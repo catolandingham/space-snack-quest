@@ -109,6 +109,11 @@ const before = await page.evaluate(() => ({ x: Math.round(window.__ss.op.mo.x), 
 await sleep(300);
 const still = await page.evaluate(() => ({ x: Math.round(window.__ss.op.mo.x), scene: window.__ss.op.scene }));
 check("Mops is not jumped to the door", before.scene === "G1" && still.scene === "G1" && still.x === 850, { before, still });
+await keys(["ArrowLeft"]);
+await sleep(700);
+await keys([]);
+const walked = await page.evaluate(() => Math.round(window.__ss.op.mo.x));
+check("Mops walks toward the diner door", walked < 780 && walked > 200, walked);
 await page.evaluate(() => { window.__ss.op.mo.x = 300; window.__ss.op.mo.y = 470; });
 await sleep(80);
 const entered = await page.evaluate(() => {
@@ -128,6 +133,113 @@ const marks = await page.evaluate(() => {
   };
 });
 check("fuel gauge, Mops-hidden cones, and pump-bot cones are in the gas stop", marks.tank && marks.noMopsCone && marks.botCone, marks);
+await page.evaluate(() => {
+  const n = window.__ss.op;
+  n.scene = "G1"; n.room = "gas"; n.cur = null; n.q = [];
+  window.__ss.ch2.fuel = false;
+});
+await sleep(200);
+const tank = await page.evaluate(() => {
+  const c = document.querySelector("canvas");
+  const g = c.getContext("2d", { willReadFrequently: true });
+  const at = (x, y) => {
+    const d = g.getImageData(x, y, 1, 1).data;
+    return [d[0], d[1], d[2]];
+  };
+  return { banner: at(710, 70), pill: at(40, 27) };
+});
+const pale = (c) => c[0] > 245 && c[1] > 220 && c[1] < 250 && c[2] > 220;
+check("TANK label is visible and not under the chapter pill", pale(tank.banner) && !pale(tank.pill), tank);
+
+// Full capture, separate from the hide path: security has to walk up and touch him.
+await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  n.q = []; n.cur = null; n.live = [];
+  n.scene = "G1"; n.room = "gas"; n.ctrl = true; n.sqPose = "stand";
+  n.sq.x = 500; n.sq.y = 540; n.sq.moving = false;
+  ss.swapTo(false);
+  Object.assign(ss.ch2.rust, { x: 420, f: 1, alert: 0, chase: false, nap: false, pause: 8 });
+  ss.ch2.phase = "g1"; ss.ch2.sec = null;
+});
+let cap = null;
+let approached = false;
+for (let i = 0; i < 80; i++) {
+  await sleep(100);
+  cap = await page.evaluate(() => {
+    const n = window.__ss.op;
+    const s = window.__ss.ch2.sec;
+    const cur = n.cur;
+    return {
+      ctrl: n.ctrl,
+      pose: n.sqPose,
+      sec: s && Math.round(s.x),
+      dist: s ? Math.round(Math.hypot(s.x - n.sq.x, s.y - n.sq.y)) : null,
+      cur: cur && (cur.k + ":" + (cur.text || (cur.b && cur.b.text) || "")),
+      scene: n.scene,
+    };
+  });
+  if (cap.sec && cap.dist < 400) approached = true;
+  if (cap.cur && cap.cur.includes("LOCKUP")) break;
+}
+check("security walks up to a standing Squatch and opens LOCKUP", !!(approached && cap && cap.cur && cap.cur.includes("LOCKUP") && cap.scene === "G1"), cap);
+await sleep(450);
+for (let i = 0; i < 4; i++) {
+  await page.evaluate(() => {
+    window.dispatchEvent(new KeyboardEvent("keydown", { code: "Space", bubbles: true, cancelable: true }));
+    window.dispatchEvent(new KeyboardEvent("keyup", { code: "Space", bubbles: true }));
+  });
+  await sleep(400);
+  cap = await page.evaluate(() => {
+    const n = window.__ss.op;
+    const cur = n.cur;
+    return {
+      ctrl: n.ctrl, scene: n.scene, phase: window.__ss.ch2.phase,
+      pose: n.sqPose, sq: [Math.round(n.sq.x), Math.round(n.sq.y)],
+      sec: window.__ss.ch2.sec, chase: window.__ss.ch2.rust.chase,
+      cur: cur && cur.k,
+    };
+  });
+  if (cap.ctrl && cap.sq[0] === 760) break;
+}
+check(
+  "LOCKUP restarts this gas section with control restored",
+  !!(cap && cap.ctrl && cap.scene === "G1" && cap.phase === "g1" && cap.pose === "stand" && cap.sq[0] === 760 && cap.sq[1] === 540 && !cap.sec && !cap.chase && !cap.cur),
+  cap,
+);
+
+// Pump bots keep their own setback. They do not call the security loop.
+await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  n.q = []; n.cur = null; n.live = [];
+  n.scene = "G6"; n.room = "gas"; n.ctrl = true; n.sqPose = "stand";
+  n.sq.x = 360; n.sq.y = 510; ss.swapTo(false); ss.ch.sing = false;
+  ss.ch2.phase = "g6"; ss.ch2.sec = null;
+  ss.ch2.rust.nap = true;
+  ss.ch2.bots = [{ x: 480, y: 500, hx: 480, f: -1, look: 0 }];
+});
+let bot = null;
+for (let i = 0; i < 30; i++) {
+  await sleep(100);
+  bot = await page.evaluate(() => {
+    const n = window.__ss.op;
+    const cur = n.cur;
+    const q = n.q.map((s) => (s.b && s.b.text) || "").join("|");
+    return {
+      sec: window.__ss.ch2.sec,
+      cur: (cur && cur.b && cur.b.text) || "",
+      q,
+      seen: window.__ss.inWedge(n.sq.x, n.sq.y - 40, 480, 460, Math.PI, 0.6, 230),
+    };
+  });
+  if ((bot.cur + bot.q).includes("FUEL") || (bot.cur + bot.q).includes("FUR")) break;
+}
+check(
+  "pump-bot sighting is a setback, not security",
+  !!((bot.cur + bot.q).match(/FUEL|FUR/) && !bot.sec),
+  bot,
+);
 
 await keys([]);
 await browser.close();

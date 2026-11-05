@@ -6,7 +6,9 @@
 
 `tests/gas-stop.mjs` checks the gas stop on its own: security leaves when Squatch hides, Mops walks to the diner door and presses enter, the tank gauge, and that pump-bot cones stay while Rusty's cone is hidden during Mops.
 
-`tests/kitchen.mjs` checks the cook fainting, the soup-on-head line, the hoof stamp, prices, the oven ticket, the removed out-front tip-jar scene, the sponge, and the Phobos boarding caption.
+`tests/kitchen.mjs` checks the cook's walked exit, the soup bowl on Mops, the timed hoof stamp, boarding at the ship, the red EXIT door, and that soup still costs 30 coins.
+
+Pump bots on the lot keep their own setback when they see Squatch. Rusty is the one who calls security. That split is intentional; it does not change how hard the bots are.
 
 From the repo root:
 
