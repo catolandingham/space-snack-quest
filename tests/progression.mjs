@@ -1,13 +1,35 @@
 /**
  * Progression gates for the armature story.
- * Requires puppeteer-core installed where Node can resolve it, and Chrome.
- * Serves index.html itself on 127.0.0.1:8766 and drives the real game loop.
+ * Serves index.html on 127.0.0.1:8766 and drives the real game loop.
+ *
+ * Install and run from the repo root:
+ *   npm install --no-save puppeteer-core
+ *   CHROME=/usr/bin/google-chrome node tests/progression.mjs
+ * CHROME is optional when Chrome is already at /usr/bin/google-chrome.
+ * See README.md.
  */
 import http from "node:http";
+import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import puppeteer from "puppeteer-core";
+
+let puppeteer;
+try {
+  puppeteer = (await import("puppeteer-core")).default;
+} catch {
+  console.error("puppeteer-core is not installed, so the progression tests cannot start.");
+  console.error("From the repo root: npm install --no-save puppeteer-core");
+  console.error("Then: CHROME=/usr/bin/google-chrome node tests/progression.mjs");
+  process.exit(1);
+}
+
+const chrome = process.env.CHROME || "/usr/bin/google-chrome";
+if (!existsSync(chrome)) {
+  console.error(`Chrome was not found at ${chrome}.`);
+  console.error("Set CHROME to the Chrome or Chromium binary, then rerun tests/progression.mjs.");
+  process.exit(1);
+}
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const html = await readFile(join(root, "index.html"));
@@ -22,11 +44,19 @@ const server = http.createServer((req, res) => {
 });
 await new Promise((r) => server.listen(8766, "127.0.0.1", r));
 
-const browser = await puppeteer.launch({
-  executablePath: process.env.CHROME || "/usr/bin/google-chrome",
-  headless: "new",
-  args: ["--no-sandbox", "--disable-gpu"],
-});
+let browser;
+try {
+  browser = await puppeteer.launch({
+    executablePath: chrome,
+    headless: "new",
+    args: ["--no-sandbox", "--disable-gpu"],
+  });
+} catch (err) {
+  server.close();
+  console.error(`Chrome at ${chrome} did not start: ${err instanceof Error ? err.message : err}`);
+  console.error("Set CHROME to a working Chrome or Chromium binary and rerun tests/progression.mjs.");
+  process.exit(1);
+}
 const page = await browser.newPage();
 const fails = [];
 function check(name, ok, detail) {
@@ -180,8 +210,12 @@ for (let i = 0; i < 100; i++) {
 await keys([]);
 check("M5 straight walk reaches the reunion", !!(m5 && (m5.met || (m5.cur && m5.cur.startsWith("MOPS")))), m5);
 
-// Chapter 2: Rusty used to reach Squatch's x and orbit there with control locked,
-// because the grab required being within 50px of y=470 while Squatch walks near y=540.
+// Chapter 2 player path: Squatch walks into Rusty's own sight cone. Detection,
+// the alert, and the chase are the game's. pause only holds his facing still
+// long enough for that walk to be deterministic. The old grab required y near
+// 470, so a player at the normal walk height froze with control locked.
+// The return checked below is the current gas-stop checkpoint (stand back at
+// the entrance). It is not the separate Phase 2 jail / section-restart loop.
 await page.evaluate(() => {
   const ss = window.__ss;
   ss.startOpening();
@@ -190,37 +224,46 @@ await page.evaluate(() => {
   n.cur = null;
   n.scene = "G1";
   n.room = "gas";
-  n.ctrl = false;
+  n.ctrl = true;
   n.sqPose = "stand";
-  n.sq.x = 500;
-  n.sq.y = 540;
+  n.sq.x = 200;
+  n.sq.y = 520;
+  n.sq.moving = false;
   ss.swapTo(false);
   const r = ss.ch2.rust;
-  r.x = 420;
+  r.x = 380;
   r.f = 1;
   r.alert = 0;
-  r.chase = true;
+  r.chase = false;
   r.nap = false;
-  r.pause = 0;
+  r.pause = 8;
   ss.ch2.phase = "g1";
 });
+await keys(["ArrowRight"]);
 let chase = null;
-for (let i = 0; i < 40; i++) {
+for (let i = 0; i < 80; i++) {
   await sleep(100);
   chase = await page.evaluate(() => {
     const n = window.__ss.op;
     const cur = n.cur;
+    const r = window.__ss.ch2.rust;
     return {
       ctrl: n.ctrl,
-      chase: window.__ss.ch2.rust.chase,
+      chase: r.chase,
+      alert: Math.round(r.alert * 10) / 10,
       cur: cur && (cur.k + ":" + ((cur.b && cur.b.text) || "")),
       sq: [Math.round(n.sq.x), Math.round(n.sq.y)],
-      rx: Math.round(window.__ss.ch2.rust.x),
+      rx: Math.round(r.x),
     };
   });
-  if (chase.cur && chase.cur.startsWith("bub")) break;
+  if (chase.cur && chase.cur.includes("Gotcha")) break;
 }
-check("Rusty grab finishes and starts the return line", !!(chase && chase.cur && chase.cur.includes("Gotcha")), chase);
+await keys([]);
+check(
+  "Rusty sees a walking Squatch and finishes the grab",
+  !!(chase && chase.cur && chase.cur.includes("Gotcha") && chase.sq[1] > 500),
+  chase,
+);
 await sleep(400);
 for (let i = 0; i < 4; i++) {
   await page.evaluate(() => {
@@ -242,8 +285,8 @@ for (let i = 0; i < 4; i++) {
   if (chase.ctrl && !chase.cur) break;
 }
 check(
-  "Rusty return gives control back at the gas-stop spot",
-  !!(chase && chase.ctrl && chase.sq[0] === 760 && chase.sq[1] === 540 && !chase.cur && chase.rx <= 450 && chase.rx >= 330),
+  "Rusty return is the gas-stop checkpoint, not a Phase 2 restart",
+  !!(chase && chase.ctrl && chase.sq[0] === 760 && chase.sq[1] === 540 && chase.pose === "stand" && !chase.cur && chase.rx <= 450 && chase.rx >= 330),
   chase,
 );
 
