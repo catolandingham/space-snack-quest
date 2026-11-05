@@ -6,12 +6,15 @@
 
 `tests/gas-stop.mjs` checks the gas stop on its own: security leaves when Squatch hides, Mops walks to the diner door and presses enter, the tank gauge, and that pump-bot cones stay while Rusty's cone is hidden during Mops.
 
+`tests/kitchen.mjs` checks the cook fainting, the soup-on-head line, the hoof stamp, prices, the oven ticket, the removed out-front tip-jar scene, the sponge, and the Phobos boarding caption.
+
 From the repo root:
 
 ```
 npm install --no-save puppeteer-core
 CHROME=/usr/bin/google-chrome node tests/progression.mjs
 CHROME=/usr/bin/google-chrome node tests/gas-stop.mjs
+CHROME=/usr/bin/google-chrome node tests/kitchen.mjs
 ```
 
 `CHROME` is the Chrome or Chromium binary. You can omit it when that binary is already at `/usr/bin/google-chrome`.
