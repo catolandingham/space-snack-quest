@@ -607,12 +607,20 @@ for (let i = 0; i < 4; i++) {
     sec: window.__ss.ch2.sec, jar: window.__ss.ch2.jar, reg: window.__ss.ch2.reg, has: window.__ss.ch2.has,
     cur: window.__ss.op.cur && window.__ss.op.cur.k,
   }));
-  if (windowCap.ctrl && windowCap.sq[0] === 120) break;
+  if (windowCap.ctrl && windowCap.sq[0] === 480 && windowCap.sq[1] === 430) break;
 }
+await sleep(400);
+const sinkStay = await page.evaluate(() => ({
+  ctrl: window.__ss.op.ctrl,
+  sec: window.__ss.ch2.sec,
+  peek: window.__ss.ch2.peek,
+  eye: window.__ss.ch2.eye || 0,
+  sq: [Math.round(window.__ss.op.sq.x), Math.round(window.__ss.op.sq.y)],
+}));
 check(
-  "kitchen capture restarts the wash and keeps the jar",
-  !!(windowCap && windowCap.ctrl && windowCap.scene === "G2k" && windowCap.phase === "wash1" && windowCap.sq[0] === 120 && windowCap.sq[1] === 470 && !windowCap.sec && windowCap.jar === 30 && windowCap.reg === 12 && windowCap.has === "soup"),
-  windowCap,
+  "kitchen capture restarts at the sink with control and keeps the jar",
+  !!(windowCap && windowCap.ctrl && windowCap.scene === "G2k" && windowCap.phase === "wash1" && windowCap.sq[0] === 480 && windowCap.sq[1] === 430 && !windowCap.sec && windowCap.jar === 30 && windowCap.reg === 12 && windowCap.has === "soup" && sinkStay.ctrl && !sinkStay.sec && !sinkStay.peek && !sinkStay.eye && sinkStay.sq[0] === 480 && sinkStay.sq[1] === 430),
+  { windowCap, sinkStay },
 );
 
 await page.evaluate(() => {
