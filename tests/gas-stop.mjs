@@ -3,8 +3,9 @@
  *   npm install --no-save puppeteer-core
  *   CHROME=/usr/bin/google-chrome node tests/gas-stop.mjs
  *
- * Capture restart here is the current section (G1 back at the entrance),
+ * Capture restart here is the current section (G1 at the entrance, G6 at the pump),
  * not a whole-chapter replay and not a further jail minigame.
+ * Pump bots call that same security loop.
  */
 import http from "node:http";
 import { existsSync } from "node:fs";
@@ -208,7 +209,7 @@ check(
   cap,
 );
 
-// Pump bots keep their own setback. They do not call the security loop.
+// Pump bots call the same security loop. Rusty is napping so he is not the spotter.
 await page.evaluate(() => {
   const ss = window.__ss;
   const n = ss.op;
@@ -224,21 +225,87 @@ for (let i = 0; i < 30; i++) {
   await sleep(100);
   bot = await page.evaluate(() => {
     const n = window.__ss.op;
-    const cur = n.cur;
-    const q = n.q.map((s) => (s.b && s.b.text) || "").join("|");
+    const live = n.live.map((row) => row.text).join("|");
     return {
-      sec: window.__ss.ch2.sec,
-      cur: (cur && cur.b && cur.b.text) || "",
-      q,
-      seen: window.__ss.inWedge(n.sq.x, n.sq.y - 40, 480, 460, Math.PI, 0.6, 230),
+      sec: window.__ss.ch2.sec && Math.round(window.__ss.ch2.sec.x),
+      ctrl: n.ctrl,
+      live,
+      x: Math.round(n.sq.x),
+      scene: n.scene,
     };
   });
-  if ((bot.cur + bot.q).includes("FUEL") || (bot.cur + bot.q).includes("FUR")) break;
+  if (bot.sec !== null && bot.live.includes("Report him")) break;
 }
 check(
-  "pump-bot sighting is a setback, not security",
-  !!((bot.cur + bot.q).match(/FUEL|FUR/) && !bot.sec),
+  "a pump bot calls security and keeps control",
+  !!(bot && bot.sec !== null && bot.ctrl && bot.live.includes("Report him or fuel him") && bot.scene === "G6"),
   bot,
+);
+await page.evaluate(() => { window.__ss.op.sqPose = "hidden"; });
+let hidden = null;
+for (let i = 0; i < 30; i++) {
+  await sleep(100);
+  hidden = await page.evaluate(() => ({
+    sec: window.__ss.ch2.sec,
+    scene: window.__ss.op.scene,
+    x: Math.round(window.__ss.op.sq.x),
+    phase: window.__ss.ch2.phase,
+  }));
+  if (!hidden.sec) break;
+}
+check(
+  "hiding dismisses the pump-bot security without restarting",
+  !!(hidden && !hidden.sec && hidden.scene === "G6" && hidden.phase === "g6" && hidden.x === 360),
+  hidden,
+);
+
+await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  n.q = []; n.cur = null; n.live = [];
+  n.scene = "G6"; n.room = "gas"; n.ctrl = true; n.sqPose = "stand";
+  n.sq.x = 360; n.sq.y = 510; n.sq.moving = false;
+  ss.swapTo(false); ss.ch.sing = false;
+  ss.ch2.phase = "g6"; ss.ch2.sec = null;
+  ss.ch2.rust.nap = true;
+  ss.ch2.bots = [{ x: 480, y: 500, hx: 480, f: -1, look: 0 }];
+});
+let botCap = null;
+for (let i = 0; i < 80; i++) {
+  await sleep(100);
+  botCap = await page.evaluate(() => {
+    const n = window.__ss.op;
+    const cur = n.cur;
+    return {
+      cur: cur && (cur.k + ":" + (cur.text || (cur.b && cur.b.text) || "")),
+      scene: n.scene,
+      ctrl: n.ctrl,
+    };
+  });
+  if (botCap.cur && botCap.cur.includes("LOCKUP")) break;
+}
+check("pump-bot security catches a standing Squatch", !!(botCap && botCap.cur && botCap.cur.includes("LOCKUP") && botCap.scene === "G6" && botCap.ctrl === false), botCap);
+await sleep(450);
+for (let i = 0; i < 4; i++) {
+  await page.evaluate(() => {
+    window.dispatchEvent(new KeyboardEvent("keydown", { code: "Space", bubbles: true, cancelable: true }));
+    window.dispatchEvent(new KeyboardEvent("keyup", { code: "Space", bubbles: true }));
+  });
+  await sleep(400);
+  botCap = await page.evaluate(() => {
+    const n = window.__ss.op;
+    return {
+      ctrl: n.ctrl, scene: n.scene, phase: window.__ss.ch2.phase,
+      pose: n.sqPose, sq: [Math.round(n.sq.x), Math.round(n.sq.y)],
+      sec: window.__ss.ch2.sec, cur: n.cur && n.cur.k,
+    };
+  });
+  if (botCap.ctrl && botCap.sq[0] === 85) break;
+}
+check(
+  "pump-bot capture restarts the pump section",
+  !!(botCap && botCap.ctrl && botCap.scene === "G6" && botCap.phase === "g6" && botCap.pose === "stand" && botCap.sq[0] === 85 && botCap.sq[1] === 470 && !botCap.sec && !botCap.cur),
+  botCap,
 );
 
 await keys([]);

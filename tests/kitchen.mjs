@@ -108,7 +108,8 @@ await page.evaluate(() => {
 });
 const seen = [];
 let cook = null;
-for (let i = 0; i < 40; i++) {
+let running = null;
+for (let i = 0; i < 70; i++) {
   await sleep(100);
   cook = await page.evaluate(() => ({
     state: window.__ss.ch2.cook,
@@ -116,9 +117,16 @@ for (let i = 0; i < 40; i++) {
     y: Math.round(window.__ss.ch2.cookY || 0),
   }));
   if (!seen.includes(cook.state)) seen.push(cook.state);
-  if (cook.state === "gone" && cook.x > 900) break;
+  if (cook.state === "run") running = cook;
+  if (cook.state === "gone" && cook.x < 100) break;
 }
-check("cook stands, runs across the kitchen, and leaves through the door", seen.includes("wake") && seen.includes("run") && cook && cook.state === "gone" && cook.x > 900, { seen, cook });
+const door = await px(28, 265);
+const doorRed = door[0] > 200 && door[1] < 120 && door[2] < 100;
+check(
+  "cook wakes, screams, and runs out the left diner door",
+  seen.includes("wake") && seen.includes("scream") && seen.includes("run") && cook && cook.state === "gone" && cook.x < 100 && running && running.x < 640 && running.y > 390 && running.y < 450 && doorRed,
+  { seen, cook, running, door },
+);
 
 await page.evaluate(() => {
   const ss = window.__ss;
@@ -140,7 +148,7 @@ await page.evaluate(() => {
   const n = ss.op;
   n.cur = null; n.q = []; n.live = [];
   n.scene = "G5k"; n.room = "kitchen"; n.ctrl = true; ss.swapTo(true);
-  n.mo.x = 880; n.mo.y = 500; ss.ch2.phase = "wash5"; ss.ch2.jar = 30; ss.ch2.has = "";
+  n.mo.x = 70; n.mo.y = 500; ss.ch2.phase = "wash5"; ss.ch2.jar = 30; ss.ch2.has = "";
   ss.ch2.cooked = 0;
 });
 await sleep(80);
@@ -157,17 +165,30 @@ await page.evaluate(() => {
   window.__ss.ch2.phase = "g4";
 });
 await sleep(80);
-const ask = await page.evaluate(() => {
-  const n = window.__ss.op;
-  const before = window.__ss.ch2.jar;
-  const verb = n.act && n.act.verb;
-  if (verb === "ASK") window.__ss.actionDown();
-  return { verb, jar: window.__ss.ch2.jar, before, live: (n.live[0] && n.live[0].text) || "" };
+const askPrompt = await page.evaluate(() => {
+  const act = window.__ss.op.act;
+  return { verb: act && act.verb, y: act && Math.round(act.y) };
 });
-check("Mops walks to the front and asks Gloop without spending coins", front.verb === "FRONT" && front.room === "diner" && ask.verb === "ASK" && ask.jar === 30 && ask.live.includes("30") && ask.live.includes("jar"), { front, ask });
+await page.evaluate(() => {
+  if (window.__ss.op.act && window.__ss.op.act.verb === "ASK") window.__ss.actionDown();
+});
+await sleep(150);
+const askLines = await page.evaluate(() => {
+  const n = window.__ss.op;
+  const cur = (n.cur && n.cur.b && n.cur.b.text) || "";
+  const q = n.q.map((s) => (s.b && s.b.text) || "").join("|");
+  return { jar: window.__ss.ch2.jar, has: window.__ss.ch2.has, text: cur + "|" + q };
+});
+const ask = { ...askPrompt, ...askLines };
+check(
+  "Mops uses the left kitchen door, then hears soup and gas are both 30",
+  front.verb === "FRONT" && front.room === "diner" && ask.verb === "ASK" && ask.y === 210 && ask.jar === 30 && ask.has === "" && ask.text.includes("jar") && ask.text.includes("Soup is 30") && ask.text.includes("tank is 30") && ask.text.includes("Soup instead of gas"),
+  { front, ask },
+);
 
 await page.evaluate(() => {
   const n = window.__ss.op;
+  n.q = []; n.cur = null; n.ctrl = true;
   n.room = "kitchen"; n.mo.x = 250; n.mo.y = 500; window.__ss.ch2.phase = "wash5";
   window.__ss.ch2.jar = 30; window.__ss.ch2.cooked = 0; n.live = [];
 });
@@ -255,19 +276,254 @@ await page.evaluate(() => {
   const n = ss.op;
   n.q = []; n.cur = null; n.live = [];
   n.room = "diner"; n.scene = "G4"; n.ctrl = true; ss.swapTo(true);
-  n.mo.x = 480; n.mo.y = 500; ss.ch2.phase = "g4"; ss.ch2.has = "coins"; ss.ch2.jar = 0; ss.ch2.reg = 0;
+  n.mo.x = 360; n.mo.y = 460;
+  ss.ch2.phase = "g4"; ss.ch2.has = ""; ss.ch2.jar = 30; ss.ch2.reg = 0; ss.ch2.fuel = false;
 });
 await sleep(80);
+const grabbed = await page.evaluate(() => {
+  const act = window.__ss.op.act;
+  if (act && act.verb === "GRAB") window.__ss.actionDown();
+  return { verb: act && act.verb, jar: window.__ss.ch2.jar, has: window.__ss.ch2.has };
+});
+await page.evaluate(() => { window.__ss.op.mo.x = 480; window.__ss.op.mo.y = 500; });
+await sleep(80);
+const buyVerb = await page.evaluate(() => window.__ss.op.act && window.__ss.op.act.verb);
 await page.evaluate(() => { if (window.__ss.op.act && window.__ss.op.act.verb === "BUY") window.__ss.actionDown(); });
-for (let i = 0; i < 4; i++) {
+let paid = null;
+for (let i = 0; i < 8; i++) {
+  await sleep(400);
   await page.evaluate(() => {
     window.dispatchEvent(new KeyboardEvent("keydown", { code: "Space", bubbles: true }));
     window.dispatchEvent(new KeyboardEvent("keyup", { code: "Space", bubbles: true }));
   });
-  await sleep(350);
+  paid = await page.evaluate(() => {
+    const n = window.__ss.op;
+    const said = n.log.map((row) => row.text || "").join("|");
+    return { reg: window.__ss.ch2.reg, has: window.__ss.ch2.has, jar: window.__ss.ch2.jar, said, verb: n.act && n.act.verb };
+  });
+  if (paid.has === "soup" && paid.reg === 30) break;
 }
-const paid = await page.evaluate(() => ({ reg: window.__ss.ch2.reg, has: window.__ss.ch2.has }));
-check("soup still costs the existing 30 coins", paid.reg === 30 && paid.has === "soup", paid);
+check(
+  "the jar buys soup instead of gas, once",
+  grabbed.verb === "GRAB" && grabbed.has === "coins" && grabbed.jar === 0 && buyVerb === "BUY" && paid && paid.has === "soup" && paid.jar === 0 && paid.reg === 30 && paid.said.includes("Soup instead of gas") && paid.verb !== "BUY",
+  { grabbed, buyVerb, paid },
+);
+
+await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  n.q = []; n.cur = null; n.live = []; n.ctrl = true;
+  n.room = "diner"; n.mo.x = 360; n.mo.y = 460;
+  ss.ch2.phase = "g6d"; ss.ch2.jar = 30; ss.ch2.has = "";
+});
+await sleep(80);
+const second = await page.evaluate(() => {
+  const act = window.__ss.op.act;
+  if (act && act.verb === "GRAB") window.__ss.actionDown();
+  return { verb: act && act.verb, jar: window.__ss.ch2.jar, has: window.__ss.ch2.has, reg: window.__ss.ch2.reg };
+});
+await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  n.q = []; n.cur = null; n.ctrl = true; n.room = "gas"; n.scene = "G6";
+  n.mo.x = 450; n.mo.y = 500;
+  ss.ch2.phase = "g6"; ss.ch2.rust.x = 450; ss.ch2.rust.nap = true; ss.ch2.bots = []; ss.ch2.sec = null;
+});
+await sleep(80);
+await page.evaluate(() => { if (window.__ss.op.act && window.__ss.op.act.verb === "GIVE") window.__ss.actionDown(); });
+await sleep(400);
+await page.evaluate(() => {
+  window.dispatchEvent(new KeyboardEvent("keydown", { code: "Space", bubbles: true }));
+  window.dispatchEvent(new KeyboardEvent("keyup", { code: "Space", bubbles: true }));
+});
+await sleep(250);
+const fueled = await page.evaluate(() => ({
+  fuel: window.__ss.ch2.fuel,
+  has: window.__ss.ch2.has,
+  reg: window.__ss.ch2.reg,
+  jar: window.__ss.ch2.jar,
+  verb: window.__ss.op.act && window.__ss.op.act.verb,
+}));
+check(
+  "a later jar buys gas and the soup payment stays in the register",
+  second.verb === "GRAB" && second.has === "coins" && second.jar === 0 && second.reg === 30 && fueled.fuel === true && fueled.has === "" && fueled.reg === 30,
+  { second, fueled },
+);
+
+await page.evaluate(() => {
+  const n = window.__ss.op;
+  n.q = []; n.cur = null; n.live = []; n.egg = null; n.ctrl = true;
+  n.scene = "G2k"; n.room = "kitchen";
+  window.__ss.swapTo(false);
+  window.__ss.ch2.peek = 3; window.__ss.ch2.cook = "gone";
+});
+await sleep(150);
+const coneOn = await px(624, 387);
+await page.evaluate(() => { window.__ss.ch2.peek = 0; });
+await sleep(150);
+const coneOff = await px(624, 387);
+check(
+  "Gloop's kitchen cone is visibly darker red while he is peeking",
+  coneOn[0] - coneOn[2] > coneOff[0] - coneOff[2] + 15,
+  { coneOn, coneOff },
+);
+
+await page.evaluate(() => {
+  const n = window.__ss.op;
+  n.q = []; n.cur = { k: "card", id: "jail", text: "LOCKUP" }; n.egg = null;
+});
+await sleep(150);
+const bars = await px(238, 300);
+const pen = await px(400, 250);
+check("the lockup card draws a holding pen", bars[0] > 180 && bars[1] > 180 && pen[0] < 80 && pen[2] < 120, { bars, pen });
+
+await page.evaluate(() => {
+  const n = window.__ss.op;
+  n.cur = null; n.q = []; n.egg = null;
+  n.live = [
+    { who: "bot", text: "ONE", style: "say", live: 3 },
+    { who: "bot2", text: "TWO", style: "say", live: 3 },
+    { who: "sq", text: "THREE", style: "say", live: 3 },
+  ];
+});
+await sleep(500);
+const stacked = await page.evaluate(() => window.__ss.op.live.map((row) => Math.round(row.live * 10) / 10));
+check("stacked captions each count down together", stacked.length === 3 && stacked.every((t) => t < 2.8 && t > 0.5), stacked);
+
+await page.evaluate(() => {
+  const n = window.__ss.op;
+  n.live = []; n.egg = null; n.ctrl = false;
+  n.q = [
+    { k: "bub", b: { who: "sq", text: "Line one", style: "say" } },
+    { k: "bub", b: { who: "mops", text: "Line two", style: "say" } },
+    { k: "bub", b: { who: "gloop", text: "Line three", style: "say" } },
+  ];
+  n.cur = null;
+});
+await sleep(450);
+await page.evaluate(() => {
+  window.dispatchEvent(new KeyboardEvent("keydown", { code: "Space", bubbles: true }));
+  window.dispatchEvent(new KeyboardEvent("keyup", { code: "Space", bubbles: true }));
+});
+await sleep(200);
+const stepped = await page.evaluate(() => {
+  const n = window.__ss.op;
+  return {
+    cur: n.cur && n.cur.b && n.cur.b.text,
+    left: n.q.map((row) => row.b && row.b.text),
+  };
+});
+check("NEXT advances one bubble and leaves the rest", stepped.cur === "Line two" && stepped.left.length === 1 && stepped.left[0] === "Line three", stepped);
+
+await page.evaluate(() => {
+  const n = window.__ss.op;
+  n.q = []; n.cur = { k: "bub", b: { who: "sq", text: "Stay put", style: "say" } };
+});
+await sleep(200);
+await page.evaluate(() => {
+  window.dispatchEvent(new KeyboardEvent("keydown", { code: "Escape", bubbles: true }));
+  window.dispatchEvent(new KeyboardEvent("keyup", { code: "Escape", bubbles: true }));
+});
+await sleep(150);
+const kept = await page.evaluate(() => window.__ss.op.cur && window.__ss.op.cur.b && window.__ss.op.cur.b.text);
+await page.evaluate(() => {
+  const n = window.__ss.op;
+  n.q = []; n.cur = { k: "fb", pic: "tour", cap: "Skip me" }; n.fbN = 3; n.fbI = 1;
+});
+await sleep(150);
+const dot = await px(480, 24);
+await page.evaluate(() => {
+  window.dispatchEvent(new KeyboardEvent("keydown", { code: "Escape", bubbles: true }));
+  window.dispatchEvent(new KeyboardEvent("keyup", { code: "Escape", bubbles: true }));
+});
+await sleep(150);
+const skipped = await page.evaluate(() => window.__ss.op.cur);
+check(
+  "skip and flashback dots stay on flashbacks",
+  kept === "Stay put" && !skipped && dot[2] > 180 && dot[2] > dot[0],
+  { kept, skipped, dot },
+);
+
+await page.evaluate(() => {
+  const n = window.__ss.op;
+  n.q = []; n.cur = null; n.egg = null;
+  n.sq.x = 480; n.sq.y = 420;
+  n.q.push({ k: "bub", b: { who: "sq", text: "La la la", style: "song" } });
+});
+await sleep(200);
+const song = await page.evaluate(() => {
+  const n = window.__ss.op;
+  const row = n.log[n.log.length - 1];
+  return { style: row && row.style, text: n.cur && n.cur.b && n.cur.b.text };
+});
+const pink = await px(480, 300);
+check("a song line is logged as a song and draws pink", song.style === "song" && song.text === "La la la" && pink[0] > 220 && pink[2] > 180, { song, pink });
+
+await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  n.q = []; n.cur = null; n.egg = null; n.live = []; n.ctrl = true;
+  n.scene = "S9"; n.room = "hall"; n.sqPose = "stand";
+  n.sq.x = 800; n.sq.y = 300; ss.swapTo(false);
+  n.found.delete("goatspace");
+});
+await sleep(120);
+const pull = await page.evaluate(() => {
+  const act = window.__ss.op.act;
+  if (act && act.verb === "PULL") window.__ss.actionDown();
+  return act && act.verb;
+});
+await sleep(200);
+const air = await page.evaluate(() => ({ egg: !!window.__ss.op.egg }));
+const airPx = await px(480, 120);
+check("the airlock pull still opens the egg", pull === "PULL" && air.egg && airPx[0] < 40 && airPx[2] < 70, { pull, air, airPx });
+
+await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  n.q = []; n.cur = null; n.egg = null; n.ctrl = true; n.sqPose = "stand";
+  n.scene = "M4"; n.room = "inside";
+  n.sq.x = 420; n.sq.y = 540; ss.swapTo(false);
+  ss.ch4.phase = "m4a"; ss.ch4.beam = 1;
+});
+await sleep(120);
+const mars = await page.evaluate(() => {
+  const act = window.__ss.op.act;
+  if (act && act.verb === "ROLL") window.__ss.actionDown();
+  return { verb: act && act.verb, beam: window.__ss.ch4.beam };
+});
+await sleep(200);
+await page.evaluate(() => { window.__ss.op.q = []; window.__ss.op.cur = null; });
+await sleep(150);
+const balled = await page.evaluate(() => ({ pose: window.__ss.op.sqPose, beam: window.__ss.ch4.beam }));
+const ballPx = await px(420, 524);
+check(
+  "Mars duck is a roll that stops the beam",
+  mars.verb === "ROLL" && mars.beam === -1 && balled.pose === "ball" && balled.beam === -1 && ballPx[0] > 70 && ballPx[0] < 150 && ballPx[2] < 60,
+  { mars, balled, ballPx },
+);
+
+const arrivals = await page.evaluate(() => {
+  const ss = window.__ss;
+  const read = () => {
+    const n = ss.op;
+    const cur = (n.cur && ((n.cur.b && n.cur.b.text) || n.cur.text)) || "";
+    const q = n.q.map((row) => (row.b && row.b.text) || row.text || "").join("|");
+    return cur + "|" + q;
+  };
+  ss.sceneG0();
+  const gas = read();
+  ss.sceneP0();
+  const phobos = read();
+  ss.sceneM0();
+  const mars = read();
+  return { gas, phobos, mars };
+});
+check(
+  "arrivals warn about locals and troopers",
+  arrivals.gas.includes("Locals and troopers use this stop.") && arrivals.phobos.includes("Locals and troopers. Keep your head down.") && arrivals.mars.includes("Troopers. Same as ever."),
+  arrivals,
+);
 
 await browser.close();
 server.close();

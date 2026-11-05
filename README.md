@@ -6,9 +6,23 @@
 
 `tests/gas-stop.mjs` checks the gas stop on its own: security leaves when Squatch hides, Mops walks to the diner door and presses enter, the tank gauge, and that pump-bot cones stay while Rusty's cone is hidden during Mops.
 
-`tests/kitchen.mjs` checks the cook's walked exit, the soup bowl on Mops, the timed hoof stamp, boarding at the ship, the red EXIT door, and that soup still costs 30 coins.
+`tests/kitchen.mjs` checks the cook's walk out the kitchen door, the soup bowl on Mops, the timed hoof stamp, boarding at the ship, the red EXIT door, and the soup-or-gas purchase.
 
-Pump bots on the lot keep their own setback when they see Squatch. Rusty is the one who calls security. That split is intentional; it does not change how hard the bots are.
+Soup and the tank each cost 30. The tip jar still fills with 30 when a wash set finishes. Grabbing it turns the jar into coins, and buying soup spends those coins once: Mops has soup, the jar is 0, and the register is 30. A later jar buys the gas. Cooking a ticket does not pay coins.
+
+Pump bots call security the same way Rusty does. Hiding sends security away. Getting caught shows the holding pen and restarts the current section. Their "report him or fuel him" line stays. Cone length and patrol speed are unchanged. The singing lure is still its own setback.
+
+## Left as they were
+
+These came up in the notes and were not given a new behavior:
+
+- Coins are not paid per dish. The jar is 30 at the end of a wash set.
+- Mops already whispers in a few lines. Nothing new was added to that.
+- Character size was checked and left alone. The closet zooms both of them, the duct draws Mops smaller so he fits the pipe, and the large portrait is a close-up.
+- Only the old DUCK prompts became ROLL. Hiding in a crate, a barrel, or under the bed is unchanged.
+- The bots' "You watch the crate" lines stay. They happen before Gloop sends them to the dock.
+- The lockup card is the jail. There is no separate jail game.
+- Cook and Gloop stay two speakers.
 
 From the repo root:
 
