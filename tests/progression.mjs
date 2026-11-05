@@ -210,12 +210,10 @@ for (let i = 0; i < 100; i++) {
 await keys([]);
 check("M5 straight walk reaches the reunion", !!(m5 && (m5.met || (m5.cur && m5.cur.startsWith("MOPS")))), m5);
 
-// Chapter 2 player path: Squatch walks into Rusty's own sight cone. Detection,
-// the alert, and the chase are the game's. pause only holds his facing still
-// long enough for that walk to be deterministic. The old grab required y near
-// 470, so a player at the normal walk height froze with control locked.
-// The return checked below is the current gas-stop checkpoint (stand back at
-// the entrance). It is not the separate Phase 2 jail / section-restart loop.
+// Squatch walks into Rusty's sight. pause only holds his facing. Sighting calls
+// security and leaves control on so he can still hide. Capture is LOCKUP and a
+// restart of this gas-stop section (back at the entrance), not the whole chapter
+// and not a separate future loop beyond that section restart.
 await page.evaluate(() => {
   const ss = window.__ss;
   ss.startOpening();
@@ -238,30 +236,30 @@ await page.evaluate(() => {
   r.nap = false;
   r.pause = 8;
   ss.ch2.phase = "g1";
+  ss.ch2.sec = null;
 });
 await keys(["ArrowRight"]);
 let chase = null;
-for (let i = 0; i < 80; i++) {
+for (let i = 0; i < 90; i++) {
   await sleep(100);
   chase = await page.evaluate(() => {
     const n = window.__ss.op;
     const cur = n.cur;
-    const r = window.__ss.ch2.rust;
     return {
       ctrl: n.ctrl,
-      chase: r.chase,
-      alert: Math.round(r.alert * 10) / 10,
-      cur: cur && (cur.k + ":" + ((cur.b && cur.b.text) || "")),
+      sec: !!window.__ss.ch2.sec,
+      scene: n.scene,
+      cur: cur && (cur.k + ":" + (cur.text || (cur.b && cur.b.text) || "")),
+      live: (n.live[0] && n.live[0].text) || "",
       sq: [Math.round(n.sq.x), Math.round(n.sq.y)],
-      rx: Math.round(r.x),
     };
   });
-  if (chase.cur && chase.cur.includes("Gotcha")) break;
+  if (chase.cur && (chase.cur.includes("LOCKUP") || chase.cur.includes("section"))) break;
 }
 await keys([]);
 check(
-  "Rusty sees a walking Squatch and finishes the grab",
-  !!(chase && chase.cur && chase.cur.includes("Gotcha") && chase.sq[1] > 500),
+  "Rusty sees a walking Squatch and security takes the section",
+  !!(chase && chase.cur && chase.cur.includes("LOCKUP") && chase.sq[1] > 500 && chase.scene === "G1"),
   chase,
 );
 await sleep(400);
@@ -276,17 +274,17 @@ for (let i = 0; i < 4; i++) {
     const cur = n.cur;
     return {
       ctrl: n.ctrl,
+      scene: n.scene,
       sq: [Math.round(n.sq.x), Math.round(n.sq.y)],
       pose: n.sqPose,
-      rx: Math.round(window.__ss.ch2.rust.x),
-      cur: cur && (cur.k + ":" + ((cur.b && cur.b.text) || "")),
+      cur: cur && cur.k,
     };
   });
-  if (chase.ctrl && !chase.cur) break;
+  if (chase.ctrl && chase.scene === "G1" && chase.sq[0] === 760) break;
 }
 check(
-  "Rusty return is the gas-stop checkpoint, not a Phase 2 restart",
-  !!(chase && chase.ctrl && chase.sq[0] === 760 && chase.sq[1] === 540 && chase.pose === "stand" && !chase.cur && chase.rx <= 450 && chase.rx >= 330),
+  "security capture restarts the gas-stop section, not the chapter",
+  !!(chase && chase.ctrl && chase.scene === "G1" && chase.sq[0] === 760 && chase.sq[1] === 540 && chase.pose === "stand" && !chase.cur),
   chase,
 );
 
