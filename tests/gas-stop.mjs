@@ -73,12 +73,16 @@ for (let i = 0; i < 40; i++) {
   await sleep(80);
   seen = await page.evaluate(() => {
     const n = window.__ss.op;
-    return { ctrl: n.ctrl, sec: window.__ss.ch2.sec && Math.round(window.__ss.ch2.sec.x), live: (n.live[0] && n.live[0].text) || "", x: Math.round(n.sq.x) };
+    return { ctrl: n.ctrl, sec: window.__ss.ch2.sec && Math.round(window.__ss.ch2.sec.x), live: n.live.map((row) => row.text).join("|"), x: Math.round(n.sq.x) };
   });
   if (seen.sec) break;
 }
 await keys([]);
-check("sighting sends security without freezing Squatch", !!(seen && seen.sec && seen.ctrl && String(seen.live).includes("SECURITY")), seen);
+check(
+  "sighting sends security without freezing Squatch",
+  !!(seen && seen.sec && seen.ctrl && String(seen.live).includes("SECURITY! A Squatch on the lot!") && String(seen.live).includes("Troopers. I can hide.")),
+  seen,
+);
 
 await page.evaluate(() => {
   const n = window.__ss.op;
@@ -238,7 +242,7 @@ for (let i = 0; i < 30; i++) {
 }
 check(
   "a pump bot calls security and keeps control",
-  !!(bot && bot.sec !== null && bot.ctrl && bot.live.includes("Report him or fuel him") && bot.scene === "G6"),
+  !!(bot && bot.sec !== null && bot.ctrl && bot.live.includes("SQUATCH ON THE LOT! Report him or fuel him!") && bot.scene === "G6"),
   bot,
 );
 await page.evaluate(() => { window.__ss.op.sqPose = "hidden"; });

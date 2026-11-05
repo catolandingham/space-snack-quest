@@ -519,9 +519,30 @@ const arrivals = await page.evaluate(() => {
   const mars = read();
   return { gas, phobos, mars };
 });
+await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  n.q = []; n.cur = null; n.live = []; n.egg = null; n.ctrl = true;
+  n.scene = "G2k"; n.room = "kitchen"; n.sqPose = "stand";
+  n.sq.x = 624; n.sq.y = 437; ss.swapTo(false);
+  ss.ch2.phase = "wash1"; ss.ch2.peek = 2; ss.ch2.cook = ""; ss.ch2.sec = null;
+});
+await sleep(250);
+const peek = await page.evaluate(() => {
+  const n = window.__ss.op;
+  const cur = (n.cur && n.cur.b && n.cur.b.text) || "";
+  const q = n.q.map((row) => (row.b && row.b.text) || "").join("|");
+  return { text: cur + "|" + q, sec: window.__ss.ch2.sec };
+});
 check(
-  "arrivals warn about locals and troopers",
-  arrivals.gas.includes("Locals and troopers use this stop.") && arrivals.phobos.includes("Locals and troopers. Keep your head down.") && arrivals.mars.includes("Troopers. Same as ever."),
+  "Gloop startles when she sees Squatch and does not raise the alarm yet",
+  peek.text.includes("What is that by the sink?!") && peek.text.includes("A WOOKIE!") && !peek.text.includes("Pump bots") && !peek.sec,
+  peek,
+);
+
+check(
+  "arrivals separate local fear from the trooper danger",
+  arrivals.gas.includes("Locals still fear Sasquatches. Troopers are the greater danger. Neither is safe.") && arrivals.gas.includes("Not the scrubbers?") && arrivals.phobos.includes("Folks here still jump at a Squatch.") && arrivals.phobos.includes("lock you up") && arrivals.mars.includes("Locals are scared of a Squatch.") && arrivals.mars.includes("I'll use them on purpose.") && !arrivals.gas.includes("Locals and troopers use this stop"),
   arrivals,
 );
 
