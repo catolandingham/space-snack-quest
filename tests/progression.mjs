@@ -180,6 +180,121 @@ for (let i = 0; i < 100; i++) {
 await keys([]);
 check("M5 straight walk reaches the reunion", !!(m5 && (m5.met || (m5.cur && m5.cur.startsWith("MOPS")))), m5);
 
+// Chapter 2: Rusty used to reach Squatch's x and orbit there with control locked,
+// because the grab required being within 50px of y=470 while Squatch walks near y=540.
+await page.evaluate(() => {
+  const ss = window.__ss;
+  ss.startOpening();
+  const n = ss.op;
+  n.q = [];
+  n.cur = null;
+  n.scene = "G1";
+  n.room = "gas";
+  n.ctrl = false;
+  n.sqPose = "stand";
+  n.sq.x = 500;
+  n.sq.y = 540;
+  ss.swapTo(false);
+  const r = ss.ch2.rust;
+  r.x = 420;
+  r.f = 1;
+  r.alert = 0;
+  r.chase = true;
+  r.nap = false;
+  r.pause = 0;
+  ss.ch2.phase = "g1";
+});
+let chase = null;
+for (let i = 0; i < 40; i++) {
+  await sleep(100);
+  chase = await page.evaluate(() => {
+    const n = window.__ss.op;
+    const cur = n.cur;
+    return {
+      ctrl: n.ctrl,
+      chase: window.__ss.ch2.rust.chase,
+      cur: cur && (cur.k + ":" + ((cur.b && cur.b.text) || "")),
+      sq: [Math.round(n.sq.x), Math.round(n.sq.y)],
+      rx: Math.round(window.__ss.ch2.rust.x),
+    };
+  });
+  if (chase.cur && chase.cur.startsWith("bub")) break;
+}
+check("Rusty grab finishes and starts the return line", !!(chase && chase.cur && chase.cur.includes("Gotcha")), chase);
+await sleep(400);
+for (let i = 0; i < 4; i++) {
+  await page.evaluate(() => {
+    window.dispatchEvent(new KeyboardEvent("keydown", { code: "Space", key: " ", bubbles: true, cancelable: true }));
+    window.dispatchEvent(new KeyboardEvent("keyup", { code: "Space", key: " ", bubbles: true }));
+  });
+  await sleep(400);
+  chase = await page.evaluate(() => {
+    const n = window.__ss.op;
+    const cur = n.cur;
+    return {
+      ctrl: n.ctrl,
+      sq: [Math.round(n.sq.x), Math.round(n.sq.y)],
+      pose: n.sqPose,
+      rx: Math.round(window.__ss.ch2.rust.x),
+      cur: cur && (cur.k + ":" + ((cur.b && cur.b.text) || "")),
+    };
+  });
+  if (chase.ctrl && !chase.cur) break;
+}
+check(
+  "Rusty return gives control back at the gas-stop spot",
+  !!(chase && chase.ctrl && chase.sq[0] === 760 && chase.sq[1] === 540 && !chase.cur && chase.rx <= 450 && chase.rx >= 330),
+  chase,
+);
+
+const los = await page.evaluate(() => {
+  const n = window.__ss.op;
+  n.room = "gas";
+  n.scene = "G1";
+  n.q = [];
+  n.cur = null;
+  const see = (ax, ay, bx, by) => window.__ss.seeLine(ax, ay, bx, by);
+  return {
+    open: see(360, 400, 480, 520),
+    underPump: see(400, 400, 540, 470),
+    farSide: see(400, 400, 620, 520),
+    throughBody: see(400, 400, 700, 500),
+  };
+});
+check("pump blocks sight under it and through it", los.open === true && los.underPump === false && los.farSide === false && los.throughBody === false, los);
+
+// Closet lane just below the G sign and along the bucket used to stop on a lip.
+await page.evaluate(() => {
+  const n = window.__ss.op;
+  n.scene = "O5";
+  n.room = "closet";
+  n.ctrl = true;
+  n.sqPose = "stand";
+  n.cur = null;
+  n.q = [];
+  n.sq.x = 450;
+  n.sq.y = 522;
+});
+await keys(["ArrowLeft"]);
+await sleep(900);
+await keys([]);
+const gsign = await page.evaluate(() => [Math.round(window.__ss.op.sq.x), Math.round(window.__ss.op.sq.y)]);
+check("G sign no longer snags the lane under it", gsign[0] < 320, gsign);
+
+await page.evaluate(() => {
+  const n = window.__ss.op;
+  n.room = "closet";
+  n.ctrl = true;
+  n.sqPose = "stand";
+  n.sq.x = 680;
+  n.sq.y = 560;
+});
+await keys(["ArrowLeft"]);
+await sleep(1000);
+await keys([]);
+const bucket = await page.evaluate(() => [Math.round(window.__ss.op.sq.x), Math.round(window.__ss.op.sq.y)]);
+check("bucket no longer snags the bottom walk lane", bucket[0] < 500, bucket);
+
 await browser.close();
 server.close();
 if (fails.length) {
