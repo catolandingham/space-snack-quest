@@ -188,6 +188,18 @@ for (let i = 0; i < 80; i++) {
   if (cap.cur && cap.cur.includes("LOCKUP")) break;
 }
 check("security walks up to a standing Squatch and opens LOCKUP", !!(approached && cap && cap.cur && cap.cur.includes("LOCKUP") && cap.scene === "G1"), cap);
+const rustPen = await page.evaluate(() => {
+  const n = window.__ss.op;
+  const c = document.querySelector("canvas");
+  const g = c.getContext("2d", { willReadFrequently: true });
+  const at = (x, y) => { const d = g.getImageData(x, y, 1, 1).data; return [d[0], d[1], d[2]]; };
+  return { by: n.cur && n.cur.by, q: n.q.map((row) => (row.b && row.b.text) || "").join("|"), cap: at(340, 375), side: at(420, 400) };
+});
+check(
+  "Rusty's lockup shows his red cap and the coin line",
+  rustPen.by === "rust" && rustPen.q.includes("I'll take the pen over the pump.") && rustPen.cap[0] > 180 && rustPen.cap[1] < 120 && rustPen.side[2] < 180,
+  rustPen,
+);
 await sleep(450);
 for (let i = 0; i < 4; i++) {
   await page.evaluate(() => {
@@ -289,6 +301,18 @@ for (let i = 0; i < 80; i++) {
   if (botCap.cur && botCap.cur.includes("LOCKUP")) break;
 }
 check("pump-bot security catches a standing Squatch", !!(botCap && botCap.cur && botCap.cur.includes("LOCKUP") && botCap.scene === "G6" && botCap.ctrl === false), botCap);
+const pumpPen = await page.evaluate(() => {
+  const n = window.__ss.op;
+  const c = document.querySelector("canvas");
+  const g = c.getContext("2d", { willReadFrequently: true });
+  const at = (x, y) => { const d = g.getImageData(x, y, 1, 1).data; return [d[0], d[1], d[2]]; };
+  return { by: n.cur && n.cur.by, q: n.q.map((row) => (row.b && row.b.text) || "").join("|"), nozzle: at(420, 470), body: at(355, 515) };
+});
+check(
+  "the pump lockup shows the nozzle and the pancake line",
+  pumpPen.by === "pump" && pumpPen.q.includes("Pancakes. Park the nozzle.") && pumpPen.nozzle[0] > 200 && pumpPen.nozzle[1] > 160 && pumpPen.nozzle[2] < 120 && pumpPen.body[0] > 180 && pumpPen.body[1] < 120,
+  pumpPen,
+);
 await sleep(450);
 for (let i = 0; i < 4; i++) {
   await page.evaluate(() => {

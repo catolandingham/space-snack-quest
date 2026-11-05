@@ -594,6 +594,18 @@ for (let i = 0; i < 40 && !(windowCap && String(windowCap).includes("LOCKUP")); 
   });
 }
 check("kitchen recognition capture opens LOCKUP", !!(windowCap && String(windowCap).includes("LOCKUP")), windowCap);
+const sinkPen = await page.evaluate(() => {
+  const n = window.__ss.op;
+  const c = document.querySelector("canvas");
+  const g = c.getContext("2d", { willReadFrequently: true });
+  const at = (x, y) => { const d = g.getImageData(x, y, 1, 1).data; return [d[0], d[1], d[2]]; };
+  return { by: n.cur && n.cur.by, q: n.q.map((row) => (row.b && row.b.text) || "").join("|"), cook: at(350, 500), win: at(560, 250) };
+});
+check(
+  "the window lockup shows the cook down and the orders window",
+  sinkPen.by === "sink" && sinkPen.q.includes("Next time I roll.") && sinkPen.cook[1] > 150 && sinkPen.cook[1] > sinkPen.cook[0] && sinkPen.win[2] > 200,
+  sinkPen,
+);
 await sleep(450);
 for (let i = 0; i < 4; i++) {
   await page.evaluate(() => {
@@ -685,6 +697,18 @@ for (let i = 0; i < 60; i++) {
   if (counterCap && String(counterCap).includes("LOCKUP")) break;
 }
 check("counter recognition capture opens LOCKUP", !!(counterCap && String(counterCap).includes("LOCKUP")), counterCap);
+const dinerPen = await page.evaluate(() => {
+  const n = window.__ss.op;
+  const c = document.querySelector("canvas");
+  const g = c.getContext("2d", { willReadFrequently: true });
+  const at = (x, y) => { const d = g.getImageData(x, y, 1, 1).data; return [d[0], d[1], d[2]]; };
+  return { by: n.cur && n.cur.by, q: n.q.map((row) => (row.b && row.b.text) || "").join("|"), blorp: at(420, 400) };
+});
+check(
+  "the counter lockup shows Blorp and the to-go line",
+  dinerPen.by === "diner" && dinerPen.q.includes("I'll take it to go.") && dinerPen.blorp[2] > 200 && dinerPen.blorp[2] > dinerPen.blorp[0],
+  dinerPen,
+);
 await sleep(450);
 for (let i = 0; i < 4; i++) {
   await page.evaluate(() => {
