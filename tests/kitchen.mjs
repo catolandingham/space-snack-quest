@@ -525,19 +525,200 @@ await page.evaluate(() => {
   n.q = []; n.cur = null; n.live = []; n.egg = null; n.ctrl = true;
   n.scene = "G2k"; n.room = "kitchen"; n.sqPose = "stand";
   n.sq.x = 624; n.sq.y = 437; ss.swapTo(false);
-  ss.ch2.phase = "wash1"; ss.ch2.peek = 2; ss.ch2.cook = ""; ss.ch2.sec = null;
+  ss.ch2.phase = "wash1"; ss.ch2.peek = 3; ss.ch2.eye = 0; ss.ch2.cook = "";
+  ss.ch2.sec = null; ss.ch2.jar = 30; ss.ch2.reg = 12; ss.ch2.has = "soup";
 });
-await sleep(250);
-const peek = await page.evaluate(() => {
+await sleep(200);
+const unsure = await page.evaluate(() => {
   const n = window.__ss.op;
   const cur = (n.cur && n.cur.b && n.cur.b.text) || "";
   const q = n.q.map((row) => (row.b && row.b.text) || "").join("|");
-  return { text: cur + "|" + q, sec: window.__ss.ch2.sec };
+  return { live: n.live.map((row) => row.text).join("|"), text: cur + "|" + q, sec: window.__ss.ch2.sec };
 });
+let recognized = null;
+for (let i = 0; i < 20; i++) {
+  await sleep(100);
+  recognized = await page.evaluate(() => {
+    const n = window.__ss.op;
+    const cur = (n.cur && n.cur.b && n.cur.b.text) || "";
+    const q = n.q.map((row) => (row.b && row.b.text) || "").join("|");
+    return { live: n.live.map((row) => row.text).join("|"), text: cur + "|" + q, sec: !!window.__ss.ch2.sec, jar: window.__ss.ch2.jar, reg: window.__ss.ch2.reg };
+  });
+  if (recognized.sec && recognized.text.includes("A WOOKIE!")) break;
+}
 check(
-  "Gloop startles when she sees Squatch and does not raise the alarm yet",
-  peek.text.includes("What is that by the sink?!") && peek.text.includes("A WOOKIE!") && !peek.text.includes("Pump bots") && !peek.sec,
-  peek,
+  "Gloop's window look startles, then recognition calls security",
+  unsure.live.includes("What is that by the sink?!") && !unsure.sec && !unsure.text.includes("A WOOKIE!") && recognized.sec && recognized.text.includes("A WOOKIE!") && recognized.text.includes("*faints*") && recognized.live.includes("SECURITY!") && recognized.jar === 30 && recognized.reg === 12,
+  { unsure, recognized },
+);
+await page.evaluate(() => { window.__ss.op.q = []; window.__ss.op.cur = null; window.__ss.op.sqPose = "ball"; window.__ss.op.ctrl = true; });
+let windowHid = null;
+for (let i = 0; i < 30; i++) {
+  await sleep(100);
+  windowHid = await page.evaluate(() => ({ sec: window.__ss.ch2.sec, scene: window.__ss.op.scene, phase: window.__ss.ch2.phase, jar: window.__ss.ch2.jar }));
+  if (!windowHid.sec) break;
+}
+check(
+  "rolling in the kitchen sends that security away",
+  !!(windowHid && !windowHid.sec && windowHid.scene === "G2k" && windowHid.phase === "wash1" && windowHid.jar === 30),
+  windowHid,
+);
+
+await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  n.q = []; n.cur = null; n.live = []; n.ctrl = true; n.sqPose = "stand";
+  n.scene = "G2k"; n.room = "kitchen"; n.sq.x = 624; n.sq.y = 437; ss.swapTo(false);
+  ss.ch2.phase = "wash1"; ss.ch2.peek = 3; ss.ch2.eye = 0; ss.ch2.cook = "";
+  ss.ch2.sec = null; ss.ch2.jar = 30; ss.ch2.reg = 12; ss.ch2.has = "soup";
+});
+let windowCap = null;
+for (let i = 0; i < 40; i++) {
+  await sleep(100);
+  windowCap = await page.evaluate(() => window.__ss.op.cur && window.__ss.op.cur.b && window.__ss.op.cur.b.text);
+  if (windowCap === "A WOOKIE!") break;
+}
+for (let i = 0; i < 6; i++) {
+  await page.evaluate(() => {
+    window.dispatchEvent(new KeyboardEvent("keydown", { code: "Space", bubbles: true }));
+    window.dispatchEvent(new KeyboardEvent("keyup", { code: "Space", bubbles: true }));
+  });
+  await sleep(400);
+}
+for (let i = 0; i < 40 && !(windowCap && String(windowCap).includes("LOCKUP")); i++) {
+  await sleep(100);
+  windowCap = await page.evaluate(() => {
+    const n = window.__ss.op;
+    const cur = n.cur;
+    return cur && (cur.k + ":" + (cur.text || (cur.b && cur.b.text) || ""));
+  });
+}
+check("kitchen recognition capture opens LOCKUP", !!(windowCap && String(windowCap).includes("LOCKUP")), windowCap);
+await sleep(450);
+for (let i = 0; i < 4; i++) {
+  await page.evaluate(() => {
+    window.dispatchEvent(new KeyboardEvent("keydown", { code: "Space", bubbles: true }));
+    window.dispatchEvent(new KeyboardEvent("keyup", { code: "Space", bubbles: true }));
+  });
+  await sleep(400);
+  windowCap = await page.evaluate(() => ({
+    ctrl: window.__ss.op.ctrl, scene: window.__ss.op.scene, phase: window.__ss.ch2.phase,
+    sq: [Math.round(window.__ss.op.sq.x), Math.round(window.__ss.op.sq.y)],
+    sec: window.__ss.ch2.sec, jar: window.__ss.ch2.jar, reg: window.__ss.ch2.reg, has: window.__ss.ch2.has,
+    cur: window.__ss.op.cur && window.__ss.op.cur.k,
+  }));
+  if (windowCap.ctrl && windowCap.sq[0] === 120) break;
+}
+check(
+  "kitchen capture restarts the wash and keeps the jar",
+  !!(windowCap && windowCap.ctrl && windowCap.scene === "G2k" && windowCap.phase === "wash1" && windowCap.sq[0] === 120 && windowCap.sq[1] === 470 && !windowCap.sec && windowCap.jar === 30 && windowCap.reg === 12 && windowCap.has === "soup"),
+  windowCap,
+);
+
+await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  n.q = []; n.cur = null; n.live = []; n.ctrl = true; n.sqPose = "stand";
+  n.scene = "G4"; n.room = "diner"; ss.swapTo(false);
+  n.sq.x = 373; n.sq.y = 300;
+  ss.ch2.phase = "g4"; ss.ch2.sec = null; ss.ch2.jar = 30; ss.ch2.reg = 12; ss.ch2.has = "coins";
+  const seen = ss.inWedge(n.sq.x, n.sq.y - 40, 468, 230, Math.PI - 0.3, 0.42, 165);
+  n.sq._seen = seen;
+});
+const counterBefore = await page.evaluate(() => Math.round(window.__ss.op.sq.x));
+let counter = null;
+for (let i = 0; i < 16; i++) {
+  await sleep(100);
+  counter = await page.evaluate(() => {
+    const n = window.__ss.op;
+    return {
+      live: n.live.map((row) => row.text).join("|"),
+      sec: !!window.__ss.ch2.sec,
+      x: Math.round(n.sq.x),
+      seen: n.sq._seen,
+      jar: window.__ss.ch2.jar,
+    };
+  });
+  if (counter.sec) break;
+}
+check(
+  "Gloop at the counter startles, shoves, and calls security",
+  !!(counter.seen && counter.live.includes("A Squatch?! Back from the counter!") && counter.live.includes("SECURITY!") && counter.sec && counter.x !== counterBefore && counter.jar === 30),
+  { counterBefore, counter },
+);
+await page.evaluate(() => { window.__ss.op.sqPose = "hidden"; window.__ss.op.q = []; window.__ss.op.cur = null; });
+let counterHid = null;
+for (let i = 0; i < 30; i++) {
+  await sleep(100);
+  counterHid = await page.evaluate(() => ({ sec: window.__ss.ch2.sec, scene: window.__ss.op.scene, phase: window.__ss.ch2.phase, jar: window.__ss.ch2.jar, reg: window.__ss.ch2.reg }));
+  if (!counterHid.sec) break;
+}
+check(
+  "hiding from counter security does not restart the diner or spend the jar",
+  !!(counterHid && !counterHid.sec && counterHid.scene === "G4" && counterHid.phase === "g4" && counterHid.jar === 30 && counterHid.reg === 12),
+  counterHid,
+);
+
+await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  n.q = []; n.cur = null; n.live = []; n.ctrl = true; n.sqPose = "stand";
+  n.scene = "G4"; n.room = "diner"; ss.swapTo(false);
+  n.sq.x = 373; n.sq.y = 300; n.sq.moving = false;
+  ss.ch2.phase = "g4"; ss.ch2.sec = null; ss.ch2.jar = 30; ss.ch2.reg = 12; ss.ch2.has = "coins";
+});
+let counterCap = null;
+for (let i = 0; i < 60; i++) {
+  await sleep(100);
+  counterCap = await page.evaluate(() => {
+    const cur = window.__ss.op.cur;
+    return cur && (cur.k + ":" + (cur.text || (cur.b && cur.b.text) || ""));
+  });
+  if (counterCap && String(counterCap).includes("LOCKUP")) break;
+}
+check("counter recognition capture opens LOCKUP", !!(counterCap && String(counterCap).includes("LOCKUP")), counterCap);
+await sleep(450);
+for (let i = 0; i < 4; i++) {
+  await page.evaluate(() => {
+    window.dispatchEvent(new KeyboardEvent("keydown", { code: "Space", bubbles: true }));
+    window.dispatchEvent(new KeyboardEvent("keyup", { code: "Space", bubbles: true }));
+  });
+  await sleep(400);
+  counterCap = await page.evaluate(() => ({
+    ctrl: window.__ss.op.ctrl, scene: window.__ss.op.scene, phase: window.__ss.ch2.phase,
+    sec: window.__ss.ch2.sec, jar: window.__ss.ch2.jar, reg: window.__ss.ch2.reg, has: window.__ss.ch2.has,
+    cur: window.__ss.op.cur && window.__ss.op.cur.k,
+  }));
+  if (counterCap.ctrl && counterCap.phase === "g4") break;
+}
+check(
+  "counter capture restarts the diner section and keeps the coins",
+  !!(counterCap && counterCap.ctrl && counterCap.scene === "G4" && counterCap.phase === "g4" && !counterCap.sec && counterCap.jar === 30 && counterCap.reg === 12 && counterCap.has === "coins" && !counterCap.cur),
+  counterCap,
+);
+
+await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  n.q = []; n.cur = null; n.live = []; n.ctrl = true; n.sqPose = "stand";
+  n.scene = "G4"; n.room = "diner"; ss.swapTo(false);
+  n.sq.x = 319; n.sq.y = 471;
+  ss.ch2.phase = "g4"; ss.ch2.sec = null; ss.ch2.jar = 30;
+});
+const blorpBefore = await page.evaluate(() => Math.round(window.__ss.op.sq.x));
+let blorp = null;
+for (let i = 0; i < 16; i++) {
+  await sleep(100);
+  blorp = await page.evaluate(() => {
+    const n = window.__ss.op;
+    return { live: n.live.map((row) => row.text).join("|"), sec: !!window.__ss.ch2.sec, x: Math.round(n.sq.x), jar: window.__ss.ch2.jar };
+  });
+  if (blorp.sec) break;
+}
+check(
+  "Blorp startles, shoves, and calls security",
+  !!(blorp && blorp.live.includes("EEK! A Squatch near my soup!") && blorp.live.includes("SECURITY!") && blorp.sec && blorp.x !== blorpBefore && blorp.jar === 30),
+  { blorpBefore, blorp },
 );
 
 check(
