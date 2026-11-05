@@ -289,24 +289,32 @@ await page.evaluate(() => { window.__ss.op.mo.x = 480; window.__ss.op.mo.y = 500
 await sleep(80);
 const buyVerb = await page.evaluate(() => window.__ss.op.act && window.__ss.op.act.verb);
 await page.evaluate(() => { if (window.__ss.op.act && window.__ss.op.act.verb === "BUY") window.__ss.actionDown(); });
-let paid = null;
+let committed = null;
 for (let i = 0; i < 8; i++) {
   await sleep(400);
   await page.evaluate(() => {
     window.dispatchEvent(new KeyboardEvent("keydown", { code: "Space", bubbles: true }));
     window.dispatchEvent(new KeyboardEvent("keyup", { code: "Space", bubbles: true }));
   });
-  paid = await page.evaluate(() => {
+  committed = await page.evaluate(() => {
     const n = window.__ss.op;
     const said = n.log.map((row) => row.text || "").join("|");
-    return { reg: window.__ss.ch2.reg, has: window.__ss.ch2.has, jar: window.__ss.ch2.jar, said, verb: n.act && n.act.verb };
+    return { reg: window.__ss.ch2.reg, has: window.__ss.ch2.has, jar: window.__ss.ch2.jar, said };
   });
-  if (paid.has === "soup" && paid.reg === 30) break;
+  if (committed.has === "soup" && committed.reg === 30) break;
 }
+await sleep(250);
+const after = await page.evaluate(() => {
+  const verb = window.__ss.op.act && window.__ss.op.act.verb;
+  if (verb === "BUY") window.__ss.actionDown();
+  return { verb, reg: window.__ss.ch2.reg, has: window.__ss.ch2.has, jar: window.__ss.ch2.jar };
+});
+await sleep(300);
+const repressed = await page.evaluate(() => ({ reg: window.__ss.ch2.reg, has: window.__ss.ch2.has, verb: window.__ss.op.act && window.__ss.op.act.verb }));
 check(
   "the jar buys soup instead of gas, once",
-  grabbed.verb === "GRAB" && grabbed.has === "coins" && grabbed.jar === 0 && buyVerb === "BUY" && paid && paid.has === "soup" && paid.jar === 0 && paid.reg === 30 && paid.said.includes("Soup instead of gas") && paid.verb !== "BUY",
-  { grabbed, buyVerb, paid },
+  grabbed.verb === "GRAB" && grabbed.has === "coins" && grabbed.jar === 0 && buyVerb === "BUY" && committed && committed.has === "soup" && committed.jar === 0 && committed.reg === 30 && committed.said.includes("Soup instead of gas") && after.verb !== "BUY" && after.reg === 30 && repressed.reg === 30 && repressed.has === "soup" && repressed.verb !== "BUY",
+  { grabbed, buyVerb, committed, after, repressed },
 );
 
 await page.evaluate(() => {
