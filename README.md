@@ -6,12 +6,35 @@
 
 `tests/gas-stop.mjs` checks the gas stop on its own: security leaves when Squatch hides, Mops walks to the diner door and presses enter, the tank gauge, and that pump-bot cones stay while Rusty's cone is hidden during Mops.
 
+`tests/kitchen.mjs` checks the cook's walk out the kitchen door, the soup bowl on Mops, the timed hoof stamp, boarding at the ship, the red EXIT door, and the soup-or-gas purchase.
+
+Soup and the tank each cost 30. The tip jar still fills with 30 when a wash set finishes. Grabbing it turns the jar into coins, and buying soup spends those coins once: Mops has soup, the jar is 0, and the register is 30. A later jar buys the gas. Cooking a ticket does not pay coins.
+
+Pump bots call security the same way Rusty does. Hiding sends security away. Getting caught shows the holding pen and restarts the current section. Their "report him or fuel him" line stays. Cone length and patrol speed are unchanged. The singing lure is still its own setback.
+
+On Stormtop, the fear is specific: fur clogs the air scrubbers. After that, locals are still afraid of a Sasquatch, and that fear is not the scrubber fear. Troopers, searchlights, and gate bots are the ones who lock him up. Locals are not harmless. Squatch's lines move from panic to choosing a hiding place. Sightings, cones, and prices do not get easier.
+
+If Gloop or Blorp recognizes him at the counter, they still say their own startled line and shove him, and they call security. Gloop's kitchen window is a short uncertain look, then the cook faints and security comes. Hiding or rolling sends security away. Getting caught still restarts that section and does not touch the jar. The holding pen looks different for Rusty, the pump bots, the counter, and the kitchen window.
+
+## Left as they were
+
+These came up in the notes and were not given a new behavior:
+
+- Coins are not paid per dish. The jar is 30 at the end of a wash set.
+- Mops already whispers in a few lines. Nothing new was added to that.
+- Character size was checked and left alone. The closet zooms both of them, the duct draws Mops smaller so he fits the pipe, and the large portrait is a close-up.
+- Only the old DUCK prompts became ROLL. Hiding in a crate, a barrel, or under the bed is unchanged.
+- The bots' "You watch the crate" lines stay. They happen before Gloop sends them to the dock.
+- The lockup card is the jail. There is no separate jail game.
+- Cook and Gloop stay two speakers.
+
 From the repo root:
 
 ```
 npm install --no-save puppeteer-core
 CHROME=/usr/bin/google-chrome node tests/progression.mjs
 CHROME=/usr/bin/google-chrome node tests/gas-stop.mjs
+CHROME=/usr/bin/google-chrome node tests/kitchen.mjs
 ```
 
 `CHROME` is the Chrome or Chromium binary. You can omit it when that binary is already at `/usr/bin/google-chrome`.
