@@ -12,4 +12,6 @@ What the game already plays is the root `README.md` and the build. Where that an
 
 QA note `df55e0c` reviewed build `d4e3714` (that note is not a commit). It found the phone tickets, the rail, Gloop's arm, and several labels failing even though the suites passed. That layout stayed partial.
 
-Composition C is now drawn on this branch: one floor line, a full-height diner door, sink left, pass window in the middle, range on the right, and three spice jars on a rack at the far end of the counter. The cone, sink hotspot, pass grab, and door hotspot keep their old radii. The range hotspot moved with the stove to x=800. This drawing is **pending independent visual QA**. It is not marked complete until that pass says so.
+Composition C, commit `6853902` only, is **passed**. That pass is the kitchen drawing scoped to that commit: one floor, full-height diner door, sink left, pass in the middle, range on the right, spice rack on the counter. No further layout review is open. Do not redraw the kitchen as part of a later reliability fix.
+
+P0 reliability is the checkpoint table in `docs/README.md`. Reset uses the capture restart, keeps the jar and the stars, and does not send an unknown section to Chapter 1.

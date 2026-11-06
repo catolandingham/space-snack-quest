@@ -30,7 +30,7 @@ These came up in the notes and were not given a new behavior:
 - The lockup card is the jail. There is no separate jail game.
 - Cook and Gloop stay two speakers.
 
-`docs/story-bible.md` is the Chapter 2 kitchen revision. Everything else in the story stays the original spine. Open conflicts outside that kitchen are in `docs/STORY-DECISIONS.md`. `docs/README.md` points at both, and at the section-reset checkpoints.
+`docs/story-bible.md` is the Chapter 2 kitchen revision. Everything else in the story stays the original spine. Open conflicts outside that kitchen are in `docs/STORY-DECISIONS.md`. `docs/README.md` points at both, and at the section-reset checkpoints. Composition C at `6853902` is the passed kitchen drawing. Reset keeps the jar and the stars and does not send an unknown section to Chapter 1.
 
 From the repo root:
 
@@ -39,6 +39,7 @@ npm install --no-save puppeteer-core
 CHROME=/usr/bin/google-chrome node tests/progression.mjs
 CHROME=/usr/bin/google-chrome node tests/gas-stop.mjs
 CHROME=/usr/bin/google-chrome node tests/kitchen.mjs
+CHROME=/usr/bin/google-chrome node tests/reliability.mjs
 ```
 
 `CHROME` is the Chrome or Chromium binary. You can omit it when that binary is already at `/usr/bin/google-chrome`.
