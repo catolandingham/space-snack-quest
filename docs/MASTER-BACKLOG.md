@@ -12,14 +12,14 @@ What the game already plays is the root `README.md` and the build. Where that an
 
 ## Register
 
-Both pull requests are open. Neither is merged. PR #5 is stacked on PR #4.
+PR #4 is squash-merged. `main` is `9999f0cd`. That commit has the same tree as kitchen C `6853902`. The site is not confirmed live. PR #5 is open on `main` and is not merged.
 
-| PR | Branch | Head | Base |
-| --- | --- | --- | --- |
-| #4 | `cursor/wash-presentation-f809` | `6853902` | `main` |
-| #5 | `cursor/p0-reliability-f809` | `17a03c2` | `cursor/wash-presentation-f809` |
+| PR | Branch | Head | Base | State |
+| --- | --- | --- | --- | --- |
+| #4 | `cursor/wash-presentation-f809` | `6853902`, squash `9999f0cd` | `main` | Merged. Not confirmed live |
+| #5 | `cursor/p0-reliability-f809` | Restack of `17a03c2` and `0ab2781` onto `9999f0cd` | `main` | Open. Not merged. Not deployed |
 
-`main` is `32156c7`. The kitchen C pass and the recovery pass below are the stacked heads, not `main`.
+The recovery commits are replayed onto `9999f0cd`. Their changes match `17a03c2` and `0ab2781`. The kitchen commits are not in this pull request.
 
 ## SS40–SS44
 
@@ -82,3 +82,5 @@ The pass drove wash 5, wash 1, `g1`, and unknown `g5`. The other checkpoint rows
 ## Changelog
 
 2026-11-06. Recorded PR #4 at `6853902` and PR #5 at `17a03c2`. SS40–SS44 pass on kitchen C, with pastdraw and `main` called out separately. DE1, DE2, DE3, DE5, and DE8 use the shots and the recovery pass. Reset section is shipped in PR #5, with the independent checks listed above. The rest stays open.
+
+2026-11-06. PR #4 is on `main` at `9999f0cd`. Deploy is not confirmed. PR #5 is restacked onto that commit and stays open.

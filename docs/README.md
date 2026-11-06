@@ -29,7 +29,7 @@ Mapped checkpoints in the build. The rows the independent pass drove are listed 
 
 ## Kitchen composition
 
-Composition C at commit `6853902` passed its visual review for that drawing only. There is no open layout review. Later work does not redraw the kitchen.
+Composition C at commit `6853902` passed its visual review for that drawing only. There is no open layout review. Later work does not redraw the kitchen. That drawing is on `main` as squash `9999f0cd`. The site is not confirmed live.
 
 One floor line. The diner door is full height and shares that line with the counter. Washing is the left bay, the pass window is the middle bay (300 wide), and the range is the right bay. The oven door, four burners, and knobs are in the counter, not a cabinet standing in the aisle. Three jars sit on a rack on the counter, past the burners.
 
