@@ -77,9 +77,29 @@ The pass drove wash 5, wash 1, `g1`, and unknown `g5`. The other checkpoint rows
 - Boarding caption. A g3 shot in the story capture is the dock line, not an explicit boarding caption.
 - DE4, DE6, and DE7.
 - Checkpoint rows the independent pass did not drive.
+- Soup BUY and Chapter 2 boarding were not re-played in the closet-crate measurement below.
 - Any item not named in the tables above.
 
+## Closet crate hide
+
+Measured on `main` `15051ec` in Chrome, with real key and pointer events after the closet gives control. The timer and the radius were not changed. This does not resolve a story hold.
+
+The dashed outline is on the crate from the first moment of control. It is not the action. The green pill reads HIDE only inside the radius, and that is the cue. The footer line is the control: E is a tap. Holding E while you walk does not hide you when the pill appears, because the key fires once.
+
+| Attempt | Where he stops | Pill | Result |
+| --- | --- | --- | --- |
+| Left or A only, on the line he spawns on (y 480) | Against the crate, (300, 480), also overlapping the G sign. Distance to the hide point 113. Radius 120. About 2.1s | HIDE | Tap E, Space, a click on the pill, or the touch Action button. He goes under the crate at (205, 545) |
+| Touch stick, hard left | (308, 480), distance 119 | HIDE | The Action button hides him |
+| Hold E during the walk, including after the pill is up | (300, 480) | HIDE | Stays standing. Releasing E does not hide him |
+| Up, then left along the top (y 372) | Left wall (100, 372). Closest distance 188 | none | E does nothing |
+| Left and down, still walking at 2.4s | (350, 578), distance 131 and still closing. The radius on that floor line is about x 339 | none yet | Keep left until the pill. E before the pill does nothing |
+| No input | Stays at (760, 480) | none | "Gotcha!" at 9.0s of control. The closet starts again |
+
+After a successful hide, Space through the lines "Security. Anyone in here?", "Just me, mopping!", and "...Janitor. Carry on." The scene then continues (O6). Shift does not speed this room up.
+
 ## Changelog
+
+2026-11-06. Closet crate hide measured on `main` `15051ec`. Exact left reaches the HIDE pill in about 2.1s, inside radius 120, and a tap hides him. The guard line is at 9.0s. Holding E during the walk does not. The top of the room never enters the radius. Timer and radius unchanged. Soup BUY and boarding were not part of this measurement.
 
 2026-11-06. Recorded PR #4 at `6853902` and PR #5 at `17a03c2`. SS40–SS44 pass on kitchen C, with pastdraw and `main` called out separately. DE1, DE2, DE3, DE5, and DE8 use the shots and the recovery pass. Reset section is shipped in PR #5, with the independent checks listed above. The rest stays open.
 
