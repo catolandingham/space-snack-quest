@@ -744,8 +744,9 @@ await page.evaluate(() => {
   n.scene = "G4"; n.room = "diner"; ss.swapTo(false);
   n.sq.x = 319; n.sq.y = 471;
   ss.ch2.phase = "g4"; ss.ch2.sec = null; ss.ch2.jar = 30;
+  n.sq._x0 = n.sq.x;
 });
-const blorpBefore = await page.evaluate(() => Math.round(window.__ss.op.sq.x));
+const blorpBefore = await page.evaluate(() => window.__ss.op.sq._x0);
 let blorp = null;
 for (let i = 0; i < 16; i++) {
   await sleep(100);
@@ -765,6 +766,168 @@ check(
   "arrivals separate local fear from the trooper danger",
   arrivals.gas.includes("Locals still fear Sasquatches. Troopers are the greater danger. Neither is safe.") && arrivals.gas.includes("Not the scrubbers?") && arrivals.phobos.includes("Folks here still jump at a Squatch.") && arrivals.phobos.includes("lock you up") && arrivals.mars.includes("Locals are scared of a Squatch.") && arrivals.mars.includes("I'll use them on purpose.") && !arrivals.gas.includes("Locals and troopers use this stop"),
   arrivals,
+);
+
+await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  n.q = []; n.cur = null; n.live = []; n.ctrl = true; n.egg = null;
+  n.scene = "G2k"; n.room = "kitchen"; n.sqPose = "stand";
+  n.sq.x = 480; n.sq.y = 500; ss.swapTo(false);
+  ss.ch2.phase = "wash1"; ss.ch2.held = 1; ss.ch2.done = 0; ss.ch2.scrub = 0;
+  ss.ch2.dishT = 0; ss.ch2.jar = 0; ss.ch2.reg = 4; ss.ch2.has = "";
+  ss.ch2.cook = ""; ss.ch2.peek = 0; ss.ch2.warn = 0;
+});
+await sleep(100);
+const scrub = [];
+for (let i = 0; i < 3; i++) {
+  await page.evaluate(() => { if (window.__ss.op.act && window.__ss.op.act.verb === "SCRUB") window.__ss.actionDown(); });
+  await sleep(80);
+  scrub.push(await page.evaluate(() => {
+    const c = document.querySelector("canvas");
+    const g = c.getContext("2d", { willReadFrequently: true });
+    const d = g.getImageData(548, 226, 1, 1).data;
+    return { n: window.__ss.ch2.scrub, dish: window.__ss.ch2.dishT > 0, sponge: [d[0], d[1], d[2]], jar: window.__ss.ch2.jar, reg: window.__ss.ch2.reg };
+  }));
+}
+await sleep(700);
+const cleared = await page.evaluate(() => ({ dish: window.__ss.ch2.dishT > 0, held: window.__ss.ch2.held, done: window.__ss.ch2.done, jar: window.__ss.ch2.jar }));
+check(
+  "each scrub shows the paw-sponge dish, then the overlay clears",
+  scrub.length === 3 && scrub.slice(0, 2).every((row) => row.dish && row.sponge[0] > 200 && row.sponge[1] > 150 && row.jar === 0 && row.reg === 4) && cleared.held === -1 && cleared.done === 1 && !cleared.dish && cleared.jar === 0,
+  { scrub, cleared },
+);
+await page.evaluate(() => {
+  const n = window.__ss.op;
+  n.q = []; n.cur = null; n.ctrl = true; n.sq.x = 480; n.sq.y = 500;
+  window.__ss.ch2.done = 2; window.__ss.ch2.held = 3; window.__ss.ch2.scrub = 2; window.__ss.ch2.jar = 0; window.__ss.ch2.reg = 4;
+});
+await sleep(80);
+await page.evaluate(() => { if (window.__ss.op.act && window.__ss.op.act.verb === "SCRUB") window.__ss.actionDown(); });
+let jar = null;
+for (let i = 0; i < 8; i++) {
+  await sleep(400);
+  await page.evaluate(() => {
+    window.dispatchEvent(new KeyboardEvent("keydown", { code: "Space", bubbles: true }));
+    window.dispatchEvent(new KeyboardEvent("keyup", { code: "Space", bubbles: true }));
+  });
+  jar = await page.evaluate(() => ({ jar: window.__ss.ch2.jar, reg: window.__ss.ch2.reg, has: window.__ss.ch2.has }));
+  if (jar.jar === 30) break;
+}
+check("a finished wash set still fills the jar with 30", !!(jar && jar.jar === 30 && jar.reg === 4 && jar.has === ""), jar);
+
+await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  n.q = []; n.cur = null; n.live = []; n.ctrl = true;
+  n.scene = "G2k"; n.room = "kitchen"; n.sq.x = 400; n.sq.y = 500;
+  ss.ch2.phase = "wash1"; ss.ch2.cook = "down"; ss.ch2.cookT = 5.05; ss.ch2.rumbled = 0; ss.ch2.rumbleT = 0;
+  ss.ch2.cookX = 640; ss.ch2.cookY = 530;
+});
+await sleep(250);
+const rumble = await page.evaluate(() => {
+  const c = document.querySelector("canvas");
+  const g = c.getContext("2d", { willReadFrequently: true });
+  const d = g.getImageData(330, 90, 1, 1).data;
+  return { cook: window.__ss.ch2.cook, live: window.__ss.op.live.map((row) => row.text).join("|"), banner: [d[0], d[1], d[2]] };
+});
+await sleep(1100);
+const woke = await page.evaluate(() => window.__ss.ch2.cook);
+check(
+  "the stomach rumble plays while the cook is still down, then she wakes",
+  rumble.cook === "down" && rumble.live.includes("*RUMBLE*") && rumble.banner[0] > 240 && rumble.banner[1] > 220 && ["wake", "scream", "run", "gone"].includes(woke),
+  { rumble, woke },
+);
+
+await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  n.q = []; n.cur = null; n.ctrl = true;
+  n.scene = "G5k"; n.room = "kitchen"; n.moPose = "stand"; n.sq.x = 80; ss.swapTo(true);
+  n.mo.x = 700; n.mo.y = 520;
+  ss.ch2.phase = "wash5"; ss.ch2.greasy = false; ss.ch2.cooked = 0; ss.ch2.sec = null; ss.ch2.cook = "";
+});
+await sleep(120);
+const hatOn = await page.evaluate(() => {
+  const c = document.querySelector("canvas");
+  const g = c.getContext("2d", { willReadFrequently: true });
+  const x = Math.round(window.__ss.op.mo.x);
+  for (let y = 350; y <= 420; y++) {
+    const d = g.getImageData(x, y, 1, 1).data;
+    if (d[0] > 180 && d[1] < 120 && d[2] < 100) return true;
+  }
+  return false;
+});
+await page.evaluate(() => { window.__ss.ch2.greasy = true; });
+await sleep(120);
+const hatOff = await page.evaluate(() => {
+  const c = document.querySelector("canvas");
+  const g = c.getContext("2d", { willReadFrequently: true });
+  const x = Math.round(window.__ss.op.mo.x);
+  for (let y = 350; y <= 420; y++) {
+    const d = g.getImageData(x, y, 1, 1).data;
+    if (d[0] > 180 && d[1] < 120 && d[2] < 100) return true;
+  }
+  return false;
+});
+const oven = await px(250, 470);
+const hatWhere = await page.evaluate(() => ({ x: Math.round(window.__ss.op.mo.x), y: Math.round(window.__ss.op.mo.y), pose: window.__ss.op.moPose, phase: window.__ss.ch2.phase, room: window.__ss.op.room }));
+check(
+  "Mops wears the chef hat only while cooking, and the oven is at the ticket station",
+  hatOn === true && hatOff === false && oven[0] < 100 && oven[2] < 140,
+  { hatOn, hatOff, oven, hatWhere },
+);
+
+await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  n.q = []; n.cur = null; n.ctrl = true;
+  n.scene = "G5k"; n.room = "kitchen"; n.moPose = "stand"; n.sq.x = 80; ss.swapTo(true);
+  n.mo.x = 150; n.mo.y = 450;
+  ss.ch2.phase = "g4k"; ss.ch2.has = "soup"; ss.ch2.greasy = false; ss.ch2.peek = 0; ss.ch2.warn = 0;
+  ss.ch2.sec = null; ss.ch2.botsIn = false; ss.ch2.argueT = 9; ss.ch2.cook = "";
+});
+await sleep(100);
+const leave = await page.evaluate(() => {
+  const n = window.__ss.op;
+  const act = n.act;
+  return { verb: act && act.verb, x: act && Math.round(act.x), y: act && Math.round(act.y), mo: [Math.round(n.mo.x), Math.round(n.mo.y)], phase: window.__ss.ch2.phase, ctrl: n.ctrl };
+});
+const leavePx = await px(180, 420);
+check(
+  "LEAVE SOUP sits on the crate, not off to the side",
+  leave.verb === "LEAVE SOUP" && leave.x === 180 && leavePx[0] > 245 && leavePx[1] > 240 && leavePx[2] > 220,
+  { leave, leavePx },
+);
+
+await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  n.q = []; n.cur = null; n.live = []; n.ctrl = true;
+  n.scene = "G5k"; n.room = "kitchen"; ss.swapTo(true);
+  n.mo.x = 480; n.mo.y = 500;
+  ss.ch2.phase = "wash5"; ss.ch2.greasy = true; ss.ch2.mopN = 2; ss.ch2.jar = 30; ss.ch2.reg = 4;
+});
+await sleep(100);
+const mopBring = await px(480, 430);
+await page.evaluate(() => { if (window.__ss.op.act && window.__ss.op.act.verb === "MOP") window.__ss.actionDown(); });
+for (let i = 0; i < 4; i++) {
+  await sleep(400);
+  await page.evaluate(() => {
+    window.dispatchEvent(new KeyboardEvent("keydown", { code: "Space", bubbles: true }));
+    window.dispatchEvent(new KeyboardEvent("keyup", { code: "Space", bubbles: true }));
+  });
+}
+let mopStay = null;
+for (let i = 0; i < 30; i++) {
+  await sleep(100);
+  mopStay = await page.evaluate(() => ({ x: Math.round(window.__ss.op.mo.x), y: Math.round(window.__ss.op.mo.y), jar: window.__ss.ch2.jar, reg: window.__ss.ch2.reg }));
+  if (mopStay.x === 160) break;
+}
+check(
+  "Mops brings the mop and stays in the kitchen",
+  mopBring[2] > 200 && mopBring[1] > 180 && mopStay && mopStay.x === 160 && mopStay.y === 520 && mopStay.jar === 30 && mopStay.reg === 4,
+  { mopBring, mopStay },
 );
 
 await browser.close();
