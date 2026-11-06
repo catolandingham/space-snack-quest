@@ -1,5 +1,11 @@
 /**
  * Kitchen corrections. State and pixels, not caption searches.
+ * Composition C hit map, radii unchanged:
+ * COOK is the range at Hn (800, 430); stand within 110 of (800, 500).
+ * GRAB stays at (660, 430) radius 80, the pass window.
+ * Sink KV (480, 430), FRONT door (53, 500), and the cone from (690, 220) stay put.
+ * Oven glass is the range door at (804, 348). Tickets hang in the 300px pass.
+ * LEAVE SOUP chip is beside the full-height door; the hotspot x stays 180.
  *   npm install --no-save puppeteer-core
  *   CHROME=/usr/bin/google-chrome node tests/kitchen.mjs
  */
@@ -189,7 +195,7 @@ check(
 await page.evaluate(() => {
   const n = window.__ss.op;
   n.q = []; n.cur = null; n.ctrl = true;
-  n.room = "kitchen"; n.mo.x = 660; n.mo.y = 500; window.__ss.ch2.phase = "wash5";
+  n.room = "kitchen"; n.mo.x = 800; n.mo.y = 500; window.__ss.ch2.phase = "wash5";
   window.__ss.ch2.jar = 30; window.__ss.ch2.cooked = 0; n.live = [];
 });
 await sleep(80);
@@ -891,10 +897,10 @@ const hatOn = await px(729, 427);
 await page.evaluate(() => { window.__ss.ch2.greasy = true; });
 await sleep(120);
 const hatOff = await px(729, 427);
-const oven = await px(660, 368);
+const oven = await px(804, 348);
 const hatWhere = await page.evaluate(() => ({ x: Math.round(window.__ss.op.mo.x), y: Math.round(window.__ss.op.mo.y), pose: window.__ss.op.moPose, phase: window.__ss.ch2.phase, room: window.__ss.op.room }));
 check(
-  "Mops wears the chef hat only while cooking, and the oven is at the ticket station",
+  "Mops wears the chef hat only while cooking, and the oven door is on the range",
   hatOn[0] > 180 && hatOn[1] < 120 && !(hatOff[0] > 180 && hatOff[1] < 120) && oven[0] < 100 && oven[2] < 140,
   { hatOn, hatOff, oven, hatWhere },
 );
@@ -914,7 +920,7 @@ const leave = await page.evaluate(() => {
   const act = n.act;
   return { verb: act && act.verb, x: act && Math.round(act.x), y: act && Math.round(act.y), mo: [Math.round(n.mo.x), Math.round(n.mo.y)], phase: window.__ss.ch2.phase, ctrl: n.ctrl };
 });
-const leavePx = await px(24, 316);
+const leavePx = await px(136, 304);
 const bowlClear = await px(150, 250);
 check(
   "LEAVE SOUP sits on the crate, not off to the side",
@@ -977,11 +983,11 @@ async function railMeasure() {
       return { n, h: bot < 0 ? 0 : bot - top + 1 };
     };
     return {
-      left: box(440, 132, 48, 56),
-      right: box(596, 132, 48, 56),
-      railWide: rail(at(450, 116)),
-      railNear: rail(at(580, 116)),
-      railPx: at(450, 116),
+      left: box(520, 112, 56, 48),
+      right: box(664, 112, 56, 48),
+      railWide: rail(at(530, 96)),
+      railNear: rail(at(700, 96)),
+      railPx: at(530, 96),
     };
   });
 }
@@ -1014,8 +1020,8 @@ const phoneRead = await page.evaluate(() => {
   const g = canvas.getContext("2d", { willReadFrequently: true });
   let top = 999;
   let bot = -1;
-  for (let y = 132; y < 188; y++) {
-    for (let x = 440; x < 488; x++) {
+  for (let y = 112; y < 170; y++) {
+    for (let x = 520; x < 576; x++) {
       const d = g.getImageData(x, y, 1, 1).data;
       if (d[0] < 140 && d[1] < 150 && d[2] < 160) {
         if (y < top) top = y;
@@ -1043,7 +1049,7 @@ const sinkLine = await page.evaluate(() => {
   const c = document.querySelector("canvas");
   const g = c.getContext("2d", { willReadFrequently: true });
   const at = (x, y) => { const d = g.getImageData(x, y, 1, 1).data; return [d[0], d[1], d[2]]; };
-  return { ticket: at(464, 150), band: at(480, 610) };
+  return { ticket: at(530, 112), band: at(480, 610) };
 });
 const paper = (c) => c[0] > 240 && c[1] > 235 && c[2] > 220;
 check(
