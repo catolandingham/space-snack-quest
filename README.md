@@ -16,7 +16,7 @@ On Stormtop, the fear is specific: fur clogs the air scrubbers. After that, loca
 
 If Gloop or Blorp recognizes him at the counter, they still say their own startled line and shove him, and they call security. Gloop's kitchen window is a short uncertain look, then the cook faints and security comes. Hiding or rolling sends security away. Getting caught still restarts that section and does not touch the jar. The holding pen looks different for Rusty, the pump bots, the counter, and the kitchen window.
 
-Each scrub in the wash shows the dish, Squatch's paw, and a sponge. A plate still being washed says DIRTY DISH. The third scrub says CLEAN DISH and stays 3/3 until the picture clears. The card closes before the wash-set line and before the greasy-pot handoff, so those spoken lines stay whole. The cook still wakes on the same timer; Squatch's stomach rumbles just before she does. Mops wears a chef hat only while he is cooking in the kitchen. The kitchen is one floor. A full-height diner door stands on the left. The sink stays on the left of a continuous counter, the service window is the middle bay (about 300 wide, where Gloop hangs the next three tickets and can pass a hand), and a four-burner range with an oven door is built into the right end. Three spice jars sit on a rack on that counter, past the burners. Mops runs the sink-to-range distance. LEAVE SOUP stays on the crate hotspot and its label sits beside the door. After the greasy pot, Mops keeps the mop and stays in the kitchen. Hold Reset section (or the R key) to return to this section's capture checkpoint. It does not pay coins or skip ahead. None of that changes the three-scrub count, the 30-coin jar, cones, or security. The drawing is pending an independent visual pass.
+Each scrub in the wash shows the dish, Squatch's paw, and a sponge. A plate still being washed says DIRTY DISH. The third scrub says CLEAN DISH and stays 3/3 until the picture clears. The card closes before the wash-set line and before the greasy-pot handoff, so those spoken lines stay whole. The cook still wakes on the same timer; Squatch's stomach rumbles just before she does. Mops wears a chef hat only while he is cooking in the kitchen. The kitchen is one floor. A full-height diner door stands on the left. The sink stays on the left of a continuous counter, the service window is the middle bay (about 300 wide, where Gloop hangs the next three tickets and can pass a hand), and a four-burner range with an oven door is built into the right end. Three spice jars sit on a rack on that counter, past the burners. Mops runs the sink-to-range distance. LEAVE SOUP stays on the crate hotspot and its label sits beside the door. After the greasy pot, Mops keeps the mop and stays in the kitchen. Hold Reset section (or the R key) to return to this section's capture checkpoint. It does not pay coins or skip ahead. None of that changes the three-scrub count, the 30-coin jar, cones, or security. The kitchen drawing at `6853902` passed visual review for that drawing. Reset section is in this branch at `17a03c2`. The evidence, and what is still open, is in `docs/MASTER-BACKLOG.md`.
 
 ## Left as they were
 
@@ -30,7 +30,7 @@ These came up in the notes and were not given a new behavior:
 - The lockup card is the jail. There is no separate jail game.
 - Cook and Gloop stay two speakers.
 
-`docs/story-bible.md` is the Chapter 2 kitchen revision. Everything else in the story stays the original spine. Open conflicts outside that kitchen are in `docs/STORY-DECISIONS.md`. `docs/README.md` points at both, and at the section-reset checkpoints.
+`docs/story-bible.md` is the Chapter 2 kitchen revision. Everything else in the story stays the original spine. Open conflicts outside that kitchen are in `docs/STORY-DECISIONS.md`. `docs/README.md` points at both, and at the section-reset checkpoints. `docs/MASTER-BACKLOG.md` is the status page. PR #4 is on `main` at `9999f0cd` (the same tree as kitchen C `6853902`). The site is not confirmed live. PR #5 is the open recovery branch, restacked onto that commit. The independent reset check is the list on that page.
 
 From the repo root:
 
@@ -39,6 +39,7 @@ npm install --no-save puppeteer-core
 CHROME=/usr/bin/google-chrome node tests/progression.mjs
 CHROME=/usr/bin/google-chrome node tests/gas-stop.mjs
 CHROME=/usr/bin/google-chrome node tests/kitchen.mjs
+CHROME=/usr/bin/google-chrome node tests/reliability.mjs
 ```
 
 `CHROME` is the Chrome or Chromium binary. You can omit it when that binary is already at `/usr/bin/google-chrome`.

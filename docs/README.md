@@ -10,23 +10,26 @@ What is playable is the game and the root `README.md`. A story note does not add
 
 Hold **Reset section** (the button, or the R key) for about three quarters of a second. It calls the same Chapter 2 restart capture uses. It clears the current chase and the unspoken queue, and it does not pay coins, change the register, or grant points.
 
-Mapped checkpoints, checked against that restart:
+Mapped checkpoints in the build. The rows the independent pass drove are listed in `docs/MASTER-BACKLOG.md`.
 
 | Phase before reset | Lands on |
 | --- | --- |
 | `back`, `g1door` | Gas back crate, still hidden |
 | `g6`, `g6d` | Gas `G6` at the door |
-| `g3hide`, `g3h` | The dock hide, timer 5.5 |
+| `g3`, `g3hide`, `g3h` | The dock hide, timer 5.5 |
 | `wash1` | Kitchen sink |
 | `wash5` | Kitchen, by the crate |
 | `g4` | Diner counter, Mops |
-| `g1` and anything else in Chapter 2, including `g4k` | Gas entrance |
+| `g2` | Diner, at the counter |
+| `g4k`, `g4l` | Kitchen cooking visit, Mops by the crate |
+| `g1` | Gas entrance |
+| Anything else in a chapter | The latest real section of that visit, not the gas entrance |
 
-`g4k` using the gas entrance is the existing capture fallback. It is not confirmed as the cooking visit's own checkpoint. Chapters other than Chapter 2 are not mapped, and the control does nothing there.
+`g4k` and `g4l` restart the cooking visit in the kitchen. They do not dump to the gas entrance. A phase that is not in the table restarts the latest real section, not Chapter 1. Chapter 1 scenes restart the visit that was saved when that scene started. Zip and Harry keep their own capture. The hold is the Reset section button (or R), about three quarters of a second, under one second. Releasing it and pressing again arms it once more. Dialogue is cancelled and the same restart runs. The jar, the register, the coins in hand, and the star total are copied out and put back. Finds are not granted again. Shipped in PR #5 at `17a03c2`. The independent pass drove wash 5, wash 1, `g1`, and unknown `g5`.
 
 ## Kitchen composition
 
-Composition C is the current kitchen drawing. It is pending independent visual QA. The picture is not the sign-off.
+Composition C at commit `6853902` passed its visual review for that drawing only. There is no open layout review. Later work does not redraw the kitchen. That drawing is on `main` as squash `9999f0cd`. The site is not confirmed live.
 
 One floor line. The diner door is full height and shares that line with the counter. Washing is the left bay, the pass window is the middle bay (300 wide), and the range is the right bay. The oven door, four burners, and knobs are in the counter, not a cabinet standing in the aisle. Three jars sit on a rack on the counter, past the burners.
 

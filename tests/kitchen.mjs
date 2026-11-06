@@ -1122,7 +1122,7 @@ check(
     keptPay(sectionRows.wash5) && sectionRows.wash5.scene === "G5k" && sectionRows.wash5.x === 230 && sectionRows.wash5.y === 520 && sectionRows.wash5.peekT === 4.5 &&
     keptPay(sectionRows.g4) && sectionRows.g4.scene === "G4" && sectionRows.g4.room === "diner" && sectionRows.g4.x === 160 && sectionRows.g4.mo === 600 &&
     keptPay(sectionRows.g1) && sectionRows.g1.scene === "G1" && sectionRows.g1.x === 760 && sectionRows.g1.y === 540 &&
-    sectionRows.g4k.scene === "G1" && sectionRows.g4k.phase === "g1" && sectionRows.g4k.jar === 12,
+    sectionRows.g4k.scene === "G4" && sectionRows.g4k.room === "kitchen" && sectionRows.g4k.phase === "g4k" && sectionRows.g4k.jar === 12,
   sectionRows,
 );
 const stillSees = await page.evaluate(() => window.__ss.inWedge(624, 387, 690, 220, 1.95, 0.75, 520));
