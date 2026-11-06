@@ -70,7 +70,7 @@ const bowl = await page.evaluate(() => {
   const c = document.querySelector("canvas");
   const g = c.getContext("2d", { willReadFrequently: true });
   let soup = 0;
-  const box = g.getImageData(370, 330, 60, 40).data;
+  const box = g.getImageData(376, 308, 48, 32).data;
   for (let i = 0; i < box.length; i += 4) {
     const r = box[i], gv = box[i + 1], b = box[i + 2];
     if (r > 200 && gv > 140 && gv < 220 && b < 130) soup++;
@@ -914,10 +914,11 @@ const leave = await page.evaluate(() => {
   const act = n.act;
   return { verb: act && act.verb, x: act && Math.round(act.x), y: act && Math.round(act.y), mo: [Math.round(n.mo.x), Math.round(n.mo.y)], phase: window.__ss.ch2.phase, ctrl: n.ctrl };
 });
-const leavePx = await px(180, 420);
+const leavePx = await px(24, 316);
+const bowlClear = await px(150, 250);
 check(
   "LEAVE SOUP sits on the crate, not off to the side",
-  leave.verb === "LEAVE SOUP" && leave.x === 180 && leavePx[0] > 245 && leavePx[1] > 240 && leavePx[2] > 220,
+  leave.verb === "LEAVE SOUP" && leave.x === 180 && leavePx[0] > 245 && leavePx[1] > 240 && leavePx[2] > 220 && !(bowlClear[0] > 245 && bowlClear[1] > 240 && bowlClear[2] > 220),
   { leave, leavePx },
 );
 
@@ -949,6 +950,106 @@ check(
   "Mops brings the mop and stays in the kitchen",
   mopBring[2] > 200 && mopBring[1] > 180 && mopStay && mopStay.x === 760 && mopStay.y === 520 && mopStay.jar === 30 && mopStay.reg === 4,
   { mopBring, mopStay },
+);
+
+async function railMeasure() {
+  return page.evaluate(() => {
+    const c = document.querySelector("canvas");
+    const g = c.getContext("2d", { willReadFrequently: true });
+    const at = (x, y) => {
+      const d = g.getImageData(x, y, 1, 1).data;
+      return [d[0], d[1], d[2]];
+    };
+    const dark = (p) => p[0] < 140 && p[1] < 150 && p[2] < 160;
+    const rail = (p) => p[0] > 45 && p[0] < 80 && p[1] > 60 && p[1] < 100 && p[2] > 80 && p[2] < 130;
+    const box = (x0, y0, w, h) => {
+      let top = 999;
+      let bot = -1;
+      let n = 0;
+      for (let y = y0; y < y0 + h; y++) {
+        for (let x = x0; x < x0 + w; x++) {
+          if (!dark(at(x, y))) continue;
+          n++;
+          if (y < top) top = y;
+          if (y > bot) bot = y;
+        }
+      }
+      return { n, h: bot < 0 ? 0 : bot - top + 1 };
+    };
+    return {
+      left: box(440, 132, 48, 56),
+      right: box(596, 132, 48, 56),
+      railWide: rail(at(450, 116)),
+      railNear: rail(at(580, 116)),
+      railPx: at(450, 116),
+    };
+  });
+}
+await page.evaluate(() => {
+  const n = window.__ss.op;
+  n.q = []; n.cur = null; n.live = []; n.ctrl = true; n.sqPose = "stand";
+  n.scene = "G5k"; n.room = "kitchen"; n.sq.x = 160; n.sq.y = 540;
+  n.mo.x = 900; n.mo.y = 560; n.mo.f = -1;
+  window.__ss.ch2.phase = "wash5";
+  window.__ss.ch2.cooked = 0; window.__ss.ch2.done = 0; window.__ss.ch2.held = -1;
+  window.__ss.ch2.peek = 0; window.__ss.ch2.peekT = 99; window.__ss.ch2.greasy = false; window.__ss.ch2.dishT = 0;
+});
+await sleep(180);
+const rail3 = await railMeasure();
+await page.evaluate(() => { window.__ss.ch2.cooked = 5; });
+await sleep(180);
+const rail1 = await railMeasure();
+const dark = (p) => p && p[0] < 55 && p[1] < 70 && p[2] < 90;
+check(
+  "the order rail matches the tickets that are up, and the number is large",
+  rail3.left.n > 40 && rail3.left.h >= 16 && rail3.right.n > 20 && rail3.railWide && rail3.railNear && rail1.left.n < 8 && rail1.right.n > 20 && !rail1.railWide && rail1.railNear,
+  { rail3, rail1 },
+);
+await page.evaluate(() => { window.__ss.ch2.cooked = 0; });
+await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
+await sleep(200);
+const phoneRead = await page.evaluate(() => {
+  const canvas = document.querySelector("canvas");
+  const rect = canvas.getBoundingClientRect();
+  const g = canvas.getContext("2d", { willReadFrequently: true });
+  let top = 999;
+  let bot = -1;
+  for (let y = 132; y < 188; y++) {
+    for (let x = 440; x < 488; x++) {
+      const d = g.getImageData(x, y, 1, 1).data;
+      if (d[0] < 140 && d[1] < 150 && d[2] < 160) {
+        if (y < top) top = y;
+        if (y > bot) bot = y;
+      }
+    }
+  }
+  const inkH = bot < 0 ? 0 : bot - top + 1;
+  return { cssW: Math.round(rect.width), cssH: Math.round(rect.height), inkH, phonePx: Math.round(inkH * rect.width / 960) };
+});
+check(
+  "ticket numbers stay readable on a 390 phone",
+  phoneRead.cssW >= 350 && phoneRead.cssW <= 390 && phoneRead.cssH >= 230 && phoneRead.cssH <= 270 && phoneRead.phonePx >= 8,
+  phoneRead,
+);
+await page.setViewport({ width: 1100, height: 800, deviceScaleFactor: 1 });
+await page.evaluate(() => {
+  window.__ss.ch2.cooked = 0;
+  window.__ss.op.live = [{ who: "gloop", text: "What is that by the sink?!", style: "say", live: 8 }];
+  window.__ss.op.cur = null;
+  window.__ss.op.q = [];
+});
+await sleep(200);
+const sinkLine = await page.evaluate(() => {
+  const c = document.querySelector("canvas");
+  const g = c.getContext("2d", { willReadFrequently: true });
+  const at = (x, y) => { const d = g.getImageData(x, y, 1, 1).data; return [d[0], d[1], d[2]]; };
+  return { ticket: at(464, 150), band: at(480, 610) };
+});
+const paper = (c) => c[0] > 240 && c[1] > 235 && c[2] > 220;
+check(
+  "the sink line sits in the bottom band and leaves the tickets clear",
+  paper(sinkLine.ticket) && sinkLine.band[0] > 240,
+  sinkLine,
 );
 
 const sectionRows = await page.evaluate(() => {
