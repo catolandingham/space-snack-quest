@@ -786,21 +786,47 @@ for (let i = 0; i < 3; i++) {
   scrub.push(await page.evaluate(() => {
     const c = document.querySelector("canvas");
     const g = c.getContext("2d", { willReadFrequently: true });
-    const d = g.getImageData(548, 226, 1, 1).data;
-    return { n: window.__ss.ch2.scrub, dish: window.__ss.ch2.dishT > 0, sponge: [d[0], d[1], d[2]], jar: window.__ss.ch2.jar, reg: window.__ss.ch2.reg };
+    const at = (x, y) => { const d = g.getImageData(x, y, 1, 1).data; return [d[0], d[1], d[2]]; };
+    return {
+      stage: window.__ss.ch2.dishN, scrub: window.__ss.ch2.scrub, dish: window.__ss.ch2.dishT > 0,
+      sponge: at(490, 222), pore: at(478, 226), dirt: at(268, 214),
+      jar: window.__ss.ch2.jar, reg: window.__ss.ch2.reg,
+    };
   }));
 }
-await sleep(700);
+const third = scrub[2];
+const dirtBrown = (c) => c && c[0] > 70 && c[0] < 160 && c[1] < 120 && c[2] < 80;
+const yellow = (c) => c && c[0] > 200 && c[1] > 150 && c[1] < 230 && c[2] < 120;
+await sleep(1300);
 const cleared = await page.evaluate(() => ({ dish: window.__ss.ch2.dishT > 0, held: window.__ss.ch2.held, done: window.__ss.ch2.done, jar: window.__ss.ch2.jar }));
 check(
-  "each scrub shows the paw-sponge dish, then the overlay clears",
-  scrub.length === 3 && scrub.slice(0, 2).every((row) => row.dish && row.sponge[0] > 200 && row.sponge[1] > 150 && row.jar === 0 && row.reg === 4) && cleared.held === -1 && cleared.done === 1 && !cleared.dish && cleared.jar === 0,
+  "each scrub shows the paw and a real sponge, and the third stays 3/3 until the card clears",
+  scrub.length === 3 && scrub[0].stage === 1 && scrub[0].dish && yellow(scrub[0].sponge) && dirtBrown(scrub[0].pore) && dirtBrown(scrub[0].dirt) && scrub[0].jar === 0 && third.stage === 3 && third.dish && third.scrub === 0 && !dirtBrown(third.dirt) && yellow(third.sponge) && dirtBrown(third.pore) && cleared.held === -1 && cleared.done === 1 && !cleared.dish && cleared.jar === 0,
   { scrub, cleared },
 );
 await page.evaluate(() => {
   const n = window.__ss.op;
   n.q = []; n.cur = null; n.ctrl = true; n.sq.x = 480; n.sq.y = 500;
-  window.__ss.ch2.done = 2; window.__ss.ch2.held = 3; window.__ss.ch2.scrub = 2; window.__ss.ch2.jar = 0; window.__ss.ch2.reg = 4;
+  window.__ss.ch2.phase = "wash5"; window.__ss.ch2.held = 6; window.__ss.ch2.scrub = 2; window.__ss.ch2.mopN = 0; window.__ss.ch2.greasy = false; window.__ss.ch2.dishT = 0;
+});
+await sleep(80);
+await page.evaluate(() => { if (window.__ss.op.act && window.__ss.op.act.verb === "SCRUB") window.__ss.actionDown(); });
+await sleep(80);
+const greasyCard = await page.evaluate(() => {
+  const c = document.querySelector("canvas");
+  const g = c.getContext("2d", { willReadFrequently: true });
+  const d = g.getImageData(268, 214, 1, 1).data;
+  return { stage: window.__ss.ch2.dishN, dish: window.__ss.ch2.dishT > 0, greasy: window.__ss.ch2.greasy, dirt: [d[0], d[1], d[2]] };
+});
+check(
+  "the greasy pot's last scrub shows 3/3, not another dirty 1/3",
+  greasyCard.stage === 3 && greasyCard.dish && greasyCard.greasy === true && !dirtBrown(greasyCard.dirt),
+  greasyCard,
+);
+await page.evaluate(() => {
+  const n = window.__ss.op;
+  n.q = []; n.cur = null; n.ctrl = true; n.sq.x = 480; n.sq.y = 500;
+  window.__ss.ch2.phase = "wash1"; window.__ss.ch2.done = 2; window.__ss.ch2.held = 3; window.__ss.ch2.scrub = 2; window.__ss.ch2.greasy = false; window.__ss.ch2.jar = 0; window.__ss.ch2.reg = 4;
 });
 await sleep(80);
 await page.evaluate(() => { if (window.__ss.op.act && window.__ss.op.act.verb === "SCRUB") window.__ss.actionDown(); });
@@ -844,37 +870,19 @@ await page.evaluate(() => {
   const n = ss.op;
   n.q = []; n.cur = null; n.ctrl = true;
   n.scene = "G5k"; n.room = "kitchen"; n.moPose = "stand"; n.sq.x = 80; ss.swapTo(true);
-  n.mo.x = 700; n.mo.y = 520;
+  n.mo.x = 700; n.mo.y = 520; n.mo.f = 1;
   ss.ch2.phase = "wash5"; ss.ch2.greasy = false; ss.ch2.cooked = 0; ss.ch2.sec = null; ss.ch2.cook = "";
 });
 await sleep(120);
-const hatOn = await page.evaluate(() => {
-  const c = document.querySelector("canvas");
-  const g = c.getContext("2d", { willReadFrequently: true });
-  const x = Math.round(window.__ss.op.mo.x);
-  for (let y = 350; y <= 420; y++) {
-    const d = g.getImageData(x, y, 1, 1).data;
-    if (d[0] > 180 && d[1] < 120 && d[2] < 100) return true;
-  }
-  return false;
-});
+const hatOn = await px(729, 427);
 await page.evaluate(() => { window.__ss.ch2.greasy = true; });
 await sleep(120);
-const hatOff = await page.evaluate(() => {
-  const c = document.querySelector("canvas");
-  const g = c.getContext("2d", { willReadFrequently: true });
-  const x = Math.round(window.__ss.op.mo.x);
-  for (let y = 350; y <= 420; y++) {
-    const d = g.getImageData(x, y, 1, 1).data;
-    if (d[0] > 180 && d[1] < 120 && d[2] < 100) return true;
-  }
-  return false;
-});
+const hatOff = await px(729, 427);
 const oven = await px(250, 470);
 const hatWhere = await page.evaluate(() => ({ x: Math.round(window.__ss.op.mo.x), y: Math.round(window.__ss.op.mo.y), pose: window.__ss.op.moPose, phase: window.__ss.ch2.phase, room: window.__ss.op.room }));
 check(
   "Mops wears the chef hat only while cooking, and the oven is at the ticket station",
-  hatOn === true && hatOff === false && oven[0] < 100 && oven[2] < 140,
+  hatOn[0] > 180 && hatOn[1] < 120 && !(hatOff[0] > 180 && hatOff[1] < 120) && oven[0] < 100 && oven[2] < 140,
   { hatOn, hatOff, oven, hatWhere },
 );
 
@@ -922,11 +930,11 @@ let mopStay = null;
 for (let i = 0; i < 30; i++) {
   await sleep(100);
   mopStay = await page.evaluate(() => ({ x: Math.round(window.__ss.op.mo.x), y: Math.round(window.__ss.op.mo.y), jar: window.__ss.ch2.jar, reg: window.__ss.ch2.reg }));
-  if (mopStay.x === 160) break;
+  if (mopStay.x === 760) break;
 }
 check(
   "Mops brings the mop and stays in the kitchen",
-  mopBring[2] > 200 && mopBring[1] > 180 && mopStay && mopStay.x === 160 && mopStay.y === 520 && mopStay.jar === 30 && mopStay.reg === 4,
+  mopBring[2] > 200 && mopBring[1] > 180 && mopStay && mopStay.x === 760 && mopStay.y === 520 && mopStay.jar === 30 && mopStay.reg === 4,
   { mopBring, mopStay },
 );
 
