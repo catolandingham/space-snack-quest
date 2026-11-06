@@ -10,7 +10,7 @@ What is playable is the game and the root `README.md`. A story note does not add
 
 Hold **Reset section** (the button, or the R key) for about three quarters of a second. It calls the same Chapter 2 restart capture uses. It clears the current chase and the unspoken queue, and it does not pay coins, change the register, or grant points.
 
-Mapped checkpoints, checked against that restart:
+Mapped checkpoints in the build. The rows the independent pass drove are listed in `docs/MASTER-BACKLOG.md`.
 
 | Phase before reset | Lands on |
 | --- | --- |
@@ -25,7 +25,7 @@ Mapped checkpoints, checked against that restart:
 | `g1` | Gas entrance |
 | Anything else in a chapter | The latest real section of that visit, not the gas entrance |
 
-`g4k` and `g4l` restart the cooking visit in the kitchen. They do not dump to the gas entrance. A phase that is not in the table restarts the latest real section, not Chapter 1. Chapter 1 scenes restart the visit that was saved when that scene started. Zip and Harry keep their own capture. The hold is the Reset section button (or R), about three quarters of a second, under one second. Releasing it and pressing again arms it once more. Dialogue is cancelled and the same restart runs. The jar, the register, the coins in hand, and the star total are copied out and put back. Finds are not granted again.
+`g4k` and `g4l` restart the cooking visit in the kitchen. They do not dump to the gas entrance. A phase that is not in the table restarts the latest real section, not Chapter 1. Chapter 1 scenes restart the visit that was saved when that scene started. Zip and Harry keep their own capture. The hold is the Reset section button (or R), about three quarters of a second, under one second. Releasing it and pressing again arms it once more. Dialogue is cancelled and the same restart runs. The jar, the register, the coins in hand, and the star total are copied out and put back. Finds are not granted again. Shipped in PR #5 at `17a03c2`. The independent pass drove wash 5, wash 1, `g1`, and unknown `g5`.
 
 ## Kitchen composition
 
