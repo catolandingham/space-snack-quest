@@ -16,7 +16,7 @@ On Stormtop, the fear is specific: fur clogs the air scrubbers. After that, loca
 
 If Gloop or Blorp recognizes him at the counter, they still say their own startled line and shove him, and they call security. Gloop's kitchen window is a short uncertain look, then the cook faints and security comes. Hiding or rolling sends security away. Getting caught still restarts that section and does not touch the jar. The holding pen looks different for Rusty, the pump bots, the counter, and the kitchen window.
 
-Each scrub in the wash shows a dirty dish, Squatch's paw, and a sponge, then the picture clears. The cook still wakes on the same timer; Squatch's stomach rumbles just before she does. Mops wears a chef hat only while he is cooking in the kitchen. The ticket station has an oven. LEAVE SOUP is labeled on the crate. After the greasy pot, Mops keeps the mop and stays in the kitchen. None of that changes the three-scrub count, the 30-coin jar, cones, or security.
+Each scrub in the wash shows the dish, Squatch's paw, and a sponge. A plate still being washed says DIRTY DISH. The third scrub says CLEAN DISH and stays 3/3 until the picture clears. The card closes before the wash-set line and before the greasy-pot handoff, so those spoken lines stay whole. The cook still wakes on the same timer; Squatch's stomach rumbles just before she does. Mops wears a chef hat only while he is cooking in the kitchen. The ticket station has an oven. LEAVE SOUP is labeled on the crate. After the greasy pot, Mops keeps the mop and stays in the kitchen. None of that changes the three-scrub count, the 30-coin jar, cones, or security.
 
 ## Left as they were
 

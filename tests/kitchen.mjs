@@ -643,17 +643,16 @@ check(
   { windowCap, sinkStay },
 );
 
-await page.evaluate(() => {
+const counterBefore = await page.evaluate(() => {
   const ss = window.__ss;
   const n = ss.op;
   n.q = []; n.cur = null; n.live = []; n.ctrl = true; n.sqPose = "stand";
   n.scene = "G4"; n.room = "diner"; ss.swapTo(false);
   n.sq.x = 373; n.sq.y = 300;
   ss.ch2.phase = "g4"; ss.ch2.sec = null; ss.ch2.jar = 30; ss.ch2.reg = 12; ss.ch2.has = "coins";
-  const seen = ss.inWedge(n.sq.x, n.sq.y - 40, 468, 230, Math.PI - 0.3, 0.42, 165);
-  n.sq._seen = seen;
+  n.sq._seen = ss.inWedge(n.sq.x, n.sq.y - 40, 468, 230, Math.PI - 0.3, 0.42, 165);
+  return Math.round(n.sq.x);
 });
-const counterBefore = await page.evaluate(() => Math.round(window.__ss.op.sq.x));
 let counter = null;
 for (let i = 0; i < 16; i++) {
   await sleep(100);
@@ -671,7 +670,7 @@ for (let i = 0; i < 16; i++) {
 }
 check(
   "Gloop at the counter startles, shoves, and calls security",
-  !!(counter.seen && counter.live.includes("A Squatch?! Back from the counter!") && counter.live.includes("SECURITY!") && counter.sec && counter.x !== counterBefore && counter.jar === 30),
+  !!(counter.seen && counter.live.includes("A Squatch?! Back from the counter!") && counter.live.includes("SECURITY!") && counter.sec && Math.abs(counter.x - counterBefore) >= 20 && counter.jar === 30),
   { counterBefore, counter },
 );
 await page.evaluate(() => { window.__ss.op.sqPose = "hidden"; window.__ss.op.q = []; window.__ss.op.cur = null; });
@@ -737,16 +736,15 @@ check(
   counterCap,
 );
 
-await page.evaluate(() => {
+const blorpBefore = await page.evaluate(() => {
   const ss = window.__ss;
   const n = ss.op;
   n.q = []; n.cur = null; n.live = []; n.ctrl = true; n.sqPose = "stand";
   n.scene = "G4"; n.room = "diner"; ss.swapTo(false);
   n.sq.x = 319; n.sq.y = 471;
   ss.ch2.phase = "g4"; ss.ch2.sec = null; ss.ch2.jar = 30;
-  n.sq._x0 = n.sq.x;
+  return Math.round(n.sq.x);
 });
-const blorpBefore = await page.evaluate(() => window.__ss.op.sq._x0);
 let blorp = null;
 for (let i = 0; i < 16; i++) {
   await sleep(100);
@@ -758,7 +756,7 @@ for (let i = 0; i < 16; i++) {
 }
 check(
   "Blorp startles, shoves, and calls security",
-  !!(blorp && blorp.live.includes("EEK! A Squatch near my soup!") && blorp.live.includes("SECURITY!") && blorp.sec && blorp.x !== blorpBefore && blorp.jar === 30),
+  !!(blorp && blorp.live.includes("EEK! A Squatch near my soup!") && blorp.live.includes("SECURITY!") && blorp.sec && Math.abs(blorp.x - blorpBefore) >= 20 && blorp.jar === 30),
   { blorpBefore, blorp },
 );
 
@@ -813,14 +811,17 @@ await sleep(80);
 await page.evaluate(() => { if (window.__ss.op.act && window.__ss.op.act.verb === "SCRUB") window.__ss.actionDown(); });
 await sleep(80);
 const greasyCard = await page.evaluate(() => {
+  const n = window.__ss.op;
   const c = document.querySelector("canvas");
   const g = c.getContext("2d", { willReadFrequently: true });
-  const d = g.getImageData(268, 214, 1, 1).data;
-  return { stage: window.__ss.ch2.dishN, dish: window.__ss.ch2.dishT > 0, greasy: window.__ss.ch2.greasy, dirt: [d[0], d[1], d[2]] };
+  const d = g.getImageData(200, 150, 1, 1).data;
+  const cur = (n.cur && n.cur.b && n.cur.b.text) || "";
+  const q = n.q.map((row) => (row.b && row.b.text) || "").join("|");
+  return { stage: window.__ss.ch2.dishN, dish: window.__ss.ch2.dishT > 0, greasy: window.__ss.ch2.greasy, text: cur + "|" + q, cover: [d[0], d[1], d[2]] };
 });
 check(
-  "the greasy pot's last scrub shows 3/3, not another dirty 1/3",
-  greasyCard.stage === 3 && greasyCard.dish && greasyCard.greasy === true && !dirtBrown(greasyCard.dirt),
+  "the greasy pot closes the scrub card before the handoff lines",
+  greasyCard.stage === 3 && !greasyCard.dish && greasyCard.greasy === true && greasyCard.text.includes("This pot is GLUED with grease!") && !(greasyCard.cover[0] > 250 && greasyCard.cover[1] > 245 && greasyCard.cover[2] > 230),
   greasyCard,
 );
 await page.evaluate(() => {
@@ -830,6 +831,18 @@ await page.evaluate(() => {
 });
 await sleep(80);
 await page.evaluate(() => { if (window.__ss.op.act && window.__ss.op.act.verb === "SCRUB") window.__ss.actionDown(); });
+await sleep(100);
+const fastLine = await page.evaluate(() => {
+  const n = window.__ss.op;
+  const cur = (n.cur && n.cur.b && n.cur.b.text) || "";
+  const q = n.q.map((row) => (row.b && row.b.text) || "").join("|");
+  return { dish: window.__ss.ch2.dishT > 0, text: cur + "|" + q };
+});
+check(
+  "the wash-set line is not covered by the scrub card",
+  !fastLine.dish && fastLine.text.includes("That goat washes FAST."),
+  fastLine,
+);
 let jar = null;
 for (let i = 0; i < 8; i++) {
   await sleep(400);
