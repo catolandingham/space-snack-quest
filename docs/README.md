@@ -1,11 +1,10 @@
 # Spec notes
 
-The playable rules are the game and the root `README.md`. Those are newer than the archived notes in this folder. When a change lands, update the root README in the same pull request and name the branch. Do not mark an archived note as shipped, and do not revert the game to match an archive.
+Story precedence: the original story stays, except the Chapter 2 kitchen sequence in `docs/story-bible.md`.
 
-## Archived anchors
+Open conflicts outside that kitchen are in `docs/STORY-DECISIONS.md`. Each one stays pending until Brian decides that item. The previous on-repo story note is in `docs/spine-archive.md`.
 
-- `docs/MASTER-BACKLOG.md` is an archived registry shell. The approved attachment body was not in the workspace, so this file does not copy that registry and does not say the backlog is done.
-- `docs/original-story-spine.md` is an archived story anchor with the same limit. Later kitchen, security, and price work stays in the game.
+What is playable is the game and the root `README.md`. A story note does not add a mechanic. When a change lands, update the root README in the same pull request and name the branch.
 
 ## Section reset
 

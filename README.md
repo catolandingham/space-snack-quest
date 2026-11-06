@@ -30,7 +30,7 @@ These came up in the notes and were not given a new behavior:
 - The lockup card is the jail. There is no separate jail game.
 - Cook and Gloop stay two speakers.
 
-`docs/README.md` says which notes are archived and which checkpoint a section reset uses. The game and this page stay ahead of those archives.
+`docs/story-bible.md` is the Chapter 2 kitchen revision. Everything else in the story stays the original spine. Open conflicts outside that kitchen are in `docs/STORY-DECISIONS.md`. `docs/README.md` points at both, and at the section-reset checkpoints.
 
 From the repo root:
 

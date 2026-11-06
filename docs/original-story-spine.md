@@ -1,7 +1,7 @@
-# ARCHIVED — original story spine
+# Original story spine
 
-Status: archived story anchor. Dated source anchor only.
+Not replaced.
 
-The approved attachment was not in this workspace, so this file does not reproduce that spine. Where the game and the root README disagree with an older spine, the game stays. This note is not a request to roll the story back.
+Chapter 1, the Chapter 2 gas stop and dock, and the Chapter 3 and Chapter 4 outlines stay the original story. This page does not rewrite them. The previous on-repo note is preserved in `docs/spine-archive.md`. The full original attachment was not in the workspace, so it was not edited.
 
-Later feedback already in the game includes the security loop, the 30/30 soup and gas prices, the kitchen galley, and the section reset. None of that is marked complete against a missing archive.
+The only canon revision is the Chapter 2 kitchen sequence, in `docs/story-bible.md`. Conflicts outside that kitchen are pending in `docs/STORY-DECISIONS.md` until Brian decides each one.
