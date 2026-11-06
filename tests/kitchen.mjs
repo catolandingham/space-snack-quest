@@ -189,7 +189,7 @@ check(
 await page.evaluate(() => {
   const n = window.__ss.op;
   n.q = []; n.cur = null; n.ctrl = true;
-  n.room = "kitchen"; n.mo.x = 250; n.mo.y = 500; window.__ss.ch2.phase = "wash5";
+  n.room = "kitchen"; n.mo.x = 660; n.mo.y = 500; window.__ss.ch2.phase = "wash5";
   window.__ss.ch2.jar = 30; window.__ss.ch2.cooked = 0; n.live = [];
 });
 await sleep(80);
@@ -891,7 +891,7 @@ const hatOn = await px(729, 427);
 await page.evaluate(() => { window.__ss.ch2.greasy = true; });
 await sleep(120);
 const hatOff = await px(729, 427);
-const oven = await px(250, 470);
+const oven = await px(660, 368);
 const hatWhere = await page.evaluate(() => ({ x: Math.round(window.__ss.op.mo.x), y: Math.round(window.__ss.op.mo.y), pose: window.__ss.op.moPose, phase: window.__ss.ch2.phase, room: window.__ss.op.room }));
 check(
   "Mops wears the chef hat only while cooking, and the oven is at the ticket station",
@@ -949,6 +949,103 @@ check(
   "Mops brings the mop and stays in the kitchen",
   mopBring[2] > 200 && mopBring[1] > 180 && mopStay && mopStay.x === 760 && mopStay.y === 520 && mopStay.jar === 30 && mopStay.reg === 4,
   { mopBring, mopStay },
+);
+
+const sectionRows = await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  const k = ss.ch2;
+  const run = (phase, scene) => {
+    n.q = [{ f() { k.jar = 99; } }];
+    n.cur = { k: "bub", b: { text: "stuck line" } };
+    n.live = [{ text: "live" }];
+    k.jar = 12;
+    k.reg = 4;
+    k.has = "coins";
+    n.stars = 40;
+    k.phase = phase;
+    n.scene = scene;
+    n.room = "kitchen";
+    n.sq.x = 10;
+    n.sq.y = 10;
+    n.sqPose = "stand";
+    ss.sectionReset();
+    return {
+      phase: k.phase,
+      scene: n.scene,
+      room: n.room,
+      x: Math.round(n.sq.x),
+      y: Math.round(n.sq.y),
+      pose: n.sqPose,
+      mo: Math.round(n.mo.x),
+      jar: k.jar,
+      reg: k.reg,
+      has: k.has,
+      stars: n.stars,
+      q: n.q.length,
+      cur: n.cur,
+      peekT: k.peekT,
+      sec: k.sec,
+      timer: k.timer,
+    };
+  };
+  return {
+    back: run("back", "G2b"),
+    door: run("g1door", "G1"),
+    g6: run("g6", "G6"),
+    g6d: run("g6d", "G6"),
+    hide: run("g3hide", "G3"),
+    wash1: run("wash1", "G2k"),
+    wash5: run("wash5", "G5k"),
+    g4: run("g4", "G4"),
+    g1: run("g1", "G1"),
+    g4k: run("g4k", "G5k"),
+  };
+});
+const sameSpot = (a, b) => a.scene === b.scene && a.room === b.room && a.phase === b.phase && a.x === b.x && a.y === b.y;
+const keptPay = (row) => row.jar === 12 && row.reg === 4 && row.has === "coins" && row.stars === 40 && row.q === 0 && !row.cur;
+check(
+  "Reset section uses the capture checkpoint for every mapped section and keeps the jar",
+  keptPay(sectionRows.back) && sectionRows.back.scene === "G2b" && sectionRows.back.phase === "back" && sectionRows.back.pose === "hidden" &&
+    sameSpot(sectionRows.door, sectionRows.back) &&
+    keptPay(sectionRows.g6) && sectionRows.g6.scene === "G6" && sectionRows.g6.phase === "g6" && sectionRows.g6.room === "gas" && sectionRows.g6.x === 85 &&
+    sameSpot(sectionRows.g6d, sectionRows.g6) &&
+    keptPay(sectionRows.hide) && sectionRows.hide.phase === "g3hide" && sectionRows.hide.scene === "G3" && sectionRows.hide.x === 300 && sectionRows.hide.y === 520 && sectionRows.hide.timer === 5.5 &&
+    keptPay(sectionRows.wash1) && sectionRows.wash1.scene === "G2k" && sectionRows.wash1.room === "kitchen" && sectionRows.wash1.x === 480 && sectionRows.wash1.y === 430 && sectionRows.wash1.peekT === 7 && !sectionRows.wash1.sec &&
+    keptPay(sectionRows.wash5) && sectionRows.wash5.scene === "G5k" && sectionRows.wash5.x === 230 && sectionRows.wash5.y === 520 && sectionRows.wash5.peekT === 4.5 &&
+    keptPay(sectionRows.g4) && sectionRows.g4.scene === "G4" && sectionRows.g4.room === "diner" && sectionRows.g4.x === 160 && sectionRows.g4.mo === 600 &&
+    keptPay(sectionRows.g1) && sectionRows.g1.scene === "G1" && sectionRows.g1.x === 760 && sectionRows.g1.y === 540 &&
+    sectionRows.g4k.scene === "G1" && sectionRows.g4k.phase === "g1" && sectionRows.g4k.jar === 12,
+  sectionRows,
+);
+const stillSees = await page.evaluate(() => window.__ss.inWedge(624, 387, 690, 220, 1.95, 0.75, 520));
+check("a section reset does not turn off the window cone", stillSees === true, { stillSees });
+
+await page.evaluate(() => {
+  const n = window.__ss.op;
+  n.scene = "G1"; n.room = "gas"; n.ctrl = true; n.sqPose = "stand";
+  n.sq.x = 100; n.sq.y = 540;
+  window.__ss.ch2.phase = "g1"; window.__ss.ch2.jar = 12;
+  window.__ss.resetHold(true);
+});
+await sleep(200);
+await page.evaluate(() => window.__ss.resetHold(false));
+await sleep(700);
+const released = await page.evaluate(() => ({ x: Math.round(window.__ss.op.sq.x), jar: window.__ss.ch2.jar }));
+const resetBtn = await page.$("button[aria-label='Reset section']");
+await page.evaluate(() => document.querySelector("button[aria-label='Reset section']").scrollIntoView({ block: "center" }));
+await page.evaluate(() => { window.__ss.op.sq.x = 100; window.__ss.ch2.phase = "g1"; window.__ss.op.scene = "G1"; });
+await resetBtn.click({ delay: 200 });
+const tap = await page.evaluate(() => Math.round(window.__ss.op.sq.x));
+await page.evaluate(() => { window.__ss.op.sq.x = 100; window.__ss.ch2.phase = "g1"; window.__ss.op.scene = "G1"; });
+await resetBtn.click({ delay: 1000 });
+const held = await page.evaluate(() => ({ x: Math.round(window.__ss.op.sq.x), y: Math.round(window.__ss.op.sq.y), jar: window.__ss.ch2.jar, phase: window.__ss.ch2.phase }));
+await page.evaluate(() => window.__ss.sectionReset());
+const again = await page.evaluate(() => ({ x: Math.round(window.__ss.op.sq.x), y: Math.round(window.__ss.op.sq.y), jar: window.__ss.ch2.jar, phase: window.__ss.ch2.phase }));
+check(
+  "Reset section confirms only after a hold, then repeats the same checkpoint",
+  released.x === 100 && released.jar === 12 && tap === 100 && held.x === 760 && held.y === 540 && held.jar === 12 && held.phase === "g1" && again.x === 760 && again.y === 540 && again.jar === 12,
+  { released, tap, held, again },
 );
 
 await browser.close();

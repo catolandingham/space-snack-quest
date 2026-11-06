@@ -16,7 +16,7 @@ On Stormtop, the fear is specific: fur clogs the air scrubbers. After that, loca
 
 If Gloop or Blorp recognizes him at the counter, they still say their own startled line and shove him, and they call security. Gloop's kitchen window is a short uncertain look, then the cook faints and security comes. Hiding or rolling sends security away. Getting caught still restarts that section and does not touch the jar. The holding pen looks different for Rusty, the pump bots, the counter, and the kitchen window.
 
-Each scrub in the wash shows the dish, Squatch's paw, and a sponge. A plate still being washed says DIRTY DISH. The third scrub says CLEAN DISH and stays 3/3 until the picture clears. The card closes before the wash-set line and before the greasy-pot handoff, so those spoken lines stay whole. The cook still wakes on the same timer; Squatch's stomach rumbles just before she does. Mops wears a chef hat only while he is cooking in the kitchen. The ticket station has an oven. LEAVE SOUP is labeled on the crate. After the greasy pot, Mops keeps the mop and stays in the kitchen. None of that changes the three-scrub count, the 30-coin jar, cones, or security.
+Each scrub in the wash shows the dish, Squatch's paw, and a sponge. A plate still being washed says DIRTY DISH. The third scrub says CLEAN DISH and stays 3/3 until the picture clears. The card closes before the wash-set line and before the greasy-pot handoff, so those spoken lines stay whole. The cook still wakes on the same timer; Squatch's stomach rumbles just before she does. Mops wears a chef hat only while he is cooking in the kitchen. The kitchen is one galley: a service window where Gloop hangs the next three tickets, the sink on the left of the counter, and the oven built into the right. LEAVE SOUP is labeled on the crate. After the greasy pot, Mops keeps the mop and stays in the kitchen. Hold Reset section (or the R key) to return to this section's capture checkpoint. It does not pay coins or skip ahead. None of that changes the three-scrub count, the 30-coin jar, cones, or security.
 
 ## Left as they were
 
@@ -29,6 +29,8 @@ These came up in the notes and were not given a new behavior:
 - The bots' "You watch the crate" lines stay. They happen before Gloop sends them to the dock.
 - The lockup card is the jail. There is no separate jail game.
 - Cook and Gloop stay two speakers.
+
+`docs/README.md` says which notes are archived and which checkpoint a section reset uses. The game and this page stay ahead of those archives.
 
 From the repo root:
 
