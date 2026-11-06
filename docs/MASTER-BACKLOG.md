@@ -78,6 +78,8 @@ The pass drove wash 5, wash 1, `g1`, and unknown `g5`. The other checkpoint rows
 - DE4, DE6, and DE7.
 - Checkpoint rows the independent pass did not drive.
 - Soup BUY and Chapter 2 boarding were not re-played in the closet-crate measurement below.
+- Discoverability, still open for Brian. The closet yellow ring is lit from the first moment of control, while the touch button stays blue Action until the feet are inside the hide radius. A short left pulse that stops on the G leaves the button blue, and a press does nothing. Whether the ring should wait until the button can hide is not decided here. The radius and the 9 second line stay as they are. This does not resolve a story hold.
+- Discoverability, still open for Brian. After the lunch is held, the chip stays "Bring Mops his lunch". It never becomes GIVE. Away from a plant or the box the touch button stays blue Action. Tab and G leave the chip, the verb, and the pose unchanged. Whether a prompt should appear when he is close enough to hand the lunch over is not decided here. The 110 reach, the cones, and the hide spots stay as they are. This does not resolve a story hold.
 - Any item not named in the tables above.
 
 ## Closet crate hide
@@ -98,7 +100,23 @@ Short pulses that stop at the G never arm HIDE. E and the blue Action button do 
 
 An earlier note on this page measured a continuous hold that crossed x 300. That input is not the short-pulse stop at the G. It does not contradict the live button.
 
+## Deck lunch handoff
+
+Same file as the closet check. sha256 `5d25303aa9fd7656fe0bb12fd40580b07570763e4451bacccf7b4dd9c46c44c4`. Played from the title with the keyboard. No scene was placed. The lunch GRAB succeeds, and the deck opens with the chip "Bring Mops his lunch", lunch held, pose standing.
+
+Tab, then G, on that deck: scene stays S1L, verb stays empty, chip stays "Bring Mops his lunch", pose stays stand, button stays blue Action.
+
+Hiding at the right plant, feet (830, 461), distance to Mops about 233: the button becomes green LEAVE. Seven seconds hidden, through the patrol, leaves the chip on "Bring Mops his lunch" and the scene on S1L. LEAVE returns him to standing, and the button returns to green HIDE. The chip is still "Bring Mops his lunch".
+
+The handoff is standing inside 110 of Mops. After LEAVE, the lower lane at y≈487 stays under the upward cones and clear of the floor vent. Waiting there until the moving tourist is at x 460, then walking up, reaches feet (792.6, 337.1). Distance to Mops is 108. The chip clears on that frame. The button is still blue Action. The next scene is S2. No capture line plays. The frame shows +100.
+
+The objective does not become a GIVE verb at any of those feet. Blue Action is the button whenever he is outside a hide spot. Green HIDE and green LEAVE are the plant and the box. They do not hand the lunch over.
+
+A separate walk on y≈528 through x≈650 clips the floor vent. Security rushes, and the line is "Just a fuzzy mop! Very fuzzy." The chip stays "Bring Mops his lunch". That line is in the same capture set as "It walks. Fancy rug." The radius, the cones, and the 110 reach were not changed.
+
 ## Changelog
+
+2026-11-06. Deck lunch on the same `15051ec` file. From the title, with the keyboard. Hiding at the right plant for 7 seconds keeps the chip "Bring Mops his lunch" and the button on LEAVE. Standing at (792.6, 337.1), distance 108, after the moving tourist is at x 460, clears the chip and enters S2. Tab and G do nothing on the deck. No reach, cone, or timer change.
 
 2026-11-06. Live closet check on `15051ec` / sha256 `5d25303a…`. The served page matches that commit. Short left pulses stop on the G at (357.5, 480), distance 159, with the yellow ring lit and the touch button still blue Action. A click does not hide him. Green HIDE appears at (300, 480), distance 113. The guard line is `o5T>9`. No timer or radius change.
 
