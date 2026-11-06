@@ -6,7 +6,7 @@
 
 `tests/gas-stop.mjs` checks the gas stop on its own: security leaves when Squatch hides, Mops walks to the diner door and presses enter, the tank gauge, and that pump-bot cones stay while Rusty's cone is hidden during Mops.
 
-`tests/kitchen.mjs` checks the cook's walk out the kitchen door, the soup bowl on Mops, the timed hoof stamp, boarding at the ship, the red EXIT door, and the soup-or-gas purchase.
+`tests/kitchen.mjs` checks the cook's walk out the kitchen door, the soup bowl on Mops, the timed hoof stamp, boarding at the ship, the red EXIT door, the soup-or-gas purchase, the scrub gag, and the rumble before the cook wakes.
 
 Soup and the tank each cost 30. The tip jar still fills with 30 when a wash set finishes. Grabbing it turns the jar into coins, and buying soup spends those coins once: Mops has soup, the jar is 0, and the register is 30. A later jar buys the gas. Cooking a ticket does not pay coins.
 
@@ -15,6 +15,8 @@ Pump bots call security the same way Rusty does. Hiding sends security away. Get
 On Stormtop, the fear is specific: fur clogs the air scrubbers. After that, locals are still afraid of a Sasquatch, and that fear is not the scrubber fear. Troopers, searchlights, and gate bots are the ones who lock him up. Locals are not harmless. Squatch's lines move from panic to choosing a hiding place. Sightings, cones, and prices do not get easier.
 
 If Gloop or Blorp recognizes him at the counter, they still say their own startled line and shove him, and they call security. Gloop's kitchen window is a short uncertain look, then the cook faints and security comes. Hiding or rolling sends security away. Getting caught still restarts that section and does not touch the jar. The holding pen looks different for Rusty, the pump bots, the counter, and the kitchen window.
+
+Each scrub in the wash shows the dish, Squatch's paw, and a sponge. A plate still being washed says DIRTY DISH. The third scrub says CLEAN DISH and stays 3/3 until the picture clears. The card closes before the wash-set line and before the greasy-pot handoff, so those spoken lines stay whole. The cook still wakes on the same timer; Squatch's stomach rumbles just before she does. Mops wears a chef hat only while he is cooking in the kitchen. The kitchen is one floor. A full-height diner door stands on the left. The sink stays on the left of a continuous counter, the service window is the middle bay (about 300 wide, where Gloop hangs the next three tickets and can pass a hand), and a four-burner range with an oven door is built into the right end. Three spice jars sit on a rack on that counter, past the burners. Mops runs the sink-to-range distance. LEAVE SOUP stays on the crate hotspot and its label sits beside the door. After the greasy pot, Mops keeps the mop and stays in the kitchen. Hold Reset section (or the R key) to return to this section's capture checkpoint. It does not pay coins or skip ahead. None of that changes the three-scrub count, the 30-coin jar, cones, or security. The drawing is pending an independent visual pass.
 
 ## Left as they were
 
@@ -27,6 +29,8 @@ These came up in the notes and were not given a new behavior:
 - The bots' "You watch the crate" lines stay. They happen before Gloop sends them to the dock.
 - The lockup card is the jail. There is no separate jail game.
 - Cook and Gloop stay two speakers.
+
+`docs/story-bible.md` is the Chapter 2 kitchen revision. Everything else in the story stays the original spine. Open conflicts outside that kitchen are in `docs/STORY-DECISIONS.md`. `docs/README.md` points at both, and at the section-reset checkpoints.
 
 From the repo root:
 
