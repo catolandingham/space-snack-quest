@@ -17,9 +17,9 @@ const FORWARD = {
   g1door: ["ENTER"],
   back: ["ENTER"],
   g2: ["ORDER"],
-  wash1: ["GRAB", "SCRUB"],
+  wash1: ["GRAB", "SCRUB", "BACK"],
   g3: ["HIDE"],
-  g3hide: ["HIDE"],
+  g3hide: ["HIDE", "BACK"],
   g3h: ["HIDE"],
   g4: ["ASK", "GRAB", "BUY", "ENTER"],
   g4k: ["LEAVE SOUP", "BACK"],
@@ -74,6 +74,15 @@ const STATES = [
     name: "play: Mops walks out front with the mop",
     steps: [["set", { done: 5, held: 6, scrub: 2, mopN: 0, greasy: false, has: "" }], ["reset", "wash5"], ["set", { held: 6, scrub: 2 }], ["act", "SCRUB"], ["drain"], ["act?", "FRONT"], ["drain"]],
   },
+  // The picture button in the kitchen (top right) lets the player switch to Mops once the cook is down.
+  {
+    name: "play: switch to Mops at the sink, walk out front",
+    steps: [["set", { done: 0, held: -1, cook: "down" }], ["reset", "wash1"], ["set", { cook: "down" }], ["swap"], ["act?", "FRONT"], ["drain"]],
+  },
+  {
+    name: "play: switch to Mops while the bots come, walk out front",
+    steps: [["set", { cook: "gone" }], ["reset", "g3hide"], ["set", { cook: "gone" }], ["swap"], ["act?", "FRONT"], ["drain"]],
+  },
   { name: "play: the new jar", steps: [["set", { jar: 30, has: "" }], ["scene", "G6"], ["drain"]] },
   { name: "play: Mops takes the coins out", steps: [["set", { jar: 30, has: "" }], ["scene", "G6"], ["drain"], ["act", "GRAB"], ["act", "EXIT"], ["drain"]] },
   {
@@ -113,6 +122,7 @@ for (const state of STATES) {
       else if (st[0] === "set") Object.assign(k, st[1]);
       else if (st[0] === "scene") ss["scene" + st[1]]();
       else if (st[0] === "drain") ss.drain();
+      else if (st[0] === "swap") ss.swapTo(!ss.ch.mops);
       else if (st[0] === "act" || st[0] === "act?") {
         const a = findAct(st[1]);
         if (a) a.f();

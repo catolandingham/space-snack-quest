@@ -36,3 +36,35 @@ The chip is the yellow goal line at the top of the picture. It is set from one t
 | 5.18 | Tank is full, bots on the ramp (g6, Squatch) | Squatch: sing from the crate to lure the bots | Squatch: sing to lure the pump bots away (the plan's draft; mine says where to sing) |
 | 5.19 | Squatch is singing (g6) | Squatch: stop singing before they reach you | Squatch: stop before the bots get to you |
 | 5.20 | The bots are looking at the crate (g6) | Squatch: run to the ship and get on board | Squatch: run to the ship! |
+| 5.21 | The player tapped the picture button in the kitchen and is now Mops, while the work is Squatch's (added with T6) | Mops: tap Squatch's picture to switch back | Mops: tap the picture, top right, to be Squatch again |
+
+## T6. Every switch between Squatch and Mops, and every room change, is announced
+
+A switch card fills the picture, shows the character, and waits for a tap. Its top line is "You are MOPS now." or "You are SQUATCH now." (the plan's wording). The second line says why:
+
+| # | When it shows | In the game now (why line) | Another way to say it |
+| --- | --- | --- | --- |
+| 6.1 | Squatch hid by the pump; Mops goes to the diner | Squatch can't be seen out front. Mops can. | (plan draft) |
+| 6.2 | Mops asked for work; Squatch goes to the back door | Mops found work. Squatch sneaks in the back. | Gloop needs a dishwasher. Squatch sneaks in the back. |
+| 6.3 | Squatch is hiding from the bots; Mops goes out front | Squatch must stay hidden. Mops goes out front. | Squatch is hiding. Mops goes out front. |
+| 6.4 | Soup delivered; back to the dishes | Mops cooks. Squatch washes the dishes. | Mops is cooking. Squatch washes. |
+| 6.5 | The greasy pot | Paws can't clean this pot. Mops has a mop. | This pot needs a mop. |
+| 6.6 | The second set of dishes is done; Mops goes for the new jar | The dishes are done. Mops gets the new jar. | The jar is full again. Mops goes to get it. |
+| 6.7 | Tank is full; Squatch has to lure the bots | The tank is full. Squatch has to lure the bots away. | Tank full! Now Squatch lures the bots away. |
+
+The tag beside the chip, in page text over the top of the picture:
+
+| # | When it shows | In the game now | Another way to say it |
+| --- | --- | --- | --- |
+| 6.8 | Any time the story is playing, for whoever the player moves | YOU: SQUATCH / YOU: MOPS | (plan wording) |
+
+A short line over the fade when a character changes room during play (it fades after about two seconds; it is not a card):
+
+| # | When it shows | In the game now | Another way to say it |
+| --- | --- | --- | --- |
+| 6.9 | Mops goes in the diner door from the lot | Mops goes inside. | (plan wording) |
+| 6.10 | Squatch goes in the KITCHEN door from the lot | Squatch sneaks into the kitchen. | Squatch slips into the kitchen. |
+| 6.11 | Mops walks from the kitchen to the diner | Mops goes out front. | Mops goes to the diner. |
+| 6.12 | Mops walks back from the diner to the kitchen (BACK · kitchen) | Mops goes back to the kitchen. | Mops heads back in. |
+| 6.13 | Mops carries the soup into the kitchen | Mops brings the soup into the kitchen. | Mops brings the soup in. |
+| 6.14 | Mops takes the coins out to the lot | Mops goes out to the pump. | Mops heads out to Rusty. |

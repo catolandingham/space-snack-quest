@@ -6288,7 +6288,7 @@
         (B.slip.on = !1),
         (x.ask = 0),
         (x.seen6 = !1),
-        (x.mops = !1),
+        switchTo("squatch"),
         Bh(),
         D.hide());
     }
@@ -6609,7 +6609,7 @@
       ((n.scene = "S9"),
         (n.room = "hall"),
         (n.live = []),
-        (x.mops = !1),
+        switchTo("squatch"),
         (x.spot = -1),
         (n.sqPose = "stand"),
         _s(bo.x, bo.y),
@@ -6694,8 +6694,26 @@
           ? ((q.asked = !1), (q.look -= l), q.look <= 0 && (q.look = -1))
           : q.look < 0 && mV(q, q.home.x, q.home.y, 50, l) && (q.look = 0);
     }
+    // Why each announced switch happens. Wording waits for Brian's yes (docs/PHASE-1-LINES-FOR-BRIAN.md).
+    // Switches with no entry here (scene set-ups, Reset section, Chapters 1, 3 and 4) are silent for now.
+    const SWITCH_WHY = {
+      "g1-door": "Squatch can't be seen out front. Mops can.",
+      "g2-back": "Mops found work. Squatch sneaks in the back.",
+      "g3-front": "Squatch must stay hidden. Mops goes out front.",
+      "g4-wash": "Mops cooks. Squatch washes the dishes.",
+      "g5-mop": "Paws can't clean this pot. Mops has a mop.",
+      "g5-jar": "The dishes are done. Mops gets the new jar.",
+      "g6-lure": "The tank is full. Squatch has to lure the bots away.",
+    };
+    function switchTo(who, why) {
+      let m = who === "mops";
+      if (x.mops === m) return;
+      ((x.mops = m), (n.sq.moving = !1), (n.mo.moving = !1));
+      let line = why && SWITCH_WHY[why];
+      line && J([{ k: "card", id: "switch", who: m ? "mops" : "sq", text: "You are " + (m ? "MOPS" : "SQUATCH") + " now.", by: line }]);
+    }
     function yf(l) {
-      x.mops !== l && ((x.mops = l), (n.sq.moving = !1), (n.mo.moving = !1), D.key());
+      x.mops !== l && (switchTo(l ? "mops" : "squatch"), D.key());
     }
     function hA() {
       return x.mops
@@ -6877,7 +6895,7 @@
     function Ih() {
       ((n.scene = "S10"),
         (n.room = "hall"),
-        (x.mops = !1),
+        switchTo("squatch"),
         (n.sqPose = "stand"),
         (x.spot = -1),
         (n.sq.x = 980),
@@ -6985,7 +7003,7 @@
       ((n.scene = "S11"),
         (n.room = "hall"),
         (n.live = []),
-        (x.mops = !1),
+        switchTo("squatch"),
         (x.spot = -1),
         (n.sqPose = "stand"),
         _s(Ch.x, Ch.y),
@@ -7105,7 +7123,7 @@
       ((n.scene = "S12"),
         (n.room = "hangar"),
         (n.live = []),
-        (x.mops = !1),
+        switchTo("squatch"),
         (n.sqPose = "stand"),
         (n.sq = { x: 120, y: 520, f: 1, walk: 0, moving: !1 }),
         (n.mo = { x: 880, y: 520, f: -1, walk: 0, moving: !1 }),
@@ -7509,7 +7527,7 @@
         (n.mo.f = c.mo.f || -1),
         (n.sqPose = c.sqPose || "stand"),
         (n.moPose = c.moPose || "stand"),
-        (x.mops = !!c.mops),
+        switchTo(c.mops ? "mops" : "squatch"),
         (x.spot = c.spot == null ? -1 : c.spot),
         n.room === "hall" && (B.camX = c.cam || 0),
         (k.peekT = c.peekT || 0),
@@ -7582,6 +7600,7 @@
       "diner:kitchen": "Mops: go back through the kitchen door",
       wash5: "Squatch: wash the next dishes",
       "wash5:mop": "Mops: mop the greasy pot at the sink",
+      "kitchen:mops": "Mops: tap Squatch's picture to switch back",
       g6d: "Mops: grab the new tip jar",
       "g6d:coins": "Mops: take the coins out the red door",
       "g6:mops": "Mops: give the coins to Rusty at the pump",
@@ -7593,7 +7612,8 @@
       let ph = k.phase || "";
       if (sqAway()) return "diner:kitchen";
       if (ph === "g4") return k.has === "soup" ? "g4:soup" : k.has === "coins" ? "g4:coins" : "g4";
-      if (ph === "wash5" && x.mops) return "wash5:mop";
+      if (ph === "wash5" && x.mops && k.greasy) return "wash5:mop";
+      if (x.mops && n.room === "kitchen" && (ph === "wash1" || ph === "wash5" || ph === "g3" || ph === "g3hide")) return "kitchen:mops";
       if (ph === "g6d") return k.has === "coins" ? "g6d:coins" : "g6d";
       if (ph === "g6")
         return x.mops ? "g6:mops" : x.sing ? "g6:sing" : (k.bots || []).some((o) => o.look > 0) ? "g6:run" : "g6";
@@ -7613,7 +7633,7 @@
           (k.phase = "back"),
           (n.sqPose = "hidden"),
           (x.spot = 60),
-          (x.mops = !1),
+          switchTo("squatch"),
           (n.sq.x = ht.x),
           (n.sq.y = ht.y),
           (n.mo.x = -200),
@@ -7626,14 +7646,14 @@
           (k.phase = "g6"),
           (n.sqPose = "stand"),
           (x.spot = -1),
-          (x.mops = !1),
+          switchTo("squatch"),
           (n.sq.x = Sa.x),
           (n.sq.y = 470),
           n.pulse.add("lure"));
         return !0;
       }
       if (l === "g3" || l === "g3hide" || l === "g3h") {
-        ((n.scene = "G3"), (n.room = "kitchen"), (n.sqPose = "stand"), (x.spot = -1), (x.mops = !1), (n.sq.x = 300), (n.sq.y = 520), V2());
+        ((n.scene = "G3"), (n.room = "kitchen"), (n.sqPose = "stand"), (x.spot = -1), switchTo("squatch"), (n.sq.x = 300), (n.sq.y = 520), V2());
         return !0;
       }
       if (l === "g4l") ((l = "wash5"), (k.has = ""), (k.sqBowl = "counter"));
@@ -7643,7 +7663,7 @@
           (k.phase = l),
           (n.sqPose = "stand"),
           (x.spot = -1),
-          (x.mops = !1),
+          switchTo("squatch"),
           (n.sq.x = l === "wash1" ? KV.x : xe.x + 60),
           (n.sq.y = l === "wash1" ? KV.y : 520),
           (k.peek = 0),
@@ -7665,7 +7685,7 @@
           (x.spot = 63),
           (n.sq.x = xe.x),
           (n.sq.y = xe.y),
-          (x.mops = !0),
+          switchTo("mops"),
           (n.mo.x = 600),
           (n.mo.y = 500),
           (n.mo.f = -1),
@@ -7677,7 +7697,7 @@
         ((n.scene = "G2"),
           (n.room = "diner"),
           (k.phase = "g2"),
-          (x.mops = !0),
+          switchTo("mops"),
           (n.mo = { x: mf.x + 40, y: 560, f: 1, walk: 0, moving: !1 }),
           (n.moPose = "stand"),
           (n.sqPose = "hidden"),
@@ -7691,7 +7711,7 @@
         ((n.scene = "G4"),
           (n.room = "kitchen"),
           (k.phase = l),
-          (x.mops = !0),
+          switchTo("mops"),
           (n.mo = { x: 150, y: 520, f: 1, walk: 0, moving: !1 }),
           (n.moPose = "stand"),
           (n.sqPose = "hidden"),
@@ -7715,7 +7735,7 @@
           (k.phase = "g1"),
           (n.sqPose = "stand"),
           (x.spot = -1),
-          (x.mops = !1),
+          switchTo("squatch"),
           (n.sq.x = 760),
           (n.sq.y = 540),
           (n.sq.f = -1),
@@ -7903,7 +7923,7 @@
                       (n.mo.y = 500),
                       (n.mo.f = -1),
                       (n.moPose = "stand"),
-                      (x.mops = !1),
+                      switchTo("squatch"),
                       (n.ctrl = !0));
                   }),
                 ]));
@@ -8100,7 +8120,7 @@
           return { verb: "ENTER", cap: "kitchen", x: Cl.x - 20, y: 300, r: 0, hot: !0, f: LA };
         if (i === "g6d" && k.has === "coins" && hV(o, 48, 470, 70))
           return { verb: "EXIT", cap: "the lot", x: 48, y: 250, r: 0, hot: !0, f: l2 };
-        if ((i === "g4k" || i === "g4l" || i === "wash5") && hV(o, Cl.x, Cl.y + 40, 90))
+        if (kitchenPhase(i) && hV(o, Cl.x, Cl.y + 40, 90))
           return {
             verb: "BACK",
             cap: "kitchen",
@@ -8109,7 +8129,7 @@
             r: 0,
             hot: !0,
             f: () => {
-              ((n.room = "kitchen"), (n.mo.x = 110), (n.mo.y = 500), (n.mo.f = 1));
+              (roomLine("Mops goes back to the kitchen."), (n.room = "kitchen"), (n.mo.x = 110), (n.mo.y = 500), (n.mo.f = 1));
             },
           };
       }
@@ -8133,7 +8153,7 @@
           r: 0,
           hot: !0,
           f: () => {
-            ((n.room = "diner"), (n.mo.x = 760), (n.mo.y = 520), (n.mo.f = -1));
+            (roomLine("Mops goes out front."), (n.room = "diner"), (n.mo.x = 760), (n.mo.y = 520), (n.mo.f = -1));
           },
         };
       if (n.room === "kitchen" && !x.mops) {
@@ -8204,7 +8224,7 @@
         (n.scene = "G0"),
         (n.room = "gas"),
         (n.live = []),
-        (x.mops = !1),
+        switchTo("squatch"),
         (x.spot = -1),
         (x.sing = !1),
         (x.costume = !1),
@@ -8237,16 +8257,17 @@
           v("sq", "We don't have coins...", "whisper"),
           v("mops", "Then we earn some. Leave it to me."),
           N(() => {
-            (Ta("sneak-g1"), (x.mops = !0), (k.phase = "g1door"), (n.chip = ch2Chip()), (n.ctrl = !0), (n.mo.moving = !1));
+            (Ta("sneak-g1"), switchTo("mops", "g1-door"), (k.phase = "g1door"), (n.chip = ch2Chip()), (n.ctrl = !0), (n.mo.moving = !1));
           }),
         ]));
     }
     function Wh() {
-      ((n.scene = "G2"),
+      (roomLine("Mops goes inside."),
+        (n.scene = "G2"),
         (k.phase = "g2"),
         (n.room = "diner"),
         (n.live = []),
-        (x.mops = !0),
+        switchTo("mops"),
         (n.mo = { x: mf.x + 40, y: 560, f: 1, walk: 0, moving: !1 }),
         (n.moPose = "stand"),
         n.pulse.clear(),
@@ -8264,7 +8285,7 @@
             ((n.scene = "G2b"),
               (k.phase = "back"),
               (n.room = "gas"),
-              (x.mops = !1),
+              switchTo("squatch", "g2-back"),
               (n.mo.x = -200),
               (n.sqPose = "hidden"),
               (x.spot = 60),
@@ -8281,6 +8302,7 @@
         (n.act = null),
         n.pulse.clear(),
         D.open(),
+        roomLine("Squatch sneaks into the kitchen."),
         (n.room = "kitchen"),
         (n.scene = "G2k"),
         (n.sq.x = 120),
@@ -8358,7 +8380,7 @@
           }),
           v("mops", "Stand back, kiddo."),
           N(() => {
-            ((x.mops = !0), n.pulse.add("sink"), (n.ctrl = !0));
+            (switchTo("mops", "g5-mop"), n.pulse.add("sink"), (n.ctrl = !0));
           }),
         ]));
     }
@@ -8381,7 +8403,7 @@
               ((n.mo.x = 760),
                 (n.mo.y = 520),
                 (n.mo.f = -1),
-                (x.mops = !1),
+                switchTo("squatch"),
                 (k.peekT = 4),
                 (k.scrub = 2),
                 $h(),
@@ -8438,7 +8460,7 @@
       ((n.scene = "G4"),
         (k.phase = "g4"),
         (n.room = "diner"),
-        (x.mops = !0),
+        switchTo("mops", "g3-front"),
         (k.tv = !1),
         (n.mo = { x: 600, y: 500, f: -1, walk: 0, moving: !1 }),
         n.pulse.clear(),
@@ -8455,6 +8477,7 @@
         (n.act = null),
         n.pulse.clear(),
         D.open(),
+        roomLine("Mops brings the soup into the kitchen."),
         (n.room = "kitchen"),
         (k.phase = "g4k"),
         (n.mo.x = 150),
@@ -8502,7 +8525,7 @@
         (k.bots = []),
         (k.botsIn = !1),
         (n.room = "kitchen"),
-        (x.mops = !1),
+        switchTo("squatch", "g4-wash"),
         (n.mo = { x: 700, y: 500, f: -1, walk: 0, moving: !1 }),
         (n.moPose = "stand"),
         (k.sqBowl = "counter"),
@@ -8530,7 +8553,7 @@
         (n.sqPose = "hidden"),
         (x.spot = -1),
         (n.sq.x = -200),
-        (x.mops = !0),
+        switchTo("mops", "g5-jar"),
         (n.mo = { x: 600, y: 500, f: -1, walk: 0, moving: !1 }),
         n.pulse.clear(),
         (n.ctrl = !1),
@@ -8546,6 +8569,7 @@
         (n.act = null),
         n.pulse.clear(),
         D.open(),
+        roomLine("Mops goes out to the pump."),
         (n.room = "gas"),
         (k.phase = "g6"),
         (n.mo.x = po.x),
@@ -8577,7 +8601,7 @@
           v("mops", "Full tank."),
           v("mops", "Bots on the ramp. Squatch, sing from the crate!"),
           N(() => {
-            ((n.sq.x = Sa.x), (n.sq.y = 470), (n.sqPose = "stand"), (x.mops = !1), n.pulse.add("lure"), (n.ctrl = !0));
+            ((n.sq.x = Sa.x), (n.sq.y = 470), (n.sqPose = "stand"), switchTo("squatch", "g6-lure"), n.pulse.add("lure"), (n.ctrl = !0));
           }),
         ]));
     }
@@ -8783,9 +8807,13 @@
     function tq(l, o, i, s) {
       (n.pulse.has(s) && oV(l - 52, o - 100, 104, 110, 10), Ys(l, o), i && ga(l, o - 58));
     }
+    function kitchenPhase(ph) {
+      // Phases whose work happens in the kitchen.
+      return ["wash1", "wash5", "g3", "g3hide", "g3h", "g4k", "g4l"].includes(ph);
+    }
     function sqAway() {
       // True while Mops is out front and Squatch is still back in the kitchen.
-      return n.room === "diner" && !!x.mops && (k.phase === "g4k" || k.phase === "g4l" || k.phase === "wash5");
+      return n.room === "diner" && !!x.mops && kitchenPhase(k.phase);
     }
     function yn(l) {
       (n.moPose !== "hidden" &&
@@ -9525,7 +9553,7 @@
           (n.sq.y = 480),
           (n.sqPose = "stand"),
           (x.spot = -1),
-          (x.mops = !1),
+          switchTo("squatch"),
           n.pulse.add("alcove"));
       };
       l
@@ -9743,7 +9771,7 @@
         (n.scene = "P0"),
         (n.room = "pad"),
         (n.live = []),
-        (x.mops = !1),
+        switchTo("squatch"),
         (x.spot = -1),
         (x.sing = !1),
         (x.costume = !1),
@@ -9787,7 +9815,7 @@
         ]));
     }
     function u6() {
-      ((n.scene = "P2"), (Q.phase = "p2"), (x.mops = !0), (n.mo.f = -1), n.pulse.clear(), n.pulse.add("zip"), (n.ctrl = !0));
+      ((n.scene = "P2"), (Q.phase = "p2"), switchTo("mops"), (n.mo.f = -1), n.pulse.clear(), n.pulse.add("zip"), (n.ctrl = !0));
     }
     function s6() {
       ((n.ctrl = !1),
@@ -9812,7 +9840,7 @@
         (Q.miss = 0),
         (Q.sings = 0),
         (Q.waltz = !1),
-        (x.mops = !1),
+        switchTo("squatch"),
         (x.spot = -1),
         (x.sing = !1),
         (n.sqPose = "stand"),
@@ -9868,7 +9896,7 @@
             return o;
           }),
           N(() => {
-            ((Q.zip = !1), (Q.rov = []), (Q.phase = "p3x"), (x.mops = !0), n.pulse.add("texit"), (n.ctrl = !0));
+            ((Q.zip = !1), (Q.rov = []), (Q.phase = "p3x"), switchTo("mops"), n.pulse.add("texit"), (n.ctrl = !0));
           }),
         ]));
     }
@@ -9881,7 +9909,7 @@
         (Q.phase = "p4i"),
         (Q.zip = !1),
         (Q.zipX = gf.x),
-        (x.mops = !1),
+        switchTo("squatch"),
         (x.sing = !1),
         (n.mo = { x: 300, y: 540, f: 1, walk: 0, moving: !1 }),
         (n.moPose = "stand"),
@@ -10656,7 +10684,7 @@
         (n.scene = "M0"),
         (n.room = "port"),
         (n.live = []),
-        (x.mops = !1),
+        switchTo("squatch"),
         (x.spot = -1),
         (x.sing = !1),
         (x.costume = !1),
@@ -10703,7 +10731,7 @@
           }),
           v("mops", "Stay behind the crate, kiddo. Let me look first.", "whisper"),
           N(() => {
-            ((H.phase = "m2"), (x.mops = !0), n.pulse.add("poster"), (n.ctrl = !0));
+            ((H.phase = "m2"), switchTo("mops"), n.pulse.add("poster"), (n.ctrl = !0));
           }),
         ]));
     }
@@ -10721,7 +10749,7 @@
           v("mops", "I think I found something of yours."),
           v("mops", "Come on out, kiddo.", "whisper"),
           N(() => {
-            ((n.sqPose = "stand"), (x.spot = -1), (n.sq.y = 540), (x.mops = !1));
+            ((n.sqPose = "stand"), (x.spot = -1), (n.sq.y = 540), switchTo("squatch"));
           }),
           He(n.sq, Qa.x - 90, 540, 150),
           N(() => {
@@ -10761,7 +10789,7 @@
         (H.phase = "m3"),
         (H.mom = !1),
         (H.dad = !1),
-        (x.mops = !0),
+        switchTo("mops"),
         n.pulse.clear(),
         n.pulse.add("vmop"),
         (n.chip = "Tidy the van"),
@@ -10784,7 +10812,7 @@
           v("mops", "He ordered them. To replace me."),
           cV((l) => mV(n.mo, 1010, 560, 120, l)),
           N(() => {
-            ((n.moPose = "hidden"), (H.gone = !0), (x.mops = !1), (n.chip = "Mops is gone"));
+            ((n.moPose = "hidden"), (H.gone = !0), switchTo("squatch"), (n.chip = "Mops is gone"));
           }),
           uV(1.6),
           N(A2),
@@ -10803,7 +10831,7 @@
         n.pulse.clear(),
         (n.sq = { x: 420, y: 540, f: 1, walk: 0, moving: !1 }),
         (n.sqPose = "stand"),
-        (x.mops = !1),
+        switchTo("squatch"),
         J([
           v("mom", "Eat up, Harry! Three dozen pretzels, and pancakes forever."),
           uV(1.2),
@@ -13738,7 +13766,16 @@
       }
     }
     function m8() {}
-    function M5(l, o, s) {
+    function M5(l, o, s, cd) {
+      if (l === "switch") {
+        // Switch card: who you are now, their picture, and why. Waits for a tap like every card.
+        let mo = cd && cd.who === "mops";
+        ((e.fillStyle = "#1e2430"), e.fillRect(0, 0, c, b), L(c / 2, 400, 150), r(mo ? "#2bc48a" : "#b5562a", 6));
+        mo ? Fe(c / 2 - 20, 500, he * 2.6, { f: 1 }) : Re(c / 2, 520, he * 1.7, { f: 1 });
+        g(o, c / 2, 110, 48, "#ffffff", "center", 800);
+        zt(s || "", 820, 26).forEach((t, i) => g(t, c / 2, 170 + i * 34, 26, "#8fdcff", "center", 700));
+        return;
+      }
       if (l === "jupiter") {
         ((e.fillStyle = "#1b2140"), e.fillRect(0, 0, c, b));
         for (let s = 0; s < 46; s++) F((s * 97) % c, (s * 61) % 420, 1.6, "#ffffff");
@@ -14453,7 +14490,7 @@
       ((qq = 0), (mq = []));
       let l = n.cur;
       if (l && l.k === "card") {
-        M5(l.id, l.text, l.by);
+        M5(l.id, l.text, l.by, l);
         return;
       }
       if (n.egg) {
@@ -14514,7 +14551,7 @@
             ((e.globalAlpha = Math.min(1, i.t * 2)),
             g(i.s, i.x, i.y, 26, i.s === "\u2665" ? "#e5533d" : "#b45309", "center", 900),
             (e.globalAlpha = 1));
-      (Ka > 0 && ((e.fillStyle = "rgba(20,24,32," + Math.min(1, Ka).toFixed(3) + ")"), e.fillRect(0, 0, c, b)), S5(), a5());
+      (Ka > 0 && ((e.fillStyle = "rgba(20,24,32," + Math.min(1, Ka).toFixed(3) + ")"), e.fillRect(0, 0, c, b)), drawRoomLine(), S5(), a5());
       let o = Bs();
       if (o && (o.x || o.r > 0 || n.room === "deck" || n.room === "hall") && !de() && n.live.length === 0) {
         let i = o.x === 790 || o.x === 845,
@@ -14762,6 +14799,43 @@
         linkDebug && debugStrip();
       }, 0);
     }
+    let whoTagEl = null;
+    function whoTag() {
+      let box = V.parentElement;
+      if (!box) return;
+      ((box.style.position = "relative"),
+        (whoTagEl = document.createElement("div")),
+        (whoTagEl.id = "ss-who"),
+        whoTagEl.setAttribute(
+          "style",
+          "position:absolute;top:1.6%;left:62%;padding:2px 10px;border:2px solid #1e2430;border-radius:12px;font:800 14px/1.3 system-ui,-apple-system,sans-serif;letter-spacing:.5px;pointer-events:none;display:none",
+        ),
+        box.appendChild(whoTagEl));
+    }
+    function updateWhoTag() {
+      let el = whoTagEl;
+      if (!el) return;
+      let show = h && p.state === "op" && !!n.scene && !(n.cur && n.cur.k === "card"),
+        text = x.mops ? "YOU: MOPS" : "YOU: SQUATCH";
+      el.style.display !== (show ? "block" : "none") && (el.style.display = show ? "block" : "none");
+      el.textContent !== text &&
+        ((el.textContent = text), (el.style.background = x.mops ? "#c9f2df" : "#f6d9c8"), (el.style.color = "#1e2430"));
+    }
+    function roomLine(text) {
+      // One short line over the fade when a character changes room during play.
+      n.roomLine = { text, at: n.T };
+    }
+    function drawRoomLine() {
+      let rl = n.roomLine;
+      if (!rl || n.T - rl.at > 1.8 || de()) return;
+      ge(26);
+      let d = e.measureText(rl.text).width + 48;
+      ((e.globalAlpha = Math.min(1, (1.8 - (n.T - rl.at)) * 3)),
+        m(c / 2 - d / 2, 280, d, 52, 16),
+        r("#1e2430", 3),
+        g(rl.text, c / 2, 306, 26, "#ffffff", "center", 800),
+        (e.globalAlpha = 1));
+    }
     function drainQueue() {
       // Test hook: plays the story queue to its end at once, the way skipping a cutscene does.
       for (let i = 0; i < 6e3 && (n.cur || n.q.length); i++) {
@@ -14832,7 +14906,7 @@
             let i = Math.min(0.05, o);
             (ep(i), (o -= i));
           }
-          Ap();
+          (Ap(), updateWhoTag());
         } catch (i) {
           console.error(i);
         }
@@ -14943,6 +15017,7 @@
         ch2ChipKey: () => ch2ChipKey(),
       }),
       debugLink(),
+      whoTag(),
       {
         actionE: J1,
         resetHold: armReset,
@@ -14968,6 +15043,7 @@
           try {
             S?.close();
           } catch {}
+          whoTagEl && whoTagEl.remove();
           (window.removeEventListener("keyup", _2), window.removeEventListener("blur", F2), S && S.close().catch(() => {}));
         },
       }
