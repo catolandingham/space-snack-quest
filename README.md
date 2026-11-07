@@ -77,7 +77,7 @@ Branch `phase-3-fairness-hud` (plan section 4, tasks T19 to T23, with Brian's de
 - The HUD is page text over the picture in fixed zones: chapter, ↺ and stars top left; the goal chip top center; the faces top right. The ↺ button (hold) replaces the big Reset section button; the sound button is under the picture. After 60 seconds without progress the chip shows how to do the step. On a phone the game sits at the top of the screen. `src/game/80-hud.js`; `tests/hud-layout.mjs`.
 - The kitchen window warning lasts 2.5 seconds and shows: the window frame flashes and Gloop fills the window until her look ends. `tests/kitchen-warning.mjs`.
 - A tap on the picture walks there when no bubble or card is up; the big button acts. `tests/phone-tap.mjs` reaches the diner with taps and the button only.
-- Small feel fixes: an early tap on a bubble is kept and shown; the action clears when a scene takes control; COOK is gone. `tests/feel-fixes.mjs`.
+- Small feel fixes: an early tap on a bubble is kept and shown; the action clears when a scene takes control; the awards say what they were for. COOK stays as on main. `tests/feel-fixes.mjs`.
 - Zoom-in cards (the opening's spotlight card) teach the first hide in Chapters 1 and 2 and the first switch in Chapter 1. `tests/zoom-cards.mjs`.
 
 Test hooks added: `__ss.capture()`, `shoo()`, `lostYou()`, `startSec()`, `CAPTURES`, `LOCKUP_RESTART`, `hallAlarm`, `hallAlarmStart()`, `CH1_CHECKPOINTS`, `CH3_CHECKPOINTS`, `CH4_CHECKPOINTS`, `stallFor()`, `methodLine()`, `METHOD_LINES`.

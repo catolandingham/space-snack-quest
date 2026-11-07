@@ -924,6 +924,21 @@
           },
         }),
         spot({
+          id: "range",
+          verb: "COOK",
+          cap: "ticket",
+          who: "mo",
+          x: Hn.x,
+          y: 500,
+          r: 110,
+          at: [Hn.x, 360],
+          when: kitMo,
+          hot: !0,
+          f: () => {
+            ((ch2.cooked = (ch2.cooked || 0) + 1), kV("mops", "Cooking ticket " + ch2.cooked + "."), D.grab());
+          },
+        }),
+        spot({
           id: "kfront",
           verb: "FRONT",
           cap: "diner",
@@ -2015,6 +2030,7 @@
           r("#e7b08a", 3));
       }
       (n.act && n.act.verb === "GRAB" && (m(400, 248, 88, 28, 10), r("#2bc48a", 3), g("GRAB", 444, 262, 16, "#ffffff", "center", 900)),
+        n.act && n.act.verb === "COOK" && (m(868, 332, 70, 26, 10), r("#2bc48a", 3), g("COOK", 903, 345, 14, "#ffffff", "center", 900)),
         ch2.rumbleT > 0 && (m(250, 100, 200, 36, 10), r("#fff3d6", 3), g("RUMBLE", 350, 118, 20, "#b45309", "center", 900)));
       (ringOf("sink"),
         ringOf("rail"),

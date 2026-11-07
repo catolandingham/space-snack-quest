@@ -112,7 +112,7 @@ The big touch button, and the small caption drawn on the picture by the spot, no
 | 11.10 | Tip jar | GRAB · tip jar | GRAB · jar |
 | 11.11 | Counter, before buying | ASK · Gloop | ASK · prices |
 | 11.12 | Counter, with coins | BUY · soup 30 | (plan wording) |
-| 11.13 | Removed in Phase 3 (T22): the range offered COOK · ticket, which only said "Cooking ticket 1." and changed nothing | (removed) | (none) |
+| 11.13 | The range | COOK · ticket | COOK · order |
 | 11.14 | Anywhere, while Gloop is about to look | ROLL · into a ball | ROLL · ball |
 | 11.15 | Recipe on the shelf | OPEN · recipe | READ · recipe |
 | 11.16 | Dish rack at the order window | GRAB · dish | GRAB · plate |

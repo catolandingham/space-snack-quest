@@ -205,10 +205,10 @@ const cookTicket = await page.evaluate(() => {
   const n = window.__ss.op;
   const verb = n.act && n.act.verb;
   const jar = window.__ss.ch2.jar;
+  if (verb === "COOK") window.__ss.actionDown();
   return { verb, jar: window.__ss.ch2.jar, was: jar, cooked: window.__ss.ch2.cooked, live: (n.live[0] && n.live[0].text) || "" };
 });
-// COOK was removed in Phase 3 (T22): it did nothing. Mops at the range is offered no COOK and the jar is untouched.
-check("Mops at the range is offered no COOK, and the jar is untouched", cookTicket.verb !== "COOK" && cookTicket.jar === 30, cookTicket);
+check("cooking a ticket does not change the jar", cookTicket.verb === "COOK" && cookTicket.jar === 30 && cookTicket.cooked === 1, cookTicket);
 
 await page.evaluate(() => {
   const ss = window.__ss;

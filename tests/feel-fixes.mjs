@@ -3,13 +3,11 @@
  * (1) A tap in the first 0.3 seconds of a new bubble is not lost: it is shown (a ring in the corner) and
  *     applied when the 0.3 seconds are up.
  * (2) While a scene has control, no action is offered: n.act is cleared and the ACTION button is empty.
- * (3) COOK is gone from the kitchen range (it did nothing).
+ * (3) COOK stays as on main (its removal waits for Brian).
  * (4) The +250 and +100 awards say what they were for (Brian, 2026-11-07).
  *   node tests/feel-fixes.mjs
  */
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
-import { startGame, sleep, root, readLines } from "./game-page.mjs";
+import { startGame, sleep, readLines } from "./game-page.mjs";
 import { setState } from "./chapter-states.mjs";
 
 const g = await startGame({ port: 8796, name: "feel-fixes" });
@@ -44,14 +42,12 @@ g.check("standing at the rack offers GRAB", offered.act === "GRAB" && /GRAB/.tes
 g.check("when a scene takes control the action clears and the button is empty", taken.act === null && taken.button === "", taken);
 await page.evaluate(() => { window.__ss.op.ctrl = true; });
 
-// (3) COOK is gone.
-const src = ["20-ch2.js"].map((f) => readFileSync(join(root, "src", "game", f), "utf8")).join("\n");
-g.check("the kitchen has no COOK action", !/verb: "COOK"/.test(src) && !/"COOK"/.test(src));
+// (3) COOK stays as on main (Brian has not decided its removal): Mops at the range is offered COOK · ticket.
 await page.evaluate(setState, { kind: "ch2", steps: [["set", { cook: "down" }], ["reset", "wash1"], ["swap", true]] });
 await page.evaluate(() => { const n = window.__ss.op; n.mo.x = 800; n.mo.y = 500; });
 await sleep(300);
-const atRange = await page.evaluate(() => ({ act: window.__ss.op.act && window.__ss.op.act.verb, spots: window.__ss.spotsNow().map((s) => s.verb) }));
-g.check("Mops at the range is offered no COOK", atRange.act !== "COOK" && !atRange.spots.includes("COOK"), atRange);
+const atRange = await page.evaluate(() => ({ act: window.__ss.op.act && window.__ss.op.act.verb, cap: window.__ss.op.act && window.__ss.op.act.cap }));
+g.check("Mops at the range is offered COOK · ticket (kept, as on main)", atRange.act === "COOK" && atRange.cap === "ticket", atRange);
 // (4) The awards say what they were for (rows 22.1 to 22.14); amounts unchanged.
 const lines = readLines();
 const aw = await page.evaluate(() => {

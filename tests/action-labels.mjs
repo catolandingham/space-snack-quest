@@ -19,7 +19,7 @@ const LINES = readLines();
 const SPOTS = {
   "11.1": "g1", "11.2": "back", "11.3": "g6 hidden at the lure crate", "11.4": "g6 singing", "11.5": "g6 Mops with coins",
   "11.6": "g4", "11.7": "g4", "11.8": "g4", "11.9": "g2", "11.10": "g4", "11.11": "g4", "11.12": "g4 with coins",
-  "11.14": "wash1 while Gloop looks", "11.15": "wash1", "11.16": "wash1", "11.17": "wash1 holding a dish",
+  "11.13": "g4k", "11.14": "wash1 while Gloop looks", "11.15": "wash1", "11.16": "wash1", "11.17": "wash1 holding a dish",
   "11.18": "the greasy pot", "11.19": "g4k with soup", "7.1": "g4k out front",
 };
 

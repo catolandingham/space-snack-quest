@@ -120,7 +120,7 @@ No new words.
 
 - A tap in the first 0.3 seconds of a new bubble used to be ignored. Now a yellow ring spreads in the bottom right corner to show it was heard, and the tap takes effect when the 0.3 seconds are up.
 - While a scene has control (a cutscene, a card, a capture), no action is offered: the ACTION button and the label by the thing clear at once. Before, the kitchen's GRAB label could stay drawn while the scene played.
-- COOK is gone from the kitchen range (the plan's recommendation). It only said "Cooking ticket 1." and changed nothing; the kitchen reads the same without it. Row 11.13 (COOK · ticket) is removed. The range's ring went with it, so `tests/data/ranges.json` was regenerated (only the range entry is gone).
+- COOK stays (review, 2026-11-07): the plan recommended removing it, but that is your call and the story still has Mops cooking. It is exactly as on main: COOK · ticket at the range, "Cooking ticket N.", no effect on the jar.
 
 ### The two awards now say what they were for (Brian, 2026-11-07)
 
