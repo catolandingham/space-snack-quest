@@ -1,7 +1,7 @@
 /**
  * Fair captures in Chapter 2, and every LOCKUP card says why (task T8).
- * (a) Reset section into g4 and stand still as Mops for 15 seconds: no security, no LOCKUP,
- *     even with Squatch put in plain sight of Gloop.
+ * (a) Reset section into g4 and stand still as Mops for 15 seconds: no security, no LOCKUP
+ *     (Squatch waits hidden). Positive control: Squatch standing in Gloop's view is seen even while the player is Mops.
  * (b) Each captor's catch opens LOCKUP, and the card's first line names a captor and a place.
  * (c) The kitchen bots shooing Mops costs no stars and is not counted as a capture.
  * (d) Kitchen bots cannot shoo Mops when he is out front; the kitchen search does not run out while the player is Mops.
@@ -32,15 +32,18 @@ const g = await startGame({ port: 8784, name: "capture-cause" });
     }
   }
   g.check("Reset section in g4, Mops still for 15 s: no security and no LOCKUP", !seen, seen);
-  // Worst case: Squatch standing at the counter in Gloop's view, while the player is Mops.
+  // Positive control: Squatch standing at the counter in Gloop's view is seen, whoever the player moves.
   await page.evaluate(() => {
-    const ss = window.__ss;
-    const n = ss.op;
+    const n = window.__ss.op;
     n.sqPose = "stand"; n.sq.x = 373; n.sq.y = 300;
   });
-  await sleep(3000);
-  const worst = await page.evaluate(() => ({ sec: !!window.__ss.ch2.sec, cur: window.__ss.op.cur && window.__ss.op.cur.text, mops: window.__ss.ch.mops }));
-  g.check("while the player is Mops, Gloop does not call security on Squatch", !worst.sec && worst.cur !== "LOCKUP" && worst.mops, worst);
+  let worst = null;
+  for (let i = 0; i < 30; i++) {
+    await sleep(100);
+    worst = await page.evaluate(() => ({ sec: !!window.__ss.ch2.sec, who: window.__ss.ch2.sec && window.__ss.ch2.sec.who, mops: window.__ss.ch.mops }));
+    if (worst.sec) break;
+  }
+  g.check("positive control: Squatch standing in Gloop's view is seen while the player is Mops", worst.sec && worst.mops, worst);
   g.check("no page errors (a)", errors.length === 0, errors);
   await ctx.close();
 }
@@ -147,6 +150,51 @@ for (const c of captors) {
   });
   g.check("the bots' search does not catch Squatch while the player is Mops", search.caught === 0 && !search.lines.includes("WOOKIE?!"), search);
   g.check("no page errors (d)", errors.length === 0, errors);
+  await ctx.close();
+}
+
+// (e) Kitchen window. Positive control: Squatch standing in Gloop's cone at the sink while the player
+// is Mops calls security. Hidden, he does not. The picture button puts him in the crate and back.
+for (const pose of ["stand", "hidden"]) {
+  const { ctx, page, errors } = await g.open("?ch=2");
+  await page.evaluate((pose) => {
+    const ss = window.__ss;
+    const n = ss.op;
+    ss.ch2.done = 0; ss.ch2.held = -1;
+    ss.resetTo("wash1");
+    ss.swapTo(true);
+    n.sqPose = pose; n.sq.x = 624; n.sq.y = 437;
+    ss.ch2.peek = 3; ss.ch2.eye = 0; ss.ch2.cook = "down"; ss.ch2.sec = null;
+  }, pose);
+  let sec = null;
+  for (let i = 0; i < 25; i++) {
+    await sleep(100);
+    sec = await page.evaluate(() => (window.__ss.ch2.sec ? window.__ss.ch2.sec.by : null));
+    if (sec) break;
+  }
+  if (pose === "stand") g.check("positive control: Gloop's window sees a standing Squatch while the player is Mops", sec === "sink", { sec });
+  else g.check("Gloop's window does not see Squatch hidden while the player is Mops", sec === null, { sec });
+  g.check(`no page errors (window, ${pose})`, errors.length === 0, errors);
+  await ctx.close();
+}
+{
+  const { ctx, page, errors } = await g.open("?ch=2");
+  const swap = await page.evaluate(() => {
+    const ss = window.__ss;
+    const n = ss.op;
+    ss.ch2.done = 0; ss.ch2.held = -1;
+    ss.resetTo("wash1");
+    ss.ch2.cook = "down"; ss.ch2.peekT = 99;
+    n.sq.x = 500; n.sq.y = 470; n.sqPose = "stand";
+    ss.picSwap();
+    const asMops = { mops: ss.ch.mops, pose: n.sqPose, x: n.sq.x, spot: ss.ch.spot };
+    ss.picSwap();
+    const back = { mops: ss.ch.mops, pose: n.sqPose, x: n.sq.x, y: n.sq.y };
+    return { asMops, back };
+  });
+  g.check("the picture button puts Squatch in the crate while the player is Mops", swap.asMops.mops && swap.asMops.pose === "hidden" && swap.asMops.spot === 63 && swap.asMops.x === 170, swap);
+  g.check("switching back puts Squatch where he was", !swap.back.mops && swap.back.pose === "stand" && swap.back.x === 500 && swap.back.y === 470, swap);
+  g.check("no page errors (picture button)", errors.length === 0, errors);
   await ctx.close();
 }
 

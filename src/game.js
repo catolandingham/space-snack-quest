@@ -7588,6 +7588,7 @@
         (k.out = -1),
         (k.timer = 0),
         (k.botsIn = !1),
+        (k.sqStash = null),
         (x.sing = !1),
         (p.alarm = !1),
         (p.alarmT = 1),
@@ -7920,7 +7921,7 @@
       if (k.peek > 0 || k.eye > 0) {
         k.peek > 0 && (k.peek -= l);
         let i = n.sq,
-          seen = n.ctrl && !x.mops && n.sqPose !== "hidden" && n.sqPose !== "ball" && vt(i.x, i.y - 50, xt.x, xt.y + 30, 1.95, 0.75, 520);
+          seen = n.ctrl && n.sqPose !== "hidden" && n.sqPose !== "ball" && vt(i.x, i.y - 50, xt.x, xt.y + 30, 1.95, 0.75, 520);
         if (seen) {
           k.eye || ((k.eye = 0.9), kV("gloop", "What is that by the sink?!"));
           if ((k.eye -= l) <= 0) {
@@ -8775,7 +8776,7 @@
         q ||
           P ||
           !n.ctrl ||
-          (x.mops && n.scene.startsWith("G")) ||
+          sqAway() ||
           n.sqPose === "hidden" ||
           n.sq.x < -100 ||
           n.T - ($s[l] ?? -9) < 3.5 ||
@@ -11562,7 +11563,21 @@
             : n.ctrl && ["S9", "S10", "S10d", "S11"].includes(n.scene) && !(n.scene === "S11" && x.doorOpen) && n.scene !== "S10d";
     }
     function _6(l, o) {
-      return p.state === "op" && O2() && !de() && l > c - 76 && o > 60 && o < 130 ? (yf(!x.mops), !0) : !1;
+      return p.state === "op" && O2() && !de() && l > c - 76 && o > 60 && o < 130 ? (picSwap(), !0) : !1;
+    }
+    function picSwap() {
+      if (n.scene.startsWith("G") && n.room === "kitchen")
+        if (!x.mops)
+          ((k.sqStash = { x: n.sq.x, y: n.sq.y, f: n.sq.f, pose: n.sqPose, spot: x.spot }),
+            (n.sqPose = "hidden"),
+            (x.spot = 63),
+            (n.sq.x = xe.x),
+            (n.sq.y = xe.y));
+        else if (k.sqStash) {
+          let st = k.sqStash;
+          ((n.sq.x = st.x), (n.sq.y = st.y), (n.sq.f = st.f), (n.sqPose = st.pose), (x.spot = st.spot), (k.sqStash = null));
+        }
+      yf(!x.mops);
     }
     function F6() {
       let l = cn;
@@ -15103,6 +15118,8 @@
         walkBounds: () => sn(),
         drain: drainQueue,
         sqAway: () => sqAway(),
+        picSwap,
+        canSwitch: () => O2(),
         CH2_CHIPS,
         ch2ChipKey: () => ch2ChipKey(),
       }),
