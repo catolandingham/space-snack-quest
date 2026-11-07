@@ -11,8 +11,7 @@
  * game's AudioContext ("running", icon "on"). On a second, fresh page the first tap on the picture
  * does the same.
  *
- * Expected to fail until task T21: the picture's top edge is within 16 pixels of the page top.
- * That check is printed but does not fail the suite yet.
+ * The picture's top edge is within 16 pixels of the page top (an expected failure until Phase 3).
  */
 import { startGame, sleep } from "./game-page.mjs";
 import { readRoute, playRoute, look } from "./route-player.mjs";
@@ -116,9 +115,9 @@ g.check("no page errors", errors.length === 0, errors);
   await second.ctx.close();
 }
 
-// Expected to fail until T21 pins the game to the top of a phone screen.
+// Phase 3 pinned the game to the top of a phone screen (it was an expected failure until then).
 const top = await page.evaluate(() => document.querySelector("canvas").getBoundingClientRect().top + window.scrollY);
-console.log(`${top <= 16 ? "PASS (T21 has landed: make this a real check)" : "EXPECTED FAIL (until T21)"} the picture's top edge is within 16 px of the page top (it is ${Math.round(top)} px)`);
+g.check("the picture's top edge is within 16 px of the page top", top <= 16, { top: Math.round(top) });
 
 await ctx.close();
 await g.finish("phone-tap");

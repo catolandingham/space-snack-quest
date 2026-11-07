@@ -52,9 +52,6 @@
             ? n.ctrl && Q.phase === "p3"
             : n.ctrl && ["S9", "S10", "S10d", "S11"].includes(n.scene) && !(n.scene === "S11" && x.doorOpen) && n.scene !== "S10d";
     }
-    function _6(l, o) {
-      return p.state === "op" && O2() && !de() && l > c - 76 && o > 60 && o < 130 ? (picSwap(), !0) : !1;
-    }
     function picSwap() {
       if (n.scene.startsWith("G") && n.room === "kitchen" && ch2.phase === "g3hide" && !x.mops) {
         (dn(xe.x, xe.y, 63), n.pulse.delete("kcrate"), HA());
@@ -407,27 +404,6 @@
           r("#ffcf33", 4));
         return;
       }
-    }
-    function a5() {
-      if ((t5(), n.scene.startsWith("M") && H.gone)) {
-        ((e.globalAlpha = 0.55),
-          m(c - 70, 64, 58, 58, 29),
-          r("#c3c9d1", 3),
-          Fe(c - 41, 116, 0.36, { f: -1 }),
-          (e.globalAlpha = 1),
-          g("Mops is gone", c - 41, 138, 13, "#59657d", "center", 800));
-        return;
-      }
-      if (!O2()) return;
-      let l = x.mops;
-      (m(c - 70, 64, 58, 58, 29),
-        r(l ? "#ffe3c4" : "#ffffff", 3),
-        l ? Re(c - 41, 112, 0.42, { f: -1 }) : Fe(c - 41, 116, 0.36, { f: -1 }),
-        (x.sing ||
-          (n.scene === "S9" && x.lureBot.look > 0) ||
-          (n.scene === "S11" && x.lureBot.look > 0) ||
-          (n.scene.startsWith("G") && ch2ChipKey() === "kitchen:mops")) &&
-          oV(c - 74, 60, 66, 66, 30));
     }
     function n5(l) {
       if (l === "terminal") {

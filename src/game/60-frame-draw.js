@@ -5,6 +5,7 @@
         !ch2.resetHold.fired &&
         ((ch2.resetHold.t += l), ch2.resetHold.t >= 0.75 && ((ch2.resetHold.fired = !0), (ch2.resetHold.on = !1), sectionReset())),
         noteSection(),
+        stallTick(l),
         d5(l),
         h5(),
         iA(l),
@@ -1071,78 +1072,6 @@
       ),
         o || (_ + T - 14, $ + R - 10, void 0));
     }
-    let Y0 = -1;
-    function S5() {
-      n.room === "gas" &&
-        (m(c - 268, 58, 200, 32, 10),
-        r(ch2.fuel ? "#e7fff3" : "#fff1f0", 3),
-        g(ch2.fuel ? "TANK FULL" : "TANK EMPTY", c - 168, 74, 15, ch2.fuel ? "#157a45" : "#b91c1c", "center", 900));
-      let l = n.scene.startsWith("M")
-        ? "CH4 \xB7 MARS"
-        : n.scene.startsWith("P")
-          ? "CH3 \xB7 PHOBOS"
-          : n.scene.startsWith("G")
-            ? "CH2 \xB7 GAS STOP"
-            : "CH1 \xB7 STORMTOP";
-      ge(17);
-      let o = n.room === "lobby",
-        i = o ? -8 : e.measureText(l).width + 28;
-      if ((o || (m(10, 10, i, 34, 17), r("#ffffff", 3), g(l, 24, 27, 17, y, "left")), n.starOn)) {
-        (n.stars > fh && (uh = n.T), (fh = n.stars));
-        let s = "\u2605 " + n.stars;
-        ge(18);
-        let q = e.measureText(s).width + 28,
-          d = Math.max(0, 1 - (n.T - uh) / 0.35),
-          A = 1 + 0.28 * Math.sin(d * Math.PI);
-        (e.save(),
-          e.translate(18 + i + q / 2, 27),
-          e.scale(A, A),
-          e.translate(-(18 + i + q / 2), -27),
-          m(18 + i, 10, q, 34, 17),
-          r(d > 0 ? "#ffe59a" : "#fff6dc", 3),
-          g(s, 18 + i + q / 2, 27, 18, "#b45309"),
-          e.restore(),
-          Y0 < 0 && (Y0 = n.T));
-        let T = n.T - Y0;
-        if (T < 3.5) {
-          ((e.globalAlpha = Math.min(1, (3.5 - T) * 2)), ge(15));
-          let R = e.measureText("\u2605 = points for finds").width + 22;
-          (m(18 + i, 50, R, 26, 13),
-            r("#ffffff", 2.5),
-            g("\u2605 = points for finds", 18 + i + R / 2, 63, 15, "#b45309", "center", 700),
-            (e.globalAlpha = 1));
-        }
-      }
-      (At(c - 58, 10, 46, 40, "#ffffff", 20),
-        m(c - 47, 24, 7, 12, 2),
-        r(y, 0),
-        e.beginPath(),
-        e.moveTo(c - 41, 24),
-        e.lineTo(c - 33, 18),
-        e.lineTo(c - 33, 42),
-        e.lineTo(c - 41, 36),
-        e.closePath(),
-        r(y, 0),
-        Va());
-      {
-        // Only the current chip. Empty means no chip: an earlier scene's goal never stays on screen.
-        let s = n.chip;
-        chipDrawn = "";
-        // No chip while a story bubble is up (rule 10); ambient chatter does not hide it. Long goals wrap.
-        // At the gas stop the chip sits between the diner sign (right edge 354) and the TANK label (left edge 692).
-        if (s && !(Y0 >= 0 && n.T - Y0 < 3.5) && !(n.cur && n.cur.k === "bub")) {
-          let q = de() ? 17 : 22,
-            gas = n.room === "gas",
-            cx = gas ? 523 : c / 2;
-          (ge(q), (chipDrawn = s));
-          let lines = zt(s, (gas ? 330 : 860) - 36, q),
-            d = Math.max(...lines.map((t) => e.measureText(t).width)) + 36;
-          (m(cx - d / 2, 50, d, lines.length * (q + 6) + 12, 18),
-            r("#ffcf33", 3),
-            lines.forEach((t, i) => g(t, cx, 59 + q / 2 + i * (q + 6), q)));
-        }
-      }
-    }
     function M5(l, o, s, cd) {
       if (l === "switch") {
         // Switch card: who you are now, their picture, and why. Waits for a tap like every card.
@@ -1932,7 +1861,7 @@
             ((e.globalAlpha = Math.min(1, i.t * 2)),
             g(i.s, i.x, i.y, 26, i.s === "\u2665" ? "#e5533d" : "#b45309", "center", 900),
             (e.globalAlpha = 1));
-      (Ka > 0 && ((e.fillStyle = "rgba(20,24,32," + Math.min(1, Ka).toFixed(3) + ")"), e.fillRect(0, 0, c, b)), drawRoomLine(), S5(), a5());
+      (Ka > 0 && ((e.fillStyle = "rgba(20,24,32," + Math.min(1, Ka).toFixed(3) + ")"), e.fillRect(0, 0, c, b)), drawRoomLine(), t5());
       let o = Bs();
       // The green VERB pill for actions with no caption. An action with a caption gets drawCap's "VERB · thing" label instead.
       if (o && !o.cap && (o.x || o.r > 0 || n.room === "deck" || n.room === "hall") && !de() && n.live.length === 0) {
@@ -1950,17 +1879,6 @@
         l && l.k === "panel" && gq(l.id, n.bt > 0.3),
         l && l.k === "bub" ? bq(l.b, !1) : !de() && n.live.length && bq(n.live[0], !0),
         window.__ss && (window.__ss.bubbleFrame = qq));
-      {
-        let i = n.sparks.filter((q) => q.x === 300),
-          s = i[i.length - 1];
-        if (s) {
-          ((e.globalAlpha = Math.min(1, s.t)), ge(16));
-          let q = e.measureText(s.s).width + 30;
-          (m(330, 10, q, 34, 17),
-            r(s.s.startsWith("\u2212") ? "#ffe3dc" : "#fff6dc", 3),
-            g(s.s, 330 + q / 2, 27, 16, s.s.startsWith("\u2212") ? "#b91c1c" : "#b45309", "center", 900));
-        }
-      }
       ((e.globalAlpha = 1), zG());
     }
     function zG() {

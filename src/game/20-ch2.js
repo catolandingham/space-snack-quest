@@ -165,16 +165,6 @@
     function armReset(l) {
       l ? (ch2.resetHold && ch2.resetHold.on) || (ch2.resetHold = { on: !0, t: 0, fired: !1 }) : ch2.resetHold && (ch2.resetHold.on = !1);
     }
-    function drawReset() {
-      let h = ch2.resetHold;
-      if (!h || !h.on) return;
-      let o = Math.min(1, h.t / 0.75);
-      (m(690, 598, 240, 30, 8),
-        r("#fffaf0", 3),
-        m(696, 604, 228 * o, 18, 6),
-        r("#8fdcff", 0),
-        g("Reset section", 810, 613, 14, "#1e2430", "center", 800));
-    }
     function gKnown(l) {
       return (
         l === "back" ||
@@ -2042,12 +2032,7 @@
           },
         }),
         yn(s),
-        s.sort((d, A) => d.y - A.y).forEach((d) => d.d()),
-        ch2.phase === "g3hide" &&
-          !de() &&
-          (m(c / 2 - 70, 100, 140, 34, 17),
-          r("#e5533d", 3),
-          g("HIDE! " + Math.max(0, Math.ceil(ch2.timer)), c / 2, 117, 18, "#ffffff", "center", 900)));
+        s.sort((d, A) => d.y - A.y).forEach((d) => d.d()));
       n.act &&
         n.act.verb === "LEAVE SOUP" &&
         (m(128, 300, 108, 32, 8),

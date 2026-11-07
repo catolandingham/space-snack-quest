@@ -1145,8 +1145,9 @@ await sleep(200);
 await page.evaluate(() => window.__ss.resetHold(false));
 await sleep(700);
 const released = await page.evaluate(() => ({ x: Math.round(window.__ss.op.sq.x), jar: window.__ss.ch2.jar }));
-const resetBtn = await page.$("button[aria-label='Reset section']");
-await page.evaluate(() => document.querySelector("button[aria-label='Reset section']").scrollIntoView({ block: "center" }));
+// Since Phase 3 the restart is the small round ↺ over the picture (#ss-reset), held the same way.
+const resetBtn = await page.$("#ss-reset");
+await page.evaluate(() => document.getElementById("ss-reset").scrollIntoView({ block: "center" }));
 await page.evaluate(() => { window.__ss.op.sq.x = 100; window.__ss.ch2.phase = "g1"; window.__ss.op.scene = "G1"; });
 await resetBtn.click({ delay: 200 });
 const tap = await page.evaluate(() => Math.round(window.__ss.op.sq.x));

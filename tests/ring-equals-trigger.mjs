@@ -14,7 +14,7 @@
  * (Mops swaying in S2, the brochure) is marked "moves" there and only its size is compared.
  * After a deliberate range change, regenerate it with: UPDATE_RANGES=1 node tests/ring-equals-trigger.mjs
  * It also checks that no hand-typed ring box is left for a hotspot in the source: every ring is drawn
- * from a spot. oV (the old box glow) is left only for the picture button and for story pointers, the
+ * from a spot. oV (the old box glow) is left only for story pointers, the
  * glow around a thing a line talks about while no action there is possible (pointer in 00-core.js).
  */
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
@@ -31,8 +31,8 @@ const g = await startGame({ port: 8792, name: "ring-equals-trigger" });
   const src = sourceFiles().slice(1).map((f) => readFileSync(f, "utf8")).join("");
   const boxes = [...src.matchAll(/\boV\(([^)]*)\)/g)].map((m) => m[0]).filter((c) => !c.startsWith("oV(l, o, i, s, q"));
   g.check(
-    "oV is called only by pointer and for the picture button (no hand-typed hotspot rings)",
-    boxes.length === 2 && boxes.includes("oV(c - 74, 60, 66, 66, 30)") && boxes.includes("oV(o, i, s, q, d)"),
+    "oV is called only by pointer (no hand-typed hotspot rings; the picture button is page text since Phase 3)",
+    boxes.length === 1 && boxes.includes("oV(o, i, s, q, d)"),
     boxes,
   );
   g.check("no ring is drawn from n.pulse with a typed box", !/pulse\.has\([^)]*\)\s*&&\s*oV\(/.test(src));

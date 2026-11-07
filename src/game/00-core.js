@@ -39,7 +39,7 @@
       font: {
         family: "Helvetica, Arial, sans-serif",
         mono: "monospace",
-        label: { fontSize: "13px", lineHeight: "18px", letterSpacing: "0" },
+        label: { fontSize: "14px", lineHeight: "19px", letterSpacing: "0" },
       },
       radius: { sm: 4, md: 8, lg: 12, xl: 16, full: 9999 },
       dataviz: { categorical: ["#2563eb", "#eab308", "#06b6d4"], other: "#9ca3af" },
@@ -173,29 +173,6 @@
             T.start(A),
             T.stop(A + o + 0.05));
         } catch {}
-    }
-    function Va() {
-      if (G) {
-        C([c - 50, 18, c - 22, 42], "#e5533d", 4);
-        return;
-      }
-      if (soundState() === "blocked") {
-        // Blocked until a tap: an orange question mark where the sound waves go.
-        (g("?", c - 25, 31, 20, "#e8590c", "center", 900),
-          soundLineShown() &&
-            (ge(13),
-            zt("Sound is blocked by this browser. Tap to try again, or allow sound for this site.", 300, 13).forEach((t, i, a) => {
-              (i === 0 && (m(c - 336, 56, 326, a.length * 18 + 12, 10), r("#fff6dc", 2.5)),
-                g(t, c - 173, 70 + i * 18, 13, "#1e2430", "center", 700));
-            })));
-        return;
-      }
-      ((e.strokeStyle = y),
-        (e.lineWidth = 3),
-        e.beginPath(),
-        e.arc(c - 31, 30, 6, -0.9, 0.9),
-        e.stroke(),
-        z >= 1 && (e.beginPath(), e.arc(c - 31, 30, 12, -0.8, 0.8), e.stroke()));
     }
     let Da = (l) => 440 * Math.pow(2, (l - 69) / 12),
       ji = (l, o, i = "triangle") => l.forEach((s, q) => lV(Da(s), o, i, 0.15, q * o * 0.7)),
@@ -727,9 +704,10 @@
           up();
           break;
         case "op":
-          (E5(), drawCap(), drawReset());
+          (E5(), drawCap());
           break;
       }
+      hudUpdate();
     }
     let pa = {
         sq: "Squatch",
@@ -1195,9 +1173,7 @@
           : ((n.stars += 25), n.funny++, n.sparks.push({ x: 300, y: 80, t: 2.4, s: "+25 FUNNY FIND!" })),
         D.pickup());
     }
-    let lf = [],
-      fh = 0,
-      uh = -9;
+    let lf = [];
     function of(l, o, i = "#ffcf33") {
       lf.push({ x: l, y: o, t: 0.8, c: i });
     }

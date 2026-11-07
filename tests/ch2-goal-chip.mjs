@@ -115,14 +115,12 @@ const steps = await page.evaluate(() => {
 g.check("g4 chip moves on from the jar to buying to carrying the soup", steps.jar !== steps.coins && steps.coins !== steps.soup && /soup/.test(steps.soup), steps);
 
 // The chip is hidden while a speech bubble is up.
+// Since Phase 3 the chip is page text over the picture (#ss-chip, src/game/80-hud.js): its width in
+// CSS pixels when it shows, 0 when it is hidden.
 const yellowRow = () =>
   page.evaluate(() => {
-    const c = document.querySelector("canvas");
-    const g2 = c.getContext("2d", { willReadFrequently: true });
-    const row = g2.getImageData(150, 58, 660, 1).data;
-    let yellow = 0;
-    for (let i = 0; i < row.length; i += 4) if (row[i] > 240 && row[i + 1] > 195 && row[i + 1] < 220 && row[i + 2] < 80) yellow++;
-    return yellow;
+    const el = document.getElementById("ss-chip");
+    return el && getComputedStyle(el).display !== "none" && el.textContent ? Math.round(el.getBoundingClientRect().width) : 0;
   });
 await page.evaluate(() => {
   const ss = window.__ss;

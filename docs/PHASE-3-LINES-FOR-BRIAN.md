@@ -46,3 +46,43 @@ The captors' joke lines after the card are the ones each catch already had (for 
 
 Checkpoints: Chapter 2 keeps its table (`applyG`). Chapters 1, 3 and 4 now have one each (`CH1_CHECKPOINTS`, `CH3_CHECKPOINTS`, `CH4_CHECKPOINTS` in `src/game/25-capture.js`): the deck, the S6 hall, the S9 lure and the S11 lure in Chapter 1 restart the way those sections begin; the pad, the temple and the ramp in Chapter 3 and the dock in Chapter 4 put Squatch back at the section's start (the van, the barrel, the pad's far side) with the rovers and the port bot at home. Other Chapter 1 scenes restart from the state saved when the scene began, as Reset section already did.
 
+## HUD. The status over the picture is page text, in fixed places, readable on a phone
+
+What changed on screen (your HUD decisions, 2026-11-07). The chapter tag, the stars, the goal chip, the countdown, the tank label and the "+100" pop used to be drawn into the picture, where a phone shrinks them to about 8 pixels. They are now page text laid over the picture, at 14 CSS pixels or more on a 375-wide phone (the chip is 15 on a phone, 20 on a computer). Each has a fixed home:
+
+- **Top left, where:** the chapter tag (for example "CH2 · GAS STOP"), then the ↺ button, then the stars.
+- **Top center, the goal:** the chip; under it the "HIDE!" countdown, the tank label at the gas stop, and the "+100 SNEAKY!" pop while it lasts. On a phone, where the top row has no room, the chip sits just under the top row, across the picture.
+- **Top right, who:** where both characters can be played (the kitchen once the cook is down, the hall from S9 to S11, the temple), two face circles: the one you are is bright, the other is dim, and the dim one glows when switching is the next step. Tapping a face switches to that character. Everywhere else only the face of the one you are shows, smaller, in the same corner, so "who am I" always has the same home. The old picture button, which showed only the other character, is gone.
+- **↺:** a small round button next to the chapter tag. Hold it for about three quarters of a second to restart the section (the ring fills inside it while you hold). The big "Reset section" button under the picture is gone. On a keyboard, holding R still works.
+- **Sound:** the sound button moved from the top right of the picture to the controls row under the picture. It shows the same three states as before (sound waves, a red line when muted, an orange question mark when the browser keeps sound off); the "Sound is blocked..." line (18.145) shows beside it.
+- **Prompts** still sit by the thing, cards still fill the picture (the HUD hides while a card is up), and bubbles still sit over the speaker. The chip still hides while a story bubble is up.
+- On a phone held upright the game now sits at the top of the screen (it was about 170 pixels down). On a computer it stays in the middle.
+- The help line under the game is 14 pixels (it was 13).
+
+| # | When it shows | In the game now | Another way to say it |
+| --- | --- | --- | --- |
+| 21.1 | The touch help line under the game (replaces 12.2's "Hold Reset section to restart.") | Stick: walk. Big button: do it. Tap the picture: next line. Hold ↺ to restart. | Stick: walk. Big button: do it. Tap the picture: next line. Hold the ↺ button to start this part again. |
+| 21.2 | Removed: "Mops is gone" under a gray Mops picture in Chapter 4 after Mops is taken. Only Squatch's face shows there now. | (removed) | (none) |
+
+### The stall hint
+
+After 60 seconds of play with no progress (no new beat, room, item or catch; time while a card or a bubble is up does not count) the chip shows the method line for that moment instead of the goal. The goal line comes back as soon as anything moves on. Method lines exist only where the chip names the goal and not the step (your chip rule); where the chip already names the step, it stays.
+
+| # | When it shows | In the game now | Another way to say it |
+| --- | --- | --- | --- |
+| 21.3 | Chapter 2, `back`: Squatch is in the crate by the pump, stuck for 60 seconds | Squatch: walk to the KITCHEN door | Squatch: go to the door that says KITCHEN |
+| 21.4 | Chapter 2, `g2`: Mops in the diner, stuck | Mops: walk up to Gloop at the counter | Mops: go stand at the counter |
+| 21.5 | Chapter 2, `wash1` or `wash5`, no dish in hand, stuck | Squatch: grab a dish from the rack by the window | Squatch: take a dish from the rack |
+| 21.6 | Chapter 2, `wash1` or `wash5`, holding a dish, stuck | Squatch: scrub the dish at the sink | Squatch: wash the dish at the sink |
+| 21.7 | Chapter 2, `g3h`: in the crate while the bots argue, stuck | Squatch: stay in the crate until the bots leave | Squatch: wait in the crate |
+| 21.8 | Chapter 2, `g4`: Mops out front without coins, stuck | Mops: walk to the tip jar on the counter | Mops: go to the tip jar |
+| 21.9 | Chapter 2, `g4k` or `g4l`: Mops carrying the soup in the kitchen, stuck | Mops: walk to the crate while the bots look away | Mops: go to the crate when the bots turn around |
+| 21.10 | Chapter 2, `g6`: the lure, Squatch not hidden, stuck | Squatch: hide in the crate by the ship | Squatch: get in the crate by the ship |
+| 21.11 | Chapter 2, `g6`: the lure, Squatch in the crate, stuck | Squatch: sing to call the bots over | Squatch: sing so the bots come |
+| 21.12 | Chapter 1, `S11`: the bot guards the door, Squatch not hidden, stuck | Squatch: hide behind the plant | Squatch: get behind the plant |
+| 21.13 | Chapter 1, `S11`: Squatch behind the plant, stuck | Squatch: sing to call the bot over | Squatch: sing so the bot comes |
+| 21.14 | Chapter 3, `p3:hid`: Squatch in the echo spot, stuck | Squatch: sing to call the rovers over | Squatch: sing so the rovers come |
+| 21.15 | Chapter 3, `p4a`: the rover on the ramp, Squatch not hidden, stuck | Squatch: hide in the barrel | Squatch: get in the barrel |
+| 21.16 | Chapter 3, `p4a`: Squatch in the barrel, stuck | Squatch: sing to call the rover over | Squatch: sing so the rover comes |
+| 21.17 | Chapter 4, `m1`: the dock, Squatch not hidden, stuck | Squatch: hide in the middle trash can | Squatch: get in the middle trash can |
+| 21.18 | Chapter 4, `m1`: Squatch in the middle trash can, stuck | Squatch: sing to call the bot over | Squatch: sing so the bot comes |

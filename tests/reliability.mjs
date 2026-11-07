@@ -173,13 +173,14 @@ const los = await page.evaluate(() => {
 });
 check("pump cover still blocks sight under it and through it", los.open === true && los.underPump === false && los.farSide === false && los.throughBody === false, los);
 
-const deskBtn = await page.$("button[aria-label='Reset section']");
-check("desktop shows the Reset section button", !!deskBtn, {});
+// Since Phase 3 the restart is the small round ↺ over the picture (#ss-reset, src/game/80-hud.js).
+const deskBtn = await page.$("#ss-reset");
+check("desktop shows the ↺ restart button", !!deskBtn, {});
 await page.setViewport({ width: 396, height: 844, deviceScaleFactor: 1 });
 await sleep(200);
-const phoneBtn = await page.$("button[aria-label='Reset section']");
+const phoneBtn = await page.$("#ss-reset");
 const phoneBox = phoneBtn ? await phoneBtn.boundingBox() : null;
-check("phone shows the Reset section button", !!(phoneBox && phoneBox.width > 40 && phoneBox.height > 30), phoneBox);
+check("phone shows the ↺ restart button", !!(phoneBox && phoneBox.width >= 28 && phoneBox.height >= 28), phoneBox);
 
 await page.evaluate(() => {
   const n = window.__ss.op;
