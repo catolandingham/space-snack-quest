@@ -7596,7 +7596,8 @@
     }
     function drawCap() {
       let a = n.act;
-      if (!a || !a.cap || !n.ctrl) return;
+      // No caption over the crate's own LEAVE SOUP label, or over the dish while it is being scrubbed.
+      if (!a || !a.cap || !n.ctrl || a.verb === "LEAVE SOUP" || (n.room === "kitchen" && k.dishT > 0)) return;
       let x = a.x,
         y = Math.max(28, a.y - 36);
       (m(x - 78, y - 14, 156, 28, 8), r("#fffaf0", 3), g(a.verb + " \u00b7 " + a.cap, x, y, 14, "#1e2430", "center", 800));
@@ -8005,6 +8006,7 @@
         if ((i === "g1" || i === "back") && n.sqPose !== "hidden" && hV(l, ht.x, ht.y, 80) && i === "g1")
           return {
             verb: "HIDE",
+            cap: "crate",
             x: ht.x,
             y: ht.y - 100,
             r: 0,
@@ -8013,10 +8015,11 @@
               (dn(ht.x, ht.y, 60), n.pulse.delete("crateg"), zA());
             },
           };
-        if (i === "back" && hV(l, Sa.x, Sa.y + 40, 90)) return { verb: "ENTER", x: Sa.x, y: Sa.y - 100, r: 0, hot: !0, f: DA };
+        if (i === "back" && hV(l, Sa.x, Sa.y + 40, 90)) return { verb: "ENTER", cap: "kitchen door", x: Sa.x, y: Sa.y - 100, r: 0, hot: !0, f: DA };
         if (i === "g6" && n.sqPose !== "hidden" && hV(l, _e.x, _e.y, 80))
           return {
             verb: "HIDE",
+            cap: "crate",
             x: _e.x,
             y: _e.y - 100,
             r: 0,
@@ -8031,6 +8034,7 @@
           return x.sing
             ? {
                 verb: "STOP",
+                cap: "singing",
                 x: _e.x,
                 y: _e.y - 110,
                 r: 0,
@@ -8040,6 +8044,7 @@
               }
             : {
                 verb: "SING",
+                cap: "lure song",
                 x: _e.x,
                 y: _e.y - 110,
                 r: 0,
@@ -8050,11 +8055,12 @@
               };
       }
       if (n.room === "gas" && x.mops && i === "g6" && k.has === "coins" && hV(o, k.rust.x, 470, 110))
-        return { verb: "GIVE", x: k.rust.x, y: 330, r: 0, hot: !0, f: QA };
+        return { verb: "GIVE", cap: "coins", x: k.rust.x, y: 330, r: 0, hot: !0, f: QA };
       if (n.room === "diner" && x.mops) {
         if (!k.cloche && hV(o, Ma.x, Ma.y, 70))
           return {
             verb: "LIFT",
+            cap: "lid",
             x: Ma.x,
             y: 270,
             r: 0,
@@ -8065,6 +8071,7 @@
         if (!k.flipFrame && hV(o, oa.x, oa.y, 70))
           return {
             verb: "FLIP",
+            cap: "picture",
             x: oa.x,
             y: 120,
             r: 0,
@@ -8075,6 +8082,7 @@
         if (!k.flipCard && hV(o, B0.x, B0.y, 70))
           return {
             verb: "FLIP",
+            cap: "postcard",
             x: B0.x,
             y: 170,
             r: 0,
@@ -8084,10 +8092,11 @@
                 TV([{ k: "panel", id: "postcard" }, v("mops", "Furry pancakes... on Mars. Hm.")]));
             },
           };
-        if (i === "g2" && hV(o, Ul.x, Ul.y, 80)) return { verb: "ORDER", x: Ul.x, y: 210, r: 0, hot: !0, f: UA };
+        if (i === "g2" && hV(o, Ul.x, Ul.y, 80)) return { verb: "ORDER", cap: "counter", x: Ul.x, y: 210, r: 0, hot: !0, f: UA };
         if ((i === "g4" || i === "g6d") && k.jar > 0 && !k.has && hV(o, Dl.x, Dl.y, 70))
           return {
             verb: "GRAB",
+            cap: "tip jar",
             x: Dl.x,
             y: 290,
             r: 0,
@@ -8099,6 +8108,7 @@
         if (i === "g4" && !k.has && hV(o, Ul.x, Ul.y, 90))
           return {
             verb: "ASK",
+            cap: "Gloop",
             x: Ul.x,
             y: 210,
             r: 0,
@@ -8117,6 +8127,7 @@
         if (i === "g4" && k.has === "coins" && hV(o, Ul.x, Ul.y, 80))
           return {
             verb: "BUY",
+            cap: "soup 30",
             x: Ul.x,
             y: 210,
             r: 0,
@@ -8159,6 +8170,7 @@
       if (n.room === "kitchen" && x.mops && hV(o, Hn.x, 500, 110))
         return {
           verb: "COOK",
+          cap: "ticket",
           x: Hn.x,
           y: 360,
           r: 0,
@@ -8184,6 +8196,7 @@
         if (s && (k.warn > 0 || k.peek > 0) && n.sqPose !== "hidden" && n.sqPose !== "ball")
           return {
             verb: "ROLL",
+            cap: "into a ball",
             x: l.x,
             y: l.y - 150,
             r: 0,
@@ -8195,6 +8208,7 @@
         if (s && !n.found.has("recipe") && hV(l, la.x, la.y, 80))
           return {
             verb: "OPEN",
+            cap: "recipe",
             x: la.x,
             y: 160,
             r: 0,
@@ -8207,6 +8221,7 @@
         if (s && k.held < 0 && k.done < q + 3 && hV(l, 660, 430, 80))
           return {
             verb: "GRAB",
+            cap: "dish",
             x: 660,
             y: 120,
             r: 0,
@@ -8220,10 +8235,11 @@
                 TV([{ k: "panel", id: "tk" + k.held }]));
             },
           };
-        if (s && k.held > 0 && hV(l, KV.x, KV.y, 80)) return { verb: "SCRUB", x: KV.x, y: 270, r: 0, hot: !0, f: $h };
+        if (s && k.held > 0 && hV(l, KV.x, KV.y, 80)) return { verb: "SCRUB", cap: "dish", x: KV.x, y: 270, r: 0, hot: !0, f: $h };
         if (i === "g3hide" && n.sqPose !== "hidden" && hV(l, xe.x, xe.y, 80))
           return {
             verb: "HIDE",
+            cap: "crate",
             x: xe.x,
             y: xe.y - 110,
             r: 0,
@@ -8234,9 +8250,9 @@
           };
       }
       return n.room === "kitchen" && x.mops && k.greasy && hV(o, KV.x, KV.y, 90)
-        ? { verb: "MOP", x: KV.x, y: 270, r: 0, hot: !0, f: BA }
+        ? { verb: "MOP", cap: "pot", x: KV.x, y: 270, r: 0, hot: !0, f: BA }
         : n.room === "kitchen" && x.mops && i === "g4k" && hV(o, xe.x, xe.y, 100)
-          ? { verb: "LEAVE SOUP", x: xe.x + 10, y: xe.y - 108, r: 0, hot: !0, f: PA }
+          ? { verb: "LEAVE SOUP", cap: "crate", x: xe.x + 10, y: xe.y - 108, r: 0, hot: !0, f: PA }
           : null;
     }
     function Ws() {
@@ -15225,10 +15241,17 @@
     let f = V.label.charAt(0) === "!",
       u = f ? V.label.slice(1) : V.label,
       h = u !== "",
+      long = (u || "ACTION").length > 7,
       c = {
-        width: V.size,
+        width: long ? "auto" : V.size,
+        minWidth: V.size,
+        maxWidth: long ? 200 : V.size,
+        padding: long ? "0 14px" : 0,
         height: V.size,
-        borderRadius: "50%",
+        borderRadius: V.size / 2,
+        textAlign: "center",
+        lineHeight: 1.1,
+        whiteSpace: "normal",
         background: h ? "#2bc48a" : "#3478f6",
         color: "#ffffff",
         border: "3px solid #1e2430",
@@ -15236,7 +15259,7 @@
         alignItems: "center",
         justifyContent: "center",
         fontWeight: 800,
-        fontSize: Math.round(V.size * ((u || "ACTION").length > 7 ? 0.14 : (u || "ACTION").length > 5 ? 0.17 : 0.22)),
+        fontSize: long ? Math.max(16, Math.round(V.size * 0.17)) : Math.round(V.size * ((u || "ACTION").length > 5 ? 0.17 : 0.22)),
         touchAction: "none",
         userSelect: "none",
         WebkitUserSelect: "none",
@@ -15245,7 +15268,7 @@
         flex: "0 0 auto",
         boxSizing: "border-box",
         cursor: "pointer",
-        letterSpacing: 1,
+        letterSpacing: long ? 0 : 1,
       };
     return (0, pe.jsxs)("div", {
       ref: t,

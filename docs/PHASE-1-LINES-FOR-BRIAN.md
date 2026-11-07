@@ -90,3 +90,30 @@ No new words. What changed on screen: bubbles in the kitchen now sit over the pe
 ## T10. The soup sits on Mops' head and looks like soup
 
 No new words. The bowl now rests on top of Mops' head (it used to float about 130 pixels above him) and bobs with him. It is a white bowl, 56 pixels wide, with yellow soup, two bits of vegetable, a spoon sticking out, and three wavy lines of steam. No label.
+
+## T11. The ACTION button names the thing
+
+The big touch button, and the small caption drawn on the picture by the spot, now read "VERB · thing" for every Chapter 2 action. The verbs are the game's existing ones; the things are new. The button turns into a wider pill for these labels, with letters at least 16 pixels.
+
+| # | Where | In the game now | Another way to say it |
+| --- | --- | --- | --- |
+| 11.1 | Crate by the pump (g1), crate in the kitchen (g3), crate by the ship ramp (g6) | HIDE · crate | HIDE · box |
+| 11.2 | KITCHEN door on the lot | ENTER · kitchen door | ENTER · kitchen |
+| 11.3 | Hidden in the crate by the ramp | SING · lure song | SING · song |
+| 11.4 | Singing in the crate | STOP · singing | STOP · song |
+| 11.5 | Mops by Rusty with the coins | GIVE · coins | PAY · Rusty |
+| 11.6 | Blorp's covered plate | LIFT · lid | LIFT · plate lid |
+| 11.7 | Employee of the Month frame | FLIP · picture | FLIP · frame |
+| 11.8 | Postcard on the wall | FLIP · postcard | (none) |
+| 11.9 | Counter, first visit | ORDER · counter | ASK · for work (would change the verb too) |
+| 11.10 | Tip jar | GRAB · tip jar | GRAB · jar |
+| 11.11 | Counter, before buying | ASK · Gloop | ASK · prices |
+| 11.12 | Counter, with coins | BUY · soup 30 | (plan wording) |
+| 11.13 | The range | COOK · ticket | COOK · order |
+| 11.14 | Anywhere, while Gloop is about to look | ROLL · into a ball | ROLL · ball |
+| 11.15 | Recipe on the shelf | OPEN · recipe | READ · recipe |
+| 11.16 | Dish rack at the order window | GRAB · dish | GRAB · plate |
+| 11.17 | Sink, holding a dish | SCRUB · dish | WASH · dish |
+| 11.18 | Sink, greasy pot, as Mops | MOP · pot | MOP · greasy pot |
+| 11.19 | Kitchen crate, as Mops with the soup | LEAVE SOUP · crate (the picture keeps its own "LEAVE SOUP" label with an arrow) | LEAVE · soup |
+| 11.20 | Already captioned before this phase and unchanged | ENTER · diner door, ENTER · kitchen, EXIT · the lot, BOARD · ship, FRONT · diner | (none) |
