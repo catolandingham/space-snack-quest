@@ -68,3 +68,17 @@ A short line over the fade when a character changes room during play (it fades a
 | 6.12 | Mops walks back from the diner to the kitchen (BACK · kitchen) | Mops goes back to the kitchen. | Mops heads back in. |
 | 6.13 | Mops carries the soup into the kitchen | Mops brings the soup into the kitchen. | Mops brings the soup in. |
 | 6.14 | Mops takes the coins out to the lot | Mops goes out to the pump. | Mops heads out to Rusty. |
+
+## T8. No capture the player cannot prevent, and every lockup card says why
+
+The LOCKUP card's second line used to be a short joke caption ("Nozzle's ready.", "Counter's closed.", "Seen from the window.", "No coins, no lot."). That line now says who saw Squatch and where. The captor's joke bubbles still come after the card, unchanged, so "Counter's closed. Pen's open." now follows a cause line. Say if you want that bubble changed too.
+
+| # | When it shows | In the game now | Another way to say it |
+| --- | --- | --- | --- |
+| 8.1 | LOCKUP card, caught by the pump bots on the lot | A pump bot saw Squatch on the lot. Security caught him. | A pump bot spotted Squatch. Security caught him. |
+| 8.2 | LOCKUP card, Gloop at the diner counter | Gloop saw Squatch at the counter. Security caught him. | (plan draft) |
+| 8.3 | LOCKUP card, Blorp in the diner | Blorp saw Squatch in the diner. Security caught him. | Blorp spotted Squatch by his soup. Security caught him. |
+| 8.4 | LOCKUP card, Gloop through the kitchen window | Gloop saw Squatch at the sink. Security caught him. | Gloop saw Squatch through the window. Security caught him. |
+| 8.5 | LOCKUP card, Rusty on the lot | Rusty saw Squatch by the pump. Security caught him. | Rusty spotted Squatch at his pump. Security caught him. |
+| 8.6 | Any other LOCKUP (none in Chapter 2 today) | Security caught Squatch. | (none) |
+| 8.7 | Pump bot bubble when the bots shoo Mops in the kitchen (replaces "Former Ganitor? SHOO!"; costs no stars now) | No goats with food past here! Shoo! | Hey! No goats by the crate! Shoo! |

@@ -7375,22 +7375,24 @@
     function Bl(l, o, i, s, q, d) {
       (e.beginPath(), e.moveTo(l, o), e.arc(l, o, q, i - s, i + s), e.closePath(), (e.fillStyle = d), e.fill());
     }
-    function Pn(l, o, i) {
+    function Pn(l, o, i, free) {
+      // free: a shoo, not a capture. It costs no stars and does not count against the ghost bonus.
       ((n.ctrl = !1),
         (n.act = null),
         (n.sq.moving = !1),
         (n.mo.moving = !1),
-        (x.ghost = !1),
-        k.caught++,
+        free || ((x.ghost = !1), k.caught++),
         (x.sing = !1),
         D.caught(),
         J([
           ...i,
           N(() => {
             let s = n.starOn;
-            ((n.stars = Math.max(0, n.stars - 100)),
-              s && n.sparks.push({ x: 300, y: 80, t: 2.4, s: "\u2212100 CAUGHT" }),
-              Dt("caught", "", o, "caught"),
+            (free
+              ? Dt("shoo", "", o, "shoo")
+              : ((n.stars = Math.max(0, n.stars - 100)),
+                s && n.sparks.push({ x: 300, y: 80, t: 2.4, s: "\u2212100 CAUGHT" }),
+                Dt("caught", "", o, "caught")),
               l(),
               (n.ctrl = !0));
           }),
@@ -7399,8 +7401,23 @@
     function Jh() {
       return { ox: k.rust.x, oy: 400, a: k.rust.f > 0 ? 0.5 : Math.PI - 0.5 };
     }
-    function sSec(l) {
-      k.sec || ((k.sec = { x: 980, y: 520, hide: 0, mode: "come", by: l || "diner" }), kV("bot", "SECURITY!"), D.alarm());
+    function sSec(l, who) {
+      k.sec ||
+        ((k.sec = { x: 980, y: 520, hide: 0, mode: "come", by: l || "diner", who: who || "" }), kV("bot", "SECURITY!"), D.alarm());
+    }
+    // The first line of the LOCKUP card: who saw Squatch and where. The captor's joke comes after, in bubbles.
+    function lockupCause(by, who) {
+      return by === "pump"
+        ? "A pump bot saw Squatch on the lot. Security caught him."
+        : by === "diner"
+          ? who === "blorp"
+            ? "Blorp saw Squatch in the diner. Security caught him."
+            : "Gloop saw Squatch at the counter. Security caught him."
+          : by === "sink"
+            ? "Gloop saw Squatch at the sink. Security caught him."
+            : by === "rust"
+              ? "Rusty saw Squatch by the pump. Security caught him."
+              : "Security caught Squatch.";
     }
     function qSec(l) {
       let s = k.sec;
@@ -7418,12 +7435,13 @@
         (s.y += (dy / d) * 130 * l),
         d < 48 &&
           ((n.jailBy = k.sec.by || ""),
+          (n.jailWho = k.sec.who || ""),
           (k.sec = null),
           (n.ctrl = !1),
           (n.act = null),
           (n.sq.moving = !1),
           J([
-            { k: "card", id: "jail", text: "LOCKUP", by: n.jailBy },
+            { k: "card", id: "jail", text: "LOCKUP", by: n.jailBy, cause: lockupCause(n.jailBy, n.jailWho) },
             ...(n.jailBy === "pump"
               ? [v("bot", "Report him or fuel him?"), v("sq", "Pancakes. Park the nozzle.")]
               : n.jailBy === "diner"
@@ -7807,7 +7825,7 @@
               (k.out = -1),
               (k.argueT = 2.4),
               kV(k.outT % 2 ? "bot" : "bot2", k.outT % 2 ? "You watch the crate." : "No, YOU watch the crate."))),
-        n.ctrl && x.mops && k.out >= 0)
+        n.ctrl && x.mops && n.room === "kitchen" && k.out >= 0)
       ) {
         let o = Zh(k.bots[k.out]);
         vt(n.mo.x, n.mo.y - 40, o.ox, o.oy, o.a, 0.6, o.len) &&
@@ -7816,7 +7834,8 @@
               ((n.mo.x = Ln.x), (n.mo.y = Ln.y), (k.out = -1), (k.argueT = 2), (k.bots[0].f = 1), (k.bots[1].f = -1));
             },
             "bots",
-            [v(k.out ? "bot2" : "bot", "Former Ganitor? SHOO!"), v("mops", "Just passing through.")],
+            [v(k.out ? "bot2" : "bot", "No goats with food past here! Shoo!"), v("mops", "Just passing through.")],
+            !0,
           );
       }
       if (k.phase === "g6") {
@@ -7897,7 +7916,7 @@
       if (k.peek > 0 || k.eye > 0) {
         k.peek > 0 && (k.peek -= l);
         let i = n.sq,
-          seen = n.ctrl && n.sqPose !== "hidden" && n.sqPose !== "ball" && vt(i.x, i.y - 50, xt.x, xt.y + 30, 1.95, 0.75, 520);
+          seen = n.ctrl && !x.mops && n.sqPose !== "hidden" && n.sqPose !== "ball" && vt(i.x, i.y - 50, xt.x, xt.y + 30, 1.95, 0.75, 520);
         if (seen) {
           k.eye || ((k.eye = 0.9), kV("gloop", "What is that by the sink?!"));
           if ((k.eye -= l) <= 0) {
@@ -7946,6 +7965,7 @@
         n.room !== "gas" && qSec(l),
         k.phase === "g3hide" &&
           n.ctrl &&
+          !x.mops &&
           ((k.timer -= l),
           k.timer <= 0 &&
             n.sqPose !== "hidden" &&
@@ -8712,6 +8732,7 @@
         q ||
           P ||
           !n.ctrl ||
+          (x.mops && n.scene.startsWith("G")) ||
           n.sqPose === "hidden" ||
           n.sq.x < -100 ||
           n.T - ($s[l] ?? -9) < 3.5 ||
@@ -8722,7 +8743,7 @@
       let _ = n.room === "hall" ? o - B.camX : o;
       (n.sparks.push({ x: _ - 58, y: i - 200, t: 2.2, s: "!" }),
         kV(l, XA[l] || "!!"),
-        (l === "gloop" || l === "blorp") && n.scene.startsWith("G") && sSec("diner"));
+        (l === "gloop" || l === "blorp") && n.scene.startsWith("G") && sSec("diner", l));
       let $ = n.sq.x - o,
         gV = n.sq.y - i,
         oe = Math.hypot($, gV) || 1,
@@ -11469,7 +11490,7 @@
     function O2() {
       return n.scene === "G6"
         ? !1
-        : n.room === "kitchen" && n.ctrl && (k.cook === "down" || k.cook === "gone" || k.phase === "wash5")
+        : n.room === "kitchen" && n.ctrl && !k.sec && (k.cook === "down" || k.cook === "gone" || k.phase === "wash5")
           ? !0
           : n.scene === "P3"
             ? n.ctrl && Q.phase === "p3"
@@ -13888,7 +13909,8 @@
             g("out cold", 360, 470, 12, "#1e2430", "center", 700),
             Re(470, 490, he * 0.85, { f: 1 }));
         else Re(480, 470, he * 0.85, { f: 1, eyes: "closed" });
-        (g(o, c / 2, 110, 44, "#ffffff", "center", 800), g(cap, c / 2, 156, 22, "#8fdcff", "center", 700));
+        (g(o, c / 2, 110, 44, "#ffffff", "center", 800),
+          zt(cd && cd.cause ? cd.cause : cap, 820, 22).forEach((t, i) => g(t, c / 2, 156 + i * 28, 22, "#8fdcff", "center", 700)));
         return;
       }
       g(o, c / 2, b / 2, 50, "#ffffff", "center", 800);
