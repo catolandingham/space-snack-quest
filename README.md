@@ -1,5 +1,22 @@
 # Space Snack Quest
 
+## Source and build
+
+The game's source is in `src/`. `index.html` is build output: never edit it by hand.
+
+- `src/game.js` is the game (Chapters 1 to 4, the page, the touch controls).
+- `src/vendor-react.js` is the React runtime. Leave it alone.
+- `src/index.template.html` is the page around the program.
+
+```
+npm run build
+npm run check-build
+```
+
+`npm run build` writes `index.html` from `src/`. `npm run check-build` fails if the committed `index.html` is not a fresh build of `src/`. The build compacts the code with esbuild but keeps every name, so a name seen in the browser can be found in `src/game.js`.
+
+`src/` is the readable copy of `index.html` at commit `15051ec`, made with Prettier 3.9.10 (`--print-width 140`). `node tools/equivalence.mjs` is the one-time proof that the build is the same program as that commit.
+
 ## Progression tests
 
 `tests/progression.mjs` plays the real game loop in headless Chrome. It checks the hangar door, the Mars reunion, Rusty's sighting through security and a section restart, pump sight, and the closet G-sign and bucket lanes.
