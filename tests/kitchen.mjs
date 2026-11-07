@@ -14,6 +14,7 @@ import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { chromePath } from "./chrome-path.mjs";
 
 let puppeteer;
 try {
@@ -23,7 +24,7 @@ try {
   console.error("From the repo root: npm install --no-save puppeteer-core");
   process.exit(1);
 }
-const chrome = process.env.CHROME || "/usr/bin/google-chrome";
+const chrome = chromePath();
 if (!existsSync(chrome)) {
   console.error(`Chrome was not found at ${chrome}.`);
   process.exit(1);

@@ -1,5 +1,27 @@
 # Spec notes
 
+## Where to start
+
+Every agent reads `CLAUDE.md` at the repo root first. It holds the short rules, how to build and test, and how to open a scene for debugging.
+
+| Doc | What it is |
+| --- | --- |
+| [`../CLAUDE.md`](../CLAUDE.md) | Rules for every agent, under 60 lines |
+| [`REVIEW-RULES.md`](REVIEW-RULES.md) | Brian's full review checklist, word for word from the Nov 2 handoff |
+| [`PLAN-2026-11-06.md`](PLAN-2026-11-06.md) | The plan: phases, decisions, and a brief for every task (T1 to T28) |
+| [`CODE-REVIEW-2026-11-06.md`](CODE-REVIEW-2026-11-06.md) | How the code is laid out, what the tests cover, and what blocks progress |
+| [`DESIGN-CHECKLISTS.md`](DESIGN-CHECKLISTS.md) | Design checklists for scenes and prompts |
+| [`MASTER-BACKLOG.md`](MASTER-BACKLOG.md) | Status of every backlog item |
+| [`HERMES-GO.md`](HERMES-GO.md) | The first Hermes job |
+| [`playtests/`](playtests/) | Transcribed playtest recordings |
+| [`grok-archive/`](grok-archive/) | Everything the Grok threads held, with a feedback index |
+| [`story-bible.md`](story-bible.md) | The Chapter 2 kitchen revision |
+| [`STORY-DECISIONS.md`](STORY-DECISIONS.md) | Open story conflicts waiting on Brian |
+| [`original-story-spine.md`](original-story-spine.md) | The original story spine |
+| [`spine-archive.md`](spine-archive.md) | The previous on-repo story note |
+
+## Story precedence
+
 Story precedence: the original story stays, except the Chapter 2 kitchen sequence in `docs/story-bible.md`.
 
 Open conflicts outside that kitchen are in `docs/STORY-DECISIONS.md`. Each one stays pending until Brian decides that item. The previous on-repo story note is in `docs/spine-archive.md`.

@@ -3,10 +3,11 @@
  *   CHROME=/usr/bin/google-chrome node tests/reliability.mjs
  */
 import http from "node:http";
-import { existsSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { chromePath } from "./chrome-path.mjs";
 
 let puppeteer;
 try {
@@ -15,7 +16,7 @@ try {
   console.error("puppeteer-core is not installed, so the reliability tests cannot start.");
   process.exit(1);
 }
-const chrome = process.env.CHROME || "/usr/bin/google-chrome";
+const chrome = chromePath();
 if (!existsSync(chrome)) {
   console.error(`Chrome was not found at ${chrome}.`);
   process.exit(1);
@@ -188,8 +189,10 @@ await page.evaluate(() => {
 });
 await sleep(200);
 const png = await page.evaluate(() => document.querySelector("canvas").toDataURL("image/png"));
-writeFileSync("/opt/cursor/artifacts/reliability_gas_restart.png", Buffer.from(png.slice(png.indexOf(",") + 1), "base64"));
-await page.screenshot({ path: "/opt/cursor/artifacts/reliability_phone_reset.png" });
+const outDir = join(root, "tests", "out");
+mkdirSync(outDir, { recursive: true });
+writeFileSync(join(outDir, "reliability_gas_restart.png"), Buffer.from(png.slice(png.indexOf(",") + 1), "base64"));
+await page.screenshot({ path: join(outDir, "reliability_phone_reset.png") });
 
 await browser.close();
 server.close();

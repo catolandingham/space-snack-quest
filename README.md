@@ -1,5 +1,33 @@
 # Space Snack Quest
 
+## Source and build
+
+The game's source is in `src/`. `index.html` is build output: never edit it by hand.
+
+- `src/game.js` is the game (Chapters 1 to 4, the page, the touch controls).
+- `src/vendor-react.js` is the React runtime. Leave it alone.
+- `src/index.template.html` is the page around the program.
+
+```
+npm run build
+npm run check-build
+```
+
+`npm run build` writes `index.html` from `src/`. `npm run check-build` fails if the committed `index.html` is not a fresh build of `src/`. The build compacts the code with esbuild but keeps every name, so a name seen in the browser can be found in `src/game.js`.
+
+`src/` is the readable copy of `index.html` at commit `15051ec`, made with Prettier 3.9.10 (`--print-width 140`). `node tools/equivalence.mjs` is the one-time proof that the build is the same program as that commit.
+
+## Debug link
+
+Add these to the address of `index.html` to jump into the game. Without them, nothing changes.
+
+- `?ch=2` starts Chapter 2 from the title, even if it is still locked.
+- `?ch=2&phase=wash1` starts Chapter 2, then jumps to that checkpoint (the same table Reset section uses, `applyG` in `src/game.js`).
+- `?scene=P3` starts that scene's chapter, then opens the scene.
+- `&debug=1` shows a line under the game, updated four times a second: chapter, scene, phase, room, who you control, pose, the prompt, the button label, the chip, security, and the kitchen warn and peek timers. The Copy button copies it. The backtick key hides and shows it.
+
+For example, `index.html?ch=2&phase=wash1&debug=1` opens the kitchen sink with the line showing `phase wash1` and `control Squatch`.
+
 ## Progression tests
 
 `tests/progression.mjs` plays the real game loop in headless Chrome. It checks the hangar door, the Mars reunion, Rusty's sighting through security and a section restart, pump sight, and the closet G-sign and bucket lanes.
@@ -35,13 +63,12 @@ These came up in the notes and were not given a new behavior:
 From the repo root:
 
 ```
-npm install --no-save puppeteer-core
-CHROME=/usr/bin/google-chrome node tests/progression.mjs
-CHROME=/usr/bin/google-chrome node tests/gas-stop.mjs
-CHROME=/usr/bin/google-chrome node tests/kitchen.mjs
-CHROME=/usr/bin/google-chrome node tests/reliability.mjs
+npm install
+npm test
 ```
 
-`CHROME` is the Chrome or Chromium binary. You can omit it when that binary is already at `/usr/bin/google-chrome`.
+`npm test` runs every suite in `tests/` one at a time and prints one PASS or FAIL line per suite. It exits non-zero if any suite fails. To run one suite: `npm run test:one tests/kitchen.mjs`.
+
+The tests find Chrome on their own: the `CHROME` environment variable if it is set, then Google Chrome in `/Applications` on a Mac, then `/usr/bin/google-chrome`. Set `CHROME` to use another Chrome or Chromium binary. Pictures the tests save go to `tests/out/`, which git ignores.
 
 If `puppeteer-core` is missing, or Chrome cannot be found or started, the test prints the failed step and the command to fix it, then exits.
