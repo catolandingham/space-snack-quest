@@ -58,7 +58,7 @@ The tag beside the chip, in page text over the top of the picture:
 
 | # | When it shows | In the game now | Another way to say it |
 | --- | --- | --- | --- |
-| 6.8 | Any time the story is playing, for whoever the player moves | YOU: SQUATCH / YOU: MOPS | (plan wording) |
+| 6.8 | Removed (Brian, 2026-11-07, after a phone playtest): the YOU: SQUATCH / YOU: MOPS tag is gone. The switch card and the "Squatch:" / "Mops:" chip already say who the player is, and the tag covered the sound icon on a phone. | (removed) | (none) |
 
 A short line over the fade when a character changes room during play (it fades after about two seconds; it is not a card):
 
@@ -147,7 +147,7 @@ Changes the player may notice that are not new words:
 
 - Reset section during g4l (after the soup is left in the crate) now resumes at wash5, the next dishes, instead of leaving Mops with nothing to do. `docs/README.md` says so in the checkpoint table.
 - Ambient chatter (the small bubbles that fade on their own) now waits its turn, one bubble at a time, in every chapter, not only Chapter 2.
-- The "YOU: SQUATCH" / "YOU: MOPS" tag shows in every chapter while the story is playing.
+- The "YOU: SQUATCH" / "YOU: MOPS" tag showed in every chapter while the story was playing. It was removed in Phase 2 (Brian, 2026-11-07; see row 6.8).
 - `switchTo` stops both characters' walking when control changes, in every chapter (the old direct switches did not).
 - In the kitchen, the picture button now puts Squatch in the crate while the player is Mops, and back where he was on the return switch. While the bots are searching (g3hide), tapping it counts as hiding in the crate, exactly like HIDE, and the story moves on.
 - The RUMBLE banner and the HIDE countdown in the kitchen sit under the goal chip.

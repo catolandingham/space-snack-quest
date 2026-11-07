@@ -63,7 +63,8 @@ for (let i = 0; i < 40 && !(s.scene === "G1" && s.ctrl && !s.busy); i++) {
   s = await state();
 }
 g.check("Chapter 2 opens with Squatch in control at the pump", s.scene === "G1" && !s.mops && s.ctrl, s);
-g.check("the tag says YOU: SQUATCH in page text", s.tag === "YOU: SQUATCH" && s.tagShown && !s.tagInCanvas, s);
+// Brian, 2026-11-07: no YOU: tag. The switch card and the "Squatch:" / "Mops:" chip say who the player is.
+g.check("there is no YOU: tag on the page", s.tag === null && !s.tagShown, s);
 
 // HIDE behind the crate with the E key.
 await page.evaluate(() => {
@@ -113,7 +114,7 @@ for (let i = 0; i < 10 && (s.busy || !s.ctrl); i++) {
   s = await state();
 }
 g.check("after the card, Mops is in control", s.mops && s.ctrl && !s.busy, s);
-g.check("the tag says YOU: MOPS", s.tag === "YOU: MOPS" && s.tagShown && !s.tagInCanvas, s);
+g.check("the player is Mops, and there is no YOU: tag", s.mops && s.tag === null, s);
 
 // Walk in the diner door: the room change has its line.
 await page.evaluate(() => {
@@ -149,13 +150,13 @@ for (let i = 0; i < 6 && (s.busy || !s.ctrl); i++) {
   await sleep(350);
   s = await state();
 }
-g.check("back on the lot, the tag says YOU: SQUATCH", s.tag === "YOU: SQUATCH" && !s.mops && s.ctrl, s);
+g.check("back on the lot, Squatch is in control and there is no YOU: tag", s.tag === null && !s.mops && s.ctrl, s);
 
-// Reset section switches silently and the tag follows.
+// Reset section switches silently.
 await page.evaluate(() => window.__ss.resetTo("g4"));
 await sleep(200);
 s = await state();
-g.check("Reset section into the diner shows YOU: MOPS with no card", s.tag === "YOU: MOPS" && !s.cur, s);
+g.check("Reset section into the diner makes the player Mops with no card and no YOU: tag", s.mops && s.tag === null && !s.cur, s);
 
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();

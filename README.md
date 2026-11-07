@@ -46,7 +46,7 @@ For example, `index.html?ch=2&phase=wash1&debug=1` opens the kitchen sink with t
 Branch `phase-1-kitchen-clarity` makes Chapter 2 clear to a 10-year-old (plan section 3, tasks T5 to T12). Every new line the player reads is listed for Brian in `docs/PHASE-1-LINES-FOR-BRIAN.md`.
 
 - The goal chip names who acts and what to do, from one table (`CH2_CHIPS`), and hides while a bubble is up. `tests/ch2-goal-chip.mjs`.
-- Every switch between Squatch and Mops goes through `switchTo` and, in Chapter 2, shows a card with the reason; a "YOU: SQUATCH" or "YOU: MOPS" tag sits over the picture; room changes show one short line. `tests/ch2-switch.mjs`.
+- Every switch between Squatch and Mops goes through `switchTo` and, in Chapter 2, shows a card with the reason; room changes show one short line. (A "YOU:" tag over the picture was removed in Phase 2 at Brian's request.) `tests/ch2-switch.mjs`.
 - Every Chapter 2 state offers a way forward (BACK · kitchen, Squatch in control after the soup, g4l resets to the next dishes) and Squatch is out of sight while Mops is out front. `tests/ch2-next-step.mjs` writes the action table to `tests/out/next-step.json`.
 - No capture while the player is Mops; a shoo costs no stars; the LOCKUP card says who saw Squatch and where. `tests/ch2-capture-cause.mjs`.
 - Speech bubbles sit over the speaker, one at a time; a voice from another room gets an ear at the door. `tests/bubble-anchor.mjs`.

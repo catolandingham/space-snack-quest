@@ -82,28 +82,6 @@
         linkDebug && debugStrip();
       }, 0);
     }
-    let whoTagEl = null;
-    function whoTag() {
-      let box = V.parentElement;
-      if (!box) return;
-      ((box.style.position = "relative"),
-        (whoTagEl = document.createElement("div")),
-        (whoTagEl.id = "ss-who"),
-        whoTagEl.setAttribute(
-          "style",
-          "position:absolute;top:1.6%;left:62%;padding:2px 10px;border:2px solid #1e2430;border-radius:12px;font:800 14px/1.3 system-ui,-apple-system,sans-serif;letter-spacing:.5px;pointer-events:none;display:none",
-        ),
-        box.appendChild(whoTagEl));
-    }
-    function updateWhoTag() {
-      let el = whoTagEl;
-      if (!el) return;
-      let show = h && p.state === "op" && !!n.scene && !(n.cur && n.cur.k === "card"),
-        text = x.mops ? "YOU: MOPS" : "YOU: SQUATCH";
-      el.style.display !== (show ? "block" : "none") && (el.style.display = show ? "block" : "none");
-      el.textContent !== text &&
-        ((el.textContent = text), (el.style.background = x.mops ? "#c9f2df" : "#f6d9c8"), (el.style.color = "#1e2430"));
-    }
     function roomLine(text) {
       // One short line over the fade when a character changes room during play.
       n.roomLine = { text, at: n.T };
@@ -189,7 +167,7 @@
             let i = Math.min(0.05, o);
             (ep(i), (o -= i));
           }
-          (Ap(), updateWhoTag());
+          Ap();
         } catch (i) {
           console.error(i);
         }
@@ -306,7 +284,6 @@
         ch2ChipKey: () => ch2ChipKey(),
       }),
       debugLink(),
-      whoTag(),
       {
         actionE: J1,
         resetHold: armReset,
@@ -328,7 +305,6 @@
           try {
             S?.close();
           } catch {}
-          whoTagEl && whoTagEl.remove();
           (window.removeEventListener("keyup", _2), window.removeEventListener("blur", F2), S && S.close().catch(() => {}));
         },
       }

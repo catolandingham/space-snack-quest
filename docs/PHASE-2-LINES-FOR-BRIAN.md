@@ -197,6 +197,8 @@ Every action in Chapters 1, 3 and 4 now has a thing, like Chapter 2. The big tou
 
 ## Also changed
 
+- The "YOU: SQUATCH" / "YOU: MOPS" tag over the picture is gone (Brian, 2026-11-07, after a phone playtest: the switch card and the chip's "Squatch:" / "Mops:" already say who you are, and the tag covered the sound icon). Phase 1 row 6.8 is marked removed.
+
 - A chip now shows only while its own moment lasts. Before, when a scene had no chip, the last chip from an earlier scene stayed on screen (in every chapter). Now no chip shows then. In Chapters 1, 3 and 4 the chip tables are the only place chips are set.
 
 - The small "VERB · thing" label on the picture is now at least as wide as before and wider for long words, and it is moved in from the edge so it is never cut off (Chapter 2's EXIT · the lot sat half off the left edge).
