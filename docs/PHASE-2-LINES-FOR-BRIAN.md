@@ -29,7 +29,7 @@ Glows that are not rings stay as they were. A line that talks about something ma
 
 ### Goal chips
 
-The chip is the yellow goal line at the top of the picture. Chapters 1, 3 and 4 now set it the way Chapter 2 does: from one table per chapter (`CH1_CHIPS`, `CH3_CHIPS`, `CH4_CHIPS`), read every frame from the scene and who the player is, and hidden while a story bubble is up. Every line names who acts. Following your chip rule, the first time a mechanic appears the chip names the step (singing in O2a, hiding in O4 and O5, the first lure in S9, the first switch in S9, the goat costume in S11, the mirrors in P3); after that it names only the goal (the second lure in S11 and the lures in Chapters 3 and 4, the second switch in S10 and P3). Chips that were there before keep their words where they named a goal, with "Squatch:" or "Mops:" added; the ones that named no goal ("What's that noise?", "Hug!", "Dance!", "Mops is gone") are replaced or dropped. The hall alarm's "Hide!" chip is unchanged.
+The chip is the yellow goal line at the top of the picture. Chapters 1, 3 and 4 now set it the way Chapter 2 does: from one table per chapter (`CH1_CHIPS`, `CH3_CHIPS`, `CH4_CHIPS`), read every frame from the scene and who the player is, and hidden while a story bubble is up. Every line names who acts. Following your chip rule, the first time a mechanic appears the chip names the step (singing in O2a, hiding in O4 and O5, singing a bot over from a hiding spot in S9, the first switch in S9, the goat costume in S11, the mirrors in P3); after that it names only the goal of the moment, never the hide or the stop (S4, S5, S11, and the singing in Chapters 3 and 4, the second switch in S10 and P3). Chips that were there before keep their words where they named a goal, with "Squatch:" or "Mops:" added; the ones that named no goal ("What's that noise?", "Hug!", "Dance!", "Mops is gone") are replaced or dropped. The hall alarm's "Hide!" chip is unchanged.
 
 The code in backticks is the chip key the game uses (for the tests).
 
@@ -52,11 +52,11 @@ The code in backticks is the chip key the game uses (for the tests).
 | 18.15 | Chapter 1, `S5`: S5: the window, before the visitors talk (goal only) | Squatch: listen to the visitors | Squatch: hear what the visitors say |
 | 18.16 | Chapter 1, `S5:bro`: S5: the brochure is in the bin | Squatch: grab the brochure | Squatch: take the brochure |
 | 18.17 | Chapter 1, `S6`: S6: Mops asks Squatch to come (was "Follow Mops") | Squatch: follow Mops | Squatch: go after Mops |
-| 18.18 | Chapter 1, `S7`: S7: the terminal (was "Use the manager's terminal") | Squatch: use the manager's terminal | Squatch: go to the terminal |
-| 18.19 | Chapter 1, `S7b`: S7b: the order form is on the terminal | Squatch: sign the order | Squatch: sign it |
-| 18.20 | Chapter 1, `S9`: S9: Mops waits by the trash (first lure: the chip names each step) | Squatch: hide in the box | Squatch: get in the box |
+| 18.18 | Chapter 1, `S7`: S7: the MANAGER computer with its ORDER screen (was "Use the manager's terminal") | Squatch: use the manager's computer | Squatch: go to the MANAGER computer |
+| 18.19 | Chapter 1, `S7b`: S7b: the order form is on the computer | Squatch: sign the order | Squatch: sign it |
+| 18.20 | Chapter 1, `S9`: S9: Mops waits by the trash (first time singing a bot over: the chip names each step) | Squatch: hide in the box | Squatch: get in the box |
 | 18.21 | Chapter 1, `S9:hid`: S9: Squatch is in the box | Squatch: sing to bring the bot over | Squatch: sing so the bot comes |
-| 18.22 | Chapter 1, `S9:sing`: S9: Squatch is singing (first time switching: the chip names the step) | Squatch: tap Mops' picture (top right) | Squatch: tap Mops' face (Mops' own words) |
+| 18.22 | Chapter 1, `S9:sing`: S9: Squatch is singing (first time switching: the chip names the step). The picture button glows while Squatch sings | Squatch: tap Mops' picture | Squatch: tap Mops' face (Mops' own words) |
 | 18.23 | Chapter 1, `S9:mops`: S9: the player is Mops | Mops: grab the slip from the trash | Mops: take the slip |
 | 18.24 | Chapter 1, `S10`: S10: the vent | Squatch: squeeze into the vent | Squatch: crawl into the vent |
 | 18.25 | Chapter 1, `S10:bumped`: S10: Squatch is too big | Squatch: let Mops try the vent | Squatch: switch to Mops |
@@ -64,7 +64,7 @@ The code in backticks is the chip key the game uses (for the tests).
 | 18.27 | Chapter 1, `S10d`: S10d: inside the duct | Mops: grab the other half of the slip | Mops: find the other half |
 | 18.28 | Chapter 1, `S10d:out`: S10d: Mops has the half | Mops: crawl back out | Mops: go back out |
 | 18.29 | Chapter 1, `S11`: S11: the bot guards the door (goal only: hiding and singing were taught in S9) | Squatch: get the bot away from the door | Squatch: clear the bot from the door |
-| 18.30 | Chapter 1, `S11:hid`: S11: Squatch is behind the plant | Squatch: lure the bot away from the door | Squatch: get the bot away from the door |
+| 18.30 | Chapter 1, `S11:hid`: S11: Squatch is behind the plant (goal only, same line as 18.29) | Squatch: get the bot away from the door | Squatch: clear the bot from the door |
 | 18.31 | Chapter 1, `S11:sing`: S11: Squatch is singing (goal only, same line as 18.29) | Squatch: get the bot away from the door | Squatch: clear the bot from the door |
 | 18.32 | Chapter 1, `S11:mops`: S11: the player is Mops | Mops: type the code at the door | Mops: open the door with the code |
 | 18.33 | Chapter 1, `S11:costume`: S11: the scanner said NO WOOKIES; Mops told him about the costume | Squatch: put on the goat costume | Squatch: get the goat costume |
@@ -74,12 +74,12 @@ The code in backticks is the chip key the game uses (for the tests).
 | 18.37 | Chapter 3, `p1`: P1: Mops said "Hide in a barrel" | Squatch: hide in a barrel | Squatch: get in a barrel |
 | 18.38 | Chapter 3, `p2`: P2: the player is Mops, Zip is at his stand | Mops: ask Zip for a ride to Mars | Mops: ask Zip the way to Mars |
 | 18.39 | Chapter 3, `p3`: P3: the temple; Mops said "Echo spot's over there" | Squatch: hide in the echo spot | Squatch: go to the echo spot |
-| 18.40 | Chapter 3, `p3:hid`: P3: Squatch is in the echo spot (lure: goal only) | Squatch: lure the rovers away from the mirrors | Squatch: sing the rovers away |
+| 18.40 | Chapter 3, `p3:hid`: P3: Squatch is in the echo spot (goal only) | Squatch: sing the rovers away from the mirrors | Squatch: get the rovers away from the mirrors |
 | 18.41 | Chapter 3, `p3:sing`: P3: Squatch is singing (switching: goal only) | Squatch: let Mops turn the mirrors | Squatch: switch to Mops |
 | 18.42 | Chapter 3, `p3:m1`: P3: the player is Mops (first mirrors: the chip names the step) | Mops: turn the first mirror | Mops: turn the mirror |
 | 18.43 | Chapter 3, `p3:m2`: P3: the first mirror is turned | Mops: turn the second mirror | Mops: turn the other mirror |
 | 18.44 | Chapter 3, `p3x`: P3: Zip has his map | Mops: go out the temple door | Mops: leave the temple |
-| 18.45 | Chapter 3, `p4a`: P4: the rover is on the ramp | Squatch: lure the rover off the ramp | Squatch: get the rover off the ramp |
+| 18.45 | Chapter 3, `p4a`: P4: the rover is on the ramp | Squatch: get the rover off the ramp | Squatch: clear the rover off the ramp |
 | 18.46 | Chapter 3, `p4a:sing`: P4: Squatch is singing (goal only, same line as 18.45) | Squatch: get the rover off the ramp | Squatch: clear the rover off the ramp |
 | 18.47 | Chapter 3, `p4a:run`: P4: the rover is looking at the barrel | Squatch: run to the ship | Squatch: run for the ship! |
 | 18.144 | Chapter 3, `p4a:board`: P4: Squatch is at the ramp and BOARD · ship is up | Squatch: get on board | Squatch: board the ship |
@@ -136,12 +136,12 @@ Every action in Chapters 1, 3 and 4 now has a thing, like Chapter 2. The big tou
 | 18.91 | Chapter 1, S6 and S7: the poster, found | LOOK · poster | LOOK · WANTED poster |
 | 18.92 | Chapter 1, S6 and S7: the trash can | PEEK · trash can | PEEK · trash |
 | 18.93 | Chapter 1, S6 and S7: the vent | PEEK · vent | PEEK · grate |
-| 18.94 | Chapter 1, S7: the terminal | USE · terminal | USE · computer |
+| 18.94 | Chapter 1, S7: the MANAGER computer | USE · computer | USE · MANAGER computer |
 | 18.95 | Chapter 1, S7b: the order form | SIGN · order | SIGN · form |
 | 18.96 | Chapter 1, S9: the trash can (Mops); S10d: the slip in the duct | GRAB · slip | GRAB · paper |
 | 18.97 | Chapter 1, S9: the AIRLOCK lever | PULL · airlock | PULL · lever |
-| 18.98 | Chapter 1, S9 and S11: hidden at the lure spot | SING · lure song | SING · song |
-| 18.99 | Chapter 1, S9 and S11: singing at the lure spot | STOP · singing | STOP · song |
+| 18.98 | Chapter 1, S9 and S11: hidden in the box or behind the plant | SING · song | SING · tune |
+| 18.99 | Chapter 1, S9 and S11: singing in the box or behind the plant | STOP · singing | STOP · song |
 | 18.100 | Chapter 1, S10: the vent | SQUEEZE · vent | SQUEEZE · in |
 | 18.101 | Chapter 1, S10d: the paper ball in the duct | UNFOLD · note | UNFOLD · paper |
 | 18.102 | Chapter 1, S10d: the vent back out | OUT · vent | OUT · back |
@@ -156,7 +156,7 @@ Every action in Chapters 1, 3 and 4 now has a thing, like Chapter 2. The big tou
 | 18.111 | Chapter 1, S12: behind the crates | GRAB · ice cream | GRAB · freeze-dried ice cream |
 | 18.112 | Chapter 1, S12: the ship (unchanged) | BOARD · ship | (none) |
 | 18.113 | Chapter 3, P1 and P4: the barrel | HIDE · barrel | HIDE · in barrel |
-| 18.114 | Chapter 3, P3 and P4: hidden, at the barrel or the echo spot | SING · lure song | SING · song |
+| 18.114 | Chapter 3, P3 and P4: hidden, at the barrel or the echo spot | SING · song | SING · tune |
 | 18.115 | Chapter 3, P3 and P4: singing | STOP · singing | STOP · song |
 | 18.116 | Chapter 3, P4: the ramp | BOARD · ship | BOARD · ramp |
 | 18.117 | Chapter 3, P4: the cart | GRAB · rope | GRAB · rope from cart |
@@ -170,7 +170,7 @@ Every action in Chapters 1, 3 and 4 now has a thing, like Chapter 2. The big tou
 | 18.125 | Chapter 3, P3: the mural | LOOK · mural | LOOK · wall picture |
 | 18.126 | Chapter 3, P3: the temple door | EXIT · temple | EXIT · door |
 | 18.127 | Chapter 4, M1: each trash can | HIDE · trash can | HIDE · can |
-| 18.128 | Chapter 4, M1: hidden in the middle trash can | SING · lure song | SING · song |
+| 18.128 | Chapter 4, M1: hidden in the middle trash can | SING · song | SING · tune |
 | 18.129 | Chapter 4, M1 and M5: singing | STOP · singing | STOP · song |
 | 18.130 | Chapter 4, M5: the dock | SING · out loud | SING · loud |
 | 18.131 | Chapter 4, M1: the sock | LIFT · sock | LIFT · giant sock |
@@ -202,4 +202,4 @@ Every action in Chapters 1, 3 and 4 now has a thing, like Chapter 2. The big tou
 - A ring is not drawn while an action that works anywhere wins over it (for example, while Squatch is hidden only LEAVE works, so the plant and poster rings stay dark). Before, those rings could glow even though nothing there could be pressed.
 
 - Chapter 1, S9: the PULL label over the airlock lever was drawn without the hall camera, so it sat in the wrong place once the hall had scrolled. It now sits over the lever.
-- Chapter 1, S6: the gallery wall's LOOK has a hole near the manager's terminal (it always had; that is where nothing is offered). Its ring, if it ever glowed, would not show the hole. Nothing switches that ring on today.
+- Chapter 1, S6: the gallery wall's LOOK has a hole near the manager's computer (it always had; that is where nothing is offered). Its ring, if it ever glowed, would not show the hole. Nothing switches that ring on today.

@@ -210,7 +210,7 @@
           spot({
             id: "sing",
             verb: x.sing ? "STOP" : "SING",
-            cap: x.sing ? "singing" : o === 150 ? "out loud" : "lure song",
+            cap: x.sing ? "singing" : o === 150 ? "out loud" : "song",
             who: "sq",
             at: [l.x, l.y - o],
             when: i,

@@ -993,7 +993,7 @@
         spot({
           id: "term",
           verb: "USE",
-          cap: "terminal",
+          cap: "computer",
           who: "sq",
           x: lt.x,
           y: lt.y + 60,
@@ -1157,7 +1157,7 @@
         spot({
           id: "sing",
           verb: x.sing ? "STOP" : "SING",
-          cap: x.sing ? "singing" : "lure song",
+          cap: x.sing ? "singing" : "song",
           who: "sq",
           at: [l.x, l.y - 60],
           when: s,
