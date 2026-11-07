@@ -107,7 +107,7 @@
               (n.act = offer({
                 id: "sing",
                 verb: "SING",
-                cap: "along",
+                cap: "song",
                 at: [n.sq.x, n.sq.y - 150],
                 hot: !0,
                 f: () => {

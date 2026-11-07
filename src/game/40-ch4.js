@@ -210,7 +210,7 @@
           spot({
             id: "sing",
             verb: x.sing ? "STOP" : "SING",
-            cap: x.sing ? "singing" : o === 150 ? "out loud" : "song",
+            cap: x.sing ? "singing" : "song",
             who: "sq",
             at: [l.x, l.y - o],
             when: i,
@@ -327,7 +327,7 @@
           },
         }),
         spot({ id: "seat", verb: "LOOK", cap: "under the seat", who: "mo", x: Tt.x, y: Tt.y + 60, r: 100, at: [Tt.x, 330], when: van && H.scrub >= 3 && !H.slip, hot: !0, f: O6 }),
-        spot({ id: "roll", verb: "ROLL", cap: "into a ball", who: "sq", at: [l.x, l.y - 150], when: inside && i === "m4a" && H.beam >= 0 && H.beam < 2.4, hot: !0, f: w6 }),
+        spot({ id: "roll", verb: "ROLL", cap: "ball", who: "sq", at: [l.x, l.y - 150], when: inside && i === "m4a" && H.beam >= 0 && H.beam < 2.4, hot: !0, f: w6 }),
         spot({
           id: "photo",
           verb: "LOOK",

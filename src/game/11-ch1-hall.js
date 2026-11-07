@@ -1543,8 +1543,8 @@
         }),
         spot({
           id: "out",
-          verb: "OUT",
-          cap: "vent",
+          verb: "EXIT",
+          cap: "duct",
           who: "mo",
           box: l(90, 200),
           at: [120, 380],

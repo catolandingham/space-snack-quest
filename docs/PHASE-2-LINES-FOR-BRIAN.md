@@ -105,7 +105,7 @@ Every action in Chapters 1, 3 and 4 now has a thing, like Chapter 2. The big tou
 
 | # | Where | In the game now | Another way to say it |
 | --- | --- | --- | --- |
-| 18.63 | Chapter 1, O2a: Mops hums | SING · along | SING · song |
+| 18.63 | Chapter 1, O2a: Mops hums | SING · song | SING · tune |
 | 18.64 | Chapter 1, O3: the closet door | PEEK · door | PEEK · outside |
 | 18.65 | Chapter 1, O3b and S1: the closet door | SNEAK OUT · door | SNEAK OUT · closet |
 | 18.66 | Chapter 1, O4: the lobby, over the CLOSET sign | HIDE! · closet | HIDE! · run home |
@@ -144,7 +144,7 @@ Every action in Chapters 1, 3 and 4 now has a thing, like Chapter 2. The big tou
 | 18.99 | Chapter 1, S9 and S11: singing in the box or behind the plant | STOP · singing | STOP · song |
 | 18.100 | Chapter 1, S10: the vent | SQUEEZE · vent | SQUEEZE · in |
 | 18.101 | Chapter 1, S10d: the paper ball in the duct | UNFOLD · note | UNFOLD · paper |
-| 18.102 | Chapter 1, S10d: the vent back out | OUT · vent | OUT · back |
+| 18.102 | Chapter 1, S10d: the way back out of the duct (verb was OUT) | EXIT · duct | CRAWL · out |
 | 18.103 | Chapter 1, S11: the wardrobe | WEAR · goat costume | WEAR · costume |
 | 18.104 | Chapter 1, S11: the keypad (Mops) | TYPE · code | TYPE · numbers |
 | 18.105 | Chapter 1, S12: the cooler with SPACE JUICE | GRAB · space juice | GRAB · juice |
@@ -172,7 +172,7 @@ Every action in Chapters 1, 3 and 4 now has a thing, like Chapter 2. The big tou
 | 18.127 | Chapter 4, M1: each trash can | HIDE · trash can | HIDE · can |
 | 18.128 | Chapter 4, M1: hidden in the middle trash can | SING · song | SING · tune |
 | 18.129 | Chapter 4, M1 and M5: singing | STOP · singing | STOP · song |
-| 18.130 | Chapter 4, M5: the dock | SING · out loud | SING · loud |
+| 18.130 | Chapter 4, M5: the dock | SING · song | SING · tune |
 | 18.131 | Chapter 4, M1: the sock | LIFT · sock | LIFT · giant sock |
 | 18.132 | Chapter 4, M5: with everyone | DANCE · with Mops | DANCE · together |
 | 18.133 | Chapter 4, M2: the poster on the stand | READ · poster | READ · lost poster |
@@ -182,7 +182,7 @@ Every action in Chapters 1, 3 and 4 now has a thing, like Chapter 2. The big tou
 | 18.137 | Chapter 4, M3: the van floor | MOP · floor | MOP · van |
 | 18.138 | Chapter 4, M3: the air freshener | FLIP · air freshener | FLIP · tree |
 | 18.139 | Chapter 4, M3: the seat | LOOK · under the seat | LOOK · seat |
-| 18.140 | Chapter 4, M4: the searchlight | ROLL · into a ball | ROLL · ball |
+| 18.140 | Chapter 4, M4: the searchlight | ROLL · ball | CURL · ball |
 | 18.141 | Chapter 4, M4: the family photo | LOOK · photo | LOOK · family photo |
 | 18.142 | Chapter 4, M4: the house door | EXIT · door | EXIT · to the van |
 | 18.143 | Chapter 4, M4: under the van seat | GRAB · Guardian Box | GRAB · box |
@@ -192,7 +192,7 @@ Every action in Chapters 1, 3 and 4 now has a thing, like Chapter 2. The big tou
 - **T15, "Stormtop Station" and "Asteroid Belt Gas Stop".** The brief says neither should remain. Both are still in the game because they are live: they are the names on the title screen's Chapter 1 and Chapter 2 cards (with "Phobos, the Tiny Moon" and "Mars!"). Everything else the old engine used is gone. Renaming the cards is a wording change; say if you want new names.
 - **T14, the picture's top edge.** The phone test prints the check that the game sits within 16 pixels of the top of a phone screen as an expected failure (it is 170 pixels down today). It becomes a real check when T21 pins the game to the top.
 - **T17, two glows that are still boxes.** The highlight on the character picture button (top right) is a box around a button, not a place on the floor, so it stays. Story pointers (the glow around a thing a line is talking about while nothing can be pressed) also stay boxes; see the T17 section.
-- **T18, eight caption rows the test checks only in the source.** The test sweeps the floor in 77 states and finds every other caption there. These eight belong to one-off moments it cannot reach without playing the opening or the torn-slip cutscene, so the test checks that the verb and thing are written together in the code: 18.63 SING · along, 18.64 PEEK · door, 18.66 HIDE! · closet, 18.69 SLEEP · bed, 18.70 GRAB · gift, 18.71 OPEN · Guardian Box, 18.92 PEEK · trash can, 18.93 PEEK · vent.
+- **T18, eight caption rows the test checks only in the source.** The test sweeps the floor in 77 states and finds every other caption there. These eight belong to one-off moments it cannot reach without playing the opening or the torn-slip cutscene, so the test checks that the verb and thing are written together in the code: 18.63 SING · song, 18.64 PEEK · door, 18.66 HIDE! · closet, 18.69 SLEEP · bed, 18.70 GRAB · gift, 18.71 OPEN · Guardian Box, 18.92 PEEK · trash can, 18.93 PEEK · vent.
 - **Switch cards in Chapters 1, 3 and 4** (left from Phase 1, T6). The chips now say who acts and the picture-button steps are named, but switching in those chapters still shows no "You are MOPS now." card with a reason. That needs your words for each switch.
 
 ## Also changed
