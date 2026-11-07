@@ -4,7 +4,12 @@
 
 The game's source is in `src/`. `index.html` is build output: never edit it by hand.
 
-- `src/game.js` is the game (Chapters 1 to 4, the page, the touch controls).
+- `src/game/` is the game, in pieces the build joins in name order. Each piece starts with one comment line saying what it holds:
+  `00-core.js` (sound, title, drawing helpers, the story queue, spots), `10-ch1.js` and `11-ch1-hall.js` (Chapter 1, in two parts),
+  `20-ch2.js`, `30-ch3.js`, `40-ch4.js` (one per chapter),
+  `50-story-frame.js` (the story update every chapter shares), `60-frame-draw.js` (the frame update and the main draw),
+  `90-input-shell.js` (keys, taps, the debug link, `window.__ss`, the page and touch controls). The pieces are cut from one function,
+  so no piece runs on its own; read them as one file in that order.
 - `src/vendor-react.js` is the React runtime. Leave it alone.
 - `src/index.template.html` is the page around the program.
 
@@ -13,16 +18,24 @@ npm run build
 npm run check-build
 ```
 
-`npm run build` writes `index.html` from `src/`. `npm run check-build` fails if the committed `index.html` is not a fresh build of `src/`. The build compacts the code with esbuild but keeps every name, so a name seen in the browser can be found in `src/game.js`.
+`npm run build` writes `index.html` from `src/`. `npm run check-build` fails if the committed `index.html` is not a fresh build of `src/`. The build compacts the code with esbuild but keeps every name, so a name seen in the browser can be found in `src/game/`.
 
-`src/` is the readable copy of `index.html` at commit `15051ec`, made with Prettier 3.9.10 (`--print-width 140`). `node tools/equivalence.mjs` is the one-time proof that the build is the same program as that commit.
+To give a short name a readable one, use the rename tool. It changes only that one variable (Babel's scope analysis), never an object key or another variable with the same short name, and refuses a new name that would collide:
+
+```
+npm run rename -- k ch2 src/game/20-ch2.js:22
+```
+
+The last part is a line where the old name appears. Each rename is recorded in `tools/renames.json` (old name, new name, where, why, date), so renames can be reviewed in a pull request; `npm run rename` with nothing after it applies any entry not yet applied. Then run `npm run build && npm test`.
+
+`src/` is the readable copy of `index.html` at commit `15051ec`, made with Prettier 3.9.10 (`--print-width 140`). `node tools/equivalence.mjs` is the one-time proof that the build is the same program as that commit. `node tools/equivalence.mjs <ref>` checks that a fresh build plays the same as `index.html` at `<ref>` (40 Enter presses in each chapter, and the Chapter 2 keyboard route).
 
 ## Debug link
 
 Add these to the address of `index.html` to jump into the game. Without them, nothing changes.
 
 - `?ch=2` starts Chapter 2 from the title, even if it is still locked.
-- `?ch=2&phase=wash1` starts Chapter 2, then jumps to that checkpoint (the same table Reset section uses, `applyG` in `src/game.js`).
+- `?ch=2&phase=wash1` starts Chapter 2, then jumps to that checkpoint (the same table Reset section uses, `applyG` in `src/game/20-ch2.js`).
 - `?scene=P3` starts that scene's chapter, then opens the scene.
 - `&debug=1` shows a line under the game, updated four times a second: chapter, scene, phase, room, who you control, pose, the prompt, the button label, the chip, security, and the kitchen warn and peek timers. The Copy button copies it. The backtick key hides and shows it.
 
@@ -33,7 +46,7 @@ For example, `index.html?ch=2&phase=wash1&debug=1` opens the kitchen sink with t
 Branch `phase-1-kitchen-clarity` makes Chapter 2 clear to a 10-year-old (plan section 3, tasks T5 to T12). Every new line the player reads is listed for Brian in `docs/PHASE-1-LINES-FOR-BRIAN.md`.
 
 - The goal chip names who acts and what to do, from one table (`CH2_CHIPS`), and hides while a bubble is up. `tests/ch2-goal-chip.mjs`.
-- Every switch between Squatch and Mops goes through `switchTo` and, in Chapter 2, shows a card with the reason; a "YOU: SQUATCH" or "YOU: MOPS" tag sits over the picture; room changes show one short line. `tests/ch2-switch.mjs`.
+- Every switch between Squatch and Mops goes through `switchTo` and, in Chapter 2, shows a card with the reason; room changes show one short line. (A "YOU:" tag over the picture was removed in Phase 2 at Brian's request.) `tests/ch2-switch.mjs`.
 - Every Chapter 2 state offers a way forward (BACK · kitchen, Squatch in control after the soup, g4l resets to the next dishes) and Squatch is out of sight while Mops is out front. `tests/ch2-next-step.mjs` writes the action table to `tests/out/next-step.json`.
 - No capture while the player is Mops; a shoo costs no stars; the LOCKUP card says who saw Squatch and where. `tests/ch2-capture-cause.mjs`.
 - Speech bubbles sit over the speaker, one at a time; a voice from another room gets an ear at the door. `tests/bubble-anchor.mjs`.
@@ -42,6 +55,19 @@ Branch `phase-1-kitchen-clarity` makes Chapter 2 clear to a 10-year-old (plan se
 - The help line names only controls that work. `tests/help-text.mjs`.
 
 Test hooks added for these: `__ss.resetTo(phase)`, `pickAct()`, `walkBounds()`, `drain()`, `sqAway()`, `CH2_CHIPS`, `ch2ChipKey()`, `lastBubble`, `bubbleFrame`. `tests/game-page.mjs` is the shared start-up code for the new suites.
+
+## Phase 2: tests, dead engine out, files by chapter, rings, captions
+
+Branch `phase-2-structure` (plan section 4, tasks T13 to T18). Every new line the player reads, and every place a ring moved, is listed for Brian in `docs/PHASE-2-LINES-FOR-BRIAN.md`, with what is not finished.
+
+- `tests/ch2-playthrough.mjs` plays Chapter 2 from `?ch=2` to the tally card with real key presses (arrows, E, Enter), following `tests/routes/ch2.json`. It never writes to the game. A step stuck for 20 seconds fails with its number and the debug strip's state line. `ROUTE_LOG=1` prints each step. About 95 seconds.
+- `tests/phone-tap.mjs` plays the same route's start on a 375 by 812 phone with touches only (joystick, ACTION button, a tap on the picture) through the diner and the first kitchen dish. Both use `tests/route-player.mjs`.
+- The old level engine (keypad, dish mini-game, guard AI, old levels and their exports) is gone. `node tools/equivalence.mjs <ref>` shows a fresh build plays the same as `index.html` at `<ref>`.
+- The source is in pieces by chapter (see "Source and build"), and `npm run rename` renames one variable safely.
+- One helper, `spot` in `src/game/00-core.js`, holds every action in all four chapters: what the button says, where the player's feet must be, and the ring, which is drawn from those same numbers. `tests/ring-equals-trigger.mjs` checks every ring in 77 states.
+- Every action in Chapters 1, 3 and 4 reads "VERB · thing", and those chapters have goal chips from one table each (`CH1_CHIPS`, `CH3_CHIPS`, `CH4_CHIPS`). `tests/action-labels.mjs` (all chapters) and `tests/chapter-chips.mjs`.
+
+Test hooks added: `__ss.spotsNow()`, `placedSpots()`, `offerNow()`, `drawFrame()`, `rings()`, `inSpot()`, `chipNow()`, `chipKeyNow()`, `CH1_CHIPS`, `CH3_CHIPS`, `CH4_CHIPS`. `tests/chapter-states.mjs` holds the states the ring and caption tests share.
 
 ## Progression tests
 

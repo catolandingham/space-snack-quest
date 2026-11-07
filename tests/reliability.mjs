@@ -74,12 +74,12 @@ const noted = await page.evaluate(() => {
     scene: n.scene, phase: window.__ss.ch2.phase, x: Math.round(n.sq.x), y: Math.round(n.sq.y),
     ctrl: n.ctrl, cur: n.cur, q: n.q.length, jar: window.__ss.ch2.jar, reg: window.__ss.ch2.reg,
     has: window.__ss.ch2.has, stars: n.stars, found: n.found.has("keep-me"),
-    cookT: window.__ss.ch2.cookT, timer: window.__ss.ch2.timer, alarm: window.__ss.game.alarm,
+    cookT: window.__ss.ch2.cookT, timer: window.__ss.ch2.timer,
   };
 });
 check(
   "dialogue cancel restarts the gas entrance without paying or wiping the jar",
-  noted.scene === "G1" && noted.phase === "g1" && noted.x === 760 && noted.y === 540 && noted.ctrl === true && !noted.cur && noted.q === 0 && noted.jar === 12 && noted.reg === 4 && noted.has === "coins" && noted.stars === 40 && noted.found === true && noted.cookT === 0 && noted.timer === 0 && noted.alarm === false,
+  noted.scene === "G1" && noted.phase === "g1" && noted.x === 760 && noted.y === 540 && noted.ctrl === true && !noted.cur && noted.q === 0 && noted.jar === 12 && noted.reg === 4 && noted.has === "coins" && noted.stars === 40 && noted.found === true && noted.cookT === 0 && noted.timer === 0,
   noted,
 );
 

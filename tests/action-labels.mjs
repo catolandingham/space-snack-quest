@@ -1,11 +1,18 @@
 /**
- * The ACTION button names the thing in Chapter 2 (task T11).
+ * The ACTION button names the thing in Chapter 2 (task T11), and in Chapters 1, 3 and 4 (task T18).
  * Using the T7 hooks, sweeps Chapter 2 states and checks every action offered has a caption.
  * Then, with touch controls on a desktop window and on a 375 by 812 phone, stands the character
  * at a few actions and checks the big button reads exactly "VERB · caption" in letters at least 16 px.
+ * Then sweeps every state in tests/chapter-states.mjs (all four chapters): every action offered has a
+ * caption, every "VERB · thing" offered in Chapters 1, 3 and 4 is a row in
+ * docs/PHASE-2-LINES-FOR-BRIAN.md, and every such row is offered somewhere (or, for the few the sweep
+ * cannot reach, its verb and thing are written together in that chapter's source).
  *   node tests/action-labels.mjs
  */
-import { startGame, sleep, readLines, actionOf } from "./game-page.mjs";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { startGame, sleep, readLines, actionOf, root } from "./game-page.mjs";
+import { STATES as ALL_STATES, setState } from "./chapter-states.mjs";
 
 const LINES = readLines();
 // Named spots: lines-file row -> the state where that action must be offered with exactly those words.
@@ -150,6 +157,97 @@ for (const vp of [
     g.check(`${vp.name}: ${label}: the button fits on the screen`, !!btn && btn.right <= btn.vw, btn);
   }
   g.check(`no page errors (${vp.name})`, errors.length === 0, errors);
+  await ctx.close();
+}
+
+// 3. All four chapters (task T18).
+{
+  const ROWS = readLines({ where: true });
+  const capRows = Object.entries(ROWS).filter(([k, r]) => k.startsWith("18.") && / \u00b7 /.test(r.words));
+  const { ctx, page, errors } = await g.open("?ch=2");
+  const offered = { 1: new Set(), 2: new Set(), 3: new Set(), 4: new Set() };
+  const missing = [];
+  for (const [chapter, label, setup] of ALL_STATES) {
+    const found = await page.evaluate(
+      (setStateSrc, setup) => {
+        (0, eval)("(" + setStateSrc + ")")(setup);
+        const ss = window.__ss, n = ss.op;
+        const keep = [n.sq.x, n.sq.y, n.mo.x, n.mo.y];
+        const out = {};
+        const note = () => {
+          const a = ss.offerNow();
+          if (a) out[a.verb + "|" + (a.cap || "")] = 1;
+        };
+        note();
+        const b = ss.walkBounds();
+        for (let y = b.y0; y <= b.y1; y += 20)
+          for (let x = b.x0; x <= b.x1; x += 20) {
+            n.sq.x = n.mo.x = x;
+            n.sq.y = n.mo.y = y;
+            note();
+          }
+        [n.sq.x, n.sq.y, n.mo.x, n.mo.y] = keep;
+        return Object.keys(out);
+      },
+      setState.toString(),
+      setup,
+    );
+    for (const key of found) {
+      const [verb, cap] = key.split("|");
+      if (!cap) missing.push(`chapter ${chapter} ${label}: ${verb}`);
+      else offered[chapter].add(`${verb} \u00b7 ${cap}`);
+    }
+  }
+  g.check("every action offered in all four chapters has a caption", missing.length === 0, missing);
+  for (const ch of [1, 3, 4]) {
+    const rowsHere = new Set(capRows.filter(([, r]) => r.where.startsWith(`Chapter ${ch},`)).map(([, r]) => r.words));
+    const unlisted = [...offered[ch]].filter((w) => !rowsHere.has(w));
+    g.check(`chapter ${ch}: every caption offered is a row in the Phase 2 lines file (${offered[ch].size} offered)`, unlisted.length === 0, unlisted);
+  }
+  // Every caption row is offered in the sweep, or its verb and thing are in one spot definition (one
+  // spot({ ... }) or offer({ ... }) object) in that chapter's source.
+  const objects = (src) => {
+    const out = [];
+    for (const m of src.matchAll(/\b(?:spot|offer)\(\{/g)) {
+      let i = m.index + m[0].length - 1, depth = 0, q = null;
+      for (let j = i; j < src.length; j++) {
+        const ch = src[j];
+        if (q) {
+          if (ch === "\\") j++;
+          else if (ch === q) q = null;
+        } else if (ch === '"' || ch === "'" || ch === "`") q = ch;
+        else if (ch === "{") depth++;
+        else if (ch === "}" && --depth === 0) {
+          out.push(src.slice(i, j + 1));
+          break;
+        }
+      }
+    }
+    return out;
+  };
+  // The verb and the caption as written in one object: verb: "X" (or a ternary naming X), cap: an expression naming the thing.
+  const pairs = (obj) => {
+    const head = obj.split(/\n\s*f: |, f: /)[0];
+    const verb = (head.match(/verb: ([^,\n]+(?: \? "[^"]*" : "[^"]*")?)/) || [])[1] || "";
+    const cap = (head.match(/cap: ([^\n]+?),(?:\n| [a-z]+:)/) || [])[1] || "";
+    return { verb, cap };
+  };
+  const SRC = { 1: ["10-ch1.js", "11-ch1-hall.js"], 3: ["30-ch3.js"], 4: ["40-ch4.js"] };
+  const sourceOnly = [];
+  for (const [row, r] of capRows) {
+    const ch = Number(r.where.match(/^Chapter (\d)/)[1]);
+    if (offered[ch].has(r.words)) continue;
+    const [verb, cap] = r.words.split(" \u00b7 ");
+    const src = SRC[ch].map((f) => readFileSync(join(root, "src", "game", f), "utf8")).join("");
+    const near = objects(src).some((o) => {
+      const p = pairs(o);
+      return p.verb.includes(`"${verb}"`) && p.cap.includes(`"${cap}"`);
+    });
+    sourceOnly.push(`${row} ${r.words}`);
+    g.check(`line ${row} "${r.words}" is in the game (not reached by the sweep; found in ${SRC[ch].join(" or ")})`, near, r);
+  }
+  console.log(`  caption rows checked only in the source: ${sourceOnly.length ? sourceOnly.join(", ") : "none"}`);
+  g.check("no page errors (all chapters)", errors.length === 0, errors);
   await ctx.close();
 }
 
