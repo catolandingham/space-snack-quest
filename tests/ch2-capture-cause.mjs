@@ -3,8 +3,8 @@
  * (a) Reset section into g4 and stand still as Mops for 15 seconds: no security, no LOCKUP
  *     (Squatch waits hidden). Positive control: Squatch standing in Gloop's view is seen even while the player is Mops.
  * (b) Each captor's catch opens LOCKUP, and the card's first line names a captor and a place.
- * (c) The kitchen bots shooing Mops costs no stars and is not counted as a capture.
- * (d) Kitchen bots cannot shoo Mops when he is out front; the kitchen search does not run out while the player is Mops.
+ * (c) The kitchen bots shooing Mops costs no stars and otherwise counts as a capture, as before.
+ * (d) Kitchen bots cannot shoo Mops when he is out front; the kitchen HIDE countdown runs while the player is Mops.
  *   node tests/ch2-capture-cause.mjs
  */
 import { startGame, sleep } from "./game-page.mjs";
@@ -113,7 +113,7 @@ for (const c of captors) {
   }
   const after = await page.evaluate(() => ({ stars: window.__ss.op.stars, caught: window.__ss.ch2.caught, ctrl: window.__ss.op.ctrl, x: Math.round(window.__ss.op.mo.x) }));
   g.check("the shoo costs no stars", after.stars === before.stars, { before, after });
-  g.check("the shoo is not counted as a capture", after.caught === 0, after);
+  g.check("the shoo still counts as a capture, as before", after.caught === 1, after);
   g.check("after the shoo Mops is back in control", after.ctrl, after);
   g.check("no page errors (c)", errors.length === 0, errors);
   await ctx.close();
@@ -141,14 +141,11 @@ for (const c of captors) {
     const ss = window.__ss;
     ss.resetTo("g3hide");
     ss.swapTo(true);
-    ss.ch2.timer = 0.5;
+    ss.ch2.timer = 5;
   });
   await sleep(1500);
-  const search = await page.evaluate(() => {
-    const n = window.__ss.op;
-    return { lines: [n.cur, ...n.q].filter(Boolean).map((r) => (r.b && r.b.text) || ""), caught: window.__ss.ch2.caught };
-  });
-  g.check("the bots' search does not catch Squatch while the player is Mops", search.caught === 0 && !search.lines.includes("WOOKIE?!"), search);
+  const search = await page.evaluate(() => ({ timer: window.__ss.ch2.timer, mops: window.__ss.ch.mops }));
+  g.check("the kitchen HIDE countdown keeps running while the player is Mops", search.mops && search.timer < 4.2, search);
   g.check("no page errors (d)", errors.length === 0, errors);
   await ctx.close();
 }

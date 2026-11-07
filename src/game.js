@@ -7379,23 +7379,22 @@
       (e.beginPath(), e.moveTo(l, o), e.arc(l, o, q, i - s, i + s), e.closePath(), (e.fillStyle = d), e.fill());
     }
     function Pn(l, o, i, free) {
-      // free: a shoo, not a capture. It costs no stars and does not count against the ghost bonus.
+      // free: a shoo. It costs no stars; everything else is the same as a capture.
       ((n.ctrl = !1),
         (n.act = null),
         (n.sq.moving = !1),
         (n.mo.moving = !1),
-        free || ((x.ghost = !1), k.caught++),
+        (x.ghost = !1),
+        k.caught++,
         (x.sing = !1),
         D.caught(),
         J([
           ...i,
           N(() => {
             let s = n.starOn;
-            (free
-              ? Dt("shoo", "", o, "shoo")
-              : ((n.stars = Math.max(0, n.stars - 100)),
-                s && n.sparks.push({ x: 300, y: 80, t: 2.4, s: "\u2212100 CAUGHT" }),
-                Dt("caught", "", o, "caught")),
+            (free ||
+              ((n.stars = Math.max(0, n.stars - 100)), s && n.sparks.push({ x: 300, y: 80, t: 2.4, s: "\u2212100 CAUGHT" })),
+              Dt("caught", "", o, "caught"),
               l(),
               (n.ctrl = !0));
           }),
@@ -7970,7 +7969,6 @@
         n.room !== "gas" && qSec(l),
         k.phase === "g3hide" &&
           n.ctrl &&
-          !x.mops &&
           ((k.timer -= l),
           k.timer <= 0 &&
             n.sqPose !== "hidden" &&
