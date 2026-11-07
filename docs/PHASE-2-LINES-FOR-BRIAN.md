@@ -39,22 +39,22 @@ The code in backticks is the chip key the game uses (for the tests).
 | 18.2 | Chapter 1, `O2a`: Mops hums; the SING button is up | Squatch: sing along with Mops | Squatch: sing with Mops |
 | 18.3 | Chapter 1, `O3`: A noise outside the closet door (was "What's that noise?") | Squatch: peek out the door | Squatch: see what the noise is |
 | 18.4 | Chapter 1, `O3b`: After the peek | Squatch: sneak out the door | Squatch: go out the door |
-| 18.5 | Chapter 1, `O4`: The lobby, someone screams "A WOOKIE!" | Squatch: hide, quick! | Squatch: run back to the closet! |
+| 18.5 | Chapter 1, `O4`: The lobby, someone screams "A WOOKIE!" (Brian's wording, 2026-11-07) | Squatch: run back to the closet! | Squatch: hide, quick! (the earlier wording) |
 | 18.6 | Chapter 1, `O5`: Back in the closet, the bot is coming | Squatch: hide under the bed | Squatch: get under the bed |
 | 18.7 | Chapter 1, `O7`: The TV in the closet | Squatch: watch the TV | Squatch: turn on the TV |
 | 18.8 | Chapter 1, `O8`: Bedtime | Squatch: go to sleep in your bed | Squatch: go to bed |
 | 18.9 | Chapter 1, `O8:gift`: Morning, a gift is on the floor | Squatch: grab the gift | Squatch: pick up the gift |
-| 18.10 | Chapter 1, `O9`: The note and the rocket (unchanged words, now with who acts) | Squatch: put them in your Guardian Box | Squatch: put the gifts in your Guardian Box |
+| 18.10 | Chapter 1, `O9`: The note and the rocket (Brian's wording, 2026-11-07) | Squatch: put the note and the rock in the box | Squatch: put them in your Guardian Box (the earlier wording) |
 | 18.11 | Chapter 1, `S1`: S1 and S1L: Mops forgot his lunch (was "Bring Mops his lunch") | Squatch: bring Mops his lunch | Squatch: take Mops his lunch |
 | 18.12 | Chapter 1, `S2`: S2: Mops is in the hall | Squatch: give Mops his lunch | Squatch: hand Mops his lunch |
-| 18.13 | Chapter 1, `S4`: S4: the Moon Pie crate (goal only: hiding was taught in the opening) | Squatch: get a Moon Pie | Squatch: grab a Moon Pie from the crate |
+| 18.13 | Chapter 1, `S4`: S4: the Moon Pie crate (Brian's wording, 2026-11-07) | Squatch: hide from the bot in the crate | Squatch: get a Moon Pie (the earlier wording) |
 | 18.14 | Chapter 1, `S4:in`: S4: Squatch is in the crate | Squatch: stay hidden in the crate | Squatch: keep still in the crate |
 | 18.15 | Chapter 1, `S5`: S5: the window, before the visitors talk (goal only) | Squatch: listen to the visitors | Squatch: hear what the visitors say |
 | 18.16 | Chapter 1, `S5:bro`: S5: the brochure is in the bin | Squatch: grab the brochure | Squatch: take the brochure |
 | 18.17 | Chapter 1, `S6`: S6: Mops asks Squatch to come (was "Follow Mops") | Squatch: follow Mops | Squatch: go after Mops |
 | 18.18 | Chapter 1, `S7`: S7: the MANAGER computer with its ORDER screen (was "Use the manager's terminal") | Squatch: use the manager's computer | Squatch: go to the MANAGER computer |
 | 18.19 | Chapter 1, `S7b`: S7b: the order form is on the computer | Squatch: sign the order | Squatch: sign it |
-| 18.20 | Chapter 1, `S9`: S9: Mops waits by the trash (first time singing a bot over: the chip names each step) | Squatch: hide in the box | Squatch: get in the box |
+| 18.20 | Chapter 1, `S9`: S9: Mops waits by the trash (Brian's wording, 2026-11-07) | Squatch: get ready to sing to the bot | Squatch: hide in the box (the earlier wording) |
 | 18.21 | Chapter 1, `S9:hid`: S9: Squatch is in the box | Squatch: sing to bring the bot over | Squatch: sing so the bot comes |
 | 18.22 | Chapter 1, `S9:sing`: S9: Squatch is singing (first time switching: the chip names the step). The picture button glows while Squatch sings | Squatch: tap Mops' picture | Squatch: tap Mops' face (Mops' own words) |
 | 18.23 | Chapter 1, `S9:mops`: S9: the player is Mops | Mops: grab the slip from the trash | Mops: take the slip |
