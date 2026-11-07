@@ -3,6 +3,10 @@
  * index.html at commit 15051ec, the last hand-edited build.
  *   node tools/equivalence.mjs
  *
+ * Part 1 holds only at commit 38075c3, where src/ was first committed. Later commits change src/ on
+ * purpose, so after that Part 1 reports FAIL; Part 2 still shows whether play without link
+ * parameters matches 15051ec.
+ *
  * Part 1, static: esbuild with the build's own options, run over the old program, gives exactly the
  * same output as the build gives from src/. Prettier only changed layout, so nothing in src/ differs
  * from the old program except whitespace, quotes, parentheses and empty statements.

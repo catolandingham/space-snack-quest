@@ -14508,9 +14508,10 @@
         g("SCRUB " + A + "/3", 480, 336, 26, "#b45309", "center", 900));
     }
     function I0(l) {
-      l < 1 ||
-        l > Ca ||
-        (qh(), l !== 1 && ((n.q = []), (n.cur = null), (n.stars = 0), (n.starOn = !0), l === 2 ? Ws() : l === 3 ? aq() : nq()));
+      l < 1 || l > Ca || startStory(l);
+    }
+    function startStory(l) {
+      (qh(), l !== 1 && ((n.q = []), (n.cur = null), (n.stars = 0), (n.starOn = !0), l === 2 ? Ws() : l === 3 ? aq() : nq()));
     }
     let j2 = (l) => {
         if (
@@ -14652,6 +14653,87 @@
         p.state !== "keypad" && af();
       }
     }
+    // Debug link (task T4). Does nothing unless the page address asks for it.
+    //   ?ch=2               start Chapter 2 from the title, even if it is still locked
+    //   ?ch=2&phase=wash1   then jump to that Chapter 2 checkpoint (the applyG table; ?phase alone means Chapter 2)
+    //   ?scene=P3           start that scene's chapter, then call window.__ss.sceneP3
+    //   &debug=1            show the state strip under the game; the backtick key hides and shows it
+    function debugLink() {
+      let q;
+      try {
+        q = new URLSearchParams(window.location.search);
+      } catch {
+        return;
+      }
+      let linkCh = parseInt(q.get("ch") || "", 10) || 0,
+        linkPhase = q.get("phase") || "",
+        linkScene = q.get("scene") || "",
+        linkDebug = q.get("debug") === "1";
+      if (!linkCh && !linkPhase && !linkScene && !linkDebug) return;
+      !linkCh && linkPhase && (linkCh = 2);
+      !linkCh && linkScene && (linkCh = { O: 1, S: 1, G: 2, P: 3, M: 4 }[linkScene[0]] || 0);
+      setTimeout(() => {
+        if (!h) return;
+        if (linkCh >= 1 && linkCh <= 4) {
+          startStory(linkCh);
+          linkCh === 2 && linkPhase && (clearRun(), applyG(linkPhase));
+        }
+        if (linkScene) {
+          let f = window.__ss && window.__ss["scene" + linkScene];
+          typeof f === "function" && (clearRun(), f());
+        }
+        linkDebug && debugStrip();
+      }, 0);
+    }
+    function debugState() {
+      let s = n.scene || "",
+        a = n.act,
+        f = (v) => (typeof v === "number" ? v.toFixed(1) : "-");
+      return [
+        "ch " + ({ O: 1, S: 1, G: 2, P: 3, M: 4 }[s[0]] || "-"),
+        "scene " + (s || "-"),
+        "phase " + (k.phase || "-"),
+        "room " + (n.room || "-"),
+        "control " + (x.mops ? "Mops" : "Squatch") + (n.ctrl ? "" : " (cutscene)"),
+        "pose " + (n.sqPose || "-"),
+        "prompt " + (a ? a.verb + (a.cap ? " \u00b7 " + a.cap : "") : "-"),
+        "button " + (p.verb || "-"),
+        'chip "' + (n.chip || "") + '"',
+        "security " + (k.sec ? k.sec.mode + " (" + k.sec.by + ")" : "none"),
+        "warn " + f(k.warn) + " peek " + f(k.peek),
+      ].join(" | ");
+    }
+    function debugStrip() {
+      let box = document.createElement("div"),
+        line = document.createElement("div"),
+        copy = document.createElement("button");
+      ((box.id = "ss-debug"),
+        box.setAttribute(
+          "style",
+          "max-width:960px;margin:0 auto;padding:4px 8px;box-sizing:border-box;width:100%;display:flex;gap:8px;align-items:flex-start;font:13px/1.4 ui-monospace,Menlo,monospace;color:#1e2430",
+        ),
+        (line.id = "ss-debug-line"),
+        line.setAttribute("style", "flex:1;word-break:break-word"),
+        (copy.type = "button"),
+        (copy.textContent = "Copy"),
+        copy.addEventListener("click", () => {
+          try {
+            navigator.clipboard.writeText(line.textContent);
+          } catch {}
+          copy.blur();
+        }),
+        box.append(line, copy),
+        document.body.appendChild(box));
+      let read = () => {
+        if (!h) return (clearInterval(timer), box.remove());
+        line.textContent = debugState();
+      };
+      let timer = setInterval(read, 250);
+      (read(),
+        window.addEventListener("keydown", (ev) => {
+          ev.code === "Backquote" && !ev.repeat && (box.style.display = box.style.display === "none" ? "flex" : "none");
+        }));
+    }
     let Z2 = performance.now(),
       xq = 0,
       W2 = (l) => {
@@ -14762,7 +14844,9 @@
           Gn = l;
         },
         tripSnacks: () => Gn,
+        debugState,
       }),
+      debugLink(),
       {
         actionE: J1,
         resetHold: armReset,
