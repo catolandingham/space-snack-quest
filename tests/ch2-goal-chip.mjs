@@ -14,7 +14,7 @@ const EXPECT = {
   g2: "Mops: ask Gloop for work at the counter",
   wash1: "Squatch: wash the dishes at the sink",
   g3hide: "Squatch: hide in the crate before the bots look!",
-  g4: "Mops: take the tip jar and buy at the counter",
+  g4: "Mops: take the tip jar",
   g4k: "Mops: carry the soup to Squatch's crate",
   wash5: "Squatch: wash the next dishes",
   g6: "Squatch: sing from the crate to lure the bots",

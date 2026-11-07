@@ -7,7 +7,7 @@
  */
 import { startGame, sleep } from "./game-page.mjs";
 
-const KEY_HELP = "Arrows or WASD: walk. E: do what the button says. Space or Enter: next line. Hold R: restart this section. Esc: skip a flashback. M: sound.";
+const KEY_HELP = "Arrows or WASD: walk. E: do the action in the white label. Space or Enter: next line. Hold R: restart this section. Esc: skip a flashback. M: sound.";
 const TOUCH_HELP = "Stick: walk. Big button: do it. Tap the picture: next line. Hold Reset section to restart.";
 const BANNED = [/\bShift\b/, /\bTab\b/, /opera/i, /push far/i];
 

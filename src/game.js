@@ -6700,12 +6700,12 @@
     // Why each announced switch happens. Wording waits for Brian's yes (docs/PHASE-1-LINES-FOR-BRIAN.md).
     // Switches with no entry here (scene set-ups, Reset section, Chapters 1, 3 and 4) are silent for now.
     const SWITCH_WHY = {
-      "g1-door": "Squatch can't be seen out front. Mops can.",
+      "g1-door": "Mops can walk out front. Squatch stays hidden by the pump.",
       "g2-back": "Mops found work. Squatch sneaks in the back.",
-      "g3-front": "Squatch must stay hidden. Mops goes out front.",
-      "g4-wash": "Mops cooks. Squatch washes the dishes.",
-      "g5-mop": "Paws can't clean this pot. Mops has a mop.",
-      "g5-jar": "The dishes are done. Mops gets the new jar.",
+      "g3-front": "Squatch stays hidden in the crate. Mops goes out front.",
+      "g4-wash": "Squatch washes the next dishes.",
+      "g5-mop": "This pot needs a mop. Mops goes to get it.",
+      "g5-jar": "The dishes are done. Mops goes out front.",
       "g6-lure": "The tank is full. Squatch has to lure the bots away.",
     };
     function switchTo(who, why) {
@@ -7614,7 +7614,7 @@
       g3: "Squatch: hide in the crate before the bots look!",
       g3hide: "Squatch: hide in the crate before the bots look!",
       g3h: "Squatch: stay hidden in the crate",
-      g4: "Mops: take the tip jar and buy at the counter",
+      g4: "Mops: take the tip jar",
       "g4:coins": "Mops: buy soup at the counter",
       "g4:soup": "Mops: take the soup through the kitchen door",
       g4k: "Mops: carry the soup to Squatch's crate",
@@ -7622,9 +7622,9 @@
       "diner:kitchen": "Mops: go back through the kitchen door",
       wash5: "Squatch: wash the next dishes",
       "wash5:mop": "Mops: mop the greasy pot at the sink",
-      "kitchen:mops": "Mops: tap Squatch's picture to switch back",
+      "kitchen:mops": "Mops: tap Squatch's picture (top right) to switch back",
       g6d: "Mops: grab the new tip jar",
-      "g6d:coins": "Mops: take the coins out the red door",
+      "g6d:coins": "Mops: take the coins out the EXIT door",
       "g6:mops": "Mops: give the coins to Rusty at the pump",
       g6: "Squatch: sing from the crate to lure the bots",
       "g6:sing": "Squatch: stop singing before they reach you",
@@ -11932,7 +11932,11 @@
       (m(c - 70, 64, 58, 58, 29),
         r(l ? "#ffe3c4" : "#ffffff", 3),
         l ? Re(c - 41, 112, 0.42, { f: -1 }) : Fe(c - 41, 116, 0.36, { f: -1 }),
-        (x.sing || (n.scene === "S9" && x.lureBot.look > 0) || (n.scene === "S11" && x.lureBot.look > 0)) && oV(c - 74, 60, 66, 66, 30));
+        (x.sing ||
+          (n.scene === "S9" && x.lureBot.look > 0) ||
+          (n.scene === "S11" && x.lureBot.look > 0) ||
+          (n.scene.startsWith("G") && ch2ChipKey() === "kitchen:mops")) &&
+          oV(c - 74, 60, 66, 66, 30));
     }
     function n5(l) {
       if (l === "terminal") {
@@ -15229,7 +15233,7 @@
     });
   }
   // Help lines: only controls that work. Wording waits for Brian's yes (docs/PHASE-1-LINES-FOR-BRIAN.md).
-  var KEY_HELP = "Arrows or WASD: walk. E: do what the button says. Space or Enter: next line. Hold R: restart this section. Esc: skip a flashback. M: sound.",
+  var KEY_HELP = "Arrows or WASD: walk. E: do the action in the white label. Space or Enter: next line. Hold R: restart this section. Esc: skip a flashback. M: sound.",
     TOUCH_HELP = "Stick: walk. Big button: do it. Tap the picture: next line. Hold Reset section to restart.";
   function r8(V) {
     let t = (0, YV.useRef)(null),

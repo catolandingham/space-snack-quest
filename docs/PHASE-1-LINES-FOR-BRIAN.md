@@ -23,7 +23,7 @@ The chip is the yellow goal line at the top of the picture. It is set from one t
 | 5.5 | First dishes (wash1) | Squatch: wash the dishes at the sink | (plan draft) |
 | 5.6 | The bots come to look (g3, g3hide) | Squatch: hide in the crate before the bots look! | (plan draft) |
 | 5.7 | Squatch is in the crate while the bots argue (g3h) | Squatch: stay hidden in the crate | Squatch: stay in the crate |
-| 5.8 | Mops out front, before he has coins (g4) | Mops: take the tip jar and buy at the counter | (plan draft) |
+| 5.8 | Mops out front, before he has coins (g4) | Mops: take the tip jar | Mops: grab the tip jar (review: one action per line, so the plan's "take the tip jar and buy at the counter" is split into 5.8 and 5.9) |
 | 5.9 | Mops has the coins (g4) | Mops: buy soup at the counter | Mops: buy the soup at the counter |
 | 5.10 | Mops has the soup (g4) | Mops: take the soup through the kitchen door | Mops: carry the soup to the kitchen |
 | 5.11 | Mops in the kitchen with the soup (g4k, g4l) | Mops: carry the soup to Squatch's crate | (plan draft) |
@@ -31,12 +31,12 @@ The chip is the yellow goal line at the top of the picture. It is set from one t
 | 5.13 | Next dishes (wash5) | Squatch: wash the next dishes | (plan draft) |
 | 5.14 | The greasy pot, Mops has the mop (wash5) | Mops: mop the greasy pot at the sink | Mops: mop the pot at the sink |
 | 5.15 | The new jar, out front (g6d) | Mops: grab the new tip jar | Mops: take the tip jar |
-| 5.16 | Mops has the coins (g6d) | Mops: take the coins out the red door | Mops: take the coins out to the pump |
+| 5.16 | Mops has the coins (g6d) | Mops: take the coins out the EXIT door | Mops: take the coins out to the pump |
 | 5.17 | Back on the lot with coins (g6, Mops) | Mops: give the coins to Rusty at the pump | Mops: pay Rusty at the pump |
 | 5.18 | Tank is full, bots on the ramp (g6, Squatch) | Squatch: sing from the crate to lure the bots | Squatch: sing to lure the pump bots away (the plan's draft; mine says where to sing) |
 | 5.19 | Squatch is singing (g6) | Squatch: stop singing before they reach you | Squatch: stop before the bots get to you |
 | 5.20 | The bots are looking at the crate (g6) | Squatch: run to the ship and get on board | Squatch: run to the ship! |
-| 5.21 | The player tapped the picture button in the kitchen and is now Mops, while the work is Squatch's (added with T6) | Mops: tap Squatch's picture to switch back | Mops: tap the picture, top right, to be Squatch again |
+| 5.21 | The player tapped the picture button in the kitchen and is now Mops, while the work is Squatch's (added with T6). The picture button glows while this chip shows. | Mops: tap Squatch's picture (top right) to switch back | Mops: tap the picture, top right, to be Squatch again |
 
 ## T6. Every switch between Squatch and Mops, and every room change, is announced
 
@@ -44,12 +44,12 @@ A switch card fills the picture, shows the character, and waits for a tap. Its t
 
 | # | When it shows | In the game now (why line) | Another way to say it |
 | --- | --- | --- | --- |
-| 6.1 | Squatch hid by the pump; Mops goes to the diner | Squatch can't be seen out front. Mops can. | (plan draft) |
+| 6.1 | Squatch hid by the pump; Mops goes to the diner | Mops can walk out front. Squatch stays hidden by the pump. | Squatch hides by the pump. Mops walks out front. |
 | 6.2 | Mops asked for work; Squatch goes to the back door | Mops found work. Squatch sneaks in the back. | Gloop needs a dishwasher. Squatch sneaks in the back. |
-| 6.3 | Squatch is hiding from the bots; Mops goes out front | Squatch must stay hidden. Mops goes out front. | Squatch is hiding. Mops goes out front. |
-| 6.4 | Soup delivered; back to the dishes | Mops cooks. Squatch washes the dishes. | Mops is cooking. Squatch washes. |
-| 6.5 | The greasy pot | Paws can't clean this pot. Mops has a mop. | This pot needs a mop. |
-| 6.6 | The second set of dishes is done; Mops goes for the new jar | The dishes are done. Mops gets the new jar. | The jar is full again. Mops goes to get it. |
+| 6.3 | Squatch is hiding from the bots; Mops goes out front | Squatch stays hidden in the crate. Mops goes out front. | Squatch is hiding. Mops goes out front. |
+| 6.4 | Soup delivered; back to the dishes | Squatch washes the next dishes. | Squatch goes back to the sink. |
+| 6.5 | The greasy pot | This pot needs a mop. Mops goes to get it. | This pot needs a mop. |
+| 6.6 | The second set of dishes is done; Mops goes for the new jar | The dishes are done. Mops goes out front. | Dishes done. Mops goes out front. |
 | 6.7 | Tank is full; Squatch has to lure the bots | The tank is full. Squatch has to lure the bots away. | Tank full! Now Squatch lures the bots away. |
 
 The tag beside the chip, in page text over the top of the picture:
@@ -122,9 +122,11 @@ The big touch button, and the small caption drawn on the picture by the spot, no
 
 | # | Where | In the game now | Another way to say it |
 | --- | --- | --- | --- |
-| 12.1 | Under the game on a computer (replaces the old line that named Shift, Tab and opera) | Arrows or WASD: walk. E: do what the button says. Space or Enter: next line. Hold R: restart this section. Esc: skip a flashback. M: sound. | Arrows or WASD: walk. E: do the action in the white label. Space or Enter: next line. Hold R: restart this section. Esc: skip a flashback. M: sound. (On a computer there is no big button, only the label on the picture, so "the button" may puzzle a player.) |
+| 12.1 | Under the game on a computer (replaces the old line that named Shift, Tab and opera) | Arrows or WASD: walk. E: do the action in the white label. Space or Enter: next line. Hold R: restart this section. Esc: skip a flashback. M: sound. | Arrows or WASD: walk. E: do what the button says. (the plan's draft; on a computer there is no big button, only the label on the picture) |
 | 12.2 | Under the touch controls on a phone or tablet, and on a computer after "Show touch controls" | Stick: walk. Big button: do it. Tap the picture: next line. Hold Reset section to restart. | Stick: walk. Big button: do what it says. Tap the picture: next line. Hold Reset section to start this part again. |
 | 12.3 | The joystick's spoken label for screen readers (was "Move (push far to run)") | Move | Walk |
+
+There is no keyboard key for switching characters in the story chapters: Tab only worked in the old engine. On a computer, switching back (5.21) is a click on Squatch's picture. A key for it would be a new control; say if you want one.
 
 The old line also said "Click the game first so it hears your keys." It is gone, because the plan's wording replaces the whole line. Say if you want it back.
 
