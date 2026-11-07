@@ -1891,7 +1891,7 @@
                                     : x5());
     }
     function E5() {
-      ((qq = 0), (mq = []), (ringsDrawn = []));
+      ((qq = 0), (mq = []), (ringsDrawn = []), (conesDrawn = []));
       let l = n.cur;
       if (l && l.k === "card") {
         M5(l.id, l.text, l.by, l);

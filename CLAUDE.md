@@ -32,8 +32,11 @@ Owner: Brian, designer and playtester, not a programmer. Clarity beats clevernes
   is visible where the prompt sits. The chip names who acts: "Mops: walk to the diner door."
 - A ring and its trigger come from the same spot entry. Never hand-type a ring box.
 - Every switch between Squatch and Mops goes through switchTo(who, why) and is announced.
-- HUD: page text over the picture in fixed zones (top left: chapter, ↺, stars; top center: goal chip;
-  top right: faces). Do not draw status into the canvas. tests/hud-layout.mjs fails on any overlap.
+- HUD: page text in fixed zones (top left: chapter, ↺, stars; top center: goal chip; top right: faces),
+  over the picture on a computer and in a bar above it on a phone. Do not draw status into the canvas.
+  tests/hud-layout.mjs checks, at 375x812 and 1100x800 in eight states, that HUD boxes do not overlap each
+  other or the sound button, stay in their zone, use text of 14 px or more, hide under cards and
+  flashbacks, and that ↺ and the faces are 44 px targets. It does not check text drawn in the canvas.
 - A new key idea is taught once with a zoom-in card (spotlight on the thing, one line): teach(id, at).
 
 ## How work gets done

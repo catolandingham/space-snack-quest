@@ -130,12 +130,14 @@
             e.setLineDash([])));
     }
     function Bl(l, o, i, s, q, d) {
-      (e.beginPath(), e.moveTo(l, o), e.arc(l, o, q, i - s, i + s), e.closePath(), (e.fillStyle = d), e.fill());
+      (conesDrawn.push({ ox: l, oy: o, a: i, half: s, len: q, room: n.room, cam: n.room === "hall" ? B.camX : 0 }),
+        e.beginPath(), e.moveTo(l, o), e.arc(l, o, q, i - s, i + s), e.closePath(), (e.fillStyle = d), e.fill());
     }
     // A sight cone drawn as the area that really sees (Phase 3, T19 addition): the same origin, facing,
     // width and length as before, cut short where a pump, crate or wall blocks the sight line (_h), so
     // the shaded area is exactly where a standing Squatch is seen. tests/cone-match.mjs checks it.
     function seenCone(l, o, i, s, q, d) {
+      conesDrawn.push({ ox: l, oy: o, a: i, half: s, len: q, blocked: !0, room: n.room, cam: n.room === "hall" ? B.camX : 0 });
       let N = 40;
       e.beginPath();
       e.moveTo(l, o);

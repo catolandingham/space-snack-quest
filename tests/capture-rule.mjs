@@ -166,6 +166,9 @@ const sec4 = await frames(() => (window.__ss.ch2.sec ? { by: window.__ss.ch2.sec
 g.check("Chapter 4: the port bot's sighting calls security, and the player still has control", !!sec4 && (sec4.by === "gate4" || sec4.by === "light4") && sec4.ctrl, { m1, sec4 });
 const caught4 = await frames(cardNow, 12000);
 g.check("Chapter 4: security reaches Squatch and the LOCKUP card names who saw him", caught4 === causes.gate4 || caught4 === causes.light4, caught4);
+await page.evaluate(() => window.__ss.drain());
+const back4 = await page.evaluate(() => { const ss = window.__ss, n = ss.op, b = ss.ch4.bot; return { x: Math.round(n.sq.x), y: Math.round(n.sq.y), pose: n.sqPose, bot: b && { x: b.x, hx: b.hx, look: b.look }, ctrl: n.ctrl }; });
+g.check("Chapter 4: the dock restarts with Squatch at the van (80, 520) and the port bot home", back4.x === 80 && back4.y === 520 && back4.pose === "stand" && back4.ctrl && !!back4.bot && back4.bot.x === back4.bot.hx && back4.bot.look === 0, back4);
 
 // Chapter 1 deck: a tourist sees Squatch, the guard comes, LOCKUP, the deck restarts, no stars lost.
 await page.evaluate(setState, SCENES[1]);
@@ -203,7 +206,10 @@ async function hallAlarm(hide) {
   }, 6000);
 }
 const hallCaught = await hallAlarm(false);
+await page.evaluate(() => window.__ss.drain());
+const backHall = await page.evaluate(() => { const n = window.__ss.op; return { scene: n.scene, x: Math.round(n.sq.x), y: Math.round(n.sq.y), ctrl: n.ctrl, alarm: window.__ss.hallAlarm.on }; });
 g.check("Chapter 1 hall alarm: not hidden at the end of the run is the LOCKUP card", !!hallCaught && hallCaught.card === causes.hallbot, hallCaught);
+g.check("Chapter 1 hall alarm: S9 restarts at its start (880, 560) with the alarm off", backHall.scene === "S9" && backHall.x === 880 && backHall.y === 560 && backHall.ctrl && !backHall.alarm, backHall);
 await page.evaluate(() => window.__ss.drain());
 const hallLost = await hallAlarm(true);
 g.check("Chapter 1 hall alarm: hidden for 2 seconds shows \"They lost you.\"", !!hallLost && hallLost.lost === true, hallLost);
@@ -261,6 +267,39 @@ for (const [label, setup] of [
   const after = await page.evaluate(() => { const ss = window.__ss, n = ss.op; return { caught: ss.ch.caught + ss.s1.caught, card: !!(n.cur && n.cur.id === "jail") || n.q.some((q) => q.id === "jail"), alarm: ss.hallAlarm.on, grace: n.seeGrace - n.T, scene: n.scene }; });
   g.check(`Chapter 1 ${label}: after a restart there is no catch for 2 seconds`, after.caught === before && !after.card && !after.alarm && after.scene === label, { before, after });
 }
+
+// Chapter 3 temple (p3): a rover sees Squatch, security comes, LOCKUP, the temple restarts at its start.
+await page.evaluate(() => { const ss = window.__ss; ss.sceneP3(); ss.drain(); const n = ss.op; n.q = []; n.cur = null; n.ctrl = true; ss.swapTo(false); n.sqPose = "stand"; ss.ch.spot = -1; ss.ch.sing = false; });
+const p3 = await page.evaluate(() => {
+  const ss = window.__ss, k = ss.ch3, n = ss.op, r = k.rov[0];
+  if (!r) return null;
+  for (const o of k.rov) Object.assign(o, { x: o.hx, f: o.hf, look: 0 });
+  const a = r.f > 0 ? 0.15 : Math.PI - 0.15;
+  for (let d = 120; d < 220; d += 10) {
+    const x = r.x + Math.cos(a) * d, y = r.y - 40 + Math.sin(a) * d;
+    if (ss.seeLine(r.x, r.y - 40, x, y)) { n.sq.x = x; n.sq.y = y + 40; return { x, y }; }
+  }
+  return { none: true };
+});
+const p3sec = await frames(() => (window.__ss.ch2.sec ? window.__ss.ch2.sec.by : null), 3000);
+const p3card = await frames(cardNow, 12000);
+await page.evaluate(() => window.__ss.drain());
+const p3back = await page.evaluate(() => { const ss = window.__ss, n = ss.op; return { x: Math.round(n.sq.x), y: Math.round(n.sq.y), mops: ss.ch.mops, rovHome: ss.ch3.rov.every((o) => o.x === o.hx && o.look === 0), phase: ss.ch3.phase }; });
+g.check("Chapter 3 temple: the rover's sighting calls security and the card names the temple", p3sec === "rover-s" && p3card === causes["rover-s"], { p3, p3sec, p3card });
+g.check("Chapter 3 temple: restart puts Squatch at the temple start (60, 480) with the rovers home", p3back.x === 60 && p3back.y === 480 && !p3back.mops && p3back.rovHome && p3back.phase === "p3", p3back);
+
+// Chapter 3 ramp (p4a): the rover reaches the singing barrel, LOCKUP at once, back in the barrel.
+await page.evaluate(setState, { kind: "ch3", room: "pad", phase: "p4a", mops: false, extra: {} });
+await page.evaluate(() => {
+  const ss = window.__ss, k = ss.ch3, n = ss.op;
+  k.rov = [{ x: 640, y: 500, hx: 640, hf: -1, f: -1, look: 0, pause: 0, alert: 0 }];
+  n.sqPose = "hidden"; ss.ch.spot = 70; ss.ch.sing = true; n.sq.x = 400; n.sq.y = 500;
+});
+const p4card = await frames(cardNow, 12000);
+await page.evaluate(() => window.__ss.drain());
+const p4back = await page.evaluate(() => { const ss = window.__ss, n = ss.op, r = ss.ch3.rov[0]; return { pose: n.sqPose, spot: ss.ch.spot, x: n.sq.x, y: n.sq.y, sing: ss.ch.sing, rov: r && { x: r.x, hx: r.hx, look: r.look } }; });
+g.check("Chapter 3 ramp: the rover reaching the singing barrel shows LOCKUP with its cause", p4card === causes.lure3, p4card);
+g.check("Chapter 3 ramp: restart puts Squatch back in the barrel, not singing, with the rover home", p4back.pose === "hidden" && p4back.spot === 70 && p4back.x === 400 && p4back.y === 500 && !p4back.sing && p4back.rov.x === p4back.rov.hx && p4back.rov.look === 0, p4back);
 
 // Tallies no longer show stars taken away.
 g.check("no tally adds a star loss to Times caught", !/Times caught " \+ s \+ \(s \?/.test(all));

@@ -56,6 +56,14 @@ You noticed Rusty seemed to catch Squatch only when he was right in front, thoug
 - Now the cone is drawn cut short where the sight line is blocked, so the shaded area is exactly where a standing Squatch is seen. No new words.
 - The game checks a point on Squatch's body, 40 pixels above his feet (50 for the kitchen window), not his feet. The test uses that point. If you want the check at his feet or his whole body instead, that would make the cones catch more and is a difficulty change, so it is left for you.
 
+### More watchers checked (review, 2026-11-07)
+
+`tests/cone-match.mjs` now also covers the deck tourist, the rover's three cones, the port bot and the Chapter 1 hall bots. Two drawings did not match what they check, and now do (no width or range changed):
+
+- The rover at the ramp (Chapter 3, p4a) checks 0.6 to each side and 230 long, but was drawn 0.55 and 240. It is now drawn 0.6 and 230.
+- A Chapter 1 hall bot also notices Squatch's feet within 70 pixels of its own, all round, which was not drawn. A faint circle round the bot now shows it.
+- The rover, port bot and hall bot cones are now cut short where a barrel, can or wall blocks the sight line, as the gas stop cones are.
+
 ## HUD. The status over the picture is page text, in fixed places, readable on a phone
 
 What changed on screen (your HUD decisions, 2026-11-07). The chapter tag, the stars, the goal chip, the countdown, the tank label and the "+100" pop used to be drawn into the picture, where a phone shrinks them to about 8 pixels. They are now page text laid over the picture, at 14 CSS pixels or more on a 375-wide phone (the chip is 15 on a phone, 20 on a computer). Each has a fixed home:

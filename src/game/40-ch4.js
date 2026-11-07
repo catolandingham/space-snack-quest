@@ -680,7 +680,7 @@
     function H6(l, o) {
       if (o && !Ao) {
         let d = go(l);
-        Bl(d.ox, d.oy, d.a, 0.55, 220, "rgba(255,207,51,.26)");
+        seenCone(d.ox, d.oy, d.a, 0.55, 220, "rgba(255,207,51,.26)");
       }
       let { x: i, y: s, f: q } = l;
       (X(i, s, 30, 8),

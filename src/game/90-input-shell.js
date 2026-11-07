@@ -302,6 +302,7 @@
         },
         methodLine: () => methodLine(),
         stallT: () => stall.t,
+        conesDrawn: () => conesDrawn.slice(),
         METHOD_LINES: [...new Set(Object.values(METHOD_LINES))],
         // Award labels (Phase 3, T22).
         SNEAKY_LABELS,

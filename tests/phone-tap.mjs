@@ -140,13 +140,18 @@ g.check("the picture's top edge is within the HUD bar's height (plus 16 px) of t
     }
     return false;
   }
+  const pos = () => p3.evaluate(() => { const ss = window.__ss, w = ss.ch.mops ? ss.op.mo : ss.op.sq; return { x: w.x, y: w.y }; });
+  // Tap the spot, then require the character to actually move (a tap that does nothing fails the step).
   async function walkTo(gx, gy, until) {
+    const from = await pos();
     await tapGame(gx, gy);
+    let moved = false;
     for (let i = 0; i < 60; i++) {
-      const s = await st();
-      if (until ? s.button === until : !s.walking) return true;
-      if (!s.walking && !until) return true;
-      if (!s.walking && i % 10 === 9) await tapGame(gx, gy);
+      const s = await st(), at = await pos();
+      moved = moved || Math.hypot(at.x - from.x, at.y - from.y) > 5;
+      if (moved && (until ? s.button === until : !s.walking)) return true;
+      if (!moved && i === 14) return false;
+      if (moved && !s.walking && until && i % 10 === 9) await tapGame(gx, gy);
       await sleep(150);
     }
     return false;
@@ -170,6 +175,20 @@ g.check("the picture's top edge is within the HUD bar's height (plus 16 px) of t
   steps.push(["into the diner", await nextUntil("g2")]);
   const bad = steps.filter((s) => !s[1]).map((s) => s[0]);
   g.check("a phone player reaches the diner (g2) by tapping the picture to walk and the button to act, no joystick", bad.length === 0, { bad, end: await st() });
+  // A tap on a live bubble means "next": it never sets a walk target.
+  const onBubble = await p3.evaluate(() => {
+    const n = window.__ss.op;
+    n.walkTo = null;
+    n.q = [{ k: "bub", b: { who: "mops", text: "Two.", style: "say" } }];
+    n.cur = { k: "bub", b: { who: "mops", text: "One.", style: "say" } };
+    n.bt = 1;
+    return true;
+  });
+  await tapGame(800, 560);
+  await sleep(150);
+  const afterBubble = await p3.evaluate(() => { const n = window.__ss.op; return { walkTo: !!n.walkTo, text: n.cur && n.cur.b ? n.cur.b.text : null }; });
+  g.check("a tap on a live bubble moves to the next line and never sets a walk target", onBubble && !afterBubble.walkTo && afterBubble.text !== "One.", afterBubble);
+  await p3.evaluate(() => { const n = window.__ss.op; n.q = []; n.cur = null; n.ctrl = true; });
   // A tap sets a walk target; an arrow key cancels it.
   await tapGame(800, 560);
   await sleep(100);

@@ -682,7 +682,10 @@
     function h2(l, o) {
       if (o) {
         let d = go(l);
-        Bl(d.ox, d.oy, d.a, 0.55, Q.phase === "p1" ? 200 : 240, l.alert > 0 ? "rgba(229,83,61,.3)" : "rgba(255,207,51,.26)");
+        // The same width and length the rover checks: 0.55 and 200 on the pad, 0.55 and 240 in the temple,
+        // 0.6 and 230 at the ramp (it was drawn 0.55 and 240 there; Phase 3 review, tests/cone-match.mjs).
+        let p4 = Q.phase === "p4a";
+        seenCone(d.ox, d.oy, d.a, p4 ? 0.6 : 0.55, Q.phase === "p1" ? 200 : p4 ? 230 : 240, l.alert > 0 ? "rgba(229,83,61,.3)" : "rgba(255,207,51,.26)");
       }
       let { x: i, y: s, f: q } = l;
       (X(i, s, 34, 9),

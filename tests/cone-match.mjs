@@ -1,7 +1,8 @@
 /**
  * The drawn sight cone is the place that sees Squatch (Phase 3, T19 addition, Brian's play of 2026-11-07:
  * "Rusty seems to catch Squatch only when he is directly in front").
- * For Rusty, a pump bot and Gloop's kitchen window: sample points just inside and just outside the drawn
+ * For Rusty, a pump bot, Gloop's kitchen window, the deck tourist, the three rover cones, the port bot and
+ * the Chapter 1 hall bot's circle: sample points just inside and just outside the drawn
  * cone's edges and just past its far end. "Drawn" is read from the picture (the pixel changes when the
  * cone is drawn). "Seen" is the game's own reaction to a standing Squatch whose eye point is that spot
  * (security starts, or Gloop's eye opens). Inside must see him and be drawn, unless the sight line is
@@ -111,5 +112,102 @@ for (const [name, faces] of [["rusty", [1, -1]], ["pumpbot", [1, -1]], ["window"
     g.check(`${name}${face ? (face > 0 ? " facing right" : " facing left") : ""}: ${checked} sample points, the drawn cone and the seeing area agree`, checked >= 4 && !report.some((r) => r.name === name && r.face === face), report.filter((r) => r.name === name && r.face === face));
   }
 }
+// More watchers (review, 2026-11-07): the deck tourist, the three rover cones (pad 200, temple 240, ramp
+// 230), the port bot, and the Chapter 1 hall bot (its cone and the 70 px circle round its feet). Here "drawn"
+// is read from the shapes the frame actually drew (__ss.conesDrawn: origin, facing, width, length, and
+// whether the drawing is cut where the sight line is blocked), so sprites drawn over a cone do not hide it.
+const insideDrawn = (cones, x, y, feetY, clear) =>
+  cones.some((c) => {
+    if (c.circle) return Math.hypot(x - c.ox, feetY - c.oy) < c.len;
+    const py = c.feet ? feetY : y, d = Math.hypot(x - c.ox, py - c.oy);
+    let t = Math.atan2(py - c.oy, x - c.ox) - c.a;
+    while (t > Math.PI) t -= 2 * Math.PI;
+    while (t < -Math.PI) t += 2 * Math.PI;
+    return d <= c.len && Math.abs(t) <= c.half && (!c.blocked || clear);
+  });
+const MORE = {
+  tourist: {
+    setup: { kind: "ch1", call: "sceneS1L", set: { op: { scene: "S1L", room: "deck", sqPose: "stand" } } },
+    prep: () => {
+      const ss = window.__ss, a = ss.s1, t = a.tour[0];
+      a.tour = [t]; Object.assign(t, { sp: 0, alert: 0, run: null });
+      a._home = { x: t.x, y: t.y };
+      ss.op.mo.x = 2000;
+      return { ox: t.x, oy: t.y - 30, a: -Math.PI / 2, half: 0.62, len: 185, eye: 0, avoid: [{ x: 790, y: 232, r: 90 }] };
+    },
+    seen: () => { const a = window.__ss.s1, t = a.tour[0]; const v = a.alertBy >= 0 || a.seen; a.alertBy = -1; a.seen = false; Object.assign(t, { alert: 0, run: null, x: a._home.x, y: a._home.y }); a.sec.on = false; window.__ss.op.live = []; return v; },
+  },
+};
+const rover = (phase, room, half, len) => ({
+  setup: { kind: "ch3", room, phase, mops: false, extra: {} },
+  prep: (phase, half, len) => {
+    const ss = window.__ss, k = ss.ch3;
+    const r = { x: 600, y: 500, hx: 600, hf: -1, f: -1, look: 0, pause: 1e6, alert: 0 };
+    k.rov = [r]; k.phase = phase;
+    return { ox: r.x, oy: r.y - 40, a: Math.PI - 0.15, half, len, eye: 40, avoid: [] };
+  },
+  args: [phase, half, len],
+  seen: () => { const k = window.__ss.ch2; const v = !!k.sec; k.sec = null; window.__ss.ch3.rov.forEach((r) => Object.assign(r, { alert: 0, x: 600, f: -1, look: 0 })); return v; },
+});
+MORE["rover, pad"] = rover("p1", "pad", 0.55, 200);
+MORE["rover, temple"] = rover("p3", "temple", 0.55, 240);
+MORE["rover, ramp"] = rover("p4a", "pad", 0.6, 230);
+MORE["port bot"] = {
+  setup: { kind: "ch4", room: "port", phase: "m1", mops: false, extra: {}, found: [] },
+  prep: () => {
+    const ss = window.__ss, k = ss.ch4;
+    k.bot = { x: 600, y: 500, hx: 600, hf: -1, f: -1, look: 0 };
+    return { ox: 600, oy: 460, a: Math.PI - 0.15, half: 0.55, len: 220, eye: 40, avoid: [], light: true };
+  },
+  seen: () => { const k = window.__ss.ch2; const v = !!k.sec; k.sec = null; Object.assign(window.__ss.ch4.bot, { x: 600, f: -1, look: 0 }); return v; },
+};
+async function judge(geo, x, y, feetY, seenFn) {
+  const cones = await page.evaluate(() => { const n = window.__ss.op, keep = n.sq.x; n.sq.x = -500; window.__ss.drawFrame(); n.sq.x = keep; return window.__ss.conesDrawn(); });
+  const clear = await page.evaluate(([ox, oy, x, y]) => window.__ss.seeLine(ox, oy, x, y), [geo.ox, geo.oy, x, y]);
+  const drawn = insideDrawn(cones, x, y, feetY, clear);
+  await page.evaluate((x, y) => { const n = window.__ss.op; Object.assign(n.sq, { x, y, moving: false }); n.sqPose = "stand"; n.ctrl = true; window.__ss.ch2.sec = null; }, x, feetY);
+  await sleep(140);
+  const seen = await page.evaluate(new Function("return (" + seenFn.toString() + ")()"));
+  await page.evaluate(() => { window.__ss.op.sq.x = -500; });
+  return { drawn, seen, clear, cones: cones.length };
+}
+for (const [name, c] of Object.entries(MORE)) {
+  await page.evaluate(setState, c.setup);
+  const geo = await page.evaluate(c.prep, ...(c.args || []));
+  const b = await page.evaluate(() => window.__ss.walkBounds());
+  const solids = await page.evaluate(() => window.__ss.solids());
+  const pts = [];
+  for (const side of [-1, 1])
+    for (const [dA, kind] of [[-0.08, "inside"], [0.08, "outside"]])
+      for (const f of [0.45, 0.7, 0.9]) pts.push({ ang: geo.a + side * (geo.half + dA), dist: geo.len * f, kind });
+  for (const dA of [-0.3, 0.3]) pts.push({ ang: geo.a + dA * geo.half, dist: geo.len + 25, kind: "outside" }, { ang: geo.a + dA * geo.half, dist: geo.len - 25, kind: "inside" });
+  const bad = [];
+  let checked = 0;
+  for (const s0 of pts) {
+    const x = geo.ox + Math.cos(s0.ang) * s0.dist, y = geo.oy + Math.sin(s0.ang) * s0.dist, feetY = y + geo.eye;
+    if (x < b.x0 + 2 || x > b.x1 - 2 || feetY < b.y0 + 2 || feetY > b.y1 - 2) continue;
+    if (solids.some((q) => x > q.x0 && x < q.x1 && feetY > q.y0 && feetY < q.y1)) continue;
+    if (geo.avoid.some((v) => Math.hypot(x - v.x, feetY - v.y) < v.r)) continue;
+    if (geo.light && (await page.evaluate(([x, y]) => window.__ss.inLight4(x, y), [x, feetY]))) continue; // the searchlight is its own watcher
+    const r = await judge(geo, x, y, feetY, c.seen);
+    checked++;
+    if (r.drawn !== r.seen) bad.push({ kind: s0.kind, x: Math.round(x), y: Math.round(y), ...r });
+  }
+  g.check(`${name}: ${checked} sample points, the drawn cone and the seeing area agree`, checked >= 4 && bad.length === 0, bad);
+}
+
+// The Chapter 1 hall bot: its cone and the 70 px circle round its feet.
+{
+  await page.evaluate(setState, { kind: "ch1", call: "sceneS6", set: { op: { scene: "S7", room: "hall", sqPose: "stand" } } });
+  await page.evaluate(() => { const ss = window.__ss; ss.hall.bots = [{ x: 700, y: 470, light: true, on: true }]; ss.op.seeGrace = 0; });
+  const hallSeen = () => { const ss = window.__ss, v = ss.hallAlarm.on; ss.hallAlarm.on = false; ss.hall.freakT = -9; ss.hall.bots[0].x = 700; ss.hall.bots[0].y = 470; return v; };
+  const res = [];
+  for (const [dx, dy] of [[0, -58], [0, -84], [-58, 0], [-84, -20]]) {
+    const r = await judge({ ox: 700, oy: 420 }, 700 + dx, 470 + dy - 30, 470 + dy, hallSeen);
+    res.push({ dx, dy, ...r });
+  }
+  g.check("Chapter 1 hall bot: inside its drawn cone or 70 px circle it sees Squatch, outside it does not", res.every((r) => r.drawn === r.seen) && res.some((r) => r.seen) && res.some((r) => !r.seen), res);
+}
+
 g.check("no page errors", errors.length === 0, errors);
 await g.finish("cone-match");

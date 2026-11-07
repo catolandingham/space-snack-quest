@@ -245,6 +245,7 @@
             (e.beginPath(),
               e.moveTo(o, i),
               e.arc(o, i, Ls, -Math.PI / 2 - z0, -Math.PI / 2 + z0),
+          conesDrawn.push({ ox: o, oy: i, a: -Math.PI / 2, half: z0, len: Ls, feet: !0, room: n.room }),
               e.closePath(),
               (e.fillStyle = l.alert > 0 ? "rgba(229,83,61,.20)" : "rgba(130,160,255,.13)"),
               e.fill(),
@@ -1012,7 +1013,9 @@
           l.push({
             y: o.y,
             d: () => {
-              S2(o) && Bl(o.x, o.y - 50, M2(o), 0.42, 210, B.freakT > n.T - 1.5 ? "rgba(229,83,61,.3)" : "rgba(255,234,120,.4)");
+              S2(o) && seenCone(o.x, o.y - 50, M2(o), 0.42, 210, B.freakT > n.T - 1.5 ? "rgba(229,83,61,.3)" : "rgba(255,234,120,.4)");
+              // The bot also senses Squatch's feet within 70 of its own (X6): that circle is drawn too (Phase 3 review).
+              S2(o) && (conesDrawn.push({ circle: !0, ox: o.x, oy: o.y, len: 70, room: n.room }), e.beginPath(), e.ellipse(o.x, o.y, 70, 70, 0, 0, Math.PI * 2), (e.fillStyle = B.freakT > n.T - 1.5 ? "rgba(229,83,61,.18)" : "rgba(255,234,120,.28)"), e.fill());
               let i = E2(o.x, o.y);
               (dq(o.x + i.x, o.y + i.y, !1), k2(o.x, o.y));
             },

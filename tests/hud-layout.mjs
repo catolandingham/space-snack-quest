@@ -23,10 +23,13 @@ const STATES = [
   ["Chapter 1 S12 hangar", { kind: "ch1", call: "sceneS12", set: { op: { scene: "S12", room: "hangar", sqPose: "stand" }, ch: { coolers: [false, false, false], tarp: true, crates: true }, trip: 0 } }],
   ["Chapter 2 g4 with soup (long chip)", { kind: "ch2", steps: [["set", { jar: 0, has: "soup" }], ["reset", "g4"]] }],
   ["Chapter 2 g6 on the lot (tank)", { kind: "ch2", steps: [["set", { jar: 30, has: "", fuel: true }], ["reset", "g6"]] }],
+  ["Chapter 2 g3hide (the HIDE! countdown)", { kind: "ch2", steps: [["reset", "g3hide"]] }],
   ["Chapter 2 kitchen as Mops (both faces, glowing)", { kind: "ch2", steps: [["set", { cook: "gone" }], ["reset", "wash1"], ["set", { cook: "gone" }], ["swap", true]] }],
   ["Chapter 3 temple", { kind: "ch3", room: "temple", phase: "p3", mops: false, extra: {} }],
   ["Chapter 4 dock", { kind: "ch4", room: "port", phase: "m1", mops: false, extra: {}, found: [] }],
 ];
+const KITCHEN = STATES.find((st) => st[0].startsWith("Chapter 2 kitchen as Mops"))[1];
+const LOT = STATES.find((st) => st[0].startsWith("Chapter 2 g6 on the lot"))[1];
 const HUD_IDS = ["ss-chapter", "ss-reset", "ss-stars", "ss-chip", "ss-count", "ss-tank", "ss-pop", "ss-face-squatch", "ss-face-mops"];
 
 async function measure(page) {
@@ -59,6 +62,7 @@ for (const [vname, viewport] of [
       n.stars = 1250; n.starOn = true;
       n.sparks.push({ x: 300, y: 80, t: 2.4, s: "Hidden in time! +100" });
       window.__ss.ch2.phase === "wash1" || window.__ss.ch2.phase === "g4" || (window.__ss.ch2.timer = 4);
+      window.__ss.ch2.phase === "g3hide" && (window.__ss.ch2.timer = 4.5);
     });
     await sleep(350);
     const m = await measure(page);
@@ -84,8 +88,32 @@ for (const [vname, viewport] of [
       });
       g.check("375x812, kitchen: the order window and Gloop's face are under no HUD element", cover.hits.length === 0, cover);
     }
+    if (label.includes("g3hide")) g.check(`${vname}, ${label}: the countdown is measured`, m.boxes.some((b) => b.id === "ss-count" && /^HIDE! \d/.test(b.text)), m.boxes.map((b) => b.id));
+    // The sound button (under the picture) overlaps no HUD box.
+    const snd = await page.evaluate(() => { const r = document.getElementById("ss-sound").getBoundingClientRect(); return { x0: r.left, y0: r.top, x1: r.right, y1: r.bottom }; });
+    g.check(`${vname}, ${label}: the sound button overlaps no HUD box and sits under the picture`, !m.boxes.some((b) => overlap(b, snd)) && snd.y0 >= m.pic.y1 - 1, { snd });
     const small = m.boxes.filter((b) => b.text && b.font < 14);
     g.check(`${vname}, ${label}: every HUD text is at least 14 CSS px`, small.length === 0, small);
+  }
+  // Cards and flashbacks fill the picture: no HUD box shows over them (the flashback's SKIP button included).
+  for (const [what, cur] of [
+    ["a LOCKUP card", { k: "card", id: "jail", text: "LOCKUP", cause: "A test.", restart: "A test." }],
+    ["a flashback with SKIP", { k: "fb", pic: "fb1crate", cap: "A delivery crate of Moon Pies came to Stormtop." }],
+  ]) {
+    await page.evaluate((cur) => { const n = window.__ss.op; n.q = []; n.cur = cur; n.bt = 0; }, cur);
+    await sleep(200);
+    const vis = await page.evaluate(() => {
+      const out = [];
+      for (const el of document.querySelectorAll("#ss-hud *, #ss-hudbar *")) {
+        const r = el.getBoundingClientRect(), st = getComputedStyle(el);
+        let hidden = !r.width || !r.height;
+        for (let p = el; p && !hidden; p = p.parentElement) { const ps = getComputedStyle(p); hidden = ps.display === "none" || ps.visibility === "hidden"; }
+        hidden || out.push(el.id || el.tagName);
+      }
+      return out;
+    });
+    g.check(`${vname}: no HUD element shows over ${what}`, vis.length === 0, vis);
+    await page.evaluate(() => { const n = window.__ss.op; n.cur = null; n.q = []; });
   }
   if (vname === "375x812") {
     const top = await page.evaluate(() => ({ pic: document.querySelector("canvas").getBoundingClientRect().top + window.scrollY, bar: document.getElementById("ss-hudbar").getBoundingClientRect().height }));
@@ -117,7 +145,7 @@ for (const [vname, viewport] of [
     const f = (id) => { const el = document.getElementById(id); const st = el && getComputedStyle(el); const im = el && el.firstChild; return el && st.display !== "none" ? { w: Math.round(im.getBoundingClientRect().width), tw: Math.round(el.getBoundingClientRect().width), th: Math.round(el.getBoundingClientRect().height), op: parseFloat(getComputedStyle(im).opacity), right: Math.round(el.getBoundingClientRect().right) } : null; };
     return { sq: f("ss-face-squatch"), mo: f("ss-face-mops"), mops: window.__ss.ch.mops };
   });
-  await page.evaluate(setState, STATES[4][1]);
+  await page.evaluate(setState, KITCHEN);
   await sleep(300);
   let s = await faces();
   g.check("kitchen as Mops: two faces, Mops bright and Squatch dim", !!(s.sq && s.mo && s.mo.op === 1 && s.sq.op < 1 && s.mops), s);
@@ -128,7 +156,7 @@ for (const [vname, viewport] of [
   await sleep(200);
   s = await faces();
   g.check("a tap on Squatch's face switches to Squatch", !!(s.sq && s.sq.op === 1 && !s.mops), s);
-  await page.evaluate(setState, STATES[3][1]);
+  await page.evaluate(setState, LOT);
   await sleep(300);
   const one = await faces();
   g.check("on the lot (no switching): only Squatch's face shows, smaller, in the same corner", !!(one.sq && !one.mo && one.sq.w < s.sq.w && Math.abs(one.sq.right - s.sq.right) <= 2), { one, two: s });
@@ -142,7 +170,7 @@ for (const [vname, viewport] of [
   g.check("holding ↺ restarts the section", held.fired && held.x !== 700, held);
 
   // (e) The stall hint.
-  await page.evaluate(setState, STATES[3][1]);
+  await page.evaluate(setState, LOT);
   await sleep(3600); // the "★ = points for finds" hint has had its 3.5 seconds
   const goal = await page.evaluate(() => document.getElementById("ss-chip").textContent);
   await page.evaluate(() => window.__ss.stallFor(61));
@@ -157,7 +185,7 @@ for (const [vname, viewport] of [
   await sleep(250);
   g.check("30 s without progress is not a stall", (await page.evaluate(() => document.getElementById("ss-chip").textContent)) === goal);
   // The stall clock pauses under a card and a bubble, ignores hiding and face swaps, and resets on progress.
-  await page.evaluate(setState, STATES[3][1]);
+  await page.evaluate(setState, LOT);
   await page.evaluate(() => window.__ss.stallFor(10));
   await sleep(300);
   const clk = {};

@@ -1223,6 +1223,7 @@
         (e.beginPath(),
           e.moveTo(i, s),
           e.arc(i, s, Ls, -Math.PI / 2 - z0, -Math.PI / 2 + z0),
+          conesDrawn.push({ ox: i, oy: s, a: -Math.PI / 2, half: z0, len: Ls, feet: !0, room: n.room }),
           e.closePath(),
           (e.fillStyle = o.alert > 0 ? "rgba(229,83,61,.20)" : "rgba(130,160,255,.13)"),
           e.fill(),

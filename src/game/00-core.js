@@ -1051,7 +1051,9 @@
       return o.length || !(n.act && n.act.spot) ? o : [n.act.spot];
     }
     // Rings drawn this frame, for tests: { id, x, y, r } or { id, box }, in world positions.
-    let ringsDrawn = [];
+    let ringsDrawn = [],
+      // Every sight cone drawn this frame, from the numbers the drawing used (for tests/cone-match.mjs).
+      conesDrawn = [];
     // The spots that can be used now and have a place (a circle or a box). A spot that works anywhere
     // (LEAVE while hidden, ROLL while the light sweeps) wins over every spot after it, so those have no ring.
     function placedSpots() {
