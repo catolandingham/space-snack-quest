@@ -301,6 +301,7 @@
           ((stall.sig = progressSig()), (stall.t = t));
         },
         methodLine: () => methodLine(),
+        stallT: () => stall.t,
         METHOD_LINES: [...new Set(Object.values(METHOD_LINES))],
         // Award labels (Phase 3, T22).
         SNEAKY_LABELS,

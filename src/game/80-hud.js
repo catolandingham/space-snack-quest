@@ -9,7 +9,6 @@
     // The goal line comes back on the next progress. Wording waits for Brian's yes (docs/PHASE-3-LINES-FOR-BRIAN.md).
     const STALL_SECONDS = 60;
     const METHOD_LINES = {
-      back: "Squatch: walk to the KITCHEN door",
       g2: "Mops: walk up to Gloop at the counter",
       "wash:grab": "Squatch: grab a dish from the rack by the window",
       "wash:scrub": "Squatch: scrub the dish at the sink",
@@ -53,7 +52,8 @@
       starPop = { last: 0, at: -9, hintAt: -1 };
     function progressSig() {
       let s = n.scene || "";
-      return [s, ch2.phase, Q.phase, H.phase, n.room, n.found.size, ch2.has, ch2.done, ch2.held, ch2.caught, Q.caught, H.caught, x.caught, aV.caught, x.mops, n.sqPose === "hidden"].join("|");
+      // Progress: a new beat, room, item or catch. Hiding, leaving a hiding spot and switching faces are not progress.
+      return [s, ch2.phase, Q.phase, H.phase, n.room, n.found.size, ch2.has, ch2.done, ch2.held, ch2.caught, Q.caught, H.caught, x.caught, aV.caught].join("|");
     }
     function stallTick(l) {
       let sig = progressSig();
@@ -156,6 +156,8 @@
     }
     // What the chip shows now: the star hint for its first 3.5 seconds, the method line after a stall, or the goal.
     function chipText() {
+      // Nothing in the goal spot while a story bubble is up (rule 10: one bubble at a time).
+      if (n.cur && n.cur.k === "bub") return "";
       if (note.text && performance.now() < note.until) return note.text;
       // The hint runs on the wall clock: the game clock starts over with each scene.
       let since = performance.now() - starPop.hintAt;

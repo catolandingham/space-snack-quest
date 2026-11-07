@@ -76,11 +76,10 @@ What changed on screen (your HUD decisions, 2026-11-07). The chapter tag, the st
 
 ### The stall hint
 
-After 60 seconds of play with no progress (no new beat, room, item or catch; time while a card or a bubble is up does not count) the chip shows the method line for that moment instead of the goal. The goal line comes back as soon as anything moves on. Method lines exist only where the chip names the goal and not the step (your chip rule); where the chip already names the step, it stays.
+After 60 seconds of play with no progress (no new beat, room, item or catch; time while a card or a bubble is up does not count) the chip shows the method line for that moment instead of the goal. Hiding, leaving a hiding spot and switching faces do not count as progress (review, 2026-11-07). Notes in the goal spot ("They lost you.", the walk hint, the star hint) wait while a story bubble is up. Row 21.3 (the back step, "Squatch: walk to the KITCHEN door") was dropped: it repeated the chip. The goal line comes back as soon as anything moves on. Method lines exist only where the chip names the goal and not the step (your chip rule); where the chip already names the step, it stays.
 
 | # | When it shows | In the game now | Another way to say it |
 | --- | --- | --- | --- |
-| 21.3 | Chapter 2, `back`: Squatch is in the crate by the pump, stuck for 60 seconds | Squatch: walk to the KITCHEN door | Squatch: go to the door that says KITCHEN |
 | 21.4 | Chapter 2, `g2`: Mops in the diner, stuck | Mops: walk up to Gloop at the counter | Mops: go stand at the counter |
 | 21.5 | Chapter 2, `wash1` or `wash5`, no dish in hand, stuck | Squatch: grab a dish from the rack by the window | Squatch: take a dish from the rack |
 | 21.6 | Chapter 2, `wash1` or `wash5`, holding a dish, stuck | Squatch: scrub the dish at the sink | Squatch: wash the dish at the sink |
