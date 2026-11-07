@@ -138,6 +138,33 @@
         found = new Set(n.found);
       (reSec(), (ch2.jar = jar), (ch2.reg = reg), (ch2.has = has), (n.stars = stars), (n.found = found));
     }
+    // The chapter bonus for no catches (the old "GHOST BONUS"). Only a catch clears it (a capture, or a bot
+    // shooing Mops); being seen and getting away does not. Amount and rule unchanged (Brian, 2026-11-07).
+    const NEVER_CAUGHT = "Never caught! +250",
+      NEVER_CAUGHT_WHY = "Squatch got through this whole chapter without being caught.",
+      NEVER_CAUGHT_TODO = "No catches this chapter wins +250";
+    // One tally line; the "never caught" reason is smaller and wraps to fit the card.
+    function tallyLine(o, x, y0, size, width, col) {
+      if (o !== NEVER_CAUGHT_WHY) return g(o, x, y0, size, col, "center", 800);
+      let s = Math.round(size * 0.75),
+        ls = zt(o, width, s);
+      ls.forEach((t, j) => g(t, x, y0 + (j - (ls.length - 1) / 2) * (s + 2), s, col, "center", 700));
+    }
+    // What each +100 sneaky find was for (it used to say only "+100 SNEAKY!"). Amounts and rules unchanged.
+    const SNEAKY_LABELS = {
+      "sneak-s1": "Unseen on the deck! +100",
+      "sneak-s6": "Unseen in the hall! +100",
+      "sneak-s9": "Unseen by the bot! +100",
+      "sneak-s11": "Unseen by the bot! +100",
+      "sneak-g1": "Hidden by the pump! +100",
+      "sneak-g3": "Hidden in time! +100",
+      "sneak-g4": "Soup delivered unseen! +100",
+      "sneak-g6": "Lured the bots away! +100",
+      "sneak-p1": "Hidden in the barrel! +100",
+      "sneak-p3": "Never caught in the temple! +100",
+      "sneak-p4": "Got past the rover! +100",
+      "sneak-m1": "Never caught at the dock! +100",
+    };
     // Security for Chapters 3 and 4 is the same figure as Chapter 2's (see qSec): it walks in from the side.
     function drawSec() {
       let s = ch2.sec;

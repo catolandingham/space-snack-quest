@@ -29,7 +29,7 @@
       }
       {
         if (p.state === "op" && Nh()) {
-          if (n.bt < 0.3) return;
+          if (n.bt < 0.3) return void (n.tapT = n.T);
           hf(l > 720 && o < 160 ? "close" : l < 400 ? "prev" : "next");
           return;
         }
@@ -302,6 +302,9 @@
         },
         methodLine: () => methodLine(),
         METHOD_LINES: [...new Set(Object.values(METHOD_LINES))],
+        // Award labels (Phase 3, T22).
+        SNEAKY_LABELS,
+        NEVER_CAUGHT: [NEVER_CAUGHT, NEVER_CAUGHT_WHY, NEVER_CAUGHT_TODO],
       }),
       debugLink(),
       {

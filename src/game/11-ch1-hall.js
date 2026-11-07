@@ -671,7 +671,7 @@
         (n.starOn = !0),
         (n.stars += 100),
         aV.sneaky++,
-        n.sparks.push({ x: 300, y: 80, t: 2.4, s: "+100 SNEAKY!" }),
+        n.sparks.push({ x: 300, y: 80, t: 2.4, s: SNEAKY_LABELS[l] || "Sneaky! +100" }),
         D.pickup());
       let o = Ks();
       of(n.room === "hall" ? o.x - B.camX : o.x, o.y - 90, "#2bc48a");
@@ -1758,7 +1758,7 @@
         "Funny finds " + o.filter((q) => n.found.has(q)).length + "/" + o.length,
         "Sneaky! " + i.filter((q) => n.found.has(q)).length + "/" + i.length,
         "Times caught " + s,
-        s === 0 ? "GHOST BONUS +250" : "Ghost bonus: get caught 0 times",
+        ...(s === 0 ? [NEVER_CAUGHT, NEVER_CAUGHT_WHY] : [NEVER_CAUGHT_TODO]),
         "Chapter score \u2605 " + n.stars,
       ];
     }

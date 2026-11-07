@@ -661,7 +661,7 @@
         "Funny finds " + o.filter((q) => n.found.has(q)).length + "/" + o.length,
         "Sneaky! " + i.filter((q) => n.found.has(q)).length + "/" + i.length,
         "Times caught " + s,
-        s === 0 ? "GHOST BONUS +250" : "Ghost bonus: get caught 0 times",
+        ...(s === 0 ? [NEVER_CAUGHT, NEVER_CAUGHT_WHY] : [NEVER_CAUGHT_TODO]),
         "Chapter score \u2605 " + (n.stars - H.start),
         "Total \u2605 " + n.stars,
       ];
@@ -968,7 +968,7 @@
           m(-260, -230, 520, 460, 16),
           r("#fff3d6", 5),
           g("CHAPTER 4 \xB7 MARS", 0, -190, 28, y, "center", 900),
-          x2().forEach((o, i) => g(o, 0, -130 + i * 50, 24, o.startsWith("GHOST") ? "#2bc48a" : y, "center", 800)),
+          x2().forEach((o, i) => tallyLine(o, 0, -130 + i * 50, 24, 460, o.startsWith("Never caught!") || o === NEVER_CAUGHT_WHY ? "#2bc48a" : y)),
           e.restore(),
           !0
         );

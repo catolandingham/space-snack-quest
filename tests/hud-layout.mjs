@@ -55,7 +55,7 @@ for (const [vname, viewport] of [
     await page.evaluate(() => {
       const n = window.__ss.op;
       n.stars = 1250; n.starOn = true;
-      n.sparks.push({ x: 300, y: 80, t: 2.4, s: "+100 SNEAKY!" });
+      n.sparks.push({ x: 300, y: 80, t: 2.4, s: "Hidden in time! +100" });
       window.__ss.ch2.phase === "wash1" || window.__ss.ch2.phase === "g4" || (window.__ss.ch2.timer = 4);
     });
     await sleep(350);

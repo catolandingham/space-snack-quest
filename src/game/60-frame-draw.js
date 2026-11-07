@@ -6,6 +6,7 @@
         ((ch2.resetHold.t += l), ch2.resetHold.t >= 0.75 && ((ch2.resetHold.fired = !0), (ch2.resetHold.on = !1), sectionReset())),
         noteSection(),
         stallTick(l),
+        n.ctrl || (n.act = null),
         d5(l),
         h5(),
         iA(l),
@@ -54,6 +55,8 @@
       for (let d of n.sparks) ((d.y -= (d.s === "!" ? 0 : 26) * l), (d.t -= l));
       if (((n.sparks = n.sparks.filter((d) => d.t > 0)), de())) {
         ((n.bt += l), n.cur && n.cur.k === "panel" && (n.panelT += l));
+        // A tap kept from the first 0.3 s of this bubble is applied now (task T22).
+        n.tapLate && (n.tapLate !== n.cur ? (n.tapLate = null) : n.bt >= 0.3 && ((n.tapLate = null), nf()));
         {
           let A = n.cur && n.cur.k === "panel" && n.cur.id === "terminal" && !x.typed ? "!SIGN" : n.bt > 3 ? "!NEXT" : "NEXT";
           p.verb !== A && ((p.verb = A), t.onVerb(A));
@@ -1802,6 +1805,19 @@
         sx = t.x - (n.room === "hall" ? B.camX : 0);
       (e.save(), (e.globalAlpha = 0.7), X(sx, t.y, 16 + 4 * k, 7 + 2 * k), (e.lineWidth = 3), (e.strokeStyle = "#ffffff"), e.stroke(), e.restore());
     }
+    // A tap was heard while the game could not take it yet: a ring spreads in the bottom right corner.
+    function drawTapHeard() {
+      let k = n.T - (n.tapT == null ? -9 : n.tapT);
+      if (k < 0 || k > 0.45) return;
+      (e.save(),
+        (e.globalAlpha = 1 - k / 0.45),
+        e.beginPath(),
+        e.arc(c - 60, b - 60, 18 + 60 * k, 0, Math.PI * 2),
+        (e.lineWidth = 6),
+        (e.strokeStyle = "#ffcf33"),
+        e.stroke(),
+        e.restore());
+    }
     function E5() {
       ((qq = 0), (mq = []), (ringsDrawn = []));
       let l = n.cur;
@@ -1888,7 +1904,7 @@
         l && l.k === "panel" && gq(l.id, n.bt > 0.3),
         l && l.k === "bub" ? bq(l.b, !1) : !de() && n.live.length && bq(n.live[0], !0),
         window.__ss && (window.__ss.bubbleFrame = qq));
-      ((e.globalAlpha = 1), zG());
+      ((e.globalAlpha = 1), zG(), drawTapHeard());
     }
     function zG() {
       if (!(ch2.dishT > 0) || n.room !== "kitchen" || de()) return;

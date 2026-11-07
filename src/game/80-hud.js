@@ -206,7 +206,7 @@
       (hudShow(hud.chip, !!t), hudText(hud.chip, t), (chipDrawn = t === n.chip ? t : ""));
       (hudShow(hud.count, !!cnt), hudText(hud.count, cnt));
       (hudShow(hud.tank, !!tank), hudText(hud.tank, tank));
-      // Points just won or lost ("+100 SNEAKY!"), under the goal for as long as the spark lasts.
+      // Points just won or lost ("Hidden in time! +100"), under the goal for as long as the spark lasts.
       let sp = n.sparks.filter((q) => q.x === 300),
         pt = sp.length ? sp[sp.length - 1].s : "";
       (hudShow(hud.pop, !!pt), hudText(hud.pop, pt), sp.length && (hud.pop.style.opacity = Math.min(1, sp[sp.length - 1].t).toFixed(2)));

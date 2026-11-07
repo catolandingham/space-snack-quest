@@ -1092,7 +1092,7 @@
           (n.starOn = !0),
           (n.stars += 100),
           aV.sneaky++,
-          n.sparks.push({ x: 300, y: 80, t: 2.4, s: "+100 SNEAKY!" }),
+          n.sparks.push({ x: 300, y: 80, t: 2.4, s: SNEAKY_LABELS["sneak-s1"] }),
           D.pickup()),
         J([uV(1.2), C2(n.room === "hall" ? B.camX + c + 60 : c + 60, n.sq.y), B2(), N(Oh)]));
     }

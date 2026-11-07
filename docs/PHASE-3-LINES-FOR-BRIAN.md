@@ -60,7 +60,7 @@ You noticed Rusty seemed to catch Squatch only when he was right in front, thoug
 What changed on screen (your HUD decisions, 2026-11-07). The chapter tag, the stars, the goal chip, the countdown, the tank label and the "+100" pop used to be drawn into the picture, where a phone shrinks them to about 8 pixels. They are now page text laid over the picture, at 14 CSS pixels or more on a 375-wide phone (the chip is 15 on a phone, 20 on a computer). Each has a fixed home:
 
 - **Top left, where:** the chapter tag (for example "CH2 · GAS STOP"), then the ↺ button, then the stars.
-- **Top center, the goal:** the chip; under it the "HIDE!" countdown, the tank label at the gas stop, and the "+100 SNEAKY!" pop while it lasts. On a phone, where the top row has no room, the chip sits just under the top row, across the picture.
+- **Top center, the goal:** the chip; under it the "HIDE!" countdown, the tank label at the gas stop, and the points pop (for example "Hidden in time! +100", T22) while it lasts. On a phone, where the top row has no room, the chip sits just under the top row, across the picture.
 - **Top right, who:** where both characters can be played (the kitchen once the cook is down, the hall from S9 to S11, the temple), two face circles: the one you are is bright, the other is dim, and the dim one glows when switching is the next step. Tapping a face switches to that character. Everywhere else only the face of the one you are shows, smaller, in the same corner, so "who am I" always has the same home. The old picture button, which showed only the other character, is gone.
 - **↺:** a small round button next to the chapter tag. Hold it for about three quarters of a second to restart the section (the ring fills inside it while you hold). The big "Reset section" button under the picture is gone. On a keyboard, holding R still works.
 - **Sound:** the sound button moved from the top right of the picture to the controls row under the picture. It shows the same three states as before (sound waves, a red line when muted, an orange question mark when the browser keeps sound off); the "Sound is blocked..." line (18.145) shows beside it.
@@ -113,3 +113,39 @@ The first time a tap walks, this shows once in the goal spot for four seconds (a
 | 23.1 | In the goal spot, the first time a tap on the picture walks | Tap the floor to walk there. | You walk where you tap. |
 
 "They lost you." (19.16) now shows in the same goal spot as page text, so it reads on a phone (it was drawn into the picture).
+
+## T22. Small feel fixes (none changes how hard anything is)
+
+No new words.
+
+- A tap in the first 0.3 seconds of a new bubble used to be ignored. Now a yellow ring spreads in the bottom right corner to show it was heard, and the tap takes effect when the 0.3 seconds are up.
+- While a scene has control (a cutscene, a card, a capture), no action is offered: the ACTION button and the label by the thing clear at once. Before, the kitchen's GRAB label could stay drawn while the scene played.
+- COOK is gone from the kitchen range (the plan's recommendation). It only said "Cooking ticket 1." and changed nothing; the kitchen reads the same without it. Row 11.13 (COOK · ticket) is removed. The range's ring went with it, so `tests/data/ranges.json` was regenerated (only the range entry is gone).
+
+### The two awards now say what they were for (Brian, 2026-11-07)
+
+**The +250 bonus.** It was called "GHOST BONUS +250". Only a catch clears it: a LOCKUP, or a bot shooing Mops. Being seen and getting away does not clear it. So it is "Never caught", not "Never spotted". It is counted per chapter (the tally card at the end of each chapter), not per section, so the reason says "chapter". Amount and rule unchanged.
+
+| # | When it shows | In the game now | Another way to say it |
+| --- | --- | --- | --- |
+| 22.1 | Each chapter's tally card, when the chapter had no catches (was "GHOST BONUS +250") | Never caught! +250 | No catches! +250 |
+| 22.2 | The line under 22.1, smaller | Squatch got through this whole chapter without being caught. | Nobody caught Squatch this whole chapter. |
+| 22.3 | Each chapter's tally card, when there was a catch (was "Ghost bonus: get caught 0 times") | No catches this chapter wins +250 | Get through without a catch for +250 |
+
+**The +100 sneaky finds.** Each used to pop up as "+100 SNEAKY!". Each now names what it was for. Amounts and rules unchanged.
+
+| # | When it shows | In the game now | Another way to say it |
+| --- | --- | --- | --- |
+| 22.4 | Chapter 1 deck: Squatch reached Mops and nobody saw him | Unseen on the deck! +100 | Nobody saw you on the deck! +100 |
+| 22.5 | Chapter 1 S6: the tourists in the hall never saw him | Unseen in the hall! +100 | Nobody saw you in the hall! +100 |
+| 22.6 | Chapter 1 S9 and S11: the lure done without the bot spotting Squatch | Unseen by the bot! +100 | The bot never saw you! +100 |
+| 22.7 | Chapter 2 g1: hidden behind the crate by the pump | Hidden by the pump! +100 | Hid at the pump! +100 |
+| 22.8 | Chapter 2 g3: in the crate before the bots looked | Hidden in time! +100 | Hid before they looked! +100 |
+| 22.9 | Chapter 2 g4: the soup reached Squatch's crate | Soup delivered unseen! +100 | Soup sneaked in! +100 |
+| 22.10 | Chapter 2 g6: the lure pulled the bots away | Lured the bots away! +100 | Bots lured! +100 |
+| 22.11 | Chapter 3 p1: hidden in the barrel | Hidden in the barrel! +100 | Barrel hide! +100 |
+| 22.12 | Chapter 3 p3: the temple done with no catch | Never caught in the temple! +100 | Clean temple run! +100 |
+| 22.13 | Chapter 3 p4: past the rover onto the ship | Got past the rover! +100 | Slipped past the rover! +100 |
+| 22.14 | Chapter 4 m1: the dock done with no catch | Never caught at the dock! +100 | Clean run to the gate! +100 |
+
+Not renamed: the final score's "Ghost-level sneaky!" rating in Chapter 4 (a rank by sneaky finds, not this bonus). Say if it should change too.
