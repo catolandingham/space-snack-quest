@@ -403,7 +403,8 @@ await page.evaluate(() => {
 });
 await sleep(500);
 const stacked = await page.evaluate(() => window.__ss.op.live.map((row) => Math.round(row.live * 10) / 10));
-check("stacked captions each count down together", stacked.length === 3 && stacked.every((t) => t < 2.8 && t > 0.5), stacked);
+// T9: one bubble at a time. The first caption counts down; the others wait their turn at full time.
+check("queued captions wait their turn: only the first counts down", stacked.length === 3 && stacked[0] < 2.8 && stacked[0] > 0.5 && stacked[1] === 3 && stacked[2] === 3, stacked);
 
 await page.evaluate(() => {
   const n = window.__ss.op;
@@ -1050,12 +1051,15 @@ const sinkLine = await page.evaluate(() => {
   const c = document.querySelector("canvas");
   const g = c.getContext("2d", { willReadFrequently: true });
   const at = (x, y) => { const d = g.getImageData(x, y, 1, 1).data; return [d[0], d[1], d[2]]; };
-  return { ticket: at(530, 112), band: at(480, 610) };
+  const b = window.__ss.lastBubble;
+  return { ticket: at(530, 112), bubble: b && { x: Math.round(b.x), y: Math.round(b.y), w: Math.round(b.w), h: Math.round(b.h), who: b.who } };
 });
 const paper = (c) => c[0] > 240 && c[1] > 235 && c[2] > 220;
+// T9: bubbles sit over the speaker, so Gloop's line is up by her order window, not in a bottom band.
+const nearWindow = (b) => !!b && b.who === "gloop" && b.y + b.h < 300 && b.x < 690 + 220 && b.x + b.w > 690 - 220;
 check(
-  "the sink line sits in the bottom band and leaves the tickets clear",
-  paper(sinkLine.ticket) && sinkLine.band[0] > 240,
+  "the sink line sits by Gloop's window and leaves the tickets clear",
+  paper(sinkLine.ticket) && nearWindow(sinkLine.bubble),
   sinkLine,
 );
 

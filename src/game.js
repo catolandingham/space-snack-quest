@@ -4160,7 +4160,10 @@
       o && !de() ? (n.q.unshift(...l, o), (n.cur = null)) : n.q.unshift(...l);
     }
     function kV(l, o, i) {
-      (n.live.push({ who: l, text: o, style: i || "say", live: 1.4 + o.length * 0.035 }), Dt("live", pa[l], o, i || "live"));
+      // Ambient lines wait their turn (one bubble at a time). A long queue drops its oldest waiting line.
+      (n.live.push({ who: l, text: o, style: i || "say", live: 1.4 + o.length * 0.035 }),
+        n.live.length > 4 && n.live.splice(1, 1),
+        Dt("live", pa[l], o, i || "live"));
     }
     function Dt(l, o, i, s) {
       n.log.push({ k: l, who: o, text: i, style: s, t: Math.round(n.T * 100) / 100 });
@@ -8664,10 +8667,34 @@
         "Total \u2605 " + n.stars,
       ];
     }
+    // Which room a Chapter 2 speaker is in. "" means the room the player sees (Gloop shows through a window in every room).
+    function speakerRoom(l) {
+      if (l === "rust") return "gas";
+      if (l === "blorp") return "diner";
+      if (l === "cook") return "kitchen";
+      if (l === "bot" || l === "bot2") return k.bots && k.bots.length ? (k.phase === "g6" ? "gas" : "kitchen") : "";
+      if (l === "sq") return sqAway() ? "kitchen" : "";
+      return "";
+    }
+    // Where a voice from another room is heard: the door on that side.
+    const EAR_DOORS = {
+      kitchen: { diner: { x: 60, y: 330 }, gas: { x: 60, y: 330 } },
+      diner: { kitchen: { x: 880, y: 330 }, gas: { x: 60, y: 330 } },
+      gas: { diner: { x: 300, y: 300 }, kitchen: { x: 85, y: 300 } },
+    };
+    function earAt(l) {
+      if (!n.scene.startsWith("G")) return null;
+      let room = speakerRoom(l);
+      if (room && room !== n.room) return (EAR_DOORS[n.room] && EAR_DOORS[n.room][room]) || { x: 60, y: 330 };
+      let who = l === "sq" ? n.sq : l === "mops" ? n.mo : null;
+      return who && (who.x < -100 || who.x > c + 100) ? { x: who.x < 0 ? 40 : c - 40, y: 330 } : null;
+    }
     function IA(l) {
       if (!n.scene.startsWith("G")) return null;
+      if (l === "cook") return { x: k.cookX || 640, y: (k.cookY || 530) - 110 };
       if (l === "gloop")
-        return n.room === "kitchen" ? { x: xt.x, y: xt.y - 20 } : n.room === "gas" ? { x: 210, y: 180 } : { x: 480, y: 150 };
+        // In the kitchen her lines sit just right of the order window, so the tickets in the pass stay readable.
+        return n.room === "kitchen" ? { x: xt.x + 70, y: xt.y - 20 } : n.room === "gas" ? { x: 210, y: 180 } : { x: 480, y: 150 };
       if (l === "rust") return { x: k.rust.x, y: 360 };
       if (l === "blorp") return { x: Ma.x, y: 330 };
       if (l === "bot" || l === "bot2") {
@@ -9269,9 +9296,9 @@
         s.sort((d, A) => d.y - A.y).forEach((d) => d.d()),
         k.phase === "g3hide" &&
           !de() &&
-          (m(c / 2 - 70, 52, 140, 34, 17),
+          (m(c / 2 - 70, 100, 140, 34, 17),
           r("#e5533d", 3),
-          g("HIDE! " + Math.max(0, Math.ceil(k.timer)), c / 2, 69, 18, "#ffffff", "center", 900)));
+          g("HIDE! " + Math.max(0, Math.ceil(k.timer)), c / 2, 117, 18, "#ffffff", "center", 900)));
       n.act &&
         n.act.verb === "LEAVE SOUP" &&
         (m(128, 300, 108, 32, 8),
@@ -12714,7 +12741,7 @@
         return;
       }
       for (let d of vV) d.t -= l;
-      ((vV = vV.filter((d) => d.t > 0)), (n.live = n.live.filter((d) => (d.live = (d.live || 0) - l) > 0)));
+      ((vV = vV.filter((d) => d.t > 0)), n.live.length && (n.live[0].live = (n.live[0].live || 0) - l) <= 0 && n.live.shift());
       (n.botSkid > 0 && (n.botSkid = Math.max(0, n.botSkid - l * 0.8)),
         n.glowT >= 0 &&
           ((n.glowT += l),
@@ -13652,10 +13679,12 @@
         q = i ? 340 : 470,
         d = zt(l.text, q, s);
       ge(s);
-      let A = l.ear ? 30 : 0,
+      let away = earAt(l.who),
+        ear = !!(l.ear || away),
+        A = ear ? 30 : 0,
         T = Math.max(110, Math.max(...d.map((CV) => e.measureText(CV).width)) + 44) + A,
         R = d.length * (s + 6) + (o ? 18 : 32),
-        P = v5(l.who),
+        P = away || v5(l.who),
         _ = w(P.x - T / 2, 10, c - T - 10),
         $ = P.y - R - 24;
       $ < 24 && ($ = 24);
@@ -13664,12 +13693,12 @@
         if (!NV) break;
         NV[1] - R - 8 >= 24 ? ($ = NV[1] - R - 8) : (_ = NV[0] + NV[2] + 8 + T <= c - 10 ? NV[0] + NV[2] + 8 : Math.max(10, NV[0] - T - 8));
       }
-      (n.room === "kitchen" && l.style !== "song" && (($ = b - R - 12), (_ = w((c - T) / 2, 12, c - T - 12))), mq.push([_, $, T, R]));
+      (mq.push([_, $, T, R]),
+        window.__ss && (window.__ss.lastBubble = { who: l.who, text: l.text, x: _, y: $, w: T, h: R, ear, at: performance.now() }));
       let gV = w(P.x, _ + 24, _ + T - 24),
         oe = l.style === "song" ? "#ffe3f1" : l.style === "whisper" ? "#f6f7fb" : "#ffffff";
       l.style === "whisper" && e.setLineDash([4, 6]);
       let ve = Math.min(P.y - 6, $ + R + 22);
-      n.room === "kitchen" && l.style !== "song" && (ve = $ + R + 6);
       if (
         (l.style !== "whisper" &&
           (e.beginPath(),
@@ -13696,7 +13725,7 @@
         let NV = e.measureText(CV).width + 22;
         (m(_ + 16, $ - 15, NV, 28, 12), r(Ds[l.who], 3), g(CV, _ + 16 + NV / 2, $ - 1, 16, "#ffffff"));
       }
-      if (l.ear) {
+      if (ear) {
         let CV = _ + 22,
           NV = $ + R / 2;
         (e.beginPath(), e.arc(CV, NV - 2, 9, Math.PI * 0.9, Math.PI * 2.3), (e.strokeStyle = y), (e.lineWidth = 3), e.stroke());
@@ -14588,7 +14617,8 @@
       }
       (n.under === "crack" && gq("crack", !1),
         l && l.k === "panel" && gq(l.id, n.bt > 0.3),
-        l && l.k === "bub" ? bq(l.b, !1) : !de() && n.live.slice(0, 3).forEach((A) => bq(A, !0)));
+        l && l.k === "bub" ? bq(l.b, !1) : !de() && n.live.length && bq(n.live[0], !0),
+        window.__ss && (window.__ss.bubbleFrame = qq));
       {
         let i = n.sparks.filter((q) => q.x === 300),
           s = i[i.length - 1];

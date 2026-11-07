@@ -82,3 +82,7 @@ The LOCKUP card's second line used to be a short joke caption ("Nozzle's ready."
 | 8.5 | LOCKUP card, Rusty on the lot | Rusty saw Squatch by the pump. Security caught him. | Rusty spotted Squatch at his pump. Security caught him. |
 | 8.6 | Any other LOCKUP (none in Chapter 2 today) | Security caught Squatch. | (none) |
 | 8.7 | Pump bot bubble when the bots shoo Mops in the kitchen (replaces "Former Ganitor? SHOO!"; costs no stars now) | No goats with food past here! Shoo! | Hey! No goats by the crate! Shoo! |
+
+## T9. Speech bubbles sit over the speaker, one at a time
+
+No new words. What changed on screen: bubbles in the kitchen now sit over the person talking instead of in a band at the bottom (Gloop's lines sit just right of her order window so the tickets stay readable); a voice from another room (the pump bots arguing in the kitchen while Mops is out front) shows as a bubble with an ear at the door on that side; ambient lines take turns, one bubble at a time; and the "HIDE! 5" countdown moved down to sit under the goal chip.
