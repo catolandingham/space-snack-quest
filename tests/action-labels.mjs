@@ -205,16 +205,16 @@ for (const vp of [
     g.check(`chapter ${ch}: every caption offered is a row in the Phase 2 lines file (${offered[ch].size} offered)`, unlisted.length === 0, unlisted);
   }
   // Every caption row is offered in the sweep, or its verb and thing sit together in that chapter's source.
-  const SRC = { 1: "10-ch1.js", 3: "30-ch3.js", 4: "40-ch4.js" };
+  const SRC = { 1: ["10-ch1.js", "11-ch1-hall.js"], 3: ["30-ch3.js"], 4: ["40-ch4.js"] };
   const sourceOnly = [];
   for (const [row, r] of capRows) {
     const ch = Number(r.where.match(/^Chapter (\d)/)[1]);
     if (offered[ch].has(r.words)) continue;
     const [verb, cap] = r.words.split(" \u00b7 ");
-    const src = readFileSync(join(root, "src", "game", SRC[ch]), "utf8");
+    const src = SRC[ch].map((f) => readFileSync(join(root, "src", "game", f), "utf8")).join("");
     const near = new RegExp(`verb: "${verb.replace(/[!]/g, "\\$&")}",?[^]{0,80}cap: "${cap}"`).test(src) || new RegExp(`cap: [^\n]*"${cap}"`).test(src);
     sourceOnly.push(`${row} ${r.words}`);
-    g.check(`line ${row} "${r.words}" is in the game (not reached by the sweep; found in ${SRC[ch]})`, near, r);
+    g.check(`line ${row} "${r.words}" is in the game (not reached by the sweep; found in ${SRC[ch].join(" or ")})`, near, r);
   }
   console.log(`  caption rows checked only in the source: ${sourceOnly.length ? sourceOnly.join(", ") : "none"}`);
   g.check("no page errors (all chapters)", errors.length === 0, errors);
