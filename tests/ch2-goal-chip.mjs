@@ -111,6 +111,19 @@ await page.evaluate(() => {
 await sleep(200);
 const during = await yellowRow();
 g.check("the chip shows when no bubble is up", before > 80, { before });
+// Ambient chatter (live bubbles, like the bots arguing in g4k) does not hide the chip.
+await page.evaluate(() => {
+  const n = window.__ss.op;
+  n.cur = null;
+  n.live = [{ who: "gloop", text: "Order up?", style: "say", live: 30 }];
+});
+await sleep(200);
+const ambient = await yellowRow();
+const stillLive = await page.evaluate(() => window.__ss.op.live.length);
+g.check("the chip stays up while ambient chatter shows", ambient > 80 && stillLive > 0, { ambient, stillLive });
+await page.evaluate(() => {
+  window.__ss.op.live = [];
+});
 g.check("the chip is hidden while a bubble is up", during < 10, { before, during });
 
 g.check("no page errors", errors.length === 0, errors);

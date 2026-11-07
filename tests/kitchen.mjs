@@ -876,7 +876,7 @@ await sleep(250);
 const rumble = await page.evaluate(() => {
   const c = document.querySelector("canvas");
   const g = c.getContext("2d", { willReadFrequently: true });
-  const d = g.getImageData(330, 90, 1, 1).data;
+  const d = g.getImageData(330, 118, 1, 1).data; // the RUMBLE banner sits under the goal chip
   return { cook: window.__ss.ch2.cook, live: window.__ss.op.live.map((row) => row.text).join("|"), banner: [d[0], d[1], d[2]] };
 });
 await sleep(1100);

@@ -9258,7 +9258,7 @@
       }
       (n.act && n.act.verb === "GRAB" && (m(400, 248, 88, 28, 10), r("#2bc48a", 3), g("GRAB", 444, 262, 16, "#ffffff", "center", 900)),
         n.act && n.act.verb === "COOK" && (m(868, 332, 70, 26, 10), r("#2bc48a", 3), g("COOK", 903, 345, 14, "#ffffff", "center", 900)),
-        k.rumbleT > 0 && (m(250, 72, 200, 36, 10), r("#fff3d6", 3), g("RUMBLE", 350, 90, 20, "#b45309", "center", 900)));
+        k.rumbleT > 0 && (m(250, 100, 200, 36, 10), r("#fff3d6", 3), g("RUMBLE", 350, 118, 20, "#b45309", "center", 900)));
       (n.pulse.has("sink") && oV(KV.x - 130, 280, 260, 110, 10),
         C([KV.x, 316, KV.x, 298, KV.x + 26, 298], "#8b97a6", 5),
         L(KV.x + 26, 304, 5),
@@ -13851,9 +13851,9 @@
         n.chip && n.chip !== "Hide!" ? ((Vq = n.chip), (jA = n.scene)) : (p.state !== "op" || Ao) && (Vq = ""));
       {
         let s = n.chip || Vq;
-        // No chip while a speech bubble is up (rule 10). Long goals wrap. At the gas stop the chip sits
-        // between the diner sign (right edge 354) and the TANK label (left edge 692).
-        if (s && !(Y0 >= 0 && n.T - Y0 < 3.5) && !(n.cur && n.cur.k === "bub") && !n.live.length) {
+        // No chip while a story bubble is up (rule 10); ambient chatter does not hide it. Long goals wrap.
+        // At the gas stop the chip sits between the diner sign (right edge 354) and the TANK label (left edge 692).
+        if (s && !(Y0 >= 0 && n.T - Y0 < 3.5) && !(n.cur && n.cur.k === "bub")) {
           let q = de() ? 17 : 22,
             gas = n.room === "gas",
             cx = gas ? 523 : c / 2;
