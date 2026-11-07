@@ -92,36 +92,42 @@
         style = hudEl("style", "", "", root);
       style.textContent =
         "@keyframes ssGlow{0%,100%{box-shadow:0 0 0 0 rgba(255,207,51,.95)}50%{box-shadow:0 0 0 10px rgba(255,207,51,0)}}" +
-        "#ss-hud button{font-family:inherit;pointer-events:auto;touch-action:none;-webkit-user-select:none;user-select:none;cursor:pointer;padding:0;margin:0}" +
-        "#ss-hud .ss-pill{background:#fff;border:2px solid #1e2430;border-radius:14px;padding:3px 10px;font-weight:800;white-space:nowrap}";
+        "#ss-hud button,#ss-hudbar button{font-family:inherit;pointer-events:auto;touch-action:none;-webkit-user-select:none;user-select:none;cursor:pointer;padding:0;margin:0}" +
+        "#ss-hud .ss-pill,#ss-hudbar .ss-pill{background:#fff;border:2px solid #1e2430;border-radius:14px;padding:3px 10px;font-weight:800;white-space:nowrap}";
       let where = hudEl("div", "ss-where", "position:absolute;left:6px;top:6px;display:flex;gap:6px;align-items:center", root),
         chapter = hudEl("span", "ss-chapter", "font-size:14px", where),
-        reset = hudEl(
-          "button",
-          "ss-reset",
-          "width:30px;height:30px;border-radius:15px;border:2px solid #1e2430;background:#fffaf0;font-size:18px;font-weight:900;line-height:26px;text-align:center;color:#1e2430",
-          where,
+        // Touch targets are 44 by 44 (the drawn circle inside is smaller).
+        reset = hudEl("button", "ss-reset", "width:44px;height:44px;border:0;background:transparent;display:flex;align-items:center;justify-content:center;font-size:18px", where),
+        dial = hudEl(
+          "span",
+          "ss-reset-dial",
+          "width:30px;height:30px;border-radius:15px;border:2px solid #1e2430;background:#fffaf0;font-size:18px;font-weight:900;line-height:26px;text-align:center;color:#1e2430;box-sizing:border-box;pointer-events:none",
+          reset,
         ),
         stars = hudEl("span", "ss-stars", "font-size:14px;color:#b45309;background:#fff6dc", where),
         goal = hudEl("div", "ss-goal", "position:absolute;top:6px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center", root),
         chip = hudEl("div", "ss-chip", "background:#ffcf33;border:2px solid #1e2430;border-radius:16px;padding:4px 14px;font-weight:800", goal),
-        count = hudEl("div", "ss-count", "background:#e5533d;color:#fff;border:2px solid #1e2430;border-radius:14px;padding:2px 14px;font-size:16px;font-weight:900", goal),
-        tank = hudEl("div", "ss-tank", "font-size:14px;font-weight:900;border:2px solid #1e2430;border-radius:10px;padding:2px 10px", goal),
-        pop = hudEl("div", "ss-pop", "font-size:15px;font-weight:900;color:#b45309;background:#fff6dc", goal),
+        status = hudEl("div", "ss-status", "display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap", goal),
+        count = hudEl("div", "ss-count", "background:#e5533d;color:#fff;border:2px solid #1e2430;border-radius:14px;padding:2px 14px;font-size:16px;font-weight:900", status),
+        tank = hudEl("div", "ss-tank", "font-size:14px;font-weight:900;border:2px solid #1e2430;border-radius:10px;padding:2px 10px", status),
+        pop = hudEl("div", "ss-pop", "font-size:15px;font-weight:900;color:#b45309;background:#fff6dc", status),
         faces = hudEl("div", "ss-faces", "position:absolute;right:6px;top:6px;display:flex;gap:6px;align-items:center", root),
-        sq = hudEl("button", "ss-face-squatch", "border-radius:50%;border:2px solid #1e2430;background:#fff;overflow:hidden", faces),
-        mo = hudEl("button", "ss-face-mops", "border-radius:50%;border:2px solid #1e2430;background:#ffe3c4;overflow:hidden", faces);
+        sq = hudEl("button", "ss-face-squatch", "width:44px;height:44px;border:0;background:transparent;display:flex;align-items:center;justify-content:center", faces),
+        mo = hudEl("button", "ss-face-mops", "width:44px;height:44px;border:0;background:transparent;display:flex;align-items:center;justify-content:center", faces),
+        // On a phone the zones sit in this bar directly above the picture, so nothing covers the picture.
+        bar = hudEl("div", "ss-hudbar", "position:relative;height:126px;display:none;font-family:" + f + ";color:#1e2430;line-height:1.2", null);
+      host.insertBefore(bar, e.canvas);
       ((chapter.className = "ss-pill"), (stars.className = "ss-pill"), (tank.className = "ss-pill"), (pop.className = "ss-pill"));
       ((reset.type = sq.type = mo.type = "button"),
-        (reset.textContent = "↺"),
-        reset.setAttribute("aria-label", "Hold to restart this section"),
+        (dial.textContent = "↺"),
+        reset.setAttribute("aria-label", "Hold to start this part over"),
         sq.setAttribute("aria-label", "Squatch"),
         mo.setAttribute("aria-label", "Mops"));
       for (let [b, who] of [
         [sq, "squatch"],
         [mo, "mops"],
       ]) {
-        let img = hudEl("img", "", "width:100%;height:100%;display:block;pointer-events:none", b);
+        let img = hudEl("img", "", "width:40px;height:40px;display:block;pointer-events:none;border-radius:50%;border:2px solid #1e2430;box-sizing:border-box;background:" + (who === "mops" ? "#ffe3c4" : "#fff"), b);
         ((img.alt = ""), (img.src = faceUrl(who)));
         b.addEventListener("pointerdown", (ev) => {
           (ev.preventDefault(), ev.stopPropagation(), VV(), hudFaceTap(who));
@@ -134,14 +140,15 @@
         reset.addEventListener("pointerup", hold(!1)),
         reset.addEventListener("pointercancel", hold(!1)),
         reset.addEventListener("pointerleave", hold(!1)));
-      return { root, where, chapter, reset, stars, goal, chip, count, tank, pop, faces, sq, mo, key: "" };
+      for (let el of [where, goal, status, faces, reset, sq, mo]) el.dataset.d = "flex";
+      return { root, bar, where, chapter, reset, dial, stars, goal, chip, count, tank, pop, faces, sq, mo, key: "", phone: null };
     }
     // Tapping a face switches to that character when switching is allowed.
     function hudFaceTap(who) {
       p.state === "op" && O2() && !de() && (who === "mops") !== !!x.mops && picSwap();
     }
     function hudShow(el, on) {
-      let d = on ? "" : "none";
+      let d = on ? el.dataset.d || "" : "none";
       el.style.display !== d && (el.style.display = d);
     }
     function hudText(el, t) {
@@ -167,9 +174,11 @@
         facesOnly = !!(card && n.cur.id === "focus" && n.cur.faces),
         on = p.state === "op" && !!n.scene && (!card || facesOnly) && !n.egg;
       for (let z of [hud.where, hud.goal]) hudShow(z, !facesOnly);
-      if ((hudShow(hud.root, on), (chipDrawn = ""), !on)) return;
+      if ((hudShow(hud.root, on), (hud.bar.style.visibility = on ? "" : "hidden"), (chipDrawn = ""), !on)) return;
       let s = n.scene;
-      hudText(hud.chapter, s.startsWith("M") ? "CH4 \xB7 MARS" : s.startsWith("P") ? "CH3 \xB7 PHOBOS" : s.startsWith("G") ? "CH2 \xB7 GAS STOP" : "CH1 \xB7 STORMTOP");
+      // On a phone the tag is short ("CH2") so the where zone fits beside two faces.
+      let tag = s.startsWith("M") ? "CH4 \xB7 MARS" : s.startsWith("P") ? "CH3 \xB7 PHOBOS" : s.startsWith("G") ? "CH2 \xB7 GAS STOP" : "CH1 \xB7 STORMTOP";
+      (hudText(hud.chapter, hud.phone ? tag.slice(0, 3) : tag), hud.chapter.setAttribute("title", tag));
       hudShow(hud.chapter, n.room !== "lobby");
       // Stars: the pill pops when the total goes up; the first time it shows, the chip spot explains it.
       (n.stars > starPop.last && (starPop.at = n.T), (starPop.last = n.stars), n.starOn && starPop.hintAt < 0 && (starPop.hintAt = performance.now()));
@@ -179,7 +188,7 @@
       // The ↺ hold shows its progress as a ring filling inside the button.
       let h = ch2.resetHold,
         fill = h && h.on ? Math.min(1, h.t / 0.75) : 0;
-      hud.reset.style.background = fill > 0 ? "conic-gradient(#8fdcff " + Math.round(fill * 360) + "deg, #fffaf0 0deg)" : "#fffaf0";
+      hud.dial.style.background = fill > 0 ? "conic-gradient(#8fdcff " + Math.round(fill * 360) + "deg, #fffaf0 0deg)" : "#fffaf0";
       // Who: two faces where both characters are playable now, else only the active face, smaller.
       let both = O2(),
         mops = !!x.mops && !(s.startsWith("M") && H.gone),
@@ -192,12 +201,13 @@
         [hud.mo, mops],
       ]) {
         hudShow(b, both || me);
-        let css = big + "px";
-        (b.style.width !== css && ((b.style.width = css), (b.style.height = css)),
-          (b.style.opacity = me ? "1" : "0.45"),
+        let css = big + "px",
+          im = b.firstChild;
+        (im.style.width !== css && ((im.style.width = css), (im.style.height = css)),
+          (im.style.opacity = me ? "1" : "0.45"),
           // The one you are always sits in the corner; the other face sits to its left.
           (b.style.order = me ? "2" : "1"),
-          (b.style.animation = glow && !me ? "ssGlow 0.9s ease-in-out infinite" : "none"),
+          (im.style.animation = glow && !me ? "ssGlow 0.9s ease-in-out infinite" : "none"),
           b.setAttribute("aria-pressed", me ? "true" : "false"),
           (b.disabled = !both));
       }
@@ -231,19 +241,33 @@
       }
       line && (line.style.display = soundLineShown() ? "" : "none");
     }
-    // Puts the goal in the top row when it fits between the where and who zones, else in a row of its own under them.
+    // On a phone (picture under 600 CSS px wide) the three zones move into a fixed-height bar directly above the
+    // picture, so nothing covers it. On a wider screen they sit over the picture's top edge, and the goal goes
+    // in the top row when it fits between the where and who zones, else in a row of its own under them.
     function hudLayout(key) {
-      let W = hud.root.clientWidth;
+      let W = e.canvas.clientWidth || hud.root.clientWidth,
+        phone = W < 600;
+      if (phone !== hud.phone) {
+        hud.phone = phone;
+        let into = phone ? hud.bar : hud.root;
+        for (let z of [hud.where, hud.goal, hud.faces]) into.appendChild(z);
+        ((hud.bar.style.display = phone ? "block" : "none"), (hud.key = ""));
+      }
       if (hud.key === key + "|" + W) return;
       hud.key = key + "|" + W;
+      let g = hud.goal;
+      if (phone) {
+        ((hud.where.style.top = hud.faces.style.top = "0px"), (hud.chip.style.fontSize = "14px"), (g.style.top = "48px"), (g.style.maxWidth = "none"));
+        ((g.style.left = "6px"), (g.style.right = "6px"), (g.style.transform = "none"));
+        return;
+      }
+      ((g.style.left = "50%"), (g.style.right = "auto"), (g.style.transform = "translateX(-50%)"));
+      hud.where.style.top = hud.faces.style.top = "6px";
       let wr = hud.where.offsetLeft + hud.where.offsetWidth,
         fl = hud.faces.offsetWidth ? hud.faces.offsetLeft : W - 6,
         gap = 10,
-        room = 2 * Math.min(W / 2 - wr, fl - W / 2) - 2 * gap,
-        fs = W < 600 ? 15 : 20,
-        g = hud.goal;
-      ((hud.chip.style.fontSize = fs + "px"), (g.style.maxWidth = Math.max(0, room) + "px"), (g.style.top = "6px"));
-      // Too narrow for the chip in the top row (a phone): its own row under the zones, the full width.
+        room = 2 * Math.min(W / 2 - wr, fl - W / 2) - 2 * gap;
+      ((hud.chip.style.fontSize = "20px"), (g.style.maxWidth = Math.max(0, room) + "px"), (g.style.top = "6px"));
       if (room < 220 || hud.chip.offsetWidth > room) {
         let below = Math.max(hud.where.offsetTop + hud.where.offsetHeight, hud.faces.offsetTop + hud.faces.offsetHeight) + 6;
         ((g.style.maxWidth = W - 12 + "px"), (g.style.top = below + "px"));

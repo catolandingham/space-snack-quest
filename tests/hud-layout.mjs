@@ -40,7 +40,9 @@ async function measure(page) {
       if (!r.width || !r.height || getComputedStyle(el).display === "none") continue;
       out.push({ id, x0: r.left, y0: r.top, x1: r.right, y1: r.bottom, font: parseFloat(getComputedStyle(el).fontSize), text: el.textContent });
     }
-    return { boxes: out, pic: { x0: pic.left, y0: pic.top, x1: pic.right, y1: pic.bottom } };
+    const bar = document.getElementById("ss-hudbar");
+    const br = bar && getComputedStyle(bar).display !== "none" ? bar.getBoundingClientRect() : null;
+    return { boxes: out, pic: { x0: pic.left, y0: pic.top, x1: pic.right, y1: pic.bottom }, bar: br && { x0: br.left, y0: br.top, x1: br.right, y1: br.bottom } };
   }, HUD_IDS);
 }
 const overlap = (a, b) => Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0) > 0.5 && Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0) > 0.5;
@@ -63,14 +65,31 @@ for (const [vname, viewport] of [
     const pairs = [];
     for (let i = 0; i < m.boxes.length; i++) for (let j = i + 1; j < m.boxes.length; j++) if (overlap(m.boxes[i], m.boxes[j])) pairs.push(m.boxes[i].id + " / " + m.boxes[j].id);
     g.check(`${vname}, ${label}: no two HUD boxes overlap`, m.boxes.length >= 4 && pairs.length === 0, { pairs, boxes: m.boxes.map((b) => [b.id, Math.round(b.x0), Math.round(b.y0), Math.round(b.x1), Math.round(b.y1)]) });
-    const off = m.boxes.filter((b) => b.x0 < m.pic.x0 - 0.5 || b.x1 > m.pic.x1 + 0.5 || b.y0 < m.pic.y0 - 0.5 || b.y1 > m.pic.y1 + 0.5);
-    g.check(`${vname}, ${label}: every HUD box sits on the picture`, off.length === 0, off);
+    // On a phone the HUD sits in the bar directly above the picture and covers none of it; wider, it sits on the picture.
+    const home = m.bar || m.pic;
+    const off = m.boxes.filter((b) => b.x0 < home.x0 - 0.5 || b.x1 > home.x1 + 0.5 || b.y0 < home.y0 - 0.5 || b.y1 > home.y1 + 0.5 || (m.bar && b.y1 > m.pic.y0 + 0.5));
+    g.check(`${vname}, ${label}: every HUD box sits ${m.bar ? "in the bar above the picture, covering none of it" : "on the picture"}`, off.length === 0 && (vname !== "375x812" || !!m.bar), off);
+    if (vname === "375x812" && label.startsWith("Chapter 2 kitchen")) {
+      // The order window (game pixels 500..800 by 44..254) and Gloop's face in it are under no HUD element.
+      const cover = await page.evaluate(() => {
+        const r = document.querySelector("canvas").getBoundingClientRect(), k = r.width / 960;
+        const win = { x0: r.left + 500 * k, x1: r.left + 800 * k, y0: r.top + 44 * k, y1: r.top + 254 * k };
+        const hits = [];
+        for (const el of document.querySelectorAll("#ss-hud *, #ss-hudbar *")) {
+          const b = el.getBoundingClientRect(), st = getComputedStyle(el);
+          if (!b.width || !b.height || st.display === "none" || st.visibility === "hidden") continue;
+          if (Math.min(b.right, win.x1) - Math.max(b.left, win.x0) > 0.5 && Math.min(b.bottom, win.y1) - Math.max(b.top, win.y0) > 0.5) hits.push(el.id || el.tagName);
+        }
+        return { win, hits };
+      });
+      g.check("375x812, kitchen: the order window and Gloop's face are under no HUD element", cover.hits.length === 0, cover);
+    }
     const small = m.boxes.filter((b) => b.text && b.font < 14);
     g.check(`${vname}, ${label}: every HUD text is at least 14 CSS px`, small.length === 0, small);
   }
   if (vname === "375x812") {
-    const top = await page.evaluate(() => document.querySelector("canvas").getBoundingClientRect().top + window.scrollY);
-    g.check("375x812: the picture's top edge is within 16 px of the page top", top <= 16, { top });
+    const top = await page.evaluate(() => ({ pic: document.querySelector("canvas").getBoundingClientRect().top + window.scrollY, bar: document.getElementById("ss-hudbar").getBoundingClientRect().height }));
+    g.check("375x812: the picture starts right under the HUD bar (top within the bar's height + 16 px of the page top)", top.pic <= top.bar + 16, top);
     const help = await page.evaluate(() => { const el = document.getElementById("ss-help"); return el ? parseFloat(getComputedStyle(el).fontSize) : 0; });
     g.check("375x812: the help line is at least 14 CSS px", help >= 14, { help });
   }
@@ -94,13 +113,17 @@ for (const [vname, viewport] of [
 {
   const { ctx, page, errors } = await g.open("?ch=2", { width: 375, height: 812, isMobile: true, hasTouch: true });
   const faces = () => page.evaluate(() => {
-    const f = (id) => { const el = document.getElementById(id); const st = el && getComputedStyle(el); return el && st.display !== "none" ? { w: Math.round(el.getBoundingClientRect().width), op: parseFloat(st.opacity), right: Math.round(el.getBoundingClientRect().right) } : null; };
+    // The button is the 44 px touch target; the face picture inside is 40 (two faces) or 30 (one face).
+    const f = (id) => { const el = document.getElementById(id); const st = el && getComputedStyle(el); const im = el && el.firstChild; return el && st.display !== "none" ? { w: Math.round(im.getBoundingClientRect().width), tw: Math.round(el.getBoundingClientRect().width), th: Math.round(el.getBoundingClientRect().height), op: parseFloat(getComputedStyle(im).opacity), right: Math.round(el.getBoundingClientRect().right) } : null; };
     return { sq: f("ss-face-squatch"), mo: f("ss-face-mops"), mops: window.__ss.ch.mops };
   });
   await page.evaluate(setState, STATES[4][1]);
   await sleep(300);
   let s = await faces();
   g.check("kitchen as Mops: two faces, Mops bright and Squatch dim", !!(s.sq && s.mo && s.mo.op === 1 && s.sq.op < 1 && s.mops), s);
+  g.check("each face is a touch target at least 44 by 44", s.sq.tw >= 44 && s.sq.th >= 44 && s.mo.tw >= 44 && s.mo.th >= 44, s);
+  const dial = await page.evaluate(() => { const r = document.getElementById("ss-reset").getBoundingClientRect(); return { w: r.width, h: r.height }; });
+  g.check("↺ is a touch target at least 44 by 44", dial.w >= 44 && dial.h >= 44, dial);
   await page.evaluate(() => document.getElementById("ss-face-squatch").dispatchEvent(new PointerEvent("pointerdown", { bubbles: true })));
   await sleep(200);
   s = await faces();

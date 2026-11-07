@@ -11,7 +11,7 @@
  * game's AudioContext ("running", icon "on"). On a second, fresh page the first tap on the picture
  * does the same.
  *
- * The picture's top edge is within 16 pixels of the page top (an expected failure until Phase 3).
+ * The picture's top edge is within the HUD bar's height (plus 16 pixels) of the page top.
  * Tap to walk (task T23): a fresh page reaches the diner (g2) with taps on the picture to walk and to say
  * "next", and the ACTION button to act. No joystick.
  */
@@ -117,9 +117,9 @@ g.check("no page errors", errors.length === 0, errors);
   await second.ctx.close();
 }
 
-// Phase 3 pinned the game to the top of a phone screen (it was an expected failure until then).
-const top = await page.evaluate(() => document.querySelector("canvas").getBoundingClientRect().top + window.scrollY);
-g.check("the picture's top edge is within 16 px of the page top", top <= 16, { top: Math.round(top) });
+// Phase 3 pinned the game to the top of a phone screen, under the HUD bar (the chip row sits above the picture).
+const top = await page.evaluate(() => ({ pic: Math.round(document.querySelector("canvas").getBoundingClientRect().top + window.scrollY), bar: Math.round(document.getElementById("ss-hudbar").getBoundingClientRect().height) }));
+g.check("the picture's top edge is within the HUD bar's height (plus 16 px) of the page top", top.pic <= top.bar + 16, top);
 
 // Tap to walk (task T23, Brian's D11): a fresh phone page reaches the diner (g2) with no joystick at all.
 // Taps on the picture walk (and say "next" while a bubble or card is up); the ACTION button acts.

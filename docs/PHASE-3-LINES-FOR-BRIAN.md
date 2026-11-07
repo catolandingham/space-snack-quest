@@ -65,7 +65,8 @@ What changed on screen (your HUD decisions, 2026-11-07). The chapter tag, the st
 - **↺:** a small round button next to the chapter tag. Hold it for about three quarters of a second to restart the section (the ring fills inside it while you hold). The big "Reset section" button under the picture is gone. On a keyboard, holding R still works.
 - **Sound:** the sound button moved from the top right of the picture to the controls row under the picture. It shows the same three states as before (sound waves, a red line when muted, an orange question mark when the browser keeps sound off); the "Sound is blocked..." line (18.145) shows beside it.
 - **Prompts** still sit by the thing, cards still fill the picture (the HUD hides while a card is up), and bubbles still sit over the speaker. The chip still hides while a story bubble is up.
-- On a phone held upright the game now sits at the top of the screen (it was about 170 pixels down). On a computer it stays in the middle.
+- **On a phone (review, 2026-11-07)** the three zones sit in a bar of page text directly above the picture, and the picture starts right under it, so nothing covers the picture (the kitchen order window and Gloop's face included). The chapter tag is short there ("CH2") so it fits beside two faces. On a computer the zones stay over the picture's top edge and the game stays in the middle.
+- ↺ and each face are 44 by 44 touch targets (the drawn circle inside is smaller).
 - The help line under the game is 14 pixels (it was 13).
 
 | # | When it shows | In the game now | Another way to say it |
@@ -100,7 +101,7 @@ After 60 seconds of play with no progress (no new beat, room, item or catch; tim
 
 No new words. What changed on screen: when Gloop is about to look through the order window, the window's frame flashes (two colors, four times a second) and Gloop moves to the middle of the window and grows, looking out at the sink, with a big "!" beside the window. That stays from the warning until her look ends. The warning now lasts 2.5 seconds before she looks, in both sets of dishes (it was 1.1 seconds in the second set and 1.5 in the first, with only the small "Order up?" line to see). The "Order up?" line is unchanged. "They lost you." (19.16) also shows in the kitchen when security gives up after Squatch rolls into a ball.
 
-Note for you: on a phone the goal chip sits in its own row just under the top of the picture, and in the kitchen that row covers the top part of the order window. The flashing frame's sides and Gloop's face below the chip still show. If you want the chip somewhere else on a phone, say where.
+On a phone the HUD sits above the picture (see the HUD section), so nothing covers the window.
 
 ## T23. Tap where you want to walk (your D11)
 
@@ -169,7 +170,6 @@ Not added: Chapter 2's first switch (g1door). It already has a switch card that 
 ## Not finished
 
 - **Text drawn in the picture on a phone.** The HUD is page text at 14 CSS px or more. Speech bubbles, cards, the "VERB · thing" label by the thing and the zoom-in cards are still drawn into the picture, so on a 375-wide phone they read at about 8 to 15 px. Making them bigger on phones needs its own pass.
-- **The phone chip row.** On a phone the chip has its own row under the top zones and covers the top strip of the picture (in the kitchen, the top of the order window). Your call where it should go.
 - **Chapter 2's first switch** keeps its switch card instead of a zoom-in card (see the zoom-in section).
 - **Mops being seen** is a shoo (your D9 recommendation, as Chapter 2 did), not a LOCKUP. If D1 should cover Mops too, say so.
 - **Chapters 3 and 4** checkpoints put Squatch back where the old nudges did (the van, the barrel, the pad's far side), which is where those sections start; they were not replayed as full scene restarts.

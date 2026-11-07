@@ -180,7 +180,7 @@ await page.setViewport({ width: 396, height: 844, deviceScaleFactor: 1 });
 await sleep(200);
 const phoneBtn = await page.$("#ss-reset");
 const phoneBox = phoneBtn ? await phoneBtn.boundingBox() : null;
-check("phone shows the ↺ restart button", !!(phoneBox && phoneBox.width >= 28 && phoneBox.height >= 28), phoneBox);
+check("phone shows the ↺ restart button, a 44 by 44 touch target", !!(phoneBox && phoneBox.width >= 44 && phoneBox.height >= 44), phoneBox);
 
 await page.evaluate(() => {
   const n = window.__ss.op;

@@ -1137,6 +1137,8 @@
             let q = el.getBoundingClientRect(),
               k = c / cv.width;
             ((fx = (q.left + q.width / 2 - cv.left) * k), (fy = (q.top + q.height / 2 - cv.top) * k), (fr = Math.max(q.width, q.height) * k * 0.75 + 12));
+            // On a phone the faces sit in the bar above the picture: the spotlight opens at the top edge under them.
+            fy < 0 && ((fy = 0), (fr = Math.max(fr, 90)));
           }
         }
         (e.save(),

@@ -39,7 +39,7 @@ Open rows found during Phase 3 (not fixed):
 | Item | What happens | State |
 | --- | --- | --- |
 | Keyboard route catch | The Chapter 2 keyboard route was seen once by Rusty while sneaking to the KITCHEN door (on main too, uncounted until T19) | Fixed: the route now waits for Rusty to walk left, goes along the bottom to under his turning spot, and leaves when he walks right; it ends with "Never caught! +250" |
-| Phone chip row | On a phone the chip's own row covers the top of the picture, including the top of the kitchen order window | Open, Brian's call |
+| Phone chip row | On a phone the chip's own row covered the top of the picture, including the top of the kitchen order window | Fixed: on a phone the HUD is a bar above the picture |
 | Canvas text on a phone | Bubbles, cards and labels drawn in the picture are still under 14 CSS px on a 375-wide phone | Open |
 
 ## Phase 2 (plan section 4, T13 to T18)
