@@ -1050,7 +1050,7 @@
           v("sq", "Not the scrubbers? ...Ooh, chili."),
           v("mops", "Hide by the pump first. Stay out of sight."),
           N(() => {
-            ((n.scene = "G1"), (ch2.phase = "g1"), n.pulse.add("crateg"), (n.ctrl = !0), teach("hide2", { x: ht.x, y: ht.y - 40, r: 120 }));
+            ((n.scene = "G1"), (ch2.phase = "g1"), n.pulse.add("crateg"), (n.ctrl = !0));
           }),
         ]));
     }

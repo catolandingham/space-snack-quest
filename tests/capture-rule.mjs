@@ -24,7 +24,7 @@ g.check("no old capture paths (Pn, df, L0, m2) are left", !/function (Pn|df|L0|m
 g.check("no code takes stars away", !/stars\s*-\s*100|n\.stars = Math\.max\(0, n\.stars -/.test(all));
 g.check("only capture() makes the LOCKUP card", (all.match(/id: "jail"/g) || []).length === 1 && /function capture\(by\)[\s\S]*?id: "jail"/.test(all));
 const ROWS = {
-  deck: "19.1", vent: "19.2", hallvent: "19.2", s6: "19.3", hallbot: "19.4", lure9: "19.5", lure11: "19.6",
+  deck: "19.1", vent: "19.2", hallvent: "19.18", s6: "19.3", hallbot: "19.4", lure9: "19.5", lure11: "19.6",
   pump: "8.1", diner: "8.2", blorp: "8.3", sink: "8.4", rust: "8.5", lure: "19.7", bots3: "19.8",
   rover1: "19.9", "rover-s": "19.10", lure3: "19.11", rover4: "19.12", light4: "19.13", gate4: "19.14",
 };

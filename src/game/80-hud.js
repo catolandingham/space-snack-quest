@@ -19,7 +19,6 @@
       "g6:sing": "Squatch: sing to call the bots over",
       "S11:hide": "Squatch: hide behind the plant",
       "S11:sing": "Squatch: sing to call the bot over",
-      "p3:hid": "Squatch: sing to call the rovers over",
       "p4a:hide": "Squatch: hide in the barrel",
       "p4a:sing": "Squatch: sing to call the rover over",
       "m1:hide": "Squatch: hide in the middle trash can",

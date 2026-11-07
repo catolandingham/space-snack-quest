@@ -32,7 +32,7 @@ Branch `phase-3-fairness-hud`, one commit per task with its test. Not merged. Th
 | T20 | Kitchen window warning visible for 2.5 s | `tests/kitchen-warning.mjs` | Done on branch |
 | T23 | Tap the picture to walk | `tests/phone-tap.mjs` | Done on branch, wording pending |
 | T22 | Early taps kept, action clears in scenes, award labels say why (COOK kept as on main) | `tests/feel-fixes.mjs` | Done on branch, wording pending |
-| Cards | Zoom-in cards for the first hide (Chapters 1 and 2) and the first switch (Chapter 1) | `tests/zoom-cards.mjs` | Done on branch, wording pending; Chapter 2's first switch keeps its switch card |
+| Cards | Zoom-in cards for the first hide and the first switch (Chapter 1) | `tests/zoom-cards.mjs` | Done on branch, wording pending; Chapter 2's first switch keeps its switch card |
 
 Open rows found during Phase 3 (not fixed):
 

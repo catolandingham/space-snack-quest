@@ -1,7 +1,7 @@
 /**
  * Zoom-in cards teach a new idea the first time it appears (Brian, 2026-11-07): the opening's
- * "This is Squatch" card technique, reused for the first hide in Chapters 1 and 2 and the first switch in
- * Chapter 1. Each card darkens the room except a spotlight on the thing, says one line (a row in
+ * "This is Squatch" card technique, reused for the first hide and the first switch in Chapter 1 (Chapter 2
+ * gets no hide card: hiding was taught in Chapter 1). Each card darkens the room except a spotlight on the thing, says one line (a row in
  * docs/PHASE-3-LINES-FOR-BRIAN.md), waits for a tap, and shows once per play-through.
  *   node tests/zoom-cards.mjs
  */
@@ -39,20 +39,19 @@ g.check("Chapter 1 S9: singing for the first time shows the zoom-in card on the 
 g.check("Chapter 1 S9: the faces stay on screen under the spotlight", facesShown);
 await page.evaluate(() => window.__ss.drain());
 
-// Chapter 2, g1: the first hide in Chapter 2, on the crate by the pump (a fresh chapter start).
+// Chapter 2, g1: no card (hiding was taught in Chapter 1; the chip rule says goal only after the first time).
 const second = await g.open("?ch=2");
-let seen = null;
-for (let i = 0; i < 80 && !seen; i++) {
-  seen = await second.page.evaluate(() => {
+let seen = null, phase = "";
+for (let i = 0; i < 80 && phase !== "g1"; i++) {
+  ({ seen, phase } = await second.page.evaluate((seen) => {
     const n = window.__ss.op;
     const c = n.cur && n.cur.id === "focus" ? n.cur : n.q.find((r) => r.id === "focus");
-    if (c) return { teach: c.teach, text: c.text, phase: window.__ss.ch2.phase };
     if (n.cur && (n.cur.k === "bub" || n.cur.k === "card")) { n.bt = 1; window.__ss.opTap(); }
-    return null;
-  });
+    return { seen: seen || (c ? c.teach : null), phase: n.ctrl && !n.cur ? window.__ss.ch2.phase : "" };
+  }, seen));
   await sleep(120);
 }
-g.check("Chapter 2 g1: the first hide shows the zoom-in card on the crate with row 24.2", !!seen && seen.teach === "hide2" && seen.text === lines["24.2"] && seen.phase === "g1", seen);
-g.check("every teaching line is a row in the lines file", [lines["24.1"], lines["24.2"], lines["24.3"]].every(Boolean));
+g.check("Chapter 2 g1: no zoom-in card for the second chapter's first hide", phase === "g1" && !seen, { phase, seen });
+g.check("every teaching line is a row in the lines file", [lines["24.1"], lines["24.3"]].every(Boolean) && !lines["24.2"]);
 g.check("no page errors", errors.length === 0 && second.errors.length === 0, [...errors, ...second.errors]);
 await g.finish("zoom-cards");

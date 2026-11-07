@@ -8,10 +8,10 @@
     const CAPTURES = {
       // Chapter 1
       deck: { cause: "A tourist saw Squatch on the deck. Security caught him.", joke: () => kh() },
-      vent: { cause: "The vent alarm found Squatch's fur. Security caught him.", joke: () => kh() },
+      vent: { cause: "The vent alarm saw Squatch on the deck. Security caught him.", joke: () => kh() },
       s6: { cause: "A tourist saw Squatch in the hall. Security caught him.", joke: () => kh() },
       hallbot: { cause: "A bot saw Squatch in the hall. Security caught him.", joke: () => kh() },
-      hallvent: { cause: "The vent alarm found Squatch's fur. Security caught him.", joke: () => kh() },
+      hallvent: { cause: "The vent alarm saw Squatch in the hall. Security caught him.", joke: () => kh() },
       lure9: { cause: "The bot saw Squatch in the box. Security caught him.", joke: () => kh() },
       lure11: { cause: "The bot saw Squatch behind the plant. Security caught him.", joke: () => kh() },
       // Chapter 2
@@ -47,7 +47,7 @@
       },
       // Chapter 4
       light4: {
-        cause: "The searchlight found Squatch at the dock. Security caught him.",
+        cause: "The searchlight found Squatch on the dock. Security caught him.",
         joke: () => [
           v("pbot", "WOOKIE?! IN THE LIGHT!"),
           v("sq", "(Searchlight. Back to the van.)", "whisper"),
@@ -55,7 +55,7 @@
         ],
       },
       gate4: {
-        cause: "The port bot saw Squatch at the dock. Security caught him.",
+        cause: "The gate bot saw Squatch on the dock. Security caught him.",
         joke: () => [
           v("pbot", "Say CHEESE! *FLASH* Proof of a Wookiee!"),
           v("sq", "(They saw me. Van, then the barrels.)", "whisper"),
@@ -64,7 +64,7 @@
       },
     };
     // The LOCKUP card's last line, on the card in every chapter.
-    const LOCKUP_RESTART = "Holding pen. This section starts over.";
+    const LOCKUP_RESTART = "Holding pen. This part starts over.";
     function lockupCause(by) {
       return (CAPTURES[by] && CAPTURES[by].cause) || "Security caught Squatch.";
     }
@@ -144,7 +144,7 @@
     // shooing Mops); being seen and getting away does not. Amount and rule unchanged (Brian, 2026-11-07).
     const NEVER_CAUGHT = "Never caught! +250",
       NEVER_CAUGHT_WHY = "Squatch got through this whole chapter without being caught.",
-      NEVER_CAUGHT_TODO = "No catches this chapter wins +250";
+      NEVER_CAUGHT_TODO = "Get through without a catch for +250";
     // One tally line; the "never caught" reason is smaller and wraps to fit the card.
     function tallyLine(o, x, y0, size, width, col) {
       if (o !== NEVER_CAUGHT_WHY) return g(o, x, y0, size, col, "center", 800);
@@ -163,16 +163,15 @@
       "sneak-g4": "Soup delivered unseen! +100",
       "sneak-g6": "Lured the bots away! +100",
       "sneak-p1": "Hidden in the barrel! +100",
-      "sneak-p3": "Never caught in the temple! +100",
+      "sneak-p3": "Safe through the temple! +100",
       "sneak-p4": "Got past the rover! +100",
-      "sneak-m1": "Never caught at the dock! +100",
+      "sneak-m1": "Safe to the gate! +100",
     };
     // The zoom-in card (the opening's "This is Squatch" technique, reused): the first time an idea appears,
     // the room goes dark except a spotlight on the thing, with one line beside it. Once per play-through.
     // Words wait for Brian's yes (docs/PHASE-3-LINES-FOR-BRIAN.md, rows 24.x).
     const TEACH = {
       hide1: "Squatch can hide under the bed. Nobody sees him there.",
-      hide2: "Squatch can hide behind the crate. Nobody sees him there.",
       switch1: "Tap a face to switch. Then you play that one.",
     };
     function teach(id, at) {

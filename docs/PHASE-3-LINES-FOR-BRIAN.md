@@ -20,7 +20,7 @@ The LOCKUP card's cause line, one per captor (rows 8.1 to 8.5 cover Chapter 2's 
 | # | When it shows | In the game now | Another way to say it |
 | --- | --- | --- | --- |
 | 19.1 | LOCKUP card, Chapter 1 deck: a tourist saw Squatch and the guard reached him | A tourist saw Squatch on the deck. Security caught him. | A tourist spotted Squatch on the deck. Security caught him. |
-| 19.2 | LOCKUP card, Chapter 1 deck or hall: Squatch walked past the vent and the vent alarm went off | The vent alarm found Squatch's fur. Security caught him. | Squatch's fur set off the vent alarm. Security caught him. |
+| 19.2 | LOCKUP card, Chapter 1 deck: Squatch walked past the vent and the vent alarm went off | The vent alarm saw Squatch on the deck. Security caught him. | The vent alarm caught Squatch on the deck. Security caught him. |
 | 19.3 | LOCKUP card, Chapter 1 hall (S6): a tourist ran to the alarm and Squatch was not hidden | A tourist saw Squatch in the hall. Security caught him. | A tourist spotted Squatch in the hall. Security caught him. |
 | 19.4 | LOCKUP card, Chapter 1 hall: a bot's light found Squatch and he was not hidden when the alarm run ended | A bot saw Squatch in the hall. Security caught him. | A cleaning bot saw Squatch in the hall. Security caught him. |
 | 19.5 | LOCKUP card, Chapter 1 S9: the bot reached the box while Squatch sang | The bot saw Squatch in the box. Security caught him. | The bot found Squatch in the box. Security caught him. |
@@ -31,16 +31,17 @@ The LOCKUP card's cause line, one per captor (rows 8.1 to 8.5 cover Chapter 2's 
 | 19.10 | LOCKUP card, Chapter 3 temple: a rover saw Squatch | A rover saw Squatch in the temple. Security caught him. | A rover spotted Squatch by the mirrors. Security caught him. |
 | 19.11 | LOCKUP card, Chapter 3 ramp: the rover reached the barrel while Squatch sang | The rover saw Squatch in the barrel. Security caught him. | The rover found Squatch in the barrel. Security caught him. |
 | 19.12 | LOCKUP card, Chapter 3 ramp: the rover saw Squatch out of the barrel | The rover saw Squatch by the ramp. Security caught him. | The rover spotted Squatch at the ramp. Security caught him. |
-| 19.13 | LOCKUP card, Chapter 4 dock: Squatch stepped into the searchlight | The searchlight found Squatch at the dock. Security caught him. | The searchlight lit up Squatch at the dock. Security caught him. |
-| 19.14 | LOCKUP card, Chapter 4 dock: the port bot saw Squatch | The port bot saw Squatch at the dock. Security caught him. | The port bot spotted Squatch at the dock. Security caught him. |
+| 19.13 | LOCKUP card, Chapter 4 dock: Squatch stepped into the searchlight | The searchlight found Squatch on the dock. Security caught him. | The searchlight lit up Squatch on the dock. Security caught him. |
+| 19.14 | LOCKUP card, Chapter 4 dock: the gate bot saw Squatch (the scene calls it that: "Back to my gate.") | The gate bot saw Squatch on the dock. Security caught him. | The gate bot spotted Squatch on the dock. Security caught him. |
 
 The other new or moved words:
 
 | # | When it shows | In the game now | Another way to say it |
 | --- | --- | --- | --- |
-| 19.15 | The bottom line of every LOCKUP card, in every chapter (it was a Security bubble after the jokes in Chapter 2 only) | Holding pen. This section starts over. | Lockup. This part starts over. |
+| 19.15 | The bottom line of every LOCKUP card, in every chapter (it was a Security bubble after the jokes in Chapter 2 only). The ↺ button's spoken label says the same: "Hold to start this part over" | Holding pen. This part starts over. | Lockup. This part starts over. |
 | 19.16 | A short line over the picture for about two seconds, when security leaves without finding Squatch (any chapter), the hall alarm cools off while he hides, or the deck guard walks away | They lost you. | You got away. |
 | 19.17 | The chapter tally card, every chapter (it used to add the stars lost, as in "Times caught 2 (−200)") | Times caught 2 | Caught 2 times |
+| 19.18 | LOCKUP card, Chapter 1 hall: Squatch walked past the vent and the vent alarm went off | The vent alarm saw Squatch in the hall. Security caught him. | The vent alarm caught Squatch in the hall. Security caught him. |
 
 The captors' joke lines after the card are the ones each catch already had (for example "Just a fuzzy mop! Very fuzzy." in Chapter 1, the rover's "A rug with legs? Rugs get ROLLED UP!" in Chapter 3). Two of them talk about being moved back ("(Searchlight. Back to the van.)", "Mmmf! (Rolled all the way back!)"); they still fit, because the section restarts where it began.
 
@@ -90,7 +91,6 @@ After 60 seconds of play with no progress (no new beat, room, item or catch; tim
 | 21.11 | Chapter 2, `g6`: the lure, Squatch in the crate, stuck | Squatch: sing to call the bots over | Squatch: sing so the bots come |
 | 21.12 | Chapter 1, `S11`: the bot guards the door, Squatch not hidden, stuck | Squatch: hide behind the plant | Squatch: get behind the plant |
 | 21.13 | Chapter 1, `S11`: Squatch behind the plant, stuck | Squatch: sing to call the bot over | Squatch: sing so the bot comes |
-| 21.14 | Chapter 3, `p3:hid`: Squatch in the echo spot, stuck | Squatch: sing to call the rovers over | Squatch: sing so the rovers come |
 | 21.15 | Chapter 3, `p4a`: the rover on the ramp, Squatch not hidden, stuck | Squatch: hide in the barrel | Squatch: get in the barrel |
 | 21.16 | Chapter 3, `p4a`: Squatch in the barrel, stuck | Squatch: sing to call the rover over | Squatch: sing so the rover comes |
 | 21.17 | Chapter 4, `m1`: the dock, Squatch not hidden, stuck | Squatch: hide in the middle trash can | Squatch: get in the middle trash can |
@@ -130,7 +130,7 @@ No new words.
 | --- | --- | --- | --- |
 | 22.1 | Each chapter's tally card, when the chapter had no catches (was "GHOST BONUS +250") | Never caught! +250 | No catches! +250 |
 | 22.2 | The line under 22.1, smaller | Squatch got through this whole chapter without being caught. | Nobody caught Squatch this whole chapter. |
-| 22.3 | Each chapter's tally card, when there was a catch (was "Ghost bonus: get caught 0 times") | No catches this chapter wins +250 | Get through without a catch for +250 |
+| 22.3 | Each chapter's tally card, when there was a catch (was "Ghost bonus: get caught 0 times") | Get through without a catch for +250 | No catches this chapter wins +250 |
 
 **The +100 sneaky finds.** Each used to pop up as "+100 SNEAKY!". Each now names what it was for. Amounts and rules unchanged.
 
@@ -144,9 +144,9 @@ No new words.
 | 22.9 | Chapter 2 g4: the soup reached Squatch's crate | Soup delivered unseen! +100 | Soup sneaked in! +100 |
 | 22.10 | Chapter 2 g6: the lure pulled the bots away | Lured the bots away! +100 | Bots lured! +100 |
 | 22.11 | Chapter 3 p1: hidden in the barrel | Hidden in the barrel! +100 | Barrel hide! +100 |
-| 22.12 | Chapter 3 p3: the temple done with no catch | Never caught in the temple! +100 | Clean temple run! +100 |
+| 22.12 | Chapter 3 p3: the temple done with no catch (only the +250 says "Never caught") | Safe through the temple! +100 | Clean temple run! +100 |
 | 22.13 | Chapter 3 p4: past the rover onto the ship | Got past the rover! +100 | Slipped past the rover! +100 |
-| 22.14 | Chapter 4 m1: the dock done with no catch | Never caught at the dock! +100 | Clean run to the gate! +100 |
+| 22.14 | Chapter 4 m1: the dock done with no catch (only the +250 says "Never caught") | Safe to the gate! +100 | Clean run to the gate! +100 |
 
 Not renamed: the final score's "Ghost-level sneaky!" rating in Chapter 4 (a rank by sneaky finds, not this bonus). Say if it should change too.
 
@@ -157,13 +157,16 @@ The opening introduces Squatch with a card that darkens the room except a spotli
 | # | When it shows | In the game now | Another way to say it |
 | --- | --- | --- | --- |
 | 24.1 | Chapter 1, O5: the first hide. The spotlight is on the bed, just as the bot is coming. | Squatch can hide under the bed. Nobody sees him there. | Hide under the bed. Nobody can see you there. |
-| 24.2 | Chapter 2, g1: the first hide in Chapter 2. The spotlight is on the crate by the pump. | Squatch can hide behind the crate. Nobody sees him there. | Hide behind the crate. Nobody can see you there. |
 | 24.3 | Chapter 1, S9: the first switch. Squatch starts singing; the spotlight is on the two faces in the top right corner. | Tap a face to switch. Then you play that one. | Tap Mops' face to play as Mops. |
+
+Removed (review, 2026-11-07): the Chapter 2 first-hide card (was 24.2). Hiding was already taught in Chapter 1, and the chip rule says goal only after the first time.
 
 Not added: Chapter 2's first switch (g1door). It already has a switch card that fills the picture with Mops and says "You are MOPS now." and why (rows 6.1 and the T6 card); a zoom-in card right before it would be two cards in a row. If you want the spotlight version instead of that card, say so and it can replace it.
 
 ## Also changed
 
+- **Chapter 2 lockups now count against the +250 bonus.** On main a LOCKUP by security (pump bots, Gloop, Blorp, Rusty) did not count as a catch, so a chapter could end with "GHOST BONUS" after a lockup. Now every LOCKUP counts.
+- **The two lure catches go straight to LOCKUP.** When the bots reach the singing crate (Chapter 2) or the rover reaches the singing barrel (Chapter 3), the LOCKUP card shows at once, with no security walk first: they have already found him.
 - **Restarts never skip a step (review, 2026-11-07).** A restart in `g6d`, or in `g6` before the tank is full, used to put Squatch at the lure, and the ship could then be boarded with an empty tank. BOARD now needs a full tank, and those restarts put Mops back with the coins by the pump (if he has them) or by the new jar in the diner. A restart from `g4l` lands on the next dishes without handing the soup back. A lure capture sends the pump bots home. In Chapter 1, a restart in S4, S7 or S7b puts the bots back where they were when the scene began, resets the crate light, and gives three seconds before a bot can see Squatch again.
 
 ## Not finished
