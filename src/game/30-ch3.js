@@ -223,6 +223,50 @@
           ((Q.floatT += l), (n.mo.y = Math.max(170, n.mo.y - 22 * l)), (n.mo.x = Math.max(70, n.mo.x - 4 * l))),
         n.ctrl && (n.act = i6()));
     }
+    // The goal chip for Chapter 3: one table, read every frame from the phase and who is in control.
+    // Every line names who acts. The first time a mechanic appears the chip names the step; after that it
+    // names only the goal (the chip rule, docs/PHASE-1-LINES-FOR-BRIAN.md). Wording waits for Brian's yes
+    // (docs/PHASE-2-LINES-FOR-BRIAN.md). A key with no line shows no new chip.
+    const CH3_CHIPS = {
+      p1: "Squatch: hide in a barrel",
+      p2: "Mops: ask Zip for a ride to Mars",
+      p3: "Squatch: hide in the echo spot",
+      "p3:hid": "Squatch: lure the rovers away from the mirrors",
+      "p3:sing": "Squatch: let Mops turn the mirrors",
+      "p3:m1": "Mops: turn the first mirror",
+      "p3:m2": "Mops: turn the second mirror",
+      p3x: "Mops: go out the temple door",
+      p4a: "Squatch: lure the rover off the ramp",
+      "p4a:sing": "Squatch: stop singing before it reaches you",
+      "p4a:run": "Squatch: run to the ship and get on board",
+      p4b: "Squatch: grab the rope from the cart",
+      "p4b:rope": "Squatch: throw the rope to Mops",
+    };
+    function ch3ChipKey() {
+      let l = Q.phase || "",
+        o = Q.rov && Q.rov[0];
+      return l === "p3"
+        ? x.mops
+          ? Q.m1
+            ? "p3:m2"
+            : "p3:m1"
+          : n.sqPose !== "hidden"
+            ? "p3"
+            : x.sing
+              ? "p3:sing"
+              : "p3:hid"
+        : l === "p4a"
+          ? x.sing
+            ? "p4a:sing"
+            : o && o.look > 0
+              ? "p4a:run"
+              : "p4a"
+          : l === "p4b"
+            ? Q.rope === "held"
+              ? "p4b:rope"
+              : "p4b"
+            : l;
+    }
     // Chapter 3's spots, in the order the picker tries them (see spot in 00-core.js).
     function ch3Spots() {
       let i = Q.phase,
@@ -233,6 +277,7 @@
           spot({
             id: "sing",
             verb: x.sing ? "STOP" : "SING",
+            cap: x.sing ? "singing" : "lure song",
             who: "sq",
             at: [l.x, l.y - o],
             when: i,
@@ -249,6 +294,7 @@
         spot({
           id: "barrel",
           verb: "HIDE",
+          cap: "barrel",
           who: "sq",
           x: OV.x,
           y: OV.y,
@@ -263,6 +309,7 @@
         spot({
           id: "barrel",
           verb: "HIDE",
+          cap: "barrel",
           who: "sq",
           x: OV.x,
           y: OV.y,
@@ -275,10 +322,11 @@
           },
         }),
         sing(OV, 110, padSq && i === "p4a" && n.sqPose === "hidden" && x.spot === 70),
-        spot({ id: "ramp", verb: "BOARD", who: "sq", x: Pe.x, y: Pe.y, r: 80, at: [Pe.x, 360], when: padSq && i === "p4a" && n.sqPose !== "hidden", hot: !0, f: r6 }),
+        spot({ id: "ramp", verb: "BOARD", cap: "ship", who: "sq", x: Pe.x, y: Pe.y, r: 80, at: [Pe.x, 360], when: padSq && i === "p4a" && n.sqPose !== "hidden", hot: !0, f: r6 }),
         spot({
           id: "cart",
           verb: "GRAB",
+          cap: "rope",
           who: "sq",
           x: Ne.x,
           y: Ne.y,
@@ -290,10 +338,11 @@
             ((Q.rope = "held"), D.grab(), n.pulse.delete("cart"), n.pulse.add("edge"));
           },
         }),
-        spot({ id: "edge", verb: "THROW", who: "sq", x: Qn.x + 40, y: Qn.y, r: 100, at: [Qn.x + 40, 340], when: padSq && i === "p4b" && Q.rope === "held", hot: !0, f: c6 }),
+        spot({ id: "edge", verb: "THROW", cap: "rope", who: "sq", x: Qn.x + 40, y: Qn.y, r: 100, at: [Qn.x + 40, 340], when: padSq && i === "p4b" && Q.rope === "held", hot: !0, f: c6 }),
         spot({
           id: "mug",
           verb: "LIFT",
+          cap: "mug",
           who: "mo",
           x: La.x,
           y: La.y,
@@ -307,6 +356,7 @@
         spot({
           id: "dlog",
           verb: "FLIP",
+          cap: "delivery log",
           who: "mo",
           x: G0.x,
           y: G0.y,
@@ -317,10 +367,11 @@
             ((Q.log = !0), ee("secret", "deliverylog", G0.x, 320), TV([{ k: "panel", id: "dlog" }, v("mops", "...Pancake stand. Every Tuesday.")]));
           },
         }),
-        spot({ id: "zip", verb: "ASK", who: "mo", x: Af.x, y: Af.y + 40, r: 120, at: [Af.x, 280], when: padMo, hot: !0, f: s6 }),
+        spot({ id: "zip", verb: "ASK", cap: "Zip", who: "mo", x: Af.x, y: Af.y + 40, r: 120, at: [Af.x, 280], when: padMo, hot: !0, f: s6 }),
         spot({
           id: "sign",
           verb: "WIPE",
+          cap: "sign",
           who: "ctl",
           x: Gl.x,
           y: Gl.y,
@@ -337,6 +388,7 @@
         spot({
           id: "alcove",
           verb: "HIDE",
+          cap: "echo spot",
           who: "sq",
           x: ae.x,
           y: ae.y,
@@ -352,6 +404,7 @@
         spot({
           id: "m1",
           verb: "TURN",
+          cap: "mirror",
           who: "mo",
           x: Ht.x,
           y: Ht.y,
@@ -363,10 +416,11 @@
             ((Q.m1 = !0), D.key(), n.pulse.delete("m1"), n.pulse.add("m2"));
           },
         }),
-        spot({ id: "m2", verb: "TURN", who: "mo", x: Pa.x, y: Pa.y, r: 70, at: [Pa.x, Pa.y - 120], when: temple && x.mops && Q.m1 && !Q.m2, hot: !0, f: q6 }),
+        spot({ id: "m2", verb: "TURN", cap: "mirror", who: "mo", x: Pa.x, y: Pa.y, r: 70, at: [Pa.x, Pa.y - 120], when: temple && x.mops && Q.m1 && !Q.m2, hot: !0, f: q6 }),
         spot({
           id: "mural",
           verb: "LOOK",
+          cap: "mural",
           who: "mo",
           x: Lt.x,
           y: Lt.y + 40,
@@ -377,7 +431,7 @@
             (ee("secret", "mural", Lt.x, 200), TV([{ k: "panel", id: "mural" }, v("mops", "...Huh. Look at that.")]));
           },
         }),
-        spot({ id: "texit", verb: "EXIT", who: "mo", x: H0.x, y: H0.y, r: 90, at: [H0.x + 20, 420], when: n.room === "temple" && i === "p3x" && x.mops, hot: !0, f: q2 }),
+        spot({ id: "texit", verb: "EXIT", cap: "temple", who: "mo", x: H0.x, y: H0.y, r: 90, at: [H0.x + 20, 420], when: n.room === "temple" && i === "p3x" && x.mops, hot: !0, f: q2 }),
       ];
     }
     function i6() {

@@ -15,13 +15,15 @@ import { chromePath } from "./chrome-path.mjs";
 export const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-// The words Brian approves: docs/PHASE-1-LINES-FOR-BRIAN.md, row number -> the "In the game now" column.
-export function readLines() {
+// The words Brian approves: docs/PHASE-1-LINES-FOR-BRIAN.md and docs/PHASE-2-LINES-FOR-BRIAN.md,
+// row number -> the "In the game now" column. With where: true, row number -> { where, words }.
+export function readLines({ where = false } = {}) {
   const out = {};
-  for (const line of readFileSync(join(root, "docs", "PHASE-1-LINES-FOR-BRIAN.md"), "utf8").split("\n")) {
-    const m = line.match(/^\| (\d+\.\d+) \| [^|]* \| ([^|]*) \|/);
-    if (m) out[m[1]] = m[2].trim();
-  }
+  for (const file of ["PHASE-1-LINES-FOR-BRIAN.md", "PHASE-2-LINES-FOR-BRIAN.md"])
+    for (const line of readFileSync(join(root, "docs", file), "utf8").split("\n")) {
+      const m = line.match(/^\| (\d+\.\d+) \| ([^|]*) \| ([^|]*) \|/);
+      if (m) out[m[1]] = where ? { where: m[2].trim(), words: m[3].trim() } : m[3].trim();
+    }
   return out;
 }
 // "HIDE · crate (note)" -> "HIDE · crate"

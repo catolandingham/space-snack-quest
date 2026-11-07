@@ -158,6 +158,46 @@
         H.phase === "m5" && n.ctrl && !H.met && (n.mo.f = 1),
         n.ctrl && (n.act = S6()));
     }
+    // The goal chip for Chapter 4: one table, read every frame from the phase and who is in control.
+    // Every line names who acts. The first time a mechanic appears the chip names the step; after that it
+    // names only the goal (the chip rule, docs/PHASE-1-LINES-FOR-BRIAN.md). Wording waits for Brian's yes
+    // (docs/PHASE-2-LINES-FOR-BRIAN.md). A key with no line shows no new chip.
+    const CH4_CHIPS = {
+      m1: "Squatch: sneak to the gate",
+      "m1:sing": "Squatch: stop singing before it reaches you",
+      "m1:run": "Squatch: run to the gate",
+      m2: "Mops: read the poster on the stand",
+      "m2:knock": "Mops: knock on the door",
+      m2h: "Squatch: hug Mom and Dad",
+      m3: "Mops: mop the van floor",
+      "m3:seat": "Mops: look under the seat",
+      m4a: "Squatch: hide from the searchlight",
+      m4b: "Squatch: go out to the van",
+      m4v: "Squatch: look under the seat",
+      m5: "Squatch: go get Mops",
+      m5d: "Squatch: dance with Mops",
+    };
+    function ch4ChipKey() {
+      let l = H.phase || "",
+        o = H.bot;
+      return l === "m1"
+        ? x.sing
+          ? "m1:sing"
+          : o && o.look > 0
+            ? "m1:run"
+            : "m1"
+        : l === "m2"
+          ? n.found.has("poster4")
+            ? "m2:knock"
+            : "m2"
+          : l === "m3"
+            ? H.gone
+              ? ""
+              : H.scrub >= 3
+                ? "m3:seat"
+                : "m3"
+            : l;
+    }
     // Chapter 4's spots, in the order the picker tries them (see spot in 00-core.js).
     function ch4Spots() {
       let l = n.sq,
@@ -170,6 +210,7 @@
           spot({
             id: "sing",
             verb: x.sing ? "STOP" : "SING",
+            cap: x.sing ? "singing" : o === 150 ? "out loud" : "lure song",
             who: "sq",
             at: [l.x, l.y - o],
             when: i,
@@ -187,6 +228,7 @@
           spot({
             id: s === 0 ? "can" : "can" + s,
             verb: "HIDE",
+            cap: "trash can",
             who: "sq",
             x: q.x,
             y: q.y,
@@ -203,6 +245,7 @@
         spot({
           id: "sock",
           verb: "LIFT",
+          cap: "sock",
           who: "sq",
           x: ia.x,
           y: ia.y,
@@ -214,10 +257,11 @@
           },
         }),
         sing(l, 150, n.room === "port" && i === "m5"),
-        spot({ id: "dance", verb: "DANCE", who: "sq", at: [l.x, l.y - 150], when: n.room === "port" && i === "m5d", hot: !0, f: D6 }),
+        spot({ id: "dance", verb: "DANCE", cap: "with Mops", who: "sq", at: [l.x, l.y - 150], when: n.room === "port" && i === "m5d", hot: !0, f: D6 }),
         spot({
           id: "poster",
           verb: "READ",
+          cap: "poster",
           who: "mo",
           x: In.x,
           y: In.y + 60,
@@ -240,6 +284,7 @@
         spot({
           id: "menu",
           verb: "FLIP",
+          cap: "menu",
           who: "mo",
           x: Hl.x,
           y: Hl.y + 60,
@@ -250,11 +295,12 @@
             (ee("secret", "menu", Hl.x, 300), TV([{ k: "panel", id: "menu4" }, v("mops", "Every year. Just in case.")]));
           },
         }),
-        spot({ id: "sdoor", verb: "KNOCK", who: "mo", x: Qa.x, y: Qa.y + 60, r: 90, at: [Qa.x, 280], when: stand && n.found.has("poster4"), hot: !0, f: E6 }),
-        spot({ id: "hug", verb: "HUG!", who: "sq", at: [l.x, l.y - 160], when: n.room === "stand" && i === "m2h", hot: !0, f: k6 }),
+        spot({ id: "sdoor", verb: "KNOCK", cap: "door", who: "mo", x: Qa.x, y: Qa.y + 60, r: 90, at: [Qa.x, 280], when: stand && n.found.has("poster4"), hot: !0, f: E6 }),
+        spot({ id: "hug", verb: "HUG!", cap: "Mom and Dad", who: "sq", at: [l.x, l.y - 160], when: n.room === "stand" && i === "m2h", hot: !0, f: k6 }),
         spot({
           id: "vmop",
           verb: "MOP",
+          cap: "floor",
           who: "mo",
           x: Kn.x,
           y: Kn.y,
@@ -269,6 +315,7 @@
         spot({
           id: "pine",
           verb: "FLIP",
+          cap: "air freshener",
           who: "mo",
           x: Ya.x,
           y: Ya.y,
@@ -279,11 +326,12 @@
             ((H.pine = !0), ee("funny", "pine", Ya.x, 280), TV([v("mops", '"Pine-ish." Smells like raccoon.')]));
           },
         }),
-        spot({ id: "seat", verb: "LOOK", who: "mo", x: Tt.x, y: Tt.y + 60, r: 100, at: [Tt.x, 330], when: van && H.scrub >= 3 && !H.slip, hot: !0, f: O6 }),
-        spot({ id: "roll", verb: "ROLL", who: "sq", at: [l.x, l.y - 150], when: inside && i === "m4a" && H.beam >= 0 && H.beam < 2.4, hot: !0, f: w6 }),
+        spot({ id: "seat", verb: "LOOK", cap: "under the seat", who: "mo", x: Tt.x, y: Tt.y + 60, r: 100, at: [Tt.x, 330], when: van && H.scrub >= 3 && !H.slip, hot: !0, f: O6 }),
+        spot({ id: "roll", verb: "ROLL", cap: "into a ball", who: "sq", at: [l.x, l.y - 150], when: inside && i === "m4a" && H.beam >= 0 && H.beam < 2.4, hot: !0, f: w6 }),
         spot({
           id: "photo",
           verb: "LOOK",
+          cap: "photo",
           who: "sq",
           x: vf.x,
           y: vf.y + 60,
@@ -294,8 +342,8 @@
             (ee("secret", "photo", vf.x, 300), TV([{ k: "panel", id: "photo4" }, v("sq", "They saved me a spot.", "whisper")]));
           },
         }),
-        spot({ id: "iexit", verb: "EXIT", who: "sq", x: To.x, y: To.y, r: 90, at: [To.x + 20, 420], when: inside && i === "m4b", hot: !0, f: N6 }),
-        spot({ id: "seat", verb: "GRAB", who: "sq", x: Tt.x, y: Tt.y + 60, r: 100, at: [Tt.x, 330], when: n.room === "van" && i === "m4v" && !x.mops && !H.box, hot: !0, f: R6 }),
+        spot({ id: "iexit", verb: "EXIT", cap: "door", who: "sq", x: To.x, y: To.y, r: 90, at: [To.x + 20, 420], when: inside && i === "m4b", hot: !0, f: N6 }),
+        spot({ id: "seat", verb: "GRAB", cap: "Guardian Box", who: "sq", x: Tt.x, y: Tt.y + 60, r: 100, at: [Tt.x, 330], when: n.room === "van" && i === "m4v" && !x.mops && !H.box, hot: !0, f: R6 }),
       ];
     }
     function S6() {
@@ -333,7 +381,7 @@
           v("sq", "Trash cans. I'll use them on purpose."),
           cV((l) => mV(n.mo, 1010, 590, 200, l)),
           N(() => {
-            ((n.moPose = "hidden"), (n.scene = "M1"), (H.phase = "m1"), n.pulse.add("can"), (n.chip = "Sneak to the gate"), (n.ctrl = !0));
+            ((n.moPose = "hidden"), (n.scene = "M1"), (H.phase = "m1"), n.pulse.add("can"), chipNow(), (n.ctrl = !0));
           }),
         ]));
     }
@@ -385,7 +433,7 @@
           }),
           v("mom", "Harry? ...HARRY! It's you!"),
           N(() => {
-            ((H.phase = "m2h"), (n.chip = "Hug!"), (n.ctrl = !0));
+            ((H.phase = "m2h"), chipNow(), (n.ctrl = !0));
           }),
         ]));
     }
@@ -420,7 +468,7 @@
         switchTo("mops"),
         n.pulse.clear(),
         n.pulse.add("vmop"),
-        (n.chip = "Tidy the van"),
+        chipNow(),
         (n.sqPose = "hidden"),
         (n.sq.x = -300),
         (n.mo = { x: 860, y: 560, f: -1, walk: 0, moving: !1 }),
@@ -440,7 +488,7 @@
           v("mops", "He ordered them. To replace me."),
           cV((l) => mV(n.mo, 1010, 560, 120, l)),
           N(() => {
-            ((n.moPose = "hidden"), (H.gone = !0), switchTo("squatch"), (n.chip = "Mops is gone"));
+            ((n.moPose = "hidden"), (H.gone = !0), switchTo("squatch"), chipNow());
           }),
           uV(1.6),
           N(A2),
@@ -543,7 +591,7 @@
         J([
           v("sq", "No more hiding."),
           N(() => {
-            ((H.phase = "m5"), (n.chip = "Go get Mops"), (n.ctrl = !0));
+            ((H.phase = "m5"), chipNow(), (n.ctrl = !0));
           }),
         ]));
     }
@@ -570,7 +618,7 @@
           v("dad", "Forget the rules. Any goat who raised our son eats pancakes with us."),
           v("sq", "Harry to my family. Squatch to my goat."),
           N(() => {
-            ((H.phase = "m5d"), (n.chip = "Dance!"), (n.ctrl = !0));
+            ((H.phase = "m5d"), chipNow(), (n.ctrl = !0));
           }),
         ]));
     }

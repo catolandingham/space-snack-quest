@@ -16,6 +16,7 @@
 import { readFileSync } from "node:fs";
 import { startGame } from "./game-page.mjs";
 import { sourceFiles } from "../tools/build.mjs";
+import { STATES, setState } from "./chapter-states.mjs";
 
 const g = await startGame({ port: 8792, name: "ring-equals-trigger" });
 
@@ -31,109 +32,16 @@ const g = await startGame({ port: 8792, name: "ring-equals-trigger" });
   g.check("no ring is drawn from n.pulse with a typed box", !/pulse\.has\([^)]*\)\s*&&\s*oV\(/.test(src));
 }
 
-// States: [chapter, label, setup run in the page]. Setup may write anything; this test checks geometry.
-const STATES = [];
-const ch2 = (label, steps) => STATES.push([2, label, { kind: "ch2", steps }]);
-for (const ph of ["g1", "back", "g2", "wash1", "g3hide", "g4", "g4k", "wash5", "g6", "g6d"])
-  ch2(ph, [["set", { jar: 30, has: "", done: ph === "wash5" ? 3 : 0, held: -1, greasy: false }], ["reset", ph]]);
-ch2("wash1 holding a dish", [["set", { done: 0, held: 1 }], ["reset", "wash1"], ["set", { held: 1 }]]);
-ch2("g4 with coins", [["set", { jar: 0, has: "coins" }], ["reset", "g4"]]);
-ch2("g4 with soup", [["set", { jar: 0, has: "soup" }], ["reset", "g4"]]);
-ch2("g4k with soup", [["set", { has: "soup" }], ["reset", "g4k"]]);
-ch2("g4k out front", [["set", { has: "soup" }], ["reset", "g4k"], ["op", { room: "diner" }]]);
-ch2("the greasy pot", [["set", { done: 5, held: 6, greasy: true }], ["reset", "wash5"], ["set", { greasy: true }], ["swap", true]]);
-ch2("g6d with coins", [["set", { jar: 0, has: "coins" }], ["call", "sceneG6"], ["set", { has: "coins", jar: 0 }]]);
-ch2("g6 Mops with coins", [["set", { jar: 0, has: "coins" }], ["call", "g6Out"], ["swap", true], ["set", { has: "coins" }]]);
-ch2("g1door", [["reset", "g1"], ["set", { phase: "g1door" }], ["swap", true]]);
-
-const ch3 = (label, room, phase, mops, extra = {}) => STATES.push([3, label, { kind: "ch3", room, phase, mops, extra }]);
-ch3("pad p1", "pad", "p1", false);
-ch3("pad p2 (Mops)", "pad", "p2", true);
-ch3("temple p3 (Squatch)", "temple", "p3", false);
-ch3("temple p3 (Mops)", "temple", "p3", true);
-ch3("temple p3, first mirror turned", "temple", "p3", true, { m1: true });
-ch3("temple p3x", "temple", "p3x", true);
-ch3("pad p4a", "pad", "p4a", false);
-ch3("pad p4b", "pad", "p4b", false);
-ch3("pad p4b, rope held", "pad", "p4b", false, { rope: "held" });
-
-// Chapter 1: [scene function, then fields to set]. Fields: op (story state), ch (Chapter 1 flags), s4, s5, hall, swap, trip.
-const ch1 = (label, call, set = {}) => STATES.push([1, label, { kind: "ch1", call, set }]);
-ch1("O5 bed", "sceneO5");
-ch1("O7 tv", "sceneO7");
-ch1("S1 lunch on the shelf", "sceneS1", { op: { scene: "S1", room: "closet", lunch: "shelf" } });
-ch1("S1 lunch held", "sceneS1", { op: { scene: "S1", room: "closet", lunch: "held" } });
-ch1("S1L deck", "sceneS1L", { op: { scene: "S1L", room: "deck", sqPose: "stand" } });
-ch1("S2 gallery", "sceneS2", { op: { scene: "S2", room: "hall" } });
-ch1("S4 crate", "sceneS4", { op: { scene: "S4", room: "hall", sqPose: "stand" }, s4: { inCrate: false, botsOut: false } });
-ch1("S5 window, brochure out", "sceneS5", { op: { scene: "S5", room: "window", sqPose: "stand" }, s5bro: { inBin: false } });
-ch1("S5 window, brochure in the bin", "sceneS5", { op: { scene: "S5", room: "window", sqPose: "stand" }, s5bro: { inBin: true }, s5: { grabbed: false } });
-ch1("S6 hall", "sceneS6", { op: { scene: "S6", room: "hall", sqPose: "stand" }, halves: true });
-ch1("S7 terminal", "sceneS6", { op: { scene: "S7", room: "hall", sqPose: "stand" } });
-ch1("S9 Squatch", "sceneS9", { op: { scene: "S9", room: "hall", sqPose: "stand", egg: null }, swap: false });
-ch1("S9 Mops", "sceneS9", { op: { scene: "S9", room: "hall" }, ch: { got1: false }, swap: true });
-ch1("S10 vent (Mops)", "sceneS10", { op: { scene: "S10", room: "hall" }, swap: true });
-ch1("S10 vent (Squatch)", "sceneS10", { op: { scene: "S10", room: "hall", sqPose: "stand" }, swap: false });
-ch1("S10d duct", "sceneS10", { op: { scene: "S10d", room: "duct" }, ch: { notesBall: true, got2: false }, swap: true });
-ch1("S10d duct, half found", "sceneS10", { op: { scene: "S10d", room: "duct" }, ch: { notesBall: false, got2: true }, swap: true });
-ch1("S11 lure (Squatch)", "sceneS11", { op: { scene: "S11", room: "hall", sqPose: "stand" }, ch: { doorOpen: false }, swap: false });
-ch1("S11 keypad (Mops)", "sceneS11", { op: { scene: "S11", room: "hall" }, ch: { doorOpen: false }, swap: true });
-ch1("S11 door open", "sceneS11", { op: { scene: "S11", room: "hall", sqPose: "stand" }, ch: { doorOpen: true, mopsHint: true, costume: false }, swap: false });
-ch1("S12 hangar", "sceneS12", { op: { scene: "S12", room: "hangar", sqPose: "stand" }, ch: { coolers: [false, false, false], tarp: true, crates: true }, trip: 0 });
-ch1("S12 hangar, all snacks", "sceneS12", { op: { scene: "S12", room: "hangar", sqPose: "stand" }, ch: { coolers: [true, true, true], tarp: false, nachos: false, crates: false, icecream: false }, trip: 3 });
-
-const ch4 = (label, room, phase, mops, extra = {}, found = []) => STATES.push([4, label, { kind: "ch4", room, phase, mops, extra, found }]);
-ch4("port m1", "port", "m1", false);
-ch4("stand m2", "stand", "m2", true);
-ch4("stand m2, poster read", "stand", "m2", true, {}, ["poster4"]);
-ch4("van m3", "van", "m3", true);
-ch4("van m3, floor mopped", "van", "m3", true, { scrub: 3 });
-ch4("inside m4a", "inside", "m4a", false);
-ch4("inside m4b", "inside", "m4b", false);
-ch4("van m4v", "van", "m4v", false);
-
 const { ctx, page, errors } = await g.open("?ch=2");
 const seen = new Set();
 const perChapter = { 1: 0, 2: 0, 3: 0, 4: 0 };
 for (const [chapter, label, setup] of STATES) {
-  const result = await page.evaluate((setup) => {
+  // The state is set and checked in one go, so no frame runs in between.
+  const result = await page.evaluate((setStateSrc, setup) => {
+    (0, eval)("(" + setStateSrc + ")")(setup);
     const ss = window.__ss, n = ss.op;
-    const clear = () => { n.q = []; n.cur = null; n.live = []; n.ctrl = true; };
-    if (setup.kind === "ch2") {
-      if (!String(n.scene || "").startsWith("G")) ss.sceneG0();
-      clear();
-      for (const st of setup.steps) {
-        if (st[0] === "reset") ss.resetTo(st[1]);
-        else if (st[0] === "set") Object.assign(ss.ch2, st[1]);
-        else if (st[0] === "op") Object.assign(n, st[1]);
-        else if (st[0] === "swap") ss.swapTo(st[1]);
-        else if (st[0] === "call") ss[st[1]]();
-      }
-      ss.ch2.timer = 99; ss.ch2.peekT = 99; ss.ch2.sec = null;
-    } else if (setup.kind === "ch1") {
-      ss.startOpening(); ss[setup.call](); ss.drain(); clear();
-      const t = setup.set;
-      if (t.swap !== undefined) ss.swapTo(t.swap);
-      Object.assign(n, t.op || {});
-      Object.assign(ss.ch, t.ch || {});
-      t.s4 && Object.assign(ss.s4, t.s4);
-      t.s5 && Object.assign(ss.s5, t.s5);
-      t.s5bro && Object.assign(ss.s5.bro, t.s5bro);
-      t.trip !== undefined && ss.setTrip(t.trip);
-      if (t.halves) for (const h of ss.hall.halves || []) h && (h.on = true);
-    } else if (setup.kind === "ch3") {
-      ss.sceneP0(); ss.drain(); clear();
-      Object.assign(ss.ch3, { phase: setup.phase, rov: [] }, setup.extra);
-      n.room = setup.room; n.sqPose = "stand"; ss.ch.spot = -1; ss.swapTo(setup.mops);
-    } else if (setup.kind === "ch4") {
-      ss.sceneM0(); ss.drain(); clear();
-      Object.assign(ss.ch4, { phase: setup.phase, bot: null }, setup.extra);
-      for (const f of setup.found) n.found.add(f);
-      n.room = setup.room; n.sqPose = "stand"; ss.ch.spot = -1; ss.swapTo(setup.mops);
-    }
-    clear();
     // Every usable spot with a place glows, then one frame is drawn.
-    const usable = ss.spotsNow().filter((e) => e && e.when !== false && (e.r > 0 || e.box));
+    const usable = ss.placedSpots();
     for (const e of usable) n.pulse.add(e.id);
     ss.drawFrame();
     const rings = ss.rings();
@@ -195,7 +103,7 @@ for (const [chapter, label, setup] of STATES) {
       out.rings.push({ id: ring.id, want, atCenter, overlap, outsideChecked: outside.length, outsideBad: outside.filter(Boolean), matched: !!spotNow });
     }
     return out;
-  }, setup);
+  }, setState.toString(), setup);
   perChapter[chapter] += result.rings.length;
   for (const r of result.rings) {
     seen.add(`${chapter}:${r.want}`);

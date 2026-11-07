@@ -281,10 +281,20 @@
         // Spots (task T17): every spot of the current scene, the action offered where the player stands,
         // one frame drawn now, and the rings that frame drew.
         spotsNow: () => spotsNow(),
+        placedSpots: () => placedSpots(),
         offerNow: () => pick(spotsNow()),
         drawFrame: () => Ap(),
         rings: () => ringsDrawn.slice(),
         inSpot: (l) => inSpot(l),
+        // Goal chips for Chapters 1, 3 and 4 (task T18), and the chip key the current state reads.
+        CH1_CHIPS,
+        CH3_CHIPS,
+        CH4_CHIPS,
+        chipNow: () => (chipNow(), n.chip),
+        chipKeyNow: () => {
+          let l = (n.scene || "")[0];
+          return l === "P" ? ch3ChipKey() : l === "M" ? ch4ChipKey() : l === "G" ? ch2ChipKey() : ch1ChipKey();
+        },
         walkBounds: () => sn(),
         drain: drainQueue,
         sqAway: () => sqAway(),

@@ -85,7 +85,7 @@
         J([
           { k: "card", id: "squatch", text: "This is Squatch. He's a Sasquatch." },
           N(() => {
-            ((n.chip = "Walk around"), (n.ctrl = !0), (n.moved = 0));
+            (chipNow(), (n.ctrl = !0), (n.moved = 0));
           }),
           cV(() => n.moved > 110),
           N(() => {
@@ -107,7 +107,8 @@
               (n.act = offer({
                 id: "sing",
                 verb: "SING",
-                at: [0, 0],
+                cap: "along",
+                at: [n.sq.x, n.sq.y - 150],
                 hot: !0,
                 f: () => {
                   ((n.act = null),
@@ -172,10 +173,11 @@
           N(() => {
             ((n.glowT = 0),
               n.pulse.add("door"),
-              (n.chip = "What's that noise?"),
+              chipNow(),
               (n.act = offer({
                 id: "door",
                 verb: "PEEK",
+                cap: "door",
                 who: "sq",
                 x: 790,
                 y: 470,
@@ -207,6 +209,7 @@
               (n.act = offer({
                 id: "door",
                 verb: "SNEAK OUT",
+                cap: "door",
                 who: "sq",
                 x: 790,
                 y: 470,
@@ -222,12 +225,13 @@
           J([
             v("sq", "The Guardians came!"),
             N(() => {
-              ((n.chip = "Put them in your Guardian Box"),
+              (chipNow(),
                 n.pulse.add("gbox"),
                 (n.ctrl = !0),
                 (n.act = offer({
                   id: "gbox",
                   verb: "OPEN",
+                  cap: "Guardian Box",
                   who: "sq",
                   x: 350,
                   y: 545,
@@ -298,6 +302,7 @@
       return offer({
         id: "hide",
         verb: "HIDE!",
+        cap: "closet",
         at: [480, 575],
         hot: !0,
         f: () => {
@@ -417,6 +422,7 @@
         (n.act = offer({
           id: "bed",
           verb: "HIDE",
+          cap: "under the bed",
           who: "sq",
           x: 220,
           y: 560,
@@ -552,6 +558,7 @@
         (n.act = offer({
           id: "tv",
           verb: "WATCH",
+          cap: "TV",
           who: "sq",
           x: 615,
           y: 400,
@@ -589,6 +596,7 @@
               (n.act = offer({
                 id: "bed",
                 verb: "SLEEP",
+                cap: "bed",
                 who: "sq",
                 x: 220,
                 y: 560,
@@ -615,7 +623,8 @@
                           (n.act = offer({
                             id: "gift",
                             verb: "GRAB",
-                            at: [0, 0],
+                            cap: "gift",
+                            at: [190, 340],
                             f: () => {
                               ((n.act = null),
                                 (n.ctrl = !1),
@@ -676,9 +685,107 @@
           uV(0.6),
           v("sq", "He forgot his lunch!"),
           N(() => {
-            ((n.chip = "Bring Mops his lunch"), (n.ctrl = !0));
+            (chipNow(), (n.ctrl = !0));
           }),
         ]));
+    }
+    // The goal chip for Chapter 1: one table, read every frame from the scene and who is in control.
+    // Every line names who acts. The first time a mechanic appears the chip names the step; after that it
+    // names only the goal (the chip rule, docs/PHASE-1-LINES-FOR-BRIAN.md). Wording waits for Brian's yes
+    // (docs/PHASE-2-LINES-FOR-BRIAN.md). A key with no line shows no new chip.
+    const CH1_CHIPS = {
+      O1: "Squatch: walk around the room",
+      O2a: "Squatch: sing along with Mops",
+      O3: "Squatch: peek out the door",
+      O3b: "Squatch: sneak out the door",
+      O4: "Squatch: hide, quick!",
+      O5: "Squatch: hide under the bed",
+      O7: "Squatch: watch the TV",
+      O8: "Squatch: go to sleep in your bed",
+      "O8:gift": "Squatch: grab the gift",
+      O9: "Squatch: put them in your Guardian Box",
+      S1: "Squatch: bring Mops his lunch",
+      S2: "Squatch: give Mops his lunch",
+      S4: "Squatch: hide in the crate",
+      "S4:in": "Squatch: stay hidden in the crate",
+      S5: "Squatch: hide behind the plant",
+      "S5:bro": "Squatch: grab the brochure",
+      S6: "Squatch: follow Mops",
+      S7: "Squatch: use the manager's terminal",
+      S7b: "Squatch: sign the order",
+      S9: "Squatch: hide in the box",
+      "S9:hid": "Squatch: sing to bring the bot over",
+      "S9:sing": "Squatch: tap Mops' picture (top right)",
+      "S9:mops": "Mops: grab the slip from the trash",
+      S10: "Squatch: squeeze into the vent",
+      "S10:bumped": "Squatch: let Mops try the vent",
+      "S10:mops": "Mops: squeeze into the vent",
+      S10d: "Mops: grab the other half of the slip",
+      "S10d:out": "Mops: crawl back out",
+      S11: "Squatch: hide behind the plant",
+      "S11:hid": "Squatch: lure the bot away from the door",
+      "S11:sing": "Squatch: stop singing before it gets there",
+      "S11:mops": "Mops: type the code at the door",
+      "S11:costume": "Squatch: put on the goat costume",
+      "S11:gate": "Squatch: walk through the gate",
+      S12: "Squatch: grab 3 snacks",
+      "S12:ship": "Squatch: get on the ship",
+    };
+    function ch1ChipKey() {
+      let l = n.scene || "";
+      return l === "O8"
+        ? n.gift
+          ? "O8:gift"
+          : "O8"
+        : l === "S1" || l === "S1L"
+          ? "S1"
+          : l === "S4"
+            ? le.inCrate
+              ? "S4:in"
+              : "S4"
+            : l === "S5"
+              ? qV.bro.inBin && !qV.grabbed
+                ? "S5:bro"
+                : "S5"
+              : l === "S6"
+                ? x.ask
+                  ? "S6"
+                  : ""
+                : l === "S9"
+                  ? x.mops
+                    ? "S9:mops"
+                    : n.sqPose !== "hidden"
+                      ? "S9"
+                      : x.sing
+                        ? "S9:sing"
+                        : "S9:hid"
+                  : l === "S10"
+                    ? x.mops
+                      ? "S10:mops"
+                      : x.bumped
+                        ? "S10:bumped"
+                        : "S10"
+                    : l === "S10d"
+                      ? x.got2
+                        ? "S10d:out"
+                        : "S10d"
+                      : l === "S11"
+                        ? x.doorOpen
+                          ? !x.costume && x.mopsHint
+                            ? "S11:costume"
+                            : "S11:gate"
+                          : x.mops
+                            ? "S11:mops"
+                            : n.sqPose !== "hidden"
+                              ? "S11"
+                              : x.sing
+                                ? "S11:sing"
+                                : "S11:hid"
+                        : l === "S12"
+                          ? Gn >= 3
+                            ? "S12:ship"
+                            : "S12"
+                          : l;
     }
     // Chapter 1's spots, scene by scene, in the order each picker tries them (see spot in 00-core.js).
     function ch1Spots() {
@@ -716,6 +823,7 @@
         spot({
           id: "lunch",
           verb: "GRAB",
+          cap: "lunch",
           who: "sq",
           x: 470,
           y: 400,
@@ -729,6 +837,7 @@
         spot({
           id: "stash",
           verb: "OPEN",
+          cap: "tin",
           who: "sq",
           x: 462,
           y: 400,
@@ -742,6 +851,7 @@
         spot({
           id: "crib",
           verb: "PULL",
+          cap: "bucket",
           who: "sq",
           x: 560,
           y: 560,
@@ -755,6 +865,7 @@
         spot({
           id: "sched",
           verb: "LOOK",
+          cap: "notice",
           who: "sq",
           x: 200,
           y: 400,
@@ -778,6 +889,7 @@
         spot({
           id: "sched",
           verb: "LOOK",
+          cap: "notice",
           who: "sq",
           x: 200,
           y: 400,
@@ -799,6 +911,7 @@
         spot({
           id: "door",
           verb: "SNEAK OUT",
+          cap: "door",
           who: "sq",
           x: 790,
           y: 470,
@@ -897,7 +1010,7 @@
         (n.mo = { x: Hs.x, y: Hs.y, f: -1, walk: 0, moving: !1 }),
         (n.moPose = "stand"),
         (n.moMop = "hand"),
-        (n.chip = "Bring Mops his lunch"),
+        chipNow(),
         (n.ctrl = !0),
         (n.act = null),
         n.pulse.clear());
@@ -914,11 +1027,12 @@
     }
     function s1lSpots() {
       return [
-        spot({ id: "leave", verb: "LEAVE", who: "sq", at: [n.sq.x, n.sq.y - 30], when: n.sqPose === "hidden", f: Qs }),
+        spot({ id: "leave", verb: "LEAVE", cap: "hiding spot", who: "sq", at: [n.sq.x, n.sq.y - 30], when: n.sqPose === "hidden", f: Qs }),
         ...qn.map((i, l) =>
           spot({
             id: "spot" + l,
             verb: "HIDE",
+            cap: i.kind === "plant" ? "plant" : "box",
             who: "sq",
             x: i.x,
             y: i.y + 6,
@@ -1355,6 +1469,7 @@
       return spot({
         id: "gallery",
         verb: "LOOK",
+        cap: "photos",
         who: "sq",
         box: { x0: 50, x1: 620, y0: 190, y1: 250 },
         not: l,
@@ -1379,6 +1494,7 @@
         spot({
           id: "photo23",
           verb: "FIX",
+          cap: "photo",
           who: "sq",
           box: wallBox(o.x, 90, 300),
           at: [o.x, 230],
@@ -1390,6 +1506,7 @@
         spot({
           id: "badge",
           verb: "FLIP",
+          cap: "badge",
           who: "sq",
           box: wallBox(HV.x, 70, 300),
           at: [HV.x, 230],
@@ -1415,7 +1532,7 @@
               ]));
           },
         }),
-        spot({ id: "mops", verb: "GIVE", who: "sq", x: n.mo.x, y: n.mo.y, r: 120, at: [n.mo.x, n.mo.y - 40], hot: !0, f: Wp }),
+        spot({ id: "mops", verb: "GIVE", cap: "lunch", who: "sq", x: n.mo.x, y: n.mo.y, r: 120, at: [n.mo.x, n.mo.y - 40], hot: !0, f: Wp }),
         gallerySpot(),
       ];
     }
@@ -1642,10 +1759,11 @@
     }
     function s4Spots() {
       return [
-        spot({ id: "crate", verb: "LEAVE", who: "sq", at: [Ct.x, Ct.y - 40], when: !!le.inCrate && n.found.has("pie500"), f: Qs }),
+        spot({ id: "crate", verb: "LEAVE", cap: "crate", who: "sq", at: [Ct.x, Ct.y - 40], when: !!le.inCrate && n.found.has("pie500"), f: Qs }),
         spot({
           id: "crate",
           verb: "GRAB",
+          cap: "Moon Pie",
           who: "sq",
           at: [Ct.x, Ct.y - 40],
           when: !!le.inCrate && !n.found.has("pie500"),
@@ -1653,7 +1771,7 @@
             (ee("secret", "pie500", Ct.x - B.camX, 200), (Gn = Math.max(Gn, 1)), TV([v("sq", "Five hundred. They won't miss one.")]));
           },
         }),
-        spot({ id: "crate", verb: "HIDE", who: "sq", x: Ct.x, y: Ct.y + 60, r: 200, at: [Ct.x, Ct.y - 40], when: !le.inCrate && !le.botsOut, hot: !0, f: VA }),
+        spot({ id: "crate", verb: "HIDE", cap: "crate", who: "sq", x: Ct.x, y: Ct.y + 60, r: 200, at: [Ct.x, Ct.y - 40], when: !le.inCrate && !le.botsOut, hot: !0, f: VA }),
       ];
     }
     function $p() {
@@ -1739,12 +1857,13 @@
       let l = qV.bro.inBin && !qV.grabbed,
         o = n.sqPose === "hidden";
       return [
-        spot({ id: "bro", verb: "GRAB", who: "sq", at: [me.x, me.y - 50], when: l && o, hot: !0, f: nA }),
-        spot({ id: "bro", verb: "GRAB", who: "sq", x: me.x, y: me.y, r: 120, at: [me.x, me.y - 50], when: l && !o, hot: !0, f: nA }),
-        spot({ id: "plant5", verb: "HIDE", who: "sq", x: rt.x, y: rt.y + 6, r: 110, at: [rt.x, rt.y - 60], when: !o && !qV.bro.inBin, hot: !0, f: aA }),
+        spot({ id: "bro", verb: "GRAB", cap: "brochure", who: "sq", at: [me.x, me.y - 50], when: l && o, hot: !0, f: nA }),
+        spot({ id: "bro", verb: "GRAB", cap: "brochure", who: "sq", x: me.x, y: me.y, r: 120, at: [me.x, me.y - 50], when: l && !o, hot: !0, f: nA }),
+        spot({ id: "plant5", verb: "HIDE", cap: "plant", who: "sq", x: rt.x, y: rt.y + 6, r: 110, at: [rt.x, rt.y - 60], when: !o && !qV.bro.inBin, hot: !0, f: aA }),
         spot({
           id: "brochure",
           verb: "LOOK",
+          cap: "brochure",
           who: "sq",
           x: qV.bro.x,
           y: qV.bro.y + 120,
@@ -1919,7 +2038,7 @@
           walk: 0,
           moving: !1,
         }),
-        (n.chip = x.ask ? "Follow Mops" : ""),
+        chipNow(),
         (n.ctrl = !0),
         (n.act = null));
     }
@@ -1951,7 +2070,7 @@
     let Bt = null;
     function Hh(l, o) {
       ((x.ask = l),
-        (n.chip = "Follow Mops"),
+        chipNow(),
         (n.ctrl = !0),
         (n.act = null),
         (Bt = { to: Is[l], sp: o, look: 0 }),
@@ -2039,7 +2158,7 @@
             N(() => {
               (n.pulse.delete("mopbot"),
                 n.pulse.add("term"),
-                (n.chip = "Use the manager's terminal"),
+                chipNow(),
                 (n.scene = "S7"),
                 (n.ctrl = !0),
                 (n.seeGrace = n.T + 3));
@@ -2049,10 +2168,11 @@
     function s6Spots() {
       let l = n.sq;
       return [
-        spot({ id: "leave", verb: "LEAVE", who: "sq", at: [l.x, l.y - 30], when: n.sqPose === "hidden", f: Xs }),
+        spot({ id: "leave", verb: "LEAVE", cap: "hiding spot", who: "sq", at: [l.x, l.y - 30], when: n.sqPose === "hidden", f: Xs }),
         spot({
           id: "plaque",
           verb: "PULL",
+          cap: "plaque",
           who: "sq",
           box: wallBox(cn.x - 26, 70, 330),
           at: [cn.x - 26, 140],
@@ -2066,6 +2186,7 @@
         spot({
           id: "wanted",
           verb: "UNROLL",
+          cap: "poster",
           who: "sq",
           box: wallBox(cn.x + 30, 60, 330),
           at: [cn.x + 30, 140],
@@ -2077,7 +2198,7 @@
         ...hallFinds(),
         gallerySpot({ x: lt.x, y: lt.y + 60, r: 120 }),
         ...va.map((o, i) =>
-          spot({ id: "va" + i, verb: "HIDE", who: "sq", x: o.x, y: o.y + 6, r: 80, at: [o.x, o.y - 30], hot: x.alertBy >= 0, f: () => lA(i) }),
+          spot({ id: "va" + i, verb: "HIDE", cap: "plant", who: "sq", x: o.x, y: o.y + 6, r: 80, at: [o.x, o.y - 30], hot: x.alertBy >= 0, f: () => lA(i) }),
         ),
       ];
     }
@@ -2090,6 +2211,7 @@
         spot({
           id: "plaque",
           verb: "LOOK",
+          cap: "plaque",
           who: "sq",
           box: wallBox(cn.x - 26, 50, 330),
           at: [cn.x - 26, 140],
@@ -2099,6 +2221,7 @@
         spot({
           id: "wanted",
           verb: "LOOK",
+          cap: "poster",
           who: "sq",
           box: wallBox(cn.x + 30, 50, 330),
           at: [cn.x + 30, 140],
@@ -2108,6 +2231,7 @@
         spot({
           id: "trash",
           verb: "PEEK",
+          cap: "trash can",
           who: "sq",
           x: DV.x,
           y: DV.y,
@@ -2123,6 +2247,7 @@
         spot({
           id: "vent",
           verb: "PEEK",
+          cap: "vent",
           who: "sq",
           x: SV.x,
           y: SV.y,
@@ -2177,10 +2302,11 @@
     }
     function s7Spots() {
       return [
-        spot({ id: "leave", verb: "LEAVE", who: "sq", at: [n.sq.x, n.sq.y - 30], when: n.sqPose === "hidden", f: Xs }),
+        spot({ id: "leave", verb: "LEAVE", cap: "hiding spot", who: "sq", at: [n.sq.x, n.sq.y - 30], when: n.sqPose === "hidden", f: Xs }),
         spot({
           id: "term",
           verb: "USE",
+          cap: "terminal",
           who: "sq",
           x: lt.x,
           y: lt.y + 60,
@@ -2217,6 +2343,7 @@
         spot({
           id: "term",
           verb: "SIGN",
+          cap: "order",
           who: "sq",
           at: [lt.x, lt.y - 40],
           hot: !0,
@@ -2343,6 +2470,7 @@
         spot({
           id: "sing",
           verb: x.sing ? "STOP" : "SING",
+          cap: x.sing ? "singing" : "lure song",
           who: "sq",
           at: [l.x, l.y - 60],
           when: s,
@@ -2358,6 +2486,7 @@
         spot({
           id: o,
           verb: "HIDE",
+          cap: o === "box9" ? "box" : "plant",
           who: "sq",
           x: l.x,
           y: l.y + 6,
@@ -2422,6 +2551,7 @@
         spot({
           id: "trash",
           verb: "GRAB",
+          cap: "slip",
           who: "mo",
           x: DV.x,
           y: DV.y,
@@ -2449,6 +2579,7 @@
         spot({
           id: "goatspace",
           verb: "PULL",
+          cap: "airlock",
           who: "sq",
           box: wallBox(ct.x, 70, ct.y + 190),
           at: [ct.x, ct.y + 20],
@@ -2630,6 +2761,7 @@
         spot({
           id: "vent",
           verb: "SQUEEZE",
+          cap: "vent",
           who: "mo",
           x: SV.x,
           y: SV.y,
@@ -2652,6 +2784,7 @@
         spot({
           id: "vent",
           verb: "SQUEEZE",
+          cap: "vent",
           who: "sq",
           x: SV.x,
           y: SV.y,
@@ -2678,6 +2811,7 @@
         spot({
           id: "notes",
           verb: "UNFOLD",
+          cap: "note",
           who: "mo",
           box: l(zl.x - 70, zl.x + 70),
           at: [zl.x, zl.y - 40],
@@ -2699,6 +2833,7 @@
         spot({
           id: "half2",
           verb: "GRAB",
+          cap: "slip",
           who: "mo",
           box: l(Rl.x - 70, Rl.x + 70),
           at: [Rl.x, Rl.y - 40],
@@ -2722,6 +2857,7 @@
         spot({
           id: "out",
           verb: "OUT",
+          cap: "vent",
           who: "mo",
           box: l(90, 200),
           at: [120, 380],
@@ -2780,6 +2916,7 @@
         spot({
           id: "ward",
           verb: "WEAR",
+          cap: "goat costume",
           who: "sq",
           x: Le.x,
           y: Le.y,
@@ -2806,6 +2943,7 @@
         spot({
           id: "keypad",
           verb: "TYPE",
+          cap: "code",
           who: "mo",
           x: Ga.x,
           y: Ga.y + 90,
@@ -2886,12 +3024,12 @@
         J([
           v("mops", "Long trip. Get your favourites."),
           N(() => {
-            ((n.chip = "Grab 3 snacks"), (n.ctrl = !0));
+            (chipNow(), (n.ctrl = !0));
           }),
         ]));
     }
     function Zs() {
-      (Gn++, D.grab(), Gn >= 3 ? ((n.chip = ""), n.pulse.add("ship")) : (n.chip = "Grab 3 snacks"));
+      (Gn++, D.grab(), Gn >= 3 ? ((n.chip = ""), n.pulse.add("ship")) : chipNow());
     }
     function s12Spots() {
       return [
@@ -2899,6 +3037,7 @@
           spot({
             id: "c" + i,
             verb: "GRAB",
+            cap: l.name.toLowerCase(),
             who: "sq",
             x: l.x,
             y: l.y + 30,
@@ -2911,12 +3050,13 @@
             },
           }),
         ),
-        spot({ id: "tarp", verb: "PULL", who: "sq", x: ue.x, y: ue.y, r: 90, at: [ue.x, ue.y - 70], when: !!x.tarp, f: () => {
+        spot({ id: "tarp", verb: "PULL", cap: "tarp", who: "sq", x: ue.x, y: ue.y, r: 90, at: [ue.x, ue.y - 70], when: !!x.tarp, f: () => {
             ((x.tarp = !1), D.grab());
           } }),
         spot({
           id: "nachos",
           verb: "GRAB",
+          cap: "nachos",
           who: "sq",
           x: ue.x,
           y: ue.y,
@@ -2927,12 +3067,13 @@
             ((x.nachos = !0), ee("secret", "nachos", 300, 80), Zs(), TV([v("sq", "Astro-Nachos! My favourite!")]));
           },
         }),
-        spot({ id: "crates", verb: "PUSH", who: "sq", x: Gt.x, y: Gt.y, r: 100, at: [Gt.x, Gt.y - 90], when: !!x.crates, f: () => {
+        spot({ id: "crates", verb: "PUSH", cap: "crates", who: "sq", x: Gt.x, y: Gt.y, r: 100, at: [Gt.x, Gt.y - 90], when: !!x.crates, f: () => {
             ((x.crates = !1), D.bzzt());
           } }),
         spot({
           id: "icecream",
           verb: "GRAB",
+          cap: "ice cream",
           who: "sq",
           x: Gt.x + 60,
           y: Gt.y,

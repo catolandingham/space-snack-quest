@@ -125,6 +125,7 @@
           n.idle > 10 &&
           !n.whispered &&
           ((n.whispered = !0), TV([v("sq", "Just one peek. Mops won't know.", "whisper")])),
+        chipNow(),
         n.scene === "S1" && n.ctrl && (n.act = Bp()),
         n.scene === "S1L" && n.ctrl && (n.act = Hp()),
         n.scene === "S2" && n.ctrl && (n.act = Zp()),
@@ -1930,7 +1931,8 @@
             (e.globalAlpha = 1));
       (Ka > 0 && ((e.fillStyle = "rgba(20,24,32," + Math.min(1, Ka).toFixed(3) + ")"), e.fillRect(0, 0, c, b)), drawRoomLine(), S5(), a5());
       let o = Bs();
-      if (o && (o.x || o.r > 0 || n.room === "deck" || n.room === "hall") && !de() && n.live.length === 0) {
+      // The green VERB pill for actions with no caption. An action with a caption gets drawCap's "VERB · thing" label instead.
+      if (o && !o.cap && (o.x || o.r > 0 || n.room === "deck" || n.room === "hall") && !de() && n.live.length === 0) {
         let i = o.x === 790 || o.x === 845,
           s = i ? 845 : o.r > 0 || o.x ? o.x : n.sq.x,
           q = i ? 250 : o.r > 0 || o.x ? o.y - 60 : 330;

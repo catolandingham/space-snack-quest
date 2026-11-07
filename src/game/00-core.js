@@ -995,6 +995,13 @@
       for (let o of l) if (o && o.verb && o.when !== !1 && inSpot(o)) return offer(o);
       return null;
     }
+    // The goal chip for Chapters 1, 3 and 4, from their tables (Chapter 2 sets its own in NA). While the
+    // hall alarm shows its "Hide!" chip, that chip stays.
+    function chipNow() {
+      let l = (n.scene || "")[0],
+        o = l === "P" ? CH3_CHIPS[ch3ChipKey()] : l === "M" ? CH4_CHIPS[ch4ChipKey()] : l === "O" || l === "S" ? CH1_CHIPS[ch1ChipKey()] : null;
+      o === null || (FV.on && n.chip === "Hide!") || (n.chip = o || "");
+    }
     // Every spot the current scene has, in the order its picker tries them. A scene without a picker
     // (the opening) has the one action its story step set, if any.
     function spotsNow() {
@@ -1004,9 +1011,20 @@
     }
     // Rings drawn this frame, for tests: { id, x, y, r } or { id, box }, in world positions.
     let ringsDrawn = [];
-    // The spots called id that can be used now and have a place (a circle or a box).
+    // The spots that can be used now and have a place (a circle or a box). A spot that works anywhere
+    // (LEAVE while hidden, ROLL while the light sweeps) wins over every spot after it, so those have no ring.
+    function placedSpots() {
+      let l = [];
+      for (let o of spotsNow())
+        if (o && o.when !== !1) {
+          if (o.r > 0 || o.box) l.push(o);
+          else if (o.verb) break;
+        }
+      return l;
+    }
+    // The spots called id that can be used now and have a place.
     function spotsCalled(l) {
-      return spotsNow().filter((o) => o && o.id === l && o.when !== !1 && (o.r > 0 || o.box));
+      return placedSpots().filter((o) => o.id === l);
     }
     // Draws the ring of every spot called id that can be used now, while id glows. Rings are drawn in
     // world positions: in the hall, call this where the drawing is already moved by the camera.
@@ -1027,8 +1045,7 @@
     // After the room is drawn: the ring of any glowing spot the room's own drawing did not place.
     function ringsLeft() {
       (e.save(), n.room === "hall" && e.translate(-B.camX, 0));
-      for (let l of spotsNow())
-        l && n.pulse.has(l.id) && l.when !== !1 && (l.r > 0 || l.box) && !ringsDrawn.some((o) => o.id === l.id) && ringZone(l);
+      for (let l of placedSpots()) n.pulse.has(l.id) && !ringsDrawn.some((o) => o.id === l.id) && ringZone(l);
       e.restore();
     }
     function oh() {
