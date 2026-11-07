@@ -9,7 +9,7 @@
  * If a step makes no progress for 20 seconds, the test fails with the step number and the state
  * line from the debug strip (task T4).
  */
-import { startGame } from "./game-page.mjs";
+import { startGame, readLines } from "./game-page.mjs";
 import { readRoute, playRoute, keyboardInput, look } from "./route-player.mjs";
 
 const route = readRoute("ch2.json");
@@ -25,11 +25,10 @@ g.check(
   !failed && end.cur === "panel:tally2",
   failed ? `stuck at step ${failed.step} "${failed.say}": ${failed.why}. State: ${failed.state}` : end.line,
 );
-// Since T19 every LOCKUP counts as a catch. Before, a security LOCKUP did not count, which hid that this
-// route is seen by Rusty once while Squatch sneaks to the KITCHEN door (it was on main too). That one
-// catch is allowed and named here until the route is fixed; any other catch fails.
 const catches = await page.evaluate(() => window.__ss.op.log.filter((e) => e.k === "caught" || e.k === "shoo").map((e) => e.text));
-g.check("the route is caught at most once, and only by Rusty on the lot (known; see the note above)", !failed && end.caught === catches.length && catches.every((t) => t === "rust") && catches.length <= 1, { caught: end.caught, catches });
+g.check("the route is never caught", !failed && end.caught === 0 && catches.length === 0, { caught: end.caught, catches });
+const tally = await page.evaluate(() => window.__ss.ch2Tally());
+g.check("the tally card shows the +250 bonus earned (Never caught!)", tally.includes(readLines()["22.1"]), tally);
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();
 await g.finish("ch2-playthrough");

@@ -170,7 +170,6 @@ Not added: Chapter 2's first switch (g1door). It already has a switch card that 
 
 - **Text drawn in the picture on a phone.** The HUD is page text at 14 CSS px or more. Speech bubbles, cards, the "VERB · thing" label by the thing and the zoom-in cards are still drawn into the picture, so on a 375-wide phone they read at about 8 to 15 px. Making them bigger on phones needs its own pass.
 - **The phone chip row.** On a phone the chip has its own row under the top zones and covers the top strip of the picture (in the kitchen, the top of the order window). Your call where it should go.
-- **The keyboard route's Rusty catch.** Since T19 every LOCKUP counts, which showed that the Chapter 2 keyboard test route is caught once by Rusty on the way to the KITCHEN door (on main too). The test allows that one named catch until the route is fixed.
 - **Chapter 2's first switch** keeps its switch card instead of a zoom-in card (see the zoom-in section).
 - **Mops being seen** is a shoo (your D9 recommendation, as Chapter 2 did), not a LOCKUP. If D1 should cover Mops too, say so.
 - **Chapters 3 and 4** checkpoints put Squatch back where the old nudges did (the van, the barrel, the pad's far side), which is where those sections start; they were not replayed as full scene restarts.
