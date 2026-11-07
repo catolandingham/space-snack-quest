@@ -6,6 +6,7 @@
  * word the row with its key in docs/PHASE-2-LINES-FOR-BRIAN.md, and every row has a chip. Then, in every
  * Chapter 1, 3 and 4 state from tests/chapter-states.mjs, the chip the game sets is the table's line for
  * the state's key, and a few states show the line they should (the right step for who is playing).
+ * Last, moving from a scene with a chip to one without leaves no chip on screen.
  */
 import { startGame, readLines } from "./game-page.mjs";
 import { STATES, setState } from "./chapter-states.mjs";
@@ -65,6 +66,28 @@ for (const [chapter, label, setup] of STATES) {
   const want = table[got.key];
   g.check(`chapter ${chapter} ${label}: the chip is the table's line for ${got.key || "(no key)"}`, want === undefined ? true : got.chip === want, got);
   if (WANT[label]) g.check(`chapter ${chapter} ${label}: shows ${WANT[label]}`, got.key === WANT[label] && got.chip === table[WANT[label]], got);
+}
+// An earlier scene's chip never stays on screen: S1 has a chip, S3 (a cutscene) has none.
+{
+  const got = await page.evaluate(
+    (setStateSrc, setup) => {
+      (0, eval)("(" + setStateSrc + ")")(setup);
+      const ss = window.__ss, n = ss.op;
+      // Past the first 3.5 seconds of the star counter, when the chip waits its turn.
+      n.T = 1e6;
+      ss.chipNow();
+      ss.drawFrame();
+      const before = ss.chipDrawn();
+      n.scene = "S3";
+      ss.chipNow();
+      ss.drawFrame();
+      return { before, after: ss.chipDrawn(), chip: n.chip };
+    },
+    setState.toString(),
+    STATES.find((s) => s[1] === "S1 lunch on the shelf")[2],
+  );
+  g.check("S1 shows its chip", got.before === tables[1].S1, got);
+  g.check("after moving on to S3, which has no chip, no chip is drawn", got.after === "" && got.chip === "", got);
 }
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();

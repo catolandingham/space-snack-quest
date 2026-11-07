@@ -89,7 +89,7 @@
           }),
           cV(() => n.moved > 110),
           N(() => {
-            ((n.ctrl = !1), (n.sq.moving = !1), (n.chip = ""));
+            ((n.ctrl = !1), (n.sq.moving = !1));
           }),
           N(Mp),
         ]));
@@ -113,7 +113,6 @@
                 f: () => {
                   ((n.act = null),
                     (n.ctrl = !1),
-                    (n.chip = ""),
                     (n.sqPose = "sing"),
                     (n.sq.moving = !1),
                     J([
@@ -185,7 +184,6 @@
                 f: () => {
                   ((n.act = null),
                     (n.ctrl = !1),
-                    (n.chip = ""),
                     (n.sq.moving = !1),
                     n.pulse.delete("door"),
                     J([{ k: "panel", id: "crack" }]));
@@ -239,7 +237,6 @@
                   f: () => {
                     ((n.act = null),
                       (n.ctrl = !1),
-                      (n.chip = ""),
                       n.pulse.delete("gbox"),
                       (n.sq.moving = !1),
                       (n.scene = "O9"),
@@ -265,7 +262,6 @@
         (n.looked = !1),
         (n.alarm = !1),
         (n.secOn = !1),
-        (n.chip = ""),
         (n.sec = { x: 480, y: 40 }),
         (n.door = 0),
         (n.puffs = []),
@@ -415,7 +411,6 @@
         (n.door = 0),
         (n.live = []),
         (vV = []),
-        (n.chip = ""),
         n.pulse.add("bed"),
         (n.ctrl = !0),
         kV("sq", "Hide!"),
@@ -431,7 +426,6 @@
           f: () => {
             ((n.act = null),
               (n.ctrl = !1),
-              (n.chip = ""),
               n.pulse.delete("bed"),
               D.hide(),
               (n.sqPose = "under"),
@@ -1102,7 +1096,6 @@
       ((aV.done = !0),
         (n.ctrl = !1),
         (n.act = null),
-        (n.chip = ""),
         (n.sq.moving = !1),
         (n.mo.f = n.sq.x > n.mo.x ? 1 : -1),
         aV.seen ||

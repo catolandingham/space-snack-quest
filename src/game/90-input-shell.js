@@ -291,6 +291,7 @@
         CH3_CHIPS,
         CH4_CHIPS,
         chipNow: () => (chipNow(), n.chip),
+        chipDrawn: () => chipDrawn,
         chipKeyNow: () => {
           let l = (n.scene || "")[0];
           return l === "P" ? ch3ChipKey() : l === "M" ? ch4ChipKey() : l === "G" ? ch2ChipKey() : ch1ChipKey();

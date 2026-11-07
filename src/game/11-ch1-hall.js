@@ -77,8 +77,7 @@
         (n.sq = { x: 560, y: 380, f: -1, walk: 0, moving: !1 }),
         (n.sqPose = "stand"),
         (n.lunch = "held"),
-        (n.ctrl = !0),
-        (n.chip = ""));
+        (n.ctrl = !0));
     }
     let cf = 6,
       U0 = 0;
@@ -239,7 +238,7 @@
       (n.found.has("photo23") && l.push(v("mops", "Goats peak early.")), l.push(N(Rh)), J(l));
     }
     function Rh() {
-      ((n.scene = "S3"), (n.ctrl = !1), (n.act = null), (n.chip = ""));
+      ((n.scene = "S3"), (n.ctrl = !1), (n.act = null));
       let l = [0, 1, 2].map((s) => ({ x: te.x, y: te.top + 10, light: !1, on: !1 })),
         o = ["Dot", "Bob", "Lou"].map((s, q) => ({ name: s, x: 1110 + q * 50, y: 470 + (q % 2) * 20, on: !0 }));
       ((B.bots = l), (B.jans = o));
@@ -397,7 +396,6 @@
       ((n.scene = "S4"),
         (n.room = "hall"),
         (n.act = null),
-        (n.chip = ""),
         (n.live = []),
         Object.assign(le, { inCrate: !1, light: 0, botsOut: !1, left: !1, dolly: !0 }),
         (B.camX = 480),
@@ -523,7 +521,6 @@
       ((n.scene = "S5"),
         (n.room = "window"),
         (n.act = null),
-        (n.chip = ""),
         (n.live = []),
         n.pulse.clear(),
         (B.camX = 0),
@@ -815,9 +812,6 @@
           ]),
         l === 2 &&
           J([
-            N(() => {
-              n.chip = "";
-            }),
             v("sq", "I'm tired of hiding!"),
             v("mops", "Remember last night?"),
             v("mops", "Out there, everyone sees a Wookie."),
@@ -1005,7 +999,6 @@
               (n.act = null),
               (n.sq.moving = !1),
               n.pulse.delete("term"),
-              (n.chip = ""),
               J([
                 { k: "panel", id: "terminal" },
                 N(() => {
@@ -1057,7 +1050,6 @@
       ((n.scene = "S8"),
         (n.ctrl = !1),
         (n.act = null),
-        (n.chip = ""),
         (B.bots = []),
         (B.mars = !0),
         J([
@@ -1133,7 +1125,6 @@
         n.pulse.clear(),
         n.pulse.add("box9"),
         (n.ctrl = !0),
-        (n.chip = ""),
         (B.camX = 480));
     }
     function Ph() {
@@ -1440,8 +1431,7 @@
         n.pulse.clear(),
         n.pulse.add("vent"),
         (x.bumped = !1),
-        (n.ctrl = !0),
-        (n.chip = ""));
+        (n.ctrl = !0));
     }
     function s10Spots() {
       return [
@@ -1573,7 +1563,6 @@
         n.pulse.clear(),
         n.pulse.add("plant11"),
         (n.ctrl = !0),
-        (n.chip = ""),
         (B.camX = 480));
     }
     function Kh() {
@@ -1716,7 +1705,7 @@
         ]));
     }
     function Zs() {
-      (Gn++, D.grab(), Gn >= 3 ? ((n.chip = ""), n.pulse.add("ship")) : chipNow());
+      (Gn++, D.grab(), Gn >= 3 && n.pulse.add("ship"), chipNow());
     }
     function s12Spots() {
       return [
@@ -1795,7 +1784,6 @@
       ((n.ctrl = !1),
         (n.act = null),
         n.pulse.clear(),
-        (n.chip = ""),
         D.zap(),
         J([
           He(n.sq, hn.x - 30, hn.y + 120, 150),

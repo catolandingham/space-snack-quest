@@ -455,7 +455,6 @@
         (x.sing = !1),
         (x.costume = !1),
         n.pulse.clear(),
-        (n.chip = ""),
         (n.ctrl = !1),
         (B.nextBeat = "Ch4"),
         (n.sq = { x: 880, y: 560, f: -1, walk: 0, moving: !1 }),

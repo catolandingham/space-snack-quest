@@ -365,7 +365,6 @@
         (x.sing = !1),
         (x.costume = !1),
         n.pulse.clear(),
-        (n.chip = ""),
         (n.ctrl = !1),
         (B.nextBeat = "End"),
         (n.sq = { x: vo.x, y: vo.y, f: 1, walk: 0, moving: !1 }),
@@ -386,7 +385,7 @@
         ]));
     }
     function M6() {
-      ((n.ctrl = !1), (n.act = null), (x.sing = !1), (n.chip = ""), H.miss === 0 && Ta("sneak-m1"), J([He(n.sq, 1e3, P0.y, 170), N(b2)]));
+      ((n.ctrl = !1), (n.act = null), (x.sing = !1), H.miss === 0 && Ta("sneak-m1"), J([He(n.sq, 1e3, P0.y, 170), N(b2)]));
     }
     function b2() {
       ((n.scene = "M2"),
@@ -444,7 +443,6 @@
         !(H.hug < 5) &&
           ((n.ctrl = !1),
           (n.act = null),
-          (n.chip = ""),
           (Ao = !0),
           n.log.push({ who: "", text: "[cones off for good: hugged on Mars]", kind: "t" }),
           J([
@@ -480,7 +478,6 @@
         (n.act = null),
         (H.slip = !0),
         n.pulse.clear(),
-        (n.chip = ""),
         J([
           v("mops", "His Guardian Box. Something fell out."),
           { k: "panel", id: "slip4" },
@@ -503,7 +500,6 @@
         (H.dad = !0),
         (H.momX = 640),
         (H.dadX = 780),
-        (n.chip = ""),
         n.pulse.clear(),
         (n.sq = { x: 420, y: 540, f: 1, walk: 0, moving: !1 }),
         (n.sqPose = "stand"),
@@ -581,7 +577,6 @@
         (H.met = !1),
         (H.wook = !1),
         (x.sing = !1),
-        (n.chip = ""),
         n.pulse.clear(),
         (n.sq = { x: vo.x, y: 575, f: 1, walk: 0, moving: !1 }),
         (n.sqPose = "stand"),
@@ -599,7 +594,6 @@
       ((H.met = !0),
         (n.ctrl = !1),
         (n.act = null),
-        (n.chip = ""),
         (n.sq.moving = !1),
         J([
           v("sq", "MOPS! I'll always come get you."),
@@ -638,7 +632,6 @@
         !(H.dance < 4) &&
           ((n.ctrl = !1),
           (n.act = null),
-          (n.chip = ""),
           (x.sing = !0),
           J([
             uV(1.2),

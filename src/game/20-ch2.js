@@ -1540,8 +1540,8 @@
         mom: "Is that... a very hairy goat?",
         dad: "Shoo, shaggy! Health rules!",
       },
-      Vq = "",
-      jA = "";
+      // The chip drawn on the last frame, for tests ("" when none).
+      chipDrawn = "";
     function i2() {
       return n.on && p.state === "op" && !(n.cur && n.cur.k !== "bub");
     }

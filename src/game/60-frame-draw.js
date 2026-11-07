@@ -1123,17 +1123,18 @@
         e.lineTo(c - 41, 36),
         e.closePath(),
         r(y, 0),
-        Va(),
-        n.chip && n.chip !== "Hide!" ? ((Vq = n.chip), (jA = n.scene)) : (p.state !== "op" || Ao) && (Vq = ""));
+        Va());
       {
-        let s = n.chip || Vq;
+        // Only the current chip. Empty means no chip: an earlier scene's goal never stays on screen.
+        let s = n.chip;
+        chipDrawn = "";
         // No chip while a story bubble is up (rule 10); ambient chatter does not hide it. Long goals wrap.
         // At the gas stop the chip sits between the diner sign (right edge 354) and the TANK label (left edge 692).
         if (s && !(Y0 >= 0 && n.T - Y0 < 3.5) && !(n.cur && n.cur.k === "bub")) {
           let q = de() ? 17 : 22,
             gas = n.room === "gas",
             cx = gas ? 523 : c / 2;
-          ge(q);
+          (ge(q), (chipDrawn = s));
           let lines = zt(s, (gas ? 330 : 860) - 36, q),
             d = Math.max(...lines.map((t) => e.measureText(t).width)) + 36;
           (m(cx - d / 2, 50, d, lines.length * (q + 6) + 12, 18),
