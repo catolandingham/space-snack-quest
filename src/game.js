@@ -6700,7 +6700,7 @@
     // Why each announced switch happens. Wording waits for Brian's yes (docs/PHASE-1-LINES-FOR-BRIAN.md).
     // Switches with no entry here (scene set-ups, Reset section, Chapters 1, 3 and 4) are silent for now.
     const SWITCH_WHY = {
-      "g1-door": "Mops can walk out front. Squatch stays hidden by the pump.",
+      "g1-door": "Mops goes to the diner. Squatch stays hidden by the pump.",
       "g2-back": "Mops found work. Squatch sneaks in the back.",
       "g3-front": "Squatch stays hidden in the crate. Mops goes out front.",
       "g4-wash": "Squatch washes the next dishes.",
@@ -6711,8 +6711,11 @@
     function switchTo(who, why) {
       let m = who === "mops";
       if (x.mops === m) return;
+      let before = !!x.mops,
+        line = why && SWITCH_WHY[why];
+      // Test record: who the player was at the moment this switch (and its card) was queued.
+      window.__ss && (window.__ss.switchLog = window.__ss.switchLog || []).push({ to: who, before, why: why || "", card: !!line });
       ((x.mops = m), (n.sq.moving = !1), (n.mo.moving = !1));
-      let line = why && SWITCH_WHY[why];
       line && J([{ k: "card", id: "switch", who: m ? "mops" : "sq", text: "You are " + (m ? "MOPS" : "SQUATCH") + " now.", by: line }]);
     }
     function yf(l) {
@@ -11565,6 +11568,10 @@
       return p.state === "op" && O2() && !de() && l > c - 76 && o > 60 && o < 130 ? (picSwap(), !0) : !1;
     }
     function picSwap() {
+      if (n.scene.startsWith("G") && n.room === "kitchen" && k.phase === "g3hide" && !x.mops) {
+        (dn(xe.x, xe.y, 63), n.pulse.delete("kcrate"), HA());
+        return;
+      }
       if (n.scene.startsWith("G") && n.room === "kitchen")
         if (!x.mops)
           ((k.sqStash = { x: n.sq.x, y: n.sq.y, f: n.sq.f, pose: n.sqPose, spot: x.spot }),

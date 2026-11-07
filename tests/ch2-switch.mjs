@@ -64,8 +64,22 @@ g.check("the tag says YOU: SQUATCH in page text", s.tag === "YOU: SQUATCH" && s.
 
 // HIDE behind the crate with the E key.
 await page.evaluate(() => {
-  const n = window.__ss.op;
+  const ss = window.__ss;
+  const n = ss.op;
   n.sq.x = 690; n.sq.y = 530; n.sq.moving = false;
+  ss.switchLog = [];
+  // Every frame until the switch card shows: could the player move Mops with no card up or waiting?
+  window.__freeMops = 0;
+  window.__cardSeen = false;
+  const isCard = (r) => r && r.k === "card" && r.id === "switch";
+  const watch = () => {
+    if (isCard(n.cur)) window.__cardSeen = true;
+    if (window.__cardSeen) return;
+    const blocked = !!n.cur && ["bub", "card", "panel", "fb"].includes(n.cur.k);
+    if (ss.ch.mops && n.ctrl && !blocked && !n.q.some(isCard)) window.__freeMops++;
+    requestAnimationFrame(watch);
+  };
+  requestAnimationFrame(watch);
 });
 await sleep(150);
 await g.key(page, "KeyE");
@@ -85,7 +99,9 @@ for (let i = 0; i < 40; i++) {
 g.check("a switch card shows after the hide", !!card, s);
 g.check("the switch card says You are MOPS now.", !!card && card.text === "You are MOPS now.", card);
 g.check("the switch card's reason is line 6.1 word for word", !!card && card.by === LINES["6.1"], { card, want: LINES["6.1"] });
-g.check("the player never had Mops before the card", !controlBeforeCard);
+const before = await page.evaluate(() => ({ free: window.__freeMops, log: window.__ss.switchLog.filter((r) => r.why === "g1-door") }));
+g.check("the switch to Mops was queued while the player was still Squatch, with its card", before.log.length === 1 && before.log[0].before === false && before.log[0].card === true, before);
+g.check("no frame let the player move Mops before the card", before.free === 0 && !controlBeforeCard, before);
 const whileCard = await state();
 g.check("the card waits for a tap", whileCard.cur && whileCard.cur.id === "switch" && (await sleep(1500), (await state()).cur?.id === "switch"));
 for (let i = 0; i < 10 && (s.busy || !s.ctrl); i++) {
@@ -211,4 +227,47 @@ for (const [row, steps] of ROOMS) {
   g.check(`no page errors (room ${row})`, errors.length === 0, errors);
   await ctx.close();
 }
+// The picture button during the bots' search counts as hiding: no capture, same state as HIDE.
+const endOfHide = async (how) => {
+  const { ctx, page, errors } = await g.open("?ch=2");
+  await page.evaluate((how) => {
+    const ss = window.__ss;
+    const n = ss.op;
+    ss.ch2.cook = "gone"; ss.ch2.caught = 0;
+    ss.resetTo("g3hide");
+    ss.ch2.cook = "gone"; ss.ch2.timer = 1;
+    n.sq.x = 300; n.sq.y = 520; n.sqPose = "stand";
+    if (how === "picture") ss.picSwap();
+    else {
+      n.sq.x = 170; n.sq.y = 560;
+      const a = ss.pickAct();
+      a && a.verb === "HIDE" && a.f();
+    }
+  }, how);
+  await sleep(2500); // past the countdown
+  await page.evaluate(() => window.__ss.picSwap()); // try to switch back
+  let s = null;
+  for (let i = 0; i < 40; i++) {
+    await sleep(300);
+    s = await page.evaluate(() => {
+      const n = window.__ss.op;
+      const lines = [n.cur, ...n.q].filter(Boolean).map((r) => (r.b && r.b.text) || "");
+      return { caught: window.__ss.ch2.caught, wookie: lines.includes("WOOKIE?!"), phase: window.__ss.ch2.phase, scene: n.scene, pose: n.sqPose, spot: window.__ss.ch.spot, sq: [Math.round(n.sq.x), Math.round(n.sq.y)] };
+    });
+    if (s.wookie || s.phase === "g4") break;
+    await g.key(page, "Space");
+  }
+  g.check(`no page errors (g3hide ${how})`, errors.length === 0, errors);
+  await ctx.close();
+  return s;
+};
+const viaHide = await endOfHide("hide");
+const viaPicture = await endOfHide("picture");
+g.check("g3hide: the picture button, the countdown and switching back bring no capture", viaPicture.caught === 0 && !viaPicture.wookie, viaPicture);
+g.check(
+  "g3hide: the picture button ends in the same state as HIDE",
+  ["phase", "scene", "pose", "spot"].every((key) => viaPicture[key] === viaHide[key]) && viaPicture.sq.join() === viaHide.sq.join() && viaHide.phase === "g4",
+  { viaHide, viaPicture },
+);
+
 await g.finish("switch");

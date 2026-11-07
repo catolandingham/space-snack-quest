@@ -83,8 +83,9 @@ const STATES = [
     steps: [["set", { done: 0, held: -1, cook: "down" }], ["reset", "wash1"], ["set", { cook: "down" }], ["picswap"], ["act?", "FRONT"], ["drain"]],
   },
   {
-    name: "play: switch to Mops while the bots come, walk out front",
-    steps: [["set", { cook: "gone" }], ["reset", "g3hide"], ["set", { cook: "gone" }], ["picswap"], ["act?", "FRONT"], ["drain"]],
+    // While the bots search, the picture button counts as hiding in the crate; the story moves on to Mops out front.
+    name: "play: picture button while the bots come counts as a hide",
+    steps: [["set", { cook: "gone", jar: 30, has: "" }], ["reset", "g3hide"], ["set", { cook: "gone", bots: [{ x: 420, y: 520, hx: 420, f: 1, look: 0 }, { x: 600, y: 520, hx: 600, f: 1, look: 0 }] }], ["picswap"], ["drain"]],
   },
   {
     name: "play: Mops at the sink after the picture button",

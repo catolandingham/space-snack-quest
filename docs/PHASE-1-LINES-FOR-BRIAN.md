@@ -46,7 +46,7 @@ A switch card fills the picture, shows the character, and waits for a tap. Its t
 
 | # | When it shows | In the game now (why line) | Another way to say it |
 | --- | --- | --- | --- |
-| 6.1 | Squatch hid by the pump; Mops goes to the diner | Mops can walk out front. Squatch stays hidden by the pump. | Squatch hides by the pump. Mops walks out front. |
+| 6.1 | Squatch hid by the pump; Mops goes to the diner | Mops goes to the diner. Squatch stays hidden by the pump. | Squatch hides by the pump. Mops walks to the diner. |
 | 6.2 | Mops asked for work; Squatch goes to the back door | Mops found work. Squatch sneaks in the back. | Gloop needs a dishwasher. Squatch sneaks in the back. |
 | 6.3 | Squatch is hiding from the bots; Mops goes out front | Squatch stays hidden in the crate. Mops goes out front. | Squatch is hiding. Mops goes out front. |
 | 6.4 | Soup delivered; back to the dishes | Squatch washes the next dishes. | Squatch goes back to the sink. |
@@ -149,7 +149,7 @@ Changes the player may notice that are not new words:
 - Ambient chatter (the small bubbles that fade on their own) now waits its turn, one bubble at a time, in every chapter, not only Chapter 2.
 - The "YOU: SQUATCH" / "YOU: MOPS" tag shows in every chapter while the story is playing.
 - `switchTo` stops both characters' walking when control changes, in every chapter (the old direct switches did not).
-- In the kitchen, the picture button now puts Squatch in the crate while the player is Mops, and back where he was on the return switch.
+- In the kitchen, the picture button now puts Squatch in the crate while the player is Mops, and back where he was on the return switch. While the bots are searching (g3hide), tapping it counts as hiding in the crate, exactly like HIDE, and the story moves on.
 - The RUMBLE banner and the HIDE countdown in the kitchen sit under the goal chip.
 
 ## Other things I noticed and did not change
