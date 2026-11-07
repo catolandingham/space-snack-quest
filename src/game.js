@@ -7447,7 +7447,7 @@
             ...(n.jailBy === "pump"
               ? [v("bot", "Report him or fuel him?"), v("sq", "Pancakes. Park the nozzle.")]
               : n.jailBy === "diner"
-                ? [v("gloop", "Counter's closed. Pen's open."), v("sq", "I'll take it to go.")]
+                ? [v("gloop", "Counter's closed. Lockup's open."), v("sq", "I'll take it to go.")]
                 : n.jailBy === "sink"
                   ? [v("gloop", "The window caught the sink."), v("sq", "Next time I roll.")]
                   : n.jailBy === "rust"
@@ -7603,7 +7603,8 @@
       (m(x - 78, y - 14, 156, 28, 8), r("#fffaf0", 3), g(a.verb + " \u00b7 " + a.cap, x, y, 14, "#1e2430", "center", 800));
     }
     // The goal chip for Chapter 2: one table, read every frame from the phase, the room and who is in control.
-    // Every line names who acts. No line names a place in another room. Wording waits for Brian's yes
+    // Every line names who acts. No line names a place in another room. The first time a mechanic appears
+    // the chip names the step (g1, g3hide); after that it names only the goal, so discovery stays with the player. Wording waits for Brian's yes
     // (docs/PHASE-1-LINES-FOR-BRIAN.md).
     const CH2_CHIPS = {
       g1: "Squatch: hide behind the crate by the pump",
@@ -7613,7 +7614,7 @@
       wash1: "Squatch: wash the dishes at the sink",
       g3: "Squatch: hide in the crate before the bots look!",
       g3hide: "Squatch: hide in the crate before the bots look!",
-      g3h: "Squatch: stay hidden in the crate",
+      g3h: "Squatch: stay out of sight",
       g4: "Mops: take the tip jar",
       "g4:coins": "Mops: buy soup at the counter",
       "g4:soup": "Mops: take the soup through the kitchen door",
@@ -7626,7 +7627,7 @@
       g6d: "Mops: grab the new tip jar",
       "g6d:coins": "Mops: take the coins out the EXIT door",
       "g6:mops": "Mops: give the coins to Rusty at the pump",
-      g6: "Squatch: sing from the crate to lure the bots",
+      g6: "Squatch: lure the bots away from the ship",
       "g6:sing": "Squatch: stop singing before they reach you",
       "g6:run": "Squatch: run to the ship and get on board",
     };
@@ -8091,7 +8092,7 @@
                 TV([{ k: "panel", id: "postcard" }, v("mops", "Furry pancakes... on Mars. Hm.")]));
             },
           };
-        if (i === "g2" && hV(o, Ul.x, Ul.y, 80)) return { verb: "ORDER", cap: "counter", x: Ul.x, y: 210, r: 0, hot: !0, f: UA };
+        if (i === "g2" && hV(o, Ul.x, Ul.y, 80)) return { verb: "ASK", cap: "for work", x: Ul.x, y: 210, r: 0, hot: !0, f: UA };
         if ((i === "g4" || i === "g6d") && k.jar > 0 && !k.has && hV(o, Dl.x, Dl.y, 70))
           return {
             verb: "GRAB",

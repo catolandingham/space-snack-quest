@@ -14,7 +14,7 @@ const g = await startGame({ port: 8785, name: "bubble-anchor" });
 const SCENES = [
   { name: "G0 arrival", steps: [["scene", "G0"]] },
   { name: "G1 hide by the pump", steps: [["reset", "g1"], ["act", "HIDE"]] },
-  { name: "G2 Mops asks for work", steps: [["scene", "G2"], ["act", "ORDER"]] },
+  { name: "G2 Mops asks for work", steps: [["scene", "G2"], ["act", "ASK"]] },
   { name: "Squatch goes in the kitchen door", steps: [["reset", "back"], ["act", "ENTER"]] },
   { name: "G3 the broadcast", steps: [["set", { done: 3 }], ["reset", "wash1"], ["scene", "G3"]] },
   { name: "G3 hide from the bots", steps: [["reset", "g3hide"], ["act", "HIDE"]] },

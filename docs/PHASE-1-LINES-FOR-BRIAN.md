@@ -12,7 +12,9 @@ To change a line: edit the "In the game now" words in this file and say so in th
 
 ## T5. The goal chip names who acts and what to do
 
-The chip is the yellow goal line at the top of the picture. It is set from one table (`CH2_CHIPS` in `src/game.js`) and hides while a speech bubble is up. Where the plan had a draft, the draft is used unless noted.
+The chip is the yellow goal line at the top of the picture. It is set from one table (`CH2_CHIPS` in `src/game.js`) and hides while a story bubble is up. Where the plan had a draft, the draft is used unless noted.
+
+**Chip rule (Brian, 2026-11-06), for every chapter:** the first time a mechanic appears, the chip names the step; after that it names only the goal, so discovery stays with the player. In Chapter 2, 5.1 (first hide) and 5.6 (first kitchen hide) name the step; 5.7 and 5.18 were changed to name only the goal; the rest already name goals.
 
 | # | When it shows | In the game now | Another way to say it |
 | --- | --- | --- | --- |
@@ -22,7 +24,7 @@ The chip is the yellow goal line at the top of the picture. It is set from one t
 | 5.4 | Mops in the diner the first time (g2) | Mops: ask Gloop for work at the counter | (plan draft) |
 | 5.5 | First dishes (wash1) | Squatch: wash the dishes at the sink | (plan draft) |
 | 5.6 | The bots come to look (g3, g3hide) | Squatch: hide in the crate before the bots look! | (plan draft) |
-| 5.7 | Squatch is in the crate while the bots argue (g3h) | Squatch: stay hidden in the crate | Squatch: stay in the crate |
+| 5.7 | Squatch is in the crate while the bots argue (g3h) | Squatch: stay out of sight | (Brian's wording, 2026-11-06) |
 | 5.8 | Mops out front, before he has coins (g4) | Mops: take the tip jar | Mops: grab the tip jar (review: one action per line, so the plan's "take the tip jar and buy at the counter" is split into 5.8 and 5.9) |
 | 5.9 | Mops has the coins (g4) | Mops: buy soup at the counter | Mops: buy the soup at the counter |
 | 5.10 | Mops has the soup (g4) | Mops: take the soup through the kitchen door | Mops: carry the soup to the kitchen |
@@ -33,7 +35,7 @@ The chip is the yellow goal line at the top of the picture. It is set from one t
 | 5.15 | The new jar, out front (g6d) | Mops: grab the new tip jar | Mops: take the tip jar |
 | 5.16 | Mops has the coins (g6d) | Mops: take the coins out the EXIT door | Mops: take the coins out to the pump |
 | 5.17 | Back on the lot with coins (g6, Mops) | Mops: give the coins to Rusty at the pump | Mops: pay Rusty at the pump |
-| 5.18 | Tank is full, bots on the ramp (g6, Squatch) | Squatch: sing from the crate to lure the bots | Squatch: sing to lure the pump bots away (the plan's draft; mine says where to sing) |
+| 5.18 | Tank is full, bots on the ramp (g6, Squatch) | Squatch: lure the bots away from the ship | (Brian's wording, 2026-11-06) |
 | 5.19 | Squatch is singing (g6) | Squatch: stop singing before they reach you | Squatch: stop before the bots get to you |
 | 5.20 | The bots are looking at the crate (g6) | Squatch: run to the ship and get on board | Squatch: run to the ship! |
 | 5.21 | The player tapped the picture button in the kitchen and is now Mops, while the work is Squatch's (added with T6). The picture button glows while this chip shows. | Mops: tap Squatch's picture (top right) to switch back | Mops: tap the picture, top right, to be Squatch again |
@@ -71,7 +73,7 @@ A short line over the fade when a character changes room during play (it fades a
 
 ## T8. No capture the player cannot prevent, and every lockup card says why
 
-The LOCKUP card's second line used to be a short joke caption ("Nozzle's ready.", "Counter's closed.", "Seen from the window.", "No coins, no lot."). That line now says who saw Squatch and where. The captor's joke bubbles still come after the card, unchanged, so "Counter's closed. Pen's open." now follows a cause line. Say if you want that bubble changed too.
+The LOCKUP card's second line used to be a short joke caption ("Nozzle's ready.", "Counter's closed.", "Seen from the window.", "No coins, no lot."). That line now says who saw Squatch and where. The captor's joke bubbles still come after the card.
 
 | # | When it shows | In the game now | Another way to say it |
 | --- | --- | --- | --- |
@@ -81,7 +83,8 @@ The LOCKUP card's second line used to be a short joke caption ("Nozzle's ready."
 | 8.4 | LOCKUP card, Gloop through the kitchen window | Gloop saw Squatch at the sink. Security caught him. | Gloop saw Squatch through the window. Security caught him. |
 | 8.5 | LOCKUP card, Rusty on the lot | Rusty saw Squatch by the pump. Security caught him. | Rusty spotted Squatch at his pump. Security caught him. |
 | 8.6 | Any other LOCKUP (none in Chapter 2 today) | Security caught Squatch. | (none) |
-| 8.7 | Pump bot bubble when the bots shoo Mops in the kitchen (replaces "Former Ganitor? SHOO!"; costs no stars now) | No goats with food past here! Shoo! | Hey! No goats by the crate! Shoo! |
+| 8.7 | Pump bot bubble when the bots shoo Mops in the kitchen (replaces "Former Ganitor? SHOO!"; costs no stars now, and still counts as a capture as before) | No goats with food past here! Shoo! | Hey! No goats by the crate! Shoo! |
+| 8.8 | Gloop's bubble after a counter LOCKUP (was "Counter's closed. Pen's open."; a child did not know what a pen was, and LOCKUP is the word on the card) | Counter's closed. Lockup's open. | (Brian's wording, 2026-11-06) |
 
 ## T9. Speech bubbles sit over the speaker, one at a time
 
@@ -105,7 +108,7 @@ The big touch button, and the small caption drawn on the picture by the spot, no
 | 11.6 | Blorp's covered plate | LIFT · lid | LIFT · plate lid |
 | 11.7 | Employee of the Month frame | FLIP · picture | FLIP · frame |
 | 11.8 | Postcard on the wall | FLIP · postcard | (none) |
-| 11.9 | Counter, first visit | ORDER · counter | ASK · for work (would change the verb too) |
+| 11.9 | Counter, first visit | ASK · for work | (Brian's wording, 2026-11-06; was ORDER · counter) |
 | 11.10 | Tip jar | GRAB · tip jar | GRAB · jar |
 | 11.11 | Counter, before buying | ASK · Gloop | ASK · prices |
 | 11.12 | Counter, with coins | BUY · soup 30 | (plan wording) |
@@ -134,7 +137,7 @@ The old line also said "Click the game first so it hears your keys." It is gone,
 
 - **T6, acceptance 2 (every switch in Chapters 1 to 4 has a why line).** Every switch in all four chapters now goes through `switchTo`, and only `switchTo` sets `x.mops` (checked by `tests/ch2-switch.mjs`). Only the seven Chapter 2 story switches have why lines and cards. The switches in Chapters 1, 3 and 4 (for example Mops taking over in the Phobos `P2` and `p3x` scenes, the Mars `m2` poster and `m3` van, and the Chapter 1 picture button) are silent, as before. Writing their why lines needs those scenes read closely and your wording, and adding tap cards there changes flows the progression tests play; it fits Phase 3 (T18 and T19) better.
 - **T8, "a HIDE action exists nearby".** Diner recognition now only starts security while the player controls Squatch, which is the fix the recording needed (Squatch is never the player in the diner during normal play). I did not add "and a hiding spot is close", because the diner has no hiding spot, so that rule would switch off diner recognition completely and break the counter-capture checks in `tests/kitchen.mjs`. That is a design call for you.
-- **T11, verbs.** I kept the game's existing verbs (ORDER, FRONT, LEAVE SOUP and so on) and only added the things. ORDER at the counter means "ask for work", which a child may not read that way; see 11.9.
+- **T11, verbs.** I kept the game's existing verbs (FRONT, LEAVE SOUP and so on) and only added the things, except ORDER, which Brian changed to ASK · for work (11.9).
 
 ## Other things I noticed and did not change
 

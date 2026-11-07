@@ -17,7 +17,7 @@ const EXPECT = {
   g4: "Mops: take the tip jar",
   g4k: "Mops: carry the soup to Squatch's crate",
   wash5: "Squatch: wash the next dishes",
-  g6: "Squatch: sing from the crate to lure the bots",
+  g6: "Squatch: lure the bots away from the ship",
 };
 const fill = {
   g4: { jar: 30, has: "" },
