@@ -34,7 +34,7 @@
           return;
         }
         if (p.state === "op") {
-          nf();
+          walkTap(l, o) || nf();
           return;
         }
         if (p.state === "title") {

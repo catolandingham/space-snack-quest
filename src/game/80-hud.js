@@ -43,6 +43,11 @@
     function methodLine() {
       return METHOD_LINES[methodKey()] || "";
     }
+    // A short note in the goal spot (page text, so it reads on a phone): "They lost you.", the walk-tap hint.
+    let note = { text: "", until: 0 };
+    function hudNote(text, secs) {
+      note = { text, until: performance.now() + secs * 1e3 };
+    }
     let hud = null,
       stall = { sig: "", t: 0 },
       starPop = { last: 0, at: -9, hintAt: -1 };
@@ -144,6 +149,7 @@
     }
     // What the chip shows now: the star hint for its first 3.5 seconds, the method line after a stall, or the goal.
     function chipText() {
+      if (note.text && performance.now() < note.until) return note.text;
       // The hint runs on the wall clock: the game clock starts over with each scene.
       let since = performance.now() - starPop.hintAt;
       if (n.starOn && starPop.hintAt >= 0 && since < 3500) return "\u2605 = points for finds";

@@ -1794,6 +1794,14 @@
           s.s === "ha ha!" ? (X(s.x, s.y, 34, 16), r("#fff6dc", 2), g(s.s, s.x, s.y, 16, "#b45309")) : g(s.s, s.x, s.y, 28, "#ff5fa8"));
       e.globalAlpha = 1;
     }
+    // Where a walk-tap is heading: a small ring on the floor while the player walks there.
+    function drawWalkTo() {
+      let t = n.walkTo;
+      if (!t || de()) return;
+      let k = 0.5 + 0.5 * Math.sin(n.T * 8),
+        sx = t.x - (n.room === "hall" ? B.camX : 0);
+      (e.save(), (e.globalAlpha = 0.7), X(sx, t.y, 16 + 4 * k, 7 + 2 * k), (e.lineWidth = 3), (e.strokeStyle = "#ffffff"), e.stroke(), e.restore());
+    }
     function E5() {
       ((qq = 0), (mq = []), (ringsDrawn = []));
       let l = n.cur;
@@ -1846,7 +1854,8 @@
                                     : x5(),
         ringsLeft(),
         xp(),
-        drawSec());
+        drawSec(),
+        drawWalkTo());
       for (let i of n.sparks)
         if (i.x !== 300 && i.s === "!") {
           let s = Math.sin(i.t * 14) * 4,

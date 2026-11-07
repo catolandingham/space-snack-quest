@@ -101,3 +101,15 @@ After 60 seconds of play with no progress (no new beat, room, item or catch; tim
 No new words. What changed on screen: when Gloop is about to look through the order window, the window's frame flashes (two colors, four times a second) and Gloop moves to the middle of the window and grows, looking out at the sink, with a big "!" beside the window. That stays from the warning until her look ends. The warning now lasts 2.5 seconds before she looks, in both sets of dishes (it was 1.1 seconds in the second set and 1.5 in the first, with only the small "Order up?" line to see). The "Order up?" line is unchanged. "They lost you." (19.16) also shows in the kitchen when security gives up after Squatch rolls into a ball.
 
 Note for you: on a phone the goal chip sits in its own row just under the top of the picture, and in the kitchen that row covers the top part of the order window. The flashing frame's sides and Gloop's face below the chip still show. If you want the chip somewhere else on a phone, say where.
+
+## T23. Tap where you want to walk (your D11)
+
+A tap (or a click) on the picture, when no bubble or card is up, walks the character you control to that spot in a straight line, the way Sierra games do. A small white ring shows on the floor where they are heading. The arrows, WASD and the stick still walk and cancel the tap-walk. A tap while a bubble or card is up still means "next", as before. The big ACTION button stays the way to act: walking onto a glowing ring lights it up, as walking there with the stick does. A tap no longer does the action the button shows (it used to, when no bubble was up); Enter and Space on a keyboard still do.
+
+The first time a tap walks, this shows once in the goal spot for four seconds (and never again on that device):
+
+| # | When it shows | In the game now | Another way to say it |
+| --- | --- | --- | --- |
+| 23.1 | In the goal spot, the first time a tap on the picture walks | Tap the floor to walk there. | You walk where you tap. |
+
+"They lost you." (19.16) now shows in the same goal spot as page text, so it reads on a phone (it was drawn into the picture).

@@ -27,8 +27,11 @@ const dark = (p) => Math.abs(p.rgb[0] - 0x2c) < 24 && Math.abs(p.rgb[1] - 0x35) 
 for (const ph of ["wash1", "wash5"]) {
   await page.evaluate(setState, { kind: "ch2", steps: [["set", { done: ph === "wash5" ? 3 : 0, held: -1, greasy: false, cook: "gone" }], ["reset", ph], ["set", { cook: "gone" }]] });
   // Squatch rolls into a ball so Gloop's look finds nothing.
-  await page.evaluate(() => { const n = window.__ss.op; n.sqPose = "ball"; window.__ss.ch2.peekT = 0.05; });
+  // Let the room's fade-in finish before reading the frame.
+  await page.evaluate(() => { window.__ss.op.sqPose = "ball"; window.__ss.ch2.peekT = 99; });
+  await sleep(1500);
   const before = await pixel();
+  await page.evaluate(() => { window.__ss.ch2.peekT = 0.05; });
   const samples = [];
   const t0 = Date.now();
   while (Date.now() - t0 < 6000) {

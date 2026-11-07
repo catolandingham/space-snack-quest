@@ -959,6 +959,26 @@
       }
       ((n.skipping = !1), (n.cutOn = !1), (n.bt = 0), Dt("skip", "", "cutscene skipped", "skip"));
     }
+    // A tap on the picture with no bubble or card up walks the player there (Sierra style).
+    function walkTap(l, o) {
+      if (!n.ctrl || de() || !n.scene) return !1;
+      let b = sn(),
+        hall = n.room === "hall" ? B.camX : 0,
+        who = x.mops ? n.mo : n.sq;
+      n.walkTo = { x: w(l + hall, b.x0, b.x1), y: w(o, b.y0, b.y1), room: n.room, lx: who.x, ly: who.y, lt: n.T, at: n.T };
+      let seen = n.walkHinted;
+      try {
+        seen = seen || window.localStorage.getItem("ssq-walk-hint") === "1";
+      } catch {}
+      seen ||
+        ((n.walkHinted = !0),
+        hudNote("Tap the floor to walk there.", 4),
+        Dt("hint", "", "walk-tap", "hint"));
+      try {
+        window.localStorage.setItem("ssq-walk-hint", "1");
+      } catch {}
+      return !0;
+    }
     function nf() {
       if ((VV(), de())) {
         if (n.bt < 0.3) return;
@@ -1072,6 +1092,18 @@
       let l = (qe.ArrowRight || qe.KeyD ? 1 : 0) - (qe.ArrowLeft || qe.KeyA ? 1 : 0),
         o = (qe.ArrowDown || qe.KeyS ? 1 : 0) - (qe.ArrowUp || qe.KeyW ? 1 : 0);
       qt.active && Math.hypot(qt.x, qt.y) > 0.15 && ((l = qt.x), (o = qt.y));
+      // Tap to walk (task T23): with no key or stick, head for the tapped point. Keys and the stick cancel it.
+      if (l || o) n.walkTo = null;
+      else if (n.walkTo) {
+        let t = n.walkTo,
+          who = x.mops ? n.mo : n.sq,
+          dx = t.x - who.x,
+          dy = t.y - who.y,
+          d = Math.hypot(dx, dy);
+        // Arrived, control taken away, a new room, or stuck against something for half a second: stop.
+        Math.hypot(who.x - t.lx, who.y - t.ly) > 2 && ((t.lx = who.x), (t.ly = who.y), (t.lt = n.T));
+        d < 8 || !n.ctrl || n.room !== t.room || n.T - t.lt > 0.5 ? (n.walkTo = null) : ((l = dx / d), (o = dy / d));
+      }
       let i = Math.hypot(l, o);
       return (i > 1 && ((l /= i), (o /= i)), { x: l, y: o });
     }

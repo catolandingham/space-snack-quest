@@ -127,7 +127,7 @@
     }
     // Security left without finding him.
     function lostYou() {
-      (roomLine("They lost you."), Dt("safe", "", "They lost you.", "safe"));
+      (hudNote("They lost you.", 2.5), Dt("safe", "", "They lost you.", "safe"));
     }
     // Restart the current section from its checkpoint; coins, the register, stars and finds are kept.
     function restartSection() {

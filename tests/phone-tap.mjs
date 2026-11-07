@@ -12,6 +12,8 @@
  * does the same.
  *
  * The picture's top edge is within 16 pixels of the page top (an expected failure until Phase 3).
+ * Tap to walk (task T23): a fresh page reaches the diner (g2) with taps on the picture to walk and to say
+ * "next", and the ACTION button to act. No joystick.
  */
 import { startGame, sleep } from "./game-page.mjs";
 import { readRoute, playRoute, look } from "./route-player.mjs";
@@ -118,6 +120,68 @@ g.check("no page errors", errors.length === 0, errors);
 // Phase 3 pinned the game to the top of a phone screen (it was an expected failure until then).
 const top = await page.evaluate(() => document.querySelector("canvas").getBoundingClientRect().top + window.scrollY);
 g.check("the picture's top edge is within 16 px of the page top", top <= 16, { top: Math.round(top) });
+
+// Tap to walk (task T23, Brian's D11): a fresh phone page reaches the diner (g2) with no joystick at all.
+// Taps on the picture walk (and say "next" while a bubble or card is up); the ACTION button acts.
+{
+  const third = await g.open("?ch=2", { width: 375, height: 812, isMobile: true, hasTouch: true });
+  const p3 = third.page;
+  const pic = () => p3.evaluate(() => { const r = document.querySelector("canvas").getBoundingClientRect(); return { x: r.left, y: r.top, w: r.width, h: r.height }; });
+  const tap = async (x, y) => { await p3.touchscreen.touchStart(x, y); await sleep(40); await p3.touchscreen.touchEnd(); };
+  // A point on the picture, in game pixels (960 by 640), as a tap on the page.
+  const tapGame = async (gx, gy) => { const r = await pic(); await tap(r.x + (gx * r.w) / 960, r.y + (gy * r.h) / 640); };
+  const st = () => p3.evaluate(() => { const ss = window.__ss, n = ss.op, c = n.cur; return { phase: ss.ch2.phase, ctrl: n.ctrl, up: !!(c && ["bub", "card", "panel", "fb"].includes(c.k)), button: String(ss.game.verb || "").replace(/^!/, ""), walking: !!n.walkTo, mops: !!ss.ch.mops, log: n.log.filter((e) => e.k === "hint").length }; });
+  async function nextUntil(phase) {
+    for (let i = 0; i < 80; i++) {
+      const s = await st();
+      if (s.phase === phase && s.ctrl && !s.up) return true;
+      if (s.up) await tapGame(480, 320);
+      await sleep(250);
+    }
+    return false;
+  }
+  async function walkTo(gx, gy, until) {
+    await tapGame(gx, gy);
+    for (let i = 0; i < 60; i++) {
+      const s = await st();
+      if (until ? s.button === until : !s.walking) return true;
+      if (!s.walking && !until) return true;
+      if (!s.walking && i % 10 === 9) await tapGame(gx, gy);
+      await sleep(150);
+    }
+    return false;
+  }
+  async function act(label) {
+    const b = await p3.evaluate(() => { const r = document.querySelector('[role="button"]').getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, text: document.querySelector('[role="button"]').textContent }; });
+    await tap(b.x, b.y);
+    await sleep(300);
+    return b.text.includes(label);
+  }
+  const steps = [];
+  steps.push(["opening lines to g1", await nextUntil("g1")]);
+  steps.push(["tap the crate by the pump", await walkTo(690, 470, "HIDE · crate")]);
+  const hint = await st();
+  steps.push(["the walk hint showed once", hint.log === 1]);
+  steps.push(["HIDE with the button", await act("HIDE")]);
+  steps.push(["lines to g1door", await nextUntil("g1door")]);
+  steps.push(["Mops: tap below the crate", await walkTo(600, 560)]);
+  steps.push(["Mops: tap the diner door", await walkTo(300, 470, "ENTER · diner door")]);
+  steps.push(["ENTER with the button", await act("ENTER")]);
+  steps.push(["into the diner", await nextUntil("g2")]);
+  const bad = steps.filter((s) => !s[1]).map((s) => s[0]);
+  g.check("a phone player reaches the diner (g2) by tapping the picture to walk and the button to act, no joystick", bad.length === 0, { bad, end: await st() });
+  // A tap sets a walk target; an arrow key cancels it.
+  await tapGame(800, 560);
+  await sleep(100);
+  const walking = (await st()).walking;
+  await p3.evaluate(() => window.dispatchEvent(new KeyboardEvent("keydown", { code: "ArrowLeft", bubbles: true })));
+  await sleep(150);
+  const after = (await st()).walking;
+  await p3.evaluate(() => window.dispatchEvent(new KeyboardEvent("keyup", { code: "ArrowLeft", bubbles: true })));
+  g.check("a tap on the picture with no bubble up sets a walk target, and an arrow key cancels it", walking && !after, { walking, after });
+  g.check("tap to walk: no page errors", third.errors.length === 0, third.errors);
+  await third.ctx.close();
+}
 
 await ctx.close();
 await g.finish("phone-tap");

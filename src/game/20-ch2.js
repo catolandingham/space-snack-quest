@@ -270,6 +270,7 @@
         (n.ctrl = !0),
         (n.hopOut = -1),
         (ch2.sec = null),
+        (n.walkTo = null),
         FV.on && FV.bot && ((FV.bot.x = FV.hx), (FV.bot.y = FV.hy)),
         FV.on && n.chip === "Hide!" && (n.chip = FV.chip),
         (FV.on = !1),
