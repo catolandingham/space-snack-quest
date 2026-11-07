@@ -409,6 +409,8 @@
         return !0;
       }
       if (l === "g6" || l === "g6d") {
+        // Tank full: Rusty has been asleep since he was paid, and stays asleep (as on main); bots go home.
+        ch2.rust.nap = !0;
         for (let b of ch2.bots || []) ((b.x = b.hx), (b.look = 0));
         ((n.scene = "G6"),
           (n.room = "gas"),

@@ -177,9 +177,9 @@
       for (let z of [hud.where, hud.goal]) hudShow(z, !facesOnly);
       if ((hudShow(hud.root, on), (hud.bar.style.visibility = on ? "" : "hidden"), (chipDrawn = ""), !on)) return;
       let s = n.scene;
-      // On a phone the tag is short ("CH2") so the where zone fits beside two faces.
+      // On a phone the tag is "Chapter 2" (no place name) so the where zone fits beside two faces.
       let tag = s.startsWith("M") ? "CH4 \xB7 MARS" : s.startsWith("P") ? "CH3 \xB7 PHOBOS" : s.startsWith("G") ? "CH2 \xB7 GAS STOP" : "CH1 \xB7 STORMTOP";
-      (hudText(hud.chapter, hud.phone ? tag.slice(0, 3) : tag), hud.chapter.setAttribute("title", tag));
+      (hudText(hud.chapter, hud.phone ? "Chapter " + tag[2] : tag), hud.chapter.setAttribute("title", tag));
       hudShow(hud.chapter, n.room !== "lobby");
       // Stars: the pill pops when the total goes up; the first time it shows, the chip spot explains it.
       (n.stars > starPop.last && (starPop.at = n.T), (starPop.last = n.stars), n.starOn && starPop.hintAt < 0 && (starPop.hintAt = performance.now()));

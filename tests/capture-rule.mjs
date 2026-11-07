@@ -250,10 +250,14 @@ for (const [label, has] of [["g6d with no coins", ""], ["g6d with the coins", "c
   const r = await page.evaluate(() => {
     const ss = window.__ss, k = ss.ch2;
     k.bots = [{ x: 300, y: 500, hx: 700, f: -1, look: 4 }, { x: 320, y: 520, hx: 900, f: -1, look: 4 }];
+    k.rust.nap = true;
     ss.capture("lure"); ss.drain();
-    return k.bots.map((b) => ({ x: b.x, hx: b.hx, look: b.look }));
+    ss.drawFrame();
+    const rustCone = ss.conesDrawn().some((c) => c.len === 280 && c.half === 0.85);
+    return { bots: k.bots.map((b) => ({ x: b.x, hx: b.hx, look: b.look })), nap: k.rust.nap, rustCone };
   });
-  g.check("after a lure capture the pump bots are home and not looking", r.length === 2 && r.every((b) => b.x === b.hx && b.look === 0), r);
+  g.check("after a lure capture the pump bots are home and not looking", r.bots.length === 2 && r.bots.every((b) => b.x === b.hx && b.look === 0), r);
+  g.check("after a lure capture Rusty is still asleep and his cone is not active", r.nap === true && !r.rustCone, r);
 }
 for (const [label, setup] of [
   ["S4", { kind: "ch1", call: "sceneS4", set: { op: { scene: "S4", room: "hall", sqPose: "stand" }, s4: { inCrate: false, botsOut: false } } }],
