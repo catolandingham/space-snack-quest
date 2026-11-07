@@ -74,7 +74,7 @@ Open rows found during Phase 1 (not fixed):
 
 | Item | What happens | State |
 | --- | --- | --- |
-| g6d reset | Reset section in g6d (or in g6 once Mops has the coins) puts the player back as Squatch on the lot, and the ship can be boarded without filling the tank | Open |
+| g6d reset | Reset section in g6d (or in g6 once Mops has the coins) puts the player back as Squatch on the lot, and the ship can be boarded without filling the tank | Fixed in Phase 3 (review group 1): BOARD needs a full tank; those restarts go to Mops with the coins or the diner jar |
 | Cook's first line | The cook says "A WOOKIE!" before she is drawn; she only appears once she is on the floor | Open |
 | Playtest issue 9 | Window and sink read as being in the wrong spot | Open, waits on decision D12 |
 

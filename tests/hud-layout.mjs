@@ -22,7 +22,7 @@ const STATES = [
   ["Chapter 1 S9, both faces", { kind: "ch1", call: "sceneS9", set: { op: { scene: "S9", room: "hall", sqPose: "stand", egg: null }, swap: false } }],
   ["Chapter 1 S12 hangar", { kind: "ch1", call: "sceneS12", set: { op: { scene: "S12", room: "hangar", sqPose: "stand" }, ch: { coolers: [false, false, false], tarp: true, crates: true }, trip: 0 } }],
   ["Chapter 2 g4 with soup (long chip)", { kind: "ch2", steps: [["set", { jar: 0, has: "soup" }], ["reset", "g4"]] }],
-  ["Chapter 2 g6 on the lot (tank)", { kind: "ch2", steps: [["set", { jar: 30, has: "" }], ["reset", "g6"]] }],
+  ["Chapter 2 g6 on the lot (tank)", { kind: "ch2", steps: [["set", { jar: 30, has: "", fuel: true }], ["reset", "g6"]] }],
   ["Chapter 2 kitchen as Mops (both faces, glowing)", { kind: "ch2", steps: [["set", { cook: "gone" }], ["reset", "wash1"], ["set", { cook: "gone" }], ["swap", true]] }],
   ["Chapter 3 temple", { kind: "ch3", room: "temple", phase: "p3", mops: false, extra: {} }],
   ["Chapter 4 dock", { kind: "ch4", room: "port", phase: "m1", mops: false, extra: {}, found: [] }],

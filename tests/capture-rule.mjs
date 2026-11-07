@@ -208,6 +208,60 @@ await page.evaluate(() => window.__ss.drain());
 const hallLost = await hallAlarm(true);
 g.check("Chapter 1 hall alarm: hidden for 2 seconds shows \"They lost you.\"", !!hallLost && hallLost.lost === true, hallLost);
 
+// Review fixes (2026-11-07): restarts never skip the tank, the soup or the lure reset, and Chapter 1 hall
+// restarts give a moment before the next alarm.
+const restartIn = (setup, before) =>
+  page.evaluate(setState, setup).then(() =>
+    page.evaluate((before) => {
+      const ss = window.__ss, n = ss.op, k = ss.ch2;
+      before && Object.assign(k, before);
+      ss.sectionReset();
+      ss.drain();
+      const ship = ss.spotsNow().find((sp) => sp.verb === "BOARD");
+      n.sq.x = 780; n.sq.y = 500; n.sqPose = "stand";
+      const offer = ss.offerNow();
+      return { phase: k.phase, room: n.room, mops: !!ss.ch.mops, has: k.has, key: ss.ch2ChipKey(), board: !!(offer && offer.verb === "BOARD"), shipUsable: !!(ship && ship.when !== false) };
+    }, before));
+for (const [label, has] of [["g6d with no coins", ""], ["g6d with the coins", "coins"]]) {
+  const r = await restartIn({ kind: "ch2", steps: [["set", { fuel: false, has, jar: 30 }], ["reset", "wash5"], ["call", "sceneG6"], ["set", { has }]] });
+  g.check(`restart in ${label}: no BOARD, and the next chip is the jar or coins step`, !r.board && !r.shipUsable && ["g6d", "g6d:coins"].includes(r.key) && r.room === "diner", r);
+}
+{
+  const r = await restartIn({ kind: "ch2", steps: [["set", { fuel: false, jar: 0, has: "coins" }], ["reset", "wash5"], ["call", "g6Out"], ["swap", true], ["set", { has: "coins" }]] });
+  g.check("restart in g6 before the tank: Mops with the coins at the pump, no BOARD", !r.board && !r.shipUsable && r.key === "g6:mops" && r.mops && r.has === "coins" && r.room === "gas", r);
+}
+{
+  const r = await restartIn({ kind: "ch2", steps: [["set", { fuel: false, has: "" }], ["reset", "g6"]], }, { phase: "g6", fuel: false });
+  g.check("BOARD is never offered before the tank is full", !r.board && !r.shipUsable, r);
+}
+{
+  const r = await page.evaluate(setState, { kind: "ch2", steps: [["set", { has: "soup" }], ["reset", "g4l"], ["set", { has: "" }]] }).then(() =>
+    page.evaluate(() => { const ss = window.__ss; ss.ch2.has = ""; ss.capture("bots3"); ss.drain(); return { phase: ss.ch2.phase, has: ss.ch2.has }; }));
+  g.check("restart from g4l lands on wash5 without the soup handed back", r.phase === "wash5" && r.has === "", r);
+}
+{
+  await page.evaluate(setState, { kind: "ch2", steps: [["set", { fuel: true }], ["reset", "g6"]] });
+  const r = await page.evaluate(() => {
+    const ss = window.__ss, k = ss.ch2;
+    k.bots = [{ x: 300, y: 500, hx: 700, f: -1, look: 4 }, { x: 320, y: 520, hx: 900, f: -1, look: 4 }];
+    ss.capture("lure"); ss.drain();
+    return k.bots.map((b) => ({ x: b.x, hx: b.hx, look: b.look }));
+  });
+  g.check("after a lure capture the pump bots are home and not looking", r.length === 2 && r.every((b) => b.x === b.hx && b.look === 0), r);
+}
+for (const [label, setup] of [
+  ["S4", { kind: "ch1", call: "sceneS4", set: { op: { scene: "S4", room: "hall", sqPose: "stand" }, s4: { inCrate: false, botsOut: false } } }],
+  ["S7", { kind: "ch1", call: "sceneS6", set: { op: { scene: "S7", room: "hall", sqPose: "stand" } } }],
+  ["S7b", { kind: "ch1", call: "sceneS6", set: { op: { scene: "S7b", room: "hall", sqPose: "stand" } } }],
+]) {
+  await page.evaluate(setState, setup);
+  await sleep(200); // the scene's checkpoint is saved on the next frame
+  const before = await page.evaluate(() => { const ss = window.__ss; ss.capture("hallbot"); ss.drain(); return ss.ch.caught + ss.s1.caught; });
+  await sleep(2000);
+  const after = await page.evaluate(() => { const ss = window.__ss, n = ss.op; return { caught: ss.ch.caught + ss.s1.caught, card: !!(n.cur && n.cur.id === "jail") || n.q.some((q) => q.id === "jail"), alarm: ss.hallAlarm.on, grace: n.seeGrace - n.T, scene: n.scene }; });
+  g.check(`Chapter 1 ${label}: after a restart there is no catch for 2 seconds`, after.caught === before && !after.card && !after.alarm && after.scene === label, { before, after });
+}
+
 // Tallies no longer show stars taken away.
 g.check("no tally adds a star loss to Times caught", !/Times caught " \+ s \+ \(s \?/.test(all));
 

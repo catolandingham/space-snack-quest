@@ -131,12 +131,14 @@
     }
     // Restart the current section from its checkpoint; coins, the register, stars and finds are kept.
     function restartSection() {
-      let jar = ch2.jar,
+      // g4l restarts at wash5 with the soup already left in the crate: the soup is not handed back.
+      let dropSoup = (n.scene || "")[0] === "G" && ch2.phase === "g4l",
+        jar = ch2.jar,
         reg = ch2.reg,
         has = ch2.has,
         stars = n.stars,
         found = new Set(n.found);
-      (reSec(), (ch2.jar = jar), (ch2.reg = reg), (ch2.has = has), (n.stars = stars), (n.found = found));
+      (reSec(), (ch2.jar = jar), (ch2.reg = reg), (ch2.has = dropSoup ? "" : has), (n.stars = stars), (n.found = found));
     }
     // The chapter bonus for no catches (the old "GHOST BONUS"). Only a catch clears it (a capture, or a bot
     // shooing Mops); being seen and getting away does not. Amount and rule unchanged (Brian, 2026-11-07).
@@ -185,7 +187,25 @@
     }
     // Checkpoint tables. Chapter 2's is applyG (20-ch2.js). A scene or phase with no entry restarts from the
     // state saved when that scene began (noteSection). Each entry puts the section back the way it starts.
-    const CH1_CHECKPOINTS = { S1L: () => Sh(), S6: () => Bh(), S9: () => Fs(), S11: () => Js() };
+    // S4, S7 and S7b: the state saved when the scene began (bots included), the crate light and alarm reset,
+    // and three seconds before a bot can see Squatch again, so a second alarm cannot fire at once.
+    function ch1Saved(scene) {
+      ch2.check && ch2.check.scene === scene && restoreCheck(ch2.check);
+      n.seeGrace = n.T + 3;
+    }
+    const CH1_CHECKPOINTS = {
+      S1L: () => Sh(),
+      S4: () => {
+        ch1Saved("S4");
+        Object.assign(le, { inCrate: !1, light: 0, botsOut: !1, left: !1, dolly: !1 });
+        n.pulse.add("crate");
+      },
+      S6: () => Bh(),
+      S7: () => ch1Saved("S7"),
+      S7b: () => ch1Saved("S7b"),
+      S9: () => Fs(),
+      S11: () => Js(),
+    };
     const CH3_CHECKPOINTS = {
       p1: () => {
         let o = Q.rov[0];

@@ -70,8 +70,8 @@ const SUBSTATES = [
   ["g6d", [["set", { jar: 30, has: "" }], ["reset", "wash5"], ["scene", "G6"]]],
   ["g6d:coins", [["set", { jar: 30, has: "" }], ["reset", "wash5"], ["scene", "G6"], ["set", { has: "coins", jar: 0 }]]],
   ["g6:mops", [["set", { jar: 0, has: "coins" }], ["reset", "wash5"], ["call", "g6Out"], ["mops"]]],
-  ["g6:sing", [["reset", "g6"], ["op", { sqPose: "hidden" }], ["ch", { spot: 61, sing: true }]]],
-  ["g6:run", [["reset", "g6"], ["ch", { sing: false }], ["set", { bots: [{ x: 700, y: 500, hx: 700, f: -1, look: 5 }, { x: 900, y: 520, hx: 900, f: -1, look: 5 }] }]]],
+  ["g6:sing", [["set", { fuel: true }], ["reset", "g6"], ["op", { sqPose: "hidden" }], ["ch", { spot: 61, sing: true }]]],
+  ["g6:run", [["set", { fuel: true }], ["reset", "g6"], ["ch", { sing: false }], ["set", { bots: [{ x: 700, y: 500, hx: 700, f: -1, look: 5 }, { x: 900, y: 520, hx: 900, f: -1, look: 5 }] }]]],
 ];
 for (const [key, steps] of SUBSTATES) {
   await page.evaluate((steps) => {

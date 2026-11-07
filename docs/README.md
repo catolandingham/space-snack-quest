@@ -42,7 +42,9 @@ Mapped checkpoints in the build. The rows the independent pass drove are listed 
 | Phase before reset | Lands on |
 | --- | --- |
 | `back`, `g1door` | Gas back crate, still hidden |
-| `g6`, `g6d` | Gas `G6` at the door |
+| `g6`, `g6d`, tank full | Gas `G6` at the door, Squatch at the lure (bots home) |
+| `g6` before the tank, Mops has the coins | Gas `G6`, Mops with the coins by the pump |
+| `g6d`, or `g6` before the tank without coins | Diner, Mops by the new jar (BOARD needs a full tank) |
 | `g3`, `g3hide`, `g3h` | The dock hide, timer 5.5 |
 | `wash1` | Kitchen sink |
 | `wash5` | Kitchen, by the crate |

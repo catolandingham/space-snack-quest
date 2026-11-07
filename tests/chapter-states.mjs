@@ -8,7 +8,7 @@
 export const STATES = [];
 const ch2 = (label, steps) => STATES.push([2, label, { kind: "ch2", steps }]);
 for (const ph of ["g1", "back", "g2", "wash1", "g3hide", "g4", "g4k", "wash5", "g6", "g6d"])
-  ch2(ph, [["set", { jar: 30, has: "", done: ph === "wash5" ? 3 : 0, held: -1, greasy: false }], ["reset", ph]]);
+  ch2(ph, [["set", { jar: 30, has: "", done: ph === "wash5" ? 3 : 0, held: -1, greasy: false, fuel: ph === "g6" || ph === "g6d" }], ["reset", ph]]);
 ch2("wash1 holding a dish", [["set", { done: 0, held: 1 }], ["reset", "wash1"], ["set", { held: 1 }]]);
 ch2("g4 with coins", [["set", { jar: 0, has: "coins" }], ["reset", "g4"]]);
 ch2("g4 with soup", [["set", { jar: 0, has: "soup" }], ["reset", "g4"]]);

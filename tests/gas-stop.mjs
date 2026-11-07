@@ -229,7 +229,7 @@ await page.evaluate(() => {
   n.q = []; n.cur = null; n.live = [];
   n.scene = "G6"; n.room = "gas"; n.ctrl = true; n.sqPose = "stand";
   n.sq.x = 360; n.sq.y = 510; ss.swapTo(false); ss.ch.sing = false;
-  ss.ch2.phase = "g6"; ss.ch2.sec = null;
+  ss.ch2.phase = "g6"; ss.ch2.sec = null; ss.ch2.fuel = true;
   ss.ch2.rust.nap = true;
   ss.ch2.bots = [{ x: 480, y: 500, hx: 480, f: -1, look: 0 }];
 });
@@ -279,7 +279,7 @@ await page.evaluate(() => {
   n.scene = "G6"; n.room = "gas"; n.ctrl = true; n.sqPose = "stand";
   n.sq.x = 360; n.sq.y = 510; n.sq.moving = false;
   ss.swapTo(false); ss.ch.sing = false;
-  ss.ch2.phase = "g6"; ss.ch2.sec = null;
+  ss.ch2.phase = "g6"; ss.ch2.sec = null; ss.ch2.fuel = true;
   ss.ch2.rust.nap = true;
   ss.ch2.bots = [{ x: 480, y: 500, hx: 480, f: -1, look: 0 }];
 });

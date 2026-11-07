@@ -27,7 +27,7 @@ const g = await startGame({ port: 8787, name: "action-labels" });
 
 // States to sweep: [label, steps]. Steps: ["set", ch2 fields], ["reset", phase], ["op", op fields], ["swap", toMops].
 const STATES = [
-  ...["g1", "back", "g2", "wash1", "g3hide", "g4", "g4k", "wash5", "g6", "g6d"].map((ph) => [ph, [["set", { jar: 30, has: "", done: ph === "wash5" ? 3 : 0, held: -1, greasy: false }], ["reset", ph]]]),
+  ...["g1", "back", "g2", "wash1", "g3hide", "g4", "g4k", "wash5", "g6", "g6d"].map((ph) => [ph, [["set", { jar: 30, has: "", done: ph === "wash5" ? 3 : 0, held: -1, greasy: false, fuel: ph === "g6" || ph === "g6d" }], ["reset", ph]]]),
   ["wash1 holding a dish", [["set", { done: 0, held: 1 }], ["reset", "wash1"], ["set", { held: 1 }]]],
   ["wash1 while Gloop looks", [["reset", "wash1"], ["set", { warn: 1 }]]],
   ["g4 with coins", [["set", { jar: 0, has: "coins" }], ["reset", "g4"]]],
@@ -37,8 +37,8 @@ const STATES = [
   ["the greasy pot", [["set", { done: 5, held: 6, greasy: true }], ["reset", "wash5"], ["set", { greasy: true }], ["swap", true]]],
   ["g6d with coins", [["set", { jar: 0, has: "coins" }], ["call", "sceneG6"], ["set", { has: "coins", jar: 0 }]]],
   ["g6 Mops with coins", [["set", { jar: 0, has: "coins" }], ["call", "g6Out"], ["swap", true], ["set", { has: "coins" }]]],
-  ["g6 hidden at the lure crate", [["reset", "g6"], ["op", { sqPose: "hidden" }], ["ch", { spot: 61, sing: false }]]],
-  ["g6 singing", [["reset", "g6"], ["op", { sqPose: "hidden" }], ["ch", { spot: 61, sing: true }]]],
+  ["g6 hidden at the lure crate", [["set", { fuel: true }], ["reset", "g6"], ["op", { sqPose: "hidden" }], ["ch", { spot: 61, sing: false }]]],
+  ["g6 singing", [["set", { fuel: true }], ["reset", "g6"], ["op", { sqPose: "hidden" }], ["ch", { spot: 61, sing: true }]]],
 ];
 
 const build = (steps) => {

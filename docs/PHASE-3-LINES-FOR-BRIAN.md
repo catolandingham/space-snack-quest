@@ -162,6 +162,10 @@ The opening introduces Squatch with a card that darkens the room except a spotli
 
 Not added: Chapter 2's first switch (g1door). It already has a switch card that fills the picture with Mops and says "You are MOPS now." and why (rows 6.1 and the T6 card); a zoom-in card right before it would be two cards in a row. If you want the spotlight version instead of that card, say so and it can replace it.
 
+## Also changed
+
+- **Restarts never skip a step (review, 2026-11-07).** A restart in `g6d`, or in `g6` before the tank is full, used to put Squatch at the lure, and the ship could then be boarded with an empty tank. BOARD now needs a full tank, and those restarts put Mops back with the coins by the pump (if he has them) or by the new jar in the diner. A restart from `g4l` lands on the next dishes without handing the soup back. A lure capture sends the pump bots home. In Chapter 1, a restart in S4, S7 or S7b puts the bots back where they were when the scene began, resets the crate light, and gives three seconds before a bot can see Squatch again.
+
 ## Not finished
 
 - **Text drawn in the picture on a phone.** The HUD is page text at 14 CSS px or more. Speech bubbles, cards, the "VERB · thing" label by the thing and the zoom-in cards are still drawn into the picture, so on a 375-wide phone they read at about 8 to 15 px. Making them bigger on phones needs its own pass.

@@ -38,7 +38,8 @@ const fill = {
   g4: { jar: 30, has: "" },
   g4k: { has: "soup" },
   g4l: { has: "" },
-  g6: { jar: 0, has: "", fuel: false },
+  // Before the tank is full Mops still has the coins (taking the jar gives them; Rusty takes them and fills the tank at once).
+  g6: { jar: 0, has: "coins", fuel: false },
   g6d: { jar: 30, has: "" },
 };
 

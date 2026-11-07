@@ -234,6 +234,7 @@
           timer: ch2.timer || 0,
           cook: ch2.cook || "",
           pulse: [...n.pulse],
+          bots: n.room === "hall" ? B.bots.map((b) => ({ ...b })) : null,
         }));
     }
     function restoreCheck(c) {
@@ -257,6 +258,7 @@
         (ch2.cook = c.cook || ""),
         n.pulse.clear());
       for (let id of c.pulse || []) n.pulse.add(id);
+      c.bots && (B.bots = c.bots.map((b) => ({ ...b })));
       ch2.noted = c.id;
       return !0;
     }
@@ -372,7 +374,40 @@
           n.pulse.add("backd"));
         return !0;
       }
+      // g6d, or g6 before the tank is filled: back to Mops with the coins at the pump, or to the diner's
+      // jar if he has no coins. Only a full tank puts Squatch at the lure (review, 2026-11-07).
+      if ((l === "g6" || l === "g6d") && !ch2.fuel) {
+        if (l === "g6" && ch2.has === "coins") {
+          ((n.scene = "G6"),
+            (n.room = "gas"),
+            (ch2.phase = "g6"),
+            switchTo("mops"),
+            (n.mo = { x: po.x, y: po.y + 70, f: 1, walk: 0, moving: !1 }),
+            (n.moPose = "stand"),
+            (n.sqPose = "hidden"),
+            (x.spot = -1),
+            (n.sq.x = -200),
+            (n.sq.y = 470),
+            (ch2.bots = [
+              { x: 700, y: 500, hx: 700, f: -1, look: 0 },
+              { x: 900, y: 520, hx: 900, f: -1, look: 0 },
+            ]));
+          return !0;
+        }
+        ((n.scene = "G6"),
+          (n.room = "diner"),
+          (ch2.phase = "g6d"),
+          switchTo("mops"),
+          (n.mo = { x: 600, y: 500, f: -1, walk: 0, moving: !1 }),
+          (n.moPose = "stand"),
+          (n.sqPose = "hidden"),
+          (x.spot = -1),
+          (n.sq.x = -200),
+          ch2.has === "coins" || n.pulse.add("jar"));
+        return !0;
+      }
       if (l === "g6" || l === "g6d") {
+        for (let b of ch2.bots || []) ((b.x = b.hx), (b.look = 0));
         ((n.scene = "G6"),
           (n.room = "gas"),
           (ch2.phase = "g6"),
@@ -730,7 +765,7 @@
             (dn(_e.x, _e.y, 61), n.pulse.delete("lure"));
           },
         }),
-        spot({ id: "ship", verb: "BOARD", cap: "ship", who: "sq", x: C0.x - 40, y: 500, r: 90, at: [C0.x - 40, 360], when: gasSq && i === "g6" && n.sqPose !== "hidden", hot: !0, f: YA }),
+        spot({ id: "ship", verb: "BOARD", cap: "ship", who: "sq", x: C0.x - 40, y: 500, r: 90, at: [C0.x - 40, 360], when: gasSq && i === "g6" && ch2.fuel && n.sqPose !== "hidden", hot: !0, f: YA }),
         spot({
           id: "sing",
           verb: x.sing ? "STOP" : "SING",

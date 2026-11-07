@@ -215,7 +215,7 @@ await page.evaluate(() => {
   const n = ss.op;
   n.q = []; n.cur = null; n.scene = "G6"; n.room = "gas"; n.ctrl = true;
   n.sqPose = "stand"; n.sq.x = 780; n.sq.y = 500; ss.swapTo(false);
-  ss.ch2.phase = "g6"; ss.ch2.bots = []; ss.ch2.sec = null; ss.ch.sing = false;
+  ss.ch2.phase = "g6"; ss.ch2.bots = []; ss.ch2.sec = null; ss.ch.sing = false; ss.ch2.fuel = true;
 });
 await sleep(100);
 await page.evaluate(() => {
@@ -1075,6 +1075,8 @@ const sectionRows = await page.evaluate(() => {
     k.jar = 12;
     k.reg = 4;
     k.has = "coins";
+    // The lure checkpoint needs a full tank (Phase 3 review); before the tank, g6 restarts with Mops and the coins.
+    k.fuel = phase === "g6" || phase === "g6d";
     n.stars = 40;
     k.phase = phase;
     n.scene = scene;
