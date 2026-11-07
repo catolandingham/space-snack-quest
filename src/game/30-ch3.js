@@ -89,26 +89,11 @@
     function go(l) {
       return { ox: l.x, oy: l.y - 40, a: l.f > 0 ? 0.15 : Math.PI - 0.15 };
     }
-    function L0(l, o, i) {
-      (Q.caught++, Q.miss++, Pn(l, o, i), ch2.caught--);
-    }
     function a6(l) {
       let o = Q.rov[0];
       if (!o) return;
       if (o.alert > 0) {
-        ((o.alert -= l),
-          o.alert <= 0 &&
-            L0(
-              () => {
-                ((n.sq.x = 880), (n.sq.y = 560), (n.sqPose = "stand"), (x.spot = -1), (o.x = 600), (o.f = -1), (o.pause = 0));
-              },
-              "rover1",
-              [
-                v("rover", "A rug with legs? Rugs get ROLLED UP!"),
-                v("sq", "Mmmf! (Rolled all the way back!)", "whisper"),
-                v("rover", "...Resuming patrol."),
-              ],
-            ));
+        o.alert -= l;
         return;
       }
       o.pause > 0
@@ -116,11 +101,13 @@
         : ((o.x += o.f * 55 * l), (o.x > 640 || o.x < 480) && ((o.x = w(o.x, 480, 640)), (o.pause = 1.8)));
       let i = go(o),
         s = n.sq;
+      // Seen: the rover stops for a moment and security comes (the one capture rule, 25-capture.js).
       n.ctrl &&
         !x.mops &&
+        !ch2.sec &&
         n.sqPose !== "hidden" &&
         vt(s.x, s.y - 40, i.ox, i.oy, i.a, 0.55, 200) &&
-        (bf(o.x, o.y, "rover"), (o.alert = 0.5), (n.ctrl = !1), (n.act = null), (s.moving = !1), D.alarm());
+        (bf(o.x, o.y, "rover"), (o.alert = 0.5), sSec("rover1"));
     }
     function n6(l) {
       if (Q.phase !== "p3") return;
@@ -158,32 +145,15 @@
         for (let s of Q.rov) {
           if (s.look > 0) continue;
           let q = go(s);
-          if (n.sqPose !== "hidden" && vt(n.sq.x, n.sq.y - 40, q.ox, q.oy, q.a, 0.55, 240)) {
-            u2(!1);
+          if (n.sqPose !== "hidden" && !ch2.sec && vt(n.sq.x, n.sq.y - 40, q.ox, q.oy, q.a, 0.55, 240)) {
+            (bf(s.x, s.y, "rover"), sSec("rover-s"));
             return;
           }
           if (n.moPose !== "hidden" && n.mo.x > -100 && vt(n.mo.x, n.mo.y - 40, q.ox, q.oy, q.a, 0.55, 240)) {
-            u2(!0);
+            shoo(CH3_CHECKPOINTS.p3, [v("rover", "HANDS OFF THE MIRRORS, GOAT."), v("mops", "Just... dusting."), v("rover", "Back. Out.")]);
             return;
           }
         }
-    }
-    function u2(l) {
-      let o = () => {
-        x.sing = !1;
-        for (let i of Q.rov) ((i.x = i.hx), (i.f = i.hf), (i.look = 0));
-        ((n.mo.x = 70),
-          (n.mo.y = 600),
-          (n.sq.x = 60),
-          (n.sq.y = 480),
-          (n.sqPose = "stand"),
-          (x.spot = -1),
-          switchTo("squatch"),
-          n.pulse.add("alcove"));
-      };
-      l
-        ? L0(o, "rover-m", [v("rover", "HANDS OFF THE MIRRORS, GOAT."), v("mops", "Just... dusting."), v("rover", "Back. Out.")])
-        : L0(o, "rover-s", [v("rover", "WOOKIE?!"), v("mops", "Just a fuzzy mop! Very fuzzy."), v("rover2", "...Back to the mirrors.")]);
     }
     function l6(l) {
       if (Q.phase !== "p4a") return;
@@ -191,33 +161,18 @@
       if (o) {
         if (x.sing && n.sqPose === "hidden" && x.spot === 70) {
           if (((o.look = 4), (o.f = -1), (o.x = Math.max(OV.x + 80, o.x - 60 * l)), o.x <= OV.x + 82 && n.ctrl)) {
-            ((x.sing = !1),
-              L0(
-                () => {
-                  ((n.sqPose = "hidden"), (x.spot = 70), (n.sq.x = OV.x), (n.sq.y = OV.y), (o.x = o.hx), (o.look = 0), (o.f = -1));
-                },
-                "lure3",
-                [v("rover", "WOOKIE?!"), v("mops", "Just a fuzzy mop! In a barrel. Very fuzzy."), v("rover", "...Back to the ramp.")],
-              ));
+            capture("lure3");
             return;
           }
         } else o.look > 0 ? (o.look -= l) : ((o.x = Math.min(o.hx, o.x + 50 * l)), (o.f = -1));
-        if (n.ctrl && !x.mops && n.sqPose !== "hidden" && o.look <= 0) {
+        if (n.ctrl && !x.mops && !ch2.sec && n.sqPose !== "hidden" && o.look <= 0) {
           let i = go(o);
-          vt(n.sq.x, n.sq.y - 40, i.ox, i.oy, i.a, 0.6, 230) &&
-            (bf(o.x, o.y, "rover"),
-            L0(
-              () => {
-                ((n.sqPose = "hidden"), (x.spot = 70), (n.sq.x = OV.x), (n.sq.y = OV.y), (o.x = o.hx), (o.look = 0));
-              },
-              "rover4",
-              [v("rover", "Loose rug! ROLL IT UP!"), v("mops", "That's pretzel packing! Back in the barrel, uh, pretzels.")],
-            ));
+          vt(n.sq.x, n.sq.y - 40, i.ox, i.oy, i.a, 0.6, 230) && (bf(o.x, o.y, "rover"), sSec("rover4"));
         }
       }
     }
     function o6(l) {
-      (de() || (n.room === "pad" && Q.phase === "p1" && a6(l), n6(l), l6(l)),
+      (de() || (n.room === "pad" && Q.phase === "p1" && a6(l), n6(l), l6(l), qSec(l)),
         Q.phase === "p4b" &&
           Q.floatT >= 0 &&
           ((Q.floatT += l), (n.mo.y = Math.max(170, n.mo.y - 22 * l)), (n.mo.x = Math.max(70, n.mo.x - 4 * l))),
@@ -681,7 +636,7 @@
         "Secrets found " + l.filter((q) => n.found.has(q)).length + "/" + l.length,
         "Funny finds " + o.filter((q) => n.found.has(q)).length + "/" + o.length,
         "Sneaky! " + i.filter((q) => n.found.has(q)).length + "/" + i.length,
-        "Times caught " + s + (s ? " (\u2212" + s * 100 + ")" : ""),
+        "Times caught " + s,
         s === 0 ? "GHOST BONUS +250" : "Ghost bonus: get caught 0 times",
         "Chapter score \u2605 " + (n.stars - Q.start),
         "Total \u2605 " + n.stars,

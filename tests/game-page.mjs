@@ -15,12 +15,12 @@ import { chromePath } from "./chrome-path.mjs";
 export const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-// The words Brian approves: docs/PHASE-1-LINES-FOR-BRIAN.md and docs/PHASE-2-LINES-FOR-BRIAN.md,
+// The words Brian approves: docs/PHASE-1-, PHASE-2- and PHASE-3-LINES-FOR-BRIAN.md,
 // row number -> the "In the game now" column. With where: true, row number -> { where, words }.
 export function readLines({ where = false } = {}) {
   const out = {};
-  for (const file of ["PHASE-1-LINES-FOR-BRIAN.md", "PHASE-2-LINES-FOR-BRIAN.md"])
-    for (const line of readFileSync(join(root, "docs", file), "utf8").split("\n")) {
+  for (const file of ["PHASE-1-LINES-FOR-BRIAN.md", "PHASE-2-LINES-FOR-BRIAN.md", "PHASE-3-LINES-FOR-BRIAN.md"])
+    for (const line of (existsSync(join(root, "docs", file)) ? readFileSync(join(root, "docs", file), "utf8") : "").split("\n")) {
       const m = line.match(/^\| (\d+\.\d+) \| ([^|]*) \| ([^|]*) \|/);
       if (m) out[m[1]] = where ? { where: m[2].trim(), words: m[3].trim() } : m[3].trim();
     }

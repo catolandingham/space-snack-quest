@@ -42,7 +42,7 @@
         let d = [...B.bots.filter((A) => A.on), ...(n.scene === "S9" || n.scene === "S11" ? [x.lureBot] : [])];
         (d.sort((A, T) => Math.hypot(A.x - SV.x, A.y - SV.y) - Math.hypot(T.x - SV.x, T.y - SV.y)),
           !d[0] && x.tour[0] && d.push(x.tour[0]),
-          d[0] && T2(d[0]));
+          d[0] && T2(d[0], "vent"));
       }
       n.room === "closet" &&
         n.ctrl &&
@@ -1223,7 +1223,7 @@
       if (l === "jail") {
         ((e.fillStyle = "#1e2430"), e.fillRect(0, 0, c, b), (e.fillStyle = "#2a3348"), e.fillRect(200, 180, 560, 340));
         for (let i = 0; i < 7; i++) (m(230 + i * 72, 190, 16, 310, 4), r("#d5dbe6", 3));
-        let who = s || n.jailBy || "",
+        let who = s === "blorp" ? "diner" : s || n.jailBy || "",
           cap =
             who === "pump"
               ? "Nozzle's ready."
@@ -1266,7 +1266,8 @@
             Re(470, 490, he * 0.85, { f: 1 }));
         else Re(480, 470, he * 0.85, { f: 1, eyes: "closed" });
         (g(o, c / 2, 110, 44, "#ffffff", "center", 800),
-          zt(cd && cd.cause ? cd.cause : cap, 820, 22).forEach((t, i) => g(t, c / 2, 156 + i * 28, 22, "#8fdcff", "center", 700)));
+          zt(cd && cd.cause ? cd.cause : cap, 820, 22).forEach((t, i) => g(t, c / 2, 156 + i * 28, 22, "#8fdcff", "center", 700)),
+          cd && cd.restart && g(cd.restart, c / 2, 560, 22, "#ffffff", "center", 800));
         return;
       }
       g(o, c / 2, b / 2, 50, "#ffffff", "center", 800);
@@ -1915,7 +1916,8 @@
                                     ? e5()
                                     : x5(),
         ringsLeft(),
-        xp());
+        xp(),
+        drawSec());
       for (let i of n.sparks)
         if (i.x !== 300 && i.s === "!") {
           let s = Math.sin(i.t * 14) * 4,

@@ -132,95 +132,35 @@
     function Bl(l, o, i, s, q, d) {
       (e.beginPath(), e.moveTo(l, o), e.arc(l, o, q, i - s, i + s), e.closePath(), (e.fillStyle = d), e.fill());
     }
-    function Pn(l, o, i, free) {
-      // free: a shoo. It costs no stars; everything else is the same as a capture.
-      ((n.ctrl = !1),
-        (n.act = null),
-        (n.sq.moving = !1),
-        (n.mo.moving = !1),
-        (x.ghost = !1),
-        ch2.caught++,
-        (x.sing = !1),
-        D.caught(),
-        J([
-          ...i,
-          N(() => {
-            let s = n.starOn;
-            (free ||
-              ((n.stars = Math.max(0, n.stars - 100)), s && n.sparks.push({ x: 300, y: 80, t: 2.4, s: "\u2212100 CAUGHT" })),
-              Dt("caught", "", o, "caught"),
-              l(),
-              (n.ctrl = !0));
-          }),
-        ]));
-    }
     function Jh() {
       return { ox: ch2.rust.x, oy: 400, a: ch2.rust.f > 0 ? 0.5 : Math.PI - 0.5 };
     }
     function sSec(l, who) {
       ch2.sec ||
-        ((ch2.sec = { x: 980, y: 520, hide: 0, mode: "come", by: l || "diner", who: who || "" }), kV("bot", "SECURITY!"), D.alarm());
+        ((ch2.sec = { x: 980, y: 520, hide: 0, mode: "come", by: l || "diner", who: who || "", scene: n.scene }), kV("bot", "SECURITY!"), D.alarm());
     }
-    // The first line of the LOCKUP card: who saw Squatch and where. The captor's joke comes after, in bubbles.
-    function lockupCause(by, who) {
-      return by === "pump"
-        ? "A pump bot saw Squatch on the lot. Security caught him."
-        : by === "diner"
-          ? who === "blorp"
-            ? "Blorp saw Squatch in the diner. Security caught him."
-            : "Gloop saw Squatch at the counter. Security caught him."
-          : by === "sink"
-            ? "Gloop saw Squatch at the sink. Security caught him."
-            : by === "rust"
-              ? "Rusty saw Squatch by the pump. Security caught him."
-              : "Security caught Squatch.";
-    }
+    // Chapter 2's security, also used in Chapters 3 and 4: it walks to Squatch; if he is hidden it leaves
+    // ("They lost you."), and if it reaches him the one capture rule runs (capture in 25-capture.js).
     function qSec(l) {
       let s = ch2.sec;
+      if (s && s.scene && s.scene !== n.scene) return void (ch2.sec = null);
       if (!s || de()) return;
       if (n.sqPose === "hidden" || (n.room === "kitchen" && n.sqPose === "ball")) {
         ((s.hide += l), (s.mode = "leave"), (s.x += (s.x < 480 ? -240 : 240) * l));
-        s.hide > 1.6 && (s.x < -70 || s.x > 1030) && (ch2.sec = null);
+        s.hide > 1.6 && (s.x < -70 || s.x > 1030) && ((ch2.sec = null), lostYou());
         return;
       }
       s.hide = 0;
       let dx = n.sq.x - s.x,
         dy = n.sq.y - s.y,
         d = Math.hypot(dx, dy) || 1;
-      ((s.x += (dx / d) * 170 * l),
-        (s.y += (dy / d) * 130 * l),
-        d < 48 &&
-          ((n.jailBy = ch2.sec.by || ""),
-          (n.jailWho = ch2.sec.who || ""),
-          (ch2.sec = null),
-          (n.ctrl = !1),
-          (n.act = null),
-          (n.sq.moving = !1),
-          J([
-            { k: "card", id: "jail", text: "LOCKUP", by: n.jailBy, cause: lockupCause(n.jailBy, n.jailWho) },
-            ...(n.jailBy === "pump"
-              ? [v("bot", "Report him or fuel him?"), v("sq", "Pancakes. Park the nozzle.")]
-              : n.jailBy === "diner"
-                ? [v("gloop", "Counter's closed. Lockup's open."), v("sq", "I'll take it to go.")]
-                : n.jailBy === "sink"
-                  ? [v("gloop", "The window caught the sink."), v("sq", "Next time I roll.")]
-                  : n.jailBy === "rust"
-                    ? [v("rust", "Parked you. Still no coins."), v("sq", "I'll take the pen over the pump.")]
-                    : []),
-            v("bot", "Holding pen. This section starts over."),
-            N(reSec),
-          ])));
+      ((s.x += (dx / d) * 170 * l), (s.y += (dy / d) * 130 * l), d < 48 && capture(s.by === "diner" && s.who === "blorp" ? "blorp" : s.by || ""));
     }
     function sectionReset() {
       if (p.state === "title" || !n.scene) return;
       if (ch2.resetHold) ((ch2.resetHold.on = !1), (ch2.resetHold.fired = !0));
       if (p.state !== "op") return;
-      let jar = ch2.jar,
-        reg = ch2.reg,
-        has = ch2.has,
-        stars = n.stars,
-        found = new Set(n.found);
-      (reSec(), (ch2.jar = jar), (ch2.reg = reg), (ch2.has = has), (n.stars = stars), (n.found = found));
+      restartSection();
     }
     function armReset(l) {
       l ? (ch2.resetHold && ch2.resetHold.on) || (ch2.resetHold = { on: !0, t: 0, fired: !1 }) : ch2.resetHold && (ch2.resetHold.on = !1);
@@ -317,6 +257,10 @@
         (n.ctrl = !0),
         (n.hopOut = -1),
         (ch2.sec = null),
+        FV.on && FV.bot && ((FV.bot.x = FV.hx), (FV.bot.y = FV.hy)),
+        FV.on && n.chip === "Hide!" && (n.chip = FV.chip),
+        (FV.on = !1),
+        (n.sirenT = -9),
         (ch2.rust.chase = !1),
         (ch2.rust.alert = 0),
         (ch2.rust.x = 450),
@@ -525,12 +469,14 @@
         phase = ch2.phase || "";
       clearRun();
       if (scene.startsWith("S") || scene.startsWith("O")) {
+        if (CH1_CHECKPOINTS[scene]) return (CH1_CHECKPOINTS[scene](), (n.ctrl = !0), void 0);
         (ch2.check && (ch2.check.scene === scene || ch2.check.scene.startsWith("S") || ch2.check.scene.startsWith("O")) && restoreCheck(ch2.check),
           (n.ctrl = !0));
         return;
       }
       if (scene.startsWith("P") || scene.startsWith("M")) {
-        (ch2.check && ch2.check.scene === scene && restoreCheck(ch2.check), (n.ctrl = !0));
+        let table = scene[0] === "P" ? CH3_CHECKPOINTS[Q.phase] : CH4_CHECKPOINTS[H.phase];
+        (ch2.check && ch2.check.scene === scene && restoreCheck(ch2.check), table && table(), (n.ctrl = !0));
         return;
       }
       if (scene.startsWith("G")) {
@@ -585,13 +531,11 @@
       ) {
         let o = Zh(ch2.bots[ch2.out]);
         vt(n.mo.x, n.mo.y - 40, o.ox, o.oy, o.a, 0.6, o.len) &&
-          Pn(
+          shoo(
             () => {
               ((n.mo.x = Ln.x), (n.mo.y = Ln.y), (ch2.out = -1), (ch2.argueT = 2), (ch2.bots[0].f = 1), (ch2.bots[1].f = -1));
             },
-            "bots",
             [v(ch2.out ? "bot2" : "bot", "No goats with food past here! Shoo!"), v("mops", "Just passing through.")],
-            !0,
           );
       }
       if (ch2.phase === "g6") {
@@ -617,16 +561,9 @@
         }
       }
     }
+    // The bots reach the crate while Squatch sings: caught (the one capture rule; Reset puts the lure back).
     function OA() {
-      ((x.sing = !1),
-        Pn(
-          () => {
-            ((n.sqPose = "stand"), (x.spot = -1), (n.sq.x = Sa.x + 40), (n.sq.y = 470));
-            for (let l of ch2.bots) ((l.x = l.hx), (l.look = 0));
-          },
-          "lure",
-          [v("bot2", "WOOKIE?!"), v("mops", "Just a fuzzy mop! Over here! Very fuzzy."), v("bot", "...Back to the pump.")],
-        ));
+      capture("lure");
     }
     function wA(l) {
       if (ch2.phase !== "wash1" && ch2.phase !== "wash5") return;
@@ -708,14 +645,7 @@
           ((ch2.timer -= l),
           ch2.timer <= 0 &&
             n.sqPose !== "hidden" &&
-            ((n.ctrl = !1),
-            Pn(
-              () => {
-                ((n.sq.x = KV.x), (n.sq.y = KV.y + 20), (n.sqPose = "stand"), (ch2.bots = []), V2());
-              },
-              "bots3",
-              [v("bot", "WOOKIE?!"), v("gloop", "That's the dish goat, you rust buckets!"), v("bot2", "...Re-scanning.")],
-            ))),
+            capture("bots3")),
         n.ctrl && (n.act = RA()));
     }
     function dn(l, o, i) {
@@ -1459,7 +1389,7 @@
         "Secrets found " + l.filter((q) => n.found.has(q)).length + "/" + l.length,
         "Funny finds " + o.filter((q) => n.found.has(q)).length + "/" + o.length,
         "Sneaky! " + i.filter((q) => n.found.has(q)).length + "/" + i.length,
-        "Times caught " + s + (s ? " (\u2212" + s * 100 + ")" : ""),
+        "Times caught " + s,
         s === 0 ? "GHOST BONUS +250" : "Ghost bonus: get caught 0 times",
         "Chapter score \u2605 " + (n.stars - ch2.start),
         "Total \u2605 " + n.stars,

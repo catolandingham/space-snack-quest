@@ -85,9 +85,6 @@
       for (let i of d2()) if (((l - i.x) / 62) ** 2 + ((o - i.y) / 34) ** 2 < 1) return !0;
       return !1;
     }
-    function m2(l, o, i) {
-      (H.caught++, H.miss++, Pn(l, o, i), ch2.caught--);
-    }
     function x6(l) {
       H.lt += l;
       let o = H.bot;
@@ -109,27 +106,15 @@
           M6();
           return;
         }
-        let q = () => {
-          ((x.sing = !1), (n.sq.x = vo.x), (n.sq.y = vo.y), (n.sqPose = "stand"), (x.spot = -1), (o.x = o.hx), (o.look = 0), (o.f = o.hf));
-        };
+        // Seen: security comes (the one capture rule, 25-capture.js).
+        if (ch2.sec) return;
         if (y2(s.x, s.y)) {
-          m2(q, "light4", [
-            v("pbot", "WOOKIE?! IN THE LIGHT!"),
-            v("sq", "(Searchlight. Back to the van.)", "whisper"),
-            v("pbot", "...Must be a big dog. Resuming sweep."),
-          ]);
+          sSec("light4");
           return;
         }
         if (o.look <= 0) {
           let d = go(o);
-          vt(s.x, s.y - 40, d.ox, d.oy, d.a, 0.55, 220) &&
-            (bf(o.x, o.y, "pbot"),
-            (H.flash = 1),
-            m2(q, "gate4", [
-              v("pbot", "Say CHEESE! *FLASH* Proof of a Wookiee!"),
-              v("sq", "(They saw me. Van, then the barrels.)", "whisper"),
-              v("pbot", "...Photo is blurry. Back to my gate."),
-            ]));
+          vt(s.x, s.y - 40, d.ox, d.oy, d.a, 0.55, 220) && (bf(o.x, o.y, "pbot"), (H.flash = 1), sSec("gate4"));
         }
       }
     }
@@ -152,7 +137,7 @@
     }
     function T6(l) {
       (de() ||
-        (H.phase === "m1" && x6(l),
+        (H.phase === "m1" && (x6(l), qSec(l)),
         H.phase === "m5" && v6(l),
         (H.phase === "m4a" || H.phase === "m4") && H.beam >= 0 && ((H.beam += l), H.beam > 3.2 && (H.beam = H.phase === "m4a" ? 0 : -1))),
         H.phase === "m5" && n.ctrl && !H.met && (n.mo.f = 1),
@@ -675,7 +660,7 @@
         "Secrets found " + l.filter((q) => n.found.has(q)).length + "/" + l.length,
         "Funny finds " + o.filter((q) => n.found.has(q)).length + "/" + o.length,
         "Sneaky! " + i.filter((q) => n.found.has(q)).length + "/" + i.length,
-        "Times caught " + s + (s ? " (\u2212" + s * 100 + ")" : ""),
+        "Times caught " + s,
         s === 0 ? "GHOST BONUS +250" : "Ghost bonus: get caught 0 times",
         "Chapter score \u2605 " + (n.stars - H.start),
         "Total \u2605 " + n.stars,
@@ -1006,11 +991,13 @@
       return !1;
     }
     let FV = { on: !1, bot: null, hx: 0, hy: 0, pulled: -1, hideT: 0, chip: "", scene: "" };
-    function T2(l) {
+    // The hall alarm (Chapter 1): a bot runs to the alarm, then Squatch has until the end of the run to hide.
+    // Hidden for 2 seconds: "They lost you." Not hidden when time runs out: the one capture rule (25-capture.js).
+    function T2(l, why) {
       FV.on ||
         !n.ctrl ||
         n.T < (n.seeGrace || 0) ||
-        (Object.assign(FV, { on: !0, bot: l, hx: l.x, hy: l.y, pulled: -1, hideT: 0, chip: n.chip, scene: n.scene }),
+        (Object.assign(FV, { on: !0, bot: l, hx: l.x, hy: l.y, pulled: -1, hideT: 0, chip: n.chip, scene: n.scene, why: why || "hallbot" }),
         (n.chip = "Hide!"),
         (n.spotT = n.T),
         Dt("alarm", "", "robot sighting -> alarm run", "alarm"));
@@ -1035,16 +1022,10 @@
         n.T - n.sirenT > 2.4 && (n.sirenT = n.T),
         n.sqPose === "hidden" ? (FV.hideT += l) : (FV.hideT = 0),
         (FV.hideT >= 2 || n.T - FV.pulled > 10) &&
-          (FV.hideT < 2 &&
-            (n.sparks.push({ x: n.sq.x - B.camX, y: n.sq.y - 120, t: 2.2, s: "CAUGHT" }),
-            (n.sq.x = w(560, sn().x0, sn().x1)),
-            (n.sq.y = 380),
-            (n.sqPose = "stand"),
-            D.zap()),
-          (FV.on = !1),
-          (n.sirenT = -9),
-          n.chip === "Hide!" && (n.chip = FV.chip),
-          Dt("alarm", "", FV.hideT >= 2 ? "alarm cooled (hid)" : "alarm setback", "alarm")));
+          (Dt("alarm", "", FV.hideT >= 2 ? "alarm cooled (hid)" : "alarm caught", "alarm"),
+          FV.hideT >= 2
+            ? ((FV.on = !1), (n.sirenT = -9), n.chip === "Hide!" && (n.chip = FV.chip), lostYou())
+            : capture(FV.why === "vent" ? "hallvent" : "hallbot")));
     }
     function lq(l, o, i) {
       if ((B.freakT > n.T && (B.freakT = -9), n.T < B.freakT + 3)) return;

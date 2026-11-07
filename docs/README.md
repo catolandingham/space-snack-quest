@@ -29,6 +29,10 @@ Open conflicts outside that kitchen are in `docs/STORY-DECISIONS.md`. Each one s
 
 What is playable is the game and the root `README.md`. A story note does not add a mechanic. When a change lands, update the root README in the same pull request and name the branch.
 
+## Capture
+
+One rule in every chapter (Brian's D1, 2026-11-07; Phase 3 task T19): someone sees Squatch, security comes, and he has time to hide. Hidden: security leaves and "They lost you." shows. Caught: the LOCKUP card names who saw him and where, the captor's joke follows, and the section restarts from its checkpoint with coins and stars kept. No catch takes stars. A bot that sees Mops shoos him back (D9) with no card. All of it is in `src/game/25-capture.js` (`capture`, `shoo`, `CAPTURES`, and the checkpoint tables `CH1_CHECKPOINTS`, `CH3_CHECKPOINTS`, `CH4_CHECKPOINTS`); Chapter 2's table is `applyG`. `tests/capture-rule.mjs` checks it.
+
 ## Section reset
 
 Hold **Reset section** (the button, or the R key) for about three quarters of a second. It calls the same Chapter 2 restart capture uses. It clears the current chase and the unspoken queue, and it does not pay coins, change the register, or grant points.
@@ -49,7 +53,7 @@ Mapped checkpoints in the build. The rows the independent pass drove are listed 
 | `g1` | Gas entrance |
 | Anything else in a chapter | The latest real section of that visit, not the gas entrance |
 
-`g4k` restarts the cooking visit in the kitchen. `g4l` (the soup already left in the crate) resumes at `wash5`, the next dishes, because Mops had nothing left to do there (Phase 1, T7). Neither dumps to the gas entrance. A phase that is not in the table restarts the latest real section, not Chapter 1. Chapter 1 scenes restart the visit that was saved when that scene started. Zip and Harry keep their own capture. The hold is the Reset section button (or R), about three quarters of a second, under one second. Releasing it and pressing again arms it once more. Dialogue is cancelled and the same restart runs. The jar, the register, the coins in hand, and the star total are copied out and put back. Finds are not granted again. Shipped in PR #5 at `17a03c2`. The independent pass drove wash 5, wash 1, `g1`, and unknown `g5`.
+`g4k` restarts the cooking visit in the kitchen. `g4l` (the soup already left in the crate) resumes at `wash5`, the next dishes, because Mops had nothing left to do there (Phase 1, T7). Neither dumps to the gas entrance. A phase that is not in the table restarts the latest real section, not Chapter 1. Chapters 1, 3 and 4 use their checkpoint tables (see Capture); a scene with no entry restarts the visit that was saved when that scene started. The hold is the Reset section button (or R), about three quarters of a second, under one second. Releasing it and pressing again arms it once more. Dialogue is cancelled and the same restart runs. The jar, the register, the coins in hand, and the star total are copied out and put back. Finds are not granted again. Shipped in PR #5 at `17a03c2`. The independent pass drove wash 5, wash 1, `g1`, and unknown `g5`.
 
 ## Kitchen composition
 

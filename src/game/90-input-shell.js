@@ -288,6 +288,18 @@
         solids: () => ih(),
         CH2_CHIPS,
         ch2ChipKey: () => ch2ChipKey(),
+        // The one capture rule (task T19, 25-capture.js).
+        CAPTURES,
+        LOCKUP_RESTART,
+        capture,
+        shoo,
+        lostYou,
+        startSec: (by) => sSec(by),
+        hallAlarm: FV,
+        hallAlarmStart: (bot, why) => T2(bot, why),
+        CH1_CHECKPOINTS,
+        CH3_CHECKPOINTS,
+        CH4_CHECKPOINTS,
       }),
       debugLink(),
       {

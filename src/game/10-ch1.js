@@ -1062,6 +1062,7 @@
         aV.sightings++,
         D.alarm(),
         kV("pa", "FUR IN THE VENT!"),
+        (aV.secBy = "vent"),
         Object.assign(aV.sec, { x: Aa.x, y: Aa.y, on: !0, mode: "rush", t: 0, lx: n.sq.x, ly: n.sq.y }));
       for (let l = 0; l < qn.length; l++) n.pulse.add("spot" + l);
     }
@@ -1076,21 +1077,9 @@
       let l = Eh[Qp++ % Eh.length];
       return [v("mops", l[0]), v("mops", l[1])];
     }
+    // The deck guard reached Squatch: the one capture rule (25-capture.js). The section restarts with Sh.
     function Yp() {
-      ((aV.sec.mode = "caught"), (n.ctrl = !1), (n.act = null), (n.sq.moving = !1), (n.live = []), (aV.swoop = !0), D.bzzt());
-      let l = n.sq.x + (n.sq.x > 480 ? -70 : 70),
-        o = n.sq.y + 4;
-      J([
-        cV((i) => {
-          let s = mV(n.mo, l, o, 520, i);
-          return ((n.mo.f = n.sq.x > n.mo.x ? 1 : -1), Math.random() < 0.7 && vV.push({ x: n.mo.x + E(-14, 14), y: n.mo.y + 4, t: 4 }), s);
-        }),
-        ...kh(),
-        N(() => {
-          let i = n.starOn;
-          ((n.stars = Math.max(0, n.stars - 100)), aV.caught++, i && n.sparks.push({ x: 300, y: 80, t: 2.4, s: "\u2212100 CAUGHT" }), Sh());
-        }),
-      ]);
+      capture(aV.secBy === "vent" ? "vent" : "deck");
     }
     function Ip() {
       ((aV.done = !0),
@@ -1111,7 +1100,7 @@
       let o = aV.sec;
       for (let i of aV.tour)
         Th(i, l, () => {
-          (Object.assign(aV.sec, { x: Aa.x, y: Aa.y, on: !0, mode: "rush", t: 0, lx: n.sq.x, ly: n.sq.y }), D.alarm());
+          (Object.assign(aV.sec, { x: Aa.x, y: Aa.y, on: !0, mode: "rush", t: 0, lx: n.sq.x, ly: n.sq.y }), (aV.secBy = "deck"), D.alarm());
         });
       for (let i of aV.tour)
         i.alert > 0 ||
@@ -1153,7 +1142,7 @@
             return;
           }
           if (mV(o, Aa.x, Aa.y, 130, l)) {
-            ((o.on = !1), (o.mode = ""));
+            ((o.on = !1), (o.mode = ""), lostYou());
             for (let s of aV.tour) s.alert = 0;
             aV.alertBy = -1;
             for (let s = 0; s < qn.length; s++) n.pulse.delete("spot" + s);

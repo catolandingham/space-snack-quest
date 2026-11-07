@@ -665,25 +665,6 @@
     function Ks() {
       return x.mops ? n.mo : n.sq;
     }
-    function df(l, o) {
-      ((n.ctrl = !1),
-        (n.act = null),
-        (n.sq.moving = !1),
-        (n.mo.moving = !1),
-        (x.ghost = !1),
-        x.caught++,
-        D.bzzt(),
-        J([
-          ...kh(),
-          N(() => {
-            let i = n.starOn;
-            ((n.stars = Math.max(0, n.stars - 100)),
-              i && n.sparks.push({ x: 300, y: 80, t: 2.4, s: "\u2212100 CAUGHT" }),
-              Dt("caught", "", o, "caught"),
-              l());
-          }),
-        ]));
-    }
     function Ta(l) {
       if (n.found.has(l)) return;
       (n.found.add(l),
@@ -955,13 +936,14 @@
                   i.alert = 0;
                 }),
                 (x.alertBy = -1),
-                kV("tourist", "...Must've been a mop."))
+                kV("tourist", "...Must've been a mop."),
+                lostYou())
               : ((x.alertBy = -1),
                 x.tour.forEach((i) => {
                   i.alert = 0;
                 }),
                 kV("pa", "SECURITY TO THE HALL!"),
-                df(Bh, "S6 seen"));
+                capture("s6"));
           });
       if (!(!n.ctrl || n.scene !== "S6") && !(x.alertBy >= 0) && n.sqPose !== "hidden") {
         for (let o = 0; o < x.tour.length; o++)
@@ -1195,7 +1177,7 @@
           mV(q, o.x + 40, o.y, 60, l),
           (q.look = 8),
           Math.hypot(q.x - o.x, q.y - o.y) < 75 &&
-            ((x.sing = !1), (x.seenPart = !0), D.alarm(), kV("bot", "SPOTTED!"), df(i, s + " spotted")))
+            ((x.seenPart = !0), D.alarm(), kV("bot", "SPOTTED!"), capture(s === "S9" ? "lure9" : "lure11")))
         : q.look > 0
           ? ((q.asked = !1), (q.look -= l), q.look <= 0 && (q.look = -1))
           : q.look < 0 && mV(q, q.home.x, q.home.y, 50, l) && (q.look = 0);
@@ -1415,7 +1397,7 @@
           x.lureBot.look <= 0 &&
           Math.hypot(x.lureBot.x - n.mo.x, x.lureBot.y - n.mo.y) < 110 &&
           !x.sing &&
-          ((x.seenPart = !0), kV("bot", "Former Ganitor! SHOO!"), df(Fs, "S9 shoo")));
+          ((x.seenPart = !0), kV("bot", "Former Ganitor! SHOO!"), shoo(Fs, kh())));
     }
     function Ih() {
       ((n.scene = "S10"),
@@ -1662,7 +1644,7 @@
               !x.sing &&
               x.lureBot.look <= 0 &&
               Math.hypot(x.lureBot.x - n.mo.x, x.lureBot.y - n.mo.y) < 110 &&
-              ((x.seenPart = !0), kV("bot", "Former Ganitor! SHOO!"), df(Js, "S11 shoo")));
+              ((x.seenPart = !0), kV("bot", "Former Ganitor! SHOO!"), shoo(Js, kh())));
           return;
         }
         (x.mops && yf(!1),
@@ -1775,7 +1757,7 @@
         "Secrets found " + l.filter((q) => n.found.has(q)).length + "/" + l.length,
         "Funny finds " + o.filter((q) => n.found.has(q)).length + "/" + o.length,
         "Sneaky! " + i.filter((q) => n.found.has(q)).length + "/" + i.length,
-        "Times caught " + s + (s ? " (\u2212" + s * 100 + ")" : ""),
+        "Times caught " + s,
         s === 0 ? "GHOST BONUS +250" : "Ghost bonus: get caught 0 times",
         "Chapter score \u2605 " + n.stars,
       ];
