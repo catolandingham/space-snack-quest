@@ -187,6 +187,14 @@ Every action in Chapters 1, 3 and 4 now has a thing, like Chapter 2. The big tou
 | 18.142 | Chapter 4, M4: the house door | EXIT · door | EXIT · to the van |
 | 18.143 | Chapter 4, M4: under the van seat | GRAB · Guardian Box | GRAB · box |
 
+### Sound (added after Brian's phone playtest, 2026-11-07)
+
+The game's sound is Web Audio only: every sound is made in the page (tones, and the Wookie voice clips stored inside the page), with no `<audio>` elements and nothing downloaded. The sound icon (top right) now shows the truth in three ways: sound waves when sound is on, a red line when the player muted it, and an orange question mark when sound is not playing yet (before the first touch, or when the browser keeps it off). Any first touch, click or key starts sound: the joystick, the ACTION button and the picture all count. If a touch tried and the browser still keeps sound off, a tap on the icon tries again and shows this line for about five seconds:
+
+| # | Where | In the game now | Another way to say it |
+| --- | --- | --- | --- |
+| 18.145 | Under the sound icon, after a tap on it, when the browser still keeps sound off (Brave on an iPhone with Shields up) | Sound is blocked by this browser. Tap to try again, or allow sound for this site. | This browser has sound turned off. Tap to try again, or turn on sound for this site. |
+
 ## Not finished
 
 - **T15, "Stormtop Station" and "Asteroid Belt Gas Stop".** The brief says neither should remain. Both are still in the game because they are live: they are the names on the title screen's Chapter 1 and Chapter 2 cards (with "Phobos, the Tiny Moon" and "Mars!"). Everything else the old engine used is gone. Renaming the cards is a wording change; say if you want new names.

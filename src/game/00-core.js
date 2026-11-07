@@ -104,6 +104,12 @@
     function W() {
       Z(G ? 1 : 0);
     }
+    // Sound is Web Audio only (no <audio> elements, nothing fetched): one AudioContext, made and resumed
+    // on the player's first touch, click or key (any of them; see J2 in 90-input-shell.js), then on every
+    // later one while it is not running. A browser can keep it suspended after a touch (Brave Shields on an
+    // iPhone does); then the sound icon shows "blocked" and a tap on it says so and tries again.
+    let soundTry = -1,
+      soundAsk = -1;
     function VV() {
       try {
         if (!S) {
@@ -111,12 +117,37 @@
             s = i.AudioContext || i.webkitAudioContext;
           if (!s) return;
           ((S = new s()), (M = S.createGain()), (M.gain.value = 0.5 * z), M.connect(S.destination));
+          // On an iPhone, play through the ring/silent switch like a video does.
+          try {
+            navigator.audioSession && (navigator.audioSession.type = "playback");
+          } catch {}
         }
-        S.state !== "running" && S.state !== "closed" && S.resume().catch(() => {});
+        if (S.state !== "running" && S.state !== "closed") {
+          soundTry < 0 && (soundTry = performance.now());
+          let r = S.resume();
+          r && r.catch && r.catch(() => {});
+        }
         let l = S.createBuffer(1, 1, 22050),
           o = S.createBufferSource();
         ((o.buffer = l), o.connect(S.destination), o.start(0));
       } catch {}
+    }
+    // What the sound icon shows: "muted" (the player turned it off), "on" (playing), or "blocked" (no
+    // touch yet, or the browser keeps sound off after one).
+    function soundState() {
+      return G ? "muted" : S && S.state === "running" ? "on" : "blocked";
+    }
+    // True when a touch tried to start sound, and the browser still has it off a moment later.
+    function soundRefused() {
+      return soundState() === "blocked" && soundTry >= 0 && performance.now() - soundTry > 600;
+    }
+    // The sound icon was tapped: start sound if it is off, else turn the volume down a step (as before).
+    function soundTap() {
+      soundState() === "blocked" ? (VV(), (soundAsk = performance.now())) : eV();
+    }
+    function soundLineShown() {
+      let l = performance.now() - soundAsk;
+      return soundAsk >= 0 && l > 600 && l < 5e3 && soundState() === "blocked";
     }
     function Ve() {
       try {
@@ -146,6 +177,17 @@
     function Va() {
       if (G) {
         C([c - 50, 18, c - 22, 42], "#e5533d", 4);
+        return;
+      }
+      if (soundState() === "blocked") {
+        // Blocked until a tap: an orange question mark where the sound waves go.
+        (g("?", c - 25, 31, 20, "#e8590c", "center", 900),
+          soundLineShown() &&
+            (ge(13),
+            zt("Sound is blocked by this browser. Tap to try again, or allow sound for this site.", 300, 13).forEach((t, i, a) => {
+              (i === 0 && (m(c - 336, 56, 326, a.length * 18 + 12, 10), r("#fff6dc", 2.5)),
+                g(t, c - 173, 70 + i * 18, 13, "#1e2430", "center", 700));
+            })));
         return;
       }
       ((e.strokeStyle = y),

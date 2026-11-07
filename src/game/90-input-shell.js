@@ -1,6 +1,9 @@
 // Keyboard and taps, the debug link and state strip, the frame loop, window.__ss for tests, and the page (joystick, ACTION button, Reset section, help line).
     let J2 = () => VV();
-    for (let l of ["touchend", "click", "pointerup", "keydown"]) window.addEventListener(l, J2, { capture: !0, passive: !0 });
+    // The first touch, click or key of any kind starts sound: the joystick, the ACTION button and the picture
+    // all count, on touch-down and on lift (some browsers allow sound only on one of them).
+    const SOUND_EVENTS = ["touchstart", "touchend", "pointerdown", "pointerup", "mousedown", "click", "keydown"];
+    for (let l of SOUND_EVENTS) window.addEventListener(l, J2, { capture: !0, passive: !0 });
     document.addEventListener("visibilitychange", Ve);
     function k5() {
       if (!N0()) return;
@@ -25,7 +28,7 @@
         return;
       }
       if (l > c - 64 && o < 56) {
-        eV();
+        soundTap();
         return;
       }
       if (!_6(l, o)) {
@@ -188,6 +191,9 @@
         transit: () => ({ fadeA: Ka, walkIn: fa, lastRoom: Mf }),
         voiceCount: () => [O1, R1, N1],
         audio: () => ({ state: S ? S.state : "none", vol: z, muted: G }),
+        soundState: () => soundState(),
+        soundRefused: () => soundRefused(),
+        soundLineShown: () => soundLineShown(),
         cycleVol: eV,
         seeLine: _h,
         inWedge: vt,
@@ -300,7 +306,7 @@
         },
         destroy: () => {
           ((h = !1), cancelAnimationFrame(xq), window.removeEventListener("keydown", j2));
-          for (let l of ["touchend", "click", "pointerup", "keydown"]) window.removeEventListener(l, J2, { capture: !0 });
+          for (let l of SOUND_EVENTS) window.removeEventListener(l, J2, { capture: !0 });
           document.removeEventListener("visibilitychange", Ve);
           try {
             S?.close();
