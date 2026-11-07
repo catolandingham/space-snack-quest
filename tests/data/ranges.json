@@ -1,0 +1,8672 @@
+{
+ "ch2 g1": [
+  {
+   "id": "ddoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 300,
+   "y": 470,
+   "r": 90
+  },
+  {
+   "id": "crateg",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 690,
+   "y": 480,
+   "r": 80
+  },
+  {
+   "id": "backd",
+   "verb": "ENTER",
+   "who": "sq",
+   "x": 85,
+   "y": 450,
+   "r": 90
+  },
+  {
+   "id": "lure",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 190,
+   "y": 560,
+   "r": 80
+  },
+  {
+   "id": "ship",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 780,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "rusty",
+   "verb": "GIVE",
+   "who": "mo",
+   "x": 450,
+   "y": 470,
+   "r": 110
+  },
+  {
+   "id": "cloche",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 240,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "frame",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 130,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "postcard",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 720,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "jar",
+   "verb": "GRAB",
+   "who": "mo",
+   "x": 360,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "counter",
+   "verb": "BUY",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kdoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "dfront",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 48,
+   "y": 470,
+   "r": 70
+  },
+  {
+   "id": "kdoor",
+   "verb": "BACK",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "range",
+   "verb": "COOK",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 110
+  },
+  {
+   "id": "kfront",
+   "verb": "FRONT",
+   "who": "mo",
+   "x": 53,
+   "y": 500,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "recipe",
+   "verb": "OPEN",
+   "who": "sq",
+   "x": 912,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "rail",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 660,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "SCRUB",
+   "who": "sq",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kcrate",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 170,
+   "y": 540,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "kcrate",
+   "verb": "LEAVE SOUP",
+   "who": "mo",
+   "x": 170,
+   "y": 540,
+   "r": 100
+  }
+ ],
+ "ch2 back": [
+  {
+   "id": "ddoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 300,
+   "y": 470,
+   "r": 90
+  },
+  {
+   "id": "crateg",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 690,
+   "y": 480,
+   "r": 80
+  },
+  {
+   "id": "backd",
+   "verb": "ENTER",
+   "who": "sq",
+   "x": 85,
+   "y": 450,
+   "r": 90
+  },
+  {
+   "id": "lure",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 190,
+   "y": 560,
+   "r": 80
+  },
+  {
+   "id": "ship",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 780,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "rusty",
+   "verb": "GIVE",
+   "who": "mo",
+   "x": 450,
+   "y": 470,
+   "r": 110
+  },
+  {
+   "id": "cloche",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 240,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "frame",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 130,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "postcard",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 720,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "jar",
+   "verb": "GRAB",
+   "who": "mo",
+   "x": 360,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "counter",
+   "verb": "BUY",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kdoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "dfront",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 48,
+   "y": 470,
+   "r": 70
+  },
+  {
+   "id": "kdoor",
+   "verb": "BACK",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "range",
+   "verb": "COOK",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 110
+  },
+  {
+   "id": "kfront",
+   "verb": "FRONT",
+   "who": "mo",
+   "x": 53,
+   "y": 500,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "recipe",
+   "verb": "OPEN",
+   "who": "sq",
+   "x": 912,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "rail",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 660,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "SCRUB",
+   "who": "sq",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kcrate",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 170,
+   "y": 540,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "kcrate",
+   "verb": "LEAVE SOUP",
+   "who": "mo",
+   "x": 170,
+   "y": 540,
+   "r": 100
+  }
+ ],
+ "ch2 g2": [
+  {
+   "id": "ddoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 300,
+   "y": 470,
+   "r": 90
+  },
+  {
+   "id": "crateg",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 690,
+   "y": 480,
+   "r": 80
+  },
+  {
+   "id": "backd",
+   "verb": "ENTER",
+   "who": "sq",
+   "x": 85,
+   "y": 450,
+   "r": 90
+  },
+  {
+   "id": "lure",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 190,
+   "y": 560,
+   "r": 80
+  },
+  {
+   "id": "ship",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 780,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "rusty",
+   "verb": "GIVE",
+   "who": "mo",
+   "x": 450,
+   "y": 470,
+   "r": 110
+  },
+  {
+   "id": "cloche",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 240,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "frame",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 130,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "postcard",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 720,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "jar",
+   "verb": "GRAB",
+   "who": "mo",
+   "x": 360,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "counter",
+   "verb": "BUY",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kdoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "dfront",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 48,
+   "y": 470,
+   "r": 70
+  },
+  {
+   "id": "kdoor",
+   "verb": "BACK",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "range",
+   "verb": "COOK",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 110
+  },
+  {
+   "id": "kfront",
+   "verb": "FRONT",
+   "who": "mo",
+   "x": 53,
+   "y": 500,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "recipe",
+   "verb": "OPEN",
+   "who": "sq",
+   "x": 912,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "rail",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 660,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "SCRUB",
+   "who": "sq",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kcrate",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 170,
+   "y": 540,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "kcrate",
+   "verb": "LEAVE SOUP",
+   "who": "mo",
+   "x": 170,
+   "y": 540,
+   "r": 100
+  }
+ ],
+ "ch2 wash1": [
+  {
+   "id": "ddoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 300,
+   "y": 470,
+   "r": 90
+  },
+  {
+   "id": "crateg",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 690,
+   "y": 480,
+   "r": 80
+  },
+  {
+   "id": "backd",
+   "verb": "ENTER",
+   "who": "sq",
+   "x": 85,
+   "y": 450,
+   "r": 90
+  },
+  {
+   "id": "lure",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 190,
+   "y": 560,
+   "r": 80
+  },
+  {
+   "id": "ship",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 780,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "rusty",
+   "verb": "GIVE",
+   "who": "mo",
+   "x": 450,
+   "y": 470,
+   "r": 110
+  },
+  {
+   "id": "cloche",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 240,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "frame",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 130,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "postcard",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 720,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "jar",
+   "verb": "GRAB",
+   "who": "mo",
+   "x": 360,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "counter",
+   "verb": "BUY",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kdoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "dfront",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 48,
+   "y": 470,
+   "r": 70
+  },
+  {
+   "id": "kdoor",
+   "verb": "BACK",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "range",
+   "verb": "COOK",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 110
+  },
+  {
+   "id": "kfront",
+   "verb": "FRONT",
+   "who": "mo",
+   "x": 53,
+   "y": 500,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "recipe",
+   "verb": "OPEN",
+   "who": "sq",
+   "x": 912,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "rail",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 660,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "SCRUB",
+   "who": "sq",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kcrate",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 170,
+   "y": 540,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "kcrate",
+   "verb": "LEAVE SOUP",
+   "who": "mo",
+   "x": 170,
+   "y": 540,
+   "r": 100
+  }
+ ],
+ "ch2 g3hide": [
+  {
+   "id": "ddoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 300,
+   "y": 470,
+   "r": 90
+  },
+  {
+   "id": "crateg",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 690,
+   "y": 480,
+   "r": 80
+  },
+  {
+   "id": "backd",
+   "verb": "ENTER",
+   "who": "sq",
+   "x": 85,
+   "y": 450,
+   "r": 90
+  },
+  {
+   "id": "lure",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 190,
+   "y": 560,
+   "r": 80
+  },
+  {
+   "id": "ship",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 780,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "rusty",
+   "verb": "GIVE",
+   "who": "mo",
+   "x": 450,
+   "y": 470,
+   "r": 110
+  },
+  {
+   "id": "cloche",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 240,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "frame",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 130,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "postcard",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 720,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "jar",
+   "verb": "GRAB",
+   "who": "mo",
+   "x": 360,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "counter",
+   "verb": "BUY",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kdoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "dfront",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 48,
+   "y": 470,
+   "r": 70
+  },
+  {
+   "id": "kdoor",
+   "verb": "BACK",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "range",
+   "verb": "COOK",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 110
+  },
+  {
+   "id": "kfront",
+   "verb": "FRONT",
+   "who": "mo",
+   "x": 53,
+   "y": 500,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "recipe",
+   "verb": "OPEN",
+   "who": "sq",
+   "x": 912,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "rail",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 660,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "SCRUB",
+   "who": "sq",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kcrate",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 170,
+   "y": 540,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "kcrate",
+   "verb": "LEAVE SOUP",
+   "who": "mo",
+   "x": 170,
+   "y": 540,
+   "r": 100
+  }
+ ],
+ "ch2 g4": [
+  {
+   "id": "ddoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 300,
+   "y": 470,
+   "r": 90
+  },
+  {
+   "id": "crateg",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 690,
+   "y": 480,
+   "r": 80
+  },
+  {
+   "id": "backd",
+   "verb": "ENTER",
+   "who": "sq",
+   "x": 85,
+   "y": 450,
+   "r": 90
+  },
+  {
+   "id": "lure",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 190,
+   "y": 560,
+   "r": 80
+  },
+  {
+   "id": "ship",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 780,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "rusty",
+   "verb": "GIVE",
+   "who": "mo",
+   "x": 450,
+   "y": 470,
+   "r": 110
+  },
+  {
+   "id": "cloche",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 240,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "frame",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 130,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "postcard",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 720,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "jar",
+   "verb": "GRAB",
+   "who": "mo",
+   "x": 360,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "counter",
+   "verb": "BUY",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kdoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "dfront",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 48,
+   "y": 470,
+   "r": 70
+  },
+  {
+   "id": "kdoor",
+   "verb": "BACK",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "range",
+   "verb": "COOK",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 110
+  },
+  {
+   "id": "kfront",
+   "verb": "FRONT",
+   "who": "mo",
+   "x": 53,
+   "y": 500,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "recipe",
+   "verb": "OPEN",
+   "who": "sq",
+   "x": 912,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "rail",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 660,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "SCRUB",
+   "who": "sq",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kcrate",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 170,
+   "y": 540,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "kcrate",
+   "verb": "LEAVE SOUP",
+   "who": "mo",
+   "x": 170,
+   "y": 540,
+   "r": 100
+  }
+ ],
+ "ch2 g4k": [
+  {
+   "id": "ddoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 300,
+   "y": 470,
+   "r": 90
+  },
+  {
+   "id": "crateg",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 690,
+   "y": 480,
+   "r": 80
+  },
+  {
+   "id": "backd",
+   "verb": "ENTER",
+   "who": "sq",
+   "x": 85,
+   "y": 450,
+   "r": 90
+  },
+  {
+   "id": "lure",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 190,
+   "y": 560,
+   "r": 80
+  },
+  {
+   "id": "ship",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 780,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "rusty",
+   "verb": "GIVE",
+   "who": "mo",
+   "x": 450,
+   "y": 470,
+   "r": 110
+  },
+  {
+   "id": "cloche",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 240,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "frame",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 130,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "postcard",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 720,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "jar",
+   "verb": "GRAB",
+   "who": "mo",
+   "x": 360,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "counter",
+   "verb": "BUY",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kdoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "dfront",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 48,
+   "y": 470,
+   "r": 70
+  },
+  {
+   "id": "kdoor",
+   "verb": "BACK",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "range",
+   "verb": "COOK",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 110
+  },
+  {
+   "id": "kfront",
+   "verb": "FRONT",
+   "who": "mo",
+   "x": 53,
+   "y": 500,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "recipe",
+   "verb": "OPEN",
+   "who": "sq",
+   "x": 912,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "rail",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 660,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "SCRUB",
+   "who": "sq",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kcrate",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 170,
+   "y": 540,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "kcrate",
+   "verb": "LEAVE SOUP",
+   "who": "mo",
+   "x": 170,
+   "y": 540,
+   "r": 100
+  }
+ ],
+ "ch2 wash5": [
+  {
+   "id": "ddoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 300,
+   "y": 470,
+   "r": 90
+  },
+  {
+   "id": "crateg",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 690,
+   "y": 480,
+   "r": 80
+  },
+  {
+   "id": "backd",
+   "verb": "ENTER",
+   "who": "sq",
+   "x": 85,
+   "y": 450,
+   "r": 90
+  },
+  {
+   "id": "lure",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 190,
+   "y": 560,
+   "r": 80
+  },
+  {
+   "id": "ship",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 780,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "rusty",
+   "verb": "GIVE",
+   "who": "mo",
+   "x": 450,
+   "y": 470,
+   "r": 110
+  },
+  {
+   "id": "cloche",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 240,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "frame",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 130,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "postcard",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 720,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "jar",
+   "verb": "GRAB",
+   "who": "mo",
+   "x": 360,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "counter",
+   "verb": "BUY",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kdoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "dfront",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 48,
+   "y": 470,
+   "r": 70
+  },
+  {
+   "id": "kdoor",
+   "verb": "BACK",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "range",
+   "verb": "COOK",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 110
+  },
+  {
+   "id": "kfront",
+   "verb": "FRONT",
+   "who": "mo",
+   "x": 53,
+   "y": 500,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "recipe",
+   "verb": "OPEN",
+   "who": "sq",
+   "x": 912,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "rail",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 660,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "SCRUB",
+   "who": "sq",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kcrate",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 170,
+   "y": 540,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "kcrate",
+   "verb": "LEAVE SOUP",
+   "who": "mo",
+   "x": 170,
+   "y": 540,
+   "r": 100
+  }
+ ],
+ "ch2 g6": [
+  {
+   "id": "ddoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 300,
+   "y": 470,
+   "r": 90
+  },
+  {
+   "id": "crateg",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 690,
+   "y": 480,
+   "r": 80
+  },
+  {
+   "id": "backd",
+   "verb": "ENTER",
+   "who": "sq",
+   "x": 85,
+   "y": 450,
+   "r": 90
+  },
+  {
+   "id": "lure",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 190,
+   "y": 560,
+   "r": 80
+  },
+  {
+   "id": "ship",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 780,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "rusty",
+   "verb": "GIVE",
+   "who": "mo",
+   "x": 450,
+   "y": 470,
+   "r": 110
+  },
+  {
+   "id": "cloche",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 240,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "frame",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 130,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "postcard",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 720,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "jar",
+   "verb": "GRAB",
+   "who": "mo",
+   "x": 360,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "counter",
+   "verb": "BUY",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kdoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "dfront",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 48,
+   "y": 470,
+   "r": 70
+  },
+  {
+   "id": "kdoor",
+   "verb": "BACK",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "range",
+   "verb": "COOK",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 110
+  },
+  {
+   "id": "kfront",
+   "verb": "FRONT",
+   "who": "mo",
+   "x": 53,
+   "y": 500,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "recipe",
+   "verb": "OPEN",
+   "who": "sq",
+   "x": 912,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "rail",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 660,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "SCRUB",
+   "who": "sq",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kcrate",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 170,
+   "y": 540,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "kcrate",
+   "verb": "LEAVE SOUP",
+   "who": "mo",
+   "x": 170,
+   "y": 540,
+   "r": 100
+  }
+ ],
+ "ch2 g6d": [
+  {
+   "id": "ddoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 300,
+   "y": 470,
+   "r": 90
+  },
+  {
+   "id": "crateg",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 690,
+   "y": 480,
+   "r": 80
+  },
+  {
+   "id": "backd",
+   "verb": "ENTER",
+   "who": "sq",
+   "x": 85,
+   "y": 450,
+   "r": 90
+  },
+  {
+   "id": "lure",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 190,
+   "y": 560,
+   "r": 80
+  },
+  {
+   "id": "ship",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 780,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "rusty",
+   "verb": "GIVE",
+   "who": "mo",
+   "x": 450,
+   "y": 470,
+   "r": 110
+  },
+  {
+   "id": "cloche",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 240,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "frame",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 130,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "postcard",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 720,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "jar",
+   "verb": "GRAB",
+   "who": "mo",
+   "x": 360,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "counter",
+   "verb": "BUY",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kdoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "dfront",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 48,
+   "y": 470,
+   "r": 70
+  },
+  {
+   "id": "kdoor",
+   "verb": "BACK",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "range",
+   "verb": "COOK",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 110
+  },
+  {
+   "id": "kfront",
+   "verb": "FRONT",
+   "who": "mo",
+   "x": 53,
+   "y": 500,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "recipe",
+   "verb": "OPEN",
+   "who": "sq",
+   "x": 912,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "rail",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 660,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "SCRUB",
+   "who": "sq",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kcrate",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 170,
+   "y": 540,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "kcrate",
+   "verb": "LEAVE SOUP",
+   "who": "mo",
+   "x": 170,
+   "y": 540,
+   "r": 100
+  }
+ ],
+ "ch2 wash1 holding a dish": [
+  {
+   "id": "ddoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 300,
+   "y": 470,
+   "r": 90
+  },
+  {
+   "id": "crateg",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 690,
+   "y": 480,
+   "r": 80
+  },
+  {
+   "id": "backd",
+   "verb": "ENTER",
+   "who": "sq",
+   "x": 85,
+   "y": 450,
+   "r": 90
+  },
+  {
+   "id": "lure",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 190,
+   "y": 560,
+   "r": 80
+  },
+  {
+   "id": "ship",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 780,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "rusty",
+   "verb": "GIVE",
+   "who": "mo",
+   "x": 450,
+   "y": 470,
+   "r": 110
+  },
+  {
+   "id": "cloche",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 240,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "frame",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 130,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "postcard",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 720,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "jar",
+   "verb": "GRAB",
+   "who": "mo",
+   "x": 360,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "counter",
+   "verb": "BUY",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kdoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "dfront",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 48,
+   "y": 470,
+   "r": 70
+  },
+  {
+   "id": "kdoor",
+   "verb": "BACK",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "range",
+   "verb": "COOK",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 110
+  },
+  {
+   "id": "kfront",
+   "verb": "FRONT",
+   "who": "mo",
+   "x": 53,
+   "y": 500,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "recipe",
+   "verb": "OPEN",
+   "who": "sq",
+   "x": 912,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "rail",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 660,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "SCRUB",
+   "who": "sq",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kcrate",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 170,
+   "y": 540,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "kcrate",
+   "verb": "LEAVE SOUP",
+   "who": "mo",
+   "x": 170,
+   "y": 540,
+   "r": 100
+  }
+ ],
+ "ch2 g4 with coins": [
+  {
+   "id": "ddoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 300,
+   "y": 470,
+   "r": 90
+  },
+  {
+   "id": "crateg",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 690,
+   "y": 480,
+   "r": 80
+  },
+  {
+   "id": "backd",
+   "verb": "ENTER",
+   "who": "sq",
+   "x": 85,
+   "y": 450,
+   "r": 90
+  },
+  {
+   "id": "lure",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 190,
+   "y": 560,
+   "r": 80
+  },
+  {
+   "id": "ship",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 780,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "rusty",
+   "verb": "GIVE",
+   "who": "mo",
+   "x": 450,
+   "y": 470,
+   "r": 110
+  },
+  {
+   "id": "cloche",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 240,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "frame",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 130,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "postcard",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 720,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "jar",
+   "verb": "GRAB",
+   "who": "mo",
+   "x": 360,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "counter",
+   "verb": "BUY",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kdoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "dfront",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 48,
+   "y": 470,
+   "r": 70
+  },
+  {
+   "id": "kdoor",
+   "verb": "BACK",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "range",
+   "verb": "COOK",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 110
+  },
+  {
+   "id": "kfront",
+   "verb": "FRONT",
+   "who": "mo",
+   "x": 53,
+   "y": 500,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "recipe",
+   "verb": "OPEN",
+   "who": "sq",
+   "x": 912,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "rail",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 660,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "SCRUB",
+   "who": "sq",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kcrate",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 170,
+   "y": 540,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "kcrate",
+   "verb": "LEAVE SOUP",
+   "who": "mo",
+   "x": 170,
+   "y": 540,
+   "r": 100
+  }
+ ],
+ "ch2 g4 with soup": [
+  {
+   "id": "ddoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 300,
+   "y": 470,
+   "r": 90
+  },
+  {
+   "id": "crateg",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 690,
+   "y": 480,
+   "r": 80
+  },
+  {
+   "id": "backd",
+   "verb": "ENTER",
+   "who": "sq",
+   "x": 85,
+   "y": 450,
+   "r": 90
+  },
+  {
+   "id": "lure",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 190,
+   "y": 560,
+   "r": 80
+  },
+  {
+   "id": "ship",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 780,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "rusty",
+   "verb": "GIVE",
+   "who": "mo",
+   "x": 450,
+   "y": 470,
+   "r": 110
+  },
+  {
+   "id": "cloche",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 240,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "frame",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 130,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "postcard",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 720,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "jar",
+   "verb": "GRAB",
+   "who": "mo",
+   "x": 360,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "counter",
+   "verb": "BUY",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kdoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "dfront",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 48,
+   "y": 470,
+   "r": 70
+  },
+  {
+   "id": "kdoor",
+   "verb": "BACK",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "range",
+   "verb": "COOK",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 110
+  },
+  {
+   "id": "kfront",
+   "verb": "FRONT",
+   "who": "mo",
+   "x": 53,
+   "y": 500,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "recipe",
+   "verb": "OPEN",
+   "who": "sq",
+   "x": 912,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "rail",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 660,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "SCRUB",
+   "who": "sq",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kcrate",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 170,
+   "y": 540,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "kcrate",
+   "verb": "LEAVE SOUP",
+   "who": "mo",
+   "x": 170,
+   "y": 540,
+   "r": 100
+  }
+ ],
+ "ch2 g4k with soup": [
+  {
+   "id": "ddoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 300,
+   "y": 470,
+   "r": 90
+  },
+  {
+   "id": "crateg",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 690,
+   "y": 480,
+   "r": 80
+  },
+  {
+   "id": "backd",
+   "verb": "ENTER",
+   "who": "sq",
+   "x": 85,
+   "y": 450,
+   "r": 90
+  },
+  {
+   "id": "lure",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 190,
+   "y": 560,
+   "r": 80
+  },
+  {
+   "id": "ship",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 780,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "rusty",
+   "verb": "GIVE",
+   "who": "mo",
+   "x": 450,
+   "y": 470,
+   "r": 110
+  },
+  {
+   "id": "cloche",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 240,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "frame",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 130,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "postcard",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 720,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "jar",
+   "verb": "GRAB",
+   "who": "mo",
+   "x": 360,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "counter",
+   "verb": "BUY",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kdoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "dfront",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 48,
+   "y": 470,
+   "r": 70
+  },
+  {
+   "id": "kdoor",
+   "verb": "BACK",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "range",
+   "verb": "COOK",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 110
+  },
+  {
+   "id": "kfront",
+   "verb": "FRONT",
+   "who": "mo",
+   "x": 53,
+   "y": 500,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "recipe",
+   "verb": "OPEN",
+   "who": "sq",
+   "x": 912,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "rail",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 660,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "SCRUB",
+   "who": "sq",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kcrate",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 170,
+   "y": 540,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "kcrate",
+   "verb": "LEAVE SOUP",
+   "who": "mo",
+   "x": 170,
+   "y": 540,
+   "r": 100
+  }
+ ],
+ "ch2 g4k out front": [
+  {
+   "id": "ddoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 300,
+   "y": 470,
+   "r": 90
+  },
+  {
+   "id": "crateg",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 690,
+   "y": 480,
+   "r": 80
+  },
+  {
+   "id": "backd",
+   "verb": "ENTER",
+   "who": "sq",
+   "x": 85,
+   "y": 450,
+   "r": 90
+  },
+  {
+   "id": "lure",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 190,
+   "y": 560,
+   "r": 80
+  },
+  {
+   "id": "ship",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 780,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "rusty",
+   "verb": "GIVE",
+   "who": "mo",
+   "x": 450,
+   "y": 470,
+   "r": 110
+  },
+  {
+   "id": "cloche",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 240,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "frame",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 130,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "postcard",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 720,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "jar",
+   "verb": "GRAB",
+   "who": "mo",
+   "x": 360,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "counter",
+   "verb": "BUY",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kdoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "dfront",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 48,
+   "y": 470,
+   "r": 70
+  },
+  {
+   "id": "kdoor",
+   "verb": "BACK",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "range",
+   "verb": "COOK",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 110
+  },
+  {
+   "id": "kfront",
+   "verb": "FRONT",
+   "who": "mo",
+   "x": 53,
+   "y": 500,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "recipe",
+   "verb": "OPEN",
+   "who": "sq",
+   "x": 912,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "rail",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 660,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "SCRUB",
+   "who": "sq",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kcrate",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 170,
+   "y": 540,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "kcrate",
+   "verb": "LEAVE SOUP",
+   "who": "mo",
+   "x": 170,
+   "y": 540,
+   "r": 100
+  }
+ ],
+ "ch2 the greasy pot": [
+  {
+   "id": "ddoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 300,
+   "y": 470,
+   "r": 90
+  },
+  {
+   "id": "crateg",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 690,
+   "y": 480,
+   "r": 80
+  },
+  {
+   "id": "backd",
+   "verb": "ENTER",
+   "who": "sq",
+   "x": 85,
+   "y": 450,
+   "r": 90
+  },
+  {
+   "id": "lure",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 190,
+   "y": 560,
+   "r": 80
+  },
+  {
+   "id": "ship",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 780,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "rusty",
+   "verb": "GIVE",
+   "who": "mo",
+   "x": 450,
+   "y": 470,
+   "r": 110
+  },
+  {
+   "id": "cloche",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 240,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "frame",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 130,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "postcard",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 720,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "jar",
+   "verb": "GRAB",
+   "who": "mo",
+   "x": 360,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "counter",
+   "verb": "BUY",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kdoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "dfront",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 48,
+   "y": 470,
+   "r": 70
+  },
+  {
+   "id": "kdoor",
+   "verb": "BACK",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "range",
+   "verb": "COOK",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 110
+  },
+  {
+   "id": "kfront",
+   "verb": "FRONT",
+   "who": "mo",
+   "x": 53,
+   "y": 500,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "recipe",
+   "verb": "OPEN",
+   "who": "sq",
+   "x": 912,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "rail",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 660,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "SCRUB",
+   "who": "sq",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kcrate",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 170,
+   "y": 540,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "kcrate",
+   "verb": "LEAVE SOUP",
+   "who": "mo",
+   "x": 170,
+   "y": 540,
+   "r": 100
+  }
+ ],
+ "ch2 g6d with coins": [
+  {
+   "id": "ddoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 300,
+   "y": 470,
+   "r": 90
+  },
+  {
+   "id": "crateg",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 690,
+   "y": 480,
+   "r": 80
+  },
+  {
+   "id": "backd",
+   "verb": "ENTER",
+   "who": "sq",
+   "x": 85,
+   "y": 450,
+   "r": 90
+  },
+  {
+   "id": "lure",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 190,
+   "y": 560,
+   "r": 80
+  },
+  {
+   "id": "ship",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 780,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "rusty",
+   "verb": "GIVE",
+   "who": "mo",
+   "x": 450,
+   "y": 470,
+   "r": 110
+  },
+  {
+   "id": "cloche",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 240,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "frame",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 130,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "postcard",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 720,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "jar",
+   "verb": "GRAB",
+   "who": "mo",
+   "x": 360,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "counter",
+   "verb": "BUY",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kdoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "dfront",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 48,
+   "y": 470,
+   "r": 70
+  },
+  {
+   "id": "kdoor",
+   "verb": "BACK",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "range",
+   "verb": "COOK",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 110
+  },
+  {
+   "id": "kfront",
+   "verb": "FRONT",
+   "who": "mo",
+   "x": 53,
+   "y": 500,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "recipe",
+   "verb": "OPEN",
+   "who": "sq",
+   "x": 912,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "rail",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 660,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "SCRUB",
+   "who": "sq",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kcrate",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 170,
+   "y": 540,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "kcrate",
+   "verb": "LEAVE SOUP",
+   "who": "mo",
+   "x": 170,
+   "y": 540,
+   "r": 100
+  }
+ ],
+ "ch2 g6 Mops with coins": [
+  {
+   "id": "ddoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 300,
+   "y": 470,
+   "r": 90
+  },
+  {
+   "id": "crateg",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 690,
+   "y": 480,
+   "r": 80
+  },
+  {
+   "id": "backd",
+   "verb": "ENTER",
+   "who": "sq",
+   "x": 85,
+   "y": 450,
+   "r": 90
+  },
+  {
+   "id": "lure",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 190,
+   "y": 560,
+   "r": 80
+  },
+  {
+   "id": "ship",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 780,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "rusty",
+   "verb": "GIVE",
+   "who": "mo",
+   "x": 460,
+   "y": 470,
+   "r": 110
+  },
+  {
+   "id": "cloche",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 240,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "frame",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 130,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "postcard",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 720,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "jar",
+   "verb": "GRAB",
+   "who": "mo",
+   "x": 360,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "counter",
+   "verb": "BUY",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kdoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "dfront",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 48,
+   "y": 470,
+   "r": 70
+  },
+  {
+   "id": "kdoor",
+   "verb": "BACK",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "range",
+   "verb": "COOK",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 110
+  },
+  {
+   "id": "kfront",
+   "verb": "FRONT",
+   "who": "mo",
+   "x": 53,
+   "y": 500,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "recipe",
+   "verb": "OPEN",
+   "who": "sq",
+   "x": 912,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "rail",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 660,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "SCRUB",
+   "who": "sq",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kcrate",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 170,
+   "y": 540,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "kcrate",
+   "verb": "LEAVE SOUP",
+   "who": "mo",
+   "x": 170,
+   "y": 540,
+   "r": 100
+  }
+ ],
+ "ch2 g1door": [
+  {
+   "id": "ddoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 300,
+   "y": 470,
+   "r": 90
+  },
+  {
+   "id": "crateg",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 690,
+   "y": 480,
+   "r": 80
+  },
+  {
+   "id": "backd",
+   "verb": "ENTER",
+   "who": "sq",
+   "x": 85,
+   "y": 450,
+   "r": 90
+  },
+  {
+   "id": "lure",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 190,
+   "y": 560,
+   "r": 80
+  },
+  {
+   "id": "ship",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 780,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "rusty",
+   "verb": "GIVE",
+   "who": "mo",
+   "x": 450,
+   "y": 470,
+   "r": 110
+  },
+  {
+   "id": "cloche",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 240,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "frame",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 130,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "postcard",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 720,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "jar",
+   "verb": "GRAB",
+   "who": "mo",
+   "x": 360,
+   "y": 430,
+   "r": 70
+  },
+  {
+   "id": "counter",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "counter",
+   "verb": "BUY",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kdoor",
+   "verb": "ENTER",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "dfront",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 48,
+   "y": 470,
+   "r": 70
+  },
+  {
+   "id": "kdoor",
+   "verb": "BACK",
+   "who": "mo",
+   "x": 880,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "range",
+   "verb": "COOK",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 110
+  },
+  {
+   "id": "kfront",
+   "verb": "FRONT",
+   "who": "mo",
+   "x": 53,
+   "y": 500,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "recipe",
+   "verb": "OPEN",
+   "who": "sq",
+   "x": 912,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "rail",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 660,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "SCRUB",
+   "who": "sq",
+   "x": 480,
+   "y": 430,
+   "r": 80
+  },
+  {
+   "id": "kcrate",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 170,
+   "y": 540,
+   "r": 80
+  },
+  {
+   "id": "sink",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 480,
+   "y": 430,
+   "r": 90
+  },
+  {
+   "id": "kcrate",
+   "verb": "LEAVE SOUP",
+   "who": "mo",
+   "x": 170,
+   "y": 540,
+   "r": 100
+  }
+ ],
+ "ch3 pad p1": [
+  {
+   "id": "barrel",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 400,
+   "y": 500,
+   "r": 80
+  },
+  {
+   "id": "barrel",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 400,
+   "y": 500,
+   "r": 80
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "ramp",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 620,
+   "y": 470,
+   "r": 80
+  },
+  {
+   "id": "cart",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 600,
+   "y": 585,
+   "r": 80
+  },
+  {
+   "id": "edge",
+   "verb": "THROW",
+   "who": "sq",
+   "x": 120,
+   "y": 470,
+   "r": 100
+  },
+  {
+   "id": "mug",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 150,
+   "y": 450,
+   "r": 70
+  },
+  {
+   "id": "dlog",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 310,
+   "y": 450,
+   "r": 70
+  },
+  {
+   "id": "zip",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 230,
+   "y": 480,
+   "r": 120
+  },
+  {
+   "id": "sign",
+   "verb": "WIPE",
+   "who": "ctl",
+   "x": 95,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "alcove",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 110,
+   "y": 545,
+   "r": 80
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "m1",
+   "verb": "TURN",
+   "who": "mo",
+   "x": 260,
+   "y": 480,
+   "r": 70
+  },
+  {
+   "id": "m2",
+   "verb": "TURN",
+   "who": "mo",
+   "x": 700,
+   "y": 480,
+   "r": 70
+  },
+  {
+   "id": "mural",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 480,
+   "y": 460,
+   "r": 110
+  },
+  {
+   "id": "texit",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 40,
+   "y": 560,
+   "r": 90
+  }
+ ],
+ "ch3 pad p2 (Mops)": [
+  {
+   "id": "barrel",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 400,
+   "y": 500,
+   "r": 80
+  },
+  {
+   "id": "barrel",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 400,
+   "y": 500,
+   "r": 80
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "ramp",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 620,
+   "y": 470,
+   "r": 80
+  },
+  {
+   "id": "cart",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 600,
+   "y": 585,
+   "r": 80
+  },
+  {
+   "id": "edge",
+   "verb": "THROW",
+   "who": "sq",
+   "x": 120,
+   "y": 470,
+   "r": 100
+  },
+  {
+   "id": "mug",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 150,
+   "y": 450,
+   "r": 70
+  },
+  {
+   "id": "dlog",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 310,
+   "y": 450,
+   "r": 70
+  },
+  {
+   "id": "zip",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 230,
+   "y": 480,
+   "r": 120
+  },
+  {
+   "id": "sign",
+   "verb": "WIPE",
+   "who": "ctl",
+   "x": 95,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "alcove",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 110,
+   "y": 545,
+   "r": 80
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "m1",
+   "verb": "TURN",
+   "who": "mo",
+   "x": 260,
+   "y": 480,
+   "r": 70
+  },
+  {
+   "id": "m2",
+   "verb": "TURN",
+   "who": "mo",
+   "x": 700,
+   "y": 480,
+   "r": 70
+  },
+  {
+   "id": "mural",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 480,
+   "y": 460,
+   "r": 110
+  },
+  {
+   "id": "texit",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 40,
+   "y": 560,
+   "r": 90
+  }
+ ],
+ "ch3 temple p3 (Squatch)": [
+  {
+   "id": "barrel",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 400,
+   "y": 500,
+   "r": 80
+  },
+  {
+   "id": "barrel",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 400,
+   "y": 500,
+   "r": 80
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "ramp",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 620,
+   "y": 470,
+   "r": 80
+  },
+  {
+   "id": "cart",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 600,
+   "y": 585,
+   "r": 80
+  },
+  {
+   "id": "edge",
+   "verb": "THROW",
+   "who": "sq",
+   "x": 120,
+   "y": 470,
+   "r": 100
+  },
+  {
+   "id": "mug",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 150,
+   "y": 450,
+   "r": 70
+  },
+  {
+   "id": "dlog",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 310,
+   "y": 450,
+   "r": 70
+  },
+  {
+   "id": "zip",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 230,
+   "y": 480,
+   "r": 120
+  },
+  {
+   "id": "sign",
+   "verb": "WIPE",
+   "who": "ctl",
+   "x": 95,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "alcove",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 110,
+   "y": 545,
+   "r": 80
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "m1",
+   "verb": "TURN",
+   "who": "mo",
+   "x": 260,
+   "y": 480,
+   "r": 70
+  },
+  {
+   "id": "m2",
+   "verb": "TURN",
+   "who": "mo",
+   "x": 700,
+   "y": 480,
+   "r": 70
+  },
+  {
+   "id": "mural",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 480,
+   "y": 460,
+   "r": 110
+  },
+  {
+   "id": "texit",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 40,
+   "y": 560,
+   "r": 90
+  }
+ ],
+ "ch3 temple p3 (Mops)": [
+  {
+   "id": "barrel",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 400,
+   "y": 500,
+   "r": 80
+  },
+  {
+   "id": "barrel",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 400,
+   "y": 500,
+   "r": 80
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "ramp",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 620,
+   "y": 470,
+   "r": 80
+  },
+  {
+   "id": "cart",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 600,
+   "y": 585,
+   "r": 80
+  },
+  {
+   "id": "edge",
+   "verb": "THROW",
+   "who": "sq",
+   "x": 120,
+   "y": 470,
+   "r": 100
+  },
+  {
+   "id": "mug",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 150,
+   "y": 450,
+   "r": 70
+  },
+  {
+   "id": "dlog",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 310,
+   "y": 450,
+   "r": 70
+  },
+  {
+   "id": "zip",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 230,
+   "y": 480,
+   "r": 120
+  },
+  {
+   "id": "sign",
+   "verb": "WIPE",
+   "who": "ctl",
+   "x": 95,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "alcove",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 110,
+   "y": 545,
+   "r": 80
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "m1",
+   "verb": "TURN",
+   "who": "mo",
+   "x": 260,
+   "y": 480,
+   "r": 70
+  },
+  {
+   "id": "m2",
+   "verb": "TURN",
+   "who": "mo",
+   "x": 700,
+   "y": 480,
+   "r": 70
+  },
+  {
+   "id": "mural",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 480,
+   "y": 460,
+   "r": 110
+  },
+  {
+   "id": "texit",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 40,
+   "y": 560,
+   "r": 90
+  }
+ ],
+ "ch3 temple p3, first mirror turned": [
+  {
+   "id": "barrel",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 400,
+   "y": 500,
+   "r": 80
+  },
+  {
+   "id": "barrel",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 400,
+   "y": 500,
+   "r": 80
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "ramp",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 620,
+   "y": 470,
+   "r": 80
+  },
+  {
+   "id": "cart",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 600,
+   "y": 585,
+   "r": 80
+  },
+  {
+   "id": "edge",
+   "verb": "THROW",
+   "who": "sq",
+   "x": 120,
+   "y": 470,
+   "r": 100
+  },
+  {
+   "id": "mug",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 150,
+   "y": 450,
+   "r": 70
+  },
+  {
+   "id": "dlog",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 310,
+   "y": 450,
+   "r": 70
+  },
+  {
+   "id": "zip",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 230,
+   "y": 480,
+   "r": 120
+  },
+  {
+   "id": "sign",
+   "verb": "WIPE",
+   "who": "ctl",
+   "x": 95,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "alcove",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 110,
+   "y": 545,
+   "r": 80
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "m1",
+   "verb": "TURN",
+   "who": "mo",
+   "x": 260,
+   "y": 480,
+   "r": 70
+  },
+  {
+   "id": "m2",
+   "verb": "TURN",
+   "who": "mo",
+   "x": 700,
+   "y": 480,
+   "r": 70
+  },
+  {
+   "id": "mural",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 480,
+   "y": 460,
+   "r": 110
+  },
+  {
+   "id": "texit",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 40,
+   "y": 560,
+   "r": 90
+  }
+ ],
+ "ch3 temple p3x": [
+  {
+   "id": "barrel",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 400,
+   "y": 500,
+   "r": 80
+  },
+  {
+   "id": "barrel",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 400,
+   "y": 500,
+   "r": 80
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "ramp",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 620,
+   "y": 470,
+   "r": 80
+  },
+  {
+   "id": "cart",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 600,
+   "y": 585,
+   "r": 80
+  },
+  {
+   "id": "edge",
+   "verb": "THROW",
+   "who": "sq",
+   "x": 120,
+   "y": 470,
+   "r": 100
+  },
+  {
+   "id": "mug",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 150,
+   "y": 450,
+   "r": 70
+  },
+  {
+   "id": "dlog",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 310,
+   "y": 450,
+   "r": 70
+  },
+  {
+   "id": "zip",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 230,
+   "y": 480,
+   "r": 120
+  },
+  {
+   "id": "sign",
+   "verb": "WIPE",
+   "who": "ctl",
+   "x": 95,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "alcove",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 110,
+   "y": 545,
+   "r": 80
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "m1",
+   "verb": "TURN",
+   "who": "mo",
+   "x": 260,
+   "y": 480,
+   "r": 70
+  },
+  {
+   "id": "m2",
+   "verb": "TURN",
+   "who": "mo",
+   "x": 700,
+   "y": 480,
+   "r": 70
+  },
+  {
+   "id": "mural",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 480,
+   "y": 460,
+   "r": 110
+  },
+  {
+   "id": "texit",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 40,
+   "y": 560,
+   "r": 90
+  }
+ ],
+ "ch3 pad p4a": [
+  {
+   "id": "barrel",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 400,
+   "y": 500,
+   "r": 80
+  },
+  {
+   "id": "barrel",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 400,
+   "y": 500,
+   "r": 80
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "ramp",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 620,
+   "y": 470,
+   "r": 80
+  },
+  {
+   "id": "cart",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 600,
+   "y": 585,
+   "r": 80
+  },
+  {
+   "id": "edge",
+   "verb": "THROW",
+   "who": "sq",
+   "x": 120,
+   "y": 470,
+   "r": 100
+  },
+  {
+   "id": "mug",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 150,
+   "y": 450,
+   "r": 70
+  },
+  {
+   "id": "dlog",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 310,
+   "y": 450,
+   "r": 70
+  },
+  {
+   "id": "zip",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 230,
+   "y": 480,
+   "r": 120
+  },
+  {
+   "id": "sign",
+   "verb": "WIPE",
+   "who": "ctl",
+   "x": 95,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "alcove",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 110,
+   "y": 545,
+   "r": 80
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "m1",
+   "verb": "TURN",
+   "who": "mo",
+   "x": 260,
+   "y": 480,
+   "r": 70
+  },
+  {
+   "id": "m2",
+   "verb": "TURN",
+   "who": "mo",
+   "x": 700,
+   "y": 480,
+   "r": 70
+  },
+  {
+   "id": "mural",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 480,
+   "y": 460,
+   "r": 110
+  },
+  {
+   "id": "texit",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 40,
+   "y": 560,
+   "r": 90
+  }
+ ],
+ "ch3 pad p4b": [
+  {
+   "id": "barrel",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 400,
+   "y": 500,
+   "r": 80
+  },
+  {
+   "id": "barrel",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 400,
+   "y": 500,
+   "r": 80
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "ramp",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 620,
+   "y": 470,
+   "r": 80
+  },
+  {
+   "id": "cart",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 600,
+   "y": 585,
+   "r": 80
+  },
+  {
+   "id": "edge",
+   "verb": "THROW",
+   "who": "sq",
+   "x": 120,
+   "y": 470,
+   "r": 100
+  },
+  {
+   "id": "mug",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 150,
+   "y": 450,
+   "r": 70
+  },
+  {
+   "id": "dlog",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 310,
+   "y": 450,
+   "r": 70
+  },
+  {
+   "id": "zip",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 230,
+   "y": 480,
+   "r": 120
+  },
+  {
+   "id": "sign",
+   "verb": "WIPE",
+   "who": "ctl",
+   "x": 95,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "alcove",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 110,
+   "y": 545,
+   "r": 80
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "m1",
+   "verb": "TURN",
+   "who": "mo",
+   "x": 260,
+   "y": 480,
+   "r": 70
+  },
+  {
+   "id": "m2",
+   "verb": "TURN",
+   "who": "mo",
+   "x": 700,
+   "y": 480,
+   "r": 70
+  },
+  {
+   "id": "mural",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 480,
+   "y": 460,
+   "r": 110
+  },
+  {
+   "id": "texit",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 40,
+   "y": 560,
+   "r": 90
+  }
+ ],
+ "ch3 pad p4b, rope held": [
+  {
+   "id": "barrel",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 400,
+   "y": 500,
+   "r": 80
+  },
+  {
+   "id": "barrel",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 400,
+   "y": 500,
+   "r": 80
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "ramp",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 620,
+   "y": 470,
+   "r": 80
+  },
+  {
+   "id": "cart",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 600,
+   "y": 585,
+   "r": 80
+  },
+  {
+   "id": "edge",
+   "verb": "THROW",
+   "who": "sq",
+   "x": 120,
+   "y": 470,
+   "r": 100
+  },
+  {
+   "id": "mug",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 150,
+   "y": 450,
+   "r": 70
+  },
+  {
+   "id": "dlog",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 310,
+   "y": 450,
+   "r": 70
+  },
+  {
+   "id": "zip",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 230,
+   "y": 480,
+   "r": 120
+  },
+  {
+   "id": "sign",
+   "verb": "WIPE",
+   "who": "ctl",
+   "x": 95,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "alcove",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 110,
+   "y": 545,
+   "r": 80
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "m1",
+   "verb": "TURN",
+   "who": "mo",
+   "x": 260,
+   "y": 480,
+   "r": 70
+  },
+  {
+   "id": "m2",
+   "verb": "TURN",
+   "who": "mo",
+   "x": 700,
+   "y": 480,
+   "r": 70
+  },
+  {
+   "id": "mural",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 480,
+   "y": 460,
+   "r": 110
+  },
+  {
+   "id": "texit",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 40,
+   "y": 560,
+   "r": 90
+  }
+ ],
+ "ch3 pad p4a, in the barrel": [
+  {
+   "id": "barrel",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 400,
+   "y": 500,
+   "r": 80
+  },
+  {
+   "id": "barrel",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 400,
+   "y": 500,
+   "r": 80
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "ramp",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 620,
+   "y": 470,
+   "r": 80
+  },
+  {
+   "id": "cart",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 600,
+   "y": 585,
+   "r": 80
+  },
+  {
+   "id": "edge",
+   "verb": "THROW",
+   "who": "sq",
+   "x": 120,
+   "y": 470,
+   "r": 100
+  },
+  {
+   "id": "mug",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 150,
+   "y": 450,
+   "r": 70
+  },
+  {
+   "id": "dlog",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 310,
+   "y": 450,
+   "r": 70
+  },
+  {
+   "id": "zip",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 230,
+   "y": 480,
+   "r": 120
+  },
+  {
+   "id": "sign",
+   "verb": "WIPE",
+   "who": "ctl",
+   "x": 95,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "alcove",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 110,
+   "y": 545,
+   "r": 80
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "m1",
+   "verb": "TURN",
+   "who": "mo",
+   "x": 260,
+   "y": 480,
+   "r": 70
+  },
+  {
+   "id": "m2",
+   "verb": "TURN",
+   "who": "mo",
+   "x": 700,
+   "y": 480,
+   "r": 70
+  },
+  {
+   "id": "mural",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 480,
+   "y": 460,
+   "r": 110
+  },
+  {
+   "id": "texit",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 40,
+   "y": 560,
+   "r": 90
+  }
+ ],
+ "ch3 pad p4a, singing": [
+  {
+   "id": "barrel",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 400,
+   "y": 500,
+   "r": 80
+  },
+  {
+   "id": "barrel",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 400,
+   "y": 500,
+   "r": 80
+  },
+  {
+   "id": "sing",
+   "verb": "STOP",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "ramp",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 620,
+   "y": 470,
+   "r": 80
+  },
+  {
+   "id": "cart",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 600,
+   "y": 585,
+   "r": 80
+  },
+  {
+   "id": "edge",
+   "verb": "THROW",
+   "who": "sq",
+   "x": 120,
+   "y": 470,
+   "r": 100
+  },
+  {
+   "id": "mug",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 150,
+   "y": 450,
+   "r": 70
+  },
+  {
+   "id": "dlog",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 310,
+   "y": 450,
+   "r": 70
+  },
+  {
+   "id": "zip",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 230,
+   "y": 480,
+   "r": 120
+  },
+  {
+   "id": "sign",
+   "verb": "WIPE",
+   "who": "ctl",
+   "x": 95,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "alcove",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 110,
+   "y": 545,
+   "r": 80
+  },
+  {
+   "id": "sing",
+   "verb": "STOP",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "m1",
+   "verb": "TURN",
+   "who": "mo",
+   "x": 260,
+   "y": 480,
+   "r": 70
+  },
+  {
+   "id": "m2",
+   "verb": "TURN",
+   "who": "mo",
+   "x": 700,
+   "y": 480,
+   "r": 70
+  },
+  {
+   "id": "mural",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 480,
+   "y": 460,
+   "r": 110
+  },
+  {
+   "id": "texit",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 40,
+   "y": 560,
+   "r": 90
+  }
+ ],
+ "ch3 temple p3, in the echo spot": [
+  {
+   "id": "barrel",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 400,
+   "y": 500,
+   "r": 80
+  },
+  {
+   "id": "barrel",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 400,
+   "y": 500,
+   "r": 80
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "ramp",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 620,
+   "y": 470,
+   "r": 80
+  },
+  {
+   "id": "cart",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 600,
+   "y": 585,
+   "r": 80
+  },
+  {
+   "id": "edge",
+   "verb": "THROW",
+   "who": "sq",
+   "x": 120,
+   "y": 470,
+   "r": 100
+  },
+  {
+   "id": "mug",
+   "verb": "LIFT",
+   "who": "mo",
+   "x": 150,
+   "y": 450,
+   "r": 70
+  },
+  {
+   "id": "dlog",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 310,
+   "y": 450,
+   "r": 70
+  },
+  {
+   "id": "zip",
+   "verb": "ASK",
+   "who": "mo",
+   "x": 230,
+   "y": 480,
+   "r": 120
+  },
+  {
+   "id": "sign",
+   "verb": "WIPE",
+   "who": "ctl",
+   "x": 95,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "alcove",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 110,
+   "y": 545,
+   "r": 80
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "m1",
+   "verb": "TURN",
+   "who": "mo",
+   "x": 260,
+   "y": 480,
+   "r": 70
+  },
+  {
+   "id": "m2",
+   "verb": "TURN",
+   "who": "mo",
+   "x": 700,
+   "y": 480,
+   "r": 70
+  },
+  {
+   "id": "mural",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 480,
+   "y": 460,
+   "r": 110
+  },
+  {
+   "id": "texit",
+   "verb": "EXIT",
+   "who": "mo",
+   "x": 40,
+   "y": 560,
+   "r": 90
+  }
+ ],
+ "ch1 O5 bed": [
+  {
+   "id": "bed",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 220,
+   "y": 560,
+   "r": 120
+  }
+ ],
+ "ch1 O7 tv": [
+  {
+   "id": "tv",
+   "verb": "WATCH",
+   "who": "sq",
+   "x": 615,
+   "y": 400,
+   "r": 120
+  }
+ ],
+ "ch1 S1 lunch on the shelf": [
+  {
+   "id": "lunch",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 470,
+   "y": 400,
+   "r": 80
+  },
+  {
+   "id": "stash",
+   "verb": "OPEN",
+   "who": "sq",
+   "x": 462,
+   "y": 400,
+   "r": 80
+  },
+  {
+   "id": "crib",
+   "verb": "PULL",
+   "who": "sq",
+   "x": 560,
+   "y": 560,
+   "r": 80
+  },
+  {
+   "id": "sched",
+   "verb": "LOOK",
+   "who": "sq",
+   "x": 200,
+   "y": 400,
+   "r": 90
+  },
+  {
+   "id": "sched",
+   "verb": "LOOK",
+   "who": "sq",
+   "x": 200,
+   "y": 400,
+   "r": 90
+  },
+  {
+   "id": "door",
+   "verb": "SNEAK OUT",
+   "who": "sq",
+   "x": 790,
+   "y": 470,
+   "r": 100
+  }
+ ],
+ "ch1 S1 lunch held": [
+  {
+   "id": "lunch",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 470,
+   "y": 400,
+   "r": 80
+  },
+  {
+   "id": "stash",
+   "verb": "OPEN",
+   "who": "sq",
+   "x": 462,
+   "y": 400,
+   "r": 80
+  },
+  {
+   "id": "crib",
+   "verb": "PULL",
+   "who": "sq",
+   "x": 560,
+   "y": 560,
+   "r": 80
+  },
+  {
+   "id": "sched",
+   "verb": "LOOK",
+   "who": "sq",
+   "x": 200,
+   "y": 400,
+   "r": 90
+  },
+  {
+   "id": "sched",
+   "verb": "LOOK",
+   "who": "sq",
+   "x": 200,
+   "y": 400,
+   "r": 90
+  },
+  {
+   "id": "door",
+   "verb": "SNEAK OUT",
+   "who": "sq",
+   "x": 790,
+   "y": 470,
+   "r": 100
+  }
+ ],
+ "ch1 S1L deck": [
+  {
+   "id": "leave",
+   "verb": "LEAVE",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "spot0",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 170,
+   "y": 476,
+   "r": 78
+  },
+  {
+   "id": "spot1",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 560,
+   "y": 256,
+   "r": 78
+  },
+  {
+   "id": "spot2",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 830,
+   "y": 461,
+   "r": 78
+  }
+ ],
+ "ch1 S2 gallery": [
+  {
+   "id": "photo23",
+   "verb": "FIX",
+   "who": "sq",
+   "box": {
+    "x0": 422,
+    "x1": 602,
+    "y0": 190,
+    "y1": 300
+   }
+  },
+  {
+   "id": "badge",
+   "verb": "FLIP",
+   "who": "sq",
+   "box": {
+    "x0": 610,
+    "x1": 750,
+    "y0": 190,
+    "y1": 300
+   }
+  },
+  {
+   "id": "mops",
+   "verb": "GIVE",
+   "who": "sq",
+   "x": 330,
+   "y": 250,
+   "r": 120
+  },
+  {
+   "id": "gallery",
+   "verb": "LOOK",
+   "who": "sq",
+   "box": {
+    "x0": 50,
+    "x1": 620,
+    "y0": 190,
+    "y1": 250
+   }
+  }
+ ],
+ "ch1 S4 crate": [
+  {
+   "id": "crate",
+   "verb": "LEAVE",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "crate",
+   "verb": "GRAB",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "crate",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 1325,
+   "y": 596,
+   "r": 200
+  }
+ ],
+ "ch1 S5 window, brochure out": [
+  {
+   "id": "bro",
+   "verb": "GRAB",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "bro",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 548,
+   "y": 488,
+   "r": 120
+  },
+  {
+   "id": "plant5",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 470,
+   "y": 476,
+   "r": 110
+  },
+  {
+   "id": "brochure",
+   "verb": "LOOK",
+   "who": "sq",
+   "x": 560,
+   "y": 410,
+   "r": 120
+  }
+ ],
+ "ch1 S5 window, brochure in the bin": [
+  {
+   "id": "bro",
+   "verb": "GRAB",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "bro",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 548,
+   "y": 488,
+   "r": 120
+  },
+  {
+   "id": "plant5",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 470,
+   "y": 476,
+   "r": 110
+  },
+  {
+   "id": "brochure",
+   "verb": "LOOK",
+   "who": "sq",
+   "x": 560,
+   "y": 410,
+   "r": 120
+  }
+ ],
+ "ch1 S6 hall": [
+  {
+   "id": "leave",
+   "verb": "LEAVE",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "plaque",
+   "verb": "PULL",
+   "who": "sq",
+   "box": {
+    "x0": 674,
+    "x1": 814,
+    "y0": 190,
+    "y1": 330
+   }
+  },
+  {
+   "id": "wanted",
+   "verb": "UNROLL",
+   "who": "sq",
+   "box": {
+    "x0": 740,
+    "x1": 860,
+    "y0": 190,
+    "y1": 330
+   }
+  },
+  {
+   "id": "plaque",
+   "verb": "LOOK",
+   "who": "sq",
+   "box": {
+    "x0": 694,
+    "x1": 794,
+    "y0": 190,
+    "y1": 330
+   }
+  },
+  {
+   "id": "wanted",
+   "verb": "LOOK",
+   "who": "sq",
+   "box": {
+    "x0": 750,
+    "x1": 850,
+    "y0": 190,
+    "y1": 330
+   }
+  },
+  {
+   "id": "trash",
+   "verb": "PEEK",
+   "who": "sq",
+   "x": 1300,
+   "y": 505,
+   "r": 100
+  },
+  {
+   "id": "vent",
+   "verb": "PEEK",
+   "who": "sq",
+   "x": 1110,
+   "y": 572,
+   "r": 90
+  },
+  {
+   "id": "gallery",
+   "verb": "LOOK",
+   "who": "sq",
+   "box": {
+    "x0": 50,
+    "x1": 620,
+    "y0": 190,
+    "y1": 250
+   },
+   "not": {
+    "x": 150,
+    "y": 310,
+    "r": 120
+   }
+  },
+  {
+   "id": "va0",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 900,
+   "y": 346,
+   "r": 80
+  },
+  {
+   "id": "va1",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 620,
+   "y": 546,
+   "r": 80
+  }
+ ],
+ "ch1 S7 terminal": [
+  {
+   "id": "leave",
+   "verb": "LEAVE",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "term",
+   "verb": "USE",
+   "who": "sq",
+   "x": 150,
+   "y": 310,
+   "r": 120
+  },
+  {
+   "id": "plaque",
+   "verb": "LOOK",
+   "who": "sq",
+   "box": {
+    "x0": 694,
+    "x1": 794,
+    "y0": 190,
+    "y1": 330
+   }
+  },
+  {
+   "id": "wanted",
+   "verb": "LOOK",
+   "who": "sq",
+   "box": {
+    "x0": 750,
+    "x1": 850,
+    "y0": 190,
+    "y1": 330
+   }
+  },
+  {
+   "id": "trash",
+   "verb": "PEEK",
+   "who": "sq",
+   "x": 1300,
+   "y": 505,
+   "r": 100
+  },
+  {
+   "id": "vent",
+   "verb": "PEEK",
+   "who": "sq",
+   "x": 1110,
+   "y": 572,
+   "r": 90
+  }
+ ],
+ "ch1 S9 Squatch": [
+  {
+   "id": "trash",
+   "verb": "GRAB",
+   "who": "mo",
+   "x": 1300,
+   "y": 505,
+   "r": 90
+  },
+  {
+   "id": "goatspace",
+   "verb": "PULL",
+   "who": "sq",
+   "box": {
+    "x0": 730,
+    "x1": 870,
+    "y0": 190,
+    "y1": 360
+   }
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "box9",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 1050,
+   "y": 566,
+   "r": 90
+  }
+ ],
+ "ch1 S9 Mops": [
+  {
+   "id": "trash",
+   "verb": "GRAB",
+   "who": "mo",
+   "x": 1300,
+   "y": 505,
+   "r": 90
+  },
+  {
+   "id": "goatspace",
+   "verb": "PULL",
+   "who": "sq",
+   "box": {
+    "x0": 730,
+    "x1": 870,
+    "y0": 190,
+    "y1": 360
+   }
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "box9",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 1050,
+   "y": 566,
+   "r": 90
+  }
+ ],
+ "ch1 S10 vent (Mops)": [
+  {
+   "id": "vent",
+   "verb": "SQUEEZE",
+   "who": "mo",
+   "x": 1110,
+   "y": 572,
+   "r": 90
+  },
+  {
+   "id": "vent",
+   "verb": "SQUEEZE",
+   "who": "sq",
+   "x": 1110,
+   "y": 572,
+   "r": 90
+  }
+ ],
+ "ch1 S10 vent (Squatch)": [
+  {
+   "id": "vent",
+   "verb": "SQUEEZE",
+   "who": "mo",
+   "x": 1110,
+   "y": 572,
+   "r": 90
+  },
+  {
+   "id": "vent",
+   "verb": "SQUEEZE",
+   "who": "sq",
+   "x": 1110,
+   "y": 572,
+   "r": 90
+  }
+ ],
+ "ch1 S10d duct": [
+  {
+   "id": "notes",
+   "verb": "UNFOLD",
+   "who": "mo",
+   "box": {
+    "x0": 400,
+    "x1": 540,
+    "y0": 390,
+    "y1": 480
+   }
+  },
+  {
+   "id": "half2",
+   "verb": "GRAB",
+   "who": "mo",
+   "box": {
+    "x0": 690,
+    "x1": 830,
+    "y0": 390,
+    "y1": 480
+   }
+  },
+  {
+   "id": "out",
+   "verb": "EXIT",
+   "who": "mo",
+   "box": {
+    "x0": 90,
+    "x1": 200,
+    "y0": 390,
+    "y1": 480
+   }
+  }
+ ],
+ "ch1 S10d duct, half found": [
+  {
+   "id": "notes",
+   "verb": "UNFOLD",
+   "who": "mo",
+   "box": {
+    "x0": 400,
+    "x1": 540,
+    "y0": 390,
+    "y1": 480
+   }
+  },
+  {
+   "id": "half2",
+   "verb": "GRAB",
+   "who": "mo",
+   "box": {
+    "x0": 690,
+    "x1": 830,
+    "y0": 390,
+    "y1": 480
+   }
+  },
+  {
+   "id": "out",
+   "verb": "EXIT",
+   "who": "mo",
+   "box": {
+    "x0": 90,
+    "x1": 200,
+    "y0": 390,
+    "y1": 480
+   }
+  }
+ ],
+ "ch1 S11 lure (Squatch)": [
+  {
+   "id": "ward",
+   "verb": "WEAR",
+   "who": "sq",
+   "x": 1390,
+   "y": 470,
+   "r": 100
+  },
+  {
+   "id": "gate",
+   "verb": "",
+   "who": "sq",
+   "x": 1360,
+   "y": 300,
+   "r": 50
+  },
+  {
+   "id": "keypad",
+   "verb": "TYPE",
+   "who": "mo",
+   "x": 1300,
+   "y": 290,
+   "r": 110
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "plant11",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 900,
+   "y": 346,
+   "r": 90
+  }
+ ],
+ "ch1 S11 keypad (Mops)": [
+  {
+   "id": "ward",
+   "verb": "WEAR",
+   "who": "sq",
+   "x": 1390,
+   "y": 470,
+   "r": 100
+  },
+  {
+   "id": "gate",
+   "verb": "",
+   "who": "sq",
+   "x": 1360,
+   "y": 300,
+   "r": 50
+  },
+  {
+   "id": "keypad",
+   "verb": "TYPE",
+   "who": "mo",
+   "x": 1300,
+   "y": 290,
+   "r": 110
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "plant11",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 900,
+   "y": 346,
+   "r": 90
+  }
+ ],
+ "ch1 S11 door open": [
+  {
+   "id": "ward",
+   "verb": "WEAR",
+   "who": "sq",
+   "x": 1390,
+   "y": 470,
+   "r": 100
+  },
+  {
+   "id": "gate",
+   "verb": "",
+   "who": "sq",
+   "x": 1360,
+   "y": 300,
+   "r": 50
+  },
+  {
+   "id": "keypad",
+   "verb": "TYPE",
+   "who": "mo",
+   "x": 1300,
+   "y": 290,
+   "r": 110
+  }
+ ],
+ "ch1 S12 hangar": [
+  {
+   "id": "c0",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 300,
+   "y": 460,
+   "r": 80
+  },
+  {
+   "id": "c1",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 440,
+   "y": 460,
+   "r": 80
+  },
+  {
+   "id": "c2",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 580,
+   "y": 460,
+   "r": 80
+  },
+  {
+   "id": "tarp",
+   "verb": "PULL",
+   "who": "sq",
+   "x": 140,
+   "y": 590,
+   "r": 90
+  },
+  {
+   "id": "nachos",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 140,
+   "y": 590,
+   "r": 90
+  },
+  {
+   "id": "crates",
+   "verb": "PUSH",
+   "who": "sq",
+   "x": 520,
+   "y": 610,
+   "r": 100
+  },
+  {
+   "id": "icecream",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 580,
+   "y": 610,
+   "r": 100
+  },
+  {
+   "id": "ship",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 760,
+   "y": 370,
+   "r": 140
+  }
+ ],
+ "ch1 O4 lobby": [],
+ "ch1 S1L hidden": [
+  {
+   "id": "leave",
+   "verb": "LEAVE",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "spot0",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 170,
+   "y": 476,
+   "r": 78
+  },
+  {
+   "id": "spot1",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 560,
+   "y": 256,
+   "r": 78
+  },
+  {
+   "id": "spot2",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 830,
+   "y": 461,
+   "r": 78
+  }
+ ],
+ "ch1 S4 in the crate": [
+  {
+   "id": "crate",
+   "verb": "LEAVE",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "crate",
+   "verb": "GRAB",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "crate",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 1325,
+   "y": 596,
+   "r": 200
+  }
+ ],
+ "ch1 S4 in the crate, pie found": [
+  {
+   "id": "crate",
+   "verb": "LEAVE",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "crate",
+   "verb": "GRAB",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "crate",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 1325,
+   "y": 596,
+   "r": 200
+  }
+ ],
+ "ch1 S6 plaque and poster found": [
+  {
+   "id": "leave",
+   "verb": "LEAVE",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "plaque",
+   "verb": "PULL",
+   "who": "sq",
+   "box": {
+    "x0": 674,
+    "x1": 814,
+    "y0": 190,
+    "y1": 330
+   }
+  },
+  {
+   "id": "wanted",
+   "verb": "UNROLL",
+   "who": "sq",
+   "box": {
+    "x0": 740,
+    "x1": 860,
+    "y0": 190,
+    "y1": 330
+   }
+  },
+  {
+   "id": "plaque",
+   "verb": "LOOK",
+   "who": "sq",
+   "box": {
+    "x0": 694,
+    "x1": 794,
+    "y0": 190,
+    "y1": 330
+   }
+  },
+  {
+   "id": "wanted",
+   "verb": "LOOK",
+   "who": "sq",
+   "box": {
+    "x0": 750,
+    "x1": 850,
+    "y0": 190,
+    "y1": 330
+   }
+  },
+  {
+   "id": "trash",
+   "verb": "PEEK",
+   "who": "sq",
+   "x": 1300,
+   "y": 505,
+   "r": 100
+  },
+  {
+   "id": "vent",
+   "verb": "PEEK",
+   "who": "sq",
+   "x": 1110,
+   "y": 572,
+   "r": 90
+  },
+  {
+   "id": "gallery",
+   "verb": "LOOK",
+   "who": "sq",
+   "box": {
+    "x0": 50,
+    "x1": 620,
+    "y0": 190,
+    "y1": 250
+   },
+   "not": {
+    "x": 150,
+    "y": 310,
+    "r": 120
+   }
+  },
+  {
+   "id": "va0",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 900,
+   "y": 346,
+   "r": 80
+  },
+  {
+   "id": "va1",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 620,
+   "y": 546,
+   "r": 80
+  }
+ ],
+ "ch1 S6 hidden": [
+  {
+   "id": "leave",
+   "verb": "LEAVE",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "plaque",
+   "verb": "PULL",
+   "who": "sq",
+   "box": {
+    "x0": 674,
+    "x1": 814,
+    "y0": 190,
+    "y1": 330
+   }
+  },
+  {
+   "id": "wanted",
+   "verb": "UNROLL",
+   "who": "sq",
+   "box": {
+    "x0": 740,
+    "x1": 860,
+    "y0": 190,
+    "y1": 330
+   }
+  },
+  {
+   "id": "plaque",
+   "verb": "LOOK",
+   "who": "sq",
+   "box": {
+    "x0": 694,
+    "x1": 794,
+    "y0": 190,
+    "y1": 330
+   }
+  },
+  {
+   "id": "wanted",
+   "verb": "LOOK",
+   "who": "sq",
+   "box": {
+    "x0": 750,
+    "x1": 850,
+    "y0": 190,
+    "y1": 330
+   }
+  },
+  {
+   "id": "trash",
+   "verb": "PEEK",
+   "who": "sq",
+   "x": 1300,
+   "y": 505,
+   "r": 100
+  },
+  {
+   "id": "vent",
+   "verb": "PEEK",
+   "who": "sq",
+   "x": 1110,
+   "y": 572,
+   "r": 90
+  },
+  {
+   "id": "gallery",
+   "verb": "LOOK",
+   "who": "sq",
+   "box": {
+    "x0": 50,
+    "x1": 620,
+    "y0": 190,
+    "y1": 250
+   },
+   "not": {
+    "x": 150,
+    "y": 310,
+    "r": 120
+   }
+  },
+  {
+   "id": "va0",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 900,
+   "y": 346,
+   "r": 80
+  },
+  {
+   "id": "va1",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 620,
+   "y": 546,
+   "r": 80
+  }
+ ],
+ "ch1 S7b sign": [
+  {
+   "id": "term",
+   "verb": "SIGN",
+   "who": "sq",
+   "anywhere": true
+  }
+ ],
+ "ch1 S9 in the box": [
+  {
+   "id": "trash",
+   "verb": "GRAB",
+   "who": "mo",
+   "x": 1300,
+   "y": 505,
+   "r": 90
+  },
+  {
+   "id": "goatspace",
+   "verb": "PULL",
+   "who": "sq",
+   "box": {
+    "x0": 730,
+    "x1": 870,
+    "y0": 190,
+    "y1": 360
+   }
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "box9",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 1050,
+   "y": 566,
+   "r": 90
+  }
+ ],
+ "ch1 S9 singing": [
+  {
+   "id": "trash",
+   "verb": "GRAB",
+   "who": "mo",
+   "x": 1300,
+   "y": 505,
+   "r": 90
+  },
+  {
+   "id": "goatspace",
+   "verb": "PULL",
+   "who": "sq",
+   "box": {
+    "x0": 730,
+    "x1": 870,
+    "y0": 190,
+    "y1": 360
+   }
+  },
+  {
+   "id": "sing",
+   "verb": "STOP",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "box9",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 1050,
+   "y": 566,
+   "r": 90
+  }
+ ],
+ "ch1 S12 hangar, all snacks": [
+  {
+   "id": "c0",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 300,
+   "y": 460,
+   "r": 80
+  },
+  {
+   "id": "c1",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 440,
+   "y": 460,
+   "r": 80
+  },
+  {
+   "id": "c2",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 580,
+   "y": 460,
+   "r": 80
+  },
+  {
+   "id": "tarp",
+   "verb": "PULL",
+   "who": "sq",
+   "x": 140,
+   "y": 590,
+   "r": 90
+  },
+  {
+   "id": "nachos",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 140,
+   "y": 590,
+   "r": 90
+  },
+  {
+   "id": "crates",
+   "verb": "PUSH",
+   "who": "sq",
+   "x": 520,
+   "y": 610,
+   "r": 100
+  },
+  {
+   "id": "icecream",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 580,
+   "y": 610,
+   "r": 100
+  },
+  {
+   "id": "ship",
+   "verb": "BOARD",
+   "who": "sq",
+   "x": 760,
+   "y": 370,
+   "r": 140
+  }
+ ],
+ "ch4 port m1": [
+  {
+   "id": "can",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 200,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "can1",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 470,
+   "y": 545,
+   "r": 70
+  },
+  {
+   "id": "can2",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 740,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "sock",
+   "verb": "LIFT",
+   "who": "sq",
+   "x": 330,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "dance",
+   "verb": "DANCE",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "poster",
+   "verb": "READ",
+   "who": "mo",
+   "x": 430,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "menu",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sdoor",
+   "verb": "KNOCK",
+   "who": "mo",
+   "x": 610,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "hug",
+   "verb": "HUG!",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "vmop",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 380,
+   "y": 540,
+   "r": 90
+  },
+  {
+   "id": "pine",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 220,
+   "y": 450,
+   "r": 80
+  },
+  {
+   "id": "seat",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "photo",
+   "verb": "LOOK",
+   "who": "sq",
+   "x": 260,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "iexit",
+   "verb": "EXIT",
+   "who": "sq",
+   "x": 70,
+   "y": 560,
+   "r": 90
+  },
+  {
+   "id": "seat",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  }
+ ],
+ "ch4 stand m2": [
+  {
+   "id": "can",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 200,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "can1",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 470,
+   "y": 545,
+   "r": 70
+  },
+  {
+   "id": "can2",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 740,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "sock",
+   "verb": "LIFT",
+   "who": "sq",
+   "x": 330,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "dance",
+   "verb": "DANCE",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "poster",
+   "verb": "READ",
+   "who": "mo",
+   "x": 430,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "menu",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sdoor",
+   "verb": "KNOCK",
+   "who": "mo",
+   "x": 610,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "hug",
+   "verb": "HUG!",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "vmop",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 380,
+   "y": 540,
+   "r": 90
+  },
+  {
+   "id": "pine",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 220,
+   "y": 450,
+   "r": 80
+  },
+  {
+   "id": "seat",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "photo",
+   "verb": "LOOK",
+   "who": "sq",
+   "x": 260,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "iexit",
+   "verb": "EXIT",
+   "who": "sq",
+   "x": 70,
+   "y": 560,
+   "r": 90
+  },
+  {
+   "id": "seat",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  }
+ ],
+ "ch4 stand m2, poster read": [
+  {
+   "id": "can",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 200,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "can1",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 470,
+   "y": 545,
+   "r": 70
+  },
+  {
+   "id": "can2",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 740,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "sock",
+   "verb": "LIFT",
+   "who": "sq",
+   "x": 330,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "dance",
+   "verb": "DANCE",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "poster",
+   "verb": "READ",
+   "who": "mo",
+   "x": 430,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "menu",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sdoor",
+   "verb": "KNOCK",
+   "who": "mo",
+   "x": 610,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "hug",
+   "verb": "HUG!",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "vmop",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 380,
+   "y": 540,
+   "r": 90
+  },
+  {
+   "id": "pine",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 220,
+   "y": 450,
+   "r": 80
+  },
+  {
+   "id": "seat",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "photo",
+   "verb": "LOOK",
+   "who": "sq",
+   "x": 260,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "iexit",
+   "verb": "EXIT",
+   "who": "sq",
+   "x": 70,
+   "y": 560,
+   "r": 90
+  },
+  {
+   "id": "seat",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  }
+ ],
+ "ch4 van m3": [
+  {
+   "id": "can",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 200,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "can1",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 470,
+   "y": 545,
+   "r": 70
+  },
+  {
+   "id": "can2",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 740,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "sock",
+   "verb": "LIFT",
+   "who": "sq",
+   "x": 330,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "dance",
+   "verb": "DANCE",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "poster",
+   "verb": "READ",
+   "who": "mo",
+   "x": 430,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "menu",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sdoor",
+   "verb": "KNOCK",
+   "who": "mo",
+   "x": 610,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "hug",
+   "verb": "HUG!",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "vmop",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 380,
+   "y": 540,
+   "r": 90
+  },
+  {
+   "id": "pine",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 220,
+   "y": 450,
+   "r": 80
+  },
+  {
+   "id": "seat",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "photo",
+   "verb": "LOOK",
+   "who": "sq",
+   "x": 260,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "iexit",
+   "verb": "EXIT",
+   "who": "sq",
+   "x": 70,
+   "y": 560,
+   "r": 90
+  },
+  {
+   "id": "seat",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  }
+ ],
+ "ch4 van m3, floor mopped": [
+  {
+   "id": "can",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 200,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "can1",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 470,
+   "y": 545,
+   "r": 70
+  },
+  {
+   "id": "can2",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 740,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "sock",
+   "verb": "LIFT",
+   "who": "sq",
+   "x": 330,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "dance",
+   "verb": "DANCE",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "poster",
+   "verb": "READ",
+   "who": "mo",
+   "x": 430,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "menu",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sdoor",
+   "verb": "KNOCK",
+   "who": "mo",
+   "x": 610,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "hug",
+   "verb": "HUG!",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "vmop",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 380,
+   "y": 540,
+   "r": 90
+  },
+  {
+   "id": "pine",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 220,
+   "y": 450,
+   "r": 80
+  },
+  {
+   "id": "seat",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "photo",
+   "verb": "LOOK",
+   "who": "sq",
+   "x": 260,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "iexit",
+   "verb": "EXIT",
+   "who": "sq",
+   "x": 70,
+   "y": 560,
+   "r": 90
+  },
+  {
+   "id": "seat",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  }
+ ],
+ "ch4 inside m4a": [
+  {
+   "id": "can",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 200,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "can1",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 470,
+   "y": 545,
+   "r": 70
+  },
+  {
+   "id": "can2",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 740,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "sock",
+   "verb": "LIFT",
+   "who": "sq",
+   "x": 330,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "dance",
+   "verb": "DANCE",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "poster",
+   "verb": "READ",
+   "who": "mo",
+   "x": 430,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "menu",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sdoor",
+   "verb": "KNOCK",
+   "who": "mo",
+   "x": 610,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "hug",
+   "verb": "HUG!",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "vmop",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 380,
+   "y": 540,
+   "r": 90
+  },
+  {
+   "id": "pine",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 220,
+   "y": 450,
+   "r": 80
+  },
+  {
+   "id": "seat",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "photo",
+   "verb": "LOOK",
+   "who": "sq",
+   "x": 260,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "iexit",
+   "verb": "EXIT",
+   "who": "sq",
+   "x": 70,
+   "y": 560,
+   "r": 90
+  },
+  {
+   "id": "seat",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  }
+ ],
+ "ch4 inside m4b": [
+  {
+   "id": "can",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 200,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "can1",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 470,
+   "y": 545,
+   "r": 70
+  },
+  {
+   "id": "can2",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 740,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "sock",
+   "verb": "LIFT",
+   "who": "sq",
+   "x": 330,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "dance",
+   "verb": "DANCE",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "poster",
+   "verb": "READ",
+   "who": "mo",
+   "x": 430,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "menu",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sdoor",
+   "verb": "KNOCK",
+   "who": "mo",
+   "x": 610,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "hug",
+   "verb": "HUG!",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "vmop",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 380,
+   "y": 540,
+   "r": 90
+  },
+  {
+   "id": "pine",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 220,
+   "y": 450,
+   "r": 80
+  },
+  {
+   "id": "seat",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "photo",
+   "verb": "LOOK",
+   "who": "sq",
+   "x": 260,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "iexit",
+   "verb": "EXIT",
+   "who": "sq",
+   "x": 70,
+   "y": 560,
+   "r": 90
+  },
+  {
+   "id": "seat",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  }
+ ],
+ "ch4 van m4v": [
+  {
+   "id": "can",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 200,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "can1",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 470,
+   "y": 545,
+   "r": 70
+  },
+  {
+   "id": "can2",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 740,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "sock",
+   "verb": "LIFT",
+   "who": "sq",
+   "x": 330,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "dance",
+   "verb": "DANCE",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "poster",
+   "verb": "READ",
+   "who": "mo",
+   "x": 430,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "menu",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sdoor",
+   "verb": "KNOCK",
+   "who": "mo",
+   "x": 610,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "hug",
+   "verb": "HUG!",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "vmop",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 380,
+   "y": 540,
+   "r": 90
+  },
+  {
+   "id": "pine",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 220,
+   "y": 450,
+   "r": 80
+  },
+  {
+   "id": "seat",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "photo",
+   "verb": "LOOK",
+   "who": "sq",
+   "x": 260,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "iexit",
+   "verb": "EXIT",
+   "who": "sq",
+   "x": 70,
+   "y": 560,
+   "r": 90
+  },
+  {
+   "id": "seat",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  }
+ ],
+ "ch4 port m1, in the middle can": [
+  {
+   "id": "can",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 200,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "can1",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 470,
+   "y": 545,
+   "r": 70
+  },
+  {
+   "id": "can2",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 740,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "sock",
+   "verb": "LIFT",
+   "who": "sq",
+   "x": 330,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "dance",
+   "verb": "DANCE",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "poster",
+   "verb": "READ",
+   "who": "mo",
+   "x": 430,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "menu",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sdoor",
+   "verb": "KNOCK",
+   "who": "mo",
+   "x": 610,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "hug",
+   "verb": "HUG!",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "vmop",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 380,
+   "y": 540,
+   "r": 90
+  },
+  {
+   "id": "pine",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 220,
+   "y": 450,
+   "r": 80
+  },
+  {
+   "id": "seat",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "photo",
+   "verb": "LOOK",
+   "who": "sq",
+   "x": 260,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "iexit",
+   "verb": "EXIT",
+   "who": "sq",
+   "x": 70,
+   "y": 560,
+   "r": 90
+  },
+  {
+   "id": "seat",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  }
+ ],
+ "ch4 port m1, singing": [
+  {
+   "id": "can",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 200,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "can1",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 470,
+   "y": 545,
+   "r": 70
+  },
+  {
+   "id": "can2",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 740,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "STOP",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "sock",
+   "verb": "LIFT",
+   "who": "sq",
+   "x": 330,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "STOP",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "dance",
+   "verb": "DANCE",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "poster",
+   "verb": "READ",
+   "who": "mo",
+   "x": 430,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "menu",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sdoor",
+   "verb": "KNOCK",
+   "who": "mo",
+   "x": 610,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "hug",
+   "verb": "HUG!",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "vmop",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 380,
+   "y": 540,
+   "r": 90
+  },
+  {
+   "id": "pine",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 220,
+   "y": 450,
+   "r": 80
+  },
+  {
+   "id": "seat",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "photo",
+   "verb": "LOOK",
+   "who": "sq",
+   "x": 260,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "iexit",
+   "verb": "EXIT",
+   "who": "sq",
+   "x": 70,
+   "y": 560,
+   "r": 90
+  },
+  {
+   "id": "seat",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  }
+ ],
+ "ch4 stand m2h": [
+  {
+   "id": "can",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 200,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "can1",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 470,
+   "y": 545,
+   "r": 70
+  },
+  {
+   "id": "can2",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 740,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "sock",
+   "verb": "LIFT",
+   "who": "sq",
+   "x": 330,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "dance",
+   "verb": "DANCE",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "poster",
+   "verb": "READ",
+   "who": "mo",
+   "x": 430,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "menu",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sdoor",
+   "verb": "KNOCK",
+   "who": "mo",
+   "x": 610,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "hug",
+   "verb": "HUG!",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "vmop",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 380,
+   "y": 540,
+   "r": 90
+  },
+  {
+   "id": "pine",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 220,
+   "y": 450,
+   "r": 80
+  },
+  {
+   "id": "seat",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "photo",
+   "verb": "LOOK",
+   "who": "sq",
+   "x": 260,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "iexit",
+   "verb": "EXIT",
+   "who": "sq",
+   "x": 70,
+   "y": 560,
+   "r": 90
+  },
+  {
+   "id": "seat",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  }
+ ],
+ "ch4 inside m4a, searchlight": [
+  {
+   "id": "can",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 200,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "can1",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 470,
+   "y": 545,
+   "r": 70
+  },
+  {
+   "id": "can2",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 740,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "sock",
+   "verb": "LIFT",
+   "who": "sq",
+   "x": 330,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "dance",
+   "verb": "DANCE",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "poster",
+   "verb": "READ",
+   "who": "mo",
+   "x": 430,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "menu",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sdoor",
+   "verb": "KNOCK",
+   "who": "mo",
+   "x": 610,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "hug",
+   "verb": "HUG!",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "vmop",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 380,
+   "y": 540,
+   "r": 90
+  },
+  {
+   "id": "pine",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 220,
+   "y": 450,
+   "r": 80
+  },
+  {
+   "id": "seat",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "photo",
+   "verb": "LOOK",
+   "who": "sq",
+   "x": 260,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "iexit",
+   "verb": "EXIT",
+   "who": "sq",
+   "x": 70,
+   "y": 560,
+   "r": 90
+  },
+  {
+   "id": "seat",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  }
+ ],
+ "ch4 port m5": [
+  {
+   "id": "can",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 200,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "can1",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 470,
+   "y": 545,
+   "r": 70
+  },
+  {
+   "id": "can2",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 740,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "sock",
+   "verb": "LIFT",
+   "who": "sq",
+   "x": 330,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "dance",
+   "verb": "DANCE",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "poster",
+   "verb": "READ",
+   "who": "mo",
+   "x": 430,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "menu",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sdoor",
+   "verb": "KNOCK",
+   "who": "mo",
+   "x": 610,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "hug",
+   "verb": "HUG!",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "vmop",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 380,
+   "y": 540,
+   "r": 90
+  },
+  {
+   "id": "pine",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 220,
+   "y": 450,
+   "r": 80
+  },
+  {
+   "id": "seat",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "photo",
+   "verb": "LOOK",
+   "who": "sq",
+   "x": 260,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "iexit",
+   "verb": "EXIT",
+   "who": "sq",
+   "x": 70,
+   "y": 560,
+   "r": 90
+  },
+  {
+   "id": "seat",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  }
+ ],
+ "ch4 port m5, singing": [
+  {
+   "id": "can",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 200,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "can1",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 470,
+   "y": 545,
+   "r": 70
+  },
+  {
+   "id": "can2",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 740,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "STOP",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "sock",
+   "verb": "LIFT",
+   "who": "sq",
+   "x": 330,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "STOP",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "dance",
+   "verb": "DANCE",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "poster",
+   "verb": "READ",
+   "who": "mo",
+   "x": 430,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "menu",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sdoor",
+   "verb": "KNOCK",
+   "who": "mo",
+   "x": 610,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "hug",
+   "verb": "HUG!",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "vmop",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 380,
+   "y": 540,
+   "r": 90
+  },
+  {
+   "id": "pine",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 220,
+   "y": 450,
+   "r": 80
+  },
+  {
+   "id": "seat",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "photo",
+   "verb": "LOOK",
+   "who": "sq",
+   "x": 260,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "iexit",
+   "verb": "EXIT",
+   "who": "sq",
+   "x": 70,
+   "y": 560,
+   "r": 90
+  },
+  {
+   "id": "seat",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  }
+ ],
+ "ch4 port m5d": [
+  {
+   "id": "can",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 200,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "can1",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 470,
+   "y": 545,
+   "r": 70
+  },
+  {
+   "id": "can2",
+   "verb": "HIDE",
+   "who": "sq",
+   "x": 740,
+   "y": 520,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "sock",
+   "verb": "LIFT",
+   "who": "sq",
+   "x": 330,
+   "y": 440,
+   "r": 70
+  },
+  {
+   "id": "sing",
+   "verb": "SING",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "dance",
+   "verb": "DANCE",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "poster",
+   "verb": "READ",
+   "who": "mo",
+   "x": 430,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "menu",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 800,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "sdoor",
+   "verb": "KNOCK",
+   "who": "mo",
+   "x": 610,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "hug",
+   "verb": "HUG!",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "vmop",
+   "verb": "MOP",
+   "who": "mo",
+   "x": 380,
+   "y": 540,
+   "r": 90
+  },
+  {
+   "id": "pine",
+   "verb": "FLIP",
+   "who": "mo",
+   "x": 220,
+   "y": 450,
+   "r": 80
+  },
+  {
+   "id": "seat",
+   "verb": "LOOK",
+   "who": "mo",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  },
+  {
+   "id": "roll",
+   "verb": "ROLL",
+   "who": "sq",
+   "anywhere": true
+  },
+  {
+   "id": "photo",
+   "verb": "LOOK",
+   "who": "sq",
+   "x": 260,
+   "y": 500,
+   "r": 90
+  },
+  {
+   "id": "iexit",
+   "verb": "EXIT",
+   "who": "sq",
+   "x": 70,
+   "y": 560,
+   "r": 90
+  },
+  {
+   "id": "seat",
+   "verb": "GRAB",
+   "who": "sq",
+   "x": 640,
+   "y": 530,
+   "r": 100
+  }
+ ]
+}

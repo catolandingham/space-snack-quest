@@ -204,7 +204,34 @@ for (const vp of [
     const unlisted = [...offered[ch]].filter((w) => !rowsHere.has(w));
     g.check(`chapter ${ch}: every caption offered is a row in the Phase 2 lines file (${offered[ch].size} offered)`, unlisted.length === 0, unlisted);
   }
-  // Every caption row is offered in the sweep, or its verb and thing sit together in that chapter's source.
+  // Every caption row is offered in the sweep, or its verb and thing are in one spot definition (one
+  // spot({ ... }) or offer({ ... }) object) in that chapter's source.
+  const objects = (src) => {
+    const out = [];
+    for (const m of src.matchAll(/\b(?:spot|offer)\(\{/g)) {
+      let i = m.index + m[0].length - 1, depth = 0, q = null;
+      for (let j = i; j < src.length; j++) {
+        const ch = src[j];
+        if (q) {
+          if (ch === "\\") j++;
+          else if (ch === q) q = null;
+        } else if (ch === '"' || ch === "'" || ch === "`") q = ch;
+        else if (ch === "{") depth++;
+        else if (ch === "}" && --depth === 0) {
+          out.push(src.slice(i, j + 1));
+          break;
+        }
+      }
+    }
+    return out;
+  };
+  // The verb and the caption as written in one object: verb: "X" (or a ternary naming X), cap: an expression naming the thing.
+  const pairs = (obj) => {
+    const head = obj.split(/\n\s*f: |, f: /)[0];
+    const verb = (head.match(/verb: ([^,\n]+(?: \? "[^"]*" : "[^"]*")?)/) || [])[1] || "";
+    const cap = (head.match(/cap: ([^\n]+?),(?:\n| [a-z]+:)/) || [])[1] || "";
+    return { verb, cap };
+  };
   const SRC = { 1: ["10-ch1.js", "11-ch1-hall.js"], 3: ["30-ch3.js"], 4: ["40-ch4.js"] };
   const sourceOnly = [];
   for (const [row, r] of capRows) {
@@ -212,7 +239,10 @@ for (const vp of [
     if (offered[ch].has(r.words)) continue;
     const [verb, cap] = r.words.split(" \u00b7 ");
     const src = SRC[ch].map((f) => readFileSync(join(root, "src", "game", f), "utf8")).join("");
-    const near = new RegExp(`verb: "${verb.replace(/[!]/g, "\\$&")}",?[^]{0,80}cap: "${cap}"`).test(src) || new RegExp(`cap: [^\n]*"${cap}"`).test(src);
+    const near = objects(src).some((o) => {
+      const p = pairs(o);
+      return p.verb.includes(`"${verb}"`) && p.cap.includes(`"${cap}"`);
+    });
     sourceOnly.push(`${row} ${r.words}`);
     g.check(`line ${row} "${r.words}" is in the game (not reached by the sweep; found in ${SRC[ch].join(" or ")})`, near, r);
   }
