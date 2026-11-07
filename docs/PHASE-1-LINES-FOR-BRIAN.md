@@ -86,3 +86,7 @@ The LOCKUP card's second line used to be a short joke caption ("Nozzle's ready."
 ## T9. Speech bubbles sit over the speaker, one at a time
 
 No new words. What changed on screen: bubbles in the kitchen now sit over the person talking instead of in a band at the bottom (Gloop's lines sit just right of her order window so the tickets stay readable); a voice from another room (the pump bots arguing in the kitchen while Mops is out front) shows as a bubble with an ear at the door on that side; ambient lines take turns, one bubble at a time; and the "HIDE! 5" countdown moved down to sit under the goal chip.
+
+## T10. The soup sits on Mops' head and looks like soup
+
+No new words. The bowl now rests on top of Mops' head (it used to float about 130 pixels above him) and bobs with him. It is a white bowl, 56 pixels wide, with yellow soup, two bits of vegetable, a spoon sticking out, and three wavy lines of steam. No label.

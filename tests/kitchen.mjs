@@ -77,7 +77,8 @@ const bowl = await page.evaluate(() => {
   const c = document.querySelector("canvas");
   const g = c.getContext("2d", { willReadFrequently: true });
   let soup = 0;
-  const box = g.getImageData(376, 308, 48, 32).data;
+  // T10: the bowl rests on his head. Mops at (400, 520) facing right: head top (431, 451), soup surface near y 431.
+  const box = g.getImageData(407, 420, 48, 22).data;
   for (let i = 0; i < box.length; i += 4) {
     const r = box[i], gv = box[i + 1], b = box[i + 2];
     if (r > 200 && gv > 140 && gv < 220 && b < 130) soup++;

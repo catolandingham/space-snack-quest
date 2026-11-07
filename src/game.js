@@ -8863,6 +8863,34 @@
       // True while Mops is out front and Squatch is still back in the kitchen.
       return n.room === "diner" && !!x.mops && kitchenPhase(k.phase);
     }
+    function soupOnHead() {
+      // A steaming bowl of soup with a spoon, resting on Mops' head. Mops is drawn at scale he * 1.15;
+      // his head is a circle at (17, -29), radius about 8.5, so its top is 37.5 units above his feet.
+      let S = he * 1.15,
+        f = n.mo.f || 1,
+        hx = n.mo.x + 17 * S * f,
+        top = n.mo.y - 37.5 * S,
+        by = top + Math.sin(n.T * 3) * 1.5,
+        cy = by - 20;
+      n.soupAt = { x: hx - 28, w: 56, bottom: by, headTop: top };
+      for (let i of [-12, 0, 12]) {
+        let pts = [];
+        for (let j = 0; j <= 6; j++) pts.push(hx + i + Math.sin(n.T * 4 + j + i) * 3, cy - 12 - j * 5);
+        (C(pts, y, 5), C(pts, "#ffffff", 2.5));
+      }
+      (C([hx + 6 * f, cy - 4, hx + 24 * f, cy - 30], y, 7),
+        C([hx + 6 * f, cy - 4, hx + 24 * f, cy - 30], "#c9ced8", 4),
+        e.beginPath(),
+        e.ellipse(hx, cy, 28, 20, 0, 0, Math.PI),
+        e.closePath(),
+        r("#ffffff", 3),
+        X(hx, cy, 28, 7),
+        r("#f2b84b", 3),
+        L(hx - 8, cy - 1, 2.5),
+        r("#e07b00", 0),
+        L(hx + 9, cy + 1, 2),
+        r("#7ad35a", 0));
+    }
     function yn(l) {
       (n.moPose !== "hidden" &&
         n.mo.x > -100 &&
@@ -8878,13 +8906,7 @@
               i = n.mo.y - 60;
             if (k.has === "coins") for (let s = 0; s < 4; s++) (X(o, i - s * 5, 10, 4), r("#ffcf33", 2));
             (k.has === "chili" && (X(o, i, 16, 8), r("#ffffff", 2.5), X(o, i - 3, 13, 4), r("#b83a1d", 0)),
-              k.has === "soup" &&
-                (m(n.mo.x - 28, n.mo.y - 214 + Math.sin(n.T * 3) * 2, 56, 38, 12),
-                r("#ffffff", 4),
-                m(n.mo.x - 20, n.mo.y - 206 + Math.sin(n.T * 3) * 2, 40, 22, 8),
-                r("#f2b84b", 0),
-                X(n.mo.x, n.mo.y - 220 + Math.sin(n.T * 3) * 2, 24, 8),
-                r("#fff6dc", 3)));
+              k.has === "soup" && soupOnHead());
           },
         }),
         n.sqPose === "ball" &&
