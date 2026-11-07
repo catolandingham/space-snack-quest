@@ -951,7 +951,85 @@
     }
     function Bs() {
       let l = n.act;
-      return !l || !n.ctrl || (l.r > 0 && Math.hypot(n.sq.x - l.x, n.sq.y - l.y) > l.r) ? null : l;
+      return !l || !n.ctrl || (l.spot && !inSpot(l.spot)) ? null : l;
+    }
+    // Spots (task T17). One spot is one action, and the numbers that say where it works are the same
+    // numbers the ring is drawn from, so the ring always sits exactly where the button lights up.
+    //   id         the ring's name; the ring glows while n.pulse holds it and the spot can be used now
+    //   verb, cap  what the button says: "VERB · cap"
+    //   x, y, r    a circle on the floor: the action works while the player's feet are inside it
+    //   box        instead of a circle, { x0, x1, y0, y1 } on the floor
+    //   not        a circle { x, y, r } cut out of the place (the S6 gallery wall near the terminal)
+    //   who        whose feet count: "sq" (Squatch), "mo" (Mops), or "ctl" (whoever the player moves)
+    //   at         [x, y] where the caption sits, over the thing (in the hall, in hall coordinates)
+    //   when       false while the spot cannot be used (story step, what is held, pose)
+    //   f          what happens; hot makes the button pulse
+    // A spot with no circle and no box works anywhere (SING while hidden, ROLL while Gloop looks) and has
+    // no ring. A spot with no verb is a place to walk into (the S11 scanner gate), never a button.
+    // Positions are world positions: in the hall, before the camera moves the picture.
+    function spot(l) {
+      return l;
+    }
+    function spotFeet(l) {
+      return l.who === "sq" ? n.sq : l.who === "mo" ? n.mo : Ks();
+    }
+    function inSpot(l, o = spotFeet(l)) {
+      let i = l.box,
+        s = l.not;
+      return s && Math.hypot(o.x - s.x, o.y - s.y) < s.r
+        ? !1
+        : i
+          ? o.x > i.x0 && o.x < i.x1 && o.y > i.y0 && o.y < i.y1
+          : l.r > 0
+            ? Math.hypot(o.x - l.x, o.y - l.y) < l.r
+            : !0;
+    }
+    // The action a spot offers: the shape every picker returns and n.act holds.
+    function offer(l) {
+      let o = n.room === "hall" ? B.camX : 0,
+        i = l.at || [l.x || 0, l.y || 0];
+      return { verb: l.verb, cap: l.cap, x: i[0] - o, y: i[1], r: 0, hot: !!l.hot, f: l.f, spot: l };
+    }
+    // The first spot in the list that can be used now and has the player's feet inside it.
+    function pick(l) {
+      for (let o of l) if (o && o.verb && o.when !== !1 && inSpot(o)) return offer(o);
+      return null;
+    }
+    // Every spot the current scene has, in the order its picker tries them. A scene without a picker
+    // (the opening) has the one action its story step set, if any.
+    function spotsNow() {
+      let l = n.scene || "",
+        o = l[0] === "G" ? ch2Spots() : l[0] === "P" ? ch3Spots() : l[0] === "M" ? ch4Spots() : ch1Spots();
+      return o.length || !(n.act && n.act.spot) ? o : [n.act.spot];
+    }
+    // Rings drawn this frame, for tests: { id, x, y, r } or { id, box }, in world positions.
+    let ringsDrawn = [];
+    // The spots called id that can be used now and have a place (a circle or a box).
+    function spotsCalled(l) {
+      return spotsNow().filter((o) => o && o.id === l && o.when !== !1 && (o.r > 0 || o.box));
+    }
+    // Draws the ring of every spot called id that can be used now, while id glows. Rings are drawn in
+    // world positions: in the hall, call this where the drawing is already moved by the camera.
+    function ringOf(l) {
+      if (n.pulse.has(l)) for (let o of spotsCalled(l)) ringZone(o);
+    }
+    // The same ring while the player stands inside it, whether or not it glows (a "you can do this here" hint).
+    function ringNear(l) {
+      if (n.ctrl) for (let o of spotsCalled(l)) inSpot(o) && ringZone(o);
+    }
+    // A story pointer (rule 4: what a line mentions glows when it matters). It glows around a thing a line
+    // talks about while no action there is possible, such as during a cutscene. It never marks where an
+    // action works: while a spot called id can be used, that spot's ring is drawn instead.
+    function pointer(l, o, i, s, q, d) {
+      if (!n.pulse.has(l)) return;
+      spotsCalled(l).length ? ringOf(l) : oV(o, i, s, q, d);
+    }
+    // After the room is drawn: the ring of any glowing spot the room's own drawing did not place.
+    function ringsLeft() {
+      (e.save(), n.room === "hall" && e.translate(-B.camX, 0));
+      for (let l of spotsNow())
+        l && n.pulse.has(l.id) && l.when !== !1 && (l.r > 0 || l.box) && !ringsDrawn.some((o) => o.id === l.id) && ringZone(l);
+      e.restore();
     }
     function oh() {
       let l = (qe.ArrowRight || qe.KeyD ? 1 : 0) - (qe.ArrowLeft || qe.KeyA ? 1 : 0),

@@ -83,9 +83,6 @@
         mopN: 0,
       });
     }
-    function hV(l, o, i, s) {
-      return Math.hypot(l.x - o, l.y - i) < s;
-    }
     function vt(l, o, i, s, q, d, A) {
       let T = l - i,
         R = o - s,
@@ -720,274 +717,321 @@
     function dn(l, o, i) {
       ((x.spot = i), (n.sqPose = "hidden"), (n.sq.x = l), (n.sq.y = o), (n.sq.moving = !1), D.hide());
     }
-    function RA() {
+    // Chapter 2's spots, in the order the picker tries them (see spot in 00-core.js).
+    function ch2Spots() {
       let l = n.sq,
         o = n.mo,
-        i = ch2.phase;
-      if (n.room === "gas" && x.mops && i === "g1door" && hV(o, po.x, po.y + 70, 90))
-        return {
+        i = ch2.phase,
+        gasSq = n.room === "gas" && !x.mops,
+        diner = n.room === "diner" && x.mops,
+        kitSq = n.room === "kitchen" && !x.mops,
+        kitMo = n.room === "kitchen" && x.mops,
+        wash = i === "wash1" || i === "wash5",
+        q = i === "wash1" ? 0 : 3;
+      return [
+        spot({
+          id: "ddoor",
           verb: "ENTER",
           cap: "diner door",
+          who: "mo",
           x: po.x,
-          y: po.y - 20,
-          r: 0,
+          y: po.y + 70,
+          r: 90,
+          at: [po.x, po.y - 20],
+          when: n.room === "gas" && x.mops && i === "g1door",
           hot: !0,
           f: () => {
             ((n.chip = ""), Wh());
           },
-        };
-      if (n.room === "gas" && !x.mops) {
-        if ((i === "g1" || i === "back") && n.sqPose !== "hidden" && hV(l, ht.x, ht.y, 80) && i === "g1")
-          return {
-            verb: "HIDE",
-            cap: "crate",
-            x: ht.x,
-            y: ht.y - 100,
-            r: 0,
-            hot: !0,
-            f: () => {
-              (dn(ht.x, ht.y, 60), n.pulse.delete("crateg"), zA());
-            },
-          };
-        if (i === "back" && hV(l, Sa.x, Sa.y + 40, 90)) return { verb: "ENTER", cap: "kitchen door", x: Sa.x, y: Sa.y - 100, r: 0, hot: !0, f: DA };
-        if (i === "g6" && n.sqPose !== "hidden" && hV(l, _e.x, _e.y, 80))
-          return {
-            verb: "HIDE",
-            cap: "crate",
-            x: _e.x,
-            y: _e.y - 100,
-            r: 0,
-            hot: !0,
-            f: () => {
-              (dn(_e.x, _e.y, 61), n.pulse.delete("lure"));
-            },
-          };
-        if (i === "g6" && n.sqPose !== "hidden" && hV(l, C0.x - 40, 500, 90))
-          return { verb: "BOARD", cap: "ship", x: C0.x - 40, y: 360, r: 0, hot: !0, f: YA };
-        if (i === "g6" && n.sqPose === "hidden" && x.spot === 61)
-          return x.sing
-            ? {
-                verb: "STOP",
-                cap: "singing",
-                x: _e.x,
-                y: _e.y - 110,
-                r: 0,
-                f: () => {
-                  ((x.sing = !1), (n.sqPose = "hidden"));
-                },
+        }),
+        spot({
+          id: "crateg",
+          verb: "HIDE",
+          cap: "crate",
+          who: "sq",
+          x: ht.x,
+          y: ht.y,
+          r: 80,
+          at: [ht.x, ht.y - 100],
+          when: gasSq && i === "g1" && n.sqPose !== "hidden",
+          hot: !0,
+          f: () => {
+            (dn(ht.x, ht.y, 60), n.pulse.delete("crateg"), zA());
+          },
+        }),
+        spot({ id: "backd", verb: "ENTER", cap: "kitchen door", who: "sq", x: Sa.x, y: Sa.y + 40, r: 90, at: [Sa.x, Sa.y - 100], when: gasSq && i === "back", hot: !0, f: DA }),
+        spot({
+          id: "lure",
+          verb: "HIDE",
+          cap: "crate",
+          who: "sq",
+          x: _e.x,
+          y: _e.y,
+          r: 80,
+          at: [_e.x, _e.y - 100],
+          when: gasSq && i === "g6" && n.sqPose !== "hidden",
+          hot: !0,
+          f: () => {
+            (dn(_e.x, _e.y, 61), n.pulse.delete("lure"));
+          },
+        }),
+        spot({ id: "ship", verb: "BOARD", cap: "ship", who: "sq", x: C0.x - 40, y: 500, r: 90, at: [C0.x - 40, 360], when: gasSq && i === "g6" && n.sqPose !== "hidden", hot: !0, f: YA }),
+        spot({
+          id: "sing",
+          verb: x.sing ? "STOP" : "SING",
+          cap: x.sing ? "singing" : "lure song",
+          who: "sq",
+          at: [_e.x, _e.y - 110],
+          when: gasSq && i === "g6" && n.sqPose === "hidden" && x.spot === 61,
+          hot: !x.sing,
+          f: x.sing
+            ? () => {
+                ((x.sing = !1), (n.sqPose = "hidden"));
               }
-            : {
-                verb: "SING",
-                cap: "lure song",
-                x: _e.x,
-                y: _e.y - 110,
-                r: 0,
-                hot: !0,
-                f: () => {
-                  ((x.sing = !0), D.snore());
-                },
-              };
-      }
-      if (n.room === "gas" && x.mops && i === "g6" && ch2.has === "coins" && hV(o, ch2.rust.x, 470, 110))
-        return { verb: "GIVE", cap: "coins", x: ch2.rust.x, y: 330, r: 0, hot: !0, f: QA };
-      if (n.room === "diner" && x.mops) {
-        if (!ch2.cloche && hV(o, Ma.x, Ma.y, 70))
-          return {
-            verb: "LIFT",
-            cap: "lid",
-            x: Ma.x,
-            y: 270,
-            r: 0,
-            f: () => {
-              ((ch2.cloche = !0), ee("funny", "pea", Ma.x, 260), TV([v("blorp", "Don't rush me.")]));
-            },
-          };
-        if (!ch2.flipFrame && hV(o, oa.x, oa.y, 70))
-          return {
-            verb: "FLIP",
-            cap: "picture",
-            x: oa.x,
-            y: 120,
-            r: 0,
-            f: () => {
-              ((ch2.flipFrame = !0), ee("funny", "employee", oa.x, 120), TV([v("mops", "Employee of the Month: the mop. Every month.")]));
-            },
-          };
-        if (!ch2.flipCard && hV(o, B0.x, B0.y, 70))
-          return {
-            verb: "FLIP",
-            cap: "postcard",
-            x: B0.x,
-            y: 170,
-            r: 0,
-            f: () => {
-              ((ch2.flipCard = !0),
-                ee("secret", "postcard", B0.x, 170),
-                TV([{ k: "panel", id: "postcard" }, v("mops", "Furry pancakes... on Mars. Hm.")]));
-            },
-          };
-        if (i === "g2" && hV(o, Ul.x, Ul.y, 80)) return { verb: "ASK", cap: "for work", x: Ul.x, y: 210, r: 0, hot: !0, f: UA };
-        if ((i === "g4" || i === "g6d") && ch2.jar > 0 && !ch2.has && hV(o, Dl.x, Dl.y, 70))
-          return {
-            verb: "GRAB",
-            cap: "tip jar",
-            x: Dl.x,
-            y: 290,
-            r: 0,
-            hot: !0,
-            f: () => {
-              ((ch2.jar = 0), (ch2.has = "coins"), D.pickup(), n.pulse.delete("jar"), n.pulse.add(ch2.phase === "g6d" ? "dfront" : "counter"));
-            },
-          };
-        if (i === "g4" && !ch2.has && hV(o, Ul.x, Ul.y, 90))
-          return {
-            verb: "ASK",
-            cap: "Gloop",
-            x: Ul.x,
-            y: 210,
-            r: 0,
-            hot: !0,
-            f: () => {
-              ((n.ctrl = !1),
-                J([
-                  v("gloop", "The jar has " + ch2.jar + " coins. Soup is 30. The tank is 30."),
-                  v("mops", "Soup instead of gas. Squatch is hungry."),
-                  N(() => {
-                    n.ctrl = !0;
-                  }),
-                ]));
-            },
-          };
-        if (i === "g4" && ch2.has === "coins" && hV(o, Ul.x, Ul.y, 80))
-          return {
-            verb: "BUY",
-            cap: "soup 30",
-            x: Ul.x,
-            y: 210,
-            r: 0,
-            hot: !0,
-            f: () => {
-              ((n.ctrl = !1),
-                n.pulse.delete("counter"),
-                J([
-                  v("mops", "One soup, to go."),
-                  v("gloop", "30 coins. Soup's on, sweetie."),
-                  v("mops", "Soup instead of gas. He's hungry."),
-                  v("mops", "Balanced on my head. Don't bump me."),
-                  N(() => {
-                    (ch2.has === "coins" && ((ch2.has = "soup"), (ch2.jar = 0), (ch2.reg += 30)),
-                      n.act && n.act.verb === "BUY" && ((n.act = null), p.verb.endsWith("BUY") && ((p.verb = ""), t.onVerb(""))),
-                      D.grab(),
-                      n.pulse.add("kdoor"),
-                      (n.ctrl = !0));
-                  }),
-                ]));
-            },
-          };
-        if (i === "g4" && ch2.has === "soup" && hV(o, Cl.x, Cl.y + 40, 90))
-          return { verb: "ENTER", cap: "kitchen", x: Cl.x - 20, y: 300, r: 0, hot: !0, f: LA };
-        if (i === "g6d" && ch2.has === "coins" && hV(o, 48, 470, 70))
-          return { verb: "EXIT", cap: "the lot", x: 48, y: 250, r: 0, hot: !0, f: l2 };
-        if (kitchenPhase(i) && hV(o, Cl.x, Cl.y + 40, 90))
-          return {
-            verb: "BACK",
-            cap: "kitchen",
-            x: Cl.x - 20,
-            y: 300,
-            r: 0,
-            hot: !0,
-            f: () => {
-              (roomLine("Mops goes back to the kitchen."), (n.room = "kitchen"), (n.mo.x = 110), (n.mo.y = 500), (n.mo.f = 1));
-            },
-          };
-      }
-      if (n.room === "kitchen" && x.mops && hV(o, Hn.x, 500, 110))
-        return {
+            : () => {
+                ((x.sing = !0), D.snore());
+              },
+        }),
+        spot({
+          id: "rusty",
+          verb: "GIVE",
+          cap: "coins",
+          who: "mo",
+          x: ch2.rust.x,
+          y: 470,
+          r: 110,
+          at: [ch2.rust.x, 330],
+          when: n.room === "gas" && x.mops && i === "g6" && ch2.has === "coins",
+          hot: !0,
+          f: QA,
+        }),
+        spot({
+          id: "cloche",
+          verb: "LIFT",
+          cap: "lid",
+          who: "mo",
+          x: Ma.x,
+          y: Ma.y,
+          r: 70,
+          at: [Ma.x, 270],
+          when: diner && !ch2.cloche,
+          f: () => {
+            ((ch2.cloche = !0), ee("funny", "pea", Ma.x, 260), TV([v("blorp", "Don't rush me.")]));
+          },
+        }),
+        spot({
+          id: "frame",
+          verb: "FLIP",
+          cap: "picture",
+          who: "mo",
+          x: oa.x,
+          y: oa.y,
+          r: 70,
+          at: [oa.x, 120],
+          when: diner && !ch2.flipFrame,
+          f: () => {
+            ((ch2.flipFrame = !0), ee("funny", "employee", oa.x, 120), TV([v("mops", "Employee of the Month: the mop. Every month.")]));
+          },
+        }),
+        spot({
+          id: "postcard",
+          verb: "FLIP",
+          cap: "postcard",
+          who: "mo",
+          x: B0.x,
+          y: B0.y,
+          r: 70,
+          at: [B0.x, 170],
+          when: diner && !ch2.flipCard,
+          f: () => {
+            ((ch2.flipCard = !0),
+              ee("secret", "postcard", B0.x, 170),
+              TV([{ k: "panel", id: "postcard" }, v("mops", "Furry pancakes... on Mars. Hm.")]));
+          },
+        }),
+        spot({ id: "counter", verb: "ASK", cap: "for work", who: "mo", x: Ul.x, y: Ul.y, r: 80, at: [Ul.x, 210], when: diner && i === "g2", hot: !0, f: UA }),
+        spot({
+          id: "jar",
+          verb: "GRAB",
+          cap: "tip jar",
+          who: "mo",
+          x: Dl.x,
+          y: Dl.y,
+          r: 70,
+          at: [Dl.x, 290],
+          when: diner && (i === "g4" || i === "g6d") && ch2.jar > 0 && !ch2.has,
+          hot: !0,
+          f: () => {
+            ((ch2.jar = 0), (ch2.has = "coins"), D.pickup(), n.pulse.delete("jar"), n.pulse.add(ch2.phase === "g6d" ? "dfront" : "counter"));
+          },
+        }),
+        spot({
+          id: "counter",
+          verb: "ASK",
+          cap: "Gloop",
+          who: "mo",
+          x: Ul.x,
+          y: Ul.y,
+          r: 90,
+          at: [Ul.x, 210],
+          when: diner && i === "g4" && !ch2.has,
+          hot: !0,
+          f: () => {
+            ((n.ctrl = !1),
+              J([
+                v("gloop", "The jar has " + ch2.jar + " coins. Soup is 30. The tank is 30."),
+                v("mops", "Soup instead of gas. Squatch is hungry."),
+                N(() => {
+                  n.ctrl = !0;
+                }),
+              ]));
+          },
+        }),
+        spot({
+          id: "counter",
+          verb: "BUY",
+          cap: "soup 30",
+          who: "mo",
+          x: Ul.x,
+          y: Ul.y,
+          r: 80,
+          at: [Ul.x, 210],
+          when: diner && i === "g4" && ch2.has === "coins",
+          hot: !0,
+          f: () => {
+            ((n.ctrl = !1),
+              n.pulse.delete("counter"),
+              J([
+                v("mops", "One soup, to go."),
+                v("gloop", "30 coins. Soup's on, sweetie."),
+                v("mops", "Soup instead of gas. He's hungry."),
+                v("mops", "Balanced on my head. Don't bump me."),
+                N(() => {
+                  (ch2.has === "coins" && ((ch2.has = "soup"), (ch2.jar = 0), (ch2.reg += 30)),
+                    n.act && n.act.verb === "BUY" && ((n.act = null), p.verb.endsWith("BUY") && ((p.verb = ""), t.onVerb(""))),
+                    D.grab(),
+                    n.pulse.add("kdoor"),
+                    (n.ctrl = !0));
+                }),
+              ]));
+          },
+        }),
+        spot({ id: "kdoor", verb: "ENTER", cap: "kitchen", who: "mo", x: Cl.x, y: Cl.y + 40, r: 90, at: [Cl.x - 20, 300], when: diner && i === "g4" && ch2.has === "soup", hot: !0, f: LA }),
+        spot({ id: "dfront", verb: "EXIT", cap: "the lot", who: "mo", x: 48, y: 470, r: 70, at: [48, 250], when: diner && i === "g6d" && ch2.has === "coins", hot: !0, f: l2 }),
+        spot({
+          id: "kdoor",
+          verb: "BACK",
+          cap: "kitchen",
+          who: "mo",
+          x: Cl.x,
+          y: Cl.y + 40,
+          r: 90,
+          at: [Cl.x - 20, 300],
+          when: diner && kitchenPhase(i),
+          hot: !0,
+          f: () => {
+            (roomLine("Mops goes back to the kitchen."), (n.room = "kitchen"), (n.mo.x = 110), (n.mo.y = 500), (n.mo.f = 1));
+          },
+        }),
+        spot({
+          id: "range",
           verb: "COOK",
           cap: "ticket",
+          who: "mo",
           x: Hn.x,
-          y: 360,
-          r: 0,
+          y: 500,
+          r: 110,
+          at: [Hn.x, 360],
+          when: kitMo,
           hot: !0,
           f: () => {
             ((ch2.cooked = (ch2.cooked || 0) + 1), kV("mops", "Cooking ticket " + ch2.cooked + "."), D.grab());
           },
-        };
-      if (n.room === "kitchen" && x.mops && hV(o, 53, 500, 100))
-        return {
+        }),
+        spot({
+          id: "kfront",
           verb: "FRONT",
           cap: "diner",
+          who: "mo",
           x: 53,
-          y: 250,
-          r: 0,
+          y: 500,
+          r: 100,
+          at: [53, 250],
+          when: kitMo,
           hot: !0,
           f: () => {
             (roomLine("Mops goes out front."), (n.room = "diner"), (n.mo.x = 760), (n.mo.y = 520), (n.mo.f = -1));
           },
-        };
-      if (n.room === "kitchen" && !x.mops) {
-        let s = i === "wash1" || i === "wash5";
-        if (s && (ch2.warn > 0 || ch2.peek > 0) && n.sqPose !== "hidden" && n.sqPose !== "ball")
-          return {
-            verb: "ROLL",
-            cap: "into a ball",
-            x: l.x,
-            y: l.y - 150,
-            r: 0,
-            hot: !0,
-            f: () => {
-              ((n.sqPose = "ball"), (n.sq.moving = !1), D.hide());
-            },
-          };
-        if (s && !n.found.has("recipe") && hV(l, la.x, la.y, 80))
-          return {
-            verb: "OPEN",
-            cap: "recipe",
-            x: la.x,
-            y: 160,
-            r: 0,
-            f: () => {
-              (ee("secret", "recipe", la.x, 160),
-                TV([{ k: "panel", id: "recipe" }, v("sq", "Secret ingredient: sasquatch hair?! ...Gross. But I'll keep it secret.")]));
-            },
-          };
-        let q = i === "wash1" ? 0 : 3;
-        if (s && ch2.held < 0 && ch2.done < q + 3 && hV(l, 660, 430, 80))
-          return {
-            verb: "GRAB",
-            cap: "dish",
-            x: 660,
-            y: 120,
-            r: 0,
-            hot: !0,
-            f: () => {
-              ((ch2.held = ch2.done + 1),
-                (ch2.scrub = 0),
-                D.grab(),
-                n.pulse.delete("rail"),
-                n.pulse.add("sink"),
-                TV([{ k: "panel", id: "tk" + ch2.held }]));
-            },
-          };
-        if (s && ch2.held > 0 && hV(l, KV.x, KV.y, 80)) return { verb: "SCRUB", cap: "dish", x: KV.x, y: 270, r: 0, hot: !0, f: $h };
-        if (i === "g3hide" && n.sqPose !== "hidden" && hV(l, xe.x, xe.y, 80))
-          return {
-            verb: "HIDE",
-            cap: "crate",
-            x: xe.x,
-            y: xe.y - 110,
-            r: 0,
-            hot: !0,
-            f: () => {
-              (dn(xe.x, xe.y, 63), n.pulse.delete("kcrate"), HA());
-            },
-          };
-      }
-      return n.room === "kitchen" && x.mops && ch2.greasy && hV(o, KV.x, KV.y, 90)
-        ? { verb: "MOP", cap: "pot", x: KV.x, y: 270, r: 0, hot: !0, f: BA }
-        : n.room === "kitchen" && x.mops && i === "g4k" && hV(o, xe.x, xe.y, 100)
-          ? { verb: "LEAVE SOUP", cap: "crate", x: xe.x + 10, y: xe.y - 108, r: 0, hot: !0, f: PA }
-          : null;
+        }),
+        spot({
+          id: "roll",
+          verb: "ROLL",
+          cap: "into a ball",
+          who: "sq",
+          at: [l.x, l.y - 150],
+          when: kitSq && wash && (ch2.warn > 0 || ch2.peek > 0) && n.sqPose !== "hidden" && n.sqPose !== "ball",
+          hot: !0,
+          f: () => {
+            ((n.sqPose = "ball"), (n.sq.moving = !1), D.hide());
+          },
+        }),
+        spot({
+          id: "recipe",
+          verb: "OPEN",
+          cap: "recipe",
+          who: "sq",
+          x: la.x,
+          y: la.y,
+          r: 80,
+          at: [la.x, 160],
+          when: kitSq && wash && !n.found.has("recipe"),
+          f: () => {
+            (ee("secret", "recipe", la.x, 160),
+              TV([{ k: "panel", id: "recipe" }, v("sq", "Secret ingredient: sasquatch hair?! ...Gross. But I'll keep it secret.")]));
+          },
+        }),
+        spot({
+          id: "rail",
+          verb: "GRAB",
+          cap: "dish",
+          who: "sq",
+          x: 660,
+          y: 430,
+          r: 80,
+          at: [660, 120],
+          when: kitSq && wash && ch2.held < 0 && ch2.done < q + 3,
+          hot: !0,
+          f: () => {
+            ((ch2.held = ch2.done + 1),
+              (ch2.scrub = 0),
+              D.grab(),
+              n.pulse.delete("rail"),
+              n.pulse.add("sink"),
+              TV([{ k: "panel", id: "tk" + ch2.held }]));
+          },
+        }),
+        spot({ id: "sink", verb: "SCRUB", cap: "dish", who: "sq", x: KV.x, y: KV.y, r: 80, at: [KV.x, 270], when: kitSq && wash && ch2.held > 0, hot: !0, f: $h }),
+        spot({
+          id: "kcrate",
+          verb: "HIDE",
+          cap: "crate",
+          who: "sq",
+          x: xe.x,
+          y: xe.y,
+          r: 80,
+          at: [xe.x, xe.y - 110],
+          when: kitSq && i === "g3hide" && n.sqPose !== "hidden",
+          hot: !0,
+          f: () => {
+            (dn(xe.x, xe.y, 63), n.pulse.delete("kcrate"), HA());
+          },
+        }),
+        spot({ id: "sink", verb: "MOP", cap: "pot", who: "mo", x: KV.x, y: KV.y, r: 90, at: [KV.x, 270], when: kitMo && ch2.greasy, hot: !0, f: BA }),
+        spot({ id: "kcrate", verb: "LEAVE SOUP", cap: "crate", who: "mo", x: xe.x, y: xe.y, r: 100, at: [xe.x + 10, xe.y - 108], when: kitMo && i === "g4k", hot: !0, f: PA }),
+      ];
+    }
+    function RA() {
+      return pick(ch2Spots());
     }
     function Ws() {
       (Ml(2),
@@ -1603,7 +1647,7 @@
         F(s, q - 88, 4, l.look > 0 ? "#ffcf33" : "#2bc48a"));
     }
     function tq(l, o, i, s) {
-      (n.pulse.has(s) && oV(l - 52, o - 100, 104, 110, 10), Ys(l, o), i && ga(l, o - 58));
+      (ringOf(s), Ys(l, o), i && ga(l, o - 58));
     }
     function kitchenPhase(ph) {
       // Phases whose work happens in the kitchen.
@@ -1708,7 +1752,7 @@
         m(po.x - 30, 290, 60, 90, 4),
         r("#e5533d", 4),
         g("OPEN", po.x, 318, 12, "#ffffff", "center", 900),
-        n.pulse.has("backd") && oV(Sa.x - 36, 290, 72, 100, 8),
+        ringOf("backd"),
         m(Sa.x - 28, 300, 56, 80, 4),
         r("#a8743a", 4),
         g("KITCHEN", Sa.x, 290, 10, y, "center", 900));
@@ -1728,14 +1772,12 @@
         r("#59657d", 3),
         g("FUEL", i, s + 28, 10, "#ffffff", "center", 900),
         m(i - 10, s - 8, 20, 16, 2),
-        r(ch2.fuel ? "#2bc48a" : Math.sin(n.T * 5) > 0 ? "#e5533d" : "#59657d", 2),
-        n.pulse.has("nozzle") && oV(i - 30, s - 30, 60, 60, 10));
+        r(ch2.fuel ? "#2bc48a" : Math.sin(n.T * 5) > 0 ? "#e5533d" : "#59657d", 2));
       let q = [];
       (q.push({
         y: we.y,
         d: () => {
-          (n.pulse.has("pump") && ch2.rust.nap && oV(we.x - 40, we.y - 130, 80, 140, 10),
-            m(we.x - 30, we.y - 120, 60, 120, 8),
+          (m(we.x - 30, we.y - 120, 60, 120, 8),
             r("#e5533d", 4),
             m(we.x - 20, we.y - 106, 40, 30, 4),
             r("#fff3d6", 2.5),
@@ -1808,13 +1850,13 @@
           XV(865, 128, 14, 14, 9, 3, 0),
           wV("#8b4a1c", 2),
           g("?", 865, 128, 14, "#ffffff", "center", 900)),
-        n.pulse.has("kdoor") && oV(Cl.x - 50, 230, 100, 160, 10),
+        ringOf("kdoor"),
         m(Cl.x - 40, 240, 80, 140, 4),
         r("#cfd8e3", 4),
         L(Cl.x, 280, 16),
         r("#8fdcff", 3),
         g("KITCHEN", Cl.x, 230, 10, y, "center", 900),
-        n.pulse.has("dfront") && oV(14, 250, 70, 140, 10),
+        ringOf("dfront"),
         m(20, 260, 56, 120, 4),
         r("#e5533d", 4),
         g("EXIT", 48, 300, 12, "#ffffff", "center", 900),
@@ -1838,8 +1880,8 @@
         r("#e5533d", 4),
         m(140, 306, 680, 18, 6),
         r("#fff3d6", 3),
-        n.pulse.has("counter") && oV(Ul.x - 70, 330, 140, 70, 10),
-        n.pulse.has("jar") && oV(Dl.x - 30, 236, 60, 76, 10),
+        ringOf("counter"),
+        ringOf("jar"),
         m(Dl.x - 20, 250, 40, 56, 8),
         r("rgba(200,235,255,.7)", 3),
         g("TIPS", Dl.x, 262, 9, y, "center", 900));
@@ -1994,7 +2036,8 @@
       (n.act && n.act.verb === "GRAB" && (m(400, 248, 88, 28, 10), r("#2bc48a", 3), g("GRAB", 444, 262, 16, "#ffffff", "center", 900)),
         n.act && n.act.verb === "COOK" && (m(868, 332, 70, 26, 10), r("#2bc48a", 3), g("COOK", 903, 345, 14, "#ffffff", "center", 900)),
         ch2.rumbleT > 0 && (m(250, 100, 200, 36, 10), r("#fff3d6", 3), g("RUMBLE", 350, 118, 20, "#b45309", "center", 900)));
-      (n.pulse.has("sink") && oV(KV.x - 130, 280, 260, 110, 10),
+      (ringOf("sink"),
+        ringOf("rail"),
         C([KV.x, 316, KV.x, 298, KV.x + 26, 298], "#8b97a6", 5),
         L(KV.x + 26, 304, 5),
         r("#8fdcff", 2),

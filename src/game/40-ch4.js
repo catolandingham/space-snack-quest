@@ -158,155 +158,148 @@
         H.phase === "m5" && n.ctrl && !H.met && (n.mo.f = 1),
         n.ctrl && (n.act = S6()));
     }
-    function S6() {
+    // Chapter 4's spots, in the order the picker tries them (see spot in 00-core.js).
+    function ch4Spots() {
       let l = n.sq,
-        o = n.mo,
-        i = H.phase;
-      if (n.room === "port" && i === "m1" && !x.mops) {
-        for (let s = 0; s < 3; s++) {
-          let q = xf[s];
-          if (n.sqPose !== "hidden" && hV(l, q.x, q.y, 70))
-            return {
-              verb: "HIDE",
-              x: q.x,
-              y: q.y - 100,
-              r: 0,
-              hot: s === 0 && n.pulse.has("can"),
-              f: () => {
-                (dn(q.x, q.y, 90 + s), n.pulse.delete("can"));
-              },
-            };
-          if (n.sqPose === "hidden" && x.spot === 90 + s)
-            return s === 1
-              ? x.sing
-                ? {
-                    verb: "STOP",
-                    x: q.x,
-                    y: q.y - 110,
-                    r: 0,
-                    f: () => {
-                      x.sing = !1;
-                    },
-                  }
-                : {
-                    verb: "SING",
-                    x: q.x,
-                    y: q.y - 110,
-                    r: 0,
-                    hot: !0,
-                    f: () => {
-                      ((x.sing = !0), D.snore());
-                    },
-                  }
-              : null;
-        }
-        if (!H.sock && n.sqPose !== "hidden" && hV(l, ia.x, ia.y, 70))
-          return {
-            verb: "LIFT",
-            x: ia.x,
-            y: 320,
-            r: 0,
+        i = H.phase,
+        port1 = n.room === "port" && i === "m1" && !x.mops,
+        stand = n.room === "stand" && i === "m2" && x.mops,
+        van = n.room === "van" && i === "m3" && x.mops,
+        inside = n.room === "inside" && (i === "m4a" || i === "m4b") && !x.mops,
+        sing = (l, o, i) =>
+          spot({
+            id: "sing",
+            verb: x.sing ? "STOP" : "SING",
+            who: "sq",
+            at: [l.x, l.y - o],
+            when: i,
+            hot: !x.sing,
+            f: x.sing
+              ? () => {
+                  x.sing = !1;
+                }
+              : () => {
+                  ((x.sing = !0), D.snore());
+                },
+          });
+      return [
+        ...xf.map((q, s) =>
+          spot({
+            id: s === 0 ? "can" : "can" + s,
+            verb: "HIDE",
+            who: "sq",
+            x: q.x,
+            y: q.y,
+            r: 70,
+            at: [q.x, q.y - 100],
+            when: port1 && n.sqPose !== "hidden",
+            hot: s === 0 && n.pulse.has("can"),
             f: () => {
-              ((H.sock = !0), ee("funny", "sock", ia.x, 320), TV([v("sq", "One sock. Size... ENORMOUS. Not mine. Probably.", "whisper")]));
+              (dn(q.x, q.y, 90 + s), n.pulse.delete("can"));
             },
-          };
-      }
-      if (n.room === "port" && i === "m5")
-        return x.sing
-          ? {
-              verb: "STOP",
-              x: l.x,
-              y: l.y - 150,
-              r: 0,
-              f: () => {
-                x.sing = !1;
-              },
-            }
-          : {
-              verb: "SING",
-              x: l.x,
-              y: l.y - 150,
-              r: 0,
-              hot: !0,
-              f: () => {
-                ((x.sing = !0), D.snore());
-              },
-            };
-      if (n.room === "port" && i === "m5d") return { verb: "DANCE", x: l.x, y: l.y - 150, r: 0, hot: !0, f: D6 };
-      if (n.room === "stand" && i === "m2" && x.mops) {
-        if (!n.found.has("poster4") && hV(o, In.x, In.y + 60, 90))
-          return {
-            verb: "READ",
-            x: In.x,
-            y: 300,
-            r: 0,
-            hot: !0,
-            f: () => {
-              (n.found.add("poster4"),
-                n.pulse.delete("poster"),
-                n.pulse.add("sdoor"),
-                TV([
-                  { k: "panel", id: "poster4" },
-                  v("mops", "...Lost in a Moon Pie shipment."),
-                  v("mops", "Your crib was a Moon Pie crate.", "whisper"),
-                  v("sq", "...That's ME?", "whisper"),
-                ]));
-            },
-          };
-        if (!n.found.has("menu") && hV(o, Hl.x, Hl.y + 60, 90))
-          return {
-            verb: "FLIP",
-            x: Hl.x,
-            y: 300,
-            r: 0,
-            f: () => {
-              (ee("secret", "menu", Hl.x, 300), TV([{ k: "panel", id: "menu4" }, v("mops", "Every year. Just in case.")]));
-            },
-          };
-        if (n.found.has("poster4") && hV(o, Qa.x, Qa.y + 60, 90)) return { verb: "KNOCK", x: Qa.x, y: 280, r: 0, hot: !0, f: E6 };
-      }
-      if (n.room === "stand" && i === "m2h") return { verb: "HUG!", x: l.x, y: l.y - 160, r: 0, hot: !0, f: k6 };
-      if (n.room === "van" && i === "m3" && x.mops) {
-        if (H.scrub < 3 && hV(o, Kn.x, Kn.y, 90))
-          return {
-            verb: "MOP",
-            x: Kn.x,
-            y: Kn.y - 120,
-            r: 0,
-            hot: !0,
-            f: () => {
-              (H.scrub++, D.splash(), H.scrub >= 3 && (n.pulse.delete("vmop"), n.pulse.add("seat"), TV([v("mops", "Old habits.")])));
-            },
-          };
-        if (!H.pine && hV(o, Ya.x, Ya.y, 80))
-          return {
-            verb: "FLIP",
-            x: Ya.x,
-            y: 280,
-            r: 0,
-            f: () => {
-              ((H.pine = !0), ee("funny", "pine", Ya.x, 280), TV([v("mops", '"Pine-ish." Smells like raccoon.')]));
-            },
-          };
-        if (H.scrub >= 3 && !H.slip && hV(o, Tt.x, Tt.y + 60, 100)) return { verb: "LOOK", x: Tt.x, y: 330, r: 0, hot: !0, f: O6 };
-      }
-      if (n.room === "inside" && (i === "m4a" || i === "m4b") && !x.mops) {
-        if (i === "m4a" && H.beam >= 0 && H.beam < 2.4) return { verb: "ROLL", x: l.x, y: l.y - 150, r: 0, hot: !0, f: w6 };
-        if (!n.found.has("photo") && hV(l, vf.x, vf.y + 60, 90))
-          return {
-            verb: "LOOK",
-            x: vf.x,
-            y: 300,
-            r: 0,
-            f: () => {
-              (ee("secret", "photo", vf.x, 300), TV([{ k: "panel", id: "photo4" }, v("sq", "They saved me a spot.", "whisper")]));
-            },
-          };
-        if (i === "m4b" && hV(l, To.x, To.y, 90)) return { verb: "EXIT", x: To.x + 20, y: 420, r: 0, hot: !0, f: N6 };
-      }
-      return n.room === "van" && i === "m4v" && !x.mops && !H.box && hV(l, Tt.x, Tt.y + 60, 100)
-        ? { verb: "GRAB", x: Tt.x, y: 330, r: 0, hot: !0, f: R6 }
-        : null;
+          }),
+        ),
+        sing(xf[1], 110, port1 && n.sqPose === "hidden" && x.spot === 91),
+        spot({
+          id: "sock",
+          verb: "LIFT",
+          who: "sq",
+          x: ia.x,
+          y: ia.y,
+          r: 70,
+          at: [ia.x, 320],
+          when: port1 && !H.sock && n.sqPose !== "hidden",
+          f: () => {
+            ((H.sock = !0), ee("funny", "sock", ia.x, 320), TV([v("sq", "One sock. Size... ENORMOUS. Not mine. Probably.", "whisper")]));
+          },
+        }),
+        sing(l, 150, n.room === "port" && i === "m5"),
+        spot({ id: "dance", verb: "DANCE", who: "sq", at: [l.x, l.y - 150], when: n.room === "port" && i === "m5d", hot: !0, f: D6 }),
+        spot({
+          id: "poster",
+          verb: "READ",
+          who: "mo",
+          x: In.x,
+          y: In.y + 60,
+          r: 90,
+          at: [In.x, 300],
+          when: stand && !n.found.has("poster4"),
+          hot: !0,
+          f: () => {
+            (n.found.add("poster4"),
+              n.pulse.delete("poster"),
+              n.pulse.add("sdoor"),
+              TV([
+                { k: "panel", id: "poster4" },
+                v("mops", "...Lost in a Moon Pie shipment."),
+                v("mops", "Your crib was a Moon Pie crate.", "whisper"),
+                v("sq", "...That's ME?", "whisper"),
+              ]));
+          },
+        }),
+        spot({
+          id: "menu",
+          verb: "FLIP",
+          who: "mo",
+          x: Hl.x,
+          y: Hl.y + 60,
+          r: 90,
+          at: [Hl.x, 300],
+          when: stand && !n.found.has("menu"),
+          f: () => {
+            (ee("secret", "menu", Hl.x, 300), TV([{ k: "panel", id: "menu4" }, v("mops", "Every year. Just in case.")]));
+          },
+        }),
+        spot({ id: "sdoor", verb: "KNOCK", who: "mo", x: Qa.x, y: Qa.y + 60, r: 90, at: [Qa.x, 280], when: stand && n.found.has("poster4"), hot: !0, f: E6 }),
+        spot({ id: "hug", verb: "HUG!", who: "sq", at: [l.x, l.y - 160], when: n.room === "stand" && i === "m2h", hot: !0, f: k6 }),
+        spot({
+          id: "vmop",
+          verb: "MOP",
+          who: "mo",
+          x: Kn.x,
+          y: Kn.y,
+          r: 90,
+          at: [Kn.x, Kn.y - 120],
+          when: van && H.scrub < 3,
+          hot: !0,
+          f: () => {
+            (H.scrub++, D.splash(), H.scrub >= 3 && (n.pulse.delete("vmop"), n.pulse.add("seat"), TV([v("mops", "Old habits.")])));
+          },
+        }),
+        spot({
+          id: "pine",
+          verb: "FLIP",
+          who: "mo",
+          x: Ya.x,
+          y: Ya.y,
+          r: 80,
+          at: [Ya.x, 280],
+          when: van && !H.pine,
+          f: () => {
+            ((H.pine = !0), ee("funny", "pine", Ya.x, 280), TV([v("mops", '"Pine-ish." Smells like raccoon.')]));
+          },
+        }),
+        spot({ id: "seat", verb: "LOOK", who: "mo", x: Tt.x, y: Tt.y + 60, r: 100, at: [Tt.x, 330], when: van && H.scrub >= 3 && !H.slip, hot: !0, f: O6 }),
+        spot({ id: "roll", verb: "ROLL", who: "sq", at: [l.x, l.y - 150], when: inside && i === "m4a" && H.beam >= 0 && H.beam < 2.4, hot: !0, f: w6 }),
+        spot({
+          id: "photo",
+          verb: "LOOK",
+          who: "sq",
+          x: vf.x,
+          y: vf.y + 60,
+          r: 90,
+          at: [vf.x, 300],
+          when: inside && !n.found.has("photo"),
+          f: () => {
+            (ee("secret", "photo", vf.x, 300), TV([{ k: "panel", id: "photo4" }, v("sq", "They saved me a spot.", "whisper")]));
+          },
+        }),
+        spot({ id: "iexit", verb: "EXIT", who: "sq", x: To.x, y: To.y, r: 90, at: [To.x + 20, 420], when: inside && i === "m4b", hot: !0, f: N6 }),
+        spot({ id: "seat", verb: "GRAB", who: "sq", x: Tt.x, y: Tt.y + 60, r: 100, at: [Tt.x, 330], when: n.room === "van" && i === "m4v" && !x.mops && !H.box, hot: !0, f: R6 }),
+      ];
+    }
+    function S6() {
+      return pick(ch4Spots());
     }
     function nq() {
       ((Ao = !1),
@@ -678,7 +671,7 @@
         r("#59657d", 2));
     }
     function L6(l, o, i) {
-      (i === 0 && n.pulse.has("can") && oV(l - 44, o - 104, 88, 110, 10),
+      (i === 0 && ringOf("can"),
         m(l - 36, o - 84, 72, 84, 8),
         r("#7d8a99", 3.5),
         C([l - 36, o - 56, l + 36, o - 56], "#59657d", 3),
@@ -753,11 +746,11 @@
         r("#e5533d", 4),
         g("BIG FURRY PANCAKES", 620, 112, 22, "#ffffff", "center", 900),
         Mo(380, 112, 0.6),
-        n.pulse.has("sdoor") && oV(Qa.x - 50, 230, 100, 160, 10),
+        ringOf("sdoor"),
         m(Qa.x - 44, 240, 88, 150, 6),
         r("#8b4a1c", 4),
         F(Qa.x + 28, 320, 5, "#ffcf33"),
-        n.pulse.has("poster") && oV(In.x - 54, 180, 108, 130, 10),
+        ringOf("poster"),
         m(In.x - 46, 190, 92, 112, 4),
         r("#ffffff", 3),
         g("MISSING", In.x, 206, 14, "#e5533d", "center", 900),
@@ -796,7 +789,7 @@
         e.closePath(),
         r("#2bc48a", 3),
         H.pine && g("PINE-ISH", Ya.x, 340, 12, "#2b8a5e", "center", 900),
-        n.pulse.has("seat") && oV(Tt.x - 110, 320, 220, 160, 10),
+        ringOf("seat"),
         m(Tt.x - 100, 330, 200, 60, 12),
         r("#e5533d", 4),
         m(Tt.x - 100, 390, 200, 70, 8),
@@ -804,7 +797,7 @@
         H.slip
           ? (m(Tt.x - 40, 300, 80, 34, 4), r("#3478f6", 3), m(Tt.x - 20, 290, 40, 14, 2), r("#fffaf0", 2))
           : H.scrub >= 3 && (m(Tt.x - 40, 446, 80, 20, 3), r("#3478f6", 2)),
-        n.pulse.has("vmop") && oV(Kn.x - 90, Kn.y - 50, 180, 90, 10));
+        ringOf("vmop"));
       for (let o = 0; o < 3 - H.scrub; o++) (X(Kn.x - 40 + o * 40, Kn.y + (o % 2) * 10, 26, 9), r("#7a4a2a", 0));
       (m(A6.x - 30, 400, 60, 180, 6), r("#59657d", 3));
       let l = [];
@@ -843,7 +836,7 @@
         r("#a8743a", 3),
         Mo(640, 430, 1),
         Mo(760, 430, 1),
-        n.pulse.has("iexit") && oV(To.x - 36, To.y - 140, 80, 150, 10),
+        ringOf("iexit"),
         m(To.x - 30, 400, 60, 170, 6),
         r("#8b4a1c", 3));
       let l = [];

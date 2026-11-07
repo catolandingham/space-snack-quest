@@ -223,168 +223,165 @@
           ((Q.floatT += l), (n.mo.y = Math.max(170, n.mo.y - 22 * l)), (n.mo.x = Math.max(70, n.mo.x - 4 * l))),
         n.ctrl && (n.act = i6()));
     }
+    // Chapter 3's spots, in the order the picker tries them (see spot in 00-core.js).
+    function ch3Spots() {
+      let i = Q.phase,
+        padSq = n.room === "pad" && !x.mops,
+        padMo = n.room === "pad" && x.mops && i === "p2",
+        temple = n.room === "temple" && i === "p3",
+        sing = (l, o, i) =>
+          spot({
+            id: "sing",
+            verb: x.sing ? "STOP" : "SING",
+            who: "sq",
+            at: [l.x, l.y - o],
+            when: i,
+            hot: !x.sing,
+            f: x.sing
+              ? () => {
+                  x.sing = !1;
+                }
+              : () => {
+                  ((x.sing = !0), l === ae && Q.sings++, D.snore());
+                },
+          });
+      return [
+        spot({
+          id: "barrel",
+          verb: "HIDE",
+          who: "sq",
+          x: OV.x,
+          y: OV.y,
+          r: 80,
+          at: [OV.x, OV.y - 100],
+          when: padSq && i === "p1" && n.sqPose !== "hidden",
+          hot: !0,
+          f: () => {
+            (dn(OV.x, OV.y, 70), n.pulse.delete("barrel"), f6());
+          },
+        }),
+        spot({
+          id: "barrel",
+          verb: "HIDE",
+          who: "sq",
+          x: OV.x,
+          y: OV.y,
+          r: 80,
+          at: [OV.x, OV.y - 100],
+          when: padSq && i === "p4a" && n.sqPose !== "hidden",
+          hot: !0,
+          f: () => {
+            dn(OV.x, OV.y, 70);
+          },
+        }),
+        sing(OV, 110, padSq && i === "p4a" && n.sqPose === "hidden" && x.spot === 70),
+        spot({ id: "ramp", verb: "BOARD", who: "sq", x: Pe.x, y: Pe.y, r: 80, at: [Pe.x, 360], when: padSq && i === "p4a" && n.sqPose !== "hidden", hot: !0, f: r6 }),
+        spot({
+          id: "cart",
+          verb: "GRAB",
+          who: "sq",
+          x: Ne.x,
+          y: Ne.y,
+          r: 80,
+          at: [Ne.x, Ne.y - 90],
+          when: padSq && i === "p4b" && !Q.rope,
+          hot: !0,
+          f: () => {
+            ((Q.rope = "held"), D.grab(), n.pulse.delete("cart"), n.pulse.add("edge"));
+          },
+        }),
+        spot({ id: "edge", verb: "THROW", who: "sq", x: Qn.x + 40, y: Qn.y, r: 100, at: [Qn.x + 40, 340], when: padSq && i === "p4b" && Q.rope === "held", hot: !0, f: c6 }),
+        spot({
+          id: "mug",
+          verb: "LIFT",
+          who: "mo",
+          x: La.x,
+          y: La.y,
+          r: 70,
+          at: [La.x, 330],
+          when: padMo && !Q.mug,
+          f: () => {
+            ((Q.mug = !0), ee("funny", "mug", La.x, 320), TV([v("mops", `"World's Okayest Raccoon." Honest.`)]));
+          },
+        }),
+        spot({
+          id: "dlog",
+          verb: "FLIP",
+          who: "mo",
+          x: G0.x,
+          y: G0.y,
+          r: 70,
+          at: [G0.x, 330],
+          when: padMo && !Q.log,
+          f: () => {
+            ((Q.log = !0), ee("secret", "deliverylog", G0.x, 320), TV([{ k: "panel", id: "dlog" }, v("mops", "...Pancake stand. Every Tuesday.")]));
+          },
+        }),
+        spot({ id: "zip", verb: "ASK", who: "mo", x: Af.x, y: Af.y + 40, r: 120, at: [Af.x, 280], when: padMo, hot: !0, f: s6 }),
+        spot({
+          id: "sign",
+          verb: "WIPE",
+          who: "ctl",
+          x: Gl.x,
+          y: Gl.y,
+          r: 70,
+          at: [Gl.x, 300],
+          when: temple && !Q.sign,
+          f: () => {
+            ((Q.sign = !0),
+              D.splash(),
+              ee("funny", "sign", Gl.x, 290),
+              TV([v(x.mops ? "mops" : "sq", x.mops ? '"Singing welcome." Huh.' : "SINGING WELCOME?!", x.mops ? "say" : "whisper")]));
+          },
+        }),
+        spot({
+          id: "alcove",
+          verb: "HIDE",
+          who: "sq",
+          x: ae.x,
+          y: ae.y,
+          r: 80,
+          at: [ae.x, ae.y - 110],
+          when: temple && !x.mops && n.sqPose !== "hidden",
+          hot: !0,
+          f: () => {
+            (dn(ae.x, ae.y, 71), n.pulse.delete("alcove"));
+          },
+        }),
+        sing(ae, 120, temple && !x.mops && n.sqPose === "hidden" && x.spot === 71),
+        spot({
+          id: "m1",
+          verb: "TURN",
+          who: "mo",
+          x: Ht.x,
+          y: Ht.y,
+          r: 70,
+          at: [Ht.x, Ht.y - 120],
+          when: temple && x.mops && !Q.m1,
+          hot: !0,
+          f: () => {
+            ((Q.m1 = !0), D.key(), n.pulse.delete("m1"), n.pulse.add("m2"));
+          },
+        }),
+        spot({ id: "m2", verb: "TURN", who: "mo", x: Pa.x, y: Pa.y, r: 70, at: [Pa.x, Pa.y - 120], when: temple && x.mops && Q.m1 && !Q.m2, hot: !0, f: q6 }),
+        spot({
+          id: "mural",
+          verb: "LOOK",
+          who: "mo",
+          x: Lt.x,
+          y: Lt.y + 40,
+          r: 110,
+          at: [Lt.x, 200],
+          when: n.room === "temple" && i === "p3x" && x.mops && !n.found.has("mural"),
+          f: () => {
+            (ee("secret", "mural", Lt.x, 200), TV([{ k: "panel", id: "mural" }, v("mops", "...Huh. Look at that.")]));
+          },
+        }),
+        spot({ id: "texit", verb: "EXIT", who: "mo", x: H0.x, y: H0.y, r: 90, at: [H0.x + 20, 420], when: n.room === "temple" && i === "p3x" && x.mops, hot: !0, f: q2 }),
+      ];
+    }
     function i6() {
-      let l = n.sq,
-        o = n.mo,
-        i = Q.phase;
-      if (n.room === "pad" && !x.mops) {
-        if (i === "p1" && n.sqPose !== "hidden" && hV(l, OV.x, OV.y, 80))
-          return {
-            verb: "HIDE",
-            x: OV.x,
-            y: OV.y - 100,
-            r: 0,
-            hot: !0,
-            f: () => {
-              (dn(OV.x, OV.y, 70), n.pulse.delete("barrel"), f6());
-            },
-          };
-        if (i === "p4a" && n.sqPose !== "hidden" && hV(l, OV.x, OV.y, 80))
-          return {
-            verb: "HIDE",
-            x: OV.x,
-            y: OV.y - 100,
-            r: 0,
-            hot: !0,
-            f: () => {
-              dn(OV.x, OV.y, 70);
-            },
-          };
-        if (i === "p4a" && n.sqPose === "hidden" && x.spot === 70)
-          return x.sing
-            ? {
-                verb: "STOP",
-                x: OV.x,
-                y: OV.y - 110,
-                r: 0,
-                f: () => {
-                  x.sing = !1;
-                },
-              }
-            : {
-                verb: "SING",
-                x: OV.x,
-                y: OV.y - 110,
-                r: 0,
-                hot: !0,
-                f: () => {
-                  ((x.sing = !0), D.snore());
-                },
-              };
-        if (i === "p4a" && n.sqPose !== "hidden" && hV(l, Pe.x, Pe.y, 80)) return { verb: "BOARD", x: Pe.x, y: 360, r: 0, hot: !0, f: r6 };
-        if (i === "p4b" && !Q.rope && hV(l, Ne.x, Ne.y, 80))
-          return {
-            verb: "GRAB",
-            x: Ne.x,
-            y: Ne.y - 90,
-            r: 0,
-            hot: !0,
-            f: () => {
-              ((Q.rope = "held"), D.grab(), n.pulse.delete("cart"), n.pulse.add("edge"));
-            },
-          };
-        if (i === "p4b" && Q.rope === "held" && hV(l, Qn.x + 40, Qn.y, 100))
-          return { verb: "THROW", x: Qn.x + 40, y: 340, r: 0, hot: !0, f: c6 };
-      }
-      if (n.room === "pad" && x.mops && i === "p2") {
-        if (!Q.mug && hV(o, La.x, La.y, 70))
-          return {
-            verb: "LIFT",
-            x: La.x,
-            y: 330,
-            r: 0,
-            f: () => {
-              ((Q.mug = !0), ee("funny", "mug", La.x, 320), TV([v("mops", `"World's Okayest Raccoon." Honest.`)]));
-            },
-          };
-        if (!Q.log && hV(o, G0.x, G0.y, 70))
-          return {
-            verb: "FLIP",
-            x: G0.x,
-            y: 330,
-            r: 0,
-            f: () => {
-              ((Q.log = !0),
-                ee("secret", "deliverylog", G0.x, 320),
-                TV([{ k: "panel", id: "dlog" }, v("mops", "...Pancake stand. Every Tuesday.")]));
-            },
-          };
-        if (hV(o, Af.x, Af.y + 40, 120)) return { verb: "ASK", x: Af.x, y: 280, r: 0, hot: !0, f: s6 };
-      }
-      if (n.room === "temple" && i === "p3") {
-        let s = Ks();
-        if (!Q.sign && hV(s, Gl.x, Gl.y, 70))
-          return {
-            verb: "WIPE",
-            x: Gl.x,
-            y: 300,
-            r: 0,
-            f: () => {
-              ((Q.sign = !0),
-                D.splash(),
-                ee("funny", "sign", Gl.x, 290),
-                TV([v(x.mops ? "mops" : "sq", x.mops ? '"Singing welcome." Huh.' : "SINGING WELCOME?!", x.mops ? "say" : "whisper")]));
-            },
-          };
-        if (!x.mops && n.sqPose !== "hidden" && hV(l, ae.x, ae.y, 80))
-          return {
-            verb: "HIDE",
-            x: ae.x,
-            y: ae.y - 110,
-            r: 0,
-            hot: !0,
-            f: () => {
-              (dn(ae.x, ae.y, 71), n.pulse.delete("alcove"));
-            },
-          };
-        if (!x.mops && n.sqPose === "hidden" && x.spot === 71)
-          return x.sing
-            ? {
-                verb: "STOP",
-                x: ae.x,
-                y: ae.y - 120,
-                r: 0,
-                f: () => {
-                  x.sing = !1;
-                },
-              }
-            : {
-                verb: "SING",
-                x: ae.x,
-                y: ae.y - 120,
-                r: 0,
-                hot: !0,
-                f: () => {
-                  ((x.sing = !0), Q.sings++, D.snore());
-                },
-              };
-        if (x.mops && !Q.m1 && hV(o, Ht.x, Ht.y, 70))
-          return {
-            verb: "TURN",
-            x: Ht.x,
-            y: Ht.y - 120,
-            r: 0,
-            hot: !0,
-            f: () => {
-              ((Q.m1 = !0), D.key(), n.pulse.delete("m1"), n.pulse.add("m2"));
-            },
-          };
-        if (x.mops && Q.m1 && !Q.m2 && hV(o, Pa.x, Pa.y, 70)) return { verb: "TURN", x: Pa.x, y: Pa.y - 120, r: 0, hot: !0, f: q6 };
-      }
-      if (n.room === "temple" && i === "p3x" && x.mops) {
-        if (!n.found.has("mural") && hV(o, Lt.x, Lt.y + 40, 110))
-          return {
-            verb: "LOOK",
-            x: Lt.x,
-            y: 200,
-            r: 0,
-            f: () => {
-              (ee("secret", "mural", Lt.x, 200), TV([{ k: "panel", id: "mural" }, v("mops", "...Huh. Look at that.")]));
-            },
-          };
-        if (hV(o, H0.x, H0.y, 90)) return { verb: "EXIT", x: H0.x + 20, y: 420, r: 0, hot: !0, f: q2 };
-      }
-      return null;
+      return pick(ch3Spots());
     }
     function aq() {
       (Ml(3),
@@ -694,7 +691,7 @@
         l.alert > 0 && g("!", i, s - 110, 40, "#e5533d", "center", 900));
     }
     function d6(l, o, i, s) {
-      (n.pulse.has(s) && oV(l - 46, o - 104, 92, 110, 10),
+      (ringOf(s),
         X(l, o - 2, 40, 10),
         r("#7a4a2a", 3),
         m(l - 40, o - 92, 80, 90, 14),
@@ -747,7 +744,7 @@
       for (let s = 0; s < 34; s++) F((s * 131) % c, (s * 41) % 300, 1.6, "#ffffff");
       (Ut("mars", 560, 120, 70), (e.fillStyle = "#8a8378"), e.fillRect(0, 380, c, b - 380), C([0, 380, c, 380], y, 4));
       for (let s = 0; s < 9; s++) (X(80 + s * 110, 610 - (s % 3) * 50, 24, 7), r("#766f65", 0));
-      (n.pulse.has("edge") && oV(Qn.x - 60, Qn.y - 110, 120, 140, 10),
+      (ringOf("edge"),
         C([20, 380, 20, b], "#59657d", 5),
         g("EDGE", 46, 400, 12, "#ffffff", "center", 900),
         m(80, 170, 300, 60, 10),
@@ -765,7 +762,7 @@
         e.lineTo(100, 262),
         e.closePath(),
         r("#e5533d", 3),
-        Q.zip && n.room === "pad" && Q.phase !== "p4b" && (n.pulse.has("zip") && oV(Q.zipX - 50, 250, 100, 140, 10), c2(Q.zipX, 380, 1)),
+        Q.zip && n.room === "pad" && Q.phase !== "p4b" && (ringOf("zip"), c2(Q.zipX, 380, 1)),
         m(90, 360, 280, 60, 6),
         r("#fff3d6", 4));
       for (let s = 0; s < 5; s++) xo(200 + s * 30, 352, 0.7);
@@ -804,7 +801,7 @@
         r("#ffcf33", 4),
         g("ZIP", o.x - 15, o.y + 10, 22, "#7a4a2a", "center", 900),
         xo(o.x + 34, o.y + 10, 0.6),
-        n.pulse.has("ramp") && oV(Pe.x - 50, Pe.y - 150, 100, 160, 10),
+        ringOf("ramp"),
         e.beginPath(),
         e.moveTo(Pe.x - 30, o.y + 60),
         e.lineTo(Pe.x + 30, o.y + 60),
@@ -823,7 +820,7 @@
         i.push({
           y: Ne.y,
           d: () => {
-            (n.pulse.has("cart") && oV(Ne.x - 60, Ne.y - 90, 120, 100, 10),
+            (ringOf("cart"),
               m(Ne.x - 50, Ne.y - 50, 100, 40, 6),
               r("#e5533d", 3),
               L(Ne.x - 30, Ne.y - 6, 10),
@@ -890,7 +887,7 @@
         for (let s = 0; s < 2; s++) Pt(Yn.x - 40 - ((n.T * 40 + s * 40) % 80), 320 - s * 20);
       let o = [],
         i = (s, q, d) => {
-          (n.pulse.has(d) && oV(s.x - 40, s.y - 120, 80, 130, 10),
+          (ringOf(d),
             C([s.x, s.y, s.x, s.y - 50], y, 4),
             e.save(),
             e.translate(s.x, s.y - 70),
@@ -904,7 +901,7 @@
         o.push({
           y: ae.y,
           d: () => {
-            (n.pulse.has("alcove") && oV(ae.x - 56, ae.y - 140, 112, 150, 10),
+            (ringOf("alcove"),
               m(ae.x - 50, ae.y - 130, 100, 130, 30),
               r("#3a2f40", 4),
               n.sqPose === "hidden" &&
@@ -913,7 +910,7 @@
               x.sing && x.spot === 71 && Pt(ae.x + 40, ae.y - 140));
           },
         }),
-        n.pulse.has("texit") && oV(H0.x - 36, H0.y - 120, 80, 130, 10));
+        ringOf("texit"));
       for (let s of Q.rov) o.push({ y: s.y, d: () => h2(s, !de() && s.look <= 0) });
       (Q.zip && o.push({ y: 470, d: () => c2(Q.zipX, 470, 1) }), yn(o), o.sort((s, q) => s.y - q.y).forEach((s) => s.d()));
     }

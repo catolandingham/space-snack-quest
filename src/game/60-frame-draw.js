@@ -410,6 +410,33 @@
         q && g(q, l + i - 30, o + 14, 13, "#7a2e1d", "center", 900),
         e.restore());
     }
+    // A spot's ring: its circle or box on the floor, glowing, with a bouncing arrow over it. It is drawn
+    // from the spot's own numbers (see spot in 00-core.js), never from a box typed in here.
+    function ringZone(l) {
+      let o = 0,
+        d = 0.5 + 0.5 * Math.sin(n.T * 5);
+      (ringsDrawn.push(l.box ? { id: l.id, who: l.who, box: { ...l.box } } : { id: l.id, who: l.who, x: l.x, y: l.y, r: l.r }),
+        e.save(),
+        (e.shadowColor = "#ffcf33"),
+        (e.shadowBlur = 18 + 16 * d),
+        e.beginPath(),
+        l.box ? e.rect(l.box.x0 - o, l.box.y0, l.box.x1 - l.box.x0, l.box.y1 - l.box.y0) : e.arc(l.x - o, l.y, l.r, 0, Math.PI * 2),
+        (e.fillStyle = "rgba(255,207,51," + (0.1 + 0.12 * d).toFixed(3) + ")"),
+        e.fill(),
+        (e.lineWidth = 6),
+        (e.strokeStyle = "#ffcf33"),
+        e.stroke(),
+        e.setLineDash([12, 8]),
+        (e.lineDashOffset = -n.T * 24),
+        (e.lineWidth = 3),
+        (e.strokeStyle = "#ff8a00"),
+        e.stroke(),
+        e.restore(),
+        e.setLineDash([]));
+      let i = (l.box ? (l.box.x0 + l.box.x1) / 2 : l.x) - o,
+        s = (l.box ? l.box.y0 : l.y - l.r) - 10 - 8 * Math.abs(Math.sin(n.T * 4));
+      s > 40 && (e.beginPath(), e.moveTo(i - 14, s - 18), e.lineTo(i + 14, s - 18), e.lineTo(i, s), e.closePath(), r("#ffcf33", 3));
+    }
     function oV(l, o, i, s, q = 14) {
       let d = 0.5 + 0.5 * Math.sin(n.T * 5);
       (e.save(),
@@ -516,7 +543,7 @@
         e.translate(200, 212),
         rq(0, 0, 0.45),
         e.restore(),
-        n.noteNear && n.scene === "S1" && oV(164, 162, 72, 82, 6),
+        n.scene === "S1" && ringNear("sched"),
         m(408, 300, 104, 12, 3),
         r("#cdbb98", 3),
         n.scene === "S1" || n.found.has("stash"))
@@ -535,14 +562,14 @@
         m(446, 338, 32, 12, 3),
         r("#dfe4ea", 2),
         n.lunch === "shelf" &&
-          (n.pulse.has("lunch") && oV(468, 258, 34, 42, 8),
+          (pointer("lunch", 468, 258, 34, 42, 8),
           m(468, 258, 34, 42, 3),
           r("#cdbb98", 2.5),
           C([468, 270, 502, 270], y, 1.5),
           g("MOPS", 485, 286, 9, y)),
         m(540, 250, 150, 14, 4),
         r("#cdbb98", 4),
-        n.pulse.has("tv") && oV(560, 170, 110, 80, 10),
+        pointer("tv", 560, 170, 110, 80, 10),
         m(560, 170, 110, 80, 8),
         r(y, 0),
         m(570, 180, 90, 58, 4),
@@ -554,7 +581,7 @@
       } else r("#59657d", 0);
       let l = n.doorGlow;
       if (
-        (n.pulse.has("door") && oV(800, 250, 90, 170, 12),
+        (pointer("door", 800, 250, 90, 170, 12),
         n.door > 0
           ? (m(800, 250, 90, 170, 8),
             r(n.botOn ? "#fff0b8" : "#ffe3a0", 5),
@@ -591,7 +618,7 @@
       for (let o = 0; o < 6; o++) C([800 + o * 10, 554, 800 + o * 10, 568], y, 3);
       for (let o of vV) (X(o.x, o.y, 24, 8), (e.fillStyle = "rgba(63,184,240," + (Math.min(1, o.t / 3) * 0.3).toFixed(3) + ")"), e.fill());
       if (
-        (n.pulse.has("bed") && oV(110, 410, 190, 130, 12),
+        (pointer("bed", 110, 410, 190, 130, 12),
         m(112, 524, 16, 18, 3),
         r("#c98a3a", 3),
         m(282, 524, 16, 18, 3),
@@ -604,7 +631,7 @@
         (X(196, 533, 5, 5 * o), r("#ffffff", 0), X(214, 533, 5, 5 * o), r("#ffffff", 0), F(197, 534, 2, y), F(215, 534, 2, y));
       }
       (H2(),
-        n.pulse.has("gbox") && oV(318, 478, 64, 44, 8),
+        pointer("gbox", 318, 478, 64, 44, 8),
         L2(),
         cq(),
         n.chair && (m(588, 396, 110, 74, 14), r("#e5533d", 4), m(580, 448, 126, 32, 10), r("#ff6a3d", 4)),
@@ -1819,7 +1846,7 @@
         for (let s = 0; s < 3; s++) F(552 + s * 12, 532, 2, "#ffffff");
       }
       n.gift &&
-        (n.pulse.has("gift") && oV(168, 362, 96, 52, 10),
+        (pointer("gift", 168, 362, 96, 52, 10),
         pq(190, 388, 0.8, -0.3),
         e.save(),
         e.translate(236, 392),
@@ -1836,7 +1863,7 @@
       e.globalAlpha = 1;
     }
     function E5() {
-      ((qq = 0), (mq = []));
+      ((qq = 0), (mq = []), (ringsDrawn = []));
       let l = n.cur;
       if (l && l.k === "card") {
         M5(l.id, l.text, l.by, l);
@@ -1885,6 +1912,7 @@
                                   : n.room === "hangar"
                                     ? e5()
                                     : x5(),
+        ringsLeft(),
         xp());
       for (let i of n.sparks)
         if (i.x !== 300 && i.s === "!") {

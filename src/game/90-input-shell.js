@@ -278,6 +278,13 @@
           (clearRun(), applyG(ph));
         },
         pickAct: () => (n.scene && n.scene.startsWith("G") ? RA() : null),
+        // Spots (task T17): every spot of the current scene, the action offered where the player stands,
+        // one frame drawn now, and the rings that frame drew.
+        spotsNow: () => spotsNow(),
+        offerNow: () => pick(spotsNow()),
+        drawFrame: () => Ap(),
+        rings: () => ringsDrawn.slice(),
+        inSpot: (l) => inSpot(l),
         walkBounds: () => sn(),
         drain: drainQueue,
         sqAway: () => sqAway(),

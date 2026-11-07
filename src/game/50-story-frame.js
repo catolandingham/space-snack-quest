@@ -115,13 +115,8 @@
           e.beginPath(),
           e.ellipse(s, q - 10, 24, 9, 0, 0, Math.PI * 2),
           r("#f0e2c0", 2.5)),
-        n.scene === "S6" &&
-          n.ctrl &&
-          n.act &&
-          (n.act.verb === "PULL" || n.act.verb === "UNROLL") &&
-          n.act &&
-          oV(n.act.x + B.camX - 32, l.y - 130, 64, 90, 8),
-        e.restore());
+        e.restore(),
+        n.scene === "S6" && n.ctrl && n.act && (n.act.verb === "PULL" || n.act.verb === "UNROLL") && ringZone(n.act.spot));
     }
     function J6() {
       let l = B.halves[0];
@@ -161,7 +156,7 @@
         r("#2bc48a", 2.5),
         g("ORDER", l, o - 122, 11, "#ffffff", "center", 900),
         Math.sin(n.T * 3) > 0 && F(l + 44, o - 98, 3, "#2bc48a"),
-        n.pulse.has("term") && oV(l - 66, o - 186, 132, 196, 10));
+        pointer("term", l - 66, o - 186, 132, 196, 10));
     }
     function W6(l) {
       if ((l.push({ y: lt.y, d: Z6 }), !!["S6", "S7", "S7b", "S8", "S9", "S10", "S11"].includes(n.scene))) {
@@ -181,14 +176,14 @@
             l.push({
               y: gt.y,
               d: () => {
-                (n.pulse.has("box9") && oV(gt.x - 50, gt.y - 52, 100, 62, 8),
+                (pointer("box9", gt.x - 50, gt.y - 52, 100, 62, 8),
                   Ys(gt.x, gt.y),
                   n.sqPose === "hidden" && ga(gt.x, gt.y - 50),
                   Pt(gt.x + 52, gt.y - 70));
               },
             }),
           n.scene === "S11" &&
-            (n.pulse.has("plant11") && l.push({ y: ne.y - 1, d: () => oV(ne.x - 46, ne.y - 110, 92, 116, 12) }),
+            (n.pulse.has("plant11") && l.push({ y: ne.y - 1, d: () => pointer("plant11", ne.x - 46, ne.y - 110, 92, 116, 12) }),
             l.push({ y: ne.y + 1, d: () => Pt(ne.x + 46, ne.y - 100) })),
           n.scene === "S9" || (n.scene === "S11" && !x.doorOpen))
         ) {
@@ -212,7 +207,7 @@
           l.push({
             y: Le.y,
             d: () => {
-              (n.pulse.has("ward") && oV(Le.x - 40, Le.y - 150, 80, 154, 8),
+              (pointer("ward", Le.x - 40, Le.y - 150, 80, 154, 8),
                 m(Le.x - 34, Le.y - 144, 68, 144, 4),
                 r("#b07a4a", 4),
                 C([Le.x, Le.y - 140, Le.x, Le.y - 4], y, 3),
@@ -236,7 +231,7 @@
             (e.globalAlpha = 1),
             C([Ha.x - 30, 160, Ha.x - 30, 360], "#3478f6", 5),
             C([Ha.x + 30, 160, Ha.x + 30, 360], "#3478f6", 5),
-            n.pulse.has("gate") && oV(Ha.x - 36, 156, 72, 210, 8)),
+            pointer("gate", Ha.x - 36, 156, 72, 210, 8)),
           (n.scene === "S6" || ["S4", "S7", "S7b", "S8", "S9", "S10", "S11"].includes(n.scene)) &&
             xh(yo.x, yo.y, (FV.on && FV.pulled >= 0) || (n.scene === "S6" && x.tour.some((l) => !!l.run && l.run.pulled >= 0))),
           n.scene === "S6" &&
@@ -265,9 +260,9 @@
           }
           e.restore();
         }
-        (n.pulse.has("trash") && oV(DV.x - 32, DV.y - 56, 64, 62, 8),
-          n.pulse.has("vent") && oV(SV.x - 36, SV.y - 18, 72, 36, 8),
-          n.pulse.has("mopbot") && B.bots[0] && oV(B.bots[0].x - 40, B.bots[0].y - 90, 80, 100, 10),
+        (pointer("trash", DV.x - 32, DV.y - 56, 64, 62, 8),
+          pointer("vent", SV.x - 36, SV.y - 18, 72, 36, 8),
+          B.bots[0] && pointer("mopbot", B.bots[0].x - 40, B.bots[0].y - 90, 80, 100, 10),
           n.sqPose !== "hidden" &&
             x.costume &&
             (XV(n.sq.x, n.sq.y - 50, 28, 30, 14, 4, 0),
@@ -293,7 +288,7 @@
           [20, 6],
         ])
           (L(zl.x + l, zl.y + o, 11), r("#fffaf0", 2.5));
-        n.act && n.act.verb === "UNFOLD" && oV(zl.x - 40, zl.y - 22, 80, 40, 8);
+        ringNear("notes");
       }
       (x.got2 ||
         (e.save(),
@@ -302,7 +297,7 @@
         m(-14, -10, 28, 20, 1),
         r("#ffffff", 2),
         e.restore(),
-        oV(Rl.x - 26, Rl.y - 20, 52, 40, 8)),
+        spotsCalled("half2").forEach(ringZone)),
         Fe(n.mo.x, n.mo.y + 30, he * 0.9, { f: n.mo.f, walk: n.mo.moving ? n.mo.walk : 0 }));
     }
     function e5() {
@@ -322,13 +317,13 @@
         e.lineTo(l.x - 60, l.y + 150),
         e.closePath(),
         r("#b5bcc8", 3),
-        n.pulse.has("ship") && oV(l.x - 70, l.y + 34, 140, 124, 10));
+        ringOf("ship"));
       let o = [];
       (D0.forEach((i, s) =>
         o.push({
           y: i.y + 40,
           d: () => {
-            (n.pulse.has("c" + s) && oV(i.x - 46, i.y - 70, 92, 116, 10),
+            (ringOf("c" + s),
               m(i.x - 40, i.y - 64, 80, 104, 8),
               r("#ffffff", 4),
               m(i.x - 32, i.y - 56, 64, 60, 4),
@@ -681,13 +676,13 @@
               r("#8a93a3", 3),
               X(me.x, me.y - 36, 20, 5),
               r("#59657d", 2.5),
-              qV.bro.on && qV.bro.inBin && (n.pulse.has("bro") && oV(me.x - 16, me.y - 70, 32, 40, 8), w2(me.x, me.y - 50, 1.1, !0)));
+              qV.bro.on && qV.bro.inBin && (pointer("bro", me.x - 16, me.y - 70, 32, 40, 8), w2(me.x, me.y - 50, 1.1, !0)));
           },
         }),
         l.push({
           y: rt.y,
           d: () => {
-            (n.pulse.has("plant5") && oV(rt.x - 46, rt.y - 110, 92, 116, 12), uf(rt.x, rt.y), n.sqPose === "hidden" && ga(rt.x, rt.y - 52));
+            (pointer("plant5", rt.x - 46, rt.y - 110, 92, 116, 12), uf(rt.x, rt.y), n.sqPose === "hidden" && ga(rt.x, rt.y - 52));
           },
         }),
         n.sqPose !== "hidden" && l.push({ y: n.sq.y, d: () => Re(n.sq.x, n.sq.y, he, { walk: n.sq.moving ? n.sq.walk : 0, f: n.sq.f }) }),
@@ -920,10 +915,7 @@
         }
         e.restore();
       }
-      if ((B.certNear && oV(HV.x - 26, HV.y - 31, 52, 62, 6), B.photoNear)) {
-        let o = rf(qf);
-        oV(o.x - 18, o.y - 13, 36, 28, 6);
-      }
+      n.scene === "S2" && (ringNear("badge"), ringNear("photo23"));
       (e.save(), m(760, 14, 640, 132, 12), e.clip(), (e.fillStyle = "#2b3a67"), e.fillRect(760, 14, 640, 132));
       for (let o = 0; o < 22; o++) F(770 + ((o * 89) % 620), 22 + ((o * 37) % 110), 1.6, "#fff");
       if (B.ship > 0) {
@@ -937,7 +929,7 @@
             (m(o - 70, 82, 140, 20, 4),
             r("#e5533d", 2),
             g("NEXT STOP: MARS", o, 92, 11, "#ffffff", "center", 900),
-            n.pulse.has("hull") && oV(o - 76, 76, 152, 32, 6)),
+            pointer("hull", o - 76, 76, 152, 32, 6)),
           e.save(),
           e.translate(o + 120, 84),
           dq(0, 0, !1),
@@ -1009,7 +1001,7 @@
             d: () => {
               let o = ye.x,
                 i = ye.y;
-              (n.pulse.has("crate") && oV(o, i, 150, 84, 8),
+              (pointer("crate", o, i, 150, 84, 8),
                 Xn(o, i, 150, 84, "\xD7500"),
                 m(o + 6, i - 22, 138, 20, 3),
                 r("#fffdf3", 2),

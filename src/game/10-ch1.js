@@ -104,11 +104,10 @@
           v("mops", "\u266A Hmm-hmm-hmmm... \u266A"),
           N(() => {
             ((n.ctrl = !0),
-              (n.act = {
+              (n.act = offer({
+                id: "sing",
                 verb: "SING",
-                x: 0,
-                y: 0,
-                r: 0,
+                at: [0, 0],
                 hot: !0,
                 f: () => {
                   ((n.act = null),
@@ -127,7 +126,7 @@
                       N(Ep),
                     ]));
                 },
-              }));
+              })));
           }),
         ]));
     }
@@ -174,8 +173,10 @@
             ((n.glowT = 0),
               n.pulse.add("door"),
               (n.chip = "What's that noise?"),
-              (n.act = {
+              (n.act = offer({
+                id: "door",
                 verb: "PEEK",
+                who: "sq",
                 x: 790,
                 y: 470,
                 r: 95,
@@ -187,7 +188,7 @@
                     n.pulse.delete("door"),
                     J([{ k: "panel", id: "crack" }]));
                 },
-              }));
+              })));
           }),
         ]));
     }
@@ -203,8 +204,10 @@
           N(() => {
             ((n.ctrl = !0),
               (n.idle = 0),
-              (n.act = {
+              (n.act = offer({
+                id: "door",
                 verb: "SNEAK OUT",
+                who: "sq",
                 x: 790,
                 y: 470,
                 r: 95,
@@ -212,7 +215,7 @@
                 f: () => {
                   ((n.act = null), (n.ctrl = !1), n.pulse.clear(), (n.glowT = -1), (n.doorGlow = 0), ch());
                 },
-              }));
+              })));
           }),
         ])),
         l === "note" &&
@@ -222,8 +225,10 @@
               ((n.chip = "Put them in your Guardian Box"),
                 n.pulse.add("gbox"),
                 (n.ctrl = !0),
-                (n.act = {
+                (n.act = offer({
+                  id: "gbox",
                   verb: "OPEN",
+                  who: "sq",
                   x: 350,
                   y: 545,
                   r: 95,
@@ -236,7 +241,7 @@
                       (n.scene = "O9"),
                       J([{ k: "panel", id: "gbox" }]));
                   },
-                }));
+                })));
             }),
           ]),
         l === "gbox" && J([v("sq", "One more for the box. Someday I'll meet them."), uV(1), N(Ah)]));
@@ -290,11 +295,10 @@
         (n.act = dh()));
     }
     function dh() {
-      return {
+      return offer({
+        id: "hide",
         verb: "HIDE!",
-        x: 480,
-        y: 575,
-        r: 0,
+        at: [480, 575],
         hot: !0,
         f: () => {
           ((n.act = null),
@@ -308,7 +312,7 @@
               }),
             ]));
         },
-      };
+      });
     }
     function wp(l) {
       let o = n.runner;
@@ -410,8 +414,10 @@
         n.pulse.add("bed"),
         (n.ctrl = !0),
         kV("sq", "Hide!"),
-        (n.act = {
+        (n.act = offer({
+          id: "bed",
           verb: "HIDE",
+          who: "sq",
           x: 220,
           y: 560,
           r: 120,
@@ -427,7 +433,7 @@
               (n.sq.y = 545),
               mh());
           },
-        }),
+        })),
         (n.o5T = 0),
         (n.botOn = !1),
         (n.coneIn = !1));
@@ -543,8 +549,10 @@
       ((n.scene = "O7"),
         n.pulse.add("tv"),
         (n.ctrl = !0),
-        (n.act = {
+        (n.act = offer({
+          id: "tv",
           verb: "WATCH",
+          who: "sq",
           x: 615,
           y: 400,
           r: 120,
@@ -570,7 +578,7 @@
                 N(Cp),
               ]));
           },
-        }));
+        })));
     }
     function Cp() {
       ((n.scene = "O8"),
@@ -578,8 +586,10 @@
           N(() => {
             (n.pulse.add("bed"),
               (n.ctrl = !0),
-              (n.act = {
+              (n.act = offer({
+                id: "bed",
                 verb: "SLEEP",
+                who: "sq",
                 x: 220,
                 y: 560,
                 r: 130,
@@ -602,11 +612,10 @@
                           D.pickup(),
                           n.pulse.add("gift"),
                           (n.ctrl = !0),
-                          (n.act = {
+                          (n.act = offer({
+                            id: "gift",
                             verb: "GRAB",
-                            x: 0,
-                            y: 0,
-                            r: 0,
+                            at: [0, 0],
                             f: () => {
                               ((n.act = null),
                                 (n.ctrl = !1),
@@ -623,11 +632,11 @@
                                   { k: "panel", id: "note" },
                                 ]));
                             },
-                          }));
+                          })));
                       }),
                     ]));
                 },
-              }));
+              })));
           }),
         ]));
     }
@@ -671,90 +680,140 @@
           }),
         ]));
     }
+    // Chapter 1's spots, scene by scene, in the order each picker tries them (see spot in 00-core.js).
+    function ch1Spots() {
+      let l = n.scene;
+      return l === "S1"
+        ? s1Spots()
+        : l === "S1L"
+          ? s1lSpots()
+          : l === "S2"
+            ? s2Spots()
+            : l === "S4"
+              ? s4Spots()
+              : l === "S5"
+                ? s5Spots()
+                : l === "S6"
+                  ? s6Spots()
+                  : l === "S7"
+                    ? s7Spots()
+                    : l === "S7b"
+                      ? s7bSpots()
+                      : l === "S9"
+                        ? s9Spots()
+                        : l === "S10"
+                          ? s10Spots()
+                          : l === "S10d"
+                            ? s10dSpots()
+                            : l === "S11"
+                              ? s11Spots()
+                              : l === "S12"
+                                ? s12Spots()
+                                : [];
+    }
+    function s1Spots() {
+      return [
+        spot({
+          id: "lunch",
+          verb: "GRAB",
+          who: "sq",
+          x: 470,
+          y: 400,
+          r: 80,
+          at: [485, 330],
+          when: n.lunch === "shelf",
+          f: () => {
+            ((n.lunch = "held"), n.pulse.delete("lunch"), n.pulse.add("door"), D.grab());
+          },
+        }),
+        spot({
+          id: "stash",
+          verb: "OPEN",
+          who: "sq",
+          x: 462,
+          y: 400,
+          r: 80,
+          at: [462, 380],
+          when: !n.found.has("stash") && n.lunch === "held",
+          f: () => {
+            (D.pickup(), ee("secret", "stash", 462, 300), TV([v("sq", "Mops's emergency Moon Pies!")]));
+          },
+        }),
+        spot({
+          id: "crib",
+          verb: "PULL",
+          who: "sq",
+          x: 560,
+          y: 560,
+          r: 80,
+          at: [560, 500],
+          when: !n.found.has("crib"),
+          f: () => {
+            (D.grab(), ee("funny", "crib", 560, 460), TV([v("sq", "My baby bed! A mop bucket. Still smells like lemons.")]));
+          },
+        }),
+        spot({
+          id: "sched",
+          verb: "LOOK",
+          who: "sq",
+          x: 200,
+          y: 400,
+          r: 90,
+          at: [200, 200],
+          when: !n.found.has("sched"),
+          f: () => {
+            ((n.ctrl = !1),
+              (n.act = null),
+              (n.sq.moving = !1),
+              n.found.add("sched"),
+              J([
+                { k: "panel", id: "sched" },
+                v("sq", "Moon Pie day!"),
+                N(() => {
+                  n.ctrl = !0;
+                }),
+              ]));
+          },
+        }),
+        spot({
+          id: "sched",
+          verb: "LOOK",
+          who: "sq",
+          x: 200,
+          y: 400,
+          r: 90,
+          at: [200, 200],
+          when: n.found.has("sched"),
+          f: () => {
+            ((n.ctrl = !1),
+              (n.act = null),
+              (n.sq.moving = !1),
+              J([
+                { k: "panel", id: "sched" },
+                N(() => {
+                  n.ctrl = !0;
+                }),
+              ]));
+          },
+        }),
+        spot({
+          id: "door",
+          verb: "SNEAK OUT",
+          who: "sq",
+          x: 790,
+          y: 470,
+          r: 100,
+          at: [845, 250],
+          when: n.lunch === "held",
+          hot: !0,
+          f: () => {
+            ((n.ctrl = !1), n.pulse.clear(), (n.act = null), J([ta(1), C2(845, 430, 220), B2(), N(Mh)]));
+          },
+        }),
+      ];
+    }
     function Bp() {
-      let l = n.sq,
-        o = (i, s, q) => Math.hypot(l.x - i, l.y - s) < q;
-      return n.lunch === "shelf" && o(470, 400, 80)
-        ? {
-            verb: "GRAB",
-            x: 485,
-            y: 330,
-            r: 0,
-            f: () => {
-              ((n.lunch = "held"), n.pulse.delete("lunch"), n.pulse.add("door"), D.grab());
-            },
-          }
-        : !n.found.has("stash") && n.lunch === "held" && o(462, 400, 80)
-          ? {
-              verb: "OPEN",
-              x: 462,
-              y: 380,
-              r: 0,
-              f: () => {
-                (D.pickup(), ee("secret", "stash", 462, 300), TV([v("sq", "Mops's emergency Moon Pies!")]));
-              },
-            }
-          : !n.found.has("crib") && o(560, 560, 80)
-            ? {
-                verb: "PULL",
-                x: 560,
-                y: 500,
-                r: 0,
-                f: () => {
-                  (D.grab(), ee("funny", "crib", 560, 460), TV([v("sq", "My baby bed! A mop bucket. Still smells like lemons.")]));
-                },
-              }
-            : ((n.noteNear = !n.found.has("sched") && o(200, 400, 90)),
-              n.noteNear
-                ? {
-                    verb: "LOOK",
-                    x: 200,
-                    y: 200,
-                    r: 0,
-                    f: () => {
-                      ((n.ctrl = !1),
-                        (n.act = null),
-                        (n.sq.moving = !1),
-                        n.found.add("sched"),
-                        J([
-                          { k: "panel", id: "sched" },
-                          v("sq", "Moon Pie day!"),
-                          N(() => {
-                            n.ctrl = !0;
-                          }),
-                        ]));
-                    },
-                  }
-                : n.found.has("sched") && o(200, 400, 90)
-                  ? {
-                      verb: "LOOK",
-                      x: 200,
-                      y: 200,
-                      r: 0,
-                      f: () => {
-                        ((n.ctrl = !1),
-                          (n.act = null),
-                          (n.sq.moving = !1),
-                          J([
-                            { k: "panel", id: "sched" },
-                            N(() => {
-                              n.ctrl = !0;
-                            }),
-                          ]));
-                      },
-                    }
-                  : n.lunch === "held" && o(790, 470, 100)
-                    ? {
-                        verb: "SNEAK OUT",
-                        x: 845,
-                        y: 250,
-                        r: 0,
-                        hot: !0,
-                        f: () => {
-                          ((n.ctrl = !1), n.pulse.clear(), (n.act = null), J([ta(1), C2(845, 430, 220), B2(), N(Mh)]));
-                        },
-                      }
-                    : null);
+      return pick(s1Spots());
     }
     let qn = [
         { kind: "plant", x: 170, y: 470 },
@@ -853,20 +912,27 @@
     function Qs() {
       n.sqPose === "hidden" && ((n.sqPose = "stand"), (n.sq.y = Math.min(590, n.sq.y + 26)), (aV.spot = -1));
     }
+    function s1lSpots() {
+      return [
+        spot({ id: "leave", verb: "LEAVE", who: "sq", at: [n.sq.x, n.sq.y - 30], when: n.sqPose === "hidden", f: Qs }),
+        ...qn.map((i, l) =>
+          spot({
+            id: "spot" + l,
+            verb: "HIDE",
+            who: "sq",
+            x: i.x,
+            y: i.y + 6,
+            r: 78,
+            at: [i.x, i.y - 30],
+            when: n.sqPose !== "hidden",
+            hot: aV.sec.mode === "rush" || aV.alertBy >= 0,
+            f: () => Gp(l),
+          }),
+        ),
+      ];
+    }
     function Hp() {
-      if (n.sqPose === "hidden") return { verb: "LEAVE", x: n.sq.x, y: n.sq.y - 30, r: 0, f: Qs };
-      let l = -1,
-        o = 78;
-      if (
-        (qn.forEach((s, q) => {
-          let d = Math.hypot(n.sq.x - s.x, n.sq.y - (s.y + 6));
-          d < o && ((o = d), (l = q));
-        }),
-        l < 0)
-      )
-        return null;
-      let i = qn[l];
-      return { verb: "HIDE", x: i.x, y: i.y - 30, r: 0, hot: aV.sec.mode === "rush" || aV.alertBy >= 0, f: () => Gp(l) };
+      return pick(s1lSpots());
     }
     function Lp(l) {
       let o = aV.tour[l];
@@ -1075,8 +1141,7 @@
         l.push({
           y: o.y,
           d: () => {
-            let s = n.ctrl && n.sqPose !== "hidden" && Math.hypot(n.sq.x - o.x, n.sq.y - (o.y + 6)) < 78;
-            ((n.pulse.has("spot" + i) || s) && oV(o.x - 46, o.y - 110, 92, 116, 12),
+            (n.pulse.has("spot" + i) ? ringOf("spot" + i) : ringNear("spot" + i),
               o.kind === "plant" ? uf(o.x, o.y) : Ys(o.x, o.y),
               n.sqPose === "hidden" && aV.spot === i && ga(o.x, o.kind === "plant" ? o.y - 52 : o.y - 50));
           },
@@ -1216,29 +1281,6 @@
     }
     let cf = 6,
       U0 = 0;
-    function wh() {
-      let l = n.sq;
-      return l.y >= 250 || l.x < 50 || l.x > 620
-        ? null
-        : {
-            verb: "LOOK",
-            x: l.x,
-            y: 230,
-            r: 0,
-            f: () => {
-              ((U0 = 0),
-                (n.ctrl = !1),
-                (n.act = null),
-                (n.sq.moving = !1),
-                J([
-                  { k: "panel", id: "gallery" },
-                  N(() => {
-                    n.ctrl = !0;
-                  }),
-                ]));
-            },
-          };
-    }
     function hf(l) {
       if (!(!n.cur || n.cur.k !== "panel" || n.cur.id !== "gallery")) {
         if (l === "close" || (l === "next" && U0 >= cf - 1)) {
@@ -1303,25 +1345,55 @@
         g("\u2715", 262, -186, 18, "#ffffff", "center", 900),
         e.restore());
     }
-    function Zp() {
-      let l = n.sq,
-        o = rf(qf);
-      if (((B.photoNear = !n.found.has("photo23") && Math.abs(l.x - o.x) < 90 && l.y < 300), B.photoNear))
-        return {
+    // Hall spots that sit on the gallery wall: a strip of floor under the picture. The strip's top is
+    // the hall floor's top edge, so it covers every place the old test (x near, y above a line) did.
+    function wallBox(l, o, i) {
+      return { x0: l - o, x1: l + o, y0: 190, y1: i };
+    }
+    // The gallery wall: LOOK anywhere along it. In S6 the strip has a hole near the terminal, as before.
+    function gallerySpot(l) {
+      return spot({
+        id: "gallery",
+        verb: "LOOK",
+        who: "sq",
+        box: { x0: 50, x1: 620, y0: 190, y1: 250 },
+        not: l,
+        at: [n.sq.x, 230],
+        f: () => {
+            ((U0 = 0),
+              (n.ctrl = !1),
+              (n.act = null),
+              (n.sq.moving = !1),
+              J([
+                { k: "panel", id: "gallery" },
+                N(() => {
+                  n.ctrl = !0;
+                }),
+              ]));
+          },
+      });
+    }
+    function s2Spots() {
+      let o = rf(qf);
+      return [
+        spot({
+          id: "photo23",
           verb: "FIX",
-          x: o.x,
-          y: 230,
-          r: 0,
+          who: "sq",
+          box: wallBox(o.x, 90, 300),
+          at: [o.x, 230],
+          when: !n.found.has("photo23"),
           f: () => {
             (D.key(), (B.p23T = n.T), ee("secret", "photo23", o.x, 200), TV([uV(0.6), v("sq", "Photo 23. I hid this here when I was 5.")]));
           },
-        };
-      if (((B.certNear = !n.found.has("badge") && Math.abs(l.x - HV.x) < 70 && l.y < 300), B.certNear))
-        return {
+        }),
+        spot({
+          id: "badge",
           verb: "FLIP",
-          x: HV.x,
-          y: 230,
-          r: 0,
+          who: "sq",
+          box: wallBox(HV.x, 70, 300),
+          at: [HV.x, 230],
+          when: !n.found.has("badge"),
           f: () => {
             (D.key(),
               (n.ctrl = !1),
@@ -1342,12 +1414,13 @@
                 }),
               ]));
           },
-        };
-      {
-        let i = !B.photoNear && !B.certNear && Math.hypot(l.x - n.mo.x, l.y - n.mo.y) >= 120 ? wh() : null;
-        if (i) return i;
-      }
-      return Math.hypot(l.x - n.mo.x, l.y - n.mo.y) < 120 ? { verb: "GIVE", x: n.mo.x, y: n.mo.y - 40, r: 0, hot: !0, f: Wp } : null;
+        }),
+        spot({ id: "mops", verb: "GIVE", who: "sq", x: n.mo.x, y: n.mo.y, r: 120, at: [n.mo.x, n.mo.y - 40], hot: !0, f: Wp }),
+        gallerySpot(),
+      ];
+    }
+    function Zp() {
+      return pick(s2Spots());
     }
     function Wp() {
       ((n.ctrl = !1),
@@ -1567,22 +1640,24 @@
         }),
       ]);
     }
+    function s4Spots() {
+      return [
+        spot({ id: "crate", verb: "LEAVE", who: "sq", at: [Ct.x, Ct.y - 40], when: !!le.inCrate && n.found.has("pie500"), f: Qs }),
+        spot({
+          id: "crate",
+          verb: "GRAB",
+          who: "sq",
+          at: [Ct.x, Ct.y - 40],
+          when: !!le.inCrate && !n.found.has("pie500"),
+          f: () => {
+            (ee("secret", "pie500", Ct.x - B.camX, 200), (Gn = Math.max(Gn, 1)), TV([v("sq", "Five hundred. They won't miss one.")]));
+          },
+        }),
+        spot({ id: "crate", verb: "HIDE", who: "sq", x: Ct.x, y: Ct.y + 60, r: 200, at: [Ct.x, Ct.y - 40], when: !le.inCrate && !le.botsOut, hot: !0, f: VA }),
+      ];
+    }
     function $p() {
-      return le.inCrate
-        ? n.found.has("pie500")
-          ? { verb: "LEAVE", x: Ct.x - B.camX, y: Ct.y - 40, r: 0, f: Qs }
-          : {
-              verb: "GRAB",
-              x: Ct.x - B.camX,
-              y: Ct.y - 40,
-              r: 0,
-              f: () => {
-                (ee("secret", "pie500", Ct.x - B.camX, 200), (Gn = Math.max(Gn, 1)), TV([v("sq", "Five hundred. They won't miss one.")]));
-              },
-            }
-        : !le.botsOut && Math.hypot(n.sq.x - Ct.x, n.sq.y - (Ct.y + 60)) < 200
-          ? { verb: "HIDE", x: Ct.x - B.camX, y: Ct.y - 40, r: 0, hot: !0, f: VA }
-          : null;
+      return pick(s4Spots());
     }
     function VA() {
       ((n.ctrl = !1),
@@ -1660,22 +1735,30 @@
         n.pulse.add("plant5"),
         (n.ctrl = !0));
     }
+    function s5Spots() {
+      let l = qV.bro.inBin && !qV.grabbed,
+        o = n.sqPose === "hidden";
+      return [
+        spot({ id: "bro", verb: "GRAB", who: "sq", at: [me.x, me.y - 50], when: l && o, hot: !0, f: nA }),
+        spot({ id: "bro", verb: "GRAB", who: "sq", x: me.x, y: me.y, r: 120, at: [me.x, me.y - 50], when: l && !o, hot: !0, f: nA }),
+        spot({ id: "plant5", verb: "HIDE", who: "sq", x: rt.x, y: rt.y + 6, r: 110, at: [rt.x, rt.y - 60], when: !o && !qV.bro.inBin, hot: !0, f: aA }),
+        spot({
+          id: "brochure",
+          verb: "LOOK",
+          who: "sq",
+          x: qV.bro.x,
+          y: qV.bro.y + 120,
+          r: 120,
+          at: [qV.bro.x, qV.bro.y - 30],
+          when: !o && !qV.bro.inBin,
+          f: () => {
+            TV([v("sq", "A brochure! But they'd see me. Hide first.", "whisper")]);
+          },
+        }),
+      ];
+    }
     function tA() {
-      return qV.bro.inBin && !qV.grabbed && (n.sqPose === "hidden" || Math.hypot(n.sq.x - me.x, n.sq.y - me.y) < 120)
-        ? { verb: "GRAB", x: me.x, y: me.y - 50, r: 0, hot: !0, f: nA }
-        : n.sqPose !== "hidden" && !qV.bro.inBin && Math.hypot(n.sq.x - rt.x, n.sq.y - (rt.y + 6)) < 110
-          ? { verb: "HIDE", x: rt.x, y: rt.y - 60, r: 0, hot: !0, f: aA }
-          : n.sqPose !== "hidden" && !qV.bro.inBin && Math.hypot(n.sq.x - qV.bro.x, n.sq.y - (qV.bro.y + 120)) < 120
-            ? {
-                verb: "LOOK",
-                x: qV.bro.x,
-                y: qV.bro.y - 30,
-                r: 0,
-                f: () => {
-                  TV([v("sq", "A brochure! But they'd see me. Hide first.", "whisper")]);
-                },
-              }
-            : null;
+      return pick(s5Spots());
     }
     function aA() {
       ((n.ctrl = !1),
@@ -1776,9 +1859,6 @@
         bumped: !1,
         botBy: 0,
       };
-    function Oe(l, o, i, s, q = !1) {
-      return { verb: l, x: n.room === "hall" ? o - B.camX : o, y: i, r: 0, f: s, hot: q };
-    }
     function Ks() {
       return x.mops ? n.mo : n.sq;
     }
@@ -1966,53 +2046,92 @@
             }),
           ]));
     }
-    function sA() {
+    function s6Spots() {
       let l = n.sq;
-      if (n.sqPose === "hidden") return Oe("LEAVE", l.x, l.y - 30, Xs);
-      if (!n.found.has("plaque") && Math.abs(l.x - (cn.x - 26)) < 70 && l.y < 330)
-        return Oe("PULL", cn.x - 26, 140, () => {
-          (ee("funny", "plaque", 300, 80),
-            D.grab(),
-            TV([v("sq", '"The Great Wookie Clog. Never forget."'), v("sq", "It's a framed hairball. The size of a beanbag.")]));
-        });
-      if (!n.found.has("wanted") && Math.abs(l.x - (cn.x + 30)) < 60 && l.y < 330)
-        return Oe("UNROLL", cn.x + 30, 140, () => {
-          (ee("funny", "wanted", 300, 80), D.grab(), TV([v("sq", "That's not even a good drawing.")]));
-        });
-      {
-        let s = Lh();
-        if (s) return s;
-      }
-      {
-        let s = wh();
-        if (s && Math.hypot(l.x - lt.x, l.y - (lt.y + 60)) >= 120) return s;
-      }
-      let o = -1,
-        i = 80;
-      return (
-        va.forEach((s, q) => {
-          let d = Math.hypot(l.x - s.x, l.y - (s.y + 6));
-          d < i && ((i = d), (o = q));
+      return [
+        spot({ id: "leave", verb: "LEAVE", who: "sq", at: [l.x, l.y - 30], when: n.sqPose === "hidden", f: Xs }),
+        spot({
+          id: "plaque",
+          verb: "PULL",
+          who: "sq",
+          box: wallBox(cn.x - 26, 70, 330),
+          at: [cn.x - 26, 140],
+          when: !n.found.has("plaque"),
+          f: () => {
+            (ee("funny", "plaque", 300, 80),
+              D.grab(),
+              TV([v("sq", '"The Great Wookie Clog. Never forget."'), v("sq", "It's a framed hairball. The size of a beanbag.")]));
+          },
         }),
-        o >= 0 ? Oe("HIDE", va[o].x, va[o].y - 30, () => lA(o), x.alertBy >= 0) : null
-      );
+        spot({
+          id: "wanted",
+          verb: "UNROLL",
+          who: "sq",
+          box: wallBox(cn.x + 30, 60, 330),
+          at: [cn.x + 30, 140],
+          when: !n.found.has("wanted"),
+          f: () => {
+            (ee("funny", "wanted", 300, 80), D.grab(), TV([v("sq", "That's not even a good drawing.")]));
+          },
+        }),
+        ...hallFinds(),
+        gallerySpot({ x: lt.x, y: lt.y + 60, r: 120 }),
+        ...va.map((o, i) =>
+          spot({ id: "va" + i, verb: "HIDE", who: "sq", x: o.x, y: o.y + 6, r: 80, at: [o.x, o.y - 30], hot: x.alertBy >= 0, f: () => lA(i) }),
+        ),
+      ];
     }
-    function Lh() {
-      let l = n.sq;
-      return n.found.has("plaque") && Math.abs(l.x - (cn.x - 26)) < 50 && l.y < 330
-        ? Oe("LOOK", cn.x - 26, 140, () => TV([v("sq", "Still a framed hairball.")]))
-        : n.found.has("wanted") && Math.abs(l.x - (cn.x + 30)) < 50 && l.y < 330
-          ? Oe("LOOK", cn.x + 30, 140, () => TV([v("sq", "REWARD: 1 free air filter. Rude.")]))
-          : B.halves[0] && B.halves[0].on && Math.hypot(l.x - DV.x, l.y - DV.y) < 100
-            ? Oe("PEEK", DV.x, DV.y - 70, () =>
-                TV([
-                  v("sq", "Half the torn slip! The hangar code's on it...", "whisper"),
-                  v("sq", "Not yet. Mops needs me first.", "whisper"),
-                ]),
-              )
-            : B.halves[1] && B.halves[1].on && Math.hypot(l.x - SV.x, l.y - SV.y) < 90
-              ? Oe("PEEK", SV.x, SV.y - 50, () => TV([v("sq", "The other half's down the vent. Way too small for me.", "whisper")]))
-              : null;
+    function sA() {
+      return pick(s6Spots());
+    }
+    // Things in the hall Squatch can look at again, and the two halves of the torn slip.
+    function hallFinds() {
+      return [
+        spot({
+          id: "plaque",
+          verb: "LOOK",
+          who: "sq",
+          box: wallBox(cn.x - 26, 50, 330),
+          at: [cn.x - 26, 140],
+          when: n.found.has("plaque"),
+          f: () => TV([v("sq", "Still a framed hairball.")]),
+        }),
+        spot({
+          id: "wanted",
+          verb: "LOOK",
+          who: "sq",
+          box: wallBox(cn.x + 30, 50, 330),
+          at: [cn.x + 30, 140],
+          when: n.found.has("wanted"),
+          f: () => TV([v("sq", "REWARD: 1 free air filter. Rude.")]),
+        }),
+        spot({
+          id: "trash",
+          verb: "PEEK",
+          who: "sq",
+          x: DV.x,
+          y: DV.y,
+          r: 100,
+          at: [DV.x, DV.y - 70],
+          when: !!(B.halves[0] && B.halves[0].on),
+          f: () =>
+          TV([
+            v("sq", "Half the torn slip! The hangar code's on it...", "whisper"),
+            v("sq", "Not yet. Mops needs me first.", "whisper"),
+          ]),
+        }),
+        spot({
+          id: "vent",
+          verb: "PEEK",
+          who: "sq",
+          x: SV.x,
+          y: SV.y,
+          r: 90,
+          at: [SV.x, SV.y - 50],
+          when: !!(B.halves[1] && B.halves[1].on),
+          f: () => TV([v("sq", "The other half's down the vent. Way too small for me.", "whisper")]),
+        }),
+      ];
     }
     function qA(l) {
       B.camX = w(n.sq.x - 480, 0, xa - c);
@@ -2056,59 +2175,69 @@
         !Bt && Math.hypot(n.sq.x - n.mo.x, n.sq.y - n.mo.y) < 110 && uA();
       }
     }
+    function s7Spots() {
+      return [
+        spot({ id: "leave", verb: "LEAVE", who: "sq", at: [n.sq.x, n.sq.y - 30], when: n.sqPose === "hidden", f: Xs }),
+        spot({
+          id: "term",
+          verb: "USE",
+          who: "sq",
+          x: lt.x,
+          y: lt.y + 60,
+          r: 120,
+          at: [lt.x, lt.y - 40],
+          hot: !0,
+          f: () => {
+            ((n.ctrl = !1),
+              (n.act = null),
+              (n.sq.moving = !1),
+              n.pulse.delete("term"),
+              (n.chip = ""),
+              J([
+                { k: "panel", id: "terminal" },
+                N(() => {
+                  ((x.typed = !0), D.grab());
+                }),
+                { k: "panel", id: "terminal" },
+                v("sq", "...Sorry, Mops.", "whisper"),
+                v("sq", "Receipt goes in my Guardian Box. Where secrets go.", "whisper"),
+                uV(2.5),
+                N(js),
+              ]));
+          },
+        }),
+        ...hallFinds(),
+      ];
+    }
     function rA() {
-      if (n.sqPose === "hidden") return Oe("LEAVE", n.sq.x, n.sq.y - 30, Xs);
-      if (Math.hypot(n.sq.x - lt.x, n.sq.y - (lt.y + 60)) >= 120) {
-        let l = Lh();
-        if (l) return l;
-      }
-      return Math.hypot(n.sq.x - lt.x, n.sq.y - (lt.y + 60)) < 120
-        ? Oe(
-            "USE",
-            lt.x,
-            lt.y - 40,
-            () => {
-              ((n.ctrl = !1),
-                (n.act = null),
-                (n.sq.moving = !1),
-                n.pulse.delete("term"),
-                (n.chip = ""),
-                J([
-                  { k: "panel", id: "terminal" },
-                  N(() => {
-                    ((x.typed = !0), D.grab());
-                  }),
-                  { k: "panel", id: "terminal" },
-                  v("sq", "...Sorry, Mops.", "whisper"),
-                  v("sq", "Receipt goes in my Guardian Box. Where secrets go.", "whisper"),
-                  uV(2.5),
-                  N(js),
-                ]));
-            },
-            !0,
-          )
-        : null;
+      return pick(s7Spots());
+    }
+    function s7bSpots() {
+      return [
+        spot({
+          id: "term",
+          verb: "SIGN",
+          who: "sq",
+          at: [lt.x, lt.y - 40],
+          hot: !0,
+          f: () => {
+            ((n.ctrl = !1),
+              (n.act = null),
+              (x.typed = !0),
+              D.grab(),
+              J([
+                { k: "panel", id: "terminal" },
+                v("sq", "...Sorry, Mops.", "whisper"),
+                v("sq", "Receipt goes in my Guardian Box. Where secrets go.", "whisper"),
+                uV(2.5),
+                N(js),
+              ]));
+          },
+        }),
+      ];
     }
     function cA() {
-      return Oe(
-        "SIGN",
-        lt.x,
-        lt.y - 40,
-        () => {
-          ((n.ctrl = !1),
-            (n.act = null),
-            (x.typed = !0),
-            D.grab(),
-            J([
-              { k: "panel", id: "terminal" },
-              v("sq", "...Sorry, Mops.", "whisper"),
-              v("sq", "Receipt goes in my Guardian Box. Where secrets go.", "whisper"),
-              uV(2.5),
-              N(js),
-            ]));
-        },
-        !0,
-      );
+      return pick(s7bSpots());
     }
     function js() {
       ((n.scene = "S8"),
@@ -2207,40 +2336,40 @@
           }),
         ]));
     }
-    function Qh(l, o) {
-      return x.mops
-        ? null
-        : n.sqPose === "hidden"
-          ? x.sing
-            ? Oe(
-                "STOP",
-                l.x,
-                l.y - 60,
-                () => {
-                  ((x.sing = !1), (n.sqPose = "hidden"));
-                },
-                !0,
-              )
-            : Oe(
-                "SING",
-                l.x,
-                l.y - 60,
-                () => {
-                  ((x.sing = !0), co());
-                },
-                !0,
-              )
-          : Math.hypot(n.sq.x - l.x, n.sq.y - (l.y + 6)) < 90
-            ? Oe(
-                "HIDE",
-                l.x,
-                l.y - 60,
-                () => {
-                  ((x.spot = 9), (n.sqPose = "hidden"), (n.sq.x = l.x), (n.sq.y = l.y + 6), (n.sq.moving = !1), D.hide(), o());
-                },
-                !0,
-              )
-            : null;
+    // A lure spot in the hall (S9 box, S11 plant): HIDE beside it, then SING or STOP from inside.
+    function lureSpots(l, o, i) {
+      let s = !x.mops && n.sqPose === "hidden";
+      return [
+        spot({
+          id: "sing",
+          verb: x.sing ? "STOP" : "SING",
+          who: "sq",
+          at: [l.x, l.y - 60],
+          when: s,
+          hot: !0,
+          f: x.sing
+            ? () => {
+                ((x.sing = !1), (n.sqPose = "hidden"));
+              }
+            : () => {
+                ((x.sing = !0), co());
+              },
+        }),
+        spot({
+          id: o,
+          verb: "HIDE",
+          who: "sq",
+          x: l.x,
+          y: l.y + 6,
+          r: 90,
+          at: [l.x, l.y - 60],
+          when: !x.mops && n.sqPose !== "hidden",
+          hot: !0,
+          f: () => {
+            ((x.spot = 9), (n.sqPose = "hidden"), (n.sq.x = l.x), (n.sq.y = l.y + 6), (n.sq.moving = !1), D.hide(), i());
+          },
+        }),
+      ];
     }
     function Yh(l, o, i, s) {
       let q = x.lureBot;
@@ -2288,35 +2417,49 @@
     function yf(l) {
       x.mops !== l && (switchTo(l ? "mops" : "squatch"), D.key());
     }
+    function s9Spots() {
+      return [
+        spot({
+          id: "trash",
+          verb: "GRAB",
+          who: "mo",
+          x: DV.x,
+          y: DV.y,
+          r: 90,
+          at: [DV.x, DV.y - 60],
+          when: x.mops && !x.got1,
+          hot: !0,
+          f: () => {
+            ((n.ctrl = !1),
+              (n.act = null),
+              (n.mo.moving = !1),
+              (x.got1 = !0),
+              B.halves[0] && (B.halves[0].on = !1),
+              D.grab(),
+              (x.sing = !1),
+              J([
+                { k: "panel", id: "half1" },
+                v("mops", "Got it! Thanks for the song, Squatch."),
+                N(() => {
+                  (x.seenPart || Ta("sneak-s9"), Ih());
+                }),
+              ]));
+          },
+        }),
+        spot({
+          id: "goatspace",
+          verb: "PULL",
+          who: "sq",
+          box: wallBox(ct.x, 70, ct.y + 190),
+          at: [ct.x, ct.y + 20],
+          when: !x.mops && !n.found.has("goatspace") && !n.egg,
+          f: dA,
+        }),
+        ...lureSpots(gt, "box9", () => n.pulse.delete("box9")),
+      ];
+    }
     function hA() {
-      return x.mops
-        ? !x.got1 && Math.hypot(n.mo.x - DV.x, n.mo.y - DV.y) < 90
-          ? Oe(
-              "GRAB",
-              DV.x,
-              DV.y - 60,
-              () => {
-                ((n.ctrl = !1),
-                  (n.act = null),
-                  (n.mo.moving = !1),
-                  (x.got1 = !0),
-                  B.halves[0] && (B.halves[0].on = !1),
-                  D.grab(),
-                  (x.sing = !1),
-                  J([
-                    { k: "panel", id: "half1" },
-                    v("mops", "Got it! Thanks for the song, Squatch."),
-                    N(() => {
-                      (x.seenPart || Ta("sneak-s9"), Ih());
-                    }),
-                  ]));
-              },
-              !0,
-            )
-          : null
-        : !n.found.has("goatspace") && !n.egg && Math.abs(n.sq.x - ct.x) < 70 && n.sq.y < ct.y + 190
-          ? { verb: "PULL", x: ct.x, y: ct.y + 20, r: 0, f: dA }
-          : Qh(gt, () => n.pulse.delete("box9"));
+      return pick(s9Spots());
     }
     let ct = { x: 800, y: 170 };
     function dA() {
@@ -2482,95 +2625,116 @@
         (n.ctrl = !0),
         (n.chip = ""));
     }
+    function s10Spots() {
+      return [
+        spot({
+          id: "vent",
+          verb: "SQUEEZE",
+          who: "mo",
+          x: SV.x,
+          y: SV.y,
+          r: 90,
+          at: [SV.x, SV.y - 60],
+          when: x.mops,
+          hot: !0,
+          f: () => {
+            ((n.ctrl = !1),
+              (n.act = null),
+              D.hide(),
+              n.pulse.delete("vent"),
+              J([
+                N(() => {
+                  ((n.room = "duct"), (n.scene = "S10d"), (n.mo = { x: 140, y: 430, f: 1, walk: 0, moving: !1 }), (n.ctrl = !0));
+                }),
+              ]));
+          },
+        }),
+        spot({
+          id: "vent",
+          verb: "SQUEEZE",
+          who: "sq",
+          x: SV.x,
+          y: SV.y,
+          r: 90,
+          at: [SV.x, SV.y - 60],
+          when: !x.mops,
+          hot: !0,
+          f: () => {
+            (D.bzzt(), TV([v("sq", "Too big! Mops, you try.")]), (x.bumped = !0));
+          },
+        }),
+      ];
+    }
     function bA() {
-      return x.mops && Math.hypot(n.mo.x - SV.x, n.mo.y - SV.y) < 90
-        ? Oe(
-            "SQUEEZE",
-            SV.x,
-            SV.y - 60,
-            () => {
-              ((n.ctrl = !1),
-                (n.act = null),
-                D.hide(),
-                n.pulse.delete("vent"),
-                J([
-                  N(() => {
-                    ((n.room = "duct"), (n.scene = "S10d"), (n.mo = { x: 140, y: 430, f: 1, walk: 0, moving: !1 }), (n.ctrl = !0));
-                  }),
-                ]));
-            },
-            !0,
-          )
-        : !x.mops && Math.hypot(n.sq.x - SV.x, n.sq.y - SV.y) < 90
-          ? Oe(
-              "SQUEEZE",
-              SV.x,
-              SV.y - 60,
-              () => {
-                (D.bzzt(), TV([v("sq", "Too big! Mops, you try.")]), (x.bumped = !0));
-              },
-              !0,
-            )
-          : null;
+      return pick(s10Spots());
     }
     let Rl = { x: 760, y: 430 },
       zl = { x: 470, y: 440 };
+    // In the duct Mops can only move between y 400 and 470, so a strip from 390 to 480 holds every
+    // place the old test (x near, any y) did.
+    function s10dSpots() {
+      let l = (o, i) => ({ x0: o, x1: i, y0: 390, y1: 480 });
+      return [
+        spot({
+          id: "notes",
+          verb: "UNFOLD",
+          who: "mo",
+          box: l(zl.x - 70, zl.x + 70),
+          at: [zl.x, zl.y - 40],
+          when: !!x.notesBall,
+          f: () => {
+            ((n.ctrl = !1),
+              (n.act = null),
+              (x.notesBall = !1),
+              ee("secret", "notes", 300, 80),
+              J([
+                { k: "panel", id: "notes" },
+                v("mops", "...Nothing to see here!"),
+                N(() => {
+                  n.ctrl = !0;
+                }),
+              ]));
+          },
+        }),
+        spot({
+          id: "half2",
+          verb: "GRAB",
+          who: "mo",
+          box: l(Rl.x - 70, Rl.x + 70),
+          at: [Rl.x, Rl.y - 40],
+          when: !x.got2,
+          hot: !0,
+          f: () => {
+            ((n.ctrl = !1),
+              (n.act = null),
+              (x.got2 = !0),
+              B.halves[1] && (B.halves[1].on = !1),
+              D.grab(),
+              J([
+                { k: "panel", id: "half2" },
+                v("mops", "Got it! Squeezy squeeze."),
+                N(() => {
+                  n.ctrl = !0;
+                }),
+              ]));
+          },
+        }),
+        spot({
+          id: "out",
+          verb: "OUT",
+          who: "mo",
+          box: l(90, 200),
+          at: [120, 380],
+          when: !!x.got2,
+          hot: !0,
+          f: () => {
+            ((n.ctrl = !1), D.hide(), J([N(Kh)]));
+          },
+        }),
+      ];
+    }
     function pA() {
-      let l = n.mo;
-      return x.notesBall && Math.abs(l.x - zl.x) < 70
-        ? {
-            verb: "UNFOLD",
-            x: zl.x,
-            y: zl.y - 40,
-            r: 0,
-            f: () => {
-              ((n.ctrl = !1),
-                (n.act = null),
-                (x.notesBall = !1),
-                ee("secret", "notes", 300, 80),
-                J([
-                  { k: "panel", id: "notes" },
-                  v("mops", "...Nothing to see here!"),
-                  N(() => {
-                    n.ctrl = !0;
-                  }),
-                ]));
-            },
-          }
-        : !x.got2 && Math.abs(l.x - Rl.x) < 70
-          ? {
-              verb: "GRAB",
-              x: Rl.x,
-              y: Rl.y - 40,
-              r: 0,
-              hot: !0,
-              f: () => {
-                ((n.ctrl = !1),
-                  (n.act = null),
-                  (x.got2 = !0),
-                  B.halves[1] && (B.halves[1].on = !1),
-                  D.grab(),
-                  J([
-                    { k: "panel", id: "half2" },
-                    v("mops", "Got it! Squeezy squeeze."),
-                    N(() => {
-                      n.ctrl = !0;
-                    }),
-                  ]));
-              },
-            }
-          : x.got2 && l.x < 200
-            ? {
-                verb: "OUT",
-                x: 120,
-                y: 380,
-                r: 0,
-                hot: !0,
-                f: () => {
-                  ((n.ctrl = !1), D.hide(), J([N(Kh)]));
-                },
-              }
-            : null;
+      return pick(s10dSpots());
     }
     function Js() {
       ((n.scene = "S11"),
@@ -2606,60 +2770,75 @@
           }),
         ]));
     }
+    // Walking into the scanner gate (S11, door open) is not a button; it is still a spot, so its ring
+    // sits where it works. gA checks it.
+    function gateSpot() {
+      return spot({ id: "gate", who: "sq", x: Ha.x, y: Ha.y, r: 50, when: !!x.doorOpen });
+    }
+    function s11Spots() {
+      return [
+        spot({
+          id: "ward",
+          verb: "WEAR",
+          who: "sq",
+          x: Le.x,
+          y: Le.y,
+          r: 100,
+          at: [Le.x, Le.y - 110],
+          when: !!x.doorOpen && !x.costume && !!x.mopsHint,
+          hot: !0,
+          f: () => {
+            ((n.ctrl = !1),
+              (n.act = null),
+              (x.costume = !0),
+              n.pulse.delete("ward"),
+              D.grab(),
+              J([
+                v("sq", "Baaa? BAAA!"),
+                v("mops", "More bleat. Less roar."),
+                N(() => {
+                  (n.pulse.add("gate"), (n.ctrl = !0));
+                }),
+              ]));
+          },
+        }),
+        gateSpot(),
+        spot({
+          id: "keypad",
+          verb: "TYPE",
+          who: "mo",
+          x: Ga.x,
+          y: Ga.y + 90,
+          r: 110,
+          at: [Ga.x, Ga.y - 20],
+          when: !x.doorOpen && x.mops,
+          hot: !0,
+          f: () => {
+            if (Math.hypot(x.lureBot.x - Ga.x, x.lureBot.y - Ga.y) < 150) {
+              (D.bzzt(), kV("mops", "Bot's still on the door. Lure it to the plant!"));
+              return;
+            }
+            ((n.ctrl = !1),
+              (n.act = null),
+              (x.sing = !1),
+              D.key(),
+              J([
+                { k: "panel", id: "keypad" },
+                N(() => {
+                  ((x.doorOpen = !0), D.zap(), x.seenPart || Ta("sneak-s11"), yf(!1));
+                }),
+                v("sq", "Door open! Uh oh... a fur scanner."),
+                N(() => {
+                  n.ctrl = !0;
+                }),
+              ]));
+          },
+        }),
+        ...(x.doorOpen ? [] : lureSpots(ne, "plant11", () => n.pulse.delete("plant11"))),
+      ];
+    }
     function AA() {
-      return x.doorOpen
-        ? !x.costume && Math.hypot(n.sq.x - Le.x, n.sq.y - Le.y) < 100 && x.mopsHint
-          ? Oe(
-              "WEAR",
-              Le.x,
-              Le.y - 110,
-              () => {
-                ((n.ctrl = !1),
-                  (n.act = null),
-                  (x.costume = !0),
-                  n.pulse.delete("ward"),
-                  D.grab(),
-                  J([
-                    v("sq", "Baaa? BAAA!"),
-                    v("mops", "More bleat. Less roar."),
-                    N(() => {
-                      (n.pulse.add("gate"), (n.ctrl = !0));
-                    }),
-                  ]));
-              },
-              !0,
-            )
-          : null
-        : x.mops
-          ? Math.hypot(n.mo.x - Ga.x, n.mo.y - (Ga.y + 90)) < 110
-            ? Oe(
-                "TYPE",
-                Ga.x,
-                Ga.y - 20,
-                () => {
-                  if (Math.hypot(x.lureBot.x - Ga.x, x.lureBot.y - Ga.y) < 150) {
-                    (D.bzzt(), kV("mops", "Bot's still on the door. Lure it to the plant!"));
-                    return;
-                  }
-                  ((n.ctrl = !1),
-                    (n.act = null),
-                    (x.sing = !1),
-                    D.key(),
-                    J([
-                      { k: "panel", id: "keypad" },
-                      N(() => {
-                        ((x.doorOpen = !0), D.zap(), x.seenPart || Ta("sneak-s11"), yf(!1));
-                      }),
-                      v("sq", "Door open! Uh oh... a fur scanner."),
-                      N(() => {
-                        n.ctrl = !0;
-                      }),
-                    ]));
-                },
-                !0,
-              )
-            : null
-          : Qh(ne, () => n.pulse.delete("plant11"));
+      return pick(s11Spots());
     }
     function gA(l) {
       if (n.ctrl) {
@@ -2673,7 +2852,7 @@
           return;
         }
         (x.mops && yf(!1),
-          Math.hypot(n.sq.x - Ha.x, n.sq.y - Ha.y) < 50 &&
+          inSpot(gateSpot()) &&
             (x.costume
               ? ((n.ctrl = !1), (n.act = null), n.pulse.delete("gate"), D.pickup(), J([v("scanner", "HAIR... PROBABLY. PROCEED."), N(Xh)]))
               : ((n.sq.x -= 70),
@@ -2714,64 +2893,61 @@
     function Zs() {
       (Gn++, D.grab(), Gn >= 3 ? ((n.chip = ""), n.pulse.add("ship")) : (n.chip = "Grab 3 snacks"));
     }
-    function xA() {
-      let l = n.sq,
-        o = (i, s, q) => Math.hypot(l.x - i, l.y - s) < q;
-      for (let i = 0; i < 3; i++)
-        if (!x.coolers[i] && o(D0[i].x, D0[i].y + 30, 80))
-          return {
+    function s12Spots() {
+      return [
+        ...D0.map((l, i) =>
+          spot({
+            id: "c" + i,
             verb: "GRAB",
-            x: D0[i].x,
-            y: D0[i].y - 90,
-            r: 0,
+            who: "sq",
+            x: l.x,
+            y: l.y + 30,
+            r: 80,
+            at: [l.x, l.y - 90],
+            when: !x.coolers[i],
             hot: !0,
             f: () => {
               ((x.coolers[i] = !0), n.pulse.delete("c" + i), Zs());
             },
-          };
-      return x.tarp && o(ue.x, ue.y, 90)
-        ? {
-            verb: "PULL",
-            x: ue.x,
-            y: ue.y - 70,
-            r: 0,
-            f: () => {
-              ((x.tarp = !1), D.grab());
-            },
-          }
-        : !x.tarp && !x.nachos && o(ue.x, ue.y, 90)
-          ? {
-              verb: "GRAB",
-              x: ue.x,
-              y: ue.y - 70,
-              r: 0,
-              f: () => {
-                ((x.nachos = !0), ee("secret", "nachos", 300, 80), Zs(), TV([v("sq", "Astro-Nachos! My favourite!")]));
-              },
-            }
-          : x.crates && o(Gt.x, Gt.y, 100)
-            ? {
-                verb: "PUSH",
-                x: Gt.x,
-                y: Gt.y - 90,
-                r: 0,
-                f: () => {
-                  ((x.crates = !1), D.bzzt());
-                },
-              }
-            : !x.crates && !x.icecream && o(Gt.x + 60, Gt.y, 100)
-              ? {
-                  verb: "GRAB",
-                  x: Gt.x + 60,
-                  y: Gt.y - 70,
-                  r: 0,
-                  f: () => {
-                    ((x.icecream = !0), ee("secret", "icecream", 300, 80), Zs(), TV([v("sq", "Freeze-Dried Ice Cream! My favourite!")]));
-                  },
-                }
-              : Gn >= 3 && o(hn.x, hn.y + 150, 140)
-                ? { verb: "BOARD", cap: "ship", x: hn.x, y: hn.y + 40, r: 0, hot: !0, f: vA }
-                : null;
+          }),
+        ),
+        spot({ id: "tarp", verb: "PULL", who: "sq", x: ue.x, y: ue.y, r: 90, at: [ue.x, ue.y - 70], when: !!x.tarp, f: () => {
+            ((x.tarp = !1), D.grab());
+          } }),
+        spot({
+          id: "nachos",
+          verb: "GRAB",
+          who: "sq",
+          x: ue.x,
+          y: ue.y,
+          r: 90,
+          at: [ue.x, ue.y - 70],
+          when: !x.tarp && !x.nachos,
+          f: () => {
+            ((x.nachos = !0), ee("secret", "nachos", 300, 80), Zs(), TV([v("sq", "Astro-Nachos! My favourite!")]));
+          },
+        }),
+        spot({ id: "crates", verb: "PUSH", who: "sq", x: Gt.x, y: Gt.y, r: 100, at: [Gt.x, Gt.y - 90], when: !!x.crates, f: () => {
+            ((x.crates = !1), D.bzzt());
+          } }),
+        spot({
+          id: "icecream",
+          verb: "GRAB",
+          who: "sq",
+          x: Gt.x + 60,
+          y: Gt.y,
+          r: 100,
+          at: [Gt.x + 60, Gt.y - 70],
+          when: !x.crates && !x.icecream,
+          f: () => {
+            ((x.icecream = !0), ee("secret", "icecream", 300, 80), Zs(), TV([v("sq", "Freeze-Dried Ice Cream! My favourite!")]));
+          },
+        }),
+        spot({ id: "ship", verb: "BOARD", cap: "ship", who: "sq", x: hn.x, y: hn.y + 150, r: 140, at: [hn.x, hn.y + 40], when: Gn >= 3, hot: !0, f: vA }),
+      ];
+    }
+    function xA() {
+      return pick(s12Spots());
     }
     function jh() {
       let l = ["stash", "photo23", "badge", "pie500", "notes", "nachos", "icecream"],
