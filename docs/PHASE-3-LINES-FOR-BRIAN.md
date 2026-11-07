@@ -46,6 +46,15 @@ The captors' joke lines after the card are the ones each catch already had (for 
 
 Checkpoints: Chapter 2 keeps its table (`applyG`). Chapters 1, 3 and 4 now have one each (`CH1_CHECKPOINTS`, `CH3_CHECKPOINTS`, `CH4_CHECKPOINTS` in `src/game/25-capture.js`): the deck, the S6 hall, the S9 lure and the S11 lure in Chapter 1 restart the way those sections begin; the pad, the temple and the ramp in Chapter 3 and the dock in Chapter 4 put Squatch back at the section's start (the van, the barrel, the pad's far side) with the rovers and the port bot at home. Other Chapter 1 scenes restart from the state saved when the scene began, as Reset section already did.
 
+### The drawn cone is now exactly where Rusty, the pump bots and Gloop's window see (T19 addition)
+
+You noticed Rusty seemed to catch Squatch only when he was right in front, though the drawn cone looked bigger. A new test (`tests/cone-match.mjs`) puts Squatch at points just inside and just outside each drawn cone and checks the game's reaction. What it found:
+
+- The width and length of every cone already matched what the game checks: Rusty 0.85 to each side and 280 long, a pump bot 0.6 and 230, Gloop's window 0.75 and 520. Nothing about width or range changed; that stays your call.
+- The difference was blocking. The pump and the crates block the sight line (as they always have), but the cone was drawn straight through them. Behind the pump, Squatch stood in the shaded cone and nobody saw him. In the test, 9 of the 16 sample points in a pump bot's cone and 2 in Rusty's were like that.
+- Now the cone is drawn cut short where the sight line is blocked, so the shaded area is exactly where a standing Squatch is seen. No new words.
+- The game checks a point on Squatch's body, 40 pixels above his feet (50 for the kitchen window), not his feet. The test uses that point. If you want the check at his feet or his whole body instead, that would make the cones catch more and is a difficulty change, so it is left for you.
+
 ## HUD. The status over the picture is page text, in fixed places, readable on a phone
 
 What changed on screen (your HUD decisions, 2026-11-07). The chapter tag, the stars, the goal chip, the countdown, the tank label and the "+100" pop used to be drawn into the picture, where a phone shrinks them to about 8 pixels. They are now page text laid over the picture, at 14 CSS pixels or more on a 375-wide phone (the chip is 15 on a phone, 20 on a computer). Each has a fixed home:

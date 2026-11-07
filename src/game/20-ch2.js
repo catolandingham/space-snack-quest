@@ -132,6 +132,29 @@
     function Bl(l, o, i, s, q, d) {
       (e.beginPath(), e.moveTo(l, o), e.arc(l, o, q, i - s, i + s), e.closePath(), (e.fillStyle = d), e.fill());
     }
+    // A sight cone drawn as the area that really sees (Phase 3, T19 addition): the same origin, facing,
+    // width and length as before, cut short where a pump, crate or wall blocks the sight line (_h), so
+    // the shaded area is exactly where a standing Squatch is seen. tests/cone-match.mjs checks it.
+    function seenCone(l, o, i, s, q, d) {
+      let N = 40;
+      e.beginPath();
+      e.moveTo(l, o);
+      for (let k = 0; k <= N; k++) {
+        let t = i - s + (2 * s * k) / N,
+          cx = Math.cos(t),
+          cy = Math.sin(t),
+          lo = 0,
+          hi = q;
+        if (!_h(l, o, l + cx * q, o + cy * q))
+          for (let j = 0; j < 9; j++) {
+            let mid = (lo + hi) / 2;
+            _h(l, o, l + cx * mid, o + cy * mid) ? (lo = mid) : (hi = mid);
+          }
+        else lo = q;
+        e.lineTo(l + cx * lo, o + cy * lo);
+      }
+      (e.closePath(), (e.fillStyle = d), e.fill());
+    }
     function Jh() {
       return { ox: ch2.rust.x, oy: 400, a: ch2.rust.f > 0 ? 0.5 : Math.PI - 0.5 };
     }
@@ -1558,7 +1581,7 @@
     function f2(l, o, i) {
       if (o) {
         let A = Zh(l);
-        Bl(A.ox, A.oy, A.a, 0.6, A.len, i ? "rgba(229,83,61,.28)" : "rgba(255,207,51,.28)");
+        seenCone(A.ox, A.oy, A.a, 0.6, A.len, i ? "rgba(229,83,61,.28)" : "rgba(255,207,51,.28)");
       }
       let { x: s, y: q, f: d } = l;
       (X(s, q, 30, 9),
@@ -1743,7 +1766,7 @@
         d: () => {
           if (!x.mops && !d.nap && !de()) {
             let A = Jh();
-            Bl(A.ox, A.oy, A.a, 0.85, 280, ch2.sec ? "rgba(229,83,61,.34)" : "rgba(255,207,51,.26)");
+            seenCone(A.ox, A.oy, A.a, 0.85, 280, ch2.sec ? "rgba(229,83,61,.34)" : "rgba(255,207,51,.26)");
           }
           KA(d.x, 470, d.f, d.nap, !!ch2.sec);
           if (ch2.sec) {
@@ -2007,7 +2030,7 @@
       ch2.sqBowl === "counter" && (X(KV.x + 108, 324, 14, 6), r("#ffffff", 2));
       ch2.peek > 0 &&
         !x.mops &&
-        (Bl(xt.x, xt.y + 30, 1.95, 0.75, 520, "rgba(229,83,61,.45)"), g("GLOOP", xt.x, 160, 14, "#b91c1c", "center", 800));
+        (seenCone(xt.x, xt.y + 30, 1.95, 0.75, 520, "rgba(229,83,61,.45)"), g("GLOOP", xt.x, 160, 14, "#b91c1c", "center", 800));
       let s = [];
       s.push({
         y: xe.y,
