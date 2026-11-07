@@ -139,6 +139,19 @@ The old line also said "Click the game first so it hears your keys." It is gone,
 - **T8, "a HIDE action exists nearby".** Diner recognition now only starts security while the player controls Squatch, which is the fix the recording needed (Squatch is never the player in the diner during normal play). I did not add "and a hiding spot is close", because the diner has no hiding spot, so that rule would switch off diner recognition completely and break the counter-capture checks in `tests/kitchen.mjs`. That is a design call for you.
 - **T11, verbs.** I kept the game's existing verbs (FRONT, LEAVE SOUP and so on) and only added the things, except ORDER, which Brian changed to ASK · for work (11.9).
 
+- **Playtest issue 9 (window and sink in the wrong spot).** Not touched in Phase 1. It waits on decision D12 in the plan, then a recording.
+
+## Also changed
+
+Changes the player may notice that are not new words:
+
+- Reset section during g4l (after the soup is left in the crate) now resumes at wash5, the next dishes, instead of leaving Mops with nothing to do. `docs/README.md` says so in the checkpoint table.
+- Ambient chatter (the small bubbles that fade on their own) now waits its turn, one bubble at a time, in every chapter, not only Chapter 2.
+- The "YOU: SQUATCH" / "YOU: MOPS" tag shows in every chapter while the story is playing.
+- `switchTo` stops both characters' walking when control changes, in every chapter (the old direct switches did not).
+- In the kitchen, the picture button now puts Squatch in the crate while the player is Mops, and back where he was on the return switch.
+- The RUMBLE banner and the HIDE countdown in the kitchen sit under the goal chip.
+
 ## Other things I noticed and did not change
 
 - Reset section in g6d (Mops out front, about to take the new jar) puts the player back on the lot as Squatch at the lure, and the ship can then be boarded without the tank being filled. Reset section in g6 after Mops has the coins does the same. Neither is a dead end, but both skip the fuel step.

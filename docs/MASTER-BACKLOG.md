@@ -36,6 +36,14 @@ Branch `phase-1-kitchen-clarity`, one commit per task with its test. Not merged.
 | T11 | "VERB · thing" on every Chapter 2 action, 16 px button text | `tests/action-labels.mjs` | Done on branch, wording pending |
 | T12 | Help names only working controls | `tests/help-text.mjs` | Done on branch, wording pending |
 
+Open rows found during Phase 1 (not fixed):
+
+| Item | What happens | State |
+| --- | --- | --- |
+| g6d reset | Reset section in g6d (or in g6 once Mops has the coins) puts the player back as Squatch on the lot, and the ship can be boarded without filling the tank | Open |
+| Cook's first line | The cook says "A WOOKIE!" before she is drawn; she only appears once she is on the floor | Open |
+| Playtest issue 9 | Window and sink read as being in the wrong spot | Open, waits on decision D12 |
+
 ## SS40–SS44
 
 Kitchen C at `6853902` is the pass for these five checks. The ground drawing is one floor line: the full-height diner door, the counter, and the spice rack share it. Pastdraw is the galley through `db3a82c`. QA note `df55e0c` reviewed `d4e3714` (that note is not a commit) and is part of pastdraw.
