@@ -86,3 +86,9 @@ After 60 seconds of play with no progress (no new beat, room, item or catch; tim
 | 21.16 | Chapter 3, `p4a`: Squatch in the barrel, stuck | Squatch: sing to call the rover over | Squatch: sing so the rover comes |
 | 21.17 | Chapter 4, `m1`: the dock, Squatch not hidden, stuck | Squatch: hide in the middle trash can | Squatch: get in the middle trash can |
 | 21.18 | Chapter 4, `m1`: Squatch in the middle trash can, stuck | Squatch: sing to call the bot over | Squatch: sing so the bot comes |
+
+## T20. The kitchen window warning can be seen, and long enough to react to
+
+No new words. What changed on screen: when Gloop is about to look through the order window, the window's frame flashes (two colors, four times a second) and Gloop moves to the middle of the window and grows, looking out at the sink, with a big "!" beside the window. That stays from the warning until her look ends. The warning now lasts 2.5 seconds before she looks, in both sets of dishes (it was 1.1 seconds in the second set and 1.5 in the first, with only the small "Order up?" line to see). The "Order up?" line is unchanged. "They lost you." (19.16) also shows in the kitchen when security gives up after Squatch rolls into a ball.
+
+Note for you: on a phone the goal chip sits in its own row just under the top of the picture, and in the kitchen that row covers the top part of the order window. The flashing frame's sides and Gloop's face below the chip still show. If you want the chip somewhere else on a phone, say where.

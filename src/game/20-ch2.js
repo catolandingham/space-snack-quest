@@ -555,6 +555,12 @@
     function OA() {
       capture("lure");
     }
+    // How long Gloop's warning at the kitchen window lasts before she looks (it was 1.1 to 1.5 seconds; Phase 3, T20).
+    const WINDOW_WARN = 2.5;
+    // True from the warning until Gloop's look ends: she fills the window and its frame flashes.
+    function windowWatch() {
+      return n.room === "kitchen" && (ch2.phase === "wash1" || ch2.phase === "wash5") && (ch2.warn > 0 || ch2.peek > 0 || ch2.eye > 0);
+    }
     function wA(l) {
       if (ch2.phase !== "wash1" && ch2.phase !== "wash5") return;
       (ch2.dishT > 0 && (ch2.dishT -= l), ch2.rumbleT > 0 && (ch2.rumbleT -= l));
@@ -622,7 +628,8 @@
           n.sqPose === "hidden" && x.spot === 62 && ((n.sqPose = "stand"), (x.spot = -1)));
         return;
       }
-      n.ctrl && ((ch2.peekT -= l), ch2.peekT <= 0 && ((ch2.warn = o ? 1.1 : 1.5), kV("gloop", "Order up?"), D.open()));
+      // The warning (task T20): Gloop comes to the window and its frame flashes for WINDOW_WARN seconds before she looks.
+      n.ctrl && ((ch2.peekT -= l), ch2.peekT <= 0 && ((ch2.warn = WINDOW_WARN), kV("gloop", "Order up?"), D.open()));
     }
     function NA(l) {
       n.scene.startsWith("G") &&
@@ -1867,8 +1874,7 @@
         e.beginPath(),
         e.rect(514, 58, 272, 180),
         e.clip(),
-        e.translate(744, 176),
-        e.scale(1, 1),
+        windowWatch() ? (e.translate(650, 200), e.scale(1.45, 1.45)) : (e.translate(744, 176), e.scale(1, 1)),
         XV(0, -30, 34, 34, 10, 3, n.T),
         wV("#7ad35a", 3),
         m(-18, -22, 36, 26, 6),
@@ -1883,6 +1889,13 @@
         m(-16, -50, 32, 12, 3),
         r("#ffffff", 2.5),
         e.restore(),
+        windowWatch() &&
+          (e.save(),
+          (e.lineWidth = 14),
+          (e.strokeStyle = Math.floor(n.T * 4) % 2 ? "#ffcf33" : "#e5533d"),
+          e.strokeRect(500, 44, 300, 210),
+          e.restore(),
+          g("!", 822, 90, 44, "#e5533d", "center", 900)),
         m(520, 236, 260, 16, 3),
         r("#a8743a", 3),
         C([540, 252, 540, 286], "#a8743a", 4),
