@@ -21,6 +21,27 @@ PR #4 is squash-merged. `main` is `9999f0cd`. That commit has the same tree as k
 
 The recovery commits are replayed onto `9999f0cd`. Their changes match `17a03c2` and `0ab2781`. The kitchen commits are not in this pull request.
 
+## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07)
+
+Branch `phase-3-fairness-hud`, one commit per task with its test. Not merged. The wording of every new line waits for Brian's yes in `docs/PHASE-3-LINES-FOR-BRIAN.md`, which also lists what is not finished.
+
+| Task | What changed | Test | State |
+| --- | --- | --- | --- |
+| T19 | One capture rule in every chapter; no star loss; checkpoint tables for Chapters 1, 3, 4; drawn cones cut where the sight line is blocked | `tests/capture-rule.mjs`, `tests/cone-match.mjs` | Done on branch, wording pending |
+| HUD | Page-text HUD in fixed zones, faces, ↺ hold, sound under the picture, stall hint, game at the top on a phone | `tests/hud-layout.mjs` | Done on branch, wording pending |
+| T20 | Kitchen window warning visible for 2.5 s | `tests/kitchen-warning.mjs` | Done on branch |
+| T23 | Tap the picture to walk | `tests/phone-tap.mjs` | Done on branch, wording pending |
+| T22 | Early taps kept, action clears in scenes, COOK gone, award labels say why | `tests/feel-fixes.mjs` | Done on branch, wording pending |
+| Cards | Zoom-in cards for the first hide (Chapters 1 and 2) and the first switch (Chapter 1) | `tests/zoom-cards.mjs` | Done on branch, wording pending; Chapter 2's first switch keeps its switch card |
+
+Open rows found during Phase 3 (not fixed):
+
+| Item | What happens | State |
+| --- | --- | --- |
+| Keyboard route catch | The Chapter 2 keyboard route is seen once by Rusty while sneaking to the KITCHEN door (it was on main too, uncounted until T19) | Open; the test names it |
+| Phone chip row | On a phone the chip's own row covers the top of the picture, including the top of the kitchen order window | Open, Brian's call |
+| Canvas text on a phone | Bubbles, cards and labels drawn in the picture are still under 14 CSS px on a 375-wide phone | Open |
+
 ## Phase 2 (plan section 4, T13 to T18)
 
 Branch `phase-2-structure`, one commit per task with its test. Not merged. The wording of every new line, and every ring that moved, waits for Brian's yes in `docs/PHASE-2-LINES-FOR-BRIAN.md`, which also lists what is not finished.

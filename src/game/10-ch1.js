@@ -436,7 +436,8 @@
         })),
         (n.o5T = 0),
         (n.botOn = !1),
-        (n.coneIn = !1));
+        (n.coneIn = !1),
+        teach("hide1", { x: 220, y: 500, r: 130 }));
     }
     function mh() {
       ((n.bot = { x: 845, y: 470, f: -1, walk: 0, moving: !1 }),

@@ -34,6 +34,7 @@ Owner: Brian, designer and playtester, not a programmer. Clarity beats clevernes
 - Every switch between Squatch and Mops goes through switchTo(who, why) and is announced.
 - HUD: page text over the picture in fixed zones (top left: chapter, ↺, stars; top center: goal chip;
   top right: faces). Do not draw status into the canvas. tests/hud-layout.mjs fails on any overlap.
+- A new key idea is taught once with a zoom-in card (spotlight on the thing, one line): teach(id, at).
 
 ## How work gets done
 - Every task states how to verify it. Done = the verify command passes, npm test passes,

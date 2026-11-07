@@ -1124,6 +1124,42 @@
         (m(c / 2 - i / 2 + 120, 120, i, 78, 18), r("#ffffff", 4), g(o, c / 2 + 120, 159, 34), c / 2 + 120 + i / 2 - 14);
         return;
       }
+      if (l === "focus" && cd) {
+        drawRoom();
+        let fx = cd.x,
+          fy = cd.y,
+          fr = cd.r;
+        // Pointing at the faces (page text over the picture): find where they are on the picture now.
+        if (cd.faces) {
+          let el = document.getElementById("ss-faces"),
+            cv = e.canvas.getBoundingClientRect();
+          if (el && cv.width) {
+            let q = el.getBoundingClientRect(),
+              k = c / cv.width;
+            ((fx = (q.left + q.width / 2 - cv.left) * k), (fy = (q.top + q.height / 2 - cv.top) * k), (fr = Math.max(q.width, q.height) * k * 0.75 + 12));
+          }
+        }
+        (e.save(),
+          e.beginPath(),
+          e.rect(0, 0, c, b),
+          e.arc(fx, fy, fr, 0, Math.PI * 2, !0),
+          (e.fillStyle = "rgba(20,24,32,.8)"),
+          e.fill("evenodd"),
+          e.beginPath(),
+          e.arc(fx, fy, fr, 0, Math.PI * 2),
+          (e.lineWidth = 6),
+          (e.strokeStyle = "#ffcf33"),
+          e.stroke(),
+          e.restore(),
+          ge(40));
+        let ls = zt(o, 420, 40),
+          bw = Math.max(...ls.map((t) => e.measureText(t).width)) + 60,
+          h = ls.length * 50 + 30,
+          tx = fx < c / 2 ? Math.min(c - bw / 2 - 20, fx + fr + 40 + bw / 2) : Math.max(bw / 2 + 20, fx - fr - 40 - bw / 2),
+          ty = w(fy - h / 2, 20, b - h - 20);
+        (m(tx - bw / 2, ty, bw, h, 18), r("#ffffff", 4), ls.forEach((t, i) => g(t, tx, ty + 40 + i * 50, 40, "#1e2430", "center", 800)));
+        return;
+      }
       if (((e.fillStyle = "#1e2430"), e.fillRect(0, 0, c, b), l === "ever")) {
         zt(o, 760, 34).forEach((i, s) => g(i, c / 2, b / 2 - 50 + s * 46, 34, "#ffffff", "center", 800));
         return;
@@ -1818,25 +1854,8 @@
         e.stroke(),
         e.restore());
     }
-    function E5() {
-      ((qq = 0), (mq = []), (ringsDrawn = []));
-      let l = n.cur;
-      if (l && l.k === "card") {
-        M5(l.id, l.text, l.by, l);
-        return;
-      }
-      if (n.egg) {
-        yA();
-        return;
-      }
-      if (l && l.k === "fb") {
-        ((n.fbPic = l.pic), I2(l.pic, l.cap), k5());
-        return;
-      }
-      if (l && l.k === "bub" && n.fbPic) {
-        (I2(n.fbPic, ""), bq(l.b, !1));
-        return;
-      }
+    // The room the player is in, drawn with nothing over it (E5 adds rings, people, bubbles and the rest).
+    function drawRoom() {
       (n.room === "closet"
         ? (P2(), X2(), g5(), z2())
         : n.room === "deck"
@@ -1867,7 +1886,28 @@
                                   ? I6()
                                   : n.room === "hangar"
                                     ? e5()
-                                    : x5(),
+                                    : x5());
+    }
+    function E5() {
+      ((qq = 0), (mq = []), (ringsDrawn = []));
+      let l = n.cur;
+      if (l && l.k === "card") {
+        M5(l.id, l.text, l.by, l);
+        return;
+      }
+      if (n.egg) {
+        yA();
+        return;
+      }
+      if (l && l.k === "fb") {
+        ((n.fbPic = l.pic), I2(l.pic, l.cap), k5());
+        return;
+      }
+      if (l && l.k === "bub" && n.fbPic) {
+        (I2(n.fbPic, ""), bq(l.b, !1));
+        return;
+      }
+      (drawRoom(),
         ringsLeft(),
         xp(),
         drawSec(),

@@ -1140,7 +1140,7 @@
                 ((x.sing = !1), (n.sqPose = "hidden"));
               }
             : () => {
-                ((x.sing = !0), co());
+                ((x.sing = !0), co(), n.scene === "S9" && teach("switch1", { x: c - 60, y: 60, r: 70, faces: !0 }));
               },
         }),
         spot({

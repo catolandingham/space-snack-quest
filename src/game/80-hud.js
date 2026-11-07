@@ -164,7 +164,9 @@
         if (!hud) return;
       }
       let card = n.cur && (n.cur.k === "card" || n.cur.k === "fb" || n.cur.k === "panel"),
-        on = p.state === "op" && !!n.scene && !card && !n.egg;
+        facesOnly = !!(card && n.cur.id === "focus" && n.cur.faces),
+        on = p.state === "op" && !!n.scene && (!card || facesOnly) && !n.egg;
+      for (let z of [hud.where, hud.goal]) hudShow(z, !facesOnly);
       if ((hudShow(hud.root, on), (chipDrawn = ""), !on)) return;
       let s = n.scene;
       hudText(hud.chapter, s.startsWith("M") ? "CH4 \xB7 MARS" : s.startsWith("P") ? "CH3 \xB7 PHOBOS" : s.startsWith("G") ? "CH2 \xB7 GAS STOP" : "CH1 \xB7 STORMTOP");

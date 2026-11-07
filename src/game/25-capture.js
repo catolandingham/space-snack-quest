@@ -165,6 +165,18 @@
       "sneak-p4": "Got past the rover! +100",
       "sneak-m1": "Never caught at the dock! +100",
     };
+    // The zoom-in card (the opening's "This is Squatch" technique, reused): the first time an idea appears,
+    // the room goes dark except a spotlight on the thing, with one line beside it. Once per play-through.
+    // Words wait for Brian's yes (docs/PHASE-3-LINES-FOR-BRIAN.md, rows 24.x).
+    const TEACH = {
+      hide1: "Squatch can hide under the bed. Nobody sees him there.",
+      hide2: "Squatch can hide behind the crate. Nobody sees him there.",
+      switch1: "Tap a face to switch. Then you play that one.",
+    };
+    function teach(id, at) {
+      (n.taught || (n.taught = new Set()), n.taught.has(id)) ||
+        (n.taught.add(id), Dt("teach", "", id, "teach"), J([{ k: "card", id: "focus", text: TEACH[id], teach: id, ...at }]));
+    }
     // Security for Chapters 3 and 4 is the same figure as Chapter 2's (see qSec): it walks in from the side.
     function drawSec() {
       let s = ch2.sec;
