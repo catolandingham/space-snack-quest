@@ -117,3 +117,25 @@ The big touch button, and the small caption drawn on the picture by the spot, no
 | 11.18 | Sink, greasy pot, as Mops | MOP · pot | MOP · greasy pot |
 | 11.19 | Kitchen crate, as Mops with the soup | LEAVE SOUP · crate (the picture keeps its own "LEAVE SOUP" label with an arrow) | LEAVE · soup |
 | 11.20 | Already captioned before this phase and unchanged | ENTER · diner door, ENTER · kitchen, EXIT · the lot, BOARD · ship, FRONT · diner | (none) |
+
+## T12. The help line tells the truth
+
+| # | Where | In the game now | Another way to say it |
+| --- | --- | --- | --- |
+| 12.1 | Under the game on a computer (replaces the old line that named Shift, Tab and opera) | Arrows or WASD: walk. E: do what the button says. Space or Enter: next line. Hold R: restart this section. Esc: skip a flashback. M: sound. | Arrows or WASD: walk. E: do the action in the white label. Space or Enter: next line. Hold R: restart this section. Esc: skip a flashback. M: sound. (On a computer there is no big button, only the label on the picture, so "the button" may puzzle a player.) |
+| 12.2 | Under the touch controls on a phone or tablet, and on a computer after "Show touch controls" | Stick: walk. Big button: do it. Tap the picture: next line. Hold Reset section to restart. | Stick: walk. Big button: do what it says. Tap the picture: next line. Hold Reset section to start this part again. |
+| 12.3 | The joystick's spoken label for screen readers (was "Move (push far to run)") | Move | Walk |
+
+The old line also said "Click the game first so it hears your keys." It is gone, because the plan's wording replaces the whole line. Say if you want it back.
+
+## Not finished
+
+- **T6, acceptance 2 (every switch in Chapters 1 to 4 has a why line).** Every switch in all four chapters now goes through `switchTo`, and only `switchTo` sets `x.mops` (checked by `tests/ch2-switch.mjs`). Only the seven Chapter 2 story switches have why lines and cards. The switches in Chapters 1, 3 and 4 (for example Mops taking over in the Phobos `P2` and `p3x` scenes, the Mars `m2` poster and `m3` van, and the Chapter 1 picture button) are silent, as before. Writing their why lines needs those scenes read closely and your wording, and adding tap cards there changes flows the progression tests play; it fits Phase 3 (T18 and T19) better.
+- **T8, "a HIDE action exists nearby".** Diner recognition now only starts security while the player controls Squatch, which is the fix the recording needed (Squatch is never the player in the diner during normal play). I did not add "and a hiding spot is close", because the diner has no hiding spot, so that rule would switch off diner recognition completely and break the counter-capture checks in `tests/kitchen.mjs`. That is a design call for you.
+- **T11, verbs.** I kept the game's existing verbs (ORDER, FRONT, LEAVE SOUP and so on) and only added the things. ORDER at the counter means "ask for work", which a child may not read that way; see 11.9.
+
+## Other things I noticed and did not change
+
+- Reset section in g6d (Mops out front, about to take the new jar) puts the player back on the lot as Squatch at the lure, and the ship can then be boarded without the tank being filled. Reset section in g6 after Mops has the coins does the same. Neither is a dead end, but both skip the fuel step.
+- The cook's "A WOOKIE!" is spoken before she is drawn (she only appears once she is on the floor), so her bubble now sits where she falls.
+- In the kitchen the picture button (top right) lets the player switch to Mops once the cook is down. That is how a player can end up as Mops at the sink. The chip now says how to switch back (5.21), and the button is off while security is coming.

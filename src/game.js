@@ -15184,7 +15184,7 @@
     let e = Math.round(V.size * 0.4);
     return (0, pe.jsx)("div", {
       ref: t,
-      "aria-label": "Move (push far to run)",
+      "aria-label": "Move",
       style: {
         position: "relative",
         width: V.size,
@@ -15213,6 +15213,9 @@
       }),
     });
   }
+  // Help lines: only controls that work. Wording waits for Brian's yes (docs/PHASE-1-LINES-FOR-BRIAN.md).
+  var KEY_HELP = "Arrows or WASD: walk. E: do what the button says. Space or Enter: next line. Hold R: restart this section. Esc: skip a flashback. M: sound.",
+    TOUCH_HELP = "Stick: walk. Big button: do it. Tap the picture: next line. Hold Reset section to restart.";
   function r8(V) {
     let t = (0, YV.useRef)(null),
       [a, e] = (0, YV.useState)(!1);
@@ -15446,16 +15449,27 @@
                     onPointerLeave: nV(() => e.current?.resetHold(!1)),
                     children: "Reset section",
                   }),
+                  (0, pe.jsx)("span", {
+                    id: "ss-help",
+                    style: { width: "100%", textAlign: "center", color: V.text.secondary, fontSize: V.font.label.fontSize },
+                    children: TOUCH_HELP,
+                  }),
                 ],
               }))
-            : I ||
+            : I
+              ? (Z = (0, pe.jsx)("div", {
+                  id: "ss-help",
+                  style: { width: "100%", textAlign: "center", color: V.text.secondary, fontSize: V.font.label.fontSize },
+                  children: TOUCH_HELP,
+                }))
+              :
               (Z = (0, pe.jsxs)("div", {
                 style: { ...M, justifyContent: "space-between" },
                 children: [
                   (0, pe.jsx)("span", {
                     style: { color: V.text.secondary, fontSize: V.font.label.fontSize },
-                    children:
-                      "Keyboard: arrows/WASD move (Shift runs), E = action (hold while hiding = opera), Tab = switch to Mops, M = sound, hold R or Reset section to restart this section. Click the game first so it hears your keys.",
+                    id: "ss-help",
+                    children: KEY_HELP,
                   }),
                   (0, pe.jsx)("button", {
                     type: "button",
