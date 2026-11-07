@@ -35,13 +35,12 @@ These came up in the notes and were not given a new behavior:
 From the repo root:
 
 ```
-npm install --no-save puppeteer-core
-CHROME=/usr/bin/google-chrome node tests/progression.mjs
-CHROME=/usr/bin/google-chrome node tests/gas-stop.mjs
-CHROME=/usr/bin/google-chrome node tests/kitchen.mjs
-CHROME=/usr/bin/google-chrome node tests/reliability.mjs
+npm install
+npm test
 ```
 
-`CHROME` is the Chrome or Chromium binary. You can omit it when that binary is already at `/usr/bin/google-chrome`.
+`npm test` runs every suite in `tests/` one at a time and prints one PASS or FAIL line per suite. It exits non-zero if any suite fails. To run one suite: `npm run test:one tests/kitchen.mjs`.
+
+The tests find Chrome on their own: the `CHROME` environment variable if it is set, then Google Chrome in `/Applications` on a Mac, then `/usr/bin/google-chrome`. Set `CHROME` to use another Chrome or Chromium binary. Pictures the tests save go to `tests/out/`, which git ignores.
 
 If `puppeteer-core` is missing, or Chrome cannot be found or started, the test prints the failed step and the command to fix it, then exits.

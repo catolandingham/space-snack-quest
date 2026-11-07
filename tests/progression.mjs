@@ -13,6 +13,7 @@ import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { chromePath } from "./chrome-path.mjs";
 
 let puppeteer;
 try {
@@ -24,7 +25,7 @@ try {
   process.exit(1);
 }
 
-const chrome = process.env.CHROME || "/usr/bin/google-chrome";
+const chrome = chromePath();
 if (!existsSync(chrome)) {
   console.error(`Chrome was not found at ${chrome}.`);
   console.error("Set CHROME to the Chrome or Chromium binary, then rerun tests/progression.mjs.");
