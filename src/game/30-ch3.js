@@ -237,8 +237,9 @@
       "p3:m2": "Mops: turn the second mirror",
       p3x: "Mops: go out the temple door",
       p4a: "Squatch: lure the rover off the ramp",
-      "p4a:sing": "Squatch: stop singing before it reaches you",
-      "p4a:run": "Squatch: run to the ship and get on board",
+      "p4a:sing": "Squatch: get the rover off the ramp",
+      "p4a:run": "Squatch: run to the ship",
+      "p4a:board": "Squatch: get on board",
       p4b: "Squatch: grab the rope from the cart",
       "p4b:rope": "Squatch: throw the rope to Mops",
     };
@@ -258,7 +259,9 @@
         : l === "p4a"
           ? x.sing
             ? "p4a:sing"
-            : o && o.look > 0
+            : n.act && n.act.verb === "BOARD"
+              ? "p4a:board"
+              : o && o.look > 0
               ? "p4a:run"
               : "p4a"
           : l === "p4b"

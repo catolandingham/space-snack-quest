@@ -47,9 +47,9 @@ The code in backticks is the chip key the game uses (for the tests).
 | 18.10 | Chapter 1, `O9`: The note and the rocket (unchanged words, now with who acts) | Squatch: put them in your Guardian Box | Squatch: put the gifts in your Guardian Box |
 | 18.11 | Chapter 1, `S1`: S1 and S1L: Mops forgot his lunch (was "Bring Mops his lunch") | Squatch: bring Mops his lunch | Squatch: take Mops his lunch |
 | 18.12 | Chapter 1, `S2`: S2: Mops is in the hall | Squatch: give Mops his lunch | Squatch: hand Mops his lunch |
-| 18.13 | Chapter 1, `S4`: S4: the Moon Pie crate | Squatch: hide in the crate | Squatch: get in the crate |
+| 18.13 | Chapter 1, `S4`: S4: the Moon Pie crate (goal only: hiding was taught in the opening) | Squatch: get a Moon Pie | Squatch: grab a Moon Pie from the crate |
 | 18.14 | Chapter 1, `S4:in`: S4: Squatch is in the crate | Squatch: stay hidden in the crate | Squatch: keep still in the crate |
-| 18.15 | Chapter 1, `S5`: S5: the window, before the visitors talk | Squatch: hide behind the plant | Squatch: hide by the plant |
+| 18.15 | Chapter 1, `S5`: S5: the window, before the visitors talk (goal only) | Squatch: listen to the visitors | Squatch: hear what the visitors say |
 | 18.16 | Chapter 1, `S5:bro`: S5: the brochure is in the bin | Squatch: grab the brochure | Squatch: take the brochure |
 | 18.17 | Chapter 1, `S6`: S6: Mops asks Squatch to come (was "Follow Mops") | Squatch: follow Mops | Squatch: go after Mops |
 | 18.18 | Chapter 1, `S7`: S7: the terminal (was "Use the manager's terminal") | Squatch: use the manager's terminal | Squatch: go to the terminal |
@@ -63,9 +63,9 @@ The code in backticks is the chip key the game uses (for the tests).
 | 18.26 | Chapter 1, `S10:mops`: S10: the player is Mops | Mops: squeeze into the vent | Mops: crawl into the vent |
 | 18.27 | Chapter 1, `S10d`: S10d: inside the duct | Mops: grab the other half of the slip | Mops: find the other half |
 | 18.28 | Chapter 1, `S10d:out`: S10d: Mops has the half | Mops: crawl back out | Mops: go back out |
-| 18.29 | Chapter 1, `S11`: S11: the bot guards the door (second lure: goal only) | Squatch: hide behind the plant | Squatch: hide by the plant |
+| 18.29 | Chapter 1, `S11`: S11: the bot guards the door (goal only: hiding and singing were taught in S9) | Squatch: get the bot away from the door | Squatch: clear the bot from the door |
 | 18.30 | Chapter 1, `S11:hid`: S11: Squatch is behind the plant | Squatch: lure the bot away from the door | Squatch: get the bot away from the door |
-| 18.31 | Chapter 1, `S11:sing`: S11: Squatch is singing | Squatch: stop singing before it gets there | Squatch: stop before the bot gets there |
+| 18.31 | Chapter 1, `S11:sing`: S11: Squatch is singing (goal only, same line as 18.29) | Squatch: get the bot away from the door | Squatch: clear the bot from the door |
 | 18.32 | Chapter 1, `S11:mops`: S11: the player is Mops | Mops: type the code at the door | Mops: open the door with the code |
 | 18.33 | Chapter 1, `S11:costume`: S11: the scanner said NO WOOKIES; Mops told him about the costume | Squatch: put on the goat costume | Squatch: get the goat costume |
 | 18.34 | Chapter 1, `S11:gate`: S11: the door is open | Squatch: walk through the gate | Squatch: go through the scanner |
@@ -80,12 +80,13 @@ The code in backticks is the chip key the game uses (for the tests).
 | 18.43 | Chapter 3, `p3:m2`: P3: the first mirror is turned | Mops: turn the second mirror | Mops: turn the other mirror |
 | 18.44 | Chapter 3, `p3x`: P3: Zip has his map | Mops: go out the temple door | Mops: leave the temple |
 | 18.45 | Chapter 3, `p4a`: P4: the rover is on the ramp | Squatch: lure the rover off the ramp | Squatch: get the rover off the ramp |
-| 18.46 | Chapter 3, `p4a:sing`: P4: Squatch is singing | Squatch: stop singing before it reaches you | Squatch: stop before the rover gets to you |
-| 18.47 | Chapter 3, `p4a:run`: P4: the rover is looking at the barrel | Squatch: run to the ship and get on board | Squatch: run to the ship! |
+| 18.46 | Chapter 3, `p4a:sing`: P4: Squatch is singing (goal only, same line as 18.45) | Squatch: get the rover off the ramp | Squatch: clear the rover off the ramp |
+| 18.47 | Chapter 3, `p4a:run`: P4: the rover is looking at the barrel | Squatch: run to the ship | Squatch: run for the ship! |
+| 18.144 | Chapter 3, `p4a:board`: P4: Squatch is at the ramp and BOARD · ship is up | Squatch: get on board | Squatch: board the ship |
 | 18.48 | Chapter 3, `p4b`: P4: Mops is floating away | Squatch: grab the rope from the cart | Squatch: get the rope |
 | 18.49 | Chapter 3, `p4b:rope`: P4: Squatch has the rope | Squatch: throw the rope to Mops | Squatch: throw Mops the rope |
 | 18.50 | Chapter 4, `m1`: M1: the Mars dock (was "Sneak to the gate") | Squatch: sneak to the gate | Squatch: get to the gate |
-| 18.51 | Chapter 4, `m1:sing`: M1: Squatch is singing in the middle trash can | Squatch: stop singing before it reaches you | Squatch: stop before the bot gets to you |
+| 18.51 | Chapter 4, `m1:sing`: M1: Squatch is singing in the middle trash can (goal only, same line as 18.50) | Squatch: sneak to the gate | Squatch: get to the gate |
 | 18.52 | Chapter 4, `m1:run`: M1: the bot is looking at the trash can | Squatch: run to the gate | Squatch: run for the gate! |
 | 18.53 | Chapter 4, `m2`: M2: the pancake stand; the player is Mops | Mops: read the poster on the stand | Mops: look at the poster |
 | 18.54 | Chapter 4, `m2:knock`: M2: Mops read the poster | Mops: knock on the door | Mops: knock |

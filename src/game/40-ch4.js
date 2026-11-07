@@ -164,7 +164,7 @@
     // (docs/PHASE-2-LINES-FOR-BRIAN.md). A key with no line shows no new chip.
     const CH4_CHIPS = {
       m1: "Squatch: sneak to the gate",
-      "m1:sing": "Squatch: stop singing before it reaches you",
+      "m1:sing": "Squatch: sneak to the gate",
       "m1:run": "Squatch: run to the gate",
       m2: "Mops: read the poster on the stand",
       "m2:knock": "Mops: knock on the door",
