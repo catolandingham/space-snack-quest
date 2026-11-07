@@ -1121,7 +1121,7 @@ check(
     keptPay(sectionRows.hide) && sectionRows.hide.phase === "g3hide" && sectionRows.hide.scene === "G3" && sectionRows.hide.x === 300 && sectionRows.hide.y === 520 && sectionRows.hide.timer === 5.5 &&
     keptPay(sectionRows.wash1) && sectionRows.wash1.scene === "G2k" && sectionRows.wash1.room === "kitchen" && sectionRows.wash1.x === 480 && sectionRows.wash1.y === 430 && sectionRows.wash1.peekT === 7 && !sectionRows.wash1.sec &&
     keptPay(sectionRows.wash5) && sectionRows.wash5.scene === "G5k" && sectionRows.wash5.x === 230 && sectionRows.wash5.y === 520 && sectionRows.wash5.peekT === 4.5 &&
-    keptPay(sectionRows.g4) && sectionRows.g4.scene === "G4" && sectionRows.g4.room === "diner" && sectionRows.g4.x === 160 && sectionRows.g4.mo === 600 &&
+    keptPay(sectionRows.g4) && sectionRows.g4.scene === "G4" && sectionRows.g4.room === "diner" && sectionRows.g4.x === 170 && sectionRows.g4.pose === "hidden" && sectionRows.g4.mo === 600 &&
     keptPay(sectionRows.g1) && sectionRows.g1.scene === "G1" && sectionRows.g1.x === 760 && sectionRows.g1.y === 540 &&
     sectionRows.g4k.scene === "G4" && sectionRows.g4k.room === "kitchen" && sectionRows.g4k.phase === "g4k" && sectionRows.g4k.jar === 12,
   sectionRows,

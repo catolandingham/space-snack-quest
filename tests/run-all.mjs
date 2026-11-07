@@ -10,7 +10,7 @@ import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 // Helper modules and this runner are not suites.
-const notSuites = new Set(["run-all.mjs", "chrome-path.mjs"]);
+const notSuites = new Set(["run-all.mjs", "chrome-path.mjs", "game-page.mjs"]);
 const suites = readdirSync(here)
   .filter((f) => f.endsWith(".mjs") && !notSuites.has(f))
   .sort();
