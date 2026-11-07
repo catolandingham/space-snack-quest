@@ -21,6 +21,29 @@ PR #4 is squash-merged. `main` is `9999f0cd`. That commit has the same tree as k
 
 The recovery commits are replayed onto `9999f0cd`. Their changes match `17a03c2` and `0ab2781`. The kitchen commits are not in this pull request.
 
+## Phase 1 (plan section 3, T5 to T12)
+
+Branch `phase-1-kitchen-clarity`, one commit per task with its test. Not merged. The wording of every new line waits for Brian's yes in `docs/PHASE-1-LINES-FOR-BRIAN.md`, which also lists what is not finished.
+
+| Task | What the player will notice | Test | State |
+| --- | --- | --- | --- |
+| T7 | No dead ends: BACK · kitchen, Squatch washes after the soup, g4l resets to the dishes | `tests/ch2-next-step.mjs` | Done on branch |
+| T5 | Goal chip names who acts and what to do | `tests/ch2-goal-chip.mjs` | Done on branch, wording pending |
+| T6 | Switch cards with a reason, YOU tag, room-change lines | `tests/ch2-switch.mjs` | Chapter 2 done on branch; Chapters 1, 3, 4 why lines not written |
+| T8 | No capture while Mops; free shoo; LOCKUP says who and where | `tests/ch2-capture-cause.mjs` | Done on branch, wording pending |
+| T9 | Bubbles over the speaker, one at a time, ear at the door | `tests/bubble-anchor.mjs` | Done on branch |
+| T10 | Soup bowl on Mops' head | `tests/soup-on-head.mjs` | Done on branch |
+| T11 | "VERB · thing" on every Chapter 2 action, 16 px button text | `tests/action-labels.mjs` | Done on branch, wording pending |
+| T12 | Help names only working controls | `tests/help-text.mjs` | Done on branch, wording pending |
+
+Open rows found during Phase 1 (not fixed):
+
+| Item | What happens | State |
+| --- | --- | --- |
+| g6d reset | Reset section in g6d (or in g6 once Mops has the coins) puts the player back as Squatch on the lot, and the ship can be boarded without filling the tank | Open |
+| Cook's first line | The cook says "A WOOKIE!" before she is drawn; she only appears once she is on the floor | Open |
+| Playtest issue 9 | Window and sink read as being in the wrong spot | Open, waits on decision D12 |
+
 ## SS40–SS44
 
 Kitchen C at `6853902` is the pass for these five checks. The ground drawing is one floor line: the full-height diner door, the counter, and the spice rack share it. Pastdraw is the galley through `db3a82c`. QA note `df55e0c` reviewed `d4e3714` (that note is not a commit) and is part of pastdraw.

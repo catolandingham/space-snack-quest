@@ -28,6 +28,21 @@ Add these to the address of `index.html` to jump into the game. Without them, no
 
 For example, `index.html?ch=2&phase=wash1&debug=1` opens the kitchen sink with the line showing `phase wash1` and `control Squatch`.
 
+## Phase 1: kitchen and diner clarity
+
+Branch `phase-1-kitchen-clarity` makes Chapter 2 clear to a 10-year-old (plan section 3, tasks T5 to T12). Every new line the player reads is listed for Brian in `docs/PHASE-1-LINES-FOR-BRIAN.md`.
+
+- The goal chip names who acts and what to do, from one table (`CH2_CHIPS`), and hides while a bubble is up. `tests/ch2-goal-chip.mjs`.
+- Every switch between Squatch and Mops goes through `switchTo` and, in Chapter 2, shows a card with the reason; a "YOU: SQUATCH" or "YOU: MOPS" tag sits over the picture; room changes show one short line. `tests/ch2-switch.mjs`.
+- Every Chapter 2 state offers a way forward (BACK · kitchen, Squatch in control after the soup, g4l resets to the next dishes) and Squatch is out of sight while Mops is out front. `tests/ch2-next-step.mjs` writes the action table to `tests/out/next-step.json`.
+- No capture while the player is Mops; a shoo costs no stars; the LOCKUP card says who saw Squatch and where. `tests/ch2-capture-cause.mjs`.
+- Speech bubbles sit over the speaker, one at a time; a voice from another room gets an ear at the door. `tests/bubble-anchor.mjs`.
+- The soup bowl rests on Mops' head, with steam and a spoon. `tests/soup-on-head.mjs`.
+- Every Chapter 2 action reads "VERB · thing" on the button and the picture, in letters at least 16 px. `tests/action-labels.mjs`.
+- The help line names only controls that work. `tests/help-text.mjs`.
+
+Test hooks added for these: `__ss.resetTo(phase)`, `pickAct()`, `walkBounds()`, `drain()`, `sqAway()`, `CH2_CHIPS`, `ch2ChipKey()`, `lastBubble`, `bubbleFrame`. `tests/game-page.mjs` is the shared start-up code for the new suites.
+
 ## Progression tests
 
 `tests/progression.mjs` plays the real game loop in headless Chrome. It checks the hangar door, the Mars reunion, Rusty's sighting through security and a section restart, pump sight, and the closet G-sign and bucket lanes.

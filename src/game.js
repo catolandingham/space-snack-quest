@@ -4160,7 +4160,10 @@
       o && !de() ? (n.q.unshift(...l, o), (n.cur = null)) : n.q.unshift(...l);
     }
     function kV(l, o, i) {
-      (n.live.push({ who: l, text: o, style: i || "say", live: 1.4 + o.length * 0.035 }), Dt("live", pa[l], o, i || "live"));
+      // Ambient lines wait their turn (one bubble at a time). A long queue drops its oldest waiting line.
+      (n.live.push({ who: l, text: o, style: i || "say", live: 1.4 + o.length * 0.035 }),
+        n.live.length > 4 && n.live.splice(1, 1),
+        Dt("live", pa[l], o, i || "live"));
     }
     function Dt(l, o, i, s) {
       n.log.push({ k: l, who: o, text: i, style: s, t: Math.round(n.T * 100) / 100 });
@@ -6288,7 +6291,7 @@
         (B.slip.on = !1),
         (x.ask = 0),
         (x.seen6 = !1),
-        (x.mops = !1),
+        switchTo("squatch"),
         Bh(),
         D.hide());
     }
@@ -6609,7 +6612,7 @@
       ((n.scene = "S9"),
         (n.room = "hall"),
         (n.live = []),
-        (x.mops = !1),
+        switchTo("squatch"),
         (x.spot = -1),
         (n.sqPose = "stand"),
         _s(bo.x, bo.y),
@@ -6694,8 +6697,29 @@
           ? ((q.asked = !1), (q.look -= l), q.look <= 0 && (q.look = -1))
           : q.look < 0 && mV(q, q.home.x, q.home.y, 50, l) && (q.look = 0);
     }
+    // Why each announced switch happens. Wording waits for Brian's yes (docs/PHASE-1-LINES-FOR-BRIAN.md).
+    // Switches with no entry here (scene set-ups, Reset section, Chapters 1, 3 and 4) are silent for now.
+    const SWITCH_WHY = {
+      "g1-door": "Mops goes to the diner. Squatch stays hidden by the pump.",
+      "g2-back": "Mops found work. Squatch sneaks in the back.",
+      "g3-front": "Squatch stays hidden in the crate. Mops goes out front.",
+      "g4-wash": "Squatch washes the next dishes.",
+      "g5-mop": "This pot needs a mop. Mops goes to get it.",
+      "g5-jar": "The dishes are done. Mops goes out front.",
+      "g6-lure": "The tank is full. Squatch has to lure the bots away.",
+    };
+    function switchTo(who, why) {
+      let m = who === "mops";
+      if (x.mops === m) return;
+      let before = !!x.mops,
+        line = why && SWITCH_WHY[why];
+      // Test record: who the player was at the moment this switch (and its card) was queued.
+      window.__ss && (window.__ss.switchLog = window.__ss.switchLog || []).push({ to: who, before, why: why || "", card: !!line });
+      ((x.mops = m), (n.sq.moving = !1), (n.mo.moving = !1));
+      line && J([{ k: "card", id: "switch", who: m ? "mops" : "sq", text: "You are " + (m ? "MOPS" : "SQUATCH") + " now.", by: line }]);
+    }
     function yf(l) {
-      x.mops !== l && ((x.mops = l), (n.sq.moving = !1), (n.mo.moving = !1), D.key());
+      x.mops !== l && (switchTo(l ? "mops" : "squatch"), D.key());
     }
     function hA() {
       return x.mops
@@ -6877,7 +6901,7 @@
     function Ih() {
       ((n.scene = "S10"),
         (n.room = "hall"),
-        (x.mops = !1),
+        switchTo("squatch"),
         (n.sqPose = "stand"),
         (x.spot = -1),
         (n.sq.x = 980),
@@ -6985,7 +7009,7 @@
       ((n.scene = "S11"),
         (n.room = "hall"),
         (n.live = []),
-        (x.mops = !1),
+        switchTo("squatch"),
         (x.spot = -1),
         (n.sqPose = "stand"),
         _s(Ch.x, Ch.y),
@@ -7105,7 +7129,7 @@
       ((n.scene = "S12"),
         (n.room = "hangar"),
         (n.live = []),
-        (x.mops = !1),
+        switchTo("squatch"),
         (n.sqPose = "stand"),
         (n.sq = { x: 120, y: 520, f: 1, walk: 0, moving: !1 }),
         (n.mo = { x: 880, y: 520, f: -1, walk: 0, moving: !1 }),
@@ -7357,7 +7381,8 @@
     function Bl(l, o, i, s, q, d) {
       (e.beginPath(), e.moveTo(l, o), e.arc(l, o, q, i - s, i + s), e.closePath(), (e.fillStyle = d), e.fill());
     }
-    function Pn(l, o, i) {
+    function Pn(l, o, i, free) {
+      // free: a shoo. It costs no stars; everything else is the same as a capture.
       ((n.ctrl = !1),
         (n.act = null),
         (n.sq.moving = !1),
@@ -7370,8 +7395,8 @@
           ...i,
           N(() => {
             let s = n.starOn;
-            ((n.stars = Math.max(0, n.stars - 100)),
-              s && n.sparks.push({ x: 300, y: 80, t: 2.4, s: "\u2212100 CAUGHT" }),
+            (free ||
+              ((n.stars = Math.max(0, n.stars - 100)), s && n.sparks.push({ x: 300, y: 80, t: 2.4, s: "\u2212100 CAUGHT" })),
               Dt("caught", "", o, "caught"),
               l(),
               (n.ctrl = !0));
@@ -7381,8 +7406,23 @@
     function Jh() {
       return { ox: k.rust.x, oy: 400, a: k.rust.f > 0 ? 0.5 : Math.PI - 0.5 };
     }
-    function sSec(l) {
-      k.sec || ((k.sec = { x: 980, y: 520, hide: 0, mode: "come", by: l || "diner" }), kV("bot", "SECURITY!"), D.alarm());
+    function sSec(l, who) {
+      k.sec ||
+        ((k.sec = { x: 980, y: 520, hide: 0, mode: "come", by: l || "diner", who: who || "" }), kV("bot", "SECURITY!"), D.alarm());
+    }
+    // The first line of the LOCKUP card: who saw Squatch and where. The captor's joke comes after, in bubbles.
+    function lockupCause(by, who) {
+      return by === "pump"
+        ? "A pump bot saw Squatch on the lot. Security caught him."
+        : by === "diner"
+          ? who === "blorp"
+            ? "Blorp saw Squatch in the diner. Security caught him."
+            : "Gloop saw Squatch at the counter. Security caught him."
+          : by === "sink"
+            ? "Gloop saw Squatch at the sink. Security caught him."
+            : by === "rust"
+              ? "Rusty saw Squatch by the pump. Security caught him."
+              : "Security caught Squatch.";
     }
     function qSec(l) {
       let s = k.sec;
@@ -7400,16 +7440,17 @@
         (s.y += (dy / d) * 130 * l),
         d < 48 &&
           ((n.jailBy = k.sec.by || ""),
+          (n.jailWho = k.sec.who || ""),
           (k.sec = null),
           (n.ctrl = !1),
           (n.act = null),
           (n.sq.moving = !1),
           J([
-            { k: "card", id: "jail", text: "LOCKUP", by: n.jailBy },
+            { k: "card", id: "jail", text: "LOCKUP", by: n.jailBy, cause: lockupCause(n.jailBy, n.jailWho) },
             ...(n.jailBy === "pump"
               ? [v("bot", "Report him or fuel him?"), v("sq", "Pancakes. Park the nozzle.")]
               : n.jailBy === "diner"
-                ? [v("gloop", "Counter's closed. Pen's open."), v("sq", "I'll take it to go.")]
+                ? [v("gloop", "Counter's closed. Lockup's open."), v("sq", "I'll take it to go.")]
                 : n.jailBy === "sink"
                   ? [v("gloop", "The window caught the sink."), v("sq", "Next time I roll.")]
                   : n.jailBy === "rust"
@@ -7509,7 +7550,7 @@
         (n.mo.f = c.mo.f || -1),
         (n.sqPose = c.sqPose || "stand"),
         (n.moPose = c.moPose || "stand"),
-        (x.mops = !!c.mops),
+        switchTo(c.mops ? "mops" : "squatch"),
         (x.spot = c.spot == null ? -1 : c.spot),
         n.room === "hall" && (B.camX = c.cam || 0),
         (k.peekT = c.peekT || 0),
@@ -7549,26 +7590,76 @@
         (k.out = -1),
         (k.timer = 0),
         (k.botsIn = !1),
+        (k.sqStash = null),
         (x.sing = !1),
         (p.alarm = !1),
         (p.alarmT = 1),
-        n.pulse.clear());
+        n.pulse.clear(),
+        String(n.scene || "").startsWith("G") && (n.chip = ""));
     }
     function drawCap() {
       let a = n.act;
-      if (!a || !a.cap || !n.ctrl) return;
+      // No caption over the crate's own LEAVE SOUP label, or over the dish while it is being scrubbed.
+      if (!a || !a.cap || !n.ctrl || a.verb === "LEAVE SOUP" || (n.room === "kitchen" && k.dishT > 0)) return;
       let x = a.x,
         y = Math.max(28, a.y - 36);
       (m(x - 78, y - 14, 156, 28, 8), r("#fffaf0", 3), g(a.verb + " \u00b7 " + a.cap, x, y, 14, "#1e2430", "center", 800));
     }
+    // The goal chip for Chapter 2: one table, read every frame from the phase, the room and who is in control.
+    // Every line names who acts. No line names a place in another room. The first time a mechanic appears
+    // the chip names the step (g1, g3hide); after that it names only the goal, so discovery stays with the player. Wording waits for Brian's yes
+    // (docs/PHASE-1-LINES-FOR-BRIAN.md).
+    const CH2_CHIPS = {
+      g1: "Squatch: hide behind the crate by the pump",
+      g1door: "Mops: walk to the diner door and go in",
+      back: "Squatch: sneak in the KITCHEN door",
+      g2: "Mops: ask Gloop for work at the counter",
+      wash1: "Squatch: wash the dishes at the sink",
+      g3: "Squatch: hide in the crate before the bots look!",
+      g3hide: "Squatch: hide in the crate before the bots look!",
+      g3h: "Squatch: stay out of sight",
+      g4: "Mops: take the tip jar",
+      "g4:coins": "Mops: buy soup at the counter",
+      "g4:soup": "Mops: take the soup through the kitchen door",
+      g4k: "Mops: carry the soup to Squatch's crate",
+      g4l: "Mops: carry the soup to Squatch's crate",
+      "diner:kitchen": "Mops: go back through the kitchen door",
+      wash5: "Squatch: wash the next dishes",
+      "wash5:mop": "Mops: mop the greasy pot at the sink",
+      "kitchen:mops": "Mops: tap Squatch's picture (top right) to switch back",
+      g6d: "Mops: grab the new tip jar",
+      "g6d:coins": "Mops: take the coins out the EXIT door",
+      "g6:mops": "Mops: give the coins to Rusty at the pump",
+      g6: "Squatch: lure the bots away from the ship",
+      "g6:sing": "Squatch: stop singing before they reach you",
+      "g6:run": "Squatch: run to the ship and get on board",
+    };
+    function ch2ChipKey() {
+      let ph = k.phase || "";
+      if (sqAway()) return "diner:kitchen";
+      if (ph === "g4") return k.has === "soup" ? "g4:soup" : k.has === "coins" ? "g4:coins" : "g4";
+      if (ph === "wash5" && x.mops && k.greasy) return "wash5:mop";
+      if (x.mops && n.room === "kitchen" && (ph === "wash1" || ph === "wash5" || ph === "g3" || ph === "g3hide")) return "kitchen:mops";
+      if (ph === "g6d") return k.has === "coins" ? "g6d:coins" : "g6d";
+      if (ph === "g6")
+        return x.mops ? "g6:mops" : x.sing ? "g6:sing" : (k.bots || []).some((o) => o.look > 0) ? "g6:run" : "g6";
+      return ph;
+    }
+    function ch2Chip() {
+      return CH2_CHIPS[ch2ChipKey()] || "";
+    }
     function applyG(l) {
+      let ok = placeG(l);
+      return (ok && (n.chip = ch2Chip()), ok);
+    }
+    function placeG(l) {
       if (l === "back" || l === "g1door") {
         ((n.scene = "G2b"),
           (n.room = "gas"),
           (k.phase = "back"),
           (n.sqPose = "hidden"),
           (x.spot = 60),
-          (x.mops = !1),
+          switchTo("squatch"),
           (n.sq.x = ht.x),
           (n.sq.y = ht.y),
           (n.mo.x = -200),
@@ -7581,23 +7672,24 @@
           (k.phase = "g6"),
           (n.sqPose = "stand"),
           (x.spot = -1),
-          (x.mops = !1),
+          switchTo("squatch"),
           (n.sq.x = Sa.x),
           (n.sq.y = 470),
           n.pulse.add("lure"));
         return !0;
       }
       if (l === "g3" || l === "g3hide" || l === "g3h") {
-        ((n.scene = "G3"), (n.room = "kitchen"), (n.sqPose = "stand"), (x.spot = -1), (x.mops = !1), (n.sq.x = 300), (n.sq.y = 520), V2());
+        ((n.scene = "G3"), (n.room = "kitchen"), (n.sqPose = "stand"), (x.spot = -1), switchTo("squatch"), (n.sq.x = 300), (n.sq.y = 520), V2());
         return !0;
       }
+      if (l === "g4l") ((l = "wash5"), (k.has = ""), (k.sqBowl = "counter"));
       if (l === "wash1" || l === "wash5") {
         ((n.scene = l === "wash1" ? "G2k" : "G5k"),
           (n.room = "kitchen"),
           (k.phase = l),
           (n.sqPose = "stand"),
           (x.spot = -1),
-          (x.mops = !1),
+          switchTo("squatch"),
           (n.sq.x = l === "wash1" ? KV.x : xe.x + 60),
           (n.sq.y = l === "wash1" ? KV.y : 520),
           (k.peek = 0),
@@ -7615,11 +7707,11 @@
         ((n.scene = "G4"),
           (n.room = "diner"),
           (k.phase = "g4"),
-          (n.sqPose = "stand"),
-          (x.spot = -1),
-          (n.sq.x = 160),
-          (n.sq.y = 520),
-          (x.mops = !0),
+          (n.sqPose = "hidden"),
+          (x.spot = 63),
+          (n.sq.x = xe.x),
+          (n.sq.y = xe.y),
+          switchTo("mops"),
           (n.mo.x = 600),
           (n.mo.y = 500),
           (n.mo.f = -1),
@@ -7631,10 +7723,13 @@
         ((n.scene = "G2"),
           (n.room = "diner"),
           (k.phase = "g2"),
-          (x.mops = !0),
+          switchTo("mops"),
           (n.mo = { x: mf.x + 40, y: 560, f: 1, walk: 0, moving: !1 }),
           (n.moPose = "stand"),
-          (n.sqPose = "stand"),
+          (n.sqPose = "hidden"),
+          (x.spot = 60),
+          (n.sq.x = ht.x),
+          (n.sq.y = ht.y),
           n.pulse.add("counter"));
         return !0;
       }
@@ -7642,13 +7737,13 @@
         ((n.scene = "G4"),
           (n.room = "kitchen"),
           (k.phase = l),
-          (x.mops = !0),
+          switchTo("mops"),
           (n.mo = { x: 150, y: 520, f: 1, walk: 0, moving: !1 }),
           (n.moPose = "stand"),
-          (n.sqPose = "stand"),
-          (x.spot = -1),
-          (n.sq.x = xe.x + 60),
-          (n.sq.y = 520),
+          (n.sqPose = "hidden"),
+          (x.spot = 63),
+          (n.sq.x = xe.x),
+          (n.sq.y = xe.y),
           (k.bots = [
             { x: 420, y: 520, hx: 420, f: 1, look: 0 },
             { x: 560, y: 520, hx: 560, f: -1, look: 0 },
@@ -7666,7 +7761,7 @@
           (k.phase = "g1"),
           (n.sqPose = "stand"),
           (x.spot = -1),
-          (x.mops = !1),
+          switchTo("squatch"),
           (n.sq.x = 760),
           (n.sq.y = 540),
           (n.sq.f = -1),
@@ -7738,7 +7833,7 @@
               (k.out = -1),
               (k.argueT = 2.4),
               kV(k.outT % 2 ? "bot" : "bot2", k.outT % 2 ? "You watch the crate." : "No, YOU watch the crate."))),
-        n.ctrl && x.mops && k.out >= 0)
+        n.ctrl && x.mops && n.room === "kitchen" && k.out >= 0)
       ) {
         let o = Zh(k.bots[k.out]);
         vt(n.mo.x, n.mo.y - 40, o.ox, o.oy, o.a, 0.6, o.len) &&
@@ -7747,7 +7842,8 @@
               ((n.mo.x = Ln.x), (n.mo.y = Ln.y), (k.out = -1), (k.argueT = 2), (k.bots[0].f = 1), (k.bots[1].f = -1));
             },
             "bots",
-            [v(k.out ? "bot2" : "bot", "Former Ganitor? SHOO!"), v("mops", "Just passing through.")],
+            [v(k.out ? "bot2" : "bot", "No goats with food past here! Shoo!"), v("mops", "Just passing through.")],
+            !0,
           );
       }
       if (k.phase === "g6") {
@@ -7854,7 +7950,7 @@
                       (n.mo.y = 500),
                       (n.mo.f = -1),
                       (n.moPose = "stand"),
-                      (x.mops = !1),
+                      switchTo("squatch"),
                       (n.ctrl = !0));
                   }),
                 ]));
@@ -7871,7 +7967,8 @@
     }
     function NA(l) {
       n.scene.startsWith("G") &&
-        (n.room === "gas" && !de() && MA(l),
+        ((n.chip = ch2Chip()),
+        n.room === "gas" && !de() && MA(l),
         de() || (EA(l), wA(l), GA(l)),
         n.room !== "gas" && qSec(l),
         k.phase === "g3hide" &&
@@ -7912,6 +8009,7 @@
         if ((i === "g1" || i === "back") && n.sqPose !== "hidden" && hV(l, ht.x, ht.y, 80) && i === "g1")
           return {
             verb: "HIDE",
+            cap: "crate",
             x: ht.x,
             y: ht.y - 100,
             r: 0,
@@ -7920,10 +8018,11 @@
               (dn(ht.x, ht.y, 60), n.pulse.delete("crateg"), zA());
             },
           };
-        if (i === "back" && hV(l, Sa.x, Sa.y + 40, 90)) return { verb: "ENTER", x: Sa.x, y: Sa.y - 100, r: 0, hot: !0, f: DA };
+        if (i === "back" && hV(l, Sa.x, Sa.y + 40, 90)) return { verb: "ENTER", cap: "kitchen door", x: Sa.x, y: Sa.y - 100, r: 0, hot: !0, f: DA };
         if (i === "g6" && n.sqPose !== "hidden" && hV(l, _e.x, _e.y, 80))
           return {
             verb: "HIDE",
+            cap: "crate",
             x: _e.x,
             y: _e.y - 100,
             r: 0,
@@ -7938,6 +8037,7 @@
           return x.sing
             ? {
                 verb: "STOP",
+                cap: "singing",
                 x: _e.x,
                 y: _e.y - 110,
                 r: 0,
@@ -7947,6 +8047,7 @@
               }
             : {
                 verb: "SING",
+                cap: "lure song",
                 x: _e.x,
                 y: _e.y - 110,
                 r: 0,
@@ -7957,11 +8058,12 @@
               };
       }
       if (n.room === "gas" && x.mops && i === "g6" && k.has === "coins" && hV(o, k.rust.x, 470, 110))
-        return { verb: "GIVE", x: k.rust.x, y: 330, r: 0, hot: !0, f: QA };
+        return { verb: "GIVE", cap: "coins", x: k.rust.x, y: 330, r: 0, hot: !0, f: QA };
       if (n.room === "diner" && x.mops) {
         if (!k.cloche && hV(o, Ma.x, Ma.y, 70))
           return {
             verb: "LIFT",
+            cap: "lid",
             x: Ma.x,
             y: 270,
             r: 0,
@@ -7972,6 +8074,7 @@
         if (!k.flipFrame && hV(o, oa.x, oa.y, 70))
           return {
             verb: "FLIP",
+            cap: "picture",
             x: oa.x,
             y: 120,
             r: 0,
@@ -7982,6 +8085,7 @@
         if (!k.flipCard && hV(o, B0.x, B0.y, 70))
           return {
             verb: "FLIP",
+            cap: "postcard",
             x: B0.x,
             y: 170,
             r: 0,
@@ -7991,10 +8095,11 @@
                 TV([{ k: "panel", id: "postcard" }, v("mops", "Furry pancakes... on Mars. Hm.")]));
             },
           };
-        if (i === "g2" && hV(o, Ul.x, Ul.y, 80)) return { verb: "ORDER", x: Ul.x, y: 210, r: 0, hot: !0, f: UA };
+        if (i === "g2" && hV(o, Ul.x, Ul.y, 80)) return { verb: "ASK", cap: "for work", x: Ul.x, y: 210, r: 0, hot: !0, f: UA };
         if ((i === "g4" || i === "g6d") && k.jar > 0 && !k.has && hV(o, Dl.x, Dl.y, 70))
           return {
             verb: "GRAB",
+            cap: "tip jar",
             x: Dl.x,
             y: 290,
             r: 0,
@@ -8006,6 +8111,7 @@
         if (i === "g4" && !k.has && hV(o, Ul.x, Ul.y, 90))
           return {
             verb: "ASK",
+            cap: "Gloop",
             x: Ul.x,
             y: 210,
             r: 0,
@@ -8024,6 +8130,7 @@
         if (i === "g4" && k.has === "coins" && hV(o, Ul.x, Ul.y, 80))
           return {
             verb: "BUY",
+            cap: "soup 30",
             x: Ul.x,
             y: 210,
             r: 0,
@@ -8050,10 +8157,23 @@
           return { verb: "ENTER", cap: "kitchen", x: Cl.x - 20, y: 300, r: 0, hot: !0, f: LA };
         if (i === "g6d" && k.has === "coins" && hV(o, 48, 470, 70))
           return { verb: "EXIT", cap: "the lot", x: 48, y: 250, r: 0, hot: !0, f: l2 };
+        if (kitchenPhase(i) && hV(o, Cl.x, Cl.y + 40, 90))
+          return {
+            verb: "BACK",
+            cap: "kitchen",
+            x: Cl.x - 20,
+            y: 300,
+            r: 0,
+            hot: !0,
+            f: () => {
+              (roomLine("Mops goes back to the kitchen."), (n.room = "kitchen"), (n.mo.x = 110), (n.mo.y = 500), (n.mo.f = 1));
+            },
+          };
       }
       if (n.room === "kitchen" && x.mops && hV(o, Hn.x, 500, 110))
         return {
           verb: "COOK",
+          cap: "ticket",
           x: Hn.x,
           y: 360,
           r: 0,
@@ -8071,7 +8191,7 @@
           r: 0,
           hot: !0,
           f: () => {
-            ((n.room = "diner"), (n.mo.x = 760), (n.mo.y = 520), (n.mo.f = -1));
+            (roomLine("Mops goes out front."), (n.room = "diner"), (n.mo.x = 760), (n.mo.y = 520), (n.mo.f = -1));
           },
         };
       if (n.room === "kitchen" && !x.mops) {
@@ -8079,6 +8199,7 @@
         if (s && (k.warn > 0 || k.peek > 0) && n.sqPose !== "hidden" && n.sqPose !== "ball")
           return {
             verb: "ROLL",
+            cap: "into a ball",
             x: l.x,
             y: l.y - 150,
             r: 0,
@@ -8090,6 +8211,7 @@
         if (s && !n.found.has("recipe") && hV(l, la.x, la.y, 80))
           return {
             verb: "OPEN",
+            cap: "recipe",
             x: la.x,
             y: 160,
             r: 0,
@@ -8102,6 +8224,7 @@
         if (s && k.held < 0 && k.done < q + 3 && hV(l, 660, 430, 80))
           return {
             verb: "GRAB",
+            cap: "dish",
             x: 660,
             y: 120,
             r: 0,
@@ -8115,10 +8238,11 @@
                 TV([{ k: "panel", id: "tk" + k.held }]));
             },
           };
-        if (s && k.held > 0 && hV(l, KV.x, KV.y, 80)) return { verb: "SCRUB", x: KV.x, y: 270, r: 0, hot: !0, f: $h };
+        if (s && k.held > 0 && hV(l, KV.x, KV.y, 80)) return { verb: "SCRUB", cap: "dish", x: KV.x, y: 270, r: 0, hot: !0, f: $h };
         if (i === "g3hide" && n.sqPose !== "hidden" && hV(l, xe.x, xe.y, 80))
           return {
             verb: "HIDE",
+            cap: "crate",
             x: xe.x,
             y: xe.y - 110,
             r: 0,
@@ -8129,9 +8253,9 @@
           };
       }
       return n.room === "kitchen" && x.mops && k.greasy && hV(o, KV.x, KV.y, 90)
-        ? { verb: "MOP", x: KV.x, y: 270, r: 0, hot: !0, f: BA }
+        ? { verb: "MOP", cap: "pot", x: KV.x, y: 270, r: 0, hot: !0, f: BA }
         : n.room === "kitchen" && x.mops && i === "g4k" && hV(o, xe.x, xe.y, 100)
-          ? { verb: "LEAVE SOUP", x: xe.x + 10, y: xe.y - 108, r: 0, hot: !0, f: PA }
+          ? { verb: "LEAVE SOUP", cap: "crate", x: xe.x + 10, y: xe.y - 108, r: 0, hot: !0, f: PA }
           : null;
     }
     function Ws() {
@@ -8142,7 +8266,7 @@
         (n.scene = "G0"),
         (n.room = "gas"),
         (n.live = []),
-        (x.mops = !1),
+        switchTo("squatch"),
         (x.spot = -1),
         (x.sing = !1),
         (x.costume = !1),
@@ -8175,16 +8299,17 @@
           v("sq", "We don't have coins...", "whisper"),
           v("mops", "Then we earn some. Leave it to me."),
           N(() => {
-            (Ta("sneak-g1"), (x.mops = !0), (k.phase = "g1door"), (n.chip = "Walk to the diner door"), (n.ctrl = !0), (n.mo.moving = !1));
+            (Ta("sneak-g1"), switchTo("mops", "g1-door"), (k.phase = "g1door"), (n.chip = ch2Chip()), (n.ctrl = !0), (n.mo.moving = !1));
           }),
         ]));
     }
     function Wh() {
-      ((n.scene = "G2"),
+      (roomLine("Mops goes inside."),
+        (n.scene = "G2"),
         (k.phase = "g2"),
         (n.room = "diner"),
         (n.live = []),
-        (x.mops = !0),
+        switchTo("mops"),
         (n.mo = { x: mf.x + 40, y: 560, f: 1, walk: 0, moving: !1 }),
         (n.moPose = "stand"),
         n.pulse.clear(),
@@ -8202,7 +8327,7 @@
             ((n.scene = "G2b"),
               (k.phase = "back"),
               (n.room = "gas"),
-              (x.mops = !1),
+              switchTo("squatch", "g2-back"),
               (n.mo.x = -200),
               (n.sqPose = "hidden"),
               (x.spot = 60),
@@ -8219,6 +8344,7 @@
         (n.act = null),
         n.pulse.clear(),
         D.open(),
+        roomLine("Squatch sneaks into the kitchen."),
         (n.room = "kitchen"),
         (n.scene = "G2k"),
         (n.sq.x = 120),
@@ -8296,7 +8422,7 @@
           }),
           v("mops", "Stand back, kiddo."),
           N(() => {
-            ((x.mops = !0), n.pulse.add("sink"), (n.ctrl = !0));
+            (switchTo("mops", "g5-mop"), n.pulse.add("sink"), (n.ctrl = !0));
           }),
         ]));
     }
@@ -8319,7 +8445,7 @@
               ((n.mo.x = 760),
                 (n.mo.y = 520),
                 (n.mo.f = -1),
-                (x.mops = !1),
+                switchTo("squatch"),
                 (k.peekT = 4),
                 (k.scrub = 2),
                 $h(),
@@ -8376,7 +8502,7 @@
       ((n.scene = "G4"),
         (k.phase = "g4"),
         (n.room = "diner"),
-        (x.mops = !0),
+        switchTo("mops", "g3-front"),
         (k.tv = !1),
         (n.mo = { x: 600, y: 500, f: -1, walk: 0, moving: !1 }),
         n.pulse.clear(),
@@ -8393,6 +8519,7 @@
         (n.act = null),
         n.pulse.clear(),
         D.open(),
+        roomLine("Mops brings the soup into the kitchen."),
         (n.room = "kitchen"),
         (k.phase = "g4k"),
         (n.mo.x = 150),
@@ -8440,7 +8567,7 @@
         (k.bots = []),
         (k.botsIn = !1),
         (n.room = "kitchen"),
-        (x.mops = !0),
+        switchTo("squatch", "g4-wash"),
         (n.mo = { x: 700, y: 500, f: -1, walk: 0, moving: !1 }),
         (n.moPose = "stand"),
         (k.sqBowl = "counter"),
@@ -8465,7 +8592,10 @@
       ((n.scene = "G6"),
         (k.phase = "g6d"),
         (n.room = "diner"),
-        (x.mops = !0),
+        (n.sqPose = "hidden"),
+        (x.spot = -1),
+        (n.sq.x = -200),
+        switchTo("mops", "g5-jar"),
         (n.mo = { x: 600, y: 500, f: -1, walk: 0, moving: !1 }),
         n.pulse.clear(),
         (n.ctrl = !1),
@@ -8481,6 +8611,7 @@
         (n.act = null),
         n.pulse.clear(),
         D.open(),
+        roomLine("Mops goes out to the pump."),
         (n.room = "gas"),
         (k.phase = "g6"),
         (n.mo.x = po.x),
@@ -8512,7 +8643,7 @@
           v("mops", "Full tank."),
           v("mops", "Bots on the ramp. Squatch, sing from the crate!"),
           N(() => {
-            ((n.sq.x = Sa.x), (n.sq.y = 470), (n.sqPose = "stand"), (x.mops = !1), n.pulse.add("lure"), (n.ctrl = !0));
+            ((n.sq.x = Sa.x), (n.sq.y = 470), (n.sqPose = "stand"), switchTo("squatch", "g6-lure"), n.pulse.add("lure"), (n.ctrl = !0));
           }),
         ]));
     }
@@ -8555,10 +8686,34 @@
         "Total \u2605 " + n.stars,
       ];
     }
+    // Which room a Chapter 2 speaker is in. "" means the room the player sees (Gloop shows through a window in every room).
+    function speakerRoom(l) {
+      if (l === "rust") return "gas";
+      if (l === "blorp") return "diner";
+      if (l === "cook") return "kitchen";
+      if (l === "bot" || l === "bot2") return k.bots && k.bots.length ? (k.phase === "g6" ? "gas" : "kitchen") : "";
+      if (l === "sq") return sqAway() ? "kitchen" : "";
+      return "";
+    }
+    // Where a voice from another room is heard: the door on that side.
+    const EAR_DOORS = {
+      kitchen: { diner: { x: 60, y: 330 }, gas: { x: 60, y: 330 } },
+      diner: { kitchen: { x: 880, y: 330 }, gas: { x: 60, y: 330 } },
+      gas: { diner: { x: 300, y: 300 }, kitchen: { x: 85, y: 300 } },
+    };
+    function earAt(l) {
+      if (!n.scene.startsWith("G")) return null;
+      let room = speakerRoom(l);
+      if (room && room !== n.room) return (EAR_DOORS[n.room] && EAR_DOORS[n.room][room]) || { x: 60, y: 330 };
+      let who = l === "sq" ? n.sq : l === "mops" ? n.mo : null;
+      return who && (who.x < -100 || who.x > c + 100) ? { x: who.x < 0 ? 40 : c - 40, y: 330 } : null;
+    }
     function IA(l) {
       if (!n.scene.startsWith("G")) return null;
+      if (l === "cook") return { x: k.cookX || 640, y: (k.cookY || 530) - 110 };
       if (l === "gloop")
-        return n.room === "kitchen" ? { x: xt.x, y: xt.y - 20 } : n.room === "gas" ? { x: 210, y: 180 } : { x: 480, y: 150 };
+        // In the kitchen her lines sit just right of the order window, so the tickets in the pass stay readable.
+        return n.room === "kitchen" ? { x: xt.x + 70, y: xt.y - 20 } : n.room === "gas" ? { x: 210, y: 180 } : { x: 480, y: 150 };
       if (l === "rust") return { x: k.rust.x, y: 360 };
       if (l === "blorp") return { x: Ma.x, y: 330 };
       if (l === "bot" || l === "bot2") {
@@ -8623,6 +8778,7 @@
         q ||
           P ||
           !n.ctrl ||
+          sqAway() ||
           n.sqPose === "hidden" ||
           n.sq.x < -100 ||
           n.T - ($s[l] ?? -9) < 3.5 ||
@@ -8633,7 +8789,7 @@
       let _ = n.room === "hall" ? o - B.camX : o;
       (n.sparks.push({ x: _ - 58, y: i - 200, t: 2.2, s: "!" }),
         kV(l, XA[l] || "!!"),
-        (l === "gloop" || l === "blorp") && n.scene.startsWith("G") && sSec("diner"));
+        (l === "gloop" || l === "blorp") && n.scene.startsWith("G") && sSec("diner", l));
       let $ = n.sq.x - o,
         gV = n.sq.y - i,
         oe = Math.hypot($, gV) || 1,
@@ -8718,6 +8874,42 @@
     function tq(l, o, i, s) {
       (n.pulse.has(s) && oV(l - 52, o - 100, 104, 110, 10), Ys(l, o), i && ga(l, o - 58));
     }
+    function kitchenPhase(ph) {
+      // Phases whose work happens in the kitchen.
+      return ["wash1", "wash5", "g3", "g3hide", "g3h", "g4k", "g4l"].includes(ph);
+    }
+    function sqAway() {
+      // True while Mops is out front and Squatch is still back in the kitchen.
+      return n.room === "diner" && !!x.mops && kitchenPhase(k.phase);
+    }
+    function soupOnHead() {
+      // A steaming bowl of soup with a spoon, resting on Mops' head. Mops is drawn at scale he * 1.15;
+      // his head is a circle at (17, -29), radius about 8.5, so its top is 37.5 units above his feet.
+      let S = he * 1.15,
+        f = n.mo.f || 1,
+        hx = n.mo.x + 17 * S * f,
+        top = n.mo.y - 37.5 * S,
+        by = top + Math.sin(n.T * 3) * 1.5,
+        cy = by - 20;
+      n.soupAt = { x: hx - 28, w: 56, bottom: by, headTop: top };
+      for (let i of [-12, 0, 12]) {
+        let pts = [];
+        for (let j = 0; j <= 6; j++) pts.push(hx + i + Math.sin(n.T * 4 + j + i) * 3, cy - 12 - j * 5);
+        (C(pts, y, 5), C(pts, "#ffffff", 2.5));
+      }
+      (C([hx + 6 * f, cy - 4, hx + 24 * f, cy - 30], y, 7),
+        C([hx + 6 * f, cy - 4, hx + 24 * f, cy - 30], "#c9ced8", 4),
+        e.beginPath(),
+        e.ellipse(hx, cy, 28, 20, 0, 0, Math.PI),
+        e.closePath(),
+        r("#ffffff", 3),
+        X(hx, cy, 28, 7),
+        r("#f2b84b", 3),
+        L(hx - 8, cy - 1, 2.5),
+        r("#e07b00", 0),
+        L(hx + 9, cy + 1, 2),
+        r("#7ad35a", 0));
+    }
     function yn(l) {
       (n.moPose !== "hidden" &&
         n.mo.x > -100 &&
@@ -8727,23 +8919,18 @@
             Fe(n.mo.x, n.mo.y, he * 1.15, {
               f: n.mo.f,
               walk: n.mo.moving ? n.mo.walk : 0,
-              mop: !(x.mops && n.room === "kitchen" && !k.greasy && (k.phase === "wash5" || n.scene === "G5k")),
+              mop: !(n.room === "kitchen" && !k.greasy && (k.phase === "wash5" || n.scene === "G5k")),
             });
             let o = n.mo.x + n.mo.f * 34,
               i = n.mo.y - 60;
             if (k.has === "coins") for (let s = 0; s < 4; s++) (X(o, i - s * 5, 10, 4), r("#ffcf33", 2));
             (k.has === "chili" && (X(o, i, 16, 8), r("#ffffff", 2.5), X(o, i - 3, 13, 4), r("#b83a1d", 0)),
-              k.has === "soup" &&
-                (m(n.mo.x - 28, n.mo.y - 214 + Math.sin(n.T * 3) * 2, 56, 38, 12),
-                r("#ffffff", 4),
-                m(n.mo.x - 20, n.mo.y - 206 + Math.sin(n.T * 3) * 2, 40, 22, 8),
-                r("#f2b84b", 0),
-                X(n.mo.x, n.mo.y - 220 + Math.sin(n.T * 3) * 2, 24, 8),
-                r("#fff6dc", 3)));
+              k.has === "soup" && soupOnHead());
           },
         }),
         n.sqPose === "ball" &&
           n.sq.x > -100 &&
+          !sqAway() &&
           l.push({
             y: n.sq.y,
             d: () => {
@@ -8758,6 +8945,7 @@
         n.sqPose !== "hidden" &&
           n.sqPose !== "ball" &&
           n.sq.x > -100 &&
+          !sqAway() &&
           l.push({
             y: n.sq.y,
             d: () => {
@@ -9074,7 +9262,7 @@
       }
       (n.act && n.act.verb === "GRAB" && (m(400, 248, 88, 28, 10), r("#2bc48a", 3), g("GRAB", 444, 262, 16, "#ffffff", "center", 900)),
         n.act && n.act.verb === "COOK" && (m(868, 332, 70, 26, 10), r("#2bc48a", 3), g("COOK", 903, 345, 14, "#ffffff", "center", 900)),
-        k.rumbleT > 0 && (m(250, 72, 200, 36, 10), r("#fff3d6", 3), g("RUMBLE", 350, 90, 20, "#b45309", "center", 900)));
+        k.rumbleT > 0 && (m(250, 100, 200, 36, 10), r("#fff3d6", 3), g("RUMBLE", 350, 118, 20, "#b45309", "center", 900)));
       (n.pulse.has("sink") && oV(KV.x - 130, 280, 260, 110, 10),
         C([KV.x, 316, KV.x, 298, KV.x + 26, 298], "#8b97a6", 5),
         L(KV.x + 26, 304, 5),
@@ -9149,9 +9337,9 @@
         s.sort((d, A) => d.y - A.y).forEach((d) => d.d()),
         k.phase === "g3hide" &&
           !de() &&
-          (m(c / 2 - 70, 52, 140, 34, 17),
+          (m(c / 2 - 70, 100, 140, 34, 17),
           r("#e5533d", 3),
-          g("HIDE! " + Math.max(0, Math.ceil(k.timer)), c / 2, 69, 18, "#ffffff", "center", 900)));
+          g("HIDE! " + Math.max(0, Math.ceil(k.timer)), c / 2, 117, 18, "#ffffff", "center", 900)));
       n.act &&
         n.act.verb === "LEAVE SOUP" &&
         (m(128, 300, 108, 32, 8),
@@ -9454,7 +9642,7 @@
           (n.sq.y = 480),
           (n.sqPose = "stand"),
           (x.spot = -1),
-          (x.mops = !1),
+          switchTo("squatch"),
           n.pulse.add("alcove"));
       };
       l
@@ -9672,7 +9860,7 @@
         (n.scene = "P0"),
         (n.room = "pad"),
         (n.live = []),
-        (x.mops = !1),
+        switchTo("squatch"),
         (x.spot = -1),
         (x.sing = !1),
         (x.costume = !1),
@@ -9716,7 +9904,7 @@
         ]));
     }
     function u6() {
-      ((n.scene = "P2"), (Q.phase = "p2"), (x.mops = !0), (n.mo.f = -1), n.pulse.clear(), n.pulse.add("zip"), (n.ctrl = !0));
+      ((n.scene = "P2"), (Q.phase = "p2"), switchTo("mops"), (n.mo.f = -1), n.pulse.clear(), n.pulse.add("zip"), (n.ctrl = !0));
     }
     function s6() {
       ((n.ctrl = !1),
@@ -9741,7 +9929,7 @@
         (Q.miss = 0),
         (Q.sings = 0),
         (Q.waltz = !1),
-        (x.mops = !1),
+        switchTo("squatch"),
         (x.spot = -1),
         (x.sing = !1),
         (n.sqPose = "stand"),
@@ -9797,7 +9985,7 @@
             return o;
           }),
           N(() => {
-            ((Q.zip = !1), (Q.rov = []), (Q.phase = "p3x"), (x.mops = !0), n.pulse.add("texit"), (n.ctrl = !0));
+            ((Q.zip = !1), (Q.rov = []), (Q.phase = "p3x"), switchTo("mops"), n.pulse.add("texit"), (n.ctrl = !0));
           }),
         ]));
     }
@@ -9810,7 +9998,7 @@
         (Q.phase = "p4i"),
         (Q.zip = !1),
         (Q.zipX = gf.x),
-        (x.mops = !1),
+        switchTo("squatch"),
         (x.sing = !1),
         (n.mo = { x: 300, y: 540, f: 1, walk: 0, moving: !1 }),
         (n.moPose = "stand"),
@@ -10585,7 +10773,7 @@
         (n.scene = "M0"),
         (n.room = "port"),
         (n.live = []),
-        (x.mops = !1),
+        switchTo("squatch"),
         (x.spot = -1),
         (x.sing = !1),
         (x.costume = !1),
@@ -10632,7 +10820,7 @@
           }),
           v("mops", "Stay behind the crate, kiddo. Let me look first.", "whisper"),
           N(() => {
-            ((H.phase = "m2"), (x.mops = !0), n.pulse.add("poster"), (n.ctrl = !0));
+            ((H.phase = "m2"), switchTo("mops"), n.pulse.add("poster"), (n.ctrl = !0));
           }),
         ]));
     }
@@ -10650,7 +10838,7 @@
           v("mops", "I think I found something of yours."),
           v("mops", "Come on out, kiddo.", "whisper"),
           N(() => {
-            ((n.sqPose = "stand"), (x.spot = -1), (n.sq.y = 540), (x.mops = !1));
+            ((n.sqPose = "stand"), (x.spot = -1), (n.sq.y = 540), switchTo("squatch"));
           }),
           He(n.sq, Qa.x - 90, 540, 150),
           N(() => {
@@ -10690,7 +10878,7 @@
         (H.phase = "m3"),
         (H.mom = !1),
         (H.dad = !1),
-        (x.mops = !0),
+        switchTo("mops"),
         n.pulse.clear(),
         n.pulse.add("vmop"),
         (n.chip = "Tidy the van"),
@@ -10713,7 +10901,7 @@
           v("mops", "He ordered them. To replace me."),
           cV((l) => mV(n.mo, 1010, 560, 120, l)),
           N(() => {
-            ((n.moPose = "hidden"), (H.gone = !0), (x.mops = !1), (n.chip = "Mops is gone"));
+            ((n.moPose = "hidden"), (H.gone = !0), switchTo("squatch"), (n.chip = "Mops is gone"));
           }),
           uV(1.6),
           N(A2),
@@ -10732,7 +10920,7 @@
         n.pulse.clear(),
         (n.sq = { x: 420, y: 540, f: 1, walk: 0, moving: !1 }),
         (n.sqPose = "stand"),
-        (x.mops = !1),
+        switchTo("squatch"),
         J([
           v("mom", "Eat up, Harry! Three dozen pretzels, and pancakes forever."),
           uV(1.2),
@@ -11370,14 +11558,32 @@
     function O2() {
       return n.scene === "G6"
         ? !1
-        : n.room === "kitchen" && n.ctrl && (k.cook === "down" || k.cook === "gone" || k.phase === "wash5")
+        : n.room === "kitchen" && n.ctrl && !k.sec && (k.cook === "down" || k.cook === "gone" || k.phase === "wash5")
           ? !0
           : n.scene === "P3"
             ? n.ctrl && Q.phase === "p3"
             : n.ctrl && ["S9", "S10", "S10d", "S11"].includes(n.scene) && !(n.scene === "S11" && x.doorOpen) && n.scene !== "S10d";
     }
     function _6(l, o) {
-      return p.state === "op" && O2() && !de() && l > c - 76 && o > 60 && o < 130 ? (yf(!x.mops), !0) : !1;
+      return p.state === "op" && O2() && !de() && l > c - 76 && o > 60 && o < 130 ? (picSwap(), !0) : !1;
+    }
+    function picSwap() {
+      if (n.scene.startsWith("G") && n.room === "kitchen" && k.phase === "g3hide" && !x.mops) {
+        (dn(xe.x, xe.y, 63), n.pulse.delete("kcrate"), HA());
+        return;
+      }
+      if (n.scene.startsWith("G") && n.room === "kitchen")
+        if (!x.mops)
+          ((k.sqStash = { x: n.sq.x, y: n.sq.y, f: n.sq.f, pose: n.sqPose, spot: x.spot }),
+            (n.sqPose = "hidden"),
+            (x.spot = 63),
+            (n.sq.x = xe.x),
+            (n.sq.y = xe.y));
+        else if (k.sqStash) {
+          let st = k.sqStash;
+          ((n.sq.x = st.x), (n.sq.y = st.y), (n.sq.f = st.f), (n.sqPose = st.pose), (x.spot = st.spot), (k.sqStash = null));
+        }
+      yf(!x.mops);
     }
     function F6() {
       let l = cn;
@@ -11734,7 +11940,11 @@
       (m(c - 70, 64, 58, 58, 29),
         r(l ? "#ffe3c4" : "#ffffff", 3),
         l ? Re(c - 41, 112, 0.42, { f: -1 }) : Fe(c - 41, 116, 0.36, { f: -1 }),
-        (x.sing || (n.scene === "S9" && x.lureBot.look > 0) || (n.scene === "S11" && x.lureBot.look > 0)) && oV(c - 74, 60, 66, 66, 30));
+        (x.sing ||
+          (n.scene === "S9" && x.lureBot.look > 0) ||
+          (n.scene === "S11" && x.lureBot.look > 0) ||
+          (n.scene.startsWith("G") && ch2ChipKey() === "kitchen:mops")) &&
+          oV(c - 74, 60, 66, 66, 30));
     }
     function n5(l) {
       if (l === "terminal") {
@@ -12594,7 +12804,7 @@
         return;
       }
       for (let d of vV) d.t -= l;
-      ((vV = vV.filter((d) => d.t > 0)), (n.live = n.live.filter((d) => (d.live = (d.live || 0) - l) > 0)));
+      ((vV = vV.filter((d) => d.t > 0)), n.live.length && (n.live[0].live = (n.live[0].live || 0) - l) <= 0 && n.live.shift());
       (n.botSkid > 0 && (n.botSkid = Math.max(0, n.botSkid - l * 0.8)),
         n.glowT >= 0 &&
           ((n.glowT += l),
@@ -12830,8 +13040,7 @@
         wV("#ffcf33", 1.2),
         F(-2, -18, 1.2, "#e8a400"),
         s.mop && (St(-26, -40, -15, 0, 2.2, "#b8a07e", 1), XV(-14, 1, 6, 2.6, 8, 1.5, 0), wV("#8fdcff", 1)),
-        x.mops &&
-          n.room === "kitchen" &&
+        n.room === "kitchen" &&
           !k.greasy &&
           (k.phase === "wash5" || n.scene === "G5k") &&
           (e.beginPath(),
@@ -13533,10 +13742,12 @@
         q = i ? 340 : 470,
         d = zt(l.text, q, s);
       ge(s);
-      let A = l.ear ? 30 : 0,
+      let away = earAt(l.who),
+        ear = !!(l.ear || away),
+        A = ear ? 30 : 0,
         T = Math.max(110, Math.max(...d.map((CV) => e.measureText(CV).width)) + 44) + A,
         R = d.length * (s + 6) + (o ? 18 : 32),
-        P = v5(l.who),
+        P = away || v5(l.who),
         _ = w(P.x - T / 2, 10, c - T - 10),
         $ = P.y - R - 24;
       $ < 24 && ($ = 24);
@@ -13545,12 +13756,12 @@
         if (!NV) break;
         NV[1] - R - 8 >= 24 ? ($ = NV[1] - R - 8) : (_ = NV[0] + NV[2] + 8 + T <= c - 10 ? NV[0] + NV[2] + 8 : Math.max(10, NV[0] - T - 8));
       }
-      (n.room === "kitchen" && l.style !== "song" && (($ = b - R - 12), (_ = w((c - T) / 2, 12, c - T - 12))), mq.push([_, $, T, R]));
+      (mq.push([_, $, T, R]),
+        window.__ss && (window.__ss.lastBubble = { who: l.who, text: l.text, x: _, y: $, w: T, h: R, ear, at: performance.now() }));
       let gV = w(P.x, _ + 24, _ + T - 24),
         oe = l.style === "song" ? "#ffe3f1" : l.style === "whisper" ? "#f6f7fb" : "#ffffff";
       l.style === "whisper" && e.setLineDash([4, 6]);
       let ve = Math.min(P.y - 6, $ + R + 22);
-      n.room === "kitchen" && l.style !== "song" && (ve = $ + R + 6);
       if (
         (l.style !== "whisper" &&
           (e.beginPath(),
@@ -13577,7 +13788,7 @@
         let NV = e.measureText(CV).width + 22;
         (m(_ + 16, $ - 15, NV, 28, 12), r(Ds[l.who], 3), g(CV, _ + 16 + NV / 2, $ - 1, 16, "#ffffff"));
       }
-      if (l.ear) {
+      if (ear) {
         let CV = _ + 22,
           NV = $ + R / 2;
         (e.beginPath(), e.arc(CV, NV - 2, 9, Math.PI * 0.9, Math.PI * 2.3), (e.strokeStyle = y), (e.lineWidth = 3), e.stroke());
@@ -13652,16 +13863,32 @@
         n.chip && n.chip !== "Hide!" ? ((Vq = n.chip), (jA = n.scene)) : (p.state !== "op" || Ao) && (Vq = ""));
       {
         let s = n.chip || Vq;
-        if (s && !(Y0 >= 0 && n.T - Y0 < 3.5)) {
-          let q = de() ? 17 : 22;
+        // No chip while a story bubble is up (rule 10); ambient chatter does not hide it. Long goals wrap.
+        // At the gas stop the chip sits between the diner sign (right edge 354) and the TANK label (left edge 692).
+        if (s && !(Y0 >= 0 && n.T - Y0 < 3.5) && !(n.cur && n.cur.k === "bub")) {
+          let q = de() ? 17 : 22,
+            gas = n.room === "gas",
+            cx = gas ? 523 : c / 2;
           ge(q);
-          let d = e.measureText(s).width + 36;
-          (m(c / 2 - d / 2, 50, d, q + 18, 18), r("#ffcf33", 3), g(s, c / 2, 59 + q / 2, q));
+          let lines = zt(s, (gas ? 330 : 860) - 36, q),
+            d = Math.max(...lines.map((t) => e.measureText(t).width)) + 36;
+          (m(cx - d / 2, 50, d, lines.length * (q + 6) + 12, 18),
+            r("#ffcf33", 3),
+            lines.forEach((t, i) => g(t, cx, 59 + q / 2 + i * (q + 6), q)));
         }
       }
     }
     function m8() {}
-    function M5(l, o, s) {
+    function M5(l, o, s, cd) {
+      if (l === "switch") {
+        // Switch card: who you are now, their picture, and why. Waits for a tap like every card.
+        let mo = cd && cd.who === "mops";
+        ((e.fillStyle = "#1e2430"), e.fillRect(0, 0, c, b), L(c / 2, 400, 150), r(mo ? "#2bc48a" : "#b5562a", 6));
+        mo ? Fe(c / 2 - 20, 500, he * 2.6, { f: 1 }) : Re(c / 2, 520, he * 1.7, { f: 1 });
+        g(o, c / 2, 110, 48, "#ffffff", "center", 800);
+        zt(s || "", 820, 26).forEach((t, i) => g(t, c / 2, 170 + i * 34, 26, "#8fdcff", "center", 700));
+        return;
+      }
       if (l === "jupiter") {
         ((e.fillStyle = "#1b2140"), e.fillRect(0, 0, c, b));
         for (let s = 0; s < 46; s++) F((s * 97) % c, (s * 61) % 420, 1.6, "#ffffff");
@@ -13774,7 +14001,8 @@
             g("out cold", 360, 470, 12, "#1e2430", "center", 700),
             Re(470, 490, he * 0.85, { f: 1 }));
         else Re(480, 470, he * 0.85, { f: 1, eyes: "closed" });
-        (g(o, c / 2, 110, 44, "#ffffff", "center", 800), g(cap, c / 2, 156, 22, "#8fdcff", "center", 700));
+        (g(o, c / 2, 110, 44, "#ffffff", "center", 800),
+          zt(cd && cd.cause ? cd.cause : cap, 820, 22).forEach((t, i) => g(t, c / 2, 156 + i * 28, 22, "#8fdcff", "center", 700)));
         return;
       }
       g(o, c / 2, b / 2, 50, "#ffffff", "center", 800);
@@ -14376,7 +14604,7 @@
       ((qq = 0), (mq = []));
       let l = n.cur;
       if (l && l.k === "card") {
-        M5(l.id, l.text, l.by);
+        M5(l.id, l.text, l.by, l);
         return;
       }
       if (n.egg) {
@@ -14437,7 +14665,7 @@
             ((e.globalAlpha = Math.min(1, i.t * 2)),
             g(i.s, i.x, i.y, 26, i.s === "\u2665" ? "#e5533d" : "#b45309", "center", 900),
             (e.globalAlpha = 1));
-      (Ka > 0 && ((e.fillStyle = "rgba(20,24,32," + Math.min(1, Ka).toFixed(3) + ")"), e.fillRect(0, 0, c, b)), S5(), a5());
+      (Ka > 0 && ((e.fillStyle = "rgba(20,24,32," + Math.min(1, Ka).toFixed(3) + ")"), e.fillRect(0, 0, c, b)), drawRoomLine(), S5(), a5());
       let o = Bs();
       if (o && (o.x || o.r > 0 || n.room === "deck" || n.room === "hall") && !de() && n.live.length === 0) {
         let i = o.x === 790 || o.x === 845,
@@ -14452,7 +14680,8 @@
       }
       (n.under === "crack" && gq("crack", !1),
         l && l.k === "panel" && gq(l.id, n.bt > 0.3),
-        l && l.k === "bub" ? bq(l.b, !1) : !de() && n.live.slice(0, 3).forEach((A) => bq(A, !0)));
+        l && l.k === "bub" ? bq(l.b, !1) : !de() && n.live.length && bq(n.live[0], !0),
+        window.__ss && (window.__ss.bubbleFrame = qq));
       {
         let i = n.sparks.filter((q) => q.x === 300),
           s = i[i.length - 1];
@@ -14685,6 +14914,53 @@
         linkDebug && debugStrip();
       }, 0);
     }
+    let whoTagEl = null;
+    function whoTag() {
+      let box = V.parentElement;
+      if (!box) return;
+      ((box.style.position = "relative"),
+        (whoTagEl = document.createElement("div")),
+        (whoTagEl.id = "ss-who"),
+        whoTagEl.setAttribute(
+          "style",
+          "position:absolute;top:1.6%;left:62%;padding:2px 10px;border:2px solid #1e2430;border-radius:12px;font:800 14px/1.3 system-ui,-apple-system,sans-serif;letter-spacing:.5px;pointer-events:none;display:none",
+        ),
+        box.appendChild(whoTagEl));
+    }
+    function updateWhoTag() {
+      let el = whoTagEl;
+      if (!el) return;
+      let show = h && p.state === "op" && !!n.scene && !(n.cur && n.cur.k === "card"),
+        text = x.mops ? "YOU: MOPS" : "YOU: SQUATCH";
+      el.style.display !== (show ? "block" : "none") && (el.style.display = show ? "block" : "none");
+      el.textContent !== text &&
+        ((el.textContent = text), (el.style.background = x.mops ? "#c9f2df" : "#f6d9c8"), (el.style.color = "#1e2430"));
+    }
+    function roomLine(text) {
+      // One short line over the fade when a character changes room during play.
+      n.roomLine = { text, at: n.T };
+    }
+    function drawRoomLine() {
+      let rl = n.roomLine;
+      if (!rl || n.T - rl.at > 1.8 || de()) return;
+      ge(26);
+      let d = e.measureText(rl.text).width + 48;
+      ((e.globalAlpha = Math.min(1, (1.8 - (n.T - rl.at)) * 3)),
+        m(c / 2 - d / 2, 280, d, 52, 16),
+        r("#1e2430", 3),
+        g(rl.text, c / 2, 306, 26, "#ffffff", "center", 800),
+        (e.globalAlpha = 1));
+    }
+    function drainQueue() {
+      // Test hook: plays the story queue to its end at once, the way skipping a cutscene does.
+      for (let i = 0; i < 6e3 && (n.cur || n.q.length); i++) {
+        if (de()) {
+          let o = n.cur;
+          ((n.cur = null), o && o.k === "panel" && rh(o.id));
+        }
+        (lh(0.05), n.cur && n.cur.k === "until" && n.cur.f(0.05) && (n.cur = null));
+      }
+    }
     function debugState() {
       let s = n.scene || "",
         a = n.act,
@@ -14745,7 +15021,7 @@
             let i = Math.min(0.05, o);
             (ep(i), (o -= i));
           }
-          Ap();
+          (Ap(), updateWhoTag());
         } catch (i) {
           console.error(i);
         }
@@ -14845,8 +15121,21 @@
         },
         tripSnacks: () => Gn,
         debugState,
+        resetTo: (ph) => {
+          (clearRun(), applyG(ph));
+        },
+        pickAct: () => (n.scene && n.scene.startsWith("G") ? RA() : null),
+        walkBounds: () => sn(),
+        drain: drainQueue,
+        sqAway: () => sqAway(),
+        picSwap,
+        canSwitch: () => O2(),
+        solids: () => ih(),
+        CH2_CHIPS,
+        ch2ChipKey: () => ch2ChipKey(),
       }),
       debugLink(),
+      whoTag(),
       {
         actionE: J1,
         resetHold: armReset,
@@ -14872,6 +15161,7 @@
           try {
             S?.close();
           } catch {}
+          whoTagEl && whoTagEl.remove();
           (window.removeEventListener("keyup", _2), window.removeEventListener("blur", F2), S && S.close().catch(() => {}));
         },
       }
@@ -14922,7 +15212,7 @@
     let e = Math.round(V.size * 0.4);
     return (0, pe.jsx)("div", {
       ref: t,
-      "aria-label": "Move (push far to run)",
+      "aria-label": "Move",
       style: {
         position: "relative",
         width: V.size,
@@ -14951,6 +15241,9 @@
       }),
     });
   }
+  // Help lines: only controls that work. Wording waits for Brian's yes (docs/PHASE-1-LINES-FOR-BRIAN.md).
+  var KEY_HELP = "Arrows or WASD: walk. E: do the action in the white label. Space or Enter: next line. Hold R: restart this section. Esc: skip a flashback. M: sound.",
+    TOUCH_HELP = "Stick: walk. Big button: do it. Tap the picture: next line. Hold Reset section to restart.";
   function r8(V) {
     let t = (0, YV.useRef)(null),
       [a, e] = (0, YV.useState)(!1);
@@ -14979,10 +15272,17 @@
     let f = V.label.charAt(0) === "!",
       u = f ? V.label.slice(1) : V.label,
       h = u !== "",
+      long = (u || "ACTION").length > 7,
       c = {
-        width: V.size,
+        width: long ? "auto" : V.size,
+        minWidth: V.size,
+        maxWidth: long ? 200 : V.size,
+        padding: long ? "0 14px" : 0,
         height: V.size,
-        borderRadius: "50%",
+        borderRadius: V.size / 2,
+        textAlign: "center",
+        lineHeight: 1.1,
+        whiteSpace: "normal",
         background: h ? "#2bc48a" : "#3478f6",
         color: "#ffffff",
         border: "3px solid #1e2430",
@@ -14990,7 +15290,7 @@
         alignItems: "center",
         justifyContent: "center",
         fontWeight: 800,
-        fontSize: Math.round(V.size * ((u || "ACTION").length > 7 ? 0.14 : (u || "ACTION").length > 5 ? 0.17 : 0.22)),
+        fontSize: long ? Math.max(16, Math.round(V.size * 0.17)) : Math.round(V.size * ((u || "ACTION").length > 5 ? 0.17 : 0.22)),
         touchAction: "none",
         userSelect: "none",
         WebkitUserSelect: "none",
@@ -14999,7 +15299,7 @@
         flex: "0 0 auto",
         boxSizing: "border-box",
         cursor: "pointer",
-        letterSpacing: 1,
+        letterSpacing: long ? 0 : 1,
       };
     return (0, pe.jsxs)("div", {
       ref: t,
@@ -15177,16 +15477,27 @@
                     onPointerLeave: nV(() => e.current?.resetHold(!1)),
                     children: "Reset section",
                   }),
+                  (0, pe.jsx)("span", {
+                    id: "ss-help",
+                    style: { width: "100%", textAlign: "center", color: V.text.secondary, fontSize: V.font.label.fontSize },
+                    children: TOUCH_HELP,
+                  }),
                 ],
               }))
-            : I ||
+            : I
+              ? (Z = (0, pe.jsx)("div", {
+                  id: "ss-help",
+                  style: { width: "100%", textAlign: "center", color: V.text.secondary, fontSize: V.font.label.fontSize },
+                  children: TOUCH_HELP,
+                }))
+              :
               (Z = (0, pe.jsxs)("div", {
                 style: { ...M, justifyContent: "space-between" },
                 children: [
                   (0, pe.jsx)("span", {
                     style: { color: V.text.secondary, fontSize: V.font.label.fontSize },
-                    children:
-                      "Keyboard: arrows/WASD move (Shift runs), E = action (hold while hiding = opera), Tab = switch to Mops, M = sound, hold R or Reset section to restart this section. Click the game first so it hears your keys.",
+                    id: "ss-help",
+                    children: KEY_HELP,
                   }),
                   (0, pe.jsx)("button", {
                     type: "button",
