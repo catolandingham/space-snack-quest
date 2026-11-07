@@ -1,0 +1,760 @@
+// Keyboard and taps, the debug link and state strip, the frame loop, window.__ss for tests, and the page (joystick, ACTION button, Reset section, help line).
+    let J2 = () => VV();
+    for (let l of ["touchend", "click", "pointerup", "keydown"]) window.addEventListener(l, J2, { capture: !0, passive: !0 });
+    document.addEventListener("visibilitychange", Ve);
+    function k5() {
+      if (!N0()) return;
+      e.save();
+      let l = Math.max(1, n.fbN || 1),
+        o = Math.min(l - 1, n.fbI || 0);
+      if (Nl(n.cur) && n.cur && n.cur.k === "fb")
+        for (let i = 0; i < l; i++) {
+          let s = c / 2 + (i - (l - 1) / 2) * 20;
+          (F(s, 24, i === o ? 6 : 5, i === o ? "#3478f6" : "rgba(255,255,255,.75)"),
+            (e.lineWidth = 2),
+            (e.strokeStyle = y),
+            e.beginPath(),
+            e.arc(s, 24, i === o ? 6 : 5, 0, Math.PI * 2),
+            e.stroke());
+        }
+      (m(c - 150, 12, 78, 30, 8), r("rgba(255,255,255,.85)", 2.5), g("SKIP \u25B8\u25B8", c - 111, 27, 13, y), e.restore());
+    }
+    function O5(l, o, i) {
+      if ((VV(), i && !u && ((u = !0), t.onTouch()), p.state === "op" && N0() && l > c - 156 && l < c - 66 && o < 48)) {
+        Cs();
+        return;
+      }
+      if (l > c - 64 && o < 56) {
+        eV();
+        return;
+      }
+      if (!_6(l, o)) {
+        if (p.state === "op" && Nh()) {
+          if (n.bt < 0.3) return;
+          hf(l > 720 && o < 160 ? "close" : l < 400 ? "prev" : "next");
+          return;
+        }
+        if (p.state === "op") {
+          nf();
+          return;
+        }
+        if (p.state === "title") {
+          for (let s = 0; s < 4; s++) {
+            let q = 40 + s * 225;
+            if (l >= q && l <= q + 205 && o >= 466 && o <= 616) {
+              I0(s + 1);
+              return;
+            }
+          }
+          o < 430 && I0(Ca);
+        }
+      }
+    }
+    // Debug link (task T4). Does nothing unless the page address asks for it.
+    //   ?ch=2               start Chapter 2 from the title, even if it is still locked
+    //   ?ch=2&phase=wash1   then jump to that Chapter 2 checkpoint (the applyG table; ?phase alone means Chapter 2)
+    //   ?scene=P3           start that scene's chapter, then call window.__ss.sceneP3
+    //   &debug=1            show the state strip under the game; the backtick key hides and shows it
+    function debugLink() {
+      let q;
+      try {
+        q = new URLSearchParams(window.location.search);
+      } catch {
+        return;
+      }
+      let linkCh = parseInt(q.get("ch") || "", 10) || 0,
+        linkPhase = q.get("phase") || "",
+        linkScene = q.get("scene") || "",
+        linkDebug = q.get("debug") === "1";
+      if (!linkCh && !linkPhase && !linkScene && !linkDebug) return;
+      !linkCh && linkPhase && (linkCh = 2);
+      !linkCh && linkScene && (linkCh = { O: 1, S: 1, G: 2, P: 3, M: 4 }[linkScene[0]] || 0);
+      setTimeout(() => {
+        if (!h) return;
+        if (linkCh >= 1 && linkCh <= 4) {
+          startStory(linkCh);
+          linkCh === 2 && linkPhase && (clearRun(), applyG(linkPhase));
+        }
+        if (linkScene) {
+          let f = window.__ss && window.__ss["scene" + linkScene];
+          typeof f === "function" && (clearRun(), f());
+        }
+        linkDebug && debugStrip();
+      }, 0);
+    }
+    let whoTagEl = null;
+    function whoTag() {
+      let box = V.parentElement;
+      if (!box) return;
+      ((box.style.position = "relative"),
+        (whoTagEl = document.createElement("div")),
+        (whoTagEl.id = "ss-who"),
+        whoTagEl.setAttribute(
+          "style",
+          "position:absolute;top:1.6%;left:62%;padding:2px 10px;border:2px solid #1e2430;border-radius:12px;font:800 14px/1.3 system-ui,-apple-system,sans-serif;letter-spacing:.5px;pointer-events:none;display:none",
+        ),
+        box.appendChild(whoTagEl));
+    }
+    function updateWhoTag() {
+      let el = whoTagEl;
+      if (!el) return;
+      let show = h && p.state === "op" && !!n.scene && !(n.cur && n.cur.k === "card"),
+        text = x.mops ? "YOU: MOPS" : "YOU: SQUATCH";
+      el.style.display !== (show ? "block" : "none") && (el.style.display = show ? "block" : "none");
+      el.textContent !== text &&
+        ((el.textContent = text), (el.style.background = x.mops ? "#c9f2df" : "#f6d9c8"), (el.style.color = "#1e2430"));
+    }
+    function roomLine(text) {
+      // One short line over the fade when a character changes room during play.
+      n.roomLine = { text, at: n.T };
+    }
+    function drawRoomLine() {
+      let rl = n.roomLine;
+      if (!rl || n.T - rl.at > 1.8 || de()) return;
+      ge(26);
+      let d = e.measureText(rl.text).width + 48;
+      ((e.globalAlpha = Math.min(1, (1.8 - (n.T - rl.at)) * 3)),
+        m(c / 2 - d / 2, 280, d, 52, 16),
+        r("#1e2430", 3),
+        g(rl.text, c / 2, 306, 26, "#ffffff", "center", 800),
+        (e.globalAlpha = 1));
+    }
+    function drainQueue() {
+      // Test hook: plays the story queue to its end at once, the way skipping a cutscene does.
+      for (let i = 0; i < 6e3 && (n.cur || n.q.length); i++) {
+        if (de()) {
+          let o = n.cur;
+          ((n.cur = null), o && o.k === "panel" && rh(o.id));
+        }
+        (lh(0.05), n.cur && n.cur.k === "until" && n.cur.f(0.05) && (n.cur = null));
+      }
+    }
+    function debugState() {
+      let s = n.scene || "",
+        a = n.act,
+        f = (v) => (typeof v === "number" ? v.toFixed(1) : "-");
+      return [
+        "ch " + ({ O: 1, S: 1, G: 2, P: 3, M: 4 }[s[0]] || "-"),
+        "scene " + (s || "-"),
+        "phase " + (ch2.phase || "-"),
+        "room " + (n.room || "-"),
+        "control " + (x.mops ? "Mops" : "Squatch") + (n.ctrl ? "" : " (cutscene)"),
+        "pose " + (n.sqPose || "-"),
+        "prompt " + (a ? a.verb + (a.cap ? " \u00b7 " + a.cap : "") : "-"),
+        "button " + (p.verb || "-"),
+        'chip "' + (n.chip || "") + '"',
+        "security " + (ch2.sec ? ch2.sec.mode + " (" + ch2.sec.by + ")" : "none"),
+        "warn " + f(ch2.warn) + " peek " + f(ch2.peek),
+      ].join(" | ");
+    }
+    function debugStrip() {
+      let box = document.createElement("div"),
+        line = document.createElement("div"),
+        copy = document.createElement("button");
+      ((box.id = "ss-debug"),
+        box.setAttribute(
+          "style",
+          "max-width:960px;margin:0 auto;padding:4px 8px;box-sizing:border-box;width:100%;display:flex;gap:8px;align-items:flex-start;font:13px/1.4 ui-monospace,Menlo,monospace;color:#1e2430",
+        ),
+        (line.id = "ss-debug-line"),
+        line.setAttribute("style", "flex:1;word-break:break-word"),
+        (copy.type = "button"),
+        (copy.textContent = "Copy"),
+        copy.addEventListener("click", () => {
+          try {
+            navigator.clipboard.writeText(line.textContent);
+          } catch {}
+          copy.blur();
+        }),
+        box.append(line, copy),
+        document.body.appendChild(box));
+      let read = () => {
+        if (!h) return (clearInterval(timer), box.remove());
+        line.textContent = debugState();
+      };
+      let timer = setInterval(read, 250);
+      (read(),
+        window.addEventListener("keydown", (ev) => {
+          ev.code === "Backquote" && !ev.repeat && (box.style.display = box.style.display === "none" ? "flex" : "none");
+        }));
+    }
+    let Z2 = performance.now(),
+      xq = 0,
+      W2 = (l) => {
+        if (!h) return;
+        let o = Math.min(0.25, Math.max(0, (l - Z2) / 1e3));
+        Z2 = l;
+        try {
+          for (; o > 1e-6;) {
+            let i = Math.min(0.05, o);
+            (ep(i), (o -= i));
+          }
+          (Ap(), updateWhoTag());
+        } catch (i) {
+          console.error(i);
+        }
+        xq = requestAnimationFrame(W2);
+      };
+    return (
+      (xq = requestAnimationFrame(W2)),
+      (window.__ss = {
+        opSkip: Cs,
+        cutActive: N0,
+        sceneO7: ph,
+        game: p,
+        SFX: D,
+        playSong: co,
+        wookVoice: _i,
+        babyBreath: z1,
+        follow: () => Bt,
+        transit: () => ({ fadeA: Ka, walkIn: fa, lastRoom: Mf }),
+        voiceCount: () => [O1, R1, N1],
+        audio: () => ({ state: S ? S.state : "none", vol: z, muted: G }),
+        cycleVol: eV,
+        seeLine: _h,
+        inWedge: vt,
+        inLight4: y2,
+        addPoints: ee,
+        burst: of,
+        ch2: ch2,
+        ch3: Q,
+        ch4: H,
+        sceneM0: nq,
+        sceneM2: b2,
+        sceneM3: p2,
+        sceneM4: A2,
+        sceneM5: g2,
+        ch4Tally: x2,
+        sceneP0: aq,
+        sceneP3: s2,
+        sceneP4: q2,
+        ch3Tally: r2,
+        sectionReset,
+        resetHold: armReset,
+        reSec,
+        sceneG0: Ws,
+        sceneG2: Wh,
+        sceneG3: e2,
+        sceneG4: t2,
+        sceneG5: a2,
+        sceneG6: n2,
+        g6Out: l2,
+        ch2Tally: o2,
+        actionDown: Vf,
+        shown: () => Array.from(p.shown),
+        op: n,
+        startOpening: qh,
+        opTap: nf,
+        s1: aV,
+        sceneS1: Ah,
+        sceneS1L: Mh,
+        inCone: Ps,
+        S1_SPOTS: qn,
+        hall: B,
+        sceneS2: Oh,
+        sceneS3: Rh,
+        s4: le,
+        s5: qV,
+        sceneS4: Uh,
+        sceneS5: Dh,
+        sceneO4: ch,
+        sceneO5: Gs,
+        sceneS6: Gh,
+        sceneS8: js,
+        sceneS9: Ph,
+        sceneS10: Ih,
+        sceneS11: Kh,
+        sceneS12: Xh,
+        ch: x,
+        swapTo: yf,
+        chTally: jh,
+        getTrip: () => Gn,
+        setTrip: (l) => {
+          Gn = l;
+        },
+        tripSnacks: () => Gn,
+        debugState,
+        resetTo: (ph) => {
+          (clearRun(), applyG(ph));
+        },
+        pickAct: () => (n.scene && n.scene.startsWith("G") ? RA() : null),
+        walkBounds: () => sn(),
+        drain: drainQueue,
+        sqAway: () => sqAway(),
+        picSwap,
+        canSwitch: () => O2(),
+        solids: () => ih(),
+        CH2_CHIPS,
+        ch2ChipKey: () => ch2ChipKey(),
+      }),
+      debugLink(),
+      whoTag(),
+      {
+        actionE: J1,
+        resetHold: armReset,
+        actionDown: Vf,
+        tapAt: O5,
+        setJoy: (l, o, i) => {
+          ((qt.x = l), (qt.y = o), (qt.active = i));
+        },
+        joyStart: () => {
+          (VV(), p.state === "title" && I0(Ca));
+        },
+        setTouch: (l) => {
+          u = l;
+        },
+        destroy: () => {
+          ((h = !1), cancelAnimationFrame(xq), window.removeEventListener("keydown", j2));
+          for (let l of ["touchend", "click", "pointerup", "keydown"]) window.removeEventListener(l, J2, { capture: !0 });
+          document.removeEventListener("visibilitychange", Ve);
+          try {
+            S?.close();
+          } catch {}
+          whoTagEl && whoTagEl.remove();
+          (window.removeEventListener("keyup", _2), window.removeEventListener("blur", F2), S && S.close().catch(() => {}));
+        },
+      }
+    );
+  }
+  function q8(V) {
+    let t = (0, YV.useRef)(null),
+      a = (0, YV.useRef)(null);
+    (0, YV.useEffect)(() => {
+      let f = t.current;
+      if (!f) return;
+      let u = null,
+        h = (y) => {
+          let U = f.getBoundingClientRect(),
+            E = (y.clientX - U.left - U.width / 2) / (U.width / 2),
+            w = (y.clientY - U.top - U.height / 2) / (U.height / 2),
+            I = Math.hypot(E, w);
+          (I > 1 && ((E /= I), (w /= I)),
+            V.eng.current?.setJoy(E, w, !0),
+            a.current && (a.current.style.transform = "translate(" + E * V.size * 0.32 + "px," + w * V.size * 0.32 + "px)"));
+        },
+        c = (y) => {
+          (y.preventDefault(), (u = y.pointerId));
+          try {
+            f.setPointerCapture(y.pointerId);
+          } catch {}
+          (V.eng.current?.joyStart(), h(y));
+        },
+        b = (y) => {
+          y.pointerId === u && (y.preventDefault(), h(y));
+        },
+        O = (y) => {
+          y.pointerId === u && ((u = null), V.eng.current?.setJoy(0, 0, !1), a.current && (a.current.style.transform = ""));
+        };
+      return (
+        f.addEventListener("pointerdown", c),
+        f.addEventListener("pointermove", b),
+        f.addEventListener("pointerup", O),
+        f.addEventListener("pointercancel", O),
+        () => {
+          (f.removeEventListener("pointerdown", c),
+            f.removeEventListener("pointermove", b),
+            f.removeEventListener("pointerup", O),
+            f.removeEventListener("pointercancel", O));
+        }
+      );
+    }, [V.size, V.eng]);
+    let e = Math.round(V.size * 0.4);
+    return (0, pe.jsx)("div", {
+      ref: t,
+      "aria-label": "Move",
+      style: {
+        position: "relative",
+        width: V.size,
+        height: V.size,
+        borderRadius: "50%",
+        background: "#f1f3f6",
+        border: "3px solid #1e2430",
+        touchAction: "none",
+        flex: "0 0 auto",
+        boxSizing: "border-box",
+      },
+      children: (0, pe.jsx)("div", {
+        ref: a,
+        style: {
+          position: "absolute",
+          left: (V.size - e) / 2 - 3,
+          top: (V.size - e) / 2 - 3,
+          width: e,
+          height: e,
+          borderRadius: "50%",
+          background: "#8fdcff",
+          border: "3px solid #1e2430",
+          pointerEvents: "none",
+          boxSizing: "border-box",
+        },
+      }),
+    });
+  }
+  // Help lines: only controls that work. Wording waits for Brian's yes (docs/PHASE-1-LINES-FOR-BRIAN.md).
+  var KEY_HELP = "Arrows or WASD: walk. E: do the action in the white label. Space or Enter: next line. Hold R: restart this section. Esc: skip a flashback. M: sound.",
+    TOUCH_HELP = "Stick: walk. Big button: do it. Tap the picture: next line. Hold Reset section to restart.";
+  function r8(V) {
+    let t = (0, YV.useRef)(null),
+      [a, e] = (0, YV.useState)(!1);
+    (0, YV.useEffect)(() => {
+      let b = t.current;
+      if (!b) return;
+      let O = (U) => {
+          (U.preventDefault(), e(!0), V.eng.current?.actionDown());
+        },
+        y = () => {
+          e(!1);
+        };
+      return (
+        b.addEventListener("pointerdown", O),
+        b.addEventListener("pointerup", y),
+        b.addEventListener("pointercancel", y),
+        b.addEventListener("pointerleave", y),
+        () => {
+          (b.removeEventListener("pointerdown", O),
+            b.removeEventListener("pointerup", y),
+            b.removeEventListener("pointercancel", y),
+            b.removeEventListener("pointerleave", y));
+        }
+      );
+    }, [V.eng]);
+    let f = V.label.charAt(0) === "!",
+      u = f ? V.label.slice(1) : V.label,
+      h = u !== "",
+      long = (u || "ACTION").length > 7,
+      c = {
+        width: long ? "auto" : V.size,
+        minWidth: V.size,
+        maxWidth: long ? 200 : V.size,
+        padding: long ? "0 14px" : 0,
+        height: V.size,
+        borderRadius: V.size / 2,
+        textAlign: "center",
+        lineHeight: 1.1,
+        whiteSpace: "normal",
+        background: h ? "#2bc48a" : "#3478f6",
+        color: "#ffffff",
+        border: "3px solid #1e2430",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontWeight: 800,
+        fontSize: long ? Math.max(16, Math.round(V.size * 0.17)) : Math.round(V.size * ((u || "ACTION").length > 5 ? 0.17 : 0.22)),
+        touchAction: "none",
+        userSelect: "none",
+        WebkitUserSelect: "none",
+        transform: a ? "scale(0.93)" : "none",
+        animation: f && !a ? "ssPulse 0.9s ease-in-out infinite" : "none",
+        flex: "0 0 auto",
+        boxSizing: "border-box",
+        cursor: "pointer",
+        letterSpacing: long ? 0 : 1,
+      };
+    return (0, pe.jsxs)("div", {
+      ref: t,
+      style: c,
+      role: "button",
+      "aria-label": u || "Action",
+      children: [
+        (0, pe.jsx)("style", {
+          children: "@keyframes ssPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,207,51,.9)}50%{box-shadow:0 0 0 14px rgba(255,207,51,0)}}",
+        }),
+        u || "ACTION",
+      ],
+    });
+  }
+  function k1() {
+    let V = Eb(),
+      t = (0, YV.useRef)(null),
+      a = (0, YV.useRef)(null),
+      e = (0, YV.useRef)(null),
+      [h, c] = (0, YV.useState)(""),
+      [b, O] = (0, YV.useState)(wb()),
+      [y, U] = (0, YV.useState)(Nb()),
+      [E, w] = (0, YV.useState)(Rb());
+    ((0, YV.useEffect)(() => {
+      let eV = t.current;
+      if (!eV) return;
+      let W = null;
+      try {
+        W = s8(eV, { onVerb: (VV) => c(VV), onTouch: () => O(!0), font: V.font.family, touch: wb() });
+      } catch (VV) {
+        console.error(VV);
+      }
+      return (
+        (e.current = W),
+        () => {
+          (W && W.destroy(), (e.current = null));
+        }
+      );
+    }, []),
+      (0, YV.useEffect)(() => {
+        e.current?.setTouch(b);
+      }, [b]),
+      (0, YV.useEffect)(() => {
+        let eV = () => {
+          (U(Nb()), w(Rb()));
+        };
+        return (
+          window.addEventListener("resize", eV),
+          window.addEventListener("orientationchange", eV),
+          () => {
+            (window.removeEventListener("resize", eV), window.removeEventListener("orientationchange", eV));
+          }
+        );
+      }, []),
+      (0, YV.useEffect)(() => {
+        let eV = a.current;
+        if (!eV) return;
+        let W = (VV) => VV.preventDefault();
+        return (eV.addEventListener("touchmove", W, { passive: !1 }), () => eV.removeEventListener("touchmove", W));
+      }, []));
+    let I = b && y,
+      tV = (eV) => {
+        eV.preventDefault();
+        let W = t.current;
+        if (!W) return;
+        W.focus();
+        let VV = W.getBoundingClientRect(),
+          Ve = eV.nativeEvent;
+        e.current?.tapAt(((eV.clientX - VV.left) * 960) / VV.width, ((eV.clientY - VV.top) * 640) / VV.height, Ve.pointerType === "touch");
+      },
+      nV = (eV) => (W) => {
+        (W.preventDefault(), eV(), setTimeout(() => t.current?.focus({ preventScroll: !0 }), 0));
+      };
+    (0, YV.useEffect)(() => {
+      let eV = window.setInterval(() => {
+        let W = t.current;
+        W &&
+          document.hasFocus() &&
+          (document.activeElement === document.body || document.activeElement === null) &&
+          W.focus({ preventScroll: !0 });
+      }, 250);
+      return () => window.clearInterval(eV);
+    }, []);
+    let M = { display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "center", gap: 10, width: "100%" },
+      z = (0, pe.jsx)(r8, { label: h, size: I ? 96 : 104, eng: e }),
+      G = (0, pe.jsx)(q8, { eng: e, size: I ? 120 : 128 }),
+      Z = null;
+    return (
+      !I && b
+            ? (Z = (0, pe.jsxs)("div", {
+                style: { ...M, justifyContent: "space-between", padding: "0 6px", boxSizing: "border-box" },
+                children: [
+                  G,
+                  z,
+                  (0, pe.jsx)("button", {
+                    type: "button",
+                    "aria-label": "Reset section",
+                    style: {
+                      height: 44,
+                      minWidth: 148,
+                      padding: "0 14px",
+                      borderRadius: 12,
+                      border: "3px solid #1e2430",
+                      background: "#fffaf0",
+                      color: "#1e2430",
+                      fontWeight: 800,
+                      fontSize: 15,
+                      touchAction: "none",
+                    },
+                    onPointerDown: nV(() => e.current?.resetHold(!0)),
+                    onPointerUp: nV(() => e.current?.resetHold(!1)),
+                    onPointerCancel: nV(() => e.current?.resetHold(!1)),
+                    onPointerLeave: nV(() => e.current?.resetHold(!1)),
+                    children: "Reset section",
+                  }),
+                  (0, pe.jsx)("span", {
+                    id: "ss-help",
+                    style: { width: "100%", textAlign: "center", color: V.text.secondary, fontSize: V.font.label.fontSize },
+                    children: TOUCH_HELP,
+                  }),
+                ],
+              }))
+            : I
+              ? (Z = (0, pe.jsx)("div", {
+                  id: "ss-help",
+                  style: { width: "100%", textAlign: "center", color: V.text.secondary, fontSize: V.font.label.fontSize },
+                  children: TOUCH_HELP,
+                }))
+              :
+              (Z = (0, pe.jsxs)("div", {
+                style: { ...M, justifyContent: "space-between" },
+                children: [
+                  (0, pe.jsx)("span", {
+                    style: { color: V.text.secondary, fontSize: V.font.label.fontSize },
+                    id: "ss-help",
+                    children: KEY_HELP,
+                  }),
+                  (0, pe.jsx)("button", {
+                    type: "button",
+                    "aria-label": "Reset section",
+                    style: {
+                      height: 44,
+                      minWidth: 148,
+                      padding: "0 14px",
+                      borderRadius: 12,
+                      border: "3px solid #1e2430",
+                      background: "#fffaf0",
+                      color: "#1e2430",
+                      fontWeight: 800,
+                      fontSize: 15,
+                      touchAction: "none",
+                    },
+                    onPointerDown: nV(() => e.current?.resetHold(!0)),
+                    onPointerUp: nV(() => e.current?.resetHold(!1)),
+                    onPointerCancel: nV(() => e.current?.resetHold(!1)),
+                    onPointerLeave: nV(() => e.current?.resetHold(!1)),
+                    children: "Reset section",
+                  }),
+                  /^!?NEXT$/.test(h) ? z : null,
+                  (0, pe.jsx)(Mb, { label: "Show touch controls", onClick: () => O(!0) }),
+                ],
+              })),
+      (0, pe.jsxs)("div", {
+        ref: a,
+        style: {
+          display: "flex",
+          flexDirection: "column",
+          gap: 10,
+          width: "100%",
+          touchAction: "none",
+          userSelect: "none",
+          WebkitUserSelect: "none",
+          fontFamily: V.font.family,
+        },
+        children: [
+          (0, pe.jsxs)("div", {
+            style: { ...M, alignItems: I ? "flex-end" : "center", flexWrap: I ? "nowrap" : "wrap" },
+            children: [
+              I ? G : null,
+              (0, pe.jsx)("div", {
+                style: { flex: "1 1 260px", width: "100%", maxWidth: I ? Math.max(260, Math.round((E - 40) * 1.5)) : 960, minWidth: 0 },
+                children: (0, pe.jsx)("canvas", {
+                  ref: t,
+                  width: 960,
+                  height: 640,
+                  tabIndex: 0,
+                  "aria-label": "Sneaky Sasquatch game",
+                  onPointerDown: tV,
+                  style: {
+                    display: "block",
+                    width: "100%",
+                    height: "auto",
+                    aspectRatio: "3 / 2",
+                    borderRadius: 12,
+                    border: "3px solid #1e2430",
+                    touchAction: "none",
+                    background: "#f1f3f6",
+                    outline: "none",
+                    boxSizing: "border-box",
+                  },
+                }),
+              }),
+              I
+                ? (0, pe.jsxs)("div", {
+                    style: { display: "flex", flexDirection: "column", gap: 8, alignItems: "center" },
+                    children: [
+                      z,
+                      (0, pe.jsx)("button", {
+                        type: "button",
+                        "aria-label": "Reset section",
+                        style: {
+                          height: 44,
+                          minWidth: 148,
+                          padding: "0 14px",
+                          borderRadius: 12,
+                          border: "3px solid #1e2430",
+                          background: "#fffaf0",
+                          color: "#1e2430",
+                          fontWeight: 800,
+                          fontSize: 15,
+                          touchAction: "none",
+                        },
+                        onPointerDown: nV(() => e.current?.resetHold(!0)),
+                        onPointerUp: nV(() => e.current?.resetHold(!1)),
+                        onPointerCancel: nV(() => e.current?.resetHold(!1)),
+                        onPointerLeave: nV(() => e.current?.resetHold(!1)),
+                        children: "Reset section",
+                      }),
+                    ],
+                  })
+                : null,
+            ],
+          }),
+          Z,
+        ],
+      })
+    );
+  }
+  var pe,
+    zb = ed(() => {
+      "use strict";
+      Ob();
+      pe = _n(ro());
+    });
+  var c8 = ka(() => {
+    var Ub = _n(xb());
+    zb();
+    var Db = _n(ro());
+    (0, Ub.createRoot)(document.getElementById("root")).render((0, Db.jsx)(k1, {}));
+  });
+  c8();
+})();
+/*! Bundled license information:
+
+scheduler/cjs/scheduler.production.js:
+  (**
+   * @license React
+   * scheduler.production.js
+   *
+   * Copyright (c) Meta Platforms, Inc. and affiliates.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE file in the root directory of this source tree.
+   *)
+
+react/cjs/react.production.js:
+  (**
+   * @license React
+   * react.production.js
+   *
+   * Copyright (c) Meta Platforms, Inc. and affiliates.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE file in the root directory of this source tree.
+   *)
+
+react-dom/cjs/react-dom.production.js:
+  (**
+   * @license React
+   * react-dom.production.js
+   *
+   * Copyright (c) Meta Platforms, Inc. and affiliates.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE file in the root directory of this source tree.
+   *)
+
+react-dom/cjs/react-dom-client.production.js:
+  (**
+   * @license React
+   * react-dom-client.production.js
+   *
+   * Copyright (c) Meta Platforms, Inc. and affiliates.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE file in the root directory of this source tree.
+   *)
+
+react/cjs/react-jsx-runtime.production.js:
+  (**
+   * @license React
+   * react-jsx-runtime.production.js
+   *
+   * Copyright (c) Meta Platforms, Inc. and affiliates.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE file in the root directory of this source tree.
+   *)
+*/

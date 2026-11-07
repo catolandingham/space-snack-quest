@@ -4,7 +4,11 @@
 
 The game's source is in `src/`. `index.html` is build output: never edit it by hand.
 
-- `src/game.js` is the game (Chapters 1 to 4, the page, the touch controls).
+- `src/game/` is the game, in pieces the build joins in name order. Each piece starts with one comment line saying what it holds:
+  `00-core.js` (sound, title, drawing helpers, the story queue), `10-ch1.js`, `20-ch2.js`, `30-ch3.js`, `40-ch4.js` (one per chapter),
+  `50-story-frame.js` (the story update every chapter shares), `60-frame-draw.js` (the frame update and the main draw),
+  `90-input-shell.js` (keys, taps, the debug link, `window.__ss`, the page and touch controls). The pieces are cut from one function,
+  so no piece runs on its own; read them as one file in that order.
 - `src/vendor-react.js` is the React runtime. Leave it alone.
 - `src/index.template.html` is the page around the program.
 
@@ -13,16 +17,24 @@ npm run build
 npm run check-build
 ```
 
-`npm run build` writes `index.html` from `src/`. `npm run check-build` fails if the committed `index.html` is not a fresh build of `src/`. The build compacts the code with esbuild but keeps every name, so a name seen in the browser can be found in `src/game.js`.
+`npm run build` writes `index.html` from `src/`. `npm run check-build` fails if the committed `index.html` is not a fresh build of `src/`. The build compacts the code with esbuild but keeps every name, so a name seen in the browser can be found in `src/game/`.
 
-`src/` is the readable copy of `index.html` at commit `15051ec`, made with Prettier 3.9.10 (`--print-width 140`). `node tools/equivalence.mjs` is the one-time proof that the build is the same program as that commit.
+To give a short name a readable one, use the rename tool. It changes only that one variable (Babel's scope analysis), never an object key or another variable with the same short name, and refuses a new name that would collide:
+
+```
+npm run rename -- k ch2 src/game/20-ch2.js:22
+```
+
+The last part is a line where the old name appears. Each rename is recorded in `tools/renames.json` (old name, new name, where, why, date), so renames can be reviewed in a pull request; `npm run rename` with nothing after it applies any entry not yet applied. Then run `npm run build && npm test`.
+
+`src/` is the readable copy of `index.html` at commit `15051ec`, made with Prettier 3.9.10 (`--print-width 140`). `node tools/equivalence.mjs` is the one-time proof that the build is the same program as that commit. `node tools/equivalence.mjs <ref>` checks that a fresh build plays the same as `index.html` at `<ref>` (40 Enter presses in each chapter, and the Chapter 2 keyboard route).
 
 ## Debug link
 
 Add these to the address of `index.html` to jump into the game. Without them, nothing changes.
 
 - `?ch=2` starts Chapter 2 from the title, even if it is still locked.
-- `?ch=2&phase=wash1` starts Chapter 2, then jumps to that checkpoint (the same table Reset section uses, `applyG` in `src/game.js`).
+- `?ch=2&phase=wash1` starts Chapter 2, then jumps to that checkpoint (the same table Reset section uses, `applyG` in `src/game/20-ch2.js`).
 - `?scene=P3` starts that scene's chapter, then opens the scene.
 - `&debug=1` shows a line under the game, updated four times a second: chapter, scene, phase, room, who you control, pose, the prompt, the button label, the chip, security, and the kitchen warn and peek timers. The Copy button copies it. The backtick key hides and shows it.
 

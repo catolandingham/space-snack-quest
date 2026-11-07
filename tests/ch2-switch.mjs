@@ -5,12 +5,12 @@
  * into the diner shows "Mops goes inside.", and asking for work switches back with a card.
  * Then plays all seven Chapter 2 story switches and checks each card's reason against the exact words
  * in docs/PHASE-1-LINES-FOR-BRIAN.md (6.1 to 6.7), and the six room-change lines (6.9 to 6.14).
- * Also checks that src/game.js changes x.mops only inside switchTo.
+ * Also checks that the source (src/game/) changes x.mops only inside switchTo.
  *   node tests/ch2-switch.mjs
  */
 import { readFileSync } from "node:fs";
-import { join } from "node:path";
-import { startGame, sleep, root, readLines } from "./game-page.mjs";
+import { startGame, sleep, readLines } from "./game-page.mjs";
+import { sourceFiles } from "../tools/build.mjs";
 
 const LINES = readLines();
 
@@ -18,7 +18,10 @@ const g = await startGame({ port: 8783, name: "switch" });
 
 // Only switchTo assigns x.mops.
 {
-  const src = readFileSync(join(root, "src", "game.js"), "utf8").split("\n");
+  const src = sourceFiles()
+    .map((f) => readFileSync(f, "utf8"))
+    .join("")
+    .split("\n");
   const hits = src.map((line, i) => [i, line]).filter(([, line]) => /x\.mops = /.test(line));
   const owner = (i) => {
     for (let j = i; j >= 0; j--) {

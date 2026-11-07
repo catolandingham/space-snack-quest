@@ -1,0 +1,12 @@
+{
+  "about": "Every rename made with npm run rename, in order. Each entry: the old name, the new name, the line where the old name was declared or used when the rename was made, why, and the date it was applied. npm run rename applies any entry without an applied date.",
+  "renames": [
+    {
+      "old": "k",
+      "new": "ch2",
+      "at": "src/game/20-ch2.js:22",
+      "why": "Chapter 2 state (the brief's sample rename)",
+      "applied": "2026-11-07"
+    }
+  ]
+}
