@@ -5,7 +5,8 @@
 The game's source is in `src/`. `index.html` is build output: never edit it by hand.
 
 - `src/game/` is the game, in pieces the build joins in name order. Each piece starts with one comment line saying what it holds:
-  `00-core.js` (sound, title, drawing helpers, the story queue), `10-ch1.js`, `20-ch2.js`, `30-ch3.js`, `40-ch4.js` (one per chapter),
+  `00-core.js` (sound, title, drawing helpers, the story queue, spots), `10-ch1.js` and `11-ch1-hall.js` (Chapter 1, in two parts),
+  `20-ch2.js`, `30-ch3.js`, `40-ch4.js` (one per chapter),
   `50-story-frame.js` (the story update every chapter shares), `60-frame-draw.js` (the frame update and the main draw),
   `90-input-shell.js` (keys, taps, the debug link, `window.__ss`, the page and touch controls). The pieces are cut from one function,
   so no piece runs on its own; read them as one file in that order.
@@ -54,6 +55,19 @@ Branch `phase-1-kitchen-clarity` makes Chapter 2 clear to a 10-year-old (plan se
 - The help line names only controls that work. `tests/help-text.mjs`.
 
 Test hooks added for these: `__ss.resetTo(phase)`, `pickAct()`, `walkBounds()`, `drain()`, `sqAway()`, `CH2_CHIPS`, `ch2ChipKey()`, `lastBubble`, `bubbleFrame`. `tests/game-page.mjs` is the shared start-up code for the new suites.
+
+## Phase 2: tests, dead engine out, files by chapter, rings, captions
+
+Branch `phase-2-structure` (plan section 4, tasks T13 to T18). Every new line the player reads, and every place a ring moved, is listed for Brian in `docs/PHASE-2-LINES-FOR-BRIAN.md`, with what is not finished.
+
+- `tests/ch2-playthrough.mjs` plays Chapter 2 from `?ch=2` to the tally card with real key presses (arrows, E, Enter), following `tests/routes/ch2.json`. It never writes to the game. A step stuck for 20 seconds fails with its number and the debug strip's state line. `ROUTE_LOG=1` prints each step. About 95 seconds.
+- `tests/phone-tap.mjs` plays the same route's start on a 375 by 812 phone with touches only (joystick, ACTION button, a tap on the picture) through the diner and the first kitchen dish. Both use `tests/route-player.mjs`.
+- The old level engine (keypad, dish mini-game, guard AI, old levels and their exports) is gone. `node tools/equivalence.mjs <ref>` shows a fresh build plays the same as `index.html` at `<ref>`.
+- The source is in pieces by chapter (see "Source and build"), and `npm run rename` renames one variable safely.
+- One helper, `spot` in `src/game/00-core.js`, holds every action in all four chapters: what the button says, where the player's feet must be, and the ring, which is drawn from those same numbers. `tests/ring-equals-trigger.mjs` checks every ring in 77 states.
+- Every action in Chapters 1, 3 and 4 reads "VERB · thing", and those chapters have goal chips from one table each (`CH1_CHIPS`, `CH3_CHIPS`, `CH4_CHIPS`). `tests/action-labels.mjs` (all chapters) and `tests/chapter-chips.mjs`.
+
+Test hooks added: `__ss.spotsNow()`, `placedSpots()`, `offerNow()`, `drawFrame()`, `rings()`, `inSpot()`, `chipNow()`, `chipKeyNow()`, `CH1_CHIPS`, `CH3_CHIPS`, `CH4_CHIPS`. `tests/chapter-states.mjs` holds the states the ring and caption tests share.
 
 ## Progression tests
 
