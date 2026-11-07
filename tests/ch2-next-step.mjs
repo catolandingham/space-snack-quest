@@ -3,6 +3,9 @@
  * For each checkpoint phase, and for the states the story reaches by play, stand the character
  * the player controls at every point of a 20-pixel grid inside the room and list the actions
  * offered. Every state must offer at least one action that moves the story on.
+ * Squatch keeps the pose he is in (a hidden Squatch is swept hidden), and only floor points outside
+ * furniture count, so an action counts only if the controlled character can stand where it is offered.
+ * In the kitchen the picture button (top right) also counts as a way forward when it is there.
  * Writes the table to tests/out/next-step.json for the reviewer.
  *   node tests/ch2-next-step.mjs
  */
@@ -77,11 +80,16 @@ const STATES = [
   // The picture button in the kitchen (top right) lets the player switch to Mops once the cook is down.
   {
     name: "play: switch to Mops at the sink, walk out front",
-    steps: [["set", { done: 0, held: -1, cook: "down" }], ["reset", "wash1"], ["set", { cook: "down" }], ["swap"], ["act?", "FRONT"], ["drain"]],
+    steps: [["set", { done: 0, held: -1, cook: "down" }], ["reset", "wash1"], ["set", { cook: "down" }], ["picswap"], ["act?", "FRONT"], ["drain"]],
   },
   {
     name: "play: switch to Mops while the bots come, walk out front",
-    steps: [["set", { cook: "gone" }], ["reset", "g3hide"], ["set", { cook: "gone" }], ["swap"], ["act?", "FRONT"], ["drain"]],
+    steps: [["set", { cook: "gone" }], ["reset", "g3hide"], ["set", { cook: "gone" }], ["picswap"], ["act?", "FRONT"], ["drain"]],
+  },
+  {
+    name: "play: Mops at the sink after the picture button",
+    switchBack: true,
+    steps: [["set", { done: 0, held: -1, cook: "down" }], ["reset", "wash1"], ["set", { cook: "down", peekT: 99 }], ["picswap"]],
   },
   { name: "play: the new jar", steps: [["set", { jar: 30, has: "" }], ["scene", "G6"], ["drain"]] },
   { name: "play: Mops takes the coins out", steps: [["set", { jar: 30, has: "" }], ["scene", "G6"], ["drain"], ["act", "GRAB"], ["act", "EXIT"], ["drain"]] },
@@ -122,7 +130,7 @@ for (const state of STATES) {
       else if (st[0] === "set") Object.assign(k, st[1]);
       else if (st[0] === "scene") ss["scene" + st[1]]();
       else if (st[0] === "drain") ss.drain();
-      else if (st[0] === "swap") ss.swapTo(!ss.ch.mops);
+      else if (st[0] === "picswap") ss.picSwap();
       else if (st[0] === "act" || st[0] === "act?") {
         const a = findAct(st[1]);
         if (a) a.f();
@@ -140,9 +148,11 @@ for (const state of STATES) {
     };
     note(ss.pickAct());
     const b = ss.walkBounds();
-    if (!ss.ch.mops && n.sqPose === "hidden") n.sqPose = "stand";
+    const solids = ss.solids();
+    const blocked = (x, y) => solids.some((o) => x > o.x0 && x < o.x1 && y > o.y0 && y < o.y1);
     for (let y = b.y0; y <= b.y1; y += 20)
       for (let x = b.x0; x <= b.x1; x += 20) {
+        if (blocked(x, y)) continue;
         who.x = x;
         who.y = y;
         note(ss.pickAct());
@@ -156,6 +166,7 @@ for (const state of STATES) {
       scene: n.scene,
       control: ss.ch.mops ? "Mops" : "Squatch",
       inControl: n.ctrl,
+      switchButton: ss.canSwitch(),
       chip: n.chip || "",
       squatch: { pose: n.sqPose, x: Math.round(n.sq.x), away: ss.sqAway() },
       verbs,
@@ -166,6 +177,9 @@ for (const state of STATES) {
   const forward = FORWARD[row.phase] || [];
   const offered = Object.keys(row.verbs || {}).map((v) => v.split(" · ")[0]);
   row.forward = offered.filter((v) => forward.includes(v));
+  if (row.switchButton && row.room === "kitchen") row.forward.push("SWITCH (picture button)");
+  if (state.switchBack)
+    g.check(`${state.name}: the picture button to switch back is there`, row.control === "Mops" && row.switchButton === true, row);
   table.push(row);
   g.check(
     `${state.name}: ${row.control || "?"} in the ${row.room || "?"} (${row.phase || "?"}) has a way forward`,

@@ -15123,6 +15123,7 @@
         sqAway: () => sqAway(),
         picSwap,
         canSwitch: () => O2(),
+        solids: () => ih(),
         CH2_CHIPS,
         ch2ChipKey: () => ch2ChipKey(),
       }),

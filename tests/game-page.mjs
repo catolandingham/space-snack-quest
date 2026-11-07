@@ -6,7 +6,7 @@
  *   g.check("name", ok, detail); ... await g.finish("suite name");
  */
 import http from "node:http";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -14,6 +14,18 @@ import { chromePath } from "./chrome-path.mjs";
 
 export const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// The words Brian approves: docs/PHASE-1-LINES-FOR-BRIAN.md, row number -> the "In the game now" column.
+export function readLines() {
+  const out = {};
+  for (const line of readFileSync(join(root, "docs", "PHASE-1-LINES-FOR-BRIAN.md"), "utf8").split("\n")) {
+    const m = line.match(/^\| (\d+\.\d+) \| [^|]* \| ([^|]*) \|/);
+    if (m) out[m[1]] = m[2].trim();
+  }
+  return out;
+}
+// "HIDE · crate (note)" -> "HIDE · crate"
+export const actionOf = (cell) => (cell.match(/^([A-Z][A-Z ]* \u00b7 [^(]+?)\s*(\(|$)/) || [])[1] || "";
 
 export async function startGame({ port, name }) {
   let puppeteer;

@@ -51,8 +51,6 @@ const g = await startGame({ port: 8784, name: "capture-cause" });
 // (b) Each captor's catch.
 const captors = [
   { by: "pump", phase: "g6", room: "gas", scene: "G6", captor: /pump bot/i, place: /lot/ },
-  { by: "diner", who: "gloop", phase: "g4", room: "diner", scene: "G4", captor: /Gloop/, place: /counter/ },
-  { by: "diner", who: "blorp", phase: "g4", room: "diner", scene: "G4", captor: /Blorp/, place: /diner/ },
   { by: "sink", phase: "wash1", room: "kitchen", scene: "G2k", captor: /Gloop/, place: /sink/ },
   { by: "rust", phase: "g1", room: "gas", scene: "G1", captor: /Rusty/, place: /pump/ },
 ];
@@ -80,6 +78,46 @@ for (const c of captors) {
   g.check(`${name}: the first card line names who saw him and where`, !!card && c.captor.test(card.cause || "") && c.place.test(card.cause || ""), card);
   g.check(`${name}: the joke comes after the cause`, !!card && card.next.length > 0, card);
   g.check(`no page errors (${name})`, errors.length === 0, errors);
+  await ctx.close();
+}
+
+// (b2) The diner path for real: Squatch stands in Blorp's or Gloop's view, they see him and call
+// security through sSec("diner", who), and the LOCKUP card names the one who saw him.
+for (const c of [
+  { who: "blorp", at: [330, 450], captor: /^Blorp/, place: /diner/ },
+  { who: "gloop", at: [373, 300], captor: /^Gloop/, place: /counter/ },
+]) {
+  const { ctx, page, errors } = await g.open("?ch=2");
+  await page.evaluate((at) => {
+    const ss = window.__ss;
+    const n = ss.op;
+    ss.ch2.jar = 30; ss.ch2.has = "";
+    ss.resetTo("g4");
+    ss.swapTo(false);
+    n.sqPose = "stand"; n.sq.x = at[0]; n.sq.y = at[1]; n.sq.moving = false;
+    n.q = []; n.cur = null; n.live = []; n.ctrl = true;
+  }, c.at);
+  let sec = null;
+  for (let i = 0; i < 40 && !sec; i++) {
+    await sleep(100);
+    sec = await page.evaluate(() => (window.__ss.ch2.sec ? { by: window.__ss.ch2.sec.by, who: window.__ss.ch2.sec.who } : null));
+  }
+  g.check(`${c.who} sees Squatch and calls security from the diner`, !!sec && sec.by === "diner" && sec.who === c.who, sec);
+  // Stand still so security reaches him.
+  await page.evaluate(() => {
+    const n = window.__ss.op;
+    n.sqPose = "stand";
+  });
+  let card = null;
+  for (let i = 0; i < 100 && !card; i++) {
+    await sleep(100);
+    card = await page.evaluate(() => {
+      const cur = window.__ss.op.cur;
+      return cur && cur.k === "card" && cur.id === "jail" ? { text: cur.text, cause: cur.cause } : null;
+    });
+  }
+  g.check(`${c.who}: the LOCKUP card names ${c.who} and the place`, !!card && card.text === "LOCKUP" && c.captor.test(card.cause || "") && c.place.test(card.cause || ""), card);
+  g.check(`no page errors (diner ${c.who})`, errors.length === 0, errors);
   await ctx.close();
 }
 

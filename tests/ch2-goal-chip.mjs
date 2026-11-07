@@ -5,19 +5,15 @@
  * the player is in the kitchen. Also checks the chip is hidden while a speech bubble is up.
  *   node tests/ch2-goal-chip.mjs
  */
-import { startGame, sleep } from "./game-page.mjs";
+import { startGame, sleep, readLines } from "./game-page.mjs";
 
-// The words Brian sees in docs/PHASE-1-LINES-FOR-BRIAN.md. If he changes one, change it here too.
-const EXPECT = {
-  g1: "Squatch: hide behind the crate by the pump",
-  back: "Squatch: sneak in the KITCHEN door",
-  g2: "Mops: ask Gloop for work at the counter",
-  wash1: "Squatch: wash the dishes at the sink",
-  g3hide: "Squatch: hide in the crate before the bots look!",
-  g4: "Mops: take the tip jar",
-  g4k: "Mops: carry the soup to Squatch's crate",
-  wash5: "Squatch: wash the next dishes",
-  g6: "Squatch: lure the bots away from the ship",
+// Every chip is compared to the literal words in docs/PHASE-1-LINES-FOR-BRIAN.md, by row.
+const LINES = readLines();
+const ROW = {
+  g1: "5.1", g1door: "5.2", back: "5.3", g2: "5.4", wash1: "5.5", g3: "5.6", g3hide: "5.6", g3h: "5.7",
+  g4: "5.8", "g4:coins": "5.9", "g4:soup": "5.10", g4k: "5.11", g4l: "5.11", "diner:kitchen": "5.12",
+  wash5: "5.13", "wash5:mop": "5.14", g6d: "5.15", "g6d:coins": "5.16", "g6:mops": "5.17", g6: "5.18",
+  "g6:sing": "5.19", "g6:run": "5.20", "kitchen:mops": "5.21",
 };
 const fill = {
   g4: { jar: 30, has: "" },
@@ -54,19 +50,53 @@ for (const ph of PHASES) {
       control: ss.ch.mops ? "Mops" : "Squatch",
       chip: ss.op.chip,
       key: ss.ch2ChipKey(),
-      table: ss.CH2_CHIPS[ss.ch2ChipKey()],
     };
   });
   const label = `Reset section in ${ph} (now ${s.phase}, ${s.room})`;
-  g.check(`${label}: chip comes from the table`, !!s.chip && s.chip === s.table, s);
-  if (EXPECT[s.phase] && s.key === s.phase) g.check(`${label}: chip reads "${EXPECT[s.phase]}"`, s.chip === EXPECT[s.phase], s);
+  const want = LINES[ROW[s.key]];
+  g.check(`${label}: chip is line ${ROW[s.key]} word for word`, !!want && s.chip === want, { ...s, want });
   g.check(`${label}: chip names who acts (${s.control})`, s.chip.startsWith(s.control + ": "), s);
   g.check(`${label}: no stale "Walk to the diner door"`, s.chip !== "Walk to the diner door", s);
   if (s.room === "kitchen") g.check(`${label}: a kitchen chip does not name the diner door`, !/diner door/i.test(s.chip), s);
 }
 
-// Every chip in the table names who acts, and none in a kitchen state names the diner door.
+// Every step inside a phase: build it, read the chip, compare to the lines file.
+const SUBSTATES = [
+  ["g4:coins", [["set", { jar: 0, has: "coins" }], ["reset", "g4"]]],
+  ["g4:soup", [["set", { jar: 0, has: "soup" }], ["reset", "g4"]]],
+  ["diner:kitchen", [["set", { has: "soup" }], ["reset", "g4k"], ["op", { room: "diner" }]]],
+  ["wash5:mop", [["set", { done: 5, held: 6 }], ["reset", "wash5"], ["set", { greasy: true }], ["mops"]]],
+  ["kitchen:mops", [["set", { done: 0, held: -1 }], ["reset", "wash1"], ["set", { cook: "down", peekT: 99 }], ["picswap"]]],
+  ["g6d", [["set", { jar: 30, has: "" }], ["reset", "wash5"], ["scene", "G6"]]],
+  ["g6d:coins", [["set", { jar: 30, has: "" }], ["reset", "wash5"], ["scene", "G6"], ["set", { has: "coins", jar: 0 }]]],
+  ["g6:mops", [["set", { jar: 0, has: "coins" }], ["reset", "wash5"], ["call", "g6Out"], ["mops"]]],
+  ["g6:sing", [["reset", "g6"], ["op", { sqPose: "hidden" }], ["ch", { spot: 61, sing: true }]]],
+  ["g6:run", [["reset", "g6"], ["ch", { sing: false }], ["set", { bots: [{ x: 700, y: 500, hx: 700, f: -1, look: 5 }, { x: 900, y: 520, hx: 900, f: -1, look: 5 }] }]]],
+];
+for (const [key, steps] of SUBSTATES) {
+  await page.evaluate((steps) => {
+    const ss = window.__ss;
+    const n = ss.op;
+    for (const st of steps) {
+      if (st[0] === "reset") ss.resetTo(st[1]);
+      else if (st[0] === "set") Object.assign(ss.ch2, st[1]);
+      else if (st[0] === "op") Object.assign(n, st[1]);
+      else if (st[0] === "ch") Object.assign(ss.ch, st[1]);
+      else if (st[0] === "mops") ss.swapTo(true);
+      else if (st[0] === "picswap") ss.picSwap();
+      else if (st[0] === "scene") ss["scene" + st[1]]();
+      else if (st[0] === "call") ss[st[1]]();
+    }
+    n.q = []; n.cur = null; n.ctrl = true; n.chip = "";
+  }, steps);
+  await sleep(120);
+  const s = await page.evaluate(() => ({ key: window.__ss.ch2ChipKey(), chip: window.__ss.op.chip }));
+  g.check(`step ${key}: chip is line ${ROW[key]} word for word`, s.key === key && s.chip === LINES[ROW[key]], { ...s, want: LINES[ROW[key]] });
+}
+
+// Every chip in the table has a row in the lines file, names who acts, and none in a kitchen state names the diner door.
 const all = await page.evaluate(() => window.__ss.CH2_CHIPS);
+g.check("every chip in the game has a row in the lines file with the same words", Object.entries(all).every(([key, t]) => ROW[key] && LINES[ROW[key]] === t), Object.entries(all).filter(([key, t]) => !(ROW[key] && LINES[ROW[key]] === t)));
 g.check("every table line starts with Squatch: or Mops:", Object.values(all).every((t) => /^(Squatch|Mops): /.test(t)), all);
 g.check("no table line names the diner door except the walk to it", Object.entries(all).every(([key, t]) => key === "g1door" || !/diner door/i.test(t)), all);
 

@@ -5,7 +5,16 @@
  * at a few actions and checks the big button reads exactly "VERB · caption" in letters at least 16 px.
  *   node tests/action-labels.mjs
  */
-import { startGame, sleep } from "./game-page.mjs";
+import { startGame, sleep, readLines, actionOf } from "./game-page.mjs";
+
+const LINES = readLines();
+// Named spots: lines-file row -> the state where that action must be offered with exactly those words.
+const SPOTS = {
+  "11.1": "g1", "11.2": "back", "11.3": "g6 hidden at the lure crate", "11.4": "g6 singing", "11.5": "g6 Mops with coins",
+  "11.6": "g4", "11.7": "g4", "11.8": "g4", "11.9": "g2", "11.10": "g4", "11.11": "g4", "11.12": "g4 with coins",
+  "11.13": "g4k", "11.14": "wash1 while Gloop looks", "11.15": "wash1", "11.16": "wash1", "11.17": "wash1 holding a dish",
+  "11.18": "the greasy pot", "11.19": "g4k with soup", "7.1": "g4k out front",
+};
 
 const g = await startGame({ port: 8787, name: "action-labels" });
 
@@ -45,6 +54,7 @@ const build = (steps) => {
 {
   const { ctx, page, errors } = await g.open("?ch=2");
   const missing = [];
+  const offeredIn = {};
   let total = 0;
   for (const [label, steps] of STATES) {
     await page.evaluate(build, steps);
@@ -70,6 +80,7 @@ const build = (steps) => {
         return out;
       },
     );
+    offeredIn[label] = Object.keys(found).map((key) => key.replace("|", " \u00b7 "));
     for (const key of Object.keys(found)) {
       total++;
       const [verb, cap] = key.split("|");
@@ -78,6 +89,10 @@ const build = (steps) => {
     console.log(`  ${label}: ${Object.keys(found).map((k) => k.replace("|", " · ")).join(", ")}`);
   }
   g.check(`every Chapter 2 action offered has a caption (${total} found)`, missing.length === 0 && total > 20, missing);
+  for (const [row, label] of Object.entries(SPOTS)) {
+    const want = actionOf(LINES[row] || "");
+    g.check(`line ${row} "${want}" is what the game offers in ${label}`, !!want && (offeredIn[label] || []).includes(want), { want, offered: offeredIn[label] });
+  }
   g.check("no page errors (sweep)", errors.length === 0, errors);
   await ctx.close();
 }
