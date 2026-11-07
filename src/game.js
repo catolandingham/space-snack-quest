@@ -7552,7 +7552,8 @@
         (x.sing = !1),
         (p.alarm = !1),
         (p.alarmT = 1),
-        n.pulse.clear());
+        n.pulse.clear(),
+        String(n.scene || "").startsWith("G") && (n.chip = ""));
     }
     function drawCap() {
       let a = n.act;
@@ -7561,7 +7562,51 @@
         y = Math.max(28, a.y - 36);
       (m(x - 78, y - 14, 156, 28, 8), r("#fffaf0", 3), g(a.verb + " \u00b7 " + a.cap, x, y, 14, "#1e2430", "center", 800));
     }
+    // The goal chip for Chapter 2: one table, read every frame from the phase, the room and who is in control.
+    // Every line names who acts. No line names a place in another room. Wording waits for Brian's yes
+    // (docs/PHASE-1-LINES-FOR-BRIAN.md).
+    const CH2_CHIPS = {
+      g1: "Squatch: hide behind the crate by the pump",
+      g1door: "Mops: walk to the diner door and go in",
+      back: "Squatch: sneak in the KITCHEN door",
+      g2: "Mops: ask Gloop for work at the counter",
+      wash1: "Squatch: wash the dishes at the sink",
+      g3: "Squatch: hide in the crate before the bots look!",
+      g3hide: "Squatch: hide in the crate before the bots look!",
+      g3h: "Squatch: stay hidden in the crate",
+      g4: "Mops: take the tip jar and buy at the counter",
+      "g4:coins": "Mops: buy soup at the counter",
+      "g4:soup": "Mops: take the soup through the kitchen door",
+      g4k: "Mops: carry the soup to Squatch's crate",
+      g4l: "Mops: carry the soup to Squatch's crate",
+      "diner:kitchen": "Mops: go back through the kitchen door",
+      wash5: "Squatch: wash the next dishes",
+      "wash5:mop": "Mops: mop the greasy pot at the sink",
+      g6d: "Mops: grab the new tip jar",
+      "g6d:coins": "Mops: take the coins out the red door",
+      "g6:mops": "Mops: give the coins to Rusty at the pump",
+      g6: "Squatch: sing from the crate to lure the bots",
+      "g6:sing": "Squatch: stop singing before they reach you",
+      "g6:run": "Squatch: run to the ship and get on board",
+    };
+    function ch2ChipKey() {
+      let ph = k.phase || "";
+      if (sqAway()) return "diner:kitchen";
+      if (ph === "g4") return k.has === "soup" ? "g4:soup" : k.has === "coins" ? "g4:coins" : "g4";
+      if (ph === "wash5" && x.mops) return "wash5:mop";
+      if (ph === "g6d") return k.has === "coins" ? "g6d:coins" : "g6d";
+      if (ph === "g6")
+        return x.mops ? "g6:mops" : x.sing ? "g6:sing" : (k.bots || []).some((o) => o.look > 0) ? "g6:run" : "g6";
+      return ph;
+    }
+    function ch2Chip() {
+      return CH2_CHIPS[ch2ChipKey()] || "";
+    }
     function applyG(l) {
+      let ok = placeG(l);
+      return (ok && (n.chip = ch2Chip()), ok);
+    }
+    function placeG(l) {
       if (l === "back" || l === "g1door") {
         ((n.scene = "G2b"),
           (n.room = "gas"),
@@ -7875,7 +7920,8 @@
     }
     function NA(l) {
       n.scene.startsWith("G") &&
-        (n.room === "gas" && !de() && MA(l),
+        ((n.chip = ch2Chip()),
+        n.room === "gas" && !de() && MA(l),
         de() || (EA(l), wA(l), GA(l)),
         n.room !== "gas" && qSec(l),
         k.phase === "g3hide" &&
@@ -8191,7 +8237,7 @@
           v("sq", "We don't have coins...", "whisper"),
           v("mops", "Then we earn some. Leave it to me."),
           N(() => {
-            (Ta("sneak-g1"), (x.mops = !0), (k.phase = "g1door"), (n.chip = "Walk to the diner door"), (n.ctrl = !0), (n.mo.moving = !1));
+            (Ta("sneak-g1"), (x.mops = !0), (k.phase = "g1door"), (n.chip = ch2Chip()), (n.ctrl = !0), (n.mo.moving = !1));
           }),
         ]));
     }
@@ -13676,11 +13722,18 @@
         n.chip && n.chip !== "Hide!" ? ((Vq = n.chip), (jA = n.scene)) : (p.state !== "op" || Ao) && (Vq = ""));
       {
         let s = n.chip || Vq;
-        if (s && !(Y0 >= 0 && n.T - Y0 < 3.5)) {
-          let q = de() ? 17 : 22;
+        // No chip while a speech bubble is up (rule 10). Long goals wrap. At the gas stop the chip sits
+        // between the diner sign (right edge 354) and the TANK label (left edge 692).
+        if (s && !(Y0 >= 0 && n.T - Y0 < 3.5) && !(n.cur && n.cur.k === "bub") && !n.live.length) {
+          let q = de() ? 17 : 22,
+            gas = n.room === "gas",
+            cx = gas ? 523 : c / 2;
           ge(q);
-          let d = e.measureText(s).width + 36;
-          (m(c / 2 - d / 2, 50, d, q + 18, 18), r("#ffcf33", 3), g(s, c / 2, 59 + q / 2, q));
+          let lines = zt(s, (gas ? 330 : 860) - 36, q),
+            d = Math.max(...lines.map((t) => e.measureText(t).width)) + 36;
+          (m(cx - d / 2, 50, d, lines.length * (q + 6) + 12, 18),
+            r("#ffcf33", 3),
+            lines.forEach((t, i) => g(t, cx, 59 + q / 2 + i * (q + 6), q)));
         }
       }
     }
@@ -14886,6 +14939,8 @@
         walkBounds: () => sn(),
         drain: drainQueue,
         sqAway: () => sqAway(),
+        CH2_CHIPS,
+        ch2ChipKey: () => ch2ChipKey(),
       }),
       debugLink(),
       {
