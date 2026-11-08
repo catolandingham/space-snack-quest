@@ -4,7 +4,7 @@ Reply with the code at the end of a row, or write your own answer in its place. 
 
 Two rows share the name D2. **D2-TV** is the TV hiding beat. **D2-STARS** is what the stars are for.
 
-Play Chapters 1 and 2 with your kid before any gameplay row below. New words still need your yes in a lines file. None of these rows change a timer, a price, how far someone can see, or how hard a scene is. A pull request does not merge until you write your yes in that pull request.
+Play Chapters 1 and 2 with your kid before any gameplay row below. New words still need your yes in a lines file. Replying here does not change the game. A pull request does not merge until you write your yes in that pull request. One row, E22, is a difficulty question: Rusty's sight stays as it is unless you say to widen it.
 
 One calendar note, not a game decision: the docs say the credit reset is Thursday 2026-11-13. November 13, 2026 is a Friday.
 
@@ -12,8 +12,8 @@ One calendar note, not a game decision: the docs say the credit reset is Thursda
 
 | Ids | Question | Options | Recommendation | Reply |
 | --- | --- | --- | --- | --- |
-| D9, E34 | When a kitchen bot sees Mops, what happens? | Shoo him back to the door, which is what the game does now. Or the lockup card, the same as when someone sees Squatch. | Shoo him, and show the bots' sight cones only while he carries the soup. A lockup would turn the soup sneak into a failure. | `D9: shoo` |
-| B28, C3, D3, audit 2 | How does Chapter 2 pay for the gas? | Keep the build: earn coins, buy Squatch soup, then pay Rusty. Or go back to the written spine: chili, Rustbucket naps, Mops siphons the gas. | Keep the coins, and the food-and-fuel choice is done once the gas is paid. The coins version has the clearer turn: Mops picks Squatch's hunger over the tank. | `CH2: coins` |
+| D9, E34 | When a kitchen bot sees Mops, what happens? | Shoo him back to the door, and show the bots' sight cones only while he carries the soup. Or the lockup card, the same as when someone sees Squatch. | Shoo him, and show those cones only during the soup sneak. A lockup would turn that sneak into a failure. | `D9: shoo` |
+| B28, C3, D3, audit 2 | How does Chapter 2 pay for the gas, and is that choice finished once the gas is paid? | Keep coins, soup for Squatch, then pay Rusty, and stop there. Or go back to the written spine: chili, Rustbucket naps, Mops siphons the gas, and more dishes can follow. | Keep the coins, and stop once the gas is paid. The coins version has the clearer turn: Mops picks Squatch's hunger over the tank. | `CH2: coins` |
 | 6.1.1, E26 | Add the Guardians-note flashback in Chapter 2? | A "Years ago, on Stormtop..." scene that shows you Mops wrote the note, while Squatch does not know. Or leave it out. | Send draft lines for you to approve before anything is built. Chapter 4 asks who the guardians were, and that question needs a secret you hold and Squatch does not. | `GUARDIANS: send lines` |
 | 6.1.3, M1 | Chapter 2's first switch still uses the old card. Replace it? | Keep the old switch card. Or one zoom-in card, the way Chapter 1 teaches the first switch. | Send one draft line. You liked the zoom-in on "this is Squatch" and asked to reuse that technique. | `SWITCH2: send line` |
 | D17, E21 | Should scrubbing a dish and mopping a pot be a few seconds of rubbing? | Leave the button press as it is. Or a short rub that cannot be failed, with the plate cleaning as you do it. | You judge a preview after you replay Chapter 2. It is a feel call, and it is not built yet. | `D17: preview` |
