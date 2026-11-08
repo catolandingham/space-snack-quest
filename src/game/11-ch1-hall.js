@@ -1184,9 +1184,21 @@
           ? ((q.asked = !1), (q.look -= l), q.look <= 0 && (q.look = -1))
           : q.look < 0 && mV(q, q.home.x, q.home.y, 50, l) && (q.look = 0);
     }
-    // Why each announced switch happens. Wording waits for Brian's yes (docs/PHASE-1-LINES-FOR-BRIAN.md).
-    // Switches with no entry here (scene set-ups, Reset section, Chapters 1, 3 and 4) are silent for now.
+    // Why each announced switch happens. Wording waits for Brian's yes (Chapter 2: docs/PHASE-1-LINES-FOR-BRIAN.md
+    // rows 6.x; Chapter 1: docs/CHAPTER-1-LINES-FOR-BRIAN.md rows 26.x). Switches with no entry here (scene
+    // set-ups, Reset section, a restart after a catch, and Chapters 3 and 4) are silent for now.
     const SWITCH_WHY = {
+      // Chapter 1, the face buttons (top right) in S9, S10 and S11 (ch1FaceWhy picks one).
+      "s9-mops": "Mops goes for the slip in the trash.",
+      "s9-squatch": "Squatch sings to bring the bot over.",
+      "s10-mops": "Squatch is too big for the vent. Mops tries it.",
+      "s10-squatch": "Only Mops fits in the vent. Squatch waits.",
+      "s11-mops": "Mops goes to type the code at the door.",
+      "s11-squatch": "Squatch sings to pull the bot off the door.",
+      // Chapter 1, switches the story makes.
+      "s10-start": "Mops has one half. Squatch goes for the other half.",
+      "s11-start": "Mops has the whole code. Now Squatch helps him reach the door.",
+      "s11-door": "Squatch has to get past the scanner.",
       "g1-door": "Mops goes to the diner. Squatch stays hidden by the pump.",
       "g2-back": "Mops found work. Squatch sneaks in the back.",
       "g3-front": "Squatch stays hidden in the crate. Mops goes out front.",
@@ -1205,8 +1217,15 @@
       ((x.mops = m), (n.sq.moving = !1), (n.mo.moving = !1));
       line && J([{ k: "card", id: "switch", who: m ? "mops" : "sq", text: "You are " + (m ? "MOPS" : "SQUATCH") + " now.", by: line }]);
     }
-    function yf(l) {
-      x.mops !== l && (switchTo(l ? "mops" : "squatch"), D.key());
+    function yf(l, why) {
+      x.mops !== l && (switchTo(l ? "mops" : "squatch", why), D.key());
+    }
+    // Why a face tap switches in Chapter 1. The first switch (to Mops in S9) was taught by the zoom-in card
+    // ("Tap a face to switch."), so it has no card of its own; every later switch says why.
+    function ch1FaceWhy(toMops) {
+      let s = n.scene;
+      if (s === "S9" && toMops && !n.sw1Done && n.taught && n.taught.has("switch1")) return ((n.sw1Done = !0), "");
+      return s === "S9" || s === "S10" || s === "S11" ? s.toLowerCase() + "-" + (toMops ? "mops" : "squatch") : "";
     }
     function s9Spots() {
       return [
@@ -1404,7 +1423,7 @@
     function Ih() {
       ((n.scene = "S10"),
         (n.room = "hall"),
-        switchTo("squatch"),
+        switchTo("squatch", "s10-start"),
         (n.sqPose = "stand"),
         (x.spot = -1),
         (n.sq.x = 980),
@@ -1533,11 +1552,12 @@
     function pA() {
       return pick(s10dSpots());
     }
-    function Js() {
+    // S11's start. From the duct (Kh) the switch to Squatch says why; a restart after a catch is silent.
+    function Js(why) {
       ((n.scene = "S11"),
         (n.room = "hall"),
         (n.live = []),
-        switchTo("squatch"),
+        switchTo("squatch", why),
         (x.spot = -1),
         (n.sqPose = "stand"),
         _s(Ch.x, Ch.y),
@@ -1550,7 +1570,7 @@
         (B.camX = 480));
     }
     function Kh() {
-      (Js(),
+      (Js("s11-start"),
         (n.ctrl = !1),
         (x.seenPart = !1),
         (x.doorOpen = !1),
@@ -1623,7 +1643,7 @@
               J([
                 { k: "panel", id: "keypad" },
                 N(() => {
-                  ((x.doorOpen = !0), D.zap(), x.seenPart || Ta("sneak-s11"), yf(!1));
+                  ((x.doorOpen = !0), D.zap(), x.seenPart || Ta("sneak-s11"), yf(!1, "s11-door"));
                 }),
                 v("sq", "Door open! Uh oh... a fur scanner."),
                 N(() => {
@@ -1649,7 +1669,7 @@
               ((x.seenPart = !0), kV("bot", "Former Ganitor! SHOO!"), shoo(Js, kh())));
           return;
         }
-        (x.mops && yf(!1),
+        (x.mops && yf(!1, "s11-door"),
           inSpot(gateSpot()) &&
             (x.costume
               ? ((n.ctrl = !1), (n.act = null), n.pulse.delete("gate"), D.pickup(), J([v("scanner", "HAIR... PROBABLY. PROCEED."), N(Xh)]))

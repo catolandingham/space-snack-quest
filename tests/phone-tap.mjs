@@ -157,6 +157,8 @@ g.check("the picture's top edge is within the HUD bar's height (plus 16 px) of t
     return false;
   }
   async function act(label) {
+    // Under a loaded machine the page's button can be a frame behind the game: give it a moment.
+    await p3.waitForFunction((label) => (document.querySelector('[role="button"]')?.textContent || "").includes(label), { timeout: 1500 }, label).catch(() => {});
     const b = await p3.evaluate(() => { const r = document.querySelector('[role="button"]').getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, text: document.querySelector('[role="button"]').textContent }; });
     await tap(b.x, b.y);
     await sleep(300);

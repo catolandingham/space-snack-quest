@@ -63,6 +63,7 @@
           zzz: 0,
           log: [],
           maxB: 0,
+          sw1Done: !1,
         }),
         (n.pulse = new Set()),
         (n.found = new Set()),

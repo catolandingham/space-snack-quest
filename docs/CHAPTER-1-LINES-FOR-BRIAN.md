@@ -49,3 +49,19 @@ Row 18.5 ("Squatch: run back to the closet!") stays: it now shows only while sec
 | 25.18 | O6, Mops waves the notice away (his reaction to what Squatch brought back) | A notice can't mop a floor. | Pfft. Paper can't mop. |
 | 25.19 | S3, Squatch's whisper when the robot delivery rolls down the ramp, after the PA's "Bleep-Bloop Bots! Floors that mop THEMSELVES!" | Robot janitors. Like the notice said. | The notice was right. |
 | 25.20 | O4, the label on the snack counter on the right wall | SNACKS | SNACK BAR |
+
+## Switch cards: every Squatch and Mops switch in Chapter 1 says why
+
+The same card as Chapter 2 (rows 6.1 to 6.7): it fills the picture, its top line is "You are MOPS now." or "You are SQUATCH now.", the second line is the why, and it waits for a tap. The very first switch (Squatch to Mops in S9, by tapping Mops's face) has no card of its own: the zoom-in card (row 24.3, "Tap a face to switch. Then you play that one.") already taught it a moment before. Restarts after a catch or a shoo switch back to Squatch with no card, as Reset section does in Chapter 2.
+
+| # | When it shows | In the game now | Another way to say it |
+| --- | --- | --- | --- |
+| 26.1 | S9, tapping Mops's face (any time after the first switch) | Mops goes for the slip in the trash. | Mops grabs the slip while the bot looks away. |
+| 26.2 | S9, tapping Squatch's face | Squatch sings to bring the bot over. | Squatch calls the bot over with his song. |
+| 26.3 | S9 into S10, after Mops grabs the trash half (the game switches back to Squatch) | Mops has one half. Squatch goes for the other half. | One half found. The other half is in the vent. |
+| 26.4 | S10, tapping Mops's face | Squatch is too big for the vent. Mops tries it. | Only Mops fits in the vent. |
+| 26.5 | S10, tapping Squatch's face while Mops is outside the vent | Only Mops fits in the vent. Squatch waits. | Squatch waits by the vent. |
+| 26.6 | S10 into S11, Mops climbs out of the duct with both halves (the game switches back to Squatch) | Mops has the whole code. Now Squatch helps him reach the door. | Mops has the code. Squatch's turn to help. |
+| 26.7 | S11, tapping Mops's face | Mops goes to type the code at the door. | Mops heads for the keypad. |
+| 26.8 | S11, tapping Squatch's face | Squatch sings to pull the bot off the door. | Squatch lures the bot away from the door. |
+| 26.9 | S11, the door opens; right after Squatch says "Door open! Uh oh... a fur scanner." (the game switches back to Squatch) | Squatch has to get past the scanner. | The scanner is Squatch's problem now. |
