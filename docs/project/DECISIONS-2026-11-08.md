@@ -32,3 +32,33 @@
 - 2026-11-07 (Brian, Chapter 1 pass review): clicking a face is the way to switch on a computer; no keyboard key needed. The "ROBOTICS DELEGATION!" banner in the door-crack view stays. No teaching card for the vent. The fur tuft is made bigger and shown earlier so it works as a warning. The S3 PA line is fixed so it cannot report fur after a clean night.
 - 2026-11-08 (Brian): wait for the weekly credit reset (Thursday 2026-11-13, about 11:00 PT) before the Chapter 2 pass; the 75% shared-pool line stays. Cursor's allowance returns 2026-11-08 and may be used for bulk building in the meantime.
 - 2026-11-07 (Brian): the "GHOST BONUS +250" award is named by what clears it. Brian: "We have no idea what ghost bonus is, and I don't think it's clear to the player either," then "Oh, it's the difference between being spotted versus being caught." Only a catch clears it, so it reads "Never caught! +250" with a reason line, and every +100 award says what it was for. Whether the bonus exists at all is part of the open stars decision D2.
+
+## 2026-11-08 (Brian): answers to the held decisions
+
+These are his answers to the rows on pull request 12 (`docs/HELD-DECISIONS-FOR-BRIAN.md` on that branch). They are recorded here. Where the game already matched an answer, it was left as it is. Answers that need new work are not built in the audit pull request. New words still go in a lines file before they ship. Two rows that shared the name D2 are D2-TV and D2-STARS.
+
+- D9: shoo. When a kitchen bot sees Mops, he is shooed back. Not a lockup. He did not, in this answer, also confirm showing the bots' cones only during the soup sneak.
+- CH2: coins. Chapter 2 keeps coins, soup for Squatch, then paying Rusty. The chili-and-siphon path stays retired. The food-and-fuel choice is done once the gas is paid.
+- GUARDIANS: send lines. The "Years ago, on Stormtop..." flashback, showing the player that Mops wrote the note, is wanted. Draft the lines for him before anything is built.
+- SWITCH2: send line. Chapter 2's first switch should become one zoom-in card, like Chapter 1. Send the one line first.
+- D17, changed: scrubbing is not a cannot-fail rub. The player may put a dish away dirty, and Gloop gets upset. That is funny, not a fail. Lines to him first. The old "preview a rub" recommendation is not the answer.
+- D2-TV: cut the argument. Keep the TV warning and the crate hide. Cut arguing after "Bots! Go watch the dock." In the current scene that arguing is already absent; the crate lines stay, and they come before the dock line.
+- DOCK: keep. Gloop's "Bots! Go watch the dock." stays.
+- D4: park. Blorp's pea gag stays parked.
+- B17, changed: do not remove COOK. Make COOK do something. Ideas are needed before that is built. The recommendation to remove it is not the answer.
+- E22: replay first. Rusty's sight stays the width it is until Brian replays. The drawn cone already matches the area that catches.
+- D13: grease cap. Replace Rusty's red "R" cap with a grease cap and a fuel-drop badge.
+- D12: ask first. Do not move the kitchen window or the sink until the player says what looked wrong, from a recording.
+- D6, more than the one-word reply: Zip's beat is a riddle, not a song list. Write many riddles. A different riddle each game. If the echo riddle is the one used, Zip mocks himself because it is obvious.
+- D7: small. Harry's dance stays four presses and Mops's "Baaa."
+- VEHICLE: ship. The Mars vehicle is the delivery ship, not the van the game shows now.
+- DAD: pancake. Dad's line is the pancake-hair joke from the spine ("You'll get hair in the pancakes."), not the game's "Health rules." The new words go in a lines file first.
+- ENDING: image. The "ever since" ending is a picture, not the long told card.
+- D16, changed: start the Chapter 3 and Chapter 4 sense pass now. No outline for him to approve first. The recommendation to send an outline first is not the answer. New words still go in a lines file.
+- D18, changed: both. Travel gets the ship-window cards and the mini-games, not the cards alone.
+- E24: bar. On a phone the HUD stays a bar above the picture.
+- E15: both. Both faces are always shown. The one you are not playing is grayed when a switch is not possible. That is his version, not the trimmed one that shipped.
+- D8: move. The manager's office moves beside storage.
+- D14: seen only. The player can skip a cutscene they have already seen. A new one still waits for a tap.
+- T24: Continue. The word "Continue" on the title screen is approved, so a save can resume. Build it in a later pull request, with the word in a lines file.
+- D2-STARS: keep the bonus. Stars stay, and "Never caught! +250" stays. The recommendation to drop that bonus is not the answer.

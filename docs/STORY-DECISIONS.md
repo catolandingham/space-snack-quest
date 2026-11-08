@@ -1,6 +1,6 @@
 # Story decisions
 
-For Brian. Each item below is **pending**. It becomes resolved only when you decide that item. The kitchen sequence is not in this list. It is already the canon revision in `docs/story-bible.md`.
+For Brian. The questions below are the record of what was open. On 2026-11-08 he answered them. Those answers are the dated section in `docs/project/DECISIONS-2026-11-08.md`. A **Pending** line under a question is the old question, not his latest answer. Where an answer was already how the game plays, it stays. Answers that need new work are not built in the audit pull request. The kitchen sequence is not in this list. It is already the canon revision in `docs/story-bible.md`.
 
 Nothing else in the original story was replaced. Chapter 1, the Chapter 2 gas stop and dock, and the Chapter 3 and Chapter 4 outlines stay as they were. Where an older idea and a newer playtest or the current build disagree, that disagreement is a hold, not a silent edit.
 

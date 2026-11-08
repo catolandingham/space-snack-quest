@@ -1,5 +1,13 @@
 # Space Snack Quest
 
+## Audits, 2026-11-08
+
+`docs/REQUESTS-AUDIT.md` is every comment in the handover's section 5, plus the backlog items that are not already one of those rows. `docs/DESIGN-RULES-AUDIT.md` is the standing rules, one at a time, across all four chapters. His answers to the held decisions are appended in `docs/project/DECISIONS-2026-11-08.md`. Those answers are not built in this branch.
+
+The one play change: the cook is on screen before she says "A WOOKIE!", and on the floor for "*faints*". Same words. `tests/cook-order.mjs`.
+
+Docs match main: yes.
+
 ## Source and build
 
 The game's source is in `src/`. `index.html` is build output: never edit it by hand.
@@ -43,7 +51,7 @@ For example, `index.html?ch=2&phase=wash1&debug=1` opens the kitchen sink with t
 
 ## Phase 1: kitchen and diner clarity
 
-Branch `phase-1-kitchen-clarity` makes Chapter 2 clear to a 10-year-old (plan section 3, tasks T5 to T12). Every new line the player reads is listed for Brian in `docs/PHASE-1-LINES-FOR-BRIAN.md`.
+Merged as pull request 8 (`9215e8b`). Branch `phase-1-kitchen-clarity` makes Chapter 2 clear to a 10-year-old (plan section 3, tasks T5 to T12). Every new line the player reads is listed for Brian in `docs/PHASE-1-LINES-FOR-BRIAN.md`.
 
 - The goal chip names who acts and what to do, from one table (`CH2_CHIPS`), and hides while a bubble is up. `tests/ch2-goal-chip.mjs`.
 - Every switch between Squatch and Mops goes through `switchTo` and, in Chapter 2, shows a card with the reason; room changes show one short line. (A "YOU:" tag over the picture was removed in Phase 2 at Brian's request.) `tests/ch2-switch.mjs`.
@@ -58,7 +66,7 @@ Test hooks added for these: `__ss.resetTo(phase)`, `pickAct()`, `walkBounds()`, 
 
 ## Phase 2: tests, dead engine out, files by chapter, rings, captions
 
-Branch `phase-2-structure` (plan section 4, tasks T13 to T18). Every new line the player reads, and every place a ring moved, is listed for Brian in `docs/PHASE-2-LINES-FOR-BRIAN.md`, with what is not finished.
+Merged as pull request 9 (`25c1933`). Branch `phase-2-structure` (plan section 4, tasks T13 to T18). Every new line the player reads, and every place a ring moved, is listed for Brian in `docs/PHASE-2-LINES-FOR-BRIAN.md`, with what is not finished.
 
 - `tests/ch2-playthrough.mjs` plays Chapter 2 from `?ch=2` to the tally card with real key presses (arrows, E, Enter), following `tests/routes/ch2.json`. It never writes to the game. A step stuck for 20 seconds fails with its number and the debug strip's state line. `ROUTE_LOG=1` prints each step. About 95 seconds.
 - `tests/phone-tap.mjs` plays the same route's start on a 375 by 812 phone with touches only (joystick, ACTION button, a tap on the picture) through the diner and the first kitchen dish. Both use `tests/route-player.mjs`.
@@ -71,7 +79,7 @@ Test hooks added: `__ss.spotsNow()`, `placedSpots()`, `offerNow()`, `drawFrame()
 
 ## Phase 3: one capture rule, phone HUD, tap to walk
 
-Branch `phase-3-fairness-hud` (plan section 4, tasks T19 to T23, with Brian's decisions of 2026-11-07). Every new line the player reads is listed for Brian in `docs/PHASE-3-LINES-FOR-BRIAN.md`, with what is not finished.
+Merged as pull request 10 (`1e84978`). Branch `phase-3-fairness-hud` (plan section 4, tasks T19 to T23, with Brian's decisions of 2026-11-07). Every new line the player reads is listed for Brian in `docs/PHASE-3-LINES-FOR-BRIAN.md`, with what is not finished.
 
 - One capture rule in every chapter: seen, security comes, time to hide ("They lost you." if hidden), caught shows the LOCKUP card with who saw Squatch and where, then the section restarts from its checkpoint with coins and stars kept. No catch takes stars. `src/game/25-capture.js`; `tests/capture-rule.mjs`.
 - The HUD is page text over the picture in fixed zones: chapter, ↺ and stars top left; the goal chip top center; the faces top right. The ↺ button (hold) replaces the big Reset section button; the sound button is under the picture. After 60 seconds without progress the chip shows how to do the step. On a phone the game sits at the top of the screen. `src/game/80-hud.js`; `tests/hud-layout.mjs`.
@@ -84,7 +92,7 @@ Test hooks added: `__ss.capture()`, `shoo()`, `lostYou()`, `startSec()`, `CAPTUR
 
 ## Chapter 1 pass: the night out has a purpose, switches say why
 
-Branch `chapter-1-pass`. Not merged. Every new line waits for Brian's yes in `docs/CHAPTER-1-LINES-FOR-BRIAN.md`, which starts with what Chapter 1 now has and still does not have.
+Merged to `main` as pull request 11 (`ee59f4a`). Every new line is listed for Brian in `docs/CHAPTER-1-LINES-FOR-BRIAN.md`, which starts with what Chapter 1 now has and still does not have.
 
 - The night out (O3 to O6, Brian's D15): Squatch sneaks into the lobby to find out what is going on and reads a NOTICE on a brochure table ("ROBOT JANITORS COMING."). The vent's pull is drawn at all times; a tuft of fur drifts toward it, and 1.5 seconds in the pull sets off "FUR IN THE VENT!". Sightings and the vent go through the one capture rule (HIDE! into the closet, or LOCKUP and the night starts over). The notice comes back in O5, O6 and S3. `tests/ch1-lobby.mjs`.
 - After the review (Brian, 2026-11-07): the notice's second line is "They take every janitor's job."; the fur tuft shows within 1.5 times the vent's circle, is twice as large and keeps moving during a chase; S3's delegation report follows what happened (vent, seen, or "all clear").
@@ -122,7 +130,7 @@ These came up in the notes and were not given a new behavior:
 - The lockup card is the jail. There is no separate jail game.
 - Cook and Gloop stay two speakers.
 
-`docs/story-bible.md` is the Chapter 2 kitchen revision. Everything else in the story stays the original spine. Open conflicts outside that kitchen are in `docs/STORY-DECISIONS.md`. `docs/README.md` points at both, and at the section-reset checkpoints. `docs/MASTER-BACKLOG.md` is the status page. PR #4 is on `main` at `9999f0cd` (the same tree as kitchen C `6853902`). The site is not confirmed live. PR #5 is the open recovery branch, restacked onto that commit. The independent reset check is the list on that page.
+`docs/story-bible.md` is the Chapter 2 kitchen revision. Everything else in the story stays the original spine until a decision in `docs/project/DECISIONS-2026-11-08.md` says otherwise. `docs/STORY-DECISIONS.md` holds the old questions and points at those answers. `docs/README.md` points at both, and at the section-reset checkpoints. `docs/MASTER-BACKLOG.md` is the status page. Pull requests 4 through 11 are on `main`. The current status is the section at the top of the backlog. The independent reset check is the list on that page.
 
 From the repo root:
 

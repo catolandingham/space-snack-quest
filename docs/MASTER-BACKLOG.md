@@ -1,6 +1,20 @@
 # Master backlog
 
-Precedence: the original story stays canon except the Chapter 2 kitchen sequence.
+## Current status (2026-11-08)
+
+Docs match main: yes.
+
+`main` is past pull request 11 (`ee59f4a`, Chapter 1 ready for play). Pull requests 7, 8, 9, and 10 are merged too. Tables lower on this page that say a phase or the Chapter 1 pass is "not merged" were written before those merges. They are history. This section is the status.
+
+| What | State |
+| --- | --- |
+| Requests audit | `docs/REQUESTS-AUDIT.md`. 161 handover rows: 125 done, 27 partial, 4 missing, 5 need Brian. 52 backlog rows: 35 done, 5 partial, 6 missing, 6 need Brian. |
+| Design-rule audit | `docs/DESIGN-RULES-AUDIT.md`. 7 pass, 14 fail. |
+| His 2026-11-08 answers | Appended in `docs/project/DECISIONS-2026-11-08.md`. Not built, except where the game already matched the answer. |
+| Cook drawing | Fixed. She is on screen before "A WOOKIE!" `tests/cook-order.mjs`. |
+| Still not built | Grease cap, office move, ship instead of van, pancake line, ending picture, both faces always, skip for a seen cutscene, Continue, Chapter 3 and 4 sense pass, travel cards and mini-games, Guardians lines, Zip's riddles, what COOK should do, the dirty-dish upset. |
+
+Precedence: the original story stays canon except the Chapter 2 kitchen sequence, until an answer in the decisions file says otherwise.
 
 - Kitchen revision, and only that revision: `docs/story-bible.md`
 - Choices still waiting on Brian, outside that kitchen: `docs/STORY-DECISIONS.md`
@@ -23,7 +37,7 @@ The recovery commits are replayed onto `9999f0cd`. Their changes match `17a03c2`
 
 ## Chapter 1 pass (Brian's brief of 2026-11-07)
 
-Branch `chapter-1-pass`, one commit per item with its test. Not merged. The wording of every new line waits for Brian's yes in `docs/CHAPTER-1-LINES-FOR-BRIAN.md`, which also says what Chapter 1 still does not have.
+Branch `chapter-1-pass`, one commit per item with its test. Merged as pull request 11 (`ee59f4a`). The wording of every new line is in `docs/CHAPTER-1-LINES-FOR-BRIAN.md`, which also says what Chapter 1 still does not have. This table was written before the merge.
 
 | Item | What changed | Test | State |
 | --- | --- | --- | --- |
@@ -40,12 +54,12 @@ Open rows found in this pass (not fixed):
 | Lobby difficulty | The kid's and the clerk's cones now see (before, their own bodies blocked them); the vent lane is narrow (the suit's cone touches it about one crossing in seven without waiting); crossing the circle takes about 1.2 s of the 1.5 s; cones see through the table and counter | Open, wants a playtest |
 | Lobby catch | A lobby catch now restarts the night and costs the +250 bonus; HIDE! after the notice skips "They lost you."; the right guard enters at (1010, 530) | Listed for Brian |
 | S3 report | The PA used to say "FUR spotted in the lobby" after a clean night out | Fixed in the review: the report follows what happened (rows 25.23 to 25.25) |
-| Phone playtest notes | `docs/playtests/2026-11-07-brian-phone-playtest-ch1.md` is not in the repo | Open |
+| Phone playtest notes | `docs/playtests/2026-11-07-brian-phone-playtest-ch1.md` is not in the repo | In the repo since `0582333` |
 | Test timing | hud-layout, phone-tap and kitchen checks failed now and then on a loaded machine; hud-layout and phone-tap now wait for the page to settle; kitchen was left as it was | Watch |
 
 ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07)
 
-Branch `phase-3-fairness-hud`, one commit per task with its test. Not merged. The wording of every new line waits for Brian's yes in `docs/PHASE-3-LINES-FOR-BRIAN.md`, which also lists what is not finished.
+Branch `phase-3-fairness-hud`, one commit per task with its test. Merged as pull request 10 (`1e84978`). The wording of every new line is in `docs/PHASE-3-LINES-FOR-BRIAN.md`, which also lists what is not finished. This table was written before the merge.
 
 | Task | What changed | Test | State |
 | --- | --- | --- | --- |
@@ -66,7 +80,7 @@ Open rows found during Phase 3 (not fixed):
 
 ## Phase 2 (plan section 4, T13 to T18)
 
-Branch `phase-2-structure`, one commit per task with its test. Not merged. The wording of every new line, and every ring that moved, waits for Brian's yes in `docs/PHASE-2-LINES-FOR-BRIAN.md`, which also lists what is not finished.
+Branch `phase-2-structure`, one commit per task with its test. Merged as pull request 9 (`25c1933`). The wording of every new line, and every ring that moved, is in `docs/PHASE-2-LINES-FOR-BRIAN.md`, which also lists what is not finished. This table was written before the merge.
 
 | Task | What changed | Test | State |
 | --- | --- | --- | --- |
@@ -97,7 +111,7 @@ Open rows found during Phase 1 (not fixed):
 | Item | What happens | State |
 | --- | --- | --- |
 | g6d reset | Reset section in g6d (or in g6 once Mops has the coins) puts the player back as Squatch on the lot, and the ship can be boarded without filling the tank | Fixed in Phase 3 (review group 1): BOARD needs a full tank; those restarts go to Mops with the coins or the diner jar |
-| Cook's first line | The cook says "A WOOKIE!" before she is drawn; she only appears once she is on the floor | Open |
+| Cook's first line | The cook says "A WOOKIE!" before she is drawn; she only appears once she is on the floor | Fixed in the 2026-11-08 audit: she stands before the line and is on the floor for "*faints*". `tests/cook-order.mjs` |
 | Playtest issue 9 | Window and sink read as being in the wrong spot | Open, waits on decision D12 |
 
 ## SS40–SS44
@@ -160,7 +174,9 @@ The pass drove wash 5, wash 1, `g1`, and unknown `g5`. The other checkpoint rows
 
 ## Changelog
 
-2026-11-07. Chapter 1 pass on branch `chapter-1-pass` (D15 night out, Chapter 1 switch cards, order fixes, Chapter 1 tests), not merged.
+2026-11-08. Audits of every handover request and of the design rules. His answers to the held decisions are recorded and not built. The cook is drawn before "A WOOKIE!".
+
+2026-11-07. Chapter 1 pass on branch `chapter-1-pass` (D15 night out, Chapter 1 switch cards, order fixes, Chapter 1 tests). Merged later as pull request 11.
 
 2026-11-07. Phase 1 is on `main` as PR #8 (`9215e8b`). Phase 2 (T13 to T18) is on branch `phase-2-structure`, not merged.
 

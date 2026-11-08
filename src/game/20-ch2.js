@@ -662,8 +662,17 @@
               ? (ch2.peekT = 6)
               : ((n.ctrl = !1),
                 (n.act = null),
+                // She is standing at the stove before she speaks, then on the floor for "*faints*".
+                // The old order played "A WOOKIE!" while cook was still "", so the line had no speaker.
+                (ch2.cook = "seen"),
+                (ch2.cookT = 0),
+                (ch2.cookX = 640),
+                (ch2.cookY = 530),
                 J([
                   v("cook", "A WOOKIE!"),
+                  N(() => {
+                    ((ch2.cook = "down"), (ch2.cookT = 0), (ch2.cookX = 640), (ch2.cookY = 530));
+                  }),
                   v("cook", "*faints*"),
                   v("mops", "I'll cook. You keep washing."),
                   N(() => {

@@ -20,13 +20,16 @@ Every agent reads `CLAUDE.md` at the repo root first. It holds the short rules, 
 | [`original-story-spine.md`](original-story-spine.md) | Brian's Nov 2 story spine, scene by scene (only the Chapter 2 kitchen was revised since, in `story-bible.md`) |
 | [`CHAPTER-1-LINES-FOR-BRIAN.md`](CHAPTER-1-LINES-FOR-BRIAN.md) | The Chapter 1 pass: what Chapter 1 now has and still does not have, then every new line with one alternative |
 | [`CHIP-ARMATURE-AUDIT.md`](CHIP-ARMATURE-AUDIT.md) | Every goal chip placed on the story's seven beats, with a verdict where the game departs from the spine |
+| [`REQUESTS-AUDIT.md`](REQUESTS-AUDIT.md) | Every Brian comment in the handover, section 5, plus backlog items, with a status and evidence |
+| [`DESIGN-RULES-AUDIT.md`](DESIGN-RULES-AUDIT.md) | Standing design rules checked across all four chapters |
+| [`project/DECISIONS-2026-11-08.md`](project/DECISIONS-2026-11-08.md) | Dated decisions, including his 2026-11-08 answers |
 | [`spine-archive.md`](spine-archive.md) | The previous on-repo story note |
 
 ## Story precedence
 
 Story precedence: the original story stays, except the Chapter 2 kitchen sequence in `docs/story-bible.md`.
 
-Open conflicts outside that kitchen are in `docs/STORY-DECISIONS.md`. Each one stays pending until Brian decides that item. The previous on-repo story note is in `docs/spine-archive.md`.
+The questions that were open are in `docs/STORY-DECISIONS.md`. His 2026-11-08 answers are in `docs/project/DECISIONS-2026-11-08.md`. Those answers are not built yet. The previous on-repo story note is in `docs/spine-archive.md`.
 
 What is playable is the game and the root `README.md`. A story note does not add a mechanic. When a change lands, update the root README in the same pull request and name the branch.
 
