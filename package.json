@@ -9,7 +9,8 @@
     "check-build": "node tools/build.mjs --check",
     "test": "node tests/run-all.mjs",
     "test:one": "node",
-    "rename": "node tools/rename.mjs"
+    "rename": "node tools/rename.mjs",
+    "export-script": "node tools/export-script.mjs"
   },
   "devDependencies": {
     "@babel/parser": "7.29.8",

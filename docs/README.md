@@ -19,6 +19,7 @@ Every agent reads `CLAUDE.md` at the repo root first. It holds the short rules, 
 | [`STORY-DECISIONS.md`](STORY-DECISIONS.md) | Open story conflicts waiting on Brian |
 | [`original-story-spine.md`](original-story-spine.md) | Brian's Nov 2 story spine, scene by scene (only the Chapter 2 kitchen was revised since, in `story-bible.md`) |
 | [`CHAPTER-1-LINES-FOR-BRIAN.md`](CHAPTER-1-LINES-FOR-BRIAN.md) | The Chapter 1 pass: what Chapter 1 now has and still does not have, then every new line with one alternative |
+| [`SCRIPT-AS-BUILT.md`](SCRIPT-AS-BUILT.md) | Every on-screen line in the build, in play order, by chapter and scene. Rebuilt with `npm run export-script` |
 | [`CHIP-ARMATURE-AUDIT.md`](CHIP-ARMATURE-AUDIT.md) | Every goal chip placed on the story's seven beats, with a verdict where the game departs from the spine |
 | [`spine-archive.md`](spine-archive.md) | The previous on-repo story note |
 

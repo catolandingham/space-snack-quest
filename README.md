@@ -18,7 +18,7 @@ npm run build
 npm run check-build
 ```
 
-`npm run build` writes `index.html` from `src/`. `npm run check-build` fails if the committed `index.html` is not a fresh build of `src/`. The build compacts the code with esbuild but keeps every name, so a name seen in the browser can be found in `src/game/`.
+`npm run build` writes `index.html` from `src/`. `npm run check-build` fails if the committed `index.html` is not a fresh build of `src/`. `npm run export-script` reads `src/game/*.js` and writes `docs/SCRIPT-AS-BUILT.md`: every on-screen line, in play order, by chapter and scene. It does not change the game. The build compacts the code with esbuild but keeps every name, so a name seen in the browser can be found in `src/game/`.
 
 To give a short name a readable one, use the rename tool. It changes only that one variable (Babel's scope analysis), never an object key or another variable with the same short name, and refuses a new name that would collide:
 
