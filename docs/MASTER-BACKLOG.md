@@ -36,9 +36,10 @@ Open rows found in this pass (not fixed):
 
 | Item | What happens | State |
 | --- | --- | --- |
-| Switching key | There is no key for switching characters; the Chapter 1 play-through clicks the faces | Open, Brian's call |
-| Lobby difficulty | The kid's and the clerk's cones now see (before, their own bodies blocked them); the vent gap is narrow; the vent's 80-pixel circle and 1.5 seconds are first guesses | Open, wants a playtest |
-| S3 report | "FUR in the air scrubbers" depends on the closet vent; after a clean night out the PA can say "FUR spotted in the lobby" | Open |
+| Switching key | There is no key for switching characters; the Chapter 1 play-through clicks the faces | Closed: Brian, 2026-11-07, clicking a face is fine |
+| Lobby difficulty | The kid's and the clerk's cones now see (before, their own bodies blocked them); the vent lane is narrow (the suit's cone touches it about one crossing in seven without waiting); crossing the circle takes about 1.2 s of the 1.5 s; cones see through the table and counter | Open, wants a playtest |
+| Lobby catch | A lobby catch now restarts the night and costs the +250 bonus; HIDE! after the notice skips "They lost you."; the right guard enters at (1010, 530) | Listed for Brian |
+| S3 report | The PA used to say "FUR spotted in the lobby" after a clean night out | Fixed in the review: the report follows what happened (rows 25.23 to 25.25) |
 | Phone playtest notes | `docs/playtests/2026-11-07-brian-phone-playtest-ch1.md` is not in the repo | Open |
 | Test timing | hud-layout, phone-tap and kitchen checks failed now and then on a loaded machine; hud-layout and phone-tap now wait for the page to settle; kitchen was left as it was | Watch |
 
