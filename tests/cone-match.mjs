@@ -26,6 +26,8 @@ const CONES = {
 
 async function prepare(name, face) {
   await page.evaluate(setState, CONES[name].setup);
+  // Let the room's fade-in finish: under the dark fade the cone's tint is too faint to read from the picture.
+  await sleep(1500);
   return page.evaluate((name, face) => {
     const ss = window.__ss, n = ss.op, k = ss.ch2;
     n.q = []; n.cur = null; n.live = []; n.ctrl = true; ss.swapTo(false); n.sqPose = "stand";
@@ -47,38 +49,36 @@ async function prepare(name, face) {
   }, name, face);
 }
 
-// Was the cone drawn at (x, y)? Compare the picture with and without the cone, Squatch out of the way.
-async function drawnAt(name, x, y) {
-  return page.evaluate((name, x, y) => {
+// One sample, all inside one page task, so no animation frame can run between "seen" and "drawn":
+// freeze the watcher, put a standing Squatch with his eye point at (x, y), run two game updates (__ss.tick)
+// and read whether the watcher saw him; then move him away and compare two frames, with and without the
+// cone (only the cone changes between them); and read whether the sight line is clear.
+async function sampleGas(name, x, y, eye, ox, oy) {
+  return page.evaluate((name, x, y, eye, ox, oy) => {
     const ss = window.__ss, n = ss.op, k = ss.ch2, cv = document.querySelector("canvas").getContext("2d");
-    const keep = { x: n.sq.x, y: n.sq.y };
-    n.sq.x = -500; n.live = []; n.sparks = [];
+    const freeze = () => {
+      if (name === "window") Object.assign(k, { warn: 0, peek: 99, eye: 0, peekT: 999 });
+      else if (name === "rusty") Object.assign(k.rust, { nap: false, pause: 1e6, alert: 0 });
+      else Object.assign(k.bots[0], { look: 0, x: k.bots[0].hx });
+    };
+    freeze();
+    n.q = []; n.cur = null; n.live = []; n.sparks = [];
+    Object.assign(n.sq, { x, y: y + eye, moving: false }); n.sqPose = "stand"; n.ctrl = true;
+    k.sec = null; k.eye = 0;
+    ss.tick(1 / 60); ss.tick(1 / 60);
+    const seen = name === "window" ? k.eye > 0 || !!k.sec : !!k.sec;
+    k.sec = null; k.eye = 0; n.live = []; n.sparks = [];
+    freeze();
+    // Squatch away, and no action label (the updates above may have offered one where he stood).
+    n.sq.x = -500; n.act = null;
     const px = () => { ss.drawFrame(); return [...cv.getImageData(Math.round(x), Math.round(y), 1, 1).data].slice(0, 3); };
     let on, off;
-    // Only the cone changes between the two frames: the window's look, Rusty's nap, the bot's look.
     if (name === "window") { k.peek = 99; on = px(); k.peek = 0; off = px(); }
     else if (name === "rusty") { k.rust.nap = false; on = px(); k.rust.nap = true; off = px(); k.rust.nap = false; }
     else { k.bots[0].look = 0; on = px(); k.bots[0].look = 0.5; off = px(); k.bots[0].look = 0; }
-    n.sq.x = keep.x; n.sq.y = keep.y;
-    return on.some((v, i) => Math.abs(v - off[i]) > 6);
-  }, name, x, y);
-}
-
-// Does the game see a standing Squatch whose eye point is (x, y)?
-async function seenAt(name, x, y, eye) {
-  await page.evaluate((name, x, y, eye) => {
-    const ss = window.__ss, n = ss.op, k = ss.ch2;
-    Object.assign(n.sq, { x, y: y + eye, moving: false }); n.sqPose = "stand"; n.ctrl = true;
-    k.sec = null; k.eye = 0;
-    if (name === "window") { k.warn = 0; k.peek = 99; }
-  }, name, x, y, eye);
-  await sleep(140);
-  return page.evaluate((name) => {
-    const k = window.__ss.ch2;
-    const seen = name === "window" ? k.eye > 0 || !!k.sec : !!k.sec;
-    k.sec = null; k.eye = 0; k.peek = 0;
-    return seen;
-  }, name);
+    name === "window" && (k.peek = 0);
+    return { seen, drawn: on.some((v, i) => Math.abs(v - off[i]) > 6), clear: ss.seeLine(ox, oy, x, y) };
+  }, name, x, y, eye, ox, oy);
 }
 
 const report = [];
@@ -99,9 +99,7 @@ for (const [name, faces] of [["rusty", [1, -1]], ["pumpbot", [1, -1]], ["window"
       const feetY = y + CONES[name].eye;
       if (x < b.x0 + 2 || x > b.x1 - 2 || feetY < b.y0 + 2 || feetY > b.y1 - 2) continue; // Squatch cannot stand there
       if (solids.some((q) => x > q.x0 && x < q.x1 && feetY > q.y0 && feetY < q.y1)) continue; // inside a solid
-      const drawn = await drawnAt(name, x, y);
-      const clear = await page.evaluate(([ox, oy, x, y]) => window.__ss.seeLine(ox, oy, x, y), [c.ox, c.oy, x, y]);
-      const seen = await seenAt(name, x, y, CONES[name].eye);
+      const { drawn, clear, seen } = await sampleGas(name, x, y, CONES[name].eye, c.ox, c.oy);
       checked++;
       s.kind === "inside" && !clear && blocked++;
       // Inside: seen and drawn, unless the sight line is blocked (by a pump or crate): then neither.
@@ -135,6 +133,7 @@ const MORE = {
       ss.op.mo.x = 2000;
       return { ox: t.x, oy: t.y - 30, a: -Math.PI / 2, half: 0.62, len: 185, eye: 0, avoid: [{ x: 790, y: 232, r: 90 }] };
     },
+    freeze: () => { const a = window.__ss.s1, t = a.tour[0]; Object.assign(t, { alert: 0, run: null, x: a._home.x, y: a._home.y, sp: 0 }); a.alertBy = -1; a.seen = false; a.sec.on = false; },
     seen: () => { const a = window.__ss.s1, t = a.tour[0]; const v = a.alertBy >= 0 || a.seen; a.alertBy = -1; a.seen = false; Object.assign(t, { alert: 0, run: null, x: a._home.x, y: a._home.y }); a.sec.on = false; window.__ss.op.live = []; return v; },
   },
 };
@@ -148,6 +147,7 @@ const rover = (phase, room, half, len) => ({
   },
   args: [phase, half, len],
   seen: () => { const k = window.__ss.ch2; const v = !!k.sec; k.sec = null; window.__ss.ch3.rov.forEach((r) => Object.assign(r, { alert: 0, x: 600, f: -1, look: 0 })); return v; },
+  freeze: () => { window.__ss.ch3.rov.forEach((r) => Object.assign(r, { alert: 0, x: 600, hx: 600, f: -1, look: 0, pause: 1e6 })); },
 });
 MORE["rover, pad"] = rover("p1", "pad", 0.55, 200);
 MORE["rover, temple"] = rover("p3", "temple", 0.55, 240);
@@ -160,16 +160,26 @@ MORE["port bot"] = {
     return { ox: 600, oy: 460, a: Math.PI - 0.15, half: 0.55, len: 220, eye: 40, avoid: [], light: true };
   },
   seen: () => { const k = window.__ss.ch2; const v = !!k.sec; k.sec = null; Object.assign(window.__ss.ch4.bot, { x: 600, f: -1, look: 0 }); return v; },
+  freeze: () => { Object.assign(window.__ss.ch4.bot, { x: 600, hx: 600, f: -1, look: 0 }); },
 };
-async function judge(geo, x, y, feetY, seenFn) {
-  const cones = await page.evaluate(() => { const n = window.__ss.op, keep = n.sq.x; n.sq.x = -500; window.__ss.drawFrame(); n.sq.x = keep; return window.__ss.conesDrawn(); });
-  const clear = await page.evaluate(([ox, oy, x, y]) => window.__ss.seeLine(ox, oy, x, y), [geo.ox, geo.oy, x, y]);
-  const drawn = insideDrawn(cones, x, y, feetY, clear);
-  await page.evaluate((x, y) => { const n = window.__ss.op; Object.assign(n.sq, { x, y, moving: false }); n.sqPose = "stand"; n.ctrl = true; window.__ss.ch2.sec = null; }, x, feetY);
-  await sleep(140);
-  const seen = await page.evaluate(new Function("return (" + seenFn.toString() + ")()"));
-  await page.evaluate(() => { window.__ss.op.sq.x = -500; });
-  return { drawn, seen, clear, cones: cones.length };
+// One sample in one page task (see sampleGas): two game updates with Squatch standing there, read "seen";
+// then, with him moved away, draw one frame and read the drawn shapes from that same frame.
+async function judge(geo, x, y, feetY, seenFn, freezeFn) {
+  return page.evaluate((ox, oy, x, y, feetY, seenSrc, freezeSrc, insideSrc) => {
+    const ss = window.__ss, n = ss.op;
+    const freeze = freezeSrc ? new Function("return (" + freezeSrc + ")()") : () => {};
+    freeze();
+    n.q = []; n.cur = null; n.live = []; n.sparks = [];
+    Object.assign(n.sq, { x, y: feetY, moving: false }); n.sqPose = "stand"; n.ctrl = true; ss.ch2.sec = null;
+    ss.tick(1 / 60); ss.tick(1 / 60);
+    const seen = new Function("return (" + seenSrc + ")()")();
+    freeze();
+    n.sq.x = -500; n.live = []; n.act = null;
+    ss.drawFrame();
+    const cones = ss.conesDrawn(), clear = ss.seeLine(ox, oy, x, y);
+    const drawn = new Function("return (" + insideSrc + ")")()(cones, x, y, feetY, clear);
+    return { drawn, seen, clear, cones: cones.length };
+  }, geo.ox, geo.oy, x, y, feetY, seenFn.toString(), freezeFn ? freezeFn.toString() : "", insideDrawn.toString());
 }
 for (const [name, c] of Object.entries(MORE)) {
   await page.evaluate(setState, c.setup);
@@ -189,7 +199,7 @@ for (const [name, c] of Object.entries(MORE)) {
     if (solids.some((q) => x > q.x0 && x < q.x1 && feetY > q.y0 && feetY < q.y1)) continue;
     if (geo.avoid.some((v) => Math.hypot(x - v.x, feetY - v.y) < v.r)) continue;
     if (geo.light && (await page.evaluate(([x, y]) => window.__ss.inLight4(x, y), [x, feetY]))) continue; // the searchlight is its own watcher
-    const r = await judge(geo, x, y, feetY, c.seen);
+    const r = await judge(geo, x, y, feetY, c.seen, c.freeze);
     checked++;
     if (r.drawn !== r.seen) bad.push({ kind: s0.kind, x: Math.round(x), y: Math.round(y), ...r });
   }
@@ -200,10 +210,11 @@ for (const [name, c] of Object.entries(MORE)) {
 {
   await page.evaluate(setState, { kind: "ch1", call: "sceneS6", set: { op: { scene: "S7", room: "hall", sqPose: "stand" } } });
   await page.evaluate(() => { const ss = window.__ss; ss.hall.bots = [{ x: 700, y: 470, light: true, on: true }]; ss.op.seeGrace = 0; });
+  const hallFreeze = () => { const ss = window.__ss; ss.hallAlarm.on = false; ss.hall.freakT = -9; Object.assign(ss.hall.bots[0], { x: 700, y: 470, light: true, on: true }); ss.op.seeGrace = 0; };
   const hallSeen = () => { const ss = window.__ss, v = ss.hallAlarm.on; ss.hallAlarm.on = false; ss.hall.freakT = -9; ss.hall.bots[0].x = 700; ss.hall.bots[0].y = 470; return v; };
   const res = [];
   for (const [dx, dy] of [[0, -58], [0, -84], [-58, 0], [-84, -20]]) {
-    const r = await judge({ ox: 700, oy: 420 }, 700 + dx, 470 + dy - 30, 470 + dy, hallSeen);
+    const r = await judge({ ox: 700, oy: 420 }, 700 + dx, 470 + dy - 30, 470 + dy, hallSeen, hallFreeze);
     res.push({ dx, dy, ...r });
   }
   g.check("Chapter 1 hall bot: inside its drawn cone or 70 px circle it sees Squatch, outside it does not", res.every((r) => r.drawn === r.seen) && res.some((r) => r.seen) && res.some((r) => !r.seen), res);

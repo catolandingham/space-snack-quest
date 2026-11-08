@@ -303,6 +303,8 @@
         methodLine: () => methodLine(),
         stallT: () => stall.t,
         conesDrawn: () => conesDrawn.slice(),
+        // One game update of dt seconds, run inside the caller's own task (no frame can run in between).
+        tick: (dt) => ep(dt),
         METHOD_LINES: [...new Set(Object.values(METHOD_LINES))],
         // Award labels (Phase 3, T22).
         SNEAKY_LABELS,
