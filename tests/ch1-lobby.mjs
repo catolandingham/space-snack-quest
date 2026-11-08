@@ -5,7 +5,8 @@
  * (a) The puzzle: every way from the closet door to the brochure table crosses the vent's pull or a
  *     sightline (a cell some cone covers some of the time), and each kind of way exists.
  * (b) The vent: its pull is drawn (the floor just inside the circle is tinted, just outside is not);
- *     near the vent the tuft shows; walking straight through with the arrow keys never sets off the
+ *     within 1.5 times the circle the tuft shows before the clock starts; in the pull it drifts; during a
+ *     sighting chase the pull keeps counting, so the tuft never freezes; walking straight through with the arrow keys never sets off the
  *     alarm; staying in the pull sets it off, and standing still until security arrives shows the LOCKUP
  *     card with row 25.10, then the night starts over at the closet door with the notice unread.
  *     HIDE! after the alarm takes Squatch into the closet with "They lost you." and the door to try again.
@@ -88,15 +89,36 @@ const fresh = () =>
   g.check("the pull is drawn before it can bite: the floor inside the circle is tinted, outside is not", tint.inside.join() !== tint.outside.join() && tint.inside[2] > tint.inside[0], tint);
   const near = await page.evaluate((v) => {
     const ss = window.__ss, n = ss.op;
+    n.sq.x = v.x; n.sq.y = v.y + v.r * 1.3;
+    for (let i = 0; i < 6; i++) ss.tick(0.05);
+    const warn = ss.lobby();
     n.sq.x = v.x; n.sq.y = v.y + v.r - 10;
     for (let i = 0; i < 6; i++) ss.tick(0.05);
     const a = ss.lobby();
-    n.sq.x = v.x; n.sq.y = v.y + v.r + 30;
+    n.sq.x = v.x; n.sq.y = v.y + v.r * 1.5 + 30;
     for (let i = 0; i < 20; i++) ss.tick(0.05);
-    return { inPull: a, after: ss.lobby() };
+    return { warn, inPull: a, after: ss.lobby() };
   }, lb.vent);
+  g.check("within 1.5 times the circle the tuft shows before the clock starts", near.warn.tuft && near.warn.near && near.warn.pull === 0, near.warn);
   g.check("near the vent the tuft shows and nothing else happens yet", near.inPull.tuft && near.inPull.pull > 0 && !near.inPull.looked, near.inPull);
   g.check("out of the pull the tuft drifts back and is gone", !near.after.tuft && near.after.pull === 0 && !near.after.looked, near.after);
+
+  // During a sighting chase the pull keeps counting (in) and draining (out), so the tuft moves with him.
+  await fresh();
+  const chase = await page.evaluate((v) => {
+    const ss = window.__ss, n = ss.op, c = ss.lobby().cones[1];
+    n.sq.x = c.ox + Math.cos(c.a) * 110; n.sq.y = c.oy + Math.sin(c.a) * 110 + 30;
+    ss.tick(0.02);
+    for (let i = 0; i < 40 && n.hopTo; i++) ss.tick(0.05);
+    const seen = ss.lobby().runner || ss.lobby().looked;
+    n.sq.x = v.x; n.sq.y = v.y;
+    for (let i = 0; i < 6; i++) ss.tick(0.05);
+    const inn = ss.lobby().pull;
+    n.sq.x = v.x; n.sq.y = v.y + v.r * 1.5 + 40;
+    for (let i = 0; i < 3; i++) ss.tick(0.05);
+    return { seen, inn, out: ss.lobby().pull };
+  }, lb.vent);
+  g.check("during a sighting chase the pull still rises in the circle and drains out of it (the tuft never freezes)", chase.seen && chase.inn > 0.2 && chase.out < chase.inn, chase);
 
   // Walking straight through with the keys: the tuft shows, the alarm does not. The column x = 650 is
   // the gap between the man in the suit's cone and the clerk's; the walk starts as the suit's cone swings

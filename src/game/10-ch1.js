@@ -482,16 +482,17 @@
       (e.restore(), m(o.x - 34, o.y - 12, 68, 24, 4), r("#dfe4ea", 3));
       for (let k = 0; k < 6; k++) C([o.x - 25 + k * 10, o.y - 8, o.x - 25 + k * 10, o.y + 8], y, 2);
     }
-    // The warning: while Squatch stands in the pull, a tuft of his fur drifts from him toward the grille. It
-    // reaches the grille only if he stays (PULL_BITE seconds); out of the pull it drifts back to him.
+    // The warning: near the vent (within 1.5 times the circle) a tuft of his fur lifts off him; inside the
+    // pull it drifts toward the grille and reaches it only if he stays (PULL_BITE seconds); out of the pull it
+    // drifts back to him. Drawn large enough to read on a 375-pixel phone.
     function lobbyTuft() {
-      if (n.scene !== "O4" || !(n.pull > 0) || n.room !== "lobby") return;
+      if (n.scene !== "O4" || n.room !== "lobby" || !(n.pull > 0 || n.ventNear)) return;
       let k = Math.min(1, n.pull / PULL_BITE),
         sx = n.sq.x + 14 * n.sq.f,
         sy = n.sq.y - 52,
         tx = sx + (LOBBY_VENT.x - sx) * k + Math.sin(n.T * 7) * 5 * (1 - k),
         ty = sy + (LOBBY_VENT.y - sy) * k;
-      (XV(tx, ty, 9, 6, 8, 2, n.T * 4), wV("#8b5a3c", 1.5));
+      (XV(tx, ty, 18, 12, 9, 3, n.T * 4), wV("#8b5a3c", 2));
     }
     // The notice, close up, when Squatch reads it: one short line and a drawn robot janitor.
     function noticePanel() {
@@ -584,6 +585,11 @@
         let s = n.T * 0.9;
         ((n.light.x = 790 + Math.cos(s) * 70), (n.light.y = 470 + Math.sin(s * 1.3) * 60));
       }
+      // The vent's pull (D15) counts during a chase too, so the tuft never stops in mid-air: time in the
+      // circle adds up, time out of it drains twice as fast. Only outside a chase can it set off the alarm.
+      // Within 1.5 times the circle the tuft already shows (the warning comes before the clock starts).
+      ((n.pull = n.ctrl && !n.hopTo && inPull(n.sq) ? Math.min(PULL_BITE, n.pull + l) : Math.max(0, n.pull - l * 2)),
+        (n.ventNear = Math.hypot(n.sq.x - LOBBY_VENT.x, n.sq.y - LOBBY_VENT.y) < LOBBY_VENT.r * 1.5));
       if ((wp(l), n.hopTo)) {
         (mV(n.sq, n.hopTo.x, n.hopTo.y, 440, l) && ((n.hopTo = null), (n.ctrl = !0)), (n.sq.f = -n.sq.f * 0 + (n.sq.x < 480 ? 1 : -1)));
         return;
@@ -591,8 +597,7 @@
       if (!n.ctrl) return;
       let i = n.sq;
       if (!n.runner && !n.looked) {
-        // The vent's pull (D15): time in the circle adds up, time out of it drains twice as fast.
-        if (((n.pull = inPull(i) ? n.pull + l : Math.max(0, n.pull - l * 2)), n.pull >= PULL_BITE)) {
+        if (n.pull >= PULL_BITE) {
           ventAlarm();
           return;
         }

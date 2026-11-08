@@ -241,7 +241,8 @@
         // The night out (D15): the vent's pull, the table, the notice, and the alarm state.
         lobby: () => ({
           pull: n.pull || 0,
-          tuft: n.scene === "O4" && n.pull > 0,
+          tuft: n.scene === "O4" && n.room === "lobby" && (n.pull > 0 || !!n.ventNear),
+          near: !!n.ventNear,
           bite: PULL_BITE,
           vent: { ...LOBBY_VENT },
           table: { ...LOBBY_TABLE },
