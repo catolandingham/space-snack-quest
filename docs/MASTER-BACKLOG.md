@@ -151,6 +151,10 @@ Independent QA at `17a03c2` used the mouse, the keyboard, and a coarse-pointer f
 
 The pass drove wash 5, wash 1, `g1`, and unknown `g5`. The other checkpoint rows are the implementation table in `docs/README.md`. The play-mode chapter restart was not played. This is not a full pass of every note in the backlog.
 
+## Held decisions (2026-11-08)
+
+`docs/HELD-DECISIONS-FOR-BRIAN.md` lists every decision still waiting on Brian, one row each: the question, the options, a recommendation with its reason, and a reply code. It does not change the game. D2-TV (the TV hiding beat) and D2-STARS (what the stars are for) are separate rows. Nothing in that file is approved until Brian replies.
+
 ## Still open
 
 - Boarding caption. A g3 shot in the story capture is the dock line, not an explicit boarding caption.
@@ -159,6 +163,8 @@ The pass drove wash 5, wash 1, `g1`, and unknown `g5`. The other checkpoint rows
 - Any item not named in the tables above.
 
 ## Changelog
+
+2026-11-08. `docs/HELD-DECISIONS-FOR-BRIAN.md` on branch `docs/held-decisions`: the open decisions in one reply sheet. Docs only. Not merged.
 
 2026-11-07. Chapter 1 pass on branch `chapter-1-pass` (D15 night out, Chapter 1 switch cards, order fixes, Chapter 1 tests), not merged.
 

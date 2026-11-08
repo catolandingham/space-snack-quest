@@ -17,6 +17,7 @@ Every agent reads `CLAUDE.md` at the repo root first. It holds the short rules, 
 | [`grok-archive/`](grok-archive/) | Everything the Grok threads held, with a feedback index |
 | [`story-bible.md`](story-bible.md) | The Chapter 2 kitchen revision |
 | [`STORY-DECISIONS.md`](STORY-DECISIONS.md) | Open story conflicts waiting on Brian |
+| [`HELD-DECISIONS-FOR-BRIAN.md`](HELD-DECISIONS-FOR-BRIAN.md) | One row per decision still waiting on Brian: the question, the options, a recommendation, and a reply code |
 | [`original-story-spine.md`](original-story-spine.md) | Brian's Nov 2 story spine, scene by scene (only the Chapter 2 kitchen was revised since, in `story-bible.md`) |
 | [`CHAPTER-1-LINES-FOR-BRIAN.md`](CHAPTER-1-LINES-FOR-BRIAN.md) | The Chapter 1 pass: what Chapter 1 now has and still does not have, then every new line with one alternative |
 | [`CHIP-ARMATURE-AUDIT.md`](CHIP-ARMATURE-AUDIT.md) | Every goal chip placed on the story's seven beats, with a verdict where the game departs from the spine |

@@ -122,7 +122,7 @@ These came up in the notes and were not given a new behavior:
 - The lockup card is the jail. There is no separate jail game.
 - Cook and Gloop stay two speakers.
 
-`docs/story-bible.md` is the Chapter 2 kitchen revision. Everything else in the story stays the original spine. Open conflicts outside that kitchen are in `docs/STORY-DECISIONS.md`. `docs/README.md` points at both, and at the section-reset checkpoints. `docs/MASTER-BACKLOG.md` is the status page. PR #4 is on `main` at `9999f0cd` (the same tree as kitchen C `6853902`). The site is not confirmed live. PR #5 is the open recovery branch, restacked onto that commit. The independent reset check is the list on that page.
+`docs/story-bible.md` is the Chapter 2 kitchen revision. Everything else in the story stays the original spine. Open conflicts outside that kitchen are in `docs/STORY-DECISIONS.md`. Decisions still waiting on Brian, each with a reply code, are in `docs/HELD-DECISIONS-FOR-BRIAN.md`. `docs/README.md` points at both, and at the section-reset checkpoints. `docs/MASTER-BACKLOG.md` is the status page. PR #4 is on `main` at `9999f0cd` (the same tree as kitchen C `6853902`). The site is not confirmed live. PR #5 is the open recovery branch, restacked onto that commit. The independent reset check is the list on that page.
 
 From the repo root:
 
