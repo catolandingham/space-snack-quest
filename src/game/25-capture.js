@@ -6,7 +6,11 @@
     // Every catch in every chapter goes through capture() or shoo(). tests/capture-rule.mjs checks that.
     // Wording waits for Brian's yes (docs/PHASE-1-LINES-FOR-BRIAN.md rows 8.x, docs/PHASE-3-LINES-FOR-BRIAN.md rows 19.x).
     const CAPTURES = {
-      // Chapter 1
+      // Chapter 1 (the lobby rows are the night out, D15: docs/CHAPTER-1-LINES-FOR-BRIAN.md)
+      lobbyvent: { cause: "Fur went into the vent. Alarm.", joke: () => kh() },
+      lobbykid: { cause: "A kid saw Squatch in the lobby. Security caught him.", joke: () => kh() },
+      lobbyexec: { cause: "A man in a suit saw Squatch in the lobby. Security caught him.", joke: () => kh() },
+      lobbyclerk: { cause: "The snack clerk saw Squatch in the lobby. Security caught him.", joke: () => kh() },
       deck: { cause: "A tourist saw Squatch on the deck. Security caught him.", joke: () => kh() },
       vent: { cause: "The vent alarm saw Squatch on the deck. Security caught him.", joke: () => kh() },
       s6: { cause: "A tourist saw Squatch in the hall. Security caught him.", joke: () => kh() },
@@ -193,6 +197,8 @@
       n.seeGrace = n.T + 3;
     }
     const CH1_CHECKPOINTS = {
+      // The night out starts over at the closet door, notice unread (D15).
+      O4: () => ch(),
       S1L: () => Sh(),
       S4: () => {
         ch1Saved("S4");

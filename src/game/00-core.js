@@ -1137,7 +1137,10 @@
         (n.room === "lobby" &&
           (l.push({ x0: 352, x1: 608, y0: 150, y1: 286 }),
           l.push({ x0: 180, x1: 324, y0: 384, y1: 412 }),
-          l.push({ x0: 832, x1: 888, y0: 424, y1: 450 })),
+          l.push({ x0: 832, x1: 888, y0: 424, y1: 450 }),
+          // D15: the brochure table and the snack counter (drawn in 10-ch1.js)
+          l.push({ x0: 712, x1: 828, y0: 200, y1: 262 }),
+          l.push({ x0: 860, x1: 960, y0: 330, y1: 480 })),
         n.room === "closet" &&
           (l.push(nt(560, 546, 26, 16, 10)),
           l.push({ x0: 326, x1: 374, y0: 484, y1: 516 }),

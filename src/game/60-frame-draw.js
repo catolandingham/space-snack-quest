@@ -234,7 +234,9 @@
         ve = _ + Math.cos($) * q.arm;
       (St(q.bodyW - 1, _, oe, ve, 3.6, q.fur, q.out),
         F(oe, ve, 2.2, q.mask),
-        s.carry && (m(oe - 4, ve - 2, 10, 11, 1.5), r("#cdbb98", 1.2)));
+        s.carry && (m(oe - 4, ve - 2, 10, 11, 1.5), r("#cdbb98", 1.2)),
+        // The robot janitors notice from the lobby (D15): a white sheet in his hand.
+        s.paper && (m(oe - 3, ve - 12, 11, 14, 1), r("#ffffff", 1), C([oe - 1, ve - 8, oe + 6, ve - 8], "#e5533d", 1.4), C([oe - 1, ve - 4, oe + 6, ve - 4], y, 0.8)));
       for (let Qe of [-q.head * 0.95, q.head * 0.95]) (e.beginPath(), e.arc(Qe, P + 1, 3.4, 0, 7), wV(q.ear, q.out));
       if (
         (XV(0, P, q.head * 0.92, q.head * 0.85, 14, q.amp, -Math.PI / 2),
@@ -817,10 +819,9 @@
         r("#ffffff", 2.5),
         F(-6, 0, 3, "#3478f6"),
         F(6, 0, 3, "#3478f6"),
-        e.restore(),
-        m(326, 590, 68, 40, 4),
-        r("#dfe4ea", 3.5));
-      for (let i = 0; i < 6; i++) C([336 + i * 10, 596, 336 + i * 10, 624], y, 2);
+        e.restore());
+      // D15: the snack counter, the brochure table with its notice, and the vent with its pull (10-ch1.js).
+      (lobbyCounter(), lobbyTable(), lobbyVent());
       let l = n.pulse.has("cdoor");
       (l &&
         (e.save(),
@@ -844,7 +845,8 @@
           L(je.x, je.y + (i ? 18 : 6), 5),
           r("#ffcf33", 2));
       }
-      if (!n.looked && n.scene === "O4") for (let i of hh()) Fh(i.ox, i.oy, i.a, i.half, i.len, "civ", !!n.runner);
+      if (!n.looked && n.scene === "O4")
+        for (let i of hh()) (Fh(i.ox, i.oy, i.a, i.half, i.len, "civ", !!n.runner), conesDrawn.push({ ox: i.ox, oy: i.oy, a: i.a, half: i.half, len: i.len, room: "lobby", cam: 0 }));
       let o = [];
       if (n.runner && !n.looked) {
         let i = n.runner;
@@ -905,8 +907,9 @@
           },
         });
       if (
-        (o.push({ y: n.sq.y, d: () => Re(n.sq.x, n.sq.y, he, { walk: n.sq.moving ? n.sq.walk : 0, f: n.sq.f }) }),
+        (o.push({ y: n.sq.y, d: () => Re(n.sq.x, n.sq.y, he, { walk: n.sq.moving ? n.sq.walk : 0, f: n.sq.f, paper: !!n.holdNotice }) }),
         o.sort((i, s) => i.y - s.y).forEach((i) => i.d()),
+        lobbyTuft(),
         n.pulse.has("cdoor") && n.ctrl)
       ) {
         let i = 584 + Math.sin(n.T * 7) * 6;
@@ -1496,6 +1499,10 @@
         i5(o);
         return;
       }
+      if (l === "notice") {
+        noticePanel();
+        return;
+      }
       if (!n5(l) && !$A(l) && !p6(l) && !v2(l)) {
         if (l === "sched") {
           (e.save(),
@@ -1771,7 +1778,7 @@
                   m(120, 422, 170, 28, 12),
                   r("#a98bff", 4),
                   i === "sleep" && g("z z z", 280, 290 - ((n.zzz * 16) % 30), 26, "#3478f6"));
-              } else Re(o.x, o.y, wl, { walk: o.moving ? o.walk : 0, f: o.f, singing: i === "sing", carry: n.lunch === "held" });
+              } else Re(o.x, o.y, wl, { walk: o.moving ? o.walk : 0, f: o.f, singing: i === "sing", carry: n.lunch === "held", paper: !!n.holdNotice });
             },
           }),
         l.sort((s, q) => s.y - q.y).forEach((s) => s.d()),

@@ -63,6 +63,8 @@
           zzz: 0,
           log: [],
           maxB: 0,
+          sw1Done: !1,
+          nightSeen: !1,
         }),
         (n.pulse = new Set()),
         (n.found = new Set()),
@@ -196,27 +198,13 @@
       (l === "crack" &&
         ((n.under = "crack"),
         J([
-          v("sq", "Robots? What are they talking about?"),
+          v("sq", "...Everybody has somebody."),
           N(() => {
             ((n.under = ""), (n.scene = "O3b"), n.pulse.add("sign"), n.pulse.add("door"));
           }),
           v("sq", "Sorry, sign.", "whisper"),
           N(() => {
-            ((n.ctrl = !0),
-              (n.idle = 0),
-              (n.act = offer({
-                id: "door",
-                verb: "SNEAK OUT",
-                cap: "door",
-                who: "sq",
-                x: 790,
-                y: 470,
-                r: 95,
-                hot: !0,
-                f: () => {
-                  ((n.act = null), (n.ctrl = !1), n.pulse.clear(), (n.glowT = -1), (n.doorGlow = 0), ch());
-                },
-              })));
+            ((n.ctrl = !0), (n.idle = 0), (n.act = sneakOut()));
           }),
         ])),
         l === "note" &&
@@ -247,6 +235,32 @@
           ]),
         l === "gbox" && J([v("sq", "One more for the box. Someday I'll meet them."), uV(1), N(Ah)]));
     }
+    // O3b: the closet door, SNEAK OUT. Offered after the peek, and again after "They lost you." (D15).
+    function sneakOut() {
+      return offer({
+        id: "door",
+        verb: "SNEAK OUT",
+        cap: "door",
+        who: "sq",
+        x: 790,
+        y: 470,
+        r: 95,
+        hot: !0,
+        f: () => {
+          ((n.act = null), (n.ctrl = !1), n.pulse.clear(), (n.glowT = -1), (n.doorGlow = 0), ch());
+        },
+      });
+    }
+    // O4, the night out (D15, Brian 2026-11-07). Squatch sneaks into the lobby to find out what is going on.
+    // A brochure table holds a notice: robot janitors are coming. The vent's pull and three sightlines stand
+    // between the closet and the table. Near the vent a tuft of his fur drifts toward it (the warning); if he
+    // stays in the pull for PULL_BITE seconds the fur goes in and the alarm sounds. A sighting or the vent alarm
+    // brings security under the one capture rule: HIDE! runs him into the closet ("They lost you."), and if a
+    // guard reaches him first the LOCKUP card shows and the night starts over (CH1_CHECKPOINTS.O4).
+    const LOBBY_VENT = { x: 650, y: 450, r: 80 },
+      LOBBY_TABLE = { x: 770, y: 250 },
+      PULL_BITE = 1.5,
+      TABLE_SEEN = 260;
     function ch() {
       ((n.scene = "O4"),
         (n.room = "lobby"),
@@ -266,6 +280,13 @@
         (n.door = 0),
         (n.puffs = []),
         (n.hopTo = null),
+        (n.pull = 0),
+        (n.sawTable = !1),
+        (n.noticeRead = !1),
+        (n.holdNotice = !1),
+        (n.lobbyBy = ""),
+        (n.act = null),
+        n.pulse.clear(),
         (vV = []));
     }
     let je = { x: 318, y: 178 };
@@ -277,6 +298,12 @@
         { k: "R", ox: 848, oy: 402, a: Math.PI - 0.25 + 0.5 * Math.sin(l * 1.1 + 2), half: 0.4, len: 190 },
       ];
     }
+    // Who shouts what when a lobby watcher sees Squatch, and the captor for the LOCKUP card (25-capture.js).
+    const LOBBY_SEEN = {
+      L: { who: "kid", shout: "DADDY! A BIG DOG!", by: "lobbykid" },
+      U: { who: "exec", shout: "Was that... FUR?", by: "lobbyexec" },
+      R: { who: "demo", shout: "Fur! Near my snacks!", by: "lobbyclerk" },
+    };
     function Op(l) {
       if (n.runner || n.looked) return;
       (n.notices++,
@@ -287,18 +314,23 @@
         (n.famTurn = 1),
         (n.execTurn = 1),
         (n.lightHit = 0.6),
-        kV(l === "L" ? "kid" : l === "U" ? "exec" : "demo", "A WOOKIE!"));
+        (n.lobbyBy = LOBBY_SEEN[l].by),
+        (n.nightSeen = !0),
+        kV(LOBBY_SEEN[l].who, LOBBY_SEEN[l].shout));
       let o = l === "R" ? { x: 860, y: 440 } : l === "L" ? { x: 210, y: 400 } : { x: 410, y: 230 };
       ((n.runner = { k: l, x: o.x, y: o.y, v: Math.hypot(o.x - je.x, o.y - je.y + 20) / 2, pulled: -1 }),
         kV("sq", "Gulp."),
         (n.hopTo = { x: w(n.sq.x + (480 - n.sq.x) * 0.3, 120, 840), y: w(n.sq.y + (560 - n.sq.y) * 0.3, 300, 560) }),
         (n.act = dh()));
     }
-    function dh() {
-      return offer({
-        id: "hide",
+    // HIDE! works anywhere while security is coming: Squatch runs into the closet. With the notice read, the
+    // night out is over (O5); without it, security loses him and he can try again.
+    function hideHome() {
+      return spot({
+        id: "cdoor",
         verb: "HIDE!",
         cap: "closet",
+        who: "sq",
         at: [480, 575],
         hot: !0,
         f: () => {
@@ -309,11 +341,190 @@
             J([
               cV((l) => ((n.sq.walk += l * 16), mV(n.sq, 480, 585, 560, l))),
               N(() => {
-                ((n.sq.moving = !1), D.hide(), Gs());
+                ((n.sq.moving = !1), D.hide(), n.noticeRead ? Gs(!0) : lobbyLost());
               }),
             ]));
         },
       });
+    }
+    function dh() {
+      return offer(hideHome());
+    }
+    // Hidden in the closet before security reached him: they lose him, and the door is there to try again.
+    function lobbyLost() {
+      ((n.scene = "O3b"),
+        (n.room = "closet"),
+        (n.lg = []),
+        (n.runner = null),
+        (n.looked = !1),
+        (n.secOn = !1),
+        (n.pull = 0),
+        (n.sirenT = -9),
+        (n.live = []),
+        (vV = []),
+        (n.sq = { x: 660, y: 520, f: 1, walk: 0, moving: !1 }),
+        (n.sqPose = "stand"),
+        n.pulse.clear(),
+        n.pulse.add("door"),
+        lostYou(),
+        (n.idle = 0),
+        (n.ctrl = !0),
+        (n.act = sneakOut()));
+    }
+    // The lobby's spots: READ the notice at the table, then ENTER the closet. While security is coming, HIDE!.
+    function o4Spots() {
+      return n.runner || n.looked
+        ? [hideHome()]
+        : [
+            spot({
+              id: "notice",
+              verb: "READ",
+              cap: "notice",
+              who: "sq",
+              x: LOBBY_TABLE.x,
+              y: LOBBY_TABLE.y + 50,
+              r: 80,
+              at: [LOBBY_TABLE.x, LOBBY_TABLE.y - 90],
+              when: !n.noticeRead,
+              hot: !0,
+              f: readNotice,
+            }),
+            spot({ id: "home", verb: "ENTER", cap: "closet", who: "sq", x: 480, y: 575, r: 90, at: [480, 570], when: !!n.noticeRead, hot: !0, f: goHome }),
+          ];
+    }
+    function readNotice() {
+      ((n.ctrl = !1),
+        (n.act = null),
+        (n.sq.moving = !1),
+        n.pulse.delete("notice"),
+        J([
+          { k: "panel", id: "notice" },
+          N(() => {
+            ((n.noticeRead = !0), (n.holdNotice = !0), D.grab());
+          }),
+          v("sq", "Robot janitors? Mops is a janitor.", "whisper"),
+          N(() => {
+            (n.pulse.add("home"), (n.ctrl = !0), chipNow());
+          }),
+        ]));
+    }
+    function goHome() {
+      ((n.act = null),
+        (n.ctrl = !1),
+        n.pulse.delete("home"),
+        J([
+          cV((l) => mV(n.sq, 480, 585, 190, l)),
+          N(() => {
+            ((n.sq.moving = !1), D.hide(), Gs(!0));
+          }),
+        ]));
+    }
+    // The vent's pull: inside the circle the tuft drifts toward the grille; out of it the tuft drifts back.
+    function inPull(o = n.sq) {
+      return Math.hypot(o.x - LOBBY_VENT.x, o.y - LOBBY_VENT.y) < LOBBY_VENT.r;
+    }
+    // The fur went in: the alarm sounds and security comes, as for a sighting.
+    function ventAlarm() {
+      ((n.pull = 0), (n.furVent = !0), (n.lobbyBy = "lobbyvent"), (n.sirenT = n.T), fq(LOBBY_VENT.x, LOBBY_VENT.y), kV("pa", "FUR IN THE VENT!"), Np(!1));
+    }
+    // A lobby watcher sees what its drawn cone covers: the wedge itself. (The old check let the kid's and the
+    // clerk's own bodies block their whole cone, so only the man in the suit ever saw anything.)
+    function lobbySees(px, py, c) {
+      let dx = px - c.ox,
+        dy = py - c.oy,
+        d = Math.hypot(dx, dy);
+      if (d > c.len || d < 1) return !1;
+      let a = Math.atan2(dy, dx) - c.a;
+      for (; a > Math.PI;) a -= 2 * Math.PI;
+      for (; a < -Math.PI;) a += 2 * Math.PI;
+      return Math.abs(a) < c.half;
+    }
+    // Lobby drawing for the night out (called from x5 in 60-frame-draw.js).
+    // The snack counter on the right wall: the clerk works in front of it, and nobody walks behind it.
+    function lobbyCounter() {
+      (m(868, 330, 100, 150, 6), r("#ffb547", 3), m(862, 320, 110, 16, 4), r("#ffffff", 3), g("SNACKS", 914, 356, 14, y, "center", 900));
+      for (let k = 0; k < 3; k++) (m(878 + k * 24, 296, 18, 24, 3), r(["#e5533d", "#3478f6", "#2bc48a"][k], 2));
+    }
+    // The brochure table, with the notice standing on it. Labelled NOTICE so the chip's word is on screen.
+    function lobbyTable() {
+      let t = LOBBY_TABLE;
+      (C([t.x - 48, t.y - 14, t.x - 48, t.y + 12], y, 4), C([t.x + 48, t.y - 14, t.x + 48, t.y + 12], y, 4), m(t.x - 58, t.y - 30, 116, 16, 4), r("#c9b28a", 3));
+      for (let k = 0; k < 3; k++) (m(t.x - 52 + k * 17, t.y - 42 + (k % 2) * 3, 14, 13, 2), r(["#ff8fc0", "#7fd1ff", "#2bc48a"][k], 1.5));
+      (C([t.x + 24, t.y - 30, t.x + 24, t.y - 58], y, 3),
+        m(t.x - 14, t.y - 132, 76, 76, 4),
+        r(n.noticeRead ? "#f1f3f6" : "#ffffff", 3),
+        g("NOTICE", t.x + 24, t.y - 118, 15, "#e5533d", "center", 900),
+        m(t.x + 12, t.y - 102, 24, 20, 4),
+        r("#8a93a3", 2),
+        F(t.x + 19, t.y - 93, 2, y),
+        F(t.x + 29, t.y - 93, 2, y),
+        m(t.x + 14, t.y - 80, 20, 16, 3),
+        r("#c5ccd6", 2),
+        C([t.x + 40, t.y - 96, t.x + 48, t.y - 66], "#8b5a3c", 3),
+        X(t.x + 49, t.y - 64, 8, 4),
+        r("#cdbb98", 1.5));
+    }
+    // The vent: a grille on the floor, with the pull drawn round it at all times (a pale circle, the exact
+    // place the pull works, and ripples running in toward the grille).
+    function lobbyVent() {
+      let o = LOBBY_VENT;
+      (e.save(),
+        L(o.x, o.y, o.r),
+        (e.fillStyle = "rgba(127,209,255,.16)"),
+        e.fill(),
+        e.setLineDash([6, 6]),
+        (e.strokeStyle = "rgba(52,120,246,.6)"),
+        (e.lineWidth = 2),
+        e.stroke(),
+        e.setLineDash([]));
+      for (let k = 0; k < 3; k++) {
+        let f = 1 - ((n.T * 0.7 + k / 3) % 1);
+        (L(o.x, o.y, 16 + (o.r - 18) * f), (e.strokeStyle = "rgba(52,120,246," + (0.15 + 0.5 * (1 - f)).toFixed(3) + ")"), (e.lineWidth = 2.5), e.stroke());
+      }
+      (e.restore(), m(o.x - 34, o.y - 12, 68, 24, 4), r("#dfe4ea", 3));
+      for (let k = 0; k < 6; k++) C([o.x - 25 + k * 10, o.y - 8, o.x - 25 + k * 10, o.y + 8], y, 2);
+    }
+    // The warning: near the vent (within 1.5 times the circle) a tuft of his fur lifts off him; inside the
+    // pull it drifts toward the grille and reaches it only if he stays (PULL_BITE seconds); out of the pull it
+    // drifts back to him. Drawn large enough to read on a 375-pixel phone.
+    function lobbyTuft() {
+      if (n.scene !== "O4" || n.room !== "lobby" || !(n.pull > 0 || n.ventNear)) return;
+      let k = Math.min(1, n.pull / PULL_BITE),
+        sx = n.sq.x + 14 * n.sq.f,
+        sy = n.sq.y - 52,
+        tx = sx + (LOBBY_VENT.x - sx) * k + Math.sin(n.T * 7) * 5 * (1 - k),
+        ty = sy + (LOBBY_VENT.y - sy) * k;
+      (XV(tx, ty, 18, 12, 9, 3, n.T * 4), wV("#8b5a3c", 2));
+    }
+    // The notice, close up, when Squatch reads it: one short line and a drawn robot janitor.
+    function noticePanel() {
+      (e.save(),
+        e.translate(480, 320),
+        e.rotate(0.015),
+        m(-230, -236, 460, 472, 8),
+        r("#ffffff", 5),
+        g("NOTICE", 0, -206, 20, "#8a93a3", "center", 900),
+        g("ROBOT JANITORS", 0, -160, 40, "#e5533d", "center", 900),
+        g("COMING.", 0, -116, 40, "#e5533d", "center", 900),
+        e.save(),
+        e.translate(-20, 0),
+        C([0, -62, 0, -82], y, 3),
+        F(0, -86, 7, "#e5533d"),
+        m(-38, -62, 76, 58, 12),
+        r("#8a93a3", 4),
+        F(-15, -36, 7, y),
+        F(15, -36, 7, y),
+        C([-14, -16, 14, -16], y, 3),
+        m(-32, 0, 64, 52, 10),
+        r("#c5ccd6", 4),
+        m(-28, 52, 56, 12, 6),
+        r(y, 0),
+        C([34, 14, 80, 92], "#8b5a3c", 6),
+        X(84, 96, 24, 9),
+        r("#cdbb98", 3),
+        e.restore(),
+        g("They take every janitor's job.", 0, 150, 30, y, "center", 800),
+        e.restore());
     }
     function wp(l) {
       let o = n.runner;
@@ -327,12 +538,12 @@
             n.log.push({ who: "", text: "[alarm pulled " + (n.T - n.spotT).toFixed(2) + "s after sighting]", kind: "t" }))
           : n.T - o.pulled > 0.5 &&
             !n.looked &&
-            (Np(), n.log.push({ who: "", text: "[guard chasing " + (n.T - n.spotT).toFixed(2) + "s after sighting]", kind: "t" })));
+            (Np(!0), n.log.push({ who: "", text: "[guard chasing " + (n.T - n.spotT).toFixed(2) + "s after sighting]", kind: "t" })));
     }
-    function Np() {
+    function Np(said) {
       n.looked ||
         ((n.looked = !0),
-        kV("sq", "Everyone's looking!"),
+        said && kV("sq", "Everyone's looking!"),
         (n.secOn = !1),
         n.pulse.add("cdoor"),
         yh(),
@@ -343,22 +554,13 @@
     }
     function yh() {
       n.lg = [
-        { x: 1010, y: 400, tx: 760, ty: 400 },
+        { x: 1010, y: 530, tx: 760, ty: 520 },
         { x: 89, y: 446, tx: 200, ty: 480 },
       ];
     }
+    // A guard reached Squatch in the lobby: the one capture rule (25-capture.js). The night starts over.
     function Rp() {
-      ((n.ctrl = !1),
-        (n.sq.moving = !1),
-        (n.lgJump = n.T),
-        D.bzzt(),
-        (n.lobbyCatches = (n.lobbyCatches || 0) + 1),
-        J([
-          v("bot", "Gotcha!"),
-          N(() => {
-            ((n.sq.x = 480), (n.sq.y = 520), (n.sq.f = 1), yh(), (n.lg[0].x = 1e3), (n.lgGrace = n.T + 3), (n.ctrl = !0));
-          }),
-        ]));
+      ((n.lgJump = n.T), (n.lobbyCatches = (n.lobbyCatches || 0) + 1), capture(n.lobbyBy || "lobbykid"));
     }
     function zp(l) {
       if (
@@ -385,6 +587,11 @@
         let s = n.T * 0.9;
         ((n.light.x = 790 + Math.cos(s) * 70), (n.light.y = 470 + Math.sin(s * 1.3) * 60));
       }
+      // The vent's pull (D15) counts during a chase too, so the tuft never stops in mid-air: time in the
+      // circle adds up, time out of it drains twice as fast. Only outside a chase can it set off the alarm.
+      // Within 1.5 times the circle the tuft already shows (the warning comes before the clock starts).
+      ((n.pull = n.ctrl && !n.hopTo && inPull(n.sq) ? Math.min(PULL_BITE, n.pull + l) : Math.max(0, n.pull - l * 2)),
+        (n.ventNear = Math.hypot(n.sq.x - LOBBY_VENT.x, n.sq.y - LOBBY_VENT.y) < LOBBY_VENT.r * 1.5));
       if ((wp(l), n.hopTo)) {
         (mV(n.sq, n.hopTo.x, n.hopTo.y, 440, l) && ((n.hopTo = null), (n.ctrl = !0)), (n.sq.f = -n.sq.f * 0 + (n.sq.x < 480 ? 1 : -1)));
         return;
@@ -392,14 +599,21 @@
       if (!n.ctrl) return;
       let i = n.sq;
       if (!n.runner && !n.looked) {
+        if (n.pull >= PULL_BITE) {
+          ventAlarm();
+          return;
+        }
         for (let s of hh())
-          if (vt(i.x, i.y - 30, s.ox, s.oy, s.a, s.half, s.len)) {
+          if (lobbySees(i.x, i.y - 30, s)) {
             Op(s.k);
             return;
           }
+        // The table comes into view once he is close enough to make it out; then its notice is the goal.
+        !n.sawTable && Math.hypot(i.x - LOBBY_TABLE.x, i.y - LOBBY_TABLE.y) < TABLE_SEEN && ((n.sawTable = !0), n.pulse.add("notice"), D.key());
       }
+      n.act = pick(o4Spots());
     }
-    function Gs() {
+    function Gs(home) {
       ((n.scene = "O5"),
         (n.room = "closet"),
         (n.sq = { x: 760, y: 480, f: -1, walk: 0, moving: !1 }),
@@ -413,6 +627,8 @@
         (vV = []),
         n.pulse.add("bed"),
         (n.ctrl = !0),
+        // Back from the lobby with the notice: the inspection Mops talked about is at the door (D15).
+        home && TV([v("bot", "Inspection! Closet next.", "say", !0)]),
         kV("sq", "Hide!"),
         (n.act = offer({
           id: "bed",
@@ -526,8 +742,13 @@
           }),
           uV(0.8),
           v("mops", "You went OUT? Tonight?"),
-          v("sq", "I wanted to see the robots."),
-          v("mops", "Curious gets you caught."),
+          v("sq", "Everybody out there has somebody."),
+          v("mops", "You have me."),
+          v("sq", "But look. Robot janitors are coming."),
+          v("mops", "A notice can't mop a floor."),
+          N(() => {
+            ((n.holdNotice = !1), D.grab());
+          }),
           v("mops", "We stay hidden. That's how we stay safe."),
           v("mops", "Back to work. Stay put."),
           N(() => {
@@ -694,6 +915,9 @@
       O3: "Squatch: peek out the door",
       O3b: "Squatch: sneak out the door",
       O4: "Squatch: run back to the closet!",
+      "O4:out": "Squatch: find out what's going on out there",
+      "O4:table": "Squatch: read the notice",
+      "O4:home": "Squatch: sneak back to the closet",
       O5: "Squatch: hide under the bed",
       O7: "Squatch: watch the TV",
       O8: "Squatch: go to sleep in your bed",
@@ -728,7 +952,15 @@
     };
     function ch1ChipKey() {
       let l = n.scene || "";
-      return l === "O8"
+      return l === "O4"
+        ? n.runner || n.looked
+          ? "O4"
+          : n.noticeRead
+            ? "O4:home"
+            : n.sawTable
+              ? "O4:table"
+              : "O4:out"
+        : l === "O8"
         ? n.gift
           ? "O8:gift"
           : "O8"
@@ -785,7 +1017,9 @@
     // Chapter 1's spots, scene by scene, in the order each picker tries them (see spot in 00-core.js).
     function ch1Spots() {
       let l = n.scene;
-      return l === "S1"
+      return l === "O4"
+        ? o4Spots()
+        : l === "S1"
         ? s1Spots()
         : l === "S1L"
           ? s1lSpots()

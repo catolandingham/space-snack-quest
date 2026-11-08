@@ -39,7 +39,7 @@ The code in backticks is the chip key the game uses (for the tests).
 | 18.2 | Chapter 1, `O2a`: Mops hums; the SING button is up | Squatch: sing along with Mops | Squatch: sing with Mops |
 | 18.3 | Chapter 1, `O3`: A noise outside the closet door (was "What's that noise?") | Squatch: peek out the door | Squatch: see what the noise is |
 | 18.4 | Chapter 1, `O3b`: After the peek | Squatch: sneak out the door | Squatch: go out the door |
-| 18.5 | Chapter 1, `O4`: The lobby, someone screams "A WOOKIE!" (Brian's wording, 2026-11-07) | Squatch: run back to the closet! | Squatch: hide, quick! (the earlier wording) |
+| 18.5 | Chapter 1, `O4`: The lobby, while security is coming after a sighting or the vent alarm (Brian's wording, 2026-11-07; since the Chapter 1 pass nobody screams "A WOOKIE!" here, see `docs/CHAPTER-1-LINES-FOR-BRIAN.md`) | Squatch: run back to the closet! | Squatch: hide, quick! (the earlier wording) |
 | 18.6 | Chapter 1, `O5`: Back in the closet, the bot is coming | Squatch: hide under the bed | Squatch: get under the bed |
 | 18.7 | Chapter 1, `O7`: The TV in the closet | Squatch: watch the TV | Squatch: turn on the TV |
 | 18.8 | Chapter 1, `O8`: Bedtime | Squatch: go to sleep in your bed | Squatch: go to bed |

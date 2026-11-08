@@ -68,7 +68,7 @@
           let st = ch2.sqStash;
           ((n.sq.x = st.x), (n.sq.y = st.y), (n.sq.f = st.f), (n.sqPose = st.pose), (x.spot = st.spot), (ch2.sqStash = null));
         }
-      yf(!x.mops);
+      yf(!x.mops, (n.scene || "")[0] === "S" ? ch1FaceWhy(!x.mops) : "");
     }
     function F6() {
       let l = cn;

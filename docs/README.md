@@ -18,6 +18,7 @@ Every agent reads `CLAUDE.md` at the repo root first. It holds the short rules, 
 | [`story-bible.md`](story-bible.md) | The Chapter 2 kitchen revision |
 | [`STORY-DECISIONS.md`](STORY-DECISIONS.md) | Open story conflicts waiting on Brian |
 | [`original-story-spine.md`](original-story-spine.md) | Brian's Nov 2 story spine, scene by scene (only the Chapter 2 kitchen was revised since, in `story-bible.md`) |
+| [`CHAPTER-1-LINES-FOR-BRIAN.md`](CHAPTER-1-LINES-FOR-BRIAN.md) | The Chapter 1 pass: what Chapter 1 now has and still does not have, then every new line with one alternative |
 | [`CHIP-ARMATURE-AUDIT.md`](CHIP-ARMATURE-AUDIT.md) | Every goal chip placed on the story's seven beats, with a verdict where the game departs from the spine |
 | [`spine-archive.md`](spine-archive.md) | The previous on-repo story note |
 
@@ -31,7 +32,7 @@ What is playable is the game and the root `README.md`. A story note does not add
 
 ## Capture
 
-One rule in every chapter (Brian's D1, 2026-11-07; Phase 3 task T19): someone sees Squatch, security comes, and he has time to hide. Hidden: security leaves and "They lost you." shows. Caught: the LOCKUP card names who saw him and where, the captor's joke follows, and the section restarts from its checkpoint with coins and stars kept. No catch takes stars. A bot that sees Mops shoos him back (D9) with no card. All of it is in `src/game/25-capture.js` (`capture`, `shoo`, `CAPTURES`, and the checkpoint tables `CH1_CHECKPOINTS`, `CH3_CHECKPOINTS`, `CH4_CHECKPOINTS`); Chapter 2's table is `applyG`. `tests/capture-rule.mjs` checks it.
+One rule in every chapter (Brian's D1, 2026-11-07; Phase 3 task T19; since the Chapter 1 pass it covers the night out in the lobby too, where HIDE! runs Squatch into the closet and a catch starts the night over): someone sees Squatch, security comes, and he has time to hide. Hidden: security leaves and "They lost you." shows. Caught: the LOCKUP card names who saw him and where, the captor's joke follows, and the section restarts from its checkpoint with coins and stars kept. No catch takes stars. A bot that sees Mops shoos him back (D9) with no card. All of it is in `src/game/25-capture.js` (`capture`, `shoo`, `CAPTURES`, and the checkpoint tables `CH1_CHECKPOINTS`, `CH3_CHECKPOINTS`, `CH4_CHECKPOINTS`); Chapter 2's table is `applyG`. `tests/capture-rule.mjs` checks it.
 
 ## Section reset
 

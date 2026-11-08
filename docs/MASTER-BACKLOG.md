@@ -21,6 +21,28 @@ PR #4 is squash-merged. `main` is `9999f0cd`. That commit has the same tree as k
 
 The recovery commits are replayed onto `9999f0cd`. Their changes match `17a03c2` and `0ab2781`. The kitchen commits are not in this pull request.
 
+## Chapter 1 pass (Brian's brief of 2026-11-07)
+
+Branch `chapter-1-pass`, one commit per item with its test. Not merged. The wording of every new line waits for Brian's yes in `docs/CHAPTER-1-LINES-FOR-BRIAN.md`, which also says what Chapter 1 still does not have.
+
+| Item | What changed | Test | State |
+| --- | --- | --- | --- |
+| D15 | The night out has a goal (the robot janitors notice) and a vent whose pull is drawn; capture under the one rule; the notice comes back in O5, O6 and S3; the lobby cones see what they draw; a snack counter closes the back route | `tests/ch1-lobby.mjs`, `tests/capture-rule.mjs` | Done on branch, wording pending |
+| Switches | Every Chapter 1 switch shows a card with a reason, except the first (taught by the zoom-in card) and restarts | `tests/ch1-switch.mjs` | Done on branch, wording pending |
+| Order | No "robot" before the notice, no "Wookie" before the flashback, no hangar code before S8, the spine's heart lines in O3 and O6 | `tests/ch1-playthrough.mjs` | Done on branch, wording pending |
+| Play-through | Chapter 1 from `?ch=1` to the ship with keys (and face clicks), never caught | `tests/ch1-playthrough.mjs` | Done on branch |
+
+Open rows found in this pass (not fixed):
+
+| Item | What happens | State |
+| --- | --- | --- |
+| Switching key | There is no key for switching characters; the Chapter 1 play-through clicks the faces | Closed: Brian, 2026-11-07, clicking a face is fine |
+| Lobby difficulty | The kid's and the clerk's cones now see (before, their own bodies blocked them); the vent lane is narrow (the suit's cone touches it about one crossing in seven without waiting); crossing the circle takes about 1.2 s of the 1.5 s; cones see through the table and counter | Open, wants a playtest |
+| Lobby catch | A lobby catch now restarts the night and costs the +250 bonus; HIDE! after the notice skips "They lost you."; the right guard enters at (1010, 530) | Listed for Brian |
+| S3 report | The PA used to say "FUR spotted in the lobby" after a clean night out | Fixed in the review: the report follows what happened (rows 25.23 to 25.25) |
+| Phone playtest notes | `docs/playtests/2026-11-07-brian-phone-playtest-ch1.md` is not in the repo | Open |
+| Test timing | hud-layout, phone-tap and kitchen checks failed now and then on a loaded machine; hud-layout and phone-tap now wait for the page to settle; kitchen was left as it was | Watch |
+
 ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07)
 
 Branch `phase-3-fairness-hud`, one commit per task with its test. Not merged. The wording of every new line waits for Brian's yes in `docs/PHASE-3-LINES-FOR-BRIAN.md`, which also lists what is not finished.
@@ -137,6 +159,8 @@ The pass drove wash 5, wash 1, `g1`, and unknown `g5`. The other checkpoint rows
 - Any item not named in the tables above.
 
 ## Changelog
+
+2026-11-07. Chapter 1 pass on branch `chapter-1-pass` (D15 night out, Chapter 1 switch cards, order fixes, Chapter 1 tests), not merged.
 
 2026-11-07. Phase 1 is on `main` as PR #8 (`9215e8b`). Phase 2 (T13 to T18) is on branch `phase-2-structure`, not merged.
 

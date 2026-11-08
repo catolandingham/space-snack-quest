@@ -278,9 +278,7 @@
         rn((s) => {
           B.ramp = s;
         }, 0.8),
-        v("pa", n.furVent ? "Delegation report: FUR in the air scrubbers." : "Delegation report: FUR spotted in the lobby.", "pa"),
-        v("pa", "Janitorial issue! First robot order: APPROVED.", "pa"),
-        v("sq", "...That was MY fur.", "whisper"),
+        ...s3Report(),
         v("pa", "DING DONG! Delivery for Stormtop!", "pa"),
         N(() => {
           B.bots.forEach((s) => {
@@ -315,6 +313,8 @@
         }),
         uV(0.4),
         v("pa", "Bleep-Bloop Bots! Floors that mop THEMSELVES!", "pa"),
+        // What Squatch brought back from the night out (D15) comes true.
+        v("sq", "Robot janitors. Like the notice said.", "whisper"),
         i(!1),
         v("pa", "Janitors Dot, Bob and Lou... REPLACED.", "pa"),
         i(!0),
@@ -384,6 +384,17 @@
         uV(1.2),
         N(Uh),
       ]);
+    }
+    // The delegation's report in S3 says what really happened (Brian, 2026-11-07): fur went into a vent
+    // (the lobby vent alarm, the closet vent, or the deck vent) -> the air scrubbers; seen in the lobby and got
+    // away -> "spotted in the lobby"; a clean night out -> all clear. Rows 25.23 to 25.25.
+    function s3Report() {
+      let order = [v("pa", "Janitorial issue! First robot order: APPROVED.", "pa"), v("sq", "...That was MY fur.", "whisper")];
+      return n.furVent
+        ? [v("pa", "Delegation report: FUR in the air scrubbers.", "pa"), ...order]
+        : n.nightSeen
+          ? [v("pa", "Delegation report: FUR spotted in the lobby.", "pa"), ...order]
+          : [v("pa", "Delegation report: all clear. Robots arrive at dawn.", "pa")];
     }
     let Ct = { x: 1065, y: 300 },
       ye = { x: 990, y: 250 };
@@ -868,6 +879,7 @@
       return pick(s6Spots());
     }
     // Things in the hall Squatch can look at again, and the two halves of the torn slip.
+    // Before S8 the slip is only paperwork to Squatch: Mops names the hangar code first, in S8 (rule 20).
     function hallFinds() {
       return [
         spot({
@@ -901,10 +913,7 @@
           at: [DV.x, DV.y - 70],
           when: !!(B.halves[0] && B.halves[0].on),
           f: () =>
-          TV([
-            v("sq", "Half the torn slip! The hangar code's on it...", "whisper"),
-            v("sq", "Not yet. Mops needs me first.", "whisper"),
-          ]),
+          TV([v("sq", "Mops's torn slip. Just paperwork.", "whisper")]),
         }),
         spot({
           id: "vent",
@@ -1182,9 +1191,21 @@
           ? ((q.asked = !1), (q.look -= l), q.look <= 0 && (q.look = -1))
           : q.look < 0 && mV(q, q.home.x, q.home.y, 50, l) && (q.look = 0);
     }
-    // Why each announced switch happens. Wording waits for Brian's yes (docs/PHASE-1-LINES-FOR-BRIAN.md).
-    // Switches with no entry here (scene set-ups, Reset section, Chapters 1, 3 and 4) are silent for now.
+    // Why each announced switch happens. Wording waits for Brian's yes (Chapter 2: docs/PHASE-1-LINES-FOR-BRIAN.md
+    // rows 6.x; Chapter 1: docs/CHAPTER-1-LINES-FOR-BRIAN.md rows 26.x). Switches with no entry here (scene
+    // set-ups, Reset section, a restart after a catch, and Chapters 3 and 4) are silent for now.
     const SWITCH_WHY = {
+      // Chapter 1, the face buttons (top right) in S9, S10 and S11 (ch1FaceWhy picks one).
+      "s9-mops": "Mops goes for the slip in the trash.",
+      "s9-squatch": "Squatch sings to bring the bot over.",
+      "s10-mops": "Squatch is too big for the vent. Mops tries it.",
+      "s10-squatch": "Only Mops fits in the vent. Squatch waits.",
+      "s11-mops": "Mops goes to type the code at the door.",
+      "s11-squatch": "Squatch sings to pull the bot off the door.",
+      // Chapter 1, switches the story makes.
+      "s10-start": "Mops has one half. Squatch goes for the other half.",
+      "s11-start": "Mops has the whole code. Now Squatch helps him reach the door.",
+      "s11-door": "Squatch has to get past the scanner.",
       "g1-door": "Mops goes to the diner. Squatch stays hidden by the pump.",
       "g2-back": "Mops found work. Squatch sneaks in the back.",
       "g3-front": "Squatch stays hidden in the crate. Mops goes out front.",
@@ -1203,8 +1224,15 @@
       ((x.mops = m), (n.sq.moving = !1), (n.mo.moving = !1));
       line && J([{ k: "card", id: "switch", who: m ? "mops" : "sq", text: "You are " + (m ? "MOPS" : "SQUATCH") + " now.", by: line }]);
     }
-    function yf(l) {
-      x.mops !== l && (switchTo(l ? "mops" : "squatch"), D.key());
+    function yf(l, why) {
+      x.mops !== l && (switchTo(l ? "mops" : "squatch", why), D.key());
+    }
+    // Why a face tap switches in Chapter 1. The first switch (to Mops in S9) was taught by the zoom-in card
+    // ("Tap a face to switch."), so it has no card of its own; every later switch says why.
+    function ch1FaceWhy(toMops) {
+      let s = n.scene;
+      if (s === "S9" && toMops && !n.sw1Done && n.taught && n.taught.has("switch1")) return ((n.sw1Done = !0), "");
+      return s === "S9" || s === "S10" || s === "S11" ? s.toLowerCase() + "-" + (toMops ? "mops" : "squatch") : "";
     }
     function s9Spots() {
       return [
@@ -1402,7 +1430,7 @@
     function Ih() {
       ((n.scene = "S10"),
         (n.room = "hall"),
-        switchTo("squatch"),
+        switchTo("squatch", "s10-start"),
         (n.sqPose = "stand"),
         (x.spot = -1),
         (n.sq.x = 980),
@@ -1531,11 +1559,12 @@
     function pA() {
       return pick(s10dSpots());
     }
-    function Js() {
+    // S11's start. From the duct (Kh) the switch to Squatch says why; a restart after a catch is silent.
+    function Js(why) {
       ((n.scene = "S11"),
         (n.room = "hall"),
         (n.live = []),
-        switchTo("squatch"),
+        switchTo("squatch", why),
         (x.spot = -1),
         (n.sqPose = "stand"),
         _s(Ch.x, Ch.y),
@@ -1548,7 +1577,7 @@
         (B.camX = 480));
     }
     function Kh() {
-      (Js(),
+      (Js("s11-start"),
         (n.ctrl = !1),
         (x.seenPart = !1),
         (x.doorOpen = !1),
@@ -1621,7 +1650,7 @@
               J([
                 { k: "panel", id: "keypad" },
                 N(() => {
-                  ((x.doorOpen = !0), D.zap(), x.seenPart || Ta("sneak-s11"), yf(!1));
+                  ((x.doorOpen = !0), D.zap(), x.seenPart || Ta("sneak-s11"), yf(!1, "s11-door"));
                 }),
                 v("sq", "Door open! Uh oh... a fur scanner."),
                 N(() => {
@@ -1647,7 +1676,7 @@
               ((x.seenPart = !0), kV("bot", "Former Ganitor! SHOO!"), shoo(Js, kh())));
           return;
         }
-        (x.mops && yf(!1),
+        (x.mops && yf(!1, "s11-door"),
           inSpot(gateSpot()) &&
             (x.costume
               ? ((n.ctrl = !1), (n.act = null), n.pulse.delete("gate"), D.pickup(), J([v("scanner", "HAIR... PROBABLY. PROCEED."), N(Xh)]))

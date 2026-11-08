@@ -65,6 +65,9 @@ for (const [vname, viewport] of [
       window.__ss.ch2.phase === "g3hide" && (window.__ss.ch2.timer = 4.5);
     });
     await sleep(350);
+    // Past the star pill's pop (0.35 s of game time after the total goes up), which scales it for a moment.
+    await page.waitForFunction(() => !document.getElementById("ss-stars").style.transform, { timeout: 5000 }).catch(() => {});
+    await sleep(100);
     const m = await measure(page);
     const pairs = [];
     for (let i = 0; i < m.boxes.length; i++) for (let j = i + 1; j < m.boxes.length; j++) if (overlap(m.boxes[i], m.boxes[j])) pairs.push(m.boxes[i].id + " / " + m.boxes[j].id);
