@@ -6,6 +6,30 @@ To change a line: edit the "In the game now" words in this file and say so in th
 
 Row numbers: the goal chips and the action labels are numbered 18.2xx, because the chip and label tests read every 18.x row; the other rows are 25.x (the night out), 26.x (switch cards) and 27.x (order fixes).
 
+## What Chapter 1 now has
+
+Read this before you play. It is the short version; the tables further down have every word.
+
+- **The night out is a sneak with a goal.** After the peek through the door crack ("...Everybody has somebody."), Squatch sneaks into the lobby and the chip says "Squatch: find out what's going on out there". A brochure table on the right holds a sign labelled NOTICE. When he gets close enough to make it out, the chip changes to "Squatch: read the notice". The notice says "ROBOT JANITORS COMING." and "No more fur. No more people.", with a drawn robot holding a mop. He whispers "Robot janitors? Mops is a janitor." and takes it home.
+- **The vent is a hazard you can see before it bites.** A grille in the middle of the lobby floor has a pale blue circle round it and ripples running in toward it, all the time. Inside the circle a tuft of Squatch's fur drifts toward the grille. If he keeps walking, nothing happens. If he stays in the circle for a second and a half, the fur goes in, "FUR IN THE VENT!" sounds and security comes.
+- **Every way to the table crosses the vent or someone's sight.** The quickest way is straight up through the vent's circle, in the gap between the man in the suit's cone and the snack clerk's cone, without stopping. The other ways cross the kid's, the man in the suit's or the clerk's cone, which you can time. A snack counter now stands on the right wall, so there is no way round the back.
+- **Getting caught follows the one capture rule.** Seen, or the vent alarm: security comes, and HIDE! runs Squatch back into the closet ("They lost you."), where he can sneak out again. If security reaches him first, the LOCKUP card says why (for the vent: "Fur went into the vent. Alarm.") and the night starts over at the closet door. Getting caught is never a step you have to take.
+- **What he brings back is used.** Back home, Security's voice at the door says "Inspection! Closet next." (the big inspection Mops mentioned). In O6 Mops sees the notice in his hand: "You went OUT? Tonight?", "Everybody out there has somebody.", "You have me.", "But look. Robot janitors are coming.", "A notice can't mop a floor." Next morning, when the robot delivery rolls down the ramp, Squatch whispers "Robot janitors. Like the notice said."
+- **Nobody says "robot" before the notice, and nobody says "Wookie" before the flashback.** The lobby watchers shout the spine's words ("DADDY! A BIG DOG!", "Was that... FUR?") and the clerk shouts "Fur! Near my snacks!". The slip peeks in S6 and S7 no longer mention the hangar code ("Mops's torn slip. Just paperwork."); Mops names it first in S8.
+- **Every switch says why.** In S9, S10 and S11 every switch between Squatch and Mops, by a face tap or by the story, shows the switch card with a reason, as Chapter 2 does. The one exception is the very first tap on Mops's face in S9, which the zoom-in card has just taught.
+- **The story beats.** The night out is now Chapter 1's "Until one day": Squatch learns that robot janitors are coming. The robot delivery (S3) and the Mars brochure (S5) follow as "Because of that".
+- **A test plays the whole chapter.** `tests/ch1-playthrough.mjs` plays from `?ch=1` to the ship with keys, crosses the vent twice without stopping, and is never caught.
+
+## What Chapter 1 still does not have
+
+- **A key for switching.** On a computer you switch by clicking a face. The play-through test clicks the faces with the mouse for that reason; everything else in it is keys.
+- **Tested numbers for the vent.** The circle reaches 80 pixels out from the grille, and the fur goes in after 1.5 seconds inside. Walking straight through takes about one second. These are first guesses; say if the circle should be bigger or smaller, or the fur quicker or slower.
+- **The old, easier lobby.** The kid's and the clerk's cones used to see nothing, because their own bodies blocked their sight lines, so only the man in the suit ever saw Squatch. Now each sees what its cone shows. Cone sizes and sweeps did not change, but the lobby is harder than the old chase because of it. The gap in the vent is narrow, and once in a while the man in the suit's cone touches it at the far end of its sweep.
+- **A card for restarts.** After a catch or a shoo in S9 or S11, the section starts over as Squatch with the LOCKUP card (or Mops's lines), and no switch card, the same as Reset section in Chapter 2.
+- **A stall hint in the lobby.** If a player stands still for a minute there, the chip does not change to a "how to" line yet.
+- **A sure S3 report.** "Delegation report: FUR in the air scrubbers." shows only if Squatch walked past the closet's floor vent; otherwise the PA says "FUR spotted in the lobby." That is as before, and after a clean night out (nobody saw him) the second line can sound wrong.
+- **Answers to the 2026-11-07 phone playtest.** `docs/playtests/2026-11-07-brian-phone-playtest-ch1.md` is not in the repo, so nothing here answers those notes directly.
+
 ## D15. The night out has a purpose and a hazard you can see
 
 ### Goal chips

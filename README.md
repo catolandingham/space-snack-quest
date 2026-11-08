@@ -82,6 +82,15 @@ Branch `phase-3-fairness-hud` (plan section 4, tasks T19 to T23, with Brian's de
 
 Test hooks added: `__ss.capture()`, `shoo()`, `lostYou()`, `startSec()`, `CAPTURES`, `LOCKUP_RESTART`, `hallAlarm`, `hallAlarmStart()`, `CH1_CHECKPOINTS`, `CH3_CHECKPOINTS`, `CH4_CHECKPOINTS`, `stallFor()`, `methodLine()`, `METHOD_LINES`.
 
+## Chapter 1 pass: the night out has a purpose, switches say why
+
+Branch `chapter-1-pass`. Not merged. Every new line waits for Brian's yes in `docs/CHAPTER-1-LINES-FOR-BRIAN.md`, which starts with what Chapter 1 now has and still does not have.
+
+- The night out (O3 to O6, Brian's D15): Squatch sneaks into the lobby to find out what is going on and reads a NOTICE on a brochure table ("ROBOT JANITORS COMING."). The vent's pull is drawn at all times; a tuft of fur drifts toward it, and 1.5 seconds in the pull sets off "FUR IN THE VENT!". Sightings and the vent go through the one capture rule (HIDE! into the closet, or LOCKUP and the night starts over). The notice comes back in O5, O6 and S3. `tests/ch1-lobby.mjs`.
+- Every Squatch and Mops switch in S9, S10 and S11 shows a switch card with a reason (the first, taught by the zoom-in card, does not). `tests/ch1-switch.mjs`.
+- Order fixes: nobody says "robot" before the notice or "Wookie" before the flashback; the S6 and S7 slip peeks no longer name the hangar code; O3 and O6 have the spine's "Everybody has somebody" and "You have me".
+- `tests/ch1-playthrough.mjs` plays Chapter 1 from `?ch=1` to the tally card with real key presses (and mouse clicks on the faces, since there is no switching key), following `tests/routes/ch1.json`, and must end never caught. About 4 minutes.
+
 ## Progression tests
 
 `tests/progression.mjs` plays the real game loop in headless Chrome. It checks the hangar door, the Mars reunion, Rusty's sighting through security and a section restart, pump sight, and the closet G-sign and bucket lanes.
