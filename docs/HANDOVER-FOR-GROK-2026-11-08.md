@@ -17,7 +17,7 @@ You have none of the context from those sessions. Read this file first. Section 
 **The live site.** `space-snack-quest.onrender.com`. Render deploys it by itself every time `main` changes. Merging to `main` therefore publishes to players. The rule is: no merge without Brian's yes written in the pull request.
 
 **The Drive folder.** `Wyttmab Drive / My Drive / Space Snack Quest /`. It holds:
-- `STATE.md`: the live state and open items. `DECISIONS.md`: every dated decision with its reason. Read both before you start.
+- `STATE.md`: the live state and open items. `DECISIONS.md`: every dated decision with its reason. Read both before you start. If you cannot open the Drive, read the snapshots in the repo at `docs/project/STATE-2026-11-08.md` and `docs/project/DECISIONS-2026-11-08.md` (copies taken 2026-11-08; the Drive files are the live ones).
 - `playtests/`: Brian's three playtest files. The 2026-11-07 phone note (`2026-11-07-brian-phone-playtest-ch1.md`) is here and in the repo's `docs/playtests/` since 2026-11-08.
 - `reviews-2026-11-06/`: copies of the review docs, `FEEDBACK-CODE-CHECK.md` (the 64-row check Hermes made; also in the repo's `docs/` since 2026-11-08) and `CHIP-ARMATURE-AUDIT.md`.
 - `source-snapshots/`: the old TypeScript from 2026-11-02. It is the old engine, so it is reference only.
