@@ -520,15 +520,8 @@
         X(84, 96, 24, 9),
         r("#cdbb98", 3),
         e.restore(),
-        g("No more fur. No more people.", 0, 136, 28, y, "center", 800));
-      for (let [px, fur] of [
-        [-70, !0],
-        [70, !1],
-      ]) {
-        (fur ? (XV(px, 190, 16, 12, 9, 3, 0.5), wV("#8b5a3c", 2)) : (L(px, 176, 9), r("#f0bf93", 2), m(px - 11, 186, 22, 20, 6), r("#7fd1ff", 2)),
-          C([px - 26, 214, px + 26, 162], "#e5533d", 5));
-      }
-      e.restore();
+        g("They take every janitor's job.", 0, 150, 30, y, "center", 800),
+        e.restore());
     }
     function wp(l) {
       let o = n.runner;
