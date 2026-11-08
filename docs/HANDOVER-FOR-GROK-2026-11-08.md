@@ -18,8 +18,8 @@ You have none of the context from those sessions. Read this file first. Section 
 
 **The Drive folder.** `Wyttmab Drive / My Drive / Space Snack Quest /`. It holds:
 - `STATE.md`: the live state and open items. `DECISIONS.md`: every dated decision with its reason. Read both before you start.
-- `playtests/`: Brian's three playtest files. The 2026-11-07 phone note (`2026-11-07-brian-phone-playtest-ch1.md`) is only here, not in the repo.
-- `reviews-2026-11-06/`: copies of the review docs, `FEEDBACK-CODE-CHECK.md` (the 64-row check Hermes made) and `CHIP-ARMATURE-AUDIT.md`.
+- `playtests/`: Brian's three playtest files. The 2026-11-07 phone note (`2026-11-07-brian-phone-playtest-ch1.md`) is here and in the repo's `docs/playtests/` since 2026-11-08.
+- `reviews-2026-11-06/`: copies of the review docs, `FEEDBACK-CODE-CHECK.md` (the 64-row check Hermes made; also in the repo's `docs/` since 2026-11-08) and `CHIP-ARMATURE-AUDIT.md`.
 - `source-snapshots/`: the old TypeScript from 2026-11-02. It is the old engine, so it is reference only.
 
 **The Grok archive.** `docs/grok-archive/` in the repo holds every Grok thread word for word, with `FEEDBACK-INDEX.md` (Brian's asks, numbered A1 to A27, B1 to B29, C1 to C8).
@@ -41,7 +41,7 @@ Brian's rule (2026-11-06): the archive was made once. The Grok threads are not r
 | `CHIP-ARMATURE-AUDIT.md` | Every goal chip placed on the seven beats, with nine departures from the spine and a verdict on each |
 | `PHASE-1-LINES-FOR-BRIAN.md`, `PHASE-2-...`, `PHASE-3-...`, `CHAPTER-1-LINES-FOR-BRIAN.md` | Every new on-screen line, with one other way to say it, and each file's list of what is not finished |
 | `HERMES-GO.md` | The first job given to Hermes |
-| `playtests/` | Brian's two transcribed recordings |
+| `playtests/` | Brian's two transcribed recordings and the 2026-11-07 phone note |
 
 **Words used in this document.**
 - **Chip**: the goal line at the top of the screen, such as "Squatch: wash the dishes at the sink".
