@@ -6208,7 +6208,24 @@
    "r": 140
   }
  ],
- "ch1 O4 lobby": [],
+ "ch1 O4 lobby": [
+  {
+   "id": "notice",
+   "verb": "READ",
+   "who": "sq",
+   "x": 770,
+   "y": 300,
+   "r": 80
+  },
+  {
+   "id": "home",
+   "verb": "ENTER",
+   "who": "sq",
+   "x": 480,
+   "y": 575,
+   "r": 90
+  }
+ ],
  "ch1 S1L hidden": [
   {
    "id": "leave",

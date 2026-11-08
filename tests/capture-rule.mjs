@@ -24,12 +24,14 @@ g.check("no old capture paths (Pn, df, L0, m2) are left", !/function (Pn|df|L0|m
 g.check("no code takes stars away", !/stars\s*-\s*100|n\.stars = Math\.max\(0, n\.stars -/.test(all));
 g.check("only capture() makes the LOCKUP card", (all.match(/id: "jail"/g) || []).length === 1 && /function capture\(by\)[\s\S]*?id: "jail"/.test(all));
 const ROWS = {
+  lobbyvent: "25.10", lobbykid: "25.11", lobbyexec: "25.12", lobbyclerk: "25.13",
   deck: "19.1", vent: "19.2", hallvent: "19.18", s6: "19.3", hallbot: "19.4", lure9: "19.5", lure11: "19.6",
   pump: "8.1", diner: "8.2", blorp: "8.3", sink: "8.4", rust: "8.5", lure: "19.7", bots3: "19.8",
   rover1: "19.9", "rover-s": "19.10", lure3: "19.11", rover4: "19.12", light4: "19.13", gate4: "19.14",
 };
 // Each catch site, by the words it calls with.
 const SITES = [
+  ["10-ch1.js", /capture\(n\.lobbyBy \|\| "lobbykid"\)/, "Chapter 1 lobby guard (the night out)"],
   ["10-ch1.js", /capture\(aV\.secBy === "vent" \? "vent" : "deck"\)/, "Chapter 1 deck guard"],
   ["11-ch1-hall.js", /capture\("s6"\)/, "Chapter 1 S6 tourist alarm"],
   ["11-ch1-hall.js", /capture\(s === "S9" \? "lure9" : "lure11"\)/, "Chapter 1 S9 and S11 lure"],
@@ -59,13 +61,14 @@ g.check("the card's restart line is row 19.15", (await page.evaluate(() => windo
 
 // (b) The same sequence for every captor.
 const SCENES = {
+  "1l": { kind: "ch1", call: "sceneO4", set: { op: { scene: "O4", room: "lobby" } } },
   1: { kind: "ch1", call: "sceneS1L", set: { op: { scene: "S1L", room: "deck", sqPose: "stand" } } },
   "1h": { kind: "ch1", call: "sceneS9", set: { op: { scene: "S9", room: "hall", sqPose: "stand", egg: null }, swap: false } },
   2: { kind: "ch2", steps: [["set", { jar: 12, has: "coins", reg: 4 }], ["reset", "g6"]] },
   3: { kind: "ch3", room: "pad", phase: "p1", mops: false, extra: {} },
   4: { kind: "ch4", room: "port", phase: "m1", mops: false, extra: {}, found: [] },
 };
-const CHAPTER = { deck: 1, vent: 1, s6: "1h", hallbot: "1h", hallvent: "1h", lure9: "1h", lure11: "1h", rover1: 3, "rover-s": 3, lure3: 3, rover4: 3, light4: 4, gate4: 4 };
+const CHAPTER = { lobbyvent: "1l", lobbykid: "1l", lobbyexec: "1l", lobbyclerk: "1l", deck: 1, vent: 1, s6: "1h", hallbot: "1h", hallvent: "1h", lure9: "1h", lure11: "1h", rover1: 3, "rover-s": 3, lure3: 3, rover4: 3, light4: 4, gate4: 4 };
 async function runCapture(key) {
   await page.evaluate(setState, SCENES[CHAPTER[key] || 2]);
   return page.evaluate((key) => {

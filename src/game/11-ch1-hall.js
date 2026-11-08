@@ -315,6 +315,8 @@
         }),
         uV(0.4),
         v("pa", "Bleep-Bloop Bots! Floors that mop THEMSELVES!", "pa"),
+        // What Squatch brought back from the night out (D15) comes true.
+        v("sq", "Robot janitors. Like the notice said.", "whisper"),
         i(!1),
         v("pa", "Janitors Dot, Bob and Lou... REPLACED.", "pa"),
         i(!0),
