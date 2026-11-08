@@ -65,3 +65,12 @@ The same card as Chapter 2 (rows 6.1 to 6.7): it fills the picture, its top line
 | 26.7 | S11, tapping Mops's face | Mops goes to type the code at the door. | Mops heads for the keypad. |
 | 26.8 | S11, tapping Squatch's face | Squatch sings to pull the bot off the door. | Squatch lures the bot away from the door. |
 | 26.9 | S11, the door opens; right after Squatch says "Door open! Uh oh... a fur scanner." (the game switches back to Squatch) | Squatch has to get past the scanner. | The scanner is Squatch's problem now. |
+
+## Order fixes: nothing is said before the player can understand it
+
+| # | When it shows | In the game now | Another way to say it |
+| --- | --- | --- | --- |
+| 27.1 | S6 and S7, PEEK at the trash can holding half the torn slip (replaces "Half the torn slip! The hangar code's on it..." and "Not yet. Mops needs me first.", which named the code before Mops does in S8) | Mops's torn slip. Just paperwork. | Half of Mops's slip. Paperwork. |
+| 27.2 | S6 and S7, PEEK at the vent holding the other half (unchanged; it names no code) | The other half's down the vent. Way too small for me. | (unchanged) |
+
+"A WOOKIE!" in the lobby and the heart lines in O3 and O6 changed with D15, because the night out rewrote those exact lines: rows 25.1 to 25.4 and 25.15 to 25.16. The word "Wookie" is now first heard in the O7 flashback ("A Wookie tour group came to visit Stormtop."), and the first "WOOKIE!" shout is the deck tourist in S1L, after it.

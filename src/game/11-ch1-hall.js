@@ -870,6 +870,7 @@
       return pick(s6Spots());
     }
     // Things in the hall Squatch can look at again, and the two halves of the torn slip.
+    // Before S8 the slip is only paperwork to Squatch: Mops names the hangar code first, in S8 (rule 20).
     function hallFinds() {
       return [
         spot({
@@ -903,10 +904,7 @@
           at: [DV.x, DV.y - 70],
           when: !!(B.halves[0] && B.halves[0].on),
           f: () =>
-          TV([
-            v("sq", "Half the torn slip! The hangar code's on it...", "whisper"),
-            v("sq", "Not yet. Mops needs me first.", "whisper"),
-          ]),
+          TV([v("sq", "Mops's torn slip. Just paperwork.", "whisper")]),
         }),
         spot({
           id: "vent",
