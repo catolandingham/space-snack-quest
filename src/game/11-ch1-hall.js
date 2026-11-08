@@ -278,9 +278,7 @@
         rn((s) => {
           B.ramp = s;
         }, 0.8),
-        v("pa", n.furVent ? "Delegation report: FUR in the air scrubbers." : "Delegation report: FUR spotted in the lobby.", "pa"),
-        v("pa", "Janitorial issue! First robot order: APPROVED.", "pa"),
-        v("sq", "...That was MY fur.", "whisper"),
+        ...s3Report(),
         v("pa", "DING DONG! Delivery for Stormtop!", "pa"),
         N(() => {
           B.bots.forEach((s) => {
@@ -386,6 +384,17 @@
         uV(1.2),
         N(Uh),
       ]);
+    }
+    // The delegation's report in S3 says what really happened (Brian, 2026-11-07): fur went into a vent
+    // (the lobby vent alarm, the closet vent, or the deck vent) -> the air scrubbers; seen in the lobby and got
+    // away -> "spotted in the lobby"; a clean night out -> all clear. Rows 25.23 to 25.25.
+    function s3Report() {
+      let order = [v("pa", "Janitorial issue! First robot order: APPROVED.", "pa"), v("sq", "...That was MY fur.", "whisper")];
+      return n.furVent
+        ? [v("pa", "Delegation report: FUR in the air scrubbers.", "pa"), ...order]
+        : n.nightSeen
+          ? [v("pa", "Delegation report: FUR spotted in the lobby.", "pa"), ...order]
+          : [v("pa", "Delegation report: all clear. Robots arrive at dawn.", "pa")];
     }
     let Ct = { x: 1065, y: 300 },
       ye = { x: 990, y: 250 };

@@ -73,6 +73,9 @@ Row 18.5 ("Squatch: run back to the closet!") stays: it now shows only while sec
 | 25.18 | O6, Mops waves the notice away (his reaction to what Squatch brought back) | A notice can't mop a floor. | Pfft. Paper can't mop. |
 | 25.19 | S3, Squatch's whisper when the robot delivery rolls down the ramp, after the PA's "Bleep-Bloop Bots! Floors that mop THEMSELVES!" | Robot janitors. Like the notice said. | The notice was right. |
 | 25.20 | O4, the label on the snack counter on the right wall | SNACKS | SNACK BAR |
+| 25.23 | S3, the delegation's report after a clean night out (nobody saw Squatch and no fur went into a vent); the "Janitorial issue!" line and "...That was MY fur." are left out (Brian, 2026-11-07) | Delegation report: all clear. Robots arrive at dawn. | Delegation report: no problems. Robots arrive today. |
+| 25.24 | S3, the report when fur went into a vent (the lobby vent alarm, the closet vent or the deck vent); then "Janitorial issue! First robot order: APPROVED." and "...That was MY fur." as before | Delegation report: FUR in the air scrubbers. | (unchanged) |
+| 25.25 | S3, the report when someone in the lobby saw Squatch and no fur went into a vent; then the same two lines as 25.24 | Delegation report: FUR spotted in the lobby. | (unchanged) |
 
 ## Switch cards: every Squatch and Mops switch in Chapter 1 says why
 

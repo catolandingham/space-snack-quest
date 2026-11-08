@@ -15,6 +15,8 @@
  * (d) The notice: READ · notice at the table (row 18.204), the close-up shows rows 25.5 to 25.7, the
  *     whisper is row 25.8, and Squatch holds the notice; ENTER · closet (18.205) leads to O5 with the
  *     inspection line (25.14, with the ear).
+ * (f) The S3 report says what happened: a vent alarm -> the air scrubbers (row 25.24), seen and got away
+ *     -> "spotted in the lobby" (row 25.25), a clean night -> all clear (row 25.23).
  * (e) The chips follow the chip rule: 18.201 until he sees the table, then 18.202, then 18.203; 18.5
  *     while security is coming.
  */
@@ -214,5 +216,22 @@ for (const [k, row] of [[0, "25.2"], [1, "25.3"], [2, "25.4"]]) {
   g.check("ENTER · closet (row 18.205) takes him home to O5", o5.offer === L["18.205"] && o5.scene === "O5", o5);
   g.check("O5 opens with Security's voice through the door, row 25.14 with the ear", o5.line === L["25.14"] && o5.ear === true && o5.who === "bot", o5);
 }
+// (f) The S3 report, for each kind of night.
+const reports = {};
+for (const [name, vent, seen] of [["vent", true, false], ["seen", false, true], ["clean", false, false]]) {
+  await fresh();
+  reports[name] = await page.evaluate(([vent, seen]) => {
+    const ss = window.__ss, n = ss.op;
+    if (seen) { const c = ss.lobby().cones[1]; n.sq.x = c.ox + Math.cos(c.a) * 110; n.sq.y = c.oy + Math.sin(c.a) * 110 + 30; ss.tick(0.02); }
+    if (vent) { const v = ss.lobby().vent; n.runner = null; n.looked = false; n.hopTo = null; n.ctrl = true; n.sq.x = v.x; n.sq.y = v.y; for (let i = 0; i < 40 && !ss.lobby().looked; i++) ss.tick(0.05); }
+    const was = { furVent: !!n.furVent, seen: !!n.nightSeen };
+    ss.sceneS3();
+    return { was, lines: n.q.filter((r) => r.k === "bub" && r.b.who === "pa").map((r) => r.b.text).slice(0, 2) };
+  }, [vent, seen]);
+}
+g.check("S3 after the vent alarm: the air-scrubbers report (row 25.24)", reports.vent.was.furVent && reports.vent.lines[0] === L["25.24"], reports.vent);
+g.check("S3 after a sighting he got away from: spotted in the lobby (row 25.25)", !reports.seen.was.furVent && reports.seen.was.seen && reports.seen.lines[0] === L["25.25"], reports.seen);
+g.check("S3 after a clean night out: all clear (row 25.23), and no janitorial-issue line", !reports.clean.was.furVent && !reports.clean.was.seen && reports.clean.lines[0] === L["25.23"] && !reports.clean.lines.some((t) => /Janitorial/.test(t)), reports.clean);
+
 g.check("no page errors", errors.length === 0, errors);
 await g.finish("ch1-lobby");

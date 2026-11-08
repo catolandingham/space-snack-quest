@@ -53,6 +53,7 @@ g.check('nobody says "Wookie" before the O7 flashback explains it', flashback >=
 g.check("the first robot line is Squatch's whisper after the notice (row 25.8)", firstRobot >= 0 && log[firstRobot].text === L["25.8"], log[firstRobot]);
 const order = ["25.1", "25.8", "25.14", "25.15", "25.16", "25.17", "25.18", "25.19"].map((r) => [r, line(L[r])]);
 g.check("O3, the notice, O5, O6 and S3 lines all show, in that order", order.every(([, i], j) => i >= 0 && (j === 0 || i > order[j - 1][1])), order);
+g.check("the clean night out gets the all-clear report in S3 (row 25.23)", line(L["25.23"]) > notice && line(L["25.24"]) < 0 && line(L["25.25"]) < 0, { clear: line(L["25.23"]) });
 g.check("O3's heart line comes before the night out, the O6 ones after the notice", order[0][1] < notice && order[3][1] > notice);
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();

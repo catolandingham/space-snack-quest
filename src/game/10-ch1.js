@@ -64,6 +64,7 @@
           log: [],
           maxB: 0,
           sw1Done: !1,
+          nightSeen: !1,
         }),
         (n.pulse = new Set()),
         (n.found = new Set()),
@@ -314,6 +315,7 @@
         (n.execTurn = 1),
         (n.lightHit = 0.6),
         (n.lobbyBy = LOBBY_SEEN[l].by),
+        (n.nightSeen = !0),
         kV(LOBBY_SEEN[l].who, LOBBY_SEEN[l].shout));
       let o = l === "R" ? { x: 860, y: 440 } : l === "L" ? { x: 210, y: 400 } : { x: 410, y: 230 };
       ((n.runner = { k: l, x: o.x, y: o.y, v: Math.hypot(o.x - je.x, o.y - je.y + 20) / 2, pulled: -1 }),
