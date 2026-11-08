@@ -1129,6 +1129,9 @@
           s = l.y + (l.ty - l.y) * o;
         ((e.globalAlpha = 1 - Math.max(0, o - 0.85) * 6), XV(i, s, 5, 3, 7, 1.4, l.t * 3), wV("#8b5a3c", 1.2), (e.globalAlpha = 1));
       }
+      // The closet teach tuft: big enough to see leave his fur and land on the vent (60-frame-draw.js).
+      let d = n.furDrift;
+      d && d.x != null && (XV(d.x + Math.sin(n.T * 7) * 4, d.y, 18, 12, 9, 3, n.T * 4), wV("#8b5a3c", 2));
     }
     let U2 = 48,
       r5 = 22;

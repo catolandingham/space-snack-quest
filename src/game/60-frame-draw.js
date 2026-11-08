@@ -46,12 +46,24 @@
           !d[0] && x.tour[0] && d.push(x.tour[0]),
           d[0] && T2(d[0], "vent"));
       }
+      // Closet vent (rule 13): a tuft leaves Squatch's fur and only then does he say it went in.
+      // The 70px reach is unchanged. The tuft is the same size as the lobby warning.
       n.room === "closet" &&
         n.ctrl &&
         !n.ventTaught &&
+        !n.furDrift &&
         n.sqPose === "stand" &&
         Math.hypot(n.sq.x - Sf.x, n.sq.y - Sf.y) < 70 &&
-        ((n.ventTaught = !0), (n.furVent = !0), fq(Sf.x, Sf.y), kV("sq", "Oops. Fur in the vent."));
+        (n.furDrift = { x0: n.sq.x + 10 * (n.sq.f || 1), y0: n.sq.y - 52, x1: Sf.x, y1: Sf.y, t: 0, dur: 0.9, said: !1 });
+      if (n.furDrift) {
+        let d = n.furDrift;
+        d.t += l;
+        let k = Math.min(1, d.t / d.dur);
+        ((d.x = d.x0 + (d.x1 - d.x0) * k),
+          (d.y = d.y0 + (d.y1 - d.y0) * k),
+          d.t >= d.dur && !d.said && ((d.said = !0), (n.ventTaught = !0), (n.furVent = !0), kV("sq", "Oops. Fur in the vent.")),
+          d.t >= d.dur + 0.45 && (n.furDrift = null));
+      }
       for (let d of n.sparks) ((d.y -= (d.s === "!" ? 0 : 26) * l), (d.t -= l));
       if (((n.sparks = n.sparks.filter((d) => d.t > 0)), de())) {
         ((n.bt += l), n.cur && n.cur.k === "panel" && (n.panelT += l));

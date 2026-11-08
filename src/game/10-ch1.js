@@ -873,11 +873,8 @@
           }),
           uV(0.8),
           N(() => {
-            ((n.chair = !1),
-              (n.moPose = "stand"),
-              (n.mo.x = 680),
-              (n.mo.y = 470),
-              (n.mo.f = -1),
+            // He was already on the chair (O8). Stand up there. Do not pop him across the room.
+            ((n.moPose = "stand"),
               (n.moMop = "hand"),
               (n.sqPose = "stand"),
               (n.sq.x = 300),
@@ -887,7 +884,7 @@
           uV(0.5),
           v("mops", "Off to work, buddy. Stay put!"),
           N(() => {
-            n.mo.f = 1;
+            ((n.mo.f = 1), (n.chair = !1));
           }),
           ta(1),
           He(n.mo, 848, 420, 120),

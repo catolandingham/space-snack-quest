@@ -133,6 +133,10 @@ npm test
 
 `npm test` runs every suite in `tests/` one at a time and prints one PASS or FAIL line per suite. It exits non-zero if any suite fails. To run one suite: `npm run test:one tests/kitchen.mjs`.
 
+`tests/video-1107.mjs` checks the 2026-11-07 Chapter 1 phone recording against this build. A tuft of fur leaves Squatch and reaches the closet vent before he says "Oops. Fur in the vent." In the morning Mops stands up on the chair he slept on, then walks to the door. The same suite checks that sneaking onto the deck does not put him in a watcher, that a hall catch does not slide him through the walls, and that a speech bubble is drawn above the cones. It does not change walking speed, the box, the cones, or the timers.
+
+Docs match main: yes.
+
 The tests find Chrome on their own: the `CHROME` environment variable if it is set, then Google Chrome in `/Applications` on a Mac, then `/usr/bin/google-chrome`. Set `CHROME` to use another Chrome or Chromium binary. Pictures the tests save go to `tests/out/`, which git ignores.
 
 If `puppeteer-core` is missing, or Chrome cannot be found or started, the test prints the failed step and the command to fix it, then exits.

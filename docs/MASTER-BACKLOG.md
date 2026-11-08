@@ -158,7 +158,28 @@ The pass drove wash 5, wash 1, `g1`, and unknown `g5`. The other checkpoint rows
 - Checkpoint rows the independent pass did not drive.
 - Any item not named in the tables above.
 
+## 2026-11-08, the Chapter 1 phone recording
+
+Brian's iPhone recording of Chapter 1 from 2026-11-07 16:58 PT was an older build, from just before PR #10. Each note was checked on current main. Branch `fix/video-1107-glitches`. Not merged. Merging would deploy to players, and that waits for Brian's yes in the pull request.
+
+| # | What the recording showed | On this build |
+| --- | --- | --- |
+| 1 | The player missed the green NEXT button five times | Report only. Wait for Brian's new recording. A tap anywhere on the picture advances a line, and so do Space, Enter, and the green button. On a 375 by 812 phone that button sits in the controls row under the picture. It reads NEXT while a line is up. Nothing on the bubble itself says NEXT. |
+| 2 | "Oops. Fur in the vent." The fur popped onto the vent | Fixed. A tuft leaves Squatch's fur, drifts onto the closet vent, and only then does he say the line. The words are unchanged. The 70px reach is unchanged. |
+| 3 | Sneaking out the door, Squatch appeared on the guard, inside the cone | Not on this build. He walks in along the bottom of the deck. Through that walk the nearest watcher stays at least 120px away, and he is never inside a cone. The lobby night-out spawn is the same: at the closet door, not on a watcher. Cones, patrols and timers were not touched. |
+| 4 | After the Guardian book, Mops popped into the middle of the room | Fixed. He is already on the chair he slept on. He stands up there, says "Off to work, buddy. Stay put!", then walks to the door. |
+| 5 | After a hallway catch, Squatch slid backward through the walls | Not on this build. He stays still under the lockup card and the joke lines, then appears at the checkpoint in one step. |
+| 6 | A bubble drew under a guard's cone | Not on this build. The bubble is drawn after the cones. Its fill is white, not tinted by the cone. |
+| 7 | A tap near the top of the iPhone opened the address bar | Report only. On a 375 by 812 phone the chapter tag, the ↺ button and Squatch's face sit in the top 40px. They are the HUD bar. Moving them would change the zone rule, so they stay. |
+| 8 | The hallway box disguise felt slow enough to give up | Report only. Not changed. While he is hidden in the box he does not move. A direction makes him stand up and leave it, then walk at the normal hall speed of 190px a second (152px a second up or down). The bot that walks to the singing box moves at 60px a second. |
+
+Test: `tests/video-1107.mjs`.
+
+Docs match main: yes.
+
 ## Changelog
+
+2026-11-08. The Chapter 1 phone recording, on branch `fix/video-1107-glitches`, not merged. Fur drifts into the closet vent before the line. Mops stands up where he slept. The other six notes are reports, not changes.
 
 2026-11-07. Chapter 1 pass on branch `chapter-1-pass` (D15 night out, Chapter 1 switch cards, order fixes, Chapter 1 tests), not merged.
 
