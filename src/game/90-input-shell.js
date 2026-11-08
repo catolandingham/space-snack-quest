@@ -1,4 +1,4 @@
-// Keyboard and taps, the debug link and state strip, the frame loop, window.__ss for tests, and the page (joystick, ACTION button, Reset section, help line).
+// Keyboard and taps, the debug link and state strip, the frame loop, window.__ss for tests, and the page (joystick, ACTION button, sound button, help line).
     let J2 = () => VV();
     // The first touch, click or key of any kind starts sound: the joystick, the ACTION button and the picture
     // all count, on touch-down and on lift (some browsers allow sound only on one of them).
@@ -27,18 +27,14 @@
         Cs();
         return;
       }
-      if (l > c - 64 && o < 56) {
-        soundTap();
-        return;
-      }
-      if (!_6(l, o)) {
+      {
         if (p.state === "op" && Nh()) {
-          if (n.bt < 0.3) return;
+          if (n.bt < 0.3) return void (n.tapT = n.T);
           hf(l > 720 && o < 160 ? "close" : l < 400 ? "prev" : "next");
           return;
         }
         if (p.state === "op") {
-          nf();
+          walkTap(l, o) || nf();
           return;
         }
         if (p.state === "title") {
@@ -288,11 +284,37 @@
         solids: () => ih(),
         CH2_CHIPS,
         ch2ChipKey: () => ch2ChipKey(),
+        // The one capture rule (task T19, 25-capture.js).
+        CAPTURES,
+        LOCKUP_RESTART,
+        capture,
+        shoo,
+        lostYou,
+        startSec: (by) => sSec(by),
+        hallAlarm: FV,
+        hallAlarmStart: (bot, why) => T2(bot, why),
+        CH1_CHECKPOINTS,
+        CH3_CHECKPOINTS,
+        CH4_CHECKPOINTS,
+        // The HUD (Phase 3, 80-hud.js): the stall hint's clock and method lines.
+        stallFor: (t) => {
+          ((stall.sig = progressSig()), (stall.t = t));
+        },
+        methodLine: () => methodLine(),
+        stallT: () => stall.t,
+        conesDrawn: () => conesDrawn.slice(),
+        // One game update of dt seconds, run inside the caller's own task (no frame can run in between).
+        tick: (dt) => ep(dt),
+        METHOD_LINES: [...new Set(Object.values(METHOD_LINES))],
+        // Award labels (Phase 3, T22).
+        SNEAKY_LABELS,
+        NEVER_CAUGHT: [NEVER_CAUGHT, NEVER_CAUGHT_WHY, NEVER_CAUGHT_TODO],
       }),
       debugLink(),
       {
         actionE: J1,
         resetHold: armReset,
+        soundTap,
         actionDown: Vf,
         tapAt: O5,
         setJoy: (l, o, i) => {
@@ -392,7 +414,7 @@
   }
   // Help lines: only controls that work. Wording waits for Brian's yes (docs/PHASE-1-LINES-FOR-BRIAN.md).
   var KEY_HELP = "Arrows or WASD: walk. E: do the action in the white label. Space or Enter: next line. Hold R: restart this section. Esc: skip a flashback. M: sound.",
-    TOUCH_HELP = "Stick: walk. Big button: do it. Tap the picture: next line. Hold Reset section to restart.";
+    TOUCH_HELP = "Stick: walk. Big button: do it. Tap the picture: next line. Hold \u21BA to restart.";
   function r8(V) {
     let t = (0, YV.useRef)(null),
       [a, e] = (0, YV.useState)(!1);
@@ -532,7 +554,37 @@
       }, 250);
       return () => window.clearInterval(eV);
     }, []);
-    let M = { display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "center", gap: 10, width: "100%" },
+    // The sound button, in the controls row under the picture (Phase 3). The engine draws its icon (hudSound).
+    let SND = (0, pe.jsxs)("span", {
+        style: { display: "inline-flex", alignItems: "center", gap: 8 },
+        children: [
+          (0, pe.jsx)("button", {
+            type: "button",
+            id: "ss-sound",
+            "aria-label": "Sound",
+            style: {
+              width: 44,
+              height: 44,
+              borderRadius: 22,
+              border: "3px solid #1e2430",
+              background: "#ffffff",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: 0,
+              touchAction: "none",
+              cursor: "pointer",
+            },
+            onPointerDown: nV(() => e.current?.soundTap()),
+          }),
+          (0, pe.jsx)("span", {
+            id: "ss-sound-line",
+            style: { display: "none", fontSize: 14, maxWidth: 240, color: "#1e2430" },
+            children: "Sound is blocked by this browser. Tap to try again, or allow sound for this site.",
+          }),
+        ],
+      }),
+      M = { display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "center", gap: 10, width: "100%" },
       z = (0, pe.jsx)(r8, { label: h, size: I ? 96 : 104, eng: e }),
       G = (0, pe.jsx)(q8, { eng: e, size: I ? 120 : 128 }),
       Z = null;
@@ -543,27 +595,7 @@
                 children: [
                   G,
                   z,
-                  (0, pe.jsx)("button", {
-                    type: "button",
-                    "aria-label": "Reset section",
-                    style: {
-                      height: 44,
-                      minWidth: 148,
-                      padding: "0 14px",
-                      borderRadius: 12,
-                      border: "3px solid #1e2430",
-                      background: "#fffaf0",
-                      color: "#1e2430",
-                      fontWeight: 800,
-                      fontSize: 15,
-                      touchAction: "none",
-                    },
-                    onPointerDown: nV(() => e.current?.resetHold(!0)),
-                    onPointerUp: nV(() => e.current?.resetHold(!1)),
-                    onPointerCancel: nV(() => e.current?.resetHold(!1)),
-                    onPointerLeave: nV(() => e.current?.resetHold(!1)),
-                    children: "Reset section",
-                  }),
+                  SND,
                   (0, pe.jsx)("span", {
                     id: "ss-help",
                     style: { width: "100%", textAlign: "center", color: V.text.secondary, fontSize: V.font.label.fontSize },
@@ -586,27 +618,7 @@
                     id: "ss-help",
                     children: KEY_HELP,
                   }),
-                  (0, pe.jsx)("button", {
-                    type: "button",
-                    "aria-label": "Reset section",
-                    style: {
-                      height: 44,
-                      minWidth: 148,
-                      padding: "0 14px",
-                      borderRadius: 12,
-                      border: "3px solid #1e2430",
-                      background: "#fffaf0",
-                      color: "#1e2430",
-                      fontWeight: 800,
-                      fontSize: 15,
-                      touchAction: "none",
-                    },
-                    onPointerDown: nV(() => e.current?.resetHold(!0)),
-                    onPointerUp: nV(() => e.current?.resetHold(!1)),
-                    onPointerCancel: nV(() => e.current?.resetHold(!1)),
-                    onPointerLeave: nV(() => e.current?.resetHold(!1)),
-                    children: "Reset section",
-                  }),
+                  SND,
                   /^!?NEXT$/.test(h) ? z : null,
                   (0, pe.jsx)(Mb, { label: "Show touch controls", onClick: () => O(!0) }),
                 ],
@@ -656,27 +668,7 @@
                     style: { display: "flex", flexDirection: "column", gap: 8, alignItems: "center" },
                     children: [
                       z,
-                      (0, pe.jsx)("button", {
-                        type: "button",
-                        "aria-label": "Reset section",
-                        style: {
-                          height: 44,
-                          minWidth: 148,
-                          padding: "0 14px",
-                          borderRadius: 12,
-                          border: "3px solid #1e2430",
-                          background: "#fffaf0",
-                          color: "#1e2430",
-                          fontWeight: 800,
-                          fontSize: 15,
-                          touchAction: "none",
-                        },
-                        onPointerDown: nV(() => e.current?.resetHold(!0)),
-                        onPointerUp: nV(() => e.current?.resetHold(!1)),
-                        onPointerCancel: nV(() => e.current?.resetHold(!1)),
-                        onPointerLeave: nV(() => e.current?.resetHold(!1)),
-                        children: "Reset section",
-                      }),
+                      SND,
                     ],
                   })
                 : null,

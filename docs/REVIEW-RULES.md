@@ -53,3 +53,6 @@ Run EVERY scene through ALL of these, both at script time and on screenshots aft
     - No collectibles or score during the opening O0–O9.
     - Getting caught always costs −100 and returns you to the checkpoint; the score never drops below 0; O4 is exempt.
     - Tally card and final score screen wait for a tap.
+
+## Techniques
+- **Zoom-in card for a first idea** (Brian, 2026-11-07): the first time a key idea appears (the first hide, the first switch), teach it with the opening's "This is Squatch" card: the room goes dark except a spotlight on the thing, one plain line beside it, wait for a tap, once per play-through (`teach` in `src/game/25-capture.js`).

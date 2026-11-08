@@ -5,6 +5,8 @@
         !ch2.resetHold.fired &&
         ((ch2.resetHold.t += l), ch2.resetHold.t >= 0.75 && ((ch2.resetHold.fired = !0), (ch2.resetHold.on = !1), sectionReset())),
         noteSection(),
+        stallTick(l),
+        n.ctrl || (n.act = null),
         d5(l),
         h5(),
         iA(l),
@@ -42,7 +44,7 @@
         let d = [...B.bots.filter((A) => A.on), ...(n.scene === "S9" || n.scene === "S11" ? [x.lureBot] : [])];
         (d.sort((A, T) => Math.hypot(A.x - SV.x, A.y - SV.y) - Math.hypot(T.x - SV.x, T.y - SV.y)),
           !d[0] && x.tour[0] && d.push(x.tour[0]),
-          d[0] && T2(d[0]));
+          d[0] && T2(d[0], "vent"));
       }
       n.room === "closet" &&
         n.ctrl &&
@@ -53,6 +55,8 @@
       for (let d of n.sparks) ((d.y -= (d.s === "!" ? 0 : 26) * l), (d.t -= l));
       if (((n.sparks = n.sparks.filter((d) => d.t > 0)), de())) {
         ((n.bt += l), n.cur && n.cur.k === "panel" && (n.panelT += l));
+        // A tap kept from the first 0.3 s of this bubble is applied now (task T22).
+        n.tapLate && (n.tapLate !== n.cur ? (n.tapLate = null) : n.bt >= 0.3 && ((n.tapLate = null), nf()));
         {
           let A = n.cur && n.cur.k === "panel" && n.cur.id === "terminal" && !x.typed ? "!SIGN" : n.bt > 3 ? "!NEXT" : "NEXT";
           p.verb !== A && ((p.verb = A), t.onVerb(A));
@@ -1071,78 +1075,6 @@
       ),
         o || (_ + T - 14, $ + R - 10, void 0));
     }
-    let Y0 = -1;
-    function S5() {
-      n.room === "gas" &&
-        (m(c - 268, 58, 200, 32, 10),
-        r(ch2.fuel ? "#e7fff3" : "#fff1f0", 3),
-        g(ch2.fuel ? "TANK FULL" : "TANK EMPTY", c - 168, 74, 15, ch2.fuel ? "#157a45" : "#b91c1c", "center", 900));
-      let l = n.scene.startsWith("M")
-        ? "CH4 \xB7 MARS"
-        : n.scene.startsWith("P")
-          ? "CH3 \xB7 PHOBOS"
-          : n.scene.startsWith("G")
-            ? "CH2 \xB7 GAS STOP"
-            : "CH1 \xB7 STORMTOP";
-      ge(17);
-      let o = n.room === "lobby",
-        i = o ? -8 : e.measureText(l).width + 28;
-      if ((o || (m(10, 10, i, 34, 17), r("#ffffff", 3), g(l, 24, 27, 17, y, "left")), n.starOn)) {
-        (n.stars > fh && (uh = n.T), (fh = n.stars));
-        let s = "\u2605 " + n.stars;
-        ge(18);
-        let q = e.measureText(s).width + 28,
-          d = Math.max(0, 1 - (n.T - uh) / 0.35),
-          A = 1 + 0.28 * Math.sin(d * Math.PI);
-        (e.save(),
-          e.translate(18 + i + q / 2, 27),
-          e.scale(A, A),
-          e.translate(-(18 + i + q / 2), -27),
-          m(18 + i, 10, q, 34, 17),
-          r(d > 0 ? "#ffe59a" : "#fff6dc", 3),
-          g(s, 18 + i + q / 2, 27, 18, "#b45309"),
-          e.restore(),
-          Y0 < 0 && (Y0 = n.T));
-        let T = n.T - Y0;
-        if (T < 3.5) {
-          ((e.globalAlpha = Math.min(1, (3.5 - T) * 2)), ge(15));
-          let R = e.measureText("\u2605 = points for finds").width + 22;
-          (m(18 + i, 50, R, 26, 13),
-            r("#ffffff", 2.5),
-            g("\u2605 = points for finds", 18 + i + R / 2, 63, 15, "#b45309", "center", 700),
-            (e.globalAlpha = 1));
-        }
-      }
-      (At(c - 58, 10, 46, 40, "#ffffff", 20),
-        m(c - 47, 24, 7, 12, 2),
-        r(y, 0),
-        e.beginPath(),
-        e.moveTo(c - 41, 24),
-        e.lineTo(c - 33, 18),
-        e.lineTo(c - 33, 42),
-        e.lineTo(c - 41, 36),
-        e.closePath(),
-        r(y, 0),
-        Va());
-      {
-        // Only the current chip. Empty means no chip: an earlier scene's goal never stays on screen.
-        let s = n.chip;
-        chipDrawn = "";
-        // No chip while a story bubble is up (rule 10); ambient chatter does not hide it. Long goals wrap.
-        // At the gas stop the chip sits between the diner sign (right edge 354) and the TANK label (left edge 692).
-        if (s && !(Y0 >= 0 && n.T - Y0 < 3.5) && !(n.cur && n.cur.k === "bub")) {
-          let q = de() ? 17 : 22,
-            gas = n.room === "gas",
-            cx = gas ? 523 : c / 2;
-          (ge(q), (chipDrawn = s));
-          let lines = zt(s, (gas ? 330 : 860) - 36, q),
-            d = Math.max(...lines.map((t) => e.measureText(t).width)) + 36;
-          (m(cx - d / 2, 50, d, lines.length * (q + 6) + 12, 18),
-            r("#ffcf33", 3),
-            lines.forEach((t, i) => g(t, cx, 59 + q / 2 + i * (q + 6), q)));
-        }
-      }
-    }
     function M5(l, o, s, cd) {
       if (l === "switch") {
         // Switch card: who you are now, their picture, and why. Waits for a tap like every card.
@@ -1192,6 +1124,44 @@
         (m(c / 2 - i / 2 + 120, 120, i, 78, 18), r("#ffffff", 4), g(o, c / 2 + 120, 159, 34), c / 2 + 120 + i / 2 - 14);
         return;
       }
+      if (l === "focus" && cd) {
+        drawRoom();
+        let fx = cd.x,
+          fy = cd.y,
+          fr = cd.r;
+        // Pointing at the faces (page text over the picture): find where they are on the picture now.
+        if (cd.faces) {
+          let el = document.getElementById("ss-faces"),
+            cv = e.canvas.getBoundingClientRect();
+          if (el && cv.width) {
+            let q = el.getBoundingClientRect(),
+              k = c / cv.width;
+            ((fx = (q.left + q.width / 2 - cv.left) * k), (fy = (q.top + q.height / 2 - cv.top) * k), (fr = Math.max(q.width, q.height) * k * 0.75 + 12));
+            // On a phone the faces sit in the bar above the picture: the spotlight opens at the top edge under them.
+            fy < 0 && ((fy = 0), (fr = Math.max(fr, 90)));
+          }
+        }
+        (e.save(),
+          e.beginPath(),
+          e.rect(0, 0, c, b),
+          e.arc(fx, fy, fr, 0, Math.PI * 2, !0),
+          (e.fillStyle = "rgba(20,24,32,.8)"),
+          e.fill("evenodd"),
+          e.beginPath(),
+          e.arc(fx, fy, fr, 0, Math.PI * 2),
+          (e.lineWidth = 6),
+          (e.strokeStyle = "#ffcf33"),
+          e.stroke(),
+          e.restore(),
+          ge(40));
+        let ls = zt(o, 420, 40),
+          bw = Math.max(...ls.map((t) => e.measureText(t).width)) + 60,
+          h = ls.length * 50 + 30,
+          tx = fx < c / 2 ? Math.min(c - bw / 2 - 20, fx + fr + 40 + bw / 2) : Math.max(bw / 2 + 20, fx - fr - 40 - bw / 2),
+          ty = w(fy - h / 2, 20, b - h - 20);
+        (m(tx - bw / 2, ty, bw, h, 18), r("#ffffff", 4), ls.forEach((t, i) => g(t, tx, ty + 40 + i * 50, 40, "#1e2430", "center", 800)));
+        return;
+      }
       if (((e.fillStyle = "#1e2430"), e.fillRect(0, 0, c, b), l === "ever")) {
         zt(o, 760, 34).forEach((i, s) => g(i, c / 2, b / 2 - 50 + s * 46, 34, "#ffffff", "center", 800));
         return;
@@ -1223,7 +1193,7 @@
       if (l === "jail") {
         ((e.fillStyle = "#1e2430"), e.fillRect(0, 0, c, b), (e.fillStyle = "#2a3348"), e.fillRect(200, 180, 560, 340));
         for (let i = 0; i < 7; i++) (m(230 + i * 72, 190, 16, 310, 4), r("#d5dbe6", 3));
-        let who = s || n.jailBy || "",
+        let who = s === "blorp" ? "diner" : s || n.jailBy || "",
           cap =
             who === "pump"
               ? "Nozzle's ready."
@@ -1266,7 +1236,8 @@
             Re(470, 490, he * 0.85, { f: 1 }));
         else Re(480, 470, he * 0.85, { f: 1, eyes: "closed" });
         (g(o, c / 2, 110, 44, "#ffffff", "center", 800),
-          zt(cd && cd.cause ? cd.cause : cap, 820, 22).forEach((t, i) => g(t, c / 2, 156 + i * 28, 22, "#8fdcff", "center", 700)));
+          zt(cd && cd.cause ? cd.cause : cap, 820, 22).forEach((t, i) => g(t, c / 2, 156 + i * 28, 22, "#8fdcff", "center", 700)),
+          cd && cd.restart && g(cd.restart, c / 2, 560, 22, "#ffffff", "center", 800));
         return;
       }
       g(o, c / 2, b / 2, 50, "#ffffff", "center", 800);
@@ -1864,25 +1835,29 @@
           s.s === "ha ha!" ? (X(s.x, s.y, 34, 16), r("#fff6dc", 2), g(s.s, s.x, s.y, 16, "#b45309")) : g(s.s, s.x, s.y, 28, "#ff5fa8"));
       e.globalAlpha = 1;
     }
-    function E5() {
-      ((qq = 0), (mq = []), (ringsDrawn = []));
-      let l = n.cur;
-      if (l && l.k === "card") {
-        M5(l.id, l.text, l.by, l);
-        return;
-      }
-      if (n.egg) {
-        yA();
-        return;
-      }
-      if (l && l.k === "fb") {
-        ((n.fbPic = l.pic), I2(l.pic, l.cap), k5());
-        return;
-      }
-      if (l && l.k === "bub" && n.fbPic) {
-        (I2(n.fbPic, ""), bq(l.b, !1));
-        return;
-      }
+    // Where a walk-tap is heading: a small ring on the floor while the player walks there.
+    function drawWalkTo() {
+      let t = n.walkTo;
+      if (!t || de()) return;
+      let k = 0.5 + 0.5 * Math.sin(n.T * 8),
+        sx = t.x - (n.room === "hall" ? B.camX : 0);
+      (e.save(), (e.globalAlpha = 0.7), X(sx, t.y, 16 + 4 * k, 7 + 2 * k), (e.lineWidth = 3), (e.strokeStyle = "#ffffff"), e.stroke(), e.restore());
+    }
+    // A tap was heard while the game could not take it yet: a ring spreads in the bottom right corner.
+    function drawTapHeard() {
+      let k = n.T - (n.tapT == null ? -9 : n.tapT);
+      if (k < 0 || k > 0.45) return;
+      (e.save(),
+        (e.globalAlpha = 1 - k / 0.45),
+        e.beginPath(),
+        e.arc(c - 60, b - 60, 18 + 60 * k, 0, Math.PI * 2),
+        (e.lineWidth = 6),
+        (e.strokeStyle = "#ffcf33"),
+        e.stroke(),
+        e.restore());
+    }
+    // The room the player is in, drawn with nothing over it (E5 adds rings, people, bubbles and the rest).
+    function drawRoom() {
       (n.room === "closet"
         ? (P2(), X2(), g5(), z2())
         : n.room === "deck"
@@ -1913,9 +1888,32 @@
                                   ? I6()
                                   : n.room === "hangar"
                                     ? e5()
-                                    : x5(),
+                                    : x5());
+    }
+    function E5() {
+      ((qq = 0), (mq = []), (ringsDrawn = []), (conesDrawn = []));
+      let l = n.cur;
+      if (l && l.k === "card") {
+        M5(l.id, l.text, l.by, l);
+        return;
+      }
+      if (n.egg) {
+        yA();
+        return;
+      }
+      if (l && l.k === "fb") {
+        ((n.fbPic = l.pic), I2(l.pic, l.cap), k5());
+        return;
+      }
+      if (l && l.k === "bub" && n.fbPic) {
+        (I2(n.fbPic, ""), bq(l.b, !1));
+        return;
+      }
+      (drawRoom(),
         ringsLeft(),
-        xp());
+        xp(),
+        drawSec(),
+        drawWalkTo());
       for (let i of n.sparks)
         if (i.x !== 300 && i.s === "!") {
           let s = Math.sin(i.t * 14) * 4,
@@ -1930,7 +1928,7 @@
             ((e.globalAlpha = Math.min(1, i.t * 2)),
             g(i.s, i.x, i.y, 26, i.s === "\u2665" ? "#e5533d" : "#b45309", "center", 900),
             (e.globalAlpha = 1));
-      (Ka > 0 && ((e.fillStyle = "rgba(20,24,32," + Math.min(1, Ka).toFixed(3) + ")"), e.fillRect(0, 0, c, b)), drawRoomLine(), S5(), a5());
+      (Ka > 0 && ((e.fillStyle = "rgba(20,24,32," + Math.min(1, Ka).toFixed(3) + ")"), e.fillRect(0, 0, c, b)), drawRoomLine(), t5());
       let o = Bs();
       // The green VERB pill for actions with no caption. An action with a caption gets drawCap's "VERB · thing" label instead.
       if (o && !o.cap && (o.x || o.r > 0 || n.room === "deck" || n.room === "hall") && !de() && n.live.length === 0) {
@@ -1948,18 +1946,7 @@
         l && l.k === "panel" && gq(l.id, n.bt > 0.3),
         l && l.k === "bub" ? bq(l.b, !1) : !de() && n.live.length && bq(n.live[0], !0),
         window.__ss && (window.__ss.bubbleFrame = qq));
-      {
-        let i = n.sparks.filter((q) => q.x === 300),
-          s = i[i.length - 1];
-        if (s) {
-          ((e.globalAlpha = Math.min(1, s.t)), ge(16));
-          let q = e.measureText(s.s).width + 30;
-          (m(330, 10, q, 34, 17),
-            r(s.s.startsWith("\u2212") ? "#ffe3dc" : "#fff6dc", 3),
-            g(s.s, 330 + q / 2, 27, 16, s.s.startsWith("\u2212") ? "#b91c1c" : "#b45309", "center", 900));
-        }
-      }
-      ((e.globalAlpha = 1), zG());
+      ((e.globalAlpha = 1), zG(), drawTapHeard());
     }
     function zG() {
       if (!(ch2.dishT > 0) || n.room !== "kitchen" || de()) return;

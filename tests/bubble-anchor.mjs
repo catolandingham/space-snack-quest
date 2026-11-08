@@ -71,7 +71,10 @@ for (const sc of SCENES) {
       const n = ss.op;
       const k = ss.ch2;
       const b = ss.lastBubble;
-      const fresh = b && performance.now() - b.at < 100 ? b : null;
+      // Judge only a bubble that is still up now: since T22 a Space pressed early on a bubble is kept and
+      // applied at 0.3 s, so the story can move on (even change room) between the last draw and this read.
+      const up = b && ((n.cur && n.cur.k === "bub" && n.cur.b.text === b.text) || n.live.some((l) => l.text === b.text));
+      const fresh = b && up && performance.now() - b.at < 100 ? b : null;
       const botsRoom = k.bots && k.bots.length ? (k.phase === "g6" ? "gas" : "kitchen") : "";
       const where = (who) => {
         if (who === "sq") return n.sq.x < -100 ? null : { x: n.sq.x, y: n.sq.y - 70 };

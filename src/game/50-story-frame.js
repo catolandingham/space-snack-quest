@@ -52,9 +52,6 @@
             ? n.ctrl && Q.phase === "p3"
             : n.ctrl && ["S9", "S10", "S10d", "S11"].includes(n.scene) && !(n.scene === "S11" && x.doorOpen) && n.scene !== "S10d";
     }
-    function _6(l, o) {
-      return p.state === "op" && O2() && !de() && l > c - 76 && o > 60 && o < 130 ? (picSwap(), !0) : !1;
-    }
     function picSwap() {
       if (n.scene.startsWith("G") && n.room === "kitchen" && ch2.phase === "g3hide" && !x.mops) {
         (dn(xe.x, xe.y, 63), n.pulse.delete("kcrate"), HA());
@@ -248,6 +245,7 @@
             (e.beginPath(),
               e.moveTo(o, i),
               e.arc(o, i, Ls, -Math.PI / 2 - z0, -Math.PI / 2 + z0),
+          conesDrawn.push({ ox: o, oy: i, a: -Math.PI / 2, half: z0, len: Ls, feet: !0, room: n.room }),
               e.closePath(),
               (e.fillStyle = l.alert > 0 ? "rgba(229,83,61,.20)" : "rgba(130,160,255,.13)"),
               e.fill(),
@@ -408,27 +406,6 @@
         return;
       }
     }
-    function a5() {
-      if ((t5(), n.scene.startsWith("M") && H.gone)) {
-        ((e.globalAlpha = 0.55),
-          m(c - 70, 64, 58, 58, 29),
-          r("#c3c9d1", 3),
-          Fe(c - 41, 116, 0.36, { f: -1 }),
-          (e.globalAlpha = 1),
-          g("Mops is gone", c - 41, 138, 13, "#59657d", "center", 800));
-        return;
-      }
-      if (!O2()) return;
-      let l = x.mops;
-      (m(c - 70, 64, 58, 58, 29),
-        r(l ? "#ffe3c4" : "#ffffff", 3),
-        l ? Re(c - 41, 112, 0.42, { f: -1 }) : Fe(c - 41, 116, 0.36, { f: -1 }),
-        (x.sing ||
-          (n.scene === "S9" && x.lureBot.look > 0) ||
-          (n.scene === "S11" && x.lureBot.look > 0) ||
-          (n.scene.startsWith("G") && ch2ChipKey() === "kitchen:mops")) &&
-          oV(c - 74, 60, 66, 66, 30));
-    }
     function n5(l) {
       if (l === "terminal") {
         if (
@@ -561,8 +538,10 @@
         ? ((e.fillStyle = "#1e2430"),
           e.fillRect(0, 0, c, b),
           g("Chapter 1 \xB7 Stormtop", c / 2, 90, 40, "#ffffff", "center", 900),
-          jh().forEach((o, i) =>
-            g(o, c / 2, 180 + i * 64, i === 5 ? 40 : 30, i === 5 ? "#ffcf33" : i === 4 ? "#8fdcff" : "#ffffff", "center", 900),
+          jh().forEach((o, i, all) =>
+            i === all.length - 1
+              ? g(o, c / 2, 180 + i * 64, 40, "#ffcf33", "center", 900)
+              : tallyLine(o, c / 2, 180 + i * 64, 30, 820, i >= 4 ? "#8fdcff" : "#ffffff"),
           ),
           !0)
         : !1;
@@ -1034,7 +1013,9 @@
           l.push({
             y: o.y,
             d: () => {
-              S2(o) && Bl(o.x, o.y - 50, M2(o), 0.42, 210, B.freakT > n.T - 1.5 ? "rgba(229,83,61,.3)" : "rgba(255,234,120,.4)");
+              S2(o) && seenCone(o.x, o.y - 50, M2(o), 0.42, 210, B.freakT > n.T - 1.5 ? "rgba(229,83,61,.3)" : "rgba(255,234,120,.4)");
+              // The bot also senses Squatch's feet within 70 of its own (X6): that circle is drawn too (Phase 3 review).
+              S2(o) && (conesDrawn.push({ circle: !0, ox: o.x, oy: o.y, len: 70, room: n.room }), e.beginPath(), e.ellipse(o.x, o.y, 70, 70, 0, 0, Math.PI * 2), (e.fillStyle = B.freakT > n.T - 1.5 ? "rgba(229,83,61,.18)" : "rgba(255,234,120,.28)"), e.fill());
               let i = E2(o.x, o.y);
               (dq(o.x + i.x, o.y + i.y, !1), k2(o.x, o.y));
             },

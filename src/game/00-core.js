@@ -39,7 +39,7 @@
       font: {
         family: "Helvetica, Arial, sans-serif",
         mono: "monospace",
-        label: { fontSize: "13px", lineHeight: "18px", letterSpacing: "0" },
+        label: { fontSize: "14px", lineHeight: "19px", letterSpacing: "0" },
       },
       radius: { sm: 4, md: 8, lg: 12, xl: 16, full: 9999 },
       dataviz: { categorical: ["#2563eb", "#eab308", "#06b6d4"], other: "#9ca3af" },
@@ -173,29 +173,6 @@
             T.start(A),
             T.stop(A + o + 0.05));
         } catch {}
-    }
-    function Va() {
-      if (G) {
-        C([c - 50, 18, c - 22, 42], "#e5533d", 4);
-        return;
-      }
-      if (soundState() === "blocked") {
-        // Blocked until a tap: an orange question mark where the sound waves go.
-        (g("?", c - 25, 31, 20, "#e8590c", "center", 900),
-          soundLineShown() &&
-            (ge(13),
-            zt("Sound is blocked by this browser. Tap to try again, or allow sound for this site.", 300, 13).forEach((t, i, a) => {
-              (i === 0 && (m(c - 336, 56, 326, a.length * 18 + 12, 10), r("#fff6dc", 2.5)),
-                g(t, c - 173, 70 + i * 18, 13, "#1e2430", "center", 700));
-            })));
-        return;
-      }
-      ((e.strokeStyle = y),
-        (e.lineWidth = 3),
-        e.beginPath(),
-        e.arc(c - 31, 30, 6, -0.9, 0.9),
-        e.stroke(),
-        z >= 1 && (e.beginPath(), e.arc(c - 31, 30, 12, -0.8, 0.8), e.stroke()));
     }
     let Da = (l) => 440 * Math.pow(2, (l - 69) / 12),
       ji = (l, o, i = "triangle") => l.forEach((s, q) => lV(Da(s), o, i, 0.15, q * o * 0.7)),
@@ -727,9 +704,10 @@
           up();
           break;
         case "op":
-          (E5(), drawCap(), drawReset());
+          (E5(), drawCap());
           break;
       }
+      hudUpdate();
     }
     let pa = {
         sq: "Squatch",
@@ -981,9 +959,30 @@
       }
       ((n.skipping = !1), (n.cutOn = !1), (n.bt = 0), Dt("skip", "", "cutscene skipped", "skip"));
     }
+    // A tap on the picture with no bubble or card up walks the player there (Sierra style).
+    function walkTap(l, o) {
+      if (!n.ctrl || de() || !n.scene) return !1;
+      let b = sn(),
+        hall = n.room === "hall" ? B.camX : 0,
+        who = x.mops ? n.mo : n.sq;
+      n.walkTo = { x: w(l + hall, b.x0, b.x1), y: w(o, b.y0, b.y1), room: n.room, lx: who.x, ly: who.y, lt: n.T, at: n.T };
+      let seen = n.walkHinted;
+      try {
+        seen = seen || window.localStorage.getItem("ssq-walk-hint") === "1";
+      } catch {}
+      seen ||
+        ((n.walkHinted = !0),
+        hudNote("Tap the floor to walk there.", 4),
+        Dt("hint", "", "walk-tap", "hint"));
+      try {
+        window.localStorage.setItem("ssq-walk-hint", "1");
+      } catch {}
+      return !0;
+    }
     function nf() {
       if ((VV(), de())) {
-        if (n.bt < 0.3) return;
+        // Too soon after the bubble opened (task T22): keep the tap, show it was heard, apply it at 0.3 s.
+        if (n.bt < 0.3) return void ((n.tapLate = n.cur), (n.tapT = n.T));
         let o = n.cur;
         ((n.cur = null), (n.idle = 0), o && o.k === "panel" && rh(o.id));
         return;
@@ -1052,7 +1051,9 @@
       return o.length || !(n.act && n.act.spot) ? o : [n.act.spot];
     }
     // Rings drawn this frame, for tests: { id, x, y, r } or { id, box }, in world positions.
-    let ringsDrawn = [];
+    let ringsDrawn = [],
+      // Every sight cone drawn this frame, from the numbers the drawing used (for tests/cone-match.mjs).
+      conesDrawn = [];
     // The spots that can be used now and have a place (a circle or a box). A spot that works anywhere
     // (LEAVE while hidden, ROLL while the light sweeps) wins over every spot after it, so those have no ring.
     function placedSpots() {
@@ -1094,6 +1095,18 @@
       let l = (qe.ArrowRight || qe.KeyD ? 1 : 0) - (qe.ArrowLeft || qe.KeyA ? 1 : 0),
         o = (qe.ArrowDown || qe.KeyS ? 1 : 0) - (qe.ArrowUp || qe.KeyW ? 1 : 0);
       qt.active && Math.hypot(qt.x, qt.y) > 0.15 && ((l = qt.x), (o = qt.y));
+      // Tap to walk (task T23): with no key or stick, head for the tapped point. Keys and the stick cancel it.
+      if (l || o) n.walkTo = null;
+      else if (n.walkTo) {
+        let t = n.walkTo,
+          who = x.mops ? n.mo : n.sq,
+          dx = t.x - who.x,
+          dy = t.y - who.y,
+          d = Math.hypot(dx, dy);
+        // Arrived, control taken away, a new room, or stuck against something for half a second: stop.
+        Math.hypot(who.x - t.lx, who.y - t.ly) > 2 && ((t.lx = who.x), (t.ly = who.y), (t.lt = n.T));
+        d < 8 || !n.ctrl || n.room !== t.room || n.T - t.lt > 0.5 ? (n.walkTo = null) : ((l = dx / d), (o = dy / d));
+      }
       let i = Math.hypot(l, o);
       return (i > 1 && ((l /= i), (o /= i)), { x: l, y: o });
     }
@@ -1195,9 +1208,7 @@
           : ((n.stars += 25), n.funny++, n.sparks.push({ x: 300, y: 80, t: 2.4, s: "+25 FUNNY FIND!" })),
         D.pickup());
     }
-    let lf = [],
-      fh = 0,
-      uh = -9;
+    let lf = [];
     function of(l, o, i = "#ffcf33") {
       lf.push({ x: l, y: o, t: 0.8, c: i });
     }

@@ -8,7 +8,9 @@
 import { startGame, sleep } from "./game-page.mjs";
 
 const KEY_HELP = "Arrows or WASD: walk. E: do the action in the white label. Space or Enter: next line. Hold R: restart this section. Esc: skip a flashback. M: sound.";
-const TOUCH_HELP = "Stick: walk. Big button: do it. Tap the picture: next line. Hold Reset section to restart.";
+import { readLines } from "./game-page.mjs";
+// Row 21.1 (Phase 3: the ↺ button replaced "Reset section").
+const TOUCH_HELP = readLines()["21.1"];
 const BANNED = [/\bShift\b/, /\bTab\b/, /opera/i, /push far/i];
 
 const g = await startGame({ port: 8788, name: "help-text" });

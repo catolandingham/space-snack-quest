@@ -130,110 +130,65 @@
             e.setLineDash([])));
     }
     function Bl(l, o, i, s, q, d) {
-      (e.beginPath(), e.moveTo(l, o), e.arc(l, o, q, i - s, i + s), e.closePath(), (e.fillStyle = d), e.fill());
+      (conesDrawn.push({ ox: l, oy: o, a: i, half: s, len: q, room: n.room, cam: n.room === "hall" ? B.camX : 0 }),
+        e.beginPath(), e.moveTo(l, o), e.arc(l, o, q, i - s, i + s), e.closePath(), (e.fillStyle = d), e.fill());
     }
-    function Pn(l, o, i, free) {
-      // free: a shoo. It costs no stars; everything else is the same as a capture.
-      ((n.ctrl = !1),
-        (n.act = null),
-        (n.sq.moving = !1),
-        (n.mo.moving = !1),
-        (x.ghost = !1),
-        ch2.caught++,
-        (x.sing = !1),
-        D.caught(),
-        J([
-          ...i,
-          N(() => {
-            let s = n.starOn;
-            (free ||
-              ((n.stars = Math.max(0, n.stars - 100)), s && n.sparks.push({ x: 300, y: 80, t: 2.4, s: "\u2212100 CAUGHT" })),
-              Dt("caught", "", o, "caught"),
-              l(),
-              (n.ctrl = !0));
-          }),
-        ]));
+    // A sight cone drawn as the area that really sees (Phase 3, T19 addition): the same origin, facing,
+    // width and length as before, cut short where a pump, crate or wall blocks the sight line (_h), so
+    // the shaded area is exactly where a standing Squatch is seen. tests/cone-match.mjs checks it.
+    function seenCone(l, o, i, s, q, d) {
+      conesDrawn.push({ ox: l, oy: o, a: i, half: s, len: q, blocked: !0, room: n.room, cam: n.room === "hall" ? B.camX : 0 });
+      let N = 40;
+      e.beginPath();
+      e.moveTo(l, o);
+      for (let k = 0; k <= N; k++) {
+        let t = i - s + (2 * s * k) / N,
+          cx = Math.cos(t),
+          cy = Math.sin(t),
+          lo = 0,
+          hi = q;
+        if (!_h(l, o, l + cx * q, o + cy * q))
+          for (let j = 0; j < 9; j++) {
+            let mid = (lo + hi) / 2;
+            _h(l, o, l + cx * mid, o + cy * mid) ? (lo = mid) : (hi = mid);
+          }
+        else lo = q;
+        e.lineTo(l + cx * lo, o + cy * lo);
+      }
+      (e.closePath(), (e.fillStyle = d), e.fill());
     }
     function Jh() {
       return { ox: ch2.rust.x, oy: 400, a: ch2.rust.f > 0 ? 0.5 : Math.PI - 0.5 };
     }
     function sSec(l, who) {
       ch2.sec ||
-        ((ch2.sec = { x: 980, y: 520, hide: 0, mode: "come", by: l || "diner", who: who || "" }), kV("bot", "SECURITY!"), D.alarm());
+        ((ch2.sec = { x: 980, y: 520, hide: 0, mode: "come", by: l || "diner", who: who || "", scene: n.scene }), kV("bot", "SECURITY!"), D.alarm());
     }
-    // The first line of the LOCKUP card: who saw Squatch and where. The captor's joke comes after, in bubbles.
-    function lockupCause(by, who) {
-      return by === "pump"
-        ? "A pump bot saw Squatch on the lot. Security caught him."
-        : by === "diner"
-          ? who === "blorp"
-            ? "Blorp saw Squatch in the diner. Security caught him."
-            : "Gloop saw Squatch at the counter. Security caught him."
-          : by === "sink"
-            ? "Gloop saw Squatch at the sink. Security caught him."
-            : by === "rust"
-              ? "Rusty saw Squatch by the pump. Security caught him."
-              : "Security caught Squatch.";
-    }
+    // Chapter 2's security, also used in Chapters 3 and 4: it walks to Squatch; if he is hidden it leaves
+    // ("They lost you."), and if it reaches him the one capture rule runs (capture in 25-capture.js).
     function qSec(l) {
       let s = ch2.sec;
+      if (s && s.scene && s.scene !== n.scene) return void (ch2.sec = null);
       if (!s || de()) return;
       if (n.sqPose === "hidden" || (n.room === "kitchen" && n.sqPose === "ball")) {
         ((s.hide += l), (s.mode = "leave"), (s.x += (s.x < 480 ? -240 : 240) * l));
-        s.hide > 1.6 && (s.x < -70 || s.x > 1030) && (ch2.sec = null);
+        s.hide > 1.6 && (s.x < -70 || s.x > 1030) && ((ch2.sec = null), lostYou());
         return;
       }
       s.hide = 0;
       let dx = n.sq.x - s.x,
         dy = n.sq.y - s.y,
         d = Math.hypot(dx, dy) || 1;
-      ((s.x += (dx / d) * 170 * l),
-        (s.y += (dy / d) * 130 * l),
-        d < 48 &&
-          ((n.jailBy = ch2.sec.by || ""),
-          (n.jailWho = ch2.sec.who || ""),
-          (ch2.sec = null),
-          (n.ctrl = !1),
-          (n.act = null),
-          (n.sq.moving = !1),
-          J([
-            { k: "card", id: "jail", text: "LOCKUP", by: n.jailBy, cause: lockupCause(n.jailBy, n.jailWho) },
-            ...(n.jailBy === "pump"
-              ? [v("bot", "Report him or fuel him?"), v("sq", "Pancakes. Park the nozzle.")]
-              : n.jailBy === "diner"
-                ? [v("gloop", "Counter's closed. Lockup's open."), v("sq", "I'll take it to go.")]
-                : n.jailBy === "sink"
-                  ? [v("gloop", "The window caught the sink."), v("sq", "Next time I roll.")]
-                  : n.jailBy === "rust"
-                    ? [v("rust", "Parked you. Still no coins."), v("sq", "I'll take the pen over the pump.")]
-                    : []),
-            v("bot", "Holding pen. This section starts over."),
-            N(reSec),
-          ])));
+      ((s.x += (dx / d) * 170 * l), (s.y += (dy / d) * 130 * l), d < 48 && capture(s.by === "diner" && s.who === "blorp" ? "blorp" : s.by || ""));
     }
     function sectionReset() {
       if (p.state === "title" || !n.scene) return;
       if (ch2.resetHold) ((ch2.resetHold.on = !1), (ch2.resetHold.fired = !0));
       if (p.state !== "op") return;
-      let jar = ch2.jar,
-        reg = ch2.reg,
-        has = ch2.has,
-        stars = n.stars,
-        found = new Set(n.found);
-      (reSec(), (ch2.jar = jar), (ch2.reg = reg), (ch2.has = has), (n.stars = stars), (n.found = found));
+      restartSection();
     }
     function armReset(l) {
       l ? (ch2.resetHold && ch2.resetHold.on) || (ch2.resetHold = { on: !0, t: 0, fired: !1 }) : ch2.resetHold && (ch2.resetHold.on = !1);
-    }
-    function drawReset() {
-      let h = ch2.resetHold;
-      if (!h || !h.on) return;
-      let o = Math.min(1, h.t / 0.75);
-      (m(690, 598, 240, 30, 8),
-        r("#fffaf0", 3),
-        m(696, 604, 228 * o, 18, 6),
-        r("#8fdcff", 0),
-        g("Reset section", 810, 613, 14, "#1e2430", "center", 800));
     }
     function gKnown(l) {
       return (
@@ -281,6 +236,7 @@
           timer: ch2.timer || 0,
           cook: ch2.cook || "",
           pulse: [...n.pulse],
+          bots: n.room === "hall" ? B.bots.map((b) => ({ ...b })) : null,
         }));
     }
     function restoreCheck(c) {
@@ -304,6 +260,7 @@
         (ch2.cook = c.cook || ""),
         n.pulse.clear());
       for (let id of c.pulse || []) n.pulse.add(id);
+      c.bots && (B.bots = c.bots.map((b) => ({ ...b })));
       ch2.noted = c.id;
       return !0;
     }
@@ -317,6 +274,11 @@
         (n.ctrl = !0),
         (n.hopOut = -1),
         (ch2.sec = null),
+        (n.walkTo = null),
+        FV.on && FV.bot && ((FV.bot.x = FV.hx), (FV.bot.y = FV.hy)),
+        FV.on && n.chip === "Hide!" && (n.chip = FV.chip),
+        (FV.on = !1),
+        (n.sirenT = -9),
         (ch2.rust.chase = !1),
         (ch2.rust.alert = 0),
         (ch2.rust.x = 450),
@@ -414,7 +376,42 @@
           n.pulse.add("backd"));
         return !0;
       }
+      // g6d, or g6 before the tank is filled: back to Mops with the coins at the pump, or to the diner's
+      // jar if he has no coins. Only a full tank puts Squatch at the lure (review, 2026-11-07).
+      if ((l === "g6" || l === "g6d") && !ch2.fuel) {
+        if (l === "g6" && ch2.has === "coins") {
+          ((n.scene = "G6"),
+            (n.room = "gas"),
+            (ch2.phase = "g6"),
+            switchTo("mops"),
+            (n.mo = { x: po.x, y: po.y + 70, f: 1, walk: 0, moving: !1 }),
+            (n.moPose = "stand"),
+            (n.sqPose = "hidden"),
+            (x.spot = -1),
+            (n.sq.x = -200),
+            (n.sq.y = 470),
+            (ch2.bots = [
+              { x: 700, y: 500, hx: 700, f: -1, look: 0 },
+              { x: 900, y: 520, hx: 900, f: -1, look: 0 },
+            ]));
+          return !0;
+        }
+        ((n.scene = "G6"),
+          (n.room = "diner"),
+          (ch2.phase = "g6d"),
+          switchTo("mops"),
+          (n.mo = { x: 600, y: 500, f: -1, walk: 0, moving: !1 }),
+          (n.moPose = "stand"),
+          (n.sqPose = "hidden"),
+          (x.spot = -1),
+          (n.sq.x = -200),
+          ch2.has === "coins" || n.pulse.add("jar"));
+        return !0;
+      }
       if (l === "g6" || l === "g6d") {
+        // Tank full: Rusty has been asleep since he was paid, and stays asleep (as on main); bots go home.
+        ch2.rust.nap = !0;
+        for (let b of ch2.bots || []) ((b.x = b.hx), (b.look = 0));
         ((n.scene = "G6"),
           (n.room = "gas"),
           (ch2.phase = "g6"),
@@ -525,12 +522,14 @@
         phase = ch2.phase || "";
       clearRun();
       if (scene.startsWith("S") || scene.startsWith("O")) {
+        if (CH1_CHECKPOINTS[scene]) return (CH1_CHECKPOINTS[scene](), (n.ctrl = !0), void 0);
         (ch2.check && (ch2.check.scene === scene || ch2.check.scene.startsWith("S") || ch2.check.scene.startsWith("O")) && restoreCheck(ch2.check),
           (n.ctrl = !0));
         return;
       }
       if (scene.startsWith("P") || scene.startsWith("M")) {
-        (ch2.check && ch2.check.scene === scene && restoreCheck(ch2.check), (n.ctrl = !0));
+        let table = scene[0] === "P" ? CH3_CHECKPOINTS[Q.phase] : CH4_CHECKPOINTS[H.phase];
+        (ch2.check && ch2.check.scene === scene && restoreCheck(ch2.check), table && table(), (n.ctrl = !0));
         return;
       }
       if (scene.startsWith("G")) {
@@ -585,13 +584,11 @@
       ) {
         let o = Zh(ch2.bots[ch2.out]);
         vt(n.mo.x, n.mo.y - 40, o.ox, o.oy, o.a, 0.6, o.len) &&
-          Pn(
+          shoo(
             () => {
               ((n.mo.x = Ln.x), (n.mo.y = Ln.y), (ch2.out = -1), (ch2.argueT = 2), (ch2.bots[0].f = 1), (ch2.bots[1].f = -1));
             },
-            "bots",
             [v(ch2.out ? "bot2" : "bot", "No goats with food past here! Shoo!"), v("mops", "Just passing through.")],
-            !0,
           );
       }
       if (ch2.phase === "g6") {
@@ -617,16 +614,15 @@
         }
       }
     }
+    // The bots reach the crate while Squatch sings: caught (the one capture rule; Reset puts the lure back).
     function OA() {
-      ((x.sing = !1),
-        Pn(
-          () => {
-            ((n.sqPose = "stand"), (x.spot = -1), (n.sq.x = Sa.x + 40), (n.sq.y = 470));
-            for (let l of ch2.bots) ((l.x = l.hx), (l.look = 0));
-          },
-          "lure",
-          [v("bot2", "WOOKIE?!"), v("mops", "Just a fuzzy mop! Over here! Very fuzzy."), v("bot", "...Back to the pump.")],
-        ));
+      capture("lure");
+    }
+    // How long Gloop's warning at the kitchen window lasts before she looks (it was 1.1 to 1.5 seconds; Phase 3, T20).
+    const WINDOW_WARN = 2.5;
+    // True from the warning until Gloop's look ends: she fills the window and its frame flashes.
+    function windowWatch() {
+      return n.room === "kitchen" && (ch2.phase === "wash1" || ch2.phase === "wash5") && (ch2.warn > 0 || ch2.peek > 0 || ch2.eye > 0);
     }
     function wA(l) {
       if (ch2.phase !== "wash1" && ch2.phase !== "wash5") return;
@@ -695,7 +691,8 @@
           n.sqPose === "hidden" && x.spot === 62 && ((n.sqPose = "stand"), (x.spot = -1)));
         return;
       }
-      n.ctrl && ((ch2.peekT -= l), ch2.peekT <= 0 && ((ch2.warn = o ? 1.1 : 1.5), kV("gloop", "Order up?"), D.open()));
+      // The warning (task T20): Gloop comes to the window and its frame flashes for WINDOW_WARN seconds before she looks.
+      n.ctrl && ((ch2.peekT -= l), ch2.peekT <= 0 && ((ch2.warn = WINDOW_WARN), kV("gloop", "Order up?"), D.open()));
     }
     function NA(l) {
       n.scene.startsWith("G") &&
@@ -708,14 +705,7 @@
           ((ch2.timer -= l),
           ch2.timer <= 0 &&
             n.sqPose !== "hidden" &&
-            ((n.ctrl = !1),
-            Pn(
-              () => {
-                ((n.sq.x = KV.x), (n.sq.y = KV.y + 20), (n.sqPose = "stand"), (ch2.bots = []), V2());
-              },
-              "bots3",
-              [v("bot", "WOOKIE?!"), v("gloop", "That's the dish goat, you rust buckets!"), v("bot2", "...Re-scanning.")],
-            ))),
+            capture("bots3")),
         n.ctrl && (n.act = RA()));
     }
     function dn(l, o, i) {
@@ -779,7 +769,7 @@
             (dn(_e.x, _e.y, 61), n.pulse.delete("lure"));
           },
         }),
-        spot({ id: "ship", verb: "BOARD", cap: "ship", who: "sq", x: C0.x - 40, y: 500, r: 90, at: [C0.x - 40, 360], when: gasSq && i === "g6" && n.sqPose !== "hidden", hot: !0, f: YA }),
+        spot({ id: "ship", verb: "BOARD", cap: "ship", who: "sq", x: C0.x - 40, y: 500, r: 90, at: [C0.x - 40, 360], when: gasSq && i === "g6" && ch2.fuel && n.sqPose !== "hidden", hot: !0, f: YA }),
         spot({
           id: "sing",
           verb: x.sing ? "STOP" : "SING",
@@ -1459,8 +1449,8 @@
         "Secrets found " + l.filter((q) => n.found.has(q)).length + "/" + l.length,
         "Funny finds " + o.filter((q) => n.found.has(q)).length + "/" + o.length,
         "Sneaky! " + i.filter((q) => n.found.has(q)).length + "/" + i.length,
-        "Times caught " + s + (s ? " (\u2212" + s * 100 + ")" : ""),
-        s === 0 ? "GHOST BONUS +250" : "Ghost bonus: get caught 0 times",
+        "Times caught " + s,
+        ...(s === 0 ? [NEVER_CAUGHT, NEVER_CAUGHT_WHY] : [NEVER_CAUGHT_TODO]),
         "Chapter score \u2605 " + (n.stars - ch2.start),
         "Total \u2605 " + n.stars,
       ];
@@ -1631,7 +1621,7 @@
     function f2(l, o, i) {
       if (o) {
         let A = Zh(l);
-        Bl(A.ox, A.oy, A.a, 0.6, A.len, i ? "rgba(229,83,61,.28)" : "rgba(255,207,51,.28)");
+        seenCone(A.ox, A.oy, A.a, 0.6, A.len, i ? "rgba(229,83,61,.28)" : "rgba(255,207,51,.28)");
       }
       let { x: s, y: q, f: d } = l;
       (X(s, q, 30, 9),
@@ -1816,7 +1806,7 @@
         d: () => {
           if (!x.mops && !d.nap && !de()) {
             let A = Jh();
-            Bl(A.ox, A.oy, A.a, 0.85, 280, ch2.sec ? "rgba(229,83,61,.34)" : "rgba(255,207,51,.26)");
+            seenCone(A.ox, A.oy, A.a, 0.85, 280, ch2.sec ? "rgba(229,83,61,.34)" : "rgba(255,207,51,.26)");
           }
           KA(d.x, 470, d.f, d.nap, !!ch2.sec);
           if (ch2.sec) {
@@ -1947,8 +1937,7 @@
         e.beginPath(),
         e.rect(514, 58, 272, 180),
         e.clip(),
-        e.translate(744, 176),
-        e.scale(1, 1),
+        windowWatch() ? (e.translate(650, 200), e.scale(1.45, 1.45)) : (e.translate(744, 176), e.scale(1, 1)),
         XV(0, -30, 34, 34, 10, 3, n.T),
         wV("#7ad35a", 3),
         m(-18, -22, 36, 26, 6),
@@ -1963,6 +1952,13 @@
         m(-16, -50, 32, 12, 3),
         r("#ffffff", 2.5),
         e.restore(),
+        windowWatch() &&
+          (e.save(),
+          (e.lineWidth = 14),
+          (e.strokeStyle = Math.floor(n.T * 4) % 2 ? "#ffcf33" : "#e5533d"),
+          e.strokeRect(500, 44, 300, 210),
+          e.restore(),
+          g("!", 822, 90, 44, "#e5533d", "center", 900)),
         m(520, 236, 260, 16, 3),
         r("#a8743a", 3),
         C([540, 252, 540, 286], "#a8743a", 4),
@@ -2074,7 +2070,7 @@
       ch2.sqBowl === "counter" && (X(KV.x + 108, 324, 14, 6), r("#ffffff", 2));
       ch2.peek > 0 &&
         !x.mops &&
-        (Bl(xt.x, xt.y + 30, 1.95, 0.75, 520, "rgba(229,83,61,.45)"), g("GLOOP", xt.x, 160, 14, "#b91c1c", "center", 800));
+        (seenCone(xt.x, xt.y + 30, 1.95, 0.75, 520, "rgba(229,83,61,.45)"), g("GLOOP", xt.x, 160, 14, "#b91c1c", "center", 800));
       let s = [];
       s.push({
         y: xe.y,
@@ -2112,12 +2108,7 @@
           },
         }),
         yn(s),
-        s.sort((d, A) => d.y - A.y).forEach((d) => d.d()),
-        ch2.phase === "g3hide" &&
-          !de() &&
-          (m(c / 2 - 70, 100, 140, 34, 17),
-          r("#e5533d", 3),
-          g("HIDE! " + Math.max(0, Math.ceil(ch2.timer)), c / 2, 117, 18, "#ffffff", "center", 900)));
+        s.sort((d, A) => d.y - A.y).forEach((d) => d.d()));
       n.act &&
         n.act.verb === "LEAVE SOUP" &&
         (m(128, 300, 108, 32, 8),
@@ -2236,7 +2227,7 @@
             m(-260, -230, 520, 460, 16),
             r("#fff3d6", 5),
             g("CHAPTER 2 \xB7 GAS STOP", 0, -190, 28, y, "center", 900),
-            o2().forEach((o, i) => g(o, 0, -130 + i * 50, 24, o.startsWith("GHOST") ? "#2bc48a" : y, "center", 800)),
+            o2().forEach((o, i) => tallyLine(o, 0, -130 + i * 50, 24, 460, o.startsWith("Never caught!") || o === NEVER_CAUGHT_WHY ? "#2bc48a" : y)),
             e.restore(),
             !0)
           : !1;

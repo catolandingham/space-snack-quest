@@ -51,6 +51,10 @@ export const look = (page) =>
 const WAITS = {
   // Rusty walks right (his cone points right), far enough along that Squatch can pass behind him.
   rustyGoingRight: (s) => s.rustF > 0 && s.rustPause <= 0 && s.rustX > 380,
+  // Rusty walks left (his cone points left), away from the crate on his right.
+  rustyGoingLeft: (s) => s.rustF < 0 && s.rustPause <= 0 && s.rustX > 420,
+  // Rusty walks left and is close to his left end (x 330), where he will stop and turn.
+  rustyNearLeftEnd: (s) => s.rustF < 0 && s.rustPause <= 0 && s.rustX <= 400,
   // The singing has pulled both bots close to the crate.
   botsClose: (s) => s.bots.length > 0 && s.bots.some((b) => b.x < 190 + 82 + 40),
   // The bots stand looking at the crate, so Squatch can run.

@@ -145,17 +145,13 @@ await page.evaluate(() => {
   window.__ss.ch2.fuel = false;
 });
 await sleep(200);
+// Since Phase 3 the TANK label and the chapter tag are page text over the picture (src/game/80-hud.js).
 const tank = await page.evaluate(() => {
-  const c = document.querySelector("canvas");
-  const g = c.getContext("2d", { willReadFrequently: true });
-  const at = (x, y) => {
-    const d = g.getImageData(x, y, 1, 1).data;
-    return [d[0], d[1], d[2]];
-  };
-  return { banner: at(710, 70), pill: at(40, 27) };
+  const box = (id) => { const el = document.getElementById(id); if (!el || getComputedStyle(el).display === "none") return null; const r = el.getBoundingClientRect(); return { x0: r.left, x1: r.right, y0: r.top, y1: r.bottom, text: el.textContent }; };
+  return { banner: box("ss-tank"), pill: box("ss-chapter") };
 });
-const pale = (c) => c[0] > 245 && c[1] > 220 && c[1] < 250 && c[2] > 220;
-check("TANK label is visible and not under the chapter pill", pale(tank.banner) && !pale(tank.pill), tank);
+const apart = (a, b) => a.x1 <= b.x0 || b.x1 <= a.x0 || a.y1 <= b.y0 || b.y1 <= a.y0;
+check("TANK label is visible and not under the chapter pill", !!tank.banner && tank.banner.text === "TANK EMPTY" && !!tank.pill && apart(tank.banner, tank.pill), tank);
 
 // Full capture, separate from the hide path: security has to walk up and touch him.
 await page.evaluate(() => {
@@ -233,7 +229,7 @@ await page.evaluate(() => {
   n.q = []; n.cur = null; n.live = [];
   n.scene = "G6"; n.room = "gas"; n.ctrl = true; n.sqPose = "stand";
   n.sq.x = 360; n.sq.y = 510; ss.swapTo(false); ss.ch.sing = false;
-  ss.ch2.phase = "g6"; ss.ch2.sec = null;
+  ss.ch2.phase = "g6"; ss.ch2.sec = null; ss.ch2.fuel = true;
   ss.ch2.rust.nap = true;
   ss.ch2.bots = [{ x: 480, y: 500, hx: 480, f: -1, look: 0 }];
 });
@@ -283,7 +279,7 @@ await page.evaluate(() => {
   n.scene = "G6"; n.room = "gas"; n.ctrl = true; n.sqPose = "stand";
   n.sq.x = 360; n.sq.y = 510; n.sq.moving = false;
   ss.swapTo(false); ss.ch.sing = false;
-  ss.ch2.phase = "g6"; ss.ch2.sec = null;
+  ss.ch2.phase = "g6"; ss.ch2.sec = null; ss.ch2.fuel = true;
   ss.ch2.rust.nap = true;
   ss.ch2.bots = [{ x: 480, y: 500, hx: 480, f: -1, look: 0 }];
 });

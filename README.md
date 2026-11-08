@@ -69,6 +69,19 @@ Branch `phase-2-structure` (plan section 4, tasks T13 to T18). Every new line th
 
 Test hooks added: `__ss.spotsNow()`, `placedSpots()`, `offerNow()`, `drawFrame()`, `rings()`, `inSpot()`, `chipNow()`, `chipKeyNow()`, `CH1_CHIPS`, `CH3_CHIPS`, `CH4_CHIPS`. `tests/chapter-states.mjs` holds the states the ring and caption tests share.
 
+## Phase 3: one capture rule, phone HUD, tap to walk
+
+Branch `phase-3-fairness-hud` (plan section 4, tasks T19 to T23, with Brian's decisions of 2026-11-07). Every new line the player reads is listed for Brian in `docs/PHASE-3-LINES-FOR-BRIAN.md`, with what is not finished.
+
+- One capture rule in every chapter: seen, security comes, time to hide ("They lost you." if hidden), caught shows the LOCKUP card with who saw Squatch and where, then the section restarts from its checkpoint with coins and stars kept. No catch takes stars. `src/game/25-capture.js`; `tests/capture-rule.mjs`.
+- The HUD is page text over the picture in fixed zones: chapter, ↺ and stars top left; the goal chip top center; the faces top right. The ↺ button (hold) replaces the big Reset section button; the sound button is under the picture. After 60 seconds without progress the chip shows how to do the step. On a phone the game sits at the top of the screen. `src/game/80-hud.js`; `tests/hud-layout.mjs`.
+- The kitchen window warning lasts 2.5 seconds and shows: the window frame flashes and Gloop fills the window until her look ends. `tests/kitchen-warning.mjs`.
+- A tap on the picture walks there when no bubble or card is up; the big button acts. `tests/phone-tap.mjs` reaches the diner with taps and the button only.
+- Small feel fixes: an early tap on a bubble is kept and shown; the action clears when a scene takes control; the awards say what they were for. COOK stays as on main. `tests/feel-fixes.mjs`.
+- Zoom-in cards (the opening's spotlight card) teach the first hide and the first switch in Chapter 1. `tests/zoom-cards.mjs`.
+
+Test hooks added: `__ss.capture()`, `shoo()`, `lostYou()`, `startSec()`, `CAPTURES`, `LOCKUP_RESTART`, `hallAlarm`, `hallAlarmStart()`, `CH1_CHECKPOINTS`, `CH3_CHECKPOINTS`, `CH4_CHECKPOINTS`, `stallFor()`, `methodLine()`, `METHOD_LINES`.
+
 ## Progression tests
 
 `tests/progression.mjs` plays the real game loop in headless Chrome. It checks the hangar door, the Mars reunion, Rusty's sighting through security and a section restart, pump sight, and the closet G-sign and bucket lanes.

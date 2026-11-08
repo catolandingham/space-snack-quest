@@ -215,7 +215,7 @@ await page.evaluate(() => {
   const n = ss.op;
   n.q = []; n.cur = null; n.scene = "G6"; n.room = "gas"; n.ctrl = true;
   n.sqPose = "stand"; n.sq.x = 780; n.sq.y = 500; ss.swapTo(false);
-  ss.ch2.phase = "g6"; ss.ch2.bots = []; ss.ch2.sec = null; ss.ch.sing = false;
+  ss.ch2.phase = "g6"; ss.ch2.bots = []; ss.ch2.sec = null; ss.ch.sing = false; ss.ch2.fuel = true;
 });
 await sleep(100);
 await page.evaluate(() => {
@@ -1075,6 +1075,8 @@ const sectionRows = await page.evaluate(() => {
     k.jar = 12;
     k.reg = 4;
     k.has = "coins";
+    // The lure checkpoint needs a full tank (Phase 3 review); before the tank, g6 restarts with Mops and the coins.
+    k.fuel = phase === "g6" || phase === "g6d";
     n.stars = 40;
     k.phase = phase;
     n.scene = scene;
@@ -1145,8 +1147,9 @@ await sleep(200);
 await page.evaluate(() => window.__ss.resetHold(false));
 await sleep(700);
 const released = await page.evaluate(() => ({ x: Math.round(window.__ss.op.sq.x), jar: window.__ss.ch2.jar }));
-const resetBtn = await page.$("button[aria-label='Reset section']");
-await page.evaluate(() => document.querySelector("button[aria-label='Reset section']").scrollIntoView({ block: "center" }));
+// Since Phase 3 the restart is the small round ↺ over the picture (#ss-reset), held the same way.
+const resetBtn = await page.$("#ss-reset");
+await page.evaluate(() => document.getElementById("ss-reset").scrollIntoView({ block: "center" }));
 await page.evaluate(() => { window.__ss.op.sq.x = 100; window.__ss.ch2.phase = "g1"; window.__ss.op.scene = "G1"; });
 await resetBtn.click({ delay: 200 });
 const tap = await page.evaluate(() => Math.round(window.__ss.op.sq.x));
