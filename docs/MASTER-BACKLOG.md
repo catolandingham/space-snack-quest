@@ -151,6 +151,14 @@ Independent QA at `17a03c2` used the mouse, the keyboard, and a coarse-pointer f
 
 The pass drove wash 5, wash 1, `g1`, and unknown `g5`. The other checkpoint rows are the implementation table in `docs/README.md`. The play-mode chapter restart was not played. This is not a full pass of every note in the backlog.
 
+## Story clarity proposal
+
+Docs only. Not in the game. Not merged. Branch `docs/story-clarity-pass`.
+
+`docs/STORY-CLARITY-PASS.md` reads all four chapters in play order and lists each story problem with a scene, what a kid would be confused by, a fix, and a priority. `docs/lines/STORY-CLARITY-LINES.md` holds every proposed line (64 wording changes, 9 cuts). Four beats move: the Chapter 1 TV, the lobby banner, Zip's first line, and the cook being seen before she yells. No timer, cone, or difficulty change. `MY GARDIANS` stays.
+
+Docs match main: yes. This page does not claim the proposal is playable.
+
 ## As-built script (H3)
 
 `docs/SCRIPT-AS-BUILT.md` is every on-screen line in `src/game/*.js`, in play order, by chapter and scene. `npm run export-script` rebuilds it. `tests/script-export.mjs` checks that the export runs and that all four chapters are in the page. It does not change what the player sees.
@@ -163,6 +171,8 @@ The pass drove wash 5, wash 1, `g1`, and unknown `g5`. The other checkpoint rows
 - Any item not named in the tables above.
 
 ## Changelog
+
+2026-11-08. Story clarity proposal on branch `docs/story-clarity-pass`: `docs/STORY-CLARITY-PASS.md` and `docs/lines/STORY-CLARITY-LINES.md`. Docs only. Not merged. The game is unchanged.
 
 2026-11-08. H3 on branch `docs/script-as-built`: `tools/export-script.mjs`, `npm run export-script`, and `docs/SCRIPT-AS-BUILT.md`. Docs and a test only. Not merged.
 

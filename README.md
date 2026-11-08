@@ -92,6 +92,10 @@ Branch `chapter-1-pass`. Not merged. Every new line waits for Brian's yes in `do
 - Order fixes: nobody says "robot" before the notice or "Wookie" before the flashback; the S6 and S7 slip peeks no longer name the hangar code; O3 and O6 have the spine's "Everybody has somebody" and "You have me".
 - `tests/ch1-playthrough.mjs` plays Chapter 1 from `?ch=1` to the tally card with real key presses (and mouse clicks on the faces, since there is no switching key), following `tests/routes/ch1.json`, and must end never caught. About 4 minutes.
 
+## Story clarity proposal
+
+Not in the game. `docs/STORY-CLARITY-PASS.md` is a read-aloud pass of all four chapters, in the order the player meets them. `docs/lines/STORY-CLARITY-LINES.md` is every proposed new or changed line, for a yes before any of it is built. No scene, timer, or difficulty changes with this proposal.
+
 ## Progression tests
 
 `tests/progression.mjs` plays the real game loop in headless Chrome. It checks the hangar door, the Mars reunion, Rusty's sighting through security and a section restart, pump sight, and the closet G-sign and bucket lanes.
