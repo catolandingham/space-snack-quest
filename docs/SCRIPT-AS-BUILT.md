@@ -9,9 +9,9 @@ Rebuild with `npm run export-script`.
 | Chapter | Lines |
 | --- | --- |
 | Chapter 1 | 372 |
-| Chapter 2 | 224 |
+| Chapter 2 | 222 |
 | Chapter 3 | 119 |
-| Chapter 4 | 139 |
+| Chapter 4 | 147 |
 | Title, help, score, and shared | 74 |
 
 ## Before the chapters
@@ -234,18 +234,6 @@ Rebuild with `npm run export-script`.
 | Squatch | GIVE · lunch | prompt |
 | Mops | My lunch! You're the best. | bubble |
 | Mops | Goats peak early. | bubble |
-| Banner | SIR MOPS-A-LOT | banner |
-| Sign | HEAD GANITOR | caption |
-| Sign | (GANITORS ON STAFF: 1) | caption |
-| Banner | GOAT HAIR: | banner |
-| Sign | certified | caption |
-| Sign | Hypo-Alien-Genic™ | caption |
-| Goal | Squatch: give Mops his lunch | chip |
-
-### S3
-
-| Who | Line | Kind |
-| --- | --- | --- |
 | Station PA | DING DONG! Delivery for Stormtop! | PA |
 | Station PA | Bleep-Bloop Bots! Floors that mop THEMSELVES! | PA |
 | Squatch | Robot janitors. Like the notice said. | bubble |
@@ -260,6 +248,17 @@ Rebuild with `npm run export-script`.
 | Station PA | Delegation report: FUR in the air scrubbers. | PA |
 | Station PA | Delegation report: FUR spotted in the lobby. | PA |
 | Station PA | Delegation report: all clear. Robots arrive at dawn. | PA |
+| Banner | SIR MOPS-A-LOT | banner |
+| Sign | HEAD GANITOR | caption |
+| Sign | (GANITORS ON STAFF: 1) | caption |
+| Banner | GOAT HAIR: | banner |
+| Sign | certified | caption |
+| Sign | Hypo-Alien-Genic™ | caption |
+| Goal | Squatch: give Mops his lunch | chip |
+
+### S3
+
+_No lines landed in this scene._
 
 ### S4
 
@@ -644,20 +643,20 @@ Rebuild with `npm run export-script`.
 | Mops | Then we earn some. Leave it to me. | bubble |
 | Card | You are MOPS now. | card |
 | Card | Mops goes to the diner. Squatch stays hidden by the pump. | card |
+| Room | Mops goes inside. | caption |
 | Goal | Squatch: hide behind the crate by the pump | chip |
 | Goal | Mops: walk to the diner door and go in | chip |
 | Banner | Hidden by the pump! +100 | banner |
 | Banner | TANK EMPTY | banner |
-| Banner | TANK FULL | banner |
 
 ### G2
 
 | Who | Line | Kind |
 | --- | --- | --- |
 | Mops | ASK · for work | prompt |
-| Room | Mops goes inside. | caption |
-| Blorp | EEK! A Squatch near my soup! | bubble |
-| Gloop | A Squatch?! Back from the counter! | bubble |
+| Mops | Got any work? We need gas money. | bubble |
+| Gloop | Dishwasher quit. Sink's in the back. Tips go in the jar. | bubble |
+| Mops | Squatch... the kitchen has a back door. | bubble |
 | Goal | Mops: ask Gloop for work at the counter | chip |
 | Goal | Mops: walk up to Gloop at the counter | chip |
 
@@ -666,11 +665,9 @@ Rebuild with `npm run export-script`.
 | Who | Line | Kind |
 | --- | --- | --- |
 | Squatch | ENTER · kitchen door | prompt |
-| Mops | Got any work? We need gas money. | bubble |
-| Gloop | Dishwasher quit. Sink's in the back. Tips go in the jar. | bubble |
-| Mops | Squatch... the kitchen has a back door. | bubble |
 | Card | You are SQUATCH now. | card |
 | Card | Mops found work. Squatch sneaks in the back. | card |
+| Room | Squatch sneaks into the kitchen. | caption |
 | Goal | Squatch: sneak in the KITCHEN door | chip |
 
 ### G2k
@@ -682,7 +679,6 @@ Rebuild with `npm run export-script`.
 | Squatch | Secret ingredient: sasquatch hair?! ...Gross. But I'll keep it secret. | bubble |
 | Squatch | GRAB · dish | prompt |
 | Squatch | SCRUB · dish | prompt |
-| Room | Squatch sneaks into the kitchen. | caption |
 | Squatch | Dishes! I'm GREAT at dishes. | bubble |
 | Blorp | *sniff* ...It's SPOTLESS! | bubble |
 | Gloop | That goat washes FAST. | bubble |
@@ -718,6 +714,10 @@ Rebuild with `npm run export-script`.
 
 | Who | Line | Kind |
 | --- | --- | --- |
+| Pump Bot | Hmph! | bubble |
+| Security | Hmph! | bubble |
+| Security | You watch the crate. | bubble |
+| Pump Bot | No, YOU watch the crate. | bubble |
 | Mops | GRAB · tip jar | prompt |
 | Mops | ASK · Gloop | prompt |
 | Gloop | The jar has… coins. Soup is 30. The tank is 30. | bubble |
@@ -792,6 +792,16 @@ Rebuild with `npm run export-script`.
 | Goal | Squatch: hide in the crate by the ship | chip |
 | Goal | Squatch: sing to call the bots over | chip |
 | Banner | Lured the bots away! +100 | banner |
+| Banner | TANK FULL | banner |
+
+### If someone sees him
+
+These lines play only when that person sees Squatch. They are not part of the ordinary walk through the chapter.
+
+| Who | Line | Kind |
+| --- | --- | --- |
+| Blorp | EEK! A Squatch near my soup! | bubble |
+| Gloop | A Squatch?! Back from the counter! | bubble |
 
 ### If he is caught
 
@@ -887,14 +897,8 @@ Rebuild with `npm run export-script`.
 
 | Who | Line | Kind |
 | --- | --- | --- |
-| Someone | FUR DETECTED! | bubble |
-| Security | SECURITY! | bubble |
 | Rusty | SECURITY! A Squatch on the lot! | bubble |
 | Squatch | Troopers. I can hide. | bubble |
-| Pump Bot | Hmph! | bubble |
-| Security | Hmph! | bubble |
-| Security | You watch the crate. | bubble |
-| Pump Bot | No, YOU watch the crate. | bubble |
 | Pump Bot | No goats with food past here! Shoo! | bubble |
 | Security | No goats with food past here! Shoo! | bubble |
 | Mops | Just passing through. | bubble |
@@ -996,7 +1000,6 @@ Rebuild with `npm run export-script`.
 
 | Who | Line | Kind |
 | --- | --- | --- |
-| Zip | Whoa! A Squatch! ...Pretzel? | bubble |
 | Mops | LIFT · mug | prompt |
 | Mops | "World's Okayest Raccoon." Honest. | bubble |
 | Mops | FLIP · delivery log | prompt |
@@ -1067,6 +1070,14 @@ Rebuild with `npm run export-script`.
 | Goal | Squatch: hide in the barrel | chip |
 | Goal | Squatch: sing to call the rover over | chip |
 | Banner | Got past the rover! +100 | banner |
+
+### If someone sees him
+
+These lines play only when that person sees Squatch. They are not part of the ordinary walk through the chapter.
+
+| Who | Line | Kind |
+| --- | --- | --- |
+| Zip | Whoa! A Squatch! ...Pretzel? | bubble |
 
 ### If he is caught
 
@@ -1172,6 +1183,8 @@ Rebuild with `npm run export-script`.
 
 | Who | Line | Kind |
 | --- | --- | --- |
+| Someone | FUR DETECTED! | bubble |
+| Security | SECURITY! | bubble |
 | Squatch | HIDE · trash can | prompt |
 | Squatch | LIFT · sock | prompt |
 | Squatch | One sock. Size... ENORMOUS. Not mine. Probably. | bubble |
@@ -1185,8 +1198,6 @@ Rebuild with `npm run export-script`.
 
 | Who | Line | Kind |
 | --- | --- | --- |
-| Mom | Is that... a very hairy goat? | bubble |
-| Dad | Shoo, shaggy! Health rules! | bubble |
 | Mops | READ · poster | prompt |
 | Mops | ...Lost in a Moon Pie shipment. | bubble |
 | Mops | Your crib was a Moon Pie crate. | bubble |
@@ -1279,8 +1290,26 @@ Rebuild with `npm run export-script`.
 
 | Who | Line | Kind |
 | --- | --- | --- |
+| Port Bot | WOOKIE?! | bubble |
+| Squatch | Sasquatch. Big and furry. | bubble |
+| Port Bot | ...Do you need help? | bubble |
+| Squatch | Nope. Just getting my goat. | bubble |
 | Squatch | DANCE · with Mops | prompt |
 | Squatch | No more hiding. | bubble |
+| Squatch | MOPS! I'll always come get you. | bubble |
+| Mops | You ordered robots, kiddo. | bubble |
+| Squatch | I'm sorry. I was scared to go without you. | bubble |
+| Squatch | So I made you stay behind. | bubble |
+| Squatch | You were my Guardian the whole time. | bubble |
+| Mops | ...Brave Sasquatches don't hide. I was wrong about that. | bubble |
+| Dad | Forget the rules. Any goat who raised our son eats pancakes with us. | bubble |
+| Squatch | Harry to my family. Squatch to my goat. | bubble |
+| Squatch | ♪ I'm floating in space... ♪ | bubble |
+| Mops | ♪ Baaa! ♪ | bubble |
+| Squatch | ♪ ...but I'm not alone. ♪ | bubble |
+| Mops | ♪ Baaa-aa! ♪ | bubble |
+| Squatch | ♪ Wherever you mop... ♪ | bubble |
+| Squatch | ♪ ...is my home. ♪ | bubble |
 | Card | Ever since: no more hiding. Squatch sings out loud, Mops mops the pancake stand (badly), and the menu says, in crayon: GOATS EAT FREE. | card |
 | Card | THE END | card |
 | Sign | CHAPTER 4 · MARS | banner |
@@ -1291,6 +1320,15 @@ Rebuild with `npm run export-script`.
 | Sign | Best on this device: ★… | caption |
 | Goal | Squatch: go get Mops | chip |
 | Goal | Squatch: dance with Mops | chip |
+
+### If someone sees him
+
+These lines play only when that person sees Squatch. They are not part of the ordinary walk through the chapter.
+
+| Who | Line | Kind |
+| --- | --- | --- |
+| Mom | Is that... a very hairy goat? | bubble |
+| Dad | Shoo, shaggy! Health rules! | bubble |
 
 ### If he is caught
 
@@ -1328,20 +1366,8 @@ Rebuild with `npm run export-script`.
 
 | Who | Line | Kind |
 | --- | --- | --- |
-| Port Bot | WOOKIE?! | bubble |
-| Squatch | Sasquatch. Big and furry. | bubble |
-| Port Bot | ...Do you need help? | bubble |
-| Squatch | Nope. Just getting my goat. | bubble |
 | Squatch | STOP · singing | prompt |
 | Squatch | SING · song | prompt |
-| Squatch | MOPS! I'll always come get you. | bubble |
-| Mops | You ordered robots, kiddo. | bubble |
-| Squatch | I'm sorry. I was scared to go without you. | bubble |
-| Squatch | So I made you stay behind. | bubble |
-| Squatch | You were my Guardian the whole time. | bubble |
-| Mops | ...Brave Sasquatches don't hide. I was wrong about that. | bubble |
-| Dad | Forget the rules. Any goat who raised our son eats pancakes with us. | bubble |
-| Squatch | Harry to my family. Squatch to my goat. | bubble |
 | Sign | PORT | caption |
 | Banner | ZIP | banner |
 | Sign | GATE | caption |
@@ -1402,7 +1428,7 @@ Rebuild with `npm run export-script`.
 
 ## What looks odd
 
-The exporter keeps a line it is unsure about, so you can see it. These are notes, not lines in the game.
+Repeated means the same words are in the source more than once for that scene. The table above shows them once. Unread means the words are chosen from a list when they play.
 
 ### Repeated in the same scene
 
@@ -1428,6 +1454,7 @@ The exporter keeps a line it is unsure about, so you can see it. These are notes
 - 1:S7: Sign: EXPRESS DELIVERY
 - 1:S7: Sign: BLEEP·BLOOP
 - 1:S11: Goal: Squatch: get the bot away from the door
+- 4:M1: Goal: Squatch: sneak to the gate
 - 2:: Sign: KITCHEN
 - 2:: Sign: LEAVE SOUP
 - 2:G4: Goal: Mops: carry the soup to Squatch's crate
@@ -1445,7 +1472,6 @@ The exporter keeps a line it is unsure about, so you can see it. These are notes
 - 3:: Sign: Brave Sasquatches
 - 3:: Sign: stay hidden.
 - 3:: Sign: — The Guardians
-- 3:P4: Goal: Squatch: get the rover off the ramp
 
 ### Lines the exporter could not read as fixed words
 

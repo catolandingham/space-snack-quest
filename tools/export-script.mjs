@@ -571,6 +571,11 @@ export function extractScript() {
         walk(node.right, { ...state, scene: sceneFor[guard], loc: here.loc });
         return;
       }
+      const phase = isPhaseMember(left.left) && stringLiteral(left.right);
+      if (phase && checkpointPhase(phase)) {
+        walk(node.right, { ...state, scene: checkpointPhase(phase), phaseHint: phase, loc: here.loc });
+        return;
+      }
     }
 
     if (node.type === "IfStatement") {
@@ -727,10 +732,10 @@ export function extractScript() {
       const hold = node.pendingHold;
       if (hold === "XA" || here.pendingName === "XA") {
         const shouted = staticObject(node);
-        const where = { gloop: "G2", blorp: "G2", zip: "P2", mom: "M2", dad: "M2" };
+        const where = { gloop: 2, blorp: 2, zip: 3, mom: 4, dad: 4 };
         if (shouted) {
           for (const [who, text] of Object.entries(shouted)) {
-            pushLine(here, { who: speakerName(who), line: text, kind: "bubble", scene: where[who] || "", chapter: chapterOfScene(where[who] || "") });
+            pushLine(here, { who: speakerName(who), line: text, kind: "bubble", scene: "seen", chapter: where[who] || 0 });
           }
         }
       }
@@ -753,6 +758,15 @@ export function extractScript() {
       }
       if (hold === "Eh" && node.type === "ArrayExpression") {
         /* filled below */
+      }
+    }
+
+    if (node.type === "ArrayExpression" && here.pendingName === "U6") {
+      for (const el of node.elements || []) {
+        if (!el || el.type !== "ArrayExpression") continue;
+        const who = stringLiteral(el.elements[0]);
+        const text = stringLiteral(el.elements[1]);
+        if (who && text) pushLine(here, { who: speakerName(who), line: text, kind: "bubble", scene: "M5", chapter: 4 });
       }
     }
 
@@ -948,7 +962,6 @@ export function extractScript() {
     const named = sceneFromSpotFn(name);
     if (named) return [named];
     if (name === "up") return ["title"];
-    if (funcScene.has(name)) return [funcScene.get(name)];
     seen.add(name);
     const scenes = new Set();
     for (const c of calls) {
@@ -957,7 +970,9 @@ export function extractScript() {
       if (direct) scenes.add(direct);
       else if (c.from) for (const s of scenesFor(c.from, seen)) scenes.add(s);
     }
-    return [...scenes];
+    if (scenes.size) return [...scenes];
+    if (funcScene.has(name)) return [funcScene.get(name)];
+    return [];
   }
   const extra = [];
   for (const line of lines) {
@@ -1022,7 +1037,7 @@ export function extractScript() {
   if (keyHelp) addConst(keyHelp, "caption", "Help", 0, "help");
   if (touchHelp) addConst(touchHelp, "caption", "Help", 0, "help");
   if (raw.includes('"TANK EMPTY"')) addConst("TANK EMPTY", "banner", "Banner", 2, "G1");
-  if (raw.includes('"TANK FULL"')) addConst("TANK FULL", "banner", "Banner", 2, "G1");
+  if (raw.includes('"TANK FULL"')) addConst("TANK FULL", "banner", "Banner", 2, "G6");
 
   // Title chapter names.
   const k1 = raw.match(/let K1 = \[([^\]]+)\]/);
@@ -1218,6 +1233,12 @@ function render(extracted) {
     // lockup rows were stored with scene lockup; sectionRows uses chapter from the line.
     const lockRows = (byScene.get(`${ch}:lockup`) || []).sort((a, b) => a.seq - b.seq);
     used.add(`${ch}:lockup`);
+    const seenRows = dedupeKeepOrder((byScene.get(`${ch}:seen`) || []).sort((a, b) => a.seq - b.seq)).rows;
+    used.add(`${ch}:seen`);
+    if (seenRows.length) {
+      counts[ch] += seenRows.length;
+      body += `### If someone sees him\n\nThese lines play only when that person sees Squatch. They are not part of the ordinary walk through the chapter.\n\n` + table(seenRows) + "\n";
+    }
     const lockKept = dedupeKeepOrder(lockRows).rows;
     // Group lockup by phaseHint so each catch reads as its own card.
     if (lockKept.length) {
@@ -1291,7 +1312,7 @@ function render(extracted) {
   }
   const noThing = extracted.lines.filter((r) => r.kind === "prompt" && !r.line.includes("·"));
   md += "## What looks odd\n\n";
-  md += "The exporter keeps a line it is unsure about, so you can see it. These are notes, not lines in the game.\n\n";
+  md += "Repeated means the same words are in the source more than once for that scene. The table above shows them once. Unread means the words are chosen from a list when they play.\n\n";
   if (!dupInScene.length && !odd.length && !noThing.length && !extracted.unresolved.length) md += "Nothing flagged.\n";
   if (odd.length) {
     md += "### Lines that look cut off\n\n";
