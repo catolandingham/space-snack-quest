@@ -58,7 +58,7 @@ No chip is in a scene that belongs to no beat. Two chips pull against what the s
 
 These hold whichever version of each scene Brian keeps. Ranked.
 
-1. **The beat 5 to beat 6 chain depends on a scene the build lacks.** M4 asks "Then who were the guardians?" and M5 pays it off, but Chapter 2 never shows the player the answer (departure 1). In the build the question is false (Squatch was told "Mops signed it") and the player has nothing to wait for. Fix in either version: show the player, not Squatch.
+1. **The beat 5 to beat 6 chain depends on a scene the build lacks.** M4 asks "Then who were the guardians?" and M5 pays it off, but Chapter 2 never shows the player the answer (departure 1). The whisper "A hoof stamp. Mops signed it." is cut, so Squatch is not told. The flashback that would show the player is still not in the game. Fix in either version: show the player, not Squatch.
 2. **Game beat 5 carries three chapters.** Chapter 2, all of Chapter 3 and Chapter 4 M1 to M4 sit inside one "Because of that", and "Until finally" is the last scene only (M5). Between Chapter 1's four beats and Chapter 4's single climax, the middle has no marked turn. Candidate turn: Chapter 3's loss (Mops floats away, "I'll always come get you") as the end of beat 5, with Chapter 4 as beat 6 start to finish. Brian's call, and it moves the Chapter 4 chips from game beat 5 to 6.
 3. **Beat 2 (Every day) is empty at chapter level in Chapters 2 to 4.** Ch2 G1 is a rule ("not without coins"), not a routine; Ch3 has one line ("Pretzels to Mars every day"); Ch4 opens on a sneak. The spine has none either, so the build matches it. A rule-of-the-place beat is what makes the next "Until one day" land.
 4. **Chapter 2 has the same job twice.** wash1 and wash5 are both "wash a set of dishes for a jar of coins"; the soup between them is the only turn. Beat 6 holds three phases (second wash, pay, bots and ship).
@@ -77,7 +77,7 @@ These hold whichever version of each scene Brian keeps. Ranked.
 
 The spine is held lightly: the game has moved on since Nov 2, and the aim is the better story. Each verdict says which version has clearer cause and effect, a stronger turn and all seven beats, and is easier for a 10-year-old. Verdicts: **keep the build**, **return to the spine**, **Brian's call** (two genuinely different stories). Type: moved, missing, added, changed.
 
-1. **Missing: Ch2 G4 flashback (FB3), and Squatch is told early.** Spine: "Years ago..." shows Mops writing the Guardians note, so the player knows and Squatch does not. Build: no flashback, and Squatch says "A hoof stamp. Mops signed it."
+1. **Missing: Ch2 G4 flashback (FB3).** Spine: "Years ago..." shows Mops writing the Guardians note, so the player knows and Squatch does not. The whisper "A hoof stamp. Mops signed it." is cut, so Squatch is not told. The flashback is still not in the game, so the player is not shown it either.
    **Return to the spine.** Irony gives beat 5 a promise the player waits on and makes M4's question land; the build tells Squatch, so M4 and M5 pay off a secret nobody holds.
 2. **Changed: Ch2 goal.** Spine: Rustbucket would do anything for chili, Mops serves it, Rustbucket naps, Mops siphons the gas. Build: Mops earns coins, buys Squatch soup instead of gas (the bible), pays Rusty.
    **Brian's call.** The build has the stronger turn (Mops chooses Squatch's hunger over the tank) and a simple cause chain; the spine has a character want and a gag. Chips 5.4 and 5.15 to 5.17 follow whichever is kept.

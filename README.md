@@ -47,6 +47,8 @@ Branch `phase-1-kitchen-clarity` makes Chapter 2 clear to a 10-year-old (plan se
 
 - The goal chip names who acts and what to do, from one table (`CH2_CHIPS`), and hides while a bubble is up. `tests/ch2-goal-chip.mjs`.
 - Every switch between Squatch and Mops goes through `switchTo` and, in Chapter 2, shows a card with the reason; room changes show one short line. (A "YOU:" tag over the picture was removed in Phase 2 at Brian's request.) `tests/ch2-switch.mjs`.
+- In Chapters 2 to 4, a room change through a door walks the character out, draws the new room, and walks them in from that door's side. Control is off during the walk. The captions are the same words. The Chapter 2 opening and the walk out to the fuel pump are unchanged. `tests/room-walk.mjs`.
+- Squatch no longer says "A hoof stamp. Mops signed it." at the soup note, so Chapter 4's "Then who were the Guardians?" is still a question. The note, the Guardians line, the hoof-stamp picture, and "...Eat up, kiddo." stay. `tests/soup-note.mjs`. `docs/LATER-CHAPTERS-LINES-FOR-BRIAN.md`.
 - Every Chapter 2 state offers a way forward (BACK · kitchen, Squatch in control after the soup, g4l resets to the next dishes) and Squatch is out of sight while Mops is out front. `tests/ch2-next-step.mjs` writes the action table to `tests/out/next-step.json`.
 - No capture while the player is Mops; a shoo costs no stars; the LOCKUP card says who saw Squatch and where. `tests/ch2-capture-cause.mjs`.
 - Speech bubbles sit over the speaker, one at a time; a voice from another room gets an ear at the door. `tests/bubble-anchor.mjs`.

@@ -1170,7 +1170,10 @@
     let Q0 = "",
       sq = !1;
     function d5(l) {
-      if (Mf && n.room !== Mf && p.state === "op" && ((Ka = Math.max(Ka, 1)), sq && n.sqPose === "stand")) {
+      // A scripted door walk (beginRoomWalk) owns this room change: walk out, then fade, then walk in.
+      // Chapter 1's C2/B2 path is the branch below, and it is unchanged while no door walk is playing.
+      if (n.roomWalk) stepRoomWalk(l);
+      else if (Mf && n.room !== Mf && p.state === "op" && ((Ka = Math.max(Ka, 1)), sq && n.sqPose === "stand")) {
         sq = !1;
         let o = D2();
         ((fa = { x: n.sq.x, y: n.sq.y, want: !0 }),
@@ -1203,4 +1206,124 @@
     }
     function B2(l = 0.35) {
       return cV((o) => ((Ka = Math.min(1, Ka + o / l + o / 0.45)), Ka >= 1));
+    }
+    // One body, copied so a room change can put the real feet at the destination while the picture still shows the walk.
+    function bodyAt(who) {
+      let b = who === "mo" ? n.mo : n.sq;
+      return { x: b.x, y: b.y, f: b.f, moving: !!b.moving, walk: b.walk || 0 };
+    }
+    // Walk out through the door, fade (the same black as B2/d5), then walk in from fromLeft.
+    // arrive() runs at once and sets the new room and where they stand, so a test that reads the room
+    // in the same turn sees the destination. The picture keeps the old room until the fade.
+    // outWho and inWho are "sq" or "mo" (the same person, unless the cut hands off, as the van does).
+    // Control stays off until the walk-in ends, then ctrlAfter is restored.
+    // The step is mV, the same step C2 and He use.
+    function beginRoomWalk(spec) {
+      let outWho = spec.outWho,
+        inWho = spec.inWho || outWho,
+        fromRoom = n.room,
+        stash = { sq: bodyAt("sq"), mo: bodyAt("mo"), sqPose: n.sqPose, moPose: n.moPose };
+      (n.act = null), (n.walkTo = null), spec.arrive();
+      let toRoom = n.room;
+      if (fromRoom === toRoom) return;
+      let inBody = inWho === "mo" ? n.mo : n.sq,
+        entryX = spec.entryX != null ? spec.entryX : inBody.x,
+        entryY = spec.entryY != null ? spec.entryY : inBody.y;
+      (inBody.x = entryX), (inBody.y = entryY);
+      n.roomWalk = {
+        phase: "out",
+        outWho,
+        inWho,
+        fromRoom,
+        toRoom,
+        scene: n.scene,
+        x: stash[outWho].x,
+        y: stash[outWho].y,
+        f: spec.exitX >= stash[outWho].x ? 1 : -1,
+        moving: !0,
+        walk: stash[outWho].walk,
+        exitX: spec.exitX,
+        exitY: spec.exitY,
+        entryX,
+        entryY,
+        fromLeft: !!spec.fromLeft,
+        stash,
+        ctrlAfter: spec.ctrlAfter != null ? spec.ctrlAfter : !!n.ctrl,
+        outMoved: 0,
+        inMoved: 0,
+      };
+      n.ctrl = !1;
+    }
+    function stepRoomWalk(dt) {
+      let w = n.roomWalk;
+      if (!w) return;
+      // A test or a checkpoint moved on: drop the picture walk and leave their control alone.
+      if (n.scene !== w.scene || n.room !== w.toRoom) {
+        n.roomWalk = null;
+        return;
+      }
+      n.ctrl = !1;
+      n.walkTo = null;
+      let beforeX = w.x,
+        beforeY = w.y;
+      if (w.phase === "out") {
+        let done = mV(w, w.exitX, w.exitY, 240, dt);
+        w.outMoved += Math.hypot(w.x - beforeX, w.y - beforeY);
+        done &&
+          ((w.phase = "in"),
+          (w.x = w.fromLeft ? -50 : c + 50),
+          (w.y = w.entryY),
+          (w.f = w.fromLeft ? 1 : -1),
+          (w.moving = !0),
+          (Ka = 1));
+        return;
+      }
+      let done = mV(w, w.entryX, w.entryY, 300, dt);
+      w.inMoved += Math.hypot(w.x - beforeX, w.y - beforeY);
+      done &&
+        ((n.walkLog || (n.walkLog = [])).push({
+          from: w.fromRoom,
+          to: w.toRoom,
+          outWho: w.outWho,
+          inWho: w.inWho,
+          outMoved: Math.round(w.outMoved),
+          inMoved: Math.round(w.inMoved),
+        }),
+        (n.roomWalk = null),
+        (n.ctrl = w.ctrlAfter));
+    }
+    // While the picture shows the walk, draw that room and those feet, then put the real state back for logic and bubbles.
+    function applyWalkDraw() {
+      let w = n.roomWalk;
+      if (!w) return;
+      let who = w.phase === "out" ? w.outWho : w.inWho,
+        body = who === "mo" ? n.mo : n.sq;
+      w.saved = {
+        room: n.room,
+        sq: bodyAt("sq"),
+        mo: bodyAt("mo"),
+        sqPose: n.sqPose,
+        moPose: n.moPose,
+      };
+      if (w.phase === "out") {
+        n.room = w.fromRoom;
+        let other = who === "mo" ? "sq" : "mo",
+          o = other === "sq" ? n.sq : n.mo,
+          st = w.stash[other];
+        (o.x = st.x), (o.y = st.y), (o.f = st.f), (o.moving = st.moving), (o.walk = st.walk);
+        other === "sq" ? (n.sqPose = w.stash.sqPose) : (n.moPose = w.stash.moPose);
+      }
+      (body.x = w.x), (body.y = w.y), (body.f = w.f), (body.moving = !!w.moving), (body.walk = w.walk || 0);
+      who === "sq" ? (n.sqPose = "stand") : (n.moPose = "stand");
+    }
+    function restoreWalkDraw() {
+      let w = n.roomWalk;
+      if (!w || !w.saved) return;
+      let s = w.saved;
+      (n.room = s.room),
+        Object.assign(n.sq, s.sq),
+        Object.assign(n.mo, s.mo),
+        (n.sqPose = s.sqPose),
+        (n.moPose = s.moPose),
+        (w.saved = null);
     }

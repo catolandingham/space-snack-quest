@@ -166,6 +166,8 @@ const front = await page.evaluate(() => {
   if (verb === "FRONT") window.__ss.actionDown();
   return { verb, room: n.room, x: Math.round(n.mo.x) };
 });
+// FRONT walks out of the kitchen and in through the diner door before control returns.
+for (let i = 0; i < 40 && (await page.evaluate(() => !!window.__ss.op.roomWalk || !window.__ss.op.ctrl)); i++) await sleep(100);
 await page.evaluate(() => {
   const n = window.__ss.op;
   n.sq.x = -300; n.sqPose = "hidden";

@@ -1,5 +1,7 @@
 <!-- Snapshot of the Drive master (Wyttmab Drive / My Drive / Space Snack Quest / DECISIONS.md) taken 2026-11-08. The Drive copy is the live one; this copy is for readers with repo access only. -->
 
+- 2026-11-09 (waiting on Brian's yes): cut Squatch's whisper "A hoof stamp. Mops signed it." at the soup note. Why: it tells him Mops is the Guardian, and Chapter 4's "...Then who were the Guardians?" needs him not to know. The note, the Guardians line, the hoof-stamp picture, and "...Eat up, kiddo." stay. Recorded in `docs/LATER-CHAPTERS-LINES-FOR-BRIAN.md`.
+
 # Space Snack Quest: decisions
 
 - 2026-11-05 (Brian, in Grok): the repository is private. Why: Brian had not known it was public.

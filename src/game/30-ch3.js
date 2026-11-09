@@ -466,30 +466,47 @@
         ]));
     }
     function s2() {
-      ((n.scene = "P3"),
-        (n.room = "temple"),
-        (Q.phase = "p3"),
-        (Q.zip = !1),
-        (Q.miss = 0),
-        (Q.sings = 0),
-        (Q.waltz = !1),
-        switchTo("squatch"),
-        (x.spot = -1),
-        (x.sing = !1),
-        (n.sqPose = "stand"),
-        (n.moPose = "stand"),
-        (n.sq = { x: 60, y: 480, f: 1, walk: 0, moving: !1 }),
-        (n.mo = { x: 70, y: 600, f: 1, walk: 0, moving: !1 }),
-        (Q.rov = [
-          { x: 380, y: 500, hx: 380, hf: -1, f: -1, look: 0, pause: 0, alert: 0 },
-          { x: 590, y: 500, hx: 590, hf: 1, f: 1, look: 0, pause: 0, alert: 0 },
-        ]),
-        J([
-          v("mops", "You sing, I turn. Echo spot's over there."),
-          N(() => {
-            (n.pulse.add("alcove"), n.pulse.add("m1"), (n.ctrl = !0));
-          }),
-        ]));
+      // From the pad, after Zip's deal: Mops walks off the landing and in through the temple's left door.
+      // A scene jump (sceneP3) just arrives.
+      let live = n.room === "pad" && n.scene === "P2",
+        arrive = () => {
+          ((n.scene = "P3"),
+            (n.room = "temple"),
+            (Q.phase = "p3"),
+            (Q.zip = !1),
+            (Q.miss = 0),
+            (Q.sings = 0),
+            (Q.waltz = !1),
+            switchTo("squatch"),
+            (x.spot = -1),
+            (x.sing = !1),
+            (n.sqPose = "stand"),
+            (n.moPose = "stand"),
+            (n.sq.x = 60),
+            (n.sq.y = 480),
+            (n.sq.f = 1),
+            (n.sq.walk = 0),
+            (n.sq.moving = !1),
+            (n.mo.x = 70),
+            (n.mo.y = 600),
+            (n.mo.f = 1),
+            (n.mo.walk = 0),
+            (n.mo.moving = !1),
+            (Q.rov = [
+              { x: 380, y: 500, hx: 380, hf: -1, f: -1, look: 0, pause: 0, alert: 0 },
+              { x: 590, y: 500, hx: 590, hf: 1, f: 1, look: 0, pause: 0, alert: 0 },
+            ]));
+        };
+      live
+        ? beginRoomWalk({ outWho: "mo", exitX: 1010, exitY: 520, fromLeft: !0, entryX: 70, entryY: 600, ctrlAfter: !1, arrive })
+        : arrive();
+      J([
+        cV(() => !n.roomWalk),
+        v("mops", "You sing, I turn. Echo spot's over there."),
+        N(() => {
+          (n.pulse.add("alcove"), n.pulse.add("m1"), (n.ctrl = !0));
+        }),
+      ]);
     }
     function q6() {
       ((n.ctrl = !1),
@@ -534,30 +551,42 @@
         ]));
     }
     function q2() {
-      ((n.ctrl = !1),
-        (n.act = null),
-        n.pulse.clear(),
-        (n.scene = "P4"),
-        (n.room = "pad"),
-        (Q.phase = "p4i"),
-        (Q.zip = !1),
-        (Q.zipX = gf.x),
-        switchTo("squatch"),
-        (x.sing = !1),
-        (n.mo = { x: 300, y: 540, f: 1, walk: 0, moving: !1 }),
-        (n.moPose = "stand"),
-        (n.sqPose = "hidden"),
-        (x.spot = 70),
-        (n.sq.x = OV.x),
-        (n.sq.y = OV.y),
-        (Q.rov = [{ x: 640, y: 500, hx: 640, hf: -1, f: -1, look: 0, pause: 0, alert: 0 }]),
-        J([
-          v("mops", "Rover's on the ramp. Go on. Sing it."),
-          v("mops", "...It's still our song. For now."),
-          N(() => {
-            ((Q.phase = "p4a"), (n.ctrl = !0));
-          }),
-        ]));
+      // Out the temple's left door, back onto the pad from that same side. A scene jump just arrives.
+      let live = n.room === "temple",
+        arrive = () => {
+          ((n.ctrl = !1),
+            (n.act = null),
+            n.pulse.clear(),
+            (n.scene = "P4"),
+            (n.room = "pad"),
+            (Q.phase = "p4i"),
+            (Q.zip = !1),
+            (Q.zipX = gf.x),
+            switchTo("squatch"),
+            (x.sing = !1),
+            (n.mo.x = 300),
+            (n.mo.y = 540),
+            (n.mo.f = 1),
+            (n.mo.walk = 0),
+            (n.mo.moving = !1),
+            (n.moPose = "stand"),
+            (n.sqPose = "hidden"),
+            (x.spot = 70),
+            (n.sq.x = OV.x),
+            (n.sq.y = OV.y),
+            (Q.rov = [{ x: 640, y: 500, hx: 640, hf: -1, f: -1, look: 0, pause: 0, alert: 0 }]));
+        };
+      live
+        ? beginRoomWalk({ outWho: "mo", exitX: -40, exitY: 560, fromLeft: !0, entryX: 300, entryY: 540, ctrlAfter: !1, arrive })
+        : arrive();
+      J([
+        cV(() => !n.roomWalk),
+        v("mops", "Rover's on the ramp. Go on. Sing it."),
+        v("mops", "...It's still our song. For now."),
+        N(() => {
+          ((Q.phase = "p4a"), (n.ctrl = !0));
+        }),
+      ]);
     }
     function r6() {
       ((n.ctrl = !1),

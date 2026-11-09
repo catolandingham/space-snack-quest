@@ -126,6 +126,8 @@ await g.key(page, "KeyE");
 await sleep(120);
 s = await state();
 g.check("going in the diner door shows line 6.9", s.room === "diner" && s.roomLine === LINES["6.9"], { s, want: LINES["6.9"] });
+// The door walks Mops out and in before control returns. Wait that out, then ask for work.
+for (let i = 0; i < 50 && (await page.evaluate(() => !!window.__ss.op.roomWalk)); i++) await sleep(100);
 
 // ORDER at the counter: the switch back to Squatch is announced too.
 await page.evaluate(() => {

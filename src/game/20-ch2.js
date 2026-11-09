@@ -735,7 +735,7 @@
           when: n.room === "gas" && x.mops && i === "g1door",
           hot: !0,
           f: () => {
-            ((n.chip = ""), Wh());
+            ((n.chip = ""), Wh(!0));
           },
         }),
         spot({
@@ -924,7 +924,17 @@
           when: diner && kitchenPhase(i),
           hot: !0,
           f: () => {
-            (roomLine("Mops goes back to the kitchen."), (n.room = "kitchen"), (n.mo.x = 110), (n.mo.y = 500), (n.mo.f = 1));
+            roomLine("Mops goes back to the kitchen.");
+            beginRoomWalk({
+              outWho: "mo",
+              exitX: 1010,
+              exitY: 520,
+              fromLeft: !0,
+              ctrlAfter: !0,
+              arrive: () => {
+                (n.room = "kitchen"), (n.mo.x = 110), (n.mo.y = 500), (n.mo.f = 1);
+              },
+            });
           },
         }),
         spot({
@@ -954,7 +964,19 @@
           when: kitMo,
           hot: !0,
           f: () => {
-            (roomLine("Mops goes out front."), (n.room = "diner"), (n.mo.x = 760), (n.mo.y = 520), (n.mo.f = -1));
+            roomLine("Mops goes out front.");
+            beginRoomWalk({
+              outWho: "mo",
+              exitX: -40,
+              exitY: 500,
+              fromLeft: !1,
+              entryX: 760,
+              entryY: 520,
+              ctrlAfter: !0,
+              arrive: () => {
+                (n.room = "diner"), (n.mo.x = 760), (n.mo.y = 520), (n.mo.f = -1);
+              },
+            });
           },
         }),
         spot({
@@ -1072,18 +1094,28 @@
           }),
         ]));
     }
-    function Wh() {
-      (roomLine("Mops goes inside."),
-        (n.scene = "G2"),
-        (ch2.phase = "g2"),
-        (n.room = "diner"),
-        (n.live = []),
-        switchTo("mops"),
-        (n.mo = { x: mf.x + 40, y: 560, f: 1, walk: 0, moving: !1 }),
-        (n.moPose = "stand"),
-        n.pulse.clear(),
-        n.pulse.add("counter"),
-        (n.ctrl = !0));
+    function Wh(live) {
+      let arrive = () => {
+        (roomLine("Mops goes inside."),
+          (n.scene = "G2"),
+          (ch2.phase = "g2"),
+          (n.room = "diner"),
+          (n.live = []),
+          switchTo("mops"),
+          (n.mo.x = mf.x + 40),
+          (n.mo.y = 560),
+          (n.mo.f = 1),
+          (n.mo.walk = 0),
+          (n.mo.moving = !1),
+          (n.moPose = "stand"),
+          n.pulse.clear(),
+          n.pulse.add("counter"),
+          (n.ctrl = !0));
+      };
+      // The diner door from play walks out and in. A scene jump (sceneG2) just arrives.
+      live
+        ? beginRoomWalk({ outWho: "mo", exitX: po.x, exitY: po.y, fromLeft: !0, entryX: mf.x + 40, entryY: 560, ctrlAfter: !0, arrive })
+        : arrive();
     }
     function UA() {
       ((n.ctrl = !1),
@@ -1114,13 +1146,20 @@
         n.pulse.clear(),
         D.open(),
         roomLine("Squatch sneaks into the kitchen."),
-        (n.room = "kitchen"),
-        (n.scene = "G2k"),
-        (n.sq.x = 120),
-        (n.sq.y = 470),
-        (n.sqPose = "stand"),
-        (x.spot = -1),
+        beginRoomWalk({
+          outWho: "sq",
+          exitX: -40,
+          exitY: 470,
+          fromLeft: !0,
+          entryX: 120,
+          entryY: 470,
+          ctrlAfter: !1,
+          arrive: () => {
+            (n.room = "kitchen"), (n.scene = "G2k"), (n.sq.x = 120), (n.sq.y = 470), (n.sqPose = "stand"), (x.spot = -1);
+          },
+        }),
         J([
+          cV(() => !n.roomWalk),
           v("sq", "Dishes! I'm GREAT at dishes."),
           N(() => {
             ((ch2.phase = "wash1"), (ch2.peekT = 7), n.pulse.add("rail"), (n.ctrl = !0));
@@ -1289,15 +1328,26 @@
         n.pulse.clear(),
         D.open(),
         roomLine("Mops brings the soup into the kitchen."),
-        (n.room = "kitchen"),
-        (ch2.phase = "g4k"),
-        (n.mo.x = 150),
-        (n.mo.y = 520),
-        (n.mo.f = 1),
-        (ch2.argueT = 2.4),
-        (ch2.out = -1),
-        n.pulse.add("kcrate"),
-        (n.ctrl = !0));
+        beginRoomWalk({
+          outWho: "mo",
+          exitX: 1010,
+          exitY: 520,
+          fromLeft: !0,
+          entryX: 150,
+          entryY: 520,
+          ctrlAfter: !0,
+          arrive: () => {
+            (n.room = "kitchen"),
+              (ch2.phase = "g4k"),
+              (n.mo.x = 150),
+              (n.mo.y = 520),
+              (n.mo.f = 1),
+              (ch2.argueT = 2.4),
+              (ch2.out = -1),
+              n.pulse.add("kcrate"),
+              (n.ctrl = !0);
+          },
+        }));
     }
     function PA() {
       ((n.ctrl = !1),
@@ -1316,7 +1366,6 @@
           v("sq", "Soup! And a note...", "whisper"),
           { k: "panel", id: "note2" },
           v("sq", "THE GUARDIANS FOUND ME IN SPACE!", "whisper"),
-          v("sq", "A hoof stamp. Mops signed it.", "whisper"),
           { k: "panel", id: "stamp" },
           v("mops", "...Eat up, kiddo.", "whisper"),
           N(() => {

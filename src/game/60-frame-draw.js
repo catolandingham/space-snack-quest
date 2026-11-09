@@ -1916,11 +1916,14 @@
         (I2(n.fbPic, ""), bq(l.b, !1));
         return;
       }
-      (drawRoom(),
-        ringsLeft(),
-        xp(),
-        drawSec(),
-        drawWalkTo());
+      let walking = !!n.roomWalk;
+      applyWalkDraw();
+      try {
+        drawRoom();
+      } finally {
+        restoreWalkDraw();
+      }
+      walking || ringsLeft(), xp(), drawSec(), drawWalkTo();
       for (let i of n.sparks)
         if (i.x !== 300 && i.s === "!") {
           let s = Math.sin(i.t * 14) * 4,
