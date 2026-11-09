@@ -1,46 +1,130 @@
 # Space Snack Quest: where things stand
-Sunday, November 8, 2026, about 8:50 PM PT. Decisions: `docs/DECISIONS.md`. Open asks: `docs/OPEN-ASKS.md`. Words: `docs/CH1-CARTOON-LINES.md`. Look: `docs/STYLE-GUIDE.md`.
+Monday, November 9, 2026, through R57 (about 9:58 AM PT). Repo copy synced the same day. Decisions: `docs/DECISIONS.md`. Open asks: `docs/OPEN-ASKS.md`. Words: `docs/CH1-CARTOON-LINES.md`. Look: `docs/STYLE-GUIDE.md`.
+
+## Fidelity system (new, 9:55 PM PT, Brian t233 / W33)
+- Approved and current pictures are frozen in `LOCKED/` (`LOCKED/INDEX.md`). Rooms are drawn only by `mockups/rooms/home_room.py`, `mockups/rooms/delivery_room.py`, `mockups/rooms/hall_room.py` (new 11:20 PM PT) and `mockups/rooms/hallway_room.py` (connecting hallway, R48, CURRENT pending Brian yes); panels import them. Before Brian sees a sketch: `tools/check_all.sh` + the independent checker (`docs/CHECKER.md`). Steps: `docs/FIDELITY.md`.
+- Home panels (08, 08a, 08b) now include R36 (door = cut in the right wall, poster beside it) and R37 (no vent); Brian hasn't seen that version yet (locked CURRENT).
+- **v2 fix pass (about 10:00 PM PT):** fixed the checker findings that already had a decision (#1–#8, #10–#12; Brian's request). Every panel is now `LOCKED/<id>-v2.png` CURRENT; v1 kept as superseded. Room-only refs are v2 as well: home changed only in the crate label (drawn up-arrow, 0% elsewhere vs v1); delivery gained the one shared game plant + bin at x167, Nunito UPS labels and the night doorway colour (0% elsewhere vs v1). `tools/fidelity_manifest.py` points at v2; `tools/check_all.sh` = PASS.
+- **Left for Brian:** #9 (ship docked overnight in 07) and the "Pawature" wording.
+- **Fresh checker read of v2, still open (no decision yet):** delivery-panel Mops (03, 04, 05a, 05b, 09) still has the raw-sprite grey line beside his face and a beige floor patch at his feet (home panels are cleaned); in 03 the third ramp robot sits behind Bob's/Lou's antennae; Dot/Bob/Lou name tags are baked into the sprites (not Nunito); the crate's drawn up-arrow is an arrow inside a game label (kept on purpose, request #4).
 
 ## The game
-- Live game = `main` of `catolandingham/space-snack-quest` at **10030f6** (Phases 0–3 and the Chapter 1 pass, PRs #7–#11). Render publishes `main`.
-- Open PRs when this note was first written: #12–#16 (docs, audits, held fixes). PR #17 (room walks and the hoof-stamp cut) opened on 2026-11-09. None of them are merged. This decision-log sync is a separate docs PR. It is not merged until Brian writes his yes.
-- **Running now:** the room-walk fix (P2) and the hoof-stamp line cut (P3), which Brian OK'd on Nov 8, are open as [PR #17](https://github.com/catolandingham/space-snack-quest/pull/17) on `cursor/later-chapter-walks-04ec` (cloud agent bc-1f6073a1-0bac-5c0f-a74a-eeae794204ec). It was not open at 8:45 PM PT on Nov 8. It is open now, and it is not merged. **Don't merge it without Brian's written yes in that PR.** That PR also edits `README.md`, `docs/MASTER-BACKLOG.md`, `docs/CHIP-ARMATURE-AUDIT.md`, `docs/project/DECISIONS-2026-11-08.md`, `docs/project/STATE-2026-11-08.md`, and adds `docs/LATER-CHAPTERS-LINES-FOR-BRIAN.md`. It edits `src/game/20-ch2.js`, `30-ch3.js`, `40-ch4.js`, `50-story-frame.js`, `60-frame-draw.js`, `90-input-shell.js`, and tests. This docs PR does not touch those code files.
+- Live game = `main` of `catolandingham/space-snack-quest` at **10030f6** (Phases 0–3 and the Chapter 1 pass, PRs #7–#11). Render publishes `main`. This docs sync does not change the game.
+- Open PRs: #12–#16 (docs, audits, held fixes), [PR #17](https://github.com/catolandingham/space-snack-quest/pull/17) (room walks and the hoof-stamp cut), and this docs PR (#18). None of them are merged.
+- **The P2/P3 work:** Brian OK'd the room-walk fix (P2) and the hoof-stamp line cut (P3) on Nov 8 (cloud agent bc-1f6073a1-0bac-5c0f-a74a-eeae794204ec). The designer note at 8:45 PM PT on Nov 8 said no PR was open yet. PR #17 opened on 2026-11-09 on `cursor/later-chapter-walks-04ec`. It is not merged. **Don't merge it without Brian's written yes in that PR.** That PR also edits `README.md`, `docs/MASTER-BACKLOG.md`, `docs/CHIP-ARMATURE-AUDIT.md`, `docs/project/DECISIONS-2026-11-08.md`, `docs/project/STATE-2026-11-08.md`, and adds `docs/LATER-CHAPTERS-LINES-FOR-BRIAN.md`. It edits `src/game/20-ch2.js`, `30-ch3.js`, `40-ch4.js`, `50-story-frame.js`, `60-frame-draw.js`, `90-input-shell.js`, and tests. This docs PR does not touch those code files.
 - Not started: the P1 security trace, P4–P8, and the Chapter 1 rebuild (it waits on the finished cartoon).
-- `docs/DECISIONS.md` and this file are the live copies. The dated snapshots `docs/project/DECISIONS-2026-11-08.md` and `docs/project/STATE-2026-11-08.md` are kept. Every earlier note is in the section below, and a replaced note is marked **Superseded** there.
+- `docs/DECISIONS.md` and this file are the live copies, synced through R57. The dated snapshots `docs/project/DECISIONS-2026-11-08.md` and `docs/project/STATE-2026-11-08.md` are history. Every earlier note is in the section below, and a replaced note is marked **Superseded** there.
 
 ## Chapter 1 cartoon: panels in story order
-All panels are in `/workspace/ssq/mockups/`. The file numbers are older and don't match the story order.
+All panels are in `/workspace/ssq/mockups/`. File numbers are older and don't follow story order; new files continue the numbering (10–13), and there are no duplicate numbers now (the guest sheet is `sketch-ref-guest-lineup.png`). **Storyboard of all drawn panels: `mockups/storyboard-ch1.png`** (`tools/storyboard.py`). Every word: `docs/CH1-CARTOON-LINES.md`.
 | Order | Panel | File (script) | State |
 |---|---|---|---|
-| 1 | Hall, the PA announces the ship | `sketch-01m-hall-soft.png` (`hall_soft3.py`) | layout approved |
-| 2 | Lunch bag | `sketch-02-lunch-bag.png` (`lunch_bag.py`) | approved ("Good") |
-| 3 | Delivery ramp, day: robots arrive, the manager, Squatch eyes-only in the plant, the mail room + robot mailbox | `sketch-03-delivery-ramp.png` (`delivery_room.py`) | redrawn tonight (mail room, plant hide, peek-eyes); Brian hasn't seen this version |
-| 4 | "Delicious." Mops bites the yellow copy, the pink copy is sucked into the wall vent | `sketch-04-delicious-vent.png` (`delicious_vent.py`) | redrawn tonight (mail room, plant hide, peek-eyes) |
-| 5 | Gumbling | `sketch-05a-gumbling.png` (`gumble.py`) | approved earlier; redrawn tonight for the mail room and peek-eyes |
-| 6 | Spit into the bin | `sketch-05b-spit-bin.png` (`gumble.py`, `gumble_extra.py`) | approved earlier; redrawn tonight for the mail room and peek-eyes |
-| 7 | Night one: Squatch paw-signs the yellow copy and posts it in the robot mailbox | `sketch-07-night-mailbox.png` (`night_mailbox.py`) | drawn (mail room updated); words TBD |
-| 8 | "Six days later" card | — | not drawn |
-| 9 | Escape night: Squatch waits outside the grate as the L2 ball | `sketch-05c-ball-wait.png` (`ball_wait.py`) | L2 ball swapped in (8:44 PM) |
-| 10 | Vent workstation (detective wall, IDEAS FOR GUARDIANS, pink slip, Squatch behind the grille) | `sketch-06-vent-workstation.png` (`vent_workstation.py`) | drawn (7:47 PM); Mops's thought bubble parked |
-| 11 | Pink slip leaves the vent ("Hurry, hurry, pink slip, got it!" / "Get it before he sees it.") | — | not drawn; words need Brian's yes |
-| 12 | Pickup day: the mail room is full and a robot opens a crate | `sketch-09-pickup-day.png` (`pickup_day.py`) | drawn; Mops moved off the arch; peek-eyes redraw going in; not shown to Brian yet |
-| 13 | Costume at home: Mops trims his beard, closet with kits and JANITOR shirt | `sketch-08a-costume-shave.png` (`costume_home.py`) | redrawn at home with the closet (8:40 PM); not reviewed yet |
-| 14 | Costume on | `sketch-08b-costume-on.png` (`costume_home.py`) | redrawn at home (8:40 PM); not reviewed yet |
-| 15 | Boarding through the fur scanner arch | — | not drawn |
-| 16 | FUR alarm zoom | — | not drawn |
+| 1 | Party: the disguise comes off, a guest pulls the hall's FUR alarm ("FUR! Security!") — camera zoom | `sketch-12-fur-alarm-zoom.png` (`fur_alarm_zoom.py`) | NEW 11:40 PM, LOCKED CURRENT v1; placement is open question Q2 |
+| 2 | Hall, the PA announces the ship | `sketch-01m-hall-soft.png` (`hall_soft3.py`) | layout approved; now drawn through `rooms/hall_room.py` (same pixels) |
+| 3 | Lunch bag | `sketch-02-lunch-bag.png` (`lunch_bag.py`) | approved ("Good") |
+| 4 | Delivery ramp, day: robots arrive, the manager, Squatch eyes-only in the plant, the mail room + robot mailbox | `sketch-03-delivery-ramp.png` (`delivery_room.py`) | v2 CURRENT; Brian hasn't seen this version |
+| 5 | "Delicious." Mops bites the yellow copy, the pink copy is sucked into the wall vent | `sketch-04-delicious-vent.png` (`delicious_vent.py`) | v2 CURRENT |
+| 6 | Gumbling | `sketch-05a-gumbling.png` (`gumble.py`) | approved earlier; v2 CURRENT |
+| 7 | Spit into the bin | `sketch-05b-spit-bin.png` (`gumble.py`, `gumble_extra.py`) | approved earlier; v2 CURRENT |
+| 8 | Night one: Squatch paw-signs the yellow copy and posts it in the robot mailbox | `sketch-07-night-mailbox.png` (`night_mailbox.py`) | v2 CURRENT; mailbox words open; ship-overnight (#9) for Brian |
+| — | "Six days later" card | `sketch-19-six-days-later.png` (`six_days_later.py`) | NEW 7:15 AM, LOCKED CURRENT v1 (card; no room) |
+| 9 | Escape night: Squatch waits outside the grate as the L2 ball | `sketch-05c-ball-wait.png` (`ball_wait.py`) | v2 CURRENT |
+| 10 | Vent workstation | `sketch-06-vent-workstation.png` (`vent_workstation.py`) | drawn (7:47 PM); not yet in the fidelity manifest (no `rooms/` module for the workstation) |
+| 11 | Pink slip leaves the vent: Mops runs out with it in his mouth, Squatch hops up and grabs it | `sketch-13-pink-slip-grab.png` (`pink_slip_grab.py`) | NEW 11:40 PM, LOCKED CURRENT v2 (11:36 PM: checker fixes, E9 '!' on the patrol robot, slip clenched in his mouth per S46); words need Brian's yes; Q3 |
+| 12 | Pickup day (R41/R40/R38): robots open a crate out by the ship and scan it; Squatch hides in a crate still inside the mail room (eyes at the lid gap); no Dot/Bob/Lou; Mops not here yet | `sketch-09-pickup-day.png` (`pickup_day.py` + `ch1_pickup.py`) | v4 CURRENT (7:15 AM, R41/R40); delivery-room-empty-pickup-v3 (opened crate at ramp foot) |
+| 13 | Crate escape (R41/R40/R38): Mops at the mail-room doorway warns him; Squatch climbs out of his mail-room crate unseen; robots busy by the ship | `sketch-10-crate-jump.png` (`crate_jump.py` + `ch1_pickup.py`) | v3 CURRENT (7:15 AM) |
+| 14 | Costume at home: Mops trims his beard; wardrobe shows spare plain blue jacket (R45) | `sketch-08a-costume-shave.png` (`costume_home.py`) | v5 CURRENT (7:20 AM); room open-v4 CURRENT (not APPROVED) |
+| 15 | Costume on (R39/R44: spare blue jacket + glued beard + horns; Mops keeps his jacket) | `sketch-08b-costume-on.png` (`costume_home.py`) | v5 CURRENT (7:20 AM); open_empty room still APPROVED v3 |
+| 16 | Boarding: R39-disguised Squatch and Mops through the fur scanner ("HAIR... PROBABLY. PROCEED."); no aliens (R40) | `sketch-11-boarding-scanner.png` (`boarding_scanner.py`) | v2 CURRENT (7:15 AM); Q4 still open |
+| — | Isfred asks robot to send Mops for Employee of the Month photo (R50) | `sketch-23a-employee-photo-ask.png` (`employee_photo_ask.py`) | office-23a CURRENT v1 (7:30 AM); chase superseded |
+| — | Robot: Mops is not here; Isfred calls for the tapes (R50) | `sketch-23b-mops-gone.png` (`mops_gone.py`) | office-23b CURRENT v1 (7:30 AM) |
+| — | "Later that evening..." card | `sketch-24-later-evening.png` (`tape_review_card.py`) | CURRENT v1 |
+| — | Tape review in office (S56) | `sketch-25-tape-review.png` (`tape_review.py`) | office-25 CURRENT v1 (7:25 AM) |
 
-Not a story panel: `sketch-07-guest-lineup.png` (guest reference sheet; 01–06 approved). Reference sheets for the ball: `sketch-ball-options*.png` (the pick is L2, `_ball_head_L2.png`). The older `beats1-7-*.png` / `beats8-18-*.png` boards are superseded by these panels, but they're the reference for the original peek-eyes. The older hall tries `sketch-01g`–`01l` are superseded by `01m`.
+
+| — | Peek at the robotics delegation | `sketch-15-peek-delegation.png` (`peek_delegation.py`) | NEW 7:15 AM, LOCKED CURRENT v2 |
+| — | Party: Squatch in tourist disguise | `sketch-14-party-tourist.png` (`party_tourist.py`) | NEW 7:15 AM, LOCKED CURRENT v2 |
+| — | TV story (at home) | `sketch-16-tv-story.png` (`tv_story.py`) | NEW 7:15 AM, LOCKED CURRENT v1 |
+| — | Walk home + snack stand | `sketch-17-walk-home-snack.png` (`walk_home_snack.py`) | NEW 7:15 AM, LOCKED CURRENT v1 |
+| — | Mars talk | `sketch-18-mars-talk.png` (`mars_talk.py`) | NEW 7:15 AM, LOCKED CURRENT v1 |
+| — | Robots tease Mops | `sketch-20-robots-tease.png` (`robots_tease.py`) | NEW 7:15 AM, LOCKED CURRENT v1 |
+| — | Almost-slip | `sketch-21-almost-slip.png` (`almost_slip.py`) | NEW 7:15 AM, LOCKED CURRENT v1 |
+| — | Moon Pie site on office computer (R46) | `sketch-22-moon-pie-site.png` (`moon_pie_site.py`) | office-22 CURRENT v1 (7:25 AM); home-22-v1 superseded |
+
+Not a story panel: `sketch-08-home-closed.png` (home, wardrobe closed — APPROVED v3, W34). Reference sheets: `sketch-ref-guest-lineup.png` (renamed from the duplicate `sketch-07-guest-lineup.png`; LOCKED as guest-lineup-sheet), `sketch-ball-options*.png` (pick: L2). Older `beats*.png` boards and hall tries `sketch-01g`–`01l` are superseded. Moments newly drawn 11-09 ~7:15 AM PT (LOCKED CURRENT): peek (15), party tourist (14), TV story (16), walk home + snack stand (17), Mars talk (18), Six days later card (19), robots tease (20), almost-slip (21), Moon Pie site (22), manager chase (23), Later that evening card (24). Still not drawn: wake-up, bedtime Guardians flashback, office tape-monitor scene (no rooms/office module — card only for S56).
+
+## Open questions from the new panels (for Brian, multiple choice)
+- **Q1 (closed by R38, refined by R41, Brian t239/t242):** Squatch hides in a crate inside the mail room; robots open a crate out by the ship; Mops warns him; no Dot/Bob/Lou (R40). Panels 09/10/11 + delivery-pickup room redrawn 7:15 AM.
+- **Q2 Where does the FUR alarm zoom happen?** Drawn: A.
+  - A. At the party, when the disguise comes off: a guest who saw him pulls the hall alarm, "FUR! Security!" (S18, K10, L14). Story slot: before the lunch day.
+  - B. In the TV story: Wookiee fur drifts into the scrubber and the alarm goes off (S19), which teaches the rule with the visible cause S61 asks for.
+  - C. Both: B teaches it, A pays it off (same zoom shot reused).
+- **Q3 How does Squatch take the pink slip without Mops seeing the paw print?** (S46 "grabs it from him".) Drawn: A.
+  - A. He hops up and pulls it from Mops's mouth while Mops is rushing out.
+  - B. Mops drops it after "got it!" as he climbs out and Squatch scoops it up.
+  - C. Mops hands it to Squatch to hold without looking at it.
+  - (Still open after that: O10, how it gets into the Guardian Box / crate.)
+- **Q4 At boarding, where are the Moon Pie crate and the Guardian Box (S50, O10)?** Drawn: A.
+  - A. Already loaded with the cargo, not shown.
+  - B. A robot pushes the Moon Pie crate up the ramp in the same picture.
+  - C. Squatch carries the little Guardian Box himself through the scanner.
 
 ## In progress right now
-- **Peek-eyes redraw:** every plant and box hide gets the game's original white eyes (`peek_eyes.py`). Applied so far in `delivery_room.py`, `delicious_vent.py`, `gumble.py` and `pickup_day.py`. Check the rest (night mailbox, workstation grille) after it lands.
-- **The P2/P3 cloud-agent PR** (above).
-- **Waiting on Brian:** the costume-at-home and pickup-day panels, the mailbox words, the pink-slip lines, and the whole Open list in DECISIONS.md §9.
+- **Peek-eyes redraw:** every plant and box hide gets the game's original white eyes (`peek_eyes.py`), at the size in C21. Plant hide now lives in the shared room (`rooms/delivery_room.py`, x167) for 03/04/05a/05b/09. Still to check: the workstation grille.
+- **The P2/P3 pull request** is PR #17 (above). It is open and not merged.
+- **Waiting on Brian:** Q2–Q4 above, the multiple-choice list at the top of `CH1-CARTOON-LINES.md` (mailbox words, pink-slip lines, PA line, and the rest marked NEEDS BRIAN), the photo-gallery gag list and keepsake points (R55–R57), a yes before the home wardrobe v4 is APPROVED (R45), and the whole Open list in DECISIONS.md §9.
 
 ## Next
-1. Draw the pink-slip exit, boarding through the scanner and the FUR alarm zoom, without pausing between sketches.
-2. Put all the panels together as one Chapter 1 cartoon in the order above, with every line in a bubble, for Brian's yes.
-3. This file and `docs/DECISIONS.md` are that sync. Review, "Docs match main: yes", and Brian's written yes come before merge.
+1. Brian reviews the storyboard (`mockups/storyboard-ch1.png`) and answers Q2–Q4 and the lines-file choices.
+2. Still not drawn: the wake-up and the bedtime Guardians flashback. The vent workstation still needs its own `rooms/` module before it can be diff-checked. Gallery gag sketches wait on Brian's pick (R55). Panel 17 (walk home) can use the approved hallway (R55).
+3. This file and `docs/DECISIONS.md` are that sync (PR #18), through R57. Review, "Docs match main: yes", and Brian's written yes come before merge. Do not merge from this PR.
 4. Then build Chapter 1 in small reviewed phases through the cloud agent.
+
+- 11-08 11:05 PM: Brian approved the home room; locked as APPROVED v3 (panel + 3 room layers). Costume panels 08a/08b stay CURRENT v2.
+- 11-08 ~11:50 PM: four new panels drawn through the locked system (10 crate jump, 11 boarding, 12 FUR alarm zoom, 13 pink-slip grab), each LOCKED CURRENT v1; hall extracted to `rooms/hall_room.py` (+ LOCKED hall-room-empty-v1, hall-room-zoom-alarm-v1); `tools/check_all.sh` PASS; lines file rebuilt as the one complete Ch1 list; storyboard `mockups/storyboard-ch1.png`.
+- 11-08 11:36 PM: panel 13 fixed after the independent checker (E9 '!' on the patrol robot; S46 slip still clenched in Mops's mouth); LOCKED delivery-13-pink-slip-grab-v2 CURRENT; storyboard rebuilt; check_all PASS.
+
+- 11-09 12:16 AM: Brian t239 decided R38 (pickup-day crate escape; closes Q1 as crate). Panel 13 redraw requested.
+- 11-09 ~12:30 AM: 08a/08b characters 1.35× bigger (Brian t238; room unchanged, 0.000%), LOCKED v3 CURRENT. R38: panel 09 redrawn (Squatch in a crate, crates loaded up the ramp, Mops removed) → v3 CURRENT; panel 10 redrawn (Mops warns, Squatch climbs out of his crate) → v2 CURRENT; shared staging `mockups/ch1_pickup.py`; storyboard rebuilt; check_all PASS.
+
+- 11-09 7:02 AM: Brian t242: R39 disguise = Mops jacket + fake beard + horns; R40 no Dot/Bob/Lou on pickup day. R41: robots open a crate out by the ship; Squatch hides in a crate inside the mail room.
+- 11-09 7:07 AM: R42 manager name Bob Peterson (Brian t244); cloud agent and sketch worker told.
+- 11-09 7:08 AM: R42 corrected: manager is Isfred Bar Neshuman (Brian t245; Bob Peterson withdrawn).
+- 11-09 7:09 AM: R43 ball detection = robot within ~70px for 2s continuous (Brian t246).
+
+- 11-09 ~7:15 AM: Brian t242 R39–R41 applied. Redrew 08a/08b (costume = jacket+beard+horns, 1.35× kept), 09/10 (crate by ship; Squatch in mail room; no aliens), 11 (costume match). Locked CURRENT: home-08a-v4, home-08b-v4, delivery-09-v4, delivery-10-v3, delivery-11-v2, delivery-room-empty-pickup-v3. Home room APPROVED empty refs still 0.000%. `tools/check_all.sh` PASS. Storyboard rebuilt. Open Qs: wardrobe JANITOR spare vs R39 jacket; does Mops keep his jacket on while Squatch wears one.
+- 11-09 7:14 AM: R44 spare jacket, Mops keeps his; R45 wardrobe JANITOR shirt -> plain blue jacket (home v4 pending Brian yes).
+- 11-09 ~7:15 AM PT: Drew remaining Ch1 moments through locked rooms (14 party tourist, 15 peek, 16 TV story, 17 walk-home+snack, 18 Mars talk, 19 Six-days card, 20 robots tease, 21 almost-slip, 22 Moon Pie site, 23 manager chase, 24 Later-evening card). Manager labeled Isfred Bar Neshuman (R42). SKIPPED office tape-monitor (no `rooms/` office module). Did not touch 08a/08b/09/10/11 or storyboard. `tools/check_all.sh` PASS. Fresh-eyes pass fixed 14/15 to v2.
+
+- 11-09 ~7:20 AM: R45 wardrobe spare = plain blue jacket. `home_room.py` default spare='plain_jacket' (spare='janitor_v3' still reproduces APPROVED open-v3 at 0.000%). Diff vs APPROVED open-v3: only the spare-slot patch, bbox (152,314)–(194,325) ≈ 42×11 px (0.035% of room). closed + open_empty unchanged (0.000% vs APPROVED v3) — not re-locked. LOCKED CURRENT: home-room-empty-open-v4, home-08a-costume-shave-v5, home-08b-costume-on-v5. Not APPROVED until Brian yes. R44 confirmed spare jacket / Mops keeps his (already drawn).
+- 11-09 7:18 AM: R46 Moon Pie site on office computer (Brian t247); home-22 v1 superseded; office room module to be extracted from game art.
+- 11-09 7:19 AM: R47 walk home mirrors walk over through the shared hallway (Brian t248).
+- 11-09 7:19 AM: R48 sketch a new connecting hallway for Brian approval; panel 17 on hold.
+- 11-09 ~7:20 AM PT: Overlap pass on new Ch1 panels (Brian notes on 15). 15 v3: banner moved left (full ROBOTICS DELEGATION!); Mops bubble to his left (face/horns clear); hall PLANT2 erased before characters so one C21 plant. 14/18/20/21/23 bumped to costume-v3 sizes + bubble clears. 17 HELD at v1 — Brian: hallway between rooms never designed, do not invent/redraw. 16/19/22/24 unchanged. `tools/check_all.sh` PASS.
+- 11-09 ~7:22 AM PT: R48 connecting hallway sketched for Brian approval. New `mockups/rooms/hallway_room.py` (`draw_hallway`). Doorways: LEFT→HOME (R6/R24), BACK→HALL/party (R6), RIGHT→DELIVERY (R14). No office door yet (R23: office beside mail room). No mail-room door (inside delivery). No vent. Signs HOME/HALL/DELIVERY = NEEDS BRIAN. LOCKED CURRENT: hallway-room-empty-v1, hallway-walk-example-v1 (Mops+Squatch walk-home direction, costume-v3 size). Not APPROVED. Panel 17 still on hold until Brian OKs the hallway.
+
+- 11-09 ~7:25 AM: R46 — built `rooms/office_room.py` from game Fp()+Z6() (middle-main-read/10-ch1.js + 50-story-frame.js; lt=150,250). Locked CURRENT office-room-empty-v1 (not APPROVED). Redrawn panel 22 in office (office-22-moon-pie-site-v1); home-22 superseded. Also drew tape review office-25-tape-review-v1 (S56). S48 button words still NEEDS BRIAN.
+- 11-09 7:27 AM: R49 party logic: no Mops, no robots at party, game-accurate guest sizes; You have me moves out of party.
+- 11-09 7:28 AM: R50 no manager at departure; office cutscene: Isfred asks robot to send Mops for Employee of the Month photo, learns he's gone. Panel 23 chase superseded.
+- 11-09 7:30 AM: R51 hallway = hall<->loading bay only, no home door, Employee of the Month photo wall; hallway v1 superseded.
+- 11-09 7:30 AM: R51 hallway = hall<->loading bay passage, no home door, photo wall, manager office off to the side (Brian t252/t253); hallway v1 rejected.
+- 11-09 ~7:30 AM: R50 — drew office 23a (Employee of the Month ask) + 23b (Mops gone → tapes). delivery-23-manager-chase superseded. Boarding panel 11 already has R39 costume and no manager (checked; no re-lock). "Mops, it's a mistake!" cut from lines. Did not touch party panels or storyboard. `tools/check_all.sh` after lock.
+- 11-09 ~7:32 AM PT: R51 hallway v2 (Brian t252/t253 rejected v1). `rooms/hallway_room.py` redrawn: LEFT→party hall, RIGHT→loading bay, NO home door; Employee of the Month photo wall (game Tf ×47); manager office alcove partly off to the side (desk/MANAGER/computer glimpse from office_room). Dropped HOME/HALL/DELIVERY plaques. LOCKED CURRENT: hallway-room-empty-v2, hallway-walk-example-v2 (Mops+Squatch heading left). Not APPROVED. Panel 17 still on hold.
+
+- 11-09 ~7:35 AM PT: R49 party redraw (Brian t250). Panels 15/14/12 re-locked CURRENT: `hall-15-peek-delegation-v4`, `hall-14-party-tourist-v4`, `hall-12-fur-alarm-zoom-v2`. No Mops, no robots (guests 01–05 only; Isfred alone on stage); guest heights from native sprite ratios via `mockups/ch1_party_sizes.py` (SQ 150 → guests 201–257, Isfred 307); pairs = family hug (01+03) + tourists laughing (02+05); lines keep "Robots?" + "Everybody has somebody"; "You have me" removed from party (CH1-CARTOON-LINES updated; placement pending). `tools/check_all.sh` PASS. Strict Ch1 logic pass logged in this turn's report (party fixed; panel 17 still HELD wrong-room; open MCs below).
+- 11-09 ~7:36 AM PT: Hallway v3 (parent review of v2). Title cleared above photo grid; office = modest back-wall doorway with full office_room-scale desk/MANAGER/computer glimpse (hallway floor continues in front); left/right end openings clearly cut into the back wall (party hall / loading bay). LOCKED CURRENT hallway-room-empty-v3 + hallway-walk-example-v3. Not APPROVED.
+
+- 11-09 ~7:45 AM PT: Panel 15 → v5 CURRENT (`hall-15-peek-delegation-v5`): Isfred height = cast.A scale 0.55 → 203px (same constant as delivery_room/`mockups/cast.py`; native spr_a_manager 370); feet ON stage top (y=330) with contact shadow; name tag beside head (inside frame); Robots? bubble left of plant, clear of guests; dropped stray ha! text. Panel 12 → v3 CURRENT (`hall-12-fur-alarm-zoom-v3`): guest removed (PA announces); bubble tail on speaker; zoom box ends above snack yellow (no clip). Panel 14 left at v4. check_all: hall/party panels PASS; hallway room vs hallway-room-empty-v3 drifted 3.921% (pre-existing, not from this pass — did not touch hallway_room.py).
+
+- 11-09 ~7:45 AM PT: Hallway v4 (parent review of v3). Office opening redrawn to match left/right back-wall openings (same height END_TOP→FLOOR_Y + floor tongue); lavender office floor/wall inside; small distant desk corner glimpse with partial MANAGER plate + partial computer (office_room proportions at OFF_DESK_S=0.50); no floating sill / chopped desk / giant monitor. Title + end openings unchanged from v3. LOCKED CURRENT hallway-room-empty-v4 + hallway-walk-example-v4. Not APPROVED. Panel 17 still on hold.
+- 11-09 8:46 AM: R52 Brian decided "You have me" goes at Mops homecoming when he finds Squatch (S18).
+- 11-09 8:48 AM: R53 hallway layout fix: exits at both ends, office door on the front wall opposite the photo wall, locked with code keypad. Hallway v5 redraw dispatched.
+
+- 11-09 ~8:50 AM PT: Hallway v5 (Brian t254 / R53). Side-wall exits: LEFT→party hall, RIGHT→loading bay (delivery/home cut language); back wall = centered Employee of the Month only (title+47+tilt); front wall = CLOSED office door + S11 world keypad (no alcove, no desk glimpse, no new words). LOCKED CURRENT hallway-room-empty-v5 + hallway-walk-example-v5. Not APPROVED. Panel 17 still on hold.
+- 11-09 9:53 AM: R54 office cutscene dialogue rewritten (Isfred: can't live off the station; robot: replaced by new robot shipment; Isfred: never ordered a replacement, get the tapes). Short version proposed to Brian; cloud agent steered for PR #19.
+- 11-09 9:55 AM: R55 hallway v5 APPROVED (Brian t257); first walk to loading bay = cutscene, hallway interactive only on return; Employee of the Month wall = swipe gallery of funny Mops photos incl. Squatch ball-rolling in background. Next: gallery gag sketches, panel 17 walk home, office/night-sneak redraw for locked door, cloud agent hallway build.
+- 11-09 9:58 AM: R56 gallery: 10 per visit, crooked photo #4 reveals the age-5 crayon drawing of Squatch+Mops (must be drawn), rotating pool of ~16 gags, end choice more-photos/move-on (proposed). Executor brief updated.
+- 11-09 9:58 AM: R57 gallery 5 per visit; crayon drawing stays on the wall, take it as a keepsake on the last hallway walk before boarding for bonus points (amount TBD). Executor told.
 
 ---
 
@@ -51,7 +135,7 @@ From `docs/project/STATE-2026-11-08.md`, the snapshot of the Drive master taken 
 
 # Space Snack Quest: state
 
-**Superseded** as the live date. The live status is the top of this file (Sunday, November 8, 2026, about 8:50 PM PT, copied into the repo on November 9). Kept:
+**Superseded** as the live date. The live status is the top of this file (Monday, November 9, 2026, through R57, about 9:58 AM PT). Kept:
 
 As of 2026-11-06 evening (Claude Code session on Brian's MacBook).
 

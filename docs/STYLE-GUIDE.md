@@ -1,7 +1,7 @@
 # Space Snack Quest — Style Guide (sketches + Ch1 build)
 
 For Brian. Keep every new sketch and build panel matching this. Template room: `hall_soft3.py` → `sketch-01m-hall-soft.png`.
-Updated Nov 8, 2026, about 8:50 PM PT. The decisions behind each rule are in `docs/DECISIONS.md` (codes in brackets).
+Updated Nov 9, 2026, synced through R57. The decisions behind each rule are in `docs/DECISIONS.md` (codes in brackets). This page does not change the game.
 
 ## Canvas and room frame
 - Canvas: **1280 × 830**
@@ -15,7 +15,8 @@ Updated Nov 8, 2026, about 8:50 PM PT. The decisions behind each rule are in `do
 - Draw rooms like `sketch-01k` / `sketch-01m-hall-soft` (`hall_soft3.py`), **not** the older block style (solid labeled blocks for areas).
 - Inner areas are made with **thin partial walls** in the same DARK outline, not filled blocks. Example: the mail room is a partial wall in the corner of the delivery room with its opening toward where the manager stands, so robots inside can't see the wall vent [R18].
 - **No area labels** on the floor or walls (e.g. no "MAIL ROOM", no "STORAGE") unless Brian asks for one [R17].
-- **Don't invent new rooms.** Reuse rooms that already exist (hall, delivery room with the mail room, home below the hall, office, vent workstation). If a scene needs something extra, add the smallest thing to an existing room. Example: a **closet** added to the home for the costume kits and the spare JANITOR shirt [R24].
+- **Don't invent new rooms** unless Brian asks for one. Reuse rooms that already exist (hall, delivery room with the mail room, home, office, vent workstation). The connecting hallway is the one he asked for [R48, R51, R55]. It runs between the party hall and the loading bay, with the Employee of the Month wall and a locked office door [R53].
+- **Home** is the game's home, plus a wardrobe on the back wall at the far left [R29, R30]. The calendar hangs on the wardrobe door and swings away when the door is open [R31, R34]. The door out is a cut in the right wall, and the STAY IN HERE poster is on the wall beside it [R35, R36]. No mop in the home [R33]. No vent in the home [R37]. The spare on the hook is a plain blue jacket, not a JANITOR shirt [R45]. The closet-and-shirt note [R24] is Superseded by those rows. Home v4 stays CURRENT until Brian says APPROVED [W34, R45].
 - Things that appear only at certain times: the **fur scanner arch** (blue scan line, foot of the ramp) is drawn **only when a ship is docked** [R15]. The mail room is **empty except for the robot mailbox** until pickup day, then holds crates and big bags [R20].
 - The **robot mailbox** (an old-school mailbox that's secretly a robot) is in the mail room in **every** delivery-room panel, day and night [R21].
 - One snack stand in the hall, on the far right, turned against the wall. The big viewing window stays flush in the top-right corner. Speaker, FUR pull alarm and vent are spread out on the walls [R7, R9, R11].
@@ -56,10 +57,11 @@ Updated Nov 8, 2026, about 8:50 PM PT. The decisions behind each rule are in `do
 - **No mop prop, ever.** Mops cleans with his **beard**, everywhere, the kitchen included [C2].
 - **Guests:** use approved `spr_guest_01`–`06` (teal-jacket woman, camera tourist, three-eyed backpacker, stilt-legs, octopus, robot tourist) plus the existing guests. Not 07 (jelly) or 08 (furry) [C12]. Workers and manager keep the current `spr_a_*.png` sprites [C11].
 
-## Squatch hiding [C3, C8, C9]
+## Squatch hiding [C3, C8, C21]
 - **In a plant, bush or box: show ONLY the plant (or box) and his eyes.** Never his body or a fur patch beside or behind it. This applies to every panel, always.
-- **Peek-eyes = the game's original eyes**, from `ga()` in `src/game/10-ch1.js`: two white ellipses 18 px apart (offsets −9 and +9, radius 6 at game scale), with a 2 px dark outline `#1e2430` and a dark pupil (radius 2.4) nudged +1,+1. Static sketches use open eyes (no blink). In sketches, use `peek_eyes.py` → `draw_peek_eyes(d, cx, cy, scale=2.5)` (sprites `spr_peek_eyes.png` at 2.5×, `spr_peek_eyes_1x.png` at game size). Never tiny dark dots.
-- **The ball pose = L2**, everywhere: `_ball_head_L2.png` (from `sketch-ball-options-4.png`). It's a solid brown ball with Squatch's frizzy, scalloped head outline and ears, and two slightly bigger dark eyes with tiny white highlights. No face, no arms or legs. Older options (A–E, the 62% kitchen-duck squash, F–J, K, L) are not used.
+- **Peek-eyes = exactly the game [C21].** *Plant:* the game plant (`Xp()`): orange pot, five fuzzy leaf clumps. The two eyes sit low, in the two lower-front clumps (eye centre about halfway down the leaves). Each eye is about 12% of the plant's height, and the centres are about 19% of the plant's width apart. *Box:* the game two-box stack (`Ys()`). The eyes peek at the seam, just under the small box. *Eyes* (`ga()`): two round white eyes, 2 px dark outline `#1e2430`, dark pupil nudged down-right. Sketches use `peek_eyes.py` → `paste_plant_hide()` / `paste_box_hide()`. **Superseded:** the v1 helper at 2.5× scale, placed high, on the old smooth plant [C9].
+- **The ball pose = L2**, everywhere: `_ball_head_L2.png` (from `sketch-ball-options-4.png`). It's a solid brown ball with Squatch's frizzy, scalloped head outline and ears, and two slightly bigger dark eyes with tiny white highlights. No face, no arms or legs. Older options (A–E, the 62% kitchen-duck squash, F–J, K, L) are not used. Ball-hide detection, when it is built, is R43 (about 70px for 2 seconds). That is not in the game.
+- **Party pictures:** no Mops and no robots [R49]. Guests 01–05 only in those panels. Guest 06 stays an approved sprite for other crowds [C12]. The manager's label, when a picture uses one, is Isfred Bar Neshuman [R42], and that label is NEEDS BRIAN in the lines file.
 
 ## Story / panel rules
 - **One picture per moment** — no arrows, no multi-step diagrams

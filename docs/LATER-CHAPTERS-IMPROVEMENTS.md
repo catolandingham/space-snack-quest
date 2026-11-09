@@ -45,7 +45,7 @@ For Brian • Sunday, November 8, 2026, about 8:30 PM PST • proposals only, no
 **Recommend A.** It matches the rule we already ship ("announce who and why") and keeps the kid from getting lost. That's 11 short lines for your cartoon review.
 
 ### X3. Rolling into a ball as a hiding move everywhere. Superseded by C20
-**Superseded by C20** in `docs/DECISIONS.md` (Brian t228). The choice is no longer open. The player can press the action button to ball up (L2) whenever they want, in every chapter. It is a weaker hide than plants and boxes: a robot already looking at him, or close by, still spots him, and one passing at a distance may miss him. Escape night is a story spot where it fully works (C19: the player presses the action button and Squatch squats into the ball; it is not automatic). Exact detection numbers still need Brian's yes before any code.
+**Superseded by C20** in `docs/DECISIONS.md` (Brian t228). The choice is no longer open. The player can press the action button to ball up (L2) whenever they want, in every chapter. It is a weaker hide than plants and boxes: a robot already looking at him, or close by, still spots him, and one passing at a distance may miss him. Escape night is a story spot where it fully works (C19: the player presses the action button and Squatch squats into the ball; it is not automatic). Ball-hide detection is decided in R43: a robot notices the L2 ball only if it stays within about one crate width (~70px) for 2 seconds, and leaving that radius resets the count. Radius and seconds stay isolated constants for tuning. Standing and walking detection do not change. None of that is in the game.
 
 The proposal below is kept so the old choices stay visible.
 

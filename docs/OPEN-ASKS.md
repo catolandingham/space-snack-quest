@@ -1,5 +1,5 @@
 # Space Snack Quest: every open ask, in one list
-For Brian and Squatchbot • Sunday, November 8, 2026, updated about 8:50 PM PT
+For Brian and Squatchbot • Monday, November 9, 2026, synced through R57
 
 **Every decision now lives in `docs/DECISIONS.md` (the single source of truth).** This list tracks the asks and their progress; the D-, S-, R-, C-, P-, L-, K- and O- codes point into DECISIONS.md.
 
@@ -15,18 +15,18 @@ For Brian and Squatchbot • Sunday, November 8, 2026, updated about 8:50 PM PT
 | A3 | Mars crossed off with a NO reply letter, to explain why Mops dismisses Mars | drawn; memory says Brian asked for it, so just confirm (DECISIONS O13) | Medium |
 | A4 | Mops's own thought bubble somewhere in the vent scene | parked (later, not drawn) | High |
 | A5 | Squatch rolled into an anxious ball outside the grate, before the workstation panel | done: sketch-05c now uses the L2 ball (escape night) | High |
-| A6 | Rolling into a ball as a standard hiding move | **decided (C19, C20).** L2 everywhere (C3). Escape night: the player presses the action button and Squatch squats into the ball (not automatic). Ball anytime, in every chapter, as a weaker hide than plants and boxes. LATER X3 / L36 is Superseded by C20. Exact detection numbers still need Brian's yes before code | High |
+| A6 | Rolling into a ball as a standard hiding move | **decided (C19, C20, R43).** L2 everywhere (C3). Escape night: the player presses the action button and Squatch squats into the ball (not automatic). Ball anytime, in every chapter, as a weaker hide than plants and boxes. LATER X3 / L36 is Superseded by C20. Ball-hide detection is R43: about one crate width (~70px) for 2 seconds, then the count resets if the robot leaves. Those numbers are not in the game. Standing and walking detection stay as they are | High |
 | A7 | Night mailbox panel: Squatch paw-signs the yellow copy and posts it in the robot mailbox (night one) | drawn (sketch-07-night-mailbox); words still to be written | High |
-| A8 | Costume panel: Mops trims part of his beard and glues it on Squatch, plus the spare JANITOR shirt | redrawn **at home with a new closet** holding the kits and the shirt (sketch-08a/08b); waiting on Brian to look | High |
-| A9 | Boarding through the fur scanner arch | not started | High |
-| A10 | FUR alarm zoom-in shot | not started | High |
+| A8 | Costume panel: Mops trims part of his beard and glues it on Squatch | **Superseded in part by R39, R44, R45.** The disguise is a spare plain blue jacket worn normally, a glued beard, and horns. Mops keeps his own jacket. The JANITOR shirt spare is gone. Drawn at home with the wardrobe (sketch-08a/08b). Home v4 is CURRENT, not APPROVED, until Brian's yes (O38) | High |
+| A9 | Boarding through the fur scanner arch | drawn (`sketch-11-boarding-scanner.png`). No manager chase (R50). Scanner line is the game's "HAIR... PROBABLY. PROCEED." Where the crate sits is still Q4 (O36) | High |
+| A10 | FUR alarm zoom-in shot | drawn at the party (`sketch-12-fur-alarm-zoom.png`). Where it happens is still Q2 (O34). The guest line is NEEDS BRIAN | High |
 | A11 | Guest lineup: taller adults, humanoids mixed with clearly different aliens | done: guests 01–06 approved; 07 jelly and 08 furry not picked | High |
 | A12 | Style guide doc | done (STYLE-GUIDE.md, updated with L2, peek-eyes, newer room style) | High |
 | A13 | Lines list of every new bubble and sign, for your yes | updated (CH1-CARTOON-LINES.md); waiting on Brian | High |
 | A14 | Is the new Guardian note Mops writes in the vent ("We know you're thinking about going to Mars...") readable, for example as a close-up? | waiting on Brian (not asked yet) | Low |
 | A15 | How the pink paw copy gets from the vent desk into the Guardian Box (and on to Mars) without Mops noticing the paw | not asked yet; needed before the Ch4 payoff | Low |
 | A16 | Delivery-slip "Ordered by: paw" idea (4:33 PM) | probably replaced by the pink-copy paw proof; confirm (DECISIONS O8) | Medium |
-| A17 | Manager's name (Puddlewick / Bimble / Clipwell) | waiting on Brian (later) | Low |
+| A17 | Manager's name (Puddlewick / Bimble / Clipwell) | **Closed by R42: Isfred Bar Neshuman.** The on-screen name tag is still NEEDS BRIAN in the lines file, because it is not in the game | High |
 | A18 | Every room change uses a visible walk-off and walk-in | standing rule; in progress in sketches | High |
 | A19 | Hiding in a plant = only the plant and his eyes, with the game's original white peek-eyes | decided; the peek-eyes redraw is in progress across the panels; not built | High |
 | A20 | Adults taller than Squatch and Mops; varied guests | in sketches; not built | High |
@@ -38,12 +38,12 @@ For Brian and Squatchbot • Sunday, November 8, 2026, updated about 8:50 PM PT
 | A26 | Mail room: the old STORAGE corner, no label, newer room style, partial wall opening toward the manager | done in sketches (03, 04, 05a, 05b, 07, 09) | High |
 | A27 | Mail room empty until pickup day, then crates and bags; robots open one instead of an inspection announcement | done in sketch-09-pickup-day; waiting on Brian to look | High |
 | A28 | Fur scanner arch only when a ship is docked | decided; follow it in every panel | High |
-| A29 | Pink slip: Mops in a hurry puts it in his mouth ("Hurry, hurry, pink slip, got it!") and Squatch grabs it ("Get it before he sees it.") | words waiting on Brian; panel not drawn | High |
+| A29 | Pink slip: Mops in a hurry puts it in his mouth ("Hurry, hurry, pink slip, got it!") and Squatch grabs it ("Get it before he sees it.") | drawn (`sketch-13-pink-slip-grab.png`). Both lines stay NEEDS BRIAN. How he grabs it is still Q3 (O35) | High |
 | A30 | How the carbon paw print gets onto the pink copy if it went into the vent at lunch, before the night signing | new question (DECISIONS O9) | Low |
 | A31 | Does Mops also have a desk in their room (bedtime flashback), or only the vent workstation? | still unanswered from 4:33 PM (DECISIONS O14) | Low |
 | A32 | What pulls the manager away at beat 8 / why the office is empty at night | not asked yet (DECISIONS O15) | Low |
 | A33 | Is the "STAFF MAIL — collected before departure." sign still needed now that the mailbox is a robot? | new question (DECISIONS O5) | Low |
-| A34 | Panels still to draw: pink-slip exit, boarding through the scanner, the FUR alarm zoom, maybe a separate bin-and-paw-sign panel | not started | High |
+| A34 | Panels still to draw: pink-slip exit, boarding through the scanner, the FUR alarm zoom, maybe a separate bin-and-paw-sign panel | those three are drawn (see STATE). Still not drawn: wake-up, and the bedtime Guardians flashback. A separate bin-and-paw-sign panel is still O16 | High |
 
 ## B. Chapter 1 story decisions (answered; build waits for the cartoon)
 | # | Decision | Status | Confidence |
@@ -61,7 +61,7 @@ For Brian and Squatchbot • Sunday, November 8, 2026, updated about 8:50 PM PT
 | B11 | Security trace (read-only cloud agent, all paths) | not started | High |
 | B12 | 4:31 PM tweaks: Moon Pie line overheard from the snack line; a clear "go home" goal during free roam; "Later that evening..." card before the tape review | decided | High |
 | B13 | Promise location = first UPS delivery (assumed A) | assumed; confirm | Medium |
-| B14 | Bedroom vent stays, with a red line; crossing it early really sends fur and brings security | decided; not built | High |
+| B14 | Bedroom vent stays, with a red line; crossing it early really sends fur and brings security | **Superseded by R37.** No vent in the home room. Not built | High |
 | B15 | Usable objects get outlines, not floor circles, everywhere | decided; not built | High |
 | B16 | Tap-for-hint (goal → place → exact action) plus a hints on/off setting; no idle auto-hints | decided; words not written | High |
 | B17 | Music: Joe's warm theme for heart moments and the title (OK to use per Brian); sneak and chase theme, travel theme, stings; sound effects for real actions; no constant music, no fart sounds | decided; other tracks not sourced | High |
@@ -118,7 +118,7 @@ For Brian and Squatchbot • Sunday, November 8, 2026, updated about 8:50 PM PT
 |---|---|---|---|
 | E1 | E24: phone HUD bar sits above the picture | done (shipped) | High |
 | E2 | E15: both faces always shown, the other one grayed when you can't switch | not started; SAFE | High |
-| E3 | D8: manager's office beside storage | decided; part of the Ch1 rebuild | High |
+| E3 | D8: manager's office beside storage | **Superseded by R51 and R53.** The office door is on the connecting hallway, opposite the Employee of the Month wall, and it is locked with a code. Not built | High |
 | E4 | D14: skip only scenes already seen | not started | High |
 | E5 | T24: save, and Continue on the title screen | word approved; build after the scene order is stable | High |
 | E6 | D2-STARS: keep stars and the "Never caught! +250" bonus | done (kept) | High |
@@ -157,4 +157,17 @@ These are settled, add no new on-screen words, and change no difficulty, timer, 
 
 **P8. Optional: export the script in play order (H3).** Add a small Node script (`tools/export-script.mjs`) that walks the source and writes `docs/SCRIPT-AS-BUILT.md`: every bubble, card, chip and sign, with its speaker, chapter, scene and file line. It doesn't touch game behavior. This makes the later-chapter cartoons and lines files faster and shows exactly which current lines each change affects.
 
-**Not on this list, and why:** the beard and pot change, dirty dish, switch cards, van → ship, Dad's joke, the ending picture, riddles and travel cards all need new words, so they go to a cartoon for your yes first. The new Chapter 2 opening waits on the ride question (C1). Ball anytime is decided (C20), and the detection numbers still need Brian's yes before code, so it is not on the start-now list. Taller sprites and Rusty's cone width could change difficulty. The Chapter 1 rebuild waits on the finished cartoon. P2 to P7 don't touch the Chapter 1 files, so they won't clash with it. P4 and P5 touch HUD files that the later iPad layout pass will touch too, so land them first.
+## F. Nov 9 cartoon decisions (R29–R57)
+Recorded in `docs/DECISIONS.md`. None of these are in the game. New words stay NEEDS BRIAN in `docs/CH1-CARTOON-LINES.md`.
+
+| # | Ask | Status | Confidence |
+|---|---|---|---|
+| F1 | Home is the game's home, plus a wardrobe (R29–R36). No mop. No home vent (R37). Door is a cut in the right wall | decided; not built. Wardrobe v4 (plain blue jacket) needs a yes before APPROVED (O38, R45) | High |
+| F2 | Pickup day: Squatch hides in a mail-room crate; robots open a crate by the ship; no Dot/Bob/Lou (R38, R40, R41). Q1 is closed | decided; drawn; not built | High |
+| F3 | Party: Squatch goes alone. No Mops. No robots. "You have me" is when Mops comes home (R49, R52) | decided; not built. Words NEEDS BRIAN | High |
+| F4 | No manager at the ship. Office cutscene instead (R50, R54). Words NEEDS BRIAN | decided; not built | High |
+| F5 | Moon Pie site is on the office computer (R46). Walk home uses the connecting hallway (R47, R55) | decided; hallway v5 APPROVED as a picture. Not built | High |
+| F6 | Hallway gallery: 5 photos a visit, crooked photo #4, crayon drawing stays, keepsake on the last walk (R55–R57) | rules decided. Gag list, end choice, and points amount are O37 | Medium |
+| F7 | Ball-hide numbers (R43): ~70px for 2 seconds. Not in the game. Not a start-now item, because it is a detection range (W5) and this pull request is docs only | decided; not built | High |
+
+**Not on this list, and why:** the beard and pot change, dirty dish, switch cards, van → ship, Dad's joke, the ending picture, riddles and travel cards all need new words, so they go to a cartoon for your yes first. The new Chapter 2 opening waits on the ride question (C1). Ball anytime is decided (C20), and the ball-hide numbers are decided in R43. They are not built here. Taller sprites and Rusty's cone width could change difficulty. The Chapter 1 rebuild waits on the finished cartoon. P2 to P7 don't touch the Chapter 1 files, so they won't clash with it. P4 and P5 touch HUD files that the later iPad layout pass will touch too, so land them first.

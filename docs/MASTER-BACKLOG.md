@@ -12,7 +12,7 @@ This page does not mark the rest of the backlog done, and it does not change the
 
 ## Register
 
-**Superseded** as the live status of `main`. This register describes `main` at `9999f0cd`. Current `main` is `10030f6`. PRs #7 through #11 are merged. Render publishes `main`. Open PRs on 2026-11-09 include #6, #12 through #16, and #17. None of them are merged. The room-walk and hoof-stamp work (K20) is [PR #17](https://github.com/catolandingham/space-snack-quest/pull/17). It also edits this page, `README.md`, `docs/CHIP-ARMATURE-AUDIT.md`, `docs/project/DECISIONS-2026-11-08.md`, `docs/project/STATE-2026-11-08.md`, and adds `docs/LATER-CHAPTERS-LINES-FOR-BRIAN.md`.
+**Superseded** as the live status of `main`. This register describes `main` at `9999f0cd`. Current `main` is `10030f6`. PRs #7 through #11 are merged. Render publishes `main`. Open PRs on 2026-11-09 include #6, #12 through #18. None of them are merged. The room-walk and hoof-stamp work (K20) is [PR #17](https://github.com/catolandingham/space-snack-quest/pull/17). It also edits this page, `README.md`, `docs/CHIP-ARMATURE-AUDIT.md`, `docs/project/DECISIONS-2026-11-08.md`, `docs/project/STATE-2026-11-08.md`, and adds `docs/LATER-CHAPTERS-LINES-FOR-BRIAN.md`. This page's Nov 9 docs sync is [PR #18](https://github.com/catolandingham/space-snack-quest/pull/18). PR #18 does not change the game.
 
 Kept, as the history of that older register:
 
@@ -164,7 +164,13 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 - Checkpoint rows the independent pass did not drive.
 - Any item not named in the tables above.
 
+## Chapter 1 replot, recorded and not built
+
+`docs/DECISIONS.md` rows R29 through R57 are the Nov 8–9 cartoon decisions: the home wardrobe, no home vent, the pickup-day crate, the spare blue jacket disguise, Isfred Bar Neshuman, ball-hide timing, the office computer, the connecting hallway, the party with no Mops and no robots, the office cutscene, and the Employee of the Month gallery (5 photos, crooked photo #4, keepsake points still open). They are not in the game. New on-screen words are marked NEEDS BRIAN in `docs/CH1-CARTOON-LINES.md`. Ball-hide numbers (R43, about 70px for 2 seconds) are written down only. This page does not change a timer, a price, or a range in the build.
+
 ## Changelog
+
+2026-11-09. Docs only, second pass on PR #18. Synced the designer record through R57 into `docs/DECISIONS.md`, `docs/STATE.md`, `docs/OPEN-ASKS.md`, `docs/CH1-CARTOON-LINES.md`, and `docs/STYLE-GUIDE.md`. README and this page point at that sync. New cartoon words stay NEEDS BRIAN. No game code and no on-screen words in the game changed.
 
 2026-11-09. Docs only. `docs/DECISIONS.md` is the single source of truth, merged with the 2026-11-08 snapshot. Answered rows in `docs/STORY-DECISIONS.md` are no longer pending. This page points at `docs/DECISIONS.md`. No game code and no on-screen words changed.
 
