@@ -1017,6 +1017,13 @@
       for (let o of B.jans) o.on && l.push({ y: o.y, d: () => u5(o) });
       if (
         (W6(l),
+        n.scene === "Q3" &&
+          l.push({
+            y: 520,
+            d: () => {
+              Qt(640, 520, "#e8a87c", 1.6, 1);
+            },
+          }),
         n.ch1Office &&
           l.push({
             y: 490,

@@ -309,6 +309,7 @@
         placedSpots: () => placedSpots(),
         offerNow: () => pick(spotsNow()),
         drawFrame: () => Ap(),
+        bubbleAt: (who) => v5(who),
         rings: () => ringsDrawn.slice(),
         inSpot: (l) => inSpot(l),
         // Goal chips for Chapters 1, 3 and 4 (task T18), and the chip key the current state reads.

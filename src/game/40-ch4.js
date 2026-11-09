@@ -86,7 +86,7 @@
       return !1;
     }
     function x6(l) {
-      H.lt += l;
+      n.holdLights || (H.lt += l);
       let o = H.bot;
       if (
         !o ||

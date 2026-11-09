@@ -994,8 +994,12 @@
         if (n.room === "hangar" && n.ch1D && n.ch1Ship && !n.ch1Night && n.scene !== "Q9") return { x: 560, y: 400 };
         return { x: 210, y: 215 };
       }
-      if (l === "bot" && n.ch1Office) return { x: 360, y: 400 };
-      if (l === "scanner") return { x: Ha.x, y: 170 };
+      if ((l === "robot" || l === "bot") && n.ch1Office) return { x: 360, y: 400 };
+      if (l === "scanner") return n.room === "hangar" && n.ch1Ship ? { x: 480, y: 210 } : { x: Ha.x, y: 170 };
+      if (l === "ups" && n.ch1Crew === "tease") return { x: 480, y: 380 };
+      if (l === "ups" && n.room === "hangar" && n.ch1D) return { x: 830, y: 460 };
+      if (l === "tourist" && n.room === "hangar" && n.scene === "Q2") return { x: 700, y: 446 };
+      if (l === "tourist" && n.room === "hall" && n.scene === "Q3") return { x: 640, y: 436 };
       if (l === "tourist" && n.room === "hall") {
         let q = x.tour[Math.max(0, x.alertBy)];
         return q ? { x: q.x, y: q.y - 84 } : { x: c / 2, y: 40 };

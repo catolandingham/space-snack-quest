@@ -7,6 +7,7 @@
  * chapter hands control back. It checks the lines in order, a real walk off and walk in, the home
  * room (no vent, door cut, wardrobe), the spare jacket, and the ball notice rule.
  */
+import { readFileSync } from "node:fs";
 import { startGame } from "./game-page.mjs";
 
 const g = await startGame({ port: 8801, name: "ch1-playthrough" });
@@ -169,6 +170,74 @@ g.check(
   "once Squatch takes it, that hook is empty and Mops still wears his jacket",
   spare.empty.nBlue === 0 && spare.mops.nBlue > 4 && spare.mopsStill.nBlue > 4,
   spare,
+);
+
+const ch1Speakers = [
+  ...new Set([...readFileSync(new URL("../src/game/12-ch1-redesign.js", import.meta.url), "utf8").matchAll(/\bv\("([a-z0-9]+)"/g)].map((m) => m[1])),
+];
+const bubbles = await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  const setups = {
+    mops: { scene: "Q1", room: "closet", sq: [400, 520], mo: [520, 500] },
+    sq: { scene: "Q1", room: "closet", sq: [400, 520], mo: [520, 500], pose: "stand" },
+    official: { scene: "Q2", room: "hangar", ch1D: true, ch1Ship: true, ch1Night: false },
+    tourist: { scene: "Q2", room: "hangar", ch1D: true, ch1Ship: true, scene2: "Q3", room2: "hall" },
+    ups: { scene: "Q2", room: "hangar", ch1D: true, ch1Ship: true, crew: "", crew2: "tease", night2: true },
+    scanner: { scene: "Q9", room: "hangar", ch1D: true, ch1Ship: true, ch1Night: false, ch1Office: false },
+    robot: { scene: "Q9", room: "hall", ch1D: false, ch1Office: true },
+  };
+  const cv = document.querySelector("canvas[width='960']") || document.querySelector("canvas");
+  const k = cv.width / 960;
+  const cx = cv.getContext("2d", { willReadFrequently: true });
+  const pix = (x, y) => {
+    const d = cx.getImageData(Math.round(x * k), Math.round(y * k), 1, 1).data;
+    return [d[0], d[1], d[2]];
+  };
+  const placed = (who, extra) => {
+    n.q = [];
+    n.cur = null;
+    n.ctrl = false;
+    n.scene = extra.scene;
+    n.room = extra.room;
+    n.ch1D = !!extra.ch1D;
+    n.ch1Duct = false;
+    n.ch1Ship = !!extra.ch1Ship;
+    n.ch1Night = !!extra.ch1Night;
+    n.ch1Office = !!extra.ch1Office;
+    n.ch1Crew = extra.crew || "";
+    n.sqPose = extra.pose || "stand";
+    n.moPose = "stand";
+    n.sq.x = (extra.sq || [400, 520])[0];
+    n.sq.y = (extra.sq || [400, 520])[1];
+    n.mo.x = (extra.mo || [520, 500])[0];
+    n.mo.y = (extra.mo || [520, 500])[1];
+    if (n.room === "hall") ss.hall.camX = 0;
+    for (let i = 0; i < 8; i++) ss.tick(0.1);
+    ss.drawFrame();
+    const at = ss.bubbleAt(who);
+    let marks = 0;
+    const probe = pix(at.x, at.y + 40);
+    for (let dy = 16; dy <= 88; dy += 12)
+      for (let dx = -16; dx <= 16; dx += 16) {
+        const p = pix(at.x + dx, at.y + dy);
+        if (Math.abs(p[0] - probe[0]) + Math.abs(p[1] - probe[1]) + Math.abs(p[2] - probe[2]) > 36) marks++;
+      }
+    return { who, at, marks, top: at.y < 80 && Math.abs(at.x - 480) < 40 };
+  };
+  const out = [];
+  for (const who of ["mops", "sq", "official", "tourist", "ups", "scanner", "robot"]) out.push(placed(who, setups[who]));
+  out.push(placed("tourist", { scene: "Q3", room: "hall", ch1D: false }));
+  out.push(placed("ups", { scene: "Q4", room: "hangar", ch1D: true, ch1Night: true, crew: "" }));
+  out.push(placed("ups", { scene: "Q5", room: "hangar", ch1D: true, ch1Night: true, crew: "tease" }));
+  out.push(placed("official", { scene: "Q9", room: "hall", ch1D: false, ch1Office: true }));
+  return out;
+});
+const missingSpeaker = ch1Speakers.filter((who) => who !== "pa" && !bubbles.some((b) => b.who === who));
+g.check(
+  "every Chapter 1 speaker has a bubble on a drawn figure",
+  missingSpeaker.length === 0 && bubbles.every((b) => !b.top && b.marks > 0),
+  { missingSpeaker, bubbles },
 );
 
 const play = await page.evaluate(() => {

@@ -120,13 +120,13 @@
         hallBottomOff = [480, 740],
         hallRightOff = [1120, 500],
         delOff = [-80, 520],
-        homeHall = () => ({
+        homeHall = (at) => ({
           who,
           exit: [840, 510],
           off: homeOff,
           to: "hall",
           entry: hallBottomOff,
-          stand: f.stand || [480, 470],
+          stand: at || [480, 470],
           scene: f.scene,
           delivery: !1,
           duct: !1,
@@ -135,13 +135,13 @@
           crew: "",
           mail: "",
         }),
-        hallDel = () => ({
+        hallDel = (at) => ({
           who,
           exit: [880, 500],
           off: hallRightOff,
           to: "hangar",
           entry: delOff,
-          stand: f.stand || [240, 520],
+          stand: at || [240, 520],
           scene: f.scene,
           delivery: !0,
           duct: !1,
@@ -150,13 +150,13 @@
           crew: f.crew || "",
           mail: f.mail || "",
         }),
-        delHall = () => ({
+        delHall = (at) => ({
           who,
           exit: [70, 520],
           off: delOff,
           to: "hall",
           entry: hallRightOff,
-          stand: f.stand || [520, 500],
+          stand: at || [520, 500],
           scene: f.scene,
           delivery: !1,
           duct: !1,
@@ -165,13 +165,13 @@
           crew: "",
           mail: "",
         }),
-        hallHome = () => ({
+        hallHome = (at) => ({
           who,
           exit: [480, 590],
           off: hallBottomOff,
           to: "closet",
           entry: homeOff,
-          stand: f.stand || [430, 510],
+          stand: at || [430, 510],
           scene: f.scene,
           delivery: !1,
           duct: !1,
@@ -210,12 +210,12 @@
           crew: f.crew || "",
           mail: f.mail || "",
         });
-      if (from === "closet" && dest === "delivery") return ch1Hop(homeHall(), () => ch1Hop(hallDel(), next));
-      if (from === "delivery" && dest === "closet") return ch1Hop(delHall(), () => ch1Hop(hallHome(), next));
-      if (from === "delivery" && dest === "hall") return ch1Hop(delHall(), next);
-      if (from === "hall" && dest === "closet") return ch1Hop(hallHome(), next);
-      if (from === "hall" && dest === "delivery") return ch1Hop(hallDel(), next);
-      if (from === "closet" && dest === "hall") return ch1Hop(homeHall(), next);
+      if (from === "closet" && dest === "delivery") return ch1Hop(homeHall(), () => ch1Hop(hallDel(f.stand), next));
+      if (from === "delivery" && dest === "closet") return ch1Hop(delHall(), () => ch1Hop(hallHome(f.stand), next));
+      if (from === "delivery" && dest === "hall") return ch1Hop(delHall(f.stand), next);
+      if (from === "hall" && dest === "closet") return ch1Hop(hallHome(f.stand), next);
+      if (from === "hall" && dest === "delivery") return ch1Hop(hallDel(f.stand), next);
+      if (from === "closet" && dest === "hall") return ch1Hop(homeHall(f.stand), next);
       if (from === "delivery" && dest === "duct") return ch1Hop(delDuct(), next);
       if (from === "duct" && dest === "delivery") return ch1Hop(ductDel(), next);
       console.warn("ch1Go: no walk from " + from + " to " + dest);
@@ -341,12 +341,12 @@
           N(() => {
             ((n.sqPose = "stand"),
               (n.wardrobe = "closed"),
-              ch1Go("delivery", { who: "sq", night: !0, ship: !1, crew: "", mail: "empty", scene: "Q4" }, ch1NightPlay));
+              ch1Go("delivery", { who: "sq", night: !0, ship: !1, crew: "", mail: "empty", scene: "Q4", stand: [140, 540] }, ch1NightPlay));
           }),
         ]));
     }
     function ch1NightPlay() {
-      ((n.scene = "Q4"), (n.ctrl = !0), (n.sqPose = "stand"), (n.sq.x = 140), (n.sq.y = 540), chipNow());
+      ((n.scene = "Q4"), (n.ctrl = !0), (n.sqPose = "stand"), chipNow());
     }
     function ch1GrabYellow() {
       ((n.ch1Got = 1), (n.act = null));
@@ -410,13 +410,13 @@
     }
     function ch1Workstation() {
       ((n.scene = "Q6"),
-        (n.sqPose = "hidden"),
-        (n.sq.x = 180),
-        (n.sq.y = 440),
-        (n.mo.x = 520),
-        (n.mo.y = 440),
+        (n.sqPose = "stand"),
         (n.ch1Prop = "desk"),
         J([
+          cV((dt) => (ch1Trail(), mV(n.sq, 180, 440, 160, dt) && mV(n.mo, 520, 440, 160, dt))),
+          N(() => {
+            ((n.sqPose = "hidden"), (n.sq.x = 180), (n.sq.y = 440), (n.mo.x = 520), (n.mo.y = 440));
+          }),
           v("sq", "I hope Mops doesn't notice...", "whisper"),
           { k: "panel", id: "ch1slip" },
           N(() => {
@@ -429,14 +429,13 @@
     function ch1PinkReady() {
       ((n.ch1Prop = "teeth"),
         (n.sqPose = "stand"),
-        (n.ctrl = !0),
         (n.scene = "Q6"),
-        (n.sq.x = 640),
-        (n.sq.y = 500),
-        (n.mo.x = 720),
-        (n.mo.y = 500),
         (n.moPose = "stand"),
-        J([v("sq", "Get it before he sees it.", "whisper"), N(() => ((n.ctrl = !0), (n.scene = "Q6")))]));
+        J([
+          cV((dt) => (ch1Trail(), mV(n.sq, 640, 500, 160, dt) && mV(n.mo, 720, 500, 160, dt))),
+          v("sq", "Get it before he sees it.", "whisper"),
+          N(() => ((n.ctrl = !0), (n.scene = "Q6"))),
+        ]));
     }
     function ch1GrabPink() {
       ((n.ctrl = !1),
@@ -500,9 +499,10 @@
         (n.wardrobe = "open"),
         (n.room = "closet"),
         J([
+          ch1Step("sq", 460, 510, 160),
           v("mops", "The spare jacket. The beard. And the horns."),
           N(() => {
-            ((n.ctrl = !0), (n.sq.x = 460), (n.sq.y = 510));
+            n.ctrl = !0;
           }),
         ]));
     }
@@ -512,15 +512,11 @@
         (n.act = null),
         J([
           v("mops", "More bleat. Less roar."),
-          N(() => ch1Go("delivery", { night: !1, ship: !0, crew: "day", mail: "full", scene: "Q9" }, ch1AtScanner)),
+          N(() => ch1Go("delivery", { night: !1, ship: !0, crew: "day", mail: "full", scene: "Q9", stand: [400, 500] }, ch1AtScanner)),
         ]));
     }
     function ch1AtScanner() {
-      ((n.scene = "Q9"),
-        (n.ctrl = !0),
-        (n.sq.x = 400),
-        (n.sq.y = 500),
-        (n.costumeOn = !0));
+      ((n.scene = "Q9"), (n.ctrl = !0), (n.costumeOn = !0));
     }
     function ch1Board() {
       ((n.ctrl = !1),
@@ -543,7 +539,7 @@
               (B.camX = 0));
           }),
           v("official", "Send in Mops. It's time for his Employee of the Month photo."),
-          v("bot", "Mops is not here."),
+          v("robot", "Mops is not here."),
           v("official", "What happened? We need to review the security tapes."),
           v("pa", "The base called the ship. It has to stop.", "pa"),
           N(() => {
@@ -745,6 +741,7 @@
       (m(150, 548, 36, 14, 3), r("#8a93a3", 3));
       (C([700, 340, 700, 520], y, 5), C([700, 520, 760, 520], y, 5), drawMailRobot(830, 540));
       n.ch1Crew === "pickup" ? drawPickupLoad() : n.ch1Mail === "full" && (Xn(720, 400, 70, 48, ""), Xn(800, 420, 56, 40, ""));
+      n.scene === "Q2" && Qt(700, 530, "#e8a87c", 1.6, -1),
       n.ch1Crew === "day" &&
         [
           ["Dot", 250, 580],
