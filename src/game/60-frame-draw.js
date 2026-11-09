@@ -135,6 +135,7 @@
         n.scene === "S2" && n.ctrl && (n.act = Zp()),
         n.scene === "S4" && (eA(l), n.ctrl && (n.act = $p())),
         n.scene === "S5" && n.ctrl && (n.act = tA()),
+        (n.scene || "")[0] === "Q" && ch1QTick(l),
         j6(l),
         n.room === "hall")
       ) {
@@ -251,6 +252,33 @@
       (s.singing
         ? (e.beginPath(), e.ellipse(0, P + q.head * 0.45, 1.8, 2.2 + Math.sin(n.T * 12) * 0.5, 0, 0, 7), (e.fillStyle = y), e.fill())
         : (e.beginPath(), e.arc(0, P + q.head * 0.38, 2.2, 0.2, Math.PI - 0.2), (e.strokeStyle = y), (e.lineWidth = 1.1), e.stroke()),
+        s.janitor &&
+          (m(-11, P + q.head * 0.85, 22, 16, 3), r("#3478f6", 1.2), g("JANITOR", 0, P + q.head * 0.95, 3.2, "#ffffff", "center", 800)),
+        s.goatBeard &&
+          (e.beginPath(),
+          e.moveTo(-2, P + q.head * 0.55),
+          e.quadraticCurveTo(-7, P + q.head * 1.15, 0, P + q.head * 1.35),
+          e.quadraticCurveTo(7, P + q.head * 1.15, 2, P + q.head * 0.55),
+          r("#f7f4ee", 1.2)),
+        e.restore());
+    }
+    // L2 ball (C3): a brown ball, scalloped head, ears, two dark eyes with white highlights. No face, arms, or legs.
+    function drawL2Ball(x, y) {
+      (e.save(),
+        e.translate(x, y),
+        F(-16, -10, 7, "#6b3a1c"),
+        F(16, -10, 7, "#6b3a1c"),
+        e.beginPath(),
+        e.arc(0, 2, 20, 0, Math.PI * 2),
+        e.moveTo(-18, -2),
+        e.arc(-14, -6, 8, 0, Math.PI * 2),
+        e.arc(0, -12, 9, 0, Math.PI * 2),
+        e.arc(14, -6, 8, 0, Math.PI * 2),
+        r("#6b3a1c", 3),
+        F(-7, -2, 4.2, "#1e2430"),
+        F(7, -2, 4.2, "#1e2430"),
+        F(-5.5, -3.4, 1.4, "#ffffff"),
+        F(8.4, -3.4, 1.4, "#ffffff"),
         e.restore());
     }
     function Fe(l, o, i, s) {
@@ -542,14 +570,7 @@
         e.fillRect(60, 360, 840, 240),
         C([60, 360, 900, 360], "rgba(30,36,48,.18)", 3),
         e.restore(),
-        m(170, 168, 60, 70, 3),
-        r("#fffaf0", 2.5),
-        F(200, 174, 4, "#e5533d"),
-        g("DELIVERY", 200, 190, 9, y, "center", 900),
-        e.save(),
-        e.translate(200, 212),
-        rq(0, 0, 0.45),
-        e.restore(),
+        drawWardrobe(),
         n.scene === "S1" && ringNear("sched"),
         m(408, 300, 104, 12, 3),
         r("#cdbb98", 3),
@@ -586,44 +607,11 @@
         for (let o = 0; o < 4; o++)
           C([574, 186 + o * 14 + ((n.T * 40) % 14), 656, 186 + o * 14 + ((n.T * 40) % 14)], "rgba(255,255,255,.6)", 2);
       } else r("#59657d", 0);
-      let l = n.doorGlow;
-      if (
-        (pointer("door", 800, 250, 90, 170, 12),
-        n.door > 0
-          ? (m(800, 250, 90, 170, 8),
-            r(n.botOn ? "#fff0b8" : "#ffe3a0", 5),
-            e.save(),
-            e.translate(800, 250),
-            e.scale(1 - n.door * 0.85, 1),
-            m(0, 0, 90, 170, 8),
-            r("#ffffff", 5),
-            e.restore())
-          : (m(800, 250, 90, 170, 8), r("#ffffff", 5), L(812, 340, 6), r("#ffcf33", 3)),
-        l > 0 && n.door <= 0)
-      ) {
-        e.save();
-        let o = e.createLinearGradient(0, 418, 0, 470);
-        (o.addColorStop(0, "rgba(255,196,70," + 0.85 * l + ")"),
-          o.addColorStop(1, "rgba(255,196,70,0)"),
-          (e.fillStyle = o),
-          e.beginPath(),
-          e.moveTo(804, 418),
-          e.lineTo(886, 418),
-          e.lineTo(896, 470),
-          e.lineTo(730, 470),
-          e.closePath(),
-          e.fill(),
-          e.restore(),
-          C([806, 418, 884, 418], "#ffb000", 4));
-      }
-      if (n.door < 0.3) {
-        let o = n.pulse.has("sign"),
-          i = o ? 1.25 + 0.07 * Math.sin(n.T * 6) : 1;
-        (o && (e.save(), (e.shadowColor = "#ffcf33"), (e.shadowBlur = 30), Ef(845, 305, i), e.restore()), Ef(845, 305, i));
-      }
-      (m(790, 548, 70, 26, 4), r("#b5bcc8", 4));
-      for (let o = 0; o < 6; o++) C([800 + o * 10, 554, 800 + o * 10, 568], y, 3);
-      for (let o of vV) (X(o.x, o.y, 24, 8), (e.fillStyle = "rgba(63,184,240," + (Math.min(1, o.t / 3) * 0.3).toFixed(3) + ")"), e.fill());
+      (pointer("door", 860, 300, 40, 160, 8),
+        homeDoorCut(),
+        Ef(748, 210, 1),
+        n.pulse.has("sign") &&
+          (e.save(), (e.shadowColor = "#ffcf33"), (e.shadowBlur = 30), Ef(748, 210, 1.08), e.restore()));
       if (
         (pointer("bed", 110, 410, 190, 130, 12),
         m(112, 524, 16, 18, 3),
@@ -641,8 +629,52 @@
         pointer("gbox", 318, 478, 64, 44, 8),
         L2(),
         cq(),
-        n.chair && (m(588, 396, 110, 74, 14), r("#e5533d", 4), m(580, 448, 126, 32, 10), r("#ff6a3d", 4)),
-        n.moMop === "lean" && n.moPose !== "hidden" && b5(772, 430));
+        n.chair && (m(588, 396, 110, 74, 14), r("#e5533d", 4), m(580, 448, 126, 32, 10), r("#ff6a3d", 4)));
+    }
+    // Home wardrobe (R29–R34). Far left, back wall, base on the floor line. Calendar faces us only while the door is shut.
+    function drawWardrobe() {
+      let open = n.wardrobe === "open",
+        x = 78,
+        y0 = 168,
+        w = 118,
+        h = 192;
+      (m(x, y0, w, h, 6), r("#d7c4a3", 4), C([x + 8, y0 + 22, x + w - 8, y0 + 22], "#a89070", 3));
+      if (!open) {
+        (C([x + w / 2, y0 + 8, x + w / 2, y0 + h - 8], y, 3),
+          F(x + w / 2 - 10, y0 + h * 0.55, 3.5, "#c9a24a"),
+          F(x + w / 2 + 10, y0 + h * 0.55, 3.5, "#c9a24a"),
+          m(x + w / 2 + 6, y0 + 28, 46, 58, 3),
+          r("#fffaf0", 2),
+          F(x + w / 2 + 29, y0 + 36, 3.5, "#e5533d"),
+          g("DELIVERY", x + w / 2 + 29, y0 + 48, 7, y, "center", 900),
+          e.save(),
+          e.translate(x + w / 2 + 29, y0 + 70),
+          rq(0, 0, 0.34),
+          e.restore());
+        return;
+      }
+      (m(x - 8, y0 + 10, 14, h - 20, 2),
+        r("#c4b08a", 3),
+        m(x + w - 6, y0 + 10, 14, h - 20, 2),
+        r("#c4b08a", 3),
+        m(x + 16, y0 + 36, 22, 30, 3),
+        r("#3dba8b", 2),
+        m(x + 42, y0 + 34, 18, 32, 3),
+        r("#f7f4ee", 2),
+        m(x + 64, y0 + 32, 26, 34, 3),
+        r("#3478f6", 2),
+        g("JANITOR", x + 77, y0 + 50, 6, "#ffffff", "center", 900),
+        m(x + 94, y0 + 40, 14, 28, 2),
+        r("#2a3142", 2));
+    }
+    // The way out is a cut in the right wall (R36). The poster hangs on the wall beside it (R35). No floor vent (R37).
+    function homeDoorCut() {
+      ((e.fillStyle = "#dfe4ea"),
+        e.fillRect(893, 248, 22, 114),
+        (e.fillStyle = "#ebe6da"),
+        e.fillRect(888, 360, 36, 78),
+        C([893, 248, 914, 248], y, 7),
+        C([893, 432, 914, 432], y, 7));
     }
     function Qt(l, o, i, s, q) {
       (e.save(),
@@ -1483,6 +1515,37 @@
         (X(l, o, i * 0.8, i), e.stroke());
     }
     function gq(l, o) {
+      if (l === "ch1site") {
+        ((e.fillStyle = "rgba(20,24,32,.62)"),
+          e.fillRect(0, 0, c, b),
+          m(230, 180, 500, 280, 16),
+          r("#fffdf8", 4),
+          g("MOON PIES", 480, 230, 28, "#b45309", "center", 900),
+          m(280, 280, 180, 70, 10),
+          r("#ffffff", 3),
+          g("Order new box", 370, 315, 18, y, "center", 800),
+          m(500, 280, 200, 70, 10),
+          r("#ffcf33", 3),
+          g("Return empty crate", 600, 315, 16, y, "center", 800));
+        return;
+      }
+      if (l === "ch1guard" || l === "ch1slip") {
+        (e.fillStyle = "rgba(20,24,32,.62)"), e.fillRect(0, 0, c, b);
+        let title = l === "ch1guard" ? "Brave Sasquatches" : "We know you're thinking",
+          line2 = l === "ch1guard" ? "stay hidden." : "about going to Mars.",
+          line3 = l === "ch1guard" ? "" : "Don't worry, we'll always be with you.";
+        (e.save(),
+          e.translate(480, 320),
+          e.rotate(-0.02),
+          m(-220, -180, 440, 360, 6),
+          r("#fffdf8", 4),
+          g(title, 0, line3 ? -70 : -40, 26, "#2b3a67", "center", 700),
+          g(line2, 0, line3 ? -32 : 0, 26, "#2b3a67", "center", 700),
+          line3 && g(line3, 0, 16, 20, "#2b3a67", "center", 700),
+          g("\u2014 The Guardians", 40, line3 ? 70 : 50, 22, "#2b3a67", "center", 700),
+          e.restore());
+        return;
+      }
       if (((e.fillStyle = "rgba(20,24,32,.62)"), e.fillRect(0, 0, c, b), l === "gbox4")) {
         (gq("gbox", !1), v2("gbox4x"), o && void 0);
         return;
@@ -1710,7 +1773,7 @@
               (Fe(n.mo.x, n.mo.y - d, wl, {
                 f: n.mo.f,
                 walk: n.mo.moving ? n.mo.walk : 0,
-                mop: n.moMop === "hand",
+                mop: !1,
                 eyes: s === "sleep" || s === "sway" ? "closed" : "",
                 mouth: s === "yawn" || s === "pant" ? "o" : "",
                 sway: q,
@@ -1778,7 +1841,17 @@
                   m(120, 422, 170, 28, 12),
                   r("#a98bff", 4),
                   i === "sleep" && g("z z z", 280, 290 - ((n.zzz * 16) % 30), 26, "#3478f6"));
-              } else Re(o.x, o.y, wl, { walk: o.moving ? o.walk : 0, f: o.f, singing: i === "sing", carry: n.lunch === "held", paper: !!n.holdNotice });
+              } else if (i === "ball") drawL2Ball(o.x, o.y - 16);
+              else
+                Re(o.x, o.y, wl, {
+                  walk: o.moving ? o.walk : 0,
+                  f: o.f,
+                  singing: i === "sing",
+                  carry: n.lunch === "held",
+                  paper: !!n.holdNotice,
+                  janitor: !!n.costumeOn,
+                  goatBeard: !!n.costumeOn,
+                });
             },
           }),
         l.sort((s, q) => s.y - q.y).forEach((s) => s.d()),
@@ -1787,9 +1860,9 @@
           (e.save(),
           (e.shadowColor = "#ffcf33"),
           (e.shadowBlur = 30),
-          Ef(845, 305, 1.25 + 0.07 * Math.sin(n.T * 6)),
+          Ef(748, 210, 1.08),
           e.restore(),
-          Ef(845, 305, 1.25 + 0.07 * Math.sin(n.T * 6))),
+          Ef(748, 210, 1)),
         n.botOn && n.coneIn)
       ) {
         let s = Math.sin(n.T * 1.6) * 60,
@@ -1874,7 +1947,9 @@
             : n.room === "window"
               ? o5()
               : n.room === "duct"
-                ? V5()
+                ? n.ch1Duct
+                  ? drawCh1Duct()
+                  : V5()
                 : n.room === "gas"
                   ? JA()
                   : n.room === "diner"
@@ -1894,7 +1969,9 @@
                                 : n.room === "inside"
                                   ? I6()
                                   : n.room === "hangar"
-                                    ? e5()
+                                    ? n.ch1D
+                                      ? drawCh1Delivery()
+                                      : e5()
                                     : x5());
     }
     function E5() {

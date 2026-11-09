@@ -67,7 +67,7 @@
         linkDebug = q.get("debug") === "1";
       if (!linkCh && !linkPhase && !linkScene && !linkDebug) return;
       !linkCh && linkPhase && (linkCh = 2);
-      !linkCh && linkScene && (linkCh = { O: 1, S: 1, G: 2, P: 3, M: 4 }[linkScene[0]] || 0);
+      !linkCh && linkScene && (linkCh = { O: 1, S: 1, Q: 1, G: 2, P: 3, M: 4 }[linkScene[0]] || 0);
       setTimeout(() => {
         if (!h) return;
         if (linkCh >= 1 && linkCh <= 4) {
@@ -111,7 +111,7 @@
         a = n.act,
         f = (v) => (typeof v === "number" ? v.toFixed(1) : "-");
       return [
-        "ch " + ({ O: 1, S: 1, G: 2, P: 3, M: 4 }[s[0]] || "-"),
+        "ch " + ({ O: 1, S: 1, Q: 1, G: 2, P: 3, M: 4 }[s[0]] || "-"),
         "scene " + (s || "-"),
         "phase " + (ch2.phase || "-"),
         "room " + (n.room || "-"),
@@ -238,6 +238,27 @@
         sceneS4: Uh,
         sceneS5: Dh,
         sceneO4: ch,
+        ch1State: () => ({
+          scene: n.scene,
+          room: n.room,
+          wardrobe: n.wardrobe || "closed",
+          costume: !!n.costumeOn,
+          night: !!n.ch1Night,
+          ship: !!n.ch1Ship,
+          walks: n.ch1Walks || [],
+          trail: n.ch1Trail || [],
+          got: n.ch1Got || 0,
+          signed: n.ch1Signed || 0,
+          mailed: n.ch1Mailed || 0,
+          didBall: !!n.ch1DidBall,
+        }),
+        ballHides,
+        BALL_SPOT_NEAR,
+        BALL_LOOK_RANGE,
+        BALL_MISS_FAR,
+        CH1_BIN,
+        CH1_MAIL,
+        CH1_VENT,
         // The night out (D15): the vent's pull, the table, the notice, and the alarm state.
         lobby: () => ({
           pull: n.pull || 0,

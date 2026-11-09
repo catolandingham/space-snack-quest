@@ -65,6 +65,16 @@
           maxB: 0,
           sw1Done: !1,
           nightSeen: !1,
+          wardrobe: "closed",
+          ch1D: !1,
+          ch1Duct: !1,
+          ch1Night: !1,
+          ch1Ship: !1,
+          ch1Crew: "",
+          ch1Mail: "",
+          costumeOn: !1,
+          ch1Walks: [],
+          ch1Trail: [],
         }),
         (n.pulse = new Set()),
         (n.found = new Set()),
@@ -80,7 +90,8 @@
         Tp());
     }
     function Tp() {
-      ((n.scene = "O0"), J([{ k: "card", id: "jupiter", text: "Stormtop Cloud Resort, floating above Jupiter." }, uV(1.2), N(Sp)]));
+      // The redesigned Chapter 1 (Brian, Nov 8). The older scenes stay in this file so a debug link can still open them.
+      ch1RedesignStart();
     }
     function Sp() {
       ((n.scene = "O1"),
@@ -1017,6 +1028,7 @@
     // Chapter 1's spots, scene by scene, in the order each picker tries them (see spot in 00-core.js).
     function ch1Spots() {
       let l = n.scene;
+      if ((l || "")[0] === "Q") return ch1QSpots();
       return l === "O4"
         ? o4Spots()
         : l === "S1"

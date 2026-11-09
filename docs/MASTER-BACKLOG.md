@@ -1,6 +1,12 @@
 # Master backlog
 
-Precedence: the original story stays canon except the Chapter 2 kitchen sequence.
+## Where this branch is (Chapter 1 redesign)
+
+A new game plays the redesigned Chapter 1 from the Nov 8 cartoon: home, delivery room, night mailbox, six days later, the vent, the costume, and the scanner. Docs for that pass: `docs/CH1-LINES-FOR-BRIAN.md`. The home room has the wardrobe, no mop, and no vent. Ball hiding uses the least-intrusive distances in that lines file until Brian picks one. The older night-out scenes are still reachable from a debug link. They are not the path from the title.
+
+Not in this build yet, because the cartoon or a decision is still open: the party and the tourist disguise, the manager's office code puzzle, a full redraw of the hall, how the pink copy rides to Mars inside the Guardian Box after Squatch pockets it, Mops's extra thought in the vent, a separate FUR-alarm zoom shot, new music, and the bigger iPad layout. Chapters 2 to 4 are unchanged.
+
+Precedence: the original story stays canon except the Chapter 2 kitchen sequence, and except this Chapter 1 redesign where `docs/CH1-LINES-FOR-BRIAN.md` and the Nov 8 decisions say otherwise.
 
 - Kitchen revision, and only that revision: `docs/story-bible.md`
 - Choices still waiting on Brian, outside that kitchen: `docs/STORY-DECISIONS.md`

@@ -1,5 +1,13 @@
 # Space Snack Quest
 
+## Chapter 1 redesign (not on main until Brian says yes)
+
+Starting a new game now plays the redesigned Chapter 1: lunch with Mops, the walk to the delivery room, the yellow and pink copies, the night mailbox, the week jump, the ball under the vent, the costume at home, and boarding. The home room matches the approved picture: wardrobe on the far left, the Moon Pie calendar on its door, no mop, no vent, and the STAY IN HERE poster beside a cut in the right wall. Room changes show Squatch (and Mops, when he comes too) walk off and walk in.
+
+Every new line is listed for Brian in `docs/CH1-LINES-FOR-BRIAN.md`. Nothing here merges without his written yes in the pull request. `tests/ch1-playthrough.mjs` plays this chapter to the tally card.
+
+The older Chapter 1 scenes are still in the program so a debug link such as `?scene=S9` can open them. They are not what a new game plays.
+
 ## Source and build
 
 The game's source is in `src/`. `index.html` is build output: never edit it by hand.

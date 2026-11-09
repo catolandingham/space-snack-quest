@@ -363,12 +363,7 @@
           o.push({
             y: n.sq.y,
             d: () => {
-              (L(n.sq.x, n.sq.y - 16, 26),
-                r("#6b3a1c", 3),
-                L(n.sq.x - 7, n.sq.y - 20, 3),
-                r("#1e2430", 0),
-                L(n.sq.x + 7, n.sq.y - 20, 3),
-                r("#1e2430", 0));
+              drawL2Ball(n.sq.x, n.sq.y - 16);
             },
           }),
         n.sqPose !== "hidden" &&
@@ -1026,7 +1021,7 @@
         l.push({
           y: n.mo.y,
           d: () => {
-            (Fe(n.mo.x, n.mo.y, he * 1.15, { f: n.mo.f, walk: n.mo.moving ? n.mo.walk : 0, mop: !0 }),
+            (Fe(n.mo.x, n.mo.y, he * 1.15, { f: n.mo.f, walk: n.mo.moving ? n.mo.walk : 0, mop: (n.scene || "")[0] !== "Q" }),
               B.gave && n.scene === "S2" && (m(n.mo.x + 22 * n.mo.f - 9, n.mo.y - 50, 18, 20, 2), r("#cdbb98", 1.5)));
           },
         }),

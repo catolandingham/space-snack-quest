@@ -521,7 +521,7 @@
       let scene = n.scene || "",
         phase = ch2.phase || "";
       clearRun();
-      if (scene.startsWith("S") || scene.startsWith("O")) {
+      if (scene.startsWith("S") || scene.startsWith("O") || scene.startsWith("Q")) {
         if (CH1_CHECKPOINTS[scene]) return (CH1_CHECKPOINTS[scene](), (n.ctrl = !0), void 0);
         (ch2.check && (ch2.check.scene === scene || ch2.check.scene.startsWith("S") || ch2.check.scene.startsWith("O")) && restoreCheck(ch2.check),
           (n.ctrl = !0));
@@ -1703,12 +1703,7 @@
           l.push({
             y: n.sq.y,
             d: () => {
-              (L(n.sq.x, n.sq.y - 16, 26),
-                r("#6b3a1c", 3),
-                L(n.sq.x - 7, n.sq.y - 20, 3),
-                r("#1e2430", 0),
-                L(n.sq.x + 7, n.sq.y - 20, 3),
-                r("#1e2430", 0));
+              drawL2Ball(n.sq.x, n.sq.y - 16);
             },
           }),
         n.sqPose !== "hidden" &&

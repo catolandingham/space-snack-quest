@@ -723,6 +723,7 @@
         linda: "Linda",
         official: "Station Official",
         scanner: "Fur Scanner",
+        ups: "UPS",
         gloop: "Gloop",
         cook: "Cook",
         rust: "Rusty",
@@ -750,6 +751,7 @@
         linda: "#a98bff",
         official: "#e5533d",
         scanner: "#3478f6",
+        ups: "#2b3a67",
         gloop: "#2bc48a",
         cook: "#e07b00",
         rust: "#e07b00",
@@ -1040,7 +1042,16 @@
     // hall alarm shows its "Hide!" chip, that chip stays.
     function chipNow() {
       let l = (n.scene || "")[0],
-        o = l === "P" ? CH3_CHIPS[ch3ChipKey()] : l === "M" ? CH4_CHIPS[ch4ChipKey()] : l === "O" || l === "S" ? CH1_CHIPS[ch1ChipKey()] : null;
+        o =
+          l === "Q"
+            ? ch1QChip()
+            : l === "P"
+              ? CH3_CHIPS[ch3ChipKey()]
+              : l === "M"
+                ? CH4_CHIPS[ch4ChipKey()]
+                : l === "O" || l === "S"
+                  ? CH1_CHIPS[ch1ChipKey()]
+                  : null;
       o === null || (FV.on && n.chip === "Hide!") || (n.chip = o || "");
     }
     // Every spot the current scene has, in the order its picker tries them. A scene without a picker
