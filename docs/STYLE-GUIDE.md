@@ -1,7 +1,7 @@
 # Space Snack Quest — Style Guide (sketches + Ch1 build)
 
 For Brian. Keep every new sketch and build panel matching this. Template room: `hall_soft3.py` → `sketch-01m-hall-soft.png`.
-Updated Nov 9, 2026, synced through R57. The decisions behind each rule are in `docs/DECISIONS.md` (codes in brackets). This page does not change the game.
+Updated Nov 9, 2026, synced through R63. The decisions behind each rule are in `docs/DECISIONS.md` (codes in brackets). This page does not change the game.
 
 ## Canvas and room frame
 - Canvas: **1280 × 830**
@@ -64,7 +64,7 @@ Updated Nov 9, 2026, synced through R57. The decisions behind each rule are in `
 - **Party pictures:** no Mops and no robots [R49]. Guests 01–05 only in those panels. Guest 06 stays an approved sprite for other crowds [C12]. The manager's label, when a picture uses one, is Isfred Bar Neshuman [R42], and that label is NEEDS BRIAN in the lines file.
 
 ## Story / panel rules
-- **One picture per moment** — no arrows, no multi-step diagrams
+- **One picture per moment** — no arrows on a sketch, no multi-step diagrams. The gallery's left and right arrows and its X are on-screen controls (R62), not sketch arrows.
 - Every room change needs a **visible walk-off and walk-in**
 - Reuse existing scenes, props, and code; keep the look clean and consistent
 - Never invent why Squatch's parents never returned

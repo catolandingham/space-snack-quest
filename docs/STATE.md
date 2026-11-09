@@ -1,5 +1,5 @@
 # Space Snack Quest: where things stand
-Monday, November 9, 2026, through R57 (about 9:58 AM PT). Repo copy synced the same day. Decisions: `docs/DECISIONS.md`. Open asks: `docs/OPEN-ASKS.md`. Words: `docs/CH1-CARTOON-LINES.md`. Look: `docs/STYLE-GUIDE.md`.
+Monday, November 9, 2026, through R63. Repo copy synced the same day. The 9:58 AM PT log below is the R57 record. R58–R63 were added after that and are not drawn. Decisions: `docs/DECISIONS.md`. Open asks: `docs/OPEN-ASKS.md`. Words: `docs/CH1-CARTOON-LINES.md`. Look: `docs/STYLE-GUIDE.md`.
 
 ## Fidelity system (new, 9:55 PM PT, Brian t233 / W33)
 - Approved and current pictures are frozen in `LOCKED/` (`LOCKED/INDEX.md`). Rooms are drawn only by `mockups/rooms/home_room.py`, `mockups/rooms/delivery_room.py`, `mockups/rooms/hall_room.py` (new 11:20 PM PT) and `mockups/rooms/hallway_room.py` (connecting hallway, R48, CURRENT pending Brian yes); panels import them. Before Brian sees a sketch: `tools/check_all.sh` + the independent checker (`docs/CHECKER.md`). Steps: `docs/FIDELITY.md`.
@@ -13,7 +13,7 @@ Monday, November 9, 2026, through R57 (about 9:58 AM PT). Repo copy synced the s
 - Open PRs: #12–#16 (docs, audits, held fixes), [PR #17](https://github.com/catolandingham/space-snack-quest/pull/17) (room walks and the hoof-stamp cut), and this docs PR (#18). None of them are merged.
 - **The P2/P3 work:** Brian OK'd the room-walk fix (P2) and the hoof-stamp line cut (P3) on Nov 8 (cloud agent bc-1f6073a1-0bac-5c0f-a74a-eeae794204ec). The designer note at 8:45 PM PT on Nov 8 said no PR was open yet. PR #17 opened on 2026-11-09 on `cursor/later-chapter-walks-04ec`. It is not merged. **Don't merge it without Brian's written yes in that PR.** That PR also edits `README.md`, `docs/MASTER-BACKLOG.md`, `docs/CHIP-ARMATURE-AUDIT.md`, `docs/project/DECISIONS-2026-11-08.md`, `docs/project/STATE-2026-11-08.md`, and adds `docs/LATER-CHAPTERS-LINES-FOR-BRIAN.md`. It edits `src/game/20-ch2.js`, `30-ch3.js`, `40-ch4.js`, `50-story-frame.js`, `60-frame-draw.js`, `90-input-shell.js`, and tests. This docs PR does not touch those code files.
 - Not started: the P1 security trace, P4–P8, and the Chapter 1 rebuild (it waits on the finished cartoon).
-- `docs/DECISIONS.md` and this file are the live copies, synced through R57. The dated snapshots `docs/project/DECISIONS-2026-11-08.md` and `docs/project/STATE-2026-11-08.md` are history. Every earlier note is in the section below, and a replaced note is marked **Superseded** there.
+- `docs/DECISIONS.md` and this file are the live copies, synced through R63. R58–R63 (balloon, party extras, gallery gags) are recorded and not in the game. The 6-second balloon rise (R59) and the 4-second snack-table placeholder (R60) are written here only. The dated snapshots `docs/project/DECISIONS-2026-11-08.md` and `docs/project/STATE-2026-11-08.md` are history. Every earlier note is in the section below, and a replaced note is marked **Superseded** there.
 
 ## Chapter 1 cartoon: panels in story order
 All panels are in `/workspace/ssq/mockups/`. File numbers are older and don't follow story order; new files continue the numbering (10–13), and there are no duplicate numbers now (the guest sheet is `sketch-ref-guest-lineup.png`). **Storyboard of all drawn panels: `mockups/storyboard-ch1.png`** (`tools/storyboard.py`). Every word: `docs/CH1-CARTOON-LINES.md`.
@@ -51,7 +51,7 @@ All panels are in `/workspace/ssq/mockups/`. File numbers are older and don't fo
 | — | Almost-slip | `sketch-21-almost-slip.png` (`almost_slip.py`) | NEW 7:15 AM, LOCKED CURRENT v1 |
 | — | Moon Pie site on office computer (R46) | `sketch-22-moon-pie-site.png` (`moon_pie_site.py`) | office-22 CURRENT v1 (7:25 AM); home-22-v1 superseded |
 
-Not a story panel: `sketch-08-home-closed.png` (home, wardrobe closed — APPROVED v3, W34). Reference sheets: `sketch-ref-guest-lineup.png` (renamed from the duplicate `sketch-07-guest-lineup.png`; LOCKED as guest-lineup-sheet), `sketch-ball-options*.png` (pick: L2). Older `beats*.png` boards and hall tries `sketch-01g`–`01l` are superseded. Moments newly drawn 11-09 ~7:15 AM PT (LOCKED CURRENT): peek (15), party tourist (14), TV story (16), walk home + snack stand (17), Mars talk (18), Six days later card (19), robots tease (20), almost-slip (21), Moon Pie site (22), manager chase (23), Later that evening card (24). Still not drawn: wake-up, bedtime Guardians flashback, office tape-monitor scene (no rooms/office module — card only for S56).
+Not a story panel: `sketch-08-home-closed.png` (home, wardrobe closed — APPROVED v3, W34). Reference sheets: `sketch-ref-guest-lineup.png` (renamed from the duplicate `sketch-07-guest-lineup.png`; LOCKED as guest-lineup-sheet), `sketch-ball-options*.png` (pick: L2). Older `beats*.png` boards and hall tries `sketch-01g`–`01l` are superseded. Moments newly drawn 11-09 ~7:15 AM PT (LOCKED CURRENT): peek (15), party tourist (14), TV story (16), walk home + snack stand (17), Mars talk (18), Six days later card (19), robots tease (20), almost-slip (21), Moon Pie site (22), manager chase (23), Later that evening card (24). Still not drawn: wake-up, bedtime Guardians flashback, and the R58–R63 moments (balloon kid, octopus hugs, photo corner, snack-table chain, balloon pop, funnier gallery gags, crayon labels). The office tape-monitor scene was drawn later as sketch-25 (see the table above).
 
 ## Open questions from the new panels (for Brian, multiple choice)
 - **Q1 (closed by R38, refined by R41, Brian t239/t242):** Squatch hides in a crate inside the mail room; robots open a crate out by the ship; Mops warns him; no Dot/Bob/Lou (R40). Panels 09/10/11 + delivery-pickup room redrawn 7:15 AM.
@@ -72,12 +72,12 @@ Not a story panel: `sketch-08-home-closed.png` (home, wardrobe closed — APPROV
 ## In progress right now
 - **Peek-eyes redraw:** every plant and box hide gets the game's original white eyes (`peek_eyes.py`), at the size in C21. Plant hide now lives in the shared room (`rooms/delivery_room.py`, x167) for 03/04/05a/05b/09. Still to check: the workstation grille.
 - **The P2/P3 pull request** is PR #17 (above). It is open and not merged.
-- **Waiting on Brian:** Q2–Q4 above, the multiple-choice list at the top of `CH1-CARTOON-LINES.md` (mailbox words, pink-slip lines, PA line, and the rest marked NEEDS BRIAN), the photo-gallery gag list and keepsake points (R55–R57), a yes before the home wardrobe v4 is APPROVED (R45), and the whole Open list in DECISIONS.md §9.
+- **Waiting on Brian:** Q2–Q4 above, the multiple-choice list at the top of `CH1-CARTOON-LINES.md` (every line marked NEEDS BRIAN, including R58–R63), the "Find someone who…" card (O39), the 4-second snack-table placeholder (O40), photo-corner and keepsake points (O41, O37), specific gallery captions, a yes before the home wardrobe v4 is APPROVED (R45), and the whole Open list in DECISIONS.md §9.
 
 ## Next
 1. Brian reviews the storyboard (`mockups/storyboard-ch1.png`) and answers Q2–Q4 and the lines-file choices.
-2. Still not drawn: the wake-up and the bedtime Guardians flashback. The vent workstation still needs its own `rooms/` module before it can be diff-checked. Gallery gag sketches wait on Brian's pick (R55). Panel 17 (walk home) can use the approved hallway (R55).
-3. This file and `docs/DECISIONS.md` are that sync (PR #18), through R57. Review, "Docs match main: yes", and Brian's written yes come before merge. Do not merge from this PR.
+2. Still not drawn: the wake-up, the bedtime Guardians flashback, and R58–R63. The vent workstation still needs its own `rooms/` module before it can be diff-checked. Gallery gag sketches follow R62 (kinds are decided; captions are NEEDS BRIAN). Panel 17 (walk home) can use the approved hallway (R55).
+3. This file and `docs/DECISIONS.md` are that sync (PR #18), through R63. Review, "Docs match main: yes", and Brian's written yes come before merge. Do not merge from this PR.
 4. Then build Chapter 1 in small reviewed phases through the cloud agent.
 
 - 11-08 11:05 PM: Brian approved the home room; locked as APPROVED v3 (panel + 3 room layers). Costume panels 08a/08b stay CURRENT v2.
@@ -125,6 +125,7 @@ Not a story panel: `sketch-08-home-closed.png` (home, wardrobe closed — APPROV
 - 11-09 9:55 AM: R55 hallway v5 APPROVED (Brian t257); first walk to loading bay = cutscene, hallway interactive only on return; Employee of the Month wall = swipe gallery of funny Mops photos incl. Squatch ball-rolling in background. Next: gallery gag sketches, panel 17 walk home, office/night-sneak redraw for locked door, cloud agent hallway build.
 - 11-09 9:58 AM: R56 gallery: 10 per visit, crooked photo #4 reveals the age-5 crayon drawing of Squatch+Mops (must be drawn), rotating pool of ~16 gags, end choice more-photos/move-on (proposed). Executor brief updated.
 - 11-09 9:58 AM: R57 gallery 5 per visit; crayon drawing stays on the wall, take it as a keepsake on the last hallway walk before boarding for bonus points (amount TBD). Executor told.
+- 11-09, later: R58–R63 recorded from the designer follow-up and not drawn. Balloon kid (return is wordless; keep yells and pulls the alarm; a missed jump only makes the kid sad). Balloon timing is a 6-second glowing rise, one jump, no words (R59, delegated). Party round 2 drops the pair hunt, uses the octopus's two hugs to knock the disguise off, adds a Polaroid photo corner, and a snack-table chain reaction (4-second hide window is a placeholder). The balloon stays in later hall scenes and pops on the last Chapter 1 hall visit (R61). Gallery gags get funnier, the crayon drawing reads as Squatch and Mops, and swiping past photo 5 beeps and cuts the gallery (R62, R63). None of this is in the game.
 
 ---
 
@@ -135,7 +136,7 @@ From `docs/project/STATE-2026-11-08.md`, the snapshot of the Drive master taken 
 
 # Space Snack Quest: state
 
-**Superseded** as the live date. The live status is the top of this file (Monday, November 9, 2026, through R57, about 9:58 AM PT). Kept:
+**Superseded** as the live date. The live status is the top of this file (Monday, November 9, 2026, through R63). Kept:
 
 As of 2026-11-06 evening (Claude Code session on Brian's MacBook).
 

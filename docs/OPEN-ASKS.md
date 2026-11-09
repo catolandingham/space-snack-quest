@@ -1,5 +1,5 @@
 # Space Snack Quest: every open ask, in one list
-For Brian and Squatchbot • Monday, November 9, 2026, synced through R57
+For Brian and Squatchbot • Monday, November 9, 2026, synced through R63
 
 **Every decision now lives in `docs/DECISIONS.md` (the single source of truth).** This list tracks the asks and their progress; the D-, S-, R-, C-, P-, L-, K- and O- codes point into DECISIONS.md.
 
@@ -136,6 +136,21 @@ For Brian and Squatchbot • Monday, November 9, 2026, synced through R57
 
 ---
 
+## F. Nov 9 cartoon decisions (R29–R63)
+Recorded in `docs/DECISIONS.md`. None of these are in the game. New words stay NEEDS BRIAN in `docs/CH1-CARTOON-LINES.md`.
+
+| # | Ask | Status | Confidence |
+|---|---|---|---|
+| F1 | Home is the game's home, plus a wardrobe (R29–R36). No mop. No home vent (R37). Door is a cut in the right wall | decided; not built. Wardrobe v4 (plain blue jacket) needs a yes before APPROVED (O38, R45) | High |
+| F2 | Pickup day: Squatch hides in a mail-room crate; robots open a crate by the ship; no Dot/Bob/Lou (R38, R40, R41). Q1 is closed | decided; drawn; not built | High |
+| F3 | Party: Squatch goes alone. No Mops. No robots. "You have me" is when Mops comes home (R49, R52) | decided; not built. Words NEEDS BRIAN | High |
+| F4 | No manager at the ship. Office cutscene instead (R50, R54). Words NEEDS BRIAN | decided; not built | High |
+| F5 | Moon Pie site is on the office computer (R46). Walk home uses the connecting hallway (R47, R55) | decided; hallway v5 APPROVED as a picture. Not built | High |
+| F6 | Hallway gallery: 5 photos a visit, crooked photo #4, crayon drawing stays, keepsake on the last walk (R55–R57, R62, R63) | rules decided. Swiping past photo 5 beeps and the gallery cuts out (R62). Specific captions and the keepsake amount are O37. "Always tied together", "BEEP BEEP", "MOPS", and "ME" are NEEDS BRIAN | Medium |
+| F7 | Ball-hide numbers (R43): ~70px for 2 seconds. Not in the game. Not a start-now item, because it is a detection range (W5) and this pull request is docs only | decided; not built | High |
+| F8 | Balloon kid (R58, R59, R61): wordless return, "Scary Wookiee!" if he keeps it, sad kid if he never jumps. Six-second glowing rise, one jump, no words. The balloon stays in later hall scenes and pops on the last Chapter 1 hall visit | decided; not in the game. "Scary Wookiee!" and "POP!" are NEEDS BRIAN. The 6 seconds are recorded only | High |
+| F9 | Party round 2 (R60): pair hunt dropped; octopus two hugs knock the disguise off; Polaroid photo corner; snack-table chain reaction | decided where noted in R60; not in the game. The picture card (O39), the 4-second placeholder (O40), the points amount (O41), and "*hic* Fellow tourist!" still need Brian | High |
+
 ## Can start now
 These are settled, add no new on-screen words, and change no difficulty, timer, price or range. They don't depend on the Chapter 2 ride question, and they mostly avoid the Chapter 1 files that the rebuild will rewrite.
 
@@ -157,17 +172,4 @@ These are settled, add no new on-screen words, and change no difficulty, timer, 
 
 **P8. Optional: export the script in play order (H3).** Add a small Node script (`tools/export-script.mjs`) that walks the source and writes `docs/SCRIPT-AS-BUILT.md`: every bubble, card, chip and sign, with its speaker, chapter, scene and file line. It doesn't touch game behavior. This makes the later-chapter cartoons and lines files faster and shows exactly which current lines each change affects.
 
-## F. Nov 9 cartoon decisions (R29–R57)
-Recorded in `docs/DECISIONS.md`. None of these are in the game. New words stay NEEDS BRIAN in `docs/CH1-CARTOON-LINES.md`.
-
-| # | Ask | Status | Confidence |
-|---|---|---|---|
-| F1 | Home is the game's home, plus a wardrobe (R29–R36). No mop. No home vent (R37). Door is a cut in the right wall | decided; not built. Wardrobe v4 (plain blue jacket) needs a yes before APPROVED (O38, R45) | High |
-| F2 | Pickup day: Squatch hides in a mail-room crate; robots open a crate by the ship; no Dot/Bob/Lou (R38, R40, R41). Q1 is closed | decided; drawn; not built | High |
-| F3 | Party: Squatch goes alone. No Mops. No robots. "You have me" is when Mops comes home (R49, R52) | decided; not built. Words NEEDS BRIAN | High |
-| F4 | No manager at the ship. Office cutscene instead (R50, R54). Words NEEDS BRIAN | decided; not built | High |
-| F5 | Moon Pie site is on the office computer (R46). Walk home uses the connecting hallway (R47, R55) | decided; hallway v5 APPROVED as a picture. Not built | High |
-| F6 | Hallway gallery: 5 photos a visit, crooked photo #4, crayon drawing stays, keepsake on the last walk (R55–R57) | rules decided. Gag list, end choice, and points amount are O37 | Medium |
-| F7 | Ball-hide numbers (R43): ~70px for 2 seconds. Not in the game. Not a start-now item, because it is a detection range (W5) and this pull request is docs only | decided; not built | High |
-
-**Not on this list, and why:** the beard and pot change, dirty dish, switch cards, van → ship, Dad's joke, the ending picture, riddles and travel cards all need new words, so they go to a cartoon for your yes first. The new Chapter 2 opening waits on the ride question (C1). Ball anytime is decided (C20), and the ball-hide numbers are decided in R43. They are not built here. Taller sprites and Rusty's cone width could change difficulty. The Chapter 1 rebuild waits on the finished cartoon. P2 to P7 don't touch the Chapter 1 files, so they won't clash with it. P4 and P5 touch HUD files that the later iPad layout pass will touch too, so land them first.
+**Not on this list, and why:** the beard and pot change, dirty dish, switch cards, van → ship, Dad's joke, the ending picture, riddles and travel cards all need new words, so they go to a cartoon for your yes first. The new Chapter 2 opening waits on the ride question (C1). Ball anytime is decided (C20), and the ball-hide numbers are decided in R43. They are not built here. Taller sprites and Rusty's cone width could change difficulty. R58–R63 (balloon, party extras, gallery words) are recorded in section F and are not on this start list: they add on-screen words, and R59/R60 record a 6-second rise and a 4-second placeholder that are not in the game. The Chapter 1 rebuild waits on the finished cartoon. P2 to P7 don't touch the Chapter 1 files, so they won't clash with it. P4 and P5 touch HUD files that the later iPad layout pass will touch too, so land them first.

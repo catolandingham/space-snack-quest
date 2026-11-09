@@ -1,6 +1,6 @@
 # Chapter 1 lines for Brian
 
-The Chapter 1 pass is on `main` (PR #11). This file lists the words from that pass. New cartoon words for the later replot are in [`CH1-CARTOON-LINES.md`](CH1-CARTOON-LINES.md). Those are not in the game. Each new one is marked NEEDS BRIAN until Brian says yes. Decisions through R57 are in [`DECISIONS.md`](DECISIONS.md).
+The Chapter 1 pass is on `main` (PR #11). This file lists the words from that pass. New cartoon words for the later replot are in [`CH1-CARTOON-LINES.md`](CH1-CARTOON-LINES.md). Those are not in the game. Each new one is marked NEEDS BRIAN until Brian says yes. Decisions through R63 are in [`DECISIONS.md`](DECISIONS.md).
 
 Every new or changed thing the player reads in the Chapter 1 pass (branch `chapter-1-pass`) is listed below. Same format as the Phase 1 to 3 files: each row gives where it shows, the words in the game now, and one other way to say it.
 

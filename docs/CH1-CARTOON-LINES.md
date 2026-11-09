@@ -1,5 +1,5 @@
 # Chapter 1: every on-screen word, in story order (for Brian's yes)
-Repo copy, synced Monday, November 9, 2026, through R57. These words are not in the game. Nothing below is approved for a build until its row says APPROVED.
+Repo copy, synced Monday, November 9, 2026, through R63. These words are not in the game. Nothing below is approved for a build until its row says APPROVED.
 Updated Sunday, November 8, 2026, about 11:45 PM PT, then extended through the Nov 9 panels. This is the one list of every word that appears on screen in the Chapter 1 cartoon. Decisions behind each line are in `docs/DECISIONS.md` (codes in brackets); which picture is current is in `docs/STATE.md` and `LOCKED/INDEX.md`.
 
 **Status words (only three):**
@@ -26,8 +26,11 @@ Rules: never invent why the parents never came back (W21). No new words go on a 
 7. **Mops's thought bubble in the vent workstation (P11/O12).** A. none · B. you give the words (not drawn)
 8. **Mops's new Guardian note (S47/O11): "We know you're thinking about going to Mars. Don't worry, we'll always be with you."** A. readable in a close-up · B. shown but not readable · C. change the words
 9. **Everything else marked NEEDS BRIAN below:** A. yes to all as written · B. go through them one by one
-10. **Employee of the Month photo captions (R55, R57).** None are written. A. you pick the gag list and the words · B. pictures only, no captions. Any caption is **NEEDS BRIAN** before it goes on a picture.
-11. **Keepsake points for taking the crayon drawing (R57).** No amount is chosen. No number goes in the game until you give it.
+10. **Employee of the Month photo captions (R55, R62).** The kinds are decided (horns, something in his mouth, things on his head, plus the ball-roll photobomb). None of the captions are written. Any caption is **NEEDS BRIAN** before it goes on a picture.
+11. **Keepsake points for taking the crayon drawing (R57), and photo-corner points if Squatch is in the Polaroid (R60).** No amounts are chosen. No number goes in the game until you give it.
+12. **"Find someone who…" picture card (R60).** The pair hunt is dropped. A. use a picture card with those words · B. change the words · C. no card.
+13. **Snack-table hide window (R60).** The chain reaction is decided. The 4 seconds are a placeholder. A. 4 seconds · B. you give another length · C. no timed window.
+14. **New lines marked NEEDS BRIAN below from R58–R63** ("Scary Wookiee!", "*hic* Fellow tourist!", "POP!", "Always tied together", "BEEP BEEP", "MOPS", "ME"): A. yes as written · B. go through them one by one.
 
 ---
 
@@ -63,10 +66,32 @@ Rules: never invent why the parents never came back (W21). No new words go on a 
 | Squatch | Everybody has somebody | EXISTING (game; S20) |
 | Mops | You have me | MOVED OUT OF PARTY (R49): Mops says it when he comes home and finds Squatch (R52, Brian decided) |
 
-### 2 · Party: the disguise comes off *(no panel yet)* [S13, S14, S18]
+### 2 · Party: balloon kid *(no panel yet)* [R58, R59, R61]
 | Speaker / surface | Exact text | Status |
 |---|---|---|
-| A guest (pulls the hat off) | Cool hat! | NEEDS BRIAN (Brian 3:22 PM) |
+| Kid, when the balloon slips | ! | EXISTING (the game's sight mark; R59 says the gasp is a "!" and the rise has no words) |
+| Kid, if Squatch returns the balloon | *(no words: smile, finger to lips, thumbs-up)* | — |
+| Kid, if Squatch keeps the balloon | Scary Wookiee! | NEEDS BRIAN (R58) |
+| Kid, if Squatch never jumps | *(no words: the kid is sad; the balloon reaches the ceiling)* | — |
+| Balloon on a later hall visit, last Chapter 1 time in the hall | POP! | NEEDS BRIAN (R61; quiet comic pop) |
+| Later hall scenes | *(no words: balloon on the ceiling if missed, tied near the kid if returned)* | — |
+
+### 2b · Party: octopus, photo corner, snack table *(no panel yet)* [R60]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Picture card (proposed; pair hunt is dropped) | Find someone who… | NEEDS BRIAN (R60; pending Brian) |
+| Octopus tourist | *hic* Fellow tourist! | NEEDS BRIAN (R60) |
+| Octopus, two hugs | *(no words: the hugs knock the disguise off)* | — |
+| Photo corner, Polaroid printing | *(no words on the print)* | — |
+| Photo-corner bonus | *(points if Squatch is in the shot; amount not chosen)* | NEEDS BRIAN (R60; no number until Brian gives one) |
+| Snack table, third grab | *(no words: a chain reaction pushes things off the far end)* | — |
+| Hide window after that push | *(4-second placeholder; not in the game)* | NEEDS BRIAN (R60; the length needs Brian) |
+| Earlier hat-pull line | ~~Cool hat!~~ | removed from the knock-off (R60 supersedes S14's hat pull and S15's 2-minute timer) |
+
+### 2c · Party: the disguise is off *(no panel yet)* [S18, R60]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Guest at the alarm, after the disguise is off | FUR! Security! | NEEDS BRIAN (Brian 3:18 PM; also the keep-the-balloon path in R58) |
 
 ### 3 · FUR alarm zoom — `sketch-12-fur-alarm-zoom.png` (NEW) [P16, S18, K10]
 | Speaker / surface | Exact text | Status |
@@ -251,17 +276,23 @@ Rules: never invent why the parents never came back (W21). No new words go on a 
 |---|---|---|
 | Card | Later that evening... | NEEDS BRIAN (Brian 4:31 PM) |
 
-### 30 · Employee of the Month gallery *(hallway; no captions written)* [R55, R56, R57]
+### 30 · Employee of the Month gallery *(hallway; no gag captions written)* [R55, R56, R57, R62, R63]
 | Speaker / surface | Exact text | Status |
 |---|---|---|
 | Photo wall title | EMPLOYEE OF THE MONTH | EXISTING (game gallery) |
-| Photo captions | *(none written; the gag list is not picked)* | NEEDS BRIAN (R55) |
-| After the visit | *(more photos, or move on — not chosen)* | NEEDS BRIAN (R56, R57) |
+| Photo captions | *(none written; kinds are horns, something in his mouth, things on his head, and the ball-roll photobomb)* | NEEDS BRIAN (R62) |
+| Under the crayon drawing | Always tied together | NEEDS BRIAN (R62) |
+| Crayon labels, kid handwriting | MOPS | NEEDS BRIAN (R63) |
+| Crayon labels, kid handwriting | ME | NEEDS BRIAN (R63) |
+| Crayon picture | *(no extra words: a dotted line from Mops to Squatch, hearts rising from it)* | — |
+| Controls under the photo | left arrow, right arrow, and an X that stays on screen | NEEDS BRIAN (R62 decided the controls; these marks are not in the game) |
+| Swipe past photo 5 | BEEP BEEP | NEEDS BRIAN (R62; the gallery then cuts out) |
+| Earlier end choice | ~~more photos / move on~~ | removed (R62 supersedes R56 and R57) |
 | Keepsake, last walk before boarding | *(take the crayon drawing; points amount not chosen)* | NEEDS BRIAN (R57; no number until Brian gives one) |
 
 ---
 
 ## D. Counts (rows in section C, plus the room labels in B)
-**APPROVED: 1 · EXISTING: 20 · NEEDS BRIAN: 54** (rows whose status starts with those words). The struck "FUR IN THE VENT!" row is not counted. "No words" rows are not counted. The earlier hand count (1 / 17 / 45) was from before the Nov 9 panels. Isfred's name tag is NEEDS BRIAN because that label is not in the game yet.
+**APPROVED: 1 · EXISTING: 21 · NEEDS BRIAN: 64** (rows whose status starts with those words). Struck and removed rows are not counted. "No words" rows are not counted. Isfred's name tag and every new R58–R63 line are NEEDS BRIAN because they are not in the game yet. The kid's gasp "!" is the game's existing sight mark (R59).
 
-Removed and not to be used: "MAIL ROOM" label (R17), the inspection announcement (S52), "Nobody can live outside" (S19), "A hoof stamp. Mops signed it." (Chapter 2, L2), "Mops, it's a mistake!" (R50).
+Removed and not to be used: "MAIL ROOM" label (R17), the inspection announcement (S52), "Nobody can live outside" (S19), "A hoof stamp. Mops signed it." (Chapter 2, L2), "Mops, it's a mistake!" (R50), "Cool hat!" as the party knock-off (R60), and "more photos / move on" (R62).
