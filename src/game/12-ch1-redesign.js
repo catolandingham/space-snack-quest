@@ -25,10 +25,9 @@
     const COOL_HAT_SECONDS = 120;
     // R59. The balloon takes about 6 seconds to reach the ceiling. Approved.
     const BALLOON_GRAB_SECONDS = 6;
-    // R60. Placeholder amounts. Not drawn on screen.
-    // PENDING BRIAN
+    // R60. A photo that includes Squatch. Approved by Brian 2026-11-09. Not drawn on screen.
     const PHOTO_BONUS = 25;
-    // PENDING BRIAN
+    // R60. How long the guests look at the spill. Approved by Brian 2026-11-09.
     const SNACK_LOOK_SECONDS = 4;
     // The corner guest aims the camera left, into the room. The shot is the floor in front of the lens.
     // The SNAP circle covers that floor, so Squatch can walk into the picture and still take it.

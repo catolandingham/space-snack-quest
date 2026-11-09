@@ -26,6 +26,6 @@ The office cutscene, after Mops and Squatch have left. Each line is pending Bria
 | Balloon kid, if Squatch keeps it | Scary Wookiee! | NEEDS BRIAN |
 | Balloon rise | about 6 seconds, with a wobble and a glow. R59, approved | approved |
 | Octopus tourist | *hic* Fellow tourist! | NEEDS BRIAN |
-| Photo bonus | PHOTO_BONUS, not shown on screen | NEEDS BRIAN |
-| Snack look-away | SNACK_LOOK_SECONDS is 4 | NEEDS BRIAN |
+| Photo bonus | 25 points, not shown on screen | approved 2026-11-09 |
+| Snack look-away | 4 seconds | approved 2026-11-09 |
 | Balloon, last hall visit | POP! | NEEDS BRIAN |

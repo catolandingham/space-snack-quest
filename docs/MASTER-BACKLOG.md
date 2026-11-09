@@ -6,16 +6,7 @@ A new game plays the redesigned Chapter 1 from the Nov 8 cartoon: home, delivery
 
 On pickup day the robots open a crate on the ramp by the ship. Squatch hides in a crate still in the mail room. Dot, Bob, and Lou are not there. Mops warns him, he slips out, and they walk home. The disguise is a spare blue jacket, a fake beard, and horns. Mops keeps his own jacket on. The wardrobe's spare jacket is plain blue, and that hook is empty once Squatch takes it.
 
-The party is in this build. Squatch goes alone after bedtime, Mops stays home, and no robots are there. A kid's balloon takes about 6 seconds to reach the ceiling (R59). After the party it stays in the hall and pops once on the last visit (R61). Giving it back is silent and safe. Keeping it starts the alarm. Ignoring it only makes the kid sad. An octopus hug, a photo corner, and a third-snack spill are in (R60). The pair hunt is not.
-
-## Needs Brian's yes
-
-These numbers are in the game as named placeholders. They are not drawn on screen, and Brian has not approved them.
-
-- `PHOTO_BONUS` is 25. Pending. A photo that includes Squatch adds this many points.
-- `SNACK_LOOK_SECONDS` is 4. Pending. Guests look at the spilled snacks for this many seconds.
-
-`BALLOON_GRAB_SECONDS` is 6. That one is approved (R59).
+The party is in this build. Squatch goes alone after bedtime, Mops stays home, and no robots are there. A kid's balloon takes about 6 seconds to reach the ceiling (R59). After the party it stays in the hall and pops once on the last visit (R61). Giving it back is silent and safe. Keeping it starts the alarm. Ignoring it only makes the kid sad. An octopus hug, a photo corner, and a third-snack spill are in (R60). The pair hunt is not. A photo that includes him is worth 25 points (`PHOTO_BONUS`, approved by Brian on 2026-11-09, not drawn). Guests look at a snack spill for 4 seconds (`SNACK_LOOK_SECONDS`, approved the same day).
 
 Not in this build yet, because the cartoon or a decision is still open: the hallway room and its photo gallery (next build, R51/R53/R55; photo gags still being picked), a full redraw of the hall, how the pink copy rides to Mars inside the Guardian Box after Squatch pockets it, Mops's extra thought in the vent, a separate FUR-alarm zoom shot, the pancake brochure at the snack stand, taking every snack and leaving food for the Guardians, new music, and the bigger iPad layout. Old Chapter 1 debug scenes still open, and they use the new home drawing. The manager's name on his bubbles is Isfred Bar Neshuman. The hiding ball is the L2 ball in this chapter and in the Chapter 2 kitchen. Ball notice is BALL_NOTICE_RADIUS (70) and BALL_NOTICE_SECONDS (2.0), the same in every room. Chapter 2's first spoken line is now "They put us off here. This is the gas stop." The rest of Chapters 2 to 4 is the same. The pink-slip code opens the manager's computer in the hall, and the Moon Pie page is on that screen, not the home TV. Walking home in this build still uses the existing hall, including its door to home. R50 is in: the manager is not at the ship when they leave. R54 is the office dialogue after that: five lines, and Isfred no longer jumps straight to the tapes.
 
