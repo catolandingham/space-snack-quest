@@ -273,6 +273,13 @@
           e.quadraticCurveTo(-7, P + q.head * 1.15, 0, P + q.head * 1.35),
           e.quadraticCurveTo(7, P + q.head * 1.15, 2, P + q.head * 0.55),
           r("#f7f4ee", 1.2)),
+        s.hawaiian &&
+          (m(-q.bodyW * 0.95, -T - R * 0.35, q.bodyW * 1.9, R * 0.85, 5),
+          r("#ff8a3d", 1.4),
+          F(-6, -T - R * 0.1, 2, "#2bc48a"),
+          F(5, -T + 2, 2, "#3478f6")),
+        s.hat && (m(-q.head * 0.7, P - q.head * 0.85, q.head * 1.4, q.head * 0.35, 3), r("#2b3a67", 1.2)),
+        s.shades && (m(-q.head * 0.55, P + q.head * 0.02, q.head * 1.1, q.head * 0.22, 2), r("#1e2430", 1)),
         e.restore());
     }
     // L2 ball (C3): a brown ball, scalloped head, ears, two dark eyes with white highlights. No face, arms, or legs.
@@ -1544,6 +1551,16 @@
         (X(l, o, i * 0.8, i), e.stroke());
     }
     function gq(l, o) {
+      if (l === "ch1fur") {
+        ((e.fillStyle = "rgba(20,24,32,.72)"),
+          e.fillRect(0, 0, c, b),
+          m(280, 160, 400, 280, 16),
+          r("#e5533d", 8),
+          g("FUR", 480, 250, 64, "#ffffff", "center", 900),
+          g("PULL DOWN", 480, 320, 28, "#ffffff", "center", 900),
+          F(480, 380, 10, "#8b5a3c"));
+        return;
+      }
       if (l === "ch1site") {
         ((e.fillStyle = "rgba(20,24,32,.62)"),
           e.fillRect(0, 0, c, b),

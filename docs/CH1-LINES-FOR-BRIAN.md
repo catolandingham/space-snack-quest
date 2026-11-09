@@ -17,6 +17,7 @@ Words the game already had, and the one you already approved, are not in this li
 | 7 | The Moon Pie page is on the manager's office computer | Squatch: return the empty crate | Squatch: send the empty crate |
 | 8 | The wardrobe is open at home | Squatch: put on the spare jacket | Squatch: put on the spare blue jacket |
 | 9 | The scanner is on | Squatch: walk through the scanner | Squatch: board the ship |
+| 70 | At the party | Squatch: look around the party | NEEDS BRIAN |
 
 ## What people say
 
@@ -60,6 +61,14 @@ Words the game already had, and the one you already approved, are not in this li
 | 68 | Isfred Bar Neshuman, in his office, third line. NEEDS BRIAN | Not here? He can't live off the station! | |
 | 69 | Robot, in the office, fourth line. NEEDS BRIAN | He was replaced by the new robot shipment. | |
 | 67 | Name on that robot's bubble. NEEDS BRIAN | Robot | Security |
+| 71 | Isfred, alone on the party stage. NEEDS BRIAN | Welcome, Bleep-Bloop Robotics delegation! | |
+| 72 | A card at the party, after the peek. NEEDS BRIAN | Everybody has somebody. | |
+| 73 | Squatch, curious, at the party. NEEDS BRIAN | Robots? | |
+| 74 | Squatch, at the party snack. NEEDS BRIAN | One snack. That's the rule. | |
+| 75 | A guest at the party. NEEDS BRIAN | Love the shirt. | |
+| 76 | A guest, after two minutes. NEEDS BRIAN | Cool hat! | |
+| 77 | The PA, when the disguise comes off. NEEDS BRIAN | FUR! Security! | |
+| 78 | Mops, at home after the party. NEEDS BRIAN | A flyer. And fur on the floor. | |
 | 66 | Mops, on the walk home in the R51 hallway. Not in the game yet. NEEDS BRIAN | Paperwork. | Pending. This line waits for the hallway. |
 | 42 | The PA, on the trip | The base called the ship. It has to stop. | |
 | 43 | A card | Six days later | The week is decided. These are the words on the card. |
@@ -131,7 +140,7 @@ On the night mailbox he can roll into a ball anywhere. On escape night the only 
    - B. Do not draw the paw until you say how it got there. This is in the game. The pink slip is the code copy. The yellow copy is the one he signs.
    - C. He signs before lunch, so the carbon is already on the pink copy. That changes the order you locked.
 
-5. The party is not built yet. R49: Squatch goes alone and hides that he went out, so Mops is not at the party. No robots are there, because the delegation is only announced and the robots have not arrived. Guests use the game's normal sprite size. The hat, sunglasses, "Cool hat!", and the run home still need their pictures. The old notice sneak is not what a new game plays. A debug link such as `?scene=S9` still opens those old scenes, and they are drawn in the new home room.
+5. The old notice sneak is not what a new game plays. A debug link such as `?scene=S9` still opens those old scenes, and they are drawn in the new home room. The party is in the game (R49, R52). Squatch goes alone. Mops is not there. No robots are there. Isfred announces the delegation alone. "You have me" is not said at the party.
 
 6. After Squatch grabs the pink slip, the game does not yet show it riding inside the Guardian Box all the way to Mars.
 
@@ -145,7 +154,7 @@ R55. Hallway approved; the first walk to the loading bay is a cutscene; the hall
 
 Layout for that build: the party hall exit is in the left end wall. The loading bay exit is in the right end wall. The Employee of the Month photo wall is centered on the back wall. The manager's office door is on the front wall, opposite the photos, locked with a code keypad until the code puzzle opens it. There is no door to home. The walk home past the robots, and Mops's line "Paperwork." (row 66, NEEDS BRIAN), happen in that hallway. Row 66 is not on screen.
 
-R49 is the party rule above. It is not built yet.
+R49 is in the game. Squatch goes to the party alone and hides it. Mops is never there. No robots are there, because the delegation is only announced. Guests are drawn at the same size as the game's people. R52: "You have me" is not said at the party. The disguise comes off if the plant, the vent, or the guard takes it, or when a guest says "Cool hat!" after 120 seconds of party play. That timer is COOL_HAT_SECONDS. Free-play moments are the list CH1_PARTY_FREE, so more can be added there.
 
 R50 is in the game. When Mops and the disguised Squatch leave, the manager is not at the ship. There is no boarding chase and no "Mops, it's a mistake!" After they leave, the office cutscene is R54, rows 63, 64, 68, 69, and 41, in that order. All five are NEEDS BRIAN. The name on the robot's bubble is "Robot" (row 67, NEEDS BRIAN), not Security. Mops is not in that cutscene. The robots have arrived by then.
 

@@ -240,6 +240,24 @@ g.check(
   { missingSpeaker, bubbles },
 );
 
+const hat = await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  n.scene = "QA";
+  n.ctrl = true;
+  n.ch1Party = true;
+  n.ch1Disguise = true;
+  n.ch1Flyer = true;
+  n.ch1PartyOver = false;
+  n.ch1PartyT = ss.COOL_HAT_SECONDS - 0.2;
+  n.q = [];
+  n.cur = null;
+  ss.tick(0.3);
+  const said = n.log.filter((e) => e.k === "bub").map((e) => e.text);
+  return { seconds: ss.COOL_HAT_SECONDS, said, over: n.ch1PartyOver, disguise: n.ch1Disguise };
+});
+g.check("Cool hat! fires at 2 minutes of party play and not sooner", hat.seconds === 120 && hat.over && !hat.disguise && hat.said.includes("Cool hat!"), hat);
+
 const play = await page.evaluate(() => {
   const ss = window.__ss;
   const n = ss.op;
@@ -324,7 +342,7 @@ const play = await page.evaluate(() => {
   };
 });
 g.check("Chapter 1 reaches the tally card", play.end === "tally", { end: play.end, acts: play.acts, scene: play.state.scene });
-const wantActs = ["GRAB · yellow copy", "SIGN · paw", "POST · mailbox", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "PUT ON · jacket", "BOARD · scanner"];
+const wantActs = ["PUT ON · tourist disguise", "TAKE · robot flyer", "GRAB · snack", "TALK · guest", "LISTEN · snack line", "SNAG · plant", "GRAB · yellow copy", "SIGN · paw", "POST · mailbox", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "PUT ON · jacket", "BOARD · scanner"];
 g.check("the player does the new actions in order", JSON.stringify(play.acts) === JSON.stringify(wantActs), play.acts);
 const must = [
   "Stormtop Cloud Resort, floating above Jupiter.",
@@ -337,6 +355,13 @@ const must = [
   "Ptoo!",
   "Quick, hide.",
   "Didn't you hear what Isfred Bar Neshuman said? They need me here, they're not going to replace me. Plus the Guardians are here.",
+  "Welcome, Bleep-Bloop Robotics delegation!",
+  "Everybody has somebody.",
+  "Robots?",
+  "One snack. That's the rule.",
+  "Love the shirt.",
+  "FUR! Security!",
+  "A flyer. And fur on the floor.",
   "Mail scanned. Signature pawature accepted.",
   "Six days later",
   "I hope Mops doesn't notice...",
@@ -367,7 +392,7 @@ g.check(
   play.state,
 );
 const walks = walkChanges(play.state.trail);
-g.check("every room change walks off and walks in", walks === 18, { walks, sample: play.state.trail.slice(0, 8) });
+g.check("every room change walks off and walks in", walks === 20, { walks, sample: play.state.trail.slice(0, 8) });
 const doors = doorUses(play.state.walks);
 g.check(
   "the walk home uses the same hall doors as the walk over",

@@ -19,7 +19,21 @@
       Q7: "Squatch: return the empty crate",
       Q8: "Squatch: put on the spare jacket",
       Q9: "Squatch: walk through the scanner",
+      QA: "Squatch: look around the party",
     };
+    // S15. Two minutes of party play. Do not change this.
+    const COOL_HAT_SECONDS = 120;
+    // Free-play moments. Add another object here for a new party beat.
+    const CH1_PARTY_FREE = [
+      { id: "snack", verb: "GRAB", cap: "snack", x: 760, y: 530, who: "sq", text: "One snack. That's the rule." },
+      { id: "guest", verb: "TALK", cap: "guest", x: 480, y: 540, who: "tourist", text: "Love the shirt." },
+      { id: "line", verb: "LISTEN", cap: "snack line", x: 700, y: 500, who: "tourist", text: "I swear we had more Moon Pies... is that what they stole at lunch?" },
+    ];
+    const CH1_PARTY_SNAG = [
+      { id: "plant", verb: "SNAG", cap: "plant", x: 220, y: 530, why: "plant" },
+      { id: "vent", verb: "SUCK", cap: "vent", x: 150, y: 420, why: "vent" },
+      { id: "guard", verb: "STAND", cap: "guard", x: 860, y: 540, why: "guard" },
+    ];
     function ch1QChip() {
       return CH1Q_CHIPS[n.scene] || "";
     }
@@ -249,6 +263,13 @@
         (n.ch1Trail = []),
         (n.ch1SiteRoom = ""),
         (n.ch1Office = !1),
+        (n.ch1Party = !1),
+        (n.ch1Disguise = !1),
+        (n.ch1Flyer = !1),
+        (n.ch1PartyT = 0),
+        (n.ch1PartyOver = !1),
+        (n.ch1PartyDid = {}),
+        (n.ch1Fur = !1),
         (n.tvOn = !1),
         (n.sqPose = "sit"),
         J([
@@ -341,9 +362,132 @@
           N(() => {
             ((n.sqPose = "stand"),
               (n.wardrobe = "closed"),
-              ch1Go("delivery", { who: "sq", night: !0, ship: !1, crew: "", mail: "empty", scene: "Q4", stand: [140, 540] }, ch1NightPlay));
+              ch1Go("hall", { who: "sq", scene: "QA" }, ch1PartyPeek));
           }),
         ]));
+    }
+    function ch1PartyPeek() {
+      ((n.scene = "QA"),
+        (n.ch1Party = !0),
+        (n.ch1Disguise = !1),
+        (n.ch1Flyer = !1),
+        (n.ch1PartyT = 0),
+        (n.ch1PartyOver = !1),
+        (n.ch1PartyDid = {}),
+        (n.sqPose = "hidden"),
+        (n.sq.x = 220),
+        (n.sq.y = 530),
+        (n.moPose = "hidden"),
+        (n.mo.x = -400),
+        J([
+          v("official", "Welcome, Bleep-Bloop Robotics delegation!"),
+          { k: "card", id: "somebody", text: "Everybody has somebody." },
+          v("sq", "Robots?", "whisper"),
+          N(() => {
+            ((n.sqPose = "stand"), (n.ctrl = !0));
+          }),
+        ]));
+    }
+    function ch1PartySpots() {
+      if (n.ch1PartyOver) return [];
+      if (!n.ch1Disguise)
+        return [
+          spot({
+            id: "disguise",
+            verb: "PUT ON",
+            cap: "tourist disguise",
+            who: "sq",
+            x: 220,
+            y: 530,
+            r: 160,
+            hot: !0,
+            f: () => {
+              ((n.ch1Disguise = !0), (n.act = null));
+            },
+          }),
+        ];
+      if (!n.ch1Flyer)
+        return [
+          spot({
+            id: "flyer",
+            verb: "TAKE",
+            cap: "robot flyer",
+            who: "sq",
+            x: 480,
+            y: 430,
+            r: 140,
+            hot: !0,
+            f: () => {
+              ((n.ch1Flyer = !0), (n.ch1PartyT = 0), (n.act = null));
+            },
+          }),
+        ];
+      let out = [];
+      for (let m of CH1_PARTY_FREE)
+        !n.ch1PartyDid[m.id] &&
+          out.push(
+            spot({
+              id: m.id,
+              verb: m.verb,
+              cap: m.cap,
+              who: "sq",
+              x: m.x,
+              y: m.y,
+              r: 90,
+              f: () => {
+                ((n.ch1PartyDid[m.id] = !0), (n.ctrl = !1), (n.act = null), J([v(m.who, m.text), N(() => (n.ctrl = !0))]));
+              },
+            }),
+          );
+      for (let m of CH1_PARTY_SNAG)
+        out.push(
+          spot({
+            id: m.id,
+            verb: m.verb,
+            cap: m.cap,
+            who: "sq",
+            x: m.x,
+            y: m.y,
+            r: 80,
+            f: () => ch1HatOff(m.why),
+          }),
+        );
+      return out;
+    }
+    function ch1HatOff(why) {
+      if (n.ch1PartyOver || !n.ch1Disguise) return;
+      ((n.ch1Disguise = !1), (n.ch1PartyOver = !0), (n.ctrl = !1), (n.act = null), (n.ch1Fur = !0));
+      let lines = [];
+      why === "cool" && lines.push(v("tourist", "Cool hat!"));
+      lines.push(
+        v("pa", "FUR! Security!", "pa"),
+        { k: "panel", id: "ch1fur" },
+        N(() => {
+          ((n.ch1Party = !1), (n.ch1Fur = !1), ch1Go("closet", { who: "sq", scene: "Q3" }, ch1PartyHome));
+        }),
+      );
+      J(lines);
+    }
+    function ch1PartyHome() {
+      ((n.moPose = "stand"),
+        (n.mo.x = 520),
+        (n.mo.y = 500),
+        (n.ch1Party = !1),
+        J([
+          v("mops", "A flyer. And fur on the floor."),
+          N(() => {
+            n.tvOn = !0;
+          }),
+          N(() => ch1Go("delivery", { who: "sq", night: !0, ship: !1, crew: "", mail: "empty", scene: "Q4", stand: [140, 540] }, ch1NightPlay)),
+        ]));
+    }
+    function ch1PartyTick(dt) {
+      n.scene === "QA" &&
+        n.ctrl &&
+        n.ch1Disguise &&
+        n.ch1Flyer &&
+        !n.ch1PartyOver &&
+        ((n.ch1PartyT = (n.ch1PartyT || 0) + (dt || 0)), n.ch1PartyT >= COOL_HAT_SECONDS && ch1HatOff("cool"));
     }
     function ch1NightPlay() {
       ((n.scene = "Q4"), (n.ctrl = !0), (n.sqPose = "stand"), chipNow());
@@ -552,6 +696,7 @@
         ]));
     }
     function ch1QSpots() {
+      if (n.scene === "QA") return n.ctrl && !n.ch1PartyOver ? ch1PartySpots() : [];
       if (!n.ctrl || n.sqPose === "ball" || n.sqPose === "hidden") return [];
       let s = n.scene,
         out = [];
@@ -626,7 +771,7 @@
       seen && capture("delivery");
     }
     function ch1QTick(dt) {
-      (n.scene || "")[0] === "Q" && (n.ctrl && (n.act = pick(ch1QSpots())), ch1Watch(dt));
+      (n.scene || "")[0] === "Q" && (n.ctrl && (n.act = pick(ch1QSpots())), ch1Watch(dt), ch1PartyTick(dt));
     }
     function ch1RestartNight() {
       ((n.scene = "Q4"),
@@ -658,6 +803,28 @@
     }
     function drawPinkSlip(px, py) {
       (m(px, py, 18, 14, 2), r("#ff8fb8", 2), C([px + 3, py + 4, px + 15, py + 4], "#9aa3b2", 1));
+    }
+    function drawCh1Party() {
+      (m(250, 36, 460, 44, 8),
+        r("#3478f6", 3),
+        g("ROBOTICS DELEGATION!", 480, 64, 18, "#ffffff", "center", 900),
+        Xp(220, 530),
+        n.sqPose === "hidden" && ga(220, 484),
+        m(130, 300, 50, 36, 3),
+        r("#8a93a3", 3));
+      for (let i = 0; i < 4; i++) C([138, 308 + i * 8, 172, 308 + i * 8], y, 2);
+      (m(700, 500, 120, 28, 4),
+        r("#cdbb98", 3),
+        Qt(340, 520, "#f2c1b0", 1.6, 1),
+        Qt(390, 526, "#f2c1b0", 1.6, -1),
+        Qt(560, 530, "#1f9d8a", 1.6, 1),
+        Qt(620, 524, "#ff8a3d", 1.6, -1),
+        Qt(470, 500, "#7ad0c8", 1.6, 1),
+        Qt(300, 470, "#7a4ad0", 1.6, 1),
+        Qt(820, 540, "#e07b00", 1.6, -1),
+        Qt(860, 540, "#59657d", 1.6, -1),
+        Qt(480, 400, "#c9b6f2", 1.6, 0.2),
+        !n.ch1Flyer && (m(500, 360, 16, 12, 1), r("#fffdf8", 1)));
     }
     function drawMailRobot(px, py) {
       (dq(px, py, !0), g("UPS", px, py - 8, 10, "#ffffff", "center", 900));
