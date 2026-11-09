@@ -44,12 +44,16 @@ For Brian • Sunday, November 8, 2026, about 8:30 PM PST • proposals only, no
 - C: no cards, just the glowing face.
 **Recommend A.** It matches the rule we already ship ("announce who and why") and keeps the kid from getting lost. That's 11 short lines for your cartoon review.
 
-### X3. Rolling into a ball as a hiding move everywhere. NEEDS BRIAN'S YES (difficulty)
+### X3. Rolling into a ball as a hiding move everywhere. Superseded by C20
+**Superseded by C20** in `docs/DECISIONS.md` (Brian t228). The choice is no longer open. The player can press the action button to ball up (L2) whenever they want, in every chapter. It is a weaker hide than plants and boxes: a robot already looking at him, or close by, still spots him, and one passing at a distance may miss him. Escape night is a story spot where it fully works (C19: the player presses the action button and Squatch squats into the ball; it is not automatic). Exact detection numbers still need Brian's yes before any code.
+
+The proposal below is kept so the old choices stay visible.
+
 **Problem:** You made the ball a standard hiding move. In the game today it only works in the Chapter 2 kitchen, while Gloop's warning is up.
 - **A: use the ball in story moments and cutscenes in Chapters 3 and 4 (for example, behind the crate on Mars), with no new button.**
 - B: add a ROLL · into a ball action anywhere there are sight cones.
 - C: leave it kitchen-only.
-**Recommend A now, and maybe B after a replay.** A keeps the move feeling consistent without making any chapter easier. B is a real difficulty change, so it should wait until you and your kid have played it.
+**Recommend A now, and maybe B after a replay.** A keeps the move feeling consistent without making any chapter easier. B is a real difficulty change, so it should wait until you and your kid have played it. That recommendation is **Superseded by C20**. Brian picked the action-button ball in every chapter, with the weaker-hide rule above.
 
 ### X4. Hiding poses match Chapter 1. SAFE (art only)
 **Problem:** Chapter 1 now draws Squatch inside a bush with only his eyes showing. Later hides (the Chapter 3 barrel, the Chapter 4 crate and trash cans) use older poses.

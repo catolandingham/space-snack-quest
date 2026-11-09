@@ -125,7 +125,7 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 | C4 | 11-08 | Ball options A–E (sketch-ball-options.png). | Brian t215: none matched | Superseded by C3 |
 | C5 | 11-08 | Ball = the Chapter 2 kitchen DUCK pose (normal Squatch squashed to 62% height, eyes closed). | memory | Superseded by C3 |
 | C6 | 11-08 | Ball options F–J (F is the game's own second hiding ball), then K/K2/K3 (F as just his head), then L (F with fuzzy head and ears). | Brian t218, t221 | Superseded by C3 (L2) |
-| C7 | 11-08 | Rolling into a ball is a consistent hiding option throughout the game (it already happens in the Chapter 2 kitchen). | memory | Decided for story moments and cutscenes. Making it a gameplay move in Chapters 3–4 needs Brian's yes (L36). |
+| C7 | 11-08 | Rolling into a ball is a consistent hiding option throughout the game (it already happens in the Chapter 2 kitchen). | memory | Superseded in part by C20. The L2 pose stays (C3). "A gameplay move in Chapters 3–4 needs Brian's yes" was L36, now Superseded by C20. |
 | C8 | 11-08 | **Plant hides:** whenever Squatch hides in a plant or bush, show ONLY the plant and his eyes peeking out of the leaves, never his body beside or behind it. This applies to every panel, always. | Brian t217 (emphatic); memory | Decided |
 | C9 | 11-08 | **Peek-eyes:** eyes in plants and boxes use the game's original look (clear white eyes with dark pupils, as in the old `beats*.png`), drawn with the shared `peek_eyes.py` helper. | Brian t220 ("a million times better") | Decided (supersedes tiny dark-dot eyes) |
 | C10 | 11-08 | Adults (manager, workers, guests) are clearly taller than Squatch and Mops. | memory | Decided |
@@ -137,6 +137,8 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 | C16 | 11-03 | The security guard wears a fun outfit and can actually catch him. If caught, Squatch goes back and retries. | memory (Nov 3) | Decided |
 | C17 | 11-08 | Rusty's red "R" cap becomes a grease cap with a fuel-drop badge (D13). | answered | Decided |
 | C18 | 11-08 | The manager's name: Puddlewick, Bimble or Clipwell. | DOWNSTREAM Q12 | Open (O6) |
+| C19 | 11-08 | Escape night: the player presses the action button and Squatch squats down into the L2 ball under the wall vent (the ball is player-triggered, not automatic). | Brian t225 | Decided |
+| C20 | 11-08 | **Ball anytime:** the player can press the action button to ball up (L2) whenever they want, as a hiding move in every chapter. It works less well than plants and boxes (a weaker hide: e.g. a robot already looking at him or close by still spots him; one passing at a distance may miss him). Escape night is a story spot where it fully works. Exact detection numbers still need Brian's yes before code. | Brian t228 card | Decided (tuning needs yes) |
 
 ## 4. Look, rooms and layout
 | # | Date | Decision | Source | Status |
@@ -230,7 +232,7 @@ Each panel's on-screen words are in CH1-CARTOON-LINES.md. Which files are curren
 | L33 | 11-08 | X13: Chapter 4's "That's ME?" becomes a callback ("Like in your story..."). | LATER-CHAPTERS proposal | Needs Brian's yes |
 | L34 | 11-08 | X14: Mops's flyers and the parents' poster drawn in the same style. | LATER-CHAPTERS proposal | Needs Brian's yes |
 | L35 | 11-08 | X15: Mops gets a whisper thought at Zip's "Sasquatches on Mars?" line. | LATER-CHAPTERS proposal | Needs Brian's yes |
-| L36 | 11-08 | X3: the ball as a hiding move in Chapters 3–4 (A: cutscenes only, B: a ROLL button). | LATER-CHAPTERS proposal | Needs Brian's yes |
+| L36 | 11-08 | X3: the ball as a hiding move in Chapters 3–4 (A: cutscenes only, B: a ROLL button). | LATER-CHAPTERS proposal | Superseded by C20 |
 | L37 | 11-08 | C2-3: Mops steps outside to tell Squatch "the kitchen has a back door" instead of whispering through a wall. | LATER-CHAPTERS proposal | Needs Brian's yes |
 | L38 | 11-08 | C3-1 and C4-4 (T28): show the locals' fear (a searchlight, a frightened local) instead of saying it. | LATER-CHAPTERS proposal | Needs Brian's yes |
 | L39 | 11-08 | C3-2: "I'll sing to the rovers" (fixes who sings). | LATER-CHAPTERS proposal | Needs Brian's yes |
@@ -312,7 +314,7 @@ Each panel's on-screen words are in CH1-CARTOON-LINES.md. Which files are curren
 | O27 | Keep the "Employee of the Month: the mop" joke? | L32 |
 | O28 | Kid replay recordings of Chapters 1 and 2 (needed for Rusty's width and the kitchen window and sink). | L12, L13 |
 | O29 | His written merge yes on PR #17 (the P2 room walks and the P3 hoof-stamp cut). | K20 |
-| O30 | All the later-chapter proposals marked Needs Brian's yes (L27–L40). | §6 |
+| O30 | All the later-chapter proposals still marked Needs Brian's yes (L27–L35 and L37–L40). L36 is Superseded by C20. | §6 |
 | O31 | Start the P1 security trace and P4–P8 now? | K21, K22 |
 | O32 | Does the 60-second auto stall hint stay in the chapters that aren't being rebuilt, given "no idle auto-hints"? | K7 vs K8 |
 | O33 | Required snack counts if Squatch "takes all the snacks" (difficulty). | S49 |
