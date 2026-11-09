@@ -1337,15 +1337,12 @@
           entryY: 520,
           ctrlAfter: !0,
           arrive: () => {
-            (n.room = "kitchen"),
-              (ch2.phase = "g4k"),
-              (n.mo.x = 150),
-              (n.mo.y = 520),
-              (n.mo.f = 1),
-              (ch2.argueT = 2.4),
-              (ch2.out = -1),
-              n.pulse.add("kcrate"),
-              (n.ctrl = !0);
+            (n.room = "kitchen"), (n.mo.x = 150), (n.mo.y = 520), (n.mo.f = 1), n.pulse.add("kcrate");
+          },
+          // EA counts argueT whenever the phase is g4k, even with control off. Arm it when the
+          // walk ends, so the 2.4 s before the bots speak is the same as it was before the walk.
+          done: () => {
+            (ch2.phase = "g4k"), (ch2.argueT = 2.4), (ch2.out = -1);
           },
         }));
     }

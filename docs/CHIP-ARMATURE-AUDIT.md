@@ -78,7 +78,7 @@ These hold whichever version of each scene Brian keeps. Ranked.
 The spine is held lightly: the game has moved on since Nov 2, and the aim is the better story. Each verdict says which version has clearer cause and effect, a stronger turn and all seven beats, and is easier for a 10-year-old. Verdicts: **keep the build**, **return to the spine**, **Brian's call** (two genuinely different stories). Type: moved, missing, added, changed.
 
 1. **Missing: Ch2 G4 flashback (FB3).** Spine: "Years ago..." shows Mops writing the Guardians note, so the player knows and Squatch does not. The whisper "A hoof stamp. Mops signed it." is cut, so Squatch is not told. The flashback is still not in the game, so the player is not shown it either.
-   **Return to the spine.** Irony gives beat 5 a promise the player waits on and makes M4's question land; the build tells Squatch, so M4 and M5 pay off a secret nobody holds.
+   **Return to the spine.** Irony gives beat 5 a promise the player waits on and makes M4's question land. The build no longer tells Squatch. The flashback is still missing, so the player is not shown it either, and M4 and M5 still pay off a secret nobody holds.
 2. **Changed: Ch2 goal.** Spine: Rustbucket would do anything for chili, Mops serves it, Rustbucket naps, Mops siphons the gas. Build: Mops earns coins, buys Squatch soup instead of gas (the bible), pays Rusty.
    **Brian's call.** The build has the stronger turn (Mops chooses Squatch's hunger over the tank) and a simple cause chain; the spine has a character want and a gag. Chips 5.4 and 5.15 to 5.17 follow whichever is kept.
 3. **Changed: Ch1 O3 and O6 heart lines.** Spine: "Everybody has somebody", then "You have me." Build: "Robots?" and "I wanted to see the robots."

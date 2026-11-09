@@ -1249,6 +1249,7 @@
         fromLeft: !!spec.fromLeft,
         stash,
         ctrlAfter: spec.ctrlAfter != null ? spec.ctrlAfter : !!n.ctrl,
+        done: spec.done || null,
         outMoved: 0,
         inMoved: 0,
       };
@@ -1257,9 +1258,12 @@
     function stepRoomWalk(dt) {
       let w = n.roomWalk;
       if (!w) return;
-      // A test or a checkpoint moved on: drop the picture walk and leave their control alone.
+      // A test or a checkpoint moved on. Drop the picture walk and give control back when this
+      // walk was going to, or when nothing queued will, so the player is not stuck.
       if (n.scene !== w.scene || n.room !== w.toRoom) {
+        let give = w.ctrlAfter || (!n.cur && !n.q.length);
         n.roomWalk = null;
+        give && (n.ctrl = !0);
         return;
       }
       n.ctrl = !1;
@@ -1280,17 +1284,20 @@
       }
       let done = mV(w, w.entryX, w.entryY, 300, dt);
       w.inMoved += Math.hypot(w.x - beforeX, w.y - beforeY);
-      done &&
-        ((n.walkLog || (n.walkLog = [])).push({
+      if (done) {
+        let finish = w.done;
+        (n.walkLog || (n.walkLog = [])).push({
           from: w.fromRoom,
           to: w.toRoom,
           outWho: w.outWho,
           inWho: w.inWho,
           outMoved: Math.round(w.outMoved),
           inMoved: Math.round(w.inMoved),
-        }),
-        (n.roomWalk = null),
-        (n.ctrl = w.ctrlAfter));
+        });
+        n.roomWalk = null;
+        finish && finish();
+        n.ctrl = w.ctrlAfter;
+      }
     }
     // While the picture shows the walk, draw that room and those feet, then put the real state back for logic and bubbles.
     function applyWalkDraw() {

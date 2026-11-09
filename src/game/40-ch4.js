@@ -503,7 +503,8 @@
           (n.sq.walk = 0),
           (n.sq.moving = !1),
           (n.sqPose = "stand"),
-          switchTo("squatch"));
+          switchTo("squatch"),
+          chipNow());
       };
       live
         ? beginRoomWalk({
@@ -551,39 +552,43 @@
         ]));
     }
     function N6() {
-      ((n.ctrl = !1),
-        (n.act = null),
-        beginRoomWalk({
-          outWho: "sq",
-          exitX: -40,
-          exitY: 560,
-          fromLeft: !1,
-          entryX: 860,
-          entryY: 560,
-          ctrlAfter: !1,
-          arrive: () => {
-            ((n.scene = "M4v"),
-              (n.room = "van"),
-              (H.phase = "m4v"),
-              (H.mom = !1),
-              (H.dad = !1),
-              n.pulse.clear(),
-              n.pulse.add("seat"),
-              (n.sq.x = 860),
-              (n.sq.y = 560),
-              (n.sq.f = -1),
-              (n.sq.walk = 0),
-              (n.sq.moving = !1),
-              (n.sqPose = "stand"));
-          },
-        }),
-        J([
+      // Out the inside room's left door and in through the van's right door. A jump from any other room just arrives.
+      let live = n.room === "inside",
+        arrive = () => {
+          ((n.scene = "M4v"),
+            (n.room = "van"),
+            (H.phase = "m4v"),
+            (H.mom = !1),
+            (H.dad = !1),
+            n.pulse.clear(),
+            n.pulse.add("seat"),
+            (n.sq.x = 860),
+            (n.sq.y = 560),
+            (n.sq.f = -1),
+            (n.sq.walk = 0),
+            (n.sq.moving = !1),
+            (n.sqPose = "stand"));
+        };
+      (n.ctrl = !1), (n.act = null);
+      live
+        ? beginRoomWalk({
+            outWho: "sq",
+            exitX: -40,
+            exitY: 560,
+            fromLeft: !1,
+            entryX: 860,
+            entryY: 560,
+            ctrlAfter: !1,
+            arrive,
+          })
+        : arrive();
+      J([
           cV(() => !n.roomWalk),
           v("sq", "Mops? ...Mops?"),
           N(() => {
             n.ctrl = !0;
           }),
-        ]));
+        ]);
     }
     function R6() {
       ((n.ctrl = !1),

@@ -207,6 +207,66 @@ for (const [name, from, to, who, setup] of ROWS) {
     { err, t, from, to, who },
   );
 }
+// The bots' 2.4 s before they speak starts when control is back, not while Mops is still walking in.
+const armed = await page.evaluate(() => {
+  const ss = window.__ss, n = ss.op;
+  quiet();
+  ss.ch2.has = "soup";
+  ss.ch2.argueT = 9;
+  ss.ch2.out = -1;
+  ss.ch2.bots = [{ x: 420, y: 520, hx: 420, f: 1, look: 0 }, { x: 560, y: 520, hx: 560, f: -1, look: 0 }];
+  n.scene = "G4"; n.room = "diner"; ss.ch2.phase = "g4";
+  ss.swapTo(true);
+  n.moPose = "stand"; n.mo.x = 400; n.mo.y = 520; n.ctrl = true;
+  const err = go("ENTER");
+  return { err, phase: ss.ch2.phase, argueT: ss.ch2.argueT, walk: !!n.roomWalk, ctrl: n.ctrl };
+});
+await sleep(500);
+const during = await page.evaluate(() => ({
+  phase: window.__ss.ch2.phase,
+  argueT: window.__ss.ch2.argueT,
+  walk: !!window.__ss.op.roomWalk,
+  ctrl: window.__ss.op.ctrl,
+}));
+let after = during;
+for (let i = 0; i < 60 && (after.walk || !after.ctrl); i++) {
+  await sleep(100);
+  after = await page.evaluate(() => ({
+    phase: window.__ss.ch2.phase,
+    argueT: window.__ss.ch2.argueT,
+    out: window.__ss.ch2.out,
+    walk: !!window.__ss.op.roomWalk,
+    ctrl: window.__ss.op.ctrl,
+  }));
+}
+g.check(
+  "the bot timer does not tick while the soup walk is running",
+  !armed.err && armed.walk && !armed.ctrl && during.walk && !during.ctrl && during.phase === "g4" && during.argueT === 9,
+  { armed, during },
+);
+g.check(
+  "the bot timer starts at 2.4 s when control returns",
+  after.phase === "g4k" && after.ctrl && !after.walk && after.out === -1 && after.argueT <= 2.4 && after.argueT > 2,
+  after,
+);
+
+// Van to inside: the goal chip refreshes when Squatch takes over.
+const chip = await page.evaluate(() => {
+  const ss = window.__ss, n = ss.op;
+  quiet();
+  n.scene = "M3"; n.room = "van"; ss.ch4.phase = "m3";
+  ss.swapTo(true);
+  n.moPose = "stand"; n.mo.x = 400; n.mo.y = 560; n.ctrl = true;
+  n.chip = "STALE CHIP";
+  ss.sceneM4();
+  return { chip: n.chip, mops: !!ss.ch.mops, phase: ss.ch4.phase, walk: !!n.roomWalk, room: n.room };
+});
+g.check(
+  "the goal chip refreshes when Squatch takes the van-to-inside handoff",
+  chip.chip === "Squatch: hide from the searchlight" && !chip.mops && chip.phase === "m4a" && chip.walk && chip.room === "inside",
+  chip,
+);
+
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();
 await g.finish("room-walk");
