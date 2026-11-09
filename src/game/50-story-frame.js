@@ -1,6 +1,6 @@
 // The story update every chapter shares (who moves, which scene runs), the picture button, and drawing for the hall, the closet and story panels.
     function j6(l) {
-      if ((X6(), K6(l), x.mops && n.ctrl)) {
+      if ((X6(l), K6(l), x.mops && n.ctrl)) {
         let o = oh(),
           i = sn();
         if (Math.hypot(o.x, o.y) > 0.1) {
@@ -148,10 +148,9 @@
         r("#59657d", 4),
         m(l - 48, o - 170, 96, 70, 4),
         r("#e8f4ff", 2.5),
-        oq(l, o - 156, 0.42),
-        m(l - 30, o - 132, 60, 20, 6),
-        r("#2bc48a", 2.5),
-        g("ORDER", l, o - 122, 11, "#ffffff", "center", 900),
+        n.scene === "Q7"
+          ? (g("Order new box", l, o - 152, 8, y, "center", 800), g("Return empty crate", l, o - 136, 7, "#7a2e1d", "center", 800))
+          : (oq(l, o - 156, 0.42), m(l - 30, o - 132, 60, 20, 6), r("#2bc48a", 2.5), g("ORDER", l, o - 122, 11, "#ffffff", "center", 900)),
         Math.sin(n.T * 3) > 0 && F(l + 44, o - 98, 3, "#2bc48a"),
         pointer("term", l - 66, o - 186, 132, 196, 10));
     }

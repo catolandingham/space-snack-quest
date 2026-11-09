@@ -1,10 +1,9 @@
 // Redesigned Chapter 1 (the Nov 8 cartoon): lunch, the delivery room, the night mailbox, the vent, the costume, and boarding.
-    // Ball-hide distances (C20). A ball hides worse than a plant or a box. These defaults are the least
-    // intrusive set: only a looker who is very close, or looking and still nearby, spots him. Brian picks
-    // the real numbers; the choices are in docs/CH1-LINES-FOR-BRIAN.md.
-    const BALL_SPOT_NEAR = 36,
-      BALL_LOOK_RANGE = 90,
-      BALL_MISS_FAR = 640,
+    // Ball hiding (R43). A robot notices a balled-up Squatch only after it stays within one crate-width
+    // for two seconds. These two constants are the whole rule, in every room and chapter. Standing and
+    // walking still use each robot's existing sight.
+    const BALL_NOTICE_RADIUS = 70,
+      BALL_NOTICE_SECONDS = 2,
       CH1_BIN = { x: 210, y: 540 },
       CH1_MAIL = { x: 800, y: 540 },
       CH1_VENT = { x: 860, y: 480 },
@@ -18,36 +17,53 @@
       Q5: "Squatch: roll into a ball by the vent",
       Q6: "Squatch: grab the pink slip",
       Q7: "Squatch: return the empty crate",
-      Q8: "Squatch: put on the costume",
+      Q8: "Squatch: put on the spare jacket",
       Q9: "Squatch: walk through the scanner",
     };
     function ch1QChip() {
       return CH1Q_CHIPS[n.scene] || "";
     }
-    // Standing sight is the hall robot's existing cone and feet circle. These are not the ball distances.
+    // Standing sight is the hall robot's existing cone and feet circle. These are not the ball constants.
     const STAND_CONE_LEN = 210,
       STAND_CONE_HALF = 0.42,
       STAND_FEET = 70,
       STAND_FACE = Math.PI / 2;
-    function ballHides(dist, looking) {
-      // Farther than BALL_MISS_FAR he is missed even if the robot is looking. That is what makes option C
-      // (miss 220) different from a look range of 220, and what makes A and B's miss distances real.
-      if (dist > BALL_MISS_FAR) return !0;
-      if (dist < BALL_SPOT_NEAR) return !1;
-      if (looking && dist < Math.min(BALL_LOOK_RANGE, BALL_MISS_FAR)) return !1;
-      return !0;
+    let ballNear = {};
+    // Time a robot has spent inside the ball radius. Leaving the radius clears it. A ball is noticed only
+    // when that time reaches BALL_NOTICE_SECONDS and the robot's normal standing sight would see him too,
+    // so a ball is never caught where standing would be safe.
+    function ballNotice(id, dist, dt, standingSees) {
+      if (n.sqPose !== "ball" || !(dist <= BALL_NOTICE_RADIUS)) {
+        ballNear[id] = 0;
+        return !1;
+      }
+      ballNear[id] = (ballNear[id] || 0) + (dt || 0);
+      return ballNear[id] >= BALL_NOTICE_SECONDS && !!standingSees;
+    }
+    function ballNoticeReset(prefix) {
+      if (!prefix) {
+        ballNear = {};
+        return;
+      }
+      for (let k in ballNear) k.startsWith(prefix) && (ballNear[k] = 0);
+    }
+    // Standing and walking return the robot's existing sight. A ball uses the linger rule instead.
+    function ballOrStand(id, dist, dt, standingSees) {
+      if (n.sqPose !== "ball") {
+        ballNotice(id, BALL_NOTICE_RADIUS + 1, 0, !1);
+        return !!standingSees;
+      }
+      return ballNotice(id, dist, dt, standingSees);
     }
     function ch1InCone(px, py) {
       let ox = CH1_ROBOT.x,
         oy = CH1_ROBOT.y - 28;
       return Math.hypot(px - CH1_ROBOT.x, py - CH1_ROBOT.y) < STAND_FEET || vt(px, py - 20, ox, oy, STAND_FACE, STAND_CONE_HALF, STAND_CONE_LEN);
     }
-    // Plant (hidden) is never seen. A ball is seen less often than standing in the same spot, and more often than a plant.
+    // Plant (hidden) is never seen. Standing uses the cone above. A ball is not this check: it uses ballNotice.
     function ch1CaughtAt(px, py, pose) {
-      if (pose === "hidden") return !1;
-      let looking = ch1InCone(px, py);
-      if (pose === "ball") return !ballHides(Math.hypot(px - CH1_ROBOT.x, py - CH1_ROBOT.y), looking);
-      return looking;
+      if (pose === "hidden" || pose === "ball") return !1;
+      return ch1InCone(px, py);
     }
     function ch1Trail() {
       let t = n.ch1Trail;
@@ -82,6 +98,7 @@
             spec.who !== "mo" && ((n.sq.x = spec.entry[0]), (n.sq.y = spec.entry[1]), (n.sq.moving = !1)),
             spec.who !== "sq" && ((n.mo.x = spec.entry[0] + 56), (n.mo.y = spec.entry[1]), (n.mo.moving = !1), (n.moPose = "stand")),
             n.room === "hall" && (B.camX = 0),
+            n.room === "closet" && (n.tvOn = !1),
             spec.who === "sq" ? (n.moPose = "hidden") : (n.moPose = "stand"),
             n.ch1Walks.push({ phase: "in", room: n.room, x: Math.round(n.sq.x), y: Math.round(n.sq.y) }));
         }),
@@ -93,17 +110,23 @@
       ch1Walk(spec, next);
     }
     // Home is below the hall. The delivery room is to the right of the hall, so you leave it to the left.
+    // The walk home is that same hallway backwards (R47). Each door has one off-screen point. Leaving uses
+    // it, and coming back walks in from it. Nobody is placed already inside the next room.
     function ch1Go(dest, flags, next) {
       let f = flags || {},
         who = f.who || "both",
         from = n.ch1Duct ? "duct" : n.ch1D ? "delivery" : n.room === "hall" ? "hall" : "closet",
+        homeOff = [1060, 510],
+        hallBottomOff = [480, 740],
+        hallRightOff = [1120, 500],
+        delOff = [-80, 520],
         homeHall = () => ({
           who,
           exit: [840, 510],
-          off: [1060, 510],
+          off: homeOff,
           to: "hall",
-          entry: [480, 590],
-          stand: [480, 470],
+          entry: hallBottomOff,
+          stand: f.stand || [480, 470],
           scene: f.scene,
           delivery: !1,
           duct: !1,
@@ -115,10 +138,10 @@
         hallDel = () => ({
           who,
           exit: [880, 500],
-          off: [1120, 500],
+          off: hallRightOff,
           to: "hangar",
-          entry: [70, 520],
-          stand: [240, 520],
+          entry: delOff,
+          stand: f.stand || [240, 520],
           scene: f.scene,
           delivery: !0,
           duct: !1,
@@ -130,10 +153,10 @@
         delHall = () => ({
           who,
           exit: [70, 520],
-          off: [-80, 520],
+          off: delOff,
           to: "hall",
-          entry: [900, 500],
-          stand: [520, 500],
+          entry: hallRightOff,
+          stand: f.stand || [520, 500],
           scene: f.scene,
           delivery: !1,
           duct: !1,
@@ -145,10 +168,10 @@
         hallHome = () => ({
           who,
           exit: [480, 590],
-          off: [480, 740],
+          off: hallBottomOff,
           to: "closet",
-          entry: [820, 500],
-          stand: [430, 510],
+          entry: homeOff,
+          stand: f.stand || [430, 510],
           scene: f.scene,
           delivery: !1,
           duct: !1,
@@ -214,6 +237,8 @@
         (n.ch1DidBall = !1),
         (n.ch1Walks = []),
         (n.ch1Trail = []),
+        (n.ch1SiteRoom = ""),
+        (n.tvOn = !1),
         (n.sqPose = "sit"),
         J([
           { k: "card", id: "jupiter", text: "Stormtop Cloud Resort, floating above Jupiter." },
@@ -249,7 +274,7 @@
         (n.scene = "Q2"),
         J([
           v("official", "Mops, don't worry, you know how much we love you here. Even our visitors always love you."),
-          v("tourist", "Manager! The dock needs you."),
+          v("tourist", "Isfred Bar Neshuman! The dock needs you."),
           v("ups", "Left one of the copies in the office. What do I do with the other two?"),
           v("mops", "I'll take care of it."),
           v("mops", "So futuristic and we still order on paper."),
@@ -284,7 +309,7 @@
           N(() => {
             ((n.sqPose = "stand"), (n.sq.x = 460), (n.sq.y = 530));
           }),
-          v("mops", "Didn't you hear what the manager said? They need me here, they're not going to replace me. Plus the Guardians are here."),
+          v("mops", "Didn't you hear what Isfred Bar Neshuman said? They need me here, they're not going to replace me. Plus the Guardians are here."),
           v("mops", "I need to get back to work, we'll talk about it tonight."),
           N(() => ch1Go("closet", { scene: "Q3" }, ch1Bedtime)),
         ]));
@@ -405,15 +430,22 @@
       ((n.ctrl = !1),
         (n.act = null),
         (n.ch1Prop = "paw"),
-        J([N(() => ch1Go("closet", { scene: "Q7", night: !1, ship: !1 }, ch1Site))]));
+        J([
+          v("sq", "The code from the slip. His computer.", "whisper"),
+          N(() => ch1Go("hall", { scene: "Q7", night: !1, ship: !1, stand: [lt.x, 420] }, ch1Site)),
+        ]));
     }
     function ch1Site() {
+      // The Moon Pie page is on the manager's computer in the hall (R46), never on the home TV.
       ((n.scene = "Q7"),
-        (n.room = "closet"),
+        (n.room = "hall"),
+        (n.ch1D = !1),
+        (n.tvOn = !1),
+        (n.ch1SiteRoom = "hall"),
         J([
           { k: "panel", id: "ch1site" },
           N(() => {
-            ((n.ctrl = !0), (n.scene = "Q7"), (n.sq.x = 460), (n.sq.y = 520));
+            ((n.ctrl = !0), (n.scene = "Q7"));
           }),
         ]));
     }
@@ -424,16 +456,30 @@
         J([N(() => ch1Go("delivery", { night: !1, ship: !0, crew: "pickup", mail: "full", scene: "Q2" }, ch1Pickup))]));
     }
     function ch1Pickup() {
-      ((n.ch1Prop = "open"),
+      // R38: crates leave storage for the belt. Squatch is inside one. Mops comes in, he climbs out, they walk home.
+      ((n.ch1Prop = "load"),
+        (n.ch1InCrate = !0),
         (n.ch1Peeked = !0),
+        (n.ch1Load = 0),
         (n.sqPose = "hidden"),
-        (n.sq.x = CH1_PLANT.x),
-        (n.sq.y = CH1_PLANT.y),
+        (n.sq.x = 780),
+        (n.sq.y = 520),
+        (n.moPose = "stand"),
+        (n.mo.x = -40),
+        (n.mo.y = 520),
+        (n.ctrl = !1),
         J([
-          uV(0.8),
-          N(() => {
-            ((n.ch1Prop = ""), (n.sqPose = "stand"), ch1Go("closet", { scene: "Q8", night: !1, ship: !1 }, ch1Costume));
+          cV((dt) => {
+            n.ch1Load = Math.min(1, (n.ch1Load || 0) + dt * 0.55);
+            let arrived = mV(n.mo, 690, 520, 160, dt);
+            return (ch1Trail(), n.ch1Load >= 1 && arrived);
           }),
+          v("mops", "Get out. They're checking a crate."),
+          N(() => {
+            ((n.ch1InCrate = !1), (n.sqPose = "stand"), (n.ch1Climbed = !0), (n.sq.x = 760), (n.sq.y = 520));
+          }),
+          cV((dt) => (ch1Trail(), mV(n.sq, 680, 530, 140, dt))),
+          N(() => ch1Go("closet", { scene: "Q8", night: !1, ship: !1 }, ch1Costume)),
         ]));
     }
     function ch1Costume() {
@@ -441,7 +487,7 @@
         (n.wardrobe = "open"),
         (n.room = "closet"),
         J([
-          v("mops", "Hold still."),
+          v("mops", "The spare jacket. The beard. And the horns."),
           N(() => {
             ((n.ctrl = !0), (n.sq.x = 460), (n.sq.y = 510));
           }),
@@ -525,8 +571,8 @@
             }),
           ),
         s === "Q7" &&
-          out.push(spot({ id: "crate", verb: "RETURN", cap: "empty crate", who: "sq", x: 460, y: 520, r: 180, hot: !0, f: ch1ReturnCrate })),
-        s === "Q8" && out.push(spot({ id: "beard", verb: "TRIM", cap: "beard", who: "sq", x: 460, y: 510, r: 200, hot: !0, f: ch1Trim })),
+          out.push(spot({ id: "crate", verb: "RETURN", cap: "empty crate", who: "sq", x: lt.x, y: 420, r: 160, at: [lt.x, lt.y - 40], hot: !0, f: ch1ReturnCrate })),
+        s === "Q8" && out.push(spot({ id: "jacket", verb: "PUT ON", cap: "jacket", who: "sq", x: 460, y: 510, r: 200, at: [460, 430], hot: !0, f: ch1Trim })),
         s === "Q9" && out.push(spot({ id: "scan", verb: "BOARD", cap: "scanner", who: "sq", x: 480, y: 500, r: 160, hot: !0, f: ch1Board })),
         s === "Q4" &&
           out.push(
@@ -544,14 +590,17 @@
           ));
       return out;
     }
-    function ch1Watch() {
+    function ch1Watch(dt) {
       if (!n.ctrl || n.scene !== "Q4" || x.mops) return;
-      let seen = ch1CaughtAt(n.sq.x, n.sq.y, n.sqPose);
+      let standing = ch1InCone(n.sq.x, n.sq.y),
+        dist = Math.hypot(n.sq.x - CH1_ROBOT.x, n.sq.y - CH1_ROBOT.y),
+        seen = n.sqPose === "hidden" ? !1 : n.sqPose === "ball" ? ballNotice("ch1night", dist, dt || 0, standing) : standing;
+      n.sqPose !== "ball" && ballNotice("ch1night", BALL_NOTICE_RADIUS + 1, 0, !1);
       n.ch1Alert = !!seen;
       seen && capture("delivery");
     }
-    function ch1QTick() {
-      (n.scene || "")[0] === "Q" && (n.ctrl && (n.act = pick(ch1QSpots())), ch1Watch());
+    function ch1QTick(dt) {
+      (n.scene || "")[0] === "Q" && (n.ctrl && (n.act = pick(ch1QSpots())), ch1Watch(dt));
     }
     function ch1RestartNight() {
       ((n.scene = "Q4"),
@@ -586,6 +635,28 @@
     }
     function drawMailRobot(px, py) {
       (dq(px, py, !0), g("UPS", px, py - 8, 10, "#ffffff", "center", 900));
+    }
+    function drawPickupLoad() {
+      let t = n.ch1Load || 0,
+        slide = (x0, y0, x1, y1) => [x0 + (x1 - x0) * t, y0 + (y1 - y0) * t];
+      // Other crates leave the mail room for the ramp. Squatch's crate stays inside the mail room.
+      [
+        [800, 500, 520, 330],
+        [860, 460, 580, 300],
+      ].forEach((s) => {
+        let p = slide(s[0], s[1], s[2], s[3]);
+        Xn(p[0], p[1], 58, 36, "");
+      });
+      (Xn(430, 250, 70, 34, ""),
+        e.save(),
+        e.translate(438, 242),
+        e.rotate(-0.8),
+        m(0, -6, 64, 12, 2),
+        r("#d9a35b", 3),
+        e.restore(),
+        dq(500, 270, !1),
+        Xn(748, 470, 78, 48, ""),
+        n.ch1InCrate && ga(787, 482));
     }
     function drawCh1Delivery() {
       let night = !!n.ch1Night;
@@ -636,18 +707,17 @@
       n.ch1Prop === "bin" && drawPinkSlip(250, 470);
       n.ch1Prop === "teeth" && drawPinkSlip(n.mo.x - 6, n.mo.y - 72);
       n.ch1Prop === "paw" && drawPinkSlip(n.sq.x + 8, n.sq.y - 48);
-      (Xp(CH1_PLANT.x, CH1_PLANT.y), n.sqPose === "hidden" && ga(CH1_PLANT.x, CH1_PLANT.y - 46), drawGameBin(250, 520));
+      (Xp(CH1_PLANT.x, CH1_PLANT.y),
+        n.sqPose === "hidden" && !n.ch1InCrate && ga(CH1_PLANT.x, CH1_PLANT.y - 46),
+        drawGameBin(250, 520));
       for (let i = 0; i < 3; i++) {
         let ang = n.T * 2 + i;
         C([130 + Math.cos(ang) * 16, 560, 130, 560], "rgba(120,170,220,.8)", 2);
       }
       (m(150, 548, 36, 14, 3), r("#8a93a3", 3));
       (C([700, 340, 700, 520], y, 5), C([700, 520, 760, 520], y, 5), drawMailRobot(830, 540));
-      n.ch1Mail === "full" &&
-        (Xn(720, 400, 70, 48, ""),
-        Xn(800, 420, 56, 40, ""),
-        n.ch1Prop === "open" && (m(720, 372, 70, 14, 3), r("#d9a35b", 3), dq(755, 430, !1)));
-      (n.ch1Crew === "day" || n.ch1Crew === "pickup") &&
+      n.ch1Crew === "pickup" ? drawPickupLoad() : n.ch1Mail === "full" && (Xn(720, 400, 70, 48, ""), Xn(800, 420, 56, 40, ""));
+      n.ch1Crew === "day" &&
         [
           ["Dot", 250, 580],
           ["Bob", 330, 565],
@@ -663,7 +733,13 @@
         n.sqPose === "ball" && drawL2Ball(n.sq.x, n.sq.y - 16),
         n.sqPose !== "hidden" &&
           n.sqPose !== "ball" &&
-          Re(n.sq.x, n.sq.y, he, { f: n.sq.f || 1, walk: n.sq.moving ? n.sq.walk : 0, janitor: !!n.costumeOn, goatBeard: !!n.costumeOn }));
+          Re(n.sq.x, n.sq.y, he, {
+            f: n.sq.f || 1,
+            walk: n.sq.moving ? n.sq.walk : 0,
+            jacket: !!n.costumeOn,
+            goatBeard: !!n.costumeOn,
+            horns: !!n.costumeOn,
+          }));
     }
     function drawCh1Duct() {
       ((e.fillStyle = "#2a3142"),

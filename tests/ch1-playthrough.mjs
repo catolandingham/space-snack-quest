@@ -5,7 +5,7 @@
  * The old key route (tests/routes/ch1.json) was the notice-sneak chapter. This suite drives the new
  * beats the way the story queue does: ticks, taps through bubbles, and presses each action when the
  * chapter hands control back. It checks the lines in order, a real walk off and walk in, the home
- * room (no vent, door cut, wardrobe), and the ball-hide distances.
+ * room (no vent, door cut, wardrobe), the spare jacket, and the ball notice rule.
  */
 import { startGame } from "./game-page.mjs";
 
@@ -44,15 +44,15 @@ g.check("the home floor vent is gone", home.floor[2] < home.floor[0] + 30 && hom
 
 const ball = await page.evaluate(() => {
   const ss = window.__ss;
-  const reach = Math.min(ss.BALL_LOOK_RANGE, ss.BALL_MISS_FAR);
-  const mid = { x: 480, y: 550 };
-  const close = { x: 480, y: 424 };
+  const R = ss.BALL_NOTICE_RADIUS;
+  const S = ss.BALL_NOTICE_SECONDS;
   ss.op.scene = "Q4";
   ss.op.room = "hangar";
   ss.op.ch1D = true;
   ss.op.ch1Night = true;
   ss.op.ctrl = true;
   ss.op.ch1Alert = true;
+  ss.op.sqPose = "ball";
   ss.op.q = [];
   ss.op.cur = null;
   ss.drawFrame();
@@ -60,25 +60,116 @@ const ball = await page.evaluate(() => {
   const cx = cv.getContext("2d", { willReadFrequently: true });
   const cone = Array.from(cx.getImageData(480, 500, 1, 1).data);
   const side = Array.from(cx.getImageData(80, 500, 1, 1).data);
-  return {
-    far: ss.ballHides(ss.BALL_MISS_FAR + 10, true),
-    pastLook: ss.ballHides(reach + 5, true),
-    inLook: ss.ballHides(reach - 5, true),
-    touch: ss.ballHides(ss.BALL_SPOT_NEAR - 4, false),
-    midStand: ss.ch1CaughtAt(mid.x, mid.y, "stand"),
-    midBall: ss.ch1CaughtAt(mid.x, mid.y, "ball"),
-    midPlant: ss.ch1CaughtAt(mid.x, mid.y, "hidden"),
-    closeStand: ss.ch1CaughtAt(close.x, close.y, "stand"),
-    closeBall: ss.ch1CaughtAt(close.x, close.y, "ball"),
-    closePlant: ss.ch1CaughtAt(close.x, close.y, "hidden"),
-    cone,
-    side,
-  };
+  ss.ballNoticeReset();
+  let pass = false;
+  for (let i = 0; i < 8; i++) {
+    const dist = Math.abs(i - 3.5) * 80;
+    if (ss.ballNotice("pass", dist, 0.25, true)) pass = true;
+  }
+  ss.ballNoticeReset();
+  let early = false;
+  let linger = false;
+  for (let t = 0; t < S; t += 0.5) {
+    const hit = ss.ballNotice("linger", R - 10, 0.5, true);
+    if (t + 0.5 < S - 0.01 && hit) early = true;
+    if (t + 0.5 >= S - 0.01) linger = hit;
+  }
+  ss.ballNoticeReset();
+  ss.ballNotice("leave", 40, 1.5, true);
+  ss.ballNotice("leave", R + 20, 0.25, true);
+  const afterLeave = ss.ballNotice("leave", 40, 0.5, true);
+  let safer = true;
+  const fails = [];
+  for (let x = 280; x <= 680; x += 40) {
+    for (let y = 360; y <= 620; y += 40) {
+      const stand = ss.ch1CaughtAt(x, y, "stand");
+      const dist = Math.hypot(x - ss.CH1_ROBOT.x, y - ss.CH1_ROBOT.y);
+      ss.op.sqPose = "ball";
+      ss.ballNoticeReset();
+      let noticed = false;
+      for (let t = 0; t < S; t += 0.5) noticed = ss.ballNotice("grid", dist, 0.5, stand);
+      if (noticed && !stand) {
+        safer = false;
+        fails.push({ x, y, dist, stand });
+      }
+      if (dist > R && noticed) {
+        safer = false;
+        fails.push({ x, y, dist, stand, outside: true });
+      }
+    }
+  }
+  ss.ballNoticeReset();
+  let blind = false;
+  for (let t = 0; t < S + 1; t += 0.5) blind = ss.ballNotice("blind", 30, 0.5, false);
+  const plant = ss.ch1CaughtAt(480, 424, "hidden");
+  const closeStand = ss.ch1CaughtAt(480, 424, "stand");
+  return { pass, early, linger, afterLeave, safer, blind, fails: fails.slice(0, 4), plant, closeStand, cone, side, radius: R, seconds: S };
 });
-g.check("near, look, and miss each change whether a ball hides", ball.far && ball.pastLook && !ball.inLook && !ball.touch, ball);
-g.check("at the same mid spot the ball hides and standing does not", ball.midStand && !ball.midBall && !ball.midPlant, ball);
-g.check("up close the ball is caught like standing, and the plant is not", ball.closeBall && ball.closeStand && !ball.closePlant, ball);
+g.check("a robot passing by in under 2s does not notice the ball", !ball.pass && !ball.early, ball);
+g.check("a robot lingering 2s within 70px notices the ball", ball.linger && ball.radius === 70 && ball.seconds === 2, ball);
+g.check("leaving the radius resets the ball timer", !ball.afterLeave, ball);
+g.check("a ball is always at least as safe as standing", ball.safer && !ball.blind && !ball.plant && ball.closeStand, ball);
 g.check("the night robot draws a vision cone", ball.cone[0] + ball.cone[1] > ball.side[0] + ball.side[1] + 15, { cone: ball.cone, side: ball.side });
+
+const spare = await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  n.room = "closet";
+  n.scene = "Q8";
+  n.ch1D = false;
+  n.ch1Duct = false;
+  n.wardrobe = "open";
+  n.costumeOn = false;
+  n.moPose = "stand";
+  n.mo.x = 430;
+  n.mo.y = 510;
+  n.mo.f = 1;
+  n.sqPose = "stand";
+  n.sq.x = 700;
+  n.sq.y = 510;
+  n.ch1Night = false;
+  n.ctrl = false;
+  n.q = [];
+  n.cur = null;
+  for (let i = 0; i < 16; i++) ss.tick(0.1);
+  const cv = document.querySelector("canvas[width='960']") || document.querySelector("canvas");
+  const k = cv.width / 960;
+  const cx = cv.getContext("2d", { willReadFrequently: true });
+  const blue = (p) => p[2] > 180 && p[0] < 100 && p[1] > 70 && p[1] < 180;
+  const scan = (x0, y0, x1, y1) => {
+    let nBlue = 0;
+    let best = [0, 0, 0];
+    for (let y = y0; y <= y1; y += 2) {
+      for (let x = x0; x <= x1; x += 2) {
+        const p = cx.getImageData(Math.round(x * k), Math.round(y * k), 1, 1).data;
+        if (p[2] > best[2]) best = [p[0], p[1], p[2]];
+        if (blue(p)) nBlue++;
+      }
+    }
+    return { nBlue, best };
+  };
+  const px = (x, y) => Array.from(cx.getImageData(Math.round(x * k), Math.round(y * k), 1, 1).data).slice(0, 3);
+  ss.drawFrame();
+  const hung = scan(100, 190, 190, 280);
+  const mops = scan(380, 430, 480, 500);
+  const wall = px(850, 300);
+  n.costumeOn = true;
+  ss.drawFrame();
+  const empty = scan(100, 190, 190, 280);
+  const mopsStill = scan(380, 430, 480, 500);
+  const canvases = Array.from(document.querySelectorAll("canvas")).map((c) => {
+    const g = c.getContext("2d", { willReadFrequently: true });
+    const d = g.getImageData(Math.min(c.width - 1, 400), Math.min(c.height - 1, 300), 1, 1).data;
+    return { w: c.width, h: c.height, px: [d[0], d[1], d[2], d[3]] };
+  });
+  return { hung, empty, mops, mopsStill, room: n.room, scene: n.scene, state: ss.game.state, wall, cw: cv.width, ch: cv.height, cur: n.cur && n.cur.k, canvases };
+});
+g.check("the open wardrobe hangs a plain blue jacket", spare.hung.nBlue > 8, spare);
+g.check(
+  "once Squatch takes it, that hook is empty and Mops still wears his jacket",
+  spare.empty.nBlue === 0 && spare.mops.nBlue > 4 && spare.mopsStill.nBlue > 4,
+  spare,
+);
 
 const play = await page.evaluate(() => {
   const ss = window.__ss;
@@ -159,27 +250,32 @@ const play = await page.evaluate(() => {
     acts,
     texts: texts(),
     state: ss.ch1State(),
-    shown: shown.filter((s) => /JANITOR|IDEAS FOR GUARDIANS|HAVE YOU SEEN|Order new box|Return empty crate|PULL DOWN|Brave Sasquatches/.test(s)),
+    shown: shown.filter((s) => /IDEAS FOR GUARDIANS|HAVE YOU SEEN|Order new box|Return empty crate|PULL DOWN|Brave Sasquatches/.test(s)),
     tally: ss.chTally(),
   };
 });
 g.check("Chapter 1 reaches the tally card", play.end === "tally", { end: play.end, acts: play.acts, scene: play.state.scene });
-const wantActs = ["GRAB · yellow copy", "SIGN · paw", "POST · mailbox", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "TRIM · beard", "BOARD · scanner"];
+const wantActs = ["GRAB · yellow copy", "SIGN · paw", "POST · mailbox", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "PUT ON · jacket", "BOARD · scanner"];
 g.check("the player does the new actions in order", JSON.stringify(play.acts) === JSON.stringify(wantActs), play.acts);
 const must = [
   "Stormtop Cloud Resort, floating above Jupiter.",
   "This is Squatch. He's a Sasquatch.",
   "My lunch! You're the best.",
   "Universal Postal Service ship arriving!",
+  "Isfred Bar Neshuman! The dock needs you.",
   "Delicious.",
   "You're gumbling! (goat mumbling)",
   "Ptoo!",
   "Quick, hide.",
+  "Didn't you hear what Isfred Bar Neshuman said? They need me here, they're not going to replace me. Plus the Guardians are here.",
   "Mail scanned. Signature pawature accepted.",
   "Six days later",
   "I hope Mops doesn't notice...",
   "Hurry, hurry, pink slip, got it!",
   "Get it before he sees it.",
+  "The code from the slip. His computer.",
+  "Get out. They're checking a crate.",
+  "The spare jacket. The beard. And the horns.",
   "More bleat. Less roar.",
   "HAIR... PROBABLY. PROCEED.",
   "Mops, it's a mistake!",
@@ -193,15 +289,38 @@ const order = must.map((line) => {
   return [line, i];
 });
 g.check("the story lines show in cartoon order", order.every(([, i]) => i >= 0), order.filter(([, i]) => i < 0).map(([line]) => line));
-g.check("Squatch rolled into the ball, hid as eyes on pickup day, then wore the costume", play.state.didBall === true && play.state.peeked === true && play.state.costume === true, play.state);
+g.check(
+  "Squatch hid in a crate on pickup day, climbed out, then wore the costume",
+  play.state.didBall === true && play.state.peeked === true && play.state.climbed === true && play.state.inCrate === false && play.state.costume === true,
+  play.state,
+);
 const walks = walkChanges(play.state.trail);
-g.check("every room change walks off and walks in", walks === 20, { walks, sample: play.state.trail.slice(0, 8) });
-g.check("the costume, vent board, and Moon Pie buttons are drawn", play.shown.includes("JANITOR") && play.shown.includes("IDEAS FOR GUARDIANS") && play.shown.includes("Return empty crate") && play.shown.includes("PULL DOWN"), play.shown);
+g.check("every room change walks off and walks in", walks === 18, { walks, sample: play.state.trail.slice(0, 8) });
+const doors = doorUses(play.state.walks);
+g.check(
+  "the walk home uses the same hall doors as the walk over",
+  play.state.siteRoom === "hall" && doors.backHall >= 3 && doors.backHome >= 3 && doors.overHall >= 4 && doors.overDelivery >= 4,
+  { siteRoom: play.state.siteRoom, doors },
+);
+g.check("the vent board, the alarm, and the Moon Pie buttons are drawn", play.shown.includes("IDEAS FOR GUARDIANS") && play.shown.includes("Return empty crate") && play.shown.includes("PULL DOWN"), play.shown);
 g.check("a clean chapter still earns the never-caught bonus", play.tally.some((line) => line.includes("Never caught")), play.tally);
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();
 await g.finish("ch1-playthrough");
 
+function doorUses(walks) {
+  const use = { backHall: 0, backHome: 0, overHall: 0, overDelivery: 0 };
+  for (let i = 0; i < walks.length - 1; i++) {
+    const a = walks[i],
+      b = walks[i + 1];
+    if (a.phase !== "edge" || b.phase !== "in") continue;
+    if (a.room === "hangar" && b.room === "hall" && a.x < 0 && b.x > 1000) use.backHall++;
+    if (a.room === "hall" && b.room === "closet" && a.y > 700 && b.x > 1000) use.backHome++;
+    if (a.room === "closet" && b.room === "hall" && a.x > 1000 && b.y > 700) use.overHall++;
+    if (a.room === "hall" && b.room === "hangar" && a.x > 1000 && b.x < 0) use.overDelivery++;
+  }
+  return use;
+}
 function walkChanges(trail) {
   let changes = 0;
   for (let i = 1; i < trail.length; i++) {

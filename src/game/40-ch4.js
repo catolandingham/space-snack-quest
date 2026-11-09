@@ -114,7 +114,8 @@
         }
         if (o.look <= 0) {
           let d = go(o);
-          vt(s.x, s.y - 40, d.ox, d.oy, d.a, 0.55, 220) && (bf(o.x, o.y, "pbot"), (H.flash = 1), sSec("gate4"));
+          ballOrStand("gate", Math.hypot(s.x - d.ox, s.y - d.oy), l, vt(s.x, s.y - 40, d.ox, d.oy, d.a, 0.55, 220)) &&
+            (bf(o.x, o.y, "pbot"), (H.flash = 1), sSec("gate4"));
         }
       }
     }
@@ -1046,21 +1047,24 @@
     function M2(l) {
       return Math.PI / 2 + 0.85 * Math.sin(n.T * 0.8 + l.x * 0.013);
     }
-    function X6() {
+    function X6(dt) {
       if (!(n.room !== "hall" || !n.ctrl || n.sqPose === "hidden" || x.mops || FV.on)) {
         if (["S6", "S7", "S7b"].includes(n.scene) && n.T > (n.seeGrace || 0)) {
           for (let l of B.bots)
             if (l.on && S2(l)) {
-              let o = M2(l);
-              if (Math.hypot(n.sq.x - l.x, n.sq.y - l.y) < 70 || vt(n.sq.x, n.sq.y - 30, l.x, l.y - 50, o, 0.42, 210)) {
+              let o = M2(l),
+                dist = Math.hypot(n.sq.x - l.x, n.sq.y - l.y),
+                standing = dist < 70 || vt(n.sq.x, n.sq.y - 30, l.x, l.y - 50, o, 0.42, 210);
+              if (ballOrStand("hall" + Math.round(l.x), dist, dt || 0, standing)) {
                 lq(l.x, l.y, l);
                 return;
               }
             }
-        }
-        (n.scene === "S9" || (n.scene === "S11" && !x.doorOpen)) &&
-          Math.hypot(n.sq.x - x.lureBot.x, n.sq.y - x.lureBot.y) < 100 &&
-          lq(x.lureBot.x, x.lureBot.y, x.lureBot);
+        } else ballNoticeReset("hall");
+        if (n.scene === "S9" || (n.scene === "S11" && !x.doorOpen)) {
+          let dist = Math.hypot(n.sq.x - x.lureBot.x, n.sq.y - x.lureBot.y);
+          ballOrStand("lure", dist, dt || 0, dist < 100) && lq(x.lureBot.x, x.lureBot.y, x.lureBot);
+        } else ballNoticeReset("lure");
       }
     }
     function E2(l, o) {

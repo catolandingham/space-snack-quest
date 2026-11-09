@@ -721,7 +721,7 @@
         tourist: "Tourist",
         gary: "Gary",
         linda: "Linda",
-        official: "Station Official",
+        official: "Isfred Bar Neshuman",
         scanner: "Fur Scanner",
         ups: "UPS",
         gloop: "Gloop",

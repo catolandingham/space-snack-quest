@@ -14,8 +14,8 @@ Words the game already had, and the one you already approved, are not in this li
 | 4 | Night, the yellow copy is still in the bin | Squatch: get the yellow copy to the mailbox | Squatch: mail the yellow copy |
 | 5 | Escape night, outside the vent | Squatch: roll into a ball by the vent | Squatch: ball up under the vent |
 | 6 | Mops comes out with the pink slip | Squatch: grab the pink slip | Squatch: take the pink slip |
-| 7 | The Moon Pie page is up | Squatch: return the empty crate | Squatch: send the empty crate |
-| 8 | The wardrobe is open at home | Squatch: put on the costume | Squatch: get the beard and the shirt |
+| 7 | The Moon Pie page is on the manager's office computer | Squatch: return the empty crate | Squatch: send the empty crate |
+| 8 | The wardrobe is open at home | Squatch: put on the spare jacket | Squatch: put on the spare blue jacket |
 | 9 | The scanner is on | Squatch: walk through the scanner | Squatch: board the ship |
 
 ## What people say
@@ -26,8 +26,8 @@ Words the game already had, and the one you already approved, are not in this li
 | 11 | The PA | Universal Postal Service ship arriving! | The Universal Postal Service ship is arriving. |
 | 12 | Squatch | Please let me follow you, I'll be really sneaky. | Your words from 4:04. |
 | 13 | Mops | Okay, just this time, but hide carefully. | Your words from 4:04. |
-| 14 | The manager | Mops, don't worry, you know how much we love you here. Even our visitors always love you. | Your words from 4:14. |
-| 15 | A person in the delivery room | Manager! The dock needs you. | See question 1 below. |
+| 14 | Isfred Bar Neshuman (his name on the bubble) | Mops, don't worry, you know how much we love you here. Even our visitors always love you. | Your words from 4:14. The name on every one of his bubbles is Isfred Bar Neshuman. |
+| 15 | A person in the delivery room | Isfred Bar Neshuman! The dock needs you. | See question 1 below. |
 | 16 | The UPS robot | Left one of the copies in the office. What do I do with the other two? | Your words from 3:45. |
 | 17 | Mops | I'll take care of it. | Your words from 3:45. |
 | 18 | Mops | So futuristic and we still order on paper. | Your "maybe" from 3:45. |
@@ -37,7 +37,7 @@ Words the game already had, and the one you already approved, are not in this li
 | 22 | Mops, walking home | We got to watch out for these robots. | |
 | 23 | A tourist, by the snacks | I swear we had more Moon Pies... is that what they stole at lunch? | Your words from 4:14. |
 | 24 | Mops | Quick, hide. | |
-| 25 | Mops, at home | Didn't you hear what the manager said? They need me here, they're not going to replace me. Plus the Guardians are here. | Your words from 4:14. |
+| 25 | Mops, at home | Didn't you hear what Isfred Bar Neshuman said? They need me here, they're not going to replace me. Plus the Guardians are here. | Your words from 4:14, with his name. |
 | 26 | Mops | I need to get back to work, we'll talk about it tonight. | Your words from 4:14. |
 | 27 | Squatch, signing at night | Signed. With my paw. | The night panel had no line yet. |
 | 28 | The mailbox | Mail scanned. Signature pawature accepted. | Mail scanned. Pawature accepted. Or no words, only paw prints. |
@@ -50,10 +50,11 @@ Words the game already had, and the one you already approved, are not in this li
 | 35 | The note Mops writes in the vent | We know you're thinking about going to Mars. Don't worry, we'll always be with you. | See question 3. It is readable now. |
 | 36 | Mops, running out | Hurry, hurry, pink slip, got it! | |
 | 37 | Squatch | Get it before he sees it. | |
-| 38 | Mops, at the wardrobe | Hold still. | The beard-trim picture had no line yet. |
-| 39 | The manager, at the ship | Mops, it's a mistake! | |
+| 62 | Squatch, in the hall, at the manager's computer | The code from the slip. His computer. | The office code. That's his computer. |
+| 38 | Mops, at the wardrobe | The spare jacket. The beard. And the horns. | Wear the spare. I'll keep mine. |
+| 39 | Isfred Bar Neshuman, at the ship | Mops, it's a mistake! | |
 | 40 | A card | Later that evening... | |
-| 41 | The manager | What happened? We need to review the security tapes. | |
+| 41 | Isfred Bar Neshuman | What happened? We need to review the security tapes. | |
 | 42 | The PA, on the trip | The base called the ship. It has to stop. | |
 | 43 | A card | Six days later | The week is decided. These are the words on the card. |
 
@@ -61,14 +62,14 @@ Words the game already had, and the one you already approved, are not in this li
 
 | # | Where | In the game now | Another way to say it |
 | --- | --- | --- | --- |
-| 44 | The spare shirt | JANITOR | |
+| 44 | The wardrobe hook | (no words) A plain blue jacket hangs here until Squatch takes it. Then the hook is empty. | |
 | 45 | The red alarm in the delivery room | FUR / PULL DOWN | |
 | 46 | The vent desk | IDEAS FOR GUARDIANS | |
 | 47 | A flyer in the vent | HAVE YOU SEEN? | |
 | 48 | A planet label | MARS | |
 | 49 | The stamp on the Mars letter | NO | |
 | 50 | The bin in the vent | TOYS | |
-| 51 | The Moon Pie page | Order new box | |
+| 51 | The manager's computer, the Moon Pie page | Order new box | |
 | 52 | The Moon Pie page, the one Squatch presses | Return empty crate | |
 
 ## Buttons
@@ -80,9 +81,13 @@ Words the game already had, and the one you already approved, are not in this li
 | 55 | At the robot mailbox | POST · mailbox |
 | 56 | Night mailbox, anywhere; and only beside the vent on escape night | ROLL · ball |
 | 57 | When Mops comes out | GRAB · pink slip |
-| 58 | On the Moon Pie page | RETURN · empty crate |
-| 59 | At the open wardrobe | TRIM · beard |
+| 58 | At the manager's office computer | RETURN · empty crate |
+| 59 | At the open wardrobe | PUT ON · jacket |
 | 60 | At the scanner | BOARD · scanner |
+
+| # | Who | In the game now | Another way to say it |
+| --- | --- | --- | --- |
+| 61 | Mops, pickup day, in the mail room. The open crate is out on the ramp. | Get out. They're checking a crate. | Get out now. They're opening one by the ship. |
 
 The old "STAFF MAIL — collected before departure." sign is not in the game. The mailbox talks instead. Say if you still want the sign.
 
@@ -91,24 +96,18 @@ The old "STAFF MAIL — collected before departure." sign is not in the game. Th
 
 The old line "Gas stop. Fuel light's blinking." is gone. The ship stopped because the base called. It did not run out of fuel.
 
-## Ball hiding: pick a row
+## Ball hiding
 
-Standing in front of the night robot uses the same sight the hall robots already use: a cone 210 pixels long, half-angle 0.42, and a 70-pixel circle at his feet. Those numbers are not the ball numbers. A plant hides completely. A ball hides more often than standing in the same spot, and less often than the plant.
+Decided (R43). When Squatch is balled up, a robot notices him only if it stays within 70 pixels (about one crate width) for 2.0 seconds in a row. Stepping outside that circle resets the timer. The same rule is used in every room and chapter. The two numbers are the constants BALL_NOTICE_RADIUS and BALL_NOTICE_SECONDS.
 
-On the night mailbox he can roll into a ball anywhere. On escape night the only ball button is beside the vent, and that one always works because it is the story. The ball hides worse than a plant and better than standing still.
+Standing and walking are unchanged. The night robot still uses the hall robot's cone: 210 pixels long, half-angle 0.42, and a 70-pixel circle at his feet. Those are not the ball constants. A plant hides completely. A ball is never noticed in a spot where standing would be safe, and a robot that only passes through the circle does not notice him.
 
-A looker spots him if they are nearer than "always spotted", or if they are looking at him and nearer than "looking spots". Farther than "miss" they miss him. The game uses row A until you pick.
-
-| | Always spotted, nearer than | Looking spots, nearer than | Miss, farther than |
-| --- | --- | --- | --- |
-| A. Easiest. In the game now. | 36 | 90 | 640 |
-| B. Middle | 70 | 160 | 320 |
-| C. Strictest | 110 | 220 | 220 |
+On the night mailbox he can roll into a ball anywhere. On escape night the only ball button is beside the vent, and that one always works because it is the story.
 
 ## Questions still open
 
 1. What pulls the manager away after he tells Mops they love him?
-   - A. Someone says "Manager! The dock needs you." This is in the game.
+   - A. Someone says "Isfred Bar Neshuman! The dock needs you." This is in the game.
    - B. The PA calls him by name.
    - C. He remembers a meeting on his own.
 
@@ -126,17 +125,14 @@ A looker spots him if they are nearer than "always spotted", or if they are look
    - B. Do not draw the paw until you say how it got there. This is in the game. The pink slip is the code copy. The yellow copy is the one he signs.
    - C. He signs before lunch, so the carbon is already on the pink copy. That changes the order you locked.
 
-5. The manager's name: Puddlewick, Bimble, or Clipwell? The game calls him the station official and does not pick a name.
+5. The party (hat, sunglasses, "Cool hat!", the run home) is not built. The cartoon does not have those pictures yet. The old notice sneak is not what a new game plays. A debug link such as `?scene=S9` still opens those old scenes, and they are drawn in the new home room.
 
-6. The party (hat, sunglasses, "Cool hat!", the run home) is not built. The cartoon does not have those pictures yet. The old notice sneak is not what a new game plays. A debug link such as `?scene=S9` still opens those old scenes, and they are drawn in the new home room.
+6. After Squatch grabs the pink slip, the game does not yet show it riding inside the Guardian Box all the way to Mars.
 
-7. The code on the pink slip is for the manager's office, not the escape. There is no office puzzle in this build. Say if the next picture is the office.
+7. The snack stand still does not bring up the pancake brochure (the rest of that beat), and Squatch does not yet take all the snacks or leave food for the Guardians. The Moon Pie line and "Quick, hide." are in.
 
-8. After Squatch grabs the pink slip, the game does not yet show it riding inside the Guardian Box all the way to Mars.
+The office computer is decided (R46). The code on the pink slip opens the manager's computer in the hall. Order new box and Return empty crate are on that screen. They are never on the home TV.
 
-9. What does Squatch jump out of on pickup day?
-   - A. He stays eyes-only in the plant while a robot opens a crate. This is in the game.
-   - B. He jumps out of the Moon Pie crate.
-   - C. He jumps out of a mail bag.
+The walk route in this build still uses the existing hall, including a door between that hall and home, with a walk-off and a walk-in. Brian decided a different hallway (R51). It is not in this build. It runs between the party hall and the loading bay, and it has no door to home. The Employee of the Month photo wall belongs on that hallway. The manager's office opens partly off the side of it, and the office is not in the loading bay. The walk home past the robots, and Mops's line "Paperwork.", happen in that hallway. That line is not on screen yet. It is pending his yes, and it waits for the hallway. Those pieces wait for their own pass. This build does not add a half-finished hallway.
 
-10. The snack stand still does not bring up the pancake brochure (the rest of that beat), and Squatch does not yet take all the snacks or leave food for the Guardians. The Moon Pie line and "Quick, hide." are in.
+Pickup day is decided. The robots open one crate out on the ramp, by the ship. Squatch hides in a crate that is still in the mail room. Dot, Bob, and Lou are not there. Mops comes in and warns him. He slips out while the robots are busy by the ship, and they walk home. The disguise is a spare blue jacket, worn normally, plus a fake beard and horns. Mops keeps his own jacket on. The wardrobe hook holds a plain blue jacket with no words, and that hook is empty once Squatch takes it.

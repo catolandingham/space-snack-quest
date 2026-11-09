@@ -252,8 +252,21 @@
       (s.singing
         ? (e.beginPath(), e.ellipse(0, P + q.head * 0.45, 1.8, 2.2 + Math.sin(n.T * 12) * 0.5, 0, 0, 7), (e.fillStyle = y), e.fill())
         : (e.beginPath(), e.arc(0, P + q.head * 0.38, 2.2, 0.2, Math.PI - 0.2), (e.strokeStyle = y), (e.lineWidth = 1.1), e.stroke()),
-        s.janitor &&
-          (m(-11, P + q.head * 0.85, 22, 16, 3), r("#3478f6", 1.2), g("JANITOR", 0, P + q.head * 0.95, 3.2, "#ffffff", "center", 800)),
+        s.jacket &&
+          (m(-q.bodyW * 0.95, -T - R * 0.35, q.bodyW * 1.9, R * 0.85, 5),
+          r("#3478f6", 1.4),
+          m(-3, -T - R * 0.05, 8, 6, 1),
+          r("#2456b0", 1)),
+        s.horns &&
+          ((e.strokeStyle = "#c9ad84"),
+          (e.lineWidth = 2.8),
+          (e.lineCap = "round"),
+          e.beginPath(),
+          e.moveTo(-q.head * 0.28, P - q.head * 0.55),
+          e.quadraticCurveTo(-q.head * 0.95, P - q.head * 1.35, -q.head * 0.15, P - q.head * 1.05),
+          e.moveTo(q.head * 0.28, P - q.head * 0.55),
+          e.quadraticCurveTo(q.head * 0.95, P - q.head * 1.35, q.head * 0.15, P - q.head * 1.05),
+          e.stroke()),
         s.goatBeard &&
           (e.beginPath(),
           e.moveTo(-2, P + q.head * 0.55),
@@ -297,7 +310,12 @@
           [12, -d],
         ].forEach(([T, R]) => St(T, -10, T + R, 0, 3.4, "#cfd5dd", q)),
         XV(0, -17, 17, 9, 14, 2, 0),
-        wV("#ffffff", q));
+        wV("#ffffff", q),
+        // His own jacket. Squatch wears the spare from the wardrobe, so this one stays on.
+        m(-14, -24, 28, 14, 4),
+        r("#3478f6", 1.2),
+        m(-3, -16, 6, 4, 1),
+        r("#2456b0", 1));
       let A = s.headDown ? 6 : 0;
       (e.beginPath(),
         e.moveTo(14, -24 + A),
@@ -657,15 +675,16 @@
         r("#c4b08a", 3),
         m(x + w - 6, y0 + 10, 14, h - 20, 2),
         r("#c4b08a", 3),
-        m(x + 16, y0 + 36, 22, 30, 3),
-        r("#3dba8b", 2),
-        m(x + 42, y0 + 34, 18, 32, 3),
-        r("#f7f4ee", 2),
-        m(x + 64, y0 + 32, 26, 34, 3),
-        r("#3478f6", 2),
-        g("JANITOR", x + 77, y0 + 50, 6, "#ffffff", "center", 900),
-        m(x + 94, y0 + 40, 14, 28, 2),
-        r("#2a3142", 2));
+        C([x + 28, y0 + 36, x + w - 28, y0 + 36], "#8a93a3", 2));
+      // The spare is a plain blue jacket. No words on it. Once Squatch takes it, the hook is bare.
+      if (!n.costumeOn) {
+        let hx = x + w / 2;
+        (C([hx, y0 + 36, hx, y0 + 46], "#6b7280", 2),
+          m(hx - 18, y0 + 46, 36, 48, 5),
+          r("#3478f6", 2),
+          m(hx - 5, y0 + 62, 10, 8, 1),
+          r("#2456b0", 1));
+      }
     }
     // The way out is a cut in the right wall (R36). The poster hangs on the wall beside it (R35). No floor vent (R37).
     function homeDoorCut() {
@@ -1850,8 +1869,9 @@
                   singing: i === "sing",
                   carry: n.lunch === "held",
                   paper: !!n.holdNotice,
-                  janitor: !!n.costumeOn,
+                  jacket: !!n.costumeOn,
                   goatBeard: !!n.costumeOn,
+                  horns: !!n.costumeOn,
                 });
             },
           }),

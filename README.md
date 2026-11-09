@@ -2,11 +2,11 @@
 
 ## Chapter 1 redesign (not on main until Brian says yes)
 
-Starting a new game now plays the redesigned Chapter 1: lunch with Mops, the walk to the delivery room, the yellow and pink copies, the night mailbox, the week jump, the ball under the vent, the costume at home, and boarding. The home room matches the approved picture: wardrobe on the far left, the Moon Pie calendar on its door, no mop, no vent, and the STAY IN HERE poster beside a cut in the right wall. Room changes show Squatch (and Mops, when he comes too) walk off and walk in.
+Starting a new game now plays the redesigned Chapter 1: lunch with Mops, the walk to the delivery room, the yellow and pink copies, the night mailbox, the week jump, the ball under the vent, pickup day (Squatch slips out of a crate in the mail room while a crate is opened on the ramp), the spare blue jacket at home (Mops keeps his own jacket on), and boarding. The home room matches the approved picture: wardrobe on the far left, the Moon Pie calendar on its door, no mop, no vent, and the STAY IN HERE poster beside a cut in the right wall. Room changes show Squatch (and Mops, when he comes too) walk off and walk in. The walk home in this build still uses the existing hall, including its door to home. The decided hallway between the party hall and the loading bay is not built yet. The Moon Pie page is on the manager's computer in the current hall, not on the home TV.
 
 Every new line is listed for Brian in `docs/CH1-LINES-FOR-BRIAN.md`. Nothing here merges without his written yes in the pull request. `tests/ch1-playthrough.mjs` plays this chapter to the tally card.
 
-The older Chapter 1 scenes are still in the program so a debug link such as `?scene=S9` can open them. They are not what a new game plays. Those old scenes are drawn in the new home room. The ball Squatch rolls into, including in the Chapter 2 kitchen, is the L2 ball. Chapter 2 now opens with "They put us off here. This is the gas stop." instead of a fuel light.
+The older Chapter 1 scenes are still in the program so a debug link such as `?scene=S9` can open them. They are not what a new game plays. Those old scenes are drawn in the new home room. The ball Squatch rolls into, including in the Chapter 2 kitchen, is the L2 ball. A robot notices that ball only after staying within 70 pixels for 2 seconds, in every room. Standing and walking sight is unchanged. The manager's name on his bubbles is Isfred Bar Neshuman. Chapter 2 now opens with "They put us off here. This is the gas stop." instead of a fuel light.
 
 ## Source and build
 
