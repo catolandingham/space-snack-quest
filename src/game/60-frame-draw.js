@@ -279,7 +279,12 @@
           F(-6, -T - R * 0.1, 2, "#2bc48a"),
           F(5, -T + 2, 2, "#3478f6")),
         s.leap && (St(-5, 0, -10, 22, 5.5, "#6b3a1c", 2), St(5, 0, 12, 24, 5.5, "#6b3a1c", 2)),
-        s.hat && (m(-q.head * 0.7, P - q.head * 0.85, q.head * 1.4, q.head * 0.35, 3), r("#2b3a67", 1.2)),
+        s.hat &&
+          (e.save(),
+          s.hatAskew && (e.translate(0, P), e.rotate(0.5), e.translate(0, -P)),
+          m(-q.head * 0.7, P - q.head * 0.85, q.head * 1.4, q.head * 0.35, 3),
+          r("#2b3a67", 1.2),
+          e.restore()),
         s.shades && (m(-q.head * 0.55, P + q.head * 0.02, q.head * 1.1, q.head * 0.22, 2), r("#1e2430", 1)),
         e.restore());
     }
@@ -1553,6 +1558,18 @@
         (X(l, o, i * 0.8, i), e.stroke());
     }
     function gq(l, o) {
+      if (l === "ch1photo") {
+        ((e.fillStyle = "rgba(20,24,32,.55)"),
+          e.fillRect(0, 0, c, b),
+          m(330, 150, 300, 340, 8),
+          r("#fffdf8", 6),
+          m(354, 174, 252, 220, 4),
+          r("#d7ecf5", 2),
+          Qt(420, 360, "#1f9d8a", 1.2, 1),
+          Qt(500, 366, "#ff8a3d", 1.2, -1),
+          n.ch1InShot && Re(460, 390, 1.1, { f: 1, hat: !0, shades: !0, hawaiian: !0 }));
+        return;
+      }
       if (l === "ch1fur") {
         ((e.fillStyle = "rgba(20,24,32,.72)"),
           e.fillRect(0, 0, c, b),

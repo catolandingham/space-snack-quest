@@ -24,4 +24,7 @@ The office cutscene, after Mops and Squatch have left. Each line is pending Bria
 | Mops, at home after | A flyer. And fur on the floor. | NEEDS BRIAN |
 | Banner | ROBOTICS DELEGATION! | existing |
 | Balloon kid, if Squatch keeps it | Scary Wookiee! | NEEDS BRIAN |
-| Balloon grab window | BALLOON_GRAB_SECONDS is 8 | NEEDS BRIAN |
+| Balloon rise | about 6 seconds, with a wobble and a glow. R59, approved | approved |
+| Octopus tourist | *hic* Fellow tourist! | NEEDS BRIAN |
+| Photo bonus | PHOTO_BONUS, not shown on screen | NEEDS BRIAN |
+| Snack look-away | SNACK_LOOK_SECONDS is 4 | NEEDS BRIAN |

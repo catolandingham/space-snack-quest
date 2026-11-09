@@ -264,6 +264,8 @@
         BALL_NOTICE_SECONDS,
         COOL_HAT_SECONDS,
         BALLOON_GRAB_SECONDS,
+        PHOTO_BONUS,
+        SNACK_LOOK_SECONDS,
         CH1_BIN,
         CH1_ROBOT,
         CH1_MAIL,

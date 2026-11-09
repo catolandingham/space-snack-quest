@@ -1052,6 +1052,7 @@
                 carry: n.lunch === "held",
                 leap: (n.ch1JumpT || 0) > 0,
                 hat: !!n.ch1Disguise,
+                hatAskew: !!n.ch1HatAskew,
                 shades: !!n.ch1Disguise,
                 hawaiian: !!n.ch1Disguise,
                 paper: !!n.ch1Flyer,
