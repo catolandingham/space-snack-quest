@@ -54,9 +54,11 @@ Words the game already had, and the one you already approved, are not in this li
 | 38 | Mops, at the wardrobe | The spare jacket. The beard. And the horns. | Wear the spare. I'll keep mine. |
 | 39 | (not used) | The manager does not say "Mops, it's a mistake!" at the ship. He is not there when they leave. | |
 | 40 | A card | Later that evening... | |
-| 41 | Isfred Bar Neshuman, in his office, after the photo ask. NEEDS BRIAN | What happened? We need to review the security tapes. | |
-| 63 | Isfred Bar Neshuman, in his office. NEEDS BRIAN | Send in Mops. It's time for his Employee of the Month photo. | Send Mops in for the photo. |
-| 64 | Robot, in the office. Mops is not in the room. NEEDS BRIAN | Mops is not here. | Mops isn't here. |
+| 41 | Isfred Bar Neshuman, in his office, fifth line. NEEDS BRIAN | I never ordered a replacement! Get me the security tapes. | |
+| 63 | Isfred Bar Neshuman, in his office, first line. NEEDS BRIAN | Send in Mops for his Employee of the Month photo. | |
+| 64 | Robot, in the office, second line. NEEDS BRIAN | Mops isn't here. | |
+| 68 | Isfred Bar Neshuman, in his office, third line. NEEDS BRIAN | Not here? He can't live off the station! | |
+| 69 | Robot, in the office, fourth line. NEEDS BRIAN | He was replaced by the new robot shipment. | |
 | 67 | Name on that robot's bubble. NEEDS BRIAN | Robot | Security |
 | 66 | Mops, on the walk home in the R51 hallway. Not in the game yet. NEEDS BRIAN | Paperwork. | Pending. This line waits for the hallway. |
 | 42 | The PA, on the trip | The base called the ship. It has to stop. | |
@@ -141,6 +143,10 @@ The walk route in this build still uses the existing hall, including a door betw
 
 R49 is the party rule above. It is not built yet.
 
-R50 is in the game. When Mops and the disguised Squatch leave, the manager is not at the ship. There is no boarding chase and no "Mops, it's a mistake!" After they leave, the office cutscene is rows 63, 64, and 41: Isfred asks a robot to send Mops in for his Employee of the Month photo, the robot says Mops is not here, and that leads into the security-tape review. The name on that robot's bubble is "Robot" (row 67, NEEDS BRIAN), not Security. Mops is not in that cutscene. The robots have arrived by then.
+R50 is in the game. When Mops and the disguised Squatch leave, the manager is not at the ship. There is no boarding chase and no "Mops, it's a mistake!" After they leave, the office cutscene is R54, rows 63, 64, 68, 69, and 41, in that order. All five are NEEDS BRIAN. The name on the robot's bubble is "Robot" (row 67, NEEDS BRIAN), not Security. Mops is not in that cutscene. The robots have arrived by then.
+
+The five office lines, in order, all NEEDS BRIAN: "Send in Mops for his Employee of the Month photo." "Mops isn't here." "Not here? He can't live off the station!" "He was replaced by the new robot shipment." "I never ordered a replacement! Get me the security tapes."
+
+R54. Office cutscene dialogue (Brian t255/t256, shortened) — five lines above; Isfred no longer jumps straight to the tapes.
 
 Pickup day is decided. The robots open one crate out on the ramp, by the ship. Squatch hides in a crate that is still in the mail room. Dot, Bob, and Lou are not there. Mops comes in and warns him. He slips out while the robots are busy by the ship, and they walk home. The disguise is a spare blue jacket, worn normally, plus a fake beard and horns. Mops keeps his own jacket on. The wardrobe hook holds a plain blue jacket with no words, and that hook is empty once Squatch takes it.

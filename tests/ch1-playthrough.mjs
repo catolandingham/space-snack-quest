@@ -348,9 +348,11 @@ const must = [
   "More bleat. Less roar.",
   "HAIR... PROBABLY. PROCEED.",
   "Later that evening...",
-  "Send in Mops. It's time for his Employee of the Month photo.",
-  "Mops is not here.",
-  "What happened? We need to review the security tapes.",
+  "Send in Mops for his Employee of the Month photo.",
+  "Mops isn't here.",
+  "Not here? He can't live off the station!",
+  "He was replaced by the new robot shipment.",
+  "I never ordered a replacement! Get me the security tapes.",
 ];
 let at = -1;
 const order = must.map((line) => {

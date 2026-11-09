@@ -538,9 +538,11 @@
               (n.mo.x = -400),
               (B.camX = 0));
           }),
-          v("official", "Send in Mops. It's time for his Employee of the Month photo."),
-          v("robot", "Mops is not here."),
-          v("official", "What happened? We need to review the security tapes."),
+          v("official", "Send in Mops for his Employee of the Month photo."),
+          v("robot", "Mops isn't here."),
+          v("official", "Not here? He can't live off the station!"),
+          v("robot", "He was replaced by the new robot shipment."),
+          v("official", "I never ordered a replacement! Get me the security tapes."),
           v("pa", "The base called the ship. It has to stop.", "pa"),
           N(() => {
             (aV.caught + x.caught === 0 && !n.found.has("ghost1") && (n.found.add("ghost1"), (n.stars += 250)), (B.nextBeat = "Ch2"));
