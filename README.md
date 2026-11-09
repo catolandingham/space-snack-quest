@@ -1,5 +1,7 @@
 # Space Snack Quest
 
+**Decisions:** [`docs/DECISIONS.md`](docs/DECISIONS.md) is the single source of truth. If this README or any other doc disagrees with it, `docs/DECISIONS.md` wins. Where things stand is [`docs/STATE.md`](docs/STATE.md). Open asks are [`docs/OPEN-ASKS.md`](docs/OPEN-ASKS.md).
+
 ## Source and build
 
 The game's source is in `src/`. `index.html` is build output: never edit it by hand.
@@ -84,7 +86,7 @@ Test hooks added: `__ss.capture()`, `shoo()`, `lostYou()`, `startSec()`, `CAPTUR
 
 ## Chapter 1 pass: the night out has a purpose, switches say why
 
-Branch `chapter-1-pass`. Not merged. Every new line waits for Brian's yes in `docs/CHAPTER-1-LINES-FOR-BRIAN.md`, which starts with what Chapter 1 now has and still does not have.
+Branch `chapter-1-pass`. Merged to `main` as PR #11. "Not merged" is **Superseded**. Every new line from that pass is listed in `docs/CHAPTER-1-LINES-FOR-BRIAN.md`, which starts with what Chapter 1 now has and still does not have. The later Chapter 1 replot (the cartoon) is not in the game. Its words are in `docs/CH1-CARTOON-LINES.md`, and each new line there still needs Brian's yes. The decisions are in `docs/DECISIONS.md`.
 
 - The night out (O3 to O6, Brian's D15): Squatch sneaks into the lobby to find out what is going on and reads a NOTICE on a brochure table ("ROBOT JANITORS COMING."). The vent's pull is drawn at all times; a tuft of fur drifts toward it, and 1.5 seconds in the pull sets off "FUR IN THE VENT!". Sightings and the vent go through the one capture rule (HIDE! into the closet, or LOCKUP and the night starts over). The notice comes back in O5, O6 and S3. `tests/ch1-lobby.mjs`.
 - After the review (Brian, 2026-11-07): the notice's second line is "They take every janitor's job."; the fur tuft shows within 1.5 times the vent's circle, is twice as large and keeps moving during a chase; S3's delegation report follows what happened (vent, seen, or "all clear").
@@ -122,7 +124,7 @@ These came up in the notes and were not given a new behavior:
 - The lockup card is the jail. There is no separate jail game.
 - Cook and Gloop stay two speakers.
 
-`docs/story-bible.md` is the Chapter 2 kitchen revision. Everything else in the story stays the original spine. Open conflicts outside that kitchen are in `docs/STORY-DECISIONS.md`. `docs/README.md` points at both, and at the section-reset checkpoints. `docs/MASTER-BACKLOG.md` is the status page. PR #4 is on `main` at `9999f0cd` (the same tree as kitchen C `6853902`). The site is not confirmed live. PR #5 is the open recovery branch, restacked onto that commit. The independent reset check is the list on that page.
+`docs/DECISIONS.md` is the single source of truth for the story and for every other decision. `docs/story-bible.md` is the Chapter 2 kitchen revision. `docs/STORY-DECISIONS.md` is the older list of eight questions, updated so an answered item is not shown as pending. `docs/README.md` points at these, and at the section-reset checkpoints. `docs/MASTER-BACKLOG.md` is the backlog. Its register that says `main` is `9999f0cd` and PR #5 is open is **Superseded**. Current `main` is `10030f6` (PRs #7 through #11 merged). Render publishes `main`. The independent reset check from that older register is still listed on the backlog page as history.
 
 From the repo root:
 

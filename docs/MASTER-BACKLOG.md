@@ -1,29 +1,33 @@
 # Master backlog
 
-Precedence: the original story stays canon except the Chapter 2 kitchen sequence.
+**[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
-- Kitchen revision, and only that revision: `docs/story-bible.md`
-- Choices still waiting on Brian, outside that kitchen: `docs/STORY-DECISIONS.md`
+The precedence below is **Superseded** as the live rule. W27 in `DECISIONS.md`: the Nov 2 spine is not binding. The kitchen revision is still `docs/story-bible.md` (R28).
+
+- Kitchen revision: `docs/story-bible.md`
+- The older eight questions, with answered items no longer marked pending: `docs/STORY-DECISIONS.md`
 - Previous on-repo story note, not deleted: `docs/spine-archive.md`
 
-A pending item stays pending until Brian decides that item. This page does not mark the rest of the backlog done. The full original attachment was not in the workspace, so it is not listed as shipped and it is not replaced.
-
-What the game already plays is the root `README.md` and the build. Where that and an older story idea disagree outside the kitchen, the disagreement is a hold in `docs/STORY-DECISIONS.md`, not a change to the game.
+This page does not mark the rest of the backlog done, and it does not change the game. What the game already plays is the root `README.md` and the build on `main` (`10030f6`). A story note does not add a mechanic.
 
 ## Register
 
-PR #4 is squash-merged. `main` is `9999f0cd`. That commit has the same tree as kitchen C `6853902`. The site is not confirmed live. PR #5 is open on `main` and is not merged.
+**Superseded** as the live status of `main`. This register describes `main` at `9999f0cd`. Current `main` is `10030f6`. PRs #7 through #11 are merged. Render publishes `main`. Open PRs on 2026-11-09 include #6, #12 through #16, and #17. None of them are merged. The room-walk and hoof-stamp work (K20) is [PR #17](https://github.com/catolandingham/space-snack-quest/pull/17). It also edits this page, `README.md`, `docs/CHIP-ARMATURE-AUDIT.md`, `docs/project/DECISIONS-2026-11-08.md`, `docs/project/STATE-2026-11-08.md`, and adds `docs/LATER-CHAPTERS-LINES-FOR-BRIAN.md`.
+
+Kept, as the history of that older register:
+
+PR #4 is squash-merged. `main` was `9999f0cd`. That commit has the same tree as kitchen C `6853902`. PR #5 later merged.
 
 | PR | Branch | Head | Base | State |
 | --- | --- | --- | --- | --- |
-| #4 | `cursor/wash-presentation-f809` | `6853902`, squash `9999f0cd` | `main` | Merged. Not confirmed live |
-| #5 | `cursor/p0-reliability-f809` | Restack of `17a03c2` and `0ab2781` onto `9999f0cd` | `main` | Open. Not merged. Not deployed |
+| #4 | `cursor/wash-presentation-f809` | `6853902`, squash `9999f0cd` | `main` | Merged. "Not confirmed live" is **Superseded**: Render publishes `main` |
+| #5 | `cursor/p0-reliability-f809` | Restack of `17a03c2` and `0ab2781` onto `9999f0cd` | `main` | **Superseded** as "open": merged |
 
-The recovery commits are replayed onto `9999f0cd`. Their changes match `17a03c2` and `0ab2781`. The kitchen commits are not in this pull request.
+History of PR #5: the recovery commits were replayed onto `9999f0cd`. Their changes match `17a03c2` and `0ab2781`. The kitchen commits were not in that pull request. PR #5 is merged.
 
 ## Chapter 1 pass (Brian's brief of 2026-11-07)
 
-Branch `chapter-1-pass`, one commit per item with its test. Not merged. The wording of every new line waits for Brian's yes in `docs/CHAPTER-1-LINES-FOR-BRIAN.md`, which also says what Chapter 1 still does not have.
+Branch `chapter-1-pass`, one commit per item with its test. **Superseded** as "not merged": merged to `main` as PR #11. The wording of every new line from that pass is in `docs/CHAPTER-1-LINES-FOR-BRIAN.md`, which also says what Chapter 1 still does not have. The later cartoon words are in `docs/CH1-CARTOON-LINES.md` and are not in the game.
 
 | Item | What changed | Test | State |
 | --- | --- | --- | --- |
@@ -45,7 +49,7 @@ Open rows found in this pass (not fixed):
 
 ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07)
 
-Branch `phase-3-fairness-hud`, one commit per task with its test. Not merged. The wording of every new line waits for Brian's yes in `docs/PHASE-3-LINES-FOR-BRIAN.md`, which also lists what is not finished.
+Branch `phase-3-fairness-hud`, one commit per task with its test. **Superseded** as "not merged": merged to `main` as PR #10. The wording of every new line is in `docs/PHASE-3-LINES-FOR-BRIAN.md`, which also lists what is not finished.
 
 | Task | What changed | Test | State |
 | --- | --- | --- | --- |
@@ -66,7 +70,7 @@ Open rows found during Phase 3 (not fixed):
 
 ## Phase 2 (plan section 4, T13 to T18)
 
-Branch `phase-2-structure`, one commit per task with its test. Not merged. The wording of every new line, and every ring that moved, waits for Brian's yes in `docs/PHASE-2-LINES-FOR-BRIAN.md`, which also lists what is not finished.
+Branch `phase-2-structure`, one commit per task with its test. **Superseded** as "not merged": merged to `main` as PR #9. The wording of every new line, and every ring that moved, is in `docs/PHASE-2-LINES-FOR-BRIAN.md`, which also lists what is not finished.
 
 | Task | What changed | Test | State |
 | --- | --- | --- | --- |
@@ -116,7 +120,7 @@ No further layout review is open for that drawing. Later work does not redraw th
 
 ## Story rows
 
-These rows record what was on screen. They do not resolve `docs/STORY-DECISIONS.md`. Brian still decides each item.
+These rows record what was on screen. They do not change the game. Brian's answers are in `docs/DECISIONS.md`. The same picks are written on `docs/STORY-DECISIONS.md`, and an answered item there is not shown as pending.
 
 An older mark said `32156c7` / current false for DE1, DE2, DE3, DE5, and DE8. That mark is retired. The status is the capture below.
 
@@ -124,13 +128,13 @@ The story shots are from the capture on this stack before `17a03c2`. PR #5 does 
 
 | ID | On screen | Still open |
 | --- | --- | --- |
-| DE1 | Station PA: "WOOKIE SPOTTED IN SPACE! Last seen near Stormtop." Hide badge "HIDE! 6". Gloop: "Bots! Go watch the dock." | Whether the TV hide stays. The crate-watch exchange was not in the saved shots |
-| DE2 | "+50 SECRET!", "+100 SNEAKY!", "+25 FUNNY FIND!", and "★ = points for finds." | What the stars are for. A Chapter 1 loss of 100 stars was not in the capture |
-| DE3 | At `17a03c2` a soup buy stayed durable across Reset section: jar 0, register 30, soup in hand. The chapter map on screen is "Talk to Grandma Gloop at the diner counter" and the fuel line | More dishes after soup and gas. A chili wash was not the scene on screen |
-| DE5 | Soup note: "You're not alone out here." signed "— The Guardians", with a paw print | The Chapter 1 box, "Brave Sasquatches stay hidden", and the lid spelling were not in the capture |
-| DE8 | Chapter 1 alarm: "WOOKIE ALERT! PROTECT THE AIR SCRUBBERS!" At `17a03c2`, Rusty said "SECURITY! A Squatch on the lot!" while control was still on. LOCKUP followed about two seconds later. Space then landed at the gas entrance (760, 540) with jar 12 and coins still in hand | Whether the two captures stay separate. A later Mops pen was not played |
+| DE1 | Station PA: "WOOKIE SPOTTED IN SPACE! Last seen near Stormtop." Hide badge "HIDE! 6". Gloop: "Bots! Go watch the dock." | **Answered** (L7, L8). Keep the TV warning and the crate hide. Cut the arguing after the dock line. Keep "Bots! Go watch the dock." |
+| DE2 | "+50 SECRET!", "+100 SNEAKY!", "+25 FUNNY FIND!", and "★ = points for finds." | **Answered** in part (K17). Keep the stars and "Never caught! +250". A catch does not take stars (K9). Still open: the hidden +100 awards versus "points for finds" (O25) |
+| DE3 | At `17a03c2` a soup buy stayed durable across Reset section: jar 0, register 30, soup in hand. The chapter map on screen is "Talk to Grandma Gloop at the diner counter" and the fuel line | **Answered** in part (L4, S3). The chili path is retired. Soup stays. Gas is **Superseded** in part by another ride. The ride itself is still open (O17) |
+| DE5 | Soup note: "You're not alone out here." signed "— The Guardians", with a paw print | **Answered** (S58, S59). The player learns Mops writes the notes. Squatch does not. "MY GARDIANS" stays. Where the Chapter 2 flashback sits is still open (O18) |
+| DE8 | Chapter 1 alarm: "WOOKIE ALERT! PROTECT THE AIR SCRUBBERS!" At `17a03c2`, Rusty said "SECURITY! A Squatch on the lot!" while control was still on. LOCKUP followed about two seconds later. Space then landed at the gas entrance (760, 540) with jar 12 and coins still in hand | **Answered** (K9, L3). One capture rule everywhere. A kitchen bot that sees Mops shoos him. He is not locked up |
 
-DE4, DE6, and DE7 stay pending in `docs/STORY-DECISIONS.md`. This page does not mark them verified. Zip's songs and Harry's dance were not on screen. The pea gag was not on screen.
+DE4, DE6, and DE7 are **Answered** in `docs/STORY-DECISIONS.md`. The pea gag stays parked (L9). Zip's beat is a riddle, not songs (L17). Harry's dance stays small: four presses and Mops's "Baaa" (L18). This page does not mark them built. They were not on screen in the capture.
 
 ## Reset section
 
@@ -153,16 +157,20 @@ The pass drove wash 5, wash 1, `g1`, and unknown `g5`. The other checkpoint rows
 
 ## Still open
 
+Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The leftovers from this older page:
+
 - Boarding caption. A g3 shot in the story capture is the dock line, not an explicit boarding caption.
-- DE4, DE6, and DE7.
+- DE4, DE6, and DE7 are answered (see the story rows). They are not built.
 - Checkpoint rows the independent pass did not drive.
 - Any item not named in the tables above.
 
 ## Changelog
 
-2026-11-07. Chapter 1 pass on branch `chapter-1-pass` (D15 night out, Chapter 1 switch cards, order fixes, Chapter 1 tests), not merged.
+2026-11-09. Docs only. `docs/DECISIONS.md` is the single source of truth, merged with the 2026-11-08 snapshot. Answered rows in `docs/STORY-DECISIONS.md` are no longer pending. This page points at `docs/DECISIONS.md`. No game code and no on-screen words changed.
 
-2026-11-07. Phase 1 is on `main` as PR #8 (`9215e8b`). Phase 2 (T13 to T18) is on branch `phase-2-structure`, not merged.
+2026-11-07. Chapter 1 pass on branch `chapter-1-pass` (D15 night out, Chapter 1 switch cards, order fixes, Chapter 1 tests). **Superseded** as "not merged": merged as PR #11.
+
+2026-11-07. Phase 1 is on `main` as PR #8 (`9215e8b`). Phase 2 (T13 to T18) was on branch `phase-2-structure`. **Superseded** as "not merged": merged as PR #9.
 
 2026-11-06. Recorded PR #4 at `6853902` and PR #5 at `17a03c2`. SS40–SS44 pass on kitchen C, with pastdraw and `main` called out separately. DE1, DE2, DE3, DE5, and DE8 use the shots and the recovery pass. Reset section is shipped in PR #5, with the independent checks listed above. The rest stays open.
 

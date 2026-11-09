@@ -1,6 +1,8 @@
 # Chapter 1 lines for Brian
 
-Every new or changed thing the player reads in the Chapter 1 pass (branch `chapter-1-pass`), listed so you can say yes or change the words before the merge. Same format as the Phase 1 to 3 files: each row gives where it shows, the words in the game now, and one other way to say it.
+The Chapter 1 pass is on `main` (PR #11). This file lists the words from that pass. New cartoon words for the later replot are in [`CH1-CARTOON-LINES.md`](CH1-CARTOON-LINES.md). Those are not in the game. Each one is marked NEEDS YES until Brian says yes. Decisions are in [`DECISIONS.md`](DECISIONS.md).
+
+Every new or changed thing the player reads in the Chapter 1 pass (branch `chapter-1-pass`) is listed below. Same format as the Phase 1 to 3 files: each row gives where it shows, the words in the game now, and one other way to say it.
 
 To change a line: edit the "In the game now" words in this file and say so in the pull request. An agent will copy your words into `src/game/` and the tests (the tests read this file).
 
@@ -32,7 +34,7 @@ Read this before you play. It is the short version; the tables further down have
 - **The guards where they were.** The guard who comes from the right now enters at (1010, 530) and stops at (760, 520), below the new snack counter; before, he came in at (1010, 400) and stopped at (760, 400).
 - **A card for restarts.** After a catch or a shoo in S9 or S11, the section starts over as Squatch with the LOCKUP card (or Mops's lines), and no switch card, the same as Reset section in Chapter 2.
 - **A stall hint in the lobby.** If a player stands still for a minute there, the chip does not change to a "how to" line yet.
-- **Answers to the 2026-11-07 phone playtest.** `docs/playtests/2026-11-07-brian-phone-playtest-ch1.md` is not in the repo, so nothing here answers those notes directly.
+- **Answers to the 2026-11-07 phone playtest.** The note is in the repo at `docs/playtests/2026-11-07-brian-phone-playtest-ch1.md`. This lines file does not answer those notes. Later decisions are in `docs/DECISIONS.md`.
 
 ## D15. The night out has a purpose and a hazard you can see
 
