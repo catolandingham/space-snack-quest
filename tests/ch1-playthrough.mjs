@@ -278,8 +278,9 @@ const must = [
   "The spare jacket. The beard. And the horns.",
   "More bleat. Less roar.",
   "HAIR... PROBABLY. PROCEED.",
-  "Mops, it's a mistake!",
   "Later that evening...",
+  "Send in Mops. It's time for his Employee of the Month photo.",
+  "Mops is not here.",
   "What happened? We need to review the security tapes.",
 ];
 let at = -1;

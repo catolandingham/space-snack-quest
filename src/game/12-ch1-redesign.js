@@ -218,6 +218,16 @@
       if (from === "closet" && dest === "hall") return ch1Hop(homeHall(), next);
       if (from === "delivery" && dest === "duct") return ch1Hop(delDuct(), next);
       if (from === "duct" && dest === "delivery") return ch1Hop(ductDel(), next);
+      console.warn("ch1Go: no walk from " + from + " to " + dest);
+      typeof next == "function" && next();
+    }
+    function ch1Step(who, x, y, speed) {
+      let pace = speed || 180;
+      return cV((dt) => {
+        let sqOk = who === "mo" || mV(n.sq, x, y, pace, dt),
+          moOk = who === "sq" || mV(n.mo, who === "mo" ? x : x + 48, y, pace, dt);
+        return (ch1Trail(), sqOk && moOk);
+      });
     }
     function ch1RedesignStart() {
       ((n.scene = "O1"),
@@ -238,6 +248,7 @@
         (n.ch1Walks = []),
         (n.ch1Trail = []),
         (n.ch1SiteRoom = ""),
+        (n.ch1Office = !1),
         (n.tvOn = !1),
         (n.sqPose = "sit"),
         J([
@@ -266,13 +277,14 @@
         ]));
     }
     function ch1AtDelivery() {
-      ((n.sqPose = "hidden"),
-        (n.sq.x = CH1_PLANT.x),
-        (n.sq.y = CH1_PLANT.y),
-        (n.mo.x = 640),
-        (n.mo.y = 500),
-        (n.scene = "Q2"),
+      ((n.scene = "Q2"),
+        (n.sqPose = "stand"),
         J([
+          ch1Step("sq", CH1_PLANT.x, CH1_PLANT.y, 180),
+          N(() => {
+            ((n.sqPose = "hidden"), (n.sq.x = CH1_PLANT.x), (n.sq.y = CH1_PLANT.y));
+          }),
+          ch1Step("mo", 640, 500, 180),
           v("official", "Mops, don't worry, you know how much we love you here. Even our visitors always love you."),
           v("tourist", "Isfred Bar Neshuman! The dock needs you."),
           v("ups", "Left one of the copies in the office. What do I do with the other two?"),
@@ -302,13 +314,15 @@
         J([
           v("tourist", "I swear we had more Moon Pies... is that what they stole at lunch?", "say", !0),
           v("mops", "Quick, hide."),
+          ch1Step("sq", ne.x, ne.y, 200),
           N(() => {
             ((n.sqPose = "hidden"), (n.sq.x = ne.x), (n.sq.y = ne.y));
           }),
           uV(0.8),
           N(() => {
-            ((n.sqPose = "stand"), (n.sq.x = 460), (n.sq.y = 530));
+            n.sqPose = "stand";
           }),
+          ch1Step("sq", 460, 530, 200),
           v("mops", "Didn't you hear what Isfred Bar Neshuman said? They need me here, they're not going to replace me. Plus the Guardians are here."),
           v("mops", "I need to get back to work, we'll talk about it tonight."),
           N(() => ch1Go("closet", { scene: "Q3" }, ch1Bedtime)),
@@ -316,13 +330,13 @@
     }
     function ch1Bedtime() {
       ((n.scene = "Q3"),
-        (n.sqPose = "sleep"),
-        (n.sq.x = 205),
-        (n.sq.y = 470),
+        (n.sqPose = "stand"),
         (n.moPose = "stand"),
-        (n.mo.x = 470),
-        (n.mo.y = 460),
         J([
+          cV((dt) => (ch1Trail(), mV(n.sq, 205, 470, 180, dt) && mV(n.mo, 470, 460, 180, dt))),
+          N(() => {
+            ((n.sqPose = "sleep"), (n.sq.x = 205), (n.sq.y = 470), (n.mo.x = 470), (n.mo.y = 460));
+          }),
           { k: "panel", id: "ch1guard" },
           N(() => {
             ((n.sqPose = "stand"),
@@ -365,22 +379,20 @@
     }
     function ch1Tease() {
       ((n.moPose = "stand"),
-        (n.mo.x = 620),
-        (n.mo.y = 500),
         (n.ch1Crew = "tease"),
         J([
+          ch1Step("mo", 620, 500, 180),
           v("ups", "We could wipe the floor with that beard."),
           v("ups", "HQ sent us a message. You're going to be replaced this week anyway."),
           v("mops", "The new robots come on the ship tomorrow. Let's go find the pancake stand."),
           v("sq", "Oh, it was on the form I sent, I mean, never mind."),
           v("sq", "A copy got sucked into the vent.", "whisper"),
           N(() => {
-            ((n.scene = "Q5"),
-              (n.ctrl = !0),
-              (n.ch1Crew = ""),
-              (n.sqPose = "stand"),
-              (n.sq.x = CH1_VENT.x - 30),
-              (n.sq.y = CH1_VENT.y));
+            ((n.scene = "Q5"), (n.ch1Crew = ""), (n.sqPose = "stand"));
+          }),
+          ch1Step("sq", CH1_VENT.x - 30, CH1_VENT.y, 180),
+          N(() => {
+            ((n.ctrl = !0), (n.sq.x = CH1_VENT.x - 30), (n.sq.y = CH1_VENT.y));
           }),
         ]));
     }
@@ -476,8 +488,9 @@
           }),
           v("mops", "Get out. They're checking a crate."),
           N(() => {
-            ((n.ch1InCrate = !1), (n.sqPose = "stand"), (n.ch1Climbed = !0), (n.sq.x = 760), (n.sq.y = 520));
+            ((n.ch1InCrate = !1), (n.sqPose = "stand"), (n.ch1Climbed = !0));
           }),
+          ch1Step("sq", 760, 520, 120),
           cV((dt) => (ch1Trail(), mV(n.sq, 680, 530, 140, dt))),
           N(() => ch1Go("closet", { scene: "Q8", night: !1, ship: !1 }, ch1Costume)),
         ]));
@@ -512,10 +525,25 @@
     function ch1Board() {
       ((n.ctrl = !1),
         (n.act = null),
+        (n.costumeOn = !0),
         J([
           v("scanner", "HAIR... PROBABLY. PROCEED."),
-          v("official", "Mops, it's a mistake!"),
+          cV((dt) => (ch1Trail(), (n.costumeOn = !0), mV(n.sq, 480, 220, 160, dt) && mV(n.mo, 540, 240, 160, dt))),
           { k: "card", id: "later", text: "Later that evening..." },
+          N(() => {
+            ((n.room = "hall"),
+              (n.ch1D = !1),
+              (n.ch1Duct = !1),
+              (n.ch1Office = !0),
+              (n.scene = "Q9"),
+              (n.sqPose = "hidden"),
+              (n.moPose = "hidden"),
+              (n.sq.x = -400),
+              (n.mo.x = -400),
+              (B.camX = 0));
+          }),
+          v("official", "Send in Mops. It's time for his Employee of the Month photo."),
+          v("bot", "Mops is not here."),
           v("official", "What happened? We need to review the security tapes."),
           v("pa", "The base called the ship. It has to stop.", "pa"),
           N(() => {
@@ -723,7 +751,7 @@
           ["Bob", 330, 565],
           ["Lou", 410, 580],
         ].forEach((w) => u5({ x: w[1], y: w[2], name: w[0] }));
-      !night && n.ch1Ship && Qt(560, 500, "#c9b6f2", 2.6, 0.2);
+      !night && n.ch1Ship && n.scene !== "Q9" && Qt(560, 500, "#c9b6f2", 2.6, 0.2);
       n.ch1Crew === "tease" && [360, 480, 600].forEach((px) => dq(px, 460, !1));
       night &&
         (seenCone(CH1_ROBOT.x, CH1_ROBOT.y - 28, STAND_FACE, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.38)"),

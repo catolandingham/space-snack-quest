@@ -1017,7 +1017,15 @@
       for (let o of B.jans) o.on && l.push({ y: o.y, d: () => u5(o) });
       if (
         (W6(l),
-        l.push({
+        n.ch1Office &&
+          l.push({
+            y: 490,
+            d: () => {
+              (Qt(220, 470, "#c9b6f2", 2.2, 0.3), dq(360, 490, !1));
+            },
+          }),
+        !n.ch1Office &&
+          l.push({
           y: n.mo.y,
           d: () => {
             (Fe(n.mo.x, n.mo.y, he * 1.15, { f: n.mo.f, walk: n.mo.moving ? n.mo.walk : 0, mop: (n.scene || "")[0] !== "Q" }),

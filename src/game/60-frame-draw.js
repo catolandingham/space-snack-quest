@@ -989,7 +989,12 @@
       if (i) return i;
       let s = G6(l);
       if (s) return s;
-      if (l === "official") return { x: 210, y: 215 };
+      if (l === "official") {
+        if (n.ch1Office) return { x: 220, y: 380 };
+        if (n.room === "hangar" && n.ch1D && n.ch1Ship && !n.ch1Night && n.scene !== "Q9") return { x: 560, y: 400 };
+        return { x: 210, y: 215 };
+      }
+      if (l === "bot" && n.ch1Office) return { x: 360, y: 400 };
       if (l === "scanner") return { x: Ha.x, y: 170 };
       if (l === "tourist" && n.room === "hall") {
         let q = x.tour[Math.max(0, x.alertBy)];
