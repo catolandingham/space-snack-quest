@@ -25,9 +25,15 @@
     const COOL_HAT_SECONDS = 120;
     // R59. The balloon takes about 6 seconds to reach the ceiling. Approved.
     const BALLOON_GRAB_SECONDS = 6;
-    // R60. Placeholder amounts. NEEDS BRIAN. Not drawn on screen.
+    // R60. Placeholder amounts. Not drawn on screen.
+    // PENDING BRIAN
     const PHOTO_BONUS = 25;
+    // PENDING BRIAN
     const SNACK_LOOK_SECONDS = 4;
+    // The corner guest aims the camera left, into the room. The shot is the floor in front of the lens.
+    // The SNAP circle covers that floor, so Squatch can walk into the picture and still take it.
+    const CH1_CAM = { x: 790, y: 230, r: 110 };
+    const CH1_FRAME = { x0: 710, x1: 770, y0: 248, y1: 300 };
     const CH1_KID = { x: 180, y: 540 };
     // Free-play moments. Add another object here for a new party beat.
     const CH1_PARTY_FREE = [
@@ -510,9 +516,9 @@
             verb: "SNAP",
             cap: "photo",
             who: "sq",
-          x: 790,
-          y: 230,
-            r: 110,
+            x: CH1_CAM.x,
+            y: CH1_CAM.y,
+            r: CH1_CAM.r,
             f: ch1Photo,
           }),
         );
@@ -571,8 +577,11 @@
         ? ((n.ch1HatAskew = !0), J([v("tourist", "*hic* Fellow tourist!"), N(() => (n.ctrl = !0))]))
         : J([N(() => ch1HatOff("hug"))]);
     }
+    function ch1InFrame(x, y) {
+      return x > CH1_FRAME.x0 && x < CH1_FRAME.x1 && y > CH1_FRAME.y0 && y < CH1_FRAME.y1;
+    }
     function ch1Photo() {
-      let inFrame = n.sq.x > 160 && n.sq.x < 420 && n.sq.y > 400 && n.sq.y < 580;
+      let inFrame = ch1InFrame(n.sq.x, n.sq.y);
       ((n.ch1Photo = !0), (n.ch1InShot = inFrame), inFrame && (n.stars = (n.stars || 0) + PHOTO_BONUS), (n.ctrl = !1), (n.act = null));
       J([{ k: "panel", id: "ch1photo" }, N(() => (n.ctrl = !0))]);
     }

@@ -373,18 +373,30 @@ const extras = await page.evaluate(() => {
     ss.tick(0.05);
     return n.cur && n.cur.id;
   };
+  const walk = (x, y) => {
+    ss.tapAt(x, y);
+    let at = { x: n.sq.x, y: n.sq.y };
+    for (let i = 0; i < 60; i++) {
+      ss.tick(0.1);
+      at = { x: n.sq.x, y: n.sq.y };
+      if (Math.hypot(at.x - x, at.y - y) < 14) break;
+    }
+    ss.tick(0.1);
+    return { at, offer: ss.offerNow() && ss.offerNow().verb };
+  };
+  const frame = ss.CH1_FRAME;
+  const cam = ss.CH1_CAM;
+  const shot = { x: (frame.x0 + frame.x1) / 2, y: (frame.y0 + frame.y1) / 2 };
   arm();
-  n.sq.x = 300;
-  n.sq.y = 500;
   const starsIn = n.stars;
-  ss.spotsNow().find((s) => s.verb === "SNAP").f();
-  const inside = { shot: n.ch1InShot, stars: n.stars - starsIn, bonus: ss.PHOTO_BONUS, panel: show() };
+  const into = walk(shot.x, shot.y);
+  ss.actionDown();
+  const inside = { shot: n.ch1InShot, stars: n.stars - starsIn, bonus: ss.PHOTO_BONUS, panel: show(), into };
   arm();
-  n.sq.x = 800;
-  n.sq.y = 520;
   const starsOut = n.stars;
-  ss.spotsNow().find((s) => s.verb === "SNAP").f();
-  const outside = { shot: n.ch1InShot, stars: n.stars - starsOut, panel: show() };
+  const away = walk(cam.x, cam.y);
+  ss.actionDown();
+  const outside = { shot: n.ch1InShot, stars: n.stars - starsOut, panel: show(), away };
   arm();
   let lookAtSpill = 0;
   for (let i = 0; i < 3; i++) {
@@ -400,7 +412,16 @@ const extras = await page.evaluate(() => {
   return { once, twice, inside, outside, spilled, hiding, turnedBack: n.ch1Look === 0 };
 });
 g.check("the first octopus hug tugs the hat and the second starts the alarm", extras.once.askew && extras.once.disguise && extras.once.line && !extras.once.over && !extras.twice.disguise && extras.twice.over && extras.twice.fur, extras);
-g.check("a photo with Squatch pays the placeholder bonus and one without him does not", extras.inside.shot && extras.inside.stars === extras.inside.bonus && extras.inside.panel === "ch1photo" && !extras.outside.shot && extras.outside.stars === 0 && extras.outside.panel === "ch1photo", extras);
+g.check(
+  "walking into the shot and pressing SNAP pays the placeholder bonus",
+  extras.inside.into.offer === "SNAP" && extras.inside.shot && extras.inside.stars === extras.inside.bonus && extras.inside.panel === "ch1photo",
+  extras.inside,
+);
+g.check(
+  "Squatch outside the frame gets no photo bonus",
+  extras.outside.away.offer === "SNAP" && !extras.outside.shot && extras.outside.stars === 0 && extras.outside.panel === "ch1photo",
+  extras.outside,
+);
 g.check("the third snack spills the table and the plant hide lasts the look window", extras.spilled.snacks === 3 && extras.spilled.look === extras.spilled.seconds && extras.hiding.pose === "hidden" && extras.hiding.disguise && extras.turnedBack, extras);
 
 const play = await page.evaluate(() => {
