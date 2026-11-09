@@ -1050,6 +1050,7 @@
                 walk: n.sq.moving ? n.sq.walk : 0,
                 f: n.sq.f,
                 carry: n.lunch === "held",
+                leap: (n.ch1JumpT || 0) > 0,
                 hat: !!n.ch1Disguise,
                 shades: !!n.ch1Disguise,
                 hawaiian: !!n.ch1Disguise,

@@ -278,6 +278,7 @@
           r("#ff8a3d", 1.4),
           F(-6, -T - R * 0.1, 2, "#2bc48a"),
           F(5, -T + 2, 2, "#3478f6")),
+        s.leap && (St(-5, 0, -10, 22, 5.5, "#6b3a1c", 2), St(5, 0, 12, 24, 5.5, "#6b3a1c", 2)),
         s.hat && (m(-q.head * 0.7, P - q.head * 0.85, q.head * 1.4, q.head * 0.35, 3), r("#2b3a67", 1.2)),
         s.shades && (m(-q.head * 0.55, P + q.head * 0.02, q.head * 1.1, q.head * 0.22, 2), r("#1e2430", 1)),
         e.restore());
@@ -1005,6 +1006,7 @@
       if (l === "scanner") return n.room === "hangar" && n.ch1Ship ? { x: 480, y: 210 } : { x: Ha.x, y: 170 };
       if (l === "ups" && n.ch1Crew === "tease") return { x: 480, y: 380 };
       if (l === "ups" && n.room === "hangar" && n.ch1D) return { x: 830, y: 460 };
+      if (l === "kid" && n.ch1Party) return { x: CH1_KID.x, y: CH1_KID.y - 90 };
       if (l === "tourist" && n.room === "hangar" && n.scene === "Q2") return { x: 700, y: 446 };
       if (l === "tourist" && n.room === "hall" && n.scene === "Q3") return { x: 640, y: 436 };
       if (l === "tourist" && n.room === "hall") {

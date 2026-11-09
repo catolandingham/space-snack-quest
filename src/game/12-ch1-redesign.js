@@ -23,6 +23,9 @@
     };
     // S15. Two minutes of party play. Do not change this.
     const COOL_HAT_SECONDS = 120;
+    // R58. How long the balloon stays grabbable. NEEDS BRIAN. A generous window.
+    const BALLOON_GRAB_SECONDS = 8;
+    const CH1_KID = { x: 180, y: 540 };
     // Free-play moments. Add another object here for a new party beat.
     const CH1_PARTY_FREE = [
       { id: "snack", verb: "GRAB", cap: "snack", x: 760, y: 530, who: "sq", text: "One snack. That's the rule." },
@@ -418,11 +421,58 @@
             r: 140,
             hot: !0,
             f: () => {
-              ((n.ch1Flyer = !0), (n.ch1PartyT = 0), (n.act = null));
+              ((n.ch1Flyer = !0),
+                (n.ch1PartyT = 0),
+                (n.ch1Balloon = "up"),
+                (n.ch1BalloonT = 0),
+                (n.ch1BalloonY = 460),
+                (n.ch1Kid = "let"),
+                (n.act = null));
             },
           }),
         ];
       let out = [];
+      n.ch1Balloon === "up" &&
+        n.ch1BalloonT < BALLOON_GRAB_SECONDS &&
+        out.push(
+          spot({
+            id: "jump",
+            verb: "JUMP",
+            cap: "balloon",
+            who: "sq",
+            x: CH1_KID.x,
+            y: n.ch1BalloonY,
+            r: 220,
+            hot: !0,
+            f: ch1JumpBalloon,
+          }),
+        );
+      n.ch1Balloon === "held" &&
+        (out.push(
+          spot({
+            id: "give",
+            verb: "GIVE",
+            cap: "balloon",
+            who: "sq",
+            x: CH1_KID.x,
+            y: CH1_KID.y,
+            r: 160,
+            hot: !0,
+            f: ch1GiveBalloon,
+          }),
+        ),
+        out.push(
+          spot({
+            id: "keep",
+            verb: "KEEP",
+            cap: "balloon",
+            who: "sq",
+            x: 700,
+            y: 540,
+            r: 160,
+            f: ch1KeepBalloon,
+          }),
+        ));
       for (let m of CH1_PARTY_FREE)
         !n.ch1PartyDid[m.id] &&
           out.push(
@@ -454,6 +504,41 @@
         );
       return out;
     }
+    function ch1JumpBalloon() {
+      n.ch1Balloon === "up" &&
+        ((n.ch1Balloon = "held"), (n.ch1JumpT = 0.55), (n.ch1Kid = "wide"), (n.act = null));
+    }
+    function ch1GiveBalloon() {
+      ((n.ctrl = !1),
+        (n.act = null),
+        J([
+          ch1Step("sq", CH1_KID.x, CH1_KID.y, 200),
+          N(() => {
+            ((n.ch1Balloon = "back"), (n.ch1Kid = "wide"));
+          }),
+          uV(0.4),
+          N(() => {
+            n.ch1Kid = "smile";
+          }),
+          uV(0.4),
+          N(() => {
+            n.ch1Kid = "shh";
+          }),
+          uV(0.4),
+          N(() => {
+            ((n.ch1Kid = "up"), (n.ctrl = !0));
+          }),
+        ]));
+    }
+    function ch1KeepBalloon() {
+      ((n.ctrl = !1),
+        (n.act = null),
+        J([
+          ch1Step("sq", 720, 540, 200),
+          v("kid", "Scary Wookiee!"),
+          N(() => ch1HatOff("scare")),
+        ]));
+    }
     function ch1HatOff(why) {
       if (n.ch1PartyOver || !n.ch1Disguise) return;
       ((n.ch1Disguise = !1), (n.ch1PartyOver = !0), (n.ctrl = !1), (n.act = null), (n.ch1Fur = !0));
@@ -482,11 +567,18 @@
         ]));
     }
     function ch1PartyTick(dt) {
-      n.scene === "QA" &&
-        n.ctrl &&
+      if (n.scene !== "QA" || n.ch1PartyOver) return;
+      n.ch1JumpT > 0 && (n.ch1JumpT -= dt || 0);
+      n.ctrl &&
         n.ch1Disguise &&
         n.ch1Flyer &&
-        !n.ch1PartyOver &&
+        n.ch1Balloon === "up" &&
+        ((n.ch1BalloonT = (n.ch1BalloonT || 0) + (dt || 0)),
+        (n.ch1BalloonY = 460 - (460 - 80) * Math.min(1, n.ch1BalloonT / BALLOON_GRAB_SECONDS)),
+        n.ch1BalloonT >= BALLOON_GRAB_SECONDS && ((n.ch1Balloon = "ceiling"), (n.ch1Kid = "sad")));
+      n.ctrl &&
+        n.ch1Disguise &&
+        n.ch1Flyer &&
         ((n.ch1PartyT = (n.ch1PartyT || 0) + (dt || 0)), n.ch1PartyT >= COOL_HAT_SECONDS && ch1HatOff("cool"));
     }
     function ch1NightPlay() {
@@ -824,7 +916,30 @@
         Qt(820, 540, "#e07b00", 1.6, -1),
         Qt(860, 540, "#59657d", 1.6, -1),
         Qt(480, 400, "#c9b6f2", 1.6, 0.2),
-        !n.ch1Flyer && (m(500, 360, 16, 12, 1), r("#fffdf8", 1)));
+        !n.ch1Flyer && (m(500, 360, 16, 12, 1), r("#fffdf8", 1)),
+        drawBalloonKid());
+    }
+    function drawBalloonKid() {
+      let kid = CH1_KID,
+        mood = n.ch1Kid || "";
+      (Qt(kid.x, kid.y, "#1f9d8a", 1.05, 1),
+        mood === "wide" && (F(kid.x + 6, kid.y - 46, 4, "#ffffff"), F(kid.x + 6, kid.y - 46, 2, y)),
+        mood === "smile" && (C([kid.x + 2, kid.y - 40, kid.x + 8, kid.y - 36, kid.x + 12, kid.y - 40], y, 1.4), F(kid.x + 6, kid.y - 46, 2.2, y)),
+        mood === "shh" &&
+          (C([kid.x + 2, kid.y - 40, kid.x + 8, kid.y - 36, kid.x + 12, kid.y - 40], y, 1.4),
+          C([kid.x + 14, kid.y - 28, kid.x + 8, kid.y - 40], "#f0bf93", 2)),
+        mood === "up" &&
+          (C([kid.x + 2, kid.y - 40, kid.x + 8, kid.y - 36, kid.x + 12, kid.y - 40], y, 1.4),
+          C([kid.x + 16, kid.y - 20, kid.x + 16, kid.y - 36], "#f0bf93", 2.4),
+          F(kid.x + 16, kid.y - 38, 3, "#f0bf93")),
+        mood === "sad" && C([kid.x + 2, kid.y - 36, kid.x + 8, kid.y - 40, kid.x + 12, kid.y - 36], y, 1.4));
+      if (n.ch1Balloon === "up" || n.ch1Balloon === "ceiling") {
+        let by = n.ch1BalloonY || 460;
+        (C([kid.x, kid.y - 20, kid.x, by + 8], "#e5533d", 1), F(kid.x, by, 8, "#e5533d"));
+      }
+      if (n.ch1Balloon === "held") {
+        (C([n.sq.x, n.sq.y - 40, n.sq.x, n.sq.y - 78], "#e5533d", 1), F(n.sq.x, n.sq.y - 86, 8, "#e5533d"));
+      }
     }
     function drawMailRobot(px, py) {
       (dq(px, py, !0), g("UPS", px, py - 8, 10, "#ffffff", "center", 900));

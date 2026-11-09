@@ -186,6 +186,7 @@ const bubbles = await page.evaluate(() => {
     ups: { scene: "Q2", room: "hangar", ch1D: true, ch1Ship: true, crew: "", crew2: "tease", night2: true },
     scanner: { scene: "Q9", room: "hangar", ch1D: true, ch1Ship: true, ch1Night: false, ch1Office: false },
     robot: { scene: "Q9", room: "hall", ch1D: false, ch1Office: true },
+    kid: { scene: "QA", room: "hall", party: true },
   };
   const cv = document.querySelector("canvas[width='960']") || document.querySelector("canvas");
   const k = cv.width / 960;
@@ -206,6 +207,7 @@ const bubbles = await page.evaluate(() => {
     n.ch1Night = !!extra.ch1Night;
     n.ch1Office = !!extra.ch1Office;
     n.ch1Crew = extra.crew || "";
+    n.ch1Party = !!extra.party;
     n.sqPose = extra.pose || "stand";
     n.moPose = "stand";
     n.sq.x = (extra.sq || [400, 520])[0];
@@ -226,7 +228,7 @@ const bubbles = await page.evaluate(() => {
     return { who, at, marks, top: at.y < 80 && Math.abs(at.x - 480) < 40 };
   };
   const out = [];
-  for (const who of ["mops", "sq", "official", "tourist", "ups", "scanner", "robot"]) out.push(placed(who, setups[who]));
+  for (const who of ["mops", "sq", "official", "tourist", "ups", "scanner", "robot", "kid"]) out.push(placed(who, setups[who]));
   out.push(placed("tourist", { scene: "Q3", room: "hall", ch1D: false }));
   out.push(placed("ups", { scene: "Q4", room: "hangar", ch1D: true, ch1Night: true, crew: "" }));
   out.push(placed("ups", { scene: "Q5", room: "hangar", ch1D: true, ch1Night: true, crew: "tease" }));
@@ -257,6 +259,68 @@ const hat = await page.evaluate(() => {
   return { seconds: ss.COOL_HAT_SECONDS, said, over: n.ch1PartyOver, disguise: n.ch1Disguise };
 });
 g.check("Cool hat! fires at 2 minutes of party play and not sooner", hat.seconds === 120 && hat.over && !hat.disguise && hat.said.includes("Cool hat!"), hat);
+
+const balloon = await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  const said = () => n.log.filter((e) => e.k === "bub").map((e) => e.text);
+  const arm = () => {
+    n.scene = "QA";
+    n.room = "hall";
+    n.ch1D = false;
+    n.ch1Party = true;
+    n.ch1Disguise = true;
+    n.ch1Flyer = true;
+    n.ch1PartyOver = false;
+    n.ch1PartyT = 0;
+    n.ch1Balloon = "up";
+    n.ch1BalloonT = 0;
+    n.ch1BalloonY = 460;
+    n.ch1Kid = "let";
+    n.ch1Fur = false;
+    n.ctrl = true;
+    n.q = [];
+    n.cur = null;
+    n.log = [];
+    n.sq.x = 180;
+    n.sq.y = 500;
+    n.sqPose = "stand";
+    ss.hall.camX = 0;
+  };
+  const drain = () => {
+    for (let i = 0; i < 40; i++) {
+      if (n.cur && (n.cur.k === "bub" || n.cur.k === "card" || n.cur.k === "panel")) ss.opTap();
+      ss.tick(0.2);
+    }
+  };
+  const spot = (verb) => ss.spotsNow().find((s) => s && s.verb === verb);
+  arm();
+  const missedJump = !spot("JUMP");
+  ss.tick(ss.BALLOON_GRAB_SECONDS + 0.2);
+  const ceiling = { balloon: n.ch1Balloon, kid: n.ch1Kid, disguise: n.ch1Disguise, over: n.ch1PartyOver, yell: said().includes("Scary Wookiee!"), jumpWasThere: !missedJump };
+  arm();
+  spot("JUMP").f();
+  const jumped = { held: n.ch1Balloon === "held", legs: n.ch1JumpT > 0, kid: n.ch1Kid };
+  spot("GIVE").f();
+  drain();
+  const back = { balloon: n.ch1Balloon, kid: n.ch1Kid, disguise: n.ch1Disguise, over: n.ch1PartyOver, yell: said().includes("Scary Wookiee!"), fur: said().includes("FUR! Security!") };
+  arm();
+  spot("JUMP").f();
+  const walksBefore = (n.ch1Walks || []).length;
+  spot("KEEP").f();
+  drain();
+  const kept = {
+    yell: said().includes("Scary Wookiee!"),
+    fur: said().includes("FUR! Security!"),
+    over: n.ch1PartyOver,
+    walked: (n.ch1Walks || []).length > walksBefore,
+    window: ss.BALLOON_GRAB_SECONDS,
+  };
+  return { ceiling, jumped, back, kept };
+});
+g.check("a balloon that reaches the ceiling only makes the kid sad", balloon.ceiling.balloon === "ceiling" && balloon.ceiling.kid === "sad" && balloon.ceiling.disguise && !balloon.ceiling.over && !balloon.ceiling.yell && balloon.ceiling.jumpWasThere, balloon.ceiling);
+g.check("bringing the balloon back keeps the disguise and the kid stays quiet", balloon.jumped.held && balloon.jumped.legs && balloon.jumped.kid === "wide" && balloon.back.balloon === "back" && balloon.back.kid === "up" && balloon.back.disguise && !balloon.back.over && !balloon.back.yell && !balloon.back.fur, balloon);
+g.check("keeping the balloon makes the kid yell and Squatch walk off", balloon.kept.yell && balloon.kept.fur && balloon.kept.over && balloon.kept.walked && balloon.kept.window >= 8, balloon.kept);
 
 const play = await page.evaluate(() => {
   const ss = window.__ss;
@@ -342,7 +406,7 @@ const play = await page.evaluate(() => {
   };
 });
 g.check("Chapter 1 reaches the tally card", play.end === "tally", { end: play.end, acts: play.acts, scene: play.state.scene });
-const wantActs = ["PUT ON · tourist disguise", "TAKE · robot flyer", "GRAB · snack", "TALK · guest", "LISTEN · snack line", "SNAG · plant", "GRAB · yellow copy", "SIGN · paw", "POST · mailbox", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "PUT ON · jacket", "BOARD · scanner"];
+const wantActs = ["PUT ON · tourist disguise", "TAKE · robot flyer", "JUMP · balloon", "GIVE · balloon", "GRAB · snack", "TALK · guest", "LISTEN · snack line", "SNAG · plant", "GRAB · yellow copy", "SIGN · paw", "POST · mailbox", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "PUT ON · jacket", "BOARD · scanner"];
 g.check("the player does the new actions in order", JSON.stringify(play.acts) === JSON.stringify(wantActs), play.acts);
 const must = [
   "Stormtop Cloud Resort, floating above Jupiter.",

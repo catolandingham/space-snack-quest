@@ -23,3 +23,5 @@ The office cutscene, after Mops and Squatch have left. Each line is pending Bria
 | PA | FUR! Security! | NEEDS BRIAN |
 | Mops, at home after | A flyer. And fur on the floor. | NEEDS BRIAN |
 | Banner | ROBOTICS DELEGATION! | existing |
+| Balloon kid, if Squatch keeps it | Scary Wookiee! | NEEDS BRIAN |
+| Balloon grab window | BALLOON_GRAB_SECONDS is 8 | NEEDS BRIAN |

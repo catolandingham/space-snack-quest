@@ -263,6 +263,7 @@
         BALL_NOTICE_RADIUS,
         BALL_NOTICE_SECONDS,
         COOL_HAT_SECONDS,
+        BALLOON_GRAB_SECONDS,
         CH1_BIN,
         CH1_ROBOT,
         CH1_MAIL,
