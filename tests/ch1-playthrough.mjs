@@ -44,44 +44,41 @@ g.check("the home floor vent is gone", home.floor[2] < home.floor[0] + 30 && hom
 
 const ball = await page.evaluate(() => {
   const ss = window.__ss;
-  const far = ss.ballHides(ss.BALL_MISS_FAR + 10, true);
-  const midLook = ss.ballHides(ss.BALL_LOOK_RANGE + 20, true);
-  const closeLook = ss.ballHides(ss.BALL_LOOK_RANGE - 10, true);
-  const touch = ss.ballHides(ss.BALL_SPOT_NEAR - 4, false);
+  const reach = Math.min(ss.BALL_LOOK_RANGE, ss.BALL_MISS_FAR);
+  const mid = { x: 480, y: 550 };
+  const close = { x: 480, y: 424 };
   ss.op.scene = "Q4";
   ss.op.room = "hangar";
   ss.op.ch1D = true;
   ss.op.ch1Night = true;
   ss.op.ctrl = true;
-  ss.op.sqPose = "ball";
-  ss.op.sq.x = 140;
-  ss.op.sq.y = 540;
+  ss.op.ch1Alert = true;
   ss.op.q = [];
   ss.op.cur = null;
-  ss.tick(0.05);
-  const safe = !(ss.op.cur && ss.op.cur.id === "jail");
-  ss.op.sqPose = "stand";
-  ss.op.sq.x = ss.CH1_VENT ? 480 : 480;
-  ss.op.sq.x = 480;
-  ss.op.sq.y = 430;
-  ss.tick(0.05);
-  const caught = ss.op.cur && ss.op.cur.id === "jail";
+  ss.drawFrame();
+  const cv = document.querySelector("canvas[width='960']") || document.querySelector("canvas");
+  const cx = cv.getContext("2d", { willReadFrequently: true });
+  const cone = Array.from(cx.getImageData(480, 500, 1, 1).data);
+  const side = Array.from(cx.getImageData(80, 500, 1, 1).data);
   return {
-    far,
-    midLook,
-    closeLook,
-    touch,
-    safe,
-    caught,
-    near: ss.BALL_SPOT_NEAR,
-    look: ss.BALL_LOOK_RANGE,
-    miss: ss.BALL_MISS_FAR,
+    far: ss.ballHides(ss.BALL_MISS_FAR + 10, true),
+    pastLook: ss.ballHides(reach + 5, true),
+    inLook: ss.ballHides(reach - 5, true),
+    touch: ss.ballHides(ss.BALL_SPOT_NEAR - 4, false),
+    midStand: ss.ch1CaughtAt(mid.x, mid.y, "stand"),
+    midBall: ss.ch1CaughtAt(mid.x, mid.y, "ball"),
+    midPlant: ss.ch1CaughtAt(mid.x, mid.y, "hidden"),
+    closeStand: ss.ch1CaughtAt(close.x, close.y, "stand"),
+    closeBall: ss.ch1CaughtAt(close.x, close.y, "ball"),
+    closePlant: ss.ch1CaughtAt(close.x, close.y, "hidden"),
+    cone,
+    side,
   };
 });
-g.check("a ball hides from a far looker and from a looker past the look range", ball.far && ball.midLook, ball);
-g.check("a ball is spotted up close, or when a looker is inside the look range", !ball.closeLook && !ball.touch, ball);
-g.check("the night robot misses a balled Squatch on the safe path", ball.safe, ball);
-g.check("standing in front of that robot still gets caught", ball.caught, ball);
+g.check("near, look, and miss each change whether a ball hides", ball.far && ball.pastLook && !ball.inLook && !ball.touch, ball);
+g.check("at the same mid spot the ball hides and standing does not", ball.midStand && !ball.midBall && !ball.midPlant, ball);
+g.check("up close the ball is caught like standing, and the plant is not", ball.closeBall && ball.closeStand && !ball.closePlant, ball);
+g.check("the night robot draws a vision cone", ball.cone[0] + ball.cone[1] > ball.side[0] + ball.side[1] + 15, { cone: ball.cone, side: ball.side });
 
 const play = await page.evaluate(() => {
   const ss = window.__ss;
@@ -118,6 +115,10 @@ const play = await page.evaluate(() => {
       continue;
     }
     if (n.ctrl && !n.cur && n.q.length === 0 && (n.scene || "")[0] === "Q") {
+      if (n.scene === "Q5") {
+        const rolls = ss.spotsNow().filter((s) => s && s.verb === "ROLL");
+        if (rolls.length !== 1 || !(rolls[0].r > 0) || rolls[0].x < 100) return { end: "vent-roll", rolls, acts, texts: texts(), state: ss.ch1State(), shown: [], tally: [] };
+      }
       const spots = ss.spotsNow().filter((s) => s && s.verb && s.r > 0);
       const spot = spots[0];
       if (!spot) {
@@ -192,9 +193,9 @@ const order = must.map((line) => {
   return [line, i];
 });
 g.check("the story lines show in cartoon order", order.every(([, i]) => i >= 0), order.filter(([, i]) => i < 0).map(([line]) => line));
-g.check("Squatch rolled into the ball, then wore the costume", play.state.didBall === true && play.state.costume === true, play.state);
+g.check("Squatch rolled into the ball, hid as eyes on pickup day, then wore the costume", play.state.didBall === true && play.state.peeked === true && play.state.costume === true, play.state);
 const walks = walkChanges(play.state.trail);
-g.check("room changes walk off and walk in (" + walks + ")", walks >= 4, { walks, sample: play.state.trail.slice(0, 6) });
+g.check("every room change walks off and walks in", walks === 20, { walks, sample: play.state.trail.slice(0, 8) });
 g.check("the costume, vent board, and Moon Pie buttons are drawn", play.shown.includes("JANITOR") && play.shown.includes("IDEAS FOR GUARDIANS") && play.shown.includes("Return empty crate") && play.shown.includes("PULL DOWN"), play.shown);
 g.check("a clean chapter still earns the never-caught bonus", play.tally.some((line) => line.includes("Never caught")), play.tally);
 g.check("no page errors", errors.length === 0, errors);

@@ -15,6 +15,7 @@
       vent: { cause: "The vent alarm saw Squatch on the deck. Security caught him.", joke: () => kh() },
       s6: { cause: "A tourist saw Squatch in the hall. Security caught him.", joke: () => kh() },
       hallbot: { cause: "A bot saw Squatch in the hall. Security caught him.", joke: () => kh() },
+      delivery: { cause: "A robot saw Squatch in the delivery room. Security caught him.", joke: () => kh() },
       hallvent: { cause: "The vent alarm saw Squatch in the hall. Security caught him.", joke: () => kh() },
       lure9: { cause: "The bot saw Squatch in the box. Security caught him.", joke: () => kh() },
       lure11: { cause: "The bot saw Squatch behind the plant. Security caught him.", joke: () => kh() },

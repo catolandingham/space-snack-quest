@@ -78,7 +78,7 @@ Words the game already had, and the one you already approved, are not in this li
 | 53 | At the bin, night | GRAB · yellow copy |
 | 54 | After he has the copy | SIGN · paw |
 | 55 | At the robot mailbox | POST · mailbox |
-| 56 | By the vent, and any time in those night scenes | ROLL · ball |
+| 56 | Night mailbox, anywhere; and only beside the vent on escape night | ROLL · ball |
 | 57 | When Mops comes out | GRAB · pink slip |
 | 58 | On the Moon Pie page | RETURN · empty crate |
 | 59 | At the open wardrobe | TRIM · beard |
@@ -86,9 +86,16 @@ Words the game already had, and the one you already approved, are not in this li
 
 The old "STAFF MAIL — collected before departure." sign is not in the game. The mailbox talks instead. Say if you still want the sign.
 
+| 28.1 | Night, the delivery room, the LOCKUP card | A robot saw Squatch in the delivery room. Security caught him. | A bot saw Squatch by the mailbox. Security caught him. |
+| 28.2 | Chapter 2 opening, Mops, when the ship puts them off | They put us off here. This is the gas stop. | The ship stopped. Here is the gas stop. |
+
+The old line "Gas stop. Fuel light's blinking." is gone. The ship stopped because the base called. It did not run out of fuel.
+
 ## Ball hiding: pick a row
 
-Rolling into a ball works any time on the two night scenes. It hides worse than a plant or a box. Escape night, under the vent, it always works because that beat is the story.
+Standing in front of the night robot uses the same sight the hall robots already use: a cone 210 pixels long, half-angle 0.42, and a 70-pixel circle at his feet. Those numbers are not the ball numbers. A plant hides completely. A ball hides more often than standing in the same spot, and less often than the plant.
+
+On the night mailbox he can roll into a ball anywhere. On escape night the only ball button is beside the vent, and that one always works because it is the story. The ball hides worse than a plant and better than standing still.
 
 A looker spots him if they are nearer than "always spotted", or if they are looking at him and nearer than "looking spots". Farther than "miss" they miss him. The game uses row A until you pick.
 
@@ -121,8 +128,15 @@ A looker spots him if they are nearer than "always spotted", or if they are look
 
 5. The manager's name: Puddlewick, Bimble, or Clipwell? The game calls him the station official and does not pick a name.
 
-6. The party (hat, sunglasses, "Cool hat!", the run home) is not built. The cartoon does not have those pictures yet. The old notice sneak is not what a new game plays.
+6. The party (hat, sunglasses, "Cool hat!", the run home) is not built. The cartoon does not have those pictures yet. The old notice sneak is not what a new game plays. A debug link such as `?scene=S9` still opens those old scenes, and they are drawn in the new home room.
 
 7. The code on the pink slip is for the manager's office, not the escape. There is no office puzzle in this build. Say if the next picture is the office.
 
-8. After Squatch grabs the pink slip, the game does not yet show it riding inside the Guardian Box all the way to Mars. That ride is still an open question.
+8. After Squatch grabs the pink slip, the game does not yet show it riding inside the Guardian Box all the way to Mars.
+
+9. What does Squatch jump out of on pickup day?
+   - A. He stays eyes-only in the plant while a robot opens a crate. This is in the game.
+   - B. He jumps out of the Moon Pie crate.
+   - C. He jumps out of a mail bag.
+
+10. The snack stand still does not bring up the pancake brochure (the rest of that beat), and Squatch does not yet take all the snacks or leave food for the Guardians. The Moon Pie line and "Quick, hide." are in.

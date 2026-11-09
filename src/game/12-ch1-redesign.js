@@ -24,10 +24,30 @@
     function ch1QChip() {
       return CH1Q_CHIPS[n.scene] || "";
     }
+    // Standing sight is the hall robot's existing cone and feet circle. These are not the ball distances.
+    const STAND_CONE_LEN = 210,
+      STAND_CONE_HALF = 0.42,
+      STAND_FEET = 70,
+      STAND_FACE = Math.PI / 2;
     function ballHides(dist, looking) {
+      // Farther than BALL_MISS_FAR he is missed even if the robot is looking. That is what makes option C
+      // (miss 220) different from a look range of 220, and what makes A and B's miss distances real.
+      if (dist > BALL_MISS_FAR) return !0;
       if (dist < BALL_SPOT_NEAR) return !1;
-      if (looking && dist < BALL_LOOK_RANGE) return !1;
+      if (looking && dist < Math.min(BALL_LOOK_RANGE, BALL_MISS_FAR)) return !1;
       return !0;
+    }
+    function ch1InCone(px, py) {
+      let ox = CH1_ROBOT.x,
+        oy = CH1_ROBOT.y - 28;
+      return Math.hypot(px - CH1_ROBOT.x, py - CH1_ROBOT.y) < STAND_FEET || vt(px, py - 20, ox, oy, STAND_FACE, STAND_CONE_HALF, STAND_CONE_LEN);
+    }
+    // Plant (hidden) is never seen. A ball is seen less often than standing in the same spot, and more often than a plant.
+    function ch1CaughtAt(px, py, pose) {
+      if (pose === "hidden") return !1;
+      let looking = ch1InCone(px, py);
+      if (pose === "ball") return !ballHides(Math.hypot(px - CH1_ROBOT.x, py - CH1_ROBOT.y), looking);
+      return looking;
     }
     function ch1Trail() {
       let t = n.ch1Trail;
@@ -62,11 +82,119 @@
             spec.who !== "mo" && ((n.sq.x = spec.entry[0]), (n.sq.y = spec.entry[1]), (n.sq.moving = !1)),
             spec.who !== "sq" && ((n.mo.x = spec.entry[0] + 56), (n.mo.y = spec.entry[1]), (n.mo.moving = !1), (n.moPose = "stand")),
             n.room === "hall" && (B.camX = 0),
+            spec.who === "sq" ? (n.moPose = "hidden") : (n.moPose = "stand"),
             n.ch1Walks.push({ phase: "in", room: n.room, x: Math.round(n.sq.x), y: Math.round(n.sq.y) }));
         }),
         cV((dt) => ch1Move(dt, spec.stand[0], spec.stand[1], 260, spec.who)),
         N(next),
       ]);
+    }
+    function ch1Hop(spec, next) {
+      ch1Walk(spec, next);
+    }
+    // Home is below the hall. The delivery room is to the right of the hall, so you leave it to the left.
+    function ch1Go(dest, flags, next) {
+      let f = flags || {},
+        who = f.who || "both",
+        from = n.ch1Duct ? "duct" : n.ch1D ? "delivery" : n.room === "hall" ? "hall" : "closet",
+        homeHall = () => ({
+          who,
+          exit: [840, 510],
+          off: [1060, 510],
+          to: "hall",
+          entry: [480, 590],
+          stand: [480, 470],
+          scene: f.scene,
+          delivery: !1,
+          duct: !1,
+          night: !1,
+          ship: !1,
+          crew: "",
+          mail: "",
+        }),
+        hallDel = () => ({
+          who,
+          exit: [880, 500],
+          off: [1120, 500],
+          to: "hangar",
+          entry: [70, 520],
+          stand: [240, 520],
+          scene: f.scene,
+          delivery: !0,
+          duct: !1,
+          night: !!f.night,
+          ship: !!f.ship,
+          crew: f.crew || "",
+          mail: f.mail || "",
+        }),
+        delHall = () => ({
+          who,
+          exit: [70, 520],
+          off: [-80, 520],
+          to: "hall",
+          entry: [900, 500],
+          stand: [520, 500],
+          scene: f.scene,
+          delivery: !1,
+          duct: !1,
+          night: !1,
+          ship: !1,
+          crew: "",
+          mail: "",
+        }),
+        hallHome = () => ({
+          who,
+          exit: [480, 590],
+          off: [480, 740],
+          to: "closet",
+          entry: [820, 500],
+          stand: [430, 510],
+          scene: f.scene,
+          delivery: !1,
+          duct: !1,
+          night: !1,
+          ship: !1,
+          crew: "",
+          mail: "",
+        }),
+        delDuct = () => ({
+          who,
+          exit: [860, 470],
+          off: [1060, 470],
+          to: "duct",
+          entry: [130, 440],
+          stand: [240, 440],
+          scene: f.scene,
+          delivery: !1,
+          duct: !0,
+          night: !0,
+          ship: !1,
+          crew: "",
+          mail: "",
+        }),
+        ductDel = () => ({
+          who,
+          exit: [150, 440],
+          off: [20, 440],
+          to: "hangar",
+          entry: [840, 490],
+          stand: [700, 500],
+          scene: f.scene,
+          delivery: !0,
+          duct: !1,
+          night: f.night !== !1,
+          ship: !!f.ship,
+          crew: f.crew || "",
+          mail: f.mail || "",
+        });
+      if (from === "closet" && dest === "delivery") return ch1Hop(homeHall(), () => ch1Hop(hallDel(), next));
+      if (from === "delivery" && dest === "closet") return ch1Hop(delHall(), () => ch1Hop(hallHome(), next));
+      if (from === "delivery" && dest === "hall") return ch1Hop(delHall(), next);
+      if (from === "hall" && dest === "closet") return ch1Hop(hallHome(), next);
+      if (from === "hall" && dest === "delivery") return ch1Hop(hallDel(), next);
+      if (from === "closet" && dest === "hall") return ch1Hop(homeHall(), next);
+      if (from === "delivery" && dest === "duct") return ch1Hop(delDuct(), next);
+      if (from === "duct" && dest === "delivery") return ch1Hop(ductDel(), next);
     }
     function ch1RedesignStart() {
       ((n.scene = "O1"),
@@ -109,25 +237,7 @@
           v("pa", "Universal Postal Service ship arriving!", "pa"),
           v("sq", "Please let me follow you, I'll be really sneaky."),
           v("mops", "Okay, just this time, but hide carefully."),
-          N(() =>
-            ch1Walk(
-              {
-                who: "both",
-                exit: [840, 520],
-                off: [1040, 520],
-                to: "hangar",
-                entry: [70, 530],
-                stand: [260, 530],
-                scene: "Q2",
-                delivery: !0,
-                night: !1,
-                ship: !0,
-                crew: "day",
-                mail: "empty",
-              },
-              ch1AtDelivery,
-            ),
-          ),
+          N(() => ch1Go("delivery", { ship: !0, crew: "day", mail: "empty", scene: "Q2", night: !1 }, ch1AtDelivery)),
         ]));
     }
     function ch1AtDelivery() {
@@ -158,26 +268,7 @@
           v("mops", "Ptoo!"),
           v("mops", "We got to watch out for these robots."),
           N(() => {
-            ((n.sqPose = "stand"),
-              (n.ch1Prop = ""),
-              ch1Walk(
-                {
-                  who: "both",
-                  exit: [860, 520],
-                  off: [1040, 520],
-                  to: "hall",
-                  entry: [120, 560],
-                  stand: [420, 520],
-                  scene: "Q3",
-                  delivery: !1,
-                  duct: !1,
-                  night: !1,
-                  ship: !1,
-                  crew: "",
-                  mail: "",
-                },
-                ch1Snack,
-              ));
+            ((n.sqPose = "stand"), (n.ch1Prop = ""), ch1Go("hall", { scene: "Q3" }, ch1Snack));
           }),
         ]));
     }
@@ -195,25 +286,7 @@
           }),
           v("mops", "Didn't you hear what the manager said? They need me here, they're not going to replace me. Plus the Guardians are here."),
           v("mops", "I need to get back to work, we'll talk about it tonight."),
-          N(() =>
-            ch1Walk(
-              {
-                who: "both",
-                exit: [480, 590],
-                off: [480, 700],
-                to: "closet",
-                entry: [820, 500],
-                stand: [420, 520],
-                scene: "Q3",
-                delivery: !1,
-                night: !1,
-                ship: !1,
-                crew: "",
-                mail: "",
-              },
-              ch1Bedtime,
-            ),
-          ),
+          N(() => ch1Go("closet", { scene: "Q3" }, ch1Bedtime)),
         ]));
     }
     function ch1Bedtime() {
@@ -229,23 +302,7 @@
           N(() => {
             ((n.sqPose = "stand"),
               (n.wardrobe = "closed"),
-              ch1Walk(
-                {
-                  who: "sq",
-                  exit: [840, 520],
-                  off: [1040, 520],
-                  to: "hangar",
-                  entry: [80, 540],
-                  stand: [140, 540],
-                  scene: "Q4",
-                  delivery: !0,
-                  night: !0,
-                  ship: !1,
-                  crew: "",
-                  mail: "empty",
-                },
-                ch1NightPlay,
-              ));
+              ch1Go("delivery", { who: "sq", night: !0, ship: !1, crew: "", mail: "empty", scene: "Q4" }, ch1NightPlay));
           }),
         ]));
     }
@@ -272,7 +329,21 @@
         (n.act = null),
         J([
           v("ups", "Mail scanned. Signature pawature accepted."),
-          { k: "card", id: "time", text: "Six days later" },
+          N(() => ch1Go("closet", { who: "sq", scene: "Q3" }, ch1Week)),
+        ]));
+    }
+    function ch1Week() {
+      J([
+        { k: "card", id: "time", text: "Six days later" },
+        N(() => ch1Go("delivery", { night: !0, ship: !1, crew: "tease", mail: "empty", scene: "Q5" }, ch1Tease)),
+      ]);
+    }
+    function ch1Tease() {
+      ((n.moPose = "stand"),
+        (n.mo.x = 620),
+        (n.mo.y = 500),
+        (n.ch1Crew = "tease"),
+        J([
           v("ups", "We could wipe the floor with that beard."),
           v("ups", "HQ sent us a message. You're going to be replaced this week anyway."),
           v("mops", "The new robots come on the ship tomorrow. Let's go find the pancake stand."),
@@ -281,15 +352,10 @@
           N(() => {
             ((n.scene = "Q5"),
               (n.ctrl = !0),
-              (n.room = "hangar"),
-              (n.ch1D = !0),
-              (n.ch1Night = !0),
-              (n.ch1Ship = !1),
+              (n.ch1Crew = ""),
               (n.sqPose = "stand"),
-              (n.sq.x = CH1_VENT.x - 40),
-              (n.sq.y = CH1_VENT.y),
-              (n.mo.x = 700),
-              (n.mo.y = 500));
+              (n.sq.x = CH1_VENT.x - 30),
+              (n.sq.y = CH1_VENT.y));
           }),
         ]));
     }
@@ -301,25 +367,7 @@
         J([
           uV(0.4),
           N(() => {
-            ((n.sqPose = "hidden"),
-              ch1Walk(
-                {
-                  who: "both",
-                  exit: [860, 460],
-                  off: [1040, 460],
-                  to: "duct",
-                  entry: [140, 440],
-                  stand: [220, 440],
-                  scene: "Q6",
-                  delivery: !1,
-                  duct: !0,
-                  night: !0,
-                  ship: !1,
-                  crew: "",
-                  mail: "",
-                },
-                ch1Workstation,
-              ));
+            ((n.sqPose = "hidden"), ch1Go("duct", { scene: "Q6", night: !0 }, ch1Workstation));
           }),
         ]));
     }
@@ -330,42 +378,34 @@
         (n.sq.y = 440),
         (n.mo.x = 520),
         (n.mo.y = 440),
+        (n.ch1Prop = "desk"),
         J([
           v("sq", "I hope Mops doesn't notice...", "whisper"),
           { k: "panel", id: "ch1slip" },
-          v("mops", "Hurry, hurry, pink slip, got it!"),
-          v("sq", "Get it before he sees it.", "whisper"),
           N(() => {
-            ((n.sqPose = "stand"), (n.ctrl = !0), (n.scene = "Q6"), (n.sq.x = 260), (n.sq.y = 440));
+            n.ch1Prop = "teeth";
           }),
+          v("mops", "Hurry, hurry, pink slip, got it!"),
+          N(() => ch1Go("delivery", { night: !0, ship: !1, crew: "", mail: "empty", scene: "Q6" }, ch1PinkReady)),
         ]));
+    }
+    function ch1PinkReady() {
+      ((n.ch1Prop = "teeth"),
+        (n.sqPose = "stand"),
+        (n.ctrl = !0),
+        (n.scene = "Q6"),
+        (n.sq.x = 640),
+        (n.sq.y = 500),
+        (n.mo.x = 720),
+        (n.mo.y = 500),
+        (n.moPose = "stand"),
+        J([v("sq", "Get it before he sees it.", "whisper"), N(() => ((n.ctrl = !0), (n.scene = "Q6")))]));
     }
     function ch1GrabPink() {
       ((n.ctrl = !1),
         (n.act = null),
-        (n.ch1Prop = "pink"),
-        J([
-          N(() =>
-            ch1Walk(
-              {
-                who: "both",
-                exit: [160, 440],
-                off: [40, 440],
-                to: "closet",
-                entry: [800, 500],
-                stand: [460, 520],
-                scene: "Q7",
-                delivery: !1,
-                duct: !1,
-                night: !1,
-                ship: !1,
-                crew: "",
-                mail: "",
-              },
-              ch1Site,
-            ),
-          ),
-        ]));
+        (n.ch1Prop = "paw"),
+        J([N(() => ch1Go("closet", { scene: "Q7", night: !1, ship: !1 }, ch1Site))]));
     }
     function ch1Site() {
       ((n.scene = "Q7"),
@@ -381,51 +421,18 @@
       ((n.ctrl = !1),
         (n.act = null),
         (n.ch1Mail = "full"),
-        J([
-          N(() =>
-            ch1Walk(
-              {
-                who: "both",
-                exit: [840, 520],
-                off: [1040, 520],
-                to: "hangar",
-                entry: [80, 530],
-                stand: [300, 530],
-                scene: "Q2",
-                delivery: !0,
-                night: !1,
-                ship: !0,
-                crew: "pickup",
-                mail: "full",
-              },
-              ch1Pickup,
-            ),
-          ),
-        ]));
+        J([N(() => ch1Go("delivery", { night: !1, ship: !0, crew: "pickup", mail: "full", scene: "Q2" }, ch1Pickup))]));
     }
     function ch1Pickup() {
       ((n.ch1Prop = "open"),
+        (n.ch1Peeked = !0),
+        (n.sqPose = "hidden"),
+        (n.sq.x = CH1_PLANT.x),
+        (n.sq.y = CH1_PLANT.y),
         J([
           uV(0.8),
           N(() => {
-            ((n.ch1Prop = ""),
-              ch1Walk(
-                {
-                  who: "both",
-                  exit: [80, 530],
-                  off: [-40, 530],
-                  to: "closet",
-                  entry: [820, 500],
-                  stand: [430, 510],
-                  scene: "Q8",
-                  delivery: !1,
-                  night: !1,
-                  ship: !1,
-                  crew: "",
-                  mail: "",
-                },
-                ch1Costume,
-              ));
+            ((n.ch1Prop = ""), (n.sqPose = "stand"), ch1Go("closet", { scene: "Q8", night: !1, ship: !1 }, ch1Costume));
           }),
         ]));
     }
@@ -446,25 +453,7 @@
         (n.act = null),
         J([
           v("mops", "More bleat. Less roar."),
-          N(() =>
-            ch1Walk(
-              {
-                who: "both",
-                exit: [840, 510],
-                off: [1040, 510],
-                to: "hangar",
-                entry: [80, 500],
-                stand: [420, 500],
-                scene: "Q9",
-                delivery: !0,
-                night: !1,
-                ship: !0,
-                crew: "day",
-                mail: "full",
-              },
-              ch1AtScanner,
-            ),
-          ),
+          N(() => ch1Go("delivery", { night: !1, ship: !0, crew: "day", mail: "full", scene: "Q9" }, ch1AtScanner)),
         ]));
     }
     function ch1AtScanner() {
@@ -506,20 +495,47 @@
           !n.ch1Mailed &&
           out.push(spot({ id: "mail", verb: "POST", cap: "mailbox", who: "sq", x: CH1_MAIL.x, y: CH1_MAIL.y, r: 90, hot: !0, f: ch1PostMail })),
         s === "Q5" &&
-          out.push(spot({ id: "ventball", verb: "ROLL", cap: "ball", who: "sq", x: CH1_VENT.x, y: CH1_VENT.y, r: 120, hot: !0, f: ch1BallThere })),
+          out.push(
+            spot({
+              id: "ventball",
+              verb: "ROLL",
+              cap: "ball",
+              who: "sq",
+              x: CH1_VENT.x,
+              y: CH1_VENT.y,
+              r: 120,
+              at: [CH1_VENT.x, CH1_VENT.y - 70],
+              hot: !0,
+              f: ch1BallThere,
+            }),
+          ),
         s === "Q6" &&
-          out.push(spot({ id: "pink", verb: "GRAB", cap: "pink slip", who: "sq", x: n.sq.x, y: n.sq.y, r: 220, hot: !0, f: ch1GrabPink })),
+          out.push(
+            spot({
+              id: "pink",
+              verb: "GRAB",
+              cap: "pink slip",
+              who: "sq",
+              x: 680,
+              y: 500,
+              r: 150,
+              at: [700, 430],
+              hot: !0,
+              f: ch1GrabPink,
+            }),
+          ),
         s === "Q7" &&
           out.push(spot({ id: "crate", verb: "RETURN", cap: "empty crate", who: "sq", x: 460, y: 520, r: 180, hot: !0, f: ch1ReturnCrate })),
         s === "Q8" && out.push(spot({ id: "beard", verb: "TRIM", cap: "beard", who: "sq", x: 460, y: 510, r: 200, hot: !0, f: ch1Trim })),
         s === "Q9" && out.push(spot({ id: "scan", verb: "BOARD", cap: "scanner", who: "sq", x: 480, y: 500, r: 160, hot: !0, f: ch1Board })),
-        (s === "Q4" || s === "Q5") &&
+        s === "Q4" &&
           out.push(
             spot({
               id: "ball",
               verb: "ROLL",
               cap: "ball",
               who: "sq",
+              at: [n.sq.x, n.sq.y - 70],
               hot: !0,
               f: () => {
                 n.sqPose = "ball";
@@ -529,14 +545,10 @@
       return out;
     }
     function ch1Watch() {
-      if (!n.ctrl || n.scene !== "Q4" || n.sqPose === "hidden" || x.mops) return;
-      let d = Math.hypot(n.sq.x - CH1_ROBOT.x, n.sq.y - CH1_ROBOT.y),
-        looking = Math.abs(n.sq.x - CH1_ROBOT.x) < 36;
-      if (n.sqPose === "ball") {
-        ballHides(d, looking) || capture("hallbot");
-        return;
-      }
-      d < BALL_LOOK_RANGE && looking && capture("hallbot");
+      if (!n.ctrl || n.scene !== "Q4" || x.mops) return;
+      let seen = ch1CaughtAt(n.sq.x, n.sq.y, n.sqPose);
+      n.ch1Alert = !!seen;
+      seen && capture("delivery");
     }
     function ch1QTick() {
       (n.scene || "")[0] === "Q" && (n.ctrl && (n.act = pick(ch1QSpots())), ch1Watch());
@@ -558,6 +570,23 @@
         (n.sq.y = 540),
         (n.ctrl = !0));
     }
+    function drawGameBin(px, py) {
+      (e.beginPath(),
+        e.moveTo(px - 16, py - 36),
+        e.lineTo(px + 16, py - 36),
+        e.lineTo(px + 12, py),
+        e.lineTo(px - 12, py),
+        e.closePath(),
+        r("#8a93a3", 3),
+        X(px, py - 36, 20, 5),
+        r("#6b7280", 2));
+    }
+    function drawPinkSlip(px, py) {
+      (m(px, py, 18, 14, 2), r("#ff8fb8", 2), C([px + 3, py + 4, px + 15, py + 4], "#9aa3b2", 1));
+    }
+    function drawMailRobot(px, py) {
+      (dq(px, py, !0), g("UPS", px, py - 8, 10, "#ffffff", "center", 900));
+    }
     function drawCh1Delivery() {
       let night = !!n.ch1Night;
       ((e.fillStyle = night ? "#8d909c" : "#f3efe6"),
@@ -566,63 +595,75 @@
         r(night ? "#d5d3cc" : "#f7f4ee", 7));
       let wall = night ? "#c8c6be" : "#f4f1ea",
         floor = night ? "#b7b3a8" : "#ebe4d6";
-      ((e.fillStyle = wall), e.fillRect(36, 26, 888, 250), (e.fillStyle = floor), e.fillRect(36, 276, 888, 338), C([36, 276, 924, 276], "#c8c2b6", 4));
-      (m(70, 36, 620, 150, 16), r("#1b2450", 5));
-      for (let i = 0; i < 28; i++) F(90 + ((i * 97) % 580), 52 + ((i * 53) % 120), 1.4, "#ffffff");
+      ((e.fillStyle = wall),
+        e.fillRect(40, 28, 880, 248),
+        (e.fillStyle = floor),
+        e.fillRect(40, 276, 880, 330),
+        C([40, 276, 900, 276], "#c8c2b6", 4));
+      (m(80, 40, 620, 150, 16), r("#1b2450", 5));
+      for (let i = 0; i < 28; i++) F(100 + ((i * 97) % 580), 56 + ((i * 53) % 120), 1.4, "#ffffff");
       n.ch1Ship &&
-        (m(150, 58, 460, 100, 40),
+        (m(160, 62, 460, 100, 40),
         r("#d5dbe6", 4),
-        g("UPS", 380, 78, 16, y, "center", 900),
-        [220, 310, 400, 490].forEach((px) => (L(px, 118, 16), r("#8fd0f2", 3))));
-      (m(48, 70, 36, 48, 4),
+        g("UPS", 390, 82, 16, y, "center", 900),
+        [230, 320, 410, 500].forEach((px) => (L(px, 122, 16), r("#8fd0f2", 3))),
+        e.beginPath(),
+        e.moveTo(400, 168),
+        e.lineTo(560, 168),
+        e.lineTo(620, 300),
+        e.lineTo(340, 300),
+        e.closePath(),
+        r("#b7c0cc", 4),
+        dq(480, 250, !1),
+        C([400, 250, 400, 340], "#9aa7b8", 6),
+        C([560, 250, 560, 340], "#9aa7b8", 6),
+        m(370, 236, 220, 24, 6),
+        r("#c5ced8", 4),
+        C([400, 258, 560, 258], "#8fd0f2", 3),
+        C([400, 272, 560, 272], "#8fd0f2", 2),
+        dq(480, 330, !1));
+      (m(52, 78, 36, 48, 4),
         r("#e5533d", 3),
-        g("FUR", 66, 84, 9, "#ffffff", "center", 900),
-        g("PULL DOWN", 66, 100, 6, "#ffffff", "center", 900),
-        m(860, 48, 52, 36, 6),
+        g("FUR", 70, 92, 9, "#ffffff", "center", 900),
+        g("PULL DOWN", 70, 108, 6, "#ffffff", "center", 900),
+        m(820, 70, 52, 36, 6),
         r("#c4b49a", 3),
-        L(886, 66, 10),
+        L(846, 88, 10),
         r("#6b6256", 2));
-      for (let i = 0; i < 5; i++) C([900, 150 + i * 14, 948, 150 + i * 14], "#8a93a3", 4);
-      n.ch1Prop === "delicious" &&
-        (m(700, 250, 28, 18, 2), r("#ffcf33", 2), m(760, 180, 22, 16, 2), r("#ff8fb8", 2), C([730, 250, 860, 170], "#9aa3b2", 2));
-      n.ch1Prop === "gumble" && (m(668, 430, 22, 16, 2), r("#ffcf33", 2));
-      n.ch1Prop === "bin" && (m(230, 470, 18, 14, 2), r("#ffcf33", 2));
-      Xp(CH1_PLANT.x, CH1_PLANT.y);
-      n.sqPose === "hidden" && ga(CH1_PLANT.x, CH1_PLANT.y - 46);
-      (m(248, 500, 36, 44, 4), r("#8a93a3", 3));
+      for (let i = 0; i < 5; i++) C([848, 130 + i * 12, 888, 130 + i * 12], "#8a93a3", 4);
+      n.ch1Prop === "delicious" && (drawPinkSlip(760, 160), C([730, 250, 860, 170], "#9aa3b2", 2));
+      n.ch1Prop === "gumble" && drawPinkSlip(n.mo.x - 8, n.mo.y - 78);
+      n.ch1Prop === "bin" && drawPinkSlip(250, 470);
+      n.ch1Prop === "teeth" && drawPinkSlip(n.mo.x - 6, n.mo.y - 72);
+      n.ch1Prop === "paw" && drawPinkSlip(n.sq.x + 8, n.sq.y - 48);
+      (Xp(CH1_PLANT.x, CH1_PLANT.y), n.sqPose === "hidden" && ga(CH1_PLANT.x, CH1_PLANT.y - 46), drawGameBin(250, 520));
       for (let i = 0; i < 3; i++) {
         let ang = n.T * 2 + i;
-        C([120 + Math.cos(ang) * 10, 560 + Math.sin(ang) * 6, 120, 560], "rgba(120,170,220,.7)", 2);
+        C([130 + Math.cos(ang) * 16, 560, 130, 560], "rgba(120,170,220,.8)", 2);
       }
-      n.ch1Ship && (m(400, 300, 200, 36, 8), r("#9aa7b8", 4), C([420, 318, 580, 318], "#8fd0f2", 3));
-      (m(700, 360, 220, 200, 4),
-        r(null, 5),
-        C([700, 360, 700, 470], y, 5),
-        C([700, 470, 760, 470], y, 5),
-        m(790, 500, 70, 48, 6),
-        r("#2b3a67", 3),
-        g("UPS", 825, 524, 12, "#ffffff", "center", 900));
+      (m(150, 548, 36, 14, 3), r("#8a93a3", 3));
+      (C([700, 340, 700, 520], y, 5), C([700, 520, 760, 520], y, 5), drawMailRobot(830, 540));
       n.ch1Mail === "full" &&
-        (Xn(730, 400, 70, 48, ""),
-        Xn(820, 390, 60, 42, ""),
-        m(760, 470, 50, 36, 4),
-        r("#c4b49a", 3),
-        n.ch1Prop === "open" && (m(730, 360, 70, 16, 3), r("#d9a35b", 3), Qt(760, 430, "#3478f6", 1.6, -1)));
+        (Xn(720, 400, 70, 48, ""),
+        Xn(800, 420, 56, 40, ""),
+        n.ch1Prop === "open" && (m(720, 372, 70, 14, 3), r("#d9a35b", 3), dq(755, 430, !1)));
       (n.ch1Crew === "day" || n.ch1Crew === "pickup") &&
         [
-          ["DOT", 250, 560],
-          ["BOB", 330, 545],
-          ["LOU", 410, 560],
-        ].forEach(([name, px, py]) => {
-          (Qt(px, py, "#8a93a3", 2.35, -0.4), m(px - 28, py - 78, 56, 16, 3), r("#ffffff", 2), g(name, px, py - 70, 11, y));
-        });
-      (!night && Qt(560, 430, "#c9b6f2", 2.9, 0.2),
-        n.moPose !== "hidden" && Fe(n.mo.x, n.mo.y, he * 1.15, { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 }),
+          ["Dot", 250, 580],
+          ["Bob", 330, 565],
+          ["Lou", 410, 580],
+        ].forEach((w) => u5({ x: w[1], y: w[2], name: w[0] }));
+      !night && n.ch1Ship && Qt(560, 500, "#c9b6f2", 2.6, 0.2);
+      n.ch1Crew === "tease" && [360, 480, 600].forEach((px) => dq(px, 460, !1));
+      night &&
+        (seenCone(CH1_ROBOT.x, CH1_ROBOT.y - 28, STAND_FACE, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.38)"),
+        dq(CH1_ROBOT.x, CH1_ROBOT.y, !1),
+        n.ch1Alert && g("!", CH1_ROBOT.x, CH1_ROBOT.y - 78, 28, "#e5533d", "center", 900));
+      (n.moPose !== "hidden" && Fe(n.mo.x, n.mo.y, he * 1.15, { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 }),
         n.sqPose === "ball" && drawL2Ball(n.sq.x, n.sq.y - 16),
         n.sqPose !== "hidden" &&
           n.sqPose !== "ball" &&
-          Re(n.sq.x, n.sq.y, he, { f: n.sq.f || 1, walk: n.sq.moving ? n.sq.walk : 0, janitor: !!n.costumeOn, goatBeard: !!n.costumeOn }),
-        night && Qt(CH1_ROBOT.x, CH1_ROBOT.y, "#e8eef8", 1.8, 0));
+          Re(n.sq.x, n.sq.y, he, { f: n.sq.f || 1, walk: n.sq.moving ? n.sq.walk : 0, janitor: !!n.costumeOn, goatBeard: !!n.costumeOn }));
     }
     function drawCh1Duct() {
       ((e.fillStyle = "#2a3142"),
@@ -642,7 +683,7 @@
       (n.sqPose === "hidden" && ga(140, 300),
         m(400, 340, 160, 18, 3),
         r("#8a7560", 3),
-        m(430, 300, 28, 36, 2),
-        r("#ff8fb8", 2),
+        (n.ch1Prop === "desk" || n.ch1Prop === "teeth") && drawPinkSlip(430, 300),
+        n.ch1Prop === "teeth" && drawPinkSlip(n.mo.x - 6, n.mo.y - 70),
         n.moPose !== "hidden" && Fe(n.mo.x, n.mo.y, he, { f: n.mo.f || -1, walk: 0, mop: !1 }));
     }

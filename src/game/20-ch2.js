@@ -1049,7 +1049,7 @@
         (n.moPose = "stand"),
         J([
           { k: "card", id: "ch2", text: "Chapter 2 \xB7 Gas Stop" },
-          v("mops", "Gas stop. Fuel light's blinking."),
+          v("mops", "They put us off here. This is the gas stop."),
           v("mops", "Locals still fear Sasquatches. Troopers are the greater danger. Neither is safe."),
           v("sq", "Not the scrubbers? ...Ooh, chili."),
           v("mops", "Hide by the pump first. Stay out of sight."),

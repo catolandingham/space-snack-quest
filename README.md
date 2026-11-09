@@ -6,7 +6,7 @@ Starting a new game now plays the redesigned Chapter 1: lunch with Mops, the wal
 
 Every new line is listed for Brian in `docs/CH1-LINES-FOR-BRIAN.md`. Nothing here merges without his written yes in the pull request. `tests/ch1-playthrough.mjs` plays this chapter to the tally card.
 
-The older Chapter 1 scenes are still in the program so a debug link such as `?scene=S9` can open them. They are not what a new game plays.
+The older Chapter 1 scenes are still in the program so a debug link such as `?scene=S9` can open them. They are not what a new game plays. Those old scenes are drawn in the new home room. The ball Squatch rolls into, including in the Chapter 2 kitchen, is the L2 ball. Chapter 2 now opens with "They put us off here. This is the gas stop." instead of a fuel light.
 
 ## Source and build
 

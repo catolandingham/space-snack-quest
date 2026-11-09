@@ -574,7 +574,7 @@
         n.scene === "S1" && ringNear("sched"),
         m(408, 300, 104, 12, 3),
         r("#cdbb98", 3),
-        n.scene === "S1" || n.found.has("stash"))
+        !0)
       )
         if (!n.found.has("stash")) (m(448, 276, 30, 22, 4), r("#3478f6", 2.5), m(445, 271, 36, 8, 3), r("#2b5fc4", 2));
         else {
@@ -609,7 +609,7 @@
       } else r("#59657d", 0);
       (pointer("door", 860, 300, 40, 160, 8),
         homeDoorCut(),
-        Ef(748, 210, 1),
+        Ef(808, 268, 1),
         n.pulse.has("sign") &&
           (e.save(), (e.shadowColor = "#ffcf33"), (e.shadowBlur = 30), Ef(748, 210, 1.08), e.restore()));
       if (
@@ -634,22 +634,22 @@
     // Home wardrobe (R29–R34). Far left, back wall, base on the floor line. Calendar faces us only while the door is shut.
     function drawWardrobe() {
       let open = n.wardrobe === "open",
-        x = 78,
-        y0 = 168,
-        w = 118,
-        h = 192;
+        x = 66,
+        y0 = 156,
+        w = 150,
+        h = 204;
       (m(x, y0, w, h, 6), r("#d7c4a3", 4), C([x + 8, y0 + 22, x + w - 8, y0 + 22], "#a89070", 3));
       if (!open) {
         (C([x + w / 2, y0 + 8, x + w / 2, y0 + h - 8], y, 3),
           F(x + w / 2 - 10, y0 + h * 0.55, 3.5, "#c9a24a"),
           F(x + w / 2 + 10, y0 + h * 0.55, 3.5, "#c9a24a"),
-          m(x + w / 2 + 6, y0 + 28, 46, 58, 3),
+          m(x + w / 2 + 8, y0 + 18, 60, 108, 3),
           r("#fffaf0", 2),
-          F(x + w / 2 + 29, y0 + 36, 3.5, "#e5533d"),
-          g("DELIVERY", x + w / 2 + 29, y0 + 48, 7, y, "center", 900),
+          F(x + w / 2 + 38, y0 + 30, 4, "#e5533d"),
+          g("DELIVERY", x + w / 2 + 38, y0 + 48, 11, y, "center", 900),
           e.save(),
-          e.translate(x + w / 2 + 29, y0 + 70),
-          rq(0, 0, 0.34),
+          e.translate(x + w / 2 + 38, y0 + 78),
+          rq(0, 0, 0.52),
           e.restore());
         return;
       }
@@ -669,12 +669,13 @@
     }
     // The way out is a cut in the right wall (R36). The poster hangs on the wall beside it (R35). No floor vent (R37).
     function homeDoorCut() {
+      // A floor-level opening in the right wall: the gap starts on the back wall and the floor runs through it.
       ((e.fillStyle = "#dfe4ea"),
-        e.fillRect(893, 248, 22, 114),
+        e.fillRect(892, 250, 24, 110),
         (e.fillStyle = "#ebe6da"),
-        e.fillRect(888, 360, 36, 78),
-        C([893, 248, 914, 248], y, 7),
-        C([893, 432, 914, 432], y, 7));
+        e.fillRect(886, 360, 42, 130),
+        C([892, 250, 916, 250], y, 7),
+        C([892, 488, 916, 488], y, 7));
     }
     function Qt(l, o, i, s, q) {
       (e.save(),
@@ -1860,9 +1861,9 @@
           (e.save(),
           (e.shadowColor = "#ffcf33"),
           (e.shadowBlur = 30),
-          Ef(748, 210, 1.08),
+          Ef(808, 268, 1.08),
           e.restore(),
-          Ef(748, 210, 1)),
+          Ef(808, 268, 1)),
         n.botOn && n.coneIn)
       ) {
         let s = Math.sin(n.T * 1.6) * 60,

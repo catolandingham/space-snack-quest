@@ -25,7 +25,7 @@ g.check("no code takes stars away", !/stars\s*-\s*100|n\.stars = Math\.max\(0, n
 g.check("only capture() makes the LOCKUP card", (all.match(/id: "jail"/g) || []).length === 1 && /function capture\(by\)[\s\S]*?id: "jail"/.test(all));
 const ROWS = {
   lobbyvent: "25.10", lobbykid: "25.11", lobbyexec: "25.12", lobbyclerk: "25.13",
-  deck: "19.1", vent: "19.2", hallvent: "19.18", s6: "19.3", hallbot: "19.4", lure9: "19.5", lure11: "19.6",
+  deck: "19.1", vent: "19.2", hallvent: "19.18", s6: "19.3", hallbot: "19.4", delivery: "28.1", lure9: "19.5", lure11: "19.6",
   pump: "8.1", diner: "8.2", blorp: "8.3", sink: "8.4", rust: "8.5", lure: "19.7", bots3: "19.8",
   rover1: "19.9", "rover-s": "19.10", lure3: "19.11", rover4: "19.12", light4: "19.13", gate4: "19.14",
 };
@@ -38,6 +38,7 @@ const SITES = [
   ["11-ch1-hall.js", /shoo\(Fs, kh\(\)\)/, "Chapter 1 S9 shoo (Mops)"],
   ["11-ch1-hall.js", /shoo\(Js, kh\(\)\)/, "Chapter 1 S11 shoo (Mops)"],
   ["40-ch4.js", /capture\(FV\.why === "vent" \? "hallvent" : "hallbot"\)/, "Chapter 1 hall alarm"],
+  ["12-ch1-redesign.js", /capture\("delivery"\)/, "Chapter 1 night delivery robot"],
   ["20-ch2.js", /d < 48 && capture\(/, "Chapter 2 security (pump, diner, Blorp, sink, Rusty)"],
   ["20-ch2.js", /capture\("lure"\)/, "Chapter 2 lure"],
   ["20-ch2.js", /capture\("bots3"\)/, "Chapter 2 kitchen search"],
@@ -68,7 +69,7 @@ const SCENES = {
   3: { kind: "ch3", room: "pad", phase: "p1", mops: false, extra: {} },
   4: { kind: "ch4", room: "port", phase: "m1", mops: false, extra: {}, found: [] },
 };
-const CHAPTER = { lobbyvent: "1l", lobbykid: "1l", lobbyexec: "1l", lobbyclerk: "1l", deck: 1, vent: 1, s6: "1h", hallbot: "1h", hallvent: "1h", lure9: "1h", lure11: "1h", rover1: 3, "rover-s": 3, lure3: 3, rover4: 3, light4: 4, gate4: 4 };
+const CHAPTER = { lobbyvent: "1l", lobbykid: "1l", lobbyexec: "1l", lobbyclerk: "1l", deck: 1, vent: 1, s6: "1h", hallbot: "1h", hallvent: "1h", delivery: "1h", lure9: "1h", lure11: "1h", rover1: 3, "rover-s": 3, lure3: 3, rover4: 3, light4: 4, gate4: 4 };
 async function runCapture(key) {
   await page.evaluate(setState, SCENES[CHAPTER[key] || 2]);
   return page.evaluate((key) => {
