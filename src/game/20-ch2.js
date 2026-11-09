@@ -209,6 +209,7 @@
       );
     }
     function noteSection() {
+      ch1StampBalloon();
       if (p.state !== "op") return;
       let scene = n.scene || "",
         phase = ch2.phase || "",
@@ -237,6 +238,8 @@
           cook: ch2.cook || "",
           pulse: [...n.pulse],
           bots: n.room === "hall" ? B.bots.map((b) => ({ ...b })) : null,
+          balloonRest: n.ch1BalloonRest || "",
+          balloonPopped: !!n.ch1BalloonPopped,
         }));
     }
     function restoreCheck(c) {
@@ -261,6 +264,7 @@
         n.pulse.clear());
       for (let id of c.pulse || []) n.pulse.add(id);
       c.bots && (B.bots = c.bots.map((b) => ({ ...b })));
+      c.balloonRest != null && ((n.ch1BalloonRest = c.balloonRest || ""), (n.ch1BalloonPopped = !!c.balloonPopped));
       ch2.noted = c.id;
       return !0;
     }

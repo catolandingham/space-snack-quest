@@ -273,6 +273,19 @@
           e.quadraticCurveTo(-7, P + q.head * 1.15, 0, P + q.head * 1.35),
           e.quadraticCurveTo(7, P + q.head * 1.15, 2, P + q.head * 0.55),
           r("#f7f4ee", 1.2)),
+        s.hawaiian &&
+          (m(-q.bodyW * 0.95, -T - R * 0.35, q.bodyW * 1.9, R * 0.85, 5),
+          r("#ff8a3d", 1.4),
+          F(-6, -T - R * 0.1, 2, "#2bc48a"),
+          F(5, -T + 2, 2, "#3478f6")),
+        s.leap && (St(-5, 0, -10, 22, 5.5, "#6b3a1c", 2), St(5, 0, 12, 24, 5.5, "#6b3a1c", 2)),
+        s.hat &&
+          (e.save(),
+          s.hatAskew && (e.translate(0, P), e.rotate(0.5), e.translate(0, -P)),
+          m(-q.head * 0.7, P - q.head * 0.85, q.head * 1.4, q.head * 0.35, 3),
+          r("#2b3a67", 1.2),
+          e.restore()),
+        s.shades && (m(-q.head * 0.55, P + q.head * 0.02, q.head * 1.1, q.head * 0.22, 2), r("#1e2430", 1)),
         e.restore());
     }
     // L2 ball (C3): a brown ball, scalloped head, ears, two dark eyes with white highlights. No face, arms, or legs.
@@ -998,6 +1011,7 @@
       if (l === "scanner") return n.room === "hangar" && n.ch1Ship ? { x: 480, y: 210 } : { x: Ha.x, y: 170 };
       if (l === "ups" && n.ch1Crew === "tease") return { x: 480, y: 380 };
       if (l === "ups" && n.room === "hangar" && n.ch1D) return { x: 830, y: 460 };
+      if (l === "kid" && n.ch1Party) return { x: CH1_KID.x, y: CH1_KID.y - 90 };
       if (l === "tourist" && n.room === "hangar" && n.scene === "Q2") return { x: 700, y: 446 };
       if (l === "tourist" && n.room === "hall" && n.scene === "Q3") return { x: 640, y: 436 };
       if (l === "tourist" && n.room === "hall") {
@@ -1544,6 +1558,28 @@
         (X(l, o, i * 0.8, i), e.stroke());
     }
     function gq(l, o) {
+      if (l === "ch1photo") {
+        ((e.fillStyle = "rgba(20,24,32,.55)"),
+          e.fillRect(0, 0, c, b),
+          m(330, 150, 300, 340, 8),
+          r("#fffdf8", 6),
+          m(354, 174, 252, 220, 4),
+          r("#d7ecf5", 2),
+          Qt(420, 360, "#1f9d8a", 1.2, 1),
+          Qt(500, 366, "#ff8a3d", 1.2, -1),
+          n.ch1InShot && Re(460, 390, 1.1, { f: 1, hat: !0, shades: !0, hawaiian: !0 }));
+        return;
+      }
+      if (l === "ch1fur") {
+        ((e.fillStyle = "rgba(20,24,32,.72)"),
+          e.fillRect(0, 0, c, b),
+          m(280, 160, 400, 280, 16),
+          r("#e5533d", 8),
+          g("FUR", 480, 250, 64, "#ffffff", "center", 900),
+          g("PULL DOWN", 480, 320, 28, "#ffffff", "center", 900),
+          F(480, 380, 10, "#8b5a3c"));
+        return;
+      }
       if (l === "ch1site") {
         ((e.fillStyle = "rgba(20,24,32,.62)"),
           e.fillRect(0, 0, c, b),

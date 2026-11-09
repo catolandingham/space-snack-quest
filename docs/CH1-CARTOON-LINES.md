@@ -9,3 +9,23 @@ The office cutscene, after Mops and Squatch have left. Each line is pending Bria
 5. Isfred: "I never ordered a replacement! Get me the security tapes." NEEDS BRIAN
 
 | R54 | Office cutscene dialogue (Brian t255/t256, shortened) — five lines above; Isfred no longer jumps straight to the tapes. |
+
+## Party (R49, R52)
+
+| Who | Words | Status |
+|---|---|---|
+| Isfred, alone on stage | Welcome, Bleep-Bloop Robotics delegation! | NEEDS BRIAN |
+| Card | Everybody has somebody. | NEEDS BRIAN |
+| Squatch | Robots? | NEEDS BRIAN |
+| Squatch | One snack. That's the rule. | NEEDS BRIAN |
+| Guest | Love the shirt. | NEEDS BRIAN |
+| Guest | Cool hat! | NEEDS BRIAN |
+| PA | FUR! Security! | NEEDS BRIAN |
+| Mops, at home after | A flyer. And fur on the floor. | NEEDS BRIAN |
+| Banner | ROBOTICS DELEGATION! | existing |
+| Balloon kid, if Squatch keeps it | Scary Wookiee! | NEEDS BRIAN |
+| Balloon rise | about 6 seconds, with a wobble and a glow. R59, approved | approved |
+| Octopus tourist | *hic* Fellow tourist! | NEEDS BRIAN |
+| Photo bonus | 25 points, not shown on screen | approved 2026-11-09 |
+| Snack look-away | 4 seconds | approved 2026-11-09 |
+| Balloon, last hall visit | POP! | NEEDS BRIAN |

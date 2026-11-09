@@ -186,6 +186,7 @@ const bubbles = await page.evaluate(() => {
     ups: { scene: "Q2", room: "hangar", ch1D: true, ch1Ship: true, crew: "", crew2: "tease", night2: true },
     scanner: { scene: "Q9", room: "hangar", ch1D: true, ch1Ship: true, ch1Night: false, ch1Office: false },
     robot: { scene: "Q9", room: "hall", ch1D: false, ch1Office: true },
+    kid: { scene: "QA", room: "hall", party: true },
   };
   const cv = document.querySelector("canvas[width='960']") || document.querySelector("canvas");
   const k = cv.width / 960;
@@ -206,6 +207,7 @@ const bubbles = await page.evaluate(() => {
     n.ch1Night = !!extra.ch1Night;
     n.ch1Office = !!extra.ch1Office;
     n.ch1Crew = extra.crew || "";
+    n.ch1Party = !!extra.party;
     n.sqPose = extra.pose || "stand";
     n.moPose = "stand";
     n.sq.x = (extra.sq || [400, 520])[0];
@@ -226,7 +228,7 @@ const bubbles = await page.evaluate(() => {
     return { who, at, marks, top: at.y < 80 && Math.abs(at.x - 480) < 40 };
   };
   const out = [];
-  for (const who of ["mops", "sq", "official", "tourist", "ups", "scanner", "robot"]) out.push(placed(who, setups[who]));
+  for (const who of ["mops", "sq", "official", "tourist", "ups", "scanner", "robot", "kid"]) out.push(placed(who, setups[who]));
   out.push(placed("tourist", { scene: "Q3", room: "hall", ch1D: false }));
   out.push(placed("ups", { scene: "Q4", room: "hangar", ch1D: true, ch1Night: true, crew: "" }));
   out.push(placed("ups", { scene: "Q5", room: "hangar", ch1D: true, ch1Night: true, crew: "tease" }));
@@ -239,6 +241,188 @@ g.check(
   missingSpeaker.length === 0 && bubbles.every((b) => !b.top && b.marks > 0),
   { missingSpeaker, bubbles },
 );
+
+const hat = await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  n.scene = "QA";
+  n.ctrl = true;
+  n.ch1Party = true;
+  n.ch1Disguise = true;
+  n.ch1Flyer = true;
+  n.ch1PartyOver = false;
+  n.ch1PartyT = ss.COOL_HAT_SECONDS - 0.2;
+  n.q = [];
+  n.cur = null;
+  ss.tick(0.3);
+  const said = n.log.filter((e) => e.k === "bub").map((e) => e.text);
+  return { seconds: ss.COOL_HAT_SECONDS, said, over: n.ch1PartyOver, disguise: n.ch1Disguise };
+});
+g.check("Cool hat! fires at 2 minutes of party play and not sooner", hat.seconds === 120 && hat.over && !hat.disguise && hat.said.includes("Cool hat!"), hat);
+
+const balloon = await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  const said = () => n.log.filter((e) => e.k === "bub").map((e) => e.text);
+  const arm = () => {
+    n.scene = "QA";
+    n.room = "hall";
+    n.ch1D = false;
+    n.ch1Party = true;
+    n.ch1Disguise = true;
+    n.ch1Flyer = true;
+    n.ch1PartyOver = false;
+    n.ch1PartyT = 0;
+    n.ch1Balloon = "up";
+    n.ch1BalloonT = 0;
+    n.ch1BalloonY = 460;
+    n.ch1Kid = "gasp";
+    n.ch1Fur = false;
+    n.ctrl = true;
+    n.q = [];
+    n.cur = null;
+    n.log = [];
+    n.sq.x = 180;
+    n.sq.y = 500;
+    n.sqPose = "stand";
+    ss.hall.camX = 0;
+  };
+  const drain = () => {
+    for (let i = 0; i < 40; i++) {
+      if (n.cur && (n.cur.k === "bub" || n.cur.k === "card" || n.cur.k === "panel")) ss.opTap();
+      ss.tick(0.2);
+    }
+  };
+  const spot = (verb) => ss.spotsNow().find((s) => s && s.verb === verb);
+  arm();
+  const missedJump = !spot("JUMP");
+  const gasped = n.ch1Kid;
+  ss.drawFrame();
+  ss.tick(ss.BALLOON_GRAB_SECONDS + 0.2);
+  const ceiling = { balloon: n.ch1Balloon, kid: n.ch1Kid, gasped, disguise: n.ch1Disguise, over: n.ch1PartyOver, yell: said().includes("Scary Wookiee!"), jumpWasThere: !missedJump };
+  arm();
+  spot("JUMP").f();
+  const jumped = { held: n.ch1Balloon === "held", legs: n.ch1JumpT > 0, kid: n.ch1Kid };
+  spot("GIVE").f();
+  drain();
+  const back = { balloon: n.ch1Balloon, kid: n.ch1Kid, disguise: n.ch1Disguise, over: n.ch1PartyOver, yell: said().includes("Scary Wookiee!"), fur: said().includes("FUR! Security!") };
+  arm();
+  spot("JUMP").f();
+  const walksBefore = (n.ch1Walks || []).length;
+  spot("KEEP").f();
+  drain();
+  const kept = {
+    yell: said().includes("Scary Wookiee!"),
+    fur: said().includes("FUR! Security!"),
+    over: n.ch1PartyOver,
+    walked: (n.ch1Walks || []).length > walksBefore,
+    window: ss.BALLOON_GRAB_SECONDS,
+  };
+  return { ceiling, jumped, back, kept };
+});
+g.check("a balloon that reaches the ceiling only makes the kid sad", balloon.ceiling.gasped === "gasp" && balloon.ceiling.balloon === "ceiling" && balloon.ceiling.kid === "sad" && balloon.ceiling.disguise && !balloon.ceiling.over && !balloon.ceiling.yell && balloon.ceiling.jumpWasThere, balloon.ceiling);
+g.check("bringing the balloon back keeps the disguise and the kid stays quiet", balloon.jumped.held && balloon.jumped.legs && balloon.jumped.kid === "wide" && balloon.back.balloon === "back" && balloon.back.kid === "up" && balloon.back.disguise && !balloon.back.over && !balloon.back.yell && !balloon.back.fur, balloon);
+g.check("keeping the balloon makes the kid yell and Squatch walk off", balloon.kept.yell && balloon.kept.fur && balloon.kept.over && balloon.kept.walked && balloon.kept.window === 6, balloon.kept);
+
+const extras = await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  const said = () => n.log.filter((e) => e.k === "bub").map((e) => e.text);
+  const arm = () => {
+    n.scene = "QA";
+    n.room = "hall";
+    n.ch1D = false;
+    n.ch1Party = true;
+    n.ch1Disguise = true;
+    n.ch1Flyer = true;
+    n.ch1PartyOver = false;
+    n.ch1PartyT = 0;
+    n.ch1HatAskew = false;
+    n.ch1Hugs = 0;
+    n.ch1Snacks = 0;
+    n.ch1Look = 0;
+    n.ch1Photo = false;
+    n.ch1InShot = false;
+    n.ch1Spill = 0;
+    n.ch1PartyDid = {};
+    n.ch1Balloon = "back";
+    n.ctrl = true;
+    n.q = [];
+    n.cur = null;
+    n.log = [];
+    n.stars = 0;
+    n.sqPose = "stand";
+    n.sq.x = 400;
+    n.sq.y = 520;
+    ss.hall.camX = 0;
+  };
+  const drain = () => {
+    for (let i = 0; i < 20; i++) {
+      if (n.cur && (n.cur.k === "bub" || n.cur.k === "card" || n.cur.k === "panel")) ss.opTap();
+      ss.tick(0.05);
+    }
+  };
+  arm();
+  ss.spotsNow().find((s) => s.verb === "HUG").f();
+  drain();
+  const once = { askew: !!n.ch1HatAskew, disguise: n.ch1Disguise, line: said().includes("*hic* Fellow tourist!"), over: n.ch1PartyOver };
+  ss.spotsNow().find((s) => s.verb === "HUG").f();
+  drain();
+  const twice = { disguise: n.ch1Disguise, over: n.ch1PartyOver, fur: said().includes("FUR! Security!") };
+  const show = () => {
+    ss.tick(0.05);
+    return n.cur && n.cur.id;
+  };
+  const walk = (x, y) => {
+    ss.tapAt(x, y);
+    let at = { x: n.sq.x, y: n.sq.y };
+    for (let i = 0; i < 60; i++) {
+      ss.tick(0.1);
+      at = { x: n.sq.x, y: n.sq.y };
+      if (Math.hypot(at.x - x, at.y - y) < 14) break;
+    }
+    ss.tick(0.1);
+    return { at, offer: ss.offerNow() && ss.offerNow().verb };
+  };
+  const frame = ss.CH1_FRAME;
+  const cam = ss.CH1_CAM;
+  const shot = { x: (frame.x0 + frame.x1) / 2, y: (frame.y0 + frame.y1) / 2 };
+  arm();
+  const starsIn = n.stars;
+  const into = walk(shot.x, shot.y);
+  ss.actionDown();
+  const inside = { shot: n.ch1InShot, stars: n.stars - starsIn, bonus: ss.PHOTO_BONUS, panel: show(), into };
+  arm();
+  const starsOut = n.stars;
+  const away = walk(cam.x, cam.y);
+  ss.actionDown();
+  const outside = { shot: n.ch1InShot, stars: n.stars - starsOut, panel: show(), away };
+  arm();
+  let lookAtSpill = 0;
+  for (let i = 0; i < 3; i++) {
+    ss.spotsNow().find((s) => s.verb === "GRAB").f();
+    if (i === 2) lookAtSpill = n.ch1Look;
+    drain();
+  }
+  const spilled = { snacks: n.ch1Snacks, look: lookAtSpill, seconds: ss.SNACK_LOOK_SECONDS };
+  const hide = ss.spotsNow().find((s) => s.verb === "HIDE");
+  hide && hide.f();
+  const hiding = { pose: n.sqPose, disguise: n.ch1Disguise };
+  ss.tick(ss.SNACK_LOOK_SECONDS + 0.1);
+  return { once, twice, inside, outside, spilled, hiding, turnedBack: n.ch1Look === 0 };
+});
+g.check("the first octopus hug tugs the hat and the second starts the alarm", extras.once.askew && extras.once.disguise && extras.once.line && !extras.once.over && !extras.twice.disguise && extras.twice.over && extras.twice.fur, extras);
+g.check(
+  "walking into the shot and pressing SNAP pays the placeholder bonus",
+  extras.inside.into.offer === "SNAP" && extras.inside.shot && extras.inside.stars === extras.inside.bonus && extras.inside.panel === "ch1photo",
+  extras.inside,
+);
+g.check(
+  "Squatch outside the frame gets no photo bonus",
+  extras.outside.away.offer === "SNAP" && !extras.outside.shot && extras.outside.stars === 0 && extras.outside.panel === "ch1photo",
+  extras.outside,
+);
+g.check("the third snack spills the table and the plant hide lasts the look window", extras.spilled.snacks === 3 && extras.spilled.look === extras.spilled.seconds && extras.hiding.pose === "hidden" && extras.hiding.disguise && extras.turnedBack, extras);
 
 const play = await page.evaluate(() => {
   const ss = window.__ss;
@@ -324,7 +508,7 @@ const play = await page.evaluate(() => {
   };
 });
 g.check("Chapter 1 reaches the tally card", play.end === "tally", { end: play.end, acts: play.acts, scene: play.state.scene });
-const wantActs = ["GRAB · yellow copy", "SIGN · paw", "POST · mailbox", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "PUT ON · jacket", "BOARD · scanner"];
+const wantActs = ["PUT ON · tourist disguise", "TAKE · robot flyer", "JUMP · balloon", "GIVE · balloon", "GRAB · snack", "GRAB · snack", "GRAB · snack", "TALK · guest", "LISTEN · snack line", "SNAP · photo", "SNAG · plant", "GRAB · yellow copy", "SIGN · paw", "POST · mailbox", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "PUT ON · jacket", "BOARD · scanner"];
 g.check("the player does the new actions in order", JSON.stringify(play.acts) === JSON.stringify(wantActs), play.acts);
 const must = [
   "Stormtop Cloud Resort, floating above Jupiter.",
@@ -337,6 +521,13 @@ const must = [
   "Ptoo!",
   "Quick, hide.",
   "Didn't you hear what Isfred Bar Neshuman said? They need me here, they're not going to replace me. Plus the Guardians are here.",
+  "Welcome, Bleep-Bloop Robotics delegation!",
+  "Everybody has somebody.",
+  "Robots?",
+  "One snack. That's the rule.",
+  "Love the shirt.",
+  "FUR! Security!",
+  "A flyer. And fur on the floor.",
   "Mail scanned. Signature pawature accepted.",
   "Six days later",
   "I hope Mops doesn't notice...",
@@ -367,7 +558,7 @@ g.check(
   play.state,
 );
 const walks = walkChanges(play.state.trail);
-g.check("every room change walks off and walks in", walks === 18, { walks, sample: play.state.trail.slice(0, 8) });
+g.check("every room change walks off and walks in", walks === 20, { walks, sample: play.state.trail.slice(0, 8) });
 const doors = doorUses(play.state.walks);
 g.check(
   "the walk home uses the same hall doors as the walk over",
@@ -376,6 +567,116 @@ g.check(
 );
 g.check("the vent board, the alarm, and the Moon Pie buttons are drawn", play.shown.includes("IDEAS FOR GUARDIANS") && play.shown.includes("Return empty crate") && play.shown.includes("PULL DOWN"), play.shown);
 g.check("a clean chapter still earns the never-caught bonus", play.tally.some((line) => line.includes("Never caught")), play.tally);
+
+const laterBalloon = await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  const cv = document.querySelector("canvas[width='960']") || document.querySelector("canvas");
+  const k = cv.width / 960;
+  const cx = cv.getContext("2d", { willReadFrequently: true });
+  const redAt = (x, y) => {
+    const p = cx.getImageData(Math.round(x * k), Math.round(y * k), 1, 1).data;
+    return p[0] > 180 && p[1] < 130 && p[2] < 120;
+  };
+  const arm = (balloon) => {
+    n.scene = "QA";
+    n.room = "hall";
+    n.ch1D = false;
+    n.ch1Party = true;
+    n.ch1Office = false;
+    n.ch1Disguise = true;
+    n.ch1PartyOver = false;
+    n.ch1Balloon = balloon;
+    n.ch1BalloonRest = "";
+    n.ch1BalloonPopped = false;
+    n.ch1BalloonPop = 0;
+    n.ctrl = true;
+    n.q = [];
+    n.cur = null;
+    n.sqPose = "stand";
+    n.sq.x = 640;
+    n.sq.y = 520;
+    ss.hall.camX = 0;
+  };
+  const lock = (balloon) => {
+    arm(balloon);
+    ss.spotsNow().find((s) => s.verb === "SNAG").f();
+    const state = ss.ch1State();
+    n.q = [];
+    n.cur = null;
+    return state.balloonRest;
+  };
+  const show = (scene) => {
+    n.scene = scene;
+    n.room = "hall";
+    n.ch1D = false;
+    n.ch1Party = false;
+    n.ch1Office = false;
+    n.ctrl = false;
+    n.q = [];
+    n.cur = null;
+    ss.hall.camX = 0;
+    for (let i = 0; i < 12; i++) ss.tick(0.1);
+    ss.drawFrame();
+  };
+  const ceiling = lock("ceiling");
+  const popsBeforeHall = ss.ch1State().balloonPops;
+  show("Q7");
+  const ceilingSeen = { rest: ss.ch1State().balloonRest, onCeiling: redAt(420, 140), tied: redAt(168, 520), pops: ss.ch1State().balloonPops - popsBeforeHall };
+  n.ch1BalloonRest = "";
+  ss.CH1_CHECKPOINTS.Q4();
+  const loaded = ss.ch1State().balloonRest;
+  const tied = lock("back");
+  const popsBeforeTied = ss.ch1State().balloonPops;
+  show("Q7");
+  const tiedSeen = { onCeiling: redAt(420, 140), tied: redAt(168, 520), pops: ss.ch1State().balloonPops - popsBeforeTied, popped: ss.ch1State().balloonPopped };
+  const kept = lock("held");
+  const missed = lock("up");
+  n.ch1Office = true;
+  n.scene = "Q9";
+  n.ctrl = true;
+  n.q = [];
+  n.cur = null;
+  const before = ss.ch1State().balloonPops;
+  ss.tick(0.05);
+  ss.drawFrame();
+  const once = {
+    pops: ss.ch1State().balloonPops - before,
+    word: ss.shown().includes("POP!"),
+    ctrl: n.ctrl,
+    quiet: n.q.length === 0 && !n.cur,
+  };
+  ss.tick(2);
+  n.room = "closet";
+  ss.tick(0.2);
+  n.room = "hall";
+  n.scene = "Q9";
+  n.ch1Office = true;
+  ss.tick(0.3);
+  ss.drawFrame();
+  return { ceiling, loaded, tied, kept, missed, ceilingSeen, tiedSeen, once, again: ss.ch1State().balloonPops - before };
+});
+g.check(
+  "the balloon stays in later hall scenes and pops once on the last visit",
+  laterBalloon.ceiling === "ceiling" &&
+    laterBalloon.loaded === "ceiling" &&
+    laterBalloon.tied === "tied" &&
+    laterBalloon.kept === "tied" &&
+    laterBalloon.missed === "ceiling" &&
+    laterBalloon.ceilingSeen.rest === "ceiling" &&
+    laterBalloon.ceilingSeen.onCeiling &&
+    !laterBalloon.ceilingSeen.tied &&
+    laterBalloon.ceilingSeen.pops === 0 &&
+    laterBalloon.tiedSeen.tied &&
+    !laterBalloon.tiedSeen.onCeiling &&
+    !laterBalloon.tiedSeen.popped &&
+    laterBalloon.once.pops === 1 &&
+    laterBalloon.once.word &&
+    laterBalloon.once.ctrl &&
+    laterBalloon.once.quiet &&
+    laterBalloon.again === 1,
+  laterBalloon,
+);
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();
 await g.finish("ch1-playthrough");

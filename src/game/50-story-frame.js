@@ -1017,6 +1017,8 @@
       for (let o of B.jans) o.on && l.push({ y: o.y, d: () => u5(o) });
       if (
         (W6(l),
+        n.ch1Party && l.push({ y: 8, d: drawCh1Party }),
+        n.ch1BalloonRest && !n.ch1Party && (n.scene || "")[0] === "Q" && l.push({ y: 530, d: drawCh1BalloonLeft }),
         n.scene === "Q3" &&
           l.push({
             y: 520,
@@ -1032,6 +1034,8 @@
             },
           }),
         !n.ch1Office &&
+          !n.ch1Party &&
+          n.mo.x > -50 &&
           l.push({
           y: n.mo.y,
           d: () => {
@@ -1042,7 +1046,18 @@
         n.sqPose !== "hidden" &&
           l.push({
             y: n.sq.y,
-            d: () => Re(n.sq.x, n.sq.y, he, { walk: n.sq.moving ? n.sq.walk : 0, f: n.sq.f, carry: n.lunch === "held" }),
+            d: () =>
+              Re(n.sq.x, n.sq.y, he, {
+                walk: n.sq.moving ? n.sq.walk : 0,
+                f: n.sq.f,
+                carry: n.lunch === "held",
+                leap: (n.ch1JumpT || 0) > 0,
+                hat: !!n.ch1Disguise,
+                hatAskew: !!n.ch1HatAskew,
+                shades: !!n.ch1Disguise,
+                hawaiian: !!n.ch1Disguise,
+                paper: !!n.ch1Flyer,
+              }),
           }),
         l.sort((o, i) => o.y - i.y).forEach((o) => o.d()),
         B.slip.on && B.held

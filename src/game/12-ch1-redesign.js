@@ -19,7 +19,32 @@
       Q7: "Squatch: return the empty crate",
       Q8: "Squatch: put on the spare jacket",
       Q9: "Squatch: walk through the scanner",
+      QA: "Squatch: look around the party",
     };
+    // S15. Two minutes of party play. Do not change this.
+    const COOL_HAT_SECONDS = 120;
+    // R59. The balloon takes about 6 seconds to reach the ceiling. Approved.
+    const BALLOON_GRAB_SECONDS = 6;
+    // R60. A photo that includes Squatch. Approved by Brian 2026-11-09. Not drawn on screen.
+    const PHOTO_BONUS = 25;
+    // R60. How long the guests look at the spill. Approved by Brian 2026-11-09.
+    const SNACK_LOOK_SECONDS = 4;
+    // The corner guest aims the camera left, into the room. The shot is the floor in front of the lens.
+    // The SNAP circle covers that floor, so Squatch can walk into the picture and still take it.
+    const CH1_CAM = { x: 790, y: 230, r: 110 };
+    const CH1_FRAME = { x0: 710, x1: 770, y0: 248, y1: 300 };
+    const CH1_KID = { x: 180, y: 540 };
+    // Free-play moments. Add another object here for a new party beat.
+    const CH1_PARTY_FREE = [
+      { id: "snack", verb: "GRAB", cap: "snack", x: 760, y: 530, who: "sq", text: "One snack. That's the rule." },
+      { id: "guest", verb: "TALK", cap: "guest", x: 480, y: 540, who: "tourist", text: "Love the shirt." },
+      { id: "line", verb: "LISTEN", cap: "snack line", x: 700, y: 500, who: "tourist", text: "I swear we had more Moon Pies... is that what they stole at lunch?" },
+    ];
+    const CH1_PARTY_SNAG = [
+      { id: "plant", verb: "SNAG", cap: "plant", x: 220, y: 530, why: "plant" },
+      { id: "vent", verb: "SUCK", cap: "vent", x: 150, y: 420, why: "vent" },
+      { id: "guard", verb: "STAND", cap: "guard", x: 860, y: 540, why: "guard" },
+    ];
     function ch1QChip() {
       return CH1Q_CHIPS[n.scene] || "";
     }
@@ -249,6 +274,13 @@
         (n.ch1Trail = []),
         (n.ch1SiteRoom = ""),
         (n.ch1Office = !1),
+        (n.ch1Party = !1),
+        (n.ch1Disguise = !1),
+        (n.ch1Flyer = !1),
+        (n.ch1PartyT = 0),
+        (n.ch1PartyOver = !1),
+        (n.ch1PartyDid = {}),
+        (n.ch1Fur = !1),
         (n.tvOn = !1),
         (n.sqPose = "sit"),
         J([
@@ -341,9 +373,318 @@
           N(() => {
             ((n.sqPose = "stand"),
               (n.wardrobe = "closed"),
-              ch1Go("delivery", { who: "sq", night: !0, ship: !1, crew: "", mail: "empty", scene: "Q4", stand: [140, 540] }, ch1NightPlay));
+              ch1Go("hall", { who: "sq", scene: "QA" }, ch1PartyPeek));
           }),
         ]));
+    }
+    function ch1PartyPeek() {
+      ((n.scene = "QA"),
+        (n.ch1Party = !0),
+        (n.ch1Disguise = !1),
+        (n.ch1Flyer = !1),
+        (n.ch1PartyT = 0),
+        (n.ch1PartyOver = !1),
+        (n.ch1PartyDid = {}),
+        (n.ch1Snacks = 0),
+        (n.ch1Hugs = 0),
+        (n.ch1Look = 0),
+        (n.ch1Spill = 0),
+        (n.ch1HatAskew = !1),
+        (n.ch1Photo = !1),
+        (n.ch1InShot = !1),
+        (n.ch1Balloon = ""),
+        (n.ch1BalloonRest = ""),
+        (n.ch1BalloonPopped = !1),
+        (n.ch1BalloonPop = 0),
+        (n.ch1BalloonPops = 0),
+        (n.ch1Kid = ""),
+        (n.sqPose = "hidden"),
+        (n.sq.x = 220),
+        (n.sq.y = 530),
+        (n.moPose = "hidden"),
+        (n.mo.x = -400),
+        J([
+          v("official", "Welcome, Bleep-Bloop Robotics delegation!"),
+          { k: "card", id: "somebody", text: "Everybody has somebody." },
+          v("sq", "Robots?", "whisper"),
+          N(() => {
+            ((n.sqPose = "stand"), (n.ctrl = !0));
+          }),
+        ]));
+    }
+    function ch1PartySpots() {
+      if (n.ch1PartyOver) return [];
+      if (!n.ch1Disguise)
+        return [
+          spot({
+            id: "disguise",
+            verb: "PUT ON",
+            cap: "tourist disguise",
+            who: "sq",
+            x: 220,
+            y: 530,
+            r: 160,
+            hot: !0,
+            f: () => {
+              ((n.ch1Disguise = !0), (n.act = null));
+            },
+          }),
+        ];
+      if (!n.ch1Flyer)
+        return [
+          spot({
+            id: "flyer",
+            verb: "TAKE",
+            cap: "robot flyer",
+            who: "sq",
+            x: 480,
+            y: 430,
+            r: 140,
+            hot: !0,
+            f: () => {
+              ((n.ch1Flyer = !0),
+                (n.ch1PartyT = 0),
+                (n.ch1Balloon = "up"),
+                (n.ch1BalloonT = 0),
+                (n.ch1BalloonY = 460),
+                (n.ch1Kid = "gasp"),
+                (n.act = null));
+            },
+          }),
+        ];
+      let out = [];
+      n.ch1Balloon === "up" &&
+        n.ch1BalloonT < BALLOON_GRAB_SECONDS &&
+        out.push(
+          spot({
+            id: "jump",
+            verb: "JUMP",
+            cap: "balloon",
+            who: "sq",
+            x: CH1_KID.x,
+            y: n.ch1BalloonY,
+            r: 220,
+            hot: !0,
+            f: ch1JumpBalloon,
+          }),
+        );
+      n.ch1Balloon === "held" &&
+        (out.push(
+          spot({
+            id: "give",
+            verb: "GIVE",
+            cap: "balloon",
+            who: "sq",
+            x: CH1_KID.x,
+            y: CH1_KID.y,
+            r: 160,
+            hot: !0,
+            f: ch1GiveBalloon,
+          }),
+        ),
+        out.push(
+          spot({
+            id: "keep",
+            verb: "KEEP",
+            cap: "balloon",
+            who: "sq",
+            x: 700,
+            y: 540,
+            r: 160,
+            f: ch1KeepBalloon,
+          }),
+        ));
+      for (let m of CH1_PARTY_FREE)
+        !n.ch1PartyDid[m.id] &&
+          out.push(
+            spot({
+              id: m.id,
+              verb: m.verb,
+              cap: m.cap,
+              who: "sq",
+              x: m.x,
+              y: m.y,
+              r: 90,
+              f: () => (m.id === "snack" ? ch1SnackGrab() : ((n.ch1PartyDid[m.id] = !0), (n.ctrl = !1), (n.act = null), J([v(m.who, m.text), N(() => (n.ctrl = !0))]))),
+            }),
+          );
+      !n.ch1Photo &&
+        out.push(
+          spot({
+            id: "photo",
+            verb: "SNAP",
+            cap: "photo",
+            who: "sq",
+            x: CH1_CAM.x,
+            y: CH1_CAM.y,
+            r: CH1_CAM.r,
+            f: ch1Photo,
+          }),
+        );
+      for (let m of CH1_PARTY_SNAG)
+        out.push(
+          spot({
+            id: m.id,
+            verb: m.verb,
+            cap: m.cap,
+            who: "sq",
+            x: m.x,
+            y: m.y,
+            r: 80,
+            f: () => ch1HatOff(m.why),
+          }),
+        );
+      n.ch1Disguise &&
+        (n.ch1Hugs || 0) < 2 &&
+        out.push(
+          spot({
+            id: "hug",
+            verb: "HUG",
+            cap: "octopus",
+            who: "sq",
+            x: 820,
+            y: 540,
+            r: 80,
+            f: ch1Hug,
+          }),
+        );
+      (n.ch1Look || 0) > 0 &&
+        out.push(
+          spot({
+            id: "hide",
+            verb: "HIDE",
+            cap: "plant",
+            who: "sq",
+            x: 220,
+            y: 530,
+            r: 90,
+            f: () => {
+              ((n.sqPose = "hidden"), (n.sq.x = 220), (n.sq.y = 530));
+            },
+          }),
+        );
+      return out;
+    }
+    function ch1SnackGrab() {
+      ((n.ch1Snacks = (n.ch1Snacks || 0) + 1), (n.ctrl = !1), (n.act = null));
+      n.ch1Snacks >= 3 && ((n.ch1PartyDid.snack = !0), (n.ch1Look = SNACK_LOOK_SECONDS), (n.ch1Spill = 1), D.splash());
+      J([v("sq", "One snack. That's the rule."), N(() => (n.ctrl = !0))]);
+    }
+    function ch1Hug() {
+      ((n.ch1Hugs = (n.ch1Hugs || 0) + 1), (n.ctrl = !1), (n.act = null));
+      n.ch1Hugs === 1
+        ? ((n.ch1HatAskew = !0), J([v("tourist", "*hic* Fellow tourist!"), N(() => (n.ctrl = !0))]))
+        : J([N(() => ch1HatOff("hug"))]);
+    }
+    function ch1InFrame(x, y) {
+      return x > CH1_FRAME.x0 && x < CH1_FRAME.x1 && y > CH1_FRAME.y0 && y < CH1_FRAME.y1;
+    }
+    function ch1Photo() {
+      let inFrame = ch1InFrame(n.sq.x, n.sq.y);
+      ((n.ch1Photo = !0), (n.ch1InShot = inFrame), inFrame && (n.stars = (n.stars || 0) + PHOTO_BONUS), (n.ctrl = !1), (n.act = null));
+      J([{ k: "panel", id: "ch1photo" }, N(() => (n.ctrl = !0))]);
+    }
+    function ch1JumpBalloon() {
+      n.ch1Balloon === "up" &&
+        ((n.ch1Balloon = "held"), (n.ch1JumpT = 0.55), (n.ch1Kid = "wide"), (n.act = null));
+    }
+    function ch1GiveBalloon() {
+      ((n.ctrl = !1),
+        (n.act = null),
+        J([
+          ch1Step("sq", CH1_KID.x, CH1_KID.y, 200),
+          N(() => {
+            ((n.ch1Balloon = "back"), (n.ch1Kid = "wide"));
+          }),
+          uV(0.4),
+          N(() => {
+            n.ch1Kid = "smile";
+          }),
+          uV(0.4),
+          N(() => {
+            n.ch1Kid = "shh";
+          }),
+          uV(0.4),
+          N(() => {
+            ((n.ch1Kid = "up"), (n.ctrl = !0));
+          }),
+        ]));
+    }
+    function ch1KeepBalloon() {
+      ((n.ctrl = !1),
+        (n.act = null),
+        J([
+          ch1Step("sq", 720, 540, 200),
+          v("kid", "Scary Wookiee!"),
+          N(() => ch1HatOff("scare")),
+        ]));
+    }
+    function ch1StampBalloon() {
+      ((n.ch1Save = { balloonRest: n.ch1BalloonRest || "", balloonPopped: !!n.ch1BalloonPopped }),
+        ch2.check && ((ch2.check.balloonRest = n.ch1Save.balloonRest), (ch2.check.balloonPopped = n.ch1Save.balloonPopped)));
+    }
+    function ch1LoadBalloon() {
+      let saved = ch2.check && ch2.check.balloonRest != null ? ch2.check : n.ch1Save;
+      saved && saved.balloonRest != null && ((n.ch1BalloonRest = saved.balloonRest || ""), (n.ch1BalloonPopped = !!saved.balloonPopped));
+    }
+    // The balloon stays in the hall. Back or held means he left it behind, tied up. Anything else is a miss.
+    function ch1LockBalloon() {
+      n.ch1BalloonRest ||
+        !n.ch1Balloon ||
+        ((n.ch1BalloonRest = n.ch1Balloon === "back" || n.ch1Balloon === "held" ? "tied" : "ceiling"), ch1StampBalloon());
+    }
+    function ch1BalloonPopNow() {
+      if (n.ch1BalloonPopped || !n.ch1BalloonRest) return;
+      ((n.ch1BalloonPopped = !0), (n.ch1BalloonPops = (n.ch1BalloonPops || 0) + 1), (n.ch1BalloonPop = 0.85), D.pop(), ch1StampBalloon());
+    }
+    function ch1HatOff(why) {
+      if (n.ch1PartyOver || !n.ch1Disguise) return;
+      ch1LockBalloon();
+      ((n.ch1Disguise = !1), (n.ch1PartyOver = !0), (n.ctrl = !1), (n.act = null), (n.ch1Fur = !0));
+      let lines = [];
+      why === "cool" && lines.push(v("tourist", "Cool hat!"));
+      lines.push(
+        v("pa", "FUR! Security!", "pa"),
+        { k: "panel", id: "ch1fur" },
+        N(() => {
+          ((n.ch1Party = !1), (n.ch1Fur = !1), ch1Go("closet", { who: "sq", scene: "Q3" }, ch1PartyHome));
+        }),
+      );
+      J(lines);
+    }
+    function ch1PartyHome() {
+      ((n.moPose = "stand"),
+        (n.mo.x = 520),
+        (n.mo.y = 500),
+        (n.ch1Party = !1),
+        J([
+          v("mops", "A flyer. And fur on the floor."),
+          N(() => {
+            n.tvOn = !0;
+          }),
+          N(() => ch1Go("delivery", { who: "sq", night: !0, ship: !1, crew: "", mail: "empty", scene: "Q4", stand: [140, 540] }, ch1NightPlay)),
+        ]));
+    }
+    function ch1PartyTick(dt) {
+      if (n.scene !== "QA" || n.ch1PartyOver) return;
+      n.ch1JumpT > 0 && (n.ch1JumpT -= dt || 0);
+      (n.ch1Look || 0) > 0 && (n.ch1Look = Math.max(0, n.ch1Look - (dt || 0)));
+      (n.ch1Spill || 0) > 0 && (n.ch1Spill = Math.max(0, n.ch1Spill - (dt || 0) / 1.8));
+      n.ctrl &&
+        n.ch1Disguise &&
+        n.ch1Flyer &&
+        n.ch1Balloon === "up" &&
+        ((n.ch1BalloonT = (n.ch1BalloonT || 0) + (dt || 0)),
+        (n.ch1BalloonY = 460 - (460 - 80) * Math.min(1, n.ch1BalloonT / BALLOON_GRAB_SECONDS)),
+        n.ch1BalloonT >= BALLOON_GRAB_SECONDS && ((n.ch1Balloon = "ceiling"), (n.ch1Kid = "sad")));
+      n.ctrl &&
+        n.ch1Disguise &&
+        n.ch1Flyer &&
+        ((n.ch1PartyT = (n.ch1PartyT || 0) + (dt || 0)),         n.ch1PartyT >= COOL_HAT_SECONDS && ch1HatOff("cool"));
+    }
+    function ch1BalloonTick(dt) {
+      n.room === "hall" && n.ch1Office && ch1BalloonPopNow();
+      n.ch1BalloonPop > 0 && (n.ch1BalloonPop = Math.max(0, n.ch1BalloonPop - (dt || 0)));
     }
     function ch1NightPlay() {
       ((n.scene = "Q4"), (n.ctrl = !0), (n.sqPose = "stand"), chipNow());
@@ -552,6 +893,7 @@
         ]));
     }
     function ch1QSpots() {
+      if (n.scene === "QA") return n.ctrl && !n.ch1PartyOver ? ch1PartySpots() : [];
       if (!n.ctrl || n.sqPose === "ball" || n.sqPose === "hidden") return [];
       let s = n.scene,
         out = [];
@@ -626,7 +968,7 @@
       seen && capture("delivery");
     }
     function ch1QTick(dt) {
-      (n.scene || "")[0] === "Q" && (n.ctrl && (n.act = pick(ch1QSpots())), ch1Watch(dt));
+      (n.scene || "")[0] === "Q" && (n.ctrl && (n.act = pick(ch1QSpots())), ch1Watch(dt), ch1PartyTick(dt), ch1BalloonTick(dt));
     }
     function ch1RestartNight() {
       ((n.scene = "Q4"),
@@ -643,7 +985,8 @@
         (n.sqPose = "stand"),
         (n.sq.x = 140),
         (n.sq.y = 540),
-        (n.ctrl = !0));
+        (n.ctrl = !0),
+        ch1LoadBalloon());
     }
     function drawGameBin(px, py) {
       (e.beginPath(),
@@ -658,6 +1001,116 @@
     }
     function drawPinkSlip(px, py) {
       (m(px, py, 18, 14, 2), r("#ff8fb8", 2), C([px + 3, py + 4, px + 15, py + 4], "#9aa3b2", 1));
+    }
+    function drawCh1Party() {
+      (m(250, 36, 460, 44, 8),
+        r("#3478f6", 3),
+        g("ROBOTICS DELEGATION!", 480, 64, 18, "#ffffff", "center", 900),
+        Xp(220, 530),
+        n.sqPose === "hidden" && ga(220, 484),
+        m(130, 300, 50, 36, 3),
+        r("#8a93a3", 3));
+      for (let i = 0; i < 4; i++) C([138, 308 + i * 8, 172, 308 + i * 8], y, 2);
+      let look = (n.ch1Look || 0) > 0,
+        face = look ? 1 : 0,
+        glance = (x, y) => look && C([x + 6, y - 34, x + 26, y - 46], "#f0bf93", 3.4);
+      (m(700, 500, 120, 28, 4),
+        r("#cdbb98", 3),
+        !(n.ch1PartyDid && n.ch1PartyDid.snack) &&
+          [0, 1, 2].forEach((i) => {
+            (F(724 + i * 28, 486, 6, i === 2 ? "#fffdf8" : "#e5533d"), F(730 + i * 28, 498, 4, "#8fdcff"));
+          }),
+        Qt(340, 520, "#f2c1b0", 1.6, face || 1),
+        glance(340, 520),
+        Qt(390, 526, "#f2c1b0", 1.6, face || -1),
+        glance(390, 526),
+        Qt(560, 530, "#1f9d8a", 1.6, face || 1),
+        glance(560, 530),
+        Qt(620, 524, "#ff8a3d", 1.6, face || -1),
+        glance(620, 524),
+        Qt(470, 500, "#7ad0c8", 1.6, face || 1),
+        glance(470, 500),
+        Qt(300, 470, "#7a4ad0", 1.6, face || 1),
+        glance(300, 470),
+        drawOctopus(820, 540 - Math.abs(Math.sin(n.T * 8)) * 10, face || -1),
+        glance(820, 530),
+        Qt(790, 230, "#ff8a3d", 1.6, face || -1),
+        glance(790, 230),
+        m(768, 214, 16, 10, 1),
+        r("#1e2430", 1),
+        Qt(860, 540, "#59657d", 1.6, face || -1),
+        glance(860, 540),
+        Qt(480, 400, "#c9b6f2", 1.6, look ? 1 : 0.2),
+        glance(480, 400),
+        !n.ch1Flyer && (m(500, 360, 16, 12, 1), r("#fffdf8", 1)),
+        (n.ch1Spill || 0) > 0 &&
+          [0, 1, 2].forEach((i) => {
+            let x = 710 + (1 - n.ch1Spill) * 250 + i * 18,
+              drop = Math.max(0, x - 840);
+            (F(x, 478 + drop, 8, i === 2 ? "#fffdf8" : "#e5533d"), m(x - 5, 494 + drop * 0.65, 10, 12, 2), r("#8fdcff", 2));
+          }),
+        drawBalloonKid());
+    }
+    function drawOctopus(x, y, f) {
+      (e.save(),
+        e.translate(x, y),
+        F(0, -28, 14, "#e07b00"),
+        F(-4, -32, 2, y),
+        F(4, -32, 2, y),
+        X(0, -24, 5, 3 + Math.abs(Math.sin(n.T * 8)) * 3),
+        r("#7a3e10", 1),
+        [-18, -8, 8, 18].forEach((dx, i) => C([0, -16, dx, 8 + (i % 2) * 6], "#e07b00", 3)),
+        F(-10, 6, 2, "#cdbb98"),
+        F(8, 10, 2, "#cdbb98"),
+        F(0, 14, 2, "#cdbb98"),
+        e.restore(),
+        f && 0);
+    }
+    function drawBalloonKid() {
+      let kid = CH1_KID,
+        mood = n.ch1Kid || "",
+        wobble = Math.sin((n.ch1BalloonT || 0) * 4) * 10,
+        bx = kid.x + (n.ch1Balloon === "up" ? wobble : 0),
+        by = n.ch1BalloonY || 460;
+      (Qt(kid.x, kid.y, "#1f9d8a", 1.05, 1),
+        mood === "gasp" && (g("!", kid.x - 34, kid.y - 96, 36, "#e5533d", "center", 900), C([kid.x - 2, kid.y - 22, kid.x - 18, kid.y - 72], "#f0bf93", 4)),
+        mood === "wide" && (F(kid.x + 6, kid.y - 46, 4, "#ffffff"), F(kid.x + 6, kid.y - 46, 2, y)),
+        mood === "smile" && (C([kid.x + 2, kid.y - 40, kid.x + 8, kid.y - 36, kid.x + 12, kid.y - 40], y, 1.4), F(kid.x + 6, kid.y - 46, 2.2, y)),
+        mood === "shh" &&
+          (C([kid.x + 2, kid.y - 40, kid.x + 8, kid.y - 36, kid.x + 12, kid.y - 40], y, 1.4),
+          C([kid.x + 14, kid.y - 28, kid.x + 8, kid.y - 40], "#f0bf93", 2)),
+        mood === "up" &&
+          (C([kid.x + 2, kid.y - 40, kid.x + 8, kid.y - 36, kid.x + 12, kid.y - 40], y, 1.4),
+          C([kid.x + 16, kid.y - 20, kid.x + 16, kid.y - 36], "#f0bf93", 2.4),
+          F(kid.x + 16, kid.y - 38, 3, "#f0bf93")),
+        mood === "sad" && C([kid.x + 2, kid.y - 36, kid.x + 8, kid.y - 40, kid.x + 12, kid.y - 36], y, 1.4));
+      if (n.ch1Balloon === "up" || n.ch1Balloon === "ceiling") {
+        n.ch1Balloon === "up" && (F(bx, by, 26, "rgba(229,83,61,.22)"), F(bx, by, 16, "rgba(255,190,180,.55)"));
+        (C([kid.x, kid.y - 20, bx, by + 8], "#e5533d", 1), F(bx, by, 8, "#e5533d"));
+      }
+      if (n.ch1Balloon === "held") {
+        (C([n.sq.x, n.sq.y - 40, n.sq.x, n.sq.y - 78], "#e5533d", 1), F(n.sq.x, n.sq.y - 86, 8, "#e5533d"));
+      }
+    }
+    // R61. After the party the balloon stays in this hall. A miss is on the ceiling. A return or a keep is tied
+    // to the plant by the kid, because Squatch does not take it home. The office visit pops it once.
+    function drawCh1BalloonLeft() {
+      let rest = n.ch1BalloonRest,
+        pop = (n.ch1BalloonPop || 0) > 0;
+      if (!rest || n.ch1Party || (n.ch1BalloonPopped && !pop)) return;
+      let tied = rest === "tied",
+        x = tied ? 168 : 420,
+        y = tied ? 520 : 140;
+      if (pop) {
+        for (let i = 0; i < 8; i++) {
+          let a = (i / 8) * Math.PI * 2;
+          C([x + Math.cos(a) * 6, y + Math.sin(a) * 6, x + Math.cos(a) * 20, y + Math.sin(a) * 20], "#1e2430", 2);
+        }
+        g("POP!", x, y - 28, 22, "#e5533d", "center", 900);
+        return;
+      }
+      tied ? (Xp(130, 580), C([148, 552, x, y + 10], "#e5533d", 1.4)) : C([x, 160, x, y + 12], "#e5533d", 1.4);
+      F(x, y, 14, "#e5533d");
     }
     function drawMailRobot(px, py) {
       (dq(px, py, !0), g("UPS", px, py - 8, 10, "#ffffff", "center", 900));
