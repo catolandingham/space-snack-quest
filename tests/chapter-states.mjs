@@ -100,7 +100,10 @@ export function setState(setup) {
     }
     ss.ch2.timer = 99; ss.ch2.peekT = 99; ss.ch2.sec = null;
   } else if (setup.kind === "ch1") {
-    ss.startOpening(); ss[setup.call](); ss.drain(); clear();
+    ss.startOpening();
+    // Drop the title-screen queue before the scene starts, so drain plays that scene and not the new opening.
+    ss.op.q = []; ss.op.cur = null;
+    ss[setup.call](); ss.drain(); clear();
     const t = setup.set;
     if (t.swap !== undefined) ss.swapTo(t.swap);
     Object.assign(n, t.op || {});

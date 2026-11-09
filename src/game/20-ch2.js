@@ -521,7 +521,7 @@
       let scene = n.scene || "",
         phase = ch2.phase || "";
       clearRun();
-      if (scene.startsWith("S") || scene.startsWith("O")) {
+      if (scene.startsWith("S") || scene.startsWith("O") || scene.startsWith("Q")) {
         if (CH1_CHECKPOINTS[scene]) return (CH1_CHECKPOINTS[scene](), (n.ctrl = !0), void 0);
         (ch2.check && (ch2.check.scene === scene || ch2.check.scene.startsWith("S") || ch2.check.scene.startsWith("O")) && restoreCheck(ch2.check),
           (n.ctrl = !0));
@@ -553,12 +553,13 @@
         ? ((o.pause -= l), o.pause <= 0 && (o.f = -o.f))
         : ((o.x += o.f * 55 * l), (o.x > 600 || o.x < 330) && ((o.x = w(o.x, 330, 600)), (o.pause = 1.8)));
       let i = Jh(),
-        s = n.sq;
+        s = n.sq,
+        rustSees = vt(s.x, s.y - 40, i.ox, i.oy, i.a, 0.85, 280);
       (n.ctrl &&
         !x.mops &&
         n.sqPose !== "hidden" &&
         !ch2.sec &&
-        vt(s.x, s.y - 40, i.ox, i.oy, i.a, 0.85, 280) &&
+        ballOrStand("rust", Math.hypot(s.x - i.ox, s.y - i.oy), l, rustSees) &&
         ((ch2.sec = { x: o.f > 0 ? 980 : -40, y: 520, hide: 0, mode: "come", by: "rust" }),
         kV("rust", "SECURITY! A Squatch on the lot!"),
         kV("sq", "Troopers. I can hide.", "whisper"),
@@ -600,8 +601,9 @@
             }
           } else o.look > 0 ? (o.look -= l) : ((o.x = Math.min(o.hx, o.x + 50 * l)), (o.f = o.x < o.hx ? 1 : -1));
         if (n.ctrl && !x.mops && n.sqPose !== "hidden") {
-          for (let o of ch2.bots)
-            if (o.look <= 0 && vt(n.sq.x, n.sq.y - 40, o.x, o.y - 40, o.f > 0 ? 0 : Math.PI, 0.6, 230)) {
+          for (let o of ch2.bots) {
+            let sees = vt(n.sq.x, n.sq.y - 40, o.x, o.y - 40, o.f > 0 ? 0 : Math.PI, 0.6, 230);
+            if (o.look <= 0 && ballOrStand("pump" + o.hx, Math.hypot(n.sq.x - o.x, n.sq.y - o.y), l, sees)) {
               if (!ch2.sec) {
                 ((ch2.sec = { x: o.f > 0 ? 980 : -40, y: 520, hide: 0, mode: "come", by: "pump" }),
                   kV("bot", "SQUATCH ON THE LOT! Report him or fuel him!"),
@@ -611,6 +613,7 @@
               }
               return;
             }
+          }
         }
       }
     }
@@ -1049,7 +1052,7 @@
         (n.moPose = "stand"),
         J([
           { k: "card", id: "ch2", text: "Chapter 2 \xB7 Gas Stop" },
-          v("mops", "Gas stop. Fuel light's blinking."),
+          v("mops", "They put us off here. This is the gas stop."),
           v("mops", "Locals still fear Sasquatches. Troopers are the greater danger. Neither is safe."),
           v("sq", "Not the scrubbers? ...Ooh, chili."),
           v("mops", "Hide by the pump first. Stay out of sight."),
@@ -1703,12 +1706,7 @@
           l.push({
             y: n.sq.y,
             d: () => {
-              (L(n.sq.x, n.sq.y - 16, 26),
-                r("#6b3a1c", 3),
-                L(n.sq.x - 7, n.sq.y - 20, 3),
-                r("#1e2430", 0),
-                L(n.sq.x + 7, n.sq.y - 20, 3),
-                r("#1e2430", 0));
+              drawL2Ball(n.sq.x, n.sq.y - 16);
             },
           }),
         n.sqPose !== "hidden" &&
