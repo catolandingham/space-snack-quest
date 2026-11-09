@@ -139,7 +139,11 @@ On the night mailbox he can roll into a ball anywhere. On escape night the only 
 
 The office computer is decided (R46). The code on the pink slip opens the manager's computer in the hall. Order new box and Return empty crate are on that screen. They are never on the home TV.
 
-The walk route in this build still uses the existing hall, including a door between that hall and home, with a walk-off and a walk-in. Brian decided a different hallway (R51). It is not in this build. It runs between the party hall and the loading bay, and it has no door to home. The Employee of the Month photo wall belongs on that hallway. The manager's office opens partly off the side of it, and the office is not in the loading bay. The walk home past the robots, and Mops's line "Paperwork." (row 66, NEEDS BRIAN), happen in that hallway. Row 66 is not on screen. Those pieces wait for their own pass. This build does not add a half-finished hallway.
+The walk route in this build still uses the existing hall, including a door between that hall and home, with a walk-off and a walk-in. The approved hallway (R51, R53, R55) is the next build. It is not in this build. The photo gags are still being picked, so the room and the gallery are not drawn yet.
+
+R55. Hallway approved; the first walk to the loading bay is a cutscene; the hallway is interactive only on the walk home; the Employee of the Month wall is a swipeable gallery of funny Mops photos.
+
+Layout for that build: the party hall exit is in the left end wall. The loading bay exit is in the right end wall. The Employee of the Month photo wall is centered on the back wall. The manager's office door is on the front wall, opposite the photos, locked with a code keypad until the code puzzle opens it. There is no door to home. The walk home past the robots, and Mops's line "Paperwork." (row 66, NEEDS BRIAN), happen in that hallway. Row 66 is not on screen.
 
 R49 is the party rule above. It is not built yet.
 
