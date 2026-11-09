@@ -28,3 +28,4 @@ The office cutscene, after Mops and Squatch have left. Each line is pending Bria
 | Octopus tourist | *hic* Fellow tourist! | NEEDS BRIAN |
 | Photo bonus | PHOTO_BONUS, not shown on screen | NEEDS BRIAN |
 | Snack look-away | SNACK_LOOK_SECONDS is 4 | NEEDS BRIAN |
+| Balloon, last hall visit | POP! | NEEDS BRIAN |

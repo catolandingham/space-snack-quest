@@ -388,6 +388,10 @@
         (n.ch1Photo = !1),
         (n.ch1InShot = !1),
         (n.ch1Balloon = ""),
+        (n.ch1BalloonRest = ""),
+        (n.ch1BalloonPopped = !1),
+        (n.ch1BalloonPop = 0),
+        (n.ch1BalloonPops = 0),
         (n.ch1Kid = ""),
         (n.sqPose = "hidden"),
         (n.sq.x = 220),
@@ -607,8 +611,27 @@
           N(() => ch1HatOff("scare")),
         ]));
     }
+    function ch1StampBalloon() {
+      ((n.ch1Save = { balloonRest: n.ch1BalloonRest || "", balloonPopped: !!n.ch1BalloonPopped }),
+        ch2.check && ((ch2.check.balloonRest = n.ch1Save.balloonRest), (ch2.check.balloonPopped = n.ch1Save.balloonPopped)));
+    }
+    function ch1LoadBalloon() {
+      let saved = ch2.check && ch2.check.balloonRest != null ? ch2.check : n.ch1Save;
+      saved && saved.balloonRest != null && ((n.ch1BalloonRest = saved.balloonRest || ""), (n.ch1BalloonPopped = !!saved.balloonPopped));
+    }
+    // The balloon stays in the hall. Back or held means he left it behind, tied up. Anything else is a miss.
+    function ch1LockBalloon() {
+      n.ch1BalloonRest ||
+        !n.ch1Balloon ||
+        ((n.ch1BalloonRest = n.ch1Balloon === "back" || n.ch1Balloon === "held" ? "tied" : "ceiling"), ch1StampBalloon());
+    }
+    function ch1BalloonPopNow() {
+      if (n.ch1BalloonPopped || !n.ch1BalloonRest) return;
+      ((n.ch1BalloonPopped = !0), (n.ch1BalloonPops = (n.ch1BalloonPops || 0) + 1), (n.ch1BalloonPop = 0.85), D.pop(), ch1StampBalloon());
+    }
     function ch1HatOff(why) {
       if (n.ch1PartyOver || !n.ch1Disguise) return;
+      ch1LockBalloon();
       ((n.ch1Disguise = !1), (n.ch1PartyOver = !0), (n.ctrl = !1), (n.act = null), (n.ch1Fur = !0));
       let lines = [];
       why === "cool" && lines.push(v("tourist", "Cool hat!"));
@@ -649,7 +672,11 @@
       n.ctrl &&
         n.ch1Disguise &&
         n.ch1Flyer &&
-        ((n.ch1PartyT = (n.ch1PartyT || 0) + (dt || 0)), n.ch1PartyT >= COOL_HAT_SECONDS && ch1HatOff("cool"));
+        ((n.ch1PartyT = (n.ch1PartyT || 0) + (dt || 0)),         n.ch1PartyT >= COOL_HAT_SECONDS && ch1HatOff("cool"));
+    }
+    function ch1BalloonTick(dt) {
+      n.room === "hall" && n.ch1Office && ch1BalloonPopNow();
+      n.ch1BalloonPop > 0 && (n.ch1BalloonPop = Math.max(0, n.ch1BalloonPop - (dt || 0)));
     }
     function ch1NightPlay() {
       ((n.scene = "Q4"), (n.ctrl = !0), (n.sqPose = "stand"), chipNow());
@@ -933,7 +960,7 @@
       seen && capture("delivery");
     }
     function ch1QTick(dt) {
-      (n.scene || "")[0] === "Q" && (n.ctrl && (n.act = pick(ch1QSpots())), ch1Watch(dt), ch1PartyTick(dt));
+      (n.scene || "")[0] === "Q" && (n.ctrl && (n.act = pick(ch1QSpots())), ch1Watch(dt), ch1PartyTick(dt), ch1BalloonTick(dt));
     }
     function ch1RestartNight() {
       ((n.scene = "Q4"),
@@ -950,7 +977,8 @@
         (n.sqPose = "stand"),
         (n.sq.x = 140),
         (n.sq.y = 540),
-        (n.ctrl = !0));
+        (n.ctrl = !0),
+        ch1LoadBalloon());
     }
     function drawGameBin(px, py) {
       (e.beginPath(),
@@ -1055,6 +1083,26 @@
       if (n.ch1Balloon === "held") {
         (C([n.sq.x, n.sq.y - 40, n.sq.x, n.sq.y - 78], "#e5533d", 1), F(n.sq.x, n.sq.y - 86, 8, "#e5533d"));
       }
+    }
+    // R61. After the party the balloon stays in this hall. A miss is on the ceiling. A return or a keep is tied
+    // to the plant by the kid, because Squatch does not take it home. The office visit pops it once.
+    function drawCh1BalloonLeft() {
+      let rest = n.ch1BalloonRest,
+        pop = (n.ch1BalloonPop || 0) > 0;
+      if (!rest || n.ch1Party || (n.ch1BalloonPopped && !pop)) return;
+      let tied = rest === "tied",
+        x = tied ? 168 : 420,
+        y = tied ? 520 : 140;
+      if (pop) {
+        for (let i = 0; i < 8; i++) {
+          let a = (i / 8) * Math.PI * 2;
+          C([x + Math.cos(a) * 6, y + Math.sin(a) * 6, x + Math.cos(a) * 20, y + Math.sin(a) * 20], "#1e2430", 2);
+        }
+        g("POP!", x, y - 28, 22, "#e5533d", "center", 900);
+        return;
+      }
+      tied ? (Xp(130, 580), C([148, 552, x, y + 10], "#e5533d", 1.4)) : C([x, 160, x, y + 12], "#e5533d", 1.4);
+      F(x, y, 14, "#e5533d");
     }
     function drawMailRobot(px, py) {
       (dq(px, py, !0), g("UPS", px, py - 8, 10, "#ffffff", "center", 900));

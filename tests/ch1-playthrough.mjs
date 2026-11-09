@@ -546,6 +546,116 @@ g.check(
 );
 g.check("the vent board, the alarm, and the Moon Pie buttons are drawn", play.shown.includes("IDEAS FOR GUARDIANS") && play.shown.includes("Return empty crate") && play.shown.includes("PULL DOWN"), play.shown);
 g.check("a clean chapter still earns the never-caught bonus", play.tally.some((line) => line.includes("Never caught")), play.tally);
+
+const laterBalloon = await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  const cv = document.querySelector("canvas[width='960']") || document.querySelector("canvas");
+  const k = cv.width / 960;
+  const cx = cv.getContext("2d", { willReadFrequently: true });
+  const redAt = (x, y) => {
+    const p = cx.getImageData(Math.round(x * k), Math.round(y * k), 1, 1).data;
+    return p[0] > 180 && p[1] < 130 && p[2] < 120;
+  };
+  const arm = (balloon) => {
+    n.scene = "QA";
+    n.room = "hall";
+    n.ch1D = false;
+    n.ch1Party = true;
+    n.ch1Office = false;
+    n.ch1Disguise = true;
+    n.ch1PartyOver = false;
+    n.ch1Balloon = balloon;
+    n.ch1BalloonRest = "";
+    n.ch1BalloonPopped = false;
+    n.ch1BalloonPop = 0;
+    n.ctrl = true;
+    n.q = [];
+    n.cur = null;
+    n.sqPose = "stand";
+    n.sq.x = 640;
+    n.sq.y = 520;
+    ss.hall.camX = 0;
+  };
+  const lock = (balloon) => {
+    arm(balloon);
+    ss.spotsNow().find((s) => s.verb === "SNAG").f();
+    const state = ss.ch1State();
+    n.q = [];
+    n.cur = null;
+    return state.balloonRest;
+  };
+  const show = (scene) => {
+    n.scene = scene;
+    n.room = "hall";
+    n.ch1D = false;
+    n.ch1Party = false;
+    n.ch1Office = false;
+    n.ctrl = false;
+    n.q = [];
+    n.cur = null;
+    ss.hall.camX = 0;
+    for (let i = 0; i < 12; i++) ss.tick(0.1);
+    ss.drawFrame();
+  };
+  const ceiling = lock("ceiling");
+  const popsBeforeHall = ss.ch1State().balloonPops;
+  show("Q7");
+  const ceilingSeen = { rest: ss.ch1State().balloonRest, onCeiling: redAt(420, 140), tied: redAt(168, 520), pops: ss.ch1State().balloonPops - popsBeforeHall };
+  n.ch1BalloonRest = "";
+  ss.CH1_CHECKPOINTS.Q4();
+  const loaded = ss.ch1State().balloonRest;
+  const tied = lock("back");
+  const popsBeforeTied = ss.ch1State().balloonPops;
+  show("Q7");
+  const tiedSeen = { onCeiling: redAt(420, 140), tied: redAt(168, 520), pops: ss.ch1State().balloonPops - popsBeforeTied, popped: ss.ch1State().balloonPopped };
+  const kept = lock("held");
+  const missed = lock("up");
+  n.ch1Office = true;
+  n.scene = "Q9";
+  n.ctrl = true;
+  n.q = [];
+  n.cur = null;
+  const before = ss.ch1State().balloonPops;
+  ss.tick(0.05);
+  ss.drawFrame();
+  const once = {
+    pops: ss.ch1State().balloonPops - before,
+    word: ss.shown().includes("POP!"),
+    ctrl: n.ctrl,
+    quiet: n.q.length === 0 && !n.cur,
+  };
+  ss.tick(2);
+  n.room = "closet";
+  ss.tick(0.2);
+  n.room = "hall";
+  n.scene = "Q9";
+  n.ch1Office = true;
+  ss.tick(0.3);
+  ss.drawFrame();
+  return { ceiling, loaded, tied, kept, missed, ceilingSeen, tiedSeen, once, again: ss.ch1State().balloonPops - before };
+});
+g.check(
+  "the balloon stays in later hall scenes and pops once on the last visit",
+  laterBalloon.ceiling === "ceiling" &&
+    laterBalloon.loaded === "ceiling" &&
+    laterBalloon.tied === "tied" &&
+    laterBalloon.kept === "tied" &&
+    laterBalloon.missed === "ceiling" &&
+    laterBalloon.ceilingSeen.rest === "ceiling" &&
+    laterBalloon.ceilingSeen.onCeiling &&
+    !laterBalloon.ceilingSeen.tied &&
+    laterBalloon.ceilingSeen.pops === 0 &&
+    laterBalloon.tiedSeen.tied &&
+    !laterBalloon.tiedSeen.onCeiling &&
+    !laterBalloon.tiedSeen.popped &&
+    laterBalloon.once.pops === 1 &&
+    laterBalloon.once.word &&
+    laterBalloon.once.ctrl &&
+    laterBalloon.once.quiet &&
+    laterBalloon.again === 1,
+  laterBalloon,
+);
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();
 await g.finish("ch1-playthrough");
