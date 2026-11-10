@@ -72,6 +72,33 @@ Words the game already had, and the one you already approved, are not in this li
 | 79 | The balloon kid, if Squatch keeps the balloon. NEEDS BRIAN | Scary Wookiee! | |
 | 80 | The octopus tourist. NEEDS BRIAN | *hic* Fellow tourist! | |
 | 81 | The balloon, the last time Squatch is in the hall. NEEDS BRIAN | POP! | |
+| 82 | Beat 2 stand-in. Mops leaves. The song is not built. NEEDS BRIAN | See you after work. | |
+| 83 | Isfred, on the party stage. NEEDS BRIAN | Welcome, everybody, to the Stormtop Space Party! | |
+| 84 | Isfred, on the party stage. NEEDS BRIAN | Let's give a big hello to our friends from Bleep-Bloop Robotics! | |
+| 85 | Isfred, on the party stage. Helpers, not replacements. NEEDS BRIAN | Soon their helper robots will be here, to help with the heavy work. | |
+| 86 | The robots poster. NEEDS BRIAN | COMING SOON! | |
+| 87 | Isfred's party badge. Decided | Isfred | |
+| 88 | Isfred, introducing the band. NEEDS BRIAN | And now... put your hands together for the Croc Boys! | |
+| 89 | Squatch, before dress-up. NEEDS BRIAN | I've never gotten to dance at a party. | |
+| 90 | The dress-up meter. NEEDS BRIAN | Disguised enough | |
+| 91 | The dress-up button. NEEDS BRIAN | Shuffle | |
+| 92 | The dress-up button. NEEDS BRIAN | Go! | |
+| 93 | The bartender, first catch. NEEDS BRIAN | ...Nice gloves. | |
+| 94 | The bartender, second catch. NEEDS BRIAN | Wait a second... fur! | |
+| 95 | Dress-up piece. NEEDS BRIAN | top hat | |
+| 96 | Dress-up piece. NEEDS BRIAN | sunglasses | |
+| 97 | Dress-up piece. NEEDS BRIAN | shirt | |
+| 98 | Dress-up piece. NEEDS BRIAN | boots | |
+| 99 | Dress-up piece. NEEDS BRIAN | scarf | |
+| 100 | Dress-up piece. NEEDS BRIAN | bow tie | |
+| 101 | Dress-up piece. NEEDS BRIAN | button nose | |
+| 102 | Dress-up piece. NEEDS BRIAN | pipe | |
+| 103 | Action. NEEDS BRIAN | PEEK · doorway | |
+| 104 | Action. NEEDS BRIAN | SHUFFLE · outfit | |
+| 105 | Action. NEEDS BRIAN | GO · party | |
+| 106 | Action. NEEDS BRIAN | OPEN · snack bar | |
+| 107 | Action. NEEDS BRIAN | CLOSE · cut-in | |
+| 108 | The cut-in exit button. NEEDS BRIAN | X | |
 | 66 | Mops, on the walk home in the R51 hallway. Not in the game yet. NEEDS BRIAN | Paperwork. | Pending. This line waits for the hallway. |
 | 42 | The PA, on the trip | The base called the ship. It has to stop. | |
 | 43 | A card | Six days later | The week is decided. These are the words on the card. |

@@ -223,6 +223,7 @@
         ch2Tally: o2,
         actionDown: Vf,
         tapAt: O5,
+        ch1Pointer: (kind, x, y) => ch1SlicePointer(kind, x, y),
         shown: () => Array.from(p.shown),
         op: n,
         startOpening: qh,

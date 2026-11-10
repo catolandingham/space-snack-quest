@@ -1,0 +1,331 @@
+# Chapter 1: every on-screen word, in story order (for Brian's yes)
+Updated Sunday, November 8, 2026, about 11:45 PM PT. This is the one list of every word that appears on screen in the Chapter 1 cartoon. Decisions behind each line are in `docs/DECISIONS.md` (codes in brackets); which picture is current is in `docs/STATE.md` and `LOCKED/INDEX.md`.
+
+**Status words (only three):**
+- **APPROVED** = Brian approved this exact wording (source given).
+- **EXISTING** = already in the game today (game text, or a label printed on the game's room art).
+- **NEEDS BRIAN** = not approved as on-screen words yet. Many of these are Brian's own words from his Nov 8 directions (time given); they still need his yes as the exact text. Nothing here was invented: every NEEDS BRIAN line comes from DECISIONS, his recorded words, or an earlier lines file.
+
+Rules: never invent why the parents never came back (W21). No new words go on a picture without a row here (W4).
+
+---
+
+## A. Still open: pick one (multiple choice)
+1. **Robot mailbox, when Squatch posts the paw-signed yellow copy (panel 07; R22/O1).**
+   - A. "Mail scanned. Signature pawature accepted." *(Brian's own words, spelled PAWATURE)*
+   - B. "Mail scanned. Pawature accepted." *(shorter)*
+   - C. No words: paw prints only *(his "keep it simpler" option)*
+2. **Pink-slip lines (panel 13; S46/O2), both Brian's own words (t213).**
+   - Mops, slip in his mouth: "Hurry, hurry, pink slip, got it!" → A. yes as written · B. change it (your words) · C. no words
+   - Squatch, thinking (whisper bubble): "Get it before he sees it." → A. yes as written · B. change it · C. no words
+3. **PA announcement (panel 01; O4).** A. "Universal Postal Service ship arriving!" · B. "The Universal Postal Service ship is arriving."
+4. **"STAFF MAIL — collected before departure." sign (old CF45 draft; O5).** A. drop it (the mailbox is a talking robot now) · B. keep it on the mailbox
+5. **What Squatch says while paw-signing (panel 07).** A. nothing (the mailbox line is enough) · B. you give a line · C. a whisper thought, your words
+6. **The guest at the FUR alarm (panel 12): "FUR! Security!"** *(Brian 3:18 PM)* A. yes as written · B. change it · C. no bubble, just the ringing alarm
+7. **Mops's thought bubble in the vent workstation (P11/O12).** A. none · B. you give the words (not drawn)
+8. **Mops's new Guardian note (S47/O11): "We know you're thinking about going to Mars. Don't worry, we'll always be with you."** A. readable in a close-up · B. shown but not readable · C. change the words
+9. **Everything else marked NEEDS BRIAN below:** A. yes to all as written · B. go through them one by one
+
+---
+
+## B. Room labels (printed on the room art, every panel in that room)
+| Room / surface | Exact text | Status |
+|---|---|---|
+| Home: poster beside the door out | STAY IN HERE! / — Mops | EXISTING (game room art) |
+| Home: calendar on the wardrobe door (closed only) | DELIVERY | EXISTING (game room art) |
+| Home: crate bed badge and calendar badge | MOON PIES | EXISTING (game room art) |
+| Home: crate bed side | FRAGILE · THIS SIDE UP (+ drawn up-arrow) | EXISTING (game room art) |
+| Home: Guardian Box | G | EXISTING (game room art) |
+| Delivery room: ship badge and robot mailbox | UPS | EXISTING (game room art) |
+| Hall and delivery room: red pull station | FUR / PULL DOWN | NEEDS BRIAN (the pull-station design is decided, R11; the exact label words were never OK'd separately) |
+| Hall: snack-stand items | *(the game's own snack sprites; their printed words are game art)* | EXISTING (game art) |
+| Delivery room: worker name tags | DOT / BOB / LOU | EXISTING (game sprites) |
+| Manager name (when labeled) | Isfred Bar Neshuman | Decided (R42; label only — spoken lines still as written below) |
+| Mail room | *(no label; "MAIL ROOM" removed, R17)* | — |
+| Connecting hallway (R51): doorway plaques HOME/HALL/DELIVERY | *(removed — R51 supersedes R48 v1 plaques)* | — |
+| Connecting hallway (R51): photo-wall title | EMPLOYEE OF THE MONTH | EXISTING (game gallery Jp() / s5() photo wall) |
+| Connecting hallway (R51): office alcove nameplate (glimpse of office_room) | MANAGER | EXISTING (game Z6 desk) |
+| Connecting hallway (R51): office computer ORDER button (glimpse) | ORDER | EXISTING (game Z6 default screen) |
+
+---
+
+## C. Panel by panel, in story order
+"No panel yet" = the moment is in DECISIONS but not drawn; its words are listed so nothing is lost.
+
+### 1 · Peek at the delegation *(no panel yet)* [S20]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Banner in the peek view | ROBOTICS DELEGATION! | EXISTING (game; keep, S20) |
+| Squatch (curious, not sad) | Robots? | NEEDS BRIAN (S20) |
+| Squatch | Everybody has somebody | EXISTING (game; S20) |
+| Mops | You have me | MOVED OUT OF PARTY (R49): Mops says it when he comes home and finds Squatch (R52, Brian decided) |
+
+### 2 · Party: the disguise comes off *(no panel yet)* [S13, S14, S18]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| A guest (pulls the hat off) | Cool hat! | NEEDS BRIAN (Brian 3:22 PM) |
+| Balloon kid (Squatch kept the balloon) | Scary Wookiee! | NEEDS BRIAN (R58, Brian t265 "or something like that") |
+| Octopus tourist (over-snacked, hug) | *hic* Fellow tourist! | NEEDS BRIAN (R60b, proposed) |
+| Sound burst (balloon pops, last hall visit) | POP! | NEEDS BRIAN (R61) |
+
+### 3 · FUR alarm zoom — `sketch-12-fur-alarm-zoom.png` (NEW) [P16, S18, K10]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Guest 01, at the pulled alarm | FUR! Security! | NEEDS BRIAN (Brian 3:18 PM; open item A6) |
+| Pull station | FUR / PULL DOWN | NEEDS BRIAN (see Room labels) |
+| *(old game alert, not on this picture)* | ~~FUR IN THE VENT!~~ | EXISTING in the game; not used on this panel |
+
+### 4 · TV story *(no panel yet)* [S19]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| *(no words decided; "Nobody can live outside" is cut)* | — | — |
+
+### 5 · Lunch → the PA *(on the way to panel 01)* [S24]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Mops, at the snack stand | I know you, Squatch, you're probably hungry... you know the rule, grab one snack. | NEEDS BRIAN (Brian 4:04 PM) |
+| Squatch | Please let me follow you, I'll be really sneaky. | NEEDS BRIAN (Brian 4:04 PM) |
+| Mops | Okay, just this time, but hide carefully. | NEEDS BRIAN (Brian 4:04 PM) |
+| Mops | I better go see what that is. | NEEDS BRIAN (Brian 4:04 PM) |
+
+### 6 · Hall, the PA announces the ship — `sketch-01m-hall-soft.png` [P1]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| PA speaker | Universal Postal Service ship arriving! | NEEDS BRIAN (open item A3) |
+
+### 7 · Lunch bag — `sketch-02-lunch-bag.png` [P2]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Mops | My lunch! You're the best. | EXISTING (game) |
+
+### 8 · Delivery ramp, day — `sketch-03-delivery-ramp.png` [P3, S25]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Manager to Mops | Mops, don't worry, you know how much we love you here. Even our visitors always love you. | NEEDS BRIAN (Brian 4:14 PM; not on the sketch yet) |
+| Robot mailbox | *(silent)* | — |
+
+### 9 · "Delicious." + the pink copy into the wall vent — `sketch-04-delicious-vent.png` [P4, S29]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Robot to Mops | Left one of the copies in the office. What do I do with the other two? | NEEDS BRIAN (Brian 3:45 PM; not on the sketch yet) |
+| Mops | I'll take care of it. | NEEDS BRIAN (Brian 3:45 PM; not on the sketch yet) |
+| Mops | Delicious. | NEEDS BRIAN |
+| Paper joke (optional) | So futuristic and we still order on paper. | NEEDS BRIAN (Brian 3:45 PM, "maybe") |
+
+### 10 · Gumbling — `sketch-05a-gumbling.png` [P5]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Mops (mouth full) | Mmf mrrf! | NEEDS BRIAN |
+| Squatch | You're gumbling! (goat mumbling) | APPROVED (Brian approved the 05a sketch with this bubble, bracket included, P5) |
+
+### 11 · Spit into the bin — `sketch-05b-spit-bin.png` [P5]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Mops | Ptoo! | NEEDS BRIAN |
+
+### 12 · Walking home past the robots — `sketch-17-walk-home-snack.png` [S32, R55]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Mops | We got to watch out for these robots | NEEDS BRIAN (Brian 4:14 PM) |
+| Mops (as they pass the robots) | Paperwork. | NEEDS BRIAN (S32 / R51 joke — not drawn on panel 17 yet) |
+
+### 13 · Snack stand on the way home *(no panel yet)* [S33]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Person in line | I swear we had more Moon Pies... is that what they stole at lunch? | NEEDS BRIAN (Brian 4:14, 4:31 PM) |
+| Mops | Quick, hide. | NEEDS BRIAN (Brian 4:14 PM) |
+
+### 14 · Their room: the Mars talk *(no panel yet)* [S36]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Mops | Didn't you hear what the manager said? They need me here, they're not going to replace me. Plus the Guardians are here. | NEEDS BRIAN (Brian 4:14 PM) |
+| Mops | I need to get back to work, we'll talk about it tonight. | NEEDS BRIAN (Brian 4:14 PM) |
+
+### 15 · Night one: paw-sign and post the yellow copy — `sketch-07-night-mailbox.png` [P7, S38]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Robot mailbox, when mail goes in | Mail scanned. Pawature accepted. *(as drawn; see open item A1 for the 3 choices)* | NEEDS BRIAN |
+| Mailbox sign (old draft) | STAFF MAIL — collected before departure. | NEEDS BRIAN (open item A4; not on the sketch) |
+| Squatch, paw-signing | *(no words yet)* | NEEDS BRIAN (open item A5) |
+
+### 16 · Time card *(no panel yet)* [S7, P8]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Card | Six days later | NEEDS BRIAN |
+
+### 17 · Robots tease Mops *(no panel yet)* [S39]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Robot to Mops | HQ sent us a message, you're going to be replaced this week anyway. | NEEDS BRIAN (Brian 4:14 PM, his words reported: HQ "sent us a message, you're going to be replaced this week anyway") |
+
+### 18 · Escape night: the almost-slip *(no panel yet)* [S40]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Squatch | Oh, it was on the form I sent, I mean, never mind. | NEEDS BRIAN (Brian 4:20 PM) |
+
+### 19 · Escape night: ball wait under the wall vent — `sketch-05c-ball-wait.png` [P9]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Squatch (L2 ball) | *(no words)* | — |
+
+### 20 · Vent workstation — `sketch-06-vent-workstation.png` [P10, S45, S47]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Board header (handwriting) | IDEAS FOR GUARDIANS | NEEDS BRIAN |
+| Notes under it | *(unreadable scribbles, on purpose)* | — |
+| Detective flyers | HAVE YOU SEEN? | NEEDS BRIAN |
+| Planet label | MARS | NEEDS BRIAN |
+| Reply stamp | NO | NEEDS BRIAN |
+| Toy bin | TOYS | NEEDS BRIAN |
+| Squatch, behind the grille (whisper) | I hope Mops doesn't notice... | NEEDS BRIAN |
+| Mops's new Guardian note | We know you're thinking about going to Mars. Don't worry, we'll always be with you. | NEEDS BRIAN (Brian 4:20 PM; open item A8) |
+| Mops's own thought | *(parked)* | NEEDS BRIAN (open item A7) |
+
+### 21 · The pink slip leaves the vent — `sketch-13-pink-slip-grab.png` (NEW) [S46, P12]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Mops (slip in his mouth, running out) | Hurry, hurry, pink slip, got it! | NEEDS BRIAN (Brian t213; open item A2) |
+| Squatch (whisper, grabbing it) | Get it before he sees it. | NEEDS BRIAN (Brian t213; open item A2) |
+
+### 22 · Moon Pie site on the office computer — `sketch-22-moon-pie-site.png` [R46, S48, S5]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Desk nameplate | MANAGER | EXISTING (game Z6) |
+| Site header | MOON PIES | NEEDS BRIAN (prop on screen) |
+| Site buttons | Order new box / Return empty crate | NEEDS BRIAN (Brian 4:20 PM; S48) |
+
+### 23 · Pickup day: robots open a crate by the ship; Squatch hides in the mail room — `sketch-09-pickup-day.png` [R41, R40, R38, P13, S53]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| *(no announcement; S53)* | — | — |
+| Removed draft | ~~Due to suspicious activity, we will be inspecting every package.~~ | removed (S52 superseded by S53) |
+
+### 24 · Mops warns him; Squatch climbs out of his mail-room crate — `sketch-10-crate-jump.png` [R41, R40, R38, R19]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| *(no words on the panel; R38/R41 give no words for Mops's warning, so it is silent here; a spoken warning would be NEEDS BRIAN)* | — | — |
+
+### 25 · Costume at home: beard trim — `sketch-08a-costume-shave.png` [P14, R39]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Spare jacket on the wardrobe hook (R45; CURRENT open-v4) | *(plain blue jacket, no JANITOR letters)* | decided by R45 (no on-screen word) |
+
+### 26 · Costume on — `sketch-08b-costume-on.png` [P14, R39]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Mops | More bleat. Less roar. | EXISTING (game; not drawn on this panel) |
+| *(no JANITOR shirt — R39: jacket + beard + horns)* | — | — |
+
+### 27 · Boarding through the fur scanner — `sketch-11-boarding-scanner.png` [P15, S16, R39, R40, R50]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Scanner | HAIR... PROBABLY. PROCEED. | EXISTING (game) |
+| *(no JANITOR shirt — R39 costume)* | — | — |
+
+### 28a · Isfred asks for Mops — `sketch-23a-employee-photo-ask.png` [R50, R42]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Name tag | Isfred Bar Neshuman | EXISTING (R42) |
+| Desk nameplate | MANAGER | EXISTING (game Z6) |
+| Isfred | Send in Mops for his Employee of the Month photo. | NEEDS BRIAN (R54 short version, Brian t255/t256) |
+| Removed | ~~Mops, it's a mistake!~~ | removed (R50 — no chase / no departure line) |
+
+### 28b · Robot reports Mops is gone — `sketch-23b-mops-gone.png` [R50, S56, R54]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Name tag | Isfred Bar Neshuman | EXISTING (R42) |
+| Robot | Mops isn't here. | NEEDS BRIAN (R54) |
+| Isfred | Not here? He can't live off the station! | NEEDS BRIAN (R54, Brian t255) |
+
+### 28c · Replaced — get the tapes — `sketch-23c-mops-replaced-tapes.png` [R50, S56, R54]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Name tag | Isfred Bar Neshuman | EXISTING (R42) |
+| Robot | He was replaced by the new robot shipment. | NEEDS BRIAN (R54, Brian t255) |
+| Isfred | I never ordered a replacement! Get me the security tapes. | NEEDS BRIAN (R54, Brian t255; replaces "What happened? We need to review the security tapes.") |
+
+### 28d · Night sneak — office keypad — `sketch-26-office-keypad-sneak.png` [S5, R53]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| *(silent — Squatch types the code; door opens)* | — | — |
+
+### 29 · Tape review in the office — `sketch-25-tape-review.png` [S56, R46, R42]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Desk nameplate | MANAGER | EXISTING (game Z6) |
+| Name tag | Isfred Bar Neshuman | EXISTING (R42) |
+| Screen badge | REC | NEEDS BRIAN (prop; security-tape mood) |
+| *(costume on screen is picture-only, no words)* | — | — |
+
+### 29b · "Later that evening..." card — `sketch-24-later-evening.png` [S56]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Card | Later that evening... | NEEDS BRIAN (Brian 4:31 PM) |
+
+---
+
+## D. Counts (rows in section C, plus the room labels in B)
+**APPROVED: 1 · EXISTING: 17 · NEEDS BRIAN: 46** (rows with words; "no words" rows and removed lines not counted).
+
+Removed and not to be used: "MAIL ROOM" label (R17), the inspection announcement (S52), "Nobody can live outside" (S19), "A hoof stamp. Mops signed it." (Chapter 2, L2).
+
+### Hallway · Employee of the Month gallery UI [R55, R56, R57, R62, R63, R64, R65, R69]
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Crayon drawing caption | TIED TOGETHER FOREVER | NEEDS BRIAN (Brian t275; replaces Always tied together) |
+| Crayon label on Squatch | ME | NEEDS BRIAN (Brian t269) |
+| Crayon label on Mops | MOPS | NEEDS BRIAN (Brian t269) |
+| Brass nameplate under Employee photo | MOPS | NEEDS BRIAN (Brian t271) |
+| Forced gallery exit SFX / on-screen | BEEP BEEP | NEEDS BRIAN (Brian t268 — robot coming after swipe past photo 5) |
+| Gallery chrome | *(left/right arrows under photo; X always visible — icons only)* | Decided (R62) |
+| Star Wars-in-reverse plaque (R69) — NOT drawn on the photo | I am your father. | NEEDS BRIAN (Brian t280u; pending only — do not put this on the picture) |
+
+### Party opening + homecoming (R73, Brian t291u) — walkthrough v2 beats 3–18
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Isfred's party name badge | Isfred | Decided (R73; replaces the full name on the badge) |
+| Isfred's office desk nameplate | ISFRED BAR NESHUMAN (above MANAGER) | NEEDS BRIAN (R73; game plate reads MANAGER today) |
+| Isfred, on stage | Welcome, everybody, to the Stormtop Space Party! | NEEDS BRIAN |
+| Isfred | Let's give a big hello to our friends from Bleep-Bloop Robotics! | NEEDS BRIAN |
+| Isfred | Soon their helper robots will be here, to help with the heavy work. | NEEDS BRIAN |
+| Poster of robot drawings | COMING SOON! | NEEDS BRIAN |
+| Isfred | And now... put your hands together for the Croc Boys! | NEEDS BRIAN |
+| Band name | the Croc Boys | NEEDS BRIAN (Brian's name, t287u) |
+| Squatch, thinking (in the plant) | I've never gotten to dance at a party. | NEEDS BRIAN (Brian t291u, shortened) |
+| Squatch, at homecoming | Everyone out there has someone. | NEEDS BRIAN (Brian's words t291u; replaces 'Everybody has somebody' at the peek) |
+| Mops, at homecoming | You have me. | EXISTING (R52 placement) |
+
+### Dress-up mini-game (R74, Brian t295u) — walkthrough v2 beat 7
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Meter label | Disguised enough | NEEDS BRIAN |
+| Button (meter full) | Go! | NEEDS BRIAN |
+| Button | Shuffle | NEEDS BRIAN |
+| Sound when the meter fills | ta-da (sound only, no on-screen word) | NEEDS BRIAN |
+
+### Party mini-games + bedtime story (R75, Brian t296u) — walkthrough v2 beats 11–21
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Karaoke screen, line 1 | ~~Floating, floating, way up high,~~ | REPLACED by the Moon Pie song (R77) |
+| Karaoke screen, line 2 | ~~past the rings and the stormy sky.~~ | REPLACED by the Moon Pie song (R77) |
+| Karaoke screen, line 3 | ~~Wave to a star and say hello,~~ | REPLACED by the Moon Pie song (R77) |
+| Karaoke screen, line 4 | ~~floating's the best way to go!~~ | REPLACED by the Moon Pie song (R77) |
+| Squatch, thinking (octopus chase) | I gotta juke this fool. | NEEDS BRIAN (Brian's words t296u) |
+| Camera tourist (photo corner) | Say cheese! | NEEDS BRIAN |
+| Bartender (sees his paw) | ...Nice gloves. | NEEDS BRIAN |
+| Mops, bedtime story | You came to me in a Moon Pie crate. You've loved Moon Pies ever since. | NEEDS BRIAN |
+
+### Karaoke Moon Pie song + bartender (R77, Brian t299u–t302u) — walkthrough v2 beats 11 and 14
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Prompt at the stage mic | Sing? | NEEDS BRIAN |
+| Big button | Sing | NEEDS BRIAN |
+| Karaoke screen, line 1 (tune: Cielito Lindo, public domain) | Ay-ay-ay-ay, I love my Moon Pies! | NEEDS BRIAN (Brian's lyric; Squatch sings it in grunts and howls) |
+| Karaoke screen, line 2 | Round and chocolate-y, sweet as the starry skies! | NEEDS BRIAN (Brian's lyric) |
+| Bartender (only if facing him when he grabs) | ...Nice gloves. | NEEDS BRIAN (kept, R77) |
+
+### Snack paw close-up (R79, Brian t303u) — walkthrough v2 beat 14
+| Speaker / surface | Exact text | Status |
+|---|---|---|
+| Bartender, first catch | ...Nice gloves. | NEEDS BRIAN |
+| Bartender, second catch (sets off the FUR alarm) | Wait a second... fur! | NEEDS BRIAN |

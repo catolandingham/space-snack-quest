@@ -502,5 +502,6 @@ These lines were added to `docs/project/DECISIONS-2026-11-08.md` after this log 
 - 2026-11-09 (Brian): R60. The octopus tourist is over-snacked. His line is "*hic* Fellow tourist!" (NEEDS BRIAN). One hug tugs the hat. A second hug knocks the disguise off. A photo corner prints a Polaroid. If Squatch is in it he gets 25 points. The third snack spills the table. Guests look away for 4 seconds, then turn back. The pair hunt is not built.
   **Decided** as the scene. The octopus line is still marked NEEDS BRIAN.
 
-- 2026-11-10 (Brian, in chat): "Yes, merge PRs #17 and #18."
-  **Decided.** PR #18 is this decision log, on `main` as `1e897aa`. PR #17 (room walks and the hoof-stamp cut) is merged onto that main in this commit. The source files merged cleanly. `index.html` was rebuilt. `docs/MASTER-BACKLOG.md` kept both changelog lines.
+- 2026-11-10 (Brian, in chat, 6:24 AM ET): "Yes, merge PRs #17 and #18."
+  **Decided.** PR #18 is on `main` as `1e897aa`. PR #17 is on `main` as `bc0759f`.
+- 2026-11-10: Slice A of the party-first Chapter 1 is a pull request and is not merged. Beat 2 is a stand-in (Mops leaves; the song is later). The party timer is 3 minutes, inside the 3 to 4 minutes Brian approved, and "Cool hat!" is the stand-in for how that time ends. The bar cut-in is the shared piece from CUT-IN-SPEC. Snack grabs do not add points. The spare blue jacket and the horns are not in the dress-up set.

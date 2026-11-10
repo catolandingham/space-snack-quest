@@ -677,6 +677,10 @@
           m(x + w / 2 + 8, y0 + 18, 60, 108, 3),
           r("#fffaf0", 2),
           F(x + w / 2 + 38, y0 + 30, 4, "#e5533d"),
+          L(x + w / 2 + 38, y0 + 30, 8),
+          (e.strokeStyle = "#e5533d"),
+          (e.lineWidth = 2),
+          e.stroke(),
           g("DELIVERY", x + w / 2 + 38, y0 + 48, 11, y, "center", 900),
           e.save(),
           e.translate(x + w / 2 + 38, y0 + 78),
@@ -1012,6 +1016,7 @@
       if (l === "ups" && n.ch1Crew === "tease") return { x: 480, y: 380 };
       if (l === "ups" && n.room === "hangar" && n.ch1D) return { x: 830, y: 460 };
       if (l === "kid" && n.ch1Party) return { x: CH1_KID.x, y: CH1_KID.y - 90 };
+      if (l === "tourist" && (n.ch1Party || n.ch1Cut)) return { x: 860, y: 430 };
       if (l === "tourist" && n.room === "hangar" && n.scene === "Q2") return { x: 700, y: 446 };
       if (l === "tourist" && n.room === "hall" && n.scene === "Q3") return { x: 640, y: 436 };
       if (l === "tourist" && n.room === "hall") {
@@ -2063,6 +2068,8 @@
       applyWalkDraw();
       try {
         drawRoom();
+        n.ch1Cut && drawCh1Cut();
+        n.ch1Dress && n.ch1Dress.on && drawCh1Dress();
       } finally {
         restoreWalkDraw();
       }

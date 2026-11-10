@@ -21,8 +21,9 @@
       Q9: "Squatch: walk through the scanner",
       QA: "Squatch: look around the party",
     };
-    // S15. Two minutes of party play. Do not change this.
-    const COOL_HAT_SECONDS = 120;
+    // R73. Brian approved a 3 to 4 minute party. This slice uses 3 minutes.
+    // "Cool hat!" is the stand-in for how the party ends when the time runs out.
+    const COOL_HAT_SECONDS = 180;
     // R59. The balloon takes about 6 seconds to reach the ceiling. Approved.
     const BALLOON_GRAB_SECONDS = 6;
     // R60. A photo that includes Squatch. Approved by Brian 2026-11-09. Not drawn on screen.
@@ -276,6 +277,12 @@
         (n.ch1Office = !1),
         (n.ch1Party = !1),
         (n.ch1Disguise = !1),
+        (n.ch1Photo = !1),
+        (n.ch1BarDone = !1),
+        (n.ch1Cut = null),
+        (n.ch1Dress = null),
+        (n.ch1PeekReady = !1),
+        (n.ch1Chain = !1),
         (n.ch1Flyer = !1),
         (n.ch1PartyT = 0),
         (n.ch1PartyOver = !1),
@@ -298,14 +305,9 @@
               (n.mo.x = 520),
               (n.mo.y = 500),
               (n.moPose = "stand"),
-              (n.scene = "Q1"));
+              (n.scene = "Q1"),
+              ch1Day1());
           }),
-          v("mops", "I know you, Squatch, you're probably hungry... you know the rule, grab one snack."),
-          v("mops", "My lunch! You're the best."),
-          v("pa", "Universal Postal Service ship arriving!", "pa"),
-          v("sq", "Please let me follow you, I'll be really sneaky."),
-          v("mops", "Okay, just this time, but hide carefully."),
-          N(() => ch1Go("delivery", { ship: !0, crew: "day", mail: "empty", scene: "Q2", night: !1 }, ch1AtDelivery)),
         ]));
     }
     function ch1AtDelivery() {
@@ -371,9 +373,7 @@
           }),
           { k: "panel", id: "ch1guard" },
           N(() => {
-            ((n.sqPose = "stand"),
-              (n.wardrobe = "closed"),
-              ch1Go("hall", { who: "sq", scene: "QA" }, ch1PartyPeek));
+            ((n.sqPose = "stand"), (n.wardrobe = "closed"), (n.scene = "Q4"), (n.ctrl = !0), ch1NightPlay());
           }),
         ]));
     }
@@ -495,7 +495,9 @@
           }),
         ));
       for (let m of CH1_PARTY_FREE)
-        !n.ch1PartyDid[m.id] &&
+        m.id !== "snack" &&
+          m.id !== "line" &&
+          !n.ch1PartyDid[m.id] &&
           out.push(
             spot({
               id: m.id,
@@ -508,6 +510,19 @@
               f: () => (m.id === "snack" ? ch1SnackGrab() : ((n.ch1PartyDid[m.id] = !0), (n.ctrl = !1), (n.act = null), J([v(m.who, m.text), N(() => (n.ctrl = !0))]))),
             }),
           );
+      !n.ch1BarDone &&
+        out.push(
+          spot({
+            id: "bar",
+            verb: "OPEN",
+            cap: "snack bar",
+            who: "sq",
+            x: 760,
+            y: 530,
+            r: 100,
+            f: ch1BarOpen,
+          }),
+        );
       !n.ch1Photo &&
         out.push(
           spot({
@@ -643,7 +658,9 @@
       ((n.ch1Disguise = !1), (n.ch1PartyOver = !0), (n.ctrl = !1), (n.act = null), (n.ch1Fur = !0));
       let lines = [];
       why === "cool" && lines.push(v("tourist", "Cool hat!"));
+      why === "bar" && lines.push(v("tourist", "Wait a second... fur!"));
       lines.push(
+        v("tourist", "FUR! Security!"),
         v("pa", "FUR! Security!", "pa"),
         { k: "panel", id: "ch1fur" },
         N(() => {
@@ -660,9 +677,14 @@
         J([
           v("mops", "A flyer. And fur on the floor."),
           N(() => {
-            n.tvOn = !0;
+            ((n.tvOn = !0), (n.scene = "Q1"));
           }),
-          N(() => ch1Go("delivery", { who: "sq", night: !0, ship: !1, crew: "", mail: "empty", scene: "Q4", stand: [140, 540] }, ch1NightPlay)),
+          v("mops", "I know you, Squatch, you're probably hungry... you know the rule, grab one snack."),
+          v("mops", "My lunch! You're the best."),
+          v("pa", "Universal Postal Service ship arriving!", "pa"),
+          v("sq", "Please let me follow you, I'll be really sneaky."),
+          v("mops", "Okay, just this time, but hide carefully."),
+          N(() => ch1Go("delivery", { ship: !0, crew: "day", mail: "empty", scene: "Q2", night: !1 }, ch1AtDelivery)),
         ]));
     }
     function ch1PartyTick(dt) {
@@ -674,13 +696,16 @@
         n.ch1Disguise &&
         n.ch1Flyer &&
         n.ch1Balloon === "up" &&
+        !n.ch1Cut &&
         ((n.ch1BalloonT = (n.ch1BalloonT || 0) + (dt || 0)),
         (n.ch1BalloonY = 460 - (460 - 80) * Math.min(1, n.ch1BalloonT / BALLOON_GRAB_SECONDS)),
         n.ch1BalloonT >= BALLOON_GRAB_SECONDS && ((n.ch1Balloon = "ceiling"), (n.ch1Kid = "sad")));
       n.ctrl &&
         n.ch1Disguise &&
         n.ch1Flyer &&
-        ((n.ch1PartyT = (n.ch1PartyT || 0) + (dt || 0)),         n.ch1PartyT >= COOL_HAT_SECONDS && ch1HatOff("cool"));
+        !n.ch1Cut &&
+        !(n.ch1Dress && n.ch1Dress.on) &&
+        ((n.ch1PartyT = (n.ch1PartyT || 0) + (dt || 0)), n.ch1PartyT >= COOL_HAT_SECONDS && ch1HatOff("cool"));
     }
     function ch1BalloonTick(dt) {
       n.room === "hall" && n.ch1Office && ch1BalloonPopNow();
@@ -893,6 +918,9 @@
         ]));
     }
     function ch1QSpots() {
+      if (n.ch1Cut) return ch1CutSpots();
+      if (n.ch1Dress && n.ch1Dress.on) return ch1DressSpots();
+      if (n.ch1PeekReady && n.ctrl) return ch1PeekSpots();
       if (n.scene === "QA") return n.ctrl && !n.ch1PartyOver ? ch1PartySpots() : [];
       if (!n.ctrl || n.sqPose === "ball" || n.sqPose === "hidden") return [];
       let s = n.scene,
@@ -968,7 +996,7 @@
       seen && capture("delivery");
     }
     function ch1QTick(dt) {
-      (n.scene || "")[0] === "Q" && (n.ctrl && (n.act = pick(ch1QSpots())), ch1Watch(dt), ch1PartyTick(dt), ch1BalloonTick(dt));
+      (n.scene || "")[0] === "Q" && (n.ctrl && (n.act = pick(ch1QSpots())), ch1Watch(dt), ch1PartyTick(dt), ch1BalloonTick(dt), ch1SliceTick(dt));
     }
     function ch1RestartNight() {
       ((n.scene = "Q4"),
@@ -1049,6 +1077,7 @@
               drop = Math.max(0, x - 840);
             (F(x, 478 + drop, 8, i === 2 ? "#fffdf8" : "#e5533d"), m(x - 5, 494 + drop * 0.65, 10, 12, 2), r("#8fdcff", 2));
           }),
+        drawCh1SliceParty(),
         drawBalloonKid());
     }
     function drawOctopus(x, y, f) {
