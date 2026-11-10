@@ -11,22 +11,28 @@ Every agent reads `CLAUDE.md` at the repo root first. It holds the short rules, 
 | [`PLAN-2026-11-06.md`](PLAN-2026-11-06.md) | The plan: phases, decisions, and a brief for every task (T1 to T28) |
 | [`CODE-REVIEW-2026-11-06.md`](CODE-REVIEW-2026-11-06.md) | How the code is laid out, what the tests cover, and what blocks progress |
 | [`DESIGN-CHECKLISTS.md`](DESIGN-CHECKLISTS.md) | Design checklists for scenes and prompts |
-| [`MASTER-BACKLOG.md`](MASTER-BACKLOG.md) | Status of every backlog item |
+| [`DECISIONS.md`](DECISIONS.md) | **Single source of truth for every decision.** If another doc disagrees, this file wins |
+| [`STATE.md`](STATE.md) | Where things stand |
+| [`OPEN-ASKS.md`](OPEN-ASKS.md) | Every open ask, with status |
+| [`CH1-CARTOON-LINES.md`](CH1-CARTOON-LINES.md) | New Chapter 1 cartoon words, through R63. Each new line is marked NEEDS BRIAN. Not in the game |
+| [`STYLE-GUIDE.md`](STYLE-GUIDE.md) | Look rules for sketches and the Chapter 1 build |
+| [`LATER-CHAPTERS-IMPROVEMENTS.md`](LATER-CHAPTERS-IMPROVEMENTS.md) | Proposals for Chapters 2 to 4. Nothing in it is built or approved |
+| [`MASTER-BACKLOG.md`](MASTER-BACKLOG.md) | Status of every backlog item. Points at `DECISIONS.md` |
 | [`HERMES-GO.md`](HERMES-GO.md) | The first Hermes job |
 | [`playtests/`](playtests/) | Transcribed playtest recordings |
 | [`grok-archive/`](grok-archive/) | Everything the Grok threads held, with a feedback index |
 | [`story-bible.md`](story-bible.md) | The Chapter 2 kitchen revision |
-| [`STORY-DECISIONS.md`](STORY-DECISIONS.md) | Open story conflicts waiting on Brian |
-| [`original-story-spine.md`](original-story-spine.md) | Brian's Nov 2 story spine, scene by scene (only the Chapter 2 kitchen was revised since, in `story-bible.md`) |
+| [`STORY-DECISIONS.md`](STORY-DECISIONS.md) | The older eight story questions. Answered items are not shown as pending. `DECISIONS.md` wins if they disagree |
+| [`original-story-spine.md`](original-story-spine.md) | Brian's Nov 2 story spine, scene by scene. It is not binding (W27 in `DECISIONS.md`). The kitchen revision is `story-bible.md` |
 | [`CHAPTER-1-LINES-FOR-BRIAN.md`](CHAPTER-1-LINES-FOR-BRIAN.md) | The Chapter 1 pass: what Chapter 1 now has and still does not have, then every new line with one alternative |
 | [`CHIP-ARMATURE-AUDIT.md`](CHIP-ARMATURE-AUDIT.md) | Every goal chip placed on the story's seven beats, with a verdict where the game departs from the spine |
 | [`spine-archive.md`](spine-archive.md) | The previous on-repo story note |
 
 ## Story precedence
 
-Story precedence: the original story stays, except the Chapter 2 kitchen sequence in `docs/story-bible.md`.
+`docs/DECISIONS.md` is the single source of truth. If this page disagrees with it, `docs/DECISIONS.md` wins.
 
-Open conflicts outside that kitchen are in `docs/STORY-DECISIONS.md`. Each one stays pending until Brian decides that item. The previous on-repo story note is in `docs/spine-archive.md`.
+The Chapter 2 kitchen sequence is in `docs/story-bible.md`. The older eight questions are in `docs/STORY-DECISIONS.md`. An item there that Brian has answered is not shown as pending. The previous on-repo story note is in `docs/spine-archive.md`.
 
 What is playable is the game and the root `README.md`. A story note does not add a mechanic. When a change lands, update the root README in the same pull request and name the branch.
 
@@ -60,7 +66,7 @@ Mapped checkpoints in the build. The rows the independent pass drove are listed 
 
 ## Kitchen composition
 
-Composition C at commit `6853902` passed its visual review for that drawing only. There is no open layout review. Later work does not redraw the kitchen. That drawing is on `main` as squash `9999f0cd`. The site is not confirmed live.
+Composition C at commit `6853902` passed its visual review for that drawing only. There is no open layout review for that drawing (R28). Later work does not redraw the kitchen. That drawing landed on `main` as squash `9999f0cd`. "The site is not confirmed live" is **Superseded**: Render publishes `main`, and current `main` is `10030f6`.
 
 One floor line. The diner door is full height and shares that line with the counter. Washing is the left bay, the pass window is the middle bay (300 wide), and the range is the right bay. The oven door, four burners, and knobs are in the counter, not a cabinet standing in the aisle. Three jars sit on a rack on the counter, past the burners.
 

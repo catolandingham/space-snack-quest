@@ -1,4 +1,6 @@
-<!-- Snapshot of the Drive master (Wyttmab Drive / My Drive / Space Snack Quest / DECISIONS.md) taken 2026-11-08. The Drive copy is the live one; this copy is for readers with repo access only. -->
+<!-- Snapshot of the Drive master (Wyttmab Drive / My Drive / Space Snack Quest / DECISIONS.md) taken 2026-11-08. The Drive copy was the live one when this snapshot was taken. -->
+
+> **Superseded as the live copy.** The single source of truth is [`docs/DECISIONS.md`](../DECISIONS.md). Every entry below is kept there: the earlier ones in section 10, and the 2026-11-09 lines in section 11. Where a later decision replaces one, that entry is marked **Superseded** in that file. Do not add new decisions here.
 
 # Space Snack Quest: decisions
 
