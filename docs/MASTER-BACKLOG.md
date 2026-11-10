@@ -2,17 +2,31 @@
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
-The precedence below is **Superseded** as the live rule. W27 in `DECISIONS.md`: the Nov 2 spine is not binding. The kitchen revision is still `docs/story-bible.md` (R28).
+## Where main is (Chapter 1 redesign)
+
+A new game plays the redesigned Chapter 1 from the Nov 8 cartoon: home, delivery room, night mailbox, six days later, the vent, the costume, and the scanner. Docs for that pass: `docs/CH1-LINES-FOR-BRIAN.md`. The home room has the wardrobe, no mop, and no vent. A balled-up Squatch is noticed only when a robot stays within 70 pixels for 2 seconds. The older night-out scenes are still reachable from a debug link. They are not the path from the title.
+
+On pickup day the robots open a crate on the ramp by the ship. Squatch hides in a crate still in the mail room. Dot, Bob, and Lou are not there. Mops warns him, he slips out, and they walk home. The disguise is a spare blue jacket, a fake beard, and horns. Mops keeps his own jacket on. The wardrobe's spare jacket is plain blue, and that hook is empty once Squatch takes it.
+
+The party is in this build. Squatch goes alone after bedtime, Mops stays home, and no robots are there. A kid's balloon takes about 6 seconds to reach the ceiling (R59). After the party it stays in the hall and pops once on the last visit (R61). Giving it back is silent and safe. Keeping it starts the alarm. Ignoring it only makes the kid sad. An octopus hug, a photo corner, and a third-snack spill are in (R60). The pair hunt is not. A photo that includes him is worth 25 points (`PHOTO_BONUS`, approved by Brian on 2026-11-09, not drawn). Guests look at a snack spill for 4 seconds (`SNACK_LOOK_SECONDS`, approved the same day).
+
+Not in this build yet, because the cartoon or a decision is still open: the hallway room and its photo gallery (next build, R51/R53/R55; photo gags still being picked), a full redraw of the hall, how the pink copy rides to Mars inside the Guardian Box after Squatch pockets it, Mops's extra thought in the vent, a separate FUR-alarm zoom shot, the pancake brochure at the snack stand, taking every snack and leaving food for the Guardians, new music, and the bigger iPad layout. Old Chapter 1 debug scenes still open, and they use the new home drawing. The manager's name on his bubbles is Isfred Bar Neshuman. The hiding ball is the L2 ball in this chapter and in the Chapter 2 kitchen. Ball notice is BALL_NOTICE_RADIUS (70) and BALL_NOTICE_SECONDS (2.0), the same in every room. Chapter 2's first spoken line is now "They put us off here. This is the gas stop." The rest of Chapters 2 to 4 is the same. The pink-slip code opens the manager's computer in the hall, and the Moon Pie page is on that screen, not the home TV. Walking home in this build still uses the existing hall, including its door to home. R50 is in: the manager is not at the ship when they leave. R54 is the office dialogue after that: five lines, and Isfred no longer jumps straight to the tapes.
+
+Next build: the hallway (R51, R53, R55). R55: Hallway approved; the first walk to the loading bay is a cutscene; the hallway is interactive only on the walk home; the Employee of the Month wall is a swipeable gallery of funny Mops photos. Layout: party hall exit in the left end wall, loading bay exit in the right end wall, Employee of the Month photo wall centered on the back wall, manager office door on the front wall opposite the photos, locked with a code keypad until the code puzzle opens it, and no door to home. The room and the gallery are not in this build. The photo gags are still being picked.
+
+The live rule is `docs/DECISIONS.md` (W27: the Nov 2 spine is not binding). The kitchen revision is still `docs/story-bible.md` (R28). The Chapter 1 redesign on `main` follows `docs/CH1-LINES-FOR-BRIAN.md` and the decisions in `docs/DECISIONS.md`.
+
+The precedence below is **Superseded** as the live rule.
 
 - Kitchen revision: `docs/story-bible.md`
 - The older eight questions, with answered items no longer marked pending: `docs/STORY-DECISIONS.md`
 - Previous on-repo story note, not deleted: `docs/spine-archive.md`
 
-This page does not mark the rest of the backlog done, and it does not change the game. What the game already plays is the root `README.md` and the build on `main` (`10030f6`). A story note does not add a mechanic.
+This page does not mark the rest of the backlog done, and it does not change the game. What the game already plays is the root `README.md` and the build on `main` (Chapter 1 redesign `aed0c4f`, party `e0e16d4`, on top of `10030f6`). A story note does not add a mechanic.
 
 ## Register
 
-**Superseded** as the live status of `main`. This register describes `main` at `9999f0cd`. Current `main` is `10030f6`. PRs #7 through #11 are merged. Render publishes `main`. Open PRs on 2026-11-09 include #6, #12 through #16, and #17. None of them are merged. The room-walk and hoof-stamp work (K20) is [PR #17](https://github.com/catolandingham/space-snack-quest/pull/17). It also edits this page, `README.md`, `docs/CHIP-ARMATURE-AUDIT.md`, `docs/project/DECISIONS-2026-11-08.md`, `docs/project/STATE-2026-11-08.md`, and adds `docs/LATER-CHAPTERS-LINES-FOR-BRIAN.md`.
+**Superseded** as the live status of `main`. This register describes `main` at `9999f0cd`. Later, `main` was `10030f6` (PRs #7 through #11). It now also has the Chapter 1 redesign (PR #19) and the party (PR #20). Render publishes `main`. Brian wrote yes on 2026-11-10 to merge PR #17 and PR #18. PR #17 still conflicts with the Chapter 1 code now on `main`, so it is not merged here. The room-walk and hoof-stamp work (K20) is [PR #17](https://github.com/catolandingham/space-snack-quest/pull/17). It also edits this page, `README.md`, `docs/CHIP-ARMATURE-AUDIT.md`, `docs/project/DECISIONS-2026-11-08.md`, `docs/project/STATE-2026-11-08.md`, and adds `docs/LATER-CHAPTERS-LINES-FOR-BRIAN.md`.
 
 Kept, as the history of that older register:
 

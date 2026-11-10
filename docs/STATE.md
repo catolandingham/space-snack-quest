@@ -1,11 +1,10 @@
 # Space Snack Quest: where things stand
-Sunday, November 8, 2026, about 8:50 PM PT. Decisions: `docs/DECISIONS.md`. Open asks: `docs/OPEN-ASKS.md`. Words: `docs/CH1-CARTOON-LINES.md`. Look: `docs/STYLE-GUIDE.md`.
+Sunday, November 8, 2026, about 8:50 PM PT. Updated 2026-11-10 after the Chapter 1 redesign and the party landed on `main`. Decisions: `docs/DECISIONS.md`. Open asks: `docs/OPEN-ASKS.md`. Words: `docs/CH1-CARTOON-LINES.md`. Look: `docs/STYLE-GUIDE.md`.
 
 ## The game
-- Live game = `main` of `catolandingham/space-snack-quest` at **10030f6** (Phases 0–3 and the Chapter 1 pass, PRs #7–#11). Render publishes `main`.
-- Open PRs when this note was first written: #12–#16 (docs, audits, held fixes). PR #17 (room walks and the hoof-stamp cut) opened on 2026-11-09. None of them are merged. This decision-log sync is a separate docs PR. It is not merged until Brian writes his yes.
-- **Running now:** the room-walk fix (P2) and the hoof-stamp line cut (P3), which Brian OK'd on Nov 8, are open as [PR #17](https://github.com/catolandingham/space-snack-quest/pull/17) on `cursor/later-chapter-walks-04ec` (cloud agent bc-1f6073a1-0bac-5c0f-a74a-eeae794204ec). It was not open at 8:45 PM PT on Nov 8. It is open now, and it is not merged. **Don't merge it without Brian's written yes in that PR.** That PR also edits `README.md`, `docs/MASTER-BACKLOG.md`, `docs/CHIP-ARMATURE-AUDIT.md`, `docs/project/DECISIONS-2026-11-08.md`, `docs/project/STATE-2026-11-08.md`, and adds `docs/LATER-CHAPTERS-LINES-FOR-BRIAN.md`. It edits `src/game/20-ch2.js`, `30-ch3.js`, `40-ch4.js`, `50-story-frame.js`, `60-frame-draw.js`, `90-input-shell.js`, and tests. This docs PR does not touch those code files.
-- Not started: the P1 security trace, P4–P8, and the Chapter 1 rebuild (it waits on the finished cartoon).
+- Live game = `main` of `catolandingham/space-snack-quest`. Phases 0–3 and the Chapter 1 pass are `10030f6` (PRs #7–#11). The Chapter 1 redesign is on `main` as PR #19 (`aed0c4f`). The party is on `main` as PR #20 (`e0e16d4`). Brian said yes to both on 2026-11-09. Render publishes `main`.
+- On 2026-11-10 Brian wrote "Yes, merge PRs #17 and #18." This decision log is PR #18. PR #17 (room walks and the hoof-stamp cut, `cursor/later-chapter-walks-04ec`) still conflicts with the Chapter 1 code now on `main` (`src/game/20-ch2.js`, `30-ch3.js`, `40-ch4.js`, `50-story-frame.js`, `60-frame-draw.js`, `90-input-shell.js`, and `index.html`). It is not merged in this update. It also edits `README.md`, `docs/MASTER-BACKLOG.md`, `docs/CHIP-ARMATURE-AUDIT.md`, `docs/project/DECISIONS-2026-11-08.md`, `docs/project/STATE-2026-11-08.md`, and adds `docs/LATER-CHAPTERS-LINES-FOR-BRIAN.md`.
+- Not started: the P1 security trace and P4–P8. The Chapter 1 rebuild is on `main`. The hallway room and its photo gallery are the next build. They are not in the game yet.
 - `docs/DECISIONS.md` and this file are the live copies. The dated snapshots `docs/project/DECISIONS-2026-11-08.md` and `docs/project/STATE-2026-11-08.md` are kept. Every earlier note is in the section below, and a replaced note is marked **Superseded** there.
 
 ## Chapter 1 cartoon: panels in story order

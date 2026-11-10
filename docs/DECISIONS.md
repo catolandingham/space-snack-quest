@@ -136,9 +136,9 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 | C15 | 11-04 | Getting spotted can be funny instead of always a security chase (a robot vacuums his fur, a tourist bot's flash, mistaken for a rug), with one funny version per chapter and a clear way out. | memory (Nov 4) | Decided (direction) |
 | C16 | 11-03 | The security guard wears a fun outfit and can actually catch him. If caught, Squatch goes back and retries. | memory (Nov 3) | Decided |
 | C17 | 11-08 | Rusty's red "R" cap becomes a grease cap with a fuel-drop badge (D13). | answered | Decided |
-| C18 | 11-08 | The manager's name: Puddlewick, Bimble or Clipwell. | DOWNSTREAM Q12 | Open (O6) |
+| C18 | 11-08 | The manager's name: Puddlewick, Bimble or Clipwell. | DOWNSTREAM Q12 | Superseded. The Chapter 1 he said yes to merge calls him Isfred Bar Neshuman (2026-11-09 office lines, section 11). |
 | C19 | 11-08 | Escape night: the player presses the action button and Squatch squats down into the L2 ball under the wall vent (the ball is player-triggered, not automatic). | Brian t225 | Decided |
-| C20 | 11-08 | **Ball anytime:** the player can press the action button to ball up (L2) whenever they want, as a hiding move in every chapter. It works less well than plants and boxes (a weaker hide: e.g. a robot already looking at him or close by still spots him; one passing at a distance may miss him). Escape night is a story spot where it fully works. Exact detection numbers still need Brian's yes before code. | Brian t228 card | Decided (tuning needs yes) |
+| C20 | 11-08 | **Ball anytime:** the player can press the action button to ball up (L2) whenever they want, as a hiding move in every chapter. It works less well than plants and boxes (a weaker hide: e.g. a robot already looking at him or close by still spots him; one passing at a distance may miss him). Escape night is a story spot where it fully works. Exact detection numbers still need Brian's yes before code. | Brian t228 card | Decided. The Chapter 1 he said yes to merge (PR #19) notices the ball after a robot stays within 70 pixels for 2 seconds. He did not write a separate sentence picking those two numbers. |
 
 ## 4. Look, rooms and layout
 | # | Date | Decision | Source | Status |
@@ -290,7 +290,7 @@ Each panel's on-screen words are in CH1-CARTOON-LINES.md. Which files are curren
 | O3 | Every NEW line in CH1-CARTOON-LINES.md needs his yes. | lines file |
 | O4 | The PA line: "Universal Postal Service ship arriving!" or "The Universal Postal Service ship is arriving."? | lines file |
 | O5 | Is the "STAFF MAIL — collected before departure." sign still wanted now that the mailbox is a talking robot? | lines file |
-| O6 | The manager's name (Puddlewick, Bimble or Clipwell). | C18 |
+| O6 | The manager's name (Puddlewick, Bimble or Clipwell). | Superseded by C18: the merged game says Isfred Bar Neshuman |
 | O7 | Confirm the promise happens at the first UPS delivery. | S23 |
 | O8 | Is the "Ordered by: paw" delivery slip dropped, now that the pink copy in the vent is the paw proof? | S31 |
 | O9 | The pink copy goes into the vent at lunch, but Squatch paw-signs the yellow copy that night. How does the carbon paw print get onto the pink copy? | S27 |
@@ -413,3 +413,41 @@ From `docs/project/DECISIONS-2026-11-08.md`, the snapshot of the Drive master ta
 
 - 2026-11-07 (Brian): the "GHOST BONUS +250" award is named by what clears it. Brian: "We have no idea what ghost bonus is, and I don't think it's clear to the player either," then "Oh, it's the difference between being spotted versus being caught." Only a catch clears it, so it reads "Never caught! +250" with a reason line, and every +100 award says what it was for. Whether the bonus exists at all is part of the open stars decision D2.
   The rename is **Decided**. "Whether the bonus exists is open" is **Superseded** by K17: keep the stars and "Never caught! +250". The hidden +100 awards versus the words "points for finds" is still Open (O25).
+
+---
+
+## 11. Decisions recorded on main on 2026-11-09
+These lines were added to `docs/project/DECISIONS-2026-11-08.md` after this log was first copied. They are kept here word for word. Nothing was deleted from that snapshot.
+
+- 2026-11-09 (Brian): office cutscene, NEEDS BRIAN. Isfred: "Send in Mops for his Employee of the Month photo." Robot: "Mops isn't here." Isfred: "Not here? He can't live off the station!" Robot: "He was replaced by the new robot shipment." Isfred: "I never ordered a replacement! Get me the security tapes."
+  **In the game** (PR #19). The words are still marked NEEDS BRIAN in `docs/CH1-CARTOON-LINES.md`. He said yes to merge before the wording pass was finished.
+
+- 2026-11-09 (Brian): R54. Office cutscene dialogue (Brian t255/t256, shortened) — five lines above; Isfred no longer jumps straight to the tapes.
+  **Decided** as the shape of the scene. Same wording note as the line above.
+
+- 2026-11-09 (Brian): R55. Hallway approved; the first walk to the loading bay is a cutscene; the hallway is interactive only on the walk home; the Employee of the Month wall is a swipeable gallery of funny Mops photos. Approved with R51 and R53. The room and the gallery are not built yet. The photo gags are still being picked. Layout, when it is built: party hall exit in the left end wall, loading bay exit in the right end wall, Employee of the Month photo wall centered on the back wall, manager office door on the front wall opposite the photos, locked with a code keypad until the code puzzle opens it, and no door to home.
+  **Decided.** Not built yet.
+
+- 2026-11-09: The Chapter 1 party is in the game from S11, S13, S14, S15, S18, S20 as amended by R49, S33, S61, S62, R49, R52, C12, C15, and P16. Squatch goes alone. Mops is not there. No robots. Isfred announces the delegation alone. "You have me" is not said there. The Cool hat timer stays 120 seconds.
+  **Decided.** On `main` as PR #20.
+
+- 2026-11-09 (Brian): R58. A guest kid lets a balloon go. Squatch can jump and grab it. The jump shows his furry legs and only the kid reacts. Giving the balloon back is silent and the disguise stays. Keeping it makes the kid yell "Scary Wookiee!" and starts the FUR alarm and the walk home. Never jumping lets the balloon reach the ceiling and the kid looks sad.
+  **Decided.** In the party build.
+
+- 2026-11-09 (Brian): R59. When the balloon slips, the kid gasps with a big ! and points up. The balloon rises slowly with a wobble and takes about 6 seconds to reach the ceiling. It glows softly while it can be grabbed, and one jump in reach grabs it. No words.
+  **Decided.** The 6 seconds were already approved.
+
+- 2026-11-09 (Brian): R61. After the party, the balloon stays in the party hall for every later Chapter 1 hall scene. If Squatch missed it, it stays on the ceiling. If he returned it or kept it, it is tied to the plant near the kid, because he does not take it home. The state is kept in the save. The last time he is in the hall, it pops once with a small "POP!" and a soft pop. Nobody reacts and play does not stop.
+  **Decided.** In the party build. The word "POP!" is still marked NEEDS BRIAN in the lines file.
+
+- 2026-11-09 2:58 PM PT (Brian): yes to merge the Chapter 1 redesign (PR #19) and the party (PR #20). His words: "if we should just go for that right now, prior to me finishing reviewing the contract script, I'd say that's totally fine, we should go for it." Posted on both pull requests by Squatchbot on his behalf. PR #19 merged to main as aed0c4f41ef7ac4ac7c6a055dafe9ebc54beb65a. PR #20 merged to main as e0e16d4ea5b51b419dcc83c9d676761647018641.
+  **Decided.**
+
+- 2026-11-09 2:59 PM PT (Brian): PHOTO_BONUS is 25 and SNACK_LOOK_SECONDS is 4. His words: "I'm okay with the two placeholder numbers if you've thought through them." The photo points are not drawn on screen. BALLOON_GRAB_SECONDS (6) was already approved (R59).
+  **Decided.**
+
+- 2026-11-09 (Brian): R60. The octopus tourist is over-snacked. His line is "*hic* Fellow tourist!" (NEEDS BRIAN). One hug tugs the hat. A second hug knocks the disguise off. A photo corner prints a Polaroid. If Squatch is in it he gets 25 points. The third snack spills the table. Guests look away for 4 seconds, then turn back. The pair hunt is not built.
+  **Decided** as the scene. The octopus line is still marked NEEDS BRIAN.
+
+- 2026-11-10 (Brian, in chat): "Yes, merge PRs #17 and #18."
+  **Decided.** PR #18 is this decision log. PR #17 (room walks and the hoof-stamp cut) still conflicts with the Chapter 1 code now on `main`, so this merge does not include it.

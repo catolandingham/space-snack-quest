@@ -2,6 +2,14 @@
 
 **Decisions:** [`docs/DECISIONS.md`](docs/DECISIONS.md) is the single source of truth. If this README or any other doc disagrees with it, `docs/DECISIONS.md` wins. Where things stand is [`docs/STATE.md`](docs/STATE.md). Open asks are [`docs/OPEN-ASKS.md`](docs/OPEN-ASKS.md).
 
+## Chapter 1 redesign (on main)
+
+Brian said yes to merge the redesign (PR #19) and the party (PR #20) on 2026-11-09. Starting a new game now plays the redesigned Chapter 1: lunch with Mops, the walk to the delivery room, the yellow and pink copies, the night mailbox, the week jump, the ball under the vent, pickup day (Squatch slips out of a crate in the mail room while a crate is opened on the ramp), the spare blue jacket at home (Mops keeps his own jacket on), and boarding. The home room matches the approved picture: wardrobe on the far left, the Moon Pie calendar on its door, no mop, no vent, and the STAY IN HERE poster beside a cut in the right wall. Room changes show Squatch (and Mops, when he comes too) walk off and walk in. The walk home in this build still uses the existing hall, including its door to home. The hallway (R51, R53, R55) is approved and is the next build. It is not in the game yet. The photo gags are still being picked, so the room and the gallery are not drawn. The party is in: Squatch goes alone, Mops stays home, and no robots are there. Isfred announces the delegation. The disguise comes off for a physical reason or after two minutes, then he runs home. A kid's balloon takes about 6 seconds to reach the ceiling. Giving it back is safe. Keeping it sets off the alarm. Either way it stays in the hall and pops on the last visit. An octopus hug can knock the disguise off, a photo can include him, and a third snack spills the table. R50 is in: the manager is not at the ship when they leave. R54 is the office cutscene after that: five lines, and Isfred no longer jumps straight to the tapes. The Moon Pie page is on the manager's computer in the current hall, not on the home TV.
+
+Every new line is listed for Brian in `docs/CH1-LINES-FOR-BRIAN.md`. He said yes to merge this chapter before the wording pass was finished, so a line in that file can still change. `tests/ch1-playthrough.mjs` plays this chapter to the tally card.
+
+The older Chapter 1 scenes are still in the program so a debug link such as `?scene=S9` can open them. They are not what a new game plays. Those old scenes are drawn in the new home room. The ball Squatch rolls into, including in the Chapter 2 kitchen, is the L2 ball. A robot notices that ball only after staying within 70 pixels for 2 seconds, in every room. Standing and walking sight is unchanged. The manager's name on his bubbles is Isfred Bar Neshuman. Chapter 2 now opens with "They put us off here. This is the gas stop." instead of a fuel light.
+
 ## Source and build
 
 The game's source is in `src/`. `index.html` is build output: never edit it by hand.
@@ -86,7 +94,7 @@ Test hooks added: `__ss.capture()`, `shoo()`, `lostYou()`, `startSec()`, `CAPTUR
 
 ## Chapter 1 pass: the night out has a purpose, switches say why
 
-Branch `chapter-1-pass`. Merged to `main` as PR #11. "Not merged" is **Superseded**. Every new line from that pass is listed in `docs/CHAPTER-1-LINES-FOR-BRIAN.md`, which starts with what Chapter 1 now has and still does not have. The later Chapter 1 replot (the cartoon) is not in the game. Its words are in `docs/CH1-CARTOON-LINES.md`, and each new line there still needs Brian's yes. The decisions are in `docs/DECISIONS.md`.
+Branch `chapter-1-pass`. Merged to `main` as PR #11. "Not merged" is **Superseded**. Every new line from that pass is listed in `docs/CHAPTER-1-LINES-FOR-BRIAN.md`. The later redesign is also on `main` (PRs #19 and #20). Its words are in `docs/CH1-LINES-FOR-BRIAN.md` and `docs/CH1-CARTOON-LINES.md`. Decisions are in `docs/DECISIONS.md`.
 
 - The night out (O3 to O6, Brian's D15): Squatch sneaks into the lobby to find out what is going on and reads a NOTICE on a brochure table ("ROBOT JANITORS COMING."). The vent's pull is drawn at all times; a tuft of fur drifts toward it, and 1.5 seconds in the pull sets off "FUR IN THE VENT!". Sightings and the vent go through the one capture rule (HIDE! into the closet, or LOCKUP and the night starts over). The notice comes back in O5, O6 and S3. `tests/ch1-lobby.mjs`.
 - After the review (Brian, 2026-11-07): the notice's second line is "They take every janitor's job."; the fur tuft shows within 1.5 times the vent's circle, is twice as large and keeps moving during a chase; S3's delegation report follows what happened (vent, seen, or "all clear").
@@ -124,7 +132,7 @@ These came up in the notes and were not given a new behavior:
 - The lockup card is the jail. There is no separate jail game.
 - Cook and Gloop stay two speakers.
 
-`docs/DECISIONS.md` is the single source of truth for the story and for every other decision. `docs/story-bible.md` is the Chapter 2 kitchen revision. `docs/STORY-DECISIONS.md` is the older list of eight questions, updated so an answered item is not shown as pending. `docs/README.md` points at these, and at the section-reset checkpoints. `docs/MASTER-BACKLOG.md` is the backlog. Its register that says `main` is `9999f0cd` and PR #5 is open is **Superseded**. Current `main` is `10030f6` (PRs #7 through #11 merged). Render publishes `main`. The independent reset check from that older register is still listed on the backlog page as history.
+`docs/DECISIONS.md` is the single source of truth for the story and for every other decision. `docs/story-bible.md` is the Chapter 2 kitchen revision. `docs/STORY-DECISIONS.md` is the older list of eight questions, updated so an answered item is not shown as pending. `docs/README.md` points at these, and at the section-reset checkpoints. `docs/MASTER-BACKLOG.md` is the backlog. Its register that says `main` is `9999f0cd` and PR #5 is open is **Superseded**. `main` at the start of this log was `10030f6` (PRs #7 through #11 merged). It now also has the Chapter 1 redesign (PR #19, `aed0c4f`) and the party (PR #20, `e0e16d4`). Render publishes `main`. The independent reset check from that older register is still listed on the backlog page as history.
 
 From the repo root:
 

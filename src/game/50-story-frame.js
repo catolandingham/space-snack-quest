@@ -1,6 +1,6 @@
 // The story update every chapter shares (who moves, which scene runs), the picture button, and drawing for the hall, the closet and story panels.
     function j6(l) {
-      if ((X6(), K6(l), x.mops && n.ctrl)) {
+      if ((X6(l), K6(l), x.mops && n.ctrl)) {
         let o = oh(),
           i = sn();
         if (Math.hypot(o.x, o.y) > 0.1) {
@@ -148,10 +148,9 @@
         r("#59657d", 4),
         m(l - 48, o - 170, 96, 70, 4),
         r("#e8f4ff", 2.5),
-        oq(l, o - 156, 0.42),
-        m(l - 30, o - 132, 60, 20, 6),
-        r("#2bc48a", 2.5),
-        g("ORDER", l, o - 122, 11, "#ffffff", "center", 900),
+        n.scene === "Q7"
+          ? (g("Order new box", l, o - 152, 8, y, "center", 800), g("Return empty crate", l, o - 136, 7, "#7a2e1d", "center", 800))
+          : (oq(l, o - 156, 0.42), m(l - 30, o - 132, 60, 20, 6), r("#2bc48a", 2.5), g("ORDER", l, o - 122, 11, "#ffffff", "center", 900)),
         Math.sin(n.T * 3) > 0 && F(l + 44, o - 98, 3, "#2bc48a"),
         pointer("term", l - 66, o - 186, 132, 196, 10));
     }
@@ -363,12 +362,7 @@
           o.push({
             y: n.sq.y,
             d: () => {
-              (L(n.sq.x, n.sq.y - 16, 26),
-                r("#6b3a1c", 3),
-                L(n.sq.x - 7, n.sq.y - 20, 3),
-                r("#1e2430", 0),
-                L(n.sq.x + 7, n.sq.y - 20, 3),
-                r("#1e2430", 0));
+              drawL2Ball(n.sq.x, n.sq.y - 16);
             },
           }),
         n.sqPose !== "hidden" &&
@@ -1023,17 +1017,47 @@
       for (let o of B.jans) o.on && l.push({ y: o.y, d: () => u5(o) });
       if (
         (W6(l),
-        l.push({
+        n.ch1Party && l.push({ y: 8, d: drawCh1Party }),
+        n.ch1BalloonRest && !n.ch1Party && (n.scene || "")[0] === "Q" && l.push({ y: 530, d: drawCh1BalloonLeft }),
+        n.scene === "Q3" &&
+          l.push({
+            y: 520,
+            d: () => {
+              Qt(640, 520, "#e8a87c", 1.6, 1);
+            },
+          }),
+        n.ch1Office &&
+          l.push({
+            y: 490,
+            d: () => {
+              (Qt(220, 470, "#c9b6f2", 2.2, 0.3), dq(360, 490, !1));
+            },
+          }),
+        !n.ch1Office &&
+          !n.ch1Party &&
+          n.mo.x > -50 &&
+          l.push({
           y: n.mo.y,
           d: () => {
-            (Fe(n.mo.x, n.mo.y, he * 1.15, { f: n.mo.f, walk: n.mo.moving ? n.mo.walk : 0, mop: !0 }),
+            (Fe(n.mo.x, n.mo.y, he * 1.15, { f: n.mo.f, walk: n.mo.moving ? n.mo.walk : 0, mop: (n.scene || "")[0] !== "Q" }),
               B.gave && n.scene === "S2" && (m(n.mo.x + 22 * n.mo.f - 9, n.mo.y - 50, 18, 20, 2), r("#cdbb98", 1.5)));
           },
         }),
         n.sqPose !== "hidden" &&
           l.push({
             y: n.sq.y,
-            d: () => Re(n.sq.x, n.sq.y, he, { walk: n.sq.moving ? n.sq.walk : 0, f: n.sq.f, carry: n.lunch === "held" }),
+            d: () =>
+              Re(n.sq.x, n.sq.y, he, {
+                walk: n.sq.moving ? n.sq.walk : 0,
+                f: n.sq.f,
+                carry: n.lunch === "held",
+                leap: (n.ch1JumpT || 0) > 0,
+                hat: !!n.ch1Disguise,
+                hatAskew: !!n.ch1HatAskew,
+                shades: !!n.ch1Disguise,
+                hawaiian: !!n.ch1Disguise,
+                paper: !!n.ch1Flyer,
+              }),
           }),
         l.sort((o, i) => o.y - i.y).forEach((o) => o.d()),
         B.slip.on && B.held
