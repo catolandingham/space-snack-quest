@@ -14,7 +14,7 @@ Every agent reads `CLAUDE.md` at the repo root first. It holds the short rules, 
 | [`DECISIONS.md`](DECISIONS.md) | **Single source of truth for every decision.** If another doc disagrees, this file wins |
 | [`STATE.md`](STATE.md) | Where things stand |
 | [`OPEN-ASKS.md`](OPEN-ASKS.md) | Every open ask, with status |
-| [`CH1-CARTOON-LINES.md`](CH1-CARTOON-LINES.md) | New Chapter 1 cartoon words. Each new line needs Brian's yes. Not in the game |
+| [`CH1-CARTOON-LINES.md`](CH1-CARTOON-LINES.md) | New Chapter 1 cartoon words, through R63. Each new line is marked NEEDS BRIAN. Not in the game |
 | [`STYLE-GUIDE.md`](STYLE-GUIDE.md) | Look rules for sketches and the Chapter 1 build |
 | [`LATER-CHAPTERS-IMPROVEMENTS.md`](LATER-CHAPTERS-IMPROVEMENTS.md) | Proposals for Chapters 2 to 4. Nothing in it is built or approved |
 | [`MASTER-BACKLOG.md`](MASTER-BACKLOG.md) | Status of every backlog item. Points at `DECISIONS.md` |

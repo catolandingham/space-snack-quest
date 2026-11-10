@@ -94,7 +94,7 @@ Test hooks added: `__ss.capture()`, `shoo()`, `lostYou()`, `startSec()`, `CAPTUR
 
 ## Chapter 1 pass: the night out has a purpose, switches say why
 
-Branch `chapter-1-pass`. Merged to `main` as PR #11. "Not merged" is **Superseded**. Every new line from that pass is listed in `docs/CHAPTER-1-LINES-FOR-BRIAN.md`. The later redesign is also on `main` (PRs #19 and #20). Its words are in `docs/CH1-LINES-FOR-BRIAN.md` and `docs/CH1-CARTOON-LINES.md`. Decisions are in `docs/DECISIONS.md`.
+Branch `chapter-1-pass`. Merged to `main` as PR #11. "Not merged" is **Superseded**. Every new line from that pass is listed in `docs/CHAPTER-1-LINES-FOR-BRIAN.md`. The later redesign and the party are also on `main` (PRs #19 and #20). Decisions through R63 are in `docs/DECISIONS.md`. The hallway gallery (R62, R63) is not in the game yet. Words still marked NEEDS BRIAN can change.
 
 - The night out (O3 to O6, Brian's D15): Squatch sneaks into the lobby to find out what is going on and reads a NOTICE on a brochure table ("ROBOT JANITORS COMING."). The vent's pull is drawn at all times; a tuft of fur drifts toward it, and 1.5 seconds in the pull sets off "FUR IN THE VENT!". Sightings and the vent go through the one capture rule (HIDE! into the closet, or LOCKUP and the night starts over). The notice comes back in O5, O6 and S3. `tests/ch1-lobby.mjs`.
 - After the review (Brian, 2026-11-07): the notice's second line is "They take every janitor's job."; the fur tuft shows within 1.5 times the vent's circle, is twice as large and keeps moving during a chase; S3's delegation report follows what happened (vent, seen, or "all clear").
