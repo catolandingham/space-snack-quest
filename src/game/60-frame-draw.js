@@ -2059,11 +2059,19 @@
         (I2(n.fbPic, ""), bq(l.b, !1));
         return;
       }
-      (drawRoom(),
-        ringsLeft(),
-        xp(),
-        drawSec(),
-        drawWalkTo());
+      let walking = !!n.roomWalk;
+      applyWalkDraw();
+      try {
+        drawRoom();
+      } finally {
+        restoreWalkDraw();
+      }
+      // During the door walk the room on screen is not the room the rings belong to, so skip those rings.
+      // Sparks, security, and the walk-tap mark still draw.
+      if (!walking) ringsLeft();
+      xp();
+      drawSec();
+      drawWalkTo();
       for (let i of n.sparks)
         if (i.x !== 300 && i.s === "!") {
           let s = Math.sin(i.t * 14) * 4,

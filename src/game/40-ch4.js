@@ -371,7 +371,7 @@
         ]));
     }
     function M6() {
-      ((n.ctrl = !1), (n.act = null), (x.sing = !1), H.miss === 0 && Ta("sneak-m1"), J([He(n.sq, 1e3, P0.y, 170), N(b2)]));
+      ((n.ctrl = !1), (n.act = null), (x.sing = !1), H.miss === 0 && Ta("sneak-m1"), J([He(n.sq, 1e3, P0.y, 170), B2(), N(b2)]));
     }
     function b2() {
       ((n.scene = "M2"),
@@ -444,20 +444,31 @@
           ])));
     }
     function p2() {
-      ((n.scene = "M3"),
-        (n.room = "van"),
-        (H.phase = "m3"),
-        (H.mom = !1),
-        (H.dad = !1),
-        switchTo("mops"),
-        n.pulse.clear(),
-        n.pulse.add("vmop"),
-        chipNow(),
-        (n.sqPose = "hidden"),
-        (n.sq.x = -300),
-        (n.mo = { x: 860, y: 560, f: -1, walk: 0, moving: !1 }),
-        (n.moPose = "stand"),
-        (n.ctrl = !0));
+      // Off the right of the stand, in through the van's right door. A scene jump from anywhere else just arrives.
+      let live = n.room === "stand",
+        arrive = () => {
+        ((n.scene = "M3"),
+          (n.room = "van"),
+          (H.phase = "m3"),
+          (H.mom = !1),
+          (H.dad = !1),
+          switchTo("mops"),
+          n.pulse.clear(),
+          n.pulse.add("vmop"),
+          chipNow(),
+          (n.sqPose = "hidden"),
+          (n.sq.x = -300),
+          (n.mo.x = 860),
+          (n.mo.y = 560),
+          (n.mo.f = -1),
+          (n.mo.walk = 0),
+          (n.mo.moving = !1),
+          (n.moPose = "stand"),
+          (n.ctrl = !0));
+      };
+      live
+        ? beginRoomWalk({ outWho: "mo", exitX: 1010, exitY: 560, fromLeft: !1, entryX: 860, entryY: 560, ctrlAfter: !0, arrive })
+        : arrive();
     }
     function O6() {
       ((n.ctrl = !1),
@@ -469,34 +480,54 @@
           { k: "panel", id: "slip4" },
           v("mops", "...That's his paw."),
           v("mops", "He ordered them. To replace me."),
-          cV((l) => mV(n.mo, 1010, 560, 120, l)),
-          N(() => {
-            ((n.moPose = "hidden"), (H.gone = !0), switchTo("squatch"), chipNow());
-          }),
-          uV(1.6),
           N(A2),
         ]));
     }
     function A2() {
-      ((n.scene = "M4"),
-        (n.room = "inside"),
-        (H.phase = "m4a"),
-        (H.beam = -1),
-        (H.mom = !0),
-        (H.dad = !0),
-        (H.momX = 640),
-        (H.dadX = 780),
-        n.pulse.clear(),
-        (n.sq = { x: 420, y: 540, f: 1, walk: 0, moving: !1 }),
-        (n.sqPose = "stand"),
-        switchTo("squatch"),
-        J([
-          v("mom", "Eat up, Harry! Three dozen pretzels, and pancakes forever."),
-          uV(1.2),
-          N(() => {
-            ((H.beam = 0), D.alarm(), (n.ctrl = !0));
-          }),
-        ]));
+      // Mops walks off the right of the van. Squatch walks in from the stand's left door.
+      // A scene jump from anywhere else just arrives.
+      let live = n.room === "van",
+        arrive = () => {
+        ((n.scene = "M4"),
+          (n.room = "inside"),
+          (H.phase = "m4a"),
+          (H.beam = -1),
+          (H.mom = !0),
+          (H.dad = !0),
+          (H.momX = 640),
+          (H.dadX = 780),
+          live && ((n.moPose = "hidden"), (H.gone = !0)),
+          n.pulse.clear(),
+          (n.sq.x = 420),
+          (n.sq.y = 540),
+          (n.sq.f = 1),
+          (n.sq.walk = 0),
+          (n.sq.moving = !1),
+          (n.sqPose = "stand"),
+          switchTo("squatch"),
+          chipNow());
+      };
+      live
+        ? beginRoomWalk({
+            outWho: "mo",
+            inWho: "sq",
+            exitX: 1010,
+            exitY: 560,
+            fromLeft: !0,
+            entryX: 420,
+            entryY: 540,
+            ctrlAfter: !1,
+            arrive,
+          })
+        : arrive();
+      J([
+        cV(() => !n.roomWalk),
+        v("mom", "Eat up, Harry! Three dozen pretzels, and pancakes forever."),
+        uV(1.2),
+        N(() => {
+          ((H.beam = 0), D.alarm(), (n.ctrl = !0));
+        }),
+      ]);
     }
     function w6() {
       ((n.ctrl = !1),
@@ -522,23 +553,43 @@
         ]));
     }
     function N6() {
-      ((n.ctrl = !1),
-        (n.act = null),
-        (n.scene = "M4v"),
-        (n.room = "van"),
-        (H.phase = "m4v"),
-        (H.mom = !1),
-        (H.dad = !1),
-        n.pulse.clear(),
-        n.pulse.add("seat"),
-        (n.sq = { x: 860, y: 560, f: -1, walk: 0, moving: !1 }),
-        (n.sqPose = "stand"),
-        J([
+      // Out the inside room's left door and in through the van's right door. A jump from any other room just arrives.
+      let live = n.room === "inside",
+        arrive = () => {
+          ((n.scene = "M4v"),
+            (n.room = "van"),
+            (H.phase = "m4v"),
+            (H.mom = !1),
+            (H.dad = !1),
+            n.pulse.clear(),
+            n.pulse.add("seat"),
+            (n.sq.x = 860),
+            (n.sq.y = 560),
+            (n.sq.f = -1),
+            (n.sq.walk = 0),
+            (n.sq.moving = !1),
+            (n.sqPose = "stand"));
+        };
+      (n.ctrl = !1), (n.act = null);
+      live
+        ? beginRoomWalk({
+            outWho: "sq",
+            exitX: -40,
+            exitY: 560,
+            fromLeft: !1,
+            entryX: 860,
+            entryY: 560,
+            ctrlAfter: !1,
+            arrive,
+          })
+        : arrive();
+      J([
+          cV(() => !n.roomWalk),
           v("sq", "Mops? ...Mops?"),
           N(() => {
             n.ctrl = !0;
           }),
-        ]));
+        ]);
     }
     function R6() {
       ((n.ctrl = !1),
@@ -556,25 +607,41 @@
         ]));
     }
     function g2() {
-      ((n.scene = "M5"),
-        (n.room = "port"),
-        (H.phase = "m5i"),
-        (H.follow = !1),
-        (H.met = !1),
-        (H.wook = !1),
-        (x.sing = !1),
-        n.pulse.clear(),
-        (n.sq = { x: vo.x, y: 575, f: 1, walk: 0, moving: !1 }),
-        (n.sqPose = "stand"),
-        (n.mo = { x: 620, y: 540, f: 1, walk: 0, moving: !1 }),
-        (n.moPose = "stand"),
-        (H.bot = { x: 860, y: 450, hx: 860, hf: -1, f: -1, look: 0, pause: 0, alert: 0 }),
-        J([
-          v("sq", "No more hiding."),
-          N(() => {
-            ((H.phase = "m5"), chipNow(), (n.ctrl = !0));
-          }),
-        ]));
+      let live = n.room === "van",
+        arrive = () => {
+          ((n.scene = "M5"),
+            (n.room = "port"),
+            (H.phase = "m5i"),
+            (H.follow = !1),
+            (H.met = !1),
+            (H.wook = !1),
+            (x.sing = !1),
+            n.pulse.clear(),
+            (n.sq.x = vo.x),
+            (n.sq.y = 575),
+            (n.sq.f = 1),
+            (n.sq.walk = 0),
+            (n.sq.moving = !1),
+            (n.sqPose = "stand"),
+            (n.mo.x = 620),
+            (n.mo.y = 540),
+            (n.mo.f = 1),
+            (n.mo.walk = 0),
+            (n.mo.moving = !1),
+            (n.moPose = "stand"),
+            (H.bot = { x: 860, y: 450, hx: 860, hf: -1, f: -1, look: 0, pause: 0, alert: 0 }));
+        };
+      // Out the van's right door, in from the left of the port. A scene jump just arrives.
+      live
+        ? beginRoomWalk({ outWho: "sq", exitX: 1010, exitY: 560, fromLeft: !0, entryX: vo.x, entryY: 575, ctrlAfter: !1, arrive })
+        : arrive();
+      J([
+        cV(() => !n.roomWalk),
+        v("sq", "No more hiding."),
+        N(() => {
+          ((H.phase = "m5"), chipNow(), (n.ctrl = !0));
+        }),
+      ]);
     }
     function z6() {
       ((H.met = !0),

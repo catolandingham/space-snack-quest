@@ -98,7 +98,8 @@
     }
     function drainQueue() {
       // Test hook: plays the story queue to its end at once, the way skipping a cutscene does.
-      for (let i = 0; i < 6e3 && (n.cur || n.q.length); i++) {
+      for (let i = 0; i < 6e3 && (n.cur || n.q.length || n.roomWalk); i++) {
+        n.roomWalk && stepRoomWalk(0.05);
         if (de()) {
           let o = n.cur;
           ((n.cur = null), o && o.k === "panel" && rh(o.id));

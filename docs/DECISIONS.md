@@ -503,4 +503,4 @@ These lines were added to `docs/project/DECISIONS-2026-11-08.md` after this log 
   **Decided** as the scene. The octopus line is still marked NEEDS BRIAN.
 
 - 2026-11-10 (Brian, in chat): "Yes, merge PRs #17 and #18."
-  **Decided.** PR #18 is this decision log. PR #17 (room walks and the hoof-stamp cut) still conflicts with the Chapter 1 code now on `main`, so this merge does not include it.
+  **Decided.** PR #18 is this decision log, on `main` as `1e897aa`. PR #17 (room walks and the hoof-stamp cut) is merged onto that main in this commit. The source files merged cleanly. `index.html` was rebuilt. `docs/MASTER-BACKLOG.md` kept both changelog lines.
