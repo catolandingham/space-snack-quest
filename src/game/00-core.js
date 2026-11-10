@@ -199,6 +199,7 @@
           (lV(220, 0.6, "sine", 0.12, 0, 110), lV(200, 0.6, "sine", 0.1, 0.7, 100));
         },
         splash: () => lV(500, 0.25, "sine", 0.12, 0, 120),
+        pop: () => lV(220, 0.1, "sine", 0.07, 0, 70),
         zap: () => lV(1400, 0.3, "sawtooth", 0.05, 0, 300),
       },
       O1 = 0,
@@ -713,6 +714,7 @@
         sq: "Squatch",
         mops: "Mops",
         bot: "Security",
+        robot: "Robot",
         pa: "Station PA",
         kid: "Kid",
         exec: "Exec",
@@ -721,8 +723,9 @@
         tourist: "Tourist",
         gary: "Gary",
         linda: "Linda",
-        official: "Station Official",
+        official: "Isfred Bar Neshuman",
         scanner: "Fur Scanner",
+        ups: "UPS",
         gloop: "Gloop",
         cook: "Cook",
         rust: "Rusty",
@@ -740,6 +743,7 @@
         sq: "#b5562a",
         mops: "#2bc48a",
         bot: "#3478f6",
+        robot: "#5b6b86",
         pa: "#e5533d",
         kid: "#ff5fa8",
         exec: "#59657d",
@@ -750,6 +754,7 @@
         linda: "#a98bff",
         official: "#e5533d",
         scanner: "#3478f6",
+        ups: "#2b3a67",
         gloop: "#2bc48a",
         cook: "#e07b00",
         rust: "#e07b00",
@@ -1040,7 +1045,16 @@
     // hall alarm shows its "Hide!" chip, that chip stays.
     function chipNow() {
       let l = (n.scene || "")[0],
-        o = l === "P" ? CH3_CHIPS[ch3ChipKey()] : l === "M" ? CH4_CHIPS[ch4ChipKey()] : l === "O" || l === "S" ? CH1_CHIPS[ch1ChipKey()] : null;
+        o =
+          l === "Q"
+            ? ch1QChip()
+            : l === "P"
+              ? CH3_CHIPS[ch3ChipKey()]
+              : l === "M"
+                ? CH4_CHIPS[ch4ChipKey()]
+                : l === "O" || l === "S"
+                  ? CH1_CHIPS[ch1ChipKey()]
+                  : null;
       o === null || (FV.on && n.chip === "Hide!") || (n.chip = o || "");
     }
     // Every spot the current scene has, in the order its picker tries them. A scene without a picker

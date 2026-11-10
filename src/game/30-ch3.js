@@ -106,7 +106,7 @@
         !x.mops &&
         !ch2.sec &&
         n.sqPose !== "hidden" &&
-        vt(s.x, s.y - 40, i.ox, i.oy, i.a, 0.55, 200) &&
+        ballOrStand("rover1", Math.hypot(s.x - i.ox, s.y - i.oy), l, vt(s.x, s.y - 40, i.ox, i.oy, i.a, 0.55, 200)) &&
         (bf(o.x, o.y, "rover"), (o.alert = 0.5), sSec("rover1"));
     }
     function n6(l) {
@@ -145,7 +145,7 @@
         for (let s of Q.rov) {
           if (s.look > 0) continue;
           let q = go(s);
-          if (n.sqPose !== "hidden" && !ch2.sec && vt(n.sq.x, n.sq.y - 40, q.ox, q.oy, q.a, 0.55, 240)) {
+          if (n.sqPose !== "hidden" && !ch2.sec && ballOrStand("roverS" + s.hx, Math.hypot(n.sq.x - q.ox, n.sq.y - q.oy), l, vt(n.sq.x, n.sq.y - 40, q.ox, q.oy, q.a, 0.55, 240))) {
             (bf(s.x, s.y, "rover"), sSec("rover-s"));
             return;
           }
@@ -167,7 +167,8 @@
         } else o.look > 0 ? (o.look -= l) : ((o.x = Math.min(o.hx, o.x + 50 * l)), (o.f = -1));
         if (n.ctrl && !x.mops && !ch2.sec && n.sqPose !== "hidden" && o.look <= 0) {
           let i = go(o);
-          vt(n.sq.x, n.sq.y - 40, i.ox, i.oy, i.a, 0.6, 230) && (bf(o.x, o.y, "rover"), sSec("rover4"));
+          ballOrStand("rover4", Math.hypot(n.sq.x - i.ox, n.sq.y - i.oy), l, vt(n.sq.x, n.sq.y - 40, i.ox, i.oy, i.a, 0.6, 230)) &&
+            (bf(o.x, o.y, "rover"), sSec("rover4"));
         }
       }
     }

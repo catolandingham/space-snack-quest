@@ -156,11 +156,13 @@ MORE["port bot"] = {
   setup: { kind: "ch4", room: "port", phase: "m1", mops: false, extra: {}, found: [] },
   prep: () => {
     const ss = window.__ss, k = ss.ch4;
+    k.lt = 0;
+    ss.op.holdLights = true;
     k.bot = { x: 600, y: 500, hx: 600, hf: -1, f: -1, look: 0 };
     return { ox: 600, oy: 460, a: Math.PI - 0.15, half: 0.55, len: 220, eye: 40, avoid: [], light: true };
   },
   seen: () => { const k = window.__ss.ch2; const v = !!k.sec; k.sec = null; Object.assign(window.__ss.ch4.bot, { x: 600, f: -1, look: 0 }); return v; },
-  freeze: () => { Object.assign(window.__ss.ch4.bot, { x: 600, hx: 600, f: -1, look: 0 }); },
+  freeze: () => { const ss = window.__ss; ss.op.holdLights = true; ss.ch4.lt = 0; Object.assign(ss.ch4.bot, { x: 600, hx: 600, f: -1, look: 0 }); },
 };
 // One sample in one page task (see sampleGas): two game updates with Squatch standing there, read "seen";
 // then, with him moved away, draw one frame and read the drawn shapes from that same frame.
