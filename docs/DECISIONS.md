@@ -504,4 +504,6 @@ These lines were added to `docs/project/DECISIONS-2026-11-08.md` after this log 
 
 - 2026-11-10 (Brian, in chat, 6:24 AM ET): "Yes, merge PRs #17 and #18."
   **Decided.** PR #18 is on `main` as `1e897aa`. PR #17 is on `main` as `bc0759f`.
+- 2026-11-10 (Brian, 8:14 AM ET): "Make a separate test link so I can play it before merging."
+  **Decided.** The slice stays unmerged. A separate site may serve the branch. The live site at space-snack-quest.onrender.com stays on main. Preview saves use ssq-pr21- keys.
 - 2026-11-10: Slice A of the party-first Chapter 1 is a pull request and is not merged. Beat 2 is a stand-in (Mops leaves; the song is later). The party timer is 3 minutes, inside the 3 to 4 minutes Brian approved, and "Cool hat!" is the stand-in for how that time ends. The bar cut-in is the shared piece from CUT-IN-SPEC. Snack grabs do not add points. The spare blue jacket and the horns are not in the dress-up set.

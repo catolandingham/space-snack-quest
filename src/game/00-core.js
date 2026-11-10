@@ -84,8 +84,16 @@
       S = null,
       M = null,
       z = 1;
+    // The live site and local tests keep ssq-*. Any other host, including the PR preview, uses ssq-pr21-* so an iPad does not mix the two.
+    function ssqKey(name) {
+      let host = "";
+      try {
+        host = location.hostname || "";
+      } catch {}
+      return (host === "space-snack-quest.onrender.com" || host === "localhost" || host === "127.0.0.1" || host === "" ? "ssq-" : "ssq-pr21-") + name;
+    }
     try {
-      let l = window.localStorage.getItem("ssq-vol");
+      let l = window.localStorage.getItem(ssqKey("vol"));
       l !== null && (z = [0, 0.5, 1].includes(parseFloat(l)) ? parseFloat(l) : 1);
     } catch {}
     let G = z === 0;
@@ -95,7 +103,7 @@
         M && S && M.gain.setValueAtTime(0.5 * l, S.currentTime);
       } catch {}
       try {
-        window.localStorage.setItem("ssq-vol", String(l));
+        window.localStorage.setItem(ssqKey("vol"), String(l));
       } catch {}
     }
     function eV() {
@@ -427,13 +435,13 @@
       ea = [],
       Ca = 1;
     try {
-      let l = window.localStorage.getItem("ssq-unlocked");
+      let l = window.localStorage.getItem(ssqKey("unlocked"));
       l && (Ca = w(parseInt(l, 10) || 1, 1, 4));
     } catch {}
     function Ml(l) {
       Ca = Math.max(Ca, l);
       try {
-        window.localStorage.setItem("ssq-unlocked", String(Ca));
+        window.localStorage.setItem(ssqKey("unlocked"), String(Ca));
       } catch {}
     }
     let p = {
@@ -973,14 +981,14 @@
       n.walkTo = { x: w(l + hall, b.x0, b.x1), y: w(o, b.y0, b.y1), room: n.room, lx: who.x, ly: who.y, lt: n.T, at: n.T };
       let seen = n.walkHinted;
       try {
-        seen = seen || window.localStorage.getItem("ssq-walk-hint") === "1";
+        seen = seen || window.localStorage.getItem(ssqKey("walk-hint")) === "1";
       } catch {}
       seen ||
         ((n.walkHinted = !0),
         hudNote("Tap the floor to walk there.", 4),
         Dt("hint", "", "walk-tap", "hint"));
       try {
-        window.localStorage.setItem("ssq-walk-hint", "1");
+        window.localStorage.setItem(ssqKey("walk-hint"), "1");
       } catch {}
       return !0;
     }

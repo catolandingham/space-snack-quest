@@ -712,11 +712,11 @@
       Ml(4);
       let l = 0;
       try {
-        l = parseInt(window.localStorage.getItem("ssq-best") || "0", 10) || 0;
+        l = parseInt(window.localStorage.getItem(ssqKey("best")) || "0", 10) || 0;
       } catch {}
       H.best = Math.max(l, n.stars);
       try {
-        window.localStorage.setItem("ssq-best", String(H.best));
+        window.localStorage.setItem(ssqKey("best"), String(H.best));
       } catch {}
     }
     function x2() {
