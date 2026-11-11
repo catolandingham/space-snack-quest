@@ -79,6 +79,40 @@ There is no music file in the repo. Joe's warm theme is not here (`/workspace/ss
 | Room doors | Walk off, new room, walk in. | No teleport for those changes. | Control is off during the walk. | Same speeds as before. | Journey bed. | Good. | PASS |
 | Restart (hold R or the arrow) | Restarts the section. | Night restart puts him back at the bin side and resets the robot's clock to "looking down". | Hold, so it is not a stray tap. | n/a | None. | Fair. | PASS |
 
+## Beats 22–61, quality pass (2026-11-11)
+
+Each row was opened on its own with `ch1JumpBeat` (the preview URL `?beat=` does the same jump, and only on a preview host). Marks: **PASS** holds. **FIX** changed in this pass. **WEAK** still thin. **NEEDS-BRIAN** needs his yes, usually words.
+
+| Moment | Look & feel | Story & continuity | Playability | Physics & motion | Audio | Fun | Mark |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Gift and the Guardian Box | Close-up, blurred room, paw, white X, MY GARDIANS. | He is holding the toy and the note. | DROP snaps them in. Drag also works. | Paw follows the finger. | Warm stand-in. Joe's file is not in the repo. | Clear. | FIX |
+| Calendar | Red ring on the shut wardrobe door. | Delivery morning. | LOOK. | No new timer. | None. | Small. | PASS |
+| Lunch sneak | Two tall guests, cones, feet circles. | Mops is in the hallway. | Sneak along the wall. A catch uses the one lockup. | Same cone as the night robot. | Sneak bed. | Fair. | PASS |
+| One snack behind the counter | One snack, big bag, paw, X, blur. | Mops is beside him. One snack, then it locks. | Drag it in, or DROP. | Paw follows. | Hide chime. | Short, readable. | FIX |
+| Walk to the bay | They walk hall, hallway, bay. | First walk through the hallway is a cutscene. | Watched. | No teleport. | Journey bed. | Quiet. | PASS |
+| Form, Delicious, grumble, spit | Pink and yellow at his mouth, then the bin. | Nothing goes in the vent. | Watched from the plant. | Isfred and the workers walk off. | Bleat. No slurp. | The bite reads. | PASS |
+| Employee of the Month wall | Five colored frames. Number 4 can open the crayon. | Optional. GO is the way on. | LOOK, then BEEP. | He walks aside. | Bleep. | Still plain. | WEAK |
+| Brochure | Big card, two furry people, PANCAKES. | He only hopes. The family is taller. | Then GO home. | The card sits over the room. | Warm stand-in. | The hope is obvious. The drawing is simple. | FIX |
+| Paw-check cut-in | Blurred bay, pink sheet, yellow copy, checkbox, paw, X. | ORDER MORE ROBOTS. The print is meant to press through. | Drag the paw onto the box, or MARK. | Paw follows. Snap on the box. | Sneak bed. | The best close-up. | FIX |
+| Post the yellow | Mailbox spot after the check. | Yellow goes in. Pink stays in his paws. | POST. | He walks to the mailbox. | Robot bleep. | Clear. | PASS |
+| Vent suck | Pink sheet tilts and moves into the vent, with suction lines. | He is hidden by the vent, eyes there, not in the plant. | Control is off. | About 1.2 seconds. | Slurp. | Readable. Still a simple rectangle. | FIX |
+| Robot tease | Three robots, Mops. | The replacement line, then home. | Tap the lines. | They do not walk into him. | Bleeps. | Mean, in a good way. | PASS |
+| Almost-slip | At home, two whispers. | He covers the mailed order. | Tap. | They are already home. | None extra. | The cover is the joke. | PASS |
+| Sneak to the vent and the ball | ROLL at the vent. | He waits as the L2 ball. | One button. | Walking as a ball still stands him up. Old physics. | Hide. | Tight. | NEEDS-BRIAN if the ball should roll |
+| Workstation | Dark vent, big Mars letter, red NO, pink slip on the desk. | The only place you learn Mops writes the notes. | Watched through the grille. | He does not go in. | None extra. | The NO is the point. The room is plain. | FIX |
+| Grab the pink slip | Mops has only the pink sheet in his mouth. | Squatch takes it before Mops reads the paw. | GRAB. | They walk out. | Grab. | Clear. | PASS |
+| Keypad cut-in | Blurred hall, keys about 72 px, paw, the code on the pink slip. | 4723 is the old keypad. A wrong digit clears. | Tap each key. | Paw follows. | Key clicks, then the door. | Fair if he looks at the slip. | FIX |
+| Return the crate | Moon Pie page. | Books the empty crate. | RETURN. | Spot on the computer. | Open chime. | OK. | PASS |
+| Take all the snacks | Six separate snacks. Five go in the bag one at a time. The last stays for the Guardians. | Not one drop. | Drag each, or press DROP once per snack, then LEAVE. | Paw follows. A miss does not count. | Hide chime each one. | The toy it should be. | FIX |
+| Packing | Box, then bucket, into the crate. The pink slip is in the box. | Guardian Box inside, bucket on top. | Two presses, or drag. | Paw follows. | Grab. | Clear enough. | PASS |
+| Robots open a crate | He starts inside a mail-room crate. A crate opens by the ship. | No Dot, Bob, or Lou. | Watched, then Mops warns him. | He climbs out and they walk home. | Bleat. | OK. | PASS |
+| Goat costume | Spare jacket, beard, horns. Mops keeps his jacket. The hook is empty. | Ridiculous on purpose. | PUT ON. | Same home room. | Grab. | The joke shows. | PASS |
+| Last walk, POP, keepsake | Balloon pops in the hall. The crayon can be taken. | No points until Brian picks a number. | GO, optional TAKE. | They walk. | Pop. | The pop is small. | PASS |
+| Scanner | Blue arch, goat Squatch, Mops, BOARD. | HAIR... PROBABLY. | Walk through. | Then up the ramp. | Scanner bleep. | The joke lands. | PASS |
+| Where's Mops | Isfred and a robot in the hallway office. | He asks for the photo and hears Mops is gone. | Tap the lines. | They are placed, not mid-line teleports. | Robot bleep. | The figures are still simple. | WEAK |
+| Tapes | REC on a screen, a tiny goat. | Later that evening. | Watched. | Same office. | None extra. | The silly goat is small. | WEAK |
+| The call | The base tells the ship to stop. | Chapter 2 is the gas stop. | Tap. | No fuel light. | Warm stand-in. Joe's file is still missing. | Heavy, as it should be. | PASS |
+
 ## Round 3, in order
 
 1. Drop in Joe's warm theme when the file is actually in the workspace, and retire the generated stand-in for the title, the happy balloon kid, home warmth, and bedtime.

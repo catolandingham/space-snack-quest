@@ -495,6 +495,7 @@
       if (n.roomWalk) return "";
       if (n.ch1Night && n.scene === "Q4" && n.ctrl) return "";
       if (n.sqPose === "hidden" && n.ch1Party) return "";
+      if (n.ch1Heart) return "heart";
       if (n.gift || n.holdToy) return "gift";
       if (n.room === "closet" && !n.ch1Search && !n.guard && !(n.ch1Dress && n.ch1Dress.on)) return "home";
       if (n.ch1Kid === "smile" || n.ch1Kid === "wide" || n.ch1Kid === "shh") return "heart";

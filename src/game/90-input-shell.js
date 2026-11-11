@@ -73,8 +73,14 @@
       let linkCh = parseInt(q.get("ch") || "", 10) || 0,
         linkPhase = q.get("phase") || "",
         linkScene = q.get("scene") || "",
-        linkDebug = q.get("debug") === "1";
-      if (!linkCh && !linkPhase && !linkScene && !linkDebug) return;
+        linkDebug = q.get("debug") === "1",
+        linkBeat = parseInt(q.get("beat") || "", 10) || 0;
+      let previewBeat = !1;
+      try {
+        let host = location.hostname || "";
+        previewBeat = !!linkBeat && host !== "space-snack-quest.onrender.com" && host !== "localhost" && host !== "127.0.0.1" && host !== "";
+      } catch {}
+      if (!linkCh && !linkPhase && !linkScene && !linkDebug && !previewBeat) return;
       !linkCh && linkPhase && (linkCh = 2);
       !linkCh && linkScene && (linkCh = { O: 1, S: 1, Q: 1, G: 2, P: 3, M: 4 }[linkScene[0]] || 0);
       setTimeout(() => {
@@ -88,6 +94,7 @@
           typeof f === "function" && (clearRun(), f());
         }
         linkDebug && debugStrip();
+        previewBeat && (startStory(1), (n.q = []), (n.cur = null), ch1JumpBeat(linkBeat));
       }, 0);
     }
     function roomLine(text) {
@@ -237,6 +244,7 @@
           ch1Day2Pointer(kind, x, y);
         },
         ch1PadPress,
+        ch1JumpBeat,
         shown: () => Array.from(p.shown),
         op: n,
         startOpening: qh,

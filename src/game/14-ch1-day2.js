@@ -207,13 +207,13 @@
         v("tourist", "We ate at a pancake place on Mars."),
         v("tourist", "Here, a brochure."),
         N(() => {
-          ((n.ch1Brochure = !0), (n.ch1BrochureBig = 3.2), (n.sqPose = "stand"));
+          ((n.ch1Brochure = !0), (n.ch1BrochureBig = 3.2), (n.ch1Heart = !0), (n.sqPose = "stand"));
         }),
         v("sq", "Are those other Sasquatches?", "whisper"),
         v("mops", "I need to get back to work, we'll talk about it tonight."),
         ch1Step("mo", 1120, 520, 180),
         N(() => {
-          ((n.moPose = "hidden"), (n.mo.x = 1200), ch1Ready("gohome", "Squatch: go home", "Q3"));
+          ((n.moPose = "hidden"), (n.mo.x = 1200), (n.ch1Heart = !1), ch1Ready("gohome", "Squatch: go home", "Q3"));
         }),
       ]);
     }
@@ -303,7 +303,7 @@
         N(() => {
           ((n.ch1SuckT = n.T), D.slurp());
         }),
-        uV(0.85),
+        uV(1.25),
         N(() => {
           ((n.ch1PinkSucked = 1),
             ch1SetPaper("vent"),
@@ -401,7 +401,12 @@
     }
     function ch1ToPad() {
       ch1GoDay("passage", { who: "both", night: !0, scene: "QP", stand: [480, 520] }, () => {
-        ((n.ch1Pad = ""), (n.ch1PadOn = !0), (n.ch1Door = !1), (n.ch1Hold = "slip"), ch1Ready("pad", "Squatch: type the code from the pink slip", "QP"));
+        ((n.ch1Pad = ""),
+          (n.ch1PadOn = !0),
+          (n.ch1Door = !1),
+          (n.ch1Hold = "slip"),
+          (n.ch1Zoom = { id: "pad", zoom: 0, paw: { x: 280, y: 580 } }),
+          ch1Ready("pad", "Squatch: type the code from the pink slip", "QP"));
       });
     }
     function ch1PadKey(d) {
@@ -418,7 +423,7 @@
       }
       ((n.ch1Pad = have + d), D.key());
       if (n.ch1Pad === CH1_OFFICE_CODE) {
-        ((n.ch1PadOn = !1), (n.ch1Code = CH1_OFFICE_CODE), (n.ch1Door = !0), D.open(), n.ch1Step === "pad" && ch1OfficeIn());
+        ((n.ch1PadOn = !1), (n.ch1Zoom = null), (n.ch1Code = CH1_OFFICE_CODE), (n.ch1Door = !0), D.open(), n.ch1Step === "pad" && ch1OfficeIn());
       }
     }
     function ch1OfficeIn() {
@@ -438,13 +443,31 @@
         J([
           v("mops", "This time, take all the snacks you want."),
           N(() => {
-            ((n.ch1Zoom = { id: "all", zoom: 0, paw: { x: 400, y: 580 }, bag: 0 }), (n.ch1Step = "all1"), (n.ch1Chip = "Squatch: take the snacks"), chipNow());
+            ((n.ch1Zoom = { id: "all", zoom: 0, paw: { x: 400, y: 580 }, bag: 0, held: -1, gone: {} }), (n.ch1Step = "all1"), (n.ch1Chip = "Squatch: take the snacks"), chipNow());
           }),
         ]));
     }
+    function ch1SnackAt(i) {
+      let spots = [
+        [470, 210],
+        [420, 270],
+        [530, 270],
+        [390, 330],
+        [480, 330],
+        [560, 330],
+      ];
+      return { x: spots[i][0], y: spots[i][1], color: ["#ffcf33", "#e5533d", "#8fd0f2", "#c9b6f2", "#ff8a3d", "#2bc48a"][i] };
+    }
+    function ch1BagSnack(i) {
+      let z = n.ch1Zoom;
+      if (!z || i < 0 || i > 4 || (z.gone && z.gone[i])) return;
+      ((z.gone = z.gone || {}), (z.gone[i] = 1), (z.held = -1), (z.bag = [0, 1, 2, 3, 4].filter((k) => z.gone[k]).length), (n.ch1All = z.bag), D.hide());
+      z.bag >= 5 && n.ch1Step === "all1" && ((n.ch1Step = "all2"), (n.ch1Chip = "Squatch: leave food for the Guardians"), chipNow());
+    }
     function ch1AllDrop() {
-      if (n.ch1Step !== "all1") return;
-      ((n.ch1Step = "all2"), (n.ch1All = 4), n.ch1Zoom && (n.ch1Zoom.bag = 4), D.hide(), (n.ch1Chip = "Squatch: leave food for the Guardians"), chipNow());
+      let z = n.ch1Zoom;
+      if (n.ch1Step !== "all1" || !z) return;
+      for (let i = 0; i < 5; i++) if (!z.gone || !z.gone[i]) return (z.paw = { x: ch1SnackAt(i).x, y: ch1SnackAt(i).y }, ch1BagSnack(i));
     }
     function ch1LeaveFood() {
       if (n.ch1Left) return;
@@ -572,6 +595,7 @@
         { k: "card", id: "later", text: "Later that evening..." },
         N(() => (n.ch1Tape = !0)),
         uV(1.1),
+        N(() => (n.ch1Heart = !0)),
         v("pa", "The base called the ship. It has to stop.", "pa"),
         N(() => {
           (aV.caught + x.caught === 0 && !n.found.has("ghost1") && (n.found.add("ghost1"), (n.stars += 250)), (B.nextBeat = "Ch2"));
@@ -615,20 +639,38 @@
       return !1;
     }
     function ch1Day2Pointer(kind, x, y) {
-      if (n.ch1PadOn && (kind === "down" || kind === "up")) {
+      let z = n.ch1Zoom;
+      if (z && z.zoom >= 1) z.paw = { x, y };
+      if (n.ch1PadOn && z && z.id === "pad" && kind === "up") {
         for (let d of ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]) {
           let k = ch1PadKey(d);
-          if (Math.hypot(x - k.x, y - k.y) < 40) {
-            kind === "up" && ch1PadPress(d);
-            return;
-          }
+          if (Math.hypot(x - k.x, y - k.y) < 36) return ch1PadPress(d);
         }
+      }
+      if (!z || z.zoom < 1 || n.ch1ZoomClosing) return;
+      if (kind === "down" && z.id === "one" && Math.hypot(x - 480, y - 260) < 40) z.held = 1;
+      if (kind === "up" && z.id === "one") {
+        z.held = 0;
+        if (x < 210 && y > 450) ch1OneDrop();
         return;
       }
-      let z = n.ch1Zoom;
-      if (!z || z.zoom < 1 || n.ch1ZoomClosing) return;
-      (kind === "move" || kind === "down") && (z.paw = { x, y });
-      kind === "up" && ((z.paw = { x, y }), ch1ZoomHit(x, y) && ch1ZoomAct());
+      if (kind === "down" && z.id === "all") {
+        z.held = -1;
+        for (let i = 0; i < 6; i++) {
+          if (z.gone && z.gone[i]) continue;
+          let at = ch1SnackAt(i);
+          if (Math.hypot(x - at.x, y - at.y) < 36) z.held = i;
+        }
+      }
+      if (kind === "up" && z.id === "all" && z.held >= 0) {
+        let held = z.held;
+        z.held = -1;
+        if (held < 5 && x < 210 && y > 450) ch1BagSnack(held);
+        else if (held === 5 && (n.ch1Zoom.bag || 0) >= 5 && Math.hypot(x - 700, y - 430) < 70) ch1LeaveFood();
+        return;
+      }
+      let onX = Math.hypot(x - 880, y - 540) < 42;
+      kind === "up" && ch1ZoomHit(x, y) && !(onX && (n.ch1Step === "all1" || n.ch1Step === "pad")) && ch1ZoomAct();
     }
     function ch1ConeHit(px, py, ox, oy, face) {
       let T = px - ox,
@@ -733,7 +775,7 @@
       for (let i = 0; i < 5; i++) {
         let x = 250 + i * 78,
           tilt = i === 3 ? -0.18 : 0;
-        (e.save(), e.translate(x, 150), e.rotate(tilt), m(-28, -36, 56, 70, 3), r(i === 3 && n.ch1Crayon ? "#fff4c2" : "#1e2430", 3));
+        (e.save(), e.translate(x, 150), e.rotate(tilt), m(-28, -36, 56, 70, 3), r(i === 3 && n.ch1Crayon ? "#fff4c2" : ["#f6d7a8", "#d7ecf5", "#ffd0e0", "#efe6c8", "#e7f6d5"][i], 3));
         i === 3 && n.ch1Crayon && !n.ch1Keepsake && (g("ME", 0, -8, 10, "#1e2430", "center", 800), g("MOPS", 0, 10, 10, "#1e2430", "center", 800));
         e.restore();
       }
@@ -752,7 +794,9 @@
     function drawCh1Zoom() {
       let z = n.ch1Zoom;
       if (!z) return;
-      ((e.fillStyle = "rgba(12,16,28,.42)"), e.fillRect(0, 0, c, b));
+      (e.save(), (e.filter = "blur(6px)"), e.drawImage(e.canvas, 0, 0), e.restore(), (e.fillStyle = "rgba(12,16,28,.35)"), e.fillRect(0, 0, c, b));
+      let shade = e.createRadialGradient(480, 300, 160, 480, 320, 560);
+      (shade.addColorStop(0, "rgba(0,0,0,0)"), shade.addColorStop(1, "rgba(0,0,0,.5)"), (e.fillStyle = shade), e.fillRect(0, 0, c, b));
       let id = z.id;
       if (id === "paw") {
         (drawSlip(300, 180, "#ffe08a", 70, 90), drawSlip(340, 150, "#ff8fb8", 220, 280), g("ORDER MORE ROBOTS", 450, 230, 18, "#1e2430", "center", 900));
@@ -763,11 +807,30 @@
         n.ch1Fed < 1 && (m(560, 300, 40, 50, 4), r("#cdbb98", 2));
         n.ch1Fed === 1 && (m(560, 320, 36, 28, 3), r("#fffdf8", 2));
         n.ch1Fed && F(500, 300, 3, "#c4a484");
-      } else if (id === "one" || id === "all") {
-        for (let row = 0; row < 4; row++) for (let i = 0; i < 4 - row; i++) F(430 + i * 26 - row * 6, 180 + row * 40, 12, "#ffcf33");
-        (m(36, 470, z.bag ? 150 : 54, z.bag ? 110 : 44, 8), r("#fffdf8", 3), g(String(z.bag || 0), 70, 520, 20, "#1e2430", "center", 900));
-        id === "all" && (L(700, 430, 36), r("#fffdf8", 3), F(700, 420, 8, "#e5533d"));
-        Fe(180, 220, 1.4, { f: 1, walk: 0, mop: !1 });
+      } else if (id === "one") {
+        (F(z.held ? z.paw.x : 480, z.held ? z.paw.y : 260, 28, "#ffcf33"), m(36, 470, z.bag ? 160 : 70, z.bag ? 120 : 56, 10), r("#fffdf8", 4), g(String(z.bag || 0), 80, 530, 28, "#1e2430", "center", 900));
+        Fe(160, 240, 1.5, { f: 1, walk: 0, mop: !1 });
+      } else if (id === "all") {
+        for (let i = 0; i < (n.ch1Step === "all2" ? 5 : 6); i++) {
+          if ((z.gone && z.gone[i]) || z.held === i) continue;
+          let at = ch1SnackAt(i);
+          F(at.x, at.y, 26, at.color);
+        }
+        z.held >= 0 && F(z.paw.x, z.paw.y, 26, ch1SnackAt(z.held).color);
+        (m(24, 460, 170, 130, 12), r("#fffdf8", 4), g(String(z.bag || 0), 108, 520, 32, "#1e2430", "center", 900));
+        n.ch1Step === "all2" && (L(700, 430, 40), r("#fff7d6", 4), g("♥", 700, 430, 28, "#e5533d", "center", 900));
+      } else if (id === "pad") {
+        (m(250, 120, 460, 440, 16),
+          r("#59657d", 5),
+          m(300, 145, 360, 60, 8),
+          r("#1e2430", 3),
+          g(n.ch1Pad || "—", 480, 176, 32, "#2bc48a", "center", 900),
+          drawSlip(70, 180, "#ff8fb8", 140, 170),
+          g(CH1_OFFICE_CODE, 140, 260, 32, "#1e2430", "center", 900),
+          ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"].forEach((d) => {
+            let k = ch1PadKey(d);
+            (L(k.x, k.y, 36), r("#fffdf8", 4), g(d, k.x, k.y, 28, "#1e2430", "center", 900));
+          }));
       } else if (id === "box") {
         (m(360, 220, 240, 180, 10), r("#3478f6", 5), g("MY GARDIANS", 480, 300, 26, "#ffffff", "center", 900));
         n.ch1Hold === "gift" && (m(180, 200, 70, 90, 4), r("#fff4c2", 2), g("Rule #1", 215, 230, 14, "#1e2430", "center", 800), g("Brave Sasquatches stay hidden.", 215, 260, 9, "#1e2430", "center", 700));
@@ -776,7 +839,7 @@
         n.ch1Packed && (m(430, 300, 80, 50, 4), r("#3478f6", 3), g("MY GARDIANS", 470, 326, 10, "#fff", "center", 800), drawSlip(448, 312, "#ff8fb8", 22, 18));
         n.ch1Packed === 2 && (L(560, 250, 22), r("#8a93a3", 3));
       }
-      (drawPawArm(z.paw), drawZoomX(), z.zoom < 1 && (e.globalAlpha = Math.max(0.35, z.zoom)));
+      (drawPawArm(z.paw), drawZoomX(), (e.globalAlpha = 1));
     }
     function drawCh1Day2() {
       if (n.ch1Step === "sneak" && n.room === "hall")
@@ -787,7 +850,7 @@
             (e.strokeStyle = "rgba(160,100,10,.9)"),
             (e.lineWidth = 2),
             e.stroke(),
-            Qt(gue.x, gue.y, "#7ad0c8", 2.2, gue.face > 2 ? -1 : 1));
+            Qt(gue.x, gue.y, "#7ad0c8", 2.4, gue.face > 2 ? -1 : 1));
         }
       n.room === "closet" && (n.ch1Cal || 0) > 0 && (e.beginPath(), e.arc(179, 214, 28 + Math.sin(n.T * 8) * 2, 0, 7), (e.strokeStyle = "#e5533d"), (e.lineWidth = 4), e.stroke());
       n.ch1Hold === "gift" && n.sqPose === "stand" && (m(n.sq.x + 16, n.sq.y - 78, 36, 28, 3), r("#e5533d", 2), m(n.sq.x + 18, n.sq.y - 110, 44, 30, 2), r("#fff4c2", 2), g("Rule #1", n.sq.x + 40, n.sq.y - 96, 8, "#1e2430", "center", 700));
@@ -799,8 +862,13 @@
       (n.ch1Paper === "pink" || n.ch1Paper === "paw" || n.ch1Hold === "slip") && n.sqPose === "stand" && drawSlip(n.sq.x + 14, n.sq.y - 72, "#ff8fb8", 18, 24);
       n.ch1Paper === "box" && n.room === "closet" && drawSlip(332, 470, "#ff8fb8", 16, 20);
       if (n.ch1SuckT) {
-        let t = Math.min(1, (n.T - n.ch1SuckT) / 0.7);
-        drawSlip(n.sq.x + (CH1_VENT.x - n.sq.x) * t, n.sq.y - 60 + (CH1_VENT.y - 40 - (n.sq.y - 60)) * t, "#ff8fb8", 26, 34);
+        let t = Math.min(1, (n.T - n.ch1SuckT) / 1.15),
+          x0 = n.sq.x - 10,
+          y0 = n.sq.y - 78,
+          x = x0 + (868 - x0) * t,
+          y = y0 + (150 - y0) * t + Math.sin(t * 24) * 18 * (1 - t);
+        (e.save(), e.translate(x, y), e.rotate(Math.sin(t * 18) * 0.7), drawSlip(-22, -28, "#ff8fb8", 44, 56), e.restore());
+        for (let i = 0; i < 4; i++) C([848, 130 + i * 14, 888, 130 + i * 14], "rgba(120,170,220,.95)", 3);
       }
       n.ch1ShowBots &&
         n.room === "hangar" &&
@@ -812,7 +880,7 @@
         });
       (n.ch1BrochureBig || 0) > 0 && (m(250, 150, 460, 280, 8), r("#fffdf8", 4), g("PANCAKES", 480, 190, 22, "#b45309", "center", 900), drawCouple(480, 300, 2.2));
       n.ch1Brochure && (n.ch1BrochureBig || 0) <= 0 && n.sqPose === "stand" && (m(n.sq.x + 8, n.sq.y - 64, 16, 20, 2), r("#fffdf8", 1), drawCouple(n.sq.x + 16, n.sq.y - 54, 0.35));
-      (n.ch1Step === "family" || n.ch1Step === "gohome") && n.room === "hall" && (Qt(560, 500, "#e8a87c", 2.3, 1), Qt(680, 510, "#ff8a3d", 2.2, -1));
+      (n.ch1Step === "family" || n.ch1Step === "gohome") && n.room === "hall" && (Qt(560, 500, "#e8a87c", 2.4, 1), Qt(680, 510, "#ff8a3d", 2.4, -1));
       n.room === "duct" &&
         (m(560, 180, 280, 150, 6),
         r("#fffdf8", 3),
@@ -823,23 +891,92 @@
         g("NO", 760, 250, 42, "#e5533d", "center", 900),
         g("We know you're thinking about going to Mars.", 430, 360, 11, "#1e2430", "center", 800),
         g("Don't worry, we'll always be with you.", 430, 378, 11, "#1e2430", "center", 800));
-      n.ch1PadOn &&
-        ((e.fillStyle = "rgba(12,16,28,.45)"),
-        e.fillRect(0, 0, c, b),
-        m(250, 150, 460, 420, 16),
-        r("#59657d", 5),
-        m(300, 170, 360, 54, 6),
-        r("#1e2430", 3),
-        g(n.ch1Pad || "—", 480, 198, 28, "#2bc48a", "center", 900),
-        drawSlip(80, 200, "#ff8fb8", 120, 150),
-        g(CH1_OFFICE_CODE, 140, 270, 28, "#1e2430", "center", 900),
-        ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"].forEach((d) => {
-          let k = ch1PadKey(d);
-          (L(k.x, k.y, 32), r("#fffdf8", 3), g(d, k.x, k.y, 24, "#1e2430", "center", 900));
-        }));
       n.room === "hangar" &&
         n.ch1Ship &&
         n.scene === "Q9" &&
         (C([400, 180, 400, 430], "#3478f6", 8), C([560, 180, 560, 430], "#3478f6", 8), C([400, 180, 560, 180], "#3478f6", 8));
       n.ch1Left && n.room === "hall" && (F(790, 500, 8, "#ffcf33"), F(806, 506, 6, "#e5533d"));
+    }
+    function ch1JumpBeat(beat) {
+      let b = beat | 0;
+      ((n.q = []),
+        (n.cur = null),
+        (n.ctrl = !0),
+        (n.ch1Day2 = !0),
+        (n.ch1Party = !1),
+        (n.ch1Zoom = null),
+        (n.ch1PadOn = !1),
+        (n.ch1Office = !1),
+        (n.ch1Night = !1),
+        (n.ch1Duct = !1),
+        (n.ch1D = !1),
+        (n.ch1Ship = !1),
+        (n.wardrobe = "closed"),
+        (n.sqPose = "stand"),
+        (n.moPose = "stand"),
+        (n.costumeOn = !1),
+        (n.ch1SuckT = 0),
+        (n.ch1ShowBots = !1),
+        (n.ch1Prop = ""),
+        (n.ch1Paper = ""),
+        (n.ch1Hold = ""),
+        (n.ch1Heart = !1),
+        (n.ch1Brochure = !1),
+        (n.ch1BrochureBig = 0),
+        (n.ch1Chip = ""));
+      if (b === 22) {
+        ((n.room = "closet"), (n.scene = "QB"), (n.sq.x = 360), (n.sq.y = 520), (n.moPose = "hidden"), (n.ch1Hold = "gift"));
+        n.ch1Zoom = { id: "box", zoom: 1, paw: { x: 420, y: 360 } };
+        n.ch1Step = "dropbox";
+        n.ch1Chip = "Squatch: put the gift in the box";
+      } else if (b === 25) {
+        ((n.room = "hall"), (n.scene = "QB"), (n.ch1Sneak = !0), (n.ch1Step = "sneak"), (n.ch1Hold = "lunch"), (n.sq.x = 220), (n.sq.y = 580), (n.moPose = "hidden"));
+      } else if (b === 27) {
+        ((n.room = "hall"), (n.scene = "Q3"), (n.sq.x = 720), (n.sq.y = 520), (n.mo.x = 640), (n.mo.y = 510));
+        n.ch1Zoom = { id: "one", zoom: 1, paw: { x: 480, y: 360 }, bag: 0 };
+        n.ch1Step = "onesnack";
+      } else if (b === 33) {
+        ((n.room = "hangar"), (n.ch1D = !0), (n.ch1Ship = !0), (n.scene = "QB"), (n.sqPose = "hidden"), (n.sq.x = CH1_PLANT.x), (n.sq.y = CH1_PLANT.y), (n.mo.x = 640), (n.mo.y = 500), (n.ch1ShowBots = !0), (n.ch1Ramp = 1), ch1SetPaper("mouth"));
+      } else if (b === 37) {
+        ((n.room = "passage"), (n.scene = "QB"), (n.ch1Step = "photos"), (n.ch1Crayon = !0), (n.sq.x = 420), (n.sq.y = 510), (n.mo.x = 520), (n.mo.y = 510));
+      } else if (b === 38) {
+        ((n.room = "hall"), (n.scene = "Q3"), (n.ch1Brochure = !0), (n.ch1BrochureBig = 8), (n.ch1Heart = !0), (n.ch1Step = "gohome"), (n.sq.x = 400), (n.sq.y = 520), (n.mo.x = 560), (n.mo.y = 510));
+      } else if (b === 42) {
+        ((n.room = "hangar"), (n.ch1D = !0), (n.ch1Night = !0), (n.scene = "Q4"), (n.ch1LookT = 0.4), (n.sq.x = CH1_BIN.x), (n.sq.y = CH1_BIN.y), (n.moPose = "hidden"), ch1SetPaper("paws"));
+        n.ch1Zoom = { id: "paw", zoom: 1, paw: { x: 500, y: 340 } };
+        n.ch1Step = "mark";
+        n.ch1Chip = "Squatch: check the order";
+      } else if (b === 142) {
+        ((n.room = "hangar"), (n.ch1D = !0), (n.ch1Night = !0), (n.scene = "Q4"), (n.sqPose = "hidden"), (n.sq.x = CH1_VENT.x - 70), (n.sq.y = CH1_VENT.y), (n.moPose = "hidden"), (n.ch1SuckT = n.T - 0.35), (n.ch1Chip = "Squatch: hide by the vent"), ch1SetPaper(""));
+      } else if (b === 48) {
+        ((n.room = "duct"), (n.ch1Duct = !0), (n.scene = "Q6"), (n.sqPose = "hidden"), (n.sq.x = 180), (n.sq.y = 440), (n.mo.x = 520), (n.mo.y = 440), (n.ch1Prop = "desk"), (n.ch1Chip = "Squatch: watch Mops"));
+      } else if (b === 52) {
+        ((n.room = "hall"), (n.scene = "Q3"), (n.sq.x = 700), (n.sq.y = 520), (n.mo.x = 600), (n.mo.y = 510));
+        n.ch1Zoom = { id: "all", zoom: 1, paw: { x: 460, y: 400 }, bag: 1, held: -1, gone: { 0: 1 } };
+        n.ch1Step = "all1";
+        n.ch1Chip = "Squatch: take the snacks";
+      } else if (b === 56) {
+        ((n.room = "closet"), (n.scene = "Q8"), (n.wardrobe = "open"), (n.costumeOn = !0), (n.sq.x = 460), (n.sq.y = 510), (n.mo.x = 620), (n.mo.y = 500), (n.ch1Step = "jacket"));
+      } else if (b === 58) {
+        ((n.room = "hangar"), (n.ch1D = !0), (n.ch1Ship = !0), (n.scene = "Q9"), (n.costumeOn = !0), (n.sq.x = 420), (n.sq.y = 500), (n.mo.x = 520), (n.mo.y = 500), (n.ch1Step = "board"));
+      } else if (b === 59 || b === 60) {
+        ((n.room = "passage"),
+          (n.ch1Office = !0),
+          (n.scene = "Q9"),
+          (n.sqPose = "hidden"),
+          (n.moPose = "hidden"),
+          (n.ch1Tape = b === 60),
+          (n.ctrl = !1),
+          (n.bt = 1),
+          (n.cur = {
+            k: "bub",
+            b: {
+              who: "official",
+              text: b === 60 ? "I never ordered a replacement! Get me the security tapes." : "Send in Mops for his Employee of the Month photo.",
+              style: "say",
+              ear: !1,
+            },
+          }));
+      }
+      chipNow();
     }
