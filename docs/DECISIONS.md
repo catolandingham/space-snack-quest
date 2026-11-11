@@ -507,3 +507,15 @@ These lines were added to `docs/project/DECISIONS-2026-11-08.md` after this log 
 - 2026-11-10 (Brian, 8:14 AM ET): "Make a separate test link so I can play it before merging."
   **Decided.** The slice stays unmerged. A separate site may serve the branch. The live site at space-snack-quest.onrender.com stays on main. Preview saves use ssq-pr21- keys.
 - 2026-11-10: Slice A of the party-first Chapter 1 is a pull request and is not merged. Beat 2 is a stand-in (Mops leaves; the song is later). The party timer is 3 minutes, inside the 3 to 4 minutes Brian approved, and "Cool hat!" is the stand-in for how that time ends. The bar cut-in is the shared piece from CUT-IN-SPEC. Snack grabs do not add points. The spare blue jacket and the horns are not in the dress-up set.
+
+- 2026-11-11 (playtest 6): The picture jumped about 30 pixels when NEXT appeared. The desktop controls row now keeps a 104 pixel slot for that button, same as the bug-fix branch.
+  **In this unmerged slice.** No new words.
+
+- 2026-11-11 (playtest 6): Isfred's party line sat on the office monitor. The monitor is the screen at about x 94–206, y 72–160. The bubble anchor for a party line from him moved from (210, 215) to (300, 330), so the box starts below that screen, next to his nameplate.
+  **In this unmerged slice.** The words are unchanged.
+
+- 2026-11-11 (playtest 6): Squatch looks about two thirds as tall as a guest. Not changed. A guest is drawn by Qt at scale 1.6: about 64 units from feet to the top of the head, so about 102 pixels. Squatch in the hall is drawn by Re at he = 1.6: about 45 units, so about 72 pixels, which is about 70% of the guest. The closet uses wl = 3 instead, which is why he looks larger at home. Matching the guest would mean drawing him at about 2.3 in the party only (102 / 45). Hiding, collision, and the plant hide use his feet and his pose, not the picture's height, so a bigger picture would not change those. It would make him overlap nearby guests and the plant visually, and his bubble would sit higher. Recommendation: leave it until Brian says yes. If he wants them to match, change only the party drawing to 2.3, not the global he.
+  **Needs Brian's yes** before the scale changes.
+
+- 2026-11-11 (playtest 6): "PUT ON · tourist disguise" turned the costume on in one frame, and the dress-up screen popped in the same way. Both now fade through black in about 0.4 seconds. No new words.
+  **In this unmerged slice.**

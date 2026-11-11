@@ -426,7 +426,17 @@
             r: 160,
             hot: !0,
             f: () => {
-              ((n.ch1Disguise = !0), (n.act = null));
+              ((n.ctrl = !1), (n.act = null), (n.ch1Veil = 0), (n.ch1VeilTo = 1));
+              J([
+                cV(() => (n.ch1Veil || 0) >= 1),
+                N(() => {
+                  ((n.ch1Disguise = !0), (n.ch1VeilTo = 0));
+                }),
+                cV(() => (n.ch1Veil || 0) <= 0),
+                N(() => {
+                  n.ctrl = !0;
+                }),
+              ]);
             },
           }),
         ];

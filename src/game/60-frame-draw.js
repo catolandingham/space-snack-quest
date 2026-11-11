@@ -1008,6 +1008,8 @@
       if (s) return s;
       if (l === "official") {
         if (n.ch1Office) return { x: 220, y: 380 };
+        // Party lines sit under the office monitor (the screen ends near y=160), on the Isfred nameplate.
+        if (n.ch1Party) return { x: 300, y: 330 };
         if (n.room === "hangar" && n.ch1D && n.ch1Ship && !n.ch1Night && n.scene !== "Q9") return { x: 560, y: 400 };
         return { x: 210, y: 215 };
       }
@@ -2110,7 +2112,8 @@
       (n.under === "crack" && gq("crack", !1),
         l && l.k === "panel" && gq(l.id, n.bt > 0.3),
         l && l.k === "bub" ? bq(l.b, !1) : !de() && n.live.length && bq(n.live[0], !0),
-        window.__ss && (window.__ss.bubbleFrame = qq));
+        window.__ss && (window.__ss.bubbleFrame = qq),
+        n.ch1Veil > 0.01 && ((e.fillStyle = "rgba(20,24,32," + Math.min(1, n.ch1Veil).toFixed(3) + ")"), e.fillRect(0, 0, c, b)));
       ((e.globalAlpha = 1), zG(), drawTapHeard());
     }
     function zG() {

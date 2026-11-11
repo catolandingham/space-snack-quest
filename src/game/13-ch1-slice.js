@@ -67,6 +67,8 @@
         (n.wardrobe = "open"),
         (n.ch1Party = !1),
         (n.ch1Dress = { on: !0, head: "", face: "", body: "", legs: "", extra: [] }),
+        (n.ch1Veil = 1),
+        (n.ch1VeilTo = 0),
         (n.ctrl = !0));
     }
     function ch1DressMeter() {
@@ -116,22 +118,27 @@
       ];
     }
     function ch1DressGo() {
-      ((n.ch1Dress.on = !1),
-        (n.ch1Disguise = !0),
-        (n.ch1Outfit = { ...(n.ch1Dress) }),
-        (n.wardrobe = "closed"),
-        (n.ctrl = !1),
-        (n.act = null));
-      ch1Go("hall", { who: "sq", scene: "QA" }, () => {
-        ((n.ch1Party = !0),
-          (n.ch1Disguise = !0),
-          (n.ch1Flyer = !1),
-          (n.ch1PartyOver = !1),
-          (n.ch1PartyT = 0),
-          (n.sqPose = "stand"),
-          (n.ctrl = !0),
-          (n.scene = "QA"));
-      });
+      ((n.ctrl = !1), (n.act = null), (n.ch1Veil = n.ch1Veil || 0), (n.ch1VeilTo = 1));
+      J([
+        cV(() => (n.ch1Veil || 0) >= 1),
+        N(() => {
+          ((n.ch1Dress.on = !1),
+            (n.ch1Disguise = !0),
+            (n.ch1Outfit = { ...(n.ch1Dress) }),
+            (n.wardrobe = "closed"),
+            (n.ch1VeilTo = 0));
+          ch1Go("hall", { who: "sq", scene: "QA" }, () => {
+            ((n.ch1Party = !0),
+              (n.ch1Disguise = !0),
+              (n.ch1Flyer = !1),
+              (n.ch1PartyOver = !1),
+              (n.ch1PartyT = 0),
+              (n.sqPose = "stand"),
+              (n.ctrl = !0),
+              (n.scene = "QA"));
+          });
+        }),
+      ]);
     }
     function ch1BarOpen() {
       ((n.ch1Cut = {
@@ -208,6 +215,11 @@
         : ch1HatOff("bar");
     }
     function ch1SliceTick(dt) {
+      if (n.ch1VeilTo != null && n.ch1Veil != null) {
+        let step = (dt || 0) / 0.4;
+        n.ch1Veil =
+          n.ch1Veil < n.ch1VeilTo ? Math.min(n.ch1VeilTo, n.ch1Veil + step) : Math.max(n.ch1VeilTo, n.ch1Veil - step);
+      }
       let cut = n.ch1Cut;
       if (!cut) return;
       cut.zoom < 1 && (cut.zoom = Math.min(1, cut.zoom + (dt || 0) / 0.5));

@@ -678,7 +678,18 @@
                     children: KEY_HELP,
                   }),
                   SND,
-                  /^!?NEXT$/.test(h) ? z : null,
+                  // The slot stays 104px whether or not NEXT is showing, so the picture does not jump up.
+                  (0, pe.jsx)("div", {
+                    "aria-hidden": /^!?NEXT$/.test(h) ? void 0 : !0,
+                    style: {
+                      width: 104,
+                      height: 104,
+                      flex: "0 0 auto",
+                      visibility: /^!?NEXT$/.test(h) ? "visible" : "hidden",
+                      pointerEvents: /^!?NEXT$/.test(h) ? "auto" : "none",
+                    },
+                    children: z,
+                  }),
                   (0, pe.jsx)(Mb, { label: "Show touch controls", onClick: () => O(!0) }),
                 ],
               })),
