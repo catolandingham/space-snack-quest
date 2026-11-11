@@ -33,6 +33,10 @@
           hf(l > 720 && o < 160 ? "close" : l < 400 ? "prev" : "next");
           return;
         }
+        if (p.state === "op" && ((n.ch1Dress && n.ch1Dress.on) || n.ch1Cut)) {
+          ch1SlicePointer("down", l, o);
+          return;
+        }
         if (p.state === "op") {
           walkTap(l, o) || nf();
           return;
@@ -380,6 +384,7 @@
         },
         actionDown: Vf,
         tapAt: O5,
+        ch1Pointer: (kind, x, y) => ch1SlicePointer(kind, x, y),
         setJoy: (l, o, i) => {
           ((qt.x = l), (qt.y = o), (qt.active = i));
         },
@@ -605,6 +610,12 @@
           Ve = eV.nativeEvent;
         e.current?.tapAt(((eV.clientX - VV.left) * 960) / VV.width, ((eV.clientY - VV.top) * 640) / VV.height, Ve.pointerType === "touch");
       },
+      dragAt = (kind) => (eV) => {
+        let W = t.current;
+        if (!W || !e.current) return;
+        let VV = W.getBoundingClientRect();
+        e.current.ch1Pointer(kind, ((eV.clientX - VV.left) * 960) / VV.width, ((eV.clientY - VV.top) * 640) / VV.height);
+      },
       nV = (eV) => (W) => {
         (W.preventDefault(), eV(), setTimeout(() => t.current?.focus({ preventScroll: !0 }), 0));
       };
@@ -744,6 +755,9 @@
                   autoFocus: !0,
                   "aria-label": "Sneaky Sasquatch game",
                   onPointerDown: tV,
+                  onPointerMove: dragAt("move"),
+                  onPointerUp: dragAt("up"),
+                  onPointerCancel: dragAt("up"),
                   style: {
                     display: "block",
                     width: "100%",

@@ -32,8 +32,9 @@
     const SNACK_LOOK_SECONDS = 4;
     // The corner guest aims the camera left, into the room. The shot is the floor in front of the lens.
     // The SNAP circle covers that floor, so Squatch can walk into the picture and still take it.
-    const CH1_CAM = { x: 790, y: 230, r: 110 };
-    const CH1_FRAME = { x0: 710, x1: 770, y0: 248, y1: 300 };
+    // The camera stands in the back-right corner, clear of the snack table. The shot is the floor in front of the lens.
+    const CH1_CAM = { x: 860, y: 340, r: 110 };
+    const CH1_FRAME = { x0: 790, x1: 850, y0: 350, y1: 400 };
     const CH1_KID = { x: 180, y: 540 };
     // Free-play moments. Add another object here for a new party beat.
     const CH1_PARTY_FREE = [
@@ -50,9 +51,9 @@
       if (n.ch1Dress && n.ch1Dress.on) return "";
       return CH1Q_CHIPS[n.scene] || "";
     }
-    // Party only. Guests are a bit smaller than before; Squatch is a touch taller than a guest. Other rooms keep he and Qt 1.6.
-    const CH1_GUEST = 1.3,
-      CH1_SQ_PARTY = 2;
+    // R67. Adults stay clearly taller than Squatch (C10). He uses the normal hall scale (he), not a bigger party scale.
+    // Guests are 1.8, a bit taller than the old 1.6, so he is about 60% of a guest. The kid stays smaller.
+    const CH1_GUEST = 1.8;
     // Standing sight is the hall robot's existing cone and feet circle. These are not the ball constants.
     const STAND_CONE_LEN = 210,
       STAND_CONE_HALF = 0.42,
@@ -226,7 +227,7 @@
           off: hallBottomOff,
           to: "closet",
           entry: homeOff,
-          stand: at || [430, 510],
+          stand: at || [760, 540],
           scene: f.scene,
           delivery: !1,
           duct: !1,
@@ -329,10 +330,10 @@
           N(() => {
             ((n.ctrl = !1),
               (n.sqPose = "stand"),
-              (n.sq.x = 400),
-              (n.sq.y = 520),
-              (n.mo.x = 220),
-              (n.mo.y = 540),
+              (n.sq.x = 760),
+              (n.sq.y = 540),
+              (n.mo.x = 455),
+              (n.mo.y = 560),
               (n.moPose = "stand"),
               (n.scene = "Q1"),
               ch1Day1());
@@ -710,8 +711,8 @@
     }
     function ch1PartyHome() {
       ((n.moPose = "stand"),
-        (n.mo.x = 220),
-        (n.mo.y = 540),
+        (n.mo.x = 455),
+        (n.mo.y = 560),
         (n.ch1Party = !1),
         J([
           v("mops", "A flyer. And fur on the floor."),
@@ -1094,28 +1095,20 @@
           [0, 1, 2].forEach((i) => {
             (F(724 + i * 28, 486, 6, i === 2 ? "#fffdf8" : "#e5533d"), F(730 + i * 28, 498, 4, "#8fdcff"));
           }),
-        Qt(360, 530, "#f2c1b0", CH1_GUEST, face || 1),
-        glance(360, 530),
-        Qt(450, 490, "#f2c1b0", CH1_GUEST, face || -1),
-        glance(450, 490),
-        Qt(540, 545, "#1f9d8a", CH1_GUEST, face || 1),
-        glance(540, 545),
-        Qt(630, 495, "#ff8a3d", CH1_GUEST, face || -1),
-        glance(630, 495),
-        Qt(250, 470, "#7ad0c8", CH1_GUEST, face || 1),
-        glance(250, 470),
-        Qt(720, 450, "#7a4ad0", CH1_GUEST, face || 1),
-        glance(720, 450),
-        drawOctopus(930, 560 - Math.abs(Math.sin(n.T * 8)) * 10, face || -1),
-        glance(930, 550),
-        Qt(790, 230, "#ff8a3d", CH1_GUEST, face || -1),
-        glance(790, 230),
-        m(768, 214, 16, 10, 1),
-        r("#1e2430", 1),
-        Qt(860, 540, "#59657d", CH1_GUEST, face || -1),
-        glance(860, 540),
-        Qt(560, 420, "#c9b6f2", CH1_GUEST, look ? 1 : 0.2),
-        glance(560, 420),
+        [
+          [270, 410, "antenna"],
+          [430, 370, "croc"],
+          [620, 390, "hat"],
+          [540, 320, "horns"],
+          [280, 585, "hair"],
+          [540, 560, "spots"],
+          [940, 520, "blob"],
+        ].forEach((guest) => {
+          (drawCh1Alien(guest[0], guest[1], guest[2], CH1_GUEST, face || 1), glance(guest[0], guest[1]));
+        }),
+        drawOctopus(860, 555 - Math.abs(Math.sin(n.T * 8)) * 6, face || -1),
+        drawCh1Alien(900, 400, "cape", CH1_GUEST, face || -1),
+        drawCh1Tripod(820, 350),
         !n.ch1Flyer && (m(500, 360, 16, 12, 1), r("#fffdf8", 1)),
         (n.ch1Spill || 0) > 0 &&
           [0, 1, 2].forEach((i) => {
@@ -1126,9 +1119,86 @@
         drawCh1SliceParty(),
         drawBalloonKid());
     }
-    function drawOctopus(x, y, f) {
+    function drawCh1Alien(ax, ay, kind, sc, face) {
+      let f = face < 0 ? -1 : 1,
+        bob = Math.sin(n.T * 2 + ax * 0.01) * 1.5;
+      (e.save(), e.translate(ax, ay + bob), e.scale(sc, sc));
+      (e.beginPath(), e.ellipse(0, 2, 14, 3.5, 0, 0, 7), (e.fillStyle = "rgba(30,36,48,.16)"), e.fill());
+      if (kind === "antenna") {
+        (m(-9, -48, 18, 42, 8),
+          r("#7ad0c8", 3),
+          L(0, -58, 11),
+          r("#d8fff6", 3),
+          C([-5, -66, -8, -78], y, 2.4),
+          C([5, -66, 8, -78], y, 2.4),
+          F(-8, -80, 3, "#ffcf33"),
+          F(8, -80, 3, "#ffcf33"));
+      } else if (kind === "croc") {
+        (m(-12, -40, 24, 36, 8),
+          r("#3f8f4a", 3),
+          m(f * 6, -52, 22, 10, 4),
+          r("#3f8f4a", 3),
+          F(f * 24, -48, 2, y),
+          L(0, -52, 12),
+          r("#b6e7a8", 3));
+      } else if (kind === "hat") {
+        (m(-11, -42, 22, 36, 10),
+          r("#ff8a3d", 3),
+          L(0, -54, 12),
+          r("#f0bf93", 3),
+          m(-16, -62, 32, 6, 2),
+          r("#2b3a67", 2),
+          m(-8, -74, 16, 14, 2),
+          r("#2b3a67", 2));
+      } else if (kind === "hair") {
+        (m(-12, -40, 24, 34, 10),
+          r("#f2c1b0", 3),
+          L(0, -52, 13),
+          r("#f0bf93", 3),
+          e.beginPath(),
+          e.arc(0, -56, 14, Math.PI, 0),
+          r("#7a4ad0", 3),
+          m(-14, -36, 28, 16, 6),
+          r("#3478f6", 2));
+      } else if (kind === "spots") {
+        (L(0, -28, 18),
+          r("#ffcf33", 3),
+          L(0, -52, 12),
+          r("#fff3c4", 3),
+          F(-6, -34, 3, "#e5533d"),
+          F(7, -24, 2.5, "#e5533d"),
+          F(2, -40, 2, "#e5533d"));
+      } else if (kind === "horns") {
+        (m(-11, -42, 22, 36, 8),
+          r("#c9b6f2", 3),
+          L(0, -54, 12),
+          r("#efe8ff", 3),
+          C([-6, -62, -12, -74], y, 3),
+          C([6, -62, 12, -74], y, 3));
+      } else if (kind === "blob") {
+        (L(0, -26, 20), r("#59657d", 3), L(0, -48, 14), r("#8a93a3", 3), F(-8, -50, 2, y), F(0, -50, 2, y), F(8, -50, 2, y));
+      } else {
+        (m(-11, -44, 22, 38, 8),
+          r("#1f9d8a", 3),
+          L(0, -56, 12),
+          r("#d8fff6", 3),
+          m(-16, -40, 10, 22, 4),
+          r("#e5533d", 2));
+      }
+      (F(f * 4, kind === "spots" || kind === "blob" ? -54 : -56, 1.8, y), m(-6, -8, 5, 10, 2), r("#3d4454", 2), m(2, -8, 5, 10, 2), r("#3d4454", 2), e.restore());
+    }
+    function drawCh1Tripod(x, y) {
+      (C([x, y - 46, x - 26, y], "#6b6256", 4),
+        C([x, y - 46, x + 24, y], "#6b6256", 4),
+        C([x, y - 46, x + 2, y + 10], "#6b6256", 4),
+        m(x - 18, y - 64, 36, 18, 4),
+        r("#1e2430", 3),
+        L(x - 20, y - 55, 7),
+        r("#8fdcff", 2));
+    }
+    function drawOctopus(x, oy, f) {
       (e.save(),
-        e.translate(x, y),
+        e.translate(x, oy),
         F(0, -28, 14, "#e07b00"),
         F(-4, -32, 2, y),
         F(4, -32, 2, y),
@@ -1146,7 +1216,9 @@
         mood = n.ch1Kid || "",
         wobble = Math.sin((n.ch1BalloonT || 0) * 4) * 10,
         bx = kid.x + (n.ch1Balloon === "up" ? wobble : 0),
-        by = n.ch1BalloonY || 460;
+        by = n.ch1BalloonY || 460,
+        hallX = 360;
+      if ((n.ch1Balloon === "up" || n.ch1Balloon === "ceiling") && by < 430) bx = Math.max(bx, hallX);
       (Qt(kid.x, kid.y, "#1f9d8a", 1.05, 1),
         mood === "gasp" && (g("!", kid.x - 34, kid.y - 96, 36, "#e5533d", "center", 900), C([kid.x - 2, kid.y - 22, kid.x - 18, kid.y - 72], "#f0bf93", 4)),
         mood === "wide" && (F(kid.x + 6, kid.y - 46, 4, "#ffffff"), F(kid.x + 6, kid.y - 46, 2, y)),
@@ -1161,7 +1233,13 @@
         mood === "sad" && C([kid.x + 2, kid.y - 36, kid.x + 8, kid.y - 40, kid.x + 12, kid.y - 36], y, 1.4));
       if (n.ch1Balloon === "up" || n.ch1Balloon === "ceiling") {
         n.ch1Balloon === "up" && (F(bx, by, 40, "rgba(229,83,61,.28)"), F(bx, by, 26, "rgba(255,190,180,.7)"));
-        (C([kid.x, kid.y - 20, bx, by + 14], "#e5533d", 2), F(bx, by, 14, "#e5533d"));
+        (by < 430
+          ? (C([kid.x, kid.y - 20, 220, kid.y - 20], "#e5533d", 2),
+            C([220, kid.y - 20, 220, 455], "#e5533d", 2),
+            C([220, 455, bx, 455], "#e5533d", 2),
+            C([bx, 455, bx, by + 14], "#e5533d", 2))
+          : C([kid.x, kid.y - 20, bx, by + 14], "#e5533d", 2),
+          F(bx, by, 14, "#e5533d"));
       }
       if (n.ch1Balloon === "held") {
         (C([n.sq.x, n.sq.y - 40, n.sq.x, n.sq.y - 78], "#e5533d", 1), F(n.sq.x, n.sq.y - 86, 8, "#e5533d"));

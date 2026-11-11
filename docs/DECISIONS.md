@@ -521,10 +521,13 @@ These lines were added to `docs/project/DECISIONS-2026-11-08.md` after this log 
   **Decided** for this session. Not a yes to merge.
 
 - 2026-11-11: R66. Party scale, under Brian's "if there's any other solutions, go for it." Party guests are drawn at 1.3 instead of 1.6, and Squatch at the party is drawn at 2 instead of 1.6, so he is a little taller than a guest and still shorter than he is at home. Guests are spaced so their bodies do not stack. The kid stays smaller. Hiding and collision still use his feet. Other rooms are unchanged.
-  **Decided** by that delegation. Not a yes to merge.
+  **Superseded** by R67. Making him taller than a guest fought C10. The overlap was the problem, not his size.
+
+- 2026-11-11: R67. Party scale, correcting R66. Brian's standing rule (C10, 2026-11-08) is that adults are clearly taller than Squatch and Mops, because Squatch is a kid. On 2026-11-11 he said "keep him a bit smaller like now." His "no good option" note was about guests overlapping, not about making Squatch bigger. At the party Squatch uses the normal hall scale (he = 1.6). Guests are drawn at 1.8, a bit taller than the old 1.6, so he is about 60% of a guest. The kid stays smaller. Guests are spaced. Hiding and collision still use feet. There is no spr_a_* sprite sheet in this repo, so the guests are drawn in the same thick-outline style. This is not a yes to merge.
+  **Decided.** Not a yes to merge.
 
 - 2026-11-11 (playtest 6): Squatch looks about two thirds as tall as a guest. Not changed. A guest is drawn by Qt at scale 1.6: about 64 units from feet to the top of the head, so about 102 pixels. Squatch in the hall is drawn by Re at he = 1.6: about 45 units, so about 72 pixels, which is about 70% of the guest. The closet uses wl = 3 instead, which is why he looks larger at home. Matching the guest would mean drawing him at about 2.3 in the party only (102 / 45). Hiding, collision, and the plant hide use his feet and his pose, not the picture's height, so a bigger picture would not change those. It would make him overlap nearby guests and the plant visually, and his bubble would sit higher. Recommendation: leave it until Brian says yes. If he wants them to match, change only the party drawing to 2.3, not the global he.
-  **Superseded** in part by R65 and R66. R65 keeps him smaller at home and in the other rooms. R66 draws the party only: guests at 1.3, Squatch at 2, still shorter than at home.
+  **Superseded** by R65 and R67. R65 does not enlarge him at home or in the other rooms. R66 (him taller than a guest) is superseded. R67 draws guests at 1.8 and Squatch at the normal hall scale.
 
 - 2026-11-11 (playtest 6): "PUT ON · tourist disguise" turned the costume on in one frame, and the dress-up screen popped in the same way. Both now fade through black in about 0.4 seconds. No new words.
   **In this unmerged slice.**

@@ -310,7 +310,17 @@
         e.restore());
     }
     function Fe(l, o, i, s) {
-      i >= he * 0.9 && s.eyes !== "closed" && n.moPose !== "sleep" && !x.mops && _A(l, o, s.f ?? 1);
+      // C14: Mops's warm cone pops a heart instead of a "!". It is a lookout cone for later chapters.
+      // Chapter 1 home, the party, and dress-up are not that beat, so it does not draw there (no pink cone, no stray heart).
+      n.room !== "closet" &&
+        (n.scene || "")[0] !== "Q" &&
+        !n.ch1Party &&
+        !(n.ch1Dress && n.ch1Dress.on) &&
+        i >= he * 0.9 &&
+        s.eyes !== "closed" &&
+        n.moPose !== "sleep" &&
+        !x.mops &&
+        _A(l, o, s.f ?? 1);
       let q = 2;
       (e.save(), e.translate(l, o), e.scale(i * (s.f || 1), i), s.sway && e.rotate(s.sway));
       let d = Math.sin(s.walk || 0) * 2;
@@ -562,15 +572,15 @@
     }
     function cq() {
       (e.beginPath(),
-        e.moveTo(522, 512),
-        e.lineTo(598, 512),
-        e.lineTo(588, 566),
-        e.lineTo(532, 566),
+        e.moveTo(572, 512),
+        e.lineTo(648, 512),
+        e.lineTo(638, 566),
+        e.lineTo(582, 566),
         e.closePath(),
         r("#ffcf33", 4),
-        X(560, 512, 38, 9),
+        X(610, 512, 38, 9),
         r("#8fdcff", 3),
-        X(552, 510, 14, 5),
+        X(602, 510, 14, 5),
         r("#ffffff", 2));
     }
     function H2() {
@@ -581,12 +591,12 @@
     }
     function g5() {
       let l = n.sq;
-      (!(n.sqPose === "stand" && l.y < 566 && Math.abs(l.x - 560) < 80) &&
-        !(n.botOn && n.bot.y >= 566 && Math.abs(n.bot.x - 560) < 90) &&
-        !(n.sqPose === "stand" && l.y >= 566 && Math.abs(l.x - 560) < 80) &&
+      (!(n.sqPose === "stand" && l.y < 566 && Math.abs(l.x - 610) < 80) &&
+        !(n.botOn && n.bot.y >= 566 && Math.abs(n.bot.x - 610) < 90) &&
+        !(n.sqPose === "stand" && l.y >= 566 && Math.abs(l.x - 610) < 80) &&
         cq(),
         n.sqPose === "stand" &&
-          (l.y < 566 && Math.abs(l.x - 560) < 80 && cq(),
+          (l.y < 566 && Math.abs(l.x - 610) < 80 && cq(),
           l.y < 512 && Math.abs(l.x - 350) < 70 && L2(),
           l.y < 526 && l.x > 70 && l.x < 340 && H2()));
     }
@@ -1586,7 +1596,11 @@
           r("#e5533d", 8),
           g("FUR", 480, 250, 64, "#ffffff", "center", 900),
           g("PULL DOWN", 480, 320, 28, "#ffffff", "center", 900),
-          F(480, 380, 10, "#8b5a3c"));
+          C([480, 348, 480, 400], "#d7dbe3", 8),
+          F(480, 404, 12, "#e5533d"),
+          C([548, 430, 500, 392], "#f0bf93", 10),
+          F(492, 386, 16, "#f0bf93"),
+          F(486, 380, 5, "#1e2430"));
         return;
       }
       if (l === "ch1site") {

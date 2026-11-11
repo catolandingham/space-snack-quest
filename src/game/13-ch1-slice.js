@@ -38,7 +38,7 @@
       ch1Go("hall", { who: "sq", scene: "QA" }, ch1SneakHide);
     }
     function ch1SneakHide() {
-      ((n.ch1Party = !0), (n.scene = "QA"));
+      ((n.ch1Party = !0), (n.scene = "QA"), (n.sparks = (n.sparks || []).filter((d) => d.s !== "\u2665")));
       J([
         ch1Step("sq", 480, 500, 160),
         ch1Step("sq", 220, 530, 160),
@@ -69,6 +69,8 @@
         (n.ch1Dress = { on: !0, head: "", face: "", body: "", legs: "", extra: [] }),
         (n.ch1Veil = 1),
         (n.ch1VeilTo = 0),
+        (n.ch1DressPop = 0),
+        (n.sparks = (n.sparks || []).filter((d) => d.s !== "\u2665")),
         (n.ctrl = !0));
     }
     function ch1DressMeter() {
@@ -77,16 +79,20 @@
         extra = Math.min(4, (d.extra || []).length) * 5;
       return Math.min(100, zones + extra);
     }
-    function ch1DressPut(id) {
+    function ch1DressSlot(i) {
+      return { x: i < 4 ? 108 : 852, y: 150 + (i % 4) * 118 };
+    }
+    function ch1DressPut(id, quiet) {
       let item = CH1_DRESS_ITEMS.find((m) => m.id === id),
         d = n.ch1Dress;
       if (!item || !d) return;
       item.zone === "extra"
         ? d.extra.includes(id) || d.extra.push(id)
         : (d[item.zone] = id);
+      quiet || ((n.ch1DressPop = 0.32), (n.ch1DressPopId = id), D.pickup());
     }
     function ch1DressShuffle() {
-      CH1_DRESS_ITEMS.forEach((m) => ch1DressPut(m.id));
+      (CH1_DRESS_ITEMS.forEach((m) => ch1DressPut(m.id, !0)), (n.ch1DressPop = 0.32), D.pickup());
     }
     function ch1DressSpots() {
       if (ch1DressMeter() < 100)
@@ -97,7 +103,7 @@
             cap: "outfit",
             who: "sq",
             x: 460,
-            y: 510,
+            y: 640,
             r: 400,
             f: () => {
               (ch1DressShuffle(), (n.act = null));
@@ -111,7 +117,7 @@
           cap: "party",
           who: "sq",
           x: 460,
-          y: 510,
+          y: 640,
           r: 400,
           f: ch1DressGo,
         }),
@@ -178,12 +184,22 @@
       if (n.ch1Cut) return ch1BarPointer(kind, x, y);
     }
     function ch1DressPointer(kind, x, y) {
+      n.ch1DragX = x;
+      n.ch1DragY = y;
       if (kind === "down") {
-        let item = CH1_DRESS_ITEMS.find((m, i) => Math.hypot(x - (80 + (i % 4) * 70), y - (80 + Math.floor(i / 4) * 70)) < 28);
+        let item = CH1_DRESS_ITEMS.find((m, i) => {
+          let s = ch1DressSlot(i);
+          return Math.hypot(x - s.x, y - s.y) < 46;
+        });
         item && (n.ch1Drag = item.id);
       }
       if (kind === "up" && n.ch1Drag) {
-        Math.hypot(x - 480, y - 340) < 120 && ch1DressPut(n.ch1Drag);
+        let onHim = Math.hypot(x - 480, y - 500) < 180,
+          onSlot = CH1_DRESS_ITEMS.some((m, i) => {
+            let s = ch1DressSlot(i);
+            return m.id === n.ch1Drag && Math.hypot(x - s.x, y - s.y) < 46;
+          });
+        (onHim || onSlot) && ch1DressPut(n.ch1Drag);
         n.ch1Drag = "";
       }
     }
@@ -220,6 +236,7 @@
         n.ch1Veil =
           n.ch1Veil < n.ch1VeilTo ? Math.min(n.ch1VeilTo, n.ch1Veil + step) : Math.max(n.ch1VeilTo, n.ch1Veil - step);
       }
+      n.ch1DressPop > 0 && (n.ch1DressPop = Math.max(0, n.ch1DressPop - (dt || 0)));
       let cut = n.ch1Cut;
       if (!cut) return;
       cut.zoom < 1 && (cut.zoom = Math.min(1, cut.zoom + (dt || 0) / 0.5));
@@ -241,7 +258,6 @@
         m(200, 250, 70, 18, 4),
         r("#fffdf8", 2),
         g("Isfred", 235, 260, 11, "#1e2430", "center", 900),
-        Qt(640, 380, "#c9842a", CH1_GUEST, -1),
         m(40, 300, 36, 28, 3),
         r("#e5533d", 2),
         g("FUR", 58, 312, 8, "#ffffff", "center", 900));
@@ -252,23 +268,59 @@
           (Qt(x, 430 + Math.sin(n.T * 6 + i) * 6, "#7ad0c8", 1.4, i % 2 ? 1 : -1), m(x - 8, 470, 16, 6, 2), r("#e8a87c", 1));
         }));
     }
+    function ch1DressIcon(id, x, y) {
+      if (id === "tophat") (m(x - 16, y - 4, 32, 6, 2), r("#1e2430", 2), m(x - 8, y - 22, 16, 18, 2), r("#1e2430", 2));
+      else if (id === "shades") (m(x - 16, y - 6, 32, 12, 3), r("#1e2430", 2), C([x - 2, y, x + 2, y], "#fffdf8", 2));
+      else if (id === "shirt") (m(x - 14, y - 12, 28, 24, 4), r("#ff8a3d", 2), F(x - 6, y - 2, 3, "#2bc48a"), F(x + 6, y + 4, 3, "#3478f6"));
+      else if (id === "boots") (m(x - 14, y - 8, 10, 16, 2), r("#3d4454", 2), m(x + 4, y - 8, 10, 16, 2), r("#3d4454", 2));
+      else if (id === "scarf") (m(x - 16, y - 4, 32, 8, 3), r("#e5533d", 2), m(x + 6, y, 8, 16, 2), r("#e5533d", 2));
+      else if (id === "bow") (m(x - 14, y - 6, 10, 12, 2), r("#3478f6", 2), m(x + 4, y - 6, 10, 12, 2), r("#3478f6", 2), F(x, y, 4, "#ffcf33"));
+      else if (id === "nose") F(x, y, 8, "#e5533d");
+      else (C([x - 10, y + 4, x + 8, y - 8], "#8b5a3c", 3), F(x + 10, y - 10, 5, "#6b6256"));
+    }
+    function drawCh1DressWorn(d) {
+      let sc = 4.2;
+      (e.save(), e.translate(480, 500), e.scale(sc, sc));
+      d.legs === "boots" && (m(-7, -5, 5, 7, 1), r("#3d4454", 1.4), m(2, -5, 5, 7, 1), r("#3d4454", 1.4));
+      (d.extra || []).includes("scarf") && (m(-9, -22, 18, 4, 1), r("#e5533d", 1.2), m(5, -20, 3, 12, 1), r("#e5533d", 1.2));
+      (d.extra || []).includes("bow") && (m(-4, -26, 3, 4, 1), r("#3478f6", 1), m(1, -26, 3, 4, 1), r("#3478f6", 1), F(0, -24, 1.4, "#ffcf33"));
+      (d.extra || []).includes("nose") && F(2, -36, 2.2, "#e5533d");
+      (d.extra || []).includes("pipe") && (C([6, -33, 14, -38], "#8b5a3c", 1.4), F(15, -39, 1.6, "#6b6256"));
+      d.head === "tophat" && (m(-9, -50, 18, 4, 1), r("#1e2430", 1.2), m(-5, -64, 10, 14, 1), r("#1e2430", 1.2));
+      e.restore();
+    }
     function drawCh1Dress() {
-      let d = n.ch1Dress;
+      let d = n.ch1Dress,
+        pop = n.ch1DressPop || 0;
       ((e.fillStyle = "#fffdf8"),
         e.fillRect(0, 0, c, b),
-        Re(480, 400, 1.8, { f: 1, hat: d.head === "tophat", shades: d.face === "shades", hawaiian: d.body === "shirt" }),
-        g("Disguised enough", 480, 168, 22, "#1e2430", "center", 900),
-        m(280, 186, 400, 16, 6),
+        Re(480, 500, 4.2, { f: 1, shades: d.face === "shades", hawaiian: d.body === "shirt" }),
+        drawCh1DressWorn(d),
+        g("Disguised enough", 480, 52, 22, "#1e2430", "center", 900),
+        m(300, 70, 360, 16, 6),
         r("#e6e0d4", 2),
-        m(282, 188, 396 * (ch1DressMeter() / 100), 12, 5),
+        m(302, 72, 356 * (ch1DressMeter() / 100), 12, 5),
         r("#3478f6", 0));
       CH1_DRESS_ITEMS.forEach((mItem, i) => {
-        let x = 80 + (i % 4) * 70,
-          y = 80 + Math.floor(i / 4) * 70,
-          worn = mItem.zone === "extra" ? (d.extra || []).includes(mItem.id) : d[mItem.zone] === mItem.id;
-        (F(x, y, 18, worn ? "#3478f6" : "#cdbb98"), worn && (e.beginPath(), e.arc(x, y, 22, 0, 7), (e.strokeStyle = "#3478f6"), (e.lineWidth = 3), e.stroke()), g(mItem.label, x, y + 28, 10, "#1e2430", "center", 800));
+        let s = ch1DressSlot(i),
+          worn = mItem.zone === "extra" ? (d.extra || []).includes(mItem.id) : d[mItem.zone] === mItem.id,
+          hot = n.ch1DressPopId === mItem.id ? 1 + pop * 1.4 : 1;
+        (e.save(),
+          e.translate(s.x, s.y),
+          e.scale(hot, hot),
+          e.translate(-s.x, -s.y),
+          F(s.x, s.y, 36, worn ? "#3478f6" : "#fffaf0"),
+          e.beginPath(),
+          e.arc(s.x, s.y, 36, 0, 7),
+          (e.strokeStyle = worn ? "#1e2430" : "#8a93a3"),
+          (e.lineWidth = worn ? 4 : 3),
+          e.stroke(),
+          ch1DressIcon(mItem.id, s.x, s.y),
+          e.restore(),
+          g(mItem.label, s.x, s.y + 52, 14, "#1e2430", "center", 800));
       });
-      ch1DressMeter() >= 100 && g("Go!", 820, 520, 28, "#3478f6", "center", 900);
+      n.ch1Drag && ch1DressIcon(n.ch1Drag, n.ch1DragX || 480, n.ch1DragY || 360);
+      ch1DressMeter() >= 100 && g("Go!", 480, 600, 28, "#3478f6", "center", 900);
     }
     function drawCh1Cut() {
       let cut = n.ch1Cut;
