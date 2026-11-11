@@ -6,7 +6,8 @@
       BALL_NOTICE_SECONDS = 2,
       CH1_BIN = { x: 212, y: 370 },
       CH1_MAIL = { x: 878, y: 450 },
-      CH1_VENT = { x: 165, y: 540 },
+      // The crawl vent is the grille under the speaker, on the right wall. The floor vent stays in the picture.
+      CH1_VENT = { x: 820, y: 470 },
       CH1_ROBOT = { x: 480, y: 400 },
       CH1_PLANT = { x: 125, y: 400 };
     const CH1Q_CHIPS = {
@@ -359,7 +360,7 @@
           mo: f.mo,
         },
         hallPass = () =>
-          Object.assign({}, pass, { exit: [880, 500], off: hallRightOff, to: "passage", entry: [-80, 510], stand: f.stand || [180, 510], ship: !1, crew: "", mail: "" }),
+          Object.assign({}, pass, { exit: [880, 500], off: hallRightOff, to: "passage", entry: [-80, 420], stand: f.stand || [180, 420], ship: !1, crew: "", mail: "" }),
         passHall = () =>
           Object.assign({}, pass, { exit: [80, 510], off: [-80, 510], to: "hall", entry: [1120, 500], stand: f.stand || [700, 520], ship: !1, crew: "", mail: "" }),
         passDel = () => Object.assign({}, pass, { exit: [880, 510], off: [1120, 510], to: "hangar", entry: [-80, 520], stand: f.stand || [200, 520], delivery: !0 }),
@@ -368,8 +369,8 @@
             exit: [70, 520],
             off: [-80, 520],
             to: "passage",
-            entry: [1040, 510],
-            stand: f.stand || [720, 510],
+            entry: [1040, 420],
+            stand: f.stand || [720, 420],
             delivery: !1,
             ship: !1,
             crew: "",
@@ -1208,6 +1209,23 @@
         });
       n.moPose !== "hidden" && n.mo.x > -50 && n.mo.x < 1100 && Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 });
     }
+    function drawCh1DayHall() {
+      drawLockedRoom("hall");
+      if (n.roomOnly) return;
+      drawCh1BalloonLeft();
+      n.scene === "Q3" && !(n.ch1Step === "family" || n.ch1Step === "gohome") && drawCh1Alien(640, 520, "hat", 2.2, 1);
+      n.moPose !== "hidden" && n.mo.x > -50 && n.mo.x < 1100 && Fe(n.mo.x, n.mo.y, he * 1.15, { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 });
+      n.sqPose === "ball" && drawL2Ball(n.sq.x, n.sq.y - 16);
+      n.sqPose !== "hidden" &&
+        n.sqPose !== "ball" &&
+        Re(n.sq.x, n.sq.y, he, {
+          f: n.sq.f || 1,
+          walk: n.sq.moving ? n.sq.walk : 0,
+          jacket: !!n.costumeOn,
+          goatBeard: !!n.costumeOn,
+          horns: !!n.costumeOn,
+        });
+    }
     function drawCh1HallwayRoom() {
       drawLockedRoom("hallway");
       if (n.roomOnly) return;
@@ -1459,9 +1477,8 @@
         (e.lineWidth = 6),
         e.stroke(),
         e.restore());
-      n.sqPose === "hidden" && !n.ch1InCrate && ga(CH1_PLANT.x, CH1_PLANT.y - 46);
-      drawMailRobot(878, 470);
-      n.ch1Crew === "pickup" ? drawPickupLoad() : n.ch1Mail === "full" && (Xn(720, 400, 70, 48, ""), Xn(800, 420, 56, 40, ""));
+      n.sqPose === "hidden" && !n.ch1InCrate && ga(n.ch1Step === "hide" || Math.hypot(n.sq.x - CH1_PLANT.x, n.sq.y - CH1_PLANT.y) < 90 ? CH1_PLANT.x : n.sq.x, (n.ch1Step === "hide" || Math.hypot(n.sq.x - CH1_PLANT.x, n.sq.y - CH1_PLANT.y) < 90 ? CH1_PLANT.y : n.sq.y) - 46);
+      n.ch1InCrate && ga(830, 510);
       n.scene === "Q2" && Qt(700, 530, "#e8a87c", QT_ADULT, -1),
       (n.ch1Crew === "day" || n.ch1Crew === "leave") &&
         [

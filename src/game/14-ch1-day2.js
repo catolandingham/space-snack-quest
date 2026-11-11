@@ -303,7 +303,7 @@
           ((n.ch1Roll = 0), (n.ch1ShowBots = !0));
         }),
         cV((dt) => ((n.ch1Roll = Math.min(1, (n.ch1Roll || 0) + dt / 1.2)), n.ch1Roll >= 1)),
-        ch1Step("sq", 790, 490, 220),
+        ch1Step("sq", CH1_VENT.x, CH1_VENT.y, 220),
         N(() => {
           ((n.sqPose = "stand"), (n.ch1Crouch = !0), (n.ch1Wide = !0));
         }),
@@ -836,11 +836,9 @@
       (m(-46, 16, 92, 18, 4), r("#fffdf8", 2), e.restore());
     }
     function drawCh1Passage() {
-      ((e.fillStyle = "#f3efe6"), e.fillRect(0, 0, c, b), m(28, 18, 904, 604, 18), r("#f7f4ee", 7));
-      ((e.fillStyle = "#f4f1ea"), e.fillRect(40, 28, 880, 250), (e.fillStyle = "#ebe4d6"), e.fillRect(40, 278, 880, 328), C([40, 278, 900, 278], "#c8c2b6", 4));
-      ((e.fillStyle = "#d5e4ea"), e.fillRect(0, 300, 36, 180), (e.fillStyle = "#d5e4ea"), e.fillRect(924, 300, 36, 180));
-      g("EMPLOYEE OF THE MONTH", 480, 70, 16, "#1e2430", "center", 900);
-      n.ch1Step === "keepsake" &&
+      drawLockedRoom(n.ch1Office ? "office" : "hallway");
+      n.ch1Crayon && !n.ch1Keepsake && !n.ch1Office && (g("ME", 640, 150, 12, "#1e2430", "center", 800), g("MOPS", 640, 168, 12, "#1e2430", "center", 800));
+      n.ch1Step === "keepsake" && !n.ch1Office &&
         (e.save(),
         (e.globalAlpha = 0.4 + 0.4 * Math.sin(n.T * 5)),
         (e.fillStyle = "#ffcf33"),
@@ -851,38 +849,16 @@
         e.closePath(),
         e.fill(),
         e.restore());
-      for (let i = 0; i < 5; i++) {
-        let x = 220 + i * 100,
-          tilt = i === 3 ? -0.18 : 0;
-        (e.save(),
-          e.translate(x, 150),
-          e.rotate(tilt),
-          m(-34, -46, 68, 90, 4),
-          r("#fffdf8", 3),
-          e.beginPath(),
-          e.rect(-32, -44, 64, 86),
-          e.clip());
-        if (i === 3 && n.ch1Crayon && !n.ch1Keepsake) (g("ME", 0, -6, 14, "#1e2430", "center", 800), g("MOPS", 0, 14, 14, "#1e2430", "center", 800));
-        else {
-          i === 0 && drawL2Ball(18, 10);
-          Fe(0, 36, 0.85, { f: 1, walk: 0, mop: !1 });
-          i === 2 && (C([-10, -6, -18, -24], "#c9ad84", 3), C([10, -6, 18, -24], "#c9ad84", 3));
-        }
-        e.restore();
-      }
-      n.ch1Crayon && !n.ch1Keepsake && g("TIED TOGETHER FOREVER", 480, 210, 14, "#1e2430", "center", 900);
-      (m(400, 470, 160, 14, 3), r("#c4a574", 3), m(412, 484, 12, 40, 2), r("#8a7560", 2), m(536, 484, 12, 40, 2), r("#8a7560", 2));
-      n.ch1Door && (Xn(430, 400, 90, 54, "MOON PIES"), g("MOON PIES", 475, 424, 8, "#1e2430", "center", 800));
       n.ch1Office
         ? (drawCh1Alien(760, 545, "horns", 2.6, -1),
           dq(520, 545, !1),
           n.ch1Tape &&
-            (m(500, 150, 400, 280, 10),
-            r("#1e2430", 5),
-            m(518, 168, 364, 220, 6),
+            (m(210, 150, 280, 190, 8),
+            r("#1e2430", 4),
+            m(224, 166, 252, 140, 4),
             r("#d9d3c6", 3),
-            g("REC", 560, 190, 16, "#e5533d", "center", 900),
-            Re(700, 360, 2.2, { f: 1, jacket: !0, goatBeard: !0, horns: !0 })))
+            g("REC", 250, 184, 14, "#e5533d", "center", 900),
+            Re(350, 290, 1.5, { f: 1, jacket: !0, goatBeard: !0, horns: !0 })))
         : (n.moPose !== "hidden" && Fe(n.mo.x, n.mo.y, he * 1.15, { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 }),
           n.sqPose === "ball" && drawL2Ball(n.sq.x, n.sq.y - 16),
           n.sqPose === "hidden" && ga(n.sq.x, n.sq.y - 40),
@@ -974,12 +950,12 @@
         let t = Math.min(1, (n.T - n.ch1SuckT) / 1.15),
           x0 = n.sq.x + 18,
           y0 = n.sq.y - 62,
-          x = x0 + (840 - x0) * t,
-          y = y0 + (168 - y0) * t + Math.sin(t * 20) * 8 * (1 - t);
+          x = x0 + (851 - x0) * t,
+          y = y0 + (220 - y0) * t + Math.sin(t * 20) * 8 * (1 - t);
         for (let i = 1; i <= 5; i++) {
           let u = Math.max(0, t - i * 0.07),
-            lx = x0 + (840 - x0) * u,
-            ly = y0 + (168 - y0) * u;
+            lx = x0 + (851 - x0) * u,
+            ly = y0 + (220 - y0) * u;
           C([lx - 18, ly + 8, lx + 6, ly - 10], "rgba(255,143,184," + (0.85 - i * 0.12) + ")", 3);
         }
         (e.save(), e.translate(x, y), e.rotate(Math.sin(t * 16) * 0.5), drawSlip(-24, -30, "#ff8fb8", 48, 60), e.restore());
@@ -994,11 +970,7 @@
         });
       (n.ch1BrochureBig || 0) > 0 && (m(250, 150, 460, 280, 8), r("#fffdf8", 4), g("PANCAKES", 480, 190, 22, "#b45309", "center", 900), drawCouple(480, 300, 2.2));
       n.ch1Brochure && (n.ch1BrochureBig || 0) <= 0 && n.sqPose === "stand" && (m(n.sq.x + 8, n.sq.y - 64, 16, 20, 2), r("#fffdf8", 1), drawCouple(n.sq.x + 16, n.sq.y - 54, 0.35));
-      (n.ch1Step === "family" || n.ch1Step === "gohome") && n.room === "hall" && (drawCh1Alien(560, 520, "hat", 2.4, 1), drawCh1Alien(700, 530, "hair", 2.4, -1));
-      n.room === "hangar" &&
-        n.ch1Ship &&
-        n.scene === "Q9" &&
-        (C([400, 180, 400, 430], "#3478f6", 8), C([560, 180, 560, 430], "#3478f6", 8), C([400, 180, 560, 180], "#3478f6", 8));
+      (n.ch1Step === "family" || n.ch1Step === "gohome") && n.room === "hall" && (drawCh1Alien(640, 520, "hat", 2.4, 1), drawCh1Alien(760, 530, "hair", 2.4, -1));
       n.ch1Left && n.room === "hall" && (F(790, 500, 8, "#ffcf33"), F(806, 506, 6, "#e5533d"));
     }
     function ch1JumpBeat(beat) {
@@ -1048,7 +1020,7 @@
       } else if (b === 33) {
         ((n.room = "hangar"), (n.ch1D = !0), (n.ch1Ship = !0), (n.scene = "QB"), (n.sqPose = "hidden"), (n.sq.x = CH1_PLANT.x), (n.sq.y = CH1_PLANT.y), (n.mo.x = 640), (n.mo.y = 500), (n.ch1ShowBots = !0), (n.ch1Ramp = 1), ch1SetPaper("mouth"));
       } else if (b === 37) {
-        ((n.room = "passage"), (n.scene = "QB"), (n.ch1Step = "photos"), (n.ch1Crayon = !0), (n.sq.x = 420), (n.sq.y = 510), (n.mo.x = 520), (n.mo.y = 510));
+        ((n.room = "passage"), (n.scene = "QB"), (n.ch1Step = "photos"), (n.ch1Crayon = !0), (n.sq.x = 420), (n.sq.y = 420), (n.mo.x = 520), (n.mo.y = 420));
       } else if (b === 38) {
         ((n.room = "hall"), (n.scene = "Q3"), (n.ch1Brochure = !0), (n.ch1BrochureBig = 8), (n.ch1Heart = !0), (n.ch1Step = "gohome"), (n.sq.x = 400), (n.sq.y = 520), (n.mo.x = 560), (n.mo.y = 510));
       } else if (b === 42) {
@@ -1064,8 +1036,8 @@
           (n.scene = "Q4"),
           (n.sqPose = "stand"),
           (n.sq.f = 1),
-          (n.sq.x = 790),
-          (n.sq.y = 490),
+          (n.sq.x = CH1_VENT.x),
+          (n.sq.y = CH1_VENT.y),
           (n.ch1Crouch = !0),
           (n.ch1Wide = !0),
           (n.moPose = "hidden"),

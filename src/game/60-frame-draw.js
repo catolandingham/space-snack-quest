@@ -2072,7 +2072,9 @@
                 ? drawCh1PartyRoom()
                 : n.ch1Office
                   ? drawCh1HallwayRoom()
-                  : s5()
+                  : (n.scene || "")[0] === "Q"
+                    ? drawCh1DayHall()
+                    : s5()
             : n.room === "window"
               ? o5()
               : n.room === "duct"

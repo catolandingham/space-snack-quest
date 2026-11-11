@@ -34,3 +34,7 @@ A person on the preview could not finish by following the picture. The automated
 | Spare jacket | Pressing it spoke a line and left. The party dress-up screen did not open, and the jacket was easy to miss. | Day 2 does not use the party dress-up. That game was the party. He walks to the wardrobe, the spare jacket, beard, and horns appear on him, and then they leave. |
 | PA over the monitor | The ship announcement covered the manager's screen. | The announcement sits lower and clear of that screen. |
 | Lunch sneak loop | At the hall door the only button in reach was ROLL. Pressing it made a ball, and walking stood him up, so the door never became the button. Found by walking with only the on-screen button. | SNEAK is the button along the hall. ROLL is a small spot off that path. Yellow arrows point to the door. |
+
+## Rooms with no locked picture
+
+The vent workstation (the duct, beat 48) has no file in `docs/locked-rooms/`. It is still drawn by hand. The party hall, hallway, office, home, and loading bay (day, night, no ship, and pickup) use the locked pictures.
