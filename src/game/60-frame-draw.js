@@ -2150,7 +2150,7 @@
       (Ka > 0 && ((e.fillStyle = "rgba(20,24,32," + Math.min(1, Ka).toFixed(3) + ")"), e.fillRect(0, 0, c, b)), drawRoomLine(), t5());
       let o = Bs();
       // The green VERB pill for actions with no caption. An action with a caption gets drawCap's "VERB · thing" label instead.
-      if (o && !o.cap && (o.x || o.r > 0 || n.room === "deck" || n.room === "hall") && !de() && n.live.length === 0) {
+      if (o && !o.cap && !n.ch1Zoom && (o.x || o.r > 0 || n.room === "deck" || n.room === "hall") && !de() && n.live.length === 0) {
         let i = o.x === 790 || o.x === 845,
           s = i ? 845 : o.r > 0 || o.x ? o.x : n.sq.x,
           q = i ? 250 : o.r > 0 || o.x ? o.y - 60 : 330;

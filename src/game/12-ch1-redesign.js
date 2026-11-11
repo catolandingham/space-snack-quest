@@ -1471,24 +1471,20 @@
           }));
     }
     function drawCh1Duct() {
-      ((e.fillStyle = "#2a3142"),
-        e.fillRect(0, 0, c, b),
-        m(40, 80, 880, 480, 18),
-        r("#3d4658", 6),
-        g("IDEAS FOR GUARDIANS", 250, 130, 16, "#d5dbe6", "center", 900),
-        g("HAVE YOU SEEN?", 620, 120, 14, "#ffffff", "center", 900),
-        g("MARS", 620, 150, 16, "#ffb4b4", "center", 900),
-        g("NO", 680, 150, 16, "#e5533d", "center", 900),
-        m(700, 300, 80, 50, 4),
-        r("#c4b49a", 3),
-        g("TOYS", 740, 326, 14, y, "center", 900),
-        m(80, 240, 120, 160, 4),
-        r("#1e2430", 4));
-      for (let i = 0; i < 6; i++) C([90, 260 + i * 22, 190, 260 + i * 22], "#9aa3b2", 3);
-      (n.sqPose === "hidden" && ga(140, 300),
-        m(400, 340, 160, 18, 3),
-        r("#8a7560", 3),
-        (n.ch1Prop === "desk" || n.ch1Prop === "teeth") && drawPinkSlip(430, 300),
-        n.ch1Prop === "teeth" && drawPinkSlip(n.mo.x - 6, n.mo.y - 70),
-        n.moPose !== "hidden" && Fe(n.mo.x, n.mo.y, he, { f: n.mo.f || -1, walk: 0, mop: !1 }));
+      ((e.fillStyle = "#f3efe6"), e.fillRect(0, 0, c, b), m(28, 18, 904, 604, 18), r("#f7f4ee", 7));
+      ((e.fillStyle = "#f4f1ea"), e.fillRect(40, 28, 880, 250), (e.fillStyle = "#ebe4d6"), e.fillRect(40, 278, 880, 328), C([40, 278, 900, 278], "#c8c2b6", 4));
+      (m(70, 160, 130, 200, 8), r("#1e2430", 4));
+      for (let i = 0; i < 7; i++) C([84, 178 + i * 24, 186, 178 + i * 24], "#9aa3b2", 3);
+      n.sqPose === "hidden" && ga(135, 250);
+      (g("IDEAS FOR GUARDIANS", 360, 150, 16, "#1e2430", "center", 900), m(250, 175, 230, 90, 6), r("#fffdf8", 3));
+      (g("We know you're thinking about going to Mars.", 365, 205, 11, "#1e2430", "center", 700), g("Don't worry, we'll always be with you.", 365, 230, 11, "#1e2430", "center", 700));
+      (m(560, 120, 340, 200, 8), r("#fffdf8", 4), g("MARS LOST & FOUND", 680, 155, 16, "#1e2430", "center", 900));
+      (g("Re: a lost baby Sasquatch.", 680, 185, 12, "#1e2430", "center", 700),
+        g("We have NO record of any lost baby.", 680, 210, 12, "#1e2430", "center", 700),
+        g("There are NO Sasquatches on Mars.", 680, 235, 12, "#1e2430", "center", 700));
+      (e.save(), e.translate(820, 275), e.rotate(-0.4), g("NO", 0, 0, 36, "#e5533d", "center", 900), e.restore());
+      (m(620, 400, 200, 16, 3), r("#c4a574", 3), m(632, 416, 14, 48, 2), r("#8a7560", 2), m(794, 416, 14, 48, 2), r("#8a7560", 2), m(650, 422, 60, 22, 2), r("#a08050", 2));
+      (n.ch1Prop === "desk" || n.ch1Prop === "teeth") && drawPinkSlip(660, 372);
+      n.ch1Prop === "teeth" && n.moPose !== "hidden" && drawPinkSlip(n.mo.x - 6, n.mo.y - 70);
+      n.moPose !== "hidden" && Fe(420, 520, he, { f: 1, walk: 0, mop: !1 });
     }

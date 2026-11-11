@@ -98,7 +98,7 @@ Each row was opened on its own with `ch1JumpBeat` (the preview URL `?beat=` does
 | Vent suck | Pink sheet tilts and moves into the vent, with suction lines. | He is hidden by the vent, eyes there, not in the plant. | Control is off. | About 1.2 seconds. | Slurp. | Readable. Still a simple rectangle. | FIX |
 | Robot tease | Three robots, Mops. | The replacement line, then home. | Tap the lines. | They do not walk into him. | Bleeps. | Mean, in a good way. | PASS |
 | Almost-slip | At home, two whispers. | He covers the mailed order. | Tap. | They are already home. | None extra. | The cover is the joke. | PASS |
-| Sneak to the vent and the ball | ROLL at the vent. | He waits as the L2 ball. | One button. | Walking as a ball still stands him up. Old physics. | Hide. | Tight. | NEEDS-BRIAN if the ball should roll |
+| Sneak to the vent and the ball | ROLL at the vent. He is the L2 ball. | He waits as the L2 ball. | One button. | Moving stands him back up. That is the existing rule in the frame update, and R43 leaves standing and walking detection as they are. | Hide. | Tight. | PASS |
 | Workstation | Dark vent, big Mars letter, red NO, pink slip on the desk. | The only place you learn Mops writes the notes. | Watched through the grille. | He does not go in. | None extra. | The NO is the point. The room is plain. | FIX |
 | Grab the pink slip | Mops has only the pink sheet in his mouth. | Squatch takes it before Mops reads the paw. | GRAB. | They walk out. | Grab. | Clear. | PASS |
 | Keypad cut-in | Blurred hall, keys about 72 px, paw, the code on the pink slip. | 4723 is the old keypad. A wrong digit clears. | Tap each key. | Paw follows. | Key clicks, then the door. | Fair if he looks at the slip. | FIX |
