@@ -71,6 +71,29 @@ const veil = await page.evaluate(() => {
 });
 g.check("the disguise fades in instead of popping on", veil.mid && veil.mid.on === true && veil.before.on === false && veil.after.veil < 0.05 && veil.after.ctrl === true, veil);
 
+const patrol = await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  n.scene = "Q4";
+  n.ch1LookT = 2.15;
+  const turn = ss.ch1NightLook(2.15);
+  const away = ss.ch1NightLook(4);
+  return {
+    turnCatch: turn.catch,
+    turnSeen: ss.ch1CaughtAt(480, 540, "stand"),
+    awaySeen: (() => {
+      n.ch1LookT = 4;
+      return ss.ch1CaughtAt(480, 540, "stand");
+    })(),
+    face: away.face,
+  };
+});
+g.check(
+  "the night robot's turn does not catch, and the back-wall look clears the floor",
+  patrol.turnCatch === false && patrol.turnSeen === false && patrol.awaySeen === false && Math.abs(patrol.face + Math.PI / 2) < 0.05,
+  patrol,
+);
+
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();
 await g.finish("slice-p6");
