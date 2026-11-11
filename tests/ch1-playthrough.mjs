@@ -495,7 +495,7 @@ const play = await page.evaluate(() => {
   };
 });
 g.check("Chapter 1 reaches the tally card", play.end === "tally", { end: play.end, acts: play.acts, scene: play.state.scene });
-const wantActs = ["PEEK · doorway", "SHUFFLE · outfit", "GO · party", "TAKE · robot flyer", "JUMP · balloon", "GIVE · balloon", "TALK · guest", "OPEN · snack bar", "CLOSE · cut-in", "SNAP · photo", "SNAG · plant", "GRAB · yellow copy", "SIGN · paw", "POST · mailbox", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "PUT ON · jacket", "BOARD · scanner"];
+const wantActs = ["SING · song", "PEEK · doorway", "SHUFFLE · outfit", "GO · party", "TAKE · robot flyer", "JUMP · balloon", "GIVE · balloon", "TALK · guest", "OPEN · snack bar", "CLOSE · cut-in", "SNAP · photo", "SNAG · plant", "HIDE · bed", "GRAB · yellow copy", "SIGN · paw", "POST · mailbox", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "PUT ON · jacket", "BOARD · scanner"];
 g.check("the player does the new actions in order", JSON.stringify(play.acts) === JSON.stringify(wantActs), play.acts);
 const must = [
   "Stormtop Cloud Resort, floating above Jupiter.",

@@ -188,6 +188,26 @@ R49 is in the game. Squatch goes to the party alone and hides it. Mops is never 
 
 R50 is in the game. When Mops and the disguised Squatch leave, the manager is not at the ship. There is no boarding chase and no "Mops, it's a mistake!" After they leave, the office cutscene is R54, rows 63, 64, 68, 69, and 41, in that order. All five are NEEDS BRIAN. The name on the robot's bubble is "Robot" (row 67, NEEDS BRIAN), not Security. Mops is not in that cutscene. The robots have arrived by then.
 
+## Day 1 stand-ins, pending
+
+These are on screen in this unmerged slice so the day can be played. NEEDS BRIAN.
+
+| # | Who | In the game now |
+| --- | --- | --- |
+| 86 | Squatch, after the party | Everyone out there has someone. |
+| 87 | Mops, answer | You have me. |
+| 88 | TV picture | Fur in the scrubber. |
+| 89 | TV picture | Onto the ship. |
+| 90 | Mops, bedtime picture | You came to me in a Moon Pie crate. You've loved Moon Pies ever since. |
+| 91 | Squatch, when the octopus comes | I gotta juke this fool. |
+| 92 | Octopus | *hic* Fellow tourist! |
+| 93 | Camera tourist | Say cheese! |
+| 94 | Karaoke screen | Ay-ay-ay-ay, I love my Moon Pies! |
+| 95 | Karaoke screen | Round and chocolate-y, sweet as the starry skies! |
+| 96 | Karaoke button | Sing |
+
+The song at home uses the song button and a SING button. No new lyric. The dance game has arrows only.
+
 The five office lines, in order, all NEEDS BRIAN: "Send in Mops for his Employee of the Month photo." "Mops isn't here." "Not here? He can't live off the station!" "He was replaced by the new robot shipment." "I never ordered a replacement! Get me the security tapes."
 
 R54. Office cutscene dialogue (Brian t255/t256, shortened) — five lines above; Isfred no longer jumps straight to the tapes.

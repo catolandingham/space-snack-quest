@@ -12,6 +12,14 @@
     ];
     function ch1Day1() {
       J([
+        N(() => {
+          ((n.ch1Song = !0), (n.ctrl = !0), (n.moPose = "polish"), (n.scene = "Q1"));
+        }),
+      ]);
+    }
+    function ch1SingAlong() {
+      ((n.ch1Song = !1), (n.ctrl = !1), (n.moPose = "stand"), (n.act = null), co());
+      J([
         v("mops", "See you after work."),
         ch1Step("mo", 900, 510, 180),
         N(() => {
@@ -180,6 +188,7 @@
       ((n.ch1Bag = (n.ch1Cut && n.ch1Cut.bag) || 0), (n.ch1Cut = null), (n.ch1BarDone = !0), (n.ctrl = !0), (n.act = null));
     }
     function ch1SlicePointer(kind, x, y) {
+      if (n.ch1Mini && kind === "down") return ch1MiniPointer(x, y);
       if (n.ch1Dress && n.ch1Dress.on) return ch1DressPointer(kind, x, y);
       if (n.ch1Cut) return ch1BarPointer(kind, x, y);
     }

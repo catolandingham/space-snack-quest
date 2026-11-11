@@ -1,7 +1,7 @@
 # Chapter 1: the story, beat by beat (words only)
 For Brian · v2, Tuesday, November 10, 2026 · built from the agreed story in DECISIONS.md, not from the comic.
 
-**v2:** Brian's notes on beats 1–15 (t291u) and on v2 beats 10–20 (t296u) are in. `UPDATED` = changed in the first round, `UPDATED t296u` = changed in the second round, `UPDATED t302u` = changed in the third round, `UPDATED t303u` = changed in the fourth round (snack paw close-up), `UPDATED t305u` = the pyramid and the chain reaction put back, `UPDATED t308u` = the bar close-up follows the original game's cut-in (docs/CUT-IN-SPEC.md). Beats marked (proposed) are new designs for Brian's yes. Five beats were added since v1, so the old v1 beat 16 (Bedtime) is now beat 21, and v1 beat 17 is now 22. Beats 22 onward are unchanged.
+**v2:** Brian's notes on beats 1–15 (t291u) and on v2 beats 10–20 (t296u) are in. `UPDATED` = changed in the first round, `UPDATED t296u` = changed in the second round, `UPDATED t302u` = changed in the third round, `UPDATED t303u` = changed in the fourth round (snack paw close-up), `UPDATED t305u` = the pyramid and the chain reaction put back, `UPDATED t308u` = the bar close-up follows the original game's cut-in (docs/CUT-IN-SPEC.md), `UPDATED t310u` = no parents in the bedtime story (docs/GUARDIANS-STORY-BRIEF.md), `UPDATED t311u` = Brian's Guardians answers and the new paper order (Day 2 and night one), `UPDATED t312u` = the vent moment is a short cutscene and the Mars NO letter (option A). Beats marked (proposed) are new designs for Brian's yes. Five beats were added since v1, so the old v1 beat 16 (Bedtime) is now beat 21, and v1 beat 17 is now 22. Beats 22 onward changed only where tagged.
 
 How to read it: each beat says where it happens, who's there, what happens, the words on screen, and what the player does. **decided** = words Brian approved or already in the game. **pending** = words still waiting for Brian's yes. The small codes at the end of each beat are for Squatchbot.
 
@@ -195,25 +195,27 @@ Mops is at work. Squatch is home alone.
 - **Player:** Tap through the story pictures.
 <sub>S18 S19 S21 · Brian note P14 · v1 beat 15 (Brian t291u: keep as agreed)</sub>
 
-### 21. Bedtime story: why Moon Pies `UPDATED t296u`
+### 21. Bedtime story: why Moon Pies `UPDATED t310u`
 - **Where:** Home, in bed
-- **Who:** Squatch, Mops; in the story: baby Squatch, his parents (player only)
-- **What happens:** Squatch asks for the story again. Mops tells how he found a baby asleep in a Moon Pie crate on the loading bay, and has looked after him ever since. The player sees more than Mops tells: the parents tuck their sleepy baby into the soft Moon Pie crate, and the crate gets unloaded. Mops never says why they didn't come back. That's why Moon Pies have always been Squatch's favorite, why his bed is a Moon Pie crate, and why he circles Moon Pie delivery day on the calendar (beat 23).
+- **Who:** Squatch, Mops; in the story pictures: Mops and baby Squatch only
+- **What happens:** Squatch asks for the story again. Mops tells how he found a baby asleep in a Moon Pie crate on the loading bay, and has looked after him ever since. The story is only about Mops finding him. No parents: not in the words, not in the pictures, no hints. At this point Squatch still has the Guardians, and the parents stay a mystery until much later. That's why Moon Pies have always been Squatch's favorite, why his bed is a Moon Pie crate, and why he circles Moon Pie delivery day on the calendar (beat 23).
 - **Words:**
   - Mops: "You came to me in a Moon Pie crate. You've loved Moon Pies ever since." *(pending)*
 - **Player:** Tap through the story pictures.
-<sub>R75 S9 replot 09 W21 R70 · v2 beat 20</sub>
+<sub>R81 R75 R70 · Brian t310u · v2 beat 20</sub>
 
 ## Day 2: lunch and the first delivery
 
-### 22. A gift from the Guardians
-- **Where:** Home, morning
+### 22. A gift from the Guardians `UPDATED t311u`
+- **Where:** Home, the morning after the party scare
 - **Who:** Squatch
-- **What happens:** Squatch wakes up to a toy rocket and a note from "the Guardians". He holds the toy up, then puts both in his Guardian Box. Nothing he picks up just disappears.
+- **What happens:** Squatch wakes up the morning after the FUR scare to a toy rocket and a note from "the Guardians". They always come when he's scared. He pictures the Guardians as big furry Sasquatches, like his crayon drawing in the box. He holds the toy up, then puts both in his Guardian Box. Nothing he picks up just disappears.
 - **Words:**
+  - Squatch: "The Guardians came! They always come when I'm scared." *(pending (from the original story outline))*
+  - Note: "Rule #1: Brave Sasquatches stay hidden. — The Guardians" *(pending (from the original story outline))*
   - Box label: "MY GARDIANS (kid spelling, on purpose)" *(decided)*
 - **Player:** Pick up the toy and note; put them in the box.
-<sub>S57 S58 (placement assumed: Open question 8) · v1 beat 17</sub>
+<sub>R82 S57 S58 · Brian t311u · v1 beat 17</sub>
 
 ### 23. The calendar: delivery day
 - **Where:** Home, the wardrobe door
@@ -292,40 +294,41 @@ Mops is at work. Squatch is home alone.
   - Isfred: "Mops, don't worry, you know how much we love you here. Even our visitors always love you." *(pending)*
 <sub>S2 S23 S25 · v1 beat 26</sub>
 
-### 32. Three copies
+### 32. Three copies `UPDATED t311u`
 - **Where:** Loading bay
 - **Who:** Isfred, a robot
-- **What happens:** Isfred signs and dates the delivery form. It comes in three copies: white, yellow and pink. The same paper is also the form you mail back to order more robots. That's how Squatch knows he can order one. Isfred writes his office code on it. Something calls him away (what is still open), so he has a robot file a copy in his office.
+- **What happens:** Isfred signs the delivery form. It comes as a set: a white copy, a big pink order sheet, and a small yellow carbon copy stuck under the pink one. The pink sheet has a box: ORDER MORE ROBOTS. That's how Squatch knows he can order one. Isfred writes his office code on the pink sheet, and it copies through onto the yellow. Something calls him away (what is still open), so he has a robot file the white copy in his office.
 - **Words:**
   - Paper joke (optional): "So futuristic and we still order on paper." *(pending)*
-<sub>S26 S27 S30 O15 · replot CF04 · v1 beat 27</sub>
+  - Order box (pink sheet): "ORDER MORE ROBOTS ☐" *(pending)*
+<sub>R82 S26 S27 S30 O15 · replot CF04 · v1 beat 27</sub>
 
-### 33. "Delicious."
+### 33. "Delicious." `UPDATED t311u`
 - **Where:** Loading bay, by the big wall vent
 - **Who:** Robot, Mops, Squatch (hidden)
-- **What happens:** The robot comes back with two copies. Mops takes them, turns away, and takes a bite. The big wall vent sucks the pink copy, with the code, inside.
+- **What happens:** The robot comes back with the other two copies, the pink sheet and the yellow copy, still stuck together. Mops takes them, turns away, and takes a bite. Nothing goes into the vent yet. (Brian t311u: the vent used to take the pink copy here, which was too soon.)
 - **Words:**
   - Robot: "Left one of the copies in the office. What do I do with the other two?" *(pending)*
   - Mops: "I'll take care of it." *(pending)*
   - Mops: "Delicious." *(pending)*
-<sub>S27 S29 S43 P4 · v1 beat 28</sub>
+<sub>R82 S27 S29 P4 · v1 beat 28</sub>
 
-### 34. Gumbling
+### 34. Gumbling `UPDATED t311u`
 - **Where:** Loading bay
 - **Who:** Mops, Squatch (in the bush, eyes only)
-- **What happens:** Mops mumbles with the yellow copy in his mouth.
+- **What happens:** Mops grumbles with the pink and yellow copies in his mouth.
 - **Words:**
   - Mops: "Mmf mrrf!" *(pending)*
   - Squatch: "You're gumbling! (goat mumbling)" *(decided (approved))*
-<sub>P5 · v1 beat 29</sub>
+<sub>R82 P5 · v1 beat 29</sub>
 
-### 35. Spit into the bin
+### 35. Spit into the bin `UPDATED t311u`
 - **Where:** Loading bay, bin by the plant
-- **Who:** Mops
-- **What happens:** Mops spits the yellow copy into the bin by the plant.
+- **Who:** Mops, Squatch (hidden, watching)
+- **What happens:** Mops spits both copies, still stuck together, into the garbage bin by the plant. Squatch sees where they went.
 - **Words:**
   - Mops: "Ptoo!" *(pending)*
-<sub>P5 S27 · v1 beat 30</sub>
+<sub>R82 P5 S27 · v1 beat 30</sub>
 
 ### 36. Walk home past the robots
 - **Where:** Loading bay → hallway
@@ -349,25 +352,25 @@ Mops is at work. Squatch is home alone.
 - **Player:** Optional: swipe the gallery; lift the crooked photo.
 <sub>R55 R56 R57 R62–R69 · v1 beat 32</sub>
 
-### 38. Missing Moon Pies and a pancake brochure
+### 38. Missing Moon Pies and a pancake brochure `UPDATED t311u`
 - **Where:** Party hall snack bar
 - **Who:** Squatch, Mops, people in line, a tourist family
-- **What happens:** People in line talk about missing Moon Pies. A tourist family walks up, and Squatch hides. The family talks about a pancake place on Mars, and Squatch ends up with their brochure.
+- **What happens:** People in line talk about missing Moon Pies. A tourist family walks up, and Squatch hides. The family talks about a pancake place on Mars, and Squatch ends up with their brochure. On the front of the brochure, a big furry Sasquatch couple smiles behind the pancake counter. It's the player's first glimpse of his parents. Nobody says so, and Squatch can only hope.
 - **Words:**
   - Person in line: "I swear we had more Moon Pies... is that what they stole at lunch?" *(pending)*
   - Mops: "Quick, hide." *(pending)*
 - **Player:** Hide when the family comes.
-<sub>S33 S35 · v1 beat 33</sub>
+<sub>R82 S33 S35 S9 · Brian t311u · v1 beat 33</sub>
 
-### 39. Other Sasquatches?
+### 39. Other Sasquatches? `UPDATED t311u`
 - **Where:** On the way home / home
 - **Who:** Squatch, Mops
-- **What happens:** Squatch wonders if the brochure family are Sasquatches like him. Mops has to get back to work. Squatch can look around on the way, but a goal keeps saying "go home".
+- **What happens:** Squatch stares at the couple on the brochure. Are they Sasquatches like him? Mops has to get back to work. Squatch can look around on the way, but a goal keeps saying "go home".
 - **Words:**
-  - Squatch: "Were those other Sasquatches?" *(pending)*
+  - Squatch: "Are those other Sasquatches?" *(pending (was "Were those other Sasquatches?"))*
   - Mops: "I need to get back to work, we'll talk about it tonight." *(pending)*
 - **Player:** Walk home (free roam with a go-home goal).
-<sub>S34 S35 · CF13–CF15 · v1 beat 34</sub>
+<sub>R82 S34 S35 · CF13–CF15 · v1 beat 34</sub>
 
 ### 40. The Mars talk
 - **Where:** Home, evening
@@ -377,21 +380,21 @@ Mops is at work. Squatch is home alone.
   - Mops: "Didn't you hear what the manager said? They need me here, they're not going to replace me. Plus the Guardians are here." *(pending)*
 <sub>S36 · v1 beat 35</sub>
 
-### 41. Mops remembers the Guardians
-- **Where:** Home, Mops at his desk (player only)
-- **Who:** Mops (Squatch asleep)
-- **What happens:** Squatch goes to bed. Mops sits at his desk. A flashback shows the player how Mops made up the Guardians. Squatch never sees this.
-<sub>S37 S59 O14 · v1 beat 36</sub>
+### 41. Lights out `UPDATED t311u`
+- **Where:** Home, night
+- **Who:** Squatch, Mops
+- **What happens:** Squatch goes to bed. Mops falls asleep and snores. No flashback and no Guardian hints. The player only learns who writes the Guardian notes at the vent (beat 48). (Brian t311u; the old flashback here is cut.)
+<sub>R82 · supersedes S37 · v1 beat 36</sub>
 
-### 42. Night one: the paw order
+### 42. Night one: the paw order `UPDATED t312u`
 - **Where:** Home → party hall → hallway → loading bay → home
 - **Who:** Squatch; robots and security at night
-- **What happens:** Mops snores. Squatch sneaks out past the robots and security. He takes the yellow copy out of the bin, signs it with his paw to replace Mops, and posts it in the robot mailbox. He knows what he's doing. He heard the promise. He sneaks back to bed.
+- **What happens:** Mops snores. Squatch sneaks out to the garbage bin and takes out the stuck-together copies. He knows what he's doing: he heard the promise. Cut-in close-up (CUT-IN-SPEC): the player uses his paw to check ORDER MORE ROBOTS on the big pink sheet. The paw print presses through onto the yellow copy too. He tears off the yellow copy and posts it in the robot mailbox. (posting: proposed) Short cutscene (player control paused): robots roll out of storage, Squatch runs back to hide by the big wall vent, and while he's hiding the vent sucks the pink sheet out of his paws. Then control comes back and he sneaks home to bed.
 - **Words:**
   - Robot mailbox: "Mail scanned. Pawature accepted." *(pending (or the longer version, or no words))*
-  - Squatch, signing: "(no words yet)" *(pending)*
-- **Player:** Sneak to the bin, paw-sign, post it, sneak home.
-<sub>S2 S38 P7 R22 · v1 beat 37</sub>
+  - Squatch, thinking: "(no words yet)" *(pending)*
+- **Player:** Sneak to the bin, check the box with his paw (cut-in), post the yellow copy, watch the vent cutscene, sneak home.
+<sub>R83 R82 R80 S2 S38 P7 R22 · Brian t311u t312u t313u · v1 beat 37</sub>
 
 ## One week later: the escape
 
@@ -435,26 +438,27 @@ Mops is at work. Squatch is home alone.
 - **Player:** Press the action button to roll into a ball and hide.
 <sub>S42 S43 C19 R43 · v1 beat 42</sub>
 
-### 48. Mops's secret workstation
+### 48. Mops's secret workstation `UPDATED t312u`
 - **Where:** Inside the big vent (player sees)
 - **Who:** Mops; Squatch peeking through the grille
-- **What happens:** Inside is Mops's secret desk, where he writes the Guardian notes. A wall shows him searching for Squatch's parents. Mars is crossed off. The pink copy is on the desk right beside him, and he doesn't notice it. He writes one more Guardian note.
+- **What happens:** Inside is Mops's secret desk. This is the ONLY place the player learns that Mops writes the Guardian notes. Squatch never learns it here. A detective wall shows Mops searching for Squatch's parents. Mars is crossed off, and pinned beside it is a big, readable reply letter with a huge red NO stamp. That's why Mops thinks going to Mars is a waste of time. The paw-checked pink sheet blew in and is lying on the desk right beside him, and he doesn't notice it. He writes one more Guardian note.
 - **Words:**
   - Board: "IDEAS FOR GUARDIANS" *(pending)*
   - Flyers: "HAVE YOU SEEN?" *(pending)*
   - Labels: "MARS / NO / TOYS" *(pending)*
+  - Mars reply letter: "MARS LOST & FOUND. Re: a lost baby Sasquatch. We have NO record of any lost baby. There are NO Sasquatches on Mars." *(pending)*
   - Squatch, whisper: "I hope Mops doesn't notice..." *(pending)*
   - New Guardian note: "We know you're thinking about going to Mars. Don't worry, we'll always be with you." *(pending)*
-<sub>S44 S45 S47 P10 · v1 beat 43</sub>
+<sub>R83 R82 S44 S45 S47 P10 · Brian t311u t312u · v1 beat 43</sub>
 
-### 49. Grab the pink slip
+### 49. Grab the pink slip `UPDATED t311u`
 - **Where:** Loading bay, at the vent
 - **Who:** Mops, Squatch
-- **What happens:** Mops rushes out with the pink copy in his mouth, so he never sees the paw print. Squatch grabs it from him right away.
+- **What happens:** Mops rushes out with the pink sheet in his mouth (it has the office code), so he never sees the paw print. Squatch grabs it from him right away, before Mops can see what he checked.
 - **Words:**
   - Mops: "Hurry, hurry, pink slip, got it!" *(pending)*
   - Squatch, thinking: "Get it before he sees it." *(pending)*
-<sub>S46 P12 · v1 beat 44</sub>
+<sub>R82 S46 P12 · v1 beat 44</sub>
 
 ### 50. The office keypad
 - **Where:** The hallway, office door (night)
@@ -473,15 +477,15 @@ Mops is at work. Squatch is home alone.
 - **Player:** Click Return empty crate.
 <sub>S48 R46 · v1 beat 46</sub>
 
-### 52. Take all the snacks
+### 52. Take all the snacks `UPDATED t311u`
 - **Where:** Party hall snack bar → home
 - **Who:** Squatch, Mops
-- **What happens:** This time Mops lets Squatch take all the snacks. Squatch leaves some food for the Guardians. Mops doesn't say anything. They go to bed.
+- **What happens:** This time Mops lets Squatch take all the snacks. Squatch leaves some food for the Guardians. Mops doesn't say anything. At home, Squatch tucks the pink slip under the notes in his Guardian Box, where Mops won't look. (proposed) They go to bed.
 - **Words:**
   - Mops: "This time, take all the snacks you want." *(pending)*
   - Squatch: "I'm worried about the Guardians. I'll leave them some food." *(pending)*
-- **Player:** Take the snacks; leave some for the Guardians.
-<sub>S49 O33 · v1 beat 47</sub>
+- **Player:** Take the snacks; leave some for the Guardians; hide the pink slip in the box.
+<sub>R82 S49 O33 O10 · v1 beat 47</sub>
 
 ## Pickup day: leaving Stormtop
 
@@ -591,14 +595,18 @@ Mops is at work. Squatch is home alone.
 ### 7. CLOSED: the bedtime story
 - Brian (t296u): keep it on party night, right after the TV story. It explains why Moon Pies are Squatch's favorite, which pays off the delivery-day calendar.
 
-### 8. The Guardians gift (toy and note)
-- I placed it on the morning of Day 2. The old plan had it at bedtime. Confirm.
+### 8. CLOSED: the Guardians gift (toy and note)
+- Brian (t311u): the morning after the party scare (beat 22).
 
 ### 9. What pulls Isfred away after signing? (O15)
 - The old idea was a robot calling about a damaged crate in the mail room. Not decided.
 
-### 10. The paw print on the pink copy, and how the pink copy gets to Mars (O9, O10)
-- The pink copy goes into the vent at lunch, but Squatch signs the yellow one that night. How does the paw print get onto the pink copy? And how does it travel to Mars?
+### 10. CLOSED: the paw print and the pink sheet (t311u)
+- Brian (t311u): the vent took the paper too soon. Now Mops spits the pink and yellow copies into the bin, Squatch takes them out at night, checks ORDER MORE ROBOTS with his paw in a cut-in, posts the yellow copy, and then, in a short cutscene (t312u/t313u), robots roll out, he runs back to hide by the vent, and the vent sucks up the big pink sheet while he's hiding. Later it rides in the Guardian Box to Mars (X8 travel shots still proposed).
+- Two details are my proposals for Brian's yes: he posts the yellow copy before the robots come out, and he hides the pink slip in the Guardian Box after the office (beat 52).
+
+### 25. CLOSED: why Mops thinks Mars is a waste of time
+- Brian (t312u) picked A: just the big Mars Lost & Found reply letter on the detective wall, stamped NO, readable on screen (beat 48). No search party. Letter words pending.
 
 ### 11. The crate on pickup day
 - They pack the crate, Squatch hides in a crate, they see a crate opened, then both board on foot in costume. What happens to the Moon Pie crate and Guardian Box? (State Q4: already loaded, pushed by a robot, or carried.)

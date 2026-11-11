@@ -8,7 +8,7 @@ Screenshots: `r2-dress.png`, `r2-party.png`, `r2-home.png`, `r2-balloon.png`, `r
 
 Marks: **PASS** holds. **FIX** changed in this round. **NEEDS-BRIAN** needs his yes before a change (usually new words, or a difficulty or timer change).
 
-Round 2 counts, 48 rows: 25 PASS, 17 FIX, 5 NEEDS-BRIAN, and 1 row that is both (Mops's goodbye, until the real song). The waits are Joe's file, a dance sting, a party-start sting, a visible party clock, and a rolling vent ball.
+Round 2 counts, 48 rows: 25 PASS, 17 FIX, 5 NEEDS-BRIAN, and 1 row that is both (Mops's goodbye, until the real song). Day 1 adds 7 FIX rows (song, dance, karaoke, octopus chase, photo countdown, hide, homecoming). The waits are Joe's file, a dance sting, a party-start sting, a visible party clock, and a rolling vent ball.
 
 Joe's file: `warm-theme-joe.tar.gz` was named in the request and was not on this machine. The generated warm stand-in is still what plays. Mute and volume still work. Nothing starts until the first tap.
 
@@ -68,6 +68,13 @@ There is no music file in the repo. Joe's warm theme is not here (`/workspace/ss
 | BOARD scanner | "HAIR... PROBABLY. PROCEED." | They walk through. | One button. | Walk up the ramp. | Scanner bleep, then the line. | The joke lands. | PASS |
 | Later that evening, office lines | Office, Isfred and a robot. | R54. Words still pending. | Tap through. | They are placed in the office, not teleported mid-line. | Robot bleep. | Heavy, as it should be. | PASS |
 | Tally | End card. | Never-caught still awards. | Tap. | n/a | None. | The end. | PASS |
+| Song with Mops | He mops with his beard. The SING button is big. | Their song, then he leaves for work. | Press SING or the song button. | He stays put until you sing. | The existing sung phrase. | The goodbye has a reason. | FIX |
+| Dance game | Arrows slide to a gold box. Four big arrow buttons. | One song, no fail. | Tap the matching button. | About 30 seconds, 10 points a hit. | Pickup chime on a hit. | You cannot lose. | FIX |
+| Karaoke | From behind Squatch, crowd in front, words on the screen. | Moon Pie jingle, pending words. | Tap Sing. Louder howls, bigger cheer. | 15 seconds. Cap 50 points. | A howl each tap. | Optional and silly. | FIX |
+| Octopus chase | He walks through the crowd slower than Squatch. | He wants a hug. Two hugs still end the disguise. | Steer away for about 10 seconds. | Speed 90. Catch within 48px. | The hic line. | A slow joke, not a brick wall. | FIX |
+| Photo countdown | 3-2-1 and "Say cheese!" by the tripod. | The flash is the cue. SNAP still takes the picture and pays 25. | Walk into the frame, then SNAP. | Countdown is 6 seconds. | A flash. | Easier to notice. | FIX |
+| Run home and hide | The guard comes in the door. | He chased you from the party. | HIDE in the bed. If he reaches you, you pop back and try again. | Guard speed 120. | The alarm already rang. | The hide is the answer. | FIX |
+| You have me, TV, bedtime | Mops walks in. Three TV pictures. Then the crate story. | No parents in the story. Then the old Day 2 starts. | Tap through. | They walk. No teleport. | Warmth is still the stand-in, not Joe's file. | The day lands. | FIX |
 | Dialogue advance (Space, Enter, NEXT, tap) | NEXT no longer shifts the picture. | One line at a time still. | A tap, Space, Enter, or NEXT still advances a line. The stick and arrow keys walk during a normal line (S10). Cards and cutscenes stay put. | Walk speed unchanged. | n/a | Less stuck. | FIX |
 | Room doors | Walk off, new room, walk in. | No teleport for those changes. | Control is off during the walk. | Same speeds as before. | Journey bed. | Good. | PASS |
 | Restart (hold R or the arrow) | Restarts the section. | Night restart puts him back at the bin side and resets the robot's clock to "looking down". | Hold, so it is not a stray tap. | n/a | None. | Fair. | PASS |

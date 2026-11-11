@@ -1589,6 +1589,8 @@
           n.ch1InShot && Re(460, 390, 1.1, { f: 1, hat: !0, shades: !0, hawaiian: !0 }));
         return;
       }
+      if (l === "ch1tv1" || l === "ch1tv2" || l === "ch1tv3") return drawCh1Tv(l);
+      if (l === "ch1moon") return drawCh1Moon();
       if (l === "ch1fur") {
         ((e.fillStyle = "rgba(20,24,32,.72)"),
           e.fillRect(0, 0, c, b),
@@ -2128,6 +2130,8 @@
       (n.under === "crack" && gq("crack", !1),
         l && l.k === "panel" && gq(l.id, n.bt > 0.3),
         l && l.k === "bub" ? bq(l.b, !1) : !de() && n.live.length && bq(n.live[0], !0),
+        n.ch1Search && drawCh1Guard(),
+        n.ch1Mini && drawCh1Mini(),
         window.__ss && (window.__ss.bubbleFrame = qq),
         n.ch1Veil > 0.01 && ((e.fillStyle = "rgba(20,24,32," + Math.min(1, n.ch1Veil).toFixed(3) + ")"), e.fillRect(0, 0, c, b)));
       ((e.globalAlpha = 1), zG(), drawTapHeard());
@@ -2206,6 +2210,12 @@
           I0(parseInt(l.code.slice(-1), 10));
           return;
         }
+        n.ch1Mini === "dance" &&
+          !l.repeat &&
+          ({ ArrowLeft: "L", ArrowRight: "R", ArrowUp: "U", ArrowDown: "D" }[l.code]
+            ? (ch1DanceHit({ ArrowLeft: "L", ArrowRight: "R", ArrowUp: "U", ArrowDown: "D" }[l.code]), !0)
+            : !1) ||
+        (n.ch1Mini === "karaoke" && !l.repeat && (l.code === "Space" || l.code === "Enter") && (ch1Howl(), !0)) ||
         (l.code === "KeyR" && !l.repeat && armReset(!0),
           (qe[l.code] = !0),
           !l.repeat && (l.code === "KeyE" ? Vf() : (l.code === "Enter" || l.code === "Space") && af()));

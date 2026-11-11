@@ -380,7 +380,7 @@
         resetHold: armReset,
         soundTap,
         songTap: () => {
-          (VV(), n.scene === "O1" && n.ctrl && co());
+          (VV(), n.ch1Song ? ch1SingAlong() : n.scene === "O1" && n.ctrl && co());
         },
         actionDown: Vf,
         tapAt: O5,

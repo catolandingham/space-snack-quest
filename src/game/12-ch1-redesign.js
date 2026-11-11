@@ -312,6 +312,12 @@
         (n.ch1Cut = null),
         (n.ch1Dress = null),
         (n.ch1PeekReady = !1),
+        (n.ch1Song = !1),
+        (n.ch1Search = !1),
+        (n.ch1Mini = ""),
+        (n.ch1OctChase = !1),
+        (n.ch1SureEnd = !1),
+        (n.guard = null),
         (n.ch1Chain = !1),
         (n.ch1Flyer = !1),
         (n.ch1PartyT = 0),
@@ -618,6 +624,7 @@
             },
           }),
         );
+      ch1ExtraPartySpots().forEach((s) => out.push(s));
       return out;
     }
     function ch1SnackGrab() {
@@ -704,7 +711,7 @@
         v("pa", "FUR! Security!", "pa"),
         { k: "panel", id: "ch1fur" },
         N(() => {
-          ((n.ch1Party = !1), (n.ch1Fur = !1), ch1Go("closet", { who: "sq", scene: "Q3" }, ch1PartyHome));
+          ((n.ch1Party = !1), (n.ch1Fur = !1), ch1Go("closet", { who: "sq", scene: "Q3" }, ch1SearchStart));
         }),
       );
       J(lines);
@@ -745,6 +752,7 @@
         n.ch1Flyer &&
         !n.ch1Cut &&
         !(n.ch1Dress && n.ch1Dress.on) &&
+        !n.ch1Mini &&
         ((n.ch1PartyT = (n.ch1PartyT || 0) + (dt || 0)), n.ch1PartyT >= COOL_HAT_SECONDS && ch1HatOff("cool"));
     }
     function ch1BalloonTick(dt) {
@@ -958,6 +966,8 @@
         ]));
     }
     function ch1QSpots() {
+      if (n.ch1Song && n.ctrl && !n.ch1Party) return ch1SongSpots();
+      if (n.ch1Search && n.ctrl && n.room === "closet") return ch1SearchSpots();
       if (n.ch1Cut) return ch1CutSpots();
       if (n.ch1Dress && n.ch1Dress.on) return ch1DressSpots();
       if (n.ch1PeekReady && n.ctrl) return ch1PeekSpots();
@@ -1042,7 +1052,8 @@
       seen && capture("delivery");
     }
     function ch1QTick(dt) {
-      (n.scene || "")[0] === "Q" && (n.ctrl && (n.act = pick(ch1QSpots())), ch1Watch(dt), ch1PartyTick(dt), ch1BalloonTick(dt), ch1SliceTick(dt));
+      (n.scene || "")[0] === "Q" &&
+        (n.ctrl && !n.ch1Mini && (n.act = pick(ch1QSpots())), ch1Watch(dt), ch1PartyTick(dt), ch1BalloonTick(dt), ch1SliceTick(dt), ch1Day1Tick(dt));
     }
     function ch1RestartNight() {
       ((n.scene = "Q4"),
@@ -1106,7 +1117,8 @@
         ].forEach((guest) => {
           (drawCh1Alien(guest[0], guest[1], guest[2], CH1_GUEST, face || 1), glance(guest[0], guest[1]));
         }),
-        drawOctopus(860, 555 - Math.abs(Math.sin(n.T * 8)) * 6, face || -1),
+        drawOctopus((n.ch1Oct && n.ch1Oct.x) || 860, (n.ch1Oct && n.ch1Oct.y) || 555, face || -1),
+        drawCh1Fest(),
         drawCh1Alien(900, 400, "cape", CH1_GUEST, face || -1),
         drawCh1Tripod(820, 350),
         !n.ch1Flyer && (m(500, 360, 16, 12, 1), r("#fffdf8", 1)),
