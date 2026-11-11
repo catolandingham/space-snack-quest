@@ -250,7 +250,12 @@
       ) {
         ((e.strokeStyle = y), (e.lineWidth = 1.1));
         for (let Qe of [-1, 1]) (e.beginPath(), e.arc(Qe * q.head * 0.27, P + q.head * 0.1, 1.6, 0.1, Math.PI - 0.1), e.stroke());
-      } else (F(-q.head * 0.27, P + q.head * 0.12, 1.5, y), F(q.head * 0.27, P + q.head * 0.12, 1.5, y));
+      } else if (s.eyes === "wide")
+        (F(-q.head * 0.28, P + q.head * 0.1, 3.4, "#ffffff"),
+          F(q.head * 0.28, P + q.head * 0.1, 3.4, "#ffffff"),
+          F(-q.head * 0.28, P + q.head * 0.14, 1.7, y),
+          F(q.head * 0.28, P + q.head * 0.14, 1.7, y));
+      else (F(-q.head * 0.27, P + q.head * 0.12, 1.5, y), F(q.head * 0.27, P + q.head * 0.12, 1.5, y));
       (s.singing
         ? (e.beginPath(), e.ellipse(0, P + q.head * 0.45, 1.8, 2.2 + Math.sin(n.T * 12) * 0.5, 0, 0, 7), (e.fillStyle = y), e.fill())
         : (e.beginPath(), e.arc(0, P + q.head * 0.38, 2.2, 0.2, Math.PI - 0.2), (e.strokeStyle = y), (e.lineWidth = 1.1), e.stroke()),

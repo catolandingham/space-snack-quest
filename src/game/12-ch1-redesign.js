@@ -1462,13 +1462,17 @@
         n.sqPose === "ball" && drawL2Ball(n.sq.x, n.sq.y - 16),
         n.sqPose !== "hidden" &&
           n.sqPose !== "ball" &&
+          (e.save(),
+          n.ch1Crouch && (e.translate(n.sq.x, n.sq.y), e.scale(1, 0.72), e.translate(-n.sq.x, -n.sq.y)),
           Re(n.sq.x, n.sq.y, sqDrawScale(), {
             f: n.sq.f || 1,
             walk: n.sq.moving ? n.sq.walk : 0,
             jacket: !!n.costumeOn,
             goatBeard: !!n.costumeOn,
             horns: !!n.costumeOn,
-          }));
+            eyes: n.ch1Wide ? "wide" : void 0,
+          }),
+          e.restore()));
     }
     function drawCh1Duct() {
       ((e.fillStyle = "#f3efe6"), e.fillRect(0, 0, c, b), m(28, 18, 904, 604, 18), r("#f7f4ee", 7));

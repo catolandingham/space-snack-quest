@@ -296,9 +296,9 @@
           ((n.ch1Roll = 0), (n.ch1ShowBots = !0));
         }),
         cV((dt) => ((n.ch1Roll = Math.min(1, (n.ch1Roll || 0) + dt / 1.2)), n.ch1Roll >= 1)),
-        ch1Step("sq", CH1_VENT.x - 36, CH1_VENT.y, 220),
+        ch1Step("sq", 790, 490, 220),
         N(() => {
-          ((n.sqPose = "ball"), (n.sq.x = 640), (n.sq.y = 500));
+          ((n.sqPose = "stand"), (n.ch1Crouch = !0), (n.ch1Wide = !0));
         }),
         N(() => {
           ((n.ch1SuckT = n.T), D.slurp());
@@ -308,6 +308,8 @@
           ((n.ch1PinkSucked = 1),
             ch1SetPaper("vent"),
             (n.ch1SuckT = 0),
+            (n.ch1Crouch = !1),
+            (n.ch1Wide = !1),
             (n.ch1ShowBots = !1),
             (n.sqPose = "stand"),
             (n.ch1Step = "out"),
@@ -788,28 +790,6 @@
     function drawSlip(x, y, color, w, h) {
       (m(x, y, w || 28, h || 36, 3), r(color, 2));
     }
-    function drawPawArm(paw) {
-      let p = paw || { x: 480, y: 580 },
-        x = p.x,
-        y = p.y;
-      e.save();
-      e.beginPath();
-      e.moveTo(x - 34, 656);
-      for (let i = 1; i <= 8; i++) {
-        let t = i / 8;
-        e.lineTo(x - 30 + Math.sin(i * 1.4) * 10, 656 - (656 - (y + 16)) * t);
-      }
-      e.lineTo(x + 28, y + 16);
-      for (let i = 8; i >= 1; i--) {
-        let t = i / 8;
-        e.lineTo(x + 30 + Math.sin(i * 1.4) * 10, 656 - (656 - (y + 16)) * t);
-      }
-      (e.closePath(), r("#6b4428", 4));
-      [[-24, -10], [-8, -20], [10, -20], [26, -8]].forEach(([dx, dy]) => {
-        (e.beginPath(), e.ellipse(x + dx, y + dy, 12, 15, dx < 0 ? -0.35 : 0.35, 0, 7), r("#6b4428", 2), F(x + dx, y + dy + 3, 4.5, "#f4c39a"));
-      });
-      (e.beginPath(), e.ellipse(x, y + 10, 22, 16, 0, 0, 7), r("#6b4428", 3), e.beginPath(), e.ellipse(x, y + 14, 13, 9, 0, 0, 7), r("#f4c39a", 1), e.restore());
-    }
     function drawZoomX() {
       (L(880, 540, 32), r("#ffffff", 4), g("X", 880, 540, 28, "#1e2430", "center", 900));
     }
@@ -949,14 +929,14 @@
       n.ch1Paper === "box" && n.room === "closet" && drawSlip(332, 470, "#ff8fb8", 16, 20);
       if (n.ch1SuckT) {
         let t = Math.min(1, (n.T - n.ch1SuckT) / 1.15),
-          x0 = n.sq.x + 10,
-          y0 = n.sq.y - 36,
-          x = x0 + (864 - x0) * t,
-          y = y0 + (186 - y0) * t + Math.sin(t * 20) * 10 * (1 - t);
+          x0 = n.sq.x + 18,
+          y0 = n.sq.y - 62,
+          x = x0 + (840 - x0) * t,
+          y = y0 + (168 - y0) * t + Math.sin(t * 20) * 8 * (1 - t);
         for (let i = 1; i <= 5; i++) {
           let u = Math.max(0, t - i * 0.07),
-            lx = x0 + (868 - x0) * u,
-            ly = y0 + (148 - y0) * u;
+            lx = x0 + (840 - x0) * u,
+            ly = y0 + (168 - y0) * u;
           C([lx - 18, ly + 8, lx + 6, ly - 10], "rgba(255,143,184," + (0.85 - i * 0.12) + ")", 3);
         }
         (e.save(), e.translate(x, y), e.rotate(Math.sin(t * 16) * 0.5), drawSlip(-24, -30, "#ff8fb8", 48, 60), e.restore());
@@ -1008,6 +988,8 @@
         (n.ch1Tape = !1),
         (n.ch1Crayon = !1),
         (n.ch1InCrate = !1),
+        (n.ch1Crouch = !1),
+        (n.ch1Wide = !1),
         (n.ch1Chip = ""));
       if (b === 22) {
         ((n.room = "closet"), (n.scene = "QB"), (n.sq.x = 360), (n.sq.y = 520), (n.moPose = "hidden"), (n.ch1Hold = "gift"));
@@ -1033,7 +1015,20 @@
         n.ch1Paw = 1;
         n.ch1Chip = "Squatch: check the order";
       } else if (b === 142) {
-        ((n.room = "hangar"), (n.ch1D = !0), (n.ch1Night = !0), (n.scene = "Q4"), (n.sqPose = "ball"), (n.sq.x = 640), (n.sq.y = 500), (n.moPose = "hidden"), (n.ch1SuckT = n.T - 0.7), (n.ch1Chip = "Squatch: hide by the vent"), ch1SetPaper(""));
+        ((n.room = "hangar"),
+          (n.ch1D = !0),
+          (n.ch1Night = !0),
+          (n.scene = "Q4"),
+          (n.sqPose = "stand"),
+          (n.sq.f = 1),
+          (n.sq.x = 790),
+          (n.sq.y = 490),
+          (n.ch1Crouch = !0),
+          (n.ch1Wide = !0),
+          (n.moPose = "hidden"),
+          (n.ch1SuckT = n.T - 0.4),
+          (n.ch1Chip = "Squatch: hide by the vent"),
+          ch1SetPaper(""));
       } else if (b === 23) {
         ((n.room = "closet"), (n.scene = "QB"), (n.wardrobe = "closed"), (n.ch1Cal = 2), (n.sq.x = 360), (n.sq.y = 520), (n.moPose = "hidden"), (n.ch1Step = "cal"), (n.ch1Chip = "Squatch: circle delivery day"));
       } else if (b === 29) {
