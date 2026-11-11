@@ -84,13 +84,13 @@
       S = null,
       M = null,
       z = 1;
-    // The live site and local tests keep ssq-*. Any other host, including the PR preview, uses ssq-pr21-* so an iPad does not mix the two.
+    // The live site and local tests keep ssq-*. This branch's preview uses ssq-day2- so it does not mix with the live game or the slice preview.
     function ssqKey(name) {
       let host = "";
       try {
         host = location.hostname || "";
       } catch {}
-      return (host === "space-snack-quest.onrender.com" || host === "localhost" || host === "127.0.0.1" || host === "" ? "ssq-" : "ssq-pr21-") + name;
+      return (host === "space-snack-quest.onrender.com" || host === "localhost" || host === "127.0.0.1" || host === "" ? "ssq-" : "ssq-day2-") + name;
     }
     try {
       let l = window.localStorage.getItem(ssqKey("vol"));
@@ -503,8 +503,9 @@
     function musicWant() {
       if (warmWhy()) return "warm";
       if (p.state !== "op") return "";
-      if (n.roomWalk) return "journey";
-      if (n.ch1Night && n.scene === "Q4" && n.ctrl) return "sneak";
+      if (n.ch1Heart) return "warm";
+      if (n.roomWalk || n.ch1Journey) return "journey";
+      if ((n.ch1Night && n.scene === "Q4" && n.ctrl) || (n.ch1Sneak && n.ctrl)) return "sneak";
       if (n.sqPose === "hidden" && n.ch1Party) return "sneak";
       return "";
     }

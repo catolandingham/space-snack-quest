@@ -27,6 +27,11 @@
         Cs();
         return;
       }
+      if (p.state === "op" && (n.ch1PadOn || n.ch1Zoom || n.ch1Cut || (n.ch1Dress && n.ch1Dress.on))) {
+        ch1SlicePointer("down", l, o);
+        ch1Day2Pointer("down", l, o);
+        return;
+      }
       {
         if (p.state === "op" && Nh()) {
           if (n.bt < 0.3) return void (n.tapT = n.T);
@@ -227,7 +232,11 @@
         ch2Tally: o2,
         actionDown: Vf,
         tapAt: O5,
-        ch1Pointer: (kind, x, y) => ch1SlicePointer(kind, x, y),
+        ch1Pointer: (kind, x, y) => {
+          ch1SlicePointer(kind, x, y);
+          ch1Day2Pointer(kind, x, y);
+        },
+        ch1PadPress,
         shown: () => Array.from(p.shown),
         op: n,
         startOpening: qh,
@@ -401,7 +410,14 @@
         },
         actionDown: Vf,
         tapAt: O5,
-        ch1Pointer: (kind, x, y) => ch1SlicePointer(kind, x, y),
+        ch1Pointer: (kind, x, y) => {
+          ch1SlicePointer(kind, x, y);
+          ch1Day2Pointer(kind, x, y);
+        },
+        pointer: (kind, x, y) => {
+          ch1SlicePointer(kind, x, y);
+          ch1Day2Pointer(kind, x, y);
+        },
         setJoy: (l, o, i) => {
           ((qt.x = l), (qt.y = o), (qt.active = i));
         },

@@ -49,6 +49,7 @@
     ];
     function ch1QChip() {
       if (n.ch1Dress && n.ch1Dress.on) return "";
+      if (n.ch1Day2 && n.ch1Chip) return n.ch1Chip;
       return CH1Q_CHIPS[n.scene] || "";
     }
     // One adult head height for every room with adults. The ruler is the party hall's right-hand
@@ -213,6 +214,7 @@
             n.room === "hall" && (B.camX = 0),
             n.room === "closet" && (n.tvOn = !1),
             spec.who === "sq" ? (n.moPose = "hidden") : (n.moPose = "stand"),
+            spec.mo && ((n.mo.x = spec.mo[0]), (n.mo.y = spec.mo[1]), (n.moPose = "stand")),
             n.ch1Walks.push({ phase: "in", room: n.room, x: Math.round(n.sq.x), y: Math.round(n.sq.y) }));
         }),
         cV((dt) => ch1Move(dt, spec.stand[0], spec.stand[1], 260, spec.who)),
@@ -228,7 +230,7 @@
     function ch1Go(dest, flags, next) {
       let f = flags || {},
         who = f.who || "both",
-        from = n.ch1Duct ? "duct" : n.ch1D ? "delivery" : n.room === "hall" ? "hall" : "closet",
+        from = n.ch1Duct ? "duct" : n.ch1D ? "delivery" : n.room === "passage" ? "passage" : n.room === "hall" ? "hall" : "closet",
         homeOff = [1060, 510],
         hallBottomOff = [480, 740],
         hallRightOff = [1120, 500],
@@ -331,6 +333,39 @@
       if (from === "closet" && dest === "hall") return ch1Hop(homeHall(f.stand), next);
       if (from === "delivery" && dest === "duct") return ch1Hop(delDuct(), next);
       if (from === "duct" && dest === "delivery") return ch1Hop(ductDel(), next);
+      // The hallway (R51) sits between the party hall and the loading bay. Day 2 walks use it.
+      let pass = {
+          who,
+          scene: f.scene,
+          delivery: !1,
+          duct: !1,
+          night: !!f.night,
+          ship: !!f.ship,
+          crew: f.crew || "",
+          mail: f.mail || "",
+          mo: f.mo,
+        },
+        hallPass = () =>
+          Object.assign({}, pass, { exit: [880, 500], off: hallRightOff, to: "passage", entry: [-80, 510], stand: f.stand || [180, 510], ship: !1, crew: "", mail: "" }),
+        passHall = () =>
+          Object.assign({}, pass, { exit: [80, 510], off: [-80, 510], to: "hall", entry: [1120, 500], stand: f.stand || [700, 520], ship: !1, crew: "", mail: "" }),
+        passDel = () => Object.assign({}, pass, { exit: [880, 510], off: [1120, 510], to: "hangar", entry: [-80, 520], stand: f.stand || [200, 520], delivery: !0 }),
+        delPass = () =>
+          Object.assign({}, pass, {
+            exit: [70, 520],
+            off: [-80, 520],
+            to: "passage",
+            entry: [1040, 510],
+            stand: f.stand || [720, 510],
+            delivery: !1,
+            ship: !1,
+            crew: "",
+            mail: "",
+          });
+      if (from === "hall" && dest === "passage") return ch1Hop(hallPass(), next);
+      if (from === "passage" && dest === "hall") return ch1Hop(passHall(), next);
+      if (from === "passage" && dest === "delivery") return ch1Hop(passDel(), next);
+      if (from === "delivery" && dest === "passage") return ch1Hop(delPass(), next);
       console.warn("ch1Go: no walk from " + from + " to " + dest);
       typeof next == "function" && next();
     }
@@ -376,6 +411,9 @@
         (n.ch1SureEnd = !1),
         (n.guard = null),
         (n.ch1Raid = null),
+        (n.ch1Day2 = !1),
+        (n.ch1Zoom = null),
+        (n.ch1PadOn = !1),
         (n.ch1Chain = !1),
         (n.ch1Flyer = !1),
         (n.ch1PartyT = 0),
@@ -773,21 +811,14 @@
       J(lines);
     }
     function ch1PartyHome() {
+      // Day 1 ends here for now. Beats 19-21 can take over this function and call ch1Day2Begin after bedtime.
       ((n.moPose = "stand"),
         (n.mo.x = 455),
         (n.mo.y = 560),
         (n.ch1Party = !1),
         J([
           v("mops", "A flyer. And fur on the floor."),
-          N(() => {
-            ((n.tvOn = !0), (n.scene = "Q1"));
-          }),
-          v("mops", "I know you, Squatch, you're probably hungry... you know the rule, grab one snack."),
-          v("mops", "My lunch! You're the best."),
-          v("pa", "Universal Postal Service ship arriving!", "pa"),
-          v("sq", "Please let me follow you, I'll be really sneaky."),
-          v("mops", "Okay, just this time, but hide carefully."),
-          N(() => ch1Go("delivery", { ship: !0, crew: "day", mail: "empty", scene: "Q2", night: !1 }, ch1AtDelivery)),
+          N(() => ch1Day2Begin()),
         ]));
     }
     function ch1PartyTick(dt) {
@@ -1028,6 +1059,7 @@
       if (n.ch1Dress && n.ch1Dress.on) return ch1DressSpots();
       if (n.ch1PeekReady && n.ctrl) return ch1PeekSpots();
       if (n.scene === "QA") return n.ch1Raid && n.room === "hall" ? ch1RaidSpots() : n.ctrl && !n.ch1PartyOver ? ch1PartySpots() : [];
+      if (n.ch1Day2) return ch1Day2Spots();
       if (!n.ctrl || n.sqPose === "ball" || n.sqPose === "hidden") return [];
       let s = n.scene,
         out = [];
@@ -1093,7 +1125,7 @@
       return out;
     }
     function ch1Watch(dt) {
-      if (!n.ctrl || n.scene !== "Q4" || x.mops) return;
+      if (!n.ctrl || n.scene !== "Q4" || x.mops || n.ch1Zoom) return;
       n.ch1LookT = (n.ch1LookT || 0) + (dt || 0);
       if (!ch1NightNow().catch) {
         ballNotice("ch1night", BALL_NOTICE_RADIUS + 1, 0, !1);
@@ -1109,7 +1141,7 @@
     }
     function ch1QTick(dt) {
       (n.scene || "")[0] === "Q" &&
-        (n.ctrl && !n.ch1Mini && (n.act = pick(ch1QSpots())), ch1Watch(dt), ch1PartyTick(dt), ch1BalloonTick(dt), ch1SliceTick(dt), ch1Day1Tick(dt));
+        (n.ctrl && !n.ch1Mini && (n.act = pick(ch1QSpots())), ch1Watch(dt), ch1PartyTick(dt), ch1BalloonTick(dt), ch1SliceTick(dt), ch1Day1Tick(dt), ch1Day2Tick(dt));
     }
     function ch1RestartNight() {
       ((n.scene = "Q4"),
@@ -1128,7 +1160,8 @@
         (n.sq.y = 540),
         (n.ctrl = !0),
         (n.ch1LookT = 0),
-        ch1LoadBalloon());
+        ch1LoadBalloon(),
+        n.ch1Day2 && ch1NightReset());
     }
     function drawGameBin(px, py) {
       (e.beginPath(),
@@ -1407,13 +1440,13 @@
       drawMailRobot(878, 470);
       n.ch1Crew === "pickup" ? drawPickupLoad() : n.ch1Mail === "full" && (Xn(720, 400, 70, 48, ""), Xn(800, 420, 56, 40, ""));
       n.scene === "Q2" && Qt(700, 530, "#e8a87c", QT_ADULT, -1),
-      n.ch1Crew === "day" &&
+      (n.ch1Crew === "day" || n.ch1Crew === "leave") &&
         [
           ["Dot", 250, 580],
           ["Bob", 330, 565],
           ["Lou", 410, 580],
-        ].forEach((w) => u5({ x: w[1], y: w[2], name: w[0] }));
-      !night && n.ch1Ship && n.scene !== "Q9" && Qt(560, 500, "#c9b6f2", QT_ADULT, 0.2);
+        ].forEach((w) => u5({ x: w[1] - (n.ch1Crew === "leave" ? (n.ch1Leave || 0) * 520 : 0), y: w[2], name: w[0] }));
+      !night && n.ch1Ship && n.scene !== "Q9" && n.ch1BossX !== -1 && Qt(n.ch1BossX == null ? 560 : n.ch1BossX, 500, "#c9b6f2", QT_ADULT, 0.2);
       n.ch1Crew === "tease" && [360, 480, 600].forEach((px) => dq(px, 460, !1));
       night &&
         (seenCone(CH1_ROBOT.x, CH1_ROBOT.y - 28, ch1NightNow().face, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.62)", "rgba(160,100,10,.95)"),

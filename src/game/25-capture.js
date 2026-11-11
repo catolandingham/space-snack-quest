@@ -213,6 +213,7 @@
       S11: () => Js(),
       // Redesigned Chapter 1 night: back at the bin, yellow copy not mailed yet.
       Q4: () => ch1RestartNight(),
+      QB: () => ch1RestartLunch(),
     };
     const CH3_CHECKPOINTS = {
       p1: () => {

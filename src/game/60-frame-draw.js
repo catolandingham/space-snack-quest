@@ -2058,12 +2058,14 @@
         ? (P2(), X2(), g5(), z2())
         : n.room === "deck"
           ? (jp(), z2())
+            : n.room === "passage"
+            ? drawCh1Passage()
             : n.room === "hall"
-            ? n.ch1Party
-              ? drawCh1PartyRoom()
-              : n.ch1Office
-                ? drawCh1HallwayRoom()
-                : s5()
+              ? n.ch1Party
+                ? drawCh1PartyRoom()
+                : n.ch1Office
+                  ? drawCh1HallwayRoom()
+                  : s5()
             : n.room === "window"
               ? o5()
               : n.room === "duct"
@@ -2120,6 +2122,8 @@
         drawRoom();
         n.ch1Cut && drawCh1Cut();
         n.ch1Dress && n.ch1Dress.on && drawCh1Dress();
+        n.ch1Day2 && drawCh1Day2();
+        n.ch1Zoom && drawCh1Zoom();
       } finally {
         restoreWalkDraw();
       }
@@ -2222,6 +2226,10 @@
           l.code === "Escape" && p.state === "op" && (N0() || storyCard(n.cur)))
         ) {
           N0() ? Cs() : skipStoryCards();
+          return;
+        }
+        if (n.ch1PadOn && (/^Digit[0-9]$/.test(l.code) || /^Numpad[0-9]$/.test(l.code))) {
+          ch1PadPress(l.code.replace(/\D/g, "").slice(-1));
           return;
         }
         if (l.code === "KeyM") {
