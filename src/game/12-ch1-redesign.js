@@ -47,8 +47,12 @@
       { id: "guard", verb: "STAND", cap: "guard", x: 860, y: 540, why: "guard" },
     ];
     function ch1QChip() {
+      if (n.ch1Dress && n.ch1Dress.on) return "";
       return CH1Q_CHIPS[n.scene] || "";
     }
+    // Party only. Guests are a bit smaller than before; Squatch is a touch taller than a guest. Other rooms keep he and Qt 1.6.
+    const CH1_GUEST = 1.3,
+      CH1_SQ_PARTY = 2;
     // Standing sight is the hall robot's existing cone and feet circle. These are not the ball constants.
     const STAND_CONE_LEN = 210,
       STAND_CONE_HALF = 0.42,
@@ -327,8 +331,8 @@
               (n.sqPose = "stand"),
               (n.sq.x = 400),
               (n.sq.y = 520),
-              (n.mo.x = 520),
-              (n.mo.y = 500),
+              (n.mo.x = 220),
+              (n.mo.y = 540),
               (n.moPose = "stand"),
               (n.scene = "Q1"),
               ch1Day1());
@@ -350,7 +354,7 @@
           v("mops", "I'll take care of it."),
           v("mops", "So futuristic and we still order on paper."),
           N(() => {
-            n.ch1Prop = "delicious";
+            ((n.ch1Prop = "delicious"), D.slurp());
           }),
           v("mops", "Delicious."),
           N(() => {
@@ -394,7 +398,7 @@
         J([
           cV((dt) => (ch1Trail(), mV(n.sq, 205, 470, 180, dt) && mV(n.mo, 470, 460, 180, dt))),
           N(() => {
-            ((n.sqPose = "sleep"), (n.sq.x = 205), (n.sq.y = 470), (n.mo.x = 470), (n.mo.y = 460));
+            ((n.sqPose = "sleep"), (n.sq.x = 205), (n.sq.y = 470), (n.mo.x = 380), (n.mo.y = 460));
           }),
           { k: "panel", id: "ch1guard" },
           N(() => {
@@ -706,8 +710,8 @@
     }
     function ch1PartyHome() {
       ((n.moPose = "stand"),
-        (n.mo.x = 520),
-        (n.mo.y = 500),
+        (n.mo.x = 220),
+        (n.mo.y = 540),
         (n.ch1Party = !1),
         J([
           v("mops", "A flyer. And fur on the floor."),
@@ -1090,28 +1094,28 @@
           [0, 1, 2].forEach((i) => {
             (F(724 + i * 28, 486, 6, i === 2 ? "#fffdf8" : "#e5533d"), F(730 + i * 28, 498, 4, "#8fdcff"));
           }),
-        Qt(340, 520, "#f2c1b0", 1.6, face || 1),
-        glance(340, 520),
-        Qt(390, 526, "#f2c1b0", 1.6, face || -1),
-        glance(390, 526),
-        Qt(560, 530, "#1f9d8a", 1.6, face || 1),
-        glance(560, 530),
-        Qt(620, 524, "#ff8a3d", 1.6, face || -1),
-        glance(620, 524),
-        Qt(470, 500, "#7ad0c8", 1.6, face || 1),
-        glance(470, 500),
-        Qt(300, 470, "#7a4ad0", 1.6, face || 1),
-        glance(300, 470),
-        drawOctopus(820, 540 - Math.abs(Math.sin(n.T * 8)) * 10, face || -1),
-        glance(820, 530),
-        Qt(790, 230, "#ff8a3d", 1.6, face || -1),
+        Qt(360, 530, "#f2c1b0", CH1_GUEST, face || 1),
+        glance(360, 530),
+        Qt(450, 490, "#f2c1b0", CH1_GUEST, face || -1),
+        glance(450, 490),
+        Qt(540, 545, "#1f9d8a", CH1_GUEST, face || 1),
+        glance(540, 545),
+        Qt(630, 495, "#ff8a3d", CH1_GUEST, face || -1),
+        glance(630, 495),
+        Qt(250, 470, "#7ad0c8", CH1_GUEST, face || 1),
+        glance(250, 470),
+        Qt(720, 450, "#7a4ad0", CH1_GUEST, face || 1),
+        glance(720, 450),
+        drawOctopus(930, 560 - Math.abs(Math.sin(n.T * 8)) * 10, face || -1),
+        glance(930, 550),
+        Qt(790, 230, "#ff8a3d", CH1_GUEST, face || -1),
         glance(790, 230),
         m(768, 214, 16, 10, 1),
         r("#1e2430", 1),
-        Qt(860, 540, "#59657d", 1.6, face || -1),
+        Qt(860, 540, "#59657d", CH1_GUEST, face || -1),
         glance(860, 540),
-        Qt(480, 400, "#c9b6f2", 1.6, look ? 1 : 0.2),
-        glance(480, 400),
+        Qt(560, 420, "#c9b6f2", CH1_GUEST, look ? 1 : 0.2),
+        glance(560, 420),
         !n.ch1Flyer && (m(500, 360, 16, 12, 1), r("#fffdf8", 1)),
         (n.ch1Spill || 0) > 0 &&
           [0, 1, 2].forEach((i) => {
@@ -1156,8 +1160,8 @@
           F(kid.x + 16, kid.y - 38, 3, "#f0bf93")),
         mood === "sad" && C([kid.x + 2, kid.y - 36, kid.x + 8, kid.y - 40, kid.x + 12, kid.y - 36], y, 1.4));
       if (n.ch1Balloon === "up" || n.ch1Balloon === "ceiling") {
-        n.ch1Balloon === "up" && (F(bx, by, 26, "rgba(229,83,61,.22)"), F(bx, by, 16, "rgba(255,190,180,.55)"));
-        (C([kid.x, kid.y - 20, bx, by + 8], "#e5533d", 1), F(bx, by, 8, "#e5533d"));
+        n.ch1Balloon === "up" && (F(bx, by, 40, "rgba(229,83,61,.28)"), F(bx, by, 26, "rgba(255,190,180,.7)"));
+        (C([kid.x, kid.y - 20, bx, by + 14], "#e5533d", 2), F(bx, by, 14, "#e5533d"));
       }
       if (n.ch1Balloon === "held") {
         (C([n.sq.x, n.sq.y - 40, n.sq.x, n.sq.y - 78], "#e5533d", 1), F(n.sq.x, n.sq.y - 86, 8, "#e5533d"));
@@ -1277,7 +1281,13 @@
       !night && n.ch1Ship && n.scene !== "Q9" && Qt(560, 500, "#c9b6f2", 2.6, 0.2);
       n.ch1Crew === "tease" && [360, 480, 600].forEach((px) => dq(px, 460, !1));
       night &&
-        (seenCone(CH1_ROBOT.x, CH1_ROBOT.y - 28, ch1NightNow().face, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.38)"),
+        (seenCone(CH1_ROBOT.x, CH1_ROBOT.y - 28, ch1NightNow().face, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.62)", "rgba(160,100,10,.95)"),
+        ch1NightNow().catch &&
+          (e.beginPath(),
+          e.arc(CH1_ROBOT.x, CH1_ROBOT.y, STAND_FEET, 0, Math.PI * 2),
+          (e.lineWidth = 3),
+          (e.strokeStyle = "rgba(160,100,10,.95)"),
+          e.stroke()),
         dq(CH1_ROBOT.x, CH1_ROBOT.y, !1),
         n.ch1Alert && g("!", CH1_ROBOT.x, CH1_ROBOT.y - 78, 28, "#e5533d", "center", 900));
       (n.moPose !== "hidden" && Fe(n.mo.x, n.mo.y, he * 1.15, { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 }),

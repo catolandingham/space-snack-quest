@@ -375,6 +375,9 @@
         actionE: J1,
         resetHold: armReset,
         soundTap,
+        songTap: () => {
+          (VV(), n.scene === "O1" && n.ctrl && co());
+        },
         actionDown: Vf,
         tapAt: O5,
         setJoy: (l, o, i) => {
@@ -387,7 +390,7 @@
           u = l;
         },
         destroy: () => {
-          ((h = !1), cancelAnimationFrame(xq), window.removeEventListener("keydown", j2));
+          ((h = !1), cancelAnimationFrame(xq), document.removeEventListener("keydown", j2, !0), window.removeEventListener("keydown", j2));
           for (let l of SOUND_EVENTS) window.removeEventListener(l, J2, { capture: !0 });
           document.removeEventListener("visibilitychange", Ve);
           try {
@@ -560,6 +563,7 @@
       let W = null;
       try {
         W = s8(eV, { onVerb: (VV) => c(VV), onTouch: () => O(!0), font: V.font.family, touch: wb() });
+        eV.focus({ preventScroll: !0 });
       } catch (VV) {
         console.error(VV);
       }
@@ -636,6 +640,25 @@
               cursor: "pointer",
             },
             onPointerDown: nV(() => e.current?.soundTap()),
+          }),
+          (0, pe.jsx)("button", {
+            type: "button",
+            id: "ss-song",
+            "aria-label": "SING",
+            style: {
+              width: 44,
+              height: 44,
+              borderRadius: 22,
+              border: "3px solid #1e2430",
+              background: "#ffffff",
+              fontSize: 22,
+              lineHeight: "38px",
+              padding: 0,
+              touchAction: "none",
+              cursor: "pointer",
+            },
+            onPointerDown: nV(() => e.current?.songTap()),
+            children: "\u266A",
           }),
           (0, pe.jsx)("span", {
             id: "ss-sound-line",
@@ -718,6 +741,7 @@
                   width: 960,
                   height: 640,
                   tabIndex: 0,
+                  autoFocus: !0,
                   "aria-label": "Sneaky Sasquatch game",
                   onPointerDown: tV,
                   style: {

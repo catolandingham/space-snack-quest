@@ -61,7 +61,8 @@
           let A = n.cur && n.cur.k === "panel" && n.cur.id === "terminal" && !x.typed ? "!SIGN" : n.bt > 3 ? "!NEXT" : "NEXT";
           p.verb !== A && ((p.verb = A), t.onVerb(A));
         }
-        return;
+        // S10: a normal spoken line does not freeze walking. Cards, panels, and cutscenes still do.
+        if (!(n.ctrl && n.cur && n.cur.k === "bub" && !n.cutOn)) return;
       }
       for (let d of vV) d.t -= l;
       ((vV = vV.filter((d) => d.t > 0)), n.live.length && (n.live[0].live = (n.live[0].live || 0) - l) <= 0 && n.live.shift());
@@ -149,8 +150,9 @@
             Math.random() < l * 6 && vV.push({ x: n.mo.x - 30 * n.mo.f, y: n.mo.y + 6, t: 5 }));
         } else n.mo.moving = !1;
       }
-      let s = Bs(),
-        q = s ? (s.hot ? "!" : "") + s.verb + (s.cap ? " \u00b7 " + s.cap : "") : "";
+      let talking = n.ctrl && n.cur && n.cur.k === "bub" && !n.cutOn,
+        s = Bs(),
+        q = talking ? (n.bt > 3 ? "!NEXT" : "NEXT") : s ? (s.hot ? "!" : "") + s.verb + (s.cap ? " \u00b7 " + s.cap : "") : "";
       (q !== p.verb && ((p.verb = q), t.onVerb(q)), lh(l));
     }
     let qq = 0,
@@ -1991,7 +1993,7 @@
     // Where a walk-tap is heading: a small ring on the floor while the player walks there.
     function drawWalkTo() {
       let t = n.walkTo;
-      if (!t || de()) return;
+      if (!t || (de() && !(n.ctrl && n.cur && n.cur.k === "bub" && !n.cutOn))) return;
       let k = 0.5 + 0.5 * Math.sin(n.T * 8),
         sx = t.x - (n.room === "hall" ? B.camX : 0);
       (e.save(), (e.globalAlpha = 0.7), X(sx, t.y, 16 + 4 * k, 7 + 2 * k), (e.lineWidth = 3), (e.strokeStyle = "#ffffff"), e.stroke(), e.restore());
@@ -2164,12 +2166,14 @@
       (qh(), l !== 1 && ((n.q = []), (n.cur = null), (n.stars = 0), (n.starOn = !0), l === 2 ? Ws() : l === 3 ? aq() : nq()));
     }
     let j2 = (l) => {
+        if (l.ssqKeyHeard) return;
+        l.ssqKeyHeard = 1;
         if (
           (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space", "Backspace", "Tab"].indexOf(l.code) >= 0 && l.preventDefault(),
           VV(),
-          l.code === "Escape" && p.state === "op" && N0())
+          l.code === "Escape" && p.state === "op" && (N0() || storyCard(n.cur)))
         ) {
-          Cs();
+          N0() ? Cs() : skipStoryCards();
           return;
         }
         if (l.code === "KeyM") {
@@ -2199,4 +2203,7 @@
         for (let l of Object.keys(qe)) qe[l] = !1;
         ((qt.active = !1), armReset(!1));
       };
-    (window.addEventListener("keydown", j2), window.addEventListener("keyup", _2), window.addEventListener("blur", F2));
+    (document.addEventListener("keydown", j2, !0),
+      window.addEventListener("keydown", j2),
+      window.addEventListener("keyup", _2),
+      window.addEventListener("blur", F2));

@@ -1047,7 +1047,7 @@
           l.push({
             y: n.sq.y,
             d: () =>
-              Re(n.sq.x, n.sq.y, he, {
+              Re(n.sq.x, n.sq.y, n.ch1Party ? CH1_SQ_PARTY : he, {
                 walk: n.sq.moving ? n.sq.walk : 0,
                 f: n.sq.f,
                 carry: n.lunch === "held",

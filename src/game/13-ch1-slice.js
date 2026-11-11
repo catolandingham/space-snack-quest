@@ -241,7 +241,7 @@
         m(200, 250, 70, 18, 4),
         r("#fffdf8", 2),
         g("Isfred", 235, 260, 11, "#1e2430", "center", 900),
-        Qt(860, 500, "#c9842a", 1.6, -1),
+        Qt(640, 380, "#c9842a", CH1_GUEST, -1),
         m(40, 300, 36, 28, 3),
         r("#e5533d", 2),
         g("FUR", 58, 312, 8, "#ffffff", "center", 900));
@@ -257,15 +257,16 @@
       ((e.fillStyle = "#fffdf8"),
         e.fillRect(0, 0, c, b),
         Re(480, 400, 1.8, { f: 1, hat: d.head === "tophat", shades: d.face === "shades", hawaiian: d.body === "shirt" }),
-        g("Disguised enough", 480, 40, 22, "#1e2430", "center", 900),
-        m(280, 58, 400, 16, 6),
+        g("Disguised enough", 480, 168, 22, "#1e2430", "center", 900),
+        m(280, 186, 400, 16, 6),
         r("#e6e0d4", 2),
-        m(282, 60, 396 * (ch1DressMeter() / 100), 12, 5),
+        m(282, 188, 396 * (ch1DressMeter() / 100), 12, 5),
         r("#3478f6", 0));
       CH1_DRESS_ITEMS.forEach((mItem, i) => {
         let x = 80 + (i % 4) * 70,
-          y = 80 + Math.floor(i / 4) * 70;
-        (F(x, y, 18, "#cdbb98"), g(mItem.label, x, y + 28, 10, "#1e2430", "center", 800));
+          y = 80 + Math.floor(i / 4) * 70,
+          worn = mItem.zone === "extra" ? (d.extra || []).includes(mItem.id) : d[mItem.zone] === mItem.id;
+        (F(x, y, 18, worn ? "#3478f6" : "#cdbb98"), worn && (e.beginPath(), e.arc(x, y, 22, 0, 7), (e.strokeStyle = "#3478f6"), (e.lineWidth = 3), e.stroke()), g(mItem.label, x, y + 28, 10, "#1e2430", "center", 800));
       });
       ch1DressMeter() >= 100 && g("Go!", 820, 520, 28, "#3478f6", "center", 900);
     }

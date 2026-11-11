@@ -69,7 +69,7 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 | S7 | 11-08 | The gap is one week on the weekly route, shown as a time lapse: a "Six days later" card, then the ship comes tomorrow. | Brian 3:36 PM, 4:33 PM | Decided (the card's words still need his yes, see the lines file) |
 | S8 | 11-08 | The robots arrive the next morning (daily route). | DOWNSTREAM Q8 proposal | Superseded by S7 |
 | S9 | 11-08 | **5A:** The player sees the parents (player-only pictures). Squatch only hopes when he sees the brochure. Mops knows only that he found the baby. | card; Brian 3:36 PM | Decided |
-| S10 | 11-08 | **6A:** Squatch can walk during normal talk, while deliberate close-ups stay tap-paced. The song button is always visible, which doesn't mean he can sing anywhere. | card; memory | Decided |
+| S10 | 11-08 | **6A:** Squatch can walk during normal talk, while deliberate close-ups stay tap-paced. The song button is always visible, which doesn't mean he can sing anywhere. | card; memory | Decided. In the unmerged slice: a spoken line no longer freezes walking while he has control. Cards, panels, and cutscenes still do. A ♪ button is always in the control row. It sings only at home before Mops leaves. |
 | S11 | 11-08 | The party replaces the old notice sneak and inspection. The guards chase him home and search the room. | Brian 3:36 PM | Decided |
 | S12 | 11-07 | D15 night out: a brochure table with the robot-janitor notice as the reason to go out. | repo | Superseded by S11 (party). The live game still has D15 from PR #11. |
 | S13 | 11-08 | Party: after the peek, Squatch puts on Mops's tourist disguise (hat, sunglasses, Hawaiian shirt), takes the robot flyer, has a snack and joins guest conversations. It's free play. | Brian 3:18 PM, 3:20 PM | Decided |
@@ -286,8 +286,8 @@ Each panel's on-screen words are in CH1-CARTOON-LINES.md. Which files are curren
 ## 7. Audio
 | # | Date | Decision | Source | Status |
 |---|---|---|---|---|
-| A1 | 11-08 | Brian's track (`/workspace/ssq/music/main-theme-from-brian.mp3`, 3:54) is the warm theme for heart moments and the title. It's a song by his friend Joe, and Brian says it's fine to use. | Brian 3:17 PM, 3:19 PM, 3:20 PM | Decided (supersedes "rights not confirmed") |
-| A2 | 11-08 | Also wanted: a sneak and chase theme, a journey/travel theme, and short stings (spotted, escape, secret found, caught). | Brian 3:19 PM | Decided (not sourced yet) |
+| A1 | 11-08 | Brian's track (`/workspace/ssq/music/main-theme-from-brian.mp3`, 3:54) is the warm theme for heart moments and the title. It's a song by his friend Joe, and Brian says it's fine to use. | Brian 3:17 PM, 3:19 PM, 3:20 PM | Decided (supersedes "rights not confirmed"). The file is not in this repo. A short generated stand-in plays until Brian sends the track. |
+| A2 | 11-08 | Also wanted: a sneak and chase theme, a journey/travel theme, and short stings (spotted, escape, secret found, caught). | Brian 3:19 PM | Decided. Generated stand-ins are in the unmerged slice. Not Joe's recording. |
 | A3 | 11-08 | Music plays at the right moments with silence between, not constantly. | Brian 3:11 PM, 3:19 PM | Decided |
 | A4 | 11-08 | Any action that makes a noise gets a sound effect (fur slurped into a vent, the robots' bleep-bloops, a goat bleat). | Brian 3:19 PM | Decided |
 | A5 | 11-08 | No fart sounds. | video notes; card | Decided |
@@ -516,6 +516,12 @@ These lines were added to `docs/project/DECISIONS-2026-11-08.md` after this log 
 
 - 2026-11-11 (Brian, 8:49 AM ET): R64. The night mailbox robot, the same one as on the bug-fix branch, looks down for 2 seconds, turns for 0.3 seconds without catching, then looks at the back wall for 4 seconds. The cone stays 210 / 0.42 / 70. His words: "Robot: make him look down 2 seconds, then at the back wall 4 seconds, and you dash while he's turned." R65: Squatch stays a bit smaller. "Size: keep him a bit smaller like now." No size change. This is not a yes to merge.
   **Decided.**
+
+- 2026-11-11 (this polish session only): W7 normally says assistants do not drive the game. Brian asked for headless play of each screen, so screenshots and scripted taps are allowed for this loop. W7 itself is unchanged for every other session.
+  **Decided** for this session. Not a yes to merge.
+
+- 2026-11-11: R66. Party scale, under Brian's "if there's any other solutions, go for it." Party guests are drawn at 1.3 instead of 1.6, and Squatch at the party is drawn at 2 instead of 1.6, so he is a little taller than a guest and still shorter than he is at home. Guests are spaced so their bodies do not stack. The kid stays smaller. Hiding and collision still use his feet. Other rooms are unchanged.
+  **Decided** by that delegation. Not a yes to merge.
 
 - 2026-11-11 (playtest 6): Squatch looks about two thirds as tall as a guest. Not changed. A guest is drawn by Qt at scale 1.6: about 64 units from feet to the top of the head, so about 102 pixels. Squatch in the hall is drawn by Re at he = 1.6: about 45 units, so about 72 pixels, which is about 70% of the guest. The closet uses wl = 3 instead, which is why he looks larger at home. Matching the guest would mean drawing him at about 2.3 in the party only (102 / 45). Hiding, collision, and the plant hide use his feet and his pose, not the picture's height, so a bigger picture would not change those. It would make him overlap nearby guests and the plant visually, and his bubble would sit higher. Recommendation: leave it until Brian says yes. If he wants them to match, change only the party drawing to 2.3, not the global he.
   **Superseded** by R65. Brian said keep him a bit smaller. No size change.

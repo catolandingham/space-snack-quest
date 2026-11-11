@@ -202,6 +202,10 @@
         baa: () => {
           for (let l = 0; l < 7; l++) lV(l % 2 ? 440 : 400, 0.07, "sawtooth", 0.06, l * 0.05);
         },
+        bleep: () => {
+          (lV(880, 0.06, "square", 0.07), lV(660, 0.08, "square", 0.06, 0.09));
+        },
+        slurp: () => lV(520, 0.45, "sine", 0.16, 0, 90),
         hide: () => lV(320, 0.09, "sine", 0.12, 0, 180),
         snore: () => {
           (lV(220, 0.6, "sine", 0.12, 0, 110), lV(200, 0.6, "sine", 0.1, 0.7, 100));
@@ -473,11 +477,36 @@
     }
     let qe = {},
       qt = { x: 0, y: 0, active: !1 };
+    let musicKind = "",
+      musicWait = 0;
+    function musicWant() {
+      if (G) return "";
+      if (p.state === "title") return "warm";
+      if (p.state !== "op") return "";
+      if (n.roomWalk) return "journey";
+      if (n.ch1Night && n.scene === "Q4" && n.ctrl) return "sneak";
+      if (n.sqPose === "hidden" && n.ch1Party) return "sneak";
+      if (n.ch1Kid === "smile" || n.ch1Kid === "wide" || n.ch1Kid === "shh") return "warm";
+      return "";
+    }
+    function musicTick(l) {
+      let want = musicWant();
+      want !== musicKind && ((musicKind = want), (musicWait = 0));
+      if (!want) return;
+      if (((musicWait -= l), musicWait > 0)) return;
+      musicWait = want === "sneak" ? 2.8 : want === "journey" ? 3.4 : 4.6;
+      want === "warm"
+        ? ji([60, 64, 67, 72], 0.24, "sine")
+        : want === "sneak"
+          ? ji([48, 51, 55, 51], 0.2, "triangle")
+          : ji([55, 59, 62, 67, 71], 0.18, "triangle");
+    }
     function ep(l) {
       p.t += l;
       for (let q of ea) ((q.x += q.vx * l), (q.y += q.vy * l), (q.t -= l));
       ea = ea.filter((q) => q.t > 0);
-      p.state === "op" && y5(l);
+      p.state === "op" && y5(l),
+        musicTick(l);
     }
     function m(l, o, i, s, q) {
       let d = Math.max(0, Math.min(q, i / 2, s / 2));
@@ -911,6 +940,7 @@
         l.k === "bub"
           ? (D.key(),
             l.b.who === "mops" && D.baa(),
+            (l.b.who === "ups" || l.b.who === "robot" || l.b.who === "scanner" || l.b.who === "bot") && D.bleep(),
             Dt("bub", pa[l.b.who], l.b.text, l.b.style + (l.b.ear ? "+ear" : "")),
             l.b.style === "song" && co())
           : l.k === "card"
@@ -956,9 +986,20 @@
     function Nl(l) {
       return !!l && (l.k === "fb" || (l.k === "card" && l.id === "fb"));
     }
+    function storyCard(l) {
+      return !!l && l.k === "card" && l.id !== "fb";
+    }
     function N0() {
       let l = n.cur;
       return !l || p.state !== "op" ? !1 : Nl(l) ? !0 : l.k === "bub" && n.q.some((o) => Nl(o)) && n.cutOn === !0;
+    }
+    function skipStoryCards() {
+      if (!storyCard(n.cur) || p.state !== "op") return !1;
+      let l = 0;
+      for (n.skipping = !0; l++ < 600 && storyCard(n.cur); ) {
+        ((n.cur = null), lh(0.05));
+      }
+      return ((n.skipping = !1), (n.bt = 0), Dt("skip", "", "cards skipped", "skip"), !0);
     }
     function Cs() {
       if (!N0()) return;
