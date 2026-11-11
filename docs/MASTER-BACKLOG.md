@@ -190,7 +190,7 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 
 2026-11-11. Slice round 1 polish, not merged. Brought the bug-fix keyboard focus, card skip, outlined night cone, and Mops-off-the-bucket positions onto this branch. Party guests are scale 1.3 and spaced apart; Squatch at the party is scale 2 (R66). The night turn is R64. Dress-up no longer shows the wrong goal chip, and worn pieces are marked. The rising balloon is larger. No new on-screen words. Docs match main: yes. Do not merge.
 
-2026-11-11. Slice playtest 6, not merged. The desktop NEXT slot keeps its height. Isfred's party line sits under the office monitor. The tourist disguise and the dress-up screen fade through black, with no new words. Squatch stays a bit smaller (R65). The night mailbox robot uses the same turn as the bug-fix branch (R64): down 2 seconds, a 0.3 second turn with no catch, then the back wall for 4 seconds. Cone numbers unchanged. Docs match main: yes. Do not merge.
+2026-11-11. Slice playtest 6, not merged. The desktop NEXT slot keeps its height. Isfred's party line sits under the office monitor. The tourist disguise and the dress-up screen fade through black, with no new words. Squatch stays a bit smaller at home and in the other rooms (R65). The night mailbox robot uses the same turn as the bug-fix branch (R64): down 2 seconds, a 0.3 second turn with no catch, then the back wall for 4 seconds. Cone numbers unchanged. Docs match main: yes. Do not merge.
 
 2026-11-10. Later-chapter doors walk out and in (Chapters 2 to 4), merged as PR #17. The Chapter 2 opening and the fuel-pump walk are unchanged. The soup-note whisper "A hoof stamp. Mops signed it." is cut so Squatch does not know who wrote the note. Captions are unchanged.
 

@@ -2,7 +2,7 @@
 
 Round 1, 2026-11-11. Chapter 1 slice (PR #21). Headless screenshots and the story code. Updated each polish round. W7 is set aside for this loop only (see `docs/DECISIONS.md`).
 
-Follow-up the same day: the bedtime walk no longer snaps. Mops walks to (380, 460), the same spot he then lies down. R65 is home and the other rooms; the party picture is R66.
+Follow-up the same day: the bedtime walk no longer snaps. Mops walks to (380, 460) and is placed there. Squatch is the one set to sleep. R65 keeps the smaller drawing at home and in the other rooms. The party picture is R66: guests at 1.3, Squatch at 2, still shorter than at home.
 
 Marks: **PASS** holds. **FIX** changed in this round. **NEEDS-BRIAN** needs his yes before a change (usually new words, or a difficulty or timer change).
 
@@ -50,7 +50,7 @@ There is no music file in the repo. Joe's warm theme is not here (`/workspace/ss
 | Day 2 lunch lines and the walk to the ship | Same rooms. | Continues the old Day 2. | Cutscene lines, control off. | Walks. | Bleat, then the vent slurp. | Familiar. | FIX (slurp) |
 | Day delivery: hide, Isfred, UPS, delicious, spit | Plant hide again. | Order matches the cartoon. | Played for him. | Copy flies to the vent. | Slurp, bleat, robot bleep. | The slurp was silent before. | FIX |
 | Snack stand, "Quick, hide." | Hall, not the party. | S33. He is walked into the plant. | No hide button. That is the decided scene. | Auto walk. | Bleat. | Still railroaded. | PASS |
-| Bedtime walk, then the Guardians card | Home, then the card. | He walks to the bed with Mops. The card is the memory. Squatch does not see it. | Control is off (a cutscene). Esc can skip the card. No SKIP label. | He used to walk toward x 470 and then jump to (380, 460). He now walks to that same spot. Speed is 180. | None extra. | Quiet. | FIX |
+| Bedtime walk, then the Guardians card | Home, then the card. | Squatch walks to the bed. Mops walks with him. The card is the memory. Squatch does not see it. | Control is off (a cutscene). Esc can skip the card. No SKIP label. | Mops used to walk toward x 470 and then jump to (380, 460). He now walks to that spot and stays standing. Squatch is set to sleep at (205, 470). Speed is 180. | None extra. | Quiet. | FIX |
 | Night mailbox | Cone was faint. It is outlined, with the feet circle (`night-away.png` shows it aimed at the back wall). | R64. Down 2s, turn 0.3s with no catch, back wall 4s, turn back. Cone stays 210 / 0.42 / 70. | Dash while it points up. Bin and mailbox are outside the down-beam. | Feet circle still catches. Ball still stands him up if he walks. | Sneak bed. Robot bleep on the mailbox line. | The turn is the fair version. | FIX |
 | SIGN paw, POST mailbox | Labels on the bin and the mailbox. | The yellow copy is the one he signs. | Stand and press. You can wait out a look-down. | Spots use feet. | Bleep on the mailbox line. | OK. | PASS |
 | Six days later card | Full card. | Decided. | Esc can skip it. | n/a | None. | Fine. | PASS |
