@@ -295,8 +295,9 @@
               (n.sqPose = "stand"),
               (n.sq.x = 400),
               (n.sq.y = 520),
-              (n.mo.x = 520),
-              (n.mo.y = 500),
+              // Left of the mop bucket so his feet are not on the rim.
+              (n.mo.x = 220),
+              (n.mo.y = 540),
               (n.moPose = "stand"),
               (n.scene = "Q1"));
           }),
@@ -365,9 +366,9 @@
         (n.sqPose = "stand"),
         (n.moPose = "stand"),
         J([
-          cV((dt) => (ch1Trail(), mV(n.sq, 205, 470, 180, dt) && mV(n.mo, 470, 460, 180, dt))),
+          cV((dt) => (ch1Trail(), mV(n.sq, 205, 470, 180, dt) && mV(n.mo, 380, 460, 180, dt))),
           N(() => {
-            ((n.sqPose = "sleep"), (n.sq.x = 205), (n.sq.y = 470), (n.mo.x = 470), (n.mo.y = 460));
+            ((n.sqPose = "sleep"), (n.sq.x = 205), (n.sq.y = 470), (n.mo.x = 380), (n.mo.y = 460));
           }),
           { k: "panel", id: "ch1guard" },
           N(() => {
@@ -654,8 +655,8 @@
     }
     function ch1PartyHome() {
       ((n.moPose = "stand"),
-        (n.mo.x = 520),
-        (n.mo.y = 500),
+        (n.mo.x = 220),
+        (n.mo.y = 540),
         (n.ch1Party = !1),
         J([
           v("mops", "A flyer. And fur on the floor."),
@@ -1206,7 +1207,12 @@
       !night && n.ch1Ship && n.scene !== "Q9" && Qt(560, 500, "#c9b6f2", 2.6, 0.2);
       n.ch1Crew === "tease" && [360, 480, 600].forEach((px) => dq(px, 460, !1));
       night &&
-        (seenCone(CH1_ROBOT.x, CH1_ROBOT.y - 28, STAND_FACE, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.38)"),
+        (seenCone(CH1_ROBOT.x, CH1_ROBOT.y - 28, STAND_FACE, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.62)", "rgba(160,100,10,.95)"),
+        e.beginPath(),
+        e.arc(CH1_ROBOT.x, CH1_ROBOT.y, STAND_FEET, 0, Math.PI * 2),
+        (e.lineWidth = 3),
+        (e.strokeStyle = "rgba(160,100,10,.95)"),
+        e.stroke(),
         dq(CH1_ROBOT.x, CH1_ROBOT.y, !1),
         n.ch1Alert && g("!", CH1_ROBOT.x, CH1_ROBOT.y - 78, 28, "#e5533d", "center", 900));
       (n.moPose !== "hidden" && Fe(n.mo.x, n.mo.y, he * 1.15, { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 }),

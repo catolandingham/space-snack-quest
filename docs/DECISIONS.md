@@ -504,3 +504,28 @@ These lines were added to `docs/project/DECISIONS-2026-11-08.md` after this log 
 
 - 2026-11-10 (Brian, in chat): "Yes, merge PRs #17 and #18."
   **Decided.** PR #18 is this decision log, on `main` as `1e897aa`. PR #17 (room walks and the hoof-stamp cut) is merged onto that main in this commit. The source files merged cleanly. `index.html` was rebuilt. `docs/MASTER-BACKLOG.md` kept both changelog lines.
+
+## 12. Playtest of live main, 2026-11-11
+
+A Grok playtest of live `main` at `bc0759f`. This is not Brian's yes. The live site is unchanged. PR #21 is unchanged.
+
+- 2026-11-11: The picture jumped up when the green NEXT button appeared, because the page is centered and the button made the page taller. The desktop controls row now keeps a 104px slot for that button.
+  **In the unmerged fix branch.** No new words.
+
+- 2026-11-11: Esc skipped only a flashback. It now also skips a run of story cards (the opening, "Everybody has somebody.", "Six days later", "Later that evening...") and stops at the next spoken line. The SKIP label and progress dots are not drawn. Proposed words are rows 82–84 in `docs/CH1-LINES-FOR-BRIAN.md`.
+  **Needs Brian's yes** for those words. The key itself is in the unmerged branch. Recommendation: leave the label off until he picks the word.
+
+- 2026-11-11: Walking is locked while a line, card, or panel is up. Space, Enter, NEXT, or a tap advances that line. That is the one-line-at-a-time rule.
+  **Decided** already (one bubble at a time). Not changed.
+
+- 2026-11-11: "Quick, hide." (S33) is a short scene. The tourist line plays, Mops says the line, and the story walks Squatch into the plant. E or NEXT only advances the line. There is no separate hide button. The pancake brochure from S33 is still not built.
+  **Decided** as S33's line. Not changed. Recommendation: leave the played hide. Add a hide button only if Brian wants the player to choose the plant.
+
+- 2026-11-11: At home, Mops stood on the mop bucket (feet at x 520, bucket from x 522). He now stands at x 220 for the lunch lines and after the party, and at x 380 beside the bed. The bucket and its funny-find spot stay at x 560.
+  **In the unmerged fix branch.** No new words.
+
+- 2026-11-11: The night mailbox robot still sees with the same cone: 210 long, half-angle 0.42, plus a 70-pixel circle at his feet (`STAND_CONE_LEN`, `STAND_CONE_HALF`, `STAND_FEET`). Those numbers are not the ball-hide numbers and are unchanged. The cone now has a darker edge, and the feet circle is drawn, so the catch area is visible. A restart still puts Squatch back in that room.
+  **Needs Brian's yes** only if he wants a shorter cone or a slower catch after he plays the preview. Recommendation: leave the numbers. The 3-for-3 catches were the cone plus the unmarked feet circle, not a bug in the restart.
+
+- 2026-11-11: Party guest size, walking through party guests, the party snack bubble over the monitor, and the red FUR / PULL DOWN card are the party scenes PR #21 replaces. They are not edited here. A clearer FUR beat is proposed as row 85 and is not on screen.
+  **Superseded** by the chapter slice. Row 85 **Needs Brian's yes** before any new words are drawn. Recommendation: let the slice replace the card, and use a guest's hand on the existing lever rather than a new sign.

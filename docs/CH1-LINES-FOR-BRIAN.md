@@ -166,3 +166,14 @@ The five office lines, in order, all NEEDS BRIAN: "Send in Mops for his Employee
 R54. Office cutscene dialogue (Brian t255/t256, shortened) — five lines above; Isfred no longer jumps straight to the tapes.
 
 Pickup day is decided. The robots open one crate out on the ramp, by the ship. Squatch hides in a crate that is still in the mail room. Dot, Bob, and Lou are not there. Mops comes in and warns him. He slips out while the robots are busy by the ship, and they walk home. The disguise is a spare blue jacket, worn normally, plus a fake beard and horns. Mops keeps his own jacket on. The wardrobe hook holds a plain blue jacket with no words, and that hook is empty once Squatch takes it.
+
+## Proposed words, not on screen
+
+These are not in the game. Esc skips a run of cards (the opening, "Everybody has somebody.", "Six days later", "Later that evening...") and stops at the next spoken line. No SKIP label is drawn. The help line still says "Esc: skip a flashback."
+
+| # | Where it would show | Proposed words | Status |
+| --- | --- | --- | --- |
+| 82 | A label on those cards | SKIP | NEEDS BRIAN. Not drawn. |
+| 83 | Dots for which intro card this is | (progress dots) | NEEDS BRIAN. Not drawn. |
+| 84 | The help line under the picture | Esc: skip a card or a flashback. | NEEDS BRIAN. The line on screen is unchanged. |
+| 85 | The party FUR card, so it reads as a guest pulling the lever | A guest grabs the lever. | NEEDS BRIAN. Not in this build. The red FUR / PULL DOWN card stays until the chapter slice replaces that beat. |

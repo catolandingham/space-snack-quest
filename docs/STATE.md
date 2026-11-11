@@ -9,6 +9,7 @@ Monday, November 9, 2026, through R63. Updated 2026-11-10 after the Chapter 1 re
 - **Fresh checker read of v2, still open (no decision yet):** delivery-panel Mops (03, 04, 05a, 05b, 09) still has the raw-sprite grey line beside his face and a beige floor patch at his feet (home panels are cleaned); in 03 the third ramp robot sits behind Bob's/Lou's antennae; Dot/Bob/Lou name tags are baked into the sprites (not Nunito); the crate's drawn up-arrow is an arrow inside a game label (kept on purpose, request #4).
 
 ## The game
+- 2026-11-11. A Grok playtest of live `main` (`bc0759f`) is not Brian's yes. Nothing from that list merges or deploys to the live URL. The fixes that are not party scenes sit on an unmerged branch, with their own preview and `ssq-bugs-` saves. PR #21 (the first chapter slice) is unchanged. Walking during a line stays locked. "Quick, hide." stays a played scene. Party guest size, walking through guests, the party snack bubble, and the FUR card are superseded by that slice.
 - Live game = `main` of `catolandingham/space-snack-quest`. Phases 0–3 and the Chapter 1 pass are `10030f6` (PRs #7–#11). The Chapter 1 redesign is on `main` as PR #19 (`aed0c4f`). The party is on `main` as PR #20 (`e0e16d4`). Brian said yes to both on 2026-11-09. Render publishes `main`. This docs sync does not change the game.
 - On 2026-11-10 Brian wrote "Yes, merge PRs #17 and #18." PR #18 is on `main` as `1e897aa`. PR #17 is merged on top of it: later-chapter doors walk out and in, and the soup-note whisper is cut. `npm test` on that merged tree: all 29 suites passed.
 - Not started: the P1 security trace and P4–P8. The hallway room and its photo gallery (R62, R63) are the next build. They are not in the game yet.
@@ -70,7 +71,8 @@ Not a story panel: `sketch-08-home-closed.png` (home, wardrobe closed — APPROV
 
 ## In progress right now
 - **Peek-eyes redraw:** every plant and box hide gets the game's original white eyes (`peek_eyes.py`), at the size in C21. Plant hide now lives in the shared room (`rooms/delivery_room.py`, x167) for 03/04/05a/05b/09. Still to check: the workstation grille.
-- **The P2/P3 pull request** is PR #17 (above). It is open and not merged.
+- **The P2/P3 pull request** was PR #17. Brian said yes on 2026-11-10 and it is on `main` (`bc0759f`). It is not open.
+- **2026-11-11 playtest:** the unmerged fix branch is separate from PR #21. Do not merge it, and do not point the live Render service at it.
 - **Waiting on Brian:** Q2–Q4 above, the multiple-choice list at the top of `CH1-CARTOON-LINES.md` (every line marked NEEDS BRIAN, including R58–R63), the "Find someone who…" card (O39), the 4-second snack-table placeholder (O40), photo-corner and keepsake points (O41, O37), specific gallery captions, a yes before the home wardrobe v4 is APPROVED (R45), and the whole Open list in DECISIONS.md §9.
 
 ## Next

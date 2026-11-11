@@ -184,6 +184,8 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 
 ## Changelog
 
+2026-11-11. Playtest fixes for the live chapter, not merged. The picture stays put when NEXT appears. Esc skips story cards with no SKIP label. The night cone is outlined and its existing 70-pixel feet circle is drawn; the cone numbers are unchanged. Mops stands clear of the home bucket. Party scale, guest pass-through, the party snack bubble, and the FUR card are left for the chapter slice. Docs match main: yes. Do not merge.
+
 2026-11-10. Later-chapter doors walk out and in (Chapters 2 to 4), merged as PR #17. The Chapter 2 opening and the fuel-pump walk are unchanged. The soup-note whisper "A hoof stamp. Mops signed it." is cut so Squatch does not know who wrote the note. Captions are unchanged.
 
 2026-11-09. Docs only, third pass on PR #18. Synced designer decisions R58–R63 into `docs/DECISIONS.md`, `docs/STATE.md`, `docs/OPEN-ASKS.md`, `docs/CH1-CARTOON-LINES.md`, `README.md`, and this page. Recorded and not in the game. New lines stay NEEDS BRIAN. No game code and no on-screen words in the game changed.

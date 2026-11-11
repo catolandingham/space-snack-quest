@@ -8,6 +8,10 @@ Brian said yes to merge the redesign (PR #19) and the party (PR #20) on 2026-11-
 
 Every new line is listed for Brian in `docs/CH1-LINES-FOR-BRIAN.md`. He said yes to merge this chapter before the wording pass was finished, so a line in that file can still change. `tests/ch1-playthrough.mjs` plays this chapter to the tally card.
 
+## Playtest fixes (not merged)
+
+A separate preview, not the live site, holds the Nov 11 fixes for the chapter that is on `main`. The picture no longer jumps when NEXT appears. Esc skips a run of cards and does not draw the word SKIP. The night robot's cone is the same size (210 long, half-angle 0.42, 70-pixel feet circle) and now has an outline and that feet circle drawn. Mops stands clear of the mop bucket at home. Walking stays locked while a line is up, on purpose. "Quick, hide." is still a short scene that walks him into the plant. Party guest size, walking through guests, the party snack bubble, and the FUR card are left for the chapter slice (PR #21), which replaces those scenes. Saves on the preview use `ssq-bugs-`. The live site and this repo's tests keep `ssq-`. Docs match main: yes. Do not merge until Brian says yes.
+
 The older Chapter 1 scenes are still in the program so a debug link such as `?scene=S9` can open them. They are not what a new game plays. Those old scenes are drawn in the new home room. The ball Squatch rolls into, including in the Chapter 2 kitchen, is the L2 ball. A robot notices that ball only after staying within 70 pixels for 2 seconds, in every room. Standing and walking sight is unchanged. The manager's name on his bubbles is Isfred Bar Neshuman. Chapter 2 now opens with "They put us off here. This is the gas stop." instead of a fuel light.
 
 ## Source and build

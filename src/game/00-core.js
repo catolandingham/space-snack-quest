@@ -84,8 +84,16 @@
       S = null,
       M = null,
       z = 1;
+    // Live site and local tests keep ssq-*. Any other host (this bug-fix preview) uses ssq-bugs-* so an iPad does not mix it with the live game or the chapter-slice preview.
+    function ssqKey(name) {
+      let host = "";
+      try {
+        host = location.hostname || "";
+      } catch {}
+      return (host === "space-snack-quest.onrender.com" || host === "localhost" || host === "127.0.0.1" || host === "" ? "ssq-" : "ssq-bugs-") + name;
+    }
     try {
-      let l = window.localStorage.getItem("ssq-vol");
+      let l = window.localStorage.getItem(ssqKey("vol"));
       l !== null && (z = [0, 0.5, 1].includes(parseFloat(l)) ? parseFloat(l) : 1);
     } catch {}
     let G = z === 0;
@@ -95,7 +103,7 @@
         M && S && M.gain.setValueAtTime(0.5 * l, S.currentTime);
       } catch {}
       try {
-        window.localStorage.setItem("ssq-vol", String(l));
+        window.localStorage.setItem(ssqKey("vol"), String(l));
       } catch {}
     }
     function eV() {
@@ -427,13 +435,13 @@
       ea = [],
       Ca = 1;
     try {
-      let l = window.localStorage.getItem("ssq-unlocked");
+      let l = window.localStorage.getItem(ssqKey("unlocked"));
       l && (Ca = w(parseInt(l, 10) || 1, 1, 4));
     } catch {}
     function Ml(l) {
       Ca = Math.max(Ca, l);
       try {
-        window.localStorage.setItem("ssq-unlocked", String(Ca));
+        window.localStorage.setItem(ssqKey("unlocked"), String(Ca));
       } catch {}
     }
     let p = {
@@ -948,9 +956,22 @@
     function Nl(l) {
       return !!l && (l.k === "fb" || (l.k === "card" && l.id === "fb"));
     }
+    // A story card (the opening cards, "Everybody has somebody.", "Six days later"). Flashback cards stay on the flashback skip.
+    function storyCard(l) {
+      return !!l && l.k === "card" && l.id !== "fb";
+    }
     function N0() {
       let l = n.cur;
       return !l || p.state !== "op" ? !1 : Nl(l) ? !0 : l.k === "bub" && n.q.some((o) => Nl(o)) && n.cutOn === !0;
+    }
+    // Esc skips a run of story cards and stops at the next line. No SKIP label is drawn for these.
+    function skipStoryCards() {
+      if (!storyCard(n.cur) || p.state !== "op") return !1;
+      let l = 0;
+      for (n.skipping = !0; l++ < 600 && storyCard(n.cur); ) {
+        ((n.cur = null), lh(0.05));
+      }
+      return ((n.skipping = !1), (n.bt = 0), Dt("skip", "", "cards skipped", "skip"), !0);
     }
     function Cs() {
       if (!N0()) return;
@@ -973,14 +994,14 @@
       n.walkTo = { x: w(l + hall, b.x0, b.x1), y: w(o, b.y0, b.y1), room: n.room, lx: who.x, ly: who.y, lt: n.T, at: n.T };
       let seen = n.walkHinted;
       try {
-        seen = seen || window.localStorage.getItem("ssq-walk-hint") === "1";
+        seen = seen || window.localStorage.getItem(ssqKey("walk-hint")) === "1";
       } catch {}
       seen ||
         ((n.walkHinted = !0),
         hudNote("Tap the floor to walk there.", 4),
         Dt("hint", "", "walk-tap", "hint"));
       try {
-        window.localStorage.setItem("ssq-walk-hint", "1");
+        window.localStorage.setItem(ssqKey("walk-hint"), "1");
       } catch {}
       return !0;
     }

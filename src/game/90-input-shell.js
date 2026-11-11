@@ -177,6 +177,7 @@
       (xq = requestAnimationFrame(W2)),
       (window.__ss = {
         opSkip: Cs,
+        ssqKey,
         cutActive: N0,
         sceneO7: ph,
         game: p,
@@ -276,6 +277,9 @@
         CH1_FRAME,
         CH1_BIN,
         CH1_ROBOT,
+        STAND_FEET,
+        STAND_CONE_LEN,
+        STAND_CONE_HALF,
         CH1_MAIL,
         CH1_VENT,
         // The night out (D15): the vent's pull, the table, the notice, and the alarm state.
@@ -677,7 +681,18 @@
                     children: KEY_HELP,
                   }),
                   SND,
-                  /^!?NEXT$/.test(h) ? z : null,
+                  // The slot stays 104px whether or not NEXT is showing, so the picture does not jump up.
+                  (0, pe.jsx)("div", {
+                    "aria-hidden": /^!?NEXT$/.test(h) ? void 0 : !0,
+                    style: {
+                      width: 104,
+                      height: 104,
+                      flex: "0 0 auto",
+                      visibility: /^!?NEXT$/.test(h) ? "visible" : "hidden",
+                      pointerEvents: /^!?NEXT$/.test(h) ? "auto" : "none",
+                    },
+                    children: z,
+                  }),
                   (0, pe.jsx)(Mb, { label: "Show touch controls", onClick: () => O(!0) }),
                 ],
               })),

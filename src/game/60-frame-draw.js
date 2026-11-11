@@ -2157,9 +2157,9 @@
         if (
           (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space", "Backspace", "Tab"].indexOf(l.code) >= 0 && l.preventDefault(),
           VV(),
-          l.code === "Escape" && p.state === "op" && N0())
+          l.code === "Escape" && p.state === "op" && (N0() || storyCard(n.cur)))
         ) {
-          Cs();
+          N0() ? Cs() : skipStoryCards();
           return;
         }
         if (l.code === "KeyM") {
