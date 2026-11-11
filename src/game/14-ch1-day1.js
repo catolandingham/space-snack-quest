@@ -59,11 +59,14 @@
         v("sq", "Everyone out there has someone."),
         v("mops", "You have me."),
         N(() => {
-          n.tvOn = !0;
+          ((n.tvOn = !0), (n.ch1Couch = !0), (n.sq.x = 640), (n.sq.y = 545), (n.mo.x = 520), (n.mo.y = 545), (n.sqPose = "stand"), (n.moPose = "stand"));
         }),
         { k: "panel", id: "ch1tv1" },
         { k: "panel", id: "ch1tv2" },
         { k: "panel", id: "ch1tv3" },
+        N(() => {
+          n.ch1Couch = !1;
+        }),
         cV((dt) => mV(n.sq, 205, 470, 160, dt) && mV(n.mo, 380, 460, 160, dt)),
         N(() => {
           ((n.sqPose = "sleep"), (n.sq.x = 205), (n.sq.y = 470), (n.mo.x = 380), (n.mo.y = 460));
@@ -109,10 +112,10 @@
     function ch1MiniPointer(x, y) {
       if (n.ch1Mini === "dance") {
         [["L", 150], ["D", 310], ["U", 490], ["R", 670]].forEach(([dir, bx]) => {
-          Math.hypot(x - bx, y - 560) < 48 && ch1DanceHit(dir);
+          Math.hypot(x - bx, y - 610) < 48 && ch1DanceHit(dir);
         });
       }
-      n.ch1Mini === "karaoke" && Math.hypot(x - 480, y - 540) < 80 && ch1Howl();
+      n.ch1Mini === "karaoke" && Math.hypot(x - 760, y - 560) < 64 && ch1Howl();
     }
     function ch1Conga() {
       ((n.ctrl = !1), (n.act = null), (n.ch1Conga = 4));
@@ -142,17 +145,21 @@
     }
     function ch1Day1Tick(dt) {
       let step = dt || 0;
-      if (n.ch1Search && n.guard && n.ctrl && n.room === "closet") {
+      if (n.ch1Search && n.guard && n.room === "closet" && (n.ctrl || n.ch1Escort)) {
         let g = n.guard;
         g.t += step;
         let hidden = n.sqPose === "under" || n.sqPose === "hidden";
         hidden ? (g.seen += step) : (g.seen = 0);
-        if (!hidden) {
+        if (n.ch1Escort) {
+          let home = mV(n.sq, 760, 540, 190, step),
+            back = mV(g, 900, 520, CH1_GUARD_SPEED, step);
+          ((n.sqPose = "stand"), (n.ctrl = !1), home && back && ((n.ch1Escort = !1), (n.ctrl = !0)));
+        } else if (n.ctrl && !hidden) {
           let dx = n.sq.x - g.x,
             dy = n.sq.y - g.y,
             dist = Math.hypot(dx, dy) || 1;
           ((g.x += (dx / dist) * CH1_GUARD_SPEED * step), (g.y += (dy / dist) * CH1_GUARD_SPEED * step));
-          dist < 36 && ((n.sq.x = 760), (n.sq.y = 540), (g.x = 900), (g.y = 520), D.caught());
+          dist < 36 && ((n.ch1Escort = !0), (n.ctrl = !1), D.caught());
         }
         (g.seen > 2 || (hidden && g.t > 8)) && ch1HideFromGuard();
       }
@@ -223,44 +230,52 @@
     function drawCh1Dance() {
       let dance = n.ch1Dance;
       if (!dance) return;
-      ((e.fillStyle = "rgba(12,16,32,.35)"), e.fillRect(0, 0, c, b), m(80, 250, 800, 80, 16), r("#1e2430", 4));
-      (L(CH1_HIT_X, 290, 28), r("rgba(255,207,51,.9)", 4));
+      (m(40, 548, 880, 52, 14), r("#1e2430", 4));
+      (L(CH1_HIT_X, 574, 22), r("rgba(255,207,51,.95)", 4));
       dance.notes.forEach((note) => {
         if (note.hit) return;
         let x = ch1NoteX(note, dance.t);
         if (x < 40 || x > 980) return;
-        g(note.dir === "L" ? "\u2190" : note.dir === "R" ? "\u2192" : note.dir === "U" ? "\u2191" : "\u2193", x, 290, 36, "#ffffff", "center", 900);
+        g(note.dir === "L" ? "\u2190" : note.dir === "R" ? "\u2192" : note.dir === "U" ? "\u2191" : "\u2193", x, 574, 32, "#ffffff", "center", 900);
       });
       [["L", "\u2190", 150], ["D", "\u2193", 310], ["U", "\u2191", 490], ["R", "\u2192", 670]].forEach((b) => {
-        (L(b[2], 560, 44), r("#ffffff", 4), g(b[1], b[2], 560, 40, "#1e2430", "center", 900));
+        (L(b[2], 610, 36), r("#ffffff", 4), g(b[1], b[2], 610, 32, "#1e2430", "center", 900));
       });
-      g(String(dance.score), 860, 80, 28, "#ffcf33", "center", 900);
+      g(String(dance.score), 880, 520, 26, "#b45309", "center", 900);
     }
     function drawCh1Karaoke() {
       let kara = n.ch1Kara;
       if (!kara) return;
-      ((e.fillStyle = "#1b2140"),
-        e.fillRect(0, 0, c, b),
-        [300, 420, 540, 660].forEach((x, i) => drawCh1Alien(x, 470, ["hair", "hat", "spots", "croc"][i], 1.5, 1)),
-        Re(480, 620, 3.2, { f: 1, hat: !0, shades: !0, hawaiian: !0 }));
       let line = kara.t < 7.5 ? "Ay-ay-ay-ay, I love my Moon Pies!" : "Round and chocolate-y, sweet as the starry skies!";
-      (g(line, 480, 120, 28, "#ffffff", "center", 900),
-        L(480, 540, 70),
+      (m(70, 28, 820, 52, 14),
+        r("#fffdf8", 4),
+        g(line, 480, 54, 24, "#1e2430", "center", 900),
+        e.save(),
+        e.translate(480, 650),
+        m(-78, -36, 156, 48, 18),
+        r("#ff8a3d", 4),
+        L(0, -78, 46),
+        r("#6b4428", 5),
+        F(-34, -84, 12, "#d98c62"),
+        F(34, -84, 12, "#d98c62"),
+        m(-36, -128, 72, 14, 4),
+        r("#1e2430", 3),
+        m(-18, -164, 36, 38, 4),
+        r("#1e2430", 3),
+        e.restore(),
+        L(760, 560, 54),
         r("#ffcf33", 5),
-        g("Sing", 480, 540, 28, "#1e2430", "center", 900));
+        g("Sing", 760, 560, 24, "#1e2430", "center", 900));
     }
     function drawCh1Tv(id) {
-      ((e.fillStyle = "#1b2140"), e.fillRect(0, 0, c, b));
-      if (id === "ch1tv1") (Re(300, 460, 2.2, { f: 1 }), Re(520, 440, 2, { f: -1 }), g("Fur in the scrubber.", 480, 120, 28, "#ffffff", "center", 800));
-      if (id === "ch1tv2") (Qt(420, 460, "#f2c1b0", 2, 1), g("!", 480, 200, 64, "#e5533d", "center", 900));
-      if (id === "ch1tv3") (Qt(260, 460, "#c9b6f2", 2.4, 1), Re(560, 480, 1.8, { f: -1 }), g("Onto the ship.", 480, 120, 28, "#ffffff", "center", 800));
+      (m(170, 78, 620, 250, 16), r("#1e2430", 6), m(190, 96, 580, 214, 8), r("#d7ecf5", 0));
+      if (id === "ch1tv1") (Re(360, 270, 1.5, { f: 1 }), Re(560, 260, 1.4, { f: -1 }), g("Fur in the scrubber.", 480, 130, 22, "#1e2430", "center", 800));
+      if (id === "ch1tv2") (Qt(460, 270, "#f2c1b0", 1.6, 1), g("!", 560, 180, 48, "#e5533d", "center", 900));
+      if (id === "ch1tv3") (Qt(340, 270, "#c9b6f2", 1.7, 1), Re(560, 280, 1.3, { f: -1 }), g("Onto the ship.", 480, 130, 22, "#1e2430", "center", 800));
     }
     function drawCh1Moon() {
-      ((e.fillStyle = "#2a241c"),
-        e.fillRect(0, 0, c, b),
-        Xn(360, 420, 200, 120, ""),
-        Re(520, 400, 1.2, { f: 1, eyes: "closed" }),
-        Fe(250, 480, 2, { f: 1 }),
-        g("You came to me in a Moon Pie crate.", 480, 120, 26, "#fffdf8", "center", 800),
-        g("You've loved Moon Pies ever since.", 480, 160, 22, "#fffdf8", "center", 700));
+      (m(150, 48, 660, 78, 16),
+        r("#fffdf8", 4),
+        g("You came to me in a Moon Pie crate.", 480, 72, 22, "#1e2430", "center", 800),
+        g("You've loved Moon Pies ever since.", 480, 104, 18, "#1e2430", "center", 700));
     }

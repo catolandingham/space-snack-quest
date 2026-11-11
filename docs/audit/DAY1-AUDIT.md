@@ -2,6 +2,25 @@
 
 2026-11-11. Chapter 1 slice, PR #21, judged against `docs/BRIAN-LENS.md`. Shots are the game canvas at 960×640, taken in an iPad-landscape window (1180×820). They live in `docs/audit-shots/day1/` so they can be reviewed from the repo.
 
+## Round 3, before and after
+
+The shots in `docs/audit-shots/day1/` are the after pictures. Words, timers, prices, and the approved tuning numbers are unchanged. No page errors while these frames were drawn.
+
+| Fix | Before | After |
+| --- | --- | --- |
+| 1. Bar cut-in | A grey party, a brown stick, and four dots. | A close-up: counter, a stacked pyramid of pies, cups, apples and cake, the bartender behind it. The arm is the shared `drawPawArm` from the Day 2 cut-ins: jagged fur edge, darker outline, pads, and irregular light tufts along the edge. The paw still follows the finger. A swipe into the bag still counts, and a bottom snack still spills. `bar-1.png` |
+| 2. Karaoke, TV, bedtime | Three dark full-screen cards. | Karaoke stays in the party hall, from behind Squatch, with the lyric and the Sing button. The TV story plays on a bright set in the home room, with Squatch and Mops on the couch. Bedtime stays in the home room: Squatch asleep on the crate, the two Moon Pie lines in a light bubble. `karaoke-1.png`, `tv-1.png`, `bedtime-1.png` |
+| 3. Dress-up | Pipe, nose, shades and bow in one pile on the face. | Shades on the eyes, the red nose on the nose, the pipe at the mouth corner, the bow on the hat. Shirt, scarf and boots stay on the body. `dress-2.png` |
+| 4. Snack chain | Specks and orange sticks. | The pyramid tips, a cup rolls, a tray tips, and the cake slides. The crowd's orange sticks are gone. `snack-2.png` |
+| 5. Mops collision | Squatch walked through Mops (closest 2px, finished at x 561). | Mops's feet are solid at home. The same walk stops at x 413, 42px from Mops, and stays there. `home-2.png` |
+| 6. Balloon | A red dot, string across the guests. | A red balloon with a shine and a knot. The string goes up, across the back wall, then down, and the kid holds one when it is given back. `balloon-1.png` |
+| 7. Dance lane | A black bar across the guests' heads. | The lane and the arrow buttons sit on the floor. `dance-1.png` |
+| 8. Polaroid | Two generic aliens on a white card. | A Polaroid of this party: starry backdrop, the guests, and a disguised Squatch peeking in when he was in the shot. `photo-2.png` |
+| 9. Guard catch | Squatch blinked to (760, 540). | The guard and Squatch walk to the reset spots. No teleport. |
+| 10. Guests | Bodies overlapped, and a few read as odd blobs. | They stand apart. Each has a body, a head, legs and a different feature, and the adults are still clearly taller than Squatch. `size-1.png` |
+
+What is still rough, on purpose, until Brian says otherwise: the bartender's back is a simple shape, the bow sits on the hat rather than under it, and the croc's snout is still a long bill. The dance floor circle is still a big pale ring. None of those change the rules.
+
 Marks: **PASS** holds. **FIX** should change before Brian quality-gates the day. **NEEDS-BRIAN** needs his yes, usually on words. Two playtest bugs were still real on `ed80c1f` and are fixed in this commit. Everything else below is report-only.
 
 No page errors came up while these moments were drawn. Timers, prices, ranges, and on-screen words were not changed.

@@ -295,11 +295,11 @@
       let sc = 4.2;
       (e.save(), e.translate(480, 500), e.scale(sc, sc));
       d.legs === "boots" && (m(-7, -5, 5, 7, 1), r("#3d4454", 1.4), m(2, -5, 5, 7, 1), r("#3d4454", 1.4));
-      (d.extra || []).includes("scarf") && (m(-9, -22, 18, 4, 1), r("#e5533d", 1.2), m(5, -20, 3, 12, 1), r("#e5533d", 1.2));
-      (d.extra || []).includes("bow") && (m(-4, -26, 3, 4, 1), r("#3478f6", 1), m(1, -26, 3, 4, 1), r("#3478f6", 1), F(0, -24, 1.4, "#ffcf33"));
-      (d.extra || []).includes("nose") && F(2, -36, 2.2, "#e5533d");
-      (d.extra || []).includes("pipe") && (C([6, -33, 14, -38], "#8b5a3c", 1.4), F(15, -39, 1.6, "#6b6256"));
-      d.head === "tophat" && (m(-9, -50, 18, 4, 1), r("#1e2430", 1.2), m(-5, -64, 10, 14, 1), r("#1e2430", 1.2));
+      (d.extra || []).includes("scarf") && (m(-10, -20, 20, 5, 2), r("#e5533d", 1.4), m(6, -18, 4, 12, 2), r("#e5533d", 1.4));
+      (d.extra || []).includes("nose") && F(0, -28, 3.1, "#e5533d");
+      (d.extra || []).includes("pipe") && (C([7, -25, 16, -30], "#8b5a3c", 1.6), F(17, -31, 2.2, "#6b6256"));
+      d.head === "tophat" && (m(-10, -54, 20, 4, 1), r("#1e2430", 1.4), m(-5, -70, 10, 16, 1), r("#1e2430", 1.4));
+      (d.extra || []).includes("bow") && (m(-8, -60, 7, 8, 1), r("#3478f6", 1.6), m(1, -60, 7, 8, 1), r("#3478f6", 1.6), F(0, -56, 2.6, "#ffcf33"));
       e.restore();
     }
     function drawCh1Dress() {
@@ -335,26 +335,96 @@
       n.ch1Drag && ch1DressIcon(n.ch1Drag, n.ch1DragX || 480, n.ch1DragY || 360);
       ch1DressMeter() >= 100 && g("Go!", 480, 600, 28, "#3478f6", "center", 900);
     }
+    // The one close-up arm. Day 2's cut-ins call this same function. Do not draw a second copy.
+    function drawPawArm(paw) {
+      let p = paw || { x: 480, y: 580 },
+        x = p.x,
+        y = p.y,
+        top = y + 20;
+      e.save();
+      e.beginPath();
+      e.moveTo(x - 22, 662);
+      for (let i = 1; i <= 8; i++) {
+        let t = i / 8;
+        e.lineTo(x + (i % 2 ? -48 : -28), 662 - (662 - top) * t);
+      }
+      e.lineTo(x + 26, top);
+      for (let i = 8; i >= 1; i--) {
+        let t = i / 8;
+        e.lineTo(x + (i % 2 ? 50 : 30), 662 - (662 - top) * t);
+      }
+      (e.closePath(), (e.fillStyle = "#6b4428"), e.fill(), (e.lineWidth = 6), (e.strokeStyle = "#3a2416"), (e.lineJoin = "round"), e.stroke());
+      [
+        [0.08, -44, 6, "#e8c09a"],
+        [0.17, -30, 13, "#c4895a"],
+        [0.22, -50, 5, "#f4c39a"],
+        [0.36, -26, 9, "#d9a06a"],
+        [0.48, -46, 15, "#f0c49a"],
+        [0.55, -32, 6, "#c4895a"],
+        [0.69, -50, 10, "#e0b080"],
+        [0.78, -24, 7, "#f4c39a"],
+        [0.91, -40, 12, "#d7a070"],
+        [0.11, 46, 11, "#f0c49a"],
+        [0.24, 28, 6, "#e0b080"],
+        [0.31, 52, 14, "#c4895a"],
+        [0.46, 34, 8, "#f4c39a"],
+        [0.6, 48, 5, "#d9a06a"],
+        [0.73, 30, 12, "#e8c09a"],
+        [0.86, 50, 7, "#c4895a"],
+      ].forEach((tuft) => F(x + tuft[1], 652 - (652 - top) * tuft[0], tuft[2], tuft[3]));
+      [[-26, -12], [-8, -22], [12, -22], [28, -10]].forEach(([dx, dy]) => {
+        (e.beginPath(), e.ellipse(x + dx, y + dy, 13, 16, dx < 0 ? -0.35 : 0.35, 0, 7), (e.fillStyle = "#6b4428"), e.fill(), (e.strokeStyle = "#3a2416"), (e.lineWidth = 3), e.stroke(), F(x + dx, y + dy + 4, 5, "#f4c39a"));
+      });
+      (e.beginPath(), e.ellipse(x, y + 12, 24, 17, 0, 0, 7), (e.fillStyle = "#6b4428"), e.fill(), (e.strokeStyle = "#3a2416"), (e.lineWidth = 4), e.stroke(), e.beginPath(), e.ellipse(x, y + 16, 14, 9, 0, 0, 7), (e.fillStyle = "#f4c39a"), e.fill(), e.restore());
+    }
+    function drawBarSnack(kind, x, y, sc) {
+      (e.save(), e.translate(x, y), e.scale(sc || 1, sc || 1));
+      if (kind === "pie") (L(0, 0, 18), r("#e7c08a", 3), L(0, 0, 8), r("#6b3a1c", 0), C([-6, -2, 6, 2], "#fff3d6", 2));
+      else if (kind === "cup") (m(-12, -16, 24, 28, 4), r("#8fdcff", 3), m(-14, -22, 28, 8, 3), r("#ffffff", 2));
+      else if (kind === "cake") (m(-20, -12, 40, 24, 4), r("#fffdf8", 3), F(0, -18, 5, "#e5533d"), F(-8, -4, 3, "#3478f6"));
+      else (L(0, 0, 16), r("#e5533d", 3), C([0, -14, 6, -24], "#3f8f4a", 3), F(-4, -2, 3, "#fff3d6"));
+      e.restore();
+    }
     function drawCh1Cut() {
       let cut = n.ch1Cut;
       if (!cut) return;
-      let z = cut.zoom || 0;
-      ((e.save(),
-        (e.filter = "blur(6px)"),
-        (e.globalAlpha = 0.65),
-        e.fillRect(0, 0, c, b),
-        e.restore()),
-        (e.fillStyle = "rgba(12,16,28,.35)"),
-        e.fillRect(0, 0, c, b),
-        Qt(760, 180, "#c9842a", 1.2, cut.face > 0 ? -1 : 1));
-      for (let row = 0; row < 4; row++)
-        for (let i = 0; i < 4 - row; i++) F(420 + i * 28 - row * 8, 160 + row * 46, 12, row === 3 ? "#e5533d" : "#ffcf33");
-      (m(24, 500, cut.drag ? 150 : 50, cut.drag ? 110 : 40, 8),
-        r("#fffdf8", 3),
-        g(String(cut.bag || 0), 48, 520, 16, "#1e2430", "center", 900),
-        L(880, 540, 32),
+      let z = Math.min(1, cut.zoom || 0);
+      (e.save(), (e.filter = "blur(6px)"), (e.globalAlpha = 0.92), e.drawImage(e.canvas, 0, 0), e.restore());
+      (e.fillStyle = "rgba(12,16,28,.28)"), e.fillRect(0, 0, c, b);
+      let shade = e.createRadialGradient(480, 300, 180, 480, 320, 620);
+      (shade.addColorStop(0, "rgba(0,0,0,0)"), shade.addColorStop(1, "rgba(0,0,0,.45)"), (e.fillStyle = shade), e.fillRect(0, 0, c, b));
+      e.save();
+      e.globalAlpha = 0.35 + 0.65 * z;
+      (m(120, 430, 720, 48, 10),
+        r("#d7c4a3", 5),
+        m(150, 478, 660, 22, 6),
+        r("#b08968", 3),
+        m(80, 80, 800, 360, 18),
+        r("rgba(255,253,248,.18)", 0));
+      let look = cut.face > 0;
+      look
+        ? Qt(760, 400, "#c9842a", 2.3, -1)
+        : (m(724, 300, 72, 110, 16), r("#8a5a32", 4), L(760, 278, 28), r("#a56b3c", 4));
+      [
+        ["cake", 480, 250],
+        ["cup", 456, 292],
+        ["pie", 504, 292],
+        ["apple", 432, 334],
+        ["pie", 480, 334],
+        ["cup", 528, 334],
+        ["pie", 408, 382],
+        ["apple", 456, 382],
+        ["cake", 504, 382],
+        ["cup", 552, 382],
+      ].forEach((bit) => drawBarSnack(bit[0], bit[1], bit[2], 1));
+      e.restore();
+      let open = !!cut.drag;
+      (m(24, 500, open ? 160 : 64, open ? 120 : 48, 10),
+        r("#fffdf8", 4),
+        g(String(cut.bag || 0), open ? 104 : 56, open ? 560 : 524, 22, "#1e2430", "center", 900),
+        L(880, 540, 36),
         r("#ffffff", 4),
         g("X", 880, 540, 28, "#1e2430", "center", 900));
       let paw = cut.paw || { x: 200, y: 560 };
-      (C([40, 620, paw.x, paw.y], "#6b3a1c", 16), F(paw.x, paw.y, 18, "#6b3a1c"), z < 1 && (e.globalAlpha = z));
+      (drawPawArm(paw), cut.held && drawBarSnack(cut.held === "bottom" ? "pie" : cut.held === "mid" ? "cup" : "cake", paw.x, paw.y - 8));
     }

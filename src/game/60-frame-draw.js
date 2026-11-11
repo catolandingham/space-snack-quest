@@ -672,6 +672,8 @@
         pointer("gbox", 318, 478, 64, 44, 8),
         L2(),
         cq(),
+        n.ch1Couch && (m(470, 490, 250, 56, 16), r("#3478f6", 4), m(458, 530, 274, 26, 10), r("#2456b0", 3)),
+        n.sqPose === "sleep" && (m(330, 430, 140, 40, 10), r("#c9b6f2", 3), m(330, 422, 140, 12, 4), r("#efe8ff", 2)),
         n.chair && (m(588, 396, 110, 74, 14), r("#e5533d", 4), m(580, 448, 126, 32, 10), r("#ff6a3d", 4)));
     }
     // Home wardrobe (R29–R34). Far left, back wall, base on the floor line. Calendar faces us only while the door is shut.
@@ -1578,15 +1580,32 @@
     }
     function gq(l, o) {
       if (l === "ch1photo") {
-        ((e.fillStyle = "rgba(20,24,32,.55)"),
+        ((e.fillStyle = "rgba(255,252,245,.4)"),
           e.fillRect(0, 0, c, b),
-          m(330, 150, 300, 340, 8),
-          r("#fffdf8", 6),
-          m(354, 174, 252, 220, 4),
-          r("#d7ecf5", 2),
-          Qt(420, 360, "#1f9d8a", 1.2, 1),
-          Qt(500, 366, "#ff8a3d", 1.2, -1),
-          n.ch1InShot && Re(460, 390, 1.1, { f: 1, hat: !0, shades: !0, hawaiian: !0 }));
+          m(230, 60, 500, 520, 6),
+          r("#fffdf8", 8),
+          e.save(),
+          e.beginPath(),
+          e.rect(254, 84, 452, 390),
+          e.clip(),
+          (e.fillStyle = "#1b2450"),
+          e.fillRect(254, 84, 452, 170),
+          (e.fillStyle = "#ebe4d6"),
+          e.fillRect(254, 254, 452, 220));
+        for (let i = 0; i < 18; i++) F(270 + ((i * 73) % 420), 100 + ((i * 41) % 130), 1.2, "#ffffff");
+        (drawCh1Alien(340, 430, "hair", 1.15, 1),
+          drawCh1Alien(450, 400, "hat", 1.15, -1),
+          drawCh1Alien(560, 420, "antenna", 1.15, 1),
+          drawCh1Alien(650, 390, "croc", 1.15, -1),
+          n.ch1InShot &&
+            (e.save(),
+            e.beginPath(),
+            e.rect(254, 84, 452, 390),
+            e.clip(),
+            Re(300, 470, 1.35, { f: 1, hat: !0, shades: !0, hawaiian: !0 }),
+            e.restore()),
+          e.restore(),
+          g("STORMTOP SPACE PARTY", 480, 520, 16, "#1e2430", "center", 800));
         return;
       }
       if (l === "ch1tv1" || l === "ch1tv2" || l === "ch1tv3") return drawCh1Tv(l);

@@ -1099,21 +1099,25 @@
       for (let i = 0; i < 4; i++) C([138, 308 + i * 8, 172, 308 + i * 8], y, 2);
       let look = (n.ch1Look || 0) > 0,
         face = look ? 1 : 0,
-        glance = (x, y) => look && C([x + 6, y - 34, x + 26, y - 46], "#f0bf93", 3.4);
+        glance = (x, y) => look && (F(x + 10, y - 78, 3, "#fffdf8"), F(x - 6, y - 78, 3, "#fffdf8"));
       (m(700, 500, 120, 28, 4),
         r("#cdbb98", 3),
         !(n.ch1PartyDid && n.ch1PartyDid.snack) &&
-          [0, 1, 2].forEach((i) => {
-            (F(724 + i * 28, 486, 6, i === 2 ? "#fffdf8" : "#e5533d"), F(730 + i * 28, 498, 4, "#8fdcff"));
-          }),
+          [
+            [734, 470, "pie"],
+            [762, 456, "cup"],
+            [790, 470, "cake"],
+            [748, 488, "apple"],
+            [776, 488, "pie"],
+          ].forEach((bit) => drawBarSnack(bit[2], bit[0], bit[1], 0.55)),
         [
-          [270, 410, "antenna"],
-          [430, 370, "croc"],
-          [620, 390, "hat"],
-          [540, 320, "horns"],
-          [280, 585, "hair"],
-          [540, 560, "spots"],
-          [940, 520, "blob"],
+          [240, 400, "antenna"],
+          [400, 360, "croc"],
+          [560, 340, "horns"],
+          [730, 390, "hat"],
+          [300, 560, "hair"],
+          [420, 575, "spots"],
+          [640, 470, "blob"],
         ].forEach((guest) => {
           (drawCh1Alien(guest[0], guest[1], guest[2], CH1_GUEST, face || 1), glance(guest[0], guest[1]));
         }),
@@ -1122,82 +1126,70 @@
         drawCh1Alien(900, 400, "cape", CH1_GUEST, face || -1),
         drawCh1Tripod(820, 350),
         !n.ch1Flyer && (m(500, 360, 16, 12, 1), r("#fffdf8", 1)),
-        (n.ch1Spill || 0) > 0 &&
-          [0, 1, 2].forEach((i) => {
-            let x = 710 + (1 - n.ch1Spill) * 250 + i * 18,
-              drop = Math.max(0, x - 840);
-            (F(x, 478 + drop, 8, i === 2 ? "#fffdf8" : "#e5533d"), m(x - 5, 494 + drop * 0.65, 10, 12, 2), r("#8fdcff", 2));
-          }),
+        (n.ch1Spill || 0) > 0 && drawCh1Chain(1 - n.ch1Spill),
         drawCh1SliceParty(),
         drawBalloonKid());
+    }
+    function drawCh1Chain(p) {
+      let tip = Math.min(1, p / 0.25),
+        roll = p < 0.25 ? 0 : Math.min(1, (p - 0.25) / 0.25),
+        tray = p < 0.5 ? 0 : Math.min(1, (p - 0.5) / 0.25),
+        cake = p < 0.75 ? 0 : Math.min(1, (p - 0.75) / 0.25);
+      (e.save(), e.translate(760, 470), e.rotate(tip * 0.7));
+      ["pie", "cup", "cake"].forEach((k, i) => drawBarSnack(k, (i - 1) * 36, -28 - (1 - tip) * 16, 1));
+      e.restore();
+      roll > 0 && (e.save(), e.translate(800 + roll * 120, 520), e.rotate(roll * 6), drawBarSnack("cup", 0, 0, 1.15), e.restore());
+      tray > 0 && (e.save(), e.translate(900, 500), e.rotate(-tray * 0.9), m(-46, -8, 92, 16, 3), r("#cdbb98", 3), drawBarSnack("pie", 0, -22, 0.7), e.restore());
+      cake > 0 && (e.save(), e.translate(860 + cake * 30, 480 + cake * 50), drawBarSnack("cake", 0, 0, 1.2), e.restore());
     }
     function drawCh1Alien(ax, ay, kind, sc, face) {
       let f = face < 0 ? -1 : 1,
         bob = Math.sin(n.T * 2 + ax * 0.01) * 1.5;
-      (e.save(), e.translate(ax, ay + bob), e.scale(sc, sc));
-      (e.beginPath(), e.ellipse(0, 2, 14, 3.5, 0, 0, 7), (e.fillStyle = "rgba(30,36,48,.16)"), e.fill());
-      if (kind === "antenna") {
-        (m(-9, -48, 18, 42, 8),
-          r("#7ad0c8", 3),
-          L(0, -58, 11),
-          r("#d8fff6", 3),
-          C([-5, -66, -8, -78], y, 2.4),
-          C([5, -66, 8, -78], y, 2.4),
-          F(-8, -80, 3, "#ffcf33"),
-          F(8, -80, 3, "#ffcf33"));
-      } else if (kind === "croc") {
-        (m(-12, -40, 24, 36, 8),
-          r("#3f8f4a", 3),
-          m(f * 6, -52, 22, 10, 4),
-          r("#3f8f4a", 3),
-          F(f * 24, -48, 2, y),
-          L(0, -52, 12),
-          r("#b6e7a8", 3));
-      } else if (kind === "hat") {
-        (m(-11, -42, 22, 36, 10),
-          r("#ff8a3d", 3),
-          L(0, -54, 12),
-          r("#f0bf93", 3),
-          m(-16, -62, 32, 6, 2),
-          r("#2b3a67", 2),
-          m(-8, -74, 16, 14, 2),
-          r("#2b3a67", 2));
-      } else if (kind === "hair") {
-        (m(-12, -40, 24, 34, 10),
-          r("#f2c1b0", 3),
-          L(0, -52, 13),
-          r("#f0bf93", 3),
-          e.beginPath(),
-          e.arc(0, -56, 14, Math.PI, 0),
-          r("#7a4ad0", 3),
-          m(-14, -36, 28, 16, 6),
-          r("#3478f6", 2));
-      } else if (kind === "spots") {
-        (L(0, -28, 18),
-          r("#ffcf33", 3),
-          L(0, -52, 12),
-          r("#fff3c4", 3),
-          F(-6, -34, 3, "#e5533d"),
-          F(7, -24, 2.5, "#e5533d"),
-          F(2, -40, 2, "#e5533d"));
-      } else if (kind === "horns") {
-        (m(-11, -42, 22, 36, 8),
-          r("#c9b6f2", 3),
-          L(0, -54, 12),
-          r("#efe8ff", 3),
-          C([-6, -62, -12, -74], y, 3),
-          C([6, -62, 12, -74], y, 3));
-      } else if (kind === "blob") {
-        (L(0, -26, 20), r("#59657d", 3), L(0, -48, 14), r("#8a93a3", 3), F(-8, -50, 2, y), F(0, -50, 2, y), F(8, -50, 2, y));
-      } else {
-        (m(-11, -44, 22, 38, 8),
-          r("#1f9d8a", 3),
-          L(0, -56, 12),
-          r("#d8fff6", 3),
-          m(-16, -40, 10, 22, 4),
-          r("#e5533d", 2));
-      }
-      (F(f * 4, kind === "spots" || kind === "blob" ? -54 : -56, 1.8, y), m(-6, -8, 5, 10, 2), r("#3d4454", 2), m(2, -8, 5, 10, 2), r("#3d4454", 2), e.restore());
+      (e.save(), e.translate(ax, ay + bob), e.scale(sc * f, sc));
+      (e.beginPath(), e.ellipse(0, 2, 16, 4, 0, 0, 7), (e.fillStyle = "rgba(30,36,48,.16)"), e.fill());
+      let body = "#7ad0c8",
+        skin = "#d8fff6";
+      kind === "croc" && ((body = "#3f8f4a"), (skin = "#b6e7a8"));
+      kind === "hat" && ((body = "#ff8a3d"), (skin = "#f0bf93"));
+      kind === "hair" && ((body = "#3478f6"), (skin = "#f2c1b0"));
+      kind === "spots" && ((body = "#ffcf33"), (skin = "#fff3c4"));
+      kind === "horns" && ((body = "#c9b6f2"), (skin = "#efe8ff"));
+      kind === "blob" && ((body = "#59657d"), (skin = "#d5dbe6"));
+      kind === "cape" && ((body = "#1f9d8a"), (skin = "#d8fff6"));
+      (m(-6, -20, 7, 20, 2),
+        r("#3d4454", 2),
+        m(2, -20, 7, 20, 2),
+        r("#3d4454", 2),
+        m(-16, -54, 32, 36, 10),
+        r(body, 3),
+        m(-22, -48, 8, 22, 3),
+        r(body, 2),
+        m(14, -48, 8, 22, 2),
+        r(body, 2),
+        L(0, -70, 14),
+        r(skin, 3),
+        F(-5, -72, 1.8, y),
+        F(5, -72, 1.8, y),
+        C([-3, -64, 0, -62, 3, -64], y, 1.2));
+      if (kind === "antenna") (C([-5, -82, -10, -98], y, 2.2), C([5, -82, 10, -98], y, 2.2), F(-10, -100, 3.2, "#ffcf33"), F(10, -100, 3.2, "#ffcf33"));
+      else if (kind === "croc")
+        (e.beginPath(),
+          e.moveTo(8, -76),
+          e.lineTo(30, -72),
+          e.lineTo(30, -62),
+          e.lineTo(8, -66),
+          e.closePath(),
+          r("#2f7a3a", 2),
+          F(24, -70, 1.3, y),
+          F(24, -65, 1.3, y),
+          C([14, -66, 20, -64, 26, -67], "#1e2430", 1.2));
+      else if (kind === "hat") (m(-14, -78, 28, 6, 2), r("#2b3a67", 2), m(-7, -92, 14, 16, 2), r("#2b3a67", 2));
+      else if (kind === "hair") (e.beginPath(), e.arc(0, -70, 14, Math.PI, 0), r("#7a4ad0", 3));
+      else if (kind === "spots") (F(-6, -48, 3, "#e5533d"), F(6, -40, 2.4, "#e5533d"), F(0, -56, 2, "#e5533d"));
+      else if (kind === "horns") (C([-4, -78, -12, -94], y, 3), C([4, -78, 12, -94], y, 3));
+      else if (kind === "blob") (F(-6, -70, 2, y), F(0, -70, 2, y), F(6, -70, 2, y), L(0, -40, 8), r("#8a93a3", 2));
+      else (m(-18, -46, 8, 18, 3), r("#e5533d", 2));
+      e.restore();
     }
     function drawCh1Tripod(x, y) {
       (C([x, y - 46, x - 26, y], "#6b6256", 4),
@@ -1244,18 +1236,32 @@
           F(kid.x + 16, kid.y - 38, 3, "#f0bf93")),
         mood === "sad" && C([kid.x + 2, kid.y - 36, kid.x + 8, kid.y - 40, kid.x + 12, kid.y - 36], y, 1.4));
       if (n.ch1Balloon === "up" || n.ch1Balloon === "ceiling") {
-        n.ch1Balloon === "up" && (F(bx, by, 40, "rgba(229,83,61,.28)"), F(bx, by, 26, "rgba(255,190,180,.7)"));
-        (by < 430
-          ? (C([kid.x, kid.y - 20, 220, kid.y - 20], "#e5533d", 2),
-            C([220, kid.y - 20, 220, 455], "#e5533d", 2),
-            C([220, 455, bx, 455], "#e5533d", 2),
-            C([bx, 455, bx, by + 14], "#e5533d", 2))
-          : C([kid.x, kid.y - 20, bx, by + 14], "#e5533d", 2),
-          F(bx, by, 14, "#e5533d"));
+        let handX = kid.x + 16,
+          handY = kid.y - 78;
+        by < 430
+          ? (C([handX, handY, handX, 188], "#e5533d", 2), C([handX, 188, bx, 188], "#e5533d", 2), C([bx, 188, bx, by + 18], "#e5533d", 2))
+          : C([handX, handY, bx, by + 18], "#e5533d", 2);
+        drawPartyBalloon(bx, by, n.ch1Balloon === "up" ? 22 : 16);
       }
-      if (n.ch1Balloon === "held") {
-        (C([n.sq.x, n.sq.y - 40, n.sq.x, n.sq.y - 78], "#e5533d", 1), F(n.sq.x, n.sq.y - 86, 8, "#e5533d"));
-      }
+      if (n.ch1Balloon === "held") (C([n.sq.x, n.sq.y - 36, n.sq.x + 8, n.sq.y - 78], "#e5533d", 2), drawPartyBalloon(n.sq.x + 8, n.sq.y - 96, 16));
+      if (n.ch1Balloon === "back") (C([kid.x + 10, kid.y - 70, kid.x + 18, kid.y - 108], "#e5533d", 2), drawPartyBalloon(kid.x + 18, kid.y - 124, 16));
+    }
+    function drawPartyBalloon(x, y, rad) {
+      (e.save(),
+        e.translate(x, y),
+        L(0, 0, rad),
+        r("#e5533d", 3),
+        e.beginPath(),
+        e.ellipse(-rad * 0.28, -rad * 0.32, rad * 0.28, rad * 0.18, -0.6, 0, 7),
+        (e.fillStyle = "rgba(255,255,255,.75)"),
+        e.fill(),
+        e.beginPath(),
+        e.moveTo(-4, rad - 1),
+        e.lineTo(0, rad + 8),
+        e.lineTo(4, rad - 1),
+        e.closePath(),
+        r("#b91c1c", 2),
+        e.restore());
     }
     // R61. After the party the balloon stays in this hall. A miss is on the ceiling. A return or a keep is tied
     // to the plant by the kid, because Squatch does not take it home. The office visit pops it once.
@@ -1274,8 +1280,8 @@
         g("POP!", x, y - 28, 22, "#e5533d", "center", 900);
         return;
       }
-      tied ? (Xp(130, 580), C([148, 552, x, y + 10], "#e5533d", 1.4)) : C([x, 160, x, y + 12], "#e5533d", 1.4);
-      F(x, y, 14, "#e5533d");
+      tied ? (Xp(130, 580), C([148, 552, x, y + 18], "#e5533d", 1.4)) : C([x, 160, x, y + 18], "#e5533d", 1.4);
+      drawPartyBalloon(x, y, 14);
     }
     function drawMailRobot(px, py) {
       (dq(px, py, !0), g("UPS", px, py - 8, 10, "#ffffff", "center", 900));

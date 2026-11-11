@@ -1276,8 +1276,14 @@
       return (n.room === "van" && l.push({ x0: Tt.x - 100, x1: Tt.x + 100, y0: 380, y1: 470 }), l);
     }
     function R0(l) {
-      let solids = ih(),
-        inside = (x, y) => solids.some((o) => x > o.x0 && x < o.x1 && y > o.y0 && y < o.y1);
+      let solids = ih();
+      n.room === "closet" &&
+        l === n.sq &&
+        n.moPose !== "hidden" &&
+        n.mo.x > 40 &&
+        n.mo.x < 980 &&
+        solids.push(nt(n.mo.x, n.mo.y, 42, 36, 40));
+      let inside = (x, y) => solids.some((o) => x > o.x0 && x < o.x1 && y > o.y0 && y < o.y1);
       if (!inside(l.x, l.y)) return;
       let best = null;
       for (let o of solids) {
