@@ -267,6 +267,7 @@
         ballNoticeReset,
         ch1CaughtAt,
         ch1InCone,
+        ch1NightLook,
         BALL_NOTICE_RADIUS,
         BALL_NOTICE_SECONDS,
         COOL_HAT_SECONDS,

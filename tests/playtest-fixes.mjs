@@ -121,6 +121,43 @@ const saved = await page.evaluate(() => {
 });
 g.check("a local save still uses ssq-vol", saved.live !== null && saved.bugs === null, saved);
 
+const patrol = await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  n.scene = "Q4";
+  n.room = "hangar";
+  n.ch1D = true;
+  n.ch1Night = true;
+  n.ctrl = true;
+  n.sqPose = "stand";
+  const at = (t, x, y) => {
+    n.ch1LookT = t;
+    const look = ss.ch1NightLook(t);
+    ss.drawFrame();
+    const cone = ss.conesDrawn().find((c) => c.len === 210);
+    return { catch: look.catch, face: look.face, seen: ss.ch1CaughtAt(x, y, "stand"), drawn: cone && cone.a };
+  };
+  return {
+    down: at(0, 480, 540),
+    bin: at(0, 210, 540),
+    mail: at(0, 800, 540),
+    turn: at(2.15, 480, 540),
+    away: at(4, 480, 540),
+    feet: at(4, 480, 410),
+    back: at(6.45, 480, 540),
+    again: at(6.6, 480, 540),
+    len: ss.STAND_CONE_LEN,
+    half: ss.STAND_CONE_HALF,
+    feetR: ss.STAND_FEET,
+  };
+});
+const near = (a, b) => Math.abs(a - b) < 0.05;
+g.check("the cone numbers are still 210, 0.42, and 70", patrol.len === 210 && patrol.half === 0.42 && patrol.feetR === 70, patrol);
+g.check("looking down, the middle of the floor is caught and the bin and mailbox are not", patrol.down.seen && patrol.down.catch && !patrol.bin.seen && !patrol.mail.seen, patrol);
+g.check("the turn swings the cone and does not catch", !patrol.turn.catch && !patrol.turn.seen && near(patrol.turn.face, 0) && near(patrol.turn.drawn, 0), patrol.turn);
+g.check("looking at the back wall, the floor is clear and the feet circle still catches", patrol.away.catch && !patrol.away.seen && near(patrol.away.face, -Math.PI / 2) && patrol.feet.seen, patrol);
+g.check("he turns back without catching, then looks down again", !patrol.back.catch && !patrol.back.seen && patrol.again.catch && patrol.again.seen && near(patrol.again.face, Math.PI / 2), patrol);
+
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();
 await g.finish("playtest-fixes");

@@ -53,6 +53,11 @@
       STAND_CONE_HALF = 0.42,
       STAND_FEET = 70,
       STAND_FACE = Math.PI / 2;
+    // R64. Brian, 2026-11-11: look down 2 seconds, then at the back wall 4 seconds. The turn is 0.3 seconds and does not catch.
+    const CH1_LOOK_DOWN_SECONDS = 2,
+      CH1_TURN_SECONDS = 0.3,
+      CH1_LOOK_AWAY_SECONDS = 4,
+      CH1_LOOK_AWAY = -Math.PI / 2;
     let ballNear = {};
     // Time a robot has spent inside the ball radius. Leaving the radius clears it. A ball is noticed only
     // when that time reaches BALL_NOTICE_SECONDS and the robot's normal standing sight would see him too,
@@ -80,10 +85,30 @@
       }
       return ballNotice(id, dist, dt, standingSees);
     }
+    function ch1NightLook(t) {
+      let down = CH1_LOOK_DOWN_SECONDS,
+        turn = CH1_TURN_SECONDS,
+        away = CH1_LOOK_AWAY_SECONDS,
+        cycle = down + turn + away + turn,
+        u = ((t || 0) % cycle + cycle) % cycle,
+        swing = (a, b, k) => a + (b - a) * k;
+      if (u < down) return { face: STAND_FACE, catch: !0 };
+      u -= down;
+      if (u < turn) return { face: swing(STAND_FACE, CH1_LOOK_AWAY, u / turn), catch: !1 };
+      u -= turn;
+      if (u < away) return { face: CH1_LOOK_AWAY, catch: !0 };
+      u -= away;
+      return { face: swing(CH1_LOOK_AWAY, STAND_FACE, u / turn), catch: !1 };
+    }
+    function ch1NightNow() {
+      return n.scene === "Q4" ? ch1NightLook(n.ch1LookT || 0) : { face: STAND_FACE, catch: !0 };
+    }
     function ch1InCone(px, py) {
+      let look = ch1NightNow();
+      if (!look.catch) return !1;
       let ox = CH1_ROBOT.x,
         oy = CH1_ROBOT.y - 28;
-      return Math.hypot(px - CH1_ROBOT.x, py - CH1_ROBOT.y) < STAND_FEET || vt(px, py - 20, ox, oy, STAND_FACE, STAND_CONE_HALF, STAND_CONE_LEN);
+      return Math.hypot(px - CH1_ROBOT.x, py - CH1_ROBOT.y) < STAND_FEET || vt(px, py - 20, ox, oy, look.face, STAND_CONE_HALF, STAND_CONE_LEN);
     }
     // Plant (hidden) is never seen. Standing uses the cone above. A ball is not this check: it uses ballNotice.
     function ch1CaughtAt(px, py, pose) {
@@ -688,7 +713,7 @@
       n.ch1BalloonPop > 0 && (n.ch1BalloonPop = Math.max(0, n.ch1BalloonPop - (dt || 0)));
     }
     function ch1NightPlay() {
-      ((n.scene = "Q4"), (n.ctrl = !0), (n.sqPose = "stand"), chipNow());
+      ((n.scene = "Q4"), (n.ctrl = !0), (n.sqPose = "stand"), (n.ch1LookT = 0), chipNow());
     }
     function ch1GrabYellow() {
       ((n.ch1Got = 1), (n.act = null));
@@ -961,6 +986,12 @@
     }
     function ch1Watch(dt) {
       if (!n.ctrl || n.scene !== "Q4" || x.mops) return;
+      n.ch1LookT = (n.ch1LookT || 0) + (dt || 0);
+      if (!ch1NightNow().catch) {
+        ballNotice("ch1night", BALL_NOTICE_RADIUS + 1, 0, !1);
+        n.ch1Alert = !1;
+        return;
+      }
       let standing = ch1InCone(n.sq.x, n.sq.y),
         dist = Math.hypot(n.sq.x - CH1_ROBOT.x, n.sq.y - CH1_ROBOT.y),
         seen = n.sqPose === "hidden" ? !1 : n.sqPose === "ball" ? ballNotice("ch1night", dist, dt || 0, standing) : standing;
@@ -987,6 +1018,7 @@
         (n.sq.x = 140),
         (n.sq.y = 540),
         (n.ctrl = !0),
+        (n.ch1LookT = 0),
         ch1LoadBalloon());
     }
     function drawGameBin(px, py) {
@@ -1207,12 +1239,13 @@
       !night && n.ch1Ship && n.scene !== "Q9" && Qt(560, 500, "#c9b6f2", 2.6, 0.2);
       n.ch1Crew === "tease" && [360, 480, 600].forEach((px) => dq(px, 460, !1));
       night &&
-        (seenCone(CH1_ROBOT.x, CH1_ROBOT.y - 28, STAND_FACE, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.62)", "rgba(160,100,10,.95)"),
-        e.beginPath(),
-        e.arc(CH1_ROBOT.x, CH1_ROBOT.y, STAND_FEET, 0, Math.PI * 2),
-        (e.lineWidth = 3),
-        (e.strokeStyle = "rgba(160,100,10,.95)"),
-        e.stroke(),
+        (seenCone(CH1_ROBOT.x, CH1_ROBOT.y - 28, ch1NightNow().face, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.62)", "rgba(160,100,10,.95)"),
+        ch1NightNow().catch &&
+          (e.beginPath(),
+          e.arc(CH1_ROBOT.x, CH1_ROBOT.y, STAND_FEET, 0, Math.PI * 2),
+          (e.lineWidth = 3),
+          (e.strokeStyle = "rgba(160,100,10,.95)"),
+          e.stroke()),
         dq(CH1_ROBOT.x, CH1_ROBOT.y, !1),
         n.ch1Alert && g("!", CH1_ROBOT.x, CH1_ROBOT.y - 78, 28, "#e5533d", "center", 900));
       (n.moPose !== "hidden" && Fe(n.mo.x, n.mo.y, he * 1.15, { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 }),
