@@ -43,7 +43,39 @@ export async function startGame({ port, name }) {
     process.exit(1);
   }
   const html = await readFile(join(root, "index.html"));
+  let musicBuf = null;
   const server = http.createServer((req, res) => {
+    let pathname = "/";
+    try {
+      pathname = new URL(req.url || "/", "http://127.0.0.1").pathname;
+    } catch {}
+    if (pathname.startsWith("/music/")) {
+      const rel = decodeURIComponent(pathname.slice(1));
+      const file = join(root, rel);
+      if (!(file === join(root, "music/main-theme-from-brian.mp3") && existsSync(file))) {
+        res.writeHead(404);
+        res.end();
+        return;
+      }
+      musicBuf || (musicBuf = readFileSync(file));
+      const range = req.headers.range;
+      const m = range && /bytes=(\d+)-(\d*)/.exec(range);
+      if (m) {
+        const start = Math.min(parseInt(m[1], 10), musicBuf.length - 1);
+        const end = m[2] ? Math.min(parseInt(m[2], 10), musicBuf.length - 1) : musicBuf.length - 1;
+        res.writeHead(206, {
+          "content-type": "audio/mpeg",
+          "content-range": `bytes ${start}-${end}/${musicBuf.length}`,
+          "content-length": end - start + 1,
+          "accept-ranges": "bytes",
+        });
+        res.end(musicBuf.subarray(start, end + 1));
+        return;
+      }
+      res.writeHead(200, { "content-type": "audio/mpeg", "content-length": musicBuf.length, "accept-ranges": "bytes" });
+      res.end(musicBuf);
+      return;
+    }
     res.writeHead(200, { "content-type": "text/html" });
     res.end(html);
   });

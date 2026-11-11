@@ -286,7 +286,7 @@ Each panel's on-screen words are in CH1-CARTOON-LINES.md. Which files are curren
 ## 7. Audio
 | # | Date | Decision | Source | Status |
 |---|---|---|---|---|
-| A1 | 11-08 | Brian's track (`/workspace/ssq/music/main-theme-from-brian.mp3`, 3:54) is the warm theme for heart moments and the title. It's a song by his friend Joe, and Brian says it's fine to use. | Brian 3:17 PM, 3:19 PM, 3:20 PM | Decided (supersedes "rights not confirmed"). The file is not in this repo. A short generated stand-in plays until Brian sends the track. |
+| A1 | 11-08 | Brian's track (`music/main-theme-from-brian.mp3`, 3:54) is the warm theme for heart moments and the title. It's a song by his friend Joe, and Brian says it's fine to use. | Brian 3:17 PM, 3:19 PM, 3:20 PM | Decided (supersedes "rights not confirmed"). The file is in this unmerged slice. It plays on the title, at home (not during the search or dress-up), while the morning gift is out, and when the balloon kid is happy. Sneak and journey stay generated. Nothing starts before the first tap. |
 | A2 | 11-08 | Also wanted: a sneak and chase theme, a journey/travel theme, and short stings (spotted, escape, secret found, caught). | Brian 3:19 PM | Decided. Generated stand-ins are in the unmerged slice. Not Joe's recording. |
 | A3 | 11-08 | Music plays at the right moments with silence between, not constantly. | Brian 3:11 PM, 3:19 PM | Decided |
 | A4 | 11-08 | Any action that makes a noise gets a sound effect (fur slurped into a vent, the robots' bleep-bloops, a goat bleat). | Brian 3:19 PM | Decided |

@@ -188,7 +188,7 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 
 2026-11-11. Day 1 through bedtime, not merged. The song, a party with a dance game, karaoke, an octopus chase, a photo countdown, the run home and the hide, "You have me", the TV story, and the Moon Pie bedtime with no parents. After bedtime the existing Day 2 still plays. New words are pending. Docs match main: yes. Do not merge.
 
-2026-11-11. Slice round 2, not merged. R66 is superseded by R67: guests at 1.8, Squatch at the normal hall scale, adults clearly taller. The stray heart and Mops's pink cone are off for this chapter. Dress-up shows each item and uses bigger targets. The party crowd is drawn in the thick-outline style (no spr_a_* files are in the repo). The camera tripod is off the snack table. The balloon string stays in the hall. Joe's track was not in the workspace, so the generated warm stand-in remains. Docs match main: yes. Do not merge.
+2026-11-11. Slice round 2, not merged. R66 is superseded by R67: guests at 1.8, Squatch at the normal hall scale, adults clearly taller. The stray heart and Mops's pink cone are off for this chapter. Dress-up shows each item and uses bigger targets. The party crowd is drawn in the thick-outline style (no spr_a_* files are in the repo). The camera tripod is off the snack table. The balloon string stays in the hall. Joe's track is now `music/main-theme-from-brian.mp3` on this slice (title, home, gift). Docs match main: yes. Do not merge.
 
 2026-11-11. Slice follow-up, not merged. Bedtime: Mops walks to (380, 460) and stays there, instead of walking toward x 470 and snapping. R65 is the smaller size at home and in the other rooms. The party drawing is R66. Docs match main: yes. Do not merge.
 

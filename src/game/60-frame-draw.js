@@ -1021,7 +1021,7 @@
       if (l === "official") {
         if (n.ch1Office) return { x: 220, y: 380 };
         // Party lines sit under the office monitor (the screen ends near y=160), on the Isfred nameplate.
-        if (n.ch1Party) return { x: 300, y: 330 };
+        if (n.ch1Party) return { x: 480, y: 500 };
         if (n.room === "hangar" && n.ch1D && n.ch1Ship && !n.ch1Night && n.scene !== "Q9") return { x: 560, y: 400 };
         return { x: 210, y: 215 };
       }

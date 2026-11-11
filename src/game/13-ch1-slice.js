@@ -124,9 +124,9 @@
           verb: "GO",
           cap: "party",
           who: "sq",
-          x: 460,
-          y: 640,
-          r: 400,
+          x: 480,
+          y: 500,
+          r: 520,
           f: ch1DressGo,
         }),
       ];
@@ -192,7 +192,11 @@
       if (n.ch1Dress && n.ch1Dress.on) return ch1DressPointer(kind, x, y);
       if (n.ch1Cut) return ch1BarPointer(kind, x, y);
     }
+    function ch1GoBox(x, y) {
+      return ch1DressMeter() >= 100 && x > 340 && x < 620 && y > 545 && y < 640;
+    }
     function ch1DressPointer(kind, x, y) {
+      if (kind === "down" && ch1GoBox(x, y)) return ch1DressGo();
       n.ch1DragX = x;
       n.ch1DragY = y;
       if (kind === "down") {

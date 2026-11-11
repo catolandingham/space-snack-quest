@@ -10,7 +10,7 @@ Marks: **PASS** holds. **FIX** changed in this round. **NEEDS-BRIAN** needs his 
 
 Round 2 counts, 48 rows: 25 PASS, 17 FIX, 5 NEEDS-BRIAN, and 1 row that is both (Mops's goodbye, until the real song). Day 1 adds 7 FIX rows (song, dance, karaoke, octopus chase, photo countdown, hide, homecoming). The waits are Joe's file, a dance sting, a party-start sting, a visible party clock, and a rolling vent ball.
 
-Joe's file: `warm-theme-joe.tar.gz` was named in the request and was not on this machine. The generated warm stand-in is still what plays. Mute and volume still work. Nothing starts until the first tap.
+Joe's file is now in this slice as `music/main-theme-from-brian.mp3`. The Day 1 picture audit is `docs/audit/DAY1-AUDIT.md`. Mute and volume still work. Nothing starts until the first tap.
 
 ## Audio (A1–A4)
 
@@ -18,7 +18,7 @@ There is no music file in the repo. Joe's warm theme is not here (`/workspace/ss
 
 | Decision | What exists | Mark |
 | --- | --- | --- |
-| A1 warm theme, Joe's track, heart moments and the title | The tar was not in the workspace. A short generated phrase still stands in on the title and when the balloon kid is happy. | NEEDS-BRIAN to resend the file |
+| A1 warm theme, Joe's track, heart moments and the title | `music/main-theme-from-brian.mp3` plays on the title, at home, for the gift, and when the balloon kid is happy. The generated warm phrase is retired. | FIX |
 | A2 sneak, journey, stings | Generated phrases: sneak on the night mailbox and while hidden at the party; journey while a room-walk is playing; spotted uses the existing alarm beep; caught uses the existing caught sting; a secret find uses the existing pickup chime. | FIX (stand-ins) |
 | A3 music in moments, not constant | The beds start and stop with those moments. Silence otherwise. | FIX |
 | A4 noisy actions | Goat bleat on Mops's lines. Grab, hide, pop, alarm, slip already existed. This round adds a slurp when the pink copy goes to the vent, and a two-note bleep on robot, UPS, and scanner lines. | FIX |
