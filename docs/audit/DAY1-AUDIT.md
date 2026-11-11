@@ -4,7 +4,7 @@
 
 ## Round 3, before and after
 
-The shots in `docs/audit-shots/day1/` are the after pictures. Words, timers, prices, and the approved tuning numbers are unchanged. No page errors while these frames were drawn.
+The shots in `docs/audit-shots/day1/` are the after pictures. The party hall is the locked hall (`docs/locked-rooms/hall-room-empty-v1.png`), not the old Employee of the Month room. Side-by-side room pictures are in `docs/audit-shots/rooms/`. Words, timers, prices, and the approved tuning numbers are unchanged. No page errors while these frames were drawn.
 
 | Fix | Before | After |
 | --- | --- | --- |

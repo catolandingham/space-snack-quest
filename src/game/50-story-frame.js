@@ -1017,7 +1017,6 @@
       for (let o of B.jans) o.on && l.push({ y: o.y, d: () => u5(o) });
       if (
         (W6(l),
-        n.ch1Party && l.push({ y: 8, d: drawCh1Party }),
         n.ch1BalloonRest && !n.ch1Party && (n.scene || "")[0] === "Q" && l.push({ y: 530, d: drawCh1BalloonLeft }),
         n.scene === "Q3" &&
           l.push({

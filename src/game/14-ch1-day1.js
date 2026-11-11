@@ -80,10 +80,10 @@
     function ch1ExtraPartySpots() {
       if (!n.ch1Disguise || n.ch1PartyOver || n.ch1Mini) return [];
       return [
-        spot({ id: "dance", verb: "DANCE", cap: "circle", who: "sq", x: 560, y: 470, r: 80, f: ch1DanceStart }),
-        spot({ id: "singmic", verb: "SING", cap: "mic", who: "sq", x: 480, y: 280, r: 70, f: ch1KaraokeStart }),
-        spot({ id: "conga", verb: "JOIN", cap: "conga", who: "sq", x: 360, y: 560, r: 70, f: ch1Conga }),
-        spot({ id: "chicken", verb: "FLAP", cap: "chicken dance", who: "sq", x: 700, y: 430, r: 70, f: ch1Chicken }),
+        spot({ id: "dance", verb: "DANCE", cap: "circle", who: "sq", x: 500, y: 530, r: 80, f: ch1DanceStart }),
+        spot({ id: "singmic", verb: "SING", cap: "mic", who: "sq", x: 400, y: 320, r: 70, f: ch1KaraokeStart }),
+        spot({ id: "conga", verb: "JOIN", cap: "conga", who: "sq", x: 320, y: 560, r: 70, f: ch1Conga }),
+        spot({ id: "chicken", verb: "FLAP", cap: "chicken dance", who: "sq", x: 600, y: 540, r: 70, f: ch1Chicken }),
       ];
     }
     function ch1DanceStart() {
@@ -187,9 +187,10 @@
         n.ch1Cheese = (n.ch1Cheese || 0) + step;
         n.ch1Flash > 0 && (n.ch1Flash -= step);
         if (n.ch1Cheese >= 6) ((n.ch1Cheese = 0), (n.ch1Flash = 0.2), !n.ch1Photo && ch1InFrame(n.sq.x, n.sq.y) && (n.ch1InShot = !0));
-        !n.ch1OctChase &&
+        !n.ch1Cut &&
+          !n.ch1OctChase &&
           n.ch1Flyer &&
-          Math.hypot(n.sq.x - 860, n.sq.y - 555) < 150 &&
+          Math.hypot(n.sq.x - 760, n.sq.y - 555) < 150 &&
           ch1StartChase();
         if (n.ch1OctChase && n.ch1Oct && !n.ch1PartyOver) {
           let o = n.ch1Oct;
@@ -207,13 +208,13 @@
       }
     }
     function drawCh1Fest() {
-      (m(390, 500, 70, 28, 6),
+      (m(500, 500, 70, 28, 6),
         r("#fffdf8", 3),
-        F(425, 492, 16, "#ff8a3d"),
-        F(410, 496, 8, "#e5533d"),
-        F(440, 498, 7, "#3478f6"),
-        L(560, 500, 54),
-        r("rgba(255,207,51,.35)", 3));
+        F(535, 492, 16, "#ff8a3d"),
+        F(520, 496, 8, "#e5533d"),
+        F(550, 498, 7, "#3478f6"),
+        L(500, 540, 40),
+        r("rgba(255,207,51,.28)", 3));
       let left = 6 - (n.ch1Cheese || 0);
       left < 3 &&
         left > 0 &&

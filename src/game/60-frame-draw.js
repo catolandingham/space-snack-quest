@@ -601,6 +601,11 @@
           l.y < 526 && l.x > 70 && l.x < 340 && H2()));
     }
     function P2() {
+      if ((n.scene || "")[0] === "Q") {
+        drawLockedRoom(n.wardrobe === "open" ? "home-open" : "home-closed");
+        n.wardrobe === "open" && n.costumeOn && ((e.fillStyle = "#f4efe6"), e.fillRect(70, 150, 150, 160));
+        return;
+      }
       if (
         ((e.fillStyle = "#dfe4ea"),
         e.fillRect(0, 0, c, b),
@@ -1021,16 +1026,16 @@
       let s = G6(l);
       if (s) return s;
       if (l === "official") {
-        if (n.ch1Office) return { x: 220, y: 380 };
+        if (n.ch1Office) return { x: 480, y: 490 };
         // Party lines sit under the office monitor (the screen ends near y=160), on the Isfred nameplate.
-        if (n.ch1Party) return { x: 480, y: 500 };
+        if (n.ch1Party) return { x: 700, y: 460 };
         if (n.room === "hangar" && n.ch1D && n.ch1Ship && !n.ch1Night && n.scene !== "Q9") return { x: 560, y: 400 };
         return { x: 210, y: 215 };
       }
-      if ((l === "robot" || l === "bot") && n.ch1Office) return { x: 360, y: 400 };
-      if (l === "scanner") return n.room === "hangar" && n.ch1Ship ? { x: 480, y: 210 } : { x: Ha.x, y: 170 };
+      if ((l === "robot" || l === "bot") && n.ch1Office) return { x: 640, y: 490 };
+      if (l === "scanner") return n.room === "hangar" && n.ch1Ship ? { x: 465, y: 340 } : { x: Ha.x, y: 170 };
       if (l === "ups" && n.ch1Crew === "tease") return { x: 480, y: 380 };
-      if (l === "ups" && n.room === "hangar" && n.ch1D) return { x: 830, y: 460 };
+      if (l === "ups" && n.room === "hangar" && n.ch1D) return { x: 878, y: 430 };
       if (l === "kid" && n.ch1Party) return { x: CH1_KID.x, y: CH1_KID.y - 90 };
       if (l === "tourist" && (n.ch1Party || n.ch1Cut)) return { x: 860, y: 430 };
       if (l === "tourist" && n.room === "hangar" && n.scene === "Q2") return { x: 700, y: 446 };
@@ -2052,8 +2057,12 @@
         ? (P2(), X2(), g5(), z2())
         : n.room === "deck"
           ? (jp(), z2())
-          : n.room === "hall"
-            ? s5()
+            : n.room === "hall"
+            ? n.ch1Party
+              ? drawCh1PartyRoom()
+              : n.ch1Office
+                ? drawCh1HallwayRoom()
+                : s5()
             : n.room === "window"
               ? o5()
               : n.room === "duct"
@@ -2085,6 +2094,7 @@
                                     : x5());
     }
     function E5() {
+      if (n.roomOnly) return drawLockedRoom(n.roomOnly);
       ((qq = 0), (mq = []), (ringsDrawn = []), (conesDrawn = []));
       let l = n.cur;
       if (l && l.k === "card") {

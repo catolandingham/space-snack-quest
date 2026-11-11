@@ -49,6 +49,19 @@ export async function startGame({ port, name }) {
     try {
       pathname = new URL(req.url || "/", "http://127.0.0.1").pathname;
     } catch {}
+    if (pathname.startsWith("/docs/locked-rooms/")) {
+      const rel = decodeURIComponent(pathname.slice(1));
+      const file = join(root, rel);
+      if (!file.startsWith(join(root, "docs/locked-rooms")) || !existsSync(file)) {
+        res.writeHead(404);
+        res.end();
+        return;
+      }
+      const type = file.endsWith(".png") ? "image/png" : file.endsWith(".py") ? "text/x-python" : "application/octet-stream";
+      res.writeHead(200, { "content-type": type });
+      res.end(readFileSync(file));
+      return;
+    }
     if (pathname.startsWith("/music/")) {
       const rel = decodeURIComponent(pathname.slice(1));
       const file = join(root, rel);

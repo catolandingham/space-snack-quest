@@ -327,6 +327,13 @@
         placedSpots: () => placedSpots(),
         offerNow: () => pick(spotsNow()),
         drawFrame: () => Ap(),
+        paintLocked: (id) => {
+          e.setTransform(1, 0, 0, 1, 0, 0);
+          e.clearRect(0, 0, c, b);
+          drawLockedRoom(id);
+        },
+        lockedReady: Promise.all(lockedWait),
+        lockedIds: () => Object.keys(LOCKED_ROOMS),
         bubbleAt: (who) => v5(who),
         rings: () => ringsDrawn.slice(),
         inSpot: (l) => inSpot(l),

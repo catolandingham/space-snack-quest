@@ -4,11 +4,11 @@
     // walking still use each robot's existing sight.
     const BALL_NOTICE_RADIUS = 70,
       BALL_NOTICE_SECONDS = 2,
-      CH1_BIN = { x: 210, y: 540 },
-      CH1_MAIL = { x: 800, y: 540 },
-      CH1_VENT = { x: 860, y: 480 },
+      CH1_BIN = { x: 212, y: 370 },
+      CH1_MAIL = { x: 878, y: 450 },
+      CH1_VENT = { x: 165, y: 540 },
       CH1_ROBOT = { x: 480, y: 400 },
-      CH1_PLANT = { x: 170, y: 500 };
+      CH1_PLANT = { x: 125, y: 400 };
     const CH1Q_CHIPS = {
       Q1: "Squatch: go with Mops to the ship",
       Q2: "Squatch: hide and watch",
@@ -33,19 +33,19 @@
     // The corner guest aims the camera left, into the room. The shot is the floor in front of the lens.
     // The SNAP circle covers that floor, so Squatch can walk into the picture and still take it.
     // The camera stands in the back-right corner, clear of the snack table. The shot is the floor in front of the lens.
-    const CH1_CAM = { x: 860, y: 340, r: 110 };
-    const CH1_FRAME = { x0: 790, x1: 850, y0: 350, y1: 400 };
-    const CH1_KID = { x: 180, y: 540 };
+    const CH1_CAM = { x: 260, y: 400, r: 110 };
+    const CH1_FRAME = { x0: 210, x1: 290, y0: 420, y1: 470 };
+    const CH1_KID = { x: 150, y: 520 };
     // Free-play moments. Add another object here for a new party beat.
     const CH1_PARTY_FREE = [
-      { id: "snack", verb: "GRAB", cap: "snack", x: 760, y: 530, who: "sq", text: "One snack. That's the rule." },
+      { id: "snack", verb: "GRAB", cap: "snack", x: 860, y: 430, who: "sq", text: "One snack. That's the rule." },
       { id: "guest", verb: "TALK", cap: "guest", x: 480, y: 540, who: "tourist", text: "Love the shirt." },
-      { id: "line", verb: "LISTEN", cap: "snack line", x: 700, y: 500, who: "tourist", text: "I swear we had more Moon Pies... is that what they stole at lunch?" },
+      { id: "line", verb: "LISTEN", cap: "snack line", x: 800, y: 500, who: "tourist", text: "I swear we had more Moon Pies... is that what they stole at lunch?" },
     ];
     const CH1_PARTY_SNAG = [
-      { id: "plant", verb: "SNAG", cap: "plant", x: 220, y: 530, why: "plant" },
-      { id: "vent", verb: "SUCK", cap: "vent", x: 150, y: 420, why: "vent" },
-      { id: "guard", verb: "STAND", cap: "guard", x: 860, y: 540, why: "guard" },
+      { id: "plant", verb: "SNAG", cap: "plant", x: 400, y: 540, why: "plant" },
+      { id: "vent", verb: "SUCK", cap: "vent", x: 188, y: 500, why: "vent" },
+      { id: "guard", verb: "STAND", cap: "guard", x: 700, y: 560, why: "guard" },
     ];
     function ch1QChip() {
       if (n.ch1Dress && n.ch1Dress.on) return "";
@@ -54,6 +54,35 @@
     // R67. Adults stay clearly taller than Squatch (C10). He uses the normal hall scale (he), not a bigger party scale.
     // Guests are 1.8, a bit taller than the old 1.6, so he is about 60% of a guest. The kid stays smaller.
     const CH1_GUEST = 1.8;
+    const LOCKED_ROOMS = {
+      hall: "docs/locked-rooms/hall-room-empty-v1.png",
+      hallway: "docs/locked-rooms/hallway-room-empty-v6.png",
+      "delivery-day": "docs/locked-rooms/delivery-room-empty-day-v2.png",
+      "delivery-night": "docs/locked-rooms/delivery-room-empty-night-v2.png",
+      "delivery-noship": "docs/locked-rooms/delivery-room-empty-day-noship-v2.png",
+      "delivery-pickup": "docs/locked-rooms/delivery-room-empty-pickup-v3.png",
+      "home-closed": "docs/locked-rooms/home-room-empty-closed-v3.png",
+      "home-open": "docs/locked-rooms/home-room-empty-open-v4.png",
+      office: "docs/locked-rooms/office-room-empty-v1.png",
+    };
+    let lockedImg = {},
+      lockedWait = [];
+    function loadLockedRooms() {
+      for (let id in LOCKED_ROOMS) {
+        let img = new Image();
+        lockedWait.push(new Promise((res) => ((img.onload = () => res()), (img.onerror = () => res()))));
+        img.src = LOCKED_ROOMS[id];
+        lockedImg[id] = img;
+      }
+    }
+    loadLockedRooms();
+    function drawLockedRoom(id) {
+      let img = lockedImg[id];
+      img && img.complete && img.naturalWidth ? e.drawImage(img, 0, 0, c, b) : ((e.fillStyle = "#e2e5ed"), e.fillRect(0, 0, c, b));
+    }
+    function ch1DeliveryArt() {
+      return n.ch1Night ? "delivery-night" : n.ch1Crew === "pickup" ? "delivery-pickup" : n.ch1Ship ? "delivery-day" : "delivery-noship";
+    }
     // Standing sight is the hall robot's existing cone and feet circle. These are not the ball constants.
     const STAND_CONE_LEN = 210,
       STAND_CONE_HALF = 0.42,
@@ -435,7 +464,7 @@
         (n.ch1BalloonPops = 0),
         (n.ch1Kid = ""),
         (n.sqPose = "hidden"),
-        (n.sq.x = 220),
+        (n.sq.x = 400),
         (n.sq.y = 530),
         (n.moPose = "hidden"),
         (n.mo.x = -400),
@@ -563,8 +592,8 @@
             verb: "OPEN",
             cap: "snack bar",
             who: "sq",
-            x: 760,
-            y: 530,
+            x: 860,
+            y: 430,
             r: 100,
             f: ch1BarOpen,
           }),
@@ -603,7 +632,7 @@
             verb: "HUG",
             cap: "octopus",
             who: "sq",
-            x: 820,
+            x: 760,
             y: 540,
             r: 80,
             f: ch1Hug,
@@ -620,7 +649,7 @@
             y: 530,
             r: 90,
             f: () => {
-              ((n.sqPose = "hidden"), (n.sq.x = 220), (n.sq.y = 530));
+              ((n.sqPose = "hidden"), (n.sq.x = 400), (n.sq.y = 530));
             },
           }),
         );
@@ -1088,46 +1117,61 @@
     function drawPinkSlip(px, py) {
       (m(px, py, 18, 14, 2), r("#ff8fb8", 2), C([px + 3, py + 4, px + 15, py + 4], "#9aa3b2", 1));
     }
+    function drawCh1PartyRoom() {
+      drawLockedRoom("hall");
+      if (n.roomOnly) return;
+      drawCh1Party();
+      n.sqPose !== "hidden" &&
+        n.sqPose !== "ball" &&
+        Re(n.sq.x, n.sq.y, he, {
+          f: n.sq.f || 1,
+          walk: n.sq.moving ? n.sq.walk : 0,
+          leap: (n.ch1JumpT || 0) > 0,
+          hat: !!n.ch1Disguise,
+          hatAskew: !!n.ch1HatAskew,
+          shades: !!n.ch1Disguise,
+          hawaiian: !!n.ch1Disguise,
+          paper: !!n.ch1Flyer,
+        });
+      n.moPose !== "hidden" && n.mo.x > -50 && n.mo.x < 1100 && Fe(n.mo.x, n.mo.y, he * 1.15, { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 });
+    }
+    function drawCh1HallwayRoom() {
+      drawLockedRoom("hallway");
+      if (n.roomOnly) return;
+      (Qt(480, 530, "#c9b6f2", 2.2, 0.3), dq(640, 530, !1), drawCh1BalloonLeft());
+    }
     function drawCh1Party() {
-      (m(250, 36, 460, 44, 8),
-        r("#3478f6", 3),
-        g("ROBOTICS DELEGATION!", 480, 64, 18, "#ffffff", "center", 900),
-        Xp(220, 530),
-        n.sqPose === "hidden" && ga(220, 484),
-        m(130, 300, 50, 36, 3),
-        r("#8a93a3", 3));
-      for (let i = 0; i < 4; i++) C([138, 308 + i * 8, 172, 308 + i * 8], y, 2);
       let look = (n.ch1Look || 0) > 0,
         face = look ? 1 : 0,
         glance = (x, y) => look && (F(x + 10, y - 78, 3, "#fffdf8"), F(x - 6, y - 78, 3, "#fffdf8"));
-      (m(700, 500, 120, 28, 4),
-        r("#cdbb98", 3),
+      (m(280, 300, 220, 28, 6),
+        r("#3478f6", 3),
+        g("ROBOTICS DELEGATION!", 390, 314, 14, "#ffffff", "center", 900),
+        n.sqPose === "hidden" && ga(400, 500),
         !(n.ch1PartyDid && n.ch1PartyDid.snack) &&
           [
-            [734, 470, "pie"],
-            [762, 456, "cup"],
-            [790, 470, "cake"],
-            [748, 488, "apple"],
-            [776, 488, "pie"],
-          ].forEach((bit) => drawBarSnack(bit[2], bit[0], bit[1], 0.55)),
+            [848, 340, "pie"],
+            [848, 390, "cup"],
+            [848, 440, "cake"],
+          ].forEach((bit) => drawBarSnack(bit[2], bit[0], bit[1], 0.45)),
         [
-          [240, 400, "antenna"],
-          [400, 360, "croc"],
-          [560, 340, "horns"],
-          [730, 390, "hat"],
-          [300, 560, "hair"],
-          [420, 575, "spots"],
-          [640, 470, "blob"],
+          [220, 460, "antenna"],
+          [380, 440, "croc"],
+          [540, 450, "horns"],
+          [700, 460, "hat"],
+          [260, 580, "hair"],
+          [460, 580, "spots"],
+          [640, 560, "blob"],
         ].forEach((guest) => {
           (drawCh1Alien(guest[0], guest[1], guest[2], CH1_GUEST, face || 1), glance(guest[0], guest[1]));
         }),
-        drawOctopus((n.ch1Oct && n.ch1Oct.x) || 860, (n.ch1Oct && n.ch1Oct.y) || 555, face || -1),
+        Qt(840, 430, "#c9842a", 1.7, -1),
+        drawOctopus((n.ch1Oct && n.ch1Oct.x) || 760, (n.ch1Oct && n.ch1Oct.y) || 555, face || -1),
         drawCh1Fest(),
-        drawCh1Alien(900, 400, "cape", CH1_GUEST, face || -1),
-        drawCh1Tripod(820, 350),
-        !n.ch1Flyer && (m(500, 360, 16, 12, 1), r("#fffdf8", 1)),
+        drawCh1Alien(300, 400, "cape", CH1_GUEST, face || -1),
+        drawCh1Tripod(250, 360),
+        !n.ch1Flyer && (m(500, 500, 16, 12, 1), r("#fffdf8", 1)),
         (n.ch1Spill || 0) > 0 && drawCh1Chain(1 - n.ch1Spill),
-        drawCh1SliceParty(),
         drawBalloonKid());
     }
     function drawCh1Chain(p) {
@@ -1310,62 +1354,14 @@
     }
     function drawCh1Delivery() {
       let night = !!n.ch1Night;
-      ((e.fillStyle = night ? "#8d909c" : "#f3efe6"),
-        e.fillRect(0, 0, c, b),
-        m(28, 18, 904, 604, 18),
-        r(night ? "#d5d3cc" : "#f7f4ee", 7));
-      let wall = night ? "#c8c6be" : "#f4f1ea",
-        floor = night ? "#b7b3a8" : "#ebe4d6";
-      ((e.fillStyle = wall),
-        e.fillRect(40, 28, 880, 248),
-        (e.fillStyle = floor),
-        e.fillRect(40, 276, 880, 330),
-        C([40, 276, 900, 276], "#c8c2b6", 4));
-      (m(80, 40, 620, 150, 16), r("#1b2450", 5));
-      for (let i = 0; i < 28; i++) F(100 + ((i * 97) % 580), 56 + ((i * 53) % 120), 1.4, "#ffffff");
-      n.ch1Ship &&
-        (m(160, 62, 460, 100, 40),
-        r("#d5dbe6", 4),
-        g("UPS", 390, 82, 16, y, "center", 900),
-        [230, 320, 410, 500].forEach((px) => (L(px, 122, 16), r("#8fd0f2", 3))),
-        e.beginPath(),
-        e.moveTo(400, 168),
-        e.lineTo(560, 168),
-        e.lineTo(620, 300),
-        e.lineTo(340, 300),
-        e.closePath(),
-        r("#b7c0cc", 4),
-        dq(480, 250, !1),
-        C([400, 250, 400, 340], "#9aa7b8", 6),
-        C([560, 250, 560, 340], "#9aa7b8", 6),
-        m(370, 236, 220, 24, 6),
-        r("#c5ced8", 4),
-        C([400, 258, 560, 258], "#8fd0f2", 3),
-        C([400, 272, 560, 272], "#8fd0f2", 2),
-        dq(480, 330, !1));
-      (m(52, 78, 36, 48, 4),
-        r("#e5533d", 3),
-        g("FUR", 70, 92, 9, "#ffffff", "center", 900),
-        g("PULL DOWN", 70, 108, 6, "#ffffff", "center", 900),
-        m(820, 70, 52, 36, 6),
-        r("#c4b49a", 3),
-        L(846, 88, 10),
-        r("#6b6256", 2));
-      for (let i = 0; i < 5; i++) C([848, 130 + i * 12, 888, 130 + i * 12], "#8a93a3", 4);
+      drawLockedRoom(ch1DeliveryArt());
       n.ch1Prop === "delicious" && (drawPinkSlip(760, 160), C([730, 250, 860, 170], "#9aa3b2", 2));
       n.ch1Prop === "gumble" && drawPinkSlip(n.mo.x - 8, n.mo.y - 78);
       n.ch1Prop === "bin" && drawPinkSlip(250, 470);
       n.ch1Prop === "teeth" && drawPinkSlip(n.mo.x - 6, n.mo.y - 72);
       n.ch1Prop === "paw" && drawPinkSlip(n.sq.x + 8, n.sq.y - 48);
-      (Xp(CH1_PLANT.x, CH1_PLANT.y),
-        n.sqPose === "hidden" && !n.ch1InCrate && ga(CH1_PLANT.x, CH1_PLANT.y - 46),
-        drawGameBin(250, 520));
-      for (let i = 0; i < 3; i++) {
-        let ang = n.T * 2 + i;
-        C([130 + Math.cos(ang) * 16, 560, 130, 560], "rgba(120,170,220,.8)", 2);
-      }
-      (m(150, 548, 36, 14, 3), r("#8a93a3", 3));
-      (C([700, 340, 700, 520], y, 5), C([700, 520, 760, 520], y, 5), drawMailRobot(830, 540));
+      n.sqPose === "hidden" && !n.ch1InCrate && ga(CH1_PLANT.x, CH1_PLANT.y - 46);
+      drawMailRobot(878, 470);
       n.ch1Crew === "pickup" ? drawPickupLoad() : n.ch1Mail === "full" && (Xn(720, 400, 70, 48, ""), Xn(800, 420, 56, 40, ""));
       n.scene === "Q2" && Qt(700, 530, "#e8a87c", 1.6, -1),
       n.ch1Crew === "day" &&
