@@ -515,6 +515,18 @@ A Grok playtest of live `main` at `bc0759f`. This is not Brian's yes. The live s
 - 2026-11-11: Esc skipped only a flashback. It now also skips a run of story cards (the opening, "Everybody has somebody.", "Six days later", "Later that evening...") and stops at the next spoken line. The SKIP label and progress dots are not drawn. Proposed words are rows 82–84 in `docs/CH1-LINES-FOR-BRIAN.md`.
   **Needs Brian's yes** for those words. The key itself is in the unmerged branch. Recommendation: leave the label off until he picks the word.
 
+- 2026-11-11 (playtest 6): Esc did not skip the Guardians card until the tester clicked the picture. The keys were already heard by the page, but the picture did not have the keyboard until that click. The picture now takes the keyboard when the page loads, and Esc is heard even if the click landed on a button.
+  **In the unmerged fix branch.** No new words. The cone numbers are still unchanged.
+
+- 2026-11-11 (playtest 6): With the cone drawn, the night mailbox was still 0 for 5 (4 LOCKUP cards, 1 reset). Top, bottom, and straight across all failed. The numbers were not changed. What the code is doing: the robot stands still at (480, 400) and looks straight down. He does not patrol. Standing in the yellow is an instant catch. The cone is 210 long and 0.42 half-angle, plus a 70-pixel circle at his feet. That beam reaches the front edge of the floor, so it is a wall from the back of the room to the front. There is no standing path from the bin (210, 540) to the mailbox (800, 540). Narrowing the angle does not open one, because the middle of the beam still hits the front edge. Rolling into a ball does not help: the first step stands him up. There is no hide button on this night. The plant at (170, 500) is already outside the beam, so hiding there would not reach the mailbox. Walk speed in this room is 190 pixels a second across and 152 down. Three tunings, none of them in the game yet:
+
+  1. Recommended. Shorten the cone from 210 to 150. Keep the half-angle at 0.42 and the feet circle at 70. The yellow then stops above a clear strip from y=544 to y=590, the front edge. The bin and the mailbox stay outside it. A player who walks along the front, under the yellow, makes it every time. They do not have to wait on the robot, because he never turns. The top route and a straight line across still fail.
+
+  2. Add a 1.0 second standing catch delay. Leave 210, 0.42, and 70. The narrowest crossing is 64 pixels (about 0.34 seconds) and the widest is about 138 pixels (about 0.73 seconds), so one second is enough to walk through without stopping. Stopping in the yellow still catches him. The ball rule stays 2 seconds inside 70 pixels. Reliable if he does not pause in the beam. Watching the robot still does nothing, because he never looks away.
+
+  3. Keep 210, 0.42, and 70, and make him turn. Face down for 2.0 seconds (the floor is blocked), then face the back wall for 4.0 seconds (the floor is clear except the 70-pixel circle at his feet). The turn takes 0.3 seconds and does not catch. Bin to mailbox is 590 pixels, about 3.1 seconds at 190 pixels a second, so the 4.0 second look-away is enough for one dash if he starts within about 0.8 seconds. This is the only option where watching the robot is the skill, and a player who waits for the cone to point up can reliably make it.
+  **Needs Brian's yes** before any of those numbers change. Recommendation: option 1.
+
 - 2026-11-11: Walking is locked while a line, card, or panel is up. Space, Enter, NEXT, or a tap advances that line. That is the one-line-at-a-time rule.
   **Decided** already (one bubble at a time). Not changed.
 

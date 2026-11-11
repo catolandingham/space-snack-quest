@@ -2154,6 +2154,8 @@
       (qh(), l !== 1 && ((n.q = []), (n.cur = null), (n.stars = 0), (n.starOn = !0), l === 2 ? Ws() : l === 3 ? aq() : nq()));
     }
     let j2 = (l) => {
+        if (l.ssqKeyHeard) return;
+        l.ssqKeyHeard = 1;
         if (
           (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space", "Backspace", "Tab"].indexOf(l.code) >= 0 && l.preventDefault(),
           VV(),
@@ -2189,4 +2191,7 @@
         for (let l of Object.keys(qe)) qe[l] = !1;
         ((qt.active = !1), armReset(!1));
       };
-    (window.addEventListener("keydown", j2), window.addEventListener("keyup", _2), window.addEventListener("blur", F2));
+    (document.addEventListener("keydown", j2, !0),
+      window.addEventListener("keydown", j2),
+      window.addEventListener("keyup", _2),
+      window.addEventListener("blur", F2));

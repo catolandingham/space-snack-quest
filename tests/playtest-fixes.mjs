@@ -15,22 +15,28 @@ const top = () => page.evaluate(() => document.querySelector("canvas").getBoundi
 
 const before = await page.evaluate(() => {
   const n = window.__ss.op;
+  const canvas = document.querySelector("canvas");
   return {
     card: !!(n.cur && n.cur.k === "card" && n.cur.id !== "fb"),
     skipGate: window.__ss.cutActive(),
     text: document.body.innerText,
     key: window.__ss.ssqKey("vol"),
+    focused: document.activeElement === canvas,
   };
 });
 g.check("the opening is a story card", before.card, before);
+g.check("the picture has the keyboard without a click", before.focused, before);
 g.check("a story card does not turn on the flashback SKIP gate", before.skipGate === false, before);
 g.check("the page does not say SKIP", !/\bSKIP\b/.test(before.text), before.text.slice(0, 240));
 g.check("localhost keeps the live save prefix", before.key === "ssq-vol", before.key);
 const topWithNext = await top();
 
 await page.evaluate(() => {
-  window.dispatchEvent(new KeyboardEvent("keydown", { code: "Escape", bubbles: true }));
-  window.dispatchEvent(new KeyboardEvent("keyup", { code: "Escape", bubbles: true }));
+  const canvas = document.querySelector("canvas");
+  canvas.blur();
+  document.body.focus();
+  document.dispatchEvent(new KeyboardEvent("keydown", { code: "Escape", bubbles: true }));
+  document.dispatchEvent(new KeyboardEvent("keyup", { code: "Escape", bubbles: true }));
 });
 await sleep(250);
 const topAfter = await top();
