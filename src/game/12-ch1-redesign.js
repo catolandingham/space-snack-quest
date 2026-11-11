@@ -47,9 +47,22 @@
       { id: "vent", verb: "SUCK", cap: "vent", x: 188, y: 500, why: "vent" },
       { id: "guard", verb: "STAND", cap: "guard", x: 700, y: 560, why: "guard" },
     ];
+    function drawWalkNudge() {
+      let p = 0.5 + 0.5 * Math.sin(n.T * 4);
+      (e.save(), (e.globalAlpha = 0.35 + 0.45 * p), (e.strokeStyle = "#ffcf33"), (e.lineWidth = 6), (e.lineCap = "round"));
+      for (let i = 0; i < 3; i++) {
+        let x = 420 + i * 70;
+        (e.beginPath(), e.moveTo(x, 530), e.lineTo(x + 28, 530), e.lineTo(x + 16, 514), e.moveTo(x + 28, 530), e.lineTo(x + 16, 546), e.stroke());
+      }
+      e.restore();
+    }
+    function drawDoorNudge() {
+      let p = 0.5 + 0.5 * Math.sin(n.T * 5);
+      (e.save(), (e.globalAlpha = 0.35 + 0.5 * p), (e.fillStyle = "#ffcf33"), e.beginPath(), e.moveTo(860, 430), e.lineTo(900, 470), e.lineTo(860, 510), e.closePath(), e.fill(), e.restore());
+    }
     function ch1QChip() {
       if (n.ch1Dress && n.ch1Dress.on) return "";
-      if (n.ch1Day2 && n.ch1Chip) return n.ch1Chip;
+      if (n.ch1Chip) return n.ch1Chip;
       return CH1Q_CHIPS[n.scene] || "";
     }
     // One adult head height for every room with adults. The ruler is the party hall's right-hand
@@ -1436,6 +1449,16 @@
       n.ch1Prop === "bin" && drawPinkSlip(250, 470);
       n.ch1Prop === "teeth" && drawPinkSlip(n.mo.x - 6, n.mo.y - 72);
       n.ch1Prop === "paw" && drawPinkSlip(n.sq.x + 8, n.sq.y - 48);
+      n.ch1Step === "hide" &&
+        n.sqPose !== "hidden" &&
+        (e.save(),
+        (e.globalAlpha = 0.35 + 0.4 * Math.sin(n.T * 5)),
+        e.beginPath(),
+        e.arc(CH1_PLANT.x, CH1_PLANT.y, 54, 0, 7),
+        (e.strokeStyle = "#ffcf33"),
+        (e.lineWidth = 6),
+        e.stroke(),
+        e.restore());
       n.sqPose === "hidden" && !n.ch1InCrate && ga(CH1_PLANT.x, CH1_PLANT.y - 46);
       drawMailRobot(878, 470);
       n.ch1Crew === "pickup" ? drawPickupLoad() : n.ch1Mail === "full" && (Xn(720, 400, 70, 48, ""), Xn(800, 420, 56, 40, ""));

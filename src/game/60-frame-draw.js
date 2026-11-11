@@ -49,6 +49,8 @@
       n.room === "closet" &&
         n.ctrl &&
         !n.ventTaught &&
+        (n.scene || "")[0] !== "Q" &&
+        (n.scene || "")[0] !== "O" &&
         n.sqPose === "stand" &&
         Math.hypot(n.sq.x - Sf.x, n.sq.y - Sf.y) < 70 &&
         ((n.ventTaught = !0), (n.furVent = !0), fq(Sf.x, Sf.y), kV("sq", "Oops. Fur in the vent."));
@@ -1086,12 +1088,12 @@
     let mq = [];
     function bq(l, o) {
       if (((n.maxB = Math.max(n.maxB, ++qq)), l.style === "pa")) {
-        let CV = zt(l.text, 640, 30);
+        let CV = zt(l.text, 520, 30);
         ge(30);
         let NV = Math.max(...CV.map((Ll) => e.measureText(Ll).width)) + 120,
           ze = CV.length * 36 + 34,
-          Ue = c / 2 - NV / 2,
-          mn = 70;
+          Ue = Math.max(250, Math.min(c - NV - 16, c / 2 - NV / 2)),
+          mn = 196;
         (m(Ue, mn, NV, ze, 16), r("#fff3d6", 4));
         let jn = mn + ze / 2;
         (m(Ue + 18, jn - 9, 12, 18, 2),
@@ -2125,6 +2127,8 @@
       applyWalkDraw();
       try {
         drawRoom();
+        n.scene === "O1" && n.ctrl && n.moved < 110 && drawWalkNudge();
+        n.ch1PeekReady && n.room === "closet" && drawDoorNudge();
         n.ch1Cut && drawCh1Cut();
         n.ch1Dress && n.ch1Dress.on && drawCh1Dress();
         n.ch1Day2 && drawCh1Day2();

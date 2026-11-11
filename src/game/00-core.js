@@ -1279,12 +1279,13 @@
     }
     function R0(l) {
       let solids = ih();
-      n.room === "closet" &&
-        l === n.sq &&
+      (n.room === "closet" || n.room === "hall" || n.room === "passage" || n.room === "hangar" || n.room === "duct") &&
         n.moPose !== "hidden" &&
-        n.mo.x > 40 &&
-        n.mo.x < 980 &&
-        solids.push(nt(n.mo.x, n.mo.y, 42, 36, 40));
+        n.moPose !== "sleep" &&
+        l === n.sq &&
+        n.mo.x > 20 &&
+        n.mo.x < 1000 &&
+        solids.push(nt(n.mo.x, n.mo.y, 46, 46, 46));
       let inside = (x, y) => solids.some((o) => x > o.x0 && x < o.x1 && y > o.y0 && y < o.y1);
       if (!inside(l.x, l.y)) return;
       let best = null;
@@ -1316,6 +1317,19 @@
         d = o.y1 - l.y,
         A = Math.min(i, sv, q, d);
       A === i ? (l.x = o.x0) : A === sv ? (l.x = o.x1) : A === q ? (l.y = o.y0) : (l.y = o.y1);
+      if (
+        l === n.sq &&
+        (n.room === "closet" || n.room === "hall" || n.room === "passage" || n.room === "hangar" || n.room === "duct") &&
+        n.moPose !== "hidden" &&
+        n.moPose !== "sleep" &&
+        n.mo.x > 20 &&
+        n.mo.x < 1000
+      ) {
+        let dx = l.x - n.mo.x,
+          dy = l.y - n.mo.y,
+          dist = Math.hypot(dx, dy) || 0.01;
+        dist < 46 && ((l.x = n.mo.x + (dx / dist) * 46), (l.y = n.mo.y + (dy / dist) * 46));
+      }
     }
     function ee(l, o, i, s) {
       n.found.has(o) ||

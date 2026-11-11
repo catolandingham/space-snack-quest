@@ -13,7 +13,7 @@
     function ch1Day1() {
       J([
         N(() => {
-          ((n.ch1Song = !0), (n.ctrl = !0), (n.moPose = "polish"), (n.scene = "Q1"));
+          ((n.ch1Song = !0), (n.ctrl = !0), (n.moPose = "polish"), (n.scene = "Q1"), (n.ch1Chip = "Squatch: sing along with Mops"), chipNow());
         }),
       ]);
     }
@@ -21,9 +21,11 @@
       ((n.ch1Song = !1), (n.ctrl = !1), (n.moPose = "stand"), (n.act = null), co());
       J([
         v("mops", "See you after work."),
-        ch1Step("mo", 900, 510, 180),
+        ch1Step("mo", 900, 430, 160),
+        ch1Step("mo", 1040, 430, 160),
+        ch1Step("sq", 840, 480, 150),
         N(() => {
-          ((n.mo.x = 1200), (n.moPose = "hidden"), (n.ch1PeekReady = !0), (n.ctrl = !0), (n.scene = "Q1"));
+          ((n.moPose = "hidden"), (n.ch1PeekReady = !0), (n.ctrl = !0), (n.scene = "Q1"), (n.ch1Chip = "Squatch: peek out the door"), chipNow());
         }),
       ]);
     }
@@ -35,14 +37,14 @@
           cap: "doorway",
           who: "sq",
           x: 890,
-          y: 500,
-          r: 90,
+          y: 480,
+          r: 160,
           f: ch1PeekGo,
         }),
       ];
     }
     function ch1PeekGo() {
-      ((n.ch1PeekReady = !1), (n.ctrl = !1), (n.act = null));
+      ((n.ch1PeekReady = !1), (n.ch1Chip = ""), (n.ctrl = !1), (n.act = null));
       ch1Go("hall", { who: "sq", scene: "QA" }, ch1SneakHide);
     }
     function ch1SneakHide() {

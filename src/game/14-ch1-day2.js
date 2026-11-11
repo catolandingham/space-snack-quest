@@ -138,7 +138,14 @@
         ]));
     }
     function ch1HideBay() {
-      ((n.ctrl = !1), (n.sqPose = "hidden"), (n.sq.x = CH1_PLANT.x), (n.sq.y = CH1_PLANT.y), D.hide(), ch1BayLines());
+      if (n.ch1Hid) return;
+      ((n.ch1Hid = !0), (n.ctrl = !1));
+      J([
+        ch1Step("sq", CH1_PLANT.x, CH1_PLANT.y, 160),
+        N(() => {
+          ((n.sqPose = "hidden"), D.hide(), (n.ch1Chip = "Squatch: hide and watch"), chipNow(), ch1BayLines());
+        }),
+      ]);
     }
     function ch1BayLines() {
       ((n.ch1Ramp = 0), (n.ch1ShowBots = !0), ch1SetPaper("set"), (n.ctrl = !1));
@@ -589,8 +596,13 @@
       ]);
     }
     function ch1Jacket() {
-      ((n.costumeOn = !0), (n.ctrl = !1));
-      J([v("mops", "More bleat. Less roar."), N(ch1LastWalk)]);
+      ((n.ctrl = !1),
+        J([
+          ch1Step("sq", 200, 500, 150),
+          N(() => (n.costumeOn = !0)),
+          v("mops", "More bleat. Less roar."),
+          N(ch1LastWalk),
+        ]));
     }
     function ch1LastWalk() {
       ((n.ch1Last = !0), (n.ctrl = !1));
@@ -614,14 +626,17 @@
         v("scanner", "HAIR... PROBABLY. PROCEED."),
         cV((dt) => (ch1Trail(), (n.costumeOn = !0), mV(n.sq, 480, 240, 160, dt) && mV(n.mo, 540, 250, 160, dt))),
         N(() => {
-          ((n.room = "passage"),
+          ((Ka = 1),
+            (n.room = "passage"),
             (n.ch1D = !1),
             (n.ch1Office = !0),
             (n.scene = "Q9"),
+            (n.ch1Chip = ""),
             (n.sqPose = "hidden"),
             (n.moPose = "hidden"),
             (n.sq.x = -400),
-            (n.mo.x = -400));
+            (n.mo.x = -400),
+            chipNow());
         }),
         v("official", "Send in Mops for his Employee of the Month photo."),
         v("robot", "Mops isn't here."),
@@ -744,7 +759,12 @@
       }
       (z && z.zoom < 1 && (z.zoom = Math.min(1, z.zoom + (dt || 0) / 0.5)),
         z && z.zoom >= 1 && !n.cur && n.q.length === 0 && (n.ctrl = !0),
-        n.ch1Step === "sneak" && n.room === "hall" && n.ctrl && !z && ch1LunchSee(dt));
+        n.ch1Step === "sneak" && n.room === "hall" && n.ctrl && !z && ch1LunchSee(dt),
+        n.ch1Step === "hide" &&
+          n.ctrl &&
+          n.sqPose === "stand" &&
+          Math.hypot(n.sq.x - CH1_PLANT.x, n.sq.y - CH1_PLANT.y) < 78 &&
+          ch1HideBay());
     }
     function ch1Day2Spots() {
       if (!n.ch1Day2 || !n.ctrl || n.ch1PadOn) return [];
@@ -756,7 +776,11 @@
       if (s === "dropbox") return [ch1At("DROP", "box", n.sq.x || 350, n.sq.y || 520, 240, ch1DropBox)];
       if (s === "cal") return [ch1At("LOOK", "calendar", 140, 510, 110, ch1LookCal)];
       if (s === "lunch") return [ch1At("TAKE", "lunch", 500, 520, 100, ch1TakeLunch)];
-      if (s === "sneak") return [ch1At("SNEAK", "hallway", 860, 560, 110, ch1ToMops), ch1At("ROLL", "ball", 220, 580, 70, () => (n.sqPose = "ball"))];
+      if (s === "sneak")
+        return [
+          ch1At("SNEAK", "hallway", 700, 540, 520, ch1ToMops),
+          ch1At("ROLL", "ball", 140, 360, 55, () => (n.sqPose = "ball")),
+        ];
       if (s === "give") return [ch1At("GIVE", "lunch", 500, 510, 130, ch1GiveLunch)];
       if (s === "feed1") return [ch1At("FEED", "lunch", n.sq.x || 240, n.sq.y || 510, 280, ch1Feed1)];
       if (s === "feed2") return [ch1At("FEED", "bag", n.sq.x || 240, n.sq.y || 510, 280, ch1Feed2)];
@@ -780,7 +804,7 @@
       if (s === "pack2") return [ch1At("PACK", "bucket", n.sq.x || 420, n.sq.y || 520, 280, ch1PackBucket)];
       if (s === "jacket") return [ch1At("PUT ON", "jacket", 160, 510, 170, ch1Jacket)];
       if (s === "keepsake") {
-        let out = [ch1At("GO", "ship", 860, 510, 110, ch1ToScanner)];
+        let out = [ch1At("GO", "ship", 820, 510, 220, ch1ToScanner)];
         n.ch1Keepsake || out.push(ch1At("TAKE", "drawing", 480, 450, 80, ch1TakeDrawing));
         return out;
       }
@@ -816,6 +840,17 @@
       ((e.fillStyle = "#f4f1ea"), e.fillRect(40, 28, 880, 250), (e.fillStyle = "#ebe4d6"), e.fillRect(40, 278, 880, 328), C([40, 278, 900, 278], "#c8c2b6", 4));
       ((e.fillStyle = "#d5e4ea"), e.fillRect(0, 300, 36, 180), (e.fillStyle = "#d5e4ea"), e.fillRect(924, 300, 36, 180));
       g("EMPLOYEE OF THE MONTH", 480, 70, 16, "#1e2430", "center", 900);
+      n.ch1Step === "keepsake" &&
+        (e.save(),
+        (e.globalAlpha = 0.4 + 0.4 * Math.sin(n.T * 5)),
+        (e.fillStyle = "#ffcf33"),
+        e.beginPath(),
+        e.moveTo(760, 500),
+        e.lineTo(820, 540),
+        e.lineTo(760, 580),
+        e.closePath(),
+        e.fill(),
+        e.restore());
       for (let i = 0; i < 5; i++) {
         let x = 220 + i * 100,
           tilt = i === 3 ? -0.18 : 0;
@@ -908,6 +943,14 @@
       (drawPawArm(z.paw), drawZoomX(), (e.globalAlpha = 1));
     }
     function drawCh1Day2() {
+      if (n.ch1Step === "sneak" && n.room === "hall" && n.sqPose !== "hidden") {
+        (e.save(), (e.globalAlpha = 0.45 + 0.35 * Math.sin(n.T * 5)), (e.fillStyle = "#ffcf33"));
+        for (let i = 0; i < 3; i++) {
+          let x = 360 + i * 90;
+          (e.beginPath(), e.moveTo(x, 560), e.lineTo(x + 36, 590), e.lineTo(x, 620), e.closePath(), e.fill());
+        }
+        e.restore();
+      }
       if (n.ch1Step === "sneak" && n.room === "hall")
         for (let gue of CH1_LUNCH_WATCH) {
           (seenCone(gue.x, gue.y - 28, gue.face, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.55)", "rgba(160,100,10,.95)"),
