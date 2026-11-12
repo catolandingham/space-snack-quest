@@ -838,10 +838,10 @@
       }
       (e.closePath(), r("#ffcf33", 0.8), X(i * 2, -37.5, 5, 1.6), r("#6b4429", 0), e.restore());
     }
-    function dq(l, o, i = !1) {
+    function dq(l, o, i = !1, sc = 1.6) {
       (e.save(),
         e.translate(l, o),
-        e.scale(1.6, 1.6),
+        e.scale(sc, sc),
         X(0, 0, 18, 6),
         r("rgba(30,36,48,.15)", 0),
         m(-15, -30, 30, 28, 9),
@@ -1033,12 +1033,14 @@
       let s = G6(l);
       if (s) return s;
       if (l === "official") {
+        if (n.ch1Office && n.room === "office") return { x: 400, y: 500 };
         if (n.ch1Office) return { x: 480, y: 490 };
         // Party lines sit under the office monitor (the screen ends near y=160), on the Isfred nameplate.
         if (n.ch1Party) return { x: 700, y: 460 };
         if (n.room === "hangar" && n.ch1D && n.ch1Ship && !n.ch1Night && n.scene !== "Q9") return { x: 560, y: 400 };
         return { x: 210, y: 215 };
       }
+      if ((l === "robot" || l === "bot") && n.ch1Office && n.room === "office") return { x: 240, y: 470 };
       if ((l === "robot" || l === "bot") && n.ch1Office) return { x: 640, y: 490 };
       if (l === "scanner") return n.room === "hangar" && n.ch1Ship ? { x: 465, y: 340 } : { x: Ha.x, y: 170 };
       if (l === "ups" && n.ch1Crew === "tease") return { x: 480, y: 380 };

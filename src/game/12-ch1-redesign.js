@@ -95,24 +95,43 @@
       if (n.ch1Chip) return n.ch1Chip;
       return CH1Q_CHIPS[n.scene] || "";
     }
-    // One adult head height for every room with adults. The ruler is the party hall's right-hand
-    // door in hall-room-empty-v1.png (the opening from y 353 through y 453, 101px on the 830-tall
-    // picture), stretched onto the 640-tall canvas. Heads land at 85% of that door, above the snack
-    // counter. Squatch's head is 80% of that. Home still uses wl. No per-room override.
-    // Alien head top is the circle at local y -70 with radius 14. Qt's head top is local -50.
-    // Squatch's head top is 45 local units (Re).
-    const ADULT_PX = 101 * (640 / 830) * 0.85,
+    // Adult head height is 85% of the door in the room he is standing in.
+    // Hall and loading-bay openings measure 101px on the 830-tall picture (77.9px on the canvas).
+    // The office door and the same door in the hallway are a 160px slab (123.4px on the canvas).
+    // Home's right-wall opening is the 129px cut. A room with no door uses the hall.
+    // Alien heads are that height / 84. Qt heads are that height / 50. Squatch is 80% of the adult, / 45.
+    const CANVAS_DOOR_PX = {
+        hall: 101 * (640 / 830),
+        hallway: 160 * (640 / 830),
+        office: 160 * (640 / 830),
+        delivery: 101 * (640 / 830),
+        home: 129 * (640 / 830),
+      },
+      HALL_ADULT_PX = CANVAS_DOOR_PX.hall * 0.85;
+    function roomDoorId(room) {
+      return room === "passage" ? "hallway" : room === "hangar" ? "delivery" : room === "closet" ? "home" : room === "office" ? "office" : room === "hall" ? "hall" : "hall";
+    }
+    function adultPxFor(room) {
+      let id = CANVAS_DOOR_PX[room] ? room : roomDoorId(room);
+      return (CANVAS_DOOR_PX[id] || CANVAS_DOOR_PX.hall) * 0.85;
+    }
+    function alienScale(room) {
+      return adultPxFor(room) / 84;
+    }
+    function qtScale(room) {
+      return adultPxFor(room) / 50;
+    }
+    const ADULT_PX = HALL_ADULT_PX,
       ALIEN_ADULT = ADULT_PX / 84,
       QT_ADULT = ADULT_PX / 50,
       SQ_ADULT = (ADULT_PX * 0.8) / 45;
     function sqDrawScale() {
-      if (n.room === "closet") return wl;
-      if (n.room === "hall" || n.room === "office" || n.room === "passage" || n.room === "duct" || (n.room === "hangar" && n.ch1D)) return SQ_ADULT;
-      return he;
+      if (n.room === "closet" && (n.scene || "")[0] !== "Q") return wl;
+      return (adultPxFor(n.room) * 0.8) / 45;
     }
     function moDrawScale() {
-      if (n.room === "closet") return wl;
-      return sqDrawScale() === he ? he * 1.15 : SQ_ADULT * 1.15;
+      if (n.room === "closet" && (n.scene || "")[0] !== "Q") return wl;
+      return sqDrawScale() * 1.15;
     }
     // Back-wall door of office-room-empty-v2. The hallway's front door, seen from inside.
     // Feet stand just through that door, on the floor below the picture's floor line (source y 330).
@@ -1258,7 +1277,7 @@
     function drawCh1HallwayRoom() {
       drawLockedRoom("hallway");
       if (n.roomOnly) return;
-      (Qt(480, 530, "#c9b6f2", QT_ADULT, 0.3),
+      (Qt(480, 530, "#c9b6f2", qtScale("hallway"), 0.3),
         dq(640, 530, !1),
         drawCh1BalloonLeft(),
         n.sqPose !== "hidden" &&
@@ -1276,11 +1295,11 @@
         n.sq.x > -40 &&
         Re(n.sq.x, n.sq.y, sqDrawScale(), { f: n.sq.f || 1, walk: n.sq.moving ? n.sq.walk : 0, jacket: !!n.costumeOn });
       n.ch1Office &&
-        (drawCh1Alien(480, 540, "horns", ALIEN_ADULT, -1),
-        dq(640, 540, !1),
+        (drawCh1Alien(400, 575, "horns", alienScale("office"), -1),
+        Qt(240, 590, "#3478f6", qtScale("office"), -1),
         n.ch1Tape &&
           (g("REC", 190, 140, 11, "#e5533d", "center", 900),
-          Re(190, 210, SQ_ADULT * 0.35, { f: 1, jacket: !0, goatBeard: !0, horns: !0 })));
+          Re(190, 210, ((adultPxFor("office") * 0.8) / 45) * 0.35, { f: 1, jacket: !0, goatBeard: !0, horns: !0 })));
     }
     function drawCh1Party() {
       let look = (n.ch1Look || 0) > 0,
@@ -1514,14 +1533,14 @@
         e.restore());
       n.sqPose === "hidden" && !n.ch1InCrate && ga(n.ch1Step === "hide" || Math.hypot(n.sq.x - CH1_PLANT.x, n.sq.y - CH1_PLANT.y) < 90 ? CH1_PLANT.x : n.sq.x, (n.ch1Step === "hide" || Math.hypot(n.sq.x - CH1_PLANT.x, n.sq.y - CH1_PLANT.y) < 90 ? CH1_PLANT.y : n.sq.y) - 46);
       n.ch1InCrate && ga(830, 510);
-      n.scene === "Q2" && Qt(700, 530, "#e8a87c", QT_ADULT, -1),
+      n.scene === "Q2" && Qt(700, 530, "#e8a87c", qtScale("hangar"), -1),
       (n.ch1Crew === "day" || n.ch1Crew === "leave") &&
         [
           ["Dot", 250, 580],
           ["Bob", 330, 565],
           ["Lou", 410, 580],
         ].forEach((w) => u5({ x: w[1] - (n.ch1Crew === "leave" ? (n.ch1Leave || 0) * 520 : 0), y: w[2], name: w[0] }));
-      !night && n.ch1Ship && n.scene !== "Q9" && n.ch1BossX !== -1 && Qt(n.ch1BossX == null ? 560 : n.ch1BossX, 500, "#c9b6f2", QT_ADULT, 0.2);
+      !night && n.ch1Ship && n.scene !== "Q9" && n.ch1BossX !== -1 && Qt(n.ch1BossX == null ? 560 : n.ch1BossX, 500, "#c9b6f2", qtScale("hangar"), 0.2);
       n.ch1Crew === "tease" && [360, 480, 600].forEach((px) => dq(px, 460, !1));
       night &&
         (seenCone(CH1_ROBOT.x, CH1_ROBOT.y - 28, ch1NightNow().face, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.62)", "rgba(160,100,10,.95)"),

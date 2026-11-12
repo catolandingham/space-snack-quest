@@ -186,7 +186,9 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 
 ## Changelog
 
-2026-11-12. Party security and adult scale, not merged. K10: a guest runs to the wall alarm, guards search the party hall, sight calls the existing hall lockup, and the home search starts half a second after the guard reaches the door. No 9-second countdown. No new words. Adults are one height, 85% of the locked hall door, and Squatch is 80% of an adult. Office art is v2 (R84). Docs match main: yes. Do not merge.
+2026-11-12. Per-room door scaling, not merged. Brian t336u: an adult's head is 85% of the door in that room. Hall 77.9px door gives 66.2px. Office 123.4px door gives 104.9px. Squatch is 80% of the adult in the same room. A room with no door keeps the hall height. Docs match main: yes. Do not merge.
+
+2026-11-12. Party security and adult scale, not merged. K10: a guest runs to the wall alarm, guards search the party hall, sight calls the existing hall lockup, and the home search starts half a second after the guard reaches the door. No 9-second countdown. No new words. The single hall-door height is superseded the same day by per-room door scaling (Brian t336u). Office art is v2 (R84). Docs match main: yes. Do not merge.
 
 2026-11-11. Day 1 through bedtime, not merged. The song, a party with a dance game, karaoke, an octopus chase, a photo countdown, the run home and the hide, "You have me", the TV story, and the Moon Pie bedtime with no parents. After bedtime the existing Day 2 still plays. New words are pending. Docs match main: yes. Do not merge.
 
