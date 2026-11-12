@@ -43,7 +43,7 @@
           return;
         }
         if (p.state === "op") {
-          walkTap(l, o) || nf();
+          ch1WorldTap(l, o) || walkTap(l, o) || nf();
           return;
         }
         if (p.state === "title") {

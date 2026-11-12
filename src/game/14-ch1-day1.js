@@ -218,6 +218,9 @@
     function ch1Day1Tick(dt) {
       let step = dt || 0;
       ch1RaidTick(step);
+      if (n.ch1MopsLeave && n.ch1PeekReady && n.room === "closet" && n.moPose !== "hidden") {
+        mV(n.mo, 1100, 450, 160, step) && ((n.moPose = "hidden"), (n.mo.x = 1100), (n.ch1MopsLeave = 0));
+      } else if (n.ch1MopsLeave && !n.ch1PeekReady) n.ch1MopsLeave = 0;
       if (n.ch1Search && n.guard && n.room === "closet" && (n.ctrl || n.ch1Escort)) {
         let g = n.guard;
         g.t += step;
