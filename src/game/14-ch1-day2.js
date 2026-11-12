@@ -208,7 +208,7 @@
         ]));
     }
     function ch1HideFamily() {
-      ((n.ctrl = !1), (n.sqPose = "hidden"), (n.sq.x = 220), (n.sq.y = 530), D.hide());
+      ((n.ctrl = !1), (n.sqPose = "hidden"), (n.sq.x = 430), (n.sq.y = 530), D.hide());
       J([
         uV(0.35),
         v("tourist", "We ate at a pancake place on Mars."),
@@ -632,10 +632,10 @@
             (n.ch1Office = !0),
             (n.scene = "Q9"),
             (n.ch1Chip = ""),
-            (n.sqPose = "stand"),
+            (n.sqPose = "hidden"),
             (n.moPose = "hidden"),
-            (n.sq.x = CH1_OFFICE_DOOR.x),
-            (n.sq.y = CH1_OFFICE_DOOR.y),
+            (n.sq.x = -400),
+            (n.sq.y = -400),
             (n.mo.x = -400),
             chipNow());
         }),
@@ -693,6 +693,7 @@
       if (!n.ch1Day2 || !n.ctrl || n.ch1Zoom || n.ch1PadOn) return !1;
       if (n.ch1Step === "photos" && ch1HallDoorHit(x, y)) return (ch1LeavePhotos(), !0);
       if (n.ch1Step === "cal" && ch1CalHit(x, y)) return (ch1LookCal(), !0);
+      if (n.ch1Step === "family" && Math.hypot(x - 430, y - 530) < 80) return (ch1HideFamily(), !0);
       return !1;
     }
     function ch1ZoomHit(x, y) {
@@ -782,7 +783,12 @@
           n.ctrl &&
           n.sqPose === "stand" &&
           Math.hypot(n.sq.x - CH1_PLANT.x, n.sq.y - CH1_PLANT.y) < 78 &&
-          ch1HideBay());
+          ch1HideBay(),
+        n.ch1Step === "family" &&
+          n.ctrl &&
+          n.sqPose === "stand" &&
+          Math.hypot(n.sq.x - 430, n.sq.y - 530) < 78 &&
+          ch1HideFamily());
     }
     function ch1Day2Spots() {
       if (!n.ch1Day2 || !n.ctrl || n.ch1PadOn) return [];
@@ -807,7 +813,7 @@
       if (s === "hide") return [ch1At("HIDE", "plant", CH1_PLANT.x, CH1_PLANT.y, 130, ch1HideBay)];
       if (s === "photos")
         return [ch1At("GO", "hall", 480, 560, 130, ch1LeavePhotos), ch1At("LOOK", "photos", 480, 320, 110, ch1LookPhotos)];
-      if (s === "family") return [ch1At("HIDE", "plant", 220, 530, 120, ch1HideFamily)];
+      if (s === "family") return [ch1At("HIDE", "plant", 430, 530, 120, ch1HideFamily)];
       if (s === "gohome") return [ch1At("GO", "home", 480, 590, 120, ch1GoHome)];
       if (s === "grab") return [ch1At("GRAB", "copies", CH1_BIN.x, CH1_BIN.y, 110, ch1GrabCopies)];
       if (s === "mark") return [ch1At("MARK", "order", CH1_BIN.x, CH1_BIN.y, 170, ch1Mark)];
@@ -1138,9 +1144,9 @@
           (n.ch1Office = !0),
           (n.ch1Step = ""),
           (n.scene = "Q9"),
-          (n.sqPose = "stand"),
-          (n.sq.x = CH1_OFFICE_DOOR.x),
-          (n.sq.y = CH1_OFFICE_DOOR.y),
+          (n.sqPose = "hidden"),
+          (n.sq.x = -400),
+          (n.sq.y = -400),
           (n.moPose = "hidden"),
           (n.ch1Tape = b === 60),
           (n.scene = b === 60 ? "Q0" : "Q9"),

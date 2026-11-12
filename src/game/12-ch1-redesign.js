@@ -57,6 +57,35 @@
       }
       e.restore();
     }
+    function drawGoalMark(x, y) {
+      let p = 0.75;
+      (e.save(),
+        (e.globalAlpha = p),
+        (e.strokeStyle = "#ffcf33"),
+        (e.lineWidth = 6),
+        e.beginPath(),
+        e.arc(x, y, 54, 0, 7),
+        e.stroke(),
+        e.restore());
+    }
+    function ch1MarkGoal() {
+      if (n.ch1PadOn) return drawGoalMark(480, 250);
+      if (!n.ctrl || (n.ch1Zoom && n.ch1Zoom.zoom < 1)) return;
+      let spots =
+        n.ch1Day2 && ch1Day2Spots
+          ? ch1Day2Spots()
+          : n.ch1Song
+            ? ch1SongSpots()
+            : n.ch1PeekReady
+              ? ch1PeekSpots()
+              : n.ch1Search
+                ? ch1SearchSpots()
+                : n.scene === "QA" && n.ch1Party && !n.ch1PartyOver
+                  ? ch1PartySpots()
+                  : [];
+      let s = (spots || []).find((o) => o && o.verb && o.x);
+      s && drawGoalMark(s.x, s.y);
+    }
     function drawDoorNudge() {
       let p = 0.5 + 0.5 * Math.sin(n.T * 5);
       (e.save(), (e.globalAlpha = 0.35 + 0.5 * p), (e.fillStyle = "#ffcf33"), e.beginPath(), e.moveTo(860, 430), e.lineTo(900, 470), e.lineTo(860, 510), e.closePath(), e.fill(), e.restore());

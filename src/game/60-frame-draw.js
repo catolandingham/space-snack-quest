@@ -2135,6 +2135,7 @@
         n.ch1Dress && n.ch1Dress.on && drawCh1Dress();
         n.ch1Day2 && drawCh1Day2();
         n.ch1Zoom && drawCh1Zoom();
+        ch1MarkGoal();
       } finally {
         restoreWalkDraw();
       }
