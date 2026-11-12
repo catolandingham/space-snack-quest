@@ -287,8 +287,8 @@ const balloon = await page.evaluate(() => {
     n.sqPose = "stand";
     ss.hall.camX = 0;
   };
-  const drain = () => {
-    for (let i = 0; i < 40; i++) {
+  const drain = (steps = 40) => {
+    for (let i = 0; i < steps; i++) {
       if (n.cur && (n.cur.k === "bub" || n.cur.k === "card" || n.cur.k === "panel")) ss.opTap();
       ss.tick(0.2);
     }
@@ -310,7 +310,7 @@ const balloon = await page.evaluate(() => {
   spot("JUMP").f();
   const walksBefore = (n.ch1Walks || []).length;
   spot("KEEP").f();
-  drain();
+  drain(100);
   const kept = {
     yell: said().includes("Scary Wookiee!"),
     fur: said().includes("FUR! Security!"),
@@ -441,6 +441,11 @@ const play = await page.evaluate(() => {
     }
     if (n.scene === "O1" && n.ctrl && n.moved < 120) {
       n.moved = 200;
+      ss.tick(0.05);
+      still = 0;
+      continue;
+    }
+    if (n.ch1Raid && n.room === "hall") {
       ss.tick(0.05);
       still = 0;
       continue;

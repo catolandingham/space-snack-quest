@@ -276,6 +276,13 @@
         BALL_NOTICE_SECONDS,
         COOL_HAT_SECONDS,
         BALLOON_GRAB_SECONDS,
+        ADULT_PX,
+        ALIEN_ADULT,
+        QT_ADULT,
+        SQ_ADULT,
+        CH1_OFFICE_DOOR,
+        CH1_HOME_DOOR,
+        CH1_GUESTS,
         PHOTO_BONUS,
         SNACK_LOOK_SECONDS,
         CH1_CAM,
@@ -331,6 +338,9 @@
           e.setTransform(1, 0, 0, 1, 0, 0);
           e.clearRect(0, 0, c, b);
           drawLockedRoom(id);
+        },
+        settleRoom: () => {
+          ((Ka = 0), (Mf = n.room), (fa = null));
         },
         lockedReady: Promise.all(lockedWait),
         lockedIds: () => Object.keys(LOCKED_ROOMS),

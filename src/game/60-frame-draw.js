@@ -1055,11 +1055,11 @@
         if (n.under === "crack") return { x: 210, y: 470 };
         if (n.sqPose === "under") return { x: 205, y: 520 };
         if (n.sqPose === "sit" || n.sqPose === "sleep") return { x: 205, y: 300 };
-        let q = n.room === "closet" ? wl : he;
+        let q = sqDrawScale();
         return { x: n.sq.x, y: n.sq.y - 46 * q };
       }
       if (l === "mops") {
-        let q = n.room === "closet" ? wl : he * 1.15;
+        let q = moDrawScale();
         return { x: n.mo.x + 18 * q * n.mo.f, y: n.mo.y - 46 * q };
       }
       if (l === "tourist" && n.room === "deck") {
@@ -2053,6 +2053,7 @@
     }
     // The room the player is in, drawn with nothing over it (E5 adds rings, people, bubbles and the rest).
     function drawRoom() {
+      if (n.room === "office") return drawCh1OfficeRoom();
       (n.room === "closet"
         ? (P2(), X2(), g5(), z2())
         : n.room === "deck"

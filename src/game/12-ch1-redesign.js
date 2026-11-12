@@ -51,9 +51,37 @@
       if (n.ch1Dress && n.ch1Dress.on) return "";
       return CH1Q_CHIPS[n.scene] || "";
     }
-    // R67. Adults stay clearly taller than Squatch (C10). He uses the normal hall scale (he), not a bigger party scale.
-    // Guests are 1.8, a bit taller than the old 1.6, so he is about 60% of a guest. The kid stays smaller.
-    const CH1_GUEST = 1.8;
+    // One adult head height for every room with adults. The ruler is the party hall's right-hand
+    // door in hall-room-empty-v1.png (the opening from y 353 through y 453, 101px on the 830-tall
+    // picture), stretched onto the 640-tall canvas. Heads land at 85% of that door, above the snack
+    // counter. Squatch's head is 80% of that. Home still uses wl. No per-room override.
+    // Alien head top is the circle at local y -70 with radius 14. Qt's head top is local -50.
+    // Squatch's head top is 45 local units (Re).
+    const ADULT_PX = 101 * (640 / 830) * 0.85,
+      ALIEN_ADULT = ADULT_PX / 84,
+      QT_ADULT = ADULT_PX / 50,
+      SQ_ADULT = (ADULT_PX * 0.8) / 45;
+    function sqDrawScale() {
+      if (n.room === "closet") return wl;
+      if (n.room === "hall" || n.room === "office" || (n.room === "hangar" && n.ch1D)) return SQ_ADULT;
+      return he;
+    }
+    function moDrawScale() {
+      if (n.room === "closet") return wl;
+      return sqDrawScale() === he ? he * 1.15 : SQ_ADULT * 1.15;
+    }
+    // Back-wall door of office-room-empty-v2. The hallway's front door, seen from inside.
+    // Feet stand just through that door, on the floor below the picture's floor line (source y 330).
+    const CH1_OFFICE_DOOR = { x: 480, y: 286 };
+    const CH1_GUESTS = [
+      [250, 460, "antenna"],
+      [400, 440, "croc"],
+      [620, 450, "horns"],
+      [740, 470, "hat"],
+      [200, 610, "hair"],
+      [520, 610, "spots"],
+      [660, 600, "blob"],
+    ];
     const LOCKED_ROOMS = {
       hall: "docs/locked-rooms/hall-room-empty-v1.png",
       hallway: "docs/locked-rooms/hallway-room-empty-v6.png",
@@ -63,7 +91,7 @@
       "delivery-pickup": "docs/locked-rooms/delivery-room-empty-pickup-v3.png",
       "home-closed": "docs/locked-rooms/home-room-empty-closed-v3.png",
       "home-open": "docs/locked-rooms/home-room-empty-open-v4.png",
-      office: "docs/locked-rooms/office-room-empty-v1.png",
+      office: "docs/locked-rooms/office-room-empty-v2.png",
     };
     let lockedImg = {},
       lockedWait = [];
@@ -347,6 +375,7 @@
         (n.ch1OctChase = !1),
         (n.ch1SureEnd = !1),
         (n.guard = null),
+        (n.ch1Raid = null),
         (n.ch1Chain = !1),
         (n.ch1Flyer = !1),
         (n.ch1PartyT = 0),
@@ -739,9 +768,7 @@
         v("tourist", "FUR! Security!"),
         v("pa", "FUR! Security!", "pa"),
         { k: "panel", id: "ch1fur" },
-        N(() => {
-          ((n.ch1Party = !1), (n.ch1Fur = !1), ch1Go("closet", { who: "sq", scene: "Q3" }, ch1SearchStart));
-        }),
+        N(() => ch1RaidBegin()),
       );
       J(lines);
     }
@@ -1000,7 +1027,7 @@
       if (n.ch1Cut) return ch1CutSpots();
       if (n.ch1Dress && n.ch1Dress.on) return ch1DressSpots();
       if (n.ch1PeekReady && n.ctrl) return ch1PeekSpots();
-      if (n.scene === "QA") return n.ctrl && !n.ch1PartyOver ? ch1PartySpots() : [];
+      if (n.scene === "QA") return n.ch1Raid && n.room === "hall" ? ch1RaidSpots() : n.ctrl && !n.ch1PartyOver ? ch1PartySpots() : [];
       if (!n.ctrl || n.sqPose === "ball" || n.sqPose === "hidden") return [];
       let s = n.scene,
         out = [];
@@ -1123,7 +1150,7 @@
       drawCh1Party();
       n.sqPose !== "hidden" &&
         n.sqPose !== "ball" &&
-        Re(n.sq.x, n.sq.y, he, {
+        Re(n.sq.x, n.sq.y, sqDrawScale(), {
           f: n.sq.f || 1,
           walk: n.sq.moving ? n.sq.walk : 0,
           leap: (n.ch1JumpT || 0) > 0,
@@ -1133,17 +1160,34 @@
           hawaiian: !!n.ch1Disguise,
           paper: !!n.ch1Flyer,
         });
-      n.moPose !== "hidden" && n.mo.x > -50 && n.mo.x < 1100 && Fe(n.mo.x, n.mo.y, he * 1.15, { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 });
+      n.moPose !== "hidden" && n.mo.x > -50 && n.mo.x < 1100 && Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 });
     }
     function drawCh1HallwayRoom() {
       drawLockedRoom("hallway");
       if (n.roomOnly) return;
-      (Qt(480, 530, "#c9b6f2", 2.2, 0.3), dq(640, 530, !1), drawCh1BalloonLeft());
+      (Qt(480, 530, "#c9b6f2", QT_ADULT, 0.3),
+        dq(640, 530, !1),
+        drawCh1BalloonLeft(),
+        n.sqPose !== "hidden" &&
+          n.sqPose !== "ball" &&
+          n.sq.x > -40 &&
+          n.sq.x < 1000 &&
+          Re(n.sq.x, n.sq.y, sqDrawScale(), { f: n.sq.f || 1, walk: n.sq.moving ? n.sq.walk : 0 }));
+    }
+    // The desk, monitors, signs and door are the locked picture. Nothing here redraws them.
+    function drawCh1OfficeRoom() {
+      drawLockedRoom("office");
+      if (n.roomOnly) return;
+      n.sqPose !== "hidden" &&
+        n.sqPose !== "ball" &&
+        n.sq.x > -40 &&
+        Re(n.sq.x, n.sq.y, sqDrawScale(), { f: n.sq.f || 1, walk: n.sq.moving ? n.sq.walk : 0, jacket: !!n.costumeOn });
     }
     function drawCh1Party() {
       let look = (n.ch1Look || 0) > 0,
         face = look ? 1 : 0,
-        glance = (x, y) => look && (F(x + 10, y - 78, 3, "#fffdf8"), F(x - 6, y - 78, 3, "#fffdf8"));
+        eye = 72 * ALIEN_ADULT,
+        glance = (x, y) => look && (F(x + 8, y - eye, 2.2, "#fffdf8"), F(x - 5, y - eye, 2.2, "#fffdf8"));
       (m(280, 300, 220, 28, 6),
         r("#3478f6", 3),
         g("ROBOTICS DELEGATION!", 390, 314, 14, "#ffffff", "center", 900),
@@ -1154,21 +1198,20 @@
             [848, 390, "cup"],
             [848, 440, "cake"],
           ].forEach((bit) => drawBarSnack(bit[2], bit[0], bit[1], 0.45)),
-        [
-          [220, 460, "antenna"],
-          [380, 440, "croc"],
-          [540, 450, "horns"],
-          [700, 460, "hat"],
-          [260, 580, "hair"],
-          [460, 580, "spots"],
-          [640, 560, "blob"],
-        ].forEach((guest) => {
-          (drawCh1Alien(guest[0], guest[1], guest[2], CH1_GUEST, face || 1), glance(guest[0], guest[1]));
+        CH1_GUESTS.forEach((guest) => {
+          if (n.ch1Raid && n.ch1Raid.witness && guest[2] === "spots") return;
+          (drawCh1Alien(guest[0], guest[1], guest[2], ALIEN_ADULT, face || 1), glance(guest[0], guest[1]));
         }),
-        Qt(840, 430, "#c9842a", 1.7, -1),
+        n.ch1Raid && n.ch1Raid.witness && drawCh1Alien(n.ch1Raid.witness.x, n.ch1Raid.witness.y, "spots", ALIEN_ADULT, 1),
+        ((n.ch1Raid && n.ch1Raid.guards) || []).forEach((g) => {
+          g.face != null &&
+            seenCone(g.x, g.y - 28, g.face, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.62)", "rgba(160,100,10,.95)");
+          drawCh1Alien(g.x, g.y, "hat", ALIEN_ADULT, Math.cos(g.face || 0) < 0 ? -1 : 1);
+        }),
+        Qt(880, 500, "#c9842a", QT_ADULT, -1),
         drawOctopus((n.ch1Oct && n.ch1Oct.x) || 760, (n.ch1Oct && n.ch1Oct.y) || 555, face || -1),
         drawCh1Fest(),
-        drawCh1Alien(300, 400, "cape", CH1_GUEST, face || -1),
+        drawCh1Alien(340, 400, "cape", ALIEN_ADULT, face || -1),
         drawCh1Tripod(250, 360),
         !n.ch1Flyer && (m(500, 500, 16, 12, 1), r("#fffdf8", 1)),
         (n.ch1Spill || 0) > 0 && drawCh1Chain(1 - n.ch1Spill),
@@ -1363,14 +1406,14 @@
       n.sqPose === "hidden" && !n.ch1InCrate && ga(CH1_PLANT.x, CH1_PLANT.y - 46);
       drawMailRobot(878, 470);
       n.ch1Crew === "pickup" ? drawPickupLoad() : n.ch1Mail === "full" && (Xn(720, 400, 70, 48, ""), Xn(800, 420, 56, 40, ""));
-      n.scene === "Q2" && Qt(700, 530, "#e8a87c", 1.6, -1),
+      n.scene === "Q2" && Qt(700, 530, "#e8a87c", QT_ADULT, -1),
       n.ch1Crew === "day" &&
         [
           ["Dot", 250, 580],
           ["Bob", 330, 565],
           ["Lou", 410, 580],
         ].forEach((w) => u5({ x: w[1], y: w[2], name: w[0] }));
-      !night && n.ch1Ship && n.scene !== "Q9" && Qt(560, 500, "#c9b6f2", 2.6, 0.2);
+      !night && n.ch1Ship && n.scene !== "Q9" && Qt(560, 500, "#c9b6f2", QT_ADULT, 0.2);
       n.ch1Crew === "tease" && [360, 480, 600].forEach((px) => dq(px, 460, !1));
       night &&
         (seenCone(CH1_ROBOT.x, CH1_ROBOT.y - 28, ch1NightNow().face, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.62)", "rgba(160,100,10,.95)"),
@@ -1382,11 +1425,11 @@
           e.stroke()),
         dq(CH1_ROBOT.x, CH1_ROBOT.y, !1),
         n.ch1Alert && g("!", CH1_ROBOT.x, CH1_ROBOT.y - 78, 28, "#e5533d", "center", 900));
-      (n.moPose !== "hidden" && Fe(n.mo.x, n.mo.y, he * 1.15, { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 }),
+      (n.moPose !== "hidden" && Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 }),
         n.sqPose === "ball" && drawL2Ball(n.sq.x, n.sq.y - 16),
         n.sqPose !== "hidden" &&
           n.sqPose !== "ball" &&
-          Re(n.sq.x, n.sq.y, he, {
+          Re(n.sq.x, n.sq.y, sqDrawScale(), {
             f: n.sq.f || 1,
             walk: n.sq.moving ? n.sq.walk : 0,
             jacket: !!n.costumeOn,

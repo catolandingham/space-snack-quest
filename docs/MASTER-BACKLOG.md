@@ -186,6 +186,8 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 
 ## Changelog
 
+2026-11-12. Party security and adult scale, not merged. K10: a guest runs to the wall alarm, guards search the party hall, sight calls the existing hall lockup, and the home search starts half a second after the guard reaches the door. No 9-second countdown. No new words. Adults are one height, 85% of the locked hall door, and Squatch is 80% of an adult. Office art is v2 (R84). Docs match main: yes. Do not merge.
+
 2026-11-11. Day 1 through bedtime, not merged. The song, a party with a dance game, karaoke, an octopus chase, a photo countdown, the run home and the hide, "You have me", the TV story, and the Moon Pie bedtime with no parents. After bedtime the existing Day 2 still plays. New words are pending. Docs match main: yes. Do not merge.
 
 2026-11-11. Slice round 2, not merged. R66 is superseded by R67: guests at 1.8, Squatch at the normal hall scale, adults clearly taller. The stray heart and Mops's pink cone are off for this chapter. Dress-up shows each item and uses bigger targets. The party crowd is drawn in the thick-outline style (no spr_a_* files are in the repo). The camera tripod is off the snack table. The balloon string stays in the hall. Joe's track is now `music/main-theme-from-brian.mp3` on this slice (title, home, gift). Docs match main: yes. Do not merge.

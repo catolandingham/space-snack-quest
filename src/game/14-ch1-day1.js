@@ -7,7 +7,79 @@
       CH1_HOWL_EACH = 5,
       CH1_CHASE_SECONDS = 10,
       CH1_OCT_SPEED = 90,
-      CH1_GUARD_SPEED = 120;
+      CH1_GUARD_SPEED = 120,
+      CH1_HOME_DOOR = { x: 480, y: 590 },
+      CH1_ALARM_AT = { x: 800, y: 430 },
+      CH1_GUARD_IN = { x: 948, y: 360 };
+    function ch1RaidBegin() {
+      let spots = CH1_GUESTS.find((g) => g[2] === "spots") || [520, 610, "spots"];
+      ((n.ch1Fur = !1),
+        (n.ctrl = !0),
+        (n.ch1Raid = {
+          phase: "witness",
+          witness: { x: spots[0], y: spots[1], x0: spots[0], y0: spots[1] },
+          guards: [],
+          doorT: 0,
+          left: !1,
+        }));
+    }
+    function ch1GuardSees(g) {
+      return (
+        Math.hypot(n.sq.x - g.x, n.sq.y - g.y) < STAND_FEET ||
+        vt(n.sq.x, n.sq.y - 20, g.x, g.y - 28, g.face, STAND_CONE_HALF, STAND_CONE_LEN)
+      );
+    }
+    function ch1RaidHome() {
+      let r = n.ch1Raid;
+      if (!r || r.left) return;
+      ((r.left = !0), (n.ch1Party = !1), (n.ch1Raid = null), (n.ctrl = !1), ch1Go("closet", { who: "sq", scene: "Q3" }, ch1SearchStart));
+    }
+    function ch1RaidTick(dt) {
+      let r = n.ch1Raid;
+      if (!r || r.left || n.room !== "hall") return;
+      let step = dt || 0,
+        hidden = n.sqPose === "hidden" || n.sqPose === "under",
+        atDoor = Math.hypot(n.sq.x - CH1_HOME_DOOR.x, n.sq.y - CH1_HOME_DOOR.y) < 48,
+        stick = oh(),
+        steering = !!n.walkTo || Math.hypot(stick.x, stick.y) > 0.2;
+      if (!steering && !hidden && !atDoor) (mV(n.sq, CH1_HOME_DOOR.x, CH1_HOME_DOOR.y, 260, step), ch1Trail());
+      if (r.phase === "witness") {
+        mV(r.witness, CH1_ALARM_AT.x, CH1_ALARM_AT.y, 420, step) &&
+          ((r.phase = "search"), D.alarm(), r.guards.push({ x: CH1_GUARD_IN.x, y: CH1_GUARD_IN.y, t: 0, face: Math.PI }));
+        return;
+      }
+      r.guards[0] && (r.guards[0].t += step);
+      r.guards.length < 2 && r.guards[0] && r.guards[0].t > 0.4 && r.guards.push({ x: CH1_GUARD_IN.x, y: CH1_GUARD_IN.y, t: 0, face: Math.PI });
+      let safe = hidden || atDoor;
+      for (let g of r.guards) {
+        let tx = safe ? CH1_HOME_DOOR.x : n.sq.x,
+          ty = safe ? CH1_HOME_DOOR.y : n.sq.y;
+        (mV(g, tx, ty, CH1_GUARD_SPEED, step), (g.face = Math.atan2(ty - 20 - (g.y - 28), tx - g.x)));
+        if (!safe && ch1GuardSees(g)) {
+          ((n.ch1Raid = null), capture("s6"));
+          return;
+        }
+      }
+      let lead = r.guards[0];
+      safe && lead && Math.hypot(lead.x - CH1_HOME_DOOR.x, lead.y - CH1_HOME_DOOR.y) < 28 ? (r.doorT += step) : (r.doorT = 0);
+      r.doorT >= 0.5 && ch1RaidHome();
+    }
+    function ch1RaidSpots() {
+      return [
+        spot({
+          id: "raidhide",
+          verb: "HIDE",
+          cap: "plant",
+          who: "sq",
+          x: 220,
+          y: 530,
+          r: 80,
+          f: () => {
+            ((n.sqPose = "hidden"), (n.sq.x = 220), (n.sq.y = 530), (n.act = null));
+          },
+        }),
+      ];
+    }
     function ch1SongSpots() {
       return [
         spot({
@@ -145,6 +217,7 @@
     }
     function ch1Day1Tick(dt) {
       let step = dt || 0;
+      ch1RaidTick(step);
       if (n.ch1Search && n.guard && n.room === "closet" && (n.ctrl || n.ch1Escort)) {
         let g = n.guard;
         g.t += step;
@@ -222,7 +295,7 @@
       n.ch1Flash > 0 && ((e.fillStyle = "rgba(255,255,255," + Math.min(0.85, n.ch1Flash * 4) + ")"), e.fillRect(0, 0, c, b));
     }
     function drawCh1Guard() {
-      n.guard && drawCh1Alien(n.guard.x, n.guard.y, "hat", 2.1, n.sq.x < n.guard.x ? -1 : 1);
+      n.guard && drawCh1Alien(n.guard.x, n.guard.y, "hat", ALIEN_ADULT, n.sq.x < n.guard.x ? -1 : 1);
     }
     function drawCh1Mini() {
       if (n.ch1Mini === "dance") return drawCh1Dance();

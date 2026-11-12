@@ -27,7 +27,7 @@ for (const [id, label] of ROOMS) {
     const known = {
       hall: "docs/locked-rooms/hall-room-empty-v1.png",
       hallway: "docs/locked-rooms/hallway-room-empty-v6.png",
-      office: "docs/locked-rooms/office-room-empty-v1.png",
+      office: "docs/locked-rooms/office-room-empty-v2.png",
       "home-closed": "docs/locked-rooms/home-room-empty-closed-v3.png",
       "home-open": "docs/locked-rooms/home-room-empty-open-v4.png",
       "delivery-day": "docs/locked-rooms/delivery-room-empty-day-v2.png",
