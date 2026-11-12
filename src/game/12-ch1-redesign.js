@@ -78,7 +78,7 @@
       SQ_ADULT = (ADULT_PX * 0.8) / 45;
     function sqDrawScale() {
       if (n.room === "closet") return wl;
-      if (n.room === "hall" || n.room === "office" || (n.room === "hangar" && n.ch1D)) return SQ_ADULT;
+      if (n.room === "hall" || n.room === "office" || n.room === "passage" || n.room === "duct" || (n.room === "hangar" && n.ch1D)) return SQ_ADULT;
       return he;
     }
     function moDrawScale() {
@@ -1213,12 +1213,12 @@
       drawLockedRoom("hall");
       if (n.roomOnly) return;
       drawCh1BalloonLeft();
-      n.scene === "Q3" && !(n.ch1Step === "family" || n.ch1Step === "gohome") && drawCh1Alien(640, 520, "hat", 2.2, 1);
-      n.moPose !== "hidden" && n.mo.x > -50 && n.mo.x < 1100 && Fe(n.mo.x, n.mo.y, he * 1.15, { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 });
+      n.scene === "Q3" && !(n.ch1Step === "family" || n.ch1Step === "gohome") && drawCh1Alien(640, 500, "hat", ALIEN_ADULT, 1);
+      n.moPose !== "hidden" && n.mo.x > -50 && n.mo.x < 1100 && Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 });
       n.sqPose === "ball" && drawL2Ball(n.sq.x, n.sq.y - 16);
       n.sqPose !== "hidden" &&
         n.sqPose !== "ball" &&
-        Re(n.sq.x, n.sq.y, he, {
+        Re(n.sq.x, n.sq.y, sqDrawScale(), {
           f: n.sq.f || 1,
           walk: n.sq.moving ? n.sq.walk : 0,
           jacket: !!n.costumeOn,
@@ -1246,6 +1246,12 @@
         n.sqPose !== "ball" &&
         n.sq.x > -40 &&
         Re(n.sq.x, n.sq.y, sqDrawScale(), { f: n.sq.f || 1, walk: n.sq.moving ? n.sq.walk : 0, jacket: !!n.costumeOn });
+      n.ch1Office &&
+        (drawCh1Alien(480, 540, "horns", ALIEN_ADULT, -1),
+        dq(640, 540, !1),
+        n.ch1Tape &&
+          (g("REC", 190, 140, 11, "#e5533d", "center", 900),
+          Re(190, 210, SQ_ADULT * 0.35, { f: 1, jacket: !0, goatBeard: !0, horns: !0 })));
     }
     function drawCh1Party() {
       let look = (n.ch1Look || 0) > 0,
@@ -1530,5 +1536,5 @@
       (m(620, 400, 200, 16, 3), r("#c4a574", 3), m(632, 416, 14, 48, 2), r("#8a7560", 2), m(794, 416, 14, 48, 2), r("#8a7560", 2), m(650, 422, 60, 22, 2), r("#a08050", 2));
       (n.ch1Prop === "desk" || n.ch1Prop === "teeth") && drawPinkSlip(660, 372);
       n.ch1Prop === "teeth" && n.moPose !== "hidden" && drawPinkSlip(n.mo.x - 6, n.mo.y - 70);
-      n.moPose !== "hidden" && Fe(420, 520, he, { f: 1, walk: 0, mop: !1 });
+      n.moPose !== "hidden" && Fe(420, 520, moDrawScale(), { f: 1, walk: 0, mop: !1 });
     }

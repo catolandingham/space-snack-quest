@@ -2,8 +2,8 @@
     // The office code is the one already drawn on the old keypad (4 7 2 3). It is not a new number.
     const CH1_OFFICE_CODE = "4723";
     const CH1_LUNCH_WATCH = [
-      { x: 500, y: 420, face: Math.PI / 2 },
-      { x: 300, y: 450, face: Math.PI },
+      { x: 360, y: 400, face: Math.PI / 2 },
+      { x: 620, y: 430, face: Math.PI },
     ];
     function ch1Ready(step, chip, scene) {
       ((n.ch1Step = step), (n.ch1Chip = chip), scene && (n.scene = scene), (n.ctrl = !0), (n.act = null), chipNow());
@@ -627,14 +627,15 @@
         cV((dt) => (ch1Trail(), (n.costumeOn = !0), mV(n.sq, 480, 240, 160, dt) && mV(n.mo, 540, 250, 160, dt))),
         N(() => {
           ((Ka = 1),
-            (n.room = "passage"),
+            (n.room = "office"),
             (n.ch1D = !1),
             (n.ch1Office = !0),
             (n.scene = "Q9"),
             (n.ch1Chip = ""),
-            (n.sqPose = "hidden"),
+            (n.sqPose = "stand"),
             (n.moPose = "hidden"),
-            (n.sq.x = -400),
+            (n.sq.x = CH1_OFFICE_DOOR.x),
+            (n.sq.y = CH1_OFFICE_DOOR.y),
             (n.mo.x = -400),
             chipNow());
         }),
@@ -879,22 +880,12 @@
         e.closePath(),
         e.fill(),
         e.restore());
-      n.ch1Office
-        ? (drawCh1Alien(760, 545, "horns", 2.6, -1),
-          dq(520, 545, !1),
-          n.ch1Tape &&
-            (m(210, 150, 280, 190, 8),
-            r("#1e2430", 4),
-            m(224, 166, 252, 140, 4),
-            r("#d9d3c6", 3),
-            g("REC", 250, 184, 14, "#e5533d", "center", 900),
-            Re(350, 290, 1.5, { f: 1, jacket: !0, goatBeard: !0, horns: !0 })))
-        : (n.moPose !== "hidden" && Fe(n.mo.x, n.mo.y, he * 1.15, { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 }),
-          n.sqPose === "ball" && drawL2Ball(n.sq.x, n.sq.y - 16),
-          n.sqPose === "hidden" && ga(n.sq.x, n.sq.y - 40),
-          n.sqPose !== "hidden" &&
-            n.sqPose !== "ball" &&
-            Re(n.sq.x, n.sq.y, he, { f: n.sq.f || 1, walk: n.sq.moving ? n.sq.walk : 0, jacket: !!n.costumeOn, goatBeard: !!n.costumeOn, horns: !!n.costumeOn }));
+      (n.moPose !== "hidden" && Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 }),
+        n.sqPose === "ball" && drawL2Ball(n.sq.x, n.sq.y - 16),
+        n.sqPose === "hidden" && ga(n.sq.x, n.sq.y - 40),
+        n.sqPose !== "hidden" &&
+          n.sqPose !== "ball" &&
+          Re(n.sq.x, n.sq.y, sqDrawScale(), { f: n.sq.f || 1, walk: n.sq.moving ? n.sq.walk : 0, jacket: !!n.costumeOn, goatBeard: !!n.costumeOn, horns: !!n.costumeOn }));
     }
     function drawCh1Zoom() {
       let z = n.ch1Zoom;
@@ -966,7 +957,7 @@
             (e.strokeStyle = "rgba(160,100,10,.9)"),
             (e.lineWidth = 2),
             e.stroke(),
-            drawCh1Alien(gue.x, gue.y, gue.face > 2 ? "antenna" : "hat", 2.3, gue.face > 2 ? -1 : 1));
+            drawCh1Alien(gue.x, gue.y, gue.face > 2 ? "antenna" : "hat", ALIEN_ADULT, gue.face > 2 ? -1 : 1));
         }
       n.room === "closet" &&
         n.ch1Step === "cal" &&
@@ -1017,7 +1008,7 @@
         });
       (n.ch1BrochureBig || 0) > 0 && (m(250, 150, 460, 280, 8), r("#fffdf8", 4), g("PANCAKES", 480, 190, 22, "#b45309", "center", 900), drawCouple(480, 300, 2.2));
       n.ch1Brochure && (n.ch1BrochureBig || 0) <= 0 && n.sqPose === "stand" && (m(n.sq.x + 8, n.sq.y - 64, 16, 20, 2), r("#fffdf8", 1), drawCouple(n.sq.x + 16, n.sq.y - 54, 0.35));
-      (n.ch1Step === "family" || n.ch1Step === "gohome") && n.room === "hall" && (drawCh1Alien(640, 520, "hat", 2.4, 1), drawCh1Alien(760, 530, "hair", 2.4, -1));
+      (n.ch1Step === "family" || n.ch1Step === "gohome") && n.room === "hall" && (drawCh1Alien(360, 560, "hat", ALIEN_ADULT, 1), drawCh1Alien(520, 470, "hair", ALIEN_ADULT, -1));
       n.ch1Left && n.room === "hall" && (F(790, 500, 8, "#ffcf33"), F(806, 506, 6, "#e5533d"));
     }
     function ch1JumpBeat(beat) {
@@ -1143,10 +1134,13 @@
       } else if (b === 58) {
         ((n.room = "hangar"), (n.ch1D = !0), (n.ch1Ship = !0), (n.scene = "Q9"), (n.costumeOn = !0), (n.sq.x = 420), (n.sq.y = 500), (n.mo.x = 520), (n.mo.y = 500), (n.ch1Step = "board"));
       } else if (b === 59 || b === 60) {
-        ((n.room = "passage"),
+        ((n.room = "office"),
           (n.ch1Office = !0),
+          (n.ch1Step = ""),
           (n.scene = "Q9"),
-          (n.sqPose = "hidden"),
+          (n.sqPose = "stand"),
+          (n.sq.x = CH1_OFFICE_DOOR.x),
+          (n.sq.y = CH1_OFFICE_DOOR.y),
           (n.moPose = "hidden"),
           (n.ch1Tape = b === 60),
           (n.scene = b === 60 ? "Q0" : "Q9"),
