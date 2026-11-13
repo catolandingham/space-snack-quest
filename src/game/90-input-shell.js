@@ -27,6 +27,10 @@
         Cs();
         return;
       }
+      if (p.state === "op" && n.ch1Beard) {
+        ch1BeardPointer("down", l, o);
+        return;
+      }
       if (p.state === "op" && (n.ch1PadOn || n.ch1Zoom || n.ch1Cut || (n.ch1Dress && n.ch1Dress.on))) {
         ch1SlicePointer("down", l, o);
         ch1Day2Pointer("down", l, o);
@@ -351,6 +355,8 @@
         // Spots (task T17): every spot of the current scene, the action offered where the player stands,
         // one frame drawn now, and the rings that frame drew.
         spotsNow: () => spotsNow(),
+        cutIn: () => CUT_IN,
+        beardBeat: (t) => beardBeat(t),
         placedSpots: () => placedSpots(),
         offerNow: () => pick(spotsNow()),
         drawFrame: () => Ap(),

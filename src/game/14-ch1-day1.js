@@ -217,6 +217,7 @@
     }
     function ch1Day1Tick(dt) {
       let step = dt || 0;
+      ch1BeardTick(step);
       ch1RaidTick(step);
       if (n.ch1MopsLeave && n.ch1PeekReady && n.room === "closet" && n.moPose !== "hidden") {
         mV(n.mo, 880, 458, 160, step) && ((n.moPose = "hidden"), (n.mo.x = 880), (n.mo.y = 458), (n.ch1MopsLeave = 0));

@@ -10,6 +10,205 @@
       { id: "nose", zone: "extra", label: "button nose" },
       { id: "pipe", zone: "extra", label: "pipe" },
     ];
+    // One recipe for every cut-in (docs/CUT-IN-SPEC.md). Zoom, blur, darken, vignette, and the X.
+    // Dress-up keeps its white background (R74) and only shares the X.
+    const CUT_IN = { zoomIn: 0.5, zoomOut: 0.4, blur: 6, dark: 0.35, x: 880, y: 568, r: 36 };
+    function cutInAdvance(zoom, dt, closing) {
+      return closing ? Math.max(0, zoom - (dt || 0) / CUT_IN.zoomOut) : Math.min(1, zoom + (dt || 0) / CUT_IN.zoomIn);
+    }
+    function cutInXHit(x, y) {
+      return Math.hypot(x - CUT_IN.x, y - CUT_IN.y) < CUT_IN.r + 4;
+    }
+    function drawCutInX() {
+      (e.beginPath(),
+        e.arc(CUT_IN.x, CUT_IN.y, CUT_IN.r, 0, 7),
+        r("#ffffff", 4),
+        e.beginPath(),
+        e.moveTo(CUT_IN.x - 14, CUT_IN.y - 14),
+        e.lineTo(CUT_IN.x + 14, CUT_IN.y + 14),
+        e.moveTo(CUT_IN.x + 14, CUT_IN.y - 14),
+        e.lineTo(CUT_IN.x - 14, CUT_IN.y + 14),
+        (e.strokeStyle = "#1e2430"),
+        (e.lineWidth = 6),
+        (e.lineCap = "round"),
+        e.stroke());
+    }
+    function drawCutInPaw(x, y) {
+      (e.save(),
+        e.translate(x, y),
+        e.beginPath(),
+        e.ellipse(0, 8, 14, 11, 0, 0, 7),
+        r("#6b4428", 3),
+        [[-9, -6], [0, -12], [9, -6]].forEach((pad) => (e.beginPath(), e.ellipse(pad[0], pad[1], 4.5, 5.5, 0, 0, 7), r("#6b4428", 2))),
+        e.restore());
+    }
+    // plain: dress-up's white card. Everything else blurs the live room.
+    function drawCutInChrome(zoom, drawInside, plain) {
+      let z = zoom == null ? 1 : Math.min(1, Math.max(0, zoom));
+      if (plain) ((e.fillStyle = "#fffdf8"), e.fillRect(0, 0, c, b));
+      else {
+        (e.save(), (e.filter = "blur(" + CUT_IN.blur + "px)"), e.drawImage(e.canvas, 0, 0), e.restore());
+        ((e.fillStyle = "rgba(12,16,28," + CUT_IN.dark + ")"), e.fillRect(0, 0, c, b));
+        let shade = e.createRadialGradient(480, 320, 140, 480, 320, 620);
+        (shade.addColorStop(0, "rgba(0,0,0,0)"), shade.addColorStop(1, "rgba(0,0,0,.55)"), (e.fillStyle = shade), e.fillRect(0, 0, c, b));
+      }
+      drawInside(z);
+      drawCutInX();
+    }
+    // The beard is the mop (C2). One cut-in, once, at the bucket. No new words.
+    // The bucket stays about knee-high on Mops and stays visible. He is drawn with Fe().
+    function ch1DunkSpot() {
+      return spot({ id: "dunk", verb: "DUNK", cap: "beard", who: "sq", x: 566, y: 540, r: 70, f: ch1Wring });
+    }
+    function withDunk(list) {
+      list.length &&
+        n.room === "closet" &&
+        (n.scene || "")[0] === "Q" &&
+        n.ctrl &&
+        !n.ch1Wrung &&
+        !n.ch1Beard &&
+        n.sqPose === "stand" &&
+        !n.ch1Cut &&
+        list.push(ch1DunkSpot());
+      return list;
+    }
+    function ch1Wring() {
+      ((n.ctrl = !1), (n.act = null), (n.ch1Beard = { zoom: 0, t: 0, closing: !1 }));
+    }
+    function ch1BeardClose() {
+      n.ch1Beard && !n.ch1Beard.closing && ((n.ch1Beard.closing = !0), (n.ctrl = !1), (n.act = null));
+    }
+    function ch1BeardTick(dt) {
+      let cut = n.ch1Beard;
+      if (!cut) return;
+      if (cut.closing) {
+        cut.zoom = cutInAdvance(cut.zoom, dt, !0);
+        cut.zoom <= 0 && ((n.ch1Beard = null), (n.ch1Wrung = !0), (n.ctrl = !0));
+        return;
+      }
+      if (cut.zoom < 1) {
+        cut.zoom = cutInAdvance(cut.zoom, dt, !1);
+        cut.zoom >= 1 && (n.ctrl = !0);
+      } else ((cut.t = (cut.t || 0) + (dt || 0)), (n.ctrl = !0));
+    }
+    function ch1BeardPointer(kind, x, y) {
+      n.ch1Beard && n.ch1Beard.zoom >= 1 && kind === "up" && cutInXHit(x, y) && ch1BeardClose();
+    }
+    function drawBeardPaw() {
+      if (n.ch1Beard || n.ch1Wrung || n.room !== "closet" || !n.ctrl) return;
+      let here = ch1DunkSpot();
+      if (!inSpot(here)) return;
+      drawCutInPaw(here.x, here.y - 36);
+    }
+    // Two cycles over a plain bucket. Times are seconds inside an 8.4s loop. The bucket never moves.
+    function beardBeat(t) {
+      let u = ((t || 0) % 8.4 + 8.4) % 8.4,
+        hold = (k) => Math.min(1, k),
+        dunk = (d) => {
+          if (d < 0.22) return { name: "dunk", bend: -0.55, stretch: 1.16, squash: 0.9, into: 1, reach: 0.45, beard: { none: 1 } };
+          if (d < 0.42) {
+            let k = (d - 0.22) / 0.2;
+            return { name: "dunk", bend: -0.55 - 0.45 * k, squash: 0.9 + 0.32 * k, stretch: 1.16 - 0.4 * k, into: 1, reach: 0.45 + 0.55 * k, beard: { none: 1 }, splash: k > 0.55 ? 1 : 0 };
+          }
+          if (d < 0.85) return { name: "dunk", bend: -1, squash: 1.22, stretch: 0.76, into: 1, reach: 1, beard: { none: 1 }, splash: 1, hang: d < 0.68 };
+          let k = (d - 0.85) / 0.35;
+          return { name: "dunk", bend: -1 + 0.35 * k, squash: 1.22 - 0.22 * k, stretch: 0.76 + 0.3 * k, into: 1, reach: 1 - 0.4 * k, beard: { none: 1 } };
+        },
+        wring = (d) => {
+          if (d < 0.28) return { name: "wring", bend: -0.7, stretch: 1.28, squash: 0.88, into: 1, reach: 0.55, beard: { none: 1 } };
+          if (d < 0.55) {
+            let k = (d - 0.28) / 0.27;
+            return { name: "wring", bend: -1, squash: 0.88 + 0.34 * k, stretch: 1.28 - 0.5 * k, into: 1, reach: 1, squeeze: 1, spin: k * 2, beard: { none: 1 }, jet: 1 };
+          }
+          if (d < 1.15) {
+            let k = (d - 0.55) / 0.6;
+            return { name: "wring", bend: -1, squash: 1.18, stretch: 0.8, into: 1, reach: 1, squeeze: 1, spin: 2 + k * Math.PI * 2, beard: { none: 1 }, fall: k };
+          }
+          let k = (d - 1.15) / 0.55;
+          return { name: "wring", bend: -0.95 + 0.4 * k, squash: 1.05, stretch: 0.95, into: k < 0.7 ? 1 : 0, reach: 0.7 * (1 - k), beard: { none: 1 }, settle: k };
+        };
+      if (u < 0.9) {
+        let k = hold(u / 0.4);
+        return { name: "lean", bend: -0.85 * k, squash: 1 - 0.05 * k, stretch: 1 + 0.08 * k, into: 1, reach: 0.25 + 0.35 * k, beard: { none: 1 } };
+      }
+      if (u < 2.2) return dunk(u - 0.9);
+      if (u < 3.5) {
+        let d = u - 2.2,
+          wave = d * 7,
+          body = Math.sin(wave),
+          lag = Math.sin(wave - 0.9),
+          slap = Math.pow(Math.max(0, Math.cos(wave - 0.9)), 10);
+        return { name: "mop", bend: -0.15, sway: -0.06 * body, squash: 1 + 0.14 * body, stretch: 1 - 0.08 * body, x: body * 28, beard: { reach: (lag - body) * 5, drop: 6 + slap * 6 }, trail: Math.min(1, d / 1.1) };
+      }
+      if (u < 5.6) return wring(u - 3.5);
+      if (u < 6.8) return dunk(u - 5.6);
+      return wring(u - 6.8);
+    }
+    function drawPlainBucket(bx, rim) {
+      (e.beginPath(), e.moveTo(bx - 34, rim), e.lineTo(bx + 34, rim), e.lineTo(bx + 26, rim + 68), e.lineTo(bx - 26, rim + 68), e.closePath(), r("#ffcf33", 5));
+      (e.beginPath(), e.ellipse(bx, rim + 6, 30, 9, 0, 0, 7), r("#8fdcff", 3));
+    }
+    function drawCh1Beard() {
+      let cut = n.ch1Beard;
+      if (!cut) return;
+      drawCutInChrome(cut.zoom, () => {
+        let pose = beardBeat(cut.t || 0),
+          feet = 500 + (pose.dip || 0),
+          mx = 490 + (pose.x || 0),
+          bx = 330,
+          rim = 430;
+        n.beardAt = null;
+        n.noseAt = null;
+        pose.trail && (e.save(), (e.globalAlpha = 0.35 + 0.45 * pose.trail), m(mx - 80, feet - 6, 36 + 150 * pose.trail, 12, 6), r("#7ec8ea", 0), e.restore());
+        (e.save(),
+          e.translate(mx, feet),
+          e.scale(pose.squash || 1, pose.stretch || 1),
+          Fe(0, 0, 6, { f: -1, headDown: (pose.dip || 0) > 4, sway: pose.sway || 0, bend: pose.bend || 0, beard: pose.beard }),
+          e.restore());
+        drawPlainBucket(bx, rim);
+        let from = n.noseAt || n.chinAt,
+          drop = pose.reach == null ? 1 : pose.reach,
+          gatherY = pose.squeeze ? rim - 26 : rim + 18,
+          endX = from ? from.x + (bx - from.x) * drop : bx,
+          endY = from ? from.y + (gatherY - from.y) * drop : rim;
+        pose.into &&
+          from &&
+          [0, 1, 2, 3, 4, 5].forEach((i) => {
+            e.beginPath();
+            e.moveTo(from.x + (i - 2.5) * 2.5, from.y);
+            e.quadraticCurveTo((from.x + endX) / 2 + (i - 2.5) * 4, (from.y + endY) / 2, endX + (i - 2.5) * 6, endY);
+            (e.strokeStyle = "#1e2430"), (e.lineWidth = 8), (e.lineCap = "round"), e.stroke();
+            (e.strokeStyle = "#f7f4ee"), (e.lineWidth = 4.5), e.stroke();
+          });
+        pose.squeeze &&
+          (e.save(),
+          e.translate(endX, endY),
+          e.rotate(pose.spin || 0),
+          e.beginPath(),
+          e.ellipse(0, 0, 26, 11, 0, 0, 7),
+          r("#f7f4ee", 3),
+          e.beginPath(),
+          e.ellipse(-14, -2, 8, 5.5, -0.6, 0, 7),
+          e.ellipse(14, -2, 8, 5.5, 0.6, 0, 7),
+          r("#cfd5dd", 2.4),
+          e.restore());
+        pose.splash &&
+          [0, 1, 2, 3, 4, 5].forEach((i) => {
+            let hang = pose.hang ? 0 : 18;
+            F(bx - 26 + i * 9, rim - 6 - (i % 3) * 11 + (pose.hang ? 0 : hang * 0.2), 4, "#d7f4ff");
+          });
+        (pose.jet || pose.fall) &&
+          (e.beginPath(),
+          e.moveTo(bx - (pose.jet && !pose.fall ? 11 : 4), endY + 8),
+          e.lineTo(bx + (pose.jet && !pose.fall ? 11 : 4), endY + 8),
+          e.lineTo(bx + 3, rim + 22),
+          e.lineTo(bx - 3, rim + 22),
+          e.closePath(),
+          (e.fillStyle = "#9adfff"),
+          e.fill(),
+          [0, 1, 2, 3].forEach((i) => F(bx - 8 + i * 5, rim + 8 + (i % 2) * 8, pose.fall ? 3 : 4, "#d7f4ff")));
+      });
+    }
     function ch1Day1() {
       J([
         N(() => {
@@ -193,9 +392,12 @@
       ];
     }
     function ch1CutClose() {
-      ((n.ch1Bag = (n.ch1Cut && n.ch1Cut.bag) || 0), (n.ch1Cut = null), (n.ch1BarDone = !0), (n.ctrl = !0), (n.act = null));
+      let cut = n.ch1Cut;
+      if (!cut || cut.closing) return;
+      ((cut.closing = !0), (n.ctrl = !1), (n.act = null));
     }
     function ch1SlicePointer(kind, x, y) {
+      if (n.ch1Beard) return ch1BeardPointer(kind, x, y);
       if (n.ch1Mini && kind === "down") return ch1MiniPointer(x, y);
       if (n.ch1Dress && n.ch1Dress.on) return ch1DressPointer(kind, x, y);
       if (n.ch1Cut) return ch1BarPointer(kind, x, y);
@@ -228,7 +430,7 @@
       let cut = n.ch1Cut;
       if (!cut || cut.zoom < 1) return;
       cut.paw = { x, y };
-      if (kind === "down" && x > 760 && y > 490) return ch1CutClose();
+      if (kind === "up" && cutInXHit(x, y)) return ch1CutClose();
       if (kind === "down") {
         let row = y < 250 ? "top" : y < 360 ? "mid" : "bottom";
         cut.held = row;
@@ -261,7 +463,12 @@
       n.ch1DressPop > 0 && (n.ch1DressPop = Math.max(0, n.ch1DressPop - (dt || 0)));
       let cut = n.ch1Cut;
       if (!cut) return;
-      cut.zoom < 1 && (cut.zoom = Math.min(1, cut.zoom + (dt || 0) / 0.5));
+      if (cut.closing) {
+        cut.zoom = cutInAdvance(cut.zoom, dt, !0);
+        if (cut.zoom <= 0) ((n.ch1Bag = cut.bag || 0), (n.ch1Cut = null), (n.ch1BarDone = !0), (n.ctrl = !0));
+        return;
+      }
+      cut.zoom < 1 && (cut.zoom = cutInAdvance(cut.zoom, dt, !1));
       cut.zoom >= 1 && !n.cur && (n.ctrl = !0);
       if (cut.zoom < 1 || cut.catches >= 2) return;
       cut.back > 0
@@ -343,6 +550,7 @@
       });
       n.ch1Drag && ch1DressIcon(n.ch1Drag, n.ch1DragX || 480, n.ch1DragY || 360);
       ch1DressMeter() >= 100 && g("Go!", 480, 600, 28, "#3478f6", "center", 900);
+      drawCutInX();
     }
     // The one close-up arm. Day 2's cut-ins call this same function. Do not draw a second copy.
     function drawPawArm(paw) {
@@ -397,11 +605,7 @@
     function drawCh1Cut() {
       let cut = n.ch1Cut;
       if (!cut) return;
-      let z = Math.min(1, cut.zoom || 0);
-      (e.save(), (e.filter = "blur(6px)"), (e.globalAlpha = 0.92), e.drawImage(e.canvas, 0, 0), e.restore());
-      (e.fillStyle = "rgba(12,16,28,.28)"), e.fillRect(0, 0, c, b);
-      let shade = e.createRadialGradient(480, 300, 180, 480, 320, 620);
-      (shade.addColorStop(0, "rgba(0,0,0,0)"), shade.addColorStop(1, "rgba(0,0,0,.45)"), (e.fillStyle = shade), e.fillRect(0, 0, c, b));
+      drawCutInChrome(cut.zoom, (z) => {
       e.save();
       e.globalAlpha = 0.35 + 0.65 * z;
       (m(120, 430, 720, 48, 10),
@@ -430,10 +634,8 @@
       let open = !!cut.drag;
       (m(24, 500, open ? 160 : 64, open ? 120 : 48, 10),
         r("#fffdf8", 4),
-        g(String(cut.bag || 0), open ? 104 : 56, open ? 560 : 524, 22, "#1e2430", "center", 900),
-        m(790, 510, 130, 56, 12),
-        r("#ffcf33", 4),
-        g("OK", 855, 538, 28, "#1e2430", "center", 900));
+        g(String(cut.bag || 0), open ? 104 : 56, open ? 560 : 524, 22, "#1e2430", "center", 900));
       let paw = cut.paw || { x: 200, y: 560 };
       (drawPawArm(paw), cut.held && drawBarSnack(cut.held === "bottom" ? "pie" : cut.held === "mid" ? "cup" : "cake", paw.x, paw.y - 8));
+      });
     }
