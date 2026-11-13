@@ -2,6 +2,8 @@
 
 These are the new words in the redesigned Chapter 1. Each one is in the game now so you can hear it while you play. Say yes, or write the line you want instead, in the pull request. Nothing merges until you say yes there.
 
+2026-11-13, 4:10 AM ET. Brian approved Mops's Mars gate lines. They are Chapter 4, rows 19.19 and 19.20 in `docs/PHASE-3-LINES-FOR-BRIAN.md`. After "WOOKIE?!", Mops says "He's with me." After "...Do you need help?", Mops says "No thanks. We're getting my goat."
+
 Words the game already had, and the one you already approved, are not in this list: "Stormtop Cloud Resort, floating above Jupiter.", "This is Squatch. He's a Sasquatch.", "My lunch! You're the best.", "You're gumbling! (goat mumbling)", "More bleat. Less roar.", "HAIR... PROBABLY. PROCEED.", "Brave Sasquatches stay hidden.", "— The Guardians", and the room labels STAY IN HERE, DELIVERY, MOON PIES, FRAGILE, G, UPS, DOT, BOB, LOU.
 
 ## Goal chips
@@ -167,8 +169,8 @@ These are the new words in this build. Each one is in the game so you can hear i
 | 126 | Squatch | I'm worried about the Guardians. I'll leave them some food. | I'll leave food for the Guardians. |
 | 127 | The order box | ORDER MORE ROBOTS | Order another robot |
 | 128 | The Guardian Box, in the close-up. The spelling is on purpose. | MY GARDIANS | |
-| 129 | The crayon, under photo 4 | TIED TOGETHER FOREVER | Always tied together |
-| 130 | The crayon labels | ME / MOPS | |
+| 129 | The crayon, under photo 4 | TIED TOGETHER FOREVER | Approved 2026-11-13. Not "Always tied together". |
+| 130 | The crayon labels | ME / MOPS | Approved 2026-11-13. |
 | 131 | The hallway wall | EMPLOYEE OF THE MONTH | |
 | 132 | The brochure | PANCAKES | |
 | 133 | The Mars reply, on the vent desk | MARS LOST & FOUND. Re: a lost baby Sasquatch. We have NO record of any lost baby. There are NO Sasquatches on Mars. | No baby. No Sasquatches. — Mars |
@@ -177,7 +179,7 @@ These are the new words in this build. Each one is in the game so you can hear i
 | 136 | Photo 2, optional | Mops, with a banana for a horn. | |
 | 137 | Photo 3, optional | Mops, with a roll in his mouth. | |
 | 138 | Photo 5, optional | Mops, and a ball of fur in the back. | |
-| 139 | The robot, if you swipe past photo 5 | BEEP BEEP | |
+| 139 | The robot, if you swipe past photo 5 | BEEP BEEP | Approved 2026-11-13. |
 | 140 | Goal chip | Squatch: pick up the gift | Squatch: get the toy |
 | 141 | Goal chip | Squatch: put the gift in the box | Squatch: put it away |
 | 142 | Goal chip | Squatch: look at the calendar | Squatch: check the door |

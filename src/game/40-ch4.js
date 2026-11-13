@@ -128,9 +128,9 @@
           D.alarm(),
           TV([
             v("pbot", "WOOKIE?!"),
-            v("sq", "Sasquatch. Big and furry."),
+            v("mops", "He's with me."),
             v("pbot", "...Do you need help?"),
-            v("sq", "Nope. Just getting my goat."),
+            v("mops", "No thanks. We're getting my goat."),
           ]));
         return;
       }

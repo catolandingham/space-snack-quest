@@ -113,6 +113,11 @@ await page.evaluate(() => {
   window.__ss.ch2.cookY = 530;
   window.__ss.ch2.cookLine = 0;
   window.__ss.ch2.cookTold = 0;
+  window.__ss.ch2.peekT = 99;
+  window.__ss.ch2.peek = 0;
+  window.__ss.ch2.warn = 0;
+  window.__ss.ch2.eye = 0;
+  window.__ss.ch2.sec = null;
 });
 const seen = [];
 let cook = null;
@@ -128,7 +133,8 @@ for (let i = 0; i < 70; i++) {
   if (cook.state === "run") running = cook;
   if (cook.state === "gone" && cook.x < 100) break;
 }
-const door = await px(28, 265);
+// The exit line sits over the cook at the door, so the red check is the door above that bubble.
+const door = await px(50, 180);
 const doorRed = door[0] > 200 && door[1] < 120 && door[2] < 100;
 check(
   "cook wakes, screams, and runs out the left diner door",
@@ -567,7 +573,7 @@ for (let i = 0; i < 20; i++) {
 }
 check(
   "Gloop's window look startles, then recognition calls security",
-  unsure.live.includes("What is that by the sink?!") && !unsure.sec && !unsure.text.includes("A WOOKIE!") && recognized.sec && recognized.text.includes("A WOOKIE!") && recognized.text.includes("*faints*") && recognized.live.includes("SECURITY!") && recognized.jar === 30 && recognized.reg === 12,
+  unsure.live.includes("What is that by the sink?!") && !unsure.sec && !unsure.text.includes("A WOOKIE!") && recognized.sec && recognized.text.includes("A WOOKIE!") && !recognized.text.includes("*faints*") && recognized.live.includes("SECURITY!") && recognized.jar === 30 && recognized.reg === 12,
   { unsure, recognized },
 );
 await page.evaluate(() => { window.__ss.op.q = []; window.__ss.op.cur = null; window.__ss.op.sqPose = "ball"; window.__ss.op.ctrl = true; });
@@ -785,7 +791,9 @@ await page.evaluate(() => {
   n.sq.x = 480; n.sq.y = 500; ss.swapTo(false);
   ss.ch2.phase = "wash1"; ss.ch2.held = 1; ss.ch2.done = 0; ss.ch2.scrub = 0;
   ss.ch2.dishT = 0; ss.ch2.jar = 0; ss.ch2.reg = 4; ss.ch2.has = "";
-  ss.ch2.cook = ""; ss.ch2.peek = 0; ss.ch2.warn = 0;
+  ss.ch2.cook = ""; ss.ch2.peek = 0; ss.ch2.warn = 0; ss.ch2.eye = 0; ss.ch2.peekT = 99; ss.ch2.sec = null;
+  // A sight hop from the previous check is still moving him. Stop it so he stays at the sink.
+  n.walkTo = null; n.sqHop = null; n.sq.moving = false;
 });
 await sleep(100);
 const scrub = [];
@@ -879,13 +887,13 @@ const rumble = await page.evaluate(() => {
   const c = document.querySelector("canvas");
   const g = c.getContext("2d", { willReadFrequently: true });
   const d = g.getImageData(330, 118, 1, 1).data; // the RUMBLE banner sits under the goal chip
-  return { cook: window.__ss.ch2.cook, live: window.__ss.op.live.map((row) => row.text).join("|"), banner: [d[0], d[1], d[2]] };
+  return { cook: window.__ss.ch2.cook, rumbled: window.__ss.ch2.rumbled, live: window.__ss.op.live.map((row) => row.text).join("|"), banner: [d[0], d[1], d[2]] };
 });
 await sleep(1100);
 const woke = await page.evaluate(() => window.__ss.ch2.cook);
 check(
   "the stomach rumble plays while the cook is still down, then she wakes",
-  rumble.cook === "down" && rumble.live.includes("*RUMBLE*") && rumble.banner[0] > 240 && rumble.banner[1] > 220 && ["wake", "scream", "run", "gone"].includes(woke),
+  rumble.cook === "down" && !rumble.live.includes("*RUMBLE*") && rumble.rumbled === 1 && ["wake", "scream", "run", "gone"].includes(woke),
   { rumble, woke },
 );
 

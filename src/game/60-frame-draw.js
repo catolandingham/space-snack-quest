@@ -1,6 +1,18 @@
 // The frame update (y5), rings, characters, bubbles, cards, room fades, and the main story draw (E5).
     function y5(l) {
-      (ch2.resetHold &&
+      (n.sqHop &&
+        ((n.sqHop.t += l),
+        (() => {
+          let hop = n.sqHop,
+            k = Math.min(1, hop.t / hop.dur),
+            arc = Math.sin(k * Math.PI) * 16;
+          ((n.sq.x = hop.x0 + (hop.x1 - hop.x0) * k),
+            (n.sq.y = hop.y0 + (hop.y1 - hop.y0) * k - arc),
+            (n.sq.moving = k < 1),
+            k >= 1 && ((n.sq.x = hop.x1), (n.sq.y = hop.y1), (n.sqHop = null)));
+        })()),
+        n.seeHint && ((n.seeHint.t -= l), n.seeHint.t <= 0 && (n.seeHint = null)),
+        ch2.resetHold &&
         ch2.resetHold.on &&
         !ch2.resetHold.fired &&
         ((ch2.resetHold.t += l), ch2.resetHold.t >= 0.75 && ((ch2.resetHold.fired = !0), (ch2.resetHold.on = !1), sectionReset())),
@@ -2182,7 +2194,39 @@
         n.ch1Mini && drawCh1Mini(),
         window.__ss && (window.__ss.bubbleFrame = qq),
         n.ch1Veil > 0.01 && ((e.fillStyle = "rgba(20,24,32," + Math.min(1, n.ch1Veil).toFixed(3) + ")"), e.fillRect(0, 0, c, b)));
-      ((e.globalAlpha = 1), zG(), drawTapHeard());
+      ((e.globalAlpha = 1), zG(), drawWaitArrow(), drawSeeHint(), drawTapHeard());
+    }
+    function drawWaitArrow() {
+      if (!(n.cur && n.cur.k === "wait")) return;
+      let bob = Math.sin(n.T * 8) * 8;
+      (e.save(),
+        e.translate(c - 78, b - 78 + bob),
+        e.beginPath(),
+        e.moveTo(-16, -6),
+        e.lineTo(0, 12),
+        e.lineTo(16, -6),
+        (e.lineWidth = 7),
+        (e.lineCap = "round"),
+        (e.lineJoin = "round"),
+        (e.strokeStyle = "#ffcf33"),
+        e.stroke(),
+        e.restore());
+    }
+    function drawSeeHint() {
+      let h = n.seeHint;
+      if (!h || h.t <= 0 || (n.cur && n.cur.k === "card")) return;
+      let bob = Math.sin(n.T * 6) * 6,
+        showBarrel = h.kind === "path" && h.t < 1.6;
+      (e.save(),
+        e.translate(780, 470 + bob),
+        m(-28, -16, 56, 28, 6),
+        r("#8fdcff", 3),
+        L(-16, 16, 7),
+        r("#1e2430", 2),
+        L(16, 16, 7),
+        r("#1e2430", 2),
+        e.restore());
+      showBarrel && (e.save(), e.translate(680, 480 + bob), X(0, 0, 18, 26), r("#c9842a", 3), e.restore());
     }
     function zG() {
       if (!(ch2.dishT > 0) || n.room !== "kitchen" || de()) return;

@@ -179,7 +179,7 @@ const security = await page.evaluate(() => {
   const ss = window.__ss;
   const n = ss.op;
   const tap = () => {
-    if (n.cur && (n.cur.k === "bub" || n.cur.k === "card" || n.cur.k === "panel")) ss.opTap();
+    if (n.cur && (n.cur.k === "bub" || n.cur.k === "card" || n.cur.k === "panel" || n.cur.k === "wait")) ss.opTap();
   };
   const arm = (x, y) => {
     n.scene = "QA";

@@ -641,7 +641,7 @@
       let o = ch2.phase === "wash5";
       if (ch2.cook === "down") {
         ch2.cookT = (ch2.cookT || 0) + l;
-        ch2.cookT > 5.15 && !ch2.rumbled && ((ch2.rumbled = 1), (ch2.rumbleT = 1.7), kV("sq", "*RUMBLE* She heard my stomach."));
+        ch2.cookT > 5.15 && !ch2.rumbled && ((ch2.rumbled = 1), (ch2.rumbleT = 1.7), D.splash());
         ch2.cookT > 6 && ((ch2.cook = "wake"), (ch2.cookT = 0), (ch2.cookX = ch2.cookX || 640), (ch2.cookY = 530));
       }
       if (ch2.cook === "wake") {
@@ -675,7 +675,9 @@
                 (n.act = null),
                 J([
                   v("cook", "A WOOKIE!"),
-                  v("cook", "*faints*"),
+                  N(() => {
+                    ((ch2.cook = "down"), (ch2.cookT = 0), (ch2.cookX = 640), (ch2.cookY = 530));
+                  }),
                   v("mops", "I'll cook. You keep washing."),
                   N(() => {
                     ((ch2.cook = "down"),
@@ -1615,14 +1617,21 @@
       let _ = n.room === "hall" ? o - B.camX : o;
       (n.sparks.push({ x: _ - 58, y: i - 200, t: 2.2, s: "!" }),
         kV(l, XA[l] || "!!"),
-        (l === "gloop" || l === "blorp") && n.scene.startsWith("G") && sSec("diner", l));
+        l === "zip" ? sSec("zip", l) : (l === "gloop" || l === "blorp") && n.scene.startsWith("G") && sSec("diner", l));
       let $ = n.sq.x - o,
         gV = n.sq.y - i,
         oe = Math.hypot($, gV) || 1,
         ve = sn();
-      ((n.sq.x = w(n.sq.x + ($ / oe) * 70, ve.x0, ve.x1)),
-        (n.sq.y = w(n.sq.y + (gV / oe) * 40, ve.y0, ve.y1)),
-        n.log.push({ who: "", text: "[seen by " + l + "]", kind: "t" }));
+      n.sqHop ||
+        (n.sqHop = {
+          x0: n.sq.x,
+          y0: n.sq.y,
+          x1: w(n.sq.x + ($ / oe) * 70, ve.x0, ve.x1),
+          y1: w(n.sq.y + (gV / oe) * 40, ve.y0, ve.y1),
+          t: 0,
+          dur: 0.25,
+        });
+      n.log.push({ who: "", text: "[seen by " + l + "]", kind: "t" });
     }
     function _A(l, o, i) {
       if (Ao || !i2() || n.sq.x < -100) return;
@@ -2087,7 +2096,7 @@
       }
       (n.act && n.act.verb === "GRAB" && (m(400, 248, 88, 28, 10), r("#2bc48a", 3), g("GRAB", 444, 262, 16, "#ffffff", "center", 900)),
         n.act && n.act.verb === "COOK" && (m(868, 332, 70, 26, 10), r("#2bc48a", 3), g("COOK", 903, 345, 14, "#ffffff", "center", 900)),
-        ch2.rumbleT > 0 && (m(250, 100, 200, 36, 10), r("#fff3d6", 3), g("RUMBLE", 350, 118, 20, "#b45309", "center", 900)));
+        ch2.rumbleT > 0 && (X(n.sq.x, n.sq.y - 18, 22, 10), r("#f2b84b", 2)));
       (ringOf("sink"),
         ringOf("rail"),
         C([KV.x, 316, KV.x, 298, KV.x + 26, 298], "#8b97a6", 5),

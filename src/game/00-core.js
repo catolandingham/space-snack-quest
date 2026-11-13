@@ -977,7 +977,8 @@
     }
     function de() {
       let l = n.cur;
-      return !!l && (l.k === "bub" || l.k === "card" || l.k === "panel" || l.k === "fb");
+      // A story wait (uV) is a tap, like a card. Wordless walks still use "until" and play on their own.
+      return !!l && (l.k === "bub" || l.k === "card" || l.k === "panel" || l.k === "fb" || l.k === "wait");
     }
     function gp(l) {
       ((n.cur = l),

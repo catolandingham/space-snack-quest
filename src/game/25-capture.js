@@ -55,15 +55,19 @@
         cause: "The searchlight found Squatch on the dock. Security caught him.",
         joke: () => [
           v("pbot", "WOOKIE?! IN THE LIGHT!"),
-          v("sq", "(Searchlight. Back to the van.)", "whisper"),
+          N(() => {
+            n.seeHint = { kind: "van", t: 3 };
+          }),
           v("pbot", "...Must be a big dog. Resuming sweep."),
         ],
       },
       gate4: {
         cause: "The gate bot saw Squatch on the dock. Security caught him.",
         joke: () => [
-          v("pbot", "Say CHEESE! *FLASH* Proof of a Wookiee!"),
-          v("sq", "(They saw me. Van, then the barrels.)", "whisper"),
+          v("pbot", "Say CHEESE! Proof of a Wookiee!"),
+          N(() => {
+            ((H.flash = 1), (n.seeHint = { kind: "path", t: 3 }));
+          }),
           v("pbot", "...Photo is blurry. Back to my gate."),
         ],
       },

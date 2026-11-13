@@ -17,7 +17,7 @@ await page.evaluate(() => {
   const ss = window.__ss;
   const n = ss.op;
   for (let i = 0; i < 8; i++) {
-    if (n.cur && (n.cur.k === "card" || n.cur.k === "bub")) {
+    if (n.cur && (n.cur.k === "card" || n.cur.k === "bub" || n.cur.k === "wait")) {
       n.bt = 1;
       ss.opTap();
     }

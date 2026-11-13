@@ -17,12 +17,12 @@ const home = await page.evaluate(() => {
   const ss = window.__ss;
   const n = ss.op;
   for (let i = 0; i < 30; i++) {
-    if (n.cur && (n.cur.k === "card" || n.cur.k === "bub")) {
+    if (n.cur && (n.cur.k === "card" || n.cur.k === "bub" || n.cur.k === "wait")) {
       n.bt = 1;
       ss.opTap();
     }
     ss.tick(0.05);
-    if (n.scene === "O1" && n.ctrl && !(n.cur && (n.cur.k === "card" || n.cur.k === "bub"))) break;
+    if (n.scene === "O1" && n.ctrl && !(n.cur && (n.cur.k === "card" || n.cur.k === "bub" || n.cur.k === "wait"))) break;
   }
   ss.drawFrame();
   const cv = document.querySelector("canvas[width='960']") || document.querySelector("canvas");
@@ -289,7 +289,7 @@ const balloon = await page.evaluate(() => {
   };
   const drain = (steps = 40) => {
     for (let i = 0; i < steps; i++) {
-      if (n.cur && (n.cur.k === "bub" || n.cur.k === "card" || n.cur.k === "panel")) ss.opTap();
+      if (n.cur && (n.cur.k === "bub" || n.cur.k === "card" || n.cur.k === "panel" || n.cur.k === "wait")) ss.opTap();
       ss.tick(0.2);
     }
   };
@@ -358,7 +358,7 @@ const extras = await page.evaluate(() => {
   };
   const drain = () => {
     for (let i = 0; i < 20; i++) {
-      if (n.cur && (n.cur.k === "bub" || n.cur.k === "card" || n.cur.k === "panel")) ss.opTap();
+      if (n.cur && (n.cur.k === "bub" || n.cur.k === "card" || n.cur.k === "panel" || n.cur.k === "wait")) ss.opTap();
       ss.tick(0.05);
     }
   };
@@ -431,7 +431,7 @@ const play = await page.evaluate(() => {
       end = "tally";
       break;
     }
-    if (cur && (cur.k === "bub" || cur.k === "card" || cur.k === "panel")) {
+    if (cur && (cur.k === "bub" || cur.k === "card" || cur.k === "panel" || cur.k === "wait")) {
       if (cur.k === "panel" || n.room === "duct" || n.ch1Zoom) ss.drawFrame();
       n.bt = 1;
       ss.opTap();

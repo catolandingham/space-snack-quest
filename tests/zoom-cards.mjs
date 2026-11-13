@@ -46,7 +46,7 @@ for (let i = 0; i < 80 && phase !== "g1"; i++) {
   ({ seen, phase } = await second.page.evaluate((seen) => {
     const n = window.__ss.op;
     const c = n.cur && n.cur.id === "focus" ? n.cur : n.q.find((r) => r.id === "focus");
-    if (n.cur && (n.cur.k === "bub" || n.cur.k === "card")) { n.bt = 1; window.__ss.opTap(); }
+    if (n.cur && (n.cur.k === "bub" || n.cur.k === "card" || n.cur.k === "wait")) { n.bt = 1; window.__ss.opTap(); }
     return { seen: seen || (c ? c.teach : null), phase: n.ctrl && !n.cur ? window.__ss.ch2.phase : "" };
   }, seen));
   await sleep(120);
