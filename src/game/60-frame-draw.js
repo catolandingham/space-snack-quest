@@ -1099,6 +1099,27 @@
                 ? { x: 360, y: 588 }
                 : { x: c / 2, y: 40 };
     }
+    // The speaker's head, in picture pixels. A bubble must sit outside this box.
+    function speakerHead(l) {
+      if (l === "sq" && n.sq.x > -100) {
+        if (n.sqPose === "sit" || n.sqPose === "sleep") {
+          let q = wl;
+          return { x: 205 - 20 * q, y: 444 - 78 * q, w: 40 * q, h: 40 * q };
+        }
+        let q = sqDrawScale();
+        return { x: n.sq.x - 20 * q, y: n.sq.y - 78 * q, w: 40 * q, h: 36 * q };
+      }
+      if (l === "mops" && n.mo.x > -100 && n.moPose !== "hidden") {
+        let q = moDrawScale(),
+          f = n.mo.f || 1,
+          hx = n.mo.x + 14 * q * f;
+        return { x: hx - 22 * q, y: n.mo.y - 82 * q, w: 44 * q, h: 40 * q };
+      }
+      return null;
+    }
+    function boxHits(a, b, gap) {
+      return a.x < b.x + b.w + gap && a.x + a.w + gap > b.x && a.y < b.y + b.h + gap && a.y + a.h + gap > b.y;
+    }
     let mq = [];
     function bq(l, o) {
       if (((n.maxB = Math.max(n.maxB, ++qq)), l.style === "pa")) {
@@ -1144,13 +1165,34 @@
         _ = w(P.x - T / 2, 10, c - T - 10),
         $ = P.y - R - 24;
       $ < 24 && ($ = 24);
+      // Never cover the speaker's face. Sit above the head, or beside it if the top of the picture is full.
+      let head = ear ? null : speakerHead(l.who);
+      if (head && boxHits({ x: _, y: $ - 16, w: T, h: R + 16 }, head, 8)) {
+        let above = head.y - R - 28;
+        above >= 20
+          ? ($ = above)
+          : ((_ = head.x + head.w + 14 + T <= c - 10 ? head.x + head.w + 14 : Math.max(10, head.x - T - 14)),
+            ($ = w(head.y, 20, b - R - 12)));
+      }
       for (let CV = 0; CV < 8; CV++) {
         let NV = mq.find((ze) => _ < ze[0] + ze[2] + 6 && _ + T + 6 > ze[0] && $ < ze[1] + ze[3] + 6 && $ + R + 6 > ze[1]);
         if (!NV) break;
         NV[1] - R - 8 >= 24 ? ($ = NV[1] - R - 8) : (_ = NV[0] + NV[2] + 8 + T <= c - 10 ? NV[0] + NV[2] + 8 : Math.max(10, NV[0] - T - 8));
       }
       (mq.push([_, $, T, R]),
-        window.__ss && (window.__ss.lastBubble = { who: l.who, text: l.text, x: _, y: $, w: T, h: R, ear, at: performance.now() }));
+        window.__ss &&
+          (window.__ss.lastBubble = {
+            who: l.who,
+            text: l.text,
+            x: _,
+            y: $,
+            w: T,
+            h: R,
+            ear,
+            head: head && { x: head.x, y: head.y, w: head.w, h: head.h },
+            at: performance.now(),
+          }));
+      head && (P = { x: head.x + head.w / 2, y: head.y });
       let gV = w(P.x, _ + 24, _ + T - 24),
         oe = l.style === "song" ? "#ffe3f1" : l.style === "whisper" ? "#f6f7fb" : "#ffffff";
       l.style === "whisper" && e.setLineDash([4, 6]);

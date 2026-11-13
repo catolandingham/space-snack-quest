@@ -21,19 +21,31 @@ const song = await page.evaluate(() => {
   n.ctrl = true;
   n.ch1Song = true;
   n.ch1Party = false;
+  n.ch1PeekReady = false;
+  n.ch1MopsLeave = 0;
   n.ch1Chip = "Squatch: sing along with Mops";
   n.sqPose = "stand";
   n.sq.x = 400;
   n.sq.y = 520;
   n.mo.x = 730;
   n.mo.y = 420;
+  n.mo.f = -1;
   const offer = ss.offerNow();
+  const from = n.mo.x;
   offer.f();
+  let steps = 0;
+  for (let i = 0; i < 80 && !(n.cur && n.cur.k === "bub"); i++) {
+    ss.tick(0.05);
+    steps++;
+  }
+  const beside = Math.abs(n.mo.x - n.sq.x);
+  const arrived = beside > 70 && beside < 170 && Math.abs(n.mo.x - from) > 30;
+  const facing = n.mo.f === -n.sq.f;
   const lines = [];
   let chipDuring = "";
   let pose = "";
+  const faces = [];
   for (let i = 0; i < 8; i++) {
-    ss.tick(0.05);
     const c = n.cur;
     if (c && c.k === "bub") {
       if (!lines.includes(c.b.text)) lines.push(c.b.text);
@@ -41,26 +53,47 @@ const song = await page.evaluate(() => {
         chipDuring = n.ch1Chip;
         pose = n.sqPose;
       }
+      ss.drawFrame();
+      const b = ss.lastBubble;
+      if (b && b.head) {
+        const top = b.y - 16;
+        const hit = b.x < b.head.x + b.head.w && b.x + b.w > b.head.x && top < b.head.y + b.head.h && top + b.h + 16 > b.head.y;
+        faces.push({ who: b.who, hit, y: Math.round(b.y), head: Math.round(b.head.y) });
+      }
     }
     n.bt = 1;
     ss.opTap();
+    ss.tick(0.05);
   }
+  const chipBeforeLeave = n.ch1Chip;
+  let left = false;
+  for (let i = 0; i < 100 && n.moPose !== "hidden"; i++) ss.tick(0.05);
+  left = n.moPose === "hidden";
   return {
     verb: offer && offer.verb,
+    steps,
+    arrived,
+    facing,
     lines,
     chipDuring,
     pose,
+    faces,
+    chipBeforeLeave,
+    left,
     chipAfter: n.ch1Chip,
+    ctrl: n.ctrl,
     goodbye: lines.some((t) => t.includes("See you after work")),
   };
 });
 g.check("SING is the action", song.verb === "SING", song);
-g.check("Squatch sings the old line first", song.lines[0] === "\u266A I'm floating in space! \u266A", song);
+g.check("Mops walks over before anyone sings", song.arrived && song.steps > 2 && song.lines[0] === "\u266A I'm floating in space! \u266A", song);
+g.check("Mops stands facing Squatch", song.facing, song);
 g.check("Mops answers with the old line", song.lines[1] === "\u266A Baaa-aa-aaa! \u266A", song);
 g.check("the goodbye stand-in is gone", song.goodbye === false, song);
 g.check("the sing-along chip is still up while he is singing", song.chipDuring === "Squatch: sing along with Mops", song);
 g.check("he is in the singing pose for his line", song.pose === "sing", song);
-g.check("the sing-along chip clears after the song", song.chipAfter === "Squatch: peek out the door", song);
+g.check("song bubbles stay off both faces", song.faces.length === 2 && song.faces.every((f) => !f.hit), song.faces);
+g.check("the peek chip waits until Mops has left and control is back", song.chipBeforeLeave !== "Squatch: peek out the door" && song.left && song.ctrl && song.chipAfter === "Squatch: peek out the door", song);
 
 const arrows = await page.evaluate(() => {
   const ss = window.__ss;
@@ -83,7 +116,7 @@ const arrows = await page.evaluate(() => {
   return { head: at(410, 514), tailUp: at(448, 514), shaft: at(434, 530) };
 });
 const headY = (p) => p && p[0] > 170 && p[1] > 130 && p[2] < 140 && p[0] > p[2] + 40;
-g.check("the bedroom arrows are on the floor", headY(arrows.shaft), arrows);
+g.check("the bedroom arrows are on the floor", arrows.shaft[0] > arrows.tailUp[0] && arrows.shaft[2] < arrows.tailUp[2], arrows);
 g.check("the arrow head is on the left, away from the bucket", headY(arrows.head) && !headY(arrows.tailUp), arrows);
 
 const src = readFileSync(new URL("../src/game/12-ch1-redesign.js", import.meta.url), "utf8");

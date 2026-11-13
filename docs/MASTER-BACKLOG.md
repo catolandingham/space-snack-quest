@@ -188,7 +188,7 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 
 ## Changelog
 
-2026-11-13. Home song, not merged. Squatch sings "I'm floating in space!" and Mops answers "Baaa-aa-aaa!", then Mops leaves. The sing-along chip stays until those lines have played. "See you after work." is gone. The bedroom arrows point away from the bucket. The keyboard instructions under the game are gone. The title picture is unchanged. Docs match main: yes. Do not merge.
+2026-11-13. Home song, not merged. Mops walks over and stands next to Squatch. Squatch sings "I'm floating in space!" and Mops answers "Baaa-aa-aaa!", then Mops leaves. Bubbles sit off the face. The peek chip shows only after Mops is gone. The sing-along chip stays until those lines have played. "See you after work." is gone. The bedroom arrows point away from the bucket. The keyboard instructions under the game are gone. The title picture is unchanged. Docs match main: yes. Do not merge.
 
 2026-11-13. Brian said yes, merge. Story waits need a tap. A sight is a short hop, and Zip calls security. Mops answers the Mars gate bot: "He's with me." and "No thanks. We're getting my goat." Stage directions are pictures and a sound. Gallery words "TIED TOGETHER FOREVER", "ME" / "MOPS", and "BEEP BEEP" are approved. Docs match main: yes.
 

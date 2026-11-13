@@ -18,28 +18,24 @@
       ]);
     }
     function ch1SingAlong() {
-      // The chip stays "sing along" until both song lines have played (K26).
-      ((n.ch1Song = !1), (n.ctrl = !1), (n.act = null), (n.sqPose = "sing"));
+      // Mops walks over, they sing, then he leaves. The peek chip waits until he is gone and control is back.
+      let room = sn(),
+        side = n.sq.x > 640 ? -1 : 1,
+        standX = w(n.sq.x + side * 130, room.x0 + 24, room.x1 - 24),
+        standY = w(n.sq.y, room.y0, room.y1);
+      ((n.ch1Song = !1), (n.ctrl = !1), (n.act = null), (n.sqPose = "stand"), (n.moPose = "stand"), (n.sq.f = side));
       J([
+        cV((dt) => mV(n.mo, standX, standY, 160, dt)),
+        N(() => {
+          ((n.mo.f = -side), (n.mo.moving = !1), (n.sqPose = "sing"));
+        }),
         v("sq", "\u266A I'm floating in space! \u266A", "song"),
         N(() => {
           ((n.sqPose = "stand"), (n.moPose = "sway"));
         }),
         v("mops", "\u266A Baaa-aa-aaa! \u266A", "song"),
         N(() => {
-          ((n.moPose = "stand"), (n.ch1Chip = "Squatch: peek out the door"), chipNow());
-        }),
-        ch1Step("sq", 760, 500, 150),
-        N(() => {
-          ((n.moPose = "stand"),
-            (n.mo.x = 620),
-            (n.mo.y = 470),
-            (n.ch1MopsLeave = 1),
-            (n.ch1PeekReady = !0),
-            (n.ctrl = !0),
-            (n.scene = "Q1"),
-            (n.ch1Chip = "Squatch: peek out the door"),
-            chipNow());
+          ((n.moPose = "stand"), (n.mo.f = 1), (n.ch1MopsLeave = 1));
         }),
       ]);
     }
