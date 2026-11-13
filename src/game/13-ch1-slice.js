@@ -62,18 +62,9 @@
         }),
       ];
     }
-    // An original short swing figure. Not the old band's tune, words, or recording.
+    // Station Call. The words stay in the bubble. Nothing is sung.
     function ch1CrocTune() {
-      let notes = [62, 65, 69, 74, 72, 69, 65, 62, 64, 67, 71, 67],
-        step = 0.28,
-        t = 0;
-      notes.forEach((midi, i) => {
-        let long = i % 2 === 0,
-          dur = long ? step * 0.62 : step * 0.34;
-        Fi(Da(midi), dur, t);
-        i % 2 === 0 && lV(Da(midi - 12), step * 0.5, "sine", 0.05, t);
-        t += long ? step * 0.66 : step * 0.34;
-      });
+      stationCall();
     }
     function ch1PeekGo() {
       ((n.ch1PeekReady = !1), (n.ch1Chip = ""), (n.ctrl = !1), (n.act = null));
@@ -120,7 +111,7 @@
         N(() => {
           ((n.ch1Dim = !0), (n.ch1Dance = 2), ch1CrocTune());
         }),
-        v("croc", "Pennsylvania 1-2-3-4-5!", "song"),
+        v("croc", "Stormtop-vania 1-2-3-4-5!", "song"),
         N(() => {
           n.ch1Dim = !1;
         }),

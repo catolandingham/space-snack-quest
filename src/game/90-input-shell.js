@@ -212,6 +212,8 @@
         transit: () => ({ fadeA: Ka, walkIn: fa, lastRoom: Mf }),
         voiceCount: () => [O1, R1, N1],
         audio: () => ({ state: S ? S.state : "none", vol: z, muted: G }),
+        cueInfo: () => cueInfo(),
+        renderCue: (name, seconds, busy) => renderCueWav(name, seconds, busy),
         soundState: () => soundState(),
         soundRefused: () => soundRefused(),
         soundLineShown: () => soundLineShown(),

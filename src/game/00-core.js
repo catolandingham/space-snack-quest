@@ -112,11 +112,11 @@
     function W() {
       Z(G ? 1 : 0);
     }
-    // Effects are Web Audio oscillators. Joe's warm theme is one file, music/main-theme-from-brian.mp3,
-    // fetched only after the first tap and only while a warm cue is on. One AudioContext, made and resumed
-    // on the player's first touch, click or key (any of them; see J2 in 90-input-shell.js), then on every
-    // later one while it is not running. A browser can keep it suspended after a touch (Brave Shields on an
-    // iPhone does); then the sound icon shows "blocked" and a tap on it says so and tries again.
+    // Effects and the beds are Web Audio oscillators. Snack Quest Drift is the warm theme. Stormtop Lobby
+    // Glow is the party bed. One AudioContext, made and resumed on the player's first touch, click or key
+    // (any of them; see J2 in 90-input-shell.js), then on every later one while it is not running. A browser
+    // can keep it suspended after a touch (Brave Shields on an iPhone does); then the sound icon shows
+    // "blocked" and a tap on it says so and tries again.
     let soundTry = -1,
       soundAsk = -1;
     function VV() {
@@ -160,7 +160,6 @@
     }
     function Ve() {
       try {
-        document.hidden && warmEl && !warmEl.paused && warmEl.pause();
         if (!S) return;
         document.hidden ? S.suspend().catch(() => {}) : S.state !== "running" && S.resume().catch(() => {});
       } catch {}
@@ -481,13 +480,10 @@
       qt = { x: 0, y: 0, active: !1 };
     let musicKind = "",
       musicWait = 0,
-      warmEl = null,
-      warmFade = 0,
-      warmPlayState = "",
-      warmStarting = false;
-    // A1: Joe's recording is the warm theme. It plays on the title, at home (not during the search or
-    // dress-up), while the morning gift is out, and on the balloon kid's happy faces. Sneak and journey
-    // stay generated. Nothing starts before the first tap, because the file is created only once S exists.
+      warmPlayState = "";
+    // A6: Snack Quest Drift plays on the title, at home (not during the search or dress-up), while the
+    // morning gift is out, and on the balloon kid's happy faces. The party hall plays Stormtop Lobby Glow.
+    // Sneak and journey stay short generated phrases. Nothing starts before the first tap.
     function warmWhy() {
       if (G) return "";
       if (p.state === "title") return "title";
@@ -507,43 +503,15 @@
       if (n.ch1Heart) return "warm";
       if (n.roomWalk || n.ch1Journey) return "journey";
       if ((n.ch1Night && n.scene === "Q4" && n.ctrl) || (n.ch1Sneak && n.ctrl)) return "sneak";
+      if (n.ch1Party && n.room === "hall") return "party";
       if (n.sqPose === "hidden" && n.ch1Party) return "sneak";
       return "";
-    }
-    function warmTick(dt, on) {
-      let goal = on && !G && z > 0 ? 1 : 0;
-      if (!warmEl && !goal) return;
-      if (!S) return;
-      if (!warmEl)
-        try {
-          ((warmEl = new Audio("music/main-theme-from-brian.mp3")), (warmEl.loop = !0), (warmEl.preload = "auto"));
-        } catch (err) {
-          warmPlayState = "err:" + (err && err.name);
-          return;
-        }
-      let step = Math.min(1, (dt || 0) / 0.45);
-      warmFade += (goal - warmFade) * step;
-      if (warmFade < 0.02 && !goal) ((warmFade = 0), (warmStarting = !1), warmEl.paused || warmEl.pause());
-      else {
-        warmEl.volume = Math.max(0, Math.min(1, 0.5 * z * warmFade));
-        if (warmEl.paused && goal > 0 && !warmStarting) {
-          warmStarting = !0;
-          warmPlayState = "pending";
-          let pending = warmEl.play();
-          pending &&
-            pending.then(
-              () => ((warmStarting = !1), (warmPlayState = "ok")),
-              (err) => ((warmStarting = !1), (warmPlayState = "err:" + (err && err.name))),
-            );
-        }
-      }
-      window.__ss && ((window.__ss.warmPlay = warmPlayState), (window.__ss.warmCue = warmWhy()), (window.__ss.warmPaused = !!warmEl.paused));
     }
     function musicTick(l) {
       let want = musicWant();
       want !== musicKind && ((musicKind = want), (musicWait = 0));
-      warmTick(l, want === "warm");
-      if (!want || want === "warm") return;
+      bedTick(want);
+      if (!want || want === "warm" || want === "party") return;
       if (((musicWait -= l), musicWait > 0)) return;
       musicWait = want === "sneak" ? 2.8 : want === "journey" ? 3.4 : 4.6;
       want === "sneak" ? ji([48, 51, 55, 51], 0.2, "triangle") : ji([55, 59, 62, 67, 71], 0.18, "triangle");

@@ -292,11 +292,12 @@ Each panel's on-screen words are in CH1-CARTOON-LINES.md. Which files are curren
 ## 7. Audio
 | # | Date | Decision | Source | Status |
 |---|---|---|---|---|
-| A1 | 11-08 | Brian's track (`music/main-theme-from-brian.mp3`, 3:54) is the warm theme for heart moments and the title. It's a song by his friend Joe, and Brian says it's fine to use. | Brian 3:17 PM, 3:19 PM, 3:20 PM | Decided (supersedes "rights not confirmed"). The file is in this unmerged slice. It plays on the title, at home (not during the search or dress-up), while the morning gift is out, and when the balloon kid is happy. Sneak and journey stay generated. Nothing starts before the first tap. |
+| A1 | 11-08 | Brian's track (`music/main-theme-from-brian.mp3`, 3:54) is the warm theme for heart moments and the title. It's a song by his friend Joe, and Brian says it's fine to use. | Brian 3:17 PM, 3:19 PM, 3:20 PM | Superseded for playback by A6 (2026-11-13). The file stays in git history only. |
 | A2 | 11-08 | Also wanted: a sneak and chase theme, a journey/travel theme, and short stings (spotted, escape, secret found, caught). | Brian 3:19 PM | Decided. Generated stand-ins are in the unmerged slice. Not Joe's recording. |
 | A3 | 11-08 | Music plays at the right moments with silence between, not constantly. | Brian 3:11 PM, 3:19 PM | Decided |
 | A4 | 11-08 | Any action that makes a noise gets a sound effect (fur slurped into a vent, the robots' bleep-bloops, a goat bleat). | Brian 3:19 PM | Decided |
 | A5 | 11-08 | No fart sounds. | video notes; card | Decided |
+| A6 | 11-13 | Brian retired the sung theme. The warm theme is an original Web Audio loop, Snack Quest Drift (92 BPM, about 64 seconds, soft bass, muted plucks, a light shaker, sparkle bells, no vocals). The party hall plays Stormtop Lobby Glow (110 BPM, 72 seconds, electric piano, brushes, a soft pad, sparse muted horns, and an extra horn only while the show is on). The Croc Boys play Station Call, about 6 seconds: muted horns, then a xylophone answer, then a short swing tag. The bubble says "Stormtop-vania 1-2-3-4-5!" and nothing is sung. A speech bubble ducks the bed. Same warm moments as A1. Nothing starts before the first tap. | Brian 2026-11-13 | Decided |
 | A6 | 11-08 | The Harry and the Hendersons Sasquatch theme and Hunting Bigfoot podcast clips are mood references only (licensing unchecked). | Brian 3:11 PM | Decided (references, not for use) |
 
 ## 8. Code, controls and process
