@@ -1,5 +1,7 @@
 # Handover for the Squatch Game bot, written 2026-11-08
 
+> Written 2026-11-08. Where things stand now is [`STATE.md`](STATE.md). Every decision now is [`DECISIONS.md`](DECISIONS.md). If this handover disagrees with those, they win. The 2026-11-08 snapshots it names are in [`history/`](history/), with pointers left in `project/`. The Ostrich threads are no longer in `grok-archive/`. See [`README.md`](README.md).
+
 ## 1. What this document is and who it is for
 
 This is the full handover of "Sneaky Sasquatch: Space Snack Quest" from Brian's Claude Code sessions (2026-11-06 to 2026-11-08) to the Grok bot called "Squatch Game", which built the game from 2026-11-02 to 2026-11-06.

@@ -4,7 +4,7 @@
 
 ## Where main is (Chapter 1 redesign)
 
-2026-11-13. PR #21 (locked rooms) and PR #23 (lunch through the ship) are merged into main. Notes below that say the hallway is not built, or that Day 2 is not merged, are from before those merges. Locked pictures stay in `docs/locked-rooms/`. Do not redraw them. The guardrail that records the hashes is not merged. Docs match main: yes.
+2026-11-13. PR #21 (locked rooms) and PR #23 (lunch through the ship) are on main. Sentences below that say the hallway is not built, or that Day 2 is not merged, are from before those merges. Locked pictures stay in `docs/locked-rooms/`. Do not redraw a room freehand, and do not change these files, without Brian's yes and a new locked version. Mops's beard is his mop; no separate mop prop. Pull requests #12, #13, #15, and #16 were read against `OPEN-ASKS.md`. New leftovers are section G there. Docs match main: yes.
 
 A new game plays the redesigned Chapter 1 from the Nov 8 cartoon: home, delivery room, night mailbox, six days later, the vent, the costume, and the scanner. Docs for that pass: `docs/CH1-LINES-FOR-BRIAN.md`. The home room has the wardrobe, no mop, and no vent. A balled-up Squatch is noticed only when a robot stays within 70 pixels for 2 seconds. The older night-out scenes are still reachable from a debug link. They are not the path from the title.
 
@@ -188,7 +188,9 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 
 ## Changelog
 
-2026-11-13. Guardrail, not merged. Locked room art must not be redrawn, replaced, or restyled. The rule from `docs/locked-rooms/README.md` is now in `CLAUDE.md` and `AGENTS.md`, word for word. Mops's beard is his mop; no separate mop prop. `docs/locked-rooms/manifest.json` holds the sha256 of each locked picture, and `tests/locked-art.mjs` fails if a picture changes or a room stops using it. Docs match main: yes. Do not merge.
+2026-11-13. Guardrail. Brian said yes, merge. Locked room art must not be redrawn, replaced, or restyled. The rule from `docs/locked-rooms/README.md` is now in `CLAUDE.md` and `AGENTS.md`, word for word. Mops's beard is his mop; no separate mop prop. `docs/locked-rooms/manifest.json` holds the sha256 of each locked picture, and `tests/locked-art.mjs` fails if a picture changes or a room stops using it. Docs match main: yes.
+
+2026-11-13. Folded the stale docs pulls. #12's reply sheet was already answered in `DECISIONS.md` and `OPEN-ASKS.md`. #13's script export was from the old chapter and was not copied. #15's Chapter 1 line changes were for the old night-out and were not copied. #16's cook drawing was game code and was not copied. Seven leftovers are `OPEN-ASKS.md` section G. Docs match main: yes.
 
 2026-11-12. Per-room door scaling, not merged. Brian t336u: an adult's head is 85% of the door in that room. Hall 77.9px door gives 66.2px. Office 123.4px door gives 104.9px. Squatch is 80% of the adult in the same room. A room with no door keeps the hall height. Docs match main: yes. Do not merge.
 
