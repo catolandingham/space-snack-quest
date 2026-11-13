@@ -67,20 +67,24 @@
       }
       e.restore();
     }
-    function drawGoalMark(x, y) {
-      let p = 0.75;
+    // A goal hint is the outline of the place, never a circle around it.
+    function drawGoalOutline(x0, y0, x1, y1) {
       (e.save(),
-        (e.globalAlpha = p),
+        (e.globalAlpha = 0.9),
         (e.strokeStyle = "#ffcf33"),
-        (e.lineWidth = 6),
-        e.beginPath(),
-        e.arc(x, y, 54, 0, 7),
-        e.stroke(),
-        e.restore());
+        (e.lineWidth = 5),
+        e.strokeRect(x0, y0, x1 - x0, y1 - y0),
+        e.restore(),
+        (n.ch1Goal = { shape: "outline", x0, y0, x1, y1 }));
+    }
+    function drawGoalMark(x, y) {
+      drawGoalOutline(x - 36, y - 28, x + 36, y + 28);
     }
     function ch1MarkGoal() {
       if (n.ch1PadOn) return drawGoalMark(480, 250);
       if (!n.ctrl || (n.ch1Zoom && n.ch1Zoom.zoom < 1)) return;
+      if (n.ch1PeekReady) return drawGoalOutline(836, 400, 936, 530);
+      if (n.ch1ToPlant) return drawGoalOutline(CH1_MID_PLANT.x0 - 4, CH1_MID_PLANT.y0 - 4, CH1_MID_PLANT.x1 + 4, CH1_MID_PLANT.y1 + 4);
       let spots =
         n.ch1Day2 && ch1Day2Spots
           ? ch1Day2Spots()
@@ -104,6 +108,8 @@
       if (n.ch1MopsLeave) return "";
       if (n.ch1Dress && n.ch1Dress.on) return "";
       if (n.ch1Chip) return n.ch1Chip;
+      // A chip only names something the player can do right now.
+      if (!n.ctrl) return "";
       return CH1Q_CHIPS[n.scene] || "";
     }
     // Adult head height is 85% of the door in the room he is standing in.
@@ -147,9 +153,12 @@
     // Back-wall door of office-room-empty-v2. The hallway's front door, seen from inside.
     // Feet stand just through that door, on the floor below the picture's floor line (source y 330).
     const CH1_OFFICE_DOOR = { x: 480, y: 286 };
+    // Middle plant and stage, measured on the locked hall and scaled onto the 960×640 picture.
+    const CH1_MID_PLANT = { x0: 400, y0: 440, x1: 483, y1: 544, cx: 441, cy: 479 },
+      CH1_STAGE = { x0: 248, y0: 245, x1: 480, y1: 293, cx: 364, feet: 290 };
     const CH1_GUESTS = [
       [250, 460, "antenna"],
-      [400, 440, "croc"],
+      [320, 530, "croc"],
       [620, 450, "horns"],
       [740, 470, "hat"],
       [200, 610, "hair"],
@@ -478,6 +487,8 @@
         (n.ch1Cut = null),
         (n.ch1Dress = null),
         (n.ch1PeekReady = !1),
+        (n.ch1ToPlant = !1),
+        (n.ch1Talk = 0),
         (n.ch1Song = !1),
         (n.ch1Search = !1),
         (n.ch1Mini = ""),
@@ -1125,6 +1136,7 @@
       if (n.ch1Cut) return ch1CutSpots();
       if (n.ch1Dress && n.ch1Dress.on) return ch1DressSpots();
       if (n.ch1PeekReady && n.ctrl) return ch1PeekSpots();
+      if (n.ch1ToPlant && n.ctrl) return ch1SneakSpots();
       if (n.scene === "QA") return n.ch1Raid && n.room === "hall" ? ch1RaidSpots() : n.ctrl && !n.ch1PartyOver ? ch1PartySpots() : [];
       if (n.ch1Day2) return ch1Day2Spots();
       if (!n.ctrl || n.sqPose === "ball" || n.sqPose === "hidden") return [];
@@ -1307,23 +1319,26 @@
           Re(190, 210, ((adultPxFor("office") * 0.8) / 45) * 0.35, { f: 1, jacket: !0, goatBeard: !0, horns: !0 })));
     }
     function drawCh1Party() {
+      drawCh1SliceParty();
       let look = (n.ch1Look || 0) > 0,
         face = look ? 1 : 0,
         eye = 72 * ALIEN_ADULT,
         glance = (x, y) => look && (F(x + 8, y - eye, 2.2, "#fffdf8"), F(x - 5, y - eye, 2.2, "#fffdf8"));
-      (m(280, 300, 220, 28, 6),
+      (m(CH1_STAGE.cx - 108, CH1_STAGE.y0 - 8, 216, 22, 4),
         r("#3478f6", 3),
-        g("ROBOTICS DELEGATION!", 390, 314, 14, "#ffffff", "center", 900),
-        n.sqPose === "hidden" && ga(400, 500),
+        g("ROBOTICS DELEGATION!", CH1_STAGE.cx, CH1_STAGE.y0 + 3, 13, "#ffffff", "center", 900),
         !(n.ch1PartyDid && n.ch1PartyDid.snack) &&
           [
             [848, 340, "pie"],
             [848, 390, "cup"],
             [848, 440, "cake"],
           ].forEach((bit) => drawBarSnack(bit[2], bit[0], bit[1], 0.45)),
+        (n.ch1Face = []),
         CH1_GUESTS.forEach((guest) => {
           if (n.ch1Raid && n.ch1Raid.witness && guest[2] === "spots") return;
-          (drawCh1Alien(guest[0], guest[1], guest[2], ALIEN_ADULT, face || 1), glance(guest[0], guest[1]));
+          let lookAt = n.ch1Talk ? (guest[0] < CH1_STAGE.cx ? 1 : -1) : face || 1,
+            bob = n.ch1Dim ? Math.sin(n.T * 8 + guest[0]) * 6 : 0;
+          (n.ch1Face.push(lookAt), drawCh1Alien(guest[0], guest[1] + bob, guest[2], ALIEN_ADULT, lookAt), glance(guest[0], guest[1]));
         }),
         n.ch1Raid && n.ch1Raid.witness && drawCh1Alien(n.ch1Raid.witness.x, n.ch1Raid.witness.y, "spots", ALIEN_ADULT, 1),
         ((n.ch1Raid && n.ch1Raid.guards) || []).forEach((g) => {
@@ -1334,8 +1349,12 @@
         Qt(880, 500, "#c9842a", QT_ADULT, -1),
         drawOctopus((n.ch1Oct && n.ch1Oct.x) || 760, (n.ch1Oct && n.ch1Oct.y) || 555, face || -1),
         drawCh1Fest(),
-        drawCh1Alien(340, 400, "cape", ALIEN_ADULT, face || -1),
+        n.ch1Talk && drawCh1Alien(CH1_STAGE.cx, CH1_STAGE.feet, "hat", ALIEN_ADULT * 1.7, 1),
+        n.sqPose === "hidden" &&
+          (ga(CH1_MID_PLANT.cx, CH1_MID_PLANT.cy), (n.ch1Eyes = { x: CH1_MID_PLANT.cx, y: CH1_MID_PLANT.cy })),
+        drawCh1Alien(340, 400, "cape", ALIEN_ADULT, n.ch1Talk ? (340 < CH1_STAGE.cx ? 1 : -1) : face || -1),
         drawCh1Tripod(250, 360),
+        drawCh1Show(),
         !n.ch1Flyer && (m(500, 500, 16, 12, 1), r("#fffdf8", 1)),
         (n.ch1Spill || 0) > 0 && drawCh1Chain(1 - n.ch1Spill),
         drawBalloonKid());
@@ -1407,8 +1426,9 @@
         C([x, y - 46, x + 2, y + 10], "#6b6256", 4),
         m(x - 18, y - 64, 36, 18, 4),
         r("#1e2430", 3),
-        L(x - 20, y - 55, 7),
-        r("#8fdcff", 2));
+        L(x + 2, y - 76, 7),
+        r("#8fdcff", 2),
+        (n.ch1Cam = { body: { x, y: y - 55 }, lens: { x: x + 2, y: y - 76 } }));
     }
     function drawOctopus(x, oy, f) {
       (e.save(),

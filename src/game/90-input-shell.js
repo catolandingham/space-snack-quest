@@ -43,6 +43,14 @@
           return;
         }
         if (p.state === "op") {
+          if (!de() && n.act && n.act.f && n.capBox && n.capBox.verb === n.act.verb && l >= n.capBox.x && l <= n.capBox.x + n.capBox.w && o >= n.capBox.y && o <= n.capBox.y + n.capBox.h) {
+            n.act.f();
+            return;
+          }
+          if (!de() && n.act && n.act.verb === "PEEK" && n.act.f && l >= 836 && l <= 936 && o >= 400 && o <= 530) {
+            n.act.f();
+            return;
+          }
           ch1WorldTap(l, o) || walkTap(l, o) || nf();
           return;
         }
@@ -365,6 +373,8 @@
         lockedReady: Promise.all(lockedWait),
         lockedIds: () => Object.keys(LOCKED_ROOMS),
         bubbleAt: (who) => v5(who),
+        ch1Plant: () => CH1_MID_PLANT,
+        ch1Stage: () => CH1_STAGE,
         rings: () => ringsDrawn.slice(),
         inSpot: (l) => inSpot(l),
         // Goal chips for Chapters 1, 3 and 4 (task T18), and the chip key the current state reads.

@@ -1048,7 +1048,8 @@
         if (n.ch1Office && n.room === "office") return { x: 400, y: 500 };
         if (n.ch1Office) return { x: 480, y: 490 };
         // Party lines sit under the office monitor (the screen ends near y=160), on the Isfred nameplate.
-        if (n.ch1Party) return { x: 700, y: 460 };
+        if (n.ch1Talk) return { x: CH1_STAGE.cx, y: CH1_STAGE.feet - 72 };
+        if (n.ch1Party) return { x: CH1_STAGE.cx, y: CH1_STAGE.feet - 72 };
         if (n.room === "hangar" && n.ch1D && n.ch1Ship && !n.ch1Night && n.scene !== "Q9") return { x: 560, y: 400 };
         return { x: 210, y: 215 };
       }
@@ -1071,7 +1072,7 @@
       if (l === "gary") return { x: qV.gary.x, y: qV.gary.y - 84 };
       if (l === "linda") return { x: qV.linda.x, y: qV.linda.y - 84 };
       if (l === "sq" && n.room === "window" && n.sqPose === "hidden") return { x: n.sq.x, y: n.sq.y - 110 };
-      if (l === "sq" && n.room === "hall" && n.sqPose === "hidden") return { x: n.sq.x, y: n.sq.y - 100 };
+      if (l === "sq" && n.room === "hall" && n.sqPose === "hidden") return { x: CH1_MID_PLANT.cx, y: CH1_MID_PLANT.cy };
       if (l === "sq") {
         if (n.under === "crack") return { x: 210, y: 470 };
         if (n.sqPose === "under") return { x: 205, y: 520 };
@@ -1100,7 +1101,16 @@
                 : { x: c / 2, y: 40 };
     }
     // The speaker's head, in picture pixels. A bubble must sit outside this box.
+    function crowdHeads() {
+      if (n.room !== "hall" || !n.ch1Party) return [];
+      let sc = ALIEN_ADULT;
+      return CH1_GUESTS.map((g) => ({ x: g[0] - 20 * sc, y: g[1] - 86 * sc, w: 40 * sc, h: 32 * sc }));
+    }
     function speakerHead(l) {
+      if (l === "sq" && n.room === "hall" && n.sqPose === "hidden")
+        return { x: CH1_MID_PLANT.cx - 18, y: CH1_MID_PLANT.cy - 12, w: 36, h: 22 };
+      if (l === "official" && (n.ch1Talk || (n.ch1Party && n.room === "hall")))
+        return { x: CH1_STAGE.cx - 18, y: CH1_STAGE.feet - 84, w: 36, h: 32 };
       if (l === "sq" && n.sq.x > -100) {
         if (n.sqPose === "sit" || n.sqPose === "sleep") {
           let q = wl;
@@ -1167,12 +1177,20 @@
       $ < 24 && ($ = 24);
       // Never cover the speaker's face. Sit above the head, or beside it if the top of the picture is full.
       let head = ear ? null : speakerHead(l.who);
-      if (head && boxHits({ x: _, y: $ - 16, w: T, h: R + 16 }, head, 8)) {
-        let above = head.y - R - 28;
-        above >= 20
+      let bubbleBox = () => ({ x: _, y: $ - 16, w: T, h: R + 16 });
+      let liftOff = (box) => {
+        if (!boxHits(bubbleBox(), box, 6)) return;
+        let above = box.y - R - 24;
+        above >= 16
           ? ($ = above)
-          : ((_ = head.x + head.w + 14 + T <= c - 10 ? head.x + head.w + 14 : Math.max(10, head.x - T - 14)),
-            ($ = w(head.y, 20, b - R - 12)));
+          : ((_ = box.x + box.w + 12 + T <= c - 10 ? box.x + box.w + 12 : Math.max(10, box.x - T - 12)),
+            ($ = w(box.y, 16, b - R - 12)));
+      };
+      head && liftOff(head);
+      if (!ear) for (let gh of crowdHeads()) liftOff(gh);
+      if (l.who === "official" && n.ch1Talk && head) {
+        _ = Math.min(c - T - 8, head.x + head.w + 18);
+        $ = Math.max(16, head.y - 10);
       }
       for (let CV = 0; CV < 8; CV++) {
         let NV = mq.find((ze) => _ < ze[0] + ze[2] + 6 && _ + T + 6 > ze[0] && $ < ze[1] + ze[3] + 6 && $ + R + 6 > ze[1]);

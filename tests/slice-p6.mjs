@@ -42,14 +42,15 @@ const bubble = await page.evaluate(() => {
   ss.drawFrame();
   return { at: ss.bubbleAt("official"), box: ss.lastBubble };
 });
-const desk = { x0: 86, y0: 64, x1: 214, y1: 262 };
+const stage = await page.evaluate(() => window.__ss.ch1Stage());
 const box = bubble.box;
-const overDesk =
-  box && box.x < desk.x1 && box.x + box.w > desk.x0 && box.y < desk.y1 && box.y + box.h > desk.y0;
+const head = box && box.head;
+const coversHead =
+  head && box.x < head.x + head.w && box.x + box.w > head.x && box.y < head.y + head.h && box.y + box.h > head.y;
 g.check(
-  "Isfred's party line clears the manager desk",
-  bubble.at.y >= 400 && box && box.y >= 168 && !overDesk,
-  { ...bubble, overDesk },
+  "Isfred's party line points at him on the stage and stays off his face",
+  !!head && head.x + head.w / 2 > stage.x0 && head.x + head.w / 2 < stage.x1 && head.y < stage.feet && !coversHead,
+  { ...bubble, stage, coversHead },
 );
 
 const dress = await page.evaluate(() => {
