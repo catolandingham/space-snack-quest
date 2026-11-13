@@ -1109,15 +1109,13 @@
         ]));
     }
     function ch1QSpots() {
-      if (n.ch1Beard && n.ch1Beard.zoom >= 1 && !n.ch1Beard.closing)
-        return [spot({ id: "beardx", verb: "CLOSE", cap: "cut-in", who: "sq", x: 880, y: 568, r: 800, f: ch1BeardClose })];
-      if (n.ch1Song && n.ctrl && !n.ch1Party) return withDunk(ch1SongSpots());
+      if (n.ch1Song && n.ctrl && !n.ch1Party) return ch1SongSpots();
       if (n.ch1Search && n.ctrl && n.room === "closet") return ch1SearchSpots();
       if (n.ch1Cut) return ch1CutSpots();
       if (n.ch1Dress && n.ch1Dress.on) return ch1DressSpots();
-      if (n.ch1PeekReady && n.ctrl) return withDunk(ch1PeekSpots());
+      if (n.ch1PeekReady && n.ctrl) return ch1PeekSpots();
       if (n.scene === "QA") return n.ch1Raid && n.room === "hall" ? ch1RaidSpots() : n.ctrl && !n.ch1PartyOver ? ch1PartySpots() : [];
-      if (n.ch1Day2) return withDunk(ch1Day2Spots());
+      if (n.ch1Day2) return ch1Day2Spots();
       if (!n.ctrl || n.sqPose === "ball" || n.sqPose === "hidden") return [];
       let s = n.scene,
         out = [];
@@ -1180,7 +1178,7 @@
               },
             }),
           ));
-      return withDunk(out);
+      return out;
     }
     function ch1Watch(dt) {
       if (!n.ctrl || n.scene !== "Q4" || x.mops || n.ch1Zoom) return;

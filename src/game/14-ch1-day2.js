@@ -681,7 +681,7 @@
                       : s === "pack2" && ch1PackBucket();
     }
     function ch1OkHit(x, y) {
-      return cutInXHit(x, y);
+      return x > 760 && x < 940 && y > 500 && y < 600;
     }
     function ch1HallDoorHit(x, y) {
       return x > 400 && x < 640 && y > 450;
@@ -739,7 +739,7 @@
         else if (held === 5 && (n.ch1Zoom.bag || 0) >= 5 && Math.hypot(x - 700, y - 430) < 70) ch1LeaveFood();
         return;
       }
-      let onX = cutInXHit(x, y);
+      let onX = Math.hypot(x - 880, y - 540) < 42;
       kind === "up" && ch1ZoomHit(x, y) && !(onX && (n.ch1Step === "all1" || n.ch1Step === "pad")) && ch1ZoomAct();
     }
     function ch1ConeHit(px, py, ox, oy, face) {
@@ -769,14 +769,14 @@
       (n.ch1BrochureBig || 0) > 0 && (n.ch1BrochureBig -= dt || 0);
       let z = n.ch1Zoom;
       if (z && n.ch1ZoomClosing) {
-        z.zoom = cutInAdvance(z.zoom, dt, !0);
+        z.zoom = Math.max(0, z.zoom - (dt || 0) / 0.4);
         if (z.zoom <= 0) {
           let next = n.ch1ZoomNext;
           ((n.ch1Zoom = null), (n.ch1ZoomClosing = !1), (n.ch1ZoomNext = null), next && next());
         }
         return;
       }
-      (z && z.zoom < 1 && (z.zoom = cutInAdvance(z.zoom, dt, !1)),
+      (z && z.zoom < 1 && (z.zoom = Math.min(1, z.zoom + (dt || 0) / 0.5)),
         z && z.zoom >= 1 && !n.cur && n.q.length === 0 && (n.ctrl = !0),
         n.ch1Step === "sneak" && n.room === "hall" && n.ctrl && !z && ch1LunchSee(dt),
         n.ch1Step === "hide" &&
@@ -840,7 +840,7 @@
       (m(x, y, w || 28, h || 36, 3), r(color, 2));
     }
     function drawZoomX() {
-      drawCutInX();
+      (L(880, 540, 32), r("#ffffff", 4), g("X", 880, 540, 28, "#1e2430", "center", 900));
     }
     function drawCouple(x, y, s) {
       (e.save(), e.translate(x, y), e.scale(s || 1, s || 1));
@@ -896,7 +896,9 @@
     function drawCh1Zoom() {
       let z = n.ch1Zoom;
       if (!z) return;
-      drawCutInChrome(z.zoom, () => {
+      (e.save(), (e.filter = "blur(6px)"), e.drawImage(e.canvas, 0, 0), e.restore(), (e.fillStyle = "rgba(12,16,28,.35)"), e.fillRect(0, 0, c, b));
+      let shade = e.createRadialGradient(480, 300, 160, 480, 320, 560);
+      (shade.addColorStop(0, "rgba(0,0,0,0)"), shade.addColorStop(1, "rgba(0,0,0,.5)"), (e.fillStyle = shade), e.fillRect(0, 0, c, b));
       let id = z.id;
       if (id === "paw") {
         (drawSlip(280, 170, "#ffe08a", 90, 120), drawSlip(330, 130, "#ff8fb8", 280, 340), g("ORDER MORE ROBOTS", 470, 190, 22, "#1e2430", "center", 900));
@@ -912,6 +914,7 @@
         n.ch1Fed === 1 && drawOpenBag(520, 280, 0);
       } else if (id === "one") {
         (drawSnack("pie", z.held ? z.paw.x : 480, z.held ? z.paw.y : 240, 1.4), drawOpenBag(20, 450, z.bag || 0), Fe(160, 240, 1.5, { f: 1, walk: 0, mop: !1 }));
+        (m(790, 520, 130, 56, 12), r("#ffcf33", 4), g("OK", 855, 548, 28, "#1e2430", "center", 900));
       } else if (id === "all") {
         for (let i = 0; i < (n.ch1Step === "all2" ? 5 : 6); i++) {
           if ((z.gone && z.gone[i]) || z.held === i) continue;
@@ -941,8 +944,7 @@
         n.ch1Packed && (m(430, 300, 80, 50, 4), r("#3478f6", 3), g("MY GARDIANS", 470, 326, 10, "#fff", "center", 800), drawSlip(448, 312, "#ff8fb8", 22, 18));
         n.ch1Packed === 2 && (L(560, 250, 22), r("#8a93a3", 3));
       }
-      (drawPawArm(z.paw), (e.globalAlpha = 1));
-      });
+      (drawPawArm(z.paw), z.id === "one" || drawZoomX(), (e.globalAlpha = 1));
     }
     function drawCh1Day2() {
       if (n.ch1Step === "sneak" && n.room === "hall" && n.sqPose !== "hidden") {
