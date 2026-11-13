@@ -18,16 +18,23 @@
       ]);
     }
     function ch1SingAlong() {
-      // Mops walks over, they sing, then he leaves. The peek chip waits until he is gone and control is back.
-      let room = sn(),
-        side = n.sq.x > 640 ? -1 : 1,
-        standX = w(n.sq.x + side * 130, room.x0 + 24, room.x1 - 24),
-        standY = w(n.sq.y, room.y0, room.y1);
-      ((n.ch1Song = !1), (n.ctrl = !1), (n.act = null), (n.sqPose = "stand"), (n.moPose = "stand"), (n.sq.f = side));
+      // Open floor to the right of the painted bucket (it runs to about x=648, past its solid).
+      // Mops stands on Squatch's left. The back lane stays above the props.
+      let sqX = 830,
+        sqY = 548,
+        moX = 720,
+        moY = 548,
+        lane = 430;
+      ((n.ch1Song = !1), (n.ctrl = !1), (n.act = null), (n.sqPose = "stand"), (n.moPose = "stand"));
       J([
-        cV((dt) => mV(n.mo, standX, standY, 160, dt)),
+        cV((dt) => mV(n.sq, n.sq.x, lane, 190, dt)),
+        cV((dt) => mV(n.sq, sqX, lane, 190, dt)),
+        cV((dt) => mV(n.sq, sqX, sqY, 190, dt)),
+        cV((dt) => mV(n.mo, n.mo.x, lane, 160, dt)),
+        cV((dt) => mV(n.mo, moX, lane, 160, dt)),
+        cV((dt) => mV(n.mo, moX, moY, 160, dt)),
         N(() => {
-          ((n.mo.f = -side), (n.mo.moving = !1), (n.sqPose = "sing"));
+          ((n.sq.f = -1), (n.mo.f = 1), (n.sq.moving = !1), (n.mo.moving = !1), (n.sqPose = "sing"));
         }),
         v("sq", "\u266A I'm floating in space! \u266A", "song"),
         N(() => {
