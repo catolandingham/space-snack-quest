@@ -38,19 +38,26 @@ const song = await page.evaluate(() => {
     ss.tick(0.05);
     steps++;
   }
-  const beside = Math.abs(n.mo.x - n.sq.x);
   const traveled = Math.hypot(n.mo.x - from, n.mo.y - 420);
-  const arrived = n.mo.x < n.sq.x && beside > 80 && beside < 170 && traveled > 40;
+  const arrived = n.mo.x < n.sq.x && traveled > 40;
   const facing = n.mo.f === 1 && n.sq.f === -1;
-  const props = ss.solids().concat([{ x0: 538, x1: 648, y0: 508, y1: 575 }]);
-  const body = (x, y, half, tall) => ({ x0: x - half, x1: x + half, y0: y - tall, y1: y });
+  // Drawn sizes in this room: Mops facing right reaches 66px left and 94px right of his feet.
+  // Squatch singing, facing left, reaches 61px left and 63px right.
+  const props = [
+    { x0: 83, x1: 290, y0: 400, y1: 530 },
+    { x0: 309, x1: 375, y0: 470, y1: 525 },
+    { x0: 530, x1: 650, y0: 508, y1: 575 },
+  ];
   const hits = (a, b) => a.x0 < b.x1 && a.x1 > b.x0 && a.y0 < b.y1 && a.y1 > b.y0;
   const blocked = [];
   let songAt = null;
+  let gap = 0;
   const noteBodies = () => {
-    const sqB = body(n.sq.x, n.sq.y, 45, 110);
-    const moB = body(n.mo.x, n.mo.y, 52, 120);
-    songAt = [Math.round(n.sq.x), Math.round(n.sq.y), Math.round(n.mo.x), Math.round(n.mo.y)];
+    const sqB = { x0: n.sq.x - 61, x1: n.sq.x + 63, y0: n.sq.y - 154, y1: n.sq.y };
+    const moB = { x0: n.mo.x - 66, x1: n.mo.x + 94, y0: n.mo.y - 155, y1: n.mo.y };
+    gap = Math.round(sqB.x0 - moB.x1);
+    songAt = [Math.round(n.sq.x), Math.round(n.sq.y), Math.round(n.mo.x), Math.round(n.mo.y), gap];
+    if (gap < 20) blocked.push("gap " + gap);
     for (const p of props) {
       if (hits(sqB, p)) blocked.push("squatch");
       if (hits(moB, p)) blocked.push("mops");
@@ -101,6 +108,7 @@ const song = await page.evaluate(() => {
     goodbye: lines.some((t) => t.includes("See you after work")),
     blocked,
     songAt,
+    gap,
   };
 });
 g.check("SING is the action", song.verb === "SING", song);
@@ -110,7 +118,7 @@ g.check("Mops answers with the old line", song.lines[1] === "\u266A Baaa-aa-aaa!
 g.check("the goodbye stand-in is gone", song.goodbye === false, song);
 g.check("the sing-along chip is still up while he is singing", song.chipDuring === "Squatch: sing along with Mops", song);
 g.check("he is in the singing pose for his line", song.pose === "sing", song);
-g.check("neither singer overlaps the bucket, the G box, or the crate", song.blocked.length === 0, song);
+g.check("the singers have a clear gap and miss the bucket, the G box, and the crate", song.blocked.length === 0 && song.gap >= 20 && song.gap <= 60, song);
 g.check("song bubbles stay off both faces", song.faces.length === 2 && song.faces.every((f) => !f.hit), song.faces);
 g.check("the peek chip waits until Mops has left and control is back", song.chipBeforeLeave !== "Squatch: peek out the door" && song.left && song.ctrl && song.chipAfter === "Squatch: peek out the door", song);
 

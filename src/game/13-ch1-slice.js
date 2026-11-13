@@ -18,13 +18,14 @@
       ]);
     }
     function ch1SingAlong() {
-      // Open floor to the right of the painted bucket (it runs to about x=648, past its solid).
-      // Mops stands on Squatch's left. The back lane stays above the props.
-      let sqX = 830,
-        sqY = 548,
-        moX = 720,
-        moY = 548,
-        lane = 430;
+      // In front of the desk, above the bucket. Mops is about 160px wide and Squatch
+      // about 124px, so their feet need ~195px between them for a 45px gap.
+      // The back lane (y 390) is above the crate, the G box, and the bucket.
+      let sqX = 660,
+        sqY = 498,
+        moX = 460,
+        moY = 498,
+        lane = 390;
       ((n.ch1Song = !1), (n.ctrl = !1), (n.act = null), (n.sqPose = "stand"), (n.moPose = "stand"));
       J([
         cV((dt) => mV(n.sq, n.sq.x, lane, 190, dt)),
