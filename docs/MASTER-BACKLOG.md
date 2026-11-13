@@ -189,7 +189,7 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 
 ## Changelog
 
-2026-11-13. Chapter 1 kid robot and ranked problem list, not merged. `tests/ch1-kid-play.mjs` plays all of Chapter 1 on a phone-size screen by touch and ends at the score card. It runs with `npm test`; `npm run kid-video` saves a video. `docs/CHAPTER-1-PROBLEMS.md` ranks ten Chapter 1 problems, each with its cause, fix, and the check that proves it. `docs/START-HERE.md` is a one-page handbook: what matters now, what went wrong before, and the loop to follow. No game code changed.
+2026-11-13. Chapter 1 kid robot and ranked problem list, merged on Brian's yes (pull request 37). `tests/ch1-kid-play.mjs` plays all of Chapter 1 on a phone-size screen by touch and ends at the score card. It runs with `npm test`; `npm run kid-video` saves a video. `docs/CHAPTER-1-PROBLEMS.md` ranks ten Chapter 1 problems, each with its cause, fix, and the check that proves it. `docs/START-HERE.md` is a one-page handbook: what matters now, what went wrong before, and the loop to follow. No game code changed.
 
 2026-11-13. Automatic checks and the kitchen duck, merged on Brian's yes (pull request 36, R105). GitHub now runs the build check and the full test suite on every pull request and on main (`.github/workflows/pr.yml`). The kitchen duck is press-and-hold: hold the action button to stay a ball, let go to stand up, so Squatch cannot get stuck as a ball. A faint dashed outline shows where Gloop's look will land during her warning. New test `tests/kitchen-duck-hold.mjs`. No new words.
 

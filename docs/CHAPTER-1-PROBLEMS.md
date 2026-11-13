@@ -37,6 +37,7 @@ A kid can finish the chapter today. The problems below have ten separate, small 
 - What the kid sees: at night in the hangar, the robot is looking the other way, Squatch walks past, and he is caught anyway. Nothing on screen showed the danger.
 - Seen: 1 to 3 catches every run, more than anywhere else in the chapter.
 - Cause: `ch1NightLook` (`src/game/12-ch1-redesign.js` line 225). The robot looks down for 2 seconds, turns, looks away for 4. A catch happens inside the drawn cone, and also anywhere within 70 px of the robot (`STAND_FEET`, line 191) even when it looks away. The 70 px circle is not drawn.
+- Brian, 2026-11-13, after watching the playthrough video: "did you get caught? Did not make sense." He asked for it to be noted for later. The catch is at about 3:49 in the video (229 seconds into the run). The picture shows the robot's light pointing up, away from Squatch, who is standing just below the robot. A few seconds later the LOCKUP card comes up: "A robot saw Squatch in the delivery room." Nothing on screen showed the danger.
 - Fix: draw the close circle, or drop the close catch while the robot looks away.
 - Needs Brian: one pick between those two.
 - Proving check: a test that stands Squatch 60 px behind the robot while it looks away, and asserts either no catch, or that a drawn circle is on screen (`__ss.conesDrawn()` has an item with `circle`).
