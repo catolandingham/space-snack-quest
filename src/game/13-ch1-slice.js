@@ -10,6 +10,25 @@
       { id: "nose", zone: "extra", label: "button nose" },
       { id: "pipe", zone: "extra", label: "pipe" },
     ];
+    // The beard is the mop (C2). One close-up, once, at the bucket. No new words.
+    function ch1DunkSpot() {
+      return spot({ id: "dunk", verb: "DUNK", cap: "beard", who: "sq", x: 566, y: 540, r: 70, f: ch1Wring });
+    }
+    function withDunk(list) {
+      list.length &&
+        n.room === "closet" &&
+        (n.scene || "")[0] === "Q" &&
+        n.ctrl &&
+        !n.ch1Wrung &&
+        n.sqPose === "stand" &&
+        !n.ch1Cut &&
+        list.push(ch1DunkSpot());
+      return list;
+    }
+    function ch1Wring() {
+      ((n.ctrl = !1), (n.act = null), (n.ch1Wrung = !0), (n.ch1WringT = n.T));
+      J([{ k: "panel", id: "ch1wring" }, N(() => (n.ctrl = !0))]);
+    }
     function ch1Day1() {
       J([
         N(() => {

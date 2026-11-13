@@ -380,7 +380,12 @@
         e.arc(-2, -18, 3.2, 0, 7),
         wV("#ffcf33", 1.2),
         F(-2, -18, 1.2, "#e8a400"),
-        s.mop && (St(-26, -40, -15, 0, 2.2, "#b8a07e", 1), XV(-14, 1, 6, 2.6, 8, 1.5, 0), wV("#8fdcff", 1)),
+        // C2: the beard is the mop. White strands hang from the chin to the floor and swish. No mop prop.
+        [0, 1, 2, 3, 4, 5].forEach((i) => {
+          let spread = s.wring ? 0.55 : 1.7,
+            sw = Math.sin((s.walk || 0) + n.T * 2.4 + i) * (s.wring ? 0.4 : Math.abs(s.walk) > 0.2 ? 3.2 : 1.1);
+          St(13 + i * spread, -9 + A * 0.2, 11 + i * spread * 0.35 + sw, s.wring ? 1 : 7, 1.15, "#f7f4ee", 1);
+        }),
         n.room === "kitchen" &&
           !ch2.greasy &&
           (ch2.phase === "wash5" || n.scene === "G5k") &&
@@ -666,7 +671,7 @@
         homeDoorCut(),
         Ef(808, 268, 1),
         n.pulse.has("sign") &&
-          (e.save(), (e.shadowColor = "#ffcf33"), (e.shadowBlur = 30), Ef(748, 210, 1.08), e.restore()));
+          (e.save(), (e.shadowColor = "#ffcf33"), (e.shadowBlur = 30), Ef(808, 268, 1.08), e.restore()));
       if (
         (pointer("bed", 110, 410, 190, 130, 12),
         m(112, 524, 16, 18, 3),
@@ -1593,6 +1598,26 @@
         (X(l, o, i * 0.8, i), e.stroke());
     }
     function gq(l, o) {
+      if (l === "ch1wring") {
+        let t = Math.max(0, n.T - (n.ch1WringT || n.T)),
+          wring = t > 0.7,
+          feet = wring ? 400 : 455;
+        ((e.fillStyle = "rgba(20,24,32,.78)"), e.fillRect(0, 0, c, b), m(150, 24, 660, 592, 18), r("#f7f1e4", 6));
+        (e.beginPath(),
+          e.moveTo(300, 430),
+          e.lineTo(660, 430),
+          e.lineTo(620, 590),
+          e.lineTo(340, 590),
+          e.closePath(),
+          r("#ffcf33", 6),
+          e.beginPath(),
+          e.ellipse(480, 442, 150, 20, 0, 0, 7),
+          r("#8fdcff", 3));
+        Fe(520, feet, 3.8, { f: 1, walk: 0, headDown: !wring && t > 0.15, wring });
+        wring &&
+          [0, 1, 2, 3, 4].forEach((i) => F(445 + i * 18, 430 + ((t * 80 + i * 16) % 70), 4, "#8fdcff"));
+        return;
+      }
       if (l === "ch1photo") {
         ((e.fillStyle = "rgba(255,252,245,.4)"),
           e.fillRect(0, 0, c, b),

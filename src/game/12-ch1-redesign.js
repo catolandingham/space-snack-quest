@@ -286,24 +286,25 @@
     function ch1Hop(spec, next) {
       ch1Walk(spec, next);
     }
-    // Home is below the hall. The delivery room is to the right of the hall, so you leave it to the left.
-    // The walk home is that same hallway backwards (R47). Each door has one off-screen point. Leaving uses
-    // it, and coming back walks in from it. Nobody is placed already inside the next room.
+    // Home is below the hall. The delivery room is to the right of the hallway (R51).
+    // Each door is a point on the 960×640 picture, measured from the locked rooms.
+    // Home's right-wall cut, the hall's bottom cut, and the side cuts shared by the
+    // hall, the hallway, and the loading bay. Nobody is placed already inside the next room.
     function ch1Go(dest, flags, next) {
       let f = flags || {},
         who = f.who || "both",
         from = n.ch1Duct ? "duct" : n.ch1D ? "delivery" : n.room === "passage" ? "passage" : n.room === "hall" ? "hall" : "closet",
-        homeOff = [1060, 510],
-        hallBottomOff = [480, 740],
-        hallRightOff = [1120, 500],
-        delOff = [-80, 520],
+        homeDoor = [880, 458],
+        hallHomeDoor = [476, 610],
+        hallSideDoor = [870, 348],
+        sideDoor = [90, 348],
         homeHall = (at) => ({
           who,
-          exit: [840, 510],
-          off: homeOff,
+          exit: [820, 470],
+          off: homeDoor,
           to: "hall",
-          entry: hallBottomOff,
-          stand: at || [480, 470],
+          entry: hallHomeDoor,
+          stand: at || [480, 500],
           scene: f.scene,
           delivery: !1,
           duct: !1,
@@ -314,10 +315,10 @@
         }),
         hallDel = (at) => ({
           who,
-          exit: [880, 500],
-          off: hallRightOff,
+          exit: [800, 400],
+          off: hallSideDoor,
           to: "hangar",
-          entry: delOff,
+          entry: sideDoor,
           stand: at || [240, 520],
           scene: f.scene,
           delivery: !0,
@@ -329,11 +330,11 @@
         }),
         delHall = (at) => ({
           who,
-          exit: [70, 520],
-          off: delOff,
+          exit: [160, 400],
+          off: sideDoor,
           to: "hall",
-          entry: hallRightOff,
-          stand: at || [520, 500],
+          entry: hallSideDoor,
+          stand: at || [700, 500],
           scene: f.scene,
           delivery: !1,
           duct: !1,
@@ -344,11 +345,11 @@
         }),
         hallHome = (at) => ({
           who,
-          exit: [480, 590],
-          off: hallBottomOff,
+          exit: [476, 560],
+          off: hallHomeDoor,
           to: "closet",
-          entry: homeOff,
-          stand: at || [760, 540],
+          entry: homeDoor,
+          stand: at || [760, 520],
           scene: f.scene,
           delivery: !1,
           duct: !1,
@@ -359,8 +360,8 @@
         }),
         delDuct = () => ({
           who,
-          exit: [860, 470],
-          off: [1060, 470],
+          exit: [820, 470],
+          off: [920, 470],
           to: "duct",
           entry: [130, 440],
           stand: [240, 440],
@@ -408,16 +409,16 @@
           mo: f.mo,
         },
         hallPass = () =>
-          Object.assign({}, pass, { exit: [880, 500], off: hallRightOff, to: "passage", entry: [-80, 420], stand: f.stand || [180, 420], ship: !1, crew: "", mail: "" }),
+          Object.assign({}, pass, { exit: [800, 400], off: hallSideDoor, to: "passage", entry: sideDoor, stand: f.stand || [180, 420], ship: !1, crew: "", mail: "" }),
         passHall = () =>
-          Object.assign({}, pass, { exit: [80, 510], off: [-80, 510], to: "hall", entry: [1120, 500], stand: f.stand || [700, 520], ship: !1, crew: "", mail: "" }),
-        passDel = () => Object.assign({}, pass, { exit: [880, 510], off: [1120, 510], to: "hangar", entry: [-80, 520], stand: f.stand || [200, 520], delivery: !0 }),
+          Object.assign({}, pass, { exit: [160, 400], off: sideDoor, to: "hall", entry: hallSideDoor, stand: f.stand || [700, 520], ship: !1, crew: "", mail: "" }),
+        passDel = () => Object.assign({}, pass, { exit: [800, 400], off: hallSideDoor, to: "hangar", entry: sideDoor, stand: f.stand || [200, 520], delivery: !0 }),
         delPass = () =>
           Object.assign({}, pass, {
-            exit: [70, 520],
-            off: [-80, 520],
+            exit: [160, 400],
+            off: sideDoor,
             to: "passage",
-            entry: [1040, 420],
+            entry: hallSideDoor,
             stand: f.stand || [720, 420],
             delivery: !1,
             ship: !1,
@@ -492,15 +493,8 @@
           }),
           cV(() => n.scene === "O1" && n.moved > 110),
           N(() => {
-            ((n.ctrl = !1),
-              (n.sqPose = "stand"),
-              (n.sq.x = 760),
-              (n.sq.y = 540),
-              (n.mo.x = 455),
-              (n.mo.y = 560),
-              (n.moPose = "stand"),
-              (n.scene = "Q1"),
-              ch1Day1());
+            (n.sqPose === "sit" || n.sqPose === "sleep") && ((n.sqPose = "stand"), (n.sq.y = 540));
+            ((n.ctrl = !0), (n.scene = "Q1"), ch1Day1());
           }),
         ]));
     }
@@ -1115,13 +1109,13 @@
         ]));
     }
     function ch1QSpots() {
-      if (n.ch1Song && n.ctrl && !n.ch1Party) return ch1SongSpots();
+      if (n.ch1Song && n.ctrl && !n.ch1Party) return withDunk(ch1SongSpots());
       if (n.ch1Search && n.ctrl && n.room === "closet") return ch1SearchSpots();
       if (n.ch1Cut) return ch1CutSpots();
       if (n.ch1Dress && n.ch1Dress.on) return ch1DressSpots();
-      if (n.ch1PeekReady && n.ctrl) return ch1PeekSpots();
+      if (n.ch1PeekReady && n.ctrl) return withDunk(ch1PeekSpots());
       if (n.scene === "QA") return n.ch1Raid && n.room === "hall" ? ch1RaidSpots() : n.ctrl && !n.ch1PartyOver ? ch1PartySpots() : [];
-      if (n.ch1Day2) return ch1Day2Spots();
+      if (n.ch1Day2) return withDunk(ch1Day2Spots());
       if (!n.ctrl || n.sqPose === "ball" || n.sqPose === "hidden") return [];
       let s = n.scene,
         out = [];
@@ -1184,7 +1178,7 @@
               },
             }),
           ));
-      return out;
+      return withDunk(out);
     }
     function ch1Watch(dt) {
       if (!n.ctrl || n.scene !== "Q4" || x.mops || n.ch1Zoom) return;

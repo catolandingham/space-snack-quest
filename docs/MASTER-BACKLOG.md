@@ -4,6 +4,8 @@
 
 ## Where main is (Chapter 1 redesign)
 
+2026-11-13, not merged. The locked pictures are unchanged. Walks between them stay on the picture, at the doors. The opening keeps control and shows the sing-along chip. The locked bedroom's blue G box and mop bucket block the walk. Mops's beard is the mop, with one wordless dunk-and-wring close-up at the bucket. Docs match main: yes. Do not merge.
+
 A new game plays the redesigned Chapter 1 from the Nov 8 cartoon: home, delivery room, night mailbox, six days later, the vent, the costume, and the scanner. Docs for that pass: `docs/CH1-LINES-FOR-BRIAN.md`. The home room has the wardrobe, no mop, and no vent. A balled-up Squatch is noticed only when a robot stays within 70 pixels for 2 seconds. The older night-out scenes are still reachable from a debug link. They are not the path from the title.
 
 On pickup day the robots open a crate on the ramp by the ship. Squatch hides in a crate still in the mail room. Dot, Bob, and Lou are not there. Mops warns him, he slips out, and they walk home. The disguise is a spare blue jacket, a fake beard, and horns. Mops keeps his own jacket on. The wardrobe's spare jacket is plain blue, and that hook is empty once Squatch takes it.

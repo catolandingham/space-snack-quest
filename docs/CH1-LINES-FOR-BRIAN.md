@@ -1,5 +1,7 @@
 # Chapter 1 lines for Brian
 
+The beard dunk has no new words. A line that was considered and not used: "He wrings it out."
+
 These are the new words in the redesigned Chapter 1. Each one is in the game now so you can hear it while you play. Say yes, or write the line you want instead, in the pull request. Nothing merges until you say yes there.
 
 Words the game already had, and the one you already approved, are not in this list: "Stormtop Cloud Resort, floating above Jupiter.", "This is Squatch. He's a Sasquatch.", "My lunch! You're the best.", "You're gumbling! (goat mumbling)", "More bleat. Less roar.", "HAIR... PROBABLY. PROCEED.", "Brave Sasquatches stay hidden.", "— The Guardians", and the room labels STAY IN HERE, DELIVERY, MOON PIES, FRAGILE, G, UPS, DOT, BOB, LOU.
