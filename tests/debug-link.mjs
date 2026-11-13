@@ -46,11 +46,15 @@ const check = (name, ok, detail) => {
   if (!ok) fails.push(name);
 };
 
-async function open(query) {
+async function open(query, consoleErrors = false) {
   const ctx = await browser.createBrowserContext();
   const page = await ctx.newPage();
   const errors = [];
   page.on("pageerror", (e) => errors.push(String(e && e.message ? e.message : e)));
+  consoleErrors &&
+    page.on("console", (msg) => {
+      if (msg.type() === "error") errors.push(msg.text());
+    });
   await page.setViewport({ width: 1100, height: 800, deviceScaleFactor: 1 });
   await page.goto(`http://127.0.0.1:8772/index.html${query}`, { waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => window.__ss && window.__ss.op, { timeout: 15000 });
@@ -89,11 +93,12 @@ async function open(query) {
 
 // No parameters: the title stays put and there is no strip.
 {
-  const { ctx, page, errors } = await open("");
+  const { ctx, page, errors } = await open("", true);
   const s = await page.evaluate(() => ({ state: window.__ss.game.state, strip: !!document.getElementById("ss-debug") }));
   check("no parameters: the game stays on the title", s.state === "title", s.state);
   check("no parameters: no state strip", s.strip === false, s.strip);
-  check("no page errors without parameters", errors.length === 0, errors.length ? errors : undefined);
+  check("the title draws without Va is not defined", !errors.some((e) => /Va is not defined/.test(e)), errors.slice(0, 3));
+  check("no page errors without parameters", errors.length === 0, errors.length ? errors.slice(0, 3) : undefined);
   await ctx.close();
 }
 
