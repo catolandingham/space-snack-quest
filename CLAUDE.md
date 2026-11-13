@@ -23,6 +23,7 @@ Owner: Brian, designer and playtester, not a programmer. Clarity beats clevernes
 11. The player always knows the goal, the next small step, and why something just happened.
 12. Every side quest is funny or moves the story.
 13. Never show an outcome without the event that caused it.
+14. Locked room pictures. The rule in docs/locked-rooms/README.md, word for word: "Do not redraw a room freehand, and do not change these files, without Brian's yes and a new locked version." Mops's beard is his mop; no separate mop prop. Do not replace or restyle a locked picture. Any visual change needs Brian's approval first.
 
 ## Conventions
 - Capture: one rule everywhere. Seen, alarm, security comes, time to hide, "They lost you" if hidden;

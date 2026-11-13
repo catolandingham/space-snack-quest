@@ -1,5 +1,7 @@
 # G Bot — Grok bot thread (verbatim archive)
 
+> Kept on 2026-11-13. This thread sets up the Squatch Game bot and the Sasquatch playtest transcription. It also spins up the Ostrich Game bot and talks about a duplicate Ostrich site on Render. Those parts stay, because this is one verbatim thread. The Ostrich-only transcripts were removed. See `README.md` in this folder. The copy before that note is in commit `bc0759f91bfda9cf37ab7eb5aeb6248a405d380b`.
+
 Source: https://grok.com/bot/2deef138-9d6b-479e-a54d-5b8f44d6a7bd (Grok, Movement Institute workspace). Scraped 2026-11-06. This is the coordinator bot Brian created on 2026-11-05 at 7:54 AM to take over the game threads from an earlier Grok Bot account that had run out of credit (that account's bots were named gamebot, Grok Bot, Squatchbot and Guess Who Bot). G Bot found both repositories, transcribed Brian's four narrated playtest recordings, and spun up the Squatch Game and Ostrich Game bots. It is relevant because the transcriptions, and the "sorted-feedback.md" G Bot wrote from them, live only in G Bot's workspace and were attached to the game bots and their Cursor agents; they are not readable in Grok. 92 entries, 26 from Brian, headers "Yesterday 7:54 AM" to "Yesterday 9:46 AM" (= 2026-11-05).
 
 ---
