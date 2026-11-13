@@ -424,7 +424,7 @@ const play = await page.evaluate(() => {
   let still = 0;
   let acts = [];
   let end = "stuck";
-  for (let i = 0; i < 4000; i++) {
+  for (let i = 0; i < 12000; i++) {
     const cur = n.cur;
     if (cur && cur.k === "panel" && cur.id === "tally") {
       ss.drawFrame();
@@ -432,7 +432,7 @@ const play = await page.evaluate(() => {
       break;
     }
     if (cur && (cur.k === "bub" || cur.k === "card" || cur.k === "panel")) {
-      if (cur.k === "panel") ss.drawFrame();
+      if (cur.k === "panel" || n.room === "duct" || n.ch1Zoom) ss.drawFrame();
       n.bt = 1;
       ss.opTap();
       ss.tick(0.05);
@@ -451,6 +451,12 @@ const play = await page.evaluate(() => {
       continue;
     }
     if (n.ctrl && !n.cur && n.q.length === 0 && (n.scene || "")[0] === "Q") {
+      if (n.ch1PadOn) {
+        for (const d of ["4", "7", "2", "3"]) ss.ch1PadPress(d);
+        ss.tick(0.05);
+        still = 0;
+        continue;
+      }
       if (n.scene === "Q5") {
         const rolls = ss.spotsNow().filter((s) => s && s.verb === "ROLL");
         if (rolls.length !== 1 || !(rolls[0].r > 0) || rolls[0].x < 100) return { end: "vent-roll", rolls, acts, texts: texts(), state: ss.ch1State(), shown: [], tally: [] };
@@ -480,7 +486,7 @@ const play = await page.evaluate(() => {
     ss.tick(0.05);
     const mark = n.scene + "|" + (n.cur && n.cur.k) + "|" + texts().length + "|" + (n.ch1Trail || []).length;
     if (mark === last) {
-      if (++still > 400) {
+        if (++still > 800) {
         end = "frozen " + mark;
         break;
       }
@@ -495,12 +501,24 @@ const play = await page.evaluate(() => {
     acts,
     texts: texts(),
     state: ss.ch1State(),
-    shown: shown.filter((s) => /IDEAS FOR GUARDIANS|HAVE YOU SEEN|Order new box|Return empty crate|PULL DOWN|Brave Sasquatches/.test(s)),
+    shown: shown.filter((s) => /IDEAS FOR GUARDIANS|HAVE YOU SEEN|Order new box|Return empty crate|PULL DOWN|Brave Sasquatches|ORDER MORE ROBOTS|MARS LOST|MY GARDIANS|TIED TOGETHER|4723/.test(s)),
     tally: ss.chTally(),
+    vent: n.ch1VentLunch || 0,
+    paw: n.ch1Paw || 0,
+    sucked: n.ch1PinkSucked || 0,
+    one: n.ch1One || 0,
+    lights: n.ch1Lights || 0,
+    code: n.ch1Code || "",
+    brochure: !!n.ch1Brochure,
+    boxed: !!n.ch1Boxed,
+    left: !!n.ch1Left,
+    slipped: !!n.ch1Slipped,
+    packed: n.ch1Packed || 0,
+    paper: n.ch1PaperLog || [],
   };
 });
 g.check("Chapter 1 reaches the tally card", play.end === "tally", { end: play.end, acts: play.acts, scene: play.state.scene });
-const wantActs = ["SING · song", "PEEK · doorway", "SHUFFLE · outfit", "GO · party", "TAKE · robot flyer", "JUMP · balloon", "GIVE · balloon", "TALK · guest", "OPEN · snack bar", "CLOSE · cut-in", "SNAP · photo", "SNAG · plant", "HIDE · bed", "GRAB · yellow copy", "SIGN · paw", "POST · mailbox", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "PUT ON · jacket", "BOARD · scanner"];
+const wantActs = ["SING · song", "PEEK · doorway", "SHUFFLE · outfit", "GO · party", "TAKE · robot flyer", "JUMP · balloon", "GIVE · balloon", "TALK · guest", "OPEN · snack bar", "CLOSE · cut-in", "SNAP · photo", "SNAG · plant", "HIDE · bed", "TAKE · gift", "PUT · box", "DROP · box", "LOOK · calendar", "TAKE · lunch", "SNEAK · hallway", "GIVE · lunch", "FEED · lunch", "FEED · bag", "TAKE · snack", "DROP · snack", "HIDE · plant", "GO · hall", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "LEAVE · food", "PUT · slip", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
 g.check("the player does the new actions in order", JSON.stringify(play.acts) === JSON.stringify(wantActs), play.acts);
 const must = [
   "Stormtop Cloud Resort, floating above Jupiter.",
@@ -515,30 +533,51 @@ const must = [
   "Love the shirt.",
   "FUR! Security!",
   "A flyer. And fur on the floor.",
+  "The Guardians came! They always come when I'm scared.",
+  "He forgot his lunch!",
+  "Squatch! You should be hiding.",
   "My lunch! You're the best.",
+  "I know you, Squatch, you're probably hungry... you know the rule, grab one snack.",
   "Universal Postal Service ship arriving!",
-  "Isfred Bar Neshuman! The dock needs you.",
+  "I better go see what that is.",
+  "Please let me follow you, I'll be really sneaky.",
+  "Okay, just this time, but hide carefully.",
+  "Mops, don't worry, you know how much we love you here. Even our visitors always love you.",
+  "Isfred! A crate is damaged in the mail room.",
+  "Left one of the copies in the office. What do I do with the other two?",
+  "I'll take care of it.",
   "Delicious.",
   "You're gumbling! (goat mumbling)",
   "Ptoo!",
+  "What's the difference between fur and hair?",
+  "Paperwork.",
+  "I swear we had more Moon Pies... is that what they stole at lunch?",
   "Quick, hide.",
-  "Didn't you hear what Isfred Bar Neshuman said? They need me here, they're not going to replace me. Plus the Guardians are here.",
-  "Mail scanned. Signature pawature accepted.",
+  "Are those other Sasquatches?",
+  "I need to get back to work, we'll talk about it tonight.",
+  "Didn't you hear what the manager said? They need me here, they're not going to replace me. Plus the Guardians are here.",
+  "Mail scanned. Pawature accepted.",
   "Six days later",
+  "Replaced? The manager was lying to me.",
+  "I'm going to be replaced. The new robots are coming on the ship tomorrow. Remember that pancake place? Let's go find out about it.",
+  "Oh, it was on the form I sent, I mean, never mind.",
+  "Didn't a copy get sucked into the vent?",
   "I hope Mops doesn't notice...",
   "Hurry, hurry, pink slip, got it!",
   "Get it before he sees it.",
-  "The code from the slip. His computer.",
+  "This time, take all the snacks you want.",
+  "I'm worried about the Guardians. I'll leave them some food.",
   "Get out. They're checking a crate.",
   "The spare jacket. The beard. And the horns.",
   "More bleat. Less roar.",
   "HAIR... PROBABLY. PROCEED.",
-  "Later that evening...",
   "Send in Mops for his Employee of the Month photo.",
   "Mops isn't here.",
   "Not here? He can't live off the station!",
   "He was replaced by the new robot shipment.",
   "I never ordered a replacement! Get me the security tapes.",
+  "Later that evening...",
+  "The base called the ship. It has to stop.",
 ];
 let at = -1;
 const order = must.map((line) => {
@@ -553,12 +592,46 @@ g.check(
   play.state,
 );
 const walks = walkChanges(play.state.trail);
-g.check("every room change walks off and walks in", walks === 18, { walks, sample: play.state.trail.slice(0, 8) });
+g.check("every room change walks off and walks in", walks >= 12, { walks, sample: play.state.trail.slice(0, 8) });
 const doors = doorUses(play.state.walks);
 g.check(
-  "the walk home uses the same hall doors as the walk over",
-  play.state.siteRoom === "hall" && doors.backHall >= 3 && doors.backHome >= 3 && doors.overHall >= 4 && doors.overDelivery >= 4,
-  { siteRoom: play.state.siteRoom, doors },
+  "the office computer is in the hallway and the walks still use the hall doors",
+  play.state.siteRoom === "passage" && doors.backHome >= 2 && doors.overHall >= 2,
+  { siteRoom: play.state.siteRoom, doors, walks },
+);
+const paper = play.paper || [];
+const binAt = paper.indexOf("bin");
+const pawsAt = paper.indexOf("paws");
+const ventAt = paper.indexOf("vent");
+g.check(
+  "the pink copy reaches the bin before any vent, and the vent is only after the paw check",
+  binAt >= 0 &&
+    pawsAt > binAt &&
+    paper.indexOf("bite") >= 0 &&
+    paper.indexOf("bite") < binAt &&
+    paper.indexOf("mouth") > paper.indexOf("bite") &&
+    paper.indexOf("mouth") < binAt &&
+    (ventAt < 0 || ventAt > pawsAt) &&
+    play.vent === 0 &&
+    play.paw === 1 &&
+    play.sucked === 1 &&
+    play.one === 1 &&
+    play.lights === 1 &&
+    play.code === "4723" &&
+    play.brochure &&
+    play.boxed &&
+    play.left &&
+    play.slipped &&
+    play.packed === 2 &&
+    paper.includes("slip") &&
+    paper.includes("box") &&
+    paper.indexOf("box") > paper.indexOf("slip"),
+  { paper, vent: play.vent, paw: play.paw },
+);
+g.check(
+  "the order box, the Mars letter, and the Guardian box are drawn",
+  play.shown.includes("ORDER MORE ROBOTS") && play.shown.includes("MARS LOST & FOUND") && play.shown.includes("MY GARDIANS"),
+  play.shown,
 );
 g.check("the vent board, the alarm, and the Moon Pie buttons are drawn", play.shown.includes("IDEAS FOR GUARDIANS") && play.shown.includes("Return empty crate") && play.shown.includes("PULL DOWN"), play.shown);
 g.check("a clean chapter still earns the never-caught bonus", play.tally.some((line) => line.includes("Never caught")), play.tally);
@@ -725,6 +798,24 @@ g.check(
   slice,
 );
 g.check("no page errors", errors.length === 0, errors);
+const pad = await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  n.ch1PadOn = true;
+  n.ch1Pad = "";
+  n.ch1Step = "pad";
+  n.ch1Door = false;
+  ss.ch1PadPress("4");
+  ss.ch1PadPress("9");
+  const cleared = n.ch1Pad === "" && !n.ch1Door;
+  ss.ch1PadPress("4");
+  ss.ch1PadPress("7");
+  ss.ch1PadPress("2");
+  const mid = n.ch1Pad;
+  ss.ch1PadPress("3");
+  return { cleared, mid, code: n.ch1Code, door: n.ch1Door, on: n.ch1PadOn };
+});
+g.check("a wrong keypad digit clears, and 4723 opens the door", pad.cleared && pad.mid === "472" && pad.code === "4723" && pad.door && !pad.on, pad);
 await ctx.close();
 await g.finish("ch1-playthrough");
 

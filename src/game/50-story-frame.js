@@ -806,7 +806,7 @@
           : C([l - 2.5, o + 3, l + 2.5, o + 3], y, 1));
     }
     function u5(l) {
-      (Qt(l.x, l.y, "#8a93a3", QT_ADULT, -0.5),
+      (Qt(l.x, l.y, "#8a93a3", qtScale(n.room), -0.5),
         X(l.x, l.y - 72, 6, 2),
         r("#59657d", 0),
         e.beginPath(),
@@ -1058,6 +1058,9 @@
                 shades: !!n.ch1Disguise,
                 hawaiian: !!n.ch1Disguise,
                 paper: !!n.ch1Flyer,
+                jacket: !!n.costumeOn,
+                goatBeard: !!n.costumeOn,
+                horns: !!n.costumeOn,
               }),
           }),
         l.sort((o, i) => o.y - i.y).forEach((o) => o.d()),

@@ -27,6 +27,11 @@
         Cs();
         return;
       }
+      if (p.state === "op" && (n.ch1PadOn || n.ch1Zoom || n.ch1Cut || (n.ch1Dress && n.ch1Dress.on))) {
+        ch1SlicePointer("down", l, o);
+        ch1Day2Pointer("down", l, o);
+        return;
+      }
       {
         if (p.state === "op" && Nh()) {
           if (n.bt < 0.3) return void (n.tapT = n.T);
@@ -38,7 +43,7 @@
           return;
         }
         if (p.state === "op") {
-          walkTap(l, o) || nf();
+          ch1WorldTap(l, o) || walkTap(l, o) || nf();
           return;
         }
         if (p.state === "title") {
@@ -68,8 +73,14 @@
       let linkCh = parseInt(q.get("ch") || "", 10) || 0,
         linkPhase = q.get("phase") || "",
         linkScene = q.get("scene") || "",
-        linkDebug = q.get("debug") === "1";
-      if (!linkCh && !linkPhase && !linkScene && !linkDebug) return;
+        linkDebug = q.get("debug") === "1",
+        linkBeat = parseInt(q.get("beat") || "", 10) || 0;
+      let previewBeat = !1;
+      try {
+        let host = location.hostname || "";
+        previewBeat = !!linkBeat && host !== "space-snack-quest.onrender.com" && host !== "localhost" && host !== "127.0.0.1" && host !== "";
+      } catch {}
+      if (!linkCh && !linkPhase && !linkScene && !linkDebug && !previewBeat) return;
       !linkCh && linkPhase && (linkCh = 2);
       !linkCh && linkScene && (linkCh = { O: 1, S: 1, Q: 1, G: 2, P: 3, M: 4 }[linkScene[0]] || 0);
       setTimeout(() => {
@@ -83,6 +94,7 @@
           typeof f === "function" && (clearRun(), f());
         }
         linkDebug && debugStrip();
+        previewBeat && (startStory(1), (n.q = []), (n.cur = null), ch1JumpBeat(linkBeat));
       }, 0);
     }
     function roomLine(text) {
@@ -227,7 +239,12 @@
         ch2Tally: o2,
         actionDown: Vf,
         tapAt: O5,
-        ch1Pointer: (kind, x, y) => ch1SlicePointer(kind, x, y),
+        ch1Pointer: (kind, x, y) => {
+          ch1SlicePointer(kind, x, y);
+          ch1Day2Pointer(kind, x, y);
+        },
+        ch1PadPress,
+        ch1JumpBeat,
         shown: () => Array.from(p.shown),
         op: n,
         startOpening: qh,
@@ -277,6 +294,9 @@
         COOL_HAT_SECONDS,
         BALLOON_GRAB_SECONDS,
         ADULT_PX,
+        adultPxFor,
+        alienScale,
+        qtScale,
         ALIEN_ADULT,
         QT_ADULT,
         SQ_ADULT,
@@ -401,7 +421,14 @@
         },
         actionDown: Vf,
         tapAt: O5,
-        ch1Pointer: (kind, x, y) => ch1SlicePointer(kind, x, y),
+        ch1Pointer: (kind, x, y) => {
+          ch1SlicePointer(kind, x, y);
+          ch1Day2Pointer(kind, x, y);
+        },
+        pointer: (kind, x, y) => {
+          ch1SlicePointer(kind, x, y);
+          ch1Day2Pointer(kind, x, y);
+        },
         setJoy: (l, o, i) => {
           ((qt.x = l), (qt.y = o), (qt.active = i));
         },

@@ -2,7 +2,7 @@
 
 These pictures and the scripts that draw them are Brian-approved. They are the source of truth for the room layouts.
 
-The game paints each one, scaled to the 960×640 picture, as the room background. Characters and things that move are drawn on top. Do not redraw a room freehand, and do not change these files, without Brian's yes and a new locked version.
+The game paints each one, scaled to the 960×640 picture, as the room background. Characters and things that move are drawn on top. An adult's head in that room is 85% of that room's main door on the canvas. Squatch is 80% of that adult. Do not redraw a room freehand, and do not change these files, without Brian's yes and a new locked version.
 
 | File | Room |
 | --- | --- |

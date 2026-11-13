@@ -314,7 +314,7 @@
     function drawCap() {
       let a = n.act;
       // No caption over the crate's own LEAVE SOUP label, or over the dish while it is being scrubbed.
-      if (!a || !a.cap || !n.ctrl || a.verb === "LEAVE SOUP" || (n.room === "kitchen" && ch2.dishT > 0)) return;
+      if (!a || !a.cap || !n.ctrl || n.ch1Zoom || a.verb === "LEAVE SOUP" || (n.room === "kitchen" && ch2.dishT > 0)) return;
       // The label is at least 156 wide, wider for long words, and always fully on the picture.
       let t = a.verb + " \u00b7 " + a.cap;
       ge(14);

@@ -141,6 +141,93 @@ The old "STAFF MAIL — collected before departure." sign is not in the game. Th
 
 The old line "Gas stop. Fuel light's blinking." is gone. The ship stopped because the base called. It did not run out of fuel.
 
+## Day 2 onward (beats 22–61), pending
+
+These are the new words in this build. Each one is in the game so you can hear it. Say yes, or write the line you want, in the pull request. Nothing here merges until you say yes.
+
+| # | Who / where | In the game now | Another way to say it |
+| --- | --- | --- | --- |
+| 109 | Squatch, morning | The Guardians came! They always come when I'm scared. | The Guardians were here. They come when I'm scared. |
+| 110 | The note in his paws | Rule #1: Brave Sasquatches stay hidden. — The Guardians | Stay hidden. — The Guardians |
+| 111 | Squatch, the lunch bag. Walkthrough says this one is already decided. | He forgot his lunch! | Mops left his lunch. |
+| 112 | Mops, in the hallway | Squatch! You should be hiding. | Squatch! You should be home. |
+| 113 | Mops, when the speaker talks | I better go see what that is. | I should go see the ship. |
+| 114 | A robot, calling Isfred away. Open question 9, the default. | Isfred! A crate is damaged in the mail room. | Isfred! The mail room needs you. |
+| 115 | Squatch, walking past the robots. Walkthrough says this is already decided. | What's the difference between fur and hair? | Fur and hair. What's the difference? |
+| 116 | Mops. Now said on that walk. | Paperwork. | It's the form. |
+| 117 | Squatch, looking at the brochure | Are those other Sasquatches? | Are they like me? |
+| 118 | A tourist | We ate at a pancake place on Mars. | The pancakes were on Mars. |
+| 119 | A tourist | Here, a brochure. | Take this. |
+| 120 | Mops, that evening | Didn't you hear what the manager said? They need me here, they're not going to replace me. Plus the Guardians are here. | The manager said they need me. And the Guardians are here. |
+| 121 | The mailbox. Shorter than row 28. | Mail scanned. Pawature accepted. | Row 28's longer line, or no words. |
+| 122 | Mops, a week later | Replaced? The manager was lying to me. | Replaced? He lied. |
+| 123 | Mops, at home | I'm going to be replaced. The new robots are coming on the ship tomorrow. Remember that pancake place? Let's go find out about it. | They're replacing me tomorrow. Let's find that pancake place. |
+| 124 | Squatch | Didn't a copy get sucked into the vent? | A copy went into the vent. |
+| 125 | Mops, escape night | This time, take all the snacks you want. | Take every snack. |
+| 126 | Squatch | I'm worried about the Guardians. I'll leave them some food. | I'll leave food for the Guardians. |
+| 127 | The order box | ORDER MORE ROBOTS | Order another robot |
+| 128 | The Guardian Box, in the close-up. The spelling is on purpose. | MY GARDIANS | |
+| 129 | The crayon, under photo 4 | TIED TOGETHER FOREVER | Always tied together |
+| 130 | The crayon labels | ME / MOPS | |
+| 131 | The hallway wall | EMPLOYEE OF THE MONTH | |
+| 132 | The brochure | PANCAKES | |
+| 133 | The Mars reply, on the vent desk | MARS LOST & FOUND. Re: a lost baby Sasquatch. We have NO record of any lost baby. There are NO Sasquatches on Mars. | No baby. No Sasquatches. — Mars |
+| 134 | The tape screen | REC | |
+| 135 | Photo 1, optional | Mops, with a cone on his head. | |
+| 136 | Photo 2, optional | Mops, with a banana for a horn. | |
+| 137 | Photo 3, optional | Mops, with a roll in his mouth. | |
+| 138 | Photo 5, optional | Mops, and a ball of fur in the back. | |
+| 139 | The robot, if you swipe past photo 5 | BEEP BEEP | |
+| 140 | Goal chip | Squatch: pick up the gift | Squatch: get the toy |
+| 141 | Goal chip | Squatch: put the gift in the box | Squatch: put it away |
+| 142 | Goal chip | Squatch: look at the calendar | Squatch: check the door |
+| 143 | Goal chip | Squatch: take the lunch | Squatch: get the bag |
+| 144 | Goal chip | Squatch: take Mops his lunch | Squatch: find Mops |
+| 145 | Goal chip | Squatch: give Mops his lunch | Squatch: hand it over |
+| 146 | Goal chip | Squatch: feed Mops | Squatch: let him eat |
+| 147 | Goal chip | Squatch: grab one snack | Squatch: take one |
+| 148 | Goal chip | Squatch: hide in the plant | Squatch: get in the plant |
+| 149 | Goal chip | Squatch: go on | Squatch: keep going |
+| 150 | Goal chip | Squatch: hide | Squatch: get out of sight |
+| 151 | Goal chip | Squatch: go home | Squatch: head home |
+| 152 | Goal chip | Squatch: get the copies from the bin | Squatch: get the papers |
+| 153 | Goal chip | Squatch: check the order | Squatch: mark the box |
+| 154 | Goal chip | Squatch: post the yellow copy | Squatch: mail the yellow one |
+| 155 | Goal chip | Squatch: sneak home | Squatch: get back to bed |
+| 156 | Goal chip | Squatch: type the code from the pink slip | Squatch: use the code |
+| 157 | Goal chip | Squatch: take the snacks | Squatch: fill the bag |
+| 158 | Goal chip | Squatch: leave food for the Guardians | Squatch: leave some food |
+| 159 | Goal chip | Squatch: hide the pink slip | Squatch: put the slip in the box |
+| 160 | Goal chip | Squatch: pack the crate | Squatch: load the crate |
+| 161 | Goal chip | Squatch: go to the ship | Squatch: head for the ship |
+| 162 | Button | TAKE · gift | |
+| 163 | Button | PUT · box | |
+| 164 | Button | DROP · box | |
+| 165 | Button | LOOK · calendar | |
+| 166 | Button | TAKE · lunch | |
+| 167 | Button | SNEAK · hallway | |
+| 168 | Button | GIVE · lunch | |
+| 169 | Button | FEED · lunch | |
+| 170 | Button | FEED · bag | |
+| 171 | Button | TAKE · snack | |
+| 172 | Button | DROP · snack | |
+| 173 | Button | HIDE · plant | |
+| 174 | Button | GO · hall | |
+| 175 | Button | GO · home | |
+| 176 | Button | GRAB · copies | The old button said yellow copy. |
+| 177 | Button | MARK · order | The old button said SIGN · paw. |
+| 178 | Button | GO · door | |
+| 179 | Button | DROP · snacks | |
+| 180 | Button | LEAVE · food | |
+| 181 | Button | PUT · slip | |
+| 182 | Button | PACK · box | |
+| 183 | Button | PACK · bucket | |
+| 184 | Button | GO · ship | |
+| 185 | Button | LOOK · photos | |
+| 186 | Button | TAKE · drawing | |
+
+The old night button "GRAB · yellow copy" and "SIGN · paw" are not on this path. He grabs both copies and checks the box with his paw.
+
 ## Ball hiding
 
 Decided (R43). When Squatch is balled up, a robot notices him only if it stays within 70 pixels (about one crate width) for 2.0 seconds in a row. Stepping outside that circle resets the timer. The same rule is used in every room and chapter. The two numbers are the constants BALL_NOTICE_RADIUS and BALL_NOTICE_SECONDS.

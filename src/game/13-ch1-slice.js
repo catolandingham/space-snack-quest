@@ -13,7 +13,7 @@
     function ch1Day1() {
       J([
         N(() => {
-          ((n.ch1Song = !0), (n.ctrl = !0), (n.moPose = "polish"), (n.scene = "Q1"));
+          ((n.ch1Song = !0), (n.ctrl = !0), (n.moPose = "polish"), (n.scene = "Q1"), (n.ch1Chip = "Squatch: sing along with Mops"), chipNow());
         }),
       ]);
     }
@@ -21,9 +21,17 @@
       ((n.ch1Song = !1), (n.ctrl = !1), (n.moPose = "stand"), (n.act = null), co());
       J([
         v("mops", "See you after work."),
-        ch1Step("mo", 900, 510, 180),
+        ch1Step("sq", 760, 500, 150),
         N(() => {
-          ((n.mo.x = 1200), (n.moPose = "hidden"), (n.ch1PeekReady = !0), (n.ctrl = !0), (n.scene = "Q1"));
+          ((n.moPose = "stand"),
+            (n.mo.x = 620),
+            (n.mo.y = 470),
+            (n.ch1MopsLeave = 1),
+            (n.ch1PeekReady = !0),
+            (n.ctrl = !0),
+            (n.scene = "Q1"),
+            (n.ch1Chip = "Squatch: peek out the door"),
+            chipNow());
         }),
       ]);
     }
@@ -35,14 +43,14 @@
           cap: "doorway",
           who: "sq",
           x: 890,
-          y: 500,
-          r: 90,
+          y: 480,
+          r: 160,
           f: ch1PeekGo,
         }),
       ];
     }
     function ch1PeekGo() {
-      ((n.ch1PeekReady = !1), (n.ctrl = !1), (n.act = null));
+      ((n.ch1PeekReady = !1), (n.ch1Chip = ""), (n.ctrl = !1), (n.act = null));
       ch1Go("hall", { who: "sq", scene: "QA" }, ch1SneakHide);
     }
     function ch1SneakHide() {
@@ -220,6 +228,7 @@
       let cut = n.ch1Cut;
       if (!cut || cut.zoom < 1) return;
       cut.paw = { x, y };
+      if (kind === "down" && x > 760 && y > 490) return ch1CutClose();
       if (kind === "down") {
         let row = y < 250 ? "top" : y < 360 ? "mid" : "bottom";
         cut.held = row;
@@ -422,9 +431,9 @@
       (m(24, 500, open ? 160 : 64, open ? 120 : 48, 10),
         r("#fffdf8", 4),
         g(String(cut.bag || 0), open ? 104 : 56, open ? 560 : 524, 22, "#1e2430", "center", 900),
-        L(880, 540, 36),
-        r("#ffffff", 4),
-        g("X", 880, 540, 28, "#1e2430", "center", 900));
+        m(790, 510, 130, 56, 12),
+        r("#ffcf33", 4),
+        g("OK", 855, 538, 28, "#1e2430", "center", 900));
       let paw = cut.paw || { x: 200, y: 560 };
       (drawPawArm(paw), cut.held && drawBarSnack(cut.held === "bottom" ? "pie" : cut.held === "mid" ? "cup" : "cake", paw.x, paw.y - 8));
     }

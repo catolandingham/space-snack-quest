@@ -78,7 +78,7 @@ g.check(
   { sqOfGuest, sq: measured.sq, adult: measured.adult },
 );
 g.check(
-  "Qt adults and alien guests share that one head height",
+  "Qt adults and alien guests share that room's head height",
   Math.abs(measured.alien * 84 - measured.adult) < 0.05 && Math.abs(measured.qt * 50 - measured.adult) < 0.05,
   measured,
 );
@@ -111,10 +111,69 @@ g.check(
   !src.includes("const CH1_GUEST = 1.8") &&
     !src.includes('"#8a93a3", 1.4') &&
     !src.includes('hat", 2.1') &&
+    src.includes("adultPxFor") &&
     src.includes("QT_ADULT") &&
     src.includes("ALIEN_ADULT") &&
     src.includes("sqDrawScale()"),
 );
+
+const rooms = await page.evaluate(async () => {
+  const ss = window.__ss;
+  const doorPx = {
+    hall: 101 * (640 / 830),
+    office: 160 * (640 / 830),
+    hallway: 160 * (640 / 830),
+    delivery: 101 * (640 / 830),
+    home: 129 * (640 / 830),
+  };
+  const img = new Image();
+  img.src = "docs/locked-rooms/office-room-empty-v2.png";
+  await img.decode();
+  const c = document.createElement("canvas");
+  c.width = img.width;
+  c.height = img.height;
+  const col = c.getContext("2d");
+  col.drawImage(img, 0, 0);
+  const data = col.getImageData(600, 0, 1, img.height).data;
+  let run = 0;
+  let best = 0;
+  for (let y = 150; y < 400; y++) {
+    const i = y * 4;
+    const r = data[i];
+    const g = data[i + 1];
+    const b = data[i + 2];
+    const slab = r < 190 && r > 90 && g < 190 && Math.abs(r - b) < 50;
+    if (slab) {
+      run++;
+      if (run > best) best = run;
+    } else run = 0;
+  }
+  const rows = {};
+  for (const id of Object.keys(doorPx)) {
+    const adult = ss.adultPxFor(id);
+    rows[id] = { door: doorPx[id], adult, share: adult / doorPx[id] };
+  }
+  return {
+    rows,
+    officeSrc: best,
+    officeCanvas: best * (640 / img.height),
+    officeAdult: ss.adultPxFor("office"),
+    officeAlien: ss.alienScale("office") * 84,
+    officeQt: ss.qtScale("office") * 50,
+    duct: ss.adultPxFor("duct"),
+    hall: ss.adultPxFor("hall"),
+  };
+});
+for (const [name, row] of Object.entries(rooms.rows)) {
+  g.check(name + " adult head is 82-88% of that room's door", row.share > 0.82 && row.share < 0.88, row);
+}
+g.check("the office picture's door is about the 160px slab", rooms.officeSrc > 140 && rooms.officeSrc < 175, rooms);
+g.check(
+  "office Isfred and Qt scales use the office door",
+  Math.abs(rooms.officeAlien - rooms.officeAdult) < 0.05 && Math.abs(rooms.officeQt - rooms.officeAdult) < 0.05,
+  rooms,
+);
+g.check("a room with no door keeps the hall adult height", Math.abs(rooms.duct - rooms.hall) < 0.05, rooms);
 
 const security = await page.evaluate(() => {
   const ss = window.__ss;

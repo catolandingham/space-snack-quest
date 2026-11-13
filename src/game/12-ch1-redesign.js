@@ -6,7 +6,8 @@
       BALL_NOTICE_SECONDS = 2,
       CH1_BIN = { x: 212, y: 370 },
       CH1_MAIL = { x: 878, y: 450 },
-      CH1_VENT = { x: 165, y: 540 },
+      // The crawl vent is the grille under the speaker, on the right wall. The floor vent stays in the picture.
+      CH1_VENT = { x: 820, y: 470 },
       CH1_ROBOT = { x: 480, y: 400 },
       CH1_PLANT = { x: 125, y: 400 };
     const CH1Q_CHIPS = {
@@ -47,28 +48,90 @@
       { id: "vent", verb: "SUCK", cap: "vent", x: 188, y: 500, why: "vent" },
       { id: "guard", verb: "STAND", cap: "guard", x: 700, y: 560, why: "guard" },
     ];
+    function drawWalkNudge() {
+      let p = 0.5 + 0.5 * Math.sin(n.T * 4);
+      (e.save(), (e.globalAlpha = 0.35 + 0.45 * p), (e.strokeStyle = "#ffcf33"), (e.lineWidth = 6), (e.lineCap = "round"));
+      for (let i = 0; i < 3; i++) {
+        let x = 420 + i * 70;
+        (e.beginPath(), e.moveTo(x, 530), e.lineTo(x + 28, 530), e.lineTo(x + 16, 514), e.moveTo(x + 28, 530), e.lineTo(x + 16, 546), e.stroke());
+      }
+      e.restore();
+    }
+    function drawGoalMark(x, y) {
+      let p = 0.75;
+      (e.save(),
+        (e.globalAlpha = p),
+        (e.strokeStyle = "#ffcf33"),
+        (e.lineWidth = 6),
+        e.beginPath(),
+        e.arc(x, y, 54, 0, 7),
+        e.stroke(),
+        e.restore());
+    }
+    function ch1MarkGoal() {
+      if (n.ch1PadOn) return drawGoalMark(480, 250);
+      if (!n.ctrl || (n.ch1Zoom && n.ch1Zoom.zoom < 1)) return;
+      let spots =
+        n.ch1Day2 && ch1Day2Spots
+          ? ch1Day2Spots()
+          : n.ch1Song
+            ? ch1SongSpots()
+            : n.ch1PeekReady
+              ? ch1PeekSpots()
+              : n.ch1Search
+                ? ch1SearchSpots()
+                : n.scene === "QA" && n.ch1Party && !n.ch1PartyOver
+                  ? ch1PartySpots()
+                  : [];
+      let s = (spots || []).find((o) => o && o.verb && o.x);
+      s && drawGoalMark(s.x, s.y);
+    }
+    function drawDoorNudge() {
+      let p = 0.5 + 0.5 * Math.sin(n.T * 5);
+      (e.save(), (e.globalAlpha = 0.35 + 0.5 * p), (e.fillStyle = "#ffcf33"), e.beginPath(), e.moveTo(860, 430), e.lineTo(900, 470), e.lineTo(860, 510), e.closePath(), e.fill(), e.restore());
+    }
     function ch1QChip() {
       if (n.ch1Dress && n.ch1Dress.on) return "";
+      if (n.ch1Chip) return n.ch1Chip;
       return CH1Q_CHIPS[n.scene] || "";
     }
-    // One adult head height for every room with adults. The ruler is the party hall's right-hand
-    // door in hall-room-empty-v1.png (the opening from y 353 through y 453, 101px on the 830-tall
-    // picture), stretched onto the 640-tall canvas. Heads land at 85% of that door, above the snack
-    // counter. Squatch's head is 80% of that. Home still uses wl. No per-room override.
-    // Alien head top is the circle at local y -70 with radius 14. Qt's head top is local -50.
-    // Squatch's head top is 45 local units (Re).
-    const ADULT_PX = 101 * (640 / 830) * 0.85,
+    // Adult head height is 85% of the door in the room he is standing in.
+    // Hall and loading-bay openings measure 101px on the 830-tall picture (77.9px on the canvas).
+    // The office door and the same door in the hallway are a 160px slab (123.4px on the canvas).
+    // Home's right-wall opening is the 129px cut. A room with no door uses the hall.
+    // Alien heads are that height / 84. Qt heads are that height / 50. Squatch is 80% of the adult, / 45.
+    const CANVAS_DOOR_PX = {
+        hall: 101 * (640 / 830),
+        hallway: 160 * (640 / 830),
+        office: 160 * (640 / 830),
+        delivery: 101 * (640 / 830),
+        home: 129 * (640 / 830),
+      },
+      HALL_ADULT_PX = CANVAS_DOOR_PX.hall * 0.85;
+    function roomDoorId(room) {
+      return room === "passage" ? "hallway" : room === "hangar" ? "delivery" : room === "closet" ? "home" : room === "office" ? "office" : room === "hall" ? "hall" : "hall";
+    }
+    function adultPxFor(room) {
+      let id = CANVAS_DOOR_PX[room] ? room : roomDoorId(room);
+      return (CANVAS_DOOR_PX[id] || CANVAS_DOOR_PX.hall) * 0.85;
+    }
+    function alienScale(room) {
+      return adultPxFor(room) / 84;
+    }
+    function qtScale(room) {
+      return adultPxFor(room) / 50;
+    }
+    const ADULT_PX = HALL_ADULT_PX,
       ALIEN_ADULT = ADULT_PX / 84,
       QT_ADULT = ADULT_PX / 50,
       SQ_ADULT = (ADULT_PX * 0.8) / 45;
     function sqDrawScale() {
-      if (n.room === "closet") return wl;
-      if (n.room === "hall" || n.room === "office" || (n.room === "hangar" && n.ch1D)) return SQ_ADULT;
-      return he;
+      if (n.room === "closet" && (n.scene || "")[0] !== "Q") return wl;
+      return (adultPxFor(n.room) * 0.8) / 45;
     }
     function moDrawScale() {
-      if (n.room === "closet") return wl;
-      return sqDrawScale() === he ? he * 1.15 : SQ_ADULT * 1.15;
+      if (n.room === "closet" && (n.scene || "")[0] !== "Q") return wl;
+      return sqDrawScale() * 1.15;
     }
     // Back-wall door of office-room-empty-v2. The hallway's front door, seen from inside.
     // Feet stand just through that door, on the floor below the picture's floor line (source y 330).
@@ -213,6 +276,7 @@
             n.room === "hall" && (B.camX = 0),
             n.room === "closet" && (n.tvOn = !1),
             spec.who === "sq" ? (n.moPose = "hidden") : (n.moPose = "stand"),
+            spec.mo && ((n.mo.x = spec.mo[0]), (n.mo.y = spec.mo[1]), (n.moPose = "stand")),
             n.ch1Walks.push({ phase: "in", room: n.room, x: Math.round(n.sq.x), y: Math.round(n.sq.y) }));
         }),
         cV((dt) => ch1Move(dt, spec.stand[0], spec.stand[1], 260, spec.who)),
@@ -228,7 +292,7 @@
     function ch1Go(dest, flags, next) {
       let f = flags || {},
         who = f.who || "both",
-        from = n.ch1Duct ? "duct" : n.ch1D ? "delivery" : n.room === "hall" ? "hall" : "closet",
+        from = n.ch1Duct ? "duct" : n.ch1D ? "delivery" : n.room === "passage" ? "passage" : n.room === "hall" ? "hall" : "closet",
         homeOff = [1060, 510],
         hallBottomOff = [480, 740],
         hallRightOff = [1120, 500],
@@ -331,6 +395,39 @@
       if (from === "closet" && dest === "hall") return ch1Hop(homeHall(f.stand), next);
       if (from === "delivery" && dest === "duct") return ch1Hop(delDuct(), next);
       if (from === "duct" && dest === "delivery") return ch1Hop(ductDel(), next);
+      // The hallway (R51) sits between the party hall and the loading bay. Day 2 walks use it.
+      let pass = {
+          who,
+          scene: f.scene,
+          delivery: !1,
+          duct: !1,
+          night: !!f.night,
+          ship: !!f.ship,
+          crew: f.crew || "",
+          mail: f.mail || "",
+          mo: f.mo,
+        },
+        hallPass = () =>
+          Object.assign({}, pass, { exit: [880, 500], off: hallRightOff, to: "passage", entry: [-80, 420], stand: f.stand || [180, 420], ship: !1, crew: "", mail: "" }),
+        passHall = () =>
+          Object.assign({}, pass, { exit: [80, 510], off: [-80, 510], to: "hall", entry: [1120, 500], stand: f.stand || [700, 520], ship: !1, crew: "", mail: "" }),
+        passDel = () => Object.assign({}, pass, { exit: [880, 510], off: [1120, 510], to: "hangar", entry: [-80, 520], stand: f.stand || [200, 520], delivery: !0 }),
+        delPass = () =>
+          Object.assign({}, pass, {
+            exit: [70, 520],
+            off: [-80, 520],
+            to: "passage",
+            entry: [1040, 420],
+            stand: f.stand || [720, 420],
+            delivery: !1,
+            ship: !1,
+            crew: "",
+            mail: "",
+          });
+      if (from === "hall" && dest === "passage") return ch1Hop(hallPass(), next);
+      if (from === "passage" && dest === "hall") return ch1Hop(passHall(), next);
+      if (from === "passage" && dest === "delivery") return ch1Hop(passDel(), next);
+      if (from === "delivery" && dest === "passage") return ch1Hop(delPass(), next);
       console.warn("ch1Go: no walk from " + from + " to " + dest);
       typeof next == "function" && next();
     }
@@ -376,6 +473,9 @@
         (n.ch1SureEnd = !1),
         (n.guard = null),
         (n.ch1Raid = null),
+        (n.ch1Day2 = !1),
+        (n.ch1Zoom = null),
+        (n.ch1PadOn = !1),
         (n.ch1Chain = !1),
         (n.ch1Flyer = !1),
         (n.ch1PartyT = 0),
@@ -773,21 +873,14 @@
       J(lines);
     }
     function ch1PartyHome() {
+      // Day 1 ends here for now. Beats 19-21 can take over this function and call ch1Day2Begin after bedtime.
       ((n.moPose = "stand"),
         (n.mo.x = 455),
         (n.mo.y = 560),
         (n.ch1Party = !1),
         J([
           v("mops", "A flyer. And fur on the floor."),
-          N(() => {
-            ((n.tvOn = !0), (n.scene = "Q1"));
-          }),
-          v("mops", "I know you, Squatch, you're probably hungry... you know the rule, grab one snack."),
-          v("mops", "My lunch! You're the best."),
-          v("pa", "Universal Postal Service ship arriving!", "pa"),
-          v("sq", "Please let me follow you, I'll be really sneaky."),
-          v("mops", "Okay, just this time, but hide carefully."),
-          N(() => ch1Go("delivery", { ship: !0, crew: "day", mail: "empty", scene: "Q2", night: !1 }, ch1AtDelivery)),
+          N(() => ch1Day2Begin()),
         ]));
     }
     function ch1PartyTick(dt) {
@@ -1028,6 +1121,7 @@
       if (n.ch1Dress && n.ch1Dress.on) return ch1DressSpots();
       if (n.ch1PeekReady && n.ctrl) return ch1PeekSpots();
       if (n.scene === "QA") return n.ch1Raid && n.room === "hall" ? ch1RaidSpots() : n.ctrl && !n.ch1PartyOver ? ch1PartySpots() : [];
+      if (n.ch1Day2) return ch1Day2Spots();
       if (!n.ctrl || n.sqPose === "ball" || n.sqPose === "hidden") return [];
       let s = n.scene,
         out = [];
@@ -1093,7 +1187,7 @@
       return out;
     }
     function ch1Watch(dt) {
-      if (!n.ctrl || n.scene !== "Q4" || x.mops) return;
+      if (!n.ctrl || n.scene !== "Q4" || x.mops || n.ch1Zoom) return;
       n.ch1LookT = (n.ch1LookT || 0) + (dt || 0);
       if (!ch1NightNow().catch) {
         ballNotice("ch1night", BALL_NOTICE_RADIUS + 1, 0, !1);
@@ -1109,7 +1203,7 @@
     }
     function ch1QTick(dt) {
       (n.scene || "")[0] === "Q" &&
-        (n.ctrl && !n.ch1Mini && (n.act = pick(ch1QSpots())), ch1Watch(dt), ch1PartyTick(dt), ch1BalloonTick(dt), ch1SliceTick(dt), ch1Day1Tick(dt));
+        (n.ctrl && !n.ch1Mini && (n.act = pick(ch1QSpots())), ch1Watch(dt), ch1PartyTick(dt), ch1BalloonTick(dt), ch1SliceTick(dt), ch1Day1Tick(dt), ch1Day2Tick(dt));
     }
     function ch1RestartNight() {
       ((n.scene = "Q4"),
@@ -1128,7 +1222,8 @@
         (n.sq.y = 540),
         (n.ctrl = !0),
         (n.ch1LookT = 0),
-        ch1LoadBalloon());
+        ch1LoadBalloon(),
+        n.ch1Day2 && ch1NightReset());
     }
     function drawGameBin(px, py) {
       (e.beginPath(),
@@ -1162,10 +1257,27 @@
         });
       n.moPose !== "hidden" && n.mo.x > -50 && n.mo.x < 1100 && Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 });
     }
+    function drawCh1DayHall() {
+      drawLockedRoom("hall");
+      if (n.roomOnly) return;
+      drawCh1BalloonLeft();
+      n.scene === "Q3" && !(n.ch1Step === "family" || n.ch1Step === "gohome") && drawCh1Alien(640, 500, "hat", ALIEN_ADULT, 1);
+      n.moPose !== "hidden" && n.mo.x > -50 && n.mo.x < 1100 && Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 });
+      n.sqPose === "ball" && drawL2Ball(n.sq.x, n.sq.y - 16);
+      n.sqPose !== "hidden" &&
+        n.sqPose !== "ball" &&
+        Re(n.sq.x, n.sq.y, sqDrawScale(), {
+          f: n.sq.f || 1,
+          walk: n.sq.moving ? n.sq.walk : 0,
+          jacket: !!n.costumeOn,
+          goatBeard: !!n.costumeOn,
+          horns: !!n.costumeOn,
+        });
+    }
     function drawCh1HallwayRoom() {
       drawLockedRoom("hallway");
       if (n.roomOnly) return;
-      (Qt(480, 530, "#c9b6f2", QT_ADULT, 0.3),
+      (Qt(480, 530, "#c9b6f2", qtScale("hallway"), 0.3),
         dq(640, 530, !1),
         drawCh1BalloonLeft(),
         n.sqPose !== "hidden" &&
@@ -1182,6 +1294,12 @@
         n.sqPose !== "ball" &&
         n.sq.x > -40 &&
         Re(n.sq.x, n.sq.y, sqDrawScale(), { f: n.sq.f || 1, walk: n.sq.moving ? n.sq.walk : 0, jacket: !!n.costumeOn });
+      n.ch1Office &&
+        (drawCh1Alien(400, 575, "horns", alienScale("office"), -1),
+        Qt(240, 590, "#3478f6", qtScale("office"), -1),
+        n.ch1Tape &&
+          (g("REC", 190, 140, 11, "#e5533d", "center", 900),
+          Re(190, 210, ((adultPxFor("office") * 0.8) / 45) * 0.35, { f: 1, jacket: !0, goatBeard: !0, horns: !0 })));
     }
     function drawCh1Party() {
       let look = (n.ch1Look || 0) > 0,
@@ -1403,17 +1521,26 @@
       n.ch1Prop === "bin" && drawPinkSlip(250, 470);
       n.ch1Prop === "teeth" && drawPinkSlip(n.mo.x - 6, n.mo.y - 72);
       n.ch1Prop === "paw" && drawPinkSlip(n.sq.x + 8, n.sq.y - 48);
-      n.sqPose === "hidden" && !n.ch1InCrate && ga(CH1_PLANT.x, CH1_PLANT.y - 46);
-      drawMailRobot(878, 470);
-      n.ch1Crew === "pickup" ? drawPickupLoad() : n.ch1Mail === "full" && (Xn(720, 400, 70, 48, ""), Xn(800, 420, 56, 40, ""));
-      n.scene === "Q2" && Qt(700, 530, "#e8a87c", QT_ADULT, -1),
-      n.ch1Crew === "day" &&
+      n.ch1Step === "hide" &&
+        n.sqPose !== "hidden" &&
+        (e.save(),
+        (e.globalAlpha = 0.35 + 0.4 * Math.sin(n.T * 5)),
+        e.beginPath(),
+        e.arc(CH1_PLANT.x, CH1_PLANT.y, 54, 0, 7),
+        (e.strokeStyle = "#ffcf33"),
+        (e.lineWidth = 6),
+        e.stroke(),
+        e.restore());
+      n.sqPose === "hidden" && !n.ch1InCrate && ga(n.ch1Step === "hide" || Math.hypot(n.sq.x - CH1_PLANT.x, n.sq.y - CH1_PLANT.y) < 90 ? CH1_PLANT.x : n.sq.x, (n.ch1Step === "hide" || Math.hypot(n.sq.x - CH1_PLANT.x, n.sq.y - CH1_PLANT.y) < 90 ? CH1_PLANT.y : n.sq.y) - 46);
+      n.ch1InCrate && ga(830, 510);
+      n.scene === "Q2" && Qt(700, 530, "#e8a87c", qtScale("hangar"), -1),
+      (n.ch1Crew === "day" || n.ch1Crew === "leave") &&
         [
           ["Dot", 250, 580],
           ["Bob", 330, 565],
           ["Lou", 410, 580],
-        ].forEach((w) => u5({ x: w[1], y: w[2], name: w[0] }));
-      !night && n.ch1Ship && n.scene !== "Q9" && Qt(560, 500, "#c9b6f2", QT_ADULT, 0.2);
+        ].forEach((w) => u5({ x: w[1] - (n.ch1Crew === "leave" ? (n.ch1Leave || 0) * 520 : 0), y: w[2], name: w[0] }));
+      !night && n.ch1Ship && n.scene !== "Q9" && n.ch1BossX !== -1 && Qt(n.ch1BossX == null ? 560 : n.ch1BossX, 500, "#c9b6f2", qtScale("hangar"), 0.2);
       n.ch1Crew === "tease" && [360, 480, 600].forEach((px) => dq(px, 460, !1));
       night &&
         (seenCone(CH1_ROBOT.x, CH1_ROBOT.y - 28, ch1NightNow().face, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.62)", "rgba(160,100,10,.95)"),
@@ -1429,33 +1556,33 @@
         n.sqPose === "ball" && drawL2Ball(n.sq.x, n.sq.y - 16),
         n.sqPose !== "hidden" &&
           n.sqPose !== "ball" &&
+          (e.save(),
+          n.ch1Crouch && (e.translate(n.sq.x, n.sq.y), e.scale(1, 0.72), e.translate(-n.sq.x, -n.sq.y)),
           Re(n.sq.x, n.sq.y, sqDrawScale(), {
             f: n.sq.f || 1,
             walk: n.sq.moving ? n.sq.walk : 0,
             jacket: !!n.costumeOn,
             goatBeard: !!n.costumeOn,
             horns: !!n.costumeOn,
-          }));
+            eyes: n.ch1Wide ? "wide" : void 0,
+          }),
+          e.restore()));
     }
     function drawCh1Duct() {
-      ((e.fillStyle = "#2a3142"),
-        e.fillRect(0, 0, c, b),
-        m(40, 80, 880, 480, 18),
-        r("#3d4658", 6),
-        g("IDEAS FOR GUARDIANS", 250, 130, 16, "#d5dbe6", "center", 900),
-        g("HAVE YOU SEEN?", 620, 120, 14, "#ffffff", "center", 900),
-        g("MARS", 620, 150, 16, "#ffb4b4", "center", 900),
-        g("NO", 680, 150, 16, "#e5533d", "center", 900),
-        m(700, 300, 80, 50, 4),
-        r("#c4b49a", 3),
-        g("TOYS", 740, 326, 14, y, "center", 900),
-        m(80, 240, 120, 160, 4),
-        r("#1e2430", 4));
-      for (let i = 0; i < 6; i++) C([90, 260 + i * 22, 190, 260 + i * 22], "#9aa3b2", 3);
-      (n.sqPose === "hidden" && ga(140, 300),
-        m(400, 340, 160, 18, 3),
-        r("#8a7560", 3),
-        (n.ch1Prop === "desk" || n.ch1Prop === "teeth") && drawPinkSlip(430, 300),
-        n.ch1Prop === "teeth" && drawPinkSlip(n.mo.x - 6, n.mo.y - 70),
-        n.moPose !== "hidden" && Fe(n.mo.x, n.mo.y, he, { f: n.mo.f || -1, walk: 0, mop: !1 }));
+      ((e.fillStyle = "#f3efe6"), e.fillRect(0, 0, c, b), m(28, 18, 904, 604, 18), r("#f7f4ee", 7));
+      ((e.fillStyle = "#f4f1ea"), e.fillRect(40, 28, 880, 250), (e.fillStyle = "#ebe4d6"), e.fillRect(40, 278, 880, 328), C([40, 278, 900, 278], "#c8c2b6", 4));
+      (m(70, 160, 130, 200, 8), r("#1e2430", 4));
+      for (let i = 0; i < 7; i++) C([84, 178 + i * 24, 186, 178 + i * 24], "#9aa3b2", 3);
+      n.sqPose === "hidden" && ga(135, 250);
+      (g("IDEAS FOR GUARDIANS", 360, 150, 16, "#1e2430", "center", 900), m(250, 175, 230, 90, 6), r("#fffdf8", 3));
+      (g("We know you're thinking about going to Mars.", 365, 205, 11, "#1e2430", "center", 700), g("Don't worry, we'll always be with you.", 365, 230, 11, "#1e2430", "center", 700));
+      (m(560, 120, 340, 200, 8), r("#fffdf8", 4), g("MARS LOST & FOUND", 680, 155, 16, "#1e2430", "center", 900));
+      (g("Re: a lost baby Sasquatch.", 680, 185, 12, "#1e2430", "center", 700),
+        g("We have NO record of any lost baby.", 680, 210, 12, "#1e2430", "center", 700),
+        g("There are NO Sasquatches on Mars.", 680, 235, 12, "#1e2430", "center", 700));
+      (e.save(), e.translate(820, 275), e.rotate(-0.4), g("NO", 0, 0, 36, "#e5533d", "center", 900), e.restore());
+      (m(620, 400, 200, 16, 3), r("#c4a574", 3), m(632, 416, 14, 48, 2), r("#8a7560", 2), m(794, 416, 14, 48, 2), r("#8a7560", 2), m(650, 422, 60, 22, 2), r("#a08050", 2));
+      (n.ch1Prop === "desk" || n.ch1Prop === "teeth") && drawPinkSlip(660, 372);
+      n.ch1Prop === "teeth" && n.moPose !== "hidden" && drawPinkSlip(n.mo.x - 6, n.mo.y - 70);
+      n.moPose !== "hidden" && Fe(420, 520, moDrawScale(), { f: 1, walk: 0, mop: !1 });
     }

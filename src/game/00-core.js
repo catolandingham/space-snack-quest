@@ -84,13 +84,13 @@
       S = null,
       M = null,
       z = 1;
-    // The live site and local tests keep ssq-*. Any other host, including the PR preview, uses ssq-pr21-* so an iPad does not mix the two.
+    // The live site and local tests keep ssq-*. This branch's preview uses ssq-day2- so it does not mix with the live game or the slice preview.
     function ssqKey(name) {
       let host = "";
       try {
         host = location.hostname || "";
       } catch {}
-      return (host === "space-snack-quest.onrender.com" || host === "localhost" || host === "127.0.0.1" || host === "" ? "ssq-" : "ssq-pr21-") + name;
+      return (host === "space-snack-quest.onrender.com" || host === "localhost" || host === "127.0.0.1" || host === "" ? "ssq-" : "ssq-day2-") + name;
     }
     try {
       let l = window.localStorage.getItem(ssqKey("vol"));
@@ -495,6 +495,7 @@
       if (n.roomWalk) return "";
       if (n.ch1Night && n.scene === "Q4" && n.ctrl) return "";
       if (n.sqPose === "hidden" && n.ch1Party) return "";
+      if (n.ch1Heart) return "heart";
       if (n.gift || n.holdToy) return "gift";
       if (n.room === "closet" && !n.ch1Search && !n.guard && !(n.ch1Dress && n.ch1Dress.on)) return "home";
       if (n.ch1Kid === "smile" || n.ch1Kid === "wide" || n.ch1Kid === "shh") return "heart";
@@ -503,8 +504,9 @@
     function musicWant() {
       if (warmWhy()) return "warm";
       if (p.state !== "op") return "";
-      if (n.roomWalk) return "journey";
-      if (n.ch1Night && n.scene === "Q4" && n.ctrl) return "sneak";
+      if (n.ch1Heart) return "warm";
+      if (n.roomWalk || n.ch1Journey) return "journey";
+      if ((n.ch1Night && n.scene === "Q4" && n.ctrl) || (n.ch1Sneak && n.ctrl)) return "sneak";
       if (n.sqPose === "hidden" && n.ch1Party) return "sneak";
       return "";
     }
@@ -1277,12 +1279,13 @@
     }
     function R0(l) {
       let solids = ih();
-      n.room === "closet" &&
-        l === n.sq &&
+      (n.room === "closet" || n.room === "hall" || n.room === "passage" || n.room === "hangar" || n.room === "duct") &&
         n.moPose !== "hidden" &&
-        n.mo.x > 40 &&
-        n.mo.x < 980 &&
-        solids.push(nt(n.mo.x, n.mo.y, 42, 36, 40));
+        n.moPose !== "sleep" &&
+        l === n.sq &&
+        n.mo.x > 20 &&
+        n.mo.x < 1000 &&
+        solids.push(nt(n.mo.x, n.mo.y, 46, 46, 46));
       let inside = (x, y) => solids.some((o) => x > o.x0 && x < o.x1 && y > o.y0 && y < o.y1);
       if (!inside(l.x, l.y)) return;
       let best = null;
@@ -1314,6 +1317,19 @@
         d = o.y1 - l.y,
         A = Math.min(i, sv, q, d);
       A === i ? (l.x = o.x0) : A === sv ? (l.x = o.x1) : A === q ? (l.y = o.y0) : (l.y = o.y1);
+      if (
+        l === n.sq &&
+        (n.room === "closet" || n.room === "hall" || n.room === "passage" || n.room === "hangar" || n.room === "duct") &&
+        n.moPose !== "hidden" &&
+        n.moPose !== "sleep" &&
+        n.mo.x > 20 &&
+        n.mo.x < 1000
+      ) {
+        let dx = l.x - n.mo.x,
+          dy = l.y - n.mo.y,
+          dist = Math.hypot(dx, dy) || 0.01;
+        dist < 46 && ((l.x = n.mo.x + (dx / dist) * 46), (l.y = n.mo.y + (dy / dist) * 46));
+      }
     }
     function ee(l, o, i, s) {
       n.found.has(o) ||

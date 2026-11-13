@@ -49,6 +49,8 @@
       n.room === "closet" &&
         n.ctrl &&
         !n.ventTaught &&
+        (n.scene || "")[0] !== "Q" &&
+        (n.scene || "")[0] !== "O" &&
         n.sqPose === "stand" &&
         Math.hypot(n.sq.x - Sf.x, n.sq.y - Sf.y) < 70 &&
         ((n.ventTaught = !0), (n.furVent = !0), fq(Sf.x, Sf.y), kV("sq", "Oops. Fur in the vent."));
@@ -250,7 +252,12 @@
       ) {
         ((e.strokeStyle = y), (e.lineWidth = 1.1));
         for (let Qe of [-1, 1]) (e.beginPath(), e.arc(Qe * q.head * 0.27, P + q.head * 0.1, 1.6, 0.1, Math.PI - 0.1), e.stroke());
-      } else (F(-q.head * 0.27, P + q.head * 0.12, 1.5, y), F(q.head * 0.27, P + q.head * 0.12, 1.5, y));
+      } else if (s.eyes === "wide")
+        (F(-q.head * 0.28, P + q.head * 0.1, 3.4, "#ffffff"),
+          F(q.head * 0.28, P + q.head * 0.1, 3.4, "#ffffff"),
+          F(-q.head * 0.28, P + q.head * 0.14, 1.7, y),
+          F(q.head * 0.28, P + q.head * 0.14, 1.7, y));
+      else (F(-q.head * 0.27, P + q.head * 0.12, 1.5, y), F(q.head * 0.27, P + q.head * 0.12, 1.5, y));
       (s.singing
         ? (e.beginPath(), e.ellipse(0, P + q.head * 0.45, 1.8, 2.2 + Math.sin(n.T * 12) * 0.5, 0, 0, 7), (e.fillStyle = y), e.fill())
         : (e.beginPath(), e.arc(0, P + q.head * 0.38, 2.2, 0.2, Math.PI - 0.2), (e.strokeStyle = y), (e.lineWidth = 1.1), e.stroke()),
@@ -831,10 +838,10 @@
       }
       (e.closePath(), r("#ffcf33", 0.8), X(i * 2, -37.5, 5, 1.6), r("#6b4429", 0), e.restore());
     }
-    function dq(l, o, i = !1) {
+    function dq(l, o, i = !1, sc = 1.6) {
       (e.save(),
         e.translate(l, o),
-        e.scale(1.6, 1.6),
+        e.scale(sc, sc),
         X(0, 0, 18, 6),
         r("rgba(30,36,48,.15)", 0),
         m(-15, -30, 30, 28, 9),
@@ -1026,12 +1033,14 @@
       let s = G6(l);
       if (s) return s;
       if (l === "official") {
+        if (n.ch1Office && n.room === "office") return { x: 400, y: 500 };
         if (n.ch1Office) return { x: 480, y: 490 };
         // Party lines sit under the office monitor (the screen ends near y=160), on the Isfred nameplate.
         if (n.ch1Party) return { x: 700, y: 460 };
         if (n.room === "hangar" && n.ch1D && n.ch1Ship && !n.ch1Night && n.scene !== "Q9") return { x: 560, y: 400 };
         return { x: 210, y: 215 };
       }
+      if ((l === "robot" || l === "bot") && n.ch1Office && n.room === "office") return { x: 240, y: 470 };
       if ((l === "robot" || l === "bot") && n.ch1Office) return { x: 640, y: 490 };
       if (l === "scanner") return n.room === "hangar" && n.ch1Ship ? { x: 465, y: 340 } : { x: Ha.x, y: 170 };
       if (l === "ups" && n.ch1Crew === "tease") return { x: 480, y: 380 };
@@ -1081,12 +1090,12 @@
     let mq = [];
     function bq(l, o) {
       if (((n.maxB = Math.max(n.maxB, ++qq)), l.style === "pa")) {
-        let CV = zt(l.text, 640, 30);
+        let CV = zt(l.text, 520, 30);
         ge(30);
         let NV = Math.max(...CV.map((Ll) => e.measureText(Ll).width)) + 120,
           ze = CV.length * 36 + 34,
-          Ue = c / 2 - NV / 2,
-          mn = 70;
+          Ue = Math.max(250, Math.min(c - NV - 16, c / 2 - NV / 2)),
+          mn = 196;
         (m(Ue, mn, NV, ze, 16), r("#fff3d6", 4));
         let jn = mn + ze / 2;
         (m(Ue + 18, jn - 9, 12, 18, 2),
@@ -2058,12 +2067,16 @@
         ? (P2(), X2(), g5(), z2())
         : n.room === "deck"
           ? (jp(), z2())
+            : n.room === "passage"
+            ? drawCh1Passage()
             : n.room === "hall"
-            ? n.ch1Party
-              ? drawCh1PartyRoom()
-              : n.ch1Office
-                ? drawCh1HallwayRoom()
-                : s5()
+              ? n.ch1Party
+                ? drawCh1PartyRoom()
+                : n.ch1Office
+                  ? drawCh1HallwayRoom()
+                  : (n.scene || "")[0] === "Q"
+                    ? drawCh1DayHall()
+                    : s5()
             : n.room === "window"
               ? o5()
               : n.room === "duct"
@@ -2118,8 +2131,13 @@
       applyWalkDraw();
       try {
         drawRoom();
+        n.scene === "O1" && n.ctrl && n.moved < 110 && drawWalkNudge();
+        n.ch1PeekReady && n.room === "closet" && drawDoorNudge();
         n.ch1Cut && drawCh1Cut();
         n.ch1Dress && n.ch1Dress.on && drawCh1Dress();
+        n.ch1Day2 && drawCh1Day2();
+        n.ch1Zoom && drawCh1Zoom();
+        ch1MarkGoal();
       } finally {
         restoreWalkDraw();
       }
@@ -2146,7 +2164,7 @@
       (Ka > 0 && ((e.fillStyle = "rgba(20,24,32," + Math.min(1, Ka).toFixed(3) + ")"), e.fillRect(0, 0, c, b)), drawRoomLine(), t5());
       let o = Bs();
       // The green VERB pill for actions with no caption. An action with a caption gets drawCap's "VERB · thing" label instead.
-      if (o && !o.cap && (o.x || o.r > 0 || n.room === "deck" || n.room === "hall") && !de() && n.live.length === 0) {
+      if (o && !o.cap && !n.ch1Zoom && (o.x || o.r > 0 || n.room === "deck" || n.room === "hall") && !de() && n.live.length === 0) {
         let i = o.x === 790 || o.x === 845,
           s = i ? 845 : o.r > 0 || o.x ? o.x : n.sq.x,
           q = i ? 250 : o.r > 0 || o.x ? o.y - 60 : 330;
@@ -2222,6 +2240,10 @@
           l.code === "Escape" && p.state === "op" && (N0() || storyCard(n.cur)))
         ) {
           N0() ? Cs() : skipStoryCards();
+          return;
+        }
+        if (n.ch1PadOn && (/^Digit[0-9]$/.test(l.code) || /^Numpad[0-9]$/.test(l.code))) {
+          ch1PadPress(l.code.replace(/\D/g, "").slice(-1));
           return;
         }
         if (l.code === "KeyM") {
