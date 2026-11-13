@@ -770,8 +770,7 @@
         e.lineTo(c - 33, 42),
         e.lineTo(c - 41, 36),
         e.closePath(),
-        r(y, 0),
-        Va());
+        r(y, 0));
     }
     function ah(l, o, i) {
       (X(l, o + 8 * i, 20 * i, 16 * i), r("#8b5a3c", 2.5));
