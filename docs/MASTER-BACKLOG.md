@@ -188,6 +188,8 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 
 ## Changelog
 
+2026-11-13. Brian's Nov 13 decisions, not merged. Story waits need a tap. A sight is a short hop, and Zip calls security. Mops answers the Mars gate bot (new lines, NEEDS BRIAN). Stage directions are pictures and a sound. Gallery words "TIED TOGETHER FOREVER", "ME" / "MOPS", and "BEEP BEEP" are approved. Docs match main: yes. Do not merge.
+
 2026-11-13. Guardrail. Brian said yes, merge. Locked room art must not be redrawn, replaced, or restyled. The rule from `docs/locked-rooms/README.md` is now in `CLAUDE.md` and `AGENTS.md`, word for word. Mops's beard is his mop; no separate mop prop. `docs/locked-rooms/manifest.json` holds the sha256 of each locked picture, and `tests/locked-art.mjs` fails if a picture changes or a room stops using it. Docs match main: yes.
 
 2026-11-13. Folded the stale docs pulls. #12's reply sheet was already answered in `DECISIONS.md` and `OPEN-ASKS.md`. #13's script export was from the old chapter and was not copied. #15's Chapter 1 line changes were for the old night-out and were not copied. #16's cook drawing was game code and was not copied. Seven leftovers are `OPEN-ASKS.md` section G. Docs match main: yes.

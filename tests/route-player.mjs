@@ -41,7 +41,7 @@ export const look = (page) =>
     return {
       phase: k.phase, scene: n.scene, ctrl: !!n.ctrl, room: n.room,
       cur: n.cur ? n.cur.k + (n.cur.id ? ":" + n.cur.id : "") : "",
-      blocking: !!n.cur && ["bub", "card", "panel", "fb"].includes(n.cur.k),
+      blocking: !!n.cur && ["bub", "card", "panel", "fb", "wait"].includes(n.cur.k),
       queued: n.q.length,
       button: String(ss.game.verb || "").replace(/^!/, ""),
       x: who.x, y: who.y, mops: !!ss.ch.mops, pose: n.sqPose,

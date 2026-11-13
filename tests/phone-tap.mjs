@@ -130,7 +130,7 @@ g.check("the picture's top edge is within the HUD bar's height (plus 16 px) of t
   const tap = async (x, y) => { await p3.touchscreen.touchStart(x, y); await sleep(40); await p3.touchscreen.touchEnd(); };
   // A point on the picture, in game pixels (960 by 640), as a tap on the page.
   const tapGame = async (gx, gy) => { const r = await pic(); await tap(r.x + (gx * r.w) / 960, r.y + (gy * r.h) / 640); };
-  const st = () => p3.evaluate(() => { const ss = window.__ss, n = ss.op, c = n.cur; return { phase: ss.ch2.phase, ctrl: n.ctrl, up: !!(c && ["bub", "card", "panel", "fb"].includes(c.k)), button: String(ss.game.verb || "").replace(/^!/, ""), walking: !!n.walkTo, mops: !!ss.ch.mops, log: n.log.filter((e) => e.k === "hint").length }; });
+  const st = () => p3.evaluate(() => { const ss = window.__ss, n = ss.op, c = n.cur; return { phase: ss.ch2.phase, ctrl: n.ctrl, up: !!(c && ["bub", "card", "panel", "fb", "wait"].includes(c.k)), button: String(ss.game.verb || "").replace(/^!/, ""), walking: !!n.walkTo, mops: !!ss.ch.mops, log: n.log.filter((e) => e.k === "hint").length }; });
   async function nextUntil(phase) {
     for (let i = 0; i < 80; i++) {
       const s = await st();

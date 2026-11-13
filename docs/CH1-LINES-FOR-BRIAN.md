@@ -167,8 +167,8 @@ These are the new words in this build. Each one is in the game so you can hear i
 | 126 | Squatch | I'm worried about the Guardians. I'll leave them some food. | I'll leave food for the Guardians. |
 | 127 | The order box | ORDER MORE ROBOTS | Order another robot |
 | 128 | The Guardian Box, in the close-up. The spelling is on purpose. | MY GARDIANS | |
-| 129 | The crayon, under photo 4 | TIED TOGETHER FOREVER | Always tied together |
-| 130 | The crayon labels | ME / MOPS | |
+| 129 | The crayon, under photo 4 | TIED TOGETHER FOREVER | Approved 2026-11-13. Not "Always tied together". |
+| 130 | The crayon labels | ME / MOPS | Approved 2026-11-13. |
 | 131 | The hallway wall | EMPLOYEE OF THE MONTH | |
 | 132 | The brochure | PANCAKES | |
 | 133 | The Mars reply, on the vent desk | MARS LOST & FOUND. Re: a lost baby Sasquatch. We have NO record of any lost baby. There are NO Sasquatches on Mars. | No baby. No Sasquatches. — Mars |
@@ -177,7 +177,7 @@ These are the new words in this build. Each one is in the game so you can hear i
 | 136 | Photo 2, optional | Mops, with a banana for a horn. | |
 | 137 | Photo 3, optional | Mops, with a roll in his mouth. | |
 | 138 | Photo 5, optional | Mops, and a ball of fur in the back. | |
-| 139 | The robot, if you swipe past photo 5 | BEEP BEEP | |
+| 139 | The robot, if you swipe past photo 5 | BEEP BEEP | Approved 2026-11-13. |
 | 140 | Goal chip | Squatch: pick up the gift | Squatch: get the toy |
 | 141 | Goal chip | Squatch: put the gift in the box | Squatch: put it away |
 | 142 | Goal chip | Squatch: look at the calendar | Squatch: check the door |

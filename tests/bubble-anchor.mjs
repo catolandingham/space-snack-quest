@@ -99,7 +99,7 @@ for (const sc of SCENES) {
         count: ss.bubbleFrame,
         room: n.room,
         busy: !!n.cur || n.q.length > 0,
-        tap: !!n.cur && ["bub", "card", "panel"].includes(n.cur.k),
+        tap: !!n.cur && ["bub", "card", "panel", "wait"].includes(n.cur.k),
         live: n.live.length,
       };
     });
