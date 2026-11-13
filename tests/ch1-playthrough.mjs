@@ -523,7 +523,8 @@ g.check("the player does the new actions in order", JSON.stringify(play.acts) ==
 const must = [
   "Stormtop Cloud Resort, floating above Jupiter.",
   "This is Squatch. He's a Sasquatch.",
-  "See you after work.",
+  "\u266A I'm floating in space! \u266A",
+  "\u266A Baaa-aa-aaa! \u266A",
   "Welcome, everybody, to the Stormtop Space Party!",
   "Let's give a big hello to our friends from Bleep-Bloop Robotics!",
   "Soon their helper robots will be here, to help with the heavy work.",

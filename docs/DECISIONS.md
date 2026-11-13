@@ -220,6 +220,8 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 | R93 | 11-13 | When Gloop, Blorp, or Zip sees Squatch, the old one-step jump of about 70 pixels is a visible hop of about a quarter second. Zip's sight calls security the same way Gloop's and Blorp's do. | Brian 2026-11-13 | Decided |
 | R94 | 11-13 | Squatch does not answer the Mars gate bot before Chapter 4.4. Mops answers for him. | Brian 2026-11-13, 4:10 AM ET | Decided. Brian approved the words: "He's with me." and "No thanks. We're getting my goat." |
 | R95 | 11-13 | These stage directions are shown, not said: the searchlight means go to the van, the gate means the van then the barrels, the cook falls instead of saying "*faints*", the stomach rumble is a wobble and a sound, and the camera flash is a flash. | Brian 2026-11-13 | Decided |
+| R96 | 11-13 | The home song uses the old lines. Squatch sings "♪ I'm floating in space! ♪". Mops answers "♪ Baaa-aa-aaa! ♪". Then Mops leaves for work. The sing-along chip stays until those lines have played. "See you after work." is not used. | Brian 2026-11-13, 6:12 AM ET | Decided. At 7:02 AM ET he added: Mops walks over and stands next to Squatch before they sing, bubbles stay off the face, and the peek chip shows only after Mops has left and control is back. |
+| R97 | 11-13 | The bedroom walk arrows point left, away from the bucket. One number flips them back. Brian is not sure the arrows should stay. | Brian 2026-11-13, 6:12 AM ET | Decided |
 
 ## 5. Chapter 1 cartoon, panel by panel (story order)
 Each panel's on-screen words are in CH1-CARTOON-LINES.md. Which files are current is in STATE.md.
@@ -324,8 +326,8 @@ Each panel's on-screen words are in CH1-CARTOON-LINES.md. Which files are curren
 | K22 | 11-08 | P4–P8 (both faces, the button-shift fix, Rusty's cap, the flaky test and stale docs, the script export). | OPEN-ASKS | Needs Brian's yes to start |
 | K23 | 11-08 | Fix the action button changing size and shifting the whole screen. | Brian 3:11 PM | Decided (not started) |
 | K24 | 11-08 | The game fills more of the iPad, in landscape and portrait. | Brian 3:11 PM | Decided (needs a layout picture first) |
-| K25 | 11-08 | Scene 1: the tiny janitor button becomes a clear settings button, and the instructions under the game go away. | memory | Decided (settings words needed) |
-| K26 | 11-08 | Scene 2: the "sing along with Mops" goal disappears once he has sung. | memory | Decided |
+| K25 | 11-08 | Scene 1: the tiny janitor button becomes a clear settings button, and the instructions under the game go away. | memory | Decided. On 2026-11-13 at 6:12 AM ET Brian said to remove the keyboard instructions under the game. The settings button still needs words. |
+| K26 | 11-08 | Scene 2: the "sing along with Mops" goal disappears once he has sung. | memory | Decided. On 2026-11-13 the chip stays until "I'm floating in space!" and "Baaa-aa-aaa!" have played, then it clears. |
 | K27 | 11-03 | Drop redundant "tap" hints when a NEXT button is visible. NEXT pulses gently after a few idle seconds. | memory (Nov 3) | Decided |
 | K28 | 11-07 | Picture text under 14 px on a phone gets its own pass, and Brian sees it on his phone first. | repo; OPEN-ASKS E8 | Decided (not started) |
 

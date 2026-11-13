@@ -24,7 +24,7 @@ const clean = (r) => BANNED.filter((re) => re.test(r.text) || re.test(r.labels))
 for (const [name, query] of [["title", ""], ["Chapter 2", "?ch=2"]]) {
   const { ctx, page, errors } = await g.open(query);
   let r = await read(page);
-  g.check(`${name}, desktop: keyboard help is on the page`, r.text.includes(KEY_HELP), r.text.slice(0, 400));
+  g.check(`${name}, desktop: the keyboard instructions are gone`, !r.text.includes(KEY_HELP), r.text.slice(0, 400));
   g.check(`${name}, desktop: no Shift, Tab, opera or push far`, clean(r).length === 0, clean(r));
   await page.evaluate(() => {
     const b = [...document.querySelectorAll("button")].find((x) => /touch controls/i.test(x.textContent || x.getAttribute("aria-label") || ""));

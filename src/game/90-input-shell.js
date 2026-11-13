@@ -524,9 +524,8 @@
       }),
     });
   }
-  // Help lines: only controls that work. Wording waits for Brian's yes (docs/PHASE-1-LINES-FOR-BRIAN.md).
-  var KEY_HELP = "Arrows or WASD: walk. E: do the action in the white label. Space or Enter: next line. Hold R: restart this section. Esc: skip a flashback. M: sound.",
-    TOUCH_HELP = "Stick: walk. Big button: do it. Tap the picture: next line. Hold \u21BA to restart.";
+  // Help lines: only controls that work. The keyboard line under the picture is gone (K25).
+  var TOUCH_HELP = "Stick: walk. Big button: do it. Tap the picture: next line. Hold \u21BA to restart.";
   function r8(V) {
     let t = (0, YV.useRef)(null),
       [a, e] = (0, YV.useState)(!1);
@@ -751,11 +750,6 @@
               (Z = (0, pe.jsxs)("div", {
                 style: { ...M, justifyContent: "space-between" },
                 children: [
-                  (0, pe.jsx)("span", {
-                    style: { color: V.text.secondary, fontSize: V.font.label.fontSize },
-                    id: "ss-help",
-                    children: KEY_HELP,
-                  }),
                   SND,
                   // The slot stays 104px whether or not NEXT is showing, so the picture does not jump up.
                   (0, pe.jsx)("div", {

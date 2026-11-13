@@ -18,20 +18,32 @@
       ]);
     }
     function ch1SingAlong() {
-      ((n.ch1Song = !1), (n.ctrl = !1), (n.moPose = "stand"), (n.act = null), co());
+      // In front of the desk, above the bucket. Mops is about 160px wide and Squatch
+      // about 124px, so their feet need ~195px between them for a 45px gap.
+      // The back lane (y 390) is above the crate, the G box, and the bucket.
+      let sqX = 660,
+        sqY = 498,
+        moX = 460,
+        moY = 498,
+        lane = 390;
+      ((n.ch1Song = !1), (n.ctrl = !1), (n.act = null), (n.sqPose = "stand"), (n.moPose = "stand"));
       J([
-        v("mops", "See you after work."),
-        ch1Step("sq", 760, 500, 150),
+        cV((dt) => mV(n.sq, n.sq.x, lane, 190, dt)),
+        cV((dt) => mV(n.sq, sqX, lane, 190, dt)),
+        cV((dt) => mV(n.sq, sqX, sqY, 190, dt)),
+        cV((dt) => mV(n.mo, n.mo.x, lane, 160, dt)),
+        cV((dt) => mV(n.mo, moX, lane, 160, dt)),
+        cV((dt) => mV(n.mo, moX, moY, 160, dt)),
         N(() => {
-          ((n.moPose = "stand"),
-            (n.mo.x = 620),
-            (n.mo.y = 470),
-            (n.ch1MopsLeave = 1),
-            (n.ch1PeekReady = !0),
-            (n.ctrl = !0),
-            (n.scene = "Q1"),
-            (n.ch1Chip = "Squatch: peek out the door"),
-            chipNow());
+          ((n.sq.f = -1), (n.mo.f = 1), (n.sq.moving = !1), (n.mo.moving = !1), (n.sqPose = "sing"));
+        }),
+        v("sq", "\u266A I'm floating in space! \u266A", "song"),
+        N(() => {
+          ((n.sqPose = "stand"), (n.moPose = "sway"));
+        }),
+        v("mops", "\u266A Baaa-aa-aaa! \u266A", "song"),
+        N(() => {
+          ((n.moPose = "stand"), (n.mo.f = 1), (n.ch1MopsLeave = 1));
         }),
       ]);
     }
