@@ -6,7 +6,7 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 - **Every assistant and thread working on Space Snack Quest writes a new decision here the moment it's made**: one line, dated, with its source and status. Don't leave it only in chat or memory.
 - When something changes, the newest version is **Decided** and the older line becomes **Superseded**, with what replaced it. Nothing gets deleted, so you can see the history.
 - **Status words:** **Decided** (Brian said it or approved it) · **Needs Brian's yes** (proposed, or on-screen words waiting on him) · **Superseded** (replaced; the line says by what) · **Open** (a real question nobody has answered yet).
-- **This repo file is the single source of truth.** It was synced on Monday, November 9, 2026 from the designer record through decision R63, and it still holds the earlier snapshot `docs/project/DECISIONS-2026-11-08.md` (on `main` at commit 10030f6). Every earlier entry is kept in section 10. Where a later decision replaces an earlier one, the earlier line is marked **Superseded** and says what replaced it. The dated snapshot stays in `docs/project/` as history and points here. New decisions get a row in the tables above, through a docs PR (review, "Docs match main: yes", Brian's written yes before merge).
+- **This repo file is the single source of truth.** It was synced on Monday, November 9, 2026 from the designer record through decision R63, and it still holds the earlier snapshot `docs/project/DECISIONS-2026-11-08.md` (on `main` at commit 10030f6). Every earlier entry is kept in section 10. Where a later decision replaces an earlier one, the earlier line is marked **Superseded** and says what replaced it. The dated snapshot's full text is in `docs/history/DECISIONS-2026-11-08.md`. A short pointer stays at `docs/project/DECISIONS-2026-11-08.md`. New decisions get a row in the tables above, through a docs PR (review, "Docs match main: yes", Brian's written yes before merge).
 - Don't invent a decision. If something isn't clear, add it under **Open**.
 
 ## Fidelity system (pictures are locked, not just words)
@@ -375,7 +375,7 @@ Each panel's on-screen words are in CH1-CARTOON-LINES.md. Which files are curren
 ---
 
 ## 10. Earlier entries, kept word for word
-From `docs/project/DECISIONS-2026-11-08.md`, the snapshot of the Drive master taken 2026-11-08. Every line below is the original entry. Nothing was deleted. **Decided** means it still stands, and the code points at the same decision in the tables above. **Superseded** means a later decision replaced it. The later decision is named.
+From the 2026-11-08 snapshot of the Drive master. The full snapshot is now `docs/history/DECISIONS-2026-11-08.md` (it used to be `docs/project/DECISIONS-2026-11-08.md`). Every line below is the original entry. Nothing was deleted. **Decided** means it still stands, and the code points at the same decision in the tables above. **Superseded** means a later decision replaced it. The later decision is named.
 
 - 2026-11-05 (Brian, in Grok): the repository is private. Why: Brian had not known it was public.
   **Decided.** Same as W28.
@@ -411,7 +411,7 @@ From `docs/project/DECISIONS-2026-11-08.md`, the snapshot of the Drive master ta
   **Decided.** Done.
 
 - 2026-11-06 (Brian): project folder is this Wyttmab Drive folder; the repo holds the code and the working docs; this folder holds STATE, DECISIONS, source snapshots and transcripts.
-  **Superseded** by W29, then by W11. The live copies are this file and `docs/STATE.md`. The dated snapshots stay in `docs/project/`.
+  **Superseded** by W29, then by W11. The live copies are this file and `docs/STATE.md`. The dated snapshots' full text is in `docs/history/`. Short pointers stay in `docs/project/`.
 
 - 2026-11-07 (Brian): remove the YOU: SQUATCH / YOU: MOPS tag. Why: the switch card and the chip prefix already say who the player is; the tag added clutter and overlapped the sound icon.
   **Decided.** Same as K4.
@@ -470,7 +470,7 @@ From `docs/project/DECISIONS-2026-11-08.md`, the snapshot of the Drive master ta
 ---
 
 ## 11. Decisions recorded on main on 2026-11-09
-These lines were added to `docs/project/DECISIONS-2026-11-08.md` after this log was first copied. They are kept here word for word. Nothing was deleted from that snapshot.
+These lines were added to the 2026-11-08 snapshot (now `docs/history/DECISIONS-2026-11-08.md`) after this log was first copied. They are kept here word for word. Nothing was deleted from that snapshot.
 
 - 2026-11-09 (Brian): office cutscene, NEEDS BRIAN. Isfred: "Send in Mops for his Employee of the Month photo." Robot: "Mops isn't here." Isfred: "Not here? He can't live off the station!" Robot: "He was replaced by the new robot shipment." Isfred: "I never ordered a replacement! Get me the security tapes."
   **In the game** (PR #19). The words are still marked NEEDS BRIAN in `docs/CH1-CARTOON-LINES.md`. He said yes to merge before the wording pass was finished.
