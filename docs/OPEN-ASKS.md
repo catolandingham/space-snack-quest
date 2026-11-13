@@ -136,6 +136,21 @@ For Brian and Squatchbot • Monday, November 9, 2026, synced through R63
 
 ---
 
+## G. Leftovers from the 2026-11-08 docs pulls
+Checked against this list and `DECISIONS.md` on 2026-11-13. Pull request #12's reply sheet is already answered here (sections C through E) and in `DECISIONS.md`. Pull request #16's cook drawing was game code and was not copied. The cook still speaks before she is on screen (`docs/MASTER-BACKLOG.md`, "Cook's first line").
+
+These were in the audits or the kids-book pass and were not already a row. They are notes, not new decisions. New words still need Brian's yes.
+
+| # | Ask | Status | Confidence |
+|---|---|---|---|
+| G1 | When Gloop, Blorp, Zip, Mom, or Dad sees Squatch, `pf` in `src/game/20-ch2.js` jumps him about 70 pixels in one step. Zip's sight shouts and jumps him, and does not call security. This is not the room-change walk (W20). | not started | High |
+| G2 | Story waits (`uV`) still advance with no tap in all four chapters. W23 says only a clear cutscene plays on its own. | not started | High |
+| G3 | While the player is Mops, watcher cones from `pf` are not drawn. Mops's heart cone is skipped when he is drawn smaller than 0.9 of his usual size. D9 confirmed the shoo. It did not confirm "cones only during the soup sneak." | not started | High |
+| G4 | The old lobby, still reachable from a debug link, has Squatch say "Gulp." and "Everyone's looking!" The sight rule says he does not speak. Those cones still see through the table and the counter. | not started. A cut would be new words, and blocking the cones would make the lobby easier | High |
+| G5 | On the Mars dock, before he is home, Squatch answers the gate bot: "Sasquatch. Big and furry." and "Nope. Just getting my goat." Rule 7 says he talks to no stranger until Chapter 4.4. | not started. The lines are already in the game | High |
+| G6 | These lines still tell the action instead of showing it: "(Searchlight. Back to the van.)", "(They saw me. Van, then the barrels.)", "*faints*", "*RUMBLE* She heard my stomach.", "*FLASH*". | not started. Words first. Same idea as the later-chapters note on stage directions | High |
+| G7 | Kids-book pass, not approved as words. Written against the old night-out opening, which a new game no longer plays, so those Chapter 1 line changes were not copied. Still not already a row: Mops should say who Gloop and Rusty are while both are on screen; the second wash should say the soup spent the coins; Mops should read the name Harry off the poster before Mom says it; "Rule #1" should say what the note said; one spelling, Wookie. Chili, the hoof-stamp whisper, the dirty dish, the riddles, the van, "Health rules", and the ending picture are already in sections C and D. | waiting on Brian | Medium |
+
 ## F. Nov 9 cartoon decisions (R29–R63)
 Recorded in `docs/DECISIONS.md`. None of these are in the game. New words stay NEEDS BRIAN in `docs/CH1-CARTOON-LINES.md`.
 
@@ -170,6 +185,6 @@ These are settled, add no new on-screen words, and change no difficulty, timer, 
 
 **P7. Housekeeping: flaky kitchen test and stale docs.** Rewrite `tests/kitchen.mjs` to wait on game state and the game clock (the way `tests/cook-order.mjs` does) instead of wall-clock sleeps. Keep every real sight and capture check. In the same PR, bring `docs/MASTER-BACKLOG.md` and `README.md` up to date with `main` (commit 10030f6; PRs #7 to #11 merged; the stale PR #5 and 9999f0cd register marked as history), and mark the Brian-answered items in `docs/STORY-DECISIONS.md` as answered, with the date and his pick (TV argument cut, dock kept, pea gag parked, riddles, small dance, ship, pancake joke, ending picture, keep the bonus). This only records his answers; nothing is decided for him.
 
-**P8. Optional: export the script in play order (H3).** Add a small Node script (`tools/export-script.mjs`) that walks the source and writes `docs/SCRIPT-AS-BUILT.md`: every bubble, card, chip and sign, with its speaker, chapter, scene and file line. It doesn't touch game behavior. This makes the later-chapter cartoons and lines files faster and shows exactly which current lines each change affects.
+**P8. Optional: export the script in play order (H3).** Add a small Node script (`tools/export-script.mjs`) that walks the source and writes `docs/SCRIPT-AS-BUILT.md`: every bubble, card, chip and sign, with its speaker, chapter, scene and file line. It doesn't touch game behavior. This makes the later-chapter cartoons and lines files faster and shows exactly which current lines each change affects. Pull request #13 already had that script, generated from the game before the Chapter 1 redesign. That export was not copied. If this is built, run it on current `main`.
 
 **Not on this list, and why:** the beard and pot change, dirty dish, switch cards, van → ship, Dad's joke, the ending picture, riddles and travel cards all need new words, so they go to a cartoon for your yes first. The new Chapter 2 opening waits on the ride question (C1). Ball anytime is decided (C20), and the ball-hide numbers are decided in R43. They are not built here. Taller sprites and Rusty's cone width could change difficulty. R58–R63 (balloon, party extras, gallery words) are recorded in section F and are not on this start list: they add on-screen words, and R59/R60 record a 6-second rise and a 4-second placeholder that are not in the game. The Chapter 1 rebuild waits on the finished cartoon. P2 to P7 don't touch the Chapter 1 files, so they won't clash with it. P4 and P5 touch HUD files that the later iPad layout pass will touch too, so land them first.
