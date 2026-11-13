@@ -1,6 +1,6 @@
 # Space Snack Quest
 
-Every agent reads `CLAUDE.md` first. Locked room art is `docs/locked-rooms/README.md`.
+New here? Read `docs/START-HERE.md`: what matters now, and the loop to follow. Every agent reads `CLAUDE.md` first. Locked room art is `docs/locked-rooms/README.md`.
 
 Do not redraw a room freehand, and do not change these files, without Brian's yes and a new locked version.
 

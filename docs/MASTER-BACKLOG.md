@@ -181,6 +181,7 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 - DE4, DE6, and DE7 are answered (see the story rows). They are not built.
 - Checkpoint rows the independent pass did not drive.
 - Any item not named in the tables above.
+- Chapter 1 problems found by the kid robot: `docs/CHAPTER-1-PROBLEMS.md`, ten items in ranked order. Fix one per pull request.
 
 ## Chapter 1 replot, recorded and not built
 
@@ -188,7 +189,9 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 
 ## Changelog
 
-2026-11-13. Automatic checks and the kitchen duck, not merged (R105). GitHub now runs the build check and the full test suite on every pull request and on main (`.github/workflows/pr.yml`). The kitchen duck is press-and-hold: hold the action button to stay a ball, let go to stand up, so Squatch cannot get stuck as a ball. A faint dashed outline shows where Gloop's look will land during her warning. New test `tests/kitchen-duck-hold.mjs`. No new words.
+2026-11-13. Chapter 1 kid robot and ranked problem list, merged on Brian's yes (pull request 37). `tests/ch1-kid-play.mjs` plays all of Chapter 1 on a phone-size screen by touch and ends at the score card. It runs with `npm test`; `npm run kid-video` saves a video. `docs/CHAPTER-1-PROBLEMS.md` ranks ten Chapter 1 problems, each with its cause, fix, and the check that proves it. `docs/START-HERE.md` is a one-page handbook: what matters now, what went wrong before, and the loop to follow. No game code changed.
+
+2026-11-13. Automatic checks and the kitchen duck, merged on Brian's yes (pull request 36, R105). GitHub now runs the build check and the full test suite on every pull request and on main (`.github/workflows/pr.yml`). The kitchen duck is press-and-hold: hold the action button to stay a ball, let go to stand up, so Squatch cannot get stuck as a ball. A faint dashed outline shows where Gloop's look will land during her warning. New test `tests/kitchen-duck-hold.mjs`. No new words.
 
 2026-11-13. Home song, not merged. Mops walks over and stands next to Squatch. Squatch sings "I'm floating in space!" and Mops answers "Baaa-aa-aaa!", then Mops leaves. Bubbles sit off the face. The peek chip shows only after Mops is gone. The sing-along chip stays until those lines have played. "See you after work." is gone. The bedroom arrows point away from the bucket. The keyboard instructions under the game are gone. The title picture is unchanged. Docs match main: yes. Do not merge.
 

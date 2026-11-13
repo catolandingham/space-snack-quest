@@ -9,6 +9,7 @@
     "check-build": "node tools/build.mjs --check",
     "test": "node tests/run-all.mjs",
     "test:one": "node",
+    "kid-video": "KID_SHOTS=1 node tests/ch1-kid-play.mjs",
     "rename": "node tools/rename.mjs"
   },
   "devDependencies": {
