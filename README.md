@@ -67,6 +67,10 @@ For example, `index.html?ch=2&phase=wash1&debug=1` opens the kitchen sink with t
 
 GitHub runs `npm run build`, `npm run check-build`, and `npm test` on every pull request and every push to main (`.github/workflows/pr.yml`). A change counts as passing only when that check is green on GitHub, not when someone says it passed on their machine. The test output (videos and screenshots) is attached to each run for 14 days.
 
+## Chapter 1 kid robot
+
+`tests/ch1-kid-play.mjs` plays all of Chapter 1 on a phone-size screen by touch, the way a kid would, from waking up to the score card. It runs with `npm test`. `npm run kid-video` also saves a video in `tests/out/kid-play/chapter-1.mp4`. Problems it meets that are already listed in `docs/CHAPTER-1-PROBLEMS.md` print as KNOWN; anything new fails the run. That file ranks the Chapter 1 problems, each with its cause and the check that proves the fix.
+
 ## Phase 1: kitchen and diner clarity
 
 Branch `phase-1-kitchen-clarity` makes Chapter 2 clear to a 10-year-old (plan section 3, tasks T5 to T12). Every new line the player reads is listed for Brian in `docs/PHASE-1-LINES-FOR-BRIAN.md`.
