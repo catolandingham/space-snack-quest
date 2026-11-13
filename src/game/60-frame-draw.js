@@ -329,12 +329,15 @@
         e.restore());
     }
     function Fe(l, o, i, s) {
-      // C14: Mops's warm cone pops a heart instead of a "!". It is a lookout cone for later chapters.
-      // Chapter 1 home, the party, and dress-up are not that beat, so it does not draw there (no pink cone, no stray heart).
-      n.room !== "closet" &&
-        (n.scene || "")[0] !== "Q" &&
-        !n.ch1Party &&
+      // C14 (Brian, 2026-11-13: "when M sees him in cone, hearts come up"): Mops's warm cone pops a heart
+      // instead of a "!", in every chapter, Chapter 1 included. It shows only while the player has control and
+      // Squatch is not disguised. It never draws under a full-screen picture (dress-up, a cut-in, a close-up),
+      // which is where the old stray heart came from.
+      n.ctrl &&
+        !n.ch1Disguise &&
         !(n.ch1Dress && n.ch1Dress.on) &&
+        !n.ch1Cut &&
+        !n.ch1Zoom &&
         i >= he * 0.9 &&
         s.eyes !== "closed" &&
         n.moPose !== "sleep" &&
@@ -2212,6 +2215,8 @@
             (e.globalAlpha = 1));
         } else
           i.x !== 300 &&
+            // Mops's heart belongs over Mops in the room, never on top of dress-up, a cut-in, or a close-up.
+            !(i.s === "\u2665" && ((n.ch1Dress && n.ch1Dress.on) || n.ch1Cut || n.ch1Zoom)) &&
             ((e.globalAlpha = Math.min(1, i.t * 2)),
             g(i.s, i.x, i.y, 26, i.s === "\u2665" ? "#e5533d" : "#b45309", "center", 900),
             (e.globalAlpha = 1));
