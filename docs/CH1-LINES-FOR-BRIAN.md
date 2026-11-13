@@ -72,6 +72,33 @@ Words the game already had, and the one you already approved, are not in this li
 | 79 | The balloon kid, if Squatch keeps the balloon. NEEDS BRIAN | Scary Wookiee! | |
 | 80 | The octopus tourist. NEEDS BRIAN | *hic* Fellow tourist! | |
 | 81 | The balloon, the last time Squatch is in the hall. NEEDS BRIAN | POP! | |
+| 82 | Beat 2 stand-in. Mops leaves. The song is not built. NEEDS BRIAN | See you after work. | |
+| 83 | Isfred, on the party stage. NEEDS BRIAN | Welcome, everybody, to the Stormtop Space Party! | |
+| 84 | Isfred, on the party stage. NEEDS BRIAN | Let's give a big hello to our friends from Bleep-Bloop Robotics! | |
+| 85 | Isfred, on the party stage. Helpers, not replacements. NEEDS BRIAN | Soon their helper robots will be here, to help with the heavy work. | |
+| 86 | The robots poster. NEEDS BRIAN | COMING SOON! | |
+| 87 | Isfred's party badge. Decided | Isfred | |
+| 88 | Isfred, introducing the band. NEEDS BRIAN | And now... put your hands together for the Croc Boys! | |
+| 89 | Squatch, before dress-up. NEEDS BRIAN | I've never gotten to dance at a party. | |
+| 90 | The dress-up meter. NEEDS BRIAN | Disguised enough | |
+| 91 | The dress-up button. NEEDS BRIAN | Shuffle | |
+| 92 | The dress-up button. NEEDS BRIAN | Go! | |
+| 93 | The bartender, first catch. NEEDS BRIAN | ...Nice gloves. | |
+| 94 | The bartender, second catch. NEEDS BRIAN | Wait a second... fur! | |
+| 95 | Dress-up piece. NEEDS BRIAN | top hat | |
+| 96 | Dress-up piece. NEEDS BRIAN | sunglasses | |
+| 97 | Dress-up piece. NEEDS BRIAN | shirt | |
+| 98 | Dress-up piece. NEEDS BRIAN | boots | |
+| 99 | Dress-up piece. NEEDS BRIAN | scarf | |
+| 100 | Dress-up piece. NEEDS BRIAN | bow tie | |
+| 101 | Dress-up piece. NEEDS BRIAN | button nose | |
+| 102 | Dress-up piece. NEEDS BRIAN | pipe | |
+| 103 | Action. NEEDS BRIAN | PEEK · doorway | |
+| 104 | Action. NEEDS BRIAN | SHUFFLE · outfit | |
+| 105 | Action. NEEDS BRIAN | GO · party | |
+| 106 | Action. NEEDS BRIAN | OPEN · snack bar | |
+| 107 | Action. NEEDS BRIAN | CLOSE · cut-in | |
+| 108 | The cut-in exit button. NEEDS BRIAN | X | |
 | 66 | Mops, on the walk home in the R51 hallway. Not in the game yet. NEEDS BRIAN | Paperwork. | Pending. This line waits for the hallway. |
 | 42 | The PA, on the trip | The base called the ship. It has to stop. | |
 | 43 | A card | Six days later | The week is decided. These are the words on the card. |
@@ -160,6 +187,26 @@ Layout for that build: the party hall exit is in the left end wall. The loading 
 R49 is in the game. Squatch goes to the party alone and hides it. Mops is never there. No robots are there, because the delegation is only announced. Guests are drawn at the same size as the game's people. R52: "You have me" is not said at the party. The disguise comes off if the plant, the vent, or the guard takes it, or when a guest says "Cool hat!" after 120 seconds of party play. That timer is COOL_HAT_SECONDS. Free-play moments are the list CH1_PARTY_FREE, so more can be added there. R58 and R59: a kid lets go of a balloon, gasps with a ! and points up. The balloon wobbles, glows while it can be grabbed, and takes about 6 seconds to reach the ceiling (R59, approved). One jump in reach grabs it. Walking it back, the kid goes wide-eyed, smiles, holds a finger to the lips, and gives a thumbs-up, with no words, and the disguise stays. Keeping it makes the kid yell "Scary Wookiee!" (row 79, NEEDS BRIAN) and starts the FUR alarm and the walk home. Letting it hit the ceiling only makes the kid sad. R60: the octopus says "*hic* Fellow tourist!" (row 80, NEEDS BRIAN). One hug tugs the hat. A second hug knocks the disguise off. A photo in the corner gives PHOTO_BONUS points if Squatch is in the shot. That amount is 25, approved by Brian on 2026-11-09, and is not drawn. The third snack spills the table. Guests look away for SNACK_LOOK_SECONDS (4), which Brian approved on 2026-11-09, and he can hide in the plant. The pair hunt is not built. R61: after the party the balloon stays in the hall. A miss stays on the ceiling. Giving it back or keeping it ties it to the plant by the kid, because he does not take it home. That state is in the save. The last hall visit pops it once, with "POP!" (row 81, NEEDS BRIAN) and a soft pop. Nobody reacts and the game does not pause.
 
 R50 is in the game. When Mops and the disguised Squatch leave, the manager is not at the ship. There is no boarding chase and no "Mops, it's a mistake!" After they leave, the office cutscene is R54, rows 63, 64, 68, 69, and 41, in that order. All five are NEEDS BRIAN. The name on the robot's bubble is "Robot" (row 67, NEEDS BRIAN), not Security. Mops is not in that cutscene. The robots have arrived by then.
+
+## Day 1 stand-ins, pending
+
+These are on screen in this unmerged slice so the day can be played. NEEDS BRIAN.
+
+| # | Who | In the game now |
+| --- | --- | --- |
+| 86 | Squatch, after the party | Everyone out there has someone. |
+| 87 | Mops, answer | You have me. |
+| 88 | TV picture | Fur in the scrubber. |
+| 89 | TV picture | Onto the ship. |
+| 90 | Mops, bedtime picture | You came to me in a Moon Pie crate. You've loved Moon Pies ever since. |
+| 91 | Squatch, when the octopus comes | I gotta juke this fool. |
+| 92 | Octopus | *hic* Fellow tourist! |
+| 93 | Camera tourist | Say cheese! |
+| 94 | Karaoke screen | Ay-ay-ay-ay, I love my Moon Pies! |
+| 95 | Karaoke screen | Round and chocolate-y, sweet as the starry skies! |
+| 96 | Karaoke button | Sing |
+
+The song at home uses the song button and a SING button. No new lyric. The dance game has arrows only.
 
 The five office lines, in order, all NEEDS BRIAN: "Send in Mops for his Employee of the Month photo." "Mops isn't here." "Not here? He can't live off the station!" "He was replaced by the new robot shipment." "I never ordered a replacement! Get me the security tapes."
 

@@ -155,7 +155,9 @@
         pointer("term", l - 66, o - 186, 132, 196, 10));
     }
     function W6(l) {
-      if ((l.push({ y: lt.y, d: Z6 }), !!["S6", "S7", "S7b", "S8", "S9", "S10", "S11"].includes(n.scene))) {
+      // The office picture already has the desk and the computer. Do not draw a second MANAGER terminal on top.
+      n.room !== "office" && l.push({ y: lt.y, d: Z6 });
+      if (["S6", "S7", "S7b", "S8", "S9", "S10", "S11"].includes(n.scene)) {
         if (
           (l.push({ y: 0, d: F6 }),
           l.push({
@@ -804,7 +806,7 @@
           : C([l - 2.5, o + 3, l + 2.5, o + 3], y, 1));
     }
     function u5(l) {
-      (Qt(l.x, l.y, "#8a93a3", 1.4, -0.5),
+      (Qt(l.x, l.y, "#8a93a3", QT_ADULT, -0.5),
         X(l.x, l.y - 72, 6, 2),
         r("#59657d", 0),
         e.beginPath(),
@@ -1017,20 +1019,19 @@
       for (let o of B.jans) o.on && l.push({ y: o.y, d: () => u5(o) });
       if (
         (W6(l),
-        n.ch1Party && l.push({ y: 8, d: drawCh1Party }),
         n.ch1BalloonRest && !n.ch1Party && (n.scene || "")[0] === "Q" && l.push({ y: 530, d: drawCh1BalloonLeft }),
         n.scene === "Q3" &&
           l.push({
             y: 520,
             d: () => {
-              Qt(640, 520, "#e8a87c", 1.6, 1);
+              Qt(640, 520, "#e8a87c", QT_ADULT, 1);
             },
           }),
         n.ch1Office &&
           l.push({
             y: 490,
             d: () => {
-              (Qt(220, 470, "#c9b6f2", 2.2, 0.3), dq(360, 490, !1));
+              (Qt(220, 470, "#c9b6f2", QT_ADULT, 0.3), dq(360, 490, !1));
             },
           }),
         !n.ch1Office &&
@@ -1039,7 +1040,7 @@
           l.push({
           y: n.mo.y,
           d: () => {
-            (Fe(n.mo.x, n.mo.y, he * 1.15, { f: n.mo.f, walk: n.mo.moving ? n.mo.walk : 0, mop: (n.scene || "")[0] !== "Q" }),
+            (Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f, walk: n.mo.moving ? n.mo.walk : 0, mop: (n.scene || "")[0] !== "Q" }),
               B.gave && n.scene === "S2" && (m(n.mo.x + 22 * n.mo.f - 9, n.mo.y - 50, 18, 20, 2), r("#cdbb98", 1.5)));
           },
         }),
@@ -1047,7 +1048,7 @@
           l.push({
             y: n.sq.y,
             d: () =>
-              Re(n.sq.x, n.sq.y, he, {
+              Re(n.sq.x, n.sq.y, sqDrawScale(), {
                 walk: n.sq.moving ? n.sq.walk : 0,
                 f: n.sq.f,
                 carry: n.lunch === "held",

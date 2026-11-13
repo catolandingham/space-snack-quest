@@ -69,7 +69,7 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 | S7 | 11-08 | The gap is one week on the weekly route, shown as a time lapse: a "Six days later" card, then the ship comes tomorrow. | Brian 3:36 PM, 4:33 PM | Decided (the card's words still need his yes, see the lines file) |
 | S8 | 11-08 | The robots arrive the next morning (daily route). | DOWNSTREAM Q8 proposal | Superseded by S7 |
 | S9 | 11-08 | **5A:** The player sees the parents (player-only pictures). Squatch only hopes when he sees the brochure. Mops knows only that he found the baby. | card; Brian 3:36 PM | Decided |
-| S10 | 11-08 | **6A:** Squatch can walk during normal talk, while deliberate close-ups stay tap-paced. The song button is always visible, which doesn't mean he can sing anywhere. | card; memory | Decided |
+| S10 | 11-08 | **6A:** Squatch can walk during normal talk, while deliberate close-ups stay tap-paced. The song button is always visible, which doesn't mean he can sing anywhere. | card; memory | Decided. In the unmerged slice: a spoken line no longer freezes walking while he has control. Cards, panels, and cutscenes still do. A ♪ button is always in the control row. It sings only at home before Mops leaves. |
 | S11 | 11-08 | The party replaces the old notice sneak and inspection. The guards chase him home and search the room. | Brian 3:36 PM | Decided |
 | S12 | 11-07 | D15 night out: a brochure table with the robot-janitor notice as the reason to go out. | repo | Superseded by S11 (party). The live game still has D15 from PR #11. |
 | S13 | 11-08 | Party: after the peek, Squatch puts on Mops's tourist disguise (hat, sunglasses, Hawaiian shirt), takes the robot flyer, has a snack and joins guest conversations. It's free play. | Brian 3:18 PM, 3:20 PM | Decided |
@@ -286,8 +286,8 @@ Each panel's on-screen words are in CH1-CARTOON-LINES.md. Which files are curren
 ## 7. Audio
 | # | Date | Decision | Source | Status |
 |---|---|---|---|---|
-| A1 | 11-08 | Brian's track (`/workspace/ssq/music/main-theme-from-brian.mp3`, 3:54) is the warm theme for heart moments and the title. It's a song by his friend Joe, and Brian says it's fine to use. | Brian 3:17 PM, 3:19 PM, 3:20 PM | Decided (supersedes "rights not confirmed") |
-| A2 | 11-08 | Also wanted: a sneak and chase theme, a journey/travel theme, and short stings (spotted, escape, secret found, caught). | Brian 3:19 PM | Decided (not sourced yet) |
+| A1 | 11-08 | Brian's track (`music/main-theme-from-brian.mp3`, 3:54) is the warm theme for heart moments and the title. It's a song by his friend Joe, and Brian says it's fine to use. | Brian 3:17 PM, 3:19 PM, 3:20 PM | Decided (supersedes "rights not confirmed"). The file is in this unmerged slice. It plays on the title, at home (not during the search or dress-up), while the morning gift is out, and when the balloon kid is happy. Sneak and journey stay generated. Nothing starts before the first tap. |
+| A2 | 11-08 | Also wanted: a sneak and chase theme, a journey/travel theme, and short stings (spotted, escape, secret found, caught). | Brian 3:19 PM | Decided. Generated stand-ins are in the unmerged slice. Not Joe's recording. |
 | A3 | 11-08 | Music plays at the right moments with silence between, not constantly. | Brian 3:11 PM, 3:19 PM | Decided |
 | A4 | 11-08 | Any action that makes a noise gets a sound effect (fur slurped into a vent, the robots' bleep-bloops, a goat bleat). | Brian 3:19 PM | Decided |
 | A5 | 11-08 | No fart sounds. | video notes; card | Decided |
@@ -305,7 +305,7 @@ Each panel's on-screen words are in CH1-CARTOON-LINES.md. Which files are curren
 | K7 | 11-07 | Reset is a small hold-to-use ↺. After 60 seconds with no progress, the goal chip shows the method line. | repo | Decided for the current game (see K8 and O32) |
 | K8 | 11-08 | Hints: try an escalating tap-for-hint (goal → place → exact action) plus a hints on/off setting in the rebuilt first scenes. No idle auto-hints. | Brian 3:19 PM | Decided (words not written) |
 | K9 | 11-07 | One capture rule everywhere: sighting → security → lockup card with the cause → restart the section, coins kept. | repo | Decided |
-| K10 | 11-08 | Security is consistent: when he's seen, a witness runs to the wall alarm, then security comes and actually catches him. He can run back to the room, and security chases him in. Cut the 9-second home countdown; the guard enters half a second after reaching the door. One rule everywhere, pending a full code trace (P1). | Brian 4:04 PM, 4:33 PM | Decided (timing yes given; trace not started) |
+| K10 | 11-08 | Security is consistent: when he's seen, a witness runs to the wall alarm, then security comes and actually catches him. He can run back to the room, and security chases him in. Cut the 9-second home countdown; the guard enters half a second after reaching the door. One rule everywhere, pending a full code trace (P1). | Brian 4:04 PM, 4:33 PM | Decided. Party hall uses it (witness, then guards, `capture('s6')` or the existing home search). Other chapters still wait on the trace. |
 | K11 | 11-07 | Tap to walk: a tap advances a bubble or card when one is up, and walks only when nothing is up. | repo | Decided |
 | K12 | 11-08 | Keep both the joystick and tap-to-move, with the joystick where it is. | memory; video notes | Decided |
 | K13 | 11-07 | The phone HUD: bar above the picture, or an overlay? | repo (open then) | Superseded by K14 |
@@ -502,5 +502,44 @@ These lines were added to `docs/project/DECISIONS-2026-11-08.md` after this log 
 - 2026-11-09 (Brian): R60. The octopus tourist is over-snacked. His line is "*hic* Fellow tourist!" (NEEDS BRIAN). One hug tugs the hat. A second hug knocks the disguise off. A photo corner prints a Polaroid. If Squatch is in it he gets 25 points. The third snack spills the table. Guests look away for 4 seconds, then turn back. The pair hunt is not built.
   **Decided** as the scene. The octopus line is still marked NEEDS BRIAN.
 
-- 2026-11-10 (Brian, in chat): "Yes, merge PRs #17 and #18."
-  **Decided.** PR #18 is this decision log, on `main` as `1e897aa`. PR #17 (room walks and the hoof-stamp cut) is merged onto that main in this commit. The source files merged cleanly. `index.html` was rebuilt. `docs/MASTER-BACKLOG.md` kept both changelog lines.
+- 2026-11-10 (Brian, in chat, 6:24 AM ET): "Yes, merge PRs #17 and #18."
+  **Decided.** PR #18 is on `main` as `1e897aa`. PR #17 is on `main` as `bc0759f`.
+- 2026-11-10 (Brian, 8:14 AM ET): "Make a separate test link so I can play it before merging."
+  **Decided.** The slice stays unmerged. A separate site may serve the branch. The live site at space-snack-quest.onrender.com stays on main. Preview saves use ssq-pr21- keys.
+- 2026-11-10: Slice A of the party-first Chapter 1 is a pull request and is not merged. Beat 2 is a stand-in (Mops leaves; the song is later). The party timer is 3 minutes, inside the 3 to 4 minutes Brian approved, and "Cool hat!" is the stand-in for how that time ends. The bar cut-in is the shared piece from CUT-IN-SPEC. Snack grabs do not add points. The spare blue jacket and the horns are not in the dress-up set.
+
+- 2026-11-11 (playtest 6): The picture jumped about 30 pixels when NEXT appeared. The desktop controls row now keeps a 104 pixel slot for that button, same as the bug-fix branch.
+  **In this unmerged slice.** No new words.
+
+- 2026-11-11 (playtest 6): Isfred's party line sat on the office monitor. The monitor is the screen at about x 94–206, y 72–160. The bubble anchor for a party line from him moved from (210, 215) to (300, 330), so the box starts below that screen, next to his nameplate.
+  **In this unmerged slice.** The words are unchanged.
+
+- 2026-11-11 (Brian, 8:49 AM ET): R64. The night mailbox robot, the same one as on the bug-fix branch, looks down for 2 seconds, turns for 0.3 seconds without catching, then looks at the back wall for 4 seconds. The cone stays 210 / 0.42 / 70. His words: "Robot: make him look down 2 seconds, then at the back wall 4 seconds, and you dash while he's turned." R65: keep him a bit smaller, like now, at home and in the other rooms. "Size: keep him a bit smaller like now." The party drawing is R66. There he is a little taller than a guest and still shorter than he is at home. This is not a yes to merge.
+  **Decided.**
+
+- 2026-11-11 (this polish session only): W7 normally says assistants do not drive the game. Brian asked for headless play of each screen, so screenshots and scripted taps are allowed for this loop. W7 itself is unchanged for every other session.
+  **Decided** for this session. Not a yes to merge.
+
+- 2026-11-11: R66. Party scale, under Brian's "if there's any other solutions, go for it." Party guests are drawn at 1.3 instead of 1.6, and Squatch at the party is drawn at 2 instead of 1.6, so he is a little taller than a guest and still shorter than he is at home. Guests are spaced so their bodies do not stack. The kid stays smaller. Hiding and collision still use his feet. Other rooms are unchanged.
+  **Superseded** by R67. Making him taller than a guest fought C10. The overlap was the problem, not his size.
+
+- 2026-11-11: R68. Day 1 of the walkthrough is in this unmerged slice, from the song through bedtime. After bedtime, the existing Day 2 (lunch through the tally) still plays. Open-question defaults, listed and not a merge yes: Q4 stays the approved 3-minute "Cool hat!" because that timer was already decided; the octopus chase is in the party as well. Q5 lunch stays where the current Day 2 puts it until the Day 2 branch. Q17 the 3-minute clock pauses during the dance and the karaoke. Q20 the party keeps the standard tourist disguise (B). Q19 the dim lights are looks only. Tuning to confirm: dance is 30 arrows over 30 seconds, 10 points a hit, hit window 42px; karaoke is 15 seconds, 5 points a howl, cap 50; octopus speed 90 (Squatch walks at 190), notices within 150px, catches within 48px, gives up at 10 seconds; the guard walks at 120, catches within 36px, and leaves after the hide. Photo countdown is 6 seconds and still uses the approved 25-point SNAP.
+  **In this unmerged slice.** Not a yes to merge.
+
+- 2026-11-11: R67. Party scale, correcting R66. Brian's standing rule (C10, 2026-11-08) is that adults are clearly taller than Squatch and Mops, because Squatch is a kid. On 2026-11-11 he said "keep him a bit smaller like now." His "no good option" note was about guests overlapping, not about making Squatch bigger. At the party Squatch uses the normal hall scale (he = 1.6). Guests are drawn at 1.8, a bit taller than the old 1.6, so he is about 60% of a guest. The kid stays smaller. Guests are spaced. Hiding and collision still use feet. There is no spr_a_* sprite sheet in this repo, so the guests are drawn in the same thick-outline style. This is not a yes to merge.
+  **Superseded** for the adult height by the 2026-11-12 ruler below. Home is still `wl`. Squatch stays the shorter one.
+
+- 2026-11-12: Adult height is one number, `ADULT_PX`. The ruler is the party hall's right-hand door in `hall-room-empty-v1.png` (source y 353–453, 101px on the 830-tall picture, 77.9px on the 640-tall canvas). Adult heads land at 85% of that door (66.2px), above the snack counter. Squatch's head is 80% of an adult (53.0px). Alien guests use that height divided by 84 local units (scale 0.788). Qt adults (bartender, Isfred, loading-bay workers and manager, lunch tourists) divide it by 50 (scale 1.324). Squatch in those rooms divides 80% of it by 45 (scale 1.177). No per-room override. The kid and the home closet scale stay as they were. Brian approved the 70–90% band and the 85% door mark.
+  **Decided.** Not a yes to merge.
+
+- 2026-11-12: K10 at the party. The FUR alarm still says the existing "FUR! Security!" lines. A guest runs to the wall alarm, then two guards come in from the hallway door and search with the same cone as the standing sight (210 long, 0.42 half-angle, 70px at the feet). If that sight catches Squatch, it calls `capture('s6')` ("A tourist saw Squatch in the hall. Security caught him."). If he hides or reaches the home door, the guard walks to that door and the existing home search starts half a second later. There is no 9-second countdown. No new on-screen words.
+  **Decided.** Not a yes to merge.
+
+- 2026-11-12: R84. Brian locked the manager's office as `docs/locked-rooms/office-room-empty-v2.png` (`office_room_v2.py`). The hallway's office door is on the office's back wall, and Squatch's entry is that door (canvas 480, 286). The desk, the computer, and the signs (NO FUR, HANG IN THERE, IN, OUT, Isfred Bar Neshuman) are in the picture. The game does not draw a second MANAGER terminal on top.
+  **Decided.** Not a yes to merge.
+
+- 2026-11-11 (playtest 6): Squatch looks about two thirds as tall as a guest. Not changed. A guest is drawn by Qt at scale 1.6: about 64 units from feet to the top of the head, so about 102 pixels. Squatch in the hall is drawn by Re at he = 1.6: about 45 units, so about 72 pixels, which is about 70% of the guest. The closet uses wl = 3 instead, which is why he looks larger at home. Matching the guest would mean drawing him at about 2.3 in the party only (102 / 45). Hiding, collision, and the plant hide use his feet and his pose, not the picture's height, so a bigger picture would not change those. It would make him overlap nearby guests and the plant visually, and his bubble would sit higher. Recommendation: leave it until Brian says yes. If he wants them to match, change only the party drawing to 2.3, not the global he.
+  **Superseded** by R65 and R67. R65 does not enlarge him at home or in the other rooms. R66 (him taller than a guest) is superseded. R67 draws guests at 1.8 and Squatch at the normal hall scale.
+
+- 2026-11-11 (playtest 6): "PUT ON · tourist disguise" turned the costume on in one frame, and the dress-up screen popped in the same way. Both now fade through black in about 0.4 seconds. No new words.
+  **In this unmerged slice.**

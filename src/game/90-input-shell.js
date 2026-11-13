@@ -33,6 +33,10 @@
           hf(l > 720 && o < 160 ? "close" : l < 400 ? "prev" : "next");
           return;
         }
+        if (p.state === "op" && ((n.ch1Dress && n.ch1Dress.on) || n.ch1Cut)) {
+          ch1SlicePointer("down", l, o);
+          return;
+        }
         if (p.state === "op") {
           walkTap(l, o) || nf();
           return;
@@ -223,6 +227,7 @@
         ch2Tally: o2,
         actionDown: Vf,
         tapAt: O5,
+        ch1Pointer: (kind, x, y) => ch1SlicePointer(kind, x, y),
         shown: () => Array.from(p.shown),
         op: n,
         startOpening: qh,
@@ -266,10 +271,18 @@
         ballNoticeReset,
         ch1CaughtAt,
         ch1InCone,
+        ch1NightLook,
         BALL_NOTICE_RADIUS,
         BALL_NOTICE_SECONDS,
         COOL_HAT_SECONDS,
         BALLOON_GRAB_SECONDS,
+        ADULT_PX,
+        ALIEN_ADULT,
+        QT_ADULT,
+        SQ_ADULT,
+        CH1_OFFICE_DOOR,
+        CH1_HOME_DOOR,
+        CH1_GUESTS,
         PHOTO_BONUS,
         SNACK_LOOK_SECONDS,
         CH1_CAM,
@@ -321,6 +334,16 @@
         placedSpots: () => placedSpots(),
         offerNow: () => pick(spotsNow()),
         drawFrame: () => Ap(),
+        paintLocked: (id) => {
+          e.setTransform(1, 0, 0, 1, 0, 0);
+          e.clearRect(0, 0, c, b);
+          drawLockedRoom(id);
+        },
+        settleRoom: () => {
+          ((Ka = 0), (Mf = n.room), (fa = null));
+        },
+        lockedReady: Promise.all(lockedWait),
+        lockedIds: () => Object.keys(LOCKED_ROOMS),
         bubbleAt: (who) => v5(who),
         rings: () => ringsDrawn.slice(),
         inSpot: (l) => inSpot(l),
@@ -373,8 +396,12 @@
         actionE: J1,
         resetHold: armReset,
         soundTap,
+        songTap: () => {
+          (VV(), n.ch1Song ? ch1SingAlong() : n.scene === "O1" && n.ctrl && co());
+        },
         actionDown: Vf,
         tapAt: O5,
+        ch1Pointer: (kind, x, y) => ch1SlicePointer(kind, x, y),
         setJoy: (l, o, i) => {
           ((qt.x = l), (qt.y = o), (qt.active = i));
         },
@@ -385,7 +412,7 @@
           u = l;
         },
         destroy: () => {
-          ((h = !1), cancelAnimationFrame(xq), window.removeEventListener("keydown", j2));
+          ((h = !1), cancelAnimationFrame(xq), document.removeEventListener("keydown", j2, !0), window.removeEventListener("keydown", j2));
           for (let l of SOUND_EVENTS) window.removeEventListener(l, J2, { capture: !0 });
           document.removeEventListener("visibilitychange", Ve);
           try {
@@ -558,6 +585,7 @@
       let W = null;
       try {
         W = s8(eV, { onVerb: (VV) => c(VV), onTouch: () => O(!0), font: V.font.family, touch: wb() });
+        eV.focus({ preventScroll: !0 });
       } catch (VV) {
         console.error(VV);
       }
@@ -599,6 +627,12 @@
           Ve = eV.nativeEvent;
         e.current?.tapAt(((eV.clientX - VV.left) * 960) / VV.width, ((eV.clientY - VV.top) * 640) / VV.height, Ve.pointerType === "touch");
       },
+      dragAt = (kind) => (eV) => {
+        let W = t.current;
+        if (!W || !e.current) return;
+        let VV = W.getBoundingClientRect();
+        e.current.ch1Pointer(kind, ((eV.clientX - VV.left) * 960) / VV.width, ((eV.clientY - VV.top) * 640) / VV.height);
+      },
       nV = (eV) => (W) => {
         (W.preventDefault(), eV(), setTimeout(() => t.current?.focus({ preventScroll: !0 }), 0));
       };
@@ -634,6 +668,25 @@
               cursor: "pointer",
             },
             onPointerDown: nV(() => e.current?.soundTap()),
+          }),
+          (0, pe.jsx)("button", {
+            type: "button",
+            id: "ss-song",
+            "aria-label": "SING",
+            style: {
+              width: 44,
+              height: 44,
+              borderRadius: 22,
+              border: "3px solid #1e2430",
+              background: "#ffffff",
+              fontSize: 22,
+              lineHeight: "38px",
+              padding: 0,
+              touchAction: "none",
+              cursor: "pointer",
+            },
+            onPointerDown: nV(() => e.current?.songTap()),
+            children: "\u266A",
           }),
           (0, pe.jsx)("span", {
             id: "ss-sound-line",
@@ -677,7 +730,18 @@
                     children: KEY_HELP,
                   }),
                   SND,
-                  /^!?NEXT$/.test(h) ? z : null,
+                  // The slot stays 104px whether or not NEXT is showing, so the picture does not jump up.
+                  (0, pe.jsx)("div", {
+                    "aria-hidden": /^!?NEXT$/.test(h) ? void 0 : !0,
+                    style: {
+                      width: 104,
+                      height: 104,
+                      flex: "0 0 auto",
+                      visibility: /^!?NEXT$/.test(h) ? "visible" : "hidden",
+                      pointerEvents: /^!?NEXT$/.test(h) ? "auto" : "none",
+                    },
+                    children: z,
+                  }),
                   (0, pe.jsx)(Mb, { label: "Show touch controls", onClick: () => O(!0) }),
                 ],
               })),
@@ -705,8 +769,12 @@
                   width: 960,
                   height: 640,
                   tabIndex: 0,
+                  autoFocus: !0,
                   "aria-label": "Sneaky Sasquatch game",
                   onPointerDown: tV,
+                  onPointerMove: dragAt("move"),
+                  onPointerUp: dragAt("up"),
+                  onPointerCancel: dragAt("up"),
                   style: {
                     display: "block",
                     width: "100%",

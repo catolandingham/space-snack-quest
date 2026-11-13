@@ -61,7 +61,8 @@
           let A = n.cur && n.cur.k === "panel" && n.cur.id === "terminal" && !x.typed ? "!SIGN" : n.bt > 3 ? "!NEXT" : "NEXT";
           p.verb !== A && ((p.verb = A), t.onVerb(A));
         }
-        return;
+        // S10: a normal spoken line does not freeze walking. Cards, panels, and cutscenes still do.
+        if (!(n.ctrl && n.cur && n.cur.k === "bub" && !n.cutOn)) return;
       }
       for (let d of vV) d.t -= l;
       ((vV = vV.filter((d) => d.t > 0)), n.live.length && (n.live[0].live = (n.live[0].live || 0) - l) <= 0 && n.live.shift());
@@ -149,8 +150,9 @@
             Math.random() < l * 6 && vV.push({ x: n.mo.x - 30 * n.mo.f, y: n.mo.y + 6, t: 5 }));
         } else n.mo.moving = !1;
       }
-      let s = Bs(),
-        q = s ? (s.hot ? "!" : "") + s.verb + (s.cap ? " \u00b7 " + s.cap : "") : "";
+      let talking = n.ctrl && n.cur && n.cur.k === "bub" && !n.cutOn,
+        s = Bs(),
+        q = talking ? (n.bt > 3 ? "!NEXT" : "NEXT") : s ? (s.hot ? "!" : "") + s.verb + (s.cap ? " \u00b7 " + s.cap : "") : "";
       (q !== p.verb && ((p.verb = q), t.onVerb(q)), lh(l));
     }
     let qq = 0,
@@ -308,7 +310,17 @@
         e.restore());
     }
     function Fe(l, o, i, s) {
-      i >= he * 0.9 && s.eyes !== "closed" && n.moPose !== "sleep" && !x.mops && _A(l, o, s.f ?? 1);
+      // C14: Mops's warm cone pops a heart instead of a "!". It is a lookout cone for later chapters.
+      // Chapter 1 home, the party, and dress-up are not that beat, so it does not draw there (no pink cone, no stray heart).
+      n.room !== "closet" &&
+        (n.scene || "")[0] !== "Q" &&
+        !n.ch1Party &&
+        !(n.ch1Dress && n.ch1Dress.on) &&
+        i >= he * 0.9 &&
+        s.eyes !== "closed" &&
+        n.moPose !== "sleep" &&
+        !x.mops &&
+        _A(l, o, s.f ?? 1);
       let q = 2;
       (e.save(), e.translate(l, o), e.scale(i * (s.f || 1), i), s.sway && e.rotate(s.sway));
       let d = Math.sin(s.walk || 0) * 2;
@@ -560,15 +572,15 @@
     }
     function cq() {
       (e.beginPath(),
-        e.moveTo(522, 512),
-        e.lineTo(598, 512),
-        e.lineTo(588, 566),
-        e.lineTo(532, 566),
+        e.moveTo(572, 512),
+        e.lineTo(648, 512),
+        e.lineTo(638, 566),
+        e.lineTo(582, 566),
         e.closePath(),
         r("#ffcf33", 4),
-        X(560, 512, 38, 9),
+        X(610, 512, 38, 9),
         r("#8fdcff", 3),
-        X(552, 510, 14, 5),
+        X(602, 510, 14, 5),
         r("#ffffff", 2));
     }
     function H2() {
@@ -579,16 +591,21 @@
     }
     function g5() {
       let l = n.sq;
-      (!(n.sqPose === "stand" && l.y < 566 && Math.abs(l.x - 560) < 80) &&
-        !(n.botOn && n.bot.y >= 566 && Math.abs(n.bot.x - 560) < 90) &&
-        !(n.sqPose === "stand" && l.y >= 566 && Math.abs(l.x - 560) < 80) &&
+      (!(n.sqPose === "stand" && l.y < 566 && Math.abs(l.x - 610) < 80) &&
+        !(n.botOn && n.bot.y >= 566 && Math.abs(n.bot.x - 610) < 90) &&
+        !(n.sqPose === "stand" && l.y >= 566 && Math.abs(l.x - 610) < 80) &&
         cq(),
         n.sqPose === "stand" &&
-          (l.y < 566 && Math.abs(l.x - 560) < 80 && cq(),
+          (l.y < 566 && Math.abs(l.x - 610) < 80 && cq(),
           l.y < 512 && Math.abs(l.x - 350) < 70 && L2(),
           l.y < 526 && l.x > 70 && l.x < 340 && H2()));
     }
     function P2() {
+      if ((n.scene || "")[0] === "Q") {
+        drawLockedRoom(n.wardrobe === "open" ? "home-open" : "home-closed");
+        n.wardrobe === "open" && n.costumeOn && ((e.fillStyle = "#f4efe6"), e.fillRect(70, 150, 150, 160));
+        return;
+      }
       if (
         ((e.fillStyle = "#dfe4ea"),
         e.fillRect(0, 0, c, b),
@@ -660,6 +677,8 @@
         pointer("gbox", 318, 478, 64, 44, 8),
         L2(),
         cq(),
+        n.ch1Couch && (m(470, 490, 250, 56, 16), r("#3478f6", 4), m(458, 530, 274, 26, 10), r("#2456b0", 3)),
+        n.sqPose === "sleep" && (m(330, 430, 140, 40, 10), r("#c9b6f2", 3), m(330, 422, 140, 12, 4), r("#efe8ff", 2)),
         n.chair && (m(588, 396, 110, 74, 14), r("#e5533d", 4), m(580, 448, 126, 32, 10), r("#ff6a3d", 4)));
     }
     // Home wardrobe (R29–R34). Far left, back wall, base on the floor line. Calendar faces us only while the door is shut.
@@ -677,6 +696,10 @@
           m(x + w / 2 + 8, y0 + 18, 60, 108, 3),
           r("#fffaf0", 2),
           F(x + w / 2 + 38, y0 + 30, 4, "#e5533d"),
+          L(x + w / 2 + 38, y0 + 30, 8),
+          (e.strokeStyle = "#e5533d"),
+          (e.lineWidth = 2),
+          e.stroke(),
           g("DELIVERY", x + w / 2 + 38, y0 + 48, 11, y, "center", 900),
           e.save(),
           e.translate(x + w / 2 + 38, y0 + 78),
@@ -1003,15 +1026,18 @@
       let s = G6(l);
       if (s) return s;
       if (l === "official") {
-        if (n.ch1Office) return { x: 220, y: 380 };
+        if (n.ch1Office) return { x: 480, y: 490 };
+        // Party lines sit under the office monitor (the screen ends near y=160), on the Isfred nameplate.
+        if (n.ch1Party) return { x: 700, y: 460 };
         if (n.room === "hangar" && n.ch1D && n.ch1Ship && !n.ch1Night && n.scene !== "Q9") return { x: 560, y: 400 };
         return { x: 210, y: 215 };
       }
-      if ((l === "robot" || l === "bot") && n.ch1Office) return { x: 360, y: 400 };
-      if (l === "scanner") return n.room === "hangar" && n.ch1Ship ? { x: 480, y: 210 } : { x: Ha.x, y: 170 };
+      if ((l === "robot" || l === "bot") && n.ch1Office) return { x: 640, y: 490 };
+      if (l === "scanner") return n.room === "hangar" && n.ch1Ship ? { x: 465, y: 340 } : { x: Ha.x, y: 170 };
       if (l === "ups" && n.ch1Crew === "tease") return { x: 480, y: 380 };
-      if (l === "ups" && n.room === "hangar" && n.ch1D) return { x: 830, y: 460 };
+      if (l === "ups" && n.room === "hangar" && n.ch1D) return { x: 878, y: 430 };
       if (l === "kid" && n.ch1Party) return { x: CH1_KID.x, y: CH1_KID.y - 90 };
+      if (l === "tourist" && (n.ch1Party || n.ch1Cut)) return { x: 860, y: 430 };
       if (l === "tourist" && n.room === "hangar" && n.scene === "Q2") return { x: 700, y: 446 };
       if (l === "tourist" && n.room === "hall" && n.scene === "Q3") return { x: 640, y: 436 };
       if (l === "tourist" && n.room === "hall") {
@@ -1029,11 +1055,11 @@
         if (n.under === "crack") return { x: 210, y: 470 };
         if (n.sqPose === "under") return { x: 205, y: 520 };
         if (n.sqPose === "sit" || n.sqPose === "sleep") return { x: 205, y: 300 };
-        let q = n.room === "closet" ? wl : he;
+        let q = sqDrawScale();
         return { x: n.sq.x, y: n.sq.y - 46 * q };
       }
       if (l === "mops") {
-        let q = n.room === "closet" ? wl : he * 1.15;
+        let q = moDrawScale();
         return { x: n.mo.x + 18 * q * n.mo.f, y: n.mo.y - 46 * q };
       }
       if (l === "tourist" && n.room === "deck") {
@@ -1559,17 +1585,36 @@
     }
     function gq(l, o) {
       if (l === "ch1photo") {
-        ((e.fillStyle = "rgba(20,24,32,.55)"),
+        ((e.fillStyle = "rgba(255,252,245,.4)"),
           e.fillRect(0, 0, c, b),
-          m(330, 150, 300, 340, 8),
-          r("#fffdf8", 6),
-          m(354, 174, 252, 220, 4),
-          r("#d7ecf5", 2),
-          Qt(420, 360, "#1f9d8a", 1.2, 1),
-          Qt(500, 366, "#ff8a3d", 1.2, -1),
-          n.ch1InShot && Re(460, 390, 1.1, { f: 1, hat: !0, shades: !0, hawaiian: !0 }));
+          m(230, 60, 500, 520, 6),
+          r("#fffdf8", 8),
+          e.save(),
+          e.beginPath(),
+          e.rect(254, 84, 452, 390),
+          e.clip(),
+          (e.fillStyle = "#1b2450"),
+          e.fillRect(254, 84, 452, 170),
+          (e.fillStyle = "#ebe4d6"),
+          e.fillRect(254, 254, 452, 220));
+        for (let i = 0; i < 18; i++) F(270 + ((i * 73) % 420), 100 + ((i * 41) % 130), 1.2, "#ffffff");
+        (drawCh1Alien(340, 430, "hair", 1.15, 1),
+          drawCh1Alien(450, 400, "hat", 1.15, -1),
+          drawCh1Alien(560, 420, "antenna", 1.15, 1),
+          drawCh1Alien(650, 390, "croc", 1.15, -1),
+          n.ch1InShot &&
+            (e.save(),
+            e.beginPath(),
+            e.rect(254, 84, 452, 390),
+            e.clip(),
+            Re(300, 470, 1.35, { f: 1, hat: !0, shades: !0, hawaiian: !0 }),
+            e.restore()),
+          e.restore(),
+          g("STORMTOP SPACE PARTY", 480, 520, 16, "#1e2430", "center", 800));
         return;
       }
+      if (l === "ch1tv1" || l === "ch1tv2" || l === "ch1tv3") return drawCh1Tv(l);
+      if (l === "ch1moon") return drawCh1Moon();
       if (l === "ch1fur") {
         ((e.fillStyle = "rgba(20,24,32,.72)"),
           e.fillRect(0, 0, c, b),
@@ -1577,7 +1622,11 @@
           r("#e5533d", 8),
           g("FUR", 480, 250, 64, "#ffffff", "center", 900),
           g("PULL DOWN", 480, 320, 28, "#ffffff", "center", 900),
-          F(480, 380, 10, "#8b5a3c"));
+          C([480, 348, 480, 400], "#d7dbe3", 8),
+          F(480, 404, 12, "#e5533d"),
+          C([548, 430, 500, 392], "#f0bf93", 10),
+          F(492, 386, 16, "#f0bf93"),
+          F(486, 380, 5, "#1e2430"));
         return;
       }
       if (l === "ch1site") {
@@ -1984,7 +2033,7 @@
     // Where a walk-tap is heading: a small ring on the floor while the player walks there.
     function drawWalkTo() {
       let t = n.walkTo;
-      if (!t || de()) return;
+      if (!t || (de() && !(n.ctrl && n.cur && n.cur.k === "bub" && !n.cutOn))) return;
       let k = 0.5 + 0.5 * Math.sin(n.T * 8),
         sx = t.x - (n.room === "hall" ? B.camX : 0);
       (e.save(), (e.globalAlpha = 0.7), X(sx, t.y, 16 + 4 * k, 7 + 2 * k), (e.lineWidth = 3), (e.strokeStyle = "#ffffff"), e.stroke(), e.restore());
@@ -2004,12 +2053,17 @@
     }
     // The room the player is in, drawn with nothing over it (E5 adds rings, people, bubbles and the rest).
     function drawRoom() {
+      if (n.room === "office") return drawCh1OfficeRoom();
       (n.room === "closet"
         ? (P2(), X2(), g5(), z2())
         : n.room === "deck"
           ? (jp(), z2())
-          : n.room === "hall"
-            ? s5()
+            : n.room === "hall"
+            ? n.ch1Party
+              ? drawCh1PartyRoom()
+              : n.ch1Office
+                ? drawCh1HallwayRoom()
+                : s5()
             : n.room === "window"
               ? o5()
               : n.room === "duct"
@@ -2041,6 +2095,7 @@
                                     : x5());
     }
     function E5() {
+      if (n.roomOnly) return drawLockedRoom(n.roomOnly);
       ((qq = 0), (mq = []), (ringsDrawn = []), (conesDrawn = []));
       let l = n.cur;
       if (l && l.k === "card") {
@@ -2063,6 +2118,8 @@
       applyWalkDraw();
       try {
         drawRoom();
+        n.ch1Cut && drawCh1Cut();
+        n.ch1Dress && n.ch1Dress.on && drawCh1Dress();
       } finally {
         restoreWalkDraw();
       }
@@ -2103,7 +2160,10 @@
       (n.under === "crack" && gq("crack", !1),
         l && l.k === "panel" && gq(l.id, n.bt > 0.3),
         l && l.k === "bub" ? bq(l.b, !1) : !de() && n.live.length && bq(n.live[0], !0),
-        window.__ss && (window.__ss.bubbleFrame = qq));
+        n.ch1Search && drawCh1Guard(),
+        n.ch1Mini && drawCh1Mini(),
+        window.__ss && (window.__ss.bubbleFrame = qq),
+        n.ch1Veil > 0.01 && ((e.fillStyle = "rgba(20,24,32," + Math.min(1, n.ch1Veil).toFixed(3) + ")"), e.fillRect(0, 0, c, b)));
       ((e.globalAlpha = 1), zG(), drawTapHeard());
     }
     function zG() {
@@ -2154,12 +2214,14 @@
       (qh(), l !== 1 && ((n.q = []), (n.cur = null), (n.stars = 0), (n.starOn = !0), l === 2 ? Ws() : l === 3 ? aq() : nq()));
     }
     let j2 = (l) => {
+        if (l.ssqKeyHeard) return;
+        l.ssqKeyHeard = 1;
         if (
           (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space", "Backspace", "Tab"].indexOf(l.code) >= 0 && l.preventDefault(),
           VV(),
-          l.code === "Escape" && p.state === "op" && N0())
+          l.code === "Escape" && p.state === "op" && (N0() || storyCard(n.cur)))
         ) {
-          Cs();
+          N0() ? Cs() : skipStoryCards();
           return;
         }
         if (l.code === "KeyM") {
@@ -2178,6 +2240,12 @@
           I0(parseInt(l.code.slice(-1), 10));
           return;
         }
+        n.ch1Mini === "dance" &&
+          !l.repeat &&
+          ({ ArrowLeft: "L", ArrowRight: "R", ArrowUp: "U", ArrowDown: "D" }[l.code]
+            ? (ch1DanceHit({ ArrowLeft: "L", ArrowRight: "R", ArrowUp: "U", ArrowDown: "D" }[l.code]), !0)
+            : !1) ||
+        (n.ch1Mini === "karaoke" && !l.repeat && (l.code === "Space" || l.code === "Enter") && (ch1Howl(), !0)) ||
         (l.code === "KeyR" && !l.repeat && armReset(!0),
           (qe[l.code] = !0),
           !l.repeat && (l.code === "KeyE" ? Vf() : (l.code === "Enter" || l.code === "Space") && af()));
@@ -2189,4 +2257,7 @@
         for (let l of Object.keys(qe)) qe[l] = !1;
         ((qt.active = !1), armReset(!1));
       };
-    (window.addEventListener("keydown", j2), window.addEventListener("keyup", _2), window.addEventListener("blur", F2));
+    (document.addEventListener("keydown", j2, !0),
+      window.addEventListener("keydown", j2),
+      window.addEventListener("keyup", _2),
+      window.addEventListener("blur", F2));

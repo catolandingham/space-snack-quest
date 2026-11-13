@@ -84,8 +84,16 @@
       S = null,
       M = null,
       z = 1;
+    // The live site and local tests keep ssq-*. Any other host, including the PR preview, uses ssq-pr21-* so an iPad does not mix the two.
+    function ssqKey(name) {
+      let host = "";
+      try {
+        host = location.hostname || "";
+      } catch {}
+      return (host === "space-snack-quest.onrender.com" || host === "localhost" || host === "127.0.0.1" || host === "" ? "ssq-" : "ssq-pr21-") + name;
+    }
     try {
-      let l = window.localStorage.getItem("ssq-vol");
+      let l = window.localStorage.getItem(ssqKey("vol"));
       l !== null && (z = [0, 0.5, 1].includes(parseFloat(l)) ? parseFloat(l) : 1);
     } catch {}
     let G = z === 0;
@@ -95,7 +103,7 @@
         M && S && M.gain.setValueAtTime(0.5 * l, S.currentTime);
       } catch {}
       try {
-        window.localStorage.setItem("ssq-vol", String(l));
+        window.localStorage.setItem(ssqKey("vol"), String(l));
       } catch {}
     }
     function eV() {
@@ -104,7 +112,8 @@
     function W() {
       Z(G ? 1 : 0);
     }
-    // Sound is Web Audio only (no <audio> elements, nothing fetched): one AudioContext, made and resumed
+    // Effects are Web Audio oscillators. Joe's warm theme is one file, music/main-theme-from-brian.mp3,
+    // fetched only after the first tap and only while a warm cue is on. One AudioContext, made and resumed
     // on the player's first touch, click or key (any of them; see J2 in 90-input-shell.js), then on every
     // later one while it is not running. A browser can keep it suspended after a touch (Brave Shields on an
     // iPhone does); then the sound icon shows "blocked" and a tap on it says so and tries again.
@@ -151,6 +160,7 @@
     }
     function Ve() {
       try {
+        document.hidden && warmEl && !warmEl.paused && warmEl.pause();
         if (!S) return;
         document.hidden ? S.suspend().catch(() => {}) : S.state !== "running" && S.resume().catch(() => {});
       } catch {}
@@ -194,6 +204,10 @@
         baa: () => {
           for (let l = 0; l < 7; l++) lV(l % 2 ? 440 : 400, 0.07, "sawtooth", 0.06, l * 0.05);
         },
+        bleep: () => {
+          (lV(880, 0.06, "square", 0.07), lV(660, 0.08, "square", 0.06, 0.09));
+        },
+        slurp: () => lV(520, 0.45, "sine", 0.16, 0, 90),
         hide: () => lV(320, 0.09, "sine", 0.12, 0, 180),
         snore: () => {
           (lV(220, 0.6, "sine", 0.12, 0, 110), lV(200, 0.6, "sine", 0.1, 0.7, 100));
@@ -427,13 +441,13 @@
       ea = [],
       Ca = 1;
     try {
-      let l = window.localStorage.getItem("ssq-unlocked");
+      let l = window.localStorage.getItem(ssqKey("unlocked"));
       l && (Ca = w(parseInt(l, 10) || 1, 1, 4));
     } catch {}
     function Ml(l) {
       Ca = Math.max(Ca, l);
       try {
-        window.localStorage.setItem("ssq-unlocked", String(Ca));
+        window.localStorage.setItem(ssqKey("unlocked"), String(Ca));
       } catch {}
     }
     let p = {
@@ -465,11 +479,79 @@
     }
     let qe = {},
       qt = { x: 0, y: 0, active: !1 };
+    let musicKind = "",
+      musicWait = 0,
+      warmEl = null,
+      warmFade = 0,
+      warmPlayState = "",
+      warmStarting = false;
+    // A1: Joe's recording is the warm theme. It plays on the title, at home (not during the search or
+    // dress-up), while the morning gift is out, and on the balloon kid's happy faces. Sneak and journey
+    // stay generated. Nothing starts before the first tap, because the file is created only once S exists.
+    function warmWhy() {
+      if (G) return "";
+      if (p.state === "title") return "title";
+      if (p.state !== "op") return "";
+      if (n.roomWalk) return "";
+      if (n.ch1Night && n.scene === "Q4" && n.ctrl) return "";
+      if (n.sqPose === "hidden" && n.ch1Party) return "";
+      if (n.gift || n.holdToy) return "gift";
+      if (n.room === "closet" && !n.ch1Search && !n.guard && !(n.ch1Dress && n.ch1Dress.on)) return "home";
+      if (n.ch1Kid === "smile" || n.ch1Kid === "wide" || n.ch1Kid === "shh") return "heart";
+      return "";
+    }
+    function musicWant() {
+      if (warmWhy()) return "warm";
+      if (p.state !== "op") return "";
+      if (n.roomWalk) return "journey";
+      if (n.ch1Night && n.scene === "Q4" && n.ctrl) return "sneak";
+      if (n.sqPose === "hidden" && n.ch1Party) return "sneak";
+      return "";
+    }
+    function warmTick(dt, on) {
+      let goal = on && !G && z > 0 ? 1 : 0;
+      if (!warmEl && !goal) return;
+      if (!S) return;
+      if (!warmEl)
+        try {
+          ((warmEl = new Audio("music/main-theme-from-brian.mp3")), (warmEl.loop = !0), (warmEl.preload = "auto"));
+        } catch (err) {
+          warmPlayState = "err:" + (err && err.name);
+          return;
+        }
+      let step = Math.min(1, (dt || 0) / 0.45);
+      warmFade += (goal - warmFade) * step;
+      if (warmFade < 0.02 && !goal) ((warmFade = 0), (warmStarting = !1), warmEl.paused || warmEl.pause());
+      else {
+        warmEl.volume = Math.max(0, Math.min(1, 0.5 * z * warmFade));
+        if (warmEl.paused && goal > 0 && !warmStarting) {
+          warmStarting = !0;
+          warmPlayState = "pending";
+          let pending = warmEl.play();
+          pending &&
+            pending.then(
+              () => ((warmStarting = !1), (warmPlayState = "ok")),
+              (err) => ((warmStarting = !1), (warmPlayState = "err:" + (err && err.name))),
+            );
+        }
+      }
+      window.__ss && ((window.__ss.warmPlay = warmPlayState), (window.__ss.warmCue = warmWhy()), (window.__ss.warmPaused = !!warmEl.paused));
+    }
+    function musicTick(l) {
+      let want = musicWant();
+      want !== musicKind && ((musicKind = want), (musicWait = 0));
+      warmTick(l, want === "warm");
+      if (!want || want === "warm") return;
+      if (((musicWait -= l), musicWait > 0)) return;
+      musicWait = want === "sneak" ? 2.8 : want === "journey" ? 3.4 : 4.6;
+      want === "sneak" ? ji([48, 51, 55, 51], 0.2, "triangle") : ji([55, 59, 62, 67, 71], 0.18, "triangle");
+    }
     function ep(l) {
       p.t += l;
       for (let q of ea) ((q.x += q.vx * l), (q.y += q.vy * l), (q.t -= l));
       ea = ea.filter((q) => q.t > 0);
-      p.state === "op" && y5(l);
+      p.state === "op" && y5(l),
+        musicTick(l);
     }
     function m(l, o, i, s, q) {
       let d = Math.max(0, Math.min(q, i / 2, s / 2));
@@ -903,6 +985,7 @@
         l.k === "bub"
           ? (D.key(),
             l.b.who === "mops" && D.baa(),
+            (l.b.who === "ups" || l.b.who === "robot" || l.b.who === "scanner" || l.b.who === "bot") && D.bleep(),
             Dt("bub", pa[l.b.who], l.b.text, l.b.style + (l.b.ear ? "+ear" : "")),
             l.b.style === "song" && co())
           : l.k === "card"
@@ -948,9 +1031,20 @@
     function Nl(l) {
       return !!l && (l.k === "fb" || (l.k === "card" && l.id === "fb"));
     }
+    function storyCard(l) {
+      return !!l && l.k === "card" && l.id !== "fb";
+    }
     function N0() {
       let l = n.cur;
       return !l || p.state !== "op" ? !1 : Nl(l) ? !0 : l.k === "bub" && n.q.some((o) => Nl(o)) && n.cutOn === !0;
+    }
+    function skipStoryCards() {
+      if (!storyCard(n.cur) || p.state !== "op") return !1;
+      let l = 0;
+      for (n.skipping = !0; l++ < 600 && storyCard(n.cur); ) {
+        ((n.cur = null), lh(0.05));
+      }
+      return ((n.skipping = !1), (n.bt = 0), Dt("skip", "", "cards skipped", "skip"), !0);
     }
     function Cs() {
       if (!N0()) return;
@@ -973,14 +1067,14 @@
       n.walkTo = { x: w(l + hall, b.x0, b.x1), y: w(o, b.y0, b.y1), room: n.room, lx: who.x, ly: who.y, lt: n.T, at: n.T };
       let seen = n.walkHinted;
       try {
-        seen = seen || window.localStorage.getItem("ssq-walk-hint") === "1";
+        seen = seen || window.localStorage.getItem(ssqKey("walk-hint")) === "1";
       } catch {}
       seen ||
         ((n.walkHinted = !0),
         hudNote("Tap the floor to walk there.", 4),
         Dt("hint", "", "walk-tap", "hint"));
       try {
-        window.localStorage.setItem("ssq-walk-hint", "1");
+        window.localStorage.setItem(ssqKey("walk-hint"), "1");
       } catch {}
       return !0;
     }
@@ -1131,8 +1225,8 @@
           ? { x0: 60, x1: 900, y0: n.room === "gas" ? 400 : 420, y1: 590 }
           : n.room === "duct"
             ? { x0: 100, x1: 880, y0: 400, y1: 470 }
-            : n.room === "hangar"
-              ? { x0: 60, x1: 900, y0: 400, y1: 590 }
+              : n.room === "hangar"
+              ? { x0: 60, x1: 900, y0: n.ch1D ? 320 : 400, y1: 590 }
               : n.room === "closet"
                 ? { x0: 100, x1: 860, y0: 372, y1: 578 }
                 : n.room === "deck"
@@ -1156,7 +1250,7 @@
           l.push({ x0: 712, x1: 828, y0: 200, y1: 262 }),
           l.push({ x0: 860, x1: 960, y0: 330, y1: 480 })),
         n.room === "closet" &&
-          (l.push(nt(560, 546, 26, 16, 10)),
+          (l.push(nt(610, 546, 26, 16, 10)),
           l.push({ x0: 326, x1: 374, y0: 484, y1: 516 }),
           l.push({ x0: 110, x1: 300, y0: 420, y1: 526 })),
         n.room === "deck")
@@ -1182,8 +1276,14 @@
       return (n.room === "van" && l.push({ x0: Tt.x - 100, x1: Tt.x + 100, y0: 380, y1: 470 }), l);
     }
     function R0(l) {
-      let solids = ih(),
-        inside = (x, y) => solids.some((o) => x > o.x0 && x < o.x1 && y > o.y0 && y < o.y1);
+      let solids = ih();
+      n.room === "closet" &&
+        l === n.sq &&
+        n.moPose !== "hidden" &&
+        n.mo.x > 40 &&
+        n.mo.x < 980 &&
+        solids.push(nt(n.mo.x, n.mo.y, 42, 36, 40));
+      let inside = (x, y) => solids.some((o) => x > o.x0 && x < o.x1 && y > o.y0 && y < o.y1);
       if (!inside(l.x, l.y)) return;
       let best = null;
       for (let o of solids) {
