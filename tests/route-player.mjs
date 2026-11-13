@@ -106,6 +106,7 @@ export async function playRoute(page, input, steps, { log = !!process.env.ROUTE_
 
   async function run(i, step) {
     const started = Date.now();
+    input.tapChip && (await input.tapChip());
     const stuck = async (why) => {
       await input.push(0, 0);
       const s = await look(page);
@@ -234,6 +235,91 @@ export function keyboardInput(page) {
     async face(who) {
       const box = await page.$eval("#ss-face-" + who, (el) => { const r = el.getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; });
       await page.mouse.click(box.x, box.y);
+    },
+  };
+}
+
+// Phone taps only: a finger on the joystick, the big button, the picture, and each goal chip.
+export const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true };
+
+export async function touchInput(page) {
+  const boxes = () =>
+    page.evaluate(() => {
+      const box = (el) => {
+        if (!el) return null;
+        const r = el.getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2, w: r.width, h: r.height, bottom: r.bottom };
+      };
+      const chip = document.getElementById("ss-chip");
+      const shown = chip && getComputedStyle(chip).display !== "none" && chip.textContent.trim();
+      return {
+        joy: box(document.querySelector('[aria-label="Move"]')),
+        act: box(document.querySelector('[role="button"]')),
+        pic: box(document.querySelector("canvas")),
+        chip: shown ? { ...box(chip), text: chip.textContent.trim() } : null,
+        vh: window.innerHeight,
+      };
+    });
+  let at = await boxes();
+  if (at.joy && at.joy.bottom > at.vh) {
+    await page.evaluate(() => document.querySelector('[aria-label="Move"]').scrollIntoView({ block: "end" }));
+    await sleep(200);
+    at = await boxes();
+  }
+  const touch = page.touchscreen;
+  let finger = null;
+  const chips = [];
+  const tapAt = async (x, y) => {
+    await touch.touchStart(x, y);
+    await sleep(40);
+    await touch.touchEnd();
+  };
+  return {
+    chips,
+    async push(dx, dy) {
+      const j = (await boxes()).joy;
+      if (!dx && !dy) {
+        if (finger) {
+          await touch.touchEnd();
+          finger = null;
+        }
+        return;
+      }
+      const len = Math.hypot(dx, dy);
+      const to = { x: j.x + (dx / len) * j.w * 0.4, y: j.y + (dy / len) * j.h * 0.4 };
+      if (!finger) {
+        await touch.touchStart(j.x, j.y);
+        finger = { x: j.x, y: j.y };
+      }
+      if (Math.abs(finger.x - to.x) > 0.5 || Math.abs(finger.y - to.y) > 0.5) {
+        await touch.touchMove(to.x, to.y);
+        finger = to;
+      }
+    },
+    async act() {
+      await this.push(0, 0);
+      const b = await boxes();
+      await tapAt(b.act.x, b.act.y);
+    },
+    async next() {
+      await this.push(0, 0);
+      const b = await boxes();
+      await tapAt(b.pic.x, b.pic.y);
+    },
+    async face(who) {
+      await this.push(0, 0);
+      const box = await page.$eval("#ss-face-" + who, (el) => {
+        const r = el.getBoundingClientRect();
+        return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+      });
+      await tapAt(box.x, box.y);
+    },
+    async tapChip() {
+      const b = await boxes();
+      if (!b.chip || chips.includes(b.chip.text)) return;
+      chips.push(b.chip.text);
+      await this.push(0, 0);
+      await tapAt(b.chip.x, b.chip.y);
     },
   };
 }

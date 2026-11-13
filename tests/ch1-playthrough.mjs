@@ -7,11 +7,30 @@
  * chapter hands control back. It checks the lines in order, a real walk off and walk in, the home
  * room (no vent, door cut, wardrobe), the spare jacket, and the ball notice rule.
  */
-import { readFileSync } from "node:fs";
-import { startGame } from "./game-page.mjs";
+import { mkdirSync, readFileSync } from "node:fs";
+import { startGame, sleep } from "./game-page.mjs";
+import { PHONE } from "./route-player.mjs";
 
 const g = await startGame({ port: 8801, name: "ch1-playthrough" });
-const { ctx, page, errors } = await g.open("?ch=1");
+const { ctx, page, errors } = await g.open("?ch=1", PHONE);
+mkdirSync("tests/out", { recursive: true });
+const rec = await page.screencast({ path: "tests/out/ch1-playthrough.webm" });
+const tapped = [];
+async function tapShownChip() {
+  const chip = await page.evaluate(() => {
+    const el = document.getElementById("ss-chip");
+    if (!el || getComputedStyle(el).display === "none") return null;
+    const text = el.textContent.trim();
+    if (!text) return null;
+    const r = el.getBoundingClientRect();
+    return { text, x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  });
+  if (!chip || tapped.includes(chip.text)) return;
+  tapped.push(chip.text);
+  await page.touchscreen.touchStart(chip.x, chip.y);
+  await sleep(40);
+  await page.touchscreen.touchEnd();
+}
 
 const home = await page.evaluate(() => {
   const ss = window.__ss;
@@ -42,6 +61,8 @@ g.check("the opening is the home room", home.scene === "O1" && home.state.room =
 g.check("the old white door slab is gone (wall, not pure white)", home.wall[0] > 220 && home.wall[0] < 255 && home.wall[2] < 250, rgb(home.wall));
 g.check("the right wall is a door cut", home.gap[2] > home.gap[0] - 20 && Math.abs(home.gap[0] - 223) < 40, rgb(home.gap));
 g.check("the home floor vent is gone", home.floor[2] < home.floor[0] + 30 && home.floor[0] > 160, rgb(home.floor));
+await tapShownChip();
+await page.screenshot({ path: "tests/out/ch1-home.png" });
 
 const ball = await page.evaluate(() => {
   const ss = window.__ss;
@@ -819,6 +840,10 @@ const pad = await page.evaluate(() => {
   return { cleared, mid, code: n.ch1Code, door: n.ch1Door, on: n.ch1PadOn };
 });
 g.check("a wrong keypad digit clears, and 4723 opens the door", pad.cleared && pad.mid === "472" && pad.code === "4723" && pad.door && !pad.on, pad);
+await tapShownChip();
+await page.screenshot({ path: "tests/out/ch1-end.png" });
+g.check("the phone play tapped a goal chip", tapped.length > 0, tapped);
+await rec.stop();
 await ctx.close();
 await g.finish("ch1-playthrough");
 

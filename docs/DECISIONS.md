@@ -28,7 +28,7 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 | W4 | 11-08 | Any new on-screen words go in a lines file for Brian first. | handover; memory | Decided |
 | W5 | 11-08 | No difficulty, timer, price or range changes without Brian's yes. | handover; memory | Decided |
 | W6 | 11-08 | Every diff gets an independent review. PRs update README and MASTER-BACKLOG and say "Docs match main: yes". Check `git ls-remote` before claiming a push. | handover | Decided |
-| W7 | 11-06 | No browser-driven playtests by assistants. Tests catch regressions, and Brian's recordings show how it plays (to save compute). | repo | Decided |
+| W7 | 11-06 | No browser-driven playtests by assistants. Tests catch regressions, and Brian's recordings show how it plays (to save compute). | repo | Superseded 2026-11-13. Brian approved phone-size tap playthroughs in CI, with a video saved for each run. |
 | W8 | 11-06 | Don't re-read old chat threads. The Grok threads were archived once into `docs/grok-archive/`. | repo; handover | Decided |
 | W9 | 11-08 | All repo work goes through a cloud agent, read-only unless Brian approved that phase. Never push from the drifted checkout `/workspace/deploy/space-snack-quest`. | handover; OPEN-ASKS E14 | Decided |
 | W10 | 11-08 | Update STATE and DECISIONS before stopping. | handover | Decided |
