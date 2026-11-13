@@ -67,8 +67,8 @@ For Brian and Squatchbot • Monday, November 9, 2026, synced through R63
 | B17 | Music: Joe's warm theme for heart moments and the title (OK to use per Brian); sneak and chase theme, travel theme, stings; sound effects for real actions; no constant music, no fart sounds | decided; other tracks not sourced | High |
 | B18 | The action button changing size shifts the whole screen: fix it | not started | High |
 | B19 | Game fills more of the iPad, in landscape and portrait | not started (needs a layout picture) | High |
-| B20 | Scene 1: tiny janitor button becomes a clear settings button; the instructions under the game go away | not started (needs words for settings) | Medium |
-| B21 | Scene 2: "sing along with Mops" goal disappears once he has sung | not started (fold into the Ch1 build) | High |
+| B20 | Scene 1: tiny janitor button becomes a clear settings button; the instructions under the game go away | Keyboard instructions removed 2026-11-13, 6:12 AM ET (K25). The settings button still needs words | Medium |
+| B21 | Scene 2: "sing along with Mops" goal disappears once he has sung | Brian 2026-11-13, 6:12 AM ET (K26, R96): the chip stays until "I'm floating in space!" and "Baaa-aa-aaa!" have played, then it clears | High |
 | B22 | Joystick AND tap-to-move both stay | decided (in game) | High |
 
 ## C. Chapter 2 (from the held-decision card and the replot)

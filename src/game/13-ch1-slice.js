@@ -18,9 +18,17 @@
       ]);
     }
     function ch1SingAlong() {
-      ((n.ch1Song = !1), (n.ctrl = !1), (n.moPose = "stand"), (n.act = null), co());
+      // The chip stays "sing along" until both song lines have played (K26).
+      ((n.ch1Song = !1), (n.ctrl = !1), (n.act = null), (n.sqPose = "sing"));
       J([
-        v("mops", "See you after work."),
+        v("sq", "\u266A I'm floating in space! \u266A", "song"),
+        N(() => {
+          ((n.sqPose = "stand"), (n.moPose = "sway"));
+        }),
+        v("mops", "\u266A Baaa-aa-aaa! \u266A", "song"),
+        N(() => {
+          ((n.moPose = "stand"), (n.ch1Chip = "Squatch: peek out the door"), chipNow());
+        }),
         ch1Step("sq", 760, 500, 150),
         N(() => {
           ((n.moPose = "stand"),

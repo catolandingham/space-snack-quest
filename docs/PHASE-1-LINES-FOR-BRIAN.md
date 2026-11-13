@@ -125,7 +125,7 @@ The big touch button, and the small caption drawn on the picture by the spot, no
 
 | # | Where | In the game now | Another way to say it |
 | --- | --- | --- | --- |
-| 12.1 | Under the game on a computer (replaces the old line that named Shift, Tab and opera) | Arrows or WASD: walk. E: do the action in the white label. Space or Enter: next line. Hold R: restart this section. Esc: skip a flashback. M: sound. | Arrows or WASD: walk. E: do what the button says. (the plan's draft; on a computer there is no big button, only the label on the picture) |
+| 12.1 | Under the game on a computer. Removed 2026-11-13 (K25). Brian said the keyboard instructions go away | (nothing) | |
 | 12.2 | Under the touch controls on a phone or tablet, and on a computer after "Show touch controls" | Stick: walk. Big button: do it. Tap the picture: next line. Hold Reset section to restart. | Stick: walk. Big button: do what it says. Tap the picture: next line. Hold Reset section to start this part again. |
 | 12.3 | The joystick's spoken label for screen readers (was "Move (push far to run)") | Move | Walk |
 

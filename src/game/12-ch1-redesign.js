@@ -49,11 +49,21 @@
       { id: "guard", verb: "STAND", cap: "guard", x: 700, y: 560, why: "guard" },
     ];
     function drawWalkNudge() {
-      let p = 0.5 + 0.5 * Math.sin(n.T * 4);
+      // dir -1 points left, away from the bucket. Set dir to 1 to point right again.
+      let dir = -1,
+        p = 0.5 + 0.5 * Math.sin(n.T * 4);
       (e.save(), (e.globalAlpha = 0.35 + 0.45 * p), (e.strokeStyle = "#ffcf33"), (e.lineWidth = 6), (e.lineCap = "round"));
       for (let i = 0; i < 3; i++) {
-        let x = 420 + i * 70;
-        (e.beginPath(), e.moveTo(x, 530), e.lineTo(x + 28, 530), e.lineTo(x + 16, 514), e.moveTo(x + 28, 530), e.lineTo(x + 16, 546), e.stroke());
+        let x = 420 + i * 70,
+          tip = x + (dir < 0 ? 0 : 28),
+          tail = x + (dir < 0 ? 28 : 0);
+        (e.beginPath(),
+          e.moveTo(tail, 530),
+          e.lineTo(tip, 530),
+          e.lineTo(tip + dir * 12, 514),
+          e.moveTo(tip, 530),
+          e.lineTo(tip + dir * 12, 546),
+          e.stroke());
       }
       e.restore();
     }
