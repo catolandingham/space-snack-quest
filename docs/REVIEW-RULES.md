@@ -56,3 +56,6 @@ Run EVERY scene through ALL of these, both at script time and on screenshots aft
 
 ## Techniques
 - **Zoom-in card for a first idea** (Brian, 2026-11-07): the first time a key idea appears (the first hide, the first switch), teach it with the opening's "This is Squatch" card: the room goes dark except a spotlight on the thing, one plain line beside it, wait for a tap, once per play-through (`teach` in `src/game/25-capture.js`).
+
+## Mistake: locked art was redrawn
+2026-11-13. An agent redrew Brian's locked room art. The no-redraw rule was already in `docs/locked-rooms/README.md`, but that file existed only on the PR #21 branch when PR #25 was built, and `CLAUDE.md` said nothing about locked rooms, so the agent never saw the rule. The rule is now in `CLAUDE.md` and `AGENTS.md`, word for word: "Do not redraw a room freehand, and do not change these files, without Brian's yes and a new locked version." Mops's beard is his mop; no separate mop prop.

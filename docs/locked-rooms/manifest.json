@@ -1,0 +1,14 @@
+{
+  "note": "sha256 of the locked pictures listed in docs/locked-rooms/README.md. tests/locked-art.mjs fails if a file changes or a room stops using its picture.",
+  "files": {
+    "hall-room-empty-v1.png": "8071d6df330746053165e263101cf99e63e78655ce09cca97a2cc4e3f7abc239",
+    "hallway-room-empty-v6.png": "3710205031da69647ec42adafb86f7ee7b74ca6c14770f78acb23512a5102e2e",
+    "office-room-empty-v2.png": "76f2da656c1e7580d2dd94f31d0841ec14d3641dec41445f92924f0da8fd101a",
+    "home-room-empty-closed-v3.png": "451704deb67e5be635e0087650dd5963ae46d5c1d772fee6ca92427548ad38a7",
+    "home-room-empty-open-v4.png": "bdc8b2ca7bbfb2a3e115d9213973fdca1b62a3e122f9d7bc8d5d583a901d4a2c",
+    "delivery-room-empty-day-v2.png": "c2a3ccd6c4eb5739c9b3cd0632cabd7d5d70e6768bd18bb008fc005ccdf51555",
+    "delivery-room-empty-day-noship-v2.png": "e957dbd23f3ac30853617f91efaf0cbf4535b736888aa4eb1a378aeb73a437d5",
+    "delivery-room-empty-night-v2.png": "2b28617f9169fd7179294a25166b84a41490ed6c90bfeae7786b7dd0b3198a4e",
+    "delivery-room-empty-pickup-v3.png": "02695ff0cf0633c5d96664dab422228cf22af6faa3090b08e63f7dd11ab7703e"
+  }
+}
