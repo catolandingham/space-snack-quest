@@ -1633,6 +1633,7 @@
         });
       n.log.push({ who: "", text: "[seen by " + l + "]", kind: "t" });
     }
+    const MOPS_CONE_HALF = 0.55, MOPS_CONE_LEN = 240;
     function _A(l, o, i) {
       if (Ao || !i2() || n.sq.x < -100) return;
       let s = i >= 0 ? 0.25 : Math.PI - 0.25,
@@ -1640,13 +1641,17 @@
         d = o - 70,
         A = n.T - (n.heartT ?? -9) < 1.2;
       if (
-        (Bl(q, d, s, 0.45, 190, A ? "rgba(255,95,168,.30)" : "rgba(255,170,200,.22)"),
-        n.sqPose === "hidden" || n.T - (n.heartT ?? -9) < 2.5 || !vt(n.sq.x, n.sq.y - 40, q, d, s, 0.45, 190))
+        // R98 follow-up (Brian, Nov 13): bigger and brighter so it reads on a phone. Drawn cone = the area that sees (L12).
+        (Bl(q, d, s, MOPS_CONE_HALF, MOPS_CONE_LEN, A ? "rgba(255,70,150,.42)" : "rgba(255,120,180,.32)"),
+        (e.lineWidth = 3),
+        (e.strokeStyle = A ? "rgba(255,40,130,.85)" : "rgba(255,90,160,.6)"),
+        e.stroke(),
+        n.sqPose === "hidden" || n.T - (n.heartT ?? -9) < 2.5 || !vt(n.sq.x, n.sq.y - 40, q, d, s, MOPS_CONE_HALF, MOPS_CONE_LEN))
       )
         return;
       n.heartT = n.T;
       let T = n.room === "hall" ? l - B.camX : l;
-      n.sparks.push({ x: T, y: o - 190, t: 1.6, s: "\u2665" });
+      n.sparks.push({ x: T, y: o - 165, t: 1.6, s: "\u2665" });
     }
     function eq(l, o, i) {
       (i >= 1 && ch2.peek <= 0 && pf("gloop", l, o, -1),
