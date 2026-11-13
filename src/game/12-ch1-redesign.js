@@ -68,13 +68,23 @@
       e.restore();
     }
     function drawGoalMark(x, y) {
-      let p = 0.75;
+      // An uneven outline. Not a circle and not a box.
+      let pts = [
+        [0, -48],
+        [36, -20],
+        [40, 22],
+        [8, 46],
+        [-34, 24],
+        [-42, -16],
+      ];
       (e.save(),
-        (e.globalAlpha = p),
+        (e.globalAlpha = 0.75),
         (e.strokeStyle = "#ffcf33"),
         (e.lineWidth = 6),
+        (e.lineJoin = "round"),
         e.beginPath(),
-        e.arc(x, y, 54, 0, 7),
+        pts.forEach((p, i) => (i ? e.lineTo(x + p[0], y + p[1]) : e.moveTo(x + p[0], y + p[1]))),
+        e.closePath(),
         e.stroke(),
         e.restore());
     }

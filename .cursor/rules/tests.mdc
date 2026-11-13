@@ -1,0 +1,11 @@
+---
+description: Tests guard the game. Phone playthroughs tap, they do not press keys.
+globs: tests/**/*.mjs
+alwaysApply: false
+---
+
+Add a test with each fix. npm test runs every suite.
+
+tests/ch1-playthrough.mjs and tests/ch2-playthrough.mjs open at 375x812 and use taps only. They save a video and screenshots under tests/out/ for CI.
+
+Do not change BALL_NOTICE_RADIUS, BALL_NOTICE_SECONDS, PHOTO_BONUS, the soup price 30, or the jar amount 30 unless Brian says yes. tests/rules-guard.mjs fails if those move.

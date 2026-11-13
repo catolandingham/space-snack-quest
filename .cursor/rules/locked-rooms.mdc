@@ -1,0 +1,9 @@
+---
+description: Locked room pictures. Do not redraw or replace them.
+globs: docs/locked-rooms/**
+alwaysApply: false
+---
+
+These files are Brian's locked room pictures and the scripts that drew them.
+
+Do not redraw a room freehand, and do not change these files, without Brian's yes and a new locked version. Mops's beard is his mop; no separate mop prop. Do not replace or restyle a locked picture.

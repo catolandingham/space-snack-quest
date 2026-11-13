@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeShellExecution": [{ "command": "node .cursor/hooks/guard.mjs" }],
+    "preToolUse": [{ "command": "node .cursor/hooks/guard.mjs" }]
+  }
+}

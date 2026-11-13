@@ -1,0 +1,9 @@
+---
+description: On-screen words live in the lines files. Copy them word for word.
+globs: docs/**/*LINES*.md
+alwaysApply: false
+---
+
+The words in these files are what the player reads. New or changed lines need Brian's yes.
+
+Copy a line into the game and the tests word for word. Do not invent a second wording in src/ or in a test.
