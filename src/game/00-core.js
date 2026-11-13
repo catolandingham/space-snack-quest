@@ -478,7 +478,18 @@
       p.state === "op" && nf();
     }
     let qe = {},
-      qt = { x: 0, y: 0, active: !1 };
+      qt = { x: 0, y: 0, active: !1 },
+      // The big action button is down (pointer). Keys are in qe. Used by the kitchen duck: hold to stay down (R99).
+      actHeld = !1;
+    function actionHeld() {
+      return actHeld || !!(qe.KeyE || qe.Enter || qe.Space);
+    }
+    function actionPress() {
+      ((actHeld = !0), Vf());
+    }
+    function actionRelease() {
+      actHeld = !1;
+    }
     let musicKind = "",
       musicWait = 0,
       warmEl = null,

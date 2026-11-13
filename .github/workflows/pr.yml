@@ -1,0 +1,52 @@
+# Runs the build check and the full test suite on GitHub for every pull request and every push to main.
+# A change is only "passing" when this check is green. See README "Automatic checks".
+name: check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Chrome and ffmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget ffmpeg
+          wget -q -O /tmp/chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt-get install -y /tmp/chrome.deb
+      - run: npm ci
+      - run: npm run build
+      - name: index.html matches the source
+        run: npm run check-build
+      - name: Full test suite
+        run: npm test 2>&1 | tee /tmp/test.log
+      - name: Failed checks, in short
+        if: failure()
+        run: |
+          echo "## Failed checks" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          grep -E "^(FAIL|=== )" /tmp/test.log | grep -B1 "^FAIL" | head -80 >> "$GITHUB_STEP_SUMMARY" || true
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+      - name: Test output (videos, screenshots)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-output
+          path: |
+            tests/out/
+            /tmp/test.log
+          if-no-files-found: ignore
+          retention-days: 14

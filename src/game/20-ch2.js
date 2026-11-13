@@ -1001,7 +1001,7 @@
           when: kitSq && wash && (ch2.warn > 0 || ch2.peek > 0) && n.sqPose !== "hidden" && n.sqPose !== "ball",
           hot: !0,
           f: () => {
-            ((n.sqPose = "ball"), (n.sq.moving = !1), D.hide());
+            ((n.sqPose = "ball"), (n.duckHold = !0), (n.sq.moving = !1), D.hide());
           },
         }),
         spot({
@@ -2132,6 +2132,16 @@
       ch2.peek > 0 &&
         !x.mops &&
         (seenCone(xt.x, xt.y + 30, 1.95, 0.75, 520, "rgba(229,83,61,.45)"), g("GLOOP", xt.x, 160, 14, "#b91c1c", "center", 800));
+      // R99: while Gloop calls "Order up?", a faint dashed preview shows where her look will land, so a kid
+      // knows to duck before it catches. It is a warning, not a catching cone, so it leaves conesDrawn alone.
+      ch2.warn > 0 &&
+        !(ch2.peek > 0) &&
+        !x.mops &&
+        (e.save(),
+        e.setLineDash([12, 10]),
+        seenCone(xt.x, xt.y + 30, 1.95, 0.75, 520, "rgba(229,83,61,.10)", "rgba(185,28,28,.55)"),
+        conesDrawn.pop(),
+        e.restore());
       let s = [];
       s.push({
         y: xe.y,
