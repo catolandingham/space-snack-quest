@@ -188,6 +188,8 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 
 ## Changelog
 
+2026-11-13. R104, not merged: Mops's heart and cone are bigger and brighter so they read on a phone (wider, longer, stronger pink cone with an outline; a large pink heart with a white rim).
+
 2026-11-13. Brian decisions recorded, not built. R100: security sees through any disguise and always uses the alarm ladder. R101: the only party extra added after the freeze is the robot dance; the bouquet toss, guest conversations, and the picture card are dropped. R102: three disguise levels (none, partial, perfect) set how fast the alarm ladder climbs. R103: losing one piece of the disguise drops Squatch to partial. Both are part of the alarm-ladder build after the current fixes.
 
 2026-11-13. Mops's heart cone, not merged (R98). Mops's warm cone and hearts are back in Chapter 1: when Squatch stands in front of Mops with the player in control, a heart pops over Mops. No heart while Squatch is disguised, hidden, or a story line has control, and never over dress-up, a cut-in, or a close-up (that was the stray heart the Nov 11 slice hid by switching the cone off). Chapters 2–4 are unchanged. Test: `tests/mops-heart-cone.mjs`. No new on-screen words. Docs match main: yes. Do not merge without Brian's yes.

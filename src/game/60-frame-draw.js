@@ -2218,7 +2218,11 @@
             // Mops's heart belongs over Mops in the room, never on top of dress-up, a cut-in, or a close-up.
             !(i.s === "\u2665" && ((n.ch1Dress && n.ch1Dress.on) || n.ch1Cut || n.ch1Zoom)) &&
             ((e.globalAlpha = Math.min(1, i.t * 2)),
-            g(i.s, i.x, i.y, 26, i.s === "\u2665" ? "#e5533d" : "#b45309", "center", 900),
+            i.s === "\u2665"
+              ? // Big bright heart with a white rim and a quick pop (R98 follow-up).
+                (g(i.s, i.x, i.y, 104 * (1 + Math.max(0, i.t - 1.3) * 1.2), "#ffffff", "center", 900),
+                g(i.s, i.x, i.y, 88 * (1 + Math.max(0, i.t - 1.3) * 1.2), "#ff2d7a", "center", 900))
+              : g(i.s, i.x, i.y, 26, "#b45309", "center", 900),
             (e.globalAlpha = 1));
       (Ka > 0 && ((e.fillStyle = "rgba(20,24,32," + Math.min(1, Ka).toFixed(3) + ")"), e.fillRect(0, 0, c, b)), drawRoomLine(), t5());
       let o = Bs();
