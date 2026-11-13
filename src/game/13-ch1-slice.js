@@ -57,21 +57,51 @@
           x: 890,
           y: 480,
           r: 160,
+          at: [860, 400],
           f: ch1PeekGo,
         }),
       ];
     }
+    // Station Call. The words stay in the bubble. Nothing is sung.
+    function ch1CrocTune() {
+      stationCall();
+    }
     function ch1PeekGo() {
       ((n.ch1PeekReady = !1), (n.ch1Chip = ""), (n.ctrl = !1), (n.act = null));
-      ch1Go("hall", { who: "sq", scene: "QA" }, ch1SneakHide);
+      // Stop just inside the hall door. The plant is the player's own walk.
+      ch1Go("hall", { who: "sq", scene: "QA", stand: [560, 590] }, ch1SneakReady);
     }
-    function ch1SneakHide() {
-      ((n.ch1Party = !0), (n.scene = "QA"), (n.sparks = (n.sparks || []).filter((d) => d.s !== "\u2665")));
+    function ch1SneakReady() {
+      ((n.ch1ToPlant = !0), (n.ch1Party = !0), (n.scene = "QA"), (n.sqPose = "stand"), (n.ctrl = !0), (n.act = null));
+    }
+    function ch1SneakSpots() {
+      let p = CH1_MID_PLANT;
+      return [
+        spot({
+          id: "hideplant",
+          verb: "HIDE",
+          cap: "plant",
+          who: "sq",
+          x: p.cx,
+          y: p.cy,
+          r: 48,
+          f: ch1HidInPlant,
+        }),
+      ];
+    }
+    function ch1HidInPlant() {
+      let p = CH1_MID_PLANT;
+      ((n.ch1ToPlant = !1),
+        (n.ctrl = !1),
+        (n.act = null),
+        (n.ch1Party = !0),
+        (n.sqPose = "hidden"),
+        (n.sq.x = p.cx),
+        (n.sq.y = p.y1),
+        (n.sparks = (n.sparks || []).filter((d) => d.s !== "\u2665")));
       J([
-        ch1Step("sq", 480, 500, 160),
-        ch1Step("sq", 220, 530, 160),
         N(() => {
-          ((n.sqPose = "hidden"), (n.sq.x = 220), (n.sq.y = 530));
+          n.ch1Talk = 1;
         }),
         v("official", "Welcome, everybody, to the Stormtop Space Party!"),
         v("official", "Let's give a big hello to our friends from Bleep-Bloop Robotics!"),
@@ -79,14 +109,16 @@
         v("sq", "Robots?", "whisper"),
         v("official", "And now... put your hands together for the Croc Boys!"),
         N(() => {
-          ((n.ch1Dim = !0), (n.ch1Dance = 2));
+          ((n.ch1Dim = !0), (n.ch1Dance = 2), ch1CrocTune());
         }),
-        uV(2),
+        v("croc", "Stormtop-vania 1-2-3-4-5!", "song"),
         N(() => {
           n.ch1Dim = !1;
         }),
         v("sq", "I've never gotten to dance at a party.", "whisper"),
-        N(() => ch1Go("closet", { who: "sq", scene: "Q1" }, ch1DressOpen)),
+        N(() => {
+          ((n.ch1Talk = 0), ch1Go("closet", { who: "sq", scene: "Q1", stand: [760, 520] }, ch1DressOpen));
+        }),
       ]);
     }
     function ch1DressOpen() {
@@ -95,8 +127,9 @@
         (n.wardrobe = "open"),
         (n.ch1Party = !1),
         (n.ch1Dress = { on: !0, head: "", face: "", body: "", legs: "", extra: [] }),
-        (n.ch1Veil = 1),
+        (n.ch1Veil = 0),
         (n.ch1VeilTo = 0),
+        (n.ch1DressIn = 0),
         (n.ch1DressPop = 0),
         (n.sparks = (n.sparks || []).filter((d) => d.s !== "\u2665")),
         (n.ctrl = !0));
@@ -270,6 +303,7 @@
         n.ch1Veil =
           n.ch1Veil < n.ch1VeilTo ? Math.min(n.ch1VeilTo, n.ch1Veil + step) : Math.max(n.ch1VeilTo, n.ch1Veil - step);
       }
+      n.ch1Dress && n.ch1Dress.on && n.ch1DressIn < 1 && (n.ch1DressIn = Math.min(1, (n.ch1DressIn || 0) + (dt || 0) / 0.35));
       n.ch1DressPop > 0 && (n.ch1DressPop = Math.max(0, n.ch1DressPop - (dt || 0)));
       let cut = n.ch1Cut;
       if (!cut) return;
@@ -289,18 +323,25 @@
         r("#fffaf0", 2),
         dq(70, 120, !1),
         g("COMING SOON!", 85, 145, 10, "#e5533d", "center", 900),
-        m(200, 250, 70, 18, 4),
-        r("#fffdf8", 2),
-        g("Isfred", 235, 260, 11, "#1e2430", "center", 900),
+        !n.ch1Talk &&
+          (m(CH1_STAGE.x0 + 8, CH1_STAGE.y0 + 8, 70, 16, 3),
+          r("#fffdf8", 2),
+          g("Isfred", CH1_STAGE.x0 + 43, CH1_STAGE.y0 + 16, 11, "#1e2430", "center", 900)),
         m(40, 300, 36, 28, 3),
         r("#e5533d", 2),
         g("FUR", 58, 312, 8, "#ffffff", "center", 900));
-      n.ch1Dim &&
-        ((e.fillStyle = "rgba(12,16,32,.45)"),
-        e.fillRect(0, 0, c, b),
-        [360, 460, 560].forEach((x, i) => {
-          (Qt(x, 430 + Math.sin(n.T * 6 + i) * 6, "#7ad0c8", 1.4, i % 2 ? 1 : -1), m(x - 8, 470, 16, 6, 2), r("#e8a87c", 1));
-        }));
+    }
+    function drawCh1Show() {
+      if (!n.ch1Dim) return;
+      ((e.fillStyle = "rgba(12,16,32,.5)"), e.fillRect(0, 0, c, b), (e.fillStyle = "rgba(255,244,200,.42)"));
+      (e.beginPath(), e.ellipse(CH1_STAGE.cx, CH1_STAGE.feet - 16, 130, 36, 0, 0, 7), e.fill());
+      [CH1_STAGE.cx - 70, CH1_STAGE.cx, CH1_STAGE.cx + 70].forEach((x, i) => {
+        let bob = Math.sin(n.T * 7 + i) * 8;
+        (drawCh1Alien(x, CH1_STAGE.feet + bob, "croc", ALIEN_ADULT * 1.35, i === 1 ? 1 : -1),
+          g("\u266A", x + 16, CH1_STAGE.y0 - 18 + bob, 18, "#ffcf33", "center", 800));
+      });
+      n.ch1Talk && drawCh1Alien(CH1_STAGE.cx, CH1_STAGE.feet, "hat", ALIEN_ADULT * 1.7, 1);
+      n.sqPose === "hidden" && ga(CH1_MID_PLANT.eyeX, CH1_MID_PLANT.eyeY);
     }
     function ch1DressIcon(id, x, y) {
       if (id === "tophat") (m(x - 16, y - 4, 32, 6, 2), r("#1e2430", 2), m(x - 8, y - 22, 16, 18, 2), r("#1e2430", 2));
@@ -325,7 +366,11 @@
     }
     function drawCh1Dress() {
       let d = n.ch1Dress,
-        pop = n.ch1DressPop || 0;
+        pop = n.ch1DressPop || 0,
+        fade = n.ch1DressIn == null ? 1 : n.ch1DressIn;
+      if (fade < 0.02) return;
+      e.save();
+      e.globalAlpha = fade;
       ((e.fillStyle = "#fffdf8"),
         e.fillRect(0, 0, c, b),
         Re(480, 500, 4.2, { f: 1, shades: d.face === "shades", hawaiian: d.body === "shirt" }),
@@ -355,6 +400,7 @@
       });
       n.ch1Drag && ch1DressIcon(n.ch1Drag, n.ch1DragX || 480, n.ch1DragY || 360);
       ch1DressMeter() >= 100 && g("Go!", 480, 600, 28, "#3478f6", "center", 900);
+      e.restore();
     }
     // The one close-up arm. Day 2's cut-ins call this same function. Do not draw a second copy.
     function drawPawArm(paw) {

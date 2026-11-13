@@ -4,6 +4,8 @@
 
 ## Where main is (Chapter 1 redesign)
 
+2026-11-13. The unmerged party-fix pull request follows Brian's standing play rules in `docs/DECISIONS.md` (bubbles, chips, outlines, taps, the stage, the plant). The Croc Boys say "Stormtop-vania 1-2-3-4-5!". The warm theme is Snack Quest Drift and the party bed is Stormtop Lobby Glow, both original and unsung. Locked pictures are unchanged. Docs match main: yes. Do not merge.
+
 2026-11-13. Brian said yes, merge (without the beard gag). PR #21 (locked rooms) and PR #23 (lunch through the ship) are on main. Walks between the locked pictures stay on the picture, at the doors. The opening keeps control and shows the sing-along chip. The locked bedroom's blue G box and mop bucket block the walk. Mops's beard hangs to the floor. There is no mop prop and no cut-in at the bucket. The title screen no longer logs "Va is not defined" every frame. Sentences below that say the hallway is not built, or that Day 2 is not merged, are from before those merges. Locked pictures stay in `docs/locked-rooms/`. Do not redraw a room freehand, and do not change these files, without Brian's yes and a new locked version. Pull requests #12, #13, #15, and #16 were read against `OPEN-ASKS.md`. New leftovers are section G there. Docs match main: yes.
 
 A new game plays the redesigned Chapter 1 from the Nov 8 cartoon: home, delivery room, night mailbox, six days later, the vent, the costume, and the scanner. Docs for that pass: `docs/CH1-LINES-FOR-BRIAN.md`. The home room has the wardrobe, no mop, and no vent. A balled-up Squatch is noticed only when a robot stays within 70 pixels for 2 seconds. The older night-out scenes are still reachable from a debug link. They are not the path from the title.

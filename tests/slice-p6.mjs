@@ -3,7 +3,8 @@
  * Isfred's party line sits under the office monitor, and the disguise fades in.
  *   node tests/slice-p6.mjs
  */
-import { startGame, sleep } from "./game-page.mjs";
+import { readFileSync } from "node:fs";
+import { startGame, sleep, root } from "./game-page.mjs";
 
 const g = await startGame({ port: 8813, name: "slice-p6" });
 const { ctx, page, errors } = await g.open("?ch=1", { width: 1100, height: 800 });
@@ -42,14 +43,15 @@ const bubble = await page.evaluate(() => {
   ss.drawFrame();
   return { at: ss.bubbleAt("official"), box: ss.lastBubble };
 });
-const desk = { x0: 86, y0: 64, x1: 214, y1: 262 };
+const stage = await page.evaluate(() => window.__ss.ch1Stage());
 const box = bubble.box;
-const overDesk =
-  box && box.x < desk.x1 && box.x + box.w > desk.x0 && box.y < desk.y1 && box.y + box.h > desk.y0;
+const head = box && box.head;
+const coversHead =
+  head && box.x < head.x + head.w && box.x + box.w > head.x && box.y < head.y + head.h && box.y + box.h > head.y;
 g.check(
-  "Isfred's party line clears the manager desk",
-  bubble.at.y >= 400 && box && box.y >= 168 && !overDesk,
-  { ...bubble, overDesk },
+  "Isfred's party line points at him on the stage and stays off his face",
+  !!head && head.x + head.w / 2 > stage.x0 && head.x + head.w / 2 < stage.x1 && head.y < stage.feet && !coversHead,
+  { ...bubble, stage, coversHead },
 );
 
 const dress = await page.evaluate(() => {
@@ -192,6 +194,14 @@ const music = await page.evaluate(async () => {
   ss.tick(0.05);
   const titleCue = ss.warmCue;
   for (let i = 0; i < 30 && ss.warmPlay !== "ok"; i++) await new Promise((r) => setTimeout(r, 100));
+  const titleBed = ss.musicBed;
+  const info = ss.cueInfo();
+  n.cur = { k: "bub", b: { who: "sq", text: "Hi", style: "say" } };
+  ss.tick(0.2);
+  const ducked = ss.musicDuck === true && ss.musicLevel < 0.4;
+  n.cur = null;
+  ss.tick(0.35);
+  const open = ss.musicDuck === false && ss.musicLevel > 0.5;
   n.scene = "Q1";
   n.room = "closet";
   n.ch1Search = false;
@@ -213,20 +223,64 @@ const music = await page.evaluate(async () => {
   const giftCue = ss.warmCue;
   n.gift = false;
   n.holdToy = false;
-  n.room = "hangar";
+  n.ch1Search = true;
+  n.ch1Sneak = false;
+  n.ch1Journey = false;
+  n.ch1Heart = false;
+  n.ch1Dance = 0;
+  n.ch1Dim = false;
+  n.room = "hall";
+  n.ch1Party = true;
+  ss.tick(0.1);
+  const partyBed = ss.musicBed;
+  n.ch1Dance = 2;
+  ss.tick(0.05);
+  const busy = ss.musicBusy === true;
+  n.ch1Dance = 0;
   n.ch1Party = false;
+  n.room = "hangar";
   ss.tick(0.5);
-  return { titleCue, homeCue, giftCue, play: ss.warmPlay, after: ss.warmCue || "", paused: ss.warmPaused };
+  return {
+    titleCue,
+    homeCue,
+    giftCue,
+    play: ss.warmPlay,
+    after: ss.warmCue || "",
+    paused: ss.warmPaused,
+    titleBed,
+    ducked,
+    open,
+    partyBed,
+    busy,
+    info,
+  };
 });
+const crocLine = readFileSync(root + "/src/game/13-ch1-slice.js", "utf8");
 g.check(
-  "Joe's theme is requested and plays for the title, home, and the gift",
+  "Snack Quest Drift plays for the title, home, and the gift, and the party bed ducks under a bubble",
   music.titleCue === "title" &&
     music.homeCue === "home" &&
     music.giftCue === "gift" &&
     music.play === "ok" &&
     music.after === "" &&
     music.paused === true &&
-    musicReqs.length > 0,
+    music.titleBed === "drift" &&
+    music.ducked === true &&
+    music.open === true &&
+    music.partyBed === "glow" &&
+    music.busy === true &&
+    music.info.drift > 62 &&
+    music.info.drift < 65 &&
+    music.info.glow > 71 &&
+    music.info.glow < 73 &&
+    music.info.station > 5 &&
+    music.info.station < 6.5 &&
+    music.info.busyN > 0 &&
+    music.info.stationKinds.includes("horn") &&
+    music.info.stationKinds.includes("xylo") &&
+    musicReqs.length === 0 &&
+    crocLine.includes("Stormtop-vania 1-2-3-4-5!") &&
+    !crocLine.includes("Pennsylvania"),
   { music, musicReqs },
 );
 
