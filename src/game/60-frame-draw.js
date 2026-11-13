@@ -316,6 +316,48 @@
         F(8.4, -3.4, 1.4, "#ffffff"),
         e.restore());
     }
+    function drawMopsBeard(bd, A) {
+      let mark = (x, y) => {
+        let m = e.getTransform(),
+          p = new DOMPoint(x, y).matrixTransform(m);
+        n.beardAt = { x: p.x, y: p.y };
+        let chin = new DOMPoint(16, -9).matrixTransform(m),
+          nose = new DOMPoint(24, -2).matrixTransform(m);
+        n.chinAt = { x: chin.x, y: chin.y };
+        n.noseAt = { x: nose.x, y: nose.y };
+      };
+      if (bd.none) {
+        mark(24, -2);
+        return;
+      }
+      if (bd.wad) {
+        (e.save(),
+          e.translate(16, -2 + (bd.sag || 0)),
+          e.rotate(bd.spin || 0),
+          e.beginPath(),
+          e.ellipse(0, 0, 5 + 8 * bd.wad, 2.6 + 1.4 * bd.wad, 0, 0, 7),
+          wV("#f7f4ee", 2),
+          C([-7, -1, 7, 1], "#e4dfd4", 1.1),
+          e.beginPath(),
+          e.ellipse(-7, -1, 3.4, 2.4, -0.5, 0, 7),
+          e.ellipse(7, -1, 3.4, 2.4, 0.5, 0, 7),
+          r("#cfd5dd", 1.1),
+          e.restore(),
+          mark(16, -2));
+        return;
+      }
+      if (bd.aim) {
+        [0, 1, 2, 3, 4, 5].forEach((i) => St(14 + i * 0.35, -9 + (A || 0) * 0.2, bd.aim.x + (i - 2.5) * (bd.aim.spread || 1.2), bd.aim.y, bd.aim.wide || 1.35, "#f7f4ee", 1));
+        mark(bd.aim.x, bd.aim.y);
+        return;
+      }
+      let tip = (bd.taut ? -24 : 7) + (bd.drop || 0);
+      [0, 1, 2, 3, 4, 5].forEach((i) => {
+        let spread = bd.taut ? 0.28 : 1.7;
+        St(13 + i * spread, -9 + (A || 0) * 0.2, 12 + (bd.reach || 0) + i * 0.45, tip, bd.taut ? 0.85 : 1.15, "#f7f4ee", 1);
+      });
+      mark(12 + (bd.reach || 0), tip);
+    }
     function Fe(l, o, i, s) {
       // C14: Mops's warm cone pops a heart instead of a "!". It is a lookout cone for later chapters.
       // Chapter 1 home, the party, and dress-up are not that beat, so it does not draw there (no pink cone, no stray heart).
@@ -341,6 +383,8 @@
           [6, d],
           [12, -d],
         ].forEach(([T, R]) => St(T, -10, T + R, 0, 3.4, "#cfd5dd", q)),
+        // A cut-in can fold him at the hip. The joint stays with the legs. Every other pose leaves bend at 0.
+        s.bend && (e.beginPath(), e.arc(0, -11, 8, 0, 7), (e.fillStyle = "#ffffff"), e.fill(), e.translate(0, -11), e.rotate(s.bend), e.translate(0, 11)),
         XV(0, -17, 17, 9, 14, 2, 0),
         wV("#ffffff", q),
         // His own jacket. Squatch wears the spare from the wardrobe, so this one stays on.
@@ -381,11 +425,13 @@
         wV("#ffcf33", 1.2),
         F(-2, -18, 1.2, "#e8a400"),
         // C2: the beard is the mop. White strands hang from the chin to the floor and swish. No mop prop.
-        [0, 1, 2, 3, 4, 5].forEach((i) => {
-          let spread = s.wring ? 0.55 : 1.7,
-            sw = Math.sin((s.walk || 0) + n.T * 2.4 + i) * (s.wring ? 0.4 : Math.abs(s.walk) > 0.2 ? 3.2 : 1.1);
-          St(13 + i * spread, -9 + A * 0.2, 11 + i * spread * 0.35 + sw, s.wring ? 1 : 7, 1.15, "#f7f4ee", 1);
-        }),
+        // A cut-in can pass s.beard to stretch, lag, or wad those same strands. The jacket above is unchanged.
+        s.beard
+          ? drawMopsBeard(s.beard, A)
+          : [0, 1, 2, 3, 4, 5].forEach((i) => {
+              let sw = Math.sin((s.walk || 0) + n.T * 2.4 + i) * (Math.abs(s.walk) > 0.2 ? 3.2 : 1.1);
+              St(13 + i * 1.7, -9 + A * 0.2, 11 + i * 1.7 * 0.35 + sw, 7, 1.15, "#f7f4ee", 1);
+            }),
         n.room === "kitchen" &&
           !ch2.greasy &&
           (ch2.phase === "wash5" || n.scene === "G5k") &&

@@ -355,6 +355,8 @@
         // Spots (task T17): every spot of the current scene, the action offered where the player stands,
         // one frame drawn now, and the rings that frame drew.
         spotsNow: () => spotsNow(),
+        cutIn: () => CUT_IN,
+        beardBeat: (t) => beardBeat(t),
         placedSpots: () => placedSpots(),
         offerNow: () => pick(spotsNow()),
         drawFrame: () => Ap(),
