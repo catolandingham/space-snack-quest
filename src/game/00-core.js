@@ -821,6 +821,7 @@
         pbot: "Port Bot",
         mom: "Mom",
         dad: "Dad",
+        croc: "Croc Boys",
       },
       Ds = {
         sq: "#b5562a",
@@ -850,6 +851,7 @@
         pbot: "#e5533d",
         mom: "#ff5fa8",
         dad: "#8b4a1c",
+        croc: "#2f7a3a",
       },
       n = {
         on: !1,

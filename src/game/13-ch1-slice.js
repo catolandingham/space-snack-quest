@@ -62,6 +62,19 @@
         }),
       ];
     }
+    // An original short swing figure. Not the old band's tune, words, or recording.
+    function ch1CrocTune() {
+      let notes = [62, 65, 69, 74, 72, 69, 65, 62, 64, 67, 71, 67],
+        step = 0.28,
+        t = 0;
+      notes.forEach((midi, i) => {
+        let long = i % 2 === 0,
+          dur = long ? step * 0.62 : step * 0.34;
+        Fi(Da(midi), dur, t);
+        i % 2 === 0 && lV(Da(midi - 12), step * 0.5, "sine", 0.05, t);
+        t += long ? step * 0.66 : step * 0.34;
+      });
+    }
     function ch1PeekGo() {
       ((n.ch1PeekReady = !1), (n.ch1Chip = ""), (n.ctrl = !1), (n.act = null));
       // Stop just inside the hall door. The plant is the player's own walk.
@@ -105,9 +118,9 @@
         v("sq", "Robots?", "whisper"),
         v("official", "And now... put your hands together for the Croc Boys!"),
         N(() => {
-          ((n.ch1Dim = !0), (n.ch1Dance = 2));
+          ((n.ch1Dim = !0), (n.ch1Dance = 2), ch1CrocTune());
         }),
-        uV(2),
+        v("croc", "Pennsylvania 1-2-3-4-5!", "song"),
         N(() => {
           n.ch1Dim = !1;
         }),
@@ -337,7 +350,7 @@
           g("\u266A", x + 16, CH1_STAGE.y0 - 18 + bob, 18, "#ffcf33", "center", 800));
       });
       n.ch1Talk && drawCh1Alien(CH1_STAGE.cx, CH1_STAGE.feet, "hat", ALIEN_ADULT * 1.7, 1);
-      n.sqPose === "hidden" && ga(CH1_MID_PLANT.cx, CH1_MID_PLANT.cy);
+      n.sqPose === "hidden" && ga(CH1_MID_PLANT.eyeX, CH1_MID_PLANT.eyeY);
     }
     function ch1DressIcon(id, x, y) {
       if (id === "tophat") (m(x - 16, y - 4, 32, 6, 2), r("#1e2430", 2), m(x - 8, y - 22, 16, 18, 2), r("#1e2430", 2));

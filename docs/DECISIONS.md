@@ -555,7 +555,7 @@ These lines were added to the 2026-11-08 snapshot (now `docs/history/DECISIONS-2
 
 - 2026-11-13 (Brian, after playing the party): standing play rules. These apply everywhere, not only to this one fix.
   1. A speaker's bubble comes from that speaker, or from the spot they are hiding in. The tail points at them. The bubble does not cover a face.
-  2. When someone hides in a plant, the eyes are centered in that plant.
+  2. When someone hides in a plant, the eyes sit low in the front leaves, on the plant, never beside it (C21).
   3. A chip or hint only describes what the player can do right now.
   4. Do not auto-walk the player to a goal they are meant to reach. Walking in through a door is still the room change.
   5. A goal hint is an outline of the real thing (the plant, the door), never a circle.
@@ -567,7 +567,7 @@ These lines were added to the 2026-11-08 snapshot (now `docs/history/DECISIONS-2
   11. A stage direction is shown with a picture or a sound, not with words in parentheses.
   12. A story pause waits for a tap, unless it is a cutscene. Wordless walks can still play themselves (W23).
   13. Locked room pictures only. No new on-screen words without Brian's yes.
-  **Decided.** Tests in `tests/play-rules.mjs` cover 1, 2, 3, 4, 5, 7, 8, 9, and 10. Rules 6, 11, 12, and 13 stay in this log. The floor vent in the party hall is part of the locked picture (`hall-room-empty-v1.png`, R11, R12). It is not a stray hint, and it was not removed. The approved guest sprites `spr_guest_01`–`06` (C12) are not in this repo, so no new guest art was drawn. The "ROBOTICS DELEGATION!" words are the existing sign, hung on the stage. Not a yes to merge.
+  **Decided.** Tests in `tests/play-rules.mjs` cover 1, 2, 3, 4, 5, 7, 8, 9, and 10, and that the bedroom never shows a vent alert. Rules 6, 11, 12, and 13 stay in this log. The floor vent in the party hall is part of the locked picture (`hall-room-empty-v1.png`, R11, R12). It is not a stray hint, and it was not removed. The old bedroom line "Oops. Fur in the vent." no longer plays at home (R37). The approved guest sprites `spr_guest_01`–`06` (C12) are not in this repo, so no new guest art was drawn. The "ROBOTICS DELEGATION!" words are the existing sign, hung on the stage. Not a yes to merge.
 
 - 2026-11-11: R84. Chapter 1 beats 22–61 use the walkthrough defaults where a question was still open. Mops is in the hallway at lunch. The calendar shows delivery morning, and the PA still says the ship is here. A robot calls Isfred away because a crate is damaged in the mail room. Squatch posts the yellow copy, then a cutscene sends the pink sheet into the vent. He hides that pink slip in the Guardian Box after the office. On pickup day the Moon Pie crate is already loaded and is not in the scanner shot. The hallway door is the north end of the party hall's right wall. Mops walks him to the snack bar, then goes back to work, and Squatch walks home. He waits at the vent as the L2 ball. The office code on the pink slip is 4723, the same digits already drawn on the old keypad. The keepsake gives no points until Brian picks a number. Lunch guests use the night robot's cone (210, 0.42, 70) so no new sight number was invented. Joe's warm theme is still the generated stand-in. None of this is a yes to merge.
   **Decided** as the build default. The words and the open questions stay pending for Brian. R67–R83 are already numbered in the 2026-11-10 planning record (the walkthrough and the decisions copy). This row does not reuse those numbers.

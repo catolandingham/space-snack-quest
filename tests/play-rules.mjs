@@ -131,6 +131,27 @@ const rules = await page.evaluate(() => {
   ss.drawFrame();
   const show = !!n.ch1Dim;
 
+  n.room = "closet";
+  n.scene = "Q1";
+  n.ctrl = true;
+  n.ch1Party = false;
+  n.ch1Talk = 0;
+  n.ch1Dim = false;
+  n.sqPose = "stand";
+  n.ventTaught = false;
+  n.furVent = false;
+  n.live = [];
+  n.q = [];
+  n.cur = null;
+  n.sq.x = 822;
+  n.sq.y = 560;
+  const before = n.log.length;
+  for (let i = 0; i < 40; i++) ss.tick(0.05);
+  ss.drawFrame();
+  const fresh = n.log.slice(before).map((e) => e.text || "").join(" ");
+  const live = (n.live || []).map((e) => e.text || "").join(" ");
+  const homeVent = /vent/i.test(fresh + " " + live + " " + (n.chip || "") + " " + (document.body.innerText || ""));
+
   return {
     plant,
     stage,
@@ -149,6 +170,8 @@ const rules = await page.evaluate(() => {
     arrived,
     dress,
     show,
+    homeVent,
+    furVent: !!n.furVent,
   };
 });
 
@@ -173,8 +196,18 @@ g.check(
   JSON.stringify(rules.faces) === JSON.stringify([1, 1, -1, -1, 1, -1, -1]),
   rules.faces,
 );
-g.check("hiding eyes are centered on the middle plant", rules.eyes && rules.eyes.x === rules.plant.cx && rules.eyes.y === rules.plant.cy, rules.eyes);
-g.check("the plant goal is an outline, not a circle", rules.goalSneak && rules.goalSneak.shape === "outline" && rules.goalSneak.x1 - rules.goalSneak.x0 > 40, rules.goalSneak);
+g.check(
+  "hiding eyes sit low on the plant, not beside it",
+  rules.eyes &&
+    rules.eyes.x === rules.plant.eyeX &&
+    rules.eyes.y === rules.plant.eyeY &&
+    rules.eyes.y > rules.plant.cy - 20 &&
+    rules.eyes.x > rules.plant.x0 &&
+    rules.eyes.x < rules.plant.x1,
+  rules.eyes,
+);
+g.check("the plant goal follows the plant, not a box or a circle", rules.goalSneak && rules.goalSneak.shape === "plant" && rules.goalSneak.n > 12, rules.goalSneak);
+g.check("the bedroom never shows a vent alert", rules.homeVent === false && rules.furVent === false, rules);
 g.check("the PEEK label is a finger-sized tap and it peeks", rules.door && rules.arrived && rules.arrived.sneak, rules);
 g.check(
   "peeking does not walk him onto the plant",

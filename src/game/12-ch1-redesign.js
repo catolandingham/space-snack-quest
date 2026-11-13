@@ -77,6 +77,17 @@
         e.restore(),
         (n.ch1Goal = { shape: "outline", x0, y0, x1, y1 }));
     }
+    function drawPlantGoal() {
+      (e.save(),
+        (e.globalAlpha = 0.95),
+        (e.strokeStyle = "#ffcf33"),
+        (e.lineWidth = 5),
+        (e.lineJoin = "round"),
+        e.beginPath(),
+        e.moveTo(CH1_PLANT_EDGE[0], CH1_PLANT_EDGE[1]));
+      for (let i = 2; i < CH1_PLANT_EDGE.length; i += 2) e.lineTo(CH1_PLANT_EDGE[i], CH1_PLANT_EDGE[i + 1]);
+      (e.closePath(), e.stroke(), e.restore(), (n.ch1Goal = { shape: "plant", n: CH1_PLANT_EDGE.length / 2 }));
+    }
     function drawGoalMark(x, y) {
       drawGoalOutline(x - 36, y - 28, x + 36, y + 28);
     }
@@ -84,7 +95,7 @@
       if (n.ch1PadOn) return drawGoalMark(480, 250);
       if (!n.ctrl || (n.ch1Zoom && n.ch1Zoom.zoom < 1)) return;
       if (n.ch1PeekReady) return drawGoalOutline(836, 400, 936, 530);
-      if (n.ch1ToPlant) return drawGoalOutline(CH1_MID_PLANT.x0 - 4, CH1_MID_PLANT.y0 - 4, CH1_MID_PLANT.x1 + 4, CH1_MID_PLANT.y1 + 4);
+      if (n.ch1ToPlant) return drawPlantGoal();
       let spots =
         n.ch1Day2 && ch1Day2Spots
           ? ch1Day2Spots()
@@ -154,7 +165,9 @@
     // Feet stand just through that door, on the floor below the picture's floor line (source y 330).
     const CH1_OFFICE_DOOR = { x: 480, y: 286 };
     // Middle plant and stage, measured on the locked hall and scaled onto the 960×640 picture.
-    const CH1_MID_PLANT = { x0: 400, y0: 440, x1: 483, y1: 544, cx: 441, cy: 479 },
+    // Eyes sit low, in the lower-front leaves (C21), on the plant. The edge is the locked plant's outline.
+    const CH1_PLANT_EDGE = [402,488,402,484,404,479,409,473,420,465,422,456,428,447,436,443,446,443,450,443,456,446,462,454,464,465,474,473,479,479,481,484,481,488,478,497,468,505,466,510,464,512,460,525,458,541,456,541,437,541,427,541,425,541,423,526,418,511,417,510,415,505,404,495,403,492],
+      CH1_MID_PLANT = { x0: 400, y0: 440, x1: 483, y1: 544, cx: 442, cy: 510, eyeX: 442, eyeY: 500 },
       CH1_STAGE = { x0: 248, y0: 245, x1: 480, y1: 293, cx: 364, feet: 290 };
     const CH1_GUESTS = [
       [250, 460, "antenna"],
@@ -1324,9 +1337,9 @@
         face = look ? 1 : 0,
         eye = 72 * ALIEN_ADULT,
         glance = (x, y) => look && (F(x + 8, y - eye, 2.2, "#fffdf8"), F(x - 5, y - eye, 2.2, "#fffdf8"));
-      (m(CH1_STAGE.cx - 108, CH1_STAGE.y0 - 8, 216, 22, 4),
+      (m(CH1_STAGE.cx - 124, 112, 248, 24, 4),
         r("#3478f6", 3),
-        g("ROBOTICS DELEGATION!", CH1_STAGE.cx, CH1_STAGE.y0 + 3, 13, "#ffffff", "center", 900),
+        g("ROBOTICS DELEGATION!", CH1_STAGE.cx, 124, 13, "#ffffff", "center", 900),
         !(n.ch1PartyDid && n.ch1PartyDid.snack) &&
           [
             [848, 340, "pie"],
@@ -1351,7 +1364,7 @@
         drawCh1Fest(),
         n.ch1Talk && drawCh1Alien(CH1_STAGE.cx, CH1_STAGE.feet, "hat", ALIEN_ADULT * 1.7, 1),
         n.sqPose === "hidden" &&
-          (ga(CH1_MID_PLANT.cx, CH1_MID_PLANT.cy), (n.ch1Eyes = { x: CH1_MID_PLANT.cx, y: CH1_MID_PLANT.cy })),
+          (ga(CH1_MID_PLANT.eyeX, CH1_MID_PLANT.eyeY), (n.ch1Eyes = { x: CH1_MID_PLANT.eyeX, y: CH1_MID_PLANT.eyeY })),
         drawCh1Alien(340, 400, "cape", ALIEN_ADULT, n.ch1Talk ? (340 < CH1_STAGE.cx ? 1 : -1) : face || -1),
         drawCh1Tripod(250, 360),
         drawCh1Show(),

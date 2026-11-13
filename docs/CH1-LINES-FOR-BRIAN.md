@@ -227,6 +227,7 @@ These are the new words in this build. Each one is in the game so you can hear i
 | 184 | Button | GO · ship | |
 | 185 | Button | LOOK · photos | |
 | 186 | Button | TAKE · drawing | |
+| 187 | The Croc Boys, on the stage, during their show. Approved by Brian 2026-11-13. An original jingle, not the old swing tune. | Pennsylvania 1-2-3-4-5! | |
 
 The old night button "GRAB · yellow copy" and "SIGN · paw" are not on this path. He grabs both copies and checks the box with his paw.
 

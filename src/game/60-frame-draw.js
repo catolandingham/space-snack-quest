@@ -58,14 +58,6 @@
           !d[0] && x.tour[0] && d.push(x.tour[0]),
           d[0] && T2(d[0], "vent"));
       }
-      n.room === "closet" &&
-        n.ctrl &&
-        !n.ventTaught &&
-        (n.scene || "")[0] !== "Q" &&
-        (n.scene || "")[0] !== "O" &&
-        n.sqPose === "stand" &&
-        Math.hypot(n.sq.x - Sf.x, n.sq.y - Sf.y) < 70 &&
-        ((n.ventTaught = !0), (n.furVent = !0), fq(Sf.x, Sf.y), kV("sq", "Oops. Fur in the vent."));
       for (let d of n.sparks) ((d.y -= (d.s === "!" ? 0 : 26) * l), (d.t -= l));
       if (((n.sparks = n.sparks.filter((d) => d.t > 0)), de())) {
         ((n.bt += l), n.cur && n.cur.k === "panel" && (n.panelT += l));
@@ -1072,7 +1064,8 @@
       if (l === "gary") return { x: qV.gary.x, y: qV.gary.y - 84 };
       if (l === "linda") return { x: qV.linda.x, y: qV.linda.y - 84 };
       if (l === "sq" && n.room === "window" && n.sqPose === "hidden") return { x: n.sq.x, y: n.sq.y - 110 };
-      if (l === "sq" && n.room === "hall" && n.sqPose === "hidden") return { x: CH1_MID_PLANT.cx, y: CH1_MID_PLANT.cy };
+      if (l === "sq" && n.room === "hall" && n.sqPose === "hidden") return { x: CH1_MID_PLANT.eyeX, y: CH1_MID_PLANT.eyeY };
+      if (l === "croc") return { x: CH1_STAGE.cx, y: CH1_STAGE.feet - 96 };
       if (l === "sq") {
         if (n.under === "crack") return { x: 210, y: 470 };
         if (n.sqPose === "under") return { x: 205, y: 520 };
@@ -1108,7 +1101,8 @@
     }
     function speakerHead(l) {
       if (l === "sq" && n.room === "hall" && n.sqPose === "hidden")
-        return { x: CH1_MID_PLANT.cx - 18, y: CH1_MID_PLANT.cy - 12, w: 36, h: 22 };
+        return { x: CH1_MID_PLANT.eyeX - 18, y: CH1_MID_PLANT.eyeY - 12, w: 36, h: 22 };
+      if (l === "croc") return { x: CH1_STAGE.cx - 22, y: CH1_STAGE.feet - 108, w: 44, h: 30 };
       if (l === "official" && (n.ch1Talk || (n.ch1Party && n.room === "hall")))
         return { x: CH1_STAGE.cx - 18, y: CH1_STAGE.feet - 84, w: 36, h: 32 };
       if (l === "sq" && n.sq.x > -100) {
