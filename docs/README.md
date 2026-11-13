@@ -8,6 +8,8 @@ If two docs disagree, [`DECISIONS.md`](DECISIONS.md) wins. Where the build stand
 
 | Doc | What it is |
 | --- | --- |
+| [`START-HERE.md`](START-HERE.md) | What matters now, what went wrong before, and the loop to follow. Read this first |
+| [`CHAPTER-1-PROBLEMS.md`](CHAPTER-1-PROBLEMS.md) | Chapter 1 problems in ranked order, each with its cause and the check that proves the fix |
 | [`DECISIONS.md`](DECISIONS.md) | Every decision. This file wins |
 | [`STATE.md`](STATE.md) | Where things stand, through R63, updated after the Chapter 1 redesign and the party landed on `main` |
 | [`OPEN-ASKS.md`](OPEN-ASKS.md) | Every open ask. The codes point into `DECISIONS.md` |

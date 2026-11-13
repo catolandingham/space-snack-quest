@@ -3,6 +3,8 @@
 A Sierra-style browser adventure for a 10-year-old (keyboard, mouse, touch).
 Owner: Brian, designer and playtester, not a programmer. Clarity beats cleverness.
 
+New here? Read docs/START-HERE.md first: what matters now (Chapter 1), the ranked problem list, and the loop to follow.
+
 ## Code
 - Source is src/. index.html is build output: never edit it by hand. Build: npm run build.
 - Tests: npm test (all). One suite: node tests/<name>.mjs. Chrome is found on a Mac; else set CHROME.
