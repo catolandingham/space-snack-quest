@@ -63,6 +63,10 @@ Add these to the address of `index.html` to jump into the game. Without them, no
 
 For example, `index.html?ch=2&phase=wash1&debug=1` opens the kitchen sink with the line showing `phase wash1` and `control Squatch`.
 
+## Automatic checks
+
+GitHub runs `npm run build`, `npm run check-build`, and `npm test` on every pull request and every push to main (`.github/workflows/pr.yml`). A change counts as passing only when that check is green on GitHub, not when someone says it passed on their machine. The test output (videos and screenshots) is attached to each run for 14 days.
+
 ## Phase 1: kitchen and diner clarity
 
 Branch `phase-1-kitchen-clarity` makes Chapter 2 clear to a 10-year-old (plan section 3, tasks T5 to T12). Every new line the player reads is listed for Brian in `docs/PHASE-1-LINES-FOR-BRIAN.md`.
@@ -99,6 +103,7 @@ Branch `phase-3-fairness-hud` (plan section 4, tasks T19 to T23, with Brian's de
 
 - One capture rule in every chapter: seen, security comes, time to hide ("They lost you." if hidden), caught shows the LOCKUP card with who saw Squatch and where, then the section restarts from its checkpoint with coins and stars kept. No catch takes stars. `src/game/25-capture.js`; `tests/capture-rule.mjs`.
 - The HUD is page text over the picture in fixed zones: chapter, ↺ and stars top left; the goal chip top center; the faces top right. The ↺ button (hold) replaces the big Reset section button; the sound button is under the picture. After 60 seconds without progress the chip shows how to do the step. On a phone the game sits at the top of the screen. `src/game/80-hud.js`; `tests/hud-layout.mjs`.
+- The kitchen duck is press-and-hold (R105): while Gloop warns or looks, hold the action button to stay a ball and let go to stand up. A faint dashed outline shows where her look will land during the warning. `tests/kitchen-duck-hold.mjs`.
 - The kitchen window warning lasts 2.5 seconds and shows: the window frame flashes and Gloop fills the window until her look ends. `tests/kitchen-warning.mjs`.
 - A tap on the picture walks there when no bubble or card is up; the big button acts. `tests/phone-tap.mjs` reaches the diner with taps and the button only.
 - Small feel fixes: an early tap on a bubble is kept and shown; the action clears when a scene takes control; the awards say what they were for. COOK stays as on main. `tests/feel-fixes.mjs`.

@@ -83,6 +83,13 @@ const input = {
     await sleep(40);
     await touch.touchEnd();
   },
+  async hold(down) {
+    await input.push(0, 0);
+    if (down) {
+      at = await boxes();
+      await touch.touchStart(at.act.x, at.act.y);
+    } else await touch.touchEnd();
+  },
   async next() {
     await input.push(0, 0);
     await touch.touchStart(at.pic.x, at.pic.y);

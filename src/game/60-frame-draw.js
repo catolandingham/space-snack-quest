@@ -109,6 +109,8 @@
         Up();
         return;
       }
+      // The kitchen duck is press-and-hold (R99): letting go of the action button stands Squatch up.
+      n.sqPose !== "ball" ? (n.duckHold = !1) : n.duckHold && !actionHeld() && ((n.sqPose = "stand"), (n.duckHold = !1));
       if (
         ((n.sqPose === "ball" && n.ctrl && i > 0.3 && !x.mops && (n.sqPose = "stand"),
         n.sqPose === "hidden" && n.ctrl && i > 0.3 && !x.mops && (x.spot >= 0 ? Xs() : Qs())),
@@ -2363,7 +2365,7 @@
       },
       F2 = () => {
         for (let l of Object.keys(qe)) qe[l] = !1;
-        ((qt.active = !1), armReset(!1));
+        ((qt.active = !1), (actHeld = !1), armReset(!1));
       };
     (document.addEventListener("keydown", j2, !0),
       window.addEventListener("keydown", j2),

@@ -237,7 +237,8 @@
         sceneG6: n2,
         g6Out: l2,
         ch2Tally: o2,
-        actionDown: Vf,
+        actionDown: actionPress,
+        actionUp: actionRelease,
         tapAt: O5,
         ch1Pointer: (kind, x, y) => {
           ch1SlicePointer(kind, x, y);
@@ -419,7 +420,8 @@
         songTap: () => {
           (VV(), n.ch1Song ? ch1SingAlong() : n.scene === "O1" && n.ctrl && co());
         },
-        actionDown: Vf,
+        actionDown: actionPress,
+        actionUp: actionRelease,
         tapAt: O5,
         ch1Pointer: (kind, x, y) => {
           ch1SlicePointer(kind, x, y);
@@ -536,7 +538,7 @@
           (U.preventDefault(), e(!0), V.eng.current?.actionDown());
         },
         y = () => {
-          e(!1);
+          (e(!1), V.eng.current?.actionUp?.());
         };
       return (
         b.addEventListener("pointerdown", O),

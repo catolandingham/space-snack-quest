@@ -22,7 +22,8 @@
  * calls "Order up?" in the kitchen and the button reads ROLL, do it and stay still until she stops
  * looking.
  *
- * An input is { push(dx, dy), act(), next() }: push(0, 0) lets go.
+ * An input is { push(dx, dy), act(), hold(down), next() }: push(0, 0) lets go; hold(true) keeps the
+ * action button down until hold(false).
  */
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -93,14 +94,16 @@ export async function playRoute(page, input, steps, { log = !!process.env.ROUTE_
   let rolls = 0;
   const reflex = async (s) => {
     if (!(s.ctrl && !s.blocking && s.button === "ROLL · into a ball")) return false;
+    // The duck is press-and-hold (R99): hold the button while Gloop looks, then let go to stand up.
     await input.push(0, 0);
-    await input.act();
+    await input.hold(true);
     rolls++;
     for (let i = 0; i < 100; i++) {
       await sleep(100);
       const t = await look(page);
       if (!t.looking || t.pose !== "ball") break;
     }
+    await input.hold(false);
     return true;
   };
 
@@ -229,6 +232,7 @@ export function keyboardInput(page) {
       for (const c of codes) if (!held.has(c)) { await page.keyboard.down(c); held.add(c); }
     },
     act: () => tap("KeyE"),
+    hold: (down) => (down ? page.keyboard.down("KeyE") : page.keyboard.up("KeyE")),
     next: () => tap("Enter"),
     // A mouse click on a face button (#ss-face-squatch, #ss-face-mops), through Chrome like a player's.
     async face(who) {
