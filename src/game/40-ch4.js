@@ -130,7 +130,7 @@
             v("pbot", "WOOKIE?!"),
             v("mops", "He's with me."),
             v("pbot", "...Do you need help?"),
-            v("mops", "Nope. Just getting my goat."),
+            v("mops", "No thanks. We're getting my goat."),
           ]));
         return;
       }

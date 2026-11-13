@@ -218,7 +218,7 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 | R63 | 11-09 | **Crayon drawing labels and sight line.** Kid-handwritten labels "MOPS" and "ME". A dotted sight line runs from Mops to Squatch, and hearts rise from that line. That heart line is the contrast with the "!" other characters get when they spot Squatch. Not in the game. | designer record, Nov 9 | Decided. On 2026-11-13 Brian approved "ME" and "MOPS" as they are in the game. |
 | R92 | 11-13 | A story wait (`uV`) waits for a tap in all four chapters. A bouncing arrow, with no words, shows that a tap continues. A wordless walk or picture change still plays on its own. | Brian 2026-11-13 | Decided |
 | R93 | 11-13 | When Gloop, Blorp, or Zip sees Squatch, the old one-step jump of about 70 pixels is a visible hop of about a quarter second. Zip's sight calls security the same way Gloop's and Blorp's do. | Brian 2026-11-13 | Decided |
-| R94 | 11-13 | Squatch does not answer the Mars gate bot before Chapter 4.4. Mops answers for him. The two new lines are NEEDS BRIAN. | Brian 2026-11-13 | Decided (words pending) |
+| R94 | 11-13 | Squatch does not answer the Mars gate bot before Chapter 4.4. Mops answers for him. | Brian 2026-11-13, 4:10 AM ET | Decided. Brian approved the words: "He's with me." and "No thanks. We're getting my goat." |
 | R95 | 11-13 | These stage directions are shown, not said: the searchlight means go to the van, the gate means the van then the barrels, the cook falls instead of saying "*faints*", the stomach rumble is a wobble and a sound, and the camera flash is a flash. | Brian 2026-11-13 | Decided |
 
 ## 5. Chapter 1 cartoon, panel by panel (story order)

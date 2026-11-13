@@ -2,6 +2,8 @@
 
 These are the new words in the redesigned Chapter 1. Each one is in the game now so you can hear it while you play. Say yes, or write the line you want instead, in the pull request. Nothing merges until you say yes there.
 
+2026-11-13, 4:10 AM ET. Brian approved Mops's Mars gate lines. They are Chapter 4, rows 19.19 and 19.20 in `docs/PHASE-3-LINES-FOR-BRIAN.md`. After "WOOKIE?!", Mops says "He's with me." After "...Do you need help?", Mops says "No thanks. We're getting my goat."
+
 Words the game already had, and the one you already approved, are not in this list: "Stormtop Cloud Resort, floating above Jupiter.", "This is Squatch. He's a Sasquatch.", "My lunch! You're the best.", "You're gumbling! (goat mumbling)", "More bleat. Less roar.", "HAIR... PROBABLY. PROCEED.", "Brave Sasquatches stay hidden.", "— The Guardians", and the room labels STAY IN HERE, DELIVERY, MOON PIES, FRAGILE, G, UPS, DOT, BOB, LOU.
 
 ## Goal chips

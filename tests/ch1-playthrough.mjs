@@ -594,6 +594,8 @@ g.check(
 const walks = walkChanges(play.state.trail);
 g.check("every room change walks off and walks in", walks >= 12, { walks, sample: play.state.trail.slice(0, 8) });
 const doors = doorUses(play.state.walks);
+const offPicture = (play.state.walks || []).filter((w) => w.x < 0 || w.x > 960 || w.y < 0 || w.y > 640);
+g.check("walks stay on the picture", offPicture.length === 0, offPicture.slice(0, 6));
 g.check(
   "the office computer is in the hallway and the walks still use the hall doors",
   play.state.siteRoom === "passage" && doors.backHome >= 2 && doors.overHall >= 2,
@@ -825,10 +827,10 @@ function doorUses(walks) {
     const a = walks[i],
       b = walks[i + 1];
     if (a.phase !== "edge" || b.phase !== "in") continue;
-    if (a.room === "hangar" && b.room === "hall" && a.x < 0 && b.x > 1000) use.backHall++;
-    if (a.room === "hall" && b.room === "closet" && a.y > 700 && b.x > 1000) use.backHome++;
-    if (a.room === "closet" && b.room === "hall" && a.x > 1000 && b.y > 700) use.overHall++;
-    if (a.room === "hall" && b.room === "hangar" && a.x > 1000 && b.x < 0) use.overDelivery++;
+    if (a.room === "hangar" && b.room === "hall" && a.x < 160 && b.x > 800) use.backHall++;
+    if (a.room === "hall" && b.room === "closet" && a.y > 560 && b.x > 800) use.backHome++;
+    if (a.room === "closet" && b.room === "hall" && a.x > 800 && b.y > 560) use.overHall++;
+    if (a.room === "hall" && b.room === "hangar" && a.x > 800 && b.x < 160) use.overDelivery++;
   }
   return use;
 }

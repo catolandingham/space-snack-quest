@@ -4,7 +4,7 @@
 
 ## Where main is (Chapter 1 redesign)
 
-2026-11-13. PR #21 (locked rooms) and PR #23 (lunch through the ship) are on main. Sentences below that say the hallway is not built, or that Day 2 is not merged, are from before those merges. Locked pictures stay in `docs/locked-rooms/`. Do not redraw a room freehand, and do not change these files, without Brian's yes and a new locked version. Mops's beard is his mop; no separate mop prop. Pull requests #12, #13, #15, and #16 were read against `OPEN-ASKS.md`. New leftovers are section G there. Docs match main: yes.
+2026-11-13. Brian said yes, merge (without the beard gag). PR #21 (locked rooms) and PR #23 (lunch through the ship) are on main. Walks between the locked pictures stay on the picture, at the doors. The opening keeps control and shows the sing-along chip. The locked bedroom's blue G box and mop bucket block the walk. Mops's beard hangs to the floor. There is no mop prop and no cut-in at the bucket. The title screen no longer logs "Va is not defined" every frame. Sentences below that say the hallway is not built, or that Day 2 is not merged, are from before those merges. Locked pictures stay in `docs/locked-rooms/`. Do not redraw a room freehand, and do not change these files, without Brian's yes and a new locked version. Pull requests #12, #13, #15, and #16 were read against `OPEN-ASKS.md`. New leftovers are section G there. Docs match main: yes.
 
 A new game plays the redesigned Chapter 1 from the Nov 8 cartoon: home, delivery room, night mailbox, six days later, the vent, the costume, and the scanner. Docs for that pass: `docs/CH1-LINES-FOR-BRIAN.md`. The home room has the wardrobe, no mop, and no vent. A balled-up Squatch is noticed only when a robot stays within 70 pixels for 2 seconds. The older night-out scenes are still reachable from a debug link. They are not the path from the title.
 
@@ -188,7 +188,9 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 
 ## Changelog
 
-2026-11-13. Brian's Nov 13 decisions, not merged. Story waits need a tap. A sight is a short hop, and Zip calls security. Mops answers the Mars gate bot (new lines, NEEDS BRIAN). Stage directions are pictures and a sound. Gallery words "TIED TOGETHER FOREVER", "ME" / "MOPS", and "BEEP BEEP" are approved. Docs match main: yes. Do not merge.
+2026-11-13. Brian said yes, merge. Story waits need a tap. A sight is a short hop, and Zip calls security. Mops answers the Mars gate bot: "He's with me." and "No thanks. We're getting my goat." Stage directions are pictures and a sound. Gallery words "TIED TOGETHER FOREVER", "ME" / "MOPS", and "BEEP BEEP" are approved. Docs match main: yes.
+
+2026-11-13. Brian said yes, merge (without the beard gag). Walks stay on the locked pictures, at the doors. The opening keeps the sing-along chip. The blue G box and the mop bucket block the bedroom walk. Mops's beard hangs to the floor, with no mop prop and no cut-in at the bucket. The title screen no longer logs "Va is not defined". Docs match main: yes.
 
 2026-11-13. Guardrail. Brian said yes, merge. Locked room art must not be redrawn, replaced, or restyled. The rule from `docs/locked-rooms/README.md` is now in `CLAUDE.md` and `AGENTS.md`, word for word. Mops's beard is his mop; no separate mop prop. `docs/locked-rooms/manifest.json` holds the sha256 of each locked picture, and `tests/locked-art.mjs` fails if a picture changes or a room stops using it. Docs match main: yes.
 
