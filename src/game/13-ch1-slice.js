@@ -10,7 +10,9 @@
       { id: "nose", zone: "extra", label: "button nose" },
       { id: "pipe", zone: "extra", label: "pipe" },
     ];
-    // The beard is the mop (C2). One close-up, once, at the bucket. No new words.
+    // The beard is the mop (C2). One cut-in, once, at the bucket. No new words.
+    // The bucket stays about knee-high on Mops. He is drawn with Fe(), the same sprite as the room.
+    const CH1_BEARD_X = { x: 880, y: 568, r: 40 };
     function ch1DunkSpot() {
       return spot({ id: "dunk", verb: "DUNK", cap: "beard", who: "sq", x: 566, y: 540, r: 70, f: ch1Wring });
     }
@@ -20,14 +22,104 @@
         (n.scene || "")[0] === "Q" &&
         n.ctrl &&
         !n.ch1Wrung &&
+        !n.ch1Beard &&
         n.sqPose === "stand" &&
         !n.ch1Cut &&
         list.push(ch1DunkSpot());
       return list;
     }
     function ch1Wring() {
-      ((n.ctrl = !1), (n.act = null), (n.ch1Wrung = !0), (n.ch1WringT = n.T));
-      J([{ k: "panel", id: "ch1wring" }, N(() => (n.ctrl = !0))]);
+      ((n.ctrl = !1), (n.act = null), (n.ch1Beard = { zoom: 0, t: 0, closing: !1 }));
+    }
+    function ch1BeardClose() {
+      n.ch1Beard && !n.ch1Beard.closing && ((n.ch1Beard.closing = !0), (n.ctrl = !1), (n.act = null));
+    }
+    function ch1BeardTick(dt) {
+      let cut = n.ch1Beard;
+      if (!cut) return;
+      if (cut.closing) {
+        cut.zoom = Math.max(0, cut.zoom - (dt || 0) / 0.4);
+        cut.zoom <= 0 && ((n.ch1Beard = null), (n.ch1Wrung = !0), (n.ctrl = !0));
+        return;
+      }
+      if (cut.zoom < 1) {
+        cut.zoom = Math.min(1, cut.zoom + (dt || 0) / 0.5);
+        cut.zoom >= 1 && (n.ctrl = !0);
+      } else ((cut.t = (cut.t || 0) + (dt || 0)), (n.ctrl = !0));
+    }
+    function ch1BeardPointer(kind, x, y) {
+      n.ch1Beard && n.ch1Beard.zoom >= 1 && kind === "up" && Math.hypot(x - CH1_BEARD_X.x, y - CH1_BEARD_X.y) < CH1_BEARD_X.r && ch1BeardClose();
+    }
+    function drawBeardPaw() {
+      if (n.ch1Beard || n.ch1Wrung || n.room !== "closet" || !n.ctrl) return;
+      let here = ch1DunkSpot();
+      if (!inSpot(here)) return;
+      (e.save(),
+        e.translate(here.x, here.y - 36),
+        e.beginPath(),
+        e.ellipse(0, 8, 14, 11, 0, 0, 7),
+        r("#6b4428", 3),
+        [[-9, -6], [0, -12], [9, -6]].forEach((pad) => (e.beginPath(), e.ellipse(pad[0], pad[1], 4.5, 5.5, 0, 0, 7), r("#6b4428", 2))),
+        e.restore());
+    }
+    function drawCh1Beard() {
+      let cut = n.ch1Beard;
+      if (!cut) return;
+      let z = Math.min(1, cut.zoom || 0),
+        phase = (cut.t || 0) % 4.4,
+        lean = 0,
+        dip = 0,
+        scrub = 0,
+        wring = !1,
+        headDown = !1;
+      phase < 0.7
+        ? (lean = phase / 0.7)
+        : phase < 1.6
+          ? ((lean = 1), (dip = (phase - 0.7) / 0.9), (headDown = !0))
+          : phase < 3
+            ? (scrub = Math.sin((phase - 1.6) * 7))
+            : (wring = !0);
+      (e.save(), (e.filter = "blur(6px)"), e.drawImage(e.canvas, 0, 0), e.restore());
+      ((e.fillStyle = "rgba(12,16,28,.35)"), e.fillRect(0, 0, c, b));
+      let shade = e.createRadialGradient(480, 320, 140, 480, 320, 620);
+      (shade.addColorStop(0, "rgba(0,0,0,0)"), shade.addColorStop(1, "rgba(0,0,0,.55)"), (e.fillStyle = shade), e.fillRect(0, 0, c, b));
+      e.save();
+      e.translate(480, 320);
+      e.scale(0.62 + 0.38 * z, 0.62 + 0.38 * z);
+      e.translate(-480, -320);
+      let stand = 520,
+        feet = stand - dip * 22,
+        bx = 360,
+        reach = phase < 1.6 ? lean : 0,
+        mx = 500 - reach * 120 + (phase >= 1.6 && phase < 3 ? scrub * 36 : 0);
+      phase >= 1.6 &&
+        phase < 3 &&
+        (e.save(), (e.globalAlpha = 0.6), m(mx - 150, stand + 8, 220, 12, 6), r("#8fdcff", 0), e.restore());
+      (e.beginPath(),
+        e.moveTo(bx - 34, stand - 70),
+        e.lineTo(bx + 34, stand - 70),
+        e.lineTo(bx + 26, stand - 8),
+        e.lineTo(bx - 26, stand - 8),
+        e.closePath(),
+        r("#ffcf33", 5),
+        e.beginPath(),
+        e.ellipse(bx, stand - 66, 32, 9, 0, 0, 7),
+        r("#8fdcff", 3));
+      Fe(mx, feet, 7, { f: -1, walk: scrub * 1.6, headDown, wring, sway: -lean * 0.4 });
+      wring && [0, 1, 2, 3, 4].forEach((i) => F(bx - 16 + i * 12, stand - 60 + (((cut.t || 0) * 80 + i * 16) % 48), 4, "#8fdcff"));
+      e.restore();
+      (e.beginPath(),
+        e.arc(CH1_BEARD_X.x, CH1_BEARD_X.y, 36, 0, 7),
+        r("#ffffff", 4),
+        e.beginPath(),
+        e.moveTo(CH1_BEARD_X.x - 14, CH1_BEARD_X.y - 14),
+        e.lineTo(CH1_BEARD_X.x + 14, CH1_BEARD_X.y + 14),
+        e.moveTo(CH1_BEARD_X.x + 14, CH1_BEARD_X.y - 14),
+        e.lineTo(CH1_BEARD_X.x - 14, CH1_BEARD_X.y + 14),
+        (e.strokeStyle = "#1e2430"),
+        (e.lineWidth = 6),
+        (e.lineCap = "round"),
+        e.stroke());
     }
     function ch1Day1() {
       J([
@@ -215,6 +307,7 @@
       ((n.ch1Bag = (n.ch1Cut && n.ch1Cut.bag) || 0), (n.ch1Cut = null), (n.ch1BarDone = !0), (n.ctrl = !0), (n.act = null));
     }
     function ch1SlicePointer(kind, x, y) {
+      if (n.ch1Beard) return ch1BeardPointer(kind, x, y);
       if (n.ch1Mini && kind === "down") return ch1MiniPointer(x, y);
       if (n.ch1Dress && n.ch1Dress.on) return ch1DressPointer(kind, x, y);
       if (n.ch1Cut) return ch1BarPointer(kind, x, y);

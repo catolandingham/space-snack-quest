@@ -1109,6 +1109,8 @@
         ]));
     }
     function ch1QSpots() {
+      if (n.ch1Beard && n.ch1Beard.zoom >= 1 && !n.ch1Beard.closing)
+        return [spot({ id: "beardx", verb: "CLOSE", cap: "cut-in", who: "sq", x: 880, y: 568, r: 800, f: ch1BeardClose })];
       if (n.ch1Song && n.ctrl && !n.ch1Party) return withDunk(ch1SongSpots());
       if (n.ch1Search && n.ctrl && n.room === "closet") return ch1SearchSpots();
       if (n.ch1Cut) return ch1CutSpots();

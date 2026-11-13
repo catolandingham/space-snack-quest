@@ -1598,26 +1598,6 @@
         (X(l, o, i * 0.8, i), e.stroke());
     }
     function gq(l, o) {
-      if (l === "ch1wring") {
-        let t = Math.max(0, n.T - (n.ch1WringT || n.T)),
-          wring = t > 0.7,
-          feet = wring ? 400 : 455;
-        ((e.fillStyle = "rgba(20,24,32,.78)"), e.fillRect(0, 0, c, b), m(150, 24, 660, 592, 18), r("#f7f1e4", 6));
-        (e.beginPath(),
-          e.moveTo(300, 430),
-          e.lineTo(660, 430),
-          e.lineTo(620, 590),
-          e.lineTo(340, 590),
-          e.closePath(),
-          r("#ffcf33", 6),
-          e.beginPath(),
-          e.ellipse(480, 442, 150, 20, 0, 0, 7),
-          r("#8fdcff", 3));
-        Fe(520, feet, 3.8, { f: 1, walk: 0, headDown: !wring && t > 0.15, wring });
-        wring &&
-          [0, 1, 2, 3, 4].forEach((i) => F(445 + i * 18, 430 + ((t * 80 + i * 16) % 70), 4, "#8fdcff"));
-        return;
-      }
       if (l === "ch1photo") {
         ((e.fillStyle = "rgba(255,252,245,.4)"),
           e.fillRect(0, 0, c, b),
@@ -2162,6 +2142,8 @@
         n.ch1Dress && n.ch1Dress.on && drawCh1Dress();
         n.ch1Day2 && drawCh1Day2();
         n.ch1Zoom && drawCh1Zoom();
+        drawBeardPaw();
+        n.ch1Beard && drawCh1Beard();
         ch1MarkGoal();
       } finally {
         restoreWalkDraw();

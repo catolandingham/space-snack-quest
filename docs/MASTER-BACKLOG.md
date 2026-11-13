@@ -4,7 +4,7 @@
 
 ## Where main is (Chapter 1 redesign)
 
-2026-11-13, not merged. The locked pictures are unchanged. Walks between them stay on the picture, at the doors. The opening keeps control and shows the sing-along chip. The locked bedroom's blue G box and mop bucket block the walk. Mops's beard is the mop, with one wordless dunk-and-wring close-up at the bucket. The title screen no longer logs "Va is not defined" every frame. Docs match main: yes. Do not merge.
+2026-11-13, not merged. The locked pictures are unchanged. Walks between them stay on the picture, at the doors. The opening keeps control and shows the sing-along chip. The locked bedroom's blue G box and mop bucket block the walk. Mops's beard is the mop, with one wordless cut-in at the bucket: he dunks it, mops the floor, and wrings it out. The title screen no longer logs "Va is not defined" every frame. Docs match main: yes. Do not merge.
 
 A new game plays the redesigned Chapter 1 from the Nov 8 cartoon: home, delivery room, night mailbox, six days later, the vent, the costume, and the scanner. Docs for that pass: `docs/CH1-LINES-FOR-BRIAN.md`. The home room has the wardrobe, no mop, and no vent. A balled-up Squatch is noticed only when a robot stays within 70 pixels for 2 seconds. The older night-out scenes are still reachable from a debug link. They are not the path from the title.
 

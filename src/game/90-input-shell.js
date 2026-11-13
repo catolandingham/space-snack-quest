@@ -27,6 +27,10 @@
         Cs();
         return;
       }
+      if (p.state === "op" && n.ch1Beard) {
+        ch1BeardPointer("down", l, o);
+        return;
+      }
       if (p.state === "op" && (n.ch1PadOn || n.ch1Zoom || n.ch1Cut || (n.ch1Dress && n.ch1Dress.on))) {
         ch1SlicePointer("down", l, o);
         ch1Day2Pointer("down", l, o);
