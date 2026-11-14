@@ -10,32 +10,36 @@ How to read it: each beat says where it happens, who's there, what happens, the 
 ## Day 1: the party
 Mops is at work. Squatch is home alone.
 
-### 1. Meet Squatch
-- **Where:** Home (Squatch and Mops's room)
-- **Who:** Squatch
-- **What happens:** Stormtop floats in the clouds of a giant planet. A big, furry kid lives in a small, hidden room. A poster by the door says to stay inside.
+### 1. Meet Squatch `UPDATED t-nov14`
+- **Where:** Home (Squatch and Mops's room), morning
+- **Who:** Squatch, Mops
+- **What happens:** Stormtop floats in the clouds of a giant planet. A big, furry kid lives in a small, hidden room. Squatch wakes up in his bed. Mops is wringing his beard out over the mop bucket; he just finished cleaning the room. A poster by the door says to stay inside. Nothing in the room is tappable yet.
 - **Words:**
+  - Card: "This is Squatch. He's a Sasquatch." *(decided)*
   - Poster: "STAY IN HERE! — Mops" *(decided)*
+  - Mops: "Morning, Squatch. Room's all clean. Big party in the hall tonight, so stay in here." (points at the poster) *(Brian agreed to the idea Nov 14; exact words need his yes)*
 - **Player:** Walk around the room.
-<sub>replot 01 · R29 R35 R36</sub>
+<sub>replot 01 · R29 R35 R36 · Brian chat Nov 14</sub>
 
-### 2. Meet Mops; their song
+### 2. Their song, then Mops leaves `UPDATED t-nov14`
 - **Where:** Home
 - **Who:** Squatch, Mops
-- **What happens:** Mops the goat cleans the floor with his long beard. He hums their song, and Squatch sings along. Then Mops leaves for work.
+- **What happens:** The song is their goodbye. Mops hums it at the door, Squatch sings along, and Mops leaves for work. No beard cleaning in this scene (Brian: Mops is not cleaning all the time).
 - **Words:**
-  - (no new words decided) *(pending)*
+  - Squatch: "I'm floating in space!" / Mops: "Baaa-aa-aaa!" *(decided)*
 - **Player:** Press the song button to sing with Mops.
-<sub>replot 02 · C2 K26</sub>
+<sub>replot 02 · C2 K26 · Brian chat Nov 14</sub>
 
-### 3. The peek `UPDATED`
-- **Where:** Home doorway, looking out into the party hall
+### 3. The peek `UPDATED t-nov14`
+- **Where:** Home doorway, looking out into the party hall, that evening
 - **Who:** Squatch (hidden); guests
-- **What happens:** Squatch hears music and voices. He taps the doorway and peeks out. The hall is full of guests. There's a stage, a snack bar and a big banner.
+- **What happens:** A card says "That evening…". Music and voices come through the wall. Squatch taps the doorway and leans out. The hall is already full of guests (nobody appears out of nowhere), with a stage, a snack bar and a big banner. He can hear talking from the stage but can't make out the words. He is curious, not sad. He wants to hear better, so he sneaks to the plant (beat 4). Isfred's announcement waits until he is in the plant.
 - **Words:**
+  - Card: "That evening…" *(Brian agreed Nov 14; exact words need his yes)*
   - Banner: "ROBOTICS DELEGATION!" *(decided)*
+  - Squatch, thinking: "Robots?" *(decided, Brian Nov 14; moved here from beat 5)*
 - **Player:** Tap the doorway to peek.
-<sub>S20 R49 R73 · v1 beat 3</sub>
+<sub>S20 R49 R73 · Brian t30 t291 · chat Nov 14</sub>
 
 ### 4. Sneak in and hide `UPDATED`
 - **Where:** Party hall, the plant in the middle of the room, close to the home doorway
@@ -54,7 +58,6 @@ Mops is at work. Squatch is home alone.
   - Isfred: "Let's give a big hello to our friends from Bleep-Bloop Robotics!" *(pending)*
   - Isfred: "Soon their helper robots will be here, to help with the heavy work." *(pending)*
   - Poster (robot drawings): "COMING SOON!" *(pending)*
-  - Squatch, thinking: "Robots?" *(pending)*
 <sub>R73 S20 R49 R42 · v1 beat 3</sub>
 
 ### 6. The Croc Boys `UPDATED`

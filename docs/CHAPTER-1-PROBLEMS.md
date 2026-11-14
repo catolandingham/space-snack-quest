@@ -14,6 +14,17 @@ How to run the robot:
 
 A kid can finish the chapter today. The problems below have ten separate, small causes. None of them needs the chapter rebuilt. Fix them in order, with the robot run after each one.
 
+## Do first: scene 1 (beats 1–3), Brian 2026-11-14
+
+Brian: make scene 1 right before anything else. The story is in `docs/CH1-STORY-WALKTHROUGH.md` beats 1–3. Four pull requests, in this order:
+
+1. Tidy, no change in play: the scene 1 that runs is spread over three files: the start in `12-ch1-redesign.js` (`ch1RedesignStart`, the cards), the song and the peek in `13-ch1-slice.js` (`ch1Day1`, `ch1SingAlong`, `ch1PeekSpots`), and Mops walking out in `14-ch1-day1.js` (`ch1Day1Tick`). `Sp` in `10-ch1.js` is an old copy kept for debug links; never edit it. Gather the live pieces in one place and prove no change with `tools/equivalence.mjs`.
+2. Steady screen: problems 4 and 5, and a bigger picture on phone and iPad (Brian t119).
+3. Room and Mops: the morning story in beats 1–2. Fix problem 7 (Squatch in the bed) and problem 6. Remove the floor arrows (`drawWalkNudge`), the "Tap the floor to walk there." note, the help line under the buttons, and the yellow polish sparkle by Mops. Fix the goal bar saying "go with Mops to the ship" (scene `Q1` label in `12-ch1-redesign.js`).
+4. The real peek: problem 12, beat 3.
+
+Saved for later, not now: a montage of Squatch's day (homework, things hidden around the room, lonely) and Mops checking in at night.
+
 ## 1. A catch at the party leaves the game stuck in the bedroom
 
 - What the kid sees: at the party, a guard sees Squatch. The card says "Holding pen. This part starts over." Then Squatch is back in his bedroom at the very start, the goal says to walk around the room, and nothing leads forward. The only way out is to restart the chapter.
