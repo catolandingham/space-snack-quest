@@ -32,6 +32,7 @@ Brian is the designer. He playtests with his young kid on an iPad held sideways.
 - When someone sees fur, security comes every time and fast. If a guard reaches Squatch, he goes to jail (t136u, t328u).
 - The same guests stay in the room for the whole party, and someone works the bar (t281u, t287u).
 - The action button never changes size or moves the screen (t119u).
+- Everyone who can see Squatch has a light dashed cone outline that fills in yellow when he steps inside it. Every scene (chat, Nov 14).
 
 ## Look
 - Clean, bright, readable on an iPad in landscape. No stray sprites, overlaps, z-order mistakes, frame jumps or dark tints during normal play.

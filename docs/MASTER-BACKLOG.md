@@ -190,7 +190,7 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 
 ## Changelog
 
-2026-11-14. Handover, docs only, not merged. `docs/START-HERE.md` now names the four files that say what the game should be. Every message Brian wrote to Squatchbot is in `docs/grok-archive/squatchbot-brian-words.md`; the walkthrough was checked against it and three missing points were added (jail on a catch, how guests show sight, guards every time). `docs/BRIAN-LENS.md` has six more of his rules. `docs/CHAPTER-1-PROBLEMS.md` has problems 11 to 19. No game code changed.
+2026-11-14. Handover, docs only, not merged. `docs/START-HERE.md` now names the four files that say what the game should be. Every message Brian wrote to Squatchbot is in `docs/grok-archive/squatchbot-brian-words.md`; the walkthrough was checked against it and three missing points were added (jail on a catch, guards every time, and Brian's Nov 14 rule for sight cones: a dashed outline on everyone that fills in when Squatch is inside). `docs/BRIAN-LENS.md` has six more of his rules. `docs/CHAPTER-1-PROBLEMS.md` has problems 11 to 19. No game code changed.
 
 2026-11-13. Chapter 1 kid robot and ranked problem list, merged on Brian's yes (pull request 37). `tests/ch1-kid-play.mjs` plays all of Chapter 1 on a phone-size screen by touch and ends at the score card. It runs with `npm test`; `npm run kid-video` saves a video. `docs/CHAPTER-1-PROBLEMS.md` ranks ten Chapter 1 problems, each with its cause, fix, and the check that proves it. `docs/START-HERE.md` is a one-page handbook: what matters now, what went wrong before, and the loop to follow. No game code changed.
 

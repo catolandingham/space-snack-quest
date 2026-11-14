@@ -1,7 +1,7 @@
 # Chapter 1: the story, beat by beat (words only)
 For Brian · v2, Tuesday, November 10, 2026 · built from the agreed story in DECISIONS.md, not from the comic.
 
-**Checked 2026-11-14** against every message Brian wrote to Squatchbot (`docs/grok-archive/squatchbot-brian-words.md`). The beats match his words. Three things he said on Nov 12 were missing and are now in beats 16, 17 and 18, marked `UPDATED t328u` and `UPDATED t332u`.
+**Checked 2026-11-14** against every message Brian wrote to Squatchbot (`docs/grok-archive/squatchbot-brian-words.md`). The beats match his words. Three things he said on Nov 12 were missing and are now in beats 16, 17 and 18, marked `UPDATED t328u` and `UPDATED 2026-11-14`.
 
 **v2:** Brian's notes on beats 1–15 (t291u) and on v2 beats 10–20 (t296u) are in. `UPDATED` = changed in the first round, `UPDATED t296u` = changed in the second round, `UPDATED t302u` = changed in the third round, `UPDATED t303u` = changed in the fourth round (snack paw close-up), `UPDATED t305u` = the pyramid and the chain reaction put back, `UPDATED t308u` = the bar close-up follows the original game's cut-in (docs/CUT-IN-SPEC.md), `UPDATED t310u` = no parents in the bedtime story (docs/GUARDIANS-STORY-BRIEF.md), `UPDATED t311u` = Brian's Guardians answers and the new paper order (Day 2 and night one), `UPDATED t312u` = the vent moment is a short cutscene and the Mars NO letter (option A). Beats marked (proposed) are new designs for Brian's yes. Five beats were added since v1, so the old v1 beat 16 (Bedtime) is now beat 21, and v1 beat 17 is now 22. Beats 22 onward changed only where tagged.
 
@@ -161,7 +161,7 @@ Mops is at work. Squatch is home alone.
 - **Words:**
   - A guest: "Cool hat!" *(pending (Brian questioned it))*
 - **Player:** Avoid the risky spots for as long as you can.
-- **How guests show they can see him `UPDATED t332u`:** open, waiting on Brian's pick. On Nov 12 (t332u) he worried that a cone on every guest is too busy and picked: cones only on guards and robots, guests show a "?" that turns into a "!". On Nov 14 he said he would rather every guest has a cone, drawn light (a dashed outline, not filled) that fills in yellow when Squatch steps inside it, so the kid always knows who can see him. Build neither until he picks. See problem 11 in `docs/CHAPTER-1-PROBLEMS.md`.
+- **How everyone shows they can see him `UPDATED 2026-11-14`:** decided by Brian in chat on Nov 14. Every character who can see Squatch (guests, the bartender, guards, robots) has a light dashed outline of a cone, not filled. It fills in yellow when Squatch steps inside it. This is the rule in every scene, not only the party. It replaces his Nov 12 pick (t332u: cones only on guards and robots, guests show a "?" then a "!"). Not built yet. See problem 11 in `docs/CHAPTER-1-PROBLEMS.md`.
 <sub>S14 S15 R73 R79 · Brian note P3 · v1 beat 11</sub>
 
 ### 17. FUR! Security! `UPDATED t303u`

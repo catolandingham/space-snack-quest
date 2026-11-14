@@ -97,10 +97,12 @@ A kid can finish the chapter today. The problems below have ten separate, small 
 
 Found by reading the Day 1 code against beats 1 to 21 of `docs/CH1-STORY-WALKTHROUGH.md`. Ten beats match or are close. The ones below differ. They were found in the code (`src/game/13-ch1-slice.js`, `14-ch1-day1.js`, `12-ch1-redesign.js`), not by watching every beat on screen, so look at each on screen before fixing it. One per pull request, after problems 1 to 10, in this order unless Brian says otherwise.
 
-## 11. How party guests show they can see Squatch
+## 11. Sight cones: a dashed outline that lights up, on everyone, in every scene
 
-- Today: guests show nothing. Only the guards, after the alarm, have a yellow cone.
-- Needs Brian: one pick. A: every guest has the filled yellow cone the game already uses (he thought this too busy). B: every guest has a light dashed outline of a cone, not filled; it fills in yellow when Squatch steps inside it. C: his Nov 12 pick, cones only on guards and robots, and guests show a "?" that turns into a "!". On Nov 14 he leaned to B. Show him A and B as pictures of the real party before building.
+- Today: party guests show nothing. Guards and robots show a filled yellow cone all the time.
+- What Brian decided (chat, Nov 14): every character who can see Squatch has a light dashed outline of a cone, not filled. It fills in yellow when Squatch steps inside it. Same rule in every scene, so the kid always knows who can see him and the party does not look busy.
+- Fix: one shared way to draw a cone (dashed when Squatch is outside, filled when inside), used by guests, the bartender, guards and robots. Start with the party. Mops's heart cone (pull request 35) is a different thing; leave it alone.
+- Needs Brian: no new pick. Show him a picture of the party and of one guard scene before merging.
 
 ## 12. The peek is not a peek (beat 3)
 
