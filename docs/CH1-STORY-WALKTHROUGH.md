@@ -176,7 +176,7 @@ Mops is at work. Squatch is home alone.
 ### 18. Run home; security searches the room `UPDATED t328u`
 - **Where:** Party hall → home
 - **Who:** Squatch, security guard
-- **What happens:** Squatch runs home. Security chases him all the way in. The guard comes in half a second after reaching the door and searches the room. If Squatch is hidden, the guard gives up and leaves. If the guard reaches him, he's caught and goes to jail. Brian (t328u): "if they catch him, that's when they get jailed, and we absolutely want that." What happens after the jail card is pull request 38, waiting on Brian.
+- **What happens:** Squatch runs home. Security chases him all the way in. The guard comes in half a second after reaching the door and searches the room. If Squatch is hidden, the guard gives up and leaves. If the guard reaches him, he's caught and goes to jail. Brian (t328u): "if they catch him, that's when they get jailed, and we absolutely want that." After the jail card, Brian (2026-11-14): set him back a little, or back where he was caught, and let play carry on. Not a guard walking into the bedroom right away.
 - **Player:** Run home and hide.
 <sub>S11 K10 C16 · v1 beat 13</sub>
 

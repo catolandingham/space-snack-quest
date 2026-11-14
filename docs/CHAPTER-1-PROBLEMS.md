@@ -20,7 +20,7 @@ A kid can finish the chapter today. The problems below have ten separate, small 
 - Seen: twice, both times after pressing a party button (SNAG, SUCK or STAND) while the guards were in the room.
 - Cause: the party scene is `QA`. A catch calls `capture("s6")` (`src/game/14-ch1-day1.js` line 59). `reSec()` (`src/game/20-ch2.js` lines 528 to 537) looks up the scene in `CH1_CHECKPOINTS` (`src/game/25-capture.js` lines 204 to 221). There is no `QA` entry (and none for Q1, Q3, Q5 to Q9), so it falls back to the old saved opening, scene O1.
 - Fix: add a `QA` entry that starts the party again. Then check every Q scene where a catch can happen has an entry.
-- Needs Brian: one pick. After a catch at the party, start the whole party again, or start again from when the guards walk in.
+- Brian answered (2026-11-14): after the jail card, set Squatch back a little, or back where he was caught, and let play carry on. No guard walking into the bedroom right away. Pull request 38 has that guard version and must not be merged.
 - Proving check: empty `LEAVE_ALONE` in `tests/ch1-kid-play.mjs`, so the robot presses the party buttons. It must reach the score card. Add a short test that sets scene QA, calls the catch, and asserts the scene is not O1 and a spot is offered.
 
 ## 2. Tapping a spot behind furniture walks Squatch into the furniture and stops
@@ -101,7 +101,9 @@ Found by reading the Day 1 code against beats 1 to 21 of `docs/CH1-STORY-WALKTHR
 
 - Today: party guests show nothing. Guards and robots show a filled yellow cone all the time.
 - What Brian decided (chat, Nov 14): every character who can see Squatch has a light dashed outline of a cone, not filled. It fills in yellow when Squatch steps inside it. Same rule in every scene, so the kid always knows who can see him and the party does not look busy.
-- Fix: one shared way to draw a cone (dashed when Squatch is outside, filled when inside), used by guests, the bartender, guards and robots. Start with the party. Mops's heart cone (pull request 35) is a different thing; leave it alone.
+- Brian, Nov 14: do this one first.
+- Step 1, its own pull request with no change in play: move `seenCone` out of `src/game/20-ch2.js` into `60-frame-draw.js`.
+- Step 2 fix: one shared way to draw a cone (dashed when Squatch is outside, filled when inside), used by guests, the bartender, guards and robots. Start with the party. Mops's heart cone (pull request 35) is a different thing; leave it alone.
 - Needs Brian: no new pick. Show him a picture of the party and of one guard scene before merging.
 
 ## 12. The peek is not a peek (beat 3)
