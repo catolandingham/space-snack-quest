@@ -36,7 +36,7 @@ Read this before you play. It is the short version; the tables further down have
 - **The guards where they were.** The guard who comes from the right now enters at (1010, 530) and stops at (760, 520), below the new snack counter; before, he came in at (1010, 400) and stopped at (760, 400).
 - **A card for restarts.** After a catch or a shoo in S9 or S11, the section starts over as Squatch with the LOCKUP card (or Mops's lines), and no switch card, the same as Reset section in Chapter 2.
 - **A stall hint in the lobby.** If a player stands still for a minute there, the chip does not change to a "how to" line yet.
-- **Answers to the 2026-11-07 phone playtest.** The note is in the repo at `docs/playtests/2026-11-07-brian-phone-playtest-ch1.md`. This lines file does not answer those notes. Later decisions are in `docs/DECISIONS.md`.
+- **Answers to the 2026-11-07 phone playtest.** The note is in the repo at `docs/old/playtests/2026-11-07-brian-phone-playtest-ch1.md`. This lines file does not answer those notes. Later decisions are in `docs/DECISIONS.md`.
 
 ## D15. The night out has a purpose and a hazard you can see
 

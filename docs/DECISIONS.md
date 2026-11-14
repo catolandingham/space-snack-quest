@@ -6,7 +6,7 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 - **Every assistant and thread working on Space Snack Quest writes a new decision here the moment it's made**: one line, dated, with its source and status. Don't leave it only in chat or memory.
 - When something changes, the newest version is **Decided** and the older line becomes **Superseded**, with what replaced it. Nothing gets deleted, so you can see the history.
 - **Status words:** **Decided** (Brian said it or approved it) · **Needs Brian's yes** (proposed, or on-screen words waiting on him) · **Superseded** (replaced; the line says by what) · **Open** (a real question nobody has answered yet).
-- **This repo file is the single source of truth.** It was synced on Monday, November 9, 2026 from the designer record through decision R63, and it still holds the earlier snapshot `docs/project/DECISIONS-2026-11-08.md` (on `main` at commit 10030f6). Every earlier entry is kept in section 10. Where a later decision replaces an earlier one, the earlier line is marked **Superseded** and says what replaced it. The dated snapshot's full text is in `docs/history/DECISIONS-2026-11-08.md`. A short pointer stays at `docs/project/DECISIONS-2026-11-08.md`. New decisions get a row in the tables above, through a docs PR (review, "Docs match main: yes", Brian's written yes before merge).
+- **This repo file is the single source of truth.** It was synced on Monday, November 9, 2026 from the designer record through decision R63, and it still holds the earlier snapshot `docs/old/project/DECISIONS-2026-11-08.md` (on `main` at commit 10030f6). Every earlier entry is kept in section 10. Where a later decision replaces an earlier one, the earlier line is marked **Superseded** and says what replaced it. The dated snapshot's full text is in `docs/old/history/DECISIONS-2026-11-08.md`. A short pointer stays at `docs/old/project/DECISIONS-2026-11-08.md`. New decisions get a row in the tables above, through a docs PR (review, "Docs match main: yes", Brian's written yes before merge).
 - Don't invent a decision. If something isn't clear, add it under **Open**.
 
 ## Fidelity system (pictures are locked, not just words)
@@ -15,7 +15,7 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 - **Before Brian sees a sketch:** `tools/check_all.sh` (room layer vs the locked room) and the independent checker (`docs/CHECKER.md`) must both pass. Steps: `docs/FIDELITY.md`.
 - **A locked design changes only when Brian explicitly asks**, and the change gets a new version; the old version is kept. When Brian approves a picture, it's locked as APPROVED (next version) and a line goes in this file.
 
-**Source shorthand:** *Brian tNNN* = Brian's own words in tonight's chat (turn number). *Brian 3:36 PM* etc. = Brian's words recorded with a time in `replot/PARKED-DETAILS.md` (Nov 8, PT). *repo* = `docs/project/DECISIONS-2026-11-08.md` / `STATE-2026-11-08.md` on main 10030f6. *answered* = Brian's 25 answers in `reconcile-sources/answered-decisions.md` (PR #12/#16 rows). *memory* = Squatchbot's saved notes. *card* = an in-chat decision card. *sketch* = a file in `/workspace/ssq/mockups/`. Times are Pacific (PT).
+**Source shorthand:** *Brian tNNN* = Brian's own words in tonight's chat (turn number). *Brian 3:36 PM* etc. = Brian's words recorded with a time in `replot/PARKED-DETAILS.md` (Nov 8, PT). *repo* = `docs/old/project/DECISIONS-2026-11-08.md` / `STATE-2026-11-08.md` on main 10030f6. *answered* = Brian's 25 answers in `reconcile-sources/answered-decisions.md` (PR #12/#16 rows). *memory* = Squatchbot's saved notes. *card* = an in-chat decision card. *sketch* = a file in `/workspace/ssq/mockups/`. Times are Pacific (PT).
 
 ---
 
@@ -50,7 +50,7 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 | W26 | 11-03 | Log each change he asks for in `NICK-CHANGES.md`. | memory (Nov 3) | Superseded by W11 (this file is the log now) |
 | W27 | 11-07 | The Nov 2 spine isn't binding. A departure from it is judged only by the core (the armature, hiding vs being seen, and the seven beats). Work goes chapter by chapter. "Ready for play: Chapter N" means everything discussed for that chapter is in, with a short list of what isn't. | repo | Decided |
 | W28 | 11-05 | The repository is private. | repo | Decided |
-| W29 | 11-06 | Keep STATE, DECISIONS and transcripts in the Wyttmab Drive folder. | repo | Superseded: moved into the repo's `docs/project/` (Nov 8), and now this file |
+| W29 | 11-06 | Keep STATE, DECISIONS and transcripts in the Wyttmab Drive folder. | repo | Superseded: moved into the repo's `docs/old/project/` (Nov 8), and now this file |
 | W30 | 11-06 | Stop work early only when there's a high risk of running out of plan credit. Credit lines: 75% for the shared pool, 90% for Fable. | repo (Nov 6, Nov 7) | Decided |
 | W31 | 11-08 | Wait for the weekly credit reset (docs say "Thursday 2026-11-13") before the Chapter 2 pass. Cursor's allowance may be used in the meantime. | repo | Superseded in part: Brian OK'd the P2/P3 fixes tonight (K20). What "Nov 13" means now is Open (O20). |
 | W32 | 11-08 | Brian's process: build the first three replot decisions first, then come back to questions 4–10, and park every other detail in a saved file. | memory | Superseded by W14: the Chapter 1 cartoon gets reviewed before the rebuild |
@@ -382,7 +382,7 @@ Each panel's on-screen words are in CH1-CARTOON-LINES.md. Which files are curren
 ---
 
 ## 10. Earlier entries, kept word for word
-From the 2026-11-08 snapshot of the Drive master. The full snapshot is now `docs/history/DECISIONS-2026-11-08.md` (it used to be `docs/project/DECISIONS-2026-11-08.md`). Every line below is the original entry. Nothing was deleted. **Decided** means it still stands, and the code points at the same decision in the tables above. **Superseded** means a later decision replaced it. The later decision is named.
+From the 2026-11-08 snapshot of the Drive master. The full snapshot is now `docs/old/history/DECISIONS-2026-11-08.md` (it used to be `docs/old/project/DECISIONS-2026-11-08.md`). Every line below is the original entry. Nothing was deleted. **Decided** means it still stands, and the code points at the same decision in the tables above. **Superseded** means a later decision replaced it. The later decision is named.
 
 - 2026-11-05 (Brian, in Grok): the repository is private. Why: Brian had not known it was public.
   **Decided.** Same as W28.
@@ -418,7 +418,7 @@ From the 2026-11-08 snapshot of the Drive master. The full snapshot is now `docs
   **Decided.** Done.
 
 - 2026-11-06 (Brian): project folder is this Wyttmab Drive folder; the repo holds the code and the working docs; this folder holds STATE, DECISIONS, source snapshots and transcripts.
-  **Superseded** by W29, then by W11. The live copies are this file and `docs/STATE.md`. The dated snapshots' full text is in `docs/history/`. Short pointers stay in `docs/project/`.
+  **Superseded** by W29, then by W11. The live copies are this file and `docs/STATE.md`. The dated snapshots' full text is in `docs/old/history/`. Short pointers stay in `docs/old/project/`.
 
 - 2026-11-07 (Brian): remove the YOU: SQUATCH / YOU: MOPS tag. Why: the switch card and the chip prefix already say who the player is; the tag added clutter and overlapped the sound icon.
   **Decided.** Same as K4.
@@ -477,7 +477,7 @@ From the 2026-11-08 snapshot of the Drive master. The full snapshot is now `docs
 ---
 
 ## 11. Decisions recorded on main on 2026-11-09
-These lines were added to the 2026-11-08 snapshot (now `docs/history/DECISIONS-2026-11-08.md`) after this log was first copied. They are kept here word for word. Nothing was deleted from that snapshot.
+These lines were added to the 2026-11-08 snapshot (now `docs/old/history/DECISIONS-2026-11-08.md`) after this log was first copied. They are kept here word for word. Nothing was deleted from that snapshot.
 
 - 2026-11-09 (Brian): office cutscene, NEEDS BRIAN. Isfred: "Send in Mops for his Employee of the Month photo." Robot: "Mops isn't here." Isfred: "Not here? He can't live off the station!" Robot: "He was replaced by the new robot shipment." Isfred: "I never ordered a replacement! Get me the security tapes."
   **In the game** (PR #19). The words are still marked NEEDS BRIAN in `docs/CH1-CARTOON-LINES.md`. He said yes to merge before the wording pass was finished.
