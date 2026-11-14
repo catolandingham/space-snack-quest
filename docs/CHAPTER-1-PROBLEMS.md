@@ -101,7 +101,7 @@ Found by reading the Day 1 code against beats 1 to 21 of `docs/CH1-STORY-WALKTHR
 
 - Today: party guests show nothing. Guards and robots show a filled yellow cone all the time.
 - What Brian decided (chat, Nov 14): every character who can see Squatch has a light dashed outline of a cone, not filled. It fills in yellow when Squatch steps inside it. Same rule in every scene, so the kid always knows who can see him and the party does not look busy.
-- Brian, Nov 14: do this one first.
+- Brian, Nov 14: do this after scene 1 (beats 1–3) is right. Scene 1 comes first.
 - Step 1, its own pull request with no change in play: move `seenCone` out of `src/game/20-ch2.js` into `60-frame-draw.js`.
 - Step 2 fix: one shared way to draw a cone (dashed when Squatch is outside, filled when inside), used by guests, the bartender, guards and robots. Start with the party. Mops's heart cone (pull request 35) is a different thing; leave it alone.
 - Needs Brian: no new pick. Show him a picture of the party and of one guard scene before merging.
