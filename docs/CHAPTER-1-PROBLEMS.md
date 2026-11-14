@@ -12,16 +12,17 @@ How to run the robot:
 
 ## Recommendation: do not rebuild Chapter 1
 
-A kid can finish the chapter today. The problems below have ten separate, small causes. None of them needs the chapter rebuilt. Fix them in order, with the robot run after each one.
+A kid can finish the chapter today. The problems below have separate, small causes. None of them needs the chapter rebuilt. Fix them in order, with the robot run after each one.
 
-## 1. A catch at the party leaves the game stuck in the bedroom
+## 1. A catch at the party leaves the game stuck in the bedroom (FIXED 2026-11-13)
 
-- What the kid sees: at the party, a guard sees Squatch. The card says "Holding pen. This part starts over." Then Squatch is back in his bedroom at the very start, the goal says to walk around the room, and nothing leads forward. The only way out is to restart the chapter.
-- Seen: twice, both times after pressing a party button (SNAG, SUCK or STAND) while the guards were in the room.
-- Cause: the party scene is `QA`. A catch calls `capture("s6")` (`src/game/14-ch1-day1.js` line 59). `reSec()` (`src/game/20-ch2.js` lines 528 to 537) looks up the scene in `CH1_CHECKPOINTS` (`src/game/25-capture.js` lines 204 to 221). There is no `QA` entry (and none for Q1, Q3, Q5 to Q9), so it falls back to the old saved opening, scene O1.
-- Fix: add a `QA` entry that starts the party again. Then check every Q scene where a catch can happen has an entry.
-- Needs Brian: one pick. After a catch at the party, start the whole party again, or start again from when the guards walk in.
-- Proving check: empty `LEAVE_ALONE` in `tests/ch1-kid-play.mjs`, so the robot presses the party buttons. It must reach the score card. Add a short test that sets scene QA, calls the catch, and asserts the scene is not O1 and a spot is offered.
+- What the kid saw: at the party, a guard sees Squatch. The card says "Holding pen. This part starts over." Then Squatch was back in his bedroom at the very start with nothing leading forward.
+- Cause: the party scene `QA` had no entry in `CH1_CHECKPOINTS` (`src/game/25-capture.js`), so `reSec()` (`src/game/20-ch2.js`) fell back to the old saved opening, scene O1.
+- Brian's rule (R106): "first jail, then released to bedroom. Always on that planet."
+- Fix: `ch1RestartRaid` (`src/game/14-ch1-day1.js`). After the LOCKUP card Squatch walks into his bedroom and the guard comes in to look for him, the same scene that follows a clean getaway. No words changed.
+- Proving checks: `tests/ch1-party-catch.mjs`. The robot's `LEAVE_ALONE` list is empty, so it presses the party buttons too.
+- Still open under R106: the hangar at night (Q4) and the lunch run (QB) start over where they did before, not in the bedroom. Do this after problem 3, or every unfair hangar catch will cost a walk from the bedroom.
+- Still open: Q1, Q3 and Q5 to Q9 have no entry either. No catch can happen in them today. If one is ever added there, it needs an entry.
 
 ## 2. Tapping a spot behind furniture walks Squatch into the furniture and stops
 
@@ -90,3 +91,17 @@ A kid can finish the chapter today. The problems below have ten separate, small 
 ## 10. A start-over with no card (seen once)
 
 - In one run the score card counted 4 catches but only 3 "starts over" cards were shown. Not seen again in two later runs. Cause not found. The robot now fails the run if it happens (`start-over-without-card`).
+
+## 11. The goal bar says the wrong thing during the raid and the bedroom search
+
+- What the kid sees: while the guards are coming in, the goal bar still says "Squatch: look around the party". While the guard searches the bedroom, it says "Squatch: talk with Mops at home". Neither tells the kid to hide.
+- Seen: every run (robot log, and the party catch video).
+- Cause: not traced. The raid (`n.ch1Raid`) and the search (`n.ch1Search`) seem to have no goal line of their own.
+- Needs Brian: yes. Any new goal words need his yes.
+
+## 12. The bedroom guard reaches Squatch in about a second
+
+- What the kid sees: Squatch arrives in the bedroom, the guard walks in and reaches him in about one second, walks him back to the same spot, and does it again until the kid presses HIDE · bed. Nothing is lost, but it looks like being caught over and over.
+- Cause: `ch1SearchStart` (`src/game/14-ch1-day1.js`) puts the guard 140 px from Squatch, and the guard walks at 120 px a second (`CH1_GUARD_SPEED`).
+- Needs Brian: a pick on what should happen here.
+

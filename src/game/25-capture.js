@@ -215,6 +215,8 @@
       S7b: () => ch1Saved("S7b"),
       S9: () => Fs(),
       S11: () => Js(),
+      // The party raid: let out into the bedroom, where the guard comes looking (Brian, 2026-11-13).
+      QA: () => ch1RestartRaid(),
       // Redesigned Chapter 1 night: back at the bin, yellow copy not mailed yet.
       Q4: () => ch1RestartNight(),
       QB: () => ch1RestartLunch(),

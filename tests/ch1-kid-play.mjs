@@ -10,7 +10,7 @@
  *   npm run kid-video   plays it and saves tests/out/kid-play/chapter-1.mp4 for Brian to watch
  *   KID_MAX_S  most seconds to play (default 900)   KID_OUT  folder for kid-play.json and the log
  *   KID_SHOTS=1  saves pictures while playing and joins them into chapter-1.mp4 (needs ffmpeg)
- *   KID_AVOID=   (empty) lets the robot press every button, the party ones included
+ *   KID_AVOID=SNAG,SUCK   makes the robot leave buttons with those words alone
  */
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
@@ -24,10 +24,9 @@ const KNOWN = {
   "tap-stops-at-furniture": "A tap on a spot behind furniture walks Squatch into the furniture and stops (problem 2).",
   "ring-on-squatch": "A goal ring is drawn around Squatch himself (problem 6).",
 };
-// Party buttons that get Squatch caught. A catch at the party leaves the game stuck in the bedroom
-// (docs/CHAPTER-1-PROBLEMS.md, problem 1), so the robot leaves them alone. The change that fixes problem 1
-// should empty this list, so the robot presses them and proves the fix.
-const LEAVE_ALONE = ["SNAG", "SUCK", "STAND"];
+// Buttons the robot leaves alone. Empty since the party catch was fixed (docs/CHAPTER-1-PROBLEMS.md,
+// problem 1): the robot presses the party buttons too, and a catch there leads on to the bedroom.
+const LEAVE_ALONE = [];
 
 const MAX_S = +(process.env.KID_MAX_S || 900);
 const OUT = process.env.KID_OUT || join(root, "tests", "out", "kid-play");
