@@ -9,10 +9,7 @@ How to use it:
 - A later message wins over an earlier one.
 - Numbers that are missing (for example 66 to 76) were bots talking to each other, not Brian.
 - Many messages were spoken into a phone, so some words came out wrong ("Mops" as "mobs", "Squatch" as "squats", "ganitor" as "gander").
-- Eighteen messages had a picture attached. The pictures are not saved here; they are still in Brian's Grok thread. The messages are 29, 45, 51, 110, 160, 170, 173, 174, 214, 229, 230, 250, 251, 276, 322, 323, 325 and 326.
-  - Most are screenshots of old builds, and his words say what was wrong.
-  - 229 (the room) and 230 (the hiding eyes) are already pinned down in `docs/locked-rooms/` and `docs/STYLE-GUIDE.md`.
-  - In 29, 170, 174, 214 and 276 the picture is the whole message (how Squatch, Mops, the guests and one photo wall gag should look). Do not guess what they showed. Ask Brian.
+- Pictures are not saved here. Approved rooms are in `docs/locked-rooms/`; approved character looks are what the game draws today. If a message points at a picture you cannot see, ask Brian. Do not guess.
 
 Where things are:
 
