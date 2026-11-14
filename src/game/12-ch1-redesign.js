@@ -451,64 +451,6 @@
         return (ch1Trail(), sqOk && moOk);
       });
     }
-    function ch1RedesignStart() {
-      ((n.scene = "O1"),
-        (n.room = "closet"),
-        (n.wardrobe = "closed"),
-        (n.ch1D = !1),
-        (n.ch1Duct = !1),
-        (n.ch1Night = !1),
-        (n.ch1Ship = !1),
-        (n.ch1Crew = ""),
-        (n.ch1Mail = ""),
-        (n.ch1Prop = ""),
-        (n.costumeOn = !1),
-        (n.ch1Got = 0),
-        (n.ch1Signed = 0),
-        (n.ch1Mailed = 0),
-        (n.ch1DidBall = !1),
-        (n.ch1Walks = []),
-        (n.ch1Trail = []),
-        (n.ch1SiteRoom = ""),
-        (n.ch1Office = !1),
-        (n.ch1Party = !1),
-        (n.ch1Disguise = !1),
-        (n.ch1Photo = !1),
-        (n.ch1BarDone = !1),
-        (n.ch1Cut = null),
-        (n.ch1Dress = null),
-        (n.ch1PeekReady = !1),
-        (n.ch1Song = !1),
-        (n.ch1Search = !1),
-        (n.ch1Mini = ""),
-        (n.ch1OctChase = !1),
-        (n.ch1SureEnd = !1),
-        (n.guard = null),
-        (n.ch1Raid = null),
-        (n.ch1Day2 = !1),
-        (n.ch1Zoom = null),
-        (n.ch1PadOn = !1),
-        (n.ch1Chain = !1),
-        (n.ch1Flyer = !1),
-        (n.ch1PartyT = 0),
-        (n.ch1PartyOver = !1),
-        (n.ch1PartyDid = {}),
-        (n.ch1Fur = !1),
-        (n.tvOn = !1),
-        (n.sqPose = "sit"),
-        J([
-          { k: "card", id: "jupiter", text: "Stormtop Cloud Resort, floating above Jupiter." },
-          { k: "card", id: "squatch", text: "This is Squatch. He's a Sasquatch." },
-          N(() => {
-            ((n.ctrl = !0), (n.scene = "O1"), chipNow());
-          }),
-          cV(() => n.scene === "O1" && n.moved > 110),
-          N(() => {
-            (n.sqPose === "sit" || n.sqPose === "sleep") && ((n.sqPose = "stand"), (n.sq.y = 540));
-            ((n.ctrl = !0), (n.scene = "Q1"), ch1Day1());
-          }),
-        ]));
-    }
     function ch1AtDelivery() {
       ((n.scene = "Q2"),
         (n.sqPose = "stand"),

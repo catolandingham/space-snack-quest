@@ -10,61 +10,6 @@
       { id: "nose", zone: "extra", label: "button nose" },
       { id: "pipe", zone: "extra", label: "pipe" },
     ];
-    function ch1Day1() {
-      J([
-        N(() => {
-          ((n.ch1Song = !0), (n.ctrl = !0), (n.moPose = "polish"), (n.scene = "Q1"), (n.ch1Chip = "Squatch: sing along with Mops"), chipNow());
-        }),
-      ]);
-    }
-    function ch1SingAlong() {
-      // In front of the desk, above the bucket. Mops is about 160px wide and Squatch
-      // about 124px, so their feet need ~195px between them for a 45px gap.
-      // The back lane (y 390) is above the crate, the G box, and the bucket.
-      let sqX = 660,
-        sqY = 498,
-        moX = 460,
-        moY = 498,
-        lane = 390;
-      ((n.ch1Song = !1), (n.ctrl = !1), (n.act = null), (n.sqPose = "stand"), (n.moPose = "stand"));
-      J([
-        cV((dt) => mV(n.sq, n.sq.x, lane, 190, dt)),
-        cV((dt) => mV(n.sq, sqX, lane, 190, dt)),
-        cV((dt) => mV(n.sq, sqX, sqY, 190, dt)),
-        cV((dt) => mV(n.mo, n.mo.x, lane, 160, dt)),
-        cV((dt) => mV(n.mo, moX, lane, 160, dt)),
-        cV((dt) => mV(n.mo, moX, moY, 160, dt)),
-        N(() => {
-          ((n.sq.f = -1), (n.mo.f = 1), (n.sq.moving = !1), (n.mo.moving = !1), (n.sqPose = "sing"));
-        }),
-        v("sq", "\u266A I'm floating in space! \u266A", "song"),
-        N(() => {
-          ((n.sqPose = "stand"), (n.moPose = "sway"));
-        }),
-        v("mops", "\u266A Baaa-aa-aaa! \u266A", "song"),
-        N(() => {
-          ((n.moPose = "stand"), (n.mo.f = 1), (n.ch1MopsLeave = 1));
-        }),
-      ]);
-    }
-    function ch1PeekSpots() {
-      return [
-        spot({
-          id: "peek",
-          verb: "PEEK",
-          cap: "doorway",
-          who: "sq",
-          x: 890,
-          y: 480,
-          r: 160,
-          f: ch1PeekGo,
-        }),
-      ];
-    }
-    function ch1PeekGo() {
-      ((n.ch1PeekReady = !1), (n.ch1Chip = ""), (n.ctrl = !1), (n.act = null));
-      ch1Go("hall", { who: "sq", scene: "QA" }, ch1SneakHide);
-    }
     function ch1SneakHide() {
       ((n.ch1Party = !0), (n.scene = "QA"), (n.sparks = (n.sparks || []).filter((d) => d.s !== "\u2665")));
       J([

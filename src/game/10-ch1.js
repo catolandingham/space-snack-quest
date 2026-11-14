@@ -93,6 +93,7 @@
       // The redesigned Chapter 1 (Brian, Nov 8). The older scenes stay in this file so a debug link can still open them.
       ch1RedesignStart();
     }
+    // Old opening, kept only for debug links. Do not edit: the scene 1 that plays is in 15-ch1-scene1.js.
     function Sp() {
       ((n.scene = "O1"),
         J([

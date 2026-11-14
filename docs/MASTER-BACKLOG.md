@@ -190,6 +190,8 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 
 ## Changelog
 
+2026-11-14. Tidy, no change in play: Chapter 1 scene 1 (start, song, Mops walking out, peek) moved into `src/game/15-ch1-scene1.js` from `12-ch1-redesign.js`, `13-ch1-slice.js` and `14-ch1-day1.js`. `tools/equivalence.mjs main` and the kid robot show the same play.
+
 2026-11-14. Notes only. Scene 1 (beats 1–3) comes first: new story agreed with Brian (morning, Mops's line, the song as goodbye, "That evening…", the peek with "Robots?"). Walkthrough beats 1–3 rewritten; `docs/CHAPTER-1-PROBLEMS.md` has a "Do first" section with four pull requests in order.
 
 2026-11-14. Notes only. `docs/START-HERE.md` loop step 3: move shared code out of a chapter file in its own pull request before a fix, never mixed. Brian's answer for problem 1 (after jail, set back and carry on) recorded; problem 11 (cones) goes first.
