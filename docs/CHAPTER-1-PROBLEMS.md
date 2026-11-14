@@ -84,9 +84,53 @@ A kid can finish the chapter today. The problems below have ten separate, small 
 
 ## 9. Party extras are buttons, and the dance circle plays itself
 
-- What the kid sees: SNAG, SUCK and STAND show as button labels. The dance circle runs about 30 seconds and ends the same whether the kid taps or not.
-- Needs Brian: his earlier lean was that the vent, plant and security should be hazards in the room, not buttons. Not confirmed.
+- What the kid sees: SNAG, SUCK and STAND show as button labels. Nothing bad happens unless the kid presses the button named after the bad thing. The dance circle runs about 30 seconds and ends the same whether the kid taps or not.
+- What Brian asked for (walkthrough beat 16, his message t126u): the disguise comes off for real reasons. He walks too close to a plant and it snags, he gets near the vent, or he stands next to security. The kid's job is to stay away from those places.
+- Fix: make the plant, the vent and the guard places in the room that act when Squatch walks too close. Remove the three buttons.
+- Needs Brian: no new pick; this is confirmed in his own words. Say back to him what the kid will do, and show a picture, before merging.
 
 ## 10. A start-over with no card (seen once)
 
 - In one run the score card counted 4 catches but only 3 "starts over" cards were shown. Not seen again in two later runs. Cause not found. The robot now fails the run if it happens (`start-over-without-card`).
+
+## Day 1 does not yet play the way the walkthrough says (added 2026-11-14)
+
+Found by reading the Day 1 code against beats 1 to 21 of `docs/CH1-STORY-WALKTHROUGH.md`. Ten beats match or are close. The ones below differ. They were found in the code (`src/game/13-ch1-slice.js`, `14-ch1-day1.js`, `12-ch1-redesign.js`), not by watching every beat on screen, so look at each on screen before fixing it. One per pull request, after problems 1 to 10, in this order unless Brian says otherwise.
+
+## 11. How party guests show they can see Squatch
+
+- Today: guests show nothing. Only the guards, after the alarm, have a yellow cone.
+- Needs Brian: one pick. A: every guest has the filled yellow cone the game already uses (he thought this too busy). B: every guest has a light dashed outline of a cone, not filled; it fills in yellow when Squatch steps inside it. C: his Nov 12 pick, cones only on guards and robots, and guests show a "?" that turns into a "!". On Nov 14 he leaned to B. Show him A and B as pictures of the real party before building.
+
+## 12. The peek is not a peek (beat 3)
+
+- Walkthrough: he taps the doorway and peeks out at the party from inside. Game: pressing PEEK walks him out into the hall.
+- Pull request 33 (Cursor, "Do not merge") has a version of beats 3 to 6. It also swaps all the music in the same change. Lift out only the peek and sneak parts; do not merge it whole.
+
+## 13. Sneaking to the plant plays itself (beat 4)
+
+- Walkthrough: "Sneak to the plant without being seen." Game: he walks to the plant by himself.
+
+## 14. The octopus and the photo have buttons that do the moment (beats 12, 13)
+
+- Walkthrough: the octopus chases slowly and the kid steers away; the kid steps in front of the backdrop before the flash. Game: both work, but there is also a HUG · octopus button and a SNAP · photo button. Remove the two buttons.
+
+## 15. Running home happens by itself (beat 18)
+
+- Walkthrough: the kid runs home and hides; guards search; if a guard reaches him he goes to jail. Game: if the kid does nothing Squatch walks home on his own, and hiding in the hall plant ends the chase. Pull request 38 (jail card, then the bedroom) is waiting on Brian and covers the catch.
+
+## 16. The TV story is a small TV in the room (beat 20)
+
+- Walkthrough and Brian (t287u): cut away to full-screen story pictures. Game: three pictures on the TV set, with two captions that Brian has not approved ("Fur in the scrubber." and "Onto the ship.").
+
+## 17. Mops finds the flyer and fur at the wrong time (beat 19)
+
+- Walkthrough: he finds them when he walks in, then "Everyone out there has someone." / "You have me." Game: he finds them after bedtime, with a line that is not in the walkthrough ("A flyer. And fur on the floor.").
+
+## 18. The bedtime story has no pictures (beat 21)
+
+- Walkthrough: tap through story pictures of Mops finding the baby in a Moon Pie crate. Game: one text box.
+
+## 19. The Croc Boys are barely there (beat 6)
+
+- Walkthrough: the band plays in Crocs and every guest does the robot dance. Game: the lights dim for 2 seconds and three figures bob.

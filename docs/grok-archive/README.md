@@ -40,7 +40,8 @@ Removed from the working tree:
 
 | File | What it is |
 | --- | --- |
-| `squatch-thread.md` | The Squatch Game bot thread |
+| `squatch-thread.md` | The Squatch Game bot thread (the early one, to Nov 6) |
+| `squatchbot-brian-words.md` | Every message Brian wrote to Squatchbot, Nov 3 to Nov 12, from his personal Grok account. Copied 2026-11-14. The `t291u`-style tags in the walkthrough point here |
 | `gbot-handoff.md` | G Bot to Squatch Game |
 | `project-fix-progression-blockers.md` | Squatch coding agent: PRs #1–#5 |
 | `project-review-interaction-story-feedback.md` | Read-only QA for PR #3 |
