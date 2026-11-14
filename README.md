@@ -31,7 +31,7 @@ The older Chapter 1 scenes are still in the program so a debug link such as `?sc
 The game's source is in `src/`. `index.html` is build output: never edit it by hand.
 
 - `src/game/` is the game, in pieces the build joins in name order. Each piece starts with one comment line saying what it holds:
-  `00-core.js` (sound, title, drawing helpers, the story queue, spots), `10-ch1.js` and `11-ch1-hall.js` (Chapter 1, in two parts),
+  `00-core.js` (sound, title, drawing helpers, the story queue, spots), `10-ch1.js` and `11-ch1-hall.js` (Chapter 1, in two parts), `15-ch1-scene1.js` (everything Chapter 1 scene 1 runs: the start, the song, Mops walking out, the peek),
   `20-ch2.js`, `30-ch3.js`, `40-ch4.js` (one per chapter),
   `50-story-frame.js` (the story update every chapter shares), `60-frame-draw.js` (the frame update and the main draw),
   `90-input-shell.js` (keys, taps, the debug link, `window.__ss`, the page and touch controls). The pieces are cut from one function,

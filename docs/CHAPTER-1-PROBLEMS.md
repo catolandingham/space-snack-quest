@@ -18,7 +18,7 @@ A kid can finish the chapter today. The problems below have ten separate, small 
 
 Brian: make scene 1 right before anything else. The story is in `docs/CH1-STORY-WALKTHROUGH.md` beats 1–3. Four pull requests, in this order:
 
-1. Tidy, no change in play: the scene 1 that runs is spread over three files: the start in `12-ch1-redesign.js` (`ch1RedesignStart`, the cards), the song and the peek in `13-ch1-slice.js` (`ch1Day1`, `ch1SingAlong`, `ch1PeekSpots`), and Mops walking out in `14-ch1-day1.js` (`ch1Day1Tick`). `Sp` in `10-ch1.js` is an old copy kept for debug links; never edit it. Gather the live pieces in one place and prove no change with `tools/equivalence.mjs`.
+1. Done (tidy, no change in play): everything scene 1 runs is now in `src/game/15-ch1-scene1.js` (the start, the song, Mops walking out, the peek). `Sp` in `10-ch1.js` is an old copy kept for debug links; never edit it. The goal-bar labels still live in the `Q1` table in `12-ch1-redesign.js`.
 2. Steady screen: problems 4 and 5, and a bigger picture on phone and iPad (Brian t119).
 3. Room and Mops: the morning story in beats 1–2. Fix problem 7 (Squatch in the bed) and problem 6. Remove the floor arrows (`drawWalkNudge`), the "Tap the floor to walk there." note, the help line under the buttons, and the yellow polish sparkle by Mops. Fix the goal bar saying "go with Mops to the ship" (scene `Q1` label in `12-ch1-redesign.js`).
 4. The real peek: problem 12, beat 3.

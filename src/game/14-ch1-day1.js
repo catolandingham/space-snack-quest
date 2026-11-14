@@ -218,19 +218,7 @@
     function ch1Day1Tick(dt) {
       let step = dt || 0;
       ch1RaidTick(step);
-      if (n.ch1MopsLeave && n.room === "closet" && n.moPose !== "hidden") {
-        n.mo.f = 1;
-        mV(n.mo, 880, 458, 160, step) &&
-          ((n.moPose = "hidden"),
-          (n.mo.x = 880),
-          (n.mo.y = 458),
-          (n.ch1MopsLeave = 0),
-          (n.ch1PeekReady = !0),
-          (n.ctrl = !0),
-          (n.scene = "Q1"),
-          (n.ch1Chip = "Squatch: peek out the door"),
-          chipNow());
-      }
+      ch1MopsLeaveTick(step);
       if (n.ch1Search && n.guard && n.room === "closet" && (n.ctrl || n.ch1Escort)) {
         let g = n.guard;
         g.t += step;
