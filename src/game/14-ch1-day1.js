@@ -118,6 +118,30 @@
         (n.sqPose = "stand"),
         (n.guard = { x: 900, y: 520, t: 0, seen: 0 }));
     }
+    // A catch in the party raid (Brian, 2026-11-13): the LOCKUP card, then Squatch is let out into his bedroom
+    // and the guard comes in to look for him, as after a clean getaway. He does not go back to the party.
+    function ch1RestartRaid() {
+      ((n.ch1Party = !1),
+        (n.ch1Raid = null),
+        (n.ch1PartyOver = !0),
+        (n.ch1Disguise = !1),
+        (n.ch1Fur = !1),
+        (n.ch1Mini = ""),
+        (n.ch1Dance = null),
+        (n.scene = "Q3"),
+        (n.room = "closet"),
+        (n.ch1D = !1),
+        (n.ch1Duct = !1),
+        (n.ch1Night = !1),
+        (n.tvOn = !1),
+        (n.sqPose = "stand"),
+        (n.moPose = "hidden"),
+        (n.sq.x = 880),
+        (n.sq.y = 458),
+        (n.sq.moving = !1));
+      // He walks in from the door, the way he comes home from the hall (ch1Go, hall to closet).
+      J([cV((dt) => ((n.ctrl = !1), mV(n.sq, 760, 520, 260, dt))), N(ch1SearchStart)]);
+    }
     function ch1HideFromGuard() {
       ((n.sqPose = "under"), (n.sq.x = 205), (n.sq.y = 500), (n.ctrl = !1), (n.act = null), (n.ch1Search = !1));
       J([uV(1.2), N(() => ((n.guard = null), (n.sqPose = "stand"))), ...ch1Homecoming()]);

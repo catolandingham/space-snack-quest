@@ -71,6 +71,10 @@ GitHub runs `npm run build`, `npm run check-build`, and `npm test` on every pull
 
 `tests/ch1-kid-play.mjs` plays all of Chapter 1 on a phone-size screen by touch, the way a kid would, from waking up to the score card. It runs with `npm test`. `npm run kid-video` also saves a video in `tests/out/kid-play/chapter-1.mp4`. Problems it meets that are already listed in `docs/CHAPTER-1-PROBLEMS.md` print as KNOWN; anything new fails the run. That file ranks the Chapter 1 problems, each with its cause and the check that proves the fix. `docs/START-HERE.md` is the one-page handbook for whoever works on the game next.
 
+## A catch at the party (R106)
+
+If a guard sees Squatch in the party raid, the LOCKUP card shows and then Squatch walks into his bedroom, where the guard comes in to look for him. This is the same scene that follows a clean getaway, so the story goes on and the party is not replayed. Before, the game went back to the opening bedroom scene with no way forward. `tests/ch1-party-catch.mjs`. No words changed.
+
 ## Phase 1: kitchen and diner clarity
 
 Branch `phase-1-kitchen-clarity` makes Chapter 2 clear to a 10-year-old (plan section 3, tasks T5 to T12). Every new line the player reads is listed for Brian in `docs/PHASE-1-LINES-FOR-BRIAN.md`.
