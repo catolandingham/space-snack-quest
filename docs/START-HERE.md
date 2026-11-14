@@ -17,6 +17,8 @@ Everything Brian wants for Chapter 1 is already written down. It was checked on 
 3. `docs/locked-rooms/`: the room pictures. The game draws rooms from these.
 4. `docs/grok-archive/squatchbot-brian-words.md`: Brian's own messages. Open it only when a beat is unclear. Search it; do not read it all.
 
+Open pull requests and branches: only the ones named in `docs/CHAPTER-1-PROBLEMS.md` matter. Everything else is leftovers from old attempts. Do not continue, merge or copy from them.
+
 The game does not yet play the way the walkthrough says. Closing that gap, one beat at a time, is the job. The other files in `docs/` are old plans and logs. Do not read them unless a problem names one. Do not write new ones.
 
 ## What went wrong before

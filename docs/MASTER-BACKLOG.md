@@ -190,6 +190,8 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 
 ## Changelog
 
+2026-11-14. Cleanup with Brian's yes: 18 branches already in `main` deleted; pull requests 22 and 29 closed (branches kept). `docs/START-HERE.md` says only pull requests named in the problem list matter.
+
 2026-11-14. Notes tidy-up, no game change. Thirteen old pages and five old folders (screenshots, audits, snapshots, playtest notes) moved into `docs/old/`, so `docs/` shows only what matters. Links updated. Nothing deleted.
 
 2026-11-14. Handover, docs only. `docs/START-HERE.md` now names the four files that say what the game should be. Every message Brian wrote to Squatchbot is in `docs/grok-archive/squatchbot-brian-words.md`; the walkthrough was checked against it and three missing points were added (jail on a catch, guards every time, and Brian's Nov 14 rule for sight cones: a dashed outline on everyone that fills in when Squatch is inside). `docs/BRIAN-LENS.md` has six more of his rules. `docs/CHAPTER-1-PROBLEMS.md` has problems 11 to 19. No game code changed.
