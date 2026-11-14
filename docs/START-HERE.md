@@ -8,6 +8,17 @@ A funny sneaking adventure in a browser for a 10-year-old, played mostly on a ph
 
 Right now one thing matters: **make Chapter 1 great**. Everything else waits.
 
+## What the game should be
+
+Everything Brian wants for Chapter 1 is already written down. It was checked on 2026-11-14 against every message he wrote. Use these four, in this order, and nothing else:
+
+1. `docs/CH1-STORY-WALKTHROUGH.md`: the story in 61 small beats. What happens, the words, what the kid does. Day 1 is beats 1 to 21.
+2. `docs/BRIAN-LENS.md`: how Brian judges a scene. One page.
+3. `docs/locked-rooms/`: the room pictures. The game draws rooms from these.
+4. `docs/grok-archive/squatchbot-brian-words.md`: Brian's own messages. Open it only when a beat is unclear. Search it; do not read it all.
+
+The game does not yet play the way the walkthrough says. Closing that gap, one beat at a time, is the job. The other files in `docs/` are old plans and logs. Do not read them unless a problem names one. Do not write new ones.
+
 ## What went wrong before
 
 Several models each announced a plan, changed many things at once, said it worked, and the game got worse. The causes, so you do not repeat them:
@@ -17,6 +28,7 @@ Several models each announced a plan, changed many things at once, said it worke
 3. Fixes were chosen by whatever was noticed last. Now there is one ranked list: `docs/CHAPTER-1-PROBLEMS.md`.
 4. Big changes mixed fixes with new ideas, so nobody could tell what broke. Now: one problem, one pull request.
 5. Brian was asked many questions at once with no background. Now: one question at a time, with the background he needs to answer it.
+6. Moments Brian described as things the kid does by moving (sneak, steer away, step into the photo) were built as buttons that play the moment for him. Before building a beat, say back to Brian what the kid will do with his fingers, and get his yes.
 
 ## The loop
 

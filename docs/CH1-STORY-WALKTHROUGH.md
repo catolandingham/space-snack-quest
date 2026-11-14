@@ -1,6 +1,8 @@
 # Chapter 1: the story, beat by beat (words only)
 For Brian · v2, Tuesday, November 10, 2026 · built from the agreed story in DECISIONS.md, not from the comic.
 
+**Checked 2026-11-14** against every message Brian wrote to Squatchbot (`docs/grok-archive/squatchbot-brian-words.md`). The beats match his words. Three things he said on Nov 12 were missing and are now in beats 16, 17 and 18, marked `UPDATED t328u` and `UPDATED 2026-11-14`.
+
 **v2:** Brian's notes on beats 1–15 (t291u) and on v2 beats 10–20 (t296u) are in. `UPDATED` = changed in the first round, `UPDATED t296u` = changed in the second round, `UPDATED t302u` = changed in the third round, `UPDATED t303u` = changed in the fourth round (snack paw close-up), `UPDATED t305u` = the pyramid and the chain reaction put back, `UPDATED t308u` = the bar close-up follows the original game's cut-in (docs/CUT-IN-SPEC.md), `UPDATED t310u` = no parents in the bedtime story (docs/GUARDIANS-STORY-BRIEF.md), `UPDATED t311u` = Brian's Guardians answers and the new paper order (Day 2 and night one), `UPDATED t312u` = the vent moment is a short cutscene and the Mars NO letter (option A). Beats marked (proposed) are new designs for Brian's yes. Five beats were added since v1, so the old v1 beat 16 (Bedtime) is now beat 21, and v1 beat 17 is now 22. Beats 22 onward changed only where tagged.
 
 How to read it: each beat says where it happens, who's there, what happens, the words on screen, and what the player does. **decided** = words Brian approved or already in the game. **pending** = words still waiting for Brian's yes. The small codes at the end of each beat are for Squatchbot.
@@ -159,21 +161,22 @@ Mops is at work. Squatch is home alone.
 - **Words:**
   - A guest: "Cool hat!" *(pending (Brian questioned it))*
 - **Player:** Avoid the risky spots for as long as you can.
+- **How everyone shows they can see him `UPDATED 2026-11-14`:** decided by Brian in chat on Nov 14. Every character who can see Squatch (guests, the bartender, guards, robots) has a light dashed outline of a cone, not filled. It fills in yellow when Squatch steps inside it. This is the rule in every scene, not only the party. It replaces his Nov 12 pick (t332u: cones only on guards and robots, guests show a "?" then a "!"). Not built yet. See problem 11 in `docs/CHAPTER-1-PROBLEMS.md`.
 <sub>S14 S15 R73 R79 · Brian note P3 · v1 beat 11</sub>
 
 ### 17. FUR! Security! `UPDATED t303u`
 - **Where:** Party hall, red pull station on the wall (zoom)
 - **Who:** A guest, Squatch
-- **What happens:** Someone sees fur (a guest, or the bartender after her second catch), runs to the red alarm on the wall, and pulls it. The alarm rings.
+- **What happens:** Someone sees fur (a guest, or the bartender after her second catch), runs to the red alarm on the wall, and pulls it. The alarm rings. Guards run in and search. This must work every time, with no long wait (Brian t136u, t328u). A guest shouting for security instead of pulling the alarm is also fine (t111u).
 - **Words:**
   - Guest: "FUR! Security!" *(pending)*
   - Pull station: "FUR / PULL DOWN" *(pending)*
 <sub>S18 K10 P16 R79 · Brian note P10 · v1 beat 12</sub>
 
-### 18. Run home; security searches the room
+### 18. Run home; security searches the room `UPDATED t328u`
 - **Where:** Party hall → home
 - **Who:** Squatch, security guard
-- **What happens:** Squatch runs home. Security chases him all the way in. The guard comes in half a second after reaching the door and searches the room. If Squatch is hidden, the guard gives up and leaves. If the guard reaches him, he's caught and retries.
+- **What happens:** Squatch runs home. Security chases him all the way in. The guard comes in half a second after reaching the door and searches the room. If Squatch is hidden, the guard gives up and leaves. If the guard reaches him, he's caught and goes to jail. Brian (t328u): "if they catch him, that's when they get jailed, and we absolutely want that." What happens after the jail card is pull request 38, waiting on Brian.
 - **Player:** Run home and hide.
 <sub>S11 K10 C16 · v1 beat 13</sub>
 

@@ -25,6 +25,15 @@ Brian is the designer. He playtests with his young kid on an iPad held sideways.
 - Fair challenge: a player who watches and waits can succeed. Never 0 out of 5.
 - He wants it FUN moment to moment: humor, juicy reactions, little surprises and Easter eggs.
 
+## Added 2026-11-14 from Brian's own messages (`docs/grok-archive/squatchbot-brian-words.md`)
+- The thing to act on glows or is outlined: the actual door, plant or box. Never an arrow, never a circle on the floor (t119u, t334u).
+- Hidden in a plant, Squatch shows only the original big white eyes (t217u, t230u).
+- People are sized by each room's own door. Squatch is 70 to 90 percent of a guest's height. If guests look huge, the guests are wrong, not Squatch (t327u, t328u, t334u).
+- When someone sees fur, security comes every time and fast. If a guard reaches Squatch, he goes to jail (t136u, t328u).
+- The same guests stay in the room for the whole party, and someone works the bar (t281u, t287u).
+- The action button never changes size or moves the screen (t119u).
+- Everyone who can see Squatch has a light dashed cone outline that fills in yellow when he steps inside it. Every scene (chat, Nov 14).
+
 ## Look
 - Clean, bright, readable on an iPad in landscape. No stray sprites, overlaps, z-order mistakes, frame jumps or dark tints during normal play.
 - Characters stand on the floor, not floating, and don't pass through each other.
