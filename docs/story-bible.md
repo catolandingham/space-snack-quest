@@ -2,7 +2,7 @@
 
 Brian's decision applies only to the Chapter 2 kitchen. Chapter 1, the Chapter 2 gas stop and dock, and the Chapter 3 and Chapter 4 outlines stay the original story. This page does not rewrite them and does not delete them.
 
-The full original attachment was not in the workspace, so it is not copied here and it is not thrown out. The previous on-repo note is kept in `docs/spine-archive.md`.
+The full original attachment was not in the workspace, so it is not copied here and it is not thrown out. The previous on-repo note is kept in `docs/old/spine-archive.md`.
 
 Open conflicts outside this kitchen sequence are listed in `docs/STORY-DECISIONS.md`. Nothing on that list is resolved until Brian decides that item.
 

@@ -132,7 +132,7 @@ For Brian and Squatchbot • Monday, November 9, 2026, synced through R63
 | E14 | Every Cursor and repo task goes through a cloud agent, read-only unless a phase is approved | standing rule | High |
 | E16 | Sister game battle-ostriches | parked | High |
 | E17 | `docs/DECISIONS.md` is the single place for every decision; every thread records new ones there immediately | the repo copy is this file, in the docs PR; waiting on Brian's written yes to merge | High |
-| E18 | Room-walk fix (P2) and hoof-stamp cut (P3) | **OK'd by Brian Nov 8**; open as PR #17 (`cursor/later-chapter-walks-04ec`), not merged. Waiting on his written yes in that PR. That PR also edits README, MASTER-BACKLOG, the two `docs/project/` snapshots, CHIP-ARMATURE-AUDIT, and adds LATER-CHAPTERS-LINES-FOR-BRIAN.md | High |
+| E18 | Room-walk fix (P2) and hoof-stamp cut (P3) | **OK'd by Brian Nov 8**; open as PR #17 (`cursor/later-chapter-walks-04ec`), not merged. Waiting on his written yes in that PR. That PR also edits README, MASTER-BACKLOG, the two `docs/old/project/` snapshots, CHIP-ARMATURE-AUDIT, and adds LATER-CHAPTERS-LINES-FOR-BRIAN.md | High |
 
 ---
 

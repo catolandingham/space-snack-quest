@@ -13,7 +13,6 @@ If two docs disagree, [`DECISIONS.md`](DECISIONS.md) wins. Where the build stand
 | [`DECISIONS.md`](DECISIONS.md) | Every decision. This file wins |
 | [`STATE.md`](STATE.md) | Where things stand, through R63, updated after the Chapter 1 redesign and the party landed on `main` |
 | [`OPEN-ASKS.md`](OPEN-ASKS.md) | Every open ask. The codes point into `DECISIONS.md` |
-| [`HANDOVER-FOR-GROK-2026-11-08.md`](HANDOVER-FOR-GROK-2026-11-08.md) | The 2026-11-08 handover: how the project was handed to the Squatch Game bot, and where Brian's comments landed. Newer facts are in `STATE.md` and `DECISIONS.md` |
 | [`CH1-LINES-FOR-BRIAN.md`](CH1-LINES-FOR-BRIAN.md) | Words in the redesigned Chapter 1 that a new game plays. Tests read this file. Pull request #25 is editing it, so this cleanup does not |
 | [`CH1-CARTOON-LINES.md`](CH1-CARTOON-LINES.md) | The full Chapter 1 cartoon, in story order, through R63. `STATE.md` calls this the words file. It includes lines that are not in the game yet. Each of those is marked NEEDS BRIAN |
 | [`STYLE-GUIDE.md`](STYLE-GUIDE.md) | Look rules for sketches and the Chapter 1 build |
@@ -27,30 +26,22 @@ If two docs disagree, [`DECISIONS.md`](DECISIONS.md) wins. Where the build stand
 | Doc | What it is |
 | --- | --- |
 | [`STORY-DECISIONS.md`](STORY-DECISIONS.md) | The older eight story questions. Answered items are not shown as pending |
-| [`original-story-spine.md`](original-story-spine.md) | Brian's Nov 2 story spine. It is not binding (W27 in `DECISIONS.md`) |
-| [`DESIGN-CHECKLISTS.md`](DESIGN-CHECKLISTS.md) | Checklists for scenes and prompts |
 | [`PHASE-1-LINES-FOR-BRIAN.md`](PHASE-1-LINES-FOR-BRIAN.md), [`PHASE-2-LINES-FOR-BRIAN.md`](PHASE-2-LINES-FOR-BRIAN.md), [`PHASE-3-LINES-FOR-BRIAN.md`](PHASE-3-LINES-FOR-BRIAN.md) | Line tables from those merged phases. Tests read them at these paths. They are not a second copy of the Chapter 1 cartoon |
 | [`LATER-CHAPTERS-LINES-FOR-BRIAN.md`](LATER-CHAPTERS-LINES-FOR-BRIAN.md) | One Chapter 2 line that was cut |
-| [`LATER-CHAPTERS-IMPROVEMENTS.md`](LATER-CHAPTERS-IMPROVEMENTS.md) | Proposals for Chapters 2 to 4. A proposal that `DECISIONS.md` has replaced is marked there |
-| [`playtests/`](playtests/) | Transcribed playtest recordings |
+| [`old/`](old/) | Old plans, reviews, audits, screenshots and snapshots, moved here 2026-11-14. Not the truth. Do not read unless a problem names a file here |
 | [`grok-archive/`](grok-archive/) | Squatch and G Bot threads. Ostrich-only files were removed. See that folder's README |
 
 The sections below (capture, section reset, kitchen composition) are working notes for those systems. `DECISIONS.md` wins if they disagree.
 
 ## History
 
-Marked here, or moved to [`history/`](history/). Not deleted.
+Marked here, or moved to [`old/`](old/). Not deleted.
 
 | Doc | Where it stands |
 | --- | --- |
-| [`history/STATE-2026-11-08.md`](history/STATE-2026-11-08.md) | Superseded state snapshot. Pointer: [`project/STATE-2026-11-08.md`](project/STATE-2026-11-08.md) |
-| [`history/DECISIONS-2026-11-08.md`](history/DECISIONS-2026-11-08.md) | Superseded decisions snapshot. Pointer: [`project/DECISIONS-2026-11-08.md`](project/DECISIONS-2026-11-08.md) |
+| [`history/STATE-2026-11-08.md`](old/history/STATE-2026-11-08.md) | Superseded state snapshot. Pointer: [`project/STATE-2026-11-08.md`](old/project/STATE-2026-11-08.md) |
+| [`history/DECISIONS-2026-11-08.md`](old/history/DECISIONS-2026-11-08.md) | Superseded decisions snapshot. Pointer: [`project/DECISIONS-2026-11-08.md`](old/project/DECISIONS-2026-11-08.md) |
 | [`CHAPTER-1-LINES-FOR-BRIAN.md`](CHAPTER-1-LINES-FOR-BRIAN.md) | History of the Chapter 1 pass (PR #11), the night-out scenes. Left at this path because the tests read it here |
-| [`spine-archive.md`](spine-archive.md) | The previous on-repo story note. Left here because `MASTER-BACKLOG.md` names this path |
-| [`PLAN-2026-11-06.md`](PLAN-2026-11-06.md) | The 2026-11-06 plan (tasks T1 to T28). The phases it names are merged. Left here because later docs link this path |
-| [`CODE-REVIEW-2026-11-06.md`](CODE-REVIEW-2026-11-06.md) | Code review from before the readable `src/` copy. Left here because the plan and the Hermes job cite it |
-| [`HERMES-GO.md`](HERMES-GO.md) | The finished Hermes job. The report is [`FEEDBACK-CODE-CHECK.md`](FEEDBACK-CODE-CHECK.md) |
-| [`CHIP-ARMATURE-AUDIT.md`](CHIP-ARMATURE-AUDIT.md) | Chip audit against the spine, on the phase-2 branch |
 
 ## Left in place on purpose
 
@@ -60,9 +51,9 @@ These were not deleted, because it is not clear they are safe to drop:
 
 - `CH1-LINES-FOR-BRIAN.md` and `CH1-CARTOON-LINES.md` both describe Chapter 1 words. They are not copies. One is the redesign that is in the game. The other is the full cartoon, including lines still marked NEEDS BRIAN. `STATE.md` points at the cartoon file. The root README points at the in-game file.
 - `gbot-thread.md` mentions Battle Ostriches and Space Snack Quest in one thread. See [`grok-archive/README.md`](grok-archive/README.md).
-- `HANDOVER-FOR-GROK-2026-11-08.md` still says the Drive copies were the live ones, and that `grok-archive/` held every thread. That was true on the day it was written. It was not rewritten.
-- `original-story-spine.md` calls itself the single source of truth. W27 in `DECISIONS.md` says the Nov 2 spine is not binding.
-- `CHIP-ARMATURE-AUDIT.md` may be stale next to the Chapter 1 redesign. It was not checked line by line against the current game in this cleanup.
+- `old/HANDOVER-FOR-GROK-2026-11-08.md` still says the Drive copies were the live ones, and that `grok-archive/` held every thread. That was true on the day it was written. It was not rewritten.
+- `old/original-story-spine.md` calls itself the single source of truth. W27 in `DECISIONS.md` says the Nov 2 spine is not binding.
+- `old/CHIP-ARMATURE-AUDIT.md` may be stale next to the Chapter 1 redesign. It was not checked line by line against the current game in this cleanup.
 
 ## Capture
 
