@@ -190,6 +190,10 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 
 ## Changelog
 
+2026-11-14. Notes only. Scene 1 (beats 1–3) comes first: new story agreed with Brian (morning, Mops's line, the song as goodbye, "That evening…", the peek with "Robots?"). Walkthrough beats 1–3 rewritten; `docs/CHAPTER-1-PROBLEMS.md` has a "Do first" section with four pull requests in order.
+
+2026-11-14. Notes only. `docs/START-HERE.md` loop step 3: move shared code out of a chapter file in its own pull request before a fix, never mixed. Brian's answer for problem 1 (after jail, set back and carry on) recorded; problem 11 (cones) goes first.
+
 2026-11-14. Cleanup with Brian's yes: 18 branches already in `main` deleted; pull requests 22 and 29 closed (branches kept). `docs/START-HERE.md` says only pull requests named in the problem list matter.
 
 2026-11-14. Notes tidy-up, no game change. Thirteen old pages and five old folders (screenshots, audits, snapshots, playtest notes) moved into `docs/old/`, so `docs/` shows only what matters. Links updated. Nothing deleted.

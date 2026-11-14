@@ -14,13 +14,24 @@ How to run the robot:
 
 A kid can finish the chapter today. The problems below have ten separate, small causes. None of them needs the chapter rebuilt. Fix them in order, with the robot run after each one.
 
+## Do first: scene 1 (beats 1–3), Brian 2026-11-14
+
+Brian: make scene 1 right before anything else. The story is in `docs/CH1-STORY-WALKTHROUGH.md` beats 1–3. Four pull requests, in this order:
+
+1. Tidy, no change in play: the scene 1 that runs is spread over three files: the start in `12-ch1-redesign.js` (`ch1RedesignStart`, the cards), the song and the peek in `13-ch1-slice.js` (`ch1Day1`, `ch1SingAlong`, `ch1PeekSpots`), and Mops walking out in `14-ch1-day1.js` (`ch1Day1Tick`). `Sp` in `10-ch1.js` is an old copy kept for debug links; never edit it. Gather the live pieces in one place and prove no change with `tools/equivalence.mjs`.
+2. Steady screen: problems 4 and 5, and a bigger picture on phone and iPad (Brian t119).
+3. Room and Mops: the morning story in beats 1–2. Fix problem 7 (Squatch in the bed) and problem 6. Remove the floor arrows (`drawWalkNudge`), the "Tap the floor to walk there." note, the help line under the buttons, and the yellow polish sparkle by Mops. Fix the goal bar saying "go with Mops to the ship" (scene `Q1` label in `12-ch1-redesign.js`).
+4. The real peek: problem 12, beat 3.
+
+Saved for later, not now: a montage of Squatch's day (homework, things hidden around the room, lonely) and Mops checking in at night.
+
 ## 1. A catch at the party leaves the game stuck in the bedroom
 
 - What the kid sees: at the party, a guard sees Squatch. The card says "Holding pen. This part starts over." Then Squatch is back in his bedroom at the very start, the goal says to walk around the room, and nothing leads forward. The only way out is to restart the chapter.
 - Seen: twice, both times after pressing a party button (SNAG, SUCK or STAND) while the guards were in the room.
 - Cause: the party scene is `QA`. A catch calls `capture("s6")` (`src/game/14-ch1-day1.js` line 59). `reSec()` (`src/game/20-ch2.js` lines 528 to 537) looks up the scene in `CH1_CHECKPOINTS` (`src/game/25-capture.js` lines 204 to 221). There is no `QA` entry (and none for Q1, Q3, Q5 to Q9), so it falls back to the old saved opening, scene O1.
 - Fix: add a `QA` entry that starts the party again. Then check every Q scene where a catch can happen has an entry.
-- Needs Brian: one pick. After a catch at the party, start the whole party again, or start again from when the guards walk in.
+- Brian answered (2026-11-14): after the jail card, set Squatch back a little, or back where he was caught, and let play carry on. No guard walking into the bedroom right away. Pull request 38 has that guard version and must not be merged.
 - Proving check: empty `LEAVE_ALONE` in `tests/ch1-kid-play.mjs`, so the robot presses the party buttons. It must reach the score card. Add a short test that sets scene QA, calls the catch, and asserts the scene is not O1 and a spot is offered.
 
 ## 2. Tapping a spot behind furniture walks Squatch into the furniture and stops
@@ -101,7 +112,9 @@ Found by reading the Day 1 code against beats 1 to 21 of `docs/CH1-STORY-WALKTHR
 
 - Today: party guests show nothing. Guards and robots show a filled yellow cone all the time.
 - What Brian decided (chat, Nov 14): every character who can see Squatch has a light dashed outline of a cone, not filled. It fills in yellow when Squatch steps inside it. Same rule in every scene, so the kid always knows who can see him and the party does not look busy.
-- Fix: one shared way to draw a cone (dashed when Squatch is outside, filled when inside), used by guests, the bartender, guards and robots. Start with the party. Mops's heart cone (pull request 35) is a different thing; leave it alone.
+- Brian, Nov 14: do this after scene 1 (beats 1–3) is right. Scene 1 comes first.
+- Step 1, its own pull request with no change in play: move `seenCone` out of `src/game/20-ch2.js` into `60-frame-draw.js`.
+- Step 2 fix: one shared way to draw a cone (dashed when Squatch is outside, filled when inside), used by guests, the bartender, guards and robots. Start with the party. Mops's heart cone (pull request 35) is a different thing; leave it alone.
 - Needs Brian: no new pick. Show him a picture of the party and of one guard scene before merging.
 
 ## 12. The peek is not a peek (beat 3)

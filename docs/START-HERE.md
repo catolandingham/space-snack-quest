@@ -39,6 +39,7 @@ Do this, and only this, until the list is empty or Brian redirects you.
 1. `git fetch`, then look at `gh pr list`. If someone else has pushed work on the same thing, stop and tell Brian.
 2. Take the top unfixed problem in `docs/CHAPTER-1-PROBLEMS.md`. If it says "Needs Brian", ask him that one question first, with a picture if it is about looks.
 3. Branch from `main`. Change the fewest lines that fix the cause written there. Edit `src/`, never `index.html`.
+   If the fix changes a rule every chapter uses (walking, catching, cones, the big button, the goal bar) and its code sits in one chapter's file, first move only that code to a shared file (`00-core.js` for rules, `60-frame-draw.js` for drawing) in its own pull request that changes nothing in play. Then make the fix in a second pull request. Never mix a move and a fix.
 4. Take the problem off the `KNOWN` list in `tests/ch1-kid-play.mjs`, or add the test the list names.
 5. Run `npm run build`, then `node tests/ch1-kid-play.mjs`. It must reach the score card and pass.
 6. Mark the problem fixed in `docs/CHAPTER-1-PROBLEMS.md`. Update `README.md` and `docs/MASTER-BACKLOG.md`.
@@ -66,7 +67,10 @@ Do this, and only this, until the list is empty or Brian redirects you.
 | Goal bar, stars, faces | `src/game/80-hud.js` |
 | Big button, stick, test hooks (`window.__ss`) | `src/game/90-input-shell.js` |
 | Drawing the picture | `src/game/60-frame-draw.js` |
+| Sight cones (used by every chapter, but filed in Chapter 2's file) | `src/game/20-ch2.js` (`seenCone`) |
 | Every decision Brian has made | `docs/DECISIONS.md` (this wins when docs disagree) |
+
+Files `10` to `14` are Chapter 1, `20` Chapter 2, `30` Chapter 3, `40` Chapter 4; the rest are shared by all chapters. About 200 shared pieces are misfiled in chapter files, most in `20-ch2.js`. Move them only as step 3 says, never all at once.
 
 Open any scene in a browser with `index.html?scene=Q4&debug=1`. Chapter 1 from the top is `?ch=1`.
 
