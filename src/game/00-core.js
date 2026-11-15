@@ -64,8 +64,9 @@
       ? !0
       : window.innerWidth > window.innerHeight;
   }
+  // The short side of the window (not the screen), so the picture fits what the player can see.
   function Rb() {
-    return typeof screen > "u" ? 640 : Math.min(screen.width, screen.height);
+    return typeof window > "u" ? 640 : Math.min(window.innerWidth, window.innerHeight);
   }
   function s8(V, t) {
     let a = V.getContext("2d");

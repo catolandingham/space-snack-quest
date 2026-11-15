@@ -19,7 +19,7 @@ A kid can finish the chapter today. The problems below have ten separate, small 
 Brian: make scene 1 right before anything else. The story is in `docs/CH1-STORY-WALKTHROUGH.md` beats 1–3. Four pull requests, in this order:
 
 1. Done (tidy, no change in play): everything scene 1 runs is now in `src/game/15-ch1-scene1.js` (the start, the song, Mops walking out, the peek). `Sp` in `10-ch1.js` is an old copy kept for debug links; never edit it. The goal-bar labels still live in the `Q1` table in `12-ch1-redesign.js`.
-2. Steady screen: problems 4 and 5, and a bigger picture on phone and iPad (Brian t119).
+2. Done (steady screen): the big button is one size for every label, the page no longer jumps, phone sideways fits, iPad sideways picture grows from about a third to over half the screen. Phone upright is limited by the phone's width; turning it sideways gives a picture about twice as big. Check: `tests/screen-fit.mjs`.
 3. Room and Mops: the morning story in beats 1–2. Fix problem 7 (Squatch in the bed) and problem 6. Remove the floor arrows (`drawWalkNudge`), the "Tap the floor to walk there." note, the help line under the buttons, and the yellow polish sparkle by Mops. Fix the goal bar saying "go with Mops to the ship" (scene `Q1` label in `12-ch1-redesign.js`).
 4. The real peek: problem 12, beat 3.
 
@@ -53,7 +53,7 @@ Saved for later, not now: a montage of Squatch's day (homework, things hidden ar
 - Needs Brian: one pick between those two.
 - Proving check: a test that stands Squatch 60 px behind the robot while it looks away, and asserts either no catch, or that a drawn circle is on screen (`__ss.conesDrawn()` has an item with `circle`).
 
-## 4. The big button changes width with every label
+## 4. The big button changes width with every label (fixed 2026-11-14)
 
 - What the kid sees: the round ACTION button turns into a wide pill for "DANCE · circle" or "HIDE · plant", then back. Brian has asked several times for one size.
 - Seen: 32 different sizes in one run, from 104 px to 200 px wide.
@@ -62,7 +62,7 @@ Saved for later, not now: a montage of Squatch's day (homework, things hidden ar
 - Needs Brian: a look at the new button before it merges (picture in chat).
 - Proving check: remove `button-size` from `KNOWN`. The robot run must pass.
 
-## 5. The whole page jumps down once at the start
+## 5. The whole page jumps down once at the start (fixed 2026-11-14)
 
 - What the kid sees: after the opening card, the picture and both controls drop by 126 px.
 - Cause: on a phone the goal bar sits above the picture in `ss-hudbar` (`src/game/80-hud.js` line 117, 126 px tall, hidden at first). `hudLayout` (line 243) only shows it the first time the bar is needed, which is after the opening card.
