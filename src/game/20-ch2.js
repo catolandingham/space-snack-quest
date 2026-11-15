@@ -311,18 +311,6 @@
         (n.ch1VeilTo = 0),
         (n.ch1Drag = ""));
     }
-    function drawCap() {
-      let a = n.act;
-      // No caption over the crate's own LEAVE SOUP label, or over the dish while it is being scrubbed.
-      if (!a || !a.cap || !n.ctrl || n.ch1Zoom || a.verb === "LEAVE SOUP" || (n.room === "kitchen" && ch2.dishT > 0)) return;
-      // The label is at least 156 wide, wider for long words, and always fully on the picture.
-      let t = a.verb + " \u00b7 " + a.cap;
-      ge(14);
-      let d = Math.max(156, e.measureText(t).width + 24),
-        x = w(a.x, d / 2 + 4, c - d / 2 - 4),
-        y = Math.max(28, a.y - 36);
-      (m(x - d / 2, y - 14, d, 28, 8), r("#fffaf0", 3), g(t, x, y, 14, "#1e2430", "center", 800));
-    }
     // The goal chip for Chapter 2: one table, read every frame from the phase, the room and who is in control.
     // Every line names who acts. No line names a place in another room. The first time a mechanic appears
     // the chip names the step (g1, g3hide); after that it names only the goal, so discovery stays with the player. Wording waits for Brian's yes
