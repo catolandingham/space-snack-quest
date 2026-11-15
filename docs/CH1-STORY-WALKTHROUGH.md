@@ -38,7 +38,7 @@ Mops is at work. Squatch is home alone.
 - **Words:**
   - Card: "That evening…" *(Brian yes, Nov 14)*
   - Banner: "ROBOTICS DELEGATION!" *(decided)*
-  - Isfred, muffled through the noise: "Mmf mmf... mm-mmf... mmf!" *(pending Brian yes)*
+  - Isfred, muffled through the noise: "Mmf mmf... mm-mmf... mmf!" *(Brian yes, Nov 14)*
   - Squatch, thinking: "Robots?" *(decided, Brian Nov 14; moved here from beat 5; said once, here only)*
 - **Player:** Tap the doorway to peek.
 - **In the game (Nov 14):** Squatch stands in his doorway at the bottom wall, half hidden. The goal bar is empty while he peeks. Then he walks to the plant on his own (beat 4, problem 13, still plays itself).
