@@ -30,6 +30,8 @@ const song = await page.evaluate(() => {
   n.mo.x = 730;
   n.mo.y = 420;
   n.mo.f = -1;
+  ss.tick(0.05);
+  const musicBefore = ss.music;
   const offer = ss.offerNow();
   const from = n.mo.x;
   offer.f();
@@ -65,6 +67,7 @@ const song = await page.evaluate(() => {
     }
   };
   const lines = [];
+  const musicDuring = [];
   let chipDuring = "";
   let pose = "";
   const faces = [];
@@ -72,6 +75,7 @@ const song = await page.evaluate(() => {
     const c = n.cur;
     if (c && c.k === "bub") {
       if (!lines.includes(c.b.text)) lines.push(c.b.text);
+      if (c.b.style === "song") (ss.tick(0.05), musicDuring.push(ss.music));
       if (!chipDuring) {
         chipDuring = n.ch1Chip;
         pose = n.sqPose;
@@ -90,6 +94,10 @@ const song = await page.evaluate(() => {
     ss.tick(0.05);
   }
   const chipBeforeLeave = n.ch1Chip;
+  // Once the tune has finished (a few seconds), the warm theme comes back.
+  let backAfter = -1;
+  for (let i = 0; i < 40 && backAfter < 0; i++) (ss.tick(0.25), ss.music === "warm" && (backAfter = (i + 1) * 0.25));
+  const musicAfter = ss.music;
   let left = false;
   for (let i = 0; i < 100 && n.moPose !== "hidden"; i++) ss.tick(0.05);
   left = n.moPose === "hidden";
@@ -102,6 +110,10 @@ const song = await page.evaluate(() => {
     ss.tick(0.1);
   }
   return {
+    backAfter,
+    musicBefore,
+    musicDuring,
+    musicAfter,
     evening,
     verb: offer && offer.verb,
     steps,
@@ -123,6 +135,7 @@ const song = await page.evaluate(() => {
 });
 g.check("SING is the action", song.verb === "SING", song);
 g.check("they meet at the door before anyone sings", song.arrived && song.steps > 2 && song.lines[0] === "\u266A I'm floating in space! \u266A", song);
+g.check("singing or music, never both: the warm music stops while they sing and comes back after", song.musicBefore === "warm" && song.musicDuring.length === 2 && song.musicDuring.every((m) => m === "") && song.musicAfter === "warm", song);
 g.check("Mops and Squatch face each other", song.facing, song);
 g.check("Mops answers with the old line", song.lines[1] === "\u266A Baaa-aa-aaa! \u266A", song);
 g.check("the goodbye stand-in is gone", song.goodbye === false, song);
