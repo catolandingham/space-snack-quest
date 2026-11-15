@@ -123,9 +123,23 @@
         }),
       ];
     }
+    // The peek (beat 3): Squatch leans out of his doorway. The hall is already full (nobody pops in),
+    // he hears talk from the stage he can't make out, reads the banner, and thinks "Robots?".
+    // Then he sneaks to the plant (ch1SneakHide), where Isfred's announcement plays once.
+    // He stops in his doorway at the bottom wall, so he is only leaning in, not in the room yet.
+    const CH1_PEEK_AT = [470, 628];
     function ch1PeekGo() {
-      ((n.ch1PeekReady = !1), (n.ch1Chip = ""), (n.ctrl = !1), (n.act = null));
-      ch1Go("hall", { who: "sq", scene: "QA" }, ch1SneakHide);
+      ((n.ch1PeekReady = !1), (n.ch1Chip = ""), (n.ctrl = !1), (n.act = null), (n.ch1Party = !0), (n.ch1Peeking = !0));
+      ch1Go("hall", { who: "sq", scene: "QA", stand: CH1_PEEK_AT }, ch1PeekLook);
+    }
+    function ch1PeekLook() {
+      ((n.ch1Party = !0), (n.scene = "QA"), (n.ctrl = !1), (n.sq.moving = !1));
+      J([
+        uV(0.6),
+        v("official", "Mmf mmf... mm-mmf... mmf!", "whisper"),
+        v("sq", "Robots?", "whisper"),
+        N(ch1SneakHide),
+      ]);
     }
     function ch1MopsLeaveTick(step) {
       if (n.ch1MopsLeave && n.room === "closet" && n.moPose !== "hidden") {

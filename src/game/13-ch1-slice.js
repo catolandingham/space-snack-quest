@@ -21,7 +21,6 @@
         v("official", "Welcome, everybody, to the Stormtop Space Party!"),
         v("official", "Let's give a big hello to our friends from Bleep-Bloop Robotics!"),
         v("official", "Soon their helper robots will be here, to help with the heavy work."),
-        v("sq", "Robots?", "whisper"),
         v("official", "And now... put your hands together for the Croc Boys!"),
         N(() => {
           ((n.ch1Dim = !0), (n.ch1Dance = 2));
@@ -31,7 +30,7 @@
           n.ch1Dim = !1;
         }),
         v("sq", "I've never gotten to dance at a party.", "whisper"),
-        N(() => ch1Go("closet", { who: "sq", scene: "Q1" }, ch1DressOpen)),
+        N(() => ((n.ch1Peeking = !1), ch1Go("closet", { who: "sq", scene: "Q1" }, ch1DressOpen))),
       ]);
     }
     function ch1DressOpen() {

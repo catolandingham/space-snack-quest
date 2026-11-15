@@ -21,7 +21,8 @@ Brian: make scene 1 right before anything else. The story is in `docs/CH1-STORY-
 1. Done (tidy, no change in play): everything scene 1 runs is now in `src/game/15-ch1-scene1.js` (the start, the song, Mops walking out, the peek). `Sp` in `10-ch1.js` is an old copy kept for debug links; never edit it. The goal-bar labels still live in the `Q1` table in `12-ch1-redesign.js`.
 2. Done (steady screen): the big button is one size for every label, the page no longer jumps, phone sideways fits, iPad sideways picture grows from about a third to over half the screen. Phone upright is limited by the phone's width; turning it sideways gives a picture about twice as big. Check: `tests/screen-fit.mjs`.
 3. Done (morning): after the cards, short bubbles while Squatch is in bed (Brian: not a lot of text at once): Mops "Morning, Squatch." / "Big party in the hall tonight." / Squatch "Party?" / Mops "Stay in here." Squatch hops out of bed (no sliding through the frame) and walks; Mops walks to the door humming; they sing there as his goodbye (Brian yes, Nov 14); Mops leaves, a "That evening…" card, then the peek goal. The room is the locked picture from the first moment, so there is one bucket and nothing jumps when the song starts. Removed: floor arrows, "Tap the floor to walk there." (Chapter 1 only; other chapters keep it), the touch help line, the yellow polish sparkle, the "go with Mops to the ship" goal. New calendar picture (`home-room-empty-closed-v4.png`): a real calendar with the Moon Pie delivery day circled. Rule (Brian, Nov 14): no yellow ring and no "VERB · thing" tag when the action happens where Squatch stands (`actsWhereSquatchStands`). Check: `tests/scene1-morning.mjs`.
-4. The real peek: problem 12, beat 3.
+4. Done (peek): Squatch leans in at his doorway (stands in the gap of the bottom wall, half hidden), the hall is already full on the first frame, the goal bar is empty, Isfred's muffled "Mmf mmf... mm-mmf... mmf!" (Brian yes, Nov 14), then "Robots?" once. Then he walks to the plant and the announcement plays there. Check: the peek part of `tests/scene1-morning.mjs`.
+5. Next: sneaking to the plant plays itself (problem 13, beat 4).
 
 Saved for later, not now: a montage of Squatch's day (homework, things hidden around the room, lonely) and Mops checking in at night.
 
@@ -121,7 +122,7 @@ Found by reading the Day 1 code against beats 1 to 21 of `docs/CH1-STORY-WALKTHR
 - Step 2 fix: one shared way to draw a cone (dashed when Squatch is outside, filled when inside), used by guests, the bartender, guards and robots. Start with the party. Mops's heart cone (pull request 35) is a different thing; leave it alone.
 - Needs Brian: no new pick. Show him a picture of the party and of one guard scene before merging.
 
-## 12. The peek is not a peek (beat 3)
+## 12. The peek is not a peek (beat 3) — fixed Nov 14 (see "Do first" step 4)
 
 - Walkthrough: he taps the doorway and peeks out at the party from inside. Game: pressing PEEK walks him out into the hall.
 - Pull request 33 (Cursor, "Do not merge") has a version of beats 3 to 6. It also swaps all the music in the same change. Lift out only the peek and sneak parts; do not merge it whole.
