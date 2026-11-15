@@ -10,6 +10,8 @@
  * - no yellow ring around Squatch for the song (it happens where he stands),
  * - after Mops leaves there is the "That evening…" card, then the peek goal,
  * - no touch help line and no "Tap the floor" note.
+ * - the peek (step 4): the hall is already full on the first hall frame, Squatch stays in his doorway,
+ *   the goal bar is empty, he hears muffled talk, then thinks "Robots?" once, then hides in the plant.
  *   node tests/scene1-morning.mjs
  */
 import { startGame, sleep } from "./game-page.mjs";
@@ -109,6 +111,38 @@ for (let i = 0; i < 80; i++) {
 }
 g.check('"That evening…" card before the peek', evening);
 g.check("then the goal is to peek out the door", s.ctrl && /peek out the door/.test(s.chip), s.chip);
+// The peek: stand at the door and use it.
+await page.evaluate(() => {
+  const n = window.__ss.op;
+  ((n.sq.x = 820), (n.sq.y = 480));
+  const o = window.__ss.offerNow();
+  o && o.f();
+});
+const peek = { firstHallParty: null, door: null, chips: new Set(), said: [] };
+for (let i = 0; i < 120; i++) {
+  const p = await page.evaluate(() => {
+    const n = window.__ss.op,
+      c = n.cur || {};
+    return { room: n.room, party: !!n.ch1Party, chip: n.chip || "", cur: c.k || "", text: (c.b && c.b.text) || c.text || "", sq: [n.sq.x, n.sq.y] };
+  });
+  if (p.room === "hall") {
+    if (peek.firstHallParty === null) peek.firstHallParty = p.party;
+    if (/^Mmf/.test(p.text) && !peek.door) peek.door = p.sq;
+    if (!/Croc Boys/.test(p.text)) peek.chips.add(p.chip);
+    if (p.cur === "bub" && peek.said[peek.said.length - 1] !== p.text) peek.said.push(p.text);
+  }
+  if (/Croc Boys/.test(p.text)) break;
+  if (p.cur === "bub" || p.cur === "card" || p.cur === "wait") await tap();
+  else await sleep(250);
+}
+g.check("the hall is already full when Squatch peeks", peek.firstHallParty === true, peek.firstHallParty);
+g.check("he stays in his doorway for the muffled talk", !!peek.door && peek.door[1] > 600, peek.door);
+g.check("the goal bar is empty during the peek", [...peek.chips].every((c) => !c), [...peek.chips]);
+const mm = peek.said.indexOf("Mmf mmf... mm-mmf... mmf!"),
+  rb = peek.said.indexOf("Robots?"),
+  wel = peek.said.findIndex((t) => /^Welcome, everybody/.test(t));
+g.check("muffled talk, then Robots?, then the announcement", mm >= 0 && rb > mm && wel > rb, peek.said);
+g.check("Robots? only once", peek.said.filter((t) => t === "Robots?").length === 1, peek.said);
 g.check("the goal bar never says ship in scene 1", ![...chips].some((c) => /ship/i.test(c)), [...chips]);
 g.check("no page errors", errors.length === 0, errors);
 await g.finish("scene1-morning");

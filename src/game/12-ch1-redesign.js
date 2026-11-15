@@ -89,7 +89,7 @@
       (e.save(), (e.globalAlpha = 0.35 + 0.5 * p), (e.fillStyle = "#ffcf33"), e.beginPath(), e.moveTo(860, 430), e.lineTo(900, 470), e.lineTo(860, 510), e.closePath(), e.fill(), e.restore());
     }
     function ch1QChip() {
-      if (n.ch1MopsLeave) return "";
+      if (n.ch1MopsLeave || n.ch1Peeking) return "";
       if (n.ch1Dress && n.ch1Dress.on) return "";
       if (n.ch1Chip) return n.ch1Chip;
       return CH1Q_CHIPS[n.scene] || "";
