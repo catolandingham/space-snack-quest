@@ -1,4 +1,10 @@
 // Chapter 1 scene 1 (walkthrough beats 1-3): the start, the song, Mops walking out, the peek. Everything scene 1 runs is here.
+    // Where Mops stands in the morning (right of the bucket in the room picture) and what he says.
+    const CH1_MOPS_MORNING = {
+      x: 712,
+      y: 560,
+      line: "Morning, Squatch. Room's all clean. Big party in the hall tonight, so stay in here.",
+    };
     function ch1RedesignStart() {
       ((n.scene = "O1"),
         (n.room = "closet"),
@@ -44,15 +50,21 @@
         (n.ch1Fur = !1),
         (n.tvOn = !1),
         (n.sqPose = "sit"),
+        // Morning: Mops has finished cleaning and stands by the bucket. No beard cleaning in scene 1.
+        (n.mo.x = CH1_MOPS_MORNING.x),
+        (n.mo.y = CH1_MOPS_MORNING.y),
+        (n.mo.f = -1),
+        (n.mo.moving = !1),
+        (n.moPose = "stand"),
         J([
           { k: "card", id: "jupiter", text: "Stormtop Cloud Resort, floating above Jupiter." },
           { k: "card", id: "squatch", text: "This is Squatch. He's a Sasquatch." },
+          v("mops", CH1_MOPS_MORNING.line),
           N(() => {
             ((n.ctrl = !0), (n.scene = "O1"), chipNow());
           }),
-          cV(() => n.scene === "O1" && n.moved > 110),
+          cV(() => n.scene === "O1" && n.moved > 110 && n.hopOut < 0),
           N(() => {
-            (n.sqPose === "sit" || n.sqPose === "sleep") && ((n.sqPose = "stand"), (n.sq.y = 540));
             ((n.ctrl = !0), (n.scene = "Q1"), ch1Day1());
           }),
         ]));
@@ -60,7 +72,7 @@
     function ch1Day1() {
       J([
         N(() => {
-          ((n.ch1Song = !0), (n.ctrl = !0), (n.moPose = "polish"), (n.scene = "Q1"), (n.ch1Chip = "Squatch: sing along with Mops"), chipNow());
+          ((n.ch1Song = !0), (n.ctrl = !0), (n.moPose = "sway"), (n.scene = "Q1"), (n.ch1Chip = "Squatch: sing along with Mops"), chipNow());
         }),
       ]);
     }
@@ -75,12 +87,13 @@
         lane = 390;
       ((n.ch1Song = !1), (n.ctrl = !1), (n.act = null), (n.sqPose = "stand"), (n.moPose = "stand"));
       J([
-        cV((dt) => mV(n.sq, n.sq.x, lane, 190, dt)),
-        cV((dt) => mV(n.sq, sqX, lane, 190, dt)),
-        cV((dt) => mV(n.sq, sqX, sqY, 190, dt)),
+        // Mops goes first: in the morning he stands right of the bucket, where Squatch is headed.
         cV((dt) => mV(n.mo, n.mo.x, lane, 160, dt)),
         cV((dt) => mV(n.mo, moX, lane, 160, dt)),
         cV((dt) => mV(n.mo, moX, moY, 160, dt)),
+        cV((dt) => mV(n.sq, n.sq.x, lane, 190, dt)),
+        cV((dt) => mV(n.sq, sqX, lane, 190, dt)),
+        cV((dt) => mV(n.sq, sqX, sqY, 190, dt)),
         N(() => {
           ((n.sq.f = -1), (n.mo.f = 1), (n.sq.moving = !1), (n.mo.moving = !1), (n.sqPose = "sing"));
         }),
@@ -120,10 +133,12 @@
           (n.mo.x = 880),
           (n.mo.y = 458),
           (n.ch1MopsLeave = 0),
-          (n.ch1PeekReady = !0),
-          (n.ctrl = !0),
-          (n.scene = "Q1"),
-          (n.ch1Chip = "Squatch: peek out the door"),
-          chipNow());
+          (n.ctrl = !1),
+          J([
+            { k: "card", id: "later", text: "That evening\u2026" },
+            N(() => {
+              ((n.ch1PeekReady = !0), (n.ctrl = !0), (n.scene = "Q1"), (n.ch1Chip = "Squatch: peek out the door"), chipNow());
+            }),
+          ]));
       }
     }

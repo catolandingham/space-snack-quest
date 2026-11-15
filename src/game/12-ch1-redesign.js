@@ -11,7 +11,7 @@
       CH1_ROBOT = { x: 480, y: 400 },
       CH1_PLANT = { x: 125, y: 400 };
     const CH1Q_CHIPS = {
-      Q1: "Squatch: go with Mops to the ship",
+      Q1: "",
       Q2: "Squatch: hide and watch",
       Q3: "Squatch: talk with Mops at home",
       Q4: "Squatch: get the yellow copy to the mailbox",
@@ -48,26 +48,13 @@
       { id: "vent", verb: "SUCK", cap: "vent", x: 188, y: 500, why: "vent" },
       { id: "guard", verb: "STAND", cap: "guard", x: 700, y: 560, why: "guard" },
     ];
-    function drawWalkNudge() {
-      // dir -1 points left, away from the bucket. Set dir to 1 to point right again.
-      let dir = -1,
-        p = 0.5 + 0.5 * Math.sin(n.T * 4);
-      (e.save(), (e.globalAlpha = 0.35 + 0.45 * p), (e.strokeStyle = "#ffcf33"), (e.lineWidth = 6), (e.lineCap = "round"));
-      for (let i = 0; i < 3; i++) {
-        let x = 420 + i * 70,
-          tip = x + (dir < 0 ? 0 : 28),
-          tail = x + (dir < 0 ? 28 : 0);
-        (e.beginPath(),
-          e.moveTo(tail, 530),
-          e.lineTo(tip, 530),
-          e.lineTo(tip + dir * 12, 514),
-          e.moveTo(tip, 530),
-          e.lineTo(tip + dir * 12, 546),
-          e.stroke());
-      }
-      e.restore();
+    // Rule: no yellow ring and no "VERB · thing" tag when the action happens right where Squatch stands.
+    function actsWhereSquatchStands(o) {
+      return !!o && (!!o.hot || Math.hypot(o.x - n.sq.x, (o.y || 0) - n.sq.y) < 40);
     }
     function drawGoalMark(x, y) {
+      // Remember the last ring drawn, so tests can check it is never around Squatch himself.
+      n.lastRing = { x, y, T: n.T };
       let p = 0.75;
       (e.save(),
         (e.globalAlpha = p),
@@ -94,7 +81,7 @@
                   ? ch1PartySpots()
                   : [];
       let s = (spots || []).find((o) => o && o.verb && o.x);
-      s && drawGoalMark(s.x, s.y);
+      s && !actsWhereSquatchStands(s) && drawGoalMark(s.x, s.y);
     }
     function drawDoorNudge() {
       let p = 0.5 + 0.5 * Math.sin(n.T * 5);
@@ -163,7 +150,7 @@
       "delivery-night": "docs/locked-rooms/delivery-room-empty-night-v2.png",
       "delivery-noship": "docs/locked-rooms/delivery-room-empty-day-noship-v2.png",
       "delivery-pickup": "docs/locked-rooms/delivery-room-empty-pickup-v3.png",
-      "home-closed": "docs/locked-rooms/home-room-empty-closed-v3.png",
+      "home-closed": "docs/locked-rooms/home-room-empty-closed-v4.png",
       "home-open": "docs/locked-rooms/home-room-empty-open-v4.png",
       office: "docs/locked-rooms/office-room-empty-v2.png",
     };

@@ -527,7 +527,6 @@
     });
   }
   // Help lines: only controls that work. The keyboard line under the picture is gone (K25).
-  var TOUCH_HELP = "Stick: walk. Big button: do it. Tap the picture: next line. Hold \u21BA to restart.";
   function r8(V) {
     let t = (0, YV.useRef)(null),
       [a, e] = (0, YV.useState)(!1);
@@ -737,19 +736,10 @@
                   G,
                   z,
                   SND,
-                  (0, pe.jsx)("span", {
-                    id: "ss-help",
-                    style: { width: "100%", textAlign: "center", color: V.text.secondary, fontSize: V.font.label.fontSize },
-                    children: TOUCH_HELP,
-                  }),
                 ],
               }))
             : I
-              ? (Z = (0, pe.jsx)("div", {
-                  id: "ss-help",
-                  style: { width: "100%", textAlign: "center", color: V.text.secondary, fontSize: V.font.label.fontSize },
-                  children: TOUCH_HELP,
-                }))
+              ? (Z = null) // No help line on touch screens (scene 1 review): the stick and button explain themselves.
               :
               (Z = (0, pe.jsxs)("div", {
                 style: { ...M, justifyContent: "space-between" },

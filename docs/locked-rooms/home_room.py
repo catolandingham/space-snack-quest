@@ -130,7 +130,9 @@ def draw_moon_pies_badge(d, cx, cy, scale=1.0):
 
 
 def draw_calendar(d, cx, cy, scale=1.0):
-    """DELIVERY / Moon Pie plan — game size m(170,168,60,70)."""
+    """v4 calendar (game size m(170,168,60,70)): red pin, red top strip, a 5 x 4 grid of days,
+    and one day circled in red with a tiny Moon Pie: the delivery day. No words.
+    The v4 PNG was made by painting this design over the v3 calendar (same spot, same size)."""
     pw = int(60 * scale); ph = int(70 * scale)
     x0, y0 = cx - pw // 2, cy - ph // 2
     d.rounded_rectangle([x0, y0, x0 + pw, y0 + ph], radius=max(2, int(3 * scale)),
@@ -138,9 +140,21 @@ def draw_calendar(d, cx, cy, scale=1.0):
     pr = max(2, int(4 * scale))
     d.ellipse([cx - pr, y0 + int(6 * scale) - pr, cx + pr, y0 + int(6 * scale) + pr],
               fill=(229, 83, 61))
-    f = NB(max(7, int(9 * scale)))
-    d.text((cx, y0 + int(22 * scale)), 'DELIVERY', font=f, fill=DARK, anchor='mm')
-    draw_moon_pies_badge(d, cx, y0 + int(48 * scale), scale=0.42 * scale)
+    top = y0 + int(13 * scale)
+    d.rectangle([x0 + int(4 * scale), top, x0 + pw - int(4 * scale), top + int(8 * scale)], fill=(229, 83, 61))
+    gx0, gy0 = x0 + int(5 * scale), top + int(12 * scale)
+    gx1, gy1 = x0 + pw - int(5 * scale), y0 + ph - int(5 * scale)
+    for i in range(6):
+        x = gx0 + (gx1 - gx0) * i // 5
+        d.line([(x, gy0), (x, gy1)], fill=GRAY, width=1)
+    for j in range(5):
+        y = gy0 + (gy1 - gy0) * j // 4
+        d.line([(gx0, y), (gx1, y)], fill=GRAY, width=1)
+    dx = gx0 + (gx1 - gx0) * 7 // 10; dy = gy0 + (gy1 - gy0) * 5 // 8
+    r = max(2, int(4 * scale))
+    d.ellipse([dx - r, dy - r, dx + r, dy + r], fill=(139, 90, 60), outline=DARK, width=1)
+    R = max(4, int(7 * scale))
+    d.ellipse([dx - R, dy - R, dx + R, dy + R], outline=(229, 83, 61), width=2)
 
 
 def draw_stay_sign(d, cx, cy, scale=1.0):

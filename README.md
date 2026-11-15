@@ -4,7 +4,7 @@
 
 **New here?** Read [`docs/START-HERE.md`](docs/START-HERE.md). It names the four files that say what Chapter 1 should be, the ranked problem list, and the loop to follow. Brian's own messages are in [`docs/grok-archive/squatchbot-brian-words.md`](docs/grok-archive/squatchbot-brian-words.md).
 
-**Next up (Brian, 2026-11-14):** make scene 1 (Chapter 1 beats 1–3) right first. See the "Do first" section of [`docs/CHAPTER-1-PROBLEMS.md`](docs/CHAPTER-1-PROBLEMS.md).
+**Next up (Brian, 2026-11-14):** make scene 1 (Chapter 1 beats 1–3) right first. The morning part is done; next is the real peek (beat 3). See the "Do first" section of [`docs/CHAPTER-1-PROBLEMS.md`](docs/CHAPTER-1-PROBLEMS.md).
 
 ## Chapter 1 redesign (on main)
 
@@ -74,6 +74,10 @@ GitHub runs `npm run build`, `npm run check-build`, and `npm test` on every pull
 ## Screen fit
 
 `tests/screen-fit.mjs` checks phone and iPad, upright and sideways: the whole picture is on screen, it does not move after the opening cards, and the big button keeps one size.
+
+## Scene 1 morning
+
+`tests/scene1-morning.mjs` plays the start of Chapter 1 on a phone: Mops's morning line while Squatch is in bed, one bucket, no "ship" in the goal bar, no ring around Squatch, the "That evening…" card, then the peek goal.
 
 ## Chapter 1 kid robot
 

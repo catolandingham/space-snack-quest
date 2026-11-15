@@ -1079,17 +1079,6 @@
         hall = n.room === "hall" ? B.camX : 0,
         who = x.mops ? n.mo : n.sq;
       n.walkTo = { x: w(l + hall, b.x0, b.x1), y: w(o, b.y0, b.y1), room: n.room, lx: who.x, ly: who.y, lt: n.T, at: n.T };
-      let seen = n.walkHinted;
-      try {
-        seen = seen || window.localStorage.getItem(ssqKey("walk-hint")) === "1";
-      } catch {}
-      seen ||
-        ((n.walkHinted = !0),
-        hudNote("Tap the floor to walk there.", 4),
-        Dt("hint", "", "walk-tap", "hint"));
-      try {
-        window.localStorage.setItem(ssqKey("walk-hint"), "1");
-      } catch {}
       return !0;
     }
     function nf() {

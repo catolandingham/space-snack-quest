@@ -610,7 +610,32 @@
     function L2() {
       (m(318, 478, 64, 44, 6), r("#3478f6", 4), g("G", 350, 501, 22, "#ffffff"));
     }
+    // Scene 1 and the rest of chapter 1 at home use the locked room picture. Only then.
+    function homePicture() {
+      let k = n.scene || "";
+      return k[0] === "Q" || k === "O1";
+    }
+    // With the picture, the bucket and bed are already drawn in it. When Squatch stands behind
+    // one, paint that piece of the picture again over him, so nothing is drawn twice.
+    const HOME_FRONT = {
+      bucket: { x: 530, y: 506, w: 72, h: 66, back: 566 },
+      bed: { x: 92, y: 396, w: 188, h: 132, back: 526 },
+      gbox: { x: 304, y: 470, w: 76, h: 56, back: 522 },
+    };
+    function homeFront() {
+      let l = n.sq,
+        img = lockedImg[n.wardrobe === "open" ? "home-open" : "home-closed"];
+      if (n.sqPose !== "stand" || !img || !img.complete || !img.naturalWidth) return;
+      let k = img.naturalWidth / c,
+        ky = img.naturalHeight / b;
+      for (let id in HOME_FRONT) {
+        let p = HOME_FRONT[id];
+        // While hopping out of bed he is over the bed, not behind it.
+        !(id === "bed" && n.hopOut >= 0) && l.y < p.back && l.x > p.x - 40 && l.x < p.x + p.w + 40 && e.drawImage(img, p.x * k, p.y * ky, p.w * k, p.h * ky, p.x, p.y, p.w, p.h);
+      }
+    }
     function g5() {
+      if (homePicture()) return homeFront();
       let l = n.sq;
       (!(n.sqPose === "stand" && l.y < 566 && Math.abs(l.x - 610) < 80) &&
         !(n.botOn && n.bot.y >= 566 && Math.abs(n.bot.x - 610) < 90) &&
@@ -622,7 +647,7 @@
           l.y < 526 && l.x > 70 && l.x < 340 && H2()));
     }
     function P2() {
-      if ((n.scene || "")[0] === "Q") {
+      if (homePicture()) {
         drawLockedRoom(n.wardrobe === "open" ? "home-open" : "home-closed");
         n.wardrobe === "open" && n.costumeOn && ((e.fillStyle = "#f4efe6"), e.fillRect(70, 150, 150, 160));
         return;
@@ -2187,7 +2212,6 @@
       applyWalkDraw();
       try {
         drawRoom();
-        n.scene === "O1" && n.ctrl && n.moved < 110 && drawWalkNudge();
         n.ch1PeekReady && n.room === "closet" && drawDoorNudge();
         n.ch1Cut && drawCh1Cut();
         n.ch1Dress && n.ch1Dress.on && drawCh1Dress();
@@ -2245,6 +2269,8 @@
       let a = n.act;
       // No caption over the crate's own LEAVE SOUP label, or over the dish while it is being scrubbed.
       if (!a || !a.cap || !n.ctrl || n.ch1Zoom || a.verb === "LEAVE SOUP" || (n.room === "kitchen" && ch2.dishT > 0)) return;
+      // Chapter 1: no tag when the action happens right where Squatch stands (same rule as the ring).
+      if (/^(Q|O1$)/.test(n.scene || "") && actsWhereSquatchStands(a)) return;
       // The label is at least 156 wide, wider for long words, and always fully on the picture.
       let t = a.verb + " \u00b7 " + a.cap;
       ge(14);
