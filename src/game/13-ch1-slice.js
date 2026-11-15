@@ -13,8 +13,6 @@
     function ch1SneakHide() {
       ((n.ch1Party = !0), (n.scene = "QA"), (n.sparks = (n.sparks || []).filter((d) => d.s !== "\u2665")));
       J([
-        ch1Step("sq", 480, 500, 160),
-        ch1Step("sq", 220, 530, 160),
         N(() => {
           ((n.sqPose = "hidden"), (n.sq.x = 220), (n.sq.y = 530));
         }),

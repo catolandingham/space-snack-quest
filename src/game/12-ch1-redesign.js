@@ -76,6 +76,8 @@
             ? ch1SongSpots()
             : n.ch1PeekReady
               ? ch1PeekSpots()
+              : n.ch1PlantSneak
+                ? ch1SneakSpots()
               : n.ch1Search
                 ? ch1SearchSpots()
                 : n.scene === "QA" && n.ch1Party && !n.ch1PartyOver
@@ -1055,6 +1057,7 @@
       if (n.ch1Cut) return ch1CutSpots();
       if (n.ch1Dress && n.ch1Dress.on) return ch1DressSpots();
       if (n.ch1PeekReady && n.ctrl) return ch1PeekSpots();
+      if (n.ch1PlantSneak) return n.ctrl ? ch1SneakSpots() : [];
       if (n.scene === "QA") return n.ch1Raid && n.room === "hall" ? ch1RaidSpots() : n.ctrl && !n.ch1PartyOver ? ch1PartySpots() : [];
       if (n.ch1Day2) return ch1Day2Spots();
       if (!n.ctrl || n.sqPose === "ball" || n.sqPose === "hidden") return [];
@@ -1251,9 +1254,10 @@
             [848, 390, "cup"],
             [848, 440, "cake"],
           ].forEach((bit) => drawBarSnack(bit[2], bit[0], bit[1], 0.45)),
+        drawCh1SneakCone(),
         CH1_GUESTS.forEach((guest) => {
           if (n.ch1Raid && n.ch1Raid.witness && guest[2] === "spots") return;
-          (drawCh1Alien(guest[0], guest[1], guest[2], ALIEN_ADULT, face || 1), glance(guest[0], guest[1]));
+          (drawCh1Alien(guest[0], guest[1], guest[2], ALIEN_ADULT, n.ch1PlantSneak && guest[2] === "spots" ? ch1SneakFace() : face || 1), glance(guest[0], guest[1]));
         }),
         n.ch1Raid && n.ch1Raid.witness && drawCh1Alien(n.ch1Raid.witness.x, n.ch1Raid.witness.y, "spots", ALIEN_ADULT, 1),
         ((n.ch1Raid && n.ch1Raid.guards) || []).forEach((g) => {
@@ -1268,7 +1272,8 @@
         drawCh1Tripod(250, 360),
         !n.ch1Flyer && (m(500, 500, 16, 12, 1), r("#fffdf8", 1)),
         (n.ch1Spill || 0) > 0 && drawCh1Chain(1 - n.ch1Spill),
-        drawBalloonKid());
+        drawBalloonKid(),
+        drawCh1SneakMark());
     }
     function drawCh1Chain(p) {
       let tip = Math.min(1, p / 0.25),

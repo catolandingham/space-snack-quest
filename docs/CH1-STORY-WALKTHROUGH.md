@@ -41,7 +41,7 @@ Mops is at work. Squatch is home alone.
   - Isfred, muffled through the noise: "Mmf mmf... mm-mmf... mmf!" *(Brian yes, Nov 14)*
   - Squatch, thinking: "Robots?" *(decided, Brian Nov 14; moved here from beat 5; said once, here only)*
 - **Player:** Tap the doorway to peek.
-- **In the game (Nov 14):** Squatch stands in his doorway at the bottom wall, half hidden. The goal bar is empty while he peeks. Then he walks to the plant on his own (beat 4, problem 13, still plays itself).
+- **In the game (Nov 14):** Squatch stands in his doorway at the bottom wall, half hidden. The goal bar is empty while he peeks. Then the player sneaks him to the plant (beat 4).
 <sub>S20 R49 R73 · Brian t30 t291 · chat Nov 14</sub>
 
 ### 4. Sneak in and hide `UPDATED`
@@ -49,6 +49,7 @@ Mops is at work. Squatch is home alone.
 - **Who:** Squatch (hidden), guests
 - **What happens:** Squatch slips out the door while everyone faces the stage. He hides in the middle plant, a few steps from his door. Only his eyes peek out of the leaves. From there he can see the stage. The snack bar is no good for hiding: the bartender works behind it.
 - **Player:** Sneak to the plant without being seen.
+- **In the game (Nov 14):** The yellow guest by the door turns now and then and looks toward the plant (a sight cone). Go while he faces the stage, then press HIDE at the plant. If he sees Squatch, a red "!" shows and Squatch hurries back to his doorway. Goal bar: "Squatch: sneak to the plant" *(pending Brian yes)*.
 <sub>R73 R9 C21 · NEW</sub>
 
 ### 5. Isfred's announcement `UPDATED`

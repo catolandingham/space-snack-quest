@@ -138,7 +138,7 @@
         uV(0.6),
         v("official", "Mmf mmf... mm-mmf... mmf!", "whisper"),
         v("sq", "Robots?", "whisper"),
-        N(ch1SneakHide),
+        N(ch1SneakStart),
       ]);
     }
     function ch1MopsLeaveTick(step) {
@@ -157,4 +157,84 @@
             }),
           ]));
       }
+    }
+
+    // Beat 4 (problem 13): the player sneaks Squatch from his doorway to the middle plant.
+    // The yellow guest by the door ("spots") faces the stage, then turns and looks toward the plant.
+    // If he sees Squatch out in the open, Squatch hurries back to his doorway and tries again.
+    // Hiding is the HIDE button at the plant, like every other hiding place in the game.
+    const CH1_SNEAK_PLANT = [400, 520],
+      CH1_SNEAK_EYES = [520, 582],
+      CH1_SNEAK_FACE = Math.PI, // straight left: covers the floor between the door and the plant, not the plant itself
+      CH1_SNEAK_STAGE_SECONDS = 3.5,
+      CH1_SNEAK_TURN_SECONDS = 0.4,
+      CH1_SNEAK_LOOK_SECONDS = 2,
+      CH1_SNEAK_START_T = 3;
+    function ch1SneakLook() {
+      let s = n.ch1PlantSneak;
+      if (!s) return "";
+      if (s.caught) return "look";
+      let cyc = CH1_SNEAK_STAGE_SECONDS + CH1_SNEAK_LOOK_SECONDS + 2 * CH1_SNEAK_TURN_SECONDS,
+        t = s.t % cyc;
+      if (t < CH1_SNEAK_STAGE_SECONDS) return "stage";
+      if (t < CH1_SNEAK_STAGE_SECONDS + CH1_SNEAK_TURN_SECONDS) return "turn";
+      if (t < CH1_SNEAK_STAGE_SECONDS + CH1_SNEAK_TURN_SECONDS + CH1_SNEAK_LOOK_SECONDS) return "look";
+      return "turn";
+    }
+    function ch1SneakSees() {
+      return ch1SneakLook() === "look" && n.sqPose !== "hidden" && vt(n.sq.x, n.sq.y - 20, CH1_SNEAK_EYES[0], CH1_SNEAK_EYES[1], CH1_SNEAK_FACE, STAND_CONE_HALF, STAND_CONE_LEN);
+    }
+    function ch1SneakStart() {
+      ((n.ch1Peeking = !1), (n.ch1PlantSneak = { t: CH1_SNEAK_START_T, caught: 0, tries: 0 }), (n.ch1Chip = "Squatch: sneak to the plant"), (n.sqPose = "stand"), (n.ctrl = !0), chipNow());
+    }
+    function ch1SneakSpots() {
+      return [
+        spot({
+          id: "hide",
+          verb: "HIDE",
+          cap: "plant",
+          who: "sq",
+          x: CH1_SNEAK_PLANT[0],
+          y: CH1_SNEAK_PLANT[1],
+          r: 55,
+          f: ch1SneakIn,
+        }),
+      ];
+    }
+    function ch1SneakIn() {
+      if (!n.ch1PlantSneak) return;
+      ((n.ch1PlantSneak = null), (n.ch1Chip = ""), (n.ctrl = !1), (n.act = null), (n.sq.moving = !1), (n.ch1Peeking = !0), chipNow());
+      ch1SneakHide();
+    }
+    function ch1SneakCaught() {
+      let s = n.ch1PlantSneak;
+      ((s.caught = 1), (s.tries += 1), (n.ctrl = !1), (n.act = null), (n.sq.moving = !1));
+      let hold = 0.7; // a short beat to see the "!" (plays on its own; uV would wait for a tap)
+      J([
+        cV((dt) => (hold -= dt || 0) <= 0),
+        ch1Step("sq", CH1_PEEK_AT[0], CH1_PEEK_AT[1], 260),
+        N(() => {
+          n.ch1PlantSneak && ((n.ch1PlantSneak.caught = 0), (n.ch1PlantSneak.t = CH1_SNEAK_START_T), (n.ctrl = !0));
+        }),
+      ]);
+    }
+    function ch1SneakTick(dt) {
+      let s = n.ch1PlantSneak;
+      if (!s || s.caught || !n.ctrl || n.room !== "hall") return;
+      s.t += dt || 0;
+      ch1SneakSees() && ch1SneakCaught();
+    }
+    // Drawn inside drawCh1Party: the watcher's cone while he looks, and a "!" when he sees Squatch.
+    function drawCh1SneakCone() {
+      let k = ch1SneakLook();
+      if (!k) return;
+      k === "look" && seenCone(CH1_SNEAK_EYES[0], CH1_SNEAK_EYES[1], CH1_SNEAK_FACE, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.62)", "rgba(160,100,10,.95)");
+    }
+    // Drawn last in drawCh1Party, so the photo table does not cover it.
+    function drawCh1SneakMark() {
+      n.ch1PlantSneak && n.ch1PlantSneak.caught && g("!", CH1_SNEAK_EYES[0] + 30, CH1_SNEAK_EYES[1] - 20, 40, "#e5533d", "center", 900);
+    }
+    function ch1SneakFace() {
+      let k = ch1SneakLook();
+      return k === "look" || k === "turn" ? -1 : 1;
     }

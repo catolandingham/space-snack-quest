@@ -220,6 +220,7 @@
       ch1RaidTick(step);
       ch1MopsHumTick(step);
       ch1MopsLeaveTick(step);
+      ch1SneakTick(step);
       if (n.ch1Search && n.guard && n.room === "closet" && (n.ctrl || n.ch1Escort)) {
         let g = n.guard;
         g.t += step;
