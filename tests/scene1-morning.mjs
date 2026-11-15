@@ -11,7 +11,10 @@
  * - after Mops leaves there is the "That evening…" card, then the peek goal,
  * - no touch help line and no "Tap the floor" note.
  * - the peek (step 4): the hall is already full on the first hall frame, Squatch stays in his doorway,
- *   the goal bar is empty, he hears muffled talk, then thinks "Robots?" once, then hides in the plant.
+ *   the goal bar is empty, he hears muffled talk, then thinks "Robots?" once.
+ * - the sneak (step 5): the player steers him to the plant. Stepping out while the yellow guest by the door
+ *   looks back gets him seen and sent back to the doorway; going while the guest faces the stage and pressing
+ *   HIDE at the plant hides him.
  *   node tests/scene1-morning.mjs
  */
 import { startGame, sleep } from "./game-page.mjs";
@@ -119,25 +122,76 @@ await page.evaluate(() => {
   o && o.f();
 });
 const peek = { firstHallParty: null, door: null, chips: new Set(), said: [] };
-for (let i = 0; i < 120; i++) {
-  const p = await page.evaluate(() => {
+const hallNow = () =>
+  page.evaluate(() => {
     const n = window.__ss.op,
-      c = n.cur || {};
-    return { room: n.room, party: !!n.ch1Party, chip: n.chip || "", cur: c.k || "", text: (c.b && c.b.text) || c.text || "", sq: [n.sq.x, n.sq.y] };
+      c = n.cur || {},
+      k = n.ch1PlantSneak;
+    return { room: n.room, party: !!n.ch1Party, chip: n.chip || "", cur: c.k || "", text: (c.b && c.b.text) || c.text || "", sq: [n.sq.x, n.sq.y], ctrl: n.ctrl, pose: n.sqPose, sneak: k ? { t: k.t, caught: k.caught, tries: k.tries } : null };
   });
-  if (p.room === "hall") {
-    if (peek.firstHallParty === null) peek.firstHallParty = p.party;
-    if (/^Mmf/.test(p.text) && !peek.door) peek.door = p.sq;
-    if (!/Croc Boys/.test(p.text)) peek.chips.add(p.chip);
-    if (p.cur === "bub" && peek.said[peek.said.length - 1] !== p.text) peek.said.push(p.text);
-  }
-  if (/Croc Boys/.test(p.text)) break;
+const note = (p) => {
+  if (p.room !== "hall") return;
+  if (peek.firstHallParty === null) peek.firstHallParty = p.party;
+  if (/^Mmf/.test(p.text) && !peek.door) peek.door = p.sq;
+  if (p.cur === "bub" && peek.said[peek.said.length - 1] !== p.text) peek.said.push(p.text);
+};
+// Tap through the peek until the player gets Squatch back (the sneak).
+let p = await hallNow();
+for (let i = 0; i < 60 && !(p.ctrl && p.sneak); i++) {
+  note(p);
+  if (p.room === "hall" && !p.sneak) peek.chips.add(p.chip);
   if (p.cur === "bub" || p.cur === "card" || p.cur === "wait") await tap();
   else await sleep(250);
+  p = await hallNow();
 }
 g.check("the hall is already full when Squatch peeks", peek.firstHallParty === true, peek.firstHallParty);
 g.check("he stays in his doorway for the muffled talk", !!peek.door && peek.door[1] > 600, peek.door);
 g.check("the goal bar is empty during the peek", [...peek.chips].every((c) => !c), [...peek.chips]);
+// The sneak (beat 4): the player steers Squatch to the plant.
+g.check("then the player sneaks: Squatch is in his doorway with the goal to sneak to the plant", p.ctrl && !!p.sneak && p.sq[1] > 600 && /sneak to the plant/.test(p.chip), p);
+const sneakT = () => page.evaluate(() => window.__ss.op.ch1PlantSneak && window.__ss.op.ch1PlantSneak.t % 6.3);
+// Wait until the yellow guest by the door is looking (his cone is out), then step out.
+for (let i = 0; i < 60; i++) {
+  const t = await sneakT();
+  if (t > 4 && t < 5) break;
+  await sleep(100);
+}
+await page.keyboard.down("ArrowUp");
+await sleep(300);
+await page.keyboard.up("ArrowUp");
+p = await hallNow();
+g.check("stepping out while he looks: Squatch is seen", !!p.sneak && p.sneak.caught === 1 && p.sneak.tries === 1, p.sneak);
+for (let i = 0; i < 30 && !p.ctrl; i++) (await sleep(200), (p = await hallNow()));
+g.check("then Squatch is back in his doorway to try again", p.ctrl && !!p.sneak && p.sq[1] > 620, p);
+// Now wait until he faces the stage and go to the plant.
+for (let i = 0; i < 80; i++) {
+  const t = await sneakT();
+  if (t > 0.1 && t < 1) break;
+  await sleep(100);
+}
+await page.keyboard.down("ArrowUp");
+await page.keyboard.down("ArrowLeft");
+let hideBtn = false;
+for (let i = 0; i < 30; i++) {
+  p = await hallNow();
+  hideBtn = await page.evaluate(() => !!(window.__ss.op.act && window.__ss.op.act.verb === "HIDE"));
+  if (hideBtn || !p.ctrl) break;
+  await sleep(100);
+}
+await page.keyboard.up("ArrowUp");
+await page.keyboard.up("ArrowLeft");
+g.check("near the plant the button says HIDE", hideBtn, p);
+await page.keyboard.press("KeyE");
+await sleep(300);
+p = await hallNow();
+g.check("going while he faces the stage: Squatch hides in the plant", !p.sneak && p.pose === "hidden", p);
+for (let i = 0; i < 60; i++) {
+  note(p);
+  if (/Croc Boys/.test(p.text)) break;
+  if (p.cur === "bub" || p.cur === "card" || p.cur === "wait") await tap();
+  else await sleep(250);
+  p = await hallNow();
+}
 const mm = peek.said.indexOf("Mmf mmf... mm-mmf... mmf!"),
   rb = peek.said.indexOf("Robots?"),
   wel = peek.said.findIndex((t) => /^Welcome, everybody/.test(t));
