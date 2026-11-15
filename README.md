@@ -71,6 +71,10 @@ For example, `index.html?ch=2&phase=wash1&debug=1` opens the kitchen sink with t
 
 GitHub runs `npm run build`, `npm run check-build`, and `npm test` on every pull request and every push to main (`.github/workflows/pr.yml`). A change counts as passing only when that check is green on GitHub, not when someone says it passed on their machine. The test output (videos and screenshots) is attached to each run for 14 days.
 
+## Screen fit
+
+`tests/screen-fit.mjs` checks phone and iPad, upright and sideways: the whole picture is on screen, it does not move after the opening cards, and the big button keeps one size.
+
 ## Chapter 1 kid robot
 
 `tests/ch1-kid-play.mjs` plays all of Chapter 1 on a phone-size screen by touch, the way a kid would, from waking up to the score card. It runs with `npm test`. `npm run kid-video` also saves a video in `tests/out/kid-play/chapter-1.mp4`. Problems it meets that are already listed in `docs/CHAPTER-1-PROBLEMS.md` print as KNOWN; anything new fails the run. That file ranks the Chapter 1 problems, each with its cause and the check that proves the fix. `docs/START-HERE.md` is the one-page handbook for whoever works on the game next.

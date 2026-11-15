@@ -19,8 +19,6 @@ import { root, startGame, sleep } from "./game-page.mjs";
 
 // Problems Brian knows about. Take one off this list in the change that fixes it.
 const KNOWN = {
-  "button-size": "The action button is a different width for each label (docs/CHAPTER-1-PROBLEMS.md, problem 4).",
-  "page-jump": "The picture and both controls move down once when the goal bar first shows (problem 5).",
   "tap-stops-at-furniture": "A tap on a spot behind furniture walks Squatch into the furniture and stops (problem 2).",
   "ring-on-squatch": "A goal ring is drawn around Squatch himself (problem 6).",
 };

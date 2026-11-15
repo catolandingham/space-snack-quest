@@ -190,6 +190,8 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 
 ## Changelog
 
+2026-11-14. Steady screen (problems 4 and 5, Brian t119): one size big button (long labels get smaller letters), the phone goal bar keeps its space from the first picture, sideways the goal sits over the picture and the picture fits the window height (iPad sideways about 59% of the screen, was 32%; phone sideways no longer cut off). New check `tests/screen-fit.mjs`; `button-size` and `page-jump` off the kid robot's KNOWN list.
+
 2026-11-14. Tidy, no change in play: Chapter 1 scene 1 (start, song, Mops walking out, peek) moved into `src/game/15-ch1-scene1.js` from `12-ch1-redesign.js`, `13-ch1-slice.js` and `14-ch1-day1.js`. `tools/equivalence.mjs main` and the kid robot show the same play.
 
 2026-11-14. Notes only. Scene 1 (beats 1–3) comes first: new story agreed with Brian (morning, Mops's line, the song as goodbye, "That evening…", the peek with "Robots?"). Walkthrough beats 1–3 rewritten; `docs/CHAPTER-1-PROBLEMS.md` has a "Do first" section with four pull requests in order.

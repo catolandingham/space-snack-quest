@@ -175,7 +175,7 @@
         facesOnly = !!(card && n.cur.id === "focus" && n.cur.faces),
         on = p.state === "op" && !!n.scene && (!card || facesOnly) && !n.egg;
       for (let z of [hud.where, hud.goal]) hudShow(z, !facesOnly);
-      if ((hudShow(hud.root, on), (hud.bar.style.visibility = on ? "" : "hidden"), (chipDrawn = ""), !on)) return;
+      if ((hudPlace(), hudShow(hud.root, on), (hud.bar.style.visibility = on ? "" : "hidden"), (chipDrawn = ""), !on)) return;
       let s = n.scene;
       // On a phone the tag is "Chapter 2" (no place name) so the where zone fits beside two faces.
       let tag = s.startsWith("M") ? "CH4 \xB7 MARS" : s.startsWith("P") ? "CH3 \xB7 PHOBOS" : s.startsWith("G") ? "CH2 \xB7 GAS STOP" : "CH1 \xB7 STORMTOP";
@@ -245,15 +245,23 @@
     // On a phone (picture under 600 CSS px wide) the three zones move into a fixed-height bar directly above the
     // picture, so nothing covers it. On a wider screen they sit over the picture's top edge, and the goal goes
     // in the top row when it fits between the where and who zones, else in a row of its own under them.
-    function hudLayout(key) {
+    // Phone or not is decided on every frame, cards included, so the bar's space is there from the first
+    // picture and the page never jumps when the goal first shows (problem 5). Sideways (wider than tall)
+    // the zones sit over the picture's top edge instead, so the picture can use the full height.
+    function hudPlace() {
       let W = e.canvas.clientWidth || hud.root.clientWidth,
-        phone = W < 600;
+        phone = W < 600 && !(typeof window < "u" && window.innerWidth > window.innerHeight);
       if (phone !== hud.phone) {
         hud.phone = phone;
         let into = phone ? hud.bar : hud.root;
         for (let z of [hud.where, hud.goal, hud.faces]) into.appendChild(z);
         ((hud.bar.style.display = phone ? "block" : "none"), (hud.key = ""));
       }
+      return W;
+    }
+    function hudLayout(key) {
+      let W = hudPlace(),
+        phone = hud.phone;
       if (hud.key === key + "|" + W) return;
       hud.key = key + "|" + W;
       let g = hud.goal;
@@ -268,7 +276,7 @@
         fl = hud.faces.offsetWidth ? hud.faces.offsetLeft : W - 6,
         gap = 10,
         room = 2 * Math.min(W / 2 - wr, fl - W / 2) - 2 * gap;
-      ((hud.chip.style.fontSize = "20px"), (g.style.maxWidth = Math.max(0, room) + "px"), (g.style.top = "6px"));
+      ((hud.chip.style.fontSize = W < 600 ? "14px" : "20px"), (g.style.maxWidth = Math.max(0, room) + "px"), (g.style.top = "6px"));
       if (room < 220 || hud.chip.offsetWidth > room) {
         let below = Math.max(hud.where.offsetTop + hud.where.offsetHeight, hud.faces.offsetTop + hud.faces.offsetHeight) + 6;
         ((g.style.maxWidth = W - 12 + "px"), (g.style.top = below + "px"));

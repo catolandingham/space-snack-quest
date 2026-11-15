@@ -557,11 +557,13 @@
       u = f ? V.label.slice(1) : V.label,
       h = u !== "",
       long = (u || "ACTION").length > 7,
+      // One size for every label (problem 4): a long label gets smaller letters and may wrap, the button never grows.
       c = {
-        width: long ? "auto" : V.size,
+        width: V.size,
         minWidth: V.size,
-        maxWidth: long ? 200 : V.size,
-        padding: long ? "0 14px" : 0,
+        maxWidth: V.size,
+        padding: "0 8px",
+        overflowWrap: "anywhere",
         height: V.size,
         borderRadius: V.size / 2,
         textAlign: "center",
@@ -574,7 +576,7 @@
         alignItems: "center",
         justifyContent: "center",
         fontWeight: 800,
-        fontSize: long ? Math.max(16, Math.round(V.size * 0.17)) : Math.round(V.size * ((u || "ACTION").length > 5 ? 0.17 : 0.22)),
+        fontSize: long ? 16 : Math.round(V.size * ((u || "ACTION").length > 5 ? 0.17 : 0.22)),
         touchAction: "none",
         userSelect: "none",
         WebkitUserSelect: "none",
@@ -786,7 +788,7 @@
             children: [
               I ? G : null,
               (0, pe.jsx)("div", {
-                style: { flex: "1 1 260px", width: "100%", maxWidth: I ? Math.max(260, Math.round((E - 40) * 1.5)) : 960, minWidth: 0 },
+                style: { flex: "1 1 260px", width: "100%", maxWidth: I ? Math.max(260, Math.round((E - 60) * 1.5)) : 960, minWidth: 0 },
                 children: (0, pe.jsx)("canvas", {
                   ref: t,
                   width: 960,
