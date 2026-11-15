@@ -437,6 +437,13 @@
         o = 0;
       for (let [i, s] of l) (Fi(Da(i), s * 0.95, o), (o += s));
       for (let i = 0; i < o; i += 0.395) lV(Da(i % 0.79 < 0.395 ? 50 : 57), 0.3, "sine", 0.06, i);
+      songUntil = p.t + o;
+    }
+    // Singing or music, never both: no background music while a song line is up, its tune is still
+    // playing, or Squatch is at the party mic. The music fades back in after.
+    let songUntil = 0;
+    function singNow() {
+      return p.t < songUntil || n.ch1Mini === "karaoke" || !!(n.cur && n.cur.k === "bub" && n.cur.b.style === "song");
     }
     let vV = [],
       ea = [],
@@ -514,6 +521,7 @@
       return "";
     }
     function musicWant() {
+      if (singNow()) return "";
       if (warmWhy()) return "warm";
       if (p.state !== "op") return "";
       if (n.ch1Heart) return "warm";
@@ -554,6 +562,7 @@
     function musicTick(l) {
       let want = musicWant();
       want !== musicKind && ((musicKind = want), (musicWait = 0));
+      window.__ss && (window.__ss.music = want);
       warmTick(l, want === "warm");
       if (!want || want === "warm") return;
       if (((musicWait -= l), musicWait > 0)) return;
