@@ -1,8 +1,8 @@
 /**
  * The help line tells the truth (task T12).
  * Page text names only controls that work: no "Shift", "Tab", "opera" or "push far" anywhere on the
- * page (text or labels), and it shows the keyboard help on a desktop window and the touch help when
- * touch controls are on (desktop with "Show touch controls", and a 375 by 812 phone).
+ * page (text or labels). Since the scene 1 review there is no touch help line at all when
+ * touch controls are on (desktop with "Show touch controls", and phones): the stick and button explain themselves.
  *   node tests/help-text.mjs
  */
 import { startGame, sleep } from "./game-page.mjs";
@@ -32,7 +32,7 @@ for (const [name, query] of [["title", ""], ["Chapter 2", "?ch=2"]]) {
   });
   await sleep(300);
   r = await read(page);
-  g.check(`${name}, desktop with touch controls: touch help is on the page`, r.text.includes(TOUCH_HELP), r.text.slice(0, 400));
+  g.check(`${name}, desktop with touch controls: no touch help line (removed in scene 1 review)`, !r.text.includes(TOUCH_HELP), r.text.slice(0, 400));
   g.check(`${name}, desktop with touch controls: no Shift, Tab, opera or push far`, clean(r).length === 0, clean(r));
   g.check(`no page errors (${name})`, errors.length === 0, errors);
   await ctx.close();
@@ -43,7 +43,7 @@ for (const vp of [
 ]) {
   const { ctx, page, errors } = await g.open("?ch=2", vp);
   const r = await read(page);
-  g.check(`${vp.name}: touch help is on the page`, r.text.includes(TOUCH_HELP), r.text.slice(0, 400));
+  g.check(`${vp.name}: no touch help line (removed in scene 1 review)`, !r.text.includes(TOUCH_HELP), r.text.slice(0, 400));
   g.check(`${vp.name}: no Shift, Tab, opera or push far`, clean(r).length === 0, clean(r));
   g.check(`no page errors (${vp.name})`, errors.length === 0, errors);
   await ctx.close();

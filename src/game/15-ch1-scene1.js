@@ -1,4 +1,10 @@
 // Chapter 1 scene 1 (walkthrough beats 1-3): the start, the song, Mops walking out, the peek. Everything scene 1 runs is here.
+    // Where Mops stands in the morning (right of the bucket in the room picture).
+    const CH1_MOPS_MORNING = { x: 690, y: 560 };
+    // The song is Mops's goodbye: he hums on his way to the door and they sing there.
+    // Mops is about 160px wide and Squatch about 124px, so their feet are 200px apart for a 45px gap.
+    const CH1_SONG_MOPS = { x: 800, y: 470 },
+      CH1_SONG_SQ = { x: 600, y: 470 };
     function ch1RedesignStart() {
       ((n.scene = "O1"),
         (n.room = "closet"),
@@ -44,15 +50,26 @@
         (n.ch1Fur = !1),
         (n.tvOn = !1),
         (n.sqPose = "sit"),
+        // Morning: Mops has finished cleaning and stands by the bucket. No beard cleaning in scene 1.
+        (n.mo.x = CH1_MOPS_MORNING.x),
+        (n.mo.y = CH1_MOPS_MORNING.y),
+        (n.mo.f = -1),
+        (n.mo.moving = !1),
+        (n.moPose = "stand"),
         J([
           { k: "card", id: "jupiter", text: "Stormtop Cloud Resort, floating above Jupiter." },
           { k: "card", id: "squatch", text: "This is Squatch. He's a Sasquatch." },
+          // Short lines that drive the plot: the party (what he will peek at), that he wants to go, the rule.
+          v("mops", "Morning, Squatch."),
+          v("mops", "Big party in the hall tonight."),
+          v("sq", "Party?"),
+          // Mops keeps facing Squatch, so his bubble stays clear of the STAY IN HERE poster.
+          v("mops", "Stay in here."),
           N(() => {
             ((n.ctrl = !0), (n.scene = "O1"), chipNow());
           }),
-          cV(() => n.scene === "O1" && n.moved > 110),
+          cV(() => n.scene === "O1" && n.moved > 110 && n.hopOut < 0),
           N(() => {
-            (n.sqPose === "sit" || n.sqPose === "sleep") && ((n.sqPose = "stand"), (n.sq.y = 540));
             ((n.ctrl = !0), (n.scene = "Q1"), ch1Day1());
           }),
         ]));
@@ -60,29 +77,27 @@
     function ch1Day1() {
       J([
         N(() => {
-          ((n.ch1Song = !0), (n.ctrl = !0), (n.moPose = "polish"), (n.scene = "Q1"), (n.ch1Chip = "Squatch: sing along with Mops"), chipNow());
+          ((n.ch1Song = !0), (n.ctrl = !0), (n.moPose = "stand"), (n.scene = "Q1"), (n.ch1Chip = "Squatch: sing along with Mops"), chipNow());
         }),
       ]);
     }
+    // While the sing goal is up, Mops walks to the door and hums there.
+    function ch1MopsHumTick(step) {
+      if (!n.ch1Song || n.room !== "closet" || n.moPose === "hidden") return;
+      n.mo.f = 1;
+      if (mV(n.mo, CH1_SONG_MOPS.x, CH1_SONG_MOPS.y, 120, step)) ((n.mo.f = -1), (n.moPose = "sway"));
+    }
     function ch1SingAlong() {
-      // In front of the desk, above the bucket. Mops is about 160px wide and Squatch
-      // about 124px, so their feet need ~195px between them for a 45px gap.
-      // The back lane (y 390) is above the crate, the G box, and the bucket.
-      let sqX = 660,
-        sqY = 498,
-        moX = 460,
-        moY = 498,
-        lane = 390;
+      // Squatch goes to Mops at the door. The back lane (y 390) is above the crate, the G box, and the bucket.
+      let lane = 390;
       ((n.ch1Song = !1), (n.ctrl = !1), (n.act = null), (n.sqPose = "stand"), (n.moPose = "stand"));
       J([
-        cV((dt) => mV(n.sq, n.sq.x, lane, 190, dt)),
-        cV((dt) => mV(n.sq, sqX, lane, 190, dt)),
-        cV((dt) => mV(n.sq, sqX, sqY, 190, dt)),
-        cV((dt) => mV(n.mo, n.mo.x, lane, 160, dt)),
-        cV((dt) => mV(n.mo, moX, lane, 160, dt)),
-        cV((dt) => mV(n.mo, moX, moY, 160, dt)),
+        cV((dt) => mV(n.mo, CH1_SONG_MOPS.x, CH1_SONG_MOPS.y, 160, dt)),
+        cV((dt) => mV(n.sq, n.sq.x, Math.min(n.sq.y, lane), 190, dt)),
+        cV((dt) => mV(n.sq, CH1_SONG_SQ.x, lane, 190, dt)),
+        cV((dt) => mV(n.sq, CH1_SONG_SQ.x, CH1_SONG_SQ.y, 190, dt)),
         N(() => {
-          ((n.sq.f = -1), (n.mo.f = 1), (n.sq.moving = !1), (n.mo.moving = !1), (n.sqPose = "sing"));
+          ((n.sq.f = 1), (n.mo.f = -1), (n.sq.moving = !1), (n.mo.moving = !1), (n.sqPose = "sing"));
         }),
         v("sq", "\u266A I'm floating in space! \u266A", "song"),
         N(() => {
@@ -120,10 +135,12 @@
           (n.mo.x = 880),
           (n.mo.y = 458),
           (n.ch1MopsLeave = 0),
-          (n.ch1PeekReady = !0),
-          (n.ctrl = !0),
-          (n.scene = "Q1"),
-          (n.ch1Chip = "Squatch: peek out the door"),
-          chipNow());
+          (n.ctrl = !1),
+          J([
+            { k: "card", id: "later", text: "That evening\u2026" },
+            N(() => {
+              ((n.ch1PeekReady = !0), (n.ctrl = !0), (n.scene = "Q1"), (n.ch1Chip = "Squatch: peek out the door"), chipNow());
+            }),
+          ]));
       }
     }

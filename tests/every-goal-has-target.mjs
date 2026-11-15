@@ -1,5 +1,6 @@
 /**
  * Every Chapter 1 goal the player acts on has a highlighted target and an action prompt.
+ * Goals whose action happens right where Squatch stands get no ring (Brian, 2026-11-14), only the prompt.
  *   node tests/every-goal-has-target.mjs
  */
 import { readFileSync } from "node:fs";
@@ -107,7 +108,9 @@ const report = await page.evaluate(async (chips) => {
     const spots = (ss.spotsNow() || []).filter((s) => s && s.verb);
     const offer = ss.offerNow();
     const at = spots[0] || { x: spec.x, y: spec.y };
-    const yellow = yellowNear(at.x || spec.x, at.y || spec.y);
+    // Rule (Brian, 2026-11-14): no ring when the action happens where Squatch stands, so those goals need only the prompt.
+    const onSquatch = !!spots[0] && (!!spots[0].hot || (Math.abs(spots[0].x - n.sq.x) < 2 && Math.abs(spots[0].y - n.sq.y) < 2));
+    const yellow = onSquatch ? 1 : yellowNear(at.x || spec.x, at.y || spec.y);
     const prompt = spec.pad ? n.ch1PadOn : spec.walk ? true : !!(offer && offer.verb);
     const target = spec.walk || spec.pad || spots.length > 0;
     if (!target || yellow < 1 || !prompt) bad.push({ chip, target, yellow, prompt, verb: offer && offer.verb, spots: spots.length });

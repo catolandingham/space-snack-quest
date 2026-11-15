@@ -20,7 +20,7 @@ Brian: make scene 1 right before anything else. The story is in `docs/CH1-STORY-
 
 1. Done (tidy, no change in play): everything scene 1 runs is now in `src/game/15-ch1-scene1.js` (the start, the song, Mops walking out, the peek). `Sp` in `10-ch1.js` is an old copy kept for debug links; never edit it. The goal-bar labels still live in the `Q1` table in `12-ch1-redesign.js`.
 2. Done (steady screen): the big button is one size for every label, the page no longer jumps, phone sideways fits, iPad sideways picture grows from about a third to over half the screen. Phone upright is limited by the phone's width; turning it sideways gives a picture about twice as big. Check: `tests/screen-fit.mjs`.
-3. Room and Mops: the morning story in beats 1–2. Fix problem 7 (Squatch in the bed) and problem 6. Remove the floor arrows (`drawWalkNudge`), the "Tap the floor to walk there." note, the help line under the buttons, and the yellow polish sparkle by Mops. Fix the goal bar saying "go with Mops to the ship" (scene `Q1` label in `12-ch1-redesign.js`).
+3. Done (morning): after the cards, short bubbles while Squatch is in bed (Brian: not a lot of text at once): Mops "Morning, Squatch." / "Big party in the hall tonight." / Squatch "Party?" / Mops "Stay in here." Squatch hops out of bed (no sliding through the frame) and walks; Mops walks to the door humming; they sing there as his goodbye (Brian yes, Nov 14); Mops leaves, a "That evening…" card, then the peek goal. The room is the locked picture from the first moment, so there is one bucket and nothing jumps when the song starts. Removed: floor arrows, "Tap the floor to walk there." (Chapter 1 only; other chapters keep it), the touch help line, the yellow polish sparkle, the "go with Mops to the ship" goal. New calendar picture (`home-room-empty-closed-v4.png`): a real calendar with the Moon Pie delivery day circled. Rule (Brian, Nov 14): no yellow ring and no "VERB · thing" tag when the action happens where Squatch stands (`actsWhereSquatchStands`). Check: `tests/scene1-morning.mjs`.
 4. The real peek: problem 12, beat 3.
 
 Saved for later, not now: a montage of Squatch's day (homework, things hidden around the room, lonely) and Mops checking in at night.
@@ -72,6 +72,8 @@ Saved for later, not now: a montage of Squatch's day (homework, things hidden ar
 
 ## 6. A yellow ring is drawn around Squatch himself
 
+- Fixed (scene 1 morning change): the ring and the white tag are skipped when the action is where Squatch stands. The kid robot now checks the ring the game really draws.
+
 - What the kid sees: the yellow "go here" ring sits on Squatch, so it points nowhere.
 - Seen: 8 times in one run (the song, the party, the gift box and others).
 - Cause: `ch1MarkGoal` (`src/game/12-ch1-redesign.js` line 81) draws the ring at the first spot that has a position. Several spots are placed on Squatch's own feet.
@@ -80,6 +82,8 @@ Saved for later, not now: a montage of Squatch's day (homework, things hidden ar
 - Proving check: remove `ring-on-squatch` from `KNOWN`. The robot run must pass.
 
 ## 7. Squatch walks through the bed when he gets up
+
+- Fixed (scene 1 morning change): the code-drawn bed and bucket were being drawn over the room picture in the wrong places. They are gone; Squatch hops off the front of the bed.
 
 - What the kid sees: at the start Squatch slides out through the bed frame.
 - Cause: scene O1 starts him at 205,438 (`src/game/10-ch1.js` line 81), which is inside the bed's solid box. The game then pushes him out to the nearest edge.

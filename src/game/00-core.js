@@ -1079,7 +1079,8 @@
         hall = n.room === "hall" ? B.camX : 0,
         who = x.mops ? n.mo : n.sq;
       n.walkTo = { x: w(l + hall, b.x0, b.x1), y: w(o, b.y0, b.y1), room: n.room, lx: who.x, ly: who.y, lt: n.T, at: n.T };
-      let seen = n.walkHinted;
+      // No "Tap the floor" note in Chapter 1 (scene 1 review, Brian 2026-11-14); other chapters keep it.
+      let seen = n.walkHinted || /^(Q|O1$)/.test(n.scene || "");
       try {
         seen = seen || window.localStorage.getItem(ssqKey("walk-hint")) === "1";
       } catch {}
@@ -1087,9 +1088,12 @@
         ((n.walkHinted = !0),
         hudNote("Tap the floor to walk there.", 4),
         Dt("hint", "", "walk-tap", "hint"));
-      try {
-        window.localStorage.setItem(ssqKey("walk-hint"), "1");
-      } catch {}
+      /^(Q|O1$)/.test(n.scene || "") ||
+        (() => {
+          try {
+            window.localStorage.setItem(ssqKey("walk-hint"), "1");
+          } catch {}
+        })();
       return !0;
     }
     function nf() {

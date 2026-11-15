@@ -218,6 +218,7 @@
     function ch1Day1Tick(dt) {
       let step = dt || 0;
       ch1RaidTick(step);
+      ch1MopsHumTick(step);
       ch1MopsLeaveTick(step);
       if (n.ch1Search && n.guard && n.room === "closet" && (n.ctrl || n.ch1Escort)) {
         let g = n.guard;

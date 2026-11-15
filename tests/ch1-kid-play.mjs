@@ -20,7 +20,6 @@ import { root, startGame, sleep } from "./game-page.mjs";
 // Problems Brian knows about. Take one off this list in the change that fixes it.
 const KNOWN = {
   "tap-stops-at-furniture": "A tap on a spot behind furniture walks Squatch into the furniture and stops (problem 2).",
-  "ring-on-squatch": "A goal ring is drawn around Squatch himself (problem 6).",
 };
 // Party buttons that get Squatch caught. A catch at the party leaves the game stuck in the bedroom
 // (docs/CHAPTER-1-PROBLEMS.md, problem 1), so the robot leaves them alone. The change that fixes problem 1
@@ -93,9 +92,9 @@ const st = () =>
       solids: ss.solids().concat(!ss.ch.mops && n.moPose !== "hidden" && n.moPose !== "sleep" && n.mo.x > 20 && n.mo.x < 1000 ? [{ x0: n.mo.x - 46, x1: n.mo.x + 46, y0: n.mo.y - 46, y1: n.mo.y + 46, mops: true }] : []),
       bounds: ss.walkBounds(),
       cones: ss.conesDrawn().filter((k) => !k.room || k.room === n.room),
-      // The goal circle (ch1MarkGoal) is drawn at the first spot that has a place. A spot placed on
-      // Squatch's own feet puts that circle around Squatch.
-      selfSpot: !ss.ch.mops && ss.spotsNow().some((k) => k && k.verb && k.x && Math.abs(k.x - n.sq.x) < 2 && Math.abs(k.y - n.sq.y) < 2),
+      // The goal ring the game really drew this frame (drawGoalMark keeps n.lastRing). A ring drawn on
+      // Squatch's own feet is a ring around Squatch himself.
+      selfSpot: !ss.ch.mops && !!n.lastRing && n.T - n.lastRing.T < 0.2 && Math.abs(n.lastRing.x - n.sq.x) < 2 && Math.abs(n.lastRing.y - n.sq.y) < 2,
     };
   });
 

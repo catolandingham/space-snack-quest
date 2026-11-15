@@ -31,7 +31,7 @@ const home = await page.evaluate(() => {
   const px = (x, y) => Array.from(cx.getImageData(Math.round(x * k), Math.round(y * k), 1, 1).data);
   return {
     scene: ss.op.scene,
-    wall: px(850, 300),
+    wall: px(780, 200),
     gap: px(900, 300),
     floor: px(820, 560),
     state: ss.ch1State(),

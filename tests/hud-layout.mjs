@@ -121,8 +121,8 @@ for (const [vname, viewport] of [
   if (vname === "375x812") {
     const top = await page.evaluate(() => ({ pic: document.querySelector("canvas").getBoundingClientRect().top + window.scrollY, bar: document.getElementById("ss-hudbar").getBoundingClientRect().height }));
     g.check("375x812: the picture starts right under the HUD bar (top within the bar's height + 16 px of the page top)", top.pic <= top.bar + 16, top);
-    const help = await page.evaluate(() => { const el = document.getElementById("ss-help"); return el ? parseFloat(getComputedStyle(el).fontSize) : 0; });
-    g.check("375x812: the help line is at least 14 CSS px", help >= 14, { help });
+    const help = await page.evaluate(() => !!document.getElementById("ss-help"));
+    g.check("375x812: no help line on a phone (removed in scene 1 review)", !help, { help });
   }
   // (d) Controls: no Reset section button; the sound button is under the picture.
   const ctl = await page.evaluate(() => {
