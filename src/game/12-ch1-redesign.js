@@ -50,7 +50,8 @@
     ];
     // Rule: no yellow ring and no "VERB · thing" tag when the action happens right where Squatch stands.
     function actsWhereSquatchStands(o) {
-      return !!o && (!!o.hot || Math.hypot(o.x - n.sq.x, (o.y || 0) - n.sq.y) < 40);
+      // A spot placed on Squatch's own feet follows him around, so a ring there would circle Squatch himself.
+      return !!o && (!!o.hot || (Math.abs(o.x - n.sq.x) < 2 && Math.abs((o.y || 0) - n.sq.y) < 2));
     }
     function drawGoalMark(x, y) {
       // Remember the last ring drawn, so tests can check it is never around Squatch himself.

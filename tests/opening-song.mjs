@@ -1,7 +1,7 @@
 /**
  * The home song is the two old lines, then Mops leaves.
  * The sing-along chip stays until those lines have played.
- * The bedroom arrows point left, away from the bucket.
+ * Then the "That evening…" card. The floor arrows are gone (scene 1 review, 2026-11-14).
  *   node tests/opening-song.mjs
  */
 import { readFileSync } from "node:fs";
@@ -92,7 +92,16 @@ const song = await page.evaluate(() => {
   let left = false;
   for (let i = 0; i < 100 && n.moPose !== "hidden"; i++) ss.tick(0.05);
   left = n.moPose === "hidden";
+  // Then the "That evening…" card; tap through it.
+  let evening = false;
+  for (let i = 0; i < 60 && !n.ctrl; i++) {
+    n.cur && n.cur.k === "card" && /^That evening/.test(n.cur.text || "") && (evening = true);
+    n.bt = 1;
+    ss.opTap();
+    ss.tick(0.1);
+  }
   return {
+    evening,
     verb: offer && offer.verb,
     steps,
     arrived,
@@ -122,32 +131,8 @@ g.check("the singers have a clear gap and miss the bucket, the G box, and the cr
 g.check("song bubbles stay off both faces", song.faces.length === 2 && song.faces.every((f) => !f.hit), song.faces);
 g.check("the peek chip waits until Mops has left and control is back", song.chipBeforeLeave !== "Squatch: peek out the door" && song.left && song.ctrl && song.chipAfter === "Squatch: peek out the door", song);
 
-const arrows = await page.evaluate(() => {
-  const ss = window.__ss;
-  const n = ss.op;
-  n.q = [];
-  n.cur = null;
-  n.scene = "O1";
-  n.room = "closet";
-  n.ctrl = true;
-  n.moved = 0;
-  n.ch1Song = false;
-  ss.drawFrame();
-  const c = document.querySelector("canvas");
-  const g2 = c.getContext("2d", { willReadFrequently: true });
-  const at = (x, y) => {
-    const p = g2.getImageData(x, y, 1, 1).data;
-    return [p[0], p[1], p[2]];
-  };
-  // First arrow points left: the head is up-left of the shaft, not up-right.
-  return { head: at(410, 514), tailUp: at(448, 514), shaft: at(434, 530) };
-});
-const headY = (p) => p && p[0] > 200 && p[1] > 160 && p[2] < 190 && p[0] > p[2] + 30;
-g.check("the bedroom arrows are on the floor", arrows.shaft[0] > arrows.tailUp[0] && arrows.shaft[2] < arrows.tailUp[2], arrows);
-g.check("the arrow head is on the left, away from the bucket", headY(arrows.head) && !headY(arrows.tailUp), arrows);
-
-const src = readFileSync(new URL("../src/game/12-ch1-redesign.js", import.meta.url), "utf8");
-g.check("the arrow direction is the one-line flip", /let dir = -1/.test(src));
+g.check('the "That evening…" card comes after Mops leaves', song.evening, song);
+g.check("the floor arrows are gone (scene 1 review)", !/function drawWalkNudge/.test(readFileSync(new URL("../src/game/12-ch1-redesign.js", import.meta.url), "utf8")));
 
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();

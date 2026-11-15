@@ -92,9 +92,9 @@ const st = () =>
       solids: ss.solids().concat(!ss.ch.mops && n.moPose !== "hidden" && n.moPose !== "sleep" && n.mo.x > 20 && n.mo.x < 1000 ? [{ x0: n.mo.x - 46, x1: n.mo.x + 46, y0: n.mo.y - 46, y1: n.mo.y + 46, mops: true }] : []),
       bounds: ss.walkBounds(),
       cones: ss.conesDrawn().filter((k) => !k.room || k.room === n.room),
-      // The goal ring the game really drew this frame (drawGoalMark keeps n.lastRing). A ring within
-      // 40 px of Squatch's feet is a ring around Squatch himself.
-      selfSpot: !ss.ch.mops && !!n.lastRing && n.T - n.lastRing.T < 0.2 && Math.hypot(n.lastRing.x - n.sq.x, n.lastRing.y - n.sq.y) < 40,
+      // The goal ring the game really drew this frame (drawGoalMark keeps n.lastRing). A ring drawn on
+      // Squatch's own feet is a ring around Squatch himself.
+      selfSpot: !ss.ch.mops && !!n.lastRing && n.T - n.lastRing.T < 0.2 && Math.abs(n.lastRing.x - n.sq.x) < 2 && Math.abs(n.lastRing.y - n.sq.y) < 2,
     };
   });
 

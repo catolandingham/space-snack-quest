@@ -190,7 +190,7 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 
 ## Changelog
 
-2026-11-14. Scene 1 morning (beats 1–2, problems 6 and 7): Mops's morning line by the bucket, Squatch hops out of bed, the song, "That evening…", then the peek goal. One bucket (the old code bucket and bed are no longer drawn over the room picture; the picture is used from the first moment). Removed the floor arrows, "Tap the floor to walk there.", the touch help line, the polish sparkle, and the "ship" goal. New calendar picture `home-room-empty-closed-v4.png` (v3 removed). Rule: no ring or tag where Squatch stands. New test `tests/scene1-morning.mjs`.
+2026-11-14. Scene 1 morning (beats 1–2, problems 6 and 7): Mops's morning line by the bucket, Squatch hops out of bed, the song, "That evening…", then the peek goal. One bucket (the old code bucket and bed are no longer drawn over the room picture; the picture is used from the first moment). Removed the floor arrows, "Tap the floor to walk there." (Chapter 1 only), the touch help line, the polish sparkle, and the "ship" goal. New calendar picture `home-room-empty-closed-v4.png` (v3 removed). Rule: no ring or tag where Squatch stands. New test `tests/scene1-morning.mjs`.
 
 2026-11-14. Tidy, no change in play: `drawCap` (the white "VERB · thing" label every chapter uses) moved from `20-ch2.js` to `60-frame-draw.js`, before the scene 1 morning fix changes it.
 
