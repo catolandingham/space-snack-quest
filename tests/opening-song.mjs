@@ -39,10 +39,11 @@ const song = await page.evaluate(() => {
     steps++;
   }
   const traveled = Math.hypot(n.mo.x - from, n.mo.y - 420);
-  const arrived = n.mo.x < n.sq.x && traveled > 40;
-  const facing = n.mo.f === 1 && n.sq.f === -1;
-  // Drawn sizes in this room: Mops facing right reaches 66px left and 94px right of his feet.
-  // Squatch singing, facing left, reaches 61px left and 63px right.
+  // The song is at the door: Mops (by the door) is right of Squatch.
+  const arrived = n.mo.x > n.sq.x && n.mo.x > 760 && traveled > 40;
+  const facing = n.mo.f === -1 && n.sq.f === 1;
+  // Drawn sizes in this room: Mops facing left reaches 94px left and 66px right of his feet.
+  // Squatch singing, facing right, reaches 63px left and 61px right.
   const props = [
     { x0: 83, x1: 290, y0: 400, y1: 530 },
     { x0: 309, x1: 375, y0: 470, y1: 525 },
@@ -53,9 +54,9 @@ const song = await page.evaluate(() => {
   let songAt = null;
   let gap = 0;
   const noteBodies = () => {
-    const sqB = { x0: n.sq.x - 61, x1: n.sq.x + 63, y0: n.sq.y - 154, y1: n.sq.y };
-    const moB = { x0: n.mo.x - 66, x1: n.mo.x + 94, y0: n.mo.y - 155, y1: n.mo.y };
-    gap = Math.round(sqB.x0 - moB.x1);
+    const sqB = { x0: n.sq.x - 63, x1: n.sq.x + 61, y0: n.sq.y - 154, y1: n.sq.y };
+    const moB = { x0: n.mo.x - 94, x1: n.mo.x + 66, y0: n.mo.y - 155, y1: n.mo.y };
+    gap = Math.round(moB.x0 - sqB.x1);
     songAt = [Math.round(n.sq.x), Math.round(n.sq.y), Math.round(n.mo.x), Math.round(n.mo.y), gap];
     if (gap < 20) blocked.push("gap " + gap);
     for (const p of props) {
@@ -121,8 +122,8 @@ const song = await page.evaluate(() => {
   };
 });
 g.check("SING is the action", song.verb === "SING", song);
-g.check("Mops walks over before anyone sings", song.arrived && song.steps > 2 && song.lines[0] === "\u266A I'm floating in space! \u266A", song);
-g.check("Mops stands facing Squatch", song.facing, song);
+g.check("they meet at the door before anyone sings", song.arrived && song.steps > 2 && song.lines[0] === "\u266A I'm floating in space! \u266A", song);
+g.check("Mops and Squatch face each other", song.facing, song);
 g.check("Mops answers with the old line", song.lines[1] === "\u266A Baaa-aa-aaa! \u266A", song);
 g.check("the goodbye stand-in is gone", song.goodbye === false, song);
 g.check("the sing-along chip is still up while he is singing", song.chipDuring === "Squatch: sing along with Mops", song);

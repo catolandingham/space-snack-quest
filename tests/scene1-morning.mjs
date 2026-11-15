@@ -1,7 +1,9 @@
 /**
  * Scene 1 morning (Brian, 2026-11-14; docs/CHAPTER-1-PROBLEMS.md "Do first: scene 1", step 3).
  * Chapter 1 from the start on a phone:
- * - after the cards, Mops says his morning line while Squatch is still in bed; Mops is not cleaning (no "polish"),
+ * - after the cards, short bubbles while Squatch is still in bed: "Morning, Squatch." "Big party in the hall tonight."
+ *   Squatch: "Party?" Mops: "Stay in here." Mops is not cleaning (no "polish"),
+ * - the song is at the door (Mops's goodbye),
  * - the room is the locked picture from the first moment (no switch when the song starts),
  * - only one bucket: nothing yellow is drawn where the old code bucket used to sit,
  * - the goal bar never says "ship" in scene 1,
@@ -59,12 +61,24 @@ for (let i = 0; i < 20; i++) {
   }
   await tap();
 }
-g.check("Mops says the morning line after the cards", !!morning, morning);
+g.check("Mops says good morning after the cards", !!morning, morning);
+// Then the short lines, one bubble each: the party, Squatch wants to go, the rule.
+const said = [];
+for (let i = 0; i < 12; i++) {
+  const t = await st();
+  if (t.ctrl) break;
+  if (t.cur === "bub" && said[said.length - 1] !== t.text) said.push(t.text);
+  await tap();
+}
+g.check(
+  "then: Big party in the hall tonight. / Party? / Stay in here.",
+  JSON.stringify(said.slice(0, 4)) === JSON.stringify(["Morning, Squatch.", "Big party in the hall tonight.", "Party?", "Stay in here."]),
+  said,
+);
 g.check("Squatch is still in bed for the morning line", morning && morning.pose === "sit", morning && morning.pose);
 g.check("Mops is not cleaning in scene 1", morning && morning.moPose !== "polish", morning && morning.moPose);
 g.check("the room is the locked picture from the start (scene O1)", (await page.evaluate(() => window.__ss.op.scene)) === "O1");
 g.check("only one bucket while Squatch wakes up", (await oldBucketYellow()) === 0, await oldBucketYellow());
-for (let i = 0; i < 6 && !(await st()).ctrl; i++) await tap();
 let s = await st();
 g.check("no touch help line and no Tap the floor note", !/Stick: walk|Tap the floor/.test(s.page), s.page.slice(0, 300));
 // Walk out of bed and around.
@@ -80,6 +94,9 @@ chips.add(s.chip);
 g.check("after walking, the goal is to sing along with Mops", /sing along with Mops/.test(s.chip), s.chip);
 g.check("no yellow ring around Squatch for the song", s.ring === null || s.ring >= 40, s.ring);
 g.check("only one bucket in the song part", (await oldBucketYellow()) === 0, await oldBucketYellow());
+await sleep(1500);
+const hum = await page.evaluate(() => ({ x: window.__ss.op.mo.x, pose: window.__ss.op.moPose }));
+g.check("Mops walks to the door and hums there", hum.x > 760 && hum.pose === "sway", hum);
 await page.keyboard.press("KeyE");
 let evening = false;
 for (let i = 0; i < 80; i++) {

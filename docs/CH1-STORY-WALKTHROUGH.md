@@ -13,11 +13,12 @@ Mops is at work. Squatch is home alone.
 ### 1. Meet Squatch `UPDATED t-nov14`
 - **Where:** Home (Squatch and Mops's room), morning
 - **Who:** Squatch, Mops
-- **What happens:** Stormtop floats in the clouds of a giant planet. A big, furry kid lives in a small, hidden room. Squatch wakes up in his bed. Mops is wringing his beard out over the mop bucket; he just finished cleaning the room. A poster by the door says to stay inside. Nothing in the room is tappable yet.
+- **What happens:** Stormtop floats in the clouds of a giant planet. A big, furry kid lives in a small, hidden room. Squatch wakes up in his bed. Mops stands by the mop bucket; the room is clean. A poster by the door says to stay inside. Nothing in the room is tappable yet.
 - **Words:**
   - Card: "This is Squatch. He's a Sasquatch." *(decided)*
   - Poster: "STAY IN HERE! — Mops" *(decided)*
-  - Mops: "Morning, Squatch. Room's all clean. Big party in the hall tonight, so stay in here." (points at the poster) *(Brian agreed to the idea Nov 14; exact words need his yes)*
+  - Short bubbles, one at a time (Brian Nov 14: not a lot of text at once): Mops: "Morning, Squatch." / Mops: "Big party in the hall tonight." / Squatch: "Party?" / Mops: "Stay in here." *(exact words need Brian's yes)*
+  - The song is Mops's goodbye: he hums on his way to the door, Squatch sings with him there, then Mops leaves (Brian yes, Nov 14).
 - **Player:** Walk around the room.
 <sub>replot 01 · R29 R35 R36 · Brian chat Nov 14</sub>
 
