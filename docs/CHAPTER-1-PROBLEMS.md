@@ -22,10 +22,82 @@ Brian: make scene 1 right before anything else. The story is in `docs/CH1-STORY-
 2. Done (steady screen): the big button is one size for every label, the page no longer jumps, phone sideways fits, iPad sideways picture grows from about a third to over half the screen. Phone upright is limited by the phone's width; turning it sideways gives a picture about twice as big. Check: `tests/screen-fit.mjs`.
 3. Done (morning): after the cards, short bubbles while Squatch is in bed (Brian: not a lot of text at once): Mops "Morning, Squatch." / "Big party in the hall tonight." / Squatch "Party?" / Mops "Stay in here." Squatch hops out of bed (no sliding through the frame) and walks; Mops walks to the door humming; they sing there as his goodbye (Brian yes, Nov 14); Mops leaves, a "That evening…" card, then the peek goal. The room is the locked picture from the first moment, so there is one bucket and nothing jumps when the song starts. Removed: floor arrows, "Tap the floor to walk there." (Chapter 1 only; other chapters keep it), the touch help line, the yellow polish sparkle, the "go with Mops to the ship" goal. New calendar picture (`home-room-empty-closed-v4.png`): a real calendar with the Moon Pie delivery day circled. Rule (Brian, Nov 14): no yellow ring and no "VERB · thing" tag when the action happens where Squatch stands (`actsWhereSquatchStands`). Check: `tests/scene1-morning.mjs`.
 4. Done (peek): Squatch leans in at his doorway (stands in the gap of the bottom wall, half hidden), the hall is already full on the first frame, the goal bar is empty, Isfred's muffled "Mmf mmf... mm-mmf... mmf!" (Brian yes, Nov 14), then "Robots?" once. Then he walks to the plant and the announcement plays there. Check: the peek part of `tests/scene1-morning.mjs`.
-5. Done (sneak): after "Robots?" the player steers Squatch from his doorway to the middle plant and presses HIDE there. The yellow guest by the door faces the stage for 3.5 seconds, turns, then looks toward the plant for 2 seconds with a sight cone (the cone covers the floor between the door and the plant, not the plant). If he sees Squatch out in the open, a red "!" shows and Squatch hurries back to his doorway to try again. Goal bar: "Squatch: sneak to the plant" (new words, pending Brian yes). Check: the sneak part of `tests/scene1-morning.mjs`; `ch1-playthrough` has the new "HIDE · plant".
-6. Next: Brian picks.
+5. Done (sneak): after "Robots?" the player steers Squatch from his doorway to the middle plant and presses HIDE there. The yellow guest by the door faces the stage for 3.5 seconds, turns, then looks toward the plant for 2 seconds with a sight cone (the cone covers the floor between the door and the plant, not the plant). If he sees Squatch out in the open, a red "!" shows and Squatch hurries back to his doorway to try again. Goal bar: "Squatch: sneak to the plant" (Brian yes and merged, Nov 15, pull request 48). Check: the sneak part of `tests/scene1-morning.mjs`; `ch1-playthrough` has the new "HIDE · plant".
+6. Next: the party hall picture. Brian, Nov 15: the hall has many design problems apart from play. Read the room sheet and the graded list just below, then fix them in the order given there, one per pull request.
 
 Saved for later, not now: a montage of Squatch's day (homework, things hidden around the room, lonely) and Mops checking in at night.
+
+## Party hall: room sheet (every decision about how it looks, in one place)
+
+Written 2026-11-15 because the hall was built from the walkthrough alone and missed decisions kept in other files. Before you change anything in the hall, read this. If you find a hall decision that is not here, add it here in the same pull request. Each line gives where it was decided.
+
+The room
+- The room is the locked picture `docs/locked-rooms/hall-room-empty-v1.png`. Never change it without Brian's yes. The yellow outline around the snack bar is part of that picture.
+- Stage at the top (R6). In the picture the stage is the long brown platform under the window. It needs to read as a stage: Isfred stands on it, the mic is on it, the Croc Boys play on it.
+- Big window stays where it is (R7). It shows the planet's clouds and rings (R5).
+- Home door at the bottom; the way to the next room is the gap at the top of the right wall (R6).
+- Speaker, FUR alarm and floor vent are spread out, one of each (R11). They are in the picture.
+- Second plant mid-room (R9). It is the plant Squatch hides in (beat 4).
+
+The banner and the poster
+- Banner "ROBOTICS DELEGATION!" (walkthrough beat 3, decided; kept by Brian 2026-11-07). It hangs above the stage, not on the floor. "No banner" in R6 and OPEN-ASKS A24 means no "Convention Hall" banner; it is not about this one.
+- A poster beside the stage with drawings of the robots, "COMING SOON!" (beat 5; the words still need Brian's yes). No real robots at the party (DECISIONS 2026-11-09 note).
+
+People
+- Isfred is on the stage when he speaks (beats 3, 5, 6). Never a speech bubble with nobody under it.
+- Adults are clearly taller than Squatch (C10, R67). Guests are a varied mix of alien types (C11, C12: teal-jacket woman, camera tourist in a Hawaiian shirt, three-eyed backpacker, stilt-legged purple alien, octopus tourist, robot tourist).
+- Before the dance, guests face the stage (beat 4: "everyone faces the stage").
+- The octopus tourist (beat 12) and the photo corner with its camera (beat 13) must read as what they are when a kid first sees them.
+
+Snack bar (Brian, 2026-11-15, R107)
+- The bartender (she) works behind the counter, not in front of it.
+- Squatch can hide behind the counter when nobody is back there. This matters later (beat 27, "One snack, behind the counter").
+- No sign on it.
+- Snacks on it are the picture's own (snack box, red snack bag, Moon Pie tin). Do not draw extra snacks on top.
+
+Floor vent (Brian, 2026-11-15, R108; also D15, S61, A22)
+- Soft swirls, always moving inward (A22). In the picture today they are still drawn and never move.
+- If Squatch goes too close without his disguise, his fur drifts into the vent: first a tuft of fur lifts off him and drifts toward it (the warning), and staying in the pull sends fur in and sets off the FUR alarm (D15, S61). The old lobby night scene already does this: `lobbyTuft` in `src/game/10-ch1.js`. Reuse it.
+- With the disguise on, the vent tugs the disguise instead (beat 16). No "SUCK · vent" button (problem 9).
+- Nobody stands on the vent.
+
+Light
+- It is evening (beat 3 card "That evening…"). The lights dim for the band (beat 6).
+
+Marks on screen (BRIAN-LENS)
+- The thing to use glows or is outlined. Never an arrow, never a circle on the floor. Goals disappear once done.
+
+## Party hall picture check, graded 2026-11-15
+
+Graded on a full-size still of the hall during the peek (`?ch=1`, after "That evening…"), against the room sheet above and `docs/BRIAN-LENS.md`.
+
+| Check | Today | Where in the code |
+| --- | --- | --- |
+| Stage reads as a stage, Isfred on it | Fail. Empty brown bench; Isfred is not drawn; his bubble floats with nobody under it | `drawCh1Party` in `12-ch1-redesign.js` |
+| Banner above the stage | Fail. It floats mid-floor among the guests | same |
+| "COMING SOON!" robot poster beside the stage | Fail. Not drawn | not built |
+| Guests face the stage | Fail. Scattered, side-on, all the same pose | `CH1_GUESTS` in `12-ch1-redesign.js` |
+| Adults clearly taller than Squatch | Fail. Guests look Squatch's size | `Qt` scale at the party |
+| Evening light | Fail. Looks like bright day | not built |
+| Bartender behind the counter | Fail. She stands in front of its bottom corner | `Qt(880, 500, ...)` in `drawCh1Party` |
+| Only the picture's snacks on the counter | Fail. Three extra small snacks drawn over the counter edge (848, 340/390/440) | `drawCh1Party` |
+| Nobody on the vent | Fail. The teal guest stands on it | `CH1_GUESTS` |
+| Vent swirls move inward | Fail. They are part of the still picture | not built |
+| Fur goes in when Squatch is close without disguise | Fail. Not built in the hall | `lobbyTuft` in `10-ch1.js` to reuse |
+| No arrow, no floor circle | Fail. Yellow arrow at bottom right points at nothing; pale yellow photo circle by the door; the goal ring around the plant | `drawDoorNudge`; `drawCh1Fest` in `14-ch1-day1.js`; `drawGoalMark` (shared) |
+| Octopus and photo corner read clearly | Fail. The octopus looks like an orange stick creature; the camera stands alone on a tripod | `drawCh1Party`, `drawCh1Fest` |
+| Door area clear | Fail. Photo table with a cake and the photo circle crowd Squatch's door and overlap the yellow guest | `drawCh1Fest` |
+| Croc Boys readable (beat 6) | Fail. Problem 19 | |
+| Window, speaker, alarm, plants, no sign on the bar | Pass | picture |
+
+Fix order, one pull request each, each with a still compared against this table:
+
+1. Stage: Isfred on the stage, banner above it, "COMING SOON!" poster beside it (poster words need Brian's yes).
+2. Snack bar: bartender behind the counter, remove the extra snacks, make the space behind the counter a hiding spot when she is not there (R107).
+3. Guests: facing the stage, taller than Squatch, off the vent, out of the doorway.
+4. Clutter: remove the arrow, move the photo corner away from the door, make the octopus and camera read.
+5. Evening light, dimming for the band.
+6. Vent: moving swirls, then the fur event when close without disguise (R108), then the disguise tug (replaces the button, problem 9).
 
 ## 1. A catch at the party leaves the game stuck in the bedroom
 

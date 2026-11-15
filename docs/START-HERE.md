@@ -17,6 +17,8 @@ Everything Brian wants for Chapter 1 is already written down. It was checked on 
 3. `docs/locked-rooms/`: the room pictures. The game draws rooms from these.
 4. `docs/grok-archive/squatchbot-brian-words.md`: Brian's own messages. Open it only when a beat is unclear. Search it; do not read it all.
 
+One more, for how a room looks: the room sheets in `docs/CHAPTER-1-PROBLEMS.md` (the party hall has one). The walkthrough does not hold every decision about a room. Some live only in `docs/DECISIONS.md` and `docs/OPEN-ASKS.md`. On 2026-11-15 the party hall was built from the walkthrough alone and missed the stage, the snack bar, the vent and the guests' height. Before you change a room with no sheet, search `docs/DECISIONS.md` and `docs/OPEN-ASKS.md` for the room's name and its objects, and write a sheet first.
+
 Open pull requests and branches: only the ones named in `docs/CHAPTER-1-PROBLEMS.md` matter. Everything else is leftovers from old attempts. Do not continue, merge or copy from them.
 
 The game does not yet play the way the walkthrough says. Closing that gap, one beat at a time, is the job. The other files in `docs/` are old plans and logs. Do not read them unless a problem names one. Do not write new ones.
@@ -43,9 +45,10 @@ Do this, and only this, until the list is empty or Brian redirects you.
 4. Take the problem off the `KNOWN` list in `tests/ch1-kid-play.mjs`, or add the test the list names.
 5. Run `npm run build`, then `node tests/ch1-kid-play.mjs`. It must reach the score card and pass.
 6. Mark the problem fixed in `docs/CHAPTER-1-PROBLEMS.md`. Update `README.md` and `docs/MASTER-BACKLOG.md`.
-7. Open a pull request. Wait for the green check on GitHub. A red check means not done.
-8. Show Brian in chat: what a kid will notice, in two sentences, plus a picture or `npm run kid-video`. Ask for his yes.
-9. Merge only on his yes, written into the pull request. Then go to step 1.
+7. Picture check. Take a full-size still of every screen you changed (for the party hall: `node tools/hall-still.mjs`; copy it for other rooms). Check it against `docs/BRIAN-LENS.md` and the room sheet, line by line. Put the pass or fail table in the pull request (the template asks for it). Fix any fail you caused. List the others; do not hide them. Brian should never be the first to spot a problem a sheet already names.
+8. Open a pull request. Wait for the green check on GitHub. A red check means not done.
+9. Show Brian in chat: what a kid will notice, in two sentences, plus a picture or `npm run kid-video`. Ask for his yes.
+10. Merge only on his yes, written into the pull request. Then go to step 1.
 
 ## Do not
 

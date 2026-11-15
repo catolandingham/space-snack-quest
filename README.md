@@ -4,7 +4,7 @@
 
 **New here?** Read [`docs/START-HERE.md`](docs/START-HERE.md). It names the four files that say what Chapter 1 should be, the ranked problem list, and the loop to follow. Brian's own messages are in [`docs/grok-archive/squatchbot-brian-words.md`](docs/grok-archive/squatchbot-brian-words.md).
 
-**Next up (Brian, 2026-11-14):** make scene 1 (Chapter 1 beats 1–3) right first. The morning part, the real peek (beat 3), and the sneak to the plant (beat 4) are done. See the "Do first" section of [`docs/CHAPTER-1-PROBLEMS.md`](docs/CHAPTER-1-PROBLEMS.md).
+**Next up (Brian, 2026-11-14):** make scene 1 (Chapter 1 beats 1–3) right first. The morning part, the real peek (beat 3), and the sneak to the plant (beat 4) are done. Next is the party hall picture (Brian, 2026-11-15): the room sheet and the graded check are in [`docs/CHAPTER-1-PROBLEMS.md`](docs/CHAPTER-1-PROBLEMS.md). Every pull request now includes a picture check (see `docs/START-HERE.md` step 7). Docs match main: yes.
 
 ## Chapter 1 redesign (on main)
 
