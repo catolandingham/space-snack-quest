@@ -73,9 +73,9 @@ Graded on a full-size still of the hall during the peek (`?ch=1`, after "That ev
 
 | Check | Today | Where in the code |
 | --- | --- | --- |
-| Stage reads as a stage, Isfred on it | Fail. Empty brown bench; Isfred is not drawn; his bubble floats with nobody under it | `drawCh1Party` in `12-ch1-redesign.js` |
-| Banner above the stage | Fail. It floats mid-floor among the guests | same |
-| "COMING SOON!" robot poster beside the stage | Fail. Not drawn | not built |
+| Stage reads as a stage, Isfred on it | Pass (2026-11-15). Isfred stands on it; his bubble points at him | `drawCh1Party` in `12-ch1-redesign.js` |
+| Banner above the stage | Pass (2026-11-15) | same |
+| "COMING SOON!" robot poster beside the stage | Pass (2026-11-15) | `drawCh1Party` |
 | Guests face the stage | Fail. Scattered, side-on, all the same pose | `CH1_GUESTS` in `12-ch1-redesign.js` |
 | Adults clearly taller than Squatch | Fail. Guests look Squatch's size | `Qt` scale at the party |
 | Evening light | Fail. Looks like bright day | not built |
@@ -92,7 +92,7 @@ Graded on a full-size still of the hall during the peek (`?ch=1`, after "That ev
 
 Fix order, one pull request each, each with a still compared against this table:
 
-1. Stage: Isfred on the stage, banner above it, "COMING SOON!" poster beside it (poster words need Brian's yes).
+1. Done 2026-11-15. Stage: Isfred on the stage, banner above it, "COMING SOON!" poster beside it.
 2. Snack bar: bartender behind the counter, remove the extra snacks, make the space behind the counter a hiding spot when she is not there (R107).
 3. Guests: facing the stage, taller than Squatch, off the vent, out of the doorway.
 4. Clutter: remove the arrow, move the photo corner away from the door, make the octopus and camera read.
