@@ -61,6 +61,7 @@ Do this, and only this, until the list is empty or Brian redirects you.
 | You need | Look in |
 | --- | --- |
 | Chapter 1 as played today (scenes Q1 to Q9, QA party, QB lunch, QP keypad) | `src/game/12-ch1-redesign.js`, `14-ch1-day1.js`, `14-ch1-day2.js` |
+| The white "VERB · thing" label over a spot (`drawCap`) | `src/game/60-frame-draw.js` |
 | Chapter 1 scene 1 (start, song, Mops walking out, peek) | `src/game/15-ch1-scene1.js` |
 | Older Chapter 1 scenes (O and S names); a few pieces are still used, but scene 1 itself is in `15-ch1-scene1.js` | `src/game/10-ch1.js`, `11-ch1-hall.js` |
 | Walking, tapping, solid furniture | `src/game/00-core.js` (`walkTap`, `oh`) |
