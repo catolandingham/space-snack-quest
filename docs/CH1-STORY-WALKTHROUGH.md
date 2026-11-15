@@ -17,7 +17,7 @@ Mops is at work. Squatch is home alone.
 - **Words:**
   - Card: "This is Squatch. He's a Sasquatch." *(decided)*
   - Poster: "STAY IN HERE! — Mops" *(decided)*
-  - Short bubbles, one at a time (Brian Nov 14: not a lot of text at once): Mops: "Morning, Squatch." / Mops: "Big party in the hall tonight." / Squatch: "Party?" / Mops: "Stay in here." *(exact words need Brian's yes)*
+  - Short bubbles, one at a time (Brian Nov 14: not a lot of text at once): Mops: "Morning, Squatch." / Mops: "Big party in the hall tonight." / Squatch: "Party?" / Mops: "Stay in here." *(Brian yes, Nov 14)*
   - The song is Mops's goodbye: he hums on his way to the door, Squatch sings with him there, then Mops leaves (Brian yes, Nov 14).
 - **Player:** Walk around the room.
 <sub>replot 01 · R29 R35 R36 · Brian chat Nov 14</sub>
@@ -36,7 +36,7 @@ Mops is at work. Squatch is home alone.
 - **Who:** Squatch (hidden); guests
 - **What happens:** A card says "That evening…". Music and voices come through the wall. Squatch taps the doorway and leans out. The hall is already full of guests (nobody appears out of nowhere), with a stage, a snack bar and a big banner. He can hear talking from the stage but can't make out the words. He is curious, not sad. He wants to hear better, so he sneaks to the plant (beat 4). Isfred's announcement waits until he is in the plant.
 - **Words:**
-  - Card: "That evening…" *(Brian agreed Nov 14; exact words need his yes)*
+  - Card: "That evening…" *(Brian yes, Nov 14)*
   - Banner: "ROBOTICS DELEGATION!" *(decided)*
   - Squatch, thinking: "Robots?" *(decided, Brian Nov 14; moved here from beat 5)*
 - **Player:** Tap the doorway to peek.
