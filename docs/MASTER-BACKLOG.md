@@ -190,6 +190,8 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 
 ## Changelog
 
+2026-11-15. Party hall fix 1, the stage (CHAPTER-1-PROBLEMS fix order): the ROBOTICS DELEGATION! banner moves from mid-floor to hang above the stage; Isfred (the horned guest) now stands on the stage instead of among the guests, and his peek line points at him there; the "COMING SOON!" robot poster (Brian yes, 2026-11-15: "Approve the poster wording COMING SOON! for the party hall") stands on legs beside the stage. No other new words. New check `tests/party-stage.mjs`. While Isfred speaks, his bubble covers the banner; Squatch reads it right after, on "Robots?".
+
 2026-11-15. Singing or music, never both (Brian): the warm background music now fades out while anyone sings (the home song at the door, a song tune still playing, or Squatch at the party mic) and fades back in after. One shared fix in `00-core.js` (`singNow`), so every song bubble in the game gets it. New check in `tests/opening-song.mjs`. No new words.
 
 2026-11-15. Docs only, no change in play. Party hall room sheet and a graded picture check in `docs/CHAPTER-1-PROBLEMS.md` (16 checks, 15 fail, with a fix order). New decisions R107 (bartender behind the snack bar; Squatch can hide behind it when nobody is there; no sign) and R108 (fur into the floor vent when Squatch is close without his disguise). `docs/START-HERE.md` now says the walkthrough does not hold every room decision, and adds a picture check step to the loop. A pull request template asks for that check. `tools/hall-still.mjs` takes a full-size still of the hall. Pull request 48 (sneak) merged with Brian's yes; its goal words are approved. Docs match main: yes.

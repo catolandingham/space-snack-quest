@@ -140,7 +140,6 @@
     const CH1_GUESTS = [
       [250, 460, "antenna"],
       [400, 440, "croc"],
-      [620, 450, "horns"],
       [740, 470, "hat"],
       [200, 610, "hair"],
       [520, 610, "spots"],
@@ -1244,9 +1243,21 @@
         face = look ? 1 : 0,
         eye = 72 * ALIEN_ADULT,
         glance = (x, y) => look && (F(x + 8, y - eye, 2.2, "#fffdf8"), F(x - 5, y - eye, 2.2, "#fffdf8"));
-      (m(280, 300, 220, 28, 6),
+      // Stage (walkthrough beats 3 and 5, CHAPTER-1-PROBLEMS stage item): the banner hangs above the stage, Isfred stands on it,
+      // and the approved "COMING SOON!" robot poster (Brian yes, 2026-11-15) stands beside it.
+      (m(250, 120, 220, 28, 6),
         r("#3478f6", 3),
-        g("ROBOTICS DELEGATION!", 390, 314, 14, "#ffffff", "center", 900),
+        g("ROBOTICS DELEGATION!", 360, 134, 14, "#ffffff", "center", 900),
+        C([258, 120, 258, 100], "#1e2430", 2),
+        C([462, 120, 462, 100], "#1e2430", 2),
+        C([500, 266, 500, 290], "#1e2430", 3),
+        C([570, 266, 570, 290], "#1e2430", 3),
+        m(490, 196, 90, 70, 4),
+        r("#fffaf0", 2),
+        dq(535, 244, !1, 0.7),
+        g("COMING SOON!", 535, 261, 10, "#e5533d", "center", 900),
+        drawCh1Alien(360, 256, "horns", ALIEN_ADULT, face || 1),
+        glance(360, 256),
         n.sqPose === "hidden" && ga(400, 500),
         !(n.ch1PartyDid && n.ch1PartyDid.snack) &&
           [
