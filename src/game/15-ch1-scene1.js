@@ -165,7 +165,7 @@
         ctx.fillText(text, x, y);
       };
       calendarText("MOONMUNCH", 360, 68, 32, "#fffaf0", "center", 800);
-      calendarText("FUZZUARY  /  MOONMUNCH  /  NAPRIL", 360, 111, 19);
+      calendarText("FUZZUARY", 360, 111, 23);
       ctx.strokeStyle = "#a8a9aa";
       ctx.lineWidth = 2;
       for (let i = 0; i <= 5; i++) {
@@ -179,14 +179,18 @@
         calendarText(String(day), 38 + ((day - 1) % 5) * 132, 141 + Math.floor((day - 1) / 5) * 80, 16, "#727777", "left", 400);
       const reminders = [
         { day: 2, lines: ["Sock hunt"] },
-        { day: 6, lines: ["Homework"] },
         { day: 9, lines: ["family", "Olympics", "night"] },
-        { day: 12, lines: ["Sing with", "Mops"] },
+        { day: 12, span: 2, lines: ["Wash outside windows", "(remember space suit!)"] },
         { day: 18, lines: ["Blanket", "fort night"] },
       ];
       for (const item of reminders) {
-        const x = 96 + ((item.day - 1) % 5) * 132;
+        const x = 96 + ((item.day - 1) % 5) * 132 + ((item.span || 1) - 1) * 66;
         const y = 130 + Math.floor((item.day - 1) / 5) * 80;
+        // A longer pencilled reminder runs into the next blank day, clear of both date numbers.
+        if (item.span) {
+          ctx.fillStyle = "#fffaf0";
+          ctx.fillRect(x - 125, y + 24, 250, 51);
+        }
         item.lines.forEach((line, i) => calendarText(line, x, y + 49 + (i - (item.lines.length - 1) / 2) * 22, 22));
       }
       calendarText("Sponsored by MOON PIES", 360, 492, 25, "#8b5a3c", "center", 700);
@@ -203,10 +207,10 @@
         // A discreet nibble at the page edge, leaving the pie, dates and reminders untouched.
         ctx.globalCompositeOperation = "destination-out";
         ctx.beginPath();
-        ctx.moveTo(720, 319);
-        ctx.quadraticCurveTo(706, 319, 711, 328);
-        ctx.quadraticCurveTo(699, 335, 711, 342);
-        ctx.quadraticCurveTo(706, 351, 720, 351);
+        ctx.moveTo(720, 314);
+        ctx.quadraticCurveTo(695, 314, 704, 326);
+        ctx.quadraticCurveTo(680, 336, 704, 347);
+        ctx.quadraticCurveTo(695, 358, 720, 358);
         // Fill closes the cutout automatically. Keep the stroked path OPEN at the page edge:
         // a vertical closing stroke would frame the missing paper like a pasted-on gray shape.
         ctx.fill();

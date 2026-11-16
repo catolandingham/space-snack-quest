@@ -21,7 +21,7 @@ Mops is at work. Squatch is home alone.
   - The song is Mops's goodbye: he hums on his way to the door, Squatch sings with him there, then Mops leaves (Brian yes, Nov 14).
 - **Player:** Walk around the room.
 - **Approved room looks, not yet built:** closet: "Mops's costumes. And my Guardian Box."; back to bed: he flops down, then hops back up, "Not sleepy anymore." Desk homework replaces the proposed work-list line; new homework words need Brian's yes.
-- **Calendar revision for review (Nov 16, PR 58 unmerged):** Brian requested a subtler bite, invented month names, a sponsor, "family Olympics night" and fitting reminders. Draft printed copy: Fuzzuary / Moonmunch / Napril; Sponsored by MOON PIES; Sock hunt; Homework; family Olympics night; Sing with Mops; Blanket fort night. Scattered dates are fixed decoration, not new playable beats. The bite is a tiny margin nibble that leaves all dates and the circled pie intact. Exact new wording awaits visual sign-off.
+- **Calendar revision for review (Nov 16, PR 58 unmerged):** latest copy is MOONMUNCH with FUZZUARY alone underneath; Sponsored by MOON PIES; Sock hunt; family Olympics night; Wash outside windows (remember space suit!); Blanket fort night. Brian removed the calendar's Homework and Sing with Mops reminders, not the desk-homework transition. Scattered dates are fixed decoration, not new playable beats. He requested a slightly larger margin nibble, still clear of all dates and the circled pie.
 <sub>replot 01 · R29 R35 R36 · Brian chat Nov 14</sub>
 
 ### 2. Their song, then Mops leaves `UPDATED t-nov14`

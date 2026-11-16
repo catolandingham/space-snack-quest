@@ -5,15 +5,16 @@
 Brian requested fake months, a calendar sponsor, "family Olympics night" and a few story-fitting items. Exact draft printed copy for visual approval:
 
 - Month heading: "MOONMUNCH"
-- Month strip: "FUZZUARY / MOONMUNCH / NAPRIL"
+- Month beneath the heading: "FUZZUARY" (Brian's correction)
 - Sponsor: "Sponsored by MOON PIES"
 - Day 2: "Sock hunt"
-- Day 6: "Homework"
 - Day 9: "family Olympics night" (Brian's requested words)
-- Day 12: "Sing with Mops"
+- Day 12: "Wash outside windows (remember space suit!)" (Brian's requested replacement; text extends into the next blank cell)
 - Day 18: "Blanket fort night"
 
 No spoken lines added. These are decorative plans, not new story beats or a change to the day-two delivery sequence. The circled Moon Pie stays in its existing grid position.
+
+Brian removed the calendar's Homework and Sing with Mops reminders on Nov 16; this does not cancel the desk-homework transition after Mops leaves. Earlier month-strip copy is superseded.
 
 ## Earlier chapter lines
 

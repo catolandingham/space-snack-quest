@@ -10,8 +10,9 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 - Don't invent a decision. If something isn't clear, add it under **Open**.
 
 ## Latest calendar direction, 2026-11-16
+- **Decided, later correction in Brian's chat:** "Just call it fuzzuary under moonmunch" and remove Homework and Sing with Mops; replace with "wash outside windows (remember space suit!)". Follow-up: "And you can make bite a bit larger". FUZZUARY alone now sits beneath MOONMUNCH. Removing the calendar reminder does not cancel the desk-homework story transition.
 - **Decided, Brian's chat:** "Change the paper bite so it is smaller and less obvious, and add some fake month names, and a brand sponsor for the calendar, and add 'family Olympics night' and a few other items that fit the story to random days". This authorizes the calendar revision, not a merge, a new story beat, or changes to the locked room files.
-- **Needs Brian's yes, exact draft copy in PR 58:** Fuzzuary / Moonmunch / Napril; Sponsored by MOON PIES; Sock hunt; Homework; family Olympics night; Sing with Mops; Blanket fort night. Entries use fixed scattered dates, not a new randomization mechanic. The circled pie remains in the fourth column of the third row; its delivery-story function is unchanged.
+- **Superseded in part, initial draft in PR 58:** the three-month strip and Homework/Sing with Mops entries are replaced by the later correction above. Sponsored by MOON PIES, Sock hunt, family Olympics night and Blanket fort night remain in the review build. Entries use fixed scattered dates, not a new randomization mechanic. The circled pie remains in the fourth column of the third row; its delivery-story function is unchanged.
 
 ## Fidelity system (pictures are locked, not just words)
 - **Approved pictures are frozen in `/workspace/ssq/LOCKED/`** (read-only, sha256-checked). The list is `LOCKED/INDEX.md`: every entry has an ID, version, date, source script, the decision IDs it shows, and a status (**APPROVED** = Brian explicitly OK'd that picture; **CURRENT** = latest version, not yet explicitly approved).

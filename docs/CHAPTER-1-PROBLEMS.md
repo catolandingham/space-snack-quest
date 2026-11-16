@@ -20,7 +20,7 @@ A kid can finish the chapter today. The problems below have ten separate, small 
 
 Brian's Nov 16 direction overrides the older party-first ordering below. One beat at a time; no move to the next beat without his sign-off.
 
-- Calendar (PR 58, unmerged): tappable close-up; Brian's latest revision requests a subtler edge nibble, fake months, sponsor, "family Olympics night" and story-fitting reminders. Draft calendar words: Fuzzuary / Moonmunch / Napril; Sponsored by MOON PIES; Sock hunt; Homework; family Olympics night; Sing with Mops; Blanket fort night. The day-two LOOK position is beside the wardrobe, not inside the bed. `tests/calendar-closeup.mjs`.
+- Calendar (PR 58, unmerged): latest copy has MOONMUNCH / FUZZUARY; Sponsored by MOON PIES; Sock hunt; family Olympics night; Wash outside windows (remember space suit!); Blanket fort night. Brian removed calendar Homework and Sing with Mops, and asked for the small edge nibble to be a little larger. Desk homework remains approved separately. The day-two LOOK position is beside the wardrobe, not inside the bed. `tests/calendar-closeup.mjs`.
 - Walking/Guardian box: PR 57 remains separate and unmerged. This calendar branch is based on main and does not include it.
 - Approved but not built: closet look, bed flop/hop and their approved lines; homework at the desk to pass time after Mops leaves, with wording still awaiting approval.
 - Still open: purple bed bar, bucket readability and Mops taking it to work, music. TV stays for beat 20. No clip needed.

@@ -49,9 +49,11 @@ for (const viewport of [
     return p[0] > 180 && p[1] < 120 && p[2] < 100;
   }));
   g.check(`${tag}: invented months and sponsor are actually printed`, await page.evaluate(() =>
-    ["MOONMUNCH", "FUZZUARY  /  MOONMUNCH  /  NAPRIL", "Sponsored by MOON PIES"].every(s => window.calendarPrinted.has(s))));
+    ["MOONMUNCH", "FUZZUARY", "Sponsored by MOON PIES"].every(s => window.calendarPrinted.has(s))));
   g.check(`${tag}: family Olympics and scattered story-fitting plans are printed`, await page.evaluate(() =>
-    ["family", "Olympics", "night", "Sock hunt", "Homework", "Sing with", "Mops", "Blanket", "fort night"].every(s => window.calendarPrinted.has(s))));
+    ["family", "Olympics", "night", "Sock hunt", "Wash outside windows", "(remember space suit!)", "Blanket", "fort night"].every(s => window.calendarPrinted.has(s))));
+  g.check(`${tag}: superseded months and routine homework/song reminders are absent`, await page.evaluate(() =>
+    ![...window.calendarPrinted].some(s => /NAPRIL|Homework|Sing with|FUZZUARY.*\//.test(s))));
   if (process.env.CALENDAR_SHOTS) await page.screenshot({ path: `/tmp/calendar-${viewport.width}-whole.png` });
   await page.keyboard.down("ArrowRight");
   await sleep(450);
@@ -83,6 +85,11 @@ for (const viewport of [
   g.check(`${tag}: small edge nibble is visible`, await page.evaluate(() => {
     const cv = document.querySelector("canvas"), k = cv.width / 960;
     const p = cv.getContext("2d").getImageData(808 * k, 390 * k, 1, 1).data;
+    return p[0] < 220 && p[1] < 220 && p[2] < 220;
+  }));
+  g.check(`${tag}: revised bite is slightly deeper without reaching the grid`, await page.evaluate(() => {
+    const cv = document.querySelector("canvas"), k = cv.width / 960;
+    const p = cv.getContext("2d").getImageData(798 * k, 391 * k, 1, 1).data;
     return p[0] < 220 && p[1] < 220 && p[2] < 220;
   }));
   if (process.env.CALENDAR_SHOTS) await page.screenshot({ path: `/tmp/calendar-${viewport.width}-bite.png` });
@@ -135,7 +142,12 @@ for (const viewport of [
   });
   await tap(179, 214);
   g.check(`${tag}: day-two calendar uses close-up`, await page.evaluate(() => !!window.__ss.op.ch1Calendar));
-  await tap(880, 540);
+  const next = await page.$('[role="button"]');
+  const nextBox = await next.boundingBox();
+  if (viewport.hasTouch) await page.touchscreen.tap(nextBox.x + nextBox.width / 2, nextBox.y + nextBox.height / 2);
+  else await page.mouse.click(nextBox.x + nextBox.width / 2, nextBox.y + nextBox.height / 2);
+  await sleep(350);
+  g.check(`${tag}: visible NEXT button closes the day-two inspection`, await page.evaluate(() => !window.__ss.op.ch1Calendar));
   for (let i = 0; i < 6; i++) { await page.keyboard.press("Space"); await sleep(350); }
   g.check(`${tag}: day-two close continues to lunch`, await page.evaluate(() => window.__ss.op.ch1Step === "lunch"));
   await page.evaluate(() => window.__ss.startOpening());
