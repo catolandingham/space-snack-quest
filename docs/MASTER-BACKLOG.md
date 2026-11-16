@@ -15,7 +15,7 @@
 | 176–194 | ## Reset section |
 | 195–205 | ## Still open |
 | 206–209 | ## Chapter 1 replot, recorded and not built |
-| 210–296 | ## Changelog |
+| 210–310 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 

@@ -3,20 +3,21 @@
 
 | Lines | Heading |
 | --- | --- |
-| 21–23 | # Space Snack Quest: every decision, in one place |
-| 24–31 | ## How to use this file |
-| 32–41 | ## Fidelity system (pictures are locked, not just words) |
-| 42–79 | ## 1. Working rules |
-| 80–146 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 147–171 | ## 3. Characters and look |
-| 172–248 | ## 4. Look, rooms and layout |
-| 249–270 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 271–314 | ## 6. Later chapters (2–4 and travel) |
-| 315–324 | ## 7. Audio |
-| 325–359 | ## 8. Code, controls and process |
-| 360–406 | ## 9. Open / waiting on Brian |
-| 407–501 | ## 10. Earlier entries, kept word for word |
-| 502–597 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 22–24 | # Space Snack Quest: every decision, in one place |
+| 25–32 | ## How to use this file |
+| 33–37 | ## Latest calendar direction, 2026-11-16 |
+| 38–47 | ## Fidelity system (pictures are locked, not just words) |
+| 48–85 | ## 1. Working rules |
+| 86–152 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 153–177 | ## 3. Characters and look |
+| 178–254 | ## 4. Look, rooms and layout |
+| 255–276 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 277–320 | ## 6. Later chapters (2–4 and travel) |
+| 321–330 | ## 7. Audio |
+| 331–365 | ## 8. Code, controls and process |
+| 366–412 | ## 9. Open / waiting on Brian |
+| 413–507 | ## 10. Earlier entries, kept word for word |
+| 508–603 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.

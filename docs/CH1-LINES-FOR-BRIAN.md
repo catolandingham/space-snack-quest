@@ -3,15 +3,17 @@
 
 | Lines | Heading |
 | --- | --- |
-| 16–23 | # Chapter 1 lines for Brian |
-| 24–38 | ## Goal chips |
-| 39–122 | ## What people say |
-| 123–136 | ## Words painted on things |
-| 137–160 | ## Buttons |
-| 161–247 | ## Day 2 onward (beats 22–61), pending |
-| 248–255 | ## Ball hiding |
-| 256–294 | ## Questions still open |
-| 295–320 | ## Day 1 stand-ins, pending |
+| 18–19 | # Chapter 1 lines for Brian |
+| 20–35 | ## Calendar revision, Nov 16 (PR 58, not live) |
+| 36–43 | ## Earlier chapter lines |
+| 44–58 | ## Goal chips |
+| 59–142 | ## What people say |
+| 143–156 | ## Words painted on things |
+| 157–180 | ## Buttons |
+| 181–267 | ## Day 2 onward (beats 22–61), pending |
+| 268–275 | ## Ball hiding |
+| 276–314 | ## Questions still open |
+| 315–340 | ## Day 1 stand-ins, pending |
 <!-- /section-index -->
 # Chapter 1 lines for Brian
 
