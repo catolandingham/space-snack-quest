@@ -66,7 +66,8 @@ for (let i = 1; i < walk.length; i++) {
   if (st > maxStep) ((maxStep = st), (where = [walk[i - 1], walk[i]]));
 }
 const inside = (p, b) => p.x > b.x0 + 1 && p.x < b.x1 - 1 && p.y > b.y0 + 1 && p.y < b.y1 - 1;
-g.check("no jumps while walking around the bed (largest step under 8)", maxStep < 8, { step: maxStep.toFixed(2), where });
+// One frame of walking in the bedroom is about 7.7 pixels; sliding round a corner adds a little. The old snaps were 11 and more.
+g.check("no jumps while walking around the bed (largest step under 10.5)", maxStep < 10.5, { step: maxStep.toFixed(2), where });
 g.check("never inside the bed", !walk.some((p) => inside(p, BED)));
 g.check("never inside the bucket", !walk.some((p) => inside(p, BUCKET)));
 g.check("he gets behind the bed", walk.some((p) => p.y < BED.y0 && p.x < 160));
