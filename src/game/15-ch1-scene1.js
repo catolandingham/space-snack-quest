@@ -41,6 +41,8 @@
         (n.ch1Raid = null),
         (n.ch1Day2 = !1),
         (n.ch1Zoom = null),
+        (n.ch1Calendar = null),
+        (n.ch1CalendarBitten = !1),
         (n.ch1PadOn = !1),
         (n.ch1Chain = !1),
         (n.ch1Flyer = !1),
@@ -73,6 +75,134 @@
             ((n.ctrl = !0), (n.scene = "Q1"), ch1Day1());
           }),
         ]));
+    }
+    // Optional inspection, not a new story beat. Keep the current queue intact while it is open.
+    // Brian, Nov 16: calendar is tappable; a close-up and a visual joke, with no new words.
+    function ch1CalendarAvailable() {
+      return n.ctrl && !de() && n.room === "closet" && n.wardrobe !== "open" &&
+        !n.ch1Day2 && !n.ch1Party && !n.ch1Dress && !n.ch1Zoom && !n.ch1Calendar &&
+        !n.ch1MopsLeave && (n.scene === "O1" || (n.scene === "Q1" && (n.ch1Song || n.ch1PeekReady)));
+    }
+    function ch1CalendarSpots() {
+      return ch1CalendarAvailable()
+        ? [spot({ id: "home-calendar", verb: "LOOK", cap: "calendar", who: "sq",
+            x: 230, y: 392, r: 45, at: [179, 214], f: () => ch1OpenCalendar() })]
+        : [];
+    }
+    function ch1OpenCalendar(next) {
+      n.ch1Calendar = { ctrl: n.ctrl, next, age: 0, paw: { x: 780, y: 590 } };
+      n.ctrl = !1;
+      n.act = null;
+      n.walkTo = null;
+      n.sq.moving = !1;
+      n.mo.moving = !1;
+    }
+    function ch1CloseCalendar() {
+      let z = n.ch1Calendar;
+      if (!z || z.age < 0.25) return;
+      n.ch1Calendar = null;
+      n.ctrl = z.ctrl;
+      n.act = null;
+      n.walkTo = null;
+      z.next && z.next();
+      chipNow();
+    }
+    function ch1CalendarTap(x, y) {
+      let z = n.ch1Calendar;
+      if (!z) {
+        if (ch1CalendarAvailable() && ch1CalHit(x, y)) {
+          ch1OpenCalendar();
+          return !0;
+        }
+        return !1;
+      }
+      z.paw = { x, y };
+      if (z.age < 0.25) return !0;
+      if (Math.hypot(x - 880, y - 540) < 64) ch1CloseCalendar();
+      // The snack is only a picture. One bite takes the paper with it.
+      else if (!n.ch1CalendarBitten && Math.hypot(x - 560, y - 393) < 65) {
+        n.ch1CalendarBitten = !0;
+        z.biteAt = z.age;
+        D.grab();
+      }
+      return !0; // Never let a tap through to the room behind the close-up.
+    }
+    let ch1CalendarPaper = null;
+    function drawCh1Calendar() {
+      let z = n.ch1Calendar;
+      if (!z) return;
+      e.save();
+      e.filter = "blur(6px)";
+      e.drawImage(e.canvas, 0, 0);
+      e.restore();
+      e.fillStyle = "rgba(12,16,28,.35)";
+      e.fillRect(0, 0, c, b);
+      // Match the locked calendar: red pin, red strip, 5-by-4 grid, pie in column four/row three.
+      // Use a separate transparent sheet so the bite really reveals the blurred room.
+      ch1CalendarPaper || (ch1CalendarPaper = document.createElement("canvas"));
+      let paper = ch1CalendarPaper;
+      paper.width = 480;
+      paper.height = 480;
+      let ctx = paper.getContext("2d");
+      ctx.fillStyle = "#fffaf0";
+      ctx.strokeStyle = "#242834";
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.roundRect(3, 3, 474, 470, 10);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = "#e5533d";
+      ctx.beginPath();
+      ctx.arc(240, 28, 13, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillRect(22, 58, 436, 48);
+      ctx.strokeStyle = "#a8a9aa";
+      ctx.lineWidth = 2;
+      for (let i = 0; i <= 5; i++) {
+        ctx.beginPath(); ctx.moveTo(40 + i * 80, 138); ctx.lineTo(40 + i * 80, 418); ctx.stroke();
+      }
+      for (let i = 0; i <= 4; i++) {
+        ctx.beginPath(); ctx.moveTo(40, 138 + i * 70); ctx.lineTo(440, 138 + i * 70); ctx.stroke();
+      }
+      // A very enthusiastic red crayon circle, not an extra clue or a new delivery date.
+      ctx.strokeStyle = "#e5533d";
+      ctx.lineWidth = 5;
+      ctx.beginPath(); ctx.ellipse(320, 313, 46, 40, -0.15, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(320, 313, 49, 42, 0.2, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = "#8b5a3c"; ctx.strokeStyle = "#242834"; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(320, 313, 27, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.strokeStyle = "#f4d7a8"; ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.moveTo(297, 318); ctx.quadraticCurveTo(320, 330, 343, 318); ctx.stroke();
+      if (n.ch1CalendarBitten) {
+        // One big scalloped bite from the edge, including the printed snack.
+        ctx.globalCompositeOperation = "destination-out";
+        ctx.beginPath();
+        ctx.moveTo(480, 283);
+        ctx.lineTo(407, 283);
+        ctx.quadraticCurveTo(380, 267, 374, 301);
+        ctx.quadraticCurveTo(320, 284, 320, 310);
+        ctx.quadraticCurveTo(290, 332, 322, 350);
+        ctx.quadraticCurveTo(336, 382, 370, 382);
+        ctx.quadraticCurveTo(366, 417, 400, 410);
+        ctx.lineTo(480, 410);
+        ctx.closePath(); ctx.fill();
+        ctx.globalCompositeOperation = "source-over";
+      }
+      e.save();
+      let zoom = Math.min(1, z.age / 0.25);
+      e.translate(480, 320); e.scale(0.92 + 0.08 * zoom, 0.92 + 0.08 * zoom);
+      e.drawImage(paper, -240, -240);
+      e.restore();
+      if (n.ch1CalendarBitten) {
+        let fall = Math.min(1, Math.max(0, z.age - (z.biteAt || 0)) / 0.5);
+        for (let i = 0; i < 6; i++) {
+          e.save(); e.translate(590 + (i % 3) * 34, 455 + fall * (45 + i * 8));
+          e.rotate(i * 0.8); e.fillStyle = "#fffaf0"; e.fillRect(-5, -3, 10, 6); e.restore();
+        }
+      }
+      drawPawArm(z.paw);
+      // At 375px wide this remains a roughly 44px target, unlike the older cut-in X.
+      L(880, 540, 58); r("#ffffff", 4); g("X", 880, 540, 40, "#1e2430", "center", 900);
     }
     function ch1Day1() {
       J([

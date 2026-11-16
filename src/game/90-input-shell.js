@@ -23,6 +23,7 @@
       (m(c - 150, 12, 78, 30, 8), r("rgba(255,255,255,.85)", 2.5), g("SKIP \u25B8\u25B8", c - 111, 27, 13, y), e.restore());
     }
     function O5(l, o, i) {
+      if (p.state === "op" && ch1CalendarTap(l, o)) return;
       if ((VV(), i && !u && ((u = !0), t.onTouch()), p.state === "op" && N0() && l > c - 156 && l < c - 66 && o < 48)) {
         Cs();
         return;
@@ -418,12 +419,17 @@
         resetHold: armReset,
         soundTap,
         songTap: () => {
+          if (n.ch1Calendar) return;
           (VV(), n.ch1Song ? ch1SingAlong() : n.scene === "O1" && n.ctrl && co());
         },
         actionDown: actionPress,
         actionUp: actionRelease,
         tapAt: O5,
         ch1Pointer: (kind, x, y) => {
+          if (n.ch1Calendar) {
+            n.ch1Calendar.paw = kind === "up" ? { x: 780, y: 590 } : { x, y };
+            return;
+          }
           ch1SlicePointer(kind, x, y);
           ch1Day2Pointer(kind, x, y);
         },

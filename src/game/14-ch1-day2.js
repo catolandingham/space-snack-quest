@@ -65,12 +65,14 @@
       ((n.ch1Boxed = !0), (n.ch1Hold = ""), D.hide(), ch1CloseZoom(() => ch1Ready("cal", "Squatch: look at the calendar", "QB")));
     }
     function ch1LookCal() {
-      ((n.ctrl = !1), (n.ch1Cal = 1.6));
-      J([
-        uV(0.7),
-        v("sq", "He forgot his lunch!"),
-        N(() => ch1Ready("lunch", "Squatch: take the lunch", "QB")),
-      ]);
+      ch1OpenCalendar(() => {
+        ((n.ctrl = !1), (n.ch1Cal = 1.6));
+        J([
+          uV(0.7),
+          v("sq", "He forgot his lunch!"),
+          N(() => ch1Ready("lunch", "Squatch: take the lunch", "QB")),
+        ]);
+      });
     }
     function ch1TakeLunch() {
       ((n.ch1Hold = "lunch"), (n.ctrl = !1), D.grab());
@@ -798,7 +800,7 @@
       if (s === "gift") return [ch1At("TAKE", "gift", 340, 520, 100, ch1TakeGift)];
       if (s === "box") return [ch1At("PUT", "box", 350, 520, 110, ch1PutBox)];
       if (s === "dropbox") return [ch1At("DROP", "box", n.sq.x || 350, n.sq.y || 520, 240, ch1DropBox)];
-      if (s === "cal") return [ch1At("LOOK", "calendar", 140, 510, 110, ch1LookCal)];
+      if (s === "cal") return [ch1At("LOOK", "calendar", 230, 392, 110, ch1LookCal)];
       if (s === "lunch") return [ch1At("TAKE", "lunch", 500, 520, 100, ch1TakeLunch)];
       if (s === "sneak")
         return [

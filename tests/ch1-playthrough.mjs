@@ -425,6 +425,11 @@ const play = await page.evaluate(() => {
   let acts = [];
   let end = "stuck";
   for (let i = 0; i < 12000; i++) {
+    if (n.ch1Calendar) {
+      ss.tick(0.3);
+      ss.opTap();
+      continue;
+    }
     const cur = n.cur;
     if (cur && cur.k === "panel" && cur.id === "tally") {
       ss.drawFrame();
@@ -461,7 +466,8 @@ const play = await page.evaluate(() => {
         const rolls = ss.spotsNow().filter((s) => s && s.verb === "ROLL");
         if (rolls.length !== 1 || !(rolls[0].r > 0) || rolls[0].x < 100) return { end: "vent-roll", rolls, acts, texts: texts(), state: ss.ch1State(), shown: [], tally: [] };
       }
-      const spots = ss.spotsNow().filter((s) => s && s.verb && s.r > 0);
+      // Optional bedroom inspections are tested separately; this route follows the story goal.
+      const spots = ss.spotsNow().filter((s) => s && s.verb && s.r > 0 && s.id !== "home-calendar");
       const spot = spots[0];
       if (!spot) {
         end = "no-spot " + n.scene;
