@@ -1258,6 +1258,8 @@
                 ? { x0: 100, x1: 860, y0: 372, y1: 578 }
                 : n.room === "deck"
                   ? { x0: 60, x1: 900, y0: 196, y1: 590 }
+                  : n.room === "hall" && n.ch1Party
+                    ? { x0: 60, x1: 900, y0: CH1_PARTY_FLOOR_Y, y1: 590 }
                   : n.room === "hall"
                     ? { x0: 60 + B.camX, x1: 900 + B.camX, y0: 200, y1: 590 }
                     : n.room === "window"
@@ -1287,7 +1289,8 @@
         n.room === "deck")
       )
         for (let i of qn) l.push(i.kind === "plant" ? nt(i.x, i.y, 26, 14, 10) : nt(i.x, i.y, 40, 14, 10));
-      if ((n.room === "window" && l.push(nt(rt.x, rt.y, 26, 14, 10)), n.room === "hall")) {
+      if (n.room === "window" && l.push(nt(rt.x, rt.y, 26, 14, 10)), n.room === "hall" && n.ch1Party) for (let i of ch1PartySolids()) l.push(i);
+      else if (n.room === "hall") {
         (l.push(nt(ne.x, ne.y, 26, 14, 10)),
           l.push(nt(DV.x, DV.y, 26, 16, 8)),
           B.crate && l.push({ x0: ye.x, x1: ye.x + 150, y0: ye.y, y1: ye.y + 82 }));

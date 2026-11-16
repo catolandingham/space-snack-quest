@@ -145,6 +145,32 @@
       [520, 610, "spots"],
       [660, 600, "blob"],
     ];
+    // Party hall solids (Brian, 2026-11-15: "Make the party hall solid so Squatch can't walk through walls, the stage, or guests").
+    // Boxes are where feet cannot go, in picture units, measured on hall-room-empty-v1.png and the party drawing.
+    // The floor starts in front of the stage (CH1_PARTY_FLOOR_Y), so nobody walks on the window or up the back wall.
+    const CH1_PARTY_FLOOR_Y = 300;
+    const CH1_PARTY_FIXED = [
+      { x0: 240, x1: 490, y0: 0, y1: 304 }, // stage
+      { x0: 490, x1: 582, y0: 0, y1: 300 }, // COMING SOON! poster and its legs
+      { x0: 798, x1: 960, y0: 0, y1: 528 }, // snack bar, the bartender behind it, and the wall past it
+      { x0: 772, x1: 800, y0: 316, y1: 336 }, // stool
+      { x0: 772, x1: 800, y0: 398, y1: 418 }, // stool
+      { x0: 72, x1: 136, y0: 330, y1: 372 }, // plant by the back wall
+      { x0: 412, x1: 476, y0: 520, y1: 552 }, // the hiding plant's pot
+      { x0: 496, x1: 574, y0: 494, y1: 530 }, // snack table
+      { x0: 228, x1: 274, y0: 340, y1: 368 }, // camera tripod
+    ];
+    function ch1PartySolids() {
+      let feet = (x, y) => ({ x0: x - 18, x1: x + 18, y0: y - 10, y1: y + 6, person: 1 }), // people block walking, not sight
+        out = CH1_PARTY_FIXED.slice(),
+        raid = n.ch1Raid;
+      CH1_GUESTS.forEach((guest) => (raid && raid.witness && guest[2] === "spots") || out.push(feet(guest[0], guest[1])));
+      raid && raid.witness && out.push(feet(raid.witness.x, raid.witness.y));
+      out.push(feet(340, 400)); // the guest in the cape
+      out.push(feet(CH1_KID.x, CH1_KID.y)); // the balloon kid
+      out.push(feet((n.ch1Oct && n.ch1Oct.x) || 760, (n.ch1Oct && n.ch1Oct.y) || 555)); // the octopus
+      return out;
+    }
     const LOCKED_ROOMS = {
       hall: "docs/locked-rooms/hall-room-empty-v1.png",
       hallway: "docs/locked-rooms/hallway-room-empty-v6.png",
