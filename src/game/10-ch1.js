@@ -131,7 +131,7 @@
                     (n.sq.moving = !1),
                     J([
                       v("sq", "\u266A I'm floating in space! \u266A", "song"),
-                      v("mops", "\u266A Baaa-aa-aaa! \u266A", "song"),
+                      v("mops", "\u266A Weeee-eenn-nnttt! \u266A", "song"),
                       N(() => {
                         n.sqPose = "stand";
                       }),

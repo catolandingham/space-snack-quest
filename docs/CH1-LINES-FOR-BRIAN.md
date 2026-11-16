@@ -74,7 +74,7 @@ Words the game already had, and the one you already approved, are not in this li
 | 79 | The balloon kid, if Squatch keeps the balloon. NEEDS BRIAN | Scary Wookiee! | |
 | 80 | The octopus tourist. NEEDS BRIAN | *hic* Fellow tourist! | |
 | 81 | The balloon, the last time Squatch is in the hall. NEEDS BRIAN | POP! | |
-| 82 | Home, after SING. Squatch sings, then Mops. Approved 2026-11-13, 6:12 AM ET. The stand-in "See you after work." is gone | ♪ I'm floating in space! ♪ then ♪ Baaa-aa-aaa! ♪ | |
+| 82 | Home, after SING. Squatch sings, then Mops. Approved 2026-11-13, 6:12 AM ET. The stand-in "See you after work." is gone | ♪ I'm floating in space! ♪ then ♪ Weeee-eenn-nnttt! ♪ | |
 | 83 | Isfred, on the party stage. NEEDS BRIAN | Welcome, everybody, to the Stormtop Space Party! | |
 | 84 | Isfred, on the party stage. NEEDS BRIAN | Let's give a big hello to our friends from Bleep-Bloop Robotics! | |
 | 85 | Isfred, on the party stage. Helpers, not replacements. NEEDS BRIAN | Soon their helper robots will be here, to help with the heavy work. | |

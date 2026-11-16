@@ -524,7 +524,7 @@ const must = [
   "Stormtop Cloud Resort, floating above Jupiter.",
   "This is Squatch. He's a Sasquatch.",
   "\u266A I'm floating in space! \u266A",
-  "\u266A Baaa-aa-aaa! \u266A",
+  "\u266A Weeee-eenn-nnttt! \u266A",
   "Mmf mmf... mm-mmf... mmf!",
   "Robots?",
   "Welcome, everybody, to the Stormtop Space Party!",
