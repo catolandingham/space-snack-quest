@@ -187,6 +187,9 @@
         ctx.lineTo(480, 410);
         ctx.closePath(); ctx.fill();
         ctx.globalCompositeOperation = "source-over";
+        // An outlined paper edge makes this read as a hole, not a gray shape laid on the page.
+        ctx.strokeStyle = "#ead8b6"; ctx.lineWidth = 7; ctx.stroke();
+        ctx.strokeStyle = "#39352f"; ctx.lineWidth = 2; ctx.stroke();
       }
       e.save();
       let zoom = Math.min(1, z.age / 0.25);
@@ -196,8 +199,9 @@
       if (n.ch1CalendarBitten) {
         let fall = Math.min(1, Math.max(0, z.age - (z.biteAt || 0)) / 0.5);
         for (let i = 0; i < 6; i++) {
-          e.save(); e.translate(590 + (i % 3) * 34, 455 + fall * (45 + i * 8));
-          e.rotate(i * 0.8); e.fillStyle = "#fffaf0"; e.fillRect(-5, -3, 10, 6); e.restore();
+          e.save(); e.translate(735 + (i % 3) * 23, 410 + fall * (45 + i * 8));
+          e.rotate(i * 0.8); e.fillStyle = "#fffaf0"; e.fillRect(-6, -4, 12, 8);
+          e.strokeStyle = "#8b7960"; e.lineWidth = 1; e.strokeRect(-6, -4, 12, 8); e.restore();
         }
       }
       drawPawArm(z.paw);
