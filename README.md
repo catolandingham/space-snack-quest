@@ -22,7 +22,7 @@ Every new line is listed for Brian in `docs/CH1-LINES-FOR-BRIAN.md`. He said yes
 
 2026-11-16, not merged: Brian t342. The small canvas words are 17px, which is at least 14 CSS px on an iPad. REC is white on a dark red plate. The locked pictures were not redrawn. Docs match main: yes. Do not merge.
 
-2026-11-16, not merged: `docs/OPEN-ASKS.md` is the one review list. Each row says whole game or one chapter, and approved, awaiting yes, or built in a pull request. The older sections stay as history. iPad pictures of pull requests 57 and 58 are in `docs/audit-shots/final/beat1/`. Docs match main: yes. Do not merge.
+2026-11-16, not merged: `docs/OPEN-ASKS.md` is the one review list. Each row says whole game or one chapter, and approved, awaiting yes, or built in a pull request. PR #35's disguise rules are approved and not built. The bigger heart cone is built in PR #35. The bedroom release is approved and built in PR #38 for the party raid. The older sections stay as history. iPad pictures of pull requests 57 and 58 are in `docs/audit-shots/final/beat1/`. Docs match main: yes. Do not merge.
 
 2026-11-16, not merged: a catch at the party puts Squatch back in the party, on the open floor, not in the plant. It does not restart the bedroom. Docs match main: yes. Do not merge.
 
