@@ -137,7 +137,7 @@ g.check("SING is the action", song.verb === "SING", song);
 g.check("they meet at the door before anyone sings", song.arrived && song.steps > 2 && song.lines[0] === "\u266A I'm floating in space! \u266A", song);
 g.check("singing or music, never both: the warm music stops while they sing and comes back after", song.musicBefore === "warm" && song.musicDuring.length === 2 && song.musicDuring.every((m) => m === "") && song.musicAfter === "warm", song);
 g.check("Mops and Squatch face each other", song.facing, song);
-g.check("Mops answers with the old line", song.lines[1] === "\u266A Baaa-aa-aaa! \u266A", song);
+g.check("Mops answers with the old line", song.lines[1] === "\u266A Weeee-eenn-nnttt! \u266A", song);
 g.check("the goodbye stand-in is gone", song.goodbye === false, song);
 g.check("the sing-along chip is still up while he is singing", song.chipDuring === "Squatch: sing along with Mops", song);
 g.check("he is in the singing pose for his line", song.pose === "sing", song);

@@ -27,7 +27,7 @@ Mops is at work. Squatch is home alone.
 - **Who:** Squatch, Mops
 - **What happens:** The song is their goodbye. Mops hums it at the door, Squatch sings along, and Mops leaves for work. No beard cleaning in this scene (Brian: Mops is not cleaning all the time).
 - **Words:**
-  - Squatch: "I'm floating in space!" / Mops: "Baaa-aa-aaa!" *(decided)*
+  - Squatch: "I'm floating in space!" / Mops: "Weeee-eenn-nnttt!" *(decided)*
 - **Player:** Press the song button to sing with Mops.
 <sub>replot 02 · C2 K26 · Brian chat Nov 14</sub>
 

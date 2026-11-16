@@ -103,7 +103,7 @@
         N(() => {
           ((n.sqPose = "stand"), (n.moPose = "sway"));
         }),
-        v("mops", "\u266A Baaa-aa-aaa! \u266A", "song"),
+        v("mops", "\u266A Weeee-eenn-nnttt! \u266A", "song"),
         N(() => {
           ((n.moPose = "stand"), (n.mo.f = 1), (n.ch1MopsLeave = 1));
         }),
