@@ -520,8 +520,12 @@
       clearRun();
       if (scene.startsWith("S") || scene.startsWith("O") || scene.startsWith("Q")) {
         if (CH1_CHECKPOINTS[scene]) return (CH1_CHECKPOINTS[scene](), (n.ctrl = !0), void 0);
-        (ch2.check && (ch2.check.scene === scene || ch2.check.scene.startsWith("S") || ch2.check.scene.startsWith("O")) && restoreCheck(ch2.check),
-          (n.ctrl = !0));
+        // A later Chapter 1 scene must not fall back to the saved opening. That
+        // left a party catch in the bedroom with no way forward.
+        let saved = ch2.check,
+          own = saved && saved.scene === scene,
+          oldCh1 = saved && (scene.startsWith("S") || scene.startsWith("O")) && (saved.scene.startsWith("S") || saved.scene.startsWith("O"));
+        ((own || oldCh1) && restoreCheck(saved), (n.ctrl = !0));
         return;
       }
       if (scene.startsWith("P") || scene.startsWith("M")) {

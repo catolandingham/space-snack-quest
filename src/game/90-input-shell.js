@@ -29,6 +29,11 @@
         return;
       }
       if (p.state === "op" && (n.ch1PadOn || n.ch1Zoom || n.ch1Cut || (n.ch1Dress && n.ch1Dress.on))) {
+        if (Nh()) {
+          if (n.bt < 0.3) return void (n.tapT = n.T);
+          hf(l > 720 && o < 160 ? "close" : l < 400 ? "prev" : "next");
+          return;
+        }
         ch1SlicePointer("down", l, o);
         ch1Day2Pointer("down", l, o);
         return;

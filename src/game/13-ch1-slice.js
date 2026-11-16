@@ -203,7 +203,7 @@
       cut.catches += 1;
       cut.held = "";
       cut.catches === 1
-        ? J([v("tourist", "...Nice gloves."), N(() => (n.ctrl = !1))])
+        ? J([v("tourist", "...Nice gloves."), N(() => (n.ctrl = !0))])
         : ch1HatOff("bar");
     }
     function ch1SliceTick(dt) {

@@ -126,6 +126,7 @@ Fix order, one pull request each, each with a still compared against this table:
 - Fix: add a `QA` entry that starts the party again. Then check every Q scene where a catch can happen has an entry.
 - Brian answered (2026-11-14): after the jail card, set Squatch back a little, or back where he was caught, and let play carry on. No guard walking into the bedroom right away. Pull request 38 has that guard version and must not be merged.
 - Proving check: empty `LEAVE_ALONE` in `tests/ch1-kid-play.mjs`, so the robot presses the party buttons. It must reach the score card. Add a short test that sets scene QA, calls the catch, and asserts the scene is not O1 and a spot is offered.
+- Fixed 2026-11-16: `QA` now restarts in the party, a little back from where he was caught, with the guards gone. A Q scene with no checkpoint no longer restores the old opening. `tests/party-catch.mjs` checks it. The robot still skips SNAG, SUCK and STAND, so that half of the proving check is still open.
 
 ## 2. Tapping a spot behind furniture walks Squatch into the furniture and stops
 

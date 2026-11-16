@@ -16,7 +16,7 @@
 | 325–358 | ## 8. Code, controls and process |
 | 359–405 | ## 9. Open / waiting on Brian |
 | 406–500 | ## 10. Earlier entries, kept word for word |
-| 501–584 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 501–587 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -591,4 +591,7 @@ These lines were added to the 2026-11-08 snapshot (now `docs/old/history/DECISIO
   **Decided** as the build default. The words and the open questions stay pending for Brian. R67–R83 are already numbered in the 2026-11-10 planning record (the walkthrough and the decisions copy). This row does not reuse those numbers.
 
 - 2026-11-16: Process checks (Brian t341), borrowed as ideas, not files. Every report uses the handover note (`docs/HANDOVER-TEMPLATE.md`): PASSED, FAILED, NOT ASSESSED, GUESSED, and "Not yet played by a person" unless a QA log covers that commit. Anything not checked is NOT ASSESSED, never passed. Long docs carry a section index, and agents read one section. `tests/canvas-text.mjs` records on-screen canvas words at the iPad sizes and flags type under 14 CSS px, contrast under 3:1, text off the canvas, and overlap over 25% of the smaller box. It does not change words, sizes, or layout; known failures wait for Brian. `docs/TUNING-PINS.json` pins the approved numbers, including the 85% door rule and Squatch at 80% of an adult. Changing a pin needs Brian's written yes in the PR.
+  **Decided.** Not a yes to merge.
+
+- 2026-11-16: A catch at the party stays in the party. Brian, 2026-11-14: after the jail card, set Squatch back a little and let play carry on. No guard walks into the bedroom. Scene QA restarts in the hall, the search is cleared, and a Chapter 1 scene with no checkpoint no longer restores the old opening.
   **Decided.** Not a yes to merge.

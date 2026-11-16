@@ -227,6 +227,8 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 
 2026-11-16. Opening-room decisions retained from Brian's prior approval: closet look "Mops's costumes. And my Guardian Box."; bed flop then hop up, "Not sleepy anymore." The desk is homework, not "Mops's work lists. Boring."; homework is to pass time after Mops's goodbye until evening. Homework wording still needs Brian's yes. These looks and homework are NOT implemented by the calendar change. TV waits for beat 20. The floating purple bed bar, bucket readability/carrying, and music remain open. Do not treat this calendar PR or PR 57 as sign-off on the whole beat.
 
+2026-11-16. A party catch stays in the party, a little back from where Squatch was seen, instead of restarting the bedroom with no way forward. Docs match main: yes. Do not merge.
+
 2026-11-16. Process checks, Brian t341, not merged. Handover note, section index on the long docs, canvas-text check (known failures wait for Brian; no word or size changes), and tuning pins. The office cutscene robot is the white robot beside Isfred, on the floor. Docs match main: yes. Do not merge.
 
 2026-11-15. New words, Brian yes: the goat says "Weeeennnttt", "make weeeennntt with hyphens like you did with baaa". In the home song Mops now answers "♪ Weeee-eenn-nnttt! ♪" instead of "♪ Baaa-aa-aaa! ♪". Nothing else changes. Checks updated: `tests/opening-song.mjs`, `tests/ch1-playthrough.mjs`. Docs match main: yes.

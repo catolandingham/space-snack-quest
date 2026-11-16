@@ -29,6 +29,34 @@
         vt(n.sq.x, n.sq.y - 20, g.x, g.y - 28, g.face, STAND_CONE_HALF, STAND_CONE_LEN)
       );
     }
+    // A catch at the party used to restore the old opening (O1), so the goal said
+    // "walk around the room" and nothing led forward. Brian, 2026-11-14: put him
+    // back a little, in the party, and let play carry on. No guard in the bedroom.
+    function ch1RestartParty() {
+      let x = n.sq.x,
+        y = n.sq.y;
+      if (!(x > 40 && x < 920 && y > 300 && y < 620)) ((x = 400), (y = 530));
+      let dx = 480 - x,
+        dy = 530 - y,
+        dist = Math.hypot(dx, dy) || 1,
+        step = Math.min(48, dist);
+      ((n.scene = "QA"),
+        (n.room = "hall"),
+        (n.ch1Party = !0),
+        (n.ch1Raid = null),
+        (n.ch1Search = !1),
+        (n.guard = null),
+        (n.ch1OctChase = !1),
+        (n.ch1Mini = ""),
+        (n.ch1Fur = !1),
+        n.ch1PartyOver && ((n.ch1PartyOver = !1), (n.ch1Disguise = !0)),
+        (n.sqPose = "stand"),
+        (n.sq.x = x + (dx / dist) * step),
+        (n.sq.y = y + (dy / dist) * step),
+        (n.ctrl = !0),
+        (n.ch1Chip = ""),
+        (B.camX = 0));
+    }
     function ch1RaidHome() {
       let r = n.ch1Raid;
       if (!r || r.left) return;
