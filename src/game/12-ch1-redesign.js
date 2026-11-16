@@ -178,8 +178,8 @@
       "delivery-night": "docs/locked-rooms/delivery-room-empty-night-v2.png",
       "delivery-noship": "docs/locked-rooms/delivery-room-empty-day-noship-v2.png",
       "delivery-pickup": "docs/locked-rooms/delivery-room-empty-pickup-v3.png",
-      "home-closed": "docs/locked-rooms/home-room-empty-closed-v4.png",
-      "home-open": "docs/locked-rooms/home-room-empty-open-v4.png",
+      "home-closed": "docs/locked-rooms/home-room-empty-closed-v5.png",
+      "home-open": "docs/locked-rooms/home-room-empty-open-v5.png",
       office: "docs/locked-rooms/office-room-empty-v2.png",
     };
     let lockedImg = {},

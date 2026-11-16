@@ -1279,9 +1279,9 @@
           l.push({ x0: 712, x1: 828, y0: 200, y1: 262 }),
           l.push({ x0: 860, x1: 960, y0: 330, y1: 480 })),
         n.room === "closet" &&
-          ((n.scene || "")[0] === "Q"
+          ((n.scene || "")[0] === "Q" || n.scene === "O1" // the locked picture: these boxes match the bucket, Guardian Box and bed drawn in it
             ? (l.push({ x0: 536, x1: 596, y0: 500, y1: 571 }),
-              l.push({ x0: 307, x1: 375, y0: 473, y1: 522 }),
+              gboxOut() && l.push({ x0: 307, x1: 375, y0: 473, y1: 522 }),
               l.push({ x0: 83, x1: 286, y0: 409, y1: 526 }))
             : (l.push(nt(610, 546, 26, 16, 10)),
               l.push({ x0: 326, x1: 374, y0: 484, y1: 516 }),
@@ -1315,6 +1315,7 @@
         n.moPose !== "hidden" &&
         n.moPose !== "sleep" &&
         l === n.sq &&
+        !n.mo.walking && // Mops walking past would shove Squatch in a jump; only a standing Mops is solid
         n.mo.x > 20 &&
         n.mo.x < 1000 &&
         solids.push(nt(n.mo.x, n.mo.y, 46, 46, 46));

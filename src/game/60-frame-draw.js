@@ -611,6 +611,10 @@
       (m(318, 478, 64, 44, 6), r("#3478f6", 4), g("G", 350, 501, 22, "#ffffff"));
     }
     // Scene 1 and the rest of chapter 1 at home use the locked room picture. Only then.
+    // The Guardian Box stays in the closet until Day 2, when Squatch takes it out to put the gift in (Brian, 2026-11-16).
+    function gboxOut() {
+      return !!n.ch1Day2 && n.ch1Step !== "gift" && n.ch1Step !== "box";
+    }
     function homePicture() {
       let k = n.scene || "";
       return k[0] === "Q" || k === "O1";
@@ -630,6 +634,11 @@
         ky = img.naturalHeight / b;
       for (let id in HOME_FRONT) {
         let p = HOME_FRONT[id];
+        if (id === "gbox") {
+          // Not in the picture any more: drawn by code, and only once it is out of the closet.
+          gboxOut() && l.y < p.back && l.x > p.x - 40 && l.x < p.x + p.w + 40 && L2();
+          continue;
+        }
         // While hopping out of bed he is over the bed, not behind it.
         !(id === "bed" && n.hopOut >= 0) && l.y < p.back && l.x > p.x - 40 && l.x < p.x + p.w + 40 && e.drawImage(img, p.x * k, p.y * ky, p.w * k, p.h * ky, p.x, p.y, p.w, p.h);
       }
@@ -649,6 +658,7 @@
     function P2() {
       if (homePicture()) {
         drawLockedRoom(n.wardrobe === "open" ? "home-open" : "home-closed");
+        gboxOut() && L2();
         n.wardrobe === "open" && n.costumeOn && ((e.fillStyle = "#f4efe6"), e.fillRect(70, 150, 150, 160));
         return;
       }

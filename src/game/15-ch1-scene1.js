@@ -85,7 +85,9 @@
     function ch1MopsHumTick(step) {
       if (!n.ch1Song || n.room !== "closet" || n.moPose === "hidden") return;
       n.mo.f = 1;
-      if (mV(n.mo, CH1_SONG_MOPS.x, CH1_SONG_MOPS.y, 120, step)) ((n.mo.f = -1), (n.moPose = "sway"));
+      let there = mV(n.mo, CH1_SONG_MOPS.x, CH1_SONG_MOPS.y, 120, step);
+      n.mo.walking = !there; // while he walks, he does not shove Squatch (see R0)
+      there && ((n.mo.f = -1), (n.moPose = "sway"));
     }
     function ch1SingAlong() {
       // Squatch goes to Mops at the door. The back lane (y 390) is above the crate, the G box, and the bucket.

@@ -157,6 +157,7 @@ Fix order, one pull request each, each with a still compared against this table:
 
 ## 7. Squatch walks through the bed when he gets up
 
+- Fixed 2026-11-16 (beat 1): walking around the bed snapped him sideways because the opening scene used old solid spots that did not match the picture. They now match, and Mops no longer shoves him (`tests/bedroom-walk.mjs`).
 - Fixed (scene 1 morning change): the code-drawn bed and bucket were being drawn over the room picture in the wrong places. They are gone; Squatch hops off the front of the bed.
 
 - What the kid sees: at the start Squatch slides out through the bed frame.
