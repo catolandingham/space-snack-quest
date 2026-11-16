@@ -16,6 +16,25 @@ A kid can finish the chapter today. The problems below have ten separate, small 
 
 ## Do first: scene 1 (beats 1–3), Brian 2026-11-14
 
+### Current priority: finish beat 1 before moving on
+
+Brian's Nov 16 direction overrides the older party-first ordering below. One beat at a time; no move to the next beat without his sign-off.
+
+- Calendar (PR 58, unmerged): latest copy has MOONMUNCH / FUZZUARY; Sponsored by MOON PIES; Sock hunt; family Olympics night; Wash outside windows (remember space suit!); Blanket fort night. Brian removed calendar Homework and Sing with Mops, and asked for the small edge nibble to be a little larger. Desk homework remains approved separately. The day-two LOOK position is beside the wardrobe, not inside the bed. `tests/calendar-closeup.mjs`.
+- Walking/Guardian box: PR 57 remains separate and unmerged. This calendar branch is based on main and does not include it.
+- Approved but not built: closet look, bed flop/hop and their approved lines; homework at the desk to pass time after Mops leaves, with wording still awaiting approval.
+- Still open: purple bed bar, bucket readability and Mops taking it to work, music. TV stays for beat 20. No clip needed.
+
+### Home room sheet for this calendar change
+
+- Keep the locked room picture unchanged. Calendar stays on the wardrobe door and faces away when that door is open (R31, R34). Close-up keeps its red pin, red strip, 5-by-4 grid, and circled Moon Pie.
+- Optional opening inspection must not advance the day, move Squatch, start the song or overwrite the story queue. No arrows or floor ring added.
+- Close-ups use a blurred room behind, a furry paw following the finger, and a white X. X must be usable on a phone. Brian now requested invented calendar names and dated decoration; these do not change story timing or the Guardian story. No new spoken dialogue.
+- Delivery-day inspection must still lead into the existing lunch sequence. The bite must not erase the delivery clue.
+- Review limitation: the full calendar fits a 375px portrait phone, but its reminder text is small in the game's landscape-shaped picture. Desktop copy is readable; a portrait-specific readable view is not implemented by this revision. Do not claim full phone typography sign-off from functional tests.
+
+### Earlier scene work
+
 Brian: make scene 1 right before anything else. The story is in `docs/CH1-STORY-WALKTHROUGH.md` beats 1–3. Four pull requests, in this order:
 
 1. Done (tidy, no change in play): everything scene 1 runs is now in `src/game/15-ch1-scene1.js` (the start, the song, Mops walking out, the peek). `Sp` in `10-ch1.js` is an old copy kept for debug links; never edit it. The goal-bar labels still live in the `Q1` table in `12-ch1-redesign.js`.

@@ -38,6 +38,8 @@ Removed from the working tree:
 
 ## Files still here
 
+`ch1-ipad-playtest-2026-11-15.txt` is the complete timestamped machine transcript of Brian's latest narrated Chapter 1 iPad recording, copied unchanged from the original local transcription on Nov 16. It contains transcription errors (for example "wankt"/"is Fred"); later written chat corrections take precedence. This is raw evidence, not an approved script. Issue 54 holds the grouped notes and the Nov 16 coverage correction. The older 24-minute Chapter 2 recording is still only represented by reconstructed/relayed feedback in FEEDBACK-INDEX section B, not its original full transcript.
+
 | File | What it is |
 | --- | --- |
 | `squatch-thread.md` | The Squatch Game bot thread (the early one, to Nov 6) |

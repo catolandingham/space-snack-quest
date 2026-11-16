@@ -1029,6 +1029,7 @@
     // Chapter 1's spots, scene by scene, in the order each picker tries them (see spot in 00-core.js).
     function ch1Spots() {
       let l = n.scene;
+      if (l === "O1") return ch1CalendarSpots();
       if ((l || "")[0] === "Q") return ch1QSpots();
       return l === "O4"
         ? o4Spots()

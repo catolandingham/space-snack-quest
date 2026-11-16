@@ -13,13 +13,15 @@ Mops is at work. Squatch is home alone.
 ### 1. Meet Squatch `UPDATED t-nov14`
 - **Where:** Home (Squatch and Mops's room), morning
 - **Who:** Squatch, Mops
-- **What happens:** Stormtop floats in the clouds of a giant planet. A big, furry kid lives in a small, hidden room. Squatch wakes up in his bed. Mops stands by the mop bucket; the room is clean. A poster by the door says to stay inside. Nothing in the room is tappable yet.
+- **What happens:** Stormtop floats in the clouds of a giant planet. A big, furry kid lives in a small, hidden room. Squatch wakes up in his bed. Mops stands by the mop bucket; the room is clean. A poster by the door says to stay inside. UPDATED Nov 16: the calendar is tappable and opens a close-up; touching its Moon Pie picture makes a bite in the paper. Closet and bed looks are approved but still to build. This replaces "Nothing in the room is tappable yet." TV stays off until beat 20.
 - **Words:**
   - Card: "This is Squatch. He's a Sasquatch." *(decided)*
   - Poster: "STAY IN HERE! — Mops" *(decided)*
   - Short bubbles, one at a time (Brian Nov 14: not a lot of text at once): Mops: "Morning, Squatch." / Mops: "Big party in the hall tonight." / Squatch: "Party?" / Mops: "Stay in here." *(Brian yes, Nov 14)*
   - The song is Mops's goodbye: he hums on his way to the door, Squatch sings with him there, then Mops leaves (Brian yes, Nov 14).
 - **Player:** Walk around the room.
+- **Approved room looks, not yet built:** closet: "Mops's costumes. And my Guardian Box."; back to bed: he flops down, then hops back up, "Not sleepy anymore." Desk homework replaces the proposed work-list line; new homework words need Brian's yes.
+- **Calendar revision for review (Nov 16, PR 58 unmerged):** latest copy is MOONMUNCH with FUZZUARY alone underneath; Sponsored by MOON PIES; Sock hunt; family Olympics night; Wash outside windows (remember space suit!); Blanket fort night. Brian removed the calendar's Homework and Sing with Mops reminders, not the desk-homework transition. Scattered dates are fixed decoration, not new playable beats. He requested a slightly larger margin nibble, still clear of all dates and the circled pie.
 <sub>replot 01 · R29 R35 R36 · Brian chat Nov 14</sub>
 
 ### 2. Their song, then Mops leaves `UPDATED t-nov14`
@@ -29,6 +31,7 @@ Mops is at work. Squatch is home alone.
 - **Words:**
   - Squatch: "I'm floating in space!" / Mops: "Weeee-eenn-nnttt!" *(decided)*
 - **Player:** Press the song button to sing with Mops.
+- **Approved transition, not yet built (Nov 16):** after Mops leaves, Squatch does homework at the desk; this passes the time until evening. Do not put homework before their goodbye or skip directly to evening once this is built. Homework button and line need Brian's yes.
 <sub>replot 02 · C2 K26 · Brian chat Nov 14</sub>
 
 ### 3. The peek `UPDATED t-nov14`
