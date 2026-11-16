@@ -14,6 +14,9 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 - **Decided, Brian's chat:** "Change the paper bite so it is smaller and less obvious, and add some fake month names, and a brand sponsor for the calendar, and add 'family Olympics night' and a few other items that fit the story to random days". This authorizes the calendar revision, not a merge, a new story beat, or changes to the locked room files.
 - **Superseded in part, initial draft in PR 58:** the three-month strip and Homework/Sing with Mops entries are replaced by the later correction above. Sponsored by MOON PIES, Sock hunt, family Olympics night and Blanket fort night remain in the review build. Entries use fixed scattered dates, not a new randomization mechanic. The circled pie remains in the fourth column of the third row; its delivery-story function is unchanged.
 
+## Vent walk, 2026-11-16
+- **Decided.** A walking Mops does not shove Squatch. Once the morning hum stops, that walking flag clears. Otherwise a later step, such as ROLL · ball at the hangar vent, can finish inside him. Not a change to a pinned number, and not a change to a locked picture.
+
 ## Locked home room v5, 2026-11-16
 - **Decided.** Brian, Nov 16, 12:50 PM PT: yes to redrawing the locked home room and painting the Guardian box out of the floor. `docs/locked-rooms/home-room-empty-closed-v5.png` and `docs/locked-rooms/home-room-empty-open-v5.png` are the locked version. v4 is kept and superseded. The box stays in the closet until Day 2.
 

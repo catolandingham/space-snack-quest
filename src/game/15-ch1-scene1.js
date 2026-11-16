@@ -243,7 +243,12 @@
     }
     // While the sing goal is up, Mops walks to the door and hums there.
     function ch1MopsHumTick(step) {
-      if (!n.ch1Song || n.room !== "closet" || n.moPose === "hidden") return;
+      // Once the sing-along starts, this tick stops. Clear the flag then, or Mops stays
+      // "walking" for the rest of the chapter and Squatch can finish a step inside him.
+      if (!n.ch1Song || n.room !== "closet" || n.moPose === "hidden") {
+        n.mo.walking = !1;
+        return;
+      }
       n.mo.f = 1;
       let there = mV(n.mo, CH1_SONG_MOPS.x, CH1_SONG_MOPS.y, 120, step);
       n.mo.walking = !there; // while he walks, he does not shove Squatch (see R0)
@@ -252,7 +257,7 @@
     function ch1SingAlong() {
       // Squatch goes to Mops at the door. The back lane (y 390) is above the crate, the G box, and the bucket.
       let lane = 390;
-      ((n.ch1Song = !1), (n.ctrl = !1), (n.act = null), (n.sqPose = "stand"), (n.moPose = "stand"));
+      ((n.ch1Song = !1), (n.mo.walking = !1), (n.ctrl = !1), (n.act = null), (n.sqPose = "stand"), (n.moPose = "stand"));
       J([
         cV((dt) => mV(n.mo, CH1_SONG_MOPS.x, CH1_SONG_MOPS.y, 160, dt)),
         cV((dt) => mV(n.sq, n.sq.x, Math.min(n.sq.y, lane), 190, dt)),
