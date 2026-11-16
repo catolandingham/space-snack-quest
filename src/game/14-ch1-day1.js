@@ -35,11 +35,24 @@
     function ch1RestartParty() {
       let x = n.sq.x,
         y = n.sq.y;
-      if (!(x > 40 && x < 920 && y > 300 && y < 620)) ((x = 400), (y = 530));
-      let dx = 480 - x,
-        dy = 530 - y,
+      if (!(x > 40 && x < 920 && y > 320 && y < 610)) ((x = 560), (y = 580));
+      // Step toward the open floor in front of the crowd, not into the plant pot.
+      let dx = 560 - x,
+        dy = 580 - y,
         dist = Math.hypot(dx, dy) || 1,
-        step = Math.min(48, dist);
+        step = Math.min(48, dist),
+        nx = x + (dx / dist) * step,
+        ny = y + (dy / dist) * step,
+        blocked = (px, py) => ch1PartySolids().some((b) => px > b.x0 - 8 && px < b.x1 + 8 && py > b.y0 - 8 && py < b.y1 + 8);
+      if (blocked(nx, ny)) {
+        let open = [
+          [560, 580],
+          [300, 580],
+          [640, 500],
+          [360, 600],
+        ].find((p) => !blocked(p[0], p[1]));
+        open && ((nx = open[0]), (ny = open[1]));
+      }
       ((n.scene = "QA"),
         (n.room = "hall"),
         (n.ch1Party = !0),
@@ -52,8 +65,8 @@
         (n.ch1Fur = !1),
         n.ch1PartyOver && ((n.ch1PartyOver = !1), (n.ch1Disguise = !0)),
         (n.sqPose = "stand"),
-        (n.sq.x = x + (dx / dist) * step),
-        (n.sq.y = y + (dy / dist) * step),
+        (n.sq.x = nx),
+        (n.sq.y = ny),
         (n.ctrl = !0),
         (n.ch1Chip = ""),
         (B.camX = 0));

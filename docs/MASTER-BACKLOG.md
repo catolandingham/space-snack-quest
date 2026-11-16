@@ -229,7 +229,7 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 
 2026-11-16. Text size, Brian t342, not merged. The small canvas words are 17px, at least 14 CSS px on an iPad. REC is white on a dark red plate. Boxes drawn in code grew so the words stay inside them. Locked pictures were not redrawn. Docs match main: yes. Do not merge.
 
-2026-11-16. A party catch stays in the party, a little back from where Squatch was seen, instead of restarting the bedroom with no way forward. Docs match main: yes. Do not merge.
+2026-11-16. A party catch stays in the party, on the open floor rather than in the plant, instead of restarting the bedroom with no way forward. Docs match main: yes. Do not merge.
 
 2026-11-16. Process checks, Brian t341, not merged. Handover note, section index on the long docs, canvas-text check (known failures wait for Brian; no word or size changes), and tuning pins. The office cutscene robot is the white robot beside Isfred, on the floor. Docs match main: yes. Do not merge.
 

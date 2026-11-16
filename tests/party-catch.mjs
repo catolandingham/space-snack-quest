@@ -69,4 +69,29 @@ const cut = await page.evaluate(() => {
   return { scene: n.scene, cut: n.ch1Cut && n.ch1Cut.id };
 });
 g.check("a catch closes the snack cut-in and stays in the party", cut.scene === "QA" && !cut.cut, cut);
+const plant = await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  n.scene = "QA";
+  n.room = "hall";
+  n.ch1Party = true;
+  n.ch1Disguise = true;
+  n.ch1PartyOver = true;
+  n.ch1Raid = { phase: "search", guards: [{ x: 400, y: 560, t: 2, face: 0 }], doorT: 0, left: false };
+  n.sqPose = "stand";
+  n.sq.x = 432;
+  n.sq.y = 574;
+  n.ctrl = true;
+  n.q = [];
+  n.cur = null;
+  ss.capture("s6");
+  for (let i = 0; i < 40; i++) {
+    ss.tick(0.4);
+    if (n.cur && (n.cur.k === "bub" || n.cur.k === "card" || n.cur.k === "panel")) ss.opTap();
+  }
+  const solids = ss.solids ? ss.solids() : [];
+  const inside = solids.some((b) => n.sq.x > b.x0 && n.sq.x < b.x1 && n.sq.y > b.y0 && n.sq.y < b.y1);
+  return { scene: n.scene, x: Math.round(n.sq.x), y: Math.round(n.sq.y), inside };
+});
+g.check("a catch from beside the plant does not leave him standing in the pot", plant.scene === "QA" && !plant.inside && !(plant.x > 412 && plant.x < 476 && plant.y > 520 && plant.y < 552), plant);
 await g.finish("party-catch");
