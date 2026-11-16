@@ -5,6 +5,7 @@
       { x: 360, y: 400, face: Math.PI / 2 },
       { x: 620, y: 430, face: Math.PI },
     ];
+    const CH1_CLOSET_SPOT = [230, 392]; // the floor in front of the closet, behind the bed
     function ch1Ready(step, chip, scene) {
       ((n.ch1Step = step), (n.ch1Chip = chip), scene && (n.scene = scene), (n.ctrl = !0), (n.act = null), chipNow());
     }
@@ -798,7 +799,7 @@
       if (s === "sneak" && n.sqPose === "ball") return [ch1At("SNEAK", "hallway", 860, 560, 110, ch1ToMops)];
       if (n.sqPose === "hidden" || n.sqPose === "ball" || n.sqPose === "sleep") return [];
       if (s === "gift") return [ch1At("TAKE", "gift", 340, 520, 100, ch1TakeGift)];
-      if (s === "box") return [ch1At("PUT", "box", 350, 520, 110, ch1PutBox)];
+      if (s === "box") return [ch1At("PUT", "box", CH1_CLOSET_SPOT[0], CH1_CLOSET_SPOT[1], 90, ch1PutBox)]; // the box is in the closet: he takes it out here
       if (s === "dropbox") return [ch1At("DROP", "box", n.sq.x || 350, n.sq.y || 520, 240, ch1DropBox)];
       if (s === "cal") return [ch1At("LOOK", "calendar", 230, 392, 110, ch1LookCal)];
       if (s === "lunch") return [ch1At("TAKE", "lunch", 500, 520, 100, ch1TakeLunch)];

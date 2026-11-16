@@ -459,7 +459,7 @@ def draw_home(im=None, wardrobe='closed', spare='plain_jacket'):
     draw_tv(d)
     draw_stay_poster(d)
     draw_bed_crate(d)
-    draw_gbox(d)
+    # v5 (Brian, 2026-11-16): the Guardian Box is kept in the closet; the game draws it on the floor from Day 2.
     draw_bucket(d)
     # no floor vent and no red line in the home (R37); no mop (R33)
     return finish_home(im)

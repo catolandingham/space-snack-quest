@@ -9,8 +9,8 @@ The game paints each one, scaled to the 960×640 picture, as the room background
 | `hall-room-empty-v1.png` | Party hall. Window, stage, snack bar, FUR alarm, plants, floor vent. No Employee of the Month wall and no manager's office. |
 | `hallway-room-empty-v6.png` | Hallway between the party hall and the loading bay. Photo wall on the back, locked office door on the front. |
 | `office-room-empty-v2.png` | Manager's office interior (R84). The hallway door is on this room's back wall. Squatch enters through that door. The desk and the signs are part of the picture. |
-| `home-room-empty-closed-v4.png` | Home, wardrobe closed. v4: the calendar is a real calendar with the Moon Pie delivery day circled (Brian, Nov 2026). |
-| `home-room-empty-open-v4.png` | Home, wardrobe open. |
+| `home-room-empty-closed-v5.png` | Home, wardrobe closed. v4: the calendar is a real calendar with the Moon Pie delivery day circled (Brian, Nov 2026). v5: no Guardian Box on the floor; it is kept in the closet until Day 2 (Brian, 2026-11-16: "put the guardian crate in the closet and they can get it out later"). |
+| `home-room-empty-open-v5.png` | Home, wardrobe open. v5: no Guardian Box on the floor (same change as closed v5). |
 | `delivery-room-empty-day-v2.png` | Loading bay, day, ship docked. Ramp and fur-scanner are in this picture. |
 | `delivery-room-empty-day-noship-v2.png` | Loading bay, day, no ship, so no scanner arch. |
 | `delivery-room-empty-night-v2.png` | Loading bay at night. |
