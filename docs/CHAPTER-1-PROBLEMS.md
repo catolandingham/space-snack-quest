@@ -209,6 +209,8 @@ Found by reading the Day 1 code against beats 1 to 21 of `docs/CH1-STORY-WALKTHR
 
 ## 11. Sight cones: a dashed outline that lights up, on everyone, in every scene
 
+**Superseded 2026-11-16.** Brian, Nov 11 (t332), is the rule: only guards and robots show vision cones. An ordinary guest shows "?" over their head, and that turns to "!" when they spot Squatch. Approved, not built. The Nov 14 dashed-cone text below is history.
+
 - Today: party guests show nothing. Guards and robots show a filled yellow cone all the time.
 - What Brian decided (chat, Nov 14): every character who can see Squatch has a light dashed outline of a cone, not filled. It fills in yellow when Squatch steps inside it. Same rule in every scene, so the kid always knows who can see him and the party does not look busy.
 - Brian, Nov 14: do this after scene 1 (beats 1–3) is right. Scene 1 comes first.

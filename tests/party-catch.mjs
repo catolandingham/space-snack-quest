@@ -24,6 +24,8 @@ const after = await page.evaluate(() => {
   n.q = [];
   n.cur = null;
   ss.capture("s6");
+  ss.tick(0.05);
+  const card = n.cur && n.cur.id === "jail" && n.cur.text === "LOCKUP" ? n.cur.text : "";
   for (let i = 0; i < 40; i++) {
     ss.tick(0.4);
     if (n.cur && (n.cur.k === "bub" || n.cur.k === "card" || n.cur.k === "panel")) ss.opTap();
@@ -41,9 +43,10 @@ const after = await page.evaluate(() => {
     verbs: spots.map((s) => s.verb),
     cur: n.cur ? n.cur.k : "",
     left: n.q.length,
+    lockup: card,
   };
 });
-g.check("a party catch does not send Squatch back to the bedroom", after.scene === "QA" && after.room === "hall" && after.scene !== "O1", after);
+g.check("the lockup card shows before he is set back in the party", after.lockup === "LOCKUP" && after.scene === "QA", after);
 g.check("the party offers a spot again and the guards are gone", after.ctrl && !after.raid && !after.over && after.disguise && after.verbs.length > 0, after);
 g.check("he is a little back from where he was caught", after.x < 719 && after.x > 40, after);
 g.check("no page errors", errors.length === 0, errors);

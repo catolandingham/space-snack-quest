@@ -16,7 +16,7 @@
 | 325–358 | ## 8. Code, controls and process |
 | 359–405 | ## 9. Open / waiting on Brian |
 | 406–500 | ## 10. Earlier entries, kept word for word |
-| 501–593 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 501–596 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -600,4 +600,7 @@ These lines were added to the 2026-11-08 snapshot (now `docs/old/history/DECISIO
   **Decided.** Not a yes to merge.
 
 - 2026-11-16: A party catch steps toward the open floor, not into the plant pot. The old step toward the middle of the room could leave him standing in the pot. He still stays in the party.
+  **Decided.** Not a yes to merge.
+
+- 2026-11-16: `docs/OPEN-ASKS.md` is the one review list. Each unbuilt ask says whether it is for the whole game or one chapter, and whether it is approved, awaiting yes, or built in a pull request. The older sections of that file stay as history. Brian, Nov 11 (t332): only guards and robots show vision cones; a guest shows "?" then "!". That supersedes the Nov 14 dashed cone on everyone. The party buttons SNAG, SUCK, STAND, HUG and SNAP are approved to become things you walk into (Nov 16, 11:50 AM PT) and are not built in this pull request. iPad pictures of pull requests 57 and 58 are in `docs/audit-shots/final/beat1/`.
   **Decided.** Not a yes to merge.

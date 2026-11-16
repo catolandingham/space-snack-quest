@@ -7,6 +7,35 @@ For Brian and Squatchbot • Monday, November 9, 2026, synced through R63
 **Confidence** means how sure we are about *what you want*, not how hard it is to build. High = you said it plainly. Medium = inferred or partly answered. Low = still a real question.
 **Sources:** saved memory, the replot files in /workspace/ssq/replot, the repo docs at `origin/main` 10030f6 (read-only), and the summary of today's chat. I couldn't open the original chat, so anything said only there and not saved may be missing. Squatchbot should add it.
 
+## Review list (the one list)
+
+This is the list to review. Each row says whether it is for the whole game or one chapter, and whether it is approved, awaiting yes, or already built in a pull request. Nothing here is a yes to merge. Sections A through G, and "Can start now", stay below as history. Where this list and an older row disagree, this list wins.
+
+| # | Scope | Ask | Status |
+| --- | --- | --- | --- |
+| R1 | Whole game | Cone rule (Brian, Nov 11, t332). Only guards and robots show vision cones. An ordinary guest shows "?" over their head, and that turns to "!" when they spot Squatch. | Approved, not built. The Nov 14 "dashed cone on everyone" line in the walkthrough and in problem 11 is superseded. |
+| R2 | Chapter 1 | SNAG, SUCK, STAND, HUG and SNAP stop being buttons (Brian, Nov 16, 11:50 AM PT). They become things you walk into. Getting too close to the vent, a plant, or a guard takes the disguise off. The octopus approaches slowly and hugs only if it reaches him. The photo happens by walking into the photo corner. The conga and the dance are joined by walking in. | Approved, not built. Its own round, after this docs pass. |
+| R3 | Chapter 1 | Security sees through any disguise (written up on PR #35 as R100). | Awaiting yes. Stuck between open PRs #35 and #38. |
+| R4 | Chapter 1 | Three disguise levels (PR #35, R102). | Awaiting yes. |
+| R5 | Chapter 1 | The alarm ladder: "!" then "?" then the alarm (PR #35, R102). | Awaiting yes. |
+| R6 | Chapter 1 | Losing one piece of the disguise drops him to partial (PR #35, R103). | Awaiting yes. |
+| R7 | Chapter 1 | A bigger, brighter heart cone for Mops (PR #35, R104). Hearts should act like the "!" marks. The cone also lights up sooner than Brian wants (problem 8). | Awaiting yes. PR #35 is open and parked. |
+| R8 | Whole game | After the jail card, let him out into the bedroom, "always on that planet," including catches outside the party (PR #38, R106). | Awaiting yes for catches outside the party. The party itself is built on this branch (PR #59): the lockup card shows, then he is set back in the party, not sent to the bedroom. That conflicts with PR #38. Do not merge either until Brian picks. |
+| R9 | Chapter 1, beat 1 | Closet look. | Approved, not built. PR #58 records the look and its lines as approved. |
+| R10 | Chapter 1, beat 1 | Bed flop. | Approved, not built. PR #58 records the flop and its lines as approved. |
+| R11 | Chapter 1, beat 1 | Desk homework. It passes time until evening. The words go in the lines file before they are built. | The transition is approved. The words are awaiting yes. |
+| R12 | Chapter 1, beat 1 | Purple bed bar. | Awaiting yes. |
+| R13 | Chapter 1, beat 1 | Mop bucket. | Awaiting yes. Mops's beard is still his mop; there is no separate mop prop. |
+| R14 | Chapter 1, beat 1 | Music in the bedroom. | Awaiting yes. |
+| R15 | Chapter 1 | Party picture fix 2. Snack bar: bartender behind the counter, no extra snacks, a hiding spot behind the counter when she is gone (R107). | Approved, not built. |
+| R16 | Chapter 1 | Party picture fix 3. Guests face the stage, stand taller than Squatch, stay off the vent, and stay out of the doorway. | Approved, not built. |
+| R17 | Chapter 1 | Party picture fix 4. Remove the stray arrow, move the photo corner off the door, and make the octopus and the camera read. | Approved, not built. |
+| R18 | Chapter 1 | Party picture fix 5. Evening light, and the lights dim for the band. | Approved, not built. |
+| R19 | Chapter 1 | Party picture fix 6. The floor vent: swirls that move inward, fur goes in when he is close without the disguise (R108), and the disguise tug replaces the button. | Approved, not built. |
+| R20 | Chapter 2 | The 24-minute narrated Chapter 2 playtest transcript (`04_24m_transcript.md`). The asks quoted from it are section B of `docs/grok-archive/FEEDBACK-INDEX.md`. The recording is not in this repo. | Awaiting the file. |
+| R21 | Chapter 1 | The 88-panel comic. Line wording waits on Brian reading it. The file is not in this repo. | Awaiting the file. |
+| R22 | Whole game | The approved character pictures. What the game draws today is the stand-in. The picture files are not in this repo. | Awaiting the files. |
+
 ## A. Chapter 1 cartoon (the current work)
 | # | Ask | Status | Confidence |
 |---|---|---|---|

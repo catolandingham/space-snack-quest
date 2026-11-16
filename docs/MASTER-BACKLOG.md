@@ -15,7 +15,7 @@
 | 176–194 | ## Reset section |
 | 195–205 | ## Still open |
 | 206–209 | ## Chapter 1 replot, recorded and not built |
-| 210–294 | ## Changelog |
+| 210–296 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -228,6 +228,8 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 2026-11-16. Opening-room decisions retained from Brian's prior approval: closet look "Mops's costumes. And my Guardian Box."; bed flop then hop up, "Not sleepy anymore." The desk is homework, not "Mops's work lists. Boring."; homework is to pass time after Mops's goodbye until evening. Homework wording still needs Brian's yes. These looks and homework are NOT implemented by the calendar change. TV waits for beat 20. The floating purple bed bar, bucket readability/carrying, and music remain open. Do not treat this calendar PR or PR 57 as sign-off on the whole beat.
 
 2026-11-16. Text size, Brian t342, not merged. The small canvas words are 17px, at least 14 CSS px on an iPad. REC is white on a dark red plate. Boxes drawn in code grew so the words stay inside them. Locked pictures were not redrawn. Docs match main: yes. Do not merge.
+
+2026-11-16. Docs only. `docs/OPEN-ASKS.md` is the one review list: scope and status on each row, older sections kept as history. The Nov 14 dashed-cone line is superseded by Brian's Nov 11 cone rule (t332). iPad pictures of pull requests 57 and 58 are in `docs/audit-shots/final/beat1/`. Docs match main: yes. Do not merge.
 
 2026-11-16. A party catch stays in the party, on the open floor rather than in the plant, instead of restarting the bedroom with no way forward. Docs match main: yes. Do not merge.
 

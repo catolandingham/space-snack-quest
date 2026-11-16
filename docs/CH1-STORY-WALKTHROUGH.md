@@ -269,7 +269,7 @@ Mops is at work. Squatch is home alone.
 - **Words:**
   - A guest: "Cool hat!" *(pending (Brian questioned it))*
 - **Player:** Avoid the risky spots for as long as you can.
-- **How everyone shows they can see him `UPDATED 2026-11-14`:** decided by Brian in chat on Nov 14. Every character who can see Squatch (guests, the bartender, guards, robots) has a light dashed outline of a cone, not filled. It fills in yellow when Squatch steps inside it. This is the rule in every scene, not only the party. It replaces his Nov 12 pick (t332u: cones only on guards and robots, guests show a "?" then a "!"). Not built yet. See problem 11 in `docs/CHAPTER-1-PROBLEMS.md`.
+- **How everyone shows they can see him `UPDATED 2026-11-16`:** **Superseded.** The Nov 14 dashed-cone line below is not the rule. Brian, Nov 11 (t332): only guards and robots show vision cones. An ordinary guest shows "?" over their head, and that turns to "!" when they spot Squatch. Approved, not built. The older wording is kept here as history: decided by Brian in chat on Nov 14. Every character who can see Squatch (guests, the bartender, guards, robots) has a light dashed outline of a cone, not filled. It fills in yellow when Squatch steps inside it. This is the rule in every scene, not only the party. It replaces his Nov 12 pick (t332u: cones only on guards and robots, guests show a "?" then a "!"). Not built yet. See problem 11 in `docs/CHAPTER-1-PROBLEMS.md`.
 <sub>S14 S15 R73 R79 · Brian note P3 · v1 beat 11</sub>
 
 ### 17. FUR! Security! `UPDATED t303u`
