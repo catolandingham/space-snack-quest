@@ -102,6 +102,27 @@ async function open(query, consoleErrors = false) {
   await ctx.close();
 }
 
+// Localhost: ?beat=day2 opens Day 2 at the gift. A numbered beat still does nothing here.
+{
+  const { ctx, page, errors } = await open("?beat=day2");
+  const s = await page.evaluate(() => {
+    const n = window.__ss.op;
+    for (let i = 0; i < 20; i++) window.__ss.tick(0.2);
+    return { day2: !!n.ch1Day2, room: n.room, scene: n.scene, step: n.ch1Step, chip: n.ch1Chip, ctrl: n.ctrl };
+  });
+  check("day2 jump opens Day 2", s.day2 === true, s);
+  check("day2 jump is in the closet", s.room === "closet" && s.scene === "QB", s);
+  check("day2 jump is at the gift, the way to the box and the lunch", s.step === "gift" && s.chip === "Squatch: pick up the gift" && s.ctrl === true, s);
+  check("day2 jump adds no page errors", errors.length === 0, errors.slice(0, 3));
+  await ctx.close();
+}
+{
+  const { ctx, page } = await open("?beat=42");
+  const s = await page.evaluate(() => window.__ss.game.state);
+  check("a numbered beat does nothing on localhost", s === "title", s);
+  await ctx.close();
+}
+
 await browser.close();
 server.close();
 if (fails.length) {

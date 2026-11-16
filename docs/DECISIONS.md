@@ -13,10 +13,10 @@
 | 249–270 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
 | 271–314 | ## 6. Later chapters (2–4 and travel) |
 | 315–324 | ## 7. Audio |
-| 325–358 | ## 8. Code, controls and process |
-| 359–405 | ## 9. Open / waiting on Brian |
-| 406–500 | ## 10. Earlier entries, kept word for word |
-| 501–596 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 325–359 | ## 8. Code, controls and process |
+| 360–406 | ## 9. Open / waiting on Brian |
+| 407–501 | ## 10. Earlier entries, kept word for word |
+| 502–597 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -344,8 +344,8 @@ Each panel's on-screen words are in CH1-CARTOON-LINES.md. Which files are curren
 | K6 | 11-08 | E15: both faces always show, and the one you can't switch to is greyed. | answered | Decided (P4, not built) |
 | K7 | 11-07 | Reset is a small hold-to-use ↺. After 60 seconds with no progress, the goal chip shows the method line. | repo | Decided for the current game (see K8 and O32) |
 | K8 | 11-08 | Hints: try an escalating tap-for-hint (goal → place → exact action) plus a hints on/off setting in the rebuilt first scenes. No idle auto-hints. | Brian 3:19 PM | Decided (words not written) |
-| K9 | 11-07 | One capture rule everywhere: sighting → security → lockup card with the cause → restart the section, coins kept. | repo | Decided |
-| K10 | 11-08 | Security is consistent: when he's seen, a witness runs to the wall alarm, then security comes and actually catches him. He can run back to the room, and security chases him in. Cut the 9-second home countdown; the guard enters half a second after reaching the door. One rule everywhere, pending a full code trace (P1). | Brian 4:04 PM, 4:33 PM | Decided. Party hall uses it (witness, then guards, `capture('s6')` or the existing home search). Other chapters still wait on the trace. |
+| K9 | 11-07 | One capture rule everywhere: sighting → security → lockup card with the cause → restart the section, coins kept. | repo | Superseded in part by K29. The lockup card stays. "Restart the section" becomes "restart the current scene" after long scenes are split. |
+| K10 | 11-08 | Security is consistent: when he's seen, a witness runs to the wall alarm, then security comes and actually catches him. He can run back to the room, and security chases him in. Cut the 9-second home countdown; the guard enters half a second after reaching the door. One rule everywhere, pending a full code trace (P1). | Brian 4:04 PM, 4:33 PM | Superseded in part by K29. A witness may still run to the alarm. Where a catch puts him is K29, not a walk into the bedroom. |
 | K11 | 11-07 | Tap to walk: a tap advances a bubble or card when one is up, and walks only when nothing is up. | repo | Decided |
 | K12 | 11-08 | Keep both the joystick and tap-to-move, with the joystick where it is. | memory; video notes | Decided |
 | K13 | 11-07 | The phone HUD: bar above the picture, or an overlay? | repo (open then) | Superseded by K14 |
@@ -364,6 +364,7 @@ Each panel's on-screen words are in CH1-CARTOON-LINES.md. Which files are curren
 | K26 | 11-08 | Scene 2: the "sing along with Mops" goal disappears once he has sung. | memory | Decided. On 2026-11-13 the chip stays until "I'm floating in space!" and "Baaa-aa-aaa!" have played, then it clears. |
 | K27 | 11-03 | Drop redundant "tap" hints when a NEXT button is visible. NEXT pulses gently after a few idle seconds. | memory (Nov 3) | Decided |
 | K28 | 11-07 | Picture text under 14 px on a phone gets its own pass, and Brian sees it on his phone first. | repo; OPEN-ASKS E8 | Decided (not started) |
+| K29 | 11-16 | **Every catch, in every chapter, present and future.** The lockup card shows, then the current scene restarts. Long scenes, such as the party, are split into shorter ones, each with its own restart point. Brian: "Every catch: jail card, then restart the current scene; split long scenes like the party into shorter ones." This supersedes the Nov 13 bedroom release (PR #38, R106) and the "set back a little where he was caught" rule (Sat Nov 14, 6:59 AM, and the 12:49 PM PT wording the same day). The party catch on this branch still sets him back (commit cb87185). That code stays until Brian approves the scene split. | Brian, Nov 16, 12:50 PM PT | Decided. Not built. The party split is a proposal awaiting yes. |
 
 ---
 
@@ -594,7 +595,7 @@ These lines were added to the 2026-11-08 snapshot (now `docs/old/history/DECISIO
   **Decided.** Not a yes to merge.
 
 - 2026-11-16: A catch at the party stays in the party. Brian, 2026-11-14: after the jail card, set Squatch back a little and let play carry on. No guard walks into the bedroom. Scene QA restarts in the hall, the search is cleared, and a Chapter 1 scene with no checkpoint no longer restores the old opening.
-  **Decided.** Not a yes to merge.
+  **Superseded** by K29 (Nov 16, 12:50 PM PT): the lockup card, then restart the current scene. The code from that commit stays until Brian approves the scene split. Not a yes to merge.
 
 - 2026-11-16: Text minimum (Brian t342). Canvas words that failed the iPad check are 17px on the 960-wide picture, which is at least 14 CSS px on an iPad upright and sideways. The words are unchanged. The gift card, the photo labels, the party banner, the Coming Soon poster, the speaker-name chip, and the tape REC plate were enlarged in code. The locked room pictures were not redrawn. REC is white on a dark red plate so it clears 3:1 (the monitor behind it is light gray, so a brighter red on that gray would have been harder to read).
   **Decided.** Not a yes to merge.
@@ -602,5 +603,5 @@ These lines were added to the 2026-11-08 snapshot (now `docs/old/history/DECISIO
 - 2026-11-16: A party catch steps toward the open floor, not into the plant pot. The old step toward the middle of the room could leave him standing in the pot. He still stays in the party.
   **Decided.** Not a yes to merge.
 
-- 2026-11-16: `docs/OPEN-ASKS.md` is the one review list. Each unbuilt ask says whether it is for the whole game or one chapter, and whether it is approved, awaiting yes, or built in a pull request. The older sections of that file stay as history. Brian, Nov 11 (t332): only guards and robots show vision cones; a guest shows "?" then "!". That supersedes the Nov 14 dashed cone on everyone. The party buttons SNAG, SUCK, STAND, HUG and SNAP are approved to become things you walk into (Nov 16, 11:50 AM PT) and are not built in this pull request. iPad pictures of pull requests 57 and 58 are in `docs/audit-shots/final/beat1/`. Security seeing through a disguise, the three disguise levels, the alarm ladder, and losing one piece (PR #35, R100, R102, R103) are approved and not built. The bigger heart cone is built in PR #35 and not merged. The bedroom release after jail is approved and built in PR #38 for the party raid; this branch sets him back in the party instead. Do not merge either until Brian picks.
+- 2026-11-16: `docs/OPEN-ASKS.md` is the one review list. Each unbuilt ask says whether it is for the whole game or one chapter, and whether it is approved, awaiting yes, or built in a pull request. The older sections of that file stay as history. Brian, Nov 11 (t332): only guards and robots show vision cones; a guest shows "?" then "!". That supersedes the Nov 14 dashed cone on everyone. The party buttons SNAG, SUCK, STAND, HUG and SNAP are approved to become things you walk into (Nov 16, 11:50 AM PT) and are not built in this pull request. iPad pictures of pull requests 57 and 58 are in `docs/audit-shots/final/beat1/`. Security seeing through a disguise, the three disguise levels, the alarm ladder, and losing one piece (PR #35, R100, R102, R103) are approved and not built. The bigger heart cone is built in PR #35 and not merged. Brian, Nov 16, 12:50 PM PT (K29): every catch, in every chapter, present and future, shows the lockup card, then restarts the current scene. Long scenes such as the party are split into shorter ones. That supersedes the Nov 13 bedroom release (PR #38) and the Nov 14 "set back a little where he was caught" rule, including what commit cb87185 built. The catch code stays until Brian approves the scene split. On localhost, `?beat=day2` opens Day 2 at the gift in the closet. The live site ignores it.
   **Decided.** Not a yes to merge.

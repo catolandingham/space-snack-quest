@@ -8,7 +8,7 @@ New here? Read docs/START-HERE.md first: what matters now (Chapter 1), the ranke
 ## Code
 - Source is src/. index.html is build output: never edit it by hand. Build: npm run build.
 - Tests: npm test (all). One suite: node tests/<name>.mjs. Chrome is found on a Mac; else set CHROME.
-- Debug: index.html?ch=2&phase=wash1&debug=1 opens a checkpoint with the state strip. ?scene=P3 opens a scene.
+- Debug: index.html?ch=2&phase=wash1&debug=1 opens a checkpoint with the state strip. ?scene=P3 opens a scene. On localhost, ?beat=day2 opens Day 2. The live site ignores it.
 - Find code by quoted anchors, not line numbers. Rename only with npm run rename.
 
 ## Brian's design rules (full text: docs/REVIEW-RULES.md)
