@@ -32,7 +32,10 @@ jobs:
       - name: index.html matches the source
         run: npm run check-build
       - name: Full test suite
-        run: npm test 2>&1 | tee /tmp/test.log
+        # pipefail: without it the step took the exit code of tee, so a failed suite still showed green (found 2026-11-15, PR 51)
+        run: |
+          set -o pipefail
+          npm test 2>&1 | tee /tmp/test.log
       - name: Failed checks, in short
         if: failure()
         run: |

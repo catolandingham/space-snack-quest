@@ -1,6 +1,6 @@
 /**
  * Playtest 6 on the chapter slice: the picture does not jump when NEXT appears,
- * Isfred's party line sits under the office monitor, and the disguise fades in.
+ * Isfred's party line points at him on the stage, and the disguise fades in.
  *   node tests/slice-p6.mjs
  */
 import { startGame, sleep } from "./game-page.mjs";
@@ -42,14 +42,13 @@ const bubble = await page.evaluate(() => {
   ss.drawFrame();
   return { at: ss.bubbleAt("official"), box: ss.lastBubble };
 });
-const desk = { x0: 86, y0: 64, x1: 214, y1: 262 };
+// Since PR 51 (Brian, 2026-11-15) Isfred stands on the party stage and his line points at him there.
+// The old check (bubble low in the room, clear of an office desk at the top left) described the room before the stage fix.
 const box = bubble.box;
-const overDesk =
-  box && box.x < desk.x1 && box.x + box.w > desk.x0 && box.y < desk.y1 && box.y + box.h > desk.y0;
 g.check(
-  "Isfred's party line clears the manager desk",
-  bubble.at.y >= 400 && box && box.y >= 168 && !overDesk,
-  { ...bubble, overDesk },
+  "Isfred's party line points at him on the stage and stays on screen",
+  bubble.at.x === 360 && bubble.at.y === 190 && box && box.y >= 0 && box.x >= 0 && box.x + box.w <= 960 && box.y + box.h <= bubble.at.y,
+  bubble,
 );
 
 const dress = await page.evaluate(() => {

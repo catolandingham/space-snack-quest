@@ -190,6 +190,8 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 
 ## Changelog
 
+2026-11-15. Test fix, no change in play. GitHub showed pull request 51 as passing even though one check failed: the workflow piped `npm test` into `tee`, so the step took the exit code of `tee`. The workflow now sets `pipefail`, so a failed suite turns the check red. The failed check, in `tests/slice-p6.mjs`, still expected Isfred's party line low in the room, clear of an old office desk; since the stage fix his line points at him on the stage, and the check now says that. No new words. Docs match main: yes.
+
 2026-11-15. Party hall fix 1, the stage (CHAPTER-1-PROBLEMS fix order): the ROBOTICS DELEGATION! banner moves from mid-floor to hang above the stage; Isfred (the horned guest) now stands on the stage instead of among the guests, and his peek line points at him there; the "COMING SOON!" robot poster (Brian yes, 2026-11-15: "Approve the poster wording COMING SOON! for the party hall") stands on legs beside the stage. No other new words. New check `tests/party-stage.mjs`. While Isfred speaks, his bubble covers the banner; Squatch reads it right after, on "Robots?".
 
 2026-11-15. Singing or music, never both (Brian): the warm background music now fades out while anyone sings (the home song at the door, a song tune still playing, or Squatch at the party mic) and fades back in after. One shared fix in `00-core.js` (`singNow`), so every song bubble in the game gets it. New check in `tests/opening-song.mjs`. No new words.
