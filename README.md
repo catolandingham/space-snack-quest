@@ -69,7 +69,7 @@ For example, `index.html?ch=2&phase=wash1&debug=1` opens the kitchen sink with t
 
 ## Automatic checks
 
-GitHub runs `npm run build`, `npm run check-build`, and `npm test` on every pull request and every push to main (`.github/workflows/pr.yml`). A change counts as passing only when that check is green on GitHub, not when someone says it passed on their machine. The test output (videos and screenshots) is attached to each run for 14 days.
+GitHub runs `npm run build`, `npm run check-build`, and `npm test` on every pull request and every push to main (`.github/workflows/pr.yml`). A change counts as passing only when that check is green on GitHub, not when someone says it passed on their machine. The test output (videos and screenshots) is attached to each run for 14 days. The test step uses `set -o pipefail`, so a failed suite turns the check red (before 2026-11-15 it did not, and one failure on pull request 51 showed green).
 
 ## Screen fit
 
