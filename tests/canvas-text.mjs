@@ -112,6 +112,13 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
     const n = ss.op;
     const shot = (name, setup) => {
       window.__textLog = [];
+      n.ch1Dress = null;
+      n.ch1Cut = null;
+      n.ch1Mini = "";
+      n.ch1Song = false;
+      n.ch1Veil = 0;
+      n.cur = null;
+      n.q = [];
       setup();
       n.ch1Veil = 0;
       for (let i = 0; i < 8; i++) ss.tick(0.05);
@@ -144,13 +151,75 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
       ss.hall.camX = 0;
     };
     return [
+      shot("opening card", () => {
+        n.scene = "O1";
+        n.room = "closet";
+        n.ch1Party = false;
+        n.ch1Day2 = false;
+        n.ctrl = false;
+        n.q = [];
+        n.cur = { k: "card", id: "squatch", text: "This is Squatch. He's a Sasquatch." };
+      }),
+      shot("song", () => {
+        n.scene = "Q1";
+        n.room = "closet";
+        n.ch1Song = true;
+        n.ctrl = true;
+        n.cur = { k: "bub", b: { who: "mops", text: "\u266A Weeee-eenn-nnttt! \u266A", style: "song" } };
+        n.moPose = "stand";
+        n.mo.x = 800;
+        n.mo.y = 470;
+        n.sq.x = 600;
+        n.sq.y = 470;
+      }),
       shot("home start", () => ss.ch1JumpBeat(22)),
+      shot("dress-up", () => {
+        n.scene = "Q1";
+        n.room = "closet";
+        n.wardrobe = "open";
+        n.ch1Dress = { on: true, head: "", face: "", body: "", legs: "", extra: [] };
+        n.ch1Veil = 0;
+        n.cur = null;
+        n.ctrl = true;
+      }),
       shot("lunch sneak", () => ss.ch1JumpBeat(25)),
       shot("photo wall", () => ss.ch1JumpBeat(37)),
       shot("night paw", () => ss.ch1JumpBeat(42)),
       shot("office cutscene", () => ss.ch1JumpBeat(59)),
       shot("tape review", () => ss.ch1JumpBeat(60)),
       shot("party", party),
+      shot("dance", () => {
+        party();
+        n.ch1Disguise = true;
+        n.ch1Flyer = true;
+        n.ch1Mini = "dance";
+        n.ch1Dance = { t: 1, score: 10, cheer: 0, notes: [{ dir: "L", at: 2.5, hit: false }] };
+      }),
+      shot("karaoke", () => {
+        party();
+        n.ch1Disguise = true;
+        n.ch1Flyer = true;
+        n.ch1Mini = "karaoke";
+        n.ch1Kara = { t: 1, howls: 1 };
+      }),
+      shot("snack cut-in", () => {
+        party();
+        n.ch1Disguise = true;
+        n.ch1Flyer = true;
+        n.ch1Cut = { id: "bar", zoom: 1, paw: { x: 480, y: 520 }, held: "", bag: 0, back: 5, glance: 0, face: 0, catches: 0, drag: false };
+      }),
+      shot("lockup card", () => {
+        party();
+        n.ctrl = false;
+        n.cur = { k: "card", id: "jail", text: "LOCKUP", by: "s6", cause: "A tourist saw Squatch in the hall. Security caught him.", restart: "Holding pen. This part starts over." };
+      }),
+      shot("tally", () => {
+        n.scene = "Q9";
+        n.room = "office";
+        n.ch1Office = true;
+        n.ctrl = false;
+        n.cur = { k: "panel", id: "tally" };
+      }),
     ];
   });
   for (const screen of screens) {
@@ -159,6 +228,8 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
       const cssPx = t.px * screen.css;
       if (!(cssPx >= MIN_CSS)) failures.push({ size: sizeName, screen: screen.name, text: t.text, reason: "size", detail: cssPx.toFixed(1) + " CSS px" });
       if (!t.ink || !t.behind) unassessed.push({ size: sizeName, screen: screen.name, text: t.text, why: "color behind the text could not be read" });
+      else if (t.text === "♪" || t.text === "♫")
+        unassessed.push({ size: sizeName, screen: screen.name, text: t.text, why: "a floating note; the background moves, so contrast is not a fixed check" });
       else if (ratio(t.ink, t.behind) < CONTRAST)
         failures.push({ size: sizeName, screen: screen.name, text: t.text, reason: "contrast", detail: ratio(t.ink, t.behind).toFixed(2) + ":1" });
       const off = t.x < -2 || t.y < -2 || t.x + t.w > screen.canvas.w + 2 || t.y + t.h > screen.canvas.h + 2;
@@ -167,6 +238,8 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
     for (let i = 0; i < texts.length; i++) {
       for (let j = i + 1; j < texts.length; j++) {
         const share = overlapOf(texts[i], texts[j]);
+        const notes = (t) => t === "♪" || t === "♫";
+        if (notes(texts[i].text) && notes(texts[j].text)) continue;
         if (share > OVERLAP)
           failures.push({
             size: sizeName,
@@ -182,6 +255,8 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
     const office = await page.evaluate(() => {
       const ss = window.__ss;
       ss.ch1JumpBeat(59);
+      ss.op.ch1Dress = null;
+      ss.op.ch1Cut = null;
       ss.op.ch1Veil = 0;
       ss.drawFrame();
       const c = document.querySelector("canvas");

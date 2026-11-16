@@ -16,7 +16,7 @@
 | 325–358 | ## 8. Code, controls and process |
 | 359–405 | ## 9. Open / waiting on Brian |
 | 406–500 | ## 10. Earlier entries, kept word for word |
-| 501–587 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 501–590 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -594,4 +594,7 @@ These lines were added to the 2026-11-08 snapshot (now `docs/old/history/DECISIO
   **Decided.** Not a yes to merge.
 
 - 2026-11-16: A catch at the party stays in the party. Brian, 2026-11-14: after the jail card, set Squatch back a little and let play carry on. No guard walks into the bedroom. Scene QA restarts in the hall, the search is cleared, and a Chapter 1 scene with no checkpoint no longer restores the old opening.
+  **Decided.** Not a yes to merge.
+
+- 2026-11-16: Text minimum (Brian t342). Canvas words that failed the iPad check are 17px on the 960-wide picture, which is at least 14 CSS px on an iPad upright and sideways. The words are unchanged. The gift card, the photo labels, the party banner, the Coming Soon poster, the speaker-name chip, and the tape REC plate were enlarged in code. The locked room pictures were not redrawn. REC is white on a dark red plate so it clears 3:1 (the monitor behind it is light gray, so a brighter red on that gray would have been harder to read).
   **Decided.** Not a yes to merge.

@@ -1262,7 +1262,9 @@
         // 47 is this robot picture's head top, in its own units, so the head matches the office adult.
         dq(280, 500, !1, adultPxFor("office") / 47),
         n.ch1Tape &&
-          (g("REC", 190, 140, 11, "#e5533d", "center", 900),
+          (m(154, 122, 72, 36, 6),
+          r("#7a1210", 3),
+          g("REC", 190, 140, 17, "#ffffff", "center", 900),
           Re(190, 210, ((adultPxFor("office") * 0.8) / 45) * 0.35, { f: 1, jacket: !0, goatBeard: !0, horns: !0 })));
     }
     function drawCh1Party() {
@@ -1272,17 +1274,17 @@
         glance = (x, y) => look && (F(x + 8, y - eye, 2.2, "#fffdf8"), F(x - 5, y - eye, 2.2, "#fffdf8"));
       // Stage (walkthrough beats 3 and 5, CHAPTER-1-PROBLEMS stage item): the banner hangs above the stage, Isfred stands on it,
       // and the approved "COMING SOON!" robot poster (Brian yes, 2026-11-15) stands beside it.
-      (m(250, 120, 220, 28, 6),
+      (m(248, 116, 400, 36, 8),
         r("#3478f6", 3),
-        g("ROBOTICS DELEGATION!", 360, 134, 14, "#ffffff", "center", 900),
-        C([258, 120, 258, 100], "#1e2430", 2),
-        C([462, 120, 462, 100], "#1e2430", 2),
+        g("ROBOTICS DELEGATION!", 448, 134, 17, "#ffffff", "center", 900),
+        C([258, 116, 258, 96], "#1e2430", 2),
+        C([638, 116, 638, 96], "#1e2430", 2),
         C([500, 266, 500, 290], "#1e2430", 3),
         C([570, 266, 570, 290], "#1e2430", 3),
-        m(490, 196, 90, 70, 4),
+        m(455, 186, 160, 80, 4),
         r("#fffaf0", 2),
-        dq(535, 244, !1, 0.7),
-        g("COMING SOON!", 535, 261, 10, "#e5533d", "center", 900),
+        dq(535, 222, !1, 0.55),
+        g("COMING SOON!", 535, 250, 17, "#e5533d", "center", 900),
         drawCh1Alien(360, 256, "horns", ALIEN_ADULT, face || 1),
         glance(360, 256),
         n.sqPose === "hidden" && ga(400, 500),

@@ -1265,9 +1265,9 @@
           (L(gV + ((P.x - gV) * CV) / 30, $ + R + CV, NV), e.setLineDash([3, 3]), r(oe, 2), e.setLineDash([]));
       if ((l.style === "song" && (g("\u266A", _ + 4, $ + 4, 22, "#ff5fa8"), g("\u266B", _ + T - 4, $ + R - 2, 22, "#ff5fa8")), !o)) {
         let CV = pa[l.who];
-        ge(16);
-        let NV = e.measureText(CV).width + 22;
-        (m(_ + 16, $ - 15, NV, 28, 12), r(Ds[l.who], 3), g(CV, _ + 16 + NV / 2, $ - 1, 16, "#ffffff"));
+        ge(17);
+        let NV = e.measureText(CV).width + 26;
+        (m(_ + 16, $ - 18, NV, 32, 12), r(Ds[l.who], 3), g(CV, _ + 16 + NV / 2, $ - 2, 17, "#ffffff"));
       }
       if (ear) {
         let CV = _ + 22,

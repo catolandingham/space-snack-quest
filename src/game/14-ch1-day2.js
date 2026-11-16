@@ -865,7 +865,13 @@
     }
     function drawCh1Passage() {
       drawLockedRoom(n.ch1Office ? "office" : "hallway");
-      n.ch1Crayon && !n.ch1Keepsake && !n.ch1Office && (g("ME", 640, 150, 12, "#1e2430", "center", 800), g("MOPS", 640, 168, 12, "#1e2430", "center", 800));
+      n.ch1Crayon &&
+        !n.ch1Keepsake &&
+        !n.ch1Office &&
+        (m(592, 118, 96, 68, 6),
+        r("#fffdf8", 3),
+        g("ME", 640, 142, 17, "#1e2430", "center", 800),
+        g("MOPS", 640, 170, 17, "#1e2430", "center", 800));
       n.ch1Step === "photos" &&
         !n.ch1Office &&
         (e.save(),
@@ -941,7 +947,12 @@
           }));
       } else if (id === "box") {
         (m(360, 220, 240, 180, 10), r("#3478f6", 5), g("MY GARDIANS", 480, 300, 26, "#ffffff", "center", 900));
-        n.ch1Hold === "gift" && (m(180, 200, 70, 90, 4), r("#fff4c2", 2), g("Rule #1", 215, 230, 14, "#1e2430", "center", 800), g("Brave Sasquatches stay hidden.", 215, 260, 9, "#1e2430", "center", 700));
+        n.ch1Hold === "gift" &&
+          (m(24, 156, 320, 112, 8),
+          r("#fff4c2", 3),
+          g("Rule #1", 184, 188, 17, "#1e2430", "center", 800),
+          g("Brave Sasquatches", 184, 216, 17, "#1e2430", "center", 700),
+          g("stay hidden.", 184, 244, 17, "#1e2430", "center", 700));
       } else if (id === "pack") {
         (m(360, 240, 240, 160, 8), r("#d7c4a3", 4), g("MOON PIES", 480, 280, 18, "#1e2430", "center", 900));
         n.ch1Packed && (m(430, 300, 80, 50, 4), r("#3478f6", 3), g("MY GARDIANS", 470, 326, 10, "#fff", "center", 800), drawSlip(448, 312, "#ff8fb8", 22, 18));
@@ -985,7 +996,13 @@
         e.closePath(),
         e.fill(),
         e.restore());
-      n.ch1Hold === "gift" && n.sqPose === "stand" && (m(n.sq.x + 16, n.sq.y - 78, 36, 28, 3), r("#e5533d", 2), m(n.sq.x + 18, n.sq.y - 110, 44, 30, 2), r("#fff4c2", 2), g("Rule #1", n.sq.x + 40, n.sq.y - 96, 8, "#1e2430", "center", 700));
+      n.ch1Hold === "gift" &&
+        n.sqPose === "stand" &&
+        (m(n.sq.x + 16, n.sq.y - 78, 36, 28, 3),
+        r("#e5533d", 2),
+        m(n.sq.x - 8, n.sq.y - 132, 92, 40, 4),
+        r("#fff4c2", 2),
+        g("Rule #1", n.sq.x + 38, n.sq.y - 112, 17, "#1e2430", "center", 800));
       n.ch1Hold === "lunch" && n.sqPose === "stand" && (m(n.sq.x + 10, n.sq.y - 70, 22, 28, 3), r("#cdbb98", 2));
       if (n.ch1Paper === "bite" || n.ch1Paper === "mouth") (drawSlip(n.mo.x - 8, n.mo.y - 86, "#ff8fb8", 22, 28), drawSlip(n.mo.x + 8, n.mo.y - 80, "#ffe08a", 14, 18));
       n.ch1Paper === "slip" && drawSlip(n.mo.x - 6, n.mo.y - 84, "#ff8fb8", 18, 24);

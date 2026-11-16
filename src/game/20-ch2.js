@@ -308,6 +308,7 @@
         n.pulse.clear(),
         String(n.scene || "").startsWith("G") && (n.chip = ""),
         (n.ch1Dress = null),
+        (n.ch1Cut = null),
         (n.ch1Veil = 0),
         (n.ch1VeilTo = 0),
         (n.ch1Drag = ""));

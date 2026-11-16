@@ -20,6 +20,8 @@ A separate preview site can serve this branch. It is not the live game at space-
 
 Every new line is listed for Brian in `docs/CH1-LINES-FOR-BRIAN.md`. He said yes to merge this chapter before the wording pass was finished, so a line in that file can still change. `tests/ch1-playthrough.mjs` plays this chapter to the tally card.
 
+2026-11-16, not merged: Brian t342. The small canvas words are 17px, which is at least 14 CSS px on an iPad. REC is white on a dark red plate. The locked pictures were not redrawn. Docs match main: yes. Do not merge.
+
 2026-11-16, not merged: a catch at the party puts Squatch back in the party, a little way from where he was seen. It does not restart the bedroom. Docs match main: yes. Do not merge.
 
 2026-11-16, not merged: Brian t341. Reports use the handover note. The long docs have a section index; read one section. Canvas words are checked at iPad size, and failures already on screen are listed for Brian instead of restyled. Approved tuning numbers are pinned. In the office cutscene the white robot stands beside Isfred, on the floor, fully on screen. Docs match main: yes. Do not merge.

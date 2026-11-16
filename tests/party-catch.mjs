@@ -47,4 +47,26 @@ g.check("a party catch does not send Squatch back to the bedroom", after.scene =
 g.check("the party offers a spot again and the guards are gone", after.ctrl && !after.raid && !after.over && after.disguise && after.verbs.length > 0, after);
 g.check("he is a little back from where he was caught", after.x < 719 && after.x > 40, after);
 g.check("no page errors", errors.length === 0, errors);
+const cut = await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  n.scene = "QA";
+  n.room = "hall";
+  n.ch1Party = true;
+  n.ch1Disguise = true;
+  n.ch1Cut = { id: "bar", zoom: 1, paw: { x: 480, y: 520 }, held: "", bag: 0, back: 5, glance: 0, face: 0, catches: 0, drag: false };
+  n.sqPose = "stand";
+  n.sq.x = 500;
+  n.sq.y = 530;
+  n.ctrl = true;
+  n.q = [];
+  n.cur = null;
+  ss.capture("s6");
+  for (let i = 0; i < 40; i++) {
+    ss.tick(0.4);
+    if (n.cur && (n.cur.k === "bub" || n.cur.k === "card" || n.cur.k === "panel")) ss.opTap();
+  }
+  return { scene: n.scene, cut: n.ch1Cut && n.ch1Cut.id };
+});
+g.check("a catch closes the snack cut-in and stays in the party", cut.scene === "QA" && !cut.cut, cut);
 await g.finish("party-catch");

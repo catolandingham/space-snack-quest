@@ -44,6 +44,7 @@
         (n.room = "hall"),
         (n.ch1Party = !0),
         (n.ch1Raid = null),
+        (n.ch1Cut = null),
         (n.ch1Search = !1),
         (n.guard = null),
         (n.ch1OctChase = !1),

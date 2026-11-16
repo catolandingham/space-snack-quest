@@ -5,18 +5,18 @@
 | --- | --- |
 | 21–23 | # Space Snack Quest: where things stand |
 | 24–30 | ## Fidelity system (new, 9:55 PM PT, Brian t233 / W33) |
-| 31–41 | ## The game |
-| 42–79 | ## Chapter 1 cartoon: panels in story order |
-| 80–95 | ## Open questions from the new panels (for Brian, multiple choice) |
-| 96–100 | ## In progress right now |
-| 101–155 | ## Next |
-| 156–160 | ## Earlier state, kept in full |
-| 161–166 | # Space Snack Quest: state |
-| 167–169 | ## What it is |
-| 170–181 | ## Where things live |
-| 182–218 | ## Open items |
-| 219–223 | ## Next step |
-| 224–228 | ## Paused 2026-11-08 at the credit line |
+| 31–43 | ## The game |
+| 44–81 | ## Chapter 1 cartoon: panels in story order |
+| 82–97 | ## Open questions from the new panels (for Brian, multiple choice) |
+| 98–102 | ## In progress right now |
+| 103–157 | ## Next |
+| 158–162 | ## Earlier state, kept in full |
+| 163–168 | # Space Snack Quest: state |
+| 169–171 | ## What it is |
+| 172–183 | ## Where things live |
+| 184–220 | ## Open items |
+| 221–225 | ## Next step |
+| 226–230 | ## Paused 2026-11-08 at the credit line |
 <!-- /section-index -->
 # Space Snack Quest: where things stand
 Monday, November 9, 2026, through R63. Updated 2026-11-10 after the Chapter 1 redesign and the party landed on `main`. Decisions: `docs/DECISIONS.md`. Open asks: `docs/OPEN-ASKS.md`. Words: `docs/CH1-CARTOON-LINES.md`. Look: `docs/STYLE-GUIDE.md`.
@@ -35,6 +35,7 @@ Monday, November 9, 2026, through R63. Updated 2026-11-10 after the Chapter 1 re
 - Live game = `main` of `catolandingham/space-snack-quest`. Phases 0–3 and the Chapter 1 pass are `10030f6` (PRs #7–#11). The Chapter 1 redesign is on `main` as PR #19 (`aed0c4f`). The party is on `main` as PR #20 (`e0e16d4`). Brian said yes to both on 2026-11-09. On 2026-11-10 he said "Yes, merge PRs #17 and #18." PR #18 is `1e897aa`. PR #17 is `bc0759f`. Render publishes `main`.
 - 2026-11-12, not merged: party security follows K10. Adult head height is 85% of the door in that room (`adultPxFor`). The hall door is 77.9px so the adult head is 66.2px. The office door is 123.4px so the adult head there is 104.9px. Squatch is 80% of the adult in the same room. A room with no door uses the hall. Brian t336u. Do not merge.
 - 2026-11-16: Brian t341. Reports use the handover note. Long docs have a section index. Canvas text is checked at iPad size and known failures are listed, not restyled. Tuning numbers are pinned. The office cutscene shows the white robot beside Isfred, both on the floor. Do not merge.
+- 2026-11-16: Brian t342. The small canvas words are 17px on the picture, at least 14 CSS px on an iPad. REC is white on a dark red plate drawn in code. Locked room pictures were not redrawn. Do not merge.
 - 2026-11-16: A catch at the party stays in the party, a little back from where he was seen. It no longer restarts the bedroom with no way forward. Do not merge.
 - This branch is Chapter 1 from the morning song through the ship, on top of slice A. It is not merged. Day 2 is the new paper order. The party hall, hallway, loading bay, home and office are the locked pictures in `docs/locked-rooms/`. Joe's track is `music/main-theme-from-brian.mp3`. It plays for the title, home, the gift, "You're the best," the brochure, and the call. `?beat=42` jumps to that beat on the preview only.
 - A separate preview site can serve this branch. It is not the live site. On any host other than space-snack-quest.onrender.com, localhost, or 127.0.0.1, saved settings use the ssq-day2- prefix. Chapter progress is not saved. A reload starts the chapter over.
