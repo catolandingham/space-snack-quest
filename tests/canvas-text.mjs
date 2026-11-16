@@ -14,8 +14,8 @@ const MIN_CSS = 14;
 const CONTRAST = 3;
 const OVERLAP = 0.25;
 const SIZES = {
-  "iPad upright": { width: 820, height: 1180 },
-  "iPad sideways": { width: 1180, height: 820 },
+  "iPad portrait": { width: 768, height: 1024 },
+  "iPad landscape": { width: 1024, height: 768 },
 };
 
 function lum(rgb) {
@@ -251,7 +251,7 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
       }
     }
   }
-  if (sizeName === "iPad sideways") {
+  if (sizeName === "iPad landscape") {
     const office = await page.evaluate(() => {
       const ss = window.__ss;
       ss.ch1JumpBeat(59);

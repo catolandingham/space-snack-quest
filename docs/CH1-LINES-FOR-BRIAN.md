@@ -3,17 +3,18 @@
 
 | Lines | Heading |
 | --- | --- |
-| 18–19 | # Chapter 1 lines for Brian |
-| 20–35 | ## Calendar revision, Nov 16 (PR 58, not live) |
-| 36–43 | ## Earlier chapter lines |
-| 44–58 | ## Goal chips |
-| 59–142 | ## What people say |
-| 143–156 | ## Words painted on things |
-| 157–180 | ## Buttons |
-| 181–267 | ## Day 2 onward (beats 22–61), pending |
-| 268–275 | ## Ball hiding |
-| 276–314 | ## Questions still open |
-| 315–340 | ## Day 1 stand-ins, pending |
+| 19–20 | # Chapter 1 lines for Brian |
+| 21–36 | ## Calendar revision, Nov 16 (PR 58, not live) |
+| 37–44 | ## Earlier chapter lines |
+| 45–59 | ## Goal chips |
+| 60–143 | ## What people say |
+| 144–157 | ## Words painted on things |
+| 158–181 | ## Buttons |
+| 182–268 | ## Day 2 onward (beats 22–61), pending |
+| 269–276 | ## Ball hiding |
+| 277–283 | ## Off-screen lines, for Brian (playtest 12) |
+| 284–322 | ## Questions still open |
+| 323–348 | ## Day 1 stand-ins, pending |
 <!-- /section-index -->
 # Chapter 1 lines for Brian
 
@@ -272,6 +273,13 @@ Decided (R43). When Squatch is balled up, a robot notices him only if it stays w
 Standing and walking are unchanged. The night robot still uses the hall robot's cone: 210 pixels long, half-angle 0.42, and a 70-pixel circle at his feet. Those are not the ball constants. A plant hides completely. A ball is never noticed in a spot where standing would be safe, and a robot that only passes through the circle does not notice him.
 
 On the night mailbox he can roll into a ball anywhere. On escape night the only ball button is beside the vent, and that one always works because it is the story.
+
+## Off-screen lines, for Brian (playtest 12)
+
+These lines were spoken with nobody on screen. The game no longer shows that bubble. The words are unchanged. Cut them, move them, or leave them for when that person is in the room.
+
+- Mops, after a catch, when he is not in the room: "Just a fuzzy mop! Very fuzzy." / "Shedding season." and the other mop jokes in that same list ("Nothing to see! Just my rug.", "It walks. Fancy rug.", "Whoa! Biggest dust bunny EVER.", "I'll mop it up!", "That's my mop's winter coat.", "Very fashionable.").
+- The UPS robot, in the photo hallway, where no robot is drawn: "BEEP BEEP".
 
 ## Questions still open
 

@@ -105,7 +105,7 @@
         ),
         stars = hudEl("span", "ss-stars", "font-size:14px;color:#b45309;background:#fff6dc", where),
         goal = hudEl("div", "ss-goal", "position:absolute;top:6px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center", root),
-        chip = hudEl("div", "ss-chip", "background:#ffcf33;border:2px solid #1e2430;border-radius:16px;padding:4px 14px;font-weight:800", goal),
+        chip = hudEl("div", "ss-chip", "background:#ffcf33;border:2px solid #1e2430;border-radius:16px;padding:4px 14px;font-weight:800;white-space:nowrap;max-width:100%;overflow:hidden", goal),
         status = hudEl("div", "ss-status", "display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap", goal),
         count = hudEl("div", "ss-count", "background:#e5533d;color:#fff;border:2px solid #1e2430;border-radius:14px;padding:2px 14px;font-size:16px;font-weight:900", status),
         tank = hudEl("div", "ss-tank", "font-size:14px;font-weight:900;border:2px solid #1e2430;border-radius:10px;padding:2px 10px", status),

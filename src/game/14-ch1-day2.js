@@ -83,7 +83,7 @@
     }
     function ch1ToMops() {
       ((n.ch1Sneak = !1), (n.sqPose = "stand"), (n.ctrl = !1));
-      ch1GoDay("passage", { who: "sq", scene: "QB", stand: [240, 510], mo: [500, 510] }, () => ch1Ready("give", "Squatch: give Mops his lunch", "QB"));
+      ch1GoDay("passage", { who: "sq", scene: "QB", stand: [240, 520], mo: [720, 540] }, () => ch1Ready("give", "Squatch: give Mops his lunch", "QB"));
     }
     function ch1GiveLunch() {
       ((n.ctrl = !1), (n.ch1Heart = !1));
@@ -109,7 +109,7 @@
       ((n.ch1Fed = 2), (n.ch1Hold = ""), ch1CloseZoom(ch1AfterLunch));
     }
     function ch1AfterLunch() {
-      ch1GoDay("hall", { who: "both", scene: "Q3", stand: [720, 520], mo: [780, 510] }, () => {
+      ch1GoDay("hall", { who: "both", scene: "Q3", stand: [480, 520], mo: [760, 520] }, () => {
         ((n.ctrl = !1),
           J([
             v("mops", "I know you, Squatch, you're probably hungry... you know the rule, grab one snack."),
@@ -1000,9 +1000,9 @@
         n.sqPose === "stand" &&
         (m(n.sq.x + 16, n.sq.y - 78, 36, 28, 3),
         r("#e5533d", 2),
-        m(n.sq.x - 8, n.sq.y - 132, 92, 40, 4),
+        m(n.sq.x + 34, n.sq.y - 58, 78, 28, 4),
         r("#fff4c2", 2),
-        g("Rule #1", n.sq.x + 38, n.sq.y - 112, 17, "#1e2430", "center", 800));
+        g("Rule #1", n.sq.x + 73, n.sq.y - 44, 17, "#1e2430", "center", 800));
       n.ch1Hold === "lunch" && n.sqPose === "stand" && (m(n.sq.x + 10, n.sq.y - 70, 22, 28, 3), r("#cdbb98", 2));
       if (n.ch1Paper === "bite" || n.ch1Paper === "mouth") (drawSlip(n.mo.x - 8, n.mo.y - 86, "#ff8fb8", 22, 28), drawSlip(n.mo.x + 8, n.mo.y - 80, "#ffe08a", 14, 18));
       n.ch1Paper === "slip" && drawSlip(n.mo.x - 6, n.mo.y - 84, "#ff8fb8", 18, 24);

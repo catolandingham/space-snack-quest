@@ -1,23 +1,7 @@
 {
-  "todo": "New screens only. Brian decides these. The 15 texts he named are fixed and must not come back.",
+  "todo": "The name Mops on the green song chip is still under 3:1. Brian decides the colour. Size is checked at 1024x768 and 768x1024.",
   "known": [
-    { "size": "iPad upright", "screen": "song", "text": "Mops", "reason": "contrast" },
-    { "size": "iPad upright", "screen": "dress-up", "text": "top hat", "reason": "size" },
-    { "size": "iPad upright", "screen": "dress-up", "text": "sunglasses", "reason": "size" },
-    { "size": "iPad upright", "screen": "dress-up", "text": "shirt", "reason": "size" },
-    { "size": "iPad upright", "screen": "dress-up", "text": "boots", "reason": "size" },
-    { "size": "iPad upright", "screen": "dress-up", "text": "scarf", "reason": "size" },
-    { "size": "iPad upright", "screen": "dress-up", "text": "bow tie", "reason": "size" },
-    { "size": "iPad upright", "screen": "dress-up", "text": "button nose", "reason": "size" },
-    { "size": "iPad upright", "screen": "dress-up", "text": "pipe", "reason": "size" },
-    { "size": "iPad sideways", "screen": "song", "text": "Mops", "reason": "contrast" },
-    { "size": "iPad sideways", "screen": "dress-up", "text": "top hat", "reason": "size" },
-    { "size": "iPad sideways", "screen": "dress-up", "text": "sunglasses", "reason": "size" },
-    { "size": "iPad sideways", "screen": "dress-up", "text": "shirt", "reason": "size" },
-    { "size": "iPad sideways", "screen": "dress-up", "text": "boots", "reason": "size" },
-    { "size": "iPad sideways", "screen": "dress-up", "text": "scarf", "reason": "size" },
-    { "size": "iPad sideways", "screen": "dress-up", "text": "bow tie", "reason": "size" },
-    { "size": "iPad sideways", "screen": "dress-up", "text": "button nose", "reason": "size" },
-    { "size": "iPad sideways", "screen": "dress-up", "text": "pipe", "reason": "size" }
+    { "size": "iPad portrait", "screen": "song", "text": "Mops", "reason": "contrast" },
+    { "size": "iPad landscape", "screen": "song", "text": "Mops", "reason": "contrast" }
   ]
 }

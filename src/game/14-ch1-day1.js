@@ -243,11 +243,12 @@
       ]);
     }
     function ch1Chicken() {
-      ((n.ctrl = !1), (n.act = null), (n.ch1Chicken = 2.2));
+      // A silent wait showed NEXT with no words. The flap plays on its own, and his feet move.
+      ((n.ctrl = !1), (n.act = null), (n.ch1Chicken = 0));
       J([
-        uV(2.2),
+        cV((dt) => ((n.ch1Chicken += dt), (n.sq.moving = !0), (n.sq.walk = n.ch1Chicken * 14), n.ch1Chicken >= 2.2)),
         N(() => {
-          ((n.ch1Chicken = 0), (n.ctrl = !0));
+          ((n.ch1Chicken = 0), (n.sq.walk = 0), (n.sq.moving = !1), (n.ctrl = !0));
         }),
       ]);
     }
@@ -336,7 +337,7 @@
       let left = 6 - (n.ch1Cheese || 0);
       left < 3 &&
         left > 0 &&
-        (g(String(Math.ceil(left)), 820, 300, 28, "#e5533d", "center", 900), g("Say cheese!", 820, 332, 16, "#1e2430", "center", 800));
+        (g(String(Math.ceil(left)), 180, 230, 28, "#e5533d", "center", 900), g("Say cheese!", 180, 266, 18, "#1e2430", "center", 800));
       n.ch1Flash > 0 && ((e.fillStyle = "rgba(255,255,255," + Math.min(0.85, n.ch1Flash * 4) + ")"), e.fillRect(0, 0, c, b));
     }
     function drawCh1Guard() {
