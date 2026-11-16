@@ -79,12 +79,12 @@
     // Optional inspection, not a new story beat. Keep the current queue intact while it is open.
     // Brian, Nov 16: calendar is tappable; a close-up and a visual joke, with no new words.
     function ch1CalendarAvailable() {
-      return n.ctrl && !de() && n.room === "closet" && n.wardrobe !== "open" &&
+      return n.ctrl && n.hopOut < 0 && !de() && n.room === "closet" && n.wardrobe !== "open" &&
         !n.ch1Day2 && !n.ch1Party && !n.ch1Dress && !n.ch1Zoom && !n.ch1Calendar &&
         !n.ch1MopsLeave && (n.scene === "O1" || (n.scene === "Q1" && (n.ch1Song || n.ch1PeekReady)));
     }
     function ch1CalendarSpots() {
-      return ch1CalendarAvailable()
+      return ch1CalendarAvailable() && n.sqPose === "stand"
         ? [spot({ id: "home-calendar", verb: "LOOK", cap: "calendar", who: "sq",
             x: 230, y: 392, r: 45, at: [179, 214], f: () => ch1OpenCalendar() })]
         : [];

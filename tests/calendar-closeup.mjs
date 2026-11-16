@@ -109,6 +109,12 @@ for (const viewport of [
   g.check(`${tag}: day-two close continues to lunch`, await page.evaluate(() => window.__ss.op.ch1Step === "lunch"));
   await page.evaluate(() => window.__ss.startOpening());
   g.check(`${tag}: new game resets bite and overlay`, await page.evaluate(() => !window.__ss.op.ch1CalendarBitten && !window.__ss.op.ch1Calendar));
+  g.check(`${tag}: calendar cannot interrupt a hop out of bed`, await page.evaluate(() => {
+    const n = window.__ss.op;
+    Object.assign(n, { ctrl: true, cur: null, q: [], hopOut: 0.1, sqPose: "stand" });
+    window.__ss.tapAt(179, 214);
+    return !n.ch1Calendar && !window.__ss.spotsNow().some(s => s.id === "home-calendar");
+  }));
   g.check(`${tag}: no script errors`, errors.length === 0, errors);
   await ctx.close();
 }
