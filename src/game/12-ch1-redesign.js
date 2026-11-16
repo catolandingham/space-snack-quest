@@ -1258,8 +1258,9 @@
         n.sq.x > -40 &&
         Re(n.sq.x, n.sq.y, sqDrawScale(), { f: n.sq.f || 1, walk: n.sq.moving ? n.sq.walk : 0, jacket: !!n.costumeOn });
       n.ch1Office &&
-        (drawCh1Alien(400, 575, "horns", alienScale("office"), -1),
-        Qt(240, 590, "#3478f6", qtScale("office"), -1),
+        (drawCh1Alien(430, 500, "horns", alienScale("office"), -1),
+        // 47 is this robot picture's head top, in its own units, so the head matches the office adult.
+        dq(280, 500, !1, adultPxFor("office") / 47),
         n.ch1Tape &&
           (g("REC", 190, 140, 11, "#e5533d", "center", 900),
           Re(190, 210, ((adultPxFor("office") * 0.8) / 45) * 0.35, { f: 1, jacket: !0, goatBeard: !0, horns: !0 })));

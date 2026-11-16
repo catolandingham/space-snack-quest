@@ -1,0 +1,22 @@
+{
+  "todo": "Brian decides these fixes. Do not change words, font sizes, or layout to clear them.",
+  "known": [
+    { "size": "iPad upright", "screen": "home start", "text": "Rule #1", "reason": "size" },
+    { "size": "iPad upright", "screen": "home start", "text": "Brave Sasquatches stay hidden.", "reason": "size" },
+    { "size": "iPad upright", "screen": "photo wall", "text": "ME", "reason": "size" },
+    { "size": "iPad upright", "screen": "photo wall", "text": "MOPS", "reason": "size" },
+    { "size": "iPad upright", "screen": "office cutscene", "text": "Isfred Bar Neshuman", "reason": "size" },
+    { "size": "iPad upright", "screen": "tape review", "text": "REC", "reason": "size" },
+    { "size": "iPad upright", "screen": "tape review", "text": "REC", "reason": "contrast" },
+    { "size": "iPad upright", "screen": "party", "text": "ROBOTICS DELEGATION!", "reason": "size" },
+    { "size": "iPad upright", "screen": "party", "text": "COMING SOON!", "reason": "size" },
+    { "size": "iPad sideways", "screen": "home start", "text": "Rule #1", "reason": "size" },
+    { "size": "iPad sideways", "screen": "home start", "text": "Brave Sasquatches stay hidden.", "reason": "size" },
+    { "size": "iPad sideways", "screen": "photo wall", "text": "ME", "reason": "size" },
+    { "size": "iPad sideways", "screen": "photo wall", "text": "MOPS", "reason": "size" },
+    { "size": "iPad sideways", "screen": "tape review", "text": "REC", "reason": "size" },
+    { "size": "iPad sideways", "screen": "tape review", "text": "REC", "reason": "contrast" },
+    { "size": "iPad sideways", "screen": "party", "text": "ROBOTICS DELEGATION!", "reason": "size" },
+    { "size": "iPad sideways", "screen": "party", "text": "COMING SOON!", "reason": "size" }
+  ]
+}

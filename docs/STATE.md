@@ -1,3 +1,23 @@
+<!-- section-index -->
+**Section index.** Read this index, then only the section you need. Do not read this file whole.
+
+| Lines | Heading |
+| --- | --- |
+| 21–23 | # Space Snack Quest: where things stand |
+| 24–30 | ## Fidelity system (new, 9:55 PM PT, Brian t233 / W33) |
+| 31–41 | ## The game |
+| 42–79 | ## Chapter 1 cartoon: panels in story order |
+| 80–95 | ## Open questions from the new panels (for Brian, multiple choice) |
+| 96–100 | ## In progress right now |
+| 101–155 | ## Next |
+| 156–160 | ## Earlier state, kept in full |
+| 161–166 | # Space Snack Quest: state |
+| 167–169 | ## What it is |
+| 170–181 | ## Where things live |
+| 182–218 | ## Open items |
+| 219–223 | ## Next step |
+| 224–228 | ## Paused 2026-11-08 at the credit line |
+<!-- /section-index -->
 # Space Snack Quest: where things stand
 Monday, November 9, 2026, through R63. Updated 2026-11-10 after the Chapter 1 redesign and the party landed on `main`. Decisions: `docs/DECISIONS.md`. Open asks: `docs/OPEN-ASKS.md`. Words: `docs/CH1-CARTOON-LINES.md`. Look: `docs/STYLE-GUIDE.md`.
 
@@ -14,6 +34,7 @@ Monday, November 9, 2026, through R63. Updated 2026-11-10 after the Chapter 1 re
 - 2026-11-13. Pull requests #21 and #23 are on `main`, so the locked rooms and the lunch through the ship are in the live game. Pull request #26 cleaned the docs. The Nov 8 reply sheet and the two audits were checked against `OPEN-ASKS.md`. What was not already written down is section G there. The cook still speaks before she is drawn. The drawing change in pull request #16 was not brought over. The same day Brian approved "TIED TOGETHER FOREVER", "ME" / "MOPS", and "BEEP BEEP", and decided R92–R95: story waits need a tap, a sight is a short hop, Zip calls security, Mops answers the Mars gate bot, and the stage directions are pictures and a sound. At 4:10 AM ET he approved the gate lines "He's with me." and "No thanks. We're getting my goat." and said yes, merge. At 6:12 AM ET he said to build the home song with the old lines, point the bedroom arrows away from the bucket, and remove the keyboard instructions. That is in a pull request and is not merged.
 - Live game = `main` of `catolandingham/space-snack-quest`. Phases 0–3 and the Chapter 1 pass are `10030f6` (PRs #7–#11). The Chapter 1 redesign is on `main` as PR #19 (`aed0c4f`). The party is on `main` as PR #20 (`e0e16d4`). Brian said yes to both on 2026-11-09. On 2026-11-10 he said "Yes, merge PRs #17 and #18." PR #18 is `1e897aa`. PR #17 is `bc0759f`. Render publishes `main`.
 - 2026-11-12, not merged: party security follows K10. Adult head height is 85% of the door in that room (`adultPxFor`). The hall door is 77.9px so the adult head is 66.2px. The office door is 123.4px so the adult head there is 104.9px. Squatch is 80% of the adult in the same room. A room with no door uses the hall. Brian t336u. Do not merge.
+- 2026-11-16: Brian t341. Reports use the handover note. Long docs have a section index. Canvas text is checked at iPad size and known failures are listed, not restyled. Tuning numbers are pinned. The office cutscene shows the white robot beside Isfred, both on the floor. Do not merge.
 - This branch is Chapter 1 from the morning song through the ship, on top of slice A. It is not merged. Day 2 is the new paper order. The party hall, hallway, loading bay, home and office are the locked pictures in `docs/locked-rooms/`. Joe's track is `music/main-theme-from-brian.mp3`. It plays for the title, home, the gift, "You're the best," the brochure, and the call. `?beat=42` jumps to that beat on the preview only.
 - A separate preview site can serve this branch. It is not the live site. On any host other than space-snack-quest.onrender.com, localhost, or 127.0.0.1, saved settings use the ssq-day2- prefix. Chapter progress is not saved. A reload starts the chapter over.
 - On 2026-11-10 Brian wrote "Yes, merge PRs #17 and #18." PR #18 is on `main` as `1e897aa`. PR #17 is merged on top of it: later-chapter doors walk out and in, and the soup-note whisper is cut. `npm test` on that merged tree: all 29 suites passed.

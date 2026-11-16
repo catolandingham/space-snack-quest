@@ -52,3 +52,6 @@ New here? Read docs/START-HERE.md first: what matters now (Chapter 1), the ranke
 - Every PR updates README.md and docs/MASTER-BACKLOG.md and says "Docs match main: yes."
 - Report to Brian in plain English in chat: what the player will notice, one screenshot, the verify output.
 - No merge or deploy without Brian's yes, written in the PR.
+- Reports and PR bodies use `docs/HANDOVER-TEMPLATE.md`. Anything not checked is NOT ASSESSED, never passed. End with "Not yet played by a person" unless `QA-LOG.md` covers that commit.
+- Big docs have a section index. Read the index and one section (`node scripts/md-section.mjs extract <file> "<heading>"`). Do not read `docs/DECISIONS.md`, `docs/CH1-LINES-FOR-BRIAN.md`, `docs/MASTER-BACKLOG.md`, `docs/STATE.md`, or `docs/CH1-STORY-WALKTHROUGH.md` whole unless asked.
+- `docs/TUNING-PINS.json` is the approved numbers. Changing one needs Brian's written yes in the PR, called out in the PR body.

@@ -1,3 +1,23 @@
+<!-- section-index -->
+**Section index.** Read this index, then only the section you need. Do not read this file whole.
+
+| Lines | Heading |
+| --- | --- |
+| 21–23 | # Space Snack Quest: every decision, in one place |
+| 24–31 | ## How to use this file |
+| 32–41 | ## Fidelity system (pictures are locked, not just words) |
+| 42–79 | ## 1. Working rules |
+| 80–146 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 147–171 | ## 3. Characters and look |
+| 172–248 | ## 4. Look, rooms and layout |
+| 249–270 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 271–314 | ## 6. Later chapters (2–4 and travel) |
+| 315–324 | ## 7. Audio |
+| 325–358 | ## 8. Code, controls and process |
+| 359–405 | ## 9. Open / waiting on Brian |
+| 406–500 | ## 10. Earlier entries, kept word for word |
+| 501–584 | ## 11. Decisions recorded on main on 2026-11-09 |
+<!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
 
@@ -569,3 +589,6 @@ These lines were added to the 2026-11-08 snapshot (now `docs/old/history/DECISIO
 
 - 2026-11-11: R84. Chapter 1 beats 22–61 use the walkthrough defaults where a question was still open. Mops is in the hallway at lunch. The calendar shows delivery morning, and the PA still says the ship is here. A robot calls Isfred away because a crate is damaged in the mail room. Squatch posts the yellow copy, then a cutscene sends the pink sheet into the vent. He hides that pink slip in the Guardian Box after the office. On pickup day the Moon Pie crate is already loaded and is not in the scanner shot. The hallway door is the north end of the party hall's right wall. Mops walks him to the snack bar, then goes back to work, and Squatch walks home. He waits at the vent as the L2 ball. The office code on the pink slip is 4723, the same digits already drawn on the old keypad. The keepsake gives no points until Brian picks a number. Lunch guests use the night robot's cone (210, 0.42, 70) so no new sight number was invented. Joe's warm theme is still the generated stand-in. None of this is a yes to merge.
   **Decided** as the build default. The words and the open questions stay pending for Brian. R67–R83 are already numbered in the 2026-11-10 planning record (the walkthrough and the decisions copy). This row does not reuse those numbers.
+
+- 2026-11-16: Process checks (Brian t341), borrowed as ideas, not files. Every report uses the handover note (`docs/HANDOVER-TEMPLATE.md`): PASSED, FAILED, NOT ASSESSED, GUESSED, and "Not yet played by a person" unless a QA log covers that commit. Anything not checked is NOT ASSESSED, never passed. Long docs carry a section index, and agents read one section. `tests/canvas-text.mjs` records on-screen canvas words at the iPad sizes and flags type under 14 CSS px, contrast under 3:1, text off the canvas, and overlap over 25% of the smaller box. It does not change words, sizes, or layout; known failures wait for Brian. `docs/TUNING-PINS.json` pins the approved numbers, including the 85% door rule and Squatch at 80% of an adult. Changing a pin needs Brian's written yes in the PR.
+  **Decided.** Not a yes to merge.

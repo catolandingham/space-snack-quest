@@ -1092,13 +1092,13 @@
       let s = G6(l);
       if (s) return s;
       if (l === "official") {
-        if (n.ch1Office && n.room === "office") return { x: 400, y: 500 };
+        if (n.ch1Office && n.room === "office") return { x: 430, y: 390 };
         if (n.ch1Office) return { x: 480, y: 490 };
         if (n.ch1Party) return { x: 360, y: 190 }; // Isfred on the stage (Brian, 2026-11-15: never a bubble with nobody under it)
         if (n.room === "hangar" && n.ch1D && n.ch1Ship && !n.ch1Night && n.scene !== "Q9") return { x: 560, y: 400 };
         return { x: 210, y: 215 };
       }
-      if ((l === "robot" || l === "bot") && n.ch1Office && n.room === "office") return { x: 240, y: 470 };
+      if ((l === "robot" || l === "bot") && n.ch1Office && n.room === "office") return { x: 280, y: 400 };
       if ((l === "robot" || l === "bot") && n.ch1Office) return { x: 640, y: 490 };
       if (l === "scanner") return n.room === "hangar" && n.ch1Ship ? { x: 465, y: 340 } : { x: Ha.x, y: 170 };
       if (l === "ups" && n.ch1Crew === "tease") return { x: 480, y: 380 };

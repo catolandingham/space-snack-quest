@@ -1,3 +1,18 @@
+<!-- section-index -->
+**Section index.** Read this index, then only the section you need. Do not read this file whole.
+
+| Lines | Heading |
+| --- | --- |
+| 16–23 | # Chapter 1 lines for Brian |
+| 24–38 | ## Goal chips |
+| 39–122 | ## What people say |
+| 123–136 | ## Words painted on things |
+| 137–160 | ## Buttons |
+| 161–247 | ## Day 2 onward (beats 22–61), pending |
+| 248–255 | ## Ball hiding |
+| 256–294 | ## Questions still open |
+| 295–320 | ## Day 1 stand-ins, pending |
+<!-- /section-index -->
 # Chapter 1 lines for Brian
 
 ## Calendar revision, Nov 16 (PR 58, not live)
