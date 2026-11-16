@@ -77,7 +77,7 @@
         ]));
     }
     // Optional inspection, not a new story beat. Keep the current queue intact while it is open.
-    // Brian, Nov 16: calendar is tappable; a close-up and a visual joke, with no new words.
+    // Brian, Nov 16: tappable calendar; subtle bite, fake months, sponsor and family reminders.
     function ch1CalendarAvailable() {
       return n.ctrl && n.hopOut < 0 && !de() && n.room === "closet" && n.wardrobe !== "open" &&
         !n.ch1Day2 && !n.ch1Party && !n.ch1Dress && !n.ch1Zoom && !n.ch1Calendar &&
@@ -120,7 +120,7 @@
       if (z.age < 0.25) return !0;
       if (Math.hypot(x - 880, y - 540) < 64) ch1CloseCalendar();
       // The snack is only a picture. One bite takes the paper with it.
-      else if (!n.ch1CalendarBitten && Math.hypot(x - 560, y - 393) < 65) {
+      else if (!n.ch1CalendarBitten && Math.hypot(x - 592, y - 385) < 65) {
         n.ch1CalendarBitten = !0;
         z.biteAt = z.age;
         D.grab();
@@ -137,73 +137,93 @@
       e.restore();
       e.fillStyle = "rgba(12,16,28,.35)";
       e.fillRect(0, 0, c, b);
-      // Match the locked calendar: red pin, red strip, 5-by-4 grid, pie in column four/row three.
+      // Preserve the locked calendar's red pin/strip, 5-by-4 grid and circled pie position.
+      // Brian requested invented months, a sponsor and scattered story-fitting reminders.
       // Use a separate transparent sheet so the bite really reveals the blurred room.
       ch1CalendarPaper || (ch1CalendarPaper = document.createElement("canvas"));
       let paper = ch1CalendarPaper;
-      paper.width = 480;
-      paper.height = 480;
+      paper.width = 720;
+      paper.height = 530;
       let ctx = paper.getContext("2d");
       ctx.fillStyle = "#fffaf0";
       ctx.strokeStyle = "#242834";
       ctx.lineWidth = 5;
       ctx.beginPath();
-      ctx.roundRect(3, 3, 474, 470, 10);
+      ctx.roundRect(3, 3, 714, 524, 10);
       ctx.fill();
       ctx.stroke();
       ctx.fillStyle = "#e5533d";
       ctx.beginPath();
-      ctx.arc(240, 28, 13, 0, Math.PI * 2);
+      ctx.arc(360, 23, 10, 0, Math.PI * 2);
       ctx.fill();
-      ctx.fillRect(22, 58, 436, 48);
+      ctx.fillRect(22, 45, 676, 45);
+      const calendarText = (text, x, y, size, color = "#384754", align = "center", weight = 600) => {
+        ctx.font = `${weight} ${size}px sans-serif`;
+        ctx.textAlign = align;
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = color;
+        ctx.fillText(text, x, y);
+      };
+      calendarText("MOONMUNCH", 360, 68, 32, "#fffaf0", "center", 800);
+      calendarText("FUZZUARY  /  MOONMUNCH  /  NAPRIL", 360, 111, 19);
       ctx.strokeStyle = "#a8a9aa";
       ctx.lineWidth = 2;
       for (let i = 0; i <= 5; i++) {
-        ctx.beginPath(); ctx.moveTo(40 + i * 80, 138); ctx.lineTo(40 + i * 80, 418); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(30 + i * 132, 130); ctx.lineTo(30 + i * 132, 450); ctx.stroke();
       }
       for (let i = 0; i <= 4; i++) {
-        ctx.beginPath(); ctx.moveTo(40, 138 + i * 70); ctx.lineTo(440, 138 + i * 70); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(30, 130 + i * 80); ctx.lineTo(690, 130 + i * 80); ctx.stroke();
       }
+      // Fixed scattered dates: decorative family plans, not new quests or randomized clues.
+      for (let day = 1; day <= 20; day++)
+        calendarText(String(day), 38 + ((day - 1) % 5) * 132, 141 + Math.floor((day - 1) / 5) * 80, 16, "#727777", "left", 400);
+      const reminders = [
+        { day: 2, lines: ["Sock hunt"] },
+        { day: 6, lines: ["Homework"] },
+        { day: 9, lines: ["family", "Olympics", "night"] },
+        { day: 12, lines: ["Sing with", "Mops"] },
+        { day: 18, lines: ["Blanket", "fort night"] },
+      ];
+      for (const item of reminders) {
+        const x = 96 + ((item.day - 1) % 5) * 132;
+        const y = 130 + Math.floor((item.day - 1) / 5) * 80;
+        item.lines.forEach((line, i) => calendarText(line, x, y + 49 + (i - (item.lines.length - 1) / 2) * 22, 22));
+      }
+      calendarText("Sponsored by MOON PIES", 360, 492, 25, "#8b5a3c", "center", 700);
       // A very enthusiastic red crayon circle, not an extra clue or a new delivery date.
       ctx.strokeStyle = "#e5533d";
-      ctx.lineWidth = 5;
-      ctx.beginPath(); ctx.ellipse(320, 313, 46, 40, -0.15, 0, Math.PI * 2); ctx.stroke();
-      ctx.beginPath(); ctx.ellipse(320, 313, 49, 42, 0.2, 0, Math.PI * 2); ctx.stroke();
+      ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.ellipse(492, 330, 35, 33, -0.15, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(492, 330, 37, 34, 0.2, 0, Math.PI * 2); ctx.stroke();
       ctx.fillStyle = "#8b5a3c"; ctx.strokeStyle = "#242834"; ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.arc(320, 313, 27, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.arc(492, 330, 24, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
       ctx.strokeStyle = "#f4d7a8"; ctx.lineWidth = 4;
-      ctx.beginPath(); ctx.moveTo(297, 318); ctx.quadraticCurveTo(320, 330, 343, 318); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(472, 335); ctx.quadraticCurveTo(492, 345, 512, 335); ctx.stroke();
       if (n.ch1CalendarBitten) {
-        // One big scalloped bite from the edge, including the printed snack.
+        // A discreet nibble at the page edge, leaving the pie, dates and reminders untouched.
         ctx.globalCompositeOperation = "destination-out";
         ctx.beginPath();
-        ctx.moveTo(480, 283);
-        ctx.lineTo(407, 283);
-        ctx.quadraticCurveTo(380, 267, 374, 301);
-        ctx.quadraticCurveTo(320, 284, 320, 310);
-        ctx.quadraticCurveTo(290, 332, 322, 350);
-        ctx.quadraticCurveTo(336, 382, 370, 382);
-        ctx.quadraticCurveTo(366, 417, 400, 410);
-        ctx.lineTo(480, 410);
+        ctx.moveTo(720, 319);
+        ctx.quadraticCurveTo(706, 319, 711, 328);
+        ctx.quadraticCurveTo(699, 335, 711, 342);
+        ctx.quadraticCurveTo(706, 351, 720, 351);
         // Fill closes the cutout automatically. Keep the stroked path OPEN at the page edge:
         // a vertical closing stroke would frame the missing paper like a pasted-on gray shape.
         ctx.fill();
         ctx.globalCompositeOperation = "source-over";
         // An outlined paper edge makes this read as a hole, not a gray shape laid on the page.
-        ctx.strokeStyle = "#ead8b6"; ctx.lineWidth = 7; ctx.stroke();
-        ctx.strokeStyle = "#39352f"; ctx.lineWidth = 2; ctx.stroke();
+        ctx.strokeStyle = "#b8a68a"; ctx.lineWidth = 1.5; ctx.stroke();
       }
       e.save();
       let zoom = Math.min(1, z.age / 0.25);
-      e.translate(480, 320); e.scale(0.92 + 0.08 * zoom, 0.92 + 0.08 * zoom);
-      e.drawImage(paper, -240, -240);
+      e.translate(460, 320); e.scale(0.92 + 0.08 * zoom, 0.92 + 0.08 * zoom);
+      e.drawImage(paper, -360, -265);
       e.restore();
-      if (n.ch1CalendarBitten) {
-        let fall = Math.min(1, Math.max(0, z.age - (z.biteAt || 0)) / 0.5);
-        for (let i = 0; i < 6; i++) {
-          e.save(); e.translate(735 + (i % 3) * 23, 410 + fall * (45 + i * 8));
-          e.rotate(i * 0.8); e.fillStyle = "#fffaf0"; e.fillRect(-6, -4, 12, 8);
-          e.strokeStyle = "#8b7960"; e.lineWidth = 1; e.strokeRect(-6, -4, 12, 8); e.restore();
+      if (n.ch1CalendarBitten && z.biteAt != null && z.age - z.biteAt < 0.7) {
+        let fall = Math.min(1, Math.max(0, z.age - z.biteAt) / 0.7);
+        for (let i = 0; i < 2; i++) {
+          e.save(); e.globalAlpha = 1 - fall; e.translate(824 + i * 6, 394 + fall * (18 + i * 6));
+          e.rotate(i * 0.8); e.fillStyle = "#fffaf0"; e.fillRect(-2, -1, 4, 3); e.restore();
         }
       }
       drawPawArm(z.paw);

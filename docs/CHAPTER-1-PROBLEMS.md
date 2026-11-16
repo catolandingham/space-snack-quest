@@ -20,7 +20,7 @@ A kid can finish the chapter today. The problems below have ten separate, small 
 
 Brian's Nov 16 direction overrides the older party-first ordering below. One beat at a time; no move to the next beat without his sign-off.
 
-- Calendar: now tappable, with a close-up and a wordless paper-bite gag. The day-two LOOK position is beside the wardrobe, not inside the bed. `tests/calendar-closeup.mjs`.
+- Calendar (PR 58, unmerged): tappable close-up; Brian's latest revision requests a subtler edge nibble, fake months, sponsor, "family Olympics night" and story-fitting reminders. Draft calendar words: Fuzzuary / Moonmunch / Napril; Sponsored by MOON PIES; Sock hunt; Homework; family Olympics night; Sing with Mops; Blanket fort night. The day-two LOOK position is beside the wardrobe, not inside the bed. `tests/calendar-closeup.mjs`.
 - Walking/Guardian box: PR 57 remains separate and unmerged. This calendar branch is based on main and does not include it.
 - Approved but not built: closet look, bed flop/hop and their approved lines; homework at the desk to pass time after Mops leaves, with wording still awaiting approval.
 - Still open: purple bed bar, bucket readability and Mops taking it to work, music. TV stays for beat 20. No clip needed.
@@ -29,8 +29,9 @@ Brian's Nov 16 direction overrides the older party-first ordering below. One bea
 
 - Keep the locked room picture unchanged. Calendar stays on the wardrobe door and faces away when that door is open (R31, R34). Close-up keeps its red pin, red strip, 5-by-4 grid, and circled Moon Pie.
 - Optional opening inspection must not advance the day, move Squatch, start the song or overwrite the story queue. No arrows or floor ring added.
-- Close-ups use a blurred room behind, a furry paw following the finger, and a white X. X must be usable on a phone. No new dialogue, invented delivery dates, or change to the Guardian story.
+- Close-ups use a blurred room behind, a furry paw following the finger, and a white X. X must be usable on a phone. Brian now requested invented calendar names and dated decoration; these do not change story timing or the Guardian story. No new spoken dialogue.
 - Delivery-day inspection must still lead into the existing lunch sequence. The bite must not erase the delivery clue.
+- Review limitation: the full calendar fits a 375px portrait phone, but its reminder text is small in the game's landscape-shaped picture. Desktop copy is readable; a portrait-specific readable view is not implemented by this revision. Do not claim full phone typography sign-off from functional tests.
 
 ### Earlier scene work
 

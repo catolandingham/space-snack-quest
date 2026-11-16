@@ -1,5 +1,5 @@
 /**
- * Brian Nov 16: tappable bedroom calendar, wordless paper-bite joke.
+ * Brian Nov 16: tappable calendar, subtle bite, invented months, sponsor and family plans.
  * Uses the real picture taps and Space, not direct calls to the new feature.
  * CALENDAR_SHOTS=1 saves review stills outside the repository.
  */
@@ -33,13 +33,25 @@ for (const viewport of [
     return { scene: n.scene, x: n.sq.x, y: n.sq.y };
   });
   g.check(`${tag}: opening reaches bedroom control`, before.scene === "O1", before);
+  await page.evaluate(() => {
+    window.calendarPrinted = new Set();
+    const draw = CanvasRenderingContext2D.prototype.fillText;
+    CanvasRenderingContext2D.prototype.fillText = function(text, ...args) {
+      window.calendarPrinted.add(String(text));
+      return draw.call(this, text, ...args);
+    };
+  });
   await tap(179, 214);
   g.check(`${tag}: tapping calendar opens close-up`, await page.evaluate(() => !!window.__ss.op.ch1Calendar));
   g.check(`${tag}: close-up is actually drawn (red header across center)`, await page.evaluate(() => {
     const cv = document.querySelector("canvas"), k = cv.width / 960;
-    const p = cv.getContext("2d").getImageData(480 * k, 155 * k, 1, 1).data;
+    const p = cv.getContext("2d").getImageData(140 * k, 110 * k, 1, 1).data;
     return p[0] > 180 && p[1] < 120 && p[2] < 100;
   }));
+  g.check(`${tag}: invented months and sponsor are actually printed`, await page.evaluate(() =>
+    ["MOONMUNCH", "FUZZUARY  /  MOONMUNCH  /  NAPRIL", "Sponsored by MOON PIES"].every(s => window.calendarPrinted.has(s))));
+  g.check(`${tag}: family Olympics and scattered story-fitting plans are printed`, await page.evaluate(() =>
+    ["family", "Olympics", "night", "Sock hunt", "Homework", "Sing with", "Mops", "Blanket", "fort night"].every(s => window.calendarPrinted.has(s))));
   if (process.env.CALENDAR_SHOTS) await page.screenshot({ path: `/tmp/calendar-${viewport.width}-whole.png` });
   await page.keyboard.down("ArrowRight");
   await sleep(450);
@@ -51,13 +63,27 @@ for (const viewport of [
   g.check(`${tag}: scene, queue and feet pause under close-up`,
     paused.scene === before.scene && paused.x === before.x && paused.y === before.y && paused.queueSame, paused);
   g.check(`${tag}: walk instruction hidden in close-up`, !paused.chip, paused);
-  await tap(560, 393);
+  await page.evaluate(() => {
+    const cv = document.querySelector("canvas"), k = cv.width / 960;
+    window.calendarGridBeforeBite = cv.getContext("2d").getImageData(130 * k, 185 * k, 660 * k, 320 * k).data;
+  });
+  await tap(592, 385);
   g.check(`${tag}: touching printed snack bites paper`, await page.evaluate(() => !!window.__ss.op.ch1CalendarBitten));
   g.check(`${tag}: released paw clears the joke`, await page.evaluate(() => window.__ss.op.ch1Calendar.paw.x === 780));
   g.check(`${tag}: bite opens through the right paper edge without a closing ink line`, await page.evaluate(() => {
     const cv = document.querySelector("canvas"), k = cv.width / 960;
-    const p = cv.getContext("2d").getImageData(719 * k, 430 * k, 1, 1).data;
+    const p = cv.getContext("2d").getImageData(819 * k, 390 * k, 1, 1).data;
     return p[0] > 90 && p[1] > 90 && p[2] > 90;
+  }));
+  g.check(`${tag}: subtle nibble leaves the entire dated grid and pie unchanged`, await page.evaluate(() => {
+    const cv = document.querySelector("canvas"), k = cv.width / 960;
+    const after = cv.getContext("2d").getImageData(130 * k, 185 * k, 660 * k, 320 * k).data;
+    return after.every((v, i) => Math.abs(v - window.calendarGridBeforeBite[i]) < 3);
+  }));
+  g.check(`${tag}: small edge nibble is visible`, await page.evaluate(() => {
+    const cv = document.querySelector("canvas"), k = cv.width / 960;
+    const p = cv.getContext("2d").getImageData(808 * k, 390 * k, 1, 1).data;
+    return p[0] < 220 && p[1] < 220 && p[2] < 220;
   }));
   if (process.env.CALENDAR_SHOTS) await page.screenshot({ path: `/tmp/calendar-${viewport.width}-bite.png` });
   await tap(880, 540);

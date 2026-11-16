@@ -1,5 +1,22 @@
 # Chapter 1 lines for Brian
 
+## Calendar revision, Nov 16 (PR 58, not live)
+
+Brian requested fake months, a calendar sponsor, "family Olympics night" and a few story-fitting items. Exact draft printed copy for visual approval:
+
+- Month heading: "MOONMUNCH"
+- Month strip: "FUZZUARY / MOONMUNCH / NAPRIL"
+- Sponsor: "Sponsored by MOON PIES"
+- Day 2: "Sock hunt"
+- Day 6: "Homework"
+- Day 9: "family Olympics night" (Brian's requested words)
+- Day 12: "Sing with Mops"
+- Day 18: "Blanket fort night"
+
+No spoken lines added. These are decorative plans, not new story beats or a change to the day-two delivery sequence. The circled Moon Pie stays in its existing grid position.
+
+## Earlier chapter lines
+
 These are the new words in the redesigned Chapter 1. Each one is in the game now so you can hear it while you play. Say yes, or write the line you want instead, in the pull request. Nothing merges until you say yes there.
 
 2026-11-13, 4:10 AM ET. Brian approved Mops's Mars gate lines. They are Chapter 4, rows 19.19 and 19.20 in `docs/PHASE-3-LINES-FOR-BRIAN.md`. After "WOOKIE?!", Mops says "He's with me." After "...Do you need help?", Mops says "No thanks. We're getting my goat."
