@@ -95,6 +95,7 @@
     }
     function _h(l, o, i, s) {
       for (let q of ih()) {
+        if (q.person) continue; // a guest's feet don't hide anyone
         let d = q.y0 - 90,
           ub = q.y1 + (n.room === "gas" ? 72 : 0);
         if (l > q.x0 && l < q.x1 && o > q.y0 && o < q.y1) continue;
