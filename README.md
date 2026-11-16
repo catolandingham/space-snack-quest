@@ -1,5 +1,7 @@
 # Space Snack Quest
 
+Calendar review status (2026-11-16): PR 58 is not merged or deployed. Its 44 focused phone/computer checks pass, including getting out of bed safely and the open paper-bite edge. The full hosted suite is still pending; the live game is unchanged.
+
 **Decisions:** [`docs/DECISIONS.md`](docs/DECISIONS.md) is the single source of truth. If this README or any other doc disagrees with it, `docs/DECISIONS.md` wins. Where things stand is [`docs/STATE.md`](docs/STATE.md). Open asks are [`docs/OPEN-ASKS.md`](docs/OPEN-ASKS.md).
 
 **New here?** Read [`docs/START-HERE.md`](docs/START-HERE.md). It names the four files that say what Chapter 1 should be, the ranked problem list, and the loop to follow. Brian's own messages are in [`docs/grok-archive/squatchbot-brian-words.md`](docs/grok-archive/squatchbot-brian-words.md).

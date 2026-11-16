@@ -185,7 +185,9 @@
         ctx.quadraticCurveTo(336, 382, 370, 382);
         ctx.quadraticCurveTo(366, 417, 400, 410);
         ctx.lineTo(480, 410);
-        ctx.closePath(); ctx.fill();
+        // Fill closes the cutout automatically. Keep the stroked path OPEN at the page edge:
+        // a vertical closing stroke would frame the missing paper like a pasted-on gray shape.
+        ctx.fill();
         ctx.globalCompositeOperation = "source-over";
         // An outlined paper edge makes this read as a hole, not a gray shape laid on the page.
         ctx.strokeStyle = "#ead8b6"; ctx.lineWidth = 7; ctx.stroke();

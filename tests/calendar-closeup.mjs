@@ -54,6 +54,11 @@ for (const viewport of [
   await tap(560, 393);
   g.check(`${tag}: touching printed snack bites paper`, await page.evaluate(() => !!window.__ss.op.ch1CalendarBitten));
   g.check(`${tag}: released paw clears the joke`, await page.evaluate(() => window.__ss.op.ch1Calendar.paw.x === 780));
+  g.check(`${tag}: bite opens through the right paper edge without a closing ink line`, await page.evaluate(() => {
+    const cv = document.querySelector("canvas"), k = cv.width / 960;
+    const p = cv.getContext("2d").getImageData(719 * k, 430 * k, 1, 1).data;
+    return p[0] > 90 && p[1] > 90 && p[2] > 90;
+  }));
   if (process.env.CALENDAR_SHOTS) await page.screenshot({ path: `/tmp/calendar-${viewport.width}-bite.png` });
   await tap(880, 540);
   g.check(`${tag}: X restores bedroom without moving Squatch`, await page.evaluate((b) => {
@@ -109,6 +114,10 @@ for (const viewport of [
   g.check(`${tag}: day-two close continues to lunch`, await page.evaluate(() => window.__ss.op.ch1Step === "lunch"));
   await page.evaluate(() => window.__ss.startOpening());
   g.check(`${tag}: new game resets bite and overlay`, await page.evaluate(() => !window.__ss.op.ch1CalendarBitten && !window.__ss.op.ch1Calendar));
+  g.check(`${tag}: seated Squatch is not offered a walking LOOK target`, await page.evaluate(() => {
+    Object.assign(window.__ss.op, { ctrl: true, cur: null, q: [], hopOut: -1, sqPose: "sit" });
+    return !window.__ss.spotsNow().some(s => s.id === "home-calendar");
+  }));
   g.check(`${tag}: calendar cannot interrupt a hop out of bed`, await page.evaluate(() => {
     const n = window.__ss.op;
     Object.assign(n, { ctrl: true, cur: null, q: [], hopOut: 0.1, sqPose: "stand" });
