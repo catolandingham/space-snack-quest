@@ -8,9 +8,9 @@ import { startGame } from "./game-page.mjs";
 const g = await startGame({ port: 8834, name: "ch1-fixes" });
 const { ctx, page, errors } = await g.open("?ch=1", { width: 1100, height: 800 });
 
-async function walk(x, y, frames) {
+async function walk(x, y, frames, day2 = false) {
   return page.evaluate(
-    async (x, y, frames) => {
+    async (x, y, frames, day2) => {
       const n = window.__ss.op;
       n.scene = "Q1";
       n.room = "closet";
@@ -21,7 +21,8 @@ async function walk(x, y, frames) {
       n.q = [];
       n.cur = null;
       n.ch1Song = false;
-      n.ch1Day2 = false;
+      n.ch1Day2 = day2;
+      n.ch1Step = day2 ? "cal" : "";
       n.ch1PeekReady = false;
       n.ch1Dress = null;
       n.ch1Search = false;
@@ -37,11 +38,13 @@ async function walk(x, y, frames) {
     x,
     y,
     frames,
+    day2,
   );
 }
 
-const gbox = await walk(420, 500, 50);
-g.check("the blue G box stops a walk through it", gbox[0] >= 370 && gbox[0] < 420, gbox);
+// The G box is in the closet on day 1 (Brian, 2026-11-15); from day 2 it sits on the floor and stops a walk.
+const gbox = await walk(420, 500, 50, true);
+g.check("day 2: the blue G box stops a walk through it", gbox[0] >= 370 && gbox[0] < 420, gbox);
 const bed = await walk(320, 450, 30);
 g.check("the bed stops a walk through it", bed[0] >= 280 && bed[0] < 320, bed);
 const floor = await walk(420, 540, 50);

@@ -31,7 +31,7 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: peek out the door": { scene: "Q1", room: "closet", peek: true, day2: false, x: 890, y: 480 },
     "Squatch: look around the party": { scene: "QA", room: "hall", party: true, day2: false, x: 480, y: 430 },
     "Squatch: pick up the gift": { step: "gift", room: "closet", x: 340, y: 520 },
-    "Squatch: put the gift in the box": { step: "box", room: "closet", x: 350, y: 520 },
+    "Squatch: put the gift in the box": { step: "box", room: "closet", x: 240, y: 400 },
     "Squatch: look at the calendar": { step: "cal", room: "closet", x: 140, y: 510 },
     "Squatch: circle delivery day": { step: "cal", room: "closet", x: 140, y: 510 },
     "Squatch: take the lunch": { step: "lunch", room: "closet", x: 500, y: 520 },
