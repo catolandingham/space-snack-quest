@@ -1077,11 +1077,11 @@
         ]));
     }
     function ch1QSpots() {
-      if (n.ch1Song && n.ctrl && !n.ch1Party) return ch1SongSpots();
+      if (n.ch1Song && n.ctrl && !n.ch1Party) return [...ch1CalendarSpots(), ...ch1SongSpots()];
       if (n.ch1Search && n.ctrl && n.room === "closet") return ch1SearchSpots();
       if (n.ch1Cut) return ch1CutSpots();
       if (n.ch1Dress && n.ch1Dress.on) return ch1DressSpots();
-      if (n.ch1PeekReady && n.ctrl) return ch1PeekSpots();
+      if (n.ch1PeekReady && n.ctrl) return [...ch1CalendarSpots(), ...ch1PeekSpots()];
       if (n.ch1PlantSneak) return n.ctrl ? ch1SneakSpots() : [];
       if (n.scene === "QA") return n.ch1Raid && n.room === "hall" ? ch1RaidSpots() : n.ctrl && !n.ch1PartyOver ? ch1PartySpots() : [];
       if (n.ch1Day2) return ch1Day2Spots();

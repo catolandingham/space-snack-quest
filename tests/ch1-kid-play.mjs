@@ -300,6 +300,14 @@ while (now() < MAX_S) {
     await sleep(220);
     continue;
   }
+  // A visible NEXT closes an inspection even while walking controls are paused.
+  // Read and touch the actual button; do not bypass the close-up or mutate story state.
+  if (!s.ctrl && s.btn === "NEXT" && s.btnR) {
+    say(s, "PRESS NEXT");
+    await tap(s.btnR[0] + s.btnR[2] / 2, s.btnR[1] + s.btnR[3] / 2);
+    await sleep(350);
+    continue;
+  }
   if (!s.ctrl) {
     await sleep(200);
     continue;

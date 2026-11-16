@@ -1106,6 +1106,7 @@
       return !0;
     }
     function nf() {
+      if (n.ch1Calendar) return ch1CloseCalendar();
       if ((VV(), de())) {
         // Too soon after the bubble opened (task T22): keep the tap, show it was heard, apply it at 0.3 s.
         if (n.bt < 0.3) return void ((n.tapLate = n.cur), (n.tapT = n.T));

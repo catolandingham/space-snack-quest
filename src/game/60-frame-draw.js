@@ -1,5 +1,14 @@
 // The frame update (y5), rings, characters, bubbles, cards, room fades, and the main story draw (E5).
     function y5(l) {
+      if (n.ch1Calendar && ch2.resetHold && ch2.resetHold.on) {
+        n.ctrl = n.ch1Calendar.ctrl;
+        n.ch1Calendar = null; // Let the existing hold-to-restart run, without firing day-two's next line.
+      }
+      if (n.ch1Calendar) {
+        n.ch1Calendar.age += l;
+        p.verb !== "NEXT" && ((p.verb = "NEXT"), t.onVerb("NEXT"));
+        return; // Pause the scene and its queue, not just Squatch's feet.
+      }
       (n.sqHop &&
         ((n.sqHop.t += l),
         (() => {
@@ -166,6 +175,7 @@
             Math.random() < l * 6 && vV.push({ x: n.mo.x - 30 * n.mo.f, y: n.mo.y + 6, t: 5 }));
         } else n.mo.moving = !1;
       }
+      if (n.ctrl && n.scene === "O1") n.act = pick(ch1CalendarSpots());
       let talking = n.ctrl && n.cur && n.cur.k === "bub" && !n.cutOn,
         s = Bs(),
         q = talking ? (n.bt > 3 ? "!NEXT" : "NEXT") : s ? (s.hot ? "!" : "") + s.verb + (s.cap ? " \u00b7 " + s.cap : "") : "";
@@ -2221,6 +2231,10 @@
       applyWalkDraw();
       try {
         drawRoom();
+        if (n.ch1Calendar) {
+          drawCh1Calendar();
+          return;
+        }
         n.ch1PeekReady && n.room === "closet" && drawDoorNudge();
         n.ch1Cut && drawCh1Cut();
         n.ch1Dress && n.ch1Dress.on && drawCh1Dress();

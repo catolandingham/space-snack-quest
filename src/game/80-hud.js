@@ -155,6 +155,7 @@
     }
     // What the chip shows now: the star hint for its first 3.5 seconds, the method line after a stall, or the goal.
     function chipText() {
+      if (n.ch1Calendar) return "";
       // Nothing in the goal spot while a story bubble is up (rule 10: one bubble at a time).
       if (n.cur && n.cur.k === "bub") return "";
       if (note.text && performance.now() < note.until) return note.text;
