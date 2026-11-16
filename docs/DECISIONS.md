@@ -3,21 +3,23 @@
 
 | Lines | Heading |
 | --- | --- |
-| 22–24 | # Space Snack Quest: every decision, in one place |
-| 25–32 | ## How to use this file |
-| 33–37 | ## Latest calendar direction, 2026-11-16 |
-| 38–47 | ## Fidelity system (pictures are locked, not just words) |
-| 48–85 | ## 1. Working rules |
-| 86–152 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 153–177 | ## 3. Characters and look |
-| 178–254 | ## 4. Look, rooms and layout |
-| 255–276 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 277–320 | ## 6. Later chapters (2–4 and travel) |
-| 321–330 | ## 7. Audio |
-| 331–365 | ## 8. Code, controls and process |
-| 366–412 | ## 9. Open / waiting on Brian |
-| 413–507 | ## 10. Earlier entries, kept word for word |
-| 508–603 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 24–26 | # Space Snack Quest: every decision, in one place |
+| 27–34 | ## How to use this file |
+| 35–39 | ## Latest calendar direction, 2026-11-16 |
+| 40–42 | ## Vent walk, 2026-11-16 |
+| 43–45 | ## Locked home room v5, 2026-11-16 |
+| 46–55 | ## Fidelity system (pictures are locked, not just words) |
+| 56–93 | ## 1. Working rules |
+| 94–160 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 161–185 | ## 3. Characters and look |
+| 186–262 | ## 4. Look, rooms and layout |
+| 263–284 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 285–328 | ## 6. Later chapters (2–4 and travel) |
+| 329–338 | ## 7. Audio |
+| 339–373 | ## 8. Code, controls and process |
+| 374–420 | ## 9. Open / waiting on Brian |
+| 421–515 | ## 10. Earlier entries, kept word for word |
+| 516–611 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -604,5 +606,5 @@ These lines were added to the 2026-11-08 snapshot (now `docs/old/history/DECISIO
 - 2026-11-16: A party catch steps toward the open floor, not into the plant pot. The old step toward the middle of the room could leave him standing in the pot. He still stays in the party.
   **Decided.** Not a yes to merge.
 
-- 2026-11-16: `docs/OPEN-ASKS.md` is the one review list. Each unbuilt ask says whether it is for the whole game or one chapter, and whether it is approved, awaiting yes, or built in a pull request. The older sections of that file stay as history. Brian, Nov 11 (t332): only guards and robots show vision cones; a guest shows "?" then "!". That supersedes the Nov 14 dashed cone on everyone. The party buttons SNAG, SUCK, STAND, HUG and SNAP are approved to become things you walk into (Nov 16, 11:50 AM PT) and are not built in this pull request. iPad pictures of pull requests 57 and 58 are in `docs/audit-shots/final/beat1/`. Security seeing through a disguise, the three disguise levels, the alarm ladder, and losing one piece (PR #35, R100, R102, R103) are approved and not built. The bigger heart cone is built in PR #35 and not merged. Brian, Nov 16, 12:50 PM PT (K29): every catch, in every chapter, present and future, shows the lockup card, then restarts the current scene. Long scenes such as the party are split into shorter ones. That supersedes the Nov 13 bedroom release (PR #38) and the Nov 14 "set back a little where he was caught" rule, including what commit cb87185 built. The catch code stays until Brian approves the scene split. On localhost, `?beat=day2` opens Day 2 at the gift in the closet. The live site ignores it.
+- 2026-11-16: `docs/OPEN-ASKS.md` is the one review list. Each unbuilt ask says whether it is for the whole game or one chapter, and whether it is approved, awaiting yes, or built in a pull request. The older sections of that file stay as history. Brian, Nov 11 (t332): only guards and robots show vision cones; a guest shows "?" then "!". That supersedes the Nov 14 dashed cone on everyone. The party buttons SNAG, SUCK, STAND, HUG and SNAP are approved to become things you walk into (Nov 16, 11:50 AM PT) and are not built in this pull request. iPad pictures of pull requests 57 and 58 are in `docs/audit-shots/final/beat1/`. Security seeing through a disguise, the three disguise levels, the alarm ladder, and losing one piece (PR #35, R100, R102, R103) are approved and not built. The bigger heart cone is built in PR #35 and not merged. Brian, Nov 16, 12:50 PM PT (K29): every catch, in every chapter, present and future, shows the lockup card, then restarts the current scene. Long scenes such as the party are split into shorter ones. That supersedes the Nov 13 bedroom release (PR #38) and the Nov 14 "set back a little where he was caught" rule, including what commit cb87185 built. The catch code stays until Brian approves the scene split. On localhost, `?beat=day2` opens Day 2 at the gift in the closet. The live site ignores it. This branch is rebased onto main after pull requests 58 and 57 and is not merged.
   **Decided.** Not a yes to merge.

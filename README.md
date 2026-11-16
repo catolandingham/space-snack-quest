@@ -20,6 +20,8 @@ A separate preview site can serve this branch. It is not the live game at space-
 
 Every new line is listed for Brian in `docs/CH1-LINES-FOR-BRIAN.md`. He said yes to merge this chapter before the wording pass was finished, so a line in that file can still change. `tests/ch1-playthrough.mjs` plays this chapter to the tally card.
 
+2026-11-16, not merged: rebased onto main after pull requests 58 and 57. The calendar close-up and locked home room v5 are on main. Docs match main: yes. Do not merge.
+
 2026-11-16, not merged: Brian t342. The small canvas words are 17px, which is at least 14 CSS px on an iPad. REC is white on a dark red plate. The locked pictures were not redrawn. Docs match main: yes. Do not merge.
 
 2026-11-16, not merged: `docs/OPEN-ASKS.md` is the one review list. Each row says whole game or one chapter, and approved, awaiting yes, or built in a pull request. PR #35's disguise rules are approved and not built. The bigger heart cone is built in PR #35. Brian, Nov 16, 12:50 PM PT (K29): every catch is the lockup card, then restart the current scene, and long scenes such as the party are split. PR #38 and the "set back where he was caught" rule are superseded. The catch code stays until Brian approves the split. On localhost, `?beat=day2` opens Day 2. The older sections stay as history. iPad pictures of pull requests 57 and 58 are in `docs/audit-shots/final/beat1/`. Docs match main: yes. Do not merge.
