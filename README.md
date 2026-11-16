@@ -71,6 +71,8 @@ For example, `index.html?ch=2&phase=wash1&debug=1` opens the kitchen sink with t
 
 GitHub runs `npm run build`, `npm run check-build`, and `npm test` on every pull request and every push to main (`.github/workflows/pr.yml`). A change counts as passing only when that check is green on GitHub, not when someone says it passed on their machine. The test output (videos and screenshots) is attached to each run for 14 days. The test step uses `set -o pipefail`, so a failed suite turns the check red (before 2026-11-15 it did not, and one failure on pull request 51 showed green).
 
+**While GitHub's checks are off (Brian, 2026-11-15):** "Until GitHub's checks run again, run the full test suite before every merge and paste the pass count in the pull request." GitHub stopped running checks on 2026-11-15 because the monthly free minutes ran out or billing needs attention. Until the check runs again, a pull request may be merged only after the full suite (`npm run build && npm run check-build && npm test`) passes on your machine and the result (for example "36 of 36 suites passed") is pasted in a pull request comment, along with Brian's yes.
+
 ## Screen fit
 
 `tests/screen-fit.mjs` checks phone and iPad, upright and sideways: the whole picture is on screen, it does not move after the opening cards, and the big button keeps one size.
