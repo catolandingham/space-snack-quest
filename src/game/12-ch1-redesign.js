@@ -137,6 +137,7 @@
     // Back-wall door of office-room-empty-v2. The hallway's front door, seen from inside.
     // Feet stand just through that door, on the floor below the picture's floor line (source y 330).
     const CH1_OFFICE_DOOR = { x: 480, y: 286 };
+    // Floor guests are the Nov 11 bodies. Horns is Isfred, drawn on the stage only.
     const CH1_GUESTS = [
       [250, 460, "antenna"],
       [400, 440, "croc"],
@@ -691,46 +692,7 @@
             f: ch1BarOpen,
           }),
         );
-      !n.ch1Photo &&
-        out.push(
-          spot({
-            id: "photo",
-            verb: "SNAP",
-            cap: "photo",
-            who: "sq",
-            x: CH1_CAM.x,
-            y: CH1_CAM.y,
-            r: CH1_CAM.r,
-            f: ch1Photo,
-          }),
-        );
-      for (let m of CH1_PARTY_SNAG)
-        out.push(
-          spot({
-            id: m.id,
-            verb: m.verb,
-            cap: m.cap,
-            who: "sq",
-            x: m.x,
-            y: m.y,
-            r: 80,
-            f: () => ch1HatOff(m.why),
-          }),
-        );
-      n.ch1Disguise &&
-        (n.ch1Hugs || 0) < 2 &&
-        out.push(
-          spot({
-            id: "hug",
-            verb: "HUG",
-            cap: "octopus",
-            who: "sq",
-            x: 760,
-            y: 540,
-            r: 80,
-            f: ch1Hug,
-          }),
-        );
+      // The photo, the plant, the vent, the guard and the octopus are walked into. They are not buttons.
       (n.ch1Look || 0) > 0 &&
         out.push(
           spot({
@@ -824,7 +786,13 @@
     function ch1HatOff(why) {
       if (n.ch1PartyOver || !n.ch1Disguise) return;
       ch1LockBalloon();
-      ((n.ch1Part = "alarm"), (n.ch1Disguise = !1), (n.ch1PartyOver = !0), (n.ctrl = !1), (n.act = null), (n.ch1Fur = !0));
+      ((n.ch1Part = "alarm"),
+        (n.ch1Chip = "Squatch: hide from security"),
+        (n.ch1Disguise = !1),
+        (n.ch1PartyOver = !0),
+        (n.ctrl = !1),
+        (n.act = null),
+        (n.ch1Fur = !0));
       let lines = [];
       why === "cool" && lines.push(v("tourist", "Cool hat!"));
       why === "bar" && lines.push(v("tourist", "Wait a second... fur!"));
@@ -867,6 +835,23 @@
         !(n.ch1Dress && n.ch1Dress.on) &&
         !n.ch1Mini &&
         ((n.ch1PartyT = (n.ch1PartyT || 0) + (dt || 0)), n.ch1PartyT >= COOL_HAT_SECONDS && ch1HatOff("cool"));
+      ch1ExtrasTouch(dt);
+    }
+    // Walk into the plant, the vent or the guard: lockup, then the extras start over. Not the alarm.
+    function ch1ExtrasTouch(dt) {
+      if (n.ch1Part !== "extras" || !n.ch1Disguise || n.ch1PartyOver || !n.ctrl || n.ch1Cut || n.ch1Mini) return;
+      if (!n.ch1Photo && ch1InFrame(n.sq.x, n.sq.y)) return ch1Photo();
+      for (let h of CH1_PARTY_SNAG)
+        if (Math.hypot(n.sq.x - h.x, n.sq.y - h.y) < 36) return capture(h.id === "vent" ? "hallvent" : "s6");
+      if ((n.ch1Hugs || 0) >= 2) return;
+      let ox = (n.ch1Oct && n.ch1Oct.x) || 760,
+        oy = (n.ch1Oct && n.ch1Oct.y) || 555,
+        dist = Math.hypot(n.sq.x - ox, n.sq.y - oy);
+      if (dist < 140) {
+        n.ch1Oct = { x: ox, y: oy, t: (n.ch1Oct && n.ch1Oct.t) || 0 };
+        if (dist > 40) ((n.ch1HugNear = !1), mV(n.ch1Oct, n.sq.x, n.sq.y, 36, dt || 0));
+        else if (!n.ch1HugNear) ((n.ch1HugNear = !0), ch1Hug());
+      } else n.ch1HugNear = !1;
     }
     function ch1BalloonTick(dt) {
       n.room === "hall" && n.ch1Office && ch1BalloonPopNow();
@@ -1270,6 +1255,15 @@
           Re(190, 210, ((adultPxFor("office") * 0.8) / 45) * 0.35, { f: 1, jacket: !0, goatBeard: !0, horns: !0 })));
     }
     function drawCh1Party() {
+      if (n.ch1GuestSheet) {
+        ((e.fillStyle = "#f6f1e7"), e.fillRect(0, 0, c, b));
+        ["antenna", "croc", "hat", "hair", "spots", "blob", "cape"].forEach((k, i) => {
+          let x = 70 + (i % 4) * 230,
+            row = i < 4 ? 0 : 1;
+          (drawCh1Alien(x, 220 + row * 280, k, ALIEN_ADULT * 2.4, 1), g(k, x, 300 + row * 280, 16, "#1e2430", "center", 700));
+        });
+        return;
+      }
       let look = (n.ch1Look || 0) > 0,
         face = look ? 1 : 0,
         eye = 72 * ALIEN_ADULT,
@@ -1299,7 +1293,7 @@
         drawCh1SneakCone(),
         CH1_GUESTS.forEach((guest) => {
           if (n.ch1Raid && n.ch1Raid.witness && guest[2] === "spots") return;
-          (drawCh1Alien(guest[0], guest[1], guest[2], ALIEN_ADULT, n.ch1PlantSneak && guest[2] === "spots" ? ch1SneakFace() : face || 1, n.ch1Part === "extras" && n.ch1Disguise && !n.ch1PartyOver), glance(guest[0], guest[1]));
+          (drawCh1Alien(guest[0], guest[1], guest[2], ALIEN_ADULT, n.ch1PlantSneak && guest[2] === "spots" ? ch1SneakFace() : face || 1), glance(guest[0], guest[1]));
         }),
         n.ch1Raid && n.ch1Raid.witness && drawCh1Alien(n.ch1Raid.witness.x, n.ch1Raid.witness.y, "spots", ALIEN_ADULT, 1),
         ((n.ch1Raid && n.ch1Raid.guards) || []).forEach((g) => {
@@ -1310,7 +1304,7 @@
         Qt(880, 500, "#c9842a", QT_ADULT, -1),
         drawOctopus((n.ch1Oct && n.ch1Oct.x) || 760, (n.ch1Oct && n.ch1Oct.y) || 555, face || -1),
         drawCh1Fest(),
-        drawCh1Alien(340, 400, "cape", ALIEN_ADULT, face || -1, n.ch1Part === "extras" && n.ch1Disguise && !n.ch1PartyOver),
+        drawCh1Alien(340, 400, "cape", ALIEN_ADULT, face || -1),
         drawCh1Tripod(250, 360),
         !n.ch1Flyer && (m(500, 500, 16, 12, 1), r("#fffdf8", 1)),
         (n.ch1Spill || 0) > 0 && drawCh1Chain(1 - n.ch1Spill),
@@ -1329,53 +1323,81 @@
       tray > 0 && (e.save(), e.translate(900, 500), e.rotate(-tray * 0.9), m(-46, -8, 92, 16, 3), r("#cdbb98", 3), drawBarSnack("pie", 0, -22, 0.7), e.restore());
       cake > 0 && (e.save(), e.translate(860 + cake * 30, 480 + cake * 50), drawBarSnack("cake", 0, 0, 1.2), e.restore());
     }
-    function drawCh1Alien(ax, ay, kind, sc, face, dance) {
+    // Nov 11 bodies (48f1aba). Each has the same hanging arms, overlapped onto that body.
+    // Horns is Isfred on the stage only. He is not also standing in the crowd.
+    function drawCh1Alien(ax, ay, kind, sc, face) {
       let f = face < 0 ? -1 : 1,
-        bob = dance ? (Math.floor(n.T * 2) % 2 ? 0 : -7) : Math.sin(n.T * 2 + ax * 0.01) * 1.5;
-      (e.save(), e.translate(ax, ay + bob), e.scale(sc * f, sc));
-      (e.beginPath(), e.ellipse(0, 2, 16, 4, 0, 0, 7), (e.fillStyle = "rgba(30,36,48,.16)"), e.fill());
-      let body = "#7ad0c8",
-        skin = "#d8fff6";
-      kind === "croc" && ((body = "#3f8f4a"), (skin = "#b6e7a8"));
-      kind === "hat" && ((body = "#ff8a3d"), (skin = "#f0bf93"));
-      kind === "hair" && ((body = "#3478f6"), (skin = "#f2c1b0"));
-      kind === "spots" && ((body = "#ffcf33"), (skin = "#fff3c4"));
-      kind === "horns" && ((body = "#c9b6f2"), (skin = "#efe8ff"));
-      kind === "blob" && ((body = "#59657d"), (skin = "#d5dbe6"));
-      kind === "cape" && ((body = "#1f9d8a"), (skin = "#d8fff6"));
-      (m(-6, -20, 7, 20, 2),
-        r("#3d4454", 2),
-        m(2, -20, 7, 20, 2),
-        r("#3d4454", 2),
-        m(-16, -54, 32, 36, 10),
-        r(body, 3),
-        dance
-          ? (m(-36, -56, 16, 6, 2), r(body, 2), m(20, -56, 16, 6, 2), r(body, 2))
-          : (m(-22, -48, 8, 22, 3), r(body, 2), m(14, -48, 8, 22, 2), r(body, 2)),
-        L(0, -70, 14),
-        r(skin, 3),
-        F(-5, -72, 1.8, y),
-        F(5, -72, 1.8, y),
-        C([-3, -64, 0, -62, 3, -64], y, 1.2));
-      if (kind === "antenna") (C([-5, -82, -10, -98], y, 2.2), C([5, -82, 10, -98], y, 2.2), F(-10, -100, 3.2, "#ffcf33"), F(10, -100, 3.2, "#ffcf33"));
+        bob = Math.sin(n.T * 2 + ax * 0.01) * 1.5,
+        hang = (half, top, col) => (m(-half - 4, top, 8, 16, 3), r(col, 2), m(half - 4, top, 8, 16, 3), r(col, 2));
+      (e.save(), e.translate(ax, ay + bob), e.scale(sc, sc));
+      (e.beginPath(), e.ellipse(0, 2, 14, 3.5, 0, 0, 7), (e.fillStyle = "rgba(30,36,48,.16)"), e.fill());
+      if (kind === "antenna")
+        (m(-9, -48, 18, 42, 8),
+          r("#7ad0c8", 3),
+          hang(9, -36, "#7ad0c8"),
+          L(0, -58, 11),
+          r("#d8fff6", 3),
+          C([-5, -66, -8, -78], y, 2.4),
+          C([5, -66, 8, -78], y, 2.4),
+          F(-8, -80, 3, "#ffcf33"),
+          F(8, -80, 3, "#ffcf33"));
       else if (kind === "croc")
-        (e.beginPath(),
-          e.moveTo(8, -76),
-          e.lineTo(30, -72),
-          e.lineTo(30, -62),
-          e.lineTo(8, -66),
-          e.closePath(),
-          r("#2f7a3a", 2),
-          F(24, -70, 1.3, y),
-          F(24, -65, 1.3, y),
-          C([14, -66, 20, -64, 26, -67], "#1e2430", 1.2));
-      else if (kind === "hat") (m(-14, -78, 28, 6, 2), r("#2b3a67", 2), m(-7, -92, 14, 16, 2), r("#2b3a67", 2));
-      else if (kind === "hair") (e.beginPath(), e.arc(0, -70, 14, Math.PI, 0), r("#7a4ad0", 3));
-      else if (kind === "spots") (F(-6, -48, 3, "#e5533d"), F(6, -40, 2.4, "#e5533d"), F(0, -56, 2, "#e5533d"));
-      else if (kind === "horns") (C([-4, -78, -12, -94], y, 3), C([4, -78, 12, -94], y, 3));
-      else if (kind === "blob") (F(-6, -70, 2, y), F(0, -70, 2, y), F(6, -70, 2, y), L(0, -40, 8), r("#8a93a3", 2));
-      else (m(-18, -46, 8, 18, 3), r("#e5533d", 2));
-      e.restore();
+        (m(-12, -40, 24, 36, 8),
+          r("#3f8f4a", 3),
+          hang(12, -32, "#3f8f4a"),
+          m(f * 6, -52, 22, 10, 4),
+          r("#3f8f4a", 3),
+          F(f * 24, -48, 2, y),
+          L(0, -52, 12),
+          r("#b6e7a8", 3));
+      else if (kind === "hat")
+        (m(-11, -42, 22, 36, 10),
+          r("#ff8a3d", 3),
+          hang(11, -34, "#ff8a3d"),
+          L(0, -54, 12),
+          r("#f0bf93", 3),
+          m(-16, -62, 32, 6, 2),
+          r("#2b3a67", 2),
+          m(-8, -74, 16, 14, 2),
+          r("#2b3a67", 2));
+      else if (kind === "hair")
+        (m(-12, -40, 24, 34, 10),
+          r("#f2c1b0", 3),
+          hang(12, -30, "#f2c1b0"),
+          L(0, -52, 13),
+          r("#f0bf93", 3),
+          e.beginPath(),
+          e.arc(0, -56, 14, Math.PI, 0),
+          r("#7a4ad0", 3),
+          m(-14, -36, 28, 16, 6),
+          r("#3478f6", 2));
+      else if (kind === "spots")
+        (L(0, -28, 18),
+          r("#ffcf33", 3),
+          hang(14, -32, "#ffcf33"),
+          L(0, -52, 12),
+          r("#fff3c4", 3),
+          F(-6, -34, 3, "#e5533d"),
+          F(7, -24, 2.5, "#e5533d"),
+          F(2, -40, 2, "#e5533d"));
+      else if (kind === "horns")
+        (m(-11, -42, 22, 36, 8),
+          r("#c9b6f2", 3),
+          hang(11, -34, "#c9b6f2"),
+          L(0, -54, 12),
+          r("#efe8ff", 3),
+          C([-6, -62, -12, -74], y, 3),
+          C([6, -62, 12, -74], y, 3));
+      else if (kind === "blob") (L(0, -26, 20), r("#59657d", 3), hang(16, -30, "#59657d"), L(0, -48, 14), r("#8a93a3", 3), F(-8, -50, 2, y), F(0, -50, 2, y), F(8, -50, 2, y));
+      else
+        (m(-11, -44, 22, 38, 8),
+          r("#1f9d8a", 3),
+          hang(11, -34, "#1f9d8a"),
+          L(0, -56, 12),
+          r("#d8fff6", 3),
+          m(-16, -40, 10, 22, 4),
+          r("#e5533d", 2));
+      (F(f * 4, kind === "spots" || kind === "blob" ? -54 : -56, 1.8, y), m(-6, -8, 5, 10, 2), r("#3d4454", 2), m(2, -8, 5, 10, 2), r("#3d4454", 2), e.restore());
     }
     function drawCh1Tripod(x, y) {
       (C([x, y - 46, x - 26, y], "#6b6256", 4),

@@ -23,7 +23,15 @@ const PROPS = [
   { name: "plant pot", x0: 412, x1: 476, y0: 520, y1: 552 },
   { name: "snack table", x0: 496, x1: 574, y0: 494, y1: 530 },
   { name: "tripod", x0: 228, x1: 274, y0: 340, y1: 368 },
+  { name: "floor vent", x0: 150, x1: 300, y0: 500, y1: 640 },
 ];
+const LIFT = { name: "lift door", x0: 430, x1: 560, y0: 470, y1: 640 };
+const photos = src.match(/stand: \[(\d+), (\d+)\], mo: \[(\d+), (\d+)\] \}, \(\) => ch1Ready\("photos"/);
+const beep = src.match(/ch1Step\("sq", (\d+), (\d+), 220\)/);
+if (!photos || !beep) {
+  console.error("could not read the photo-hallway stands");
+  process.exit(1);
+}
 
 const g = await startGame({ port: 8881, name: "apart" });
 const { page } = await g.open("?ch=1");
@@ -93,15 +101,27 @@ const out = await page.evaluate(
         path: Math.round(path),
         pathClear: path >= need,
       },
+      passage: (() => {
+        const sq = spots.beep;
+        const mo = spots.photos.mo;
+        const need = gap("passage");
+        const dist = Math.hypot(sq[0] - mo[0], sq[1] - mo[1]);
+        const onLift = (p) => p[0] > spots.lift.x0 && p[0] < spots.lift.x1 && p[1] > spots.lift.y0 && p[1] < spots.lift.y1;
+        return { sq, mo, dist: Math.round(dist), need: Math.round(need), clear: dist >= need, sqLift: onLift(sq), moLift: onLift(mo) };
+      })(),
     };
   },
   {
     give: { sq: [Number(give[1]), Number(give[2])], mo: [Number(give[3]), Number(give[4])] },
+    photos: { sq: [Number(photos[1]), Number(photos[2])], mo: [Number(photos[3]), Number(photos[4])] },
+    beep: [Number(beep[1]), Number(beep[2])],
     props: PROPS,
+    lift: LIFT,
   },
 );
 g.check("passage: Squatch is not inside Mops", out.give && out.give.clear, out.give || out);
 g.check("snack hall: the walk ends with them apart", out.hall && out.hall.room === "hall" && out.hall.clear, out.hall || out);
 g.check("snack hall: neither one stands on a prop", out.hall && !out.hall.sqProp && !out.hall.moProp, out.hall || out);
 g.check("snack hall: Mops is not in the way of the snack", out.hall && out.hall.pathClear, out.hall || out);
+g.check("photo hallway: after the beep they are apart and off the lift", out.passage && out.passage.clear && !out.passage.sqLift && !out.passage.moLift, out.passage || out);
 await g.finish("apart");

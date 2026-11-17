@@ -15,6 +15,8 @@
       let spots = CH1_GUESTS.find((g) => g[2] === "spots") || [520, 610, "spots"];
       ((n.ch1Part = "alarm"),
         (n.ch1Fur = !1),
+        (n.ch1Chip = "Squatch: hide from security"),
+        chipNow(),
         (n.ctrl = !0),
         (n.ch1Raid = {
           phase: "witness",
@@ -72,7 +74,7 @@
         (n.ch1Fur = !1),
         (n.ch1PlantSneak = { t: 3, caught: 0, tries: 0 }),
         (n.sq.x = 470),
-        (n.sq.y = 600),
+        (n.sq.y = 628),
         (n.ch1Chip = "Squatch: sneak to the plant"),
         chipNow());
     }
@@ -104,7 +106,8 @@
         (n.ch1Fur = !0),
         (n.sq.x = 560),
         (n.sq.y = 580),
-        (n.ch1Chip = ""),
+        (n.ch1Chip = "Squatch: hide from security"),
+        chipNow(),
         ch1RaidBegin());
     }
     function ch1RestartHome() {
@@ -118,7 +121,7 @@
         (n.sq.x = 480),
         (n.sq.y = 520),
         (n.guard = { x: 900, y: 520, t: 0, seen: 0 }),
-        (n.ch1Chip = ""),
+        (n.ch1Chip = "Squatch: hide under the bed"),
         chipNow());
     }
     function ch1RestartParty() {
@@ -219,6 +222,8 @@
         (n.ch1Search = !0),
         (n.ctrl = !0),
         (n.sqPose = "stand"),
+        (n.ch1Chip = "Squatch: hide under the bed"),
+        chipNow(),
         (n.guard = { x: 900, y: 520, t: 0, seen: 0 }));
     }
     function ch1HideFromGuard() {
@@ -297,7 +302,8 @@
       J([
         ch1Step("sq", 360, 560, 160),
         ch1Step("sq", 520, 560, 160),
-        ch1Step("sq", 680, 540, 160),
+        // 680,540 sits inside the guard's catch. Stop short of him.
+        ch1Step("sq", 620, 540, 160),
         N(() => {
           ((n.ch1Conga = 0), (n.ctrl = !0));
         }),
@@ -330,16 +336,12 @@
         g.t += step;
         let hidden = n.sqPose === "under" || n.sqPose === "hidden";
         hidden ? (g.seen += step) : (g.seen = 0);
-        if (n.ch1Escort) {
-          let home = mV(n.sq, 760, 540, 190, step),
-            back = mV(g, 900, 520, CH1_GUARD_SPEED, step);
-          ((n.sqPose = "stand"), (n.ctrl = !1), home && back && ((n.ch1Escort = !1), (n.ctrl = !0)));
-        } else if (n.ctrl && !hidden) {
+        if (n.ctrl && !hidden) {
           let dx = n.sq.x - g.x,
             dy = n.sq.y - g.y,
             dist = Math.hypot(dx, dy) || 1;
           ((g.x += (dx / dist) * CH1_GUARD_SPEED * step), (g.y += (dy / dist) * CH1_GUARD_SPEED * step));
-          dist < 36 && ((n.ch1Escort = !0), (n.ctrl = !1), D.caught());
+          dist < 36 && capture("home");
         }
         (g.seen > 2 || (hidden && g.t > 8)) && ch1HideFromGuard();
       }

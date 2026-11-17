@@ -375,15 +375,8 @@
     }
     function ch1SneakCaught() {
       let s = n.ch1PlantSneak;
-      ((s.caught = 1), (s.tries += 1), (n.ctrl = !1), (n.act = null), (n.sq.moving = !1));
-      let hold = 0.7; // a short beat to see the "!" (plays on its own; uV would wait for a tap)
-      J([
-        cV((dt) => (hold -= dt || 0) <= 0),
-        ch1Step("sq", CH1_PEEK_AT[0], CH1_PEEK_AT[1], 260),
-        N(() => {
-          n.ch1PlantSneak && ((n.ch1PlantSneak.caught = 0), (n.ch1PlantSneak.t = CH1_SNEAK_START_T), (n.ctrl = !0));
-        }),
-      ]);
+      if (!s || s.caught) return;
+      ((s.caught = 1), (s.tries += 1), (n.ctrl = !1), (n.act = null), (n.sq.moving = !1), capture("s6"));
     }
     function ch1SneakTick(dt) {
       let s = n.ch1PlantSneak;

@@ -3,19 +3,20 @@
 
 | Lines | Heading |
 | --- | --- |
-| 20–21 | # Chapter 1 lines for Brian |
-| 22–37 | ## Calendar revision, Nov 16 (PR 58, not live) |
-| 38–45 | ## Earlier chapter lines |
-| 46–60 | ## Goal chips |
-| 61–144 | ## What people say |
-| 145–158 | ## Words painted on things |
-| 159–182 | ## Buttons |
-| 183–269 | ## Day 2 onward (beats 22–61), pending |
-| 270–277 | ## Ball hiding |
-| 278–285 | ## Off-screen lines, for Brian (playtest 12) |
-| 286–295 | ## Homework desk, approved Nov 16 |
-| 296–334 | ## Questions still open |
-| 335–360 | ## Day 1 stand-ins, pending |
+| 21–22 | # Chapter 1 lines for Brian |
+| 23–38 | ## Calendar revision, Nov 16 (PR 58, not live) |
+| 39–46 | ## Earlier chapter lines |
+| 47–61 | ## Goal chips |
+| 62–145 | ## What people say |
+| 146–159 | ## Words painted on things |
+| 160–183 | ## Buttons |
+| 184–270 | ## Day 2 onward (beats 22–61), pending |
+| 271–278 | ## Ball hiding |
+| 279–286 | ## Off-screen lines, for Brian (playtest 12) |
+| 287–298 | ## Party scene goals, for Brian (playtest 14) |
+| 299–308 | ## Homework desk, approved Nov 16 |
+| 309–347 | ## Questions still open |
+| 348–373 | ## Day 1 stand-ins, pending |
 <!-- /section-index -->
 # Chapter 1 lines for Brian
 
@@ -282,6 +283,18 @@ These lines were spoken with nobody on screen. The game no longer shows that bub
 - Mops, after a catch, when he is not in the room: "Just a fuzzy mop! Very fuzzy." / "Shedding season." and the other mop jokes in that same list ("Nothing to see! Just my rug.", "It walks. Fancy rug.", "Whoa! Biggest dust bunny EVER.", "I'll mop it up!", "That's my mop's winter coat.", "Very fashionable.").
 
 "BEEP BEEP" is back in the photo hallway, with the UPS robot on screen. It is not on this list.
+
+## Party scene goals, for Brian (playtest 14)
+
+Each party scene should say its own goal. Two of these are new. The others are already in the game.
+
+- Peek: "Squatch: peek out the door". Already in the game.
+- Sneak: "Squatch: sneak to the plant". Already in the game.
+- Extras: "Squatch: look around the party". Already in the game.
+- Alarm: "Squatch: hide from security". New. In the game so you can read it. Say yes, or write the line you want.
+- Run home: "Squatch: hide under the bed". New. In the game so you can read it. Say yes, or write the line you want.
+
+The lockup card when the guard catches him at home: "The guard saw Squatch at home. Security caught him." New. Same yes.
 
 ## Homework desk, approved Nov 16
 

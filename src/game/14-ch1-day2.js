@@ -110,7 +110,7 @@
     }
     function ch1AfterLunch() {
       // Squatch stands left of the snack, off the plant pot. Mops stands on the open left floor, not on the door and not in the way.
-      ch1GoDay("hall", { who: "both", scene: "Q3", stand: [620, 580], mo: [240, 560] }, () => {
+      ch1GoDay("hall", { who: "both", scene: "Q3", stand: [620, 580], mo: [320, 440] }, () => {
         ((n.ctrl = !1),
           J([
             v("mops", "I know you, Squatch, you're probably hungry... you know the rule, grab one snack."),
@@ -181,7 +181,7 @@
         v("mops", "Paperwork."),
         N(() => {
           n.ch1ShowBots = !1;
-          ch1GoDay("passage", { who: "both", scene: "QB", stand: [420, 510] }, () => ch1Ready("photos", "Squatch: go on", "QB"));
+          ch1GoDay("passage", { who: "both", scene: "QB", stand: [240, 520], mo: [720, 500] }, () => ch1Ready("photos", "Squatch: go on", "QB"));
         }),
       ]);
     }
@@ -198,7 +198,7 @@
         N(() => (n.ch1Beep = !0)),
         v("ups", "BEEP BEEP"),
         N(() => (n.ch1Beep = !1)),
-        ch1Step("sq", 480, 540, 220),
+        ch1Step("sq", 240, 540, 220),
         N(() => ch1Ready("photos", "Squatch: go on", "QB")),
       ]);
     }

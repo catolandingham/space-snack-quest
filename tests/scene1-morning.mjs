@@ -13,8 +13,8 @@
  * - the peek (step 4): the hall is already full on the first hall frame, Squatch stays in his doorway,
  *   the goal bar is empty, he hears muffled talk, then thinks "Robots?" once.
  * - the sneak (step 5): the player steers him to the plant. Stepping out while the yellow guest by the door
- *   looks back gets him seen and sent back to the doorway; going while the guest faces the stage and pressing
- *   HIDE at the plant hides him.
+ *   looks back shows the lockup card, then the sneak starts over in the doorway. Going while the guest
+ *   faces the stage and pressing HIDE at the plant hides him.
  *   node tests/scene1-morning.mjs
  */
 import { startGame, sleep } from "./game-page.mjs";
@@ -161,8 +161,12 @@ await sleep(300);
 await page.keyboard.up("ArrowUp");
 p = await hallNow();
 g.check("stepping out while he looks: Squatch is seen", !!p.sneak && p.sneak.caught === 1 && p.sneak.tries === 1, p.sneak);
-for (let i = 0; i < 30 && !p.ctrl; i++) (await sleep(200), (p = await hallNow()));
-g.check("then Squatch is back in his doorway to try again", p.ctrl && !!p.sneak && p.sq[1] > 620, p);
+for (let i = 0; i < 40 && !(p.ctrl && p.sq[1] > 620); i++) {
+  if (p.cur === "card" || p.cur === "bub" || p.cur === "wait") await tap();
+  else await sleep(200);
+  p = await hallNow();
+}
+g.check("then the lockup card restarts the sneak in the doorway", p.ctrl && !!p.sneak && p.sq[1] > 620, p);
 // Now wait until he faces the stage and go to the plant.
 for (let i = 0; i < 80; i++) {
   const t = await sneakT();

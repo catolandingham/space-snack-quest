@@ -30,6 +30,8 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: sing along with Mops": { scene: "Q1", room: "closet", song: true, day2: false },
     "Squatch: peek out the door": { scene: "Q1", room: "closet", peek: true, day2: false, x: 890, y: 480 },
     "Squatch: look around the party": { scene: "QA", room: "hall", party: true, day2: false, x: 480, y: 430 },
+    "Squatch: hide from security": { scene: "QA", room: "hall", party: true, day2: false, raid: true, x: 220, y: 530 },
+    "Squatch: hide under the bed": { scene: "QH", room: "closet", day2: false, search: true, x: 480, y: 520 },
     "Squatch: pick up the gift": { step: "gift", room: "closet", x: 340, y: 520 },
     "Squatch: put the gift in the box": { step: "box", room: "closet", x: 230, y: 392 },
     "Squatch: look at the calendar": { step: "cal", room: "closet", x: 230, y: 392 },
@@ -83,7 +85,10 @@ const report = await page.evaluate(async (chips) => {
     n.ch1Flyer = false;
     n.ch1Song = !!spec.song;
     n.ch1PeekReady = !!spec.peek;
-    n.ch1Search = false;
+    n.ch1Search = !!spec.search;
+    n.ch1Part = spec.raid ? "alarm" : spec.search ? "home" : "";
+    n.ch1Raid = spec.raid ? { phase: "search", guards: [], doorT: 0, left: false, witness: { x: 800, y: 430 } } : null;
+    n.guard = spec.search ? { x: 900, y: 520, t: 0, seen: 0 } : null;
     n.ch1PadOn = !!spec.pad;
     n.ch1Zoom = spec.zoom ? { id: spec.zoom, zoom: 1, paw: { x: 400, y: 400 }, bag: 0, gone: {} } : null;
     n.scene = spec.scene || "QB";

@@ -349,6 +349,7 @@ const extras = await page.evaluate(() => {
     n.ch1Balloon = "back";
     n.ch1Raid = null;
     n.ch1Part = "extras";
+    n.ch1Flyer = true;
     n.ctrl = true;
     n.q = [];
     n.cur = null;
@@ -365,11 +366,26 @@ const extras = await page.evaluate(() => {
       ss.tick(0.05);
     }
   };
+  const hug = () => {
+    n.ctrl = true;
+    n.ch1Part = "extras";
+    n.ch1Disguise = true;
+    n.ch1PartyOver = false;
+    n.ch1HugNear = false;
+    n.sq.x = 760;
+    n.sq.y = 545;
+    n.ch1Oct = { x: 760, y: 555, t: 0 };
+    ss.tick(0.05);
+  };
   arm();
-  ss.spotsNow().find((s) => s.verb === "HUG").f();
+  hug();
   drain();
   const once = { askew: !!n.ch1HatAskew, disguise: n.ch1Disguise, line: said().includes("*hic* Fellow tourist!"), over: n.ch1PartyOver };
-  ss.spotsNow().find((s) => s.verb === "HUG").f();
+  n.sq.x = 400;
+  n.sq.y = 520;
+  n.ch1HugNear = false;
+  ss.tick(0.05);
+  hug();
   drain();
   const twice = { disguise: n.ch1Disguise, over: n.ch1PartyOver, fur: said().includes("FUR! Security!") };
   const show = () => {
@@ -392,25 +408,29 @@ const extras = await page.evaluate(() => {
   const shot = { x: (frame.x0 + frame.x1) / 2, y: (frame.y0 + frame.y1) / 2 };
   arm();
   const starsIn = n.stars;
-  const into = walk(shot.x, shot.y);
-  ss.actionDown();
-  const inside = { shot: n.ch1InShot, stars: n.stars - starsIn, bonus: ss.PHOTO_BONUS, panel: show(), into };
+  n.ch1Part = "extras";
+  n.sq.x = shot.x;
+  n.sq.y = shot.y;
+  ss.tick(0.05);
+  const inside = { shot: n.ch1InShot, stars: n.stars - starsIn, bonus: ss.PHOTO_BONUS, panel: show() };
   arm();
   const starsOut = n.stars;
-  const away = walk(cam.x, cam.y);
-  ss.actionDown();
-  const outside = { shot: n.ch1InShot, stars: n.stars - starsOut, panel: show(), away };
+  n.ch1Part = "extras";
+  n.sq.x = cam.x;
+  n.sq.y = cam.y;
+  ss.tick(0.05);
+  const outside = { shot: n.ch1InShot, stars: n.stars - starsOut, panel: show() };
   return { once, twice, inside, outside };
 });
 g.check("the first octopus hug tugs the hat and the second starts the alarm", extras.once.askew && extras.once.disguise && extras.once.line && !extras.once.over && !extras.twice.disguise && extras.twice.over && extras.twice.fur, extras);
 g.check(
-  "walking into the shot and pressing SNAP pays the placeholder bonus",
-  extras.inside.into.offer === "SNAP" && extras.inside.shot && extras.inside.stars === extras.inside.bonus && extras.inside.panel === "ch1photo",
+  "walking into the shot pays the placeholder bonus",
+  extras.inside.shot && extras.inside.stars === extras.inside.bonus && extras.inside.panel === "ch1photo",
   extras.inside,
 );
 g.check(
   "Squatch outside the frame gets no photo bonus",
-  extras.outside.away.offer === "SNAP" && !extras.outside.shot && extras.outside.stars === 0 && extras.outside.panel === "ch1photo",
+  !extras.outside.shot && extras.outside.stars === 0 && extras.outside.panel !== "ch1photo",
   extras.outside,
 );
 
@@ -461,6 +481,19 @@ const play = await page.evaluate(() => {
         n.sq.y = 530;
       }
       ss.tick(0.05);
+      still = 0;
+      continue;
+    }
+    if (n.scene === "QA" && n.ch1Part === "extras" && n.ch1Disguise && n.ch1Flyer && n.ch1BarDone && n.ch1Balloon !== "up" && n.ch1Balloon !== "held" && !n.ch1PartyOver && !n.ch1Photo && !n.ch1Cut && n.ctrl) {
+      n.sq.x = 250;
+      n.sq.y = 445;
+      ss.tick(0.05);
+      still = 0;
+      continue;
+    }
+    if (n.scene === "QA" && n.ch1Part === "extras" && n.ch1Photo && !n.ch1PartyOver && n.ctrl && !n.cur) {
+      n.ch1PartyT = 179.5;
+      ss.tick(0.6);
       still = 0;
       continue;
     }
@@ -533,7 +566,7 @@ const play = await page.evaluate(() => {
   };
 });
 g.check("Chapter 1 reaches the tally card", play.end === "tally", { end: play.end, acts: play.acts, scene: play.state.scene });
-const wantActs = ["SING · song", "PEEK · doorway", "HIDE · plant", "SHUFFLE · outfit", "GO · party", "TAKE · robot flyer", "JUMP · balloon", "GIVE · balloon", "TALK · guest", "OPEN · snack bar", "CLOSE · cut-in", "SNAP · photo", "SNAG · plant", "HIDE · bed", "TAKE · gift", "PUT · box", "DROP · box", "LOOK · calendar", "TAKE · lunch", "SNEAK · hallway", "GIVE · lunch", "FEED · lunch", "FEED · bag", "TAKE · snack", "DROP · snack", "HIDE · plant", "GO · hall", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "LEAVE · food", "PUT · slip", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
+const wantActs = ["SING · song", "PEEK · doorway", "HIDE · plant", "SHUFFLE · outfit", "GO · party", "TAKE · robot flyer", "JUMP · balloon", "GIVE · balloon", "TALK · guest", "OPEN · snack bar", "CLOSE · cut-in", "HIDE · bed", "TAKE · gift", "PUT · box", "DROP · box", "LOOK · calendar", "TAKE · lunch", "SNEAK · hallway", "GIVE · lunch", "FEED · lunch", "FEED · bag", "TAKE · snack", "DROP · snack", "HIDE · plant", "GO · hall", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "LEAVE · food", "PUT · slip", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
 g.check("the player does the new actions in order", JSON.stringify(play.acts) === JSON.stringify(wantActs), play.acts);
 const must = [
   "Stormtop Cloud Resort, floating above Jupiter.",
@@ -688,7 +721,10 @@ const laterBalloon = await page.evaluate(() => {
   const lock = (balloon) => {
     n.ch1Cut = null;
     arm(balloon);
-    ss.spotsNow().find((s) => s.verb === "SNAG").f();
+    n.ch1Part = "extras";
+    n.ch1Flyer = true;
+    n.ch1PartyT = 180;
+    ss.tick(0.05);
     const state = ss.ch1State();
     n.q = [];
     n.cur = null;

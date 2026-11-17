@@ -204,10 +204,14 @@ const security = await page.evaluate(() => {
     n.sq.y = y;
     ss.hall.camX = 0;
   };
+  const alarm = () => {
+    n.ch1Part = "extras";
+    n.ch1Flyer = true;
+    n.ch1PartyT = 180;
+    ss.tick(0.05);
+  };
   arm(400, 540);
-  const snag = ss.spotsNow().find((s) => s && s.verb === "SNAG");
-  if (!snag) return { error: "no snag" };
-  snag.f();
+  alarm();
   let armed = -1;
   let opened = -1;
   let entered = -1;
@@ -245,7 +249,7 @@ const security = await page.evaluate(() => {
     search: !!n.ch1Search,
   };
   arm(400, 540);
-  ss.spotsNow().find((s) => s && s.verb === "SNAG").f();
+  alarm();
   let cause = "";
   let sawGuard = false;
   for (let i = 0; i < 400 && !cause; i++) {

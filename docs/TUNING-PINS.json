@@ -30,7 +30,7 @@
     { "id": "oct-notice", "file": "src/game/14-ch1-day1.js", "snippet": "Math.hypot(n.sq.x - 760, n.sq.y - 555) < 150", "source": "R68. The octopus notices within 150px." },
     { "id": "oct-catch", "file": "src/game/14-ch1-day1.js", "snippet": "dist < 48 && ((n.ch1OctChase = !1), ch1Hug())", "source": "R68. The octopus catches within 48px." },
     { "id": "guard-speed", "file": "src/game/14-ch1-day1.js", "snippet": "CH1_GUARD_SPEED = 120", "source": "R68. The guard walks at 120." },
-    { "id": "guard-catch", "file": "src/game/14-ch1-day1.js", "snippet": "dist < 36 && ((n.ch1Escort = !0)", "source": "R68. The guard catches within 36px." },
+    { "id": "guard-catch", "file": "src/game/14-ch1-day1.js", "snippet": "dist < 36 && capture(\"home\")", "source": "R68. The guard catches within 36px. A catch is the lockup card." },
     { "id": "home-door-reach", "file": "src/game/14-ch1-day1.js", "snippet": "n.sq.y - CH1_HOME_DOOR.y) < 48", "source": "Reaching the home door counts inside 48px." },
     { "id": "home-search-delay", "file": "src/game/14-ch1-day1.js", "snippet": "r.doorT >= 0.5 && ch1RaidHome()", "source": "K10. The home search starts half a second after the guard reaches the door." },
     { "id": "walk-pace", "file": "src/game/12-ch1-redesign.js", "snippet": "let pace = speed || 180", "source": "Chapter 1 walk pace when a step does not name its own speed. Current code is 180." },

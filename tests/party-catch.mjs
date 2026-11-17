@@ -7,6 +7,12 @@ import { readFileSync } from "node:fs";
 import { startGame } from "./game-page.mjs";
 
 const raidSrc = readFileSync(new URL("../src/game/14-ch1-day1.js", import.meta.url), "utf8");
+const partySrc = readFileSync(new URL("../src/game/12-ch1-redesign.js", import.meta.url), "utf8");
+const snagBlock = partySrc.slice(partySrc.indexOf("const CH1_PARTY_SNAG"), partySrc.indexOf("];", partySrc.indexOf("const CH1_PARTY_SNAG")));
+const snags = [...snagBlock.matchAll(/x:\s*(\d+),\s*y:\s*(\d+)/g)].map((m) => [+m[1], +m[2]]);
+const conga = raidSrc.slice(raidSrc.indexOf("function ch1Conga"), raidSrc.indexOf("function ch1Chicken"));
+const congaEnd = [...conga.matchAll(/ch1Step\("sq",\s*(\d+),\s*(\d+)/g)].map((m) => [+m[1], +m[2]]).pop();
+const congaClear = !!congaEnd && snags.every(([x, y]) => Math.hypot(congaEnd[0] - x, congaEnd[1] - y) > 36);
 const g = await startGame({ port: 8948, name: "party-catch" });
 const { page, errors } = await g.open("?ch=1");
 await page.evaluate(() => window.__ss.lockedReady);
@@ -127,5 +133,87 @@ const want = {
 };
 for (const row of out) g.check(row.name + ": lockup, then that scene starts over", want[row.name](row), row);
 g.check("the alarm does not walk him home in the code", !/mV\(n\.sq, CH1_HOME_DOOR/.test(raidSrc), "auto-run still in the raid");
+g.check("the home guard does not walk him to 760", !/mV\(n\.sq, 760, 540/.test(raidSrc));
+const paths = await page.evaluate(() => {
+  const ss = window.__ss;
+  const n = ss.op;
+  const run = (setup, done) => {
+    n.q = [];
+    n.cur = null;
+    n.ctrl = true;
+    n.ch1Raid = null;
+    n.ch1Search = false;
+    n.guard = null;
+    n.ch1Cut = null;
+    n.ch1Mini = "";
+    n.ch1PartyOver = false;
+    setup();
+    let card = "";
+    for (let i = 0; i < 100 && !done(); i++) {
+      ss.tick(0.15);
+      if (n.cur && n.cur.id === "jail") card = n.cur.text;
+      if (n.cur && (n.cur.k === "bub" || n.cur.k === "card" || n.cur.k === "panel" || n.cur.k === "wait")) ss.opTap();
+    }
+    return { card, part: n.ch1Part, scene: n.scene, room: n.room, x: Math.round(n.sq.x), over: !!n.ch1PartyOver, disguise: !!n.ch1Disguise, raid: n.ch1Raid && n.ch1Raid.phase, search: !!n.ch1Search };
+  };
+  return {
+    sneak: run(() => {
+      n.scene = "QA";
+      n.room = "hall";
+      n.ch1Party = true;
+      n.ch1Part = "sneak";
+      n.ch1PlantSneak = { t: 4.5, caught: 0, tries: 0 };
+      n.sqPose = "stand";
+      n.sq.x = 460;
+      n.sq.y = 582;
+    }, () => n.cur && n.cur.id === "jail"),
+    extras: run(() => {
+      n.scene = "QA";
+      n.room = "hall";
+      n.ch1Party = true;
+      n.ch1Part = "extras";
+      n.ch1Disguise = true;
+      n.sqPose = "stand";
+      n.sq.x = 370;
+      n.sq.y = 538;
+    }, () => n.ch1Part === "extras" && n.ch1Disguise && !n.ch1PartyOver && Math.round(n.sq.x) === 560 && !(n.cur && n.cur.id === "jail")),
+    alarm: run(() => {
+      n.scene = "QA";
+      n.room = "hall";
+      n.ch1Party = true;
+      n.ch1Part = "alarm";
+      n.ch1PartyOver = true;
+      n.ch1Disguise = false;
+      n.sqPose = "stand";
+      n.sq.x = 500;
+      n.sq.y = 540;
+      n.ch1Raid = { phase: "search", guards: [{ x: 520, y: 540, t: 2, face: 0 }], doorT: 0, left: false, witness: { x: 800, y: 430 } };
+    }, () => n.ch1Part === "alarm" && n.ch1Raid && n.ch1Raid.phase === "witness"),
+    home: run(() => {
+      n.scene = "QH";
+      n.room = "closet";
+      n.ch1Part = "home";
+      n.ch1Search = true;
+      n.ch1Party = false;
+      n.sqPose = "stand";
+      n.sq.x = 700;
+      n.sq.y = 520;
+      n.guard = { x: 720, y: 520, t: 1, seen: 0 };
+    }, () => n.ch1Part === "home" && n.scene === "QH" && Math.round(n.sq.x) === 480 && n.guard && !(n.cur && n.cur.id === "jail") && n.ctrl),
+    peek: run(() => {
+      n.scene = "QA";
+      n.room = "hall";
+      n.ch1Part = "peek";
+      n.ch1Party = true;
+      ss.capture("s6");
+    }, () => n.ch1Part === "peek" && n.room === "closet" && n.ch1PeekReady),
+  };
+});
+g.check("sneak: the cone calls capture and shows the lockup card", paths.sneak.card === "LOCKUP", paths.sneak);
+g.check("extras: walking into the plant is a lockup, then the extras restart", paths.extras.card === "LOCKUP" && paths.extras.part === "extras" && !paths.extras.over, paths.extras);
+g.check("alarm: a guard's touch shows the lockup card and restarts the search", paths.alarm.card === "LOCKUP" && paths.alarm.raid === "witness", paths.alarm);
+g.check("run home: the guard's touch shows the lockup card and does not walk him to 760", paths.home.card === "LOCKUP" && paths.home.x === 480 && paths.home.search, paths.home);
+g.check("peek: a catch shows the lockup card and restarts the peek", paths.peek.card === "LOCKUP" && paths.peek.part === "peek" && paths.peek.room === "closet", paths.peek);
+g.check("the conga ends clear of the plant, the vent, and the guard", congaClear, { congaEnd, snags });
 g.check("no page errors", errors.length === 0, errors);
 await g.finish("party-catch");
