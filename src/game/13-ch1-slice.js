@@ -104,7 +104,8 @@
             (n.wardrobe = "closed"),
             (n.ch1VeilTo = 0));
           ch1Go("hall", { who: "sq", scene: "QA" }, () => {
-            ((n.ch1Party = !0),
+            ((n.ch1Part = "extras"),
+              (n.ch1Party = !0),
               (n.ch1Disguise = !0),
               (n.ch1Flyer = !1),
               (n.ch1PartyOver = !1),

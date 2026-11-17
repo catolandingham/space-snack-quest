@@ -296,7 +296,7 @@
     // He stops in his doorway at the bottom wall, so he is only leaning in, not in the room yet.
     const CH1_PEEK_AT = [470, 628];
     function ch1PeekGo() {
-      ((n.ch1PeekReady = !1), (n.ch1Chip = ""), (n.ctrl = !1), (n.act = null), (n.ch1Party = !0), (n.ch1Peeking = !0));
+      ((n.ch1Part = "peek"), (n.ch1PeekReady = !1), (n.ch1Chip = ""), (n.ctrl = !1), (n.act = null), (n.ch1Party = !0), (n.ch1Peeking = !0));
       ch1Go("hall", { who: "sq", scene: "QA", stand: CH1_PEEK_AT }, ch1PeekLook);
     }
     function ch1PeekLook() {
@@ -320,7 +320,7 @@
           J([
             { k: "card", id: "later", text: "That evening\u2026" },
             N(() => {
-              ((n.ch1PeekReady = !0), (n.ctrl = !0), (n.scene = "Q1"), (n.ch1Chip = "Squatch: peek out the door"), chipNow());
+              ((n.ch1Part = "peek"), (n.ch1PeekReady = !0), (n.ctrl = !0), (n.scene = "Q1"), (n.ch1Chip = "Squatch: peek out the door"), chipNow());
             }),
           ]));
       }
@@ -352,7 +352,7 @@
       return ch1SneakLook() === "look" && n.sqPose !== "hidden" && vt(n.sq.x, n.sq.y - 20, CH1_SNEAK_EYES[0], CH1_SNEAK_EYES[1], CH1_SNEAK_FACE, STAND_CONE_HALF, STAND_CONE_LEN);
     }
     function ch1SneakStart() {
-      ((n.ch1Peeking = !1), (n.ch1PlantSneak = { t: CH1_SNEAK_START_T, caught: 0, tries: 0 }), (n.ch1Chip = "Squatch: sneak to the plant"), (n.sqPose = "stand"), (n.ctrl = !0), chipNow());
+      ((n.ch1Part = "sneak"), (n.ch1Peeking = !1), (n.ch1PlantSneak = { t: CH1_SNEAK_START_T, caught: 0, tries: 0 }), (n.ch1Chip = "Squatch: sneak to the plant"), (n.sqPose = "stand"), (n.ctrl = !0), chipNow());
     }
     function ch1SneakSpots() {
       return [

@@ -316,13 +316,14 @@ const balloon = await page.evaluate(() => {
     fur: said().includes("FUR! Security!"),
     over: n.ch1PartyOver,
     walked: (n.ch1Walks || []).length > walksBefore,
+    raid: !!(n.ch1Raid && n.ch1Raid.phase),
     window: ss.BALLOON_GRAB_SECONDS,
   };
   return { ceiling, jumped, back, kept };
 });
 g.check("a balloon that reaches the ceiling only makes the kid sad", balloon.ceiling.gasped === "gasp" && balloon.ceiling.balloon === "ceiling" && balloon.ceiling.kid === "sad" && balloon.ceiling.disguise && !balloon.ceiling.over && !balloon.ceiling.yell && balloon.ceiling.jumpWasThere, balloon.ceiling);
 g.check("bringing the balloon back keeps the disguise and the kid stays quiet", balloon.jumped.held && balloon.jumped.legs && balloon.jumped.kid === "wide" && balloon.back.balloon === "back" && balloon.back.kid === "up" && balloon.back.disguise && !balloon.back.over && !balloon.back.yell && !balloon.back.fur, balloon);
-g.check("keeping the balloon makes the kid yell and Squatch walk off", balloon.kept.yell && balloon.kept.fur && balloon.kept.over && balloon.kept.walked && balloon.kept.window === 6, balloon.kept);
+g.check("keeping the balloon makes the kid yell and security start searching", balloon.kept.yell && balloon.kept.fur && balloon.kept.over && !balloon.kept.walked && !!balloon.kept.raid && balloon.kept.window === 6, balloon.kept);
 
 const extras = await page.evaluate(() => {
   const ss = window.__ss;
@@ -346,6 +347,8 @@ const extras = await page.evaluate(() => {
     n.ch1Spill = 0;
     n.ch1PartyDid = {};
     n.ch1Balloon = "back";
+    n.ch1Raid = null;
+    n.ch1Part = "extras";
     n.ctrl = true;
     n.q = [];
     n.cur = null;
@@ -451,6 +454,12 @@ const play = await page.evaluate(() => {
       continue;
     }
     if (n.ch1Raid && n.room === "hall") {
+      // The alarm no longer walks him home. He hides, the way the HIDE spot works, and the search can end.
+      if (n.sqPose !== "hidden") {
+        n.sqPose = "hidden";
+        n.sq.x = 220;
+        n.sq.y = 530;
+      }
       ss.tick(0.05);
       still = 0;
       continue;

@@ -215,6 +215,12 @@ const security = await page.evaluate(() => {
   for (let i = 0; i < 500; i++) {
     tap();
     const r = n.ch1Raid;
+    // He is not carried home. The player goes to the door, then the guard follows.
+    if (r && r.phase === "search") {
+      n.sq.x = ss.CH1_HOME_DOOR.x;
+      n.sq.y = ss.CH1_HOME_DOOR.y;
+      n.sqPose = "stand";
+    }
     const lead = r && r.guards && r.guards[0];
     const near =
       lead &&
@@ -260,7 +266,7 @@ const security = await page.evaluate(() => {
 });
 
 g.check(
-  "getting home skips the 9-second countdown and the guard enters about half a second after the door",
+  "when he reaches the door, the guard enters about half a second later, with no 9-second countdown",
   security.home && !security.home.caught && security.home.search && security.home.delay > 0.35 && security.home.delay < 1.2,
   security.home,
 );

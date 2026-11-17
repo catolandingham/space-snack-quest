@@ -824,7 +824,7 @@
     function ch1HatOff(why) {
       if (n.ch1PartyOver || !n.ch1Disguise) return;
       ch1LockBalloon();
-      ((n.ch1Disguise = !1), (n.ch1PartyOver = !0), (n.ctrl = !1), (n.act = null), (n.ch1Fur = !0));
+      ((n.ch1Part = "alarm"), (n.ch1Disguise = !1), (n.ch1PartyOver = !0), (n.ctrl = !1), (n.act = null), (n.ch1Fur = !0));
       let lines = [];
       why === "cool" && lines.push(v("tourist", "Cool hat!"));
       why === "bar" && lines.push(v("tourist", "Wait a second... fur!"));
@@ -1299,7 +1299,7 @@
         drawCh1SneakCone(),
         CH1_GUESTS.forEach((guest) => {
           if (n.ch1Raid && n.ch1Raid.witness && guest[2] === "spots") return;
-          (drawCh1Alien(guest[0], guest[1], guest[2], ALIEN_ADULT, n.ch1PlantSneak && guest[2] === "spots" ? ch1SneakFace() : face || 1), glance(guest[0], guest[1]));
+          (drawCh1Alien(guest[0], guest[1], guest[2], ALIEN_ADULT, n.ch1PlantSneak && guest[2] === "spots" ? ch1SneakFace() : face || 1, n.ch1Part === "extras" && n.ch1Disguise && !n.ch1PartyOver), glance(guest[0], guest[1]));
         }),
         n.ch1Raid && n.ch1Raid.witness && drawCh1Alien(n.ch1Raid.witness.x, n.ch1Raid.witness.y, "spots", ALIEN_ADULT, 1),
         ((n.ch1Raid && n.ch1Raid.guards) || []).forEach((g) => {
@@ -1310,7 +1310,7 @@
         Qt(880, 500, "#c9842a", QT_ADULT, -1),
         drawOctopus((n.ch1Oct && n.ch1Oct.x) || 760, (n.ch1Oct && n.ch1Oct.y) || 555, face || -1),
         drawCh1Fest(),
-        drawCh1Alien(340, 400, "cape", ALIEN_ADULT, face || -1),
+        drawCh1Alien(340, 400, "cape", ALIEN_ADULT, face || -1, n.ch1Part === "extras" && n.ch1Disguise && !n.ch1PartyOver),
         drawCh1Tripod(250, 360),
         !n.ch1Flyer && (m(500, 500, 16, 12, 1), r("#fffdf8", 1)),
         (n.ch1Spill || 0) > 0 && drawCh1Chain(1 - n.ch1Spill),
@@ -1329,9 +1329,9 @@
       tray > 0 && (e.save(), e.translate(900, 500), e.rotate(-tray * 0.9), m(-46, -8, 92, 16, 3), r("#cdbb98", 3), drawBarSnack("pie", 0, -22, 0.7), e.restore());
       cake > 0 && (e.save(), e.translate(860 + cake * 30, 480 + cake * 50), drawBarSnack("cake", 0, 0, 1.2), e.restore());
     }
-    function drawCh1Alien(ax, ay, kind, sc, face) {
+    function drawCh1Alien(ax, ay, kind, sc, face, dance) {
       let f = face < 0 ? -1 : 1,
-        bob = Math.sin(n.T * 2 + ax * 0.01) * 1.5;
+        bob = dance ? (Math.floor(n.T * 2) % 2 ? 0 : -7) : Math.sin(n.T * 2 + ax * 0.01) * 1.5;
       (e.save(), e.translate(ax, ay + bob), e.scale(sc * f, sc));
       (e.beginPath(), e.ellipse(0, 2, 16, 4, 0, 0, 7), (e.fillStyle = "rgba(30,36,48,.16)"), e.fill());
       let body = "#7ad0c8",
@@ -1349,10 +1349,9 @@
         r("#3d4454", 2),
         m(-16, -54, 32, 36, 10),
         r(body, 3),
-        m(-22, -48, 8, 22, 3),
-        r(body, 2),
-        m(14, -48, 8, 22, 2),
-        r(body, 2),
+        dance
+          ? (m(-36, -56, 16, 6, 2), r(body, 2), m(20, -56, 16, 6, 2), r(body, 2))
+          : (m(-22, -48, 8, 22, 3), r(body, 2), m(14, -48, 8, 22, 2), r(body, 2)),
         L(0, -70, 14),
         r(skin, 3),
         F(-5, -72, 1.8, y),

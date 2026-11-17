@@ -220,6 +220,8 @@
       QB: () => ch1RestartLunch(),
       // The party. A catch stays in the party, a little back from where he was seen.
       QA: () => ch1RestartParty(),
+      // The run home, after he gets out of the alarm. A catch restarts the search, not the party.
+      QH: () => ch1RestartHome(),
     };
     const CH3_CHECKPOINTS = {
       p1: () => {
