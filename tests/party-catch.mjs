@@ -215,5 +215,10 @@ g.check("alarm: a guard's touch shows the lockup card and restarts the search", 
 g.check("run home: the guard's touch shows the lockup card and does not walk him to 760", paths.home.card === "LOCKUP" && paths.home.x === 480 && paths.home.search, paths.home);
 g.check("peek: a catch shows the lockup card and restarts the peek", paths.peek.card === "LOCKUP" && paths.peek.part === "peek" && paths.peek.room === "closet", paths.peek);
 g.check("the conga ends clear of the plant, the vent, and the guard", congaClear, { congaEnd, snags });
+const partyDraw = partySrc.slice(partySrc.indexOf("function drawCh1Party"), partySrc.indexOf("function drawCh1Chain"));
+g.check(
+  "the extras guard is drawn on his catch",
+  /ch1Part === "extras"/.test(partyDraw) && partyDraw.includes("CH1_PARTY_SNAG") && partyDraw.includes('"hat"'),
+);
 g.check("no page errors", errors.length === 0, errors);
 await g.finish("party-catch");

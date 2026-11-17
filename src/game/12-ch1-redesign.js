@@ -168,6 +168,10 @@
       CH1_GUESTS.forEach((guest) => (raid && raid.witness && guest[2] === "spots") || out.push(feet(guest[0], guest[1])));
       raid && raid.witness && out.push(feet(raid.witness.x, raid.witness.y));
       out.push(feet(340, 400)); // the guest in the cape
+      if (n.ch1Part === "extras" && !raid) {
+        let stand = CH1_PARTY_SNAG.find((h) => h.id === "guard");
+        stand && out.push(feet(stand.x, stand.y));
+      }
       out.push(feet(CH1_KID.x, CH1_KID.y)); // the balloon kid
       out.push(feet((n.ch1Oct && n.ch1Oct.x) || 760, (n.ch1Oct && n.ch1Oct.y) || 555)); // the octopus
       return out;
@@ -1301,6 +1305,11 @@
             seenCone(g.x, g.y - 28, g.face, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.62)", "rgba(160,100,10,.95)");
           drawCh1Alien(g.x, g.y, "hat", ALIEN_ADULT, Math.cos(g.face || 0) < 0 ? -1 : 1);
         }),
+        n.ch1Part === "extras" &&
+          !n.ch1Raid &&
+          CH1_PARTY_SNAG.filter((h) => h.id === "guard").forEach((stand) => (
+            drawCh1Alien(stand.x, stand.y, "hat", ALIEN_ADULT, -1), glance(stand.x, stand.y)
+          )),
         Qt(880, 500, "#c9842a", QT_ADULT, -1),
         drawOctopus((n.ch1Oct && n.ch1Oct.x) || 760, (n.ch1Oct && n.ch1Oct.y) || 555, face || -1),
         drawCh1Fest(),
