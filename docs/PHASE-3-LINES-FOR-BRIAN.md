@@ -42,6 +42,7 @@ The other new or moved words:
 | 19.16 | A short line over the picture for about two seconds, when security leaves without finding Squatch (any chapter), the hall alarm cools off while he hides, or the deck guard walks away | They lost you. | You got away. |
 | 19.17 | The chapter tally card, every chapter (it used to add the stars lost, as in "Times caught 2 (−200)") | Times caught 2 | Caught 2 times |
 | 19.18 | LOCKUP card, Chapter 1 hall: Squatch walked past the vent and the vent alarm went off | The vent alarm saw Squatch in the hall. Security caught him. | The vent alarm caught Squatch in the hall. Security caught him. |
+| 19.21 | LOCKUP card, Chapter 1, the guard at home after the party | The guard saw Squatch at home. Security caught him. | The guard found Squatch in the bedroom. Security caught him. |
 | 19.19 | Mars dock, before Chapter 4.4. The gate bot says "WOOKIE?!". Mops answers. Approved 2026-11-13, 4:10 AM ET. Squatch no longer speaks here | He's with me. | My friend. Don't mind him. |
 | 19.20 | Mars dock, the gate bot asks "...Do you need help?". Mops answers. Approved 2026-11-13, 4:10 AM ET | No thanks. We're getting my goat. | Nope. Just getting my goat. |
 

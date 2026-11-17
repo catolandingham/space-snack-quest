@@ -110,7 +110,7 @@
     }
     function ch1AfterLunch() {
       // Squatch stands left of the snack, off the plant pot. Mops stands on the open left floor, not on the door and not in the way.
-      ch1GoDay("hall", { who: "both", scene: "Q3", stand: [620, 580], mo: [240, 560] }, () => {
+      ch1GoDay("hall", { who: "both", scene: "Q3", stand: [620, 580], mo: [320, 440] }, () => {
         ((n.ctrl = !1),
           J([
             v("mops", "I know you, Squatch, you're probably hungry... you know the rule, grab one snack."),
@@ -181,7 +181,7 @@
         v("mops", "Paperwork."),
         N(() => {
           n.ch1ShowBots = !1;
-          ch1GoDay("passage", { who: "both", scene: "QB", stand: [420, 510] }, () => ch1Ready("photos", "Squatch: go on", "QB"));
+          ch1GoDay("passage", { who: "both", scene: "QB", stand: [240, 520], mo: [720, 500] }, () => ch1Ready("photos", "Squatch: go on", "QB"));
         }),
       ]);
     }
@@ -198,7 +198,7 @@
         N(() => (n.ch1Beep = !0)),
         v("ups", "BEEP BEEP"),
         N(() => (n.ch1Beep = !1)),
-        ch1Step("sq", 480, 540, 220),
+        ch1Step("sq", 240, 540, 220),
         N(() => ch1Ready("photos", "Squatch: go on", "QB")),
       ]);
     }
@@ -1010,7 +1010,7 @@
       n.ch1Hold === "lunch" && n.sqPose === "stand" && (m(n.sq.x + 10, n.sq.y - 70, 22, 28, 3), r("#cdbb98", 2));
       if (n.ch1Paper === "bite" || n.ch1Paper === "mouth") (drawSlip(n.mo.x - 8, n.mo.y - 86, "#ff8fb8", 22, 28), drawSlip(n.mo.x + 8, n.mo.y - 80, "#ffe08a", 14, 18));
       n.ch1Paper === "slip" && drawSlip(n.mo.x - 6, n.mo.y - 84, "#ff8fb8", 18, 24);
-      n.ch1Paper === "bin" && (drawSlip(236, 470, "#ff8fb8", 20, 26), drawSlip(252, 476, "#ffe08a", 12, 16));
+      n.ch1Paper === "bin" && n.room === "hangar" && (drawSlip(236, 470, "#ff8fb8", 20, 26), drawSlip(252, 476, "#ffe08a", 12, 16));
       n.ch1Paper === "paws" && n.sqPose === "stand" && (drawSlip(n.sq.x + 12, n.sq.y - 70, "#ff8fb8", 18, 24), !n.ch1Mailed && drawSlip(n.sq.x + 24, n.sq.y - 64, "#ffe08a", 12, 16));
       (n.ch1Paper === "pink" || n.ch1Paper === "paw" || n.ch1Hold === "slip") && n.sqPose === "stand" && drawSlip(n.sq.x + 14, n.sq.y - 72, "#ff8fb8", 18, 24);
       n.ch1Paper === "box" && n.room === "closet" && drawSlip(332, 470, "#ff8fb8", 16, 20);

@@ -29,7 +29,7 @@ e = await walk(360, 420, "ArrowUp"); g.check("walking up into the stage stops in
 e = await walk(535, 420, "ArrowUp"); g.check("walking up into the poster stops in front of its legs", e.moved >= 8 && (e.y >= 300), e);
 e = await walk(700, 460, "ArrowRight"); g.check("walking right into the snack bar stops at the counter", e.moved >= 8 && (e.x <= 798), e);
 e = await walk(700, 300 + 10, "ArrowRight"); g.check("walking right along the back wall stops at the snack bar too", e.moved >= 8 && (e.x <= 798), e);
-e = await walk(250, 520, "ArrowUp"); g.check("walking up into the guest at (250, 460) stops below the guest", e.moved >= 8 && (e.y >= 466), e);
+e = await walk(320, 540, "ArrowUp"); g.check("walking up into the guest at (320, 470) stops below the guest", e.moved >= 8 && (e.y >= 476), e);
 e = await walk(150, 400, "ArrowDown"); g.check("walking down into the balloon kid stops above the kid", e.moved >= 8 && (e.y <= 510), e);
 e = await walk(440, 600, "ArrowUp", 30); g.check("walking up into the hiding plant stops at its pot", e.moved >= 8 && (e.y >= 552 || e.x < 412 || e.x > 476), e);
 e = await walk(600, 512, "ArrowLeft"); g.check("walking left into the snack table stops at its edge", e.moved >= 8 && (e.x >= 574), e);

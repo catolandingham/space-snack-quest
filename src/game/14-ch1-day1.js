@@ -13,7 +13,10 @@
       CH1_GUARD_IN = { x: 948, y: 360 };
     function ch1RaidBegin() {
       let spots = CH1_GUESTS.find((g) => g[2] === "spots") || [520, 610, "spots"];
-      ((n.ch1Fur = !1),
+      ((n.ch1Part = "alarm"),
+        (n.ch1Fur = !1),
+        (n.ch1Chip = "Squatch: hide from security"),
+        chipNow(),
         (n.ctrl = !0),
         (n.ch1Raid = {
           phase: "witness",
@@ -29,62 +32,122 @@
         vt(n.sq.x, n.sq.y - 20, g.x, g.y - 28, g.face, STAND_CONE_HALF, STAND_CONE_LEN)
       );
     }
-    // A catch at the party used to restore the old opening (O1), so the goal said
-    // "walk around the room" and nothing led forward. Brian, 2026-11-14: put him
-    // back a little, in the party, and let play carry on. No guard in the bedroom.
-    function ch1RestartParty() {
-      let x = n.sq.x,
-        y = n.sq.y;
-      if (!(x > 40 && x < 920 && y > 320 && y < 610)) ((x = 560), (y = 580));
-      // Step toward the open floor in front of the crowd, not into the plant pot.
-      let dx = 560 - x,
-        dy = 580 - y,
-        dist = Math.hypot(dx, dy) || 1,
-        step = Math.min(48, dist),
-        nx = x + (dx / dist) * step,
-        ny = y + (dy / dist) * step,
-        blocked = (px, py) => ch1PartySolids().some((b) => px > b.x0 - 8 && px < b.x1 + 8 && py > b.y0 - 8 && py < b.y1 + 8);
-      if (blocked(nx, ny)) {
-        let open = [
-          [560, 580],
-          [300, 580],
-          [640, 500],
-          [360, 600],
-        ].find((p) => !blocked(p[0], p[1]));
-        open && ((nx = open[0]), (ny = open[1]));
-      }
-      ((n.scene = "QA"),
-        (n.room = "hall"),
-        (n.ch1Party = !0),
-        (n.ch1Raid = null),
+    // K29. A catch shows the lockup card, then restarts the party scene he is in.
+    // The five scenes are the peek, the sneak, the extras, the alarm, and the run home.
+    function ch1ClearPartyRun() {
+      ((n.ch1Raid = null),
         (n.ch1Cut = null),
         (n.ch1Search = !1),
         (n.guard = null),
         (n.ch1OctChase = !1),
         (n.ch1Mini = ""),
-        (n.ch1Fur = !1),
-        n.ch1PartyOver && ((n.ch1PartyOver = !1), (n.ch1Disguise = !0)),
+        (n.ch1Peeking = !1),
+        (n.ch1PlantSneak = null),
+        (n.sq.moving = !1),
         (n.sqPose = "stand"),
-        (n.sq.x = nx),
-        (n.sq.y = ny),
         (n.ctrl = !0),
-        (n.ch1Chip = ""),
         (B.camX = 0));
+    }
+    function ch1RestartPeek() {
+      (ch1ClearPartyRun(),
+        (n.ch1Part = "peek"),
+        (n.scene = "Q1"),
+        (n.room = "closet"),
+        (n.ch1Party = !1),
+        (n.ch1PeekReady = !0),
+        (n.ch1Disguise = !1),
+        (n.ch1PartyOver = !1),
+        (n.ch1Fur = !1),
+        (n.sq.x = 760),
+        (n.sq.y = 520),
+        (n.ch1Chip = "Squatch: peek out the door"),
+        chipNow());
+    }
+    function ch1RestartSneak() {
+      (ch1ClearPartyRun(),
+        (n.ch1Part = "sneak"),
+        (n.scene = "QA"),
+        (n.room = "hall"),
+        (n.ch1Party = !0),
+        (n.ch1Disguise = !1),
+        (n.ch1PartyOver = !1),
+        (n.ch1Fur = !1),
+        (n.ch1PlantSneak = { t: 3, caught: 0, tries: 0 }),
+        (n.sq.x = 470),
+        (n.sq.y = 628),
+        (n.ch1Chip = "Squatch: sneak to the plant"),
+        chipNow());
+    }
+    function ch1RestartExtras() {
+      (ch1ClearPartyRun(),
+        (n.ch1Part = "extras"),
+        (n.scene = "QA"),
+        (n.room = "hall"),
+        (n.ch1Party = !0),
+        (n.ch1Disguise = !0),
+        (n.ch1PartyOver = !1),
+        (n.ch1Fur = !1),
+        (n.ch1Flyer = !1),
+        (n.ch1Balloon = ""),
+        (n.ch1PartyT = 0),
+        (n.sq.x = 560),
+        (n.sq.y = 580),
+        (n.ch1Chip = "Squatch: look around the party"),
+        chipNow());
+    }
+    function ch1RestartAlarm() {
+      (ch1ClearPartyRun(),
+        (n.ch1Part = "alarm"),
+        (n.scene = "QA"),
+        (n.room = "hall"),
+        (n.ch1Party = !0),
+        (n.ch1Disguise = !1),
+        (n.ch1PartyOver = !0),
+        (n.ch1Fur = !0),
+        (n.sq.x = 560),
+        (n.sq.y = 580),
+        (n.ch1Chip = "Squatch: hide from security"),
+        chipNow(),
+        ch1RaidBegin());
+    }
+    function ch1RestartHome() {
+      (ch1ClearPartyRun(),
+        (n.ch1Part = "home"),
+        (n.scene = "QH"),
+        (n.room = "closet"),
+        (n.ch1Party = !1),
+        (n.ch1Search = !0),
+        (n.ch1Disguise = !1),
+        (n.sq.x = 480),
+        (n.sq.y = 520),
+        (n.guard = { x: 900, y: 520, t: 0, seen: 0 }),
+        (n.ch1Chip = "Squatch: hide under the bed"),
+        chipNow());
+    }
+    function ch1RestartParty() {
+      let part = n.ch1Part || "extras";
+      part === "peek"
+        ? ch1RestartPeek()
+        : part === "sneak"
+          ? ch1RestartSneak()
+          : part === "alarm"
+            ? ch1RestartAlarm()
+            : part === "home"
+              ? ch1RestartHome()
+              : ch1RestartExtras();
     }
     function ch1RaidHome() {
       let r = n.ch1Raid;
       if (!r || r.left) return;
-      ((r.left = !0), (n.ch1Party = !1), (n.ch1Raid = null), (n.ctrl = !1), ch1Go("closet", { who: "sq", scene: "Q3" }, ch1SearchStart));
+      ((r.left = !0), (n.ch1Party = !1), (n.ch1Raid = null), (n.ch1Part = "home"), (n.ctrl = !1), ch1Go("closet", { who: "sq", scene: "QH" }, ch1SearchStart));
     }
     function ch1RaidTick(dt) {
       let r = n.ch1Raid;
       if (!r || r.left || n.room !== "hall") return;
       let step = dt || 0,
         hidden = n.sqPose === "hidden" || n.sqPose === "under",
-        atDoor = Math.hypot(n.sq.x - CH1_HOME_DOOR.x, n.sq.y - CH1_HOME_DOOR.y) < 48,
-        stick = oh(),
-        steering = !!n.walkTo || Math.hypot(stick.x, stick.y) > 0.2;
-      if (!steering && !hidden && !atDoor) (mV(n.sq, CH1_HOME_DOOR.x, CH1_HOME_DOOR.y, 260, step), ch1Trail());
+        atDoor = Math.hypot(n.sq.x - CH1_HOME_DOOR.x, n.sq.y - CH1_HOME_DOOR.y) < 48;
+      // He does not run home by himself. The guards search. A catch is the lockup card.
       if (r.phase === "witness") {
         mV(r.witness, CH1_ALARM_AT.x, CH1_ALARM_AT.y, 420, step) &&
           ((r.phase = "search"), D.alarm(), r.guards.push({ x: CH1_GUARD_IN.x, y: CH1_GUARD_IN.y, t: 0, face: Math.PI }));
@@ -153,11 +216,14 @@
       ];
     }
     function ch1SearchStart() {
-      ((n.scene = "Q3"),
+      ((n.ch1Part = "home"),
+        (n.scene = "QH"),
         (n.room = "closet"),
         (n.ch1Search = !0),
         (n.ctrl = !0),
         (n.sqPose = "stand"),
+        (n.ch1Chip = "Squatch: hide under the bed"),
+        chipNow(),
         (n.guard = { x: 900, y: 520, t: 0, seen: 0 }));
     }
     function ch1HideFromGuard() {
@@ -236,7 +302,8 @@
       J([
         ch1Step("sq", 360, 560, 160),
         ch1Step("sq", 520, 560, 160),
-        ch1Step("sq", 680, 540, 160),
+        // 680,540 sits inside the guard's catch. Stop short of him.
+        ch1Step("sq", 620, 540, 160),
         N(() => {
           ((n.ch1Conga = 0), (n.ctrl = !0));
         }),
@@ -269,16 +336,12 @@
         g.t += step;
         let hidden = n.sqPose === "under" || n.sqPose === "hidden";
         hidden ? (g.seen += step) : (g.seen = 0);
-        if (n.ch1Escort) {
-          let home = mV(n.sq, 760, 540, 190, step),
-            back = mV(g, 900, 520, CH1_GUARD_SPEED, step);
-          ((n.sqPose = "stand"), (n.ctrl = !1), home && back && ((n.ch1Escort = !1), (n.ctrl = !0)));
-        } else if (n.ctrl && !hidden) {
+        if (n.ctrl && !hidden) {
           let dx = n.sq.x - g.x,
             dy = n.sq.y - g.y,
             dist = Math.hypot(dx, dy) || 1;
           ((g.x += (dx / dist) * CH1_GUARD_SPEED * step), (g.y += (dy / dist) * CH1_GUARD_SPEED * step));
-          dist < 36 && ((n.ch1Escort = !0), (n.ctrl = !1), D.caught());
+          dist < 36 && capture("home");
         }
         (g.seen > 2 || (hidden && g.t > 8)) && ch1HideFromGuard();
       }

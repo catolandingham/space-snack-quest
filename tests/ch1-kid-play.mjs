@@ -100,6 +100,10 @@ const st = () =>
 
 // What the robot can see of danger: any cone on screen, with a little room to spare.
 const inDanger = (s, x, y) => {
+  // During the extras, walking into the plant, the vent, or the guard is a catch. The robot goes around them.
+  if (s.scene === "QA" && s.chip === "Squatch: look around the party") {
+    for (const [hx, hy] of [[400, 540], [188, 500], [700, 560]]) if (Math.hypot(x - hx, y - hy) < 56) return true;
+  }
   for (const c of s.cones) {
     // Close to a watcher is never safe, whichever way it faces.
     if (Math.hypot(x - c.ox, y - (c.oy + 28)) < 96) return true;
@@ -282,9 +286,10 @@ while (now() < MAX_S) {
   }
   const tag = s.scene + ": " + s.chip;
   if (!seen.scenes.length || seen.scenes[seen.scenes.length - 1][1] !== tag) seen.scenes.push([Math.round(now()), tag]);
-  if (s.curId === "tally") {
+  // The tally card is one tap. If that tap also starts Chapter 2, the next look is already scene G.
+  if (s.curId === "tally" || /^G/.test(s.scene)) {
     end = "tally";
-    say(s, "TALLY CARD: Chapter 1 finished");
+    say(s, s.curId === "tally" ? "TALLY CARD: Chapter 1 finished" : "Chapter 2 started, so Chapter 1 finished");
     await sleep(1500);
     break;
   }
