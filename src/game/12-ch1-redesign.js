@@ -139,7 +139,7 @@
     const CH1_OFFICE_DOOR = { x: 480, y: 286 };
     // Floor guests are the Nov 11 bodies. Horns is Isfred, drawn on the stage only.
     const CH1_GUESTS = [
-      [250, 460, "antenna"],
+      [320, 470, "antenna"],
       [400, 440, "croc"],
       [740, 470, "hat"],
       [200, 610, "hair"],
@@ -1307,9 +1307,7 @@
         }),
         n.ch1Part === "extras" &&
           !n.ch1Raid &&
-          CH1_PARTY_SNAG.filter((h) => h.id === "guard").forEach((stand) => (
-            drawCh1Alien(stand.x, stand.y, "hat", ALIEN_ADULT, -1), glance(stand.x, stand.y)
-          )),
+          CH1_PARTY_SNAG.filter((h) => h.id === "guard").forEach((stand) => hq(stand.x, stand.y, -1, !0)),
         Qt(880, 500, "#c9842a", QT_ADULT, -1),
         drawOctopus((n.ch1Oct && n.ch1Oct.x) || 760, (n.ch1Oct && n.ch1Oct.y) || 555, face || -1),
         drawCh1Fest(),
@@ -1336,9 +1334,15 @@
     // Horns is Isfred on the stage only. He is not also standing in the crowd.
     function drawCh1Alien(ax, ay, kind, sc, face) {
       let f = face < 0 ? -1 : 1,
-        bob = Math.sin(n.T * 2 + ax * 0.01) * 1.5,
-        hang = (half, top, col) => (m(-half - 4, top, 8, 16, 3), r(col, 2), m(half - 4, top, 8, 16, 3), r(col, 2));
-      (e.save(), e.translate(ax, ay + bob), e.scale(sc, sc));
+        dance = n.ch1Part === "extras" && !n.ch1Raid && !n.ch1PartyOver,
+        beat = n.T * 2.4 + ax * 0.02,
+        step = dance ? Math.sin(beat) * 18 : 0,
+        bob = Math.sin(n.T * 2 + ax * 0.01) * 1.5 - (dance ? Math.abs(Math.sin(beat)) * 8 : 0),
+        hang = (half, top, col) => {
+          let lift = dance ? Math.abs(Math.sin(beat + 0.8)) * 10 : 0;
+          (m(-half - 4, top - lift, 8, 16, 3), r(col, 2), m(half - 4, top - lift, 8, 16, 3), r(col, 2));
+        };
+      (e.save(), e.translate(ax + step, ay + bob), dance && e.rotate(Math.sin(beat) * 0.35), e.scale(sc, sc));
       (e.beginPath(), e.ellipse(0, 2, 14, 3.5, 0, 0, 7), (e.fillStyle = "rgba(30,36,48,.16)"), e.fill());
       if (kind === "antenna")
         (m(-9, -48, 18, 42, 8),

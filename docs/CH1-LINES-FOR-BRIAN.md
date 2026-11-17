@@ -13,10 +13,10 @@
 | 184–270 | ## Day 2 onward (beats 22–61), pending |
 | 271–278 | ## Ball hiding |
 | 279–286 | ## Off-screen lines, for Brian (playtest 12) |
-| 287–298 | ## Party scene goals, for Brian (playtest 14) |
-| 299–308 | ## Homework desk, approved Nov 16 |
-| 309–347 | ## Questions still open |
-| 348–373 | ## Day 1 stand-ins, pending |
+| 287–300 | ## Party scene goals, for Brian (playtest 14) |
+| 301–310 | ## Homework desk, approved Nov 16 |
+| 311–349 | ## Questions still open |
+| 350–375 | ## Day 1 stand-ins, pending |
 <!-- /section-index -->
 # Chapter 1 lines for Brian
 
@@ -295,6 +295,8 @@ Each party scene should say its own goal. Two of these are new. The others are a
 - Run home: "Squatch: hide under the bed". New. In the game so you can read it. Say yes, or write the line you want.
 
 The lockup card when the guard catches him at home: "The guard saw Squatch at home. Security caught him." New. Same yes.
+
+A guard catch during the extras or the alarm still says "A tourist saw Squatch in the hall. Security caught him." That shipped line stays until you say yes. Proposed: "A guard saw Squatch at the party. Security caught him."
 
 ## Homework desk, approved Nov 16
 

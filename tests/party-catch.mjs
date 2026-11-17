@@ -217,8 +217,8 @@ g.check("peek: a catch shows the lockup card and restarts the peek", paths.peek.
 g.check("the conga ends clear of the plant, the vent, and the guard", congaClear, { congaEnd, snags });
 const partyDraw = partySrc.slice(partySrc.indexOf("function drawCh1Party"), partySrc.indexOf("function drawCh1Chain"));
 g.check(
-  "the extras guard is drawn on his catch",
-  /ch1Part === "extras"/.test(partyDraw) && partyDraw.includes("CH1_PARTY_SNAG") && partyDraw.includes('"hat"'),
+  "the extras guard is the uniformed guard, not another top hat",
+  /ch1Part === "extras"/.test(partyDraw) && partyDraw.includes("hq(stand.x, stand.y"),
 );
 g.check("no page errors", errors.length === 0, errors);
 await g.finish("party-catch");

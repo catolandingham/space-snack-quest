@@ -36,7 +36,7 @@ This is the list to review. Each row says whether it is for the whole game or on
 | R20 | Chapter 2 | The 24-minute narrated Chapter 2 playtest transcript (`04_24m_transcript.md`). The asks quoted from it are section B of `docs/grok-archive/FEEDBACK-INDEX.md`. The recording is not in this repo. | Awaiting yes. The file is not in this repo, so the asks inside it cannot be confirmed until Brian provides it. |
 | R21 | Chapter 1 | The 88-panel comic. Line wording waits on Brian reading it. The file is not in this repo. | Awaiting yes. |
 | R22 | Whole game | The approved character pictures. What the game draws today is the stand-in. The picture files are not in this repo. | Awaiting yes. |
-| R24 | Chapter 1 | Party extras are the robot dance only. Brian, Nov 16, 4:03 PM PT: "Robot dance only." There is no bouquet toss. | Built on this pull request. The guests lock their arms out during the extras. There is no bouquet. |
+| R24 | Chapter 1 | Party extras are the robot dance only. Brian, Nov 16, 4:03 PM PT: "Robot dance only." There is no bouquet toss. | Built on this pull request. During the extras the guests step and lean, and their arms stay on their bodies. There is no bouquet. |
 | R25 | Whole game | Mops's hearts stop at "...That's his paw" and come back after the apology. Brian, Nov 16, 4:04 PM PT. | Approved, not built. Built with the cone round. |
 
 ## A. Chapter 1 cartoon (the current work)

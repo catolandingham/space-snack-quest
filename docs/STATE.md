@@ -5,18 +5,18 @@
 | --- | --- |
 | 21–23 | # Space Snack Quest: where things stand |
 | 24–30 | ## Fidelity system (new, 9:55 PM PT, Brian t233 / W33) |
-| 31–50 | ## The game |
-| 51–88 | ## Chapter 1 cartoon: panels in story order |
-| 89–104 | ## Open questions from the new panels (for Brian, multiple choice) |
-| 105–109 | ## In progress right now |
-| 110–164 | ## Next |
-| 165–169 | ## Earlier state, kept in full |
-| 170–175 | # Space Snack Quest: state |
-| 176–178 | ## What it is |
-| 179–190 | ## Where things live |
-| 191–227 | ## Open items |
-| 228–232 | ## Next step |
-| 233–237 | ## Paused 2026-11-08 at the credit line |
+| 31–51 | ## The game |
+| 52–89 | ## Chapter 1 cartoon: panels in story order |
+| 90–105 | ## Open questions from the new panels (for Brian, multiple choice) |
+| 106–110 | ## In progress right now |
+| 111–165 | ## Next |
+| 166–170 | ## Earlier state, kept in full |
+| 171–176 | # Space Snack Quest: state |
+| 177–179 | ## What it is |
+| 180–191 | ## Where things live |
+| 192–228 | ## Open items |
+| 229–233 | ## Next step |
+| 234–238 | ## Paused 2026-11-08 at the credit line |
 <!-- /section-index -->
 # Space Snack Quest: where things stand
 Monday, November 9, 2026, through R63. Updated 2026-11-10 after the Chapter 1 redesign and the party landed on `main`. Decisions: `docs/DECISIONS.md`. Open asks: `docs/OPEN-ASKS.md`. Words: `docs/CH1-CARTOON-LINES.md`. Look: `docs/STYLE-GUIDE.md`.
@@ -34,6 +34,7 @@ Monday, November 9, 2026, through R63. Updated 2026-11-10 after the Chapter 1 re
 - 2026-11-13. Pull requests #21 and #23 are on `main`, so the locked rooms and the lunch through the ship are in the live game. Pull request #26 cleaned the docs. The Nov 8 reply sheet and the two audits were checked against `OPEN-ASKS.md`. What was not already written down is section G there. The cook still speaks before she is drawn. The drawing change in pull request #16 was not brought over. The same day Brian approved "TIED TOGETHER FOREVER", "ME" / "MOPS", and "BEEP BEEP", and decided R92–R95: story waits need a tap, a sight is a short hop, Zip calls security, Mops answers the Mars gate bot, and the stage directions are pictures and a sound. At 4:10 AM ET he approved the gate lines "He's with me." and "No thanks. We're getting my goat." and said yes, merge. At 6:12 AM ET he said to build the home song with the old lines, point the bedroom arrows away from the bucket, and remove the keyboard instructions. That is in a pull request and is not merged.
 - Live game = `main` of `catolandingham/space-snack-quest`. Phases 0–3 and the Chapter 1 pass are `10030f6` (PRs #7–#11). The Chapter 1 redesign is on `main` as PR #19 (`aed0c4f`). The party is on `main` as PR #20 (`e0e16d4`). Brian said yes to both on 2026-11-09. On 2026-11-10 he said "Yes, merge PRs #17 and #18." PR #18 is `1e897aa`. PR #17 is `bc0759f`. Render publishes `main`.
 - 2026-11-12, not merged: party security follows K10. Adult head height is 85% of the door in that room (`adultPxFor`). The hall door is 77.9px so the adult head is 66.2px. The office door is 123.4px so the adult head there is 104.9px. Squatch is 80% of the adult in the same room. A room with no door uses the hall. Brian t336u. Do not merge.
+- 2026-11-17: Playtest 15, not merged. The bin slips draw only in the hangar. The extras are a step-and-lean dance. The extras guard is the blue-uniform guard, not another top hat. The teal guest is off the party vent. A proposed guard lockup line is waiting on Brian. Do not merge.
 - 2026-11-17: Playtest 14, not merged. The sneak, the extras, and the run home each show the lockup card, then that scene starts over. Walking into the plant during the extras is that catch, not the alarm. The alarm goal is "Squatch: hide from security". The crowd is the Nov 11 creatures again, each with normal arms. Isfred stays the only horns guest, on the stage. Mops stands off the snack-hall vent, and after the beep Squatch is not on Mops or the lift. Do not merge.
 - 2026-11-16: The party split is this pull request. Playtest 13 is on main as PR #59. Five scenes: peek, sneak, extras, alarm, run home. A catch shows the lockup card, then restarts that scene. The alarm is a guard search, not an automatic run home. The extras are the robot dance. There is no bouquet toss. Cones, hearts, music, and the homework desk stay unbuilt. Do not merge.
 - 2026-11-16: Playtest 13 is on main as PR #59 (Brian, Nov 16, 6:09 PM PT: Yes PR 59). After two feeds, Squatch and Mops stand apart in the snack hall, off the plant pot, and Mops is not in the way of the snack. The Mops name chip is dark text on green. "BEEP BEEP" shows with the UPS robot in the photo hallway. The long goal stays on one line, clear of the party balloon.

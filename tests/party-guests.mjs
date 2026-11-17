@@ -24,6 +24,12 @@ check("the cape guest is its own body", cape);
 check("the cape cloth is the Nov 11 cloth", draw.includes("m(-16, -40, 10, 22, 4)"));
 check("the body is not flipped, only the eye and the croc snout", draw.includes("e.scale(sc, sc)") && draw.includes("F(f * 4") && !draw.includes("e.scale(sc * f, sc)"));
 check("arms hang on the body instead of floating beside it", draw.includes("hang(") && !draw.includes("m(-36, -56"));
+check("the extras are a step-and-lean dance, not a still bob", draw.includes("Math.sin(beat) * 18") && draw.includes("e.rotate(Math.sin(beat) * 0.35)"));
+const guestBlock = src.slice(src.indexOf("const CH1_GUESTS"), src.indexOf("];", src.indexOf("const CH1_GUESTS")));
+const placed = [...guestBlock.matchAll(/\[(\d+), (\d+), "([a-z]+)"\]/g)].map((m) => ({ x: +m[1], y: +m[2], kind: m[3] }));
+const vent = { x0: 150, x1: 220, y0: 450, y1: 530 };
+const onVent = placed.filter((g) => g.x > vent.x0 && g.x < vent.x1 && g.y > vent.y0 && g.y < vent.y1);
+check("no guest stands on the party floor vent", onVent.length === 0, onVent);
 if (failed) {
   console.error("Failed: party guests");
   process.exit(1);

@@ -859,8 +859,8 @@
     function Y2() {
       return n.room === "closet" ? 2.9 : 1.75;
     }
-    function hq(l, o, i) {
-      pf("guard", l, o, i, !0);
+    function hq(l, o, i, quiet) {
+      quiet || pf("guard", l, o, i, !0);
       let s = Y2();
       (e.save(),
         e.translate(l, o),

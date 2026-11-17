@@ -20,6 +20,8 @@ A separate preview site can serve this branch. It is not the live game at space-
 
 Every new line is listed for Brian in `docs/CH1-LINES-FOR-BRIAN.md`. He said yes to merge this chapter before the wording pass was finished, so a line in that file can still change. `tests/ch1-playthrough.mjs` plays this chapter to the tally card.
 
+2026-11-17, not merged: playtest 15. The pink and yellow slips stay in the hangar bin, so they do not cover Squatch after BEEP BEEP. During the extras the guests step and lean, with their arms still hanging on their bodies. The extras guard wears the blue uniform. The teal guest stands off the party vent. Docs match main: yes. Do not merge.
+
 2026-11-17, not merged: playtest 14. Each party catch shows the lockup card and restarts that scene. The party crowd is the Nov 11 creatures again, with normal arms, and Isfred is only on the stage. Mops is off the vent, and the beep no longer stands anyone on the lift. Docs match main: yes. Do not merge.
 
 2026-11-16, not merged: the party is five scenes. A catch shows the lockup card, then that scene starts over. The alarm is a guard search. The extras are the robot dance, and there is no bouquet toss. Cones, hearts, music, and homework stay for later. Docs match main: yes. Do not merge.
