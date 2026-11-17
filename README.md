@@ -20,6 +20,8 @@ A separate preview site can serve this branch. It is not the live game at space-
 
 Every new line is listed for Brian in `docs/CH1-LINES-FOR-BRIAN.md`. He said yes to merge this chapter before the wording pass was finished, so a line in that file can still change. `tests/ch1-playthrough.mjs` plays this chapter to the tally card.
 
+2026-11-16, not merged: playtest 13. After lunch, Squatch and Mops stand apart in the snack hall, off the plant and clear of the snack. The name Mops is dark on the green song chip. "BEEP BEEP" plays with the UPS robot visible. A long goal stays on one line. The party split, cones, hearts, music, and homework desk are written down and not built. Docs match main: yes. Do not merge.
+
 2026-11-16, not merged: playtest 12. Canvas words are at least 14 CSS px at 1024x768 and 768x1024. The Rule #1 tag sits beside Squatch, not on his eyes. He and Mops no longer stand inside each other at the lunch handoff or the snack hall. A bubble is not shown when the speaker is off screen. Docs match main: yes. Do not merge.
 
 2026-11-16, not merged: Brian t342. The small canvas words are 17px, which is at least 14 CSS px on an iPad. REC is white on a dark red plate. The locked pictures were not redrawn. Docs match main: yes. Do not merge.

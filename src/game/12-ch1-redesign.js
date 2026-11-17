@@ -275,9 +275,11 @@
         y0 = Math.round(n.sq.y);
       (!last || last.room !== n.room || Math.abs(last.x - x0) > 8 || Math.abs(last.y - y0) > 8) && t.push({ room: n.room, x: x0, y: y0 });
     }
-    function ch1Move(dt, x, y, speed, who) {
+    function ch1Move(dt, x, y, speed, who, moAt) {
       let sqOk = who === "mo" ? !0 : mV(n.sq, x, y, speed, dt),
-        moOk = who === "sq" ? !0 : mV(n.mo, x + (who === "mo" ? 0 : 48), y, speed, dt);
+        moX = moAt ? moAt[0] : x + (who === "mo" ? 0 : 48),
+        moY = moAt ? moAt[1] : y,
+        moOk = who === "sq" ? !0 : mV(n.mo, moX, moY, speed, dt);
       return (ch1Trail(), sqOk && moOk);
     }
     function ch1Walk(spec, next) {
@@ -302,10 +304,10 @@
             n.room === "hall" && (B.camX = 0),
             n.room === "closet" && (n.tvOn = !1),
             spec.who === "sq" ? (n.moPose = "hidden") : (n.moPose = "stand"),
-            spec.mo && ((n.mo.x = spec.mo[0]), (n.mo.y = spec.mo[1]), (n.moPose = "stand")),
+            spec.mo && spec.who === "sq" && ((n.mo.x = spec.mo[0]), (n.mo.y = spec.mo[1]), (n.moPose = "stand")),
             n.ch1Walks.push({ phase: "in", room: n.room, x: Math.round(n.sq.x), y: Math.round(n.sq.y) }));
         }),
-        cV((dt) => ch1Move(dt, spec.stand[0], spec.stand[1], 260, spec.who)),
+        cV((dt) => ch1Move(dt, spec.stand[0], spec.stand[1], 260, spec.who, spec.who !== "sq" && spec.mo ? spec.mo : null)),
         N(next),
       ]);
     }

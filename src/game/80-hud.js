@@ -271,15 +271,28 @@
         ((g.style.left = "6px"), (g.style.right = "6px"), (g.style.transform = "none"));
         return;
       }
-      ((g.style.left = "50%"), (g.style.right = "auto"), (g.style.transform = "translateX(-50%)"));
       hud.where.style.top = hud.faces.style.top = "6px";
+      // One line, in the open gap between the side zones, so a long goal does not drop onto the picture.
       let wr = hud.where.offsetLeft + hud.where.offsetWidth,
         fl = hud.faces.offsetWidth ? hud.faces.offsetLeft : W - 6,
-        gap = 10,
-        room = 2 * Math.min(W / 2 - wr, fl - W / 2) - 2 * gap;
-      ((hud.chip.style.fontSize = W < 600 ? "14px" : "20px"), (g.style.maxWidth = Math.max(0, room) + "px"), (g.style.top = "6px"));
-      if (room < 220 || hud.chip.offsetWidth > room) {
+        pad = 8,
+        spanLeft = wr + pad,
+        spanRight = fl - pad,
+        span = spanRight - spanLeft,
+        size = W < 600 ? 14 : 20;
+      ((hud.chip.style.whiteSpace = "nowrap"),
+        (hud.chip.style.width = "max-content"),
+        (hud.chip.style.maxWidth = "none"),
+        (hud.chip.style.fontSize = size + "px"),
+        (g.style.maxWidth = "none"),
+        (g.style.top = "6px"));
+      while (size > 14 && span > 40 && hud.chip.offsetWidth > span) ((size -= 1), (hud.chip.style.fontSize = size + "px"));
+      if (span > 40 && hud.chip.offsetWidth <= span + 1) {
+        let mid = (spanLeft + spanRight) / 2;
+        ((g.style.left = mid + "px"), (g.style.right = "auto"), (g.style.transform = "translateX(-50%)"), (g.style.maxWidth = span + "px"), (g.style.top = "6px"));
+      } else {
+        ((g.style.left = "50%"), (g.style.right = "auto"), (g.style.transform = "translateX(-50%)"));
         let below = Math.max(hud.where.offsetTop + hud.where.offsetHeight, hud.faces.offsetTop + hud.faces.offsetHeight) + 6;
-        ((g.style.maxWidth = W - 12 + "px"), (g.style.top = below + "px"));
+        ((hud.chip.style.maxWidth = "100%"), (g.style.maxWidth = W - 12 + "px"), (g.style.top = below + "px"));
       }
     }

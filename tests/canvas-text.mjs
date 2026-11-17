@@ -271,6 +271,13 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
       office,
     );
   }
+  const mopsChip = screens
+    .filter((screen) => screen.name === "song")
+    .flatMap((screen) => screen.texts.filter((t) => t.text === "Mops" && t.ink && t.behind).map((t) => ratio(t.ink, t.behind)));
+  const worst = mopsChip.length ? Math.min(...mopsChip) : 0;
+  if (!(worst >= 4.5))
+    failures.push({ size: sizeName, screen: "song", text: "Mops", reason: "contrast", detail: (worst || 0).toFixed(2) + ":1, want 4.5" });
+  g.check(sizeName + ": the Mops name chip is at least 4.5:1", worst >= 4.5, worst.toFixed(2));
   await page.close();
 }
 

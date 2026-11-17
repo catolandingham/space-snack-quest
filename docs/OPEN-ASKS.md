@@ -13,21 +13,21 @@ This is the list to review. Each row says whether it is for the whole game or on
 
 | # | Scope | Ask | Status |
 | --- | --- | --- | --- |
-| R1 | Whole game | Cone rule (Brian, Nov 11, t332). Only guards and robots show vision cones. An ordinary guest shows "?" over their head, and that turns to "!" when they spot Squatch. | Approved, not built. The Nov 14 "dashed cone on everyone" line in the walkthrough and in problem 11 is superseded. |
+| R1 | Whole game | Cone rule (Brian, Nov 16, 4:02 PM PT). "Everyone who can see him gets a faint dashed cone that fills yellow when he's inside." | Approved, not built. This supersedes the Nov 11 rule (only guards and robots; guests show "?" then "!") and DECISIONS C14. Built with the heart round, not on this pull request. |
 | R2 | Chapter 1 | SNAG, SUCK, STAND, HUG and SNAP stop being buttons (Brian, Nov 16, 11:50 AM PT). They become things you walk into. Getting too close to the vent, a plant, or a guard takes the disguise off. The octopus approaches slowly and hugs only if it reaches him. The photo happens by walking into the photo corner. The conga and the dance are joined by walking in. | Approved, not built. Its own round, after this docs pass. |
 | R3 | Chapter 1 | Security sees through any disguise (PR #35, R100). Brian: "Perfect disguise never works for security." | Approved, not built. |
 | R4 | Chapter 1 | Three disguise levels (PR #35, R102). | Approved, not built. |
 | R5 | Chapter 1 | The alarm ladder: "!" then "?" then the alarm (PR #35, R100 and R102). | Approved, not built. |
 | R6 | Chapter 1 | Losing one piece of the disguise drops him to partial (PR #35, R103). | Approved, not built. |
 | R7 | Chapter 1 | A bigger, brighter heart cone for Mops (PR #35, R104). Hearts should act like the "!" marks. The cone also lights up sooner than Brian wants (problem 8). | Built in PR #35. Not merged. |
-| R8 | Whole game | Every catch, in every chapter, present and future: the lockup card, then restart the current scene. Long scenes, such as the party, are split into shorter ones. Brian, Nov 16, 12:50 PM PT: "Every catch: jail card, then restart the current scene; split long scenes like the party into shorter ones." | Approved, not built. Supersedes the Nov 13 bedroom release (PR #38, R106) and the Nov 14 "set back a little where he was caught" rule, including what commit cb87185 built. That catch code stays until the scene split is approved. |
-| R23 | Chapter 1 | Proposal: split the party into short scenes, each with its own restart point. For example: the peek, the sneak to the plant, the party extras, the alarm, and the run home. After "FUR! Security!" Squatch runs home by himself. There is no security catch at the party. | Awaiting yes. The catch rebuild waits on this yes. Not changed in this round. |
+| R8 | Whole game | Every catch, in every chapter, present and future: the lockup card, then restart the current scene. Long scenes, such as the party, are split into shorter ones. Brian, Nov 16, 12:50 PM PT: "Every catch: jail card, then restart the current scene; split long scenes like the party into shorter ones." | Approved, not built. The party split itself is approved (R23). Supersedes the Nov 13 bedroom release (PR #38, R106) and the Nov 14 "set back a little where he was caught" rule. That set-back code stays until the next pull request builds the split. |
+| R23 | Chapter 1 | Split the party into five scenes, each with its own restart point: the peek, the sneak to the plant, the party extras, the alarm, and the run home. Brian, Nov 16, 4:02 PM PT: "Yes, split the party into those five scenes." The alarm scene gets a real security catch (guards search, a catch is jail) instead of Squatch running home by himself. | Approved, not built. Next pull request, before the cones. |
 | R9 | Chapter 1, beat 1 | Closet look. | Approved, not built. PR #58 records the look and its lines as approved. |
 | R10 | Chapter 1, beat 1 | Bed flop. | Approved, not built. PR #58 records the flop and its lines as approved. |
-| R11 | Chapter 1, beat 1 | Desk homework. It passes time until evening. The words go in the lines file before they are built. | The transition is approved. The words are awaiting yes. |
+| R11 | Chapter 1, beat 1 | Desk homework. Brian, Nov 16, 4:05 PM PT: "DO · homework, no line, then 'That evening…'." | Approved, not built. The words are in `docs/CH1-LINES-FOR-BRIAN.md`. Built after the cone and heart round. |
 | R12 | Chapter 1, beat 1 | Purple bed bar. | Awaiting yes. |
 | R13 | Chapter 1, beat 1 | Mop bucket. | Awaiting yes. Mops's beard is still his mop; there is no separate mop prop. |
-| R14 | Chapter 1, beat 1 | Music in the bedroom. | Awaiting yes. |
+| R14 | Chapter 1 | Opening-room music. Brian, Nov 16, 4:05 PM PT: "Quiet until the goodbye song, Joe's theme at the title and heart moments." | Approved, not built. Built with the homework desk, after the cone and heart round. |
 | R15 | Chapter 1 | Party picture fix 2. Snack bar: bartender behind the counter, no extra snacks, a hiding spot behind the counter when she is gone (R107). | Approved, not built. |
 | R16 | Chapter 1 | Party picture fix 3. Guests face the stage, stand taller than Squatch, stay off the vent, and stay out of the doorway. | Approved, not built. |
 | R17 | Chapter 1 | Party picture fix 4. Remove the stray arrow, move the photo corner off the door, and make the octopus and the camera read. | Approved, not built. |
@@ -36,6 +36,8 @@ This is the list to review. Each row says whether it is for the whole game or on
 | R20 | Chapter 2 | The 24-minute narrated Chapter 2 playtest transcript (`04_24m_transcript.md`). The asks quoted from it are section B of `docs/grok-archive/FEEDBACK-INDEX.md`. The recording is not in this repo. | Awaiting yes. The file is not in this repo, so the asks inside it cannot be confirmed until Brian provides it. |
 | R21 | Chapter 1 | The 88-panel comic. Line wording waits on Brian reading it. The file is not in this repo. | Awaiting yes. |
 | R22 | Whole game | The approved character pictures. What the game draws today is the stand-in. The picture files are not in this repo. | Awaiting yes. |
+| R24 | Chapter 1 | Party extras are the robot dance only. Brian, Nov 16, 4:03 PM PT: "Robot dance only." There is no bouquet toss. | Approved, not built. Built with the party split, on the next pull request. |
+| R25 | Whole game | Mops's hearts stop at "...That's his paw" and come back after the apology. Brian, Nov 16, 4:04 PM PT. | Approved, not built. Built with the cone round. |
 
 ## A. Chapter 1 cartoon (the current work)
 | # | Ask | Status | Confidence |

@@ -27,7 +27,11 @@ const out = await page.evaluate(() => {
   const mop = say("mops", "Just a fuzzy mop! Very fuzzy.");
   n.room = "passage";
   n.ch1D = false;
+  n.ch1Beep = false;
   const beep = say("ups", "BEEP BEEP");
+  n.ch1Beep = true;
+  const beepOn = say("ups", "BEEP BEEP");
+  n.ch1Beep = false;
   n.sqPose = "hidden";
   n.sq.x = 220;
   n.sq.y = 530;
@@ -38,10 +42,11 @@ const out = await page.evaluate(() => {
   const here = say("mops", "You have me.");
   n.moPose = "hidden";
   const ear = say("mops", "Security's voice.", true);
-  return { mop, beep, hide, here, ear };
+  return { mop, beep, beepOn, hide, here, ear };
 });
 g.check("an off-screen Mops gets no bubble", !out.mop.up && out.mop.skipped, out.mop);
-g.check("the UPS beep in the hallway gets no bubble", !out.beep.up && out.beep.skipped, out.beep);
+g.check("the UPS beep stays hidden until the robot is drawn", !out.beep.up && out.beep.skipped, out.beep);
+g.check("the UPS beep shows when the robot is in the hallway", out.beepOn.up && !out.beepOn.skipped, out.beepOn);
 g.check("hiding Squatch still gets his line", out.hide.up && !out.hide.skipped, out.hide);
 g.check("Mops on screen still gets his line", out.here.up && !out.here.skipped, out.here);
 g.check("an overheard line still shows", out.ear.up && !out.ear.skipped, out.ear);

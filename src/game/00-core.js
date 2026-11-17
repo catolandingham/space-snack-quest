@@ -1009,11 +1009,11 @@
     }
     function speakerDrawn(who) {
       // A bubble needs the speaker in the picture. Hiding Squatch is still in the picture (the bubble sits on his spot).
-      // Mops who is hidden or off the picture, and the UPS robot outside the hangar, are not.
+      // Mops who is hidden or off the picture is not. The UPS robot counts when the hangar crew is out, or when the photo-wall beep draws him.
       if (who === "pa") return !0;
       if (who === "mops") return n.moPose !== "hidden" && n.mo.x > 20 && n.mo.x < 940 && n.mo.y > 40 && n.mo.y < 620;
       if (who === "sq") return n.sq.x > -20 && n.sq.x < 980 && n.sq.y > 0 && n.sq.y < 640;
-      if (who === "ups") return !!(n.room === "hangar" && n.ch1D);
+      if (who === "ups") return !!(n.room === "hangar" && n.ch1D) || !!n.ch1Beep;
       return !0;
     }
     function gp(l) {

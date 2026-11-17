@@ -3,18 +3,19 @@
 
 | Lines | Heading |
 | --- | --- |
-| 19–20 | # Chapter 1 lines for Brian |
-| 21–36 | ## Calendar revision, Nov 16 (PR 58, not live) |
-| 37–44 | ## Earlier chapter lines |
-| 45–59 | ## Goal chips |
-| 60–143 | ## What people say |
-| 144–157 | ## Words painted on things |
-| 158–181 | ## Buttons |
-| 182–268 | ## Day 2 onward (beats 22–61), pending |
-| 269–276 | ## Ball hiding |
-| 277–283 | ## Off-screen lines, for Brian (playtest 12) |
-| 284–322 | ## Questions still open |
-| 323–348 | ## Day 1 stand-ins, pending |
+| 20–21 | # Chapter 1 lines for Brian |
+| 22–37 | ## Calendar revision, Nov 16 (PR 58, not live) |
+| 38–45 | ## Earlier chapter lines |
+| 46–60 | ## Goal chips |
+| 61–144 | ## What people say |
+| 145–158 | ## Words painted on things |
+| 159–182 | ## Buttons |
+| 183–269 | ## Day 2 onward (beats 22–61), pending |
+| 270–277 | ## Ball hiding |
+| 278–285 | ## Off-screen lines, for Brian (playtest 12) |
+| 286–295 | ## Homework desk, approved Nov 16 |
+| 296–334 | ## Questions still open |
+| 335–360 | ## Day 1 stand-ins, pending |
 <!-- /section-index -->
 # Chapter 1 lines for Brian
 
@@ -279,7 +280,18 @@ On the night mailbox he can roll into a ball anywhere. On escape night the only 
 These lines were spoken with nobody on screen. The game no longer shows that bubble. The words are unchanged. Cut them, move them, or leave them for when that person is in the room.
 
 - Mops, after a catch, when he is not in the room: "Just a fuzzy mop! Very fuzzy." / "Shedding season." and the other mop jokes in that same list ("Nothing to see! Just my rug.", "It walks. Fancy rug.", "Whoa! Biggest dust bunny EVER.", "I'll mop it up!", "That's my mop's winter coat.", "Very fashionable.").
-- The UPS robot, in the photo hallway, where no robot is drawn: "BEEP BEEP".
+
+"BEEP BEEP" is back in the photo hallway, with the UPS robot on screen. It is not on this list.
+
+## Homework desk, approved Nov 16
+
+Brian, Nov 16, 4:05 PM PT: "DO · homework, no line, then 'That evening…'."
+
+- The button is `DO · homework`.
+- There is no spoken line.
+- Then the card already in the game: "That evening…".
+
+Approved. Not built on this pull request. It is built after the cone and heart round.
 
 ## Questions still open
 

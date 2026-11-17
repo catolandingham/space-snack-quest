@@ -5,18 +5,18 @@
 | --- | --- |
 | 21–23 | # Space Snack Quest: where things stand |
 | 24–30 | ## Fidelity system (new, 9:55 PM PT, Brian t233 / W33) |
-| 31–47 | ## The game |
-| 48–85 | ## Chapter 1 cartoon: panels in story order |
-| 86–101 | ## Open questions from the new panels (for Brian, multiple choice) |
-| 102–106 | ## In progress right now |
-| 107–161 | ## Next |
-| 162–166 | ## Earlier state, kept in full |
-| 167–172 | # Space Snack Quest: state |
-| 173–175 | ## What it is |
-| 176–187 | ## Where things live |
-| 188–224 | ## Open items |
-| 225–229 | ## Next step |
-| 230–234 | ## Paused 2026-11-08 at the credit line |
+| 31–48 | ## The game |
+| 49–86 | ## Chapter 1 cartoon: panels in story order |
+| 87–102 | ## Open questions from the new panels (for Brian, multiple choice) |
+| 103–107 | ## In progress right now |
+| 108–162 | ## Next |
+| 163–167 | ## Earlier state, kept in full |
+| 168–173 | # Space Snack Quest: state |
+| 174–176 | ## What it is |
+| 177–188 | ## Where things live |
+| 189–225 | ## Open items |
+| 226–230 | ## Next step |
+| 231–235 | ## Paused 2026-11-08 at the credit line |
 <!-- /section-index -->
 # Space Snack Quest: where things stand
 Monday, November 9, 2026, through R63. Updated 2026-11-10 after the Chapter 1 redesign and the party landed on `main`. Decisions: `docs/DECISIONS.md`. Open asks: `docs/OPEN-ASKS.md`. Words: `docs/CH1-CARTOON-LINES.md`. Look: `docs/STYLE-GUIDE.md`.
@@ -34,7 +34,8 @@ Monday, November 9, 2026, through R63. Updated 2026-11-10 after the Chapter 1 re
 - 2026-11-13. Pull requests #21 and #23 are on `main`, so the locked rooms and the lunch through the ship are in the live game. Pull request #26 cleaned the docs. The Nov 8 reply sheet and the two audits were checked against `OPEN-ASKS.md`. What was not already written down is section G there. The cook still speaks before she is drawn. The drawing change in pull request #16 was not brought over. The same day Brian approved "TIED TOGETHER FOREVER", "ME" / "MOPS", and "BEEP BEEP", and decided R92–R95: story waits need a tap, a sight is a short hop, Zip calls security, Mops answers the Mars gate bot, and the stage directions are pictures and a sound. At 4:10 AM ET he approved the gate lines "He's with me." and "No thanks. We're getting my goat." and said yes, merge. At 6:12 AM ET he said to build the home song with the old lines, point the bedroom arrows away from the bucket, and remove the keyboard instructions. That is in a pull request and is not merged.
 - Live game = `main` of `catolandingham/space-snack-quest`. Phases 0–3 and the Chapter 1 pass are `10030f6` (PRs #7–#11). The Chapter 1 redesign is on `main` as PR #19 (`aed0c4f`). The party is on `main` as PR #20 (`e0e16d4`). Brian said yes to both on 2026-11-09. On 2026-11-10 he said "Yes, merge PRs #17 and #18." PR #18 is `1e897aa`. PR #17 is `bc0759f`. Render publishes `main`.
 - 2026-11-12, not merged: party security follows K10. Adult head height is 85% of the door in that room (`adultPxFor`). The hall door is 77.9px so the adult head is 66.2px. The office door is 123.4px so the adult head there is 104.9px. Squatch is 80% of the adult in the same room. A room with no door uses the hall. Brian t336u. Do not merge.
-- 2026-11-16: Playtest 12, not merged. Type is 14 CSS px at 1024x768 and 768x1024. Rule #1 is off his eyes. He does not stand inside Mops at lunch or the snack hall. Off-screen bubbles are hidden. The party still has no security catch after "FUR! Security!"; that waits on the party split. Do not merge.
+- 2026-11-16: Playtest 13, not merged. After two feeds, Squatch and Mops stand apart in the snack hall, off the plant pot, and Mops is not in the way of the snack. The Mops name chip is dark text on green. "BEEP BEEP" shows with the UPS robot in the photo hallway. The long goal stays on one line, clear of the party balloon. The party split, the catch rebuild, the robot dance, the cones, the hearts, the quiet opening, and the homework desk are approved and not built. Do not merge.
+- 2026-11-16: Playtest 12, not merged. Type is 14 CSS px at 1024x768 and 768x1024. Rule #1 is off his eyes. He does not stand inside Mops at lunch or the snack hall. Off-screen bubbles are hidden. The party still has no security catch after "FUR! Security!"; that waits on the next pull request. Do not merge.
 - 2026-11-16: Brian t341. Reports use the handover note. Long docs have a section index. Canvas text is checked at iPad size and known failures are listed, not restyled. Tuning numbers are pinned. The office cutscene shows the white robot beside Isfred, both on the floor. Do not merge.
 - 2026-11-16: Brian t342. The small canvas words are 17px on the picture, at least 14 CSS px on an iPad. REC is white on a dark red plate drawn in code. Locked room pictures were not redrawn. Do not merge.
 - 2026-11-16: `docs/OPEN-ASKS.md` is the one review list. The cone rule (t332), the party walk-into buttons, the beat 1 asks, party picture fixes 2–6, and the missing transcript, comic and character pictures are on it. PR #35's disguise rules and heart cone are marked approved there. Brian, Nov 16, 12:50 PM PT (K29): every catch is the lockup card, then restart the current scene. Long scenes such as the party are split. The bedroom release (PR #38) and the "set back where he was caught" rule (Nov 14, and commit cb87185) are superseded. That catch code stays until Brian approves the scene split. The split is awaiting yes. Older sections of that file stay as history. iPad pictures of pull requests 57 and 58 are in `docs/audit-shots/final/beat1/`. Do not merge.

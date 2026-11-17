@@ -109,7 +109,8 @@
       ((n.ch1Fed = 2), (n.ch1Hold = ""), ch1CloseZoom(ch1AfterLunch));
     }
     function ch1AfterLunch() {
-      ch1GoDay("hall", { who: "both", scene: "Q3", stand: [480, 520], mo: [760, 520] }, () => {
+      // Squatch stands left of the snack, off the plant pot. Mops stands on the open left floor, not on the door and not in the way.
+      ch1GoDay("hall", { who: "both", scene: "Q3", stand: [620, 580], mo: [240, 560] }, () => {
         ((n.ctrl = !1),
           J([
             v("mops", "I know you, Squatch, you're probably hungry... you know the rule, grab one snack."),
@@ -194,7 +195,9 @@
         { k: "card", id: "gag4", text: "TIED TOGETHER FOREVER" },
         N(() => (n.ch1Crayon = !0)),
         { k: "card", id: "gag5", text: "Mops, and a ball of fur in the back." },
+        N(() => (n.ch1Beep = !0)),
         v("ups", "BEEP BEEP"),
+        N(() => (n.ch1Beep = !1)),
         ch1Step("sq", 480, 540, 220),
         N(() => ch1Ready("photos", "Squatch: go on", "QB")),
       ]);
@@ -872,6 +875,7 @@
         r("#fffdf8", 3),
         g("ME", 640, 142, 17, "#1e2430", "center", 800),
         g("MOPS", 640, 170, 17, "#1e2430", "center", 800));
+      n.ch1Beep && !n.ch1Office && drawMailRobot(860, 520);
       n.ch1Step === "photos" &&
         !n.ch1Office &&
         (e.save(),

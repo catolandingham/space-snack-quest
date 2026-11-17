@@ -19,7 +19,7 @@
 | 339–373 | ## 8. Code, controls and process |
 | 374–420 | ## 9. Open / waiting on Brian |
 | 421–515 | ## 10. Earlier entries, kept word for word |
-| 516–611 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 516–612 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -175,7 +175,7 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 | C11 | 11-08 | The current alien sprites are fine for the workers and the manager. Guests need variety: some humanoids mixed with clearly different aliens. | memory | Decided |
 | C12 | 11-08 | **Guests approved:** `spr_guest_01`–`05` (teal-jacket woman, Hawaiian-shirt camera tourist, three-eyed backpacker, stilt-legged purple alien, octopus tourist) and `06` (robot tourist), plus the guests we already had. `07` (jelly) and `08` (furry alien) weren't picked. | Brian t214; sketch-ref-guest-lineup.png (was sketch-07-guest-lineup.png; renamed 11-08 so 07 is only the night-mailbox panel) | Decided |
 | C13 | 11-04 | Characters keep the same size and drawings in cutscenes as in gameplay, unless the camera clearly zooms. | memory (Nov 4) | Decided |
-| C14 | 11-04 | Vision cones: everyone but Mops has a cone and pops a "!" on seeing Squatch. Mops has a warm cone that pops a heart. All cones vanish on Mars. | memory (Nov 4) | Decided (the newer colour idea is O26) |
+| C14 | 11-04 | Vision cones: everyone but Mops has a cone and pops a "!" on seeing Squatch. Mops has a warm cone that pops a heart. All cones vanish on Mars. | memory (Nov 4) | Superseded by Brian, Nov 16, 4:02 PM PT: everyone who can see him gets a faint dashed cone that fills yellow when he is inside. Approved, not built. |
 | C15 | 11-04 | Getting spotted can be funny instead of always a security chase (a robot vacuums his fur, a tourist bot's flash, mistaken for a rug), with one funny version per chapter and a clear way out. | memory (Nov 4) | Decided (direction) |
 | C16 | 11-03 | The security guard wears a fun outfit and can actually catch him. If caught, Squatch goes back and retries. | memory (Nov 3) | Decided |
 | C17 | 11-08 | Rusty's red "R" cap becomes a grease cap with a fuel-drop badge (D13). | answered | Decided |
@@ -367,7 +367,7 @@ Each panel's on-screen words are in CH1-CARTOON-LINES.md. Which files are curren
 | K26 | 11-08 | Scene 2: the "sing along with Mops" goal disappears once he has sung. | memory | Decided. On 2026-11-13 the chip stays until "I'm floating in space!" and "Baaa-aa-aaa!" have played, then it clears. |
 | K27 | 11-03 | Drop redundant "tap" hints when a NEXT button is visible. NEXT pulses gently after a few idle seconds. | memory (Nov 3) | Decided |
 | K28 | 11-07 | Picture text under 14 px on a phone gets its own pass, and Brian sees it on his phone first. | repo; OPEN-ASKS E8 | Decided (not started) |
-| K29 | 11-16 | **Every catch, in every chapter, present and future.** The lockup card shows, then the current scene restarts. Long scenes, such as the party, are split into shorter ones, each with its own restart point. Brian: "Every catch: jail card, then restart the current scene; split long scenes like the party into shorter ones." This supersedes the Nov 13 bedroom release (PR #38, R106) and the "set back a little where he was caught" rule (Sat Nov 14, 6:59 AM, and the 12:49 PM PT wording the same day). The party catch on this branch still sets him back (commit cb87185). That code stays until Brian approves the scene split. | Brian, Nov 16, 12:50 PM PT | Decided. Not built. The party split is a proposal awaiting yes. |
+| K29 | 11-16 | **Every catch, in every chapter, present and future.** The lockup card shows, then the current scene restarts. Long scenes, such as the party, are split into shorter ones, each with its own restart point. Brian: "Every catch: jail card, then restart the current scene; split long scenes like the party into shorter ones." This supersedes the Nov 13 bedroom release (PR #38, R106) and the "set back a little where he was caught" rule (Sat Nov 14, 6:59 AM, and the 12:49 PM PT wording the same day). Brian, Nov 16, 4:02 PM PT: "Yes, split the party into those five scenes" (the peek, the sneak to the plant, the party extras, the alarm, and the run home). The set-back code stays until the next pull request builds it. | Brian, Nov 16, 12:50 PM PT; split yes 4:02 PM PT | Approved. Not built on this pull request. |
 
 ---
 
@@ -600,6 +600,7 @@ These lines were added to the 2026-11-08 snapshot (now `docs/old/history/DECISIO
 - 2026-11-16: A catch at the party stays in the party. Brian, 2026-11-14: after the jail card, set Squatch back a little and let play carry on. No guard walks into the bedroom. Scene QA restarts in the hall, the search is cleared, and a Chapter 1 scene with no checkpoint no longer restores the old opening.
   **Superseded** by K29 (Nov 16, 12:50 PM PT): the lockup card, then restart the current scene. The code from that commit stays until Brian approves the scene split. Not a yes to merge.
 
+- 2026-11-16: Decisions recorded, not built, so this pull request can merge sooner. Brian, Nov 16, 4:02 PM PT: the party splits into the peek, the sneak to the plant, the party extras, the alarm, and the run home. The alarm gets a real security catch. Same minute: everyone who can see Squatch gets a faint dashed cone that fills yellow when he is inside. That supersedes the Nov 11 cone rule and C14. 4:03 PM PT: party extras are the robot dance only, and there is no bouquet toss. 4:04 PM PT: hearts stop at "...That's his paw" and come back after the apology. 4:05 PM PT: the opening room stays quiet until the goodbye song, and Joe's theme plays at the title and at heart moments. Same minute: the homework desk is "DO · homework", no spoken line, then "That evening…". Build order after this pull request: (1) the party split, the catch rule, the security catch, and the robot dance; (2) the cones and Mops's hearts; (3) the music and the homework desk. Not a yes to merge.
 - 2026-11-16: Text minimum (Brian t342). Canvas words that failed the iPad check are 17px on the 960-wide picture, which is at least 14 CSS px on an iPad upright and sideways. The words are unchanged. The gift card, the photo labels, the party banner, the Coming Soon poster, the speaker-name chip, and the tape REC plate were enlarged in code. The locked room pictures were not redrawn. REC is white on a dark red plate so it clears 3:1 (the monitor behind it is light gray, so a brighter red on that gray would have been harder to read).
   **Decided.** Not a yes to merge.
 

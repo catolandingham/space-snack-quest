@@ -1101,6 +1101,7 @@
       if ((l === "robot" || l === "bot") && n.ch1Office && n.room === "office") return { x: 280, y: 400 };
       if ((l === "robot" || l === "bot") && n.ch1Office) return { x: 640, y: 490 };
       if (l === "scanner") return n.room === "hangar" && n.ch1Ship ? { x: 465, y: 340 } : { x: Ha.x, y: 170 };
+      if (l === "ups" && n.ch1Beep) return { x: 860, y: 450 };
       if (l === "ups" && n.ch1Crew === "tease") return { x: 480, y: 380 };
       if (l === "ups" && n.room === "hangar" && n.ch1D) return { x: 878, y: 430 };
       if (l === "kid" && n.ch1Party) return { x: CH1_KID.x, y: CH1_KID.y - 90 };
@@ -1168,6 +1169,8 @@
     }
     let mq = [];
     function bq(l, o) {
+      // The photo-wall heading sits at the top of the hallway. A bubble must not cover it.
+      n.room === "passage" && !n.ch1Office && !mq.some((box) => box[4] === "header") && mq.push([250, 28, 460, 110, "header"]);
       if (((n.maxB = Math.max(n.maxB, ++qq)), l.style === "pa")) {
         let CV = zt(l.text, 520, 30);
         ge(30);
@@ -1267,7 +1270,7 @@
         let CV = pa[l.who];
         ge(17);
         let NV = e.measureText(CV).width + 26;
-        (m(_ + 16, $ - 18, NV, 32, 12), r(Ds[l.who], 3), g(CV, _ + 16 + NV / 2, $ - 2, 17, "#ffffff"));
+        (m(_ + 16, $ - 18, NV, 32, 12), r(Ds[l.who], 3), g(CV, _ + 16 + NV / 2, $ - 2, 17, l.who === "mops" ? "#1e2430" : "#ffffff"));
       }
       if (ear) {
         let CV = _ + 22,
