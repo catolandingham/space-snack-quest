@@ -1,3 +1,22 @@
+<!-- section-index -->
+**Section index.** Read this index, then only the section you need. Do not read this file whole.
+
+| Lines | Heading |
+| --- | --- |
+| 20–21 | # Chapter 1 lines for Brian |
+| 22–37 | ## Calendar revision, Nov 16 (PR 58, not live) |
+| 38–45 | ## Earlier chapter lines |
+| 46–60 | ## Goal chips |
+| 61–144 | ## What people say |
+| 145–158 | ## Words painted on things |
+| 159–182 | ## Buttons |
+| 183–269 | ## Day 2 onward (beats 22–61), pending |
+| 270–277 | ## Ball hiding |
+| 278–285 | ## Off-screen lines, for Brian (playtest 12) |
+| 286–295 | ## Homework desk, approved Nov 16 |
+| 296–334 | ## Questions still open |
+| 335–360 | ## Day 1 stand-ins, pending |
+<!-- /section-index -->
 # Chapter 1 lines for Brian
 
 ## Calendar revision, Nov 16 (PR 58, not live)
@@ -255,6 +274,24 @@ Decided (R43). When Squatch is balled up, a robot notices him only if it stays w
 Standing and walking are unchanged. The night robot still uses the hall robot's cone: 210 pixels long, half-angle 0.42, and a 70-pixel circle at his feet. Those are not the ball constants. A plant hides completely. A ball is never noticed in a spot where standing would be safe, and a robot that only passes through the circle does not notice him.
 
 On the night mailbox he can roll into a ball anywhere. On escape night the only ball button is beside the vent, and that one always works because it is the story.
+
+## Off-screen lines, for Brian (playtest 12)
+
+These lines were spoken with nobody on screen. The game no longer shows that bubble. The words are unchanged. Cut them, move them, or leave them for when that person is in the room.
+
+- Mops, after a catch, when he is not in the room: "Just a fuzzy mop! Very fuzzy." / "Shedding season." and the other mop jokes in that same list ("Nothing to see! Just my rug.", "It walks. Fancy rug.", "Whoa! Biggest dust bunny EVER.", "I'll mop it up!", "That's my mop's winter coat.", "Very fashionable.").
+
+"BEEP BEEP" is back in the photo hallway, with the UPS robot on screen. It is not on this list.
+
+## Homework desk, approved Nov 16
+
+Brian, Nov 16, 4:05 PM PT: "DO · homework, no line, then 'That evening…'."
+
+- The button is `DO · homework`.
+- There is no spoken line.
+- Then the card already in the game: "That evening…".
+
+Approved. Not built on this pull request. It is built after the cone and heart round.
 
 ## Questions still open
 

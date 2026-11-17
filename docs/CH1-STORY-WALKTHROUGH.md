@@ -1,3 +1,101 @@
+<!-- section-index -->
+**Section index.** Read this index, then only the section you need. Do not read this file whole.
+
+| Lines | Heading |
+| --- | --- |
+| 99–107 | # Chapter 1: the story, beat by beat (words only) |
+| 108–110 | ## Day 1: the party |
+| 111–124 | ### 1. Meet Squatch `UPDATED t-nov14` |
+| 125–134 | ### 2. Their song, then Mops leaves `UPDATED t-nov14` |
+| 135–147 | ### 3. The peek `UPDATED t-nov14` |
+| 148–155 | ### 4. Sneak in and hide `UPDATED` |
+| 156–167 | ### 5. Isfred's announcement `UPDATED` |
+| 168–176 | ### 6. The Croc Boys `UPDATED` |
+| 177–189 | ### 7. The dress-up game `UPDATED` |
+| 190–198 | ### 8. Into the party `UPDATED t303u` |
+| 199–205 | ### 9. A real party `UPDATED` |
+| 206–214 | ### 10. Dance mini-game `UPDATED t296u` |
+| 215–226 | ### 11. Karaoke: the Moon Pie song `UPDATED t302u` |
+| 227–236 | ### 12. Juke the octopus `UPDATED t296u` |
+| 237–245 | ### 13. The photo corner `UPDATED t296u` |
+| 246–255 | ### 14. Snack trips: the bar cut-in and the pyramid `UPDATED t308u` |
+| 256–264 | ### 15. The balloon |
+| 265–274 | ### 16. The disguise comes off `UPDATED t303u` |
+| 275–283 | ### 17. FUR! Security! `UPDATED t303u` |
+| 284–290 | ### 18. Run home; security searches the room `UPDATED t328u` |
+| 291–299 | ### 19. Mops comes home: "You have me" `UPDATED` |
+| 300–308 | ### 20. The TV story |
+| 309–317 | ### 21. Bedtime story: why Moon Pies `UPDATED t310u` |
+| 318–319 | ## Day 2: lunch and the first delivery |
+| 320–330 | ### 22. A gift from the Guardians `UPDATED t311u` |
+| 331–339 | ### 23. The calendar: delivery day |
+| 340–348 | ### 24. Mops forgot his lunch |
+| 349–355 | ### 25. Sneak the lunch to Mops |
+| 356–365 | ### 26. "My lunch! You're the best." |
+| 366–374 | ### 27. One snack, behind the counter |
+| 375–385 | ### 28. The ship is coming |
+| 386–392 | ### 29. Walk to the loading bay |
+| 393–399 | ### 30. The robots arrive |
+| 400–407 | ### 31. The promise |
+| 408–416 | ### 32. Three copies `UPDATED t311u` |
+| 417–426 | ### 33. "Delicious." `UPDATED t311u` |
+| 427–435 | ### 34. Gumbling `UPDATED t311u` |
+| 436–443 | ### 35. Spit into the bin `UPDATED t311u` |
+| 444–453 | ### 36. Walk home past the robots |
+| 454–465 | ### 37. The Employee of the Month wall |
+| 466–475 | ### 38. Missing Moon Pies and a pancake brochure `UPDATED t311u` |
+| 476–485 | ### 39. Other Sasquatches? `UPDATED t311u` |
+| 486–493 | ### 40. The Mars talk |
+| 494–499 | ### 41. Lights out `UPDATED t311u` |
+| 500–509 | ### 42. Night one: the paw order `UPDATED t312u` |
+| 510–511 | ## One week later: the escape |
+| 512–518 | ### 43. "Six days later" |
+| 519–527 | ### 44. The robots tease Mops |
+| 528–535 | ### 45. "Let's go find that pancake place" |
+| 536–544 | ### 46. The almost-slip |
+| 545–551 | ### 47. Sneak to the vent |
+| 552–564 | ### 48. Mops's secret workstation `UPDATED t312u` |
+| 565–573 | ### 49. Grab the pink slip `UPDATED t311u` |
+| 574–580 | ### 50. The office keypad |
+| 581–590 | ### 51. Return empty crate |
+| 591–600 | ### 52. Take all the snacks `UPDATED t311u` |
+| 601–602 | ## Pickup day: leaving Stormtop |
+| 603–608 | ### 53. Packing the crate |
+| 609–615 | ### 54. The robots open a crate |
+| 616–622 | ### 55. Mops warns him |
+| 623–631 | ### 56. The goat costume |
+| 632–640 | ### 57. Last walk: POP! and the keepsake |
+| 641–649 | ### 58. Through the scanner |
+| 650–661 | ### 59. Where's Mops? |
+| 662–670 | ### 60. The security tapes |
+| 671–678 | ### 61. The call to the ship |
+| 679–680 | ## Open questions |
+| 681–684 | ### 1. CLOSED: hiding first, then the disguise from the home wardrobe |
+| 685–687 | ### 2. CLOSED: "Everybody has somebody" moved to the homecoming |
+| 688–690 | ### 3. CLOSED: robot dancing |
+| 691–697 | ### 4. The "Cool hat!" fallback |
+| 698–701 | ### 5. Where is Mops at lunch? |
+| 702–705 | ### 6. Does the calendar replace the loudspeaker announcement? |
+| 706–708 | ### 7. CLOSED: the bedtime story |
+| 709–711 | ### 8. CLOSED: the Guardians gift (toy and note) |
+| 712–714 | ### 9. What pulls Isfred away after signing? (O15) |
+| 715–718 | ### 10. CLOSED: the paw print and the pink sheet (t311u) |
+| 719–721 | ### 25. CLOSED: why Mops thinks Mars is a waste of time |
+| 722–724 | ### 11. The crate on pickup day |
+| 725–727 | ### 12. The hallway exit in the party hall |
+| 728–730 | ### 13. Walking home |
+| 731–733 | ### 14. Waiting at the vent |
+| 734–737 | ### 17. The dance and karaoke games: scope |
+| 738–740 | ### 21. Squatch on the stage |
+| 741–743 | ### 22. Many snacks at the party vs the one-snack rule |
+| 744–746 | ### 18. Isfred's desk nameplate |
+| 747–750 | ### 20. Does the dress-up outfit carry over to the party? (for the coding later) |
+| 751–753 | ### 19. Dim lights at the party |
+| 754–757 | ### 23. Snacks can now cost the disguise |
+| 758–761 | ### 24. Other cut-ins (t308u) |
+| 762–764 | ### 15. Numbers and words still waiting |
+| 765–787 | ## What the comic v9 got wrong |
+<!-- /section-index -->
 # Chapter 1: the story, beat by beat (words only)
 For Brian · v2, Tuesday, November 10, 2026 · built from the agreed story in DECISIONS.md, not from the comic.
 
@@ -171,7 +269,7 @@ Mops is at work. Squatch is home alone.
 - **Words:**
   - A guest: "Cool hat!" *(pending (Brian questioned it))*
 - **Player:** Avoid the risky spots for as long as you can.
-- **How everyone shows they can see him `UPDATED 2026-11-14`:** decided by Brian in chat on Nov 14. Every character who can see Squatch (guests, the bartender, guards, robots) has a light dashed outline of a cone, not filled. It fills in yellow when Squatch steps inside it. This is the rule in every scene, not only the party. It replaces his Nov 12 pick (t332u: cones only on guards and robots, guests show a "?" then a "!"). Not built yet. See problem 11 in `docs/CHAPTER-1-PROBLEMS.md`.
+- **How everyone shows they can see him `UPDATED 2026-11-16`:** **Superseded.** The Nov 14 dashed-cone line below is not the rule. Brian, Nov 11 (t332): only guards and robots show vision cones. An ordinary guest shows "?" over their head, and that turns to "!" when they spot Squatch. Approved, not built. The older wording is kept here as history: decided by Brian in chat on Nov 14. Every character who can see Squatch (guests, the bartender, guards, robots) has a light dashed outline of a cone, not filled. It fills in yellow when Squatch steps inside it. This is the rule in every scene, not only the party. It replaces his Nov 12 pick (t332u: cones only on guards and robots, guests show a "?" then a "!"). Not built yet. See problem 11 in `docs/CHAPTER-1-PROBLEMS.md`.
 <sub>S14 S15 R73 R79 · Brian note P3 · v1 beat 11</sub>
 
 ### 17. FUR! Security! `UPDATED t303u`

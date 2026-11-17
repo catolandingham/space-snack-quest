@@ -8,7 +8,7 @@ New here? Read docs/START-HERE.md first: what matters now (Chapter 1), the ranke
 ## Code
 - Source is src/. index.html is build output: never edit it by hand. Build: npm run build.
 - Tests: npm test (all). One suite: node tests/<name>.mjs. Chrome is found on a Mac; else set CHROME.
-- Debug: index.html?ch=2&phase=wash1&debug=1 opens a checkpoint with the state strip. ?scene=P3 opens a scene.
+- Debug: index.html?ch=2&phase=wash1&debug=1 opens a checkpoint with the state strip. ?scene=P3 opens a scene. On localhost, ?beat=day2 opens Day 2. The live site ignores it.
 - Find code by quoted anchors, not line numbers. Rename only with npm run rename.
 
 ## Brian's design rules (full text: docs/REVIEW-RULES.md)
@@ -52,3 +52,6 @@ New here? Read docs/START-HERE.md first: what matters now (Chapter 1), the ranke
 - Every PR updates README.md and docs/MASTER-BACKLOG.md and says "Docs match main: yes."
 - Report to Brian in plain English in chat: what the player will notice, one screenshot, the verify output.
 - No merge or deploy without Brian's yes, written in the PR.
+- Reports and PR bodies use `docs/HANDOVER-TEMPLATE.md`. Anything not checked is NOT ASSESSED, never passed. End with "Not yet played by a person" unless `QA-LOG.md` covers that commit.
+- Big docs have a section index. Read the index and one section (`node scripts/md-section.mjs extract <file> "<heading>"`). Do not read `docs/DECISIONS.md`, `docs/CH1-LINES-FOR-BRIAN.md`, `docs/MASTER-BACKLOG.md`, `docs/STATE.md`, or `docs/CH1-STORY-WALKTHROUGH.md` whole unless asked.
+- `docs/TUNING-PINS.json` is the approved numbers. Changing one needs Brian's written yes in the PR, called out in the PR body.

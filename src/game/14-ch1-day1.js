@@ -29,6 +29,48 @@
         vt(n.sq.x, n.sq.y - 20, g.x, g.y - 28, g.face, STAND_CONE_HALF, STAND_CONE_LEN)
       );
     }
+    // A catch at the party used to restore the old opening (O1), so the goal said
+    // "walk around the room" and nothing led forward. Brian, 2026-11-14: put him
+    // back a little, in the party, and let play carry on. No guard in the bedroom.
+    function ch1RestartParty() {
+      let x = n.sq.x,
+        y = n.sq.y;
+      if (!(x > 40 && x < 920 && y > 320 && y < 610)) ((x = 560), (y = 580));
+      // Step toward the open floor in front of the crowd, not into the plant pot.
+      let dx = 560 - x,
+        dy = 580 - y,
+        dist = Math.hypot(dx, dy) || 1,
+        step = Math.min(48, dist),
+        nx = x + (dx / dist) * step,
+        ny = y + (dy / dist) * step,
+        blocked = (px, py) => ch1PartySolids().some((b) => px > b.x0 - 8 && px < b.x1 + 8 && py > b.y0 - 8 && py < b.y1 + 8);
+      if (blocked(nx, ny)) {
+        let open = [
+          [560, 580],
+          [300, 580],
+          [640, 500],
+          [360, 600],
+        ].find((p) => !blocked(p[0], p[1]));
+        open && ((nx = open[0]), (ny = open[1]));
+      }
+      ((n.scene = "QA"),
+        (n.room = "hall"),
+        (n.ch1Party = !0),
+        (n.ch1Raid = null),
+        (n.ch1Cut = null),
+        (n.ch1Search = !1),
+        (n.guard = null),
+        (n.ch1OctChase = !1),
+        (n.ch1Mini = ""),
+        (n.ch1Fur = !1),
+        n.ch1PartyOver && ((n.ch1PartyOver = !1), (n.ch1Disguise = !0)),
+        (n.sqPose = "stand"),
+        (n.sq.x = nx),
+        (n.sq.y = ny),
+        (n.ctrl = !0),
+        (n.ch1Chip = ""),
+        (B.camX = 0));
+    }
     function ch1RaidHome() {
       let r = n.ch1Raid;
       if (!r || r.left) return;
@@ -201,11 +243,12 @@
       ]);
     }
     function ch1Chicken() {
-      ((n.ctrl = !1), (n.act = null), (n.ch1Chicken = 2.2));
+      // A silent wait showed NEXT with no words. The flap plays on its own, and his feet move.
+      ((n.ctrl = !1), (n.act = null), (n.ch1Chicken = 0));
       J([
-        uV(2.2),
+        cV((dt) => ((n.ch1Chicken += dt), (n.sq.moving = !0), (n.sq.walk = n.ch1Chicken * 14), n.ch1Chicken >= 2.2)),
         N(() => {
-          ((n.ch1Chicken = 0), (n.ctrl = !0));
+          ((n.ch1Chicken = 0), (n.sq.walk = 0), (n.sq.moving = !1), (n.ctrl = !0));
         }),
       ]);
     }
@@ -294,7 +337,7 @@
       let left = 6 - (n.ch1Cheese || 0);
       left < 3 &&
         left > 0 &&
-        (g(String(Math.ceil(left)), 820, 300, 28, "#e5533d", "center", 900), g("Say cheese!", 820, 332, 16, "#1e2430", "center", 800));
+        (g(String(Math.ceil(left)), 180, 230, 28, "#e5533d", "center", 900), g("Say cheese!", 180, 266, 18, "#1e2430", "center", 800));
       n.ch1Flash > 0 && ((e.fillStyle = "rgba(255,255,255," + Math.min(0.85, n.ch1Flash * 4) + ")"), e.fillRect(0, 0, c, b));
     }
     function drawCh1Guard() {

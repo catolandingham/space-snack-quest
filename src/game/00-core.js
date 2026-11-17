@@ -601,8 +601,14 @@
       for (let s = 2; s < l.length; s += 2) e.lineTo(l[s], l[s + 1]);
       ((e.strokeStyle = o), (e.lineWidth = i), (e.lineCap = "round"), (e.lineJoin = "round"), e.stroke());
     }
+    function textFloor(l) {
+      // 14 CSS px on the real iPad (1024x768 and 768x1024). The canvas is 960 wide.
+      let w = e.canvas && e.canvas.clientWidth,
+        scale = w ? w / c : 1;
+      return Math.max(l || 0, Math.ceil(14 / Math.min(1, Math.max(scale, 0.5))));
+    }
     function ge(l, o = 800) {
-      e.font = o + " " + l + "px " + f;
+      e.font = o + " " + textFloor(l) + "px " + f;
     }
     function Us(l) {
       (p.shown.size > 3e4 && p.shown.clear(), p.shown.add(l));
@@ -1001,7 +1007,20 @@
       // A story wait (uV) is a tap, like a card. Wordless walks still use "until" and play on their own.
       return !!l && (l.k === "bub" || l.k === "card" || l.k === "panel" || l.k === "fb" || l.k === "wait");
     }
+    function speakerDrawn(who) {
+      // A bubble needs the speaker in the picture. Hiding Squatch is still in the picture (the bubble sits on his spot).
+      // Mops who is hidden or off the picture is not. The UPS robot counts when the hangar crew is out, or when the photo-wall beep draws him.
+      if (who === "pa") return !0;
+      if (who === "mops") return n.moPose !== "hidden" && n.mo.x > 20 && n.mo.x < 940 && n.mo.y > 40 && n.mo.y < 620;
+      if (who === "sq") return n.sq.x > -20 && n.sq.x < 980 && n.sq.y > 0 && n.sq.y < 640;
+      if (who === "ups") return !!(n.room === "hangar" && n.ch1D) || !!n.ch1Beep;
+      return !0;
+    }
     function gp(l) {
+      if (l && l.k === "bub" && l.b && !l.b.ear && !speakerDrawn(l.b.who)) {
+        ((n.cur = null), Dt("offscreen", l.b.who, l.b.text, "skip"));
+        return;
+      }
       ((n.cur = l),
         (n.bt = 0),
         l.k === "bub" && l.b.text.startsWith("Nobody can live outside") && _i("banish"),

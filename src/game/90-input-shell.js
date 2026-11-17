@@ -29,6 +29,8 @@
         return;
       }
       if (p.state === "op" && (n.ch1PadOn || n.ch1Zoom || n.ch1Cut || (n.ch1Dress && n.ch1Dress.on))) {
+        // A bubble or a card still goes away on a tap. The snack bar used to swallow that tap.
+        if (de()) return void nf();
         ch1SlicePointer("down", l, o);
         ch1Day2Pointer("down", l, o);
         return;
@@ -63,6 +65,8 @@
     //   ?ch=2               start Chapter 2 from the title, even if it is still locked
     //   ?ch=2&phase=wash1   then jump to that Chapter 2 checkpoint (the applyG table; ?phase alone means Chapter 2)
     //   ?scene=P3           start that scene's chapter, then call window.__ss.sceneP3
+    //   ?beat=42            on a preview host only, open that Chapter 1 beat
+    //   ?beat=day2          on localhost or a preview host, open Day 2 at the gift in the closet. The live site ignores it.
     //   &debug=1            show the state strip under the game; the backtick key hides and shows it
     function debugLink() {
       let q;
@@ -75,13 +79,19 @@
         linkPhase = q.get("phase") || "",
         linkScene = q.get("scene") || "",
         linkDebug = q.get("debug") === "1",
-        linkBeat = parseInt(q.get("beat") || "", 10) || 0;
-      let previewBeat = !1;
+        linkBeatRaw = q.get("beat") || "",
+        linkBeat = parseInt(linkBeatRaw, 10) || 0,
+        linkDay2 = linkBeatRaw === "day2";
+      let previewBeat = !1,
+        day2Jump = !1;
       try {
-        let host = location.hostname || "";
-        previewBeat = !!linkBeat && host !== "space-snack-quest.onrender.com" && host !== "localhost" && host !== "127.0.0.1" && host !== "";
+        let host = location.hostname || "",
+          live = host === "space-snack-quest.onrender.com",
+          local = host === "localhost" || host === "127.0.0.1" || host === "";
+        previewBeat = !!linkBeat && !live && !local;
+        day2Jump = linkDay2 && !live;
       } catch {}
-      if (!linkCh && !linkPhase && !linkScene && !linkDebug && !previewBeat) return;
+      if (!linkCh && !linkPhase && !linkScene && !linkDebug && !previewBeat && !day2Jump) return;
       !linkCh && linkPhase && (linkCh = 2);
       !linkCh && linkScene && (linkCh = { O: 1, S: 1, Q: 1, G: 2, P: 3, M: 4 }[linkScene[0]] || 0);
       setTimeout(() => {
@@ -96,6 +106,7 @@
         }
         linkDebug && debugStrip();
         previewBeat && (startStory(1), (n.q = []), (n.cur = null), ch1JumpBeat(linkBeat));
+        day2Jump && (startStory(1), (n.q = []), (n.cur = null), ch1Day2Begin());
       }, 0);
     }
     function roomLine(text) {

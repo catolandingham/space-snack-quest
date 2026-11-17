@@ -1,0 +1,4 @@
+{
+  "todo": "No known canvas-text failures. Size is checked at 1024x768 and 768x1024. The Mops name chip is also checked at 4.5:1.",
+  "known": []
+}

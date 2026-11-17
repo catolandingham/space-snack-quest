@@ -1,3 +1,26 @@
+<!-- section-index -->
+**Section index.** Read this index, then only the section you need. Do not read this file whole.
+
+| Lines | Heading |
+| --- | --- |
+| 24–26 | # Space Snack Quest: every decision, in one place |
+| 27–34 | ## How to use this file |
+| 35–39 | ## Latest calendar direction, 2026-11-16 |
+| 40–42 | ## Vent walk, 2026-11-16 |
+| 43–45 | ## Locked home room v5, 2026-11-16 |
+| 46–55 | ## Fidelity system (pictures are locked, not just words) |
+| 56–93 | ## 1. Working rules |
+| 94–160 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 161–185 | ## 3. Characters and look |
+| 186–262 | ## 4. Look, rooms and layout |
+| 263–284 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 285–328 | ## 6. Later chapters (2–4 and travel) |
+| 329–338 | ## 7. Audio |
+| 339–373 | ## 8. Code, controls and process |
+| 374–420 | ## 9. Open / waiting on Brian |
+| 421–515 | ## 10. Earlier entries, kept word for word |
+| 516–612 | ## 11. Decisions recorded on main on 2026-11-09 |
+<!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
 
@@ -152,7 +175,7 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 | C11 | 11-08 | The current alien sprites are fine for the workers and the manager. Guests need variety: some humanoids mixed with clearly different aliens. | memory | Decided |
 | C12 | 11-08 | **Guests approved:** `spr_guest_01`–`05` (teal-jacket woman, Hawaiian-shirt camera tourist, three-eyed backpacker, stilt-legged purple alien, octopus tourist) and `06` (robot tourist), plus the guests we already had. `07` (jelly) and `08` (furry alien) weren't picked. | Brian t214; sketch-ref-guest-lineup.png (was sketch-07-guest-lineup.png; renamed 11-08 so 07 is only the night-mailbox panel) | Decided |
 | C13 | 11-04 | Characters keep the same size and drawings in cutscenes as in gameplay, unless the camera clearly zooms. | memory (Nov 4) | Decided |
-| C14 | 11-04 | Vision cones: everyone but Mops has a cone and pops a "!" on seeing Squatch. Mops has a warm cone that pops a heart. All cones vanish on Mars. | memory (Nov 4) | Decided (the newer colour idea is O26) |
+| C14 | 11-04 | Vision cones: everyone but Mops has a cone and pops a "!" on seeing Squatch. Mops has a warm cone that pops a heart. All cones vanish on Mars. | memory (Nov 4) | Superseded by Brian, Nov 16, 4:02 PM PT: everyone who can see him gets a faint dashed cone that fills yellow when he is inside. Approved, not built. |
 | C15 | 11-04 | Getting spotted can be funny instead of always a security chase (a robot vacuums his fur, a tourist bot's flash, mistaken for a rug), with one funny version per chapter and a clear way out. | memory (Nov 4) | Decided (direction) |
 | C16 | 11-03 | The security guard wears a fun outfit and can actually catch him. If caught, Squatch goes back and retries. | memory (Nov 3) | Decided |
 | C17 | 11-08 | Rusty's red "R" cap becomes a grease cap with a fuel-drop badge (D13). | answered | Decided |
@@ -324,8 +347,8 @@ Each panel's on-screen words are in CH1-CARTOON-LINES.md. Which files are curren
 | K6 | 11-08 | E15: both faces always show, and the one you can't switch to is greyed. | answered | Decided (P4, not built) |
 | K7 | 11-07 | Reset is a small hold-to-use ↺. After 60 seconds with no progress, the goal chip shows the method line. | repo | Decided for the current game (see K8 and O32) |
 | K8 | 11-08 | Hints: try an escalating tap-for-hint (goal → place → exact action) plus a hints on/off setting in the rebuilt first scenes. No idle auto-hints. | Brian 3:19 PM | Decided (words not written) |
-| K9 | 11-07 | One capture rule everywhere: sighting → security → lockup card with the cause → restart the section, coins kept. | repo | Decided |
-| K10 | 11-08 | Security is consistent: when he's seen, a witness runs to the wall alarm, then security comes and actually catches him. He can run back to the room, and security chases him in. Cut the 9-second home countdown; the guard enters half a second after reaching the door. One rule everywhere, pending a full code trace (P1). | Brian 4:04 PM, 4:33 PM | Decided. Party hall uses it (witness, then guards, `capture('s6')` or the existing home search). Other chapters still wait on the trace. |
+| K9 | 11-07 | One capture rule everywhere: sighting → security → lockup card with the cause → restart the section, coins kept. | repo | Superseded in part by K29. The lockup card stays. "Restart the section" becomes "restart the current scene" after long scenes are split. |
+| K10 | 11-08 | Security is consistent: when he's seen, a witness runs to the wall alarm, then security comes and actually catches him. He can run back to the room, and security chases him in. Cut the 9-second home countdown; the guard enters half a second after reaching the door. One rule everywhere, pending a full code trace (P1). | Brian 4:04 PM, 4:33 PM | Superseded in part by K29. A witness may still run to the alarm. Where a catch puts him is K29, not a walk into the bedroom. |
 | K11 | 11-07 | Tap to walk: a tap advances a bubble or card when one is up, and walks only when nothing is up. | repo | Decided |
 | K12 | 11-08 | Keep both the joystick and tap-to-move, with the joystick where it is. | memory; video notes | Decided |
 | K13 | 11-07 | The phone HUD: bar above the picture, or an overlay? | repo (open then) | Superseded by K14 |
@@ -344,6 +367,7 @@ Each panel's on-screen words are in CH1-CARTOON-LINES.md. Which files are curren
 | K26 | 11-08 | Scene 2: the "sing along with Mops" goal disappears once he has sung. | memory | Decided. On 2026-11-13 the chip stays until "I'm floating in space!" and "Baaa-aa-aaa!" have played, then it clears. |
 | K27 | 11-03 | Drop redundant "tap" hints when a NEXT button is visible. NEXT pulses gently after a few idle seconds. | memory (Nov 3) | Decided |
 | K28 | 11-07 | Picture text under 14 px on a phone gets its own pass, and Brian sees it on his phone first. | repo; OPEN-ASKS E8 | Decided (not started) |
+| K29 | 11-16 | **Every catch, in every chapter, present and future.** The lockup card shows, then the current scene restarts. Long scenes, such as the party, are split into shorter ones, each with its own restart point. Brian: "Every catch: jail card, then restart the current scene; split long scenes like the party into shorter ones." This supersedes the Nov 13 bedroom release (PR #38, R106) and the "set back a little where he was caught" rule (Sat Nov 14, 6:59 AM, and the 12:49 PM PT wording the same day). Brian, Nov 16, 4:02 PM PT: "Yes, split the party into those five scenes" (the peek, the sneak to the plant, the party extras, the alarm, and the run home). The set-back code stays until the next pull request builds it. | Brian, Nov 16, 12:50 PM PT; split yes 4:02 PM PT | Approved. Not built on this pull request. |
 
 ---
 
@@ -569,3 +593,19 @@ These lines were added to the 2026-11-08 snapshot (now `docs/old/history/DECISIO
 
 - 2026-11-11: R84. Chapter 1 beats 22–61 use the walkthrough defaults where a question was still open. Mops is in the hallway at lunch. The calendar shows delivery morning, and the PA still says the ship is here. A robot calls Isfred away because a crate is damaged in the mail room. Squatch posts the yellow copy, then a cutscene sends the pink sheet into the vent. He hides that pink slip in the Guardian Box after the office. On pickup day the Moon Pie crate is already loaded and is not in the scanner shot. The hallway door is the north end of the party hall's right wall. Mops walks him to the snack bar, then goes back to work, and Squatch walks home. He waits at the vent as the L2 ball. The office code on the pink slip is 4723, the same digits already drawn on the old keypad. The keepsake gives no points until Brian picks a number. Lunch guests use the night robot's cone (210, 0.42, 70) so no new sight number was invented. Joe's warm theme is still the generated stand-in. None of this is a yes to merge.
   **Decided** as the build default. The words and the open questions stay pending for Brian. R67–R83 are already numbered in the 2026-11-10 planning record (the walkthrough and the decisions copy). This row does not reuse those numbers.
+
+- 2026-11-16: Process checks (Brian t341), borrowed as ideas, not files. Every report uses the handover note (`docs/HANDOVER-TEMPLATE.md`): PASSED, FAILED, NOT ASSESSED, GUESSED, and "Not yet played by a person" unless a QA log covers that commit. Anything not checked is NOT ASSESSED, never passed. Long docs carry a section index, and agents read one section. `tests/canvas-text.mjs` records on-screen canvas words at the iPad sizes and flags type under 14 CSS px, contrast under 3:1, text off the canvas, and overlap over 25% of the smaller box. It does not change words, sizes, or layout; known failures wait for Brian. `docs/TUNING-PINS.json` pins the approved numbers, including the 85% door rule and Squatch at 80% of an adult. Changing a pin needs Brian's written yes in the PR.
+  **Decided.** Not a yes to merge.
+
+- 2026-11-16: A catch at the party stays in the party. Brian, 2026-11-14: after the jail card, set Squatch back a little and let play carry on. No guard walks into the bedroom. Scene QA restarts in the hall, the search is cleared, and a Chapter 1 scene with no checkpoint no longer restores the old opening.
+  **Superseded** by K29 (Nov 16, 12:50 PM PT): the lockup card, then restart the current scene. The code from that commit stays until Brian approves the scene split. Not a yes to merge.
+
+- 2026-11-16: Decisions recorded, not built, so this pull request can merge sooner. Brian, Nov 16, 4:02 PM PT: the party splits into the peek, the sneak to the plant, the party extras, the alarm, and the run home. The alarm gets a real security catch. Same minute: everyone who can see Squatch gets a faint dashed cone that fills yellow when he is inside. That supersedes the Nov 11 cone rule and C14. 4:03 PM PT: party extras are the robot dance only, and there is no bouquet toss. 4:04 PM PT: hearts stop at "...That's his paw" and come back after the apology. 4:05 PM PT: the opening room stays quiet until the goodbye song, and Joe's theme plays at the title and at heart moments. Same minute: the homework desk is "DO · homework", no spoken line, then "That evening…". Build order after this pull request: (1) the party split, the catch rule, the security catch, and the robot dance; (2) the cones and Mops's hearts; (3) the music and the homework desk. Not a yes to merge.
+- 2026-11-16: Text minimum (Brian t342). Canvas words that failed the iPad check are 17px on the 960-wide picture, which is at least 14 CSS px on an iPad upright and sideways. The words are unchanged. The gift card, the photo labels, the party banner, the Coming Soon poster, the speaker-name chip, and the tape REC plate were enlarged in code. The locked room pictures were not redrawn. REC is white on a dark red plate so it clears 3:1 (the monitor behind it is light gray, so a brighter red on that gray would have been harder to read).
+  **Decided.** Not a yes to merge.
+
+- 2026-11-16: A party catch steps toward the open floor, not into the plant pot. The old step toward the middle of the room could leave him standing in the pot. He still stays in the party.
+  **Decided.** Not a yes to merge.
+
+- 2026-11-16: `docs/OPEN-ASKS.md` is the one review list. Each unbuilt ask says whether it is for the whole game or one chapter, and whether it is approved, awaiting yes, or built in a pull request. The older sections of that file stay as history. Brian, Nov 11 (t332): only guards and robots show vision cones; a guest shows "?" then "!". That supersedes the Nov 14 dashed cone on everyone. The party buttons SNAG, SUCK, STAND, HUG and SNAP are approved to become things you walk into (Nov 16, 11:50 AM PT) and are not built in this pull request. iPad pictures of pull requests 57 and 58 are in `docs/audit-shots/final/beat1/`. Security seeing through a disguise, the three disguise levels, the alarm ladder, and losing one piece (PR #35, R100, R102, R103) are approved and not built. The bigger heart cone is built in PR #35 and not merged. Brian, Nov 16, 12:50 PM PT (K29): every catch, in every chapter, present and future, shows the lockup card, then restarts the current scene. Long scenes such as the party are split into shorter ones. That supersedes the Nov 13 bedroom release (PR #38) and the Nov 14 "set back a little where he was caught" rule, including what commit cb87185 built. The catch code stays until Brian approves the scene split. On localhost, `?beat=day2` opens Day 2 at the gift in the closet. The live site ignores it. This branch is rebased onto main after pull requests 58 and 57 and is not merged. Playtest 12: canvas words are at least 14 CSS px at 1024×768 and 768×1024. A bubble is not drawn when its speaker is off screen. Squatch and Mops do not stand inside each other at the lunch handoff or the snack hall. The party still auto-runs home after "FUR! Security!"; a security catch there waits on the party split.
+  **Decided.** Not a yes to merge.

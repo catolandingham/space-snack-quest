@@ -1,3 +1,22 @@
+<!-- section-index -->
+**Section index.** Read this index, then only the section you need. Do not read this file whole.
+
+| Lines | Heading |
+| --- | --- |
+| 20–23 | # Master backlog |
+| 24–49 | ## Where main is (Chapter 1 redesign) |
+| 50–64 | ## Register |
+| 65–86 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 87–107 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 108–120 | ## Phase 2 (plan section 4, T13 to T18) |
+| 121–143 | ## Phase 1 (plan section 3, T5 to T12) |
+| 144–157 | ## SS40–SS44 |
+| 158–175 | ## Story rows |
+| 176–194 | ## Reset section |
+| 195–205 | ## Still open |
+| 206–209 | ## Chapter 1 replot, recorded and not built |
+| 210–318 | ## Changelog |
+<!-- /section-index -->
 # Master backlog
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
@@ -207,6 +226,18 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 2026-11-16. Bedroom calendar (Brian: "Let’s make the calendar Tappsble, that’s fine - create a closeup view. Try to add something funny." / "No need for a clip. Focus on the other items."). Tap the visible calendar in the opening room or use LOOK beside the wardrobe. A close-up matches the locked calendar's red pin, red strip, 5-by-4 grid and circled Moon Pie. Tap the printed snack for a scalloped bite out of the paper and paper crumbs; the delivery clue stays recognizable. X or the existing NEXT button closes it. The scene and queue pause while inspecting; reopening remembers the bite until a new game. Day 2 uses the same close-up and resumes the existing lunch sequence on close. No new words; no locked image changes. Test: `tests/calendar-closeup.mjs`, plus updated story-route and target checks. PR 57 is separate, not merged. Docs match main: yes.
 
 2026-11-16. Opening-room decisions retained from Brian's prior approval: closet look "Mops's costumes. And my Guardian Box."; bed flop then hop up, "Not sleepy anymore." The desk is homework, not "Mops's work lists. Boring."; homework is to pass time after Mops's goodbye until evening. Homework wording still needs Brian's yes. These looks and homework are NOT implemented by the calendar change. TV waits for beat 20. The floating purple bed bar, bucket readability/carrying, and music remain open. Do not treat this calendar PR or PR 57 as sign-off on the whole beat.
+
+2026-11-16. Playtest 13, not merged. The snack hall walk no longer ends with Squatch inside Mops or on the plant pot. The Mops name chip clears 4.5:1. "BEEP BEEP" is back, with the robot on screen and off the photo heading. The longest goal stays on one line. Brian's Nov 16, 4:02–4:05 PM PT decisions are recorded and not built: the five-scene party split, the dashed yellow cones, robot dance only, hearts pausing at "...That's his paw", quiet until the goodbye song, and "DO · homework" then "That evening…". Next pull request builds the split first. Docs match main: yes. Do not merge.
+
+2026-11-16. Playtest 12, not merged. Canvas words meet 14 CSS px at the real iPad sizes 1024x768 and 768x1024. The Rule #1 tag is beside Squatch. Lunch handoff and snack hall keep him out of Mops. Off-screen speakers get no bubble; those lines are listed for Brian. The chicken dance plays without a blank NEXT. Docs match main: yes. Do not merge.
+
+2026-11-16. Text size, Brian t342, not merged. The small canvas words are 17px, at least 14 CSS px on an iPad. REC is white on a dark red plate. Boxes drawn in code grew so the words stay inside them. Locked pictures were not redrawn. Docs match main: yes. Do not merge.
+
+2026-11-16. Docs only. `docs/OPEN-ASKS.md` is the one review list: scope and status on each row, older sections kept as history. The Nov 14 dashed-cone line is superseded by Brian's Nov 11 cone rule (t332). PR #35's disguise rules are approved and not built. The bigger heart cone is built in PR #35. Brian, Nov 16, 12:50 PM PT (K29): every catch is the lockup card, then restart the current scene. Long scenes such as the party are split. PR #38 and the set-back rule (Nov 14, commit cb87185) are superseded. The catch code stays. On localhost, `?beat=day2` opens Day 2 at the gift. iPad pictures of pull requests 57 and 58 are in `docs/audit-shots/final/beat1/`. Docs match main: yes. Do not merge.
+
+2026-11-16. A party catch stays in the party, on the open floor rather than in the plant, instead of restarting the bedroom with no way forward. Docs match main: yes. Do not merge.
+
+2026-11-16. Process checks, Brian t341, not merged. Handover note, section index on the long docs, canvas-text check (known failures wait for Brian; no word or size changes), and tuning pins. The office cutscene robot is the white robot beside Isfred, on the floor. Docs match main: yes. Do not merge.
 
 2026-11-15. New words, Brian yes: the goat says "Weeeennnttt", "make weeeennntt with hyphens like you did with baaa". In the home song Mops now answers "♪ Weeee-eenn-nnttt! ♪" instead of "♪ Baaa-aa-aaa! ♪". Nothing else changes. Checks updated: `tests/opening-song.mjs`, `tests/ch1-playthrough.mjs`. Docs match main: yes.
 2026-11-15. Party hall made solid (Brian: "Make the party hall solid so Squatch can't walk through walls, the stage, or guests"). At the party Squatch now stays on the floor below the back wall and stops at the stage, the poster, the snack bar and its stools, both plants, the snack table, the camera tripod, and every guest (the balloon kid and the octopus too). The old hall boxes are not used at the party. Guests block walking only, not sight, so the doorway sneak still works as before. Not fixed here: security guards still walk through the bar, and a tap-to-walk can still stop at something in the way (CHAPTER-1-PROBLEMS item on tap walks). No new words, no locked picture changed. New check `tests/party-solid.mjs`. Docs match main: yes.

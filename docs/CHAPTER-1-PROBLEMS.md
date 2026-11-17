@@ -126,6 +126,7 @@ Fix order, one pull request each, each with a still compared against this table:
 - Fix: add a `QA` entry that starts the party again. Then check every Q scene where a catch can happen has an entry.
 - Brian answered (2026-11-14): after the jail card, set Squatch back a little, or back where he was caught, and let play carry on. No guard walking into the bedroom right away. Pull request 38 has that guard version and must not be merged.
 - Proving check: empty `LEAVE_ALONE` in `tests/ch1-kid-play.mjs`, so the robot presses the party buttons. It must reach the score card. Add a short test that sets scene QA, calls the catch, and asserts the scene is not O1 and a spot is offered.
+- Fixed 2026-11-16: `QA` now restarts in the party, a little back from where he was caught, with the guards gone. A Q scene with no checkpoint no longer restores the old opening. `tests/party-catch.mjs` checks it. The robot still skips SNAG, SUCK and STAND, so that half of the proving check is still open.
 
 ## 2. Tapping a spot behind furniture walks Squatch into the furniture and stops
 
@@ -207,6 +208,8 @@ Fix order, one pull request each, each with a still compared against this table:
 Found by reading the Day 1 code against beats 1 to 21 of `docs/CH1-STORY-WALKTHROUGH.md`. Ten beats match or are close. The ones below differ. They were found in the code (`src/game/13-ch1-slice.js`, `14-ch1-day1.js`, `12-ch1-redesign.js`), not by watching every beat on screen, so look at each on screen before fixing it. One per pull request, after problems 1 to 10, in this order unless Brian says otherwise.
 
 ## 11. Sight cones: a dashed outline that lights up, on everyone, in every scene
+
+**Superseded 2026-11-16.** Brian, Nov 11 (t332), is the rule: only guards and robots show vision cones. An ordinary guest shows "?" over their head, and that turns to "!" when they spot Squatch. Approved, not built. The Nov 14 dashed-cone text below is history.
 
 - Today: party guests show nothing. Guards and robots show a filled yellow cone all the time.
 - What Brian decided (chat, Nov 14): every character who can see Squatch has a light dashed outline of a cone, not filled. It fills in yellow when Squatch steps inside it. Same rule in every scene, so the kid always knows who can see him and the party does not look busy.

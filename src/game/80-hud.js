@@ -105,7 +105,7 @@
         ),
         stars = hudEl("span", "ss-stars", "font-size:14px;color:#b45309;background:#fff6dc", where),
         goal = hudEl("div", "ss-goal", "position:absolute;top:6px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center", root),
-        chip = hudEl("div", "ss-chip", "background:#ffcf33;border:2px solid #1e2430;border-radius:16px;padding:4px 14px;font-weight:800", goal),
+        chip = hudEl("div", "ss-chip", "background:#ffcf33;border:2px solid #1e2430;border-radius:16px;padding:4px 14px;font-weight:800;white-space:nowrap;max-width:100%;overflow:hidden", goal),
         status = hudEl("div", "ss-status", "display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap", goal),
         count = hudEl("div", "ss-count", "background:#e5533d;color:#fff;border:2px solid #1e2430;border-radius:14px;padding:2px 14px;font-size:16px;font-weight:900", status),
         tank = hudEl("div", "ss-tank", "font-size:14px;font-weight:900;border:2px solid #1e2430;border-radius:10px;padding:2px 10px", status),
@@ -271,15 +271,28 @@
         ((g.style.left = "6px"), (g.style.right = "6px"), (g.style.transform = "none"));
         return;
       }
-      ((g.style.left = "50%"), (g.style.right = "auto"), (g.style.transform = "translateX(-50%)"));
       hud.where.style.top = hud.faces.style.top = "6px";
+      // One line, in the open gap between the side zones, so a long goal does not drop onto the picture.
       let wr = hud.where.offsetLeft + hud.where.offsetWidth,
         fl = hud.faces.offsetWidth ? hud.faces.offsetLeft : W - 6,
-        gap = 10,
-        room = 2 * Math.min(W / 2 - wr, fl - W / 2) - 2 * gap;
-      ((hud.chip.style.fontSize = W < 600 ? "14px" : "20px"), (g.style.maxWidth = Math.max(0, room) + "px"), (g.style.top = "6px"));
-      if (room < 220 || hud.chip.offsetWidth > room) {
+        pad = 8,
+        spanLeft = wr + pad,
+        spanRight = fl - pad,
+        span = spanRight - spanLeft,
+        size = W < 600 ? 14 : 20;
+      ((hud.chip.style.whiteSpace = "nowrap"),
+        (hud.chip.style.width = "max-content"),
+        (hud.chip.style.maxWidth = "none"),
+        (hud.chip.style.fontSize = size + "px"),
+        (g.style.maxWidth = "none"),
+        (g.style.top = "6px"));
+      while (size > 14 && span > 40 && hud.chip.offsetWidth > span) ((size -= 1), (hud.chip.style.fontSize = size + "px"));
+      if (span > 40 && hud.chip.offsetWidth <= span + 1) {
+        let mid = (spanLeft + spanRight) / 2;
+        ((g.style.left = mid + "px"), (g.style.right = "auto"), (g.style.transform = "translateX(-50%)"), (g.style.maxWidth = span + "px"), (g.style.top = "6px"));
+      } else {
+        ((g.style.left = "50%"), (g.style.right = "auto"), (g.style.transform = "translateX(-50%)"));
         let below = Math.max(hud.where.offsetTop + hud.where.offsetHeight, hud.faces.offsetTop + hud.faces.offsetHeight) + 6;
-        ((g.style.maxWidth = W - 12 + "px"), (g.style.top = below + "px"));
+        ((hud.chip.style.maxWidth = "100%"), (g.style.maxWidth = W - 12 + "px"), (g.style.top = below + "px"));
       }
     }
