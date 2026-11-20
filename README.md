@@ -58,7 +58,7 @@ npm run build
 npm run check-build
 ```
 
-`npm run build` writes `index.html` from `src/`. `npm run check-build` fails if the committed `index.html` is not a fresh build of `src/`. The build compacts the code with esbuild but keeps every name, so a name seen in the browser can be found in `src/game/`.
+`npm run build` writes `index.html` from `src/`. `npm run check-build` fails if the committed `index.html` is not a fresh build of `src/`. The build lifts each piece into a real module and bundles those modules with esbuild. The modules still run in name order, inside the one function `s8`, sharing one object (`__state`), so play does not change. The files in `src/game/` stay the source: the build does not rewrite them. A shared name is written `__state.name` in the built file, and a function keeps its name, so it can still be found in `src/game/`.
 
 `npm run depmap` writes `docs/DEPMAP.md` and `docs/depmap.json`: every name the 16 game files share, which file defines it, and which other files read or write it. `tests/depmap.mjs` fails if that map is out of date. The order for splitting the files into real modules, without changing play, is `docs/REFACTOR-PLAN.md`.
 

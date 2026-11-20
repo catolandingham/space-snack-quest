@@ -134,7 +134,7 @@ const marks = await page.evaluate(() => {
   const html = document.documentElement.innerHTML;
   return {
     tank: html.includes("TANK EMPTY") && html.includes("TANK FULL"),
-    noMopsCone: html.includes("!x.mops&&!d.nap"),
+    noMopsCone: html.includes("!x.mops&&!d.nap") || html.includes("!__state.x.mops&&!d.nap"),
     botCone: html.includes("f2(A,A.look<=0,A.look<=0)"),
   };
 });

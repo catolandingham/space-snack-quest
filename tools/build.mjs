@@ -5,8 +5,10 @@
  *
  * src/vendor-react.js and the pieces in src/game/ are joined in name order (00-core.js, 10-ch1.js, ...).
  * They are one program: the React runtime opens the wrapper function that the last piece closes, and
- * the pieces are cut from one function at function boundaries, so no piece runs on its own. The
- * joined program is compacted with esbuild and put into src/index.template.html where it says BUILD.
+ * the pieces are cut from one function at function boundaries, so no piece runs on its own.
+ * tools/to-modules.mjs lifts each piece into a real module. The modules still run in that same
+ * order, inside s8, sharing one object. esbuild bundles them into src/index.template.html
+ * where it says BUILD. The files in src/game/ are not rewritten.
  * Each piece starts with a one-line comment saying what it holds; esbuild drops comments, so the
  * comments never reach index.html.
  *
@@ -14,7 +16,6 @@
  * (no minifyIdentifiers). Names in index.html stay the same as in src/, so a name seen in the
  * browser can be searched for in src/game/. To change a name, use npm run rename (tools/rename.mjs).
  */
-import { transform } from "esbuild";
 import { readFileSync, writeFileSync, mkdtempSync, rmSync, readdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
@@ -34,10 +35,16 @@ export function sourceFiles() {
 export const ESBUILD_OPTIONS = { minifyWhitespace: true, minifySyntax: true, legalComments: "inline" };
 
 export async function buildHtml() {
-  const program = sourceFiles()
-    .map((f) => readFileSync(f, "utf8"))
-    .join("");
-  const { code } = await transform(program, ESBUILD_OPTIONS);
+  const { bundleProgram } = await import("./to-modules.mjs");
+  let at = 0;
+  const files = sourceFiles().map((path) => {
+    const text = readFileSync(path, "utf8");
+    const rec = { rel: path.slice(root.length + 1), text, start: at };
+    at += text.length;
+    return rec;
+  });
+  const program = files.map((f) => f.text).join("");
+  const code = await bundleProgram(program, files);
   const template = read("src/index.template.html");
   const marker = "/*BUILD*/";
   if (template.split(marker).length !== 2) throw new Error(`src/index.template.html must contain ${marker} exactly once`);
