@@ -60,6 +60,8 @@ npm run check-build
 
 `npm run build` writes `index.html` from `src/`. `npm run check-build` fails if the committed `index.html` is not a fresh build of `src/`. The build compacts the code with esbuild but keeps every name, so a name seen in the browser can be found in `src/game/`.
 
+`npm run depmap` writes `docs/DEPMAP.md` and `docs/depmap.json`: every name the 16 game files share, which file defines it, and which other files read or write it. `tests/depmap.mjs` fails if that map is out of date. The order for splitting the files into real modules, without changing play, is `docs/REFACTOR-PLAN.md`.
+
 To give a short name a readable one, use the rename tool. It changes only that one variable (Babel's scope analysis), never an object key or another variable with the same short name, and refuses a new name that would collide:
 
 ```
