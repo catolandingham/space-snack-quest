@@ -12,6 +12,8 @@ const files = [
   "docs/MASTER-BACKLOG.md",
   "docs/STATE.md",
   "docs/CH1-STORY-WALKTHROUGH.md",
+  "docs/DEPMAP.md",
+  "docs/REFACTOR-PLAN.md",
 ];
 
 let failed = 0;

@@ -10,7 +10,8 @@
     "test": "node tests/run-all.mjs",
     "test:one": "node",
     "kid-video": "KID_SHOTS=1 node tests/ch1-kid-play.mjs",
-    "rename": "node tools/rename.mjs"
+    "rename": "node tools/rename.mjs",
+    "depmap": "node tools/depmap.mjs"
   },
   "devDependencies": {
     "@babel/parser": "7.29.8",
