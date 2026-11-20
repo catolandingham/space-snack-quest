@@ -14,8 +14,10 @@
     "depmap": "node tools/depmap.mjs"
   },
   "devDependencies": {
+    "@babel/generator": "7.29.13",
     "@babel/parser": "7.29.8",
     "@babel/traverse": "7.29.8",
+    "@babel/types": "7.29.11",
     "esbuild": "0.28.2",
     "puppeteer-core": "24.43.1"
   }
