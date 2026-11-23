@@ -189,6 +189,25 @@
       let img = lockedImg[id];
       img && img.complete && img.naturalWidth ? e.drawImage(img, 0, 0, c, b) : ((e.fillStyle = "#e2e5ed"), e.fillRect(0, 0, c, b));
     }
+    // Where Squatch's eyes show when he hides in a plant (Brian, C21: "The two eyes sit LOW, in the two
+    // lower-front clumps" of leaves, small). One entry per plant in the locked pictures, in game positions.
+    const CH1_PLANT_EYES = {
+      hangar: [[125, 308]], // loading bay plant
+      hall: [
+        [441, 486], // the plant in the middle of the hall
+        [101, 318], // the plant by the back wall
+      ],
+    };
+    // The eyes of the plant Squatch is hiding in (the nearest plant within reach), or over his own spot.
+    function ch1HideEyes() {
+      let best = null,
+        d = 140;
+      for (let [x, y] of CH1_PLANT_EYES[n.room] || []) {
+        let k = Math.hypot(n.sq.x - x, n.sq.y - 60 - y);
+        k < d && ((d = k), (best = [x, y]));
+      }
+      best ? ga(best[0], best[1]) : ga(n.sq.x, n.sq.y - 46);
+    }
     function ch1DeliveryArt() {
       return n.ch1Night ? "delivery-night" : n.ch1Crew === "pickup" ? "delivery-pickup" : n.ch1Ship ? "delivery-day" : "delivery-noship";
     }
@@ -1241,6 +1260,7 @@
       n.scene === "Q3" && !(n.ch1Step === "family" || n.ch1Step === "gohome") && drawCh1Alien(640, 500, "hat", ALIEN_ADULT, 1);
       n.moPose !== "hidden" && n.mo.x > -50 && n.mo.x < 1100 && Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 });
       n.sqPose === "ball" && drawL2Ball(n.sq.x, n.sq.y - 16);
+      n.sqPose === "hidden" && ch1HideEyes();
       n.sqPose !== "hidden" &&
         n.sqPose !== "ball" &&
         Re(n.sq.x, n.sq.y, sqDrawScale(), {
@@ -1301,7 +1321,7 @@
         g("COMING SOON!", 535, 250, 17, "#e5533d", "center", 900),
         drawCh1Alien(360, 256, "horns", ALIEN_ADULT, face || 1),
         glance(360, 256),
-        n.sqPose === "hidden" && ga(400, 500),
+        n.sqPose === "hidden" && ch1HideEyes(),
         !(n.ch1PartyDid && n.ch1PartyDid.snack) &&
           [
             [848, 340, "pie"],
@@ -1515,7 +1535,7 @@
       n.ch1Prop === "bin" && drawPinkSlip(250, 470);
       n.ch1Prop === "teeth" && drawPinkSlip(n.mo.x - 6, n.mo.y - 72);
       n.ch1Prop === "paw" && drawPinkSlip(n.sq.x + 8, n.sq.y - 48);
-      n.sqPose === "hidden" && !n.ch1InCrate && ga(n.ch1Step === "hide" || Math.hypot(n.sq.x - CH1_PLANT.x, n.sq.y - CH1_PLANT.y) < 90 ? CH1_PLANT.x : n.sq.x, (n.ch1Step === "hide" || Math.hypot(n.sq.x - CH1_PLANT.x, n.sq.y - CH1_PLANT.y) < 90 ? CH1_PLANT.y : n.sq.y) - 46);
+      n.sqPose === "hidden" && !n.ch1InCrate && ch1HideEyes();
       n.ch1InCrate && ga(830, 510);
       n.scene === "Q2" && Qt(700, 530, "#e8a87c", qtScale("hangar"), -1),
       (n.ch1Crew === "day" || n.ch1Crew === "leave") &&
