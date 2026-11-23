@@ -10,6 +10,7 @@ New here? Read docs/START-HERE.md first: what matters now (Chapter 1), the ranke
 - Tests: npm test (all). One suite: node tests/<name>.mjs. Chrome is found on a Mac; else set CHROME.
 - Debug: index.html?ch=2&phase=wash1&debug=1 opens a checkpoint with the state strip. ?scene=P3 opens a scene. On localhost, ?beat=day2 opens Day 2. The live site ignores it.
 - Find code by quoted anchors, not line numbers. Rename only with npm run rename.
+- New code goes in `src/modules/` as real modules (ES modules, bundled by esbuild into their own script that runs before the older program). New code meets the older program only through `window.SSQ` (`src/modules/bridge.js`): a rebuilt beat registers there by id; when a beat first needs engine functions (walking, catching, drawing), a hand-over for exactly those is added to the bridge. The older program guards every use (`window.SSQ && ...`) so the game still runs if the module script fails. Do not add new pieces to `src/game/`. When a beat is rebuilt as a module, delete its old code in `src/game/` in the same change. `tests/module-build.mjs` checks each part sits in its own script; to prove a step changed nothing a player sees, compare builds with `node tools/compare-builds.mjs <git ref>`.
 
 ## Brian's design rules (full text: docs/REVIEW-RULES.md)
 1. Every beat has a cause, a need it answers, and an effect. Armature: "Home is where love doesn't have to hide."
