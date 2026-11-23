@@ -42,7 +42,7 @@ function recorder() {
       st.pts = [];
     }
   });
-  wrap("beginPath", () => (st.pts = []));
+  wrap("beginPath", () => ((st.pts = []), (st.lastEllipse = false)));
   wrap("moveTo", ([x, y]) => pt(x, y));
   wrap("lineTo", ([x, y]) => pt(x, y));
   wrap("quadraticCurveTo", ([cx, cy, x, y]) => (pt(cx, cy), pt(x, y)));
@@ -66,7 +66,6 @@ function recorder() {
   wrap("stroke", function () {
     st.on && st.ops.push({ k: "stroke", c: String(this.strokeStyle).toLowerCase(), b: box() });
   });
-  wrap("beginPath", () => (st.lastEllipse = false));
 }
 
 async function mopsOps(page, setup) {
