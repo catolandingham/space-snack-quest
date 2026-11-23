@@ -6,20 +6,20 @@
 | 24–26 | # Space Snack Quest: where things stand |
 | 27–43 | ## 2026-11-22 sitting (Snack Quest Chat, Claude) |
 | 44–49 | ## 2026-11-22 sitting 2 (Snack Quest Chat, Claude): repeat-complaint tests |
-| 50–54 | ## 2026-11-22 overnight (Snack Quest Chat, Claude; Brian asleep, said keep going) |
-| 55–61 | ## Fidelity system (new, 9:55 PM PT, Brian t233 / W33) |
-| 62–79 | ## The game |
-| 80–117 | ## Chapter 1 cartoon: panels in story order |
-| 118–133 | ## Open questions from the new panels (for Brian, multiple choice) |
-| 134–138 | ## In progress right now |
-| 139–193 | ## Next |
-| 194–198 | ## Earlier state, kept in full |
-| 199–204 | # Space Snack Quest: state |
-| 205–207 | ## What it is |
-| 208–219 | ## Where things live |
-| 220–256 | ## Open items |
-| 257–261 | ## Next step |
-| 262–266 | ## Paused 2026-11-08 at the credit line |
+| 50–56 | ## 2026-11-22 overnight (Snack Quest Chat, Claude; Brian asleep, said keep going) |
+| 57–63 | ## Fidelity system (new, 9:55 PM PT, Brian t233 / W33) |
+| 64–81 | ## The game |
+| 82–119 | ## Chapter 1 cartoon: panels in story order |
+| 120–135 | ## Open questions from the new panels (for Brian, multiple choice) |
+| 136–140 | ## In progress right now |
+| 141–195 | ## Next |
+| 196–200 | ## Earlier state, kept in full |
+| 201–206 | # Space Snack Quest: state |
+| 207–209 | ## What it is |
+| 210–221 | ## Where things live |
+| 222–258 | ## Open items |
+| 259–263 | ## Next step |
+| 264–268 | ## Paused 2026-11-08 at the credit line |
 <!-- /section-index -->
 # Space Snack Quest: where things stand
 Monday, November 9, 2026, through R63. Updated 2026-11-10 after the Chapter 1 redesign and the party landed on `main`. Decisions: `docs/DECISIONS.md`. Open asks: `docs/OPEN-ASKS.md`. Words: `docs/CH1-CARTOON-LINES.md`. Look: `docs/STYLE-GUIDE.md`.
@@ -51,6 +51,8 @@ Monday, November 9, 2026, through R63. Updated 2026-11-10 after the Chapter 1 re
 - Branch `fix/ch1-restart-security`, on top of sitting 2. ↺ now restarts the step he is on in every redesigned Chapter 1 scene (was nothing in Q3, Q5, Q6, Q7, QP, and every Day 2 ↺ went to the lunch walk). The night robot and the lunch guests call security instead of an instant LOCKUP (Brian's K#159). Details: MASTER-BACKLOG changelog.
 - Found while there: Day 2 goals have no target mark at all (their spots count as "where Squatch stands"), and the circles left in play are the home door peek, the office keypad, the plant, the calendar (with an arrow), the photo corner, and a yellow triangle at the home door. The outline work is therefore "outline every goal's real object", next.
 - Branch `feat/ch1-outlines`, on top of that: every circle and arrow is gone from Chapter 1's goals; 17 goals outline their real thing (traced from the locked picture, or the doorway). First code in `src/modules/` (outline.js, goal-targets.js, through `window.SSQ.drawGoalOutline`). Needs Brian's eye: it is a visual change (rule 14), done to his own spec (G#292, G#430, G#438, R26).
+- Then, each on top of the last: `feat/ch1-lunch-witness` (the lunch guest runs to the FUR alarm first), `feat/ch1-words-if-stuck` (goal words wait 20 s while the goal is outlined), `feat/ch1-plant-eyes` (eyes in the leaves, C21). Separate: `docs/hall-options` (two hall pictures to pick from, and the cones-on-everyone still at phone and iPad size). Full suite on `feat/ch1-plant-eyes` (contains everything): 61 of 61 suites passed, 2,054 passing checks, 2 KNOWN. Nothing merged; each pull request waits for Brian's word.
+- Next: Brian picks a hall option and says whether the cones still reads cleanly; then outlines for the props the game draws, and the Day 1 beat rebuilds.
 
 ## Fidelity system (new, 9:55 PM PT, Brian t233 / W33)
 - Approved and current pictures are frozen in `LOCKED/` (`LOCKED/INDEX.md`). Rooms are drawn only by `mockups/rooms/home_room.py`, `mockups/rooms/delivery_room.py`, `mockups/rooms/hall_room.py` (new 11:20 PM PT) and `mockups/rooms/hallway_room.py` (connecting hallway, R48; hallway v5 is APPROVED, R55); panels import them. Before Brian sees a sketch: `tools/check_all.sh` + the independent checker (`docs/CHECKER.md`). Steps: `docs/FIDELITY.md`.

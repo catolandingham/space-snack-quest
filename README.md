@@ -102,6 +102,8 @@ Four complaints Brian raised again and again now have tests that run with `npm t
 
 - `tests/ch1-words-if-stuck.mjs`: while a goal's thing is outlined, no goal words for the first 20 seconds of that step; then the words appear. A goal with no outline yet shows its words at once.
 
+- `tests/ch1-plant-eyes.mjs`: hiding in a plant shows two eyes in that plant's leaves (C21), at the loading bay plant and the hall's middle plant.
+
 ## Scene 1 morning
 
 `tests/scene1-morning.mjs` plays the start of Chapter 1 on a phone: Mops's morning line while Squatch is in bed, one bucket, no "ship" in the goal bar, no ring around Squatch, the "That evening…" card, then the peek goal, and the peek itself: the hall full on the first frame, Squatch in his doorway, an empty goal bar, the muffled talk, then "Robots?" once before the announcement, and the sneak: seen while the yellow guest looks back sends Squatch to his doorway; going while he faces the stage and pressing HIDE at the plant hides him.
