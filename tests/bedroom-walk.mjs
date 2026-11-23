@@ -3,22 +3,17 @@
  * is in the closet until Day 2 (Brian, 2026-11-16).
  *   node tests/bedroom-walk.mjs
  */
-import { startGame, sleep } from "./game-page.mjs";
+import { startGame, toMorningSong } from "./game-page.mjs";
 
 const g = await startGame({ port: 8946, name: "bedroom walk" });
 const { page } = await g.open("?ch=1");
 await page.click("canvas");
 
-// Play the real start until Squatch can walk.
-let ready = false;
-for (let i = 0; i < 60 && !ready; i++) {
-  ready = await page.evaluate(() => window.__ss.op.scene === "O1" && window.__ss.op.ctrl);
-  if (!ready) {
-    await page.keyboard.press("Space");
-    await sleep(500);
-  }
-}
-g.check("the start reaches the walk-around goal", ready);
+// Play the real start (the morning, src/modules/morning.js) until Squatch can walk: he is out of bed,
+// on the floor in front of it, and the song plays.
+await toMorningSong(page);
+const ready = await page.evaluate(() => window.__ss.op.ctrl && window.__ss.op.sqPose === "stand");
+g.check("the start reaches the first goal with Squatch out of bed", ready);
 
 const BED = { x0: 83, x1: 286, y0: 409, y1: 526 };
 const BUCKET = { x0: 536, x1: 596, y0: 500, y1: 571 };
@@ -73,10 +68,11 @@ g.check("never inside the bucket", !walk.some((p) => inside(p, BUCKET)));
 g.check("he gets behind the bed", walk.some((p) => p.y < BED.y0 && p.x < 160));
 g.check("he gets in front of the bed", walk.some((p) => p.y > BED.y1 && p.x < 200));
 
-// Mops walking to the door past Squatch does not shove him (he used to jump out of Mops's way).
+// Mops walking out past Squatch at the end of the morning does not shove him (he used to jump out of Mops's way).
 const shove = await page.evaluate(() => {
   const n = window.__ss.op;
-  Object.assign(n, { q: [], cur: null, scene: "Q1", room: "closet", ch1Song: true, ctrl: true, sqPose: "stand", moPose: "stand" });
+  Object.assign(n, { q: [], cur: null, scene: "Q1", room: "closet", ctrl: true, sqPose: "stand", moPose: "stand", ch1Morning: { step: "leave", t: 0, notes: true } });
+  n.mo.walking = true;
   ((n.mo.x = 690), (n.mo.y = 560), (n.sq.x = 745), (n.sq.y = 515));
   let big = 0, px = n.sq.x, py = n.sq.y;
   for (let i = 0; i < 90; i++) {
@@ -108,7 +104,7 @@ g.check("beat 1: the Guardian Box is not drawn", !(await blueAt(335, 510)));
 // Day 2: the box comes out of the closet when Squatch puts the gift in it.
 await page.evaluate(() => {
   const n = window.__ss.op;
-  Object.assign(n, { q: [], cur: null, ch1Song: false, ch1Day2: true, ch1Step: "box", scene: "QB", room: "closet", ctrl: true, sqPose: "stand", wardrobe: "closed" });
+  Object.assign(n, { q: [], cur: null, ch1Morning: null, ch1Day2: true, ch1Step: "box", scene: "QB", room: "closet", ctrl: true, sqPose: "stand", wardrobe: "closed" });
 });
 g.check("Day 2 before PUT: still in the closet", !(await blueAt(335, 510)));
 const put = await page.evaluate(() => (window.__ss.spotsNow() || []).find((s) => s.verb === "PUT"));

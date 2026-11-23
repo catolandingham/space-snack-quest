@@ -65,8 +65,8 @@
       let spots =
         n.ch1Day2 && ch1Day2Spots
           ? ch1Day2Spots()
-          : n.ch1Song
-            ? ch1SongSpots()
+          : ch1MorningSpots()
+            ? ch1MorningSpots()
             : n.ch1PeekReady
               ? ch1PeekSpots()
               : n.ch1PlantSneak
@@ -79,8 +79,18 @@
       let s = (spots || []).find((o) => o && o.verb && o.when !== !1);
       s && drawGoalMark(s);
     }
+    // The morning module's spots (SING ALONG, TALK · Mops) while its song step has control, else null.
+    function ch1MorningSpots() {
+      let beat = window.SSQ && window.SSQ.beat("ch1-morning");
+      return beat && n.room === "closet" ? beat.spots() : null;
+    }
+    // True while Mops walks out at the end of the morning (the goal chip hides).
+    function ch1MorningLeaving() {
+      let beat = window.SSQ && window.SSQ.beat("ch1-morning");
+      return !!(beat && beat.leaving());
+    }
     function ch1QChip() {
-      if (n.ch1MopsLeave || n.ch1Peeking) return "";
+      if (ch1MorningLeaving() || n.ch1Peeking) return "";
       if (n.ch1Dress && n.ch1Dress.on) return "";
       if (n.ch1Chip) return n.ch1Chip;
       return CH1Q_CHIPS[n.scene] || "";
@@ -1095,7 +1105,7 @@
         ]));
     }
     function ch1QSpots() {
-      if (n.ch1Song && n.ctrl && !n.ch1Party) return [...ch1CalendarSpots(), ...ch1SongSpots()];
+      if (ch1MorningSpots()) return ch1MorningSpots();
       if (n.ch1Search && n.ctrl && n.room === "closet") return ch1SearchSpots();
       if (n.ch1Cut) return ch1CutSpots();
       if (n.ch1Dress && n.ch1Dress.on) return ch1DressSpots();

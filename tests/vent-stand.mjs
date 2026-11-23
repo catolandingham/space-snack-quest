@@ -1,32 +1,30 @@
 /**
  * A party-night walk must not finish inside Mops.
- * The morning hum used to leave n.mo.walking on. At the vent, Squatch then walked
+ * The morning hum used to leave n.mo.walking on; the rebuilt morning (src/modules/morning.js) sets it only while
+ * Mops walks out, and clears it when he is gone. At the vent, Squatch then walked
  * through him and stopped at 815, 470, inside his body (CI run 43954456685).
  * The home-room picture is not involved: the hangar has no furniture solids.
  *   node tests/vent-stand.mjs
  */
-import { startGame } from "./game-page.mjs";
+import { startGame, toMorningSong } from "./game-page.mjs";
 
 const g = await startGame({ port: 8879, name: "vent stand" });
 const { page } = await g.open("?ch=1");
+await toMorningSong(page);
 const out = await page.evaluate(() => {
-  const n = window.__ss.op;
+  const ss = window.__ss,
+    n = ss.op;
   const inside = (x, y, b, pad = -6) => x > b.x0 - pad && x < b.x1 + pad && y > b.y0 - pad && y < b.y1 + pad;
-  n.q = [];
-  n.cur = null;
-  n.ctrl = true;
-  n.scene = "Q1";
-  n.room = "closet";
-  n.moPose = "stand";
-  n.ch1Song = true;
-  n.mo.x = 690;
-  n.mo.y = 560;
-  n.mo.walking = false;
-  window.__ss.tick(1 / 30);
+  // TALK · Mops (or SING ALONG), then tap through his goodbye until he walks out.
+  (ss.spotsNow() || []).find((s) => s.id === "sing").f();
+  for (let i = 0; i < 400 && !(n.ch1Morning && n.ch1Morning.step === "leave"); i++) {
+    n.cur && n.cur.k === "bub" && ((n.bt = 1), ss.opTap());
+    ss.tick(0.05);
+  }
   const started = !!n.mo.walking;
-  n.ch1Song = false;
-  window.__ss.tick(1 / 30);
-  const cleared = !n.mo.walking;
+  for (let i = 0; i < 400 && n.moPose !== "hidden"; i++) ss.tick(1 / 30);
+  const cleared = n.moPose === "hidden" && !n.mo.walking;
+  Object.assign(n, { q: [], cur: null, ch1Morning: null });
   Object.assign(n, {
     ch1Day2: true,
     ch1D: true,
@@ -55,8 +53,8 @@ const out = await page.evaluate(() => {
   const hangarSolids = window.__ss.solids().map((b) => [b.x0, b.x1, b.y0, b.y1].join(","));
   return { started, cleared, entered, x: Math.round(n.sq.x), homeInHangar: hangarSolids.filter((b) => home.includes(b)) };
 });
-g.check("the morning hum starts Mops walking", out.started === true, out);
-g.check("ending the hum clears the walking flag", out.cleared === true, out);
+g.check("Mops walking out at the end of the morning is marked as walking", out.started === true, out);
+g.check("once he is gone the walking flag is cleared", out.cleared === true, out);
 g.check("the vent step does not finish inside Mops", out.entered === false, out);
 g.check("the hangar adds no home-room furniture", out.homeInHangar.length === 0, out);
 await g.finish("vent stand");

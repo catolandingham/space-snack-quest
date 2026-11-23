@@ -62,7 +62,7 @@ const dress = await page.evaluate(() => {
     n.q = [];
     n.live = [];
     n.ch1Cut = null;
-    n.ch1Song = false;
+    n.ch1Morning = null;
     n.ch1Search = false;
     n.ch1Mini = "";
     n.ch1Dress = {

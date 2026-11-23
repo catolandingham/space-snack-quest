@@ -321,10 +321,12 @@ g.check("walking up to Mops, Squatch does not stand inside him", Math.hypot(s.mo
 await B.page.touchscreen.tap(s.btnAt[0], s.btnAt[1]);
 await sleep(500);
 const talked = [];
+let talkAt = null;
 for (let i = 0; i < 30; i++) {
   const t = await B.st();
   if (t.k === "bub" && talked[talked.length - 1] !== t.text) {
     talked.push(t.text);
+    talkAt = talkAt || { sq: t.sq, mo: t.mo };
     if (t.who === "mops" && Math.sign(t.sq[0] - t.mo[0]) !== t.mo[2]) B1.bad.face.push(t.text);
     if (t.text === L["mops-stay"].text) break;
     await B.tapAt(480, 330);
@@ -333,5 +335,7 @@ for (let i = 0; i < 30; i++) {
 }
 g.check("TALK · Mops goes straight to his goodbye (no singing)", JSON.stringify(talked) === JSON.stringify([L["mops-work"].text, L["mops-stay"].text]), talked);
 g.check("talk run: Mops faces Squatch for every line", B1.bad.face.length === 0, B1.bad.face);
+// Their drawings are about 160 (Mops) and 124 (Squatch) wide: 180 apart leaves a clear gap.
+g.check("talk run: Squatch steps back so their drawings do not overlap while Mops talks", !!talkAt && Math.abs(talkAt.sq[0] - talkAt.mo[0]) >= 175, talkAt);
 g.check("no page errors (talk run)", B.errors.length === 0, B.errors);
 await g.finish("morning-order");

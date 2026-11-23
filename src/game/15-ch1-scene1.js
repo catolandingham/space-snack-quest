@@ -1,13 +1,7 @@
-// Chapter 1 scene 1 (walkthrough beats 1-3): the start, the song, Mops walking out, the peek. Everything scene 1 runs is here.
-    // Where Mops stands in the morning (right of the bucket in the room picture).
-    const CH1_MOPS_MORNING = { x: 690, y: 560 };
-    // The song is Mops's goodbye: he hums on his way to the door and they sing there.
-    // Mops is about 160px wide and Squatch about 124px, so their feet are 200px apart for a 45px gap.
-    const CH1_SONG_MOPS = { x: 800, y: 470 },
-      CH1_SONG_SQ = { x: 600, y: 470 };
-    function ch1RedesignStart() {
-      ((n.scene = "O1"),
-        (n.room = "closet"),
+// Chapter 1 scene 1 (walkthrough beats 1-3): the chapter reset, the hand-over to the morning module (src/modules/morning.js), the calendar close-up, the peek and the sneak.
+    // The chapter's state, reset at the start of Chapter 1 (the morning beat and its fallback both start here).
+    function ch1ResetState() {
+      ((n.room = "closet"),
         (n.wardrobe = "closed"),
         (n.ch1D = !1),
         (n.ch1Duct = !1),
@@ -32,7 +26,6 @@
         (n.ch1Cut = null),
         (n.ch1Dress = null),
         (n.ch1PeekReady = !1),
-        (n.ch1Song = !1),
         (n.ch1Search = !1),
         (n.ch1Mini = ""),
         (n.ch1OctChase = !1),
@@ -50,38 +43,82 @@
         (n.ch1PartyOver = !1),
         (n.ch1PartyDid = {}),
         (n.ch1Fur = !1),
-        (n.tvOn = !1),
-        (n.sqPose = "sit"),
-        // Morning: Mops has finished cleaning and stands by the bucket. No beard cleaning in scene 1.
-        (n.mo.x = CH1_MOPS_MORNING.x),
-        (n.mo.y = CH1_MOPS_MORNING.y),
-        (n.mo.f = -1),
-        (n.mo.moving = !1),
-        (n.moPose = "stand"),
-        J([
-          { k: "card", id: "jupiter", text: "Stormtop Cloud Resort, floating above Jupiter." },
-          { k: "card", id: "squatch", text: "This is Squatch. He's a Sasquatch." },
-          // Short lines that drive the plot: the party (what he will peek at), that he wants to go, the rule.
-          v("mops", "Morning, Squatch."),
-          v("mops", "Big party in the hall tonight."),
-          v("sq", "Party?"),
-          // Mops keeps facing Squatch, so his bubble stays clear of the STAY IN HERE poster.
-          v("mops", "Stay in here."),
-          N(() => {
-            ((n.ctrl = !0), (n.scene = "O1"), chipNow());
-          }),
-          cV(() => n.scene === "O1" && n.moved > 110 && n.hopOut < 0),
-          N(() => {
-            ((n.ctrl = !0), (n.scene = "Q1"), ch1Day1());
-          }),
-        ]));
+        (n.ch1Morning = null),
+        (n.sqLift = 0),
+        (n.mo.walking = !1),
+        (n.tvOn = !1));
     }
+    // The morning (walkthrough beats 1 and 2) is a module now: src/modules/morning.js. If the module script
+    // failed to load, Chapter 1 still plays: the opening cards, then straight to the evening.
+    function ch1RedesignStart() {
+      ch1ResetState();
+      let beat = window.SSQ && window.SSQ.beat && window.SSQ.beat("ch1-morning");
+      if (beat) return beat.start();
+      ((n.scene = "Q1"), (n.sqPose = "stand"), (n.sq.x = 250), (n.sq.y = 574), (n.moPose = "hidden"), (n.ctrl = !1));
+      J([
+        { k: "card", id: "jupiter", text: "Stormtop Cloud Resort, floating above Jupiter." },
+        { k: "card", id: "squatch", text: "This is Squatch. He's a Sasquatch." },
+        { k: "card", id: "later", text: "That evening\u2026" },
+        N(ch1EveningStart),
+      ]);
+    }
+    // The evening starts (beat 3): Squatch alone at home, the goal is to peek out the door.
+    function ch1EveningStart() {
+      ((n.ch1PeekReady = !0), (n.ctrl = !0), (n.scene = "Q1"), (n.ch1Chip = "Squatch: peek out the door"), chipNow());
+    }
+    // The engine functions the morning module uses, handed over once (src/modules/bridge.js, handOver).
+    window.SSQ &&
+      window.SSQ.handOver &&
+      window.SSQ.handOver({
+        queue: (items) => J(items),
+        say: (who, text, style) => v(who, text, style || "say"),
+        card: (id, text) => ({ k: "card", id, text }),
+        run: (f) => N(f),
+        until: (f) => cV(f),
+        // A tap wait with no words and no arrow (the beat draws its own "tap" cue).
+        tapWait: () => ({ k: "wait", t: 0, quiet: !0 }),
+        current: () => (n.cur ? { k: n.cur.k, who: n.cur.b ? n.cur.b.who : "", style: n.cur.b ? n.cur.b.style : "", id: n.cur.id || "" } : null),
+        get: (k) => n[k],
+        set: (k, val) => {
+          n[k] = val;
+        },
+        pos: (who) => {
+          let o = who === "mops" ? n.mo : n.sq;
+          return { x: o.x, y: o.y, f: o.f };
+        },
+        place: (who, x, y) => {
+          let o = who === "mops" ? n.mo : n.sq;
+          ((o.x = x), (o.y = y));
+        },
+        face: (who, f) => {
+          (who === "mops" ? n.mo : n.sq).f = f;
+        },
+        step: (who, x, y, speed, dt) => mV(who === "mops" ? n.mo : n.sq, x, y, speed, dt),
+        still: (who) => {
+          (who === "mops" ? n.mo : n.sq).moving = !1;
+        },
+        // While Mops walks, he is not solid (he would shove Squatch in a jump; see R0).
+        moWalking: (on) => {
+          n.mo.walking = !!on;
+        },
+        room: () => n.room,
+        time: () => n.T,
+        chipNow: () => chipNow(),
+        resetChapter: () => ch1ResetState(),
+        eveningStarts: () => ch1EveningStart(),
+        soundState: () => soundState(),
+        audioCtx: () => S,
+        masterGain: () => M,
+        chime: () => D.chime(),
+        drawMops: (x, y, scale, opts) => Fe(x, y, scale, opts || {}),
+        text: (t, x, y, size, color, align, weight) => g(t, x, y, size, color, align, weight),
+      });
     // Optional inspection, not a new story beat. Keep the current queue intact while it is open.
     // Brian, Nov 16: tappable calendar; subtle bite, fake months, sponsor and family reminders.
     function ch1CalendarAvailable() {
       return n.ctrl && n.hopOut < 0 && !de() && n.room === "closet" && n.wardrobe !== "open" &&
         !n.ch1Day2 && !n.ch1Party && !n.ch1Dress && !n.ch1Zoom && !n.ch1Calendar &&
-        !n.ch1MopsLeave && (n.scene === "O1" || (n.scene === "Q1" && (n.ch1Song || n.ch1PeekReady)));
+        (n.scene === "O1" || (n.scene === "Q1" && n.ch1PeekReady));
     }
     function ch1CalendarSpots() {
       return ch1CalendarAvailable() && n.sqPose === "stand"
@@ -234,48 +271,6 @@
       // At 375px wide this remains a roughly 44px target, unlike the older cut-in X.
       L(880, 540, 58); r("#ffffff", 4); g("X", 880, 540, 40, "#1e2430", "center", 900);
     }
-    function ch1Day1() {
-      J([
-        N(() => {
-          ((n.ch1Song = !0), (n.ctrl = !0), (n.moPose = "stand"), (n.scene = "Q1"), (n.ch1Chip = "Squatch: sing along with Mops"), chipNow());
-        }),
-      ]);
-    }
-    // While the sing goal is up, Mops walks to the door and hums there.
-    function ch1MopsHumTick(step) {
-      // Once the sing-along starts, this tick stops. Clear the flag then, or Mops stays
-      // "walking" for the rest of the chapter and Squatch can finish a step inside him.
-      if (!n.ch1Song || n.room !== "closet" || n.moPose === "hidden") {
-        n.mo.walking = !1;
-        return;
-      }
-      n.mo.f = 1;
-      let there = mV(n.mo, CH1_SONG_MOPS.x, CH1_SONG_MOPS.y, 120, step);
-      n.mo.walking = !there; // while he walks, he does not shove Squatch (see R0)
-      there && ((n.mo.f = -1), (n.moPose = "sway"));
-    }
-    function ch1SingAlong() {
-      // Squatch goes to Mops at the door. The back lane (y 390) is above the crate, the G box, and the bucket.
-      let lane = 390;
-      ((n.ch1Song = !1), (n.mo.walking = !1), (n.ctrl = !1), (n.act = null), (n.sqPose = "stand"), (n.moPose = "stand"));
-      J([
-        cV((dt) => mV(n.mo, CH1_SONG_MOPS.x, CH1_SONG_MOPS.y, 160, dt)),
-        cV((dt) => mV(n.sq, n.sq.x, Math.min(n.sq.y, lane), 190, dt)),
-        cV((dt) => mV(n.sq, CH1_SONG_SQ.x, lane, 190, dt)),
-        cV((dt) => mV(n.sq, CH1_SONG_SQ.x, CH1_SONG_SQ.y, 190, dt)),
-        N(() => {
-          ((n.sq.f = 1), (n.mo.f = -1), (n.sq.moving = !1), (n.mo.moving = !1), (n.sqPose = "sing"));
-        }),
-        v("sq", "\u266A I'm floating in space! \u266A", "song"),
-        N(() => {
-          ((n.sqPose = "stand"), (n.moPose = "sway"));
-        }),
-        v("mops", "\u266A Weeee-eenn-nnttt! \u266A", "song"),
-        N(() => {
-          ((n.moPose = "stand"), (n.mo.f = 1), (n.ch1MopsLeave = 1));
-        }),
-      ]);
-    }
     function ch1PeekSpots() {
       return [
         spot({
@@ -308,24 +303,6 @@
         N(ch1SneakStart),
       ]);
     }
-    function ch1MopsLeaveTick(step) {
-      if (n.ch1MopsLeave && n.room === "closet" && n.moPose !== "hidden") {
-        n.mo.f = 1;
-        mV(n.mo, 880, 458, 160, step) &&
-          ((n.moPose = "hidden"),
-          (n.mo.x = 880),
-          (n.mo.y = 458),
-          (n.ch1MopsLeave = 0),
-          (n.ctrl = !1),
-          J([
-            { k: "card", id: "later", text: "That evening\u2026" },
-            N(() => {
-              ((n.ch1PeekReady = !0), (n.ctrl = !0), (n.scene = "Q1"), (n.ch1Chip = "Squatch: peek out the door"), chipNow());
-            }),
-          ]));
-      }
-    }
-
     // Beat 4 (problem 13): the player sneaks Squatch from his doorway to the middle plant.
     // The yellow guest by the door ("spots") faces the stage, then turns and looks toward the plant.
     // If he sees Squatch out in the open, Squatch hurries back to his doorway and tries again.

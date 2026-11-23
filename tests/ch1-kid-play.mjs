@@ -66,7 +66,8 @@ const st = () =>
       scene: n.scene || "",
       room: n.room || "",
       ctrl: !!n.ctrl,
-      up: !!(c && ["bub", "card", "panel", "fb", "wait"].includes(c.k)),
+      // A cutaway picture (the morning's beard wringing) waits for a tap like a card.
+      up: !!(c && ["bub", "card", "panel", "fb", "wait", "cutaway"].includes(c.k)),
       cur: c ? c.k : "",
       curId: c ? c.id || "" : "",
       by: c && c.id === "jail" ? c.by || "?" : "",

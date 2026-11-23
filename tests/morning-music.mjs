@@ -2,6 +2,7 @@
  * Brian's Floating in Space recording in the morning (plan section 3, "home-music.js"; Q8 answer 2026-11-23:
  * from the Dog Zylan line until "That evening…", then it fades; Joe's theme stays everywhere else).
  * - Sound off (the default): nothing plays, but the notes still come out of the speaker.
+ * - The morning keeps the room quiet before the song (Joe's theme does not play under the speaker).
  * - Sound on: the recording music/floating-in-space.mp3 starts on the tap after "Now here's a classic hit
  *   from Dog Zylan!", never before; it plays as a decoded buffer through the game's master volume (no new
  *   <audio> element); Joe's theme is quiet while it plays; it dips under each sung line and comes back; the
@@ -85,13 +86,15 @@ const waitFor = async (r, ok, ms = 8000) => {
 {
   const r = await open(true);
   let s = await tapUntil(r, (s) => s.k === "bub" && s.text === SONG);
-  g.check("sound on: nothing of the recording plays before the Dog Zylan line is tapped", s.mm.starts.length === 0 && !s.m.playing && !s.m.owns, s);
+  g.check("sound on: nothing of the recording plays before the Dog Zylan line is tapped", s.mm.starts.length === 0 && !s.m.playing, s);
+  g.check("the morning keeps the room quiet before the song (no Joe's theme under the speaker)", s.m.owns && s.warmCue === "", s);
   await r.tap();
   s = await waitFor(r, (s) => s.m.playing);
   g.check("the tap after the Dog Zylan line starts the recording (32.6 s, from the top)", s.m.playing && s.mm.starts.length === 1 && Math.abs(s.mm.starts[0].dur - 32.6) < 0.5 && s.mm.starts[0].offset === 0, s.mm.starts);
   g.check("it plays through the game's master volume, not a new <audio> element", s.m.via === "master" && !s.mm.audios.some((a) => /floating/.test(a)), { via: s.m.via, audios: s.mm.audios });
   g.check("first play at full level", Math.abs(s.m.target - 1) < 0.01, s.m);
-  g.check("Joe's theme is quiet while the recording plays", s.warmCue === "" && s.warmPaused !== false, { warmCue: s.warmCue, warmPaused: s.warmPaused });
+  s = await waitFor(r, (s) => s.warmPaused !== false, 3000);
+  g.check("Joe's theme is quiet while the recording plays", s.warmCue === "" && s.warmPaused !== false && s.m.playing, { warmCue: s.warmCue, warmPaused: s.warmPaused });
   s = await tapUntil(r, (s) => s.ctrl && !!s.chip);
   // Sing.
   const btn = await r.page.evaluate(() => {
@@ -105,11 +108,10 @@ const waitFor = async (r, ok, ms = 8000) => {
   s = await r.st();
   g.check("the recording dips under Squatch's sung line", s.m.target < 0.5 && s.m.playing, s.m);
   g.check("the made-up tune does not play over the recording", s.mm.osc - osc0 < 15, s.mm.osc - osc0);
-  await r.tap();
-  s = await waitFor(r, (s) => s.k === "bub" && s.style !== "song", 4000);
+  s = await tapUntil(r, (s) => s.k === "bub" && s.style !== "song", 10);
   await sleep(300);
   s = await r.st();
-  g.check("and comes back up after the singing", s.m.target > 0.5, s.m);
+  g.check("and comes back up after the singing", s.m.target >= s.m.background - 0.01 && s.m.target > 0.35, s.m);
   s = await tapUntil(r, (s) => s.k === "card");
   g.check('it is still playing when Mops is gone and "That evening…" comes up', /^That evening/.test(s.text), s.text);
   s = await waitFor(r, (s) => !s.m.playing && !s.m.owns, 5000);

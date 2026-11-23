@@ -13,13 +13,61 @@ import { outlineCanvas, OUTLINE } from "./outline.js";
 import { GOAL_TARGETS } from "./goal-targets.js";
 import { partyCones, SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
 import { createGuestArt } from "./guests.js";
+import { createHomeMusic } from "./home-music.js";
+import { lastCutaway } from "./cutaway.js";
+import { SPEAKER } from "./morning.js";
+
+/**
+ * The game-state fields a rebuilt beat may write, through engine().set(field, value). Anything else it
+ * changes goes through a named hand-over function (place, face, step, still, moWalking). A beat that tries
+ * to write another field stops with an error; tests/module-build.mjs checks the morning against this list.
+ */
+export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz"]);
 
 export function createBridge() {
   const beats = new Map();
   const outlines = new Map();
   const guests = createGuestArt();
+  // The engine functions the older program hands over (see handOver), and the fields beats have written.
+  let engine = null;
+  const written = new Set();
+  const homeMusic = createHomeMusic(() => engine);
   return Object.freeze({
     version: 1,
+    /**
+     * The older program hands over, once at start, the small engine functions rebuilt beats use: the story
+     * queue (queue, say, card, run, until, tapWait, current), people (pos, place, face, step, still,
+     * moWalking), state (get, and set for the BEAT_WRITES fields only), the chip, the chapter reset and the
+     * evening start, sound (soundState, audioCtx, masterGain, chime), drawing (drawMops, text) and the clock.
+     * A later hand-over replaces an earlier one (the page made a new game).
+     */
+    handOver(e) {
+      if (!e || typeof e !== "object") throw new Error("handOver needs the engine functions");
+      engine = Object.freeze({
+        ...e,
+        set(field, value) {
+          if (!BEAT_WRITES.includes(field)) throw new Error(`a beat may not write ${field} (bridge.js BEAT_WRITES)`);
+          written.add(field);
+          e.set(field, value);
+        },
+      });
+    },
+    /** The handed-over engine functions, or null before the older program has started. */
+    engine() {
+      return engine;
+    },
+    /** Every game-state field a beat has written so far (tests). */
+    beatWrites() {
+      return [...written];
+    },
+    /** Brian's Floating in Space recording in the morning. See home-music.js. */
+    homeMusic,
+    /** The wall speaker in the home room, for placing its bubble. See morning.js. */
+    speakerBox() {
+      return SPEAKER;
+    },
+    /** The full-screen cutaway (tests read what its last frame drew). See cutaway.js. */
+    cutaway: Object.freeze({ last: lastCutaway }),
     /** Register a rebuilt beat. Ids are unique; registering one twice is a mistake, so it throws. */
     registerBeat(id, beat) {
       if (typeof id !== "string" || !id) throw new Error("registerBeat needs an id");

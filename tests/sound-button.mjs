@@ -96,23 +96,10 @@ for (const [vol, want] of [["0.5", "on"], ["1", "on"], ["0", "muted"]]) {
   s = await now();
   g.check(`an older save of volume ${vol} keeps sound ${want === "on" ? "on" : "off"}`, want === "on" ? s.icon === "on" : s.icon === "muted", s);
 }
-// The sing-along button (♪) shows only while Squatch can sing, so there is one sound button the rest of the time.
-const song = await page.evaluate(async () => {
-  const ss = window.__ss,
-    n = ss.op,
-    shown = () => getComputedStyle(document.getElementById("ss-song")).display !== "none";
-  ((ss.game.state = "op"), (n.q = []), (n.cur = null), (n.ctrl = true), (n.ch1Song = false), (n.scene = "Q1"));
-  (ss.tick(1 / 30), ss.drawFrame());
-  const usual = shown();
-  n.ch1Song = true;
-  (ss.tick(1 / 30), ss.drawFrame());
-  const singing = shown();
-  n.ch1Song = false;
-  (ss.tick(1 / 30), ss.drawFrame());
-  return { usual, singing };
-});
-g.check("the sing-along button is hidden when there is nothing to sing", song.usual === false, song);
-g.check("the sing-along button shows while Squatch can sing along with Mops", song.singing === true, song);
+// The ♪ sing-along button under the picture is gone: the morning's SING ALONG is the action button
+// (src/modules/morning.js), so the speaker is the only round button there.
+const round = await page.evaluate(() => ({ song: !!document.getElementById("ss-song"), sound: !!document.getElementById("ss-sound") }));
+g.check("the speaker is the one sound button; the ♪ sing-along button is gone", round.sound && !round.song, round);
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();
 await g.finish("sound-button");

@@ -4,24 +4,26 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–51 | ## Where main is (Chapter 1 redesign) |
-| 52–66 | ## Register |
-| 67–88 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 89–109 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 110–122 | ## Phase 2 (plan section 4, T13 to T18) |
-| 123–145 | ## Phase 1 (plan section 3, T5 to T12) |
-| 146–159 | ## SS40–SS44 |
-| 160–177 | ## Story rows |
-| 178–196 | ## Reset section |
-| 197–207 | ## Still open |
-| 208–211 | ## Chapter 1 replot, recorded and not built |
-| 212–344 | ## Changelog |
+| 24–53 | ## Where main is (Chapter 1 redesign) |
+| 54–68 | ## Register |
+| 69–90 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 91–111 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 112–124 | ## Phase 2 (plan section 4, T13 to T18) |
+| 125–147 | ## Phase 1 (plan section 3, T5 to T12) |
+| 148–161 | ## SS40–SS44 |
+| 162–179 | ## Story rows |
+| 180–198 | ## Reset section |
+| 199–209 | ## Still open |
+| 210–213 | ## Chapter 1 replot, recorded and not built |
+| 214–347 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-23, draft PR (morning plan PR 2), not merged: the morning from waking to Mops leaving is the first rebuilt beat (`src/modules/morning.js`, words in `src/modules/morning-lines.js`, sheet `docs/MORNING-LINES-FOR-BRIAN.md` with six lines needing Brian's yes). Speaker wakes Squatch, Mops mops then greets him, "Party?", the beard-wringing cutaway, Dog Zylan, Brian's Floating in Space recording with notes from the speaker, SING ALONG or TALK · Mops, the goodbye, the walk out, "That evening…". Old morning code deleted from `src/game/`. Still to build (PR 3): home alone after Mops leaves (closet, bed, homework, calendar already bitten). Not yet played by a person.
 
 2026-11-22, pull request #64, merged on Brian's go-ahead: new code can live in real modules in `src/modules/`, bundled into their own strict-mode script before the older program, meeting it only through `window.SSQ`. No change a player can see: the program built from `src/game/` is byte for byte the one on main at `4d1faa2`, and `node tools/compare-builds.mjs 4d1faa2` draws Chapter 1 start and morning, the Chapter 2 gas stop, the hangar and the party at phone and desktop size from both builds; the game picture matched at all ten. First step of rebuilding Chapter 1 beat by beat (`docs/DECISIONS.md`, "Which repo is the base, 2026-11-22").
 
@@ -211,6 +213,7 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/old/OPEN-ASKS.md`. The
 
 ## Changelog
 
+2026-11-23, draft PR (morning plan PR 2). The morning rebuilt as a module, in Brian's order with his answers of 2026-11-23 (Q1 speaker first, Q3 his words, Q4 sing or TALK · Mops, Q5 no repeat, Q8 the recording this morning only). New: `morning.js`, `morning-lines.js`, `cutaway.js` (shared full-screen cutaway), `home-music.js` (the recording as a decoded buffer through the master gain, full level first, 40% after, 35% under singing, faded on "That evening…"; the room is quiet before the song). Bridge: `handOver`, `BEAT_WRITES`, `homeMusic`, `speakerBox`, `cutaway`. Old code deleted: the morning queue, `ch1Day1`, `ch1MopsHumTick`, `ch1SingAlong`, `ch1MopsLeaveTick`, `ch1SongSpots`, `ch1Song`, `ch1MopsLeave`, the ♪ button. Kept on purpose: the bed hop (old debug opening), `co()`, the calendar code. Tests: morning-order, morning-music, morning-fallback, morning-lines; rewritten: scene1-morning, opening-song and the suites that started at the old song step. Lines needing Brian's yes: 6 of 18. Not built: PR 3 (closet, bed, homework, calendar bite).
 2026-11-23, draft PR #81 (morning plan PR 1). Mops matches Brian's Nov 8 approved picture in every chapter and pose (Brian: "Match the whole picture"): blue work shirt over the back (white belly below), two-point collar, chest pocket with a white oval name patch, short tail, floppy ears with pink insides, closed smiling eyes and a smile, a narrow chin-to-floor beard, dark hooves; no gold badge; no mop stick (it still drew in Chapters 2 and 3; DECISIONS C2). Changed in place in `Fe` (`60-frame-draw.js`), the shared Mops drawing, as a fix to an existing drawing rather than a new beat module. The HUD face buttons drew each other's character (since 2026-11-07); fixed in `faceUrl` (`80-hud.js`). Debug hook `__ss.drawMops`. `music/floating-in-space.mp3` copied in, not wired (PR 2 wires it). Test: mops-look. Needs Brian's yes on the picture before merge.
 2026-11-23. New locked pictures on Brian's yes: party hall v2 (option C: corner doorway, full-length bar moved down, no painted yellow outline) and home v6 (the wooden speaker by the door). The game follows the hall: bar solid, stools, the snacks drawn on the bar and the chain reaction (CH1_BAR_DY), the hallway doorway outline, the room-walk door point and the security door point. Brian's eight answers of 2026-11-23 are in DECISIONS.md. Known: the Day 2 hall (not the party) still has no solid for the bar, as before.
 2026-11-23. Controls always shown: the joystick and ACTION button are on screen on computers too, not hidden behind "Show touch controls" (Brian: singing with Mops did not work by touch; the sing-along is an ACTION-button action where Squatch stands, so with the controls hidden there was nothing to press). Test: controls-always.

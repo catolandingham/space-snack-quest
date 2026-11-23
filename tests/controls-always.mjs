@@ -5,7 +5,7 @@
  * (an action where Squatch stands, so nothing to tap in the picture) could not be done by touch.
  *   node tests/controls-always.mjs
  */
-import { startGame, sleep } from "./game-page.mjs";
+import { startGame, sleep, toMorningSong } from "./game-page.mjs";
 
 const g = await startGame({ port: 8988, name: "controls-always" });
 for (const vp of [
@@ -26,14 +26,9 @@ for (const vp of [
   g.check(`${vp.name}: the joystick is on screen`, seen.stick, seen);
   g.check(`${vp.name}: the ACTION button is on screen`, seen.action, seen);
   g.check(`${vp.name}: no "Show touch controls" button`, !seen.toggle, seen);
-  // The morning song: Squatch can sing along with Mops. The ACTION button says SING; pressing it sings.
-  await page.evaluate(() => {
-    const ss = window.__ss,
-      n = ss.op;
-    Object.assign(n, { scene: "Q1", room: "closet", q: [], cur: null, ctrl: true, ch1Song: true, ch1Party: false, ch1Day2: false, sqPose: "stand", moPose: "stand" });
-    ((n.sq.x = 400), (n.sq.y = 500), (n.mo.x = 690), (n.mo.y = 560));
-    ss.tick(1 / 30);
-  });
+  // The morning song (src/modules/morning.js): Squatch can sing along with Mops. The ACTION button says
+  // SING ALONG; pressing it sings.
+  await toMorningSong(page);
   await sleep(300);
   const btn = await page.evaluate(() => {
     const el = document.querySelector('[role="button"]');
@@ -41,11 +36,11 @@ for (const vp of [
     const r = el.getBoundingClientRect();
     return { x: r.left + r.width / 2, y: r.top + r.height / 2, text: el.textContent };
   });
-  g.check(`${vp.name}: at the song, the ACTION button says SING`, /SING/.test(btn.text), btn);
+  g.check(`${vp.name}: at the song, the ACTION button says SING ALONG`, /SING ALONG/.test(btn.text), btn);
   vp.hasTouch ? await page.touchscreen.tap(btn.x, btn.y) : await page.mouse.click(btn.x, btn.y);
   await sleep(400);
-  const sang = await page.evaluate(() => ({ song: window.__ss.op.ch1Song, ctrl: window.__ss.op.ctrl }));
-  g.check(`${vp.name}: pressing it starts singing with Mops`, sang.song === false, sang);
+  const sang = await page.evaluate(() => ({ step: window.__ss.op.ch1Morning && window.__ss.op.ch1Morning.step, pose: window.__ss.op.sqPose }));
+  g.check(`${vp.name}: pressing it starts singing with Mops`, sang.step === "sing" && sang.pose === "sing", sang);
   g.check(`no page errors (${vp.name})`, errors.length === 0, errors);
   await ctx.close();
 }

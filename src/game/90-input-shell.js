@@ -434,10 +434,6 @@
         actionE: J1,
         resetHold: armReset,
         soundTap,
-        songTap: () => {
-          if (n.ch1Calendar) return;
-          (VV(), n.ch1Song ? ch1SingAlong() : n.scene === "O1" && n.ctrl && co());
-        },
         actionDown: actionPress,
         actionUp: actionRelease,
         tapAt: O5,
@@ -726,25 +722,6 @@
             onPointerUp: nV(() => e.current?.soundTap()),
             // A keyboard press on the focused speaker (Enter or Space) arrives as a click with no pointer.
             onClick: (W) => W.detail === 0 && e.current?.soundTap(),
-          }),
-          (0, pe.jsx)("button", {
-            type: "button",
-            id: "ss-song",
-            "aria-label": "SING",
-            style: {
-              width: 44,
-              height: 44,
-              borderRadius: 22,
-              border: "3px solid #1e2430",
-              background: "#ffffff",
-              fontSize: 22,
-              lineHeight: "38px",
-              padding: 0,
-              touchAction: "none",
-              cursor: "pointer",
-            },
-            onPointerDown: nV(() => e.current?.songTap()),
-            children: "\u266A",
           }),
           (0, pe.jsx)("span", {
             id: "ss-sound-line",

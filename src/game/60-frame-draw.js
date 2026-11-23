@@ -9,6 +9,11 @@
         p.verb !== "NEXT" && ((p.verb = "NEXT"), t.onVerb("NEXT"));
         return; // Pause the scene and its queue, not just Squatch's feet.
       }
+      // The morning module's animations and music run every frame, bubbles up or not (never a new step).
+      {
+        let beat = window.SSQ && window.SSQ.beat("ch1-morning");
+        beat && beat.tick(l);
+      }
       (n.sqHop &&
         ((n.sqHop.t += l),
         (() => {
@@ -387,22 +392,26 @@
         r("#3478f6", 1),
         X(6, -19, 2.2, 1.1),
         r("#ffffff", 0.8));
-      let A = s.headDown ? 6 : 0;
+      // headDrop lowers his head (the morning cutaway); sweep swings the beard's ragged end (mopping);
+      // noBeard leaves the beard to the caller (the cutaway draws it dunking and twisting).
+      let A = s.headDrop != null ? s.headDrop : s.headDown ? 6 : 0,
+        sw = s.sweep || 0;
       // The beard is his mop: narrow, from his chin to the floor in front of his chest, ragged at the ends.
-      (e.beginPath(),
+      (s.noBeard ||
+        (e.beginPath(),
         e.moveTo(14.5, -25 + A),
-        e.quadraticCurveTo(12.5, -12, 14, -2),
-        e.lineTo(15, 1),
-        e.lineTo(16.5, -2.5),
-        e.lineTo(18, 1.5),
-        e.lineTo(19.5, -2),
-        e.lineTo(21, 1),
-        e.lineTo(22.5, -3),
-        e.quadraticCurveTo(25, -13, 23.5, -25 + A),
+        e.quadraticCurveTo(12.5 + sw * 0.4, -12, 14 + sw, -2),
+        e.lineTo(15 + sw, 1),
+        e.lineTo(16.5 + sw, -2.5),
+        e.lineTo(18 + sw, 1.5),
+        e.lineTo(19.5 + sw, -2),
+        e.lineTo(21 + sw, 1),
+        e.lineTo(22.5 + sw, -3),
+        e.quadraticCurveTo(25 + sw * 0.4, -13, 23.5, -25 + A),
         e.closePath(),
         wV("#f4f5f8", q),
-        C([17, -18, 17.5, -5], "#c9ced8", 0.8),
-        C([20.5, -16, 20, -5], "#c9ced8", 0.8),
+        C([17, -18, 17.5 + sw * 0.7, -5], "#c9ced8", 0.8),
+        C([20.5, -16, 20 + sw * 0.7, -5], "#c9ced8", 0.8)),
         // Floppy ears with pink insides, one each side of the head, under it so the fluff covers their roots.
         [
           [8.5, -0.35, -1],
@@ -1124,6 +1133,10 @@
       if (i) return i;
       let s = G6(l);
       if (s) return s;
+      if (l === "speaker") {
+        let k = window.SSQ && window.SSQ.speakerBox && window.SSQ.speakerBox();
+        return k ? { x: (k.x0 + k.x1) / 2, y: (k.y0 + k.y1) / 2 } : { x: c / 2, y: 40 };
+      }
       if (l === "official") {
         if (n.ch1Office && n.room === "office") return { x: 430, y: 390 };
         if (n.ch1Office) return { x: 480, y: 490 };
@@ -1247,6 +1260,9 @@
         _ = w(P.x - T / 2, 10, c - T - 10),
         $ = P.y - R - 24;
       $ < 24 && ($ = 24);
+      // The wall speaker (the morning): the bubble sits to its left, level with it, its tail pointing at it.
+      let spk = l.who === "speaker" && window.SSQ && window.SSQ.speakerBox ? window.SSQ.speakerBox() : null;
+      spk && ((_ = w(spk.x0 - 26 - T, 10, c - T - 10)), ($ = w(spk.y0 - 6, 24, b - R - 12)));
       // Never cover the speaker's face. Sit above the head, or beside it if the top of the picture is full.
       let head = ear ? null : speakerHead(l.who);
       if (head && boxHits({ x: _, y: $ - 16, w: T, h: R + 16 }, head, 8)) {
@@ -1281,6 +1297,7 @@
       let ve = Math.min(P.y - 6, $ + R + 22);
       if (
         (l.style !== "whisper" &&
+          !spk &&
           (e.beginPath(),
           e.moveTo(gV - 11, $ + R - 2),
           e.lineTo(gV + (P.x > gV ? 8 : P.x < gV ? -8 : 0), ve),
@@ -1292,7 +1309,14 @@
         e.setLineDash([]),
         l.style !== "whisper")
       )
-        ((e.fillStyle = oe), e.fillRect(gV - 9, $ + R - 5, 18, 7));
+        spk
+          ? (() => {
+              let sy = (spk.y0 + spk.y1) / 2,
+                ty = w(sy, $ + 18, $ + R - 18);
+              (e.beginPath(), e.moveTo(_ + T - 3, ty - 12), e.lineTo(spk.x0 - 8, sy), e.lineTo(_ + T - 3, ty + 12), e.closePath(), r(oe, 4));
+              ((e.fillStyle = oe), e.fillRect(_ + T - 8, ty - 9, 7, 18));
+            })()
+          : ((e.fillStyle = oe), e.fillRect(gV - 9, $ + R - 5, 18, 7));
       else
         for (let [CV, NV] of [
           [10, 5],
@@ -1300,7 +1324,8 @@
         ])
           (L(gV + ((P.x - gV) * CV) / 30, $ + R + CV, NV), e.setLineDash([3, 3]), r(oe, 2), e.setLineDash([]));
       if ((l.style === "song" && (g("\u266A", _ + 4, $ + 4, 22, "#ff5fa8"), g("\u266B", _ + T - 4, $ + R - 2, 22, "#ff5fa8")), !o)) {
-        let CV = pa[l.who];
+        let beat = l.who === "speaker" && window.SSQ && window.SSQ.beat("ch1-morning"),
+          CV = beat ? beat.speakerName() : pa[l.who];
         ge(17);
         let NV = e.measureText(CV).width + 26;
         (m(_ + 16, $ - 18, NV, 32, 12), r(Ds[l.who], 3), g(CV, _ + 16 + NV / 2, $ - 2, 17, l.who === "mops" ? "#1e2430" : "#ffffff"));
@@ -2034,9 +2059,12 @@
                 walk: n.mo.moving ? n.mo.walk : 0,
                 mop: !1,
                 eyes: s === "sleep" || s === "sway" ? "closed" : "",
-                mouth: s === "yawn" || s === "pant" ? "o" : "",
+                // The morning (src/modules/morning.js): "sing" opens his mouth; he never rocks there.
+                mouth: s === "yawn" || s === "pant" ? "o" : s === "sing" ? "open" : "",
                 sway: q,
-                headDown: s === "pant",
+                // "mop": head down, only the beard sweeps the floor; "shake": the beard shaken fluffy.
+                headDown: s === "pant" || s === "mop",
+                sweep: s === "mop" ? Math.sin(n.T * 3.4) * 1.6 : s === "shake" ? Math.sin(n.T * 34) * 1.4 : 0,
               }),
               s === "polish")
             ) {
@@ -2096,7 +2124,11 @@
                   }
                   (X(300, 594, 7, 4), r("#c98a4a", 2), e.restore());
                 }
-                (Re(205, 444 - (s ? Math.max(0, Math.sin(n.T * 5)) * 7 : 0), wl, { f: 1, eyes: i === "sleep" ? "closed" : "", legs: !1 }),
+                // sqLift: below 0 he is slumped down asleep (the morning), above 0 he rises to stand up.
+                (e.save(),
+                  (n.sqLift || 0) < 0 && (e.translate(205, 444), e.rotate(0.12 * n.sqLift), e.translate(-205, -444)),
+                  Re(205, 444 - (s ? Math.max(0, Math.sin(n.T * 5)) * 7 : 0) - (n.sqLift || 0) * 22, wl, { f: 1, eyes: i === "sleep" ? "closed" : "", legs: !1 }),
+                  e.restore(),
                   m(120, 422, 170, 28, 12),
                   r("#a98bff", 4),
                   i === "sleep" && g("z z z", 280, 290 - ((n.zzz * 16) % 30), 26, "#3478f6"));
@@ -2247,8 +2279,15 @@
       if (n.roomOnly) return drawLockedRoom(n.roomOnly);
       ((qq = 0), (mq = []), (ringsDrawn = []), (conesDrawn = []));
       let l = n.cur;
+      // The morning module draws its "tap" cue on its cards, and its full-screen cutaway pictures.
+      let beat = window.SSQ && window.SSQ.beat("ch1-morning");
       if (l && l.k === "card") {
         M5(l.id, l.text, l.by, l);
+        beat && beat.drawCue(e);
+        return;
+      }
+      if (l && l.k === "cutaway") {
+        beat && beat.drawCutaway(e, l);
         return;
       }
       if (n.egg) {
@@ -2267,6 +2306,8 @@
       applyWalkDraw();
       try {
         drawRoom();
+        // The morning's sound lines and notes at the wall speaker, and the wet floor where Mops mops.
+        beat && beat.draw(e);
         if (n.ch1Calendar) {
           drawCh1Calendar();
           return;
@@ -2321,6 +2362,7 @@
         window.__ss && (window.__ss.bubbleFrame = qq),
         n.ch1Veil > 0.01 && ((e.fillStyle = "rgba(20,24,32," + Math.min(1, n.ch1Veil).toFixed(3) + ")"), e.fillRect(0, 0, c, b)));
       ((e.globalAlpha = 1), zG(), drawWaitArrow(), drawSeeHint(), drawTapHeard());
+      beat && de() && beat.drawCue(e);
     }
     // The white "VERB · thing" label over the spot the big button acts on. Every chapter uses it.
     function drawCap() {
@@ -2338,7 +2380,7 @@
       (m(x - d / 2, y - 14, d, 28, 8), r("#fffaf0", 3), g(t, x, y, 14, "#1e2430", "center", 800));
     }
     function drawWaitArrow() {
-      if (!(n.cur && n.cur.k === "wait")) return;
+      if (!(n.cur && n.cur.k === "wait") || n.cur.quiet) return;
       let bob = Math.sin(n.T * 8) * 8;
       (e.save(),
         e.translate(c - 78, b - 78 + bob),

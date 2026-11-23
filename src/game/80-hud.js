@@ -174,7 +174,8 @@
         hud = hudInit();
         if (!hud) return;
       }
-      let card = n.cur && (n.cur.k === "card" || n.cur.k === "fb" || n.cur.k === "panel"),
+      // A full-screen cutaway picture (src/modules/cutaway.js) hides the HUD like a card.
+      let card = n.cur && (n.cur.k === "card" || n.cur.k === "fb" || n.cur.k === "panel" || n.cur.k === "cutaway"),
         facesOnly = !!(card && n.cur.id === "focus" && n.cur.faces),
         on = p.state === "op" && !!n.scene && (!card || facesOnly) && !n.egg;
       for (let z of [hud.where, hud.goal]) hudShow(z, !facesOnly);
@@ -234,14 +235,7 @@
     // The sound button sits in the controls row under the picture (page text, made by the page shell).
     function hudSound() {
       let b = document.getElementById("ss-sound"),
-        line = document.getElementById("ss-sound-line"),
-        song = document.getElementById("ss-song");
-      // One sound button (Brian, 2026-11-23). The sing-along button shows only while Squatch can sing, so it is
-      // never taken for a second sound button.
-      if (song) {
-        let can = p.state === "op" && !n.ch1Calendar && (n.ch1Song || (n.scene === "O1" && n.ctrl)) ? "" : "none";
-        song.style.display !== can && (song.style.display = can);
-      }
+        line = document.getElementById("ss-sound-line");
       if (!b) return;
       let st = soundState(),
         key = st + (st === "on" ? z : "");
