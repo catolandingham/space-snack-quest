@@ -52,7 +52,7 @@ The game's source is in `src/`. `index.html` is build output: never edit it by h
   so no piece runs on its own; read them as one file in that order.
 - `src/vendor-react.js` is the React runtime. Leave it alone.
 - `src/index.template.html` is the page around the program. It has two script slots: MODULES, then BUILD.
-- `src/modules/` is new code written as real modules. `src/modules/main.js` is the entry; esbuild bundles it into its own script that runs first. `src/modules/bridge.js` is `window.SSQ`, the only meeting point with the older program: rebuilt beats register there by id. Chapter 1 is being rebuilt into modules one beat at a time, with each beat's old code deleted as it goes (the base decision: `docs/DECISIONS.md`, "Which repo is the base, 2026-11-22", on branch `docs/assessment-2026-11-22` until that merges). `node tools/compare-builds.mjs <git ref>` draws the same moments from that ref's build and this one and compares the pictures.
+- `src/modules/` is new code written as real modules. `src/modules/main.js` is the entry; esbuild bundles it into its own script that runs first. `src/modules/bridge.js` is `window.SSQ`, the only meeting point with the older program: rebuilt beats register there by id. Chapter 1 is being rebuilt into modules one beat at a time, with each beat's old code deleted as it goes (the base decision: `docs/DECISIONS.md`, "Which repo is the base, 2026-11-22"). `node tools/compare-builds.mjs <git ref>` draws the same moments from that ref's build and this one and compares the pictures.
 
 ```
 npm run build
