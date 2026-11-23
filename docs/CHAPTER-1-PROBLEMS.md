@@ -139,6 +139,8 @@ Fix order, one pull request each, each with a still compared against this table:
 
 ## 3. The hangar robot catches Squatch with no warning when he is close
 
+**Brian picked 2026-11-22: no close catch while the robot looks away; only its cone counts.** (`docs/DECISIONS.md`)
+
 - What the kid sees: at night in the hangar, the robot is looking the other way, Squatch walks past, and he is caught anyway. Nothing on screen showed the danger.
 - Seen: 1 to 3 catches every run, more than anywhere else in the chapter.
 - Cause: `ch1NightLook` (`src/game/12-ch1-redesign.js` line 225). The robot looks down for 2 seconds, turns, looks away for 4. A catch happens inside the drawn cone, and also anywhere within 70 px of the robot (`STAND_FEET`, line 191) even when it looks away. The 70 px circle is not drawn.
@@ -208,6 +210,8 @@ Fix order, one pull request each, each with a still compared against this table:
 Found by reading the Day 1 code against beats 1 to 21 of `docs/CH1-STORY-WALKTHROUGH.md`. Ten beats match or are close. The ones below differ. They were found in the code (`src/game/13-ch1-slice.js`, `14-ch1-day1.js`, `12-ch1-redesign.js`), not by watching every beat on screen, so look at each on screen before fixing it. One per pull request, after problems 1 to 10, in this order unless Brian says otherwise.
 
 ## 11. Sight cones: a dashed outline that lights up, on everyone, in every scene
+
+**Current rule, Brian 2026-11-22 (supersedes the Nov 16 note below):** cones on every character who can see Squatch, dashed until he enters the line of sight, then yellow. Guests show "?" first and "!" only if he stays too long; guards and robots show "!" right away; Mops shows hearts, as in the earlier v1 version. The disguise slows guests further ("Nice gloves", then "fur!" the second time). Exact words in `docs/DECISIONS.md`, "Sight cones, 2026-11-22".
 
 **Superseded 2026-11-16.** Brian, Nov 11 (t332), is the rule: only guards and robots show vision cones. An ordinary guest shows "?" over their head, and that turns to "!" when they spot Squatch. Approved, not built. The Nov 14 dashed-cone text below is history.
 

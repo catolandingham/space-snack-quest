@@ -3,23 +3,28 @@
 
 | Lines | Heading |
 | --- | --- |
-| 24–26 | # Space Snack Quest: every decision, in one place |
-| 27–34 | ## How to use this file |
-| 35–39 | ## Latest calendar direction, 2026-11-16 |
-| 40–42 | ## Vent walk, 2026-11-16 |
-| 43–45 | ## Locked home room v5, 2026-11-16 |
-| 46–55 | ## Fidelity system (pictures are locked, not just words) |
-| 56–93 | ## 1. Working rules |
-| 94–160 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 161–185 | ## 3. Characters and look |
-| 186–262 | ## 4. Look, rooms and layout |
-| 263–284 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 285–328 | ## 6. Later chapters (2–4 and travel) |
-| 329–338 | ## 7. Audio |
-| 339–373 | ## 8. Code, controls and process |
-| 374–420 | ## 9. Open / waiting on Brian |
-| 421–515 | ## 10. Earlier entries, kept word for word |
-| 516–612 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 29–31 | # Space Snack Quest: every decision, in one place |
+| 32–39 | ## How to use this file |
+| 40–62 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 63–74 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 75–99 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 100–108 | ## Which repo is the base, 2026-11-22 |
+| 109–115 | ## Sight cones, 2026-11-22 |
+| 116–120 | ## Latest calendar direction, 2026-11-16 |
+| 121–123 | ## Vent walk, 2026-11-16 |
+| 124–126 | ## Locked home room v5, 2026-11-16 |
+| 127–136 | ## Fidelity system (pictures are locked, not just words) |
+| 137–174 | ## 1. Working rules |
+| 175–241 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 242–266 | ## 3. Characters and look |
+| 267–343 | ## 4. Look, rooms and layout |
+| 344–365 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 366–409 | ## 6. Later chapters (2–4 and travel) |
+| 410–419 | ## 7. Audio |
+| 420–454 | ## 8. Code, controls and process |
+| 455–501 | ## 9. Open / waiting on Brian |
+| 502–596 | ## 10. Earlier entries, kept word for word |
+| 597–693 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -31,6 +36,82 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 - **Status words:** **Decided** (Brian said it or approved it) · **Needs Brian's yes** (proposed, or on-screen words waiting on him) · **Superseded** (replaced; the line says by what) · **Open** (a real question nobody has answered yet).
 - **This repo file is the single source of truth.** It was synced on Monday, November 9, 2026 from the designer record through decision R63, and it still holds the earlier snapshot `docs/old/project/DECISIONS-2026-11-08.md` (on `main` at commit 10030f6). Every earlier entry is kept in section 10. Where a later decision replaces an earlier one, the earlier line is marked **Superseded** and says what replaced it. The dated snapshot's full text is in `docs/old/history/DECISIONS-2026-11-08.md`. A short pointer stays at `docs/old/project/DECISIONS-2026-11-08.md`. New decisions get a row in the tables above, through a docs PR (review, "Docs match main: yes", Brian's written yes before merge).
 - Don't invent a decision. If something isn't clear, add it under **Open**.
+
+## Brian's confirmations by multiple choice, 2026-11-22
+Brian does not read the long files; he confirms assumptions by multiple choice in Snack Quest Chat. Each line is his pick, word for word as the option read.
+- **Morning order: "Your latest order".** The speaker announcement wakes Squatch while Mops keeps mopping, then a beard-wringing cutaway, then the song is announced, Squatch gets up, Mops says something like "Floating in space, it's our favorite song", they sing, then Mops leaves for work and mentions the party (G Bot #561). v1's current opening lines get replaced. New or changed lines still need his yes word for word.
+- **Controls: "Stick + tap + button".** Joystick, tap the floor to walk, one fixed-size action button, as v1.
+- **Plant eyes: "The very original".** Find the earliest approved eyes in v1's history, copy them exactly, show Brian a picture before building.
+- **Optional things: "They discover them".** Only what the player must do gets a yellow outline; optional things (closet, bed, calendar) have none, and tapping them still works.
+- **Balloon and dance: "Keep, simplified".** Rebuild both in the simplest form found and show Brian before it lands. (His own words, G Bot #516: "The balloon thing has just never worked when we've tried it before." If no simple version works, say so and ask before dropping.)
+- **Points for a kid who plays for perfect, 2026-11-22.** Brian picked "B": each part of Chapter 1 gets its own "clean" (never caught) check; perfect means every part clean; any single part can be replayed from the chapter screen to make it clean. Parts are the walkthrough's sections: Day 1, the party (beats 1 to 21); Day 2, lunch and the first delivery (22 to 42); one week later, the escape (43 to 52); pickup day (53 to 61). Claude's recommendations that go with it: (1) the end card shows secrets found as "7 of 9" with missing ones as "???", a clean check per part, and a gold "PERFECT CHAPTER!" when all is done; (2) the chapter screen keeps his best stars and a perfect badge on that device; (3) the never-caught party ends at closing time, so the perfect run has its own ending; (4) a few stars per swiped snack, with the topple as the risk. Existing rules stay (Nov 8): +50 a secret, +25 a funny find, "Never caught! +250", a catch never takes stars, photo corner 25. Exact on-screen words need Brian's yes.
+- **Snack bar, Brian 2026-11-22:** "the idea was that it was almost a mini game where he could sneak up and swipe food, and the pyramid only happens if he steals too much (it foreshadows the “only take so many snacks” in the next day)." So: the paw close-up swipe is the mini-game; the bartender glances and catches ("...Nice gloves", then "Wait a second... fur!" and the alarm, words pending); the pyramid topples only after too many snacks (a tuning pin, start near five), the crowd turns, and he has a few seconds to hide or be caught. It sets up Mops's one-snack rule on Day 2 (beat 27).
+- **Party ending, Brian 2026-11-22: "(A)", two endings that meet at home.** Caught (alarm, run home, guard search, Mops finds the flyer and fur) or never caught (closing time: the speaker announces it, guests leave, Mops finds him while cleaning and walks him home). Both then "Everyone out there has someone." / "You have me." The Guardians' note line (beat 22) may need a wording change for the never-caught path; Brian's call when built. Brian added: "think about points because [his kid] loves to play the chapter perfectly".
+- **Locked pictures: Brian "Good with two and three" (2026-11-22).** New locked versions of the home room (with his approved speaker, option 4) and the party hall (without the painted yellow outline around the snack bar), each shown to Brian as a picture before it is locked. The new party hall also makes his repeated bar request, asked at least four times: "the bar being too long and blocking the other door" (Grok Bot #328); "I think you can bring the bar even closer in, though, to the wall. Doesn't need so much space between it and the wall." (Squatchbot #494); "the hallway entrance needs to move, move closer to the wall, and the bar needs to move, move further away to the other wall." (G Bot #603); and the bar overlapping the hallway entrance (G Bot #474, voice chat). Added 2026-11-22 after the check of his words found it in no doc.
+- **Goat suit (same message):** a short cutscene of Mops trimming his beard, then the dress-up close-up with three pieces (beard, horns, the spare jacket), the meter, and "More bleat. Less roar."
+- **Party mini-games, revised later the same day.** Brian: "I don't think the dance game ever worked. I'm okay skipping photo corner and simplified baloon unless you are confident of making it work. Whole aim was to have a few more fun Easter eggs / mini games". Claude's call on confidence: keep the octopus juke (beat 12) and the photo corner (beat 13), each one simple rule the touch robot can test; the snack pyramid (beat 14) is needed as the party's ending; karaoke (beat 11) last, only if those play well. Out for now: the dance game (beat 10; Grok Bot #351 found it could not be played by touch: "Every tap scores 0; only keyboard arrow keys work.") and the balloon (beats 15 and 57; Brian, G Bot #516: "The balloon thing has just never worked"). Conga, chicken dance and bouquet toss are background only, with no player part. This replaces the "Keep, simplified" answer below for the balloon and dance.
+- **Dress-up: "Drag-on close-up".** A close-up of Squatch on a white background; the kid drags pieces on, more or less anywhere; the "Disguised enough" meter fills as pieces go on.
+- **Wookiee TV: "Full-screen story".** Cut away to full-screen story pictures, as walkthrough beat 20 says.
+- **Hangar robot (problem 3): "No close catch".** While the night robot looks away it cannot catch Squatch, however close; only its cone counts.
+- **Keypad: "We need the code for the office door, not the hangar"** (his own answer). v1 already puts the code (4723, from the pink slip) on the office door, walkthrough beat 50; no hangar code. No change needed.
+- **Raising the alarm: "Ch 1 wall, later shout".** In Chapter 1 whoever sees Squatch runs to the FUR ALARM on the wall and pulls it, giving him time to hide; shouting for security is allowed in later chapters.
+- **Goal words: "Outline; words if stuck".** The next place or thing gets a soft outline (his settled rule, Squatchbot #1343 to #1345: "You just light up that entrance"). No goal line at first; if the kid does nothing useful for about 20 seconds, a short goal line fades in. This replaces v1's always-on goal bar.
+- **Outfit: "Yes, his outfit".** What the kid drags on in dress-up is what Squatch wears all party; snags and tugs pull off whatever is on him.
+- **Hiding: Claude's call, Brian said "I can argue either way".** A HIDE button at the hiding spot (the "HIDE · plant" prompt), as most stealth games use an explicit hide action: the kid always knows when he is hidden, he never hides by accident while walking past, and it works the same with touch, stick and mouse.
+- **Push and merge: "Push freely, merge on yes".** Claude pushes branches and opens pull requests as needed. Nothing merges into main (which goes live) until Brian says yes in Snack Quest Chat; his words are copied into the pull request.
+
+## Story and points, settled 2026-11-22 (Brian: "All good")
+From four fresh-angle checks of the design (story logic, his words missing from docs, docs that contradict, what the design needs). Claude recommended each; Brian answered "All good" to the whole list.
+1. **Caught versus spotted.** Brian's own line (Nov 7): "it's the difference between being spotted versus being caught." A part stays clean if Squatch is spotted, the alarm goes and he hides; only being reached by a guard and jailed breaks it.
+2. **Closing-time ending.** Guests leave in pairs and families; Squatch is the last one standing alone in the empty hall when Mops finds him. That is the cause for "Everyone out there has someone."
+3. **Guardians' line (beat 22).** One line on every path: "The Guardians came!" (still needs his yes word for word when built). Drops "They always come when I'm scared".
+4. **Mops during the party.** Elsewhere on the station, out of the hall until closing time; on the caught path the alarm is why he hurries home.
+5. **Why Mops agrees to Mars (beat 45).** Being replaced leaves him nothing to stay for, and the pancake brochure is a fresh lead he trusts more than the old NO letter. His Guardian note ("we'll always be with you") is comfort for the trip.
+6. **A free dance.** When Squatch steps into the dance circle he dances: no game, no points, no fail. It pays off "I've never gotten to dance at a party."
+7. **Disguise is one state.** Disguised or not; a snag pulls off a piece, and he is exposed only when the meter drops below "Disguised enough". Replaces the earlier "three disguise levels" (R4).
+8. **Points.** +100 for each clean part and +250 more for a perfect chapter (replaces the single "Never caught! +250"; new tuning pins).
+Also settled in the same "All good": closing time comes after about 3 minutes of party, and the old "Cool hat!" timer goes; Mops assumes the bin was emptied, so the vent is Squatch's lead; on Day 2 a second snack gets a look from Mops; the packed crate rides as cargo with the Guardian Box and bucket, and the robots open it and find nothing; in the vent Mops's back is to Squatch, so the secret holds; karaoke stays out (rule 7: no singing in public); the hidden "goating in space" airlock joke stays as an Easter egg.
+
+## Claude's design calls, 2026-11-22 (Brian can veto any)
+From the Chapter 1 design check (`docs/ch1-design-audit-2026-11-22/`). Each is settled by Brian's own words or the repo's rules; Brian was told the list and can say "no to N".
+1. Dress-up pieces stay where the kid drops them on Squatch (G Bot #603: "you should be able to put it more or less wherever"); dropped off him, they slide back.
+2. The sneak's door guest is a guest, so "?" briefly, then "!" (Sight cones, 2026-11-22).
+3. The peek stays as built: Squatch half hidden in his doorway (Squatchbot #1372: "he just peeks").
+4. Chapter 1 alarm: the guest who spots him says "FUR!" and runs to the wall alarm; exact words wait for Brian's yes.
+5. Losing the disguise shows its cause on screen: the hat tilts, then flies (rule 13).
+6. The vent, plant and guard spots trigger by walking near them; the SNAG, SUCK and STAND buttons go (problem 9, walkthrough beat 16).
+7. Every catch, at home too, shows the lockup card, then restarts the current scene (K29, Brian Nov 16: "Every catch: jail card, then restart the current scene; split long scenes like the party into shorter ones"). Corrected 2026-11-22: this call first cited the older Nov 14 rule.
+8. Mops finds the flyer and fur without a new line, then "Everyone out there has someone." / "You have me."
+9. The TV story is pictures only until Brian approves words.
+10. The Moon Pie site is on the manager's office computer (R46); booked with "RETURN · empty crate".
+11. On pickup day the kid plays the crate scenes (hide, then sneak home), as beats 54 and 55 say.
+12. Every robot, the night ones included, gets the same dashed cone and the "!" rule.
+13. Day 2 calendar (beat 23) is required: it gets the soft outline, and its close-up shows today circled.
+14. Beat 40: Squatch holds up the brochure, no new words, before Mops's line.
+15. Beat 32: Isfred is called away to a damaged crate in the mail room (v1 today); the line needs Brian's yes.
+16. Beat 38: v1's two extra lines that the walkthrough does not have ("We ate at a pancake place on Mars." and "Here, a brochure.") are cut; the family leaves the brochure behind. The walkthrough's own two lines stay pending Brian's yes.
+17. Beat 42: a robot that sees Squatch at night runs to the FUR alarm on the bay wall, same rule as the hall.
+18. Plants and boxes block sight lines when Squatch hides behind them.
+19. The "Disguised enough" meter: each piece on Squatch adds the same amount, so it fills wherever pieces go (fits call 1).
+20. When a goal line fades in (stuck about 20 seconds), it shows in the top-center chip zone, names who acts ("Squatch: ..."), and fades out when the step is done.
+21. The snack count and the bartender's catches are separate: she catches only if she glances while the paw is in, so a careful kid can reach the topple limit.
+22. The game remembers the last part of Chapter 1 reached on that device; the chapter screen can start any part reached. This is needed for replaying a part, and stops a kid losing 25 minutes when the browser closes (v1 saves no progress inside a chapter today).
+
+## Which repo is the base, 2026-11-22
+- **Decided by Claude (Snack Quest Chat) at Brian's request.** Brian, 2026-11-22: "I really don't want to make the decision, I need you too to make sure you're fully considering everything, confirm you understand my goal, and then weighing all tradeoffs. [...] I'd have to defer to you." He can overturn it at any time.
+- **The goal, as understood:** a Chapter 1 his 10-year-old understands and enjoys on a phone or iPad, built to his decisions, that stops breaking earlier wins and stops claiming work is done when it is not, with little of his time and no new spending. Clean and simple (G Bot #516), early-version feel with the later ideas (G Bot #583, #586).
+- **Decision:** this repo (v1) is the base. Chapter 1 is rebuilt here beat by beat into new, small, clearly named files that follow `docs/WHAT-GOOD-LOOKS-LIKE.md`. Each new beat replaces the old code for that beat in the same change, and the old code is deleted then, so there is never a second live version of a beat. The test suite (54 suites, including the touch robot that plays the chapter) must pass after every change, and the game stays playable end to end at the end of every sitting. Proven shared pieces (walking, catching, the goal bar, input, the locked room pictures, approved lines) are kept and fixed where needed, not rewritten. Chapters 2 to 4 are left alone.
+- **Refined the same day, after Brian asked about v2's architecture:** v1's 16 source files are one function cut into pieces (`tools/build.mjs`; pull request 61 counted 1,060 shared names, 548 used across files, `n` used by all 16), so new files added to that build would join the tangle. v2's template (Claude Code Game Studios 1.3.0) has the right target shape: real modules, values in data files, tests, a seeded replay after each change, one feature a sitting. Its 582-file toolkit (48 agents, mostly for other engines) is left out. **Brian, 2026-11-22, multiple choice "Yes, do it first":** the first job is the build change that lets new code live in real modules, with no change a player can see. It bends the "no refactor phase" rule once. Proof required: every existing test passes and before-and-after pictures match. Pull request 62 drafted this change; its claims are unverified and it is checked, not merged as is. After that, each rebuilt Chapter 1 beat goes in its own module with its values in data files, and the old code for that beat is deleted.
+- **v2** (`catolandingham/space-snack-quest-v2`) is kept as a reference, not deleted. Its approved assets (the Floating in Space recording, the chosen speaker) and ideas that match Brian's spec (the morning with the speaker, homework, the bigger phone picture) are copied over one at a time, each with Brian's yes. Not its character drawings: Brian told v2 to use the live game's Squatch, Mops and aliens instead (G Bot #419: "we completely changed Sasquatch and Mops characters, and we reverted to earlier alien drawings"), so v1's characters stand. Corrected 2026-11-22.
+- **Why not v2 as the base:** its only playable code is one prototype file marked "PROTOTYPE - NOT FOR PRODUCTION", its production code folder is empty, its two tests cannot run on the Mac mini, and by its own bot's account it did "the opposite on almost every point" Brian had decided (G Bot #572). Starting there means building the real game from nothing, without the checks that catch breakage.
+- **Why not fix v1 in place as it stands:** the bloat Brian named is real (about 12,000 lines behind Chapter 1, two older generations of scenes still in the code, docs older than his G Bot decisions), and several beats need rebuilding anyway to match his newer spec. Rebuilding those beats clean, inside the repo that has the tests, gets the clean start without losing the safety net.
+
+## Sight cones, 2026-11-22
+- **Decided, Brian in Snack Quest Chat, 2026-11-22:** "Re cones, let's keep them on all players, but dashes until line of sight is intersected by S and then turns yellow - with the red exclamation if no disguise and hearts from mops (earlier version better than v2 build)." Read back to Brian as: every character who can see Squatch has a cone (guests, bartender, guards, robots, Mops); a faint dashed outline while Squatch is outside it; it fills yellow when Squatch enters its line of sight; a red "!" over the watcher if Squatch has no disguise; Mops shows floating hearts instead. Follow the earlier v1 look (pull request 35, R98, R104), not the v2 build.
+- **Supersedes** the Nov 16 rule in `docs/CHAPTER-1-PROBLEMS.md` problem 11 (cones only on guards and robots, "?" over ordinary guests) and restores the Nov 14 dashed-cone direction. Also answers G Bot #603 ("only some of the aliens have the sight cones").
+- **Decided, Brian 2026-11-22, multiple choice "Yellow, then suspicion":** with the disguise on, the cone still fills yellow when Squatch is inside it. If he stays in it a while, the watcher gets suspicious (a "?" or a line like "Nice gloves"); the second time is "fur!" and the fur alarm. This follows his earlier bartender idea (Squatchbot #1025: "maybe the first time he says nice gloves, the second time he goes, wait a second, fur"). Still to settle when built: how long "a while" is (a tuning pin) and the exact words of each line (his yes, word for word).
+- **Refined, Brian 2026-11-22 (his words: "Maybe we meant it stats with a question mark and only turns into exclamation after he stays too long (if guests versus security)"; then picked "Yes, exactly that" on the read-back):** everyone has a dashed cone that turns yellow when Squatch is in it. Guests show "?" first and "!" only if he stays too long. Security (guards, robots) shows "!" right away. Mops shows hearts. The disguise slows guests down further ("Nice gloves", then "fur!" the second time). This keeps the "?" then "!" idea Brian picked on Nov 11 (Squatchbot #1146 to #1148) and adds cones on everyone. "Too long" is a tuning pin to set when built.
+- **Check before building (Claude, 2026-11-22, after Brian asked not to agree quickly):** Brian's own Nov 11 worry was that cones on every guest "would be too much" (Squatchbot #1145). So the first step is one still of the party hall with every cone drawn dashed, at phone and iPad size, for Brian to look at once. If it reads cleanly, build it. If not, fall back to his Nov 11 pick: cones only on guards and robots, "?" then "!" over guests.
 
 ## Latest calendar direction, 2026-11-16
 - **Decided, later correction in Brian's chat:** "Just call it fuzzuary under moonmunch" and remove Homework and Sing with Mops; replace with "wash outside windows (remember space suit!)". Follow-up: "And you can make bite a bit larger". FUZZUARY alone now sits beneath MOONMUNCH. Removing the calendar reminder does not cancel the desk-homework story transition.
