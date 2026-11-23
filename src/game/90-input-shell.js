@@ -86,7 +86,7 @@
         day2Jump = !1;
       try {
         let host = location.hostname || "",
-          live = host === "space-snack-quest.onrender.com",
+          live = LIVE_HOSTS.includes(host),
           local = host === "localhost" || host === "127.0.0.1" || host === "";
         previewBeat = !!linkBeat && !live && !local;
         day2Jump = linkDay2 && !live;

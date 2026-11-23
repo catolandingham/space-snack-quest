@@ -16,7 +16,7 @@ Brian said yes to merge the redesign (PR #19) and the party (PR #20) on 2026-11-
 
 On a preview host, `?beat=42` opens that beat by itself. Local play and the live site ignore a numbered beat. On localhost, `?beat=day2` opens Day 2 at the gift in the closet, so a playtester can reach the closet box and, by playing on, the lunch handoff. The live site ignores it. No new words.
 
-A separate preview site can serve this branch. It is not the live game at space-snack-quest.onrender.com. On that preview, saved settings use ssq-day2- keys so they do not mix with the live game or the slice preview on the same iPad.
+The live game is at space-snack-quest.onrender.com and squatch.onrender.com (both build main; `LIVE_HOSTS` in `src/game/00-core.js`). A separate preview site can serve a branch. On that preview, saved settings use ssq-day2- keys so they do not mix with the live game or the slice preview on the same iPad.
 
 Every new line is listed for Brian in `docs/CH1-LINES-FOR-BRIAN.md`. He said yes to merge this chapter before the wording pass was finished, so a line in that file can still change. `tests/ch1-playthrough.mjs` plays this chapter to the tally card.
 
