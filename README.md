@@ -109,6 +109,8 @@ Four complaints Brian raised again and again now have tests that run with `npm t
 
 - `tests/ch1-plant-eyes.mjs`: hiding in a plant shows two eyes in that plant's leaves (C21), at the loading bay plant and the hall's middle plant.
 
+- `tests/ch1-party-cones.mjs`: sight cones on everyone at the party (Brian, 2026-11-23: "let's try all of them and then we can adjust"): the six guests, Isfred, the bartender, the cape guest and the octopus. Faint dashed cones; the one Squatch is in fills yellow. In disguise a "?" shows over whoever sees him and nobody catches him; after the snack spill everyone's cone turns to him. In the sneak to the plant everyone faces the stage, the way from his doorway to the plant is outside every cone, and a watcher shows "?" first and "!" (caught) only if he stays in sight 0.8 seconds (a placeholder until Brian sets it). The six guests are drawn from Brian's approved Nov 8 pictures (`docs/approved-art/guests/`, `src/modules/guests.js`); who faces where is `src/modules/party-watch.js`.
+
 ## Scene 1 morning
 
 `tests/scene1-morning.mjs` plays the start of Chapter 1 on a phone: Mops's morning line while Squatch is in bed, one bucket, no "ship" in the goal bar, no ring around Squatch, the "That evening…" card, then the peek goal, and the peek itself: the hall full on the first frame, Squatch in his doorway, an empty goal bar, the muffled talk, then "Robots?" once before the announcement, and the sneak: seen while the yellow guest looks back sends Squatch to his doorway; going while he faces the stage and pressing HIDE at the plant hides him.

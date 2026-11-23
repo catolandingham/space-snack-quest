@@ -127,7 +127,7 @@ const hallNow = () =>
     const n = window.__ss.op,
       c = n.cur || {},
       k = n.ch1PlantSneak;
-    return { room: n.room, party: !!n.ch1Party, chip: n.chip || "", cur: c.k || "", text: (c.b && c.b.text) || c.text || "", sq: [n.sq.x, n.sq.y], ctrl: n.ctrl, pose: n.sqPose, sneak: k ? { t: k.t, caught: k.caught, tries: k.tries } : null };
+    return { room: n.room, party: !!n.ch1Party, chip: n.chip || "", cur: c.k || "", text: (c.b && c.b.text) || c.text || "", sq: [n.sq.x, n.sq.y], ctrl: n.ctrl, pose: n.sqPose, sneak: k ? { t: k.t, caught: k.caught, tries: k.tries, seenBy: k.seenBy || "" } : null };
   });
 const note = (p) => {
   if (p.room !== "hall") return;
@@ -153,14 +153,18 @@ const sneakT = () => page.evaluate(() => window.__ss.op.ch1PlantSneak && window.
 // Wait until the yellow guest by the door is looking (his cone is out), then step out.
 for (let i = 0; i < 60; i++) {
   const t = await sneakT();
-  if (t > 4 && t < 5) break;
+  if (t > 4 && t < 4.4) break;
   await sleep(100);
 }
-await page.keyboard.down("ArrowUp");
-await sleep(300);
-await page.keyboard.up("ArrowUp");
+// One short step up puts him in the door guest's sight, and he stays there (placed, since a key press of a
+// few frames overshoots the narrow part of the cone near the doorway).
+await page.evaluate(() => (window.__ss.op.sq.y = 600));
+await sleep(150);
 p = await hallNow();
-g.check("stepping out while he looks: Squatch is seen", !!p.sneak && p.sneak.caught === 1 && p.sneak.tries === 1, p.sneak);
+// Brian, 2026-11-22: the watcher shows "?" first, and "!" only if Squatch stays in sight too long.
+g.check('stepping out while he looks: a "?" first, not caught yet', !!p.sneak && p.sneak.caught === 0 && p.sneak.seenBy === "door", p.sneak);
+for (let i = 0; i < 20 && p.sneak && !p.sneak.caught; i++) (await sleep(100), (p = await hallNow()));
+g.check("staying in his sight: Squatch is seen", !!p.sneak && p.sneak.caught === 1 && p.sneak.tries === 1, p.sneak);
 for (let i = 0; i < 30 && !p.ctrl; i++) (await sleep(200), (p = await hallNow()));
 g.check("then Squatch is back in his doorway to try again", p.ctrl && !!p.sneak && p.sq[1] > 620, p);
 // Now wait until he faces the stage and go to the plant.

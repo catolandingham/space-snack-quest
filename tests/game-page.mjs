@@ -50,10 +50,12 @@ export async function startGame({ port, name }) {
     try {
       pathname = new URL(req.url || "/", "http://127.0.0.1").pathname;
     } catch {}
-    if (pathname.startsWith("/docs/locked-rooms/")) {
+    // Pictures the game loads: the locked rooms, and approved art (the party guests).
+    const picDir = ["docs/locked-rooms/", "docs/approved-art/"].find((d) => pathname.startsWith("/" + d));
+    if (picDir) {
       const rel = decodeURIComponent(pathname.slice(1));
       const file = join(root, rel);
-      if (!file.startsWith(join(root, "docs/locked-rooms")) || !existsSync(file)) {
+      if (!file.startsWith(join(root, picDir)) || !existsSync(file)) {
         res.writeHead(404);
         res.end();
         return;

@@ -340,7 +340,7 @@
     function ch1SneakLook() {
       let s = n.ch1PlantSneak;
       if (!s) return "";
-      if (s.caught) return "look";
+      if (s.caught) return s.by && s.by !== "door" ? "stage" : "look"; // the door guest turns only if he is the one who saw
       let cyc = CH1_SNEAK_STAGE_SECONDS + CH1_SNEAK_LOOK_SECONDS + 2 * CH1_SNEAK_TURN_SECONDS,
         t = s.t % cyc;
       if (t < CH1_SNEAK_STAGE_SECONDS) return "stage";
@@ -373,23 +373,70 @@
       ((n.ch1PlantSneak = null), (n.ch1Chip = ""), (n.ctrl = !1), (n.act = null), (n.sq.moving = !1), (n.ch1Peeking = !0), chipNow());
       ch1SneakHide();
     }
-    function ch1SneakCaught() {
+    function ch1SneakCaught(by) {
       let s = n.ch1PlantSneak;
-      ((s.caught = 1), (s.tries += 1), (n.ctrl = !1), (n.act = null), (n.sq.moving = !1));
+      ((s.caught = 1), (s.by = by), (s.tries += 1), (n.ctrl = !1), (n.act = null), (n.sq.moving = !1));
       let hold = 0.7; // a short beat to see the "!" (plays on its own; uV would wait for a tap)
       J([
         cV((dt) => (hold -= dt || 0) <= 0),
         ch1Step("sq", CH1_PEEK_AT[0], CH1_PEEK_AT[1], 260),
         N(() => {
-          n.ch1PlantSneak && ((n.ch1PlantSneak.caught = 0), (n.ch1PlantSneak.t = CH1_SNEAK_START_T), (n.ctrl = !0));
+          n.ch1PlantSneak &&
+            ((n.ch1PlantSneak.caught = 0), (n.ch1PlantSneak.by = ""), (n.ch1PlantSneak.seenBy = ""), (n.ch1PlantSneak.seenT = 0), (n.ch1PlantSneak.t = CH1_SNEAK_START_T), (n.ctrl = !0));
         }),
       ]);
     }
     function ch1SneakTick(dt) {
       let s = n.ch1PlantSneak;
-      if (!s || s.caught || !n.ctrl || n.room !== "hall") return;
+      if (!s || s.caught) return;
+      // No control (a cutscene) or another room: nobody is watching him, so no "?" carries over.
+      if (!n.ctrl || n.room !== "hall") return ((s.seenT = 0), (s.seenBy = ""));
       s.t += dt || 0;
-      ch1SneakSees() && ch1SneakCaught();
+      // Whoever sees him shows "?" first and "!" only if he stays in sight too long (Brian, 2026-11-22).
+      let by = ch1SneakSees() ? "door" : (ch1PartyCones().find((c) => c.inside) || {}).id;
+      if (!by) return ((s.seenT = 0), (s.seenBy = ""));
+      ((s.seenT = s.seenBy === by ? (s.seenT || 0) + (dt || 0) : 0), (s.seenBy = by));
+      s.seenT >= ((window.SSQ && window.SSQ.seenTooLong) || 0) && ch1SneakCaught(by);
+    }
+    // Sight cones on everyone at the party (Brian, 2026-11-23: "let's try all of them and then we can adjust").
+    // Who stands where; which way they look comes from src/modules/party-watch.js. The guest by the door keeps
+    // his own turning cone during the sneak (above).
+    function ch1PartyPeople() {
+      let out = [];
+      CH1_GUESTS.forEach((g) => {
+        if (g[2] === "spots" && n.ch1PlantSneak) return;
+        out.push({ id: (window.SSQ && window.SSQ.guestId(g[2])) || g[2], x: g[0], y: g[1] });
+      });
+      for (let id in CH1_PARTY_CAST) {
+        let at = id === "octopus" && n.ch1Oct ? [n.ch1Oct.x, n.ch1Oct.y] : CH1_PARTY_CAST[id];
+        out.push({ id, x: at[0], y: at[1] });
+      }
+      return out;
+    }
+    // The cones, while the player sneaks to the plant or walks the party in disguise; each knows whether
+    // Squatch is inside it (the game's own sight check, so the shaded area is exactly where he is seen).
+    function ch1PartyCones() {
+      if (!(window.SSQ && window.SSQ.partyCones) || n.room !== "hall" || !n.ch1Party) return [];
+      if (!(n.ch1PlantSneak || (n.ch1Disguise && !n.ch1PartyOver))) return [];
+      let hidden = n.sqPose === "hidden";
+      return window.SSQ.partyCones(ch1PartyPeople(), n.sq, (n.ch1Look || 0) > 0).map((c) => ({
+        ...c,
+        inside: !hidden && vt(n.sq.x, n.sq.y - 20, c.ox, c.oy, c.a, STAND_CONE_HALF, STAND_CONE_LEN),
+      }));
+    }
+    // Drawn under the people in drawCh1Party. A faint dashed cone each; the one Squatch is in fills yellow.
+    // In disguise a "?" shows over whoever sees him; in the sneak a "!" over the one who caught him.
+    function drawCh1PartyCones() {
+      let s = n.ch1PlantSneak,
+        cones = ch1PartyCones();
+      cones.forEach((c) => {
+        c.mark = s ? (s.caught ? (s.by === c.id ? "!" : "") : s.seenBy === c.id ? "?" : "") : c.inside ? "?" : "";
+        if (c.inside || c.mark) seenCone(c.ox, c.oy, c.a, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.55)", "rgba(160,100,10,.95)");
+        else (e.save(), e.setLineDash([8, 7]), seenCone(c.ox, c.oy, c.a, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(0,0,0,0)", "rgba(90,96,110,.5)"), e.restore());
+        // In disguise this cone only brings a "?", never a catch (read by tests/ch1-kid-play.mjs).
+        !s && (conesDrawn[conesDrawn.length - 1].askOnly = !0);
+      });
+      n.ch1Cones = cones;
     }
     // Drawn inside drawCh1Party: the watcher's cone while he looks, and a "!" when he sees Squatch.
     function drawCh1SneakCone() {
@@ -399,7 +446,11 @@
     }
     // Drawn last in drawCh1Party, so the photo table does not cover it.
     function drawCh1SneakMark() {
-      n.ch1PlantSneak && n.ch1PlantSneak.caught && g("!", CH1_SNEAK_EYES[0] + 30, CH1_SNEAK_EYES[1] - 20, 40, "#e5533d", "center", 900);
+      let s = n.ch1PlantSneak;
+      s && s.caught && (!s.by || s.by === "door") && g("!", CH1_SNEAK_EYES[0] + 30, CH1_SNEAK_EYES[1] - 20, 40, "#e5533d", "center", 900);
+      s && !s.caught && s.seenBy === "door" && g("?", CH1_SNEAK_EYES[0] + 30, CH1_SNEAK_EYES[1] - 20, 40, "#ffcf33", "center", 900);
+      // Over everyone else whose cone has him: "!" (caught in the sneak) or "?" (in disguise).
+      (n.ch1Cones || []).forEach((c) => c.mark && g(c.mark, c.x, c.y - ADULT_PX * 1.25 - 8, 36, c.mark === "!" ? "#e5533d" : "#ffcf33", "center", 900));
     }
     function ch1SneakFace() {
       let k = ch1SneakLook();

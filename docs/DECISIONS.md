@@ -10,22 +10,22 @@
 | 69–80 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
 | 81–105 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
 | 106–114 | ## Which repo is the base, 2026-11-22 |
-| 115–121 | ## Sight cones, 2026-11-22 |
-| 122–126 | ## Latest calendar direction, 2026-11-16 |
-| 127–129 | ## Vent walk, 2026-11-16 |
-| 130–132 | ## Locked home room v5, 2026-11-16 |
-| 133–142 | ## Fidelity system (pictures are locked, not just words) |
-| 143–180 | ## 1. Working rules |
-| 181–247 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 248–272 | ## 3. Characters and look |
-| 273–349 | ## 4. Look, rooms and layout |
-| 350–371 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 372–415 | ## 6. Later chapters (2–4 and travel) |
-| 416–425 | ## 7. Audio |
-| 426–460 | ## 8. Code, controls and process |
-| 461–507 | ## 9. Open / waiting on Brian |
-| 508–602 | ## 10. Earlier entries, kept word for word |
-| 603–699 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 115–122 | ## Sight cones, 2026-11-22 |
+| 123–127 | ## Latest calendar direction, 2026-11-16 |
+| 128–130 | ## Vent walk, 2026-11-16 |
+| 131–133 | ## Locked home room v5, 2026-11-16 |
+| 134–143 | ## Fidelity system (pictures are locked, not just words) |
+| 144–181 | ## 1. Working rules |
+| 182–248 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 249–273 | ## 3. Characters and look |
+| 274–350 | ## 4. Look, rooms and layout |
+| 351–372 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 373–416 | ## 6. Later chapters (2–4 and travel) |
+| 417–426 | ## 7. Audio |
+| 427–461 | ## 8. Code, controls and process |
+| 462–508 | ## 9. Open / waiting on Brian |
+| 509–603 | ## 10. Earlier entries, kept word for word |
+| 604–700 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -108,7 +108,7 @@ From the Chapter 1 design check (`docs/ch1-design-audit-2026-11-22/`). Each is s
 - **The goal, as understood:** a Chapter 1 his 10-year-old understands and enjoys on a phone or iPad, built to his decisions, that stops breaking earlier wins and stops claiming work is done when it is not, with little of his time and no new spending. Clean and simple (G Bot #516), early-version feel with the later ideas (G Bot #583, #586).
 - **Decision:** this repo (v1) is the base. Chapter 1 is rebuilt here beat by beat into new, small, clearly named files that follow `docs/WHAT-GOOD-LOOKS-LIKE.md`. Each new beat replaces the old code for that beat in the same change, and the old code is deleted then, so there is never a second live version of a beat. The test suite (54 suites, including the touch robot that plays the chapter) must pass after every change, and the game stays playable end to end at the end of every sitting. Proven shared pieces (walking, catching, the goal bar, input, the locked room pictures, approved lines) are kept and fixed where needed, not rewritten. Chapters 2 to 4 are left alone.
 - **Refined the same day, after Brian asked about v2's architecture:** v1's 16 source files are one function cut into pieces (`tools/build.mjs`; pull request 61 counted 1,060 shared names, 548 used across files, `n` used by all 16), so new files added to that build would join the tangle. v2's template (Claude Code Game Studios 1.3.0) has the right target shape: real modules, values in data files, tests, a seeded replay after each change, one feature a sitting. Its 582-file toolkit (48 agents, mostly for other engines) is left out. **Brian, 2026-11-22, multiple choice "Yes, do it first":** the first job is the build change that lets new code live in real modules, with no change a player can see. It bends the "no refactor phase" rule once. Proof required: every existing test passes and before-and-after pictures match. Pull request 62 drafted this change; its claims are unverified and it is checked, not merged as is. After that, each rebuilt Chapter 1 beat goes in its own module with its values in data files, and the old code for that beat is deleted.
-- **v2** (`catolandingham/space-snack-quest-v2`) is kept as a reference, not deleted. Its approved assets (the Floating in Space recording, the chosen speaker) and ideas that match Brian's spec (the morning with the speaker, homework, the bigger phone picture) are copied over one at a time, each with Brian's yes. Not its character drawings: Brian told v2 to use the live game's Squatch, Mops and aliens instead (G Bot #419: "we completely changed Sasquatch and Mops characters, and we reverted to earlier alien drawings"), so v1's characters stand. Corrected 2026-11-22.
+- **v2** (`catolandingham/space-snack-quest-v2`) is kept as a reference, not deleted. Its approved assets (the Floating in Space recording, the chosen speaker) and ideas that match Brian's spec (the morning with the speaker, homework, the bigger phone picture) are copied over one at a time, each with Brian's yes. Not its Squatch and Mops drawings: v1's stand (G Bot #419: "we completely changed Sasquatch and Mops characters, and we reverted to earlier alien drawings"). The party guests are the exception: #419 complained that v2 used earlier alien drawings, G Bot then put in the six guests Brian approved on Nov 8 (G Bot #445), and Brian picked those six for the party ("The six approved Nov 8 pictures", Squatchbot #1349). Corrected 2026-11-23: the 2026-11-22 version of this line read #419 as "use the live game's aliens".
 - **Why not v2 as the base:** its only playable code is one prototype file marked "PROTOTYPE - NOT FOR PRODUCTION", its production code folder is empty, its two tests cannot run on the Mac mini, and by its own bot's account it did "the opposite on almost every point" Brian had decided (G Bot #572). Starting there means building the real game from nothing, without the checks that catch breakage.
 - **Why not fix v1 in place as it stands:** the bloat Brian named is real (about 12,000 lines behind Chapter 1, two older generations of scenes still in the code, docs older than his G Bot decisions), and several beats need rebuilding anyway to match his newer spec. Rebuilding those beats clean, inside the repo that has the tests, gets the clean start without losing the safety net.
 
@@ -117,6 +117,7 @@ From the Chapter 1 design check (`docs/ch1-design-audit-2026-11-22/`). Each is s
 - **Supersedes** the Nov 16 rule in `docs/CHAPTER-1-PROBLEMS.md` problem 11 (cones only on guards and robots, "?" over ordinary guests) and restores the Nov 14 dashed-cone direction. Also answers G Bot #603 ("only some of the aliens have the sight cones").
 - **Decided, Brian 2026-11-22, multiple choice "Yellow, then suspicion":** with the disguise on, the cone still fills yellow when Squatch is inside it. If he stays in it a while, the watcher gets suspicious (a "?" or a line like "Nice gloves"); the second time is "fur!" and the fur alarm. This follows his earlier bartender idea (Squatchbot #1025: "maybe the first time he says nice gloves, the second time he goes, wait a second, fur"). Still to settle when built: how long "a while" is (a tuning pin) and the exact words of each line (his yes, word for word).
 - **Refined, Brian 2026-11-22 (his words: "Maybe we meant it stats with a question mark and only turns into exclamation after he stays too long (if guests versus security)"; then picked "Yes, exactly that" on the read-back):** everyone has a dashed cone that turns yellow when Squatch is in it. Guests show "?" first and "!" only if he stays too long. Security (guards, robots) shows "!" right away. Mops shows hearts. The disguise slows guests down further ("Nice gloves", then "fur!" the second time). This keeps the "?" then "!" idea Brian picked on Nov 11 (Squatchbot #1146 to #1148) and adds cones on everyone. "Too long" is a tuning pin to set when built.
+- **Built as a first try, 2026-11-23 (Brian, after seeing the stills: "let's try all of them and then we can adjust"):** party only, `tests/ch1-party-cones.mjs`. Everyone faces the stage except Isfred (faces the guests) and the bartender (faces the room). "Too long" is 0.8 seconds, a placeholder, not a tuning pin until Brian sets it. Not built yet: the disguised "Nice gloves" then "fur!" step, Mops's hearts (Mops is not at the party), cones in other rooms.
 - **Check before building (Claude, 2026-11-22, after Brian asked not to agree quickly):** Brian's own Nov 11 worry was that cones on every guest "would be too much" (Squatchbot #1145). So the first step is one still of the party hall with every cone drawn dashed, at phone and iPad size, for Brian to look at once. If it reads cleanly, build it. If not, fall back to his Nov 11 pick: cones only on guards and robots, "?" then "!" over guests.
 
 ## Latest calendar direction, 2026-11-16

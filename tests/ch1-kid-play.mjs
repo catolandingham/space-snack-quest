@@ -101,6 +101,8 @@ const st = () =>
 // What the robot can see of danger: any cone on screen, with a little room to spare.
 const inDanger = (s, x, y) => {
   for (const c of s.cones) {
+    // A party guest's cone in disguise only brings a "?" (no catch); a kid who has seen that walks through it.
+    if (c.askOnly) continue;
     // Close to a watcher is never safe, whichever way it faces.
     if (Math.hypot(x - c.ox, y - (c.oy + 28)) < 96) return true;
     for (const py of [y, y - 20]) {

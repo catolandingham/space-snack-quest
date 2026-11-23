@@ -34,7 +34,7 @@ const server = http.createServer((req, res) => {
     return res.end(html[p]);
   }
   const f = join(root, p);
-  if ((p.startsWith("/docs/locked-rooms/") || p.startsWith("/music/")) && f.startsWith(root) && existsSync(f)) {
+  if ((p.startsWith("/docs/locked-rooms/") || p.startsWith("/docs/approved-art/") || p.startsWith("/music/")) && f.startsWith(root) && existsSync(f)) {
     res.writeHead(200, { "content-type": p.endsWith(".png") ? "image/png" : "audio/mpeg" });
     return res.end(readFileSync(f));
   }
