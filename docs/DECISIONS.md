@@ -5,26 +5,26 @@
 | --- | --- |
 | 29–31 | # Space Snack Quest: every decision, in one place |
 | 32–39 | ## How to use this file |
-| 40–62 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 63–74 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 75–99 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 100–108 | ## Which repo is the base, 2026-11-22 |
-| 109–115 | ## Sight cones, 2026-11-22 |
-| 116–120 | ## Latest calendar direction, 2026-11-16 |
-| 121–123 | ## Vent walk, 2026-11-16 |
-| 124–126 | ## Locked home room v5, 2026-11-16 |
-| 127–136 | ## Fidelity system (pictures are locked, not just words) |
-| 137–174 | ## 1. Working rules |
-| 175–241 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 242–266 | ## 3. Characters and look |
-| 267–343 | ## 4. Look, rooms and layout |
-| 344–365 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 366–409 | ## 6. Later chapters (2–4 and travel) |
-| 410–419 | ## 7. Audio |
-| 420–454 | ## 8. Code, controls and process |
-| 455–501 | ## 9. Open / waiting on Brian |
-| 502–596 | ## 10. Earlier entries, kept word for word |
-| 597–693 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 40–63 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 64–75 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 76–100 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 101–109 | ## Which repo is the base, 2026-11-22 |
+| 110–116 | ## Sight cones, 2026-11-22 |
+| 117–121 | ## Latest calendar direction, 2026-11-16 |
+| 122–124 | ## Vent walk, 2026-11-16 |
+| 125–127 | ## Locked home room v5, 2026-11-16 |
+| 128–137 | ## Fidelity system (pictures are locked, not just words) |
+| 138–175 | ## 1. Working rules |
+| 176–242 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 243–267 | ## 3. Characters and look |
+| 268–344 | ## 4. Look, rooms and layout |
+| 345–366 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 367–410 | ## 6. Later chapters (2–4 and travel) |
+| 411–420 | ## 7. Audio |
+| 421–455 | ## 8. Code, controls and process |
+| 456–502 | ## 9. Open / waiting on Brian |
+| 503–597 | ## 10. Earlier entries, kept word for word |
+| 598–694 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -49,6 +49,7 @@ Brian does not read the long files; he confirms assumptions by multiple choice i
 - **Party ending, Brian 2026-11-22: "(A)", two endings that meet at home.** Caught (alarm, run home, guard search, Mops finds the flyer and fur) or never caught (closing time: the speaker announces it, guests leave, Mops finds him while cleaning and walks him home). Both then "Everyone out there has someone." / "You have me." The Guardians' note line (beat 22) may need a wording change for the never-caught path; Brian's call when built. Brian added: "think about points because [his kid] loves to play the chapter perfectly".
 - **Locked pictures: Brian "Good with two and three" (2026-11-22).** New locked versions of the home room (with his approved speaker, option 4) and the party hall (without the painted yellow outline around the snack bar), each shown to Brian as a picture before it is locked. The new party hall also makes his repeated bar request, asked at least four times: "the bar being too long and blocking the other door" (Grok Bot #328); "I think you can bring the bar even closer in, though, to the wall. Doesn't need so much space between it and the wall." (Squatchbot #494); "the hallway entrance needs to move, move closer to the wall, and the bar needs to move, move further away to the other wall." (G Bot #603); and the bar overlapping the hallway entrance (G Bot #474, voice chat). Added 2026-11-22 after the check of his words found it in no doc.
 - **Goat suit (same message):** a short cutscene of Mops trimming his beard, then the dress-up close-up with three pieces (beard, horns, the spare jacket), the meter, and "More bleat. Less roar."
+- **Test order, Claude's call (Brian: "I don't know which - your call", 2026-11-22).** The four repeat complaints that cut across every scene get tests first (walls and furniture, security timing, outlines not circles, dead ends and ↺). Then each beat is rebuilt in one sitting together with its own repeat-complaint tests, rather than writing every test before any rebuild. Reason: a playable rebuilt Day 1 much sooner, without leaving the everywhere-problems unguarded.
 - **Party mini-games, revised later the same day.** Brian: "I don't think the dance game ever worked. I'm okay skipping photo corner and simplified baloon unless you are confident of making it work. Whole aim was to have a few more fun Easter eggs / mini games". Claude's call on confidence: keep the octopus juke (beat 12) and the photo corner (beat 13), each one simple rule the touch robot can test; the snack pyramid (beat 14) is needed as the party's ending; karaoke (beat 11) last, only if those play well. Out for now: the dance game (beat 10; Grok Bot #351 found it could not be played by touch: "Every tap scores 0; only keyboard arrow keys work.") and the balloon (beats 15 and 57; Brian, G Bot #516: "The balloon thing has just never worked"). Conga, chicken dance and bouquet toss are background only, with no player part. This replaces the "Keep, simplified" answer below for the balloon and dance.
 - **Dress-up: "Drag-on close-up".** A close-up of Squatch on a white background; the kid drags pieces on, more or less anywhere; the "Disguised enough" meter fills as pieces go on.
 - **Wookiee TV: "Full-screen story".** Cut away to full-screen story pictures, as walkthrough beat 20 says.

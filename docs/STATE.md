@@ -4,20 +4,20 @@
 | Lines | Heading |
 | --- | --- |
 | 22–24 | # Space Snack Quest: where things stand |
-| 25–40 | ## 2026-11-22 sitting (Snack Quest Chat, Claude) |
-| 41–47 | ## Fidelity system (new, 9:55 PM PT, Brian t233 / W33) |
-| 48–65 | ## The game |
-| 66–103 | ## Chapter 1 cartoon: panels in story order |
-| 104–119 | ## Open questions from the new panels (for Brian, multiple choice) |
-| 120–124 | ## In progress right now |
-| 125–179 | ## Next |
-| 180–184 | ## Earlier state, kept in full |
-| 185–190 | # Space Snack Quest: state |
-| 191–193 | ## What it is |
-| 194–205 | ## Where things live |
-| 206–242 | ## Open items |
-| 243–247 | ## Next step |
-| 248–252 | ## Paused 2026-11-08 at the credit line |
+| 25–41 | ## 2026-11-22 sitting (Snack Quest Chat, Claude) |
+| 42–48 | ## Fidelity system (new, 9:55 PM PT, Brian t233 / W33) |
+| 49–66 | ## The game |
+| 67–104 | ## Chapter 1 cartoon: panels in story order |
+| 105–120 | ## Open questions from the new panels (for Brian, multiple choice) |
+| 121–125 | ## In progress right now |
+| 126–180 | ## Next |
+| 181–185 | ## Earlier state, kept in full |
+| 186–191 | # Space Snack Quest: state |
+| 192–194 | ## What it is |
+| 195–206 | ## Where things live |
+| 207–243 | ## Open items |
+| 244–248 | ## Next step |
+| 249–253 | ## Paused 2026-11-08 at the credit line |
 <!-- /section-index -->
 # Space Snack Quest: where things stand
 Monday, November 9, 2026, through R63. Updated 2026-11-10 after the Chapter 1 redesign and the party landed on `main`. Decisions: `docs/DECISIONS.md`. Open asks: `docs/OPEN-ASKS.md`. Words: `docs/CH1-CARTOON-LINES.md`. Look: `docs/STYLE-GUIDE.md`.
@@ -31,7 +31,8 @@ Monday, November 9, 2026, through R63. Updated 2026-11-10 after the Chapter 1 re
 - Brian, 2026-11-22: the three files can go in the public repo once anything private or off-game is edited out (done: one family name and one account line removed).
 - Waiting on Brian: his corrections to the three files, problem 3 (hangar robot), and his say-so to commit.
 - Done and merged 2026-11-22 (pull request #64): new code lives in real modules in `src/modules/`, meeting the older program only through `window.SSQ`; nothing a player sees changed (55 of 55 suites, 2,046 checks; 10 of 10 pictures identical to `4d1faa2` with `node tools/compare-builds.mjs`). The docs from the sitting are pull request #65, merged. Pull requests 61 and 62 closed (replaced by #64). Old bot pull requests 33, 35, 38 and 60 are left open until their beats are rebuilt.
-- Next sitting: the first regression tests for Brian's repeat complaints, starting with outlines instead of circles (and rewriting the two ring tests), each written to fail first where the problem is still there.
+- Next sitting: the four repeat complaints that cut across every scene get their own tests first, each written to fail where the problem is still there: nothing walks through walls or furniture; security comes on time at every sighting; outlines instead of circles (rewriting the two ring tests that protect the rejected rings); no dead ends, and the ↺ button always works. After those, each Chapter 1 beat is rebuilt in one sitting together with its own repeat-complaint tests, Day 1 (beats 1 to 21) first.
+- Estimate given to Brian 2026-11-22: about 12 to 15 sittings to a rebuilt Day 1 worth a family playtest, about 12 to 15 more for the rest; to be re-estimated after the first three sittings from the actual pace.
 - Design settled 2026-11-22 (all in `docs/DECISIONS.md`): morning order, controls, plant eyes, outlines and goal words, cones, dress-up, snack bar mini-game, two party endings (caught or closing time), party mini-games (octopus, photo corner, snack pyramid; karaoke last; dance and balloon out), goat suit, two new locked pictures to show Brian, points with a clean check per part, and 18 Claude design calls for Brian to veto. Full beat-by-beat check: `docs/ch1-design-audit-2026-11-22/`.
 - Known dead code to delete in the rebuild: the old hangar-code design (Brian, 2026-11-22: there is no hangar bay code; only the office keypad, beat 50). See `docs/REJECTED.md`.
 - After the modules change: tests for Brian's repeat complaints, each written to fail first where the problem is still there, then fixed. Order (from `docs/ch1-design-audit-2026-11-22/angles/repeat-guards.md`): outlines not circles (and rewrite the two ring tests that protect the rejected rings); the bar and the new hall picture (and update the hall lock); security timing at every sighting; nothing walks through walls or furniture; scene jumps and following Mops; dead ends and the ↺ button; the hall vent; cones on everyone (after Brian sees one still); plant eyes (after Brian approves one still); sizes and rooms as played; then the purple bar on the bed (present today), drag-on dress-up, no unexplained marks, wall alarm, stage, overlaps. Sound gets a log of what played plus Brian's ears.
