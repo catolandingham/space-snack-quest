@@ -58,7 +58,7 @@
     // it is never round Squatch himself.
     function drawGoalMark(spot) {
       let box = window.SSQ && window.SSQ.drawGoalOutline ? window.SSQ.drawGoalOutline(e, n.room, spot.id, lockedImg[lockedNow], n.T) : null;
-      box && (n.lastRing = { x: (box.x0 + box.x1) / 2, y: (box.y0 + box.y1) / 2, T: n.T, box });
+      box && (n.lastRing = { x: (box.x0 + box.x1) / 2, y: (box.y0 + box.y1) / 2, T: n.T, box, id: spot.id, act: spot.verb + " · " + spot.cap });
     }
     function ch1MarkGoal() {
       if (n.ch1PadOn || !n.ctrl || n.ch1Zoom || n.sqPose === "hidden") return;

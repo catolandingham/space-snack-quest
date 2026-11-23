@@ -38,7 +38,17 @@ export function createBridge() {
      * draw at (x, y), or null. See outline.js.
      */
     outline(key, source, box) {
-      if (!outlines.has(key)) outlines.set(key, outlineCanvas(source, box));
+      // A picture the browser will not let us read (a page opened straight from disk) gets no outline
+      // rather than stopping the game's drawing.
+      if (!outlines.has(key)) {
+        let o = null;
+        try {
+          o = outlineCanvas(source, box);
+        } catch (e) {
+          o = null;
+        }
+        outlines.set(key, o);
+      }
       return outlines.get(key);
     },
     /**

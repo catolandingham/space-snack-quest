@@ -81,12 +81,19 @@ const report = await page.evaluate(async (chips) => {
   const bad = [],
     ringed = [],
     outlined = [],
-    unoutlined = [];
+    unoutlined = [],
+    farOutline = [];
   // Every yellow circle the frame draws (radius 30 or more, so eyes and dots are not counted). Chapter 1
   // draws some highlights itself instead of through ringZone, so the drawing calls are watched directly.
   const yellowCircles = new Set();
   const proto = CanvasRenderingContext2D.prototype;
-  const isYellow = (st) => typeof st === "string" && /#ffcf33|#ffd23f|#ffe066|255, ?207, ?51|255,207,51/i.test(st);
+  // Any yellow: hex, rgb() or rgba(), red and green high, blue well below them (the game's yellows include #ffcf33, #ffe08a, #ffd23f).
+  const isYellow = (st) => {
+    if (typeof st !== "string") return false;
+    let m = st.match(/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})/i),
+      c = m ? m.slice(1, 4).map((h) => parseInt(h, 16)) : (st.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/) || []).slice(1, 4).map(Number);
+    return c.length === 3 && c[0] > 200 && c[1] > 150 && c[2] < c[1] - 60;
+  };
   let arcs = [];
   const { arc, beginPath, stroke, fill } = proto;
   proto.beginPath = function () {
@@ -95,16 +102,23 @@ const report = await page.evaluate(async (chips) => {
     return beginPath.apply(this, arguments);
   };
   proto.arc = function (x, y, r, a0, a1) {
-    if (r >= 30 && Math.abs(a1 - a0) >= Math.PI * 1.5) arcs.push(`${Math.round(x)},${Math.round(y)} r${Math.round(r)}`);
+    if (r >= 20 && Math.abs(a1 - a0) >= Math.PI) arcs.push(`${Math.round(x)},${Math.round(y)} r${Math.round(r)}`);
     return arc.apply(this, arguments);
+  };
+  const { ellipse } = proto;
+  proto.ellipse = function (x, y, rx, ry, rot, a0, a1) {
+    if (Math.min(rx, ry) >= 20 && Math.abs(a1 - a0) >= Math.PI) arcs.push(`${Math.round(x)},${Math.round(y)} e${Math.round(rx)}x${Math.round(ry)}`);
+    return ellipse.apply(this, arguments);
   };
   proto.stroke = function () {
     if (isYellow(this.strokeStyle)) arcs.forEach((a) => yellowCircles.add(a));
+    // A stroked chevron: two or three straight lines, no curve, not dashed (outlines of doorways use strokeRect).
+    if (isYellow(this.strokeStyle) && lines >= 2 && lines <= 4 && !arcs.length && !this.getLineDash().length) yellowCircles.add("arrow");
     return stroke.apply(this, arguments);
   };
   proto.fill = function () {
     if (isYellow(this.fillStyle)) arcs.forEach((a) => yellowCircles.add(a));
-    if (isYellow(this.fillStyle) && lines >= 2 && lines <= 3 && !arcs.length) yellowCircles.add("arrow");
+    if (isYellow(this.fillStyle) && lines >= 2 && lines <= 4 && !arcs.length) yellowCircles.add("arrow");
     return fill.apply(this, arguments);
   };
   // Yellow arrows: a filled yellow shape of two or three straight lines.
@@ -157,11 +171,15 @@ const report = await page.evaluate(async (chips) => {
     for (const r of ss.rings()) ringed.push(`${chip} -> ${r.box ? "box" : "circle"} ring and arrow on ${r.id}`);
     for (const c of yellowCircles) ringed.push(`${chip} -> yellow ${c === "arrow" ? "arrow" : "circle at " + c}`);
     // Where the goal's thing is away from Squatch, the outline round it (src/modules/goal-targets.js).
-    if (n.lastRing && n.lastRing.box) outlined.push(chip);
-    else unoutlined.push(chip);
+    // The outline must be round the goal's own thing: the one whose action is offered where the goal is done.
+    if (n.lastRing && n.lastRing.box) {
+      outlined.push(chip);
+      const offered = offer && offer.verb ? offer.verb + " · " + offer.cap : "";
+      offered && offered !== n.lastRing.act && farOutline.push(`${chip}: outline for ${n.lastRing.act}, action offered is ${offered}`);
+    } else unoutlined.push(chip);
     if (!target || yellow < 1 || !prompt) bad.push({ chip, target, yellow, prompt, verb: offer && offer.verb, spots: spots.length });
   }
-  return { missing, bad, ringed, outlined, unoutlined, checked: Object.keys(play).length, story: [...story] };
+  return { missing, bad, ringed, outlined, unoutlined, farOutline, checked: Object.keys(play).length, story: [...story] };
 }, unique);
 
 g.check("every Chapter 1 goal chip is classified", report.missing.length === 0, report.missing);
@@ -172,6 +190,7 @@ g.check(
 );
 g.check("no goal is marked with a yellow circle, a floor ring or an arrow", report.ringed.length === 0, report.ringed);
 g.check("at least 14 goals outline their real thing (doors, plants, bin, mailbox, vent, calendar, wardrobe)", report.outlined.length >= 14, report.outlined);
+g.check("each outline is round the thing whose action is offered where the goal is done", report.farOutline.length === 0, report.farOutline);
 g.known(`${report.unoutlined.length} of ${report.checked} goals have no outline yet (props the game draws, Mops, close-ups, and Squatch's own spot)`, report.unoutlined.length > 0, report.unoutlined);
 g.check("story goals are named", report.story.length === 4, report.story);
 g.check("no page errors", errors.length === 0, errors);
