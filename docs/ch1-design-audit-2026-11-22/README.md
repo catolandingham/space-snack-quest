@@ -18,3 +18,7 @@ The design questions each report raised were settled on 2026-11-22: most by Clau
 Use: when a sitting rebuilds a beat, read that beat's block in the matching report first, delete the leftovers it lists for that beat in the same change, and update the block.
 
 Correction: beat 10 (dance game) is marked MATCHES in `beats-09-21.md` because the code is there. Grok Bot's audit (#351) found it could not be played by touch ("Every tap scores 0; only keyboard arrow keys work."). Not rechecked today. It is out for now (`docs/DECISIONS.md`).
+
+## Second pass: four fresh angles (2026-11-22)
+
+After Brian asked for "one more pass to see what else you think you understand but don't yet", four Sonnet helpers each looked from one angle, without seeing each other's work: `angles/story-logic.md` (causes and effects across the 61 beats), `angles/missing-words.md` (Brian's words in no doc), `angles/contradictions.md` (docs that disagree), `angles/missing-assets.md` (pictures, sounds and words the design needs that do not exist yet: 83 pending lines across 41 beats). What they found was settled the same day in `docs/DECISIONS.md` ("Story and points, settled 2026-11-22", "Claude's design calls", and the party-hall bar request). The assets list is the to-do list for pictures and words Brian must see or approve.

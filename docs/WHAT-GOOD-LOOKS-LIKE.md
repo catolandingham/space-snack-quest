@@ -8,6 +8,9 @@ How to read it: quotes are word for word, typos kept. Tags say where each is fro
 
 These win over anything below that disagrees. Details in `docs/DECISIONS.md`.
 
+- Story and points (all approved "All good", 2026-11-22): spotted is not caught, only a guard's catch breaks a clean part; the never-caught party ends at closing time with Squatch alone in the empty hall; "The Guardians came!" on every path; Mops is elsewhere during the party; being replaced is why Mops agrees to Mars; a free dance in the circle; one disguise state; +100 per clean part, +250 more for a perfect chapter.
+- The new party hall also moves the bar closer to its wall and away from the hallway entrance, as you asked four times.
+
 - Morning: your latest order (speaker wakes him, Mops mopping, beard cutaway, song, sing along, Mops leaves for work).
 - Controls: stick, tap to walk, and one fixed-size action button.
 - Plant eyes: copy the very original approved eyes.
