@@ -15,7 +15,7 @@
 | 178–196 | ## Reset section |
 | 197–207 | ## Still open |
 | 208–211 | ## Chapter 1 replot, recorded and not built |
-| 212–332 | ## Changelog |
+| 212–334 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -210,6 +210,8 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 `docs/DECISIONS.md` rows R29 through R63 are the Nov 8–9 cartoon decisions. R29–R57 cover the home wardrobe, no home vent, the pickup-day crate, the spare blue jacket disguise, Isfred Bar Neshuman, ball-hide timing, the office computer, the connecting hallway, the party with no Mops and no robots, the office cutscene, and the Employee of the Month gallery (5 photos, crooked photo #4, keepsake points still open). R58–R63 are not in the game. R58: returning the balloon gets a wordless smile, a finger to the lips, and a thumbs-up; keeping it makes the kid yell "Scary Wookiee!" (NEEDS BRIAN), pulls the FUR alarm, and brings security; never jumping sends the balloon to the ceiling, the kid is sad, and nothing else happens. R59, delegated by Brian: the kid gasps with "!" and points, then a 6-second wobbly glowing rise while grabbable, one jump grabs it, and it reads with no words. R60: the pair hunt is dropped; a "Find someone who…" picture card is proposed and pending Brian; the octopus is an over-snacked, huggy tourist ("*hic* Fellow tourist!", NEEDS BRIAN) whose two hugs knock the disguise off; a photo corner lets Squatch enter the shot, then a cut to a printing Polaroid, with bonus points if he is in it (amount open); tapes proof is dropped; the third snack-table grab starts a chain reaction that pushes things off the far end and gives a hide window (4-second placeholder, needs Brian). R61: the balloon stays in the party hall later (on the ceiling if missed, tied near the kid's spot if returned) and pops quietly with a comic "POP!" (NEEDS BRIAN) on the last Chapter 1 hall visit. R62: funnier gags are things worn as horns, something in his mouth, and random things on his head, about 16, the Squatch ball-roll photobomb stays, and the crooked photo stays #4; the crayon drawing reads as Squatch and Mops with "Always tied together" (NEEDS BRIAN) underneath; controls are left and right arrows under the photo plus an X that is always visible; swiping past photo 5 always triggers "BEEP BEEP" (NEEDS BRIAN) and the gallery cuts out. R63: kid-handwritten "MOPS" and "ME" (NEEDS BRIAN), and a dotted sight line from Mops to Squatch with hearts rising from it, contrasting with the "!" other characters get. They are not in the game. New on-screen words are marked NEEDS BRIAN in `docs/CH1-CARTOON-LINES.md`. Ball-hide numbers (R43, about 70px for 2 seconds), the 6-second rise (R59), and the 4-second snack-table placeholder (R60) are written down only. This page does not change a timer, a price, or a range in the build.
 
 ## Changelog
+
+2026-11-23. squatch.onrender.com shows this game too (Brian picked "Point it at this game"; the Render site squatch now builds this repo's main). The game counts both addresses as the live site (LIVE_HOSTS in 00-core.js), so test links do nothing there and saves use the live keys. Test: live-hosts.
 
 2026-11-22 (overnight). Plant eyes follow C21: when Squatch hides in a plant his eyes sit in the leaves (eye centres about halfway down the leaves), at the loading bay plant (they sat on the pot) and at both hall plants (the Day 2 hide showed no eyes at all; the party eyes sat left of the plant). One table, `CH1_PLANT_EYES` in 12-ch1-redesign.js. Test: ch1-plant-eyes.
 
