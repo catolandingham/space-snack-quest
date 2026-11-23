@@ -1164,11 +1164,18 @@
         seen = n.sqPose === "hidden" ? !1 : n.sqPose === "ball" ? ballNotice("ch1night", dist, dt || 0, standing) : standing;
       n.sqPose !== "ball" && ballNotice("ch1night", BALL_NOTICE_RADIUS + 1, 0, !1);
       n.ch1Alert = !!seen;
-      seen && capture("delivery");
+      seen && ch1CallSecurity("delivery");
     }
     function ch1QTick(dt) {
       (n.scene || "")[0] === "Q" &&
-        (n.ctrl && !n.ch1Mini && (n.act = pick(ch1QSpots())), ch1Watch(dt), ch1PartyTick(dt), ch1BalloonTick(dt), ch1SliceTick(dt), ch1Day1Tick(dt), ch1Day2Tick(dt));
+        (n.ctrl && !n.ch1Mini && (n.act = pick(ch1QSpots())),
+        ch1Watch(dt),
+        ch1PartyTick(dt),
+        ch1BalloonTick(dt),
+        ch1SliceTick(dt),
+        ch1Day1Tick(dt),
+        ch1Day2Tick(dt),
+        n.scene !== "QA" && qSec(dt || 0));
     }
     function ch1RestartNight() {
       ((n.scene = "Q4"),

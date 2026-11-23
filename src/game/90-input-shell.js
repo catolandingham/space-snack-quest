@@ -363,6 +363,8 @@
         pickAct: () => (n.scene && n.scene.startsWith("G") ? RA() : null),
         // Spots (task T17): every spot of the current scene, the action offered where the player stands,
         // one frame drawn now, and the rings that frame drew.
+        // The guard walking in now (Chapters 1 to 4), or null.
+        secNow: () => (ch2.sec ? { ...ch2.sec } : null),
         spotsNow: () => spotsNow(),
         placedSpots: () => placedSpots(),
         offerNow: () => pick(spotsNow()),

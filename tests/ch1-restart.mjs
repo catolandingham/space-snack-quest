@@ -8,23 +8,21 @@
  * window.__ss.ch1JumpBeat): walk Squatch away from where the beat starts, hold ↺, and check
  *   (a) he stays in Chapter 1's same part (not the opening in the bedroom),
  *   (b) he has control and a goal afterwards,
- *   (c) ↺ actually put him back (his place or the beat's step changed back). Parts with no restart point
- *       yet are on KNOWN below.
+ *   (c) ↺ puts him back where the step he is on began (the party and the night use their own restarts).
  *   node tests/ch1-restart.mjs
  */
 import { startGame } from "./game-page.mjs";
 
-// Scenes whose ↺ does nothing today (no entry in CH1_CHECKPOINTS, src/game/25-capture.js).
-// Take one off in the change that gives it a restart point.
-const KNOWN_NO_RESTART = new Set(["Q3", "Q5", "Q6", "Q7", "Q8", "Q9", "QP"]);
 const BEATS = [22, 23, 25, 27, 29, 33, 37, 38, 42, 43, 44, 45, 47, 48, 49, 50, 51, 53];
 
 const g = await startGame({ port: 8966, name: "ch1-restart" });
-const { page, ctx, errors } = await g.open("?ch=1");
-await page.evaluate(() => window.__ss.lockedReady);
+const errors = [];
 
+// Each beat gets a fresh page, so nothing one beat leaves behind changes the next.
 async function tryRestart(label, setUp) {
-  return page.evaluate(
+  const { page, ctx, errors: pageErrors } = await g.open("?ch=1");
+  await page.evaluate(() => window.__ss.lockedReady);
+  const r = await page.evaluate(
     ([label, setUp]) => {
       const ss = window.__ss, n = ss.op;
       if (setUp === "party") {
@@ -33,6 +31,7 @@ async function tryRestart(label, setUp) {
         Object.assign(n, { scene: "QA", room: "hall", ch1Party: true, ch1Disguise: true, ch1PartyOver: false, q: [], cur: null, ctrl: true });
       } else ((n.q = []), (n.cur = null), ss.ch1JumpBeat(setUp));
       for (let i = 0; i < 10; i++) ss.tick(1 / 30);
+      const playing = !!n.ctrl && !n.cur && !n.q.length;
       const before = { scene: n.scene, room: n.room, step: n.ch1Step || "", x: Math.round(n.sq.x), y: Math.round(n.sq.y), chip: n.ch1Chip || n.chip || "" };
       // Wander off: 200 px across the floor from where the beat put him.
       Object.assign(n, { q: [], cur: null, ctrl: true, sqPose: "stand", walkTo: null });
@@ -42,10 +41,13 @@ async function tryRestart(label, setUp) {
       for (let i = 0; i < 10; i++) ss.tick(1 / 30);
       const after = { scene: n.scene, room: n.room, step: n.ch1Step || "", x: Math.round(n.sq.x), y: Math.round(n.sq.y), ctrl: !!n.ctrl, chip: n.ch1Chip || n.chip || "" };
       const putBack = after.x !== moved.x || after.y !== moved.y || after.step !== before.step;
-      return { label, before, moved, after, putBack };
+      return { label, playing, before, moved, after, putBack };
     },
     [label, setUp],
   );
+  errors.push(...pageErrors);
+  await ctx.close();
+  return r;
 }
 
 const results = [await tryRestart("Day 1 party", "party")];
@@ -57,17 +59,13 @@ const otherPart = results.filter((r) => r.after.scene !== r.before.scene && r.af
 g.check("↺ keeps him in the same part of the chapter", otherPart.length === 0, otherPart);
 const stuck = results.filter((r) => !r.after.ctrl || (r.before.chip && !r.after.chip));
 g.check("after ↺ he can move and has a goal", stuck.length === 0, stuck);
-const nothing = results.filter((r) => !r.putBack);
-const knownNothing = nothing.filter((r) => KNOWN_NO_RESTART.has(r.before.scene));
-const newNothing = nothing.filter((r) => !KNOWN_NO_RESTART.has(r.before.scene));
-g.check("↺ puts him back in every part that has a restart point", newNothing.length === 0, newNothing);
-g.known(
-  `↺ does nothing in ${knownNothing.length} of ${results.length} beats checked (scenes ${[...new Set(knownNothing.map((r) => r.before.scene))].join(", ")} have no restart point)`,
-  knownNothing.length > 0,
-  knownNothing.map((r) => r.label),
-);
-const fixed = [...KNOWN_NO_RESTART].filter((s) => results.some((r) => r.before.scene === s) && !knownNothing.some((r) => r.before.scene === s));
-fixed.length && console.log(`NOTE ↺ now works in ${fixed.join(", ")}: take them off KNOWN_NO_RESTART.`);
+// The party (QA) and the night (Q4) keep their own restarts (CH1_CHECKPOINTS). Everywhere else ↺ puts
+// him back where the step he is on began, on that same step (noteCh1Step in src/game/20-ch2.js).
+// Only beats that open with the player in control: a beat that opens in a cutscene has no step start yet.
+const own = results.filter((r) => r.playing && r.before.scene !== "QA" && r.before.scene !== "Q4");
+const notBack = own.filter((r) => r.after.step !== r.before.step || Math.abs(r.after.x - r.before.x) > 2 || Math.abs(r.after.y - r.before.y) > 2);
+g.check(`↺ puts him back where his step began, on the same step (${own.length} beats)`, notBack.length === 0, notBack);
+const handMade = results.filter((r) => (r.before.scene === "QA" || r.before.scene === "Q4") && !r.putBack);
+g.check("↺ at the party and at night puts him back (their own restarts)", handMade.length === 0, handMade);
 g.check("no page errors", errors.length === 0, errors);
-await ctx.close();
 await g.finish("ch1-restart");

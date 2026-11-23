@@ -766,7 +766,7 @@
           dist = Math.hypot(n.sq.x - gue.x, n.sq.y - gue.y),
           standing = ch1ConeHit(n.sq.x, n.sq.y - 20, gue.x, gue.y - 28, gue.face),
           seen = n.sqPose === "ball" ? ballNotice("lunch" + i, dist, dt || 0, standing) : standing;
-        (n.sqPose !== "ball" && ballNotice("lunch" + i, STAND_FEET + 99, 0, !1), seen && capture("s6"));
+        (n.sqPose !== "ball" && ballNotice("lunch" + i, STAND_FEET + 99, 0, !1), seen && ch1CallSecurity("s6"));
       }
     }
     function ch1Day2Tick(dt) {
@@ -809,7 +809,9 @@
       if (s === "sneak")
         return [
           ch1At("SNEAK", "hallway", 700, 540, 520, ch1ToMops),
-          ch1At("ROLL", "ball", 140, 360, 55, () => (n.sqPose = "ball")),
+          ch2.sec
+            ? ch1At("ROLL", "ball", n.sq.x, n.sq.y, 60, () => (n.sqPose = "ball")) // a guard is coming: roll up where he stands (C20)
+            : ch1At("ROLL", "ball", 140, 360, 55, () => (n.sqPose = "ball")),
         ];
       if (s === "give") return [ch1At("GIVE", "lunch", 500, 510, 130, ch1GiveLunch)];
       if (s === "feed1") return [ch1At("FEED", "lunch", n.sq.x || 240, n.sq.y || 510, 280, ch1Feed1)];

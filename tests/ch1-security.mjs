@@ -9,17 +9,12 @@
  * (a) The party: the guest who saw him reaches the alarm and the first guard walks in within 1.5 seconds,
  *     a second guard follows, a guard who sees him catches him (LOCKUP), and hiding sends the guards
  *     to search his home instead of catching him.
- * (b) Every other place in Chapter 1 that can see Squatch (the Day 2 lunch guests, the night robot)
- *     must not go straight to LOCKUP with no alarm and no guard. Today they do; that is on KNOWN below.
+ * (b) Every other place in Chapter 1 that can see Squatch (the Day 2 lunch guests, the night robot):
+ *     the alarm and a guard come first, rolling into a ball gets him away, standing gets him caught.
  *   node tests/ch1-security.mjs
  */
 import { startGame } from "./game-page.mjs";
 
-// Problems Brian knows about. Take one off this list in the change that fixes it.
-const KNOWN = {
-  lunch: "Day 2 lunch: a guest who sees Squatch sends him straight to LOCKUP. No alarm, no guard, no chance to hide.",
-  night: "Night loading bay: the delivery robot that sees Squatch sends him straight to LOCKUP. No alarm, no guard, no chance to hide.",
-};
 const ALARM_WITHIN_S = 1.5;
 
 const g = await startGame({ port: 8965, name: "ch1-security" });
@@ -68,36 +63,55 @@ const hid = await party(true);
 g.check("party: hiding is never a catch; the guards go and search his home", hid.r.lockupAt === null && hid.r.homeAt !== null, hid.r);
 g.check("party: no page errors", open.errors.length === 0 && hid.errors.length === 0, [...open.errors, ...hid.errors]);
 
-// (b) Places that can see him outside the party: stand him on a grid until one sees him, then look at
-// what came first. Brian's rule needs an alarm and a guard before any LOCKUP.
+// (b) Places that can see him outside the party: stand him on a grid until one sees him. Brian's rule:
+// the alarm and a guard come first (no instant LOCKUP); rolled into a ball he gets away ("They lost
+// you."); standing in the open the guard reaches him (LOCKUP).
 async function watched(id, beat, grid) {
   // ?beat= works only on a preview host, so open Chapter 1 and jump to the beat the same way it does.
   const { page, ctx, errors } = await g.open("?ch=1");
   await page.evaluate(() => window.__ss.lockedReady);
-  const r = await page.evaluate(
-    ([grid, beat]) => {
-      const ss = window.__ss, n = ss.op;
-      const lockedUp = () => (n.cur && n.cur.id === "jail") || n.q.some((q) => q.id === "jail");
-      ((n.q = []), (n.cur = null), ss.ch1JumpBeat(beat));
-      const start = { scene: n.scene, room: n.room, step: n.ch1Step };
-      for (const [x, y] of grid) {
-        Object.assign(n, { q: [], cur: null, ctrl: true, sqPose: "stand", walkTo: null, ch1Zoom: null });
-        n.sq.x = x;
-        n.sq.y = y;
-        for (let i = 0; i < 6; i++) {
+  const run = (roll) =>
+    page.evaluate(
+      ([grid, beat, roll]) => {
+        const ss = window.__ss, n = ss.op;
+        const lockedUp = () => (n.cur && n.cur.id === "jail") || n.q.some((q) => q.id === "jail");
+        ((n.q = []), (n.cur = null), ss.ch1JumpBeat(beat));
+        const start = { scene: n.scene, room: n.room, step: n.ch1Step };
+        let seenAt = null;
+        for (const [x, y] of grid) {
+          Object.assign(n, { q: [], cur: null, ctrl: true, sqPose: "stand", walkTo: null, ch1Zoom: null });
+          n.sq.x = x;
+          n.sq.y = y;
           ss.tick(1 / 30);
-          if (lockedUp()) return { start, seenAt: [x, y], lockupAfterFrames: i + 1, guards: n.ch1Raid ? n.ch1Raid.guards.length : 0 };
+          if (lockedUp() || ss.secNow()) {
+            seenAt = [x, y];
+            break;
+          }
         }
-      }
-      return { start, seenAt: null };
-    },
-    [grid, beat],
-  );
+        if (!seenAt) return { start, seenAt };
+        const instant = lockedUp();
+        const alarmGuard = !!ss.secNow();
+        let t = 0, lockupAt = null, lostAt = null;
+        if (roll) n.sqPose = "ball";
+        // Hold still (rolled up, or standing where he was seen) for up to 12 seconds.
+        for (let i = 0; i < 360 && lockupAt === null && lostAt === null; i++) {
+          if (n.cur && n.cur.id !== "jail") ((n.cur = null), (n.q = n.q.filter((q) => q.id === "jail")));
+          ss.tick(1 / 30);
+          t += 1 / 30;
+          if (lockedUp()) lockupAt = Math.round(t * 10) / 10;
+          if (!ss.secNow() && n.log.some((l) => l.text === "They lost you.")) lostAt = Math.round(t * 10) / 10;
+        }
+        return { start, seenAt, instant, alarmGuard, lockupAt, lostAt };
+      },
+      [grid, beat, roll],
+    );
+  const stand = await run(false);
+  g.check(`${id}: beat ${beat} opens where someone can see Squatch`, stand.seenAt !== null, stand);
+  g.check(`${id}: being seen brings the alarm and a guard, not an instant LOCKUP`, stand.seenAt && !stand.instant && stand.alarmGuard, stand);
+  g.check(`${id}: standing in the open, the guard reaches him (LOCKUP)`, stand.lockupAt !== null, stand);
+  const roll = await run(true);
+  g.check(`${id}: rolled into a ball, he gets away ("They lost you.")`, roll.lostAt !== null && roll.lockupAt === null, roll);
   await ctx.close();
-  g.check(`${id}: beat ${beat} opens where someone can see Squatch`, r.seenAt !== null, r);
-  const instant = r.seenAt !== null && r.guards === 0;
-  if (KNOWN[id]) g.known(KNOWN[id], instant, r);
-  else g.check(`${id}: being seen brings the alarm and a guard before any LOCKUP`, !instant, r);
   g.check(`${id}: no page errors`, errors.length === 0, errors);
 }
 const grid = [];

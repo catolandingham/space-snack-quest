@@ -3,22 +3,23 @@
 
 | Lines | Heading |
 | --- | --- |
-| 23–25 | # Space Snack Quest: where things stand |
-| 26–42 | ## 2026-11-22 sitting (Snack Quest Chat, Claude) |
-| 43–48 | ## 2026-11-22 sitting 2 (Snack Quest Chat, Claude): repeat-complaint tests |
-| 49–55 | ## Fidelity system (new, 9:55 PM PT, Brian t233 / W33) |
-| 56–73 | ## The game |
-| 74–111 | ## Chapter 1 cartoon: panels in story order |
-| 112–127 | ## Open questions from the new panels (for Brian, multiple choice) |
-| 128–132 | ## In progress right now |
-| 133–187 | ## Next |
-| 188–192 | ## Earlier state, kept in full |
-| 193–198 | # Space Snack Quest: state |
-| 199–201 | ## What it is |
-| 202–213 | ## Where things live |
-| 214–250 | ## Open items |
-| 251–255 | ## Next step |
-| 256–260 | ## Paused 2026-11-08 at the credit line |
+| 24–26 | # Space Snack Quest: where things stand |
+| 27–43 | ## 2026-11-22 sitting (Snack Quest Chat, Claude) |
+| 44–49 | ## 2026-11-22 sitting 2 (Snack Quest Chat, Claude): repeat-complaint tests |
+| 50–53 | ## 2026-11-22 overnight (Snack Quest Chat, Claude; Brian asleep, said keep going) |
+| 54–60 | ## Fidelity system (new, 9:55 PM PT, Brian t233 / W33) |
+| 61–78 | ## The game |
+| 79–116 | ## Chapter 1 cartoon: panels in story order |
+| 117–132 | ## Open questions from the new panels (for Brian, multiple choice) |
+| 133–137 | ## In progress right now |
+| 138–192 | ## Next |
+| 193–197 | ## Earlier state, kept in full |
+| 198–203 | # Space Snack Quest: state |
+| 204–206 | ## What it is |
+| 207–218 | ## Where things live |
+| 219–255 | ## Open items |
+| 256–260 | ## Next step |
+| 261–265 | ## Paused 2026-11-08 at the credit line |
 <!-- /section-index -->
 # Space Snack Quest: where things stand
 Monday, November 9, 2026, through R63. Updated 2026-11-10 after the Chapter 1 redesign and the party landed on `main`. Decisions: `docs/DECISIONS.md`. Open asks: `docs/OPEN-ASKS.md`. Words: `docs/CH1-CARTOON-LINES.md`. Look: `docs/STYLE-GUIDE.md`.
@@ -45,6 +46,10 @@ Monday, November 9, 2026, through R63. Updated 2026-11-10 after the Chapter 1 re
 - Fixed in this sitting (small): no climbing the walls in the hall, hallway and office (feet stop at y 256, where the locked pictures' wall meets the floor); the office desk and filing cabinet and the loading bay plant, bin, scanner posts, mail room wall and robot mailbox are solid. Screenshots: `tests/out/sitting2/` (not in git).
 - Known, for the beat rebuilds: Day 2 lunch guests and the night robot catch at once with no alarm or guard (Brian K#159 asked for alarm every time); 5 of 34 goals still drawn with a yellow circle (party, calendar with an arrow, plant, keypad); ↺ does nothing in Q3, Q5, Q6, Q7 and QP (no restart point). The two ring tests are left until the outline change replaces the circles.
 - Not checked: the hangar floor at night, the duct, and party furniture beyond what `tests/party-solid.mjs` covers; Mops's own walking against the new furniture.
+
+## 2026-11-22 overnight (Snack Quest Chat, Claude; Brian asleep, said keep going)
+- Branch `fix/ch1-restart-security`, on top of sitting 2. ↺ now restarts the step he is on in every redesigned Chapter 1 scene (was nothing in Q3, Q5, Q6, Q7, QP, and every Day 2 ↺ went to the lunch walk). The night robot and the lunch guests call security instead of an instant LOCKUP (Brian's K#159). Details: MASTER-BACKLOG changelog.
+- Found while there: Day 2 goals have no target mark at all (their spots count as "where Squatch stands"), and the circles left in play are the home door peek, the office keypad, the plant, the calendar (with an arrow), the photo corner, and a yellow triangle at the home door. The outline work is therefore "outline every goal's real object", next.
 
 ## Fidelity system (new, 9:55 PM PT, Brian t233 / W33)
 - Approved and current pictures are frozen in `LOCKED/` (`LOCKED/INDEX.md`). Rooms are drawn only by `mockups/rooms/home_room.py`, `mockups/rooms/delivery_room.py`, `mockups/rooms/hall_room.py` (new 11:20 PM PT) and `mockups/rooms/hallway_room.py` (connecting hallway, R48; hallway v5 is APPROVED, R55); panels import them. Before Brian sees a sketch: `tools/check_all.sh` + the independent checker (`docs/CHECKER.md`). Steps: `docs/FIDELITY.md`.
