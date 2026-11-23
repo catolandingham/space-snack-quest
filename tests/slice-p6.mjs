@@ -183,6 +183,8 @@ g.check(
   patrol,
 );
 
+// Sound is off until the speaker is tapped (Brian, 2026-11-23): turn it on, as a player would.
+await page.click("#ss-sound");
 await page.click("canvas");
 const music = await page.evaluate(async () => {
   const ss = window.__ss;

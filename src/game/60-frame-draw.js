@@ -2402,12 +2402,13 @@
           W();
           return;
         }
+        // One sound switch (2026-11-23): minus turns sound off, equal turns it on, the same as the speaker.
         if (l.code === "Minus") {
-          Z(z === 1 ? 0.5 : 0);
+          G || eV();
           return;
         }
         if (l.code === "Equal") {
-          Z(z === 0 ? 0.5 : 1);
+          G && eV();
           return;
         }
         if (p.state === "title" && /^Digit[1-4]$/.test(l.code)) {
