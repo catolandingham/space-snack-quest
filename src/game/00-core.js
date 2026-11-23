@@ -1,7 +1,4 @@
 // Core: the page wrapper, sound and songs, the title screen, drawing helpers, the speaker names, the story queue and bubbles, walk bounds and solids.
-  function Mb(V) {
-    return (0, kb.jsx)("button", { onClick: V.onClick, disabled: V.disabled, children: V.label });
-  }
   function Eb() {
     return {
       kind: "light",

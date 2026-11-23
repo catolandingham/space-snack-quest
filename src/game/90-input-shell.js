@@ -625,7 +625,9 @@
       a = (0, YV.useRef)(null),
       e = (0, YV.useRef)(null),
       [h, c] = (0, YV.useState)(""),
-      [b, O] = (0, YV.useState)(wb()),
+      // The joystick and ACTION button are always shown (Brian, 2026-11-23: "controls (joystick, etc.) should just
+      // always be shown"), on every screen, touch or not.
+      [b, O] = (0, YV.useState)(!0),
       [y, U] = (0, YV.useState)(Nb()),
       [E, w] = (0, YV.useState)(Rb());
     ((0, YV.useEffect)(() => {
@@ -761,28 +763,8 @@
                   SND,
                 ],
               }))
-            : I
-              ? (Z = null) // No help line on touch screens (scene 1 review): the stick and button explain themselves.
-              :
-              (Z = (0, pe.jsxs)("div", {
-                style: { ...M, justifyContent: "space-between" },
-                children: [
-                  SND,
-                  // The slot stays 104px whether or not NEXT is showing, so the picture does not jump up.
-                  (0, pe.jsx)("div", {
-                    "aria-hidden": /^!?NEXT$/.test(h) ? void 0 : !0,
-                    style: {
-                      width: 104,
-                      height: 104,
-                      flex: "0 0 auto",
-                      visibility: /^!?NEXT$/.test(h) ? "visible" : "hidden",
-                      pointerEvents: /^!?NEXT$/.test(h) ? "auto" : "none",
-                    },
-                    children: z,
-                  }),
-                  (0, pe.jsx)(Mb, { label: "Show touch controls", onClick: () => O(!0) }),
-                ],
-              })),
+            : (Z = null), // Sideways phones put the controls beside the picture.
+
       (0, pe.jsxs)("div", {
         ref: a,
         style: {

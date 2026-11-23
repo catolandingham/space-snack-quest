@@ -10,6 +10,7 @@ Calendar review status (2026-11-16): Brian said yes to merge the calendar (Nov 1
 
 ## Chapter 1 redesign (on main)
 
+2026-11-23. The joystick and the ACTION button are always on screen, on every device (Brian: "touch doesn't work at all for singing with mops, so I think controls (joystick, etc.) should just always be shown"). The "Show touch controls" button is gone. `tests/controls-always.mjs`.
 2026-11-23. What to build next lives in `docs/BRIAN-ASKS-OPEN.md`: everything Brian asked for that is not in the game yet, in his own words, from all three threads, checked against main and by an independent review. The full lists are in his private archive. `docs/OPEN-ASKS.md` (Nov 9) moved to `docs/old/`.
 
 2026-11-23. One sound button for music and sound effects (Brian: "Let's just have one button to turn on music and sound effects", the Battle Ostriches plan). Sound is off until the player taps the speaker under the picture; it shows a slash while off. One tap turns music and sound effects on, started inside that tap so iPhones allow it (the music file is started then too); another tap turns them off. The choice is saved on the device; if it was left on, the next tap after a locked phone or a reload brings it back. Taps on the game never turn sound on. The volume steps are gone. The ♪ sing-along button shows only while Squatch can sing. `tests/sound-button.mjs`.
