@@ -11,10 +11,13 @@
  */
 import { outlineCanvas, OUTLINE } from "./outline.js";
 import { GOAL_TARGETS } from "./goal-targets.js";
+import { partyCones, SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
+import { createGuestArt } from "./guests.js";
 
 export function createBridge() {
   const beats = new Map();
   const outlines = new Map();
+  const guests = createGuestArt();
   return Object.freeze({
     version: 1,
     /** Register a rebuilt beat. Ids are unique; registering one twice is a mistake, so it throws. */
@@ -74,6 +77,18 @@ export function createBridge() {
       }
       ctx.restore();
       return target.rect || target.trace;
+    },
+    /** Party sight cones: where each person's cone starts and which way it points. See party-watch.js. */
+    partyCones,
+    /** Seconds a guest watches Squatch with "?" before it turns into "!". See party-watch.js. */
+    seenTooLong: SEEN_TOO_LONG_SECONDS,
+    /** The approved guest who stands in place of one of the older program's guest kinds, or null. See guests.js. */
+    guestId(kind) {
+      return guests.idFor(kind);
+    },
+    /** Draws an approved party guest; false while its picture is not ready (the caller draws its own). */
+    drawGuest(ctx, kind, x, y, adultPx, time) {
+      return guests.draw(ctx, kind, x, y, adultPx, time);
     },
   });
 }

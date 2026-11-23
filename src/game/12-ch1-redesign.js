@@ -134,6 +134,8 @@
       [520, 610, "spots"],
       [660, 600, "blob"],
     ];
+    // Everyone else at the party, where they stand (feet). Their sight cones come from here too (ch1PartyPeople).
+    const CH1_PARTY_CAST = { isfred: [360, 256], cape: [340, 400], bartender: [880, 500], octopus: [760, 555] };
     // Party hall solids (Brian, 2026-11-15: "Make the party hall solid so Squatch can't walk through walls, the stage, or guests").
     // Boxes are where feet cannot go, in picture units, measured on hall-room-empty-v1.png and the party drawing.
     // The floor starts in front of the stage (CH1_PARTY_FLOOR_Y), so nobody walks on the window or up the back wall.
@@ -1319,8 +1321,8 @@
         r("#fffaf0", 2),
         dq(535, 222, !1, 0.55),
         g("COMING SOON!", 535, 250, 17, "#e5533d", "center", 900),
-        drawCh1Alien(360, 256, "horns", ALIEN_ADULT, face || 1),
-        glance(360, 256),
+        drawCh1Alien(CH1_PARTY_CAST.isfred[0], CH1_PARTY_CAST.isfred[1], "horns", ALIEN_ADULT, face || 1),
+        glance(CH1_PARTY_CAST.isfred[0], CH1_PARTY_CAST.isfred[1]),
         n.sqPose === "hidden" && ch1HideEyes(),
         !(n.ch1PartyDid && n.ch1PartyDid.snack) &&
           [
@@ -1329,20 +1331,28 @@
             [848, 440, "cake"],
           ].forEach((bit) => drawBarSnack(bit[2], bit[0], bit[1], 0.45)),
         drawCh1SneakCone(),
+        drawCh1PartyCones(),
+        (n.ch1GuestArt = 0),
         CH1_GUESTS.forEach((guest) => {
           if (n.ch1Raid && n.ch1Raid.witness && guest[2] === "spots") return;
-          (drawCh1Alien(guest[0], guest[1], guest[2], ALIEN_ADULT, n.ch1PlantSneak && guest[2] === "spots" ? ch1SneakFace() : face || 1), glance(guest[0], guest[1]));
+          // Brian's approved Nov 8 guests (src/modules/guests.js); the older drawing only while a picture is not ready.
+          window.SSQ && window.SSQ.drawGuest(e, guest[2], guest[0], guest[1], ADULT_PX, n.T)
+            ? n.ch1GuestArt++
+            : (drawCh1Alien(guest[0], guest[1], guest[2], ALIEN_ADULT, n.ch1PlantSneak && guest[2] === "spots" ? ch1SneakFace() : face || 1), glance(guest[0], guest[1]));
         }),
-        n.ch1Raid && n.ch1Raid.witness && drawCh1Alien(n.ch1Raid.witness.x, n.ch1Raid.witness.y, "spots", ALIEN_ADULT, 1),
+        n.ch1Raid &&
+          n.ch1Raid.witness &&
+          !(window.SSQ && window.SSQ.drawGuest(e, "spots", n.ch1Raid.witness.x, n.ch1Raid.witness.y, ADULT_PX, n.T)) &&
+          drawCh1Alien(n.ch1Raid.witness.x, n.ch1Raid.witness.y, "spots", ALIEN_ADULT, 1),
         ((n.ch1Raid && n.ch1Raid.guards) || []).forEach((g) => {
           g.face != null &&
             seenCone(g.x, g.y - 28, g.face, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.62)", "rgba(160,100,10,.95)");
           drawCh1Alien(g.x, g.y, "hat", ALIEN_ADULT, Math.cos(g.face || 0) < 0 ? -1 : 1);
         }),
-        Qt(880, 500, "#c9842a", QT_ADULT, -1),
-        drawOctopus((n.ch1Oct && n.ch1Oct.x) || 760, (n.ch1Oct && n.ch1Oct.y) || 555, face || -1),
+        Qt(CH1_PARTY_CAST.bartender[0], CH1_PARTY_CAST.bartender[1], "#c9842a", QT_ADULT, -1),
+        drawOctopus((n.ch1Oct && n.ch1Oct.x) || CH1_PARTY_CAST.octopus[0], (n.ch1Oct && n.ch1Oct.y) || CH1_PARTY_CAST.octopus[1], face || -1),
         drawCh1Fest(),
-        drawCh1Alien(340, 400, "cape", ALIEN_ADULT, face || -1),
+        drawCh1Alien(CH1_PARTY_CAST.cape[0], CH1_PARTY_CAST.cape[1], "cape", ALIEN_ADULT, face || -1),
         drawCh1Tripod(250, 360),
         !n.ch1Flyer && (m(500, 500, 16, 12, 1), r("#fffdf8", 1)),
         (n.ch1Spill || 0) > 0 && drawCh1Chain(1 - n.ch1Spill),
