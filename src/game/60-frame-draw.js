@@ -433,7 +433,8 @@
         (e.lineCap = "round"),
         e.stroke(),
         F(23.5, -26.5 + A, 1.1, "#f2a7b6"),
-        s.mouth === "o"
+        // "o" (yawn, pant, shout) and "open" (singing) draw the round mouth; otherwise he smiles.
+        s.mouth === "o" || s.mouth === "open"
           ? (e.beginPath(), e.ellipse(22, -24 + A, 1.4, 1.9, 0, 0, 7), (e.fillStyle = y), e.fill())
           : (e.beginPath(), e.moveTo(19.5, -25 + A), e.quadraticCurveTo(21.3, -23.4 + A, 23.2, -24.8 + A), (e.strokeStyle = y), (e.lineWidth = 1), e.stroke()),
         // No mop stick: his beard is his mop (DECISIONS C2). Callers still pass `mop`; it draws nothing.

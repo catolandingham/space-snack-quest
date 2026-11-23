@@ -168,7 +168,7 @@ function checkLook(where, ops, pose = {}) {
   const eye = strokes.find((o) => o.c === INK && w(o.b) >= 1.5 && w(o.b) <= 5 && h(o.b) <= 2.5 && o.b.y0 > hy - 4 && o.b.y1 < hy + 1.5 && o.b.x0 > hx - 2);
   g.check(`${where}: closed eye`, !!eye, strokes.filter((o) => o.c === INK && w(o.b) < 8).map((o) => o.b));
   // Mouth: a smile under the nose, or the round "o" when the pose calls for it.
-  if (pose.mouth === "o") {
+  if (pose.mouth === "o" || pose.mouth === "open") {
     const o = fills.find((f) => f.c === INK && f.oval && f.b.y0 > hy);
     g.check(`${where}: round open mouth`, !!o);
   } else {
@@ -203,7 +203,8 @@ const MO = { x: 611.25, y: 503.5, f: 1, moving: false };
   await ctx.close();
 }
 // Each pose the drawing has, drawn on its own through the debug hook (the same function the game calls).
-// Poses come from X2 in 60-frame-draw.js (moPose: stand, sleep, sway, yawn, pant), walking, and facing left.
+// Poses come from X2 in 60-frame-draw.js (moPose: stand, sleep, sway, yawn, pant), walking, facing left,
+// and the hall song cutaway's mouth: "open" (11-ch1-hall.js).
 {
   const { page, ctx, errors } = await g.open("?ch=1");
   await page.click("canvas");
@@ -218,6 +219,7 @@ const MO = { x: 611.25, y: 503.5, f: 1, moving: false };
     ["yawn", { mouth: "o" }],
     ["pant, head down", { mouth: "o", headDown: true }],
     ["carrying the mop flag", { mop: true }],
+    ["singing", { mouth: "open" }],
   ];
   const hook = await page.evaluate(() => typeof window.__ss.drawMops === "function");
   g.check("debug hook __ss.drawMops draws Mops", hook);
