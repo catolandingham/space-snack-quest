@@ -32,7 +32,9 @@ The five I read closely:
 3. Today's Chapter 1 catches are not in the catch-rule test.
 4. GitHub's automatic checks are off (commit f721953: "while GitHub's checks are off, paste the local pass count"), so passing is only ever on one machine.
 
-**Conclusion:** the suite is real enough to refactor and fix on top of. It will catch most "this used to work and now it's broken" mistakes in story and walking. It will not catch "this looks wrong" or "this isn't fun". The bias you set holds: fix v1 on its tests, do not rewrite.
+**Correction, later the same day.** A register of Brian's repeat complaints (`docs/ch1-design-audit-2026-11-22/angles/repeat-issues.md`: 24 issues raised more than once, 16 of them reported fixed by a bot and then broken again) was checked against the tests (`angles/repeat-guards.md`). None of the 24 is fully guarded: 15 partly, 9 not at all. Three existing tests protect things Brian rejected: `ring-equals-trigger.mjs` and `every-goal-has-target.mjs` require rings, `ch1-playthrough.mjs` checks the balloon, and `locked-rooms.mjs` locks the hall picture with the long bar. So the suite guards against breaking the story and the walking; it does not yet guard against his repeat complaints. Writing those tests comes first, each before its fix, in the order in `docs/STATE.md`.
+
+**Conclusion (first draft):** the suite is real enough to refactor and fix on top of. It will catch most "this used to work and now it's broken" mistakes in story and walking. It will not catch "this looks wrong" or "this isn't fun". The bias you set holds: fix v1 on its tests, do not rewrite.
 
 ## 2. The open problems, by who can fix them
 

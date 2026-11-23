@@ -4,20 +4,20 @@
 | Lines | Heading |
 | --- | --- |
 | 22–24 | # Space Snack Quest: where things stand |
-| 25–38 | ## 2026-11-22 sitting (Snack Quest Chat, Claude) |
-| 39–45 | ## Fidelity system (new, 9:55 PM PT, Brian t233 / W33) |
-| 46–63 | ## The game |
-| 64–101 | ## Chapter 1 cartoon: panels in story order |
-| 102–117 | ## Open questions from the new panels (for Brian, multiple choice) |
-| 118–122 | ## In progress right now |
-| 123–177 | ## Next |
-| 178–182 | ## Earlier state, kept in full |
-| 183–188 | # Space Snack Quest: state |
-| 189–191 | ## What it is |
-| 192–203 | ## Where things live |
-| 204–240 | ## Open items |
-| 241–245 | ## Next step |
-| 246–250 | ## Paused 2026-11-08 at the credit line |
+| 25–39 | ## 2026-11-22 sitting (Snack Quest Chat, Claude) |
+| 40–46 | ## Fidelity system (new, 9:55 PM PT, Brian t233 / W33) |
+| 47–64 | ## The game |
+| 65–102 | ## Chapter 1 cartoon: panels in story order |
+| 103–118 | ## Open questions from the new panels (for Brian, multiple choice) |
+| 119–123 | ## In progress right now |
+| 124–178 | ## Next |
+| 179–183 | ## Earlier state, kept in full |
+| 184–189 | # Space Snack Quest: state |
+| 190–192 | ## What it is |
+| 193–204 | ## Where things live |
+| 205–241 | ## Open items |
+| 242–246 | ## Next step |
+| 247–251 | ## Paused 2026-11-08 at the credit line |
 <!-- /section-index -->
 # Space Snack Quest: where things stand
 Monday, November 9, 2026, through R63. Updated 2026-11-10 after the Chapter 1 redesign and the party landed on `main`. Decisions: `docs/DECISIONS.md`. Open asks: `docs/OPEN-ASKS.md`. Words: `docs/CH1-CARTOON-LINES.md`. Look: `docs/STYLE-GUIDE.md`.
@@ -33,6 +33,7 @@ Monday, November 9, 2026, through R63. Updated 2026-11-10 after the Chapter 1 re
 - Next sitting (Brian's yes, 2026-11-22): the build change that lets new code live in real modules, nothing a player can see; every test passes and before-and-after pictures match. Check pull request 62's approach, do not merge it as is.
 - Design settled 2026-11-22 (all in `docs/DECISIONS.md`): morning order, controls, plant eyes, outlines and goal words, cones, dress-up, snack bar mini-game, two party endings (caught or closing time), party mini-games (octopus, photo corner, snack pyramid; karaoke last; dance and balloon out), goat suit, two new locked pictures to show Brian, points with a clean check per part, and 18 Claude design calls for Brian to veto. Full beat-by-beat check: `docs/ch1-design-audit-2026-11-22/`.
 - Known dead code to delete in the rebuild: the old hangar-code design (Brian, 2026-11-22: there is no hangar bay code; only the office keypad, beat 50). See `docs/REJECTED.md`.
+- After the modules change: tests for Brian's repeat complaints, each written to fail first where the problem is still there, then fixed. Order (from `docs/ch1-design-audit-2026-11-22/angles/repeat-guards.md`): outlines not circles (and rewrite the two ring tests that protect the rejected rings); the bar and the new hall picture (and update the hall lock); security timing at every sighting; nothing walks through walls or furniture; scene jumps and following Mops; dead ends and the ↺ button; the hall vent; cones on everyone (after Brian sees one still); plant eyes (after Brian approves one still); sizes and rooms as played; then the purple bar on the bed (present today), drag-on dress-up, no unexplained marks, wall alarm, stage, overlaps. Sound gets a log of what played plus Brian's ears.
 - Then: Chapter 1 rebuilt one beat per sitting into its own module, values in data files, old code for that beat deleted, under the new rules (regression test first, full playthroughs pass, screenshot, "not yet played by a person").
 - Nothing committed this sitting.
 

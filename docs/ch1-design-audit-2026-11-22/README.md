@@ -22,3 +22,7 @@ Correction: beat 10 (dance game) is marked MATCHES in `beats-09-21.md` because t
 ## Second pass: four fresh angles (2026-11-22)
 
 After Brian asked for "one more pass to see what else you think you understand but don't yet", four Sonnet helpers each looked from one angle, without seeing each other's work: `angles/story-logic.md` (causes and effects across the 61 beats), `angles/missing-words.md` (Brian's words in no doc), `angles/contradictions.md` (docs that disagree), `angles/missing-assets.md` (pictures, sounds and words the design needs that do not exist yet: 83 pending lines across 41 beats). What they found was settled the same day in `docs/DECISIONS.md` ("Story and points, settled 2026-11-22", "Claude's design calls", and the party-hall bar request). The assets list is the to-do list for pictures and words Brian must see or approve.
+
+## Brian's repeat complaints (2026-11-22)
+
+Brian asked for particular attention to "the places where I flagged issues like then it let me climb the walls etc, and places I made repeat requests like the length of the bar, getting sound right, etc". `angles/repeat-issues.md` lists 24 issues he raised more than once, with every citation; 16 were reported fixed and came back. `angles/repeat-guards.md` checks each against today's tests: none fully guarded, 15 partly, 9 not at all; it proposes one regression test per issue and the order to write them.
