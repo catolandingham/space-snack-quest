@@ -22,3 +22,11 @@ wall, following the later request.
 If one is chosen, the game also changes: the bar's solid boxes (`CH1_PARTY_FIXED`), the snack spot, and, for
 option A, the hall's side door point used by room walks (`hallSideDoor`, 870,348) and the doorway outline
 (`goal-targets.js`).
+
+## Sight cones on everyone, 2026-11-22 (overnight)
+
+`cones-everyone-ipad.png` and `cones-everyone-phone.png`: the party hall as the game draws it, with the cone
+rule Brian picked drawn over it (not built in the game): every guest and the bartender has a faint dashed cone;
+the one Squatch stands in fills yellow, with a "?" over that guest because he is in disguise. This is the
+"check before building" step in DECISIONS.md (Brian's Nov 11 worry: cones on every guest "would be too much").
+If it reads cleanly, build it; if not, fall back to cones only on guards and robots, "?" then "!" over guests.
