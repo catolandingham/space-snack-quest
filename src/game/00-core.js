@@ -1151,6 +1151,10 @@
         hall = n.room === "hall" ? B.camX : 0,
         who = x.mops ? n.mo : n.sq;
       n.walkTo = { x: w(l + hall, b.x0, b.x1), y: w(o, b.y0, b.y1), room: n.room, lx: who.x, ly: who.y, lt: n.T, at: n.T };
+      // Around furniture, not into it (problem 2): the corners to walk through, ending at the tap or at the
+      // free floor nearest it. Without the module, straight there as before.
+      let path = window.SSQ && window.SSQ.findPath ? window.SSQ.findPath(who, n.walkTo, b, walkSolids(who)) : null;
+      path && path.length && ((n.walkTo.path = path), (n.walkTo.x = path[path.length - 1].x), (n.walkTo.y = path[path.length - 1].y));
       // No "Tap the floor" note in Chapter 1 (scene 1 review, Brian 2026-11-14); other chapters keep it.
       let seen = n.walkHinted || /^(Q|O1$)/.test(n.scene || "");
       try {
@@ -1298,13 +1302,17 @@
       if (l || o) n.walkTo = null;
       else if (n.walkTo) {
         let t = n.walkTo,
-          who = x.mops ? n.mo : n.sq,
-          dx = t.x - who.x,
-          dy = t.y - who.y,
-          d = Math.hypot(dx, dy);
+          who = x.mops ? n.mo : n.sq;
+        // Walking around furniture: head for the next corner, then the one after.
+        t.path && t.path.length > 1 && Math.hypot(t.path[0].x - who.x, t.path[0].y - who.y) < 8 && t.path.shift();
+        let to = t.path && t.path.length ? t.path[0] : t,
+          dx = to.x - who.x,
+          dy = to.y - who.y,
+          d = t.path && t.path.length > 1 ? Math.max(8, Math.hypot(t.x - who.x, t.y - who.y)) : Math.hypot(dx, dy),
+          step = Math.hypot(dx, dy) || 1;
         // Arrived, control taken away, a new room, or stuck against something for half a second: stop.
         Math.hypot(who.x - t.lx, who.y - t.ly) > 2 && ((t.lx = who.x), (t.ly = who.y), (t.lt = n.T));
-        d < 8 || !n.ctrl || n.room !== t.room || n.T - t.lt > 0.5 ? (n.walkTo = null) : ((l = dx / d), (o = dy / d));
+        d < 8 || !n.ctrl || n.room !== t.room || n.T - t.lt > 0.5 ? (n.walkTo = null) : ((l = dx / step), (o = dy / step));
       }
       let i = Math.hypot(l, o);
       return (i > 1 && ((l /= i), (o /= i)), { x: l, y: o });
@@ -1400,7 +1408,9 @@
       if ((n.scene || "")[0] === "Q" && CH1_FURNITURE[n.room] && (n.room !== "office" || n.ch1Office)) for (let i of CH1_FURNITURE[n.room]) l.push(i);
       return (n.room === "van" && l.push({ x0: Tt.x - 100, x1: Tt.x + 100, y0: 380, y1: 470 }), l);
     }
-    function R0(l) {
+    // What blocks a walker's feet: the room's solids, plus a standing Mops when the walker is Squatch.
+    // R0 pushes feet out of these, and a tap walk goes around them (src/modules/tap-path.js).
+    function walkSolids(l) {
       let solids = ih();
       (n.room === "closet" || n.room === "hall" || n.room === "passage" || n.room === "hangar" || n.room === "duct") &&
         n.moPose !== "hidden" &&
@@ -1410,6 +1420,10 @@
         n.mo.x > 20 &&
         n.mo.x < 1000 &&
         solids.push(nt(n.mo.x, n.mo.y, 46, 46, 46));
+      return solids;
+    }
+    function R0(l) {
+      let solids = walkSolids(l);
       let inside = (x, y) => solids.some((o) => x > o.x0 && x < o.x1 && y > o.y0 && y < o.y1);
       if (!inside(l.x, l.y)) return;
       let best = null;

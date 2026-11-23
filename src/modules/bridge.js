@@ -13,6 +13,7 @@ import { outlineCanvas, OUTLINE } from "./outline.js";
 import { GOAL_TARGETS } from "./goal-targets.js";
 import { partyCones, SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
 import { createGuestArt } from "./guests.js";
+import { findPath } from "./tap-path.js";
 import { createHomeMusic } from "./home-music.js";
 import { lastCutaway } from "./cutaway.js";
 import { SPEAKER } from "./morning.js";
@@ -126,6 +127,8 @@ export function createBridge() {
       ctx.restore();
       return target.rect || target.trace;
     },
+    /** Tap to walk around furniture: the corners to walk through. See tap-path.js. */
+    findPath,
     /** Party sight cones: where each person's cone starts and which way it points. See party-watch.js. */
     partyCones,
     /** Seconds a guest watches Squatch with "?" before it turns into "!". See party-watch.js. */
