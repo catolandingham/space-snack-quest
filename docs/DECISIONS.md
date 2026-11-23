@@ -5,25 +5,25 @@
 | --- | --- |
 | 28–30 | # Space Snack Quest: every decision, in one place |
 | 31–38 | ## How to use this file |
-| 39–60 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 61–81 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 82–90 | ## Which repo is the base, 2026-11-22 |
-| 91–97 | ## Sight cones, 2026-11-22 |
-| 98–102 | ## Latest calendar direction, 2026-11-16 |
-| 103–105 | ## Vent walk, 2026-11-16 |
-| 106–108 | ## Locked home room v5, 2026-11-16 |
-| 109–118 | ## Fidelity system (pictures are locked, not just words) |
-| 119–156 | ## 1. Working rules |
-| 157–223 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 224–248 | ## 3. Characters and look |
-| 249–325 | ## 4. Look, rooms and layout |
-| 326–347 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 348–391 | ## 6. Later chapters (2–4 and travel) |
-| 392–401 | ## 7. Audio |
-| 402–436 | ## 8. Code, controls and process |
-| 437–483 | ## 9. Open / waiting on Brian |
-| 484–578 | ## 10. Earlier entries, kept word for word |
-| 579–675 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 39–61 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 62–82 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 83–91 | ## Which repo is the base, 2026-11-22 |
+| 92–98 | ## Sight cones, 2026-11-22 |
+| 99–103 | ## Latest calendar direction, 2026-11-16 |
+| 104–106 | ## Vent walk, 2026-11-16 |
+| 107–109 | ## Locked home room v5, 2026-11-16 |
+| 110–119 | ## Fidelity system (pictures are locked, not just words) |
+| 120–157 | ## 1. Working rules |
+| 158–224 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 225–249 | ## 3. Characters and look |
+| 250–326 | ## 4. Look, rooms and layout |
+| 327–348 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 349–392 | ## 6. Later chapters (2–4 and travel) |
+| 393–402 | ## 7. Audio |
+| 403–437 | ## 8. Code, controls and process |
+| 438–484 | ## 9. Open / waiting on Brian |
+| 485–579 | ## 10. Earlier entries, kept word for word |
+| 580–676 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -43,8 +43,9 @@ Brian does not read the long files; he confirms assumptions by multiple choice i
 - **Plant eyes: "The very original".** Find the earliest approved eyes in v1's history, copy them exactly, show Brian a picture before building.
 - **Optional things: "They discover them".** Only what the player must do gets a yellow outline; optional things (closet, bed, calendar) have none, and tapping them still works.
 - **Balloon and dance: "Keep, simplified".** Rebuild both in the simplest form found and show Brian before it lands. (His own words, G Bot #516: "The balloon thing has just never worked when we've tried it before." If no simple version works, say so and ask before dropping.)
+- **Points for a kid who plays for perfect, 2026-11-22.** Brian picked "B": each part of Chapter 1 gets its own "clean" (never caught) check; perfect means every part clean; any single part can be replayed from the chapter screen to make it clean. Parts are the walkthrough's sections: Day 1, the party (beats 1 to 21); Day 2, lunch and the first delivery (22 to 42); one week later, the escape (43 to 52); pickup day (53 to 61). Claude's recommendations that go with it: (1) the end card shows secrets found as "7 of 9" with missing ones as "???", a clean check per part, and a gold "PERFECT CHAPTER!" when all is done; (2) the chapter screen keeps his best stars and a perfect badge on that device; (3) the never-caught party ends at closing time, so the perfect run has its own ending; (4) a few stars per swiped snack, with the topple as the risk. Existing rules stay (Nov 8): +50 a secret, +25 a funny find, "Never caught! +250", a catch never takes stars, photo corner 25. Exact on-screen words need Brian's yes.
 - **Snack bar, Brian 2026-11-22:** "the idea was that it was almost a mini game where he could sneak up and swipe food, and the pyramid only happens if he steals too much (it foreshadows the “only take so many snacks” in the next day)." So: the paw close-up swipe is the mini-game; the bartender glances and catches ("...Nice gloves", then "Wait a second... fur!" and the alarm, words pending); the pyramid topples only after too many snacks (a tuning pin, start near five), the crowd turns, and he has a few seconds to hide or be caught. It sets up Mops's one-snack rule on Day 2 (beat 27).
-- **Party ending, proposed by Brian 2026-11-22, not yet settled:** "Maybe the party doesn't need to end? Maybe they just play closing time if nothing else happens and the ganitor comes thru and catches him??" Claude proposed two endings that meet at home: caught (alarm, run home, guard search, Mops finds the flyer and fur) or never caught (closing time, guests leave, Mops finds him while cleaning and walks him home); both then "Everyone out there has someone." / "You have me." Waiting on Brian.
+- **Party ending, Brian 2026-11-22: "(A)", two endings that meet at home.** Caught (alarm, run home, guard search, Mops finds the flyer and fur) or never caught (closing time: the speaker announces it, guests leave, Mops finds him while cleaning and walks him home). Both then "Everyone out there has someone." / "You have me." The Guardians' note line (beat 22) may need a wording change for the never-caught path; Brian's call when built. Brian added: "think about points because [his kid] loves to play the chapter perfectly".
 - **Locked pictures: Brian "Good with two and three" (2026-11-22).** New locked versions of the home room (with his approved speaker, option 4) and the party hall (without the painted yellow outline around the snack bar), each shown to Brian as a picture before it is locked.
 - **Goat suit (same message):** a short cutscene of Mops trimming his beard, then the dress-up close-up with three pieces (beard, horns, the spare jacket), the meter, and "More bleat. Less roar."
 - **Party mini-games, revised later the same day.** Brian: "I don't think the dance game ever worked. I'm okay skipping photo corner and simplified baloon unless you are confident of making it work. Whole aim was to have a few more fun Easter eggs / mini games". Claude's call on confidence: keep the octopus juke (beat 12) and the photo corner (beat 13), each one simple rule the touch robot can test; the snack pyramid (beat 14) is needed as the party's ending; karaoke (beat 11) last, only if those play well. Out for now: the dance game (beat 10; Grok Bot #351 found it could not be played by touch: "Every tap scores 0; only keyboard arrow keys work.") and the balloon (beats 15 and 57; Brian, G Bot #516: "The balloon thing has just never worked"). Conga, chicken dance and bouquet toss are background only, with no player part. This replaces the "Keep, simplified" answer below for the balloon and dance.

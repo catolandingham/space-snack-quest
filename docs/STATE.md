@@ -4,20 +4,20 @@
 | Lines | Heading |
 | --- | --- |
 | 22–24 | # Space Snack Quest: where things stand |
-| 25–37 | ## 2026-11-22 sitting (Snack Quest Chat, Claude) |
-| 38–44 | ## Fidelity system (new, 9:55 PM PT, Brian t233 / W33) |
-| 45–62 | ## The game |
-| 63–100 | ## Chapter 1 cartoon: panels in story order |
-| 101–116 | ## Open questions from the new panels (for Brian, multiple choice) |
-| 117–121 | ## In progress right now |
-| 122–176 | ## Next |
-| 177–181 | ## Earlier state, kept in full |
-| 182–187 | # Space Snack Quest: state |
-| 188–190 | ## What it is |
-| 191–202 | ## Where things live |
-| 203–239 | ## Open items |
-| 240–244 | ## Next step |
-| 245–249 | ## Paused 2026-11-08 at the credit line |
+| 25–38 | ## 2026-11-22 sitting (Snack Quest Chat, Claude) |
+| 39–45 | ## Fidelity system (new, 9:55 PM PT, Brian t233 / W33) |
+| 46–63 | ## The game |
+| 64–101 | ## Chapter 1 cartoon: panels in story order |
+| 102–117 | ## Open questions from the new panels (for Brian, multiple choice) |
+| 118–122 | ## In progress right now |
+| 123–177 | ## Next |
+| 178–182 | ## Earlier state, kept in full |
+| 183–188 | # Space Snack Quest: state |
+| 189–191 | ## What it is |
+| 192–203 | ## Where things live |
+| 204–240 | ## Open items |
+| 241–245 | ## Next step |
+| 246–250 | ## Paused 2026-11-08 at the credit line |
 <!-- /section-index -->
 # Space Snack Quest: where things stand
 Monday, November 9, 2026, through R63. Updated 2026-11-10 after the Chapter 1 redesign and the party landed on `main`. Decisions: `docs/DECISIONS.md`. Open asks: `docs/OPEN-ASKS.md`. Words: `docs/CH1-CARTOON-LINES.md`. Look: `docs/STYLE-GUIDE.md`.
@@ -31,6 +31,7 @@ Monday, November 9, 2026, through R63. Updated 2026-11-10 after the Chapter 1 re
 - Brian, 2026-11-22: the three files can go in the public repo once anything private or off-game is edited out (done: one family name and one account line removed).
 - Waiting on Brian: his corrections to the three files, problem 3 (hangar robot), and his say-so to commit.
 - Next sitting (Brian's yes, 2026-11-22): the build change that lets new code live in real modules, nothing a player can see; every test passes and before-and-after pictures match. Check pull request 62's approach, do not merge it as is.
+- Design settled 2026-11-22 (all in `docs/DECISIONS.md`): morning order, controls, plant eyes, outlines and goal words, cones, dress-up, snack bar mini-game, two party endings (caught or closing time), party mini-games (octopus, photo corner, snack pyramid; karaoke last; dance and balloon out), goat suit, two new locked pictures to show Brian, points with a clean check per part, and 18 Claude design calls for Brian to veto. Full beat-by-beat check: `docs/ch1-design-audit-2026-11-22/`.
 - Known dead code to delete in the rebuild: the old hangar-code design (Brian, 2026-11-22: there is no hangar bay code; only the office keypad, beat 50). See `docs/REJECTED.md`.
 - Then: Chapter 1 rebuilt one beat per sitting into its own module, values in data files, old code for that beat deleted, under the new rules (regression test first, full playthroughs pass, screenshot, "not yet played by a person").
 - Nothing committed this sitting.
