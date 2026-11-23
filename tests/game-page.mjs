@@ -44,7 +44,9 @@ export async function startGame({ port, name }) {
     process.exit(1);
   }
   const html = await readFile(join(root, "index.html"));
-  let musicBuf = null;
+  // The music files the game may load: Joe's theme, and Brian's Floating in Space (not wired yet).
+  const MUSIC = ["music/main-theme-from-brian.mp3", "music/floating-in-space.mp3"];
+  const musicBufs = new Map();
   const server = http.createServer((req, res) => {
     let pathname = "/";
     try {
@@ -68,12 +70,13 @@ export async function startGame({ port, name }) {
     if (pathname.startsWith("/music/")) {
       const rel = decodeURIComponent(pathname.slice(1));
       const file = join(root, rel);
-      if (!(file === join(root, "music/main-theme-from-brian.mp3") && existsSync(file))) {
+      if (!(MUSIC.some((f) => file === join(root, f)) && existsSync(file))) {
         res.writeHead(404);
         res.end();
         return;
       }
-      musicBuf || (musicBuf = readFileSync(file));
+      musicBufs.has(file) || musicBufs.set(file, readFileSync(file));
+      const musicBuf = musicBufs.get(file);
       const range = req.headers.range;
       const m = range && /bytes=(\d+)-(\d*)/.exec(range);
       if (m) {

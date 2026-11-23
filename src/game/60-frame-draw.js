@@ -365,13 +365,29 @@
           [6, d],
           [12, -d],
         ].forEach(([T, R]) => St(T, -10, T + R, 0, 3.4, "#cfd5dd", q)),
+        // His short tail, up at the rump (mops-approved-nov8.png). Drawn first so the body covers its root.
+        XV(-19, -24, 3, 4.5, 6, 1, 0),
+        wV("#ffffff", q),
         XV(0, -17, 17, 9, 14, 2, 0),
         wV("#ffffff", q),
-        // His own jacket. Squatch wears the spare from the wardrobe, so this one stays on.
-        m(-14, -24, 28, 14, 4),
+        // His blue work shirt (Brian's Nov 8 picture): over the back, white belly below, a collar at the neck,
+        // a chest pocket with a white oval name patch. No badge. Squatch wears the spare from the wardrobe.
+        e.beginPath(),
+        e.ellipse(0, -17, 18, 10, 0, Math.PI * 1.09, Math.PI * 1.91),
+        e.lineTo(16, -12),
+        e.quadraticCurveTo(0, -10, -16, -12),
+        e.closePath(),
         r("#3478f6", 1.2),
-        m(-3, -16, 6, 4, 1),
-        r("#2456b0", 1));
+        e.beginPath(),
+        e.moveTo(5.5, -24.5),
+        e.lineTo(10, -17),
+        e.lineTo(13.5, -23.5),
+        e.closePath(),
+        r("#3478f6", 1),
+        m(3, -19, 6, 6, 1.5),
+        r("#3478f6", 1),
+        X(6, -19, 2.2, 1.1),
+        r("#ffffff", 0.8));
       let A = s.headDown ? 6 : 0;
       (e.beginPath(),
         e.moveTo(14, -24 + A),
@@ -400,11 +416,7 @@
         s.eyes === "closed" ? C([17.5, -29 + A, 21, -29 + A], y, 1.2) : F(19.5, -29 + A, 1.4, y),
         F(23.5, -26.5 + A, 1.1, "#f2a7b6"),
         s.mouth === "o" && (e.beginPath(), e.ellipse(22, -24 + A, 1.4, 1.9, 0, 0, 7), (e.fillStyle = y), e.fill()),
-        e.beginPath(),
-        e.arc(-2, -18, 3.2, 0, 7),
-        wV("#ffcf33", 1.2),
-        F(-2, -18, 1.2, "#e8a400"),
-        s.mop && (St(-26, -40, -15, 0, 2.2, "#b8a07e", 1), XV(-14, 1, 6, 2.6, 8, 1.5, 0), wV("#8fdcff", 1)),
+        // No mop stick: his beard is his mop (DECISIONS C2). Callers still pass `mop`; it draws nothing.
         n.room === "kitchen" &&
           !ch2.greasy &&
           (ch2.phase === "wash5" || n.scene === "G5k") &&
