@@ -370,6 +370,8 @@
         placedSpots: () => placedSpots(),
         offerNow: () => pick(spotsNow()),
         drawFrame: () => Ap(),
+        // Mops drawn on his own, any pose (tests/mops-look.mjs and the picture sheet).
+        drawMops: (x, y, scale, opts) => Fe(x, y, scale, opts || {}),
         paintLocked: (id) => {
           e.setTransform(1, 0, 0, 1, 0, 0);
           e.clearRect(0, 0, c, b);

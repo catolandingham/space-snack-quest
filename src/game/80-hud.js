@@ -61,14 +61,15 @@
     function stalled() {
       return stall.t >= STALL_SECONDS;
     }
-    // A face picture for a button, drawn once with the game's own drawing (Fe is Squatch, Re is Mops).
+    // A face picture for a button, drawn once with the game's own drawing (Re is Squatch, Fe is Mops).
+    // Mops's button shows his head and shoulders: his head (17, -29 in his own units) centred in the circle.
     function faceUrl(who) {
       let cv = document.createElement("canvas");
       ((cv.width = 58), (cv.height = 58));
       let keep = e;
       try {
         ((e = cv.getContext("2d")), e.beginPath(), e.arc(29, 29, 29, 0, Math.PI * 2), e.clip());
-        who === "mops" ? ((e.fillStyle = "#ffe3c4"), e.fillRect(0, 0, 58, 58), Re(29, 48, 0.42, { f: -1 })) : ((e.fillStyle = "#ffffff"), e.fillRect(0, 0, 58, 58), Fe(29, 52, 0.36, { f: -1 }));
+        who === "mops" ? ((e.fillStyle = "#ffe3c4"), e.fillRect(0, 0, 58, 58), Fe(29 + 17 * 1.4, 29 + 29 * 1.4, 1.4, { f: -1 })) : ((e.fillStyle = "#ffffff"), e.fillRect(0, 0, 58, 58), Re(29, 48, 0.42, { f: -1 }));
       } finally {
         e = keep;
       }

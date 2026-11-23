@@ -364,39 +364,50 @@
           [-6, -d],
           [6, d],
           [12, -d],
-        ].forEach(([T, R]) => St(T, -10, T + R, 0, 3.4, "#cfd5dd", q)),
+        // Near legs white, far legs light grey, each with a dark hoof (mops-approved-nov8.png).
+        ].forEach(([T, R], i) => (St(T, -10, T + R, 0, 3.4, i % 2 ? "#ffffff" : "#dfe3e8", q), St(T + R * 0.75, -2.5, T + R, 0, 3.4, "#4a505c", 0))),
         // His short tail, up at the rump (mops-approved-nov8.png). Drawn first so the body covers its root.
         XV(-19, -24, 3, 4.5, 6, 1, 0),
         wV("#ffffff", q),
         XV(0, -17, 17, 9, 14, 2, 0),
         wV("#ffffff", q),
-        // His blue work shirt (Brian's Nov 8 picture): over the back, white belly below, a collar at the neck,
-        // a chest pocket with a white oval name patch. No badge. Squatch wears the spare from the wardrobe.
+        // His blue work shirt (Brian's Nov 8 picture): over the back, white belly below, a two-point collar at
+        // the neck, a chest pocket with a white oval name patch. No badge. Squatch wears the spare from the wardrobe.
         e.beginPath(),
         e.ellipse(0, -17, 18, 10, 0, Math.PI * 1.09, Math.PI * 1.91),
         e.lineTo(16, -12),
         e.quadraticCurveTo(0, -10, -16, -12),
         e.closePath(),
         r("#3478f6", 1.2),
-        e.beginPath(),
-        e.moveTo(5.5, -24.5),
-        e.lineTo(10, -17),
-        e.lineTo(13.5, -23.5),
-        e.closePath(),
-        r("#3478f6", 1),
+        [
+          [4, -24.6, 8, -18.6, 10.5, -23.8],
+          [9.5, -24.2, 12.5, -18.8, 14.5, -24.6],
+        ].forEach(([a, b, c2, d2, f2, g2]) => (e.beginPath(), e.moveTo(a, b), e.lineTo(c2, d2), e.lineTo(f2, g2), e.closePath(), r("#3478f6", 1))),
         m(3, -19, 6, 6, 1.5),
         r("#3478f6", 1),
         X(6, -19, 2.2, 1.1),
         r("#ffffff", 0.8));
       let A = s.headDown ? 6 : 0;
+      // The beard is his mop: narrow, from his chin to the floor in front of his chest, ragged at the ends.
       (e.beginPath(),
-        e.moveTo(14, -24 + A),
-        e.quadraticCurveTo(27, -16, 22, -8),
-        e.quadraticCurveTo(29, -4, 25, 0),
-        e.quadraticCurveTo(20, 2.5, 17, -1),
-        e.quadraticCurveTo(12, -10, 14, -24 + A),
-        wV("#f1f3f6", q),
-        C([19, -16, 21, -6], "#c9ced8", 0.8),
+        e.moveTo(14.5, -25 + A),
+        e.quadraticCurveTo(12.5, -12, 14, -2),
+        e.lineTo(15, 1),
+        e.lineTo(16.5, -2.5),
+        e.lineTo(18, 1.5),
+        e.lineTo(19.5, -2),
+        e.lineTo(21, 1),
+        e.lineTo(22.5, -3),
+        e.quadraticCurveTo(25, -13, 23.5, -25 + A),
+        e.closePath(),
+        wV("#f4f5f8", q),
+        C([17, -18, 17.5, -5], "#c9ced8", 0.8),
+        C([20.5, -16, 20, -5], "#c9ced8", 0.8),
+        // Floppy ears with pink insides, one each side of the head, under it so the fluff covers their roots.
+        [
+          [8.5, -0.35, -1],
+          [25.5, 0.35, 1],
+        ].forEach(([x0, rot, k]) => (e.beginPath(), e.ellipse(x0, -31 + A, 5, 2.4, rot, 0, 7), wV("#ffffff", 1.6), e.beginPath(), e.ellipse(x0 + k * 0.8, -30.8 + A, 3, 1.1, rot, 0, 7), (e.fillStyle = "#f6b3c2"), e.fill())),
         XV(17, -29 + A, 7, 7, 10, 1.6, 0),
         wV("#ffffff", q),
         e.beginPath(),
@@ -413,9 +424,18 @@
         (e.strokeStyle = "#c9ad84"),
         (e.lineWidth = 2.6),
         e.stroke(),
-        s.eyes === "closed" ? C([17.5, -29 + A, 21, -29 + A], y, 1.2) : F(19.5, -29 + A, 1.4, y),
+        // Eyes closed, as in the picture: a soft smiling arc, or a flat line when he is asleep.
+        e.beginPath(),
+        e.moveTo(17.5, -29 + A),
+        s.eyes === "closed" ? e.lineTo(21, -29 + A) : e.quadraticCurveTo(19.25, -30.4 + A, 21, -29 + A),
+        (e.strokeStyle = y),
+        (e.lineWidth = 1.2),
+        (e.lineCap = "round"),
+        e.stroke(),
         F(23.5, -26.5 + A, 1.1, "#f2a7b6"),
-        s.mouth === "o" && (e.beginPath(), e.ellipse(22, -24 + A, 1.4, 1.9, 0, 0, 7), (e.fillStyle = y), e.fill()),
+        s.mouth === "o"
+          ? (e.beginPath(), e.ellipse(22, -24 + A, 1.4, 1.9, 0, 0, 7), (e.fillStyle = y), e.fill())
+          : (e.beginPath(), e.moveTo(19.5, -25 + A), e.quadraticCurveTo(21.3, -23.4 + A, 23.2, -24.8 + A), (e.strokeStyle = y), (e.lineWidth = 1), e.stroke()),
         // No mop stick: his beard is his mop (DECISIONS C2). Callers still pass `mop`; it draws nothing.
         n.room === "kitchen" &&
           !ch2.greasy &&
