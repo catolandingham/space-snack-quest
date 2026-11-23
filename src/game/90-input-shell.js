@@ -668,7 +668,9 @@
         let W = (VV) => VV.preventDefault();
         return (eV.addEventListener("touchmove", W, { passive: !1 }), () => eV.removeEventListener("touchmove", W));
       }, []));
-    let I = b && y,
+    // Controls beside the picture only on a touch screen turned sideways; a computer keeps them in a row
+    // under a full-size picture (they are always shown since 2026-11-23).
+    let I = b && y && wb(),
       tV = (eV) => {
         eV.preventDefault();
         let W = t.current;

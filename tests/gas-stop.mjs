@@ -189,8 +189,10 @@ const rustPen = await page.evaluate(() => {
   const n = window.__ss.op;
   const c = document.querySelector("canvas");
   const g = c.getContext("2d", { willReadFrequently: true });
-  const at = (x, y) => { const d = g.getImageData(x, y, 1, 1).data; return [d[0], d[1], d[2]]; };
-  return { by: n.cur && n.cur.by, q: n.q.map((row) => (row.b && row.b.text) || "").join("|"), cap: at(340, 375), side: at(420, 400) };
+  // Game positions (960 wide), scaled to the canvas's own pixels (they follow its size on screen).
+  const k = c.width / 960;
+  const at = (x, y) => { const d = g.getImageData(Math.round(x * k), Math.round(y * k), 1, 1).data; return [d[0], d[1], d[2]]; };
+  return { by: n.cur && n.cur.by, q: n.q.map((row) => (row.b && row.b.text) || "").join("|"), cap: at(340, 375), side: at(420, 400), k };
 });
 check(
   "Rusty's lockup shows his red cap and the coin line",
