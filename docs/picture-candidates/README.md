@@ -30,3 +30,14 @@ rule Brian picked drawn over it (not built in the game): every guest and the bar
 the one Squatch stands in fills yellow, with a "?" over that guest because he is in disguise. This is the
 "check before building" step in DECISIONS.md (Brian's Nov 11 worry: cones on every guest "would be too much").
 If it reads cleanly, build it; if not, fall back to cones only on guards and robots, "?" then "!" over guests.
+
+## Home room speaker, 2026-11-23
+
+`home-room-speaker-A-closed.png` and `home-room-speaker-A-open.png`: the locked home room (v5, closet closed
+and open) with the bedroom speaker added at the spot Brian picked, "A, near the door" (Squatchbot #1385, Nov 17:
+high on the wall, above the STAY IN HERE poster, beside the doorway out). The speaker is the one Brian picked for
+every wall, "4: retro wooden speaker" (Squatchbot #448), cut from the locked hall picture so it matches exactly.
+It is drawn without the sound lines the hall has painted on, because Brian's rule is that the speaker shows sound
+lines (announcements) or music notes (songs) only while it is playing (G Bot #566, #575); the game draws those.
+Nothing else in the picture changed. If Brian says yes, this becomes home v6 and the morning beat gets the speaker
+announcement, the Dog Zylan line and the song, all already approved in the Squatchbot thread (#1386 to #1391).
