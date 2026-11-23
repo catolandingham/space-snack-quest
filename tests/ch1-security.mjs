@@ -110,7 +110,14 @@ async function watched(id, beat, grid) {
           if (lockedUp()) lockupAt = Math.round(t * 10) / 10;
           if (!ss.secNow() && n.log.some((l) => l.text === "They lost you.")) lostAt = Math.round(t * 10) / 10;
         }
-        return { start, seenAt, instant, witnessRan, guardAfter, alarmGuard, offers, lockupAt, lostAt };
+        // After the guard gives up, the guest who ran to the alarm walks back to his place (lunch).
+        let homeAfter = null;
+        if (roll && lostAt !== null)
+          for (let i = 0; i < 300 && homeAfter === null; i++) {
+            ss.tick(1 / 30);
+            if (!n.ch1LunchRun) homeAfter = Math.round((i / 30) * 10) / 10;
+          }
+        return { start, seenAt, instant, witnessRan, guardAfter, alarmGuard, offers, lockupAt, lostAt, homeAfter };
       },
       [grid, beat, roll],
     );
@@ -143,6 +150,7 @@ async function watched(id, beat, grid) {
   g.check(`${id}: a guard does not follow him into another room`, left.came && !left.after, left);
   const roll = await run(true);
   g.check(`${id}: rolled into a ball, he gets away ("They lost you.")`, roll.lostAt !== null && roll.lockupAt === null, roll);
+  id === "lunch" && g.check("lunch: after the guard gives up, the guest walks back to his place", roll.homeAfter !== null, roll);
   await ctx.close();
   g.check(`${id}: no page errors`, errors.length === 0, errors);
 }

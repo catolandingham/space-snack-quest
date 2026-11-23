@@ -272,6 +272,7 @@
     }
     function ch1RestartLunch() {
       ((n.ch1Day2 = !0),
+        (n.ch1LunchRun = null),
         (n.scene = "QB"),
         (n.room = "hall"),
         (n.ch1D = !1),
@@ -780,7 +781,10 @@
           standing = ch1ConeHit(n.sq.x, n.sq.y - 20, gue.x, gue.y - 28, gue.face),
           seen = n.sqPose === "ball" ? ballNotice("lunch" + i, dist, dt || 0, standing) : standing;
         (n.sqPose !== "ball" && ballNotice("lunch" + i, STAND_FEET + 99, 0, !1),
-          seen && !n.ch1LunchRun && !ch2.sec && (n.ch1LunchRun = { i, x: gue.x, y: gue.y, phase: "run" }));
+          seen &&
+            !ch2.sec &&
+            // A guest walking back from the alarm: the other one who sees him calls the guard at once.
+            (n.ch1LunchRun ? n.ch1LunchRun.phase === "back" && ch1CallSecurity("s6") : (n.ch1LunchRun = { i, x: gue.x, y: gue.y, phase: "run" })));
       }
     }
     function ch1Day2Tick(dt) {
@@ -813,7 +817,8 @@
     function ch1Day2Spots() {
       if (!n.ch1Day2 || !n.ctrl || n.ch1PadOn) return [];
       let s = n.ch1Step;
-      if (s === "sneak" && n.sqPose === "ball") return ch2.sec || n.ch1LunchRun ? [] : [ch1At("SNEAK", "hallway", 860, 560, 110, ch1ToMops)];
+      if (s === "sneak" && n.sqPose === "ball")
+        return ch2.sec || (n.ch1LunchRun && n.ch1LunchRun.phase !== "back") ? [] : [ch1At("SNEAK", "hallway", 860, 560, 110, ch1ToMops)];
       if (n.sqPose === "hidden" || n.sqPose === "ball" || n.sqPose === "sleep") return [];
       if (s === "gift") return [ch1At("TAKE", "gift", 340, 520, 100, ch1TakeGift)];
       if (s === "box") return [ch1At("PUT", "box", CH1_CLOSET_SPOT[0], CH1_CLOSET_SPOT[1], 90, ch1PutBox)]; // the box is in the closet: he takes it out here
