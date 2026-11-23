@@ -15,7 +15,7 @@
 | 178–196 | ## Reset section |
 | 197–207 | ## Still open |
 | 208–211 | ## Chapter 1 replot, recorded and not built |
-| 212–336 | ## Changelog |
+| 212–338 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -196,7 +196,7 @@ The pass drove wash 5, wash 1, `g1`, and unknown `g5`. The other checkpoint rows
 
 ## Still open
 
-Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The leftovers from this older page:
+Live open questions are `docs/DECISIONS.md` §9 and `docs/old/OPEN-ASKS.md`. The leftovers from this older page:
 
 - Boarding caption. A g3 shot in the story capture is the dock line, not an explicit boarding caption.
 - DE4, DE6, and DE7 are answered (see the story rows). They are not built.
@@ -210,6 +210,8 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 `docs/DECISIONS.md` rows R29 through R63 are the Nov 8–9 cartoon decisions. R29–R57 cover the home wardrobe, no home vent, the pickup-day crate, the spare blue jacket disguise, Isfred Bar Neshuman, ball-hide timing, the office computer, the connecting hallway, the party with no Mops and no robots, the office cutscene, and the Employee of the Month gallery (5 photos, crooked photo #4, keepsake points still open). R58–R63 are not in the game. R58: returning the balloon gets a wordless smile, a finger to the lips, and a thumbs-up; keeping it makes the kid yell "Scary Wookiee!" (NEEDS BRIAN), pulls the FUR alarm, and brings security; never jumping sends the balloon to the ceiling, the kid is sad, and nothing else happens. R59, delegated by Brian: the kid gasps with "!" and points, then a 6-second wobbly glowing rise while grabbable, one jump grabs it, and it reads with no words. R60: the pair hunt is dropped; a "Find someone who…" picture card is proposed and pending Brian; the octopus is an over-snacked, huggy tourist ("*hic* Fellow tourist!", NEEDS BRIAN) whose two hugs knock the disguise off; a photo corner lets Squatch enter the shot, then a cut to a printing Polaroid, with bonus points if he is in it (amount open); tapes proof is dropped; the third snack-table grab starts a chain reaction that pushes things off the far end and gives a hide window (4-second placeholder, needs Brian). R61: the balloon stays in the party hall later (on the ceiling if missed, tied near the kid's spot if returned) and pops quietly with a comic "POP!" (NEEDS BRIAN) on the last Chapter 1 hall visit. R62: funnier gags are things worn as horns, something in his mouth, and random things on his head, about 16, the Squatch ball-roll photobomb stays, and the crooked photo stays #4; the crayon drawing reads as Squatch and Mops with "Always tied together" (NEEDS BRIAN) underneath; controls are left and right arrows under the photo plus an X that is always visible; swiping past photo 5 always triggers "BEEP BEEP" (NEEDS BRIAN) and the gallery cuts out. R63: kid-handwritten "MOPS" and "ME" (NEEDS BRIAN), and a dotted sight line from Mops to Squatch with hearts rising from it, contrasting with the "!" other characters get. They are not in the game. New on-screen words are marked NEEDS BRIAN in `docs/CH1-CARTOON-LINES.md`. Ball-hide numbers (R43, about 70px for 2 seconds), the 6-second rise (R59), and the 4-second snack-table placeholder (R60) are written down only. This page does not change a timer, a price, or a range in the build.
 
 ## Changelog
+
+2026-11-23. New work list: docs/BRIAN-ASKS-OPEN.md, Brian's open asks in his own words (about 880 asks read from the three threads, merged, checked against main, checked again by an independent Fable review). CLAUDE.md and START-HERE point at it first; the Nov 9 OPEN-ASKS.md moved to docs/old/. Why: his newest music, morning and Mops asks sat unbuilt while work followed older lists.
 
 2026-11-23. Sound: one button, off by default, as in Battle Ostriches (Brian: "one button to turn on music and sound effects"). The speaker tap starts the sound engine and Joe's theme inside the tap (the theme was started outside any tap before, which iPhones refuse); it saves "on"/"off" per device; older saved volumes above zero stay on. Taps on the game no longer start sound. No volume steps. The ♪ button shows only while Squatch can sing. Test: sound-button; phone-tap and slice-p6 updated.
 
@@ -251,7 +253,7 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 
 2026-11-16. Text size, Brian t342, not merged. The small canvas words are 17px, at least 14 CSS px on an iPad. REC is white on a dark red plate. Boxes drawn in code grew so the words stay inside them. Locked pictures were not redrawn. Docs match main: yes. Do not merge.
 
-2026-11-16. Docs only. `docs/OPEN-ASKS.md` is the one review list: scope and status on each row, older sections kept as history. The Nov 14 dashed-cone line is superseded by Brian's Nov 11 cone rule (t332). PR #35's disguise rules are approved and not built. The bigger heart cone is built in PR #35. Brian, Nov 16, 12:50 PM PT (K29): every catch is the lockup card, then restart the current scene. Long scenes such as the party are split. PR #38 and the set-back rule (Nov 14, commit cb87185) are superseded. The catch code stays. On localhost, `?beat=day2` opens Day 2 at the gift. iPad pictures of pull requests 57 and 58 are in `docs/audit-shots/final/beat1/`. Docs match main: yes. Do not merge.
+2026-11-16. Docs only. `docs/old/OPEN-ASKS.md` is the one review list: scope and status on each row, older sections kept as history. The Nov 14 dashed-cone line is superseded by Brian's Nov 11 cone rule (t332). PR #35's disguise rules are approved and not built. The bigger heart cone is built in PR #35. Brian, Nov 16, 12:50 PM PT (K29): every catch is the lockup card, then restart the current scene. Long scenes such as the party are split. PR #38 and the set-back rule (Nov 14, commit cb87185) are superseded. The catch code stays. On localhost, `?beat=day2` opens Day 2 at the gift. iPad pictures of pull requests 57 and 58 are in `docs/audit-shots/final/beat1/`. Docs match main: yes. Do not merge.
 
 2026-11-16. A party catch stays in the party, on the open floor rather than in the plant, instead of restarting the bedroom with no way forward. Docs match main: yes. Do not merge.
 
@@ -320,9 +322,9 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/OPEN-ASKS.md`. The lef
 
 2026-11-10. Later-chapter doors walk out and in (Chapters 2 to 4), merged as PR #17. The Chapter 2 opening and the fuel-pump walk are unchanged. The soup-note whisper "A hoof stamp. Mops signed it." is cut so Squatch does not know who wrote the note. Captions are unchanged.
 
-2026-11-09. Docs only, third pass on PR #18. Synced designer decisions R58–R63 into `docs/DECISIONS.md`, `docs/STATE.md`, `docs/OPEN-ASKS.md`, `docs/CH1-CARTOON-LINES.md`, `README.md`, and this page. Recorded and not in the game. New lines stay NEEDS BRIAN. No game code and no on-screen words in the game changed.
+2026-11-09. Docs only, third pass on PR #18. Synced designer decisions R58–R63 into `docs/DECISIONS.md`, `docs/STATE.md`, `docs/old/OPEN-ASKS.md`, `docs/CH1-CARTOON-LINES.md`, `README.md`, and this page. Recorded and not in the game. New lines stay NEEDS BRIAN. No game code and no on-screen words in the game changed.
 
-2026-11-09. Docs only, second pass on PR #18. Synced the designer record through R57 into `docs/DECISIONS.md`, `docs/STATE.md`, `docs/OPEN-ASKS.md`, `docs/CH1-CARTOON-LINES.md`, and `docs/STYLE-GUIDE.md`. README and this page point at that sync. New cartoon words stay NEEDS BRIAN. No game code and no on-screen words in the game changed.
+2026-11-09. Docs only, second pass on PR #18. Synced the designer record through R57 into `docs/DECISIONS.md`, `docs/STATE.md`, `docs/old/OPEN-ASKS.md`, `docs/CH1-CARTOON-LINES.md`, and `docs/STYLE-GUIDE.md`. README and this page point at that sync. New cartoon words stay NEEDS BRIAN. No game code and no on-screen words in the game changed.
 
 2026-11-09. Docs only. `docs/DECISIONS.md` is the single source of truth, merged with the 2026-11-08 snapshot. Answered rows in `docs/STORY-DECISIONS.md` are no longer pending. This page points at `docs/DECISIONS.md`. No game code and no on-screen words changed.
 

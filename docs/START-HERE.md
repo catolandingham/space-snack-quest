@@ -17,7 +17,7 @@ Everything Brian wants for Chapter 1 is already written down. It was checked on 
 3. `docs/locked-rooms/`: the room pictures. The game draws rooms from these.
 4. `docs/grok-archive/squatchbot-brian-words.md`: Brian's own messages. Open it only when a beat is unclear. Search it; do not read it all.
 
-One more, for how a room looks: the room sheets in `docs/CHAPTER-1-PROBLEMS.md` (the party hall has one). The walkthrough does not hold every decision about a room. Some live only in `docs/DECISIONS.md` and `docs/OPEN-ASKS.md`. On 2026-11-15 the party hall was built from the walkthrough alone and missed the stage, the snack bar, the vent and the guests' height. Before you change a room with no sheet, search `docs/DECISIONS.md` and `docs/OPEN-ASKS.md` for the room's name and its objects, and write a sheet first.
+One more, for how a room looks: the room sheets in `docs/CHAPTER-1-PROBLEMS.md` (the party hall has one). The walkthrough does not hold every decision about a room. Some live only in `docs/DECISIONS.md` and `docs/old/OPEN-ASKS.md`. On 2026-11-15 the party hall was built from the walkthrough alone and missed the stage, the snack bar, the vent and the guests' height. Before you change a room with no sheet, search `docs/DECISIONS.md` and `docs/old/OPEN-ASKS.md` for the room's name and its objects, and write a sheet first.
 
 Open pull requests and branches: only the ones named in `docs/CHAPTER-1-PROBLEMS.md` matter. Everything else is leftovers from old attempts. Do not continue, merge or copy from them.
 
@@ -39,7 +39,7 @@ Several models each announced a plan, changed many things at once, said it worke
 Do this, and only this, until the list is empty or Brian redirects you.
 
 1. `git fetch`, then look at `gh pr list`. If someone else has pushed work on the same thing, stop and tell Brian.
-2. Take the top unfixed problem in `docs/CHAPTER-1-PROBLEMS.md`. If it says "Needs Brian", ask him that one question first, with a picture if it is about looks.
+2. Take the top item under "Build next" in `docs/BRIAN-ASKS-OPEN.md` (Brian's own asks that are not in the game yet, newest first; since 2026-11-23 this comes before the older problem list). Then the top unfixed problem in `docs/CHAPTER-1-PROBLEMS.md`. If it says "Needs Brian", ask him that one question first, with a picture if it is about looks.
 3. Branch from `main`. Change the fewest lines that fix the cause written there. Edit `src/`, never `index.html`.
    If the fix changes a rule every chapter uses (walking, catching, cones, the big button, the goal bar) and its code sits in one chapter's file, first move only that code to a shared file (`00-core.js` for rules, `60-frame-draw.js` for drawing) in its own pull request that changes nothing in play. Then make the fix in a second pull request. Never mix a move and a fix.
 4. Take the problem off the `KNOWN` list in `tests/ch1-kid-play.mjs`, or add the test the list names.

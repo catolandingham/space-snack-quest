@@ -4,6 +4,8 @@ A Sierra-style browser adventure for a 10-year-old (keyboard, mouse, touch).
 Owner: Brian, designer and playtester, not a programmer. Clarity beats cleverness.
 
 New here? Read docs/START-HERE.md first: what matters now (Chapter 1), the ranked problem list, and the loop to follow.
+What to build: `docs/BRIAN-ASKS-OPEN.md`, everything Brian asked for that is not in the game yet, in his own words. Read "Build next" before choosing work. Brian's messages are the spec; the other docs are summaries that lag (2026-11-23: his newest music and morning asks sat unbuilt while work followed older lists). When something on it is built, remove its line in the same change.
+Before sending Brian any picture, check everything visible in it against the approved look (locked rooms, approved characters), not only what you changed.
 
 ## Code
 - Source is src/. index.html is build output: never edit it by hand. Build: npm run build.
