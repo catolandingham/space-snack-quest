@@ -15,6 +15,11 @@ outline round the snack bar (Brian, 2026-11-22: "Good with two and three"). Both
   blocking the other door" (Grok Bot #328).
 - **Option B** (`hall-option-B.png`): the doorway stays where it is; the bar just starts below it.
 
+- **Option C** (`hall-option-C.png`, Brian 2026-11-23: "A is more correct but you can keep the bar long and
+  just move it south on the screen"): option A's doorway in the back corner, and the bar at its full locked
+  length, moved down so it starts just below the doorway and its foot reaches the front wall. The gap between the
+  bar and the right wall opens toward the doorway. `hall-options-A-C.png` shows the locked hall, A and C side by side.
+
 Brian's requests also included "you need to be able to get behind the snack bar" (Squatchbot #451) and later
 "bring the bar even closer in, though, to the wall" (Squatchbot #494). Both options keep the bar against the
 wall, following the later request.
