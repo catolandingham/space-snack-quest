@@ -95,7 +95,7 @@ GitHub runs `npm run build`, `npm run check-build`, and `npm test` on every pull
 ## Brian's repeat complaints, as tests (2026-11-22)
 
 Four complaints Brian raised again and again now have tests that run with `npm test`. Each problem still in the game prints as KNOWN (it does not fail the run) until the change that fixes it takes it off the list; `g.known` in `tests/game-page.mjs` does this.
-- `tests/ch1-rooms-solid.mjs`: Squatch cannot walk up the walls (feet stop at the floor line, y 256, in the hall, hallway and office) or into the office desk and filing cabinet or the loading bay plant, bin, scanner posts, mail room wall and robot mailbox. Fixed in this change; all pass.
+- `tests/ch1-rooms-solid.mjs`: Squatch cannot walk up the walls (feet stop at the floor line, y 256, in the hallway, the office and the redesigned Chapter 1 hall scenes) or into the office desk and filing cabinet or the loading bay plant, bin, scanner posts, mail room wall and robot mailbox. Fixed in this change; all pass.
 - `tests/ch1-security.mjs`: at the party the alarm sounds and a guard walks in within 1.5 seconds, a second follows, a guard who sees him catches him, and hiding sends the guards to search his home. KNOWN: the Day 2 lunch guests and the night robot send him straight to LOCKUP with no alarm or guard.
 - `tests/every-goal-has-target.mjs`: KNOWN: 5 of 34 Chapter 1 goals still mark the place with a yellow circle (the calendar also with an arrow) instead of an outline of the real thing.
 - `tests/ch1-restart.mjs`: ↺ never sends him to the opening and keeps him in the same part with a goal. KNOWN: ↺ does nothing in scenes Q3, Q5, Q6, Q7 and the office keypad (QP), which have no restart point.

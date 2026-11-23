@@ -49,10 +49,14 @@ const out = await page.evaluate(() => {
     const m = { x0: n.mo.x - 46, x1: n.mo.x + 46, y0: n.mo.y - 46, y1: n.mo.y + 46 };
     if (inside(n.sq.x, n.sq.y, m)) entered = true;
   }
-  return { started, cleared, entered, x: Math.round(n.sq.x), hangarSolids: window.__ss.solids().length };
+  // The home room's bed, bucket and Guardian box (00-core.js ih(), closet) must not leak into the loading bay.
+  // The loading bay's own furniture (CH1_FURNITURE.hangar) is allowed.
+  const home = ["536,596,500,571", "307,375,473,522", "83,286,409,526"];
+  const hangarSolids = window.__ss.solids().map((b) => [b.x0, b.x1, b.y0, b.y1].join(","));
+  return { started, cleared, entered, x: Math.round(n.sq.x), homeInHangar: hangarSolids.filter((b) => home.includes(b)) };
 });
 g.check("the morning hum starts Mops walking", out.started === true, out);
 g.check("ending the hum clears the walking flag", out.cleared === true, out);
 g.check("the vent step does not finish inside Mops", out.entered === false, out);
-g.check("the hangar adds no home-room furniture", out.hangarSolids === 0, out);
+g.check("the hangar adds no home-room furniture", out.homeInHangar.length === 0, out);
 await g.finish("vent stand");

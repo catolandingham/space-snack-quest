@@ -13,7 +13,8 @@
  *     a thin solid can be crossed without his feet ever being seen inside it. Sliding along its side is fine.
  *
  * Each room: (a) walking up from a row of points along the floor stops at or below the floor line;
- * (b) walking into each object from four sides never puts Squatch's feet inside it.
+ * (b) walking into each object from four sides, at a normal frame and at the game's slowest frame (its
+ *     longest step), never puts Squatch's feet inside it or past it.
  *   node tests/ch1-rooms-solid.mjs
  */
 import { startGame } from "./game-page.mjs";
@@ -67,20 +68,21 @@ async function place(room, x, y) {
   );
 }
 // Holds a key for `steps` frames; returns the end point and the frames where the feet were inside `box`.
-async function walk(key, steps, box) {
+// dt is one frame; the game never steps more than 0.05 s at once (90-input-shell.js), its longest step.
+async function walk(key, steps, box, dt = 1 / 30) {
   await page.keyboard.down(key);
   const r = await page.evaluate(
-    ([steps, box]) => {
+    ([steps, box, dt]) => {
       const n = window.__ss.op;
       let inside = 0, minY = n.sq.y;
       for (let i = 0; i < steps; i++) {
-        window.__ss.tick(1 / 30);
+        window.__ss.tick(dt);
         minY = Math.min(minY, n.sq.y);
         if (box && n.sq.x > box.x0 + 2 && n.sq.x < box.x1 - 2 && n.sq.y > box.y0 + 2 && n.sq.y < box.y1 - 2) inside++;
       }
       return { x: Math.round(n.sq.x), y: Math.round(n.sq.y), minY: Math.round(minY), inside };
     },
-    [steps, box],
+    [steps, box, dt],
   );
   await page.keyboard.up(key);
   return r;
@@ -105,11 +107,12 @@ for (const room of ROOMS) {
       ["from the right", b.x1 + 40, cy, "ArrowLeft", (e) => e.x < b.x0 && e.y > b.y0 && e.y < b.y1],
     ];
     const through = [];
-    for (const [side, x, y, key, crossed] of tries) {
-      await place(room, x, y);
-      const e = await walk(key, 75, b);
-      if (e.inside || crossed(e)) through.push({ side, end: [e.x, e.y], framesInside: e.inside });
-    }
+    for (const dt of [1 / 30, 0.05])
+      for (const [side, x, y, key, crossed] of tries) {
+        await place(room, x, y);
+        const e = await walk(key, 75, b, dt);
+        if (e.inside || crossed(e)) through.push({ side, dt, end: [e.x, e.y], framesInside: e.inside });
+      }
     g.check(`${room.id}: Squatch cannot walk into the ${t.name}`, through.length === 0, through);
   }
 }

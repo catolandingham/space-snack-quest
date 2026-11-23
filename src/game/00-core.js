@@ -1293,21 +1293,23 @@
     const CH1_WALL_FOOT = 256,
       // Furniture in the locked loading bay and office pictures, as the strip where each one stands on
       // the floor, in game positions (picture x * 0.75, picture y * 640 / 830). tests/ch1-rooms-solid.mjs
-      // walks into each one from four sides. A solid is at least 24 wide: R0 pushes Squatch out to the
-      // nearest side, so anything thinner than two steps lets him pop out the far side.
+      // walks into each one from four sides. Every solid is at least 24 across both ways: R0 pushes
+      // Squatch out to the nearest side, so anything thinner than two of his longest steps (about 8 px at
+      // the slowest frame) lets him pop out the far side. Thin things grow back toward the wall, so the
+      // side where they stand on the floor stays where the picture draws it.
       CH1_FURNITURE = {
         office: [
-          { x0: 59, x1: 167, y0: 486, y1: 509 }, // filing cabinet
+          { x0: 59, x1: 167, y0: 485, y1: 509 }, // filing cabinet
           { x0: 587, x1: 885, y0: 524, y1: 551 }, // desk
         ],
         hangar: [
-          { x0: 103, x1: 148, y0: 351, y1: 370 }, // plant
-          { x0: 189, x1: 237, y0: 359, y1: 374 }, // bin
-          { x0: 344, x1: 369, y0: 397, y1: 416 }, // scanner arch, left post
-          { x0: 563, x1: 588, y0: 397, y1: 416 }, // scanner arch, right post
+          { x0: 103, x1: 148, y0: 346, y1: 370 }, // plant
+          { x0: 189, x1: 237, y0: 350, y1: 374 }, // bin
+          { x0: 344, x1: 369, y0: 392, y1: 416 }, // scanner arch, left post
+          { x0: 563, x1: 588, y0: 392, y1: 416 }, // scanner arch, right post
           { x0: 675, x1: 699, y0: 360, y1: 420 }, // mail room wall, above its door
           { x0: 675, x1: 699, y0: 507, y1: 609 }, // mail room wall, below its door
-          { x0: 848, x1: 908, y0: 455, y1: 476 }, // robot mailbox
+          { x0: 848, x1: 908, y0: 452, y1: 476 }, // robot mailbox
         ],
       };
     let nt = (l, o, i, s, q) => ({ x0: l - i, x1: l + i, y0: o - s, y1: o + q });
