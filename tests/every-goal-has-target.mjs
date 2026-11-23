@@ -1,6 +1,10 @@
 /**
  * Every Chapter 1 goal the player acts on has a highlighted target and an action prompt.
  * Goals whose action happens right where Squatch stands get no ring (Brian, 2026-11-14), only the prompt.
+ * Brian's repeat rule (raised at least six times, Nov 8 to Nov 15): the place to go is shown by outlining
+ * the real thing in dashed yellow, never by a circle or box on the floor and never by an arrow. Every
+ * floor ring today comes with a bouncing arrow (ringZone in 60-frame-draw.js), so each goal that still
+ * draws one is listed as KNOWN until the outline work replaces it (repeat-issues.md, issue 2).
  *   node tests/every-goal-has-target.mjs
  */
 import { readFileSync } from "node:fs";
@@ -74,7 +78,31 @@ const report = await page.evaluate(async (chips) => {
       }
     return hit;
   };
-  const bad = [];
+  const bad = [],
+    ringed = [];
+  // Every yellow circle the frame draws (radius 30 or more, so eyes and dots are not counted). Chapter 1
+  // draws some highlights itself instead of through ringZone, so the drawing calls are watched directly.
+  const yellowCircles = new Set();
+  const proto = CanvasRenderingContext2D.prototype;
+  const isYellow = (st) => typeof st === "string" && /#ffcf33|#ffd23f|#ffe066|255, ?207, ?51|255,207,51/i.test(st);
+  let arcs = [];
+  const { arc, beginPath, stroke, fill } = proto;
+  proto.beginPath = function () {
+    arcs = [];
+    return beginPath.apply(this, arguments);
+  };
+  proto.arc = function (x, y, r, a0, a1) {
+    if (r >= 30 && Math.abs(a1 - a0) >= Math.PI * 1.5) arcs.push(`${Math.round(x)},${Math.round(y)} r${Math.round(r)}`);
+    return arc.apply(this, arguments);
+  };
+  proto.stroke = function () {
+    if (isYellow(this.strokeStyle)) arcs.forEach((a) => yellowCircles.add(a));
+    return stroke.apply(this, arguments);
+  };
+  proto.fill = function () {
+    if (isYellow(this.fillStyle)) arcs.forEach((a) => yellowCircles.add(a));
+    return fill.apply(this, arguments);
+  };
   for (const [chip, spec] of Object.entries(play)) {
     n.ch1Day2 = spec.day2 !== false;
     n.ch1Party = !!spec.party;
@@ -104,6 +132,7 @@ const report = await page.evaluate(async (chips) => {
     n.ch1Veil = 0;
     n.chip = chip;
     for (let i = 0; i < 12; i++) ss.tick(0.05);
+    yellowCircles.clear();
     ss.drawFrame();
     const spots = (ss.spotsNow() || []).filter((s) => s && s.verb);
     const offer = ss.offerNow();
@@ -113,9 +142,11 @@ const report = await page.evaluate(async (chips) => {
     const yellow = onSquatch ? 1 : yellowNear(at.x || spec.x, at.y || spec.y);
     const prompt = spec.pad ? n.ch1PadOn : spec.walk ? true : !!(offer && offer.verb);
     const target = spec.walk || spec.pad || spots.length > 0;
+    for (const r of ss.rings()) ringed.push(`${chip} -> ${r.box ? "box" : "circle"} ring and arrow on ${r.id}`);
+    for (const c of yellowCircles) ringed.push(`${chip} -> yellow circle at ${c}`);
     if (!target || yellow < 1 || !prompt) bad.push({ chip, target, yellow, prompt, verb: offer && offer.verb, spots: spots.length });
   }
-  return { missing, bad, checked: Object.keys(play).length, story: [...story] };
+  return { missing, bad, ringed, checked: Object.keys(play).length, story: [...story] };
 }, unique);
 
 g.check("every Chapter 1 goal chip is classified", report.missing.length === 0, report.missing);
@@ -124,6 +155,7 @@ g.check(
   report.bad.length === 0,
   report.bad.slice(0, 8),
 );
+g.known(`${new Set(report.ringed.map((r) => r.split(" -> ")[0])).size} of ${report.checked} goals have ${report.ringed.length} marks drawn as a yellow circle or a floor ring with an arrow, not an outline of the real thing`, report.ringed.length > 0, report.ringed);
 g.check("story goals are named", report.story.length === 4, report.story);
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();
