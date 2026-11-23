@@ -3,26 +3,27 @@
 
 | Lines | Heading |
 | --- | --- |
-| 27–29 | # Space Snack Quest: every decision, in one place |
-| 30–37 | ## How to use this file |
-| 38–51 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 52–60 | ## Which repo is the base, 2026-11-22 |
-| 61–67 | ## Sight cones, 2026-11-22 |
-| 68–72 | ## Latest calendar direction, 2026-11-16 |
-| 73–75 | ## Vent walk, 2026-11-16 |
-| 76–78 | ## Locked home room v5, 2026-11-16 |
-| 79–88 | ## Fidelity system (pictures are locked, not just words) |
-| 89–126 | ## 1. Working rules |
-| 127–193 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 194–218 | ## 3. Characters and look |
-| 219–295 | ## 4. Look, rooms and layout |
-| 296–317 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 318–361 | ## 6. Later chapters (2–4 and travel) |
-| 362–371 | ## 7. Audio |
-| 372–406 | ## 8. Code, controls and process |
-| 407–453 | ## 9. Open / waiting on Brian |
-| 454–548 | ## 10. Earlier entries, kept word for word |
-| 549–645 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 28–30 | # Space Snack Quest: every decision, in one place |
+| 31–38 | ## How to use this file |
+| 39–55 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 56–76 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 77–85 | ## Which repo is the base, 2026-11-22 |
+| 86–92 | ## Sight cones, 2026-11-22 |
+| 93–97 | ## Latest calendar direction, 2026-11-16 |
+| 98–100 | ## Vent walk, 2026-11-16 |
+| 101–103 | ## Locked home room v5, 2026-11-16 |
+| 104–113 | ## Fidelity system (pictures are locked, not just words) |
+| 114–151 | ## 1. Working rules |
+| 152–218 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 219–243 | ## 3. Characters and look |
+| 244–320 | ## 4. Look, rooms and layout |
+| 321–342 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 343–386 | ## 6. Later chapters (2–4 and travel) |
+| 387–396 | ## 7. Audio |
+| 397–431 | ## 8. Code, controls and process |
+| 432–478 | ## 9. Open / waiting on Brian |
+| 479–573 | ## 10. Earlier entries, kept word for word |
+| 574–670 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -47,7 +48,31 @@ Brian does not read the long files; he confirms assumptions by multiple choice i
 - **Hangar robot (problem 3): "No close catch".** While the night robot looks away it cannot catch Squatch, however close; only its cone counts.
 - **Keypad: "We need the code for the office door, not the hangar"** (his own answer). v1 already puts the code (4723, from the pink slip) on the office door, walkthrough beat 50; no hangar code. No change needed.
 - **Raising the alarm: "Ch 1 wall, later shout".** In Chapter 1 whoever sees Squatch runs to the FUR ALARM on the wall and pulls it, giving him time to hide; shouting for security is allowed in later chapters.
+- **Goal words: "Outline; words if stuck".** The next place or thing gets a soft outline (his settled rule, Squatchbot #1343 to #1345: "You just light up that entrance"). No goal line at first; if the kid does nothing useful for about 20 seconds, a short goal line fades in. This replaces v1's always-on goal bar.
+- **Outfit: "Yes, his outfit".** What the kid drags on in dress-up is what Squatch wears all party; snags and tugs pull off whatever is on him.
+- **Hiding: Claude's call, Brian said "I can argue either way".** A HIDE button at the hiding spot (the "HIDE · plant" prompt), as most stealth games use an explicit hide action: the kid always knows when he is hidden, he never hides by accident while walking past, and it works the same with touch, stick and mouse.
 - **Push and merge: "Push freely, merge on yes".** Claude pushes branches and opens pull requests as needed. Nothing merges into main (which goes live) until Brian says yes in Snack Quest Chat; his words are copied into the pull request.
+
+## Claude's design calls, 2026-11-22 (Brian can veto any)
+From the Chapter 1 design check (`docs/ch1-design-audit-2026-11-22/`). Each is settled by Brian's own words or the repo's rules; Brian was told the list and can say "no to N".
+1. Dress-up pieces stay where the kid drops them on Squatch (G Bot #603: "you should be able to put it more or less wherever"); dropped off him, they slide back.
+2. The sneak's door guest is a guest, so "?" briefly, then "!" (Sight cones, 2026-11-22).
+3. The peek stays as built: Squatch half hidden in his doorway (Squatchbot #1372: "he just peeks").
+4. Chapter 1 alarm: the guest who spots him says "FUR!" and runs to the wall alarm; exact words wait for Brian's yes.
+5. Losing the disguise shows its cause on screen: the hat tilts, then flies (rule 13).
+6. The vent, plant and guard spots trigger by walking near them; the SNAG, SUCK and STAND buttons go (problem 9, walkthrough beat 16).
+7. A catch at home shows the lockup card, then sets him back a little (Brian, Nov 14).
+8. Mops finds the flyer and fur without a new line, then "Everyone out there has someone." / "You have me."
+9. The TV story is pictures only until Brian approves words.
+10. The Moon Pie site is on the manager's office computer (R46); booked with "RETURN · empty crate".
+11. On pickup day the kid plays the crate scenes (hide, then sneak home), as beats 54 and 55 say.
+12. Every robot, the night ones included, gets the same dashed cone and the "!" rule.
+13. Day 2 calendar (beat 23) is required: it gets the soft outline, and its close-up shows today circled.
+14. Beat 40: Squatch holds up the brochure, no new words, before Mops's line.
+15. Beat 32: Isfred is called away to a damaged crate in the mail room (v1 today); the line needs Brian's yes.
+16. Beat 38: the two unapproved lines are cut; the family leaves the brochure behind.
+17. Beat 42: a robot that sees Squatch at night runs to the FUR alarm on the bay wall, same rule as the hall.
+18. Plants and boxes block sight lines when Squatch hides behind them.
 
 ## Which repo is the base, 2026-11-22
 - **Decided by Claude (Snack Quest Chat) at Brian's request.** Brian, 2026-11-22: "I really don't want to make the decision, I need you too to make sure you're fully considering everything, confirm you understand my goal, and then weighing all tradeoffs. [...] I'd have to defer to you." He can overturn it at any time.
