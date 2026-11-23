@@ -419,20 +419,24 @@
       if (!(window.SSQ && window.SSQ.partyCones) || n.room !== "hall" || !n.ch1Party) return [];
       if (!(n.ch1PlantSneak || (n.ch1Disguise && !n.ch1PartyOver))) return [];
       let hidden = n.sqPose === "hidden";
-      return window.SSQ.partyCones(ch1PartyPeople(), n.sq, (n.ch1Look || 0) > 0).map((c) => ({
+      return window.SSQ.partyCones(ch1PartyPeople(), n.sq, (n.ch1Look || 0) > 0, { half: STAND_CONE_HALF, len: STAND_CONE_LEN }).map((c) => ({
         ...c,
         inside: !hidden && vt(n.sq.x, n.sq.y - 20, c.ox, c.oy, c.a, STAND_CONE_HALF, STAND_CONE_LEN),
       }));
     }
-    // Drawn under the people in drawCh1Party. A faint dashed cone each; the one Squatch is in fills yellow.
-    // In disguise a "?" shows over whoever sees him; in the sneak a "!" over the one who caught him.
+    // Drawn under the people in drawCh1Party. A faint dashed cone each, shown only when Squatch is near the
+    // cone itself (c.show, the distance fade); the one Squatch is in fills yellow. In disguise a "?" shows over
+    // whoever sees him; in the sneak "?" first, then "!" over the one who caught him.
     function drawCh1PartyCones() {
       let s = n.ch1PlantSneak,
         cones = ch1PartyCones();
       cones.forEach((c) => {
         c.mark = s ? (s.caught ? (s.by === c.id ? "!" : "") : s.seenBy === c.id ? "?" : "") : c.inside ? "?" : "";
+        if (!(c.show > 0) && !c.mark) return;
+        (e.save(), (e.globalAlpha = c.mark ? 1 : c.show));
         if (c.inside || c.mark) seenCone(c.ox, c.oy, c.a, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.55)", "rgba(160,100,10,.95)");
-        else (e.save(), e.setLineDash([8, 7]), seenCone(c.ox, c.oy, c.a, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(0,0,0,0)", "rgba(90,96,110,.5)"), e.restore());
+        else (e.setLineDash([8, 7]), seenCone(c.ox, c.oy, c.a, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(0,0,0,0)", "rgba(90,96,110,.5)"));
+        e.restore();
         // In disguise this cone only brings a "?", never a catch (read by tests/ch1-kid-play.mjs).
         !s && (conesDrawn[conesDrawn.length - 1].askOnly = !0);
       });

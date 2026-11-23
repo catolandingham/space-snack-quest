@@ -5,6 +5,9 @@
  *   - In disguise: every guest, Isfred, the bartender, the cape guest and the octopus show a faint cone.
  *     Squatch inside one: that cone fills and a "?" shows over that person, and nobody catches him.
  *   - After the snack spill, everyone turns to look at Squatch (their cones point at him).
+ *   - Distance fade (Brian, 2026-11-23: "Add the distance fade"): a cone shows only when Squatch is near the
+ *     cone itself: gone beyond 120 from it, fully shown within 40, fading in between, so every cone that can
+ *     see him is fully drawn (rule 8).
  *   - The sneak to the plant: everyone faces the stage. The way from his doorway to the plant is outside every
  *     cone. Stepping into a cone shows "?" over that person; staying too long turns it into "!" and he is seen
  *     (Brian, 2026-11-22: "it stats with a question mark and only turns into exclamation after he stays too long").
@@ -43,7 +46,17 @@ const party = await page.evaluate((EVERYONE) => {
     return { id: c.id, off: Math.min(d, 2 * Math.PI - d) };
   });
   n.ch1Look = 0;
-  return { open, inCam, caught, look, art: n.ch1GuestArt, ids: open.map((c) => c.id) };
+  // Distance fade, from three places on the floor: what is drawn this frame, and how strongly.
+  const fade = [];
+  for (const [x, y] of [[560, 600], [200, 520], [800, 560]]) {
+    ((n.sq.x = x), (n.sq.y = y));
+    ss.tick(1 / 30);
+    ss.drawFrame();
+    const drawn = ss.conesDrawn().filter((k) => k.room === "hall").length;
+    for (const c of n.ch1Cones || []) fade.push({ at: [x, y], id: c.id, d: c.edge, show: c.show, inside: c.inside });
+    fade.push({ at: [x, y], drawn, shown: (n.ch1Cones || []).filter((c) => c.show > 0).length });
+  }
+  return { open, inCam, caught, look, fade, art: n.ch1GuestArt, ids: open.map((c) => c.id) };
 }, EVERYONE);
 
 g.check(
@@ -60,6 +73,13 @@ g.check(
   party.look.length >= EVERYONE.length && party.look.every((c) => c.off < 0.05),
   party.look.filter((c) => c.off >= 0.05),
 );
+const cones = party.fade.filter((f) => f.id),
+  frames = party.fade.filter((f) => !f.id);
+g.check("far from a cone (over 120), it is not shown", cones.filter((c) => c.d > 120).every((c) => c.show === 0), cones.filter((c) => c.d > 120 && c.show !== 0));
+g.check("close to a cone (within 40), it is fully shown", cones.filter((c) => c.d <= 40).every((c) => c.show === 1), cones.filter((c) => c.d <= 40 && c.show !== 1));
+g.check("in between, the cone fades in as he comes closer", cones.some((c) => c.d > 40 && c.d < 120) && cones.filter((c) => c.d > 40 && c.d < 120).every((c) => c.show > 0 && c.show < 1), cones.filter((c) => c.d > 40 && c.d < 120));
+g.check("every cone that sees him is fully shown (rule 8)", cones.filter((c) => c.inside).every((c) => c.show === 1), cones.filter((c) => c.inside));
+g.check("only the shown cones are drawn, so far-away cones do not clutter the screen", frames.every((f) => f.drawn === f.shown) && frames.some((f) => f.shown < 10), frames);
 g.check("the six party guests are drawn from Brian's approved Nov 8 pictures", party.art === 6, party.art);
 
 // The sneak to the plant.
