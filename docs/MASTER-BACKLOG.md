@@ -4,24 +4,26 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–49 | ## Where main is (Chapter 1 redesign) |
-| 50–64 | ## Register |
-| 65–86 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 87–107 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 108–120 | ## Phase 2 (plan section 4, T13 to T18) |
-| 121–143 | ## Phase 1 (plan section 3, T5 to T12) |
-| 144–157 | ## SS40–SS44 |
-| 158–175 | ## Story rows |
-| 176–194 | ## Reset section |
-| 195–205 | ## Still open |
-| 206–209 | ## Chapter 1 replot, recorded and not built |
-| 210–318 | ## Changelog |
+| 24–51 | ## Where main is (Chapter 1 redesign) |
+| 52–66 | ## Register |
+| 67–88 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 89–109 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 110–122 | ## Phase 2 (plan section 4, T13 to T18) |
+| 123–145 | ## Phase 1 (plan section 3, T5 to T12) |
+| 146–159 | ## SS40–SS44 |
+| 160–177 | ## Story rows |
+| 178–196 | ## Reset section |
+| 197–207 | ## Still open |
+| 208–211 | ## Chapter 1 replot, recorded and not built |
+| 212–320 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-22, pull request from branch `build/modules` (merges into main only on Brian's yes): new code can live in real modules in `src/modules/`, bundled into their own strict-mode script before the older program, meeting it only through `window.SSQ`. No change a player can see: the program built from `src/game/` is byte for byte the one on main at `4d1faa2`, and `node tools/compare-builds.mjs 4d1faa2` draws Chapter 1 start and morning, the Chapter 2 gas stop, the hangar and the party at phone and desktop size from both builds; the game picture matched at all ten. First step of rebuilding Chapter 1 beat by beat (`docs/DECISIONS.md` on branch `docs/assessment-2026-11-22`).
 
 2026-11-13. Brian said yes, merge (without the beard gag). PR #21 (locked rooms) and PR #23 (lunch through the ship) are on main. Walks between the locked pictures stay on the picture, at the doors. The opening keeps control and shows the sing-along chip. The locked bedroom's blue G box and mop bucket block the walk. Mops's beard hangs to the floor. There is no mop prop and no cut-in at the bucket. The title screen no longer logs "Va is not defined" every frame. Sentences below that say the hallway is not built, or that Day 2 is not merged, are from before those merges. Locked pictures stay in `docs/locked-rooms/`. Do not redraw a room freehand, and do not change these files, without Brian's yes and a new locked version. Pull requests #12, #13, #15, and #16 were read against `OPEN-ASKS.md`. New leftovers are section G there. Docs match main: yes.
 
