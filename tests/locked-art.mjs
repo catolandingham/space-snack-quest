@@ -45,11 +45,11 @@ const game = readdirSync(join(root, "src/game"))
   .join("\n");
 const pixelSuite = read("tests/locked-rooms.mjs");
 const rooms = {
-  "hall-room-empty-v1.png": ["hall", 'drawLockedRoom("hall")'],
+  "hall-room-empty-v2.png": ["hall", 'drawLockedRoom("hall")'],
   "hallway-room-empty-v6.png": ["hallway", 'drawLockedRoom("hallway")', 'drawLockedRoom(n.ch1Office ? "office" : "hallway")'],
   "office-room-empty-v2.png": ["office", 'drawLockedRoom("office")'],
-  "home-room-empty-closed-v5.png": ["home-closed", 'drawLockedRoom(n.wardrobe === "open" ? "home-open" : "home-closed")'],
-  "home-room-empty-open-v5.png": ["home-open", 'drawLockedRoom(n.wardrobe === "open" ? "home-open" : "home-closed")'],
+  "home-room-empty-closed-v6.png": ["home-closed", 'drawLockedRoom(n.wardrobe === "open" ? "home-open" : "home-closed")'],
+  "home-room-empty-open-v6.png": ["home-open", 'drawLockedRoom(n.wardrobe === "open" ? "home-open" : "home-closed")'],
   "delivery-room-empty-day-v2.png": ["delivery-day", "drawLockedRoom(ch1DeliveryArt())"],
   "delivery-room-empty-day-noship-v2.png": ["delivery-noship", "drawLockedRoom(ch1DeliveryArt())"],
   "delivery-room-empty-night-v2.png": ["delivery-night", "drawLockedRoom(ch1DeliveryArt())"],

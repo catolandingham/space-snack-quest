@@ -27,8 +27,9 @@ g.check("Squatch can walk up to the counter, close enough to GRAB the snack", e.
 e = await walk(640, 420, "ArrowUp"); g.check("walking up stops on the floor, below the window and back wall", e.moved >= 8 && (e.y >= 300), e);
 e = await walk(360, 420, "ArrowUp"); g.check("walking up into the stage stops in front of it", e.moved >= 8 && (e.y >= 304), e);
 e = await walk(535, 420, "ArrowUp"); g.check("walking up into the poster stops in front of its legs", e.moved >= 8 && (e.y >= 300), e);
-e = await walk(700, 460, "ArrowRight"); g.check("walking right into the snack bar stops at the counter", e.moved >= 8 && (e.x <= 798), e);
-e = await walk(700, 300 + 10, "ArrowRight"); g.check("walking right along the back wall stops at the snack bar too", e.moved >= 8 && (e.x <= 798), e);
+// The bar's left edge: x 806 in hall v2 (2026-11-23, the long bar moved down below the corner doorway).
+e = await walk(700, 460, "ArrowRight"); g.check("walking right into the snack bar stops at the counter", e.moved >= 8 && (e.x <= 806), e);
+e = await walk(700, 300 + 10, "ArrowRight"); g.check("walking right along the back wall stops at the snack bar too", e.moved >= 8 && (e.x <= 806), e);
 e = await walk(250, 520, "ArrowUp"); g.check("walking up into the guest at (250, 460) stops below the guest", e.moved >= 8 && (e.y >= 466), e);
 e = await walk(150, 400, "ArrowDown"); g.check("walking down into the balloon kid stops above the kid", e.moved >= 8 && (e.y <= 510), e);
 e = await walk(440, 600, "ArrowUp", 30); g.check("walking up into the hiding plant stops at its pot", e.moved >= 8 && (e.y >= 552 || e.x < 412 || e.x > 476), e);

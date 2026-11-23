@@ -11,7 +11,7 @@
  * Squatch is seen (tests/cone-match.mjs).
  */
 
-// The middle of the stage, in game positions (hall-room-empty-v1 and the party drawing).
+// The middle of the stage, in game positions (hall-room-empty-v2 and the party drawing).
 export const PARTY_STAGE = { x: 448, y: 280 };
 // People who do not face the stage: the way they look (radians, 0 = right, PI / 2 = down the screen).
 export const PARTY_FACES = { isfred: Math.PI / 2, bartender: Math.PI };

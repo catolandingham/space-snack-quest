@@ -137,15 +137,18 @@
     // Everyone else at the party, where they stand (feet). Their sight cones come from here too (ch1PartyPeople).
     const CH1_PARTY_CAST = { isfred: [360, 256], cape: [340, 400], bartender: [880, 500], octopus: [760, 555] };
     // Party hall solids (Brian, 2026-11-15: "Make the party hall solid so Squatch can't walk through walls, the stage, or guests").
-    // Boxes are where feet cannot go, in picture units, measured on hall-room-empty-v1.png and the party drawing.
+    // Boxes are where feet cannot go, in picture units, measured on hall-room-empty-v2.png and the party drawing.
+    // v2 (Brian, 2026-11-23): the bar starts just below the corner doorway and runs to the front wall, picture
+    // y 458 to 784 (game 353 to 605); CH1_BAR_DY is how far down everything drawn on the bar moved from v1.
     // The floor starts in front of the stage (CH1_PARTY_FLOOR_Y), so nobody walks on the window or up the back wall.
-    const CH1_PARTY_FLOOR_Y = 300;
+    const CH1_PARTY_FLOOR_Y = 300,
+      CH1_BAR_DY = 83;
     const CH1_PARTY_FIXED = [
       { x0: 240, x1: 490, y0: 0, y1: 304 }, // stage
       { x0: 490, x1: 582, y0: 0, y1: 300 }, // COMING SOON! poster and its legs
-      { x0: 798, x1: 960, y0: 0, y1: 528 }, // snack bar, the bartender behind it, and the wall past it
-      { x0: 772, x1: 800, y0: 316, y1: 336 }, // stool
-      { x0: 772, x1: 800, y0: 398, y1: 418 }, // stool
+      { x0: 806, x1: 960, y0: 0, y1: 606 }, // snack bar, the bartender behind it, and the wall past it
+      { x0: 772, x1: 800, y0: 380, y1: 400 }, // stool
+      { x0: 772, x1: 800, y0: 438, y1: 458 }, // stool
       { x0: 72, x1: 136, y0: 330, y1: 372 }, // plant by the back wall
       { x0: 412, x1: 476, y0: 520, y1: 552 }, // the hiding plant's pot
       { x0: 496, x1: 574, y0: 494, y1: 530 }, // snack table
@@ -163,14 +166,14 @@
       return out;
     }
     const LOCKED_ROOMS = {
-      hall: "docs/locked-rooms/hall-room-empty-v1.png",
+      hall: "docs/locked-rooms/hall-room-empty-v2.png",
       hallway: "docs/locked-rooms/hallway-room-empty-v6.png",
       "delivery-day": "docs/locked-rooms/delivery-room-empty-day-v2.png",
       "delivery-night": "docs/locked-rooms/delivery-room-empty-night-v2.png",
       "delivery-noship": "docs/locked-rooms/delivery-room-empty-day-noship-v2.png",
       "delivery-pickup": "docs/locked-rooms/delivery-room-empty-pickup-v3.png",
-      "home-closed": "docs/locked-rooms/home-room-empty-closed-v5.png",
-      "home-open": "docs/locked-rooms/home-room-empty-open-v5.png",
+      "home-closed": "docs/locked-rooms/home-room-empty-closed-v6.png",
+      "home-open": "docs/locked-rooms/home-room-empty-open-v6.png",
       office: "docs/locked-rooms/office-room-empty-v2.png",
     };
     let lockedImg = {},
@@ -337,7 +340,7 @@
         from = n.ch1Duct ? "duct" : n.ch1D ? "delivery" : n.room === "passage" ? "passage" : n.room === "hall" ? "hall" : "closet",
         homeDoor = [880, 458],
         hallHomeDoor = [476, 610],
-        hallSideDoor = [870, 348],
+        hallSideDoor = [870, 336], // just inside the right-wall doorway (v2: picture y 338 to 443, game 261 to 342)
         sideDoor = [90, 348],
         homeHall = (at) => ({
           who,
@@ -1326,9 +1329,9 @@
         n.sqPose === "hidden" && ch1HideEyes(),
         !(n.ch1PartyDid && n.ch1PartyDid.snack) &&
           [
-            [848, 340, "pie"],
-            [848, 390, "cup"],
-            [848, 440, "cake"],
+            [848, 340 + CH1_BAR_DY, "pie"],
+            [848, 390 + CH1_BAR_DY, "cup"],
+            [848, 440 + CH1_BAR_DY, "cake"],
           ].forEach((bit) => drawBarSnack(bit[2], bit[0], bit[1], 0.45)),
         drawCh1SneakCone(),
         drawCh1PartyCones(),
@@ -1364,12 +1367,12 @@
         roll = p < 0.25 ? 0 : Math.min(1, (p - 0.25) / 0.25),
         tray = p < 0.5 ? 0 : Math.min(1, (p - 0.5) / 0.25),
         cake = p < 0.75 ? 0 : Math.min(1, (p - 0.75) / 0.25);
-      (e.save(), e.translate(760, 470), e.rotate(tip * 0.7));
+      (e.save(), e.translate(760, 470 + CH1_BAR_DY), e.rotate(tip * 0.7));
       ["pie", "cup", "cake"].forEach((k, i) => drawBarSnack(k, (i - 1) * 36, -28 - (1 - tip) * 16, 1));
       e.restore();
-      roll > 0 && (e.save(), e.translate(800 + roll * 120, 520), e.rotate(roll * 6), drawBarSnack("cup", 0, 0, 1.15), e.restore());
-      tray > 0 && (e.save(), e.translate(900, 500), e.rotate(-tray * 0.9), m(-46, -8, 92, 16, 3), r("#cdbb98", 3), drawBarSnack("pie", 0, -22, 0.7), e.restore());
-      cake > 0 && (e.save(), e.translate(860 + cake * 30, 480 + cake * 50), drawBarSnack("cake", 0, 0, 1.2), e.restore());
+      roll > 0 && (e.save(), e.translate(800 + roll * 120, Math.min(580, 520 + CH1_BAR_DY)), e.rotate(roll * 6), drawBarSnack("cup", 0, 0, 1.15), e.restore());
+      tray > 0 && (e.save(), e.translate(900, 500 + CH1_BAR_DY), e.rotate(-tray * 0.9), m(-46, -8, 92, 16, 3), r("#cdbb98", 3), drawBarSnack("pie", 0, -22, 0.7), e.restore());
+      cake > 0 && (e.save(), e.translate(860 + cake * 30, 480 + CH1_BAR_DY + cake * 20), drawBarSnack("cake", 0, 0, 1.2), e.restore());
     }
     function drawCh1Alien(ax, ay, kind, sc, face) {
       let f = face < 0 ? -1 : 1,
