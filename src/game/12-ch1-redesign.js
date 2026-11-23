@@ -53,22 +53,15 @@
       // A spot placed on Squatch's own feet follows him around, so a ring there would circle Squatch himself.
       return !!o && (!!o.hot || (Math.abs(o.x - n.sq.x) < 2 && Math.abs((o.y || 0) - n.sq.y) < 2));
     }
-    function drawGoalMark(x, y) {
-      // Remember the last ring drawn, so tests can check it is never around Squatch himself.
-      n.lastRing = { x, y, T: n.T };
-      let p = 0.75;
-      (e.save(),
-        (e.globalAlpha = p),
-        (e.strokeStyle = "#ffcf33"),
-        (e.lineWidth = 6),
-        e.beginPath(),
-        e.arc(x, y, 54, 0, 7),
-        e.stroke(),
-        e.restore());
+    // The goal mark is a soft yellow outline round the real thing (src/modules/goal-targets.js), never a
+    // circle or an arrow (Brian, raised at least six times). Remember the last one drawn, so tests can check
+    // it is never round Squatch himself.
+    function drawGoalMark(spot) {
+      let box = window.SSQ && window.SSQ.drawGoalOutline ? window.SSQ.drawGoalOutline(e, n.room, spot.id, lockedImg[lockedNow], n.T) : null;
+      box && (n.lastRing = { x: (box.x0 + box.x1) / 2, y: (box.y0 + box.y1) / 2, T: n.T, box, id: spot.id, act: spot.verb + " · " + spot.cap });
     }
     function ch1MarkGoal() {
-      if (n.ch1PadOn) return drawGoalMark(480, 250);
-      if (!n.ctrl || (n.ch1Zoom && n.ch1Zoom.zoom < 1)) return;
+      if (n.ch1PadOn || !n.ctrl || n.ch1Zoom || n.sqPose === "hidden") return;
       let spots =
         n.ch1Day2 && ch1Day2Spots
           ? ch1Day2Spots()
@@ -83,12 +76,8 @@
                 : n.scene === "QA" && n.ch1Party && !n.ch1PartyOver
                   ? ch1PartySpots()
                   : [];
-      let s = (spots || []).find((o) => o && o.verb && o.x);
-      s && !actsWhereSquatchStands(s) && drawGoalMark(s.x, s.y);
-    }
-    function drawDoorNudge() {
-      let p = 0.5 + 0.5 * Math.sin(n.T * 5);
-      (e.save(), (e.globalAlpha = 0.35 + 0.5 * p), (e.fillStyle = "#ffcf33"), e.beginPath(), e.moveTo(860, 430), e.lineTo(900, 470), e.lineTo(860, 510), e.closePath(), e.fill(), e.restore());
+      let s = (spots || []).find((o) => o && o.verb && o.when !== !1);
+      s && drawGoalMark(s);
     }
     function ch1QChip() {
       if (n.ch1MopsLeave || n.ch1Peeking) return "";
@@ -193,7 +182,10 @@
       }
     }
     loadLockedRooms();
+    // The locked picture drawn last, so the goal outline can trace things in it.
+    let lockedNow = "";
     function drawLockedRoom(id) {
+      lockedNow = id;
       let img = lockedImg[id];
       img && img.complete && img.naturalWidth ? e.drawImage(img, 0, 0, c, b) : ((e.fillStyle = "#e2e5ed"), e.fillRect(0, 0, c, b));
     }
@@ -1510,16 +1502,6 @@
       n.ch1Prop === "bin" && drawPinkSlip(250, 470);
       n.ch1Prop === "teeth" && drawPinkSlip(n.mo.x - 6, n.mo.y - 72);
       n.ch1Prop === "paw" && drawPinkSlip(n.sq.x + 8, n.sq.y - 48);
-      n.ch1Step === "hide" &&
-        n.sqPose !== "hidden" &&
-        (e.save(),
-        (e.globalAlpha = 0.35 + 0.4 * Math.sin(n.T * 5)),
-        e.beginPath(),
-        e.arc(CH1_PLANT.x, CH1_PLANT.y, 54, 0, 7),
-        (e.strokeStyle = "#ffcf33"),
-        (e.lineWidth = 6),
-        e.stroke(),
-        e.restore());
       n.sqPose === "hidden" && !n.ch1InCrate && ga(n.ch1Step === "hide" || Math.hypot(n.sq.x - CH1_PLANT.x, n.sq.y - CH1_PLANT.y) < 90 ? CH1_PLANT.x : n.sq.x, (n.ch1Step === "hide" || Math.hypot(n.sq.x - CH1_PLANT.x, n.sq.y - CH1_PLANT.y) < 90 ? CH1_PLANT.y : n.sq.y) - 46);
       n.ch1InCrate && ga(830, 510);
       n.scene === "Q2" && Qt(700, 530, "#e8a87c", qtScale("hangar"), -1),
