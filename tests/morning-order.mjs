@@ -300,7 +300,46 @@ for (let i = 0; i < 30; i++) {
 g.check('then the "That evening…" card, then the peek goal', evening && s.ctrl && /peek out the door/.test(s.chip), s);
 g.check("the card waited for a tap too", A1.bad.auto.length === 0, A1.bad.auto);
 g.check("the morning beat is finished once the evening starts", s.beat && s.beat.step === "", s.beat);
+// The step restart (hold ↺) in the evening keeps the evening: Mops does not come back for the song.
+const holdRestart = (page) =>
+  page.evaluate(() => {
+    const ss = window.__ss,
+      n = ss.op;
+    ss.resetHold(true);
+    for (let i = 0; i < 20; i++) ss.tick(0.05);
+    ss.resetHold(false);
+    for (let i = 0; i < 4; i++) ss.tick(0.05);
+    const c = n.cur;
+    return { k: c ? c.k : "", step: n.ch1Morning ? n.ch1Morning.step : "", pose: n.sqPose, moPose: n.moPose, peek: !!n.ch1PeekReady, chip: ss.chipNow(), ctrl: n.ctrl, walking: !!n.mo.walking };
+  });
+const eveRestart = await holdRestart(A.page);
+g.check("↺ in the evening keeps the evening (no song step, Mops stays gone)", eveRestart.step === "" && eveRestart.moPose === "hidden" && eveRestart.peek && /peek/.test(eveRestart.chip), eveRestart);
 g.check("no page errors (sing run)", A.errors.length === 0, A.errors);
+
+// ---------- Run C: hold ↺ in the middle of the morning ----------
+{
+  const C = await openMorning();
+  let c = await C.st();
+  for (let i = 0; i < 20 && !(c.k === "bub" && c.text === L["mops-morning"].text); i++) {
+    await C.tapAt(480, 330);
+    await sleep(450);
+    c = await C.st();
+  }
+  const r = await holdRestart(C.page);
+  g.check("↺ before the song plays the morning again from the room (no cards): Squatch asleep, Mops mopping, waiting for a tap", r.k === "wait" && r.step === "asleep" && r.pose === "sleep" && r.moPose === "mop", r);
+  const C1 = await playToSong(C);
+  g.check("after ↺ the morning still plays through to the song step", C1.last.ctrl && C1.last.chip === L["chip-sing"].text && C1.seen.every((x) => x.k !== "card"), C1.last);
+  // ↺ during Mops's walk out brings back the song step at most, with Mops solid again.
+  await C.page.evaluate(() => {
+    const ss = window.__ss,
+      n = ss.op;
+    (ss.spotsNow() || []).find((x) => x.id === "sing").f();
+    for (let i = 0; i < 400 && !(n.ch1Morning && n.ch1Morning.step === "leave"); i++) (n.cur && n.cur.k === "bub" && ((n.bt = 1), ss.opTap()), ss.tick(0.05));
+  });
+  const w = await holdRestart(C.page);
+  g.check("↺ while Mops walks out does not put the song step back", w.step !== "song" && w.chip !== L["chip-sing"].text, w);
+  g.check("no page errors (↺ run)", C.errors.length === 0, C.errors);
+}
 
 // ---------- Run B: the kid does not sing; walks to Mops and talks ----------
 const B = await openMorning();

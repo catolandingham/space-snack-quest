@@ -105,6 +105,7 @@ export function createMorning(bridge) {
     e.set("moPose", "stand");
     e.face("mops", 1);
     e.moWalking(true);
+    e.forgetSaved();
     step("leave");
   }
   function gone() {
@@ -121,8 +122,10 @@ export function createMorning(bridge) {
   }
 
   return {
-    start() {
-      const e = E();
+    /** A new Chapter 1. With { restart: true } (the ↺ hold before the song): the morning again, without the cards. */
+    start(opts) {
+      const e = E(),
+        cards = !(opts && opts.restart);
       e.resetChapter();
       // The room stays quiet (no Joe's theme) until the speaker plays the song.
       bridge.homeMusic.hold();
@@ -141,8 +144,7 @@ export function createMorning(bridge) {
       e.still("mops");
       e.set("ch1Morning", { step: "asleep", t: 0, notes: false });
       e.queue([
-        e.card("jupiter", line("card-jupiter")),
-        e.card("squatch", line("card-squatch")),
+        ...(cards ? [e.card("jupiter", line("card-jupiter")), e.card("squatch", line("card-squatch"))] : []),
         // The room, no words: Squatch asleep, Mops mopping. A tap wakes the speaker.
         e.tapWait(),
         e.run(() => (e.chime(), e.set("sqPose", "sit"), step("waking"))),
@@ -208,8 +210,10 @@ export function createMorning(bridge) {
           break;
         case "song":
         case "sing":
-          // Mops stays put and keeps facing Squatch wherever the kid walks him.
+          // Mops stays put and keeps facing Squatch wherever the kid walks him. (After a ↺ during his walk out
+          // the song step comes back: he is solid again.)
           if (m.step === "song") {
+            e.moWalking(false);
             const sq = e.pos("sq"),
               mo = e.pos("mops");
             e.face("mops", sq.x < mo.x ? -1 : 1);
@@ -222,7 +226,7 @@ export function createMorning(bridge) {
     },
     /** The spots the song step offers: SING ALONG anywhere, TALK · Mops beside him. */
     spots() {
-      const m = M(),
+      const m = live(),
         e = E();
       if (!m || m.step !== "song" || !e.get("ctrl")) return null;
       const mo = e.pos("mops"),
@@ -236,13 +240,18 @@ export function createMorning(bridge) {
         { id: "talk", verb, cap, who: "sq", x: mo.x, y: mo.y, r: MORNING_PLACES.talkReach, at: [mo.x, mo.y - 170], f: talk },
       ];
     },
-    /** True while the beat runs (from start() to "That evening…"). */
+    /** True while the beat runs (from start() to "That evening…") and Chapter 1 is at home. */
     active() {
-      return !!M();
+      return !!live();
+    },
+    /** True while the morning is before its song step (the ↺ hold then restarts the morning). */
+    beforeSong() {
+      const m = live();
+      return !!m && ["asleep", "waking", "awake", "shake", "standup", "up"].includes(m.step);
     },
     /** True while Mops walks out (the goal chip hides). */
     leaving() {
-      const m = M();
+      const m = live();
       return !!m && m.step === "leave";
     },
     /** Drawn over the room: the wet floor where Mops mops, sound lines and music notes at the speaker. */

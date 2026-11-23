@@ -113,7 +113,7 @@ const waitFor = async (r, ok, ms = 8000) => {
   s = await r.st();
   g.check("and comes back up after the singing", s.m.target >= s.m.background - 0.01 && s.m.target > 0.35, s.m);
   s = await tapUntil(r, (s) => s.k === "card");
-  g.check('it is still playing when Mops is gone and "That evening…" comes up', /^That evening/.test(s.text), s.text);
+  g.check('it is still playing when Mops is gone and "That evening…" comes up', /^That evening/.test(s.text) && s.m.playing && s.m.owns, { text: s.text, m: s.m });
   s = await waitFor(r, (s) => !s.m.playing && !s.m.owns, 5000);
   g.check('it fades out on "That evening…" and gives the room back to Joe\'s theme', !s.m.playing && !s.m.owns, s.m);
   g.check("no page errors (sound on)", r.errors.length === 0, r.errors);

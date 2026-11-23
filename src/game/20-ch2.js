@@ -598,6 +598,10 @@
       if (scene.startsWith("S") || scene.startsWith("O") || scene.startsWith("Q")) {
         // The party and the night keep their own restarts; every other Q scene goes back to the start of its step.
         if (scene[0] === "Q" && scene !== "QA" && scene !== "Q4") {
+          // The morning before its song step has no saved start (the kid has had no control): play it again
+          // from the room, without the opening cards (src/modules/morning.js).
+          let beat = window.SSQ && window.SSQ.beat("ch1-morning");
+          if (beat && beat.beforeSong()) return void beat.start({ restart: !0 });
           if (restoreCh1Step(ch2.qCheck)) return void (n.ctrl = !0);
           // No saved start for this step (the player has not had control in it yet): only the lunch walk has a hand-made one.
           if (scene === "QB" && n.ch1Step === "sneak") return (ch1RestartLunch(), void (n.ctrl = !0));

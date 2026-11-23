@@ -1,6 +1,7 @@
 // Chapter 1 scene 1 (walkthrough beats 1-3): the chapter reset, the hand-over to the morning module (src/modules/morning.js), the calendar close-up, the peek and the sneak.
     // The chapter's state, reset at the start of Chapter 1 (the morning beat and its fallback both start here).
     function ch1ResetState() {
+      ch2.qCheck = null;
       ((n.room = "closet"),
         (n.wardrobe = "closed"),
         (n.ch1D = !1),
@@ -64,6 +65,8 @@
     }
     // The evening starts (beat 3): Squatch alone at home, the goal is to peek out the door.
     function ch1EveningStart() {
+      // The evening is a new step: forget the morning's saved song step, so ↺ here never brings Mops back.
+      ch2.qCheck = null;
       ((n.ch1PeekReady = !0), (n.ctrl = !0), (n.scene = "Q1"), (n.ch1Chip = "Squatch: peek out the door"), chipNow());
     }
     // The engine functions the morning module uses, handed over once (src/modules/bridge.js, handOver).
@@ -106,6 +109,10 @@
         chipNow: () => chipNow(),
         resetChapter: () => ch1ResetState(),
         eveningStarts: () => ch1EveningStart(),
+        // Forget the step restart's saved start (Mops is leaving: ↺ must not bring back the song step).
+        forgetSaved: () => {
+          ch2.qCheck = null;
+        },
         soundState: () => soundState(),
         audioCtx: () => S,
         masterGain: () => M,

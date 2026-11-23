@@ -37,8 +37,8 @@ export function createBridge() {
     /**
      * The older program hands over, once at start, the small engine functions rebuilt beats use: the story
      * queue (queue, say, card, run, until, tapWait, current), people (pos, place, face, step, still,
-     * moWalking), state (get, and set for the BEAT_WRITES fields only), the chip, the chapter reset and the
-     * evening start, sound (soundState, audioCtx, masterGain, chime), drawing (drawMops, text) and the clock.
+     * moWalking), state (get, and set for the BEAT_WRITES fields only), the chip, the chapter reset, the
+     * evening start, forgetting the step restart's saved start, sound (soundState, audioCtx, masterGain, chime), drawing (drawMops, text) and the clock.
      * A later hand-over replaces an earlier one (the page made a new game).
      */
     handOver(e) {
