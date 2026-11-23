@@ -625,7 +625,9 @@
       a = (0, YV.useRef)(null),
       e = (0, YV.useRef)(null),
       [h, c] = (0, YV.useState)(""),
-      [b, O] = (0, YV.useState)(wb()),
+      // The joystick and ACTION button are always shown (Brian, 2026-11-23: "controls (joystick, etc.) should just
+      // always be shown"), on every screen, touch or not.
+      [b, O] = (0, YV.useState)(!0),
       [y, U] = (0, YV.useState)(Nb()),
       [E, w] = (0, YV.useState)(Rb());
     ((0, YV.useEffect)(() => {
@@ -666,7 +668,9 @@
         let W = (VV) => VV.preventDefault();
         return (eV.addEventListener("touchmove", W, { passive: !1 }), () => eV.removeEventListener("touchmove", W));
       }, []));
-    let I = b && y,
+    // Controls beside the picture only on a touch screen turned sideways; a computer keeps them in a row
+    // under a full-size picture (they are always shown since 2026-11-23).
+    let I = b && y && wb(),
       tV = (eV) => {
         eV.preventDefault();
         let W = t.current;
@@ -761,28 +765,8 @@
                   SND,
                 ],
               }))
-            : I
-              ? (Z = null) // No help line on touch screens (scene 1 review): the stick and button explain themselves.
-              :
-              (Z = (0, pe.jsxs)("div", {
-                style: { ...M, justifyContent: "space-between" },
-                children: [
-                  SND,
-                  // The slot stays 104px whether or not NEXT is showing, so the picture does not jump up.
-                  (0, pe.jsx)("div", {
-                    "aria-hidden": /^!?NEXT$/.test(h) ? void 0 : !0,
-                    style: {
-                      width: 104,
-                      height: 104,
-                      flex: "0 0 auto",
-                      visibility: /^!?NEXT$/.test(h) ? "visible" : "hidden",
-                      pointerEvents: /^!?NEXT$/.test(h) ? "auto" : "none",
-                    },
-                    children: z,
-                  }),
-                  (0, pe.jsx)(Mb, { label: "Show touch controls", onClick: () => O(!0) }),
-                ],
-              })),
+            : (Z = null), // Sideways phones put the controls beside the picture.
+
       (0, pe.jsxs)("div", {
         ref: a,
         style: {

@@ -15,7 +15,7 @@
 | 178–196 | ## Reset section |
 | 197–207 | ## Still open |
 | 208–211 | ## Chapter 1 replot, recorded and not built |
-| 212–338 | ## Changelog |
+| 212–339 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -211,6 +211,7 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/old/OPEN-ASKS.md`. The
 
 ## Changelog
 
+2026-11-23. Controls always shown: the joystick and ACTION button are on screen on computers too, not hidden behind "Show touch controls" (Brian: singing with Mops did not work by touch; the sing-along is an ACTION-button action where Squatch stands, so with the controls hidden there was nothing to press). Test: controls-always.
 2026-11-23. New work list: docs/BRIAN-ASKS-OPEN.md, Brian's open asks in his own words (about 880 asks read from the three threads, merged, checked against main, checked again by an independent Fable review). CLAUDE.md and START-HERE point at it first; the Nov 9 OPEN-ASKS.md moved to docs/old/. Why: his newest music, morning and Mops asks sat unbuilt while work followed older lists.
 
 2026-11-23. Sound: one button, off by default, as in Battle Ostriches (Brian: "one button to turn on music and sound effects"). The speaker tap starts the sound engine and Joe's theme inside the tap (the theme was started outside any tap before, which iPhones refuse); it saves "on"/"off" per device; older saved volumes above zero stay on. Taps on the game no longer start sound. No volume steps. The ♪ button shows only while Squatch can sing. Test: sound-button; phone-tap and slice-p6 updated.
