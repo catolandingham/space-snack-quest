@@ -262,7 +262,8 @@
     // every op field named ch1..., the scene, room, both characters and the glows. Functions are not
     // saved (a step's "what comes next" is set again by the step itself).
     function noteCh1Step() {
-      if (!n.ctrl || n.cur || n.q.length) return;
+      // Not while an overlay is open inside the step (dress-up, the snack cut-in): ↺ closes those.
+      if (!n.ctrl || n.cur || n.q.length || (n.ch1Dress && n.ch1Dress.on) || n.ch1Cut) return;
       let id = n.scene + "|" + n.room + "|" + (n.ch1Step || "");
       if (ch2.qCheck && ch2.qCheck.id === id) return;
       let ch1 = {},
