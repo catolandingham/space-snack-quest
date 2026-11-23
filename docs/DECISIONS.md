@@ -5,25 +5,25 @@
 | --- | --- |
 | 28–30 | # Space Snack Quest: every decision, in one place |
 | 31–38 | ## How to use this file |
-| 39–55 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 56–76 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 77–85 | ## Which repo is the base, 2026-11-22 |
-| 86–92 | ## Sight cones, 2026-11-22 |
-| 93–97 | ## Latest calendar direction, 2026-11-16 |
-| 98–100 | ## Vent walk, 2026-11-16 |
-| 101–103 | ## Locked home room v5, 2026-11-16 |
-| 104–113 | ## Fidelity system (pictures are locked, not just words) |
-| 114–151 | ## 1. Working rules |
-| 152–218 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 219–243 | ## 3. Characters and look |
-| 244–320 | ## 4. Look, rooms and layout |
-| 321–342 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 343–386 | ## 6. Later chapters (2–4 and travel) |
-| 387–396 | ## 7. Audio |
-| 397–431 | ## 8. Code, controls and process |
-| 432–478 | ## 9. Open / waiting on Brian |
-| 479–573 | ## 10. Earlier entries, kept word for word |
-| 574–670 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 39–56 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 57–77 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 78–86 | ## Which repo is the base, 2026-11-22 |
+| 87–93 | ## Sight cones, 2026-11-22 |
+| 94–98 | ## Latest calendar direction, 2026-11-16 |
+| 99–101 | ## Vent walk, 2026-11-16 |
+| 102–104 | ## Locked home room v5, 2026-11-16 |
+| 105–114 | ## Fidelity system (pictures are locked, not just words) |
+| 115–152 | ## 1. Working rules |
+| 153–219 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 220–244 | ## 3. Characters and look |
+| 245–321 | ## 4. Look, rooms and layout |
+| 322–343 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 344–387 | ## 6. Later chapters (2–4 and travel) |
+| 388–397 | ## 7. Audio |
+| 398–432 | ## 8. Code, controls and process |
+| 433–479 | ## 9. Open / waiting on Brian |
+| 480–574 | ## 10. Earlier entries, kept word for word |
+| 575–671 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -43,6 +43,7 @@ Brian does not read the long files; he confirms assumptions by multiple choice i
 - **Plant eyes: "The very original".** Find the earliest approved eyes in v1's history, copy them exactly, show Brian a picture before building.
 - **Optional things: "They discover them".** Only what the player must do gets a yellow outline; optional things (closet, bed, calendar) have none, and tapping them still works.
 - **Balloon and dance: "Keep, simplified".** Rebuild both in the simplest form found and show Brian before it lands. (His own words, G Bot #516: "The balloon thing has just never worked when we've tried it before." If no simple version works, say so and ask before dropping.)
+- **Party mini-games, revised later the same day.** Brian: "I don't think the dance game ever worked. I'm okay skipping photo corner and simplified baloon unless you are confident of making it work. Whole aim was to have a few more fun Easter eggs / mini games". Claude's call on confidence: keep the octopus juke (beat 12) and the photo corner (beat 13), each one simple rule the touch robot can test; the snack pyramid (beat 14) is needed as the party's ending; karaoke (beat 11) last, only if those play well. Out for now: the dance game (beat 10; Grok Bot #351 found it could not be played by touch: "Every tap scores 0; only keyboard arrow keys work.") and the balloon (beats 15 and 57; Brian, G Bot #516: "The balloon thing has just never worked"). Conga, chicken dance and bouquet toss are background only, with no player part. This replaces the "Keep, simplified" answer below for the balloon and dance.
 - **Dress-up: "Drag-on close-up".** A close-up of Squatch on a white background; the kid drags pieces on, more or less anywhere; the "Disguised enough" meter fills as pieces go on.
 - **Wookiee TV: "Full-screen story".** Cut away to full-screen story pictures, as walkthrough beat 20 says.
 - **Hangar robot (problem 3): "No close catch".** While the night robot looks away it cannot catch Squatch, however close; only its cone counts.

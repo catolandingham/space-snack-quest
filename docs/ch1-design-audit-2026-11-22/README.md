@@ -16,3 +16,5 @@ About 21 of 61 beats match the newest design today. Most differences are the new
 The design questions each report raised were settled on 2026-11-22: most by Claude from Brian's own words and the repo's rules (listed in `docs/DECISIONS.md`, "Claude's design calls", for Brian to veto), and the rest put to Brian with a recommendation.
 
 Use: when a sitting rebuilds a beat, read that beat's block in the matching report first, delete the leftovers it lists for that beat in the same change, and update the block.
+
+Correction: beat 10 (dance game) is marked MATCHES in `beats-09-21.md` because the code is there. Grok Bot's audit (#351) found it could not be played by touch ("Every tap scores 0; only keyboard arrow keys work."). Not rechecked today. It is out for now (`docs/DECISIONS.md`).
