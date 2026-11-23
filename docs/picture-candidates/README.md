@@ -38,6 +38,6 @@ and open) with the bedroom speaker added at the spot Brian picked, "A, near the 
 high on the wall, above the STAY IN HERE poster, beside the doorway out). The speaker is the one Brian picked for
 every wall, "4: retro wooden speaker" (Squatchbot #448), cut from the locked hall picture so it matches exactly.
 It is drawn without the sound lines the hall has painted on, because Brian's rule is that the speaker shows sound
-lines (announcements) or music notes (songs) only while it is playing (G Bot #566, #575); the game draws those.
+lines (announcements) or music notes (songs) only while it is playing (G Bot #565, #575); the game draws those.
 Nothing else in the picture changed. If Brian says yes, this becomes home v6 and the morning beat gets the speaker
 announcement, the Dog Zylan line and the song, all already approved in the Squatchbot thread (#1386 to #1391).
