@@ -157,13 +157,12 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 ## 5. Merged, in a pull request, and being built
 
 Merged today on main: one sound button, off by default (PR #77); squatch.onrender.com shows the game (PR #76); walls and furniture, step restart, outlines, lunch alarm, goal words after 20 s, plant eyes (PRs #68 to #73).
+Merged 2026-11-23: cones on everyone and the six approved guests (#75), controls always shown (#79), the hall v2 and home v6 pictures (this change).
+
 Not merged yet:
-- Cones on everyone and the six approved guests (PR #75). "it doesn't seem like you've got the right aliens in this." (G 430); "only some of the aliens have the sight cones" (G 603).
-- Joystick and ACTION button always shown (the controls-always change). "controls (joystick, etc.) should just always be shown" (Snack Quest Chat, 2026-11-23).
 - The tap-path change.
 - Mops's heart cone in Chapter 1 (PR #35, open since Nov 13) and the rules check on pull requests (PR #34).
 
-Being built, not yet in a pull request (uncommitted edits): the hall and home picture lock. It holds the bar and hallway entrance moved apart, bar not too long, corner doorway ("the bar still overlaps with the hallway", G 603; "the bar being too long and blocking the other door", K 328) and the wall speaker as agreed ("the speaker on the wall in the room is not the speaker we agreed on", G 547).
 
 Settled 2026-11-23 in Snack Quest Chat: unattended work stops at 75% of weekly credit ("let's keep it to 75% for now").
 

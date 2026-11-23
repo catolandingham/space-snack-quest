@@ -172,7 +172,7 @@
     // through a door. Hidden or rolled up, he gets away ("They lost you."); reached, the LOCKUP card.
     // No "SECURITY!" bubble here: sSec's bubble goes to the "bot" speaker (the UPS mailbox at night), not to
     // whoever saw him, and a line for the right speaker needs Brian's yes. The alarm sound still plays.
-    const CH1_SEC_DOOR = { hangar: { x: -30, y: 335 }, hall: { x: 948, y: 360 }, passage: { x: 990, y: 520 } };
+    const CH1_SEC_DOOR = { hangar: { x: -30, y: 335 }, hall: { x: 948, y: 336 }, passage: { x: 990, y: 520 } };
     function ch1CallSecurity(by) {
       sSec(by, "quiet", CH1_SEC_DOOR[n.room]);
     }

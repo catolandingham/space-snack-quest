@@ -16,7 +16,7 @@ export const GOAL_TARGETS = {
   // Party hall
   "hall:hide": { trace: { x0: 392, x1: 494, y0: 432, y1: 556 } }, // the plant in the middle (party sneak)
   "hall:d2-HIDE-plant": { trace: { x0: 392, x1: 494, y0: 432, y1: 556 } }, // the same plant (Day 2)
-  "hall:d2-SNEAK-hallway": { rect: { x0: 912, x1: 940, y0: 266, y1: 354 } }, // the doorway to the hallway
+  "hall:d2-SNEAK-hallway": { rect: { x0: 912, x1: 940, y0: 257, y1: 345 } }, // the doorway to the hallway (hall v2, back corner)
   "hall:d2-GO-home": { rect: { x0: 426, x1: 528, y0: 600, y1: 622 } }, // the doorway home, in the front wall
   // Hallway
   "passage:d2-GO-hall": { rect: { x0: 20, x1: 48, y0: 266, y1: 354 } }, // the doorway to the hall (left; the walk uses it)

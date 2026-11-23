@@ -3,29 +3,30 @@
 
 | Lines | Heading |
 | --- | --- |
-| 30–32 | # Space Snack Quest: every decision, in one place |
-| 33–40 | ## How to use this file |
-| 41–44 | ## Sound, 2026-11-23 |
-| 45–68 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 69–80 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 81–105 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 106–114 | ## Which repo is the base, 2026-11-22 |
-| 115–122 | ## Sight cones, 2026-11-22 |
-| 123–127 | ## Latest calendar direction, 2026-11-16 |
-| 128–130 | ## Vent walk, 2026-11-16 |
-| 131–133 | ## Locked home room v5, 2026-11-16 |
-| 134–143 | ## Fidelity system (pictures are locked, not just words) |
-| 144–181 | ## 1. Working rules |
-| 182–248 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 249–273 | ## 3. Characters and look |
-| 274–350 | ## 4. Look, rooms and layout |
-| 351–372 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 373–416 | ## 6. Later chapters (2–4 and travel) |
-| 417–426 | ## 7. Audio |
-| 427–461 | ## 8. Code, controls and process |
-| 462–508 | ## 9. Open / waiting on Brian |
-| 509–603 | ## 10. Earlier entries, kept word for word |
-| 604–700 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 31–33 | # Space Snack Quest: every decision, in one place |
+| 34–41 | ## How to use this file |
+| 42–50 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 51–54 | ## Sound, 2026-11-23 |
+| 55–78 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 79–90 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 91–115 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 116–124 | ## Which repo is the base, 2026-11-22 |
+| 125–132 | ## Sight cones, 2026-11-22 |
+| 133–137 | ## Latest calendar direction, 2026-11-16 |
+| 138–140 | ## Vent walk, 2026-11-16 |
+| 141–143 | ## Locked home room v5, 2026-11-16 |
+| 144–153 | ## Fidelity system (pictures are locked, not just words) |
+| 154–191 | ## 1. Working rules |
+| 192–258 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 259–283 | ## 3. Characters and look |
+| 284–360 | ## 4. Look, rooms and layout |
+| 361–382 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 383–426 | ## 6. Later chapters (2–4 and travel) |
+| 427–436 | ## 7. Audio |
+| 437–471 | ## 8. Code, controls and process |
+| 472–518 | ## 9. Open / waiting on Brian |
+| 519–613 | ## 10. Earlier entries, kept word for word |
+| 614–710 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -38,6 +39,15 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 - **This repo file is the single source of truth.** It was synced on Monday, November 9, 2026 from the designer record through decision R63, and it still holds the earlier snapshot `docs/old/project/DECISIONS-2026-11-08.md` (on `main` at commit 10030f6). Every earlier entry is kept in section 10. Where a later decision replaces an earlier one, the earlier line is marked **Superseded** and says what replaced it. The dated snapshot's full text is in `docs/old/history/DECISIONS-2026-11-08.md`. A short pointer stays at `docs/old/project/DECISIONS-2026-11-08.md`. New decisions get a row in the tables above, through a docs PR (review, "Docs match main: yes", Brian's written yes before merge).
 - Don't invent a decision. If something isn't clear, add it under **Open**.
 
+## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat)
+- **Party hall picture: "C (Recommended)".** The corner doorway, the bar at full length moved down below it (his note that morning: "A is more correct but you can keep the bar long and just move it south on the screen"). Locked as `hall-room-empty-v2.png`.
+- **Home room speaker: "Yes, lock it (Recommended)".** The retro wooden speaker (Squatchbot #448) at spot A near the door (Squatchbot #1385). Locked as `home-room-empty-closed-v6.png` and `-open-v6.png`.
+- **Merge: "Merge #68 to #73 (Recommended)".** Merged in order on 2026-11-23, his words copied into each PR.
+- **Cone numbers: "Keep for now (Recommended)".** "?" turns into "!" after 0.8 s in sight; a cone shows within 120 of Squatch, fully within 40. Placeholders until he plays it.
+- **Dress-up pieces, his words: "let's try to have them snap but be okay with absurdist results, for instance, pants on the head. Is that possible?"** Yes: a piece snaps to the body spot (head, face, body, legs) nearest where it is dropped, whatever the piece is. This replaces both "snap to its own spot" (walkthrough) and "stays where dropped" (Nov 22 call 1).
+- **A catch at the party: "Card, restart scene (Recommended)".** K29: the lockup card, then the current scene restarts; the party is split into its five scenes. The Nov 14 "set back a little" is superseded.
+- **Karaoke: "Last, if time allows".** Not "stays out": karaoke is built last, after the rest of the party plays well. Note for then: rule 7 limits Squatch's singing to lure spots and bond moments, so the karaoke needs his word on how it fits.
+- **Raising the alarm at the party: "Runs to wall alarm (Recommended)".** The guest who sees fur runs to the red wall alarm and pulls it, as at the Day 2 lunch.
 ## Sound, 2026-11-23
 - **Brian:** "We need to fix the sound. Let's just have one button to turn on music and sound effects? you can look at what the plan was we arrived at for Ostriches." The Ostriches plan (G Bot #502 to #509, Brian's yes to default off): sound is off until the player taps one speaker button; a slash shows while off; the tap starts sound inside it; the choice is saved per device; the in-game switch is the same button; after a lock, the next tap brings sound back only if it was left on. No new words: the button's labels are the existing "Sound on" and "Sound off".
 - **Claude's call (Brian can veto):** the ♪ sing-along button shows only while Squatch can sing, so it is not taken for a second sound button.

@@ -1,3 +1,24 @@
+<!-- section-index -->
+**Section index.** Read this index, then only the section you need. Do not read this file whole.
+
+| Lines | Heading |
+| --- | --- |
+| 22–31 | # Space Snack Quest |
+| 32–71 | ## Chapter 1 redesign (on main) |
+| 72–102 | ## Source and build |
+| 103–113 | ## Debug link |
+| 114–119 | ## Automatic checks |
+| 120–123 | ## Screen fit |
+| 124–137 | ## Brian's repeat complaints, as tests (2026-11-22) |
+| 138–141 | ## Scene 1 morning |
+| 142–145 | ## Chapter 1 kid robot |
+| 146–162 | ## Phase 1: kitchen and diner clarity |
+| 163–175 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
+| 176–189 | ## Phase 3: one capture rule, phone HUD, tap to walk |
+| 190–199 | ## Chapter 1 pass: the night out has a purpose, switches say why |
+| 200–217 | ## Progression tests |
+| 218–244 | ## Left as they were |
+<!-- /section-index -->
 # Space Snack Quest
 
 Calendar review status (2026-11-16): Brian said yes to merge the calendar (Nov 16, 12:50 PM PT). Latest printed copy: FUZZUARY alone beneath MOONMUNCH; Homework and Sing with Mops removed; "Wash outside windows (remember space suit!)"; a slightly larger edge bite that does not touch the grid.
@@ -10,6 +31,9 @@ Calendar review status (2026-11-16): Brian said yes to merge the calendar (Nov 1
 
 ## Chapter 1 redesign (on main)
 
+2026-11-23. Two new locked pictures on Brian's yes: the party hall v2 (`hall-room-empty-v2.png`: the hallway doorway in the back corner, the snack bar at full length starting just below it, no painted yellow outline) and the home room v6 (`home-room-empty-closed-v6.png`, `-open-v6.png`: the wooden wall speaker above the STAY IN HERE poster). The party's bar solid, stools, the snacks drawn on the bar, the doorway outline and the door points follow the new hall. `tests/locked-art.mjs` and `tests/locked-rooms.mjs` check the new files are the ones drawn.
+
+2026-11-13. Brian said yes, merge (without the beard gag). Pull requests #21 and #23 are on main. The rooms are Brian's locked pictures in `docs/locked-rooms/`. Walks stop at the doors on those pictures. After the opening walk, control stays on and the chip says to sing along. In the locked bedroom the bed and the mop bucket stop you (the G box is in the closet on day 1; locked picture v5). Mops's beard hangs to the floor. There is no mop prop and no cut-in at the bucket. The title screen no longer logs "Va is not defined" every frame. The rule there, word for word: "Do not redraw a room freehand, and do not change these files, without Brian's yes and a new locked version." Mops's beard is his mop; no separate mop prop. A new game takes the lunch, sneaks the hallway, and hands it to Mops. The Nov 8 docs pulls were checked. Anything still missing is section G of `docs/OPEN-ASKS.md`. On 2026-11-13 Brian approved the gallery words "TIED TOGETHER FOREVER", "ME" / "MOPS", and "BEEP BEEP", and the gameplay in R92–R95. At 4:10 AM ET he approved Mops's gate lines: "He's with me." and "No thanks. We're getting my goat." At 6:12 AM ET he said to build the home song with the old lines, point the bedroom arrows away from the bucket, and remove the keyboard instructions under the game. The title picture stays. Docs match main: yes. Do not merge.
 2026-11-23. The joystick and the ACTION button are always on screen, on every device (Brian: "touch doesn't work at all for singing with mops, so I think controls (joystick, etc.) should just always be shown"). The "Show touch controls" button is gone. `tests/controls-always.mjs`.
 2026-11-23. What to build next lives in `docs/BRIAN-ASKS-OPEN.md`: everything Brian asked for that is not in the game yet, in his own words, from all three threads, checked against main and by an independent review. The full lists are in his private archive. `docs/OPEN-ASKS.md` (Nov 9) moved to `docs/old/`.
 

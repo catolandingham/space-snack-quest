@@ -17,7 +17,7 @@ await page.evaluate(() => window.__ss.lockedReady);
 const measured = await page.evaluate(async () => {
   const ss = window.__ss;
   const img = new Image();
-  img.src = "docs/locked-rooms/hall-room-empty-v1.png";
+  img.src = "docs/locked-rooms/hall-room-empty-v2.png";
   await img.decode();
   const c = document.createElement("canvas");
   c.width = img.width;
