@@ -1,7 +1,8 @@
 // Keyboard and taps, the debug link and state strip, the frame loop, window.__ss for tests, and the page (joystick, ACTION button, sound button, help line).
-    let J2 = () => VV();
-    // The first touch, click or key of any kind starts sound: the joystick, the ACTION button and the picture
-    // all count, on touch-down and on lift (some browsers allow sound only on one of them).
+    let J2 = () => G || (VV(), warmPrime());
+    // While sound is on (the player turned it on with the speaker), any touch, click or key starts it again
+    // if the browser stopped it (a locked phone, a page opened again): the joystick, the ACTION button and the
+    // picture all count, on touch-down and on lift (some browsers allow sound only on one of them).
     const SOUND_EVENTS = ["touchstart", "touchend", "pointerdown", "pointerup", "mousedown", "click", "keydown"];
     for (let l of SOUND_EVENTS) window.addEventListener(l, J2, { capture: !0, passive: !0 });
     document.addEventListener("visibilitychange", Ve);
@@ -215,11 +216,11 @@
         follow: () => Bt,
         transit: () => ({ fadeA: Ka, walkIn: fa, lastRoom: Mf }),
         voiceCount: () => [O1, R1, N1],
-        audio: () => ({ state: S ? S.state : "none", vol: z, muted: G }),
+        audio: () => ({ state: S ? S.state : "none", vol: z, muted: G, music: !!warmEl }),
         soundState: () => soundState(),
         soundRefused: () => soundRefused(),
         soundLineShown: () => soundLineShown(),
-        cycleVol: eV,
+        soundToggle: eV,
         seeLine: _h,
         inWedge: vt,
         inLight4: y2,
@@ -715,7 +716,10 @@
               touchAction: "none",
               cursor: "pointer",
             },
-            onPointerDown: nV(() => e.current?.soundTap()),
+            // On lift-off: iPhones count a tap as the player's own only when the finger comes up.
+            onPointerUp: nV(() => e.current?.soundTap()),
+            // A keyboard press on the focused speaker (Enter or Space) arrives as a click with no pointer.
+            onClick: (W) => W.detail === 0 && e.current?.soundTap(),
           }),
           (0, pe.jsx)("button", {
             type: "button",

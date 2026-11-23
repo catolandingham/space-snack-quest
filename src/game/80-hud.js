@@ -177,6 +177,8 @@
         facesOnly = !!(card && n.cur.id === "focus" && n.cur.faces),
         on = p.state === "op" && !!n.scene && (!card || facesOnly) && !n.egg;
       for (let z of [hud.where, hud.goal]) hudShow(z, !facesOnly);
+      // The speaker is under the picture on every screen (title and cards too), so it is kept right first.
+      hudSound();
       if ((hudPlace(), hudShow(hud.root, on), (hud.bar.style.visibility = on ? "" : "hidden"), (chipDrawn = ""), !on)) return;
       let s = n.scene;
       // On a phone the tag is "Chapter 2" (no place name) so the where zone fits beside two faces.
@@ -226,12 +228,19 @@
         pt = sp.length ? sp[sp.length - 1].s : "";
       (hudShow(hud.pop, !!pt), hudText(hud.pop, pt), sp.length && (hud.pop.style.opacity = Math.min(1, sp[sp.length - 1].t).toFixed(2)));
       tank && ((hud.tank.style.background = ch2.fuel ? "#e7fff3" : "#fff1f0"), (hud.tank.style.color = ch2.fuel ? "#157a45" : "#b91c1c"));
-      (hudLayout(t + "|" + cnt + "|" + tank + "|" + pt + "|" + both + "|" + n.starOn + "|" + n.stars + "|" + mops), hudSound());
+      hudLayout(t + "|" + cnt + "|" + tank + "|" + pt + "|" + both + "|" + n.starOn + "|" + n.stars + "|" + mops);
     }
     // The sound button sits in the controls row under the picture (page text, made by the page shell).
     function hudSound() {
       let b = document.getElementById("ss-sound"),
-        line = document.getElementById("ss-sound-line");
+        line = document.getElementById("ss-sound-line"),
+        song = document.getElementById("ss-song");
+      // One sound button (Brian, 2026-11-23). The sing-along button shows only while Squatch can sing, so it is
+      // never taken for a second sound button.
+      if (song) {
+        let can = p.state === "op" && !n.ch1Calendar && (n.ch1Song || (n.scene === "O1" && n.ctrl)) ? "" : "none";
+        song.style.display !== can && (song.style.display = can);
+      }
       if (!b) return;
       let st = soundState(),
         key = st + (st === "on" ? z : "");

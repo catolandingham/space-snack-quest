@@ -96,10 +96,16 @@
       } catch {}
       return (LIVE_HOSTS.includes(host) || host === "localhost" || host === "127.0.0.1" || host === "" ? "ssq-" : "ssq-day2-") + name;
     }
+    // Sound: one button for music and sound effects, off until the player taps it (Brian, 2026-11-23, the
+    // Battle Ostriches plan). The choice is saved on this device ("on" or "off"). A player from before this
+    // change keeps sound on if a volume above zero was saved. Nothing saved: off.
     try {
-      let l = window.localStorage.getItem(ssqKey("vol"));
-      l !== null && (z = [0, 0.5, 1].includes(parseFloat(l)) ? parseFloat(l) : 1);
-    } catch {}
+      let on = window.localStorage.getItem(ssqKey("sound")),
+        l = window.localStorage.getItem(ssqKey("vol"));
+      z = on === "on" ? 1 : on === "off" ? 0 : l !== null && parseFloat(l) > 0 ? 1 : 0;
+    } catch {
+      z = 0;
+    }
     let G = z === 0;
     function Z(l) {
       ((z = l), (G = l === 0));
@@ -107,23 +113,28 @@
         M && S && M.gain.setValueAtTime(0.5 * l, S.currentTime);
       } catch {}
       try {
-        window.localStorage.setItem(ssqKey("vol"), String(l));
+        window.localStorage.setItem(ssqKey("sound"), l > 0 ? "on" : "off");
       } catch {}
     }
+    // The speaker was tapped: sound on (started inside this tap, as iPhones require) or off.
     function eV() {
-      (Z(z === 1 ? 0.5 : z === 0.5 ? 0 : 1), G || lV(660, 0.08, "square", 0.12));
+      G ? (Z(1), VV(), warmPrime(), lV(660, 0.08, "square", 0.12)) : (Z(0), warmEl && !warmEl.paused && warmEl.pause());
     }
+    // The M key does what the speaker does (one switch for music and sound effects).
     function W() {
-      Z(G ? 1 : 0);
+      eV();
     }
-    // Effects are Web Audio oscillators. Joe's warm theme is one file, music/main-theme-from-brian.mp3,
-    // fetched only after the first tap and only while a warm cue is on. One AudioContext, made and resumed
-    // on the player's first touch, click or key (any of them; see J2 in 90-input-shell.js), then on every
-    // later one while it is not running. A browser can keep it suspended after a touch (Brave Shields on an
-    // iPhone does); then the sound icon shows "blocked" and a tap on it says so and tries again.
+    // Effects are Web Audio oscillators. Joe's warm theme is one file, music/main-theme-from-brian.mp3. One
+    // AudioContext, made and resumed only while sound is on: by the tap on the speaker that turns it on, and
+    // then by any touch, click or key while it is not running (J2 in 90-input-shell.js), for example after the
+    // phone was locked or the page opened again with sound left on. A browser can keep it suspended after a
+    // touch (Brave Shields on an iPhone does); then the sound icon shows "blocked" and a tap on it says so and
+    // tries again.
     let soundTry = -1,
       soundAsk = -1;
     function VV() {
+      // Sound off: never start the sound engine (taps on the game do not turn sound on).
+      if (G) return;
       try {
         if (!S) {
           let i = window,
@@ -154,9 +165,10 @@
     function soundRefused() {
       return soundState() === "blocked" && soundTry >= 0 && performance.now() - soundTry > 600;
     }
-    // The sound icon was tapped: start sound if it is off, else turn the volume down a step (as before).
+    // The sound icon was tapped: if sound is on but the browser has not started it yet, start it; else switch
+    // sound on or off.
     function soundTap() {
-      soundState() === "blocked" ? (VV(), (soundAsk = performance.now())) : eV();
+      soundState() === "blocked" ? (VV(), warmPrime(), (soundAsk = performance.now())) : eV();
     }
     function soundLineShown() {
       let l = performance.now() - soundAsk;
@@ -509,7 +521,8 @@
       warmStarting = false;
     // A1: Joe's recording is the warm theme. It plays on the title, at home (not during the search or
     // dress-up), while the morning gift is out, and on the balloon kid's happy faces. Sneak and journey
-    // stay generated. Nothing starts before the first tap, because the file is created only once S exists.
+    // stay generated. The file is made and first started inside a tap (warmPrime), since iPhones refuse to
+    // start it otherwise; after that warmTick plays and pauses it.
     function warmWhy() {
       if (G) return "";
       if (p.state === "title") return "title";
@@ -532,6 +545,25 @@
       if ((n.ch1Night && n.scene === "Q4" && n.ctrl) || (n.ch1Sneak && n.ctrl)) return "sneak";
       if (n.sqPose === "hidden" && n.ch1Party) return "sneak";
       return "";
+    }
+    // Make the music file and start it inside the player's tap: iPhones start an audio file only from a tap,
+    // and only some parts of a tap count (finger down is refused, finger up is allowed), so every tap tries
+    // again while the file is paused. If no warm cue is on once it starts, it is paused at once; warmTick plays
+    // it when a cue comes on. A file started this way may play from then on without a tap.
+    function warmPrime() {
+      if (G || !S) return;
+      try {
+        warmEl || ((warmEl = new Audio("music/main-theme-from-brian.mp3")), (warmEl.loop = !0), (warmEl.preload = "auto"));
+        if (warmEl.paused && !warmStarting) {
+          ((warmStarting = !0), warmFade < 0.02 && (warmEl.volume = 0));
+          let pr = warmEl.play();
+          pr &&
+            pr.then(
+              () => ((warmStarting = !1), (warmPlayState = "ok"), warmWhy() || warmEl.pause()),
+              (err) => ((warmStarting = !1), (warmPlayState = "err:" + (err && err.name))),
+            );
+        }
+      } catch {}
     }
     function warmTick(dt, on) {
       let goal = on && !G && z > 0 ? 1 : 0;

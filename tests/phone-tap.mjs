@@ -52,16 +52,16 @@ if (at.joy && at.joy.bottom > at.vh) {
 
 const touch = page.touchscreen;
 
-// Sound starts on the first touch of the joystick.
+// Sound is off until the player taps the speaker (Brian, 2026-11-23; tests/sound-button.mjs has the rest).
 {
   const before = await page.evaluate(() => ({ ...window.__ss.audio(), icon: window.__ss.soundState() }));
-  g.check("before any touch, the sound icon shows blocked (no sound yet)", before.icon === "blocked" && before.state !== "running", before);
+  g.check("before any touch, the speaker shows sound off", before.icon === "muted" && before.state !== "running", before);
   await touch.touchStart(at.joy.x, at.joy.y);
   await sleep(60);
   await touch.touchEnd();
   await sleep(400);
   const after = await page.evaluate(() => ({ ...window.__ss.audio(), icon: window.__ss.soundState() }));
-  g.check("after the first joystick touch, the AudioContext is running and the icon shows on", after.state === "running" && after.icon === "on", after);
+  g.check("a joystick touch does not turn sound on", after.state !== "running" && after.icon === "muted", after);
 }
 let finger = null; // where the joystick finger is, or null
 const input = {
@@ -107,7 +107,7 @@ g.check(
 );
 g.check("no page errors", errors.length === 0, errors);
 
-// Sound starts on the first tap of the picture too (a fresh page).
+// A tap on the picture does not turn sound on either (a fresh page).
 {
   const second = await g.open("?ch=2", { width: 375, height: 812, isMobile: true, hasTouch: true });
   const pic = await second.page.evaluate(() => {
@@ -120,7 +120,7 @@ g.check("no page errors", errors.length === 0, errors);
   await second.page.touchscreen.touchEnd();
   await sleep(400);
   const after = await second.page.evaluate(() => ({ ...window.__ss.audio(), icon: window.__ss.soundState() }));
-  g.check("after the first picture tap, the AudioContext is running and the icon shows on", before !== "running" && after.state === "running" && after.icon === "on", { before, after });
+  g.check("a picture tap does not turn sound on", before !== "running" && after.state !== "running" && after.icon === "muted", { before, after });
   await second.ctx.close();
 }
 

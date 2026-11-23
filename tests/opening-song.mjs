@@ -9,6 +9,8 @@ import { startGame } from "./game-page.mjs";
 
 const g = await startGame({ port: 8844, name: "opening-song" });
 const { ctx, page, errors } = await g.open("?ch=1");
+// Sound is off until the player taps the speaker (2026-11-23): turn it on, as a player would.
+await page.click("#ss-sound");
 
 const song = await page.evaluate(() => {
   const ss = window.__ss;
