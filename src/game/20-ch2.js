@@ -163,7 +163,7 @@
     }
     function sSec(l, who, from) {
       ch2.sec ||
-        ((ch2.sec = { x: from ? from.x : 980, y: from ? from.y : 520, hide: 0, mode: "come", by: l || "diner", who: who || "", scene: n.scene }),
+        ((ch2.sec = { x: from ? from.x : 980, y: from ? from.y : 520, hide: 0, mode: "come", by: l || "diner", who: who || "", scene: n.scene, room: n.room }),
         who !== "quiet" && kV("bot", "SECURITY!"),
         D.alarm());
     }
@@ -181,7 +181,9 @@
     function qSec(l) {
       let s = ch2.sec;
       if (s && s.scene && s.scene !== n.scene) return void (ch2.sec = null);
-      if (!s || de()) return;
+      // Chapter 1: the guard stays in the room he came into, and waits while the story has control.
+      if (s && (n.scene || "")[0] === "Q" && s.room && s.room !== n.room) return void (ch2.sec = null);
+      if (!s || de() || ((n.scene || "")[0] === "Q" && !n.ctrl)) return;
       if (n.sqPose === "hidden" || (n.sqPose === "ball" && (n.room === "kitchen" || (n.scene || "")[0] === "Q"))) {
         ((s.hide += l), (s.mode = "leave"), (s.x += (s.x < 480 ? -240 : 240) * l));
         s.hide > 1.6 && (s.x < -70 || s.x > 1030) && ((ch2.sec = null), lostYou());
@@ -299,7 +301,8 @@
         let v = c.ch1[k];
         n[k] = v && typeof v === "object" ? JSON.parse(JSON.stringify(v)) : v;
       }
-      ((n.room = c.room),
+      ((n.ch1ZoomNext = null),
+        (n.room = c.room),
         (n.sq.x = c.sq.x),
         (n.sq.y = c.sq.y),
         (n.sq.f = c.sq.f || 1),

@@ -91,6 +91,8 @@ async function watched(id, beat, grid) {
         if (!seenAt) return { start, seenAt };
         const instant = lockedUp();
         const alarmGuard = !!ss.secNow();
+        // While the guard is coming the only way out is to hide: nothing walks him out of the room.
+        const offers = (ss.spotsNow() || []).filter((o) => o && o.verb).map((o) => o.verb);
         let t = 0, lockupAt = null, lostAt = null;
         if (roll) n.sqPose = "ball";
         // Hold still (rolled up, or standing where he was seen) for up to 12 seconds.
@@ -101,7 +103,7 @@ async function watched(id, beat, grid) {
           if (lockedUp()) lockupAt = Math.round(t * 10) / 10;
           if (!ss.secNow() && n.log.some((l) => l.text === "They lost you.")) lostAt = Math.round(t * 10) / 10;
         }
-        return { start, seenAt, instant, alarmGuard, lockupAt, lostAt };
+        return { start, seenAt, instant, alarmGuard, offers, lockupAt, lostAt };
       },
       [grid, beat, roll],
     );
@@ -109,6 +111,27 @@ async function watched(id, beat, grid) {
   g.check(`${id}: beat ${beat} opens where someone can see Squatch`, stand.seenAt !== null, stand);
   g.check(`${id}: being seen brings the alarm and a guard, not an instant LOCKUP`, stand.seenAt && !stand.instant && stand.alarmGuard, stand);
   g.check(`${id}: standing in the open, the guard reaches him (LOCKUP)`, stand.lockupAt !== null, stand);
+  g.check(`${id}: while the guard is coming, no action walks him out of the room`, stand.offers && !stand.offers.some((v) => v === "SNEAK" || v === "GO"), stand.offers);
+  // A guard stays in the room he came into: if the story moves Squatch to another room, the guard is gone.
+  const left = await page.evaluate(
+    ([grid, beat]) => {
+      const ss = window.__ss, n = ss.op;
+      ((n.q = []), (n.cur = null), ss.ch1JumpBeat(beat));
+      for (const [x, y] of grid) {
+        Object.assign(n, { q: [], cur: null, ctrl: true, sqPose: "stand", walkTo: null, ch1Zoom: null });
+        n.sq.x = x;
+        n.sq.y = y;
+        ss.tick(1 / 30);
+        if (ss.secNow()) break;
+      }
+      const came = !!ss.secNow();
+      n.room = n.room === "hall" ? "passage" : "hall";
+      ss.tick(1 / 30);
+      return { came, after: ss.secNow() };
+    },
+    [grid, beat],
+  );
+  g.check(`${id}: a guard does not follow him into another room`, left.came && !left.after, left);
   const roll = await run(true);
   g.check(`${id}: rolled into a ball, he gets away ("They lost you.")`, roll.lostAt !== null && roll.lockupAt === null, roll);
   await ctx.close();
