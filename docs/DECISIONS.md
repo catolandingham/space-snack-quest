@@ -3,23 +3,26 @@
 
 | Lines | Heading |
 | --- | --- |
-| 24–26 | # Space Snack Quest: every decision, in one place |
-| 27–34 | ## How to use this file |
-| 35–39 | ## Latest calendar direction, 2026-11-16 |
-| 40–42 | ## Vent walk, 2026-11-16 |
-| 43–45 | ## Locked home room v5, 2026-11-16 |
-| 46–55 | ## Fidelity system (pictures are locked, not just words) |
-| 56–93 | ## 1. Working rules |
-| 94–160 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 161–185 | ## 3. Characters and look |
-| 186–262 | ## 4. Look, rooms and layout |
-| 263–284 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 285–328 | ## 6. Later chapters (2–4 and travel) |
-| 329–338 | ## 7. Audio |
-| 339–373 | ## 8. Code, controls and process |
-| 374–420 | ## 9. Open / waiting on Brian |
-| 421–515 | ## 10. Earlier entries, kept word for word |
-| 516–612 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 27–29 | # Space Snack Quest: every decision, in one place |
+| 30–37 | ## How to use this file |
+| 38–47 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 48–56 | ## Which repo is the base, 2026-11-22 |
+| 57–63 | ## Sight cones, 2026-11-22 |
+| 64–68 | ## Latest calendar direction, 2026-11-16 |
+| 69–71 | ## Vent walk, 2026-11-16 |
+| 72–74 | ## Locked home room v5, 2026-11-16 |
+| 75–84 | ## Fidelity system (pictures are locked, not just words) |
+| 85–122 | ## 1. Working rules |
+| 123–189 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 190–214 | ## 3. Characters and look |
+| 215–291 | ## 4. Look, rooms and layout |
+| 292–313 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 314–357 | ## 6. Later chapters (2–4 and travel) |
+| 358–367 | ## 7. Audio |
+| 368–402 | ## 8. Code, controls and process |
+| 403–449 | ## 9. Open / waiting on Brian |
+| 450–544 | ## 10. Earlier entries, kept word for word |
+| 545–641 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -31,6 +34,32 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 - **Status words:** **Decided** (Brian said it or approved it) · **Needs Brian's yes** (proposed, or on-screen words waiting on him) · **Superseded** (replaced; the line says by what) · **Open** (a real question nobody has answered yet).
 - **This repo file is the single source of truth.** It was synced on Monday, November 9, 2026 from the designer record through decision R63, and it still holds the earlier snapshot `docs/old/project/DECISIONS-2026-11-08.md` (on `main` at commit 10030f6). Every earlier entry is kept in section 10. Where a later decision replaces an earlier one, the earlier line is marked **Superseded** and says what replaced it. The dated snapshot's full text is in `docs/old/history/DECISIONS-2026-11-08.md`. A short pointer stays at `docs/old/project/DECISIONS-2026-11-08.md`. New decisions get a row in the tables above, through a docs PR (review, "Docs match main: yes", Brian's written yes before merge).
 - Don't invent a decision. If something isn't clear, add it under **Open**.
+
+## Brian's confirmations by multiple choice, 2026-11-22
+Brian does not read the long files; he confirms assumptions by multiple choice in Snack Quest Chat. Each line is his pick, word for word as the option read.
+- **Morning order: "Your latest order".** The speaker announcement wakes Squatch while Mops keeps mopping, then a beard-wringing cutaway, then the song is announced, Squatch gets up, Mops says something like "Floating in space, it's our favorite song", they sing, then Mops leaves for work and mentions the party (G Bot #561). v1's current opening lines get replaced. New or changed lines still need his yes word for word.
+- **Controls: "Stick + tap + button".** Joystick, tap the floor to walk, one fixed-size action button, as v1.
+- **Plant eyes: "The very original".** Find the earliest approved eyes in v1's history, copy them exactly, show Brian a picture before building.
+- **Optional things: "They discover them".** Only what the player must do gets a yellow outline; optional things (closet, bed, calendar) have none, and tapping them still works.
+- **Balloon and dance: "Keep, simplified".** Rebuild both in the simplest form found and show Brian before it lands. (His own words, G Bot #516: "The balloon thing has just never worked when we've tried it before." If no simple version works, say so and ask before dropping.)
+- **Dress-up: "Drag-on close-up".** A close-up of Squatch on a white background; the kid drags pieces on, more or less anywhere; the "Disguised enough" meter fills as pieces go on.
+- **Wookiee TV: "Full-screen story".** Cut away to full-screen story pictures, as walkthrough beat 20 says.
+
+## Which repo is the base, 2026-11-22
+- **Decided by Claude (Snack Quest Chat) at Brian's request.** Brian, 2026-11-22: "I really don't want to make the decision, I need you too to make sure you're fully considering everything, confirm you understand my goal, and then weighing all tradeoffs. [...] I'd have to defer to you." He can overturn it at any time.
+- **The goal, as understood:** a Chapter 1 his 10-year-old understands and enjoys on a phone or iPad, built to his decisions, that stops breaking earlier wins and stops claiming work is done when it is not, with little of his time and no new spending. Clean and simple (G Bot #516), early-version feel with the later ideas (G Bot #583, #586).
+- **Decision:** this repo (v1) is the base. Chapter 1 is rebuilt here beat by beat into new, small, clearly named files that follow `docs/WHAT-GOOD-LOOKS-LIKE.md`. Each new beat replaces the old code for that beat in the same change, and the old code is deleted then, so there is never a second live version of a beat. The test suite (54 suites, including the touch robot that plays the chapter) must pass after every change, and the game stays playable end to end at the end of every sitting. Proven shared pieces (walking, catching, the goal bar, input, the locked room pictures, approved lines) are kept and fixed where needed, not rewritten. Chapters 2 to 4 are left alone.
+- **Refined the same day, after Brian asked about v2's architecture:** v1's 16 source files are one function cut into pieces (`tools/build.mjs`; pull request 61 counted 1,060 shared names, 548 used across files, `n` used by all 16), so new files added to that build would join the tangle. v2's template (Claude Code Game Studios 1.3.0) has the right target shape: real modules, values in data files, tests, a seeded replay after each change, one feature a sitting. Its 582-file toolkit (48 agents, mostly for other engines) is left out. **Brian, 2026-11-22, multiple choice "Yes, do it first":** the first job is the build change that lets new code live in real modules, with no change a player can see. It bends the "no refactor phase" rule once. Proof required: every existing test passes and before-and-after pictures match. Pull request 62 drafted this change; its claims are unverified and it is checked, not merged as is. After that, each rebuilt Chapter 1 beat goes in its own module with its values in data files, and the old code for that beat is deleted.
+- **v2** (`catolandingham/space-snack-quest-v2`) is kept as a reference, not deleted. Its approved assets (the Floating in Space recording, the chosen speaker, Mops approved Nov 8, the guests) and ideas that match Brian's spec (the morning with the speaker, homework, the bigger phone picture) are copied over one at a time, each with Brian's yes.
+- **Why not v2 as the base:** its only playable code is one prototype file marked "PROTOTYPE - NOT FOR PRODUCTION", its production code folder is empty, its two tests cannot run on the Mac mini, and by its own bot's account it did "the opposite on almost every point" Brian had decided (G Bot #572). Starting there means building the real game from nothing, without the checks that catch breakage.
+- **Why not fix v1 in place as it stands:** the bloat Brian named is real (about 12,000 lines behind Chapter 1, two older generations of scenes still in the code, docs older than his G Bot decisions), and several beats need rebuilding anyway to match his newer spec. Rebuilding those beats clean, inside the repo that has the tests, gets the clean start without losing the safety net.
+
+## Sight cones, 2026-11-22
+- **Decided, Brian in Snack Quest Chat, 2026-11-22:** "Re cones, let's keep them on all players, but dashes until line of sight is intersected by S and then turns yellow - with the red exclamation if no disguise and hearts from mops (earlier version better than v2 build)." Read back to Brian as: every character who can see Squatch has a cone (guests, bartender, guards, robots, Mops); a faint dashed outline while Squatch is outside it; it fills yellow when Squatch enters its line of sight; a red "!" over the watcher if Squatch has no disguise; Mops shows floating hearts instead. Follow the earlier v1 look (pull request 35, R98, R104), not the v2 build.
+- **Supersedes** the Nov 16 rule in `docs/CHAPTER-1-PROBLEMS.md` problem 11 (cones only on guards and robots, "?" over ordinary guests) and restores the Nov 14 dashed-cone direction. Also answers G Bot #603 ("only some of the aliens have the sight cones").
+- **Decided, Brian 2026-11-22, multiple choice "Yellow, then suspicion":** with the disguise on, the cone still fills yellow when Squatch is inside it. If he stays in it a while, the watcher gets suspicious (a "?" or a line like "Nice gloves"); the second time is "fur!" and the fur alarm. This follows his earlier bartender idea (Squatchbot #1025: "maybe the first time he says nice gloves, the second time he goes, wait a second, fur"). Still to settle when built: how long "a while" is (a tuning pin) and the exact words of each line (his yes, word for word).
+- **Refined, Brian 2026-11-22 (his words: "Maybe we meant it stats with a question mark and only turns into exclamation after he stays too long (if guests versus security)"; then picked "Yes, exactly that" on the read-back):** everyone has a dashed cone that turns yellow when Squatch is in it. Guests show "?" first and "!" only if he stays too long. Security (guards, robots) shows "!" right away. Mops shows hearts. The disguise slows guests down further ("Nice gloves", then "fur!" the second time). This keeps the "?" then "!" idea Brian picked on Nov 11 (Squatchbot #1146 to #1148) and adds cones on everyone. "Too long" is a tuning pin to set when built.
+- **Check before building (Claude, 2026-11-22, after Brian asked not to agree quickly):** Brian's own Nov 11 worry was that cones on every guest "would be too much" (Squatchbot #1145). So the first step is one still of the party hall with every cone drawn dashed, at phone and iPad size, for Brian to look at once. If it reads cleanly, build it. If not, fall back to his Nov 11 pick: cones only on guards and robots, "?" then "!" over guests.
 
 ## Latest calendar direction, 2026-11-16
 - **Decided, later correction in Brian's chat:** "Just call it fuzzuary under moonmunch" and remove Homework and Sing with Mops; replace with "wash outside windows (remember space suit!)". Follow-up: "And you can make bite a bit larger". FUZZUARY alone now sits beneath MOONMUNCH. Removing the calendar reminder does not cancel the desk-homework story transition.

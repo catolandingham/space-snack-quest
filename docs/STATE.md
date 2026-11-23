@@ -3,23 +3,36 @@
 
 | Lines | Heading |
 | --- | --- |
-| 21–23 | # Space Snack Quest: where things stand |
-| 24–30 | ## Fidelity system (new, 9:55 PM PT, Brian t233 / W33) |
-| 31–48 | ## The game |
-| 49–86 | ## Chapter 1 cartoon: panels in story order |
-| 87–102 | ## Open questions from the new panels (for Brian, multiple choice) |
-| 103–107 | ## In progress right now |
-| 108–162 | ## Next |
-| 163–167 | ## Earlier state, kept in full |
-| 168–173 | # Space Snack Quest: state |
-| 174–176 | ## What it is |
-| 177–188 | ## Where things live |
-| 189–225 | ## Open items |
-| 226–230 | ## Next step |
-| 231–235 | ## Paused 2026-11-08 at the credit line |
+| 22–24 | # Space Snack Quest: where things stand |
+| 25–36 | ## 2026-11-22 sitting (Snack Quest Chat, Claude) |
+| 37–43 | ## Fidelity system (new, 9:55 PM PT, Brian t233 / W33) |
+| 44–61 | ## The game |
+| 62–99 | ## Chapter 1 cartoon: panels in story order |
+| 100–115 | ## Open questions from the new panels (for Brian, multiple choice) |
+| 116–120 | ## In progress right now |
+| 121–175 | ## Next |
+| 176–180 | ## Earlier state, kept in full |
+| 181–186 | # Space Snack Quest: state |
+| 187–189 | ## What it is |
+| 190–201 | ## Where things live |
+| 202–238 | ## Open items |
+| 239–243 | ## Next step |
+| 244–248 | ## Paused 2026-11-08 at the credit line |
 <!-- /section-index -->
 # Space Snack Quest: where things stand
 Monday, November 9, 2026, through R63. Updated 2026-11-10 after the Chapter 1 redesign and the party landed on `main`. Decisions: `docs/DECISIONS.md`. Open asks: `docs/OPEN-ASKS.md`. Words: `docs/CH1-CARTOON-LINES.md`. Look: `docs/STYLE-GUIDE.md`.
+
+## 2026-11-22 sitting (Snack Quest Chat, Claude)
+- Assessment: `docs/ASSESSMENT-2026-11-22.md`, screenshots in `docs/assessment-2026-11-22/`. `npm test` on `main` at `4d1faa2`: 54 of 54 suites, 2,036 checks, 0 failures, one known problem (problem 2). Recommendation: v1 is the base; fix on its tests, one problem at a time. Not yet decided: waits on Brian's yes and his ten-minute play of both builds.
+- Grok threads copied in full (bot replies included), kept out of this public repo at `~/Code/space-snack-quest-private/grok-archive/`: G Bot (MI, 603), Squatchbot (personal, 1,391), Grok Bot (personal, 355). Also there: the Nov 8 50-minute narrated Chapter 1 playtest transcript (machine, local Whisper). Recordings list: `docs/grok-archive/README.md`. Brian, Nov 22: his most recent thinking is in G Bot, written when he was worn out fixing v1.
+- Written for Brian to correct: `docs/WHAT-GOOD-LOOKS-LIKE.md` (85 items, his words), `docs/REJECTED.md` (154), `docs/PROMISED-NOT-DELIVERED.md` (123). Every quote checked by script against the message its tag names.
+- Decided 2026-11-22: sight cones on everyone, dashed then yellow; guests "?" then "!" if he lingers; guards and robots "!" at once; Mops hearts; disguise slows guests. In `docs/DECISIONS.md`.
+- Base decided 2026-11-22 (Claude, at Brian's request): v1 is the base; Chapter 1 is rebuilt here beat by beat into clean new files, old code for each beat deleted as it is replaced, all tests passing after every change. v2 kept as a reference. See `docs/DECISIONS.md`.
+- Brian, 2026-11-22: the three files can go in the public repo once anything private or off-game is edited out (done: one family name and one account line removed).
+- Waiting on Brian: his corrections to the three files, problem 3 (hangar robot), and his say-so to commit.
+- Next sitting (Brian's yes, 2026-11-22): the build change that lets new code live in real modules, nothing a player can see; every test passes and before-and-after pictures match. Check pull request 62's approach, do not merge it as is.
+- Then: Chapter 1 rebuilt one beat per sitting into its own module, values in data files, old code for that beat deleted, under the new rules (regression test first, full playthroughs pass, screenshot, "not yet played by a person").
+- Nothing committed this sitting.
 
 ## Fidelity system (new, 9:55 PM PT, Brian t233 / W33)
 - Approved and current pictures are frozen in `LOCKED/` (`LOCKED/INDEX.md`). Rooms are drawn only by `mockups/rooms/home_room.py`, `mockups/rooms/delivery_room.py`, `mockups/rooms/hall_room.py` (new 11:20 PM PT) and `mockups/rooms/hallway_room.py` (connecting hallway, R48; hallway v5 is APPROVED, R55); panels import them. Before Brian sees a sketch: `tools/check_all.sh` + the independent checker (`docs/CHECKER.md`). Steps: `docs/FIDELITY.md`.

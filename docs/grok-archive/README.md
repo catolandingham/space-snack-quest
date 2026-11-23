@@ -53,6 +53,34 @@ Removed from the working tree:
 | `gbot-thread.md` | G Bot coordinator thread |
 | `FEEDBACK-INDEX.md` | Numbered asks from Brian. Ostrich rows removed. Statuses are still unverified |
 
+## Full copies, 2026-11-22 (bot replies included)
+
+These files are NOT in this repo. This repo is public, and the threads also hold personal and other-work messages, so the full copies live only on the Mac mini at `~/Code/space-snack-quest-private/grok-archive/` (not in git). The same folder holds the Nov 8 transcript below. Anything from them that belongs in the repo is copied out word for word, game content only.
+
+Copied by Snack Quest Chat (Claude) on the Mac mini, Sunday evening, read only. Each file runs from the thread's first message to its last. Entries are numbered `### N. Speaker`; right-aligned messages are tagged Brian. A label in parentheses after the speaker is the "Messaged" or "Message from" marker the page showed just before that entry (the sub-agent or project it went to or came from). Voice chats appear as their full transcripts.
+
+| File | Thread | Account | Entries | Brian's |
+| --- | --- | --- | --- | --- |
+| `gbot-thread-full-2026-11-22.md` | G Bot (v2 work and Brian's most recent thinking, per Brian) | Movement Institute, in Chrome | 603 | 161 |
+| `squatchbot-thread-full-2026-11-22.md` | Squatchbot (v1 work) | Personal, in the Claude app browser pane | 1,391 | 409 |
+| `grokbot-thread-full-2026-11-22.md` | Grok Bot (some v1 work) | Personal, in the Claude app browser pane | 355 | 123 |
+
+These supersede `gbot-thread.md` and `squatch-thread.md` as the complete record; the older files stay. Each list was scrolled top to bottom at least twice, keeping the longest text per entry id; the second pass found no new entries. Grok folds long messages behind "Show more"; all 60 folded messages (11 G Bot, 42 Squatchbot, 7 Grok Bot) were opened and copied in full, and the 11 G Bot ones were checked against a fingerprint taken in the page. The G Bot thread also holds Ostrich game work; it is copied whole, not split.
+
+## Recordings (checked 2026-11-22)
+
+| Recording | Where | Transcript |
+| --- | --- | --- |
+| Nov 4, Chapter 2, about 25 min, narrated | Brian's Desktop (aac) | `docs/old/playtests/2026-11-04-game-building-session-chapter-two.md` |
+| Nov 6, Chapter 2, 11 min, narrated | Brian's Desktop (aac) | `docs/old/playtests/2026-11-06-game-interface-and-navigation-issues.md` (issues list) |
+| Nov 7, Chapter 1, 10:22, no voice | iCloud shared album "Nov 7, 2026" (expires 2026-12-08) | none; Squatchbot's review is Squatchbot #253 |
+| Nov 8, Chapter 1, 50:39, narrated (Brian and a child; the session that rebuilt the plot) | iCloud link in a photo, Squatchbot #306 (expires 2026-12-08) | `~/Code/space-snack-quest-private/grok-archive/ch1-playtest-2026-11-08-transcript.txt` (machine, local only) |
+| Nov 15, Chapter 1 iPad, 8:58, narrated | Brian's Dropbox, family project folder, `RPReplay_Final1794774193.MP4` | `ch1-ipad-playtest-2026-11-15.txt` |
+| Nov 15, Chapter 1 iPhone, 10:42, silent, same session | Dropbox, `ScreenRecording_11-15-2026 12-28-41_1.MP4` | none (no sound) |
+| Nov 15, 4:07 | Dropbox, `RPReplay_Final1794777062.MP4` | Ostrich game, not this one |
+
+Attached sound files in Squatchbot: three short Wookiee growl clips (3 to 6 seconds). No videos are attached directly in any of the three threads.
+
 ## Method
 
 - Browser: the Claude desktop app's built-in pane, signed in as Brian (MI workspace). A direct `/bot/<id>` URL rendered a blank page; threads were opened from the sidebar.

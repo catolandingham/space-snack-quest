@@ -209,6 +209,8 @@ Found by reading the Day 1 code against beats 1 to 21 of `docs/CH1-STORY-WALKTHR
 
 ## 11. Sight cones: a dashed outline that lights up, on everyone, in every scene
 
+**Current rule, Brian 2026-11-22 (supersedes the Nov 16 note below):** cones on every character who can see Squatch, dashed until he enters the line of sight, then yellow. Guests show "?" first and "!" only if he stays too long; guards and robots show "!" right away; Mops shows hearts, as in the earlier v1 version. The disguise slows guests further ("Nice gloves", then "fur!" the second time). Exact words in `docs/DECISIONS.md`, "Sight cones, 2026-11-22".
+
 **Superseded 2026-11-16.** Brian, Nov 11 (t332), is the rule: only guards and robots show vision cones. An ordinary guest shows "?" over their head, and that turns to "!" when they spot Squatch. Approved, not built. The Nov 14 dashed-cone text below is history.
 
 - Today: party guests show nothing. Guards and robots show a filled yellow cone all the time.
