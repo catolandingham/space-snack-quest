@@ -79,6 +79,8 @@ These supersede `gbot-thread.md` and `squatch-thread.md` as the complete record;
 | Nov 15, Chapter 1 iPhone, 10:42, silent, same session | Dropbox, `ScreenRecording_11-15-2026 12-28-41_1.MP4` | none (no sound) |
 | Nov 15, 4:07 | Dropbox, `RPReplay_Final1794777062.MP4` | Ostrich game, not this one |
 
+Rule from 2026-11-22: this repo is public. New recordings and transcripts with Brian's kids' voices go to `~/Code/space-snack-quest-private/grok-archive/`, not here. `ch1-ipad-playtest-2026-11-15.txt` stays (no names in it, public since Nov 16; Brian left the call to Claude).
+
 Attached sound files in Squatchbot: three short Wookiee growl clips (3 to 6 seconds). No videos are attached directly in any of the three threads.
 
 ## Method

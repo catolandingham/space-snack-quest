@@ -15,6 +15,9 @@ These win over anything below that disagrees. Details in `docs/DECISIONS.md`.
 - Balloon and dance: keep, in the simplest form, shown to you before it lands.
 - Dress-up: drag pieces onto a close-up of Squatch on a white background, with the disguise meter.
 - Wookiee TV: full-screen story pictures.
+- Hangar robot: no close catch while it looks away; only its cone counts.
+- The keypad code is for the office door, not the hangar.
+- Chapter 1: whoever sees him runs to the wall alarm; later chapters may shout for security.
 - Sight cones: on everyone, dashed then yellow; guests "?" then "!" if he lingers; guards and robots "!" at once; Mops hearts. First a still of the party with every cone drawn, for you to look at once.
 
 ## How it should feel

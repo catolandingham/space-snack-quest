@@ -5,24 +5,24 @@
 | --- | --- |
 | 27–29 | # Space Snack Quest: every decision, in one place |
 | 30–37 | ## How to use this file |
-| 38–47 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 48–56 | ## Which repo is the base, 2026-11-22 |
-| 57–63 | ## Sight cones, 2026-11-22 |
-| 64–68 | ## Latest calendar direction, 2026-11-16 |
-| 69–71 | ## Vent walk, 2026-11-16 |
-| 72–74 | ## Locked home room v5, 2026-11-16 |
-| 75–84 | ## Fidelity system (pictures are locked, not just words) |
-| 85–122 | ## 1. Working rules |
-| 123–189 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 190–214 | ## 3. Characters and look |
-| 215–291 | ## 4. Look, rooms and layout |
-| 292–313 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 314–357 | ## 6. Later chapters (2–4 and travel) |
-| 358–367 | ## 7. Audio |
-| 368–402 | ## 8. Code, controls and process |
-| 403–449 | ## 9. Open / waiting on Brian |
-| 450–544 | ## 10. Earlier entries, kept word for word |
-| 545–641 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 38–51 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 52–60 | ## Which repo is the base, 2026-11-22 |
+| 61–67 | ## Sight cones, 2026-11-22 |
+| 68–72 | ## Latest calendar direction, 2026-11-16 |
+| 73–75 | ## Vent walk, 2026-11-16 |
+| 76–78 | ## Locked home room v5, 2026-11-16 |
+| 79–88 | ## Fidelity system (pictures are locked, not just words) |
+| 89–126 | ## 1. Working rules |
+| 127–193 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 194–218 | ## 3. Characters and look |
+| 219–295 | ## 4. Look, rooms and layout |
+| 296–317 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 318–361 | ## 6. Later chapters (2–4 and travel) |
+| 362–371 | ## 7. Audio |
+| 372–406 | ## 8. Code, controls and process |
+| 407–453 | ## 9. Open / waiting on Brian |
+| 454–548 | ## 10. Earlier entries, kept word for word |
+| 549–645 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -44,6 +44,10 @@ Brian does not read the long files; he confirms assumptions by multiple choice i
 - **Balloon and dance: "Keep, simplified".** Rebuild both in the simplest form found and show Brian before it lands. (His own words, G Bot #516: "The balloon thing has just never worked when we've tried it before." If no simple version works, say so and ask before dropping.)
 - **Dress-up: "Drag-on close-up".** A close-up of Squatch on a white background; the kid drags pieces on, more or less anywhere; the "Disguised enough" meter fills as pieces go on.
 - **Wookiee TV: "Full-screen story".** Cut away to full-screen story pictures, as walkthrough beat 20 says.
+- **Hangar robot (problem 3): "No close catch".** While the night robot looks away it cannot catch Squatch, however close; only its cone counts.
+- **Keypad: "We need the code for the office door, not the hangar"** (his own answer). v1 already puts the code (4723, from the pink slip) on the office door, walkthrough beat 50; no hangar code. No change needed.
+- **Raising the alarm: "Ch 1 wall, later shout".** In Chapter 1 whoever sees Squatch runs to the FUR ALARM on the wall and pulls it, giving him time to hide; shouting for security is allowed in later chapters.
+- **Push and merge: "Push freely, merge on yes".** Claude pushes branches and opens pull requests as needed. Nothing merges into main (which goes live) until Brian says yes in Snack Quest Chat; his words are copied into the pull request.
 
 ## Which repo is the base, 2026-11-22
 - **Decided by Claude (Snack Quest Chat) at Brian's request.** Brian, 2026-11-22: "I really don't want to make the decision, I need you too to make sure you're fully considering everything, confirm you understand my goal, and then weighing all tradeoffs. [...] I'd have to defer to you." He can overturn it at any time.
