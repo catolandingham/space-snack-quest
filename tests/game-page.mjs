@@ -4,6 +4,7 @@
  *   const g = await startGame({ port: 8781 });
  *   const { page } = await g.open("?ch=2");
  *   g.check("name", ok, detail); ... await g.finish("suite name");
+ *   g.known("name", stillHappens, detail) for a known problem: printed as KNOWN, never a failure.
  */
 import http from "node:http";
 import { existsSync, readFileSync } from "node:fs";
@@ -106,6 +107,10 @@ export async function startGame({ port, name }) {
     console.log(`${ok ? "PASS" : "FAIL"} ${label}${detail === undefined || ok ? "" : " " + JSON.stringify(detail)}`);
     if (!ok) fails.push(label);
   };
+  // A problem Brian knows about and that is not fixed yet: printed, never failing the suite. When it stops
+  // happening, the note says so, so the change that fixes it takes it off the suite's known list.
+  const known = (label, stillThere, detail) =>
+    console.log(stillThere ? `KNOWN ${label}${detail === undefined ? "" : " " + JSON.stringify(detail)}` : `NOTE ${label}: this known problem did not happen. If it is fixed, take it off the known list.`);
   async function open(query = "?ch=2", viewport = { width: 1100, height: 800 }) {
     const ctx = await browser.createBrowserContext();
     const page = await ctx.newPage();
@@ -133,5 +138,5 @@ export async function startGame({ port, name }) {
     }
     console.log(`${label} checks passed`);
   }
-  return { open, check, key, finish, browser };
+  return { open, check, known, key, finish, browser };
 }

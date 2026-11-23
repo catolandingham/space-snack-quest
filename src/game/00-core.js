@@ -1281,11 +1281,37 @@
                   : n.room === "hall" && n.ch1Party
                     ? { x0: 60, x1: 900, y0: CH1_PARTY_FLOOR_Y, y1: 590 }
                   : n.room === "hall"
-                    ? { x0: 60 + B.camX, x1: 900 + B.camX, y0: 200, y1: 590 }
+                    ? { x0: 60 + B.camX, x1: 900 + B.camX, y0: (n.scene || "")[0] === "Q" ? CH1_WALL_FOOT : 200, y1: 590 }
                     : n.room === "window"
                       ? { x0: 60, x1: 900, y0: 380, y1: 590 }
-                      : { x0: 60, x1: 900, y0: 236, y1: 590 };
+                      : n.room === "passage" || n.room === "office"
+                        ? { x0: 60, x1: 900, y0: CH1_WALL_FOOT, y1: 590 }
+                        : { x0: 60, x1: 900, y0: 236, y1: 590 };
     }
+    // Where the wall meets the floor in the locked hall, hallway and office pictures (picture row 332
+    // of 830, drawn at 640 high). Feet above this line would be standing on the wall.
+    const CH1_WALL_FOOT = 256,
+      // Furniture in the locked loading bay and office pictures, as the strip where each one stands on
+      // the floor, in game positions (picture x * 0.75, picture y * 640 / 830). tests/ch1-rooms-solid.mjs
+      // walks into each one from four sides. Every solid is at least 24 across both ways: R0 pushes
+      // Squatch out to the nearest side, so anything thinner than two of his longest steps (about 8 px at
+      // the slowest frame) lets him pop out the far side. Thin things grow back toward the wall, so the
+      // side where they stand on the floor stays where the picture draws it.
+      CH1_FURNITURE = {
+        office: [
+          { x0: 59, x1: 167, y0: 485, y1: 509 }, // filing cabinet
+          { x0: 587, x1: 885, y0: 524, y1: 551 }, // desk
+        ],
+        hangar: [
+          { x0: 103, x1: 148, y0: 346, y1: 370 }, // plant
+          { x0: 189, x1: 237, y0: 350, y1: 374 }, // bin
+          { x0: 344, x1: 369, y0: 392, y1: 416 }, // scanner arch, left post
+          { x0: 563, x1: 588, y0: 392, y1: 416 }, // scanner arch, right post
+          { x0: 675, x1: 699, y0: 360, y1: 420 }, // mail room wall, above its door
+          { x0: 675, x1: 699, y0: 507, y1: 609 }, // mail room wall, below its door
+          { x0: 848, x1: 908, y0: 452, y1: 476 }, // robot mailbox
+        ],
+      };
     let nt = (l, o, i, s, q) => ({ x0: l - i, x1: l + i, y0: o - s, y1: o + q });
     function ih() {
       let l = [],
@@ -1327,6 +1353,7 @@
         n.room === "port")
       )
         for (let i of xf) l.push(nt(i.x, i.y, 26, 14, 10));
+      if ((n.scene || "")[0] === "Q" && CH1_FURNITURE[n.room] && (n.room !== "office" || n.ch1Office)) for (let i of CH1_FURNITURE[n.room]) l.push(i);
       return (n.room === "van" && l.push({ x0: Tt.x - 100, x1: Tt.x + 100, y0: 380, y1: 470 }), l);
     }
     function R0(l) {

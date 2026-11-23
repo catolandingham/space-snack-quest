@@ -230,6 +230,7 @@ const seen = { inSolid: [], blocked: new Set(), selfRing: new Set(), caught: [],
 const firstChip = new Map();
 let lastChip = "",
   lastScene = "",
+  loopScene = "", // the scene on the robot's previous look
   lastCaughtAt = 0;
 const presses = new Map(),
   done = new Set(),
@@ -288,6 +289,15 @@ while (now() < MAX_S) {
     await sleep(1500);
     break;
   }
+  // The robot reads the screen, then taps a moment later. If the tally card came up in between, the tap
+  // closed it and Chapter 2 began. Chapter 2 is only queued after the tally card (end of ch1 in
+  // 14-ch1-day2.js), so arriving in Chapter 2 straight from Q9 means the tally was shown.
+  if (String(s.scene).startsWith("G") && loopScene === "Q9") {
+    end = "tally";
+    say(s, "TALLY CARD: Chapter 1 finished (closed by the robot's last tap; now in Chapter 2)");
+    break;
+  }
+  loopScene = s.scene;
   const key = [s.scene, s.room, s.chip, s.mops, s.zoomKey, done.size, seen.caught.length].join("|");
   if (key !== lastKey) ((lastKey = key), (lastChange = Date.now()), progress++);
   if (Date.now() - lastChange > 75000) {

@@ -3,21 +3,22 @@
 
 | Lines | Heading |
 | --- | --- |
-| 22–24 | # Space Snack Quest: where things stand |
-| 25–41 | ## 2026-11-22 sitting (Snack Quest Chat, Claude) |
-| 42–48 | ## Fidelity system (new, 9:55 PM PT, Brian t233 / W33) |
-| 49–66 | ## The game |
-| 67–104 | ## Chapter 1 cartoon: panels in story order |
-| 105–120 | ## Open questions from the new panels (for Brian, multiple choice) |
-| 121–125 | ## In progress right now |
-| 126–180 | ## Next |
-| 181–185 | ## Earlier state, kept in full |
-| 186–191 | # Space Snack Quest: state |
-| 192–194 | ## What it is |
-| 195–206 | ## Where things live |
-| 207–243 | ## Open items |
-| 244–248 | ## Next step |
-| 249–253 | ## Paused 2026-11-08 at the credit line |
+| 23–25 | # Space Snack Quest: where things stand |
+| 26–42 | ## 2026-11-22 sitting (Snack Quest Chat, Claude) |
+| 43–48 | ## 2026-11-22 sitting 2 (Snack Quest Chat, Claude): repeat-complaint tests |
+| 49–55 | ## Fidelity system (new, 9:55 PM PT, Brian t233 / W33) |
+| 56–73 | ## The game |
+| 74–111 | ## Chapter 1 cartoon: panels in story order |
+| 112–127 | ## Open questions from the new panels (for Brian, multiple choice) |
+| 128–132 | ## In progress right now |
+| 133–187 | ## Next |
+| 188–192 | ## Earlier state, kept in full |
+| 193–198 | # Space Snack Quest: state |
+| 199–201 | ## What it is |
+| 202–213 | ## Where things live |
+| 214–250 | ## Open items |
+| 251–255 | ## Next step |
+| 256–260 | ## Paused 2026-11-08 at the credit line |
 <!-- /section-index -->
 # Space Snack Quest: where things stand
 Monday, November 9, 2026, through R63. Updated 2026-11-10 after the Chapter 1 redesign and the party landed on `main`. Decisions: `docs/DECISIONS.md`. Open asks: `docs/OPEN-ASKS.md`. Words: `docs/CH1-CARTOON-LINES.md`. Look: `docs/STYLE-GUIDE.md`.
@@ -38,6 +39,12 @@ Monday, November 9, 2026, through R63. Updated 2026-11-10 after the Chapter 1 re
 - After the modules change: tests for Brian's repeat complaints, each written to fail first where the problem is still there, then fixed. Order (from `docs/ch1-design-audit-2026-11-22/angles/repeat-guards.md`): outlines not circles (and rewrite the two ring tests that protect the rejected rings); the bar and the new hall picture (and update the hall lock); security timing at every sighting; nothing walks through walls or furniture; scene jumps and following Mops; dead ends and the ↺ button; the hall vent; cones on everyone (after Brian sees one still); plant eyes (after Brian approves one still); sizes and rooms as played; then the purple bar on the bed (present today), drag-on dress-up, no unexplained marks, wall alarm, stage, overlaps. Sound gets a log of what played plus Brian's ears.
 - Then: Chapter 1 rebuilt one beat per sitting into its own module, values in data files, old code for that beat deleted, under the new rules (regression test first, full playthroughs pass, screenshot, "not yet played by a person").
 - Nothing committed this sitting.
+
+## 2026-11-22 sitting 2 (Snack Quest Chat, Claude): repeat-complaint tests
+- Branch `tests/cross-cutting`. Four tests for Brian's repeat complaints; each problem still in the game prints KNOWN and is listed in the README section "Brian's repeat complaints, as tests".
+- Fixed in this sitting (small): no climbing the walls in the hall, hallway and office (feet stop at y 256, where the locked pictures' wall meets the floor); the office desk and filing cabinet and the loading bay plant, bin, scanner posts, mail room wall and robot mailbox are solid. Screenshots: `tests/out/sitting2/` (not in git).
+- Known, for the beat rebuilds: Day 2 lunch guests and the night robot catch at once with no alarm or guard (Brian K#159 asked for alarm every time); 5 of 34 goals still drawn with a yellow circle (party, calendar with an arrow, plant, keypad); ↺ does nothing in Q3, Q5, Q6, Q7 and QP (no restart point). The two ring tests are left until the outline change replaces the circles.
+- Not checked: the hangar floor at night, the duct, and party furniture beyond what `tests/party-solid.mjs` covers; Mops's own walking against the new furniture.
 
 ## Fidelity system (new, 9:55 PM PT, Brian t233 / W33)
 - Approved and current pictures are frozen in `LOCKED/` (`LOCKED/INDEX.md`). Rooms are drawn only by `mockups/rooms/home_room.py`, `mockups/rooms/delivery_room.py`, `mockups/rooms/hall_room.py` (new 11:20 PM PT) and `mockups/rooms/hallway_room.py` (connecting hallway, R48; hallway v5 is APPROVED, R55); panels import them. Before Brian sees a sketch: `tools/check_all.sh` + the independent checker (`docs/CHECKER.md`). Steps: `docs/FIDELITY.md`.

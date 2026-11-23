@@ -1092,7 +1092,8 @@
       } else if (b === 38) {
         ((n.room = "hall"), (n.scene = "Q3"), (n.ch1Brochure = !0), (n.ch1BrochureBig = 8), (n.ch1Heart = !0), (n.ch1Step = "gohome"), (n.sq.x = 400), (n.sq.y = 520), (n.mo.x = 560), (n.mo.y = 510));
       } else if (b === 42) {
-        ((n.room = "hangar"), (n.ch1D = !0), (n.ch1Night = !0), (n.scene = "Q4"), (n.ch1LookT = 0.4), (n.sq.x = CH1_BIN.x), (n.sq.y = CH1_BIN.y), (n.moPose = "hidden"), ch1SetPaper("paws"));
+        ((n.room = "hangar"), (n.ch1D = !0), (n.ch1Night = !0), (n.scene = "Q4"), (n.ch1LookT = 0.4), (n.sq.x = CH1_BIN.x), (n.sq.y = CH1_BIN.y + 12), // just in front of the bin, not inside its solid
+           (n.moPose = "hidden"), ch1SetPaper("paws"));
         n.ch1Zoom = { id: "paw", zoom: 1, paw: { x: 470, y: 320 } };
         n.ch1Step = "mark";
         n.ch1Paw = 1;
