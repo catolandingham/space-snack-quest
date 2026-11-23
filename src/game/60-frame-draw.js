@@ -2382,7 +2382,7 @@
       l < 1 || l > Ca || startStory(l);
     }
     function startStory(l) {
-      (qh(), l !== 1 && ((n.q = []), (n.cur = null), (n.stars = 0), (n.starOn = !0), l === 2 ? Ws() : l === 3 ? aq() : nq()));
+      ((ch2.qCheck = null), qh(), l !== 1 && ((n.q = []), (n.cur = null), (n.stars = 0), (n.starOn = !0), l === 2 ? Ws() : l === 3 ? aq() : nq()));
     }
     let j2 = (l) => {
         if (l.ssqKeyHeard) return;

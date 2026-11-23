@@ -190,7 +190,16 @@
     // Security for Chapters 3 and 4 is the same figure as Chapter 2's (see qSec): it walks in from the side.
     function drawSec() {
       let s = ch2.sec;
-      if (!s || s.scene !== n.scene || n.room === "gas" || n.room === "hall") return;
+      if (!s || s.scene !== n.scene || n.room === "gas") return;
+      // Chapter 1's guard is the party guard (alien in a hat) with a sight cone, walking toward Squatch.
+      if ((n.scene || "")[0] === "Q") {
+        let face = Math.atan2(n.sq.y - 20 - (s.y - 28), n.sq.x - s.x);
+        return (
+          seenCone(s.x, s.y - 28, face, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.62)", "rgba(160,100,10,.95)"),
+          drawCh1Alien(s.x, s.y, "hat", ALIEN_ADULT, Math.cos(face) < 0 ? -1 : 1)
+        );
+      }
+      if (n.room === "hall") return;
       (m(s.x - 16, s.y - 70, 32, 54, 8), r("#3478f6", 3), g("SEC", s.x, s.y - 78, 12, "#ffffff", "center", 900));
     }
     // Checkpoint tables. Chapter 2's is applyG (20-ch2.js). A scene or phase with no entry restarts from the
@@ -217,7 +226,6 @@
       S11: () => Js(),
       // Redesigned Chapter 1 night: back at the bin, yellow copy not mailed yet.
       Q4: () => ch1RestartNight(),
-      QB: () => ch1RestartLunch(),
       // The party. A catch stays in the party, a little back from where he was seen.
       QA: () => ch1RestartParty(),
     };

@@ -766,7 +766,7 @@
           dist = Math.hypot(n.sq.x - gue.x, n.sq.y - gue.y),
           standing = ch1ConeHit(n.sq.x, n.sq.y - 20, gue.x, gue.y - 28, gue.face),
           seen = n.sqPose === "ball" ? ballNotice("lunch" + i, dist, dt || 0, standing) : standing;
-        (n.sqPose !== "ball" && ballNotice("lunch" + i, STAND_FEET + 99, 0, !1), seen && capture("s6"));
+        (n.sqPose !== "ball" && ballNotice("lunch" + i, STAND_FEET + 99, 0, !1), seen && ch1CallSecurity("s6"));
       }
     }
     function ch1Day2Tick(dt) {
@@ -799,18 +799,17 @@
     function ch1Day2Spots() {
       if (!n.ch1Day2 || !n.ctrl || n.ch1PadOn) return [];
       let s = n.ch1Step;
-      if (s === "sneak" && n.sqPose === "ball") return [ch1At("SNEAK", "hallway", 860, 560, 110, ch1ToMops)];
+      if (s === "sneak" && n.sqPose === "ball") return ch2.sec ? [] : [ch1At("SNEAK", "hallway", 860, 560, 110, ch1ToMops)];
       if (n.sqPose === "hidden" || n.sqPose === "ball" || n.sqPose === "sleep") return [];
       if (s === "gift") return [ch1At("TAKE", "gift", 340, 520, 100, ch1TakeGift)];
       if (s === "box") return [ch1At("PUT", "box", CH1_CLOSET_SPOT[0], CH1_CLOSET_SPOT[1], 90, ch1PutBox)]; // the box is in the closet: he takes it out here
       if (s === "dropbox") return [ch1At("DROP", "box", n.sq.x || 350, n.sq.y || 520, 240, ch1DropBox)];
       if (s === "cal") return [ch1At("LOOK", "calendar", 230, 392, 110, ch1LookCal)];
       if (s === "lunch") return [ch1At("TAKE", "lunch", 500, 520, 100, ch1TakeLunch)];
+      // A guard is coming: the only way out is to hide, so ROLL is offered where he stands (C20) and SNEAK waits.
+      if (s === "sneak" && ch2.sec) return [ch1At("ROLL", "ball", n.sq.x, n.sq.y, 60, () => (n.sqPose = "ball"))];
       if (s === "sneak")
-        return [
-          ch1At("SNEAK", "hallway", 700, 540, 520, ch1ToMops),
-          ch1At("ROLL", "ball", 140, 360, 55, () => (n.sqPose = "ball")),
-        ];
+        return [ch1At("SNEAK", "hallway", 700, 540, 520, ch1ToMops), ch1At("ROLL", "ball", 140, 360, 55, () => (n.sqPose = "ball"))];
       if (s === "give") return [ch1At("GIVE", "lunch", 500, 510, 130, ch1GiveLunch)];
       if (s === "feed1") return [ch1At("FEED", "lunch", n.sq.x || 240, n.sq.y || 510, 280, ch1Feed1)];
       if (s === "feed2") return [ch1At("FEED", "bag", n.sq.x || 240, n.sq.y || 510, 280, ch1Feed2)];
@@ -1043,7 +1042,9 @@
     }
     function ch1JumpBeat(beat) {
       let b = beat | 0;
-      ((n.q = []),
+      ((ch2.qCheck = null),
+        (ch2.sec = null),
+        (n.q = []),
         (n.cur = null),
         (n.ctrl = !0),
         (n.ch1Day2 = !0),

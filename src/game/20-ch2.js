@@ -161,17 +161,30 @@
     function Jh() {
       return { ox: ch2.rust.x, oy: 400, a: ch2.rust.f > 0 ? 0.5 : Math.PI - 0.5 };
     }
-    function sSec(l, who) {
+    function sSec(l, who, from) {
       ch2.sec ||
-        ((ch2.sec = { x: 980, y: 520, hide: 0, mode: "come", by: l || "diner", who: who || "", scene: n.scene }), kV("bot", "SECURITY!"), D.alarm());
+        ((ch2.sec = { x: from ? from.x : 980, y: from ? from.y : 520, hide: 0, mode: "come", by: l || "diner", who: who || "", scene: n.scene, room: n.room }),
+        who !== "quiet" && kV("bot", "SECURITY!"),
+        D.alarm());
+    }
+    // Chapter 1 outside the party (Brian's one capture rule; K#159 "when the robots spot you, shouldn't they
+    // set off the security alarm every time and you have to hide"): the alarm sounds and a guard walks in
+    // through a door. Hidden or rolled up, he gets away ("They lost you."); reached, the LOCKUP card.
+    // No "SECURITY!" bubble here: sSec's bubble goes to the "bot" speaker (the UPS mailbox at night), not to
+    // whoever saw him, and a line for the right speaker needs Brian's yes. The alarm sound still plays.
+    const CH1_SEC_DOOR = { hangar: { x: -30, y: 335 }, hall: { x: 948, y: 360 }, passage: { x: 990, y: 520 } };
+    function ch1CallSecurity(by) {
+      sSec(by, "quiet", CH1_SEC_DOOR[n.room]);
     }
     // Chapter 2's security, also used in Chapters 3 and 4: it walks to Squatch; if he is hidden it leaves
     // ("They lost you."), and if it reaches him the one capture rule runs (capture in 25-capture.js).
     function qSec(l) {
       let s = ch2.sec;
       if (s && s.scene && s.scene !== n.scene) return void (ch2.sec = null);
-      if (!s || de()) return;
-      if (n.sqPose === "hidden" || (n.room === "kitchen" && n.sqPose === "ball")) {
+      // Chapter 1: the guard stays in the room he came into, and waits while the story has control.
+      if (s && (n.scene || "")[0] === "Q" && s.room && s.room !== n.room) return void (ch2.sec = null);
+      if (!s || de() || ((n.scene || "")[0] === "Q" && !n.ctrl)) return;
+      if (n.sqPose === "hidden" || (n.sqPose === "ball" && (n.room === "kitchen" || (n.scene || "")[0] === "Q"))) {
         ((s.hide += l), (s.mode = "leave"), (s.x += (s.x < 480 ? -240 : 240) * l));
         s.hide > 1.6 && (s.x < -70 || s.x > 1030) && ((ch2.sec = null), lostYou());
         return;
@@ -212,6 +225,7 @@
     function noteSection() {
       ch1StampBalloon();
       if (p.state !== "op") return;
+      if ((n.scene || "")[0] === "Q") return noteCh1Step();
       let scene = n.scene || "",
         phase = ch2.phase || "",
         ch1 = /^(S|O)\d/.test(scene),
@@ -242,6 +256,68 @@
           balloonRest: n.ch1BalloonRest || "",
           balloonPopped: !!n.ch1BalloonPopped,
         }));
+    }
+    // Redesigned Chapter 1 (Q scenes): ↺ restarts the step the player is on (Brian, K29: restart the
+    // current scene). The state is saved on the first frame a new step hands control to the player:
+    // every op field named ch1..., the scene, room, both characters and the glows. Functions are not
+    // saved (a step's "what comes next" is set again by the step itself).
+    function noteCh1Step() {
+      // Not while an overlay is open inside the step (dress-up, the snack cut-in): ↺ closes those.
+      if (!n.ctrl || n.cur || n.q.length || (n.ch1Dress && n.ch1Dress.on) || n.ch1Cut) return;
+      let id = n.scene + "|" + n.room + "|" + (n.ch1Step || "");
+      if (ch2.qCheck && ch2.qCheck.id === id) return;
+      let ch1 = {},
+        skip = [];
+      for (let k of Object.keys(n)) {
+        if (!k.startsWith("ch1") || typeof n[k] === "function") continue;
+        let v = n[k];
+        if (v && typeof v === "object")
+          try {
+            v = JSON.parse(JSON.stringify(v));
+          } catch (e) {
+            skip.push(k);
+            continue;
+          }
+        ch1[k] = v;
+      }
+      ch2.qCheck = {
+        id,
+        scene: n.scene,
+        room: n.room,
+        ch1,
+        skip,
+        sq: { x: n.sq.x, y: n.sq.y, f: n.sq.f },
+        mo: { x: n.mo.x, y: n.mo.y, f: n.mo.f },
+        sqPose: n.sqPose,
+        moPose: n.moPose,
+        cam: B.camX || 0,
+        pulse: [...n.pulse],
+      };
+    }
+    function restoreCh1Step(c) {
+      if (!c || c.id !== n.scene + "|" + n.room + "|" + (n.ch1Step || "")) return !1;
+      // A flag the step set after it began goes back to unset; anything that could not be saved is left alone.
+      for (let k of Object.keys(n)) k.startsWith("ch1") && typeof n[k] !== "function" && !(k in c.ch1) && !c.skip.includes(k) && (n[k] = void 0);
+      for (let k of Object.keys(c.ch1)) {
+        let v = c.ch1[k];
+        n[k] = v && typeof v === "object" ? JSON.parse(JSON.stringify(v)) : v;
+      }
+      ((n.ch1ZoomNext = null),
+        (n.room = c.room),
+        (n.sq.x = c.sq.x),
+        (n.sq.y = c.sq.y),
+        (n.sq.f = c.sq.f || 1),
+        (n.mo.x = c.mo.x),
+        (n.mo.y = c.mo.y),
+        (n.mo.f = c.mo.f || -1),
+        (n.sqPose = c.sqPose || "stand"),
+        (n.moPose = c.moPose || "stand"),
+        (n.walkTo = null),
+        (B.camX = c.cam || 0),
+        n.pulse.clear());
+      for (let id of c.pulse) n.pulse.add(id);
+      ((n.seeGrace = n.T + 3), chipNow());
+      return !0;
     }
     function restoreCheck(c) {
       if (!c) return !1;
@@ -520,6 +596,13 @@
         phase = ch2.phase || "";
       clearRun();
       if (scene.startsWith("S") || scene.startsWith("O") || scene.startsWith("Q")) {
+        // The party and the night keep their own restarts; every other Q scene goes back to the start of its step.
+        if (scene[0] === "Q" && scene !== "QA" && scene !== "Q4") {
+          if (restoreCh1Step(ch2.qCheck)) return void (n.ctrl = !0);
+          // No saved start for this step (the player has not had control in it yet): only the lunch walk has a hand-made one.
+          if (scene === "QB" && n.ch1Step === "sneak") return (ch1RestartLunch(), void (n.ctrl = !0));
+          return void (n.cur || n.q.length || (n.ctrl = !0));
+        }
         if (CH1_CHECKPOINTS[scene]) return (CH1_CHECKPOINTS[scene](), (n.ctrl = !0), void 0);
         // A later Chapter 1 scene must not fall back to the saved opening. That
         // left a party catch in the bedroom with no way forward.
