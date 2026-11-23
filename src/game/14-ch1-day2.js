@@ -875,29 +875,6 @@
         g("ME", 640, 142, 17, "#1e2430", "center", 800),
         g("MOPS", 640, 170, 17, "#1e2430", "center", 800));
       n.ch1Beep && !n.ch1Office && drawMailRobot(860, 520);
-      n.ch1Step === "photos" &&
-        !n.ch1Office &&
-        (e.save(),
-        (e.globalAlpha = 0.45 + 0.4 * Math.sin(n.T * 5)),
-        (e.fillStyle = "#ffcf33"),
-        e.beginPath(),
-        e.moveTo(450, 430),
-        e.lineTo(510, 430),
-        e.lineTo(480, 490),
-        e.closePath(),
-        e.fill(),
-        e.restore());
-      n.ch1Step === "keepsake" && !n.ch1Office &&
-        (e.save(),
-        (e.globalAlpha = 0.4 + 0.4 * Math.sin(n.T * 5)),
-        (e.fillStyle = "#ffcf33"),
-        e.beginPath(),
-        e.moveTo(760, 500),
-        e.lineTo(820, 540),
-        e.lineTo(760, 580),
-        e.closePath(),
-        e.fill(),
-        e.restore());
       (n.moPose !== "hidden" && Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 }),
         n.sqPose === "ball" && drawL2Ball(n.sq.x, n.sq.y - 16),
         n.sqPose === "hidden" && ga(n.sq.x, n.sq.y - 40),
@@ -964,14 +941,6 @@
       (drawPawArm(z.paw), z.id === "one" || drawZoomX(), (e.globalAlpha = 1));
     }
     function drawCh1Day2() {
-      if (n.ch1Step === "sneak" && n.room === "hall" && n.sqPose !== "hidden") {
-        (e.save(), (e.globalAlpha = 0.45 + 0.35 * Math.sin(n.T * 5)), (e.fillStyle = "#ffcf33"));
-        for (let i = 0; i < 3; i++) {
-          let x = 360 + i * 90;
-          (e.beginPath(), e.moveTo(x, 560), e.lineTo(x + 36, 590), e.lineTo(x, 620), e.closePath(), e.fill());
-        }
-        e.restore();
-      }
       if (n.ch1Step === "sneak" && n.room === "hall")
         for (let gue of CH1_LUNCH_WATCH) {
           (seenCone(gue.x, gue.y - 28, gue.face, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.55)", "rgba(160,100,10,.95)"),
@@ -982,23 +951,6 @@
             e.stroke(),
             drawCh1Alien(gue.x, gue.y, gue.face > 2 ? "antenna" : "hat", ALIEN_ADULT, gue.face > 2 ? -1 : 1));
         }
-      n.room === "closet" &&
-        n.ch1Step === "cal" &&
-        (e.save(),
-        (e.globalAlpha = 0.45 + 0.4 * Math.sin(n.T * 5)),
-        (e.strokeStyle = "#ffcf33"),
-        (e.lineWidth = 8),
-        e.beginPath(),
-        e.arc(179, 214, 36, 0, 7),
-        e.stroke(),
-        (e.fillStyle = "#ffcf33"),
-        e.beginPath(),
-        e.moveTo(179, 280),
-        e.lineTo(159, 250),
-        e.lineTo(199, 250),
-        e.closePath(),
-        e.fill(),
-        e.restore());
       n.ch1Hold === "gift" &&
         n.sqPose === "stand" &&
         (m(n.sq.x + 16, n.sq.y - 78, 36, 28, 3),

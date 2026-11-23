@@ -2238,7 +2238,6 @@
           drawCh1Calendar();
           return;
         }
-        n.ch1PeekReady && n.room === "closet" && drawDoorNudge();
         n.ch1Cut && drawCh1Cut();
         n.ch1Dress && n.ch1Dress.on && drawCh1Dress();
         n.ch1Day2 && drawCh1Day2();

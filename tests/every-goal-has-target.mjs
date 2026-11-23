@@ -2,9 +2,9 @@
  * Every Chapter 1 goal the player acts on has a highlighted target and an action prompt.
  * Goals whose action happens right where Squatch stands get no ring (Brian, 2026-11-14), only the prompt.
  * Brian's repeat rule (raised at least six times, Nov 8 to Nov 15): the place to go is shown by outlining
- * the real thing in dashed yellow, never by a circle or box on the floor and never by an arrow. Every
- * floor ring today comes with a bouncing arrow (ringZone in 60-frame-draw.js), so each goal that still
- * draws one is listed as KNOWN until the outline work replaces it (repeat-issues.md, issue 2).
+ * the real thing in dashed yellow, never by a circle or box on the floor and never by an arrow. No goal may
+ * draw a yellow circle or arrow; goals whose thing is in a locked picture are outlined; the rest (props
+ * the game draws, Mops) are KNOWN until they get outlines (repeat-issues.md, issue 2).
  *   node tests/every-goal-has-target.mjs
  */
 import { readFileSync } from "node:fs";
@@ -79,7 +79,9 @@ const report = await page.evaluate(async (chips) => {
     return hit;
   };
   const bad = [],
-    ringed = [];
+    ringed = [],
+    outlined = [],
+    unoutlined = [];
   // Every yellow circle the frame draws (radius 30 or more, so eyes and dots are not counted). Chapter 1
   // draws some highlights itself instead of through ringZone, so the drawing calls are watched directly.
   const yellowCircles = new Set();
@@ -89,6 +91,7 @@ const report = await page.evaluate(async (chips) => {
   const { arc, beginPath, stroke, fill } = proto;
   proto.beginPath = function () {
     arcs = [];
+    lines = 0;
     return beginPath.apply(this, arguments);
   };
   proto.arc = function (x, y, r, a0, a1) {
@@ -101,7 +104,15 @@ const report = await page.evaluate(async (chips) => {
   };
   proto.fill = function () {
     if (isYellow(this.fillStyle)) arcs.forEach((a) => yellowCircles.add(a));
+    if (isYellow(this.fillStyle) && lines >= 2 && lines <= 3 && !arcs.length) yellowCircles.add("arrow");
     return fill.apply(this, arguments);
+  };
+  // Yellow arrows: a filled yellow shape of two or three straight lines.
+  let lines = 0;
+  const { lineTo } = proto;
+  proto.lineTo = function () {
+    lines++;
+    return lineTo.apply(this, arguments);
   };
   for (const [chip, spec] of Object.entries(play)) {
     n.ch1Day2 = spec.day2 !== false;
@@ -133,6 +144,7 @@ const report = await page.evaluate(async (chips) => {
     n.chip = chip;
     for (let i = 0; i < 12; i++) ss.tick(0.05);
     yellowCircles.clear();
+    n.lastRing = null;
     ss.drawFrame();
     const spots = (ss.spotsNow() || []).filter((s) => s && s.verb);
     const offer = ss.offerNow();
@@ -143,10 +155,13 @@ const report = await page.evaluate(async (chips) => {
     const prompt = spec.pad ? n.ch1PadOn : spec.walk ? true : !!(offer && offer.verb);
     const target = spec.walk || spec.pad || spots.length > 0;
     for (const r of ss.rings()) ringed.push(`${chip} -> ${r.box ? "box" : "circle"} ring and arrow on ${r.id}`);
-    for (const c of yellowCircles) ringed.push(`${chip} -> yellow circle at ${c}`);
+    for (const c of yellowCircles) ringed.push(`${chip} -> yellow ${c === "arrow" ? "arrow" : "circle at " + c}`);
+    // Where the goal's thing is away from Squatch, the outline round it (src/modules/goal-targets.js).
+    if (n.lastRing && n.lastRing.box) outlined.push(chip);
+    else unoutlined.push(chip);
     if (!target || yellow < 1 || !prompt) bad.push({ chip, target, yellow, prompt, verb: offer && offer.verb, spots: spots.length });
   }
-  return { missing, bad, ringed, checked: Object.keys(play).length, story: [...story] };
+  return { missing, bad, ringed, outlined, unoutlined, checked: Object.keys(play).length, story: [...story] };
 }, unique);
 
 g.check("every Chapter 1 goal chip is classified", report.missing.length === 0, report.missing);
@@ -155,7 +170,9 @@ g.check(
   report.bad.length === 0,
   report.bad.slice(0, 8),
 );
-g.known(`${new Set(report.ringed.map((r) => r.split(" -> ")[0])).size} of ${report.checked} goals have ${report.ringed.length} marks drawn as a yellow circle or a floor ring with an arrow, not an outline of the real thing`, report.ringed.length > 0, report.ringed);
+g.check("no goal is marked with a yellow circle, a floor ring or an arrow", report.ringed.length === 0, report.ringed);
+g.check("at least 14 goals outline their real thing (doors, plants, bin, mailbox, vent, calendar, wardrobe)", report.outlined.length >= 14, report.outlined);
+g.known(`${report.unoutlined.length} of ${report.checked} goals have no outline yet (props the game draws, Mops, close-ups, and Squatch's own spot)`, report.unoutlined.length > 0, report.unoutlined);
 g.check("story goals are named", report.story.length === 4, report.story);
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();
