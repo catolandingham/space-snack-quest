@@ -164,6 +164,7 @@
       if (n.starOn && starPop.hintAt >= 0 && since < 3500) return "\u2605 = points for finds";
       let s = n.chip || "";
       if (!s || (n.cur && n.cur.k === "bub")) return "";
+      if (ch1WordsWait()) return "";
       let m = stalled() ? methodLine() : "";
       return m || s;
     }

@@ -100,6 +100,8 @@ Four complaints Brian raised again and again now have tests that run with `npm t
 - `tests/every-goal-has-target.mjs`: no Chapter 1 goal is marked with a yellow circle, a floor ring or an arrow. The thing to go to gets a soft yellow dashed outline that follows its shape, traced from the locked picture (`src/modules/outline.js`, targets in `src/modules/goal-targets.js`); doorways get a dashed line round the opening. KNOWN: 17 of 34 goals have no outline yet (props the game draws, Mops, close-ups, Squatch's own spot).
 - `tests/ch1-restart.mjs`: ↺ never sends him to the opening, keeps him in the same part with a goal, and puts him back where the step he is on began (the game saves each Chapter 1 step the moment it hands the player control). The party and the night keep their own restarts. Each beat runs in a fresh page.
 
+- `tests/ch1-words-if-stuck.mjs`: while a goal's thing is outlined, no goal words for the first 20 seconds of that step; then the words appear. A goal with no outline yet shows its words at once.
+
 ## Scene 1 morning
 
 `tests/scene1-morning.mjs` plays the start of Chapter 1 on a phone: Mops's morning line while Squatch is in bed, one bucket, no "ship" in the goal bar, no ring around Squatch, the "That evening…" card, then the peek goal, and the peek itself: the hall full on the first frame, Squatch in his doorway, an empty goal bar, the muffled talk, then "Robots?" once before the announcement, and the sneak: seen while the yellow guest looks back sends Squatch to his doorway; going while he faces the stage and pressing HIDE at the plant hides him.

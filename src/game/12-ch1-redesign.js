@@ -1158,7 +1158,20 @@
       n.ch1Alert = !!seen;
       seen && ch1CallSecurity("delivery");
     }
+    // "Outline; words if stuck" (Brian, 2026-11-22): while the goal's thing is outlined, the goal words wait
+    // until the player has had control in this step for this long without moving it on.
+    const CH1_WORDS_IF_STUCK = 20;
+    function ch1GoalClock(dt) {
+      let key = n.scene + "|" + n.room + "|" + (n.ch1Step || "");
+      key !== n.ch1GoalKey && ((n.ch1GoalKey = key), (n.ch1GoalT = 0));
+      n.ctrl && !n.cur && (n.ch1GoalT = (n.ch1GoalT || 0) + (dt || 0));
+    }
+    // True while the goal words should wait: an outline is showing and the player is not stuck yet.
+    function ch1WordsWait() {
+      return (n.scene || "")[0] === "Q" && !!n.lastRing && n.T - n.lastRing.T < 0.3 && (n.ch1GoalT || 0) < CH1_WORDS_IF_STUCK;
+    }
     function ch1QTick(dt) {
+      (n.scene || "")[0] === "Q" && ch1GoalClock(dt);
       (n.scene || "")[0] === "Q" &&
         (n.ctrl && !n.ch1Mini && (n.act = pick(ch1QSpots())),
         ch1Watch(dt),
