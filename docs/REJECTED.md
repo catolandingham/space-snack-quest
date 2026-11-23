@@ -182,6 +182,6 @@ Things Brian said no to, said were wrong, or asked to remove, from the Grok thre
 - Rooms drawn in the older style: "The post office room looks like the older way we used to draw rooms versus the new way" [S#630]
 - The manager named Bob Peterson: "his name should actually be Isfred Bar Neshuman" [S#782]
 - A Back soon with your next order line: "Saying Back Soon With Your Next Order Doesn't Make Sense Because They Don't Have A Next Order" [Nov 8 @24:29]
-- The hangar code (he asks for the code again at [Nov 8 @46:45]): "Don't Think We Need The Hanger Code Thing Anymore" [Nov 8 @44:08]
+- A hangar bay code: "Don't Think We Need The Hanger Code Thing Anymore" [Nov 8 @44:08]. Brian, 2026-11-22: "If you pay attention to the approved design of when they leave the first planet you'll see there is no hangar bay code". The only code is the office keypad (walkthrough beat 50). Leftovers of the old hangar-code design are still in v1 (`src/game/11-ch1-hall.js`, Mops: "The hangar code was on that slip I ripped."; the torn slip drawn as "Hangar code:" in `src/game/50-story-frame.js`) and are deleted when the rebuild reaches beats 49 and 50.
 - Seeing the janitor outside the ship: "It Doesn't Make Sense That We Can See The Janner Yet Because He Should Be Inside The Ship" [Nov 8 @22:05]
 - Removing the calendar extras: "I liked calendar extras" [S#1338]
