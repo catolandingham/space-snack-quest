@@ -83,14 +83,21 @@ async function watched(id, beat, grid) {
           n.sq.x = x;
           n.sq.y = y;
           ss.tick(1 / 30);
-          if (lockedUp() || ss.secNow()) {
+          if (lockedUp() || ss.secNow() || n.ch1LunchRun) {
             seenAt = [x, y];
             break;
           }
         }
         if (!seenAt) return { start, seenAt };
         const instant = lockedUp();
-        const alarmGuard = !!ss.secNow();
+        // A guest who saw him runs to the FUR alarm first (lunch); then the alarm and the guard, within 1.5 s.
+        const witnessRan = !!n.ch1LunchRun && !ss.secNow();
+        let guardAfter = null;
+        for (let i = 0; i <= 45 && guardAfter === null && !lockedUp(); i++) {
+          if (ss.secNow()) guardAfter = Math.round((i / 30) * 100) / 100;
+          else ss.tick(1 / 30);
+        }
+        const alarmGuard = guardAfter !== null;
         // While the guard is coming the only way out is to hide: nothing walks him out of the room.
         const offers = (ss.spotsNow() || []).filter((o) => o && o.verb).map((o) => o.verb);
         let t = 0, lockupAt = null, lostAt = null;
@@ -103,13 +110,14 @@ async function watched(id, beat, grid) {
           if (lockedUp()) lockupAt = Math.round(t * 10) / 10;
           if (!ss.secNow() && n.log.some((l) => l.text === "They lost you.")) lostAt = Math.round(t * 10) / 10;
         }
-        return { start, seenAt, instant, alarmGuard, offers, lockupAt, lostAt };
+        return { start, seenAt, instant, witnessRan, guardAfter, alarmGuard, offers, lockupAt, lostAt };
       },
       [grid, beat, roll],
     );
   const stand = await run(false);
   g.check(`${id}: beat ${beat} opens where someone can see Squatch`, stand.seenAt !== null, stand);
-  g.check(`${id}: being seen brings the alarm and a guard, not an instant LOCKUP`, stand.seenAt && !stand.instant && stand.alarmGuard, stand);
+  g.check(`${id}: being seen brings the alarm and a guard within 1.5 s, not an instant LOCKUP`, stand.seenAt && !stand.instant && stand.alarmGuard, stand);
+  id === "lunch" && g.check("lunch: the guest who saw him runs to the FUR alarm before the guard comes", stand.witnessRan, stand);
   g.check(`${id}: standing in the open, the guard reaches him (LOCKUP)`, stand.lockupAt !== null, stand);
   g.check(`${id}: while the guard is coming, no action walks him out of the room`, stand.offers && !stand.offers.some((v) => v === "SNEAK" || v === "GO"), stand.offers);
   // A guard stays in the room he came into: if the story moves Squatch to another room, the guard is gone.
@@ -122,8 +130,9 @@ async function watched(id, beat, grid) {
         n.sq.x = x;
         n.sq.y = y;
         ss.tick(1 / 30);
-        if (ss.secNow()) break;
+        if (ss.secNow() || n.ch1LunchRun) break;
       }
+      for (let i = 0; i < 60 && !ss.secNow(); i++) ss.tick(1 / 30);
       const came = !!ss.secNow();
       n.room = n.room === "hall" ? "passage" : "hall";
       ss.tick(1 / 30);

@@ -759,14 +759,28 @@
       for (; a < -Math.PI; ) a += 2 * Math.PI;
       return Math.abs(a) < STAND_CONE_HALF;
     }
+    // The guest who saw him runs to the FUR alarm on the wall and pulls it; then the alarm sounds and the
+    // guard comes (Brian, Nov 15: "someone should run over to the fur alarm"; the party does the same).
+    // After the guard has gone, the guest walks back. The floor under the wall alarm in the hall picture:
+    const CH1_LUNCH_ALARM = { x: 885, y: 270 };
+    function ch1LunchRunTick(dt) {
+      let run = n.ch1LunchRun;
+      if (!run) return;
+      let home = CH1_LUNCH_WATCH[run.i];
+      if (run.phase === "run") mV(run, CH1_LUNCH_ALARM.x, CH1_LUNCH_ALARM.y, 420, dt || 0) && ((run.phase = "wait"), ch1CallSecurity("s6"));
+      else if (run.phase === "wait") ch2.sec || (run.phase = "back");
+      else if (run.phase === "back") mV(run, home.x, home.y, 120, dt || 0) && (n.ch1LunchRun = null);
+    }
     function ch1LunchSee(dt) {
       if (n.sqPose === "hidden") return;
       for (let i = 0; i < CH1_LUNCH_WATCH.length; i++) {
+        if (n.ch1LunchRun && n.ch1LunchRun.i === i) continue; // running to the alarm or back: not watching
         let gue = CH1_LUNCH_WATCH[i],
           dist = Math.hypot(n.sq.x - gue.x, n.sq.y - gue.y),
           standing = ch1ConeHit(n.sq.x, n.sq.y - 20, gue.x, gue.y - 28, gue.face),
           seen = n.sqPose === "ball" ? ballNotice("lunch" + i, dist, dt || 0, standing) : standing;
-        (n.sqPose !== "ball" && ballNotice("lunch" + i, STAND_FEET + 99, 0, !1), seen && ch1CallSecurity("s6"));
+        (n.sqPose !== "ball" && ballNotice("lunch" + i, STAND_FEET + 99, 0, !1),
+          seen && !n.ch1LunchRun && !ch2.sec && (n.ch1LunchRun = { i, x: gue.x, y: gue.y, phase: "run" }));
       }
     }
     function ch1Day2Tick(dt) {
@@ -784,7 +798,7 @@
       }
       (z && z.zoom < 1 && (z.zoom = Math.min(1, z.zoom + (dt || 0) / 0.5)),
         z && z.zoom >= 1 && !n.cur && n.q.length === 0 && (n.ctrl = !0),
-        n.ch1Step === "sneak" && n.room === "hall" && n.ctrl && !z && ch1LunchSee(dt),
+        n.ch1Step === "sneak" && n.room === "hall" && n.ctrl && !z && (ch1LunchSee(dt), ch1LunchRunTick(dt)),
         n.ch1Step === "hide" &&
           n.ctrl &&
           n.sqPose === "stand" &&
@@ -799,15 +813,16 @@
     function ch1Day2Spots() {
       if (!n.ch1Day2 || !n.ctrl || n.ch1PadOn) return [];
       let s = n.ch1Step;
-      if (s === "sneak" && n.sqPose === "ball") return ch2.sec ? [] : [ch1At("SNEAK", "hallway", 860, 560, 110, ch1ToMops)];
+      if (s === "sneak" && n.sqPose === "ball") return ch2.sec || n.ch1LunchRun ? [] : [ch1At("SNEAK", "hallway", 860, 560, 110, ch1ToMops)];
       if (n.sqPose === "hidden" || n.sqPose === "ball" || n.sqPose === "sleep") return [];
       if (s === "gift") return [ch1At("TAKE", "gift", 340, 520, 100, ch1TakeGift)];
       if (s === "box") return [ch1At("PUT", "box", CH1_CLOSET_SPOT[0], CH1_CLOSET_SPOT[1], 90, ch1PutBox)]; // the box is in the closet: he takes it out here
       if (s === "dropbox") return [ch1At("DROP", "box", n.sq.x || 350, n.sq.y || 520, 240, ch1DropBox)];
       if (s === "cal") return [ch1At("LOOK", "calendar", 230, 392, 110, ch1LookCal)];
       if (s === "lunch") return [ch1At("TAKE", "lunch", 500, 520, 100, ch1TakeLunch)];
-      // A guard is coming: the only way out is to hide, so ROLL is offered where he stands (C20) and SNEAK waits.
-      if (s === "sneak" && ch2.sec) return [ch1At("ROLL", "ball", n.sq.x, n.sq.y, 60, () => (n.sqPose = "ball"))];
+      // Seen (the guest is running to the alarm) or a guard is coming: the only way out is to hide, so ROLL is
+      // offered where he stands (C20) and SNEAK waits.
+      if (s === "sneak" && (ch2.sec || (n.ch1LunchRun && n.ch1LunchRun.phase !== "back"))) return [ch1At("ROLL", "ball", n.sq.x, n.sq.y, 60, () => (n.sqPose = "ball"))];
       if (s === "sneak")
         return [ch1At("SNEAK", "hallway", 700, 540, 520, ch1ToMops), ch1At("ROLL", "ball", 140, 360, 55, () => (n.sqPose = "ball"))];
       if (s === "give") return [ch1At("GIVE", "lunch", 500, 510, 130, ch1GiveLunch)];
@@ -942,7 +957,15 @@
     }
     function drawCh1Day2() {
       if (n.ch1Step === "sneak" && n.room === "hall")
-        for (let gue of CH1_LUNCH_WATCH) {
+        for (let gi = 0; gi < CH1_LUNCH_WATCH.length; gi++) {
+          let gue = CH1_LUNCH_WATCH[gi],
+            run = n.ch1LunchRun && n.ch1LunchRun.i === gi ? n.ch1LunchRun : null;
+          if (run) {
+            // Running to the alarm (or walking back): no cone while running, facing the way he goes.
+            let to = run.phase === "back" ? gue : CH1_LUNCH_ALARM;
+            drawCh1Alien(run.x, run.y, gue.face > 2 ? "antenna" : "hat", ALIEN_ADULT, to.x < run.x ? -1 : 1);
+            continue;
+          }
           (seenCone(gue.x, gue.y - 28, gue.face, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.55)", "rgba(160,100,10,.95)"),
             e.beginPath(),
             e.arc(gue.x, gue.y, STAND_FEET, 0, 7),
@@ -996,6 +1019,7 @@
       let b = beat | 0;
       ((ch2.qCheck = null),
         (ch2.sec = null),
+        (n.ch1LunchRun = null),
         (n.q = []),
         (n.cur = null),
         (n.ctrl = !0),
