@@ -161,15 +161,32 @@ export async function toMorningSong(page) {
   });
 }
 
-// Plays Chapter 1 from its start through the morning (singing along) to the evening: Squatch at home with
-// the goal to peek out the door, where the calendar close-up can be opened. Returns the goal chip.
-export async function toEvening(page) {
+// Plays Chapter 1 from its start through the morning (singing along) until Mops has left and Squatch is home
+// alone with the goal to do his homework (src/modules/home-alone.js). Returns the goal chip.
+export async function toHomeAlone(page) {
   await toMorningSong(page);
   return page.evaluate(() => {
     const ss = window.__ss,
       n = ss.op;
     const sing = (ss.spotsNow() || []).find((s) => s.id === "sing");
     sing && sing.f();
+    for (let i = 0; i < 3000 && !(n.ctrl && n.ch1Morning && n.ch1Morning.step === "home" && !n.cur); i++) {
+      if (n.cur && ["card", "bub", "wait", "cutaway"].includes(n.cur.k)) ((n.bt = 1), ss.opTap());
+      ss.tick(0.05);
+    }
+    return ss.chipNow();
+  });
+}
+
+// Plays Chapter 1 from its start through the morning (singing along) and the homework to the evening: Squatch
+// at home with the goal to peek out the door, where the calendar close-up can be opened. Returns the goal chip.
+export async function toEvening(page) {
+  await toHomeAlone(page);
+  return page.evaluate(() => {
+    const ss = window.__ss,
+      n = ss.op;
+    const hw = (ss.spotsNow() || []).find((s) => s.id === "homework");
+    hw && hw.f();
     for (let i = 0; i < 3000 && !(n.ctrl && n.ch1PeekReady && !n.cur); i++) {
       if (n.cur && ["card", "bub", "wait", "cutaway"].includes(n.cur.k)) ((n.bt = 1), ss.opTap());
       ss.tick(0.05);
