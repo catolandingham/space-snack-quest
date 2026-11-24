@@ -67,12 +67,12 @@ const dir = join(root, "src", "modules");
 const party = readdirSync(dir)
   .filter((f) => f.endsWith(".js") && f !== "party-lines.js")
   .map((f) => ({ f, src: readFileSync(join(dir, f), "utf8") }))
-  .filter((m) => /from "\.\/party-lines\.js"/.test(m.src));
+  .filter((m) => /from "\.\/party-lines\.js"/.test(m.src) || /^party-/.test(m.f));
 check("the party code reads the lines file", party.length > 0);
 const code = party.map((m) => m.src).join("\n").replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, "");
-const ids = [...code.matchAll(/(?:partyLine|line|say|think|chip)\("([a-z0-9-]+)"/g)].map((m) => m[1]).filter((id) => PARTY_LINES.some((l) => l.id === id));
+const ids = [...code.matchAll(/"([a-z0-9-]+)"/g)].map((m) => m[1]).filter((id) => PARTY_LINES.some((l) => l.id === id));
 const asked = [...code.matchAll(/partyLine\("([a-z0-9-]+)"\)/g)].map((m) => m[1]);
-const used = new Set([...ids, ...[...code.matchAll(/"((?:who|where)-[a-z]+)"/g)].map((m) => m[1])]);
+const used = new Set([...ids, ...(/lockupCause\(/.test(code) ? ["lockup-cause"] : [])]);
 const unused = PARTY_LINES.filter((l) => BUILT_HALVES.includes(l.half) && !used.has(l.id)).map((l) => l.id);
 check("the party code uses every line of the halves built so far", unused.length === 0, unused);
 check("the party code asks only for lines that exist", asked.every((id) => PARTY_LINES.some((l) => l.id === id)), asked.filter((id) => !PARTY_LINES.some((l) => l.id === id)));

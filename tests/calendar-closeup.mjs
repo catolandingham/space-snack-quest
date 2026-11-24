@@ -34,7 +34,7 @@ for (const viewport of [
     window.calendarCur = n.cur;
     return { scene: n.scene, x: n.sq.x, y: n.sq.y };
   });
-  g.check(`${tag}: the morning reaches bedroom control in the evening`, before.scene === "Q1" && (await page.evaluate(() => window.__ss.op.ch1PeekReady)), before);
+  g.check(`${tag}: the morning reaches bedroom control in the evening`, before.scene === "Q1" && (await page.evaluate(() => ((window.SSQ.beat("ch1-party").now() || {}).scene === "P1"))), before);
   await page.evaluate(() => {
     window.calendarPrinted = new Set();
     const draw = CanvasRenderingContext2D.prototype.fillText;
@@ -168,7 +168,7 @@ for (const viewport of [
   await page.evaluate(() => {
     const n = window.__ss.op;
     Object.assign(n, { q: [], cur: null, scene: "QB", room: "closet", wardrobe: "closed",
-      ch1Day2: true, ch1PeekReady: false, ch1Step: "cal", ctrl: true });
+      ch1Day2: true, ch1Step: "cal", ctrl: true });
     n.sq.x = 230; n.sq.y = 392;
   });
   await tap(179, 214);

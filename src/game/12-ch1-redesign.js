@@ -23,7 +23,7 @@
       QA: "",
     };
     // R73. Brian approved a 3 to 4 minute party. This slice uses 3 minutes.
-    // "Cool hat!" is the stand-in for how the party ends when the time runs out.
+    // When it runs out, Squatch walks home (half one of the party rebuild; half two brings closing time).
     const COOL_HAT_SECONDS = 180;
     // R59. The balloon takes about 6 seconds to reach the ceiling. Approved.
     const BALLOON_GRAB_SECONDS = 6;
@@ -151,11 +151,11 @@
     // Where the approved guests stand in the older free play: the party plan's cast (src/modules/party-hall.js
     // CAST), so the hall looks the same when Squatch walks back in. The octopus waits by the bar for his hug.
     const CH1_GUESTS = [
-      [336, 396, "antenna"],
+      [342, 396, "antenna"],
       [600, 490, "croc"],
-      [380, 430, "hat"],
-      [290, 390, "hair"],
-      [600, 380, "spots"],
+      [400, 452, "hat"],
+      [270, 390, "hair"],
+      [590, 380, "spots"],
       [760, 555, "blob"],
     ];
     // Everyone else at the party, where they stand (feet). Their sight cones come from here too (ch1PartyPeople).
@@ -572,7 +572,7 @@
         ]));
     }
     // Half one of the party rebuild ends here: Squatch walks into the older free play in the outfit he chose
-    // (src/modules/party.js draws it on him). The arrow dance and "Cool hat!" are off; half two replaces this.
+    // (src/modules/party.js draws it on him). The arrow dance and the cool-hat ending are off; half two replaces this.
     function ch1FreePlayStart() {
       ((n.scene = "QA"),
         (n.room = "hall"),
@@ -814,7 +814,7 @@
       J(lines);
     }
     // The older free play's time is up (COOL_HAT_SECONDS): Squatch walks home, and the evening ends there.
-    // ("Cool hat!" is off in half one of the party rebuild; half two brings closing time.)
+    // (The cool-hat line is off in half one of the party rebuild; half two brings closing time.)
     function ch1PartyTimeUp() {
       if (n.ch1PartyOver) return;
       ((n.ch1PartyOver = !0), (n.ctrl = !1), (n.act = null), (n.ch1Party = !1));
@@ -1062,7 +1062,7 @@
         ]));
     }
     function ch1QSpots() {
-      if (partyBeat() && partyBeat().active()) return partyBeat().spots();
+      if (partyBeat() && partyBeat().active()) return [...partyBeat().spots(), ...ch1CalendarSpots()];
       if (ch1MorningSpots()) return ch1MorningSpots();
       if (n.ch1Search && n.ctrl && n.room === "closet") return ch1SearchSpots();
       if (n.ch1Cut) return ch1CutSpots();
@@ -1289,7 +1289,7 @@
           if (guest[2] === "blob") return;
           window.SSQ && window.SSQ.drawGuest(e, guest[2], guest[0], guest[1], ADULT_PX, n.T) && n.ch1GuestArt++;
         }),
-        window.SSQ && window.SSQ.drawGuest(e, "blob", (n.ch1Oct && n.ch1Oct.x) || CH1_PARTY_CAST.octopus[0], (n.ch1Oct && n.ch1Oct.y) || CH1_PARTY_CAST.octopus[1], ADULT_PX, n.T),
+        window.SSQ && window.SSQ.drawGuest(e, "blob", (n.ch1Oct && n.ch1Oct.x) || CH1_PARTY_CAST.octopus[0], (n.ch1Oct && n.ch1Oct.y) || CH1_PARTY_CAST.octopus[1], ADULT_PX, n.T) && n.ch1GuestArt++,
         n.ch1Raid && n.ch1Raid.witness && window.SSQ && window.SSQ.drawGuest(e, "spots", n.ch1Raid.witness.x, n.ch1Raid.witness.y, ADULT_PX, n.T),
         ((n.ch1Raid && n.ch1Raid.guards) || []).forEach((g) => {
           g.face != null &&

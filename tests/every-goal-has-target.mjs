@@ -10,8 +10,8 @@
 import { readFileSync } from "node:fs";
 import { startGame } from "./game-page.mjs";
 
-const src = ["12-ch1-redesign.js", "13-ch1-slice.js", "14-ch1-day2.js"]
-  .map((f) => readFileSync(new URL("../src/game/" + f, import.meta.url), "utf8"))
+const src = ["game/12-ch1-redesign.js", "game/13-ch1-slice.js", "game/14-ch1-day2.js", "modules/party-lines.js"]
+  .map((f) => readFileSync(new URL("../src/" + f, import.meta.url), "utf8"))
   .join("\n");
 const chips = [...src.matchAll(/Squatch: [^"]+/g)].map((m) => m[0]);
 const unique = [...new Set(chips)];
@@ -32,8 +32,12 @@ const report = await page.evaluate(async (chips) => {
   const play = {
     "Squatch: walk around the room": { scene: "O1", room: "closet", day2: false, walk: true, x: 500, y: 530 },
     "Squatch: sing along with Mops": { scene: "Q1", room: "closet", song: true, day2: false },
-    "Squatch: peek out the door": { scene: "Q1", room: "closet", peek: true, day2: false, x: 890, y: 480 },
-    "Squatch: look around the party": { scene: "QA", room: "hall", party: true, day2: false, x: 480, y: 430 },
+    // The party night (src/modules/party.js): each opens its scene. Walking through a doorway is the action
+    // there (no button), so those goals count the walk, as "walk around the room" does.
+    "Squatch: peek out the door": { party: "P1", x: 860, y: 480 },
+    "Squatch: sneak to the plant": { party: "P2", x: 400, y: 552 },
+    "Squatch: sneak home for a disguise": { party: "P4", out: true, walk: true, x: 477, y: 560 },
+    "Squatch: run home and hide!": { party: "P2", alarm: true, walk: true, x: 520, y: 560 },
     "Squatch: pick up the gift": { step: "gift", room: "closet", x: 340, y: 520 },
     "Squatch: put the gift in the box": { step: "box", room: "closet", x: 230, y: 392 },
     "Squatch: look at the calendar": { step: "cal", room: "closet", x: 230, y: 392 },
@@ -129,6 +133,15 @@ const report = await page.evaluate(async (chips) => {
     return lineTo.apply(this, arguments);
   };
   for (const [chip, spec] of Object.entries(play)) {
+    if (spec.party) {
+      Object.assign(n, { ch1Day2: false, ch1Party: false, ch1Zoom: null, ch1PadOn: false, ch1Search: false, ch1Morning: null, q: [], cur: null, moPose: "hidden" });
+      window.SSQ.beat("ch1-party").jump(spec.party);
+      const p = n.ch1PartyNow;
+      spec.out && ((p.pose = "stand"), (n.sqPose = "stand"));
+      spec.alarm && (p.alarm = { phase: "search", t: 0, st: 0, w: { id: "backpack", x: 880, y: 318, hx: 600, hy: 490 }, where: "where-hall", who: "who-tourist", guards: [], bell: 9, last: null, hidden: "" });
+      ((n.sq.x = spec.x), (n.sq.y = spec.y), (n.ch1Chip = chip), (n.chip = chip), (n.moved = 200));
+    } else {
+    n.ch1PartyNow = null;
     n.ch1Day2 = spec.day2 !== false;
     n.ch1Party = !!spec.party;
     n.ch1PartyOver = false;
@@ -137,7 +150,6 @@ const report = await page.evaluate(async (chips) => {
     // The song step of the morning module (src/modules/morning.js), with Mops beside the bucket.
     n.ch1Morning = spec.song ? { step: "song", t: 0, notes: true } : null;
     spec.song && ((n.mo.x = 690), (n.mo.y = 560));
-    n.ch1PeekReady = !!spec.peek;
     n.ch1Search = false;
     n.ch1PadOn = !!spec.pad;
     n.ch1Zoom = spec.zoom ? { id: spec.zoom, zoom: 1, paw: { x: 400, y: 400 }, bag: 0, gone: {} } : null;
@@ -156,8 +168,8 @@ const report = await page.evaluate(async (chips) => {
     n.sq.x = spec.x || 400;
     n.sq.y = spec.y || 520;
     n.moved = spec.walk ? 0 : 200;
-    n.ch1Veil = 0;
     n.chip = chip;
+    }
     for (let i = 0; i < 12; i++) ss.tick(0.05);
     yellowCircles.clear();
     n.lastRing = null;

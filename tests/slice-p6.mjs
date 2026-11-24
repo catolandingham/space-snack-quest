@@ -1,6 +1,6 @@
 /**
  * Playtest 6 on the chapter slice: the picture does not jump when NEXT appears,
- * Isfred's party line points at him on the stage, and the disguise fades in.
+ * and Isfred's party line points at him on the stage (at the mic, party plan cast).
  *   node tests/slice-p6.mjs
  */
 import { startGame, sleep } from "./game-page.mjs";
@@ -47,118 +47,12 @@ const bubble = await page.evaluate(() => {
 const box = bubble.box;
 g.check(
   "Isfred's party line points at him on the stage and stays on screen",
-  bubble.at.x === 360 && bubble.at.y === 190 && box && box.y >= 0 && box.x >= 0 && box.x + box.w <= 960 && box.y + box.h <= bubble.at.y,
+  bubble.at.x === 420 && bubble.at.y === 190 && box && box.y >= 0 && box.x >= 0 && box.x + box.w <= 960 && box.y + box.h <= bubble.at.y,
   bubble,
 );
 
-const dress = await page.evaluate(() => {
-  const ss = window.__ss;
-  const n = ss.op;
-  const fill = () => {
-    n.scene = "Q1";
-    n.room = "closet";
-    n.ctrl = true;
-    n.cur = null;
-    n.q = [];
-    n.live = [];
-    n.ch1Cut = null;
-    n.ch1Morning = null;
-    n.ch1Search = false;
-    n.ch1Mini = "";
-    n.ch1Dress = {
-      on: true,
-      head: "tophat",
-      face: "shades",
-      body: "shirt",
-      legs: "boots",
-      extra: ["scarf", "bow", "nose", "pipe"],
-    };
-    n.sq.x = 120;
-    n.sq.y = 400;
-    n.ch1Veil = 0;
-    n.ch1VeilTo = 0;
-    ss.tick(0.05);
-  };
-  const press = (code) => document.dispatchEvent(new KeyboardEvent("keydown", { code, bubbles: true }));
-  fill();
-  const offer = ss.offerNow();
-  const dist = Math.hypot(n.sq.x - 460, n.sq.y - 640);
-  press("Space");
-  const space = { veilTo: n.ch1VeilTo, ctrl: n.ctrl };
-  fill();
-  press("Enter");
-  const enter = { veilTo: n.ch1VeilTo, ctrl: n.ctrl };
-  fill();
-  ss.actionDown();
-  const keyE = { veilTo: n.ch1VeilTo, ctrl: n.ctrl };
-  fill();
-  ss.ch1Pointer("down", 480, 600);
-  const click = { veilTo: n.ch1VeilTo, ctrl: n.ctrl };
-  fill();
-  ss.ch1Pointer("down", 120, 200);
-  const miss = { veilTo: n.ch1VeilTo, on: !!(n.ch1Dress && n.ch1Dress.on) };
-  fill();
-  ss.ch1Pointer("down", 480, 600);
-  for (let i = 0; i < 24; i++) ss.tick(0.05);
-  const left = { on: !!(n.ch1Dress && n.ch1Dress.on), veil: n.ch1Veil, room: n.room };
-  fill();
-  ss.resetHold(true);
-  for (let i = 0; i < 20; i++) ss.tick(0.05);
-  ss.resetHold(false);
-  return {
-    verb: offer && offer.verb,
-    dist,
-    space,
-    enter,
-    keyE,
-    click,
-    miss,
-    left,
-    afterR: { on: !!(n.ch1Dress && n.ch1Dress.on), veil: n.ch1Veil || 0 },
-  };
-});
-g.check(
-  "Go! works from a corner by Space, Enter, E, and a click, and R clears the overlay",
-  dress.verb === "GO" &&
-    dress.dist > 400 &&
-    dress.space.veilTo === 1 &&
-    dress.enter.veilTo === 1 &&
-    dress.keyE.veilTo === 1 &&
-    dress.click.veilTo === 1 &&
-    dress.miss.veilTo === 0 &&
-    dress.miss.on === true &&
-    dress.left.on === false &&
-    dress.afterR.on === false &&
-    dress.afterR.veil === 0,
-  dress,
-);
-
-const veil = await page.evaluate(() => {
-  const ss = window.__ss;
-  const n = ss.op;
-  n.scene = "QA";
-  n.room = "hall";
-  n.ch1Party = true;
-  n.ch1Disguise = false;
-  n.ch1PartyOver = false;
-  n.ch1Dress = null;
-  n.ch1Cut = null;
-  n.ctrl = true;
-  n.cur = null;
-  n.q = [];
-  n.sqPose = "stand";
-  n.sq.x = 220;
-  n.sq.y = 530;
-  const spot = ss.spotsNow().find((s) => s && s.cap === "tourist disguise");
-  if (!spot) return { missing: true };
-  spot.f();
-  const before = { veil: n.ch1Veil, on: !!n.ch1Disguise };
-  for (let i = 0; i < 20; i++) ss.tick(0.05);
-  const mid = { veil: n.ch1Veil, on: !!n.ch1Disguise };
-  for (let i = 0; i < 20; i++) ss.tick(0.05);
-  return { before, mid, after: { veil: n.ch1Veil, on: !!n.ch1Disguise, ctrl: n.ctrl } };
-});
-g.check("the disguise fades in instead of popping on", veil.mid && veil.mid.on === true && veil.before.on === false && veil.after.veil < 0.05 && veil.after.ctrl === true, veil);
+// The dress-up and the "PUT ON · tourist disguise" fade went with the party rebuild (src/modules/dress-up.js):
+// tests/party-scenes.mjs checks the full-screen dress-up, its GO · party button and ↺.
 
 const patrol = await page.evaluate(() => {
   const ss = window.__ss;
@@ -193,10 +87,16 @@ const music = await page.evaluate(async () => {
   ss.tick(0.05);
   const titleCue = ss.warmCue;
   for (let i = 0; i < 30 && ss.warmPlay !== "ok"; i++) await new Promise((r) => setTimeout(r, 100));
+  // The morning's own recording hands the room back once its fade-out has run (it began at the title).
+  for (let i = 0; i < 80 && window.SSQ.homeMusic.owns(); i++) ss.tick(0.05);
   n.scene = "Q1";
   n.room = "closet";
+  // Past the morning (its own music owns the home room until "That evening…"), with no bubble up.
+  n.ch1Morning = null;
+  n.cur = null;
+  n.q = [];
+  n.ch1Party = false;
   n.ch1Search = false;
-  n.ch1Dress = null;
   n.guard = null;
   n.gift = false;
   n.holdToy = false;

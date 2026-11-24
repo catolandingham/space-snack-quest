@@ -44,7 +44,7 @@ const bridge = await page.evaluate(() => {
   return out;
 });
 g.check("window.SSQ is the bridge: frozen, not replaceable, version 1", !!bridge && bridge.version === 1 && bridge.frozen && bridge.locked, bridge);
-g.check("the morning is the one rebuilt beat", !!bridge && JSON.stringify(bridge.ids) === JSON.stringify(["ch1-morning"]) && bridge.unknown === null, bridge);
+g.check("the rebuilt beats are the morning and the party night", !!bridge && JSON.stringify(bridge.ids) === JSON.stringify(["ch1-morning", "ch1-party"]) && bridge.unknown === null, bridge);
 g.check("a beat registers once by id; registering it twice throws", !!bridge && bridge.registered === "test" && bridge.twice === "throws", bridge);
 g.check("the older program still starts (Chapter 1 state is there)", await page.evaluate(() => !!(window.__ss && window.__ss.op)));
 g.check("the older program handed the engine over to the bridge", await page.evaluate(() => !!window.SSQ.engine()));
@@ -58,6 +58,14 @@ const sets = [...morningSrc.matchAll(/\.set\("([A-Za-z0-9]+)"/g)].map((m) => m[1
 g.check("bridge.js names the fields a beat may write", Array.isArray(BEAT_WRITES) && BEAT_WRITES.length > 0, BEAT_WRITES);
 g.check("the morning writes only named fields", Array.isArray(BEAT_WRITES) && sets.length > 0 && sets.every((k) => BEAT_WRITES.includes(k)), sets.filter((k) => !(BEAT_WRITES || []).includes(k)));
 g.check("the morning never reaches into the game state another way", !/__ss|\.op\b|window\.n\b/.test(morningSrc));
+// The party night (party.js and its parts) writes through the same engine, only named fields.
+const partySrc = readdirSync(join(root, "src", "modules"))
+  .filter((f) => /^party/.test(f) || f === "dress-up.js")
+  .map((f) => readFileSync(join(root, "src", "modules", f), "utf8"))
+  .join("\n");
+const partySets = [...partySrc.matchAll(/\.set\("([A-Za-z0-9]+)"/g)].map((m) => m[1]);
+g.check("the party night writes only named fields", partySets.length > 0 && partySets.every((k) => (BEAT_WRITES || []).includes(k)), partySets.filter((k) => !(BEAT_WRITES || []).includes(k)));
+g.check("the party night never reaches into the game state another way", !/__ss|\.op\b|window\.n\b/.test(partySrc));
 const writes = await page.evaluate(() => window.SSQ.beatWrites());
 g.check("in the browser the morning wrote only named fields", Array.isArray(writes) && writes.every((k) => (BEAT_WRITES || []).includes(k)), writes);
 const game = readdirSync(join(root, "src", "game"))
@@ -67,7 +75,10 @@ const game = readdirSync(join(root, "src", "game"))
 // ch1CalendarBitten and the bite on touch went with home alone: the calendar is always bitten (Brian, G 556).
 const gone = ["CH1_MOPS_MORNING", "CH1_SONG_MOPS", "CH1_SONG_SQ", "ch1Day1(", "ch1MopsHumTick", "ch1SingAlong", "ch1MopsLeaveTick", "ch1SongSpots", "ch1Song", "ch1MopsLeave", "songTap", "ss-song", "ch1CalendarBitten", "biteAt"];
 g.check("the old morning code is gone from src/game/", gone.every((name) => !game.includes(name)), gone.filter((name) => game.includes(name)));
-const kept = ["function ch1CalendarAvailable", "function ch1CalendarSpots", "function ch1OpenCalendar", "function ch1CloseCalendar", "function ch1CalendarTap", "let ch1CalendarPaper", "function drawCh1Calendar", "function ch1CalHit", "function ch1PeekSpots", "function ch1SneakStart", "function co("];
-g.check("the calendar, the peek and the made-up tune (used elsewhere) stay", kept.every((name) => game.includes(name)), kept.filter((name) => !game.includes(name)));
+const kept = ["function ch1CalendarAvailable", "function ch1CalendarSpots", "function ch1OpenCalendar", "function ch1CloseCalendar", "function ch1CalendarTap", "let ch1CalendarPaper", "function drawCh1Calendar", "function ch1CalHit", "function co("];
+g.check("the calendar and the made-up tune (used elsewhere) stay", kept.every((name) => game.includes(name)), kept.filter((name) => !game.includes(name)));
+// The old party peek, sneak and dress-up (party plan P1 to P5) are gone from src/game/: party.js replaced them.
+const partyGone = ["function ch1PeekSpots", "function ch1PeekGo", "function ch1PeekLook", "CH1_PEEK_AT", "function ch1SneakStart", "function ch1SneakTick", "function ch1SneakHide", "ch1PlantSneak", "function ch1DressOpen", "function drawCh1Dress", "CH1_DRESS_ITEMS", "function ch1PartyPeek", "drawCh1SliceParty", "ch1Veil"];
+g.check("the old party peek, sneak and dress-up code is gone from src/game/", partyGone.every((name) => !game.includes(name)), partyGone.filter((name) => game.includes(name)));
 g.check("no page errors", errors.length === 0, errors);
 await g.finish("module-build");

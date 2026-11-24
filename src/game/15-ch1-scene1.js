@@ -65,6 +65,11 @@
     function partyBeat() {
       return (window.SSQ && window.SSQ.beat && window.SSQ.beat("ch1-party")) || null;
     }
+    // True at home that evening before the peek (party P1): the calendar is still there to look at.
+    function ch1PartyAtHome() {
+      let now = partyBeat() && partyBeat().now();
+      return !!now && now.scene === "P1" && now.phase === "home";
+    }
     // The evening starts (beat 3): the party night module takes over (P1, the peek). Without it, Day 2 starts.
     function ch1EveningStart() {
       // The evening is a new step: forget the morning's saved song step, so ↺ here never brings Mops back.
@@ -140,7 +145,6 @@
         drawEyes: (ctx, x, y) => onCtx(ctx, () => ga(x, y)),
         drawMopsOn: (ctx, x, y, scale, opts) => onCtx(ctx, () => Fe(x, y, scale, opts || {})),
         hallSizes: () => ({ adult: ADULT_PX, squatch: SQ_ADULT }),
-        homeAdult: () => adultPxFor("home"),
         // Sight cones: the standing cone's size, and telling the tests (conesDrawn) about a cone drawn this frame.
         coneSize: () => ({ half: STAND_CONE_HALF, len: STAND_CONE_LEN }),
         noteCone: (c) => conesDrawn.push({ ...c, room: n.room, cam: 0 }),
@@ -161,7 +165,7 @@
         },
         // The one capture rule's end (25-capture.js): the LOCKUP card with `cause`, then the part restarts.
         catchSquatch: (cause) => ((CAPTURES.party = { cause, joke: () => kh() }), capture("party")),
-        lostYou: () => lostYou(),
+        lostYou: (text) => (hudNote(text, 2.5), Dt("safe", "", text, "safe")),
         sfx: (name) => D[name] && D[name](),
         // The goal's yellow outline round a party spot's real thing (drawGoalMark keeps n.lastRing for the chip).
         markGoal: (spot) => drawGoalMark(spot),
@@ -178,7 +182,7 @@
         alone = !!(beat && beat.homeAlone && beat.homeAlone());
       return n.ctrl && n.hopOut < 0 && !de() && n.room === "closet" && n.wardrobe !== "open" &&
         !n.ch1Day2 && !n.ch1Party && !n.ch1Zoom && !n.ch1Calendar &&
-        (n.scene === "O1" || (n.scene === "Q1" && alone));
+        (n.scene === "O1" || (n.scene === "Q1" && (alone || ch1PartyAtHome())));
     }
     function ch1CalendarSpots() {
       return ch1CalendarAvailable() && n.sqPose === "stand"

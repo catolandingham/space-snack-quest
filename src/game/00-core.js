@@ -1050,6 +1050,8 @@
       // Mops who is hidden or off the picture is not. The UPS robot counts when the hangar crew is out, or when the photo-wall beep draws him.
       if (who === "pa") return !0;
       if (who === "mops") return n.moPose !== "hidden" && n.mo.x > 20 && n.mo.x < 940 && n.mo.y > 40 && n.mo.y < 620;
+      // Peeking round his door at the party, only his head shows at the picture's edge (src/modules/party.js).
+      if (who === "sq" && partyBeat() && partyBeat().speakerAt("sq")) return !0;
       if (who === "sq") return n.sq.x > -20 && n.sq.x < 980 && n.sq.y > 0 && n.sq.y < 640;
       if (who === "ups") return !!(n.room === "hangar" && n.ch1D) || !!n.ch1Beep;
       return !0;

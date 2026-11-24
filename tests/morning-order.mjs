@@ -427,7 +427,7 @@ const holdRestart = (page) =>
     for (let i = 0; i < 4; i++) ss.tick(0.05);
     const c = n.cur;
     const d = window.SSQ.beat("ch1-morning").debug();
-    return { k: c ? c.k : "", step: n.ch1Morning ? n.ch1Morning.step : "", pose: n.sqPose, moPose: n.moPose, peek: !!n.ch1PeekReady, chip: ss.chipNow(), ctrl: n.ctrl, walking: !!n.mo.walking, wet: d.wet, mo: [Math.round(n.mo.x), Math.round(n.mo.y)] };
+    return { k: c ? c.k : "", step: n.ch1Morning ? n.ch1Morning.step : "", pose: n.sqPose, moPose: n.moPose, peek: ((window.SSQ.beat("ch1-party").now() || {}).scene === "P1"), chip: ss.chipNow(), ctrl: n.ctrl, walking: !!n.mo.walking, wet: d.wet, mo: [Math.round(n.mo.x), Math.round(n.mo.y)] };
   });
 // Taps through the morning until the beat's step is `step` (and, if given, a `k` step is up); returns what is up then.
 const tapUntilStep = (page, step, k) =>

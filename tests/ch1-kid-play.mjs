@@ -86,6 +86,8 @@ const st = () =>
       zoomKey: n.ch1Zoom ? [n.ch1Zoom.id, n.ch1Zoom.bag || 0, n.ch1Packed || 0].join(":") : "",
       jailBy: n.jailBy || "",
       step: n.ch1Step || "",
+      // The party's full-screen dress-up (src/modules/party.js): the pieces in the closet and the body spots.
+      dress: window.SSQ && window.SSQ.beat("ch1-party") ? window.SSQ.beat("ch1-party").dressTargets() : null,
       placed: ss.placedSpots().map((s) => ({ id: s.id || "", verb: s.verb || "", cap: s.cap || "", x: Math.round(s.x || 0), y: Math.round(s.y || 0), r: s.r || 0 })),
       // Furniture, plus Mops: the game does not let Squatch walk through him.
       solids: ss.solids().concat(!ss.ch.mops && n.moPose !== "hidden" && n.moPose !== "sleep" && n.mo.x > 20 && n.mo.x < 1000 ? [{ x0: n.mo.x - 46, x1: n.mo.x + 46, y0: n.mo.y - 46, y1: n.mo.y + 46, mops: true }] : []),
@@ -299,12 +301,34 @@ while (now() < MAX_S) {
     break;
   }
   loopScene = s.scene;
-  const key = [s.scene, s.room, s.chip, s.mops, s.zoomKey, done.size, seen.caught.length].join("|");
+  const key = [s.scene, s.room, s.chip, s.mops, s.zoomKey, done.size, seen.caught.length, s.dress ? JSON.stringify(s.dress.outfit) : ""].join("|");
   if (key !== lastKey) ((lastKey = key), (lastChange = Date.now()), progress++);
   if (Date.now() - lastChange > 75000) {
     end = "stuck";
     say(s, "STUCK 75s. Spots: " + JSON.stringify(s.placed) + " mini=" + s.mini + " cur=" + s.cur + " ctrl=" + s.ctrl + " zoom=" + s.zoom + " step=" + s.step);
     break;
+  }
+  // The dress-up fills the phone: drag a piece from the closet onto the next bare spot on Squatch, the way a kid
+  // drags with a finger; when the meter is full, tap GO · party.
+  if (s.dress) {
+    const d = s.dress;
+    if (d.go) {
+      say(s, "DRESS: GO · party");
+      await tap(d.go.x, d.go.y);
+      await sleep(500);
+      continue;
+    }
+    const spot = ["head", "face", "body", "legs"].find((k) => !d.outfit[k]);
+    const piece = d.pieces[0];
+    if (spot && piece) {
+      say(s, `DRESS: drag ${piece.id} to ${spot}`);
+      const to = d.spots[spot];
+      await page.touchscreen.touchStart(piece.x, piece.y);
+      for (let k = 1; k <= 8; k++) (await page.touchscreen.touchMove(piece.x + ((to.x - piece.x) * k) / 8, piece.y + ((to.y - piece.y) * k) / 8), await sleep(30));
+      await page.touchscreen.touchEnd();
+      await sleep(350);
+    }
+    continue;
   }
   if (s.up) {
     await tapGame(s, 480, 320);

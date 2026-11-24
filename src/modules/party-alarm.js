@@ -30,12 +30,13 @@ export const ALARM = Object.freeze({
   homeDelay: 0.5, // pinned: home-search-delay (a guard follows him home this long after he goes through)
   search: 3.5, // how long the guards search a hidden Squatch before giving up
   homeSearch: 3, // how long the guard searches the home room
+  doorLook: 0.8, // the home guard first looks round from the doorway
   bell: 1.6, // the bell rings again this often while the alarm is on
   backAway: 34, // how far guests back away toward the walls
   calm: 140, // walking back to calm (pixels a second)
 });
 // The home room: where the guard comes in and where he searches from (game positions in the locked home picture).
-export const HOME = Object.freeze({ door: { x: 880, y: 470 }, look: { x: 690, y: 480 } });
+export const HOME = Object.freeze({ door: { x: 880, y: 470 }, look: { x: 770, y: 470 } });
 
 const step = (o, x, y, speed, dt) => {
   const dx = x - o.x,
@@ -180,11 +181,12 @@ function searchHome(a, dt, api, sq, hidden) {
     g.a = 0;
     return;
   }
-  const arrived = step(g, HOME.look.x, HOME.look.y, ALARM.guard, dt);
+  g.door = (g.door || 0) + dt;
+  const arrived = g.door > ALARM.doorLook && step(g, HOME.look.x, HOME.look.y, ALARM.guard, dt);
   if (arrived) {
     g.sweep += dt;
     g.a = Math.PI + Math.sin(g.sweep * 1.6) * 0.55;
-  } else g.a = Math.atan2(HOME.look.y - g.y, HOME.look.x - g.x);
+  } else g.a = g.door > ALARM.doorLook ? Math.atan2(HOME.look.y - g.y, HOME.look.x - g.x) : Math.PI + Math.sin(g.door * 4) * 0.4;
   const c = coneFrom("guard-home", g.x, g.y, g.a, api.size()),
     sees = !hidden && (coneSees(c, sq) || Math.hypot(sq.x - g.x, sq.y - g.y) < ALARM.feet);
   g.sees = sees;

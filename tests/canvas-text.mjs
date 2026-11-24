@@ -115,15 +115,13 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
     const n = ss.op;
     const shot = (name, setup) => {
       window.__textLog = [];
-      n.ch1Dress = null;
+      n.ch1PartyNow = null;
       n.ch1Cut = null;
       n.ch1Mini = "";
       n.ch1Morning = null;
-      n.ch1Veil = 0;
       n.cur = null;
       n.q = [];
       setup();
-      n.ch1Veil = 0;
       for (let i = 0; i < 8; i++) ss.tick(0.05);
       ss.drawFrame();
       const css = document.querySelector("canvas").getBoundingClientRect().width / 960;
@@ -200,15 +198,9 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
         n.sq.y = 470;
       }),
       shot("home start", () => ss.ch1JumpBeat(22)),
-      shot("dress-up", () => {
-        n.scene = "Q1";
-        n.room = "closet";
-        n.wardrobe = "open";
-        n.ch1Dress = { on: true, head: "", face: "", body: "", legs: "", extra: [] };
-        n.ch1Veil = 0;
-        n.cur = null;
-        n.ctrl = true;
-      }),
+      // The party night's hall (src/modules/party.js): the banner's words. The dress-up is full screen, its own
+      // canvas over the page, not text on the game picture.
+      shot("party sneak", () => window.SSQ.beat("ch1-party").jump("P2")),
       shot("lunch sneak", () => ss.ch1JumpBeat(25)),
       shot("photo wall", () => ss.ch1JumpBeat(37)),
       shot("night paw", () => ss.ch1JumpBeat(42)),
@@ -282,9 +274,8 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
     const office = await page.evaluate(() => {
       const ss = window.__ss;
       ss.ch1JumpBeat(59);
-      ss.op.ch1Dress = null;
+      ss.op.ch1PartyNow = null;
       ss.op.ch1Cut = null;
-      ss.op.ch1Veil = 0;
       ss.drawFrame();
       const c = document.querySelector("canvas");
       const g = c.getContext("2d");

@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–57 | ## Where main is (Chapter 1 redesign) |
-| 58–72 | ## Register |
-| 73–94 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 95–115 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 116–128 | ## Phase 2 (plan section 4, T13 to T18) |
-| 129–151 | ## Phase 1 (plan section 3, T5 to T12) |
-| 152–165 | ## SS40–SS44 |
-| 166–183 | ## Story rows |
-| 184–202 | ## Reset section |
-| 203–213 | ## Still open |
-| 214–217 | ## Chapter 1 replot, recorded and not built |
-| 218–359 | ## Changelog |
+| 24–59 | ## Where main is (Chapter 1 redesign) |
+| 60–74 | ## Register |
+| 75–96 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 97–117 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 118–130 | ## Phase 2 (plan section 4, T13 to T18) |
+| 131–153 | ## Phase 1 (plan section 3, T5 to T12) |
+| 154–167 | ## SS40–SS44 |
+| 168–185 | ## Story rows |
+| 186–204 | ## Reset section |
+| 205–215 | ## Still open |
+| 216–219 | ## Chapter 1 replot, recorded and not built |
+| 220–363 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -23,7 +23,9 @@
 
 ## Where main is (Chapter 1 redesign)
 
-2026-11-24, draft PR on branch `feat/morning-fixes`, not merged: Brian's 18a to 21a and the iPhone playthrough of 2026-11-23. No "tap ▸" note and no yellow bobbing arrow on story waits in any chapter (NEXT only; the big button is dimmed while the story plays on its own); the title's Sir Mops-a-Lot drawn as the approved Mops (beard as mop, no stick); faces only where a switch is possible; with sound on, Joe's theme on the title and first card (through the master volume, fading on "This is Squatch"), soft snoring while Squatch sleeps, a ding-dong before "Good morning, Stormtop!" (`src/modules/morning-sound.js`); the Floating in Space recording starts past its quiet first 3 seconds and Mops's song line waits for it; Mops mops along the floor to his bucket with a wet streak before the beard close-up; no paw on the calendar close-up. His party comments 10 to 23 are in `docs/BRIAN-ASKS-OPEN.md` under "Playthrough 2026-11-23" for the party rebuild.
+2026-11-24, draft PR #85 on branch `feat/party-rebuild` (party rebuild, half one), not merged: party scenes P1 to P5 as `src/modules/party.js` with `party-alarm.js` (the one capture rule), `party-vent.js` (the no-disguise fur rule), `dress-up.js` and `fullscreen.js` (the full-screen dress-up), `party-hall.js`, `party-art.js`, `party-draw.js`, words in `party-lines.js` (sheet `docs/PARTY-LINES-FOR-BRIAN.md`, all approved 2026-11-24), the picture sheet tool `tools/party-sheet.mjs`. Hands off to the older free play (arrow dance and "Cool hat!" off). Half two (P6 to P8) is next. Not yet played by a person.
+
+2026-11-24, PR #86 (branch `feat/morning-fixes`), merged 2026-11-24: Brian's 18a to 21a and the iPhone playthrough of 2026-11-23. No "tap ▸" note and no yellow bobbing arrow on story waits in any chapter (NEXT only; the big button is dimmed while the story plays on its own); the title's Sir Mops-a-Lot drawn as the approved Mops (beard as mop, no stick); faces only where a switch is possible; with sound on, Joe's theme on the title and first card (through the master volume, fading on "This is Squatch"), soft snoring while Squatch sleeps, a ding-dong before "Good morning, Stormtop!" (`src/modules/morning-sound.js`); the Floating in Space recording starts past its quiet first 3 seconds and Mops's song line waits for it; Mops mops along the floor to his bucket with a wet streak before the beard close-up; no paw on the calendar close-up. His party comments 10 to 23 are in `docs/BRIAN-ASKS-OPEN.md` under "Playthrough 2026-11-23" for the party rebuild.
 
 2026-11-23, draft PR on branch `feat/home-alone` (morning plan PR 3), not merged: home alone after Mops leaves (`src/modules/home-alone.js`, `home-alone-lines.js`, `homework-cutaway.js`; sheet `docs/HOME-ALONE-LINES-FOR-BRIAN.md`). Goal "Squatch: do your homework", desk outlined only; DO · homework, a two-picture homework cutaway, then "That evening…". Optional: OPEN · closet (G box drawn on the locked open picture as approved, door shuts on the next tap), FLOP · bed ("Not sleepy anymore."), LOOK · calendar (bitten from the start). Brian's answers 13A (sums approved), 14A (thin-outline close-up Squatch, lying-down flop), 15A (edge nibble kept), 16A (merge after a full green run) are built, with his feedback: labels next to their thing and clear of Squatch (`cap-place.js`), no goal outline over Squatch or Mops, no purple bar in front of the bed. Not yet played by a person.
 
@@ -216,6 +218,8 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/old/OPEN-ASKS.md`. The
 `docs/DECISIONS.md` rows R29 through R63 are the Nov 8–9 cartoon decisions. R29–R57 cover the home wardrobe, no home vent, the pickup-day crate, the spare blue jacket disguise, Isfred Bar Neshuman, ball-hide timing, the office computer, the connecting hallway, the party with no Mops and no robots, the office cutscene, and the Employee of the Month gallery (5 photos, crooked photo #4, keepsake points still open). R58–R63 are not in the game. R58: returning the balloon gets a wordless smile, a finger to the lips, and a thumbs-up; keeping it makes the kid yell "Scary Wookiee!" (NEEDS BRIAN), pulls the FUR alarm, and brings security; never jumping sends the balloon to the ceiling, the kid is sad, and nothing else happens. R59, delegated by Brian: the kid gasps with "!" and points, then a 6-second wobbly glowing rise while grabbable, one jump grabs it, and it reads with no words. R60: the pair hunt is dropped; a "Find someone who…" picture card is proposed and pending Brian; the octopus is an over-snacked, huggy tourist ("*hic* Fellow tourist!", NEEDS BRIAN) whose two hugs knock the disguise off; a photo corner lets Squatch enter the shot, then a cut to a printing Polaroid, with bonus points if he is in it (amount open); tapes proof is dropped; the third snack-table grab starts a chain reaction that pushes things off the far end and gives a hide window (4-second placeholder, needs Brian). R61: the balloon stays in the party hall later (on the ceiling if missed, tied near the kid's spot if returned) and pops quietly with a comic "POP!" (NEEDS BRIAN) on the last Chapter 1 hall visit. R62: funnier gags are things worn as horns, something in his mouth, and random things on his head, about 16, the Squatch ball-roll photobomb stays, and the crooked photo stays #4; the crayon drawing reads as Squatch and Mops with "Always tied together" (NEEDS BRIAN) underneath; controls are left and right arrows under the photo plus an X that is always visible; swiping past photo 5 always triggers "BEEP BEEP" (NEEDS BRIAN) and the gallery cuts out. R63: kid-handwritten "MOPS" and "ME" (NEEDS BRIAN), and a dotted sight line from Mops to Squatch with hearts rising from it, contrasting with the "!" other characters get. They are not in the game. New on-screen words are marked NEEDS BRIAN in `docs/CH1-CARTOON-LINES.md`. Ball-hide numbers (R43, about 70px for 2 seconds), the 6-second rise (R59), and the 4-second snack-table placeholder (R60) are written down only. This page does not change a timer, a price, or a range in the build.
 
 ## Changelog
+
+2026-11-24, draft PR #85 on `feat/party-rebuild`. Party rebuild half one (P1 to P5). New modules: `party.js` (the scenes, sight, restarts), `party-alarm.js`, `party-vent.js`, `party-hall.js` (the hall's things and the cast, one table), `party-art.js` and `party-draw.js` (every new drawing; on the picture sheet), `dress-up.js`, `fullscreen.js`, `party-lines.js`. Bridge: `ch1PartyNow` added to BEAT_WRITES, the guest pictures exposed; new hand-overs (drawing Squatch and Isfred on a given canvas, the hall sizes, the cone size, enterRoom, steering, catchSquatch with the who-and-where cause, lostYou, sfx, markGoal, startFreePlay). Deleted from `src/game/`: the old peek, sneak, dress-up, `ch1PartyPeek`, the PUT ON disguise fade, the poster, cake table, cape guest, stick octopus, balloon kid and tripod drawings. The older free play's guests stand at the new cast spots; its cones are whole; DANCE · circle and the "Cool hat!" line are off (COOL_HAT_SECONDS unchanged; time up walks him home). Lines: all 41 approved by Brian 2026-11-24 ("Yes to all"); Croc Boys look B redrawn as crocodiles and approved ("A: Yes, use these"). Docs match main: yes.
 
 2026-11-23, draft PR on `feat/home-alone` (morning plan PR 3). Home alone after Mops leaves, as part of the morning beat: new `home-alone.js` (spots, closet open and shut, bed flop, G box drawing), `home-alone-lines.js`, `homework-cutaway.js` (two pictures in the shared cutaway); `goal-targets.js` gets `closet:homework` (the desk); bridge: `drawSquatch` hand-over, `wardrobe` and `sqBedX` in `BEAT_WRITES`. Older program: the calendar is offered home alone, the bite is drawn from the start, and the bite-on-touch code (`ch1CalendarBitten`, the crumbs) is deleted; the bed drawing takes `sqBedX`; the home room calls the module's `drawOnRoom` for the G box. `docs/approved-art/closet/` holds Brian's approved G box picture for the test. Tests: home-alone, home-alone-lines; updated: morning-order, opening-song, morning-music, scene1-morning, calendar-closeup, ch1-playthrough, module-build, `toEvening` in game-page. Lines 9 to 11 need Brian's yes.
 

@@ -23,8 +23,7 @@ async function walk(x, y, frames, day2 = false) {
       n.ch1Morning = null;
       n.ch1Day2 = day2;
       n.ch1Step = day2 ? "cal" : "";
-      n.ch1PeekReady = false;
-      n.ch1Dress = null;
+      n.ch1PartyNow = null;
       n.ch1Search = false;
       n.guard = null;
       n.sq.x = x;
@@ -64,8 +63,8 @@ const atBucket = await page.evaluate(() => {
   n.moPose = "hidden";
   n.ch1Morning = null;
   n.ch1Day2 = false;
-  n.ch1PeekReady = true;
-  n.ch1Dress = null;
+  // The evening (party P1, src/modules/party.js).
+  window.SSQ.beat("ch1-party").jump("P1");
   n.ch1Cut = null;
   n.q = [];
   n.cur = null;

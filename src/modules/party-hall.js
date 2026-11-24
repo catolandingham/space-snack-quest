@@ -44,7 +44,7 @@ export const SPOTS = Object.freeze({
 // The dance spotlight on the floor in front of the stage (party lighting, not an outline).
 export const DANCE_SPOT = Object.freeze({ x: 470, y: 360, rx: 95, ry: 38 });
 // The banner: one cloth over the stage, hanging from the ceiling in front of the window.
-export const BANNER = Object.freeze({ x0: 200, x1: 528, y0: 92, y1: 152 });
+export const BANNER = Object.freeze({ x0: 200, x1: 528, y0: 90, y1: 156 });
 
 /**
  * The cast at the party (feet, game positions). Guests are the six approved pictures (guests.js ids). `pair` names
@@ -56,12 +56,13 @@ export const CAST = Object.freeze({
   isfredBar: Object.freeze({ x: 800, y: 330 }),
   band: Object.freeze([Object.freeze({ x: 258, y: 256 }), Object.freeze({ x: 308, y: 256 }), Object.freeze({ x: 358, y: 256 })]),
   guests: Object.freeze([
-    Object.freeze({ id: "teal", x: 290, y: 390, pair: "stilt" }),
-    Object.freeze({ id: "stilt", x: 336, y: 396, pair: "teal" }),
-    Object.freeze({ id: "robot", x: 600, y: 380, pair: "octopus-guest" }),
-    Object.freeze({ id: "octopus-guest", x: 646, y: 386, pair: "robot" }),
+    // Partners stand a step apart (72), so no one's body overlaps another's (tests/people-scale.mjs).
+    Object.freeze({ id: "teal", x: 270, y: 390, pair: "stilt" }),
+    Object.freeze({ id: "stilt", x: 342, y: 396, pair: "teal" }),
+    Object.freeze({ id: "robot", x: 590, y: 380, pair: "octopus-guest" }),
+    Object.freeze({ id: "octopus-guest", x: 662, y: 386, pair: "robot" }),
     Object.freeze({ id: "backpack", x: 600, y: 490, glancer: true }),
-    Object.freeze({ id: "camera", x: 380, y: 430, tripod: Object.freeze({ x: 352, y: 436 }) }),
+    Object.freeze({ id: "camera", x: 400, y: 452, tripod: Object.freeze({ x: 372, y: 458 }) }),
   ]),
   bartender: Object.freeze({ x: 890, y: 482 }),
 });

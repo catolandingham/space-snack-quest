@@ -272,9 +272,10 @@ export function drawBanner(ctx, box, glow, t = 0) {
   ctx.restore();
   const mid = y0 + (y1 - y0) * 0.33,
     low = y0 + (y1 - y0) * 0.72;
-  rr(ctx, x0 + 34, low - 11, w - 68, 22, 4, "#fffdf8");
-  words(ctx, partyLine("banner-1"), x0 + w / 2, mid, 18, "#ffffff");
-  words(ctx, partyLine("banner-2"), x0 + w / 2, low + 1, 16, "#e5533d");
+  rr(ctx, x0 + 34, low - 12, w - 68, 24, 4, "#fffdf8");
+  // At least 18 game pixels: 14 CSS pixels on an upright tablet (tests/canvas-text.mjs).
+  words(ctx, partyLine("banner-1"), x0 + w / 2, mid, 19, "#ffffff");
+  words(ctx, partyLine("banner-2"), x0 + w / 2, low + 1, 18, "#e5533d");
   // a little robot doodle at each end
   for (const rx of [x0 + 17, x1 - 17]) {
     rr(ctx, rx - 8, mid - 4, 16, 13, 3, "#dfe4ea", 1.5);

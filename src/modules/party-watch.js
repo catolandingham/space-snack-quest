@@ -114,8 +114,9 @@ export function drawCones(ctx, cones, sq, hidden, all, note) {
       inside = !hidden && edge <= 0,
       show = all || c.always ? 1 : coneShow(edge);
     out.push({ ...c, edge, inside, show });
-    note && note({ ox: c.ox, oy: c.oy, a: c.a, half: c.half, len: c.len, askOnly: !!c.askOnly });
     if (!(show > 0)) continue;
+    // Only a cone on screen is told to the tests (what a kid can see).
+    note && note({ ox: c.ox, oy: c.oy, a: c.a, half: c.half, len: c.len, askOnly: !!c.askOnly });
     ctx.save();
     ctx.globalAlpha = show;
     ctx.beginPath();
