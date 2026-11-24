@@ -122,9 +122,9 @@ export function createMorningSound(getEngine) {
       play("tick");
       if (b.who !== "mops") return;
       if (b.text === line("mops-stop")) return void play("grumpy", 0, MORNING_SOUND.mehAfter);
-      if (mehScene === scene) return;
-      mehScene = scene;
-      songPlaying || play("meh", 0, MORNING_SOUND.mehAfter);
+      // Heard once in a scene: a line said while sound was off does not use it up.
+      if (mehScene === scene || songPlaying) return;
+      play("meh", 0, MORNING_SOUND.mehAfter) && (mehScene = scene);
     },
     /** A new morning: Mops's first line meh's again. */
     newMorning() {

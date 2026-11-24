@@ -291,6 +291,9 @@ const A1 = await playToSong(A, {
       sleepy.cut1 = await cutShot(run.page);
       const b = sleepy.cut1.beard;
       await run.tapAt((b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2);
+      // An impatient tap elsewhere and a NEXT while the water flies must not lose his line.
+      await run.tapAt(150, 150);
+      sleepy.impatient = await run.page.evaluate(() => (window.__ss.opTap(), window.__ss.op.cur && window.__ss.op.cur.k));
       sleepy.stop = await run.page.evaluate(() => {
         const ss = window.__ss,
           n = ss.op,
@@ -389,7 +392,11 @@ g.check("nothing with words or a tap target moves on by itself (six seconds afte
   g.check("Brian 31a: in the wringing picture the beard glows (drawn lit pale yellow) before it is tapped", !!c1 && c1.glow && c1.yellow > 100, c1 && { glow: c1.glow, yellow: c1.yellow });
   g.check("Brian 31a: a tap on the beard makes it squirt, and the water is drawn landing on the floor", !!st && st.landed && !!st.squirt && st.squirt.taps === 1, st && { landed: st.landed, squirt: st.squirt });
   g.check('Brian 31a: then Mops says, word for word, "Hey, stop that!" over the close-up', !!st && st.k === "bub" && st.who === "mops" && st.text === L["mops-stop"].text && st.over && st.drawn.id === "beard" && st.drawn.panel === 1, st);
-  g.check("Brian 31a: his line waits until the water has landed (about half a second)", !!st && st.frames >= 30 && st.frames < 90, st && st.frames);
+  g.check(
+    "Brian 31a: his line waits until the water has landed (about two thirds of a second), and taps meanwhile do not lose it",
+    !!st && !!st.squirt && st.drawn.t - st.squirt.at >= 0.6 && st.drawn.t - st.squirt.at < 1 && sleepy.impatient === "until",
+    st && { wait: st.drawn.t - (st.squirt || {}).at, impatient: sleepy.impatient },
+  );
   const bub = st && st.bubble,
     face = { x0: 400, x1: 670, y0: 100, y1: 380 };
   g.check(

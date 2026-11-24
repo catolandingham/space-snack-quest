@@ -106,9 +106,14 @@ const playAll = (page, lines) =>
       else if (c && c.k === "cutaway" && c.id === "beard" && c.panel === 1 && !tapped) {
         await tick(3);
         const b = beat.debug().beard;
+        // The tap's squirt plays as the picture gives way to the water flying over it: note it as played on
+        // the picture that was tapped.
+        const on = where();
         beat.pictureTap((b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2);
         tapped = true;
+        const from = seen.length;
         note();
+        seen.slice(from).forEach((x) => Object.assign(x, { k: on.k, id: on.id, el: on.el }));
         // The water lands, then Mops says his line over the picture.
         await tick(1.2);
       } else if (c && ["card", "bub", "wait", "cutaway"].includes(c.k)) await next(0.6);

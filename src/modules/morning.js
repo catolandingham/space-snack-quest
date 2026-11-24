@@ -188,15 +188,23 @@ export function createMorning(bridge) {
     const key = c.id + ":" + c.panel;
     // A new picture (or the same one again after ↺): its time starts from 0.
     (key !== cue.cut || c.el < cue.el) && ((cue.cut = key), (cue.el = -0.001));
-    const sq = m.squirt,
-      quiet = sq && c.id === "beard" && c.panel === 1 && c.el - sq.at < STOP_AFTER;
-    quiet || soundsBetween(c.id, c.panel, cue.el, c.el).forEach((name) => sound.play(name));
+    soundsBetween(c.id, c.panel, cue.el, c.el).forEach((name) => sound.play(name));
     cue.el = c.el;
-    // Brian 31a: once the squirt has landed, Mops says it, once ("Hey, stop that!"), over the picture.
-    if (sq && !sq.said && c.id === "beard" && c.panel === 1 && c.el - sq.at >= STOP_AFTER) {
-      sq.said = true;
-      e.cutIn([{ ...e.say("mops", line("mops-stop")), over: true }]);
-    }
+  }
+  // Brian 31a, the first squirt: the water flies and lands over the picture (nothing to tap meanwhile, and the
+  // wringing sounds wait), then Mops says it, once ("Hey, stop that!"), over the picture; then the picture
+  // comes back. The wait moves the picture's own time on, so the squirt is drawn flying.
+  function stopThat(at) {
+    const e = E();
+    const wait = {
+      ...e.until((dt) => {
+        const o = wait.over;
+        o.el = (o.el || 0) + (dt || 0);
+        return o.el - at >= STOP_AFTER;
+      }),
+      over: true,
+    };
+    e.cutIn([wait, { ...e.say("mops", line("mops-stop")), over: true }]);
   }
 
   return {
@@ -451,8 +459,10 @@ export function createMorning(bridge) {
       const b = beardTarget();
       if (x < b.x0 || x > b.x1 || y < b.y0 || y > b.y1) return false;
       if (m.squirt && c.el - m.squirt.at < SQUIRT.fly + 0.1) return true; // still flying
-      m.squirt = { at: c.el, said: !!(m.squirt && m.squirt.said), taps: ((m.squirt && m.squirt.taps) || 0) + 1 };
+      const first = !m.squirt;
+      m.squirt = { at: c.el, said: true, taps: ((m.squirt && m.squirt.taps) || 0) + 1 };
       sound.play("squirt");
+      first && stopThat(c.el);
       return true;
     },
     /** Where a speaker is when its bubble is over a close-up (31a): Mops's snout in the picture. */

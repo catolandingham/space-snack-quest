@@ -1288,7 +1288,8 @@
       let spk = l.who === "speaker" && window.SSQ && window.SSQ.speakerBox ? window.SSQ.speakerBox() : null;
       spk && ((_ = w(spk.x0 - 26 - T, 10, c - T - 10)), ($ = w(spk.y0 - 6, 24, b - R - 12)));
       // At the party, Isfred's and the band's bubbles sit beside them, never over the banner.
-      let side = (partyBeat() && partyBeat().bubbleBeside(l.who)) || (n.cur && n.cur.over && window.SSQ && window.SSQ.beat("ch1-morning").closeUpBeside(l.who));
+      let close = n.cur && n.cur.over && window.SSQ && window.SSQ.beat("ch1-morning"),
+        side = (partyBeat() && partyBeat().bubbleBeside(l.who)) || (close && close.closeUpBeside(l.who));
       side && ((_ = w(side.side === "left" ? side.x0 - 26 - T : side.x1 + 26, 10, c - T - 10)), ($ = w(side.y0 - 6, 24, b - R - 12)));
       // Never cover the speaker's face. Sit above the head, or beside it if the top of the picture is full.
       let head = ear ? null : speakerHead(l.who);
@@ -2323,9 +2324,10 @@
         beat && beat.drawCutaway(e, l);
         return;
       }
-      // A line said over a close-up (Brian 31a, "Hey, stop that!"): the picture stays behind the bubble.
-      if (l && l.k === "bub" && l.over) {
-        (beat && beat.drawCutaway(e, l.over), bq(l.b, !1));
+      // A line said over a close-up (Brian 31a, "Hey, stop that!"), and the moment before it: the picture stays
+      // behind (and the bubble over it).
+      if (l && l.over) {
+        (beat && beat.drawCutaway(e, l.over), l.k === "bub" && bq(l.b, !1));
         return;
       }
       if (n.egg) {
