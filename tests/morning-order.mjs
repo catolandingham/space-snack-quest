@@ -418,8 +418,26 @@ const holdRestart = (page) =>
     ss.resetHold(false);
     for (let i = 0; i < 4; i++) ss.tick(0.05);
     const c = n.cur;
-    return { k: c ? c.k : "", step: n.ch1Morning ? n.ch1Morning.step : "", pose: n.sqPose, moPose: n.moPose, peek: !!n.ch1PeekReady, chip: ss.chipNow(), ctrl: n.ctrl, walking: !!n.mo.walking };
+    const d = window.SSQ.beat("ch1-morning").debug();
+    return { k: c ? c.k : "", step: n.ch1Morning ? n.ch1Morning.step : "", pose: n.sqPose, moPose: n.moPose, peek: !!n.ch1PeekReady, chip: ss.chipNow(), ctrl: n.ctrl, walking: !!n.mo.walking, wet: d.wet, mo: [Math.round(n.mo.x), Math.round(n.mo.y)] };
   });
+// Taps through the morning until the beat's step is `step` (and, if given, a `k` step is up); returns what is up then.
+const tapUntilStep = (page, step, k) =>
+  page.evaluate(
+    (step, k) => {
+      const ss = window.__ss,
+        n = ss.op,
+        ok = () => n.ch1Morning && n.ch1Morning.step === step && (!k || (n.cur && n.cur.k === k));
+      for (let i = 0; i < 2000 && !ok(); i++) {
+        if (n.cur && ["card", "bub", "wait", "cutaway"].includes(n.cur.k)) ((n.bt = 1), ss.opTap());
+        ss.tick(1 / 30);
+      }
+      return { step: n.ch1Morning ? n.ch1Morning.step : "", k: n.cur ? n.cur.k : "" };
+    },
+    step,
+    k || "",
+  );
+const asleepAgain = (r) => r.k === "wait" && r.step === "asleep" && r.pose === "sleep" && r.moPose === "mop" && !r.wet && r.mo[0] === 830 && r.mo[1] === 560;
 const eveRestart = await holdRestart(A.page);
 g.check("↺ in the evening keeps the evening (no song step, Mops stays gone)", eveRestart.step === "" && eveRestart.moPose === "hidden" && eveRestart.peek && /peek/.test(eveRestart.chip), eveRestart);
 g.check("no page errors (sing run)", A.errors.length === 0, A.errors);
@@ -435,6 +453,14 @@ g.check("no page errors (sing run)", A.errors.length === 0, A.errors);
   }
   const r = await holdRestart(C.page);
   g.check("↺ before the song plays the morning again from the room (no cards): Squatch asleep, Mops mopping, waiting for a tap", r.k === "wait" && r.step === "asleep" && r.pose === "sleep" && r.moPose === "mop", r);
+  // Brian 21a's new steps: ↺ while Mops mops along the floor, and on the beard close-up, starts the room again
+  // (Mops back where he mops at first, no wet streak left, no cards).
+  const atMop = await tapUntilStep(C.page, "mopping");
+  const rMop = await holdRestart(C.page);
+  g.check("↺ while Mops mops along the floor (21a) plays the morning again from the room, with no wet streak left", atMop.step === "mopping" && asleepAgain(rMop), { atMop, rMop });
+  const atCut = await tapUntilStep(C.page, "mopped", "cutaway");
+  const rCut = await holdRestart(C.page);
+  g.check("↺ on the beard close-up plays the morning again from the room", atCut.k === "cutaway" && asleepAgain(rCut), { atCut, rCut });
   const C1 = await playToSong(C);
   g.check("after ↺ the morning still plays through to the song step", C1.last.ctrl && C1.last.chip === L["chip-sing"].text && C1.seen.every((x) => x.k !== "card"), C1.last);
   // ↺ during Mops's walk out brings back the song step at most, with Mops solid again.

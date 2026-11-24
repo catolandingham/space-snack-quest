@@ -153,10 +153,6 @@ export function createHomeMusic(getEngine) {
       fading = true;
       fadeLeft = HOME_MUSIC.fade;
     },
-    /** True once the first play has run its full length. */
-    ended() {
-      return !!(src && ctxUsed && ctxUsed.currentTime - startedAt >= length());
-    },
     /** True while the morning has the home room's music (Joe's theme stays quiet). */
     owns() {
       return owning;
