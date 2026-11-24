@@ -82,9 +82,9 @@
       S = null,
       M = null,
       z = 1;
-    // The addresses the real game is played at (Brian, 2026-11-23: squatch.onrender.com shows this game too, picked
-    // "Point it at this game"). Anywhere else is a preview: test links work there and saves use other keys.
-    const LIVE_HOSTS = ["space-snack-quest.onrender.com", "squatch.onrender.com"];
+    // The address the real game is played at (Brian, 2026-11-23: "We can drop first website and just go with
+    // Squatch"; the old site is deleted). Anywhere else is a preview: test links work there and saves use other keys.
+    const LIVE_HOSTS = ["squatch.onrender.com"];
     // The live site and local tests keep ssq-*. This branch's preview uses ssq-day2- so it does not mix with the live game or the slice preview.
     function ssqKey(name) {
       let host = "";

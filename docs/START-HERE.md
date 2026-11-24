@@ -6,6 +6,8 @@ For any model or person picking this project up. Read this page, then `CLAUDE.md
 
 A funny sneaking adventure in a browser for a 10-year-old, played mostly on a phone. Squatch hides who he is on a space station; Mops the goat is his friend. Brian designs and playtests. He does not code and does not read GitHub. He judges by playing and by watching video in chat.
 
+The game's one link is squatch.onrender.com (it builds `main`). The old space-snack-quest.onrender.com site was deleted on 2026-11-23 on Brian's word ("We can drop first website and just go with Squatch"); do not send that address.
+
 Right now one thing matters: **make Chapter 1 great**. Everything else waits.
 
 ## What the game should be

@@ -319,4 +319,69 @@ for (let i = 0; i < 20 && !(await st()).ctrl; i++) await sleep(150);
 s = await st();
 g.check("then the evening: the peek goal, the home-alone part is over", s.ctrl && s.peek && /peek out the door/.test(s.chip) && s.step === "", s);
 g.check("no page errors", errors.length === 0, errors);
+
+// ---------- Hold ↺ in the middle of each thing, and after a ↺ while Mops walked out ----------
+{
+  const R = await g.open("?ch=1", PHONE);
+  const hold = () =>
+    R.page.evaluate(() => {
+      const ss = window.__ss,
+        n = ss.op;
+      ss.resetHold(true);
+      for (let i = 0; i < 20; i++) ss.tick(0.05);
+      ss.resetHold(false);
+      for (let i = 0; i < 4; i++) ss.tick(0.05);
+      return { k: n.cur ? n.cur.k : "", step: n.ch1Morning ? n.ch1Morning.step : "", look: n.ch1Morning ? n.ch1Morning.look : "", wardrobe: n.wardrobe, pose: n.sqPose, bedX: n.sqBedX || 0, lift: n.sqLift || 0, moPose: n.moPose, chip: ss.chipNow(), ctrl: n.ctrl, sq: [n.sq.x, n.sq.y] };
+    });
+  const home = (r) => r.step === "home" && !r.look && !r.k && r.ctrl && r.wardrobe === "closed" && r.pose === "stand" && !r.bedX && !r.lift && r.moPose === "hidden" && r.chip === L["chip-homework"];
+  // ↺ while Mops walks out, then on home alone: still home alone, Squatch where home alone began.
+  await R.page.evaluate(() => {
+    const ss = window.__ss,
+      n = ss.op;
+    for (let i = 0; i < 2000 && !(n.ctrl && n.ch1Morning && n.ch1Morning.step === "song"); i++) (n.cur && ((n.bt = 1), ss.opTap()), ss.tick(0.05));
+    (ss.spotsNow() || []).find((x) => x.id === "sing").f();
+    for (let i = 0; i < 400 && !(n.ch1Morning && n.ch1Morning.step === "leave"); i++) (n.cur && ((n.bt = 1), ss.opTap()), ss.tick(0.05));
+    for (let i = 0; i < 10; i++) ss.tick(0.05);
+  });
+  await hold();
+  const began = await R.page.evaluate(() => {
+    const ss = window.__ss,
+      n = ss.op;
+    for (let i = 0; i < 400 && !(n.ch1Morning && n.ch1Morning.step === "home"); i++) ss.tick(0.05);
+    ss.tick(0.05);
+    const at = [n.sq.x, n.sq.y];
+    n.sq.x = 700;
+    n.sq.y = 450;
+    ss.tick(0.05);
+    return at;
+  });
+  let r = await hold();
+  g.check("↺ at home after a ↺ while Mops walked out: home alone as it began", home(r) && Math.abs(r.sq[0] - began[0]) < 1 && Math.abs(r.sq[1] - began[1]) < 1, { r, began });
+  const start = (id, until) =>
+    R.page.evaluate(
+      ([id, until]) => {
+        const ss = window.__ss,
+          n = ss.op;
+        (ss.spotsNow() || []).find((x) => x.id === id).f();
+        for (let i = 0; i < 400; i++) {
+          ss.tick(1 / 30);
+          const m = n.ch1Morning || {};
+          if (until === "open" ? n.wardrobe === "open" : until === "rest" ? m.phase === "rest" : n.cur && n.cur.k === "cutaway") break;
+        }
+        return { wardrobe: n.wardrobe, phase: (n.ch1Morning || {}).phase, k: n.cur ? n.cur.k : "" };
+      },
+      [id, until],
+    );
+  const mid = {};
+  mid.closet = await start("closet", "open");
+  r = await hold();
+  g.check("↺ with the closet open: home alone, door shut", mid.closet.wardrobe === "open" && home(r), { mid: mid.closet, r });
+  mid.bed = await start("bed", "rest");
+  r = await hold();
+  g.check("↺ mid-flop: home alone, standing, nothing left shifted", mid.bed.phase === "rest" && home(r), { mid: mid.bed, r });
+  mid.homework = await start("homework", "cutaway");
+  r = await hold();
+  g.check("↺ during the homework cutaway: home alone again, homework still to do", mid.homework.k === "cutaway" && home(r), { mid: mid.homework, r });
+  g.check("no page errors (↺ run)", R.errors.length === 0, R.errors);
+}
 await g.finish("home-alone");

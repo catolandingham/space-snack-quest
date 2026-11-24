@@ -83,6 +83,9 @@ export function createHomeAlone({ E, M, step, done }) {
     /** Mops is gone: Squatch has the room, with the homework as the goal. */
     start() {
       const e = E();
+      // A new step for the step restart (↺): forget any start saved while Mops walked out, so ↺ at home
+      // always comes back to home alone as it began.
+      e.forgetSaved();
       step("home", { look: "", phase: "" });
       e.set("sqPose", "stand");
       e.set("ch1Chip", homeLine("chip-homework"));
