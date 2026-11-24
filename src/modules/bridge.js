@@ -26,7 +26,7 @@ import { placeLabel } from "./cap-place.js";
  * to write another field stops with an error; tests/module-build.mjs checks the morning (and its home-alone
  * part) against this list.
  */
-export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe"]);
+export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe"]);
 
 export function createBridge() {
   const beats = new Map();
@@ -150,6 +150,8 @@ export function createBridge() {
     partyCones,
     /** Seconds a guest watches Squatch with "?" before it turns into "!". See party-watch.js. */
     seenTooLong: SEEN_TOO_LONG_SECONDS,
+    /** The approved guest pictures (guests.js), for the party's own drawing. */
+    guests,
     /** The approved guest who stands in place of one of the older program's guest kinds, or null. See guests.js. */
     guestId(kind) {
       return guests.idFor(kind);

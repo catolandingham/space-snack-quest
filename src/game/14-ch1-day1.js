@@ -179,7 +179,6 @@
     function ch1ExtraPartySpots() {
       if (!n.ch1Disguise || n.ch1PartyOver || n.ch1Mini) return [];
       return [
-        spot({ id: "dance", verb: "DANCE", cap: "circle", who: "sq", x: 500, y: 530, r: 80, f: ch1DanceStart }),
         spot({ id: "singmic", verb: "SING", cap: "mic", who: "sq", x: 400, y: 320, r: 70, f: ch1KaraokeStart }),
         spot({ id: "conga", verb: "JOIN", cap: "conga", who: "sq", x: 320, y: 560, r: 70, f: ch1Conga }),
         spot({ id: "chicken", verb: "FLAP", cap: "chicken dance", who: "sq", x: 600, y: 540, r: 70, f: ch1Chicken }),
@@ -246,7 +245,6 @@
     function ch1Day1Tick(dt) {
       let step = dt || 0;
       ch1RaidTick(step);
-      ch1SneakTick(step);
       if (n.ch1Search && n.guard && n.room === "closet" && (n.ctrl || n.ch1Escort)) {
         let g = n.guard;
         g.t += step;
@@ -310,11 +308,6 @@
       }
     }
     function drawCh1Fest() {
-      (m(500, 500, 70, 28, 6),
-        r("#fffdf8", 3),
-        F(535, 492, 16, "#ff8a3d"),
-        F(520, 496, 8, "#e5533d"),
-        F(550, 498, 7, "#3478f6"));
       let left = 6 - (n.ch1Cheese || 0);
       left < 3 &&
         left > 0 &&

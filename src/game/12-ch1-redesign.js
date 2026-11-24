@@ -20,7 +20,7 @@
       Q7: "Squatch: return the empty crate",
       Q8: "Squatch: put on the spare jacket",
       Q9: "Squatch: walk through the scanner",
-      QA: "Squatch: look around the party",
+      QA: "",
     };
     // R73. Brian approved a 3 to 4 minute party. This slice uses 3 minutes.
     // "Cool hat!" is the stand-in for how the party ends when the time runs out.
@@ -64,16 +64,14 @@
     }
     function ch1MarkGoal() {
       if (n.ch1PadOn || !n.ctrl || n.ch1Zoom || n.sqPose === "hidden") return;
+      // The party night draws its own outline (src/modules/party.js).
+      if (partyBeat() && partyBeat().active()) return;
       let spots =
         n.ch1Day2 && ch1Day2Spots
           ? ch1Day2Spots()
           : ch1MorningSpots()
             ? ch1MorningSpots()
-            : n.ch1PeekReady
-              ? ch1PeekSpots()
-              : n.ch1PlantSneak
-                ? ch1SneakSpots()
-              : n.ch1Search
+            : n.ch1Search
                 ? ch1SearchSpots()
                 : n.scene === "QA" && n.ch1Party && !n.ch1PartyOver
                   ? ch1PartySpots()
@@ -94,8 +92,8 @@
       return !!(beat && beat.leaving());
     }
     function ch1QChip() {
-      if (ch1MorningLeaving() || n.ch1Peeking) return "";
-      if (n.ch1Dress && n.ch1Dress.on) return "";
+      if (ch1MorningLeaving()) return "";
+      if (partyBeat() && partyBeat().active()) return n.ch1Chip || "";
       if (n.ch1Chip) return n.ch1Chip;
       return CH1Q_CHIPS[n.scene] || "";
     }
@@ -150,16 +148,18 @@
     // Back-wall door of office-room-empty-v2. The hallway's front door, seen from inside.
     // Feet stand just through that door, on the floor below the picture's floor line (source y 330).
     const CH1_OFFICE_DOOR = { x: 480, y: 286 };
+    // Where the approved guests stand in the older free play: the party plan's cast (src/modules/party-hall.js
+    // CAST), so the hall looks the same when Squatch walks back in. The octopus waits by the bar for his hug.
     const CH1_GUESTS = [
-      [250, 460, "antenna"],
-      [400, 440, "croc"],
-      [740, 470, "hat"],
-      [200, 610, "hair"],
-      [520, 610, "spots"],
-      [660, 600, "blob"],
+      [336, 396, "antenna"],
+      [600, 490, "croc"],
+      [380, 430, "hat"],
+      [290, 390, "hair"],
+      [600, 380, "spots"],
+      [760, 555, "blob"],
     ];
     // Everyone else at the party, where they stand (feet). Their sight cones come from here too (ch1PartyPeople).
-    const CH1_PARTY_CAST = { isfred: [360, 256], cape: [340, 400], bartender: [880, 500], octopus: [760, 555] };
+    const CH1_PARTY_CAST = { isfred: [420, 258], bartender: [890, 482], octopus: [760, 555] };
     // Party hall solids (Brian, 2026-11-15: "Make the party hall solid so Squatch can't walk through walls, the stage, or guests").
     // Boxes are where feet cannot go, in picture units, measured on hall-room-empty-v2.png and the party drawing.
     // v2 (Brian, 2026-11-23): the bar starts just below the corner doorway and runs to the front wall, picture
@@ -169,13 +169,11 @@
       CH1_BAR_DY = 83;
     const CH1_PARTY_FIXED = [
       { x0: 240, x1: 490, y0: 0, y1: 304 }, // stage
-      { x0: 490, x1: 582, y0: 0, y1: 300 }, // COMING SOON! poster and its legs
       { x0: 806, x1: 960, y0: 0, y1: 606 }, // snack bar, the bartender behind it, and the wall past it
       { x0: 772, x1: 800, y0: 380, y1: 400 }, // stool
       { x0: 772, x1: 800, y0: 438, y1: 458 }, // stool
       { x0: 72, x1: 136, y0: 330, y1: 372 }, // plant by the back wall
       { x0: 412, x1: 476, y0: 520, y1: 552 }, // the hiding plant's pot
-      { x0: 496, x1: 574, y0: 494, y1: 530 }, // snack table
       { x0: 228, x1: 274, y0: 340, y1: 368 }, // camera tripod
     ];
     function ch1PartySolids() {
@@ -184,8 +182,6 @@
         raid = n.ch1Raid;
       CH1_GUESTS.forEach((guest) => (raid && raid.witness && guest[2] === "spots") || out.push(feet(guest[0], guest[1])));
       raid && raid.witness && out.push(feet(raid.witness.x, raid.witness.y));
-      out.push(feet(340, 400)); // the guest in the cape
-      out.push(feet(CH1_KID.x, CH1_KID.y)); // the balloon kid
       out.push(feet((n.ch1Oct && n.ch1Oct.x) || 760, (n.ch1Oct && n.ch1Oct.y) || 555)); // the octopus
       return out;
     }
@@ -575,11 +571,14 @@
           }),
         ]));
     }
-    function ch1PartyPeek() {
+    // Half one of the party rebuild ends here: Squatch walks into the older free play in the outfit he chose
+    // (src/modules/party.js draws it on him). The arrow dance and "Cool hat!" are off; half two replaces this.
+    function ch1FreePlayStart() {
       ((n.scene = "QA"),
+        (n.room = "hall"),
         (n.ch1Party = !0),
-        (n.ch1Disguise = !1),
-        (n.ch1Flyer = !1),
+        (n.ch1Disguise = !0),
+        (n.ch1Flyer = !0),
         (n.ch1PartyT = 0),
         (n.ch1PartyOver = !1),
         (n.ch1PartyDid = {}),
@@ -591,75 +590,14 @@
         (n.ch1Photo = !1),
         (n.ch1InShot = !1),
         (n.ch1Balloon = ""),
-        (n.ch1BalloonRest = ""),
-        (n.ch1BalloonPopped = !1),
-        (n.ch1BalloonPop = 0),
-        (n.ch1BalloonPops = 0),
-        (n.ch1Kid = ""),
-        (n.sqPose = "hidden"),
-        (n.sq.x = 400),
-        (n.sq.y = 530),
-        (n.moPose = "hidden"),
-        (n.mo.x = -400),
-        J([
-          v("official", "Welcome, Bleep-Bloop Robotics delegation!"),
-          { k: "card", id: "somebody", text: "Everybody has somebody." },
-          v("sq", "Robots?", "whisper"),
-          N(() => {
-            ((n.sqPose = "stand"), (n.ctrl = !0));
-          }),
-        ]));
+        (n.ch1Chip = ""),
+        (n.sqPose = "stand"),
+        (n.ctrl = !0),
+        chipNow());
     }
     function ch1PartySpots() {
       if (n.ch1PartyOver) return [];
-      if (!n.ch1Disguise)
-        return [
-          spot({
-            id: "disguise",
-            verb: "PUT ON",
-            cap: "tourist disguise",
-            who: "sq",
-            x: 220,
-            y: 530,
-            r: 160,
-            hot: !0,
-            f: () => {
-              ((n.ctrl = !1), (n.act = null), (n.ch1Veil = 0), (n.ch1VeilTo = 1));
-              J([
-                cV(() => (n.ch1Veil || 0) >= 1),
-                N(() => {
-                  ((n.ch1Disguise = !0), (n.ch1VeilTo = 0));
-                }),
-                cV(() => (n.ch1Veil || 0) <= 0),
-                N(() => {
-                  n.ctrl = !0;
-                }),
-              ]);
-            },
-          }),
-        ];
-      if (!n.ch1Flyer)
-        return [
-          spot({
-            id: "flyer",
-            verb: "TAKE",
-            cap: "robot flyer",
-            who: "sq",
-            x: 480,
-            y: 430,
-            r: 140,
-            hot: !0,
-            f: () => {
-              ((n.ch1Flyer = !0),
-                (n.ch1PartyT = 0),
-                (n.ch1Balloon = "up"),
-                (n.ch1BalloonT = 0),
-                (n.ch1BalloonY = 460),
-                (n.ch1Kid = "gasp"),
-                (n.act = null));
-            },
-          }),
-        ];
+      if (!n.ch1Disguise) return [];
       let out = [];
       n.ch1Balloon === "up" &&
         n.ch1BalloonT < BALLOON_GRAB_SECONDS &&
@@ -866,7 +804,6 @@
       ch1LockBalloon();
       ((n.ch1Disguise = !1), (n.ch1PartyOver = !0), (n.ctrl = !1), (n.act = null), (n.ch1Fur = !0));
       let lines = [];
-      why === "cool" && lines.push(v("tourist", "Cool hat!"));
       why === "bar" && lines.push(v("tourist", "Wait a second... fur!"));
       lines.push(
         v("tourist", "FUR! Security!"),
@@ -875,6 +812,13 @@
         N(() => ch1RaidBegin()),
       );
       J(lines);
+    }
+    // The older free play's time is up (COOL_HAT_SECONDS): Squatch walks home, and the evening ends there.
+    // ("Cool hat!" is off in half one of the party rebuild; half two brings closing time.)
+    function ch1PartyTimeUp() {
+      if (n.ch1PartyOver) return;
+      ((n.ch1PartyOver = !0), (n.ctrl = !1), (n.act = null), (n.ch1Party = !1));
+      ch1Go("closet", { who: "sq", scene: "Q3" }, () => J(ch1Homecoming()));
     }
     function ch1PartyHome() {
       // Day 1 ends here for now. Beats 19-21 can take over this function and call ch1Day2Begin after bedtime.
@@ -904,9 +848,8 @@
         n.ch1Disguise &&
         n.ch1Flyer &&
         !n.ch1Cut &&
-        !(n.ch1Dress && n.ch1Dress.on) &&
         !n.ch1Mini &&
-        ((n.ch1PartyT = (n.ch1PartyT || 0) + (dt || 0)), n.ch1PartyT >= COOL_HAT_SECONDS && ch1HatOff("cool"));
+        ((n.ch1PartyT = (n.ch1PartyT || 0) + (dt || 0)), n.ch1PartyT >= COOL_HAT_SECONDS && ch1PartyTimeUp());
     }
     function ch1BalloonTick(dt) {
       n.room === "hall" && n.ch1Office && ch1BalloonPopNow();
@@ -1119,12 +1062,10 @@
         ]));
     }
     function ch1QSpots() {
+      if (partyBeat() && partyBeat().active()) return partyBeat().spots();
       if (ch1MorningSpots()) return ch1MorningSpots();
       if (n.ch1Search && n.ctrl && n.room === "closet") return ch1SearchSpots();
       if (n.ch1Cut) return ch1CutSpots();
-      if (n.ch1Dress && n.ch1Dress.on) return ch1DressSpots();
-      if (n.ch1PeekReady && n.ctrl) return [...ch1CalendarSpots(), ...ch1PeekSpots()];
-      if (n.ch1PlantSneak) return n.ctrl ? ch1SneakSpots() : [];
       if (n.scene === "QA") return n.ch1Raid && n.room === "hall" ? ch1RaidSpots() : n.ctrl && !n.ch1PartyOver ? ch1PartySpots() : [];
       if (n.ch1Day2) return ch1Day2Spots();
       if (!n.ctrl || n.sqPose === "ball" || n.sqPose === "hidden") return [];
@@ -1274,12 +1215,8 @@
           f: n.sq.f || 1,
           walk: n.sq.moving ? n.sq.walk : 0,
           leap: (n.ch1JumpT || 0) > 0,
-          hat: !!n.ch1Disguise,
-          hatAskew: !!n.ch1HatAskew,
-          shades: !!n.ch1Disguise,
-          hawaiian: !!n.ch1Disguise,
-          paper: !!n.ch1Flyer,
-        });
+        }),
+        n.sqPose !== "hidden" && n.sqPose !== "ball" && n.ch1Disguise && partyBeat() && partyBeat().drawOutfitOn(e, n.sq.x, n.sq.y, sqDrawScale(), n.sq.f || 1, !!n.ch1HatAskew);
       n.moPose !== "hidden" && n.mo.x > -50 && n.mo.x < 1100 && Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 });
     }
     function drawCh1DayHall() {
@@ -1330,61 +1267,40 @@
           g("REC", 190, 140, 17, "#ffffff", "center", 900),
           Re(190, 210, ((adultPxFor("office") * 0.8) / 45) * 0.35, { f: 1, jacket: !0, goatBeard: !0, horns: !0 })));
     }
+    // The older free play's hall (until half two of the party rebuild replaces it). The banner, the bartender,
+    // the guards, the camera and Squatch's outfit are the party module's drawings (src/modules/party.js); the
+    // guests are Brian's approved pictures. The poster, the cake table, the guest in the cape, the extra counter
+    // snacks, the stick octopus and the balloon kid are gone (party plan, "Removed").
     function drawCh1Party() {
-      let look = (n.ch1Look || 0) > 0,
+      let pb = partyBeat(),
+        look = (n.ch1Look || 0) > 0,
         face = look ? 1 : 0,
         eye = 72 * ALIEN_ADULT,
         glance = (x, y) => look && (F(x + 8, y - eye, 2.2, "#fffdf8"), F(x - 5, y - eye, 2.2, "#fffdf8"));
-      // Stage (walkthrough beats 3 and 5, CHAPTER-1-PROBLEMS stage item): the banner hangs above the stage, Isfred stands on it,
-      // and the approved "COMING SOON!" robot poster (Brian yes, 2026-11-15) stands beside it.
-      (m(248, 116, 400, 36, 8),
-        r("#3478f6", 3),
-        g("ROBOTICS DELEGATION!", 448, 134, 17, "#ffffff", "center", 900),
-        C([258, 116, 258, 96], "#1e2430", 2),
-        C([638, 116, 638, 96], "#1e2430", 2),
-        C([500, 266, 500, 290], "#1e2430", 3),
-        C([570, 266, 570, 290], "#1e2430", 3),
-        m(455, 186, 160, 80, 4),
-        r("#fffaf0", 2),
-        dq(535, 222, !1, 0.55),
-        g("COMING SOON!", 535, 250, 17, "#e5533d", "center", 900),
-        drawCh1Alien(CH1_PARTY_CAST.isfred[0], CH1_PARTY_CAST.isfred[1], "horns", ALIEN_ADULT, face || 1),
+      pb && pb.drawBannerOn(e);
+      (drawCh1Alien(CH1_PARTY_CAST.isfred[0], CH1_PARTY_CAST.isfred[1], "horns", ALIEN_ADULT, face || 1),
         glance(CH1_PARTY_CAST.isfred[0], CH1_PARTY_CAST.isfred[1]),
         n.sqPose === "hidden" && ch1HideEyes(),
-        !(n.ch1PartyDid && n.ch1PartyDid.snack) &&
-          [
-            [848, 340 + CH1_BAR_DY, "pie"],
-            [848, 390 + CH1_BAR_DY, "cup"],
-            [848, 440 + CH1_BAR_DY, "cake"],
-          ].forEach((bit) => drawBarSnack(bit[2], bit[0], bit[1], 0.45)),
-        drawCh1SneakCone(),
         drawCh1PartyCones(),
         (n.ch1GuestArt = 0),
         CH1_GUESTS.forEach((guest) => {
           if (n.ch1Raid && n.ch1Raid.witness && guest[2] === "spots") return;
-          // Brian's approved Nov 8 guests (src/modules/guests.js); the older drawing only while a picture is not ready.
-          window.SSQ && window.SSQ.drawGuest(e, guest[2], guest[0], guest[1], ADULT_PX, n.T)
-            ? n.ch1GuestArt++
-            : (drawCh1Alien(guest[0], guest[1], guest[2], ALIEN_ADULT, n.ch1PlantSneak && guest[2] === "spots" ? ch1SneakFace() : face || 1), glance(guest[0], guest[1]));
+          // The octopus is the one who chases Squatch for a hug: drawn where the chase has him.
+          if (guest[2] === "blob") return;
+          window.SSQ && window.SSQ.drawGuest(e, guest[2], guest[0], guest[1], ADULT_PX, n.T) && n.ch1GuestArt++;
         }),
-        n.ch1Raid &&
-          n.ch1Raid.witness &&
-          !(window.SSQ && window.SSQ.drawGuest(e, "spots", n.ch1Raid.witness.x, n.ch1Raid.witness.y, ADULT_PX, n.T)) &&
-          drawCh1Alien(n.ch1Raid.witness.x, n.ch1Raid.witness.y, "spots", ALIEN_ADULT, 1),
+        window.SSQ && window.SSQ.drawGuest(e, "blob", (n.ch1Oct && n.ch1Oct.x) || CH1_PARTY_CAST.octopus[0], (n.ch1Oct && n.ch1Oct.y) || CH1_PARTY_CAST.octopus[1], ADULT_PX, n.T),
+        n.ch1Raid && n.ch1Raid.witness && window.SSQ && window.SSQ.drawGuest(e, "spots", n.ch1Raid.witness.x, n.ch1Raid.witness.y, ADULT_PX, n.T),
         ((n.ch1Raid && n.ch1Raid.guards) || []).forEach((g) => {
           g.face != null &&
             seenCone(g.x, g.y - 28, g.face, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.62)", "rgba(160,100,10,.95)");
-          drawCh1Alien(g.x, g.y, "hat", ALIEN_ADULT, Math.cos(g.face || 0) < 0 ? -1 : 1);
+          pb && pb.drawPersonOn(e, "guard", g.x, g.y, Math.cos(g.face || 0) < 0 ? -1 : 1);
         }),
-        Qt(CH1_PARTY_CAST.bartender[0], CH1_PARTY_CAST.bartender[1], "#c9842a", QT_ADULT, -1),
-        drawOctopus((n.ch1Oct && n.ch1Oct.x) || CH1_PARTY_CAST.octopus[0], (n.ch1Oct && n.ch1Oct.y) || CH1_PARTY_CAST.octopus[1], face || -1),
+        pb && pb.drawPersonOn(e, "bartender", CH1_PARTY_CAST.bartender[0], CH1_PARTY_CAST.bartender[1], -1),
         drawCh1Fest(),
-        drawCh1Alien(CH1_PARTY_CAST.cape[0], CH1_PARTY_CAST.cape[1], "cape", ALIEN_ADULT, face || -1),
-        drawCh1Tripod(250, 360),
-        !n.ch1Flyer && (m(500, 500, 16, 12, 1), r("#fffdf8", 1)),
+        pb && pb.drawTripodOn(e, 250, 360),
         (n.ch1Spill || 0) > 0 && drawCh1Chain(1 - n.ch1Spill),
-        drawBalloonKid(),
-        drawCh1SneakMark());
+        drawCh1PartyMarks());
     }
     function drawCh1Chain(p) {
       let tip = Math.min(1, p / 0.25),
@@ -1446,61 +1362,6 @@
       else if (kind === "blob") (F(-6, -70, 2, y), F(0, -70, 2, y), F(6, -70, 2, y), L(0, -40, 8), r("#8a93a3", 2));
       else (m(-18, -46, 8, 18, 3), r("#e5533d", 2));
       e.restore();
-    }
-    function drawCh1Tripod(x, y) {
-      (C([x, y - 46, x - 26, y], "#6b6256", 4),
-        C([x, y - 46, x + 24, y], "#6b6256", 4),
-        C([x, y - 46, x + 2, y + 10], "#6b6256", 4),
-        m(x - 18, y - 64, 36, 18, 4),
-        r("#1e2430", 3),
-        L(x - 20, y - 55, 7),
-        r("#8fdcff", 2));
-    }
-    function drawOctopus(x, oy, f) {
-      (e.save(),
-        e.translate(x, oy),
-        F(0, -28, 14, "#e07b00"),
-        F(-4, -32, 2, y),
-        F(4, -32, 2, y),
-        X(0, -24, 5, 3 + Math.abs(Math.sin(n.T * 8)) * 3),
-        r("#7a3e10", 1),
-        [-18, -8, 8, 18].forEach((dx, i) => C([0, -16, dx, 8 + (i % 2) * 6], "#e07b00", 3)),
-        F(-10, 6, 2, "#cdbb98"),
-        F(8, 10, 2, "#cdbb98"),
-        F(0, 14, 2, "#cdbb98"),
-        e.restore(),
-        f && 0);
-    }
-    function drawBalloonKid() {
-      let kid = CH1_KID,
-        mood = n.ch1Kid || "",
-        wobble = Math.sin((n.ch1BalloonT || 0) * 4) * 10,
-        bx = kid.x + (n.ch1Balloon === "up" ? wobble : 0),
-        by = n.ch1BalloonY || 460,
-        hallX = 360;
-      if ((n.ch1Balloon === "up" || n.ch1Balloon === "ceiling") && by < 430) bx = Math.max(bx, hallX);
-      (Qt(kid.x, kid.y, "#1f9d8a", 1.05, 1),
-        mood === "gasp" && (g("!", kid.x - 34, kid.y - 96, 36, "#e5533d", "center", 900), C([kid.x - 2, kid.y - 22, kid.x - 18, kid.y - 72], "#f0bf93", 4)),
-        mood === "wide" && (F(kid.x + 6, kid.y - 46, 4, "#ffffff"), F(kid.x + 6, kid.y - 46, 2, y)),
-        mood === "smile" && (C([kid.x + 2, kid.y - 40, kid.x + 8, kid.y - 36, kid.x + 12, kid.y - 40], y, 1.4), F(kid.x + 6, kid.y - 46, 2.2, y)),
-        mood === "shh" &&
-          (C([kid.x + 2, kid.y - 40, kid.x + 8, kid.y - 36, kid.x + 12, kid.y - 40], y, 1.4),
-          C([kid.x + 14, kid.y - 28, kid.x + 8, kid.y - 40], "#f0bf93", 2)),
-        mood === "up" &&
-          (C([kid.x + 2, kid.y - 40, kid.x + 8, kid.y - 36, kid.x + 12, kid.y - 40], y, 1.4),
-          C([kid.x + 16, kid.y - 20, kid.x + 16, kid.y - 36], "#f0bf93", 2.4),
-          F(kid.x + 16, kid.y - 38, 3, "#f0bf93")),
-        mood === "sad" && C([kid.x + 2, kid.y - 36, kid.x + 8, kid.y - 40, kid.x + 12, kid.y - 36], y, 1.4));
-      if (n.ch1Balloon === "up" || n.ch1Balloon === "ceiling") {
-        let handX = kid.x + 16,
-          handY = kid.y - 78;
-        by < 430
-          ? (C([handX, handY, handX, 188], "#e5533d", 2), C([handX, 188, bx, 188], "#e5533d", 2), C([bx, 188, bx, by + 18], "#e5533d", 2))
-          : C([handX, handY, bx, by + 18], "#e5533d", 2);
-        drawPartyBalloon(bx, by, n.ch1Balloon === "up" ? 22 : 16);
-      }
-      if (n.ch1Balloon === "held") (C([n.sq.x, n.sq.y - 36, n.sq.x + 8, n.sq.y - 78], "#e5533d", 2), drawPartyBalloon(n.sq.x + 8, n.sq.y - 96, 16));
-      if (n.ch1Balloon === "back") (C([kid.x + 10, kid.y - 70, kid.x + 18, kid.y - 108], "#e5533d", 2), drawPartyBalloon(kid.x + 18, kid.y - 124, 16));
     }
     function drawPartyBalloon(x, y, rad) {
       (e.save(),

@@ -263,7 +263,7 @@
     // saved (a step's "what comes next" is set again by the step itself).
     function noteCh1Step() {
       // Not while an overlay is open inside the step (dress-up, the snack cut-in): ↺ closes those.
-      if (!n.ctrl || n.cur || n.q.length || (n.ch1Dress && n.ch1Dress.on) || n.ch1Cut) return;
+      if (!n.ctrl || n.cur || n.q.length || n.ch1Cut) return;
       let id = n.scene + "|" + n.room + "|" + (n.ch1Step || "");
       if (ch2.qCheck && ch2.qCheck.id === id) return;
       let ch1 = {},
@@ -383,11 +383,9 @@
         (x.sing = !1),
         n.pulse.clear(),
         String(n.scene || "").startsWith("G") && (n.chip = ""),
-        (n.ch1Dress = null),
-        (n.ch1Cut = null),
-        (n.ch1Veil = 0),
-        (n.ch1VeilTo = 0),
-        (n.ch1Drag = ""));
+        (n.ch1Cut = null));
+      // The party night's full-screen views (the dress-up, the alarm close-up) close on a restart too.
+      partyBeat() && partyBeat().closeViews();
     }
     // The goal chip for Chapter 2: one table, read every frame from the phase, the room and who is in control.
     // Every line names who acts. No line names a place in another room. The first time a mechanic appears
@@ -596,6 +594,8 @@
         phase = ch2.phase || "";
       clearRun();
       if (scene.startsWith("S") || scene.startsWith("O") || scene.startsWith("Q")) {
+        // The party night restarts the scene Squatch is in (party:P1 to party:P5, src/modules/party.js).
+        if (partyBeat() && partyBeat().active()) return void partyBeat().restart();
         // The party and the night keep their own restarts; every other Q scene goes back to the start of its step.
         if (scene[0] === "Q" && scene !== "QA" && scene !== "Q4") {
           // The morning before its song step has no saved start (the kid has had no control): play it again

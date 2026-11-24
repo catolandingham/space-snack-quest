@@ -13,6 +13,9 @@
       {
         let beat = window.SSQ && window.SSQ.beat("ch1-morning");
         beat && beat.tick(l);
+        // The party night (src/modules/party.js): its scenes, sight, the alarm and the vent.
+        let party = partyBeat();
+        party && party.tick(l);
       }
       (n.sqHop &&
         ((n.sqHop.t += l),
@@ -356,7 +359,6 @@
         n.room !== "closet" &&
         (n.scene || "")[0] !== "Q" &&
         !n.ch1Party &&
-        !(n.ch1Dress && n.ch1Dress.on) &&
         i >= he * 0.9 &&
         s.eyes !== "closed" &&
         n.moPose !== "sleep" &&
@@ -1138,6 +1140,9 @@
       return n.room === "hall" && l !== "pa" && !n.fbPic ? { x: o.x - B.camX, y: o.y } : o;
     }
     function T5(l) {
+      // The party night places its own speakers (Isfred beside him, the band, Squatch's eyes in the plant).
+      let at = partyBeat() && partyBeat().speakerAt(l);
+      if (at) return at;
       let o = IA(l);
       if (o) return o;
       let i = h6(l);
@@ -1274,6 +1279,9 @@
       // The wall speaker (the morning): the bubble sits to its left, level with it, its tail pointing at it.
       let spk = l.who === "speaker" && window.SSQ && window.SSQ.speakerBox ? window.SSQ.speakerBox() : null;
       spk && ((_ = w(spk.x0 - 26 - T, 10, c - T - 10)), ($ = w(spk.y0 - 6, 24, b - R - 12)));
+      // At the party, Isfred's and the band's bubbles sit beside them, never over the banner.
+      let side = partyBeat() && partyBeat().bubbleBeside(l.who);
+      side && ((_ = w(side.side === "left" ? side.x0 - 26 - T : side.x1 + 26, 10, c - T - 10)), ($ = w(side.y0 - 6, 24, b - R - 12)));
       // Never cover the speaker's face. Sit above the head, or beside it if the top of the picture is full.
       let head = ear ? null : speakerHead(l.who);
       if (head && boxHits({ x: _, y: $ - 16, w: T, h: R + 16 }, head, 8)) {
@@ -2245,6 +2253,8 @@
     // The room the player is in, drawn with nothing over it (E5 adds rings, people, bubbles and the rest).
     function drawRoom() {
       if (n.room === "office") return drawCh1OfficeRoom();
+      // The party night's hall is the party module's drawing, on the locked picture.
+      if (n.room === "hall" && partyBeat() && partyBeat().ownsRoom() && partyBeat().drawRoom(e)) return;
       (n.room === "closet"
         ? (P2(), X2(), g5(), z2())
         : n.room === "deck"
@@ -2321,12 +2331,12 @@
         drawRoom();
         // The morning's sound lines and notes at the wall speaker, and the wet floor where Mops mops.
         beat && beat.draw(e);
+        partyBeat() && partyBeat().draw(e);
         if (n.ch1Calendar) {
           drawCh1Calendar();
           return;
         }
         n.ch1Cut && drawCh1Cut();
-        n.ch1Dress && n.ch1Dress.on && drawCh1Dress();
         n.ch1Day2 && drawCh1Day2();
         n.ch1Zoom && drawCh1Zoom();
         ch1MarkGoal();
@@ -2375,6 +2385,7 @@
         window.__ss && (window.__ss.bubbleFrame = qq),
         n.ch1Veil > 0.01 && ((e.fillStyle = "rgba(20,24,32," + Math.min(1, n.ch1Veil).toFixed(3) + ")"), e.fillRect(0, 0, c, b)));
       ((e.globalAlpha = 1), zG(), drawSeeHint(), drawTapHeard());
+      beat && de() && beat.drawCue(e);
     }
     // The white "VERB · thing" label over the spot the big button acts on. Every chapter uses it.
     function drawCap() {
