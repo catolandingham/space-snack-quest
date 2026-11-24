@@ -546,11 +546,22 @@ function squirt(ctx, s) {
   if (fade > 0) {
     ctx.save();
     ctx.globalAlpha = fade;
-    for (let i = 0; i <= 12; i++) {
-      const u = (k * i) / 12,
-        p = along(u);
-      drop(ctx, p.x, p.y, 6 + 4 * (i / 12));
+    // A thick stream of water (outlined, like the drops), and a big drop at its front.
+    ctx.beginPath();
+    for (let i = 0; i <= 20; i++) {
+      const p = along((k * i) / 20);
+      i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
     }
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 17;
+    ctx.strokeStyle = INK;
+    ctx.stroke();
+    ctx.lineWidth = 11;
+    ctx.strokeStyle = WATER;
+    ctx.stroke();
+    const front = along(k);
+    drop(ctx, front.x, front.y, 13);
     ctx.restore();
   }
   if (s < SQUIRT.fly) return null;
