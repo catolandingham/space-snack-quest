@@ -68,6 +68,17 @@
       ch2.qCheck = null;
       ((n.ch1PeekReady = !0), (n.ctrl = !0), (n.scene = "Q1"), (n.ch1Chip = "Squatch: peek out the door"), chipNow());
     }
+    // Runs `f` drawing on `ctx` instead of the game's canvas (the party's hand-overs below).
+    function onCtx(ctx, f) {
+      if (!ctx || ctx === e) return f();
+      let keep = e;
+      try {
+        e = ctx;
+        return f();
+      } finally {
+        e = keep;
+      }
+    }
     // The engine functions the morning module uses, handed over once (src/modules/bridge.js, handOver).
     window.SSQ &&
       window.SSQ.handOver &&
@@ -116,6 +127,17 @@
         audioCtx: () => S,
         masterGain: () => M,
         drawMops: (x, y, scale, opts) => Fe(x, y, scale, opts || {}),
+        // The party night (src/modules/party.js): Squatch and Isfred as the room draws them, the eyes in a plant,
+        // and the hall's sizes (a grown-up's height, Squatch's scale).
+        // Each draws on `ctx` (the game's canvas, or a picture of the sheet tool's), as the face buttons do.
+        drawSquatch: (ctx, x, y, scale, opts) => onCtx(ctx, () => Re(x, y, scale, opts || {})),
+        drawIsfred: (ctx, x, y, f) => onCtx(ctx, () => drawCh1Alien(x, y, "horns", ALIEN_ADULT, f || 1)),
+        drawEyes: (ctx, x, y) => onCtx(ctx, () => ga(x, y)),
+        drawMopsOn: (ctx, x, y, scale, opts) => onCtx(ctx, () => Fe(x, y, scale, opts || {})),
+        hallSizes: () => ({ adult: ADULT_PX, squatch: SQ_ADULT }),
+        // Sight cones: the standing cone's size, and telling the tests (conesDrawn) about a cone drawn this frame.
+        coneSize: () => ({ half: STAND_CONE_HALF, len: STAND_CONE_LEN }),
+        noteCone: (c) => conesDrawn.push({ ...c, room: n.room, cam: 0 }),
         squatchScale: () => wl,
         text: (t, x, y, size, color, align, weight) => g(t, x, y, size, color, align, weight),
       });

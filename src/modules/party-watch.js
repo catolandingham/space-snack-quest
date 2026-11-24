@@ -74,3 +74,70 @@ export function partyCones(people, sq, lookAtSquatch, cone) {
     return { id: p.id, x: p.x, y: p.y, ox, oy, a, edge, show: coneShow(edge) };
   });
 }
+
+// ---------- the party night's cones (party plan "Rules that hold in every scene", Sight) ----------
+// Only a plant he is hiding in blocks sight; furniture never chops a cone. The room's walls still end cones:
+// cones are drawn clipped to the room inside its walls, and Squatch is always inside it, so the drawn cone is
+// exactly where he is seen (tests/party-scenes.mjs).
+export const ROOM_INSIDE = Object.freeze({ x0: 34, y0: 200, x1: 926, y1: 613 });
+
+/** A cone from a person standing at feet (x, y), looking at angle `a`. */
+export function coneFrom(id, x, y, a, size) {
+  return { id, x, y, ox: x, oy: y - EYE_ABOVE_FEET, a, half: size.half, len: size.len };
+}
+/** The angle from a person at feet (x, y) to a point. */
+export function lookAt(x, y, to) {
+  return Math.atan2(to.y - (y - EYE_ABOVE_FEET), to.x - x);
+}
+/** The angle a stage-facing guest looks (the middle of the stage). */
+export function towardStage(x, y) {
+  return lookAt(x, y, PARTY_STAGE);
+}
+/** True when the cone sees Squatch standing at feet `sq` (not hidden). */
+export function coneSees(c, sq) {
+  return distToCone(sq.x, sq.y - SQUATCH_SEEN_ABOVE_FEET, c.ox, c.oy, c.a, c.half, c.len) <= 0;
+}
+
+/**
+ * Draws the cones whole (walls end them). Each is dashed while Squatch is outside it and yellow while he is in it.
+ * `all` draws every cone fully (the peek, which teaches cones); otherwise a cone shows only as Squatch comes near
+ * it (the approved distance fade, coneShow). Returns the cones as drawn, each with its `show` and `inside`.
+ */
+export function drawCones(ctx, cones, sq, hidden, all, note) {
+  const out = [];
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(ROOM_INSIDE.x0, ROOM_INSIDE.y0, ROOM_INSIDE.x1 - ROOM_INSIDE.x0, ROOM_INSIDE.y1 - ROOM_INSIDE.y0);
+  ctx.clip();
+  for (const c of cones) {
+    const edge = distToCone(sq.x, sq.y - SQUATCH_SEEN_ABOVE_FEET, c.ox, c.oy, c.a, c.half, c.len),
+      inside = !hidden && edge <= 0,
+      show = all || c.always ? 1 : coneShow(edge);
+    out.push({ ...c, edge, inside, show });
+    note && note({ ox: c.ox, oy: c.oy, a: c.a, half: c.half, len: c.len, askOnly: !!c.askOnly });
+    if (!(show > 0)) continue;
+    ctx.save();
+    ctx.globalAlpha = show;
+    ctx.beginPath();
+    ctx.moveTo(c.ox, c.oy);
+    ctx.arc(c.ox, c.oy, c.len, c.a - c.half, c.a + c.half);
+    ctx.closePath();
+    if (inside || c.hot) {
+      ctx.fillStyle = "rgba(255,234,120,.55)";
+      ctx.fill();
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "rgba(160,100,10,.95)";
+      ctx.stroke();
+    } else {
+      ctx.setLineDash([8, 7]);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "rgba(90,96,110,.6)";
+      ctx.fillStyle = "rgba(255,255,255,.08)";
+      ctx.fill();
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+  ctx.restore();
+  return out;
+}
