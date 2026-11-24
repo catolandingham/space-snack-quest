@@ -115,7 +115,7 @@ const cueDrawn = (page) =>
     } finally {
       P.fillText = fill;
     }
-    return seen.some((t) => /^tap\b|\u25b8/.test(t));
+    return seen.some((t) => /^tap\b/i.test(t));
   });
 
 // Plays from the title until the song step gives control back (or something goes wrong). Each waiting card,

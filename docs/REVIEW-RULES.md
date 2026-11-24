@@ -76,3 +76,6 @@ The later full touch run exposed a test-driver gap: it waited whenever walking w
 
 ## Mistake: a killed run was read as a failing test
 2026-11-24. The morning-fixes full run ended in `tests/ch1-kid-play.mjs` with puppeteer's "Attempted to use detached Frame". The run had been killed (its task output read "[killed]" at the same second the log stopped) when the builder's session stopped, which closed Chrome under the robot; the game was fine, and the suite alone reached the tally card. Before debugging a run that ends in "detached Frame", "Target closed" or no summary line, check whether the run was stopped, then rerun that suite alone.
+
+## Mistake: a "nothing is drawn" check looked where the old drawing never was
+2026-11-24. The reviewer found half of the calendar's no-paw check sampled a spot the old paw had already left, so it would pass with the paw still there. A check that something is gone samples every place the old drawing could be (where it rests, and where it follows a held finger), and is run against main to see it fail.

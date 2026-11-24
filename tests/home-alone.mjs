@@ -404,7 +404,7 @@ for (let i = 0; i < 2; i++) {
   const info = await page.evaluate(() => {
     window.__ss.drawFrame();
     const printed = [...window.__printed];
-    return { last: window.SSQ.cutaway.last(), cue: printed.some((t) => /^tap\b|\u25b8/.test(t)), printed };
+    return { last: window.SSQ.cutaway.last(), cue: printed.some((t) => /^tap\b/i.test(t)), printed };
   });
   cut.push({ panel: s.panel, btn: s.btn, still: await stillAfter6s(), ...info });
   await tapAt(480, 330);

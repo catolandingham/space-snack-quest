@@ -88,9 +88,26 @@ for (const viewport of [
       return hits;
     }, [x0, y0, x1, y1]);
   const pawBefore = await pawPixels(700, 590, 860, 640);
+  // A held drag across the paper (the old paw followed the finger), then a tap; nothing brown anywhere it went.
+  const drag = async () => {
+    const rect = await page.$eval("canvas", (el) => {
+      const r = el.getBoundingClientRect();
+      return { x: r.x, y: r.y, w: r.width, h: r.height };
+    });
+    const at = (x, y) => [rect.x + (x * rect.w) / 960, rect.y + (y * rect.h) / 640];
+    if (viewport.hasTouch) (await page.touchscreen.touchStart(...at(592, 385)), await page.touchscreen.touchMove(...at(600, 470)));
+    else (await page.mouse.move(...at(592, 385)), await page.mouse.down(), await page.mouse.move(...at(600, 470), { steps: 4 }));
+    await sleep(150);
+    const held = await pawPixels(480, 400, 720, 640);
+    if (viewport.hasTouch) await page.touchscreen.touchEnd();
+    else await page.mouse.up();
+    await sleep(350);
+    return held;
+  };
+  const pawHeld = await drag();
   await tap(592, 385);
-  const pawAfter = await pawPixels(530, 560, 660, 640);
-  g.check(`${tag}: no paw is drawn on the close-up, before or after a touch`, pawBefore === 0 && pawAfter === 0, { pawBefore, pawAfter });
+  const pawAfter = (await pawPixels(530, 560, 660, 640)) + (await pawPixels(700, 590, 860, 640));
+  g.check(`${tag}: no paw is drawn on the close-up, before, during a drag, or after a touch`, pawBefore === 0 && pawHeld === 0 && pawAfter === 0, { pawBefore, pawHeld, pawAfter });
   g.check(`${tag}: bite opens through the right paper edge without a closing ink line`, await page.evaluate(() => {
     const cv = document.querySelector("canvas"), k = cv.width / 960;
     const p = cv.getContext("2d").getImageData(819 * k, 390 * k, 1, 1).data;
