@@ -79,10 +79,12 @@
       let s = (spots || []).find((o) => o && o.verb && o.when !== !1);
       s && drawGoalMark(s);
     }
-    // The morning module's spots (SING ALONG, TALK · Mops) while its song step has control, else null.
+    // The morning module's spots (SING ALONG, TALK · Mops) while its song step has control, and home alone's
+    // (DO · homework first, the goal; then OPEN · closet, FLOP · bed) with the calendar after them; else null.
     function ch1MorningSpots() {
-      let beat = window.SSQ && window.SSQ.beat("ch1-morning");
-      return beat && n.room === "closet" ? beat.spots() : null;
+      let beat = window.SSQ && window.SSQ.beat("ch1-morning"),
+        s = beat && n.room === "closet" ? beat.spots() : null;
+      return s && beat.homeAlone && beat.homeAlone() ? [...s, ...ch1CalendarSpots()] : s;
     }
     // True while Mops walks out at the end of the morning (the goal chip hides).
     function ch1MorningLeaving() {

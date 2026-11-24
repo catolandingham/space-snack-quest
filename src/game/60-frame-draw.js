@@ -711,6 +711,11 @@
       if (homePicture()) {
         drawLockedRoom(n.wardrobe === "open" ? "home-open" : "home-closed");
         gboxOut() && L2();
+        // Home alone with the closet open: the morning module draws the G box on the closet floor.
+        {
+          let beat = window.SSQ && window.SSQ.beat("ch1-morning");
+          beat && beat.drawOnRoom && beat.drawOnRoom(e);
+        }
         n.wardrobe === "open" && n.costumeOn && ((e.fillStyle = "#f4efe6"), e.fillRect(70, 150, 150, 160));
         return;
       }
@@ -2125,9 +2130,11 @@
                   (X(300, 594, 7, 4), r("#c98a4a", 2), e.restore());
                 }
                 // sqLift: below 0 he is slumped down asleep (the morning), above 0 he rises to stand up.
+                // sqBedX moves him sideways from the bed's middle (the home-alone bed flop jumps on and off).
+                let bx = 205 + (n.sqBedX || 0);
                 (e.save(),
-                  (n.sqLift || 0) < 0 && (e.translate(205, 444), e.rotate(0.12 * n.sqLift), e.translate(-205, -444)),
-                  Re(205, 444 - (s ? Math.max(0, Math.sin(n.T * 5)) * 7 : 0) - (n.sqLift || 0) * 22, wl, { f: 1, eyes: i === "sleep" ? "closed" : "", legs: !1 }),
+                  (n.sqLift || 0) < 0 && (e.translate(bx, 444), e.rotate(0.12 * n.sqLift), e.translate(-bx, -444)),
+                  Re(bx, 444 - (s ? Math.max(0, Math.sin(n.T * 5)) * 7 : 0) - (n.sqLift || 0) * 22, wl, { f: 1, eyes: i === "sleep" ? "closed" : "", legs: !1 }),
                   e.restore(),
                   m(120, 422, 170, 28, 12),
                   r("#a98bff", 4),

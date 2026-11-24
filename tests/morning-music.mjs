@@ -6,7 +6,8 @@
  * - Sound on: the recording music/floating-in-space.mp3 starts on the tap after "Now here's a classic hit
  *   from Dog Zylan!", never before; it plays as a decoded buffer through the game's master volume (no new
  *   <audio> element); Joe's theme is quiet while it plays; it dips under each sung line and comes back; the
- *   made-up tune (co) does not play over it; after Mops leaves it fades out on "That evening…".
+ *   made-up tune (co) does not play over it; after Mops leaves it keeps playing while Squatch is home alone,
+ *   and fades out on "That evening…".
  * - Sound turned on partway through the song step: the recording starts from the top, at background level.
  *   node tests/morning-music.mjs
  */
@@ -112,8 +113,14 @@ const waitFor = async (r, ok, ms = 8000) => {
   await sleep(300);
   s = await r.st();
   g.check("and comes back up after the singing", s.m.target >= s.m.background - 0.01 && s.m.target > 0.35, s.m);
+  // Mops leaves; Squatch is home alone (src/modules/home-alone.js) until he does his homework.
+  s = await tapUntil(r, (s) => s.ctrl && /homework/.test(s.chip));
+  await sleep(1500);
+  s = await r.st();
+  g.check("it keeps playing while Squatch is home alone", /homework/.test(s.chip) && s.m.playing && s.m.owns, { chip: s.chip, m: s.m });
+  await r.page.evaluate(() => (window.__ss.spotsNow() || []).find((x) => x.id === "homework").f());
   s = await tapUntil(r, (s) => s.k === "card");
-  g.check('it is still playing when Mops is gone and "That evening…" comes up', /^That evening/.test(s.text) && s.m.playing && s.m.owns, { text: s.text, m: s.m });
+  g.check('it is still playing after the homework when "That evening…" comes up', /^That evening/.test(s.text) && s.m.playing && s.m.owns, { text: s.text, m: s.m });
   s = await waitFor(r, (s) => !s.m.playing && !s.m.owns, 5000);
   g.check('it fades out on "That evening…" and gives the room back to Joe\'s theme', !s.m.playing && !s.m.owns, s.m);
   g.check("no page errors (sound on)", r.errors.length === 0, r.errors);

@@ -36,7 +36,6 @@
         (n.ch1Day2 = !1),
         (n.ch1Zoom = null),
         (n.ch1Calendar = null),
-        (n.ch1CalendarBitten = !1),
         (n.ch1PadOn = !1),
         (n.ch1Chain = !1),
         (n.ch1Flyer = !1),
@@ -46,6 +45,7 @@
         (n.ch1Fur = !1),
         (n.ch1Morning = null),
         (n.sqLift = 0),
+        (n.sqBedX = 0),
         (n.mo.walking = !1),
         (n.tvOn = !1));
     }
@@ -118,14 +118,18 @@
         masterGain: () => M,
         chime: () => D.chime(),
         drawMops: (x, y, scale, opts) => Fe(x, y, scale, opts || {}),
+        drawSquatch: (x, y, scale, opts) => Re(x, y, scale, opts || {}),
         text: (t, x, y, size, color, align, weight) => g(t, x, y, size, color, align, weight),
       });
     // Optional inspection, not a new story beat. Keep the current queue intact while it is open.
     // Brian, Nov 16: tappable calendar; subtle bite, fake months, sponsor and family reminders.
+    // Offered home alone after Mops leaves (src/modules/home-alone.js) and in the evening.
     function ch1CalendarAvailable() {
+      let beat = window.SSQ && window.SSQ.beat && window.SSQ.beat("ch1-morning"),
+        alone = !!(beat && beat.homeAlone && beat.homeAlone());
       return n.ctrl && n.hopOut < 0 && !de() && n.room === "closet" && n.wardrobe !== "open" &&
         !n.ch1Day2 && !n.ch1Party && !n.ch1Dress && !n.ch1Zoom && !n.ch1Calendar &&
-        (n.scene === "O1" || (n.scene === "Q1" && n.ch1PeekReady));
+        (n.scene === "O1" || (n.scene === "Q1" && (n.ch1PeekReady || alone)));
     }
     function ch1CalendarSpots() {
       return ch1CalendarAvailable() && n.sqPose === "stand"
@@ -162,13 +166,8 @@
       }
       z.paw = { x, y };
       if (z.age < 0.25) return !0;
+      // The snack is only a picture: touching it does nothing (the paper is already nibbled, Brian G 556).
       if (Math.hypot(x - 880, y - 540) < 64) ch1CloseCalendar();
-      // The snack is only a picture. One bite takes the paper with it.
-      else if (!n.ch1CalendarBitten && Math.hypot(x - 592, y - 385) < 65) {
-        n.ch1CalendarBitten = !0;
-        z.biteAt = z.age;
-        D.grab();
-      }
       return !0; // Never let a tap through to the room behind the close-up.
     }
     let ch1CalendarPaper = null;
@@ -247,8 +246,10 @@
       ctx.beginPath(); ctx.arc(492, 330, 24, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
       ctx.strokeStyle = "#f4d7a8"; ctx.lineWidth = 4;
       ctx.beginPath(); ctx.moveTo(472, 335); ctx.quadraticCurveTo(492, 345, 512, 335); ctx.stroke();
-      if (n.ch1CalendarBitten) {
-        // A discreet nibble at the page edge, leaving the pie, dates and reminders untouched.
+      {
+        // The nibble at the page edge is there from the start, as if Mops had a little taste (Brian G 556: "It
+        // should just have a bite out already, kind of like implying maybe the gander ate a little bit."). It
+        // leaves the pie, dates and reminders untouched.
         ctx.globalCompositeOperation = "destination-out";
         ctx.beginPath();
         ctx.moveTo(720, 314);
@@ -267,13 +268,6 @@
       e.translate(460, 320); e.scale(0.92 + 0.08 * zoom, 0.92 + 0.08 * zoom);
       e.drawImage(paper, -360, -265);
       e.restore();
-      if (n.ch1CalendarBitten && z.biteAt != null && z.age - z.biteAt < 0.7) {
-        let fall = Math.min(1, Math.max(0, z.age - z.biteAt) / 0.7);
-        for (let i = 0; i < 2; i++) {
-          e.save(); e.globalAlpha = 1 - fall; e.translate(824 + i * 6, 394 + fall * (18 + i * 6));
-          e.rotate(i * 0.8); e.fillStyle = "#fffaf0"; e.fillRect(-2, -1, 4, 3); e.restore();
-        }
-      }
       drawPawArm(z.paw);
       // At 375px wide this remains a roughly 44px target, unlike the older cut-in X.
       L(880, 540, 58); r("#ffffff", 4); g("X", 880, 540, 40, "#1e2430", "center", 900);

@@ -21,9 +21,10 @@ import { SPEAKER } from "./morning.js";
 /**
  * The game-state fields a rebuilt beat may write, through engine().set(field, value). Anything else it
  * changes goes through a named hand-over function (place, face, step, still, moWalking). A beat that tries
- * to write another field stops with an error; tests/module-build.mjs checks the morning against this list.
+ * to write another field stops with an error; tests/module-build.mjs checks the morning (and its home-alone
+ * part) against this list.
  */
-export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz"]);
+export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe", "sqBedX"]);
 
 export function createBridge() {
   const beats = new Map();
@@ -39,7 +40,7 @@ export function createBridge() {
      * The older program hands over, once at start, the small engine functions rebuilt beats use: the story
      * queue (queue, say, card, run, until, tapWait, current), people (pos, place, face, step, still,
      * moWalking), state (get, and set for the BEAT_WRITES fields only), the chip, the chapter reset, the
-     * evening start, forgetting the step restart's saved start, sound (soundState, audioCtx, masterGain, chime), drawing (drawMops, text) and the clock.
+     * evening start, forgetting the step restart's saved start, sound (soundState, audioCtx, masterGain, chime), drawing (drawMops, drawSquatch, text) and the clock.
      * A later hand-over replaces an earlier one (the page made a new game).
      */
     handOver(e) {

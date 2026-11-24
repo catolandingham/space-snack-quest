@@ -52,7 +52,8 @@ g.check("the older program handed the engine over to the bridge", await page.eva
 // (c) The morning (the first rebuilt beat) writes only the game-state fields bridge.js names, and its old
 // code is gone from src/game/ while the calendar it shares with Day 2 stays.
 const { BEAT_WRITES } = await import(new URL("../src/modules/bridge.js", import.meta.url).href).catch(() => ({}));
-const morningSrc = readFileSync(join(root, "src", "modules", "morning.js"), "utf8");
+// The morning and its home-alone part (home-alone.js), which writes through the same engine.
+const morningSrc = ["morning.js", "home-alone.js"].map((f) => readFileSync(join(root, "src", "modules", f), "utf8")).join("\n");
 const sets = [...morningSrc.matchAll(/\.set\("([A-Za-z0-9]+)"/g)].map((m) => m[1]);
 g.check("bridge.js names the fields a beat may write", Array.isArray(BEAT_WRITES) && BEAT_WRITES.length > 0, BEAT_WRITES);
 g.check("the morning writes only named fields", Array.isArray(BEAT_WRITES) && sets.length > 0 && sets.every((k) => BEAT_WRITES.includes(k)), sets.filter((k) => !(BEAT_WRITES || []).includes(k)));
@@ -63,7 +64,8 @@ const game = readdirSync(join(root, "src", "game"))
   .filter((f) => f.endsWith(".js"))
   .map((f) => readFileSync(join(root, "src", "game", f), "utf8"))
   .join("\n");
-const gone = ["CH1_MOPS_MORNING", "CH1_SONG_MOPS", "CH1_SONG_SQ", "ch1Day1(", "ch1MopsHumTick", "ch1SingAlong", "ch1MopsLeaveTick", "ch1SongSpots", "ch1Song", "ch1MopsLeave", "songTap", "ss-song"];
+// ch1CalendarBitten and the bite on touch went with home alone: the calendar is always bitten (Brian, G 556).
+const gone = ["CH1_MOPS_MORNING", "CH1_SONG_MOPS", "CH1_SONG_SQ", "ch1Day1(", "ch1MopsHumTick", "ch1SingAlong", "ch1MopsLeaveTick", "ch1SongSpots", "ch1Song", "ch1MopsLeave", "songTap", "ss-song", "ch1CalendarBitten", "biteAt"];
 g.check("the old morning code is gone from src/game/", gone.every((name) => !game.includes(name)), gone.filter((name) => game.includes(name)));
 const kept = ["function ch1CalendarAvailable", "function ch1CalendarSpots", "function ch1OpenCalendar", "function ch1CloseCalendar", "function ch1CalendarTap", "let ch1CalendarPaper", "function drawCh1Calendar", "function ch1CalHit", "function ch1PeekSpots", "function ch1SneakStart", "function co("];
 g.check("the calendar, the peek and the made-up tune (used elsewhere) stay", kept.every((name) => game.includes(name)), kept.filter((name) => !game.includes(name)));

@@ -9,10 +9,15 @@
  * described it at G 224): he bends over a plain bucket, dunks his beard, and wrings it out right above it so
  * the water pours back in, twice. G 189: Mops is bigger than the bucket and really leans in.
  *
+ * Squatch's homework on the home-alone morning is the second user: its two pictures are in
+ * homework-cutaway.js.
+ *
  * Drawn here in the game's style (dark outlines, flat colours). Mops is drawn by this file too, from the same
  * shapes as the engine's drawMops but with outlines as thin as in Brian's approved picture (see "Mops in the
  * close-up"), and his beard so it can dunk and twist.
  */
+import { HOMEWORK_PANELS } from "./homework-cutaway.js";
+
 const INK = "#1e2430";
 const WALL = "#f4f1ea",
   FLOOR = "#ebe6da",
@@ -509,6 +514,7 @@ function wring(ctx, t) {
 
 const PANELS = {
   beard: [dunk, wring],
+  homework: HOMEWORK_PANELS,
 };
 
 /** Draws the cutaway picture `step` fills the screen with. `cue` is the "tap ▸" words. */
@@ -519,17 +525,16 @@ export function drawCutaway(ctx, engine, step, t, cue) {
   ctx.fillStyle = WALL;
   ctx.fillRect(0, 0, 960, 640);
   widest = 0;
-  const { bucket, lean } = panels[step.panel](ctx, t);
+  const drew = panels[step.panel](ctx, t, engine) || {};
   ctx.restore();
   drawTapCue(ctx, engine, t, cue);
-  const m = mopsBox();
-  last = {
-    id: step.id,
-    panel: step.panel,
-    full: true,
-    mops: { w: m.x1 - m.x0, h: m.y1 - m.y0, outline: widest, nose: at(26.7, -26.9, lean) },
-    bucket: { w: bucket.x1 - bucket.x0, h: bucket.y1 - bucket.y0 },
-  };
+  last = { id: step.id, panel: step.panel, full: true };
+  if (drew.bucket) {
+    // The beard pictures: how big Mops and the bucket are, his outlines, and where his nose is (tests).
+    const m = mopsBox();
+    last.mops = { w: m.x1 - m.x0, h: m.y1 - m.y0, outline: widest, nose: at(26.7, -26.9, drew.lean) };
+    last.bucket = { w: drew.bucket.x1 - drew.bucket.x0, h: drew.bucket.y1 - drew.bucket.y0 };
+  } else Object.assign(last, drew);
 }
 
 /** What the last cutaway frame drew (tests). */

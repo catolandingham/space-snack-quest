@@ -8,7 +8,7 @@
  * - the song: the goal "Squatch: sing along with Mops", Mops stays by the bucket (no walk to the door, no hum),
  *   no yellow ring around Squatch,
  * - the goal bar never says "ship" in scene 1,
- * - after Mops leaves there is the "That evening…" card, then the peek goal,
+ * - after Mops leaves Squatch is home alone with his homework, then the "That evening…" card, then the peek goal,
  * - no touch help line and no "Tap the floor" note.
  * - the peek (step 4): the hall is already full on the first hall frame, Squatch stays in his doorway,
  *   the goal bar is empty, he hears muffled talk, then thinks "Robots?" once.
@@ -96,15 +96,23 @@ await sleep(1500);
 const stay = await st();
 g.check("Mops stays by the bucket for the song (no walk to the door, no hum)", Math.abs(stay.mo[0] - s.mo[0]) < 1 && stay.moPose === "stand", { before: s.mo, after: stay.mo, pose: stay.moPose });
 await page.keyboard.press("KeyE");
-let evening = false;
+let evening = false,
+  homework = false;
 for (let i = 0; i < 80; i++) {
   s = await st();
   chips.add(s.chip);
   if (s.cur === "card" && /^That evening/.test(s.text)) evening = true;
   if (s.ctrl && /peek out the door/.test(s.chip)) break;
-  if (s.cur === "bub" || s.cur === "card" || s.cur === "wait") await tap();
+  // Home alone after Mops leaves: the homework at the desk (tests/home-alone.mjs) comes before the evening.
+  if (s.ctrl && /do your homework/.test(s.chip)) {
+    homework = true;
+    await page.evaluate(() => (window.__ss.spotsNow() || []).find((x) => x.id === "homework").f());
+    continue;
+  }
+  if (s.cur === "bub" || s.cur === "card" || s.cur === "wait" || s.cur === "cutaway") await tap();
   else await sleep(300);
 }
+g.check("after Mops leaves, home alone with the homework goal", homework);
 g.check('"That evening…" card before the peek', evening);
 g.check("then the goal is to peek out the door", s.ctrl && /peek out the door/.test(s.chip), s.chip);
 // The peek: stand at the door and use it.
