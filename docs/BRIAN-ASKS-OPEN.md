@@ -10,17 +10,17 @@
 | 74–75 | ## 4. Everything else not built |
 | 76–96 | ### Morning and home |
 | 97–110 | ### Party |
-| 111–127 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
-| 128–132 | ### Snacks and dress-up |
-| 133–145 | ### Day 2 and night |
-| 146–150 | ### Escape and later chapters |
-| 151–154 | ### Looks and lines |
-| 155–162 | ### Sound |
-| 163–166 | ### Words and rules |
-| 167–179 | ### How the bots work |
-| 180–187 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
-| 188–202 | ## 5. Merged, in a pull request, and being built |
-| 203–213 | ## 6. Corrections to the checkers |
+| 111–126 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
+| 127–131 | ### Snacks and dress-up |
+| 132–144 | ### Day 2 and night |
+| 145–149 | ### Escape and later chapters |
+| 150–153 | ### Looks and lines |
+| 154–161 | ### Sound |
+| 162–165 | ### Words and rules |
+| 166–178 | ### How the bots work |
+| 179–186 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
+| 187–201 | ## 5. Merged, in a pull request, and being built |
+| 202–212 | ## 6. Corrections to the checkers |
 <!-- /section-index -->
 # Brian's asks that are not in the game yet
 
@@ -109,11 +109,10 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 - Manager's office look. "Think about hallway and entrance to managers office and how it should look inside (door type and placement), then think about how an office would actually look and what fun quirks can be added" (S 1120).
 
 ### Playthrough 2026-11-23 (party, for the party rebuild)
-Brian played the live game on his iPhone on 2026-11-23. His party comments, in his words, in the order he said them. These are for the party rebuild, not for the morning fixes. One of them is built and left off this list: the faces at the top right ("that's supposed to tell me who I'm playing") show only where a switch is possible (morning-fixes PR, 19a).
+Brian played the live game on his iPhone on 2026-11-23. His party comments, in his words, in the order he said them. These are for the party rebuild, not for the morning fixes. Two of them are built in the morning-fixes PR and left off this list: the faces at the top right ("that's supposed to tell me who I'm playing") show only where a switch is possible (19a), and "The yellow flashing light on the bottom right doesn't make sense" (the bobbing arrow on story waits) is gone; NEXT is the only cue (18a).
 - Peeking: "I'm not peeking here. Look, it's like I fully walked out. That doesn't make sense."
 - The banner and the camera: "The 'coming soon' is not on the actual sign. The camera's pointing in the wrong direction."
 - Guest sizes (unclear on the recording; best reading, the guests are different sizes in a way that looks wrong): "The creatures are kind of various sizes, the way that doesn't make sense."
-- A yellow marker at the lower right: "The yellow flashing light on the bottom right doesn't make sense."
 - One sign: "It's not clear that's an actual sign. I think we could just have 'Robotics Delegation, coming soon' on the same sign, if we want."
 - Sideways: "Notice how when I've got it landscape, that label is behind Chapter One. But this is fine."
 - Peek versus sneak, and being seen: "Am I supposed to be peeking this whole time? I thought I was sneaking out and then trying to get to the plant. Well, I can't even. And also I'm in the line of sight here, but nothing happens. That doesn't make sense."
@@ -193,7 +192,7 @@ Merged 2026-11-23: cones on everyone and the six approved guests (#75), controls
 Merged 2026-11-23: home alone after Mops leaves (#84, morning plan PR 3): the homework goal and cutaway, OPEN · closet with the G box, FLOP · bed, the calendar already bitten (13A to 16A).
 
 Not merged yet:
-- Morning fixes (branch feat/morning-fixes, draft), Brian's answers of 2026-11-23 and his iPhone playthrough: 18a (no "tap ▸" note, NEXT only), 19a (the faces show only where a switch is possible), 20a (with sound on: Joe's theme on the title and first card, snoring while Squatch sleeps, a ding-dong before "Good morning, Stormtop!"), 21a (Mops mops along the floor to his bucket, leaving a wet streak, before the beard close-up), the song audible before Mops's "Floating in space!" line (it starts past the recording's quiet first 3 seconds), and no paw on the calendar close-up ("It's the calendar paw that doesn't make sense").
+- Morning fixes (branch feat/morning-fixes, draft), Brian's answers of 2026-11-23 and his iPhone playthrough: 18a (no "tap ▸" note and no yellow bobbing arrow on story waits, NEXT only; the big button dims while the story plays on its own), the title's Sir Mops-a-Lot drawn as the approved Mops, 19a (the faces show only where a switch is possible), 20a (with sound on: Joe's theme on the title and first card, snoring while Squatch sleeps, a ding-dong before "Good morning, Stormtop!"), 21a (Mops mops along the floor to his bucket, leaving a wet streak, before the beard close-up), the song audible before Mops's "Floating in space!" line (it starts past the recording's quiet first 3 seconds), and no paw on the calendar close-up ("It's the calendar paw that doesn't make sense").
 - The tap-path change.
 - Mops's heart cone in Chapter 1 (PR #35, open since Nov 13) and the rules check on pull requests (PR #34).
 
