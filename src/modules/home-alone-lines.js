@@ -21,9 +21,9 @@ export const HOME_ALONE_LINES = Object.freeze([
   { id: "sq-bed", who: "sq", text: "Not sleepy anymore.", status: "approved", source: "walkthrough beat 1, approved room looks" },
   { id: "sheet-heading", who: "sheet", text: "I SWEATY", status: "approved", source: "G 567 (I sweaty); okayed G 579" },
   { id: "sheet-name", who: "sheet", text: "Name: Squatch", status: "approved", source: "okayed G 579" },
-  { id: "sheet-subject", who: "sheet", text: "SPACE MATH", status: "needs-yes", source: "bot's pick (G 576: you come up with whatever you think makes sense)" },
-  { id: "sheet-sum", who: "sheet", text: "2 + 2 = 4 Moon Pies", status: "needs-yes", source: "bot's pick (G 576)" },
-  { id: "sheet-take", who: "sheet", text: "4 − 4 = yum!", status: "needs-yes", source: "bot's pick (G 576)" },
+  { id: "sheet-subject", who: "sheet", text: "SPACE MATH", status: "approved", source: "Brian 2026-11-23: 13A (Good with the 3 words on the homework sheet)" },
+  { id: "sheet-sum", who: "sheet", text: "2 + 2 = 4 Moon Pies", status: "approved", source: "Brian 2026-11-23: 13A (Good with the 3 words on the homework sheet)" },
+  { id: "sheet-take", who: "sheet", text: "4 − 4 = yum!", status: "approved", source: "Brian 2026-11-23: 13A (Good with the 3 words on the homework sheet)" },
 ]);
 
 /** The words of one line, by id. Throws on an unknown id, so a typo cannot show empty words. */

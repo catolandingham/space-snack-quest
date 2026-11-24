@@ -273,11 +273,13 @@ export function createMorning(bridge) {
       const m = live();
       return !!m && m.step === "leave";
     },
-    /** Drawn over the room: the wet floor where Mops mops, sound lines and music notes at the speaker. */
+    /** Drawn over the room: the wet floor where Mops mops, sound lines and music notes at the speaker, and
+     * Squatch while he flops on the bed (home alone). */
     draw(ctx) {
       const m = live(),
         e = E();
       if (!m) return;
+      home.draw(ctx);
       const t = e.time();
       if (e.get("moPose") === "mop") {
         const mo = e.pos("mops");
@@ -341,7 +343,7 @@ export function createMorning(bridge) {
     /** For tests: where the beat is and what it draws. */
     debug() {
       const m = M();
-      return { step: m ? m.step : "", fx: !m ? "" : speakerTalking() ? "lines" : m.notes ? "notes" : "", cue, lift: E() ? E().get("sqLift") : 0 };
+      return { step: m ? m.step : "", fx: !m ? "" : speakerTalking() ? "lines" : m.notes ? "notes" : "", cue, lift: E() ? E().get("sqLift") : 0, flop: m ? home.flop() : null };
     },
   };
 }

@@ -57,7 +57,9 @@
     // circle or an arrow (Brian, raised at least six times). Remember the last one drawn, so tests can check
     // it is never round Squatch himself.
     function drawGoalMark(spot) {
-      let box = window.SSQ && window.SSQ.drawGoalOutline ? window.SSQ.drawGoalOutline(e, n.room, spot.id, lockedImg[lockedNow], n.T) : null;
+      // Never over the people standing there: the outline is left out of their boxes.
+      let people = [n.sqPose !== "hidden" ? sqBox() : null, n.moPose && n.moPose !== "hidden" && n.mo.x > -100 ? moBox() : null];
+      let box = window.SSQ && window.SSQ.drawGoalOutline ? window.SSQ.drawGoalOutline(e, n.room, spot.id, lockedImg[lockedNow], n.T, people) : null;
       box && (n.lastRing = { x: (box.x0 + box.x1) / 2, y: (box.y0 + box.y1) / 2, T: n.T, box, id: spot.id, act: spot.verb + " · " + spot.cap });
     }
     function ch1MarkGoal() {
@@ -130,6 +132,16 @@
     function sqDrawScale() {
       if (n.room === "closet" && (n.scene || "")[0] !== "Q") return wl;
       return (adultPxFor(n.room) * 0.8) / 45;
+    }
+    // The box round Squatch's drawing (ears and fur included), and round Mops's, in game positions. At home the
+    // room draws Squatch at wl.
+    function sqBox() {
+      let q = n.room === "closet" ? wl : sqDrawScale();
+      return { x0: n.sq.x - 19 * q, x1: n.sq.x + 19 * q, y0: n.sq.y - 50 * q, y1: n.sq.y + 2 };
+    }
+    function moBox() {
+      let q = moDrawScale();
+      return { x0: n.mo.x - 24 * q, x1: n.mo.x + 24 * q, y0: n.mo.y - 56 * q, y1: n.mo.y + 2 };
     }
     function moDrawScale() {
       if (n.room === "closet" && (n.scene || "")[0] !== "Q") return wl;

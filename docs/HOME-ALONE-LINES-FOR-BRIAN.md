@@ -18,10 +18,12 @@ The calendar ("LOOK · calendar" and its close-up), the "That evening…" card a
 | 6 | Squatch, after he flops on the bed and gets back up | Not sleepy anymore. | sq | approved | walkthrough beat 1, approved room looks |
 | 7 | Homework cutaway, second picture: the heading at the top of the sheet | I SWEATY | sheet | approved | G 567 (I sweaty); okayed G 579 |
 | 8 | Homework sheet, under the heading | Name: Squatch | sheet | approved | okayed G 579 |
-| 9 | Homework sheet, the subject | SPACE MATH | sheet | needs your yes | bot's pick (G 576: you come up with whatever you think makes sense) |
-| 10 | Homework sheet, first sum | 2 + 2 = 4 Moon Pies | sheet | needs your yes | bot's pick (G 576) |
-| 11 | Homework sheet, second sum | 4 − 4 = yum! | sheet | needs your yes | bot's pick (G 576) |
+| 9 | Homework sheet, the subject | SPACE MATH | sheet | approved | Brian 2026-11-23: 13A (Good with the 3 words on the homework sheet) |
+| 10 | Homework sheet, first sum | 2 + 2 = 4 Moon Pies | sheet | approved | Brian 2026-11-23: 13A (Good with the 3 words on the homework sheet) |
+| 11 | Homework sheet, second sum | 4 − 4 = yum! | sheet | approved | Brian 2026-11-23: 13A (Good with the 3 words on the homework sheet) |
 
-Lines that need your yes: 9, 10, 11 (the homework sheet's sums; you said the bot could pick these, G 576, so they are built and shown on the picture sheet). Answer by number, for example "change 11 to ...".
+Lines that need your yes: none left (you said yes to 9, 10 and 11 on 2026-11-23: "13A", "Good with the 3 words on the homework sheet").
+
+Your other answers of 2026-11-23 on this part: 14A (the homework close-up's Squatch redrawn with thin outlines like the room's, and a real lying-down flop on the bed); 15A (the calendar keeps the approved nibble at the paper's edge, there from the start); 16A (merge once 13 to 15 are done and a full test run passes). Also from your feedback: the "VERB · thing" labels sit next to their thing without covering Squatch or other things, the purple bar across the bed in front of Squatch is gone, and the desk's dashed outline no longer draws over Squatch.
 
 The homework cutaway's first picture (Squatch at the desk with his pencil, tongue out) and the muddy paw print on the sheet have no words.

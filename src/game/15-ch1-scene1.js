@@ -45,7 +45,6 @@
         (n.ch1Fur = !1),
         (n.ch1Morning = null),
         (n.sqLift = 0),
-        (n.sqBedX = 0),
         (n.mo.walking = !1),
         (n.tvOn = !1));
     }
@@ -118,7 +117,7 @@
         masterGain: () => M,
         chime: () => D.chime(),
         drawMops: (x, y, scale, opts) => Fe(x, y, scale, opts || {}),
-        drawSquatch: (x, y, scale, opts) => Re(x, y, scale, opts || {}),
+        squatchScale: () => wl,
         text: (t, x, y, size, color, align, weight) => g(t, x, y, size, color, align, weight),
       });
     // Optional inspection, not a new story beat. Keep the current queue intact while it is open.
@@ -134,7 +133,7 @@
     function ch1CalendarSpots() {
       return ch1CalendarAvailable() && n.sqPose === "stand"
         ? [spot({ id: "home-calendar", verb: "LOOK", cap: "calendar", who: "sq",
-            x: 230, y: 392, r: 45, at: [179, 214], f: () => ch1OpenCalendar() })]
+            x: 230, y: 392, r: 45, at: [179, 214], thing: { x0: 99, x1: 167, y0: 196, y1: 279 }, f: () => ch1OpenCalendar() })]
         : [];
     }
     function ch1OpenCalendar(next) {

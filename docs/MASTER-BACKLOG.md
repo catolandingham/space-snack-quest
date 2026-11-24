@@ -15,7 +15,7 @@
 | 182–200 | ## Reset section |
 | 201–211 | ## Still open |
 | 212–215 | ## Chapter 1 replot, recorded and not built |
-| 216–355 | ## Changelog |
+| 216–357 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -23,7 +23,7 @@
 
 ## Where main is (Chapter 1 redesign)
 
-2026-11-23, draft PR on branch `feat/home-alone` (morning plan PR 3), not merged: home alone after Mops leaves (`src/modules/home-alone.js`, `home-alone-lines.js`, `homework-cutaway.js`; sheet `docs/HOME-ALONE-LINES-FOR-BRIAN.md`). Goal "Squatch: do your homework", desk outlined only; DO · homework, a two-picture homework cutaway, then "That evening…". Optional: OPEN · closet (G box drawn on the locked open picture as approved, door shuts on the next tap), FLOP · bed ("Not sleepy anymore."), LOOK · calendar (bitten from the start). Lines 9 to 11 (the sheet's sums) need Brian's yes. Not yet played by a person.
+2026-11-23, draft PR on branch `feat/home-alone` (morning plan PR 3), not merged: home alone after Mops leaves (`src/modules/home-alone.js`, `home-alone-lines.js`, `homework-cutaway.js`; sheet `docs/HOME-ALONE-LINES-FOR-BRIAN.md`). Goal "Squatch: do your homework", desk outlined only; DO · homework, a two-picture homework cutaway, then "That evening…". Optional: OPEN · closet (G box drawn on the locked open picture as approved, door shuts on the next tap), FLOP · bed ("Not sleepy anymore."), LOOK · calendar (bitten from the start). Brian's answers 13A (sums approved), 14A (thin-outline close-up Squatch, lying-down flop), 15A (edge nibble kept), 16A (merge after a full green run) are built, with his feedback: labels next to their thing and clear of Squatch (`cap-place.js`), no goal outline over Squatch or Mops, no purple bar in front of the bed. Not yet played by a person.
 
 2026-11-23, PR #82 (morning plan PR 2), merged after the full run: the morning from waking to Mops leaving is the first rebuilt beat (`src/modules/morning.js`, words in `src/modules/morning-lines.js`, sheet `docs/MORNING-LINES-FOR-BRIAN.md` with every line approved by Brian, 2026-11-23: "1A", "2B" the tag reads "Speaker"). The beard-wringing close-up is redrawn on the approved Mops model ("3A"). Speaker wakes Squatch, Mops mops then greets him, "Party?", the beard-wringing cutaway, Dog Zylan, Brian's Floating in Space recording with notes from the speaker, SING ALONG or TALK · Mops, the goodbye, the walk out, "That evening…". Old morning code deleted from `src/game/`. Home alone after Mops leaves (PR 3) is the draft on `feat/home-alone`. Not yet played by a person.
 
@@ -216,6 +216,8 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/old/OPEN-ASKS.md`. The
 ## Changelog
 
 2026-11-23, draft PR on `feat/home-alone` (morning plan PR 3). Home alone after Mops leaves, as part of the morning beat: new `home-alone.js` (spots, closet open and shut, bed flop, G box drawing), `home-alone-lines.js`, `homework-cutaway.js` (two pictures in the shared cutaway); `goal-targets.js` gets `closet:homework` (the desk); bridge: `drawSquatch` hand-over, `wardrobe` and `sqBedX` in `BEAT_WRITES`. Older program: the calendar is offered home alone, the bite is drawn from the start, and the bite-on-touch code (`ch1CalendarBitten`, the crumbs) is deleted; the bed drawing takes `sqBedX`; the home room calls the module's `drawOnRoom` for the G box. `docs/approved-art/closet/` holds Brian's approved G box picture for the test. Tests: home-alone, home-alone-lines; updated: morning-order, opening-song, morning-music, scene1-morning, calendar-closeup, ch1-playthrough, module-build, `toEvening` in game-page. Lines 9 to 11 need Brian's yes.
+
+2026-11-23, PR #84 again, Brian's answers and feedback: 13A, 14A, 15A, 16A recorded in `docs/HOME-ALONE-LINES-FOR-BRIAN.md`. New `src/modules/cap-place.js` (one rule for Chapter 1 "VERB · thing" labels: next to the spot's `thing`, clear of Squatch, the thing and other things; drawCap asks the bridge's `placeLabel`); home spots and the calendar spot name their thing; the desk spot sits right of the desk. `drawGoalOutline` takes boxes to leave out (Squatch, Mops). New `src/modules/squatch-art.js` (Squatch with outlines in pixels: the homework close-up, and the lying flop at room size). Older program: the purple bar `m(120, 422, 170, 28, 12)` across the bed is deleted (it dates from the room drawn before the locked picture, which has its own mattress); pose "lie" is drawn by the module; `sqBedX` and the `drawSquatch` hand-over are gone again (`squatchScale` instead). Tests: bed-look (new), home-alone (labels, outline, lying flop, close-up outline and colours).
 
 2026-11-23, in the same draft PR, on Brian's word ("We can drop first website and just go with Squatch", then "C"): the old Render site space-snack-quest.onrender.com is deleted (it returns 404). squatch.onrender.com is the game's one link: `LIVE_HOSTS` in `00-core.js` lists only it, `tests/live-hosts.mjs` checks the old address is gone from the game, and README, START-HERE and STATE say so.
 

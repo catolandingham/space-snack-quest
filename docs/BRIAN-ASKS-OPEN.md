@@ -173,7 +173,7 @@ Merged today on main: one sound button, off by default (PR #77); squatch.onrende
 Merged 2026-11-23: cones on everyone and the six approved guests (#75), controls always shown (#79), the hall v2 and home v6 pictures (this change).
 
 Not merged yet:
-- Home alone after Mops leaves (morning plan PR 3, branch feat/home-alone, draft): the homework goal and cutaway, OPEN · closet with the G box, FLOP · bed, the calendar already bitten. The homework sheet's sums need Brian's yes (docs/HOME-ALONE-LINES-FOR-BRIAN.md, lines 9 to 11).
+- Home alone after Mops leaves (morning plan PR 3, branch feat/home-alone, draft): the homework goal and cutaway, OPEN · closet with the G box, FLOP · bed, the calendar already bitten. Brian's answers of 2026-11-23 are built in it: 13A (the sheet's sums approved), 14A (thin-outline Squatch in the homework close-up, a lying-down flop), 15A (the calendar keeps its edge nibble), and his feedback (labels next to their thing, clear of Squatch; no purple bar in front of the bed; the desk outline never over Squatch). 16A: merge once a full test run passes.
 - The tap-path change.
 - Mops's heart cone in Chapter 1 (PR #35, open since Nov 13) and the rules check on pull requests (PR #34).
 

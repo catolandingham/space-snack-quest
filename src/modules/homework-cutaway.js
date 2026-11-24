@@ -5,10 +5,11 @@
  * I ready"; G 576: "do something fun, you come up with whatever you think makes sense".
  *   Picture 1: Squatch at the little desk, pencil in his paw, tongue out, scribbling.
  *   Picture 2: the sheet up close: "I SWEATY" in wobbly kid letters, "Name: Squatch", the sums, a muddy paw print.
- * Squatch is the game's own drawing (the engine's drawSquatch, handed over through the bridge), so he stays on
- * model. Every word comes from home-alone-lines.js.
+ * Squatch is drawn by squatch-art.js: the room's Squatch, same shapes and colours, with outlines as thin as the
+ * room's at his usual size (Brian, 2026-11-23, 14A). Every word comes from home-alone-lines.js.
  */
 import { homeLine } from "./home-alone-lines.js";
+import { drawSquatchArt } from "./squatch-art.js";
 
 const INK = "#1e2430",
   WALL = "#f4f1ea",
@@ -27,15 +28,8 @@ const INK = "#1e2430",
   WRITING = "#3a3f4b";
 
 // Picture 1: where Squatch stands behind the desk (his feet, hidden by the desk) and how big he is drawn.
-// At this size his outlines are under twice as thick as the room's people at their usual size; bigger would
-// make them heavy (the beard cutaway's lesson: tests/morning-order.mjs). His feet are behind the desk and his
-// near paw rests on its top.
-const SQ = { x: 480, y: 520, scale: 5.4 };
-// His near paw (the engine's Squatch, arm at rest): body width 11.5 - 1 + sin(.35) x arm 12, and
-// leg 7 + body 14 - 3 - cos(.35) x 12 above his feet, in his own units.
-const PAW = { x: 14.6, y: -6.7 };
-// His mouth, in his own units (head 15 tall, centred 32.25 above his feet).
-const MOUTH = { x: 2.6, y: -26 };
+// His feet are behind the desk and his near paw rests on its top. Outlines 4 px, like the beard close-up's Mops.
+const SQ = { x: 480, y: 520, scale: 5.4, line: 4 };
 const DESK_TOP = { x0: 230, x1: 730, y0: 470, y1: 506 };
 
 // The wall and floor behind him (the floor line sits above the desk top, so the desk stands on the floor).
@@ -88,11 +82,10 @@ function pencil(ctx, x, y, angle, len) {
 // Picture 1: Squatch at the desk, scribbling (the pencil wiggles; a few lines appear on the sheet and start over).
 function atDesk(ctx, t, engine) {
   room(ctx);
-  const s = SQ.scale;
-  engine.drawSquatch(SQ.x, SQ.y, s, { f: 1 });
+  const sq = drawSquatchArt(ctx, SQ.x, SQ.y, SQ.scale, { line: SQ.line });
   // Tongue out of the corner of his mouth while he concentrates.
   ctx.beginPath();
-  ctx.ellipse(SQ.x + MOUTH.x * s, SQ.y + MOUTH.y * s + 4, 7, 5.5, 0.4, 0, Math.PI * 2);
+  ctx.ellipse(sq.mouth.x + 14, sq.mouth.y + 6, 7, 5.5, 0.4, 0, Math.PI * 2);
   ctx.fillStyle = TONGUE;
   ctx.fill();
   ctx.lineWidth = 2.5;
@@ -138,7 +131,7 @@ function atDesk(ctx, t, engine) {
     ctx.stroke();
   }
   // The pencil in his near paw, its tip on the sheet, wiggling as he writes.
-  const paw = { x: SQ.x + PAW.x * s, y: SQ.y + PAW.y * s };
+  const paw = sq.paw;
   const wiggle = Math.sin(t * 14) * 0.08;
   pencil(ctx, paw.x - 34, d.y0 + 14, -0.9 + wiggle, 96);
   // His paw closes round the pencil (the game's paw colour).
@@ -149,7 +142,7 @@ function atDesk(ctx, t, engine) {
   ctx.lineWidth = 3;
   ctx.strokeStyle = INK;
   ctx.stroke();
-  return { squatch: { x: SQ.x, y: SQ.y, scale: s }, pencil: true };
+  return { squatch: { x: SQ.x, y: SQ.y, scale: SQ.scale, outline: sq.outline }, pencil: true };
 }
 
 // One line of kid writing: the whole line tilted a little, as a kid writes.

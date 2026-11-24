@@ -9,7 +9,11 @@
  *   closet floor, drawn like Brian's approved picture (docs/approved-art/closet/); Squatch stands clear of it
  *   and says "Mops's costumes. And my Guardian Box."; the line waits for a tap; the tap shuts the door and the
  *   calendar is offered again (Q7).
- * - FLOP · bed: Squatch flops onto the bed and gets back up without jumping between frames, then says
+ * - Brian's feedback of 2026-11-23 on PR #84: each "VERB · thing" label sits next to the thing it names and
+ *   covers neither Squatch nor that thing nor another home object; the desk's dashed outline never draws over
+ *   Squatch; no purple bar across the bed in front of Squatch; the homework close-up's Squatch has thin outlines
+ *   in the room's colours; FLOP · bed is a real lying-down pose (14A).
+ * - FLOP · bed: Squatch flops onto the bed, lies down on it, and hops back off without jumping between frames, then says
  *   "Not sleepy anymore." (waits for a tap), then control is back.
  * - DO · homework: straight into the homework cutaway (no pop-up first): picture 1 Squatch at the desk, picture
  *   2 the sheet with its words from the lines file; each waits for a tap with NEXT and the "tap ▸" cue; then
@@ -27,6 +31,15 @@ const { HOME_ALONE_LINES } = await import(pathToFileURL(join(root, "src", "modul
 const L = Object.fromEntries(HOME_ALONE_LINES.map((l) => [l.id, l.text]));
 const APPROVED = "data:image/png;base64," + readFileSync(join(root, "docs", "approved-art", "closet", "closet-gbox-approved-2026-11-23.png")).toString("base64");
 const g = await startGame({ port: 8973, name: "home-alone" });
+// 14A: the close-up Squatch (src/modules/squatch-art.js) keeps the room Squatch's look: same colours and sizes
+// as the engine's (m5 in src/game/60-frame-draw.js).
+{
+  const { SQUATCH_LOOK } = await import(pathToFileURL(join(root, "src", "modules", "squatch-art.js")).href);
+  const src = readFileSync(join(root, "src", "game", "60-frame-draw.js"), "utf8");
+  const m5 = (src.match(/m5 = \{([\s\S]*?)\}/) || [])[1] || "";
+  const differ = Object.entries(SQUATCH_LOOK).filter(([k, v]) => !new RegExp(`\\b${k}: ${typeof v === "string" ? `"${v}"` : v.toString().replace(".", "\\.")},`).test(m5));
+  g.check("the close-up Squatch has the room Squatch's colours and sizes", m5.length > 0 && differ.length === 0, differ);
+}
 const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 1 };
 
 const { page, errors } = await g.open("?ch=1", PHONE);
@@ -138,6 +151,82 @@ const rings = await page.evaluate(() => {
   return out;
 });
 g.check("only the desk gets the yellow outline, wherever Squatch stands", rings.every((r) => r && r.id === "homework" && r.box.x0 < 410 && r.box.x1 > 510 && r.box.y0 < 250), rings);
+// Brian 2026-11-23: "the places that pop up kind of overlap in weird ways". Each "VERB · thing" label sits next
+// to the thing it names and covers neither Squatch, nor that thing, nor another home object. The boxes are read
+// off the locked home picture v6 (game positions), here in the test, not taken from the game's code.
+const HOME = {
+  closet: { x0: 36, x1: 180, y0: 193, y1: 345 },
+  calendar: { x0: 99, x1: 167, y0: 196, y1: 279 },
+  desk: { x0: 403, x1: 515, y0: 245, y1: 345 },
+  bed: { x0: 84, x1: 286, y0: 395, y1: 545 },
+  tv: { x0: 545, x1: 705, y0: 135, y1: 238 },
+  bucket: { x0: 536, x1: 596, y0: 500, y1: 571 },
+  poster: { x0: 834, x1: 914, y0: 244, y1: 324 },
+  speaker: { x0: 856, x1: 893, y0: 162, y1: 203 },
+};
+const hit = (a, b) => a.x0 < b.x1 && a.x1 > b.x0 && a.y0 < b.y1 && a.y1 > b.y0;
+const gap = (a, b) => Math.max(0, a.x0 - b.x1, b.x0 - a.x1, a.y0 - b.y1, b.y0 - a.y1);
+const labels = await page.evaluate(() => {
+  const ss = window.__ss,
+    n = ss.op,
+    out = {};
+  for (const id of ["homework", "closet", "bed", "home-calendar"]) {
+    const sp = (ss.spotsNow() || []).find((x) => x.id === id);
+    if (!sp) continue;
+    n.sq.x = sp.x;
+    n.sq.y = sp.y;
+    n.walkTo = null;
+    ss.tick(0.02);
+    n.lastCap = null;
+    ss.drawFrame();
+    out[id] = { sq: [n.sq.x, n.sq.y], act: n.act ? n.act.verb + " · " + n.act.cap : "", cap: n.lastCap };
+  }
+  n.sq.x = 250;
+  n.sq.y = 574;
+  ss.tick(0.02);
+  return out;
+});
+for (const [id, thing] of [
+  ["homework", "desk"],
+  ["closet", "closet"],
+  ["bed", "bed"],
+  ["home-calendar", "calendar"],
+]) {
+  const l = labels[id],
+    box = l && l.cap && l.cap.box;
+  const sq = l && { x0: l.sq[0] - 56, x1: l.sq[0] + 56, y0: l.sq[1] - 150, y1: l.sq[1] + 6 };
+  const covers = box ? Object.entries(HOME).filter(([k, b]) => hit(box, b)).map(([k]) => k) : ["no label"];
+  g.check(`the ${l && l.act} label covers neither Squatch nor ${thing} nor another home object`, !!box && !hit(box, sq) && covers.length === 0, { box, sq, covers });
+  g.check(`the ${l && l.act} label sits next to the ${thing} (within 40)`, !!box && gap(box, HOME[thing]) <= 40, { box, thing: HOME[thing] });
+}
+// Brian: "The dash outline drawing over him doesn't work." Squatch at the desk: no outline yellow on him.
+const overHim = await page.evaluate(() => {
+  const ss = window.__ss,
+    n = ss.op;
+  n.sq.x = 459;
+  n.sq.y = 385;
+  ss.tick(0.02);
+  ss.drawFrame();
+  const cv = document.querySelector("canvas"),
+    k = cv.width / 960,
+    px = cv.getContext("2d").getImageData(0, 0, cv.width, cv.height).data;
+  const yellow = (x, y) => {
+    const i = (Math.round(y * k) * cv.width + Math.round(x * k)) * 4;
+    return Math.abs(px[i] - 255) + Math.abs(px[i + 1] - 207) + Math.abs(px[i + 2] - 51) < 60;
+  };
+  let on = 0,
+    off = 0;
+  for (let y = 230; y < 360; y += 1 / k)
+    for (let x = 390; x < 530; x += 1 / k) {
+      const inSq = x > 459 - 56 && x < 459 + 56 && y > 385 - 150;
+      yellow(x, y) && (inSq ? on++ : off++);
+    }
+  n.sq.x = 250;
+  n.sq.y = 574;
+  ss.tick(0.02);
+  return { on, off, ring: n.lastRing && n.lastRing.id };
+});
+g.check("the desk's dashed outline is drawn, but never over Squatch standing at the desk", overHim.ring === "homework" && overHim.off > 20 && overHim.on === 0, overHim);
 const idle = await page.evaluate(() => {
   const ss = window.__ss,
     n = ss.op;
@@ -239,21 +328,32 @@ await page.touchscreen.tap(s.btnAt[0], s.btnAt[1]);
 const flop = await page.evaluate(() => {
   const ss = window.__ss,
     n = ss.op,
+    beat = window.SSQ.beat("ch1-morning"),
     path = [];
-  let sat = false;
+  let lay = null,
+    drawnTwice = false;
   for (let i = 0; i < 600 && !(n.cur && n.cur.k === "bub"); i++) {
     ss.tick(1 / 60);
-    // Where his drawing stands: on the bed (sitting at 205, 444, shifted by sqBedX and raised by sqLift; see
-    // the bed drawing in src/game/60-frame-draw.js), or at his feet when he stands.
-    const sit = n.sqPose === "sit";
-    sat = sat || sit;
-    path.push(sit ? [205 + (n.sqBedX || 0), 444 - (n.sqLift || 0) * 22] : [n.sq.x, n.sq.y]);
+    // Where his drawing is: the module draws him while he flops (feet x, y and the angle he is turned by);
+    // otherwise he stands at his feet, upright.
+    const f = beat.debug().flop;
+    if (f && n.sqPose === "stand") drawnTwice = true;
+    path.push(f ? [f.x, f.y, f.a] : [n.sq.x, n.sq.y, 0]);
+    if (f && Math.abs(f.a) > 1.4 && !lay) {
+      ss.drawFrame();
+      lay = { ...f, box: f.box };
+    }
   }
-  let maxStep = 0;
-  for (let i = 1; i < path.length; i++) maxStep = Math.max(maxStep, Math.hypot(path[i][0] - path[i - 1][0], path[i][1] - path[i - 1][1]));
-  return { frames: path.length, maxStep, sat, text: n.cur && n.cur.b ? n.cur.b.text : "", pose: n.sqPose, hop: n.hopOut };
+  let maxStep = 0,
+    maxTurn = 0;
+  for (let i = 1; i < path.length; i++) {
+    maxStep = Math.max(maxStep, Math.hypot(path[i][0] - path[i - 1][0], path[i][1] - path[i - 1][1]));
+    maxTurn = Math.max(maxTurn, Math.abs(path[i][2] - path[i - 1][2]));
+  }
+  return { frames: path.length, maxStep, maxTurn, lay, drawnTwice, text: n.cur && n.cur.b ? n.cur.b.text : "", pose: n.sqPose, hop: n.hopOut };
 });
-g.check("FLOP · bed: Squatch flops onto the bed and gets back up, no jump between frames", flop.sat && flop.maxStep < 8 && flop.hop < 0, flop);
+g.check("FLOP · bed: Squatch lies down on the bed (turned on his side, wider than tall, on the mattress)", !!flop.lay && flop.lay.box.x1 - flop.lay.box.x0 > flop.lay.box.y1 - flop.lay.box.y0 && flop.lay.box.x0 > 80 && flop.lay.box.x1 < 300 && flop.lay.box.y1 < 445, flop.lay);
+g.check("the flop and the hop off have no jump between frames, and he is never drawn twice", flop.maxStep < 8 && flop.maxTurn < 0.15 && !flop.drawnTwice && flop.hop < 0, flop);
 g.check('then he says "Not sleepy anymore." standing', flop.text === L["sq-bed"] && flop.pose === "stand", flop);
 g.check("the bed line waits for a tap", await stillAfter6s());
 await tapAt(480, 330);
@@ -305,6 +405,8 @@ for (let i = 0; i < 2; i++) {
 g.check("the homework cutaway has two full-screen pictures, in order", cut.length === 2 && cut.every((c, i) => c.panel === i && c.last && c.last.id === "homework" && c.last.full === true), cut.map((c) => c.last));
 g.check("each picture waits for a tap, NEXT on the button and the tap cue drawn", cut.every((c) => c.still && /NEXT$/.test(c.btn) && c.cue), cut.map((c) => [c.still, c.btn, c.cue]));
 g.check("picture 1 shows Squatch at the desk with his pencil", !!cut[0] && !!cut[0].last.squatch && cut[0].last.pencil === true, cut[0] && cut[0].last);
+// 14A: thin outlines like the room's Squatch at his size (the beard close-up's rule: 5 px or less).
+g.check("picture 1: Squatch's outlines are thin (5 px or less), not scaled up", !!cut[0] && cut[0].last.squatch.outline > 0 && cut[0].last.squatch.outline <= 5, cut[0] && cut[0].last.squatch);
 {
   const want = ["sheet-heading", "sheet-name", "sheet-subject", "sheet-sum", "sheet-take"].map((id) => L[id]);
   const printed = (cut[1] && cut[1].printed) || [];
