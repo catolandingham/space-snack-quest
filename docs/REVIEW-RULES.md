@@ -79,3 +79,6 @@ The later full touch run exposed a test-driver gap: it waited whenever walking w
 
 ## Mistake: a "nothing is drawn" check looked where the old drawing never was
 2026-11-24. The reviewer found half of the calendar's no-paw check sampled a spot the old paw had already left, so it would pass with the paw still there. A check that something is gone samples every place the old drawing could be (where it rests, and where it follows a held finger), and is run against main to see it fail.
+
+## Mistake: a game wait on real audio time met a test helper that only ticks
+2026-11-24. Mops's song line now waits until the recording has really played, but `toMorningSong` in `tests/game-page.mjs` ticked the game in one synchronous loop, so no real time passed and `tests/opening-song.mjs` failed in the full run. When the game waits on something outside its own clock (audio, a download), the shared test helpers must let real time pass, and every suite that uses them with sound on is rerun.
