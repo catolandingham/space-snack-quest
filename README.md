@@ -9,15 +9,15 @@
 | 107–117 | ## Debug link |
 | 118–123 | ## Automatic checks |
 | 124–127 | ## Screen fit |
-| 128–141 | ## Brian's repeat complaints, as tests (2026-11-22) |
-| 142–145 | ## Scene 1 morning |
-| 146–149 | ## Chapter 1 kid robot |
-| 150–166 | ## Phase 1: kitchen and diner clarity |
-| 167–179 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
-| 180–193 | ## Phase 3: one capture rule, phone HUD, tap to walk |
-| 194–203 | ## Chapter 1 pass: the night out has a purpose, switches say why |
-| 204–221 | ## Progression tests |
-| 222–248 | ## Left as they were |
+| 128–143 | ## Brian's repeat complaints, as tests (2026-11-22) |
+| 144–147 | ## Scene 1 morning |
+| 148–151 | ## Chapter 1 kid robot |
+| 152–168 | ## Phase 1: kitchen and diner clarity |
+| 169–181 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
+| 182–195 | ## Phase 3: one capture rule, phone HUD, tap to walk |
+| 196–205 | ## Chapter 1 pass: the night out has a purpose, switches say why |
+| 206–223 | ## Progression tests |
+| 224–250 | ## Left as they were |
 <!-- /section-index -->
 # Space Snack Quest
 
@@ -134,6 +134,8 @@ Four complaints Brian raised again and again now have tests that run with `npm t
 - `tests/ch1-restart.mjs`: ↺ never sends him to the opening, keeps him in the same part with a goal, and puts him back where the step he is on began (the game saves each Chapter 1 step the moment it hands the player control). The party and the night keep their own restarts. Each beat runs in a fresh page.
 
 - `tests/ch1-words-if-stuck.mjs`: while a goal's thing is outlined, no goal words for the first 20 seconds of that step; then the words appear. A goal with no outline yet shows its words at once.
+
+- `tests/ch1-tap-path.mjs`: a tap behind the bed, the bin or a standing Mops walks Squatch around them to it (problem 2); a tap on furniture walks him to the floor next to it; standing flush against furniture, a tap away still walks; open floor is a straight walk. Path finder: `src/modules/tap-path.js`.
 
 - `tests/ch1-plant-eyes.mjs`: hiding in a plant shows two eyes in that plant's leaves (C21), at the loading bay plant and the hall's middle plant.
 

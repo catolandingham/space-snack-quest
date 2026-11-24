@@ -15,7 +15,7 @@
 | 180–198 | ## Reset section |
 | 199–209 | ## Still open |
 | 210–213 | ## Chapter 1 replot, recorded and not built |
-| 214–347 | ## Changelog |
+| 214–349 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -222,6 +222,8 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/old/OPEN-ASKS.md`. The
 2026-11-23. Sound: one button, off by default, as in Battle Ostriches (Brian: "one button to turn on music and sound effects"). The speaker tap starts the sound engine and Joe's theme inside the tap (the theme was started outside any tap before, which iPhones refuse); it saves "on"/"off" per device; older saved volumes above zero stay on. Taps on the game no longer start sound. No volume steps. The ♪ button shows only while Squatch can sing. Test: sound-button; phone-tap and slice-p6 updated.
 
 2026-11-23. squatch.onrender.com shows this game too (Brian picked "Point it at this game"; the Render site squatch now builds this repo's main). The game counts both addresses as the live site (LIVE_HOSTS in 00-core.js), so test links do nothing there and saves use the live keys. Test: live-hosts.
+2026-11-23. Problem 2 fixed: a tap walk goes around furniture and a standing Mops instead of stopping against them (src/modules/tap-path.js). Test: ch1-tap-path; the kid robot's KNOWN list is empty.
+
 2026-11-23. Party cones fade with distance (Brian: "Add the distance fade"): a cone shows only when Squatch is within 120 of the cone itself, fully within 40, so only cones he could walk into are on screen. Measured from the watcher instead, almost every cone still showed from mid-hall. `CONE_FADE` in src/modules/party-watch.js. Test: ch1-party-cones.
 
 2026-11-23. Party: sight cones on everyone (guests, Isfred, bartender, cape guest, octopus), dashed until Squatch is in one, then yellow with "?" over the watcher; in the sneak "?" turns into "!" (caught) after 0.8 seconds in sight (placeholder, Brian to set). Guests drawn from Brian's six approved Nov 8 pictures. Not built: in disguise, staying too long ("Nice gloves", then "fur!"). Test: ch1-party-cones; scene1-morning updated for the "?" first rule.

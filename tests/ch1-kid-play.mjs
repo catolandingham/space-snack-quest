@@ -18,9 +18,7 @@ import { join } from "node:path";
 import { root, startGame, sleep } from "./game-page.mjs";
 
 // Problems Brian knows about. Take one off this list in the change that fixes it.
-const KNOWN = {
-  "tap-stops-at-furniture": "A tap on a spot behind furniture walks Squatch into the furniture and stops (problem 2).",
-};
+const KNOWN = {};
 // Party buttons that get Squatch caught. A catch at the party leaves the game stuck in the bedroom
 // (docs/CHAPTER-1-PROBLEMS.md, problem 1), so the robot leaves them alone. The change that fixes problem 1
 // should empty this list, so the robot presses them and proves the fix.

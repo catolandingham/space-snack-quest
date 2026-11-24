@@ -1,3 +1,37 @@
+<!-- section-index -->
+**Section index.** Read this index, then only the section you need. Do not read this file whole.
+
+| Lines | Heading |
+| --- | --- |
+| 35–46 | # Chapter 1 problems, ranked |
+| 47–50 | ## Recommendation: do not rebuild Chapter 1 |
+| 51–52 | ## Do first: scene 1 (beats 1–3), Brian 2026-11-14 |
+| 53–61 | ### Current priority: finish beat 1 before moving on |
+| 62–69 | ### Home room sheet for this calendar change |
+| 70–82 | ### Earlier scene work |
+| 83–122 | ## Party hall: room sheet (every decision about how it looks, in one place) |
+| 123–154 | ## Party hall picture check, graded 2026-11-15 |
+| 155–164 | ## 1. A catch at the party leaves the game stuck in the bedroom |
+| 165–175 | ## 2. Tapping a spot behind furniture walks Squatch into the furniture and stops (fixed 2026-11-23) |
+| 176–187 | ## 3. The hangar robot catches Squatch with no warning when he is close |
+| 188–196 | ## 4. The big button changes width with every label (fixed 2026-11-14) |
+| 197–204 | ## 5. The whole page jumps down once at the start (fixed 2026-11-14) |
+| 205–215 | ## 6. A yellow ring is drawn around Squatch himself |
+| 216–226 | ## 7. Squatch walks through the bed when he gets up |
+| 227–232 | ## 8. Mops's sight cone lights up too soon (pull request 35, parked) |
+| 233–239 | ## 9. Party extras are buttons, and the dance circle plays itself |
+| 240–243 | ## 10. A start-over with no card (seen once) |
+| 244–247 | ## Day 1 does not yet play the way the walkthrough says (added 2026-11-14) |
+| 248–260 | ## 11. Sight cones: a dashed outline that lights up, on everyone, in every scene |
+| 261–265 | ## 12. The peek is not a peek (beat 3) — fixed Nov 14 (see "Do first" step 4) |
+| 266–269 | ## 13. Sneaking to the plant plays itself (beat 4) — fixed Nov 14 (see "Do first" step 5) |
+| 270–273 | ## 14. The octopus and the photo have buttons that do the moment (beats 12, 13) |
+| 274–277 | ## 15. Running home happens by itself (beat 18) |
+| 278–281 | ## 16. The TV story is a small TV in the room (beat 20) |
+| 282–285 | ## 17. Mops finds the flyer and fur at the wrong time (beat 19) |
+| 286–289 | ## 18. The bedtime story has no pictures (beat 21) |
+| 290–293 | ## 19. The Croc Boys are barely there (beat 6) |
+<!-- /section-index -->
 # Chapter 1 problems, ranked
 
 Written 2026-11-13 from robot playthroughs of Chapter 1 on a phone-size screen (375 by 812, touch only). The robot is `tests/ch1-kid-play.mjs`. It taps like a kid: taps through speech, presses the big button, taps the spot it wants to reach. It reached the score card in 344, 367 and 482 seconds.
@@ -128,7 +162,9 @@ Fix order, one pull request each, each with a still compared against this table:
 - Proving check: empty `LEAVE_ALONE` in `tests/ch1-kid-play.mjs`, so the robot presses the party buttons. It must reach the score card. Add a short test that sets scene QA, calls the catch, and asserts the scene is not O1 and a spot is offered.
 - Fixed 2026-11-16: `QA` now restarts in the party, a little back from where he was caught, with the guards gone. A Q scene with no checkpoint no longer restores the old opening. `tests/party-catch.mjs` checks it. The robot still skips SNAG, SUCK and STAND, so that half of the proving check is still open.
 
-## 2. Tapping a spot behind furniture walks Squatch into the furniture and stops
+## 2. Tapping a spot behind furniture walks Squatch into the furniture and stops (fixed 2026-11-23)
+
+- Fixed 2026-11-23: a tap walk goes around solids (`src/modules/tap-path.js`, used by `walkTap`). `tests/ch1-tap-path.mjs`; the kid robot no longer lists it as KNOWN.
 
 - What the kid sees: tap the calendar. Squatch walks straight at it, bumps the bed, and stops. Nothing happens. The kid has to steer around with the stick.
 - Seen every run: the calendar (stops at 286,509), hiding the slip and the spare jacket (stops at 596,515), the drawing in the passage (stops at 182,443).
