@@ -3,21 +3,23 @@
 
 | Lines | Heading |
 | --- | --- |
-| 20–21 | # Chapter 1 lines for Brian |
-| 22–37 | ## Calendar revision, Nov 16 (PR 58, not live) |
-| 38–45 | ## Earlier chapter lines |
-| 46–60 | ## Goal chips |
-| 61–144 | ## What people say |
-| 145–158 | ## Words painted on things |
-| 159–182 | ## Buttons |
-| 183–269 | ## Day 2 onward (beats 22–61), pending |
-| 270–277 | ## Ball hiding |
-| 278–285 | ## Off-screen lines, for Brian (playtest 12) |
-| 286–295 | ## Homework desk, approved Nov 16 |
-| 296–334 | ## Questions still open |
-| 335–360 | ## Day 1 stand-ins, pending |
+| 20–23 | # Chapter 1 lines for Brian |
+| 24–39 | ## Calendar revision, Nov 16 (PR 58, not live) |
+| 40–47 | ## Earlier chapter lines |
+| 48–62 | ## Goal chips |
+| 63–146 | ## What people say |
+| 147–160 | ## Words painted on things |
+| 161–184 | ## Buttons |
+| 185–271 | ## Day 2 onward (beats 22–61), pending |
+| 272–279 | ## Ball hiding |
+| 280–287 | ## Off-screen lines, for Brian (playtest 12) |
+| 288–297 | ## Homework desk, approved Nov 16 |
+| 298–336 | ## Questions still open |
+| 337–362 | ## Day 1 stand-ins, pending |
 <!-- /section-index -->
 # Chapter 1 lines for Brian
+
+The rebuilt morning (2026-11-23, draft PR, waking up to Mops leaving) has its own numbered sheet: `docs/MORNING-LINES-FOR-BRIAN.md`. Its words replace the Nov 14 morning lines below where they differ.
 
 ## Calendar revision, Nov 16 (PR 58, not live)
 

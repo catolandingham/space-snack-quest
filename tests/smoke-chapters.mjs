@@ -1,7 +1,8 @@
 /**
  * Smoke test: every chapter starts from the title and its opening lines advance without a page error.
  * For chapters 1 to 4: press the chapter number on the title, press Enter 12 times, then check that
- * no page error happened and that the story scene is a chapter scene (O, G, P or M).
+ * no page error happened and that the story scene is a chapter scene (O or Q, G, P or M; the redesigned
+ * Chapter 1 starts in Q1 since the morning became a module).
  *   npm run test:one tests/smoke-chapters.mjs
  */
 import http from "node:http";
@@ -69,7 +70,7 @@ for (const chapter of [1, 2, 3, 4]) {
   await sleep(300);
   const scene = await page.evaluate(() => window.__ss.op.scene);
   check(`chapter ${chapter} starts and advances with no page error`, errors.length === 0, errors.length ? errors : undefined);
-  check(`chapter ${chapter} is in a story scene`, typeof scene === "string" && /^[OGPM]/.test(scene), { scene });
+  check(`chapter ${chapter} is in a story scene`, typeof scene === "string" && /^[OQGPM]/.test(scene), { scene });
   await ctx.close();
 }
 

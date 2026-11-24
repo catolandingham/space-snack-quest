@@ -28,7 +28,7 @@ for (const [name, s] of Object.entries(SIZES)) {
   await sleep(800);
   const first = await box();
   const widths = new Set();
-  // Tap through the opening cards, then let the song come up (its label is the long "SING · song").
+  // Tap through the opening cards and the first morning steps (the action button reads NEXT, later SING ALONG).
   for (let i = 0; i < 12; i++) {
     await page.touchscreen.tap(s.width / 2, Math.min(s.height * 0.3, first.c[1] + first.c[3] / 2));
     await sleep(500);

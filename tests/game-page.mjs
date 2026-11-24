@@ -145,3 +145,35 @@ export async function startGame({ port, name }) {
   }
   return { open, check, known, key, finish, browser };
 }
+
+// Plays Chapter 1 from its start to the morning's song step (src/modules/morning.js): every card, bubble, wait
+// and cutaway picture is tapped away in the page, and the clock runs, until the kid has control with the
+// sing-along goal. Returns the goal chip. For suites that start at the song step.
+export async function toMorningSong(page) {
+  return page.evaluate(() => {
+    const ss = window.__ss,
+      n = ss.op;
+    for (let i = 0; i < 2000 && !(n.ctrl && n.ch1Morning && n.ch1Morning.step === "song"); i++) {
+      if (n.cur && ["card", "bub", "wait", "cutaway"].includes(n.cur.k)) ((n.bt = 1), ss.opTap());
+      ss.tick(0.05);
+    }
+    return n.ch1Chip;
+  });
+}
+
+// Plays Chapter 1 from its start through the morning (singing along) to the evening: Squatch at home with
+// the goal to peek out the door, where the calendar close-up can be opened. Returns the goal chip.
+export async function toEvening(page) {
+  await toMorningSong(page);
+  return page.evaluate(() => {
+    const ss = window.__ss,
+      n = ss.op;
+    const sing = (ss.spotsNow() || []).find((s) => s.id === "sing");
+    sing && sing.f();
+    for (let i = 0; i < 3000 && !(n.ctrl && n.ch1PeekReady && !n.cur); i++) {
+      if (n.cur && ["card", "bub", "wait", "cutaway"].includes(n.cur.k)) ((n.bt = 1), ss.opTap());
+      ss.tick(0.05);
+    }
+    return ss.chipNow();
+  });
+}

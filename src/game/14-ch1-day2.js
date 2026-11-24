@@ -1055,6 +1055,7 @@
         (n.ch1InCrate = !1),
         (n.ch1Crouch = !1),
         (n.ch1Wide = !1),
+        (n.ch1Morning = null),
         (n.ch1Chip = ""));
       if (b === 22) {
         ((n.room = "closet"), (n.scene = "QB"), (n.sq.x = 360), (n.sq.y = 520), (n.moPose = "hidden"), (n.ch1Hold = "gift"));

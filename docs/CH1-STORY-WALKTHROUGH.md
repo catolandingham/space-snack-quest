@@ -5,96 +5,96 @@
 | --- | --- |
 | 99–109 | # Chapter 1: the story, beat by beat (words only) |
 | 110–112 | ## Day 1: the party |
-| 113–126 | ### 1. Meet Squatch `UPDATED t-nov14` |
-| 127–136 | ### 2. Their song, then Mops leaves `UPDATED t-nov14` |
-| 137–149 | ### 3. The peek `UPDATED t-nov14` |
-| 150–157 | ### 4. Sneak in and hide `UPDATED` |
-| 158–169 | ### 5. Isfred's announcement `UPDATED` |
-| 170–178 | ### 6. The Croc Boys `UPDATED` |
-| 179–191 | ### 7. The dress-up game `UPDATED` |
-| 192–200 | ### 8. Into the party `UPDATED t303u` |
-| 201–207 | ### 9. A real party `UPDATED` |
-| 208–216 | ### 10. Dance mini-game `UPDATED t296u` |
-| 217–228 | ### 11. Karaoke: the Moon Pie song `UPDATED t302u` |
-| 229–238 | ### 12. Juke the octopus `UPDATED t296u` |
-| 239–247 | ### 13. The photo corner `UPDATED t296u` |
-| 248–257 | ### 14. Snack trips: the bar cut-in and the pyramid `UPDATED t308u` |
-| 258–266 | ### 15. The balloon |
-| 267–276 | ### 16. The disguise comes off `UPDATED t303u` |
-| 277–285 | ### 17. FUR! Security! `UPDATED t303u` |
-| 286–292 | ### 18. Run home; security searches the room `UPDATED t328u` |
-| 293–301 | ### 19. Mops comes home: "You have me" `UPDATED` |
-| 302–310 | ### 20. The TV story |
-| 311–319 | ### 21. Bedtime story: why Moon Pies `UPDATED t310u` |
-| 320–321 | ## Day 2: lunch and the first delivery |
-| 322–332 | ### 22. A gift from the Guardians `UPDATED t311u` |
-| 333–341 | ### 23. The calendar: delivery day |
-| 342–350 | ### 24. Mops forgot his lunch |
-| 351–357 | ### 25. Sneak the lunch to Mops |
-| 358–367 | ### 26. "My lunch! You're the best." |
-| 368–376 | ### 27. One snack, behind the counter |
-| 377–387 | ### 28. The ship is coming |
-| 388–394 | ### 29. Walk to the loading bay |
-| 395–401 | ### 30. The robots arrive |
-| 402–409 | ### 31. The promise |
-| 410–418 | ### 32. Three copies `UPDATED t311u` |
-| 419–428 | ### 33. "Delicious." `UPDATED t311u` |
-| 429–437 | ### 34. Gumbling `UPDATED t311u` |
-| 438–445 | ### 35. Spit into the bin `UPDATED t311u` |
-| 446–455 | ### 36. Walk home past the robots |
-| 456–467 | ### 37. The Employee of the Month wall |
-| 468–477 | ### 38. Missing Moon Pies and a pancake brochure `UPDATED t311u` |
-| 478–487 | ### 39. Other Sasquatches? `UPDATED t311u` |
-| 488–495 | ### 40. The Mars talk |
-| 496–501 | ### 41. Lights out `UPDATED t311u` |
-| 502–511 | ### 42. Night one: the paw order `UPDATED t312u` |
-| 512–513 | ## One week later: the escape |
-| 514–520 | ### 43. "Six days later" |
-| 521–529 | ### 44. The robots tease Mops |
-| 530–537 | ### 45. "Let's go find that pancake place" |
-| 538–546 | ### 46. The almost-slip |
-| 547–553 | ### 47. Sneak to the vent |
-| 554–566 | ### 48. Mops's secret workstation `UPDATED t312u` |
-| 567–575 | ### 49. Grab the pink slip `UPDATED t311u` |
-| 576–582 | ### 50. The office keypad |
-| 583–592 | ### 51. Return empty crate |
-| 593–602 | ### 52. Take all the snacks `UPDATED t311u` |
-| 603–604 | ## Pickup day: leaving Stormtop |
-| 605–610 | ### 53. Packing the crate |
-| 611–617 | ### 54. The robots open a crate |
-| 618–624 | ### 55. Mops warns him |
-| 625–633 | ### 56. The goat costume |
-| 634–642 | ### 57. Last walk: POP! and the keepsake |
-| 643–651 | ### 58. Through the scanner |
-| 652–663 | ### 59. Where's Mops? |
-| 664–672 | ### 60. The security tapes |
-| 673–680 | ### 61. The call to the ship |
-| 681–682 | ## Open questions |
-| 683–686 | ### 1. CLOSED: hiding first, then the disguise from the home wardrobe |
-| 687–689 | ### 2. CLOSED: "Everybody has somebody" moved to the homecoming |
-| 690–692 | ### 3. CLOSED: robot dancing |
-| 693–699 | ### 4. The "Cool hat!" fallback |
-| 700–703 | ### 5. Where is Mops at lunch? |
-| 704–707 | ### 6. Does the calendar replace the loudspeaker announcement? |
-| 708–710 | ### 7. CLOSED: the bedtime story |
-| 711–713 | ### 8. CLOSED: the Guardians gift (toy and note) |
-| 714–716 | ### 9. What pulls Isfred away after signing? (O15) |
-| 717–720 | ### 10. CLOSED: the paw print and the pink sheet (t311u) |
-| 721–723 | ### 25. CLOSED: why Mops thinks Mars is a waste of time |
-| 724–726 | ### 11. The crate on pickup day |
-| 727–729 | ### 12. The hallway exit in the party hall |
-| 730–732 | ### 13. Walking home |
-| 733–735 | ### 14. Waiting at the vent |
-| 736–739 | ### 17. The dance and karaoke games: scope |
-| 740–742 | ### 21. Squatch on the stage |
-| 743–745 | ### 22. Many snacks at the party vs the one-snack rule |
-| 746–748 | ### 18. Isfred's desk nameplate |
-| 749–752 | ### 20. Does the dress-up outfit carry over to the party? (for the coding later) |
-| 753–755 | ### 19. Dim lights at the party |
-| 756–759 | ### 23. Snacks can now cost the disguise |
-| 760–763 | ### 24. Other cut-ins (t308u) |
-| 764–766 | ### 15. Numbers and words still waiting |
-| 767–789 | ## What the comic v9 got wrong |
+| 113–127 | ### 1. Meet Squatch `UPDATED t-nov14` |
+| 128–138 | ### 2. Their song, then Mops leaves `UPDATED t-nov14` |
+| 139–151 | ### 3. The peek `UPDATED t-nov14` |
+| 152–159 | ### 4. Sneak in and hide `UPDATED` |
+| 160–171 | ### 5. Isfred's announcement `UPDATED` |
+| 172–180 | ### 6. The Croc Boys `UPDATED` |
+| 181–193 | ### 7. The dress-up game `UPDATED` |
+| 194–202 | ### 8. Into the party `UPDATED t303u` |
+| 203–209 | ### 9. A real party `UPDATED` |
+| 210–218 | ### 10. Dance mini-game `UPDATED t296u` |
+| 219–230 | ### 11. Karaoke: the Moon Pie song `UPDATED t302u` |
+| 231–240 | ### 12. Juke the octopus `UPDATED t296u` |
+| 241–249 | ### 13. The photo corner `UPDATED t296u` |
+| 250–259 | ### 14. Snack trips: the bar cut-in and the pyramid `UPDATED t308u` |
+| 260–268 | ### 15. The balloon |
+| 269–278 | ### 16. The disguise comes off `UPDATED t303u` |
+| 279–287 | ### 17. FUR! Security! `UPDATED t303u` |
+| 288–294 | ### 18. Run home; security searches the room `UPDATED t328u` |
+| 295–303 | ### 19. Mops comes home: "You have me" `UPDATED` |
+| 304–312 | ### 20. The TV story |
+| 313–321 | ### 21. Bedtime story: why Moon Pies `UPDATED t310u` |
+| 322–323 | ## Day 2: lunch and the first delivery |
+| 324–334 | ### 22. A gift from the Guardians `UPDATED t311u` |
+| 335–343 | ### 23. The calendar: delivery day |
+| 344–352 | ### 24. Mops forgot his lunch |
+| 353–359 | ### 25. Sneak the lunch to Mops |
+| 360–369 | ### 26. "My lunch! You're the best." |
+| 370–378 | ### 27. One snack, behind the counter |
+| 379–389 | ### 28. The ship is coming |
+| 390–396 | ### 29. Walk to the loading bay |
+| 397–403 | ### 30. The robots arrive |
+| 404–411 | ### 31. The promise |
+| 412–420 | ### 32. Three copies `UPDATED t311u` |
+| 421–430 | ### 33. "Delicious." `UPDATED t311u` |
+| 431–439 | ### 34. Gumbling `UPDATED t311u` |
+| 440–447 | ### 35. Spit into the bin `UPDATED t311u` |
+| 448–457 | ### 36. Walk home past the robots |
+| 458–469 | ### 37. The Employee of the Month wall |
+| 470–479 | ### 38. Missing Moon Pies and a pancake brochure `UPDATED t311u` |
+| 480–489 | ### 39. Other Sasquatches? `UPDATED t311u` |
+| 490–497 | ### 40. The Mars talk |
+| 498–503 | ### 41. Lights out `UPDATED t311u` |
+| 504–513 | ### 42. Night one: the paw order `UPDATED t312u` |
+| 514–515 | ## One week later: the escape |
+| 516–522 | ### 43. "Six days later" |
+| 523–531 | ### 44. The robots tease Mops |
+| 532–539 | ### 45. "Let's go find that pancake place" |
+| 540–548 | ### 46. The almost-slip |
+| 549–555 | ### 47. Sneak to the vent |
+| 556–568 | ### 48. Mops's secret workstation `UPDATED t312u` |
+| 569–577 | ### 49. Grab the pink slip `UPDATED t311u` |
+| 578–584 | ### 50. The office keypad |
+| 585–594 | ### 51. Return empty crate |
+| 595–604 | ### 52. Take all the snacks `UPDATED t311u` |
+| 605–606 | ## Pickup day: leaving Stormtop |
+| 607–612 | ### 53. Packing the crate |
+| 613–619 | ### 54. The robots open a crate |
+| 620–626 | ### 55. Mops warns him |
+| 627–635 | ### 56. The goat costume |
+| 636–644 | ### 57. Last walk: POP! and the keepsake |
+| 645–653 | ### 58. Through the scanner |
+| 654–665 | ### 59. Where's Mops? |
+| 666–674 | ### 60. The security tapes |
+| 675–682 | ### 61. The call to the ship |
+| 683–684 | ## Open questions |
+| 685–688 | ### 1. CLOSED: hiding first, then the disguise from the home wardrobe |
+| 689–691 | ### 2. CLOSED: "Everybody has somebody" moved to the homecoming |
+| 692–694 | ### 3. CLOSED: robot dancing |
+| 695–701 | ### 4. The "Cool hat!" fallback |
+| 702–705 | ### 5. Where is Mops at lunch? |
+| 706–709 | ### 6. Does the calendar replace the loudspeaker announcement? |
+| 710–712 | ### 7. CLOSED: the bedtime story |
+| 713–715 | ### 8. CLOSED: the Guardians gift (toy and note) |
+| 716–718 | ### 9. What pulls Isfred away after signing? (O15) |
+| 719–722 | ### 10. CLOSED: the paw print and the pink sheet (t311u) |
+| 723–725 | ### 25. CLOSED: why Mops thinks Mars is a waste of time |
+| 726–728 | ### 11. The crate on pickup day |
+| 729–731 | ### 12. The hallway exit in the party hall |
+| 732–734 | ### 13. Walking home |
+| 735–737 | ### 14. Waiting at the vent |
+| 738–741 | ### 17. The dance and karaoke games: scope |
+| 742–744 | ### 21. Squatch on the stage |
+| 745–747 | ### 22. Many snacks at the party vs the one-snack rule |
+| 748–750 | ### 18. Isfred's desk nameplate |
+| 751–754 | ### 20. Does the dress-up outfit carry over to the party? (for the coding later) |
+| 755–757 | ### 19. Dim lights at the party |
+| 758–761 | ### 23. Snacks can now cost the disguise |
+| 762–765 | ### 24. Other cut-ins (t308u) |
+| 766–768 | ### 15. Numbers and words still waiting |
+| 769–791 | ## What the comic v9 got wrong |
 <!-- /section-index -->
 # Chapter 1: the story, beat by beat (words only)
 
@@ -122,6 +122,7 @@ Mops is at work. Squatch is home alone.
 - **Player:** Walk around the room.
 - **Approved room looks, not yet built:** closet: "Mops's costumes. And my Guardian Box."; back to bed: he flops down, then hops back up, "Not sleepy anymore." Desk homework replaces the proposed work-list line; new homework words need Brian's yes.
 - **Calendar revision for review (Nov 16, PR 58 unmerged):** latest copy is MOONMUNCH with FUZZUARY alone underneath; Sponsored by MOON PIES; Sock hunt; family Olympics night; Wash outside windows (remember space suit!); Blanket fort night. Brian removed the calendar's Homework and Sing with Mops reminders, not the desk-homework transition. Scattered dates are fixed decoration, not new playable beats. He requested a slightly larger margin nibble, still clear of all dates and the circled pie.
+- **Rebuilt 2026-11-23 (draft PR, morning plan PR 2, not merged):** Brian's newer order (G 547 to 567, answers of 2026-11-23) replaces the Nov 14 one above: Squatch wakes in bed to the wall speaker's party announcement while Mops mops with his beard; Mops: "Morning, Squatch."; Squatch: "Party?"; the beard-wringing cutaway; the speaker announces Dog Zylan and Brian's Floating in Space recording plays. "Big party in the hall tonight." is now the speaker's line. Every word, with its status, is in `docs/MORNING-LINES-FOR-BRIAN.md`.
 <sub>replot 01 · R29 R35 R36 · Brian chat Nov 14</sub>
 
 ### 2. Their song, then Mops leaves `UPDATED t-nov14`
@@ -132,6 +133,7 @@ Mops is at work. Squatch is home alone.
   - Squatch: "I'm floating in space!" / Mops: "Weeee-eenn-nnttt!" *(decided)*
 - **Player:** Press the song button to sing with Mops.
 - **Approved transition, not yet built (Nov 16):** after Mops leaves, Squatch does homework at the desk; this passes the time until evening. Do not put homework before their goodbye or skip directly to evening once this is built. Homework button and line need Brian's yes.
+- **Rebuilt 2026-11-23 (draft PR, not merged):** Mops: "Floating in space! It's our favorite song!"; the kid presses SING ALONG (they sing where they stand, facing each other) or walks to Mops for TALK · Mops; Mops: "I have to go to work now." / "Stay in here."; he walks out; "That evening…". No walk to the door, no hum, no ♪ button. The recording plays until "That evening…". Homework after Mops leaves is still to build (PR 3).
 <sub>replot 02 · C2 K26 · Brian chat Nov 14</sub>
 
 ### 3. The peek `UPDATED t-nov14`

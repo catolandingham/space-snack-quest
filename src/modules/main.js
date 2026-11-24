@@ -1,7 +1,11 @@
 // Entry point for new code written as real modules. tools/build.mjs bundles this file with esbuild
 // (strict mode) and runs it before the older program in src/game/, so window.SSQ exists when that
-// program starts. Rebuilt Chapter 1 beats will be imported here and registered on the bridge.
+// program starts. Rebuilt Chapter 1 beats are imported here and registered on the bridge.
 import { createBridge } from "./bridge.js";
+import { createMorning } from "./morning.js";
 
+const bridge = createBridge();
+// The rebuilt beats. The older program asks for each by id where it used to run its own code.
+bridge.registerBeat("ch1-morning", createMorning(bridge));
 // Not writable or replaceable: the older program and every module see the same bridge.
-Object.defineProperty(window, "SSQ", { value: createBridge(), writable: false, configurable: false, enumerable: true });
+Object.defineProperty(window, "SSQ", { value: bridge, writable: false, configurable: false, enumerable: true });

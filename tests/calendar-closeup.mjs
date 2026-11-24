@@ -3,7 +3,7 @@
  * Uses the real picture taps and Space, not direct calls to the new feature.
  * CALENDAR_SHOTS=1 saves review stills outside the repository.
  */
-import { startGame, sleep } from "./game-page.mjs";
+import { startGame, sleep, toEvening } from "./game-page.mjs";
 const g = await startGame({ port: 8947, name: "calendar-closeup" });
 for (const viewport of [
   { width: 1180, height: 820 },
@@ -21,18 +21,16 @@ for (const viewport of [
     else await page.mouse.click(px, py);
     await sleep(350);
   };
-  for (let i = 0; i < 16; i++) {
-    if (await page.evaluate(() => window.__ss.op.ctrl)) break;
-    await page.keyboard.press("Space");
-    await sleep(350);
-  }
+  // The calendar can be looked at once Squatch is home alone: after the morning (src/modules/morning.js), in
+  // the evening. (Home alone in the morning, with the calendar already bitten, is the morning plan's PR 3.)
+  await toEvening(page);
   const before = await page.evaluate(() => {
     const n = window.__ss.op;
     window.calendarQueue = n.q;
     window.calendarCur = n.cur;
     return { scene: n.scene, x: n.sq.x, y: n.sq.y };
   });
-  g.check(`${tag}: opening reaches bedroom control`, before.scene === "O1", before);
+  g.check(`${tag}: the morning reaches bedroom control in the evening`, before.scene === "Q1" && (await page.evaluate(() => window.__ss.op.ch1PeekReady)), before);
   await page.evaluate(() => {
     window.calendarPrinted = new Set();
     const draw = CanvasRenderingContext2D.prototype.fillText;
@@ -112,13 +110,8 @@ for (const viewport of [
   }));
   // The existing section-reset path is not a new-game path. Start a fresh opening for the next check.
   await page.evaluate(() => window.__ss.startOpening());
-  for (let i = 0; i < 16; i++) {
-    if (await page.evaluate(() => window.__ss.op.ctrl)) break;
-    await page.keyboard.press("Space"); await sleep(350);
-  }
-  // Continuing the actual opening still reaches the song.
-  await page.keyboard.down("ArrowRight"); await sleep(1100); await page.keyboard.up("ArrowRight");
-  g.check(`${tag}: walking still advances to song`, await page.evaluate(() => window.__ss.op.ch1Song));
+  // Playing the actual opening again still reaches the evening's peek goal.
+  g.check(`${tag}: a new game still plays through to the evening`, /peek out the door/.test(await toEvening(page)));
   // A reachable keyboard action beside the wardrobe, not inside the bed.
   await page.evaluate(() => {
     const n = window.__ss.op;
@@ -137,7 +130,7 @@ for (const viewport of [
   await page.evaluate(() => {
     const n = window.__ss.op;
     Object.assign(n, { q: [], cur: null, scene: "QB", room: "closet", wardrobe: "closed",
-      ch1Day2: true, ch1Song: false, ch1PeekReady: false, ch1Step: "cal", ctrl: true });
+      ch1Day2: true, ch1PeekReady: false, ch1Step: "cal", ctrl: true });
     n.sq.x = 230; n.sq.y = 392;
   });
   await tap(179, 214);

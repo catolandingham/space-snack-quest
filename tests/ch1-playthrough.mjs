@@ -16,13 +16,14 @@ const { ctx, page, errors } = await g.open("?ch=1");
 const home = await page.evaluate(() => {
   const ss = window.__ss;
   const n = ss.op;
-  for (let i = 0; i < 30; i++) {
-    if (n.cur && (n.cur.k === "card" || n.cur.k === "bub" || n.cur.k === "wait")) {
+  // The morning (src/modules/morning.js) up to the song, when the kid first has control at home.
+  for (let i = 0; i < 400; i++) {
+    if (n.cur && (n.cur.k === "card" || n.cur.k === "bub" || n.cur.k === "wait" || n.cur.k === "cutaway")) {
       n.bt = 1;
       ss.opTap();
     }
     ss.tick(0.05);
-    if (n.scene === "O1" && n.ctrl && !(n.cur && (n.cur.k === "card" || n.cur.k === "bub" || n.cur.k === "wait"))) break;
+    if (n.ctrl && n.ch1Morning && n.ch1Morning.step === "song" && !n.cur) break;
   }
   ss.drawFrame();
   const cv = document.querySelector("canvas[width='960']") || document.querySelector("canvas");
@@ -38,7 +39,7 @@ const home = await page.evaluate(() => {
   };
 });
 const rgb = (p) => p.slice(0, 3).join(",");
-g.check("the opening is the home room", home.scene === "O1" && home.state.room === "closet" && home.state.wardrobe === "closed", home.state);
+g.check("the opening is the home room", home.scene === "Q1" && home.state.room === "closet" && home.state.wardrobe === "closed", home.state);
 g.check("the old white door slab is gone (wall, not pure white)", home.wall[0] > 220 && home.wall[0] < 255 && home.wall[2] < 250, rgb(home.wall));
 g.check("the right wall is a door cut", home.gap[2] > home.gap[0] - 20 && Math.abs(home.gap[0] - 223) < 40, rgb(home.gap));
 g.check("the home floor vent is gone", home.floor[2] < home.floor[0] + 30 && home.floor[0] > 160, rgb(home.floor));
@@ -436,7 +437,7 @@ const play = await page.evaluate(() => {
       end = "tally";
       break;
     }
-    if (cur && (cur.k === "bub" || cur.k === "card" || cur.k === "panel" || cur.k === "wait")) {
+    if (cur && (cur.k === "bub" || cur.k === "card" || cur.k === "panel" || cur.k === "wait" || cur.k === "cutaway")) {
       if (cur.k === "panel" || n.room === "duct" || n.ch1Zoom) ss.drawFrame();
       n.bt = 1;
       ss.opTap();
@@ -446,6 +447,19 @@ const play = await page.evaluate(() => {
     }
     if (n.scene === "O1" && n.ctrl && n.moved < 120) {
       n.moved = 200;
+      ss.tick(0.05);
+      still = 0;
+      continue;
+    }
+    // The morning's song step: sing along (SING ALONG works where Squatch stands, so it has no ring).
+    if (n.ctrl && !n.cur && n.ch1Morning && n.ch1Morning.step === "song") {
+      const sing = ss.offerNow();
+      if (!sing || sing.verb !== "SING ALONG") {
+        end = "no-sing " + (sing && sing.verb);
+        break;
+      }
+      acts.push(sing.verb);
+      sing.f();
       ss.tick(0.05);
       still = 0;
       continue;
@@ -524,7 +538,7 @@ const play = await page.evaluate(() => {
   };
 });
 g.check("Chapter 1 reaches the tally card", play.end === "tally", { end: play.end, acts: play.acts, scene: play.state.scene });
-const wantActs = ["SING · song", "PEEK · doorway", "HIDE · plant", "SHUFFLE · outfit", "GO · party", "TAKE · robot flyer", "JUMP · balloon", "GIVE · balloon", "TALK · guest", "OPEN · snack bar", "CLOSE · cut-in", "SNAP · photo", "SNAG · plant", "HIDE · bed", "TAKE · gift", "PUT · box", "DROP · box", "LOOK · calendar", "TAKE · lunch", "SNEAK · hallway", "GIVE · lunch", "FEED · lunch", "FEED · bag", "TAKE · snack", "DROP · snack", "HIDE · plant", "GO · hall", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "LEAVE · food", "PUT · slip", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
+const wantActs = ["SING ALONG", "PEEK · doorway", "HIDE · plant", "SHUFFLE · outfit", "GO · party", "TAKE · robot flyer", "JUMP · balloon", "GIVE · balloon", "TALK · guest", "OPEN · snack bar", "CLOSE · cut-in", "SNAP · photo", "SNAG · plant", "HIDE · bed", "TAKE · gift", "PUT · box", "DROP · box", "LOOK · calendar", "TAKE · lunch", "SNEAK · hallway", "GIVE · lunch", "FEED · lunch", "FEED · bag", "TAKE · snack", "DROP · snack", "HIDE · plant", "GO · hall", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "LEAVE · food", "PUT · slip", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
 g.check("the player does the new actions in order", JSON.stringify(play.acts) === JSON.stringify(wantActs), play.acts);
 const must = [
   "Stormtop Cloud Resort, floating above Jupiter.",

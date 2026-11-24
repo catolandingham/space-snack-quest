@@ -67,3 +67,6 @@ The later full touch run exposed a test-driver gap: it waited whenever walking w
 
 ## Mistake: a big doc's section index went stale
 2026-11-23. A changelog line was added to `docs/MASTER-BACKLOG.md` and the section index at its top was not updated, so `tests/section-index.mjs` failed in the full run. After any edit to a doc with a section index, run `node scripts/md-section.mjs stamp <file>`.
+
+## Mistake: a rebuilt beat forgot the step restart
+2026-11-23. The first build of the morning module (src/modules/morning.js) let the hold-to-restart (↺) empty the story queue before the song step, which froze the morning, and in the evening it brought back the song step with Mops. The restart saves a step only once the kid has control and keys it by scene, room and ch1Step, so a beat that runs long without control, or two steps with the same key, needs its own answer. A rebuilt beat says what ↺ does at each of its steps and has a test for it (tests/morning-order.mjs, "↺").

@@ -1,13 +1,13 @@
 /**
- * Scene 1 morning (Brian, 2026-11-14; docs/CHAPTER-1-PROBLEMS.md "Do first: scene 1", step 3).
- * Chapter 1 from the start on a phone:
- * - after the cards, short bubbles while Squatch is still in bed: "Morning, Squatch." "Big party in the hall tonight."
- *   Squatch: "Party?" Mops: "Stay in here." Mops is not cleaning (no "polish"),
- * - the song is at the door (Mops's goodbye),
- * - the room is the locked picture from the first moment (no switch when the song starts),
- * - only one bucket: nothing yellow is drawn where the old code bucket used to sit,
+ * Scene 1 morning (Brian, 2026-11-14; rebuilt as src/modules/morning.js with his answers of 2026-11-23).
+ * Chapter 1 from the start on a phone (the step-by-step order is tests/morning-order.mjs):
+ * - after the cards, Squatch is asleep in bed and Mops mops; the wall speaker's party line wakes Squatch, who
+ *   sits up in bed, then Mops "Morning, Squatch." and Squatch "Party?",
+ * - the room is the locked picture from the first moment, with only one bucket (nothing yellow where the old
+ *   code bucket used to sit),
+ * - the song: the goal "Squatch: sing along with Mops", Mops stays by the bucket (no walk to the door, no hum),
+ *   no yellow ring around Squatch,
  * - the goal bar never says "ship" in scene 1,
- * - no yellow ring around Squatch for the song (it happens where he stands),
  * - after Mops leaves there is the "That evening…" card, then the peek goal,
  * - no touch help line and no "Tap the floor" note.
  * - the peek (step 4): the hall is already full on the first hall frame, Squatch stays in his doorway,
@@ -36,6 +36,7 @@ const st = () =>
       pose: n.sqPose,
       moPose: n.moPose,
       sq: [n.sq.x, n.sq.y],
+      mo: [n.mo.x, n.mo.y],
       ring: n.lastRing && n.T - n.lastRing.T < 0.2 ? Math.hypot(n.lastRing.x - n.sq.x, n.lastRing.y - n.sq.y) : null,
       page: document.body.innerText,
     };
@@ -56,52 +57,44 @@ const oldBucketYellow = () =>
   });
 
 const chips = new Set();
-let morning = null;
+let wake = null;
 for (let i = 0; i < 20; i++) {
   const s = await st();
   chips.add(s.chip);
-  if (s.cur === "bub" && /Morning, Squatch/.test(s.text)) {
-    morning = s;
+  if (s.cur === "bub" && s.who === "speaker") {
+    wake = s;
     break;
   }
   await tap();
 }
-g.check("Mops says good morning after the cards", !!morning, morning);
-// Then the short lines, one bubble each: the party, Squatch wants to go, the rule.
+g.check("after the cards the wall speaker's party line wakes Squatch", !!wake && /Big party in the hall tonight/.test(wake.text), wake);
+g.check("Squatch sits up in bed for it", wake && wake.pose === "sit", wake && wake.pose);
+g.check("Mops is mopping, not polishing or rocking", wake && wake.moPose === "mop", wake && wake.moPose);
+g.check("the room is the locked picture from the start", wake && wake.scene === "Q1", wake && wake.scene);
+g.check("only one bucket while Squatch wakes up", (await oldBucketYellow()) === 0, await oldBucketYellow());
 const said = [];
 for (let i = 0; i < 12; i++) {
   const t = await st();
-  if (t.ctrl) break;
+  if (t.cur === "cutaway") break;
   if (t.cur === "bub" && said[said.length - 1] !== t.text) said.push(t.text);
   await tap();
 }
-g.check(
-  "then: Big party in the hall tonight. / Party? / Stay in here.",
-  JSON.stringify(said.slice(0, 4)) === JSON.stringify(["Morning, Squatch.", "Big party in the hall tonight.", "Party?", "Stay in here."]),
-  said,
-);
-g.check("Squatch is still in bed for the morning line", morning && morning.pose === "sit", morning && morning.pose);
-g.check("Mops is not cleaning in scene 1", morning && morning.moPose !== "polish", morning && morning.moPose);
-g.check("the room is the locked picture from the start (scene O1)", (await page.evaluate(() => window.__ss.op.scene)) === "O1");
-g.check("only one bucket while Squatch wakes up", (await oldBucketYellow()) === 0, await oldBucketYellow());
+g.check("then Mops: Morning, Squatch. / Squatch: Party?", said.includes("Morning, Squatch.") && said.indexOf("Party?") > said.indexOf("Morning, Squatch."), said);
 let s = await st();
 g.check("no touch help line and no Tap the floor note", !/Stick: walk|Tap the floor/.test(s.page), s.page.slice(0, 300));
-// Walk out of bed and around.
-await page.keyboard.down("ArrowRight");
-await sleep(900);
-await page.keyboard.up("ArrowRight");
-await page.keyboard.down("ArrowUp");
-await sleep(500);
-await page.keyboard.up("ArrowUp");
-await sleep(700);
-s = await st();
-chips.add(s.chip);
-g.check("after walking, the goal is to sing along with Mops", /sing along with Mops/.test(s.chip), s.chip);
+// Tap on through the cutaway and the song's start until the kid has control.
+for (let i = 0; i < 20 && !(s.ctrl && s.chip); i++) {
+  if (["bub", "card", "wait", "cutaway"].includes(s.cur)) await tap();
+  else await sleep(300);
+  s = await st();
+  chips.add(s.chip);
+}
+g.check("then the goal is to sing along with Mops", /sing along with Mops/.test(s.chip), s.chip);
 g.check("no yellow ring around Squatch for the song", s.ring === null || s.ring >= 40, s.ring);
 g.check("only one bucket in the song part", (await oldBucketYellow()) === 0, await oldBucketYellow());
 await sleep(1500);
-const hum = await page.evaluate(() => ({ x: window.__ss.op.mo.x, pose: window.__ss.op.moPose }));
-g.check("Mops walks to the door and hums there", hum.x > 760 && hum.pose === "sway", hum);
+const stay = await st();
+g.check("Mops stays by the bucket for the song (no walk to the door, no hum)", Math.abs(stay.mo[0] - s.mo[0]) < 1 && stay.moPose === "stand", { before: s.mo, after: stay.mo, pose: stay.moPose });
 await page.keyboard.press("KeyE");
 let evening = false;
 for (let i = 0; i < 80; i++) {

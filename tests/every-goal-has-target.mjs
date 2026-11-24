@@ -134,7 +134,9 @@ const report = await page.evaluate(async (chips) => {
     n.ch1PartyOver = false;
     n.ch1Disguise = !!spec.party;
     n.ch1Flyer = false;
-    n.ch1Song = !!spec.song;
+    // The song step of the morning module (src/modules/morning.js), with Mops beside the bucket.
+    n.ch1Morning = spec.song ? { step: "song", t: 0, notes: true } : null;
+    spec.song && ((n.mo.x = 690), (n.mo.y = 560));
     n.ch1PeekReady = !!spec.peek;
     n.ch1Search = false;
     n.ch1PadOn = !!spec.pad;

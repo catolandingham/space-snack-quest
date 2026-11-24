@@ -122,21 +122,6 @@
         }),
       ];
     }
-    function ch1SongSpots() {
-      return [
-        spot({
-          id: "song",
-          verb: "SING",
-          cap: "song",
-          who: "sq",
-          x: n.sq.x,
-          y: n.sq.y,
-          r: 800,
-          hot: !0,
-          f: ch1SingAlong,
-        }),
-      ];
-    }
     function ch1SearchSpots() {
       return [
         spot({
@@ -261,8 +246,6 @@
     function ch1Day1Tick(dt) {
       let step = dt || 0;
       ch1RaidTick(step);
-      ch1MopsHumTick(step);
-      ch1MopsLeaveTick(step);
       ch1SneakTick(step);
       if (n.ch1Search && n.guard && n.room === "closet" && (n.ctrl || n.ch1Escort)) {
         let g = n.guard;

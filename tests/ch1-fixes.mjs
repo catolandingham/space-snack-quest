@@ -20,7 +20,7 @@ async function walk(x, y, frames, day2 = false) {
       n.mo.x = -400;
       n.q = [];
       n.cur = null;
-      n.ch1Song = false;
+      n.ch1Morning = null;
       n.ch1Day2 = day2;
       n.ch1Step = day2 ? "cal" : "";
       n.ch1PeekReady = false;
@@ -62,7 +62,7 @@ const atBucket = await page.evaluate(() => {
   n.ctrl = true;
   n.sqPose = "stand";
   n.moPose = "hidden";
-  n.ch1Song = false;
+  n.ch1Morning = null;
   n.ch1Day2 = false;
   n.ch1PeekReady = true;
   n.ch1Dress = null;

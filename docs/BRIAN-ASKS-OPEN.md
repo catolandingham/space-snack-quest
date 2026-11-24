@@ -1,3 +1,26 @@
+<!-- section-index -->
+**Section index.** Read this index, then only the section you need. Do not read this file whole.
+
+| Lines | Heading |
+| --- | --- |
+| 24–30 | # Brian's asks that are not in the game yet |
+| 31–51 | ## 1. Build next |
+| 52–72 | ## 2. Needs your eyes |
+| 73–76 | ## 3. Your instructions disagree |
+| 77–78 | ## 4. Everything else not built |
+| 79–99 | ### Morning and home |
+| 100–113 | ### Party |
+| 114–118 | ### Snacks and dress-up |
+| 119–131 | ### Day 2 and night |
+| 132–136 | ### Escape and later chapters |
+| 137–140 | ### Looks and lines |
+| 141–148 | ### Sound |
+| 149–152 | ### Words and rules |
+| 153–165 | ### How the bots work |
+| 166–173 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
+| 174–185 | ## 5. Merged, in a pull request, and being built |
+| 186–196 | ## 6. Corrections to the checkers |
+<!-- /section-index -->
 # Brian's asks that are not in the game yet
 
 This page lists everything Brian asked for that is not in the game yet, checked against main on 2026-11-23 and against an independent review the same day.
@@ -9,21 +32,11 @@ Brian's G Bot messages 419 to 603 were written while he looked at the old "v2" b
 
 Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win over older words.
 
-1. **The morning, built as one ordered sequence (G 547 to 567).** Brian agreed today to rebuild it his way. Order:
-   - Wakes up in bed. "he should wake up in his bed. and I thought we had a whole thing about he was waking up to a morning announcement from the speaker." (G 547). Today he starts sitting.
-   - The speaker announces the party. "In the announcement of the party from the speakers, so makes sense" (G 565). Today Mops says the party line himself.
-   - Mops keeps mopping, then wrings his beard as a cutaway. "the janitor should be continuing to mop the floor, and then you see him wringing out his beard. I think that would be a good chance to do a cutaway, kind of like later when we do the Wookiee TV thing." (G 561). Today he has already finished cleaning.
-   - The beard cutaway: Mops not smaller than the bucket ("so the goat is way smaller than the mop bucket? That doesn't make sense." G 189), looks like the other cutaways (G 213), his chosen reference video (G 221, G 600). Also "he should put his beard in a mop bucket and ring it out in a closeup sometime" (G 149).
-   - Calendar already bitten. "When we click on the calendar again, it takes a bite out. That doesn't make any sense. It should just have a bite out already" (G 556). Today the first tap takes the bite. Calendar close-up: "it doesn't actually look like a calendar. See if you can find what we had previously." (G 556).
-   - The song is announced and plays. "the song should be announced, Dogzilla, the music should start playing, Squatch gets out of bed janitor says something like, Floating in space, it's our favorite song." (G 561). Today it is a card and a line.
-   - Real Floating in Space recording, copied in from Brian's file (agreed today). "There was the full audio file for floating in space. And ideally you're actually hearing that music in the background." (G 556). The game plays a short made-up tune. The file is now `music/floating-in-space.mp3` (draft PR feat/mops-shirt); nothing plays it yet.
-   - Notes come out of the speaker. "we should see visibly when the speakers got noise coming out of it or music coming out of it, you know, little music notes" (G 565).
-   - They sing along. "then they sing along and then Gander says, okay, I have to go to work now and whatever about the party tonight. And also the earlier stuff on party night should stay there as well." (G 561). Today "Stay in here." comes before the song. Sing-along is an option: "then they have the option to start singing along" (G 556).
-   - The music stays on in the room. "we should have that music ongoing while he's in the room." (G 561). The home room plays Joe's warm theme.
-   - Closet opens. "when we click on the closet door, ideally it'll open and we could see the costumes and the guardian box." (G 556). Only the calendar and song are tappable now.
-   - Mops's approved look (Nov 8 blue work shirt, chest pocket, name patch, no badge). "the uniform he has on doesn't make sense either" (G 547). Drawn to match the whole picture (shirt, collar, pocket, patch, tail, ears, closed eyes, smile, beard, hooves; no badge) in draft PR #81, waiting on Brian's yes on the picture. His body proportions (shorter legs, smaller head than the picture) are unchanged.
-   - Homework at the desk is the one required thing. "The one thing you'll have to do is go to the desk and do homework." (G 567). Heading "I sweaty" (G 567). The bot picks the homework, no question needed: "do something fun, you come up with whatever you think makes sense, and I'm gonna be just fine with it." (G 576). Also "maybe there's a little cutaway of Sasquatch doing homework there" (G 567).
-   - Tests tests/scene1-morning.mjs and tests/ch1-plant-eyes.mjs pin the old morning and will fail; update them with it.
+1. **The morning, built as one ordered sequence (G 547 to 567).** Brian agreed today to rebuild it his way. Waking up through Mops leaving is built in the morning PR (#82, branch feat/morning-rebuild); every line is approved (Brian 2026-11-23: "1A", "2B") and the beard-wringing close-up with Mops on the bucket model is approved as drawn ("3A"). Still to build, after Mops leaves (PR 3, home alone). Button and goal words Brian approved 2026-11-23 ("6A"): "OPEN · closet", "FLOP · bed", and the goal "Squatch: do your homework":
+   - Calendar already bitten. "When we click on the calendar again, it takes a bite out. That doesn't make any sense. It should just have a bite out already" (G 556). Today the first tap takes the bite. Calendar close-up (the beard-wringing cutaway look is approved, "3A"; this calendar picture is a separate ask): "it doesn't actually look like a calendar. See if you can find what we had previously." (G 556).
+   - Closet opens. "when we click on the closet door, ideally it'll open and we could see the costumes and the guardian box." (G 556). Button: "OPEN · closet" (approved, "6A"). Closet picture (Brian, 2026-11-23, "9a"): the closet uses the locked home-room-empty-open-v6.png unchanged, and the game draws the small blue G Guardian Box on the closet floor under the clothes, on top of the picture, so Squatch's line "Mops's costumes. And my Guardian Box." shows what it names. A picture of it goes to Brian before it ships. The look is approved (Brian, 2026-11-23, "11a"): a small blue box with a white "G" on the closet floor under the spare shirt, about 39 x 28 game units (details in the private file MORNING-PLAN.md, "More answers"). Not built. Today nothing at home opens yet: once Mops leaves, "That evening…" comes straight away.
+   - Homework at the desk is the one required thing. "The one thing you'll have to do is go to the desk and do homework." (G 567). Heading "I sweaty" (G 567). The bot picks the homework, no question needed: "do something fun, you come up with whatever you think makes sense, and I'm gonna be just fine with it." (G 576). Also "maybe there's a little cutaway of Sasquatch doing homework there" (G 567). Goal chip: "Squatch: do your homework" (approved, "6A"). The bed flop button: "FLOP · bed" (approved, "6A").
+1a. **Vents swirl and pull.** Brian, 2026-11-23 (Snack Quest Chat): "make sure we still have the rule about vents swirling and that if squatch gets too close at any time, it sucks in fur and sets off alarm." Every floor vent shows soft swirls always moving inward (R12; "Ideally the swirls are in soft motion at all times", S 485). If Squatch gets too close without his disguise, at any time, the vent pulls his fur in (a tuft drifts first as the warning) and that sets off the alarm (R108, G 474). With the disguise on, Brian: "No, it tugs the disguise" (2026-11-23): the vent tugs the disguise and does not pull fur or set off the alarm (R108 stays). Today the party-hall vent has still swirls and a SUCK button instead (`src/game/12-ch1-redesign.js`, the "vent" spot); the old lobby code in `src/game/10-ch1.js` has the fur drift to reuse. Not built in this PR.
 2. **Dress-up pieces snap to the nearest body spot.** Brian, 2026-11-23: "let's try to have them snap but be okay with absurdist results, for instance, pants on the head." Whatever the piece is, it snaps to the spot nearest where it is dropped. Today each piece goes to its own fixed zone (13-ch1-slice.js:171-177). Replaces "put it more or less wherever" (G 603).
 3. **Raising the alarm at the party.** Brian, 2026-11-23: the guest runs to the wall alarm. Today at the party the guest runs to a spot on the floor and the PA shouts "FUR! Security!" too; it should be the red wall alarm, as at the Day 2 lunch. "anytime you're seeing or anytime fur detected someone needs to run the trip alarm." (K 163).
 4. **A catch at the party.** Brian, 2026-11-23, "Card, restart scene": a catch shows the lockup card, then the current scene restarts. Today (since PR #69) a catch at the party shows the card and puts him back a little in the party; it should restart the part of the party he is in, with the party split into its five parts (peek, sneak, free play, alarm, run home).
@@ -32,7 +45,7 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 7. **Camera stays off the stage.** "the camera pointing away from the stage is really odd" (G 292); "the camera would be kind of right up next to the stage ... back toward the audience, which would seem very odd" (G 295). The tripod stands at the stage's front-left corner (12-ch1-redesign.js:150).
 8. **Mops's heart cone and its size.** Open PR #35 turns the hearts on in Chapter 1; review it, do not rebuild. "coming up from Mops Cone is supposed to be the floating hearts" (G 442); "Mop can still have a cone, it's just that the cone he had was super small compared and looked odd compared to the size of the other cones." (G 427).
 9. **No outline unless required.** Only the thing the player must go to next gets an outline. "I don't think we should have yellow outlines in Squatch when it's not actually requiring you to do the thing." (G 567). Outline of props the game draws itself, dashed and outside: "For the bush outline, I'd still like it to be outside of the object and dashed." (G 438). The glowing circle and bouncing arrow still draw outside Chapter 1 (60-frame-draw.js:522-545): "it doesn't need an arrow!!" (S 1153).
-11. **A check that catches drift.** Open PR #34 checks his rules on each pull request; nothing compares the game to DECISIONS.md. "I think we basically need to have a recurring built-in check to make sure we're not drifting." (G 433).
+11. **A check that catches drift.** Open PR #34 checks his rules on each pull request; a first try is closed PR #34 (rules check on every PR); nothing compares the game to DECISIONS.md. "I think we basically need to have a recurring built-in check to make sure we're not drifting." (G 433).
 12. **Delete the old Chapter 1.** "we didn't get rid of the wrong ideas as we went" (G 433); "deleting bad code" (G 516). The old opening is still in 10-ch1.js and 11-ch1-hall.js.
 13. **Last, if time allows: karaoke.** Brian, 2026-11-23. Karaoke with the Moon Pie song: "For karaoke, let's actually do a different song." (S 1013); "I'm good with the Moon Pie's song." (S 1019). Today it is tap-to-howl only.
 
@@ -41,7 +54,6 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 - **The party picture.** Main already draws Isfred on the stage; Brian's "Fred on the stage, that he's not actually on the stage at all" (G 603) was about v2. The banner: "Robotics delegation banner doesn't make sense where it is" (G 603); older "the robotic delegation sign doesn't make any sense there. Maybe it's a banner that should be hanging or something." (G 292). Newest wins: keep a hanging banner, change where it hangs.
 - **The plant eyes.** Merged today in PRs #68 to #73. History: center (G 292), "Low is fine" (G 309), "a little low still" (G 430), "we had it right in the very original" (G 442), "eyes are wrong in bush again" (G 526). Newest instruction: copy the original; check the merged version.
 - **Home room objects.** "the new version of the crate in the room is off, at least in the picture you showed." (G 597). Covers crate, bed, bucket, bedtime-story look, janitor facing. Walls and furniture merged today; check.
-- **The morning walk and pacing.** "Squatch is starting bad. the way they move when the song comes on is kinda weird." (G 556); "it jumps a little too much before he leaves." (G 556); "Regarding pacing, we never really had that nailed" (G 561); the crib: "getting out of the crib's a little wonky" (K 191).
 - **The dance game.** A scrolling-arrow dance exists but you said it never worked. "The dance game, hopefully that can be done clean and simple. If not, forget it." (G 516). "the fur shows at the dance scene" (G 603) is unclear.
 - **The balloon game.** "The balloon thing has just never worked when we've tried it before ... if it's all wonky and confusing, forget it." (G 516); "the balloon's just total nonsense" (K 336). Still in main (12-ch1-redesign.js:808-834).
 - **Who says "fur".** "It's not clear who's saying wait a second fur." (G 603).
@@ -61,14 +73,12 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 ## 3. Your instructions disagree
 
 - **May bots merge while you are away?** "Nothing merges without my yes in the pull request." (S 227) against "merge without checking with me" (S 1286), and in the newest thread "I want you to just make decisions and update the live game without me having to verify anything further" (G 516) and "no need to ask for permission, i'm walking away" (G 365). Two waivers or a standing rule; confirm.
-- **Sing button.** "I Think Maybe The Song Button Should Always Be There As An Option" (P L204), later "Button is fine" (S 1356) and the sing-along option in the morning (G 556). Newest supports an optional sing-along in the morning song, not a permanent button.
 
 ## 4. Everything else not built
 
 ### Morning and home
 - Thought bubbles for animals. "Thought bubble is fine just was pointing out it was not in the version you showed" (S 593).
 - Vent strings, crossed-off planets, toy bin. "Draw strings between postings and make it more obvious he's searching like a detective" (S 590).
-- Vent swirls do not move. "Ideally the swirls are in soft motion at all times" (S 485).
 - Mops goat body and tail. "Full beard to floor, remember!! And more goat body" (S 522). He is called "Janitor, goat janitor is what mops is called." (G 565); humor "where do we have humor about him being the planet's first goat / janitor - aka ganitor? Need to add that in." (S 218). Old unused scenes hold some of these words.
 - Make the first gift obvious. "that needs to be more obvious." (S 92).
 - Things to touch on the walk to the room. "maybe look around, maybe there's another thing or two he can interact with on the way." (S 405).
@@ -152,6 +162,14 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 - Show a cartoon, not a script. "If you build it as a cartoon then I would!" (S 555).
 - Audit each mini-game alone. "Really think having sn agent just sudit each mini game or interaction like the bar or dancing or balloon on their own in isolation" (S 1091).
 - A separate reviewer agent, proven. "I think you might need like a new agent to look at this maybe." (S 729).
+
+### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23)
+
+Each of these is checked against main first; guests and cones were rebuilt in #75.
+
+- From closed PR #35 (Mops's heart cone, decisions R98 and R104). Check against main first; guests and cones were rebuilt in #75. Mops gets a warm cone and pops hearts when Squatch is in it, while everyone else shows "!". Bigger and brighter (R104). Hearts act just like the "!" marks. Brian: "eyesight lights up way sooner than it should." Rebuild it on the cones in `src/modules/party-watch.js`.
+- From closed PR #60 (playtest 15 fixes). Check against main first; guests and cones were rebuilt in #75. The pink and yellow slips stay in the hangar bin so they do not cover Squatch after BEEP BEEP. Party guests step and lean with their arms on their bodies. The extras guard wears the blue security uniform. The teal guest stands off the party vent. The party-catch lockup card still says a tourist saw him; the proposed line "A guard saw Squatch at the party. Security caught him." needs Brian's yes.
+- From closed PR #33 (party notes). Check against main first; guests and cones were rebuilt in #75. No "Oops. Fur in the vent." line in the bedroom. The hall plant is outlined in its real shape (leaves and pot). Squatch's eyes sit low in the front leaves when he hides. Isfred's "ROBOTICS DELEGATION!" sign is fully readable. The Croc Boys' line "Stormtop-vania 1-2-3-4-5!" comes from the stage. Its music swap is not wanted (Brian's newer asks are the Floating in Space recording and Joe's theme).
 
 ## 5. Merged, in a pull request, and being built
 

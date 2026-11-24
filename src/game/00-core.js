@@ -228,6 +228,8 @@
         splash: () => lV(500, 0.25, "sine", 0.12, 0, 120),
         pop: () => lV(220, 0.1, "sine", 0.07, 0, 70),
         zap: () => lV(1400, 0.3, "sawtooth", 0.05, 0, 300),
+        // The wall speaker's ding-dong before the morning announcement.
+        chime: () => ji([79, 72], 0.28, "sine"),
       },
       O1 = 0,
       w1 = [
@@ -524,6 +526,8 @@
       if (G) return "";
       if (p.state === "title") return "title";
       if (p.state !== "op") return "";
+      // The morning has the room's music (Brian's Floating in Space) until "That evening…".
+      if (window.SSQ && window.SSQ.homeMusic && window.SSQ.homeMusic.owns()) return "";
       if (n.roomWalk) return "";
       if (n.ch1Night && n.scene === "Q4" && n.ctrl) return "";
       if (n.sqPose === "hidden" && n.ch1Party) return "";
@@ -592,6 +596,8 @@
       window.__ss && ((window.__ss.warmPlay = warmPlayState), (window.__ss.warmCue = warmWhy()), (window.__ss.warmPaused = !!warmEl.paused));
     }
     function musicTick(l) {
+      // Brian's Floating in Space (the morning, src/modules/home-music.js): it fades out off the game screen.
+      window.SSQ && window.SSQ.homeMusic && (p.state === "op" || window.SSQ.homeMusic.stop(), window.SSQ.homeMusic.tick(l));
       let want = musicWant();
       want !== musicKind && ((musicKind = want), (musicWait = 0));
       window.__ss && (window.__ss.music = want);
@@ -858,6 +864,7 @@
         bot: "Security",
         robot: "Robot",
         pa: "Station PA",
+        speaker: "Speaker", // the wall speaker in the home room (morning); the morning reads its tag from the morning's lines file (Brian 2026-11-23: "Speaker")
         kid: "Kid",
         exec: "Exec",
         demo: "Snack Clerk",
@@ -887,6 +894,7 @@
         bot: "#3478f6",
         robot: "#5b6b86",
         pa: "#e5533d",
+        speaker: "#e5533d",
         kid: "#ff5fa8",
         exec: "#59657d",
         demo: "#3478f6",
@@ -1037,7 +1045,8 @@
     function de() {
       let l = n.cur;
       // A story wait (uV) is a tap, like a card. Wordless walks still use "until" and play on their own.
-      return !!l && (l.k === "bub" || l.k === "card" || l.k === "panel" || l.k === "fb" || l.k === "wait");
+      // A full-screen cutaway picture (src/modules/cutaway.js) waits for a tap like a card.
+      return !!l && (l.k === "bub" || l.k === "card" || l.k === "panel" || l.k === "fb" || l.k === "wait" || l.k === "cutaway");
     }
     function speakerDrawn(who) {
       // A bubble needs the speaker in the picture. Hiding Squatch is still in the picture (the bubble sits on his spot).
@@ -1061,7 +1070,8 @@
             l.b.who === "mops" && D.baa(),
             (l.b.who === "ups" || l.b.who === "robot" || l.b.who === "scanner" || l.b.who === "bot") && D.bleep(),
             Dt("bub", pa[l.b.who], l.b.text, l.b.style + (l.b.ear ? "+ear" : "")),
-            l.b.style === "song" && co())
+            // The morning plays Brian's recording instead of the made-up tune (src/modules/home-music.js).
+            l.b.style === "song" && !(window.SSQ && window.SSQ.homeMusic && window.SSQ.homeMusic.owns()) && co())
           : l.k === "card"
             ? (l.id === "fb" && (n.cutOn = !1), Dt("card", "", l.text, "card"))
             : l.k === "panel"
@@ -1074,7 +1084,9 @@
                   l.pic === "shed" && _i("shed"),
                   l.pic === "fb1beard" && D.pickup(),
                   (n.breathT = 0))
-                : l.k === "wait" && (n.t = l.t));
+                : l.k === "cutaway"
+                  ? Dt("cutaway", "", l.id + ":" + l.panel, "cutaway")
+                  : l.k === "wait" && (n.t = l.t));
     }
     function lh(l) {
       for (let o = 0; o < 60; o++) {

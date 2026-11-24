@@ -115,7 +115,7 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
       n.ch1Dress = null;
       n.ch1Cut = null;
       n.ch1Mini = "";
-      n.ch1Song = false;
+      n.ch1Morning = null;
       n.ch1Veil = 0;
       n.cur = null;
       n.q = [];
@@ -160,10 +160,34 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
         n.q = [];
         n.cur = { k: "card", id: "squatch", text: "This is Squatch. He's a Sasquatch." };
       }),
+      // The morning (src/modules/morning.js): the speaker's bubble with its sound lines, the two cutaway
+      // pictures, and the song with notes from the speaker; each with the "tap" cue.
+      shot("morning speaker", () => {
+        n.scene = "Q1";
+        n.room = "closet";
+        n.ch1Party = false;
+        n.ch1Day2 = false;
+        n.ch1Morning = { step: "waking", t: 1, notes: false };
+        n.sqPose = "sit";
+        n.moPose = "mop";
+        n.cur = { k: "bub", b: { who: "speaker", text: "Good morning, Stormtop! Big party in the hall tonight!", style: "say" } };
+      }),
+      shot("morning cutaway 1", () => {
+        n.scene = "Q1";
+        n.room = "closet";
+        n.ch1Morning = { step: "talk", t: 1, notes: false };
+        n.cur = { k: "cutaway", id: "beard", panel: 0 };
+      }),
+      shot("morning cutaway 2", () => {
+        n.scene = "Q1";
+        n.room = "closet";
+        n.ch1Morning = { step: "talk", t: 1, notes: false };
+        n.cur = { k: "cutaway", id: "beard", panel: 1 };
+      }),
       shot("song", () => {
         n.scene = "Q1";
         n.room = "closet";
-        n.ch1Song = true;
+        n.ch1Morning = { step: "sing", t: 1, notes: true, notesAt: n.T - 1.5 };
         n.ctrl = true;
         n.cur = { k: "bub", b: { who: "mops", text: "\u266A Weeee-eenn-nnttt! \u266A", style: "song" } };
         n.moPose = "stand";
