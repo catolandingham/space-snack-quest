@@ -57,7 +57,7 @@ Brian's Nov 16 direction overrides the older party-first ordering below. One bea
 - Calendar (PR 58, unmerged): latest copy has MOONMUNCH / FUZZUARY; Sponsored by MOON PIES; Sock hunt; family Olympics night; Wash outside windows (remember space suit!); Blanket fort night. Brian removed calendar Homework and Sing with Mops, and asked for the small edge nibble to be a little larger. Desk homework remains approved separately. The day-two LOOK position is beside the wardrobe, not inside the bed. `tests/calendar-closeup.mjs`.
 - Walking/Guardian box: PR 57 remains separate and unmerged. This calendar branch is based on main and does not include it.
 - Approved but not built: closet look, bed flop/hop and their approved lines; homework at the desk to pass time after Mops leaves, with wording still awaiting approval.
-- Still open: purple bed bar, bucket readability and Mops taking it to work, music. TV stays for beat 20. No clip needed.
+- Still open: bucket readability and Mops taking it to work, music. (The purple bed bar is removed on branch feat/home-alone, PR #84: Brian, 2026-11-23, "that weird extra line back on the bed".) TV stays for beat 20. No clip needed.
 
 ### Home room sheet for this calendar change
 

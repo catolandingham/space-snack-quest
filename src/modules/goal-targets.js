@@ -11,6 +11,7 @@ export const GOAL_TARGETS = {
   // Home
   "closet:peek": { rect: { x0: 912, x1: 940, y0: 358, y1: 468 } }, // the doorway in the right wall
   "closet:hidebed": { trace: { x0: 76, x1: 294, y0: 390, y1: 552 } }, // the bed
+  "closet:homework": { trace: { x0: 396, x1: 522, y0: 238, y1: 352 } }, // the desk (home alone: do your homework)
   "closet:d2-PUT-box": { trace: { x0: 30, x1: 172, y0: 188, y1: 352 } }, // the wardrobe (the box is in it)
   "closet:d2-LOOK-calendar": { rect: { x0: 99, x1: 167, y0: 196, y1: 279 } }, // the calendar on the wardrobe door
   // Party hall

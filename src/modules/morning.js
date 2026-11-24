@@ -5,17 +5,18 @@
  *   cards; Squatch asleep, Mops mopping with his beard; the wall speaker wakes Squatch with the party news;
  *   Mops "Morning, Squatch."; Squatch "Party?"; the beard-wringing cutaway; the speaker announces Dog Zylan;
  *   the tap starts Brian's recording, the notes and Squatch getting out of bed; Mops "Floating in space!...";
- *   the kid sings (SING ALONG) or walks to Mops (TALK · Mops); the goodbye; Mops walks out; "That evening…".
+ *   the kid sings (SING ALONG) or walks to Mops (TALK · Mops); the goodbye; Mops walks out; Squatch home alone
+ *   (home-alone.js: the homework, and the closet, bed and calendar if the kid wants); "That evening…".
  * Every step waits for a tap (one bubble at a time, nothing moves on by itself). Animations a tap started
  * (waking, the stand-up, the beard shake, the walk out) may lead straight to the next step.
  *
  * Words come only from morning-lines.js. Game state is written only through the bridge's engine.set with
  * the fields bridge.js names (BEAT_WRITES), and the few hand-over functions (place, face, step).
  * The beat's own progress lives in the game state as ch1Morning, so the step restart (↺) keeps it.
- * Not built here (PR 3): home alone after Mops leaves (closet, bed, homework, the calendar's bite).
  */
 import { line } from "./morning-lines.js";
 import { cutawaySteps, drawCutaway, drawTapCue } from "./cutaway.js";
+import { createHomeAlone } from "./home-alone.js";
 
 // The wooden speaker in the locked home picture v6 (x 1141 to 1191, y 210 to 263 of 1280 x 830), in game
 // positions. Nothing else types these numbers: the bubble placement asks for them through the bridge.
@@ -108,10 +109,15 @@ export function createMorning(bridge) {
     e.forgetSaved();
     step("leave");
   }
+  // Mops is out of the door: Squatch is home alone until he has done his homework.
   function gone() {
     const e = E();
     e.set("moPose", "hidden");
     e.moWalking(false);
+    home.start();
+  }
+  function evening() {
+    const e = E();
     step("evening");
     e.queue([
       // Q8: the recording fades out on "That evening…".
@@ -120,6 +126,7 @@ export function createMorning(bridge) {
       e.run(() => (e.set("ch1Morning", null), e.eveningStarts())),
     ]);
   }
+  const home = createHomeAlone({ E, M, step, done: evening });
 
   return {
     /** A new Chapter 1. With { restart: true } (the ↺ hold before the song): the morning again, without the cards. */
@@ -222,12 +229,16 @@ export function createMorning(bridge) {
         case "leave":
           e.step("mops", MORNING_PLACES.door.x, MORNING_PLACES.door.y, PACE.leave, dt || 0) && gone();
           break;
+        case "home":
+          home.tick(dt);
+          break;
       }
     },
-    /** The spots the song step offers: SING ALONG anywhere, TALK · Mops beside him. */
+    /** The spots the song step offers (SING ALONG anywhere, TALK · Mops beside him), or home alone's. */
     spots() {
       const m = live(),
         e = E();
+      if (m && m.step === "home") return home.spots();
       if (!m || m.step !== "song" || !e.get("ctrl")) return null;
       const mo = e.pos("mops"),
         sq = e.pos("sq"),
@@ -249,16 +260,26 @@ export function createMorning(bridge) {
       const m = live();
       return !!m && ["asleep", "waking", "awake", "shake", "standup", "up"].includes(m.step);
     },
+    /** True while Squatch is home alone and free to walk about (the calendar may be looked at then). */
+    homeAlone() {
+      return !!live() && home.free();
+    },
+    /** Drawn on the room picture under the people: the G box in the open closet (home alone). */
+    drawOnRoom(ctx) {
+      live() && home.drawOnRoom(ctx);
+    },
     /** True while Mops walks out (the goal chip hides). */
     leaving() {
       const m = live();
       return !!m && m.step === "leave";
     },
-    /** Drawn over the room: the wet floor where Mops mops, sound lines and music notes at the speaker. */
+    /** Drawn over the room: the wet floor where Mops mops, sound lines and music notes at the speaker, and
+     * Squatch while he flops on the bed (home alone). */
     draw(ctx) {
       const m = live(),
         e = E();
       if (!m) return;
+      home.draw(ctx);
       const t = e.time();
       if (e.get("moPose") === "mop") {
         const mo = e.pos("mops");
@@ -322,7 +343,7 @@ export function createMorning(bridge) {
     /** For tests: where the beat is and what it draws. */
     debug() {
       const m = M();
-      return { step: m ? m.step : "", fx: !m ? "" : speakerTalking() ? "lines" : m.notes ? "notes" : "", cue, lift: E() ? E().get("sqLift") : 0 };
+      return { step: m ? m.step : "", fx: !m ? "" : speakerTalking() ? "lines" : m.notes ? "notes" : "", cue, lift: E() ? E().get("sqLift") : 0, flop: m ? home.flop() : null };
     },
   };
 }

@@ -5,7 +5,7 @@
  * - the song bubbles stay off both faces, and the sing-along chip is still the goal while they sing,
  * - Brian's recording plays from the speaker and dips under each sung line (instead of "singing or music,
  *   never both"); Joe's theme stays off and the made-up tune does not play,
- * - then the goodbye, Mops walks out, "That evening…", and only then the peek goal.
+ * - then the goodbye, Mops walks out, home alone with the homework, "That evening…", and only then the peek goal.
  * The floor arrows are gone (scene 1 review, 2026-11-14).
  *   node tests/opening-song.mjs
  */
@@ -65,6 +65,10 @@ const song = await page.evaluate(() => {
   let left = false;
   for (let i = 0; i < 200 && n.moPose !== "hidden"; i++) ss.tick(0.05);
   left = n.moPose === "hidden";
+  // Home alone (src/modules/home-alone.js): the homework at the desk comes before "That evening…".
+  const homeChip = ss.chipNow();
+  const hw = (ss.spotsNow() || []).find((x) => x.id === "homework");
+  hw && hw.f();
   let evening = false,
     chipOnCard = "";
   for (let i = 0; i < 60 && !n.ctrl; i++) {
@@ -73,7 +77,7 @@ const song = await page.evaluate(() => {
     ss.opTap();
     ss.tick(0.1);
   }
-  return { verb: offer && offer.verb, lines, music, faces, chipDuring, pose, moved, sway, facing, left, evening, chipOnCard, ctrl: n.ctrl, chipAfter: n.ch1Chip };
+  return { verb: offer && offer.verb, lines, music, faces, chipDuring, pose, moved, sway, facing, left, homeChip, homework: !!hw, evening, chipOnCard, ctrl: n.ctrl, chipAfter: n.ch1Chip };
 });
 g.check("SING ALONG is the action", song.verb === "SING ALONG", song.verb);
 g.check("they sing where they stand: nobody walks for the song", song.moved < 1, song.moved);
@@ -90,7 +94,8 @@ g.check("the recording plays and dips under each sung line", sung.length === 2 &
 g.check("and is back up for the spoken goodbye", said.length >= 1 && said.every((m) => m.playing && m.target >= 0.39), said);
 g.check("Joe's theme stays off during the morning song", song.music.every((m) => !m.warm), song.music);
 g.check("Mops walks out after the goodbye", song.left, song);
-g.check('the "That evening…" card comes after Mops leaves', song.evening, song);
+g.check("once Mops is gone Squatch is home alone with his homework to do", song.homeChip === "Squatch: do your homework" && song.homework, song);
+g.check('the "That evening…" card comes after the homework', song.evening, song);
 g.check("the peek goal waits until the card is gone and control is back", song.chipOnCard !== "Squatch: peek out the door" && song.ctrl && song.chipAfter === "Squatch: peek out the door", song);
 g.check("the floor arrows are gone (scene 1 review)", !/function drawWalkNudge/.test(readFileSync(new URL("../src/game/12-ch1-redesign.js", import.meta.url), "utf8")));
 g.check("no page errors", errors.length === 0, errors);

@@ -711,6 +711,11 @@
       if (homePicture()) {
         drawLockedRoom(n.wardrobe === "open" ? "home-open" : "home-closed");
         gboxOut() && L2();
+        // Home alone with the closet open: the morning module draws the G box on the closet floor.
+        {
+          let beat = window.SSQ && window.SSQ.beat("ch1-morning");
+          beat && beat.drawOnRoom && beat.drawOnRoom(e);
+        }
         n.wardrobe === "open" && n.costumeOn && ((e.fillStyle = "#f4efe6"), e.fillRect(70, 150, 150, 160));
         return;
       }
@@ -2104,7 +2109,9 @@
       let o = n.sq,
         i = n.sqPose;
       if (
+        // "lie": the home-alone bed flop, drawn by the morning module (src/modules/home-alone.js).
         (i !== "under" &&
+          i !== "lie" &&
           l.push({
             y: i === "sit" || i === "sleep" ? 420 : o.y,
             d: () => {
@@ -2125,12 +2132,13 @@
                   (X(300, 594, 7, 4), r("#c98a4a", 2), e.restore());
                 }
                 // sqLift: below 0 he is slumped down asleep (the morning), above 0 he rises to stand up.
+                // He sits on the locked picture's own purple mattress: no bar of our own in front of him (Brian,
+                // 2026-11-23: "that weird extra line back on the bed"; the bar came from the room drawn before
+                // the locked picture, and stayed when the picture brought its own mattress).
                 (e.save(),
                   (n.sqLift || 0) < 0 && (e.translate(205, 444), e.rotate(0.12 * n.sqLift), e.translate(-205, -444)),
                   Re(205, 444 - (s ? Math.max(0, Math.sin(n.T * 5)) * 7 : 0) - (n.sqLift || 0) * 22, wl, { f: 1, eyes: i === "sleep" ? "closed" : "", legs: !1 }),
                   e.restore(),
-                  m(120, 422, 170, 28, 12),
-                  r("#a98bff", 4),
                   i === "sleep" && g("z z z", 280, 290 - ((n.zzz * 16) % 30), 26, "#3478f6"));
               } else if (i === "ball") drawL2Ball(o.x, o.y - 16);
               else
@@ -2377,6 +2385,16 @@
       let d = Math.max(156, e.measureText(t).width + 24),
         x = w(a.x, d / 2 + 4, c - d / 2 - 4),
         y = Math.max(28, a.y - 36);
+      // Chapter 1: next to the thing it names, clear of Squatch and the other things (src/modules/cap-place.js).
+      if (/^Q/.test(n.scene || "") && window.SSQ && window.SSQ.placeLabel) {
+        let o = n.room === "hall" ? B.camX : 0,
+          sh = (k) => k && { x0: k.x0 - o, x1: k.x1 - o, y0: k.y0, y1: k.y1 },
+          sp = a.spot || {},
+          others = spotsNow().filter((k) => k && k !== sp && k.thing).map((k) => sh(k.thing)),
+          at = window.SSQ.placeLabel({ w: d, h: 28, at: { x, y }, thing: sh(sp.thing), squatch: sh(sqBox()), avoid: [...others, ...(sp.avoid || []).filter((k) => k !== sp.thing).map(sh)] });
+        ((x = at.x), (y = at.y));
+      }
+      n.lastCap = { box: { x0: x - d / 2, x1: x + d / 2, y0: y - 14, y1: y + 14 }, text: t };
       (m(x - d / 2, y - 14, d, 28, 8), r("#fffaf0", 3), g(t, x, y, 14, "#1e2430", "center", 800));
     }
     function drawWaitArrow() {

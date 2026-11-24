@@ -4,7 +4,8 @@
  * - The steps come in this order, each waiting for a tap: the two cards; the room with Squatch asleep and Mops
  *   mopping (no words); the speaker's lines; Mops "Morning, Squatch."; Squatch "Party?"; the beard-wringing
  *   cutaway (two full-screen pictures); the speaker's Dog Zylan line; Mops "Floating in space! ..."; then the
- *   kid sings (SING ALONG) or walks to Mops (TALK · Mops); the goodbye; Mops walks out; "That evening…".
+ *   kid sings (SING ALONG) or walks to Mops (TALK · Mops); the goodbye; Mops walks out; home alone (the homework,
+ *   tests/home-alone.mjs); "That evening…".
  * - The words are exactly the lines file's (src/modules/morning-lines.js), said by the right speaker.
  * - Nothing moves on by itself: after every card, bubble, wait and cutaway picture, six game seconds pass and
  *   the same thing is still up. The one step that follows an animation is Mops's song line, after the
@@ -294,7 +295,8 @@ for (let i = 0; i < 40; i++) {
         for (let i = 0; i < 600 && n.moPose !== "hidden"; i++) {
           ss.tick(1 / 60);
           path.push([n.mo.x, n.mo.y]);
-          chips.add(ss.chipNow() || "");
+          // Once he is out of the door, home alone begins with its own goal (tests/home-alone.mjs).
+          n.moPose !== "hidden" && chips.add(ss.chipNow() || "");
         }
         let maxStep = 0;
         for (let i = 1; i < path.length; i++) maxStep = Math.max(maxStep, Math.hypot(path[i][0] - path[i - 1][0], path[i][1] - path[i - 1][1]));
@@ -312,6 +314,18 @@ g.check("Mops and Squatch are not inside each other while they sing", !!atSing &
 g.check("Mops walks out at an even pace (no jump) and is gone", !!walk && walk.gone && walk.maxStep < 4, walk);
 g.check("the chip is hidden while he walks out", !!walk && walk.chips.every((c) => !c), walk);
 g.check("Mops never rocks while singing or leaving", A1.bad.sway.length === 0, A1.bad.sway);
+// Home alone (tests/home-alone.mjs has the details): the homework at the desk, then "That evening…".
+await sleep(300);
+s = await A.st();
+g.check("once Mops is gone Squatch is home alone, with his homework as the goal", s.ctrl && !s.k && s.chip === "Squatch: do your homework", s);
+await A.page.evaluate(() => (window.__ss.spotsNow() || []).find((x) => x.id === "homework").f());
+await sleep(400);
+for (let i = 0; i < 10; i++) {
+  s = await A.st();
+  if (s.k !== "cutaway") break;
+  await A.tapAt(480, 330);
+  await sleep(400);
+}
 let evening = false;
 for (let i = 0; i < 30; i++) {
   s = await A.st();

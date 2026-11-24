@@ -4,22 +4,22 @@
 | Lines | Heading |
 | --- | --- |
 | 24–30 | # Brian's asks that are not in the game yet |
-| 31–51 | ## 1. Build next |
-| 52–72 | ## 2. Needs your eyes |
-| 73–76 | ## 3. Your instructions disagree |
-| 77–78 | ## 4. Everything else not built |
-| 79–99 | ### Morning and home |
-| 100–113 | ### Party |
-| 114–118 | ### Snacks and dress-up |
-| 119–131 | ### Day 2 and night |
-| 132–136 | ### Escape and later chapters |
-| 137–140 | ### Looks and lines |
-| 141–148 | ### Sound |
-| 149–152 | ### Words and rules |
-| 153–165 | ### How the bots work |
-| 166–173 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
-| 174–185 | ## 5. Merged, in a pull request, and being built |
-| 186–196 | ## 6. Corrections to the checkers |
+| 31–47 | ## 1. Build next |
+| 48–68 | ## 2. Needs your eyes |
+| 69–72 | ## 3. Your instructions disagree |
+| 73–74 | ## 4. Everything else not built |
+| 75–95 | ### Morning and home |
+| 96–109 | ### Party |
+| 110–114 | ### Snacks and dress-up |
+| 115–127 | ### Day 2 and night |
+| 128–132 | ### Escape and later chapters |
+| 133–136 | ### Looks and lines |
+| 137–144 | ### Sound |
+| 145–148 | ### Words and rules |
+| 149–161 | ### How the bots work |
+| 162–169 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
+| 170–182 | ## 5. Merged, in a pull request, and being built |
+| 183–193 | ## 6. Corrections to the checkers |
 <!-- /section-index -->
 # Brian's asks that are not in the game yet
 
@@ -32,10 +32,6 @@ Brian's G Bot messages 419 to 603 were written while he looked at the old "v2" b
 
 Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win over older words.
 
-1. **The morning, built as one ordered sequence (G 547 to 567).** Brian agreed today to rebuild it his way. Waking up through Mops leaving is built in the morning PR (#82, branch feat/morning-rebuild); every line is approved (Brian 2026-11-23: "1A", "2B") and the beard-wringing close-up with Mops on the bucket model is approved as drawn ("3A"). Still to build, after Mops leaves (PR 3, home alone). Button and goal words Brian approved 2026-11-23 ("6A"): "OPEN · closet", "FLOP · bed", and the goal "Squatch: do your homework":
-   - Calendar already bitten. "When we click on the calendar again, it takes a bite out. That doesn't make any sense. It should just have a bite out already" (G 556). Today the first tap takes the bite. Calendar close-up (the beard-wringing cutaway look is approved, "3A"; this calendar picture is a separate ask): "it doesn't actually look like a calendar. See if you can find what we had previously." (G 556).
-   - Closet opens. "when we click on the closet door, ideally it'll open and we could see the costumes and the guardian box." (G 556). Button: "OPEN · closet" (approved, "6A"). Closet picture (Brian, 2026-11-23, "9a"): the closet uses the locked home-room-empty-open-v6.png unchanged, and the game draws the small blue G Guardian Box on the closet floor under the clothes, on top of the picture, so Squatch's line "Mops's costumes. And my Guardian Box." shows what it names. A picture of it goes to Brian before it ships. The look is approved (Brian, 2026-11-23, "11a"): a small blue box with a white "G" on the closet floor under the spare shirt, about 39 x 28 game units (details in the private file MORNING-PLAN.md, "More answers"). Not built. Today nothing at home opens yet: once Mops leaves, "That evening…" comes straight away.
-   - Homework at the desk is the one required thing. "The one thing you'll have to do is go to the desk and do homework." (G 567). Heading "I sweaty" (G 567). The bot picks the homework, no question needed: "do something fun, you come up with whatever you think makes sense, and I'm gonna be just fine with it." (G 576). Also "maybe there's a little cutaway of Sasquatch doing homework there" (G 567). Goal chip: "Squatch: do your homework" (approved, "6A"). The bed flop button: "FLOP · bed" (approved, "6A").
 1a. **Vents swirl and pull.** Brian, 2026-11-23 (Snack Quest Chat): "make sure we still have the rule about vents swirling and that if squatch gets too close at any time, it sucks in fur and sets off alarm." Every floor vent shows soft swirls always moving inward (R12; "Ideally the swirls are in soft motion at all times", S 485). If Squatch gets too close without his disguise, at any time, the vent pulls his fur in (a tuft drifts first as the warning) and that sets off the alarm (R108, G 474). With the disguise on, Brian: "No, it tugs the disguise" (2026-11-23): the vent tugs the disguise and does not pull fur or set off the alarm (R108 stays). Today the party-hall vent has still swirls and a SUCK button instead (`src/game/12-ch1-redesign.js`, the "vent" spot); the old lobby code in `src/game/10-ch1.js` has the fur drift to reuse. Not built in this PR.
 2. **Dress-up pieces snap to the nearest body spot.** Brian, 2026-11-23: "let's try to have them snap but be okay with absurdist results, for instance, pants on the head." Whatever the piece is, it snaps to the spot nearest where it is dropped. Today each piece goes to its own fixed zone (13-ch1-slice.js:171-177). Replaces "put it more or less wherever" (G 603).
 3. **Raising the alarm at the party.** Brian, 2026-11-23: the guest runs to the wall alarm. Today at the party the guest runs to a spot on the floor and the PA shouts "FUR! Security!" too; it should be the red wall alarm, as at the Day 2 lunch. "anytime you're seeing or anytime fur detected someone needs to run the trip alarm." (K 163).
@@ -177,6 +173,7 @@ Merged today on main: one sound button, off by default (PR #77); squatch.onrende
 Merged 2026-11-23: cones on everyone and the six approved guests (#75), controls always shown (#79), the hall v2 and home v6 pictures (this change).
 
 Not merged yet:
+- Home alone after Mops leaves (morning plan PR 3, branch feat/home-alone, draft): the homework goal and cutaway, OPEN · closet with the G box, FLOP · bed, the calendar already bitten. Brian's answers of 2026-11-23 are built in it: 13A (the sheet's sums approved), 14A (thin-outline Squatch in the homework close-up, a lying-down flop), 15A (the calendar keeps its edge nibble), and his feedback (labels next to their thing, clear of Squatch; no purple bar in front of the bed; the desk outline never over Squatch). 16A: merge once a full test run passes.
 - The tap-path change.
 - Mops's heart cone in Chapter 1 (PR #35, open since Nov 13) and the rules check on pull requests (PR #34).
 

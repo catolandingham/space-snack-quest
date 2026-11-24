@@ -106,6 +106,9 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
     };
   });
   await page.reload({ waitUntil: "domcontentloaded" });
+  // Wait for the game to set up its test hook: on a slower machine (GitHub's runner) it is not there yet
+  // right after DOMContentLoaded, and reading it failed with "Cannot read properties of undefined".
+  await page.waitForFunction(() => window.__ss, { timeout: 30000 });
   await page.evaluate(() => window.__ss.lockedReady);
   const screens = await page.evaluate(async () => {
     const ss = window.__ss;

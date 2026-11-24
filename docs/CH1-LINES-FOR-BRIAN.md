@@ -293,7 +293,7 @@ Brian, Nov 16, 4:05 PM PT: "DO · homework, no line, then 'That evening…'."
 - There is no spoken line.
 - Then the card already in the game: "That evening…".
 
-Approved. Not built on this pull request. It is built after the cone and heart round.
+Approved. Built 2026-11-23 on branch `feat/home-alone` (draft): every home-alone word is in `docs/HOME-ALONE-LINES-FOR-BRIAN.md`.
 
 ## Questions still open
 

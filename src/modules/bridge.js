@@ -17,13 +17,15 @@ import { findPath } from "./tap-path.js";
 import { createHomeMusic } from "./home-music.js";
 import { lastCutaway } from "./cutaway.js";
 import { SPEAKER } from "./morning.js";
+import { placeLabel } from "./cap-place.js";
 
 /**
  * The game-state fields a rebuilt beat may write, through engine().set(field, value). Anything else it
  * changes goes through a named hand-over function (place, face, step, still, moWalking). A beat that tries
- * to write another field stops with an error; tests/module-build.mjs checks the morning against this list.
+ * to write another field stops with an error; tests/module-build.mjs checks the morning (and its home-alone
+ * part) against this list.
  */
-export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz"]);
+export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe"]);
 
 export function createBridge() {
   const beats = new Map();
@@ -39,7 +41,7 @@ export function createBridge() {
      * The older program hands over, once at start, the small engine functions rebuilt beats use: the story
      * queue (queue, say, card, run, until, tapWait, current), people (pos, place, face, step, still,
      * moWalking), state (get, and set for the BEAT_WRITES fields only), the chip, the chapter reset, the
-     * evening start, forgetting the step restart's saved start, sound (soundState, audioCtx, masterGain, chime), drawing (drawMops, text) and the clock.
+     * evening start, forgetting the step restart's saved start, sound (soundState, audioCtx, masterGain, chime), drawing (drawMops, squatchScale, text) and the clock.
      * A later hand-over replaces an earlier one (the page made a new game).
      */
     handOver(e) {
@@ -105,14 +107,23 @@ export function createBridge() {
     },
     /**
      * Draws the soft yellow outline round the real thing a Chapter 1 goal needs (GOAL_TARGETS), pulsing
-     * gently. `picture` is the locked room picture on screen (traced things come from it). Returns the box
-     * outlined, or null when this goal has no outline.
+     * gently. `picture` is the locked room picture on screen (traced things come from it). `avoid` is a list of
+     * boxes (the people standing there): the outline is not drawn inside them, so it never draws over Squatch
+     * (Brian, 2026-11-23: "The dash outline drawing over him doesn't work."). Returns the box outlined, or null
+     * when this goal has no outline.
      */
-    drawGoalOutline(ctx, room, spotId, picture, time) {
+    drawGoalOutline(ctx, room, spotId, picture, time, avoid) {
       const target = GOAL_TARGETS[room + ":" + spotId];
       if (!target) return null;
       const alpha = 0.85 + 0.15 * Math.sin((time || 0) * 4); // always clearly visible (Brian G#430: "I can't really see it")
       ctx.save();
+      for (const b of avoid || []) {
+        if (!b) continue;
+        ctx.beginPath();
+        ctx.rect(-4000, -4000, 9000, 9000);
+        ctx.rect(b.x0, b.y0, b.x1 - b.x0, b.y1 - b.y0);
+        ctx.clip("evenodd");
+      }
       ctx.globalAlpha = alpha;
       if (target.rect) {
         const b = target.rect;
@@ -127,6 +138,8 @@ export function createBridge() {
       ctx.restore();
       return target.rect || target.trace;
     },
+    /** Where a "VERB · thing" label goes: next to its thing, clear of Squatch and other things. See cap-place.js. */
+    placeLabel,
     /** Tap to walk around furniture: the corners to walk through. See tap-path.js. */
     findPath,
     /** Party sight cones: where each person's cone starts and which way it points. See party-watch.js. */
