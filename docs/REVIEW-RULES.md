@@ -16,7 +16,7 @@
 | 103–105 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
 | 106–112 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
 | 113–120 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
-| 121–128 | ## Mistakes caught building the morning sound (2026-11-24) |
+| 121–129 | ## Mistakes caught building the morning sound (2026-11-24) |
 <!-- /section-index -->
 # Review rules
 
@@ -125,3 +125,4 @@ The later full touch run exposed a test-driver gap: it waited whenever walking w
 - An auto-advancing picture clears the step, and the next one comes up on the following frame; a test that reads the button in between reads the dimmed "~". Read what is up a frame after the change.
 - The reviewer found "Hey, stop that!" was queued by a later frame, 0.68 s after the squirt, so a tap or NEXT in between ended the picture and lost the line. A line that follows an animation is queued at once, behind a wait step that plays the animation (taps do nothing during it), and a test taps impatiently in between.
 - The reviewer found Mops's meh was used up by a line said while sound was off. A once-only sound is marked heard only when it really played.
+- The second review found the wringing sounds due while the squirt flew were saved up and all played at once when the picture came back. When a picture's clock runs while something else is up, its sound cue moves on with it; `tests/sound-cues.mjs` checks every wringing sound lands on its beat, and failed on the old code.

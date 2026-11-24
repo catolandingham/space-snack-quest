@@ -104,7 +104,8 @@ const playAll = (page, lines) =>
         roomWait < 4 ? ((roomWait += dt), await tick(dt), await new Promise((ok) => setTimeout(ok, dt * 1000))) : await next(0.1);
       } else if (c && c.k === "cutaway" && c.auto) await tick(dt);
       else if (c && c.k === "cutaway" && c.id === "beard" && c.panel === 1 && !tapped) {
-        await tick(3);
+        // Tap just before a loop ends, so a twist falls while the water flies (it must be skipped, not played late).
+        await tick(2.6);
         const b = beat.debug().beard;
         // The tap's squirt plays as the picture gives way to the water flying over it: note it as played on
         // the picture that was tapped.
@@ -199,6 +200,11 @@ g.check("sound on: the morning was played to the \"That evening…\" card", R.en
     j = S.findIndex((x) => x.name === "grumpy");
   const between = S.slice(i + 1, j).filter((x) => x.id === "beard:1" && x.name !== "tick");
   g.check("the wringing sounds are quiet from the squirt until his line", i >= 0 && j > i && between.length === 0, between);
+  // Every wringing sound plays on its beat in the 2.8 s loop (within a frame), also once the picture comes back
+  // after his line: none saved up from the skipped stretch.
+  const BEATS = { twist: [0, 1.0], plink: [2.2], plinkSoft: [2.55] };
+  const late = at((x) => x.id === "beard:1" && BEATS[x.name]).filter((x) => !BEATS[x.name].some((b) => inFrame(x.el, b + 2.8 * Math.floor((x.el - b + 0.001) / 2.8))));
+  g.check("every wringing sound plays on its beat, none late after his line", late.length === 0 && at((x) => x.id === "beard:1" && BEATS[x.name]).length >= 3, late);
   g.check("the beard shake plays once, back in the room", at((x) => x.name === "shake").length === 1 && at((x) => x.name === "shake")[0].step === "shake", at((x) => x.name === "shake"));
   const hooves = at((x) => x.name === "hoof");
   g.check("hooves clip clop as Mops walks out (one every quarter second)", hooves.length >= 4 && hooves.every((x) => x.step === "leave"), hooves.length);

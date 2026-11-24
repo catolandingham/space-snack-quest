@@ -200,6 +200,8 @@ export function createMorning(bridge) {
       ...e.until((dt) => {
         const o = wait.over;
         o.el = (o.el || 0) + (dt || 0);
+        // The wringing sounds of this stretch are skipped, not saved up for when the picture comes back.
+        cue.el = o.el;
         return o.el - at >= STOP_AFTER;
       }),
       over: true,
