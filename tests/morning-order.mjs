@@ -2,15 +2,16 @@
  * The morning, from waking up to Mops leaving (docs/BRIAN-ASKS-OPEN.md "Build next" item 1; the plan's
  * section 1 with Brian's answers of 2026-11-23). Played on a phone (375x812) with touches only.
  * - The steps come in this order, each waiting for a tap: the two cards; the room with Squatch asleep and Mops
- *   mopping (no words); the speaker's lines; Mops "Morning, Squatch."; Squatch "Party?"; the beard-wringing
- *   cutaway (two full-screen pictures); the speaker's Dog Zylan line; Mops "Floating in space! ..."; then the
+ *   mopping (no words); the speaker's ding-dong, then its lines; Mops "Morning, Squatch."; Squatch "Party?";
+ *   Mops mopping a few steps along the floor to his bucket, a wet streak behind him (Brian 21a); the
+ *   beard-wringing cutaway (two full-screen pictures); the speaker's Dog Zylan line; Mops "Floating in space! ..."; then the
  *   kid sings (SING ALONG) or walks to Mops (TALK · Mops); the goodbye; Mops walks out; home alone (the homework,
  *   tests/home-alone.mjs); "That evening…".
  * - The words are exactly the lines file's (src/modules/morning-lines.js), said by the right speaker.
  * - Nothing moves on by itself: after every card, bubble, wait and cutaway picture, six game seconds pass and
  *   the same thing is still up. The one step that follows an animation is Mops's song line, after the
  *   stand-up that the Dog Zylan tap started; the card follows the walk-out the last goodbye tap started.
- * - While each waits, the action button reads NEXT and the "tap ▸" cue is drawn.
+ * - While each waits, the action button reads NEXT and no "tap ▸" cue is drawn (Brian 18a: "just next").
  * - Squatch is asleep at the start and sitting up after the speaker's first line; Mops mops (head down) until
  *   he says good morning, then faces Squatch for every line; Mops is never in the rocking "sway" pose.
  * - The speaker's bubbles sit to the left of the speaker with the sound lines drawn; music notes come from the
@@ -99,14 +100,22 @@ const stillAfter6s = (page) =>
     for (let i = 0; i < 60; i++) ss.tick(0.1);
     return n.cur === c && n.cur.__mark === mark;
   });
-// Draws one frame; true if the morning drew its "tap ▸" cue in it.
+// Draws one frame; true if a "tap ▸" cue (any canvas text starting with "tap") was drawn in it.
 const cueDrawn = (page) =>
   page.evaluate(() => {
-    const beat = window.SSQ && window.SSQ.beat("ch1-morning");
-    if (!beat) return false;
-    const before = beat.debug().cue;
-    window.__ss.drawFrame();
-    return beat.debug().cue > before;
+    const P = CanvasRenderingContext2D.prototype,
+      fill = P.fillText,
+      seen = [];
+    P.fillText = function (t, ...a) {
+      seen.push(String(t));
+      return fill.call(this, t, ...a);
+    };
+    try {
+      window.__ss.drawFrame();
+    } finally {
+      P.fillText = fill;
+    }
+    return seen.some((t) => /^tap\b|\u25b8/.test(t));
   });
 
 // Plays from the title until the song step gives control back (or something goes wrong). Each waiting card,
@@ -123,7 +132,7 @@ async function playToSong(run, opts = {}) {
       await sleep(150);
       const s2 = await run.st();
       if (!/NEXT$/.test(s2.btn)) bad.next.push([s.text || s.k, s2.btn]);
-      if (!(await cueDrawn(run.page))) bad.cue.push(s.text || s.k + ":" + s.id + ":" + s.panel);
+      if (await cueDrawn(run.page)) bad.cue.push(s.text || s.k + ":" + s.id + ":" + s.panel);
       if (s.k === "bub" && s.who === "mops" && Math.sign(s.sq[0] - s.mo[0]) !== s.mo[2]) bad.face.push(s.text);
       // opts.at may tap on its own (it returns true then).
       if (!(opts.at && (await opts.at(s, run)))) await run.tapAt(480, 330);
@@ -149,6 +158,21 @@ const A1 = await playToSong(A, {
       await run.page.keyboard.up("ArrowRight");
       const t = await run.st();
       sleepy.after = { sq: t.sq, pose: t.pose, hop: t.hop };
+      // Brian 20a: the tap on the sleeping room rings the speaker's ding-dong first; its words come after it.
+      await run.tapAt(480, 330);
+      sleepy.ding = await run.page.evaluate(() => {
+        const ss = window.__ss,
+          n = ss.op;
+        let t = 0,
+          fx = "";
+        for (let i = 0; i < 300 && !(n.cur && n.cur.k === "bub"); i++) {
+          ss.tick(1 / 60);
+          t += 1 / 60;
+          fx = fx || window.SSQ.beat("ch1-morning").debug().fx;
+        }
+        return { t, fx, who: n.cur && n.cur.b ? n.cur.b.who : "" };
+      });
+      return true;
     }
     if (s.k === "bub" && s.text === L["speaker-party"].text) {
       sleepy.woke = { pose: s.pose, moPose: s.moPose, fx: s.beat && s.beat.fx };
@@ -160,6 +184,35 @@ const A1 = await playToSong(A, {
       sleepy.sitAfter = { sq: t.sq, pose: t.pose, hop: t.hop };
     }
     if (s.k === "bub" && s.text === L["mops-morning"].text) sleepy.morning = { moPose: s.moPose, mo: s.mo, sq: s.sq };
+    if (s.k === "bub" && s.text === L["sq-party"].text) {
+      // Brian 21a: the tap on "Party?" sends Mops mopping along the floor to his bucket; then the close-up.
+      await run.tapAt(480, 330);
+      sleepy.mopping = await run.page.evaluate(() => {
+        const ss = window.__ss,
+          n = ss.op,
+          path = [];
+        for (let i = 0; i < 900 && !(n.cur && n.cur.k === "cutaway"); i++) {
+          ss.tick(1 / 60);
+          path.push([n.mo.x, n.mo.y, n.moPose, !!n.mo.moving, n.mo.f]);
+        }
+        let maxStep = 0;
+        for (let i = 1; i < path.length; i++) maxStep = Math.max(maxStep, Math.hypot(path[i][0] - path[i - 1][0], path[i][1] - path[i - 1][1]));
+        const xs = path.map((p) => p[0]);
+        const d = window.SSQ.beat("ch1-morning").debug();
+        return {
+          frames: path.length,
+          moved: Math.max(...xs) - Math.min(...xs),
+          maxStep,
+          poses: [...new Set(path.map((p) => p[2]))],
+          walked: path.filter((p) => p[3]).length,
+          faces: [...new Set(path.slice(0, -1).map((p) => p[4]))],
+          end: path[path.length - 1],
+          wet: d.wet,
+          cut: !!(n.cur && n.cur.k === "cutaway" && n.cur.panel === 0),
+        };
+      });
+      return true;
+    }
     if (s.k === "cutaway")
       sleepy["cut" + s.panel] = await run.page.evaluate(() => {
         window.__ss.drawFrame();
@@ -222,7 +275,19 @@ g.check("the morning comes in Brian's order, word for word from the lines file",
 g.check("then Mops: Floating in space! It's our favorite song!", sleepy.standUp && sleepy.standUp.next === L["mops-song"].text, sleepy.standUp);
 g.check("nothing moves on by itself (six seconds after each step, the same step is up)", A1.bad.auto.length === 0, A1.bad.auto);
 g.check("the action button reads NEXT while each step waits", A1.bad.next.length === 0, A1.bad.next);
-g.check('the "tap ▸" cue is drawn while each step waits', A1.bad.cue.length === 0, A1.bad.cue);
+g.check('Brian 18a: no "tap ▸" cue is drawn while a step waits (just NEXT)', A1.bad.cue.length === 0, A1.bad.cue);
+g.check(
+  "Brian 20a: the tap on the sleeping room rings the speaker's ding-dong (sound lines at the speaker) before its first words",
+  !!sleepy.ding && sleepy.ding.t >= 0.8 && sleepy.ding.t < 2.5 && sleepy.ding.fx === "lines" && sleepy.ding.who === "speaker",
+  sleepy.ding,
+);
+{
+  const m = sleepy.mopping;
+  g.check("Brian 21a: after \"Party?\" Mops mops a few steps along the floor, head down, legs walking, beard sweeping", !!m && m.moved >= 100 && m.poses.length === 1 && m.poses[0] === "mop" && m.walked > 30 && m.maxStep < 4, m);
+  g.check("Brian 21a: he mops toward his bucket, facing it, and ends beside it", !!m && m.faces.length === 1 && m.faces[0] === -1 && Math.abs(m.end[0] - 690) < 1 && Math.abs(m.end[1] - 560) < 1, m);
+  g.check("Brian 21a: a wet streak is left behind him on the floor", !!m && !!m.wet && m.wet.x1 - m.wet.x0 >= 100 && m.wet.y > 540, m && m.wet);
+  g.check("Brian 21a: then the beard-wringing close-up comes straight after", !!m && m.cut, m);
+}
 g.check("Squatch is asleep and Mops mops (head down) at the start", sleepy.pose === "sleep" && sleepy.moPose === "mop", sleepy);
 g.check("the joystick does not move Squatch while he is asleep", !!sleepy.after && sleepy.after.pose === "sleep" && sleepy.after.hop < 0 && Math.abs(sleepy.after.sq[0] - 205) < 1, sleepy.after);
 g.check("the speaker's line wakes him: Squatch sits up, Mops keeps mopping, sound lines at the speaker", !!sleepy.woke && sleepy.woke.pose === "sit" && sleepy.woke.moPose === "mop" && sleepy.woke.fx === "lines", sleepy.woke);

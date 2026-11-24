@@ -15,6 +15,7 @@ import { partyCones, SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
 import { createGuestArt } from "./guests.js";
 import { findPath } from "./tap-path.js";
 import { createHomeMusic } from "./home-music.js";
+import { createMorningSound } from "./morning-sound.js";
 import { lastCutaway } from "./cutaway.js";
 import { SPEAKER } from "./morning.js";
 import { placeLabel } from "./cap-place.js";
@@ -35,13 +36,14 @@ export function createBridge() {
   let engine = null;
   const written = new Set();
   const homeMusic = createHomeMusic(() => engine);
+  const morningSound = createMorningSound(() => engine);
   return Object.freeze({
     version: 1,
     /**
      * The older program hands over, once at start, the small engine functions rebuilt beats use: the story
      * queue (queue, say, card, run, until, tapWait, current), people (pos, place, face, step, still,
      * moWalking), state (get, and set for the BEAT_WRITES fields only), the chip, the chapter reset, the
-     * evening start, forgetting the step restart's saved start, sound (soundState, audioCtx, masterGain, chime), drawing (drawMops, squatchScale, text) and the clock.
+     * evening start, forgetting the step restart's saved start, sound (soundState, audioCtx, masterGain), drawing (drawMops, squatchScale, text) and the clock.
      * A later hand-over replaces an earlier one (the page made a new game).
      */
     handOver(e) {
@@ -65,6 +67,8 @@ export function createBridge() {
     },
     /** Brian's Floating in Space recording in the morning. See home-music.js. */
     homeMusic,
+    /** The morning's snoring and the speaker's ding-dong, synthesized. See morning-sound.js. */
+    morningSound,
     /** The wall speaker in the home room, for placing its bubble. See morning.js. */
     speakerBox() {
       return SPEAKER;

@@ -22,12 +22,12 @@ Run EVERY scene through ALL of these, both at script time and on screenshots aft
 11. **Singing** is a distraction (lure spots only) plus the bond (scripted moments only). No random or ambient singing, no opera, no goat gags unless a scene gives them a purpose.
 12. **Verbatim script, and drift audits.** Also audit existing cutscenes against the chat-approved beats. Every line, card and panel is implemented WORD FOR WORD from the spine. If it doesn't fit, split it across bubbles; never rewrite it. There's an exact-text test.
 13. **Dialogue presentation:**
-    - Story lines are speech bubbles over the speaker (name tag, large text, clamped to the screen edges), with a pop-in and a blip, and a pulsing "tap ▸".
+    - Story lines are speech bubbles over the speaker (name tag, large text, clamped to the screen edges), with a pop-in and a blip. The NEXT button is the only "tap" cue (Brian 18a, 2026-11-23: "just next"); no "tap ▸" note.
     - The game pauses (no movement, timers or NPCs) until the tap.
     - Ambient chatter is small auto-fading bubbles over the speaker.
     - Overheard lines get an ear icon.
     - No bottom-left dialogue box. The objective chip is hidden while a bubble is up.
-14. **Nothing auto-advances.** Every cutscene card, panel, frame and line waits for a tap/click with a pulsing "tap ▸", including the "Years ago" and "Now" cards.
+14. **Nothing auto-advances.** Every cutscene card, panel, frame and line waits for a tap/click (the NEXT button shows it; no "tap ▸" note, Brian 18a), including the "Years ago" and "Now" cards.
 15. **Simple visual style.** Gameplay looks like the cutscenes: bold flat shapes, a limited palette, no clutter, only what matters, and interactive objects clearly highlighted (pulse/glow).
 16. **Drawn, not described.** Never put a visual in caption text when it can be drawn (crayon drawings, hair on a note, coffee stains, torn edges, paw prints). No "(narration in parentheses)" lines.
 17. **Exact-text rule for briefs:** report scripts to Brian verbatim (speaker + exact text, every card), as clear and warm as the chat version.

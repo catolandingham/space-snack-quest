@@ -2287,11 +2287,10 @@
       if (n.roomOnly) return drawLockedRoom(n.roomOnly);
       ((qq = 0), (mq = []), (ringsDrawn = []), (conesDrawn = []));
       let l = n.cur;
-      // The morning module draws its "tap" cue on its cards, and its full-screen cutaway pictures.
+      // The morning module draws its full-screen cutaway pictures (no "tap" cue: NEXT only, Brian 18a).
       let beat = window.SSQ && window.SSQ.beat("ch1-morning");
       if (l && l.k === "card") {
         M5(l.id, l.text, l.by, l);
-        beat && beat.drawCue(e);
         return;
       }
       if (l && l.k === "cutaway") {
@@ -2370,7 +2369,6 @@
         window.__ss && (window.__ss.bubbleFrame = qq),
         n.ch1Veil > 0.01 && ((e.fillStyle = "rgba(20,24,32," + Math.min(1, n.ch1Veil).toFixed(3) + ")"), e.fillRect(0, 0, c, b)));
       ((e.globalAlpha = 1), zG(), drawWaitArrow(), drawSeeHint(), drawTapHeard());
-      beat && de() && beat.drawCue(e);
     }
     // The white "VERB · thing" label over the spot the big button acts on. Every chapter uses it.
     function drawCap() {

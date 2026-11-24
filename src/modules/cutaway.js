@@ -1,8 +1,8 @@
 /**
  * The full-screen cutaway: the room is hidden and one story picture fills the screen, like the Wookiee TV's
  * "full-screen story" (DECISIONS 2026-11-22) and without a TV box (Brian G 213: "maybe it's similar to TV
- * cutaway but wihtout the box?"). Each picture is one queue step: it waits for a tap or NEXT, shows the
- * "tap ▸" cue, and plays a short loop while it waits (an animation, never a step of the story).
+ * cutaway but wihtout the box?"). Each picture is one queue step: it waits for a tap or NEXT (the NEXT button
+ * is the only cue, Brian 18a), and plays a short loop while it waits (an animation, never a step of the story).
  *
  * The morning uses it for Mops wringing his beard (Brian G 561: "then you see him wringing out his beard. I
  * think that would be a good chance to do a cutaway"). Modelled on the reference he picked (G 221, as the bot
@@ -43,22 +43,6 @@ export function cutawaySteps(id) {
 /** True while a cutaway picture is the thing on screen. */
 export function isCutaway(step) {
   return !!step && step.k === "cutaway";
-}
-
-/** The pulsing "tap ▸" cue, bottom right of the picture. `words` is the cue's text (from the lines file). */
-export function drawTapCue(ctx, engine, t, words) {
-  const a = 0.6 + 0.4 * Math.abs(Math.sin(t * 3));
-  ctx.save();
-  ctx.globalAlpha = a;
-  ctx.beginPath();
-  ctx.roundRect(790, 566, 120, 44, 22);
-  ctx.fillStyle = "#ffffff";
-  ctx.fill();
-  ctx.lineWidth = 3;
-  ctx.strokeStyle = INK;
-  ctx.stroke();
-  engine.text(words, 850, 588, 22, INK, "center", 800);
-  ctx.restore();
 }
 
 function room(ctx) {
@@ -517,8 +501,8 @@ const PANELS = {
   homework: HOMEWORK_PANELS,
 };
 
-/** Draws the cutaway picture `step` fills the screen with. `cue` is the "tap ▸" words. */
-export function drawCutaway(ctx, engine, step, t, cue) {
+/** Draws the cutaway picture `step` fills the screen with. */
+export function drawCutaway(ctx, engine, step, t) {
   const panels = PANELS[step.id];
   if (!panels || !panels[step.panel]) return;
   ctx.save();
@@ -527,7 +511,6 @@ export function drawCutaway(ctx, engine, step, t, cue) {
   widest = 0;
   const drew = panels[step.panel](ctx, t, engine) || {};
   ctx.restore();
-  drawTapCue(ctx, engine, t, cue);
   last = { id: step.id, panel: step.panel, full: true };
   if (drew.bucket) {
     // The beard pictures: how big Mops and the bucket are, his outlines, and where his nose is (tests).

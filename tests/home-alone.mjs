@@ -16,7 +16,7 @@
  * - FLOP · bed: Squatch flops onto the bed, lies down on it, and hops back off without jumping between frames, then says
  *   "Not sleepy anymore." (waits for a tap), then control is back.
  * - DO · homework: straight into the homework cutaway (no pop-up first): picture 1 Squatch at the desk, picture
- *   2 the sheet with its words from the lines file; each waits for a tap with NEXT and the "tap ▸" cue; then
+ *   2 the sheet with its words from the lines file; each waits for a tap with NEXT and no "tap ▸" cue (Brian 18a); then
  *   "That evening…" and the peek goal.
  * - Every action reads "VERB · thing" from the lines file. Hold ↺ at home: still home alone, door shut.
  *   node tests/home-alone.mjs
@@ -402,17 +402,16 @@ for (let i = 0; i < 2; i++) {
   s = await st();
   if (s.k !== "cutaway") break;
   const info = await page.evaluate(() => {
-    const beat = window.SSQ.beat("ch1-morning"),
-      before = beat.debug().cue;
     window.__ss.drawFrame();
-    return { last: window.SSQ.cutaway.last(), cue: beat.debug().cue > before, printed: [...window.__printed] };
+    const printed = [...window.__printed];
+    return { last: window.SSQ.cutaway.last(), cue: printed.some((t) => /^tap\b|\u25b8/.test(t)), printed };
   });
   cut.push({ panel: s.panel, btn: s.btn, still: await stillAfter6s(), ...info });
   await tapAt(480, 330);
   await sleep(400);
 }
 g.check("the homework cutaway has two full-screen pictures, in order", cut.length === 2 && cut.every((c, i) => c.panel === i && c.last && c.last.id === "homework" && c.last.full === true), cut.map((c) => c.last));
-g.check("each picture waits for a tap, NEXT on the button and the tap cue drawn", cut.every((c) => c.still && /NEXT$/.test(c.btn) && c.cue), cut.map((c) => [c.still, c.btn, c.cue]));
+g.check('each picture waits for a tap with NEXT on the button, and no "tap ▸" cue (Brian 18a)', cut.every((c) => c.still && /NEXT$/.test(c.btn) && !c.cue), cut.map((c) => [c.still, c.btn, c.cue]));
 g.check("picture 1 shows Squatch at the desk with his pencil", !!cut[0] && !!cut[0].last.squatch && cut[0].last.pencil === true, cut[0] && cut[0].last);
 // 14A: thin outlines like the room's Squatch at his size (the beard close-up's rule: 5 px or less).
 g.check("picture 1: Squatch's outlines are thin (5 px or less), not scaled up", !!cut[0] && cut[0].last.squatch.outline > 0 && cut[0].last.squatch.outline <= 5, cut[0] && cut[0].last.squatch);

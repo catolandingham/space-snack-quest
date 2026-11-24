@@ -1,10 +1,17 @@
+<!-- section-index -->
+**Section index.** Read this index, then only the section you need. Do not read this file whole.
+
+| Lines | Heading |
+| --- | --- |
+| 8–42 | # The morning: every line, for Brian's yes |
+<!-- /section-index -->
 # The morning: every line, for Brian's yes
 
 The morning from waking up to Mops leaving (Chapter 1, walkthrough beats 1 and 2), rebuilt on branch `feat/morning-rebuild`.
 Every word the morning shows is here, numbered in the order a player meets it, with where it appears and whether you have said yes.
 The game reads the same words from `src/modules/morning-lines.js`; `tests/morning-lines.mjs` fails if the two ever differ.
 
-Status: **approved** means your yes is on record (the source column says where). **needs your yes** means the words are new or used in a new place; they are in this draft so you can see them, and they change if you say so.
+Status: **approved** means your yes is on record (the source column says where). **needs your yes** means the words are new or used in a new place; they are in this draft so you can see them, and they change if you say so. **removed** means you took the line out; it stays here so the numbers do not shift, and the game never shows it.
 
 Every line is approved. If you want a word changed later, answer by number, for example "change 4 to ...".
 
@@ -27,8 +34,8 @@ Every line is approved. If you want a word changed later, answer by number, for 
 | 15 | Mops's goodbye, next tap; then he walks out the right-wall opening | Stay in here. | mops | approved | walkthrough beat 1, Nov 14; Q5 answer 2026-11-23 |
 | 16 | Card after Mops is gone (the song fades on it) | That evening… | card | approved | walkthrough beat 3, Nov 14 |
 | 17 | Name over the speaker's bubbles (lines 3, 4 and 7) | Speaker | tag | approved | Brian 2026-11-23: 1A / 2B |
-| 18 | Small pulsing note at the bottom right of every morning card, bubble and cutaway picture while it waits for a tap | tap ▸ | cue | approved | Brian 2026-11-23: 1A / 2B |
+| 18 | Nowhere now: the small pulsing note at the bottom right of every morning card, bubble and cutaway picture is gone; the NEXT button is the only cue | tap ▸ | cue | removed | Brian 18a, 2026-11-23: just the NEXT button |
 
-Lines that need your yes: none left (you said yes to 3, 4, 7, 11, 17 and 18 on 2026-11-23: "1A", and "2B" for line 17, which is "Speaker").
+Lines that need your yes: none left (you said yes to 3, 4, 7, 11, 17 and 18 on 2026-11-23: "1A", and "2B" for line 17, which is "Speaker"). Line 18 is removed, Brian 18a (2026-11-23): "I don't think I want next and tap here, just next."
 
 The beard-wringing cutaway (two full-screen pictures between lines 6 and 7) has no words.

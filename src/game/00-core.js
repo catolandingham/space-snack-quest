@@ -228,8 +228,6 @@
         splash: () => lV(500, 0.25, "sine", 0.12, 0, 120),
         pop: () => lV(220, 0.1, "sine", 0.07, 0, 70),
         zap: () => lV(1400, 0.3, "sawtooth", 0.05, 0, 300),
-        // The wall speaker's ding-dong before the morning announcement.
-        chime: () => ji([79, 72], 0.28, "sine"),
       },
       O1 = 0,
       w1 = [
@@ -517,7 +515,41 @@
       warmEl = null,
       warmFade = 0,
       warmPlayState = "",
-      warmStarting = false;
+      warmStarting = false,
+      warmGain = null,
+      warmVia = "";
+    // The theme file goes through the game's master volume (a gain node), so it fades out on an iPhone too:
+    // iPhones ignore an <audio> element's volume (Brian 20a: the theme fades as the morning begins). A page
+    // opened straight from disk keeps the element's own volume (the browser would make the routed sound silent).
+    function warmMake() {
+      if (warmEl) return warmEl;
+      ((warmEl = new Audio("music/main-theme-from-brian.mp3")), (warmEl.loop = !0), (warmEl.preload = "auto"));
+      try {
+        /^https?:$/.test(location.protocol) &&
+          S &&
+          M &&
+          S.createMediaElementSource &&
+          ((warmGain = S.createGain()), (warmGain.gain.value = 0), S.createMediaElementSource(warmEl).connect(warmGain), warmGain.connect(M), (warmVia = "gain"));
+      } catch {
+        warmGain = null;
+      }
+      warmVia || (warmVia = "element");
+      return warmEl;
+    }
+    let warmSet = -1;
+    function warmLevel(v) {
+      if (warmGain) {
+        warmEl.volume = 1;
+        // A new ramp only when the level really changes (not one per frame).
+        if (Math.abs(v - warmSet) < 0.002) return;
+        warmSet = v;
+        try {
+          warmGain.gain.setTargetAtTime(v, S.currentTime, 0.04);
+        } catch {
+          warmGain.gain.value = v;
+        }
+      } else warmEl.volume = Math.max(0, Math.min(1, 0.5 * z * v));
+    }
     // A1: Joe's recording is the warm theme. It plays on the title, at home (not during the search or
     // dress-up), while the morning gift is out, and on the balloon kid's happy faces. Sneak and journey
     // stay generated. The file is made and first started inside a tap (warmPrime), since iPhones refuse to
@@ -554,9 +586,9 @@
     function warmPrime() {
       if (G || !S) return;
       try {
-        warmEl || ((warmEl = new Audio("music/main-theme-from-brian.mp3")), (warmEl.loop = !0), (warmEl.preload = "auto"));
+        warmMake();
         if (warmEl.paused && !warmStarting) {
-          ((warmStarting = !0), warmFade < 0.02 && (warmEl.volume = 0));
+          ((warmStarting = !0), warmFade < 0.02 && (warmGain ? (warmGain.gain.cancelScheduledValues(S.currentTime), (warmGain.gain.value = 0), (warmSet = 0)) : (warmEl.volume = 0)));
           let pr = warmEl.play();
           pr &&
             pr.then(
@@ -572,7 +604,7 @@
       if (!S) return;
       if (!warmEl)
         try {
-          ((warmEl = new Audio("music/main-theme-from-brian.mp3")), (warmEl.loop = !0), (warmEl.preload = "auto"));
+          warmMake();
         } catch (err) {
           warmPlayState = "err:" + (err && err.name);
           return;
@@ -581,7 +613,7 @@
       warmFade += (goal - warmFade) * step;
       if (warmFade < 0.02 && !goal) ((warmFade = 0), (warmStarting = !1), warmEl.paused || warmEl.pause());
       else {
-        warmEl.volume = Math.max(0, Math.min(1, 0.5 * z * warmFade));
+        warmLevel(warmFade);
         if (warmEl.paused && goal > 0 && !warmStarting) {
           warmStarting = !0;
           warmPlayState = "pending";
@@ -593,11 +625,13 @@
             );
         }
       }
-      window.__ss && ((window.__ss.warmPlay = warmPlayState), (window.__ss.warmCue = warmWhy()), (window.__ss.warmPaused = !!warmEl.paused));
+      window.__ss && ((window.__ss.warmPlay = warmPlayState), (window.__ss.warmCue = warmWhy()), (window.__ss.warmPaused = !!warmEl.paused), (window.__ss.warmVia = warmVia));
     }
     function musicTick(l) {
       // Brian's Floating in Space (the morning, src/modules/home-music.js): it fades out off the game screen.
       window.SSQ && window.SSQ.homeMusic && (p.state === "op" || window.SSQ.homeMusic.stop(), window.SSQ.homeMusic.tick(l));
+      // The morning's snoring (src/modules/morning-sound.js) stops off the game screen too (the beat ticks only there).
+      window.SSQ && window.SSQ.morningSound && p.state !== "op" && window.SSQ.morningSound.snore(!1);
       let want = musicWant();
       want !== musicKind && ((musicKind = want), (musicWait = 0));
       window.__ss && (window.__ss.music = want);
