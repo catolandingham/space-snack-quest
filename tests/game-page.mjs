@@ -149,13 +149,17 @@ export async function startGame({ port, name }) {
 // Plays Chapter 1 from its start to the morning's song step (src/modules/morning.js): every card, bubble, wait
 // and cutaway picture is tapped away in the page, and the clock runs, until the kid has control with the
 // sing-along goal. Returns the goal chip. For suites that start at the song step.
+// With sound on, Mops's song line waits until the recording has really played a moment (src/modules/home-music.js,
+// audible()), which takes real time, not game ticks: while the game waits on its own, real time is let pass.
 export async function toMorningSong(page) {
-  return page.evaluate(() => {
+  return page.evaluate(async () => {
     const ss = window.__ss,
-      n = ss.op;
+      n = ss.op,
+      until = performance.now() + 15000;
     for (let i = 0; i < 2000 && !(n.ctrl && n.ch1Morning && n.ch1Morning.step === "song"); i++) {
       if (n.cur && ["card", "bub", "wait", "cutaway"].includes(n.cur.k)) ((n.bt = 1), ss.opTap());
       ss.tick(0.05);
+      if (n.cur && n.cur.k === "until" && performance.now() < until) await new Promise((ok) => setTimeout(ok, 20));
     }
     return n.ch1Chip;
   });

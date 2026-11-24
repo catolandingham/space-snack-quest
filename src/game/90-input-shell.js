@@ -438,10 +438,8 @@
         actionUp: actionRelease,
         tapAt: O5,
         ch1Pointer: (kind, x, y) => {
-          if (n.ch1Calendar) {
-            n.ch1Calendar.paw = kind === "up" ? { x: 780, y: 590 } : { x, y };
-            return;
-          }
+          // The calendar close-up has no paw (Brian 2026-11-23): a drag there moves nothing.
+          if (n.ch1Calendar) return;
           ch1SlicePointer(kind, x, y);
           ch1Day2Pointer(kind, x, y);
         },
@@ -570,8 +568,10 @@
         }
       );
     }, [V.eng]);
-    let f = V.label.charAt(0) === "!",
-      u = f ? V.label.slice(1) : V.label,
+    // "~": the story is playing on its own (60-frame-draw.js), so the button is dimmed and says nothing new.
+    let dim = V.label === "~",
+      f = V.label.charAt(0) === "!",
+      u = dim ? "" : f ? V.label.slice(1) : V.label,
       h = u !== "",
       long = (u || "ACTION").length > 7,
       // One size for every label (problem 4): a long label gets smaller letters and may wrap, the button never grows.
@@ -598,6 +598,7 @@
         userSelect: "none",
         WebkitUserSelect: "none",
         transform: a ? "scale(0.93)" : "none",
+        opacity: dim ? 0.4 : 1,
         animation: f && !a ? "ssPulse 0.9s ease-in-out infinite" : "none",
         flex: "0 0 auto",
         boxSizing: "border-box",

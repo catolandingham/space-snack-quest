@@ -1,3 +1,10 @@
+<!-- section-index -->
+**Section index.** Read this index, then only the section you need. Do not read this file whole.
+
+| Lines | Heading |
+| --- | --- |
+| 8–37 | # Home alone: every line, for Brian's yes |
+<!-- /section-index -->
 # Home alone: every line, for Brian's yes
 
 Squatch home alone after Mops leaves for work, before "That evening…" (Chapter 1, walkthrough beats 1 and 2; the morning plan's PR 3), built on branch `feat/home-alone`.
@@ -6,7 +13,7 @@ The game reads the same words from `src/modules/home-alone-lines.js`; `tests/hom
 
 Status: **approved** means your yes is on record (the source column says where). **needs your yes** means the words are new; they are in this draft so you can see them, and they change if you say so.
 
-The calendar ("LOOK · calendar" and its close-up), the "That evening…" card and the small "tap ▸" note are not new and are not listed here.
+The calendar ("LOOK · calendar" and its close-up) and the "That evening…" card are not new and are not listed here. The small "tap ▸" note is removed, Brian 18a (2026-11-23): the NEXT button is the only cue.
 
 | # | Where it appears | Words | Who | Status | Source |
 |---|---|---|---|---|---|

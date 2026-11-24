@@ -22,12 +22,12 @@ Run EVERY scene through ALL of these, both at script time and on screenshots aft
 11. **Singing** is a distraction (lure spots only) plus the bond (scripted moments only). No random or ambient singing, no opera, no goat gags unless a scene gives them a purpose.
 12. **Verbatim script, and drift audits.** Also audit existing cutscenes against the chat-approved beats. Every line, card and panel is implemented WORD FOR WORD from the spine. If it doesn't fit, split it across bubbles; never rewrite it. There's an exact-text test.
 13. **Dialogue presentation:**
-    - Story lines are speech bubbles over the speaker (name tag, large text, clamped to the screen edges), with a pop-in and a blip, and a pulsing "tap ▸".
+    - Story lines are speech bubbles over the speaker (name tag, large text, clamped to the screen edges), with a pop-in and a blip. The NEXT button is the only "tap" cue (Brian 18a, 2026-11-23: "just next"); no "tap ▸" note.
     - The game pauses (no movement, timers or NPCs) until the tap.
     - Ambient chatter is small auto-fading bubbles over the speaker.
     - Overheard lines get an ear icon.
     - No bottom-left dialogue box. The objective chip is hidden while a bubble is up.
-14. **Nothing auto-advances.** Every cutscene card, panel, frame and line waits for a tap/click with a pulsing "tap ▸", including the "Years ago" and "Now" cards.
+14. **Nothing auto-advances.** Every cutscene card, panel, frame and line waits for a tap/click (the NEXT button shows it; no "tap ▸" note, Brian 18a), including the "Years ago" and "Now" cards.
 15. **Simple visual style.** Gameplay looks like the cutscenes: bold flat shapes, a limited palette, no clutter, only what matters, and interactive objects clearly highlighted (pulse/glow).
 16. **Drawn, not described.** Never put a visual in caption text when it can be drawn (crayon drawings, hair on a note, coffee stains, torn edges, paw prints). No "(narration in parentheses)" lines.
 17. **Exact-text rule for briefs:** report scripts to Brian verbatim (speaker + exact text, every card), as clear and warm as the chat version.
@@ -69,7 +69,16 @@ The later full touch run exposed a test-driver gap: it waited whenever walking w
 2026-11-23. A changelog line was added to `docs/MASTER-BACKLOG.md` and the section index at its top was not updated, so `tests/section-index.mjs` failed in the full run. After any edit to a doc with a section index, run `node scripts/md-section.mjs stamp <file>`.
 
 ## Mistake: a rebuilt beat forgot the step restart
-2026-11-23. The first build of the morning module (src/modules/morning.js) let the hold-to-restart (↺) empty the story queue before the song step, which froze the morning, and in the evening it brought back the song step with Mops. The restart saves a step only once the kid has control and keys it by scene, room and ch1Step, so a beat that runs long without control, or two steps with the same key, needs its own answer. A rebuilt beat says what ↺ does at each of its steps and has a test for it (tests/morning-order.mjs, "↺").
+2026-11-23. The first build of the morning module (src/modules/morning.js) let the hold-to-restart (↺) empty the story queue before the song step, which froze the morning, and in the evening it brought back the song step with Mops. The restart saves a step only once the kid has control and keys it by scene, room and ch1Step, so a beat that runs long without control, or two steps with the same key, needs its own answer. A rebuilt beat says what ↺ does at each of its steps and has a test for it (tests/morning-order.mjs, "↺"). A step added later needs its own ↺ check in the same change (2026-11-24: the reviewer found Mops's new mopping step, 21a, had none).
 
 ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch
 2026-11-23. The first home-alone pictures (PR #84) were checked against the locked rooms, but not for what the game draws on top: the "VERB · thing" labels covered the TV, the closet top, the bed and Squatch's head, the desk's dashed outline ran across Squatch, and an old purple bar crossed the bed in front of him. Brian caught all three. Before sending a picture, look at every label, outline and drawn prop and ask: does it cover Squatch, a bubble, or the thing another line or label names? Labels now follow one rule (`src/modules/cap-place.js`), outlines leave people out (`drawGoalOutline`'s `avoid`), and `tests/home-alone.mjs` and `tests/bed-look.mjs` check them.
+
+## Mistake: a killed run was read as a failing test
+2026-11-24. The morning-fixes full run ended in `tests/ch1-kid-play.mjs` with puppeteer's "Attempted to use detached Frame". The run had been killed (its task output read "[killed]" at the same second the log stopped) when the builder's session stopped, which closed Chrome under the robot; the game was fine, and the suite alone reached the tally card. Before debugging a run that ends in "detached Frame", "Target closed" or no summary line, check whether the run was stopped, then rerun that suite alone.
+
+## Mistake: a "nothing is drawn" check looked where the old drawing never was
+2026-11-24. The reviewer found half of the calendar's no-paw check sampled a spot the old paw had already left, so it would pass with the paw still there. A check that something is gone samples every place the old drawing could be (where it rests, and where it follows a held finger), and is run against main to see it fail.
+
+## Mistake: a game wait on real audio time met a test helper that only ticks
+2026-11-24. Mops's song line now waits until the recording has really played, but `toMorningSong` in `tests/game-page.mjs` ticked the game in one synchronous loop, so no real time passed and `tests/opening-song.mjs` failed in the full run. When the game waits on something outside its own clock (audio, a download), the shared test helpers must let real time pass, and every suite that uses them with sound on is rerun.

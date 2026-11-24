@@ -2,6 +2,8 @@
  * Brian Nov 16: tappable calendar, subtle bite, invented months, sponsor and family plans.
  * Brian G 556 (2026-11-23): the bite is there from the start ("It should just have a bite out already"); touching
  * the printed Moon Pie takes no bite.
+ * Brian 2026-11-23 (chat): "It's the calendar paw that doesn't make sense": no paw is drawn on the close-up, before or
+ * after a touch (touching changes nothing anyway).
  * Uses the real picture taps and Space, not direct calls to the new feature.
  * CALENDAR_SHOTS=1 saves review stills outside the repository.
  */
@@ -76,8 +78,36 @@ for (const viewport of [
       return p[0] < 220 && p[1] < 220 && p[2] < 220;
     }, [x, y]);
   g.check(`${tag}: the paper is already bitten before any touch`, (await nibbleAt(808, 390)) && (await nibbleAt(798, 391)));
+  // Squatch's paw is a dark brown arm (#6b4428, outline #3a2416) rising from the bottom edge.
+  const pawPixels = (x0, y0, x1, y1) =>
+    page.evaluate(([x0, y0, x1, y1]) => {
+      const cv = document.querySelector("canvas"), k = cv.width / 960;
+      const d = cv.getContext("2d").getImageData(x0 * k, y0 * k, (x1 - x0) * k, (y1 - y0) * k).data;
+      let hits = 0;
+      for (let i = 0; i < d.length; i += 4) if (Math.abs(d[i] - 107) < 14 && Math.abs(d[i + 1] - 68) < 14 && Math.abs(d[i + 2] - 40) < 14) hits++;
+      return hits;
+    }, [x0, y0, x1, y1]);
+  const pawBefore = await pawPixels(700, 590, 860, 640);
+  // A held drag across the paper (the old paw followed the finger), then a tap; nothing brown anywhere it went.
+  const drag = async () => {
+    const rect = await page.$eval("canvas", (el) => {
+      const r = el.getBoundingClientRect();
+      return { x: r.x, y: r.y, w: r.width, h: r.height };
+    });
+    const at = (x, y) => [rect.x + (x * rect.w) / 960, rect.y + (y * rect.h) / 640];
+    if (viewport.hasTouch) (await page.touchscreen.touchStart(...at(592, 385)), await page.touchscreen.touchMove(...at(600, 470)));
+    else (await page.mouse.move(...at(592, 385)), await page.mouse.down(), await page.mouse.move(...at(600, 470), { steps: 4 }));
+    await sleep(150);
+    const held = await pawPixels(480, 400, 720, 640);
+    if (viewport.hasTouch) await page.touchscreen.touchEnd();
+    else await page.mouse.up();
+    await sleep(350);
+    return held;
+  };
+  const pawHeld = await drag();
   await tap(592, 385);
-  g.check(`${tag}: released paw clears the joke`, await page.evaluate(() => window.__ss.op.ch1Calendar.paw.x === 780));
+  const pawAfter = (await pawPixels(530, 560, 660, 640)) + (await pawPixels(700, 590, 860, 640));
+  g.check(`${tag}: no paw is drawn on the close-up, before, during a drag, or after a touch`, pawBefore === 0 && pawHeld === 0 && pawAfter === 0, { pawBefore, pawHeld, pawAfter });
   g.check(`${tag}: bite opens through the right paper edge without a closing ink line`, await page.evaluate(() => {
     const cv = document.querySelector("canvas"), k = cv.width / 960;
     const p = cv.getContext("2d").getImageData(819 * k, 390 * k, 1, 1).data;

@@ -10,7 +10,7 @@
  *   status  "approved" (Brian's yes, `source` says where) or "needs-yes" (new; not final until he says yes)
  *   source  where the words or the yes came from
  * The calendar's words ("LOOK · calendar" and the close-up) are the older program's, unchanged; the
- * "That evening…" card and the "tap ▸" cue are the morning's (morning-lines.js).
+ * "That evening…" card is the morning's (morning-lines.js). There is no "tap ▸" cue (Brian 18a): NEXT only.
  */
 export const HOME_ALONE_LINES = Object.freeze([
   { id: "chip-homework", who: "chip", text: "Squatch: do your homework", status: "approved", source: "Brian 2026-11-23: 6A" },

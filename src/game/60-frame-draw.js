@@ -181,9 +181,12 @@
         } else n.mo.moving = !1;
       }
       if (n.ctrl && n.scene === "O1") n.act = pick(ch1CalendarSpots());
+      // While the story plays on its own (an animation a tap started, such as Mops mopping to his bucket), the big
+      // button is dimmed ("~"): there is nothing to tap, and NEXT is only for a step that waits for one (Brian 18a).
       let talking = n.ctrl && n.cur && n.cur.k === "bub" && !n.cutOn,
         s = Bs(),
-        q = talking ? (n.bt > 3 ? "!NEXT" : "NEXT") : s ? (s.hot ? "!" : "") + s.verb + (s.cap ? " \u00b7 " + s.cap : "") : "";
+        playing = !n.ctrl && !!n.cur && n.cur.k === "until",
+        q = talking ? (n.bt > 3 ? "!NEXT" : "NEXT") : s ? (s.hot ? "!" : "") + s.verb + (s.cap ? " \u00b7 " + s.cap : "") : playing ? "~" : "";
       (q !== p.verb && ((p.verb = q), t.onVerb(q)), lh(l));
     }
     let qq = 0,
@@ -348,7 +351,9 @@
     function Fe(l, o, i, s) {
       // C14: Mops's warm cone pops a heart instead of a "!". It is a lookout cone for later chapters.
       // Chapter 1 home, the party, and dress-up are not that beat, so it does not draw there (no pink cone, no stray heart).
-      n.room !== "closet" &&
+      // Only in play: the title screen draws him too, and the cone and the chef hat are not part of it.
+      p.state === "op" &&
+        n.room !== "closet" &&
         (n.scene || "")[0] !== "Q" &&
         !n.ch1Party &&
         !(n.ch1Dress && n.ch1Dress.on) &&
@@ -447,7 +452,8 @@
           ? (e.beginPath(), e.ellipse(22, -24 + A, 1.4, 1.9, 0, 0, 7), (e.fillStyle = y), e.fill())
           : (e.beginPath(), e.moveTo(19.5, -25 + A), e.quadraticCurveTo(21.3, -23.4 + A, 23.2, -24.8 + A), (e.strokeStyle = y), (e.lineWidth = 1), e.stroke()),
         // No mop stick: his beard is his mop (DECISIONS C2). Callers still pass `mop`; it draws nothing.
-        n.room === "kitchen" &&
+        p.state === "op" &&
+          n.room === "kitchen" &&
           !ch2.greasy &&
           (ch2.phase === "wash5" || n.scene === "G5k") &&
           (e.beginPath(),
@@ -2287,11 +2293,10 @@
       if (n.roomOnly) return drawLockedRoom(n.roomOnly);
       ((qq = 0), (mq = []), (ringsDrawn = []), (conesDrawn = []));
       let l = n.cur;
-      // The morning module draws its "tap" cue on its cards, and its full-screen cutaway pictures.
+      // The morning module draws its full-screen cutaway pictures (no "tap" cue: NEXT only, Brian 18a).
       let beat = window.SSQ && window.SSQ.beat("ch1-morning");
       if (l && l.k === "card") {
         M5(l.id, l.text, l.by, l);
-        beat && beat.drawCue(e);
         return;
       }
       if (l && l.k === "cutaway") {
@@ -2369,8 +2374,7 @@
         n.ch1Mini && drawCh1Mini(),
         window.__ss && (window.__ss.bubbleFrame = qq),
         n.ch1Veil > 0.01 && ((e.fillStyle = "rgba(20,24,32," + Math.min(1, n.ch1Veil).toFixed(3) + ")"), e.fillRect(0, 0, c, b)));
-      ((e.globalAlpha = 1), zG(), drawWaitArrow(), drawSeeHint(), drawTapHeard());
-      beat && de() && beat.drawCue(e);
+      ((e.globalAlpha = 1), zG(), drawSeeHint(), drawTapHeard());
     }
     // The white "VERB · thing" label over the spot the big button acts on. Every chapter uses it.
     function drawCap() {
@@ -2396,22 +2400,6 @@
       }
       n.lastCap = { box: { x0: x - d / 2, x1: x + d / 2, y0: y - 14, y1: y + 14 }, text: t };
       (m(x - d / 2, y - 14, d, 28, 8), r("#fffaf0", 3), g(t, x, y, 14, "#1e2430", "center", 800));
-    }
-    function drawWaitArrow() {
-      if (!(n.cur && n.cur.k === "wait") || n.cur.quiet) return;
-      let bob = Math.sin(n.T * 8) * 8;
-      (e.save(),
-        e.translate(c - 78, b - 78 + bob),
-        e.beginPath(),
-        e.moveTo(-16, -6),
-        e.lineTo(0, 12),
-        e.lineTo(16, -6),
-        (e.lineWidth = 7),
-        (e.lineCap = "round"),
-        (e.lineJoin = "round"),
-        (e.strokeStyle = "#ffcf33"),
-        e.stroke(),
-        e.restore());
     }
     function drawSeeHint() {
       let h = n.seeHint;

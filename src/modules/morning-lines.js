@@ -5,7 +5,8 @@
  *   who     "card", "speaker" (the wooden speaker on the wall), "mops", "sq", "chip" (the goal chip),
  *           "button" (the big action button), "tag" (the name over a bubble) or "cue" (drawn on the picture)
  *   text    the words, exactly as shown
- *   status  "approved" (Brian's yes, `source` says where) or "needs-yes" (new or changed; not final until he says yes)
+ *   status  "approved" (Brian's yes, `source` says where), "needs-yes" (new or changed; not final until he says yes)
+ *           or "removed" (Brian took it out: it stays listed so the sheet's numbers do not shift; the game never shows it)
  *   source  where the words or the yes came from
  * Brian, 2026-11-23, on the speaker lines: "I like them generally but you can expand to help with story and flow".
  */
@@ -27,7 +28,7 @@ export const MORNING_LINES = Object.freeze([
   { id: "mops-stay", who: "mops", text: "Stay in here.", status: "approved", source: "walkthrough beat 1, Nov 14; Q5 answer 2026-11-23" },
   { id: "card-evening", who: "card", text: "That evening…", status: "approved", source: "walkthrough beat 3, Nov 14" },
   { id: "tag-speaker", who: "tag", text: "Speaker", status: "approved", source: "Brian 2026-11-23: 1A / 2B" },
-  { id: "cue-tap", who: "cue", text: "tap ▸", status: "approved", source: "Brian 2026-11-23: 1A / 2B" },
+  { id: "cue-tap", who: "cue", text: "tap ▸", status: "removed", source: "Brian 18a, 2026-11-23: just the NEXT button" },
 ]);
 
 /** The words of one line, by id. Throws on an unknown id, so a typo cannot show empty words. */
