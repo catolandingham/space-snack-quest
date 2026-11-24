@@ -351,7 +351,9 @@
     function Fe(l, o, i, s) {
       // C14: Mops's warm cone pops a heart instead of a "!". It is a lookout cone for later chapters.
       // Chapter 1 home, the party, and dress-up are not that beat, so it does not draw there (no pink cone, no stray heart).
-      n.room !== "closet" &&
+      // Only in play: the title screen draws him too, and the cone and the chef hat are not part of it.
+      p.state === "op" &&
+        n.room !== "closet" &&
         (n.scene || "")[0] !== "Q" &&
         !n.ch1Party &&
         !(n.ch1Dress && n.ch1Dress.on) &&
@@ -450,7 +452,8 @@
           ? (e.beginPath(), e.ellipse(22, -24 + A, 1.4, 1.9, 0, 0, 7), (e.fillStyle = y), e.fill())
           : (e.beginPath(), e.moveTo(19.5, -25 + A), e.quadraticCurveTo(21.3, -23.4 + A, 23.2, -24.8 + A), (e.strokeStyle = y), (e.lineWidth = 1), e.stroke()),
         // No mop stick: his beard is his mop (DECISIONS C2). Callers still pass `mop`; it draws nothing.
-        n.room === "kitchen" &&
+        p.state === "op" &&
+          n.room === "kitchen" &&
           !ch2.greasy &&
           (ch2.phase === "wash5" || n.scene === "G5k") &&
           (e.beginPath(),

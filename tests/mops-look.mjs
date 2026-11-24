@@ -247,6 +247,28 @@ const MO = { x: 611.25, y: 503.5, f: 1, moving: false };
   g.check("poses: no page errors", errors.length === 0, errors);
   await ctx.close();
 }
+// The title screen's "Sir Mops-a-Lot" is the same approved Mops (2026-11-24: he was an old white goat with a
+// gold badge and a separate mop stick, against rule 14 "Mops's beard is his mop; no separate mop prop").
+// He is drawn mopping with his beard, head down, at (600, 395).
+{
+  const { page, ctx, errors } = await g.open("");
+  await page.evaluate(recorder);
+  const ops = await page.evaluate(() => {
+    window.requestAnimationFrame = () => 0;
+    const st = window.__mopsRec;
+    st.target = { x: 600, y: 395 };
+    st.ops = [];
+    st.on = false;
+    const state = window.__ss.game.state;
+    window.__ss.drawFrame();
+    st.target = null;
+    return { ops: st.ops, state };
+  });
+  g.check("title: the title screen is up", ops.state === "title", ops.state);
+  checkLook("title Sir Mops-a-Lot", ops.ops, { headDown: true });
+  g.check("title: no page errors", errors.length === 0, errors);
+  await ctx.close();
+}
 // Floating in Space is in music/ and the test page serves it (the morning rebuild will load it).
 {
   const { page, ctx } = await g.open("?ch=1");

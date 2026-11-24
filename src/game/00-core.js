@@ -795,41 +795,6 @@
         r("#e5533d", 1),
         e.restore());
     }
-    function Ol(l, o, i, s, q) {
-      (e.save(), e.translate(l, o), e.scale(i, 1));
-      let d = Math.sin(s * 0.8) * 3;
-      (e.beginPath(),
-        e.moveTo(13, -6),
-        e.lineTo(23, -6),
-        e.lineTo(24, 18),
-        e.lineTo(8, 24),
-        e.lineTo(-62 + d, 25),
-        e.lineTo(-64 + d, 19),
-        e.lineTo(4, 17),
-        e.lineTo(13, 10),
-        e.closePath(),
-        r("#ffffff", 2.5));
-      let A = q ? Math.sin(s) * 2 : 0;
-      for (let [R, P] of [
-        [-14, A],
-        [-7, -A],
-        [4, A],
-        [10, -A],
-      ])
-        (m(R, 6 + P * 0.3, 4, 12, 1), r("#ffffff", 2));
-      (m(-20, -8, 38, 18, 8),
-        r("#ffffff", 2.5),
-        L(-1, 1, 3.6),
-        r("#ffcf33", 1.5),
-        m(10, -18, 14, 13, 5),
-        r("#ffffff", 2.5),
-        C([13, -18, 9, -25], y, 3),
-        C([18, -18, 16, -26], y, 3),
-        (e.fillStyle = y),
-        e.fillRect(18, -14, 2, 2));
-      let T = Math.sin(s * 1.5) * 3;
-      (C([18, -4, 34 + T * 0.5, 20], y, 3), m(28 + T * 0.5, 19, 14, 5, 2), r("#3fb8f0", 2), e.restore());
-    }
     function up() {
       ((e.fillStyle = "#eef3fb"),
         e.fillRect(0, 0, c, b),
@@ -843,11 +808,9 @@
         e.scale(3, 3),
         O0(0, 0, 1, { walk: p.t * 8, moving: !0, dis: "", singing: l, hop: Math.abs(Math.sin(p.t * 3)) * 3 }),
         e.restore(),
-        e.save(),
-        e.translate(600, 330),
-        e.scale(2.6, 2.6),
-        Ol(0, 0, -1, p.t * 6, !0),
-        e.restore(),
+        // Sir Mops-a-Lot mops with his beard, drawn like Mops everywhere else (Brian's approved Nov 8 look: the
+        // beard is his mop, no mop stick, his blue work shirt). tests/mops-look.mjs checks the title too.
+        Fe(600, 395, 2.6, { f: -1, walk: p.t * 6, headDown: !0, sweep: Math.sin(p.t * 3.4) * 1.6 }),
         g(U, 600, 408, 18, "#2b8a5e"),
         l && Cn(180, 222, "\u266A I'm floating in space! \u266A", "#ffe3f1", 20),
         g(u ? "Tap a chapter to play" : "Click a chapter or press 1-4 (ENTER = continue)", c / 2, 440, 20, y, "center", 700));
