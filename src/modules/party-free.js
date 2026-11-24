@@ -25,13 +25,13 @@ import { openFullScreen, closeFullScreen } from "./fullscreen.js";
 export const COOL_HAT_SECONDS = 180;
 // The three songs share the party's length.
 export const SONG_SECONDS = COOL_HAT_SECONDS / 3;
-// PLACEHOLDERS for Brian: his first minute in the hall (nothing knocks a piece off, the octopus waits), how long a
+// PLACEHOLDERS for Brian: how long a crooked piece stays crooked if nothing else bumps it, his first minute in the hall (nothing knocks a piece off, the octopus waits), how long a
 // guest must look to grow curious, how long until they turn for a second look, the turn (the "?" warning), how long
 // the second look lasts and how much of it sees through the disguise, how long before the same guest is curious
 // again (tuned after the party robot: a plain "second look" rule caught a kid standing still on the dance floor
 // in 3 seconds, because every guest faces the stage across it), how slowly guests mill and how long they stop to dance, and
 // how close to the bar the paw icon shows.
-export const FREE = Object.freeze({ firstMinute: 60, firstLook: 1, curiousAfter: 4, turn: 0.6, stare: 2.4, secondLook: 1.6, forget: 15, mill: 38, stops: [5, 7, 6, 8], pawNear: 260, shake: 0.4, warn: 1.2 });
+export const FREE = Object.freeze({ straighten: 8, firstMinute: 60, firstLook: 1, curiousAfter: 4, turn: 0.6, stare: 2.4, secondLook: 1.6, forget: 15, mill: 38, stops: [5, 7, 6, 8], pawNear: 260, shake: 0.4, warn: 1.2 });
 // Who mills together: the dancing pair, the robot (his partner the octopus heads for the snacks), the glancer. The
 // camera tourist stays with his camera.
 const UNITS = Object.freeze([["teal", "stilt"], ["robot"], ["backpack"]]);
@@ -278,6 +278,8 @@ export function createFreePlay(h) {
     p.clap = Math.max(0, p.clap - dt);
     p.shake = Math.max(0, p.shake - dt);
     p.warn && (p.warn.t -= dt) <= 0 && (p.warn = null);
+    // a crooked piece he leaves alone for a while gets straightened (he pushes it back)
+    p.tip ? (p.tipT = (p.tipT || 0) + dt) >= FREE.straighten && ((p.tip = null), (p.tipT = 0)) : (p.tipT = 0);
     p.stare && (p.stare.t -= dt) <= 0 && (p.stare = null);
     mill(p, dt);
     const stand = free && p.pose === "stand" && !p.dance && !p.snack;
@@ -364,6 +366,7 @@ export function createFreePlay(h) {
   // A bump's three signs: a sound, a short shake, the piece drawn big over him (or it flying off).
   function hit(p, what, s) {
     if (what !== "tip" && what !== "off") return;
+    p.tipT = 0;
     p.shake = FREE.shake;
     const id = what === "tip" && p.tip ? p.outfit[p.tip.spot] : "";
     id && (p.warn = { id, t: FREE.warn });

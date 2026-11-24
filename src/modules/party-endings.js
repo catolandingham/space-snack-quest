@@ -19,7 +19,7 @@ export const ENDING = Object.freeze({ leave: 110, gap: 1.2, pack: 1.6, mop: 45, 
 // Who leaves, in order: the pairs, the two who came alone, then the bartender, Isfred and the band.
 export const LEAVING = Object.freeze([["teal", "stilt"], ["robot", "octopus-guest"], ["camera", "backpack"], ["bartender"], ["isfred"], ["band0", "band1", "band2"]]);
 // The home room: where Mops comes in, and where he stops to see the flyer (game positions, locked home v6).
-const HOME = Object.freeze({ door: { x: 985, y: 470 }, inside: { x: 850, y: 472 }, flyerLook: { x: 820, y: 476 } });
+const HOME = Object.freeze({ door: { x: 985, y: 470 }, inside: { x: 850, y: 472 }, flyerLook: { x: 820, y: 476 }, clear: { x: 620, y: 500 } });
 const step = (o, x, y, speed, dt) => {
   const dx = x - o.x,
     dy = y - o.y,
@@ -208,8 +208,10 @@ export function createEndings(h) {
     e.set("moPose", "stand");
     e.place("mops", HOME.door.x, HOME.door.y);
     e.face("mops", -1);
-    h.sound.one("door");
     e.queue([
+      // he steps into the room, clear of the door, so Mops has room to come in
+      e.until((dt) => h.sq().x <= HOME.clear.x || e.step("sq", HOME.clear.x, HOME.clear.y, ENDING.walk, dt)),
+      e.run(() => (e.still("sq"), e.face("sq", 1), h.sound.one("door"))),
       e.until((dt) => e.step("mops", HOME.flyerLook.x, HOME.flyerLook.y, ENDING.walk, dt)),
       e.run(() => {
         const q = h.P();

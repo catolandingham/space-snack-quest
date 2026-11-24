@@ -93,16 +93,25 @@ for (;;) {
   }
   if (s.now.snack) {
     // drag a snack to the bag when her back is turned; close after three
-    if (s.now.snack.phase === "back" && s.now.snacks.bag < (SEED ? 6 : 5)) {
+    const most = process.env.ROBOT_CAREFUL ? 3 : SEED ? 6 : 5; // a careful kid stops before the pyramid falls
+    if (s.now.snack.phase === "back" && s.now.snacks.bag < most) {
       const taken = s.now.snacks.bag;
       const [_, sx, sy] = layout.cut.snacks[(taken * 3) % 10];
       await pointer("down", sx, sy);
       await sleep(200);
       await pointer("move", 100, 540);
       await pointer("up", 100, 540);
-    } else if (s.now.snacks.bag >= 3 && !SEED) await pointer("down", layout.cut.close.x, layout.cut.close.y);
+    } else if (s.now.snacks.bag >= Math.min(3, most) && !SEED) await pointer("down", layout.cut.close.x, layout.cut.close.y);
     await sleep(400);
     continue;
+  }
+  if (s.now.gone && s.now.gone.length > (log.lostN || 0)) {
+    log.lostN = s.now.gone.length;
+    log.push(`${Math.round(s.now.ft)}s lost ${s.now.gone.join(",")} at ${Math.round(s.x)},${Math.round(s.y)} (octopus ${s.now.oct && s.now.oct.mode}, hugs ${s.now.oct && s.now.oct.hugs}, stare ${s.now.stare})`);
+  }
+  if (s.now.scene === "P7" && !log.some((l) => l.includes("alarm"))) {
+    const w = await page.evaluate(() => { const a = window.__ss.op.ch1PartyNow.alarm; return a ? a.w.id + " " + a.where : ""; });
+    log.push(`${Math.round(s.now.ft)}s alarm: ${w}, fur showing ${s.now.fur}, at ${Math.round(s.x)},${Math.round(s.y)}`);
   }
   if (s.now.scene === "P7") {
     // the alarm: run home and hide under the bed
@@ -118,7 +127,16 @@ for (;;) {
   // a careful kid: when someone turns for a second look (the big "?"), walk away from them
   if (process.env.ROBOT_CAREFUL && s.now.curious && s.now.curious.phase !== "wait") {
     const w = s.now.people[s.now.curious.id] || { x: 890, y: 482 };
-    await walk(Math.max(120, Math.min(860, s.x + (s.x < w.x ? -160 : 160))), Math.max(330, Math.min(600, s.y + (s.y < w.y ? -60 : 60))));
+    // to whichever open corner of the front floor is further from them (clear of the plants and the vent)
+    const spots = [[650, 595], [560, 330]],
+      far = spots.sort((a, b) => Math.hypot(b[0] - w.x, b[1] - w.y) - Math.hypot(a[0] - w.x, a[1] - w.y))[0];
+    await walk(far[0], far[1]);
+    await sleep(500);
+    continue;
+  }
+  // everything done: wait for closing time on the open floor
+  if (order.every((k) => s.now.done[k])) {
+    Math.hypot(s.x - 650, s.y - 595) > 20 && (await walk(650, 595));
     await sleep(500);
     continue;
   }
