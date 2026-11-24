@@ -486,6 +486,9 @@ export function createParty(bridge) {
       p = P(),
       scene = p.scene;
     control(false);
+    // Out from under the bed first (he does not slide across the room lying down).
+    e.set("sqPose", "stand");
+    p.pose = "stand";
     e.walkOff();
     e.queue([
       e.until((dt) => e.step("sq", 905, 470, PACE.walk, dt)),
@@ -875,10 +878,11 @@ export function createParty(bridge) {
       return bridge.guests.drawId(ctx, id, x, y, E().hallSizes().adult, E().time(), to ? 1 : 0, to ? Math.sign(to.x - x) : 0);
     },
     // ---- the older free play's places, from this one table (party-hall.js), so nobody jumps on the way in ----
-    /** The guests as [x, y, kind] at the spots they stood in P4. */
+    /** The guests as [x, y, kind] at the spots they stood in P4 (all but the octopus). */
     freeGuests() {
       const kindOf = Object.fromEntries(Object.entries(GUEST_FOR_KIND).map(([k, id]) => [id, k]));
-      return CAST.guests.map((g) => [g.x, g.y, kindOf[g.id]]);
+      // The octopus is not here: the free play draws him (and his cone and feet) where he strolls (ch1Oct).
+      return CAST.guests.filter((g) => g.id !== "octopus-guest").map((g) => [g.x, g.y, kindOf[g.id]]);
     },
     /** Isfred (at the bar, where he walked in P3), the bartender, and the octopus's spot by the snacks. */
     freeCast() {

@@ -207,13 +207,7 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
       shot("office cutscene", () => ss.ch1JumpBeat(59)),
       shot("tape review", () => ss.ch1JumpBeat(60)),
       shot("party", party),
-      shot("dance", () => {
-        party();
-        n.ch1Disguise = true;
-        n.ch1Flyer = true;
-        n.ch1Mini = "dance";
-        n.ch1Dance = { t: 1, score: 10, cheer: 0, notes: [{ dir: "L", at: 2.5, hit: false }] };
-      }),
+      // (The arrow dance screen was deleted with the party rebuild, half one; the free dance comes in half two.)
       shot("karaoke", () => {
         party();
         n.ch1Disguise = true;

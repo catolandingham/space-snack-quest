@@ -1349,7 +1349,7 @@
         window.__ss && window.__ss.lastBubble && (window.__ss.lastBubble.name = CV);
         ge(17);
         let NV = e.measureText(CV).width + 26;
-        (m(_ + 16, $ - 18, NV, 32, 12), r(Ds[l.who], 3), g(CV, _ + 16 + NV / 2, $ - 2, 17, l.who === "mops" ? "#1e2430" : "#ffffff"));
+        (m(_ + 16, $ - 18, NV, 32, 12), r(Ds[l.who] || "#2f8a3c", 3), g(CV, _ + 16 + NV / 2, $ - 2, 17, l.who === "mops" ? "#1e2430" : "#ffffff"));
       }
       if (ear) {
         let CV = _ + 22,

@@ -310,15 +310,20 @@ async function getSeen(page) {
   await getSeen(page);
   await until(page, (q) => q.now && q.now.alarm === "search", 12000);
   // A guard right by the plant, looking at it, as Squatch steps in.
+  // A guard looking at the plant from 170 away (in his cone, out of his reach), the other far off.
   await page.evaluate((spot) => {
-    const g = window.__ss.op.ch1PartyNow.alarm.guards[0];
-    Object.assign(g, { x: spot.x + 110, y: spot.y, a: Math.PI, look: 0 });
+    const [g0, g1] = window.__ss.op.ch1PartyNow.alarm.guards;
+    Object.assign(g0, { x: spot.x + 170, y: spot.y - 10, a: Math.PI, look: 0 });
+    Object.assign(g1, { x: 900, y: 320 });
   }, hall.SPOTS.plantMiddle);
-  await place(page, hall.SPOTS.plantMiddle.x + 10, hall.SPOTS.plantMiddle.y);
+  await place(page, hall.SPOTS.plantMiddle.x, hall.SPOTS.plantMiddle.y);
   await until(page, (q) => q.act === "HIDE · plant", 3000);
   await press(page);
+  const hid = await until(page, (q) => q.now && q.now.pose === "hidden", 3000);
+  const spotted = await page.evaluate(() => !!(window.__ss.op.ch1PartyNow.alarm && window.__ss.op.ch1PartyNow.alarm.spotted));
+  g.check("he got into the plant, but the guard saw him step in", !!hid && spotted, { hid: !!hid, spotted });
   const s = await until(page, (q) => q.cur === "card" && q.curId === "jail", 15000);
-  g.check("hiding while a guard is looking does not count: he is caught", !!s, s);
+  g.check("hiding while a guard is looking does not count: the guard walks over and catches him", !!s, s);
   g.check("no script errors when the hide is seen", errors.length === 0, errors.slice(0, 3));
 }
 

@@ -20,7 +20,8 @@ await page.evaluate(() => window.__ss.lockedReady);
 // Give the guest pictures time to load.
 await page.evaluate(() => new Promise((r) => setTimeout(r, 1500)));
 
-const EVERYONE = ["stilt", "backpack", "camera", "teal", "robot", "octopus-guest", "isfred", "bartender", "octopus"];
+// The octopus is one person: his cone ("octopus") goes where he strolls and chases.
+const EVERYONE = ["stilt", "backpack", "camera", "teal", "robot", "isfred", "bartender", "octopus"];
 
 const party = await page.evaluate((EVERYONE) => {
   const ss = window.__ss,
