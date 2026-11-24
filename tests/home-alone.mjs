@@ -93,7 +93,7 @@ const st = () =>
       step: n.ch1Morning ? n.ch1Morning.step : "",
       spots: (ss.spotsNow() || []).filter((s) => s.when !== false).map((s) => s.id + "=" + s.verb + " · " + s.cap),
       cal: !!n.ch1Calendar,
-      peek: !!n.ch1PeekReady,
+      peek: ((window.SSQ.beat("ch1-party").now() || {}).scene === "P1"),
     };
   });
 const stillAfter6s = () =>

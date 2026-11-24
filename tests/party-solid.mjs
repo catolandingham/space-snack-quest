@@ -26,14 +26,14 @@ e = await walk(700, 440, "ArrowRight", 40);
 g.check("Squatch can walk up to the counter, close enough to GRAB the snack", e.x >= 790 && Math.hypot(e.x - 860, e.y - 430) < 90, e);
 e = await walk(640, 420, "ArrowUp"); g.check("walking up stops on the floor, below the window and back wall", e.moved >= 8 && (e.y >= 300), e);
 e = await walk(360, 420, "ArrowUp"); g.check("walking up into the stage stops in front of it", e.moved >= 8 && (e.y >= 304), e);
-e = await walk(535, 420, "ArrowUp"); g.check("walking up into the poster stops in front of its legs", e.moved >= 8 && (e.y >= 300), e);
+e = await walk(535, 420, "ArrowUp"); g.check("walking up beside the stage (the poster is gone) stops on the floor", e.moved >= 8 && (e.y >= 300), e);
 // The bar's left edge: x 806 in hall v2 (2026-11-23, the long bar moved down below the corner doorway).
 e = await walk(700, 460, "ArrowRight"); g.check("walking right into the snack bar stops at the counter", e.moved >= 8 && (e.x <= 806), e);
 e = await walk(700, 300 + 10, "ArrowRight"); g.check("walking right along the back wall stops at the snack bar too", e.moved >= 8 && (e.x <= 806), e);
-e = await walk(250, 520, "ArrowUp"); g.check("walking up into the guest at (250, 460) stops below the guest", e.moved >= 8 && (e.y >= 466), e);
-e = await walk(150, 400, "ArrowDown"); g.check("walking down into the balloon kid stops above the kid", e.moved >= 8 && (e.y <= 510), e);
+e = await walk(270, 470, "ArrowUp"); g.check("walking up into the teal guest at (270, 390) stops below the guest", e.moved >= 8 && (e.y >= 396), e);
+e = await walk(150, 400, "ArrowDown"); g.check("the balloon kid is gone: walking down by the back plant reaches the front of the hall", e.moved >= 8 && (e.y >= 580), e);
 e = await walk(440, 600, "ArrowUp", 30); g.check("walking up into the hiding plant stops at its pot", e.moved >= 8 && (e.y >= 552 || e.x < 412 || e.x > 476), e);
-e = await walk(600, 512, "ArrowLeft"); g.check("walking left into the snack table stops at its edge", e.moved >= 8 && (e.x >= 574), e);
+e = await walk(600, 580, "ArrowLeft"); g.check("the cake table is gone: walking left in front of the plant passes where it stood", e.moved >= 8 && (e.x < 496), e);
 const old = await page.evaluate(() => { const n = window.__ss.op; n.ch1Party = false; n.scene = "Q1"; const s = window.__ss.solids(); n.ch1Party = true; return s.length; });
 g.check("the other hall scenes keep their own solids", old > 0, { old });
 await ctx.close();

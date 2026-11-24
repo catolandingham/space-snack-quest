@@ -1,9 +1,5 @@
 // Day 1 beats that sit on the slice: the song, the party games, the chase, the search, the TV, bedtime.
-    const CH1_DANCE_POINTS = 10,
-      CH1_DANCE_SECONDS = 30,
-      CH1_DANCE_NOTES = 30,
-      CH1_HIT_X = 220,
-      CH1_HOWLS_CAP = 50,
+    const CH1_HOWLS_CAP = 50,
       CH1_HOWL_EACH = 5,
       CH1_CHASE_SECONDS = 10,
       CH1_OCT_SPEED = 90,
@@ -113,11 +109,13 @@
           verb: "HIDE",
           cap: "plant",
           who: "sq",
-          x: 220,
-          y: 530,
+          // The middle plant (it used to be the floor vent: Brian 2026-11-23, comment 19).
+          x: partyBeat().spot("plantMiddle").x,
+          y: partyBeat().spot("plantMiddle").y,
           r: 80,
           f: () => {
-            ((n.sqPose = "hidden"), (n.sq.x = 220), (n.sq.y = 530), (n.act = null));
+            let at = partyBeat().spot("plantMiddle");
+            ((n.sqPose = "hidden"), (n.sq.x = at.x), (n.sq.y = at.y), (n.act = null));
           },
         }),
       ];
@@ -179,28 +177,10 @@
     function ch1ExtraPartySpots() {
       if (!n.ch1Disguise || n.ch1PartyOver || n.ch1Mini) return [];
       return [
-        spot({ id: "dance", verb: "DANCE", cap: "circle", who: "sq", x: 500, y: 530, r: 80, f: ch1DanceStart }),
         spot({ id: "singmic", verb: "SING", cap: "mic", who: "sq", x: 400, y: 320, r: 70, f: ch1KaraokeStart }),
         spot({ id: "conga", verb: "JOIN", cap: "conga", who: "sq", x: 320, y: 560, r: 70, f: ch1Conga }),
         spot({ id: "chicken", verb: "FLAP", cap: "chicken dance", who: "sq", x: 600, y: 540, r: 70, f: ch1Chicken }),
       ];
-    }
-    function ch1DanceStart() {
-      let notes = [];
-      for (let i = 0; i < CH1_DANCE_NOTES; i++) notes.push({ dir: "LDUR"[i % 4], at: 1.2 + i * 0.9, hit: !1 });
-      ((n.ch1Mini = "dance"),
-        (n.ctrl = !1),
-        (n.act = null),
-        (n.ch1Dance = { t: 0, notes, score: 0, cheer: 0 }));
-    }
-    function ch1DanceHit(dir) {
-      let g = n.ch1Dance;
-      if (!g) return;
-      let note = g.notes.find((q) => !q.hit && q.dir === dir && Math.abs(ch1NoteX(q, g.t) - CH1_HIT_X) < 42);
-      note && ((note.hit = !0), (g.score += CH1_DANCE_POINTS), (g.cheer = 0.4), D.pickup());
-    }
-    function ch1NoteX(note, t) {
-      return 920 - (t - (note.at - 1.5)) * 460;
     }
     function ch1KaraokeStart() {
       ((n.ch1Mini = "karaoke"), (n.ctrl = !1), (n.act = null), (n.ch1Kara = { t: 0, howls: 0 }));
@@ -209,11 +189,6 @@
       n.ch1Kara && ((n.ch1Kara.howls += 1), lV(180 + (n.ch1Kara.howls % 5) * 40, 0.18, "sawtooth", 0.08, 0, 80));
     }
     function ch1MiniPointer(x, y) {
-      if (n.ch1Mini === "dance") {
-        [["L", 150], ["D", 310], ["U", 490], ["R", 670]].forEach(([dir, bx]) => {
-          Math.hypot(x - bx, y - 610) < 48 && ch1DanceHit(dir);
-        });
-      }
       n.ch1Mini === "karaoke" && Math.hypot(x - 760, y - 560) < 64 && ch1Howl();
     }
     function ch1Conga() {
@@ -246,7 +221,6 @@
     function ch1Day1Tick(dt) {
       let step = dt || 0;
       ch1RaidTick(step);
-      ch1SneakTick(step);
       if (n.ch1Search && n.guard && n.room === "closet" && (n.ctrl || n.ch1Escort)) {
         let g = n.guard;
         g.t += step;
@@ -264,16 +238,6 @@
           dist < 36 && ((n.ch1Escort = !0), (n.ctrl = !1), D.caught());
         }
         (g.seen > 2 || (hidden && g.t > 8)) && ch1HideFromGuard();
-      }
-      if (n.ch1Mini === "dance" && n.ch1Dance) {
-        let g = n.ch1Dance;
-        ((g.t += step), (g.cheer = Math.max(0, g.cheer - step)));
-        g.t >= CH1_DANCE_SECONDS &&
-          ((n.stars = (n.stars || 0) + g.score),
-          (n.ch1Mini = ""),
-          (n.ch1Dance = null),
-          (n.ctrl = !0),
-          D.open());
       }
       if (n.ch1Mini === "karaoke" && n.ch1Kara) {
         let g = n.ch1Kara;
@@ -310,11 +274,6 @@
       }
     }
     function drawCh1Fest() {
-      (m(500, 500, 70, 28, 6),
-        r("#fffdf8", 3),
-        F(535, 492, 16, "#ff8a3d"),
-        F(520, 496, 8, "#e5533d"),
-        F(550, 498, 7, "#3478f6"));
       let left = 6 - (n.ch1Cheese || 0);
       left < 3 &&
         left > 0 &&
@@ -325,24 +284,7 @@
       n.guard && drawCh1Alien(n.guard.x, n.guard.y, "hat", ALIEN_ADULT, n.sq.x < n.guard.x ? -1 : 1);
     }
     function drawCh1Mini() {
-      if (n.ch1Mini === "dance") return drawCh1Dance();
       if (n.ch1Mini === "karaoke") return drawCh1Karaoke();
-    }
-    function drawCh1Dance() {
-      let dance = n.ch1Dance;
-      if (!dance) return;
-      (m(40, 548, 880, 52, 14), r("#1e2430", 4));
-      (L(CH1_HIT_X, 574, 22), r("rgba(255,207,51,.95)", 4));
-      dance.notes.forEach((note) => {
-        if (note.hit) return;
-        let x = ch1NoteX(note, dance.t);
-        if (x < 40 || x > 980) return;
-        g(note.dir === "L" ? "\u2190" : note.dir === "R" ? "\u2192" : note.dir === "U" ? "\u2191" : "\u2193", x, 574, 32, "#ffffff", "center", 900);
-      });
-      [["L", "\u2190", 150], ["D", "\u2193", 310], ["U", "\u2191", 490], ["R", "\u2192", 670]].forEach((b) => {
-        (L(b[2], 610, 36), r("#ffffff", 4), g(b[1], b[2], 610, 32, "#1e2430", "center", 900));
-      });
-      g(String(dance.score), 880, 520, 26, "#b45309", "center", 900);
     }
     function drawCh1Karaoke() {
       let kara = n.ch1Kara;

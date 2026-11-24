@@ -191,7 +191,7 @@ export async function toEvening(page) {
       n = ss.op;
     const hw = (ss.spotsNow() || []).find((s) => s.id === "homework");
     hw && hw.f();
-    for (let i = 0; i < 3000 && !(n.ctrl && n.ch1PeekReady && !n.cur); i++) {
+    for (let i = 0; i < 3000 && !(n.ctrl && n.ch1PartyNow && n.ch1PartyNow.scene === "P1" && !n.cur); i++) {
       if (n.cur && ["card", "bub", "wait", "cutaway"].includes(n.cur.k)) ((n.bt = 1), ss.opTap());
       ss.tick(0.05);
     }

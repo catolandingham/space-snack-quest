@@ -565,7 +565,7 @@
       if (n.sqPose === "hidden" && n.ch1Party) return "";
       if (n.ch1Heart) return "heart";
       if (n.gift || n.holdToy) return "gift";
-      if (n.room === "closet" && !n.ch1Search && !n.guard && !(n.ch1Dress && n.ch1Dress.on)) return "home";
+      if (n.room === "closet" && !n.ch1Search && !n.guard) return "home";
       if (n.ch1Kid === "smile" || n.ch1Kid === "wide" || n.ch1Kid === "shh") return "heart";
       return "";
     }
@@ -1050,6 +1050,8 @@
       // Mops who is hidden or off the picture is not. The UPS robot counts when the hangar crew is out, or when the photo-wall beep draws him.
       if (who === "pa") return !0;
       if (who === "mops") return n.moPose !== "hidden" && n.mo.x > 20 && n.mo.x < 940 && n.mo.y > 40 && n.mo.y < 620;
+      // Peeking round his door at the party, only his head shows at the picture's edge (src/modules/party.js).
+      if (who === "sq" && partyBeat() && partyBeat().speakerAt("sq")) return !0;
       if (who === "sq") return n.sq.x > -20 && n.sq.x < 980 && n.sq.y > 0 && n.sq.y < 640;
       if (who === "ups") return !!(n.room === "hangar" && n.ch1D) || !!n.ch1Beep;
       return !0;
@@ -1327,6 +1329,8 @@
                 ? { x0: 100, x1: 860, y0: 372, y1: 578 }
                 : n.room === "deck"
                   ? { x0: 60, x1: 900, y0: 196, y1: 590 }
+                  : n.room === "hall" && partyBeat() && partyBeat().ownsRoom()
+                    ? partyBeat().bounds()
                   : n.room === "hall" && n.ch1Party
                     ? { x0: 60, x1: 900, y0: CH1_PARTY_FLOOR_Y, y1: 590 }
                   : n.room === "hall"
@@ -1384,7 +1388,8 @@
         n.room === "deck")
       )
         for (let i of qn) l.push(i.kind === "plant" ? nt(i.x, i.y, 26, 14, 10) : nt(i.x, i.y, 40, 14, 10));
-      if (n.room === "window" && l.push(nt(rt.x, rt.y, 26, 14, 10)), n.room === "hall" && n.ch1Party) for (let i of ch1PartySolids()) l.push(i);
+      if (n.room === "window" && l.push(nt(rt.x, rt.y, 26, 14, 10)), n.room === "hall" && partyBeat() && partyBeat().ownsRoom()) for (let i of partyBeat().solids()) l.push(i);
+      else if (n.room === "hall" && n.ch1Party) for (let i of ch1PartySolids()) l.push(i);
       else if (n.room === "hall") {
         (l.push(nt(ne.x, ne.y, 26, 14, 10)),
           l.push(nt(DV.x, DV.y, 26, 16, 8)),

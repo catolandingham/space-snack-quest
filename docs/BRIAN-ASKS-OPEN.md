@@ -4,23 +4,23 @@
 | Lines | Heading |
 | --- | --- |
 | 25–31 | # Brian's asks that are not in the game yet |
-| 32–48 | ## 1. Build next |
-| 49–69 | ## 2. Needs your eyes |
-| 70–73 | ## 3. Your instructions disagree |
-| 74–75 | ## 4. Everything else not built |
-| 76–96 | ### Morning and home |
-| 97–110 | ### Party |
-| 111–126 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
-| 127–131 | ### Snacks and dress-up |
-| 132–144 | ### Day 2 and night |
-| 145–149 | ### Escape and later chapters |
-| 150–153 | ### Looks and lines |
-| 154–161 | ### Sound |
-| 162–165 | ### Words and rules |
-| 166–178 | ### How the bots work |
-| 179–186 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
-| 187–201 | ## 5. Merged, in a pull request, and being built |
-| 202–212 | ## 6. Corrections to the checkers |
+| 32–46 | ## 1. Build next |
+| 47–63 | ## 2. Needs your eyes |
+| 64–67 | ## 3. Your instructions disagree |
+| 68–69 | ## 4. Everything else not built |
+| 70–88 | ### Morning and home |
+| 89–100 | ### Party |
+| 101–116 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
+| 117–121 | ### Snacks and dress-up |
+| 122–134 | ### Day 2 and night |
+| 135–139 | ### Escape and later chapters |
+| 140–143 | ### Looks and lines |
+| 144–151 | ### Sound |
+| 152–155 | ### Words and rules |
+| 156–168 | ### How the bots work |
+| 169–176 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
+| 177–191 | ## 5. Merged, in a pull request, and being built |
+| 192–202 | ## 6. Corrections to the checkers |
 <!-- /section-index -->
 # Brian's asks that are not in the game yet
 
@@ -33,13 +33,11 @@ Brian's G Bot messages 419 to 603 were written while he looked at the old "v2" b
 
 Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win over older words.
 
-1a. **Vents swirl and pull.** Brian, 2026-11-23 (Snack Quest Chat): "make sure we still have the rule about vents swirling and that if squatch gets too close at any time, it sucks in fur and sets off alarm." Every floor vent shows soft swirls always moving inward (R12; "Ideally the swirls are in soft motion at all times", S 485). If Squatch gets too close without his disguise, at any time, the vent pulls his fur in (a tuft drifts first as the warning) and that sets off the alarm (R108, G 474). With the disguise on, Brian: "No, it tugs the disguise" (2026-11-23): the vent tugs the disguise and does not pull fur or set off the alarm (R108 stays). Today the party-hall vent has still swirls and a SUCK button instead (`src/game/12-ch1-redesign.js`, the "vent" spot); the old lobby code in `src/game/10-ch1.js` has the fur drift to reuse. Not built in this PR.
-2. **Dress-up pieces snap to the nearest body spot.** Brian, 2026-11-23: "let's try to have them snap but be okay with absurdist results, for instance, pants on the head." Whatever the piece is, it snaps to the spot nearest where it is dropped. Today each piece goes to its own fixed zone (13-ch1-slice.js:171-177). Replaces "put it more or less wherever" (G 603).
-3. **Raising the alarm at the party.** Brian, 2026-11-23: the guest runs to the wall alarm. Today at the party the guest runs to a spot on the floor and the PA shouts "FUR! Security!" too; it should be the red wall alarm, as at the Day 2 lunch. "anytime you're seeing or anytime fur detected someone needs to run the trip alarm." (K 163).
-4. **A catch at the party.** Brian, 2026-11-23, "Card, restart scene": a catch shows the lockup card, then the current scene restarts. Today (since PR #69) a catch at the party shows the card and puts him back a little in the party; it should restart the part of the party he is in, with the party split into its five parts (peek, sneak, free play, alarm, run home).
+1a. **Vents tug the disguise.** Brian, 2026-11-23: "No, it tugs the disguise": with the disguise on, the vent tugs a piece and does not pull fur or set off the alarm (R108 stays). The no-disguise half (swirls always turning inward; too close, a tuft drifts in, then fur goes in and the alarm sounds) is built in the party rebuild, half one (draft PR #85, `src/modules/party-vent.js`). The tug comes with half two (P6), on the outfit the kid chose; the older free play still has its SUCK button until then.
+3. **Raising the alarm at the party, in free play.** Brian, 2026-11-23: the guest runs to the wall alarm. Built for the peek and sneaks in draft PR #85 (`src/modules/party-alarm.js`); the older free play still runs its own alarm until half two. "anytime you're seeing or anytime fur detected someone needs to run the trip alarm." (K 163).
+4. **A catch at the party, in free play.** Brian, 2026-11-23, "Card, restart scene": built for P1 to P5 in draft PR #85 (each scene restarts on a catch or ↺). The older free play still puts him back a little in the party until half two splits it (P6 to P8).
 5. **Wookiee growl.** Brian agreed today to copy his recording into the game. "the Wookie noise kind of sounds like like a whoopee cut cushion." (S 192).
-6. **Guests move around and face the speech.** Party guests stand still. "people are milling about during party" (G 526); "everyone would be facing him during, in the speech" (G 295).
-7. **Camera stays off the stage.** "the camera pointing away from the stage is really odd" (G 292); "the camera would be kind of right up next to the stage ... back toward the audience, which would seem very odd" (G 295). The tripod stands at the stage's front-left corner (12-ch1-redesign.js:150).
+6. **Guests move around during the party.** "people are milling about during party" (G 526). Facing Isfred during the speech ("everyone would be facing him during, in the speech", G 295) is built in draft PR #85 (P3); milling comes with half two (P6).
 8. **Mops's heart cone and its size.** Open PR #35 turns the hearts on in Chapter 1; review it, do not rebuild. "coming up from Mops Cone is supposed to be the floating hearts" (G 442); "Mop can still have a cone, it's just that the cone he had was super small compared and looked odd compared to the size of the other cones." (G 427).
 9. **No outline unless required.** Only the thing the player must go to next gets an outline. "I don't think we should have yellow outlines in Squatch when it's not actually requiring you to do the thing." (G 567). Outline of props the game draws itself, dashed and outside: "For the bush outline, I'd still like it to be outside of the object and dashed." (G 438). The glowing circle and bouncing arrow still draw outside Chapter 1 (60-frame-draw.js:522-545): "it doesn't need an arrow!!" (S 1153).
 11. **A check that catches drift.** Open PR #34 checks his rules on each pull request; a first try is closed PR #34 (rules check on every PR); nothing compares the game to DECISIONS.md. "I think we basically need to have a recurring built-in check to make sure we're not drifting." (G 433).
@@ -48,12 +46,9 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 
 ## 2. Needs your eyes
 
-- **The party picture.** Main already draws Isfred on the stage; Brian's "Fred on the stage, that he's not actually on the stage at all" (G 603) was about v2. The banner: "Robotics delegation banner doesn't make sense where it is" (G 603); older "the robotic delegation sign doesn't make any sense there. Maybe it's a banner that should be hanging or something." (G 292). Newest wins: keep a hanging banner, change where it hangs.
-- **The plant eyes.** Merged today in PRs #68 to #73. History: center (G 292), "Low is fine" (G 309), "a little low still" (G 430), "we had it right in the very original" (G 442), "eyes are wrong in bush again" (G 526). Newest instruction: copy the original; check the merged version.
 - **Home room objects.** "the new version of the crate in the room is off, at least in the picture you showed." (G 597). Covers crate, bed, bucket, bedtime-story look, janitor facing. Walls and furniture merged today; check.
 - **The dance game.** A scrolling-arrow dance exists but you said it never worked. "The dance game, hopefully that can be done clean and simple. If not, forget it." (G 516). "the fur shows at the dance scene" (G 603) is unclear.
 - **The balloon game.** "The balloon thing has just never worked when we've tried it before ... if it's all wonky and confusing, forget it." (G 516); "the balloon's just total nonsense" (K 336). Still in main (12-ch1-redesign.js:808-834).
-- **Who says "fur".** "It's not clear who's saying wait a second fur." (G 603).
 - **The theme song.** "don't like the theme song :/ definitely not the singing part" (G 318). Joe's track is one he uploaded ("This should be main theme", S 354; "It's all good", S 361). Ask which song he meant before building.
 - **Wookiee TV panel.** "Wookiee TV panel. Just go with the one we built before." (G 603). Main has three panels after the party; is that the one he meant?
 - **Hallway and corners.** "Adding The Airlock Button Here For No Reason Doesn't Really Make Sense" (P L198). "The Alarm Can Not Be In The Bush Here" (P L163). The hall asks about the speaker and FUR alarm on one wall and the window wrap (S 457, 463, 466) are checked against the locked hall picture, which has the speaker and alarm on the back wall and no wrap.
@@ -62,7 +57,6 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 - **Extra lit-up things.** "the purple extra thing on the bed", "the extra thing next to the planter" (K 328); "The thoughts aren't above the bush. The bar is lit up for no reason." (K 332); "there's multiple lit up yellow things on the screen" (K 336). Not checked by eye.
 - **Smaller drawings.** "Highlights The Square In The Middle Of The Room Doesn't Make Sense" (P L73). "balloon is underneath the speaker." (S 968). "I don't know about the font" (S 580). "I do like option one on the shirt when we go with it" (S 497).
 - **Night and escape.** Step restart merged today; "maybe it's that it restarts the last scene" (S 1224). Robots: "maybe it needs to be a cut scene that the robots roll out of storage and he runs back there." (S 1065). "Just remember to have action button lead to him squatting" (S 693). "It should be the same mechanism." (S 383).
-- **Peek.** "the peak button should be at the door because he hears the party noise." (G 569): the door spot is built but no party noise plays first. "But when he peeks he doesn't walk out, he just peeks" (S 1372): today he leans out, then sneaks to the plant.
 - **Story clarity.** "We need to make sure we really clean up story to be as understandable as a kids book" (S 294); "Feels like there's a lot of dialogues to get through right at the beginning of the game" (S 175).
 - **Unclear messages.** "Illustrations. it's really about the illustrations for the, the shelves." (G 543); "have you hidden Easter eggs like previously discussed" (S 118).
 - **The red line.** "some visual to remind him not to go past there, like a, a red line on the wall or something" (S 347) was about the bedroom vent, which G 313 says the docs now drop. Confirm it is moot.
@@ -91,15 +85,11 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 - Reason Mops dismisses Mars, made obvious. "there's a reason why he thinks it's a waste of time to go to Mars." (S 1058).
 - Order signed in triplicate. "I like Paul signs the order, but it's in triplicate" (S 380).
 - Moon Pies delivered for a reason. "Actually make sure the moonpies get delivered and maybe there's a reason why ?" (K 156).
-- Robots dancing, with an emotional reason. "He sees Robots Dancing together There has to be An emotional Reason why" (P L30).
-- Croc Boys song named for the station. "Lets have it be the name of the planet or station- vania 12345" (G 318).
 
 ### Party
 - Hall: speaker and FUR alarm placement, window wrap, fur-alarm zoom. "let's have the viewing portal wrap from the far left wall all the way up behind the wall where the fur alarm and the speaker are" (S 457); "let's just make sure at some point we do a zoom in on the fur alarm." (S 466). Check against the locked hall picture.
-- Musicians in Crocs on the stage. "we should have some musicians on the stage. They should be wearing Crocs." (S 968). "the clock boys never come up" (K 341): the announcer calls the Croc Boys and nobody appears.
-- More people. A bartender figure stands behind the bar. "don't we need more people around than just one, two, three, four Five, six" (S 954).
+- More people. The bartender (draft PR #85) and the Croc Boys are in; more guests wait until Brian sees this cast. "don't we need more people around than just one, two, three, four Five, six" (S 954).
 - Random conversations to join. "there should be random conversations he could join and be part of" (S 361).
-- The cool-hat ending replaced with many disguises. "show me a bunch of different disguises." (S 954).
 - Tower of snacks topples after too many, not the first. "I still like the idea that Towering Pyramid does kind of a Rube Goldberg chain." (S 1030).
 - "Got any pancakes" at the stand, "Mom's Pancakes", spilled coffee. "It's Just Mom's Pancakes" (P L154); "One Of Them Should Say Got Any Pancakes" (P L147).
 - Guests' eyes pop after the spill. "why are there eyeballs if they can't see us?" (S 65).
@@ -181,8 +171,8 @@ Brian played the live game on his iPhone on 2026-11-23. His party comments, in h
 Each of these is checked against main first; guests and cones were rebuilt in #75.
 
 - From closed PR #35 (Mops's heart cone, decisions R98 and R104). Check against main first; guests and cones were rebuilt in #75. Mops gets a warm cone and pops hearts when Squatch is in it, while everyone else shows "!". Bigger and brighter (R104). Hearts act just like the "!" marks. Brian: "eyesight lights up way sooner than it should." Rebuild it on the cones in `src/modules/party-watch.js`.
-- From closed PR #60 (playtest 15 fixes). Check against main first; guests and cones were rebuilt in #75. The pink and yellow slips stay in the hangar bin so they do not cover Squatch after BEEP BEEP. Party guests step and lean with their arms on their bodies. The extras guard wears the blue security uniform. The teal guest stands off the party vent. The party-catch lockup card still says a tourist saw him; the proposed line "A guard saw Squatch at the party. Security caught him." needs Brian's yes.
-- From closed PR #33 (party notes). Check against main first; guests and cones were rebuilt in #75. No "Oops. Fur in the vent." line in the bedroom. The hall plant is outlined in its real shape (leaves and pot). Squatch's eyes sit low in the front leaves when he hides. Isfred's "ROBOTICS DELEGATION!" sign is fully readable. The Croc Boys' line "Stormtop-vania 1-2-3-4-5!" comes from the stage. Its music swap is not wanted (Brian's newer asks are the Floating in Space recording and Joe's theme).
+- From closed PR #60 (playtest 15 fixes). Check against main first; guests and cones were rebuilt in #75. The pink and yellow slips stay in the hangar bin so they do not cover Squatch after BEEP BEEP. Party guests step and lean with their arms on their bodies (the robot dance in pairs is in draft PR #85; milling waits for half two). The guard in blue, the teal guest off the vent and the who-and-where lockup card are in draft PR #85.
+- From closed PR #33 (party notes). No "Oops. Fur in the vent." line in the bedroom. The plant outline, the low eyes, the readable banner and the Croc Boys' line from the stage are in draft PR #85. Its music swap is not wanted (Brian's newer asks are the Floating in Space recording and Joe's theme).
 
 ## 5. Merged, in a pull request, and being built
 

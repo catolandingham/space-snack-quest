@@ -47,20 +47,37 @@ export function createGuestArt() {
      * Returns false when the picture is not ready, so the caller draws its own guest instead.
      */
     draw(ctx, kind, x, y, adultPx, time) {
-      const img = images[GUEST_FOR_KIND[kind]];
+      return this.drawId(ctx, GUEST_FOR_KIND[kind], x, y, adultPx, time);
+    },
+    /**
+     * The same, by guest id (GUEST_ART). `dance` (0 to 1) makes them do the robot dance with a partner: they lean
+     * toward the partner (`lean`, -1 left or 1 right) and both snap through the same stiff moves in step, mirrored,
+     * with the same bounce, so the two read as a pair at phone size.
+     */
+    drawId(ctx, id, x, y, adultPx, time, dance = 0, lean = 0) {
+      const img = images[id];
       if (!img || !img.complete || !img.naturalWidth) return false;
-      const k = adultPx / TEAL_PX,
+      const t = time || 0,
+        k = adultPx / TEAL_PX,
         w = img.naturalWidth * k,
         h = img.naturalHeight * k,
-        bob = Math.sin((time || 0) * 2 + x * 0.01) * 1.5;
+        bob = (1 - dance) * Math.sin(t * 2 + x * 0.01) * 1.5 - dance * Math.abs(Math.sin(t * 5)) * 6,
+        tilt = dance * (lean * 0.12 + Math.round(Math.sin(t * 2.5)) * 0.16 * (lean || 1));
       ctx.save();
       ctx.beginPath();
       ctx.ellipse(x, y + 2, w * 0.4, 4, 0, 0, 7);
       ctx.fillStyle = "rgba(30,36,48,.16)";
       ctx.fill();
-      ctx.drawImage(img, x - w / 2, y - h + bob, w, h);
+      ctx.translate(x, y);
+      ctx.rotate(tilt);
+      ctx.drawImage(img, -w / 2, -h + bob, w, h);
       ctx.restore();
       return true;
+    },
+    /** How tall the guest is drawn, in game pixels, with the teal guest `adultPx` tall (heights from the approved sheet). */
+    height(id, adultPx) {
+      const img = images[id];
+      return img && img.naturalHeight ? (img.naturalHeight * adultPx) / TEAL_PX : adultPx;
     },
   };
 }

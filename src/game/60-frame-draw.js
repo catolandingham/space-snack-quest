@@ -13,6 +13,9 @@
       {
         let beat = window.SSQ && window.SSQ.beat("ch1-morning");
         beat && beat.tick(l);
+        // The party night (src/modules/party.js): its scenes, sight, the alarm and the vent.
+        let party = partyBeat();
+        party && party.tick(l);
       }
       (n.sqHop &&
         ((n.sqHop.t += l),
@@ -356,7 +359,6 @@
         n.room !== "closet" &&
         (n.scene || "")[0] !== "Q" &&
         !n.ch1Party &&
-        !(n.ch1Dress && n.ch1Dress.on) &&
         i >= he * 0.9 &&
         s.eyes !== "closed" &&
         n.moPose !== "sleep" &&
@@ -1138,6 +1140,9 @@
       return n.room === "hall" && l !== "pa" && !n.fbPic ? { x: o.x - B.camX, y: o.y } : o;
     }
     function T5(l) {
+      // The party night places its own speakers (Isfred beside him, the band, Squatch's eyes in the plant).
+      let at = partyBeat() && partyBeat().speakerAt(l);
+      if (at) return at;
       let o = IA(l);
       if (o) return o;
       let i = h6(l);
@@ -1151,7 +1156,7 @@
       if (l === "official") {
         if (n.ch1Office && n.room === "office") return { x: 430, y: 390 };
         if (n.ch1Office) return { x: 480, y: 490 };
-        if (n.ch1Party) return { x: 360, y: 190 }; // Isfred on the stage (Brian, 2026-11-15: never a bubble with nobody under it)
+        if (n.ch1Party) return { x: CH1_PARTY_CAST.isfred[0], y: CH1_PARTY_CAST.isfred[1] - 68 }; // over Isfred's head (at the bar since the band started) (Brian, 2026-11-15: never a bubble with nobody under it)
         if (n.room === "hangar" && n.ch1D && n.ch1Ship && !n.ch1Night && n.scene !== "Q9") return { x: 560, y: 400 };
         return { x: 210, y: 215 };
       }
@@ -1274,6 +1279,9 @@
       // The wall speaker (the morning): the bubble sits to its left, level with it, its tail pointing at it.
       let spk = l.who === "speaker" && window.SSQ && window.SSQ.speakerBox ? window.SSQ.speakerBox() : null;
       spk && ((_ = w(spk.x0 - 26 - T, 10, c - T - 10)), ($ = w(spk.y0 - 6, 24, b - R - 12)));
+      // At the party, Isfred's and the band's bubbles sit beside them, never over the banner.
+      let side = partyBeat() && partyBeat().bubbleBeside(l.who);
+      side && ((_ = w(side.side === "left" ? side.x0 - 26 - T : side.x1 + 26, 10, c - T - 10)), ($ = w(side.y0 - 6, 24, b - R - 12)));
       // Never cover the speaker's face. Sit above the head, or beside it if the top of the picture is full.
       let head = ear ? null : speakerHead(l.who);
       if (head && boxHits({ x: _, y: $ - 16, w: T, h: R + 16 }, head, 8)) {
@@ -1336,10 +1344,12 @@
           (L(gV + ((P.x - gV) * CV) / 30, $ + R + CV, NV), e.setLineDash([3, 3]), r(oe, 2), e.setLineDash([]));
       if ((l.style === "song" && (g("\u266A", _ + 4, $ + 4, 22, "#ff5fa8"), g("\u266B", _ + T - 4, $ + R - 2, 22, "#ff5fa8")), !o)) {
         let beat = l.who === "speaker" && window.SSQ && window.SSQ.beat("ch1-morning"),
-          CV = beat ? beat.speakerName() : pa[l.who];
+          CV = beat ? beat.speakerName() : (partyBeat() && partyBeat().speakerName(l.who)) || pa[l.who] || "";
+        // Tests: the name over the bubble on screen.
+        window.__ss && window.__ss.lastBubble && (window.__ss.lastBubble.name = CV);
         ge(17);
         let NV = e.measureText(CV).width + 26;
-        (m(_ + 16, $ - 18, NV, 32, 12), r(Ds[l.who], 3), g(CV, _ + 16 + NV / 2, $ - 2, 17, l.who === "mops" ? "#1e2430" : "#ffffff"));
+        (m(_ + 16, $ - 18, NV, 32, 12), r(Ds[l.who] || "#2f8a3c", 3), g(CV, _ + 16 + NV / 2, $ - 2, 17, l.who === "mops" ? "#1e2430" : "#ffffff"));
       }
       if (ear) {
         let CV = _ + 22,
@@ -2245,6 +2255,8 @@
     // The room the player is in, drawn with nothing over it (E5 adds rings, people, bubbles and the rest).
     function drawRoom() {
       if (n.room === "office") return drawCh1OfficeRoom();
+      // The party night's hall is the party module's drawing, on the locked picture.
+      if (n.room === "hall" && partyBeat() && partyBeat().ownsRoom() && partyBeat().drawRoom(e)) return;
       (n.room === "closet"
         ? (P2(), X2(), g5(), z2())
         : n.room === "deck"
@@ -2321,12 +2333,12 @@
         drawRoom();
         // The morning's sound lines and notes at the wall speaker, and the wet floor where Mops mops.
         beat && beat.draw(e);
+        partyBeat() && partyBeat().draw(e);
         if (n.ch1Calendar) {
           drawCh1Calendar();
           return;
         }
         n.ch1Cut && drawCh1Cut();
-        n.ch1Dress && n.ch1Dress.on && drawCh1Dress();
         n.ch1Day2 && drawCh1Day2();
         n.ch1Zoom && drawCh1Zoom();
         ch1MarkGoal();
@@ -2372,8 +2384,7 @@
         l && l.k === "bub" ? bq(l.b, !1) : !de() && n.live.length && bq(n.live[0], !0),
         n.ch1Search && drawCh1Guard(),
         n.ch1Mini && drawCh1Mini(),
-        window.__ss && (window.__ss.bubbleFrame = qq),
-        n.ch1Veil > 0.01 && ((e.fillStyle = "rgba(20,24,32," + Math.min(1, n.ch1Veil).toFixed(3) + ")"), e.fillRect(0, 0, c, b)));
+        window.__ss && (window.__ss.bubbleFrame = qq));
       ((e.globalAlpha = 1), zG(), drawSeeHint(), drawTapHeard());
     }
     // The white "VERB · thing" label over the spot the big button acts on. Every chapter uses it.
@@ -2496,11 +2507,6 @@
           I0(parseInt(l.code.slice(-1), 10));
           return;
         }
-        n.ch1Mini === "dance" &&
-          !l.repeat &&
-          ({ ArrowLeft: "L", ArrowRight: "R", ArrowUp: "U", ArrowDown: "D" }[l.code]
-            ? (ch1DanceHit({ ArrowLeft: "L", ArrowRight: "R", ArrowUp: "U", ArrowDown: "D" }[l.code]), !0)
-            : !1) ||
         (n.ch1Mini === "karaoke" && !l.repeat && (l.code === "Space" || l.code === "Enter") && (ch1Howl(), !0)) ||
         (l.code === "KeyR" && !l.repeat && armReset(!0),
           (qe[l.code] = !0),

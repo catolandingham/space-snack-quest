@@ -29,7 +29,7 @@
         Cs();
         return;
       }
-      if (p.state === "op" && (n.ch1PadOn || n.ch1Zoom || n.ch1Cut || (n.ch1Dress && n.ch1Dress.on))) {
+      if (p.state === "op" && (n.ch1PadOn || n.ch1Zoom || n.ch1Cut)) {
         // A bubble or a card still goes away on a tap. The snack bar used to swallow that tap.
         if (de()) return void nf();
         ch1SlicePointer("down", l, o);
@@ -42,7 +42,7 @@
           hf(l > 720 && o < 160 ? "close" : l < 400 ? "prev" : "next");
           return;
         }
-        if (p.state === "op" && ((n.ch1Dress && n.ch1Dress.on) || n.ch1Cut)) {
+        if (p.state === "op" && n.ch1Cut) {
           ch1SlicePointer("down", l, o);
           return;
         }
@@ -68,6 +68,7 @@
     //   ?scene=P3           start that scene's chapter, then call window.__ss.sceneP3
     //   ?beat=42            on a preview host only, open that Chapter 1 beat
     //   ?beat=day2          on localhost or a preview host, open Day 2 at the gift in the closet. The live site ignores it.
+    //   ?beat=party         on localhost or a preview host, open the party night at P1 (party:P3 opens P3). Ignored live.
     //   &debug=1            show the state strip under the game; the backtick key hides and shows it
     function debugLink() {
       let q;
@@ -82,17 +83,20 @@
         linkDebug = q.get("debug") === "1",
         linkBeatRaw = q.get("beat") || "",
         linkBeat = parseInt(linkBeatRaw, 10) || 0,
-        linkDay2 = linkBeatRaw === "day2";
+        linkDay2 = linkBeatRaw === "day2",
+        linkParty = /^party(:P[1-5])?$/.test(linkBeatRaw) ? linkBeatRaw.slice(6) || "P1" : "";
       let previewBeat = !1,
-        day2Jump = !1;
+        day2Jump = !1,
+        partyJump = !1;
       try {
         let host = location.hostname || "",
           live = LIVE_HOSTS.includes(host),
           local = host === "localhost" || host === "127.0.0.1" || host === "";
         previewBeat = !!linkBeat && !live && !local;
         day2Jump = linkDay2 && !live;
+        partyJump = !!linkParty && !live;
       } catch {}
-      if (!linkCh && !linkPhase && !linkScene && !linkDebug && !previewBeat && !day2Jump) return;
+      if (!linkCh && !linkPhase && !linkScene && !linkDebug && !previewBeat && !day2Jump && !partyJump) return;
       !linkCh && linkPhase && (linkCh = 2);
       !linkCh && linkScene && (linkCh = { O: 1, S: 1, Q: 1, G: 2, P: 3, M: 4 }[linkScene[0]] || 0);
       setTimeout(() => {
@@ -108,6 +112,7 @@
         linkDebug && debugStrip();
         previewBeat && (startStory(1), (n.q = []), (n.cur = null), ch1JumpBeat(linkBeat));
         day2Jump && (startStory(1), (n.q = []), (n.cur = null), ch1Day2Begin());
+        partyJump && partyBeat() && (startStory(1), (n.q = []), (n.cur = null), ch1ResetState(), (n.moPose = "hidden"), partyBeat().jump(linkParty));
       }, 0);
     }
     function roomLine(text) {
@@ -317,6 +322,7 @@
         CH1_OFFICE_DOOR,
         CH1_HOME_DOOR,
         CH1_GUESTS,
+        CH1_PARTY_CAST,
         PHOTO_BONUS,
         SNACK_LOOK_SECONDS,
         CH1_CAM,

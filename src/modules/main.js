@@ -3,9 +3,11 @@
 // program starts. Rebuilt Chapter 1 beats are imported here and registered on the bridge.
 import { createBridge } from "./bridge.js";
 import { createMorning } from "./morning.js";
+import { createParty } from "./party.js";
 
 const bridge = createBridge();
 // The rebuilt beats. The older program asks for each by id where it used to run its own code.
 bridge.registerBeat("ch1-morning", createMorning(bridge));
+bridge.registerBeat("ch1-party", createParty(bridge));
 // Not writable or replaceable: the older program and every module see the same bridge.
 Object.defineProperty(window, "SSQ", { value: bridge, writable: false, configurable: false, enumerable: true });

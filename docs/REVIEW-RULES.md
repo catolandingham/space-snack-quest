@@ -1,3 +1,21 @@
+<!-- section-index -->
+**Section index.** Read this index, then only the section you need. Do not read this file whole.
+
+| Lines | Heading |
+| --- | --- |
+| 19–22 | # Review rules |
+| 23–74 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
+| 75–77 | ## Techniques |
+| 78–80 | ## Mistake: locked art was redrawn |
+| 81–85 | ## Mistake: optional inspection interrupted getting out of bed |
+| 86–88 | ## Mistake: a big doc's section index went stale |
+| 89–91 | ## Mistake: a rebuilt beat forgot the step restart |
+| 92–94 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
+| 95–97 | ## Mistake: a killed run was read as a failing test |
+| 98–100 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
+| 101–103 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
+| 104–110 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
+<!-- /section-index -->
 # Review rules
 
 Copied word for word on 2026-11-06 from the "Process: review checklist" section of `HANDOFF.md` (HANDOFF: Space Snack Quest v3, updated 2026-11-02, in the Grok workspace zip). Do not edit these rules without Brian's yes. `CLAUDE.md` at the repo root holds the short form.
@@ -82,3 +100,18 @@ The later full touch run exposed a test-driver gap: it waited whenever walking w
 
 ## Mistake: a game wait on real audio time met a test helper that only ticks
 2026-11-24. Mops's song line now waits until the recording has really played, but `toMorningSong` in `tests/game-page.mjs` ticked the game in one synchronous loop, so no real time passed and `tests/opening-song.mjs` failed in the full run. When the game waits on something outside its own clock (audio, a download), the shared test helpers must let real time pass, and every suite that uses them with sound on is rerun.
+
+## Mistakes caught building the party rebuild, half one (2026-11-24)
+- A full-screen view covered the page's ↺, so a kid could not restart the dress-up. Every full-screen view keeps its own ↺ (`src/modules/fullscreen.js`, `restart`), and a test presses it with a finger (`elementFromPoint` on top).
+- A close-up's frame loop closed the view and then scheduled one more frame, so its "done" ran every frame and froze the alarm. A loop that can close itself checks that it is closed before asking for the next frame.
+- Anyone with a cone could raise the alarm, so Isfred on the stage became a "tourist" on the LOCKUP card, and a shout appeared over someone who never moved. Only people the game can draw running, with a "who" line for the card, raise the alarm; the others show "?".
+- A test number (guests at least 70 apart) blocked the dancing pairs, and the first fix loosened the test. Move the design to meet the test (the pairs now stand 72 apart); never loosen a test to fit a design.
+- A Squatch line was skipped because he stood below the picture's edge while peeking (`speakerDrawn`). A beat that puts a speaker at the picture's edge says so to the bubble rule (the party's `speakerAt`).
+
+## Mistakes the independent review of PR #85 caught (2026-11-24)
+- The fur stopped mid-air when the alarm started, because only the "no alarm" branch moved it. Anything that shows the cause of an alarm keeps moving while the alarm runs, and a test follows it to its end (the tuft reaches the grille).
+- A new speaker ("band") had no name, so its bubble read "undefined". Every speaker gets a name from its lines file, and a test reads the name drawn over each bubble.
+- Walking into the free play moved Isfred, the camera and the octopus. Every scene change is tested for jumps: nobody (Squatch or the cast) moves more than 60 between one frame and the next inside a room.
+- Some cones only ever showed "?" (Isfred's, the band's): nobody "randomly doesn't care". If the one who sees him cannot run, someone near him does.
+- A test read the source for `size: 42` instead of measuring the mark drawn. Measure what is drawn (review rule 22).
+- Drawings for a later half and a look Brian did not pick sat in shipped modules. They live in `tools/` until the half that uses them.

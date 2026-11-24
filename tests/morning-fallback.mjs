@@ -1,7 +1,8 @@
 /**
  * If the module script (src/modules/, bundled into the first <script> of index.html) fails to load, the game
  * must still play (CLAUDE.md: the older program guards every use of window.SSQ). The morning is a module now,
- * so without it Chapter 1 skips from the opening cards to "That evening…" and the evening plays as usual.
+ * so without it Chapter 1 skips from the opening cards to "That evening…". The party night is a module too
+ * (src/modules/party.js), so without it the evening goes on to Day 2, which still plays.
  *   node tests/morning-fallback.mjs
  */
 import { readFileSync } from "node:fs";
@@ -45,7 +46,7 @@ for (let i = 0; i < 20 && !(s.ctrl && s.chip); i++) {
   s = await st();
 }
 g.check("without the module the cards still play, then \"That evening…\"", seen.length >= 3 && /^card:Stormtop/.test(seen[0]) && seen.some((t) => /^card:That evening/.test(t)), seen);
-g.check("then the evening plays: the goal is to peek out the door", s.ctrl && /peek out the door/.test(s.chip), s);
+g.check("then the game goes on: without the party module, Day 2 starts with a goal", s.ctrl && /pick up the gift/.test(s.chip), s);
 g.check("no page errors without the module", errors.length === 0, errors);
 await ctx.close();
 await g.finish("morning-fallback");
