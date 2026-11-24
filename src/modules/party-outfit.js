@@ -50,6 +50,7 @@ export function bump(p, sq, scale, to, land, firstMinute) {
   if (!spot) return "";
   if (firstMinute || !p.tip || p.tip.spot !== spot) {
     p.tip = { spot, a: PIECE_FLY.tipAngle };
+    p.tipT = 0;
     return "tip";
   }
   knockOff(p, spot, sq, scale, to, land);
@@ -58,7 +59,7 @@ export function bump(p, sq, scale, to, land, firstMinute) {
 /** Tips the next piece crooked (a warning) without knocking anything off. */
 export function tipNext(p) {
   const spot = bumpSpot(p);
-  spot && (p.tip = { spot, a: PIECE_FLY.tipAngle });
+  spot && ((p.tip = { spot, a: PIECE_FLY.tipAngle }), (p.tipT = 0));
   return spot;
 }
 /** Knocks the piece at `spot` off: it flies from his body to `land` (the vent's grille, the floor, the plant). */

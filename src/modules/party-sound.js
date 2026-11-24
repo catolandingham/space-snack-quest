@@ -60,7 +60,9 @@ export function createPartySound(getEngine) {
     muffled_ = false;
   const recs = {},
     loading = {};
-  const played = []; // tests: what was asked to play
+  const played = []; // tests: what was asked to play (the last 300)
+  const note = (name) => (played.push(name), played.length > 300 && played.shift());
+  let ambGain = null;
   function live() {
     const e = getEngine();
     if (!e || !e.soundState || e.soundState() !== "on") return null;
@@ -144,7 +146,7 @@ export function createPartySound(getEngine) {
   return {
     /** One sound by name (party-board-sounds.js). Silent while sound is off. */
     one(name) {
-      played.push(name);
+      note(name);
       const A = live();
       if (!A) return;
       const t = A.c.currentTime + 0.01;
@@ -157,11 +159,17 @@ export function createPartySound(getEngine) {
     },
     /** The band: `i` 0, 1 or 2 plays that song; -1 stops. */
     song(i) {
-      i !== song && ((song = i), (beatNo = 0), (nextBeat = 0), i >= 0 && played.push("song" + i));
+      i !== song && ((song = i), (beatNo = 0), (nextBeat = 0), i >= 0 && note("song" + i));
     },
     /** The party heard through his door ("door"), the crowd ("murmur"), or nothing (""). */
     ambience(k) {
-      k !== amb && ((amb = k), (ambNext = 0), k && played.push("ambience-" + k));
+      if (k === amb) return;
+      amb = k;
+      ambNext = 0;
+      k && note("ambience-" + k);
+      // what is already scheduled stops at once (its own gain fades out); a new ambience gets a new gain
+      ambGain && ambGain.gain.setTargetAtTime(0, ambGain.context.currentTime, 0.05);
+      ambGain = null;
     },
     /** True once each time the band stops dead and shouts (then the game shows the band's line). */
     takeBreak() {
@@ -201,7 +209,7 @@ export function createPartySound(getEngine) {
         lp.connect(humGain);
         humGain.connect(A.o);
         humSrc.start(0, PARTY_SOUND.hum.skip);
-        played.push("hum");
+        note("hum");
       }
       humGain.gain.setTargetAtTime(PARTY_SOUND.hum.level * level, A.c.currentTime, 0.2);
     },
@@ -218,7 +226,9 @@ export function createPartySound(getEngine) {
       if (amb) {
         ambNext < now && (ambNext = now + 0.05);
         if (ambNext < now + PARTY_SOUND.ahead) {
-          amb === "door" ? throughDoor(A, ambNext) : BOARD.murmur(muffled(A, 900), ambNext, PARTY_SOUND.murmur + 0.4);
+          if (!ambGain || ambGain.context !== A.c) ((ambGain = A.c.createGain()), ambGain.connect(A.o));
+          const B = { c: A.c, o: ambGain };
+          amb === "door" ? throughDoor(B, ambNext) : BOARD.murmur(muffled(B, 900), ambNext, PARTY_SOUND.murmur + 0.4);
           ambNext += amb === "door" ? PARTY_SOUND.door : PARTY_SOUND.murmur;
         }
       }
@@ -236,6 +246,8 @@ export function createPartySound(getEngine) {
     stop() {
       song = -1;
       amb = "";
+      ambGain && ambGain.gain.setTargetAtTime(0, ambGain.context.currentTime, 0.05);
+      ambGain = null;
       humGain && humGain.gain.setTargetAtTime(0, humGain.context.currentTime, 0.1);
     },
     /** Tests: every sound asked for, in order, the song now, and which recordings have loaded. */

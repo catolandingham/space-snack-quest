@@ -112,7 +112,8 @@ export function createEndings(h) {
           const to = b.path[0];
           b.face = Math.atan2(to.y - b.y, to.x - b.x);
           b.walk = true;
-          (c.stepT = (c.stepT || 0) + dt / 11) > 0.3 && ((c.stepT = 0), h.sound.one("step"));
+          // a footfall about every 0.3 s for each one walking out
+          (b.stepT = (b.stepT || 0) + dt) > 0.3 && ((b.stepT = 0), h.sound.one("step"));
           step(b, to.x, to.y, ENDING.leave, dt) && b.path.shift();
           b.path.length || (c.gone[id] = true);
         }
