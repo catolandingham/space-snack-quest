@@ -2384,10 +2384,8 @@
         l && l.k === "bub" ? bq(l.b, !1) : !de() && n.live.length && bq(n.live[0], !0),
         n.ch1Search && drawCh1Guard(),
         n.ch1Mini && drawCh1Mini(),
-        window.__ss && (window.__ss.bubbleFrame = qq),
-        n.ch1Veil > 0.01 && ((e.fillStyle = "rgba(20,24,32," + Math.min(1, n.ch1Veil).toFixed(3) + ")"), e.fillRect(0, 0, c, b)));
+        window.__ss && (window.__ss.bubbleFrame = qq));
       ((e.globalAlpha = 1), zG(), drawSeeHint(), drawTapHeard());
-      beat && de() && beat.drawCue(e);
     }
     // The white "VERB · thing" label over the spot the big button acts on. Every chapter uses it.
     function drawCap() {
