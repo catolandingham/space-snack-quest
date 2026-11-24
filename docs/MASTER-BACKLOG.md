@@ -4,24 +4,26 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–55 | ## Where main is (Chapter 1 redesign) |
-| 56–70 | ## Register |
-| 71–92 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 93–113 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 114–126 | ## Phase 2 (plan section 4, T13 to T18) |
-| 127–149 | ## Phase 1 (plan section 3, T5 to T12) |
-| 150–163 | ## SS40–SS44 |
-| 164–181 | ## Story rows |
-| 182–200 | ## Reset section |
-| 201–211 | ## Still open |
-| 212–215 | ## Chapter 1 replot, recorded and not built |
-| 216–357 | ## Changelog |
+| 24–57 | ## Where main is (Chapter 1 redesign) |
+| 58–72 | ## Register |
+| 73–94 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 95–115 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 116–128 | ## Phase 2 (plan section 4, T13 to T18) |
+| 129–151 | ## Phase 1 (plan section 3, T5 to T12) |
+| 152–165 | ## SS40–SS44 |
+| 166–183 | ## Story rows |
+| 184–202 | ## Reset section |
+| 203–213 | ## Still open |
+| 214–217 | ## Chapter 1 replot, recorded and not built |
+| 218–359 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-24, draft PR on branch `feat/morning-fixes`, not merged: Brian's 18a to 21a and the iPhone playthrough of 2026-11-23. No "tap ▸" note (NEXT only); faces only where a switch is possible; with sound on, Joe's theme on the title and first card (through the master volume, fading on "This is Squatch"), soft snoring while Squatch sleeps, a ding-dong before "Good morning, Stormtop!" (`src/modules/morning-sound.js`); the Floating in Space recording starts past its quiet first 3 seconds and Mops's song line waits for it; Mops mops along the floor to his bucket with a wet streak before the beard close-up; no paw on the calendar close-up. His party comments 10 to 23 are in `docs/BRIAN-ASKS-OPEN.md` under "Playthrough 2026-11-23" for the party rebuild.
 
 2026-11-23, draft PR on branch `feat/home-alone` (morning plan PR 3), not merged: home alone after Mops leaves (`src/modules/home-alone.js`, `home-alone-lines.js`, `homework-cutaway.js`; sheet `docs/HOME-ALONE-LINES-FOR-BRIAN.md`). Goal "Squatch: do your homework", desk outlined only; DO · homework, a two-picture homework cutaway, then "That evening…". Optional: OPEN · closet (G box drawn on the locked open picture as approved, door shuts on the next tap), FLOP · bed ("Not sleepy anymore."), LOOK · calendar (bitten from the start). Brian's answers 13A (sums approved), 14A (thin-outline close-up Squatch, lying-down flop), 15A (edge nibble kept), 16A (merge after a full green run) are built, with his feedback: labels next to their thing and clear of Squatch (`cap-place.js`), no goal outline over Squatch or Mops, no purple bar in front of the bed. Not yet played by a person.
 
