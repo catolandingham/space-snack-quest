@@ -32,8 +32,8 @@ export const HALL = Object.freeze({
 // restart spot of the sneak), and by each plant to step into it.
 export const SPOTS = Object.freeze({
   peek: Object.freeze({ x: 477, y: 646 }),
-  doorway: Object.freeze({ x: 477, y: 606 }),
-  plantMiddle: Object.freeze({ x: 398, y: 548 }),
+  doorway: Object.freeze({ x: 477, y: 590 }),
+  plantMiddle: Object.freeze({ x: 396, y: 552 }),
   plantBack: Object.freeze({ x: 150, y: 384 }),
   // Under the wall alarm, where a guest who saw him runs to pull it; guards come in at the hallway doorway.
   alarmRun: Object.freeze({ x: 880, y: 318 }),
@@ -54,7 +54,7 @@ export const BANNER = Object.freeze({ x0: 200, x1: 528, y0: 92, y1: 152 });
 export const CAST = Object.freeze({
   isfred: Object.freeze({ x: 420, y: 258 }),
   isfredBar: Object.freeze({ x: 800, y: 330 }),
-  band: Object.freeze([Object.freeze({ x: 272, y: 256 }), Object.freeze({ x: 314, y: 256 }), Object.freeze({ x: 356, y: 256 })]),
+  band: Object.freeze([Object.freeze({ x: 258, y: 256 }), Object.freeze({ x: 308, y: 256 }), Object.freeze({ x: 358, y: 256 })]),
   guests: Object.freeze([
     Object.freeze({ id: "teal", x: 290, y: 390, pair: "stilt" }),
     Object.freeze({ id: "stilt", x: 336, y: 396, pair: "teal" }),
@@ -65,10 +65,10 @@ export const CAST = Object.freeze({
   ]),
   bartender: Object.freeze({ x: 890, y: 482 }),
 });
-// The glancer's look across the lane (radians; about 168 degrees, down and to the left), and how far it sweeps
+// The glancer's look across the lane (radians; about 174 degrees, down and to the left), and how far it sweeps
 // either side. Chosen so the lane between the door and the plant is covered while his doorway and the plant's left
 // side, where Squatch steps in, are never in his cone (tests/party-scenes.mjs).
-export const GLANCE = Object.freeze({ a: (168 * Math.PI) / 180, sweep: 0.15 });
+export const GLANCE = Object.freeze({ a: (174 * Math.PI) / 180, sweep: 0.15 });
 // The glancer's rhythm (P2): facing the stage, then head turn with "?", then looking across the lane, then back.
 export const GLANCE_TIMES = Object.freeze({ stage: 3.5, warn: 0.5, look: 2, back: 0.4 });
 

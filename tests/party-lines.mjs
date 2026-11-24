@@ -47,7 +47,12 @@ check("status is approved or needs-yes", PARTY_LINES.every((l) => l.status === "
 check("every line is in half one or half two", PARTY_LINES.every((l) => l.half === 1 || l.half === 2));
 const need = PARTY_LINES.map((l, i) => (l.status === "needs-yes" ? i + 1 : 0)).filter(Boolean);
 const said = (sheet.match(/Lines that need your yes: ([0-9, ]+) \(/) || [])[1];
-check("the sheet's list of lines that need Brian's yes is right", !!said && said.split(",").map((s) => +s.trim()).join(",") === need.join(","), { said, need });
+const saidNone = /Lines that need your yes: none left/.test(sheet);
+check(
+  "the sheet's list of lines that need Brian's yes is right",
+  need.length === 0 ? saidNone : !!said && said.split(",").map((s) => +s.trim()).join(",") === need.join(","),
+  { said, saidNone, need },
+);
 let threw = false;
 try {
   partyLine("no-such-line");

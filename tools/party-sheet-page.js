@@ -54,7 +54,7 @@ function base(t = 1.2) {
     picture: pics.hall,
     banner: { glow: 0 },
     isfred: { x: CAST.isfred.x, y: CAST.isfred.y },
-    band: { look: "A", playing: false },
+    band: { look: "B", playing: false },
     guests: guestsFacingStage(),
     bartender: { x: CAST.bartender.x, y: CAST.bartender.y, f: -1 },
     tripod: { ...CAST.guests.find((g) => g.id === "camera").tripod, aim: { x: 330, y: 250 } },
@@ -169,7 +169,7 @@ for (const song of [0, 1, 2])
   R["v10_lights_song" + (song + 1)] = () => {
     const v = base(1);
     v.lights = { song, dim: 1 };
-    v.band = { look: "A", playing: true };
+    v.band = { look: "B", playing: true };
     v.guests = pairDance();
     return hall(v);
   };
@@ -179,7 +179,7 @@ function pairDance() {
 R.v11_flyer_back = () => {
   const v = base();
   v.lights = { song: 0, dim: 1 };
-  v.band = { look: "A", playing: true };
+  v.band = { look: "B", playing: true };
   v.guests = pairDance();
   v.cones = pairCones(v.guests);
   v.squatch = { x: 455, y: 585, f: 1, pose: "stand", flyer: true };
@@ -261,7 +261,7 @@ R.v15_caught_mark = () => {
 };
 R.v15_eyes_plant = () => {
   const v = base(1.4);
-  v.band = { look: "A", playing: true };
+  v.band = { look: "B", playing: true };
   v.lights = { song: 0, dim: 1 };
   v.guests = pairDance();
   v.squatch = { x: SPOTS.plantMiddle.x, y: SPOTS.plantMiddle.y, pose: "hidden" };

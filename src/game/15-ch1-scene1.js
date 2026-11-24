@@ -135,6 +135,7 @@
         drawEyes: (ctx, x, y) => onCtx(ctx, () => ga(x, y)),
         drawMopsOn: (ctx, x, y, scale, opts) => onCtx(ctx, () => Fe(x, y, scale, opts || {})),
         hallSizes: () => ({ adult: ADULT_PX, squatch: SQ_ADULT }),
+        homeAdult: () => adultPxFor("home"),
         // Sight cones: the standing cone's size, and telling the tests (conesDrawn) about a cone drawn this frame.
         coneSize: () => ({ half: STAND_CONE_HALF, len: STAND_CONE_LEN }),
         noteCone: (c) => conesDrawn.push({ ...c, room: n.room, cam: 0 }),

@@ -71,6 +71,26 @@ export function drawPerson(ctx, x, y, h, look, f = 1, t = 0) {
   ctx.scale(k * (f < 0 ? -1 : 1), k);
   const ow = lw / k;
   oval(ctx, 0, 1, 16, 3, "rgba(30,36,48,.16)");
+  if (look.croc) {
+    // a thick crocodile tail behind the legs, with darker bumps along it
+    ctx.beginPath();
+    ctx.moveTo(-4, -40);
+    ctx.quadraticCurveTo(-20, -30, -34, -4);
+    ctx.quadraticCurveTo(-30, -2, -26, -6);
+    ctx.quadraticCurveTo(-14, -24, 4, -30);
+    ctx.closePath();
+    ctx.fillStyle = "#3fae4a";
+    ctx.fill();
+    ctx.lineWidth = ow;
+    ctx.strokeStyle = INK;
+    ctx.stroke();
+    for (const [tx, ty] of [
+      [-14, -31],
+      [-21, -23],
+      [-27, -14],
+    ])
+      oval(ctx, tx, ty, 2, 1.4, "#2a7a33");
+  }
   // legs and shoes
   rr(ctx, -9, -34, 8, 32, 2, look.pants || "#3a3f52", ow);
   rr(ctx, 1, -34, 8, 32, 2, look.pants || "#3a3f52", ow);
@@ -89,6 +109,7 @@ export function drawPerson(ctx, x, y, h, look, f = 1, t = 0) {
   oval(ctx, 0, 30, 3.6, 3.6, look.skin, ow);
   ctx.restore();
   rr(ctx, -15, -72, 30, 40, 7, look.shirt, ow);
+  if (look.croc) for (let i = 0; i < 4; i++) oval(ctx, -15, -68 + i * 9, 2.2, 3, "#2a7a33", ow * 0.6); // ridges down his back
   if (look.bandShirt) {
     // the band's matching shirt: a white stripe with a little crocodile tooth zig-zag
     rr(ctx, -15, -58, 30, 7, 1, "#fffdf8");
@@ -117,15 +138,42 @@ export function drawPerson(ctx, x, y, h, look, f = 1, t = 0) {
   const hy = -84,
     hr = 12;
   if (look.croc) {
-    // a crocodile head: round top, long snout with teeth, eyes on bumps
-    oval(ctx, -5, hy - 8, 4, 4, "#3fae4a", ow);
-    oval(ctx, 5, hy - 8, 4, 4, "#3fae4a", ow);
-    rr(ctx, -12, hy - 6, 24, 18, 8, "#3fae4a", ow);
-    rr(ctx, 2, hy + 1, 26, 10, 4, "#3fae4a", ow);
-    for (let i = 6; i < 26; i += 5) line(ctx, [i, hy + 11, i + 1.6, hy + 13.5, i + 3.2, hy + 11], "#fffdf8", 1.4);
-    oval(ctx, -5, hy - 8, 1.6, 1.6, INK);
-    oval(ctx, 5, hy - 8, 1.6, 1.6, INK);
-    oval(ctx, 25, hy + 3, 1, 1, INK);
+    // A crocodile head seen side on (Brian 2026-11-24: "they don't look like crocs"): a long flat snout, longer
+    // than the head is tall, a row of white zig-zag teeth along the jaw, two bumpy eyes on top, nostril bumps at
+    // the tip, and darker green ridges along the head.
+    const G = "#3fae4a",
+      D = "#2a7a33";
+    rr(ctx, -13, hy - 9, 22, 19, 7, G, ow); // the back of the head
+    rr(ctx, 2, hy - 3, 34, 8, 3, G, ow); // upper jaw: long and flat
+    rr(ctx, 2, hy + 5, 31, 6, 3, G, ow); // lower jaw
+    // teeth: a white zig-zag where the jaws meet
+    ctx.beginPath();
+    ctx.moveTo(5, hy + 5);
+    for (let i = 0; i < 7; i++) (ctx.lineTo(7 + i * 4, hy + 8.2), ctx.lineTo(9 + i * 4, hy + 5));
+    ctx.closePath();
+    ctx.fillStyle = "#fffdf8";
+    ctx.fill();
+    ctx.lineWidth = ow * 0.6;
+    ctx.strokeStyle = INK;
+    ctx.stroke();
+    // nostril bumps at the snout tip
+    oval(ctx, 32, hy - 4, 2.6, 2, G, ow * 0.8);
+    oval(ctx, 32.5, hy - 4.4, 0.9, 0.7, INK);
+    // eyes on bumps on top of the head
+    for (const ex of [-6, 2]) {
+      oval(ctx, ex, hy - 10, 4.4, 4.2, G, ow);
+      oval(ctx, ex, hy - 10.5, 2.4, 2.4, "#fffdf8");
+      oval(ctx, ex + 0.8, hy - 10.5, 1.3, 1.6, INK);
+    }
+    // darker ridges along the head and snout
+    for (const [rx, ry] of [
+      [-11, -4],
+      [-8, 0],
+      [8, -3],
+      [14, -3],
+      [20, -3],
+    ])
+      oval(ctx, rx, hy + ry, 1.6, 1.1, D);
   } else {
     oval(ctx, 0, hy, hr, hr, look.skin, ow);
     if (look.hair) {

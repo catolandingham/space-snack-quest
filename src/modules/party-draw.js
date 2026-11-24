@@ -124,7 +124,7 @@ export function drawDanceCloseUp(ctx, w, h, guestArt, outfit, t, move = 0, song 
   // the band at the back, small, on a strip of stage
   ctx.fillStyle = "#b08968";
   ctx.fillRect(w * 0.1, floorY - h * 0.08, w * 0.8, h * 0.03);
-  drawBand(ctx, [0.3, 0.5, 0.7].map((k) => ({ x: w * k, y: floorY - h * 0.08 })), s * 26, "A", t, true);
+  drawBand(ctx, [0.3, 0.5, 0.7].map((k) => ({ x: w * k, y: floorY - h * 0.08 })), s * 26, "B", t, true);
   // the spotlight
   const sp = ctx.createRadialGradient(w / 2, h * 0.8, 10, w / 2, h * 0.8, w * 0.45);
   sp.addColorStop(0, "rgba(255,250,210,.6)");
