@@ -1,3 +1,25 @@
+<!-- section-index -->
+**Section index.** Read this index, then only the section you need. Do not read this file whole.
+
+| Lines | Heading |
+| --- | --- |
+| 23–29 | # Brian's asks that are not in the game yet |
+| 30–49 | ## 1. Build next |
+| 50–70 | ## 2. Needs your eyes |
+| 71–74 | ## 3. Your instructions disagree |
+| 75–76 | ## 4. Everything else not built |
+| 77–98 | ### Morning and home |
+| 99–112 | ### Party |
+| 113–117 | ### Snacks and dress-up |
+| 118–130 | ### Day 2 and night |
+| 131–135 | ### Escape and later chapters |
+| 136–139 | ### Looks and lines |
+| 140–147 | ### Sound |
+| 148–151 | ### Words and rules |
+| 152–164 | ### How the bots work |
+| 165–176 | ## 5. Merged, in a pull request, and being built |
+| 177–187 | ## 6. Corrections to the checkers |
+<!-- /section-index -->
 # Brian's asks that are not in the game yet
 
 This page lists everything Brian asked for that is not in the game yet, checked against main on 2026-11-23 and against an independent review the same day.
@@ -9,10 +31,10 @@ Brian's G Bot messages 419 to 603 were written while he looked at the old "v2" b
 
 Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win over older words.
 
-1. **The morning, built as one ordered sequence (G 547 to 567).** Brian agreed today to rebuild it his way. Waking up through Mops leaving is built in the draft morning PR (morning plan PR 2, branch feat/morning-rebuild; lines for his yes in docs/MORNING-LINES-FOR-BRIAN.md). Still to build, after Mops leaves (PR 3):
-   - Calendar already bitten. "When we click on the calendar again, it takes a bite out. That doesn't make any sense. It should just have a bite out already" (G 556). Today the first tap takes the bite. Calendar close-up: "it doesn't actually look like a calendar. See if you can find what we had previously." (G 556).
-   - Closet opens. "when we click on the closet door, ideally it'll open and we could see the costumes and the guardian box." (G 556). Today nothing at home opens yet: once Mops leaves, "That evening…" comes straight away.
-   - Homework at the desk is the one required thing. "The one thing you'll have to do is go to the desk and do homework." (G 567). Heading "I sweaty" (G 567). The bot picks the homework, no question needed: "do something fun, you come up with whatever you think makes sense, and I'm gonna be just fine with it." (G 576). Also "maybe there's a little cutaway of Sasquatch doing homework there" (G 567).
+1. **The morning, built as one ordered sequence (G 547 to 567).** Brian agreed today to rebuild it his way. Waking up through Mops leaving is built in the morning PR (#82, branch feat/morning-rebuild); every line is approved (Brian 2026-11-23: "1A", "2B") and the beard-wringing close-up with Mops on the bucket model is approved as drawn ("3A"). Still to build, after Mops leaves (PR 3, home alone). Button and goal words Brian approved 2026-11-23 ("6A"): "OPEN · closet", "FLOP · bed", and the goal "Squatch: do your homework":
+   - Calendar already bitten. "When we click on the calendar again, it takes a bite out. That doesn't make any sense. It should just have a bite out already" (G 556). Today the first tap takes the bite. Calendar close-up (the beard-wringing cutaway look is approved, "3A"; this calendar picture is a separate ask): "it doesn't actually look like a calendar. See if you can find what we had previously." (G 556).
+   - Closet opens. "when we click on the closet door, ideally it'll open and we could see the costumes and the guardian box." (G 556). Button: "OPEN · closet" (approved, "6A"). Today nothing at home opens yet: once Mops leaves, "That evening…" comes straight away.
+   - Homework at the desk is the one required thing. "The one thing you'll have to do is go to the desk and do homework." (G 567). Heading "I sweaty" (G 567). The bot picks the homework, no question needed: "do something fun, you come up with whatever you think makes sense, and I'm gonna be just fine with it." (G 576). Also "maybe there's a little cutaway of Sasquatch doing homework there" (G 567). Goal chip: "Squatch: do your homework" (approved, "6A"). The bed flop button: "FLOP · bed" (approved, "6A").
 2. **Dress-up pieces snap to the nearest body spot.** Brian, 2026-11-23: "let's try to have them snap but be okay with absurdist results, for instance, pants on the head." Whatever the piece is, it snaps to the spot nearest where it is dropped. Today each piece goes to its own fixed zone (13-ch1-slice.js:171-177). Replaces "put it more or less wherever" (G 603).
 3. **Raising the alarm at the party.** Brian, 2026-11-23: the guest runs to the wall alarm. Today at the party the guest runs to a spot on the floor and the PA shouts "FUR! Security!" too; it should be the red wall alarm, as at the Day 2 lunch. "anytime you're seeing or anytime fur detected someone needs to run the trip alarm." (K 163).
 4. **A catch at the party.** Brian, 2026-11-23, "Card, restart scene": a catch shows the lockup card, then the current scene restarts. Today (since PR #69) a catch at the party shows the card and puts him back a little in the party; it should restart the part of the party he is in, with the party split into its five parts (peek, sneak, free play, alarm, run home).
@@ -30,7 +52,6 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 - **The party picture.** Main already draws Isfred on the stage; Brian's "Fred on the stage, that he's not actually on the stage at all" (G 603) was about v2. The banner: "Robotics delegation banner doesn't make sense where it is" (G 603); older "the robotic delegation sign doesn't make any sense there. Maybe it's a banner that should be hanging or something." (G 292). Newest wins: keep a hanging banner, change where it hangs.
 - **The plant eyes.** Merged today in PRs #68 to #73. History: center (G 292), "Low is fine" (G 309), "a little low still" (G 430), "we had it right in the very original" (G 442), "eyes are wrong in bush again" (G 526). Newest instruction: copy the original; check the merged version.
 - **Home room objects.** "the new version of the crate in the room is off, at least in the picture you showed." (G 597). Covers crate, bed, bucket, bedtime-story look, janitor facing. Walls and furniture merged today; check.
-- **The morning walk and pacing.** "Squatch is starting bad. the way they move when the song comes on is kinda weird." (G 556); "it jumps a little too much before he leaves." (G 556); "Regarding pacing, we never really had that nailed" (G 561); the crib: "getting out of the crib's a little wonky" (K 191).
 - **The dance game.** A scrolling-arrow dance exists but you said it never worked. "The dance game, hopefully that can be done clean and simple. If not, forget it." (G 516). "the fur shows at the dance scene" (G 603) is unclear.
 - **The balloon game.** "The balloon thing has just never worked when we've tried it before ... if it's all wonky and confusing, forget it." (G 516); "the balloon's just total nonsense" (K 336). Still in main (12-ch1-redesign.js:808-834).
 - **Who says "fur".** "It's not clear who's saying wait a second fur." (G 603).
@@ -50,7 +71,6 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 ## 3. Your instructions disagree
 
 - **May bots merge while you are away?** "Nothing merges without my yes in the pull request." (S 227) against "merge without checking with me" (S 1286), and in the newest thread "I want you to just make decisions and update the live game without me having to verify anything further" (G 516) and "no need to ask for permission, i'm walking away" (G 365). Two waivers or a standing rule; confirm.
-- **Sing button.** "I Think Maybe The Song Button Should Always Be There As An Option" (P L204), later "Button is fine" (S 1356) and the sing-along option in the morning (G 556). Newest supports an optional sing-along in the morning song, not a permanent button.
 
 ## 4. Everything else not built
 

@@ -864,7 +864,7 @@
         bot: "Security",
         robot: "Robot",
         pa: "Station PA",
-        speaker: "Station PA", // the wall speaker in the home room (morning); its tag comes from the morning's lines file
+        speaker: "Speaker", // the wall speaker in the home room (morning); the morning reads its tag from the morning's lines file (Brian 2026-11-23: "Speaker")
         kid: "Kid",
         exec: "Exec",
         demo: "Snack Clerk",

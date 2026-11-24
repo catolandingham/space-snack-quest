@@ -12,22 +12,22 @@
 export const MORNING_LINES = Object.freeze([
   { id: "card-jupiter", who: "card", text: "Stormtop Cloud Resort, floating above Jupiter.", status: "approved", source: "walkthrough beat 1, decided" },
   { id: "card-squatch", who: "card", text: "This is Squatch. He's a Sasquatch.", status: "approved", source: "walkthrough beat 1, decided" },
-  { id: "speaker-party", who: "speaker", text: "Good morning, Stormtop! Big party in the hall tonight!", status: "needs-yes", source: "picked for v2 (S 1388 to 1391); Q2 answer 2026-11-23: \"I like them generally\"" },
-  { id: "speaker-invite", who: "speaker", text: "Everyone is invited!", status: "needs-yes", source: "new: Q2 answer 2026-11-23 \"you can expand to help with story and flow\"" },
+  { id: "speaker-party", who: "speaker", text: "Good morning, Stormtop! Big party in the hall tonight!", status: "approved", source: "Brian 2026-11-23: 1A / 2B" },
+  { id: "speaker-invite", who: "speaker", text: "Everyone is invited!", status: "approved", source: "Brian 2026-11-23: 1A / 2B" },
   { id: "mops-morning", who: "mops", text: "Morning, Squatch.", status: "approved", source: "walkthrough beat 1, Brian yes Nov 14; after the speaker by the Q1 answer 2026-11-23" },
   { id: "sq-party", who: "sq", text: "Party?", status: "approved", source: "walkthrough beat 1, Nov 14; before the cutaway by the Q1 answer 2026-11-23" },
-  { id: "speaker-song", who: "speaker", text: "Now here's a classic hit from Dog Zylan!", status: "needs-yes", source: "Brian's words S 1378, picked for v2 (S 1390, S 1391); Q2 answer 2026-11-23: \"I like them generally\"" },
+  { id: "speaker-song", who: "speaker", text: "Now here's a classic hit from Dog Zylan!", status: "approved", source: "Brian 2026-11-23: 1A / 2B" },
   { id: "mops-song", who: "mops", text: "Floating in space! It's our favorite song!", status: "approved", source: "Q3 answer 2026-11-23 (from G 561)" },
   { id: "chip-sing", who: "chip", text: "Squatch: sing along with Mops", status: "approved", source: "Q4 answer 2026-11-23" },
   { id: "button-sing", who: "button", text: "SING ALONG", status: "approved", source: "card answer S 1371; \"Button is fine\" S 1356" },
-  { id: "button-talk", who: "button", text: "TALK · Mops", status: "needs-yes", source: "Q4 answer 2026-11-23 chose this path; the words are new" },
+  { id: "button-talk", who: "button", text: "TALK · Mops", status: "approved", source: "Brian 2026-11-23: 1A / 2B" },
   { id: "sq-sing", who: "sq", text: "♪ I'm floating in space! ♪", status: "approved", source: "walkthrough beat 2, decided; S 1335" },
   { id: "mops-sing", who: "mops", text: "♪ Weeee-eenn-nnttt! ♪", status: "approved", source: "walkthrough beat 2, decided; S 1335" },
   { id: "mops-work", who: "mops", text: "I have to go to work now.", status: "approved", source: "Q5 answer 2026-11-23 (from G 561)" },
   { id: "mops-stay", who: "mops", text: "Stay in here.", status: "approved", source: "walkthrough beat 1, Nov 14; Q5 answer 2026-11-23" },
   { id: "card-evening", who: "card", text: "That evening…", status: "approved", source: "walkthrough beat 3, Nov 14" },
-  { id: "tag-speaker", who: "tag", text: "Station PA", status: "needs-yes", source: "the game's name for station announcements, used here over the wall speaker's bubbles" },
-  { id: "cue-tap", who: "cue", text: "tap ▸", status: "needs-yes", source: "morning plan section 1 (\"the pulsing 'tap ▸' cue\"); new words on the picture" },
+  { id: "tag-speaker", who: "tag", text: "Speaker", status: "approved", source: "Brian 2026-11-23: 1A / 2B" },
+  { id: "cue-tap", who: "cue", text: "tap ▸", status: "approved", source: "Brian 2026-11-23: 1A / 2B" },
 ]);
 
 /** The words of one line, by id. Throws on an unknown id, so a typo cannot show empty words. */
