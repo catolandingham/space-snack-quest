@@ -31,7 +31,7 @@ export const PARTY_LINES = Object.freeze([
   { id: "note-lost", half: 1, who: "note", text: "They lost you.", status: "approved", source: "The one capture rule (CLAUDE.md)" },
   { id: "lockup-cause", half: 1, who: "lockup", text: "{who} saw Squatch {where}. Security caught him.", status: "approved", source: "Brian 2026-11-24: Yes to all" },
   { id: "who-tourist", half: 1, who: "lockup", text: "A tourist", status: "approved", source: "In the game (the hall's lockup card)" },
-  { id: "who-bartender", half: 2, who: "lockup", text: "The bartender", status: "approved", source: "Brian 2026-11-24: Yes to all" },
+  { id: "who-bartender", half: 1, who: "lockup", text: "The bartender", status: "approved", source: "Brian 2026-11-24: Yes to all" },
   { id: "who-guard", half: 1, who: "lockup", text: "A guard", status: "approved", source: "Brian 2026-11-24: Yes to all" },
   { id: "where-hall", half: 1, who: "lockup", text: "in the hall", status: "approved", source: "In the game (the hall's lockup card)" },
   { id: "where-bar", half: 2, who: "lockup", text: "at the snack bar", status: "approved", source: "Brian 2026-11-24: Yes to all" },

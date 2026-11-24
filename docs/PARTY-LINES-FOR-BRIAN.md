@@ -23,7 +23,7 @@ Half one is P1 to P5 (peek to dress-up), built first. Half two is P6 to P8. The 
 | 11 | P2 on. After the guards give up and walk out | They lost you. | note | one | approved | The one capture rule (CLAUDE.md) |
 | 12 | P2 on. The LOCKUP card when a guard reaches him (blanks filled below) | {who} saw Squatch {where}. Security caught him. | lockup | one | approved | Brian 2026-11-24: Yes to all |
 | 13 | LOCKUP card, who: a guest saw him | A tourist | lockup | one | approved | In the game (the hall's lockup card) |
-| 14 | LOCKUP card, who: the bartender saw him | The bartender | lockup | two | approved | Brian 2026-11-24: Yes to all |
+| 14 | LOCKUP card, who: the bartender saw him | The bartender | lockup | one | approved | Brian 2026-11-24: Yes to all |
 | 15 | LOCKUP card, who: a guard saw him first | A guard | lockup | one | approved | Brian 2026-11-24: Yes to all |
 | 16 | LOCKUP card, where: the hall floor | in the hall | lockup | one | approved | In the game (the hall's lockup card) |
 | 17 | LOCKUP card, where: at the bar | at the snack bar | lockup | two | approved | Brian 2026-11-24: Yes to all |

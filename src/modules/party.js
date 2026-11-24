@@ -21,7 +21,7 @@ import { partyLine, lockupCause } from "./party-lines.js";
 import { HALL, SPOTS, CAST, GLANCE, GLANCE_TIMES, HALL_PICTURE, BANNER } from "./party-hall.js";
 import { coneFrom, towardStage, lookAt, coneSees, drawCones, SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
 import { drawHall } from "./party-draw.js";
-import { drawDoorNotes, drawFlyer, drawOutfit, drawPerson, LOOKS, drawAlarmCloseUp, drawBanner, drawTripod, drawBand } from "./party-art.js";
+import { drawDoorNotes, drawFlyer, drawOutfit, drawPerson, LOOKS, drawAlarmCloseUp, drawBanner, drawTripod, drawBand, drawMark } from "./party-art.js";
 import { startAlarm, tickAlarm, guardCones, homeGuardCone, ALARM } from "./party-alarm.js";
 import { tickVent, ventTufts } from "./party-vent.js";
 import { openFullScreen, closeFullScreen, fullScreenOpen } from "./fullscreen.js";
@@ -541,7 +541,9 @@ export function createParty(bridge) {
     if (free && p.pose === "bed" && !p.alarm && e.steering()) ((p.pose = "stand"), e.set("sqPose", "stand"));
     // Sight: whoever's cone holds him shows "?", then "!" if he stays too long, and the alarm starts.
     if ((p.scene === "P2" || p.scene === "P4") && inHallNow && !p.alarm) {
-      const seen = free && p.pose === "stand" ? cones(p).find((c) => coneSees(c, s)) : null;
+      // A cone of someone who can raise the alarm wins over Isfred's or the band's (who only show "?").
+      const all = free && p.pose === "stand" ? cones(p).filter((c) => coneSees(c, s)) : [];
+      const seen = all.find((c) => WITNESS[c.id]) || all[0] || null;
       if (!seen) ((p.seenBy = ""), (p.seenT = 0));
       else {
         p.seenT = p.seenBy === seen.id ? p.seenT + dt : 0;
@@ -736,6 +738,8 @@ export function createParty(bridge) {
       drawCones(ctx, [c], s, p.pose === "bed", true, (k) => e.noteCone(k));
       // As tall next to Squatch as in the hall (Squatch is 80% of a grown-up): the home room draws him bigger.
       drawPerson(ctx, g.x, g.y, (50 * e.squatchScale()) / 0.8, LOOKS.guard, Math.cos(g.a) < 0 ? -1 : 1, t);
+      // Guards show "!" at once when they see him.
+      g.sees && drawMark(ctx, g.x, g.y - (50 * e.squatchScale()) / 0.8 - 26, "!", 48, t);
     }
     outline(p, "closet");
   }
