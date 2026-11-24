@@ -29,6 +29,7 @@ export const MORNING_LINES = Object.freeze([
   { id: "card-evening", who: "card", text: "That evening…", status: "approved", source: "walkthrough beat 3, Nov 14" },
   { id: "tag-speaker", who: "tag", text: "Speaker", status: "approved", source: "Brian 2026-11-23: 1A / 2B" },
   { id: "cue-tap", who: "cue", text: "tap ▸", status: "removed", source: "Brian 18a, 2026-11-23: just the NEXT button" },
+  { id: "mops-stop", who: "mops", text: "Hey, stop that!", status: "approved", source: "Brian 2026-11-24: 31a" },
 ]);
 
 /** The words of one line, by id. Throws on an unknown id, so a typo cannot show empty words. */

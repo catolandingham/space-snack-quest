@@ -81,6 +81,10 @@
       nV = (l) => l[Math.floor(Math.random() * l.length)],
       S = null,
       M = null,
+      // Under the master volume M: the music level (MU) and the sound-effects level (FX), at the levels the
+      // modules set (src/modules/sound-mix.js, Brian 2026-11-24 sound plan section 8).
+      MU = null,
+      FX = null,
       z = 1;
     // The address the real game is played at (Brian, 2026-11-23: "We can drop first website and just go with
     // Squatch"; the old site is deleted). Anywhere else is a preview: test links work there and saves use other keys.
@@ -138,6 +142,8 @@
             s = i.AudioContext || i.webkitAudioContext;
           if (!s) return;
           ((S = new s()), (M = S.createGain()), (M.gain.value = 0.5 * z), M.connect(S.destination));
+          let mix = (window.SSQ && window.SSQ.mix) || {};
+          ((MU = S.createGain()), (MU.gain.value = mix.music || 1), MU.connect(M), (FX = S.createGain()), (FX.gain.value = mix.effects || 1), FX.connect(M));
           // On an iPhone, play through the ring/silent switch like a video does.
           try {
             navigator.audioSession && (navigator.audioSession.type = "playback");
@@ -192,7 +198,7 @@
             R.gain.exponentialRampToValueAtTime(s, A + 0.01),
             R.gain.exponentialRampToValueAtTime(1e-4, A + o),
             T.connect(R),
-            R.connect(M),
+            R.connect(FX || M),
             T.start(A),
             T.stop(A + o + 0.05));
         } catch {}
@@ -268,9 +274,9 @@
         q = S.createStereoPanner
           ? (() => {
               let R = S.createStereoPanner();
-              return ((R.pan.value = w(o, -1, 1)), R.connect(M), R);
+              return ((R.pan.value = w(o, -1, 1)), R.connect(FX || M), R);
             })()
-          : M;
+          : FX || M;
       s.connect(q);
       let d = Math.floor(Math.random() * 4),
         A = 0.05 * l,
@@ -347,7 +353,7 @@
         if (!s || !S || !M || G) return;
         let q = S.createBufferSource(),
           d = S.createGain();
-        ((q.buffer = s), (q.playbackRate.value = i), (d.gain.value = 0.9), q.connect(d), d.connect(M), q.start());
+        ((q.buffer = s), (q.playbackRate.value = i), (d.gain.value = 0.9), q.connect(d), d.connect(FX || M), q.start());
       });
     }
     let R1 = 0;
@@ -439,7 +445,7 @@
             A.gain.setValueAtTime(0.12, s + Math.max(0.05, o - 0.08)),
             A.gain.exponentialRampToValueAtTime(1e-4, s + o + 0.06));
           let P = S.createGain();
-          ((P.gain.value = 0.35), q.connect(A), d.connect(P), P.connect(A), A.connect(M));
+          ((P.gain.value = 0.35), q.connect(A), d.connect(P), P.connect(A), A.connect(MU || M));
           for (let _ of [q, d, T]) (_.start(s), _.stop(s + o + 0.1));
         } catch {}
     }
@@ -529,7 +535,7 @@
           S &&
           M &&
           S.createMediaElementSource &&
-          ((warmGain = S.createGain()), (warmGain.gain.value = 0), S.createMediaElementSource(warmEl).connect(warmGain), warmGain.connect(M), (warmVia = "gain"));
+          ((warmGain = S.createGain()), (warmGain.gain.value = 0), S.createMediaElementSource(warmEl).connect(warmGain), warmGain.connect(MU || M), (warmVia = "gain"));
       } catch {
         warmGain = null;
       }
@@ -1065,8 +1071,8 @@
         (n.bt = 0),
         l.k === "bub" && l.b.text.startsWith("Nobody can live outside") && _i("banish"),
         l.k === "bub"
-          ? (D.key(),
-            l.b.who === "mops" && D.baa(),
+          ? // A soft tick, and Mops's meh on his first line in a scene (src/modules/morning-sound.js, Brian 34A).
+            (window.SSQ && window.SSQ.bubbleSound && window.SSQ.bubbleSound(l.b, n.scene),
             (l.b.who === "ups" || l.b.who === "robot" || l.b.who === "scanner" || l.b.who === "bot") && D.bleep(),
             Dt("bub", pa[l.b.who], l.b.text, l.b.style + (l.b.ear ? "+ear" : "")),
             // The morning plays Brian's recording instead of the made-up tune (src/modules/home-music.js).
@@ -1173,6 +1179,8 @@
     }
     function nf() {
       if (n.ch1Calendar) return ch1CloseCalendar();
+      // Brian 30a: a cutaway picture with no words and nothing to tap plays by itself; a tap does not skip it.
+      if (n.cur && n.cur.k === "cutaway" && n.cur.auto) return void VV();
       if ((VV(), de())) {
         // Too soon after the bubble opened (task T22): keep the tap, show it was heard, apply it at 0.3 s.
         if (n.bt < 0.3) return void ((n.tapLate = n.cur), (n.tapT = n.T));

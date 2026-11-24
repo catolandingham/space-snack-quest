@@ -4,24 +4,26 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–59 | ## Where main is (Chapter 1 redesign) |
-| 60–74 | ## Register |
-| 75–96 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 97–117 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 118–130 | ## Phase 2 (plan section 4, T13 to T18) |
-| 131–153 | ## Phase 1 (plan section 3, T5 to T12) |
-| 154–167 | ## SS40–SS44 |
-| 168–185 | ## Story rows |
-| 186–204 | ## Reset section |
-| 205–215 | ## Still open |
-| 216–219 | ## Chapter 1 replot, recorded and not built |
-| 220–365 | ## Changelog |
+| 24–61 | ## Where main is (Chapter 1 redesign) |
+| 62–76 | ## Register |
+| 77–98 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 99–119 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 120–132 | ## Phase 2 (plan section 4, T13 to T18) |
+| 133–155 | ## Phase 1 (plan section 3, T5 to T12) |
+| 156–169 | ## SS40–SS44 |
+| 170–187 | ## Story rows |
+| 188–206 | ## Reset section |
+| 207–217 | ## Still open |
+| 218–221 | ## Chapter 1 replot, recorded and not built |
+| 222–369 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-24, draft PR on branch `feat/morning-sound`, not merged: the morning's and home alone's sound (Brian's "34(A)": every MY PICK on the sound board, `synth.js`, `morning-sound.js`), the beard squirt and "Hey, stop that!" ("31a"), wordless cutaway pictures playing by themselves ("30a", CLAUDE.md rule 3), music and effects levels under the master and Brian's recording turned up 10 dB (`sound-mix.js`). See README.
 
 2026-11-24, draft PR #85 on branch `feat/party-rebuild` (party rebuild, half one), not merged: party scenes P1 to P5 as `src/modules/party.js` with `party-alarm.js` (the one capture rule), `party-vent.js` (the no-disguise fur rule), `dress-up.js` and `fullscreen.js` (the full-screen dress-up), `party-hall.js`, `party-art.js`, `party-draw.js`, words in `party-lines.js` (sheet `docs/PARTY-LINES-FOR-BRIAN.md`, all approved 2026-11-24), the picture sheet tool `tools/party-sheet.mjs`. Hands off to the older free play (arrow dance and "Cool hat!" off). Half two (P6 to P8) is next. Not yet played by a person.
 
@@ -218,6 +220,8 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/old/OPEN-ASKS.md`. The
 `docs/DECISIONS.md` rows R29 through R63 are the Nov 8–9 cartoon decisions. R29–R57 cover the home wardrobe, no home vent, the pickup-day crate, the spare blue jacket disguise, Isfred Bar Neshuman, ball-hide timing, the office computer, the connecting hallway, the party with no Mops and no robots, the office cutscene, and the Employee of the Month gallery (5 photos, crooked photo #4, keepsake points still open). R58–R63 are not in the game. R58: returning the balloon gets a wordless smile, a finger to the lips, and a thumbs-up; keeping it makes the kid yell "Scary Wookiee!" (NEEDS BRIAN), pulls the FUR alarm, and brings security; never jumping sends the balloon to the ceiling, the kid is sad, and nothing else happens. R59, delegated by Brian: the kid gasps with "!" and points, then a 6-second wobbly glowing rise while grabbable, one jump grabs it, and it reads with no words. R60: the pair hunt is dropped; a "Find someone who…" picture card is proposed and pending Brian; the octopus is an over-snacked, huggy tourist ("*hic* Fellow tourist!", NEEDS BRIAN) whose two hugs knock the disguise off; a photo corner lets Squatch enter the shot, then a cut to a printing Polaroid, with bonus points if he is in it (amount open); tapes proof is dropped; the third snack-table grab starts a chain reaction that pushes things off the far end and gives a hide window (4-second placeholder, needs Brian). R61: the balloon stays in the party hall later (on the ceiling if missed, tied near the kid's spot if returned) and pops quietly with a comic "POP!" (NEEDS BRIAN) on the last Chapter 1 hall visit. R62: funnier gags are things worn as horns, something in his mouth, and random things on his head, about 16, the Squatch ball-roll photobomb stays, and the crooked photo stays #4; the crayon drawing reads as Squatch and Mops with "Always tied together" (NEEDS BRIAN) underneath; controls are left and right arrows under the photo plus an X that is always visible; swiping past photo 5 always triggers "BEEP BEEP" (NEEDS BRIAN) and the gallery cuts out. R63: kid-handwritten "MOPS" and "ME" (NEEDS BRIAN), and a dotted sight line from Mops to Squatch with hearts rising from it, contrasting with the "!" other characters get. They are not in the game. New on-screen words are marked NEEDS BRIAN in `docs/CH1-CARTOON-LINES.md`. Ball-hide numbers (R43, about 70px for 2 seconds), the 6-second rise (R59), and the 4-second snack-table placeholder (R60) are written down only. This page does not change a timer, a price, or a range in the build.
 
 ## Changelog
+
+2026-11-24, draft PR on `feat/morning-sound`. New `synth.js` (the board's recipes), `sound-mix.js` (MIX: music 0.8, effects 1, Floating in Space +10 dB); `morning-sound.js` rewritten (cues, bubble tick and meh rule, a log for tests, `measure`); `cutaway.js` gains `AUTO` (30a), `SOUNDS`, the beard's glow, squirt and target, and the close-up bubble's place; `morning.js` cues each step's sounds, `pictureTap` (31a); `home-alone.js` the closet and flop sounds; `home-music.js` plays on the music level (background 0.5). Line 19 "Hey, stop that!" (31a). Engine: MU and FX levels, `bubbleSound`, auto pictures, the line over a close-up, `cutIn`. Deleted: the click on every bubble and the baa on every Mops line, the old snore and ding-dong code. New test `sound-cues`.
 
 2026-11-24, draft PR #85 again, the independent review's fixes (private PARTY-HALF1-REVIEW-fable.md): band name tag "Croc Boys" (new line 25); tufts drift every frame (`moveTufts`); the free play opens where P4 left everyone (cast, Isfred, octopus, camera, lights, pairs from `party-hall.js` through the module; nothing typed twice); TALK · guest and the arrow dance removed (four dance pins deleted with the code: needs Brian's yes); stage cones send the nearest guest; guards search a route, watched hides fail, the home guard gives up; hall solids, home boxes and the two doorway outlines come from one place each; half-two drawings in `tools/party-half-two-art.js`; `drawMopsOn` hand-over removed. New tests measure the drawn "?", the peek's pixels, names over bubbles, pairs and faces by cone angle, the calm's movement, jumps over 60, ↺ in P3.
 

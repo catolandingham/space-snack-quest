@@ -17,7 +17,7 @@ Before sending Brian any picture, check everything visible in it against the app
 ## Brian's design rules (full text: docs/REVIEW-RULES.md)
 1. Every beat has a cause, a need it answers, and an effect. Armature: "Home is where love doesn't have to hide."
 2. A 10-year-old must get it. Short lines. A cutscene beats a clever clue.
-3. One new idea per beat. One bubble at a time. Nothing auto-advances.
+3. One new idea per beat. One bubble at a time. Nothing auto-advances, except (Brian, 2026-11-24, "30a") a cutaway picture with no words and nothing to tap: it plays by itself for 2 to 4 seconds, ending on a clear last frame, then the game goes on. One with a line or something to tap still waits for NEXT.
 4. Nothing is named before it is shown; what a line mentions is visible and glows when it matters.
 5. Draw it, don't describe it. No narration in parentheses.
 6. Script lines are word for word from the spine. New or changed lines need Brian's yes.

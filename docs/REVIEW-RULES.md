@@ -3,18 +3,20 @@
 
 | Lines | Heading |
 | --- | --- |
-| 19–22 | # Review rules |
-| 23–74 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
-| 75–77 | ## Techniques |
-| 78–80 | ## Mistake: locked art was redrawn |
-| 81–85 | ## Mistake: optional inspection interrupted getting out of bed |
-| 86–88 | ## Mistake: a big doc's section index went stale |
-| 89–91 | ## Mistake: a rebuilt beat forgot the step restart |
-| 92–94 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
-| 95–97 | ## Mistake: a killed run was read as a failing test |
-| 98–100 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
-| 101–103 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
-| 104–110 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
+| 21–24 | # Review rules |
+| 25–76 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
+| 77–79 | ## Techniques |
+| 80–82 | ## Mistake: locked art was redrawn |
+| 83–87 | ## Mistake: optional inspection interrupted getting out of bed |
+| 88–90 | ## Mistake: a big doc's section index went stale |
+| 91–93 | ## Mistake: a rebuilt beat forgot the step restart |
+| 94–96 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
+| 97–99 | ## Mistake: a killed run was read as a failing test |
+| 100–102 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
+| 103–105 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
+| 106–112 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
+| 113–120 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
+| 121–126 | ## Mistakes caught building the morning sound (2026-11-24) |
 <!-- /section-index -->
 # Review rules
 
@@ -45,7 +47,7 @@ Run EVERY scene through ALL of these, both at script time and on screenshots aft
     - Ambient chatter is small auto-fading bubbles over the speaker.
     - Overheard lines get an ear icon.
     - No bottom-left dialogue box. The objective chip is hidden while a bubble is up.
-14. **Nothing auto-advances.** Every cutscene card, panel, frame and line waits for a tap/click (the NEXT button shows it; no "tap ▸" note, Brian 18a), including the "Years ago" and "Now" cards.
+14. **Nothing auto-advances.** Every cutscene card, panel, frame and line waits for a tap/click (the NEXT button shows it; no "tap ▸" note, Brian 18a), including the "Years ago" and "Now" cards. One exception, Brian 2026-11-24, "30a": "a cutaway with no words and nothing to tap plays by itself (about 2 to 4 seconds, ending on a clear last frame), then the game goes on; one with a line, or something to tap, still waits for NEXT." A tap does not skip it, and the big button is dimmed (no NEXT) while it plays (`src/modules/cutaway.js`, `AUTO`; `tests/morning-order.mjs`, `tests/home-alone.mjs`).
 15. **Simple visual style.** Gameplay looks like the cutscenes: bold flat shapes, a limited palette, no clutter, only what matters, and interactive objects clearly highlighted (pulse/glow).
 16. **Drawn, not described.** Never put a visual in caption text when it can be drawn (crayon drawings, hair on a note, coffee stains, torn edges, paw prints). No "(narration in parentheses)" lines.
 17. **Exact-text rule for briefs:** report scripts to Brian verbatim (speaker + exact text, every card), as clear and warm as the chat version.
@@ -115,3 +117,9 @@ The later full touch run exposed a test-driver gap: it waited whenever walking w
 - Some cones only ever showed "?" (Isfred's, the band's): nobody "randomly doesn't care". If the one who sees him cannot run, someone near him does.
 - A test read the source for `size: 42` instead of measuring the mark drawn. Measure what is drawn (review rule 22).
 - Drawings for a later half and a look Brian did not pick sat in shipped modules. They live in `tools/` until the half that uses them.
+
+## Mistakes caught building the morning sound (2026-11-24)
+- A sound timed to a picture was checked against the time read after the frame that played it, so it looked a frame late. A sound check reads the picture's time at the moment the sound played (the step's `el` less that frame), and allows one frame.
+- A wait on a real clock (the snoring's audio clock) met a test that only ticks the game: the room's snores did not come. A test that counts sounds booked on the audio clock lets real time pass there.
+- The first glow (a yellow halo round the beard) vanished against the yellow bucket and under Mops's shirt; the test counted the halo and found none. A glow that says "tap this" must show against everything behind it: the beard itself is lit pale yellow, with outlined stars, and the test measures the drawn colour.
+- An auto-advancing picture clears the step, and the next one comes up on the following frame; a test that reads the button in between reads the dimmed "~". Read what is up a frame after the change.

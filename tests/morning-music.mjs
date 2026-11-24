@@ -5,7 +5,8 @@
  * - The morning keeps the room quiet before the song (Joe's theme does not play under the speaker).
  * - Sound on: the recording music/floating-in-space.mp3 starts on the tap after "Now here's a classic hit
  *   from Dog Zylan!", never before; it plays as a decoded buffer through the game's master volume (no new
- *   <audio> element); Joe's theme is quiet while it plays; it dips under each sung line and comes back; the
+ *   <audio> element) on the music level, turned up 10 dB to sit level with Joe's theme (sound plan section 8);
+ *   Joe's theme is quiet while it plays; it dips under each sung line and comes back; the
  *   made-up tune (co) does not play over it; after Mops leaves it keeps playing while Squatch is home alone,
  *   and fades out on "That evening…".
  * - Sound turned on partway through the song step: the recording starts from the top, at background level.
@@ -114,7 +115,7 @@ const waitFor = async (r, ok, ms = 8000) => {
   await r.tap();
   s = await waitFor(r, (s) => s.warmPaused !== false && s.ms && s.ms.breaths > 0, 6000);
   g.check('on "This is Squatch" the theme fades out and he snores softly', s.k === "card" && s.id === "squatch" && s.warmPaused !== false && s.ms.snoring && s.ms.breaths > 0, s);
-  g.check("the snoring plays through the game's master volume", s.ms.via === "master", s.ms);
+  g.check("the snoring plays through the sound-effects level, under the game's master volume", s.ms.via === "effects", s.ms);
   await r.tap();
   s = await waitFor(r, (s) => s.k === "wait", 3000);
   const b0 = s.ms.breaths;
@@ -180,8 +181,10 @@ const waitFor = async (r, ok, ms = 8000) => {
   g.check("the song has been playing for over a second before Mops's \"Floating in space!\" line",atLine.playing && atLine.playedFor >= 1.2, atLine);
   s = await waitFor(r, (s) => s.m.playing);
   g.check("the tap after the Dog Zylan line starts the recording (32.6 s), past its quiet start", s.m.playing && s.mm.starts.length === 1 && Math.abs(s.mm.starts[0].dur - 32.6) < 0.5 && Math.abs(s.mm.starts[0].offset - SKIP) < 0.01 && SKIP > 2, s.mm.starts);
-  g.check("it plays through the game's master volume, not a new <audio> element", s.m.via === "master" && !s.mm.audios.some((a) => /floating/.test(a)), { via: s.m.via, audios: s.mm.audios });
+  g.check("it plays through the music level under the game's master volume, not a new <audio> element", s.m.via === "music" && !s.mm.audios.some((a) => /floating/.test(a)), { via: s.m.via, audios: s.mm.audios });
   g.check("first play at full level", Math.abs(s.m.target - 1) < 0.01, s.m);
+  // Sound plan section 8: the file is 10 dB quieter than Joe's theme (ffmpeg: -27.1 against -17.1 LUFS).
+  g.check("Brian's recording is turned up 10 dB to sit level with Joe's theme", Math.abs(s.m.gain - 3.16) < 0.01, s.m);
   s = await waitFor(r, (s) => s.warmPaused !== false, 3000);
   g.check("Joe's theme is quiet while the recording plays", s.warmCue === "" && s.warmPaused !== false && s.m.playing, { warmCue: s.warmCue, warmPaused: s.warmPaused });
   s = await tapUntil(r, (s) => s.ctrl && !!s.chip);
