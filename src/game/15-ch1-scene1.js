@@ -137,7 +137,7 @@
         : [];
     }
     function ch1OpenCalendar(next) {
-      n.ch1Calendar = { ctrl: n.ctrl, next, age: 0, paw: { x: 780, y: 590 } };
+      n.ch1Calendar = { ctrl: n.ctrl, next, age: 0 };
       n.ctrl = !1;
       n.act = null;
       n.walkTo = null;
@@ -163,7 +163,6 @@
         }
         return !1;
       }
-      z.paw = { x, y };
       if (z.age < 0.25) return !0;
       // The snack is only a picture: touching it does nothing (the paper is already nibbled, Brian G 556).
       if (Math.hypot(x - 880, y - 540) < 64) ch1CloseCalendar();
@@ -267,7 +266,7 @@
       e.translate(460, 320); e.scale(0.92 + 0.08 * zoom, 0.92 + 0.08 * zoom);
       e.drawImage(paper, -360, -265);
       e.restore();
-      drawPawArm(z.paw);
+      // No paw on the close-up (Brian 2026-11-23: "It's the calendar paw that doesn't make sense").
       // At 375px wide this remains a roughly 44px target, unlike the older cut-in X.
       L(880, 540, 58); r("#ffffff", 4); g("X", 880, 540, 40, "#1e2430", "center", 900);
     }

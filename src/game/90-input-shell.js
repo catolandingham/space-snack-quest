@@ -438,10 +438,8 @@
         actionUp: actionRelease,
         tapAt: O5,
         ch1Pointer: (kind, x, y) => {
-          if (n.ch1Calendar) {
-            n.ch1Calendar.paw = kind === "up" ? { x: 780, y: 590 } : { x, y };
-            return;
-          }
+          // The calendar close-up has no paw (Brian 2026-11-23): a drag there moves nothing.
+          if (n.ch1Calendar) return;
           ch1SlicePointer(kind, x, y);
           ch1Day2Pointer(kind, x, y);
         },
