@@ -539,6 +539,11 @@ export function createParty(bridge) {
       p.scene === "P4" && !p.flyer && (p.flyer = "back");
     }
     if (free && p.pose === "bed" && !p.alarm && e.steering()) ((p.pose = "stand"), e.set("sqPose", "stand"));
+    // Anything else that stood him up (the game's own walk out of a hiding place) counts as stepping out too.
+    if (free && p.pose === "hidden" && inHallNow && e.get("sqPose") === "stand" && (p.scene === "P2" || p.scene === "P4")) {
+      p.pose = "stand";
+      p.scene === "P4" && !p.flyer && (p.flyer = "back");
+    }
     // Sight: whoever's cone holds him shows "?", then "!" if he stays too long, and the alarm starts.
     if ((p.scene === "P2" || p.scene === "P4") && inHallNow && !p.alarm) {
       // A cone of someone who can raise the alarm wins over Isfred's or the band's (who only show "?").
@@ -606,8 +611,10 @@ export function createParty(bridge) {
       // while the alarm rings.
       p.scene === "P2" && out.push(plant("middle"), plant("back"));
       p.scene === "P4" && p.alarm && out.push(plant("middle"), plant("back"));
-      (p.alarm || p.scene === "P4") && out.push(door("go-home", HALL_DOOR.x, HALL_DOOR.y, 30));
+      p.alarm && out.push(door("go-home", HALL_DOOR.x, HALL_DOOR.y, 30));
     }
+    // P4: his door is the goal even while he is still in the plant (stepping out is walking there).
+    p.scene === "P4" && room === "hall" && !p.alarm && out.push(door("go-home", HALL_DOOR.x, HALL_DOOR.y, 30));
     if (p.alarm && room === "closet" && p.pose !== "bed")
       out.push({ id: "hidebed", verb: "HIDE", cap: partyLine("button-hide-bed").split(" · ")[1], who: "sq", x: HOME_ROOM.bed.x, y: HOME_ROOM.bed.y, r: 700, thing: { x0: 84, x1: 286, y0: 395, y1: 545 }, f: hideUnderBed });
     if (p.scene === "P5" && room === "closet" && p.phase === "closet")

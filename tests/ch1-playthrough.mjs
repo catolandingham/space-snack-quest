@@ -259,7 +259,9 @@ const hat = await page.evaluate(() => {
   const said = n.log.filter((e) => e.k === "bub").map((e) => e.text);
   return { seconds: ss.COOL_HAT_SECONDS, said, over: n.ch1PartyOver, disguise: n.ch1Disguise };
 });
-g.check("Cool hat! fires at 3 minutes of party play and not sooner", hat.seconds === 180 && hat.over && !hat.disguise && hat.said.includes("Cool hat!"), hat);
+// Half one of the party rebuild: the older free play's time (the pinned 3 minutes) still ends it, but with no
+// "Cool hat!" line: he walks home and the evening ends there (half two brings closing time).
+g.check("the free play ends at 3 minutes of party play, not sooner, with no \"Cool hat!\"", hat.seconds === 180 && hat.over && !hat.said.includes("Cool hat!"), hat);
 
 const balloon = await page.evaluate(() => {
   const ss = window.__ss;
@@ -431,6 +433,22 @@ const play = await page.evaluate(() => {
       ss.opTap();
       continue;
     }
+    // The party's full-screen dress-up: drag a piece onto each bare spot, then GO · party, with the finger's own
+    // pointer events on the view (src/modules/fullscreen.js).
+    const dress = window.SSQ.beat("ch1-party") && window.SSQ.beat("ch1-party").dressTargets();
+    if (dress) {
+      const cv = document.querySelector('canvas[aria-label="dress-up"]');
+      const ev = (type, p) => cv.dispatchEvent(new PointerEvent(type, { clientX: p.x, clientY: p.y, pointerId: 7, bubbles: true }));
+      if (dress.go) ev("pointerdown", dress.go);
+      else {
+        const spot = ["head", "face", "body", "legs"].find((k) => !dress.outfit[k]);
+        (ev("pointerdown", dress.pieces[0]), ev("pointermove", dress.spots[spot]), ev("pointerup", dress.spots[spot]));
+        acts.push("DRESS " + dress.pieces[0].id + " · " + spot);
+      }
+      ss.tick(0.05);
+      still = 0;
+      continue;
+    }
     const cur = n.cur;
     if (cur && cur.k === "panel" && cur.id === "tally") {
       ss.drawFrame();
@@ -481,8 +499,9 @@ const play = await page.evaluate(() => {
         if (rolls.length !== 1 || !(rolls[0].r > 0) || rolls[0].x < 100) return { end: "vent-roll", rolls, acts, texts: texts(), state: ss.ch1State(), shown: [], tally: [] };
       }
       // Optional bedroom inspections are tested separately; this route follows the story goal.
-      // A spot with a place to stand: a circle (r) or a box (the home-alone desk).
-      const spots = ss.spotsNow().filter((s) => s && s.verb && (s.r > 0 || s.box) && s.id !== "home-calendar");
+      // A spot with a place to stand: a circle (r) or a box (the home-alone desk). A doorway the party walks him
+      // through has no button: standing in it is the action.
+      const spots = ss.spotsNow().filter((s) => s && (s.verb || s.r > 0) && (s.r > 0 || s.box) && s.id !== "home-calendar");
       const spot = spots[0];
       if (!spot) {
         end = "no-spot " + n.scene;
@@ -493,6 +512,12 @@ const play = await page.evaluate(() => {
       n.sqPose = "stand";
       ss.drawFrame();
       ss.tick(0.05);
+      if (!spot.verb) {
+        acts.push("WALK · " + spot.id);
+        ss.tick(0.05);
+        still = 0;
+        continue;
+      }
       const act = ss.offerNow();
       if (!act || !act.f) {
         end = "no-act " + n.scene + " " + (act && act.verb);
@@ -539,7 +564,9 @@ const play = await page.evaluate(() => {
   };
 });
 g.check("Chapter 1 reaches the tally card", play.end === "tally", { end: play.end, acts: play.acts, scene: play.state.scene });
-const wantActs = ["SING ALONG", "DO · homework", "PEEK · doorway", "HIDE · plant", "SHUFFLE · outfit", "GO · party", "TAKE · robot flyer", "JUMP · balloon", "GIVE · balloon", "TALK · guest", "OPEN · snack bar", "CLOSE · cut-in", "SNAP · photo", "SNAG · plant", "HIDE · bed", "TAKE · gift", "PUT · box", "DROP · box", "LOOK · calendar", "TAKE · lunch", "SNEAK · hallway", "GIVE · lunch", "FEED · lunch", "FEED · bag", "TAKE · snack", "DROP · snack", "HIDE · plant", "GO · hall", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "LEAVE · food", "PUT · slip", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
+// The party night's half one (src/modules/party.js): the peek, the plant, home through his door, the dress-up,
+// out through his door; then the older free play (no flyer to take, no balloon: they went with the rebuild).
+const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "WALK · go-home", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "TALK · guest", "OPEN · snack bar", "CLOSE · cut-in", "SNAP · photo", "SNAG · plant", "HIDE · bed", "TAKE · gift", "PUT · box", "DROP · box", "LOOK · calendar", "TAKE · lunch", "SNEAK · hallway", "GIVE · lunch", "FEED · lunch", "FEED · bag", "TAKE · snack", "DROP · snack", "HIDE · plant", "GO · hall", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "LEAVE · food", "PUT · slip", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
 g.check("the player does the new actions in order", JSON.stringify(play.acts) === JSON.stringify(wantActs), play.acts);
 const must = [
   "Stormtop Cloud Resort, floating above Jupiter.",
@@ -548,10 +575,13 @@ const must = [
   "\u266A Weeee-eenn-nnttt! \u266A",
   "Mmf mmf... mm-mmf... mmf!",
   "Robots?",
-  "Welcome, everybody, to the Stormtop Space Party!",
+  // The party plan trims the welcome to three Isfred lines (src/modules/party-lines.js), with the teach card
+  // and the band's song between.
+  "Stay out of their sight!",
   "Let's give a big hello to our friends from Bleep-Bloop Robotics!",
   "Soon their helper robots will be here, to help with the heavy work.",
   "And now... put your hands together for the Croc Boys!",
+  "Stormtop-vania 1-2-3-4-5!",
   "I've never gotten to dance at a party.",
   "Love the shirt.",
   "FUR! Security!",

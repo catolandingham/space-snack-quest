@@ -65,7 +65,12 @@ export function openFullScreen({ draw, pointer, label, restart }) {
     if (kind === "down" && onRestart(x, y)) return void (held = performance.now());
     if (kind === "up" && held) return void (held = 0);
     if (held) return;
-    if (kind === "down") ((down = true), cv.setPointerCapture && cv.setPointerCapture(ev.pointerId));
+    if (kind === "down") {
+      down = true;
+      try {
+        cv.setPointerCapture && cv.setPointerCapture(ev.pointerId);
+      } catch {}
+    }
     if (kind === "move" && !down) return;
     if (kind === "up") down = false;
     pointer && pointer(kind, x, y);
