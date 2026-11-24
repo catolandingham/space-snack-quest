@@ -9,15 +9,15 @@
 | 107–117 | ## Debug link |
 | 118–123 | ## Automatic checks |
 | 124–127 | ## Screen fit |
-| 128–141 | ## Brian's repeat complaints, as tests (2026-11-22) |
-| 142–145 | ## Scene 1 morning |
-| 146–149 | ## Chapter 1 kid robot |
-| 150–166 | ## Phase 1: kitchen and diner clarity |
-| 167–179 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
-| 180–193 | ## Phase 3: one capture rule, phone HUD, tap to walk |
-| 194–203 | ## Chapter 1 pass: the night out has a purpose, switches say why |
-| 204–221 | ## Progression tests |
-| 222–248 | ## Left as they were |
+| 128–143 | ## Brian's repeat complaints, as tests (2026-11-22) |
+| 144–147 | ## Scene 1 morning |
+| 148–151 | ## Chapter 1 kid robot |
+| 152–168 | ## Phase 1: kitchen and diner clarity |
+| 169–181 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
+| 182–195 | ## Phase 3: one capture rule, phone HUD, tap to walk |
+| 196–205 | ## Chapter 1 pass: the night out has a purpose, switches say why |
+| 206–223 | ## Progression tests |
+| 224–250 | ## Left as they were |
 <!-- /section-index -->
 # Space Snack Quest
 
