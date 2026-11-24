@@ -135,6 +135,8 @@ Four complaints Brian raised again and again now have tests that run with `npm t
 
 - `tests/ch1-words-if-stuck.mjs`: while a goal's thing is outlined, no goal words for the first 20 seconds of that step; then the words appear. A goal with no outline yet shows its words at once.
 
+- `tests/ch1-tap-path.mjs`: a tap behind the bed, the bin or a standing Mops walks Squatch around them to it (problem 2); a tap on furniture walks him to the floor next to it; standing flush against furniture, a tap away still walks; open floor is a straight walk. Path finder: `src/modules/tap-path.js`.
+
 - `tests/ch1-plant-eyes.mjs`: hiding in a plant shows two eyes in that plant's leaves (C21), at the loading bay plant and the hall's middle plant.
 
 - `tests/ch1-party-cones.mjs`: sight cones on everyone at the party (Brian, 2026-11-23: "let's try all of them and then we can adjust"): the six guests, Isfred, the bartender, the cape guest and the octopus. Faint dashed cones, each shown only when Squatch is near that cone (Brian: "Add the distance fade"; fully shown within 40 of it, gone beyond 120, fading in between); the one Squatch is in fills yellow. In disguise a "?" shows over whoever sees him and nobody catches him; after the snack spill everyone's cone turns to him. In the sneak to the plant everyone faces the stage, the way from his doorway to the plant is outside every cone, and a watcher shows "?" first and "!" (caught) only if he stays in sight 0.8 seconds (a placeholder until Brian sets it). The six guests are drawn from Brian's approved Nov 8 pictures (`docs/approved-art/guests/`, `src/modules/guests.js`); who faces where is `src/modules/party-watch.js`.
