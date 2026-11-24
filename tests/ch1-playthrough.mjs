@@ -481,7 +481,8 @@ const play = await page.evaluate(() => {
         if (rolls.length !== 1 || !(rolls[0].r > 0) || rolls[0].x < 100) return { end: "vent-roll", rolls, acts, texts: texts(), state: ss.ch1State(), shown: [], tally: [] };
       }
       // Optional bedroom inspections are tested separately; this route follows the story goal.
-      const spots = ss.spotsNow().filter((s) => s && s.verb && s.r > 0 && s.id !== "home-calendar");
+      // A spot with a place to stand: a circle (r) or a box (the home-alone desk).
+      const spots = ss.spotsNow().filter((s) => s && s.verb && (s.r > 0 || s.box) && s.id !== "home-calendar");
       const spot = spots[0];
       if (!spot) {
         end = "no-spot " + n.scene;
