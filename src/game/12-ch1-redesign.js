@@ -716,11 +716,11 @@
             verb: "HIDE",
             cap: "plant",
             who: "sq",
-            x: 220,
-            y: 530,
+            x: 396,
+            y: 552,
             r: 90,
             f: () => {
-              ((n.sqPose = "hidden"), (n.sq.x = 400), (n.sq.y = 530));
+              ((n.sqPose = "hidden"), (n.sq.x = 396), (n.sq.y = 552));
             },
           }),
         );
@@ -1277,7 +1277,7 @@
         face = look ? 1 : 0,
         eye = 72 * ALIEN_ADULT,
         glance = (x, y) => look && (F(x + 8, y - eye, 2.2, "#fffdf8"), F(x - 5, y - eye, 2.2, "#fffdf8"));
-      pb && pb.drawBannerOn(e);
+      pb && (pb.drawBannerOn(e), pb.drawBandOn(e));
       (drawCh1Alien(CH1_PARTY_CAST.isfred[0], CH1_PARTY_CAST.isfred[1], "horns", ALIEN_ADULT, face || 1),
         glance(CH1_PARTY_CAST.isfred[0], CH1_PARTY_CAST.isfred[1]),
         n.sqPose === "hidden" && ch1HideEyes(),
@@ -1327,7 +1327,6 @@
       kind === "spots" && ((body = "#ffcf33"), (skin = "#fff3c4"));
       kind === "horns" && ((body = "#c9b6f2"), (skin = "#efe8ff"));
       kind === "blob" && ((body = "#59657d"), (skin = "#d5dbe6"));
-      kind === "cape" && ((body = "#1f9d8a"), (skin = "#d8fff6"));
       (m(-6, -20, 7, 20, 2),
         r("#3d4454", 2),
         m(2, -20, 7, 20, 2),

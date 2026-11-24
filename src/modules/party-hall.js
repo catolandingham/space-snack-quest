@@ -38,7 +38,6 @@ export const SPOTS = Object.freeze({
   // Under the wall alarm, where a guest who saw him runs to pull it; guards come in at the hallway doorway.
   alarmRun: Object.freeze({ x: 880, y: 318 }),
   guardIn: Object.freeze({ x: 950, y: 302 }),
-  guardStep: Object.freeze({ x: 880, y: 320 }),
 });
 
 // The dance spotlight on the floor in front of the stage (party lighting, not an outline).
@@ -72,12 +71,3 @@ export const CAST = Object.freeze({
 export const GLANCE = Object.freeze({ a: (174 * Math.PI) / 180, sweep: 0.15 });
 // The glancer's rhythm (P2): facing the stage, then head turn with "?", then looking across the lane, then back.
 export const GLANCE_TIMES = Object.freeze({ stage: 3.5, warn: 0.5, look: 2, back: 0.4 });
-
-/** The cast as the sight code wants it: [{ id, x, y }]. */
-export function castPeople(withBand = true) {
-  const out = CAST.guests.map((g) => ({ id: g.id, x: g.x, y: g.y }));
-  out.push({ id: "isfred", x: CAST.isfred.x, y: CAST.isfred.y });
-  out.push({ id: "bartender", x: CAST.bartender.x, y: CAST.bartender.y });
-  withBand && CAST.band.forEach((b, i) => out.push({ id: "band" + i, x: b.x, y: b.y }));
-  return out;
-}

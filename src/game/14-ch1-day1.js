@@ -113,11 +113,12 @@
           verb: "HIDE",
           cap: "plant",
           who: "sq",
-          x: 220,
-          y: 530,
+          // The middle plant (it used to be the floor vent: Brian 2026-11-23, comment 19).
+          x: 396,
+          y: 552,
           r: 80,
           f: () => {
-            ((n.sqPose = "hidden"), (n.sq.x = 220), (n.sq.y = 530), (n.act = null));
+            ((n.sqPose = "hidden"), (n.sq.x = 396), (n.sq.y = 552), (n.act = null));
           },
         }),
       ];

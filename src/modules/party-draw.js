@@ -7,7 +7,7 @@
  *            tripod: { x, y, aim, counting }, cones: [cone], allCones, squatch: { x, y, f, walk, pose ("stand",
  *            "peek" or "hidden"), outfit, flyer, tip, shake } | null, eyes: { x, y } | null, marks: [{ x, y,
  *            mark }], shout: { x, y } | null, alarm: bool, beard: 0 to 1, vent: bool, tufts: [{ x, y, s, rot }],
- *            warning: { kind: "tuft" | "piece", piece, k } | null, flyerFloor: { x, y } | null }
+ *            warning: { kind: "tuft" | "piece", piece, k } | null, unseen (nobody can see him now) }
  * Returns the cones as drawn (party-watch.js drawCones).
  */
 import { HALL, BANNER, CAST, DANCE_SPOT } from "./party-hall.js";
@@ -46,7 +46,7 @@ export function drawSquatchInHall(ctx, E, sq, scale, t) {
   E.drawSquatch(ctx, sq.x + shake, sq.y, scale, { f: sq.f || 1, walk: sq.walk || 0 });
   sq.outfit && drawOutfit(ctx, sq.x + shake, sq.y, scale, sq.outfit, sq.f || 1, sq.tip);
   // the flyer stuck to his back fur: on the side away from where he faces, big enough to see
-  sq.flyer && drawFlyer(ctx, sq.x + shake - (sq.f || 1) * 9 * scale, sq.y - 22 * scale, 9 * scale, -(sq.f || 1) * 0.35);
+  sq.flyer && drawFlyer(ctx, sq.x + shake - (sq.f || 1) * 9 * scale, sq.y - 24 * scale, 15 * scale, -(sq.f || 1) * 0.35);
 }
 
 export function drawHall(ctx, E, guestArt, view) {
@@ -62,9 +62,8 @@ export function drawHall(ctx, E, guestArt, view) {
   view.alarm && drawAlarmFlash(ctx, HALL.alarm, t);
   view.beard > 0 && drawBeardInDoorway(ctx, HALL.hallwayDoor, t, view.beard);
   view.lights && drawPartyLights(ctx, DANCE_SPOT, view.lights.song, t, view.lights.dim);
-  view.flyerFloor && drawFlyer(ctx, view.flyerFloor.x, view.flyerFloor.y, 12, 0.5);
   const sq = view.squatch;
-  const drawn = drawCones(ctx, view.cones || [], sq || { x: -999, y: -999 }, !sq || sq.pose !== "stand", !!view.allCones, view.noteCone);
+  const drawn = drawCones(ctx, view.cones || [], sq || { x: -999, y: -999 }, !sq || sq.pose !== "stand" || !!view.unseen, !!view.allCones, view.noteCone);
   // Everyone, back to front.
   const people = [];
   for (const g of view.guests || []) people.push({ y: g.y, f: () => guestArt.drawId(ctx, g.id, g.x, g.y, adult, t, g.dance || 0, g.lean || 0) });

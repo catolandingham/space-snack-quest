@@ -21,8 +21,8 @@ import { partyLine, lockupCause } from "./party-lines.js";
 import { HALL, SPOTS, CAST, GLANCE, GLANCE_TIMES, HALL_PICTURE, BANNER } from "./party-hall.js";
 import { coneFrom, towardStage, lookAt, coneSees, drawCones, SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
 import { drawHall } from "./party-draw.js";
-import { drawDoorNotes, drawFlyer, drawOutfit, drawPerson, LOOKS, drawAlarmCloseUp, drawBanner, drawTripod } from "./party-art.js";
-import { startAlarm, tickAlarm, guardCones, homeGuardCone } from "./party-alarm.js";
+import { drawDoorNotes, drawFlyer, drawOutfit, drawPerson, LOOKS, drawAlarmCloseUp, drawBanner, drawTripod, drawBand } from "./party-art.js";
+import { startAlarm, tickAlarm, guardCones, homeGuardCone, ALARM } from "./party-alarm.js";
 import { tickVent, ventTufts } from "./party-vent.js";
 import { openFullScreen, closeFullScreen, fullScreenOpen } from "./fullscreen.js";
 import * as dress from "./dress-up.js";
@@ -35,7 +35,7 @@ export const HOME_ROOM = Object.freeze({
   inside: { x: 790, y: 480 },
   runTo: { x: 660, y: 545 },
   closet: { x: 130, y: 400, r: 70 },
-  inFront: { x: 160, y: 430 },
+  inFront: { x: 175, y: 385 }, // in front of the closet, above the bed (not in it)
   bed: { x: 205, y: 500 },
   flyer: { x: 868, y: 520 },
 });
@@ -53,6 +53,8 @@ const SOLIDS = Object.freeze([
   { x0: 360, x1: 386, y0: 447, y1: 468 },
 ]);
 const BOUNDS = Object.freeze({ x0: 60, x1: 900, y0: HALL.floorTop, y1: 590 });
+// Who can raise the alarm, and how the LOCKUP card names them (party-lines.js "who-*").
+const WITNESS = Object.freeze({ ...Object.fromEntries(CAST.guests.map((g) => [g.id, "who-tourist"])), bartender: "who-bartender" });
 
 export function createParty(bridge) {
   const E = () => bridge.engine();
@@ -70,6 +72,8 @@ export function createParty(bridge) {
   };
   const say = (who, id, style) => E().say(who, partyLine(id), style);
   const chip = (id) => (E().set("ch1Chip", id ? partyLine(id) : ""), E().chipNow());
+  // A guard reached him: the LOCKUP card is on its way, so nothing hands control back first.
+  const caught = () => !!(P() && P().alarm && P().alarm.phase === "caught");
   const control = (on) => (E().set("ctrl", !!on), on || E().set("act", null), on || E().still("sq"));
 
   // ---------- the cast ----------
@@ -79,7 +83,7 @@ export function createParty(bridge) {
       const dx = g.x - 480,
         dy = g.y - 450,
         d = Math.hypot(dx, dy) || 1;
-      out[g.id] = { x: g.x, y: g.y, hx: g.x, hy: g.y, ax: (dx / d) * 34, ay: (dy / d) * 20 };
+      out[g.id] = { x: g.x, y: g.y, hx: g.x, hy: g.y, ax: (dx / d) * ALARM.backAway, ay: (dy / d) * ALARM.backAway * 0.6 };
     }
     return out;
   }
@@ -311,7 +315,7 @@ export function createParty(bridge) {
         p.seenT = 0;
         // P2 with no alarm, in the middle plant: he made it; the welcome starts.
         if (p.scene === "P2" && !p.alarm && plantId === "middle") return startScene("P3");
-        control(true);
+        caught() || control(true);
       }),
     ]);
   }
@@ -326,7 +330,7 @@ export function createParty(bridge) {
         e.set("sqPose", "under");
         P().pose = "bed";
         e.sfx("hide");
-        control(true);
+        caught() || control(true);
       }),
     ]);
   }
@@ -350,7 +354,7 @@ export function createParty(bridge) {
         const q = P();
         // the flyer drops off his back by the door
         q.flyer === "back" && (q.flyer = "floor");
-        if (q.alarm) return ((q.phase = "hiding"), control(true));
+        if (q.alarm) return ((q.phase = "hiding"), caught() || control(true));
         startScene("P5");
       }),
     ]);
@@ -367,6 +371,8 @@ export function createParty(bridge) {
     p.dress = st;
     openFullScreen({
       label: "dress-up",
+      // Holding ↺ restarts the dress-up with nothing on (the page's ↺ is under the full-screen view).
+      restart: () => e.restartPart(),
       draw(ctx, w, h, t) {
         const L = dress.layout(w, h);
         if (dress.meter(st.outfit) >= 1 && !t0.full) ((t0.full = true), (t0.tada = 0.001), e.sfx("chime"));
@@ -440,7 +446,7 @@ export function createParty(bridge) {
             t0 == null && (t0 = t);
             const k = Math.min(1, (t - t0) / 0.8);
             drawAlarmCloseUp(ctx, w, h, picture, HALL.alarmPicture, k, t);
-            if (t - t0 >= 1.8) {
+            if (t - t0 >= ALARM.closeUp) {
               closeFullScreen();
               control(wasCtrl);
               e.sfx("alarm");
@@ -454,6 +460,8 @@ export function createParty(bridge) {
       },
       lost() {
         P().lost = true;
+        // "They lost you.": the run-and-hide goal is over while the room calms down.
+        chip("");
         e.sfx("chime");
         e.lostYou(partyLine("note-lost"));
       },
@@ -538,9 +546,11 @@ export function createParty(bridge) {
       else {
         p.seenT = p.seenBy === seen.id ? p.seenT + dt : 0;
         p.seenBy = seen.id;
-        if (p.seenT >= SEEN_TOO_LONG_SECONDS) {
+        // Guests and the bartender run to the alarm (the lockup card names which); Isfred and the band, busy on
+        // the stage, show their "?" (everyone who sees him reacts, rule 8) but never leave it.
+        if (p.seenT >= SEEN_TOO_LONG_SECONDS && WITNESS[seen.id]) {
           const w = personAt(p, seen.id);
-          startAlarm(p, { id: seen.id, x: w.x, y: w.y }, "where-hall");
+          startAlarm(p, { id: seen.id, x: w.x, y: w.y }, "where-hall", WITNESS[seen.id]);
           raise(p);
         }
       }
@@ -637,6 +647,8 @@ export function createParty(bridge) {
     const a = p.alarm;
     const shout = a && (a.phase === "shout" || (a.phase === "run" && a.t < 0.5)) ? { x: a.w.x, y: a.w.y - 96 } : null;
     a && a.phase === "shout" && marks.push({ x: a.w.x + 40, y: a.w.y - 70, mark: "!", size: 42 });
+    // Guards show "!" at once when they see him (party plan, Sight).
+    a && a.guards.forEach((g) => g.room === "hall" && g.sees && marks.push({ x: g.x, y: g.y - 84, mark: "!", size: 42 }));
     const outlineHidden = p.pose === "hidden" || p.pose === "bed";
     const eyes = p.pose === "hidden" ? eyesAt(p, t) : null;
     return {
@@ -647,12 +659,14 @@ export function createParty(bridge) {
       isfred: p.isfred,
       band: { look: "B", playing: p.band },
       guests,
-      bartender: { x: CAST.bartender.x, y: CAST.bartender.y, f: -1 },
+      bartender: a && a.w.id === "bartender" ? { x: a.w.x, y: a.w.y, f: Math.sign(a.w.x - a.w.hx) || -1 } : { x: CAST.bartender.x, y: CAST.bartender.y, f: -1 },
       guards: a ? a.guards.filter((g) => g.room === "hall").map((g) => ({ x: g.x, y: g.y, f: Math.cos(g.a) < 0 ? -1 : 1 })) : [],
       tripod: { ...CAST.guests.find((g) => g.id === "camera").tripod, aim: { x: 330, y: 250 } },
       cones: cones(p),
       allCones: p.scene === "P1",
       noteCone: (c) => e.noteCone(c),
+      // While a line is up or a scripted walk runs, nobody sees him, so no cone fills yellow (drawn equals sight).
+      unseen: !(e.get("ctrl") && !e.current()),
       squatch: outlineHidden ? { x: s.x, y: s.y, pose: "hidden" } : { x: s.x, y: s.y, f: s.f || 1, walk: e.walkPhase(), pose: p.pose === "peek" ? "peek" : "stand", flyer: p.flyer === "back", shake: p.vent && p.vent.shake, outfit: null },
       eyes,
       marks,
@@ -818,6 +832,10 @@ export function createParty(bridge) {
     // ---- the older free play's hall (until half two replaces it) draws with these ----
     drawBannerOn(ctx) {
       drawBanner(ctx, BANNER, 0, E().time());
+    },
+    /** The Croc Boys on the stage, playing (the free play goes on with the band). */
+    drawBandOn(ctx) {
+      drawBand(ctx, CAST.band, E().hallSizes().adult * 0.98, "B", E().time(), true);
     },
     drawPersonOn(ctx, kind, x, y, f) {
       drawPerson(ctx, x, y, E().hallSizes().adult, LOOKS[kind], f, E().time());

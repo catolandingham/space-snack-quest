@@ -6,9 +6,8 @@
  * the room from behind the bar. After the snack spill everyone turns to look at Squatch.
  *
  * This file says where each cone starts, which way it points, and how strongly it shows (the distance fade
- * below). The older program draws each cone
- * with its own seenCone and checks sight with its own vt, so the shaded area stays exactly the place where
- * Squatch is seen (tests/cone-match.mjs).
+ * below), and draws the cones whole (drawCones, at the end): the party night and the older free play both draw
+ * with it, and the sight check uses the same shape, so the shaded area is exactly where Squatch is seen.
  */
 
 // The middle of the stage, in game positions (hall-room-empty-v2 and the party drawing).
@@ -21,7 +20,7 @@ export const EYE_ABOVE_FEET = 28;
 // and only turns into exclamation after he stays too long"). PROVISIONAL: Brian has not set this number
 // yet (docs/DECISIONS.md, Sight cones); it is not a tuning pin until he does.
 export const SEEN_TOO_LONG_SECONDS = 0.8;
-// The point on Squatch that is seen: this far above his feet (as ch1SneakSees checks).
+// The point on Squatch that is seen: this far above his feet.
 export const SQUATCH_SEEN_ABOVE_FEET = 20;
 // Distance fade (Brian, 2026-11-23: "Add the distance fade"): a cone shows only when Squatch is near the cone
 // itself, so only the cones he could walk into are on screen. Distances run from the point on Squatch that is

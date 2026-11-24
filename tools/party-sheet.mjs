@@ -52,7 +52,7 @@ const CAPTIONS = {
 };
 const FULL = { v05_dance_phone: "phone", v05_dance_computer: "computer", v06_dress_phone_start: "phone", v06_dress_phone_absurd: "phone", v06_dress_computer: "computer", v12_alarm_phone: "phone", v12_alarm_computer: "computer" };
 
-const g = await startGame({ port: 8945, name: "party-sheet" });
+const g = await startGame({ port: 8994, name: "party-sheet" });
 const { page } = await g.open("?ch=1", { width: 1280, height: 800, deviceScaleFactor: 1 });
 await sleep(1500);
 await page.addScriptTag({ content: script });

@@ -26,7 +26,7 @@ import { startGame, sleep, root } from "./game-page.mjs";
 const OUT = join(root, "tests", "out", "party-stills");
 mkdirSync(OUT, { recursive: true });
 const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 1 };
-const g = await startGame({ port: 8971, name: "party-scenes" });
+const g = await startGame({ port: 8991, name: "party-scenes" });
 const hall = await import(join(root, "src", "modules", "party-hall.js"));
 const watch = await import(join(root, "src", "modules", "party-watch.js"));
 
@@ -257,6 +257,20 @@ async function getSeen(page) {
   g.check("no script errors in the home hide", errors.length === 0, errors.slice(0, 3));
 }
 
+// ---------- the bartender sees him ----------
+{
+  const { page, errors } = await open("party:P2");
+  await place(page, 720, 480);
+  let s = await until(page, (q) => q.now && q.now.alarm === "shout", 4000);
+  g.check("in the bartender's cone the alarm starts with her as the witness", !!s, s);
+  const ran = await until(page, (q) => q.now && q.now.alarm === "pull", 8000);
+  const w = await page.evaluate(() => window.__ss.op.ch1PartyNow.alarm && window.__ss.op.ch1PartyNow.alarm.w);
+  g.check("the bartender runs to the alarm herself", !!ran && w && w.id === "bartender" && Math.hypot(w.x - hall.SPOTS.alarmRun.x, w.y - hall.SPOTS.alarmRun.y) < 6, w);
+  s = await until(page, (q) => q.cur === "card" && q.curId === "jail", 25000);
+  g.check("the LOCKUP card names the bartender", !!s && s.cause === "The bartender saw Squatch in the hall. Security caught him.", s && s.cause);
+  g.check("no script errors with the bartender", errors.length === 0, errors.slice(0, 3));
+}
+
 // ---------- the vent ----------
 {
   const { page, errors } = await open("party:P2");
@@ -376,8 +390,17 @@ async function getSeen(page) {
   g.check("four covered spots fill the meter and bring GO · party", !!d.go && Object.values(d.outfit).every(Boolean), d);
   await sleep(400);
   await still(page, "p5-dress-full");
-  // ↺ in the middle of the dress-up restarts P5 with nothing on.
-  await page.evaluate(() => window.__ss.sectionReset());
+  // ↺ in the middle of the dress-up restarts P5 with nothing on: the view's own ↺ (the page's is under it),
+  // held with a finger as long as the page's.
+  const r = await page.evaluate(() => {
+    const at = { x: 10 + 24, y: 10 + 24 },
+      el = document.elementFromPoint(at.x, at.y);
+    return { ...at, top: el && el.getAttribute("aria-label") };
+  });
+  g.check("the dress-up's own ↺ is on top in the corner", r.top === "dress-up", r);
+  await page.touchscreen.touchStart(r.x, r.y);
+  await sleep(1000);
+  await page.touchscreen.touchEnd();
   await sleep(500);
   s = await st(page);
   const after = await page.evaluate(() => ({ open: !!document.querySelector('canvas[aria-label="dress-up"]'), outfit: window.__ss.op.ch1PartyNow.outfit }));
@@ -434,4 +457,13 @@ const redesign = readFileSync(join(root, "src", "game", "12-ch1-redesign.js"), "
 g.check("the older free play never says \"Cool hat!\"", !redesign.includes('"Cool hat!"'));
 g.check("COOL_HAT_SECONDS is still the pinned 180", redesign.includes("COOL_HAT_SECONDS = 180"));
 g.check("the warnings' marks are at least as tall as Squatch's head", watch.SEEN_TOO_LONG_SECONDS > 0 && readFileSync(join(root, "src", "modules", "party.js"), "utf8").includes('mark: "?", size: 42'));
+// The capture rule's numbers are Brian's pinned ones (docs/TUNING-PINS.json): a pin change must change both.
+const { ALARM } = await import(join(root, "src", "modules", "party-alarm.js"));
+const pins = JSON.parse(readFileSync(join(root, "docs", "TUNING-PINS.json"), "utf8")).pins;
+const pin = (id) => +(((pins.find((p) => p.id === id) || {}).snippet || "").match(/(?:>=|=|<)\s*([\d.]+)/) || [])[1];
+g.check(
+  "the party's guard speed, reach, feet circle and home delay equal the pinned numbers",
+  ALARM.guard === pin("guard-speed") && ALARM.reach === pin("guard-catch") && ALARM.feet === pin("cone-feet") && ALARM.homeDelay === pin("home-search-delay"),
+  { ALARM, pins: ["guard-speed", "guard-catch", "cone-feet", "home-search-delay"].map(pin) },
+);
 await g.finish("party-scenes");

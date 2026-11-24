@@ -24,7 +24,7 @@ import { placeLabel } from "./cap-place.js";
  * The game-state fields a rebuilt beat may write, through engine().set(field, value). Anything else it
  * changes goes through a named hand-over function (place, face, step, still, moWalking). A beat that tries
  * to write another field stops with an error; tests/module-build.mjs checks the morning (and its home-alone
- * part) against this list.
+ * part) and the party night against this list.
  */
 export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe"]);
 

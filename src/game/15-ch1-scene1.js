@@ -171,6 +171,8 @@
         markGoal: (spot) => drawGoalMark(spot),
         // Half one ends: Squatch walks into the older free play in his outfit (src/game/12-ch1-redesign.js).
         startFreePlay: () => ch1FreePlayStart(),
+        // Holding ↺ inside a full-screen view: the same restart as the page's ↺.
+        restartPart: () => sectionReset(),
         squatchScale: () => wl,
         text: (t, x, y, size, color, align, weight) => g(t, x, y, size, color, align, weight),
       });
