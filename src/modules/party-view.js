@@ -160,7 +160,8 @@ export function createView(h) {
     p.warn && p.warn.id && p.pose === "stand" && drawTugWarning(ctx, s.x, s.y - 50 * scale - 34, p.warn.id, t);
     p.speakerOn && drawSpeakerRing(ctx, HALL_SPEAKER, t);
     drawFlash(ctx, p.flash);
-    p.photo && p.photo.pol > 0 && drawPolaroid(ctx, cam.x - 28, cam.y - 30, 1 - p.photo.pol / PHOTO.polaroid, (c, x, y, w, hh) => polaroidInside(c, x, y, w, hh, p, t));
+    // the Polaroid slides out to the camera's left, clear of Squatch standing in the shot
+    p.photo && p.photo.pol > 0 && drawPolaroid(ctx, cam.x - 118, cam.y - 30, 1 - p.photo.pol / PHOTO.polaroid, (c, x, y, w, hh) => polaroidInside(c, x, y, w, hh, p, t));
   }
   // Inside the Polaroid: the band on the stage, and Squatch in his outfit in front of them.
   function polaroidInside(ctx, x, y, w, hh, p, t) {
