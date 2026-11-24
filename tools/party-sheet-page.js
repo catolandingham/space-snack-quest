@@ -1,11 +1,17 @@
 // Bundled by tools/party-sheet.mjs and run inside the game page (never part of the game): draws every new party
 // picture for Brian's picture sheet with the game's own drawing code, and hands each back as a PNG data URL.
 import { drawHall } from "../src/modules/party-draw.js";
-import { BAND_A, MORE_SONG_LIGHTS, drawBeardInDoorway, drawHeartCone, drawCountdownLight, drawTugWarning, drawDanceCloseUp } from "./party-half-two-art.js";
+import { BAND_A } from "./party-half-two-art.js";
+import { drawBeardInDoorway, drawHeartCone, drawCountdown, drawTugWarning, drawPolaroid, drawBandNotes, drawClap, drawHiccups, drawSpeakerRing, drawPuffs, drawLoosePiece, drawFurryFlyer, drawFlash } from "../src/modules/party-free-art.js";
+import { drawDanceCloseUp, SONG_LIGHTS } from "../src/modules/party-dance.js";
+import { drawPyramid, drawPawIcon, drawSnackCloseUp } from "../src/modules/party-snacks.js";
+import { congaAt, CONGA } from "../src/modules/party-toys.js";
+import { PAW_ICON } from "../src/modules/party-free.js";
+import { HALL_SPEAKER } from "../src/modules/party-hall.js";
 import { HALL, CAST, SPOTS, GLANCE, HALL_PICTURE } from "../src/modules/party-hall.js";
 import { coneFrom, towardStage, lookAt } from "../src/modules/party-watch.js";
 import { createGuestArt } from "../src/modules/guests.js";
-import { drawDoorNotes, drawFlyer, drawAlarmCloseUp, drawMark } from "../src/modules/party-art.js";
+import { drawDoorNotes, drawFlyer, drawAlarmCloseUp } from "../src/modules/party-art.js";
 import * as dress from "../src/modules/dress-up.js";
 
 const guests = createGuestArt();
@@ -115,12 +121,12 @@ R.v04_band_both = () => {
 };
 R.v05_dance_phone = () => {
   const c = canvas(375, 812);
-  drawDanceCloseUp(c.getContext("2d"), 375, 812, guests, SMART, 1.1, 1, 0);
+  drawDanceCloseUp(c.getContext("2d"), 375, 812, guests, SMART, 1.1, { moves: 1, cheer: 0.5, pop: 0 }, 0);
   return c;
 };
 R.v05_dance_computer = () => {
   const c = canvas(1100, 800);
-  drawDanceCloseUp(c.getContext("2d"), 1100, 800, guests, ABSURD, 1.1, 2, 1);
+  drawDanceCloseUp(c.getContext("2d"), 1100, 800, guests, ABSURD, 1.1, { moves: 2, cheer: 0.9, pop: 0 }, 1);
   return c;
 };
 function dressShot(w, h, outfit, drag) {
@@ -174,13 +180,11 @@ R.v09_vent_tug = () => {
 for (const song of [0, 1, 2])
   R["v10_lights_song" + (song + 1)] = () => {
     const v = base(1);
-    v.lights = { dim: 1 };
+    v.lights = { dim: 1, color: SONG_LIGHTS[song] };
     v.band = { playing: true };
     v.guests = pairDance();
-    const c = hall(v),
-      ctx = c.getContext("2d");
-    // the second and third songs' colours over the first's (half two)
-    song > 0 && ((ctx.fillStyle = MORE_SONG_LIGHTS[song - 1]), ctx.fillRect(0, 0, 960, 640));
+    const c = hall(v);
+    drawBandNotes(c.getContext("2d"), CAST.band, 1.2 + song * 0.3, song);
     return c;
   };
 function pairDance() {
@@ -241,12 +245,7 @@ R.v13_heart_cone = () => {
   const gc = document.querySelector("canvas"),
     g = gc.getContext("2d"),
     k = gc.width / 960;
-  g.save();
-  g.setTransform(k, 0, 0, k, 0, 0);
-  g.drawImage(c, 0, 0, 960, 640);
-  E().drawMops(mx, my, sc, { f: -1 });
-  g.restore();
-  ctx.drawImage(gc, 0, 0, 960, 640);
+  E().drawMopsOn(ctx, mx, my, sc, { f: -1 });
   return c;
 };
 R.v14_camera_conga = () => {
@@ -259,8 +258,7 @@ R.v14_camera_conga = () => {
   ];
   v.squatch = { x: 640, y: 484, f: 1, pose: "stand", outfit: SMART };
   const c = hall(v);
-  drawCountdownLight(c.getContext("2d"), v.tripod.x, v.tripod.y);
-  drawMark(c.getContext("2d"), 330, 360, "3", 32, 1);
+  drawCountdown(c.getContext("2d"), v.tripod.x, v.tripod.y, 2, 1);
   return c;
 };
 R.v15_warnings = () => {
@@ -286,6 +284,141 @@ R.v15_eyes_plant = () => {
   v.squatch = { x: SPOTS.plantMiddle.x, y: SPOTS.plantMiddle.y, pose: "hidden" };
   v.eyes = HALL.plants[0].eyes;
   return hall(v);
+};
+
+// ---------- half two (P6 to P8): every new drawing, as the game draws it ----------
+const P6 = { head: "boots", face: "stache", body: "tutu", legs: "shades" };
+function partyView(t = 1.3, song = 0) {
+  const v = base(t);
+  v.lights = { dim: 1, color: SONG_LIGHTS[song] };
+  v.band = { playing: true };
+  v.guests = pairDance();
+  v.isfred = { x: CAST.isfredBar.x, y: CAST.isfredBar.y };
+  return v;
+}
+R.h2_conga = () => {
+  const v = partyView(1.6, 1),
+    d = 300;
+  const line = ["teal", "stilt", "backpack"].map((id, i) => ({ id, ...congaAt(d - i * CONGA.gap), dance: 1 }));
+  v.guests = [...pairDance().filter((g) => !line.some((q) => q.id === g.id)), ...line];
+  const tail = congaAt(d - 3 * CONGA.gap);
+  v.squatch = { x: tail.x, y: tail.y, f: 1, walk: 3, pose: "stand", outfit: P6 };
+  return hall(v);
+};
+R.h2_camera_count_and_polaroid = () => {
+  const v = partyView(1.1);
+  v.squatch = { x: 420, y: 368, f: 1, pose: "stand", outfit: P6 };
+  const c = hall(v),
+    ctx = c.getContext("2d"),
+    tp = v.tripod;
+  drawCountdown(ctx, tp.x, tp.y, 1, 1);
+  drawPolaroid(ctx, tp.x, tp.y - 36, 0.6, (cc, x, y, w, hh) => {
+    cc.fillStyle = "#b08968";
+    cc.fillRect(x, y + hh * 0.55, w, hh * 0.08);
+    E().drawSquatch(cc, x + w * 0.5, y + hh * 0.98, hh * 0.011, { f: 1 });
+  });
+  return crop(c, 250, 220, 300, 280, 600);
+};
+R.h2_flash = () => {
+  const c = hall(partyView(1.1)),
+    ctx = c.getContext("2d");
+  drawFlash(ctx, 0.12);
+  return c;
+};
+R.h2_pyramid_and_paw = () => {
+  const v = partyView(1.4);
+  v.squatch = { x: 760, y: 540, f: 1, pose: "stand", outfit: P6 };
+  const c = hall(v),
+    ctx = c.getContext("2d");
+  drawPyramid(ctx, { snacks: { bag: 2, chain: -1, toppled: false } }, v.squatch, 1);
+  drawPawIcon(ctx, PAW_ICON.x, PAW_ICON.y, 1);
+  return crop(c, 640, 400, 320, 220, 640);
+};
+R.h2_pyramid_topple = () => {
+  const v = partyView(1.4);
+  v.squatch = { x: 720, y: 520, f: 1, pose: "stand", outfit: { ...P6, head: "" } };
+  const c = hall(v),
+    ctx = c.getContext("2d");
+  drawPyramid(ctx, { snacks: { bag: 5, chain: 0.4, toppled: true } }, v.squatch, 1);
+  drawLoosePiece(ctx, "boots", 760, 470, 22, 2.2);
+  return crop(c, 600, 380, 360, 240, 720);
+};
+for (const phase of ["back", "glance", "face"])
+  R["h2_snack_closeup_" + phase] = () => {
+    const c = hall(partyView(1.4)),
+      ctx = c.getContext("2d");
+    const p = { snack: { zoom: 1, paw: { x: 470, y: 330 }, held: 4, phase, t: 0 }, snacks: { bag: 2, taken: [0, 2], toppled: false } };
+    drawSnackCloseUp(ctx, p, 1, E().drawPawArm);
+    return c;
+  };
+R.h2_piece_tip_and_fly = () => {
+  const v = partyView(2);
+  v.squatch = { x: 460, y: 540, f: 1, pose: "stand", outfit: P6, tip: { spot: "head", a: 0.5 }, shake: 1 };
+  const c = hall(v),
+    ctx = c.getContext("2d");
+  drawTugWarning(ctx, 460, 540 - 50 * E().hallSizes().squatch - 34, "boots", 2);
+  drawLoosePiece(ctx, "tutu", 530, 470, 25, 1.5);
+  return crop(c, 360, 380, 260, 200, 650);
+};
+R.h2_beard_in_doorway = () => {
+  const v = partyView(1.2);
+  v.squatch = { x: 812, y: 322, f: 1, pose: "stand", outfit: P6 };
+  const c = hall(v);
+  drawBeardInDoorway(c.getContext("2d"), HALL.hallwayDoor, 1.2, 1);
+  return crop(c, 700, 200, 260, 200, 650);
+};
+R.h2_clap_and_hiccups = () => {
+  const v = partyView(1.3);
+  const c = hall(v),
+    ctx = c.getContext("2d");
+  v.guests.forEach((g) => g.id !== "octopus-guest" && drawClap(ctx, g.x, g.y - 80, 1.3));
+  const o = v.guests.find((g) => g.id === "octopus-guest");
+  drawHiccups(ctx, o.x, o.y, 1.3);
+  return c;
+};
+R.h2_closing_speaker = () => {
+  const c = hall({ ...partyView(1.3), lights: null }),
+    ctx = c.getContext("2d");
+  drawSpeakerRing(ctx, HALL_SPEAKER, 1.3);
+  return crop(c, 560, 60, 260, 160, 520);
+};
+R.h2_leaving_in_pairs = () => {
+  const v = { ...partyView(1.3), lights: null };
+  v.band = { playing: false };
+  v.guests = [
+    { id: "teal", x: 868, y: 318, dance: 0 },
+    { id: "stilt", x: 900, y: 330, dance: 0 },
+    { id: "robot", x: 760, y: 360, dance: 0 },
+    { id: "octopus-guest", x: 790, y: 380, dance: 0 },
+    { id: "camera", x: 560, y: 420, dance: 0 },
+    { id: "backpack", x: 600, y: 430, dance: 0 },
+  ];
+  v.squatch = { x: 420, y: 520, f: 1, pose: "stand", outfit: P6 };
+  return hall(v);
+};
+R.h2_mops_mopping_in = () => {
+  const v = { ...base(1.5), guests: [], band: null, isfred: null, bartender: null, tripod: null };
+  v.squatch = { x: 420, y: 520, f: 1, pose: "stand", outfit: P6 };
+  const c = hall(v),
+    ctx = c.getContext("2d");
+  for (let i = 0; i < 6; i++) {
+    ctx.fillStyle = "rgba(140,190,230,.35)";
+    ctx.beginPath();
+    ctx.ellipse(900 - i * 14, 362 + i * 6, 16, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  E().drawMopsOn(ctx, 800, 390, E().hallSizes().squatch * 1.15, { f: -1, walk: 3, headDown: true, sweep: 3 });
+  return c;
+};
+R.h2_home_mops_puffs_and_furry_flyer = () => {
+  const c = canvas(960, 640),
+    ctx = c.getContext("2d");
+  ctx.drawImage(pics.home, 0, 0, 960, 640);
+  drawFurryFlyer(ctx, 868, 520, 1.2, 1);
+  E().drawMopsOn(ctx, 820, 476, E().squatchScale() * 1.15, { f: 1, headDown: true });
+  drawPuffs(ctx, 830, 476 - 62 * E().squatchScale(), 1.2);
+  E().drawSquatch(ctx, 420, 480, E().squatchScale(), { f: 1 });
+  return c;
 };
 
 window.PARTY_SHEET = {

@@ -80,5 +80,11 @@ g.check("the calendar and the made-up tune (used elsewhere) stay", kept.every((n
 // The old party peek, sneak and dress-up (party plan P1 to P5) are gone from src/game/: party.js replaced them.
 const partyGone = ["function ch1PeekSpots", "function ch1PeekGo", "function ch1PeekLook", "CH1_PEEK_AT", "function ch1SneakStart", "function ch1SneakTick", "function ch1SneakHide", "ch1PlantSneak", "function ch1DressOpen", "function drawCh1Dress", "CH1_DRESS_ITEMS", "function ch1PartyPeek", "drawCh1SliceParty", "ch1Veil"];
 g.check("the old party peek, sneak and dress-up code is gone from src/game/", partyGone.every((name) => !game.includes(name)), partyGone.filter((name) => game.includes(name)));
+// The old party free play, alarm, home search and homecoming (party plan P6 to P8) are gone from src/game/ too:
+// party-free.js, party-toys.js, party-snacks.js, party-dance.js and party-endings.js replaced them.
+const freeGone = ["ch1FreePlayStart", "ch1PartySpots", "ch1Raid", "ch1Cut", "COOL_HAT_SECONDS", "CH1_PARTY_CAST", "CH1_GUESTS", "PHOTO_BONUS", "ch1Homecoming", "ch1Search", "n.guard", "ch1PartyCones", "ch1Cones", "askOnly", '"ch1photo"', '"ch1fur"', "ch1Disguise", "ch1HatOff", "ch1PartyTimeUp", "ch1Photo", "ch1Oct", "BALLOON_GRAB", "ch1PartyOver", "ch1PartyDid", "ch1Kara", '"SNAG"', '"SUCK"', '"STAND"'];
+g.check("the old party free play, raid, home search and homecoming code is gone from src/game/", freeGone.every((name) => !game.includes(name)), freeGone.filter((name) => game.includes(name)));
+const exported = await page.evaluate(() => ["COOL_HAT_SECONDS", "CH1_PARTY_CAST", "CH1_GUESTS", "PHOTO_BONUS", "BALLOON_GRAB_SECONDS", "ch1FreePlayStart"].filter((k) => k in window.__ss));
+g.check("the old party's numbers and hooks are gone from window.__ss", exported.length === 0, exported);
 g.check("no page errors", errors.length === 0, errors);
 await g.finish("module-build");

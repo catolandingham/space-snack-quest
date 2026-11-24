@@ -4,8 +4,8 @@
  * does nothing, leaves a stuck kid with no way forward (docs/CHAPTER-1-PROBLEMS.md, problem 1;
  * repeat-issues.md, issue 9).
  *
- * For each Chapter 1 beat the game can open (the Day 1 party by ?scene=QA, Day 2 and the night by
- * window.__ss.ch1JumpBeat): walk Squatch away from where the beat starts, hold ↺, and check
+ * For each Chapter 1 beat the game can open (the Day 1 party's scenes P2, P6 and P7 by its own jump, as
+ * ?beat=party:P6 opens them; Day 2 and the night by window.__ss.ch1JumpBeat): walk Squatch away from where the beat starts, hold ↺, and check
  *   (a) he stays in Chapter 1's same part (not the opening in the bedroom),
  *   (b) he has control and a goal afterwards,
  *   (c) ↺ puts him back where the step he is on began (the party and the night use their own restarts).
@@ -25,10 +25,9 @@ async function tryRestart(label, setUp) {
   const r = await page.evaluate(
     ([label, setUp]) => {
       const ss = window.__ss, n = ss.op;
-      if (setUp === "party") {
-        // The party as ?scene=QA opens it, with control.
-        ss.sceneQA ? ss.sceneQA() : null;
-        Object.assign(n, { scene: "QA", room: "hall", ch1Party: true, ch1Disguise: true, ch1PartyOver: false, q: [], cur: null, ctrl: true });
+      if (String(setUp).startsWith("party:")) {
+        // A party scene (src/modules/party.js), opened the way ?beat=party:P6 opens it.
+        ((n.q = []), (n.cur = null), window.SSQ.beat("ch1-party").jump(setUp.slice(6)));
       } else ((n.q = []), (n.cur = null), ss.ch1JumpBeat(setUp));
       for (let i = 0; i < 10; i++) ss.tick(1 / 30);
       const playing = !!n.ctrl && !n.cur && !n.q.length;
@@ -50,7 +49,7 @@ async function tryRestart(label, setUp) {
   return r;
 }
 
-const results = [await tryRestart("Day 1 party", "party")];
+const results = [await tryRestart("Day 1 party, the sneak (P2)", "party:P2"), await tryRestart("Day 1 party in disguise (P6)", "party:P6"), await tryRestart("Day 1 party, the FUR alarm (P7)", "party:P7")];
 for (const b of BEATS) results.push(await tryRestart(`beat ${b}`, b));
 
 const toOpening = results.filter((r) => r.before.scene !== "O1" && r.after.scene === "O1");

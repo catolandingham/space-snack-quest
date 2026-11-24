@@ -1,6 +1,7 @@
 /**
  * Playtest 6 on the chapter slice: the picture does not jump when NEXT appears,
- * and Isfred's party line points at him (in the free play he stands at the bar, where he walked in P3).
+ * and Isfred's party line points at him (on the stage, his welcome in P3 of the party, src/modules/party.js) and
+ * sits beside him, on screen, never over him.
  *   node tests/slice-p6.mjs
  */
 import { startGame, sleep } from "./game-page.mjs";
@@ -31,23 +32,33 @@ g.check("the picture stays put when NEXT hides", Math.abs(withNext - without) < 
 const bubble = await page.evaluate(() => {
   const ss = window.__ss;
   const n = ss.op;
-  n.scene = "QA";
-  n.room = "hall";
-  n.ch1Party = true;
-  n.ch1Office = false;
-  n.ch1D = false;
-  n.cur = { k: "bub", b: { who: "official", text: "Welcome, everybody, to the Stormtop Space Party!", style: "say" } };
+  const b = window.SSQ.beat("ch1-party");
   n.q = [];
-  ss.hall.camX = 0;
+  n.cur = null;
+  // The welcome (P3): Isfred's first line, as the game queues it.
+  b.jump("P3");
+  for (let i = 0; i < 30 && !(n.cur && n.cur.k === "bub"); i++) ss.tick(1 / 30);
   ss.drawFrame();
-  return { at: ss.bubbleAt("official"), box: ss.lastBubble, isfred: ss.CH1_PARTY_CAST.isfred };
+  const isf = b.now() && n.ch1PartyNow.isfred;
+  return { who: n.cur && n.cur.b && n.cur.b.who, text: n.cur && n.cur.b && n.cur.b.text, at: ss.bubbleAt("official"), box: ss.lastBubble, isfred: isf && [isf.x, isf.y], adult: ss.ADULT_PX };
 });
-// Since PR 51 (Brian, 2026-11-15) Isfred stands on the party stage and his line points at him there.
-// The old check (bubble low in the room, clear of an office desk at the top left) described the room before the stage fix.
+// Since PR 51 (Brian, 2026-11-15) Isfred stands on the party stage and his line points at him there; the party
+// rebuild puts his bubble beside him, so it never covers the banner (party.js bubbleBeside).
 const box = bubble.box;
+const isfredBox = bubble.isfred && { x0: bubble.isfred[0] - 16, x1: bubble.isfred[0] + 16, y0: bubble.isfred[1] - bubble.adult, y1: bubble.isfred[1] };
 g.check(
-  "Isfred's party line points at him and stays on screen",
-  bubble.at.x === bubble.isfred[0] && bubble.at.y === bubble.isfred[1] - 68 && box && box.y >= 0 && box.x >= 0 && box.x + box.w <= 960 && box.y + box.h <= bubble.at.y,
+  "Isfred's party line points at him, sits beside him (not over him) and stays on screen",
+  bubble.who === "official" &&
+    !!bubble.isfred &&
+    bubble.at.x === bubble.isfred[0] &&
+    Math.abs(bubble.at.y - (bubble.isfred[1] - bubble.adult - 6)) < 1 &&
+    box &&
+    box.text === bubble.text &&
+    box.y >= 0 &&
+    box.x >= 0 &&
+    box.x + box.w <= 960 &&
+    box.y + box.h <= 640 &&
+    !(box.x < isfredBox.x1 && box.x + box.w > isfredBox.x0 && box.y < isfredBox.y1 && box.y + box.h > isfredBox.y0),
   bubble,
 );
 
@@ -95,9 +106,7 @@ const music = await page.evaluate(async () => {
   n.ch1Morning = null;
   n.cur = null;
   n.q = [];
-  n.ch1Party = false;
-  n.ch1Search = false;
-  n.guard = null;
+  n.ch1PartyNow = null;
   n.gift = false;
   n.holdToy = false;
   n.roomWalk = null;
@@ -108,14 +117,12 @@ const music = await page.evaluate(async () => {
   ss.tick(0.05);
   const homeCue = ss.warmCue;
   n.room = "hall";
-  n.ch1Party = true;
   n.gift = true;
   ss.tick(0.05);
   const giftCue = ss.warmCue;
   n.gift = false;
   n.holdToy = false;
   n.room = "hangar";
-  n.ch1Party = false;
   ss.tick(0.5);
   return { titleCue, homeCue, giftCue, play: ss.warmPlay, after: ss.warmCue || "", paused: ss.warmPaused };
 });

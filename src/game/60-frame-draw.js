@@ -358,7 +358,6 @@
       p.state === "op" &&
         n.room !== "closet" &&
         (n.scene || "")[0] !== "Q" &&
-        !n.ch1Party &&
         i >= he * 0.9 &&
         s.eyes !== "closed" &&
         n.moPose !== "sleep" &&
@@ -1156,7 +1155,6 @@
       if (l === "official") {
         if (n.ch1Office && n.room === "office") return { x: 430, y: 390 };
         if (n.ch1Office) return { x: 480, y: 490 };
-        if (n.ch1Party) return { x: CH1_PARTY_CAST.isfred[0], y: CH1_PARTY_CAST.isfred[1] - 68 }; // over Isfred's head (at the bar since the band started) (Brian, 2026-11-15: never a bubble with nobody under it)
         if (n.room === "hangar" && n.ch1D && n.ch1Ship && !n.ch1Night && n.scene !== "Q9") return { x: 560, y: 400 };
         return { x: 210, y: 215 };
       }
@@ -1166,8 +1164,6 @@
       if (l === "ups" && n.ch1Beep) return { x: 860, y: 450 };
       if (l === "ups" && n.ch1Crew === "tease") return { x: 480, y: 380 };
       if (l === "ups" && n.room === "hangar" && n.ch1D) return { x: 878, y: 430 };
-      if (l === "kid" && n.ch1Party) return { x: CH1_KID.x, y: CH1_KID.y - 90 };
-      if (l === "tourist" && (n.ch1Party || n.ch1Cut)) return { x: 860, y: 430 };
       if (l === "tourist" && n.room === "hangar" && n.scene === "Q2") return { x: 700, y: 446 };
       if (l === "tourist" && n.room === "hall" && n.scene === "Q3") return { x: 640, y: 436 };
       if (l === "tourist" && n.room === "hall") {
@@ -1775,51 +1771,8 @@
         (X(l, o, i * 0.8, i), e.stroke());
     }
     function gq(l, o) {
-      if (l === "ch1photo") {
-        ((e.fillStyle = "rgba(255,252,245,.4)"),
-          e.fillRect(0, 0, c, b),
-          m(230, 60, 500, 520, 6),
-          r("#fffdf8", 8),
-          e.save(),
-          e.beginPath(),
-          e.rect(254, 84, 452, 390),
-          e.clip(),
-          (e.fillStyle = "#1b2450"),
-          e.fillRect(254, 84, 452, 170),
-          (e.fillStyle = "#ebe4d6"),
-          e.fillRect(254, 254, 452, 220));
-        for (let i = 0; i < 18; i++) F(270 + ((i * 73) % 420), 100 + ((i * 41) % 130), 1.2, "#ffffff");
-        (drawCh1Alien(340, 430, "hair", 1.15, 1),
-          drawCh1Alien(450, 400, "hat", 1.15, -1),
-          drawCh1Alien(560, 420, "antenna", 1.15, 1),
-          drawCh1Alien(650, 390, "croc", 1.15, -1),
-          n.ch1InShot &&
-            (e.save(),
-            e.beginPath(),
-            e.rect(254, 84, 452, 390),
-            e.clip(),
-            Re(300, 470, 1.35, { f: 1, hat: !0, shades: !0, hawaiian: !0 }),
-            e.restore()),
-          e.restore(),
-          g("STORMTOP SPACE PARTY", 480, 520, 16, "#1e2430", "center", 800));
-        return;
-      }
       if (l === "ch1tv1" || l === "ch1tv2" || l === "ch1tv3") return drawCh1Tv(l);
       if (l === "ch1moon") return drawCh1Moon();
-      if (l === "ch1fur") {
-        ((e.fillStyle = "rgba(20,24,32,.72)"),
-          e.fillRect(0, 0, c, b),
-          m(280, 160, 400, 280, 16),
-          r("#e5533d", 8),
-          g("FUR", 480, 250, 64, "#ffffff", "center", 900),
-          g("PULL DOWN", 480, 320, 28, "#ffffff", "center", 900),
-          C([480, 348, 480, 400], "#d7dbe3", 8),
-          F(480, 404, 12, "#e5533d"),
-          C([548, 430, 500, 392], "#f0bf93", 10),
-          F(492, 386, 16, "#f0bf93"),
-          F(486, 380, 5, "#1e2430"));
-        return;
-      }
       if (l === "ch1site") {
         ((e.fillStyle = "rgba(20,24,32,.62)"),
           e.fillRect(0, 0, c, b),
@@ -2264,13 +2217,11 @@
             : n.room === "passage"
             ? drawCh1Passage()
             : n.room === "hall"
-              ? n.ch1Party
-                ? drawCh1PartyRoom()
-                : n.ch1Office
-                  ? drawCh1HallwayRoom()
-                  : (n.scene || "")[0] === "Q"
-                    ? drawCh1DayHall()
-                    : s5()
+              ? n.ch1Office
+                ? drawCh1HallwayRoom()
+                : (n.scene || "")[0] === "Q"
+                  ? drawCh1DayHall()
+                  : s5()
             : n.room === "window"
               ? o5()
               : n.room === "duct"
@@ -2338,7 +2289,6 @@
           drawCh1Calendar();
           return;
         }
-        n.ch1Cut && drawCh1Cut();
         n.ch1Day2 && drawCh1Day2();
         n.ch1Zoom && drawCh1Zoom();
         ch1MarkGoal();
@@ -2382,8 +2332,6 @@
       (n.under === "crack" && gq("crack", !1),
         l && l.k === "panel" && gq(l.id, n.bt > 0.3),
         l && l.k === "bub" ? bq(l.b, !1) : !de() && n.live.length && bq(n.live[0], !0),
-        n.ch1Search && drawCh1Guard(),
-        n.ch1Mini && drawCh1Mini(),
         window.__ss && (window.__ss.bubbleFrame = qq));
       ((e.globalAlpha = 1), zG(), drawSeeHint(), drawTapHeard());
     }
@@ -2507,7 +2455,6 @@
           I0(parseInt(l.code.slice(-1), 10));
           return;
         }
-        (n.ch1Mini === "karaoke" && !l.repeat && (l.code === "Space" || l.code === "Enter") && (ch1Howl(), !0)) ||
         (l.code === "KeyR" && !l.repeat && armReset(!0),
           (qe[l.code] = !0),
           !l.repeat && (l.code === "KeyE" ? Vf() : (l.code === "Enter" || l.code === "Space") && af()));

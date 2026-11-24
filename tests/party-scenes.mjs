@@ -13,8 +13,8 @@
  *   - P3: Isfred's lines in order, everyone facing him, his bubble never over the banner; then the band and the
  *     pairs; his eyes in the plant, never at the vent. P4: a flyer on his back, home through his door, the flyer
  *     on the floor. P5: the full-screen dress-up (stick and button hidden), pieces snap to the nearest body spot,
- *     a second piece swaps, the meter, GO · party, ↺ restarts with nothing on; out through the door into the
- *     older free play with no arrow dance and no "Cool hat!".
+ *     a second piece swaps, the meter (its ta-da chimes), GO · party, ↺ restarts with nothing on; out through the
+ *     door into the party in disguise (P6, tests/party-free.mjs), nobody jumping.
  *   - Every scene's ↺ restarts that scene; every room change is a walk through a door.
  * Stills of every warning at 375 x 812 go to tests/out/party-stills/.
  *   node tests/party-scenes.mjs
@@ -591,6 +591,7 @@ let p4Cast = null;
   }
   g.check("four covered spots fill the meter and bring GO · party", !!d.go && Object.values(d.outfit).every(Boolean), d);
   await sleep(400);
+  g.check("the full outfit's ta-da is not silent (the ta-da plays)", (await page.evaluate(() => window.SSQ.beat("ch1-party").now().sound.played)).includes("tada"));
   await still(page, "p5-dress-full");
   // ↺ in the middle of the dress-up restarts P5 with nothing on: the view's own ↺ (the page's is under it),
   // held with a finger as long as the page's.
@@ -630,23 +631,15 @@ let p4Cast = null;
   s = await st(page);
   g.check("GO · party: back in the room in his outfit, control back, the door the goal", s.now && s.now.phase === "out" && s.ctrl && JSON.stringify(s.now.outfit) === JSON.stringify({ head: "boots", face: "stache", body: "shirt", legs: "shades" }), s.now);
   await still(page, "p5-dressed-at-home");
-  s = await until(page, (q) => !q.now && q.party, 15000, async (q) => q.ctrl && q.room === "closet" && (await walk(page, 858, 470)));
-  g.check("he walks out through his door into the older free play", !!s && s.room === "hall", s);
-  const free = await page.evaluate(() => ({ spots: window.__ss.placedSpots().map((p) => p.verb), outfit: window.SSQ.beat("ch1-party").outfit() }));
-  g.check("the free play offers no arrow dance (DANCE · circle is off)", !free.spots.includes("DANCE"), free.spots);
-  g.check("he keeps the outfit he chose in the free play", free.outfit && free.outfit.head === "boots", free.outfit);
+  s = await until(page, (q) => q.now && q.now.scene === "P6", 15000, async (q) => q.ctrl && q.room === "closet" && (await walk(page, 858, 470)));
+  g.check("he walks out through his door into the party in disguise (P6)", !!s && s.room === "hall", s && s.now);
+  g.check("he keeps the outfit he chose in P6", s && s.now.worn.head === "boots", s && s.now.worn);
   // Nobody jumps on the way in: everyone where P4 left them (Isfred at the bar, the octopus at his dance spot).
-  const freeCast = await page.evaluate(() => {
-    const ss = window.__ss,
-      out = {};
-    for (const [x, y, kind] of ss.CH1_GUESTS) out[window.SSQ.guestId(kind)] = [x, y];
-    out["octopus-guest"] = [ss.op.ch1Oct.x, ss.op.ch1Oct.y];
-    return { people: out, isfred: ss.CH1_PARTY_CAST.isfred };
-  });
+  const freeCast = { people: Object.fromEntries(Object.entries(s.now.people).map(([id, q]) => [id, [q.x, q.y]])), isfred: [s.now.isfred.x, s.now.isfred.y] };
   const moved = [];
   for (const [id, [x, y]] of Object.entries(p4Cast.people)) Math.hypot(freeCast.people[id][0] - x, freeCast.people[id][1] - y) > 60 && moved.push([id, [x, y], freeCast.people[id]]);
   Math.hypot(freeCast.isfred[0] - p4Cast.isfred[0], freeCast.isfred[1] - p4Cast.isfred[1]) > 60 && moved.push(["isfred", p4Cast.isfred, freeCast.isfred]);
-  g.check("into the free play nobody jumps over 60: everyone stands where P4 left them", moved.length === 0, moved);
+  g.check("into P6 nobody jumps over 60: everyone stands where P4 left them", moved.length === 0, moved);
   await sleep(500);
   await still(page, "p6-free-play-outfit");
   g.check("no script errors in P5", errors.length === 0, errors.slice(0, 3));
@@ -666,15 +659,16 @@ for (const [scene, room, pose] of [
   g.check(`↺ in ${scene} restarts ${scene}`, s.now && s.now.scene === scene && s.room === room && s.now.pose === pose && s.ctrl, s);
 }
 
-// ---------- the source: no "Cool hat!" in the free play, and the time pin unchanged ----------
-const redesign = readFileSync(join(root, "src", "game", "12-ch1-redesign.js"), "utf8");
-g.check("the older free play never says \"Cool hat!\"", !redesign.includes('"Cool hat!"'));
-g.check("COOL_HAT_SECONDS is still the pinned 180", redesign.includes("COOL_HAT_SECONDS = 180"));
+// ---------- the source: no "Cool hat!" anywhere, and the time pin unchanged ----------
+const { COOL_HAT_SECONDS } = await import(join(root, "src", "modules", "party-free.js"));
+const allGame = ["12-ch1-redesign.js", "14-ch1-day1.js", "15-ch1-scene1.js"].map((f) => readFileSync(join(root, "src", "game", f), "utf8")).join("\n");
+g.check("the game never says \"Cool hat!\" (the old free play is gone)", !allGame.includes('"Cool hat!"'));
+g.check("COOL_HAT_SECONDS is still the pinned 180", COOL_HAT_SECONDS === 180);
 // The marks' size is measured where they are drawn (P2, "?" over the glancer), not read from the source.
 // The capture rule's numbers are Brian's pinned ones (docs/TUNING-PINS.json): a pin change must change both.
 const { ALARM } = await import(join(root, "src", "modules", "party-alarm.js"));
 const pins = JSON.parse(readFileSync(join(root, "docs", "TUNING-PINS.json"), "utf8")).pins;
-const pin = (id) => +(((pins.find((p) => p.id === id) || {}).snippet || "").match(/(?:>=|=|<)\s*([\d.]+)/) || [])[1];
+const pin = (id) => +(((pins.find((p) => p.id === id) || {}).snippet || "").match(/(?:>=|=|<|:)\s*([\d.]+)/) || [])[1];
 g.check(
   "the party's guard speed, reach, feet circle and home delay equal the pinned numbers",
   ALARM.guard === pin("guard-speed") && ALARM.reach === pin("guard-catch") && ALARM.feet === pin("cone-feet") && ALARM.homeDelay === pin("home-search-delay"),

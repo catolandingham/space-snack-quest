@@ -49,10 +49,25 @@ const CAPTIONS = {
   v15_warnings: "V15. A guest's \"?\" when Squatch is in his cone (here the glancer looking across the lane).",
   v15_caught_mark: "V15. \"!\" when he stays in sight too long: the alarm starts.",
   v15_eyes_plant: "V15. Hidden in the plant: only his eyes in the leaves, watching the pairs dance.",
+  h2_conga: "Half two, new. The conga line (three guests) on its loop round the floor, Squatch towed on its end, in his outfit.",
+  h2_camera_count_and_polaroid: "Half two, new. The camera's red light counting 3-2-1 (lit dots on top), and the Polaroid sliding out with Squatch in it (+25).",
+  h2_flash: "Half two, new. The camera's flash: the picture goes white for a moment.",
+  h2_pyramid_and_paw: "Half two, new. The snack pyramid on the bar's counter, and the paw icon over it that opens the snack close-up (no words).",
+  h2_pyramid_topple: "Half two, new. The pyramid toppling in a chain (a cup rolls, the tray slides, the Moon Pie tin falls), a flying cup, and a piece of his outfit knocked off.",
+  h2_snack_closeup_back: "Half two, new. The snack close-up: the bartender's back turned (her apron bow and hair bun), his paw taking a snack, the bag with what he took, the close button (a cross, no words).",
+  h2_snack_closeup_glance: "Half two, new. The same, as she glances: her face turns to the side (the warning).",
+  h2_snack_closeup_face: "Half two, new. The same, facing the room: a paw in the snacks now is caught.",
+  h2_piece_tip_and_fly: "Half two, new. A warning: the piece about to go, drawn big over him, and him shaking; a piece knocked off flying away.",
+  h2_beard_in_doorway: "Half two, new. Mops's beard swishing past the hallway doorway, his humming drawn as green notes; Squatch stepped back.",
+  h2_clap_and_hiccups: "Half two, new. Clapping over the guests after the dance, and hiccup bubbles over the octopus.",
+  h2_closing_speaker: "Half two, new. Closing time: the wall speaker's ring lines while it speaks.",
+  h2_leaving_in_pairs: "Half two, new. Closing time: the guests walking out through the hallway doorway two by two (the two who came alone leave together).",
+  h2_mops_mopping_in: "Half two, new. The empty hall: Mops comes in mopping with his beard, head down, leaving a wet streak.",
+  h2_home_mops_puffs_and_furry_flyer: "Half two, new. After the alarm, at home: Mops in the doorway out of breath (puffs), the flyer on the floor covered in fur and glowing.",
 };
 const FULL = { v05_dance_phone: "phone", v05_dance_computer: "computer", v06_dress_phone_start: "phone", v06_dress_phone_absurd: "phone", v06_dress_computer: "computer", v12_alarm_phone: "phone", v12_alarm_computer: "computer" };
 
-const g = await startGame({ port: 8994, name: "party-sheet" });
+const g = await startGame({ port: +(process.env.PARTY_SHEET_PORT || 8994), name: "party-sheet" });
 const { page } = await g.open("?ch=1", { width: 1280, height: 800, deviceScaleFactor: 1 });
 await sleep(1500);
 await page.addScriptTag({ content: script });
@@ -68,7 +83,7 @@ const card = (id) => {
 };
 const html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Party pictures</title><style>body{margin:0;padding:12px;font:16px/1.4 system-ui,sans-serif;color:#1e2430;background:#f4f1ea}h1{font-size:22px}figure{margin:0 0 22px;background:#fff;border-radius:10px;padding:8px}img{display:block;border-radius:6px}figcaption{padding:6px 4px 0}</style></head>
-<body><h1>Party night: every new picture (showing 1)</h1><p>Drawn by the game on top of the locked hall picture, which is unchanged. On a phone the hall pictures show at this width (375). Full-screen pictures fill the phone.</p>
+<body><h1>Party night: every new picture (showing 3: half two added at the end)</h1><p>Drawn by the game on top of the locked hall picture, which is unchanged. On a phone the hall pictures show at this width (375). Full-screen pictures fill the phone.</p>
 ${ids.map(card).join("\n")}</body></html>`;
 writeFileSync(join(OUT, "sheet.html"), html);
 for (const [name, width] of [

@@ -451,11 +451,11 @@
       for (let i = 0; i < o; i += 0.395) lV(Da(i % 0.79 < 0.395 ? 50 : 57), 0.3, "sine", 0.06, i);
       songUntil = p.t + o;
     }
-    // Singing or music, never both: no background music while a song line is up, its tune is still
-    // playing, or Squatch is at the party mic. The music fades back in after.
+    // Singing or music, never both: no background music while a song line is up or its tune is still
+    // playing. The music fades back in after.
     let songUntil = 0;
     function singNow() {
-      return p.t < songUntil || n.ch1Mini === "karaoke" || !!(n.cur && n.cur.k === "bub" && n.cur.b.style === "song");
+      return p.t < songUntil || !!(n.cur && n.cur.k === "bub" && n.cur.b.style === "song");
     }
     let vV = [],
       ea = [],
@@ -560,13 +560,13 @@
       if (p.state !== "op") return "";
       // The morning has the room's music (Brian's Floating in Space) until "That evening…".
       if (window.SSQ && window.SSQ.homeMusic && window.SSQ.homeMusic.owns()) return "";
+      // The party night has its own music (the Croc Boys, muffled at home; src/modules/party-sound.js), never Joe's theme.
+      if (window.SSQ && window.SSQ.beat("ch1-party") && window.SSQ.beat("ch1-party").active()) return "";
       if (n.roomWalk) return "";
       if (n.ch1Night && n.scene === "Q4" && n.ctrl) return "";
-      if (n.sqPose === "hidden" && n.ch1Party) return "";
       if (n.ch1Heart) return "heart";
       if (n.gift || n.holdToy) return "gift";
-      if (n.room === "closet" && !n.ch1Search && !n.guard) return "home";
-      if (n.ch1Kid === "smile" || n.ch1Kid === "wide" || n.ch1Kid === "shh") return "heart";
+      if (n.room === "closet") return "home";
       return "";
     }
     function musicWant() {
@@ -576,7 +576,6 @@
       if (n.ch1Heart) return "warm";
       if (n.roomWalk || n.ch1Journey) return "journey";
       if ((n.ch1Night && n.scene === "Q4" && n.ctrl) || (n.ch1Sneak && n.ctrl)) return "sneak";
-      if (n.sqPose === "hidden" && n.ch1Party) return "sneak";
       return "";
     }
     // Make the music file and start it inside the player's tap: iPhones start an audio file only from a tap,
@@ -1331,8 +1330,6 @@
                   ? { x0: 60, x1: 900, y0: 196, y1: 590 }
                   : n.room === "hall" && partyBeat() && partyBeat().ownsRoom()
                     ? partyBeat().bounds()
-                  : n.room === "hall" && n.ch1Party
-                    ? { x0: 60, x1: 900, y0: CH1_PARTY_FLOOR_Y, y1: 590 }
                   : n.room === "hall"
                     ? { x0: 60 + B.camX, x1: 900 + B.camX, y0: (n.scene || "")[0] === "Q" ? CH1_WALL_FOOT : 200, y1: 590 }
                     : n.room === "window"
@@ -1389,7 +1386,6 @@
       )
         for (let i of qn) l.push(i.kind === "plant" ? nt(i.x, i.y, 26, 14, 10) : nt(i.x, i.y, 40, 14, 10));
       if (n.room === "window" && l.push(nt(rt.x, rt.y, 26, 14, 10)), n.room === "hall" && partyBeat() && partyBeat().ownsRoom()) for (let i of partyBeat().solids()) l.push(i);
-      else if (n.room === "hall" && n.ch1Party) for (let i of ch1PartySolids()) l.push(i);
       else if (n.room === "hall") {
         (l.push(nt(ne.x, ne.y, 26, 14, 10)),
           l.push(nt(DV.x, DV.y, 26, 16, 8)),

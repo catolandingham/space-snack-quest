@@ -187,7 +187,6 @@ const bubbles = await page.evaluate(() => {
     ups: { scene: "Q2", room: "hangar", ch1D: true, ch1Ship: true, crew: "", crew2: "tease", night2: true },
     scanner: { scene: "Q9", room: "hangar", ch1D: true, ch1Ship: true, ch1Night: false, ch1Office: false },
     robot: { scene: "Q9", room: "hall", ch1D: false, ch1Office: true },
-    kid: { scene: "QA", room: "hall", party: true },
   };
   const cv = document.querySelector("canvas[width='960']") || document.querySelector("canvas");
   const k = cv.width / 960;
@@ -208,7 +207,7 @@ const bubbles = await page.evaluate(() => {
     n.ch1Night = !!extra.ch1Night;
     n.ch1Office = !!extra.ch1Office;
     n.ch1Crew = extra.crew || "";
-    n.ch1Party = !!extra.party;
+    n.ch1PartyNow = null;
     n.sqPose = extra.pose || "stand";
     n.moPose = "stand";
     n.sq.x = (extra.sq || [400, 520])[0];
@@ -229,7 +228,7 @@ const bubbles = await page.evaluate(() => {
     return { who, at, marks, top: at.y < 80 && Math.abs(at.x - 480) < 40 };
   };
   const out = [];
-  for (const who of ["mops", "sq", "official", "tourist", "ups", "scanner", "robot", "kid"]) out.push(placed(who, setups[who]));
+  for (const who of ["mops", "sq", "official", "tourist", "ups", "scanner", "robot"]) out.push(placed(who, setups[who]));
   out.push(placed("tourist", { scene: "Q3", room: "hall", ch1D: false }));
   out.push(placed("ups", { scene: "Q4", room: "hangar", ch1D: true, ch1Night: true, crew: "" }));
   out.push(placed("ups", { scene: "Q5", room: "hangar", ch1D: true, ch1Night: true, crew: "tease" }));
@@ -243,176 +242,40 @@ g.check(
   { missingSpeaker, bubbles },
 );
 
+// The party in disguise (P6, src/modules/party-free.js): three songs share the pinned 3 minutes
+// (COOL_HAT_SECONDS), and closing time (P8b, the wall speaker's line) comes after the third, not sooner, with no
+// "Cool hat!". The test sets the party's clock just short of the end, as the older check did.
 const hat = await page.evaluate(() => {
   const ss = window.__ss;
   const n = ss.op;
-  n.scene = "QA";
-  n.ctrl = true;
-  n.ch1Party = true;
-  n.ch1Disguise = true;
-  n.ch1Flyer = true;
-  n.ch1PartyOver = false;
-  n.ch1PartyT = ss.COOL_HAT_SECONDS - 0.2;
+  const b = window.SSQ.beat("ch1-party");
   n.q = [];
   n.cur = null;
-  ss.tick(0.3);
-  const said = n.log.filter((e) => e.k === "bub").map((e) => e.text);
-  return { seconds: ss.COOL_HAT_SECONDS, said, over: n.ch1PartyOver, disguise: n.ch1Disguise };
+  n.log = [];
+  b.jump("P6");
+  const p = n.ch1PartyNow;
+  // He stands behind the crowd at the front of the hall, where nobody is looking.
+  n.sq.x = 600;
+  n.sq.y = 585;
+  ss.tick(0.05);
+  Object.assign(p, { song: 2, songT: 60 - 0.3, ft: 180 - 0.3 });
+  ss.tick(0.2);
+  const before = b.now().scene;
+  ss.tick(0.2);
+  ss.tick(0.05);
+  const said = n.log.filter((e) => e.k === "bub").map((e) => e.text).concat(n.cur && n.cur.b ? [n.cur.b.text] : []);
+  return { before, after: b.now() && b.now().scene, said };
 });
-// Half one of the party rebuild: the older free play's time (the pinned 3 minutes) still ends it, but with no
-// "Cool hat!" line: he walks home and the evening ends there (half two brings closing time).
-g.check("the free play ends at 3 minutes of party play, not sooner, with no \"Cool hat!\"", hat.seconds === 180 && hat.over && !hat.said.includes("Cool hat!"), hat);
-
-const balloon = await page.evaluate(() => {
-  const ss = window.__ss;
-  const n = ss.op;
-  const said = () => n.log.filter((e) => e.k === "bub").map((e) => e.text);
-  const arm = () => {
-    n.scene = "QA";
-    n.room = "hall";
-    n.ch1D = false;
-    n.ch1Party = true;
-    n.ch1Disguise = true;
-    n.ch1Flyer = true;
-    n.ch1PartyOver = false;
-    n.ch1PartyT = 0;
-    n.ch1Balloon = "up";
-    n.ch1BalloonT = 0;
-    n.ch1BalloonY = 460;
-    n.ch1Kid = "gasp";
-    n.ch1Fur = false;
-    n.ctrl = true;
-    n.q = [];
-    n.cur = null;
-    n.log = [];
-    n.sq.x = 180;
-    n.sq.y = 500;
-    n.sqPose = "stand";
-    ss.hall.camX = 0;
-  };
-  const drain = (steps = 40) => {
-    for (let i = 0; i < steps; i++) {
-      if (n.cur && (n.cur.k === "bub" || n.cur.k === "card" || n.cur.k === "panel" || n.cur.k === "wait")) ss.opTap();
-      ss.tick(0.2);
-    }
-  };
-  const spot = (verb) => ss.spotsNow().find((s) => s && s.verb === verb);
-  arm();
-  const missedJump = !spot("JUMP");
-  const gasped = n.ch1Kid;
-  ss.drawFrame();
-  ss.tick(ss.BALLOON_GRAB_SECONDS + 0.2);
-  const ceiling = { balloon: n.ch1Balloon, kid: n.ch1Kid, gasped, disguise: n.ch1Disguise, over: n.ch1PartyOver, yell: said().includes("Scary Wookiee!"), jumpWasThere: !missedJump };
-  arm();
-  spot("JUMP").f();
-  const jumped = { held: n.ch1Balloon === "held", legs: n.ch1JumpT > 0, kid: n.ch1Kid };
-  spot("GIVE").f();
-  drain();
-  const back = { balloon: n.ch1Balloon, kid: n.ch1Kid, disguise: n.ch1Disguise, over: n.ch1PartyOver, yell: said().includes("Scary Wookiee!"), fur: said().includes("FUR! Security!") };
-  arm();
-  spot("JUMP").f();
-  const walksBefore = (n.ch1Walks || []).length;
-  spot("KEEP").f();
-  drain(100);
-  const kept = {
-    yell: said().includes("Scary Wookiee!"),
-    fur: said().includes("FUR! Security!"),
-    over: n.ch1PartyOver,
-    walked: (n.ch1Walks || []).length > walksBefore,
-    window: ss.BALLOON_GRAB_SECONDS,
-  };
-  return { ceiling, jumped, back, kept };
-});
-g.check("a balloon that reaches the ceiling only makes the kid sad", balloon.ceiling.gasped === "gasp" && balloon.ceiling.balloon === "ceiling" && balloon.ceiling.kid === "sad" && balloon.ceiling.disguise && !balloon.ceiling.over && !balloon.ceiling.yell && balloon.ceiling.jumpWasThere, balloon.ceiling);
-g.check("bringing the balloon back keeps the disguise and the kid stays quiet", balloon.jumped.held && balloon.jumped.legs && balloon.jumped.kid === "wide" && balloon.back.balloon === "back" && balloon.back.kid === "up" && balloon.back.disguise && !balloon.back.over && !balloon.back.yell && !balloon.back.fur, balloon);
-g.check("keeping the balloon makes the kid yell and Squatch walk off", balloon.kept.yell && balloon.kept.fur && balloon.kept.over && balloon.kept.walked && balloon.kept.window === 6, balloon.kept);
-
-const extras = await page.evaluate(() => {
-  const ss = window.__ss;
-  const n = ss.op;
-  const said = () => n.log.filter((e) => e.k === "bub").map((e) => e.text);
-  const arm = () => {
-    n.scene = "QA";
-    n.room = "hall";
-    n.ch1D = false;
-    n.ch1Party = true;
-    n.ch1Disguise = true;
-    n.ch1Flyer = true;
-    n.ch1PartyOver = false;
-    n.ch1PartyT = 0;
-    n.ch1HatAskew = false;
-    n.ch1Hugs = 0;
-    n.ch1Snacks = 0;
-    n.ch1Look = 0;
-    n.ch1Photo = false;
-    n.ch1InShot = false;
-    n.ch1Spill = 0;
-    n.ch1PartyDid = {};
-    n.ch1Balloon = "back";
-    n.ctrl = true;
-    n.q = [];
-    n.cur = null;
-    n.log = [];
-    n.stars = 0;
-    n.sqPose = "stand";
-    n.sq.x = 400;
-    n.sq.y = 520;
-    ss.hall.camX = 0;
-  };
-  const drain = () => {
-    for (let i = 0; i < 20; i++) {
-      if (n.cur && (n.cur.k === "bub" || n.cur.k === "card" || n.cur.k === "panel" || n.cur.k === "wait")) ss.opTap();
-      ss.tick(0.05);
-    }
-  };
-  arm();
-  ss.spotsNow().find((s) => s.verb === "HUG").f();
-  drain();
-  const once = { askew: !!n.ch1HatAskew, disguise: n.ch1Disguise, line: said().includes("*hic* Fellow tourist!"), over: n.ch1PartyOver };
-  ss.spotsNow().find((s) => s.verb === "HUG").f();
-  drain();
-  const twice = { disguise: n.ch1Disguise, over: n.ch1PartyOver, fur: said().includes("FUR! Security!") };
-  const show = () => {
-    ss.tick(0.05);
-    return n.cur && n.cur.id;
-  };
-  const walk = (x, y) => {
-    ss.tapAt(x, y);
-    let at = { x: n.sq.x, y: n.sq.y };
-    for (let i = 0; i < 60; i++) {
-      ss.tick(0.1);
-      at = { x: n.sq.x, y: n.sq.y };
-      if (Math.hypot(at.x - x, at.y - y) < 14) break;
-    }
-    ss.tick(0.1);
-    return { at, offer: ss.offerNow() && ss.offerNow().verb };
-  };
-  const frame = ss.CH1_FRAME;
-  const cam = ss.CH1_CAM;
-  const shot = { x: (frame.x0 + frame.x1) / 2, y: (frame.y0 + frame.y1) / 2 };
-  arm();
-  const starsIn = n.stars;
-  const into = walk(shot.x, shot.y);
-  ss.actionDown();
-  const inside = { shot: n.ch1InShot, stars: n.stars - starsIn, bonus: ss.PHOTO_BONUS, panel: show(), into };
-  arm();
-  const starsOut = n.stars;
-  const away = walk(cam.x, cam.y);
-  ss.actionDown();
-  const outside = { shot: n.ch1InShot, stars: n.stars - starsOut, panel: show(), away };
-  return { once, twice, inside, outside };
-});
-g.check("the first octopus hug tugs the hat and the second starts the alarm", extras.once.askew && extras.once.disguise && extras.once.line && !extras.once.over && !extras.twice.disguise && extras.twice.over && extras.twice.fur, extras);
+const free = await import(new URL("../src/modules/party-free.js", import.meta.url).href);
 g.check(
-  "walking into the shot and pressing SNAP pays the placeholder bonus",
-  extras.inside.into.offer === "SNAP" && extras.inside.shot && extras.inside.stars === extras.inside.bonus && extras.inside.panel === "ch1photo",
-  extras.inside,
+  "the party in disguise lasts its 3 minutes (three songs), then closing time, not sooner, with no \"Cool hat!\"",
+  free.COOL_HAT_SECONDS === 180 && free.SONG_SECONDS * 3 === 180 && hat.before === "P6" && hat.after === "P8b" && hat.said.includes("The party's over. Good night, Stormtop!") && !hat.said.includes("Cool hat!"),
+  hat,
 );
-g.check(
-  "Squatch outside the frame gets no photo bonus",
-  extras.outside.away.offer === "SNAP" && !extras.outside.shot && extras.outside.stars === 0 && extras.outside.panel === "ch1photo",
-  extras.outside,
-);
+// The balloon (and the balloon kid), the octopus's two-hug alarm, the SNAP photo button and the snack bar cut-in
+// went with the old free play on purpose (party rebuild, half two). Their replacements in P6 are checked in
+// tests/party-free.mjs: the octopus's hugs knock a piece off, the camera's flash pays the photo bonus once, and
+// the snack close-up (five snacks topple the pyramid; the bartender's two catches).
 
 const play = await page.evaluate(() => {
   const ss = window.__ss;
@@ -482,8 +345,56 @@ const play = await page.evaluate(() => {
       still = 0;
       continue;
     }
-    if (n.ch1Raid && n.room === "hall") {
+    // The party in disguise and closing time (src/modules/party-free.js, party-endings.js).
+    const pb = window.SSQ.beat("ch1-party"),
+      pn = pb && pb.now();
+    if (pn && pn.dance) {
+      // The full-screen dance: every tap is a move; it ends with the song.
+      const cv = document.querySelector('canvas[aria-label="dance"]');
+      cv && i % 8 === 0 && cv.dispatchEvent(new PointerEvent("pointerdown", { clientX: 200, clientY: 300, pointerId: 8, bubbles: true }));
+      cv && i % 8 === 0 && cv.dispatchEvent(new PointerEvent("pointerup", { clientX: 200, clientY: 300, pointerId: 8, bubbles: true }));
+      ss.tick(0.1);
+      still = 0;
+      continue;
+    }
+    if (pn && pn.scene === "P6" && pn.done.dance && n.ctrl && !n.cur) {
+      // After the dance he enjoys the party until closing time, the way a careful kid does: he stands where no cone
+      // reaches, and steps somewhere else when someone looks his way or turns for a second look.
+      const cones = pb.cones();
+      const inCone = (c, x, y) => {
+        const dx = x - c.ox,
+          dy = y - 20 - c.oy;
+        let a = Math.atan2(dy, dx) - c.a;
+        while (a > Math.PI) a -= 2 * Math.PI;
+        while (a < -Math.PI) a += 2 * Math.PI;
+        return Math.abs(a) <= c.half + 0.08 && Math.hypot(dx, dy) <= c.len + 16;
+      };
+      const seen = (x, y) => cones.some((c) => inCone(c, x, y));
+      const curious = pn.curious && pn.curious.phase !== "wait";
+      if (seen(n.sq.x, n.sq.y) || curious || n.sq.y < 400) {
+        // (clear of the vent, the plants, the hallway doorway and the octopus's place by the snacks)
+        const SAFE = [[600, 585], [320, 585], [560, 470], [420, 470], [250, 585], [520, 585], [130, 585]];
+        const far = (x, y) => !curious || !pn.curious || Math.hypot(x - n.sq.x, y - n.sq.y) > 120;
+        const to = SAFE.find(([x, y]) => !seen(x, y) && far(x, y)) || SAFE.find(([x, y]) => !seen(x, y));
+        to && ((n.sq.x = to[0]), (n.sq.y = to[1]));
+      }
+      n.sqPose = "stand";
+      ss.tick(0.2);
+      still = 0;
+      continue;
+    }
+    if (pn && pn.scene === "P8b" && pn.mops && n.ctrl && !n.cur) {
+      // Closing time: Mops has come in mopping; Squatch walks over to him, and they go home together.
+      n.sq.x = pn.mops.x - 50;
+      n.sq.y = pn.mops.y + 4;
+      acts.push("WALK · Mops");
       ss.tick(0.05);
+      still = 0;
+      continue;
+    }
+    if (pn && pn.scene === "P8b" && !n.cur && !n.ctrl) {
+      // The band packs up and everyone leaves, two by two.
+      ss.tick(0.1);
       still = 0;
       continue;
     }
@@ -564,9 +475,9 @@ const play = await page.evaluate(() => {
   };
 });
 g.check("Chapter 1 reaches the tally card", play.end === "tally", { end: play.end, acts: play.acts, scene: play.state.scene });
-// The party night's half one (src/modules/party.js): the peek, the plant, home through his door, the dress-up,
-// out through his door; then the older free play (no flyer to take, no balloon: they went with the rebuild).
-const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "WALK · go-home", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "OPEN · snack bar", "CLOSE · cut-in", "SNAP · photo", "SNAG · plant", "HIDE · bed", "TAKE · gift", "PUT · box", "DROP · box", "LOOK · calendar", "TAKE · lunch", "SNEAK · hallway", "GIVE · lunch", "FEED · lunch", "FEED · bag", "TAKE · snack", "DROP · snack", "HIDE · plant", "GO · hall", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "LEAVE · food", "PUT · slip", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
+// The party night (src/modules/party.js): the peek, the plant, home through his door, the dress-up, out through his
+// door; the party in disguise (the dance), closing time, and walking home with Mops.
+const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "WALK · go-home", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "TAKE · gift", "PUT · box", "DROP · box", "LOOK · calendar", "TAKE · lunch", "SNEAK · hallway", "GIVE · lunch", "FEED · lunch", "FEED · bag", "TAKE · snack", "DROP · snack", "HIDE · plant", "GO · hall", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "LEAVE · food", "PUT · slip", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
 g.check("the player does the new actions in order", JSON.stringify(play.acts) === JSON.stringify(wantActs), play.acts);
 const must = [
   "Stormtop Cloud Resort, floating above Jupiter.",
@@ -583,8 +494,11 @@ const must = [
   "And now... put your hands together for the Croc Boys!",
   "Stormtop-vania 1-2-3-4-5!",
   "I've never gotten to dance at a party.",
-  "FUR! Security!",
-  "A flyer. And fur on the floor.",
+  // Closing time and the walk home with Mops (party-endings.js); the raid and Mops finding the flyer went with
+  // the old free play.
+  "The party's over. Good night, Stormtop!",
+  "Everyone out there has someone.",
+  "You have me.",
   "The Guardians came! They always come when I'm scared.",
   "He forgot his lunch!",
   "Squatch! You should be hiding.",
@@ -687,170 +601,37 @@ g.check(
   play.shown.includes("ORDER MORE ROBOTS") && play.shown.includes("MARS LOST & FOUND") && play.shown.includes("MY GARDIANS"),
   play.shown,
 );
-g.check("the vent board, the alarm, and the Moon Pie buttons are drawn", play.shown.includes("IDEAS FOR GUARDIANS") && play.shown.includes("Return empty crate") && play.shown.includes("PULL DOWN"), play.shown);
-g.check("a clean chapter still earns the never-caught bonus", play.tally.some((line) => line.includes("Never caught")), play.tally);
-
-const laterBalloon = await page.evaluate(() => {
+g.check("the vent board and the Moon Pie buttons are drawn", play.shown.includes("IDEAS FOR GUARDIANS") && play.shown.includes("Return empty crate"), play.shown);
+// The red FUR alarm is part of the locked party hall picture now (its words are in the picture, not drawn text):
+// it shows on the back wall, by the hallway doorway, during the party.
+const { HALL } = await import(new URL("../src/modules/party-hall.js", import.meta.url).href);
+const red = await page.evaluate((a) => {
   const ss = window.__ss;
   const n = ss.op;
+  n.q = [];
+  n.cur = null;
+  window.SSQ.beat("ch1-party").jump("P2");
+  // past the fade into the room
+  for (let i = 0; i < 30; i++) ss.tick(0.05);
+  ss.drawFrame();
   const cv = document.querySelector("canvas[width='960']") || document.querySelector("canvas");
   const k = cv.width / 960;
   const cx = cv.getContext("2d", { willReadFrequently: true });
-  const redAt = (x, y) => {
-    const p = cx.getImageData(Math.round(x * k), Math.round(y * k), 1, 1).data;
-    return p[0] > 180 && p[1] < 130 && p[2] < 120;
-  };
-  const arm = (balloon) => {
-    n.scene = "QA";
-    n.room = "hall";
-    n.ch1D = false;
-    n.ch1Party = true;
-    n.ch1Office = false;
-    n.ch1Disguise = true;
-    n.ch1PartyOver = false;
-    n.ch1Balloon = balloon;
-    n.ch1BalloonRest = "";
-    n.ch1BalloonPopped = false;
-    n.ch1BalloonPop = 0;
-    n.ctrl = true;
-    n.q = [];
-    n.cur = null;
-    n.sqPose = "stand";
-    n.sq.x = 640;
-    n.sq.y = 520;
-    ss.hall.camX = 0;
-  };
-  const lock = (balloon) => {
-    n.ch1Cut = null;
-    arm(balloon);
-    ss.spotsNow().find((s) => s.verb === "SNAG").f();
-    const state = ss.ch1State();
-    n.q = [];
-    n.cur = null;
-    return state.balloonRest;
-  };
-  const show = (scene) => {
-    n.scene = scene;
-    n.room = "hall";
-    n.ch1D = false;
-    n.ch1Party = false;
-    n.ch1Office = false;
-    n.ctrl = false;
-    n.q = [];
-    n.cur = null;
-    ss.hall.camX = 0;
-    for (let i = 0; i < 12; i++) ss.tick(0.1);
-    ss.drawFrame();
-  };
-  const ceiling = lock("ceiling");
-  const popsBeforeHall = ss.ch1State().balloonPops;
-  show("Q7");
-  const ceilingSeen = { rest: ss.ch1State().balloonRest, onCeiling: redAt(420, 140), tied: redAt(168, 520), pops: ss.ch1State().balloonPops - popsBeforeHall };
-  n.ch1BalloonRest = "";
-  ss.CH1_CHECKPOINTS.Q4();
-  const loaded = ss.ch1State().balloonRest;
-  const tied = lock("back");
-  const popsBeforeTied = ss.ch1State().balloonPops;
-  show("Q7");
-  const tiedSeen = { onCeiling: redAt(420, 140), tied: redAt(168, 520), pops: ss.ch1State().balloonPops - popsBeforeTied, popped: ss.ch1State().balloonPopped };
-  const kept = lock("held");
-  const missed = lock("up");
-  n.ch1Party = false;
-  n.ch1Office = true;
-  n.scene = "Q9";
-  n.ctrl = true;
-  n.q = [];
-  n.cur = null;
-  const before = ss.ch1State().balloonPops;
-  ss.tick(0.05);
-  ss.drawFrame();
-  const once = {
-    pops: ss.ch1State().balloonPops - before,
-    word: ss.shown().includes("POP!"),
-    ctrl: n.ctrl,
-    quiet: n.q.length === 0 && !n.cur,
-  };
-  ss.tick(2);
-  n.room = "closet";
-  ss.tick(0.2);
-  n.room = "hall";
-  n.scene = "Q9";
-  n.ch1Office = true;
-  ss.tick(0.3);
-  ss.drawFrame();
-  return { ceiling, loaded, tied, kept, missed, ceilingSeen, tiedSeen, once, again: ss.ch1State().balloonPops - before };
-});
-g.check(
-  "the balloon stays in later hall scenes and pops once on the last visit",
-  laterBalloon.ceiling === "ceiling" &&
-    laterBalloon.loaded === "ceiling" &&
-    laterBalloon.tied === "tied" &&
-    laterBalloon.kept === "tied" &&
-    laterBalloon.missed === "ceiling" &&
-    laterBalloon.ceilingSeen.rest === "ceiling" &&
-    laterBalloon.ceilingSeen.onCeiling &&
-    !laterBalloon.ceilingSeen.tied &&
-    laterBalloon.ceilingSeen.pops === 0 &&
-    laterBalloon.tiedSeen.tied &&
-    !laterBalloon.tiedSeen.onCeiling &&
-    !laterBalloon.tiedSeen.popped &&
-    laterBalloon.once.pops === 1 &&
-    laterBalloon.once.word &&
-    laterBalloon.once.ctrl &&
-    laterBalloon.once.quiet &&
-    laterBalloon.again === 1,
-  laterBalloon,
-);
-const slice = await page.evaluate(() => {
-  const ss = window.__ss;
-  const n = ss.op;
-  n.scene = "QA";
-  n.room = "hall";
-  n.ch1Party = true;
-  n.ch1Disguise = true;
-  n.ch1Flyer = true;
-  n.ch1PartyOver = false;
-  n.ch1PartyT = 10;
-  n.ch1Cut = null;
-  n.ch1BarDone = false;
-  n.ch1Chain = false;
-  n.ch1Bag = 0;
-  n.stars = 0;
-  n.ctrl = true;
-  n.q = [];
-  n.cur = null;
-  n.log = [];
-  ss.spotsNow().find((s) => s.verb === "OPEN").f();
-  const opened = n.ch1Cut && n.ch1Cut.id === "bar" && n.ctrl === false;
-  const t0 = n.ch1PartyT;
-  ss.tick(1);
-  const paused = n.ch1PartyT === t0;
-  ss.ch1Pointer("down", 430, 200);
-  ss.ch1Pointer("up", 40, 560);
-  const bagged = n.ch1Cut && n.ch1Cut.bag === 1 && n.stars === 0;
-  n.ch1Cut.face = 1;
-  n.ch1Cut.held = "top";
-  ss.ch1Pointer("up", 400, 300);
-  ss.tick(0.05);
-  const first = n.log.some((e) => e.text === "...Nice gloves.") && n.ch1Cut;
-  n.ch1Cut.face = 1;
-  n.ch1Cut.held = "bottom";
-  const beforeAlarm = n.ch1PartyOver;
-  ss.ch1Pointer("up", 400, 500);
-  const second = n.log.some((e) => e.text === "Wait a second... fur!") || n.ch1PartyOver;
-  n.ch1PartyOver = false;
-  n.ch1Disguise = true;
-  n.ch1Cut = { id: "bar", zoom: 1, paw: { x: 200, y: 500 }, held: "", bag: 1, back: 0, glance: 0, face: 0, catches: 0, drag: false };
-  n.ch1Chain = false;
-  ss.ch1Pointer("down", 420, 400);
-  ss.ch1Pointer("up", 40, 560);
-  return { opened, paused, bagged, first, second, beforeAlarm, chain: n.ch1Chain, look: n.ch1Look, bag: n.ch1Bag };
-});
-g.check(
-  "the bar cut-in pauses the party, counts snacks, and a bottom grab spills once",
-  slice.opened && slice.paused && slice.bagged && slice.first && slice.chain && slice.look === 4 && slice.bag === 2,
-  slice,
-);
+  let reds = 0,
+    all = 0;
+  for (let y = a.y0 + 2; y < a.y1 - 2; y += 2)
+    for (let x = a.x0 + 2; x < a.x1 - 2; x += 2) {
+      const p = cx.getImageData(Math.round(x * k), Math.round(y * k), 1, 1).data;
+      all++;
+      p[0] > 170 && p[1] < 110 && p[2] < 110 && reds++;
+    }
+  return { room: n.room, reds, all };
+}, HALL.alarm);
+g.check("the red FUR alarm shows on the party hall's back wall", red.room === "hall" && red.reds > red.all * 0.25, red);
+g.check("a clean chapter still earns the never-caught bonus", play.tally.some((line) => line.includes("Never caught")), play.tally);
+
+// The balloon that stayed in later hall scenes went with the old free play on purpose (party rebuild, half two),
+// and so did the snack bar cut-in: the snack close-up is checked in tests/party-free.mjs.
 g.check("no page errors", errors.length === 0, errors);
 const pad = await page.evaluate(() => {
   const ss = window.__ss;

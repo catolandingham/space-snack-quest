@@ -29,7 +29,7 @@
         Cs();
         return;
       }
-      if (p.state === "op" && (n.ch1PadOn || n.ch1Zoom || n.ch1Cut)) {
+      if (p.state === "op" && (n.ch1PadOn || n.ch1Zoom || partyCutOpen())) {
         // A bubble or a card still goes away on a tap. The snack bar used to swallow that tap.
         if (de()) return void nf();
         ch1SlicePointer("down", l, o);
@@ -42,12 +42,12 @@
           hf(l > 720 && o < 160 ? "close" : l < 400 ? "prev" : "next");
           return;
         }
-        if (p.state === "op" && n.ch1Cut) {
+        if (p.state === "op" && partyCutOpen()) {
           ch1SlicePointer("down", l, o);
           return;
         }
         if (p.state === "op") {
-          ch1WorldTap(l, o) || walkTap(l, o) || nf();
+          (partyBeat() && partyBeat().tap(l, o)) || ch1WorldTap(l, o) || walkTap(l, o) || nf();
           return;
         }
         if (p.state === "title") {
@@ -84,7 +84,7 @@
         linkBeatRaw = q.get("beat") || "",
         linkBeat = parseInt(linkBeatRaw, 10) || 0,
         linkDay2 = linkBeatRaw === "day2",
-        linkParty = /^party(:P[1-5])?$/.test(linkBeatRaw) ? linkBeatRaw.slice(6) || "P1" : "";
+        linkParty = /^party(:P([1-7]|8a|8b))?$/.test(linkBeatRaw) ? linkBeatRaw.slice(6) || "P1" : "";
       let previewBeat = !1,
         day2Jump = !1,
         partyJump = !1;
@@ -298,10 +298,6 @@
           inCrate: !!n.ch1InCrate,
           climbed: !!n.ch1Climbed,
           siteRoom: n.ch1SiteRoom || "",
-          balloonRest: n.ch1BalloonRest || "",
-          balloonPopped: !!n.ch1BalloonPopped,
-          balloonPops: n.ch1BalloonPops || 0,
-          balloonSave: n.ch1Save || null,
         }),
         ballNotice,
         ballNoticeReset,
@@ -310,8 +306,6 @@
         ch1NightLook,
         BALL_NOTICE_RADIUS,
         BALL_NOTICE_SECONDS,
-        COOL_HAT_SECONDS,
-        BALLOON_GRAB_SECONDS,
         ADULT_PX,
         adultPxFor,
         alienScale,
@@ -320,13 +314,6 @@
         QT_ADULT,
         SQ_ADULT,
         CH1_OFFICE_DOOR,
-        CH1_HOME_DOOR,
-        CH1_GUESTS,
-        CH1_PARTY_CAST,
-        PHOTO_BONUS,
-        SNACK_LOOK_SECONDS,
-        CH1_CAM,
-        CH1_FRAME,
         CH1_BIN,
         CH1_ROBOT,
         CH1_MAIL,
@@ -428,6 +415,8 @@
         methodLine: () => methodLine(),
         stallT: () => stall.t,
         conesDrawn: () => conesDrawn.slice(),
+        // Why the warm (home) music would play now, or "" (the party night keeps it off).
+        warmWhy: () => warmWhy(),
         // One game update of dt seconds, run inside the caller's own task (no frame can run in between).
         tick: (dt) => ep(dt),
         METHOD_LINES: [...new Set(Object.values(METHOD_LINES))],

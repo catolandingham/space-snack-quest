@@ -95,6 +95,18 @@ export async function startGame({ port, name }) {
       res.end(musicBuf);
       return;
     }
+    // The party's recorded sounds (sounds/*.mp3, Kenney CC0: sounds/CREDITS.txt).
+    if (pathname.startsWith("/sounds/") && pathname.endsWith(".mp3")) {
+      const file = join(root, decodeURIComponent(pathname.slice(1)));
+      if (!file.startsWith(join(root, "sounds")) || !existsSync(file)) {
+        res.writeHead(404);
+        res.end();
+        return;
+      }
+      res.writeHead(200, { "content-type": "audio/mpeg" });
+      res.end(readFileSync(file));
+      return;
+    }
     res.writeHead(200, { "content-type": "text/html" });
     res.end(html);
   });

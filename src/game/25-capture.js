@@ -226,8 +226,6 @@
       S11: () => Js(),
       // Redesigned Chapter 1 night: back at the bin, yellow copy not mailed yet.
       Q4: () => ch1RestartNight(),
-      // The party. A catch stays in the party, a little back from where he was seen.
-      QA: () => ch1RestartParty(),
     };
     const CH3_CHECKPOINTS = {
       p1: () => {

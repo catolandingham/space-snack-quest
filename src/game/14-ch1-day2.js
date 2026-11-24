@@ -25,9 +25,6 @@
     function ch1Day2Begin() {
       ((n.ch1Day2 = !0),
         (n.ch1VentLunch = 0),
-        (n.ch1Disguise = !1),
-        (n.ch1Party = !1),
-        (n.ch1PartyOver = !0),
         (n.wardrobe = "closed"),
         (n.room = "closet"),
         (n.scene = "QB"),
@@ -614,8 +611,7 @@
     function ch1LastWalk() {
       ((n.ch1Last = !0), (n.ctrl = !1));
       ch1GoDay("hall", { who: "both", scene: "Q9" }, () => {
-        (ch1BalloonPopNow(),
-          ch1GoDay("passage", { who: "both", scene: "Q9" }, () => ch1Ready("keepsake", "Squatch: go to the ship", "Q9")));
+        ch1GoDay("passage", { who: "both", scene: "Q9" }, () => ch1Ready("keepsake", "Squatch: go to the ship", "Q9"));
       });
     }
     function ch1TakeDrawing() {
@@ -1029,7 +1025,6 @@
         (n.cur = null),
         (n.ctrl = !0),
         (n.ch1Day2 = !0),
-        (n.ch1Party = !1),
         (n.ch1Zoom = null),
         (n.ch1PadOn = !1),
         (n.ch1Office = !1),

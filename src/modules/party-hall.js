@@ -72,7 +72,7 @@ export const GLANCE = Object.freeze({ a: (174 * Math.PI) / 180, sweep: 0.15 });
 // The glancer's rhythm (P2): facing the stage, then head turn with "?", then looking across the lane, then back.
 export const GLANCE_TIMES = Object.freeze({ stage: 3.5, warn: 0.5, look: 2, back: 0.4 });
 
-// Where feet cannot go in the party hall (the night and the older free play both use this one list): the stage, the
+// Where feet cannot go in the party hall (one list for every scene; from P6 on the strip to the hallway opens): the stage, the
 // snack bar with the wall past it, its two stools, the two plant pots, and the camera's tripod. People's feet are
 // added by whoever stands there.
 export const HALL_SOLIDS = Object.freeze([
@@ -86,7 +86,47 @@ export const HALL_SOLIDS = Object.freeze([
 ]);
 // Where the camera points: the middle of the stage, where the band plays.
 export const CAMERA_AIM = Object.freeze({ x: 420, y: 280 });
-// The octopus's spot by the snacks in the older free play (where he notices Squatch, a pinned number in
-// src/game/14-ch1-day1.js): he strolls there from his dance spot.
+// The octopus's spot by the snacks (P6): he strolls there from his dance spot and notices Squatch from there.
 export const OCTOPUS_SNACKS = Object.freeze({ x: 760, y: 555 });
 
+
+// ---------- the party in disguise (P6) and the endings (P8): places on the same locked picture ----------
+// The wall speaker on the back wall (picture 885 to 933, 135 to 184): the closing line comes from it.
+export const HALL_SPEAKER = fromPicture(885, 135, 933, 184);
+// Where the guests mill (P6): the dance floor, the bar and the photo spot, each a place a pair can stand in (the
+// pair stands 36 either side of it). All clear of the vent, the door strip, the plant pots and the tripod.
+export const MILL = Object.freeze([
+  Object.freeze({ id: "floor-left", x: 300, y: 405 }),
+  Object.freeze({ id: "floor-right", x: 610, y: 400 }),
+  Object.freeze({ id: "bar-top", x: 720, y: 405 }),
+  Object.freeze({ id: "bar-low", x: 700, y: 510 }),
+  Object.freeze({ id: "photo", x: 305, y: 478 }),
+  Object.freeze({ id: "middle", x: 560, y: 470 }),
+]);
+// The conga line's loop round the floor (P6). It passes near the vent once (the third point), so staying in the
+// line is not free.
+export const CONGA_ROUTE = Object.freeze([
+  Object.freeze({ x: 330, y: 405 }),
+  Object.freeze({ x: 250, y: 440 }),
+  Object.freeze({ x: 240, y: 515 }),
+  Object.freeze({ x: 320, y: 545 }),
+  Object.freeze({ x: 380, y: 505 }),
+  Object.freeze({ x: 540, y: 490 }),
+  Object.freeze({ x: 600, y: 430 }),
+  Object.freeze({ x: 470, y: 415 }),
+]);
+// The band photo: the floor between the camera's lens and the stage. Standing here when the flash goes, Squatch
+// is in the picture.
+export const PHOTO_FRAME = Object.freeze({ x0: 390, x1: 450, y0: 330, y1: 400 });
+// The snack bar's pyramid (on the counter's front end) and where Squatch stands to reach into it.
+export const PYRAMID = Object.freeze({ x: 868, y: 560 });
+export const SNACK_SPOT = Object.freeze({ x: 770, y: 540, r: 60 });
+// The floor in front of the hallway doorway (P6): walking in here, he meets Mops's beard and steps back.
+export const HALLWAY_ZONE = Object.freeze({ x0: 850, x1: 960, y0: 290, y1: 352 });
+export const HALLWAY_BACK = Object.freeze({ x: 812, y: 322 });
+// The floor strip from the bar's top end to the hallway doorway (open in P6 to P8, so he can head for it).
+export const HALLWAY_LANE = Object.freeze({ x0: 806, x1: 960, y0: 0, y1: 350 });
+// Leaving at closing time (P8b): a walk to the hallway doorway, then out through it.
+export const EXIT = Object.freeze([Object.freeze({ x: 880, y: 325 }), Object.freeze({ x: 990, y: 310 })]);
+// Mops at closing time (P8b): he comes in from the hallway mopping, and stops here, facing the room.
+export const MOPS_IN = Object.freeze({ from: Object.freeze({ x: 990, y: 320 }), at: Object.freeze({ x: 700, y: 400 }) });

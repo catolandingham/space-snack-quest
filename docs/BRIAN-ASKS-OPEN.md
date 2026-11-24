@@ -4,23 +4,23 @@
 | Lines | Heading |
 | --- | --- |
 | 25–31 | # Brian's asks that are not in the game yet |
-| 32–46 | ## 1. Build next |
-| 47–63 | ## 2. Needs your eyes |
-| 64–67 | ## 3. Your instructions disagree |
-| 68–69 | ## 4. Everything else not built |
-| 70–88 | ### Morning and home |
-| 89–100 | ### Party |
-| 101–116 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
-| 117–121 | ### Snacks and dress-up |
-| 122–134 | ### Day 2 and night |
-| 135–139 | ### Escape and later chapters |
-| 140–143 | ### Looks and lines |
-| 144–151 | ### Sound |
-| 152–155 | ### Words and rules |
-| 156–168 | ### How the bots work |
-| 169–176 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
-| 177–191 | ## 5. Merged, in a pull request, and being built |
-| 192–202 | ## 6. Corrections to the checkers |
+| 32–41 | ## 1. Build next |
+| 42–58 | ## 2. Needs your eyes |
+| 59–62 | ## 3. Your instructions disagree |
+| 63–64 | ## 4. Everything else not built |
+| 65–83 | ### Morning and home |
+| 84–94 | ### Party |
+| 95–106 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
+| 107–111 | ### Snacks and dress-up |
+| 112–124 | ### Day 2 and night |
+| 125–129 | ### Escape and later chapters |
+| 130–133 | ### Looks and lines |
+| 134–141 | ### Sound |
+| 142–145 | ### Words and rules |
+| 146–158 | ### How the bots work |
+| 159–166 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
+| 167–181 | ## 5. Merged, in a pull request, and being built |
+| 182–192 | ## 6. Corrections to the checkers |
 <!-- /section-index -->
 # Brian's asks that are not in the game yet
 
@@ -33,12 +33,7 @@ Brian's G Bot messages 419 to 603 were written while he looked at the old "v2" b
 
 Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win over older words.
 
-1a. **Vents tug the disguise.** Brian, 2026-11-23: "No, it tugs the disguise": with the disguise on, the vent tugs a piece and does not pull fur or set off the alarm (R108 stays). The no-disguise half (swirls always turning inward; too close, a tuft drifts in, then fur goes in and the alarm sounds) is built in the party rebuild, half one (draft PR #85, `src/modules/party-vent.js`). The tug comes with half two (P6), on the outfit the kid chose; the older free play still has its SUCK button until then.
-3. **Raising the alarm at the party, in free play.** Brian, 2026-11-23: the guest runs to the wall alarm. Built for the peek and sneaks in draft PR #85 (`src/modules/party-alarm.js`); the older free play still runs its own alarm until half two. "anytime you're seeing or anytime fur detected someone needs to run the trip alarm." (K 163).
-4. **A catch at the party, in free play.** Brian, 2026-11-23, "Card, restart scene": built for P1 to P5 in draft PR #85 (each scene restarts on a catch or ↺). The older free play still puts him back a little in the party until half two splits it (P6 to P8).
 5. **Wookiee growl.** Brian agreed today to copy his recording into the game. "the Wookie noise kind of sounds like like a whoopee cut cushion." (S 192).
-6. **Guests move around during the party.** "people are milling about during party" (G 526). Facing Isfred during the speech ("everyone would be facing him during, in the speech", G 295) is built in draft PR #85 (P3); milling comes with half two (P6).
-8. **Mops's heart cone and its size.** Open PR #35 turns the hearts on in Chapter 1; review it, do not rebuild. "coming up from Mops Cone is supposed to be the floating hearts" (G 442); "Mop can still have a cone, it's just that the cone he had was super small compared and looked odd compared to the size of the other cones." (G 427).
 9. **No outline unless required.** Only the thing the player must go to next gets an outline. "I don't think we should have yellow outlines in Squatch when it's not actually requiring you to do the thing." (G 567). Outline of props the game draws itself, dashed and outside: "For the bush outline, I'd still like it to be outside of the object and dashed." (G 438). The glowing circle and bouncing arrow still draw outside Chapter 1 (60-frame-draw.js:522-545): "it doesn't need an arrow!!" (S 1153).
 11. **A check that catches drift.** Open PR #34 checks his rules on each pull request; a first try is closed PR #34 (rules check on every PR); nothing compares the game to DECISIONS.md. "I think we basically need to have a recurring built-in check to make sure we're not drifting." (G 433).
 12. **Delete the old Chapter 1.** "we didn't get rid of the wrong ideas as we went" (G 433); "deleting bad code" (G 516). The old opening is still in 10-ch1.js and 11-ch1-hall.js.
@@ -90,7 +85,6 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 - Hall: speaker and FUR alarm placement, window wrap, fur-alarm zoom. "let's have the viewing portal wrap from the far left wall all the way up behind the wall where the fur alarm and the speaker are" (S 457); "let's just make sure at some point we do a zoom in on the fur alarm." (S 466). Check against the locked hall picture.
 - More people. The bartender (draft PR #85) and the Croc Boys are in; more guests wait until Brian sees this cast. "don't we need more people around than just one, two, three, four Five, six" (S 954).
 - Random conversations to join. "there should be random conversations he could join and be part of" (S 361).
-- Tower of snacks topples after too many, not the first. "I still like the idea that Towering Pyramid does kind of a Rube Goldberg chain." (S 1030).
 - "Got any pancakes" at the stand, "Mom's Pancakes", spilled coffee. "It's Just Mom's Pancakes" (P L154); "One Of Them Should Say Got Any Pancakes" (P L147).
 - Guests' eyes pop after the spill. "why are there eyeballs if they can't see us?" (S 65).
 - An alarm on the wall of every room. "There Should Be An Alarm In Every Room Too" (P L107).
@@ -100,18 +94,14 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 
 ### Playthrough 2026-11-23 (party, for the party rebuild)
 Brian played the live game on his iPhone on 2026-11-23. His party comments, in his words, in the order he said them. These are for the party rebuild, not for the morning fixes. Two of them are built in the morning-fixes PR and left off this list: the faces at the top right ("that's supposed to tell me who I'm playing") show only where a switch is possible (19a), and "The yellow flashing light on the bottom right doesn't make sense" (the bobbing arrow on story waits) is gone; NEXT is the only cue (18a).
-- Peeking: "I'm not peeking here. Look, it's like I fully walked out. That doesn't make sense."
 - The banner and the camera: "The 'coming soon' is not on the actual sign. The camera's pointing in the wrong direction."
 - Guest sizes (unclear on the recording; best reading, the guests are different sizes in a way that looks wrong): "The creatures are kind of various sizes, the way that doesn't make sense."
 - One sign: "It's not clear that's an actual sign. I think we could just have 'Robotics Delegation, coming soon' on the same sign, if we want."
 - Sideways: "Notice how when I've got it landscape, that label is behind Chapter One. But this is fine."
-- Peek versus sneak, and being seen: "Am I supposed to be peeking this whole time? I thought I was sneaking out and then trying to get to the plant. Well, I can't even. And also I'm in the line of sight here, but nothing happens. That doesn't make sense."
 - Placement, at the host on the stage: "And then what's this random thing here? And then that's like a truncated, oddly shaped thing. Got to think about placement of everyone."
 - "Why are there no eyeballs on this?"
 - The host's welcome speech: "Just think about the order of this too. And then, again, coming from the exact wrong place. Now the eyeballs. And then just magically back in there. I shouldn't have to talk you through this. They should make sense. This is just random now."
 - The disguise screen: "Come on. You should be able to audit all these things, like what is this?"
-- The hallway: "I should be able to try and go to the hallway and then it should stop me because the janitor's there."
-- Too fast (unclear on the recording): "It's way too fast. This doesn't make sense. I feel like it should be full screen." Brian in Snack Quest Chat, 2026-11-23: this is the dance arrow game, played in a thin strip at the bottom; he felt it "should be full screen".
 - Brian in Snack Quest Chat, 2026-11-23: "line of sights are cut off": the drawn sight cones are cut short.
 
 ### Snacks and dress-up

@@ -6,7 +6,8 @@
  *            tripod: { x, y, aim, counting }, cones: [cone], allCones, squatch: { x, y, f, walk, pose ("stand",
  *            "peek" or "hidden"), outfit, flyer, tip, shake } | null, eyes: { x, y } | null, marks: [{ x, y,
  *            mark }], shout: { x, y } | null, alarm: bool, vent: bool, tufts: [{ x, y, s, rot }],
- *            warning: { k } | null (the vent's fur sign), unseen (nobody can see him now) }
+ *            warning: { k } | null (the vent's fur sign), unseen (nobody can see him now), floor (ctx) (drawn under
+ *            everyone), extra: [{ y, f }] (more people, sorted by their feet: Mops at closing time) }
  * Returns the cones as drawn (party-watch.js drawCones).
  */
 import { HALL, BANNER, CAST, DANCE_SPOT } from "./party-hall.js";
@@ -58,21 +59,24 @@ export function drawHall(ctx, E, guestArt, view) {
   view.vent !== false && drawVentSwirl(ctx, HALL.vent, t);
   drawBanner(ctx, BANNER, view.banner ? view.banner.glow || 0 : 0, t);
   view.alarm && drawAlarmFlash(ctx, HALL.alarm, t);
-  view.lights && drawPartyLights(ctx, DANCE_SPOT, t, view.lights.dim);
+  view.lights && drawPartyLights(ctx, DANCE_SPOT, t, view.lights.dim, view.lights.color);
   const sq = view.squatch;
   const drawn = drawCones(ctx, view.cones || [], sq || { x: -999, y: -999 }, !sq || sq.pose !== "stand" || !!view.unseen, !!view.allCones, view.noteCone);
+  // On the floor, under everyone: what P6 to P8 leave there (fallen pieces, Mops's wet streak, his heart cone).
+  view.floor && view.floor(ctx);
   // Everyone, back to front.
   const people = [];
   for (const g of view.guests || []) people.push({ y: g.y, f: () => guestArt.drawId(ctx, g.id, g.x, g.y, adult, t, g.dance || 0, g.lean || 0) });
   view.isfred && people.push({ y: view.isfred.y, f: () => E.drawIsfred(ctx, view.isfred.x, view.isfred.y, view.isfred.f || 1) });
   if (view.band) {
     const spots = view.band.spots || CAST.band;
-    people.push({ y: spots[0].y, f: () => drawBand(ctx, spots, adult * 0.98, t, !!view.band.playing, view.band.looks) });
+    people.push({ y: spots[0].y, f: () => drawBand(ctx, spots, adult * 0.98, t, !!view.band.playing, view.band.looks, view.band.gone) });
   }
   view.bartender && people.push({ y: view.bartender.y, f: () => drawPerson(ctx, view.bartender.x, view.bartender.y, adult, LOOKS.bartender, view.bartender.f || -1, t) });
   for (const g of view.guards || []) people.push({ y: g.y, f: () => drawPerson(ctx, g.x, g.y, adult * 1.02, LOOKS.guard, g.f || 1, t) });
   view.tripod && people.push({ y: view.tripod.y, f: () => drawTripod(ctx, view.tripod.x, view.tripod.y, view.tripod.aim) });
   if (sq && sq.pose === "stand") people.push({ y: sq.y, f: () => drawSquatchInHall(ctx, E, sq, sqScale, t) });
+  for (const x of view.extra || []) people.push(x);
   people.sort((a, b) => a.y - b.y).forEach((p) => p.f());
   sq && sq.pose === "peek" && drawPeek(ctx, E, sq, sqScale);
   view.eyes && E.drawEyes(ctx, view.eyes.x, view.eyes.y);

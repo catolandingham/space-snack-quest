@@ -4,24 +4,26 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–59 | ## Where main is (Chapter 1 redesign) |
-| 60–74 | ## Register |
-| 75–96 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 97–117 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 118–130 | ## Phase 2 (plan section 4, T13 to T18) |
-| 131–153 | ## Phase 1 (plan section 3, T5 to T12) |
-| 154–167 | ## SS40–SS44 |
-| 168–185 | ## Story rows |
-| 186–204 | ## Reset section |
-| 205–215 | ## Still open |
-| 216–219 | ## Chapter 1 replot, recorded and not built |
-| 220–365 | ## Changelog |
+| 24–61 | ## Where main is (Chapter 1 redesign) |
+| 62–76 | ## Register |
+| 77–98 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 99–119 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 120–132 | ## Phase 2 (plan section 4, T13 to T18) |
+| 133–155 | ## Phase 1 (plan section 3, T5 to T12) |
+| 156–169 | ## SS40–SS44 |
+| 170–187 | ## Story rows |
+| 188–206 | ## Reset section |
+| 207–217 | ## Still open |
+| 218–221 | ## Chapter 1 replot, recorded and not built |
+| 222–367 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-24, draft PR on branch `feat/party-half-two` (party rebuild, half two), not merged: P6 the party in disguise (no chips or outlines; milling guests; three songs and early closing; the second-look rule; the free dance full screen, the conga, the band photo +25, the snack close-up and the pyramid topple, the octopus after a minute, the hallway and Mops's beard, plants and the vent take pieces), P7 the alarm and the run home (the beard yanks away), P8a and P8b both reaching "You have me." and beat 20; the party's sounds (the board's picks, an original swing tune, Kenney CC0 recordings). The old free play is deleted from `src/game/`; pins moved, four retired (needs Brian's yes). Docs match main: yes.
 
 2026-11-24, draft PR #85 on branch `feat/party-rebuild` (party rebuild, half one), not merged: party scenes P1 to P5 as `src/modules/party.js` with `party-alarm.js` (the one capture rule), `party-vent.js` (the no-disguise fur rule), `dress-up.js` and `fullscreen.js` (the full-screen dress-up), `party-hall.js`, `party-art.js`, `party-draw.js`, words in `party-lines.js` (sheet `docs/PARTY-LINES-FOR-BRIAN.md`, all approved 2026-11-24), the picture sheet tool `tools/party-sheet.mjs`. Hands off to the older free play (arrow dance and "Cool hat!" off). Half two (P6 to P8) is next. Not yet played by a person.
 

@@ -1,8 +1,12 @@
 /**
- * The longest goal stays on one line, in the top row, clear of the party balloon.
+ * The longest goal stays on one line, in the top row, clear of the party hall's banner (src/modules/party-hall.js
+ * BANNER; the balloon this checked before went with the party rebuild).
  *   node tests/goal-line.mjs
  */
-import { startGame, sleep } from "./game-page.mjs";
+import { join } from "node:path";
+import { startGame, sleep, root } from "./game-page.mjs";
+
+const { BANNER } = await import(join(root, "src", "modules", "party-hall.js"));
 
 const LINE = "Squatch: grab a dish from the rack by the window";
 const g = await startGame({ port: 8887, name: "goal-line" });
@@ -13,28 +17,32 @@ for (const [name, vp] of [
   const { page } = await g.open("?ch=1", vp);
   await page.evaluate((line) => {
     const n = window.__ss.op;
-    n.scene = "QA";
-    n.room = "hall";
-    n.ch1Party = true;
+    n.q = [];
+    n.cur = null;
+    // The party hall in the sneak (P2), as ?beat=party:P2 opens it.
+    window.SSQ.beat("ch1-party").jump("P2");
     n.ctrl = true;
     n.cur = null;
     n.q = [];
+    n.ch1Chip = line;
     n.chip = line;
+    // The goal's words show beside its outline once the kid has been on it a while (ch1WordsWait).
+    n.ch1GoalT = 1e6;
     n.starOn = true;
     n.stars = 1250;
     window.__ss.drawFrame();
   }, LINE);
   await sleep(3800);
-  const out = await page.evaluate((line) => {
+  const out = await page.evaluate(([line, banner]) => {
     const ss = window.__ss;
     const n = ss.op;
-    n.scene = "QA";
-    n.room = "hall";
-    n.ch1Party = true;
     n.ctrl = true;
     n.cur = null;
     n.q = [];
+    n.ch1Chip = line;
     n.chip = line;
+    // The goal's words show beside its outline once the kid has been on it a while (ch1WordsWait).
+    n.ch1GoalT = 1e6;
     n.starOn = true;
     n.stars = 1250;
     ss.drawFrame();
@@ -45,7 +53,8 @@ for (const [name, vp] of [
     const cv = canvas.getBoundingClientRect();
     const cs = getComputedStyle(chip);
     const k = cv.width / 960;
-    const balloonTop = cv.top + (80 - 18) * k;
+    // The banner hangs from y 90 of the picture; the chip keeps the old 18 px clearance above y 80 (the top row).
+    const balloonTop = cv.top + Math.min(80, banner.y0) * k - 18 * k;
     const where = document.getElementById("ss-where").getBoundingClientRect();
     const faces = document.getElementById("ss-faces").getBoundingClientRect();
     const overlap = (a, b) => Math.min(a.right, b.right) - Math.max(a.left, b.left) > 0.5 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 0.5;
@@ -60,9 +69,11 @@ for (const [name, vp] of [
       h: Math.round(cr.height),
       bottom: Math.round(cr.bottom),
       balloon: Math.round(balloonTop),
+      room: n.room,
+      party: window.SSQ.beat("ch1-party").now() && window.SSQ.beat("ch1-party").now().scene,
     };
-  }, LINE);
-  g.check(name + ": the long goal is one line, at least 14px, and clear of the balloon", out.text === LINE && out.font >= 14 && out.white === "nowrap" && out.oneLine && out.aboveBalloon && out.clearWhere && out.clearFaces, out);
+  }, [LINE, BANNER]);
+  g.check(name + ": in the party hall, the long goal is one line, at least 14px, in the top row and clear of the banner", out.room === "hall" && out.party === "P2" && out.text === LINE && out.font >= 14 && out.white === "nowrap" && out.oneLine && out.aboveBalloon && out.clearWhere && out.clearFaces, out);
   await page.close();
 }
 await g.finish("goal-line");

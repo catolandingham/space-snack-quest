@@ -134,7 +134,7 @@ const report = await page.evaluate(async (chips) => {
   };
   for (const [chip, spec] of Object.entries(play)) {
     if (spec.party) {
-      Object.assign(n, { ch1Day2: false, ch1Party: false, ch1Zoom: null, ch1PadOn: false, ch1Search: false, ch1Morning: null, q: [], cur: null, moPose: "hidden" });
+      Object.assign(n, { ch1Day2: false, ch1Zoom: null, ch1PadOn: false, ch1Morning: null, q: [], cur: null, moPose: "hidden" });
       window.SSQ.beat("ch1-party").jump(spec.party);
       const p = n.ch1PartyNow;
       spec.out && ((p.pose = "stand"), (n.sqPose = "stand"));
@@ -143,14 +143,9 @@ const report = await page.evaluate(async (chips) => {
     } else {
     n.ch1PartyNow = null;
     n.ch1Day2 = spec.day2 !== false;
-    n.ch1Party = !!spec.party;
-    n.ch1PartyOver = false;
-    n.ch1Disguise = !!spec.party;
-    n.ch1Flyer = false;
     // The song step of the morning module (src/modules/morning.js), with Mops beside the bucket.
     n.ch1Morning = spec.song ? { step: "song", t: 0, notes: true } : null;
     spec.song && ((n.mo.x = 690), (n.mo.y = 560));
-    n.ch1Search = false;
     n.ch1PadOn = !!spec.pad;
     n.ch1Zoom = spec.zoom ? { id: spec.zoom, zoom: 1, paw: { x: 400, y: 400 }, bag: 0, gone: {} } : null;
     n.scene = spec.scene || "QB";

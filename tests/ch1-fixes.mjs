@@ -24,8 +24,6 @@ async function walk(x, y, frames, day2 = false) {
       n.ch1Day2 = day2;
       n.ch1Step = day2 ? "cal" : "";
       n.ch1PartyNow = null;
-      n.ch1Search = false;
-      n.guard = null;
       n.sq.x = x;
       n.sq.y = y;
       window.dispatchEvent(new KeyboardEvent("keydown", { code: "ArrowLeft", bubbles: true }));
@@ -65,7 +63,6 @@ const atBucket = await page.evaluate(() => {
   n.ch1Day2 = false;
   // The evening (party P1, src/modules/party.js).
   window.SSQ.beat("ch1-party").jump("P1");
-  n.ch1Cut = null;
   n.q = [];
   n.cur = null;
   n.live = [];

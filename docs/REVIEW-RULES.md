@@ -3,18 +3,20 @@
 
 | Lines | Heading |
 | --- | --- |
-| 19–22 | # Review rules |
-| 23–74 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
-| 75–77 | ## Techniques |
-| 78–80 | ## Mistake: locked art was redrawn |
-| 81–85 | ## Mistake: optional inspection interrupted getting out of bed |
-| 86–88 | ## Mistake: a big doc's section index went stale |
-| 89–91 | ## Mistake: a rebuilt beat forgot the step restart |
-| 92–94 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
-| 95–97 | ## Mistake: a killed run was read as a failing test |
-| 98–100 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
-| 101–103 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
-| 104–110 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
+| 21–24 | # Review rules |
+| 25–77 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
+| 78–80 | ## Techniques |
+| 81–83 | ## Mistake: locked art was redrawn |
+| 84–88 | ## Mistake: optional inspection interrupted getting out of bed |
+| 89–91 | ## Mistake: a big doc's section index went stale |
+| 92–94 | ## Mistake: a rebuilt beat forgot the step restart |
+| 95–97 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
+| 98–100 | ## Mistake: a killed run was read as a failing test |
+| 101–103 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
+| 104–106 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
+| 107–113 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
+| 114–121 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
+| 122–128 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
 <!-- /section-index -->
 # Review rules
 
@@ -46,6 +48,7 @@ Run EVERY scene through ALL of these, both at script time and on screenshots aft
     - Overheard lines get an ear icon.
     - No bottom-left dialogue box. The objective chip is hidden while a bubble is up.
 14. **Nothing auto-advances.** Every cutscene card, panel, frame and line waits for a tap/click (the NEXT button shows it; no "tap ▸" note, Brian 18a), including the "Years ago" and "Now" cards.
+    - **Exception, Brian 30a (2026-11-24):** "a cutaway or close-up with no words and nothing to tap plays itself (about 2 to 4 seconds, ending on a clear last frame), then the game goes on. One with a line, or something to tap, still waits for NEXT." This narrows rule 14 for wordless cutaways only (the party's hand pulling the alarm plays 2.4 seconds).
 15. **Simple visual style.** Gameplay looks like the cutscenes: bold flat shapes, a limited palette, no clutter, only what matters, and interactive objects clearly highlighted (pulse/glow).
 16. **Drawn, not described.** Never put a visual in caption text when it can be drawn (crayon drawings, hair on a note, coffee stains, torn edges, paw prints). No "(narration in parentheses)" lines.
 17. **Exact-text rule for briefs:** report scripts to Brian verbatim (speaker + exact text, every card), as clear and warm as the chat version.
@@ -115,3 +118,10 @@ The later full touch run exposed a test-driver gap: it waited whenever walking w
 - Some cones only ever showed "?" (Isfred's, the band's): nobody "randomly doesn't care". If the one who sees him cannot run, someone near him does.
 - A test read the source for `size: 42` instead of measuring the mark drawn. Measure what is drawn (review rule 22).
 - Drawings for a later half and a look Brian did not pick sat in shipped modules. They live in `tools/` until the half that uses them.
+
+## Mistakes caught building the party rebuild, half two (2026-11-24)
+- Two pieces of state shared one name (`p.lost` was both "They lost you." and the outfit's lost pieces), and the game threw every frame. A new field on a shared state object gets a name no other module uses; grep the state's name before adding one.
+- Moving a beat to modules deleted the code that held tuning pins. Move each pin with its value and its name to the module that now owns the rule, point docs/TUNING-PINS.json at it, and list retired pins (their feature deleted) for Brian; never drop a pin silently.
+- The party asked the old sound table for "chime", which it never had, so three moments were silent and no test noticed. A module plays its own sounds and a test reads what was played (`now().sound.played`).
+- Joe's home theme played through the party night because the music picker only knew the old flags. A rebuilt beat that owns a room says so to the music picker (`warmWhy`), with a test.
+

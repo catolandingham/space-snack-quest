@@ -6,14 +6,11 @@
  * the room from behind the bar. After the snack spill everyone turns to look at Squatch.
  *
  * This file says where each cone starts, which way it points, and how strongly it shows (the distance fade
- * below), and draws the cones whole (drawCones, at the end): the party night and the older free play both draw
- * with it, and the sight check uses the same shape, so the shaded area is exactly where Squatch is seen.
+ * below), and draws the cones whole (drawCones, at the end): the party night draws with it, and the sight check uses the same shape, so the shaded area is exactly where Squatch is seen.
  */
 
 // The middle of the stage, in game positions (hall-room-empty-v2 and the party drawing).
 export const PARTY_STAGE = { x: 448, y: 280 };
-// People who do not face the stage: the way they look (radians, 0 = right, PI / 2 = down the screen).
-export const PARTY_FACES = { isfred: Math.PI / 2, bartender: Math.PI };
 // A cone starts this far above a person's feet, as every standing cone in the game does.
 export const EYE_ABOVE_FEET = 28;
 // How long a guest watches Squatch before "?" turns into "!" (Brian, 2026-11-22: "it stats with a question mark
@@ -52,26 +49,6 @@ export function distToCone(px, py, ox, oy, a, half, len) {
     return Math.hypot(dx - ux * s, dy - uy * s);
   };
   return Math.min(toEdge(a - half), toEdge(a + half));
-}
-
-/**
- * One cone per person. `people` is [{ id, x, y }] (feet, game positions). `sq` is Squatch's feet { x, y }.
- * With `lookAtSquatch`, every cone points at him. `cone` is the game's cone size { half, len }.
- * Returns [{ id, x, y, ox, oy, a, edge, show }]: `edge` is how far Squatch is from the cone, `show` how strongly
- * the cone is drawn (coneShow).
- */
-export function partyCones(people, sq, lookAtSquatch, cone) {
-  return people.map((p) => {
-    const ox = p.x,
-      oy = p.y - EYE_ABOVE_FEET;
-    const a = lookAtSquatch
-      ? Math.atan2(sq.y - SQUATCH_SEEN_ABOVE_FEET - oy, sq.x - ox)
-      : p.id in PARTY_FACES
-        ? PARTY_FACES[p.id]
-        : Math.atan2(PARTY_STAGE.y - oy, PARTY_STAGE.x - ox);
-    const edge = distToCone(sq.x, sq.y - SQUATCH_SEEN_ABOVE_FEET, ox, oy, a, cone.half, cone.len);
-    return { id: p.id, x: p.x, y: p.y, ox, oy, a, edge, show: coneShow(edge) };
-  });
 }
 
 // ---------- the party night's cones (party plan "Rules that hold in every scene", Sight) ----------
@@ -115,7 +92,7 @@ export function drawCones(ctx, cones, sq, hidden, all, note) {
     out.push({ ...c, edge, inside, show });
     if (!(show > 0)) continue;
     // Only a cone on screen is told to the tests (what a kid can see).
-    note && note({ ox: c.ox, oy: c.oy, a: c.a, half: c.half, len: c.len, askOnly: !!c.askOnly });
+    note && note({ ox: c.ox, oy: c.oy, a: c.a, half: c.half, len: c.len });
     ctx.save();
     ctx.globalAlpha = show;
     ctx.beginPath();

@@ -217,8 +217,9 @@ export function drawDrum(ctx, x, y, h) {
 }
 
 /** The three Croc Boys standing at their spots; `playing` makes them bob and strum. `looks` is for the picture sheet. */
-export function drawBand(ctx, spots, h, t, playing, looks = LOOKS.band) {
+export function drawBand(ctx, spots, h, t, playing, looks = LOOKS.band, gone = null) {
   spots.forEach((s, i) => {
+    if (gone && gone[i]) return;
     const jump = playing ? Math.abs(Math.sin(t * 6 + i)) * h * 0.04 : 0;
     drawPerson(ctx, s.x, s.y - jump, h, { ...looks[i], armUp: playing && i === 0 ? 0.3 + 0.2 * Math.sin(t * 8) : 0 }, 1, playing ? t : 0);
     looks[i].instrument === "drum" && drawDrum(ctx, s.x, s.y, h);
@@ -476,19 +477,21 @@ export function drawAlarmCloseUp(ctx, w, h, picture, src, k, t) {
 }
 
 // ---------- lights (V10) ----------
-// The room's light while the band plays its first song: a soft pink tint over the hall (the other two songs' colours
-// come with half two).
+// The room's light while the band plays its first song: a soft pink tint over the hall (the three songs' colours are
+// party-dance.js SONG_LIGHTS).
 export const SONG_LIGHT = "rgba(255,95,168,.16)";
 /** The lights dimmed, the dance spotlight on the floor at `spot`, the song's colour over the room. */
-export function drawPartyLights(ctx, spot, t, dim = 1) {
+export function drawPartyLights(ctx, spot, t, dim = 1, color = SONG_LIGHT) {
   ctx.save();
   ctx.fillStyle = `rgba(12,16,32,${0.32 * dim})`;
   ctx.beginPath();
   ctx.rect(0, 0, 960, 640);
   ctx.ellipse(spot.x, spot.y, spot.rx, spot.ry, 0, 0, TAU, true);
   ctx.fill("evenodd");
-  ctx.fillStyle = SONG_LIGHT;
+  ctx.globalAlpha = Math.min(1, dim);
+  ctx.fillStyle = color;
   ctx.fillRect(0, 0, 960, 640);
+  ctx.globalAlpha = 1;
   const g = ctx.createRadialGradient(spot.x, spot.y, 4, spot.x, spot.y, spot.rx);
   g.addColorStop(0, "rgba(255,250,210,.38)");
   g.addColorStop(1, "rgba(255,250,210,0)");

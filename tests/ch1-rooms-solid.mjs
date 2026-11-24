@@ -23,7 +23,7 @@ const FLOOR_Y = 256;
 const pic = (x0, x1, y0, y1) => ({ x0: Math.round(x0 * 0.75), x1: Math.round(x1 * 0.75), y0: Math.round((y0 * 640) / 830), y1: Math.round((y1 * 640) / 830) });
 
 const ROOMS = [
-  { id: "party hall, outside the party (lunch on Day 2)", set: { room: "hall", scene: "Q3", ch1D: true, ch1Party: false }, floor: true, things: [] },
+  { id: "party hall, outside the party (lunch on Day 2)", set: { room: "hall", scene: "Q3", ch1D: true }, floor: true, things: [] },
   { id: "hallway", set: { room: "passage", scene: "QP", ch1D: true }, floor: true, things: [] },
   {
     id: "manager's office",
@@ -58,7 +58,7 @@ async function place(room, x, y) {
   await page.evaluate(
     ([set, x, y]) => {
       const ss = window.__ss, n = ss.op;
-      Object.assign(n, { q: [], cur: null, ch1Party: false, ch1Office: false, ch1Night: false }, set);
+      Object.assign(n, { q: [], cur: null, ch1PartyNow: null, ch1Office: false, ch1Night: false }, set);
       Object.assign(n, { ctrl: true, sqPose: "stand", walkTo: null, moPose: "hidden" });
       ss.hall.camX = 0;
       n.sq.x = x;

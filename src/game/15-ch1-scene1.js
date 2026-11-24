@@ -1,4 +1,4 @@
-// Chapter 1 scene 1 (walkthrough beats 1-3): the chapter reset, the hand-overs to the morning and party modules (src/modules/morning.js, party.js), the calendar close-up, and the party cones of the older free play.
+// Chapter 1 scene 1 (walkthrough beats 1-3): the chapter reset, the hand-overs to the morning and party modules (src/modules/morning.js, party.js), and the calendar close-up.
     // The chapter's state, reset at the start of Chapter 1 (the morning beat and its fallback both start here).
     function ch1ResetState() {
       ch2.qCheck = null;
@@ -20,27 +20,12 @@
         (n.ch1Trail = []),
         (n.ch1SiteRoom = ""),
         (n.ch1Office = !1),
-        (n.ch1Party = !1),
-        (n.ch1Disguise = !1),
-        (n.ch1Photo = !1),
-        (n.ch1BarDone = !1),
-        (n.ch1Cut = null),
         (n.ch1PartyNow = null),
-        (n.ch1Search = !1),
-        (n.ch1Mini = ""),
-        (n.ch1OctChase = !1),
         (n.ch1SureEnd = !1),
-        (n.guard = null),
-        (n.ch1Raid = null),
         (n.ch1Day2 = !1),
         (n.ch1Zoom = null),
         (n.ch1Calendar = null),
         (n.ch1PadOn = !1),
-        (n.ch1Chain = !1),
-        (n.ch1Flyer = !1),
-        (n.ch1PartyT = 0),
-        (n.ch1PartyOver = !1),
-        (n.ch1Fur = !1),
         (n.ch1Morning = null),
         (n.sqLift = 0),
         (n.mo.walking = !1),
@@ -63,6 +48,10 @@
     // The party night's module (src/modules/party.js), or null if the module script did not load.
     function partyBeat() {
       return (window.SSQ && window.SSQ.beat && window.SSQ.beat("ch1-party")) || null;
+    }
+    // True while the party's snack close-up is open (src/modules/party-snacks.js): taps and drags go to it.
+    function partyCutOpen() {
+      return !!(partyBeat() && partyBeat().cutOpen && partyBeat().cutOpen());
     }
     // True at home that evening before the peek (party P1): the calendar is still there to look at.
     function ch1PartyAtHome() {
@@ -167,8 +156,16 @@
         sfx: (name) => D[name] && D[name](),
         // The goal's yellow outline round a party spot's real thing (drawGoalMark keeps n.lastRing for the chip).
         markGoal: (spot) => drawGoalMark(spot),
-        // Half one ends: Squatch walks into the older free play in his outfit (src/game/12-ch1-redesign.js).
-        startFreePlay: () => ch1FreePlayStart(),
+        // The party night (P6 to P8): Mops in the hall at closing time (on `ctx`), an ambient line that fades by itself
+        // ("Say cheese!"), stars for a snack or the photo, the paw arm of the snack close-up, and beat 20 (the TV
+        // story) after "You have me." (14-ch1-day1.js ch1TvEvening).
+        drawMopsOn: (ctx, x, y, scale, opts) => onCtx(ctx, () => Fe(x, y, scale, opts || {})),
+        ambient: (who, text, style) => kV(who, text, style),
+        addStars: (k) => {
+          n.stars = (n.stars || 0) + k;
+        },
+        drawPawArm: (ctx, paw) => onCtx(ctx, () => drawPawArm(paw)),
+        tvStory: () => J(ch1TvEvening()),
         // Holding ↺ inside a full-screen view: the same restart as the page's ↺.
         restartPart: () => sectionReset(),
         squatchScale: () => wl,
@@ -181,7 +178,7 @@
       let beat = window.SSQ && window.SSQ.beat && window.SSQ.beat("ch1-morning"),
         alone = !!(beat && beat.homeAlone && beat.homeAlone());
       return n.ctrl && n.hopOut < 0 && !de() && n.room === "closet" && n.wardrobe !== "open" &&
-        !n.ch1Day2 && !n.ch1Party && !n.ch1Zoom && !n.ch1Calendar &&
+        !n.ch1Day2 && !n.ch1Zoom && !n.ch1Calendar &&
         (n.scene === "O1" || (n.scene === "Q1" && (alone || ch1PartyAtHome())));
     }
     function ch1CalendarSpots() {
@@ -323,39 +320,4 @@
       // No paw on the close-up (Brian 2026-11-23: "It's the calendar paw that doesn't make sense").
       // At 375px wide this remains a roughly 44px target, unlike the older cut-in X.
       L(880, 540, 58); r("#ffffff", 4); g("X", 880, 540, 40, "#1e2430", "center", 900);
-    }
-    // Sight cones on everyone at the party (Brian, 2026-11-23: "let's try all of them and then we can adjust").
-    // Who stands where; which way they look comes from src/modules/party-watch.js. The guest by the door keeps
-    // his own turning cone during the sneak (above).
-    function ch1PartyPeople() {
-      let out = [];
-      CH1_GUESTS.forEach((g) => {
-        out.push({ id: (window.SSQ && window.SSQ.guestId(g[2])) || g[2], x: g[0], y: g[1] });
-      });
-      for (let id in CH1_PARTY_CAST) {
-        let at = id === "octopus" && n.ch1Oct ? [n.ch1Oct.x, n.ch1Oct.y] : CH1_PARTY_CAST[id];
-        out.push({ id, x: at[0], y: at[1] });
-      }
-      return out;
-    }
-    // The cones, while the player sneaks to the plant or walks the party in disguise; each knows whether
-    // Squatch is inside it (the game's own sight check, so the shaded area is exactly where he is seen).
-    function ch1PartyCones() {
-      if (!(window.SSQ && window.SSQ.partyCones) || n.room !== "hall" || !n.ch1Party) return [];
-      if (!(n.ch1Disguise && !n.ch1PartyOver)) return [];
-      return window.SSQ.partyCones(ch1PartyPeople(), n.sq, (n.ch1Look || 0) > 0, { half: STAND_CONE_HALF, len: STAND_CONE_LEN }).map((c) => ({ ...c, half: STAND_CONE_HALF, len: STAND_CONE_LEN, askOnly: !0 }));
-    }
-    // Drawn under the people in drawCh1Party: whole cones (the party module's drawCones: furniture never cuts a
-    // cone short), each shown only when Squatch is near it (the distance fade); the one he is in fills yellow.
-    // In disguise a cone only brings a "?" over whoever sees him, never a catch (askOnly, read by
-    // tests/ch1-kid-play.mjs).
-    function drawCh1PartyCones() {
-      let pb = partyBeat(),
-        cones = pb ? pb.drawConesOn(e, ch1PartyCones(), n.sq, n.sqPose === "hidden") : [];
-      cones.forEach((c) => (c.mark = c.inside ? "?" : ""));
-      n.ch1Cones = cones;
-    }
-    // Drawn last in drawCh1Party: "?" over everyone whose cone has Squatch in it (in disguise).
-    function drawCh1PartyMarks() {
-      (n.ch1Cones || []).forEach((c) => c.mark && g(c.mark, c.x, c.y - ADULT_PX * 1.25 - 8, 36, "#ffcf33", "center", 900));
     }

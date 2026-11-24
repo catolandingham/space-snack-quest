@@ -1,0 +1,102 @@
+/**
+ * The party's sounds (src/modules/party-sound.js, party-board-sounds.js; the sound plan of 2026-11-24; Brian
+ * "34(A)", "35 (A)", question 36): heard, not just asked for.
+ *   - Sound off (the default): the party makes no sound at all (no oscillator, no recording), but the band's
+ *     notes are still drawn.
+ *   - Sound on: the Croc Boys play (oscillators run through the master volume), the band stops dead in each
+ *     song's break and its line "Stormtop-vania 1-2-3-4-5!" shows over the band; at home the band is muffled and
+ *     Joe's home theme stays off all party night; before the peek the party is heard through his door.
+ *   - The Kenney recordings (sounds/, CC0) are in the repo, credited, and decode; the crash plays them.
+ *   node tests/party-sound.mjs
+ */
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+import { startGame, sleep, root } from "./game-page.mjs";
+
+const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 1 };
+const g = await startGame({ port: 9106, name: "party-sound" });
+const sound = await import(join(root, "src", "modules", "party-sound.js"));
+
+async function open(beat, on) {
+  const o = await g.open("?beat=" + beat, PHONE);
+  await o.page.evaluate(() => {
+    window.__ps = { osc: 0, bufs: 0 };
+    const A = window.AudioContext || window.webkitAudioContext,
+      osc = A.prototype.createOscillator,
+      src = A.prototype.createBufferSource;
+    A.prototype.createOscillator = function () {
+      window.__ps.osc++;
+      return osc.call(this);
+    };
+    A.prototype.createBufferSource = function () {
+      window.__ps.bufs++;
+      return src.call(this);
+    };
+  });
+  on && (await o.page.click("#ss-sound"));
+  await sleep(1200);
+  return o;
+}
+const dbg = (page) => page.evaluate(() => ({ ...window.SSQ.beat("ch1-party").now().sound, ps: window.__ps, warm: window.__ss.warmWhy(), on: window.SSQ.engine().soundState() }));
+
+// ---------- the recordings ----------
+for (const files of Object.values(sound.RECORDINGS)) for (const f of files) g.check("the recording " + f + " is in the repo", existsSync(join(root, f)));
+const credits = existsSync(join(root, "sounds", "CREDITS.txt")) ? readFileSync(join(root, "sounds", "CREDITS.txt"), "utf8") : "";
+g.check("the recordings are credited to Kenney, CC0", /Kenney/.test(credits) && /CC0/.test(credits));
+
+// ---------- sound off ----------
+{
+  const { page, errors } = await open("party:P6", false);
+  await sleep(4000);
+  const d = await dbg(page);
+  g.check("sound off: the party makes no sound (no oscillator, no recording)", d.on !== "on" && d.ps.osc === 0 && d.ps.bufs === 0, d);
+  g.check("no errors with sound off", errors.length === 0, errors);
+  await page.close();
+}
+
+// ---------- sound on ----------
+{
+  const { page, errors } = await open("party:P6", true);
+  let d = await dbg(page);
+  g.check("sound on: the Croc Boys play (song 1) through the master volume", d.on === "on" && d.song === 0, d);
+  await sleep(2000);
+  d = await dbg(page);
+  g.check("the band's notes are really made (oscillators run)", d.ps.osc > 20, d.ps);
+  // the break: the band stops dead and shouts its line, shown over the band (he waits behind the crowd, out of sight)
+  await page.evaluate(() => ((window.__ss.op.sq.x = 150), (window.__ss.op.sq.y = 590)));
+  let shout = false;
+  for (let i = 0; i < 60 && !shout; i++) {
+    shout = await page.evaluate(() => (window.__ss.op.log || []).some((l) => l.k === "live" && l.text === "Stormtop-vania 1-2-3-4-5!"));
+    await sleep(500);
+  }
+  g.check("in the song's break the band shouts \"Stormtop-vania 1-2-3-4-5!\" (shown over the band)", shout);
+  // the recordings decode (the crash and the footsteps play them through the master volume)
+  const decoded = await page.evaluate(async (files) => {
+    const c = new (window.AudioContext || window.webkitAudioContext)();
+    let ok = 0;
+    for (const f of files) {
+      const b = await fetch(f).then((r) => r.arrayBuffer());
+      (await c.decodeAudioData(b)).duration > 0.05 && ok++;
+    }
+    return ok;
+  }, [...sound.RECORDINGS.crash, ...sound.RECORDINGS.step]);
+  g.check("every recording decodes in the browser", decoded === sound.RECORDINGS.crash.length + sound.RECORDINGS.step.length, decoded);
+  g.check("no errors with sound on", errors.length === 0, errors);
+  await page.close();
+}
+{
+  const { page } = await open("party", true);
+  const d = await dbg(page);
+  g.check("before the peek, at home: the party is heard through his door", d.ambience === "door", d.ambience);
+  g.check("and Joe's home theme stays off", d.warm === "", d.warm);
+  await page.close();
+}
+{
+  const { page } = await open("party:P5", true);
+  await sleep(500);
+  const d = await dbg(page);
+  g.check("at home in the dress-up: the band plays on, muffled, and Joe's theme stays off", d.song === 0 && d.warm === "", d);
+  await page.close();
+}
+
+await g.finish("party-sound");

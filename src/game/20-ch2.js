@@ -223,7 +223,6 @@
       );
     }
     function noteSection() {
-      ch1StampBalloon();
       if (p.state !== "op") return;
       if ((n.scene || "")[0] === "Q") return noteCh1Step();
       let scene = n.scene || "",
@@ -253,8 +252,6 @@
           cook: ch2.cook || "",
           pulse: [...n.pulse],
           bots: n.room === "hall" ? B.bots.map((b) => ({ ...b })) : null,
-          balloonRest: n.ch1BalloonRest || "",
-          balloonPopped: !!n.ch1BalloonPopped,
         }));
     }
     // Redesigned Chapter 1 (Q scenes): ↺ restarts the step the player is on (Brian, K29: restart the
@@ -262,8 +259,7 @@
     // every op field named ch1..., the scene, room, both characters and the glows. Functions are not
     // saved (a step's "what comes next" is set again by the step itself).
     function noteCh1Step() {
-      // Not while an overlay is open inside the step (dress-up, the snack cut-in): ↺ closes those.
-      if (!n.ctrl || n.cur || n.q.length || n.ch1Cut) return;
+      if (!n.ctrl || n.cur || n.q.length) return;
       let id = n.scene + "|" + n.room + "|" + (n.ch1Step || "");
       if (ch2.qCheck && ch2.qCheck.id === id) return;
       let ch1 = {},
@@ -341,7 +337,6 @@
         n.pulse.clear());
       for (let id of c.pulse || []) n.pulse.add(id);
       c.bots && (B.bots = c.bots.map((b) => ({ ...b })));
-      c.balloonRest != null && ((n.ch1BalloonRest = c.balloonRest || ""), (n.ch1BalloonPopped = !!c.balloonPopped));
       ch2.noted = c.id;
       return !0;
     }
@@ -382,8 +377,7 @@
         (ch2.sqStash = null),
         (x.sing = !1),
         n.pulse.clear(),
-        String(n.scene || "").startsWith("G") && (n.chip = ""),
-        (n.ch1Cut = null));
+        String(n.scene || "").startsWith("G") && (n.chip = ""));
       // The party night's full-screen views (the dress-up, the alarm close-up) close on a restart too.
       partyBeat() && partyBeat().closeViews();
     }

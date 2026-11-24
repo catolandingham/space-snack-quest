@@ -1,88 +1,207 @@
 /**
  * Sight cones on everyone at the party (Brian, 2026-11-23: "let's try all of them and then we can adjust"),
  * and the party guests drawn from the six pictures Brian approved on Nov 8 (Squatchbot #1349: "The six
- * approved Nov 8 pictures").
- *   - In disguise (the older free play, until half two of the party rebuild): every guest, Isfred, the bartender
- *     and the octopus show a faint cone, drawn whole (furniture never cuts a cone short).
- *     Squatch inside one: that cone fills and a "?" shows over that person, and nobody catches him.
- *   - After the snack spill, everyone turns to look at Squatch (their cones point at him).
+ * approved Nov 8 pictures"). Checked in P6, the party in disguise (src/modules/party-free.js), from what is
+ * really drawn on the canvas (the cones' arcs, the "?" marks, the guest pictures), not from the source.
+ *   - In disguise every guest, Isfred, the band and the bartender has a cone, drawn whole (a cone's arc is its
+ *     full length: furniture never cuts it short).
+ *     Squatch inside one: that cone fills yellow and a "?" is drawn over that person, and nobody catches him
+ *     at once (a long second look is what starts the alarm: tests/party-free.mjs).
+ *   - After the snack pyramid topples, everyone turns to look at Squatch (their cones point at him).
  *   - Distance fade (Brian, 2026-11-23: "Add the distance fade"): a cone shows only when Squatch is near the
  *     cone itself: gone beyond 120 from it, fully shown within 40, fading in between, so every cone that can
  *     see him is fully drawn (rule 8).
- *   - The sneak to the plant moved to the party module (src/modules/party.js): tests/party-scenes.mjs.
+ *   - The sneak to the plant is checked in tests/party-scenes.mjs.
  *   node tests/ch1-party-cones.mjs
  */
-import { startGame } from "./game-page.mjs";
+import { join } from "node:path";
+import { startGame, sleep, root } from "./game-page.mjs";
 
+const watch = await import(join(root, "src", "modules", "party-watch.js"));
 const g = await startGame({ port: 8981, name: "ch1-party-cones" });
-const { page, ctx, errors } = await g.open("?ch=1");
+const { page, ctx, errors } = await g.open("?beat=party:P6");
 await page.evaluate(() => window.__ss.lockedReady);
 // Give the guest pictures time to load.
-await page.evaluate(() => new Promise((r) => setTimeout(r, 1500)));
+await sleep(1500);
 
-// The octopus is one person: his cone ("octopus") goes where he strolls and chases.
-const EVERYONE = ["stilt", "backpack", "camera", "teal", "robot", "isfred", "bartender", "octopus"];
+// Everyone who should show a cone in the free play.
+const EVERYONE = ["teal", "stilt", "robot", "octopus-guest", "backpack", "camera", "isfred", "band0", "band1", "band2", "bartender"];
 
-const party = await page.evaluate((EVERYONE) => {
-  const ss = window.__ss,
-    n = ss.op;
-  const frame = () => (ss.tick(1 / 30), ss.drawFrame(), (n.ch1Cones || []).map((c) => ({ id: c.id, a: c.a, ox: c.ox, oy: c.oy, inside: c.inside, mark: c.mark })));
-  Object.assign(n, { scene: "QA", room: "hall", ch1Party: true, ch1Day2: false, ch1Disguise: true, ch1PartyOver: false, ch1Mini: "", q: [], cur: null, ctrl: true, sqPose: "stand", ch1Look: 0, ch1PlantSneak: null });
-  // Out in the open, away from everyone's cone.
-  ((n.sq.x = 560), (n.sq.y = 600));
-  const open = frame();
-  // Right in front of the camera tourist, inside the cone he watches the stage with.
-  const cam = open.find((c) => c.id === "camera") || { ox: 740, oy: 442, a: -2.64 }; // where he stands, if no cones are drawn yet
-  ((n.sq.x = cam.ox + Math.cos(cam.a) * 90), (n.sq.y = cam.oy + Math.sin(cam.a) * 90 + 20));
-  let inCam = frame();
-  for (let i = 0; i < 90; i++) ss.tick(1 / 30);
-  inCam = frame();
-  const caught = { sec: !!ss.secNow(), over: n.ch1PartyOver, disguise: n.ch1Disguise, card: (n.cur && n.cur.k) || "" };
-  // The snack spill: everyone turns to look at Squatch.
-  n.ch1Look = 2;
-  const look = frame().map((c) => {
-    const want = Math.atan2(n.sq.y - 20 - c.oy, n.sq.x - c.ox);
-    let d = Math.abs(c.a - want) % (2 * Math.PI);
-    return { id: c.id, off: Math.min(d, 2 * Math.PI - d) };
+// Record what the canvas really draws: every arc (with its alpha and the fill that follows), every "?" or "!"
+// (in canvas pixels), and every approved guest picture drawn (where its feet land, in canvas pixels).
+await page.evaluate(() => {
+  const C = CanvasRenderingContext2D.prototype,
+    arc = C.arc,
+    fill = C.fill,
+    text = C.fillText;
+  const px = (m, x, y) => ({ px: m.a * x + m.c * y + m.e, py: m.b * x + m.d * y + m.f });
+  C.arc = function (x, y, r, a0, a1, ...rest) {
+    window.__rec && window.__rec.arcs.push({ x, y, r, alpha: this.globalAlpha, fill: "" });
+    return arc.call(this, x, y, r, a0, a1, ...rest);
+  };
+  C.fill = function (...a) {
+    const arcs = window.__rec && window.__rec.arcs,
+      last = arcs && arcs[arcs.length - 1];
+    last && !last.fill && (last.fill = String(this.fillStyle));
+    return fill.apply(this, a);
+  };
+  C.fillText = function (t, x, y, ...rest) {
+    window.__rec && (t === "?" || t === "!") && window.__rec.marks.push({ t, ...px(this.getTransform(), x, y) });
+    return text.call(this, t, x, y, ...rest);
+  };
+  const G = window.SSQ.guests,
+    drawId = G.drawId;
+  G.drawId = function (c, id, x, y, ...rest) {
+    const ok = drawId.call(this, c, id, x, y, ...rest);
+    window.__rec && ok && window.__rec.guests.push({ id, ...px(c.getTransform(), x, y) });
+    return ok;
+  };
+});
+
+// Ticks the game `n` frames with Squatch held at (x, y), then draws one frame and returns what was drawn.
+const frameAt = (x, y, n = 1) =>
+  page.evaluate(
+    (a) => {
+      const ss = window.__ss,
+        o = ss.op,
+        b = window.SSQ.beat("ch1-party");
+      for (let i = 0; i < a.n; i++) ((o.sq.x = a.x), (o.sq.y = a.y), ss.tick(1 / 30));
+      ((o.sq.x = a.x), (o.sq.y = a.y));
+      window.__rec = { arcs: [], marks: [], guests: [] };
+      ss.tick(1 / 60);
+      ss.drawFrame();
+      const rec = window.__rec;
+      window.__rec = null;
+      const now = b.now();
+      return { ...rec, cones: b.cones(), drawn: ss.conesDrawn().filter((k) => k.room === "hall").length, now: { scene: now.scene, alarm: now.alarm, seenBy: now.seenBy, stare: now.stare, pose: now.pose }, sq: { x: o.sq.x, y: o.sq.y }, sec: !!ss.secNow(), card: (o.cur && o.cur.k) || "" };
+    },
+    { x, y, n },
+  );
+// The arc a cone was drawn with (same centre and radius), or null when it was not drawn.
+const arcOf = (f, c) => f.arcs.find((a) => Math.abs(a.x - c.ox) < 0.01 && Math.abs(a.y - c.oy) < 0.01 && Math.abs(a.r - c.len) < 0.01) || null;
+const edgeOf = (c, s) => watch.distToCone(s.x, s.y - watch.SQUATCH_SEEN_ABOVE_FEET, c.ox, c.oy, c.a, c.half, c.len);
+const yellow = (a) => !!a && /255,\s*234,\s*120/.test(a.fill);
+
+// Out in the open first, to read where everyone stands.
+const open = await frameAt(480, 600, 2);
+g.check("the party in disguise is on (P6)", open.now.scene === "P6", open.now);
+const ids = open.cones.map((c) => c.id);
+g.check("in disguise, everyone at the party has a sight cone", EVERYONE.every((id) => ids.includes(id)), ids);
+const lens = [...new Set(open.cones.map((c) => c.len))];
+g.check("every cone is the same full length", lens.length === 1 && lens[0] > 100, lens);
+
+// A place inside the camera tourist's cone and no one else's (he stays by his camera; his cone is steady).
+const spot = (() => {
+  const cam = open.cones.find((c) => c.id === "camera");
+  for (const d of [90, 110, 70, 130, 60, 150])
+    for (const da of [0, 0.15, -0.15, 0.3, -0.3]) {
+      const x = cam.ox + Math.cos(cam.a + da) * d,
+        y = cam.oy + Math.sin(cam.a + da) * d + watch.SQUATCH_SEEN_ABOVE_FEET;
+      if (y < 310 || y > 585 || x < 70 || x > 890) continue;
+      const s = { x, y };
+      if (edgeOf(cam, s) <= 0 && open.cones.filter((c) => c.id !== "camera").every((c) => edgeOf(c, s) > 0)) return s;
+    }
+  return null;
+})();
+g.check("there is floor inside the camera tourist's cone only (the test can stand there)", !!spot, spot);
+
+if (spot) {
+  // About 1.5 seconds inside it.
+  const inCam = await frameAt(spot.x, spot.y, 45);
+  const cam = inCam.cones.find((c) => c.id === "camera"),
+    camArc = arcOf(inCam, cam),
+    camGuest = inCam.guests.find((q) => q.id === "camera"),
+    q = inCam.marks.filter((m) => m.t === "?");
+  g.check("inside the camera tourist's cone, he is the one who sees him", inCam.now.seenBy === "camera", inCam.now);
+  g.check("inside the camera tourist's cone: it is drawn fully and fills yellow", !!camArc && camArc.alpha === 1 && yellow(camArc), camArc);
+  g.check(
+    'inside the camera tourist\'s cone: a "?" is drawn over him',
+    !!camGuest && q.some((m) => Math.abs(m.px - camGuest.px) < 12 && m.py < camGuest.py - 20),
+    { camGuest, q },
+  );
+  g.check('in disguise it is only a "?": no "!" is drawn', !inCam.marks.some((m) => m.t === "!"), inCam.marks);
+  // Another 1.5 seconds: three in all. Nobody catches him for being seen in disguise.
+  const later = await frameAt(spot.x, spot.y, 45);
+  g.check("in disguise, a guest who sees him does not catch him at once (no alarm in 3 seconds)", later.now.scene === "P6" && !later.now.alarm && !later.sec && later.card !== "card", later.now);
+}
+
+// Distance fade, from three places on the floor: which cones are drawn this frame, and how strongly.
+const fade = [];
+for (const [x, y] of [
+  [480, 600],
+  [200, 520],
+  [800, 560],
+  [470, 470],
+]) {
+  const f = await frameAt(x, y, 1);
+  const cones = f.cones.map((c) => {
+    const a = arcOf(f, c);
+    return { at: [x, y], id: c.id, d: Math.round(edgeOf(c, f.sq) * 10) / 10, alpha: a ? a.alpha : 0, whole: !a || a.r === c.len, yellow: yellow(a) };
   });
-  n.ch1Look = 0;
-  // Distance fade, from three places on the floor: what is drawn this frame, and how strongly.
-  const fade = [];
-  for (const [x, y] of [[560, 600], [200, 520], [800, 560]]) {
-    ((n.sq.x = x), (n.sq.y = y));
-    ss.tick(1 / 30);
-    ss.drawFrame();
-    const drawn = ss.conesDrawn().filter((k) => k.room === "hall").length;
-    for (const c of n.ch1Cones || []) fade.push({ at: [x, y], id: c.id, d: c.edge, show: c.show, inside: c.inside });
-    fade.push({ at: [x, y], drawn, shown: (n.ch1Cones || []).filter((c) => c.show > 0).length });
+  fade.push({ at: [x, y], cones, drawn: f.drawn, shown: cones.filter((c) => c.alpha > 0).length });
+}
+const all = fade.flatMap((f) => f.cones);
+g.check("far from a cone (over 120), it is not drawn", all.filter((c) => c.d >= 120).every((c) => c.alpha === 0), all.filter((c) => c.d >= 120 && c.alpha !== 0));
+g.check("close to a cone (within 40), it is drawn fully", all.filter((c) => c.d <= 40).every((c) => c.alpha === 1), all.filter((c) => c.d <= 40 && c.alpha !== 1));
+g.check(
+  "in between, the cone fades in as he comes closer",
+  all.some((c) => c.d > 40 && c.d < 120) && all.filter((c) => c.d > 40 && c.d < 120).every((c) => c.alpha > 0 && c.alpha < 1),
+  all.filter((c) => c.d > 40 && c.d < 120),
+);
+g.check("every cone that sees him is drawn fully and yellow (rule 8)", all.filter((c) => c.d <= 0).every((c) => c.alpha === 1 && c.yellow), all.filter((c) => c.d <= 0));
+g.check("every cone is drawn whole (its full length)", all.every((c) => c.whole), all.filter((c) => !c.whole));
+g.check(
+  "only the shown cones are drawn, so far-away cones do not clutter the screen",
+  fade.every((f) => f.drawn === f.shown) && fade.some((f) => f.shown < f.cones.length),
+  fade.map((f) => ({ at: f.at, drawn: f.drawn, shown: f.shown })),
+);
+g.check("the six party guests are drawn from Brian's approved Nov 8 pictures", new Set(open.guests.map((q) => q.id)).size === 6, open.guests.map((q) => q.id));
+
+// The snack pyramid topples (five snacks dragged into the bag in the close-up): everyone turns to look at him.
+{
+  const L = await page.evaluate(() => window.SSQ.beat("ch1-party").snackLayout());
+  await page.evaluate(() => ((window.__ss.op.sq.x = 700), (window.__ss.op.sq.y = 520)));
+  const t0 = Date.now();
+  while (Date.now() - t0 < 3000 && !(await page.evaluate(() => window.SSQ.beat("ch1-party").now().paw))) await sleep(100);
+  await page.evaluate((p) => window.__ss.tapAt(p[0], p[1]), [L.paw.x, L.paw.y]);
+  let last = null;
+  const open2 = async (f, ms) => {
+    const t1 = Date.now();
+    while (Date.now() - t1 < ms) {
+      const v = (last = await page.evaluate(() => window.SSQ.beat("ch1-party").now()));
+      if (f(v)) return v;
+      await sleep(100);
+    }
+    return null;
+  };
+  g.check("the paw icon opens the snack close-up", !!(await open2((v) => v && v.snack, 6000)));
+  await sleep(800); // the close-up zooms in before it takes a finger
+  for (let i = 0; i < 5; i++) {
+    await open2((v) => v && v.snack && v.snack.phase === "back", 12000);
+    const [, x, y] = L.cut.snacks[i];
+    await page.evaluate((a) => window.__ss.ch1Pointer("down", a[0], a[1]), [x, y]);
+    await page.evaluate(() => window.__ss.ch1Pointer("move", 100, 550));
+    await page.evaluate(() => window.__ss.ch1Pointer("up", 100, 550));
+    await sleep(150);
   }
-  return { open, inCam, caught, look, fade, art: n.ch1GuestArt, ids: open.map((c) => c.id) };
-}, EVERYONE);
+  const v = await open2((q) => q && q.stare > 0, 4000);
+  g.check("five snacks topple the pyramid and everyone stares", !!v && v.snacks.toppled, last && { scene: last.scene, alarm: last.alarm, snack: last.snack, snacks: last.snacks, stare: last.stare, curious: last.curious });
+  const at = await page.evaluate(() => ({ x: window.__ss.op.sq.x, y: window.__ss.op.sq.y }));
+  const f = await frameAt(at.x, at.y, 0);
+  const look = f.cones
+    .filter((c) => EVERYONE.includes(c.id))
+    .map((c) => {
+      const want = Math.atan2(at.y - c.oy, at.x - c.ox);
+      const d = Math.abs(c.a - want) % (2 * Math.PI);
+      return { id: c.id, off: Math.round(Math.min(d, 2 * Math.PI - d) * 1000) / 1000 };
+    });
+  g.check(
+    "after the pyramid topples, everyone turns to look at Squatch",
+    f.now.stare > 0 && look.length === EVERYONE.length && look.every((c) => c.off < 0.05),
+    { stare: f.now.stare, off: look.filter((c) => c.off >= 0.05) },
+  );
+}
 
-g.check(
-  "in disguise, everyone at the party shows a sight cone",
-  EVERYONE.every((id) => party.ids.includes(id)),
-  party.ids,
-);
-g.check("out in the open, nobody's cone is on him", party.open.every((c) => !c.inside), party.open.filter((c) => c.inside));
-const cam = party.inCam.find((c) => c.id === "camera") || {};
-g.check('inside the camera tourist\'s cone: it fills and a "?" shows over him', cam.inside === true && cam.mark === "?", cam);
-g.check("in disguise, a guest who sees him does not catch him", !party.caught.sec && !party.caught.over && party.caught.disguise, party.caught);
-g.check(
-  "after the snack spill, everyone turns to look at Squatch",
-  party.look.length >= EVERYONE.length && party.look.every((c) => c.off < 0.05),
-  party.look.filter((c) => c.off >= 0.05),
-);
-const cones = party.fade.filter((f) => f.id),
-  frames = party.fade.filter((f) => !f.id);
-g.check("far from a cone (over 120), it is not shown", cones.filter((c) => c.d > 120).every((c) => c.show === 0), cones.filter((c) => c.d > 120 && c.show !== 0));
-g.check("close to a cone (within 40), it is fully shown", cones.filter((c) => c.d <= 40).every((c) => c.show === 1), cones.filter((c) => c.d <= 40 && c.show !== 1));
-g.check("in between, the cone fades in as he comes closer", cones.some((c) => c.d > 40 && c.d < 120) && cones.filter((c) => c.d > 40 && c.d < 120).every((c) => c.show > 0 && c.show < 1), cones.filter((c) => c.d > 40 && c.d < 120));
-g.check("every cone that sees him is fully shown (rule 8)", cones.filter((c) => c.inside).every((c) => c.show === 1), cones.filter((c) => c.inside));
-g.check("only the shown cones are drawn, so far-away cones do not clutter the screen", frames.every((f) => f.drawn === f.shown) && frames.some((f) => f.shown < 10), frames);
-g.check("the six party guests are drawn from Brian's approved Nov 8 pictures", party.art === 6, party.art);
-
-// The sneak to the plant is the party module now: tests/party-scenes.mjs checks its cones.
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();
 await g.finish("ch1-party-cones");

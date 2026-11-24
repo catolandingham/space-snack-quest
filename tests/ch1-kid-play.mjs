@@ -6,11 +6,14 @@
  * jumping, Squatch standing inside furniture, a tap that stops at furniture, a goal ring on
  * Squatch himself, and errors. Each problem it meets is checked against KNOWN below: a problem
  * on that list passes with a note, a problem not on it fails.
+ * The party night (src/modules/party.js) is played the same way: the sneak, the dress-up (dragging the pieces),
+ * then the party in disguise (P6) until it ends, by closing time or by a FUR alarm and the run home; in the dance
+ * it taps the screen, and at closing time it walks Squatch to Mops. Every party button is pressed.
  * The run ends at the Chapter 1 tally card (about 8 minutes). Not getting there fails the suite.
  *   npm run kid-video   plays it and saves tests/out/kid-play/chapter-1.mp4 for Brian to watch
  *   KID_MAX_S  most seconds to play (default 900)   KID_OUT  folder for kid-play.json and the log
  *   KID_SHOTS=1  saves pictures while playing and joins them into chapter-1.mp4 (needs ffmpeg)
- *   KID_AVOID=   (empty) lets the robot press every button, the party ones included
+ *   KID_AVOID=HIDE,DANCE  buttons (verbs) the robot leaves alone (default: none)
  */
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
@@ -19,15 +22,11 @@ import { root, startGame, sleep } from "./game-page.mjs";
 
 // Problems Brian knows about. Take one off this list in the change that fixes it.
 const KNOWN = {};
-// Party buttons that get Squatch caught. A catch at the party leaves the game stuck in the bedroom
-// (docs/CHAPTER-1-PROBLEMS.md, problem 1), so the robot leaves them alone. The change that fixes problem 1
-// should empty this list, so the robot presses them and proves the fix.
-const LEAVE_ALONE = ["SNAG", "SUCK", "STAND"];
 
 const MAX_S = +(process.env.KID_MAX_S || 900);
 const OUT = process.env.KID_OUT || join(root, "tests", "out", "kid-play");
 const SHOTS = process.env.KID_SHOTS === "1";
-const AVOID = process.env.KID_AVOID === undefined ? LEAVE_ALONE : process.env.KID_AVOID.split(",").filter(Boolean);
+const AVOID = (process.env.KID_AVOID || "").split(",").filter(Boolean);
 const SLIP_CODE = "4723"; // what the pink slip says
 const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 1 };
 mkdirSync(OUT, { recursive: true });
@@ -79,7 +78,12 @@ const st = () =>
       mops: !!ss.ch.mops,
       pose: n.sqPose,
       mini: n.ch1Mini || "",
-      raid: !!n.ch1Raid,
+      // The party night (src/modules/party.js): its scene, the FUR alarm, the dance, and Mops at closing time.
+      party: (() => {
+        const b = window.SSQ && window.SSQ.beat("ch1-party"),
+          p = b && b.now();
+        return p ? { scene: p.scene, alarm: p.alarm || "", song: p.song == null ? -1 : p.song, dance: !!p.dance, done: p.done ? Object.keys(p.done).length : 0, close: p.close ? p.close.phase : "", mops: p.mops && p.mops.heart > 0 ? { x: Math.round(p.mops.x), y: Math.round(p.mops.y) } : null } : null;
+      })(),
       pad: !!n.ch1PadOn && !!n.ch1Zoom && n.ch1Zoom.zoom >= 1,
       padHave: n.ch1Pad || "",
       zoom: n.ch1Zoom ? n.ch1Zoom.id : "",
@@ -102,8 +106,8 @@ const st = () =>
 // What the robot can see of danger: any cone on screen, with a little room to spare.
 const inDanger = (s, x, y) => {
   for (const c of s.cones) {
-    // A party guest's cone in disguise only brings a "?" (no catch); a kid who has seen that walks through it.
-    if (c.askOnly) continue;
+    // Mops's cone of hearts at closing time is not someone who could catch him.
+    if (c.heart) continue;
     // Close to a watcher is never safe, whichever way it faces.
     if (Math.hypot(x - c.ox, y - (c.oy + 28)) < 96) return true;
     for (const py of [y, y - 20]) {
@@ -301,7 +305,8 @@ while (now() < MAX_S) {
     break;
   }
   loopScene = s.scene;
-  const key = [s.scene, s.room, s.chip, s.mops, s.zoomKey, done.size, seen.caught.length, s.dress ? JSON.stringify(s.dress.outfit) : ""].join("|");
+  const pk = s.party ? [s.party.scene, s.party.alarm, s.party.song, s.party.done, s.party.close].join(":") : "";
+  const key = [s.scene, s.room, s.chip, s.mops, s.zoomKey, done.size, seen.caught.length, s.dress ? JSON.stringify(s.dress.outfit) : "", pk].join("|");
   if (key !== lastKey) ((lastKey = key), (lastChange = Date.now()), progress++);
   if (Date.now() - lastChange > 75000) {
     end = "stuck";
@@ -328,6 +333,12 @@ while (now() < MAX_S) {
       await page.touchscreen.touchEnd();
       await sleep(350);
     }
+    continue;
+  }
+  // The party's dance fills the screen: every tap is his next move, the way a kid dances.
+  if (s.party && s.party.dance) {
+    await tap(PHONE.width / 2, PHONE.height / 2);
+    await sleep(400);
     continue;
   }
   if (s.up) {
@@ -358,7 +369,7 @@ while (now() < MAX_S) {
     continue;
   }
   // Hidden with a cone on screen: stay put, the way a kid holds still while someone is looking.
-  if ((s.pose === "hidden" || s.pose === "under") && (s.cones.length || s.raid) && Date.now() - (hidAt || (hidAt = Date.now())) < 20000) {
+  if ((s.pose === "hidden" || s.pose === "under") && (s.cones.length || (s.party && s.party.alarm)) && Date.now() - (hidAt || (hidAt = Date.now())) < 20000) {
     await sleep(250);
     continue;
   }
@@ -373,6 +384,16 @@ while (now() < MAX_S) {
     say(s, "PRESS " + verb);
     await tap(s.btnR[0] + s.btnR[2] / 2, s.btnR[1] + s.btnR[3] / 2);
     await sleep(500);
+    continue;
+  }
+  // Closing time: Mops has come in mopping and his hearts point at Squatch; a kid walks Squatch over to him.
+  if (s.party && s.party.mops && !s.placed.length) {
+    const m = s.party.mops;
+    say(s, `WALK to Mops (${m.x},${m.y})`);
+    const step = nextStep(s, m.x, Math.max(s.bounds.y0, Math.min(s.bounds.y1, m.y)), 40);
+    if (!step.wait) await tapGame(s, step.x, step.y);
+    else await tapGame(s, m.x, m.y);
+    await sleep(600);
     continue;
   }
   const open = s.placed.filter((p) => p.x && !avoid(p.verb) && !done.has(s.scene + "|" + (p.id || p.verb + p.cap)));
@@ -431,7 +452,8 @@ while (now() < MAX_S) {
     await sleep(300);
     continue;
   }
-  const pts = [[760, 470], [480, 540], [240, 560], [820, 560], [600, 420]];
+  // At the party in disguise, the spotlight on the dance floor (drawn on the floor) is somewhere a kid goes to see.
+  const pts = s.party && s.party.scene === "P6" ? [[470, 372], [760, 470], [480, 540], [240, 560], [470, 372], [600, 420]] : [[760, 470], [480, 540], [240, 560], [820, 560], [600, 420]];
   const w = pts[wander++ % pts.length];
   const step = nextStep(s, w[0], w[1], 30);
   say(s, `WANDER toward ${w}`);

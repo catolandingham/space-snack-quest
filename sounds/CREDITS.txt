@@ -1,0 +1,8 @@
+Sounds in this folder
+
+impactPlate_light_000, impactPlate_light_002, impactGlass_light_001, impactMetal_light_000 (the snack pyramid's crash)
+and footstep_concrete_000 to 004 (footsteps of the guards and of the guests leaving at closing time)
+are from "Impact Sounds" (1.0) by Kenney (www.kenney.nl), released under Creative Commons Zero (CC0):
+http://creativecommons.org/publicdomain/zero/1.0/
+Converted from .ogg to .mp3 (mono, 64 kb/s) so older iPhones can play them. Downloaded with Brian's yes
+(2026-11-24, "35 (A)"). The game plays them through its master volume, only when sound is on.

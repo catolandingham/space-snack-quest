@@ -22,8 +22,8 @@ import { coneFrom, coneSees, lookAt } from "./party-watch.js";
 
 export const ALARM = Object.freeze({
   shout: 0.9, // seconds the FUR! shows before the witness runs
-  run: 320, // the witness's run to the alarm (pixels a second)
-  closeUp: 1.8, // the first alarm's close-up of the hand pulling it
+  run: 420, // PLACEHOLDER (was 320; a guest across the hall took 1.7 s, over the old 1.5 s rule) the witness's run to the alarm (pixels a second)
+  closeUp: 2.4, // the first alarm's close-up of the hand pulling it: wordless, so it plays itself (Brian 30a: about 2 to 4 seconds)
   guardGap: 0.5, // the second guard comes in this long after the first
   guard: 120, // pinned: guard-speed
   reach: 36, // pinned: guard-catch
@@ -84,7 +84,7 @@ export function tickAlarm(P, dt, api) {
   // The bell keeps ringing while the alarm is on; the guests back away toward the walls.
   if (a.phase === "ring" || a.phase === "search" || a.phase === "home") {
     a.bell -= dt;
-    a.bell <= 0 && ((a.bell = ALARM.bell), E.sfx("alarm"));
+    a.bell <= 0 && ((a.bell = ALARM.bell), api.bell ? api.bell() : E.sfx("alarm"));
     for (const g of Object.values(api.people())) step(g, g.hx + g.ax, g.hy + g.ay, ALARM.calm, dt);
   }
   if (a.phase === "ring") {
