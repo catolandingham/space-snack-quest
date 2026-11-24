@@ -20,7 +20,8 @@ export const SQUATCH_LOOK = Object.freeze({
   amp: 2.2,
 });
 const INK = "#1e2430";
-// In the engine the outline is 2 of his units, the face mask's 1.5 and the eyes' and mouth's 1.1.
+// In the engine the outline is 2 of his units, the face mask's 1.5 and the eyes' and mouth's 1.1: here the
+// mask's and the smile's lines are the same fractions of the outline.
 const MASK_LINE = 1.5 / 2,
   FACE_LINE = 1.1 / 2;
 
@@ -130,19 +131,21 @@ export function drawSquatchArt(ctx, x, y, scale, { line = 4, shadow = true } = {
   ctx.bezierCurveTo(mx + mw * 0.2, my + mh * 0.52, mx + mw * 0.45, my + mh * 0.4, mx + mw * 0.5, my - mh * 0.05);
   ctx.bezierCurveTo(mx + mw * 0.62, my - mh * 0.55, mx + mw * 0.15, my - mh * 0.62, mx, my - mh * 0.28);
   ctx.closePath();
-  fill(q.mask, o * MASK_LINE * 2);
+  fill(q.mask, o * MASK_LINE);
   dot(-q.head * 0.27, P + q.head * 0.12, 1.5, INK);
   dot(q.head * 0.27, P + q.head * 0.12, 1.5, INK);
   ctx.beginPath();
   ctx.arc(0, P + q.head * 0.38, 2.2, 0.2, Math.PI - 0.2);
   ctx.strokeStyle = INK;
-  ctx.lineWidth = o * FACE_LINE * 2;
+  ctx.lineWidth = o * FACE_LINE;
   ctx.stroke();
   ctx.restore();
   return {
     paw: { x: x + nx * scale, y: y + ny * scale },
     mouth: { x, y: y + (P + q.head * 0.38) * scale },
     outline: line,
+    // The face mask's and the smile's line, in game pixels (at the room's size: 1.5 and 1.1 of his units).
+    lines: { mask: o * MASK_LINE * scale, face: o * FACE_LINE * scale },
     box: { x0: x - (q.head * 0.95 + 3.4 + o) * scale, x1: x + (q.head * 0.95 + 3.4 + o) * scale, y0: y + (P - q.head * 0.85 - q.amp * 1.6) * scale, y1: y + 4 * scale },
   };
 }

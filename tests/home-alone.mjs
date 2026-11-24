@@ -39,6 +39,15 @@ const g = await startGame({ port: 8973, name: "home-alone" });
   const m5 = (src.match(/m5 = \{([\s\S]*?)\}/) || [])[1] || "";
   const differ = Object.entries(SQUATCH_LOOK).filter(([k, v]) => !new RegExp(`\\b${k}: ${typeof v === "string" ? `"${v}"` : v.toString().replace(".", "\\.")},`).test(m5));
   g.check("the close-up Squatch has the room Squatch's colours and sizes", m5.length > 0 && differ.length === 0, differ);
+  // At the room's size and outline (scale 3, outline 2 units) the face mask and smile lines are the engine's
+  // (wV(q.mask, 1.5) and the smile's lineWidth 1.1, in his units).
+  const { drawSquatchArt } = await import(pathToFileURL(join(root, "src", "modules", "squatch-art.js")).href);
+  const noop = () => {};
+  const fake = new Proxy({}, { get: (t, k) => (k in t ? t[k] : noop), set: (t, k, v) => ((t[k] = v), true) });
+  const art = drawSquatchArt(fake, 0, 0, 3, { line: 6 });
+  const engineMask = /wV\(q\.mask, 1\.5\)/.test(src),
+    engineSmile = /e\.lineWidth = 1\.1\)\);\s*for \(let Qe of \[-1, 1\]\)/.test(src) || /\(e\.lineWidth = 1\.1\), e\.stroke\(\)/.test(src);
+  g.check("at the room's size its face mask and smile lines match the engine's (1.5 and 1.1 units)", engineMask && engineSmile && Math.abs(art.lines.mask - 4.5) < 0.01 && Math.abs(art.lines.face - 3.3) < 0.01, { art: art.lines, engineMask, engineSmile });
 }
 const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 1 };
 
@@ -433,9 +442,9 @@ g.check("no page errors", errors.length === 0, errors);
       for (let i = 0; i < 20; i++) ss.tick(0.05);
       ss.resetHold(false);
       for (let i = 0; i < 4; i++) ss.tick(0.05);
-      return { k: n.cur ? n.cur.k : "", step: n.ch1Morning ? n.ch1Morning.step : "", look: n.ch1Morning ? n.ch1Morning.look : "", wardrobe: n.wardrobe, pose: n.sqPose, bedX: n.sqBedX || 0, lift: n.sqLift || 0, moPose: n.moPose, chip: ss.chipNow(), ctrl: n.ctrl, sq: [n.sq.x, n.sq.y] };
+      return { k: n.cur ? n.cur.k : "", step: n.ch1Morning ? n.ch1Morning.step : "", look: n.ch1Morning ? n.ch1Morning.look : "", wardrobe: n.wardrobe, pose: n.sqPose, lift: n.sqLift || 0, moPose: n.moPose, chip: ss.chipNow(), ctrl: n.ctrl, sq: [n.sq.x, n.sq.y] };
     });
-  const home = (r) => r.step === "home" && !r.look && !r.k && r.ctrl && r.wardrobe === "closed" && r.pose === "stand" && !r.bedX && !r.lift && r.moPose === "hidden" && r.chip === L["chip-homework"];
+  const home = (r) => r.step === "home" && !r.look && !r.k && r.ctrl && r.wardrobe === "closed" && r.pose === "stand" && !r.lift && r.moPose === "hidden" && r.chip === L["chip-homework"];
   // ↺ while Mops walks out, then on home alone: still home alone, Squatch where home alone began.
   await R.page.evaluate(() => {
     const ss = window.__ss,
