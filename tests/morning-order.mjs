@@ -33,7 +33,7 @@ import { startGame, sleep } from "./game-page.mjs";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const { MORNING_LINES } = await import(pathToFileURL(join(root, "src", "modules", "morning-lines.js")).href);
 const L = Object.fromEntries(MORNING_LINES.map((l) => [l.id, l]));
-const g = await startGame({ port: 8971, name: "morning-order" });
+const g = await startGame({ port: 8976, name: "morning-order" });
 const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 1 };
 
 async function openMorning() {
