@@ -7,21 +7,24 @@
  * A goal with no entry gets no outline (optional things, close-ups, and props the game draws itself,
  * which are still to do: see README "Brian's repeat complaints, as tests").
  */
+// Doorways more than one goal outlines: each typed once.
+const HOME_DOOR = { rect: { x0: 912, x1: 940, y0: 358, y1: 468 } }, // home: the doorway in the right wall
+  HALL_HOME_DOOR = { rect: { x0: 426, x1: 528, y0: 600, y1: 622 } }; // the hall: the doorway home, in the front wall
 export const GOAL_TARGETS = {
   // Home
-  "closet:peek": { rect: { x0: 912, x1: 940, y0: 358, y1: 468 } }, // the doorway in the right wall
+  "closet:peek": HOME_DOOR,
   "closet:hidebed": { trace: { x0: 76, x1: 294, y0: 390, y1: 552 } }, // the bed
   "closet:homework": { trace: { x0: 396, x1: 522, y0: 238, y1: 352 } }, // the desk (home alone: do your homework)
   "closet:dress": { trace: { x0: 30, x1: 172, y0: 188, y1: 352 } }, // the closet (party P5: dress up)
-  "closet:go-party": { rect: { x0: 912, x1: 940, y0: 358, y1: 468 } }, // the doorway in the right wall (P5, dressed)
+  "closet:go-party": HOME_DOOR, // party P5, dressed: out through it
   "closet:d2-PUT-box": { trace: { x0: 30, x1: 172, y0: 188, y1: 352 } }, // the wardrobe (the box is in it)
   "closet:d2-LOOK-calendar": { rect: { x0: 99, x1: 167, y0: 196, y1: 279 } }, // the calendar on the wardrobe door
   // Party hall
   "hall:hide": { trace: { x0: 392, x1: 494, y0: 432, y1: 556 } }, // the plant in the middle (party sneak)
-  "hall:go-home": { rect: { x0: 426, x1: 528, y0: 600, y1: 622 } }, // the doorway home (party P4, and the alarm)
+  "hall:go-home": HALL_HOME_DOOR, // party P4, and the alarm
   "hall:d2-HIDE-plant": { trace: { x0: 392, x1: 494, y0: 432, y1: 556 } }, // the same plant (Day 2)
   "hall:d2-SNEAK-hallway": { rect: { x0: 912, x1: 940, y0: 257, y1: 345 } }, // the doorway to the hallway (hall v2, back corner)
-  "hall:d2-GO-home": { rect: { x0: 426, x1: 528, y0: 600, y1: 622 } }, // the doorway home, in the front wall
+  "hall:d2-GO-home": HALL_HOME_DOOR,
   // Hallway
   "passage:d2-GO-hall": { rect: { x0: 20, x1: 48, y0: 266, y1: 354 } }, // the doorway to the hall (left; the walk uses it)
   "passage:d2-GO-ship": { rect: { x0: 912, x1: 940, y0: 266, y1: 354 } }, // the doorway to the loading bay

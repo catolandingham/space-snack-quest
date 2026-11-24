@@ -322,6 +322,7 @@
         CH1_OFFICE_DOOR,
         CH1_HOME_DOOR,
         CH1_GUESTS,
+        CH1_PARTY_CAST,
         PHOTO_BONUS,
         SNACK_LOOK_SECONDS,
         CH1_CAM,

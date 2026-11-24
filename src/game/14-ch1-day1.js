@@ -1,9 +1,5 @@
 // Day 1 beats that sit on the slice: the song, the party games, the chase, the search, the TV, bedtime.
-    const CH1_DANCE_POINTS = 10,
-      CH1_DANCE_SECONDS = 30,
-      CH1_DANCE_NOTES = 30,
-      CH1_HIT_X = 220,
-      CH1_HOWLS_CAP = 50,
+    const CH1_HOWLS_CAP = 50,
       CH1_HOWL_EACH = 5,
       CH1_CHASE_SECONDS = 10,
       CH1_OCT_SPEED = 90,
@@ -114,11 +110,12 @@
           cap: "plant",
           who: "sq",
           // The middle plant (it used to be the floor vent: Brian 2026-11-23, comment 19).
-          x: 396,
-          y: 552,
+          x: partyBeat().spot("plantMiddle").x,
+          y: partyBeat().spot("plantMiddle").y,
           r: 80,
           f: () => {
-            ((n.sqPose = "hidden"), (n.sq.x = 396), (n.sq.y = 552), (n.act = null));
+            let at = partyBeat().spot("plantMiddle");
+            ((n.sqPose = "hidden"), (n.sq.x = at.x), (n.sq.y = at.y), (n.act = null));
           },
         }),
       ];
@@ -185,23 +182,6 @@
         spot({ id: "chicken", verb: "FLAP", cap: "chicken dance", who: "sq", x: 600, y: 540, r: 70, f: ch1Chicken }),
       ];
     }
-    function ch1DanceStart() {
-      let notes = [];
-      for (let i = 0; i < CH1_DANCE_NOTES; i++) notes.push({ dir: "LDUR"[i % 4], at: 1.2 + i * 0.9, hit: !1 });
-      ((n.ch1Mini = "dance"),
-        (n.ctrl = !1),
-        (n.act = null),
-        (n.ch1Dance = { t: 0, notes, score: 0, cheer: 0 }));
-    }
-    function ch1DanceHit(dir) {
-      let g = n.ch1Dance;
-      if (!g) return;
-      let note = g.notes.find((q) => !q.hit && q.dir === dir && Math.abs(ch1NoteX(q, g.t) - CH1_HIT_X) < 42);
-      note && ((note.hit = !0), (g.score += CH1_DANCE_POINTS), (g.cheer = 0.4), D.pickup());
-    }
-    function ch1NoteX(note, t) {
-      return 920 - (t - (note.at - 1.5)) * 460;
-    }
     function ch1KaraokeStart() {
       ((n.ch1Mini = "karaoke"), (n.ctrl = !1), (n.act = null), (n.ch1Kara = { t: 0, howls: 0 }));
     }
@@ -209,11 +189,6 @@
       n.ch1Kara && ((n.ch1Kara.howls += 1), lV(180 + (n.ch1Kara.howls % 5) * 40, 0.18, "sawtooth", 0.08, 0, 80));
     }
     function ch1MiniPointer(x, y) {
-      if (n.ch1Mini === "dance") {
-        [["L", 150], ["D", 310], ["U", 490], ["R", 670]].forEach(([dir, bx]) => {
-          Math.hypot(x - bx, y - 610) < 48 && ch1DanceHit(dir);
-        });
-      }
       n.ch1Mini === "karaoke" && Math.hypot(x - 760, y - 560) < 64 && ch1Howl();
     }
     function ch1Conga() {
@@ -264,16 +239,6 @@
         }
         (g.seen > 2 || (hidden && g.t > 8)) && ch1HideFromGuard();
       }
-      if (n.ch1Mini === "dance" && n.ch1Dance) {
-        let g = n.ch1Dance;
-        ((g.t += step), (g.cheer = Math.max(0, g.cheer - step)));
-        g.t >= CH1_DANCE_SECONDS &&
-          ((n.stars = (n.stars || 0) + g.score),
-          (n.ch1Mini = ""),
-          (n.ch1Dance = null),
-          (n.ctrl = !0),
-          D.open());
-      }
       if (n.ch1Mini === "karaoke" && n.ch1Kara) {
         let g = n.ch1Kara;
         g.t += step;
@@ -319,24 +284,7 @@
       n.guard && drawCh1Alien(n.guard.x, n.guard.y, "hat", ALIEN_ADULT, n.sq.x < n.guard.x ? -1 : 1);
     }
     function drawCh1Mini() {
-      if (n.ch1Mini === "dance") return drawCh1Dance();
       if (n.ch1Mini === "karaoke") return drawCh1Karaoke();
-    }
-    function drawCh1Dance() {
-      let dance = n.ch1Dance;
-      if (!dance) return;
-      (m(40, 548, 880, 52, 14), r("#1e2430", 4));
-      (L(CH1_HIT_X, 574, 22), r("rgba(255,207,51,.95)", 4));
-      dance.notes.forEach((note) => {
-        if (note.hit) return;
-        let x = ch1NoteX(note, dance.t);
-        if (x < 40 || x > 980) return;
-        g(note.dir === "L" ? "\u2190" : note.dir === "R" ? "\u2192" : note.dir === "U" ? "\u2191" : "\u2193", x, 574, 32, "#ffffff", "center", 900);
-      });
-      [["L", "\u2190", 150], ["D", "\u2193", 310], ["U", "\u2191", 490], ["R", "\u2192", 670]].forEach((b) => {
-        (L(b[2], 610, 36), r("#ffffff", 4), g(b[1], b[2], 610, 32, "#1e2430", "center", 900));
-      });
-      g(String(dance.score), 880, 520, 26, "#b45309", "center", 900);
     }
     function drawCh1Karaoke() {
       let kara = n.ch1Kara;

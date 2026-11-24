@@ -107,3 +107,11 @@ The later full touch run exposed a test-driver gap: it waited whenever walking w
 - Anyone with a cone could raise the alarm, so Isfred on the stage became a "tourist" on the LOCKUP card, and a shout appeared over someone who never moved. Only people the game can draw running, with a "who" line for the card, raise the alarm; the others show "?".
 - A test number (guests at least 70 apart) blocked the dancing pairs, and the first fix loosened the test. Move the design to meet the test (the pairs now stand 72 apart); never loosen a test to fit a design.
 - A Squatch line was skipped because he stood below the picture's edge while peeking (`speakerDrawn`). A beat that puts a speaker at the picture's edge says so to the bubble rule (the party's `speakerAt`).
+
+## Mistakes the independent review of PR #85 caught (2026-11-24)
+- The fur stopped mid-air when the alarm started, because only the "no alarm" branch moved it. Anything that shows the cause of an alarm keeps moving while the alarm runs, and a test follows it to its end (the tuft reaches the grille).
+- A new speaker ("band") had no name, so its bubble read "undefined". Every speaker gets a name from its lines file, and a test reads the name drawn over each bubble.
+- Walking into the free play moved Isfred, the camera and the octopus. Every scene change is tested for jumps: nobody (Squatch or the cast) moves more than 60 between one frame and the next inside a room.
+- Some cones only ever showed "?" (Isfred's, the band's): nobody "randomly doesn't care". If the one who sees him cannot run, someone near him does.
+- A test read the source for `size: 42` instead of measuring the mark drawn. Measure what is drawn (review rule 22).
+- Drawings for a later half and a look Brian did not pick sat in shipped modules. They live in `tools/` until the half that uses them.

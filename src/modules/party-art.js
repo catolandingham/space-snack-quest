@@ -14,19 +14,19 @@ export const INK = "#1e2430";
 const TAU = Math.PI * 2;
 
 // ---------- small shapes ----------
-function rr(ctx, x, y, w, h, r, fill, line) {
+export function rr(ctx, x, y, w, h, r, fill, line) {
   ctx.beginPath();
   ctx.roundRect(x, y, w, h, Math.min(r, Math.abs(w) / 2, Math.abs(h) / 2));
   if (fill) ((ctx.fillStyle = fill), ctx.fill());
   if (line) ((ctx.lineWidth = line), (ctx.strokeStyle = INK), ctx.stroke());
 }
-function oval(ctx, x, y, rx, ry, fill, line) {
+export function oval(ctx, x, y, rx, ry, fill, line) {
   ctx.beginPath();
   ctx.ellipse(x, y, Math.abs(rx), Math.abs(ry), 0, 0, TAU);
   if (fill) ((ctx.fillStyle = fill), ctx.fill());
   if (line) ((ctx.lineWidth = line), (ctx.strokeStyle = INK), ctx.stroke());
 }
-function line(ctx, pts, color, w) {
+export function line(ctx, pts, color, w) {
   ctx.beginPath();
   ctx.moveTo(pts[0], pts[1]);
   for (let i = 2; i < pts.length; i += 2) ctx.lineTo(pts[i], pts[i + 1]);
@@ -34,17 +34,6 @@ function line(ctx, pts, color, w) {
   ctx.strokeStyle = color;
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
-  ctx.stroke();
-}
-function heart(ctx, x, y, s, fill) {
-  ctx.beginPath();
-  ctx.moveTo(x, y + s * 0.35);
-  ctx.bezierCurveTo(x - s, y - s * 0.3, x - s * 0.45, y - s, x, y - s * 0.45);
-  ctx.bezierCurveTo(x + s * 0.45, y - s, x + s, y - s * 0.3, x, y + s * 0.35);
-  ctx.fillStyle = fill;
-  ctx.fill();
-  ctx.lineWidth = Math.max(1, s * 0.12);
-  ctx.strokeStyle = INK;
   ctx.stroke();
 }
 /** Bold words drawn on the picture (the banner, the meter): at least 18 game pixels, so 14 on a phone-held tablet. */
@@ -210,21 +199,15 @@ export function drawPerson(ctx, x, y, h, look, f = 1, t = 0) {
 export const LOOKS = Object.freeze({
   bartender: { skin: "#e7b48f", shirt: "#e5533d", pants: "#3a3f52", hair: "#4a3020", bun: true, apron: true },
   guard: { skin: "#c98b62", shirt: "#2f5fb3", pants: "#24407a", cap: "#1d3770", badge: true },
-  // The Croc Boys, look A: three guest types in matching band shirts and green Crocs.
-  bandA: [
-    { skin: "#8b5a3c", shirt: "#3fae4a", pants: "#2b2f3c", hair: "#2b1d14", bandShirt: true, crocs: true, instrument: "guitar" },
-    { skin: "#8ea6bf", shirt: "#3fae4a", pants: "#2b2f3c", antennae: true, bandShirt: true, crocs: true, instrument: "keytar" },
-    { skin: "#e7b48f", shirt: "#3fae4a", pants: "#2b2f3c", hair: "#7a4a24", bandShirt: true, crocs: true, instrument: "drum" },
-  ],
-  // Look B: crocodile-headed aliens in Crocs.
-  bandB: [
+  // The Croc Boys: look B, crocodiles in Crocs (Brian 2026-11-24, docs/approved-art/party/).
+  band: [
     { croc: true, skin: "#3fae4a", shirt: "#ffcf33", pants: "#2b2f3c", crocs: true, instrument: "guitar" },
     { croc: true, skin: "#3fae4a", shirt: "#3478f6", pants: "#2b2f3c", crocs: true, instrument: "keytar" },
     { croc: true, skin: "#3fae4a", shirt: "#e5533d", pants: "#2b2f3c", crocs: true, instrument: "drum" },
   ],
 });
 
-/** A small drum on a stand in front of a band member (look A or B, the third one). */
+/** A small drum on a stand in front of the third band member. */
 export function drawDrum(ctx, x, y, h) {
   const k = h / 100;
   rr(ctx, x - 13 * k, y - 32 * k, 26 * k, 18 * k, 4 * k, "#e5533d", Math.max(1, 2 * k));
@@ -233,9 +216,8 @@ export function drawDrum(ctx, x, y, h) {
   line(ctx, [x + 8 * k, y - 14 * k, x + 12 * k, y], INK, Math.max(1, 2 * k));
 }
 
-/** The three Croc Boys standing at their spots, look "A" or "B"; `playing` makes them bob and strum. */
-export function drawBand(ctx, spots, h, lookId, t, playing) {
-  const looks = lookId === "B" ? LOOKS.bandB : LOOKS.bandA;
+/** The three Croc Boys standing at their spots; `playing` makes them bob and strum. `looks` is for the picture sheet. */
+export function drawBand(ctx, spots, h, t, playing, looks = LOOKS.band) {
   spots.forEach((s, i) => {
     const jump = playing ? Math.abs(Math.sin(t * 6 + i)) * h * 0.04 : 0;
     drawPerson(ctx, s.x, s.y - jump, h, { ...looks[i], armUp: playing && i === 0 ? 0.3 + 0.2 * Math.sin(t * 8) : 0 }, 1, playing ? t : 0);
@@ -493,48 +475,20 @@ export function drawAlarmCloseUp(ctx, w, h, picture, src, k, t) {
   if (k >= 1) for (const sx of [-1, 1]) line(ctx, [w / 2 + sx * cw * 0.62, y + ch * 0.3, w / 2 + sx * cw * 0.8, y + ch * 0.2], "#e5533d", 6);
 }
 
-// ---------- the hallway doorway (V8) ----------
-/** Mops's long white beard swishing past the hallway doorway (`door`), seen only inside the doorway. */
-export function drawBeardInDoorway(ctx, door, t, show = 1) {
-  if (show <= 0) return;
-  const swing = Math.sin(t * 1.6);
-  ctx.save();
-  ctx.beginPath();
-  ctx.rect(door.x0 - 30, door.y0, door.x1 - door.x0 + 60, door.y1 - door.y0);
-  ctx.clip();
-  const bx = door.x0 + 6 + swing * 18,
-    by = door.y1 - 6;
-  ctx.globalAlpha = show;
-  ctx.beginPath();
-  ctx.moveTo(bx - 26, door.y0 + 10);
-  ctx.quadraticCurveTo(bx - 32, by - 30, bx - 14 + swing * 8, by);
-  ctx.quadraticCurveTo(bx + 2, by - 10, bx + 14 - swing * 6, by + 2);
-  ctx.quadraticCurveTo(bx + 18, by - 40, bx + 10, door.y0 + 10);
-  ctx.closePath();
-  ctx.fillStyle = "#f4f5f8";
-  ctx.fill();
-  ctx.lineWidth = 2.5;
-  ctx.strokeStyle = "#9aa1ad";
-  ctx.stroke();
-  for (let i = 0; i < 3; i++) line(ctx, [bx - 18 + i * 9, door.y0 + 26, bx - 14 + i * 9 + swing * 4, by - 14], "#c9ced8", 1.5);
-  ctx.restore();
-}
-
 // ---------- lights (V10) ----------
-// The room's light for each of the band's three songs (party plan P6): a soft tint over the hall.
-export const SONG_LIGHTS = Object.freeze(["rgba(255,95,168,.16)", "rgba(43,196,170,.16)", "rgba(255,190,60,.18)"]);
+// The room's light while the band plays its first song: a soft pink tint over the hall (the other two songs' colours
+// come with half two).
+export const SONG_LIGHT = "rgba(255,95,168,.16)";
 /** The lights dimmed, the dance spotlight on the floor at `spot`, the song's colour over the room. */
-export function drawPartyLights(ctx, spot, song, t, dim = 1) {
+export function drawPartyLights(ctx, spot, t, dim = 1) {
   ctx.save();
   ctx.fillStyle = `rgba(12,16,32,${0.32 * dim})`;
   ctx.beginPath();
   ctx.rect(0, 0, 960, 640);
   ctx.ellipse(spot.x, spot.y, spot.rx, spot.ry, 0, 0, TAU, true);
   ctx.fill("evenodd");
-  if (song >= 0) {
-    ctx.fillStyle = SONG_LIGHTS[song % 3];
-    ctx.fillRect(0, 0, 960, 640);
-  }
+  ctx.fillStyle = SONG_LIGHT;
+  ctx.fillRect(0, 0, 960, 640);
   const g = ctx.createRadialGradient(spot.x, spot.y, 4, spot.x, spot.y, spot.rx);
   g.addColorStop(0, "rgba(255,250,210,.38)");
   g.addColorStop(1, "rgba(255,250,210,0)");
@@ -555,8 +509,8 @@ export function drawPartyLights(ctx, spot, song, t, dim = 1) {
 }
 
 // ---------- the camera (V14) ----------
-/** The camera on its tripod, standing at (x, y) and pointing at `aim`; its red light blinks while `counting`. */
-export function drawTripod(ctx, x, y, aim, counting, t) {
+/** The camera on its tripod, standing at (x, y) and pointing at `aim`. */
+export function drawTripod(ctx, x, y, aim) {
   const a = Math.atan2(aim.y - (y - 46), aim.x - x);
   line(ctx, [x, y - 34, x - 14, y], "#6b6256", 3);
   line(ctx, [x, y - 34, x + 13, y], "#6b6256", 3);
@@ -566,29 +520,6 @@ export function drawTripod(ctx, x, y, aim, counting, t) {
   ctx.rotate(a);
   rr(ctx, -12, -8, 22, 15, 3, "#1e2430", 2);
   rr(ctx, 9, -5, 8, 9, 2, "#8fdcff", 2);
-  ctx.restore();
-  if (counting && Math.sin(t * 8) > 0) oval(ctx, x - 6, y - 51, 3, 3, "#ff3b30", 1);
-}
-
-// ---------- Mops's heart cone (V13) ----------
-/** Mops's warm cone, as big as everyone's, with hearts floating up in it (PR #35's look, R98 and R104). */
-export function drawHeartCone(ctx, ox, oy, a, half, len, t) {
-  ctx.save();
-  ctx.beginPath();
-  ctx.moveTo(ox, oy);
-  ctx.arc(ox, oy, len, a - half, a + half);
-  ctx.closePath();
-  ctx.fillStyle = "rgba(255,140,180,.30)";
-  ctx.fill();
-  ctx.lineWidth = 2.5;
-  ctx.strokeStyle = "rgba(214,70,120,.8)";
-  ctx.stroke();
-  for (let i = 0; i < 5; i++) {
-    const k = (t * 0.4 + i / 5) % 1,
-      d = 30 + k * (len - 40),
-      off = Math.sin(i * 2.1 + t) * half * 0.6;
-    heart(ctx, ox + Math.cos(a + off) * d, oy + Math.sin(a + off) * d - k * 10, 7 + 3 * Math.sin(k * Math.PI), "#ff6fa0");
-  }
   ctx.restore();
 }
 

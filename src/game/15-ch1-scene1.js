@@ -40,7 +40,6 @@
         (n.ch1Flyer = !1),
         (n.ch1PartyT = 0),
         (n.ch1PartyOver = !1),
-        (n.ch1PartyDid = {}),
         (n.ch1Fur = !1),
         (n.ch1Morning = null),
         (n.sqLift = 0),
@@ -143,7 +142,6 @@
         drawSquatch: (ctx, x, y, scale, opts) => onCtx(ctx, () => Re(x, y, scale, opts || {})),
         drawIsfred: (ctx, x, y, f) => onCtx(ctx, () => drawCh1Alien(x, y, "horns", ALIEN_ADULT, f || 1)),
         drawEyes: (ctx, x, y) => onCtx(ctx, () => ga(x, y)),
-        drawMopsOn: (ctx, x, y, scale, opts) => onCtx(ctx, () => Fe(x, y, scale, opts || {})),
         hallSizes: () => ({ adult: ADULT_PX, squatch: SQ_ADULT }),
         // Sight cones: the standing cone's size, and telling the tests (conesDrawn) about a cone drawn this frame.
         coneSize: () => ({ half: STAND_CONE_HALF, len: STAND_CONE_LEN }),

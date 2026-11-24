@@ -1,6 +1,6 @@
 /**
  * Playtest 6 on the chapter slice: the picture does not jump when NEXT appears,
- * and Isfred's party line points at him on the stage (at the mic, party plan cast).
+ * and Isfred's party line points at him (in the free play he stands at the bar, where he walked in P3).
  *   node tests/slice-p6.mjs
  */
 import { startGame, sleep } from "./game-page.mjs";
@@ -40,14 +40,14 @@ const bubble = await page.evaluate(() => {
   n.q = [];
   ss.hall.camX = 0;
   ss.drawFrame();
-  return { at: ss.bubbleAt("official"), box: ss.lastBubble };
+  return { at: ss.bubbleAt("official"), box: ss.lastBubble, isfred: ss.CH1_PARTY_CAST.isfred };
 });
 // Since PR 51 (Brian, 2026-11-15) Isfred stands on the party stage and his line points at him there.
 // The old check (bubble low in the room, clear of an office desk at the top left) described the room before the stage fix.
 const box = bubble.box;
 g.check(
-  "Isfred's party line points at him on the stage and stays on screen",
-  bubble.at.x === 420 && bubble.at.y === 190 && box && box.y >= 0 && box.x >= 0 && box.x + box.w <= 960 && box.y + box.h <= bubble.at.y,
+  "Isfred's party line points at him and stays on screen",
+  bubble.at.x === bubble.isfred[0] && bubble.at.y === bubble.isfred[1] - 68 && box && box.y >= 0 && box.x >= 0 && box.x + box.w <= 960 && box.y + box.h <= bubble.at.y,
   bubble,
 );
 

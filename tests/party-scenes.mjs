@@ -76,6 +76,33 @@ const until = async (page, f, ms = 15000, onWait) => {
   }
 };
 const still = (page, name) => page.screenshot({ path: join(OUT, name + ".png") });
+// A pixel of the game picture, at game position (x, y).
+const px = (page, x, y) =>
+  page.evaluate(([x, y]) => {
+    const c = document.querySelector("canvas"),
+      k = c.width / 960;
+    return Array.from(c.getContext("2d").getImageData(Math.round(x * k), Math.round(y * k), 1, 1).data).slice(0, 3);
+  }, [x, y]);
+const near = (a, hex, tol) => [1, 3, 5].every((i, j) => Math.abs(a[j] - parseInt(hex.slice(i, i + 2), 16)) <= tol);
+// Squatch's position every 50 ms (for "nobody teleports"): steps bigger than 60 inside one room are jumps.
+const trailStart = (page) =>
+  page.evaluate(() => {
+    window.__trail = [];
+    window.__trailT = setInterval(() => {
+      const n = window.__ss.op;
+      window.__trail.push([Math.round(n.sq.x), Math.round(n.sq.y), n.room]);
+    }, 50);
+  });
+const trailJumps = (page) =>
+  page.evaluate(() => {
+    clearInterval(window.__trailT);
+    const t = window.__trail,
+      out = [];
+    for (let i = 1; i < t.length; i++) t[i][2] === t[i - 1][2] && Math.hypot(t[i][0] - t[i - 1][0], t[i][1] - t[i - 1][1]) > 60 && out.push([t[i - 1], t[i]]);
+    return { samples: t.length, jumps: out };
+  });
+// The name over the bubble on screen ("none" before any bubble).
+const bubbleName = (page) => page.evaluate(() => (window.__ss.lastBubble ? String(window.__ss.lastBubble.name) : "none"));
 
 // ---------- P1 ----------
 {
@@ -87,8 +114,11 @@ const still = (page, name) => page.screenshot({ path: join(OUT, name + ".png") }
   g.check("at the door the button is PEEK · door and the door is outlined", !!s, s);
   await still(page, "p1-home-door");
   const walks0 = s ? s.walks : 0;
+  await trailStart(page);
   await press(page);
-  const seen = [];
+  const seen = [],
+    names = [];
+  let peekPx = null;
   let waits = 0,
     glowOnRobots = false,
     teach = null,
@@ -102,9 +132,22 @@ const still = (page, name) => page.screenshot({ path: join(OUT, name + ".png") }
       if (q.cur === "bub" || q.cur === "card") {
         if (!seen.includes(q.text)) {
           seen.push(q.text);
-          q.text === "Robots?" && (glowOnRobots = await page.evaluate(() => window.__ss.op.ch1PartyNow.glow === 1));
+          q.cur === "bub" && (await sleep(150), names.push([q.text, await bubbleName(page)]));
+          if (q.text === "Robots?") {
+            glowOnRobots = await page.evaluate(() => window.__ss.op.ch1PartyNow.glow === 1);
+            // Only his head and paws: fur in the doorway gap, none above it where his body would stand.
+            await sleep(300);
+            const head = [],
+              body = [];
+            for (let x = 465; x <= 489; x += 4) {
+              for (let y = 606; y <= 632; y += 4) head.push(await px(page, x, y));
+              for (let y = 540; y <= 590; y += 5) body.push(await px(page, x, y));
+            }
+            peekPx = { head: head.filter((c) => near(c, "#6b4428", 40)).length, body: body.filter((c) => near(c, "#6b4428", 40)).length };
+          }
           q.curId === "focus" && ((teach = q), await still(page, "p1-teach-card"));
-          q.text.startsWith("Mmf") && (await still(page, "p1-peek"));
+          // after the room's fade has finished
+          q.text.startsWith("Mmf") && (await sleep(800), await still(page, "p1-peek"));
         }
         // One tap per line, after it has been up a moment (a tap too soon is kept for the next line).
         if (tapped !== q.text) ((tapped = q.text), await sleep(450), await tap(page));
@@ -112,6 +155,10 @@ const still = (page, name) => page.screenshot({ path: join(OUT, name + ".png") }
     },
   );
   g.check("P1 ends in P2 with control", !!s, s);
+  const p1Trail = await trailJumps(page);
+  g.check("in P1 nobody teleports: Squatch never jumps over 60 inside a room", p1Trail.samples > 20 && p1Trail.jumps.length === 0, p1Trail.jumps.slice(0, 3));
+  g.check("the peek shows only his head and paws (fur in the doorway gap, none above it)", !!peekPx && peekPx.head >= 3 && peekPx.body === 0, peekPx);
+  g.check("every bubble in the peek has a real name over it", names.length >= 2 && names.every(([, nm]) => nm && nm !== "undefined" && nm !== "none"), names);
   g.check("the peek lines come in order, one at a time", JSON.stringify(seen) === JSON.stringify(["Mmf mmf... mm-mmf... mmf!", "Robots?", "Stay out of their sight!"]), seen);
   g.check("the banner glows while Squatch thinks \"Robots?\"", glowOnRobots);
   g.check("the teach card spotlights the glancer", !!teach && teach.curId === "focus");
@@ -181,8 +228,20 @@ async function getSeen(page) {
   const { page, errors } = await open("party:P2");
   let s = await until(page, (q) => q.now && q.now.glance === "look", 10000);
   await place(page, LANE.x, LANE.y);
+  await page.evaluate(() => {
+    // Watch the marks the picture draws: their words and font size.
+    const fill = CanvasRenderingContext2D.prototype.fillText;
+    window.__marks = [];
+    CanvasRenderingContext2D.prototype.fillText = function (t, ...r) {
+      (t === "?" || t === "!") && window.__marks.push({ t, px: parseFloat((String(this.font).match(/(\d+(\.\d+)?)px/) || [0, 0])[1]) });
+      return fill.call(this, t, ...r);
+    };
+  });
   s = await until(page, (q) => q.now && q.now.seenBy === "backpack", 3000);
   g.check("in the glancer's cone a \"?\" comes first (seenBy, no alarm yet)", !!s && !s.now.alarm, s && s.now);
+  await sleep(200);
+  const marks = await page.evaluate(() => ({ q: Math.max(0, ...window.__marks.filter((m) => m.t === "?").map((m) => m.px)), head: 25.5 * window.SSQ.engine().hallSizes().squatch }));
+  g.check("the \"?\" drawn over the watcher is at least as tall as Squatch's head", marks.q >= marks.head, marks);
   await still(page, "p2-question-mark");
   s = await until(page, (q) => q.now && q.now.alarm === "shout", 3000);
   g.check("staying in sight starts the alarm: the witness shouts", !!s, s);
@@ -226,11 +285,84 @@ async function getSeen(page) {
   await press(page);
   s = await until(page, (q) => q.now && q.now.pose === "hidden", 3000);
   await still(page, "p2-hidden-eyes");
-  s = await until(page, (q) => /They lost you/.test(q.note) || (q.now && q.now.alarm === "calm"), 12000);
-  g.check("hidden in the plant, the guards give up: \"They lost you.\"", !!s, s);
-  const calm = await until(page, (q) => q.now && q.now.scene === "P3", 15000);
-  g.check("the calm is shown (guards walk out, witness walks back), then P3 starts: he made it", !!calm, calm);
+  s = await until(page, (q) => q.now && (q.now.lost || q.now.alarm === "calm"), 12000);
+  g.check("hidden in the plant, the guards give up: \"They lost you.\"", !!s && s.now.lost, s && s.now);
+  // The calm, watched: the guards walk out through the hallway doorway and the witness walks back to his spot.
+  const calmSteps = [];
+  const calm = await until(page, (q) => q.now && q.now.scene === "P3", 15000, async () => {
+    const a = await page.evaluate(() => {
+      const al = window.__ss.op.ch1PartyNow.alarm;
+      return al && { g: al.guards.map((x) => [Math.round(x.x), x.room]), w: [Math.round(al.w.x), Math.round(al.w.y), al.w.hx, al.w.hy] };
+    });
+    a && calmSteps.push(a);
+  });
+  const first = calmSteps[0],
+    last = calmSteps[calmSteps.length - 1];
+  g.check("the calm is shown: the guards walk out of the hallway doorway (not vanish)", !!first && calmSteps.length > 5 && last.g.every(([x, room]) => x >= 930 || room === "out") && first.g.some(([x]) => x < 930), { first, last, steps: calmSteps.length });
+  g.check("the calm is shown: the witness walks back to his spot", !!last && Math.hypot(last.w[0] - last.w[2], last.w[1] - last.w[3]) < 30 && Math.hypot(first.w[0] - first.w[2], first.w[1] - first.w[3]) > 100, { first: first && first.w, last: last && last.w });
+  g.check("then P3 starts: he made it", !!calm, calm);
   g.check("no script errors in the plant hide", errors.length === 0, errors.slice(0, 3));
+}
+
+// ---------- the capture rule: a hide a guard watched does not count ----------
+{
+  const { page, errors } = await open("party:P2");
+  await getSeen(page);
+  await until(page, (q) => q.now && q.now.alarm === "search", 12000);
+  // A guard right by the plant, looking at it, as Squatch steps in.
+  await page.evaluate((spot) => {
+    const g = window.__ss.op.ch1PartyNow.alarm.guards[0];
+    Object.assign(g, { x: spot.x + 110, y: spot.y, a: Math.PI, look: 0 });
+  }, hall.SPOTS.plantMiddle);
+  await place(page, hall.SPOTS.plantMiddle.x + 10, hall.SPOTS.plantMiddle.y);
+  await until(page, (q) => q.act === "HIDE · plant", 3000);
+  await press(page);
+  const s = await until(page, (q) => q.cur === "card" && q.curId === "jail", 15000);
+  g.check("hiding while a guard is looking does not count: he is caught", !!s, s);
+  g.check("no script errors when the hide is seen", errors.length === 0, errors.slice(0, 3));
+}
+
+// ---------- the capture rule: home, unseen, without the bed ----------
+{
+  const { page, errors } = await open("party:P2");
+  await getSeen(page);
+  await until(page, (q) => q.now && (q.now.alarm === "ring" || q.now.alarm === "search"), 12000);
+  await walk(page, 477, 600);
+  await until(page, (q) => q.room === "closet" && q.ctrl, 10000);
+  // Behind the guard's look and out of his reach: he never sees him.
+  await place(page, 860, 575);
+  const s = await until(page, (q) => q.room === "hall" && q.now && q.now.pose === "peek", 20000);
+  g.check("at home, unseen, the guard searches, gives up and leaves (no bed needed)", !!s, s);
+  g.check("no script errors at home unseen", errors.length === 0, errors.slice(0, 3));
+}
+
+// ---------- a stage cone: someone in the crowd sees him too ----------
+{
+  const { page, errors } = await open("party:P2");
+  // A floor spot only Isfred's or the band's cone holds.
+  const spot = await page.evaluate(() => {
+    const b = window.SSQ.beat("ch1-party"),
+      inC = (c, x, y) => {
+        const dx = x - c.ox,
+          dy = y - 20 - c.oy;
+        let a = Math.atan2(dy, dx) - c.a;
+        while (a > Math.PI) a -= 2 * Math.PI;
+        while (a < -Math.PI) a += 2 * Math.PI;
+        return Math.hypot(dx, dy) <= c.len && Math.abs(a) <= c.half;
+      };
+    window.__ss.op.ch1PartyNow.gt = 0;
+    for (let y = 330; y <= 460; y += 10)
+      for (let x = 160; x <= 700; x += 10) {
+        const holds = b.cones().filter((c) => inC(c, x, y)).map((c) => c.id);
+        if (holds.length && holds.every((id) => id === "isfred" || id.startsWith("band")) && !window.__ss.solids().some((q) => x > q.x0 - 10 && x < q.x1 + 10 && y > q.y0 - 10 && y < q.y1 + 10)) return { x, y, holds };
+      }
+    return null;
+  });
+  spot && (await place(page, spot.x, spot.y));
+  const s = await until(page, (q) => q.now && q.now.alarm === "shout", 4000);
+  const w = await page.evaluate(() => window.__ss.op.ch1PartyNow.alarm && window.__ss.op.ch1PartyNow.alarm.w.id);
+  g.check("staying in a stage cone: the nearest guest turns, shouts and runs (not \"?\" forever)", !!spot && !!s && ["teal", "stilt", "robot", "octopus-guest", "backpack", "camera"].includes(w), { spot, w });
+  g.check("no script errors at a stage cone", errors.length === 0, errors.slice(0, 3));
 }
 
 // ---------- the capture rule: home and the bed ----------
@@ -251,6 +383,7 @@ async function getSeen(page) {
   await still(page, "p2-home-guard");
   s = await until(page, (q) => q.room === "hall" && q.now && q.now.pose === "peek", 15000);
   g.check("hidden under the bed, the guard gives up; the calm is seen from the door gap", !!s, s);
+  await sleep(900);
   await still(page, "p2-calm-from-door");
   s = await until(page, (q) => q.now && q.now.scene === "P2" && q.ctrl && !q.now.alarm, 15000);
   g.check("then he steps back into his doorway and P2 goes on", !!s && Math.abs(s.y - hall.SPOTS.doorway.y) < 4, s);
@@ -285,16 +418,40 @@ async function getSeen(page) {
   await still(page, "p2-vent-warning");
   s = await until(page, (q) => q.now && q.now.alarm === "shout", 4000);
   g.check("staying, the fur goes in and the alarm starts", !!s, s);
+  // The fur is seen going in, alarm or not: the tufts keep drifting until they reach the grille.
+  let closest = 999;
+  await until(page, (q) => q.now && q.now.tufts.length === 0, 4000, async (q) => {
+    for (const tf of (q.now && q.now.tufts) || []) closest = Math.min(closest, Math.hypot(tf.x - hall.HALL.vent.x, tf.y - hall.HALL.vent.y));
+  });
+  g.check("a tuft of fur reaches the vent's grille", closest < 14, closest);
   s = await until(page, (q) => q.cur === "card" && q.curId === "jail", 25000);
   g.check("the LOCKUP card says by the vent", !!s && / by the vent\./.test(s.cause), s && s.cause);
   g.check("no script errors at the vent", errors.length === 0, errors.slice(0, 3));
 }
 
+// ---------- ↺ during P3 (the long step with no control) ----------
+{
+  const { page, errors } = await open("party:P3");
+  await until(page, (q) => q.cur === "bub" && q.text.startsWith("Let's give"), 6000);
+  await sleep(500);
+  await tap(page);
+  await until(page, (q) => q.cur === "bub" && q.text.startsWith("Soon"), 6000);
+  await page.evaluate(() => window.__ss.sectionReset());
+  const s = await until(page, (q) => q.cur === "bub", 6000);
+  g.check("↺ during P3 starts the welcome again from its first line, still in the plant", !!s && s.text.startsWith("Let's give") && s.now.scene === "P3" && s.now.pose === "hidden", s);
+  g.check("no script errors on ↺ in P3", errors.length === 0, errors.slice(0, 3));
+}
+
+// The positions of everyone in P4 (for the hand-off into the free play: nobody jumps).
+let p4Cast = null;
 // ---------- P3 and P4 ----------
 {
   const { page, errors } = await open("party:P3");
-  const lines = [];
+  await trailStart(page);
+  const lines = [],
+    names = [];
   let facing = true,
+    waits = 0,
     bubbleOverBanner = false,
     eyesAt = null;
   const banner = hall.BANNER;
@@ -303,18 +460,32 @@ async function getSeen(page) {
     (q) => q.now && q.now.scene === "P4",
     40000,
     async (q) => {
+      q.cur === "wait" && !q.quiet && waits++;
       if (q.cur !== "bub") return;
       if (!lines.includes(q.text)) {
         lines.push(q.text);
+        await sleep(150);
+        names.push([q.text, await bubbleName(page)]);
         const info = await page.evaluate(() => {
           const b = window.SSQ.beat("ch1-party"),
             p = window.__ss.op.ch1PartyNow,
-            lb = window.__ss.lastBubble;
-          return { mode: p.mode, bubble: lb, eyes: b.now().eyes };
+            lb = window.__ss.lastBubble,
+            fs = p.isfred;
+          // How far each guest's look is from pointing at Isfred's face.
+          const off = b
+            .cones()
+            .filter((c) => !c.id.startsWith("band") && c.id !== "isfred" && c.id !== "bartender")
+            .map((c) => {
+              let d = Math.atan2(fs.y - 40 - c.oy, fs.x - c.ox) - c.a;
+              while (d > Math.PI) d -= 2 * Math.PI;
+              while (d < -Math.PI) d += 2 * Math.PI;
+              return Math.abs(d);
+            });
+          return { off, bubble: lb, eyes: b.now().eyes };
         });
         eyesAt = eyesAt || info.eyes;
         if (q.text.startsWith("Let's give") || q.text.startsWith("Soon")) {
-          facing = facing && info.mode === "isfred";
+          facing = facing && info.off.length === 6 && info.off.every((d) => d < 0.15);
           const b = info.bubble;
           b && b.x < banner.x1 && b.x + b.w > banner.x0 && b.y < banner.y1 && b.y + b.h > banner.y0 && (bubbleOverBanner = true);
           await still(page, "p3-isfred");
@@ -326,12 +497,36 @@ async function getSeen(page) {
     },
   );
   g.check("P3's lines in order", JSON.stringify(lines) === JSON.stringify(["Let's give a big hello to our friends from Bleep-Bloop Robotics!", "Soon their helper robots will be here, to help with the heavy work.", "And now... put your hands together for the Croc Boys!", "Stormtop-vania 1-2-3-4-5!", "I've never gotten to dance at a party."]), lines);
-  g.check("everyone faces Isfred during his lines", facing);
+  g.check("everyone in the crowd looks at Isfred during his lines (their cones point at him)", facing);
+  g.check("every bubble in P3 has a real name over it (the band's says Croc Boys)", names.length === 5 && names.every(([, nm]) => nm && nm !== "undefined" && nm !== "none") && names[3][1] === "Croc Boys", names);
+  g.check("no wordless story wait in P3 (no yellow corner chevron)", waits === 0, waits);
   g.check("Isfred's bubble never covers the banner", !bubbleOverBanner);
   g.check("his eyes are in the middle plant, never at the vent", !!eyesAt && Math.hypot(eyesAt.x - 441, eyesAt.y - 486) < 6, eyesAt);
   g.check("P4 starts with him in the plant, control back, the door the goal", !!s && s.ctrl && s.now.pose === "hidden", s);
-  const pairs = await page.evaluate(() => window.__ss.op.ch1PartyNow.mode);
-  g.check("the guests dance in pairs", pairs === "pairs", pairs);
+  // The pairs: partners stand side by side and look at each other; the two without partners watch the band.
+  const pairs = await page.evaluate(() => {
+    const b = window.SSQ.beat("ch1-party"),
+      p = window.__ss.op.ch1PartyNow,
+      cones = b.cones(),
+      at = (id) => p.people[id],
+      looksAt = (id, to) => {
+        const c = cones.find((k) => k.id === id),
+          t = at(to);
+        let d = Math.atan2(t.y - 28 - c.oy, t.x - c.ox) - c.a;
+        while (d > Math.PI) d -= 2 * Math.PI;
+        while (d < -Math.PI) d += 2 * Math.PI;
+        return Math.abs(d) < 0.1;
+      };
+    return [
+      ["teal", "stilt"],
+      ["robot", "octopus-guest"],
+    ].map(([a, c]) => ({ a, c, apart: Math.hypot(at(a).x - at(c).x, at(a).y - at(c).y), face: looksAt(a, c) && looksAt(c, a) }));
+  });
+  g.check("the guests dance in pairs: partners side by side, looking at each other", pairs.every((q) => q.apart < 90 && q.face), pairs);
+  p4Cast = await page.evaluate(() => {
+    const p = window.__ss.op.ch1PartyNow;
+    return { people: Object.fromEntries(Object.entries(p.people).map(([k, v]) => [k, [v.x, v.y]])), isfred: [p.isfred.x, p.isfred.y] };
+  });
   await walk(page, 470, 600);
   s = await until(page, (q) => q.now && q.now.pose === "stand", 3000);
   g.check("steering steps him out of the plant with a flyer stuck to his back", !!s && s.now.flyer === "back", s && s.now);
@@ -340,6 +535,8 @@ async function getSeen(page) {
   s = await until(page, (q) => q.now && q.now.scene === "P5", 12000, async (q) => q.ctrl && q.room === "hall" && (await walk(page, 477, 600)));
   g.check("through his door he walks home; the flyer drops on the floor; P5", !!s && s.now.flyer === "floor" && s.room === "closet", s && s.now);
   await still(page, "p5-home-flyer");
+  const p3Trail = await trailJumps(page);
+  g.check("from P3 to P5 nobody teleports: Squatch never jumps over 60 inside a room", p3Trail.jumps.length === 0, p3Trail.jumps.slice(0, 3));
   g.check("no script errors in P3 and P4", errors.length === 0, errors.slice(0, 3));
 }
 
@@ -433,6 +630,18 @@ async function getSeen(page) {
   const free = await page.evaluate(() => ({ spots: window.__ss.placedSpots().map((p) => p.verb), outfit: window.SSQ.beat("ch1-party").outfit() }));
   g.check("the free play offers no arrow dance (DANCE · circle is off)", !free.spots.includes("DANCE"), free.spots);
   g.check("he keeps the outfit he chose in the free play", free.outfit && free.outfit.head === "boots", free.outfit);
+  // Nobody jumps on the way in: everyone where P4 left them (Isfred at the bar, the octopus at his dance spot).
+  const freeCast = await page.evaluate(() => {
+    const ss = window.__ss,
+      out = {};
+    for (const [x, y, kind] of ss.CH1_GUESTS) out[window.SSQ.guestId(kind)] = [x, y];
+    out["octopus-guest"] = [ss.op.ch1Oct.x, ss.op.ch1Oct.y];
+    return { people: out, isfred: ss.CH1_PARTY_CAST.isfred };
+  });
+  const moved = [];
+  for (const [id, [x, y]] of Object.entries(p4Cast.people)) Math.hypot(freeCast.people[id][0] - x, freeCast.people[id][1] - y) > 60 && moved.push([id, [x, y], freeCast.people[id]]);
+  Math.hypot(freeCast.isfred[0] - p4Cast.isfred[0], freeCast.isfred[1] - p4Cast.isfred[1]) > 60 && moved.push(["isfred", p4Cast.isfred, freeCast.isfred]);
+  g.check("into the free play nobody jumps over 60: everyone stands where P4 left them", moved.length === 0, moved);
   await sleep(500);
   await still(page, "p6-free-play-outfit");
   g.check("no script errors in P5", errors.length === 0, errors.slice(0, 3));
@@ -456,7 +665,7 @@ for (const [scene, room, pose] of [
 const redesign = readFileSync(join(root, "src", "game", "12-ch1-redesign.js"), "utf8");
 g.check("the older free play never says \"Cool hat!\"", !redesign.includes('"Cool hat!"'));
 g.check("COOL_HAT_SECONDS is still the pinned 180", redesign.includes("COOL_HAT_SECONDS = 180"));
-g.check("the warnings' marks are at least as tall as Squatch's head", watch.SEEN_TOO_LONG_SECONDS > 0 && readFileSync(join(root, "src", "modules", "party.js"), "utf8").includes('mark: "?", size: 42'));
+// The marks' size is measured where they are drawn (P2, "?" over the glancer), not read from the source.
 // The capture rule's numbers are Brian's pinned ones (docs/TUNING-PINS.json): a pin change must change both.
 const { ALARM } = await import(join(root, "src", "modules", "party-alarm.js"));
 const pins = JSON.parse(readFileSync(join(root, "docs", "TUNING-PINS.json"), "utf8")).pins;

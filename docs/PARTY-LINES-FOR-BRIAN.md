@@ -4,7 +4,7 @@ The party night (Chapter 1, the eight party scenes P1 to P8: peek, sneak to the 
 Every word the party shows is here, numbered in the order a player meets it, with where it appears, which half it is built in, and whether you have said yes.
 The game reads the same words from `src/modules/party-lines.js`; `tests/party-lines.mjs` fails if the two ever differ, or if the party code types a word of its own.
 
-Status: **approved** means your yes is on record (the source column says where). On 2026-11-24 you said "Yes to all" to the 31 lines that needed it.
+Status: **approved** means your yes is on record (the source column says where). On 2026-11-24 you said "Yes to all" to the 31 lines that needed it. **needs your yes** means new since then.
 
 Half one is P1 to P5 (peek to dress-up), built first. Half two is P6 to P8. The red wall alarm's own words (FUR, PULL DOWN) are part of the locked hall picture. The LOCKUP card's last line ("Holding pen. This part starts over.") and Isfred's name over his bubble ("Isfred Bar Neshuman") are the game's own, unchanged. The "That evening…" card is the morning's.
 
@@ -34,25 +34,26 @@ Half one is P1 to P5 (peek to dress-up), built first. Half two is P6 to P8. The 
 | 22 | P3. Isfred at the mic, everyone facing him; Squatch's eyes in the plant | Let's give a big hello to our friends from Bleep-Bloop Robotics! | isfred | one | approved | Brian 2026-11-24: Yes to all |
 | 23 | P3. Isfred; the banner glows | Soon their helper robots will be here, to help with the heavy work. | isfred | one | approved | Brian 2026-11-24: Yes to all |
 | 24 | P3. Isfred, after his flyers flutter down | And now... put your hands together for the Croc Boys! | isfred | one | approved | Brian 2026-11-24: Yes to all |
-| 25 | P3. The Croc Boys sing it as the lights dim and the pairs dance | Stormtop-vania 1-2-3-4-5! | band | one | approved | Brian 2026-11-24: Yes to all |
-| 26 | P3. Squatch thinks it, alone in the leaves, watching the pairs | I've never gotten to dance at a party. | sq | one | approved | Brian 2026-11-24: Yes to all |
-| 27 | P3 end. Goal chip if stuck (his door's outline leads first) | Squatch: sneak home for a disguise | chip | one | approved | Brian 2026-11-24: Yes to all |
-| 28 | P5. Action button at the closet | OPEN · closet | button | one | approved | Brian 2026-11-23: 6A (home alone) |
-| 29 | P5. Over the meter in the full-screen dress-up | Disguised enough | meter | one | approved | Brian 2026-11-24: Yes to all |
-| 30 | P5. One big button under Squatch once the meter is full | GO · party | button | one | approved | Brian 2026-11-24: Yes to all |
-| 31 | P6. Action button in the dance spotlight | DANCE · circle | button | two | approved | Brian 2026-11-24: Yes to all |
-| 32 | P6. The camera tourist, as the red light counts 3-2-1 | Say cheese! | guest | two | approved | Brian 2026-11-24: Yes to all |
-| 33 | P6. The bartender, the first time she glances at his paw in the snacks | ...Nice gloves. | bartender | two | approved | Brian 2026-11-24: Yes to all |
-| 34 | P6. The bartender, the second time; then she runs to the alarm | Wait a second... fur! | bartender | two | approved | Brian 2026-11-24: Yes to all |
-| 35 | P6. The octopus, after Squatch's first minute in the hall | *hic* Fellow tourist! | octopus | two | approved | Brian 2026-11-24: Yes to all |
-| 36 | P6. Squatch thinks it as the octopus follows | I gotta juke this fool. | sq | two | approved | Brian 2026-11-24: Yes to all |
-| 37 | P6. Squatch thinks it if he heads for the hallway while Mops's beard is there | Mops! | sq | two | approved | Brian 2026-11-24: Yes to all |
-| 38 | P2 on. Goal chip while the alarm rings (and in P7) | Squatch: run home and hide! | chip | one | approved | Brian 2026-11-24: Yes to all |
-| 39 | P8b. The wall speaker at closing time | The party's over. Good night, Stormtop! | speaker | two | approved | Brian 2026-11-24: Yes to all |
-| 40 | P8. Squatch at home, both endings | Everyone out there has someone. | sq | two | approved | Brian 2026-11-24: Yes to all |
-| 41 | P8. Mops answers, both endings | You have me. | mops | two | approved | R52, decided |
+| 25 | P3. The name over the band's song bubble | Croc Boys | tag | one | needs your yes | New: the name over the band's song bubble (Isfred has just called them the Croc Boys); coordinator, 2026-11-24 |
+| 26 | P3. The Croc Boys sing it as the lights dim and the pairs dance | Stormtop-vania 1-2-3-4-5! | band | one | approved | Brian 2026-11-24: Yes to all |
+| 27 | P3. Squatch thinks it, alone in the leaves, watching the pairs | I've never gotten to dance at a party. | sq | one | approved | Brian 2026-11-24: Yes to all |
+| 28 | P3 end. Goal chip if stuck (his door's outline leads first) | Squatch: sneak home for a disguise | chip | one | approved | Brian 2026-11-24: Yes to all |
+| 29 | P5. Action button at the closet | OPEN · closet | button | one | approved | Brian 2026-11-23: 6A (home alone) |
+| 30 | P5. Over the meter in the full-screen dress-up | Disguised enough | meter | one | approved | Brian 2026-11-24: Yes to all |
+| 31 | P5. One big button under Squatch once the meter is full | GO · party | button | one | approved | Brian 2026-11-24: Yes to all |
+| 32 | P6. Action button in the dance spotlight | DANCE · circle | button | two | approved | Brian 2026-11-24: Yes to all |
+| 33 | P6. The camera tourist, as the red light counts 3-2-1 | Say cheese! | guest | two | approved | Brian 2026-11-24: Yes to all |
+| 34 | P6. The bartender, the first time she glances at his paw in the snacks | ...Nice gloves. | bartender | two | approved | Brian 2026-11-24: Yes to all |
+| 35 | P6. The bartender, the second time; then she runs to the alarm | Wait a second... fur! | bartender | two | approved | Brian 2026-11-24: Yes to all |
+| 36 | P6. The octopus, after Squatch's first minute in the hall | *hic* Fellow tourist! | octopus | two | approved | Brian 2026-11-24: Yes to all |
+| 37 | P6. Squatch thinks it as the octopus follows | I gotta juke this fool. | sq | two | approved | Brian 2026-11-24: Yes to all |
+| 38 | P6. Squatch thinks it if he heads for the hallway while Mops's beard is there | Mops! | sq | two | approved | Brian 2026-11-24: Yes to all |
+| 39 | P2 on. Goal chip while the alarm rings (and in P7) | Squatch: run home and hide! | chip | one | approved | Brian 2026-11-24: Yes to all |
+| 40 | P8b. The wall speaker at closing time | The party's over. Good night, Stormtop! | speaker | two | approved | Brian 2026-11-24: Yes to all |
+| 41 | P8. Squatch at home, both endings | Everyone out there has someone. | sq | two | approved | Brian 2026-11-24: Yes to all |
+| 42 | P8. Mops answers, both endings | You have me. | mops | two | approved | R52, decided |
 
-Lines that need your yes: none left (you said "Yes to all" on 2026-11-24, Snack Quest Chat).
+Lines that need your yes: 25 (1 line). Your "Yes to all" (2026-11-24) covered the other 31; line 25, the band's name tag "Croc Boys", was added after it.
 
 The Croc Boys: you picked look B on 2026-11-24 ("25 i like B but they don't look like crocs"); their heads are redrawn as real crocodiles (long snout, teeth, eyes on top, tail).
 

@@ -31,18 +31,11 @@
     const PHOTO_BONUS = 25;
     // R60. How long the guests look at the spill. Approved by Brian 2026-11-09.
     const SNACK_LOOK_SECONDS = 4;
-    // The corner guest aims the camera left, into the room. The shot is the floor in front of the lens.
-    // The SNAP circle covers that floor, so Squatch can walk into the picture and still take it.
-    // The camera stands in the back-right corner, clear of the snack table. The shot is the floor in front of the lens.
-    const CH1_CAM = { x: 260, y: 400, r: 110 };
-    const CH1_FRAME = { x0: 210, x1: 290, y0: 420, y1: 470 };
+    // The camera tourist's camera, in the crowd, pointing at the stage (party module): the SNAP circle round it and
+    // the shot, the floor between the lens and the stage.
+    const CH1_CAM = (partyBeat() && partyBeat().camera().cam) || { x: 0, y: 0, r: 0 };
+    const CH1_FRAME = (partyBeat() && partyBeat().camera().frame) || { x0: 0, x1: 0, y0: 0, y1: 0 };
     const CH1_KID = { x: 150, y: 520 };
-    // Free-play moments. Add another object here for a new party beat.
-    const CH1_PARTY_FREE = [
-      { id: "snack", verb: "GRAB", cap: "snack", x: 860, y: 430, who: "sq", text: "One snack. That's the rule." },
-      { id: "guest", verb: "TALK", cap: "guest", x: 480, y: 540, who: "tourist", text: "Love the shirt." },
-      { id: "line", verb: "LISTEN", cap: "snack line", x: 800, y: 500, who: "tourist", text: "I swear we had more Moon Pies... is that what they stole at lunch?" },
-    ];
     const CH1_PARTY_SNAG = [
       { id: "plant", verb: "SNAG", cap: "plant", x: 400, y: 540, why: "plant" },
       { id: "vent", verb: "SUCK", cap: "vent", x: 188, y: 500, why: "vent" },
@@ -148,18 +141,11 @@
     // Back-wall door of office-room-empty-v2. The hallway's front door, seen from inside.
     // Feet stand just through that door, on the floor below the picture's floor line (source y 330).
     const CH1_OFFICE_DOOR = { x: 480, y: 286 };
-    // Where the approved guests stand in the older free play: the party plan's cast (src/modules/party-hall.js
-    // CAST), so the hall looks the same when Squatch walks back in. The octopus waits by the bar for his hug.
-    const CH1_GUESTS = [
-      [342, 396, "antenna"],
-      [600, 490, "croc"],
-      [400, 452, "hat"],
-      [270, 390, "hair"],
-      [590, 380, "spots"],
-      [760, 555, "blob"],
-    ];
-    // Everyone else at the party, where they stand (feet). Their sight cones come from here too (ch1PartyPeople).
-    const CH1_PARTY_CAST = { isfred: [420, 258], bartender: [890, 482], octopus: [760, 555] };
+    // The older free play's guests, Isfred, the bartender and the octopus's snack spot come from the party module's
+    // one table (src/modules/party-hall.js), so the hall looks the same when Squatch walks back in. The free play is
+    // only reached through that module, so without it these are empty.
+    const CH1_GUESTS = (partyBeat() && partyBeat().freeGuests()) || [];
+    const CH1_PARTY_CAST = (partyBeat() && partyBeat().freeCast()) || {};
     // Party hall solids (Brian, 2026-11-15: "Make the party hall solid so Squatch can't walk through walls, the stage, or guests").
     // Boxes are where feet cannot go, in picture units, measured on hall-room-empty-v2.png and the party drawing.
     // v2 (Brian, 2026-11-23): the bar starts just below the corner doorway and runs to the front wall, picture
@@ -167,18 +153,9 @@
     // The floor starts in front of the stage (CH1_PARTY_FLOOR_Y), so nobody walks on the window or up the back wall.
     const CH1_PARTY_FLOOR_Y = 300,
       CH1_BAR_DY = 83;
-    const CH1_PARTY_FIXED = [
-      { x0: 240, x1: 490, y0: 0, y1: 304 }, // stage
-      { x0: 806, x1: 960, y0: 0, y1: 606 }, // snack bar, the bartender behind it, and the wall past it
-      { x0: 772, x1: 800, y0: 380, y1: 400 }, // stool
-      { x0: 772, x1: 800, y0: 438, y1: 458 }, // stool
-      { x0: 72, x1: 136, y0: 330, y1: 372 }, // plant by the back wall
-      { x0: 412, x1: 476, y0: 520, y1: 552 }, // the hiding plant's pot
-      { x0: 228, x1: 274, y0: 340, y1: 368 }, // camera tripod
-    ];
     function ch1PartySolids() {
       let feet = (x, y) => ({ x0: x - 18, x1: x + 18, y0: y - 10, y1: y + 6, person: 1 }), // people block walking, not sight
-        out = CH1_PARTY_FIXED.slice(),
+        out = (partyBeat() && partyBeat().hallSolids()) || [],
         raid = n.ch1Raid;
       CH1_GUESTS.forEach((guest) => (raid && raid.witness && guest[2] === "spots") || out.push(feet(guest[0], guest[1])));
       raid && raid.witness && out.push(feet(raid.witness.x, raid.witness.y));
@@ -581,7 +558,6 @@
         (n.ch1Flyer = !0),
         (n.ch1PartyT = 0),
         (n.ch1PartyOver = !1),
-        (n.ch1PartyDid = {}),
         (n.ch1Snacks = 0),
         (n.ch1Hugs = 0),
         (n.ch1Look = 0),
@@ -590,6 +566,8 @@
         (n.ch1Photo = !1),
         (n.ch1InShot = !1),
         (n.ch1Balloon = ""),
+        // The octopus starts where he danced in P4 and strolls back to the snacks (nobody jumps).
+        (n.ch1Oct = { ...partyBeat().octopusStart(), t: 0, stroll: !0 }),
         (n.ch1Chip = ""),
         (n.sqPose = "stand"),
         (n.ctrl = !0),
@@ -640,22 +618,7 @@
             f: ch1KeepBalloon,
           }),
         ));
-      for (let m of CH1_PARTY_FREE)
-        m.id !== "snack" &&
-          m.id !== "line" &&
-          !n.ch1PartyDid[m.id] &&
-          out.push(
-            spot({
-              id: m.id,
-              verb: m.verb,
-              cap: m.cap,
-              who: "sq",
-              x: m.x,
-              y: m.y,
-              r: 90,
-              f: () => (m.id === "snack" ? ch1SnackGrab() : ((n.ch1PartyDid[m.id] = !0), (n.ctrl = !1), (n.act = null), J([v(m.who, m.text), N(() => (n.ctrl = !0))]))),
-            }),
-          );
+      // No TALK · guest: Squatch talks to no stranger until Chapter 4.4 (rule 7); the line was cut by the party plan.
       !n.ch1BarDone &&
         out.push(
           spot({
@@ -716,21 +679,17 @@
             verb: "HIDE",
             cap: "plant",
             who: "sq",
-            x: 396,
-            y: 552,
+            x: partyBeat().spot("plantMiddle").x,
+            y: partyBeat().spot("plantMiddle").y,
             r: 90,
             f: () => {
-              ((n.sqPose = "hidden"), (n.sq.x = 396), (n.sq.y = 552));
+              let at = partyBeat().spot("plantMiddle");
+              ((n.sqPose = "hidden"), (n.sq.x = at.x), (n.sq.y = at.y));
             },
           }),
         );
       ch1ExtraPartySpots().forEach((s) => out.push(s));
       return out;
-    }
-    function ch1SnackGrab() {
-      ((n.ch1Snacks = (n.ch1Snacks || 0) + 1), (n.ctrl = !1), (n.act = null));
-      n.ch1Snacks >= 3 && ((n.ch1PartyDid.snack = !0), (n.ch1Look = SNACK_LOOK_SECONDS), (n.ch1Spill = 1), D.splash());
-      J([v("sq", "One snack. That's the rule."), N(() => (n.ctrl = !0))]);
     }
     function ch1Hug() {
       ((n.ch1Hugs = (n.ch1Hugs || 0) + 1), (n.ctrl = !1), (n.act = null));
@@ -835,6 +794,7 @@
       if (n.scene !== "QA" || n.ch1PartyOver) return;
       n.ch1JumpT > 0 && (n.ch1JumpT -= dt || 0);
       (n.ch1Look || 0) > 0 && (n.ch1Look = Math.max(0, n.ch1Look - (dt || 0)));
+      n.ch1Oct && n.ch1Oct.stroll && !n.ch1OctChase && mV(n.ch1Oct, CH1_PARTY_CAST.octopus[0], CH1_PARTY_CAST.octopus[1], 40, dt || 0) && (n.ch1Oct.stroll = !1);
       (n.ch1Spill || 0) > 0 && (n.ch1Spill = Math.max(0, n.ch1Spill - (dt || 0) / 1.8));
       n.ctrl &&
         n.ch1Disguise &&
@@ -1277,7 +1237,7 @@
         face = look ? 1 : 0,
         eye = 72 * ALIEN_ADULT,
         glance = (x, y) => look && (F(x + 8, y - eye, 2.2, "#fffdf8"), F(x - 5, y - eye, 2.2, "#fffdf8"));
-      pb && (pb.drawBannerOn(e), pb.drawBandOn(e));
+      pb && (pb.drawLightsOn(e), pb.drawBannerOn(e), pb.drawBandOn(e));
       (drawCh1Alien(CH1_PARTY_CAST.isfred[0], CH1_PARTY_CAST.isfred[1], "horns", ALIEN_ADULT, face || 1),
         glance(CH1_PARTY_CAST.isfred[0], CH1_PARTY_CAST.isfred[1]),
         n.sqPose === "hidden" && ch1HideEyes(),
@@ -1287,7 +1247,7 @@
           if (n.ch1Raid && n.ch1Raid.witness && guest[2] === "spots") return;
           // The octopus is the one who chases Squatch for a hug: drawn where the chase has him.
           if (guest[2] === "blob") return;
-          window.SSQ && window.SSQ.drawGuest(e, guest[2], guest[0], guest[1], ADULT_PX, n.T) && n.ch1GuestArt++;
+          pb && pb.drawFreeGuest(e, guest[2], guest[0], guest[1]) && n.ch1GuestArt++;
         }),
         window.SSQ && window.SSQ.drawGuest(e, "blob", (n.ch1Oct && n.ch1Oct.x) || CH1_PARTY_CAST.octopus[0], (n.ch1Oct && n.ch1Oct.y) || CH1_PARTY_CAST.octopus[1], ADULT_PX, n.T) && n.ch1GuestArt++,
         n.ch1Raid && n.ch1Raid.witness && window.SSQ && window.SSQ.drawGuest(e, "spots", n.ch1Raid.witness.x, n.ch1Raid.witness.y, ADULT_PX, n.T),
@@ -1298,7 +1258,7 @@
         }),
         pb && pb.drawPersonOn(e, "bartender", CH1_PARTY_CAST.bartender[0], CH1_PARTY_CAST.bartender[1], -1),
         drawCh1Fest(),
-        pb && pb.drawTripodOn(e, 250, 360),
+        pb && pb.drawTripodOn(e),
         (n.ch1Spill || 0) > 0 && drawCh1Chain(1 - n.ch1Spill),
         drawCh1PartyMarks());
     }

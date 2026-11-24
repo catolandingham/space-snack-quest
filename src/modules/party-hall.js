@@ -71,3 +71,22 @@ export const CAST = Object.freeze({
 export const GLANCE = Object.freeze({ a: (174 * Math.PI) / 180, sweep: 0.15 });
 // The glancer's rhythm (P2): facing the stage, then head turn with "?", then looking across the lane, then back.
 export const GLANCE_TIMES = Object.freeze({ stage: 3.5, warn: 0.5, look: 2, back: 0.4 });
+
+// Where feet cannot go in the party hall (the night and the older free play both use this one list): the stage, the
+// snack bar with the wall past it, its two stools, the two plant pots, and the camera's tripod. People's feet are
+// added by whoever stands there.
+export const HALL_SOLIDS = Object.freeze([
+  Object.freeze({ x0: 240, x1: 490, y0: 0, y1: 304 }),
+  Object.freeze({ x0: 806, x1: 960, y0: 0, y1: 606 }),
+  Object.freeze({ x0: 772, x1: 800, y0: 380, y1: 400 }),
+  Object.freeze({ x0: 772, x1: 800, y0: 438, y1: 458 }),
+  Object.freeze({ x0: 72, x1: 136, y0: 330, y1: 372 }),
+  Object.freeze({ x0: 412, x1: 476, y0: 520, y1: 552 }),
+  Object.freeze({ x0: 360, x1: 386, y0: 447, y1: 468 }),
+]);
+// Where the camera points: the middle of the stage, where the band plays.
+export const CAMERA_AIM = Object.freeze({ x: 420, y: 280 });
+// The octopus's spot by the snacks in the older free play (where he notices Squatch, a pinned number in
+// src/game/14-ch1-day1.js): he strolls there from his dance spot.
+export const OCTOPUS_SNACKS = Object.freeze({ x: 760, y: 555 });
+

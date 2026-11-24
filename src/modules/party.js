@@ -18,24 +18,27 @@
  * and the tests can read it. Everything in the hall is drawn by party-draw.js on the locked picture.
  */
 import { partyLine, lockupCause } from "./party-lines.js";
-import { HALL, SPOTS, CAST, GLANCE, GLANCE_TIMES, HALL_PICTURE, BANNER } from "./party-hall.js";
+import { HALL, SPOTS, CAST, GLANCE, GLANCE_TIMES, HALL_PICTURE, BANNER, HALL_SOLIDS, CAMERA_AIM, OCTOPUS_SNACKS, DANCE_SPOT } from "./party-hall.js";
+import { HOME_THINGS, HOME_SPOTS } from "./home-alone.js";
+import { GOAL_TARGETS } from "./goal-targets.js";
+import { GUEST_FOR_KIND } from "./guests.js";
 import { coneFrom, towardStage, lookAt, coneSees, drawCones, SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
 import { drawHall } from "./party-draw.js";
-import { drawDoorNotes, drawFlyer, drawOutfit, drawPerson, LOOKS, drawAlarmCloseUp, drawBanner, drawTripod, drawBand, drawMark } from "./party-art.js";
+import { drawDoorNotes, drawFlyer, drawOutfit, drawPerson, LOOKS, drawAlarmCloseUp, drawBanner, drawTripod, drawBand, drawMark, drawPartyLights } from "./party-art.js";
 import { startAlarm, tickAlarm, guardCones, homeGuardCone, ALARM } from "./party-alarm.js";
-import { tickVent, ventTufts } from "./party-vent.js";
+import { tickVent, moveTufts, ventTufts } from "./party-vent.js";
 import { openFullScreen, closeFullScreen, fullScreenOpen } from "./fullscreen.js";
 import * as dress from "./dress-up.js";
 
 // The home room (locked home picture v6, game positions): the door in the right wall, where Squatch stands after
 // coming home, the closet spot, the bed he hides under, and where the flyer lands.
+// His home door in the right wall: the one box its outline uses too (goal-targets.js).
+const HOME_DOOR = GOAL_TARGETS["closet:peek"].rect;
 export const HOME_ROOM = Object.freeze({
-  door: { x0: 912, x1: 940, y0: 358, y1: 468 },
   doorSpot: { x: 858, y: 470 },
   inside: { x: 790, y: 480 },
   runTo: { x: 660, y: 545 },
-  closet: { x: 130, y: 400, r: 70 },
-  inFront: { x: 175, y: 385 }, // in front of the closet, above the bed (not in it)
+  inFront: { x: 330, y: 410 }, // just right of the bed, clear of it (not on its head end)
   bed: { x: 205, y: 500 },
   flyer: { x: 868, y: 520 },
 });
@@ -43,15 +46,6 @@ export const HOME_ROOM = Object.freeze({
 const PACE = Object.freeze({ walk: 240, scurry: 330, peekStep: 120, flyers: 2.2, bandIn: 2.6, watch: 2.5 });
 // The doorway home, as a trigger: standing here (during the alarm, or in P4) walks him through it.
 const HALL_DOOR = Object.freeze({ x: 477, y: 590, dx: 40 });
-// Party solids (feet cannot go here): the plant pots, the bar, its stools, the camera's tripod.
-const SOLIDS = Object.freeze([
-  { x0: 414, x1: 472, y0: 512, y1: 550 },
-  { x0: 80, x1: 124, y0: 345, y1: 372 },
-  { x0: 806, x1: 960, y0: 340, y1: 606 },
-  { x0: 772, x1: 800, y0: 380, y1: 400 },
-  { x0: 772, x1: 800, y0: 438, y1: 458 },
-  { x0: 360, x1: 386, y0: 447, y1: 468 },
-]);
 const BOUNDS = Object.freeze({ x0: 60, x1: 900, y0: HALL.floorTop, y1: 590 });
 // Who can raise the alarm, and how the LOCKUP card names them (party-lines.js "who-*").
 const WITNESS = Object.freeze({ ...Object.fromEntries(CAST.guests.map((g) => [g.id, "who-tourist"])), bartender: "who-bartender" });
@@ -138,6 +132,16 @@ export function createParty(bridge) {
       w && Object.assign(w, coneFrom(w.id, p.alarm.w.x, p.alarm.w.y, lookAt(p.alarm.w.x, p.alarm.w.y, HALL.alarm), size));
     }
     return out;
+  }
+  // The guest standing nearest Squatch: { id, x, y }.
+  function nearestGuest(p, s) {
+    let best = null;
+    for (const g of CAST.guests) {
+      const at = p.people[g.id],
+        d = Math.hypot(at.x - s.x, at.y - s.y);
+      (!best || d < best.d) && (best = { id: g.id, x: at.x, y: at.y, d });
+    }
+    return best;
   }
   const personAt = (p, id) => {
     if (p.alarm && p.alarm.w.id === id) return p.alarm.w;
@@ -262,6 +266,8 @@ export function createParty(bridge) {
     const e = E(),
       p = P(),
       spot = plantId === "back" ? SPOTS.plantBack : SPOTS.plantMiddle;
+    // A guard watching him step into the plant knows where he is: that hide does not count.
+    p.alarm && (p.alarm.spotted = p.alarm.guards.some((g) => g.sees));
     e.place("sq", spot.x, spot.y);
     e.set("sqPose", "hidden");
     p.pose = "hidden";
@@ -468,7 +474,7 @@ export function createParty(bridge) {
       calmDone(how) {
         const p = P();
         chip(p.scene === "P2" ? "chip-plant" : p.scene === "P4" ? "chip-home" : "");
-        if (how === "bed") return calmFromHome();
+        if (how === "home") return calmFromHome();
         // Hidden in the middle plant in P2: he made it, and the welcome starts from there.
         if (p.scene === "P2" && p.hideAt === "middle" && p.pose === "hidden") return startScene("P3");
       },
@@ -516,6 +522,7 @@ export function createParty(bridge) {
     p.t += dt;
     p.pt = (p.pt || 0) + dt;
     p.flyers >= 0 && (p.flyers += dt);
+    moveTufts(p, dt);
     const s = sq(),
       inHallNow = e.room() === "hall";
     // Isfred walks off the stage to the bar's top end once the band plays.
@@ -553,11 +560,13 @@ export function createParty(bridge) {
       else {
         p.seenT = p.seenBy === seen.id ? p.seenT + dt : 0;
         p.seenBy = seen.id;
-        // Guests and the bartender run to the alarm (the lockup card names which); Isfred and the band, busy on
-        // the stage, show their "?" (everyone who sees him reacts, rule 8) but never leave it.
-        if (p.seenT >= SEEN_TOO_LONG_SECONDS && WITNESS[seen.id]) {
-          const w = personAt(p, seen.id);
-          startAlarm(p, { id: seen.id, x: w.x, y: w.y }, "where-hall", WITNESS[seen.id]);
+        // Guests and the bartender run to the alarm (the lockup card names which). Isfred and the band stay on the
+        // stage: when one of them stares at him too long, the guest nearest Squatch turns, sees him too and runs
+        // (nobody "randomly doesn't care", review rule 19; the card stays right: a tourist saw him).
+        if (p.seenT >= SEEN_TOO_LONG_SECONDS) {
+          const id = WITNESS[seen.id] ? seen.id : nearestGuest(p, s).id,
+            w = personAt(p, id);
+          startAlarm(p, { id, x: w.x, y: w.y }, "where-hall", WITNESS[id]);
           raise(p);
         }
       }
@@ -566,13 +575,7 @@ export function createParty(bridge) {
       v === "warn" && e.sfx("slurp");
       if (v === "fur") {
         e.sfx("zap");
-        let best = null;
-        for (const g of CAST.guests) {
-          const at = p.people[g.id],
-            d = Math.hypot(at.x - s.x, at.y - s.y);
-          (!best || d < best.d) && (best = { id: g.id, x: at.x, y: at.y, d });
-        }
-        startAlarm(p, best, "where-vent");
+        startAlarm(p, nearestGuest(p, s), "where-vent");
         raise(p);
       }
     }
@@ -605,7 +608,7 @@ export function createParty(bridge) {
     };
     const door = (id, x, y, r) => ({ id, verb: "", cap: "", who: "sq", x, y, r });
     if (p.scene === "P1" && p.phase === "home" && room === "closet")
-      out.push({ id: "peek", verb: "PEEK", cap: partyLine("button-peek").split(" · ")[1], who: "sq", x: 890, y: 480, r: 160, thing: HOME_ROOM.door, f: peek });
+      out.push({ id: "peek", verb: "PEEK", cap: partyLine("button-peek").split(" · ")[1], who: "sq", x: 890, y: 480, r: 160, thing: HOME_DOOR, f: peek });
     if ((p.scene === "P2" || p.scene === "P4") && room === "hall" && p.pose === "stand") {
       // P2: the plant is the goal (both plants hide him). P4: his door is the goal; the plants hide him only
       // while the alarm rings.
@@ -616,9 +619,9 @@ export function createParty(bridge) {
     // P4: his door is the goal even while he is still in the plant (stepping out is walking there).
     p.scene === "P4" && room === "hall" && !p.alarm && out.push(door("go-home", HALL_DOOR.x, HALL_DOOR.y, 30));
     if (p.alarm && room === "closet" && p.pose !== "bed")
-      out.push({ id: "hidebed", verb: "HIDE", cap: partyLine("button-hide-bed").split(" · ")[1], who: "sq", x: HOME_ROOM.bed.x, y: HOME_ROOM.bed.y, r: 700, thing: { x0: 84, x1: 286, y0: 395, y1: 545 }, f: hideUnderBed });
+      out.push({ id: "hidebed", verb: "HIDE", cap: partyLine("button-hide-bed").split(" · ")[1], who: "sq", x: HOME_ROOM.bed.x, y: HOME_ROOM.bed.y, r: 700, thing: HOME_THINGS.bed, f: hideUnderBed });
     if (p.scene === "P5" && room === "closet" && p.phase === "closet")
-      out.push({ id: "dress", verb: "OPEN", cap: partyLine("button-closet").split(" · ")[1], who: "sq", x: HOME_ROOM.closet.x, y: HOME_ROOM.closet.y, r: HOME_ROOM.closet.r, thing: { x0: 36, x1: 180, y0: 193, y1: 345 }, f: openCloset });
+      out.push({ id: "dress", verb: "OPEN", cap: partyLine("button-closet").split(" · ")[1], who: "sq", x: HOME_SPOTS.closet.x, y: HOME_SPOTS.closet.y, r: HOME_SPOTS.closet.r, thing: HOME_THINGS.closet, f: openCloset });
     if (p.scene === "P5" && room === "closet" && p.phase === "out") out.push(door("go-party", HOME_ROOM.doorSpot.x, HOME_ROOM.doorSpot.y, 36));
     return out;
   }
@@ -641,7 +644,8 @@ export function createParty(bridge) {
     const guests = CAST.guests.map((g) => {
       const at = p.alarm && p.alarm.w.id === g.id ? p.alarm.w : p.people[g.id],
         to = g.pair ? p.people[g.pair] : null;
-      return { id: g.id, x: at.x, y: at.y, dance: dancing && !p.alarm ? 1 : 0, lean: to ? Math.sign(to.x - at.x) : 0 };
+      // Partners dance; the camera tourist and the glancer, with no partner, watch the band.
+      return { id: g.id, x: at.x, y: at.y, dance: dancing && !p.alarm && to ? 1 : 0, lean: to ? Math.sign(to.x - at.x) : 0 };
     });
     const marks = [];
     p.seenBy && (() => {
@@ -664,13 +668,13 @@ export function createParty(bridge) {
       t,
       picture,
       banner: { glow: p.glow },
-      lights: p.lights ? { song: 0, dim: 1 } : null,
+      lights: p.lights ? { dim: 1 } : null,
       isfred: p.isfred,
-      band: { look: "B", playing: p.band },
+      band: { playing: p.band },
       guests,
       bartender: a && a.w.id === "bartender" ? { x: a.w.x, y: a.w.y, f: Math.sign(a.w.x - a.w.hx) || -1 } : { x: CAST.bartender.x, y: CAST.bartender.y, f: -1 },
       guards: a ? a.guards.filter((g) => g.room === "hall").map((g) => ({ x: g.x, y: g.y, f: Math.cos(g.a) < 0 ? -1 : 1 })) : [],
-      tripod: { ...CAST.guests.find((g) => g.id === "camera").tripod, aim: { x: 330, y: 250 } },
+      tripod: { ...CAST.guests.find((g) => g.id === "camera").tripod, aim: CAMERA_AIM },
       cones: cones(p),
       allCones: p.scene === "P1",
       noteCone: (c) => e.noteCone(c),
@@ -682,7 +686,7 @@ export function createParty(bridge) {
       shout,
       alarm: !!a && a.phase !== "shout" && a.phase !== "run" && a.phase !== "calm",
       tufts: ventTufts(p),
-      warning: p.vent && p.vent.t > 0 && p.pose === "stand" ? { kind: "tuft", k: Math.min(1, p.vent.t * 4) } : null,
+      warning: p.vent && p.vent.t > 0 && p.pose === "stand" ? { k: Math.min(1, p.vent.t * 4) } : null,
     };
   }
   // His eyes in the plant he hides in; in P3 and P4 they move from pair to pair.
@@ -735,7 +739,7 @@ export function createParty(bridge) {
       e = E();
     if (!p || e.room() !== "closet") return;
     const t = e.time();
-    p.scene === "P1" && p.phase === "home" && drawDoorNotes(ctx, HOME_ROOM.door, t);
+    p.scene === "P1" && p.phase === "home" && drawDoorNotes(ctx, HOME_DOOR, t);
     p.flyer === "floor" && drawFlyer(ctx, HOME_ROOM.flyer.x, HOME_ROOM.flyer.y, 16, 0.5);
     const s = sq();
     p.scene === "P5" && p.pose === "stand" && e.get("sqPose") === "stand" && drawOutfit(ctx, s.x, s.y, e.squatchScale(), p.outfit, s.f || 1);
@@ -776,7 +780,7 @@ export function createParty(bridge) {
     now() {
       const p = live();
       return p
-        ? { scene: p.scene, phase: p.phase, pose: p.pose, alarm: p.alarm ? p.alarm.phase : "", seenBy: p.seenBy, glance: p.scene === "P2" ? glancePhase(p).phase : "", outfit: { ...p.outfit }, flyer: p.flyer, eyes: p.pose === "hidden" ? eyesAt(p, 0) : null, lost: !!p.lost }
+        ? { scene: p.scene, phase: p.phase, pose: p.pose, alarm: p.alarm ? p.alarm.phase : "", seenBy: p.seenBy, glance: p.scene === "P2" ? glancePhase(p).phase : "", outfit: { ...p.outfit }, flyer: p.flyer, tufts: ventTufts(p), eyes: p.pose === "hidden" ? eyesAt(p, 0) : null, lost: !!p.lost }
         : null;
     },
     /** The outfit he chose (the older free play draws it on him). */
@@ -802,7 +806,7 @@ export function createParty(bridge) {
       const p = live();
       if (!p) return [];
       const feet = (x, y) => ({ x0: x - 18, x1: x + 18, y0: y - 10, y1: y + 6, person: 1 });
-      return [...SOLIDS, ...Object.values(p.people).map((g) => feet(g.x, g.y))];
+      return [...HALL_SOLIDS, ...Object.values(p.people).map((g) => feet(g.x, g.y))];
     },
     bounds() {
       return BOUNDS;
@@ -817,6 +821,10 @@ export function createParty(bridge) {
       if (who === "sq" && p.pose === "hidden") return eyesAt(p, 0);
       if (who === "sq" && p.pose === "peek") return { x: SPOTS.peek.x, y: 590 };
       return null;
+    },
+    /** The name over a party speaker's bubble the game has no name for (the band), or "". */
+    speakerName(who) {
+      return live() && who === "band" ? partyLine("tag-band") : "";
     },
     /** A bubble that sits beside its speaker instead of over them (Isfred's never covers the banner). */
     bubbleBeside(who) {
@@ -846,13 +854,53 @@ export function createParty(bridge) {
     },
     /** The Croc Boys on the stage, playing (the free play goes on with the band). */
     drawBandOn(ctx) {
-      drawBand(ctx, CAST.band, E().hallSizes().adult * 0.98, "B", E().time(), true);
+      drawBand(ctx, CAST.band, E().hallSizes().adult * 0.98, E().time(), true);
     },
     drawPersonOn(ctx, kind, x, y, f) {
       drawPerson(ctx, x, y, E().hallSizes().adult, LOOKS[kind], f, E().time());
     },
-    drawTripodOn(ctx, x, y) {
-      drawTripod(ctx, x, y, { x: 360, y: 250 }, false, E().time());
+    drawTripodOn(ctx) {
+      const tp = CAST.guests.find((g) => g.id === "camera").tripod;
+      drawTripod(ctx, tp.x, tp.y, CAMERA_AIM);
+    },
+    /** The lights as the band left them in P4 (dimmed, the dance spotlight, the first song's colour). */
+    drawLightsOn(ctx) {
+      drawPartyLights(ctx, DANCE_SPOT, E().time(), 1);
+    },
+    /** A guest of the free play, dancing with their partner as in P3 and P4. */
+    drawFreeGuest(ctx, kind, x, y) {
+      const id = GUEST_FOR_KIND[kind],
+        g = CAST.guests.find((q) => q.id === id),
+        to = g && g.pair ? CAST.guests.find((q) => q.id === g.pair) : null;
+      return bridge.guests.drawId(ctx, id, x, y, E().hallSizes().adult, E().time(), to ? 1 : 0, to ? Math.sign(to.x - x) : 0);
+    },
+    // ---- the older free play's places, from this one table (party-hall.js), so nobody jumps on the way in ----
+    /** The guests as [x, y, kind] at the spots they stood in P4. */
+    freeGuests() {
+      const kindOf = Object.fromEntries(Object.entries(GUEST_FOR_KIND).map(([k, id]) => [id, k]));
+      return CAST.guests.map((g) => [g.x, g.y, kindOf[g.id]]);
+    },
+    /** Isfred (at the bar, where he walked in P3), the bartender, and the octopus's spot by the snacks. */
+    freeCast() {
+      return { isfred: [CAST.isfredBar.x, CAST.isfredBar.y], bartender: [CAST.bartender.x, CAST.bartender.y], octopus: [OCTOPUS_SNACKS.x, OCTOPUS_SNACKS.y] };
+    },
+    /** Where the octopus stands as the free play begins (his P4 dance spot). */
+    octopusStart() {
+      const g = CAST.guests.find((q) => q.id === "octopus-guest");
+      return { x: g.x, y: g.y };
+    },
+    /** The camera, and the floor in front of its lens (a photo with Squatch in it). */
+    camera() {
+      const tp = CAST.guests.find((g) => g.id === "camera").tripod;
+      return { cam: { x: tp.x, y: tp.y, r: 110 }, frame: { x0: 390, x1: 450, y0: 330, y1: 400 } };
+    },
+    /** A spot from the table: plantMiddle, doorway and so on. */
+    spot(name) {
+      return SPOTS[name];
+    },
+    /** The hall's solids (one list). */
+    hallSolids() {
+      return HALL_SOLIDS.slice();
     },
     /** His outfit on him (the older free play): a hug from the octopus tips the head piece. */
     drawOutfitOn(ctx, x, y, scale, f, askew) {

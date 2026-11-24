@@ -19,14 +19,23 @@ export function ventDistance(sq) {
 }
 
 /**
- * One frame. `P.vent` keeps { t (seconds near), tufts: [{ k, x0, y0 }] }. Returns "warn" the frame he first comes
- * too close, "fur" the frame the fur goes in, else "".
+ * Every frame, alarm or not: the tufts already lifted off him keep drifting until they go into the grille (the fur
+ * going in is the alarm's cause, so it is always seen: rule 13).
  */
-export function tickVent(P, dt, sq, active) {
-  const v = P.vent || (P.vent = { t: 0, tufts: [], shake: 0 });
+export function moveTufts(P, dt) {
+  const v = P.vent;
+  if (!v) return;
   v.shake = Math.max(0, (v.shake || 0) - dt);
   for (const tf of v.tufts) tf.k += dt / VENT.drift;
   v.tufts = v.tufts.filter((tf) => tf.k < 1);
+}
+
+/**
+ * One frame of the rule. `P.vent` keeps { t (seconds near), tufts: [{ k, x0, y0 }] }. Returns "warn" the frame he
+ * first comes too close, "fur" the frame the fur goes in, else "".
+ */
+export function tickVent(P, dt, sq, active) {
+  const v = P.vent || (P.vent = { t: 0, tufts: [], shake: 0 });
   if (!active || ventDistance(sq) > VENT.near) {
     v.t = 0;
     return "";

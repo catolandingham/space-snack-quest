@@ -1,10 +1,11 @@
 // Bundled by tools/party-sheet.mjs and run inside the game page (never part of the game): draws every new party
 // picture for Brian's picture sheet with the game's own drawing code, and hands each back as a PNG data URL.
-import { drawHall, drawDanceCloseUp } from "../src/modules/party-draw.js";
+import { drawHall } from "../src/modules/party-draw.js";
+import { BAND_A, MORE_SONG_LIGHTS, drawBeardInDoorway, drawHeartCone, drawCountdownLight, drawTugWarning, drawDanceCloseUp } from "./party-half-two-art.js";
 import { HALL, CAST, SPOTS, GLANCE, HALL_PICTURE } from "../src/modules/party-hall.js";
 import { coneFrom, towardStage, lookAt } from "../src/modules/party-watch.js";
 import { createGuestArt } from "../src/modules/guests.js";
-import { drawDoorNotes, drawFlyer, drawHeartCone, drawAlarmCloseUp, drawMark } from "../src/modules/party-art.js";
+import { drawDoorNotes, drawFlyer, drawAlarmCloseUp, drawMark } from "../src/modules/party-art.js";
 import * as dress from "../src/modules/dress-up.js";
 
 const guests = createGuestArt();
@@ -54,7 +55,7 @@ function base(t = 1.2) {
     picture: pics.hall,
     banner: { glow: 0 },
     isfred: { x: CAST.isfred.x, y: CAST.isfred.y },
-    band: { look: "B", playing: false },
+    band: { playing: false },
     guests: guestsFacingStage(),
     bartender: { x: CAST.bartender.x, y: CAST.bartender.y, f: -1 },
     tripod: { ...CAST.guests.find((g) => g.id === "camera").tripod, aim: { x: 330, y: 250 } },
@@ -99,8 +100,8 @@ R.v02_peek = () => {
 };
 R.v02_peek_zoom = () => crop(R.v02_peek(), 330, 460, 300, 180);
 R.v03_cast = () => hall({ ...base(), guards: [{ x: 760, y: 330, f: -1 }, { x: 820, y: 360, f: -1 }] });
-R.v04_band_A = () => crop(hall({ ...base(), band: { look: "A", playing: true } }), 230, 150, 260, 140, 520);
-R.v04_band_B = () => crop(hall({ ...base(), band: { look: "B", playing: true } }), 230, 150, 260, 140, 520);
+R.v04_band_A = () => crop(hall({ ...base(), band: { playing: true, looks: BAND_A } }), 230, 150, 260, 140, 520);
+R.v04_band_B = () => crop(hall({ ...base(), band: { playing: true } }), 230, 150, 260, 140, 520);
 R.v04_band_both = () => {
   const a = R.v04_band_A(),
     b = R.v04_band_B(),
@@ -151,35 +152,44 @@ R.v07_outfit_zoom = () => {
   ctx.drawImage(b, 540, 450, 120, 120, 320, 0, 320, 320);
   return c;
 };
-R.v08_beard = () => crop(hall({ ...base(), beard: 1 }), 760, 220, 200, 160, 600);
+R.v08_beard = () => {
+  const c = hall(base());
+  drawBeardInDoorway(c.getContext("2d"), HALL.hallwayDoor, 1.2, 1);
+  return crop(c, 760, 220, 200, 160, 600);
+};
 R.v09_vent_tuft = () => {
   const v = base(2);
   v.squatch = { x: 240, y: 520, f: -1, pose: "stand", shake: 1 };
   v.tufts = [{ x: 215, y: 505, s: 11, rot: -0.4 }];
-  v.warning = { kind: "tuft", k: 1 };
+  v.warning = { k: 1 };
   return crop(hall(v), 100, 380, 280, 180, 700);
 };
 R.v09_vent_tug = () => {
   const v = base(2);
   v.squatch = { x: 245, y: 525, f: -1, pose: "stand", outfit: SMART, tip: { spot: "head", a: -0.6 }, shake: 1 };
-  v.warning = { kind: "piece", piece: "tophat", k: 1 };
-  return crop(hall(v), 100, 380, 280, 180, 700);
+  const c = hall(v);
+  drawTugWarning(c.getContext("2d"), 245, 525 - 50 * E().hallSizes().squatch - 34, "tophat", 2);
+  return crop(c, 100, 380, 280, 180, 700);
 };
 for (const song of [0, 1, 2])
   R["v10_lights_song" + (song + 1)] = () => {
     const v = base(1);
-    v.lights = { song, dim: 1 };
-    v.band = { look: "B", playing: true };
+    v.lights = { dim: 1 };
+    v.band = { playing: true };
     v.guests = pairDance();
-    return hall(v);
+    const c = hall(v),
+      ctx = c.getContext("2d");
+    // the second and third songs' colours over the first's (half two)
+    song > 0 && ((ctx.fillStyle = MORE_SONG_LIGHTS[song - 1]), ctx.fillRect(0, 0, 960, 640));
+    return c;
   };
 function pairDance() {
   return CAST.guests.map((g) => ({ id: g.id, x: g.x, y: g.y, dance: 1, lean: g.pair ? (CAST.guests.find((q) => q.id === g.pair).x > g.x ? 1 : -1) : 0 }));
 }
 R.v11_flyer_back = () => {
   const v = base();
-  v.lights = { song: 0, dim: 1 };
-  v.band = { look: "B", playing: true };
+  v.lights = { dim: 1 };
+  v.band = { playing: true };
   v.guests = pairDance();
   v.cones = pairCones(v.guests);
   v.squatch = { x: 455, y: 585, f: 1, pose: "stand", flyer: true };
@@ -226,13 +236,21 @@ R.v13_heart_cone = () => {
     my = 330,
     sc = E().hallSizes().squatch * 1.15;
   drawHeartCone(ctx, mx - 10, my - 32, lookAt(mx, my, { x: 520, y: 520 }), size().half, size().len, 1.5);
-  E().drawMopsOn(ctx, mx, my, sc, { f: -1 });
   E().drawSquatch(ctx, 520, 520, E().hallSizes().squatch, { f: 1 });
+  // Mops is drawn by the game on its own canvas: borrow it for one moment (no frame runs in between) and copy back.
+  const gc = document.querySelector("canvas"),
+    g = gc.getContext("2d"),
+    k = gc.width / 960;
+  g.save();
+  g.setTransform(k, 0, 0, k, 0, 0);
+  g.drawImage(c, 0, 0, 960, 640);
+  E().drawMops(mx, my, sc, { f: -1 });
+  g.restore();
+  ctx.drawImage(gc, 0, 0, 960, 640);
   return c;
 };
 R.v14_camera_conga = () => {
   const v = base(1);
-  v.tripod.counting = true;
   v.guests = [
     ...guestsFacingStage().filter((g) => !["teal", "stilt", "octopus-guest"].includes(g.id)),
     { id: "teal", x: 520, y: 470, dance: 0.6 },
@@ -241,6 +259,7 @@ R.v14_camera_conga = () => {
   ];
   v.squatch = { x: 640, y: 484, f: 1, pose: "stand", outfit: SMART };
   const c = hall(v);
+  drawCountdownLight(c.getContext("2d"), v.tripod.x, v.tripod.y);
   drawMark(c.getContext("2d"), 330, 360, "3", 32, 1);
   return c;
 };
@@ -261,8 +280,8 @@ R.v15_caught_mark = () => {
 };
 R.v15_eyes_plant = () => {
   const v = base(1.4);
-  v.band = { look: "B", playing: true };
-  v.lights = { song: 0, dim: 1 };
+  v.band = { playing: true };
+  v.lights = { dim: 1 };
   v.guests = pairDance();
   v.squatch = { x: SPOTS.plantMiddle.x, y: SPOTS.plantMiddle.y, pose: "hidden" };
   v.eyes = HALL.plants[0].eyes;

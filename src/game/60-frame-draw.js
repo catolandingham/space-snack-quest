@@ -1156,7 +1156,7 @@
       if (l === "official") {
         if (n.ch1Office && n.room === "office") return { x: 430, y: 390 };
         if (n.ch1Office) return { x: 480, y: 490 };
-        if (n.ch1Party) return { x: 420, y: 190 }; // Isfred on the stage, at the mic (Brian, 2026-11-15: never a bubble with nobody under it)
+        if (n.ch1Party) return { x: CH1_PARTY_CAST.isfred[0], y: CH1_PARTY_CAST.isfred[1] - 68 }; // over Isfred's head (at the bar since the band started) (Brian, 2026-11-15: never a bubble with nobody under it)
         if (n.room === "hangar" && n.ch1D && n.ch1Ship && !n.ch1Night && n.scene !== "Q9") return { x: 560, y: 400 };
         return { x: 210, y: 215 };
       }
@@ -1344,7 +1344,9 @@
           (L(gV + ((P.x - gV) * CV) / 30, $ + R + CV, NV), e.setLineDash([3, 3]), r(oe, 2), e.setLineDash([]));
       if ((l.style === "song" && (g("\u266A", _ + 4, $ + 4, 22, "#ff5fa8"), g("\u266B", _ + T - 4, $ + R - 2, 22, "#ff5fa8")), !o)) {
         let beat = l.who === "speaker" && window.SSQ && window.SSQ.beat("ch1-morning"),
-          CV = beat ? beat.speakerName() : pa[l.who];
+          CV = beat ? beat.speakerName() : (partyBeat() && partyBeat().speakerName(l.who)) || pa[l.who] || "";
+        // Tests: the name over the bubble on screen.
+        window.__ss && window.__ss.lastBubble && (window.__ss.lastBubble.name = CV);
         ge(17);
         let NV = e.measureText(CV).width + 26;
         (m(_ + 16, $ - 18, NV, 32, 12), r(Ds[l.who], 3), g(CV, _ + 16 + NV / 2, $ - 2, 17, l.who === "mops" ? "#1e2430" : "#ffffff"));
@@ -2507,11 +2509,6 @@
           I0(parseInt(l.code.slice(-1), 10));
           return;
         }
-        n.ch1Mini === "dance" &&
-          !l.repeat &&
-          ({ ArrowLeft: "L", ArrowRight: "R", ArrowUp: "U", ArrowDown: "D" }[l.code]
-            ? (ch1DanceHit({ ArrowLeft: "L", ArrowRight: "R", ArrowUp: "U", ArrowDown: "D" }[l.code]), !0)
-            : !1) ||
         (n.ch1Mini === "karaoke" && !l.repeat && (l.code === "Space" || l.code === "Enter") && (ch1Howl(), !0)) ||
         (l.code === "KeyR" && !l.repeat && armReset(!0),
           (qe[l.code] = !0),

@@ -6,10 +6,11 @@
  *   3. "pull":  the first time in a play, a full-screen close-up shows a hand pulling it.
  *   4. "ring":  the bell rings, the alarm's own light flashes, the guests back away to the walls, and two guards
  *               in blue come in through the hallway doorway with cones.
- *   5. "search": the guards look for him. A guard that sees him walks at him; one that reaches him catches him
- *               (the LOCKUP card naming who saw him and where; the scene restarts). Hidden in either plant, the
- *               guards search, give up and leave: "They lost you." Through his home door, a guard follows him
- *               home half a second later and searches the room (HIDE · bed): "home".
+ *   5. "search": the guards walk the hall from point to point, looking round. A guard that sees him walks at him;
+ *               one that reaches him catches him (the LOCKUP card naming who saw him and where; the scene restarts).
+ *               Hidden in either plant while no guard is looking, the guards search, give up and leave: "They lost
+ *               you." Through his home door, a guard follows him home half a second later and searches the room
+ *               (HIDE · bed); not seeing him, he gives up and leaves: "home".
  *   6. "calm":  shown every time: the alarm stops, the guards walk out through the hallway doorway, the witness
  *               walks back and the guests drift back to their spots. After a hide at home this is watched from
  *               the door gap (the peek view).
@@ -133,24 +134,41 @@ export function guardCones(a, size) {
   return (a ? a.guards : []).filter((g) => g.room === "hall").map((g, i) => ({ ...coneFrom("guard" + i, g.x, g.y, g.a, size), hot: !!g.sees }));
 }
 
+// Where the guards look when nobody has seen him: they walk the hall from point to point, looking round at each.
+const SEARCH = Object.freeze([
+  { x: 470, y: 460 },
+  { x: 300, y: 520 },
+  { x: 650, y: 540 },
+  { x: 480, y: 575 },
+  { x: 220, y: 430 },
+  { x: 700, y: 430 },
+]);
+
 function searchHall(a, dt, api, sq, hidden) {
   const size = api.size();
-  let anySees = false;
+  // A hide only counts if no guard was looking at him as he stepped in (a.spotted is set then).
+  const safe = !!hidden && !a.spotted;
   a.guards.forEach((g, i) => {
     const c = coneFrom("guard" + i, g.x, g.y, g.a, size),
-      sees = !hidden && (coneSees(c, sq) || Math.hypot(sq.x - g.x, sq.y - g.y) < ALARM.feet);
+      sees = !safe && (coneSees(c, sq) || Math.hypot(sq.x - g.x, sq.y - g.y) < ALARM.feet);
     g.sees = sees;
-    if (sees) ((a.last = { x: sq.x, y: sq.y }), (anySees = true));
-    // Walk toward where he was last seen; without one, toward him (they search the hall); hidden, round his plant.
-    const to = hidden ? { x: sq.x + (i ? 60 : -60), y: Math.min(HALL.floorBottom, sq.y + 20) } : a.last || { x: sq.x + (i ? 40 : -40), y: sq.y };
-    const moving = !step(g, to.x, to.y, ALARM.guard, dt);
-    g.a = moving ? Math.atan2(to.y - g.y, to.x - g.x) : g.a + Math.sin(a.t * 2 + i) * dt * 1.5;
-    if (!hidden && Math.hypot(sq.x - g.x, sq.y - g.y) < ALARM.reach) {
+    sees && (a.last = { x: sq.x, y: sq.y });
+    // Seen: at him. Lost him: to where he was last seen. Otherwise the search walk, point to point.
+    g.next = g.next == null ? i * 3 : g.next;
+    const to = sees || (a.last && !safe) ? a.last : SEARCH[g.next % SEARCH.length];
+    const there = step(g, to.x, to.y, ALARM.guard, dt);
+    if (there && !sees) {
+      a.last && Math.hypot(a.last.x - g.x, a.last.y - g.y) < 2 && (a.last = null);
+      g.look = (g.look || 0) + dt;
+      g.a += Math.sin(g.look * 3) * dt * 2.5;
+      g.look > 1.2 && ((g.look = 0), (g.next = g.next + 1));
+    } else g.a = Math.atan2(to.y - g.y, to.x - g.x);
+    if (!safe && Math.hypot(sq.x - g.x, sq.y - g.y) < ALARM.reach) {
       api.caught(a.who, a.where);
       a.phase = "caught";
     }
   });
-  if (hidden) {
+  if (safe) {
     a.hidden = hidden;
     a.st = (a.st || 0) + dt;
     if (a.st >= ALARM.search) {
@@ -159,7 +177,6 @@ function searchHall(a, dt, api, sq, hidden) {
       api.lost();
     }
   } else a.st = 0;
-  return anySees;
 }
 
 function searchHome(a, dt, api, sq, hidden) {
@@ -175,7 +192,7 @@ function searchHome(a, dt, api, sq, hidden) {
       a.homeGuard = null;
       a.phase = "calm";
       a.t = 0;
-      a.hidden = "bed";
+      a.hidden = "home";
       api.lost();
     }
     g.a = 0;
@@ -199,7 +216,8 @@ function searchHome(a, dt, api, sq, hidden) {
       a.phase = "caught";
     }
   }
-  if (hidden && g.sweep >= ALARM.homeSearch) g.leaving = true;
+  // He gives up after a search: under the bed, or anywhere he has not been seen.
+  if (!sees && g.sweep >= ALARM.homeSearch) g.leaving = true;
 }
 
 /** The home guard's cone, while one is in the home room. */

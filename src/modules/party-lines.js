@@ -5,7 +5,7 @@
  *   id      the line's name in the code and in the tests
  *   half    1 = scenes P1 to P5 (peek to dress-up, built first), 2 = P6 to P8 (free play, alarm, endings)
  *   who     "banner", "isfred", "sq" (Squatch thinks or says it), "card", "chip" (the goal chip), "button" (the big
- *           action button), "meter", "guest" (a party guest), "bartender", "octopus", "band", "speaker", "mops",
+ *           action button), "tag" (the name over a bubble), "meter", "guest" (a party guest), "bartender", "octopus", "band", "speaker", "mops",
  *           "lockup" (the LOCKUP card) or "note" (the small note after hiding)
  *   text    the words, exactly as shown. The lockup line has two blanks, {who} and {where}, filled from the
  *           "who-*" and "where-*" lines.
@@ -43,6 +43,7 @@ export const PARTY_LINES = Object.freeze([
   { id: "isfred-hello", half: 1, who: "isfred", text: "Let's give a big hello to our friends from Bleep-Bloop Robotics!", status: "approved", source: "Brian 2026-11-24: Yes to all" },
   { id: "isfred-helpers", half: 1, who: "isfred", text: "Soon their helper robots will be here, to help with the heavy work.", status: "approved", source: "Brian 2026-11-24: Yes to all" },
   { id: "isfred-band", half: 1, who: "isfred", text: "And now... put your hands together for the Croc Boys!", status: "approved", source: "Brian 2026-11-24: Yes to all" },
+  { id: "tag-band", half: 1, who: "tag", text: "Croc Boys", status: "needs-yes", source: "New: the name over the band's song bubble (Isfred has just called them the Croc Boys); coordinator, 2026-11-24" },
   { id: "band-song", half: 1, who: "band", text: "Stormtop-vania 1-2-3-4-5!", status: "approved", source: "Brian 2026-11-24: Yes to all" },
   { id: "sq-dance-wish", half: 1, who: "sq", text: "I've never gotten to dance at a party.", status: "approved", source: "Brian 2026-11-24: Yes to all" },
   { id: "chip-home", half: 1, who: "chip", text: "Squatch: sneak home for a disguise", status: "approved", source: "Brian 2026-11-24: Yes to all" },
