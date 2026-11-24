@@ -4,7 +4,8 @@
  *     every HUD box sits on the picture, and every HUD text is at least 14 CSS px.
  * (b) On the phone the picture's top edge is within 16 px of the page top.
  * (c) Who: where both characters are playable there are two faces (the active one bright) and a tap on the
- *     other face switches; elsewhere only the active face shows, smaller, in the same spot.
+ *     other face switches; where no switch is possible no face shows at all (Brian 19a, 2026-11-23: "That
+ *     doesn't do anything, the upper right"): not on the lot, not in the Chapter 1 morning.
  * (d) The ↺ button restarts the section when held; the old "Reset section" button is gone; the sound button
  *     is in the controls row under the picture.
  * (e) The stall hint: after 60 seconds with no progress the chip shows the method line; progress brings
@@ -140,6 +141,28 @@ for (const [vname, viewport] of [
   await ctx.close();
 }
 
+// Brian 19a: the Chapter 1 morning (Squatch only) shows no face at all, on the picture or under a card.
+{
+  const { ctx, page, errors } = await g.open("?ch=1", { width: 375, height: 812, isMobile: true, hasTouch: true });
+  const shown = () => page.evaluate(() => ["ss-face-squatch", "ss-face-mops", "ss-faces"].filter((id) => { const el = document.getElementById(id); if (!el || getComputedStyle(el).visibility === "hidden") return false; let v = el; while (v) { if (getComputedStyle(v).display === "none") return false; v = v.parentElement; } return true; }));
+  await page.click("canvas");
+  await page.waitForFunction(() => window.__ss.game.state === "op", { timeout: 15000 });
+  const seen = [];
+  for (let i = 0; i < 14; i++) {
+    const st = await page.evaluate(() => { const n = window.__ss.op; return { k: n.cur ? n.cur.k : "", ctrl: !!n.ctrl, hud: getComputedStyle(document.getElementById("ss-hud") || document.body).display }; });
+    seen.push({ ...st, faces: await shown() });
+    await page.evaluate(() => { const n = window.__ss.op; n.cur && ((n.bt = 1), window.__ss.opTap()); for (let j = 0; j < 20; j++) window.__ss.tick(0.05); });
+    await sleep(120);
+  }
+  // Squatch alone at home, free to walk: still no face.
+  await page.evaluate(() => { const n = window.__ss.op; n.q = []; n.cur = null; n.ctrl = true; window.__ss.tick(0.05); });
+  await sleep(200);
+  seen.push({ k: "free", faces: await shown() });
+  g.check("Brian 19a: no face shows anywhere in the Chapter 1 morning (cards, bubbles, walking about)", seen.every((x) => x.faces.length === 0), seen);
+  g.check("Chapter 1 morning: no page errors", errors.length === 0, errors);
+  await ctx.close();
+}
+
 // (c) Faces and (d) the ↺ hold, on a phone.
 {
   const { ctx, page, errors } = await g.open("?ch=2", { width: 375, height: 812, isMobile: true, hasTouch: true });
@@ -162,7 +185,8 @@ for (const [vname, viewport] of [
   await page.evaluate(setState, LOT);
   await sleep(300);
   const one = await faces();
-  g.check("on the lot (no switching): only Squatch's face shows, smaller, in the same corner", !!(one.sq && !one.mo && one.sq.w < s.sq.w && Math.abs(one.sq.right - s.sq.right) <= 2), { one, two: s });
+  const box = await page.evaluate(() => { const el = document.getElementById("ss-faces"); return el && getComputedStyle(el).display !== "none" ? el.getBoundingClientRect().width : 0; });
+  g.check("Brian 19a: on the lot (no switching) no face shows, and the faces zone takes no room", !one.sq && !one.mo && box === 0, { one, box });
 
   // The ↺ hold restarts the section.
   await page.evaluate(() => { const ss = window.__ss; ss.ch2.resetHold = null; ss.op.sq.x = 700; });

@@ -196,18 +196,21 @@
       let h = ch2.resetHold,
         fill = h && h.on ? Math.min(1, h.t / 0.75) : 0;
       hud.dial.style.background = fill > 0 ? "conic-gradient(#8fdcff " + Math.round(fill * 360) + "deg, #fffaf0 0deg)" : "#fffaf0";
-      // Who: two faces where both characters are playable now, else only the active face, smaller.
-      let both = O2(),
+      // Who: two faces where both characters are playable now (a tap on the other face switches), and no face at
+      // all where no switch is possible (Brian 19a, 2026-11-23: "That doesn't do anything, the upper right").
+      // The first-switch teaching card spotlights the faces, so they show under it too.
+      let both = O2() || facesOnly,
         mops = !!x.mops && !(s.startsWith("M") && H.gone),
         glow =
           both &&
           (x.sing || (s === "S9" && x.lureBot.look > 0) || (s === "S11" && x.lureBot.look > 0) || (s.startsWith("G") && ch2ChipKey() === "kitchen:mops")),
-        big = both ? 40 : 30;
+        big = 40;
+      hudShow(hud.faces, both);
       for (let [b, me] of [
         [hud.sq, !mops],
         [hud.mo, mops],
       ]) {
-        hudShow(b, both || me);
+        hudShow(b, both);
         let css = big + "px",
           im = b.firstChild;
         (im.style.width !== css && ((im.style.width = css), (im.style.height = css)),
