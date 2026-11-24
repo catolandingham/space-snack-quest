@@ -25,7 +25,8 @@
  * built in party-view.js); the capture rule's hooks are in party-capture.js.
  */
 import { partyLine } from "./party-lines.js";
-import { HALL, SPOTS, CAST, GLANCE, GLANCE_TIMES, HALL_PICTURE, HALL_SOLIDS, HALLWAY_LANE, DANCE_SPOT, HALL_SPEAKER, BANNER } from "./party-hall.js";
+import { HALL, SPOTS, CAST, GLANCE, GLANCE_TIMES, HALL_PICTURE, HALL_SOLIDS, HALLWAY_LANE, DANCE_SPOT, HALL_SPEAKER, BANNER, HOME_ROOM, HALL_DOOR } from "./party-hall.js";
+export { HOME_ROOM };
 import { HOME_THINGS, HOME_SPOTS } from "./home-alone.js";
 import { GOAL_TARGETS } from "./goal-targets.js";
 import { coneFrom, towardStage, lookAt, coneSees, SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
@@ -41,22 +42,10 @@ import { createPartySound } from "./party-sound.js";
 import { furShows, wornNow } from "./party-outfit.js";
 import { CUT } from "./party-snacks.js";
 
-// The home room (locked home picture v6, game positions): the door in the right wall, where Squatch stands after
-// coming home, the closet spot, the bed he hides under, and where the flyer lands.
 // His home door in the right wall: the one box its outline uses too (goal-targets.js).
 const HOME_DOOR = GOAL_TARGETS["closet:peek"].rect;
-export const HOME_ROOM = Object.freeze({
-  doorSpot: { x: 858, y: 470 },
-  inside: { x: 790, y: 480 },
-  runTo: { x: 660, y: 545 },
-  inFront: { x: 330, y: 410 }, // just right of the bed, clear of it (not on its head end)
-  bed: { x: 205, y: 500 },
-  flyer: { x: 868, y: 520 },
-});
 // How fast scripted walks go (pixels a second) and how long the P3 moments last (seconds).
 const PACE = Object.freeze({ walk: 240, scurry: 330, peekStep: 120, flyers: 2.2, bandIn: 2.6, watch: 2.5 });
-// The doorway home, as a trigger: standing here (during the alarm, or in P4) walks him through it.
-const HALL_DOOR = Object.freeze({ x: 477, y: 590, dx: 40 });
 // What he wears when a link opens P6 to P8 with no dress-up before it.
 export const JUMP_OUTFIT = Object.freeze({ head: "tophat", face: "shades", body: "shirt", legs: "boots" });
 const BOUNDS = Object.freeze({ x0: 60, x1: 900, y0: HALL.floorTop, y1: 590 });
@@ -371,8 +360,8 @@ export function createParty(bridge) {
     P().phase = "walk";
     e.walkOff();
     e.queue([
-      e.until((dt) => (e.trail(), e.step("sq", 840, 470, PACE.walk, dt))),
-      e.until((dt) => e.step("sq", 905, 465, PACE.walk, dt)),
+      e.until((dt) => (e.trail(), e.step("sq", HOME_ROOM.doorStep.x, HOME_ROOM.doorStep.y, PACE.walk, dt))),
+      e.until((dt) => e.step("sq", HOME_ROOM.doorIn.x, HOME_ROOM.doorIn.y - 5, PACE.walk, dt)),
       e.run(() => {
         e.enterRoom("hall", "QA");
         e.place("sq", SPOTS.peek.x, SPOTS.peek.y);
@@ -441,7 +430,7 @@ export function createParty(bridge) {
       e.until((dt) => (e.trail(), e.step("sq", HALL_DOOR.x, 636, PACE.walk, dt))),
       e.run(() => {
         e.enterRoom("closet", "Q1");
-        e.place("sq", 905, 470);
+        e.place("sq", HOME_ROOM.doorIn.x, HOME_ROOM.doorIn.y);
         e.face("sq", -1);
       }),
       // Running from the alarm he runs well into the room; on his way home he stops just inside.
@@ -505,7 +494,7 @@ export function createParty(bridge) {
     p.phase = "walkOut";
     e.walkOff();
     e.queue([
-      e.until((dt) => (e.trail(), e.step("sq", 905, 466, PACE.walk, dt))),
+      e.until((dt) => (e.trail(), e.step("sq", HOME_ROOM.doorIn.x, HOME_ROOM.doorIn.y - 4, PACE.walk, dt))),
       e.run(() => {
         e.enterRoom("hall", "QA");
         e.place("sq", HALL_DOOR.x, 636);
@@ -606,8 +595,8 @@ export function createParty(bridge) {
     if (p.alarm) {
       tickAlarm(p, dt, capture.api());
       // Running from the alarm: his doorway takes him home.
-      if (P() && P().alarm && free && inHallNow && p.pose === "stand" && Math.abs(s.x - HALL_DOOR.x) < HALL_DOOR.dx && s.y >= HALL_DOOR.y - 12 && p.alarm.phase !== "calm") walkHome();
-    } else if ((p.scene === "P4" || p.scene === "P7") && free && inHallNow && p.pose === "stand" && Math.abs(s.x - HALL_DOOR.x) < HALL_DOOR.dx && s.y >= HALL_DOOR.y - 12) walkHome();
+      if (P() && P().alarm && free && inHallNow && p.pose === "stand" && Math.hypot(s.x - HALL_DOOR.x, s.y - HALL_DOOR.y) < HALL_DOOR.r && p.alarm.phase !== "calm") walkHome();
+    } else if ((p.scene === "P4" || p.scene === "P7") && free && inHallNow && p.pose === "stand" && Math.hypot(s.x - HALL_DOOR.x, s.y - HALL_DOOR.y) < HALL_DOOR.r) walkHome();
     if (p.scene === "P5" && p.phase === "out" && free && Math.hypot(s.x - HOME_ROOM.doorSpot.x, s.y - HOME_ROOM.doorSpot.y) < 40) walkToParty();
   }
   function raise(p) {
@@ -640,10 +629,10 @@ export function createParty(bridge) {
       // while the alarm rings.
       p.scene === "P2" && out.push(plant("middle"), plant("back"));
       p.scene === "P4" && p.alarm && out.push(plant("middle"), plant("back"));
-      p.alarm && out.push(door("go-home", HALL_DOOR.x, HALL_DOOR.y, 30));
+      p.alarm && out.push(door("go-home", HALL_DOOR.x, HALL_DOOR.y, HALL_DOOR.r));
     }
     // P4: his door is the goal even while he is still in the plant (stepping out is walking there).
-    p.scene === "P4" && room === "hall" && !p.alarm && out.push(door("go-home", HALL_DOOR.x, HALL_DOOR.y, 30));
+    p.scene === "P4" && room === "hall" && !p.alarm && out.push(door("go-home", HALL_DOOR.x, HALL_DOOR.y, HALL_DOOR.r));
     if (p.alarm && room === "closet" && p.pose !== "bed")
       out.push({ id: "hidebed", verb: "HIDE", cap: partyLine("button-hide-bed").split(" · ")[1], who: "sq", x: HOME_ROOM.bed.x, y: HOME_ROOM.bed.y, r: 700, thing: HOME_THINGS.bed, f: hideUnderBed });
     if (p.scene === "P5" && room === "closet" && p.phase === "closet")
@@ -657,7 +646,7 @@ export function createParty(bridge) {
     // P7: both plants hide him while the alarm rings; his door is the way home, alarm or not.
     if (p.scene === "P7" && room === "hall" && p.pose === "stand") {
       p.alarm && out.push(plant("middle"), plant("back"));
-      out.push(door("go-home", HALL_DOOR.x, HALL_DOOR.y, 30));
+      out.push(door("go-home", HALL_DOOR.x, HALL_DOOR.y, HALL_DOOR.r));
     }
     return out;
   }
@@ -670,7 +659,8 @@ export function createParty(bridge) {
     if (p.scene === "P4" && room === "hall") return "go-home";
     if (p.scene === "P5") return p.phase === "closet" ? "dress" : p.phase === "out" ? "go-party" : "";
     // P6 has no outlines ("Optional things: They discover them"); P7 after the search: home through his door.
-    if (p.scene === "P7" && room === "hall" && p.pose === "stand") return "go-home";
+    // P7 after the search (standing, or still hidden in a plant): home through his door is the next step
+    if (p.scene === "P7" && room === "hall") return "go-home";
     return "";
   }
 
@@ -809,7 +799,9 @@ export function createParty(bridge) {
       // From P6 on, the floor strip from the bar's top end to the hallway doorway is open (he can head for it).
       const fixed = late(p) ? [...HALL_SOLIDS.filter((b) => !(b.x0 === HALLWAY_LANE.x0 && b.y0 === 0)), { ...HALL_SOLIDS.find((b) => b.x0 === HALLWAY_LANE.x0 && b.y0 === 0), y0: HALLWAY_LANE.y1 }] : HALL_SOLIDS;
       const people = Object.entries(p.people).filter(([id, g]) => !gone[id] && g.task !== "conga" && !(p.oct && p.oct.mode === "chase" && id === "octopus-guest"));
-      return [...fixed, ...people.map(([, g]) => feet(g.x, g.y))];
+      // Isfred (by the bar's top end from P3 on) and Mops at closing time are solid too: nobody stands inside anybody
+      const more = [gone.isfred ? null : p.isfred, p.mops].filter(Boolean);
+      return [...fixed, ...people.map(([, g]) => feet(g.x, g.y)), ...more.map((g) => feet(g.x, g.y))];
     },
     bounds() {
       return BOUNDS;
@@ -841,7 +833,9 @@ export function createParty(bridge) {
       if (who === "official") return { x0: p.isfred.x - 16, x1: p.isfred.x + 16, y0: p.isfred.y - adult, y1: p.isfred.y, side: "right" };
       if (who === "band") return { x0: CAST.band[0].x - 20, x1: CAST.band[2].x + 20, y0: CAST.band[0].y - adult, y1: CAST.band[0].y, side: "right" };
       // the wall speaker's closing line: to its left, below the banner (never over its words)
-      if (who === "pa") return { ...HALL_SPEAKER, y0: BANNER.y1 + 14, side: "left" };
+      if (who === "pa") return { ...HALL_SPEAKER, y0: BANNER.y1 + 40, side: "left" };
+      // the camera tourist's "Say cheese!" sits to his left, off the photo spot where Squatch stands
+      if (who === "tourist" && p.talker === "camera") return { x0: p.people.camera.x - 16, x1: p.people.camera.x + 16, y0: p.people.camera.y - adult, y1: p.people.camera.y, side: "left" };
       return null;
     },
     /** Tests: the dress-up's pieces and body spots, in page pixels, while it is open. */

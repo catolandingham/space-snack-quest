@@ -11,42 +11,38 @@
  * party-dance.js.
  */
 import { partyLine } from "./party-lines.js";
-import { MILL, DANCE_SPOT, SNACK_SPOT, HALLWAY_BACK, PYRAMID, CAST } from "./party-hall.js";
+import { MILL, DANCE_SPOT, SNACK_SPOT, HALLWAY_BACK, PYRAMID, CAST, stepTo, stepClear, CLEAR_OF_SQUATCH } from "./party-hall.js";
 import { coneSees, lookAt, towardStage, SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
 import { startAlarm, ALARM } from "./party-alarm.js";
 import { tickVent } from "./party-vent.js";
 import { furShows, anyWorn, wornNow, tickPieces, bump, knockOff, bumpSpot, tipNext } from "./party-outfit.js";
 import { tickConga, tickPhoto, tickOctopus, tickBeard, tickPlants, tickTug, inHallwayZone, yankBeard, PHOTO_BONUS, PHOTO, BEARD } from "./party-toys.js";
 import { openSnacks, closeSnacks, tickSnacks, snackPointer, startTopple, tickTopple, SNACK_STARS, SNACK_LOOK_SECONDS } from "./party-snacks.js";
-import { newDance, danceMove, tickDance, drawDanceCloseUp, DANCE } from "./party-dance.js";
+import { newDance, danceMove, tickDance, drawDanceCloseUp, drawCloseButton, danceClose, DANCE } from "./party-dance.js";
 import { openFullScreen, closeFullScreen } from "./fullscreen.js";
 
 // R73 (Brian approved a 3 to 4 minute party; this slice uses 3 minutes). A tuning pin: name and value unchanged.
 export const COOL_HAT_SECONDS = 180;
 // The three songs share the party's length.
 export const SONG_SECONDS = COOL_HAT_SECONDS / 3;
-// PLACEHOLDERS for Brian: how long a crooked piece stays crooked if nothing else bumps it, his first minute in the hall (nothing knocks a piece off, the octopus waits), how long a
-// guest must look to grow curious, how long until they turn for a second look, the turn (the "?" warning), how long
-// the second look lasts and how much of it sees through the disguise, how long before the same guest is curious
-// again (tuned after the party robot: a plain "second look" rule caught a kid standing still on the dance floor
-// in 3 seconds, because every guest faces the stage across it), how slowly guests mill and how long they stop to dance, and
-// how close to the bar the paw icon shows.
-export const FREE = Object.freeze({ straighten: 8, firstMinute: 60, firstLook: 1, curiousAfter: 4, turn: 0.6, stare: 2.4, secondLook: 1.6, forget: 15, mill: 38, stops: [5, 7, 6, 8], pawNear: 260, shake: 0.4, warn: 1.2 });
+// PLACEHOLDERS for Brian:
+//   straighten   a crooked piece he leaves alone this long is pushed straight again
+//   firstMinute  his first minute in the hall: nothing knocks a piece off, the octopus waits, nobody takes a second look
+//   the second look (the review of PR #87: "In disguise, guests are fooled"; it must be rare and readable): only a
+//   guest who sees something wrong (a crooked piece) grows curious, after looking at him for `firstLook`; `curiousAfter`
+//   later, if he is still in that guest's sight, the guest stops, turns his whole body to him and a big "?" grows over
+//   `turn` seconds (with its sound); then the guest stares for `stare` seconds at the place he stood, and only a stay
+//   of `secondLook` inside THAT look is "FUR!". The same guest is not curious again for `forget` seconds.
+//   mill, stops  how slowly guests mill and how long they stop to dance; pawNear  how close the paw icon shows
+//   clearOf      guests walking go round Squatch this far from him (nobody walks through anybody); giveWay  how long a
+//                group waits when he stands on the spot it is heading for, before it heads for another
+export const FREE = Object.freeze({ straighten: 8, firstMinute: 60, firstLook: 1, curiousAfter: 3, turn: 2, stare: 2.4, secondLook: 1.6, forget: 15, mill: 38, stops: [5, 7, 6, 8], pawNear: 260, shake: 0.4, warn: 1.2, clearOf: CLEAR_OF_SQUATCH, giveWay: 1.5 });
 // Who mills together: the dancing pair, the robot (his partner the octopus heads for the snacks), the glancer. The
 // camera tourist stays with his camera.
 const UNITS = Object.freeze([["teal", "stilt"], ["robot"], ["backpack"]]);
 // The paw icon over the pyramid, which opens the snack close-up.
 export const PAW_ICON = Object.freeze({ x: PYRAMID.x, y: PYRAMID.y - 58, r: 34 });
-const step = (o, x, y, speed, dt) => {
-  const dx = x - o.x,
-    dy = y - o.y,
-    d = Math.hypot(dx, dy),
-    k = speed * dt;
-  if (d <= k || d < 0.5) return ((o.x = x), (o.y = y), true);
-  o.x += (dx / d) * k;
-  o.y += (dy / d) * k;
-  return false;
-};
+const step = stepTo;
 const inSpot = (s) => ((s.x - DANCE_SPOT.x) / DANCE_SPOT.rx) ** 2 + ((s.y - DANCE_SPOT.y) / DANCE_SPOT.ry) ** 2 <= 1;
 /** Which "where-*" line names where he is (the LOCKUP card). */
 export function whereOf(s) {
@@ -109,16 +105,23 @@ export function createFreePlay(h) {
         lead.stops = (lead.stops || 0) + 1;
       }
       const m = MILL[lead.spot];
-      let all = true;
+      let all = true,
+        left = 0;
       u.forEach((id, j) => {
         const g = p.people[id],
           x = u.length === 2 ? m.x + (j ? 36 : -36) : m.x,
           y = m.y + (j ? 4 : 0),
           moving = Math.hypot(x - g.x, y - g.y) > 1;
         moving && (g.face = Math.atan2(y - g.y, x - g.x));
-        all = step(g, x, y, FREE.mill, dt) && all;
+        all = stepClear(g, x, y, FREE.mill, dt, h.sq(), FREE.clearOf) && all;
+        left += Math.hypot(x - g.x, y - g.y);
         g.dance = moving ? 0 : 1;
       });
+      // he stands on (or right by) their spot: when they stop getting closer for a moment, they give up on it and head
+      // for another
+      if (all || left < (lead.best ?? Infinity) - 1) ((lead.best = all ? Infinity : left), (lead.blockT = 0));
+      else lead.blockT = (lead.blockT || 0) + dt;
+      if (lead.blockT > FREE.giveWay) return void ((lead.blockT = 0), (lead.best = Infinity), (lead.arrived = true), (lead.wait = 0));
       if (all && !lead.arrived) ((lead.arrived = true), (lead.wait = FREE.stops[(lead.stops + i) % FREE.stops.length]));
       if (all) {
         lead.wait -= dt;
@@ -139,12 +142,13 @@ export function createFreePlay(h) {
   // curious: a few seconds later, if he is still near, they turn to him with a big "?" (the warning, as the
   // glancer's in P2) and take a long second look at the place he stood. Still in that look at its end: "FUR!".
   // Walking out of it in time, nothing happens (2026-11-22 "Yellow, then suspicion"; party plan P6).
-  function curiosity(p, dt, s, can, all) {
+  function curiosity(p, dt, s, can, all, first) {
     const c = p.curious;
     for (const id of Object.keys(p.calm || {})) (p.calm[id] -= dt) <= 0 && delete p.calm[id];
     if (!c) {
-      if (!can) return null;
-      const w = all.find((q) => h.witness[q.id] && !(p.calm && p.calm[q.id]));
+      // Only something wrong with the disguise (a crooked piece) makes a guest curious, never in his first minute.
+      if (!can || first || !p.tip) return ((p.lookT = 0), (p.lookId = ""), null);
+      const w = all.find((q) => h.witness[q.id] && p.people[q.id] && !(p.calm && p.calm[q.id]));
       if (!w) return ((p.lookT = 0), (p.lookId = ""), null);
       p.lookT = p.lookId === w.id ? (p.lookT || 0) + dt : 0;
       p.lookId = w.id;
@@ -152,18 +156,25 @@ export function createFreePlay(h) {
       return null;
     }
     c.t += dt;
-    const who = h.personAt(p, c.id);
-    if (c.phase === "wait" && c.t >= FREE.curiousAfter) {
-      const near = can && who && Math.hypot(s.x - who.x, s.y - who.y) < E().coneSize().len;
-      if (!near) return void (p.curious = null);
+    const who = p.people[c.id];
+    const done = () => (who && (who.task = ""), (p.curious = null), ((p.calm = p.calm || {})[c.id] = FREE.forget), null);
+    if (c.phase === "wait") {
+      // Before the double-take, the guest forgets him (and someone else may grow curious) if the piece is pushed
+      // straight or he leaves that guest's sight: a guest only takes a second look at what is still in front of them.
+      if (!p.tip || !can || !all.some((q) => q.id === c.id)) return ((p.curious = null), (p.lookT = 0), (p.lookId = ""), null);
+      if (c.t < FREE.curiousAfter) return null;
       Object.assign(c, { phase: "turn", t: 0, at: { x: s.x, y: s.y - 20 } });
-      E().sfx("bleep");
-    } else if (c.phase === "turn" && c.t >= FREE.turn) Object.assign(c, { phase: "stare", t: 0, held: 0 });
-    else if (c.phase === "stare") {
+      who && ((who.task = "curious"), (who.dance = 0), (who.face = lookAt(who.x, who.y, c.at)));
+      h.sound.one("hm");
+    } else if (c.phase === "turn") {
+      who && (who.face = lookAt(who.x, who.y, c.at));
+      c.t >= FREE.turn && Object.assign(c, { phase: "stare", t: 0, held: 0 });
+    } else if (c.phase === "stare") {
+      who && (who.face = lookAt(who.x, who.y, c.at));
       const mine = all.find((q) => q.id === c.id);
       c.held = can && mine ? c.held + dt : 0;
       if (c.held >= FREE.secondLook) return c.id;
-      if (c.t >= FREE.stare) ((p.curious = null), ((p.calm = p.calm || {})[c.id] = FREE.forget));
+      if (c.t >= FREE.stare) return done();
     }
     return null;
   }
@@ -171,12 +182,13 @@ export function createFreePlay(h) {
     const all = can ? h.cones(p).filter((c) => coneSees(c, s)) : [];
     const fur = furShows(p);
     if (!fur) {
-      const by = curiosity(p, dt, s, can, all);
+      const by = curiosity(p, dt, s, can, all, p.ft < FREE.firstMinute);
       if (by) return alarm(p, by, s, whereOf(s));
       const c = p.curious;
       p.seenBy = c && c.phase !== "wait" ? c.id : all.length ? (all.find((q) => h.witness[q.id]) || all[0]).id : "";
       return;
     }
+    p.curious && p.people[p.curious.id] && (p.people[p.curious.id].task = "");
     p.curious = null;
     const seen = all.find((c) => h.witness[c.id]) || all[0] || null;
     if (!seen) return ((p.seenBy = ""), (p.seenT = 0));
@@ -189,6 +201,8 @@ export function createFreePlay(h) {
     const id = h.witness[seerId] ? seerId : h.nearestGuest(p, s).id,
       w = h.personAt(p, id);
     endToys(p);
+    // the second look is over: the alarm is its consequence, so no "?" stays up over that guest
+    ((p.curious = null), (p.seenBy = ""), (p.seenT = 0));
     // the guests back away from where they stand now, and drift back there after
     for (const g of Object.values(p.people)) {
       const dx = g.x - 480,
@@ -228,26 +242,32 @@ export function createFreePlay(h) {
         const q = h.P();
         if (!q || !q.dance) return;
         drawDanceCloseUp(ctx, w, hgt, h.guests, wornNow(q), t, q.dance, q.song);
+        drawCloseButton(ctx, danceClose(w));
       },
-      pointer(kind) {
+      pointer(kind, x, y) {
         const q = h.P();
         if (kind !== "down" || !q || !q.dance) return;
+        // the way out: the close button in the corner (the dance counts once he has made a few moves)
+        const cb = danceClose(danceView ? danceView.size().w : 375);
+        if (Math.hypot(x - cb.x, y - cb.y) < cb.r) return void closeDance(q);
         danceMove(q.dance);
         h.sound.one("robot");
         q.dance.moves % 3 === 1 && h.sound.one("cheer");
       },
     });
   }
-  function closeDance(p, quiet) {
+  // `forAlarm`: the alarm closes it (control stays off for the capture rule). Otherwise the guests clap and he has
+  // control again; the dance counts once he made a few moves.
+  function closeDance(p, forAlarm) {
+    const moves = p.dance ? p.dance.moves : 0;
     closeFullScreen();
     danceView = null;
     p.dance = null;
-    if (quiet) return;
-    p.done.dance = true;
-    p.clap = DANCE.clap;
-    h.sound.one("clap");
+    if (forAlarm) return;
+    moves >= 3 && ((p.done.dance = true), (p.clap = DANCE.clap), h.sound.one("clap"));
     h.control(true);
   }
+
 
   // ---------- every frame ----------
   function tick(p, dt, s, free, paused) {
@@ -305,14 +325,20 @@ export function createFreePlay(h) {
     if (oc === "notice") {
       p.done.octopus = true;
       h.sound.one("hiccup");
-      h.control(false);
-      p.talker = "octopus-guest";
-      e.queue([h.say("tourist", "octopus-hic"), h.say("sq", "sq-juke", "whisper"), e.run(() => h.P() && h.P().scene === "P6" && h.control(true))]);
+      // his two lines, the first time he follows; after that he just hiccups along
+      if (!p.oct.said) {
+        p.oct.said = true;
+        h.control(false);
+        p.talker = "octopus-guest";
+        e.queue([h.say("tourist", "octopus-hic"), h.say("sq", "sq-juke", "whisper"), e.run(() => h.P() && h.P().scene === "P6" && h.control(true))]);
+      }
     }
     if (oc === "hug") {
-      h.sound.one("hiccup");
       h.sound.one("squish");
-      hit(p, bump(p, s, scale, "floor", null, first), s);
+      // the plan: "One hug knocks a piece crooked; a second hug knocks it off."
+      const spot = bumpSpot(p);
+      if (p.oct.hugs >= 2 && spot && !first) (knockOff(p, spot, s, scale, "floor"), hit(p, "off", s));
+      else hit(p, (tipNext(p), "tip"), s);
     }
     // the hallway: Mops's beard
     const shown = p.beard && p.beard.show > 0.5;

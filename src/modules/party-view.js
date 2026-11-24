@@ -39,25 +39,47 @@ export function createView(h) {
         // P3 and P4: partners dance; the camera tourist and the glancer, with no partner, watch the band. From P6 on,
         // each guest dances when stopped and walks when going somewhere (party-free.js).
         const dance = p.alarm ? 0 : late ? (at.dance ? 1 : 0) : dancing && to ? 1 : 0;
-        return { id: g.id, x: at.x, y: at.y, dance, lean: to ? Math.sign(to.x - at.x) : 0 };
+        // a curious guest stops and turns his whole body to Squatch
+        const turned = p.curious && p.curious.id === g.id && p.curious.phase !== "wait";
+        return { id: g.id, x: at.x, y: at.y, dance: turned ? 0 : dance, lean: turned ? Math.sign(s.x - at.x) : to ? Math.sign(to.x - at.x) : 0 };
       });
     const marks = [];
-    if (p.seenBy) {
+    const cur = p.curious && p.curious.phase !== "wait" ? p.curious : null;
+    if (cur) {
+      // the double-take: a big "?" that grows over the turn, then stays big while that guest stares
+      const w = p.people[cur.id],
+        k = cur.phase === "turn" ? Math.min(1, cur.t / 2) : 1;
+      w && marks.push({ x: w.x, y: w.y - 90 - 14 * k, mark: "?", size: 30 + 40 * k });
+    } else if (p.seenBy && p.scene !== "P8b") {
       const w = h.personAt(p, p.seenBy);
       w && marks.push({ x: w.x, y: w.y - 84, mark: "?", size: 42 });
     }
-    // a curious guest turning for a second look: the big "?" (the warning) pulses
-    p.curious && p.curious.phase === "turn" && marks.length && (marks[marks.length - 1].size = 42 + 8 * Math.sin(t * 20));
     // the glancer's warning "?" as his head turns
     if (p.scene === "P2" && !p.alarm && h.glancePhase(p).phase === "warn") {
       const g = p.people.backpack;
       marks.push({ x: g.x, y: g.y - 84, mark: "?", size: 42 });
     }
     const a = p.alarm;
-    const shout = a && (a.phase === "shout" || (a.phase === "run" && a.t < 0.5) ) && a.who !== "who-bartender" ? { x: a.w.x, y: a.w.y - 96 } : null;
+    const shout = a && (a.phase === "shout" || (a.phase === "run" && a.t < 0.5)) ? { x: a.w.x, y: a.w.y - 96 } : null;
     a && a.phase === "shout" && marks.push({ x: a.w.x + 40, y: a.w.y - 70, mark: "!", size: 42 });
     // Guards show "!" at once when they see him (party plan, Sight).
     a && a.guards.forEach((g) => g.room === "hall" && g.sees && marks.push({ x: g.x, y: g.y - 84, mark: "!", size: 42 }));
+    // No mark and no "FUR!" burst sits on Squatch (a guest just below him would put it on his head): it moves beside
+    // that guest's head, on the side away from him, else above him.
+    if (p.pose === "stand") {
+      const k = e.hallSizes().squatch,
+        sq = { x0: s.x - 22 * k, x1: s.x + 22 * k, y0: s.y - 72 * k, y1: s.y + 2 },
+        on = (x, y, rx, ry) => x - rx < sq.x1 && x + rx > sq.x0 && y - ry < sq.y1 && y + ry > sq.y0,
+        clear = (o, rx, ry) => {
+          if (!on(o.x, o.y, rx, ry)) return;
+          const away = Math.sign(o.x - s.x) || 1,
+            tries = [[o.x + away * (rx + 24), o.y + 34], [o.x - away * (rx + 24), o.y + 34], [o.x, sq.y0 - ry - 6]],
+            ok = tries.find(([x, y]) => !on(x, y, rx, ry)) || tries[0];
+          ((o.x = ok[0]), (o.y = ok[1]));
+        };
+      for (const mk of marks) clear(mk, mk.size / 2, mk.size / 2);
+      shout && clear(shout, 54, 36);
+    }
     const outlineHidden = p.pose === "hidden" || p.pose === "bed";
     const eyes = p.pose === "hidden" ? eyesAt(p, t) : null;
     const cam = p.people.camera,
@@ -77,7 +99,8 @@ export function createView(h) {
       bartender,
       guards: a ? a.guards.filter((g) => g.room === "hall").map((g) => ({ x: g.x, y: g.y, f: Math.cos(g.a) < 0 ? -1 : 1 })) : [],
       tripod: gone.camera ? null : { ...tripodAt, aim: CAMERA_AIM },
-      cones: h.cones(p).filter((c) => !gone[c.id]),
+      // closing time: nobody is watching for him any more (they are leaving), so no cones (rule 8: a cone always reacts)
+      cones: p.scene === "P8b" ? [] : h.cones(p).filter((c) => !gone[c.id]),
       allCones: p.scene === "P1",
       noteCone: (c) => e.noteCone(c),
       // While a line is up or a scripted walk runs, nobody sees him, so no cone fills yellow (drawn equals sight).

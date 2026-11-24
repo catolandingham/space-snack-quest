@@ -9,6 +9,9 @@
  *   ROBOT_CAREFUL=1                            the robot walks away from a guest who turns for a second look
  *   ROBOT_VIDEO=<folder>                       saves a frame every 0.25 s and joins them into party.mp4 (ffmpeg)
  *   ROBOT_START=party:P6                       where to start (default: the dress-up's end, party:P6)
+ *   ROBOT_DANCE_TAPS=12                        leaves the dance by its close button after that many moves
+ *   ROBOT_ORDER=dance,photo,snacks             the toys to visit, in this order (default: all six)
+ *   ROBOT_WAIT=560,330                         where it waits on the open floor once its toys are done
  */
 import { mkdirSync, rmSync } from "node:fs";
 import { spawnSync } from "node:child_process";
@@ -50,7 +53,7 @@ const TOYS = {
   octopus: { x: 740, y: 560 },
   plant: { x: 420, y: 540 },
 };
-let order = ["dance", "photo", "snacks", "conga", "hallway", "octopus"];
+let order = process.env.ROBOT_ORDER ? process.env.ROBOT_ORDER.split(",") : ["dance", "photo", "snacks", "conga", "hallway", "octopus"];
 if (SEED) order = order.map((k) => [rand(), k]).sort((a, b) => a[0] - b[0]).map((x) => x[1]);
 const log = [];
 let goal = 0,
@@ -85,6 +88,12 @@ for (;;) {
     continue;
   }
   if (s.full) {
+    // a kid who has had enough leaves by the close button (top right)
+    if (process.env.ROBOT_DANCE_TAPS && danceTaps >= +process.env.ROBOT_DANCE_TAPS) {
+      await page.touchscreen.tap(375 - 36, 36);
+      await sleep(400);
+      continue;
+    }
     // the dance: tap anywhere, a kid's rhythm
     await page.touchscreen.tap(120 + (danceTaps % 5) * 30, 400);
     danceTaps++;
@@ -136,7 +145,8 @@ for (;;) {
   }
   // everything done: wait for closing time on the open floor
   if (order.every((k) => s.now.done[k])) {
-    Math.hypot(s.x - 650, s.y - 595) > 20 && (await walk(650, 595));
+    const [wx, wy] = (process.env.ROBOT_WAIT || "650,595").split(",").map(Number);
+    Math.hypot(s.x - wx, s.y - wy) > 20 && (await walk(wx, wy));
     await sleep(500);
     continue;
   }

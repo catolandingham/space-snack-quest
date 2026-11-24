@@ -5,7 +5,7 @@
  * Numbers marked PLACEHOLDER are the builder's guesses for Brian to tune; "pinned" ones are his approved values
  * (docs/TUNING-PINS.json).
  */
-import { CONGA_ROUTE, PHOTO_FRAME, HALLWAY_ZONE, HALL, OCTOPUS_SNACKS } from "./party-hall.js";
+import { CONGA_ROUTE, PHOTO_FRAME, HALLWAY_ZONE, HALL, OCTOPUS_SNACKS, stepTo, stepClear, CLEAR_OF_SQUATCH } from "./party-hall.js";
 import { VENT, ventDistance } from "./party-vent.js";
 import { bump, tipNext, knockOff, bumpSpot, anyWorn, furShows } from "./party-outfit.js";
 
@@ -39,16 +39,7 @@ export function congaAt(d) {
 export function congaTail(c) {
   return congaAt(c.d - CONGA.gap * CONGA_DANCERS.length);
 }
-const step = (o, x, y, speed, dt) => {
-  const dx = x - o.x,
-    dy = y - o.y,
-    d = Math.hypot(dx, dy),
-    k = speed * dt;
-  if (d <= k || d < 0.5) return ((o.x = x), (o.y = y), true);
-  o.x += (dx / d) * k;
-  o.y += (dy / d) * k;
-  return false;
-};
+const step = stepTo;
 /**
  * One frame of the conga. `songT` is the seconds into the current song. Moves the dancers in `p.people` (they walk
  * to their places first, so nobody jumps), and tows Squatch while he is in it. Returns "join", "leave" or "".
@@ -71,7 +62,9 @@ export function tickConga(p, dt, songT, s, api) {
     if (!g) return;
     g.task = "conga";
     const at = congaAt(c.d - CONGA.gap * i);
-    const there = step(g, at.x, at.y, c.formed ? CONGA.speed * 1.6 : CONGA.catchUp, dt);
+    // the line bends round Squatch when he is not in it (nobody walks through him)
+    const v = c.formed ? CONGA.speed * 1.6 : CONGA.catchUp,
+      there = c.joined ? step(g, at.x, at.y, v, dt) : stepClear(g, at.x, at.y, v, dt, s, CLEAR_OF_SQUATCH);
     g.face = at.a;
     g.dance = 1;
     all = all && there;
@@ -132,7 +125,10 @@ export function tickOctopus(p, dt, s, api) {
   o.rest = Math.max(0, o.rest - dt);
   if (o.mode === "stroll" || o.mode === "back") {
     g.task = "octopus";
-    const there = step(g, OCTOPUS_SNACKS.x, OCTOPUS_SNACKS.y, OCT.stroll, dt);
+    const gx = g.x,
+      gy = g.y,
+      // round Squatch, never through him; if he stands on the snack spot, the octopus stops where he is
+      there = stepClear(g, OCTOPUS_SNACKS.x, OCTOPUS_SNACKS.y, OCT.stroll, dt, s, CLEAR_OF_SQUATCH) || (g.x === gx && g.y === gy && Math.hypot(s.x - OCTOPUS_SNACKS.x, s.y - OCTOPUS_SNACKS.y) < CLEAR_OF_SQUATCH * 2);
     g.face = Math.atan2(OCTOPUS_SNACKS.y - g.y, OCTOPUS_SNACKS.x - g.x);
     there && ((o.mode = "snacks"), (g.face = Math.PI));
     return "";

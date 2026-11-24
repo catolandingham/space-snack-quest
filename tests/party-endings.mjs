@@ -47,6 +47,8 @@ const st = (page) =>
       text: c ? (c.b ? c.b.text : c.text || "") : "",
       x: Math.round(n.sq.x),
       y: Math.round(n.sq.y),
+      puff: n.ch1PartyNow ? n.ch1PartyNow.puff || 0 : 0,
+      glow: n.ch1PartyNow ? n.ch1PartyNow.glow || 0 : 0,
       act: n.act ? n.act.verb + (n.act.cap ? " · " + n.act.cap : "") : "",
       chip: window.__ss.chipNow(),
       ring: n.lastRing && n.T - n.lastRing.T < 0.3 ? n.lastRing.id : "",
@@ -124,8 +126,13 @@ async function readLines(page, stop, ms = 30000) {
   s = await until(page, (q) => q.now && q.now.scene === "P8a", 20000);
   g.check("after the calm (seen from the door gap): P8a at home", !!s && s.room === "closet", s && s.now && s.now.scene);
   g.check("Joe's home theme never played through the party night", s && s.warm === "", s && s.warm);
-  await sleep(1500);
+  s = await until(page, (q) => q.now && q.now.scene === "P8a" && (q.puff > 0 || q.glow > 0), 12000, null);
+  await sleep(200);
   await still(page, "p8a-mops-out-of-breath");
+  const mops = await page.evaluate(() => ({ x: window.__ss.op.mo.x, puff: window.__ss.op.ch1PartyNow.puff, k: window.SSQ.engine().squatchScale() }));
+  g.check("P8a: Mops comes in out of breath (the puffs are drawn), inside the room picture", mops.puff > 0 && mops.x + 26 * mops.k <= 960, mops);
+  const glowed = await until(page, (q) => q.glow > 0, 6000);
+  g.check("then the flyer on the floor glows (fur on it)", !!glowed);
   s = await until(page, (q) => q.now && q.now.scene === "P8a" && (q.now.done !== undefined) && q.cur === "bub", 15000);
   await still(page, "p8a-lines");
   const lines = await readLines(page, (q) => q.tv);
@@ -163,9 +170,10 @@ async function readLines(page, stop, ms = 30000) {
   g.check("hidden in the plant, the guards give up: \"They lost you.\"", !!s);
   s = await until(page, (q) => q.now && !q.now.alarm && q.ctrl, 15000);
   g.check("the calm is shown, then he has control again", !!s);
+  // still hidden in the plant, the next step shows: his door is outlined
+  s = await until(page, (q) => q.ring === "go-home", 3000);
+  g.check("still hidden in the plant after \"They lost you.\", his door is outlined (the next step)", !!s && s.now.pose === "hidden", s && [s.ring, s.now.pose]);
   await walk(page, hall.SPOTS.doorway.x, 600);
-  s = await until(page, (q) => q.ring === "go-home" || q.room === "closet", 3000);
-  g.check("his door is the goal (outlined)", !!s);
   s = await until(page, (q) => q.now && q.now.scene === "P8a", 12000);
   g.check("walking home through his door gives P8a", !!s);
   await page.close();
@@ -180,9 +188,34 @@ async function readLines(page, stop, ms = 30000) {
   g.check("its name is the game's own \"Station PA\"", (await bubbleName(page)) === "Station PA", await bubbleName(page));
   await still(page, "p8b-speaker");
   await next(page);
-  // everyone leaves through the hallway doorway, in order, each walking out
+  // the party is over: he can walk about while everyone leaves, and nobody watches for him (no cones)
+  s = await until(page, (q) => q.ctrl, 4000);
+  g.check("once the speaker is done he has control while everyone leaves", !!s);
+  await sleep(400);
+  const coneCount = await page.evaluate(() => window.__ss.conesDrawn().filter((c) => !c.heart).length);
+  g.check("closing time draws no cones (nobody is watching for him)", coneCount === 0, coneCount);
+  // and no "?" or "!" is drawn over anyone (measured where the picture draws them)
+  const marks = await page.evaluate(async () => {
+    const fill = CanvasRenderingContext2D.prototype.fillText,
+      got = [];
+    CanvasRenderingContext2D.prototype.fillText = function (t, ...r) {
+      (t === "?" || t === "!") && got.push(t);
+      return fill.call(this, t, ...r);
+    };
+    await new Promise((ok) => setTimeout(ok, 400));
+    CanvasRenderingContext2D.prototype.fillText = fill;
+    return got.length;
+  });
+  g.check("closing time draws no \"?\" or \"!\" over anyone", marks === 0, marks);
+  // he stands right on the way out: nobody walks through him
+  await place(page, 760, 360);
   const order = [],
     lastAt = {};
+  let closest = 999,
+    closestWho = null,
+    closestFred = 999,
+    lastSq = null;
+  const waitFrom = Date.now();
   s = await until(
     page,
     (q) => q.now && q.now.close && q.now.close.phase === "empty",
@@ -191,20 +224,38 @@ async function readLines(page, stop, ms = 30000) {
       const p = await page.evaluate(() => {
         const P = window.__ss.op.ch1PartyNow,
           out = {};
-        for (const [id, g] of Object.entries(P.people)) out[id] = [g.x, g.y];
-        out.isfred = [P.isfred.x, P.isfred.y];
-        out.bartender = [P.bartenderAt.x, P.bartenderAt.y];
-        P.bandAt.forEach((b, i) => (out["band" + i] = [b.x, b.y]));
+        // [x, y, walking out now]
+        for (const [id, g] of Object.entries(P.people)) out[id] = [g.x, g.y, g.task === "leave"];
+        out.isfred = [P.isfred.x, P.isfred.y, P.isfred.task === "leave"];
+        out.bartender = [P.bartenderAt.x, P.bartenderAt.y, P.bartenderAt.task === "leave"];
+        P.bandAt.forEach((b, i) => (out["band" + i] = [b.x, b.y, b.task === "leave"]));
         return out;
       });
       for (const id of q.now.close ? q.now.close.gone : []) order.includes(id) || order.push(id);
-      for (const [id, at] of Object.entries(p)) order.includes(id) || (lastAt[id] = at);
+      // the closest anyone walking out comes to him (someone standing still is solid, so he cannot walk into them)
+      const sqStill = lastSq && lastSq[0] === q.x && lastSq[1] === q.y;
+      lastSq = [q.x, q.y];
+      for (const [id, at] of Object.entries(p)) {
+        if (order.includes(id)) continue;
+        lastAt[id] = at;
+        // (only while he stands still: when the kid walks him up to someone, that is his doing, not theirs)
+        const d = Math.hypot(at[0] - q.x, at[1] - q.y);
+        at[2] && sqStill && d < closest && ((closest = d), (closestWho = [id, Math.round(at[0]), Math.round(at[1]), q.x, q.y]));
+        // and nobody walks through Isfred while he still stands by the bar
+        const f = p.isfred,
+          df = Math.hypot(at[0] - f[0], at[1] - f[1]);
+        id !== "isfred" && at[2] && !f[2] && !order.includes("isfred") && df < closestFred && (closestFred = df);
+      }
+      // after a while he steps out of the way, as a kid would
+      Date.now() - waitFrom > 6000 && Math.hypot(q.x - 420, q.y - 560) > 10 && (await walk(page, 420, 560));
       q.now.close && q.now.close.gone.length === 4 && !order.saved && ((order.saved = 1), await still(page, "p8b-leaving-in-pairs"));
     },
   );
   for (const id of s && s.now.close ? s.now.close.gone : []) order.includes(id) || order.push(id);
   g.check("everyone leaves (the hall is empty)", !!s && order.length === 11, order);
   const groupOf = (id) => endings.LEAVING.findIndex((grp) => grp.includes(id));
+  g.check("nobody walks through Squatch on the way out (they go round him, or wait)", closest >= 30, [Math.round(closest), closestWho]);
+  g.check("nobody walks through Isfred on the way out (they go round him)", closestFred >= 30, Math.round(closestFred));
   g.check("they leave in the pairs, then the bartender, Isfred and the band", order.every((id, i) => i === 0 || groupOf(id) >= groupOf(order[i - 1])), order);
   const walkedOut = Object.entries(lastAt).filter(([, at]) => at[0] < 880);
   g.check("nobody vanishes: everyone was last seen at the hallway doorway, walking out", walkedOut.length === 0, walkedOut);
@@ -220,12 +271,64 @@ async function readLines(page, stop, ms = 30000) {
   for (let i = 0; i < 15; i++) ((await st(page)).cur === "bub" && words++, await sleep(100));
   g.check("no words at Mops's hearts (sampled for 1.5 seconds)", words === 0, words);
   g.check("no catch in P8: no cone fills and nobody shouts", s && !s.now.alarm);
-  await walk(page, s.now.mops.x - 50, s.now.mops.y + 8);
-  s = await until(page, (q) => q.room === "closet", 20000);
+  // the kid does nothing: a moment later Mops walks over to him, and they go home together
+  s = await until(page, (q) => q.room === "closet", 25000);
   g.check("they walk home together through his door", !!s && s.walks.slice(-3).join(",").includes("edge:hall"), s && s.walks.slice(-3));
   const lines = await readLines(page, (q) => q.tv);
   g.check("at home: the same two lines, then beat 20", lines[0] === "Everyone out there has someone." && lines[1] === "You have me.", lines);
   g.check("no errors in P8b", errors.length === 0, errors);
+  await page.close();
+}
+
+// ---------- P8b from the party: a "?" a guest showed in P6 does not stay up at closing time ----------
+{
+  const { page } = await open("party:P6");
+  // in his own time the last song ends while a guest's cone shows "?" over him (the test sets the song clock)
+  await place(page, 770, 455);
+  await until(page, (q) => q.now && q.now.seenBy, 4000);
+  await set(page, (p) => ((p.song = 2), (p.songT = 59.9)));
+  const s = await until(page, (q) => q.cur === "bub" && q.now.scene === "P8b", 6000);
+  await sleep(300);
+  const marks = await page.evaluate(async () => {
+    const fill = CanvasRenderingContext2D.prototype.fillText,
+      got = [];
+    CanvasRenderingContext2D.prototype.fillText = function (t, ...r) {
+      (t === "?" || t === "!") && got.push(t);
+      return fill.call(this, t, ...r);
+    };
+    await new Promise((ok) => setTimeout(ok, 400));
+    CanvasRenderingContext2D.prototype.fillText = fill;
+    return got.length;
+  });
+  g.check("closing time from the party: no \"?\" left over a guest", !!s && marks === 0, [!!s, marks]);
+  await page.close();
+}
+
+// ---------- P8b: a kid who stands on the way out the whole time still sees the party end ----------
+{
+  const { page } = await open("party:P8b");
+  await until(page, (q) => q.cur === "bub", 3000);
+  await next(page);
+  await until(page, (q) => q.ctrl, 4000);
+  // he stands where everyone turns for the hallway doorway, and never moves
+  await place(page, hall.EXIT[0].x, hall.EXIT[0].y);
+  let closest = 999;
+  const s = await until(
+    page,
+    (q) => q.now && q.now.close && q.now.close.phase !== "pack" && q.now.close.phase !== "leave",
+    60000,
+    async (q) => {
+      const d = await page.evaluate(() => {
+        const P = window.__ss.op.ch1PartyNow,
+          n = window.__ss.op,
+          w = [...Object.values(P.people), P.isfred, P.bartenderAt, ...P.bandAt].filter((b) => b && b.task === "leave");
+        return Math.min(999, ...w.map((b) => Math.hypot(b.x - n.sq.x, b.y - n.sq.y)));
+      });
+      closest = Math.min(closest, d);
+    },
+  );
+  g.check("standing on the way out, he does not stop the party ending: everyone still leaves", !!s, s && s.now.close);
+  g.check("and they go round him, never through him", closest >= 30, Math.round(closest));
   await page.close();
 }
 

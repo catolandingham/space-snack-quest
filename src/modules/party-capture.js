@@ -83,7 +83,7 @@ export function createCapture(h) {
     p.pose = "stand";
     e.walkOff();
     e.queue([
-      e.until((dt) => e.step("sq", 905, 470, h.pace.walk, dt)),
+      e.until((dt) => e.step("sq", h.homeRoom.doorIn.x, h.homeRoom.doorIn.y, h.pace.walk, dt)),
       e.run(() => {
         e.set("sqPose", "hidden");
         e.enterRoom("hall", "QA");

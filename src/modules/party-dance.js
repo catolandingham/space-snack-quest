@@ -103,3 +103,14 @@ export function drawDanceCloseUp(ctx, w, h, guestArt, outfit, t, d, song = 0) {
   drawOutfit(ctx, 0, 0, sc, outfit, 1);
   ctx.restore();
 }
+
+/** The dance's way out (the review of PR #87): a close button in the top-right corner, a 44-pixel target or more. */
+export function danceClose(w) {
+  return { x: w - 36, y: 36, r: 28 };
+}
+/** The close button: a white disc with a cross, no words (the snack close-up's own). */
+export function drawCloseButton(ctx, b) {
+  oval(ctx, b.x, b.y, b.r - 2, b.r - 2, "#ffffff", 3);
+  line(ctx, [b.x - 10, b.y - 10, b.x + 10, b.y + 10], "#1e2430", 5);
+  line(ctx, [b.x + 10, b.y - 10, b.x - 10, b.y + 10], "#1e2430", 5);
+}

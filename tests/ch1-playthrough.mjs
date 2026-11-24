@@ -387,13 +387,13 @@ const play = await page.evaluate(() => {
       // Closing time: Mops has come in mopping; Squatch walks over to him, and they go home together.
       n.sq.x = pn.mops.x - 50;
       n.sq.y = pn.mops.y + 4;
-      acts.push("WALK · Mops");
+      acts[acts.length - 1] === "WALK · Mops" || acts.push("WALK · Mops");
       ss.tick(0.05);
       still = 0;
       continue;
     }
-    if (pn && pn.scene === "P8b" && !n.cur && !n.ctrl) {
-      // The band packs up and everyone leaves, two by two.
+    if (pn && pn.scene === "P8b" && !n.cur && !pn.mops) {
+      // The band packs up and everyone leaves, two by two (he has control meanwhile and stays where he is).
       ss.tick(0.1);
       still = 0;
       continue;

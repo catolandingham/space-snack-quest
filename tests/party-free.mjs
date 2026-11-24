@@ -203,29 +203,156 @@ g.check("the songs last COOL_HAT_SECONDS in all, and the pin is 180", free.COOL_
 }
 
 // ---------- sight in disguise ----------
+// Runs the game `secs` seconds at once with its own update (the frame loop keeps drawing meanwhile).
+const run = (page, secs) => page.evaluate((n) => { for (let i = 0; i < n; i++) window.__ss.tick(0.05); }, Math.round(secs / 0.05));
+// Squatch's box and the box of the bubble or the label on screen now (game positions), for "nothing over Squatch".
+const overSquatch = (page) =>
+  page.evaluate(() => {
+    const n = window.__ss.op,
+      k = window.SSQ.engine().hallSizes().squatch,
+      sq = { x0: n.sq.x - 19 * k, x1: n.sq.x + 19 * k, y0: n.sq.y - 50 * k, y1: n.sq.y + 2 },
+      hit = (b) => !!b && b.x0 < sq.x1 && b.x1 > sq.x0 && b.y0 < sq.y1 && b.y1 > sq.y0,
+      bub = window.__ss.lastBubble,
+      bb = bub ? { x0: bub.x, x1: bub.x + bub.w, y0: bub.y - 24, y1: bub.y + (bub.h || 60) } : null,
+      cap = n.lastCap && n.T - (n.lastCapT || n.T) < 0.3 ? n.lastCap.box : n.lastCap ? n.lastCap.box : null;
+    return { bubble: hit(bb), label: hit(cap), bubbleText: bub ? bub.text : "", label_: n.lastCap ? n.lastCap.text : "" };
+  });
+{
+  // In full disguise, standing still in the dance spotlight, in front of everyone: never caught (the plan, P6:
+  // "In disguise, guests are fooled"), in his first minute and after it.
+  const { page } = await open("party:P6");
+  await place(page, hall.DANCE_SPOT.x, hall.DANCE_SPOT.y + 6);
+  // meanwhile the guests mill past him: nobody comes into him or right in front of him (where a taller guest would
+  // cover him), walking or waiting, measured every tick after he arrives
+  const near = await page.evaluate((n) => {
+    const op = window.__ss.op,
+      p = op.ch1PartyNow;
+    let min = 999,
+      who = null;
+    for (let i = 0; i < n; i++) {
+      window.__ss.tick(0.05);
+      if (i < 40) continue;
+      for (const [id, g] of Object.entries(p.people)) {
+        const dy = g.y - op.sq.y,
+          d = Math.hypot(g.x - op.sq.x, dy > 0 ? dy * 0.6 : dy);
+        d < min && ((min = d), (who = [id, Math.round(g.x), Math.round(g.y)]));
+      }
+    }
+    return { min: Math.round(min), who };
+  }, Math.round(40 / 0.05));
+  g.check("guests milling past never walk into him or right in front of him", near.min >= 36, near);
+  await run(page, 20);
+  let s = await st(page);
+  g.check("full disguise, standing still 60 s in the spotlight in his first minute: never caught", s.now.scene === "P6" && !s.now.alarm && s.now.gone.length === 0, [s.now.scene, s.now.alarm]);
+  await set(page, (p) => ((p.ft = 61), (p.songT = 0), (p.song = 0)));
+  await place(page, hall.DANCE_SPOT.x, hall.DANCE_SPOT.y + 6);
+  await run(page, 55);
+  s = await st(page);
+  g.check("and 55 s more after his first minute: never caught", s.now.scene === "P6" && !s.now.alarm, [s.now.scene, s.now.alarm, s.now.curious]);
+  await page.close();
+}
+{
+  // He stands on a spot the guests mill to (by the bar's top end): whoever heads there goes round him or waits a
+  // moment and heads somewhere else; nobody freezes, and nobody stands in him.
+  const { page } = await open("party:P6");
+  const spot = hall.MILL.find((m) => m.id === "bar-top");
+  await place(page, spot.x, spot.y);
+  const r = await page.evaluate((n) => {
+    const op = window.__ss.op,
+      p = op.ch1PartyNow,
+      leads = ["teal", "robot", "backpack"],
+      was = {},
+      walked = { teal: 0, robot: 0, backpack: 0 };
+    let min = 999,
+      who = null,
+      block = 0;
+    for (let i = 0; i < n; i++) {
+      window.__ss.tick(0.05);
+      // how long a group waits on him (not counting the conga, which takes the dancers)
+      for (const id of leads) {
+        const q = p.people[id];
+        q.task || (block = Math.max(block, q.blockT || 0));
+        was[id] && (walked[id] += Math.hypot(q.x - was[id][0], q.y - was[id][1]));
+        was[id] = [q.x, q.y];
+      }
+      if (i < 40) continue;
+      for (const [id, g] of Object.entries(p.people)) {
+        const dy = g.y - op.sq.y,
+          d = Math.hypot(g.x - op.sq.x, dy > 0 ? dy * 0.6 : dy);
+        d < min && ((min = d), (who = [id, Math.round(g.x), Math.round(g.y)]));
+      }
+    }
+    return { min: Math.round(min), who, block: Math.round(block * 10) / 10, walked: Object.values(walked).map(Math.round) };
+  }, Math.round(50 / 0.05));
+  g.check("standing on a milling spot: no group waits on him longer than a moment, and every group keeps moving", r.block <= free.FREE.giveWay + 0.1 && r.walked.every((d) => d > 150), r);
+  g.check("and nobody stands in him or right in front of him", r.min >= 36, r);
+  await page.close();
+}
 {
   const { page } = await open("party:P6");
   // stand in front of the bartender (she does not move): her cone holds him
-  const spot = [770, 455];
-  await place(page, ...spot);
+  await place(page, 770, 455);
   await sleep(2000);
-  let s = await st(page);
+  const s = await st(page);
   g.check("in disguise, a look shows only \"?\" (no alarm)", s.now.seenBy === "bartender" && !s.now.alarm, [s.now.seenBy, s.now.alarm]);
   await still(page, "p6-disguise-question");
-  s = await until(page, (q) => q.now.curious && q.now.curious.phase === "turn", 6000);
-  g.check("a few seconds on, she turns for a second look: the big \"?\" warns first", !!s && !s.now.alarm, s && s.now.curious);
-  s && (await still(page, "p6-second-look-warning"));
-  s = await until(page, (q) => q.now && q.now.alarm, 5000);
-  g.check("staying in her second look: \"FUR!\" and the alarm (P7), at the snack bar", !!s && s.now.scene === "P7" && (await page.evaluate(() => window.__ss.op.ch1PartyNow.alarm.where)) === "where-bar", s && s.now);
+  await page.close();
+}
+// A guest walking past may grow curious and walk on; a crooked piece straightens after FREE.straighten. Like a kid
+// who keeps brushing the plant, the hat is knocked crooked again whenever it straightens (the cause, never the result).
+const keepCrooked = (page) => async (q) => !q.now.tip && (await set(page, (p) => (p.tip = { spot: "head", a: 0.5 })));
+{
+  // A crooked piece after his first minute: a guest whose cone holds him (often the camera tourist, who faces the
+  // stage across the photo spot; a milling guest may get there first) grows curious, stops, turns to him and a big
+  // "?" grows; staying in THAT guest's look is "FUR!", with that same guest the witness (the plan: "a long second
+  // look from the same guest").
+  const { page } = await open("party:P6");
+  const spot = [420, 382];
+  await set(page, (p) => ((p.ft = 61), (p.tip = { spot: "head", a: 0.5 })));
+  await place(page, ...spot);
+  let s = await until(page, (q) => q.now.curious && q.now.curious.phase === "turn", 20000, keepCrooked(page));
+  const curiousId = s && s.now.curious.id;
+  g.check("a crooked piece: a guest who sees him turns for a second look (a big \"?\" warns first, no alarm yet)", !!s && !!s.now.people[curiousId] && !s.now.alarm, s && s.now.curious);
+  const turned = await page.evaluate((id) => { const p = window.__ss.op.ch1PartyNow, w = p.people[id], c = p.curious; return !!w && w.task === "curious" && w.dance === 0 && c && Math.hypot(c.at.x - window.__ss.op.sq.x, c.at.y + 20 - window.__ss.op.sq.y) < 2; }, curiousId);
+  g.check("that guest stops (no dancing) and looks at where he stands", turned);
+  const grow = [];
+  for (let i = 0; i < 4; i++) (grow.push(await page.evaluate(() => { const c = window.__ss.op.ch1PartyNow.curious; return c ? Math.round(c.t * 10) / 10 : -1; })), await sleep(400));
+  g.check("the double-take lasts about 2 seconds before the stare", grow.filter((x) => x >= 0).length >= 3, grow);
+  // measured where it is drawn: the big "?" sits clear of Squatch (a guest just below him used to put it on his head)
+  const q = await page.evaluate(async () => {
+    const fill = CanvasRenderingContext2D.prototype.fillText,
+      got = [];
+    CanvasRenderingContext2D.prototype.fillText = function (t, ...r) {
+      if (t === "?") {
+        const m = this.getTransform(),
+          k = this.canvas.width / 960;
+        got.push({ x: m.e / k, y: m.f / k, r: (parseFloat((String(this.font).match(/(\d+(\.\d+)?)px/) || [0, 0])[1]) * m.a) / k / 2 });
+      }
+      return fill.call(this, t, ...r);
+    };
+    await new Promise((ok) => setTimeout(ok, 300));
+    CanvasRenderingContext2D.prototype.fillText = fill;
+    const n = window.__ss.op,
+      sk = window.SSQ.engine().hallSizes().squatch,
+      sq = { x0: n.sq.x - 19 * sk, x1: n.sq.x + 19 * sk, y0: n.sq.y - 50 * sk, y1: n.sq.y };
+    return { got: got.slice(-1), on: got.some((m) => m.x - m.r < sq.x1 && m.x + m.r > sq.x0 && m.y - m.r < sq.y1 && m.y + m.r > sq.y0), sq };
+  });
+  g.check("the big \"?\" is drawn clear of Squatch", q.got.length > 0 && !q.on, q);
+  await still(page, "p6-second-look-warning");
+  s = await until(page, (q) => q.now && q.now.alarm, 8000);
+  const witness = s && (await page.evaluate(() => window.__ss.op.ch1PartyNow.alarm.w.id));
+  g.check("staying in that second look: \"FUR!\" and the alarm (P7), that same guest the witness", !!s && s.now.scene === "P7" && witness === curiousId, [witness, curiousId]);
+  g.check("once the alarm starts, the double-take's \"?\" is gone (the alarm is what follows it)", !!s && !s.now.curious, s && s.now.curious);
   s && (await sleep(150), await still(page, "p6-second-look-fur"));
   await page.close();
 }
 {
   const { page } = await open("party:P6");
-  await place(page, 770, 455);
-  const s0 = await until(page, (q) => q.now.curious && q.now.curious.phase === "turn", 9000);
-  await place(page, 600, 600);
-  await sleep(3500);
+  await set(page, (p) => ((p.ft = 61), (p.tip = { spot: "head", a: 0.5 })));
+  await place(page, 420, 382);
+  const s0 = await until(page, (q) => q.now.curious && q.now.curious.phase === "turn", 20000, keepCrooked(page));
+  await place(page, 640, 600);
+  await sleep(4500);
   const s = await st(page);
   g.check("walking out of the second look in time: nothing happens", !!s0 && !s.now.alarm && s.now.scene === "P6", [!!s0, s.now.alarm]);
   await page.close();
@@ -292,6 +419,9 @@ g.check("the songs last COOL_HAT_SECONDS in all, and the pin is 180", free.COOL_
   await walk(page, hall.DANCE_SPOT.x, hall.DANCE_SPOT.y + 4);
   let s = await until(page, (q) => q.act === "DANCE · circle", 8000);
   g.check("in the spotlight the button is DANCE · circle", !!s, s && s.act);
+  await sleep(300);
+  const lab = await overSquatch(page);
+  g.check("the DANCE · circle label sits clear of Squatch", lab.label_ === "DANCE · circle" && !lab.label, lab);
   await press(page);
   s = await until(page, (q) => q.full, 3000);
   g.check("the dance fills the screen", !!s);
@@ -323,6 +453,9 @@ g.check("the songs last COOL_HAT_SECONDS in all, and the pin is 180", free.COOL_
   let s = await until(page, (q) => q.now.photo && q.now.photo.phase === "count", 3000);
   await sleep(1200);
   await still(page, "p6-camera-countdown");
+  const cheese = await page.evaluate(() => (window.__ss.op.log || []).some((l) => l.k === "live" && l.text === "Say cheese!"));
+  const over = await overSquatch(page);
+  g.check("\"Say cheese!\" shows, and neither it nor a label covers Squatch on the photo spot", cheese && !over.bubble && !over.label, over);
   s = await until(page, (q) => q.now.photo && q.now.photo.taken, 5000);
   g.check("in front of the camera at the flash: the photo, +25", !!s && s.stars === stars0 + toys.PHOTO_BONUS, s && [s.stars, stars0]);
   await sleep(500);
@@ -364,6 +497,16 @@ g.check("the songs last COOL_HAT_SECONDS in all, and the pin is 180", free.COOL_
   s = await until(page, (q) => q.now.gone.length === 1, 3000);
   g.check("the flying cup knocks a piece off (after the first minute)", !!s, s && s.now.gone);
   g.check("everyone turns to stare for 4 seconds", !!s && s.now.stare > 2 && s.now.stare <= 4, s && s.now.stare);
+  // measured: every guest's cone points at where he stood
+  const aims = await page.evaluate(() => {
+    const p = window.__ss.op.ch1PartyNow,
+      at = p.stare && p.stare.at;
+    return window.SSQ.beat("ch1-party").cones().filter((c) => p.people[c.id]).map((c) => {
+      const want = Math.atan2(at.y - c.oy, at.x - c.ox);
+      return Math.abs(Math.atan2(Math.sin(c.a - want), Math.cos(c.a - want)));
+    });
+  });
+  g.check("their cones all point at where he stood", aims.length >= 6 && aims.every((d) => d < 0.05), aims);
   await still(page, "p6-stare");
   await page.close();
 }
@@ -416,11 +559,20 @@ g.check("the songs last COOL_HAT_SECONDS in all, and the pin is 180", free.COOL_
   await next(page);
   s = await until(page, (q) => q.now.oct.hugs === 1, 6000);
   g.check("the octopus follows and hugs: a piece tips crooked", !!s && s.now.tip && s.now.gone.length === 0, s && s.now.tip);
-  await set(page, (p) => ((p.oct.rest = 0), (p.oct.mode = "snacks")));
+  // the crooked hat can make a guest curious: like a kid, he moves away whenever a big "?" turns to him, and after
+  // the real straighten time (FREE.straighten, nothing set) the piece is pushed straight again
+  const away = [[640, 590], [250, 575]];
+  let hop = 0;
+  s = await until(page, (q) => !q.now.tip || !!q.now.alarm, (free.FREE.straighten + 4) * 1000, async (q) => q.now.curious && q.now.curious.phase !== "wait" && (await place(page, ...away[hop++ % 2])));
+  g.check("a crooked piece left alone is pushed straight (in its real time)", !!s && !s.now.tip && !s.now.alarm, s && [s.now.tip, s.now.alarm]);
+  // with his real rest between chases (nothing zeroed): he goes back to the snacks, rests, and comes again
+  s = await until(page, (q) => q.now.oct.mode === "snacks", 15000);
   const o2 = (await st(page)).now.people["octopus-guest"];
-  await place(page, o2.x - 40, o2.y);
-  s = await until(page, (q) => q.now.oct.hugs === 2, 8000, async (q) => q.cur === "bub" && (await next(page)));
-  g.check("a second hug knocks it off", !!s && s.now.gone.length === 1, s && s.now.gone);
+  await place(page, o2.x - 60, o2.y - 30);
+  let lines = 0;
+  s = await until(page, (q) => q.now.oct.hugs === 2, 30000, async (q) => q.cur === "bub" && (lines++, await next(page)));
+  g.check("a second hug (after his real rest) knocks the piece off", !!s && s.now.gone.length === 1, s && [s.now.gone, s.now.oct]);
+  g.check("his two lines come only the first time he follows", lines === 0, lines);
   await page.close();
 }
 
@@ -433,9 +585,12 @@ g.check("the songs last COOL_HAT_SECONDS in all, and the pin is 180", free.COOL_
   g.check("heading for the hallway doorway: he thinks \"Mops!\"", !!s && s.text === "Mops!", s && s.text);
   g.check("Mops's beard is in the doorway", !!s && s.now.beard.show > 0.5, s && s.now.beard);
   await still(page, "p6-hallway-mops");
+  const mb = await overSquatch(page);
+  g.check("the \"Mops!\" thought sits clear of Squatch", !mb.bubble, mb);
   await next(page);
   s = await until(page, (q) => q.ctrl && !q.cur, 4000);
   g.check("he steps back and cannot go through", !!s && Math.abs(s.x - hall.HALLWAY_BACK.x) < 3 && s.room === "hall", s && [s.x, s.y]);
+  g.check("stepping back he stands clear of Isfred (nobody stands inside anybody)", !!s && Math.hypot(s.x - s.now.isfred.x, s.y - s.now.isfred.y) >= 36, s && [s.x, s.y, s.now.isfred]);
   g.check("the uh-oh and the beard's swish sound", (await played(page)).includes("uhoh"));
   await page.close();
 }
@@ -464,6 +619,20 @@ g.check("the songs last COOL_HAT_SECONDS in all, and the pin is 180", free.COOL_
   const here = await st(page);
   s = await until(page, (q) => !q.now.conga.joined, 3000, async () => walk(page, here.x, Math.min(600, here.y + 80)));
   g.check("steering away leaves the line", !!s);
+  await page.close();
+}
+
+// ---------- the dance's way out ----------
+{
+  const { page } = await open("party:P6");
+  await walk(page, hall.DANCE_SPOT.x, hall.DANCE_SPOT.y + 4);
+  await until(page, (q) => q.act === "DANCE · circle", 8000);
+  await press(page);
+  await until(page, (q) => q.full, 3000);
+  await page.touchscreen.tap(375 - 36, 36);
+  const s = await until(page, (q) => !q.full && q.ctrl, 2000);
+  g.check("the dance has a way out: its close button ends it at once and gives control back", !!s && !s.now.dance, s && s.now);
+  g.check("with no moves made it does not count as a dance (no early closing from it)", !!s && !s.now.done.dance, s && s.now.done);
   await page.close();
 }
 

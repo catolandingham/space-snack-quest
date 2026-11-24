@@ -16,7 +16,7 @@
 | 104–106 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
 | 107–113 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
 | 114–121 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
-| 122–128 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
+| 122–138 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
 <!-- /section-index -->
 # Review rules
 
@@ -124,4 +124,14 @@ The later full touch run exposed a test-driver gap: it waited whenever walking w
 - Moving a beat to modules deleted the code that held tuning pins. Move each pin with its value and its name to the module that now owns the rule, point docs/TUNING-PINS.json at it, and list retired pins (their feature deleted) for Brian; never drop a pin silently.
 - The party asked the old sound table for "chime", which it never had, so three moments were silent and no test noticed. A module plays its own sounds and a test reads what was played (`now().sound.played`).
 - Joe's home theme played through the party night because the music picker only knew the old flags. A rebuilt beat that owns a room says so to the music picker (`warmWhy`), with a test.
+- The independent review of PR #87 found a fully dressed kid standing still caught in 7 seconds, in his first minute. A rule that can end a scene gets a "do nothing for a minute" test with the real numbers (`tests/party-free.mjs`: 60 s still in the spotlight).
+- A test set the octopus's rest to 0, so "a second hug knocks it off" passed while the real numbers (rest 14 s, straighten 8 s) made it impossible. Tests run with the shipped numbers; a test may wait, never zero a timer the player lives with.
+- Bubbles and labels sat on Squatch in the stills ("Say cheese!", DANCE · circle, a name tag over "Mops!"). Party tests read the bubble's and the label's boxes against Squatch's (`overSquatch`), and the label rule tries beside him before giving up.
+- Guests, the band and Mops walked through Squatch, and he stood on Isfred. Anyone who walks checks whether Squatch is in the way and waits; every person who stands still is solid.
 
+- The first "wait for Squatch" rule only stopped people walking toward him, so people leaving at closing time brushed past him sideways, 21 px apart. Everyone in the party walks with one helper that goes round him or waits (`stepClear` in `party-hall.js`), keeping further off in front of him, where a taller guest covers him; a walker he blocks waits only a moment, so the party always ends. `tests/party-free.mjs` and `tests/party-endings.mjs` measure how close anyone walking comes.
+- A test named the camera tourist as the guest who takes the second look; the plan names no guest, and a milling guest often gets there first. A test checks what the plan says (the same guest turns, stares and raises the alarm) and names a person only where the game makes it so.
+- The double-take "?" and the "FUR!" burst are drawn over the guest's head, so a guest standing just below Squatch put them on his head (the second-look still). Every mark the party draws moves beside the guest when it would cover him, and the test measures where the "?" is drawn.
+- A suite printed "checks passed" and then did not exit for many minutes: Chrome's crash handler and Google Updater, started by the test Chrome, kept its output pipes open after the browser closed. The game and the test were fine. Before calling a suite hung, look for "checks passed" or "Failed:" in its output, and wait on that line rather than on the process ending.
+- Giving him control at closing time and making his hall door a circle broke two older suites that drive the party their own way (`ch1-playthrough` waited for control to be off; `every-goal-has-target` stood him inside the new trigger); only the full run found them. When a scene's control, trigger or timing changes, grep `tests/` for that scene's name and run every suite that drives it before the full run.
+- In the retaken videos a "?" stayed over a guest after the alarm started and on into closing time: the double-take and the last look were never cleared when the scene moved on. Moving to the alarm or to closing time clears every per-guest look (`curious`, `seenBy`), and tests count the "?" and "!" actually drawn.

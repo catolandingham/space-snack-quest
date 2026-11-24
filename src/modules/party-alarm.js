@@ -17,7 +17,7 @@
  * The state lives in the party's game-state field (P.alarm), so a restart clears it. Numbers marked "pinned" are
  * Brian's approved values (docs/TUNING-PINS.json: guard-speed, guard-catch, home-search-delay, cone-feet).
  */
-import { SPOTS, HALL } from "./party-hall.js";
+import { SPOTS, HALL, HOME_ROOM, stepTo } from "./party-hall.js";
 import { coneFrom, coneSees, lookAt } from "./party-watch.js";
 
 export const ALARM = Object.freeze({
@@ -36,19 +36,10 @@ export const ALARM = Object.freeze({
   backAway: 34, // how far guests back away toward the walls
   calm: 140, // walking back to calm (pixels a second)
 });
-// The home room: where the guard comes in and where he searches from (game positions in the locked home picture).
-export const HOME = Object.freeze({ door: { x: 880, y: 470 }, look: { x: 770, y: 470 } });
+// The home room: where the guard comes in and where he searches from (party-hall.js HOME_ROOM).
+const HOME = Object.freeze({ door: HOME_ROOM.guardDoor, look: HOME_ROOM.guardLook });
 
-const step = (o, x, y, speed, dt) => {
-  const dx = x - o.x,
-    dy = y - o.y,
-    d = Math.hypot(dx, dy),
-    k = speed * dt;
-  if (d <= k || d < 0.5) return ((o.x = x), (o.y = y), true);
-  o.x += (dx / d) * k;
-  o.y += (dy / d) * k;
-  return false;
-};
+const step = stepTo;
 
 /** Starts the rule: `witness` is { id, x, y } of who saw him, `where` the lockup card's "where-*" line id. */
 export function startAlarm(P, witness, where, who = "who-tourist") {

@@ -36,7 +36,8 @@ const report = await page.evaluate(async (chips) => {
     // there (no button), so those goals count the walk, as "walk around the room" does.
     "Squatch: peek out the door": { party: "P1", x: 860, y: 480 },
     "Squatch: sneak to the plant": { party: "P2", x: 400, y: 552 },
-    "Squatch: sneak home for a disguise": { party: "P4", out: true, walk: true, x: 477, y: 560 },
+    // he stands a step from his door, outside its trigger (party-hall.js HALL_DOOR, a 36 px circle round the doorway)
+    "Squatch: sneak home for a disguise": { party: "P4", out: true, walk: true, x: 477, y: 540 },
     "Squatch: run home and hide!": { party: "P2", alarm: true, walk: true, x: 520, y: 560 },
     "Squatch: pick up the gift": { step: "gift", room: "closet", x: 340, y: 520 },
     "Squatch: put the gift in the box": { step: "box", room: "closet", x: 230, y: 392 },

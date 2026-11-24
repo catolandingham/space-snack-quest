@@ -6,7 +6,8 @@
  *     line with its middle, else its right edge, else its left edge), else just below it the same way, else to
  *     its left, else to its right: the first place that is on the picture and clear.
  *   - A spot without a thing keeps its own place (36 above `at`, as before) when that place is clear.
- *   - Otherwise the label goes just above Squatch's head; if even that is not clear, the old place is used.
+ *   - Otherwise the label goes just above Squatch's head, else below his feet, else beside him; if none of those is
+ *     clear, the old place is used.
  * The older program's drawCap (src/game/60-frame-draw.js) asks for the place; tests/home-alone.mjs checks it.
  */
 const GAP = 8;
@@ -34,7 +35,12 @@ export function placeLabel({ w, h, at, thing, squatch, avoid = [] }) {
     for (const y of [above, below]) for (const x of xs) tries.push([x, y]);
     tries.push([thing.x0 - GAP - w / 2, cy], [thing.x1 + GAP + w / 2, cy]);
   } else tries.push([at.x, at.y]);
-  if (squatch) tries.push([(squatch.x0 + squatch.x1) / 2, squatch.y0 - GAP - h / 2]);
+  if (squatch) {
+    const sx = (squatch.x0 + squatch.x1) / 2,
+      sy = (squatch.y0 + squatch.y1) / 2;
+    // above his head, then below his feet, then to his right or left (never on him)
+    tries.push([sx, squatch.y0 - GAP - h / 2], [sx, squatch.y1 + GAP + h / 2], [squatch.x1 + GAP + w / 2, sy], [squatch.x0 - GAP - w / 2, sy]);
+  }
   for (const [x, y] of tries) {
     const b = box(x, y);
     if (clear(b)) return { x, y, box: b };

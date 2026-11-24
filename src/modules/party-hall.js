@@ -87,7 +87,7 @@ export const HALL_SOLIDS = Object.freeze([
 // Where the camera points: the middle of the stage, where the band plays.
 export const CAMERA_AIM = Object.freeze({ x: 420, y: 280 });
 // The octopus's spot by the snacks (P6): he strolls there from his dance spot and notices Squatch from there.
-export const OCTOPUS_SNACKS = Object.freeze({ x: 760, y: 555 });
+export const OCTOPUS_SNACKS = Object.freeze({ x: 724, y: 592 }); // the counter's front end, clear of where Squatch reaches in
 
 
 // ---------- the party in disguise (P6) and the endings (P8): places on the same locked picture ----------
@@ -120,13 +120,97 @@ export const CONGA_ROUTE = Object.freeze([
 export const PHOTO_FRAME = Object.freeze({ x0: 390, x1: 450, y0: 330, y1: 400 });
 // The snack bar's pyramid (on the counter's front end) and where Squatch stands to reach into it.
 export const PYRAMID = Object.freeze({ x: 868, y: 560 });
-export const SNACK_SPOT = Object.freeze({ x: 770, y: 540, r: 60 });
+export const SNACK_SPOT = Object.freeze({ x: 780, y: 497, r: 60 });
 // The floor in front of the hallway doorway (P6): walking in here, he meets Mops's beard and steps back.
 export const HALLWAY_ZONE = Object.freeze({ x0: 850, x1: 960, y0: 290, y1: 352 });
-export const HALLWAY_BACK = Object.freeze({ x: 812, y: 322 });
+export const HALLWAY_BACK = Object.freeze({ x: 846, y: 344 }); // clear of Isfred by the bar's top end
 // The floor strip from the bar's top end to the hallway doorway (open in P6 to P8, so he can head for it).
 export const HALLWAY_LANE = Object.freeze({ x0: 806, x1: 960, y0: 0, y1: 350 });
 // Leaving at closing time (P8b): a walk to the hallway doorway, then out through it.
 export const EXIT = Object.freeze([Object.freeze({ x: 880, y: 325 }), Object.freeze({ x: 990, y: 310 })]);
+// The way into the strip to the hallway doorway, behind Isfred at the bar's top end: everyone leaving from the floor or
+// the stage comes here first, so nobody cuts across the bar counter.
+export const EXIT_LANE_MOUTH = Object.freeze({ x: 760, y: 300 });
 // Mops at closing time (P8b): he comes in from the hallway mopping, and stops here, facing the room.
 export const MOPS_IN = Object.freeze({ from: Object.freeze({ x: 990, y: 320 }), at: Object.freeze({ x: 700, y: 400 }) });
+
+// ---------- the home room (locked home picture v6, game positions): one table for every party file ----------
+export const HOME_ROOM = Object.freeze({
+  doorSpot: Object.freeze({ x: 858, y: 470 }), // walking here takes him out through his door
+  doorIn: Object.freeze({ x: 905, y: 470 }), // just inside the door in the right wall
+  doorStep: Object.freeze({ x: 840, y: 470 }), // the step before the door, on his way out to the party
+  inside: Object.freeze({ x: 790, y: 480 }),
+  runTo: Object.freeze({ x: 660, y: 545 }),
+  inFront: Object.freeze({ x: 330, y: 410 }), // just right of the bed, clear of it (not on its head end)
+  clear: Object.freeze({ x: 620, y: 500 }), // well into the room, clear of the door (P8a)
+  bed: Object.freeze({ x: 205, y: 500 }),
+  flyer: Object.freeze({ x: 868, y: 520 }),
+  guardDoor: Object.freeze({ x: 880, y: 470 }), // where a guard comes in, and where he searches from
+  guardLook: Object.freeze({ x: 770, y: 470 }),
+  mopsDoor: Object.freeze({ x: 935, y: 470 }), // Mops comes in here, inside the picture
+  mopsInside: Object.freeze({ x: 850, y: 472 }),
+  mopsFlyerLook: Object.freeze({ x: 820, y: 476 }),
+});
+// The doorway home in the hall, as a trigger: within `r` of the door spot (SPOTS.doorway) he goes through.
+export const HALL_DOOR = Object.freeze({ x: SPOTS.doorway.x, y: SPOTS.doorway.y, r: 36 });
+
+/** Moves `o` toward (x, y) at `speed` for `dt` seconds; true once there. */
+export function stepTo(o, x, y, speed, dt) {
+  const dx = x - o.x,
+    dy = y - o.y,
+    d = Math.hypot(dx, dy),
+    k = speed * dt;
+  if (d <= k || d < 0.5) return ((o.x = x), (o.y = y), true);
+  o.x += (dx / d) * k;
+  o.y += (dy / d) * k;
+  return false;
+}
+
+/**
+ * Like stepTo, but nobody walks into or through Squatch (`s`): a step that would come within `clear` of him, and
+ * closer than before, goes round him instead (sideways, on the side toward the place), and if the place itself is
+ * that close to him, the walker waits there for him to move. True once there. Someone in front of him (lower on the
+ * picture) is taller than him and would hide him sooner, so in front the distance counts as `FRONT` of itself:
+ * they keep about 1.7 times further off there.
+ */
+const FRONT = 0.6;
+// PLACEHOLDER for Brian: how far everyone walking keeps from Squatch (game pixels, side on; further in front).
+export const CLEAR_OF_SQUATCH = 40;
+export function stepClear(o, x, y, speed, dt, s, clear, above = false) {
+  const sc = (v) => (v > s.y ? s.y + (v - s.y) * FRONT : v),
+    un = (v) => (v > s.y ? s.y + (v - s.y) / FRONT : v),
+    far = (px, py) => Math.hypot(px - s.x, sc(py) - s.y);
+  const ox = o.x,
+    oy = o.y,
+    d0 = far(ox, oy);
+  const there = stepTo(o, x, y, speed, dt),
+    d1 = far(o.x, o.y);
+  if (d1 >= clear || d1 >= d0) return ((o.round = 0), there);
+  o.x = ox;
+  o.y = oy;
+  if (far(x, y) < clear) return false;
+  // go round him, in the space where "in front" counts less
+  const py = sc(oy),
+    ux = (ox - s.x) / (d0 || 1),
+    uy = (py - s.y) / (d0 || 1),
+    // the side is kept until they are past him, so nobody dithers when he stands right on their way
+    // (`above`: always go round behind him, up the picture, for someone with a counter beside him: up first, then
+    // across toward the place once behind him)
+    side = above ? (uy < -0.3 ? Math.sign(x - ox) || 1 : -(Math.sign(ux) || 1)) : (o.round = o.round || (-uy * (x - ox) + ux * (sc(y) - py) >= 0 ? 1 : -1)),
+    k = speed * dt;
+  let nx = ox - uy * side * k,
+    ny = py + ux * side * k;
+  const dn = Math.hypot(nx - s.x, ny - s.y) || 1,
+    r = Math.min(clear, d0 + k);
+  dn < r && ((nx = s.x + ((nx - s.x) / dn) * r), (ny = s.y + ((ny - s.y) / dn) * r));
+  // back in game pixels: never faster than walking (the squashed space would stretch the step in front of him)
+  let mx = nx - ox,
+    my = un(ny) - oy;
+  const len = Math.hypot(mx, my);
+  len > k && ((mx = (mx / len) * k), (my = (my / len) * k));
+  // a shortened step that would still come closer than before and inside the zone: wait instead
+  if (far(ox + mx, oy + my) < Math.min(clear, d0)) return false;
+  o.x = ox + mx;
+  o.y = oy + my;
+  return false;
+}
