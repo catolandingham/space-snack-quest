@@ -14,7 +14,8 @@
  *   he says good morning, then faces Squatch for every line; Mops is never in the rocking "sway" pose.
  * - The speaker's bubbles sit to the left of the speaker with the sound lines drawn; music notes come from the
  *   speaker once the song starts (sound off, the default, too).
- * - The cutaway covers the whole picture and its Mops is bigger than its bucket.
+ * - The cutaway covers the whole picture and its Mops is bigger than its bucket; he is on model (thin outlines,
+ *   white legs, pink nose; mops-approved-nov8.png).
  * - Squatch gets out of bed smoothly (no hop, no jump between frames) and the joystick does not move him
  *   while he is asleep or sitting.
  * - SING ALONG is not offered while Mops's song line is up; then the chip reads "Squatch: sing along with Mops"
@@ -158,7 +159,28 @@ const A1 = await playToSong(A, {
       sleepy.sitAfter = { sq: t.sq, pose: t.pose, hop: t.hop };
     }
     if (s.k === "bub" && s.text === L["mops-morning"].text) sleepy.morning = { moPose: s.moPose, mo: s.mo, sq: s.sq };
-    if (s.k === "cutaway") sleepy["cut" + s.panel] = await run.page.evaluate(() => (window.__ss.drawFrame(), window.SSQ.cutaway.last()));
+    if (s.k === "cutaway")
+      sleepy["cut" + s.panel] = await run.page.evaluate(() => {
+        window.__ss.drawFrame();
+        const last = window.SSQ.cutaway.last(),
+          cv = document.querySelector("canvas"),
+          k = cv.width / 960,
+          px = cv.getContext("2d").getImageData(0, 0, cv.width, cv.height).data;
+        const rgb = (x, y) => {
+          const i = (Math.round(y * k) * cv.width + Math.round(x * k)) * 4;
+          return [px[i], px[i + 1], px[i + 2]];
+        };
+        // Across his legs (40 px above the floor line, left of the bucket): the longest run of outline-dark pixels.
+        let run = 0,
+          longest = 0;
+        for (let x = 0; x < 480; x += 1 / k) {
+          const [r, g, b] = rgb(x, 600);
+          run = r < 80 && g < 80 && b < 90 ? run + 1 / k : 0;
+          longest = Math.max(longest, run);
+        }
+        const n = last.mops.nose;
+        return { ...last, legInk: longest, noseRgb: rgb(n.x, n.y) };
+      });
     if (s.k === "bub" && s.text === L["speaker-song"].text) {
       // The tap on this line starts the song and the stand-up; record the stand-up frame by frame.
       await run.tapAt(480, 330);
@@ -217,6 +239,13 @@ for (const p of [0, 1]) {
   const c = sleepy["cut" + p];
   g.check(`cutaway picture ${p + 1} covers the whole picture`, !!c && c.full === true && c.id === "beard" && c.panel === p, c);
   g.check(`in cutaway picture ${p + 1} Mops is bigger than the bucket`, !!c && c.mops.h > c.bucket.h && c.mops.w > c.bucket.w, c);
+  // Brian 2026-11-23: the close-up drew Mops off-model (outlines scaled up, legs like stripes, no nose).
+  g.check(`in cutaway picture ${p + 1} Mops's outlines are thin, like the approved picture (5 px or less)`, !!c && c.mops.outline > 0 && c.mops.outline <= 5, c && c.mops);
+  g.check(`in cutaway picture ${p + 1} his legs are white with thin outlines, not dark stripes`, !!c && c.legInk > 0 && c.legInk <= 8, c && c.legInk);
+  {
+    const [r, gg, b] = (c && c.noseRgb) || [0, 0, 0];
+    g.check(`in cutaway picture ${p + 1} he has his pink nose`, r > 220 && gg > 140 && gg < 200 && b > 160 && b < 210, c && c.noseRgb);
+  }
 }
 g.check(
   "Squatch gets out of bed smoothly, ending on the floor in front of the bed, no hop",
