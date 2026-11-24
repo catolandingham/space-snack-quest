@@ -187,6 +187,12 @@ const A1 = await playToSong(A, {
     if (s.k === "bub" && s.text === L["sq-party"].text) {
       // Brian 21a: the tap on "Party?" sends Mops mopping along the floor to his bucket; then the close-up.
       await run.tapAt(480, 330);
+      // While he mops there is nothing to tap: the big button is dimmed and says nothing new (not a live ACTION).
+      await sleep(250);
+      sleepy.mopButton = await run.page.evaluate(() => {
+        const b = document.querySelector('[role="button"]');
+        return { step: window.__ss.op.ch1Morning && window.__ss.op.ch1Morning.step, opacity: +getComputedStyle(b).opacity, label: b.getAttribute("aria-label") };
+      });
       sleepy.mopping = await run.page.evaluate(() => {
         const ss = window.__ss,
           n = ss.op,
@@ -287,6 +293,8 @@ g.check(
   g.check("Brian 21a: he mops toward his bucket, facing it, and ends beside it", !!m && m.faces.length === 1 && m.faces[0] === -1 && Math.abs(m.end[0] - 690) < 1 && Math.abs(m.end[1] - 560) < 1, m);
   g.check("Brian 21a: a wet streak is left behind him on the floor", !!m && !!m.wet && m.wet.x1 - m.wet.x0 >= 100 && m.wet.y > 540, m && m.wet);
   g.check("Brian 21a: then the beard-wringing close-up comes straight after", !!m && m.cut, m);
+  const mb = sleepy.mopButton;
+  g.check("while Mops mops, the big button is dimmed with nothing to tap", !!mb && mb.step === "mopping" && mb.opacity < 0.6 && mb.label === "Action", mb);
 }
 g.check("Squatch is asleep and Mops mops (head down) at the start", sleepy.pose === "sleep" && sleepy.moPose === "mop", sleepy);
 g.check("the joystick does not move Squatch while he is asleep", !!sleepy.after && sleepy.after.pose === "sleep" && sleepy.after.hop < 0 && Math.abs(sleepy.after.sq[0] - 205) < 1, sleepy.after);

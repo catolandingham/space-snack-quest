@@ -1,6 +1,9 @@
 /**
  * Brian's 2026-11-13 gameplay: a story wait needs a tap, a sight is a short hop,
  * and Zip calls security.
+ * The yellow arrow his Nov 13 ask put on story waits is gone, replaced by his newer words: 18a, 2026-11-23,
+ * "I don't want next and tap here, just next", and his playthrough comment at the party, "The yellow
+ * flashing light on the bottom right doesn't make sense". The NEXT button is the only cue now.
  *   node tests/brian-1113.mjs
  */
 import { startGame } from "./game-page.mjs";
@@ -34,7 +37,7 @@ const wait = await page.evaluate(() => {
   return { held, arrow, done: n.waitDone === true, cur: n.cur && n.cur.k };
 });
 g.check("a story wait does not end by itself", wait.held, wait);
-g.check("the wait shows a yellow arrow and no words", wait.arrow, wait);
+g.check("the wait shows no yellow arrow and no words (Brian 18a: just NEXT)", !wait.arrow, wait);
 g.check("a tap ends the story wait", wait.done && !wait.cur, wait);
 
 await ctx.close();

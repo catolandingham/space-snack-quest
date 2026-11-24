@@ -181,9 +181,12 @@
         } else n.mo.moving = !1;
       }
       if (n.ctrl && n.scene === "O1") n.act = pick(ch1CalendarSpots());
+      // While the story plays on its own (an animation a tap started, such as Mops mopping to his bucket), the big
+      // button is dimmed ("~"): there is nothing to tap, and NEXT is only for a step that waits for one (Brian 18a).
       let talking = n.ctrl && n.cur && n.cur.k === "bub" && !n.cutOn,
         s = Bs(),
-        q = talking ? (n.bt > 3 ? "!NEXT" : "NEXT") : s ? (s.hot ? "!" : "") + s.verb + (s.cap ? " \u00b7 " + s.cap : "") : "";
+        playing = !n.ctrl && !!n.cur && n.cur.k === "until",
+        q = talking ? (n.bt > 3 ? "!NEXT" : "NEXT") : s ? (s.hot ? "!" : "") + s.verb + (s.cap ? " \u00b7 " + s.cap : "") : playing ? "~" : "";
       (q !== p.verb && ((p.verb = q), t.onVerb(q)), lh(l));
     }
     let qq = 0,
@@ -2368,7 +2371,7 @@
         n.ch1Mini && drawCh1Mini(),
         window.__ss && (window.__ss.bubbleFrame = qq),
         n.ch1Veil > 0.01 && ((e.fillStyle = "rgba(20,24,32," + Math.min(1, n.ch1Veil).toFixed(3) + ")"), e.fillRect(0, 0, c, b)));
-      ((e.globalAlpha = 1), zG(), drawWaitArrow(), drawSeeHint(), drawTapHeard());
+      ((e.globalAlpha = 1), zG(), drawSeeHint(), drawTapHeard());
     }
     // The white "VERB · thing" label over the spot the big button acts on. Every chapter uses it.
     function drawCap() {
@@ -2394,22 +2397,6 @@
       }
       n.lastCap = { box: { x0: x - d / 2, x1: x + d / 2, y0: y - 14, y1: y + 14 }, text: t };
       (m(x - d / 2, y - 14, d, 28, 8), r("#fffaf0", 3), g(t, x, y, 14, "#1e2430", "center", 800));
-    }
-    function drawWaitArrow() {
-      if (!(n.cur && n.cur.k === "wait") || n.cur.quiet) return;
-      let bob = Math.sin(n.T * 8) * 8;
-      (e.save(),
-        e.translate(c - 78, b - 78 + bob),
-        e.beginPath(),
-        e.moveTo(-16, -6),
-        e.lineTo(0, 12),
-        e.lineTo(16, -6),
-        (e.lineWidth = 7),
-        (e.lineCap = "round"),
-        (e.lineJoin = "round"),
-        (e.strokeStyle = "#ffcf33"),
-        e.stroke(),
-        e.restore());
     }
     function drawSeeHint() {
       let h = n.seeHint;

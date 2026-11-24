@@ -77,8 +77,8 @@
         card: (id, text) => ({ k: "card", id, text }),
         run: (f) => N(f),
         until: (f) => cV(f),
-        // A tap wait with no words and no arrow (NEXT is the only cue, Brian 18a).
-        tapWait: () => ({ k: "wait", t: 0, quiet: !0 }),
+        // A tap wait with no words (NEXT is the only cue, Brian 18a).
+        tapWait: () => ({ k: "wait", t: 0 }),
         current: () => (n.cur ? { k: n.cur.k, who: n.cur.b ? n.cur.b.who : "", style: n.cur.b ? n.cur.b.style : "", id: n.cur.id || "" } : null),
         get: (k) => n[k],
         set: (k, val) => {
