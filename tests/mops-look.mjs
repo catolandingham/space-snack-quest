@@ -249,14 +249,14 @@ const MO = { x: 611.25, y: 503.5, f: 1, moving: false };
 }
 // The title screen's "Sir Mops-a-Lot" is the same approved Mops (2026-11-24: he was an old white goat with a
 // gold badge and a separate mop stick, against rule 14 "Mops's beard is his mop; no separate mop prop").
-// He is drawn mopping with his beard, head down, at (600, 395).
+// He is drawn mopping with his beard, head down, at (600, 386).
 {
   const { page, ctx, errors } = await g.open("");
   await page.evaluate(recorder);
   const ops = await page.evaluate(() => {
     window.requestAnimationFrame = () => 0;
     const st = window.__mopsRec;
-    st.target = { x: 600, y: 395 };
+    st.target = { x: 600, y: 386 };
     st.ops = [];
     st.on = false;
     const state = window.__ss.game.state;
