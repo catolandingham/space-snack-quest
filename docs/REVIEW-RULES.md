@@ -3,26 +3,27 @@
 
 | Lines | Heading |
 | --- | --- |
-| 27–30 | # Review rules |
-| 31–82 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
-| 83–85 | ## Techniques |
-| 86–88 | ## Mistake: locked art was redrawn |
-| 89–93 | ## Mistake: optional inspection interrupted getting out of bed |
-| 94–96 | ## Mistake: a big doc's section index went stale |
-| 97–99 | ## Mistake: a rebuilt beat forgot the step restart |
-| 100–102 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
-| 103–105 | ## Mistake: a killed run was read as a failing test |
-| 106–108 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
-| 109–111 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
-| 112–118 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
-| 119–126 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
-| 127–143 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
-| 144–156 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
-| 157–159 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
-| 160–168 | ## Mistakes caught building the morning sound (2026-11-24) |
-| 169–180 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
-| 181–192 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
-| 193–206 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
+| 28–31 | # Review rules |
+| 32–83 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
+| 84–86 | ## Techniques |
+| 87–89 | ## Mistake: locked art was redrawn |
+| 90–94 | ## Mistake: optional inspection interrupted getting out of bed |
+| 95–97 | ## Mistake: a big doc's section index went stale |
+| 98–100 | ## Mistake: a rebuilt beat forgot the step restart |
+| 101–103 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
+| 104–106 | ## Mistake: a killed run was read as a failing test |
+| 107–109 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
+| 110–112 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
+| 113–119 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
+| 120–127 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
+| 128–144 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
+| 145–157 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
+| 158–160 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
+| 161–169 | ## Mistakes caught building the morning sound (2026-11-24) |
+| 170–181 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
+| 182–193 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
+| 194–207 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
+| 208–214 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
 <!-- /section-index -->
 # Review rules
 
@@ -203,3 +204,10 @@ His words, on the snack close-up, for every piece of the game: "It just needs to
 - A still tool set a Day 2 flag by hand (the office flag in the hall) and drew a room the game never shows that way. A hand-made state for a still copies a state the game itself makes (read the scene's own set-up first), and the report says which stills are hand-made.
 - The first clear way to the flyer was 48 wide in game numbers and passed its own test; on a phone that is 18 px, less than a finger, and the kid robot (which keeps a kid's distance from watchers) could not get up it. A gap a kid must steer through is judged in phone pixels (the picture is about 0.37 of game size): 100 game px or more, and the kid robot must walk it before it is called clear.
 - Making the showing-4 video, the robot ran home after an alarm and did not hide; the guard's light fell on him, the guard stepped at him and back to his looking place every frame, gave up, and "They lost you." sent him back to the party. Every place the capture rule can end gets a "do nothing" run (home too, not only the hall): standing in the open he is caught, with the card (`tests/party-catch.mjs`).
+
+## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25)
+- A suite threw "getImageData: Value is not of type 'long'" because a module had changed and index.html had not been rebuilt, so the game sent a number the new test expected and the old build did not have. After any change in `src/`, run `npm run build` before running a suite.
+- A scripted replacement changed one of two lines that looked alike and missed the other, so the hall check read Squatch at the home room's size and failed for the wrong reason. After a scripted edit, grep that every place meant to change did.
+- "No fur below the cuff" first counted single blended pixels at the edge of a snack (a pie's dark middle against its crust) as fur. A check that a colour is absent looks for a patch of it (the pixel and its neighbours), within the area the thing could be, not one blended pixel anywhere.
+- A sleeve check sampled a folded arm where its own cuff and paw lie in front of the sleeve, and failed though the drawing was right. Before sampling along a part, leave out where another part of the same figure is drawn over it, and say so in the check.
+- Running a test with `STILLS=x` wrote a folder `x/` into the repo and `git add -A` staged it. Stills go to an absolute path outside the repo; check `git status` before committing.

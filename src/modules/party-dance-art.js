@@ -13,7 +13,7 @@
 import { drawBand, drawOutfit, oval, line } from "./party-art.js";
 import { bootsOnFeet } from "./party-outfit.js";
 import { drawSquatchArt, armEnds, SQUATCH_LOOK } from "./squatch-art.js";
-import { DANCE, SONG_LIGHTS, ROUTINE_LENGTH, danceSquatch, onScreen, spotOnScreen, spotStanding, spotNow, ringLeft, ringRadius, unit } from "./party-dance.js";
+import { DANCE, SONG_LIGHTS, ROUTINE_LENGTH, danceSquatch, danceBand, onScreen, spotOnScreen, spotStanding, spotNow, ringLeft, ringRadius, unit } from "./party-dance.js";
 
 const FLOORS = ["#5a2c4f", "#1f4f52", "#5a4a22"];
 const INK = "#1e2430",
@@ -122,7 +122,8 @@ export function drawDanceCloseUp(ctx, w, h, guestArt, outfit, t, d, song = 0) {
   g.addColorStop(1, "#3a2d55");
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, w, h);
-  const floorY = h * 0.58,
+  const B = danceBand(w, h),
+    floorY = B.floor,
     s = unit(w, h),
     party = d.party > 0 && !(d.stumble > 0),
     big = party && d.big;
@@ -130,10 +131,12 @@ export function drawDanceCloseUp(ctx, w, h, guestArt, outfit, t, d, song = 0) {
   ctx.fillRect(0, floorY, w, h - floorY);
   ctx.fillStyle = SONG_LIGHTS[song % 3];
   ctx.fillRect(0, 0, w, h);
-  // the band at the back, small, on a strip of stage
+  // the band at the back, small, on a raised stage (above his hat: Brian 2026-11-25)
   ctx.fillStyle = "#b08968";
-  ctx.fillRect(w * 0.1, floorY - h * 0.08, w * 0.8, h * 0.03);
-  drawBand(ctx, [0.3, 0.5, 0.7].map((k) => ({ x: w * k, y: floorY - h * 0.08 })), s * 26, t, true);
+  ctx.fillRect(w * 0.1, B.feet, w * 0.8, h * 0.03);
+  ctx.fillStyle = "#8b6a4f";
+  ctx.fillRect(w * 0.1, B.feet + h * 0.03, w * 0.8, floorY - B.feet - h * 0.03);
+  drawBand(ctx, B.xs.map((x) => ({ x, y: B.feet })), B.tall, t, true);
   // the spotlight
   const sp = ctx.createRadialGradient(w / 2, h * 0.88, 10, w / 2, h * 0.88, w * 0.48);
   sp.addColorStop(0, "rgba(255,250,210,.6)");

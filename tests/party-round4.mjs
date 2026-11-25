@@ -17,7 +17,9 @@
  *     doorway and the snack bar; the alarm box showing), the camera tourist faces them, only JOIN · photo is
  *     offered (no DANCE, no GRAB), "Say cheese!", 3-2-1, the click; in his place: +25 once and the Polaroid filling
  *     the screen until a tap; not there: no close-up; everyone walks back and the second song starts; one photo a
- *     party; ↺ and an alarm in the middle of it.
+ *     party; ↺ and an alarm in the middle of it. Since 2026-11-25 the row is wider and staggered (no face in the
+ *     hall row more than a quarter covered) and the Polaroid keeps it as it stood (no two faces overlap, the top
+ *     hat on; each Croc Boy's face shows).
  * Stills at 375 x 812 go to tests/out/party-stills/ (r4-*.png).
  *   node tests/party-round4.mjs
  */
@@ -550,6 +552,50 @@ const runWatch = (page, secs, stopAt) =>
     Math.round(secs / 0.05),
     stopAt || "",
   );
+// ---------- every face in the photo shows (Brian 2026-11-25, "make the fixes you think best") ----------
+// Each person's face box (party-photo.js PHOTO_FACES, shares of their drawn height) and, for whoever stands in front
+// of them, their face and body; Squatch's head with the piece on it (party-art.js PIECES, BODY_SPOTS) and his body.
+// Heights: the guests' approved pictures (their own heights, the teal guest a grown-up), the Croc Boys 0.98 of one.
+const art = await import(join(root, "src", "modules", "party-art.js"));
+const { readFileSync } = await import("node:fs");
+const pngHeight = (f) => readFileSync(join(root, "docs", "approved-art", "guests", f)).readUInt32BE(20);
+const TEAL_H = pngHeight("teal.png");
+const GUEST_FILE = { teal: "teal.png", backpack: "backpack.png", stilt: "stilt.png", "octopus-guest": "octopus.png", robot: "robot.png" };
+function rowBoxes(adult, sqScale, head = "tophat") {
+  const P = photo.PHOTO_ROW,
+    out = [];
+  for (const r of [...P.back, ...P.front]) {
+    const band = r.id.startsWith("band"),
+      h = band ? adult * 0.98 : (pngHeight(GUEST_FILE[r.id]) / TEAL_H) * adult,
+      f = photo.PHOTO_FACES[band ? "band" : r.id];
+    out.push({ id: r.id, y: r.y, face: { x0: r.x + f.x0 * h, x1: r.x + f.x1 * h, y0: r.y + f.y0 * h, y1: r.y + f.y1 * h }, body: { x0: r.x - 0.2 * h, x1: r.x + 0.2 * h, y0: r.y + f.y1 * h, y1: r.y } });
+  }
+  // Squatch: his head (and the piece on it) and his body, in his units, at his scale
+  const s = P.squatch,
+    spot = art.BODY_SPOTS.head,
+    piece = art.PIECES.find((q) => q.id === head),
+    ph = piece ? spot.w * piece.h : 0,
+    top = piece ? spot.y - ph / 2 + 3 - ph / 2 : -45;
+  out.push({ id: "squatch", y: s.y, face: { x0: s.x - 14 * sqScale, x1: s.x + 14 * sqScale, y0: s.y + top * sqScale, y1: s.y - 19.5 * sqScale }, body: { x0: s.x - 13 * sqScale, x1: s.x + 13 * sqScale, y0: s.y - 19.5 * sqScale, y1: s.y } });
+  return out;
+}
+const overlap = (a, b) => Math.max(0, Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0)) * Math.max(0, Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0));
+const inBox = (x, y, b) => x >= b.x0 && x <= b.x1 && y >= b.y0 && y <= b.y1;
+// How much of each face is under someone drawn in front of it (further down the screen; the same row counts both
+// ways), on a 20 x 20 grid over the face.
+function covered(boxes) {
+  return boxes.map((a) => {
+    const front = boxes.filter((b) => b !== a && b.y >= a.y);
+    let hid = 0;
+    for (let i = 0; i < 20; i++)
+      for (let j = 0; j < 20; j++) {
+        const x = a.face.x0 + ((i + 0.5) / 20) * (a.face.x1 - a.face.x0),
+          y = a.face.y0 + ((j + 0.5) / 20) * (a.face.y1 - a.face.y0);
+        front.some((b) => inBox(x, y, b.face) || inBox(x, y, b.body)) && hid++;
+      }
+    return { id: a.id, hid: hid / 400 };
+  });
+}
 const sounds = async (page, from) => (await played(page)).slice(from);
 const liveLines = (page) => page.evaluate(() => (window.__ss.op.log || []).filter((l) => l.k === "live").map((l) => l.text));
 {
@@ -596,10 +642,14 @@ const liveLines = (page) => page.evaluate(() => (window.__ss.op.log || []).filte
   const label = await page.evaluate(() => { const n = window.__ss.op; return n.lastCap ? { text: n.lastCap.text, box: n.lastCap.box } : null; });
   g.check("JOIN · photo is offered from across the hall, its label at the gap in the row", !!s && !!label && label.text === "JOIN · photo" && Math.abs((label.box.x0 + label.box.x1) / 2 - photo.PHOTO_ROW.squatch.x) < 120 && label.box.y1 < 420 && label.box.x1 <= 960 && label.box.y0 >= 0, label);
   await still(page, "r4-photo-row-and-label");
+  const sqScale = await page.evaluate(() => window.SSQ.engine().hallSizes().squatch),
+    hallCover = covered(rowBoxes(adult, sqScale));
+  g.check("in the hall row no face is more than a quarter covered (Squatch in his place with the top hat on)", hallCover.every((c) => c.hid <= 0.25), hallCover.filter((c) => c.hid > 0));
+  g.check("the row is wider and staggered: 64 or more apart along each row, each front place in a gap of the back row", [photo.PHOTO_ROW.back, [...photo.PHOTO_ROW.front, photo.PHOTO_ROW.squatch].sort((a, b) => a.x - b.x)].every((row) => row.every((r, i) => !i || r.x - row[i - 1].x >= 64)) && [...photo.PHOTO_ROW.front, photo.PHOTO_ROW.squatch].every((f) => photo.PHOTO_ROW.back.every((b) => Math.abs(b.x - f.x) >= 24)));
   // he presses it and walks into his place
   const n1 = (await played(page)).length;
   await press(page);
-  const wj = await runWatch(page, 8, "count");
+  const wj = await runWatch(page, photo.PHOTO.settle + 3, "count");
   s = await st(page);
   g.check("pressing it walks him into the gap (a walk, no jump), facing the camera", Math.hypot(s.x - photo.PHOTO_ROW.squatch.x, s.y - photo.PHOTO_ROW.squatch.y) < 2 && s.now.shot.in && wj.max <= photo.PHOTO.join * 0.05 + 0.5, [s.x, s.y, s.now.shot, wj]);
   g.check("\"Say cheese!\" as the count starts", (await liveLines(page)).includes("Say cheese!") && s.now.shot.phase === "count", await liveLines(page));
@@ -626,6 +676,62 @@ const liveLines = (page) => page.evaluate(() => (window.__ss.op.log || []).filte
   });
   g.check("the Polaroid of the group fills the screen (the five guests of the row drawn in it), with its own ↺", !!pol && ["backpack.png", "octopus.png", "robot.png", "stilt.png", "teal.png"].every((f) => pol.guests.includes(f)) && !pol.guests.includes("camera.png") && pol.top === "group photo", pol);
   await still(page, "r4-photo-polaroid");
+  // The Polaroid keeps the row as it stood (one scale across and up), so its faces are the row's faces: no two
+  // overlap, Squatch's head with the top hat included. Then, in the picture drawn: each Croc Boy's face is his
+  // green crocodile head (the top hat once covered one).
+  const pb = rowBoxes(adult, sqScale),
+    pairs = [];
+  pb.forEach((a, i) => pb.slice(i + 1).forEach((b) => overlap(a.face, b.face) > 0 && pairs.push([a.id, b.id])));
+  g.check("in the Polaroid no two faces overlap, with the top hat on", pairs.length === 0, pairs);
+  const seenFaces = await page.evaluate(() => {
+    const cv = document.querySelector('canvas[aria-label="group photo"]');
+    return { w: cv.clientWidth, h: cv.clientHeight, k: cv.width / cv.clientWidth };
+  });
+  const L = photo.polaroidLayout(seenFaces.w, seenFaces.h),
+    toScreen = (x, y) => {
+      // the Polaroid's frame: its middle at (w / 2, h * 0.47), tilted -0.035 once it has slid in
+      const q = L.at(x, y),
+        a = -0.035;
+      return { x: seenFaces.w / 2 + q.x * Math.cos(a) - q.y * Math.sin(a), y: seenFaces.h * 0.47 + q.x * Math.sin(a) + q.y * Math.cos(a) };
+    };
+  const faceColours = await page.evaluate(
+    (pts, k) => {
+      const ctx = document.querySelector('canvas[aria-label="group photo"]').getContext("2d");
+      return pts.map((g) => g.map((p) => Array.from(ctx.getImageData(Math.round(p.x * k), Math.round(p.y * k), 1, 1).data).slice(0, 3)));
+    },
+    pb.filter((b) => b.id !== "squatch").map((b) => {
+      const pts = [];
+      for (let i = 1; i <= 5; i++) for (let j = 1; j <= 5; j++) pts.push(toScreen(b.face.x0 + ((b.face.x1 - b.face.x0) * i) / 6, b.face.y0 + ((b.face.y1 - b.face.y0) * j) / 6));
+      return pts;
+    }),
+    seenFaces.k,
+  );
+  const near = (c, h, tol) => [1, 3, 5].every((i, j) => Math.abs(c[j] - parseInt(h.slice(i, i + 2), 16)) <= tol);
+  const faceReport = pb.filter((b) => b.id.startsWith("band")).map((b) => ({ id: b.id, green: faceColours[pb.filter((q) => q.id !== "squatch").indexOf(b)].filter((c) => near(c, "#3fae4a", 30)).length }));
+  // his party shirt's long sleeves in the Polaroid too (Brian 2026-11-25): a third and half way down each arm
+  const shirtArt = await import(join(root, "src", "modules", "party-shirt-art.js")),
+    sq = photo.PHOTO_ROW.squatch,
+    sleevePts = [-1, 1].flatMap((side) => [3, 4.5].map((d) => ({ x: sq.x + side * (10.5 + Math.sin(0.35) * d) * sqScale, y: sq.y + (-18 + Math.cos(0.35) * d) * sqScale }))),
+    sleeveCs = await page.evaluate(
+      (pts, k) => {
+        const ctx = document.querySelector('canvas[aria-label="group photo"]').getContext("2d");
+        return pts.map((p) => Array.from(ctx.getImageData(Math.round(p.x * k), Math.round(p.y * k), 1, 1).data).slice(0, 3));
+      },
+      sleevePts.map((q) => toScreen(q.x, q.y)),
+      seenFaces.k,
+    );
+  // (the shirt's orange, a spot, or at this small size a blend of the two)
+  const sleeveArt = await import(join(root, "src", "modules", "sleeve-art.js")),
+    onShirt = (c) =>
+      sleeveArt.SHIRT_SPOTS.some((hx) => {
+        const a = [255, 138, 61],
+          b = [1, 3, 5].map((i) => parseInt(hx.slice(i, i + 2), 16)),
+          ab = a.map((v, j) => b[j] - v),
+          t = Math.max(0, Math.min(1, ab.reduce((n, v, j) => n + v * (c[j] - a[j]), 0) / ab.reduce((n, v) => n + v * v, 0)));
+        return Math.hypot(...a.map((v, j) => v + ab[j] * t - c[j])) <= 24;
+      });
+  g.check("in the Polaroid his party shirt has long sleeves (orange half way down both arms)", shirtArt.SLEEVE.wide > 0 && sleeveCs.every(onShirt), sleeveCs.map((c) => c.join(",")));
+  g.check("in the Polaroid each Croc Boy's face shows: his green crocodile head over a quarter of his face's places", faceReport.every((f) => f.green >= 7), faceReport);
   await sleep(400);
   s = await st(page);
   g.check("it waits for a tap (nothing moves on by itself)", s.now.shot.phase === "polaroid" && !!(await page.evaluate(() => document.querySelector('canvas[aria-label="group photo"]'))));

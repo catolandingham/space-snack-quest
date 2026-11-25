@@ -26,6 +26,8 @@ const shirt = await import(join(root, "src", "modules", "party-shirt-art.js"));
 const sleeveArt = await import(join(root, "src", "modules", "sleeve-art.js"));
 const D = await import(join(root, "src", "modules", "party-dance.js"));
 const hall = await import(join(root, "src", "modules", "party-hall.js"));
+// The sleeve's outline in his units (the shirt's: party-art.js draws pieces on his body with this outline).
+const LINE = Math.max(1, (await import(join(root, "src", "modules", "party-art.js"))).BODY_SPOTS.body.w * 0.045);
 const ORANGE = "#ff8a3d",
   PAD = look.SQUATCH_LOOK.mask;
 const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
@@ -60,10 +62,17 @@ function armSamples(arms, px = 10) {
           dy = q.y - cuff.y,
           along = dx * Math.cos(dir) + dy * Math.sin(dir),
           across = -dx * Math.sin(dir) + dy * Math.cos(dir);
-        return (along / (C.ry + C.amp + 0.6 + edge)) ** 2 + (across / (C.rx + C.amp + 0.6 + edge)) ** 2 <= 1;
+        // (the cuff's size, its bumps, its outline, and the blending at its edge)
+        return (along / (C.ry + C.amp + LINE + edge)) ** 2 + (across / (C.rx + C.amp + LINE + edge)) ** 2 <= 1;
       },
-      clear = (q) => !underCuff(q) && Math.hypot(q.x - a.hand.x, q.y - a.hand.y) > shirt.SLEEVE.paw + 1.5 + edge;
-    return { sleeve: [1 / 4, 1 / 3, 1 / 2, 2 / 3].map((k) => at(sleeve * k)).filter(clear), paw: a.hand };
+      // (at a bent elbow the sleeve folds over itself: its inner corner is left out too)
+      atElbow = (q) => a.elbow !== a.hand && Math.hypot(q.x - a.elbow.x, q.y - a.elbow.y) < shirt.SLEEVE.wide / 2 + edge,
+      clear = (q) => !underCuff(q) && !atElbow(q) && Math.hypot(q.x - a.hand.x, q.y - a.hand.y) > shirt.SLEEVE.paw + 1.5 + edge;
+    // (a paw folded right back onto his shoulder, "shoulderL" and "shoulderR", puts its cuff and paw over the
+    // whole of its short sleeve: that arm is checked by its paw alone, and the other poses check the sleeve)
+    const pts = [0.15, 1 / 4, 1 / 3, 1 / 2, 2 / 3].map((k) => at(sleeve * k)).filter(clear),
+      some = !pts.length;
+    return { sleeve: pts, paw: a.hand, some };
   });
 }
 /** Reads the picture at each arm's places; `toScreen(u)` turns his units into the canvas's own pixels. */
@@ -82,7 +91,7 @@ async function readArms(page, canvasSel, samples, toScreen) {
   return samples.map((s) => {
     const sleeve = cs.slice(i, i + s.sleeve.length);
     i += s.sleeve.length;
-    return { sleeve, paw: cs[i++] };
+    return { sleeve, paw: cs[i++], some: s.some };
   });
 }
 // The shirt's colours: its orange, one of its spots, or (at a small size) a blend of the orange and a spot.
@@ -94,7 +103,7 @@ const onShirt = (c) =>
       t = Math.max(0, Math.min(1, ab.reduce((n, v, j) => n + v * (c[j] - a[j]), 0) / ab.reduce((n, v) => n + v * v, 0)));
     return Math.hypot(...a.map((v, j) => v + ab[j] * t - c[j])) <= 24;
   });
-const sleevesOk = (arms) => arms.every((a) => a.sleeve.length > 0 && a.sleeve.every(onShirt) && a.sleeve.some((c) => like(c, ORANGE, 20)) && like(a.paw, PAD, 18));
+const sleevesOk = (arms) => arms.every((a) => (a.some || (a.sleeve.every(onShirt) && a.sleeve.some((c) => like(c, ORANGE, 20)))) && like(a.paw, PAD, 18)) && arms.some((a) => !a.some);
 const show = (arms) => arms.map((a) => ({ sleeve: a.sleeve.map((c) => c.join(",")), paw: a.paw.join(",") }));
 
 // ---------- the dress-up, at home, and out into the hall ----------

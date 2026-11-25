@@ -14,6 +14,8 @@
  *     the next routine; the cap holds (a second routine in the same song pays nothing);
  *   - doing nothing for a long time never ends the dance; it counts as tried after his first three spots;
  *   - its sounds are asked through the party's sounds, and nothing sounds with sound off; no words are drawn.
+ *   - he is framed below the band (Brian 2026-11-25: his top hat hid it): hat to boots on the screen, the band's
+ *     heads showing above his hat in every pose, with every head piece;
  * Once the dance is open the game's clock is stopped: only the test's own ticks move it (60 a second), with the
  * shipped numbers. Stills go to tests/out/party-stills/ (dance-*.png), or to STILLS if set.
  *   node tests/party-dance.mjs
@@ -66,7 +68,31 @@ const { DANCE, SPOTS, ROUTINES, POSES } = D;
   for (let i = 0; i < 4; i++) got += D.dancePays(pay, 0, "perfect");
   g.check("the cap: one song pays at most eight spots and one bonus", got === 8 * DANCE.spotStars + DANCE.perfectStars, got);
   g.check("a new song pays again, and the whole party's dancing pays at most 195", D.dancePays(pay, 1, "hit") === DANCE.spotStars && 3 * (8 * DANCE.spotStars + DANCE.perfectStars) === 195);
-  g.check("the numbers: 2.5 seconds a spot, 5 stars a spot, 25 for a whole routine", DANCE.spotSeconds === 2.5 && DANCE.spotStars === 5 && DANCE.perfectStars === 25);
+  // (3 seconds a spot since 2026-11-25, a starting number for a 10-year-old on a phone; it was 2.5)
+  // His top hat hid the band (Brian 2026-11-25, "make the fixes you think best"): he is framed below the band, hat to
+  // boots on the screen, in every pose, with every piece he can wear on his head, popping and hopping in a cheer.
+  const art = await import(join(root, "src", "modules", "party-art.js")),
+    hs = art.BODY_SPOTS.head,
+    tops = art.PIECES.map((q) => {
+      const ph = hs.w * q.h;
+      return { id: q.id, top: -(hs.y - ph / 2 + 3 - ph / 2) + Math.max(1, hs.w * 0.045) / 2 };
+    });
+  g.check("DANCE_TOP is above his tallest: every head piece's top, a cheer's hop and the pop", tops.every((q) => (q.top + 2.4) * 1.05 <= D.DANCE_TOP), tops);
+  const frames = [];
+  for (const [w, h] of [
+    [W, H],
+    [1100, 800],
+  ]) {
+    const band = D.danceBand(w, h);
+    for (const pose of POSES) {
+      const at = D.danceSquatch(w, h, { ...D.newDance(), pose: POSES.indexOf(pose), pop: 1 }),
+        top = Math.min(...tops.map((q) => D.onScreen(at, 0, -(q.top + 2.4)).y)),
+        boots = D.onScreen(at, 0, 4).y;
+      frames.push({ w, h, pose: pose.id, top: Math.round(top), bandFeet: Math.round(band.feet), boots: Math.round(boots) });
+    }
+  }
+  g.check("on a phone and a computer, in all ten poses, his tallest hat stays below the band's feet and his boots on the screen", frames.every((f) => f.top > f.bandFeet && f.boots < f.h), frames.filter((f) => !(f.top > f.bandFeet && f.boots < f.h)));
+  g.check("the numbers: 3 seconds a spot, 5 stars a spot, 25 for a whole routine", DANCE.spotSeconds === 3 && DANCE.spotStars === 5 && DANCE.perfectStars === 25);
 }
 
 // ---------- in the game ----------
@@ -197,7 +223,8 @@ const still = (page, name) => page.screenshot({ path: join(OUT, name + ".png") }
   s = await st(page);
   ring = await ringAt();
   const real = s.d.left / DANCE.spotSeconds;
-  g.check("after 1 second of 2.5 the ring says 60% left, as the clock does", Math.abs(real - 0.6) < 0.02 && Math.abs(ring.left - real) < 0.02, [real, ring.left]);
+  const ringWant = 1 - 1 / DANCE.spotSeconds;
+  g.check(`after 1 second of ${DANCE.spotSeconds} the ring says ${Math.round(ringWant * 100)}% left, as the clock does`, Math.abs(real - ringWant) < 0.02 && Math.abs(ring.left - real) < 0.02, [real, ring.left]);
   g.check("and it is drawn there: closer to the spot, by the share of time gone", Math.abs(ring.drawn - ring.r * (1 + 1.3 * real)) <= 6, ring);
   await still(page, "dance-02-the-ring-closing");
 
@@ -225,7 +252,7 @@ const still = (page, name) => page.screenshot({ path: join(OUT, name + ".png") }
   const starsA = s.stars,
     took = await runUntil(page, "(d) => !d.live", 5);
   s = await st(page);
-  g.check("the ring closes after the real limit, 2.5 seconds, not before", Math.abs(took - DANCE.spotSeconds) <= 2 / 60, took);
+  g.check(`the ring closes after the real limit, ${DANCE.spotSeconds} seconds, not before`, Math.abs(took - DANCE.spotSeconds) <= 2 / 60, took);
   g.check("too slow: no stars for that spot, a stumble, and a cross on its mark", s.stars === starsA && s.d.stumble > 0 && s.d.marks.join() === "1,-1" && s.d.moves === 1, [s.stars - starsA, s.d.stumble, s.d.marks]);
   g.check("the miss is heard (\"uhoh\"), and the dance is still open", s.played.includes("uhoh") && s.full && !!s.d);
   await run(page, DANCE.stumble * 0.35);
@@ -308,9 +335,11 @@ const still = (page, name) => page.screenshot({ path: join(OUT, name + ".png") }
   // Doing nothing never ends it (a fresh dance near the start of a song, so the song itself does not end it).
   const { page, errors } = await open(false);
   const stars0 = (await st(page)).stars;
-  await run(page, 30);
+  // (a whole routine's time: the first pause, then each of its spots run out and stumbled, and a little more)
+  const idle = Math.ceil(DANCE.first + D.ROUTINE_LENGTH * (DANCE.spotSeconds + DANCE.stumble) + 2);
+  await run(page, idle);
   const s = await st(page);
-  g.check("30 seconds of doing nothing: every spot lost, no stars, and he is still dancing", s.full && !!s.d && s.stars === stars0 && s.d.round >= 1 && s.d.moves === 0 && s.d.marks.every((m) => m === -1), [s.full, s.stars - stars0, s.d && s.d.round, s.d && s.d.marks]);
+  g.check(`${idle} seconds of doing nothing (a routine's time): every spot lost, no stars, and he is still dancing`, s.full && !!s.d && s.stars === stars0 && s.d.round >= 1 && s.d.moves === 0 && s.d.marks.every((m) => m === -1), [s.full, s.stars - stars0, s.d && s.d.round, s.d && s.d.marks]);
   g.check("a routine with every spot lost still ends with the smaller cheer, never the bonus", s.d.round >= 1 && !s.d.big && Object.keys(s.pay).length === 0, s.pay);
   g.check("no page errors doing nothing", errors.length === 0, errors);
   await page.close();
@@ -327,7 +356,7 @@ const still = (page, name) => page.screenshot({ path: join(OUT, name + ".png") }
   await page.close();
   const o = await open(false);
   for (let i = 0; i < 3; i++) (await live(o.page), await tapGlow(o.page));
-  await run(o.page, 3.2); // one spot lost too: sound off for a miss as well
+  await run(o.page, DANCE.spotSeconds + 0.7); // one spot lost too: sound off for a miss as well
   await o.page.touchscreen.tap(W - 36, 36);
   s = await st(o.page);
   g.check("his first three spots hit, then closed: it counts as danced", !s.full && s.done.dance === true, s.done);
@@ -335,5 +364,41 @@ const still = (page, name) => page.screenshot({ path: join(OUT, name + ".png") }
   g.check("with sound off, hits and a miss made no sound", s.osc === 0 && s.played.includes("robot") && s.played.includes("uhoh"), [s.osc, s.played.slice(-6)]);
   g.check("no page errors", errors.length === 0 && o.errors.length === 0, [errors, o.errors]);
   await o.page.close();
+}
+// ---------- the band shows above his top hat, in every pose (Brian 2026-11-25) ----------
+{
+  const { page, errors } = await open(false);
+  const k = await page.evaluate(() => {
+    const c = document.querySelector('canvas[aria-label="dance"]');
+    return c.width / c.clientWidth;
+  });
+  const band = D.danceBand(W, H),
+    t = band.tall / 100,
+    // the middle Croc Boy's crocodile head (party-art.js drawPerson: x -13 to 36, y -98 to -73 of his height), raised
+    // by half his biggest jump; a 12 x 12 grid over it
+    head = [];
+  for (let i = 0; i < 12; i++) for (let j = 0; j < 12; j++) head.push([band.xs[1] + (-13 + (49 * (i + 0.5)) / 12) * t, band.feet + (-98 + (25 * (j + 0.5)) / 12 - 2) * t]);
+  const hidden = [];
+  for (let i = 0; i < POSES.length; i++) {
+    const got = await page.evaluate(
+      (i, pts, k) => {
+        const n = window.__ss.op,
+          dd = n.ch1PartyNow.dance;
+        Object.assign(dd, { pose: i, stumble: 0, party: 0, pop: 0, live: false });
+        window.__frames.frame && window.__frames.frame();
+        const ctx = document.querySelector('canvas[aria-label="dance"]').getContext("2d");
+        return { hat: n.ch1PartyNow.outfit.head, cs: pts.map(([x, y]) => Array.from(ctx.getImageData(Math.round(x * k), Math.round(y * k), 1, 1).data).slice(0, 3)) };
+      },
+      i,
+      head,
+      k,
+    );
+    const green = got.cs.filter((c) => near(c, hex("#3fae4a"), 40)).length;
+    (got.hat !== "tophat" || green < 30) && hidden.push({ pose: POSES[i].id, hat: got.hat, green });
+    i === D.poseIndex("cheer") && (await still(page, "dance-12-band-above-his-hat"));
+  }
+  g.check("in every pose, with the top hat on, the middle Croc Boy's crocodile head shows (not under the hat)", hidden.length === 0, hidden);
+  g.check("no page errors (the band above his hat)", errors.length === 0, errors);
+  await page.close();
 }
 await g.finish("party-dance");

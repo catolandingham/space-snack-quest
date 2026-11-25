@@ -13,24 +13,41 @@
  * No camera countdown and no flash at any other time. The state is `p.shot`; party-free.js runs it.
  */
 import { CAST, stepTo, stepClear, CLEAR_OF_SQUATCH } from "./party-hall.js";
-import { rr, oval, drawBand, drawOutfit } from "./party-art.js";
+import { rr, oval, drawBand, drawOutfit, LOOKS } from "./party-art.js";
 
 // Pinned (R60, docs/TUNING-PINS.json): a photo with Squatch in it is 25.
 export const PHOTO_BONUS = 25;
 // PLACEHOLDERS for Brian: how fast people walk to the row, the longest the gathering may take, the moment the kid
-// has once everyone is there, the count, the flash, the pause after the click, how fast Squatch walks to his place,
+// has once everyone is there (his time to join: 8 s since 2026-11-25, it was 5; a starting number), the count, the flash, the pause after the click, how fast Squatch walks to his place,
 // and how soon a tap may close the Polaroid.
-export const PHOTO = Object.freeze({ walk: 120, gatherMax: 9, settle: 5, count: 3, flash: 0.25, hold: 0.9, join: 240, closeAfter: 0.6, giveWay: 1.2 });
+export const PHOTO = Object.freeze({ walk: 120, gatherMax: 9, settle: 8, count: 3, flash: 0.25, hold: 0.9, join: 240, closeAfter: 0.6, giveWay: 1.2 });
 // The two rows in front of the back wall, left of the lane to the hallway doorway and clear of the snack bar: who
 // stands where (feet, game positions), the gap for Squatch in the front row, the camera tourist's place facing
 // them, where the camera points, and the stage's end, where the band steps down.
+// Spread wider and staggered since 2026-11-25 (Brian: "make the fixes you think best"; the row was hard to read on
+// a phone): 64 apart along each row, the front row in the gaps of the back one, the tallest (the stilt-walker) and
+// the Croc Boys at the back; the rows 54 apart, so every face is above the heads in front of it (and above Squatch's
+// top hat); Squatch in front, one place left of the middle, so his hat sits between faces.
 export const PHOTO_ROW = Object.freeze({
-  back: Object.freeze([["band0", 540], ["band1", 584], ["band2", 628], ["stilt", 672], ["robot", 716]].map(([id, x]) => Object.freeze({ id, x, y: 310 }))),
-  front: Object.freeze([["teal", 574], ["backpack", 686], ["octopus-guest", 734]].map(([id, x]) => Object.freeze({ id, x, y: 348 }))),
-  squatch: Object.freeze({ x: 630, y: 350 }),
-  camera: Object.freeze({ x: 660, y: 486 }),
-  aim: Object.freeze({ x: 630, y: 280 }),
+  back: Object.freeze([["stilt", 506], ["robot", 570], ["band0", 634], ["band1", 698], ["band2", 762]].map(([id, x]) => Object.freeze({ id, x, y: 302 }))),
+  front: Object.freeze([["teal", 538], ["backpack", 666], ["octopus-guest", 730]].map(([id, x]) => Object.freeze({ id, x, y: 356 }))),
+  squatch: Object.freeze({ x: 602, y: 356 }),
+  camera: Object.freeze({ x: 634, y: 486 }),
+  aim: Object.freeze({ x: 634, y: 280 }),
   stageEnd: Object.freeze({ x: 514, y: 264 }),
+});
+/**
+ * Where each face is (tests: no face is hidden), as shares of how tall they are drawn, from their feet: x across
+ * from their middle, y up (negative). Read off the approved guest pictures (docs/approved-art/guests) and the Croc
+ * Boys' side-on crocodile head (party-art.js drawPerson: its snout points right).
+ */
+export const PHOTO_FACES = Object.freeze({
+  teal: Object.freeze({ x0: -0.1, x1: 0.1, y0: -0.93, y1: -0.73 }),
+  backpack: Object.freeze({ x0: -0.1, x1: 0.1, y0: -0.98, y1: -0.76 }),
+  "octopus-guest": Object.freeze({ x0: -0.2, x1: 0.2, y0: -0.93, y1: -0.54 }),
+  robot: Object.freeze({ x0: -0.14, x1: 0.14, y0: -0.93, y1: -0.74 }),
+  stilt: Object.freeze({ x0: -0.08, x1: 0.08, y0: -0.95, y1: -0.81 }),
+  band: Object.freeze({ x0: -0.13, x1: 0.36, y0: -0.98, y1: -0.73 }),
 });
 const ROW = [...PHOTO_ROW.back, ...PHOTO_ROW.front];
 const DOWN = Math.PI / 2;
@@ -148,26 +165,42 @@ export function goBack(p) {
 
 // ---------- the Polaroid, the whole screen ----------
 /**
+ * Where the Polaroid's picture is on a `w` x `h` screen, and how the row maps into it: one scale `z` for across and
+ * up, so the photo is the row as it stood (back row 54 behind, faces above the heads in front). `at(x, y)` is a
+ * game position's place in the picture, in the Polaroid's own frame (its middle at 0, 0, before it is tilted).
+ */
+export function polaroidLayout(w, h) {
+  const pw = Math.min(w - 28, 560),
+    ph = Math.min(h * 0.62, pw * 0.92),
+    m = 14,
+    iw = pw - m * 2,
+    ih = ph - m * 2 - ph * 0.14,
+    x0 = -pw / 2 + m,
+    y0 = -ph / 2 + m,
+    all = [...PHOTO_ROW.back, ...PHOTO_ROW.front, PHOTO_ROW.squatch],
+    lo = Math.min(...all.map((r) => r.x)) - 50,
+    hi = Math.max(...all.map((r) => r.x)) + 50,
+    z = iw / (hi - lo),
+    front = PHOTO_ROW.squatch.y,
+    floor = y0 + ih * 0.97;
+  return { pw, ph, iw, ih, x0, y0, z, at: (x, y) => ({ x: x0 + (x - lo) * z, y: floor - (front - y) * z }) };
+}
+/**
  * The group photo as a Polaroid filling the screen (`w` by `h`): the two rows as they stood, Squatch in his outfit
- * in the gap. `art`: { squatch (ctx, x, y, scale), guest (ctx, id, x, y, tall), sqScale } from the game; `worn` is
- * his outfit now. `k` (0 to 1) slides it in.
+ * in his place. `art`: { squatch (ctx, x, y, scale), guest (ctx, id, x, y, tall), adult, sqScale } from the game;
+ * `worn` is his outfit now. `k` (0 to 1) slides it in.
  */
 export function drawGroupPolaroid(ctx, w, h, art, worn, k) {
   ctx.fillStyle = "#1e2430";
   ctx.fillRect(0, 0, w, h);
-  const pw = Math.min(w - 28, 560),
-    ph = Math.min(h * 0.62, pw * 0.92),
+  const L = polaroidLayout(w, h),
+    { pw, ph, iw, ih, x0, y0, z } = L,
     ease = 1 - (1 - Math.min(1, k)) ** 3;
   ctx.save();
   ctx.translate(w / 2, h * 0.47 + (1 - ease) * h * 0.6);
   ctx.rotate(-0.035 * ease);
   rr(ctx, -pw / 2, -ph / 2, pw, ph, 10, "#fffdf8", 3);
-  // the picture: the back wall and the floor, then everyone
-  const m = 14,
-    iw = pw - m * 2,
-    ih = ph - m * 2 - ph * 0.14,
-    x0 = -pw / 2 + m,
-    y0 = -ph / 2 + m;
+  // the picture: the back wall and the floor, then everyone, back row first
   ctx.save();
   ctx.beginPath();
   ctx.rect(x0, y0, iw, ih);
@@ -176,19 +209,15 @@ export function drawGroupPolaroid(ctx, w, h, art, worn, k) {
   ctx.fillRect(x0, y0, iw, ih);
   ctx.fillStyle = "#a78f98";
   ctx.fillRect(x0, y0 + ih * 0.8, iw, ih * 0.2);
-  // the row is 230 game pixels wide and a grown-up tall: fit it across the picture
-  const lo = PHOTO_ROW.back[0].x - 40,
-    hi = PHOTO_ROW.front[PHOTO_ROW.front.length - 1].x + 40,
-    z = iw / (hi - lo),
-    tall = art.adult * z,
-    px = (x) => x0 + (x - lo) * z,
-    floorBack = y0 + ih * 0.86,
-    floorFront = y0 + ih * 0.97;
-  drawBand(ctx, PHOTO_ROW.back.slice(0, 3).map((r) => ({ x: px(r.x), y: floorBack })), tall * 0.98, 0, false);
-  for (const r of PHOTO_ROW.back.slice(3)) art.guest(ctx, r.id, px(r.x), floorBack, tall);
-  for (const r of PHOTO_ROW.front) art.guest(ctx, r.id, px(r.x), floorFront, tall);
-  art.squatch(ctx, px(PHOTO_ROW.squatch.x), floorFront, art.sqScale * z);
-  drawOutfit(ctx, px(PHOTO_ROW.squatch.x), floorFront, art.sqScale * z, worn, 1);
+  const tall = art.adult * z;
+  for (const r of PHOTO_ROW.back) {
+    const at = L.at(r.x, r.y);
+    r.id.startsWith("band") ? drawBand(ctx, [at], tall * 0.98, 0, false, [LOOKS.band[+r.id.slice(4)]]) : art.guest(ctx, r.id, at.x, at.y, tall);
+  }
+  for (const r of PHOTO_ROW.front) art.guest(ctx, r.id, L.at(r.x, r.y).x, L.at(r.x, r.y).y, tall);
+  const sq = L.at(PHOTO_ROW.squatch.x, PHOTO_ROW.squatch.y);
+  art.squatch(ctx, sq.x, sq.y, art.sqScale * z);
+  drawOutfit(ctx, sq.x, sq.y, art.sqScale * z, worn, 1);
   ctx.restore();
   ctx.lineWidth = 3;
   ctx.strokeStyle = "#1e2430";

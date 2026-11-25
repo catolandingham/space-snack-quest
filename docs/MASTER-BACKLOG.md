@@ -4,24 +4,29 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–86 | ## Where main is (Chapter 1 redesign) |
-| 87–101 | ## Register |
-| 102–123 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 124–144 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 145–157 | ## Phase 2 (plan section 4, T13 to T18) |
-| 158–180 | ## Phase 1 (plan section 3, T5 to T12) |
-| 181–194 | ## SS40–SS44 |
-| 195–212 | ## Story rows |
-| 213–231 | ## Reset section |
-| 232–242 | ## Still open |
-| 243–246 | ## Chapter 1 replot, recorded and not built |
-| 247–398 | ## Changelog |
+| 24–91 | ## Where main is (Chapter 1 redesign) |
+| 92–106 | ## Register |
+| 107–128 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 129–149 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 150–162 | ## Phase 2 (plan section 4, T13 to T18) |
+| 163–185 | ## Phase 1 (plan section 3, T5 to T12) |
+| 186–199 | ## SS40–SS44 |
+| 200–217 | ## Story rows |
+| 218–236 | ## Reset section |
+| 237–247 | ## Still open |
+| 248–251 | ## Chapter 1 replot, recorded and not built |
+| 252–403 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-25, draft PR #87, not merged. Done: Brian's picks for the snack close-up ("C and 1 but I don't think we need the extra eye icon"): his paw in the party shirt's long orange sleeve with a fur cuff, the bartender drawn for the close-up in three views (back, side, front), no eye sign; the party shirt has long sleeves everywhere he wears it. Four fixes (Brian: "make the fixes you think best"): the banner 16 higher, clear of Isfred's antennae and the band; the dance framed so the band shows above his top hat; the group photo's row wider and staggered and the Polaroid with every face showing; starting numbers 3 s a dance spot and 8 s to join the photo. Open for Brian:
+- Placeholders (not pins): 3 s a dance spot (was 2.5), 8 s to join the photo (was 5); 5 stars a spot, 25 for a clean routine, 65 a song, 60 s left when he goes back to the party, unchanged.
+- In the dance Squatch is smaller than before (on a phone about nine tenths of his old size; on a computer about half), so the band shows over his hat. A question for Brian's eye.
+- The Polaroid now shows the row as it stood: everyone is a little smaller in it, with more wall above the back row.
 
 2026-11-24 (night), draft PR #87, not merged. Done: the flyer sneak (P3 and P4: one flyer set down on the stage's right end, GRAB · flyer, carried home, two thoughts at home; the toss, the floor flyers and the flyer on his back deleted); the four lines after the hat and Mops pressing the TV's button with his horn. Open for Brian:
 - The flyer is on the stage's right end, the end Isfred leaves by. To leave a wide, clear strip to it (100 or more: about 37 px on a phone), the two dancing pairs stand 100 further apart from the start of the party (50 each way), and once the band plays three guests look somewhere new: the octopus eyes the snack bar (his partner the robot still looks at him), the glancer watches Isfred at the bar, and the camera tourist films the band (his camera turns to it). A question for Brian's eye. (The first build left a strip 48 wide, 18 px on a phone; the kid robot could not get up it, which is what a finger would find too.)

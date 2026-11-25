@@ -42,8 +42,9 @@ export const SPOTS = Object.freeze({
 
 // The dance spotlight on the floor in front of the stage (party lighting, not an outline).
 export const DANCE_SPOT = Object.freeze({ x: 470, y: 360, rx: 95, ry: 38 });
-// The banner: one cloth over the stage, hanging from the ceiling in front of the window.
-export const BANNER = Object.freeze({ x0: 200, x1: 528, y0: 90, y1: 156 });
+// The banner: one cloth over the stage, hanging from the ceiling in front of the window. (16 higher since
+// 2026-11-25: Isfred's antennae touched it once everyone was 40% bigger; tests/party-stage.mjs measures the gap.)
+export const BANNER = Object.freeze({ x0: 200, x1: 528, y0: 74, y1: 140 });
 
 /**
  * The cast at the party (feet, game positions). Guests are the six approved pictures (guests.js ids). `pair` names

@@ -21,7 +21,8 @@ import { armEnds, SQUATCH_LOOK } from "./squatch-art.js";
 // `least`, `cheerFade`, `cheerPerMove`, `clap`: as before (the shortest dance, how the crowd's cheer fades and
 // grows, how long the guests clap back in the hall).
 // NEW PLACEHOLDERS for Brian (2026-11-24; not approved pins):
-//   spotSeconds   how long he has to tap a glowing spot (the ring closes over this long)
+//   spotSeconds   how long he has to tap a glowing spot (the ring closes over this long); 3 since 2026-11-25
+//                 (it was 2.5; a starting number for a 10-year-old on a phone, Brian: "make the fixes you think best")
 //   spotStars     stars for a spot tapped in time
 //   perfectStars  the bonus for a routine with every spot tapped in time
 //   first, hold, stumble, bigCheer, smallCheer   the pauses: before the first spot, after a hit (the pose is held),
@@ -30,7 +31,7 @@ import { armEnds, SQUATCH_LOOK } from "./squatch-art.js";
 // THE CAP (placeholder too): in each of the three songs the dance pays for one routine's worth of spots (eight)
 // and one bonus, however long he dances; a new song pays again. So the most a party's dancing can pay is
 // 3 x (8 x 5 + 25) = 195 stars, and dancing on never farms more.
-export const DANCE = Object.freeze({ least: 12, cheerFade: 0.35, cheerPerMove: 0.18, clap: 2.5, spotSeconds: 2.5, spotStars: 5, perfectStars: 25, first: 0.9, hold: 0.5, stumble: 0.9, bigCheer: 2, smallCheer: 1.2, tried: 3 });
+export const DANCE = Object.freeze({ least: 12, cheerFade: 0.35, cheerPerMove: 0.18, clap: 2.5, spotSeconds: 3, spotStars: 5, perfectStars: 25, first: 0.9, hold: 0.5, stumble: 0.9, bigCheer: 2, smallCheer: 1.2, tried: 3 });
 // The room's light for each of the three songs (party plan V10): pink, teal, amber.
 export const SONG_LIGHTS = Object.freeze(["rgba(255,95,168,.16)", "rgba(43,196,170,.16)", "rgba(255,190,60,.18)"]);
 
@@ -185,13 +186,30 @@ export function tickDance(d, dt) {
 // ---------- where things are on the screen ----------
 /** How big the dance draws things on a `w` x `h` screen (one unit of the crowd's and the band's sizes). */
 export const unit = (w, h) => Math.min(w / 90, h / 120);
-// How big he is drawn (in the crowd's units), and the smallest a spot's target may be on the screen (48 px across).
+// How big he is drawn at most (in the crowd's units), and the smallest a spot's target may be on the screen (48 px
+// across).
 const BIG = 1.5,
   SMALLEST = 24;
-/** Where Squatch stands in the dance on a `w` x `h` screen: his feet, his scale, his lean, and his pose now. */
+// His tallest, in his own units above his feet: the top hat's top (the tallest head piece, 69.3 with its outline),
+// a cheer's hop (2.4) and the pop (5%). tests/party-dance.mjs checks it against every piece on his head.
+export const DANCE_TOP = 76;
+/**
+ * The band at the back of the dance, on a raised stage (Brian 2026-11-25, "make the fixes you think best": his top
+ * hat hid the band). Their feet (`feet`), the stage from there down to the floor (`floor`), how tall they are
+ * (`tall`) and where each stands (`xs`). He is framed below them: the whole band shows above his hat.
+ */
+export function danceBand(w, h) {
+  return { feet: h * 0.42, floor: h * 0.58, tall: unit(w, h) * 26, xs: [0.3, 0.5, 0.7].map((k) => w * k) };
+}
+/**
+ * Where Squatch stands in the dance on a `w` x `h` screen: his feet, his scale, his lean, and his pose now. His
+ * whole body is on the screen, hat to boots, and his tallest (DANCE_TOP) stays 6 below the band's feet.
+ */
 export function danceSquatch(w, h, d) {
-  const pose = poseNow(d);
-  return { x: w / 2, y: h * 0.9, scale: unit(w, h) * BIG * (1 + (d && d.pop ? d.pop : 0) * 0.05), rot: pose.rot, pose };
+  const pose = poseNow(d),
+    feet = h * 0.95,
+    fit = (feet - danceBand(w, h).feet - 6) / DANCE_TOP;
+  return { x: w / 2, y: feet, scale: Math.min(unit(w, h) * BIG, fit) * (1 + (d && d.pop ? d.pop : 0) * 0.05), rot: pose.rot, pose };
 }
 /** A point of his body (his own units) on the screen, for where he stands (`at`, from danceSquatch). */
 export function onScreen(at, x, y) {
