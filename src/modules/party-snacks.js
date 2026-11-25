@@ -20,9 +20,10 @@ import { SLOTS, fullStack, pull, snacksLeft, SNACK_COUNT } from "./party-snacks-
 
 // PLACEHOLDERS for Brian: stars per snack ("a few"); the bartender's rhythm (seconds with her back turned, then
 // her turn, then facing him, and how long she still looks after a catch); how long his paw takes (out to the
-// snack, back to the bag, home); how long a slide and the last moment before the fall show; the chain's length.
+// snack, back to the bag, home); a slide (the snack hangs over the gap for `hang`, each one further up the pile
+// `hangStep` longer, then drops over `settle`); how long the last moment before the fall shows; the chain's length.
 export const SNACK_STARS = 5;
-export const BAR = Object.freeze({ backs: [5, 4, 6, 4.5], glance: 0.9, face: 2, away: 0.35, afterCatch: 0.6, zoom: 0.4, chain: 1.8, cupAt: 0.45, reach: 0.3, seen: 0.12, carry: 0.4, home: 0.25, settle: 0.45, fall: 0.8 });
+export const BAR = Object.freeze({ backs: [5, 4, 6, 4.5], glance: 0.9, face: 2, away: 0.35, afterCatch: 0.6, zoom: 0.4, chain: 1.8, cupAt: 0.45, reach: 0.3, seen: 0.12, carry: 0.4, home: 0.25, hang: 0.3, hangStep: 0.1, settle: 0.4, fall: 0.8 });
 // Pinned (R60): how long everyone stares after the spill.
 export const SNACK_LOOK_SECONDS = 4;
 
@@ -168,7 +169,8 @@ export function tickSnacks(p, dt) {
       c.held = res.id;
       r.stage = "carry";
       r.t = 0;
-      res.result === "settle" && (c.slides.push(...res.moves.map((m) => ({ ...m, t: 0 }))), ev.push("settle"));
+      // (each sliding snack hangs a moment first, so the kid sees the gap, then the drop: cause, then effect)
+      res.result === "settle" && (c.slides.push(...res.moves.map((m, j) => ({ ...m, t: -(BAR.hang + j * BAR.hangStep) }))), ev.push("settle"));
     } else if (r.stage === "carry" && r.t >= BAR.carry) {
       bagIt(s, c);
       ev.push("bag");

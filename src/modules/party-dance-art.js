@@ -167,8 +167,17 @@ export function drawDanceCloseUp(ctx, w, h, guestArt, outfit, t, d, song = 0) {
   ctx.rotate(at.rot + sway * 0.38);
   drawSquatchArt(ctx, 0, 0, sc, { line: Math.max(2, sc * 0.5), arms, feet: !bootsOnFeet(outfit) });
   drawOutfit(ctx, 0, 0, sc, outfit || {}, 1);
-  // his paws again, over what he wears: the paw on the spot always shows
-  for (const a of armEnds(arms)) oval(ctx, a.hand.x * sc, a.hand.y * sc, 2.5 * sc, 2.5 * sc, SQUATCH_LOOK.mask, Math.max(2, sc * 0.45));
+  // His forearms and paws again, over what he wears: a paw on his belly or his hip is on top of his shirt, with
+  // the arm that put it there, never a paw by itself (the same arm, drawn along itself: still one pair of arms).
+  armEnds(arms).forEach((a, i) => {
+    if (a.elbow !== a.hand)
+      for (const [lw, color] of [
+        [3.6 * sc + Math.max(2, sc * 0.5) * 2, INK],
+        [3.6 * sc, i === 0 ? SQUATCH_LOOK.dark : SQUATCH_LOOK.fur],
+      ])
+        line(ctx, [a.elbow.x * sc, a.elbow.y * sc, a.hand.x * sc, a.hand.y * sc], color, lw);
+    oval(ctx, a.hand.x * sc, a.hand.y * sc, 2.5 * sc, 2.5 * sc, SQUATCH_LOOK.mask, Math.max(2, sc * 0.45));
+  });
   ctx.restore();
   if (wob >= 0) {
     // dizzy: little stars going round over his head

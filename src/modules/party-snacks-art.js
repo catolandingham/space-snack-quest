@@ -291,13 +291,13 @@ function drawPileSnack(ctx, c, slots, i, t, fall) {
     rot = 0;
   const slide = (c.slides || []).find((m) => m.to === i);
   if (slide) {
-    // it drops into the gap with a small bounce
+    // it hangs over the gap a moment (shaking), then drops into it with a small bounce
     const k = clamp(slide.t / BAR.settle),
       from = slotAt(slide.from),
       d = k < 0.7 ? ease(k / 0.7) : 1 - Math.sin(((k - 0.7) / 0.3) * Math.PI) * 0.08;
     x = from.x + (at.x - from.x) * d;
     y = from.y + (at.y - from.y) * d;
-    rot = (1 - k) * 0.3 * Math.sign(at.x - from.x);
+    rot = slide.t < 0 ? Math.sin(t * 30) * 0.07 : (1 - k) * 0.3 * Math.sign(at.x - from.x);
   } else if (fall > 0) {
     // the pile leans toward the gap, the higher rows furthest
     const dir = Math.sign(slotAt(c.gap).x - CUT.cell.x) || 1,

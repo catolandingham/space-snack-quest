@@ -320,15 +320,22 @@ const backTurned = (page, need = 1.2) => runUntil(page, `(c) => c && c.phase ===
   g.check("(the end pie has one snack on it)", stack.load((await st(page)).snacks.slots, endPie) === "pressed");
   await tapSlot(page, endPie);
   await runUntil(page, "(c) => c.slides.length > 0", 2);
-  await run(page, BAR.settle * 0.45);
+  // first the cup hangs over the gap he made (the gap shows, the cup has not moved yet)
+  await run(page, BAR.hang * 0.5);
+  const up = slotAt(slot(2, 1)),
+    down = slotAt(endPie),
+    cupAt = async () => (await colours(page, [[up.x, up.y + 14], [(up.x + down.x) / 2, (up.y + down.y) / 2 + 14], [down.x, down.y + 14]])).map((c) => (like(c, FILL.cup, 10) ? "cup" : "-")).join("");
+  const hanging = await cupAt();
+  await runUntil(page, `(c) => c.slides[0] && c.slides[0].t >= ${BAR.settle * 0.45}`, 2);
+  const sliding = await cupAt();
   s = await st(page);
   g.check("pulling a snack with one on it: that one slides down into the gap (a settle, no crash)", s.snack.slides.length === 1 && s.snack.fall < 0 && s.snacks.slots[endPie] >= 0 && stack.kindOf(s.snacks.slots[endPie]) === "cup" && stack.stands(s.snacks.slots), s.snack.slides);
   g.check("the settle is heard (\"bump\")", s.played.includes("bump"));
-  // drawn part way down: neither still up in its old place, nor already in the gap's middle
-  const mover = await colours(page, [[slotAt(slot(2, 1)).x, slotAt(slot(2, 1)).y - 30], [slotAt(endPie).x, slotAt(endPie).y + 30]]);
-  g.check("the slide is drawn: the cup is on its way, between the two places", !like(mover[0], FILL.cup, 10) || !like(mover[1], FILL.cup, 10), mover);
+  // read from the picture at three places (its old place, half way, the gap): first up, then on its way, then down
+  g.check("the slide is drawn: the cup hangs over the gap, then is on its way between the two places", hanging === "cup--" && sliding[1] === "c" && sliding !== hanging, [hanging, sliding]);
   await still(page, "snack-10-a-settle");
   await runUntil(page, "(c, s) => s.bag === 3 && c.slides.length === 0", 3);
+  g.check("and it ends in the gap", (await cupAt()) === "--cup", await cupAt());
   ck = await cutKinds(page);
   g.check("after the settle the close-up shows the pile as the rule left it", ck.join() === want((await st(page)).snacks.slots).join(), ck);
 
