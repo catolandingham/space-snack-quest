@@ -154,7 +154,10 @@ export function createTalk(h) {
         Object.assign(q.lift, { held: liftTo(m, s, e.squatchScale()), rest: { x: s.x + TALK.hatOut, y: Math.max(m.y, s.y) - TALK.hatUp }, set: 0 });
       }),
       e.until(() => !P() || !P().lift || !P().lift.id || P().lift.set >= 1),
-      ...wait(0.6),
+      // and steps back beside him for the rest of the talk (close only for the hat: they are drawn big at home)
+      e.until((dt) => e.step("mops", S.x + TALK.beside, S.y + 6, TALK.walk * 0.5, dt)),
+      e.run(() => (e.still("mops"), e.face("mops", -1))),
+      ...wait(0.4),
       // his worry, the flyer held up (Brian 2026-11-25: "Worry comes after You have me")
       e.run(() => ((P().flyerUp = 0), h.sound.one("fwip"))),
       e.until(() => !P() || P().flyerUp >= 1),

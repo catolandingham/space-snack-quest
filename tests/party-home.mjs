@@ -225,7 +225,7 @@ for (const beat of ["party:P8a", "party:P8b"]) {
         if (!p || p.scene === "done") break;
         if (n.cur && n.cur.k === "bub" && n.cur.b.text === "But look. Robots are coming to do your job.") {
           robotsLine = true;
-          upHeld = { up: p.flyerUp, flyer: p.flyer };
+          upHeld = { up: p.flyerUp, flyer: p.flyer, over: over(place(mb, n.mo.x, n.mo.y, n.mo.f || -1), place(sb, n.sq.x, n.sq.y, n.sq.f || 1)) };
           break;
         }
         n.cur && n.cur.k === "bub" ? (up += 1 / 60) : (up = 0);
@@ -239,6 +239,7 @@ for (const beat of ["party:P8a", "party:P8b"]) {
   await still(page, "home-3-" + beat.slice(6) + "-flyer-held-up");
   g.check(`${beat}: Squatch fetches the flyer and comes to the middle of the room without being drawn over Mops`, res.most === 0, res);
   g.check(`${beat}: the flyer is in his paw before the talk, and held up for "${L("sq-robots-coming")}"`, res.paw != null && res.robotsLine && res.upHeld.flyer === "paw" && res.upHeld.up >= 1, res);
+  g.check(`${beat}: after the hat Mops has stepped back: they are not drawn over each other while Squatch shows him the flyer`, res.robotsLine && res.upHeld.over === 0, res.upHeld);
   g.check(`no page errors (${beat})`, errors.length === 0, errors);
   await page.close();
 }
