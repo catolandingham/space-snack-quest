@@ -158,7 +158,8 @@ g.check(
 );
 g.check("the six party guests are drawn from Brian's approved Nov 8 pictures", new Set(open.guests.map((q) => q.id)).size === 6, open.guests.map((q) => q.id));
 
-// The snack pyramid topples (five snacks dragged into the bag in the close-up): everyone turns to look at him.
+// The snack pyramid topples (he pulls out a snack two others stand on; Brian 2026-11-24: "it just depends on what
+// he takes", not a count of five): everyone turns to look at him.
 {
   const L = await page.evaluate(() => window.SSQ.beat("ch1-party").snackLayout());
   await page.evaluate(() => ((window.__ss.op.sq.x = 700), (window.__ss.op.sq.y = 520)));
@@ -177,16 +178,14 @@ g.check("the six party guests are drawn from Brian's approved Nov 8 pictures", n
   };
   g.check("the paw icon opens the snack close-up", !!(await open2((v) => v && v.snack, 6000)));
   await sleep(800); // the close-up zooms in before it takes a finger
-  for (let i = 0; i < 5; i++) {
+  {
+    // a middle cup of the counter row (two pies stand on it), tapped while her back is turned
     await open2((v) => v && v.snack && v.snack.phase === "back", 12000);
-    const [, x, y] = L.cut.snacks[i];
+    const [, x, y] = L.cut.snacks[7];
     await page.evaluate((a) => window.__ss.ch1Pointer("down", a[0], a[1]), [x, y]);
-    await page.evaluate(() => window.__ss.ch1Pointer("move", 100, 550));
-    await page.evaluate(() => window.__ss.ch1Pointer("up", 100, 550));
-    await sleep(150);
   }
-  const v = await open2((q) => q && q.stare > 0, 4000);
-  g.check("five snacks topple the pyramid and everyone stares", !!v && v.snacks.toppled, last && { scene: last.scene, alarm: last.alarm, snack: last.snack, snacks: last.snacks, stare: last.stare, curious: last.curious });
+  const v = await open2((q) => q && q.stare > 0, 6000);
+  g.check("pulling a snack two others stand on topples the pyramid and everyone stares", !!v && v.snacks.toppled, last && { scene: last.scene, alarm: last.alarm, snack: last.snack, snacks: last.snacks, stare: last.stare, curious: last.curious });
   const at = await page.evaluate(() => ({ x: window.__ss.op.sq.x, y: window.__ss.op.sq.y }));
   const f = await frameAt(at.x, at.y, 0);
   const look = f.cones

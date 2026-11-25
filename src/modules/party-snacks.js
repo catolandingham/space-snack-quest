@@ -113,6 +113,8 @@ export function tickSnacks(p, dt) {
     ev = [];
   if (!c) return ev;
   const s = stock(p);
+  // (a close-up made by hand, as some tests make it, gets what it lacks)
+  c.slides || Object.assign(c, { reach: null, slides: [], fall: -1, landed: 0 });
   c.zoom = Math.min(1, c.zoom + dt / BAR.zoom);
   if (c.zoom < 1) return ev;
   c.landed = Math.max(0, c.landed - dt * 3);
@@ -198,7 +200,8 @@ export function snackPointer(p, kind, x, y) {
   if (!c || c.zoom < 1 || kind !== "down" || c.fall >= 0) return "";
   const L = CUT.leave;
   if (x >= L.x0 && x <= L.x1 && y >= L.y0 && y <= L.y1) return "close";
-  if (c.reach) return "";
+  // one snack at a time; a paw already on its way home can turn straight round for the next one
+  if (c.reach && c.reach.stage !== "home") return "";
   const slot = snackUnder(stock(p), x, y);
   if (slot < 0) return "";
   c.reach = { stage: "out", slot, t: 0, from: pawAt(c) };

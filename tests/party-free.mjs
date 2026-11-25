@@ -14,7 +14,8 @@
  *   - the dance: DANCE · circle in the spotlight opens the whole screen with the stick and button hidden and its
  *     own ↺; every tap is a move and the crowd cheers louder; it ends with the song; the guests clap;
  *   - the photo: in front of the camera at the flash, +25 once, and the Polaroid; the snacks: the paw icon at the
- *     bar opens the close-up, each snack is stars, five topple the pyramid, the flying cup knocks a piece off and
+ *     bar opens the close-up, each tapped snack is stars, pulling a snack two others stand on topples the pyramid
+ *     (the rule and the close-up are checked in tests/party-snack-stack.mjs and tests/party-snacks.mjs), the flying cup knocks a piece off and
  *     everyone stares for 4 seconds; the bartender's two catches; the octopus only after the first minute, his
  *     lines, two hugs knock a piece off; the hallway doorway: he is bounced back and thinks "I can't go there. Mops will see me." (no beard;
  *     tests/party-round3.mjs measures the bounce);
@@ -483,20 +484,30 @@ const keepCrooked = (page) => async (q) => !q.now.tip && (await set(page, (p) =>
   await still(page, "p6-snack-close-up");
   await set(page, (p) => (p.ft = 61));
   const stars0 = (await st(page)).stars;
-  for (let i = 0; i < 5; i++) {
-    await until(page, (q) => q.now.snack && q.now.snack.phase === "back", 12000);
+  // Brian 2026-11-24: a tap takes a snack (no dragging), and the pile falls by what he takes, not after five.
+  // He taps while her back is turned, with time to spare.
+  const tapSnack = async (i) => {
+    await page.waitForFunction(() => ((c) => c && c.phase === "back" && c.t > 0.4 && c.t < 2.5 && !c.reach)(window.__ss.op.ch1PartyNow.snack), { timeout: 15000 });
     const [, x, y] = L.cut.snacks[i];
     await page.evaluate((a) => window.__ss.ch1Pointer("down", a[0], a[1]), [x, y]);
-    await page.evaluate(() => window.__ss.ch1Pointer("move", 100, 550));
-    await page.evaluate(() => window.__ss.ch1Pointer("up", 100, 550));
-    await sleep(150);
-  }
-  s = await st(page);
-  g.check("each snack is stars; five topple the pyramid and the zoom pulls back", s.now.snacks.toppled && !s.now.snack && s.stars === stars0 + 5 * snacks.SNACK_STARS, [s.now.snacks, s.stars - stars0]);
+  };
+  await tapSnack(0); // the cake on top: nothing is on it
+  s = await until(page, (q) => q.now.snacks.bag === 1, 3000);
+  g.check("a tapped snack goes in the bag and is stars", !!s && s.stars === stars0 + snacks.SNACK_STARS && !s.now.snacks.toppled, s && [s.now.snacks, s.stars - stars0]);
+  s = await until(page, (q) => q.cur === "bub", 2000);
+  g.check("after his first snack: \"Got one!\"", !!s && s.text === "Got one!", s && s.text);
+  await sleep(500);
+  await next(page);
+  await until(page, (q) => q.cur !== "bub", 3000);
+  await tapSnack(7); // a middle cup of the counter row: two pies stand on it
+  s = await until(page, (q) => q.now.snacks.toppled && !q.now.snack, 4000);
+  g.check("pulling a snack two others stand on topples the pyramid and the zoom pulls back, with no stars for it", !!s && s.stars === stars0 + snacks.SNACK_STARS, s && [s.now.snacks, s.stars - stars0]);
   await sleep(500);
   await still(page, "p6-pyramid-topples");
-  s = await until(page, (q) => q.now.gone.length === 1, 3000);
-  g.check("the flying cup knocks a piece off (after the first minute)", !!s, s && s.now.gone);
+  // (if another guest's line comes up meanwhile, the octopus's hiccup for one, he taps it away as a kid would)
+  const lines = [];
+  s = await until(page, (q) => q.now.gone.length === 1, 6000, async (q) => q.cur === "bub" && (lines.push(q.text), await sleep(350), await next(page)));
+  g.check("the flying cup knocks a piece off (after the first minute)", !!s, s ? s.now.gone : lines);
   g.check("everyone turns to stare for 4 seconds", !!s && s.now.stare > 2 && s.now.stare <= 4, s && s.now.stare);
   // measured: every guest's cone points at where he stood
   const aims = await page.evaluate(() => {
@@ -520,13 +531,16 @@ const keepCrooked = (page) => async (q) => !q.now.tip && (await set(page, (p) =>
     p.snack = { zoom: 1, paw: { x: 480, y: 560 }, held: -1, phase: "back", t: 0, back: 0, catches: 0 };
   });
   const L = await page.evaluate(() => window.SSQ.beat("ch1-party").snackLayout());
+  // Brian 2026-11-24: a tap takes a snack, so the catch is his paw out while she faces him (before, the test held
+  // a snack until she turned round).
   const holdUntilCaught = async () => {
+    await page.waitForFunction(() => ((c) => c && c.phase === "face")(window.__ss.op.ch1PartyNow.snack), { timeout: 15000 });
     const [, x, y] = L.cut.snacks[0];
     await page.evaluate((a) => window.__ss.ch1Pointer("down", a[0], a[1]), [x, y]);
     return until(page, (q) => q.cur === "bub", 12000);
   };
   let s = await holdUntilCaught();
-  g.check("she turns while his paw holds a snack: \"...Nice gloves.\"", !!s && s.text === "...Nice gloves.", s && s.text);
+  g.check("his paw out while she faces him: \"...Nice gloves.\"", !!s && s.text === "...Nice gloves.", s && s.text);
   await next(page);
   await until(page, (q) => q.cur !== "bub", 3000);
   s = await holdUntilCaught();
