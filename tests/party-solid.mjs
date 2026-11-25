@@ -80,7 +80,8 @@ e = await walk(150, 400, "ArrowDown");
 g.check("the balloon kid is gone: walking down by the back plant reaches the front of the hall", e.moved >= 8 && e.y >= 580, e);
 e = await walk(440, 600, "ArrowUp", 30);
 g.check("walking up into the hiding plant stops at its pot", e.moved >= 8 && (e.y >= 552 || e.x < 412 || e.x > 476), e);
-e = await walk(600, 580, "ArrowLeft");
+// (not along the very front: since 2026-11-25 his own doorway there, 477,590, takes him home early)
+e = await walk(600, 545, "ArrowLeft");
 g.check("the cake table is gone: walking left in front of the plant passes where it stood", e.moved >= 8 && e.x < 496, e);
 
 // A guest: once a guest has stopped somewhere to dance, walking up into them from below stops at their feet.
