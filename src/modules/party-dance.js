@@ -1,116 +1,236 @@
 /**
- * The free dance (party plan P6, "Dance"; decision 2026-11-22: "A free dance ... no game, no points, no fail";
- * Brian 2026-11-23 on the old arrow game: "It's way too fast ... it should be full screen"). DANCE · circle in the
- * spotlight opens it full screen (the whole phone screen, the stick and the action button hidden): Squatch big in
- * his outfit in the spotlight, a ring of guests clapping behind him, the band at the back. Every tap anywhere is
- * his next robot move and the crowd cheers louder. No arrows, no speed, no fail, no points. It ends with the song.
+ * The dance (party plan P6, "Dance"; Brian 2026-11-23 on the old arrow game: "It's way too fast ... it should be
+ * full screen"; Brian 2026-11-24: "different parts of his body are lighting up ... you have to touch each part of
+ * his body where he needs to put his hand", then: "can we have it that you can get a certain number of points for
+ * doing macarena correctly? And if you don't click the right spot within a certain time period you lose it?" and,
+ * on a miss, "Lose that spot, keep dancing").
+ *
+ * DANCE · circle in the spotlight opens it full screen. One spot on his body glows, with a ring closing round it:
+ * the ring is the time left. Tap the spot before the ring closes and he puts his paw there, strikes that pose and
+ * scores a few stars, shown by the spot. Too slow, or a tap somewhere else on him: no stars for that spot, a short
+ * funny stumble, and the next spot glows. A tap that is not on him does nothing. A routine is eight spots, in a
+ * different order for each of the three songs; every spot hit is a bonus and the big cheer, a routine with a miss
+ * ends with a smaller cheer, and then it goes round again until the song ends or he closes it. A miss never ends
+ * the dance. It reads with the sound off: the glow, the ring, the "+5", the stumble and the cheer are all drawn.
+ *
+ * This file is the rules and the numbers (no drawing, no browser): party-dance-art.js draws it and
+ * party-dance-play.js gives the stars and plays the sounds.
  */
-import { drawBand, drawOutfit, oval, line } from "./party-art.js";
-import { bootsOnFeet } from "./party-outfit.js";
-import { drawSquatchArt } from "./squatch-art.js";
+import { armEnds, SQUATCH_LOOK } from "./squatch-art.js";
 
-// PLACEHOLDERS: the shortest dance (if the song is nearly over when he starts, the band plays on this long), how
-// fast the crowd's cheer fades, and how long the guests clap back in the hall.
-export const DANCE = Object.freeze({ least: 12, cheerFade: 0.35, cheerPerMove: 0.18, clap: 2.5 });
+// `least`, `cheerFade`, `cheerPerMove`, `clap`: as before (the shortest dance, how the crowd's cheer fades and
+// grows, how long the guests clap back in the hall).
+// NEW PLACEHOLDERS for Brian (2026-11-24; not approved pins):
+//   spotSeconds   how long he has to tap a glowing spot (the ring closes over this long)
+//   spotStars     stars for a spot tapped in time
+//   perfectStars  the bonus for a routine with every spot tapped in time
+//   first, hold, stumble, bigCheer, smallCheer   the pauses: before the first spot, after a hit (the pose is held),
+//                 the stumble after a miss, the cheer after a whole routine (big with no miss, smaller with one)
+//   tried         the dance counts as tried once he has hit this many spots (it was "three moves")
+// THE CAP (placeholder too): in each of the three songs the dance pays for one routine's worth of spots (eight)
+// and one bonus, however long he dances; a new song pays again. So the most a party's dancing can pay is
+// 3 x (8 x 5 + 25) = 195 stars, and dancing on never farms more.
+export const DANCE = Object.freeze({ least: 12, cheerFade: 0.35, cheerPerMove: 0.18, clap: 2.5, spotSeconds: 2.5, spotStars: 5, perfectStars: 25, first: 0.9, hold: 0.5, stumble: 0.9, bigCheer: 2, smallCheer: 1.2, tried: 3 });
 // The room's light for each of the three songs (party plan V10): pink, teal, amber.
 export const SONG_LIGHTS = Object.freeze(["rgba(255,95,168,.16)", "rgba(43,196,170,.16)", "rgba(255,190,60,.18)"]);
-const FLOORS = ["#5a2c4f", "#1f4f52", "#5a4a22"];
 
-/** A new dance: no moves yet, a quiet crowd. */
-export function newDance(endAt) {
-  return { moves: 0, cheer: 0.2, t: 0, endAt, pop: 0 };
+// The spots on his body, in his own units (feet at 0, up is negative, x to the right of the screen), each where
+// his paw can reach. `r` is how big a spot's glow and target are.
+export const SPOT_R = 4.8;
+export const SPOTS = Object.freeze({
+  headL: Object.freeze({ x: -15, y: -31 }),
+  headR: Object.freeze({ x: 15, y: -31 }),
+  shoulderL: Object.freeze({ x: -12, y: -19 }),
+  shoulderR: Object.freeze({ x: 12, y: -19 }),
+  belly: Object.freeze({ x: 0, y: -13 }),
+  hipL: Object.freeze({ x: -10, y: -7 }),
+  hipR: Object.freeze({ x: 10, y: -7 }),
+});
+// One routine for each song: eight spots, never the same spot twice running (nor from its end to its start).
+export const ROUTINES = Object.freeze([
+  Object.freeze(["headR", "shoulderR", "hipR", "belly", "hipL", "shoulderL", "headL", "belly"]),
+  Object.freeze(["headL", "headR", "shoulderL", "shoulderR", "hipL", "hipR", "belly", "headR"]),
+  Object.freeze(["hipL", "shoulderR", "belly", "headL", "hipR", "shoulderL", "headR", "belly"]),
+]);
+export const ROUTINE_LENGTH = ROUTINES[0].length;
+
+// ---------- his poses ----------
+const Q = Math.PI / 2,
+  ARM = SQUATCH_LOOK.arm;
+/**
+ * The arm ({ a, bend }, as squatch-art.js armEnds reads it) that puts the paw of his left (0) or right (1) arm on
+ * the point (x, y) of his own body; out of reach, the arm stretches straight toward it. `out` picks which way the
+ * elbow sticks (1 away from his body, -1 across it).
+ */
+export function armTo(side, x, y, out = 1) {
+  const sh = armEnds([{ a: 0 }, { a: 0 }])[side].shoulder,
+    dx = x - sh.x,
+    dy = y - sh.y,
+    d = Math.hypot(dx, dy),
+    to = Math.atan2(dx, dy);
+  if (d >= ARM - 0.01) return { a: to };
+  const k = Math.acos(d / ARM) * (side === 1 ? 1 : -1) * out;
+  return { a: to + k, bend: -2 * k };
 }
-/** A tap: his next robot move, and the crowd cheers louder. */
-export function danceMove(d) {
+const on = (side, spot, out) => armTo(side, SPOTS[spot].x, SPOTS[spot].y, out);
+/**
+ * His poses, each a drawing of its own: one for every spot (the paw of that side on the spot, the other arm doing
+ * something different each time), then standing ready, the stumble and the cheer. `arms` is [left, right] as
+ * armEnds reads them (null: at rest); `rot` leans him. They are his only arms: a pose replaces the arms at rest.
+ */
+export const POSES = Object.freeze([
+  { id: "headL", rot: -0.07, arms: [on(0, "headL"), { a: Math.PI - 0.7 }] }, // left paw to his head, right arm thrown up
+  { id: "headR", rot: 0.07, arms: [{ a: -Q }, on(1, "headR")] }, // right paw to his head, left arm straight out
+  { id: "shoulderL", rot: 0.04, arms: [on(0, "shoulderL"), { a: 0.9 }] }, // left paw on his shoulder, right arm low and out
+  { id: "shoulderR", rot: -0.04, arms: [{ a: -Q, bend: -Q }, on(1, "shoulderR")] }, // right paw on his shoulder, left arm flexed up
+  { id: "belly", rot: 0, arms: [on(0, "hipL"), on(1, "belly", -1)] }, // right paw on his belly, left paw on his hip
+  { id: "hipL", rot: 0.06, arms: [on(0, "hipL"), { a: Q }] }, // left paw on his hip, right arm straight out
+  { id: "hipR", rot: -0.06, arms: [{ a: -(Math.PI - 0.6) }, on(1, "hipR")] }, // right paw on his hip, left arm waving high
+  { id: "ready", rot: 0, arms: null },
+  { id: "stumble", rot: 0, arms: [{ a: -2.2, bend: 0.9 }, { a: 2.5, bend: 1.1 }] }, // arms flailing
+  { id: "cheer", rot: 0, arms: [{ a: -(Math.PI - 0.45) }, { a: Math.PI - 0.45 }] }, // both arms up
+]);
+export const poseIndex = (id) => POSES.findIndex((q) => q.id === id);
+const READY = poseIndex("ready"),
+  STUMBLE = poseIndex("stumble"),
+  CHEER = poseIndex("cheer");
+
+// ---------- the dance ----------
+/** A new dance: standing ready, a quiet crowd, the first spot about to glow. */
+export function newDance() {
+  return { moves: 0, cheer: 0.2, t: 0, pop: 0, song: 0, i: 0, round: 0, missed: 0, marks: [], live: false, left: 0, hold: DANCE.first, pose: READY, stumble: 0, party: 0, big: false, fx: [] };
+}
+/** The routine of the song the dance is on. */
+export const routineOf = (d) => ROUTINES[(d.song || 0) % ROUTINES.length];
+/** The spot glowing now ("" while he holds a pose, stumbles or is cheered). */
+export const spotNow = (d) => (d && d.live ? routineOf(d)[d.i] : "");
+/** How much of the time to tap the glowing spot is left, 1 down to 0 (the ring is drawn from this). */
+export const ringLeft = (d) => (d && d.live ? Math.max(0, d.left / DANCE.spotSeconds) : 0);
+/** True once he has hit enough spots for the dance to count as tried. */
+export const danceTried = (d) => !!d && d.moves >= DANCE.tried;
+/** The pose he is in now: the stumble, the cheer, or the pose of the last spot he hit. */
+export function poseNow(d) {
+  if (!d) return POSES[READY];
+  if (d.stumble > 0) return POSES[STUMBLE];
+  if (d.party > 0) return POSES[CHEER];
+  return POSES[d.pose == null ? (d.moves || 0) % POSES.length : d.pose] || POSES[READY];
+}
+// The spot is done (hit or missed): the next one glows after `wait`; after the last, the routine's cheer first.
+function next(d, wait, ev) {
+  d.live = false;
+  d.i += 1;
+  if (d.i >= ROUTINE_LENGTH) {
+    d.big = d.missed === 0;
+    d.party = d.big ? DANCE.bigCheer : DANCE.smallCheer;
+    d.cheer = d.big ? 1.6 : 0.9;
+    d.i = 0;
+    d.round += 1;
+    d.missed = 0;
+    wait += d.party;
+    ev.push(d.big ? "perfect" : "round");
+  }
+  d.hold = wait;
+}
+function hit(d) {
+  const spot = spotNow(d),
+    ev = ["hit"];
   d.moves += 1;
-  d.cheer = Math.min(1, d.cheer + DANCE.cheerPerMove);
+  d.marks.push(1);
+  d.pose = poseIndex(spot);
   d.pop = 1;
+  d.cheer = Math.min(1, d.cheer + DANCE.cheerPerMove);
+  d.fx.push({ kind: "hit", spot, t: 0, stars: 0 });
+  next(d, DANCE.hold, ev);
+  return ev;
 }
+function miss(d, why) {
+  const ev = [why];
+  d.marks.push(-1);
+  d.missed += 1;
+  d.stumble = DANCE.stumble;
+  d.fx.push({ kind: "miss", spot: spotNow(d), t: 0 });
+  next(d, DANCE.stumble, ev);
+  return ev;
+}
+/**
+ * One frame. Returns what happened, as a list: "slow" (the ring closed: that spot is lost), then perhaps "round"
+ * (the routine is over, with a miss in it) — a "perfect" routine can only end on a tap.
+ */
 export function tickDance(d, dt) {
+  const ev = [];
   d.t += dt;
   d.cheer = Math.max(0.2, d.cheer - DANCE.cheerFade * dt);
   d.pop = Math.max(0, d.pop - dt * 4);
+  d.fx = d.fx.filter((f) => (f.t += dt) < 1.1);
+  if (d.stumble > 0) d.stumble = Math.max(0, d.stumble - dt);
+  else if (d.party > 0) d.party = Math.max(0, d.party - dt);
+  if (!d.live) {
+    d.hold -= dt;
+    if (d.hold <= 0) {
+      // the next spot glows; a new routine starts with a clean row of marks
+      d.i === 0 && d.marks.length >= ROUTINE_LENGTH && (d.marks = []);
+      d.live = true;
+      d.left = DANCE.spotSeconds;
+    }
+    return ev;
+  }
+  d.left -= dt;
+  d.left <= 0 && ev.push(...miss(d, "slow"));
+  return ev;
 }
 
-// His four robot poses, one per move: arms out straight, one arm up and one bent down, both bent up, and a lean
-// with one forearm up and one down. `arms` is [far, near] as squatch-art.js armEnds reads them (the angle from
-// straight down, and the turn at the elbow). They are his only arms: the pose replaces the arms at rest.
-const Q = Math.PI / 2;
-export const POSES = Object.freeze([
-  { rot: 0, arms: [{ a: -Q }, { a: Q }] },
-  { rot: 0.06, arms: [{ a: -Q, bend: Q }, { a: Math.PI - 0.9 }] },
-  { rot: 0, arms: [{ a: -Q, bend: -Q }, { a: Q, bend: Q }] },
-  { rot: -0.08, arms: [{ a: -Q, bend: -Q }, { a: Q, bend: -Q }] },
-]);
+// ---------- where things are on the screen ----------
 /** How big the dance draws things on a `w` x `h` screen (one unit of the crowd's and the band's sizes). */
-const unit = (w, h) => Math.min(w / 90, h / 120);
+export const unit = (w, h) => Math.min(w / 90, h / 120);
 /** Where Squatch stands in the dance on a `w` x `h` screen: his feet, his scale, his lean, and his pose now. */
 export function danceSquatch(w, h, d) {
-  const pose = POSES[(d ? d.moves : 0) % POSES.length];
-  return { x: w / 2, y: h * 0.86, scale: unit(w, h) * 0.9 * (1 + (d ? d.pop : 0) * 0.05), rot: pose.rot, pose };
+  const pose = poseNow(d);
+  return { x: w / 2, y: h * 0.9, scale: unit(w, h) * 1.5 * (1 + (d && d.pop ? d.pop : 0) * 0.05), rot: pose.rot, pose };
 }
-
+/** A point of his body (his own units) on the screen, for where he stands (`at`, from danceSquatch). */
+export function onScreen(at, x, y) {
+  return { x: at.x + (x * Math.cos(at.rot) - y * Math.sin(at.rot)) * at.scale, y: at.y + (x * Math.sin(at.rot) + y * Math.cos(at.rot)) * at.scale };
+}
+/** A spot's place and size on the screen: { x, y, r }. The target is never under 44 pixels across. */
+export function spotOnScreen(w, h, d, spot) {
+  const at = danceSquatch(w, h, { ...d, pop: 0 }),
+    s = SPOTS[spot];
+  return { ...onScreen(at, s.x, s.y), r: Math.max(24, SPOT_R * at.scale) };
+}
+/** True when the screen point (x, y) is on him (his head and what he wears on it, his body, his legs). */
+export function onHim(w, h, d, x, y) {
+  const at = danceSquatch(w, h, { ...d, pop: 0 }),
+    dx = (x - at.x) / at.scale,
+    dy = (y - at.y) / at.scale,
+    ux = dx * Math.cos(at.rot) + dy * Math.sin(at.rot),
+    uy = -dx * Math.sin(at.rot) + dy * Math.cos(at.rot),
+    inside = (cx, cy, rx, ry) => ((ux - cx) / rx) ** 2 + ((uy - cy) / ry) ** 2 <= 1;
+  return inside(0, -37, 18, 21) || inside(0, -14, 15, 10) || (Math.abs(ux) <= 8 && uy >= -8 && uy <= 3);
+}
 /**
- * Draws the dance on a `w` x `h` screen. `guestArt` draws the approved guests; `outfit` is what he has on now;
- * `d` is the dance (moves, cheer); `song` picks the floor and the light.
+ * A tap on the dance at screen point (x, y). Returns what happened, as a list: "hit" (the glowing spot, in time),
+ * or "wrong" (somewhere else on him: that spot is lost), each perhaps followed by "perfect" or "round" when that
+ * was the routine's last spot; or nothing (not on him, or no spot is glowing).
  */
-export function drawDanceCloseUp(ctx, w, h, guestArt, outfit, t, d, song = 0) {
-  const g = ctx.createLinearGradient(0, 0, 0, h);
-  g.addColorStop(0, "#1b1f3a");
-  g.addColorStop(1, "#3a2d55");
-  ctx.fillStyle = g;
-  ctx.fillRect(0, 0, w, h);
-  const floorY = h * 0.62,
-    s = unit(w, h);
-  ctx.fillStyle = FLOORS[song % 3];
-  ctx.fillRect(0, floorY, w, h - floorY);
-  ctx.fillStyle = SONG_LIGHTS[song % 3];
-  ctx.fillRect(0, 0, w, h);
-  // the band at the back, small, on a strip of stage
-  ctx.fillStyle = "#b08968";
-  ctx.fillRect(w * 0.1, floorY - h * 0.08, w * 0.8, h * 0.03);
-  drawBand(ctx, [0.3, 0.5, 0.7].map((k) => ({ x: w * k, y: floorY - h * 0.08 })), s * 26, t, true);
-  // the spotlight
-  const sp = ctx.createRadialGradient(w / 2, h * 0.8, 10, w / 2, h * 0.8, w * 0.45);
-  sp.addColorStop(0, "rgba(255,250,210,.6)");
-  sp.addColorStop(1, "rgba(255,250,210,0)");
-  ctx.fillStyle = sp;
-  ctx.beginPath();
-  ctx.ellipse(w / 2, h * 0.8, w * 0.45, h * 0.09, 0, 0, Math.PI * 2);
-  ctx.fill();
-  // the ring of guests, clapping: they bounce higher and their cheer lines grow as the crowd cheers louder
-  const ring = ["teal", "camera", "backpack", "stilt", "octopus-guest", "robot"],
-    cheer = d ? d.cheer : 0.4;
-  ring.forEach((id, i) => {
-    const k = i / (ring.length - 1),
-      x = w * (0.08 + 0.84 * k),
-      hop = Math.abs(Math.sin(t * (4 + cheer * 6) + i)) * h * 0.012 * (1 + cheer * 2),
-      y = floorY + h * 0.07 + Math.sin(k * Math.PI) * -h * 0.04 - hop;
-    guestArt.drawId(ctx, id, x, y, s * 30, t * 1.5, 1, 0);
-    // the cheer, drawn (sound may be off): lines bursting over each head, longer when it is louder
-    const top = y - s * 34;
-    for (const a of [-0.6, 0, 0.6]) line(ctx, [x + Math.sin(a) * s * 3, top - s * 2, x + Math.sin(a) * s * (3 + 5 * cheer), top - s * (2 + 6 * cheer)], "#ffcf33", Math.max(2, s * 0.6));
-  });
-  // Squatch big, doing the robot: his arms snap to a new pose on each move. He is drawn once: the pose's arms are
-  // his arms, and boots on his legs stand where his feet would be (Brian 2026-11-24: "two sets of arms ... two
-  // sets of shoes").
-  const at = danceSquatch(w, h, d),
-    sc = at.scale;
-  ctx.save();
-  ctx.translate(at.x, at.y);
-  ctx.rotate(at.rot);
-  drawSquatchArt(ctx, 0, 0, sc, { line: Math.max(2, sc * 0.9), arms: at.pose.arms, feet: !bootsOnFeet(outfit) });
-  drawOutfit(ctx, 0, 0, sc, outfit, 1);
-  ctx.restore();
+export function danceTap(d, x, y, w, h) {
+  const spot = spotNow(d);
+  if (!spot) return [];
+  const s = spotOnScreen(w, h, d, spot);
+  if (Math.hypot(x - s.x, y - s.y) <= s.r) return hit(d);
+  return onHim(w, h, d, x, y) ? miss(d, "wrong") : [];
+}
+/**
+ * The stars a hit or a bonus pays, under the cap. `pay` is the party's record of what the dance has paid in each
+ * song ({ [song]: { spots, bonus } }); it is changed. `what` is "hit" or "perfect".
+ */
+export function dancePays(pay, song, what) {
+  const rec = pay[song] || (pay[song] = { spots: 0, bonus: false });
+  if (what === "hit" && rec.spots < ROUTINE_LENGTH) return ((rec.spots += 1), DANCE.spotStars);
+  if (what === "perfect" && !rec.bonus) return ((rec.bonus = true), DANCE.perfectStars);
+  return 0;
 }
 
 /** The dance's way out (the review of PR #87): a close button in the top-right corner, a 44-pixel target or more. */
 export function danceClose(w) {
   return { x: w - 36, y: 36, r: 28 };
-}
-/** The close button: a white disc with a cross, no words (the snack close-up's own). */
-export function drawCloseButton(ctx, b) {
-  oval(ctx, b.x, b.y, b.r - 2, b.r - 2, "#ffffff", 3);
-  line(ctx, [b.x - 10, b.y - 10, b.x + 10, b.y + 10], "#1e2430", 5);
-  line(ctx, [b.x + 10, b.y - 10, b.x - 10, b.y + 10], "#1e2430", 5);
 }

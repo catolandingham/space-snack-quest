@@ -3,8 +3,9 @@
 import { drawHall } from "../src/modules/party-draw.js";
 import { BAND_A } from "./party-half-two-art.js";
 import { drawHeartCone, drawCountdown, drawTugWarning, drawPolaroid, drawBandNotes, drawClap, drawHiccups, drawSpeakerRing, drawPuffs, drawLoosePiece, drawFurryFlyer, drawFlash } from "../src/modules/party-free-art.js";
-import { drawDanceCloseUp, SONG_LIGHTS } from "../src/modules/party-dance.js";
-import { drawPyramid, drawPawIcon, drawSnackCloseUp } from "../src/modules/party-snacks.js";
+import { SONG_LIGHTS } from "../src/modules/party-dance.js";
+import { drawDanceCloseUp } from "../src/modules/party-dance-art.js";
+import { drawPyramid, drawPawIcon, drawSnackCloseUp } from "../src/modules/party-snacks-art.js";
 import { congaAt, CONGA } from "../src/modules/party-toys.js";
 import { PAW_ICON } from "../src/modules/party-free.js";
 import { HALL_SPEAKER } from "../src/modules/party-hall.js";

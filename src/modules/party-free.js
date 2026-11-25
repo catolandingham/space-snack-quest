@@ -20,7 +20,9 @@ import { tickConga, tickPhoto, tickOctopus, tickPlants, tickTug, PHOTO_BONUS, PH
 import { inHallwayZone, startBounce, tickBounce } from "./party-hallway.js";
 import { openSnacks, closeSnacks, tickTopple, snackRecord, SNACK_LOOK_SECONDS } from "./party-snacks.js";
 import { snackFrame, snackTouch } from "./party-snacks-play.js";
-import { newDance, danceMove, tickDance, drawDanceCloseUp, drawCloseButton, danceClose, DANCE } from "./party-dance.js";
+import { newDance, danceClose, danceTried, DANCE } from "./party-dance.js";
+import { drawDanceCloseUp, drawCloseButton } from "./party-dance-art.js";
+import { danceFrame, danceTouch } from "./party-dance-play.js";
 import { openFullScreen, closeFullScreen } from "./fullscreen.js";
 
 // R73 (Brian approved a 3 to 4 minute party; this slice uses 3 minutes). A tuning pin: name and value unchanged.
@@ -248,24 +250,23 @@ export function createFreePlay(h) {
       pointer(kind, x, y) {
         const q = h.P();
         if (kind !== "down" || !q || !q.dance) return;
-        // the way out: the close button in the corner (the dance counts once he has made a few moves)
+        // the way out: the close button in the corner (the dance counts once he has hit his first three spots)
         const cb = danceClose(danceView ? danceView.size().w : 375);
         if (Math.hypot(x - cb.x, y - cb.y) < cb.r) return void closeDance(q);
-        danceMove(q.dance);
-        h.sound.one("robot");
-        q.dance.moves % 3 === 1 && h.sound.one("cheer");
+        // a tap on the glowing spot, on him, or nowhere (party-dance-play.js)
+        danceTouch(q, x, y, danceView ? danceView.size() : { w: 375, h: 812 }, h);
       },
     });
   }
   // `forAlarm`: the alarm closes it (control stays off for the capture rule). Otherwise the guests clap and he has
-  // control again; the dance counts once he made a few moves.
+  // control again; the dance counts once he has hit his first three spots.
   function closeDance(p, forAlarm) {
-    const moves = p.dance ? p.dance.moves : 0;
+    const tried = danceTried(p.dance);
     closeFullScreen();
     danceView = null;
     p.dance = null;
     if (forAlarm) return;
-    moves >= 3 && ((p.done.dance = true), (p.clap = DANCE.clap), h.sound.one("clap"));
+    tried && ((p.done.dance = true), (p.clap = DANCE.clap), h.sound.one("clap"));
     h.control(true);
   }
 
@@ -289,7 +290,7 @@ export function createFreePlay(h) {
       p.songT = 0;
       h.sound.song(p.song);
     }
-    p.dance && (tickDance(p.dance, dt), p.dance.song !== p.song && p.dance.t >= DANCE.least && closeDance(p));
+    p.dance && (danceFrame(p, dt, h), p.dance.song !== p.song && p.dance.t >= DANCE.least && closeDance(p));
     const others = ["conga", "photo", "snacks", "octopus", "hallway"].filter((k) => p.done[k]).length;
     if (p.done.dance && others >= 2 && p.song < 2 && !p.early) ((p.early = true), (p.song = 2), (p.songT = 0), h.sound.song(2));
     p.clap = Math.max(0, p.clap - dt);
