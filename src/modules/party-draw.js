@@ -14,6 +14,7 @@
 import { HALL, BANNER, CAST, DANCE_SPOT } from "./party-hall.js";
 import { drawCones } from "./party-watch.js";
 import { drawOctopusArmsOut, drawHug } from "./party-octopus-art.js";
+import { walkArms } from "./party-shirt-art.js";
 import { drawBanner, drawBand, drawPerson, LOOKS, drawTripod, drawVentSwirl, drawAlarmFlash, drawPartyLights, drawOutfit, drawFlyer, drawTuft, drawMark, drawShout, drawWarning } from "./party-art.js";
 
 // Peeking, the top of his head shows this far above the doorway gap's top edge.
@@ -52,7 +53,7 @@ export function drawSquatchInHall(ctx, E, sq, scale, t) {
   const shake = sq.shake > 0 ? Math.sin(t * 60) * 2.5 : 0,
     y = sq.y - (sq.hop || 0); // a bump lifts him off the floor for a moment (the hallway doorway's push back)
   E.drawSquatch(ctx, sq.x + shake, y, scale, { f: sq.f || 1, walk: sq.walk || 0 });
-  sq.outfit && drawOutfit(ctx, sq.x + shake, y, scale, sq.outfit, sq.f || 1);
+  sq.outfit && drawOutfit(ctx, sq.x + shake, y, scale, sq.outfit, sq.f || 1, { arms: walkArms(sq.walk || 0) });
   // the flyer he carries: in his paw, in front of him
   if (sq.flyer) {
     const at = flyerInPaw(sq.x + shake, y, sq.f || 1, scale);

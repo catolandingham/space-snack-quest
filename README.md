@@ -4,20 +4,20 @@
 | Lines | Heading |
 | --- | --- |
 | 22–31 | # Space Snack Quest |
-| 32–99 | ## Chapter 1 redesign (on main) |
-| 100–130 | ## Source and build |
-| 131–141 | ## Debug link |
-| 142–147 | ## Automatic checks |
-| 148–151 | ## Screen fit |
-| 152–173 | ## Brian's repeat complaints, as tests (2026-11-22) |
-| 174–179 | ## Scene 1 morning |
-| 180–183 | ## Chapter 1 kid robot |
-| 184–200 | ## Phase 1: kitchen and diner clarity |
-| 201–213 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
-| 214–227 | ## Phase 3: one capture rule, phone HUD, tap to walk |
-| 228–237 | ## Chapter 1 pass: the night out has a purpose, switches say why |
-| 238–255 | ## Progression tests |
-| 256–282 | ## Left as they were |
+| 32–101 | ## Chapter 1 redesign (on main) |
+| 102–132 | ## Source and build |
+| 133–143 | ## Debug link |
+| 144–149 | ## Automatic checks |
+| 150–153 | ## Screen fit |
+| 154–175 | ## Brian's repeat complaints, as tests (2026-11-22) |
+| 176–181 | ## Scene 1 morning |
+| 182–185 | ## Chapter 1 kid robot |
+| 186–202 | ## Phase 1: kitchen and diner clarity |
+| 203–215 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
+| 216–229 | ## Phase 3: one capture rule, phone HUD, tap to walk |
+| 230–239 | ## Chapter 1 pass: the night out has a purpose, switches say why |
+| 240–257 | ## Progression tests |
+| 258–284 | ## Left as they were |
 <!-- /section-index -->
 # Space Snack Quest
 
@@ -31,13 +31,15 @@ Calendar review status (2026-11-16): Brian said yes to merge the calendar (Nov 1
 
 ## Chapter 1 redesign (on main)
 
+2026-11-25, the same draft pull request #87, Brian's picks for the snack close-up ("C and 1 but I don't think we need the extra eye icon"); not merged to main. His paw is now in the orange spotted sleeve of his party shirt, with a fuzzy fur cuff and only a round furry mitten paw out (it looks like a glove, which sets up "...Nice gloves."): waiting, reaching and holding, with no bare arm anywhere, and the paw holds the snack between its palm and fingers (`src/modules/party-snacks-paw.js`, `sleeve-art.js`). The bartender is the same bartender drawn properly for the close-up, wholly inside the picture with her waist at the counter: her back (busy at the shelf, humming), a clear side view while she turns, and her front with wide eyes, and a gasp when she sees his paw out (`src/modules/party-bartender-art.js`). The eye sign beside her is gone; her sight cone starts from her face. The party shirt has long sleeves wherever Squatch wears it (the dress-up closet, the dress-up, home, the hall, the dance, the Polaroid), drawn the same way as the close-up's sleeve, with his paws out of fur cuffs (`src/modules/party-shirt-art.js`; `tests/party-shirt.mjs`). The bartender in the hall is unchanged.
+
 2026-11-24 (night), the same draft pull request #87, three more of Brian's asks; not merged to main. Also a fix found making the videos: a kid who runs home after an alarm and does not hide is caught (the guard who sees him at home keeps coming; before, he gave up and "They lost you." was said to a kid standing in his light).
 
 The flyer sneak (P3 and P4; Brian: "I don't get him throwing the sheets, what if he just leaves one on the side of the stage when he leaves and we have to sneak to get it and get back to the room, avoiding lines of sight?"). Isfred no longer tosses flyers: the toss, the fluttering sheets, the flyers on the floor, the one in the plant and the flyer stuck to Squatch's back are deleted. Isfred holds one flyer through his lines, and as he walks off to the bar he stops at the stage's right end and sets it down there (`FLYER` in `src/modules/party-hall.js`). After "I've never gotten to dance at a party." Squatch thinks "A robot flyer! I'll show Mops." and the flyer glows. In P4 the flyer is outlined, the chip reads "Squatch: grab the flyer", and every sight cone is drawn whole so a kid can plan. The dancers leave one wide, clear strip: the two pairs stand 100 further apart than before (the teal guest and the stilt-walker 50 to the left, the robot and the octopus 50 to the right); the pair by the stage's left look at each other, the robot looks at the octopus, the octopus has turned to eye the snack bar, the glancer watches Isfred at the bar, and the camera tourist films the band. The open strip runs between the pairs from the front of the floor to the stage's right end, 100 or more wide all the way (about 37 px on a phone); the dance floor to its left and the floor to its right are watched. Within reach the button reads "GRAB · flyer"; he is seen taking it and carries it in his paw; then the chip is "Squatch: sneak home for a disguise" and his door is outlined. His door does nothing before he has the flyer. At home he puts it down on the floor by the door and thinks "I deserve one night of normal." and "Costume on. Then I dance!", then the closet is outlined (P5). Seen on the way: the one capture rule; caught, P4 restarts with the flyer back on the stage; hidden until they lose him, he keeps it. After hiding at home without the flyer he steps back out into his doorway and the flyer is still the goal.
 
 After the hat in "Keep going" (Brian: "Shouldn't mops say something and then turn it on?"): Mops sets the lifted piece down on the floor between them; Squatch asks "But why do I have to hide from everyone but you?" and "And why can't the Guardians and I be together?"; Mops says "I've been waiting to show you this." and "Here's why you have to hide." (he answers only the first question, on purpose). With no words Mops walks to the TV, whose button glows, and presses it with his horn; the TV comes on (drawn by the party over the locked picture's TV, measured from the picture: `TV` in `src/modules/party-after-alarm.js`), is held a moment, and beat 20 plays as before.
 
-2026-11-24, the same draft pull request #87, the snacks and the dance (branch `feat/party-snacks-dance`, merged into `feat/party-half-two`); not merged to main. The snack bar's close-up is bright and sharp, and its pyramid is the same ten snacks as the one on the bar in the hall (one table, `src/modules/party-snacks-stack.js`). GRAB · snacks on the action button opens it (no paw icon; the button is not offered once the pile has fallen or every snack is taken). A tap takes a snack: his paw reaches out and puts it in a paper bag that shows a count. The bartender turns her whole body; an eye beside her is shut or open, and her sight lies over the pyramid when she faces him. His paw out while she faces him is a catch. The pyramid falls by what he takes, not by a count: a snack with nothing on it comes out free; a snack with one snack on it lets that one slide down into the gap; a snack with two on it brings the pile down (the hall's topple: the flying cup knocks a piece off and everyone stares). Loose snacks jiggle; snacks stood on look pressed. After his first snack he thinks "Got one!"; "LEAVE · bar" is always on screen. A snack in his paw when the close-up closes (LEAVE · bar, the song ending, an alarm) goes in the bag and is paid (`snackShut`). The octopus starts nothing while the pile falls and everyone stares. Taking all ten is remembered: "Snack Bandit: took every snack at the party." on the Chapter 1 tally (no points), and `snackRecord()` for Day 2.
+2026-11-24, the same draft pull request #87, the snacks and the dance (branch `feat/party-snacks-dance`, merged into `feat/party-half-two`); not merged to main. The snack bar's close-up is bright and sharp, and its pyramid is the same ten snacks as the one on the bar in the hall (one table, `src/modules/party-snacks-stack.js`). GRAB · snacks on the action button opens it (no paw icon; the button is not offered once the pile has fallen or every snack is taken). A tap takes a snack: his paw reaches out and puts it in a paper bag that shows a count. The bartender turns her whole body: her back, side-on, then her front (no eye sign beside her since 2026-11-25), and her sight lies over the pyramid when she faces him. His paw out while she faces him is a catch. The pyramid falls by what he takes, not by a count: a snack with nothing on it comes out free; a snack with one snack on it lets that one slide down into the gap; a snack with two on it brings the pile down (the hall's topple: the flying cup knocks a piece off and everyone stares). Loose snacks jiggle; snacks stood on look pressed. After his first snack he thinks "Got one!"; "LEAVE · bar" is always on screen. A snack in his paw when the close-up closes (LEAVE · bar, the song ending, an alarm) goes in the bag and is paid (`snackShut`). The octopus starts nothing while the pile falls and everyone stares. Taking all ten is remembered: "Snack Bandit: took every snack at the party." on the Chapter 1 tally (no points), and `snackRecord()` for Day 2.
 
 The dance is touch the glowing spots: one spot on him glows with a ring closing round it (2.5 seconds); a tap in time puts his paw there in a pose of its own and scores 5 stars, shown by the spot; too slow, or a tap elsewhere on him, loses that spot with a stumble and the dance goes on; eight spots a routine, a different order for each song; every spot hit is 25 more and the big cheer. Each song pays for at most eight spots and one bonus. The dance counts as found (the try-again card's picture) after three spots hit.
 

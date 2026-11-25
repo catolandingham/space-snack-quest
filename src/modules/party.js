@@ -893,14 +893,15 @@ export function createParty(bridge) {
       if (who === "tourist" && p.talker === "camera") return { x0: p.people.camera.x - 16, x1: p.people.camera.x + 16, y0: p.people.camera.y - adult, y1: p.people.camera.y, side: "left" };
       return null;
     },
-    /** Tests: the dress-up's pieces and body spots, in page pixels, while it is open. */
+    /** Tests: the dress-up's pieces (with how wide each is drawn), body spots and Squatch, in page pixels, while it is open. */
     dressTargets() {
       const p = live(),
         o = fullScreenOpen();
       if (!p || !p.dress || !o) return null;
       const L = dress.layout(o.size().w, o.size().h);
       return {
-        pieces: L.slots.filter((s) => !dress.worn(p.dress.outfit, s.id)).map((s) => ({ id: s.id, x: s.x, y: s.y })),
+        pieces: L.slots.filter((s) => !dress.worn(p.dress.outfit, s.id)).map((s) => ({ id: s.id, x: s.x, y: s.y, w: s.w })),
+        sq: { x: L.sq.x, y: L.sq.y, scale: L.sq.scale },
         spots: Object.fromEntries(dress.SPOT_NAMES.map((n) => [n, dress.spotAt(L, n)])),
         go: dress.meter(p.dress.outfit) >= 1 ? { x: L.go.x + L.go.w / 2, y: L.go.y + L.go.h / 2 } : null,
         outfit: { ...p.dress.outfit },
@@ -937,6 +938,10 @@ export function createParty(bridge) {
     snackHonor() {
       const p = P();
       return snackRecord(p && p.snacks).all ? partyLine("honor-snack-bandit") : "";
+    },
+    /** Tests: what the snack close-up drew last frame (its sleeve's middle line, the bartender's view), or null. */
+    snackDrawn() {
+      return P() ? views.snackDrawn() : null;
     },
     /** Tests: where he stands at the snack bar, and the snack close-up's layout (game positions). */
     snackLayout() {

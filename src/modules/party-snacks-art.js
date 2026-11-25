@@ -5,16 +5,18 @@
  * actually look like the ones that are in the bar in the other shot").
  *
  * The close-up must be "painstakingly obvious" (Brian, 2026-11-24). What a kid reads off it, with no words:
- *   - Is she looking? Her whole body turns. Back turned: her bun and apron bow, an arm up at the shelf, a closed
- *     eye beside her. Facing him: her face with wide eyes, an open eye beside her, and her sight (the game's
- *     yellow cone) lying over the pyramid. While she turns, the cone swings round to it.
+ *   - Is she looking? Her whole body turns (party-bartender-art.js). Back turned: her bun, star clip and apron bow,
+ *     an arm up at the shelf, humming. Turning: side-on, with motion arcs. Facing him: her face with wide eyes,
+ *     and her sight (the game's yellow cone) lying over the pyramid. While she turns, the cone swings round to it.
+ *     No eye sign beside her (Brian 2026-11-25: "I don't think we need the extra eye icon").
  *   - Which snack is safe? A snack with nothing on it jiggles. A snack with one snack on it sits pressed. A snack
  *     with two on it is squashed flat, with strain marks: pull it and the pile falls.
  *   - What did the pile just do? A snack that slides down is drawn sliding, with a puff where it lands; a pile
  *     about to fall leans and a burst shows the gap.
  *   - His bag is a paper bag with snacks poking out and a count; LEAVE · bar is always on screen.
  */
-import { rr, oval, line, words, INK, drawPerson, LOOKS } from "./party-art.js";
+import { rr, oval, line, words, INK } from "./party-art.js";
+import { drawBartender } from "./party-bartender-art.js";
 import { PYRAMID } from "./party-hall.js";
 import { partyLine } from "./party-lines.js";
 import { SLOTS, kindOf, load, fullStack } from "./party-snacks-stack.js";
@@ -101,59 +103,6 @@ export function bartenderTurn(c) {
   if (c.phase === "glance") return ease(clamp(c.t / BAR.glance));
   return 1 - ease(clamp(c.t / BAR.away));
 }
-/** Her back: the bun, the apron's bow, one arm up at the shelf with a cup (she is busy, not looking). */
-function bartenderBack(ctx, h, t) {
-  const k = h / 100,
-    L = LOOKS.bartender,
-    ow = 5 / k,
-    lift = Math.sin(t * 3) * 1.5;
-  ctx.save();
-  ctx.scale(k, k);
-  rr(ctx, -9, -34, 8, 32, 2, L.pants, ow);
-  rr(ctx, 1, -34, 8, 32, 2, L.pants, ow);
-  rr(ctx, -21, -70, 7, 30, 3, L.shirt, ow);
-  // her other arm reaches up to the shelf, a cup in her hand
-  ctx.save();
-  ctx.translate(17.5, -68);
-  ctx.rotate(-2.5 + lift * 0.03);
-  rr(ctx, -3.5, -2, 7, 30, 3, L.shirt, ow);
-  oval(ctx, 0, 30, 3.6, 3.6, L.skin, ow);
-  rr(ctx, -5, 30, 10, 11, 2, "#8fdcff", ow * 0.8);
-  ctx.restore();
-  rr(ctx, -15, -72, 30, 40, 7, L.shirt, ow);
-  // the apron's strings, tied in a bow at her back
-  line(ctx, [-13, -50, 13, -50], "#fffdf8", 2.4);
-  oval(ctx, -4.5, -50, 4.5, 3.2, "#fffdf8", ow * 0.7);
-  oval(ctx, 4.5, -50, 4.5, 3.2, "#fffdf8", ow * 0.7);
-  line(ctx, [-2, -48, -4, -40], "#fffdf8", 2);
-  line(ctx, [2, -48, 4, -40], "#fffdf8", 2);
-  // the back of her head: all hair, and the bun
-  oval(ctx, 0, -84, 12, 12, L.hair, ow);
-  oval(ctx, 0, -99, 5, 4, L.hair, ow);
-  ctx.restore();
-}
-/** Her front (the approved bartender, drawPerson), with wide eyes on the pyramid; brows up when she sees his paw. */
-function bartenderFront(ctx, h, t, alarmed) {
-  drawPerson(ctx, 0, 0, h, LOOKS.bartender, 1, 0);
-  const k = h / 100,
-    hy = -84 * k;
-  for (const ex of [-4.6, 4.6]) {
-    oval(ctx, ex * k, hy + 1 * k, 3.1 * k, (alarmed ? 4 : 3.4) * k, "#ffffff", 4);
-    oval(ctx, (ex - 1) * k, hy + 1.8 * k, 1.5 * k, 1.7 * k, INK);
-    alarmed && line(ctx, [(ex - 3) * k, hy - 5.5 * k, (ex + 3) * k, hy - 6.5 * k - ex * 0.2 * k], INK, 5);
-  }
-}
-/** The bartender at `at` ({ x, y, h }), turned by `turn` (0 her back, 1 her front): her whole body swings round. */
-export function drawBartender(ctx, at, turn, t, alarmed) {
-  const wide = Math.abs(Math.cos(turn * Math.PI));
-  ctx.save();
-  ctx.translate(at.x, at.y + Math.sin(t * 2) * 3);
-  ctx.scale(Math.max(0.12, wide), 1);
-  turn < 0.5 ? bartenderBack(ctx, at.h, t) : bartenderFront(ctx, at.h, t, alarmed);
-  ctx.restore();
-}
-/** Her eyes, where her sight starts. */
-const eyesOf = (at) => ({ x: at.x, y: at.y - at.h * 0.83 });
 /**
  * Her sight: the game's cone, from her eyes. Facing him it lies over the pyramid; while she turns it swings round
  * from the shelf. Yellow fills it when his paw is out in it (fur showing), as the hall's cones do.
@@ -161,7 +110,7 @@ const eyesOf = (at) => ({ x: at.x, y: at.y - at.h * 0.83 });
 export function drawBarSight(ctx, c, t) {
   const turn = bartenderTurn(c);
   if (turn <= 0.02) return null;
-  const e = eyesOf(CUT.bartender),
+  const e = CUT.bartender.eyes,
     aim = Math.atan2(CUT.cell.y - 150 - e.y, CUT.cell.x - e.x), // the middle of the pyramid
     a = aim + (1 - turn) * 2.2, // swinging down from the shelf side
     half = 0.5,
@@ -184,31 +133,6 @@ export function drawBarSight(ctx, c, t) {
   ctx.restore();
   return { x: e.x, y: e.y, a, half, len };
 }
-/** The eye beside her: shut while her back is turned, opening as she turns, wide open (ringed red) facing him. */
-export function drawEyeSign(ctx, x, y, open, t) {
-  const r = 40,
-    lid = clamp(open);
-  ctx.save();
-  ctx.translate(x, y);
-  oval(ctx, 0, 0, r, r, "#fffdf8", 5);
-  if (lid > 0.9) ((ctx.lineWidth = 7), (ctx.strokeStyle = "#e5533d"), ctx.beginPath(), ctx.arc(0, 0, r + 6 + Math.sin(t * 10) * 2, 0, TAU), ctx.stroke());
-  // the eye: an almond that opens
-  const hgt = 3 + 15 * lid;
-  ctx.beginPath();
-  ctx.moveTo(-26, 0);
-  ctx.quadraticCurveTo(0, -hgt * 2, 26, 0);
-  ctx.quadraticCurveTo(0, hgt * 2, -26, 0);
-  ctx.closePath();
-  ctx.fillStyle = lid > 0.3 ? "#ffffff" : "#d8cdbd";
-  ctx.fill();
-  ctx.lineWidth = 5;
-  ctx.strokeStyle = INK;
-  ctx.stroke();
-  if (lid > 0.3) (oval(ctx, 0, 0, 8 * lid + 2, 8 * lid + 2, "#4a3020"), oval(ctx, 0, 0, 4 * lid, 4 * lid, INK));
-  else for (const lx of [-16, -6, 6, 16]) line(ctx, [lx, 5, lx * 1.15, 13], INK, 4); // shut: lashes hang down
-  ctx.restore();
-}
-
 // ---------- the close-up ----------
 function drawBag(ctx, s, landed) {
   const b = CUT.bag,
@@ -305,9 +229,10 @@ function drawPileSnack(ctx, c, slots, i, t, fall) {
 /**
  * The close-up, drawn over the whole picture, bright and sharp: the wall and her shelf, the bartender (her back,
  * turning, or facing him), her sight, the counter, the pyramid, his bag with its count, LEAVE · bar, and his paw
- * (the engine's paw arm, `drawPawArm`) with the snack it carries. Returns what was drawn where (tests).
+ * (`drawPaw(ctx, at, heldKind, reaching)`: the party's sleeved paw, party-snacks-paw.js) with the snack it carries.
+ * No eye sign: her turning and facing say whether she is looking (Brian 2026-11-25). Returns what was drawn (tests).
  */
-export function drawSnackCloseUp(ctx, p, t, drawPawArm) {
+export function drawSnackCloseUp(ctx, p, t, drawPaw) {
   const c = p.snack,
     s = p.snacks;
   if (!c || !s) return null;
@@ -317,7 +242,7 @@ export function drawSnackCloseUp(ctx, p, t, drawPawArm) {
   ctx.save();
   ctx.globalAlpha = ease(clamp(c.zoom));
   drawBarRoom(ctx);
-  drawBartender(ctx, CUT.bartender, turn, t, c.phase === "face" && pawOut(c));
+  const view = drawBartender(ctx, CUT.bartender, turn, t, c.phase === "face" && pawOut(c));
   drawCounter(ctx);
   const sight = drawBarSight(ctx, c, t);
   // bottom row first, so each snack sits in front of the ones it stands on
@@ -331,13 +256,14 @@ export function drawSnackCloseUp(ctx, p, t, drawPawArm) {
     }
     drawSnack(ctx, kindOf(c.dropped), g.x + 30 * fall, g.y + 150 * fall * fall, SNACK_SIZE.cut, fall * 3, 0, 2);
   }
-  drawEyeSign(ctx, CUT.bartender.x - 118, CUT.bartender.y - CUT.bartender.h * 0.92, turn, t);
   drawLeave(ctx);
-  const paw = c.paw || CUT.rest;
-  drawPawArm && drawPawArm(ctx, paw);
-  c.held >= 0 && drawSnack(ctx, kindOf(c.held), paw.x, paw.y - 34, SNACK_SIZE.cut, 0, 0, 2);
+  const paw = c.paw || CUT.rest,
+    held = c.held >= 0 ? kindOf(c.held) : null;
+  // (a paw that draws the snack it holds says so, { snack: true }; then it is not drawn a second time)
+  const drawn = drawPaw ? drawPaw(ctx, paw, held, !!c.reach && c.reach.stage === "out") : null;
+  held && !(drawn && drawn.snack) && drawSnack(ctx, held, paw.x, paw.y - 34, SNACK_SIZE.cut, 0, 0, 2);
   // the bag is in front of his arm: his paw dips into it from behind, and the count is never covered
   drawBag(ctx, s, c.landed || 0);
   ctx.restore();
-  return { sight, turn, fall };
+  return { sight, turn, fall, view, paw: drawn };
 }

@@ -6,6 +6,7 @@ import { drawHeartCone, drawCountdown, drawBandNotes, drawClap, drawHiccups, dra
 import { SONG_LIGHTS } from "../src/modules/party-dance.js";
 import { drawDanceCloseUp } from "../src/modules/party-dance-art.js";
 import { drawPyramid, drawSnackCloseUp } from "../src/modules/party-snacks-art.js";
+import { drawSnackPaw } from "../src/modules/party-snacks-paw.js";
 import { congaAt, CONGA } from "../src/modules/party-toys.js";
 import { HALL_SPEAKER } from "../src/modules/party-hall.js";
 import { HALL, CAST, SPOTS, GLANCE, HALL_PICTURE, CAMERA_AIM } from "../src/modules/party-hall.js";
@@ -330,7 +331,7 @@ for (const phase of ["back", "glance", "face"])
     const c = hall(partyView(1.4)),
       ctx = c.getContext("2d");
     const p = { snack: { zoom: 1, paw: { x: 470, y: 330 }, held: 4, phase, t: 0 }, snacks: { bag: 2, taken: [0, 2], toppled: false } };
-    drawSnackCloseUp(ctx, p, 1, E().drawPawArm);
+    drawSnackCloseUp(ctx, p, 1, drawSnackPaw);
     return c;
   };
 R.h2_piece_fly = () => {

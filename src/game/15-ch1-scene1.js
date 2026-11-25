@@ -169,14 +169,13 @@
         // The goal's yellow outline round a party spot's real thing (drawGoalMark keeps n.lastRing for the chip).
         markGoal: (spot) => drawGoalMark(spot),
         // The party night (P6 to P8): Mops in the hall at closing time (on `ctx`), an ambient line that fades by itself
-        // ("Say cheese!"), stars for a snack or the photo, the paw arm of the snack close-up, and beat 20 (the TV
+        // ("Say cheese!"), stars for a snack or the photo, and beat 20 (the TV
         // story) after "You have me." (14-ch1-day1.js ch1TvEvening).
         drawMopsOn: (ctx, x, y, scale, opts) => onCtx(ctx, () => Fe(x, y, scale, opts || {})),
         ambient: (who, text, style) => kV(who, text, style),
         addStars: (k) => {
           n.stars = (n.stars || 0) + k;
         },
-        drawPawArm: (ctx, paw) => onCtx(ctx, () => drawPawArm(paw)),
         tvStory: () => J(ch1TvEvening()),
         // Holding ↺ inside a full-screen view: the same restart as the page's ↺.
         restartPart: () => sectionReset(),

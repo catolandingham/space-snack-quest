@@ -47,12 +47,25 @@ export const CUT = Object.freeze({
   leave: LEAVE,
   // (the old close button's place: the middle of LEAVE · bar)
   close: Object.freeze({ x: (LEAVE.x0 + LEAVE.x1) / 2, y: (LEAVE.y0 + LEAVE.y1) / 2, r: 44 }),
-  // her feet (below the picture: the counter hides her legs) and her height; her bubble sits over her head
-  bartender: Object.freeze({ x: 800, y: 700, h: 500 }),
-  rest: Object.freeze({ x: 400, y: 596 }), // his paw waiting
+  // where she stands (x), her feet below the picture (the counter hides her legs) and her height to the top of
+  // her bun, where her bubble sits; her eyes, where her sight starts (party-bartender-art.js draws her)
+  bartender: Object.freeze({ x: 790, y: 700, h: 576, eyes: Object.freeze({ x: 780, y: 240 }) }),
+  rest: Object.freeze({ x: 420, y: 556 }), // his paw waiting (the cuff of his sleeve just in the picture)
   hide: Object.freeze({ x: 400, y: 690 }), // his paw pulled back out of sight while she faces him
 });
 
+// His sleeved arm (paw "C", Brian 2026-11-25; party-snacks-paw.js draws it): it comes in from below the picture
+// (`rootY`, a quarter of the way from x 250 toward his paw), and its fur cuff sits `wrist` back from his paw's
+// middle, toward where the arm comes from.
+export const PAW_SLEEVE = Object.freeze({ rootY: 800, wrist: 46 });
+/** Where his sleeve starts (below the picture) and where it ends at the cuff, for his paw at `paw`. */
+export function sleeveEnds(paw) {
+  const root = { x: 250 + (paw.x - 250) * 0.25, y: PAW_SLEEVE.rootY },
+    dx = root.x - paw.x,
+    dy = root.y - paw.y,
+    l = Math.hypot(dx, dy) || 1;
+  return { root, cuff: { x: paw.x + (dx / l) * PAW_SLEEVE.wrist, y: paw.y + (dy / l) * PAW_SLEEVE.wrist } };
+}
 /** The pile and the bag (p.snacks), with the pile made the first time it is asked for. */
 export function stock(p) {
   const s = p.snacks || (p.snacks = { bag: 0, taken: [], toppled: false, chain: -1 });

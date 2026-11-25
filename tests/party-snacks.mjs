@@ -5,8 +5,11 @@
  *   - the hall's pyramid and the close-up's are the same snacks in the same places, from one table, and stay so
  *     as snacks are taken and slide;
  *   - the close-up is bright and sharp (no dimmed, blurred hall behind it);
- *   - the bartender's whole body turns; her back, her turn and her front are drawn differently; an eye beside her
- *     is shut or open; her sight lies over the pyramid only when she faces him;
+ *   - the bartender (Brian 2026-11-25, "1"): her back, side-on while she turns, and her front are three different
+ *     drawings; no eye sign beside her (Brian: "I don't think we need the extra eye icon"); her sight starts from
+ *     her face and lies over the pyramid only when she faces him;
+ *   - his paw (Brian 2026-11-25, "C"): his arm is in his party shirt's long sleeve with a fur cuff, waiting,
+ *     reaching and holding, with no bare arm below the cuff; the snack in his paw is drawn once;
  *   - a tap takes a snack (no dragging): his paw reaches out, the snack leaves the pile and lands in the bag, the
  *     bag shows the count, each snack is stars;
  *   - "Got one!" once, after the first snack; LEAVE · bar is drawn the whole time, big enough to read, and leaves;
@@ -40,6 +43,7 @@ const free = await import(join(root, "src", "modules", "party-free.js"));
 const { BAR, CUT, SNACK_STARS, SNACK_LOOK_SECONDS, slotAt } = mod;
 const FILL = { cup: "#8fdcff", pie: "#6b3a1c", cake: "#fffdf8" }; // the colour at each kind's middle
 const WALL = "#f1e3ea";
+const INK_HEX = "#1e2430";
 // Where slot i sits on the hall's counter (the art module's own; it needs a browser to import, so the same sum here).
 const hallAt = (i) => ({ x: hall.PYRAMID.x + (stack.SLOTS[i].col - 3) * 7.5, y: hall.PYRAMID.y - 8 - stack.SLOTS[i].row * 13 });
 const slot = (row, n) => stack.SLOTS.map((s, i) => ({ ...s, i })).filter((s) => s.row === row).sort((a, b) => a.col - b.col)[n].i;
@@ -176,6 +180,81 @@ const zoomStill = async (page, name, box, times) => {
   );
   writeFileSync(join(OUT, name + ".png"), Buffer.from(url.split(",")[1], "base64"));
 };
+// His paw is in his party shirt's long sleeve (Brian 2026-11-25, paw "C"): what the close-up drew last (the
+// sleeve's middle line and its cuff, from the game), checked in the picture. Along the sleeve's middle, below the
+// cuff, the picture is the sleeve's orange; and below the cuff's lowest point, within 60 of the sleeve's middle,
+// there is no patch of his fur's colour (the old paw was a bare furry arm from the picture's bottom edge up to
+// the paw). Checked against the old paw: it fails there.
+const FUR = "#6b4428",
+  SLEEVE = "#ff8a3d";
+async function sleeveSeen(page) {
+  const d = await page.evaluate(() => window.SSQ.beat("ch1-party").snackDrawn()),
+    w = d && d.paw;
+  if (!w) return { drawn: false };
+  const inBag = (q) => q.x > CUT.bag.x0 - 10 && q.x < CUT.bag.x1 + 10 && q.y > CUT.bag.y0;
+  const mid = w.sleeve.filter((q) => q.y < 637 && Math.hypot(q.x - w.cuff.x, q.y - w.cuff.y) > 40 && !inBag(q)),
+    onMid = await colours(page, mid.map((q) => [q.x, q.y]));
+  // every pixel below the cuff within 60 of the sleeve's middle line (where his arm is), and the bottom row
+  const fur = await page.evaluate(
+    (top, F, line) => {
+      const c = document.querySelector("canvas"),
+        k = c.width / 960,
+        y0 = Math.round(top * k),
+        h = c.height - y0;
+      if (h <= 0) return { rows: 0, fur: 0, orange: 0, at: [] };
+      const d = c.getContext("2d").getImageData(0, y0, c.width, h).data,
+        near = (i, r, g, b, tol) => Math.abs(d[i] - r) <= tol && Math.abs(d[i + 1] - g) <= tol && Math.abs(d[i + 2] - b) <= tol,
+        segDist = (x, y, a, b) => {
+          const dx = b.x - a.x,
+            dy = b.y - a.y,
+            t = Math.max(0, Math.min(1, ((x - a.x) * dx + (y - a.y) * dy) / (dx * dx + dy * dy || 1)));
+          return Math.hypot(x - a.x - dx * t, y - a.y - dy * t);
+        };
+      let fur = 0,
+        orange = 0,
+        at = [];
+      for (let i = 0; i < d.length; i += 4) {
+        const x = ((i / 4) % c.width) / k,
+          y = (y0 + Math.floor(i / 4 / c.width)) / k;
+        let m = Infinity;
+        for (let j = 1; j < line.length; j++) m = Math.min(m, segDist(x, y, line[j - 1], line[j]));
+        if (m > 60) continue;
+        // (a patch of fur, not one blended pixel at a snack's edge: the pixel and the four 3 away are all fur)
+        const W4 = c.width * 4,
+          patch = [i, i - 12, i + 12, i - 3 * W4, i + 3 * W4].every((q) => q >= 0 && q < d.length && near(q, F[0], F[1], F[2], 6));
+        patch && (fur++, at.length < 6 && at.push([Math.round(x), Math.round(y)]));
+        near(i, 255, 138, 61, 14) && orange++;
+      }
+      return { rows: h, fur, orange, at };
+    },
+    w.cuff.low + 2,
+    hex(FUR),
+    w.sleeve,
+  );
+  return { drawn: true, mid: mid.length, midOrange: onMid.filter((c) => like(c, SLEEVE, 14)).length, midFur: onMid.filter((c) => like(c, FUR, 6)).length, below: fur, cuff: w.cuff };
+}
+// How many times the snack in his paw is drawn this frame (a fill in its colour with its middle at the paw's
+// snack place): once, by the paw, between his palm and fingers.
+async function heldDraws(page, colour) {
+  return page.evaluate((colour) => {
+    const n = window.__ss.op,
+      c = n.ch1PartyNow.snack,
+      cv = document.querySelector("canvas"),
+      k = cv.width / 960,
+      at = { x: c.paw.x, y: c.paw.y - 34 },
+      ctx = cv.getContext("2d"),
+      fill = CanvasRenderingContext2D.prototype.fill;
+    let hits = 0;
+    CanvasRenderingContext2D.prototype.fill = function (...a) {
+      const m = this.getTransform();
+      this === ctx && String(this.fillStyle).toLowerCase() === colour && Math.abs(m.e / k - at.x) < 2 && Math.abs(m.f / k - at.y) < 2 && hits++;
+      return fill.apply(this, a);
+    };
+    window.__ss.drawFrame();
+    CanvasRenderingContext2D.prototype.fill = fill;
+    return hits;
+  }, colour);
+}
 // Stands him at the bar (where the action button offers the snacks).
 const atBar = async (page) => {
   await page.evaluate((p) => ((window.__ss.op.sq.x = p.x - 10), (window.__ss.op.sq.y = p.y + 10)), hall.SNACK_SPOT);
@@ -216,27 +295,51 @@ const backTurned = (page, need = 1.2) => runUntil(page, `(c) => c && c.phase ===
   const bright = await colours(page, [[60, 40], [500, 60], [60, 300]]);
   g.check("the close-up is bright and sharp: the bar's own wall, nothing dimmed or blurred behind it", bright.every((c) => like(c, WALL, 3)), bright);
   await still(page, "snack-03-close-up-same-snacks");
+  // his paw waiting: the mitten and cuff, his sleeve below them to the picture's edge, no bare arm
+  let sl = await sleeveSeen(page);
+  g.check("his paw waiting: a sleeve under the fur cuff at the picture's edge, and no fur below the cuff", sl.drawn && sl.below.rows > 0 && sl.below.orange > 0 && sl.below.fur === 0, sl);
 
-  // ---------- the bartender ----------
-  await backTurned(page, 2);
+  // ---------- the bartender (Brian 2026-11-25: bartender "1", no eye sign) ----------
+  // She is drawn as three different pictures, read from the colour at three places well inside each: her head
+  // below her bun (hair from behind, skin from the front), her far side at the apron's height (red shirt from
+  // behind, the apron's white edge side-on and from the front), and past her right side (her shirt from behind
+  // and from the front, the wall side-on, where she is narrow).
   const B = CUT.bartender,
-    face = [B.x + 40, B.y - B.h * 0.84 + 25], // her cheek
-    eye = [B.x - 118, B.y - B.h * 0.92 - 8],
-    inSight = [300, 60];
+    E = B.eyes,
+    head = [B.x + 20, 280],
+    apron = [B.x - 49, 450],
+    beyond = [B.x + 70, 450],
+    inSight = [250, 120],
+    // where the eye sign was (a white disc 40 across, its middle at 682, 240): its middle and four places inside it
+    signAt = [[682, 240], [662, 252], [702, 252], [682, 266], [682, 214]],
+    noSign = (cs) => cs.every((c) => !like(c, "#fffdf8", 4) && !like(c, "#d8cdbd", 4) && !like(c, "#ffffff", 4)),
+    view = async () => {
+      const [h, a, b] = await colours(page, [head, apron, beyond]);
+      return { head: h, apron: a, beyond: b, sign: await colours(page, signAt), sight: (await colours(page, [inSight]))[0], wide: await shirtWidth(page, 420) };
+    };
   let s = await st(page);
-  const back = { face: (await colours(page, [face]))[0], eye: (await colours(page, [eye]))[0], sight: (await colours(page, [inSight]))[0], wide: await shirtWidth(page, 420) };
-  g.check("her back turned: her hair where her face would be, the eye beside her shut, no sight over the pyramid", like(back.face, "#4a3020") && like(back.eye, "#fffdf8") && like(back.sight, WALL, 3), back);
+  const back = await view();
+  g.check("her back turned: hair where her face would be, her red shirt across her back, no sight over the pyramid", like(back.head, "#4a3020") && like(back.apron, "#e5533d") && like(back.beyond, "#e5533d") && like(back.sight, WALL, 3), back);
+  g.check("no eye sign beside her, her back turned (its old place is the bar's wall or her)", noSign(back.sign), back.sign);
   await still(page, "snack-04-her-back-turned");
   await runUntil(page, `(c) => c.phase === "glance" && c.t >= ${BAR.glance * 0.5}`, 12);
-  const mid = { wide: await shirtWidth(page, 420), sight: (await colours(page, [[700, 60]]))[0] };
-  g.check("turning: her whole body swings round (edge on, under a third as wide)", mid.wide > 0 && mid.wide < back.wide / 3, [mid.wide, back.wide]);
-  await runUntil(page, `(c) => c.phase === "glance" && c.t >= ${BAR.glance * 0.72}`, 2);
+  const mid = await view();
+  // (the glance ends facing him; half way round she is side-on)
+  g.check("turning: she is drawn side-on (the apron's edge at her side, narrow: the wall shows past her)", like(mid.apron, "#fffdf8") && !like(mid.beyond, "#e5533d", 30) && mid.wide > 0 && mid.wide < back.wide * 0.6, mid);
+  g.check("no eye sign beside her while she turns", noSign(mid.sign), mid.sign);
   await still(page, "snack-05-she-turns");
   s = await st(page);
   g.check("her turn is heard too (\"dun\")", s.played.includes("dun"));
   await runUntil(page, `(c) => c.phase === "face" && c.t >= 0.4`, 3);
-  const front = { face: (await colours(page, [face]))[0], eye: (await colours(page, [eye]))[0], sight: (await colours(page, [inSight]))[0], wide: await shirtWidth(page, 420) };
-  g.check("facing him: her face, the eye beside her open, her sight lying over the pyramid", like(front.face, "#e7b48f") && like(front.eye, "#4a3020") && !like(front.sight, WALL, 3) && front.wide > back.wide * 0.8, front);
+  const front = await view();
+  g.check("facing him: her face, her apron, her sight lying over the pyramid", like(front.head, "#e7b48f") && like(front.apron, "#fffdf8") && like(front.beyond, "#e5533d") && !like(front.sight, WALL, 3) && front.wide > back.wide * 0.8, front);
+  g.check("no eye sign beside her facing him", noSign(front.sign), front.sign);
+  // her sight starts from her face: round the place the cone is drawn from (the game's own table) the picture is
+  // her face (skin, her eyes' white and dark), never the wall or the cone's yellow
+  const lay = await page.evaluate(() => window.SSQ.beat("ch1-party").snackLayout().cut.bartender.eyes),
+    round = await colours(page, [-6, 0, 6].flatMap((dx) => [-6, 0, 6].map((dy) => [lay.x + dx, lay.y + dy]))),
+    face = (c) => like(c, "#e7b48f", 14) || like(c, "#fffdf8", 14) || like(c, INK_HEX, 40);
+  g.check("her sight starts from her face (round the cone's place, read from the game, is her face)", lay.x === E.x && lay.y === E.y && round.every(face) && round.some((c) => like(c, "#e7b48f", 14)), [lay, round]);
   s = await st(page);
   g.check("his paw waits out of sight while she faces him", s.snack.paw.y > 640, s.snack.paw);
   await still(page, "snack-06-she-faces-him");
@@ -262,10 +365,17 @@ const backTurned = (page, need = 1.2) => runUntil(page, `(c) => c && c.phase ===
   await tapSlot(page, 0);
   s = await st(page);
   g.check("a tap on a snack sends his paw for it (no drag)", !!s.snack.reach && s.snack.reach.slot === 0 && s.snack.held < 0);
-  await run(page, BAR.reach + 0.1);
+  await run(page, BAR.reach * 0.8);
+  sl = await sleeveSeen(page);
+  g.check("his paw reaching: his arm is the orange sleeve all the way down, no fur below the cuff", sl.drawn && sl.mid >= 4 && sl.midOrange === sl.mid && sl.below.orange > 0 && sl.below.fur === 0, sl);
+  await still(page, "snack-07a-paw-reaches-in-its-sleeve");
+  await run(page, BAR.reach * 0.2 + 0.1);
   s = await st(page);
   g.check("his paw closes on it: the snack is out of the pile and in his paw", s.snack.held === 0 && s.snacks.slots[0] === -1 && Math.abs(s.snack.paw.y - slotAt(0).y) < 120, s.snack);
   await still(page, "snack-07-paw-takes-a-snack");
+  sl = await sleeveSeen(page);
+  g.check("his paw holding the snack: his arm is the orange sleeve all the way down, no fur below the cuff", sl.drawn && sl.mid >= 4 && sl.midOrange === sl.mid && sl.below.orange > 0 && sl.below.fur === 0, sl);
+  g.check("the snack in his paw is drawn once (by his paw, between his palm and fingers)", (await heldDraws(page, FILL[stack.kindOf(s.snack.held)] || "#e5533d")) === 1);
   await runUntil(page, "(c, s) => s.bag === 1", 3);
   s = await st(page);
   g.check("it lands in the bag: the count is 1 and he has the stars", s.snacks.bag === 1 && s.stars === stars0 + SNACK_STARS && s.texts.some((t) => t.text === "1" && inBag(t)), [s.snacks.bag, s.stars - stars0]);

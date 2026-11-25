@@ -166,10 +166,11 @@ export function drawDanceCloseUp(ctx, w, h, guestArt, outfit, t, d, song = 0) {
   ctx.translate(at.x + sway * sc * 3, at.y - hop);
   ctx.rotate(at.rot + sway * 0.38);
   drawSquatchArt(ctx, 0, 0, sc, { line: Math.max(2, sc * 0.5), arms, feet: !bootsOnFeet(outfit) });
-  drawOutfit(ctx, 0, 0, sc, outfit || {}, 1);
+  drawOutfit(ctx, 0, 0, sc, outfit || {}, 1, { arms, pawLine: Math.max(2, sc * 0.45) / sc, pawR: 2.5 });
   // His forearms and paws again, over what he wears: a paw on his belly or his hip is on top of his shirt, with
   // the arm that put it there, never a paw by itself (the same arm, drawn along itself: still one pair of arms).
-  armEnds(arms).forEach((a, i) => {
+  // In the party shirt the long sleeves are those arms (drawOutfit draws them last, with his paws out of the cuffs).
+  (outfit && outfit.body === "shirt" ? [] : armEnds(arms)).forEach((a, i) => {
     if (a.elbow !== a.hand)
       for (const [lw, color] of [
         [3.6 * sc + Math.max(2, sc * 0.5) * 2, INK],

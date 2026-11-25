@@ -9,6 +9,7 @@
  * Words come only from party-lines.js.
  */
 import { partyLine } from "./party-lines.js";
+import { drawShirt, drawShirtSleeves } from "./party-shirt-art.js";
 
 export const INK = "#1e2430";
 const TAU = Math.PI * 2;
@@ -576,7 +577,11 @@ export const PIECES = Object.freeze([
   { id: "stache", h: 0.35 },
   { id: "tutu", h: 0.48 },
 ]);
-export function drawPiece(ctx, id, x, y, w, rot = 0) {
+/**
+ * One piece, centred at (x, y), `w` across, turned by `rot`. `onBody`: the shirt is on his body, so its long
+ * sleeves are drawn along his arms by drawOutfit (party-shirt-art.js); on its own it hangs with its sleeves down.
+ */
+export function drawPiece(ctx, id, x, y, w, rot = 0, onBody = false) {
   const p = PIECES.find((q) => q.id === id);
   if (!p) return;
   const h = w * p.h,
@@ -595,31 +600,7 @@ export function drawPiece(ctx, id, x, y, w, rot = 0) {
     line(ctx, [-w * 0.36, -h * 0.1, -w * 0.24, h * 0.05], "#8a93a3", lw);
     line(ctx, [w * 0.18, -h * 0.1, w * 0.3, h * 0.05], "#8a93a3", lw);
   } else if (id === "shirt") {
-    ctx.beginPath();
-    ctx.moveTo(-w * 0.22, -h * 0.5);
-    ctx.lineTo(-w * 0.5, -h * 0.28);
-    ctx.lineTo(-w * 0.38, -h * 0.05);
-    ctx.lineTo(-w * 0.3, -h * 0.12);
-    ctx.lineTo(-w * 0.3, h * 0.5);
-    ctx.lineTo(w * 0.3, h * 0.5);
-    ctx.lineTo(w * 0.3, -h * 0.12);
-    ctx.lineTo(w * 0.38, -h * 0.05);
-    ctx.lineTo(w * 0.5, -h * 0.28);
-    ctx.lineTo(w * 0.22, -h * 0.5);
-    ctx.quadraticCurveTo(0, -h * 0.3, -w * 0.22, -h * 0.5);
-    ctx.closePath();
-    ctx.fillStyle = "#ff8a3d";
-    ctx.fill();
-    ctx.lineWidth = lw;
-    ctx.strokeStyle = INK;
-    ctx.stroke();
-    for (const [fx, fy, c] of [
-      [-0.15, -0.05, "#2bc48a"],
-      [0.14, 0.18, "#3478f6"],
-      [-0.1, 0.32, "#ffcf33"],
-      [0.16, -0.2, "#ff5fa8"],
-    ])
-      oval(ctx, w * fx, h * fy, w * 0.07, w * 0.07, c);
+    drawShirt(ctx, w, h, lw, onBody);
   } else if (id === "boots") {
     for (const s of [-1, 1]) {
       rr(ctx, s * w * 0.27 - w * 0.17, -h * 0.5, w * 0.3, h * 0.8, w * 0.04, "#ffcf33", lw);
@@ -688,9 +669,11 @@ export const BODY_SPOTS = Object.freeze({
 });
 /**
  * Draws the outfit on Squatch standing at feet (x, y), `scale` game pixels to his unit, facing `f`. `outfit` is
- * { head, face, body, legs } -> piece id or "".
+ * { head, face, body, legs } -> piece id or "". The shirt on his body has long sleeves down his arms, drawn last
+ * (over what he wears, as his arms are): `opts.arms` is how his arms are drawn (squatch-art.js armEnds; left out,
+ * at rest; walkArms for the room's walking Squatch), `opts.pawLine` and `opts.pawR` his paws' outline and size.
  */
-export function drawOutfit(ctx, x, y, scale, outfit, f = 1) {
+export function drawOutfit(ctx, x, y, scale, outfit, f = 1, opts = {}) {
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(scale * (f < 0 ? -1 : 1), scale);
@@ -700,7 +683,9 @@ export function drawOutfit(ctx, x, y, scale, outfit, f = 1) {
     const s = BODY_SPOTS[spot],
       p = PIECES.find((q) => q.id === id),
       h = s.w * (p ? p.h : 0.5);
-    drawPiece(ctx, id, s.x, s.sit ? s.y - h / 2 + 3 : s.y, s.w, 0);
+    drawPiece(ctx, id, s.x, s.sit ? s.y - h / 2 + 3 : s.y, s.w, 0, spot === "body");
   }
+  const o = opts || {};
+  outfit && outfit.body === "shirt" && drawShirtSleeves(ctx, o.arms || null, Math.max(1, BODY_SPOTS.body.w * 0.045), o);
   ctx.restore();
 }

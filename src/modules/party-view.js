@@ -13,6 +13,8 @@ import { homeGuardCone } from "./party-alarm.js";
 import { ventTufts } from "./party-vent.js";
 import { wornNow, flyingNow, furShows } from "./party-outfit.js";
 import { drawPyramid, drawSnackCloseUp } from "./party-snacks-art.js";
+import { drawSnackPaw } from "./party-snacks-paw.js";
+import { walkArms } from "./party-shirt-art.js";
 import { SONG_LIGHTS } from "./party-dance.js";
 import { drawCountdown, drawFlash, drawBandNotes, drawClap, drawHiccups, drawSpeakerRing, drawLoosePiece, drawHeartCone, liftAt, liftTo, setDownAt, drawPat, drawTv } from "./party-free-art.js";
 import { TV } from "./party-after-alarm.js";
@@ -258,7 +260,7 @@ export function createView(h) {
   function draw(ctx, p) {
     const e = E(),
       t = e.time();
-    if (e.room() === "hall") return void (p.snack && drawSnackCloseUp(ctx, p, t, e.drawPawArm));
+    if (e.room() === "hall") return void (snackDrawn = p.snack ? drawSnackCloseUp(ctx, p, t, drawSnackPaw) : null);
     if (e.room() !== "closet") return;
     p.scene === "P1" && p.phase === "home" && drawDoorNotes(ctx, h.homeDoor, t);
     p.flyer === "floor" && drawFlyer(ctx, h.homeRoom.flyer.x, h.homeRoom.flyer.y, 16, 0.5);
@@ -277,7 +279,7 @@ export function createView(h) {
       ctx.save();
       // while Mops looks at the costume, it glows (what the next line is about)
       p.costumeLook && ((ctx.shadowColor = `rgba(255,207,51,${0.75 + 0.25 * Math.sin(t * 6)})`), (ctx.shadowBlur = 26));
-      drawOutfit(ctx, s.x, s.y, sk, wear, s.f || 1);
+      drawOutfit(ctx, s.x, s.y, sk, wear, s.f || 1, { arms: walkArms(e.walkPhase()) });
       ctx.restore();
     }
     if (p.lift && standing) {
@@ -304,7 +306,7 @@ export function createView(h) {
       drawCones(ctx, [c], s, p.pose === "bed", true, (k) => e.noteCone(k));
       // The cone lies under everyone, as in the hall (nothing is drawn over Squatch): standing in the room he is
       // drawn again on top of it, with what he wears, behind the guard or in front of him by where his feet are.
-      const again = () => standing && (e.drawSquatch(ctx, s.x, s.y, sk, { f: s.f || 1, walk: e.walkPhase() }), wear && drawOutfit(ctx, s.x, s.y, sk, wear, s.f || 1));
+      const again = () => standing && (e.drawSquatch(ctx, s.x, s.y, sk, { f: s.f || 1, walk: e.walkPhase() }), wear && drawOutfit(ctx, s.x, s.y, sk, wear, s.f || 1, { arms: walkArms(e.walkPhase()) }));
       s.y <= g.y && again();
       drawPerson(ctx, g.x, g.y, tall, { ...guardLook(g), torch: true }, f, t);
       s.y > g.y && again();
@@ -318,5 +320,7 @@ export function createView(h) {
   function homeGuardHeight() {
     return (50 * E().squatchScale()) / 0.8;
   }
-  return { view, eyesAt, drawRoom, draw, furShows, homeGuardHeight, flyerAt };
+  // what the snack close-up drew last (tests: where his sleeve ran, which view of the bartender)
+  let snackDrawn = null;
+  return { view, eyesAt, drawRoom, draw, furShows, homeGuardHeight, flyerAt, snackDrawn: () => snackDrawn };
 }
