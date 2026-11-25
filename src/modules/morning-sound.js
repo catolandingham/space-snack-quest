@@ -3,10 +3,15 @@
  * Brian 20a (2026-11-23): snoring while Squatch sleeps and a ding-dong before "Good morning, Stormtop!".
  * Brian 2026-11-24, "34(A)" (every MY PICK on the sound board): the snore whistles; a softer tick on every
  * speech bubble in place of the click; Mops's "meh" only on his first line in a scene (never over his own song,
- * no baa on every line); mopping "swish, squeak" (soft and slow while Squatch sleeps); the dunk, the wring, the
+ * no baa on every line); mopping "swish, squeak" once Squatch is awake; the dunk, the wring, the
  * beard shake, hooves walking out and the station door; home alone: the closet door, the bed flop, the homework
  * scribble, the paper rustle and the "That evening…" whoosh. "31a": the beard's squirt and Mops's grumpy
  * "meh-EH!" under "Hey, stop that!".
+ * Brian 2026-11-24, after the morning video ("It's hard to tell the difference between the whistle and the
+ * squeaking. Can we make the snore and whistle a bit more prominent?"): the snore is louder, and while Squatch
+ * sleeps a mop stroke is a soft swish with no squeak (his yes: "just swish and not squeak. That seems fine to
+ * me"), so the only high sound in the quiet room is the snore's whistle. The squeak belongs to the wring at the
+ * bucket (mop-loop.js plays the strokes, the squeeze and the drips, each as it is drawn).
  *
  * Every sound goes through the effects level under the game's master volume (sound-mix.js). Nothing plays
  * while sound is off, and nothing here starts the sound engine. Each sound that really plays is written in a
@@ -18,9 +23,11 @@ import { line } from "./morning-lines.js";
 
 export const MORNING_SOUND = Object.freeze({
   breathEvery: 3.4, // seconds from one snore to the next
-  snoreLevel: 0.22, // the snoring, under a one-off effect (sound plan section 8, rule 3)
+  // The snoring: the main sound of the quiet room, still under the ding-dong that wakes him. A placeholder
+  // (0.22 until 2026-11-24, when Brian asked for the snore and its whistle to be more prominent).
+  snoreLevel: 0.4,
   snoreFade: 0.25, // seconds the snoring takes to fade when he wakes
-  mopSoftEvery: 1.1, // seconds between the soft mop strokes while Squatch sleeps
+  mopSoftEvery: 0.8, // seconds a stroke of the beard takes while Squatch sleeps (out, then back). A placeholder.
   mopEvery: 0.5, // seconds between mop strokes as Mops mops along the floor (one a step, 4 in his 2-second walk)
   hoofEvery: 0.25, // seconds between hooves as he walks out
   mehAfter: 0.05, // seconds after the bubble's tick that Mops's "meh" starts
@@ -132,24 +139,36 @@ export function createMorningSound(getEngine) {
     },
     /**
      * For tests: renders one sound alone, silently (an offline audio context, at the effects level), and says
-     * how loud it is: its peak and its loudness (root mean square) over its length.
+     * how loud it is: its peak and its loudness (root mean square) over its length. `opts`: `level` (the level
+     * it plays at, like the snoring's), `from` and `to` (seconds into the sound: only that part), `highpass`
+     * (Hz: only what is above it, 24 dB an octave).
      */
-    async measure(name) {
+    async measure(name, opts) {
       const snd = SOUNDS[name],
+        o = opts || {},
         rate = 22050,
         Off = typeof OfflineAudioContext !== "undefined" ? OfflineAudioContext : null;
       if (!snd || !Off) return null;
       const c = new Off(1, Math.ceil(rate * (snd.len + 0.3)), rate),
         lvl = c.createGain();
-      lvl.gain.value = MIX.effects;
-      lvl.connect(c.destination);
+      lvl.gain.value = MIX.effects * (o.level == null ? 1 : o.level);
+      let out = lvl;
+      for (let i = 0; o.highpass && i < 2; i++) {
+        const hp = c.createBiquadFilter();
+        hp.type = "highpass";
+        hp.frequency.value = o.highpass;
+        out.connect(hp);
+        out = hp;
+      }
+      out.connect(c.destination);
       snd.play({ c, o: lvl }, 0.01, 0);
       const d = (await c.startRendering()).getChannelData(0);
       let peak = 0,
         sum = 0;
-      const n = Math.min(d.length, Math.ceil(rate * (snd.len + 0.01)));
-      for (let i = 0; i < n; i++) ((peak = Math.max(peak, Math.abs(d[i]))), (sum += d[i] * d[i]));
-      return { peak, rms: Math.sqrt(sum / n) };
+      const i0 = Math.floor(rate * (0.01 + (o.from || 0))),
+        n = Math.min(d.length, Math.ceil(rate * ((o.to == null ? snd.len : o.to) + 0.02)));
+      for (let i = i0; i < n; i++) ((peak = Math.max(peak, Math.abs(d[i]))), (sum += d[i] * d[i]));
+      return { peak, rms: Math.sqrt(sum / Math.max(1, n - i0)) };
     },
     /** For tests: whether he is snoring, how many breaths and ding-dongs have played, through what, and the log. */
     debug() {

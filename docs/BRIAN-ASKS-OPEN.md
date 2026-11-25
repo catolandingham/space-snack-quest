@@ -19,8 +19,8 @@
 | 152–155 | ### Words and rules |
 | 156–168 | ### How the bots work |
 | 169–176 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
-| 177–191 | ## 5. Merged, in a pull request, and being built |
-| 192–202 | ## 6. Corrections to the checkers |
+| 177–192 | ## 5. Merged, in a pull request, and being built |
+| 193–203 | ## 6. Corrections to the checkers |
 <!-- /section-index -->
 # Brian's asks that are not in the game yet
 
@@ -182,6 +182,7 @@ Merged 2026-11-23: cones on everyone and the six approved guests (#75), controls
 Merged 2026-11-23: home alone after Mops leaves (#84, morning plan PR 3): the homework goal and cutaway, OPEN · closet with the G box, FLOP · bed, the calendar already bitten (13A to 16A).
 
 Not merged yet:
+- The quiet room's mopping (the same branch, draft PR #88), Brian after its video, 2026-11-24: "It's hard to tell the difference between the whistle and the squeaking. Can we make the snore and whistle a bit more prominent? ... see the janitor walking around, mopping the floor with his beard ... the water on the floor kind of following ... And then walking back to the bucket to squeeze it out." Built: Mops's loop before the first tap, a louder snore, swish-only strokes while Squatch sleeps (`src/modules/mop-loop.js`). Waiting for his ears and eyes.
 - The morning's sound (branch feat/morning-sound, draft), Brian's answers of 2026-11-24: 34A (every MY PICK on the sound board, in the morning and home alone), 31a (the beard squirts when tapped; "Hey, stop that!"), 30a (a cutaway with no words and nothing to tap plays by itself), the music and effects levels and Brian's recording turned up 10 dB. The morning fixes (18a to 21a) merged on 2026-11-24 as PR #86.
 - The tap-path change.
 - Mops's heart cone in Chapter 1 (PR #35, open since Nov 13) and the rules check on pull requests (PR #34).

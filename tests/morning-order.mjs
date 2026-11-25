@@ -2,8 +2,9 @@
  * The morning, from waking up to Mops leaving (docs/BRIAN-ASKS-OPEN.md "Build next" item 1; the plan's
  * section 1 with Brian's answers of 2026-11-23). Played on a phone (375x812) with touches only.
  * - The steps come in this order, each waiting for a tap: the two cards; the room with Squatch asleep and Mops
- *   mopping (no words); the speaker's ding-dong, then its lines; Mops "Morning, Squatch."; Squatch "Party?";
- *   Mops mopping a few steps along the floor to his bucket, a wet streak behind him (Brian 21a); the
+ *   mopping round his loop (no words; tests/morning-mop-loop.mjs has the loop and a tap at each point of it; here
+ *   the tap comes as he is back at the door end); the speaker's ding-dong, then its lines; Mops "Morning,
+ *   Squatch."; Squatch "Party?"; Mops mopping along the floor to his bucket, a wet streak behind him (21a); the
  *   beard-wringing cutaway (two full-screen pictures); the speaker's Dog Zylan line; Mops "Floating in space! ..."; then the
  *   kid sings (SING ALONG) or walks to Mops (TALK · Mops); the goodbye; Mops walks out; home alone (the homework,
  *   tests/home-alone.mjs); "That evening…".
@@ -225,6 +226,15 @@ const A1 = await playToSong(A, {
       await run.page.keyboard.up("ArrowRight");
       const t = await run.st();
       sleepy.after = { sq: t.sq, pose: t.pose, hop: t.hop };
+      // Mops goes round his mopping loop while the room waits (src/modules/mop-loop.js), so the test chooses
+      // when to tap: as he comes back to the door end of his stretch, a full stretch from his bucket.
+      sleepy.tapAt = await run.page.evaluate(() => {
+        const ss = window.__ss,
+          n = ss.op,
+          lp = () => window.SSQ.beat("ch1-morning").debug().loop;
+        for (let i = 0; i < 1500 && !(lp() && lp().round >= 1 && lp().ph === "down"); i++) ss.tick(1 / 30);
+        return { ph: lp() && lp().ph, k: n.cur ? n.cur.k : "", mo: [n.mo.x, n.mo.y], pose: n.sqPose };
+      });
       // Brian 20a: the tap on the sleeping room rings the speaker's ding-dong first; its words come after it.
       await run.tapAt(480, 330);
       sleepy.ding = await run.page.evaluate(() => {
@@ -425,6 +435,7 @@ g.check(
   g.check("while Mops mops, the big button is dimmed with nothing to tap", !!mb && mb.step === "mopping" && mb.opacity < 0.6 && mb.label === "Action", mb);
 }
 g.check("Squatch is asleep and Mops mops (head down) at the start", sleepy.pose === "sleep" && sleepy.moPose === "mop", sleepy);
+g.check("the quiet room is still waiting, Squatch asleep, when Mops has gone once round his loop", !!sleepy.tapAt && sleepy.tapAt.k === "wait" && sleepy.tapAt.pose === "sleep" && sleepy.tapAt.ph === "down" && Math.abs(sleepy.tapAt.mo[0] - 830) < 1, sleepy.tapAt);
 g.check("the joystick does not move Squatch while he is asleep", !!sleepy.after && sleepy.after.pose === "sleep" && sleepy.after.hop < 0 && Math.abs(sleepy.after.sq[0] - 205) < 1, sleepy.after);
 g.check("the speaker's line wakes him: Squatch sits up, Mops keeps mopping, sound lines at the speaker", !!sleepy.woke && sleepy.woke.pose === "sit" && sleepy.woke.moPose === "mop" && sleepy.woke.fx === "lines", sleepy.woke);
 g.check("the joystick does not move Squatch while he sits in bed (no hop)", !!sleepy.sitAfter && sleepy.sitAfter.pose === "sit" && sleepy.sitAfter.hop < 0, sleepy.sitAfter);

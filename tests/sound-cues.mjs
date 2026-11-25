@@ -3,8 +3,8 @@
  * the sound plan, sections 1 to 4, 8 and 9). Plays Chapter 1 from its first card to "That evening…" on a phone,
  * and records which sound starts at which moment (src/modules/morning-sound.js keeps a log of every sound that
  * really played).
- * - Sound on: snoring (with its whistle) on "This is Squatch" and in the quiet room, the soft slow mopping only
- *   in the quiet room; the ding-dong on the tap; a soft tick on every spoken bubble and none on sung ones;
+ * - Sound on: snoring (with its whistle) on "This is Squatch" and in the quiet room, the soft mop strokes (a
+ *   swish, no squeak) only in the quiet room; the ding-dong on the tap; a soft tick on every spoken bubble and none on sung ones;
  *   Mops's "meh" only on his first line ("Morning, Squatch."), never on a later one or while his song plays;
  *   four mop strokes as he mops along to his bucket (one a step, stopping at the bucket); the dunk's bloop,
  *   glug glug, drips, timed to its picture; the wring's twists; the beard's squirt on a tap, and the grumpy
@@ -101,7 +101,10 @@ const playAll = (page, lines) =>
       const c = n.cur;
       if (c && c.k === "wait") {
         // The quiet room: let a few breaths and mop strokes play before the tap (the snoring keeps real time).
-        roomWait < 4 ? ((roomWait += dt), await tick(dt), await new Promise((ok) => setTimeout(ok, dt * 1000))) : await next(0.1);
+        // Mops goes round his loop meanwhile (src/modules/mop-loop.js; its sounds: tests/morning-mop-loop.mjs),
+        // so the tap comes when he is back at the door end of his stretch, a full stretch from his bucket.
+        const lp = beat.debug().loop;
+        roomWait < 4 || !(lp && lp.round >= 1 && lp.ph === "down") ? ((roomWait += dt), await tick(dt), roomWait < 4 && (await new Promise((ok) => setTimeout(ok, dt * 1000)))) : await next(0.1);
       } else if (c && c.k === "cutaway" && c.auto) await tick(dt);
       else if (c && c.k === "cutaway" && c.id === "beard" && c.panel === 1 && !tapped) {
         // Tap just before a loop ends, so a twist falls while the water flies (it must be skipped, not played late).
@@ -166,7 +169,7 @@ g.check("sound on: the morning was played to the \"That evening…\" card", R.en
   const sq = at((x) => x.name === "snore");
   g.check('the snore plays on "This is Squatch" and in the quiet room, and stops once he wakes', sq.length >= 2 && sq.every((x) => x.step === "asleep") && sq.some((x) => x.k === "card") && sq.some((x) => x.k === "wait"), sq);
   const soft = at((x) => x.name === "mopSoft");
-  g.check("the soft, slow mopping plays only in the quiet room (under the snore), about once a second", soft.length >= 3 && soft.every((x) => x.k === "wait" && x.step === "asleep"), soft);
+  g.check("the soft mop strokes play only in the quiet room (under the snore)", soft.length >= 3 && soft.every((x) => x.k === "wait" && x.step === "asleep"), soft);
   g.check("the ding-dong plays once, on the tap in the quiet room, before the speaker's first words", at((x) => x.name === "dingDong").length === 1 && firstAt("dingDong") < S.findIndex((x) => x.text === L["speaker-party"]), names(S.slice(0, 20)));
 }
 {

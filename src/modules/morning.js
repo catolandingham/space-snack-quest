@@ -3,8 +3,9 @@
  * leaving for work. Brian's order (docs/BRIAN-ASKS-OPEN.md "Build next" item 1, G 547 to 567) with his
  * answers of 2026-11-23 (Q1 to Q8 in the private MORNING-PLAN.md):
  *   cards (Joe's theme plays on the first, if sound is on); Squatch asleep and snoring, Mops mopping with his
- *   beard; the wall speaker's ding-dong, then its party news wakes Squatch; Mops "Morning, Squatch."; Squatch
- *   "Party?"; Mops mops a few steps along the floor to his bucket, leaving a wet streak (Brian 21a); the
+ *   beard, round and round: along the floor to his bucket, a wring over it, back out (mop-loop.js); the wall
+ *   speaker's ding-dong, then its party news wakes Squatch; Mops "Morning, Squatch."; Squatch "Party?"; Mops
+ *   mops from where he stands along the floor to his bucket, leaving a wet streak (Brian 21a); the
  *   beard-wringing cutaway (the dunk plays by itself, Brian 30a; in the wringing picture a tap on his glowing
  *   beard makes it squirt and Mops says "Hey, stop that!", Brian 31a); the speaker announces Dog Zylan;
  *   the tap starts Brian's recording, the notes and Squatch getting out of bed; Mops "Floating in space!...";
@@ -23,6 +24,7 @@ import { line } from "./morning-lines.js";
 import { cutawaySteps, drawCutaway, soundsBetween, beardTarget, closeUpSpeaker, SQUIRT } from "./cutaway.js";
 import { createHomeAlone } from "./home-alone.js";
 import { MORNING_SOUND } from "./morning-sound.js";
+import { createMopLoop, drawWet } from "./mop-loop.js";
 
 // The wooden speaker in the locked home picture v6 (x 1141 to 1191, y 210 to 263 of 1280 x 830), in game
 // positions. Nothing else types these numbers: the bubble placement asks for them through the bridge.
@@ -32,14 +34,16 @@ export const MORNING_PLACES = Object.freeze({
   bed: { x: 205, y: 470 }, // Squatch's feet while he is in the crate bed
   outOfBed: { x: 250, y: 574 }, // the floor in front of the bed, where getting up ends
   mops: { x: 690, y: 560 }, // beside the painted bucket
-  mopFrom: { x: 830, y: 560 }, // where Mops mops at first; after "Party?" he mops along the floor to the bucket
+  mopFrom: { x: 830, y: 560 }, // the door end of the floor Mops mops; his loop starts here (mop-loop.js)
+  wring: { x: 675, y: 528 }, // a step up to the painted bucket: from here his wrung beard reaches over its rim
+  water: { x0: 545, x1: 586, y: 508 }, // the water in the painted bucket (locked home picture v6), for the drips
   beardTip: 50, // how far in front of Mops (game pixels) his beard sweeps the floor
   door: { x: 880, y: 458 }, // the right-wall opening Mops leaves by
   talkReach: 200, // how near Mops Squatch must stand for TALK · Mops
   talkGap: 180, // feet apart (left to right) when they talk, so their drawings do not overlap
   talkFloor: 595, // the floor line in front of the bucket, where Squatch steps back to
 });
-const PACE = Object.freeze({ wake: 0.45, rise: 0.5, standUp: 150, shake: 0.7, leave: 160, notesEvery: 0.5, noteLife: 2.4, mop: 70, wetDries: 12 });
+const PACE = Object.freeze({ wake: 0.45, rise: 0.5, standUp: 150, shake: 0.7, leave: 160, notesEvery: 0.5, noteLife: 2.4, mop: 70, mopAtLeast: 1, wetDries: 12 });
 const NOTE_COLORS = ["#ff5fa8", "#3478f6", "#e07b00", "#2bc48a"];
 
 // Brian 31a: seconds after the beard's squirt that Mops says "Hey, stop that!" (the water has landed by then).
@@ -49,7 +53,7 @@ export function createMorning(bridge) {
   const E = () => bridge.engine();
   const sound = bridge.morningSound;
   // When the step sounds last played (not game state: ↺ starts them again with the step).
-  const cue = { step: "", t: 0, k: 0, soft: 0, softK: 0, cut: "", el: 0 };
+  const cue = { step: "", t: 0, k: 0, cut: "", el: 0 };
   const M = () => {
     const e = E();
     return (e && e.get("ch1Morning")) || null;
@@ -73,22 +77,32 @@ export function createMorning(bridge) {
     const c = E().current();
     return !(c && c.k === "card" && c.id === "jupiter");
   };
-  // The tap on the sleeping room: the speaker's ding-dong (sound on), and Squatch starts to sit up.
+  // The room with no words is up (Squatch asleep, waiting for the tap): Mops goes round his mopping loop.
+  const quiet = (m) => {
+    const c = E().current();
+    return !!m && m.step === "asleep" && !!c && c.k === "wait";
+  };
+  // The tap on the sleeping room: the speaker's ding-dong (sound on), Squatch starts to sit up, and Mops stops
+  // where he is (still mopping, on the spot).
   function ding() {
     const e = E();
     sound.chime();
+    loop.hold(M());
     e.set("sqPose", "sit");
     step("waking", { chimeAt: e.time() });
   }
-  // The tap on "Party?": Mops goes back to mopping, a few steps along the floor to his bucket (Brian 21a: the
-  // close-up "would only make sense if he was just mopping the floor just beforehand").
+  // The tap on "Party?": Mops goes back to mopping, from where he stands along the floor to his bucket (Brian
+  // 21a: the close-up "would only make sense if he was just mopping the floor just beforehand"). The tap came
+  // anywhere in his loop, so he may stand on either side of the bucket spot: out along his stretch, or a step
+  // past it at the wring spot. He faces the bucket all the way (from the wring spot he just steps back), and
+  // if he is already at the spot he still mops two strokes there first (PACE.mopAtLeast).
   function mopAlong() {
     const e = E(),
-      mo = e.pos("mops"),
-      y = mo.y + 12; // just below his hooves, so the streak shows along his whole length
+      tip = e.pos("mops").x - MORNING_PLACES.beardTip,
+      y = MORNING_PLACES.mops.y + 12; // just below his hooves, so the streak shows along his whole length
     e.set("moPose", "mop");
     e.face("mops", -1);
-    step("mopping", { wet: { x0: mo.x - MORNING_PLACES.beardTip, x1: mo.x - MORNING_PLACES.beardTip + 24, y, dryAt: -1 } });
+    step("mopping", { wet: { x0: tip, x1: tip + 24, y, dryAt: -1 } });
   }
 
   function faceEachOther() {
@@ -167,9 +181,10 @@ export function createMorning(bridge) {
     ]);
   }
   const home = createHomeAlone({ E, M, step, done: evening, sound });
+  const loop = createMopLoop({ E, places: MORNING_PLACES, sound });
 
-  // The sounds of the step on now: the soft mopping under the snore in the quiet room, a stroke a step as he
-  // mops along, the beard shake, hooves as he walks out, and each cutaway picture's own sounds.
+  // The sounds of the step on now: a stroke a step as he mops along, the beard shake, hooves as he walks out,
+  // and each cutaway picture's own sounds. (The quiet room's swishes and drips are the loop's, mop-loop.js.)
   function stepSounds(m, dt) {
     const e = E(),
       c = e.current();
@@ -177,13 +192,10 @@ export function createMorning(bridge) {
     cue.t -= dt;
     // A stroke a step as he mops along (none in the last quarter second: he has reached the bucket), a hoof a
     // step as he walks out.
-    const left = m.step === "mopping" ? (e.pos("mops").x - MORNING_PLACES.mops.x) / PACE.mop : 1;
+    const mo = e.pos("mops"),
+      left = m.step === "mopping" ? Math.max(Math.hypot(mo.x - MORNING_PLACES.mops.x, mo.y - MORNING_PLACES.mops.y) / PACE.mop, PACE.mopAtLeast - m.t) : 1;
     const every = m.step === "mopping" ? MORNING_SOUND.mopEvery : m.step === "leave" ? MORNING_SOUND.hoofEvery : 0;
     every && cue.t <= 0 && left > 0.25 && (sound.play(m.step === "mopping" ? "mop" : "hoof", cue.k++), (cue.t += every));
-    if (m.step === "asleep" && c && c.k === "wait" && e.get("moPose") === "mop") {
-      cue.soft -= dt;
-      cue.soft <= 0 && (sound.play("mopSoft", cue.softK++), (cue.soft = MORNING_SOUND.mopSoftEvery));
-    } else cue.soft = 0.6;
     if (!c || c.k !== "cutaway") return;
     const key = c.id + ":" + c.panel;
     // A new picture (or the same one again after ↺): its time starts from 0.
@@ -219,7 +231,7 @@ export function createMorning(bridge) {
       // (no Joe's theme) until the speaker plays the song. Without the cards (↺) it is quiet at once.
       cards ? bridge.homeMusic.release() : bridge.homeMusic.hold();
       sound.newMorning();
-      Object.assign(cue, { step: "", t: 0, k: 0, soft: 0, softK: 0, cut: "", el: 0 });
+      Object.assign(cue, { step: "", t: 0, k: 0, cut: "", el: 0 });
       e.set("scene", "Q1");
       e.set("ctrl", false);
       e.set("ch1Chip", "");
@@ -234,9 +246,11 @@ export function createMorning(bridge) {
       e.still("sq");
       e.still("mops");
       e.set("ch1Morning", { step: "asleep", t: 0, notes: false });
+      loop.start(M());
       e.queue([
         ...(cards ? [e.card("jupiter", line("card-jupiter")), e.run(() => bridge.homeMusic.hold()), e.card("squatch", line("card-squatch"))] : []),
-        // The room, no words: Squatch asleep and snoring, Mops mopping. A tap rings the speaker's ding-dong.
+        // The room, no words: Squatch asleep and snoring, Mops mopping round his loop. A tap rings the
+        // speaker's ding-dong (the room waits for it; nothing here moves the story on).
         e.tapWait(),
         e.run(ding),
         e.until(() => !ringing(M())),
@@ -271,9 +285,11 @@ export function createMorning(bridge) {
       const c = e.current();
       music.dip(!!c && c.k === "bub" && c.style === "song");
       music.load();
+      loop.settle(m, dt || 0);
       switch (m.step) {
         case "asleep":
           e.set("zzz", (e.get("zzz") || 0) + (dt || 0));
+          quiet(m) && loop.tick(m, dt || 0);
           break;
         case "waking":
           e.set("sqLift", Math.min(0, -1 + m.t / PACE.wake));
@@ -283,7 +299,7 @@ export function createMorning(bridge) {
           const done = e.step("mops", MORNING_PLACES.mops.x, MORNING_PLACES.mops.y, PACE.mop, dt || 0);
           e.face("mops", -1);
           m.wet && (m.wet.x0 = Math.min(m.wet.x0, e.pos("mops").x - MORNING_PLACES.beardTip));
-          if (done) {
+          if (done && m.t >= PACE.mopAtLeast) {
             e.still("mops");
             m.wet && (m.wet.dryAt = e.time() + PACE.wetDries);
             m.step = "mopped";
@@ -370,27 +386,20 @@ export function createMorning(bridge) {
       const m = live();
       if (!m) return;
       home.drawOnRoom(ctx);
-      // The wet streak Mops's beard leaves on the floor; it dries away a while after he stops.
+      // The shine his beard leaves as he goes round in the quiet room; it dries from its old end.
+      loop.drawShine(ctx, m);
+      // The wet streak Mops's beard leaves on the floor after "Party?"; it dries away a while after he stops.
       const w = m.wet,
         t = E().time();
       if (w && (w.dryAt < 0 || t < w.dryAt)) {
         const a = w.dryAt < 0 ? 1 : Math.min(1, (w.dryAt - t) / 3);
-        ctx.save();
-        ctx.globalAlpha = 0.7 * a;
-        ctx.beginPath();
-        ctx.roundRect(w.x0 - 6, w.y - 8, w.x1 - w.x0 + 12, 16, 8);
-        ctx.fillStyle = "rgb(143,220,255)";
-        ctx.fill();
-        ctx.globalAlpha = 0.8 * a;
-        ctx.beginPath();
-        ctx.moveTo(w.x0 + 6, w.y - 2);
-        ctx.lineTo(w.x1 - 6, w.y - 2);
-        ctx.lineWidth = 3;
-        ctx.lineCap = "round";
-        ctx.strokeStyle = "#ffffff";
-        ctx.stroke();
-        ctx.restore();
+        drawWet(ctx, [{ x: w.x0, a }, { x: w.x1, a }], w.y);
       }
+    },
+    /** How Mops's head and beard are drawn while he mops or wrings (the engine's drawMops options), or null. */
+    mopsLook() {
+      const m = live();
+      return m ? loop.look(m) : null;
     },
     /** True while Mops walks out (the goal chip hides). */
     leaving() {
@@ -406,14 +415,15 @@ export function createMorning(bridge) {
       home.draw(ctx);
       const t = e.time();
       if (e.get("moPose") === "mop") {
-        const mo = e.pos("mops");
+        // The wet under his beard, wherever the beard is in its sweep.
         ctx.save();
         ctx.beginPath();
-        ctx.ellipse(mo.x - MORNING_PLACES.beardTip, mo.y + 8, 34, 5, 0, 0, Math.PI * 2);
+        ctx.ellipse(loop.tipX(m), e.pos("mops").y + 8, 34, 5, 0, 0, Math.PI * 2);
         ctx.fillStyle = "rgba(143,220,255,.45)";
         ctx.fill();
         ctx.restore();
       }
+      loop.drawWring(ctx, m);
       const cx = (SPEAKER.x0 + SPEAKER.x1) / 2,
         cy = (SPEAKER.y0 + SPEAKER.y1) / 2;
       if (speakerTalking() || ringing(m)) {
@@ -493,6 +503,7 @@ export function createMorning(bridge) {
         lift: E() ? E().get("sqLift") : 0,
         flop: m ? home.flop() : null,
         wet: w ? { x0: w.x0, x1: w.x1, y: w.y } : null,
+        ...(m && E() ? loop.debug(m) : { loop: null, shine: null }),
         squirt: m && m.squirt ? { ...m.squirt } : null,
         beard: beardTarget(),
       };

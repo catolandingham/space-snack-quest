@@ -3,20 +3,21 @@
 
 | Lines | Heading |
 | --- | --- |
-| 21–24 | # Review rules |
-| 25–76 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
-| 77–79 | ## Techniques |
-| 80–82 | ## Mistake: locked art was redrawn |
-| 83–87 | ## Mistake: optional inspection interrupted getting out of bed |
-| 88–90 | ## Mistake: a big doc's section index went stale |
-| 91–93 | ## Mistake: a rebuilt beat forgot the step restart |
-| 94–96 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
-| 97–99 | ## Mistake: a killed run was read as a failing test |
-| 100–102 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
-| 103–105 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
-| 106–112 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
-| 113–120 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
-| 121–129 | ## Mistakes caught building the morning sound (2026-11-24) |
+| 22–25 | # Review rules |
+| 26–77 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
+| 78–80 | ## Techniques |
+| 81–83 | ## Mistake: locked art was redrawn |
+| 84–88 | ## Mistake: optional inspection interrupted getting out of bed |
+| 89–91 | ## Mistake: a big doc's section index went stale |
+| 92–94 | ## Mistake: a rebuilt beat forgot the step restart |
+| 95–97 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
+| 98–100 | ## Mistake: a killed run was read as a failing test |
+| 101–103 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
+| 104–106 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
+| 107–113 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
+| 114–121 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
+| 122–130 | ## Mistakes caught building the morning sound (2026-11-24) |
+| 131–142 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
 <!-- /section-index -->
 # Review rules
 
@@ -126,3 +127,15 @@ The later full touch run exposed a test-driver gap: it waited whenever walking w
 - The reviewer found "Hey, stop that!" was queued by a later frame, 0.68 s after the squirt, so a tap or NEXT in between ended the picture and lost the line. A line that follows an animation is queued at once, behind a wait step that plays the animation (taps do nothing during it), and a test taps impatiently in between.
 - The reviewer found Mops's meh was used up by a line said while sound was off. A once-only sound is marked heard only when it really played.
 - The second review found the wringing sounds due while the squirt flew were saved up and all played at once when the picture came back. When a picture's clock runs while something else is up, its sound cue moves on with it; `tests/sound-cues.mjs` checks every wringing sound lands on its beat, and failed on the old code.
+
+## Mistakes caught building the quiet room's mopping loop (2026-11-24)
+- When Mops could start his mop-along from anywhere, a tap beside the bucket left him no floor to mop, so 21a's promise (he mops just before the close-up) was gone. When a fixed start becomes "wherever he stands", re-read the ask the fixed start served and keep it from every start (he now mops two strokes at least).
+- From the wring spot he mopped away from the bucket with his back to it; no test saw it, a still did. When a walk can start from several places, look at a still of each start, not only the one the old code had.
+- The falling drops were drawn blue over the bucket's blue water and could not be seen. Check a new drawing against what is behind it at that exact spot (the drops now fall through the air above the rim).
+- The beard's forward sweep touched the painted bucket at the end of his stretch. A part that moves is checked at both ends of its travel against the things in the locked picture.
+- A "dry again" check sampled a spot the shine never reached, so it passed for nothing. A check that something has gone samples a spot where the same run saw it first.
+- A check read Mops's pose in the same frame as the tap; the tap's step runs on the next frame. Read what a tap did a frame later (the same rule as for a picture that moves on).
+- Loudness checks compared the peaks of noise sounds and sat within 1 dB of their limit, so they flipped between runs. Compare noise sounds by loudness (rms), leave 2 dB or more, and run a sound-level test several times before trusting it.
+- The reviewer found the bucket's drips rose through the whistle's own pitches (1.1 to 1.7 kHz), the very mix-up Brian asked to end, and the check compared peaks that were mostly noise. A new sound that plays near another is measured in that sound's band (the drip now falls in pitch, under 700 Hz, and the test measures above 1 kHz).
+- The reviewer found a branch for Mops standing far to the left of his bucket that nothing in the loop can reach, and no test ran it. Code for a case that cannot happen is deleted, not kept.
+- The reviewer found the beard was never measured against the painted bucket (only the shine was), and a level check read the number in the source. Measure the drawn beard and the rendered sound.

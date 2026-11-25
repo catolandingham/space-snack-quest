@@ -71,7 +71,8 @@ function tone(A, o) {
   os.start(t);
   os.stop(t + d + 0.05);
 }
-// Filtered noise: kind, filter type ft at f (to f1), q, level v, attack a, hold, tremolo trem at tremF.
+// Filtered noise: kind, filter type ft at f (to f1), q, level v, attack a, hold, tremolo trem at tremF; `top`
+// cuts everything above it as well (a second, low-pass filter).
 function nz(A, o) {
   const c = A.c,
     t = o.t,
@@ -87,7 +88,13 @@ function nz(A, o) {
   fl.Q.value = o.q == null ? 1 : o.q;
   env(g, t, o.a || 0.01, d, o.v == null ? 0.2 : o.v, o.hold);
   src.connect(fl);
-  fl.connect(g);
+  if (o.top) {
+    const lp = c.createBiquadFilter();
+    lp.type = "lowpass";
+    lp.frequency.value = o.top;
+    fl.connect(lp);
+    lp.connect(g);
+  } else fl.connect(g);
   let out = g;
   if (o.trem) {
     const tg = c.createGain(),
@@ -147,6 +154,10 @@ function bleat(A, t, f, d, v) {
   l.stop(t + d + 0.05);
 }
 const stroke = (A, t, up, v) => nz(A, { t, d: 0.32, a: 0.09, v: 0.45 * (v || 1), f: up ? 800 : 1500, f1: up ? 1500 : 800, q: 0.9 });
+// A stroke with no squeak, for the quiet room (Brian, 2026-11-24: "It's hard to tell the difference between the
+// whistle and the squeaking"; swish only, his yes the same day): low, soft and wet, all of it under the snore's
+// whistle (1100 to 1700 Hz). Not from the sound board: a placeholder until Brian has heard it.
+const swish = (A, t, up) => nz(A, { t, d: 0.55, a: 0.18, v: 0.2, f: up ? 420 : 640, f1: up ? 640 : 420, q: 1.1, top: 800, trem: 0.3, tremF: 14 });
 const squeak = (A, t, v) => tone(A, { t, f: 1700, f1: 2300, d: 0.11, type: "triangle", v: 0.07 * (v || 1), vib: 70, vibF: 35, a: 0.02 });
 const plink = (A, t, f, v) => tone(A, { t, f: f || 900, f1: (f || 900) * 1.7, d: 0.09, v: 0.12 * (v || 1), a: 0.003 });
 const pour = (A, t, d) => {
@@ -240,14 +251,21 @@ export const SOUNDS = Object.freeze({
       squeak(A, t + 0.27);
     },
   },
-  // The same, soft and slow, while Squatch is still asleep (under the snoring).
-  mopSoft: {
-    len: 0.4,
-    play: (A, t, k) => {
-      stroke(A, t, (k || 0) % 2 === 0, 0.5);
-      squeak(A, t + 0.27, 0.5);
+  // One stroke while Squatch is still asleep (under the snoring): a low, soft, wet swish, no squeak.
+  mopSoft: { len: 0.6, play: (A, t, k) => swish(A, t, (k || 0) % 2 === 0) },
+  // The quiet room's wring at the bucket (mop-loop.js): one short, quiet, rubbery squeeze with a little water.
+  // The squeak lives here now, low and soft, all of it under the snore's whistle (the close-up's "twist" is the
+  // big one). A placeholder too.
+  squeeze: {
+    len: 0.5,
+    play: (A, t) => {
+      tone(A, { t, f: 380, f1: 700, d: 0.4, type: "sine", v: 0.035, vib: 45, vibF: 24, a: 0.05, hold: 0.18 });
+      nz(A, { t: t + 0.08, d: 0.4, a: 0.08, v: 0.05, f: 650, q: 0.7, top: 900, trem: 0.25, tremF: 11 });
     },
   },
+  // One drop landing in the bucket as he wrings there in the quiet room: a small, low "plop" that falls in
+  // pitch (k: which drop), so it cannot be taken for the snore's rising whistle.
+  dripSoft: { len: 0.12, play: (A, t, k) => tone(A, { t, f: [640, 580, 700, 540, 610][(k || 0) % 5], f1: 340, d: 0.11, v: 0.045, a: 0.01 }) },
   // The dunk, "C. Bloop, glug glug, drip drip": in, two bubbles while it soaks, drips as he comes up.
   bloop: { len: 0.25, play: (A, t) => tone(A, { t, f: 700, f1: 150, d: 0.22, v: 0.28, a: 0.005 }) },
   glug: { len: 0.12, play: (A, t) => tone(A, { t, f: 170, f1: 280, d: 0.1, v: 0.22, a: 0.01 }) },

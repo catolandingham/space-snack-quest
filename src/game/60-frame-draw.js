@@ -2082,7 +2082,11 @@
           d: () => {
             let s = n.moPose,
               q = s === "sway" ? Math.sin(n.T * 2.4) * 0.07 : 0,
-              d = s === "pant" ? Math.abs(Math.sin(n.T * 9)) * 4 : 0;
+              d = s === "pant" ? Math.abs(Math.sin(n.T * 9)) * 4 : 0,
+              // The morning's mopping (src/modules/mop-loop.js) says how far his beard sweeps and how low his
+              // head is; "wring": it draws the beard itself, out over the bucket.
+              mb = window.SSQ && window.SSQ.beat && window.SSQ.beat("ch1-morning"),
+              look = (mb && mb.mopsLook && mb.mopsLook()) || null;
             if (
               (Fe(n.mo.x, n.mo.y - d, wl, {
                 f: n.mo.f,
@@ -2095,6 +2099,7 @@
                 // "mop": head down, only the beard sweeps the floor; "shake": the beard shaken fluffy.
                 headDown: s === "pant" || s === "mop",
                 sweep: s === "mop" ? Math.sin(n.T * 3.4) * 1.6 : s === "shake" ? Math.sin(n.T * 34) * 1.4 : 0,
+                ...look,
               }),
               s === "polish")
             ) {
