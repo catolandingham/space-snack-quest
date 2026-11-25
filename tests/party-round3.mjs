@@ -155,7 +155,7 @@ const frameDiff = (page, change, undo, from) =>
         iRest = tr.findIndex((q, i) => i > iDeep && Math.abs(q[0] - end[0]) < 0.5);
       let fastest = 0;
       for (let i = iDeep + 1; i <= iRest; i++) fastest = Math.max(fastest, (tr[i - 1][0] - tr[i][0]) * 60);
-      return { deep, back: deep - end[0], seconds: (iRest - iDeep) / 60, fastest, y0: tr[iDeep][1], y1: end[1], bubble: end[2] === "bub", text: n.cur && n.cur.b ? n.cur.b.text : "", ctrlDuring: tr.slice(iStop).some((q) => q[3]), bounce: window.SSQ.beat("ch1-party").now().bounce || null };
+      return { deep, back: deep - end[0], seconds: (iRest - iDeep) / 60, fastest, y0: tr[iDeep][1], y1: end[1], bubble: end[2] === "bub", text: n.cur && n.cur.b ? n.cur.b.text : "", ctrlDuring: iStop < 0 || tr.slice(iStop).some((q) => q[3]), bounce: window.SSQ.beat("ch1-party").now().bounce || null };
     });
   const first = await tryDoor();
   g.check("walking into the hallway doorway he reaches it (not stopped far short of it)", first.deep >= hall.HALLWAY_ZONE.x0 && first.deep <= 900, first.deep);
@@ -195,6 +195,34 @@ const frameDiff = (page, change, undo, from) =>
     await still(page, "r3-hallway-bounce-bump");
   }
   g.check("no errors at the hallway", errors.length === 0, errors);
+  await page.close();
+}
+{
+  // The last song ends in the very moment he is pushed back: closing time waits until his line is read.
+  const { page, errors } = await open("party:P6");
+  const r = await page.evaluate(() => {
+    const ss = window.__ss,
+      n = ss.op,
+      b = window.SSQ.beat("ch1-party"),
+      p = n.ch1PartyNow;
+    p.song = 2;
+    n.sq.x = 860;
+    n.sq.y = 322;
+    ss.tapAt(940, 320);
+    let hit = false;
+    for (let i = 0; i < 200 && !(n.cur && n.cur.k === "bub"); i++) {
+      ss.tick(1 / 60);
+      // the song's clock is put at its end as the push back begins (the test sets the clock, never the result)
+      if (!hit && b.now().bounce) ((hit = true), (n.ch1PartyNow.songT = 1e6));
+    }
+    const during = { hit, scene: b.now().scene, text: n.cur && n.cur.b ? n.cur.b.text : "" };
+    ss.opTap();
+    for (let i = 0; i < 90 && b.now().scene === "P6"; i++) ss.tick(1 / 60);
+    return { during, after: b.now().scene, close: b.now().close };
+  });
+  g.check("a push back as the last song ends: his line comes first, still in the party", r.during.hit && r.during.scene === "P6" && r.during.text === "I can't go there. Mops will see me.", r.during);
+  g.check("and closing time follows once the line is read", r.after === "P8b", r);
+  g.check("no errors (push back at closing)", errors.length === 0, errors);
   await page.close();
 }
 
@@ -434,30 +462,32 @@ const drawnNow = (page) =>
   // The sight rule itself, in numbers: a cone lifted for the drawing sees exactly what the unlifted cone sees, and
   // exactly what the rule saw before (from 28 above the guard's feet to 20 above Squatch's).
   let differs = 0,
-    drawnDiffers = 0,
     seen = 0;
   const guardLook = await import(join(root, "src", "modules", "party-guard-look.js"));
   for (const f of [-1, 1])
     for (let a = Math.PI - 0.6; a <= Math.PI + 0.6; a += 0.15)
       for (let x = 400; x <= 900; x += 20)
         for (let y = 360; y <= 580; y += 20) {
-          const sq = { x, y },
-            draw = guardLook.torchShift({ turn: Math.sin(a * 7) }, 187.5, f),
-            c = watch.coneFrom("g", 770, 470, a, size, draw),
-            was = watch.distToCone(x, y - 20, 770, 470 - 28, a, size.half, size.len) <= 0,
-            pt = watch.seenPointDrawn(sq, draw),
-            drawn = watch.distToCone(pt.x, pt.y, c.ox + draw.dx, c.oy + draw.dy, a, size.half, size.len) <= 0;
-          watch.coneSees(c, sq) !== was && differs++;
-          drawn !== was && drawnDiffers++;
+          const c = watch.coneFrom("g", 770, 470, a, size, guardLook.torchShift({ turn: Math.sin(a * 7) }, 187.5, f)),
+            was = watch.distToCone(x, y - 20, 770, 470 - 28, a, size.half, size.len) <= 0;
+          watch.coneSees(c, { x, y }) !== was && differs++;
           was && seen++;
         }
   g.check("rule: drawing the cone as the flashlight's beam changes nothing about who is seen (5,400 places and looks compared with the rule as it was)", differs === 0 && seen > 200, { differs, seen });
-  g.check("rule: the beam, as drawn, still covers exactly the places where he is seen", drawnDiffers === 0, drawnDiffers);
   {
-    // the point of him the beam is drawn to see is on his own body at home (his head), not beside him
-    const d = guardLook.torchShift({ turn: 0 }, 187.5, -1),
-      pt = watch.seenPointDrawn({ x: 0, y: 0 }, d);
-    g.check("rule: the beam finds him when it lands on his head (the point it is drawn to see is on him)", Math.abs(pt.x) < 40 && pt.y < -62 && pt.y > -135, pt);
+    // What the kid reads off the picture: the beam finds him when it lands on his head. The point of him the beam
+    // is drawn to see must be on his own head as drawn at home (three times hall size), whichever way the guard
+    // faces and however he leans.
+    const Q = look.SQUATCH_LOOK,
+      sc = 3,
+      headY = -(Q.leg + Q.bodyH + Q.head * 0.75) * sc,
+      on = [];
+    for (const f of [-1, 1])
+      for (const turn of [-1, 0, 1]) {
+        const pt = watch.seenPointDrawn({ x: 0, y: 0 }, guardLook.torchShift({ turn }, 187.5, f));
+        on.push(((pt.x / (Q.head * 0.92 * sc)) ** 2 + ((pt.y - headY) / (Q.head * 0.85 * sc)) ** 2 <= 1 ? 1 : 0));
+      }
+    g.check("rule: the point of him the beam is drawn to see is on his head (so the beam finds him when it lands on his head)", on.every(Boolean), on);
   }
 
   const { page, errors } = await open("party:P7");
@@ -522,11 +552,16 @@ const drawnNow = (page) =>
   }
   g.check("standing in the room he is seen (as before the beam): the guard's \"!\" is drawn, no \"?\"", !!saw && saw.marks.length === 1 && saw.marks[0].t === "!", saw && saw.marks);
   if (saw) {
+    // On the picture: when he is seen from further than the guard's reach of 70, the beam as drawn lies on his
+    // head as drawn (some part of his head is inside it).
     const c = saw.cones[0],
-      pt = watch.seenPointDrawn(saw.sq, c.draw),
-      inDrawn = watch.distToCone(pt.x, pt.y, c.ox, c.oy, c.a, c.half, c.len) <= 0,
-      close = Math.hypot(saw.sq.x - saw.g.x, saw.sq.y - saw.g.y) < 70;
-    g.check("when he is seen, the point of him the cone is drawn to see is inside the drawn cone (or the guard is right on him)", inDrawn || close, { c, pt, close });
+      Qh = look.SQUATCH_LOOK,
+      sc = saw.g.tall / 62.5,
+      hy = saw.sq.y - (Qh.leg + Qh.bodyH + Qh.head * 0.75) * sc;
+    let onHead = 0;
+    for (let ax = -1; ax <= 1; ax += 0.25) for (let ay = -1; ay <= 1; ay += 0.25) ax * ax + ay * ay <= 1 && watch.distToCone(saw.sq.x + ax * Qh.head * 0.92 * sc, hy + ay * Qh.head * 0.85 * sc, c.ox, c.oy, c.a, c.half, c.len) <= 0 && onHead++;
+    const far = Math.hypot(saw.sq.x - saw.g.x, saw.sq.y - saw.g.y) >= 70;
+    g.check("when he is seen (from further than the guard's reach), the beam as drawn lies on his head", far && onHead > 0, { far, onHead, c, sq: saw.sq });
     // Nothing is drawn over Squatch: inside the yellow cone the fur of his head keeps its own colour (the cone lies
     // under him, as in the hall). Sampled at four places on his brow and temples, in his own units.
     const Q = look.SQUATCH_LOOK,

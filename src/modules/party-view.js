@@ -99,8 +99,7 @@ export function createView(h) {
       band: { playing: p.band, spots: p.bandAt || CAST.band, gone: ["band0", "band1", "band2"].map((id) => !!gone[id]) },
       guests,
       bartender,
-      // a guard who has stopped to look round has the searching look (his head turns, he leans in)
-      guards: a ? a.guards.filter((g) => g.room === "hall").map((g) => ({ x: g.x, y: g.y, f: Math.cos(g.a) < 0 ? -1 : 1, look: guardLook(g) })) : [],
+      guards: a ? a.guards.filter((g) => g.room === "hall").map((g) => ({ x: g.x, y: g.y, f: Math.cos(g.a) < 0 ? -1 : 1 })) : [],
       tripod: gone.camera ? null : { ...tripodAt, aim: CAMERA_AIM },
       // closing time: nobody is watching for him any more (they are leaving), so no cones (rule 8: a cone always reacts)
       cones: p.scene === "P8b" ? [] : h.cones(p).filter((c) => !gone[c.id]),

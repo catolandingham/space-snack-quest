@@ -18,8 +18,10 @@ export const EYE_ABOVE_FEET = 28;
  * A cone can be DRAWN somewhere other than where sight is measured from: `draw` = { dx, dy } moves the drawing only
  * (Brian 2026-11-24, on the guard in Squatch's room, drawn almost three times hall size: "it comes from his feet";
  * his cone is now his flashlight's beam, drawn from the flashlight in his hand: party-guard-look.js). The sight test
- * is not changed by this. The cone and the point on Squatch that is seen move by the same amount (seenPointDrawn),
- * so who is seen, and from where, is exactly as before, and the drawn cone still shows exactly where he is seen.
+ * is not changed by this: the cone and the point on Squatch that is tested move by the same amount (seenPointDrawn),
+ * so who is seen, and from where, is exactly as before. What changes is what the kid reads off the picture: the
+ * beam is drawn higher than the patch of floor sight is measured on, so it finds him when it lands on his head (at
+ * home he is drawn three times hall size), not on his feet. Brian is told this in the PR.
  */
 export function seenPointDrawn(sq, draw) {
   return { x: sq.x + ((draw && draw.dx) || 0), y: sq.y - SQUATCH_SEEN_ABOVE_FEET + ((draw && draw.dy) || 0) };
@@ -103,14 +105,15 @@ export function drawCones(ctx, cones, sq, hidden, all, note, fooled = false) {
   ctx.rect(ROOM_INSIDE.x0, ROOM_INSIDE.y0, ROOM_INSIDE.x1 - ROOM_INSIDE.x0, ROOM_INSIDE.y1 - ROOM_INSIDE.y0);
   ctx.clip();
   for (const c of cones) {
-    const edge = distToCone(sq.x, sq.y - SQUATCH_SEEN_ABOVE_FEET, c.ox, c.oy, c.a, c.half, c.len),
+    // (for a cone drawn elsewhere, `draw`, the point of him it is drawn to see moves with it: the same test)
+    const dx = c.ox + ((c.draw && c.draw.dx) || 0),
+      dy = c.oy + ((c.draw && c.draw.dy) || 0),
+      pt = seenPointDrawn(sq, c.draw),
+      edge = distToCone(pt.x, pt.y, dx, dy, c.a, c.half, c.len),
       inside = !hidden && edge <= 0,
       show = all || c.always ? 1 : coneShow(edge);
     out.push({ ...c, edge, inside, show });
     if (!(show > 0)) continue;
-    // Drawn where `draw` moves it (a flashlight's beam starts at the flashlight); sight (`inside`) is as ever.
-    const dx = c.ox + ((c.draw && c.draw.dx) || 0),
-      dy = c.oy + ((c.draw && c.draw.dy) || 0);
     // Only a cone on screen is told to the tests (what a kid can see): the numbers it is drawn from.
     note && note({ ox: dx, oy: dy, a: c.a, half: c.half, len: c.len, ...(c.draw ? { draw: c.draw } : {}) });
     ctx.save();

@@ -1,11 +1,9 @@
 /**
- * The searching guard's look (Brian 2026-11-24, on the guard who follows Squatch home: "he doesn't seem alarmed").
- * While a guard looks for him, his head turns from side to side with the swing of his cone, he leans forward to
- * look, and (in Squatch's room, where he stands alone) a "?" sits over him until he sees Squatch ("!") or gives
- * up. It is the same guard drawing (party-art.js drawPerson, LOOKS.guard) with two of its parts moved: the head's
+ * The searching guard's look, for the guard who follows Squatch home (Brian 2026-11-24: "he doesn't seem alarmed").
+ * While he looks for him, his head turns from side to side with the swing of his beam, he leans forward to look,
+ * and a "?" sits over him until he sees Squatch ("!") or gives up. He carries a flashlight (torchShift). It is the same guard drawing (party-art.js drawPerson, LOOKS.guard) with two of its parts moved: the head's
  * features and the lean of his upper body. No words.
- *   g.turn  -1 to 1 while he looks round (party-alarm.js sets it from the cone's own swing), null or undefined
- *           while he walks; g.sees  true once he sees Squatch; g.leaving  true once he has given up.
+ *   g.turn  -1 to 1 while he looks round (party-alarm.js searchHome sets it from the beam's own swing); g.sees  true once he sees Squatch; g.leaving  true once he has given up.
  */
 import { LOOKS, TORCH } from "./party-art.js";
 import { EYE_ABOVE_FEET } from "./party-watch.js";

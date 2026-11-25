@@ -37,7 +37,7 @@ export function bounceHop(p) {
 /** The bump mark: where it is drawn (at the doorway side of where he hit, at `scale` of his size) and how faded. */
 export function bumpMark(p, scale) {
   const b = p.bounce;
-  return b ? { x: b.x0 + 20 * scale, y: b.y - 30 * scale, r: BOUNCE.markR, k: Math.max(0, 1 - b.t / BOUNCE.mark) } : null;
+  return b && b.t < BOUNCE.mark ? { x: b.x0 + 20 * scale, y: b.y - 30 * scale, r: BOUNCE.markR, k: 1 - b.t / BOUNCE.mark } : null;
 }
 /** The bump, drawn: a small burst of short rays round a white spark, fading out. No words. */
 export function drawBump(ctx, m) {

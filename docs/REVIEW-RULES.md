@@ -3,21 +3,22 @@
 
 | Lines | Heading |
 | --- | --- |
-| 22–25 | # Review rules |
-| 26–78 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
-| 79–81 | ## Techniques |
-| 82–84 | ## Mistake: locked art was redrawn |
-| 85–89 | ## Mistake: optional inspection interrupted getting out of bed |
-| 90–92 | ## Mistake: a big doc's section index went stale |
-| 93–95 | ## Mistake: a rebuilt beat forgot the step restart |
-| 96–98 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
-| 99–101 | ## Mistake: a killed run was read as a failing test |
-| 102–104 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
-| 105–107 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
-| 108–114 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
-| 115–122 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
-| 123–139 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
-| 140–148 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
+| 23–26 | # Review rules |
+| 27–79 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
+| 80–82 | ## Techniques |
+| 83–85 | ## Mistake: locked art was redrawn |
+| 86–90 | ## Mistake: optional inspection interrupted getting out of bed |
+| 91–93 | ## Mistake: a big doc's section index went stale |
+| 94–96 | ## Mistake: a rebuilt beat forgot the step restart |
+| 97–99 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
+| 100–102 | ## Mistake: a killed run was read as a failing test |
+| 103–105 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
+| 106–108 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
+| 109–115 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
+| 116–123 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
+| 124–140 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
+| 141–153 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
+| 154–156 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
 <!-- /section-index -->
 # Review rules
 
@@ -145,3 +146,10 @@ The later full touch run exposed a test-driver gap: it waited whenever walking w
 - A test pressed the action button on the same tick he got control, before the game had offered the action. A test waits for the offer it is about to press (`n.act`), as a kid waits for the button.
 - A speed check took the slowest single tick, which is short whenever a walker turns a corner inside a tick. Speed is measured over the whole walk; the longest single step is the check for jumps.
 - Deleting one helper took its neighbour with it (the tests' `seenByNow`), and only the next test run showed it. After deleting a block, build and run the suite that reads it before making the next change.
+- The reviewer of round three found a check that could not fail: it moved the drawn beam and the point it tested by the same amount, so "the beam covers where he is seen" was true whatever the code did. For every check, name the change to the game that would make it fail; if there is none, it is not a check. (The beam is drawn higher than the floor patch sight is measured on; the tests now check the thing a kid reads: the beam lies on his head when he is seen. Brian is told the difference.)
+- The push back at the hallway doorway started a line, and the same frame could still start an alarm or closing time, so the line could have shown over either. The frame that starts a scripted moment does nothing else, anything that could end the scene waits for it, and a test starts the other thing in the middle (the last song ending during the push back).
+- The searching look, asked for the guard who follows him home, was also given to the hall guards. Build a look for the one character Brian named; list the others it could suit and ask.
+- A length was typed twice (the flash's 0.25 in the code, `PHOTO.flash` in the table the test read). A number a test reads from a table must be the number the code uses.
+
+## Standing rule: painstakingly obvious (Brian, 2026-11-24)
+His words, on the snack close-up, for every piece of the game: "It just needs to be more painstakingly obvious, and we need to kind of build this as a core thing we're looking at all times." Before a picture or a beat goes to Brian, ask of each thing on screen: would a 10-year-old know what it is, what it is doing and what he can do about it, without being told? If the answer needs a sentence of explaining, the drawing is not done.

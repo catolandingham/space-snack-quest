@@ -2,7 +2,7 @@
  * Draws the party hall at night from one description of what is on screen (a "view"), so the game (party.js)
  * and the picture sheet for Brian (tools/party-sheet.mjs) draw it the same way. The locked hall picture is drawn
  * first and never changed; everything else goes on top of it.
- *   view = { t, picture, banner: { glow }, lights: { dim } | null, isfred: { x, y, f }, band: { playing }, guests: [{ id, x, y, dance, lean }], bartender: { x, y, f }, guards: [{ x, y, f, look }],
+ *   view = { t, picture, banner: { glow }, lights: { dim } | null, isfred: { x, y, f }, band: { playing }, guests: [{ id, x, y, dance, lean }], bartender: { x, y, f }, guards: [{ x, y, f }],
  *            tripod: { x, y, aim, counting }, cones: [cone], allCones, squatch: { x, y, f, walk, pose ("stand",
  *            "peek" or "hidden"), outfit, flyer, tip, shake, hop } | null, eyes: { x, y } | null, marks: [{ x, y,
  *            mark }], shout: { x, y } | null, alarm: bool, vent: bool, tufts: [{ x, y, s, rot }],
@@ -75,7 +75,7 @@ export function drawHall(ctx, E, guestArt, view) {
     people.push({ y: spots[0].y, f: () => drawBand(ctx, spots, adult * 0.98, t, !!view.band.playing, view.band.looks, view.band.gone) });
   }
   view.bartender && people.push({ y: view.bartender.y, f: () => drawPerson(ctx, view.bartender.x, view.bartender.y, adult, LOOKS.bartender, view.bartender.f || -1, t) });
-  for (const g of view.guards || []) people.push({ y: g.y, f: () => drawPerson(ctx, g.x, g.y, adult * 1.02, g.look || LOOKS.guard, g.f || 1, t) });
+  for (const g of view.guards || []) people.push({ y: g.y, f: () => drawPerson(ctx, g.x, g.y, adult * 1.02, LOOKS.guard, g.f || 1, t) });
   view.tripod && people.push({ y: view.tripod.y, f: () => drawTripod(ctx, view.tripod.x, view.tripod.y, view.tripod.aim) });
   if (sq && sq.pose === "stand") people.push({ y: sq.y, f: () => drawSquatchInHall(ctx, E, sq, sqScale, t) });
   for (const x of view.extra || []) people.push(x);

@@ -281,7 +281,8 @@ export function createFreePlay(h) {
     const first = p.ft < FREE.firstMinute;
     // the songs, and closing time
     p.songT += dt;
-    if (p.songT >= SONG_SECONDS && !(p.dance && p.dance.t < DANCE.least)) {
+    // (closing time waits for a push back at the hallway doorway and its line to finish)
+    if (p.songT >= SONG_SECONDS && !(p.dance && p.dance.t < DANCE.least) && !p.bounce) {
       if (p.song >= 2) return void (p.dance || p.snack ? (p.dance && closeDance(p), p.snack && (closeSnacks(p), h.control(true))) : h.toClosing());
       p.song += 1;
       p.songT = 0;
@@ -313,7 +314,7 @@ export function createFreePlay(h) {
       Math.hypot(s.x - p.people.camera.x, s.y - p.people.camera.y) < PHOTO.cheeseNear && ((p.talker = "camera"), e.ambient("tourist", partyLine("guest-cheese")));
     }
     ph === "beep" && h.sound.one("beep");
-    if (ph === "flash" || ph === "photo") ((p.flash = 0.25), h.sound.one("flash"));
+    if (ph === "flash" || ph === "photo") ((p.flash = PHOTO.flash), h.sound.one("flash"));
     ph === "photo" && ((p.done.photo = true), e.addStars(PHOTO_BONUS), h.sound.one("cheer"), h.sound.one("zzzt"));
     // the octopus
     const oc = tickOctopus(p, dt, s, { firstMinute: first, canChase: stand, hidden: p.pose !== "stand" });
@@ -336,7 +337,8 @@ export function createFreePlay(h) {
       else hit(p, (tipNext(p), "tip"), s);
     }
     // the hallway doorway: he cannot go that way yet
-    if (stand && inHallwayZone(s) && !p.bounce) bounceBack(p, s);
+    // (the rest of this frame is skipped, so no alarm starts in the same frame as the push back)
+    if (stand && inHallwayZone(s) && !p.bounce) return void bounceBack(p, s);
     // the plants and the vent
     const pl = stand ? tickPlants(p, s, scale, first) : "";
     pl && h.sound.one("rip");
@@ -405,11 +407,12 @@ export function createFreePlay(h) {
         e.place("sq", at.x, at.y);
         return at.done;
       }),
-      e.run(() => (h.P() && (h.P().bounce = null), h.sound.one("uhoh"))),
+      e.run(() => h.sound.one("uhoh")),
       h.say("sq", "sq-hallway", "whisper"),
+      // the push back is over only once his line is read: until then nothing else in the party starts
       e.run(() => {
         const q = h.P();
-        q && q.scene === "P6" && h.control(true);
+        q && ((q.bounce = null), q.scene === "P6" && h.control(true));
       }),
     ]);
   }

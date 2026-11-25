@@ -152,10 +152,8 @@ function searchHall(a, dt, api, sq, hidden) {
       a.last && Math.hypot(a.last.x - g.x, a.last.y - g.y) < 2 && (a.last = null);
       g.look = (g.look || 0) + dt;
       g.a += Math.sin(g.look * 3) * dt * 2.5;
-      // stopped and looking round: his head turns with his look (the searching look, party-guard-look.js)
-      g.turn = Math.sin(g.look * 3);
       g.look > 1.2 && ((g.look = 0), (g.next = g.next + 1));
-    } else ((g.a = Math.atan2(to.y - g.y, to.x - g.x)), (g.turn = null));
+    } else g.a = Math.atan2(to.y - g.y, to.x - g.x);
     if (!safe && a.phase !== "caught" && Math.hypot(sq.x - g.x, sq.y - g.y) < ALARM.reach) {
       api.caught(a.who, a.where);
       a.phase = "caught";
