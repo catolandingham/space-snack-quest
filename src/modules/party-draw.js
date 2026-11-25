@@ -2,11 +2,12 @@
  * Draws the party hall at night from one description of what is on screen (a "view"), so the game (party.js)
  * and the picture sheet for Brian (tools/party-sheet.mjs) draw it the same way. The locked hall picture is drawn
  * first and never changed; everything else goes on top of it.
- *   view = { t, picture, banner: { glow }, lights: { dim } | null, isfred: { x, y, f }, band: { playing }, guests: [{ id, x, y, dance, lean }], bartender: { x, y, f }, guards: [{ x, y, f }],
+ *   view = { t, picture, banner: { glow }, lights: { dim } | null, isfred: { x, y, f }, band: { playing }, guests: [{ id, x, y, dance, lean }], bartender: { x, y, f }, guards: [{ x, y, f, look }],
  *            tripod: { x, y, aim, counting }, cones: [cone], allCones, squatch: { x, y, f, walk, pose ("stand",
  *            "peek" or "hidden"), outfit, flyer, tip, shake, hop } | null, eyes: { x, y } | null, marks: [{ x, y,
  *            mark }], shout: { x, y } | null, alarm: bool, vent: bool, tufts: [{ x, y, s, rot }],
- *            warning: { k } | null (the vent's fur sign), unseen (nobody can see him now), floor (ctx) (drawn under
+ *            warning: { k } | null (the vent's fur sign), unseen (nobody can see him now), fooled (in a whole
+ *            disguise: a cone that holds him stays a dashed outline), floor (ctx) (drawn under
  *            everyone), extra: [{ y, f }] (more people, sorted by their feet: Mops at closing time) }
  * Returns the cones as drawn (party-watch.js drawCones).
  */
@@ -62,7 +63,7 @@ export function drawHall(ctx, E, guestArt, view) {
   view.alarm && drawAlarmFlash(ctx, HALL.alarm, t);
   view.lights && drawPartyLights(ctx, DANCE_SPOT, t, view.lights.dim, view.lights.color);
   const sq = view.squatch;
-  const drawn = drawCones(ctx, view.cones || [], sq || { x: -999, y: -999 }, !sq || sq.pose !== "stand" || !!view.unseen, !!view.allCones, view.noteCone);
+  const drawn = drawCones(ctx, view.cones || [], sq || { x: -999, y: -999 }, !sq || sq.pose !== "stand" || !!view.unseen, !!view.allCones, view.noteCone, !!view.fooled);
   // On the floor, under everyone: what P6 to P8 leave there (fallen pieces, Mops's wet streak, his heart cone).
   view.floor && view.floor(ctx);
   // Everyone, back to front.
@@ -74,7 +75,7 @@ export function drawHall(ctx, E, guestArt, view) {
     people.push({ y: spots[0].y, f: () => drawBand(ctx, spots, adult * 0.98, t, !!view.band.playing, view.band.looks, view.band.gone) });
   }
   view.bartender && people.push({ y: view.bartender.y, f: () => drawPerson(ctx, view.bartender.x, view.bartender.y, adult, LOOKS.bartender, view.bartender.f || -1, t) });
-  for (const g of view.guards || []) people.push({ y: g.y, f: () => drawPerson(ctx, g.x, g.y, adult * 1.02, LOOKS.guard, g.f || 1, t) });
+  for (const g of view.guards || []) people.push({ y: g.y, f: () => drawPerson(ctx, g.x, g.y, adult * 1.02, g.look || LOOKS.guard, g.f || 1, t) });
   view.tripod && people.push({ y: view.tripod.y, f: () => drawTripod(ctx, view.tripod.x, view.tripod.y, view.tripod.aim) });
   if (sq && sq.pose === "stand") people.push({ y: sq.y, f: () => drawSquatchInHall(ctx, E, sq, sqScale, t) });
   for (const x of view.extra || []) people.push(x);

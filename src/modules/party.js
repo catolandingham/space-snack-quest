@@ -39,9 +39,9 @@ import { createView } from "./party-view.js";
 import { createFreePlay, PAW_ICON } from "./party-free.js";
 import { createEndings } from "./party-endings.js";
 import { createPartySound } from "./party-sound.js";
-import { furShows, wornNow } from "./party-outfit.js";
+import { furShows } from "./party-outfit.js";
 import { CUT } from "./party-snacks.js";
-import { bumpMark } from "./party-hallway.js";
+import { lateState } from "./party-now.js";
 
 // His home door in the right wall: the one box its outline uses too (goal-targets.js).
 const HOME_DOOR = GOAL_TARGETS["closet:peek"].rect;
@@ -664,6 +664,20 @@ export function createParty(bridge) {
     return "";
   }
 
+  /** The people and things feet cannot walk through in the hall. */
+  function solids() {
+    const p = live();
+    if (!p) return [];
+    const feet = (x, y) => ({ x0: x - 18, x1: x + 18, y0: y - 10, y1: y + 6, person: 1 }),
+      gone = (p.close && p.close.gone) || {};
+    // From P6 on, the floor strip from the bar's top end to the hallway doorway is open (he can head for it).
+    const fixed = late(p) ? [...HALL_SOLIDS.filter((b) => !(b.x0 === HALLWAY_LANE.x0 && b.y0 === 0)), { ...HALL_SOLIDS.find((b) => b.x0 === HALLWAY_LANE.x0 && b.y0 === 0), y0: HALLWAY_LANE.y1 }] : HALL_SOLIDS;
+    const people = Object.entries(p.people).filter(([id, g]) => !gone[id] && g.task !== "conga" && !(p.oct && p.oct.mode === "chase" && id === "octopus-guest"));
+    // Isfred (by the bar's top end from P3 on) and Mops at closing time are solid too: nobody stands inside anybody
+    const more = [gone.isfred ? null : p.isfred, p.mops].filter(Boolean);
+    return [...fixed, ...people.map(([, g]) => feet(g.x, g.y)), ...more.map((g) => feet(g.x, g.y))];
+  }
+
   // ---------- the pieces ----------
   const helpers = { E, P, sq, say, chip, control, startScene, picture, homeRoom: HOME_ROOM, pace: PACE, firstAlarm, homeDoor: HOME_DOOR, sound };
   const capture = createCapture(helpers);
@@ -722,34 +736,7 @@ export function createParty(bridge) {
       const p = live();
       if (!p) return null;
       const out = { scene: p.scene, phase: p.phase, pose: p.pose, alarm: p.alarm ? p.alarm.phase : "", seenBy: seenByNow(p), glance: p.scene === "P2" ? glancePhase(p).phase : "", outfit: { ...p.outfit }, flyer: p.flyer, tufts: ventTufts(p), eyes: p.pose === "hidden" ? eyesAt(p, 0) : null, lost: !!p.lost, sound: sound.debug() };
-      if (!late(p)) return out;
-      return {
-        ...out,
-        worn: wornNow(p),
-        gone: (p.lostPieces || []).slice(),
-        tip: p.tip ? p.tip.spot : "",
-        flying: (p.flying || []).length,
-        fur: furShows(p),
-        song: p.song,
-        songT: p.songT,
-        ft: p.ft,
-        done: { ...(p.done || {}) },
-        early: !!p.early,
-        dance: p.dance ? { moves: p.dance.moves, cheer: p.dance.cheer } : null,
-        snack: p.snack ? { phase: p.snack.phase, held: p.snack.held, catches: p.snack.catches } : null,
-        snacks: p.snacks ? { bag: p.snacks.bag, toppled: p.snacks.toppled, chain: p.snacks.chain } : null,
-        stare: p.stare ? p.stare.t : 0,
-        curious: p.curious ? { id: p.curious.id, phase: p.curious.phase } : null,
-        conga: p.conga ? { on: p.conga.on, formed: p.conga.formed, joined: p.conga.joined } : null,
-        photo: p.photo ? { phase: p.photo.phase, taken: p.photo.taken, pol: p.photo.pol } : null,
-        oct: p.oct ? { mode: p.oct.mode, hugs: p.oct.hugs } : null,
-        bounce: p.bounce ? { t: p.bounce.t, mark: bumpMark(p, E().hallSizes().squatch) } : null,
-        paw: !!p.pawIcon,
-        close: p.close ? { phase: p.close.phase, gone: Object.keys(p.close.gone) } : null,
-        mops: p.mops ? { x: p.mops.x, y: p.mops.y, heart: p.mops.heart } : null,
-        people: Object.fromEntries(Object.entries(p.people).map(([id, g]) => [id, { x: Math.round(g.x), y: Math.round(g.y), task: g.task || "" }])),
-        isfred: { x: Math.round(p.isfred.x), y: Math.round(p.isfred.y) },
-      };
+      return late(p) ? { ...out, ...lateState(p, { scale: E().hallSizes().squatch, guardTall: views.homeGuardHeight() }) } : out;
     },
     /** The outfit he chose. */
     outfit() {
@@ -790,19 +777,7 @@ export function createParty(bridge) {
       const p = live();
       return !!(p && p.snack);
     },
-    /** The people and things feet cannot walk through in the hall, and the floor he can walk on. */
-    solids() {
-      const p = live();
-      if (!p) return [];
-      const feet = (x, y) => ({ x0: x - 18, x1: x + 18, y0: y - 10, y1: y + 6, person: 1 }),
-        gone = (p.close && p.close.gone) || {};
-      // From P6 on, the floor strip from the bar's top end to the hallway doorway is open (he can head for it).
-      const fixed = late(p) ? [...HALL_SOLIDS.filter((b) => !(b.x0 === HALLWAY_LANE.x0 && b.y0 === 0)), { ...HALL_SOLIDS.find((b) => b.x0 === HALLWAY_LANE.x0 && b.y0 === 0), y0: HALLWAY_LANE.y1 }] : HALL_SOLIDS;
-      const people = Object.entries(p.people).filter(([id, g]) => !gone[id] && g.task !== "conga" && !(p.oct && p.oct.mode === "chase" && id === "octopus-guest"));
-      // Isfred (by the bar's top end from P3 on) and Mops at closing time are solid too: nobody stands inside anybody
-      const more = [gone.isfred ? null : p.isfred, p.mops].filter(Boolean);
-      return [...fixed, ...people.map(([, g]) => feet(g.x, g.y)), ...more.map((g) => feet(g.x, g.y))];
-    },
+    solids,
     bounds() {
       return BOUNDS;
     },

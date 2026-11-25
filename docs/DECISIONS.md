@@ -11,22 +11,22 @@
 | 79–90 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
 | 91–115 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
 | 116–124 | ## Which repo is the base, 2026-11-22 |
-| 125–132 | ## Sight cones, 2026-11-22 |
-| 133–137 | ## Latest calendar direction, 2026-11-16 |
-| 138–140 | ## Vent walk, 2026-11-16 |
-| 141–143 | ## Locked home room v5, 2026-11-16 |
-| 144–153 | ## Fidelity system (pictures are locked, not just words) |
-| 154–191 | ## 1. Working rules |
-| 192–258 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 259–283 | ## 3. Characters and look |
-| 284–360 | ## 4. Look, rooms and layout |
-| 361–382 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 383–426 | ## 6. Later chapters (2–4 and travel) |
-| 427–436 | ## 7. Audio |
-| 437–471 | ## 8. Code, controls and process |
-| 472–518 | ## 9. Open / waiting on Brian |
-| 519–613 | ## 10. Earlier entries, kept word for word |
-| 614–710 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 125–135 | ## Sight cones, 2026-11-22 |
+| 136–140 | ## Latest calendar direction, 2026-11-16 |
+| 141–143 | ## Vent walk, 2026-11-16 |
+| 144–146 | ## Locked home room v5, 2026-11-16 |
+| 147–156 | ## Fidelity system (pictures are locked, not just words) |
+| 157–194 | ## 1. Working rules |
+| 195–261 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 262–286 | ## 3. Characters and look |
+| 287–363 | ## 4. Look, rooms and layout |
+| 364–385 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 386–429 | ## 6. Later chapters (2–4 and travel) |
+| 430–439 | ## 7. Audio |
+| 440–474 | ## 8. Code, controls and process |
+| 475–521 | ## 9. Open / waiting on Brian |
+| 522–616 | ## 10. Earlier entries, kept word for word |
+| 617–713 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -126,6 +126,9 @@ From the Chapter 1 design check (`docs/ch1-design-audit-2026-11-22/`). Each is s
 - **Decided, Brian in Snack Quest Chat, 2026-11-22:** "Re cones, let's keep them on all players, but dashes until line of sight is intersected by S and then turns yellow - with the red exclamation if no disguise and hearts from mops (earlier version better than v2 build)." Read back to Brian as: every character who can see Squatch has a cone (guests, bartender, guards, robots, Mops); a faint dashed outline while Squatch is outside it; it fills yellow when Squatch enters its line of sight; a red "!" over the watcher if Squatch has no disguise; Mops shows floating hearts instead. Follow the earlier v1 look (pull request 35, R98, R104), not the v2 build.
 - **Supersedes** the Nov 16 rule in `docs/CHAPTER-1-PROBLEMS.md` problem 11 (cones only on guards and robots, "?" over ordinary guests) and restores the Nov 14 dashed-cone direction. Also answers G Bot #603 ("only some of the aliens have the sight cones").
 - **Decided, Brian 2026-11-22, multiple choice "Yellow, then suspicion":** with the disguise on, the cone still fills yellow when Squatch is inside it. If he stays in it a while, the watcher gets suspicious (a "?" or a line like "Nice gloves"); the second time is "fur!" and the fur alarm. This follows his earlier bartender idea (Squatchbot #1025: "maybe the first time he says nice gloves, the second time he goes, wait a second, fur"). Still to settle when built: how long "a while" is (a tuning pin) and the exact words of each line (his yes, word for word).
+- **Replaced, Brian 2026-11-24, click "No yellow in disguise":** in a whole disguise a cone that holds him stays a dashed outline and the guest shows "?"; the cone fills yellow only once fur shows. This replaces "Yellow, then suspicion" above. The same evening he also chose "Lose it all" for tipping (nothing tips a piece crooked; a piece comes off only in the big moments: the snack pyramid's flying cup and the octopus's second hug), which removes the second look; that part is not built yet (docs/MASTER-BACKLOG.md).
+- **Hallway doorway, Brian 2026-11-24:** no beard at the doorway ("the visual of the beard is probably not helpful"); he is bounced back "like any other video game where you try to go somewhere that you can't go yet", and thinks "I can't go there. Mops will see me." each time.
+- **The guard at home, Brian 2026-11-24:** the guard who follows him home carries a flashlight and his search cone is drawn as its beam ("you get the beam even though he's not in [its] vision makes sense"). Sight is unchanged.
 - **Refined, Brian 2026-11-22 (his words: "Maybe we meant it stats with a question mark and only turns into exclamation after he stays too long (if guests versus security)"; then picked "Yes, exactly that" on the read-back):** everyone has a dashed cone that turns yellow when Squatch is in it. Guests show "?" first and "!" only if he stays too long. Security (guards, robots) shows "!" right away. Mops shows hearts. The disguise slows guests down further ("Nice gloves", then "fur!" the second time). This keeps the "?" then "!" idea Brian picked on Nov 11 (Squatchbot #1146 to #1148) and adds cones on everyone. "Too long" is a tuning pin to set when built.
 - **Built as a first try, 2026-11-23 (Brian, after seeing the stills: "let's try all of them and then we can adjust"):** party only, `tests/ch1-party-cones.mjs`. Everyone faces the stage except Isfred (faces the guests) and the bartender (faces the room). "Too long" is 0.8 seconds, a placeholder, not a tuning pin until Brian sets it. **Distance fade, Brian 2026-11-23 ("Add the distance fade", after asking "What if cones only came up when you were within a certain distance?"):** a cone shows only when Squatch is near the cone itself (fully within 40, gone beyond 120); both numbers are placeholders for Brian to tune. Not built yet: the disguised "Nice gloves" then "fur!" step, Mops's hearts (Mops is not at the party), cones in other rooms.
 - **Check before building (Claude, 2026-11-22, after Brian asked not to agree quickly):** Brian's own Nov 11 worry was that cones on every guest "would be too much" (Squatchbot #1145). So the first step is one still of the party hall with every cone drawn dashed, at phone and iPad size, for Brian to look at once. If it reads cleanly, build it. If not, fall back to his Nov 11 pick: cones only on guards and robots, "?" then "!" over guests.

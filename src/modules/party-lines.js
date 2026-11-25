@@ -11,6 +11,7 @@
  *           "who-*" and "where-*" lines.
  *   status  "approved" (Brian's yes, `source` says where) or "needs-yes" (not final until he says yes). Brian said
  *           "Yes to all" to the 31 lines that needed it on 2026-11-24 (Snack Quest Chat).
+ *   removed true for a line the game no longer shows (its row stays, so the sheet's numbers never shift)
  *   source  where the words or the yes came from. "Waiting" = written before, never given his yes. "New" = written
  *           for the party plan.
  * The "That evening…" card is the morning's (morning-lines.js); Isfred's name over his bubble is the engine's.
@@ -58,13 +59,16 @@ export const PARTY_LINES = Object.freeze([
   { id: "bartender-fur", half: 2, who: "bartender", text: "Wait a second... fur!", status: "approved", source: "Brian 2026-11-24: Yes to all" },
   { id: "octopus-hic", half: 2, who: "octopus", text: "*hic* Fellow tourist!", status: "approved", source: "Brian 2026-11-24: Yes to all" },
   { id: "sq-juke", half: 2, who: "sq", text: "I gotta juke this fool.", status: "approved", source: "Brian 2026-11-24: Yes to all" },
-  { id: "sq-mops", half: 2, who: "sq", text: "Mops!", status: "approved", source: "Brian 2026-11-24: Yes to all" },
+  // Removed 2026-11-24 (the row is kept so the sheet's numbers do not shift): "sq-hallway" below replaced it.
+  { id: "sq-mops", half: 2, who: "sq", text: "Mops!", status: "approved", source: "Removed 2026-11-24: replaced by line 43 (it had Brian's yes of 2026-11-24)", removed: true },
   // P7, the FUR alarm and the run home
   { id: "chip-run", half: 1, who: "chip", text: "Squatch: run home and hide!", status: "approved", source: "Brian 2026-11-24: Yes to all" },
   // P8, the endings
   { id: "speaker-closing", half: 2, who: "speaker", text: "The party's over. Good night, Stormtop!", status: "approved", source: "Brian 2026-11-24: Yes to all" },
   { id: "sq-someone", half: 2, who: "sq", text: "Everyone out there has someone.", status: "approved", source: "Brian 2026-11-24: Yes to all" },
   { id: "mops-have-me", half: 2, who: "mops", text: "You have me.", status: "approved", source: "R52, decided" },
+  // Added after the first 42 (new lines go at the end, so no number ever shifts)
+  { id: "sq-hallway", half: 2, who: "sq", text: "I can't go there. Mops will see me.", status: "approved", source: "Brian 2026-11-24, click in Snack Quest Chat" },
 ]);
 
 /** The words of one line, by id. Throws on an unknown id, so a typo cannot show empty words. */

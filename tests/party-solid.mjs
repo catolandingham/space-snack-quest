@@ -58,7 +58,7 @@ g.check("walking right into the snack bar stops at the counter", e.moved >= 8 &&
 e = await walk(700, 300 + 10, "ArrowRight", 90, "P2");
 g.check("in the sneak (P2), walking right along the back wall stops at the snack bar too", e.moved >= 8 && e.maxX <= 806, e);
 // In disguise the lane to the hallway doorway is open, but he cannot go through it yet: walking into the doorway he
-// is bounced back a short way ("Mops!") and never goes through.
+// is bounced back a short way and never goes through.
 e = await walk(700, 300 + 10, "ArrowRight", 150);
 e.after = await page.evaluate(() => {
   const ss = window.__ss,

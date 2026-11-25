@@ -406,7 +406,7 @@ export function createFreePlay(h) {
         return at.done;
       }),
       e.run(() => (h.P() && (h.P().bounce = null), h.sound.one("uhoh"))),
-      h.say("sq", "sq-mops", "whisper"),
+      h.say("sq", "sq-hallway", "whisper"),
       e.run(() => {
         const q = h.P();
         q && q.scene === "P6" && h.control(true);

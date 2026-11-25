@@ -5,9 +5,8 @@
  *   - no walk ring is drawn on a place the goal outline already marks (his door on the run home);
  *   - the hallway doorway: no beard, no humming notes; walking into it bounces him back a short way, quickly, with
  *     a bump, and he thinks his line every time; nothing yanks out of the doorway when the alarm starts;
- *   - the guard who follows him home: his cone starts at his eyes, as tall as he is drawn, the sight rule unchanged,
- *     and he searches (his head turns, he leans, a "?" over him);
- *   - after the guard gives up, the calm seen through the door gap shows Mops hurrying up the hall toward home.
+ *   - the guard who follows him home carries a flashlight: his search cone is drawn as its beam, from the flashlight
+ *     in his hand, the sight rule unchanged, and he searches (his head turns, he leans, a "?" over him).
  * Stills at 375 x 812 go to tests/out/party-stills/ (r3-*.png).
  *   node tests/party-round3.mjs
  */
@@ -66,6 +65,8 @@ const until = async (page, f, ms = 15000, onWait) => {
   }
 };
 const still = (page, name) => page.screenshot({ path: join(OUT, name + ".png") });
+// Stops the game's clock on the frame it is at (for a still of one exact moment), drawing that frame once more.
+const freeze = (page) => page.evaluate(() => ((window.requestAnimationFrame = () => 0), window.__ss.drawFrame()));
 const played = (page) => page.evaluate(() => (window.SSQ.beat("ch1-party").now() || { sound: { played: [] } }).sound.played);
 const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
 const like = (a, h, tol = 10) => hex(h).every((v, j) => Math.abs(a[j] - v) <= tol);
@@ -161,7 +162,7 @@ const frameDiff = (page, change, undo, from) =>
   g.check("he is bounced back a short way (28 to 60)", first.back >= 28 && first.back <= 60 && Math.abs(first.y1 - first.y0) < 12, first);
   g.check("the bounce is quick, not a walk (under 0.35 s, faster than his run)", first.seconds > 0.05 && first.seconds <= 0.35 && first.fastest > 330, first);
   g.check("the kid has no control during the bounce", !first.ctrlDuring, first);
-  g.check("then he thinks his line (the approved \"Mops!\" stands in until Brian's new words)", first.bubble && first.text === "Mops!", first.text);
+  g.check("then he thinks \"I can't go there. Mops will see me.\"", first.bubble && first.text === "I can't go there. Mops will see me.", first.text);
   g.check("the bump sounds", (await played(page)).includes("bump"), await played(page));
   await sleep(150);
   await still(page, "r3-hallway-bounce-line");
@@ -170,7 +171,7 @@ const frameDiff = (page, change, undo, from) =>
   g.check("after the line he has control again, outside the doorway, in the hall", !!s && s.room === "hall" && !hallway.inHallwayZone({ x: s.x, y: s.y }), s && [s.x, s.y]);
   g.check("he stands clear of Isfred (nobody stands inside anybody)", !!s && Math.hypot(s.x - s.now.isfred.x, s.y - s.now.isfred.y) >= 36, s && [s.x, s.y, s.now.isfred]);
   const second = await tryDoor();
-  g.check("the line shows every time he tries, not only the first", second.bubble && second.text === "Mops!" && second.back >= 28, second);
+  g.check("the line shows every time he tries, not only the first", second.bubble && second.text === "I can't go there. Mops will see me." && second.back >= 28, second);
   await next(page);
   // the bump mark is drawn while he is pushed back, at the doorway side of him, and is gone afterwards
   const mark = await page.evaluate(() => {
@@ -377,6 +378,180 @@ const frameDiff = (page, change, undo, from) =>
     await page.screenshot({ path: join(OUT, `r3-dance-pose-${m + 1}.png`) });
   }
   g.check("no errors in the dance", errors.length === 0, errors);
+  await page.close();
+}
+
+// ---------- the guard who follows him home: his cone from his eyes, his searching look ----------
+const watch = await import(join(root, "src", "modules", "party-watch.js"));
+// In the page: he runs home from P7's restart (the kid taps his door), then (if asked) hides under the bed, and the
+// clock runs until the guard has walked in and started looking round. Everything happens in game ticks.
+const runHome = (page, hide) =>
+  page.evaluate((hide) => {
+    const ss = window.__ss,
+      n = ss.op,
+      guard = () => n.ch1PartyNow && n.ch1PartyNow.alarm && n.ch1PartyNow.alarm.homeGuard;
+    ss.tapAt(477, 600);
+    for (let i = 0; i < 900 && n.room !== "closet"; i++) ss.tick(1 / 30);
+    for (let i = 0; i < 300 && !(n.ctrl && !n.cur); i++) ss.tick(1 / 30);
+    for (let i = 0; i < 20 && !(n.act && n.act.verb === "HIDE"); i++) ss.tick(1 / 30);
+    const act = n.act ? n.act.verb : "";
+    if (hide) {
+      ss.actionDown();
+      ss.actionUp();
+      for (let i = 0; i < 300 && n.ch1PartyNow.pose !== "bed"; i++) ss.tick(1 / 30);
+    }
+    for (let i = 0; i < 600 && !(guard() && guard().sweep > 0.05); i++) ss.tick(1 / 30);
+    return { room: n.room, pose: n.ch1PartyNow.pose, guard: !!guard(), act };
+  }, hide);
+// In the page: one frame drawn now, with what it drew read off the canvas calls: the "?" and "!" marks (where),
+// the guard's head and eyes (drawPerson's ovals), and the cones (the numbers they were drawn from). Game positions.
+const drawnNow = (page) =>
+  page.evaluate(() => {
+    const P = CanvasRenderingContext2D.prototype,
+      fill = P.fillText,
+      ell = P.ellipse,
+      c = document.querySelector("canvas"),
+      k = c.width / 960,
+      at = (m, x, y) => ({ x: (m.a * x + m.c * y + m.e) / k, y: (m.b * x + m.d * y + m.f) / k }),
+      marks = [],
+      ovals = [];
+    P.fillText = function (t, x, y, ...r) {
+      (t === "?" || t === "!") && marks.push({ t, ...at(this.getTransform(), x, y) });
+      return fill.call(this, t, x, y, ...r);
+    };
+    P.ellipse = function (x, y, rx, ry, ...r) {
+      ovals.push({ rx, ry, ...at(this.getTransform(), x, y) });
+      return ell.call(this, x, y, rx, ry, ...r);
+    };
+    window.__ss.drawFrame();
+    P.fillText = fill;
+    P.ellipse = ell;
+    const g = window.SSQ.beat("ch1-party").now().homeGuard;
+    return { marks, lens: ovals.find((o) => o.rx === 1.6 && o.ry === 3.4) || null, eyes: ovals.filter((o) => o.rx === 1.8 && o.ry === 1.8), head: ovals.find((o) => o.rx === 12 && o.ry === 12) || null, cones: window.__ss.conesDrawn().filter((q) => q.room === "closet"), g, sq: { x: window.__ss.op.sq.x, y: window.__ss.op.sq.y } };
+  });
+{
+  const size = { half: 0.42, len: 210 };
+  // The sight rule itself, in numbers: a cone lifted for the drawing sees exactly what the unlifted cone sees, and
+  // exactly what the rule saw before (from 28 above the guard's feet to 20 above Squatch's).
+  let differs = 0,
+    drawnDiffers = 0,
+    seen = 0;
+  const guardLook = await import(join(root, "src", "modules", "party-guard-look.js"));
+  for (const f of [-1, 1])
+    for (let a = Math.PI - 0.6; a <= Math.PI + 0.6; a += 0.15)
+      for (let x = 400; x <= 900; x += 20)
+        for (let y = 360; y <= 580; y += 20) {
+          const sq = { x, y },
+            draw = guardLook.torchShift({ turn: Math.sin(a * 7) }, 187.5, f),
+            c = watch.coneFrom("g", 770, 470, a, size, draw),
+            was = watch.distToCone(x, y - 20, 770, 470 - 28, a, size.half, size.len) <= 0,
+            pt = watch.seenPointDrawn(sq, draw),
+            drawn = watch.distToCone(pt.x, pt.y, c.ox + draw.dx, c.oy + draw.dy, a, size.half, size.len) <= 0;
+          watch.coneSees(c, sq) !== was && differs++;
+          drawn !== was && drawnDiffers++;
+          was && seen++;
+        }
+  g.check("rule: drawing the cone as the flashlight's beam changes nothing about who is seen (5,400 places and looks compared with the rule as it was)", differs === 0 && seen > 200, { differs, seen });
+  g.check("rule: the beam, as drawn, still covers exactly the places where he is seen", drawnDiffers === 0, drawnDiffers);
+  {
+    // the point of him the beam is drawn to see is on his own body at home (his head), not beside him
+    const d = guardLook.torchShift({ turn: 0 }, 187.5, -1),
+      pt = watch.seenPointDrawn({ x: 0, y: 0 }, d);
+    g.check("rule: the beam finds him when it lands on his head (the point it is drawn to see is on him)", Math.abs(pt.x) < 40 && pt.y < -62 && pt.y > -135, pt);
+  }
+
+  const { page, errors } = await open("party:P7");
+  const home = await runHome(page, true);
+  g.check("he runs home, hides under the bed, and the guard follows him in", home.room === "closet" && home.pose === "bed" && home.guard, home);
+  // Over the guard's whole look round: where his cone is drawn from, his head, his lean, the mark over him.
+  const frames = [];
+  for (let i = 0; i < 40; i++) {
+    const d = await drawnNow(page);
+    if (!d.g || d.g.leaving) break;
+    frames.push(d);
+    await page.evaluate(() => {
+      for (let j = 0; j < 2; j++) window.__ss.tick(1 / 30);
+    });
+  }
+  const f0 = frames[0];
+  g.check("the guard is drawn much bigger than in the hall (about 187 tall)", !!f0 && f0.g.tall > 150, f0 && f0.g.tall);
+  g.check(
+    "his search cone is drawn as his flashlight's beam: it starts at the flashlight's lens in his hand (as drawn), never at his legs",
+    frames.length > 10 && frames.every((d) => d.cones.length === 1 && d.lens && Math.hypot(d.cones[0].ox - d.lens.x, d.cones[0].oy - d.lens.y) < 3 && d.cones[0].oy < d.g.y - d.g.tall * 0.4 && d.cones[0].oy > d.g.y - d.g.tall * 0.7),
+    frames.slice(0, 2).map((d) => [d.cones, d.lens, d.g.y, d.g.tall]),
+  );
+  g.check("the cone's size is unchanged (the pinned length and width)", frames.every((d) => d.cones[0].len === 210 && d.cones[0].half === 0.42), f0 && f0.cones);
+  g.check("under the bed he is not seen: the guard never sees him", frames.every((d) => !d.g.sees));
+  const turns = frames.map((d) => d.g.turn);
+  g.check("his head turns from side to side as he looks (both ways)", Math.max(...turns) > 0.6 && Math.min(...turns) < -0.6, [Math.min(...turns), Math.max(...turns)]);
+  // measured on the drawing: his eyes sit to one side of his head's middle, then to the other
+  const eyeOff = frames.filter((d) => d.head && d.eyes.length === 2).map((d) => ({ turn: d.g.turn, off: ((d.eyes[0].x + d.eyes[1].x) / 2 - d.head.x) * d.g.f, lean: (d.head.x - d.g.x) * d.g.f }));
+  const fwd = eyeOff.filter((q) => q.turn > 0.6).map((q) => q.off),
+    back = eyeOff.filter((q) => q.turn < -0.6).map((q) => q.off);
+  g.check("drawn: his eyes slide across his face as his head turns (4 px or more each way)", fwd.length > 0 && back.length > 0 && Math.min(...fwd) > 4 && Math.max(...back) < -4, { fwd: fwd.slice(0, 3), back: back.slice(0, 3) });
+  g.check("drawn: he leans in to look (his head ahead of his feet, the way he faces)", eyeOff.length > 0 && eyeOff.every((q) => q.lean > 3), eyeOff.slice(0, 4).map((q) => q.lean));
+  g.check(
+    "a \"?\" is drawn over his head all the time he looks, and no \"!\"",
+    frames.every((d) => d.marks.length === 1 && d.marks[0].t === "?" && d.marks[0].y < d.g.y - d.g.tall && Math.abs(d.marks[0].x - d.g.x) < 40),
+    frames.slice(0, 2).map((d) => d.marks),
+  );
+  g.check("no line is spoken while he searches", (await st(page)).cur !== "bub");
+  await page.evaluate(() => window.__ss.drawFrame());
+  await still(page, "r3-home-guard-searching");
+  g.check("no errors (the guard at home, hidden)", errors.length === 0, errors);
+
+  await page.close();
+}
+{
+  // Not hidden: he is seen as before (the guard's "!" and he walks at him), and the cone he is seen by is the one drawn.
+  const { page, errors } = await open("party:P7");
+  const home = await runHome(page, false);
+  await freeze(page); // from here only the test's own ticks move the game
+  g.check("at home, not hidden: HIDE · bed is offered", home.room === "closet" && home.act === "HIDE", home);
+  let saw = null;
+  for (let i = 0; i < 80 && !saw; i++) {
+    const d = await drawnNow(page);
+    if (d.g && d.g.sees) ((saw = d), await freeze(page));
+    else
+      await page.evaluate(() => {
+        const n = window.__ss.op;
+        // he stands where the kid left him, in the room (the test holds him still)
+        window.__ss.tick(1 / 30);
+        n.walkTo = null;
+      });
+  }
+  g.check("standing in the room he is seen (as before the beam): the guard's \"!\" is drawn, no \"?\"", !!saw && saw.marks.length === 1 && saw.marks[0].t === "!", saw && saw.marks);
+  if (saw) {
+    const c = saw.cones[0],
+      pt = watch.seenPointDrawn(saw.sq, c.draw),
+      inDrawn = watch.distToCone(pt.x, pt.y, c.ox, c.oy, c.a, c.half, c.len) <= 0,
+      close = Math.hypot(saw.sq.x - saw.g.x, saw.sq.y - saw.g.y) < 70;
+    g.check("when he is seen, the point of him the cone is drawn to see is inside the drawn cone (or the guard is right on him)", inDrawn || close, { c, pt, close });
+    // Nothing is drawn over Squatch: inside the yellow cone the fur of his head keeps its own colour (the cone lies
+    // under him, as in the hall). Sampled at four places on his brow and temples, in his own units.
+    const Q = look.SQUATCH_LOOK,
+      spots = [
+        [11.5, -35.5, Q.fur],
+        [-11.5, -35.5, Q.fur],
+        [9, -38, Q.fur],
+        [-9, -38, Q.fur],
+      ];
+    const got = await page.evaluate((spots) => {
+      const n = window.__ss.op,
+        cv = document.querySelector("canvas"),
+        k = cv.width / 960,
+        sc = window.SSQ.engine().squatchScale();
+      return spots.map(([ux, uy]) => {
+        const x = n.sq.x + ux * sc * (n.sq.f || 1),
+          y = n.sq.y + uy * sc;
+        return { x, y, c: Array.from(cv.getContext("2d").getImageData(Math.round(x * k), Math.round(y * k), 1, 1).data).slice(0, 3) };
+      });
+    }, spots);
+    const inYellow = got.filter((q) => watch.distToCone(q.x, q.y, c.ox, c.oy, c.a, c.half, c.len) <= 0).length;
+    g.check("the cone lies under Squatch: inside the yellow the fur of his head keeps its own colour", inYellow > 0 && got.every((q, i) => like(q.c, spots[i][2], 10)), { inYellow, got: got.map((q) => q.c) });
+    await still(page, "r3-home-guard-sees-him");
+  }
+  g.check("no errors (the guard at home, seen)", errors.length === 0, errors);
   await page.close();
 }
 

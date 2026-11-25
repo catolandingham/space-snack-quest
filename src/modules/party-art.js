@@ -49,7 +49,9 @@ export function words(ctx, text, x, y, size, color, align = "center", weight = 9
 /**
  * A person with feet at (x, y), `h` game pixels tall, facing us (`f` -1 turns them). `look` picks the colours and
  * the extras: { skin, shirt, pants, shoes, hair, cap, apron, badge, crocs, croc (a crocodile head), instrument,
- * armUp (0 to 1, one arm raised: dancing or pulling) }.
+ * armUp (0 to 1, one arm raised: dancing or pulling), lean (radians: his upper body leans forward from the hips),
+ * headTurn (-1 to 1: his eyes, mouth and cap peak turn back or forward), torch (he holds a flashlight at his chest,
+ * pointing the way he faces: TORCH) }.
  */
 export function drawPerson(ctx, x, y, h, look, f = 1, t = 0) {
   const k = h / 100,
@@ -87,16 +89,23 @@ export function drawPerson(ctx, x, y, h, look, f = 1, t = 0) {
   oval(ctx, -6, -1, 7, 3.5, shoe, ow);
   oval(ctx, 6, -1, 7, 3.5, shoe, ow);
   if (look.crocs) for (const sx of [-8, -4, 4, 8]) oval(ctx, sx, -1.5, 0.9, 0.9, "#1e5a25");
+  // leaning in to look: everything above the hips tips forward (the way he faces)
+  const lean = look.lean || 0,
+    turn = (look.headTurn || 0) * 4;
+  ctx.save();
+  if (lean) (ctx.translate(0, -34), ctx.rotate(lean), ctx.translate(0, 34));
   // arms (behind the body), body
   const up = look.armUp || 0;
   rr(ctx, -21, -70, 7, 30, 3, look.sleeve || look.shirt, ow);
   oval(ctx, -17.5, -38, 3.6, 3.6, look.skin, ow);
-  ctx.save();
-  ctx.translate(17.5, -68);
-  ctx.rotate(-up * 2.6);
-  rr(ctx, -3.5, -2, 7, 30, 3, look.sleeve || look.shirt, ow);
-  oval(ctx, 0, 30, 3.6, 3.6, look.skin, ow);
-  ctx.restore();
+  if (!look.torch) {
+    ctx.save();
+    ctx.translate(17.5, -68);
+    ctx.rotate(-up * 2.6);
+    rr(ctx, -3.5, -2, 7, 30, 3, look.sleeve || look.shirt, ow);
+    oval(ctx, 0, 30, 3.6, 3.6, look.skin, ow);
+    ctx.restore();
+  }
   rr(ctx, -15, -72, 30, 40, 7, look.shirt, ow);
   if (look.croc) for (let i = 0; i < 4; i++) oval(ctx, -15, -68 + i * 9, 2.2, 3, "#2a7a33", ow * 0.6); // ridges down his back
   if (look.bandShirt) {
@@ -122,6 +131,18 @@ export function drawPerson(ctx, x, y, h, look, f = 1, t = 0) {
   } else if (look.instrument === "keytar") {
     rr(ctx, -20, -52, 40, 9, 2, "#e5533d", ow);
     for (let i = -16; i <= 14; i += 5) rr(ctx, i, -50, 3, 5, 0.5, "#fffdf8");
+  }
+  if (look.torch) {
+    // his near arm bent across his chest, the flashlight in his hand (a grey barrel, a wide head, a lit lens)
+    ctx.save();
+    ctx.translate(15, -66);
+    ctx.rotate(0.55);
+    rr(ctx, -3.5, -2, 7, 19, 3, look.sleeve || look.shirt, ow);
+    ctx.restore();
+    rr(ctx, TORCH.x - 13, TORCH.y - 2.2, 9, 4.4, 1.5, "#8a93a3", ow);
+    rr(ctx, TORCH.x - 5, TORCH.y - 3.6, 5, 7.2, 1.5, "#5c6472", ow);
+    oval(ctx, TORCH.x, TORCH.y, 1.6, 3.4, "#fff3a8", ow * 0.8);
+    oval(ctx, TORCH.x - 10, TORCH.y + 0.5, 3.4, 3.4, look.skin, ow);
   }
   // head
   const hy = -84,
@@ -179,21 +200,27 @@ export function drawPerson(ctx, x, y, h, look, f = 1, t = 0) {
       line(ctx, [-4, hy - hr, -5, hy - hr - 8], INK, ow);
       line(ctx, [4, hy - hr, 5, hy - hr - 8], INK, ow);
     }
-    oval(ctx, -4, hy + 1, 1.8, 1.8, INK);
-    oval(ctx, 4, hy + 1, 1.8, 1.8, INK);
+    // his face: turned with `headTurn` (the eyes, the mouth, the cap's peak and its badge slide the way he looks)
+    oval(ctx, -4 + turn, hy + 1, 1.8, 1.8, INK);
+    oval(ctx, 4 + turn, hy + 1, 1.8, 1.8, INK);
     ctx.beginPath();
-    ctx.arc(0, hy + 4, 3.5, 0.3, Math.PI - 0.3);
+    ctx.arc(turn * 0.7, hy + 4, 3.5, 0.3, Math.PI - 0.3);
     ctx.lineWidth = ow * 0.8;
     ctx.strokeStyle = INK;
     ctx.stroke();
     if (look.cap) {
       rr(ctx, -12, hy - hr - 1, 24, 7, 3, look.cap, ow);
-      rr(ctx, -2, hy - hr + 3, 17, 3.5, 1.5, look.cap, ow);
-      oval(ctx, 0, hy - hr + 2, 2, 2, "#ffcf33");
+      rr(ctx, -2 + turn * 1.2, hy - hr + 3, 17, 3.5, 1.5, look.cap, ow);
+      oval(ctx, turn, hy - hr + 2, 2, 2, "#ffcf33");
     }
   }
   ctx.restore();
+  ctx.restore();
 }
+
+// The flashlight a guard holds at his chest (drawPerson `torch`): where its front is, in the person's own units
+// (feet at 0, up negative, x the way he faces). His search cone is drawn as its beam from here.
+export const TORCH = Object.freeze({ x: 15, y: -52 });
 
 // The new cast's looks (party plan V3 and V4).
 export const LOOKS = Object.freeze({

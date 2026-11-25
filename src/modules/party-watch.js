@@ -11,8 +11,19 @@
 
 // The middle of the stage, in game positions (hall-room-empty-v2 and the party drawing).
 export const PARTY_STAGE = { x: 448, y: 280 };
-// A cone starts this far above a person's feet, as every standing cone in the game does.
+// A cone starts this far above a person's feet, as every standing cone in the game does. This is where the sight
+// test measures from, in every room.
 export const EYE_ABOVE_FEET = 28;
+/**
+ * A cone can be DRAWN somewhere other than where sight is measured from: `draw` = { dx, dy } moves the drawing only
+ * (Brian 2026-11-24, on the guard in Squatch's room, drawn almost three times hall size: "it comes from his feet";
+ * his cone is now his flashlight's beam, drawn from the flashlight in his hand: party-guard-look.js). The sight test
+ * is not changed by this. The cone and the point on Squatch that is seen move by the same amount (seenPointDrawn),
+ * so who is seen, and from where, is exactly as before, and the drawn cone still shows exactly where he is seen.
+ */
+export function seenPointDrawn(sq, draw) {
+  return { x: sq.x + ((draw && draw.dx) || 0), y: sq.y - SQUATCH_SEEN_ABOVE_FEET + ((draw && draw.dy) || 0) };
+}
 // How long a guest watches Squatch before "?" turns into "!" (Brian, 2026-11-22: "it stats with a question mark
 // and only turns into exclamation after he stays too long"). PROVISIONAL: Brian has not set this number
 // yet (docs/DECISIONS.md, Sight cones); it is not a tuning pin until he does.
@@ -57,9 +68,12 @@ export function distToCone(px, py, ox, oy, a, half, len) {
 // exactly where he is seen (tests/party-scenes.mjs).
 export const ROOM_INSIDE = Object.freeze({ x0: 34, y0: 200, x1: 926, y1: 613 });
 
-/** A cone from a person standing at feet (x, y), looking at angle `a`. */
-export function coneFrom(id, x, y, a, size) {
-  return { id, x, y, ox: x, oy: y - EYE_ABOVE_FEET, a, half: size.half, len: size.len };
+/**
+ * A cone from a person standing at feet (x, y), looking at angle `a`. (ox, oy) is where sight is measured from.
+ * `draw` ({ dx, dy }, optional) only moves where the cone is drawn (see seenPointDrawn).
+ */
+export function coneFrom(id, x, y, a, size, draw = null) {
+  return { id, x, y, ox: x, oy: y - EYE_ABOVE_FEET, a, half: size.half, len: size.len, ...(draw ? { draw } : {}) };
 }
 /** The angle from a person at feet (x, y) to a point. */
 export function lookAt(x, y, to) {
@@ -76,10 +90,13 @@ export function coneSees(c, sq) {
 
 /**
  * Draws the cones whole (walls end them). Each is dashed while Squatch is outside it and yellow while he is in it.
+ * `fooled` (he is in a whole disguise, nobody knows him): a cone that holds him stays a dashed outline, and only
+ * the "?" over that guest shows; yellow comes back the moment fur shows (Brian 2026-11-24, "No yellow in disguise",
+ * which replaces his 2026-11-22 "Yellow, then suspicion"). A guard who sees him (`hot`) is always yellow.
  * `all` draws every cone fully (the peek, which teaches cones); otherwise a cone shows only as Squatch comes near
  * it (the approved distance fade, coneShow). Returns the cones as drawn, each with its `show` and `inside`.
  */
-export function drawCones(ctx, cones, sq, hidden, all, note) {
+export function drawCones(ctx, cones, sq, hidden, all, note, fooled = false) {
   const out = [];
   ctx.save();
   ctx.beginPath();
@@ -91,15 +108,28 @@ export function drawCones(ctx, cones, sq, hidden, all, note) {
       show = all || c.always ? 1 : coneShow(edge);
     out.push({ ...c, edge, inside, show });
     if (!(show > 0)) continue;
-    // Only a cone on screen is told to the tests (what a kid can see).
-    note && note({ ox: c.ox, oy: c.oy, a: c.a, half: c.half, len: c.len });
+    // Drawn where `draw` moves it (a flashlight's beam starts at the flashlight); sight (`inside`) is as ever.
+    const dx = c.ox + ((c.draw && c.draw.dx) || 0),
+      dy = c.oy + ((c.draw && c.draw.dy) || 0);
+    // Only a cone on screen is told to the tests (what a kid can see): the numbers it is drawn from.
+    note && note({ ox: dx, oy: dy, a: c.a, half: c.half, len: c.len, ...(c.draw ? { draw: c.draw } : {}) });
     ctx.save();
     ctx.globalAlpha = show;
     ctx.beginPath();
-    ctx.moveTo(c.ox, c.oy);
-    ctx.arc(c.ox, c.oy, c.len, c.a - c.half, c.a + c.half);
+    ctx.moveTo(dx, dy);
+    ctx.arc(dx, dy, c.len, c.a - c.half, c.a + c.half);
     ctx.closePath();
-    if (inside || c.hot) {
+    if (c.beam && !((inside && !fooled) || c.hot)) {
+      // a flashlight's beam: soft light, always showing where he is looking, whether or not it has found anyone
+      const g = ctx.createRadialGradient(dx, dy, 4, dx, dy, c.len);
+      g.addColorStop(0, "rgba(255,248,200,.6)");
+      g.addColorStop(1, "rgba(255,248,200,.14)");
+      ctx.fillStyle = g;
+      ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "rgba(190,160,60,.5)";
+      ctx.stroke();
+    } else if ((inside && !fooled) || c.hot) {
       ctx.fillStyle = "rgba(255,234,120,.55)";
       ctx.fill();
       ctx.lineWidth = 3;

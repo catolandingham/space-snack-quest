@@ -6,8 +6,9 @@
  */
 import { HALL, CAST, CAMERA_AIM, HALL_SPEAKER } from "./party-hall.js";
 import { drawCones } from "./party-watch.js";
+import { guardLook, guardMark, torchShift } from "./party-guard-look.js";
 import { drawHall } from "./party-draw.js";
-import { drawDoorNotes, drawFlyer, drawOutfit, drawPerson, LOOKS, drawMark, drawBand, cameraLens } from "./party-art.js";
+import { drawDoorNotes, drawFlyer, drawOutfit, drawPerson, drawMark, drawBand, cameraLens } from "./party-art.js";
 import { homeGuardCone } from "./party-alarm.js";
 import { ventTufts } from "./party-vent.js";
 import { wornNow, flyingNow, furShows } from "./party-outfit.js";
@@ -98,7 +99,8 @@ export function createView(h) {
       band: { playing: p.band, spots: p.bandAt || CAST.band, gone: ["band0", "band1", "band2"].map((id) => !!gone[id]) },
       guests,
       bartender,
-      guards: a ? a.guards.filter((g) => g.room === "hall").map((g) => ({ x: g.x, y: g.y, f: Math.cos(g.a) < 0 ? -1 : 1 })) : [],
+      // a guard who has stopped to look round has the searching look (his head turns, he leans in)
+      guards: a ? a.guards.filter((g) => g.room === "hall").map((g) => ({ x: g.x, y: g.y, f: Math.cos(g.a) < 0 ? -1 : 1, look: guardLook(g) })) : [],
       tripod: gone.camera ? null : { ...tripodAt, aim: CAMERA_AIM },
       // closing time: nobody is watching for him any more (they are leaving), so no cones (rule 8: a cone always reacts)
       cones: p.scene === "P8b" ? [] : h.cones(p).filter((c) => !gone[c.id]),
@@ -106,6 +108,8 @@ export function createView(h) {
       noteCone: (c) => e.noteCone(c),
       // While a line is up or a scripted walk runs, nobody sees him, so no cone fills yellow (drawn equals sight).
       unseen: !(e.get("ctrl") && !e.current()) || p.scene === "P8b",
+      // In a whole disguise nobody knows him: a cone that holds him stays dashed (only the "?" shows).
+      fooled: late && !furShows(p),
       squatch: outlineHidden ? { x: s.x, y: s.y, pose: "hidden" } : { x: s.x, y: s.y, f: s.f || 1, walk: e.walkPhase(), pose: p.pose === "peek" ? "peek" : "stand", flyer: p.flyer === "back", shake, outfit, tip: late ? p.tip : null, hop: bounceHop(p) },
       eyes,
       marks,
@@ -233,13 +237,28 @@ export function createView(h) {
     }
     const g = p.alarm && p.alarm.homeGuard;
     if (g) {
-      const c = homeGuardCone(p.alarm, e.coneSize());
+      // As tall next to Squatch as in the hall (Squatch is 80% of a grown-up): the home room draws him bigger. He
+      // carries a flashlight, and his search cone is drawn as its beam, from the flashlight in his hand (Brian
+      // 2026-11-24); sight itself is unchanged (party-watch.js seenPointDrawn).
+      const tall = homeGuardHeight(),
+        f = Math.cos(g.a) < 0 ? -1 : 1,
+        c = { ...homeGuardCone(p.alarm, e.coneSize(), torchShift(g, tall, f)), beam: true };
       drawCones(ctx, [c], s, p.pose === "bed", true, (k) => e.noteCone(k));
-      // As tall next to Squatch as in the hall (Squatch is 80% of a grown-up): the home room draws him bigger.
-      drawPerson(ctx, g.x, g.y, (50 * e.squatchScale()) / 0.8, LOOKS.guard, Math.cos(g.a) < 0 ? -1 : 1, t);
-      g.sees && drawMark(ctx, g.x, g.y - (50 * e.squatchScale()) / 0.8 - 26, "!", 48, t);
+      // The cone lies under everyone, as in the hall (nothing is drawn over Squatch): standing in the room he is
+      // drawn again on top of it, with what he wears, behind the guard or in front of him by where his feet are.
+      const again = () => p.pose === "stand" && e.get("sqPose") === "stand" && (e.drawSquatch(ctx, s.x, s.y, e.squatchScale(), { f: s.f || 1, walk: e.walkPhase() }), wear && drawOutfit(ctx, s.x, s.y, e.squatchScale(), wear, s.f || 1));
+      s.y <= g.y && again();
+      drawPerson(ctx, g.x, g.y, tall, { ...guardLook(g), torch: true }, f, t);
+      s.y > g.y && again();
+      // "?" while he searches, "!" once he sees him
+      const mk = guardMark(g, tall, f);
+      mk && drawMark(ctx, mk.x, mk.y, mk.mark, mk.size, t);
     }
     outline(p, "closet");
   }
-  return { view, eyesAt, drawRoom, draw, furShows };
+  // How tall the guard is drawn in the home room.
+  function homeGuardHeight() {
+    return (50 * E().squatchScale()) / 0.8;
+  }
+  return { view, eyesAt, drawRoom, draw, furShows, homeGuardHeight };
 }

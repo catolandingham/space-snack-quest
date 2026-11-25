@@ -5,8 +5,9 @@
  * really drawn on the canvas (the cones' arcs, the "?" marks, the guest pictures), not from the source.
  *   - In disguise every guest, Isfred, the band and the bartender has a cone, drawn whole (a cone's arc is its
  *     full length: furniture never cuts it short).
- *     Squatch inside one: that cone fills yellow and a "?" is drawn over that person, and nobody catches him
- *     at once (a long second look is what starts the alarm: tests/party-free.mjs).
+ *     Squatch inside one, in a whole disguise: that cone stays a dashed outline (no yellow) and a "?" is drawn over
+ *     that person, and nobody catches him (Brian 2026-11-24, "No yellow in disguise", replacing "Yellow, then
+ *     suspicion" of 2026-11-22). The moment fur shows, the cone that holds him fills yellow.
  *   - After the snack pyramid topples, everyone turns to look at Squatch (their cones point at him).
  *   - Distance fade (Brian, 2026-11-23: "Add the distance fade"): a cone shows only when Squatch is near the
  *     cone itself: gone beyond 120 from it, fully shown within 40, fading in between, so every cone that can
@@ -113,7 +114,7 @@ if (spot) {
     camGuest = inCam.guests.find((q) => q.id === "camera"),
     q = inCam.marks.filter((m) => m.t === "?");
   g.check("inside the camera tourist's cone, he is the one who sees him", inCam.now.seenBy === "camera", inCam.now);
-  g.check("inside the camera tourist's cone: it is drawn fully and fills yellow", !!camArc && camArc.alpha === 1 && yellow(camArc), camArc);
+  g.check("in a whole disguise, inside the camera tourist's cone: it is drawn fully and stays a dashed outline (no yellow)", !!camArc && camArc.alpha === 1 && !yellow(camArc), camArc);
   g.check(
     'inside the camera tourist\'s cone: a "?" is drawn over him',
     !!camGuest && q.some((m) => Math.abs(m.px - camGuest.px) < 12 && m.py < camGuest.py - 20),
@@ -148,7 +149,7 @@ g.check(
   all.some((c) => c.d > 40 && c.d < 120) && all.filter((c) => c.d > 40 && c.d < 120).every((c) => c.alpha > 0 && c.alpha < 1),
   all.filter((c) => c.d > 40 && c.d < 120),
 );
-g.check("every cone that sees him is drawn fully and yellow (rule 8)", all.filter((c) => c.d <= 0).every((c) => c.alpha === 1 && c.yellow), all.filter((c) => c.d <= 0));
+g.check("every cone that holds him is drawn fully (rule 8), and in a whole disguise none of them is yellow", all.filter((c) => c.d <= 0).every((c) => c.alpha === 1 && !c.yellow), all.filter((c) => c.d <= 0));
 g.check("every cone is drawn whole (its full length)", all.every((c) => c.whole), all.filter((c) => !c.whole));
 g.check(
   "only the shown cones are drawn, so far-away cones do not clutter the screen",
@@ -200,6 +201,17 @@ g.check("the six party guests are drawn from Brian's approved Nov 8 pictures", n
     f.now.stare > 0 && look.length === EVERYONE.length && look.every((c) => c.off < 0.05),
     { stare: f.now.stare, off: look.filter((c) => c.off >= 0.05) },
   );
+}
+
+// Fur shows (a piece of his outfit is gone): the cones that hold him fill yellow again, at once.
+{
+  const at = await page.evaluate(() => {
+    window.__ss.op.ch1PartyNow.lostPieces = ["head"];
+    return { x: window.__ss.op.sq.x, y: window.__ss.op.sq.y, fur: window.SSQ.beat("ch1-party").now().fur };
+  });
+  const f = await frameAt(at.x, at.y, 0);
+  const holding = f.cones.filter((c) => EVERYONE.includes(c.id) && edgeOf(c, at) <= 0).map((c) => arcOf(f, c));
+  g.check("once fur shows, every cone that holds him fills yellow", at.fur && holding.length > 0 && holding.every((a) => !!a && yellow(a)), { fur: at.fur, holding: holding.length });
 }
 
 g.check("no page errors", errors.length === 0, errors);

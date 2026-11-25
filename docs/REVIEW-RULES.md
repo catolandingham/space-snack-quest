@@ -3,20 +3,21 @@
 
 | Lines | Heading |
 | --- | --- |
-| 21–24 | # Review rules |
-| 25–77 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
-| 78–80 | ## Techniques |
-| 81–83 | ## Mistake: locked art was redrawn |
-| 84–88 | ## Mistake: optional inspection interrupted getting out of bed |
-| 89–91 | ## Mistake: a big doc's section index went stale |
-| 92–94 | ## Mistake: a rebuilt beat forgot the step restart |
-| 95–97 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
-| 98–100 | ## Mistake: a killed run was read as a failing test |
-| 101–103 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
-| 104–106 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
-| 107–113 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
-| 114–121 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
-| 122–138 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
+| 22–25 | # Review rules |
+| 26–78 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
+| 79–81 | ## Techniques |
+| 82–84 | ## Mistake: locked art was redrawn |
+| 85–89 | ## Mistake: optional inspection interrupted getting out of bed |
+| 90–92 | ## Mistake: a big doc's section index went stale |
+| 93–95 | ## Mistake: a rebuilt beat forgot the step restart |
+| 96–98 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
+| 99–101 | ## Mistake: a killed run was read as a failing test |
+| 102–104 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
+| 105–107 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
+| 108–114 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
+| 115–122 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
+| 123–139 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
+| 140–148 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
 <!-- /section-index -->
 # Review rules
 
@@ -135,3 +136,12 @@ The later full touch run exposed a test-driver gap: it waited whenever walking w
 - A suite printed "checks passed" and then did not exit for many minutes: Chrome's crash handler and Google Updater, started by the test Chrome, kept its output pipes open after the browser closed. The game and the test were fine. Before calling a suite hung, look for "checks passed" or "Failed:" in its output, and wait on that line rather than on the process ending.
 - Giving him control at closing time and making his hall door a circle broke two older suites that drive the party their own way (`ch1-playthrough` waited for control to be off; `every-goal-has-target` stood him inside the new trigger); only the full run found them. When a scene's control, trigger or timing changes, grep `tests/` for that scene's name and run every suite that drives it before the full run.
 - In the retaken videos a "?" stayed over a guest after the alarm started and on into closing time: the double-take and the last look were never cleared when the scene moved on. Moving to the alarm or to closing time clears every per-guest look (`curious`, `seenBy`), and tests count the "?" and "!" actually drawn.
+
+## Mistakes caught building party round three, Brian's video notes (2026-11-24)
+- The brief guessed the white ring at his door was the go-home spot's ring; it was the walk-tap ring, drawn by other code. Before changing a drawing Brian points at, find what draws it from the frame itself (the video frame, then a with-and-without picture diff), not from a guess.
+- A raised paw was drawn behind his ear, so one pose had only one paw showing. A posed figure is checked in every pose, by the colour at the place each part should show.
+- A colour check sampled the edge of a shape (the ear, which the head's outline crosses) and failed for the wrong reason, and an earlier version sampled a place the change never touched, so it passed with and without the change. A colour check samples well inside the shape, says how many of its samples lie inside the thing being tested, and is run once without the change to see it fail.
+- A still was taken after reading the game's state, and the game had moved on (the guard had already lost him). For a still of one exact moment, stop the game's clock on that frame first (`freeze` in `tests/party-round3.mjs`).
+- A test pressed the action button on the same tick he got control, before the game had offered the action. A test waits for the offer it is about to press (`n.act`), as a kid waits for the button.
+- A speed check took the slowest single tick, which is short whenever a walker turns a corner inside a tick. Speed is measured over the whole walk; the longest single step is the check for jumps.
+- Deleting one helper took its neighbour with it (the tests' `seenByNow`), and only the next test run showed it. After deleting a block, build and run the suite that reads it before making the next change.

@@ -152,8 +152,10 @@ function searchHall(a, dt, api, sq, hidden) {
       a.last && Math.hypot(a.last.x - g.x, a.last.y - g.y) < 2 && (a.last = null);
       g.look = (g.look || 0) + dt;
       g.a += Math.sin(g.look * 3) * dt * 2.5;
+      // stopped and looking round: his head turns with his look (the searching look, party-guard-look.js)
+      g.turn = Math.sin(g.look * 3);
       g.look > 1.2 && ((g.look = 0), (g.next = g.next + 1));
-    } else g.a = Math.atan2(to.y - g.y, to.x - g.x);
+    } else ((g.a = Math.atan2(to.y - g.y, to.x - g.x)), (g.turn = null));
     if (!safe && a.phase !== "caught" && Math.hypot(sq.x - g.x, sq.y - g.y) < ALARM.reach) {
       api.caught(a.who, a.where);
       a.phase = "caught";
@@ -191,10 +193,13 @@ function searchHome(a, dt, api, sq, hidden) {
   }
   g.door = (g.door || 0) + dt;
   const arrived = g.door > ALARM.doorLook && step(g, HOME.look.x, HOME.look.y, ALARM.guard, dt);
+  // `turn` (-1 to 1) is how far his head is turned as he looks round: it follows the very swing his cone makes.
   if (arrived) {
     g.sweep += dt;
-    g.a = Math.PI + Math.sin(g.sweep * 1.6) * 0.55;
-  } else g.a = g.door > ALARM.doorLook ? Math.atan2(HOME.look.y - g.y, HOME.look.x - g.x) : Math.PI + Math.sin(g.door * 4) * 0.4;
+    g.turn = Math.sin(g.sweep * 1.6);
+    g.a = Math.PI + g.turn * 0.55;
+  } else if (g.door > ALARM.doorLook) ((g.a = Math.atan2(HOME.look.y - g.y, HOME.look.x - g.x)), (g.turn = 0));
+  else ((g.turn = Math.sin(g.door * 4)), (g.a = Math.PI + g.turn * 0.4));
   const c = coneFrom("guard-home", g.x, g.y, g.a, api.size()),
     sees = !hidden && (coneSees(c, sq) || Math.hypot(sq.x - g.x, sq.y - g.y) < ALARM.feet);
   g.sees = sees;
@@ -211,8 +216,8 @@ function searchHome(a, dt, api, sq, hidden) {
   if (!sees && g.sweep >= ALARM.homeSearch) g.leaving = true;
 }
 
-/** The home guard's cone, while one is in the home room. */
-export function homeGuardCone(a, size) {
+/** The home guard's cone, while one is in the home room; `draw` moves where it is drawn (his flashlight). */
+export function homeGuardCone(a, size, draw = null) {
   const g = a && a.homeGuard;
-  return g ? { ...coneFrom("guard-home", g.x, g.y, g.a, size), hot: !!g.sees } : null;
+  return g ? { ...coneFrom("guard-home", g.x, g.y, g.a, size, draw), hot: !!g.sees } : null;
 }
