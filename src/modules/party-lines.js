@@ -69,6 +69,9 @@ export const PARTY_LINES = Object.freeze([
   { id: "mops-have-me", half: 2, who: "mops", text: "You have me.", status: "approved", source: "R52, decided" },
   // Added after the first 42 (new lines go at the end, so no number ever shifts)
   { id: "sq-hallway", half: 2, who: "sq", text: "I can't go there. Mops will see me.", status: "approved", source: "Brian 2026-11-24, click in Snack Quest Chat" },
+  { id: "sq-got-one", half: 2, who: "sq", text: "Got one!", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat: \"I like his own thought\"" },
+  { id: "button-leave-bar", half: 2, who: "button", text: "LEAVE · bar", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat: a LEAVE · bar button always on screen" },
+  { id: "honor-snack-bandit", half: 2, who: "card", text: "Snack Bandit: took every snack at the party.", status: "approved", source: "Brian 2026-11-24, click in Snack Quest Chat: \"Snack Bandit (Recommended)\"" },
 ]);
 
 /** The words of one line, by id. Throws on an unknown id, so a typo cannot show empty words. */

@@ -40,7 +40,7 @@ import { createFreePlay, PAW_ICON } from "./party-free.js";
 import { createEndings } from "./party-endings.js";
 import { createPartySound } from "./party-sound.js";
 import { furShows } from "./party-outfit.js";
-import { CUT } from "./party-snacks.js";
+import { CUT, snackRecord } from "./party-snacks.js";
 import { lateState } from "./party-now.js";
 
 // His home door in the right wall: the one box its outline uses too (goal-targets.js).
@@ -702,7 +702,7 @@ export function createParty(bridge) {
     // Both endings hand over to beat 20 (the TV story) as today; the party night is over.
     finish() {
       sound.stop();
-      save({ scene: "done", outfit: P() && P().outfit });
+      save({ scene: "done", outfit: P() && P().outfit, snacks: snackRecord(P() && P().snacks) });
       E().tvStory();
     },
   });
@@ -790,6 +790,8 @@ export function createParty(bridge) {
       if (who === "band") return { x: CAST.band[1].x, y: CAST.band[1].y - adult - 6 };
       if (who === "sq" && p.pose === "hidden") return eyesAt(p, 0);
       if (who === "sq" && p.pose === "peek") return { x: SPOTS.peek.x, y: 590 };
+      // in the snack close-up only his paw shows: his thought sits over it
+      if (who === "sq" && p.snack) return { x: p.snack.paw.x, y: p.snack.paw.y - 60 };
       if (who === "pa") return { x: HALL_SPEAKER.x0, y: (HALL_SPEAKER.y0 + HALL_SPEAKER.y1) / 2 };
       if (who === "tourist" && p.talker && p.people[p.talker]) return { x: p.people[p.talker].x, y: p.people[p.talker].y - adult - 6 };
       if (who === "bartender") return p.snack ? { x: CUT.bartender.x, y: CUT.bartender.y - CUT.bartender.h - 6 } : { x: (p.bartenderAt || CAST.bartender).x, y: (p.bartenderAt || CAST.bartender).y - adult - 6 };
@@ -830,6 +832,19 @@ export function createParty(bridge) {
     cones() {
       const p = live();
       return p ? cones(p) : [];
+    },
+    /**
+     * What the party remembers about the snacks, for Day 2: { all (he took every snack), left (how many are still
+     * on the bar), bag (how many he took), toppled (the pile fell) }. It stays readable after the party is over.
+     */
+    snackRecord() {
+      const p = P();
+      return snackRecord(p && p.snacks);
+    },
+    /** The line for the end of Chapter 1 when he took every snack at the party ("Snack Bandit"), or "". */
+    snackHonor() {
+      const p = P();
+      return snackRecord(p && p.snacks).all ? partyLine("honor-snack-bandit") : "";
     },
     /** Tests: the paw icon and the snack close-up's layout (game positions). */
     snackLayout() {

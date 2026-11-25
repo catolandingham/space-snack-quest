@@ -534,10 +534,11 @@
         ? ((e.fillStyle = "#1e2430"),
           e.fillRect(0, 0, c, b),
           g("Chapter 1 \xB7 Stormtop", c / 2, 90, 40, "#ffffff", "center", 900),
+          // (An eighth line, the party's Snack Bandit honor, closes the rows up so the last one stays on the card.)
           jh().forEach((o, i, all) =>
             i === all.length - 1
-              ? g(o, c / 2, 180 + i * 64, 40, "#ffcf33", "center", 900)
-              : tallyLine(o, c / 2, 180 + i * 64, 30, 820, i >= 4 ? "#8fdcff" : "#ffffff"),
+              ? g(o, c / 2, 180 + i * Math.min(64, 420 / (all.length - 1)), 40, "#ffcf33", "center", 900)
+              : tallyLine(o, c / 2, 180 + i * Math.min(64, 420 / (all.length - 1)), 30, 820, i >= 4 ? "#8fdcff" : "#ffffff"),
           ),
           !0)
         : !1;

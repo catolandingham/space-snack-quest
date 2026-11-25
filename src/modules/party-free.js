@@ -18,7 +18,8 @@ import { tickVent } from "./party-vent.js";
 import { furShows, anyWorn, wornNow, tickPieces, bump, knockOff, bumpSpot, tipNext } from "./party-outfit.js";
 import { tickConga, tickPhoto, tickOctopus, tickPlants, tickTug, PHOTO_BONUS, PHOTO } from "./party-toys.js";
 import { inHallwayZone, startBounce, tickBounce } from "./party-hallway.js";
-import { openSnacks, closeSnacks, tickSnacks, snackPointer, startTopple, tickTopple, SNACK_STARS, SNACK_LOOK_SECONDS } from "./party-snacks.js";
+import { openSnacks, closeSnacks, tickTopple, snackRecord, SNACK_LOOK_SECONDS } from "./party-snacks.js";
+import { snackFrame, snackTouch } from "./party-snacks-play.js";
 import { newDance, danceMove, tickDance, drawDanceCloseUp, drawCloseButton, danceClose, DANCE } from "./party-dance.js";
 import { openFullScreen, closeFullScreen } from "./fullscreen.js";
 
@@ -353,21 +354,8 @@ export function createFreePlay(h) {
       v === "warn" && (h.sound.one("whoosh"), h.sound.one("fwip"));
       if (v === "fur") return void (e.sfx("zap"), alarm(p, h.nearestGuest(p, s).id, s, "where-vent"));
     }
-    // the snack bar: the bartender in the close-up, and the pyramid's chain
-    const glanced = p.snack && p.snack.phase;
-    const sn = tickSnacks(p, dt);
-    glanced === "back" && p.snack && p.snack.phase === "glance" && h.sound.one("dun");
-    sn === "catch1" && (e.sfx("bleep"), e.queue([h.say("bartender", "bartender-gloves")]));
-    if (sn === "catch2") {
-      e.sfx("bleep");
-      e.queue([
-        h.say("bartender", "bartender-fur"),
-        e.run(() => {
-          const q = h.P();
-          q && q.scene === "P6" && alarm(q, "bartender", h.sq(), "where-bar", "run");
-        }),
-      ]);
-    }
+    // the snack bar: the close-up (party-snacks-play.js), and the pyramid's chain
+    snackFrame(p, dt, h, alarm);
     const tp = tickTopple(p, dt);
     tp === "crash" && h.sound.one("crash");
     if (tp === "cup") {
@@ -426,10 +414,10 @@ export function createFreePlay(h) {
       out.push({ id: "dance", verb: "DANCE", cap: partyLine("button-dance").split(" · ")[1], who: "sq", x: DANCE_SPOT.x, y: DANCE_SPOT.y, r: DANCE_SPOT.rx, thing: { x0: DANCE_SPOT.x - DANCE_SPOT.rx, x1: DANCE_SPOT.x + DANCE_SPOT.rx, y0: DANCE_SPOT.y - DANCE_SPOT.ry, y1: DANCE_SPOT.y + DANCE_SPOT.ry }, when: inSpot(s), f: () => openDance(h.P()) });
     return out;
   }
-  /** True while the paw icon shows: near the bar, the pyramid still standing. */
+  /** True while the paw icon shows: near the bar, the pyramid still standing with a snack left on it. */
   function pawShows(p) {
     const s = h.sq();
-    return p.scene === "P6" && !p.snack && !p.dance && p.pose === "stand" && !p.snacks.toppled && Math.hypot(s.x - SNACK_SPOT.x, s.y - SNACK_SPOT.y) < FREE.pawNear;
+    return p.scene === "P6" && !p.snack && !p.dance && p.pose === "stand" && !p.snacks.toppled && snackRecord(p.snacks).left > 0 && Math.hypot(s.x - SNACK_SPOT.x, s.y - SNACK_SPOT.y) < FREE.pawNear;
   }
   /** A tap on the picture (game positions): the paw icon walks him to the bar and opens the close-up. */
   function tap(p, x, y) {
@@ -449,13 +437,7 @@ export function createFreePlay(h) {
   /** A finger in the snack close-up. True when the close-up took it. */
   function pointer(p, kind, x, y) {
     if (!p.snack) return false;
-    const e = E();
-    const r = snackPointer(p, kind, x, y);
-    r === "grab" && h.sound.one("crinkle");
-    if (r === "bag" || r === "topple") ((p.done.snacks = true), e.addStars(SNACK_STARS), e.sfx("pickup"), h.sound.one("tink"));
-    if (r === "topple") (closeSnacks(p), startTopple(p), h.sound.one("crash"), h.control(true));
-    r === "close" && (closeSnacks(p), h.control(true));
-    return true;
+    return snackTouch(p, kind, x, y, h);
   }
   return { start, tick, spots, tap, pointer, pawShows, alarm, closeDance, inSpot };
 }

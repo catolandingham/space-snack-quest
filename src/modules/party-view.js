@@ -12,7 +12,7 @@ import { drawDoorNotes, drawFlyer, drawOutfit, drawPerson, drawMark, drawBand, c
 import { homeGuardCone } from "./party-alarm.js";
 import { ventTufts } from "./party-vent.js";
 import { wornNow, flyingNow, furShows } from "./party-outfit.js";
-import { drawPyramid, drawPawIcon, drawSnackCloseUp } from "./party-snacks.js";
+import { drawPyramid, drawPawIcon, drawSnackCloseUp } from "./party-snacks-art.js";
 import { SONG_LIGHTS } from "./party-dance.js";
 import { drawCountdown, drawFlash, drawPolaroid, drawBandNotes, drawClap, drawHiccups, drawSpeakerRing, drawPuffs, drawLoosePiece, drawTugWarning, drawFurryFlyer, drawHeartCone } from "./party-free-art.js";
 import { PHOTO } from "./party-toys.js";
