@@ -86,6 +86,14 @@ const { DANCE, SPOTS, ROUTINES, POSES } = D;
   g.check("\"Dance again\": the same routine from its start, one speed faster", !one.over && one.i === 0 && one.marks.length === 0 && one.level === 1 && one.secs === 2.4);
   for (let i = 0; i < 5; i++) D.danceAgain(one);
   g.check("the fastest speed stays the fastest", one.level === 3 && one.secs === 1.5);
+  // the two buttons sit above the band's heads on a phone, a computer and a short wide screen (the review of 2026-11-25)
+  const endMod = await import(join(root, "src", "modules", "party-dance-end.js")),
+    endFit = [[375, 812], [1100, 800], [1280, 720]].map(([w, h]) => {
+      const B = D.danceBand(w, h),
+        bs = endMod.danceEndButtons(w, h);
+      return { w, h, bottom: Math.max(...bs.map((b) => b.y + b.h)), heads: Math.round(B.feet - B.tall * 1.02), top: Math.min(...bs.map((b) => b.y)) };
+    });
+  g.check("the dance's two buttons end above the band's heads, and below the top bar, on three screen sizes", endFit.every((f) => f.bottom <= f.heads && f.top >= 70), endFit);
   // (3 seconds a spot since 2026-11-25, a starting number for a 10-year-old on a phone; it was 2.5)
   // His top hat hid the band (Brian 2026-11-25, "make the fixes you think best"): he is framed below the band, hat to
   // boots on the screen, in every pose, with every piece he can wear on his head, popping and hopping in a cheer.

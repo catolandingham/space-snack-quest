@@ -3,12 +3,15 @@
  * on the big button, on the full-screen views), at real speed, on a phone-size page (375 x 812, video 750 x 1624),
  * with the game's own sound. The picture is the browser's screencast, the sound is recorded inside the page from
  * the game's master volume, and ffmpeg joins them. Not a test: it reads the game only to know when to act.
- *   npm run build && node tools/party-showing.mjs <keep|back|flyer> <out.mp4>
+ *   npm run build && node tools/party-showing.mjs <keep|back|flyer|early> <out.mp4>
  *     keep   from the start of P6: the dance (one spot missed), the group photo, the octopus (one hug), snacks, the
  *            bartender's two catches, the alarm, home, under the bed, the card, "Keep going" to the TV coming on.
  *     back   from the start of P6: a snack, the crash, the alarm, home, the card, "Back to the party", the dance,
  *            the group photo, closing time, Mops, home.
- *     flyer  from the start of P3: the welcome, the flyer sneak (P4), home, the dress-up, out to the party.
+ *     flyer  from the start of P3: the welcome, the flyer sneak (P4, the cones timed: tests/party-sneak.mjs plans the
+ *            waits from the game's own cones, and the finger follows the plan in real time), home, the dress-up, out.
+ *     early  from the start of P6: a dance, then home early through his own door, the card, "Keep going", the
+ *            closet (the costume off), Mops comes home, the talk, the TV.
  *   SHOWING_SILENT=1 leaves the sound out.
  */
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
@@ -17,8 +20,8 @@ import { join, dirname } from "node:path";
 import { startGame, sleep, root } from "../tests/game-page.mjs";
 
 const [which, outFile] = process.argv.slice(2);
-if (!["keep", "back", "flyer"].includes(which) || !outFile) {
-  console.error("Usage: node tools/party-showing.mjs <keep|back|flyer> <out.mp4>");
+if (!["keep", "back", "flyer", "early"].includes(which) || !outFile) {
+  console.error("Usage: node tools/party-showing.mjs <keep|back|flyer|early> <out.mp4>");
   process.exit(2);
 }
 const SILENT = !!process.env.SHOWING_SILENT;
@@ -28,7 +31,8 @@ mkdirSync(join(WORK, "fr"), { recursive: true });
 mkdirSync(dirname(outFile), { recursive: true });
 const hall = await import(join(root, "src", "modules", "party-hall.js"));
 const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 2 };
-const g = await startGame({ port: 9360 + ["keep", "back", "flyer"].indexOf(which), name: "party-showing-" + which });
+const g = await startGame({ port: 9360 + ["keep", "back", "flyer", "early"].indexOf(which), name: "party-showing-" + which });
+const sneak = await import(join(root, "tests", "party-sneak.mjs"));
 const { page, errors } = await g.open("?beat=" + (which === "flyer" ? "party:P3" : "party:P6"), PHONE);
 await sleep(600);
 SILENT || (await page.click("#ss-sound").catch(() => {}));
@@ -119,6 +123,7 @@ const st = () =>
       cv: [cv.x, cv.y, cv.width, cv.height],
       full: ["dance", "party card", "group photo", "dress-up"].find((l) => document.querySelector(`canvas[aria-label="${l}"]`)) || "",
       glow: d && d.live && d.seen && d.seen.glow ? { x: d.seen.glow.x, y: d.seen.glow.y, n: (d.round || 0) * 100 + d.i } : null,
+      end: d && d.over && d.seen && d.seen.end ? { ...d.seen.end, level: d.level } : null,
       danceT: d ? d.t : -1,
       snack: p && p.snack ? { phase: p.snack.phase, t: p.snack.t, reach: !!p.snack.reach, zoom: p.snack.zoom, fall: p.snack.fall } : null,
       slots: p && p.snacks && p.snacks.slots ? p.snacks.slots.slice() : null,
@@ -191,6 +196,15 @@ async function dance(hits, miss) {
   while (done < hits && Date.now() < end) {
     s = await st();
     if (s.full !== "dance") break;
+    // one routine a visit: then "Dance again" (faster) while he still has spots to dance, else "Back to the party"
+    if (s.end) {
+      await sleep(1600);
+      const b = done < hits ? s.end.again : s.end.back;
+      await tap(b.x, b.y);
+      log(done < hits ? "Dance again (faster)" : "Back to the party");
+      await sleep(600);
+      continue;
+    }
     if (s.glow) {
       const key = Math.round(s.glow.x) + "," + Math.round(s.glow.y) + "," + s.glow.n;
       if (key !== lastKey) {
@@ -209,7 +223,9 @@ async function dance(hits, miss) {
     await sleep(120);
   }
   await sleep(1400);
-  (await st()).full === "dance" && (await tap(375 - 36, 36));
+  // out: by "Back to the party" once the routine is over, else by the X
+  const e2 = await until((q) => q.end || q.full !== "dance", 30000);
+  e2 && e2.end ? (await sleep(1200), await tap(e2.end.back.x, e2.end.back.y), log("Back to the party")) : (await st()).full === "dance" && (await tap(375 - 36, 36));
   await until((q) => q.full !== "dance" && q.ctrl, 5000);
   log(`danced: ${done} spots hit${miss ? ", one missed" : ""}`);
 }
@@ -297,7 +313,8 @@ async function runHomeToCard() {
     process.env.SHOWING_DEBUG && log(`home: act "${q.act}" ctrl ${q.ctrl} full "${q.full}" pose ${q.now && q.now.pose} alarm ${q.now && q.now.alarm} cur ${q.cur} btn ${JSON.stringify(q.btn)}`);
     q.act === "HIDE · bed" && q.ctrl && !q.full && (await sleep(250), await press(), await sleep(500));
   });
-  s = await until((q) => q.full === "party card", 30000);
+  // the guard looks round; Mops comes in and sends him off (their six lines); then the card
+  s = await until((q) => q.full === "party card", 60000, read);
   if (!s) return fail("no card");
   log("the card");
   await sleep(3200);
@@ -315,7 +332,33 @@ const toTv = async (ms) => {
   await sleep(2500);
 };
 
-// ---------- the three showings ----------
+// P4: a way to `to` past the moving cones, planned from the game's own cones and P4's clock now (the game keeps
+// running in real time), then followed by a finger: every tenth of a second the finger is on the plan's place for
+// P4's clock now (he walks a little faster than the plan, so he keeps up).
+async function follow(to, hidden) {
+  const now = await page.evaluate(() => window.__ss.op.ch1PartyNow.sweepT || 0),
+    tl = await sneak.coneTimeline(page, now + 75),
+    from = await page.evaluate(() => ({ x: window.__ss.op.sq.x, y: window.__ss.op.sq.y })),
+    plan = sneak.planSneak(tl, from, now + 0.3, to, { hidden });
+  plan || (await fail("no way past the cones"));
+  log(`a way past the cones: ${(plan[plan.length - 1].t - plan[0].t).toFixed(1)} s, with waits`);
+  for (;;) {
+    const s = await st(),
+      t = s.now ? await page.evaluate(() => window.__ss.op.ch1PartyNow.sweepT || 0) : 1e9,
+      q = plan.find((p) => p.t >= t + 0.1) || plan[plan.length - 1];
+    if (!s.now || s.now.alarm || t > plan[plan.length - 1].t + 1.5) break;
+    const at = plan.find((p) => p.t >= t) || plan[plan.length - 1],
+      moved = Math.hypot(q.x - s.x, q.y - s.y) > 6;
+    // standing still in the plan is standing still: no tap (a tap on his own spot does nothing anyway)
+    moved && s.ctrl && (await floor(q.x, q.y));
+    if (at === plan[plan.length - 1] && Math.hypot(s.x - at.x, s.y - at.y) < 14) break;
+    await sleep(90);
+  }
+  const q = await st();
+  q.now && q.now.alarm && (await fail("seen on the way"));
+}
+
+// ---------- the showings ----------
 await startRecording();
 await sleep(1800);
 if (which === "keep") {
@@ -372,8 +415,7 @@ if (which === "flyer") {
   s || (await fail("P4 did not start"));
   log("P4: the flyer sneak");
   await sleep(2600);
-  for (const [x, y] of [[470, 585], [505, 560], [505, 400]]) await goTo(x, y);
-  await goTo(hall.FLYER.reach.x, hall.FLYER.reach.y + 8, (q) => q.act === "GRAB · flyer");
+  await follow(hall.FLYER.reach, true);
   s = await until((q) => q.act === "GRAB · flyer", 4000);
   s || (await fail("no GRAB · flyer"));
   await sleep(900);
@@ -381,7 +423,7 @@ if (which === "flyer") {
   await until((q) => q.now.flyer === "paw" && q.ctrl, 4000);
   log("GRAB · flyer");
   await sleep(700);
-  for (const [x, y] of [[505, 400], [505, 560]]) await goTo(x, y);
+  await follow({ x: hall.HALL_DOOR.x, y: hall.HALL_DOOR.y - 50, r: 30 }, false);
   s = await until((q) => q.now && q.now.scene === "P5" && q.ctrl, 40000, async (q) => {
     if (q.cur === "bub") return read(q);
     q.ctrl && q.room === "hall" && (await floor(hall.HALL_DOOR.x, hall.HALL_DOOR.y + 12), await sleep(600));
@@ -414,6 +456,28 @@ if (which === "flyer") {
   s = await until((q) => q.now && q.now.scene === "P6" && q.ctrl, 15000);
   log(s ? "P6: out at the party in disguise" : "P6 did not start");
   await sleep(2500);
+}
+if (which === "early") {
+  await dance(10, 0);
+  // away from his door, then home through it: the party ends with the card
+  await goTo(480, 450);
+  let s = await until((q) => q.full === "party card", 20000, async (q) => {
+    if (["bub", "card", "panel"].includes(q.cur)) return read(q);
+    q.ctrl && q.room === "hall" && (await floor(hall.HALL_DOOR.x, hall.HALL_DOOR.y + 12), await sleep(500));
+  });
+  s || (await fail("no card after going home"));
+  log("home early: the card");
+  await sleep(3200);
+  await chooseOnCard("keep");
+  // the closet: OPEN · closet takes the costume off
+  await goTo(150, 400, (q) => q.act === "OPEN · closet");
+  s = await until((q) => q.act === "OPEN · closet" && q.ctrl, 8000);
+  s || (await fail("no OPEN · closet at home"));
+  await sleep(900);
+  await press();
+  await until((q) => q.ctrl && q.now && Object.values(q.now.worn).every((v) => !v), 8000);
+  log("the costume off");
+  await toTv(120000);
 }
 await finishRecording();
 console.log("page errors", errors.slice(0, 5));

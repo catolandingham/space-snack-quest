@@ -115,7 +115,7 @@ export function drawCones(ctx, cones, sq, hidden, all, note, fooled = false) {
     out.push({ ...c, edge, inside, show });
     if (!(show > 0)) continue;
     // Only a cone on screen is told to the tests (what a kid can see): the numbers it is drawn from.
-    note && note({ ox: dx, oy: dy, a: c.a, half: c.half, len: c.len, ...(c.draw ? { draw: c.draw } : {}) });
+    note && note({ id: c.id, ox: dx, oy: dy, a: c.a, half: c.half, len: c.len, ...(c.draw ? { draw: c.draw } : {}) });
     ctx.save();
     ctx.globalAlpha = show;
     ctx.beginPath();

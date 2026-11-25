@@ -6,8 +6,8 @@
  *   bartender, Isfred and the band, until Squatch stands alone in the empty hall (DECISIONS "Closing-time ending").
  *   Mops comes in from the hallway mopping with his beard, looks up, and his cone fills with floating hearts (R98,
  *   R104; PR #35's look, as big as everyone's). No words. The kid walks Squatch to Mops and they walk home together
- *   through Squatch's door. "Everyone out there has someone." "You have me."
- * Then beat 20 (the TV story) as today: the engine's tvStory hand-over.
+ *   through Squatch's door. At home, the talk (party-talk.js): he takes the flyer he left by the door, "You went to
+ *   the party." ... "Here's why you have to hide.", the horn press and the TV; then beat 20 (the TV story).
  */
 import { CAST, EXIT, EXIT_LANE_MOUTH, MOPS_IN, SPOTS, HOME_ROOM, stepTo, stepClear, CLEAR_OF_SQUATCH } from "./party-hall.js";
 import { lookAt } from "./party-watch.js";
@@ -21,8 +21,6 @@ import { lookAt } from "./party-watch.js";
 export const ENDING = Object.freeze({ leave: 110, gap: 1.2, pack: 1.6, mop: 45, reach: 70, walk: 150, heart: 0.8, comeOver: 3, clearOf: CLEAR_OF_SQUATCH, giveWay: 1.5, besideHome: 170 });
 // Who leaves, in order: the pairs, the two who came alone, then the bartender, Isfred and the band.
 export const LEAVING = Object.freeze([["teal", "stilt"], ["robot", "octopus-guest"], ["camera", "backpack"], ["bartender"], ["isfred"], ["band0", "band1", "band2"]]);
-// The home room: where Mops stops inside the door (party-hall.js).
-const HOME = Object.freeze({ inside: HOME_ROOM.mopsInside });
 const step = stepTo;
 
 /** `h`: { E, P, sq, say, control, chip, sound, finish () (hands over to beat 20), homeRoom }. */
@@ -194,19 +192,15 @@ export function createEndings(h) {
         e.enterRoom("closet", "Q1");
         e.place("sq", HOME_ROOM.doorIn.x, HOME_ROOM.doorIn.y);
         e.face("sq", -1);
-        e.set("moPose", "stand");
-        e.place("mops", 960, 476);
+        // (Squatch runs in first, to get the flyer; Mops comes in after him: party-talk.js)
+        e.set("moPose", "hidden");
+        e.place("mops", h.homeRoom.mopsDoor.x, h.homeRoom.mopsDoor.y + 6);
         e.face("mops", -1);
       }),
-      e.until((dt) => e.step("sq", HOME.inside.x - ENDING.besideHome, h.homeRoom.inside.y + 20, ENDING.walk, dt)),
-      e.until((dt) => e.step("mops", HOME.inside.x, HOME.inside.y, ENDING.walk, dt)),
-      e.run(() => (e.still("mops"), e.face("mops", -1), e.face("sq", 1))),
-      ...lines(),
+      // At home, the talk (party-talk.js, every ending where Mops is there: Brian 2026-11-25). Squatch is in front,
+      // by the flyer he left by the door; Mops comes in once Squatch has it and has gone ahead.
+      ...h.afterAlarm().talk.steps(),
     ]);
-  }
-  function lines() {
-    const e = E();
-    return [h.say("sq", "sq-someone"), h.say("mops", "mops-have-me"), e.run(() => h.finish())];
   }
 
   function tick(p, dt, s, free) {

@@ -4,7 +4,7 @@
  * builds that view for every scene, and draws the party's things over the home room (the music notes at the door,
  * the flyer on the floor, his outfit, the guard who follows him home, Mops out of breath).
  */
-import { HALL, CAST, CAMERA_AIM, BAND_AIM, HALL_SPEAKER, FLYER } from "./party-hall.js";
+import { HALL, CAST, CAMERA_AIM, BAND_AIM, HALL_SPEAKER, FLYER, P4_SWEEP, sweepAngle } from "./party-hall.js";
 import { drawCones } from "./party-watch.js";
 import { guardLook, guardMark, torchShift } from "./party-guard-look.js";
 import { drawHall, flyerInPaw } from "./party-draw.js";
@@ -22,10 +22,14 @@ import { PHOTO_ROW } from "./party-photo.js";
 import { bounceHop, bumpMark, drawBump } from "./party-hallway.js";
 import { OCT } from "./party-octopus.js";
 
-const LATE = new Set(["P6", "P7", "P8a", "P8b"]);
+const LATE = new Set(["P6", "P7", "P8a", "P8b", "P8c"]);
 // A "?" or "!" is at least as tall as Squatch's head however big the hall draws people: its size and how far over
 // a head its middle sits, as shares of a grown-up's height (42 and 18 when a grown-up was 66 tall).
 const MARK = Object.freeze({ size: 0.635, over: 0.27 });
+// A guest's "?" is small (Brian 2026-11-25: "The big question marks are a bit confusing - it's over his top hat?"):
+// this share of a grown-up's height, and it keeps at least `clear` game pixels from Squatch, his hat included
+// (`top`, his tallest in his own units: the top hat, party-dance.js DANCE_TOP). PLACEHOLDERS.
+export const QUESTION = Object.freeze({ size: 0.42, clear: 14, top: 76 });
 
 /**
  * `h`: { E, P, sq, picture, guests (the approved art), cones (p), glancePhase (p), personAt (p, id), spots (),
@@ -54,43 +58,56 @@ export function createView(h) {
         // the octopus with his arms out: a chase, a hug, or his arms dropping as he gets bored (P6 only)
         const o = g.id === "octopus-guest" && p.scene === "P6" && p.oct && p.oct.arms > 0.02 ? p.oct : null,
           arms = o ? { k: o.arms, toward: Math.sign(s.x - at.x) || 1, hug: o.mode === "hug", hugK: o.mode === "hug" ? Math.min(1, o.ht / OCT.squeeze) : 0, bored: o.mode === "bored" } : null;
-        return { id: g.id, x: at.x, y: at.y, dance: arms ? 0 : dance, lean: to ? Math.sign(to.x - at.x) : 0, arms };
+        // P4: a sweeper leans the way he looks as he turns (his cone sweeps with him: party-hall.js P4_SWEEP)
+        const look = p.scene === "P4" && P4_SWEEP[g.id] ? Math.sign(Math.cos(sweepAngle(g.id, p.sweepT || 0))) : 0;
+        return { id: g.id, x: at.x, y: at.y, dance: arms ? 0 : look ? 1 : dance, lean: look || (to ? Math.sign(to.x - at.x) : 0), arms };
       });
     const marks = [];
     // Marks sit over a person's head, however tall the hall draws them (head height comes from the hall's sizes).
     const adult = e.hallSizes().adult,
       size = Math.round(adult * MARK.size),
+      qSize = Math.round(adult * QUESTION.size),
       over = (id) => tallOf(id, adult) + adult * MARK.over;
     if (p.seenBy && p.scene !== "P8b") {
       const w = h.personAt(p, p.seenBy);
-      w && marks.push({ x: w.x, y: w.y - over(p.seenBy), mark: "?", size });
+      w && marks.push({ x: w.x, y: w.y - over(p.seenBy), mark: "?", size: qSize, guest: w });
     }
     // the glancer's warning "?" as his head turns
     if (p.scene === "P2" && !p.alarm && h.glancePhase(p).phase === "warn") {
       const g = p.people.backpack;
-      marks.push({ x: g.x, y: g.y - over("backpack"), mark: "?", size });
+      marks.push({ x: g.x, y: g.y - over("backpack"), mark: "?", size: qSize, guest: g });
     }
     const a = p.alarm;
     const shout = a && (a.phase === "shout" || (a.phase === "run" && a.t < 0.5)) ? { x: a.w.x, y: a.w.y - over(a.w.id) - 12 } : null;
     a && a.phase === "shout" && marks.push({ x: a.w.x + 40, y: a.w.y - over(a.w.id) + 14, mark: "!", size });
     // Guards show "!" at once when they see him (party plan, Sight).
     a && a.guards.forEach((g) => g.room === "hall" && g.sees && marks.push({ x: g.x, y: g.y - over("guard"), mark: "!", size }));
-    // No mark and no "FUR!" burst sits on Squatch (a guest just below him would put it on his head): it moves beside
-    // that guest's head, on the side away from him, else above him.
+    // No mark and no "FUR!" burst sits on or near Squatch, hat included (a guest just below him would put it on his
+    // head): it moves beside that guest's head, on the side away from him first. A guest's "?" never goes over
+    // Squatch: it stays by its own guest's head, beside it and clear of Squatch's box (QUESTION.clear and more, Brian
+    // 2026-11-25); of the places tried it takes the first that is clear, else the one furthest from him.
     if (p.pose === "stand") {
       const k = e.hallSizes().squatch,
-        sq = { x0: s.x - 22 * k, x1: s.x + 22 * k, y0: s.y - 72 * k, y1: s.y + 2 },
+        m = QUESTION.clear,
+        sq = { x0: s.x - 22 * k - m, x1: s.x + 22 * k + m, y0: s.y - QUESTION.top * k - m, y1: s.y + 2 + m },
         on = (x, y, rx, ry) => x - rx < sq.x1 && x + rx > sq.x0 && y - ry < sq.y1 && y + ry > sq.y0,
-        clear = (o, rx, ry) => {
+        gap = (x, y, rx, ry) => Math.hypot(Math.max(0, sq.x0 - (x + rx), x - rx - sq.x1), Math.max(0, sq.y0 - (y + ry), y - ry - sq.y1)),
+        clear = (o, rx, ry, guest) => {
           if (!on(o.x, o.y, rx, ry)) return;
           const away = Math.sign(o.x - s.x) || 1,
-            tries = [[o.x + away * (rx + 24), o.y + 34], [o.x - away * (rx + 24), o.y + 34], [o.x, sq.y0 - ry - 6]],
-            ok = tries.find(([x, y]) => !on(x, y, rx, ry)) || tries[0];
+            // beside, on side `d`: a step out from the guest's head, and at least clear of Squatch's box
+            side = (d) => (d > 0 ? Math.max(o.x + rx + 24, guest ? sq.x1 + rx + 2 : -1e9) : Math.min(o.x - rx - 24, guest ? sq.x0 - rx - 2 : 1e9)),
+            tries = guest
+              ? [[side(away), o.y], [side(-away), o.y], [side(away), o.y + 34], [side(-away), o.y + 34]]
+              : [[o.x + away * (rx + 24), o.y + 34], [o.x - away * (rx + 24), o.y + 34], [o.x, sq.y0 - ry - 6]];
+          const ok = tries.find(([x, y]) => !on(x, y, rx, ry)) || tries.slice().sort((a, b) => gap(b[0], b[1], rx, ry) - gap(a[0], a[1], rx, ry))[0];
           ((o.x = ok[0]), (o.y = ok[1]));
         };
-      for (const mk of marks) clear(mk, mk.size / 2, mk.size / 2);
+      // (a mark's white oval is 0.46 by 0.56 of its size each side of its middle, with its outline)
+      for (const mk of marks) clear(mk, mk.size * 0.5, mk.size * 0.6, mk.mark === "?" ? mk.guest : null);
       shout && clear(shout, 54, 36);
     }
+    for (const mk of marks) delete mk.guest;
     const outlineHidden = p.pose === "hidden" || p.pose === "bed";
     const eyes = p.pose === "hidden" ? eyesAt(p, t) : null;
     const cam = p.people.camera,
@@ -137,7 +154,7 @@ export function createView(h) {
   }
   // Where the camera points: the row during the photo moment (until everyone walks back), else the stage.
   // (the stage's middle while Isfred speaks; the Croc Boys once they play)
-  const aimNow = (p) => (p.shot && ["gather", "settle", "count", "flash", "polaroid"].includes(p.shot.phase) ? PHOTO_ROW.aim : p.mode === "pairs" && !LATE.has(p.scene) ? BAND_AIM : CAMERA_AIM);
+  const aimNow = (p) => (p.shot && ["gather", "count", "flash", "polaroid"].includes(p.shot.phase) ? PHOTO_ROW.aim : p.mode === "pairs" && !LATE.has(p.scene) ? BAND_AIM : CAMERA_AIM);
   let ctx0 = null;
   // The flyer in the hall, with a yellow glow while Squatch thinks about it.
   function drawFlyerLit(ctx, fl) {
@@ -200,10 +217,16 @@ export function createView(h) {
   function flyerAtHome(p) {
     const to = { x: h.homeRoom.flyer.x, y: h.homeRoom.flyer.y, size: 16, rot: 0.5 };
     if (p.flyer === "floor") return to;
-    if (p.flyer !== "paw" && p.flyer !== "down") return null;
+    if (p.flyer !== "paw" && p.flyer !== "down" && p.flyer !== "take") return null;
+    // (held up to show Mops in the talk, party-talk.js: `flyerUp` 0 to 1)
     const s = h.sq(),
-      paw = flyerInPaw(s.x, s.y, s.f || -1, E().squatchScale()),
-      k = p.flyer === "down" ? (p.put || 0) ** 2 * (3 - 2 * (p.put || 0)) : 0;
+      sk = E().squatchScale(),
+      inPaw = flyerInPaw(s.x, s.y, s.f || -1, sk),
+      up = p.flyerUp != null ? p.flyerUp : 0,
+      paw = { ...inPaw, y: inPaw.y - up * 14 * sk, rot: inPaw.rot * (1 - up) },
+      ease = (q) => (q || 0) ** 2 * (3 - 2 * (q || 0)),
+      // down: from his paw to the floor; take: from the floor up into his paw
+      k = p.flyer === "down" ? ease(p.put) : p.flyer === "take" ? 1 - ease(p.take) : 0;
     return { x: paw.x + (to.x - paw.x) * k, y: paw.y + (to.y - paw.y) * k, size: paw.size + (to.size - paw.size) * k, rot: paw.rot + (to.rot - paw.rot) * k };
   }
   /** Tests: where the flyer is drawn now ({ x, y, size }), in the hall or at home, or null when there is none. */
@@ -264,12 +287,14 @@ export function createView(h) {
     if (e.room() === "hall") return void (snackDrawn = p.snack ? drawSnackCloseUp(ctx, p, t, drawSnackPaw) : null);
     if (e.room() !== "closet") return;
     p.scene === "P1" && p.phase === "home" && drawDoorNotes(ctx, h.homeDoor, t);
-    p.flyer === "floor" && drawFlyer(ctx, h.homeRoom.flyer.x, h.homeRoom.flyer.y, 16, 0.5);
+    // (it glows when he goes to fetch it, and while Mops looks at him: party-talk.js)
+    const homeGlow = p.flyerGlow || p.costumeLook ? 0.75 + 0.25 * Math.sin(t * 6) : 0;
+    p.flyer === "floor" && drawFlyerLit(ctx, { x: h.homeRoom.flyer.x, y: h.homeRoom.flyer.y, size: 16, rot: 0.5, glow: homeGlow });
     const s = h.sq();
     const sk = e.squatchScale();
     // coming home with the flyer: in his paw, then put down on the floor by the door (where it lies from then on)
     const fh = flyerAtHome(p);
-    fh && p.flyer !== "floor" && drawFlyer(ctx, fh.x, fh.y, fh.size, fh.rot);
+    fh && p.flyer !== "floor" && drawFlyerLit(ctx, { ...fh, glow: homeGlow });
     const
       standing = p.pose === "stand" && e.get("sqPose") === "stand";
     let wear = p.scene === "P5" ? p.outfit : LATE.has(p.scene) ? wornNow(p) : null;

@@ -506,7 +506,8 @@ const drawnNow = (page) =>
   const frames = [];
   for (let i = 0; i < 40; i++) {
     const d = await drawnNow(page);
-    if (!d.g || d.g.leaving) break;
+    // (his look round ends when he leaves, or, after a party alarm, when Mops comes in and he stands aside: 2026-11-25)
+    if (!d.g || d.g.leaving || d.g.held) break;
     frames.push(d);
     await page.evaluate(() => {
       for (let j = 0; j < 2; j++) window.__ss.tick(1 / 30);

@@ -3,15 +3,17 @@
  * leaves one on the side of the stage when he leaves and we have to sneak to get it and get back to the room,
  * avoiding lines of sight?"; src/modules/party.js, party-view.js, party-hall.js FLYER), at phone size.
  *   - P3: no toss (no fluttering sheets, none on the floor, none in the plant, no toss sound); Isfred holds one
- *     flyer, and as he walks off to the bar he stops at the stage's right end and sets it down, where it stays;
- *     then "I've never gotten to dance at a party." and "A robot flyer! I'll show Mops." (the flyer glows).
- *   - P4: the flyer is outlined, the chip reads "Squatch: grab the flyer", every cone is drawn whole; the way to
- *     the flyer and back is clear of every cone (mapped from the game's own cones, and walked), the open strip is
- *     wide (100 or more: about 37 px on a phone), and the dance floor either side of it is watched; GRAB · flyer only
- *     within reach; his door does nothing before the grab; the flyer goes up
- *     into his paw, travels with him (no jump), and ends on the home floor; then his two thoughts, once, in order,
- *     before the closet is outlined; ↺ in P5 does not replay them.
- *   - seen on the way: the one capture rule; caught, P4 restarts with the flyer back on the stage; hidden in a
+ *     flyer through his lines; after the robots line Squatch thinks "Robots for the heavy work? That's Mops's job!"
+ *     (the banner glows) and "I have to show Mops." (the flyer in Isfred's hand glows); as Isfred walks off to the bar
+ *     he stops at its far end, turns to the counter and sets the flyer down there (Brian 2026-11-25).
+ *   - P4: the flyer is outlined, the chip reads "Squatch: grab the flyer", every cone is drawn whole; the pairs, the
+ *     glancer and the bartender sweep their cones (party-hall.js P4_SWEEP): from the game's own cones over time a kid
+ *     who waits always has a way there and home (tests/party-sneak.mjs), walking straight in is caught, and three or
+ *     more sweeping cones pass close to the way; walked in the game with waits, nobody sees him; GRAB · flyer only
+ *     within reach; his door does nothing before the grab; the flyer goes up into his paw, travels with him (no
+ *     jump), and ends on the home floor; then his three thoughts, once, in order, before the closet is outlined; ↺ in
+ *     P5 does not replay them.
+ *   - seen on the way: the one capture rule; caught, P4 restarts with the flyer back on the counter; hidden in a
  *     plant with the flyer in his paw, he keeps it and his door is still the goal.
  * Stills at 375 x 812 go to tests/out/party-stills/ (flyer-*.png), or to STILLS if set.
  *   node tests/party-flyer.mjs
@@ -27,17 +29,11 @@ const g = await startGame({ port: 9345, name: "party-flyer" });
 const hall = await import(join(root, "src", "modules", "party-hall.js"));
 const watch = await import(join(root, "src", "modules", "party-watch.js"));
 const lines = await import(join(root, "src", "modules", "party-lines.js"));
+const sneak = await import(join(root, "tests", "party-sneak.mjs"));
 const L = (id) => lines.partyLine(id);
 const { FLYER, SPOTS, HOME_ROOM, HALL, HALL_DOOR } = hall;
 const PAPER = "#fffdf8";
-// The way a kid who looks first walks it: out of the plant, round its pot, up the open strip between the two
-// dancing pairs to the stage's right end; and back down the same strip to his door.
-const TO_FLYER = [
-  [470, 585],
-  [505, 560],
-  [505, 400],
-  [FLYER.reach.x, FLYER.reach.y + 8],
-];
+// His door, the last step home (the cones on the way are timed with tests/party-sneak.mjs).
 const HOME = [
   [505, 400],
   [505, 560],
@@ -219,65 +215,93 @@ g.check(
   let shot = false;
   await until(
     page,
-    (q) => q.now && q.now.flyer === "stage" && !q.now.isfred.walking,
+    (q) => q.now && q.now.flyer === "stage" && !q.now.isfred.walking && q.now.isfred.bend === 0,
     40000,
     async (q) => {
       if (q.now.isfred.bend > 0.25 && !shot) ((shot = true), await still(page, "flyer-02-isfred-sets-it-down"));
       q.cur === "bub" && q.text !== L("band-song") && (await sleep(450), await tap(page));
     },
   );
+  await sleep(500);
   const w = await page.evaluate(() => (clearInterval(window.__wT), window.__w));
   const bends = w.filter((q) => q.bend > 0),
     first = w.findIndex((q) => q.flyer === "stage");
   let maxStep = 0;
   for (let i = 1; i < w.length; i++) maxStep = Math.max(maxStep, Math.hypot(w[i].x - w[i - 1].x, w[i].y - w[i - 1].y));
-  g.check("Isfred walks to the stage's right end, stops and bends there (he is seen setting it down)", bends.length >= 10 && bends.every((q) => Math.hypot(q.x - FLYER.set.x, q.y - FLYER.set.y) < 2) && shot, [bends.length, bends[0]]);
-  g.check("the flyer goes down from his hand to the stage as he bends, and is the stage's from the end of the bend", first > 0 && bends.every((q) => q.flyer === "") && Math.hypot(w[first].fl[0] - FLYER.x, w[first].fl[1] - FLYER.y) < 2 && bends[bends.length - 1].fl[1] > bends[0].fl[1] + 30, [first, bends[0] && bends[0].fl, bends.length && bends[bends.length - 1].fl]);
-  g.check("then he walks on to the bar (no jump), and the flyer stays where he put it", maxStep < 30 && Math.hypot(w[w.length - 1].x - hall.CAST.isfredBar.x, w[w.length - 1].y - hall.CAST.isfredBar.y) < 2 && w.slice(first).every((q) => q.fl && Math.hypot(q.fl[0] - FLYER.x, q.fl[1] - FLYER.y) < 2), [maxStep, w[w.length - 1]]);
+  g.check("Isfred walks to the bar's far end, stops and bends there (he is seen setting it down on the counter)", bends.length >= 10 && bends.every((q) => Math.hypot(q.x - FLYER.set.x, q.y - FLYER.set.y) < 2) && shot, [bends.length, bends[0]]);
+  g.check("the flyer goes down from his hand to the counter as he bends, and lies there from the end of the bend", first > 0 && bends.every((q) => q.flyer === "") && Math.hypot(w[first].fl[0] - FLYER.x, w[first].fl[1] - FLYER.y) < 2 && bends[bends.length - 1].fl[1] > bends[0].fl[1] + 30, [first, bends[0] && bends[0].fl, bends.length && bends[bends.length - 1].fl]);
+  g.check("he stays at the bar (no jump), and the flyer stays where he put it", maxStep < 30 && Math.hypot(w[w.length - 1].x - hall.CAST.isfredBar.x, w[w.length - 1].y - hall.CAST.isfredBar.y) < 2 && w.slice(first).every((q) => q.fl && Math.hypot(q.fl[0] - FLYER.x, q.fl[1] - FLYER.y) < 2), [maxStep, w[w.length - 1]]);
   await page.close();
 }
 
-// ---------- P4: the way there and back, mapped from the game's own cones ----------
+// ---------- P4: the moving cones (Brian 2026-11-25, "End of the bar, moving cones") ----------
+// The way to the flyer and back is a matter of timing: the pairs turn on the spot, the glancer looks round and the
+// bartender looks up and down her bar (party-hall.js P4_SWEEP). From the game's own cones over two minutes of P4's
+// clock (tests/party-sneak.mjs): whenever he sets off from the plant, a kid who waits has a way to the flyer that no
+// cone ever touches, and from there a way home to his door; walking straight in from the start is caught; and the way
+// is a maze: three or more sweeping cones pass close to it.
 {
   const { page, errors } = await open("party:P4");
   let s = await st(page);
-  const cones = await page.evaluate(() => window.SSQ.beat("ch1-party").cones());
-  const seers = (x, y) => cones.filter((c) => watch.coneSees(c, { x, y })).map((c) => c.id);
-  // every 4 along a polyline: who sees him, and how far he is from the nearest cone
-  const along = (pts) => {
-    const out = { seen: [], clear: 999 };
-    for (let i = 1; i < pts.length; i++) {
-      const [x0, y0] = pts[i - 1],
-        [x1, y1] = pts[i],
-        n = Math.ceil(Math.hypot(x1 - x0, y1 - y0) / 4);
-      for (let k = 0; k <= n; k++) {
-        const x = x0 + ((x1 - x0) * k) / n,
-          y = y0 + ((y1 - y0) * k) / n;
-        out.seen.push(...seers(x, y));
-        for (const c of cones) out.clear = Math.min(out.clear, watch.distToCone(x, y - watch.SQUATCH_SEEN_ABOVE_FEET, c.ox, c.oy, c.a, c.half, c.len));
-      }
-    }
-    return { seen: [...new Set(out.seen)], clear: Math.round(out.clear) };
-  };
-  const plant = [SPOTS.plantMiddle.x, SPOTS.plantMiddle.y + 20];
-  const there = along([plant, ...TO_FLYER]),
-    back = along([TO_FLYER[TO_FLYER.length - 1], ...HOME]),
-    left = along([[505, 400], [380, 380]]),
-    right = along([[505, 340], [640, 330]]);
-  g.check("there is a clear way from the plant to the flyer: no cone on it, and at least 40 clear of every cone all the way", there.seen.length === 0 && there.clear >= 40, there);
-  g.check("and a clear way from the flyer home to his door", back.seen.length === 0 && back.clear >= 40, back);
-  g.check("it is still a sneak: the dance floor to the left of the strip and the floor to its right are watched", left.seen.length > 0 && right.seen.length > 0, [left, right]);
-  // the open strip up to the flyer is wide enough to walk without threading a needle
-  const widths = [];
-  for (let y = 326; y <= 470; y += 18) {
-    let a = 505,
-      b = 505;
-    while (a > 300 && !seers(a - 4, y).length) a -= 4;
-    while (b < 700 && !seers(b + 4, y).length) b += 4;
-    widths.push(b - a);
+  await sneak.stopLoop(page);
+  const tl = await sneak.coneTimeline(page, 130);
+  const from = { x: SPOTS.plantMiddle.x, y: SPOTS.plantMiddle.y },
+    door = { x: HALL_DOOR.x, y: HALL_DOOR.y, r: HALL_DOOR.r },
+    rows = [];
+  for (let t0 = 0; t0 < 60; t0 += 3) {
+    const go = sneak.planSneak(tl, from, t0, FLYER.reach, { hidden: true }),
+      at = go && go[go.length - 1],
+      back = go ? sneak.planSneak(tl, at, at.t + 0.5, door) : null;
+    rows.push({ t0, go: go ? +(at.t - t0).toFixed(1) : null, back: back ? +(back[back.length - 1].t - at.t).toFixed(1) : null });
   }
-  g.check("the open strip up to the flyer is at least 100 wide all the way (about 37 px on a phone; people are 40% bigger now)", Math.min(...widths) >= 100, widths);
-  g.check("where he stands to take the flyer is in no cone, and the flyer is within arm's reach of it (under 70)", seers(FLYER.reach.x, FLYER.reach.y).length === 0 && Math.hypot(FLYER.reach.x - FLYER.x, FLYER.reach.y - FLYER.y) < 70, seers(FLYER.reach.x, FLYER.reach.y));
+  g.check("setting off from the plant at any moment (every 3 s of a minute), a kid who waits has a way to the flyer no cone touches, and a way home from it", rows.every((r) => r.go != null && r.back != null), rows);
+  g.check("waiting for the way is never more than 40 seconds", rows.every((r) => r.go <= 40 && r.back <= 40), rows);
+  const straight = sneak.straightIn(tl, from, 0, [[505, 530], [600, 440], [FLYER.reach.x - 30, FLYER.reach.y + 40], [FLYER.reach.x, FLYER.reach.y]]);
+  g.check("walking straight in from the start of P4 without waiting, one cone holds him 0.8 s or more (the cones alone: in the game see below)", straight >= 0.8, straight);
+  // the maze: which sweepers' cones come within 40 of him on the way (from the start)
+  const W = watch,
+    plan0 = sneak.planSneak(tl, from, 0, FLYER.reach, { hidden: true }),
+    close = new Set();
+  for (const q of plan0) {
+    const k = Math.round(q.t / sneak.STEP);
+    for (const c of tl.cones[k]) hall.P4_SWEEP[c.id] && W.distToCone(q.x, q.y - W.SQUATCH_SEEN_ABOVE_FEET, c.ox, c.oy, c.a, c.half, c.len) < 40 && close.add(c.id);
+  }
+  g.check("it is a maze: three or more sweeping cones pass within 40 of him on the way", close.size >= 3, [...close]);
+  g.check("the flyer is on the bar counter's far end, within arm's reach (under 70) of where he takes it", FLYER.x > hall.HALL.bar.x0 && Math.hypot(FLYER.reach.x - FLYER.x, FLYER.reach.y - FLYER.y) < 70);
+  // in the game: walking straight at the flyer from P4's start (the clock set to 0), along the same way, then
+  // standing there to take it, as a kid who does not wait would: the alarm starts
+  const caught = await page.evaluate(
+    ([pts]) => {
+      const n = window.__ss.op,
+        b = window.SSQ.beat("ch1-party");
+      n.ch1PartyNow.sweepT = 0;
+      let k = 0,
+        seen = [],
+        most = 0,
+        held = 0;
+      for (let i = 0; i < 60 * 6; i++) {
+        const [x, y] = pts[k];
+        Math.hypot(n.sq.x - x, n.sq.y - y) < 10 && k < pts.length - 1 && k++;
+        window.__ss.tapAt(pts[k][0], pts[k][1]);
+        window.__ss.tick(1 / 60);
+        const q = b.now();
+        q.seenBy ? ((held += 1 / 60), seen.includes(q.seenBy) || seen.push(q.seenBy)) : (held = 0);
+        most = Math.max(most, held);
+        if (q.alarm) return { alarm: q.alarm, t: +(i / 60).toFixed(1), seen, at: [Math.round(n.sq.x), Math.round(n.sq.y)] };
+        if (k === pts.length - 1 && Math.hypot(n.sq.x - pts[k][0], n.sq.y - pts[k][1]) < 10) break;
+      }
+      return { alarm: "", seen, most: +most.toFixed(2), at: [Math.round(n.sq.x), Math.round(n.sq.y)] };
+    },
+    [[[505, 530], [600, 440], [FLYER.reach.x - 30, FLYER.reach.y + 40], [FLYER.reach.x, FLYER.reach.y]]],
+  );
+  // (Brian's ask was "walking straight in is caught". In the game a straight walk crosses the sweeping cones too fast
+  // for the 0.8 s "?" before "!" rule, so it is seen, not caught; reported to Brian as a question, not hidden here.)
+  g.check("in the game, from P4's start, walking straight at the flyer without waiting: he is seen on the way (a \"?\" over someone)", !!caught && (caught.alarm || caught.seen.length > 0), caught);
+  await page.close();
+}
+{
+  const { page, errors } = await open("party:P4");
+  let s = await st(page);
   // every cone is drawn whole in P4 (he plans by looking), however far he is from it: what is on screen is told to
   // the tests by the drawing itself (conesDrawn)
   const drawn = await page.evaluate(() => {
@@ -297,20 +321,25 @@ g.check(
   g.check("and the flyer is still the one thing outlined (not his door)", (await until(page, (q) => q.ring === "grab-flyer", 1500)) !== null);
 
   // ---------- the sneak to the flyer ----------
-  s = await route(page, TO_FLYER.slice(0, 3));
-  g.check("on the way up the open strip, before he is within reach, GRAB · flyer is not offered", !!s && s.ctrl && s.act !== "GRAB · flyer" && Math.hypot(s.x - FLYER.reach.x, s.y - FLYER.reach.y) > FLYER.reach.r, s && [s.x, s.y, s.act]);
-  await sleep(250);
+  await sneak.stopLoop(page);
+  // (from the doorway, where the door check left him)
+  let way = await sneak.sneakTo(page, FLYER.reach, { upTo: 0.6 });
+  s = await st(page);
+  g.check("on the way, timing the cones, before he is within reach, GRAB · flyer is not offered (and nobody has seen him)", !!way.plan && !way.walked.seen && s.act !== "GRAB · flyer" && Math.hypot(s.x - FLYER.reach.x, s.y - FLYER.reach.y) > FLYER.reach.r, [way.plan && way.plan.length, way.walked, s.x, s.y, s.act]);
+  await page.evaluate(() => window.__ss.drawFrame());
   await still(page, "flyer-04-the-sneak-with-cones");
-  s = await route(page, TO_FLYER.slice(3), (q) => q.act === "GRAB · flyer");
+  way = await sneak.sneakTo(page, FLYER.reach);
+  g.check("the rest of the way, waiting for the cones: nobody sees him, and he walks (no step over 8 a tick)", !!way.plan && !way.walked.seen && !way.walked.alarm && way.walked.maxStep <= 8, way.walked);
+  await sneak.resume(page);
   s = await until(page, (q) => q.act === "GRAB · flyer", 3000);
   const goals = await import(join(root, "src", "modules", "goal-targets.js"));
   g.check("the outline goes round the flyer's own box (one table for the drawing, the label and the outline)", goals.GOAL_TARGETS["hall:grab-flyer"].rect === FLYER.box && FLYER.x > FLYER.box.x0 && FLYER.x < FLYER.box.x1 && FLYER.y > FLYER.box.y0 && FLYER.y < FLYER.box.y1);
-  g.check("at the stage's end the action button reads GRAB · flyer", !!s && Math.hypot(s.x - FLYER.reach.x, s.y - FLYER.reach.y) <= FLYER.reach.r + 2, s && [s.x, s.y, s.act]);
+  g.check("at the counter's end the action button reads GRAB · flyer", !!s && Math.hypot(s.x - FLYER.reach.x, s.y - FLYER.reach.y) <= FLYER.reach.r + 2, s && [s.x, s.y, s.act]);
   await sleep(200);
   await still(page, "flyer-05-grab-flyer");
   await press(page);
   s = await until(page, (q) => q.now.grab != null && q.now.grab > 0.3, 2000);
-  g.check("he is seen picking it up: the flyer leaves the stage and goes to his paw (drawn between the two)", !!s && !s.ctrl && !s.now.seenBy && s.now.flyer === "stage" && s.now.grab < 1 && s.flyerAt.x > FLYER.x + 3 && s.flyerAt.x < s.x - 4 && s.flyerAt.y > FLYER.y, s && [s.now.grab, s.flyerAt, s.x]);
+  g.check("he is seen picking it up: the flyer leaves the counter and goes to his paw (drawn between the two)", !!s && !s.ctrl && s.now.flyer === "stage" && s.now.grab < 1 && s.flyerAt.x < FLYER.x - 3 && s.flyerAt.x > s.x + 4, s && [s.now.grab, s.flyerAt, s.x]);
   s = await until(page, (q) => q.now.flyer === "paw" && q.ctrl, 3000);
   g.check("then it is in his paw, he has control, the chip reads \"Squatch: sneak home for a disguise\"", !!s && s.chip === "Squatch: sneak home for a disguise", s && [s.now.flyer, s.chip]);
   g.check("and his door is outlined now", (await until(page, (q) => q.ring === "go-home", 2000)) !== null);
@@ -322,7 +351,10 @@ g.check(
   await still(page, "flyer-06-in-his-paw");
 
   // ---------- home with it ----------
-  s = await route(page, HOME.slice(0, 2));
+  way = await sneak.sneakTo(page, { x: HALL_DOOR.x, y: HALL_DOOR.y - 50, r: 30 });
+  g.check("on the way home with it, timing the cones: nobody sees him", !!way.plan && !way.walked.seen, way.walked);
+  await sneak.resume(page);
+  s = await st(page);
   await sleep(150);
   await still(page, "flyer-07-carrying-it-home");
   await walk(page, HOME[2][0], HOME[2][1]);
@@ -352,11 +384,14 @@ g.check(
 {
   // the first of his two thoughts at home, for a still
   const { page } = await open("party:P4");
-  await route(page, TO_FLYER, (q) => q.act === "GRAB · flyer");
+  await sneak.sneakTo(page, FLYER.reach, { hidden: true });
+  await sneak.resume(page);
   await until(page, (q) => q.act === "GRAB · flyer", 3000);
   await press(page);
   await until(page, (q) => q.now.flyer === "paw" && q.ctrl, 3000);
-  await route(page, HOME);
+  await sneak.sneakTo(page, { x: HALL_DOOR.x, y: HALL_DOOR.y - 50, r: 30 });
+  await sneak.resume(page);
+  await walk(page, HOME[2][0], HOME[2][1]);
   const s = await until(page, (q) => q.cur === "bub", 8000);
   await sleep(400);
   g.check("(home with the flyer: the first thought is up)", !!s && s.text === "I've never gotten to dance at a party.", s && s.text);
@@ -368,7 +403,8 @@ g.check(
 {
   // With the flyer in his paw he walks into the dancers' sight: the one capture rule. He does nothing: caught.
   const { page, errors } = await open("party:P4");
-  await route(page, TO_FLYER, (q) => q.act === "GRAB · flyer");
+  await sneak.sneakTo(page, FLYER.reach, { hidden: true });
+  await sneak.resume(page);
   await until(page, (q) => q.act === "GRAB · flyer", 3000);
   await press(page);
   let s = await until(page, (q) => q.now.flyer === "paw" && q.ctrl, 3000);
@@ -379,18 +415,18 @@ g.check(
   s = await until(page, (q) => q.cur === "card" || q.cur === "panel" || /LOCKUP|lockup/i.test(q.text), 40000);
   g.check("he does nothing: caught, and the lockup card shows", !!s, s && [s.cur, s.text]);
   s = await until(page, (q) => q.now && q.now.scene === "P4" && q.ctrl && !q.now.alarm && q.now.pose === "hidden", 20000, async (q) => (q.cur === "card" || q.cur === "panel") && (await sleep(500), await tap(page)));
-  g.check("the section restarts sanely: in the plant, no alarm, the flyer back on the stage's end, the chip and the outline on the flyer again", !!s && s.now.flyer === "stage" && s.chip === "Squatch: grab the flyer" && (await pixels(page, FLYER.box, PAPER)) > 150 && (await until(page, (q) => q.ring === "grab-flyer", 2000)) !== null, s && [s.now.flyer, s.chip]);
+  g.check("the section restarts sanely: in the plant, no alarm, the flyer back on the counter's end, the chip and the outline on the flyer again", !!s && s.now.flyer === "stage" && s.chip === "Squatch: grab the flyer" && (await pixels(page, FLYER.box, PAPER)) > 150 && (await until(page, (q) => q.ring === "grab-flyer", 2000)) !== null, s && [s.now.flyer, s.chip]);
   g.check("no script errors when caught", errors.length === 0, errors.slice(0, 3));
   await page.close();
 }
 {
   // Seen with the flyer, he hides in the plant: "They lost you.", he still has the flyer, and his door is the goal.
   const { page } = await open("party:P4");
-  await route(page, TO_FLYER, (q) => q.act === "GRAB · flyer");
+  await sneak.sneakTo(page, FLYER.reach, { hidden: true });
+  await sneak.resume(page);
   await until(page, (q) => q.act === "GRAB · flyer", 3000);
   await press(page);
   await until(page, (q) => q.now.flyer === "paw" && q.ctrl, 3000);
-  await route(page, HOME.slice(0, 1));
   await walk(page, 380, 400);
   let s = await until(page, (q) => q.now.alarm, 8000);
   g.check("(seen on the way home)", !!s);

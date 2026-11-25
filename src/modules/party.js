@@ -11,11 +11,11 @@
  *      the robots line Squatch thinks "Robots for the heavy work? That's Mops's job!" (the banner glows) and "I have
  *      to show Mops." (the flyer in Isfred's hand glows); the lights dim, the Croc Boys
  *      play, and as Isfred walks off he sets the flyer down; the guests pair off and dance.
- *   P4 The flyer sneak (restart: eyes in the plant, band playing, the flyer on the stage). He sneaks to the flyer
- *      past the dancers' sight (every cone drawn whole), GRAB · flyer, carries it in his paw home through his
+ *   P4 The flyer sneak (restart: eyes in the plant, band playing, the flyer on the bar counter's far end). He sneaks
+ *      to it past the dancers' sweeping cones (every cone drawn whole; party-hall.js P4_SWEEP), GRAB · flyer, carries it in his paw home through his
  *      door (his door is not the goal, and does nothing, until he has it), puts it down on the floor, thinks "I've
  *      never gotten to dance at a party.", "I deserve one night of normal." and "Costume on. Then I dance!". Seen: the one capture rule; a restart puts
- *      the flyer back on the stage.
+ *      the flyer back on the counter.
  *   P5 Dress up (home; ↺ restarts it with nothing on). OPEN · closet: the full-screen dress-up (dress-up.js). Then
  *      he walks out through his door in his outfit.
  *   P6 The party in disguise (restart: just inside his door, same outfit, the song that was playing): free play,
@@ -23,14 +23,15 @@
  *   P7 The FUR alarm and the run home (restart: the alarm ringing, guards coming in, Squatch on the dance floor
  *      with the pieces he lost still gone): the one capture rule. Under his bed, the "more to find" card: back to
  *      the party (P6 goes on), or keep going (party-after-alarm.js).
- *   P8a / P8b The endings, after an alarm ("Keep going") or at closing time; both reach "You have me." and then
- *      beat 20 (party-after-alarm.js, party-endings.js).
+ *   P8a / P8b / P8c The endings: after an alarm ("Keep going"), at closing time, or after going home early through
+ *      his own door ("Keep going"); all three end with the talk at home and beat 20 (party-after-alarm.js,
+ *      party-endings.js, party-home-early.js, party-talk.js).
  * Words come only from party-lines.js. The beat's progress lives in the game state as ch1PartyNow, so a restart
  * and the tests can read it. Everything in the hall is drawn by party-draw.js on the locked picture (the view is
  * built in party-view.js); the capture rule's hooks are in party-capture.js.
  */
 import { partyLine } from "./party-lines.js";
-import { HALL, SPOTS, CAST, GLANCE, GLANCE_TIMES, HALL_PICTURE, HALL_SOLIDS, HALLWAY_LANE, DANCE_SPOT, HALL_SPEAKER, BANNER, HOME_ROOM, HALL_DOOR, SNACK_SPOT, FLYER, PYRAMID, BAND_AIM, stepTo } from "./party-hall.js";
+import { HALL, SPOTS, CAST, GLANCE, GLANCE_TIMES, HALL_PICTURE, HALL_SOLIDS, HALLWAY_LANE, DANCE_SPOT, HALL_SPEAKER, BANNER, HOME_ROOM, HALL_DOOR, SNACK_SPOT, FLYER, PYRAMID, BAND_AIM, P4_SWEEP, sweepAngle } from "./party-hall.js";
 export { HOME_ROOM };
 import { HOME_THINGS, HOME_SPOTS } from "./home-alone.js";
 import { GOAL_TARGETS } from "./goal-targets.js";
@@ -44,6 +45,8 @@ import { createView } from "./party-view.js";
 import { createFreePlay } from "./party-free.js";
 import { createEndings } from "./party-endings.js";
 import { createAfterAlarm } from "./party-after-alarm.js";
+import { createHomeEarly } from "./party-home-early.js";
+import { tickStageWalks, bandOffStage } from "./party-stage-walks.js";
 import { createPartySound } from "./party-sound.js";
 import { furShows } from "./party-outfit.js";
 import { CUT, snackRecord } from "./party-snacks.js";
@@ -53,8 +56,6 @@ import { lateState } from "./party-now.js";
 const HOME_DOOR = GOAL_TARGETS["closet:peek"].rect;
 // How fast scripted walks go (pixels a second) and how long the P3 moments last (seconds).
 const PACE = Object.freeze({ walk: 240, scurry: 330, peekStep: 120, bandIn: 2.6, watch: 2.5 });
-// PLACEHOLDERS: the Croc Boys walk on from this far left of their places, at this speed (pixels a second).
-export const BAND_WALK_ON = Object.freeze({ from: 150, speed: 120 });
 // What he wears when a link opens P6 to P8 with no dress-up before it.
 export const JUMP_OUTFIT = Object.freeze({ head: "tophat", face: "shades", body: "shirt", legs: "boots" });
 const BOUNDS = Object.freeze({ x0: 60, x1: 900, y0: HALL.floorTop, y1: 590 });
@@ -82,7 +83,7 @@ export function createParty(bridge) {
   const control = (on) => (E().set("ctrl", !!on), on || E().set("act", null), on || E().still("sq"));
 
   const sound = createPartySound(E);
-  const late = (p) => p.scene === "P6" || p.scene === "P7" || p.scene === "P8a" || p.scene === "P8b";
+  const late = (p) => p.scene === "P6" || p.scene === "P7" || p.scene === "P8a" || p.scene === "P8b" || p.scene === "P8c";
 
   // ---------- the cast ----------
   function freshPeople() {
@@ -103,12 +104,12 @@ export function createParty(bridge) {
     if (late(p) && p.stare) return lookAt(x, y, p.stare.at);
     if (late(p) && p.people[id] && p.people[id].face != null) return p.people[id].face;
     if (p.mode === "isfred") return lookAt(x, y, { x: p.isfred.x, y: p.isfred.y - 40 });
-    // Once the band plays (P3's end and P4) the dancers are busy. The pair by the stage's left look at each other;
-    // the robot looks at the octopus, who has turned to eye the snack bar (he heads there in P6); the glancer
-    // watches Isfred go to the bar and stay there; the camera tourist films the band. That leaves one wide, clear
-    // strip between the two pairs, from the floor's front to the stage's right end and the flyer
-    // (tests/party-flyer.mjs maps it from these cones and walks it).
+    // Once the band plays (P3's end) the dancers are busy: the pairs look at each other, the robot at the octopus,
+    // who eyes the snack bar, the glancer watches Isfred go to the bar, the camera tourist films the band. In P4 the
+    // pairs and the glancer turn (P4_SWEEP below) and their cones sweep the floor on the way to the flyer.
     // (the camera turns back to the stage's middle for the party in disguise, as it always was there)
+    // P4: the pairs turn on the spot and the glancer looks round (party-hall.js P4_SWEEP), so their cones sweep
+    if (p.scene === "P4" && P4_SWEEP[id]) return sweepAngle(id, p.sweepT || 0);
     if (p.mode === "pairs" && !late(p) && id === "camera") return lookAt(x, y, BAND_AIM);
     if (p.mode === "pairs" && id === "octopus-guest") return lookAt(x, y, { x: PYRAMID.x, y: PYRAMID.y - 28 });
     if (p.mode === "pairs" && g && g.glancer) return lookAt(x, y, { x: p.isfred.x, y: p.isfred.y - 40 });
@@ -154,7 +155,7 @@ export function createParty(bridge) {
     out.push(coneFrom("isfred", p.isfred.x, p.isfred.y, stare(p.isfred.x, p.isfred.y, isf), size));
     p.bandOff || (p.bandAt || CAST.band).forEach((b, i) => out.push(coneFrom("band" + i, b.x, b.y, b.face != null ? b.face : stare(b.x, b.y, Math.PI / 2 + (i - 1) * 0.25), size)));
     const bt = p.bartenderAt || CAST.bartender;
-    const btFace = bt.face != null ? bt.face : stare(bt.x, bt.y, Math.PI);
+    const btFace = bt.face != null ? bt.face : p.scene === "P4" ? sweepAngle("bartender", p.sweepT || 0) : stare(bt.x, bt.y, Math.PI);
     out.push(coneFrom("bartender", bt.x, bt.y, btFace, size));
     p.alarm && out.push(...guardCones(p.alarm, size));
     // During the alarm the witness has left his spot: his cone goes with him (he is looking at the alarm).
@@ -259,7 +260,7 @@ export function createParty(bridge) {
           // them join?")
           q.lights = true;
           q.bandOff = false;
-          q.bandAt = CAST.band.map((b) => ({ x: b.x - BAND_WALK_ON.from, y: b.y, walk: 1 }));
+          q.bandAt = bandOffStage();
           // he walks off to the bar, and on the way sets his flyer down (tick)
           q.isfred = { x: CAST.isfred.x, y: CAST.isfred.y, walking: true, wt: 0 };
           q.pt = 0;
@@ -275,7 +276,7 @@ export function createParty(bridge) {
       return;
     }
     if (id === "P4") {
-      // (a restart puts the flyer back on the stage, whether or not he had it)
+      // (a restart puts the flyer back on the counter, whether or not he had it)
       const p = base("P4", { phase: "home", pose: "hidden", hideAt: "middle", flyer: "stage" });
       bandOn(p);
       save(p);
@@ -327,15 +328,17 @@ export function createParty(bridge) {
       control(true);
       return;
     }
-    if (id === "P8a" || id === "P8b") {
+    if (id === "P8a" || id === "P8b" || id === "P8c") {
       const was = P() || {};
       const p = base(id, { phase: "end", flyer: "floor" });
       Object.values(p.outfit).some(Boolean) || (p.outfit = { ...JUMP_OUTFIT });
       bandOn(p);
       Object.assign(p, { lostPieces: (was.lostPieces || []).slice(), song: 2, done: was.done || {}, snacks: was.snacks || null, flying: [], fallen: (was.fallen || []).slice() });
       save(p);
-      // "Keep going" from its start: under the bed, the guard about to come in
+      // "Keep going" from its start: under the bed, Mops in the room, the guard gone; then the talk
       if (id === "P8a") return afterAlarm.startKeep(p);
+      // "Keep going" after going home early: at home in his costume, Mops not home yet
+      if (id === "P8c") return homeEarly.startKeep(p);
       inHall();
       opts.restart && e.place("sq", DANCE_SPOT.x, DANCE_SPOT.y + 10);
       e.set("sqPose", "stand");
@@ -466,12 +469,13 @@ export function createParty(bridge) {
       }),
     ]);
   }
-  // GRAB · flyer: he turns to the stage's end and takes the flyer in his paw; then his door is the goal.
+  // GRAB · flyer: he turns to the counter's end and takes the flyer in his paw; then his door is the goal.
   function grabFlyer() {
     const e = E();
     control(false);
     e.walkOff();
-    e.face("sq", -1);
+    // (the flyer is on the counter, to his right)
+    e.face("sq", 1);
     P().grab = 0;
     sound.one("fwip");
     e.queue([
@@ -585,31 +589,8 @@ export function createParty(bridge) {
     moveTufts(p, dt);
     const s = sq(),
       inHallNow = e.room() === "hall";
-    // Isfred walks off the stage to the bar's top end once the band plays. On the way he stops at the stage's right
-    // end, bends and sets his flyer down there (FLYER: `to` the end, `down` the bend, `off` on to the bar).
-    if (p.isfred.walking) {
-      const w = p.isfred,
-        A = CAST.isfred,
-        S = FLYER.set,
-        B = CAST.isfredBar,
-        mix = (a, b, k) => ((w.x = a.x + (b.x - a.x) * k), (w.y = a.y + (b.y - a.y) * k));
-      w.wt = (w.wt || 0) + dt;
-      if (w.wt < FLYER.to) mix(A, S, w.wt / FLYER.to);
-      else if (w.wt < FLYER.to + FLYER.down) (mix(S, S, 0), (w.bend = (w.wt - FLYER.to) / FLYER.down));
-      else {
-        p.flyer || ((p.flyer = "stage"), sound.one("pop"));
-        w.bend = 0;
-        const k = Math.min(1, (w.wt - FLYER.to - FLYER.down) / FLYER.off);
-        mix(S, B, k);
-        k >= 1 && (p.isfred = { x: B.x, y: B.y, atBar: true });
-      }
-    }
-    // the Croc Boys walk on (P3); once all three are in their places they play and the guests pair off to dance
-    if (p.scene === "P3" && p.bandAt && p.bandAt.some((b) => b.walk)) {
-      let all = true;
-      p.bandAt.forEach((b, i) => (all = stepTo(b, CAST.band[i].x, CAST.band[i].y, BAND_WALK_ON.speed, dt) && all));
-      if (all) ((p.bandAt = null), (p.band = true), (p.mode = "pairs"), (p.pt = Math.max(p.pt, PACE.bandIn - 0.6)));
-    }
+    // Isfred's walk to the bar, the Croc Boys walking on, P4's clock (party-stage-walks.js)
+    tickStageWalks(p, dt, sound, PACE.bandIn);
     if (p.scene === "P2" && !p.alarm) {
       const before = glancePhase(p).phase;
       p.gt += dt;
@@ -673,10 +654,12 @@ export function createParty(bridge) {
       const cur = e.current(),
         paused = !!cur && ["bub", "card", "panel", "wait"].includes(cur.k);
       inHallNow && (p.scene === "P6" || p.scene === "P7") && freePlay.tick(p, dt, s, free, paused);
+      // his own door takes him home early (party-home-early.js)
+      if (inHallNow && p.scene === "P6" && !p.alarm && !paused && homeEarly.hallTick(p, s, free)) return;
       paused || endings.tick(p, dt, s, free);
       if (!live()) return;
     }
-    late(p) && afterAlarm.tick(p, dt);
+    late(p) && (afterAlarm.tick(p, dt), homeEarly.tick(p, dt));
     // (the game waits behind the "more to find" card)
     if (p.alarm && !p.card) {
       tickAlarm(p, dt, capture.api());
@@ -718,7 +701,7 @@ export function createParty(bridge) {
       p.scene === "P4" && p.alarm && out.push(plant("middle"), plant("back"));
       p.alarm && out.push(door("go-home", HALL_DOOR.x, HALL_DOOR.y, HALL_DOOR.r));
     }
-    // P4: the flyer on the stage's end is the goal, even while he is still in the plant (stepping out is walking
+    // P4: the flyer on the bar counter's far end is the goal, even while he is still in the plant (stepping out is walking
     // there); GRAB · flyer is offered only within reach of it. With the flyer in his paw, his door is the goal.
     if (p.scene === "P4" && room === "hall" && !p.alarm) {
       const [verb, cap] = partyLine("button-grab-flyer").split(" · ");
@@ -735,6 +718,8 @@ export function createParty(bridge) {
       out.push(...freePlay.spots(p));
       p.pose === "stand" && furShows(p) && !p.dance && !p.snack && out.push(plant("middle"), plant("back"));
     }
+    // P8c (home early): OPEN · closet takes the costume off.
+    out.push(...homeEarly.spots(p));
     // P7: both plants hide him while the alarm rings; his door is the way home, alarm or not.
     if (p.scene === "P7" && room === "hall" && p.pose === "stand") {
       p.alarm && out.push(plant("middle"), plant("back"));
@@ -753,6 +738,8 @@ export function createParty(bridge) {
     // P6 has no outlines ("Optional things: They discover them"); P7 after the search: home through his door.
     // P7 after the search (standing, or still hidden in a plant): home through his door is the next step
     if (p.scene === "P7" && room === "hall") return "go-home";
+    // home early: the closet, while he still has his costume on and Mops is not home yet
+    if (p.scene === "P8c" && homeEarly.spots(p).length) return "undress";
     return "";
   }
 
@@ -800,7 +787,8 @@ export function createParty(bridge) {
     save({ scene: "done", outfit: P() && P().outfit, snacks: snackRecord(P() && P().snacks) });
     E().tvStory();
   };
-  const afterAlarm = createAfterAlarm({ ...helpers, guests: bridge.guests, finish, resume: (p) => freePlay.resume(p) });
+  const afterAlarm = createAfterAlarm({ ...helpers, guests: bridge.guests, finish, resume: (p) => freePlay.resume(p), homeEarly: () => homeEarly });
+  const homeEarly = createHomeEarly({ ...helpers, resume: (p) => freePlay.resume(p) });
   const views = createView({ ...helpers, guests: bridge.guests, cones, glancePhase, personAt, spots, goalId });
   const eyesAt = (p, t) => views.eyesAt(p, t);
   const seenByNow = (p) => p.seenBy;

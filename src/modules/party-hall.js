@@ -69,25 +69,49 @@ export const CAST = Object.freeze({
   ]),
   bartender: Object.freeze({ x: 890, y: 482 }),
 });
-// The flyer sneak (P3 and P4; Brian 2026-11-24, "what if he just leaves one on the side of the stage"). Isfred holds
-// one flyer through his lines, and as he walks off to the bar he stops at the stage's right end (`set`) and puts it
-// down there (`x`, `y`: on the stage's right-front corner, `size` across). Squatch takes it from `reach` (within
-// `r`), on the floor right of the stage. Times in seconds: Isfred's walk to the end (`to`), the bend (`down`), the
-// walk on to the bar (`off`), Squatch's reach for it (`grab`), and putting it down at home (`put`). PLACEHOLDERS.
+// The flyer sneak (P3 and P4; Brian 2026-11-24, "what if he just leaves one on the side of the stage"; moved
+// 2026-11-25, his click "End of the bar, moving cones": "I was hoping that getting to it was more of a maze, so like
+// he had navigate all the cones successfully as they're moving"). Isfred holds one flyer through his lines; he walks
+// off the stage to his place at the bar's top end (`set`, his CAST.isfredBar), turns to the counter, bends and puts
+// it down on the counter's far end (`x`, `y`, `size` across; `box` is the thing GRAB · flyer names), then stands
+// there facing the room with his back to it. Squatch takes it from `reach` (within `r`), on the floor in front of
+// the counter's end, between the two bar stools (clear of Isfred, who stands a little up the room). Times in seconds: Isfred's walk to the bar (`to`), the
+// bend (`down`), Squatch's reach for it (`grab`), and putting it down at home (`put`). PLACEHOLDERS.
 export const FLYER = Object.freeze({
-  x: 486,
-  y: 290,
+  x: 838,
+  y: 418,
   size: 34,
-  box: Object.freeze({ x0: 464, x1: 508, y0: 264, y1: 314 }),
-  reach: Object.freeze({ x: 524, y: 328, r: 34 }),
-  set: Object.freeze({ x: 458, y: 262 }),
+  box: Object.freeze({ x0: 816, x1: 860, y0: 392, y1: 442 }),
+  reach: Object.freeze({ x: 788, y: 420, r: 30 }),
+  set: Object.freeze({ x: 782, y: 330 }),
   hand: Object.freeze({ dx: 24, dy: -58, size: 24 }),
-  to: 0.6,
+  to: 2.1,
   down: 0.8,
-  off: 1.9,
   grab: 0.45,
   put: 0.5,
 });
+/**
+ * P4, the moving cones (Brian 2026-11-25): while the band plays, the dancing pairs turn on the spot, the glancer looks
+ * round and the bartender looks up and down her bar, so their cones sweep slowly over the floor between the plant and
+ * the flyer (the robot never looks up at the counter's end: where he stands to take it, nobody sees him); the camera
+ * tourist films the band and Isfred looks into the room. Each sweeper's look is `base + amp * sin(2 pi t / period +
+ * phase)` radians, `t` the seconds since P4 began (the same every play). tests/party-flyer.mjs searches the game's
+ * own cones over time: from the plant, a kid who waits has a way to the flyer whenever he sets off, and walking
+ * straight in from the start is caught. PLACEHOLDERS (numbers from that search).
+ */
+export const P4_SWEEP = Object.freeze({
+  robot: Object.freeze({ base: 1.68, amp: 0.86, period: 8, phase: 6.23 }),
+  "octopus-guest": Object.freeze({ base: 2.47, amp: 1.13, period: 9, phase: 3.83 }),
+  backpack: Object.freeze({ base: -1.8, amp: 1.06, period: 10, phase: 3.29 }),
+  bartender: Object.freeze({ base: 2.66, amp: 0.31, period: 6, phase: 5.7 }),
+  teal: Object.freeze({ base: 0.3, amp: 0.6, period: 8, phase: 0.5 }),
+  stilt: Object.freeze({ base: 2.84, amp: 0.6, period: 8, phase: 3.64 }),
+});
+/** Where a P4 sweeper looks `t` seconds into P4 (radians), or null for someone who does not sweep. */
+export function sweepAngle(id, t) {
+  const w = P4_SWEEP[id];
+  return w ? w.base + w.amp * Math.sin((2 * Math.PI * t) / w.period + w.phase) : null;
+}
 // The glancer's look across the lane (radians; about 174 degrees, down and to the left), and how far it sweeps
 // either side. Chosen so the lane between the door and the plant is covered while his doorway and the plant's left
 // side, where Squatch steps in, are never in his cone (tests/party-scenes.mjs).

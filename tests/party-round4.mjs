@@ -109,14 +109,21 @@ const tileLight = (page) =>
       T = window.SSQ.beat("ch1-party").cardTargets();
     return Object.fromEntries(T.tiles.map((t) => [t.id, cv.getContext("2d").getImageData(Math.round((t.x - t.s / 2 + 9) * k), Math.round((t.y - t.s / 2 + 9) * k), 1, 1).data[0] > 200]));
   });
-// From P7's start: run home and hide under the bed, to the card. `before` sets the party's state first.
+// From P7's start: run home and hide under the bed; the guard looks round, Mops comes in and sends him off (their
+// lines are tapped through, as a kid does), and then the card (Brian 2026-11-25, "Card after Mops sends the guard
+// off"). `before` sets the party's state first. The lines seen on the way are kept in `toCard.talk`.
 async function toCard(page, before) {
   before && (await set(page, before));
   await walk(page, hall.SPOTS.doorway.x, 605);
   let s = await until(page, (q) => q.room === "closet" && q.act === "HIDE · bed", 12000);
   if (!s) return null;
   await press(page);
-  return until(page, (q) => q.now && !!q.now.card, 6000);
+  toCard.talk = [];
+  return until(page, (q) => q.now && !!q.now.card, 40000, async (q) => {
+    if (q.cur !== "bub") return;
+    if (!toCard.talk.length || toCard.talk[toCard.talk.length - 1][1] !== q.text) (await sleep(150), toCard.talk.push([q.who, q.text, await bubbleName(page)]));
+    await next(page);
+  });
 }
 // Lines shown in order until `stop`, tapping NEXT on each: [who, text, name over the bubble].
 async function readLines(page, stop, ms = 40000) {
@@ -160,20 +167,20 @@ g.check("the card's things are the dance, the photo, the snacks, the conga and t
   let T = await targets(page);
   g.check("with nothing found, all five things are \"?\" tiles (dark), none filled in", Object.values(T.got).every((v) => !v) && Object.values(await tileLight(page)).every((v) => !v) && text.includes("?"), [T.got, await tileLight(page)]);
   await still(page, "r4-card-nothing-found");
-  // the game waits behind the card: the guard does not move, the alarm's clock stands still
-  const a0 = await page.evaluate(() => { const a = window.__ss.op.ch1PartyNow.alarm; return [a.t, a.homeGuard ? a.homeGuard.x : -1, a.homeGuard ? a.homeGuard.sweep : -1]; });
+  // the game waits behind the card: Mops stands where he sent the guard off, Squatch stays under the bed, nothing runs
+  // (before 2026-11-25 the guard waited behind it; now he has gone)
+  const a0 = await page.evaluate(() => { const n = window.__ss.op; return [Math.round(n.mo.x), Math.round(n.mo.y), n.moPose, n.ch1PartyNow.pose, !!n.cur, !!n.ch1PartyNow.alarm]; });
   await sleep(1500);
-  const a1 = await page.evaluate(() => { const a = window.__ss.op.ch1PartyNow.alarm; return [a.t, a.homeGuard ? a.homeGuard.x : -1, a.homeGuard ? a.homeGuard.sweep : -1]; });
-  g.check("the game waits behind the card (the guard and the alarm's clock stand still)", JSON.stringify(a0) === JSON.stringify(a1), [a0, a1]);
+  const a1 = await page.evaluate(() => { const n = window.__ss.op; return [Math.round(n.mo.x), Math.round(n.mo.y), n.moPose, n.ch1PartyNow.pose, !!n.cur, !!n.ch1PartyNow.alarm]; });
+  g.check("the game waits behind the card (Mops in the room, Squatch under the bed, the guard gone, nothing moving)", JSON.stringify(a0) === JSON.stringify(a1) && a0[2] === "stand" && a0[3] === "bed" && !a0[5], [a0, a1]);
   // "Back to the party", with a finger
   await page.touchscreen.tap(T.back.x, T.back.y);
   s = await until(page, (q) => !q.full, 2000);
   g.check("a tap on \"Back to the party\" closes the card (still P7)", !!s && s.now.scene === "P7" && s.now.choice === "back", s && [s.now.scene, s.now.choice]);
-  s = await until(page, (q) => q.now.homeGuard && q.now.homeGuard.turn != null && Math.abs(q.now.homeGuard.turn) > 0.3, 8000);
-  g.check("the guard comes in and sweeps the room with his flashlight (his head turning as he looks)", !!s && s.now.pose === "bed", s && s.now.homeGuard);
-  await still(page, "r4-back-guard-sweeps");
-  s = await until(page, (q) => q.note > 0, 12000);
-  g.check("he gives up and leaves: \"They lost you.\"", !!s && !s.now.homeGuard, s && s.now.homeGuard);
+  // (Brian 2026-11-25: with no words Mops heads back out to work, and Squatch sneaks out after him)
+  s = await until(page, (q) => q.mo.pose === "hidden", 8000, async (q) => q.cur === "bub" && (await next(page)));
+  g.check("with no words, Mops heads back out to work through the door (Squatch still under the bed till then)", !!s && s.now.pose === "bed" && s.cur !== "bub", s && [s.now.pose, s.mo]);
+  await still(page, "r4-back-mops-goes-to-work");
   // out from under the bed, to his closet, the piece he lost goes back on
   s = await until(page, (q) => q.wardrobe === "open", 12000);
   g.check("he comes out and goes to his closet (it opens), the lost piece still off", !!s && s.sqPose === "stand" && s.now.gone.length === 1, s && [s.sqPose, s.now.gone]);
@@ -184,7 +191,7 @@ g.check("the card's things are the dance, the photo, the snacks, the conga and t
   await sleep(60);
   await still(page, "r4-back-disguise-back-on");
   g.check("he is seen putting his disguise back on: the piece pops back on him at the closet", !!s && s.wardrobe === "open" && !s.now.fur, s && [s.wardrobe, s.now.fur]);
-  g.check("Mops has not come (he is nowhere in the room) and no line was spoken", s.mo.pose === "hidden" || s.mo.x > 960 || s.mo.x < 0, s.mo);
+  g.check("Mops has gone (he is nowhere in the room), and \"They lost you.\" was not said (Mops sent the guard off)", (s.mo.pose === "hidden" || s.mo.x > 960 || s.mo.x < 0) && s.note === 0, [s.mo, s.note]);
   // out through his door, and the party goes on
   await page.evaluate(() => {
     window.__w = [];
@@ -234,8 +241,8 @@ g.check("the card's things are the dance, the photo, the snacks, the conga and t
   s = await until(page, (q) => q.room === "closet" && q.act === "HIDE · bed", 12000);
   const early = s ? s.now.alarm : "";
   await press(page);
-  s = await until(page, (q) => q.now && !!q.now.card, 12000);
-  g.check("under the bed before the alarm's own close-up has played: the card still comes, once the search is home", !!s && ["shout", "run", "pull"].includes(early) && s.now.alarm === "home" && s.full === "party card", [early, s && s.now.alarm, s && s.full]);
+  s = await until(page, (q) => q.now && !!q.now.card, 40000, async (q) => q.cur === "bub" && (await sleep(150), await next(page)));
+  g.check("under the bed before the alarm's own close-up has played: the card still comes, once Mops has sent the guard off", !!s && ["shout", "run", "pull"].includes(early) && !s.now.alarm && s.full === "party card", [early, s && s.now.alarm, s && s.full]);
   await page.close();
 }
 
@@ -314,36 +321,31 @@ g.check(
   JSON.stringify(GUARD_TALK.map((l) => l[1])) === JSON.stringify(["Someone pulled the fur alarm.", "They saw someone run in here.", "Sure. I'm hiding a Wookiee in here.", "Ha! You're right. That's ridiculous.", "You coming to poker night?", "You know I don't have opposable thumbs."]) &&
     JSON.stringify(HOME_TALK.map((l) => l[1])) === JSON.stringify(["You went to the party.", "Everyone out there has someone.", "Everyone except me.", "You have me."]),
 );
+// The talk at home after the hat (Brian 2026-11-25, "Worry comes after You have me"): his worry, flyer held up, and
+// Mops's answer, then the two questions.
+const ROBOT_TALK = [
+  ["sq", L("sq-robots-coming")],
+  ["mops", L("mops-need-me")],
+];
 // Plays "Keep going" from the card to beat 20; returns what happened. `outfit` is what he wears, `lost` what is gone.
 async function keepGoing(name, outfit, lost) {
   const { page, errors } = await open("party:P7");
   let s = await toCard(page, `(p) => ((p.outfit = ${JSON.stringify(outfit)}), (p.lostPieces = ${JSON.stringify(lost)}))`);
+  const out = { errors, talk: toCard.talk.slice() };
+  // (since 2026-11-25 Mops sends the guard off before the card, while Squatch is under the bed)
+  out.guardFirst = !!s && s.now.pose === "bed" && !s.now.alarm && s.mo.pose === "stand";
   const T = await targets(page);
   await page.touchscreen.tap(T.keep.x, T.keep.y);
   s = await until(page, (q) => !q.full, 2000);
-  const out = { errors, closed: !!s && s.now.scene === "P8a" };
-  s = await until(page, (q) => q.now.homeGuard && q.now.homeGuard.turn != null && Math.abs(q.now.homeGuard.turn) > 0.3, 8000);
-  out.sweeps = !!s && s.now.pose === "bed" && s.mo.pose === "hidden";
-  // Mops comes in while the guard is still there; the first line
-  s = await until(page, (q) => q.cur === "bub", 15000);
-  out.mopsIn = !!s && !!s.now.homeGuard && s.mo.pose === "stand" && s.mo.x > 40 && s.mo.x < 940 && s.now.pose === "bed";
-  await sleep(250);
-  name && (await still(page, "r4-keep-guard-and-mops"));
-  out.guardName = await bubbleName(page);
-  out.bubbleOnGuard = await page.evaluate(() => {
-    // the guard's bubble sits over his head, on the picture, and not over Mops
-    const b = window.__ss.lastBubble,
-      n = window.__ss.op,
-      gd = n.ch1PartyNow.alarm.homeGuard;
-    return { on: b.x >= 0 && b.x + b.w <= 960 && b.y - 24 >= 0, over: Math.abs(b.x + b.w / 2 - gd.x) < 260 && b.y + (b.h || 60) < gd.y - 60 };
-  });
-  out.talk = await readLines(page, (q, seen) => seen.length >= 6 && q.cur !== "bub");
-  s = await until(page, (q) => !q.now.homeGuard && !q.now.alarm, 8000);
-  out.guardLeft = !!s;
-  out.noNote = s ? s.note === 0 : false;
-  s = await until(page, (q) => q.now.costumeLook, 12000);
+  out.closed = !!s && s.now.scene === "P8a";
+  out.noNote = !!s && s.note === 0;
+  // he comes out and fetches the flyer from by the door (it glows), then Mops looks at him
+  s = await until(page, (q) => q.now && q.now.flyer === "take", 20000);
+  out.fetch = !!s && s.now.flyerGlow !== undefined;
+  name && (await still(page, `r4-keep-${name}-takes-the-flyer`));
+  s = await until(page, (q) => q.now.costumeLook, 20000);
   out.cameOut = !!s && s.sqPose === "stand" && s.now.pose === "stand" && JSON.stringify(s.now.worn) === JSON.stringify(Object.fromEntries(Object.entries(outfit).map(([k, v]) => [k, lost.includes(k) ? "" : v])));
-  out.look = !!s && s.cur !== "bub" && Math.abs(s.mo.x - s.x) < 260;
+  out.look = !!s && s.cur !== "bub" && Math.abs(s.mo.x - s.x) < 260 && s.now.flyer === "paw";
   await sleep(300);
   name && (await still(page, `r4-keep-${name}-mops-looks`));
   out.home = await readLines(page, (q, seen) => seen.length >= 4 && q.cur !== "bub");
@@ -353,10 +355,13 @@ async function keepGoing(name, outfit, lost) {
   out.liftNoBubble = !!s && s.cur !== "bub";
   out.wornDuring = s ? s.now.worn : null;
   name && (await still(page, `r4-keep-${name}-lift`));
-  // after the lift: Squatch's two questions and Mops's two answers, one bubble at a time, the TV still off
-  out.why = await readLines(page, (q, seen) => seen.length >= 4 && q.cur !== "bub");
+  // after the lift: his worry with the flyer held up, Mops's answer, then the two questions and two answers
+  // (the six follow one another with no pause between them: read together, then split)
+  const six = await readLines(page, (q, seen) => seen.length >= 6 && q.cur !== "bub");
+  out.robots = six.slice(0, 2);
+  out.why = six.slice(2);
   s = await st(page);
-  out.tvOffForTalk = out.why.every((l) => l[3] === false) && !s.lit && !!s.now;
+  out.tvOffForTalk = [...out.robots, ...out.why].every((l) => l[3] === false) && !s.lit && !!s.now;
   // the piece he lifted off lies on the floor between them (Mops does not carry it about)
   out.hatDown = s.now.lift && (s.now.lift.id ? s.now.lift.set === 1 && s.now.lift.rest.y + after.AFTER.hatUp >= s.y && s.now.lift.rest.y + after.AFTER.hatUp <= s.y + 12 && s.now.lift.rest.y < 600 && s.now.lift.rest.x > s.x + 40 && s.now.lift.rest.x < s.mo.x - 40 : s.now.lift.set == null);
   const hatRest = s.now.lift && s.now.lift.rest;
@@ -392,28 +397,34 @@ async function keepGoing(name, outfit, lost) {
   out.heldFor = await tickUntil(page, '(p, n) => !p || p.scene === "done" || (n.cur && n.cur.k === "panel")', 8);
   s = await st(page);
   out.tv = s.tv && (!s.now || s.now.scene === "done") && (await page.evaluate(() => { const c = window.__ss.op.cur; return !!c && c.k === "panel" && c.id === "ch1tv1"; }));
+  name === "tophat" && (await page.evaluate(() => window.__ss.drawFrame()), await still(page, "r4-keep-tv-story-first-picture"));
+  // the TV story fills the whole picture (Brian 2026-11-25: "the more fullscreen TV"): dark blue in all four corners
+  out.full = await page.evaluate(() => {
+    const c = document.querySelector("canvas"),
+      k = c.width / 960,
+      x = c.getContext("2d");
+    return [[30, 30], [930, 30], [30, 600], [930, 600]].map(([a, b]) => Array.from(x.getImageData(Math.round(a * k), Math.round(b * k), 1, 1).data).slice(0, 3));
+  });
   await page.close();
   return out;
 }
 {
   const o = await keepGoing("tophat", { head: "tophat", face: "shades", body: "shirt", legs: "boots" }, []);
-  g.check("a tap on \"Keep going\" closes the card: the ending (P8a)", o.closed);
-  g.check("the guard comes in and sweeps the room (Squatch under the bed, Mops not there yet)", o.sweeps);
-  g.check("Mops comes in while the guard is still there (Squatch still under the bed)", o.mopsIn);
-  g.check("the guard and Mops: the six lines, word for word, in order, each from its speaker", JSON.stringify(o.talk.map((l) => [l[0], l[1]])) === JSON.stringify(GUARD_TALK), o.talk);
-  g.check("over the guard's bubble, a name (\"A guard\"), never blank; over Mops's, \"Mops\"", o.guardName === "A guard" && o.talk.filter((l) => l[0] === "mops").every((l) => l[2] === "Mops") && o.talk.filter((l) => l[0] === "guard").every((l) => l[2] === "A guard"), [o.guardName, o.talk.map((l) => l[2])]);
-  g.check("the guard's bubble is on the picture, over his head", o.bubbleOnGuard.on && o.bubbleOnGuard.over, o.bubbleOnGuard);
-  g.check("then the guard leaves, and no \"They lost you.\" interrupts", o.guardLeft && o.noNote, [o.guardLeft, o.noNote]);
-  g.check("Squatch comes out from under the bed still in costume, and Mops looks at it (it glows, before any line)", o.cameOut && o.look, [o.cameOut, o.look]);
+  g.check("before the card, Mops comes in and sends the guard off while Squatch is under the bed: the six lines, word for word, in order, each from its speaker", o.guardFirst && JSON.stringify(o.talk.map((l) => [l[0], l[1]])) === JSON.stringify(GUARD_TALK), o.talk);
+  g.check("over the guard's bubble, a name (\"A guard\"), never blank; over Mops's, \"Mops\"", o.talk.filter((l) => l[0] === "mops").every((l) => l[2] === "Mops") && o.talk.filter((l) => l[0] === "guard").every((l) => l[2] === "A guard"), o.talk.map((l) => l[2]));
+  g.check("a tap on \"Keep going\" closes the card: the ending (P8a), and no \"They lost you.\" was said", o.closed && o.noNote);
+  g.check("Squatch comes out still in costume and takes the flyer he left by the door; Mops looks at him (the costume and the flyer glow, before any line)", o.fetch && o.cameOut && o.look, [o.fetch, o.cameOut, o.look]);
   g.check("Mops and Squatch: the four lines, word for word, in order", JSON.stringify(o.home.map((l) => [l[0], l[1]])) === JSON.stringify(HOME_TALK), o.home);
   g.check("with no words, Mops lifts the hat off him: it leaves his head and plays itself", o.lift && o.lift.id === "tophat" && o.liftNoBubble && o.wornDuring && o.wornDuring.head === "tophat", [o.lift, o.liftNoBubble]);
   g.check("the hat he lifted off is set down on the floor between them, and stays there when Mops walks to the TV", o.hatDown && o.atTv.hatStayed, [o.hatDown, o.atTv]);
-  g.check("after the hat: Squatch's two questions and Mops's two answers, word for word, in order, each from its speaker, with the TV still off", JSON.stringify(o.why.map((l) => [l[0], l[1]])) === JSON.stringify(WHY_TALK) && o.tvOffForTalk, [o.why, o.tvOffForTalk]);
+  g.check("after the hat: \"But look. Robots are coming to do your job.\" and \"Nobody is replacing me. They need me here.\", word for word, each from its speaker", JSON.stringify(o.robots.map((l) => [l[0], l[1]])) === JSON.stringify(ROBOT_TALK), o.robots);
+  g.check("then Squatch's two questions and Mops's two answers, word for word, in order, each from its speaker, with the TV still off", JSON.stringify(o.why.map((l) => [l[0], l[1]])) === JSON.stringify(WHY_TALK) && o.tvOffForTalk, [o.why, o.tvOffForTalk]);
   g.check("Mops answers only the first question: nothing he says names the Guardians", o.why.filter((l) => l[0] === "mops").every((l) => !/guardian/i.test(l[1])) && o.why.filter((l) => l[0] === "mops").length === 2);
   g.check("then, with no words, Mops walks to the TV (no jump; Squatch stays put); its button glows and the screen is still dark", o.walkBegan && !o.walk.tv && !o.walk.bub && o.walk.dark && o.walk.glow > 8 && o.walk.red > 8 && o.walk.horn === 0 && o.jump.max > 0 && o.jump.max <= 8 && o.jump.sq < 1 && o.jump.phase === "press", [o.walk, o.jump]);
   g.check("he presses the TV's button with his horn: the horn is drawn on the button at the press (and was not there as he walked up), with its click", o.press.horn >= 12 && o.walk.horn === 0 && o.atTv.hornBefore === 0 && o.press.heard.includes("click") && !o.press.bub, [o.atTv, o.press]);
   g.check("the TV comes on at the press, not before (the screen is drawn lit), and stays on while he stands back down", !o.atTv.tv && o.press.tv && o.press.lit && o.on.tv && o.on.lit && o.on.now && !o.on.bub && Math.abs(o.on.mopsDown - after.TV.stand.y) < 1, [o.atTv, o.press, o.on]);
-  g.check("the lit TV is held a moment (a clear last frame), then beat 20 (the TV story) as today, and the party night is over", o.heldFor >= 1 && o.heldFor <= 4 && o.tv, [o.heldFor, o.tv]);
+  g.check("the lit TV is held a moment (a clear last frame), then beat 20 (the TV story), and the party night is over", o.heldFor >= 1 && o.heldFor <= 4 && o.tv, [o.heldFor, o.tv]);
+  g.check("the TV story's first picture fills the whole picture (dark blue in all four corners), as before 2026-11-11", o.full.every((c) => Math.abs(c[0] - 0x1b) < 12 && Math.abs(c[1] - 0x21) < 12 && Math.abs(c[2] - 0x40) < 12), o.full);
   g.check("no errors in \"Keep going\"", o.errors.length === 0, o.errors);
 }
 {
@@ -424,23 +435,24 @@ async function keepGoing(name, outfit, lost) {
 {
   // nothing on his head (the hat was knocked off at the party): a gentle pat
   const o = await keepGoing("no-hat", { head: "tophat", face: "shades", body: "shirt", legs: "boots" }, ["head"]);
-  g.check("nothing on his head: a gentle pat (nothing is lifted or set down), then the four lines, the TV and beat 20", o.lift && o.lift.id === "" && o.liftNoBubble && o.cameOut && o.hatDown && o.why.length === 4 && o.press.lit && o.tv, [o.lift, o.cameOut, o.tv]);
+  g.check("nothing on his head: a gentle pat (nothing is lifted or set down), then the six lines, the TV and beat 20", o.lift && o.lift.id === "" && o.liftNoBubble && o.cameOut && o.hatDown && o.robots.length === 2 && o.why.length === 4 && o.press.lit && o.tv, [o.lift, o.cameOut, o.tv]);
 }
 
 // ---------- ↺ in "Keep going" ----------
 {
   const { page } = await open("party:P8a");
   let s = await st(page);
-  g.check("the ending's restart point: under the bed, the guard about to come in, no card", s.now.scene === "P8a" && s.room === "closet" && s.now.pose === "bed" && s.now.alarm === "home" && !s.now.card && s.now.choice === "keep", [s.now.scene, s.now.pose, s.now.alarm]);
-  s = await until(page, (q) => q.cur === "bub", 15000);
+  // (it goes straight on into the talk: a moment later he is already out from under the bed, on his way to the flyer)
+  g.check("the ending's restart point: from under the bed, Mops in the room, the guard gone, no card, the flyer still on the floor", s.now.scene === "P8a" && s.room === "closet" && !s.now.alarm && !s.now.card && s.now.choice === "keep" && s.mo.pose === "stand" && s.now.flyer === "floor", [s.now.scene, s.now.pose, s.now.alarm, s.mo, s.now.flyer]);
+  s = await until(page, (q) => q.cur === "bub", 30000);
   await next(page);
   await sleep(300);
   await page.evaluate(() => window.__ss.sectionReset());
   await sleep(600);
   s = await st(page);
-  g.check("↺ in the middle of the guard's talk: \"Keep going\" starts over from under the bed (no line up, Mops gone, the guard back at the door)", s.now.scene === "P8a" && s.now.pose === "bed" && s.cur !== "bub" && s.mo.pose === "hidden" && (!s.now.homeGuard || s.now.homeGuard.x > 880) && s.now.alarm === "home", [s.now.scene, s.now.pose, s.cur, s.mo.pose, s.now.homeGuard]);
-  s = await until(page, (q) => q.cur === "bub", 15000);
-  g.check("and it plays again: the guard's first line", !!s && s.text === L("guard-alarm"), s && s.text);
+  g.check("↺ in the middle of the talk: \"Keep going\" starts over from under the bed (no line up, the flyer back on the floor)", s.now.scene === "P8a" && s.cur !== "bub" && s.mo.pose === "stand" && !s.now.alarm && (s.now.pose === "bed" || s.now.flyer === "floor"), [s.now.scene, s.now.pose, s.cur, s.mo.pose, s.now.flyer]);
+  s = await until(page, (q) => q.cur === "bub", 30000);
+  g.check("and it plays again: Mops's first line", !!s && s.text === L("mops-went"), s && s.text);
   await page.close();
 }
 
@@ -452,7 +464,7 @@ async function keepGoing(name, outfit, lost) {
   await page.evaluate(() => window.__ss.sectionReset());
   await sleep(600);
   s = await st(page);
-  g.check("↺ once the TV is on: \"Keep going\" starts over from under the bed, the TV off again", s.now.scene === "P8a" && s.now.pose === "bed" && !s.lit && !s.now.tv && !s.now.lift && s.mo.pose === "hidden" && (await tvDark(page)), [s.now.scene, s.lit, s.now.tv]);
+  g.check("↺ once the TV is on: \"Keep going\" starts over from under the bed, the TV off again", s.now.scene === "P8a" && !s.lit && !s.now.tv && !s.now.lift && s.mo.pose === "stand" && (await tvDark(page)), [s.now.scene, s.lit, s.now.tv]);
   await page.close();
 }
 {
@@ -465,13 +477,13 @@ async function keepGoing(name, outfit, lost) {
   await page.evaluate(() => window.__ss.sectionReset());
   await sleep(600);
   s = await st(page);
-  g.check("↺ while the hat is being set down: \"Keep going\" starts over (under the bed, nothing lifted, no TV)", s.now.scene === "P8a" && s.now.pose === "bed" && !s.now.lift && !s.now.tv && s.mo.pose === "hidden", [s.now.pose, s.now.lift, s.now.tv]);
+  g.check("↺ while the hat is being set down: \"Keep going\" starts over (nothing lifted, no TV, the flyer back on the floor)", s.now.scene === "P8a" && !s.now.lift && !s.now.tv && s.now.flyer === "floor", [s.now.pose, s.now.lift, s.now.tv, s.now.flyer]);
   s = await play((q) => q.now && q.now.tv && q.now.tv.phase === "press" && q.now.tv.k > 0.1);
   g.check("(Mops is in the middle of the horn press)", !!s, s && s.now.tv);
   await page.evaluate(() => window.__ss.sectionReset());
   await sleep(600);
   s = await st(page);
-  g.check("↺ in the middle of the horn press: it starts over, the TV off, Mops gone", s.now.scene === "P8a" && s.now.pose === "bed" && !s.now.lift && !s.now.tv && !s.lit && s.mo.pose === "hidden" && (await tvDark(page)), [s.now.pose, s.now.tv, s.mo.pose]);
+  g.check("↺ in the middle of the horn press: it starts over, the TV off, Mops back where he sent the guard off", s.now.scene === "P8a" && !s.now.lift && !s.now.tv && !s.lit && Math.abs(s.mo.x - after.AFTER_SPOTS.mopsTalk.x) < 2 && (await tvDark(page)), [s.now.pose, s.now.tv, s.mo]);
   s = await play((q) => q.tv && (!q.now || q.now.scene === "done"), 120000);
   g.check("and played once more it runs clean to beat 20 (no left-over wait from the runs before)", !!s && errors.length === 0, [!!s, errors.slice(0, 2)]);
   await page.close();
@@ -511,7 +523,7 @@ async function keepGoing(name, outfit, lost) {
       staged = { wait, at, got: !!s, closeUpOver: over, alarm: s && s.now.alarm };
       if (s) {
         await press(page);
-        s = await until(page, (q) => q.full === "party card", 12000);
+        s = await until(page, (q) => q.full === "party card", 40000, async (q) => q.cur === "bub" && (await sleep(150), await next(page)));
         staged.card = !!s;
       }
       await page.close();
@@ -611,6 +623,8 @@ const liveLines = (page) => page.evaluate(() => (window.__ss.op.log || []).filte
   await set(page, (p, n, a) => (p.songT = a - 0.2), free.SONG_SECONDS);
   s = await until(page, (q) => q.now.shot && q.now.shot.phase === "gather", 3000);
   g.check("when the first song ends the photo moment begins: the band stops playing", !!s && s.now.sound.song === -1 && s.now.song === 0, s && [s.now.shot, s.now.sound.song]);
+  // (Brian 2026-11-25, "Photo right after the song, short wait": a Croc Boy calls it; before, nobody said anything)
+  g.check("a Croc Boy calls \"Group photo!\" from the stage as it begins", (await liveLines(page)).includes("Group photo!"), await liveLines(page));
   // in the dance spotlight and at the bar, only JOIN · photo is offered
   await place(page, hall.DANCE_SPOT.x, hall.DANCE_SPOT.y + 4);
   await sleep(350);
@@ -621,9 +635,12 @@ const liveLines = (page) => page.evaluate(() => (window.__ss.op.log || []).filte
   s = await st(page);
   g.check("and at the snack bar too (no GRAB during the photo moment)", s.act === "JOIN · photo", s.act);
   await place(page, 150, 585);
-  const w = await runWatch(page, 12, "settle");
+  // (since 2026-11-25 there is no wait once they are there: the count starts click - count = 5 s after the call)
+  const nCount = (await played(page)).length;
+  const w = await runWatch(page, photo.PHOTO.click, "count");
   s = await st(page);
-  g.check("everyone walks to the row (the band off the stage's end and across the floor): nobody jumps", w.phase === "settle" && w.max <= photo.PHOTO.walk * 0.05 + 0.5, w);
+  g.check("everyone walks to the row (the band off the stage's end and across the floor) before the count starts: nobody jumps", w.phase === "count" && w.max <= photo.PHOTO.walk * 0.05 + 0.5, w);
+  g.check("the count starts 5 seconds after the call, so the click is 8 seconds after it", s.now.shot.phase === "count" && photo.PHOTO.click === 8 && photo.PHOTO.count === 3);
   // where they stand: two rows by the back wall, clear of the hallway doorway and the snack bar, under the alarm box
   const adult = await page.evaluate(() => window.SSQ.engine().hallSizes().adult);
   const row = [...photo.PHOTO_ROW.back, ...photo.PHOTO_ROW.front],
@@ -647,11 +664,16 @@ const liveLines = (page) => page.evaluate(() => (window.__ss.op.log || []).filte
   g.check("in the hall row no face is more than a quarter covered (Squatch in his place with the top hat on)", hallCover.every((c) => c.hid <= 0.25), hallCover.filter((c) => c.hid > 0));
   g.check("the row is wider and staggered: 64 or more apart along each row, each front place in a gap of the back row", [photo.PHOTO_ROW.back, [...photo.PHOTO_ROW.front, photo.PHOTO_ROW.squatch].sort((a, b) => a.x - b.x)].every((row) => row.every((r, i) => !i || r.x - row[i - 1].x >= 64)) && [...photo.PHOTO_ROW.front, photo.PHOTO_ROW.squatch].every((f) => photo.PHOTO_ROW.back.every((b) => Math.abs(b.x - f.x) >= 24)));
   // he presses it and walks into his place
-  const n1 = (await played(page)).length;
   await press(page);
-  const wj = await runWatch(page, photo.PHOTO.settle + 3, "count");
+  const wj = await page.evaluate(() => {
+    const op = window.__ss.op;
+    let max = 0,
+      was = [op.sq.x, op.sq.y];
+    for (let i = 0; i < 60 && !op.ch1PartyNow.shot.in; i++) (window.__ss.tick(0.05), (max = Math.max(max, Math.hypot(op.sq.x - was[0], op.sq.y - was[1]))), (was = [op.sq.x, op.sq.y]));
+    return { max: Math.round(max * 10) / 10, phase: op.ch1PartyNow.shot.phase };
+  });
   s = await st(page);
-  g.check("pressing it walks him into the gap (a walk, no jump), facing the camera", Math.hypot(s.x - photo.PHOTO_ROW.squatch.x, s.y - photo.PHOTO_ROW.squatch.y) < 2 && s.now.shot.in && wj.max <= photo.PHOTO.join * 0.05 + 0.5, [s.x, s.y, s.now.shot, wj]);
+  g.check("pressing it walks him into the gap (a walk, no jump), facing the camera, before the click", Math.hypot(s.x - photo.PHOTO_ROW.squatch.x, s.y - photo.PHOTO_ROW.squatch.y) < 2 && s.now.shot.in && wj.phase === "count" && wj.max <= photo.PHOTO.join * 0.05 + 0.5, [s.x, s.y, s.now.shot, wj]);
   g.check("\"Say cheese!\" as the count starts", (await liveLines(page)).includes("Say cheese!") && s.now.shot.phase === "count", await liveLines(page));
   await sleep(120);
   await still(page, "r4-photo-say-cheese");
@@ -660,7 +682,8 @@ const liveLines = (page) => page.evaluate(() => (window.__ss.op.log || []).filte
   const stars0 = s.now ? (await page.evaluate(() => window.__ss.op.stars || 0)) : 0;
   await runWatch(page, 4, "polaroid");
   await sleep(250);
-  heard = await sounds(page, n1);
+  // (the count began before he pressed JOIN: its first beep is counted from the count's start)
+  heard = await sounds(page, nCount);
   const stars1 = await page.evaluate(() => window.__ss.op.stars || 0);
   g.check("3, 2, 1 (a beep each), the click and its flash at the lens; he is in the photo: +25", heard.filter((x) => x === "beep").length === 3 && heard.includes("flash") && stars1 === stars0 + photo.PHOTO_BONUS, [heard, stars1 - stars0]);
   const pol = await page.evaluate(async () => {
@@ -824,7 +847,8 @@ const liveLines = (page) => page.evaluate(() => (window.__ss.op.log || []).filte
   await set(page, (p, n, a) => ((p.songT = a - 0.2), (p.lostPieces = ["head"])), free.SONG_SECONDS);
   await place(page, 150, 585);
   await until(page, (q) => q.now.shot && q.now.shot.phase === "gather", 3000);
-  await runWatch(page, 9, "settle");
+  // (in the middle of the gathering: since 2026-11-25 there is no "settle" wait, the count starts 5 s after the call)
+  await runWatch(page, 3, "count");
   await place(page, 630, 430);
   let s = await until(page, (q) => q.now && q.now.scene === "P7", 6000);
   g.check("seen with fur showing during the photo moment: the alarm (the photo moment is over)", !!s && s.now.shot.phase === "back", s && s.now.shot);
@@ -841,4 +865,66 @@ const liveLines = (page) => page.evaluate(() => (window.__ss.op.log || []).filte
   await page.close();
 }
 
+// ---------- a guest's "?" is small and never over or near Squatch's head or hat (Brian 2026-11-25) ----------
+// Brian: "The big question marks are a bit confusing - it's over his top hat?". Squatch, top hat on, stands right by a
+// guest who sees him (below him, beside him on either side, below and to one side); one frame is drawn and the "?"
+// read off the canvas: one "?", by that guest, small, and QUESTION.clear or more from Squatch's box, hat included.
+{
+  const { page, errors } = await open("party:P6");
+  await page.evaluate(() => (window.requestAnimationFrame = () => 0));
+  const view = await import(join(root, "src", "modules", "party-view.js"));
+  const Q = view.QUESTION;
+  const sizes = await page.evaluate(() => window.SSQ.engine().hallSizes());
+  const rows = [];
+  for (const id of ["camera", "backpack", "teal"]) {
+    const g0 = (await st(page)).now.people[id];
+    for (const [dx, dy] of [[0, 40], [0, 60], [-50, 10], [50, 10], [-40, 45], [40, 45], [0, -20]]) {
+      const r = await page.evaluate(
+        (id, dx, dy) => {
+          const n = window.__ss.op,
+            p = n.ch1PartyNow,
+            g = p.people[id];
+          n.sq.x = g.x + dx;
+          n.sq.y = g.y + dy;
+          p.seenBy = id;
+          p.pose = "stand";
+          const P = CanvasRenderingContext2D.prototype,
+            fill = P.fillText,
+            c = document.querySelector("canvas"),
+            k = c.width / 960,
+            marks = [];
+          P.fillText = function (t, x, y, ...r) {
+            if (t === "?") {
+              const m = this.getTransform();
+              marks.push({ x: (m.a * x + m.c * y + m.e) / k, y: (m.b * x + m.d * y + m.f) / k, size: (parseFloat((this.font.match(/(\d+(\.\d+)?)px/) || [])[1]) * m.d) / k });
+            }
+            return fill.call(this, t, x, y, ...r);
+          };
+          window.__ss.drawFrame();
+          P.fillText = fill;
+          return { marks, g: { x: g.x, y: g.y }, sq: { x: n.sq.x, y: n.sq.y }, hat: window.SSQ.beat("ch1-party").now().worn.head };
+        },
+        id,
+        dx,
+        dy,
+      );
+      const k = sizes.squatch,
+        box = { x0: r.sq.x - 22 * k, x1: r.sq.x + 22 * k, y0: r.sq.y - Q.top * k, y1: r.sq.y + 2 },
+        // (drawMark: the words are 0.85 of the mark's size, 0.04 of it below its middle; its white oval is 0.46 by 0.56
+        // of the size each side of the middle, and its outline 0.07)
+        f = r.marks[0],
+        m = f && { x: f.x, size: f.size / 0.85, y: f.y - (0.04 * f.size) / 0.85 },
+        hx = m ? m.size * 0.5 : 0,
+        hy = m ? m.size * 0.6 : 0,
+        gap = m ? Math.hypot(Math.max(0, box.x0 - (m.x + hx), m.x - hx - box.x1), Math.max(0, box.y0 - (m.y + hy), m.y - hy - box.y1)) : -1;
+      rows.push({ id, dx, dy, n: r.marks.length, hat: r.hat, gap: Math.round(gap), size: m && Math.round(m.size), byGuest: m ? Math.round(Math.abs(m.x - r.g.x)) : -1, aboveFeet: m ? m.y < r.g.y : false });
+    }
+  }
+  g.check("in every place by a guest who sees him (top hat on), one \"?\" is drawn", rows.every((r) => r.n === 1 && r.hat === "tophat"), rows.filter((r) => r.n !== 1));
+  g.check(`it keeps ${Q.clear} or more from Squatch, his top hat included (never over or near his head)`, rows.every((r) => r.gap >= Q.clear), rows.filter((r) => r.gap < Q.clear));
+  g.check("it stays by its own guest (within 90 across, above his feet)", rows.every((r) => r.byGuest <= 90 && r.aboveFeet), rows.filter((r) => !(r.byGuest <= 90 && r.aboveFeet)));
+  g.check(`it is small: about ${Math.round(Q.size * 100)}% of a grown-up's height (it was 64%)`, rows.every((r) => Math.abs(r.size - sizes.adult * Q.size) <= 2), [rows[0].size, sizes.adult]);
+  g.check("no page errors (the \"?\" by the guest)", errors.length === 0, errors);
+  await page.close();
+}
 await g.finish("party-round4");

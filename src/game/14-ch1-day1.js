@@ -22,11 +22,14 @@
         }),
       ];
     }
+    // The TV story fills the whole picture, as it did before 2026-11-11 (ba9102d drew it as a small TV over the room).
+    // Brian 2026-11-25, on the showing-4 video: "We had the previous design the more fullscreen TV ... we just need
+    // to stay with what we had before." Restored word for word from ba9102d^.
     function drawCh1Tv(id) {
-      (m(170, 78, 620, 250, 16), r("#1e2430", 6), m(190, 96, 580, 214, 8), r("#d7ecf5", 0));
-      if (id === "ch1tv1") (Re(360, 270, 1.5, { f: 1 }), Re(560, 260, 1.4, { f: -1 }), g("Fur in the scrubber.", 480, 130, 22, "#1e2430", "center", 800));
-      if (id === "ch1tv2") (Qt(460, 270, "#f2c1b0", 1.6, 1), g("!", 560, 180, 48, "#e5533d", "center", 900));
-      if (id === "ch1tv3") (Qt(340, 270, "#c9b6f2", 1.7, 1), Re(560, 280, 1.3, { f: -1 }), g("Onto the ship.", 480, 130, 22, "#1e2430", "center", 800));
+      ((e.fillStyle = "#1b2140"), e.fillRect(0, 0, c, b));
+      if (id === "ch1tv1") (Re(300, 460, 2.2, { f: 1 }), Re(520, 440, 2, { f: -1 }), g("Fur in the scrubber.", 480, 120, 28, "#ffffff", "center", 800));
+      if (id === "ch1tv2") (Qt(420, 460, "#f2c1b0", 2, 1), g("!", 480, 200, 64, "#e5533d", "center", 900));
+      if (id === "ch1tv3") (Qt(260, 460, "#c9b6f2", 2.4, 1), Re(560, 480, 1.8, { f: -1 }), g("Onto the ship.", 480, 120, 28, "#ffffff", "center", 800));
     }
     function drawCh1Moon() {
       (m(150, 48, 660, 78, 16),

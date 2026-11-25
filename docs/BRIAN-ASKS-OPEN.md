@@ -5,23 +5,23 @@
 | --- | --- |
 | 26–32 | # Brian's asks that are not in the game yet |
 | 33–42 | ## 1. Build next |
-| 43–59 | ## 2. Needs your eyes |
-| 60–63 | ## 3. Your instructions disagree |
-| 64–65 | ## 4. Everything else not built |
-| 66–84 | ### Morning and home |
-| 85–95 | ### Party |
-| 96–107 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
-| 108–111 | ### Party video notes and answers, 2026-11-24 (not built yet) |
-| 112–116 | ### Snacks and dress-up |
-| 117–129 | ### Day 2 and night |
-| 130–134 | ### Escape and later chapters |
-| 135–138 | ### Looks and lines |
-| 139–146 | ### Sound |
-| 147–150 | ### Words and rules |
-| 151–163 | ### How the bots work |
-| 164–171 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
-| 172–187 | ## 5. Merged, in a pull request, and being built |
-| 188–198 | ## 6. Corrections to the checkers |
+| 43–58 | ## 2. Needs your eyes |
+| 59–62 | ## 3. Your instructions disagree |
+| 63–64 | ## 4. Everything else not built |
+| 65–83 | ### Morning and home |
+| 84–94 | ### Party |
+| 95–106 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
+| 107–110 | ### Party video notes and answers, 2026-11-24 (not built yet) |
+| 111–115 | ### Snacks and dress-up |
+| 116–128 | ### Day 2 and night |
+| 129–133 | ### Escape and later chapters |
+| 134–137 | ### Looks and lines |
+| 138–145 | ### Sound |
+| 146–149 | ### Words and rules |
+| 150–162 | ### How the bots work |
+| 163–170 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
+| 171–186 | ## 5. Merged, in a pull request, and being built |
+| 187–197 | ## 6. Corrections to the checkers |
 <!-- /section-index -->
 # Brian's asks that are not in the game yet
 
@@ -46,7 +46,6 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 - **The dance game.** A scrolling-arrow dance exists but you said it never worked. "The dance game, hopefully that can be done clean and simple. If not, forget it." (G 516). "the fur shows at the dance scene" (G 603) is unclear.
 - **The balloon game.** "The balloon thing has just never worked when we've tried it before ... if it's all wonky and confusing, forget it." (G 516); "the balloon's just total nonsense" (K 336). Still in main (12-ch1-redesign.js:808-834).
 - **The theme song.** "don't like the theme song :/ definitely not the singing part" (G 318). Joe's track is one he uploaded ("This should be main theme", S 354; "It's all good", S 361). Ask which song he meant before building.
-- **Wookiee TV panel.** "Wookiee TV panel. Just go with the one we built before." (G 603). Main has three panels after the party; is that the one he meant?
 - **Hallway and corners.** "Adding The Airlock Button Here For No Reason Doesn't Really Make Sense" (P L198). "The Alarm Can Not Be In The Bush Here" (P L163). The hall asks about the speaker and FUR alarm on one wall and the window wrap (S 457, 463, 466) are checked against the locked hall picture, which has the speaker and alarm on the back wall and no wrap.
 - **Sizes and looks of people.** Room-door sizing is built, cutscene sizes unchecked. "please go ahead with sizing people by each room's door, even tho it risks running out" (S 1163). "It could just be is Fred." (S 982). "I hate the arms on the green guys - just make them normal" (K 314).
 - **Room changes and camera.** "it kind of jumps to him dropping into the middle of the next scene versus like a smooth walk" (S 195); "the camera being in off placement and so so so many of those things" (K 328). Characters jumping: "All Of A Sudden You're Hidden Like We Need An Actual Transition Here" (P L90) means show how he got hidden.

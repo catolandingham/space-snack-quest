@@ -3,27 +3,28 @@
 
 | Lines | Heading |
 | --- | --- |
-| 28–31 | # Review rules |
-| 32–83 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
-| 84–86 | ## Techniques |
-| 87–89 | ## Mistake: locked art was redrawn |
-| 90–94 | ## Mistake: optional inspection interrupted getting out of bed |
-| 95–97 | ## Mistake: a big doc's section index went stale |
-| 98–100 | ## Mistake: a rebuilt beat forgot the step restart |
-| 101–103 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
-| 104–106 | ## Mistake: a killed run was read as a failing test |
-| 107–109 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
-| 110–112 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
-| 113–119 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
-| 120–127 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
-| 128–144 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
-| 145–157 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
-| 158–160 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
-| 161–169 | ## Mistakes caught building the morning sound (2026-11-24) |
-| 170–181 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
-| 182–193 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
-| 194–207 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
-| 208–214 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
+| 29–32 | # Review rules |
+| 33–84 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
+| 85–87 | ## Techniques |
+| 88–90 | ## Mistake: locked art was redrawn |
+| 91–95 | ## Mistake: optional inspection interrupted getting out of bed |
+| 96–98 | ## Mistake: a big doc's section index went stale |
+| 99–101 | ## Mistake: a rebuilt beat forgot the step restart |
+| 102–104 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
+| 105–107 | ## Mistake: a killed run was read as a failing test |
+| 108–110 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
+| 111–113 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
+| 114–120 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
+| 121–128 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
+| 129–145 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
+| 146–158 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
+| 159–161 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
+| 162–170 | ## Mistakes caught building the morning sound (2026-11-24) |
+| 171–182 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
+| 183–194 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
+| 195–208 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
+| 209–215 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
+| 216–226 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
 <!-- /section-index -->
 # Review rules
 
@@ -211,3 +212,14 @@ His words, on the snack close-up, for every piece of the game: "It just needs to
 - "No fur below the cuff" first counted single blended pixels at the edge of a snack (a pie's dark middle against its crust) as fur. A check that a colour is absent looks for a patch of it (the pixel and its neighbours), within the area the thing could be, not one blended pixel anywhere.
 - A sleeve check sampled a folded arm where its own cuff and paw lie in front of the sleeve, and failed though the drawing was right. Before sampling along a part, leave out where another part of the same figure is drawn over it, and say so in the check.
 - Running a test with `STILLS=x` wrote a folder `x/` into the repo and `git add -A` staged it. Stills go to an absolute path outside the repo; check `git status` before committing.
+
+## Mistakes caught building Brian's showing-4 notes (2026-11-25)
+- A test read two lines with a pause between them as one group and two lines with none as two groups, so the second read swallowed the next four lines and waited out its clock. Lines that follow one another with no pause are read together and split afterwards.
+- A path search said there was no way to the flyer for any start time; the reason was a place no cone could ever leave free (the robot's sweep always crossed the only approach). Before tuning numbers, map which floor is never free over a whole cycle and give the goal a pocket nobody's cone reaches.
+- The sneak planner did not know the vent, and a planned wait by it started the fur alarm. A planner for a scene knows every rule that can end it there (cones, the vent), not only the cones.
+- A tool that runs the game faster than real time (the planned walk, many ticks in one call) made a real-time sampler see jumps. Any sampler around a fast-forwarded stretch is told where it starts and ends (`walkPlan` pushes a break), and the stretch measures its own steps.
+- Mops and the guard (and Squatch with his top hat) are drawn about 150 to 230 tall at home, so two people on one lane can never pass each other without overlapping; the fix was different lanes (the back of the room and the front), checked by their drawn boxes every tick, and Squatch going round the back when Mops stands between him and where he is going.
+- Changing who the home guard gives up on (only once Squatch is under the bed) broke an older check that he gives up on a kid standing out of sight in the early scenes. A rule Brian asked to change for one scene (after the party alarm) stays as it was everywhere else; grep the tests for the rule's old behaviour before changing it.
+- A still of one exact frame (a small "?" beside a guest) came out without the "?": the test that drew it read the canvas calls in the same moment, but by the time the screenshot was taken the game's own loop had drawn later frames, in which the "?" was gone. A still of one exact frame is copied from the canvas in the same call that draws it (`toDataURL`), and the check reads a pixel of the thing, not only that it was asked to be drawn.
+- Going home early through his door needs him to have walked away from it first (`leftDoor`); coming back from the alarm's card, the walk in ends inside the door's circle, and with `leftDoor` still set from before the alarm he was sent straight home again (the photo test froze). Every way back into a scene resets the "has walked away" kind of flag (`resume` now does), and a test stands him just inside the door after each way back.
+- The reviewer of this round found Squatch detouring round the back of the room for a Mops who had not come in yet (`between` read Mops's place without asking whether he is in the room). A helper that reads someone's position first asks whether that someone is there.

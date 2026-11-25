@@ -2,10 +2,12 @@
  * The group photo (Brian 2026-11-24: "maybe it's a group photo. There's room in front of the wall next to the fire
  * alarm, and maybe the band's in it"; his click "Guests and the band"; it replaces the looping camera and plan
  * decision 16, "the photo is of the band"). One clear moment, once a party, when the first song ends:
- *   gather   the guests walk into two rows in front of the back wall beside the alarm box, the Croc Boys walk off
- *            the stage's end and squeeze in, and the camera tourist carries his tripod over and faces the wall;
- *   settle   a moment for the kid: JOIN · photo marks the gap left for Squatch in the front row;
- *   count    "Say cheese!", three red lights on the camera, a beep each second: 3, 2, 1;
+ *   gather   a Croc Boy calls "Group photo!" from the stage (Brian 2026-11-25, his click "Photo right after the song,
+ *            short wait"); the guests walk into two rows in front of the back wall beside the alarm box, the Croc
+ *            Boys walk off the stage's end and squeeze in, and the camera tourist carries his tripod over and faces
+ *            the wall; JOIN · photo marks the gap left for Squatch in the front row from the call on;
+ *   count    "Say cheese!", three red lights on the camera, a beep each second: 3, 2, 1. The click comes
+ *            PHOTO.click seconds after the call, whether everyone (or he) is in place or not;
  *   flash    the click: a small burst at the lens. In his place, the photo has him in it (+25, once): the whole
  *            screen shows the Polaroid of the group with him in costume, closed with a tap. Not there: the photo
  *            is taken without him and no close-up shows;
@@ -20,7 +22,10 @@ export const PHOTO_BONUS = 25;
 // PLACEHOLDERS for Brian: how fast people walk to the row, the longest the gathering may take, the moment the kid
 // has once everyone is there (his time to join: 8 s since 2026-11-25, it was 5; a starting number), the count, the flash, the pause after the click, how fast Squatch walks to his place,
 // and how soon a tap may close the Polaroid.
-export const PHOTO = Object.freeze({ walk: 120, gatherMax: 9, settle: 8, count: 3, flash: 0.25, hold: 0.9, join: 240, closeAfter: 0.6, giveWay: 1.2 });
+// Since 2026-11-25 (Brian, "Photo right after the song, short wait") there is no wait once everyone is there: the
+// count starts `click - count` seconds after the call and the click is `click` (8) after it. (Before: up to 9 s to
+// gather, then 8 s to join, then the count.) The guests walk a little faster (150, was 120) to be in place in time.
+export const PHOTO = Object.freeze({ walk: 150, click: 8, count: 3, flash: 0.25, hold: 0.9, join: 240, closeAfter: 0.6, giveWay: 1.2 });
 // The two rows in front of the back wall, left of the lane to the hallway doorway and clear of the snack bar: who
 // stands where (feet, game positions), the gap for Squatch in the front row, the camera tourist's place facing
 // them, where the camera points, and the stage's end, where the band steps down.
@@ -55,7 +60,7 @@ const DOWN = Math.PI / 2;
 /** True from the first song's end until everyone is back (the Polaroid included). */
 export const photoActive = (p) => !!p.shot && p.shot.phase !== "done";
 /** True while he can still walk into the photo (JOIN · photo shows). */
-export const photoOpen = (p) => !!p.shot && ["gather", "settle", "count"].includes(p.shot.phase) && !p.shot.in;
+export const photoOpen = (p) => !!p.shot && ["gather", "count"].includes(p.shot.phase) && !p.shot.in;
 /** True once the party's one photo moment is over. */
 export const photoDone = (p) => !!p.shot && p.shot.phase === "done";
 
@@ -110,8 +115,7 @@ export function tickPhoto(p, dt, s) {
       walkWay(b, dt, s, !r.id.startsWith("band")) ? (b.face = DOWN) : (all = false);
     }
     if (cam) walkWay(cam, dt, s, true) ? (cam.face = -DOWN) : (all = false);
-    if (sh.phase === "gather" && (all || sh.t >= PHOTO.gatherMax)) ((sh.phase = "settle"), (sh.t = 0));
-    else if (sh.phase === "settle" && sh.t >= PHOTO.settle) return ((sh.phase = "count"), (sh.t = 0), (sh.n = 3), "cheese");
+    if (sh.phase === "gather" && sh.t >= PHOTO.click - PHOTO.count) return ((sh.phase = "count"), (sh.t = 0), (sh.n = 3), "cheese");
     else if (sh.phase === "count") {
       const n = 3 - Math.floor(sh.t);
       if (n !== sh.n && n > 0) return ((sh.n = n), "beep");

@@ -7,6 +7,7 @@
  */
 import { partyLine } from "./party-lines.js";
 import { rr, words, INK } from "./party-art.js";
+import { danceBand } from "./party-dance.js";
 
 // How tall a button is, and the gap between them (a 44-pixel target or more).
 const BH = 54,
@@ -15,7 +16,9 @@ const BH = 54,
 /** Where the two buttons are on a `w` x `h` dance: [{ id: "again" | "back", x, y, w, h }]. Side by side when wide. */
 export function danceEndButtons(w, h) {
   const m = Math.max(16, Math.round(w * 0.05)),
-    top = Math.round(Math.max(86, h * 0.105) + 26);
+    B = danceBand(w, h),
+    // under the row of marks, and never down onto the band's heads (on a short, wide screen the row is higher)
+    top = Math.round(Math.min(Math.max(86, h * 0.105) + 26, B.feet - B.tall * 1.02 - BH - 6));
   if (w >= 600) {
     const bw = Math.min(300, (w - m * 2 - GAP) / 2);
     return [

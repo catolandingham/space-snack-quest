@@ -1,18 +1,19 @@
 /**
- * After an alarm, at home (Brian's answers of 2026-11-24, asks/video-notes-2026-11-24/ANSWERS.md; it replaces the
- * old P8a). The alarm itself is the one capture rule, unchanged (party-alarm.js): he runs home, a guard follows,
- * HIDE · bed or be caught.
- *   The card. Once he is under the bed: "There's more to find at the party!", the party's things as pictures, and
- *     two buttons (party-card.js). The game waits behind it.
- *   "Back to the party" (still P7). The guard comes in with his flashlight, sweeps the room, gives up and leaves;
- *     "They lost you."; Mops does not come. Squatch comes out, puts the pieces he lost back on at his closet, and
- *     walks back out through his door. The party carries on from where it was (party-free.js `resume`).
- *   "Keep going" (P8a; ↺ restarts it from under the bed). The guard comes in and sweeps the room; Mops comes in;
- *     their six lines; the guard leaves; Squatch comes out from under the bed still in costume; Mops looks at the
- *     costume; "You went to the party."; "Everyone out there has someone."; "Everyone except me."; "You have me.";
- *     Mops gently lifts the piece on his head off him, with no words (nothing on his head: a gentle pat). Then
- *     Squatch's two questions and Mops's two answers (he answers only the first, on purpose); with no words Mops
- *     walks to the TV and presses its button with a horn (he has no thumbs); the TV comes on; beat 20.
+ * After an alarm, at home (Brian's answers of 2026-11-24 and 2026-11-25, asks/video-notes-2026-11-24/ANSWERS.md;
+ * it replaces the old P8a). The alarm itself is the one capture rule (party-alarm.js): he runs home, a guard follows
+ * with his flashlight. Only the beam finds him (he need not be under the bed before the guard walks in, Brian
+ * 2026-11-25), and after a party alarm the guard looks round until he is under the bed (HIDE · bed).
+ *   Mops sends the guard off. The guard's search is over: he steps aside to the back of the room; Mops comes in
+ *     along the front (the two are never drawn over each other) and stops between him and the door; their six
+ *     lines; the guard leaves along the back.
+ *   The card. Then, with Squatch still under the bed: "There's more to find at the party!", the party's things as
+ *     pictures, and two buttons (party-card.js). The game waits behind it (Brian 2026-11-25, his click "Card after
+ *     Mops sends the guard off").
+ *   "Back to the party" (still P7). With no words Mops heads back out to work; Squatch comes out after him, puts the
+ *     pieces he lost back on at his closet, and walks back out through his door. The party carries on from where
+ *     it was (party-free.js `resume`).
+ *   "Keep going" (P8a; ↺ restarts it from here: Squatch under the bed, Mops in the room). Squatch comes out, and the
+ *     talk at home (party-talk.js), then beat 20.
  *   Hiding in a plant in the hall and walking home later: a guard follows him in a moment later all the same, so
  *     the card and both endings are the same (`follow`).
  */
@@ -21,35 +22,23 @@ import { startAlarm } from "./party-alarm.js";
 import { openFullScreen, closeFullScreen, fullScreenOpen } from "./fullscreen.js";
 import { found, cardLayout, cardButtonAt, drawCard } from "./party-card.js";
 import { wornNow } from "./party-outfit.js";
-import { liftTo } from "./party-free-art.js";
+import { createTalk, TV, TALK, TALK_SPOTS } from "./party-talk.js";
+const TALK_OUT = TALK_SPOTS.sq;
+export { TV };
 
-// PLACEHOLDERS for Brian: how fast they walk at home, how far apart they stand to talk and for the hat, how long
-// Mops looks at the costume, how long a piece takes to go back on, and how long the hat's lift (or the pat) plays.
-export const AFTER = Object.freeze({ walk: 150, beside: 170, close: 138, look: 1.4, redress: 0.45, lift: 2.6, setDown: 0.5, hatUp: 14, hatOut: 52 });
-// Where they stand in the home room (game positions): Mops walks in past the guard (`mopsPast`, well in front of
-// him) and stops between the guard and the bed to talk (`mopsTalk`), so the guard's way out is clear; and Squatch
-// once he is out from under the bed (beside it, on the open floor in front of the bucket and the Guardian box,
-// which are part of the locked room picture).
-// The TV on the home room's shelf, measured on the locked home picture (v6): its dark frame is 566..683 x 134..225,
-// its screen 572..677 x 141..212, the shelf under it starts at 225. The picture shows it off; lit, and its button,
-// are the party's own drawings, shown only for this moment (party-free-art.js drawTv). The button is on the
-// frame's bottom edge, at the end Mops walks up to. `stand` is where his feet are for the top of his front horn to
-// be `hop` under the button; the press is a small hop that long, and the TV comes on at its top (`peak`). `hold`
-// is how long the lit TV is shown before beat 20 (a wordless moment plays itself: 30a).
-// PLACEHOLDERS for Brian: the press 0.9 s, the hold 1.6 s, setting the hat down 0.5 s.
-const HORN_TOP = Object.freeze({ x: 27 * 3, y: 45 * 3 }); // the top of his front horn from his feet, as he is drawn at home
-const TV_BUTTON = Object.freeze({ x: 672, y: 219, r: 4 });
-const TV_HOP = 14;
-export const TV = Object.freeze({
-  button: TV_BUTTON,
-  screen: Object.freeze({ x: 624, y: 176, x0: 572, x1: 678, y0: 141, y1: 213 }),
-  stand: Object.freeze({ x: TV_BUTTON.x + HORN_TOP.x, y: TV_BUTTON.y + HORN_TOP.y + TV_HOP }),
-  hop: TV_HOP,
-  press: 0.9,
-  peak: 0.5,
-  hold: 1.6,
+// PLACEHOLDERS for Brian: how fast they walk at home, and how long a piece takes to go back on.
+export const AFTER = Object.freeze({ walk: TALK.walk, redress: 0.45, hatUp: TALK.hatUp });
+// Where they stand while Mops sends the guard off (game positions; the home room draws them big, about 190 tall):
+// the guard steps aside to the back of the room (`guardAside`), Mops comes in along the front (`mopsPast`) and stops
+// in front of him (`mopsTalk`, well below him: their drawings never overlap, and clear of the flyer by the door); the
+// guard leaves along the back (`guardOut`) to the door, never across Mops. `out`: where Squatch stands once he is out from under the bed.
+export const AFTER_SPOTS = Object.freeze({
+  guardAside: Object.freeze({ x: 540, y: 385 }),
+  guardOut: Object.freeze({ x: 880, y: 385 }),
+  mopsPast: Object.freeze({ x: 850, y: 578 }),
+  mopsTalk: Object.freeze({ x: 600, y: 578 }),
+  out: TALK_OUT,
 });
-export const AFTER_SPOTS = Object.freeze({ mopsPast: Object.freeze({ x: 850, y: 548 }), mopsTalk: Object.freeze({ x: 662, y: 540 }), out: Object.freeze({ x: 400, y: 590 }) });
 
 /**
  * `h`: { E, P, sq, say, chip, control, sound, homeRoom, pace, guests (the approved art), finish () (beat 20),
@@ -58,6 +47,7 @@ export const AFTER_SPOTS = Object.freeze({ mopsPast: Object.freeze({ x: 850, y: 
 export function createAfterAlarm(h) {
   const E = () => h.E();
   const P = () => h.P();
+  const talk = createTalk(h);
   // What the card's pictures are drawn with: Squatch as the game draws him, and a guest's approved picture `tall` high.
   const art = {
     squatch: (ctx, x, y, scale) => E().drawSquatch(ctx, x, y, scale, { f: 1 }),
@@ -65,7 +55,7 @@ export function createAfterAlarm(h) {
   };
 
   // ---------- the card ----------
-  /** He is under the bed with the alarm on: the card (once; a restart of P8a has already chosen). */
+  /** Squatch is under the bed and Mops has sent the guard off: the card (once; a restart of P8a has already chosen). */
   function underBed(p) {
     if (p.choice || p.card) return;
     const e = E();
@@ -92,7 +82,7 @@ export function createAfterAlarm(h) {
       },
     });
   }
-  /** "back" or "keep": the card closes and the guard's search goes on. */
+  /** "back" or "keep": the card closes; Mops goes back to work, or the talk. */
   function choose(p, id) {
     closeFullScreen();
     p.card = null;
@@ -100,8 +90,10 @@ export function createAfterAlarm(h) {
     // he is hidden: the "run home and hide!" chip has done its job
     h.chip("");
     h.sound.one("pop");
-    // "Keep going" is the ending: its own restart point from here on.
-    id === "keep" && ((p.scene = "P8a"), E().forgetSaved());
+    // (the same card after going home early: party-home-early.js)
+    if (p.homeEarly) return id === "keep" ? h.homeEarly().keep(p) : h.homeEarly().backOut(p);
+    if (id === "keep") return keepGoing(p);
+    back(p);
   }
   /** Tests and the robot: where the card's buttons are on the screen now. */
   function cardTargets() {
@@ -124,8 +116,57 @@ export function createAfterAlarm(h) {
     h.control(true);
   }
 
+  // ---------- Mops sends the guard off ----------
+  /**
+   * The guard has finished looking with Squatch under the bed (party-alarm.js asks). After a party alarm (P7) Mops
+   * comes in and sends him off; then the card. True keeps the guard standing (`held`) until he is sent off.
+   */
+  function guardSearched(g) {
+    const p = P();
+    if (!p || p.scene !== "P7") return false;
+    if (p.mopsIn) return true;
+    p.mopsIn = true;
+    const e = E(),
+      A = AFTER_SPOTS,
+      guard = () => (P() && P().alarm && P().alarm.homeGuard) || null;
+    // the guard steps aside to the back of the room, then turns to the door
+    Object.assign(g, { to: { ...A.guardAside }, faceTo: 0 });
+    h.control(false);
+    e.queue([
+      e.until(() => !guard() || !guard().to),
+      e.run(() => {
+        e.set("moPose", "stand");
+        e.place("mops", h.homeRoom.mopsDoor.x, h.homeRoom.mopsDoor.y);
+        e.face("mops", -1);
+        h.sound.one("door");
+      }),
+      // Mops comes in along the front, in front of the guard and well below him
+      e.until((dt) => e.step("mops", A.mopsPast.x, A.mopsPast.y, AFTER.walk, dt)),
+      e.until((dt) => e.step("mops", A.mopsTalk.x, A.mopsTalk.y, AFTER.walk, dt)),
+      // Mops turns to the guard, and the guard looks at him
+      e.run(() => (e.still("mops"), e.face("mops", -1), guard() && (guard().a = Math.atan2(A.mopsTalk.y - guard().y, A.mopsTalk.x - guard().x)))),
+      h.say("guard", "guard-alarm"),
+      h.say("guard", "guard-ran"),
+      h.say("mops", "mops-wookiee"),
+      h.say("guard", "guard-ridiculous"),
+      h.say("guard", "guard-poker"),
+      h.say("mops", "mops-thumbs"),
+      // the guard leaves along the back of the room, then out through the door
+      e.run(() => guard() && Object.assign(guard(), { held: false, leaving: true, exit: [{ ...A.guardOut }] })),
+      e.until(() => !guard()),
+      e.run(() => {
+        const q = P();
+        q.alarm = null;
+        h.sound.one("door");
+        // still under the bed: the card
+        underBed(q);
+      }),
+    ]);
+    return true;
+  }
+
   // ---------- "Back to the party" ----------
-  /** The guard has gone and the hall is calm: out from under the bed, his disguise back on, out through his door. */
+  /** With no words Mops goes back out to work; Squatch comes out, puts his disguise back on, and goes out too. */
   function back(p) {
     const e = E(),
       R = h.homeRoom,
@@ -133,9 +174,16 @@ export function createAfterAlarm(h) {
       wait = (s) => [e.run(() => (P().pt = 0)), e.until(() => !P() || P().pt >= s)],
       steps = [];
     h.control(false);
-    e.set("sqPose", "stand");
-    p.pose = "stand";
-    e.walkOff();
+    steps.push(
+      e.run(() => e.walkOff()),
+      e.until((dt) => e.step("mops", R.mopsDoor.x + 30, R.mopsDoor.y, AFTER.walk, dt)),
+      e.run(() => (e.set("moPose", "hidden"), h.sound.one("door"))),
+      ...wait(0.5),
+      e.run(() => {
+        e.set("sqPose", "stand");
+        P().pose = "stand";
+      }),
+    );
     if (missing.length) {
       // at his closet, the pieces he lost go back on one at a time
       steps.push(
@@ -170,128 +218,50 @@ export function createAfterAlarm(h) {
   }
 
   // ---------- "Keep going" ----------
-  /** The guard has finished looking (party-alarm.js asks): with "Keep going" chosen, Mops comes in and he stays. */
-  function guardSearched(g) {
-    const p = P();
-    if (!p || p.choice !== "keep" || p.mopsIn) return !!(p && p.mopsIn);
-    p.mopsIn = true;
-    const e = E(),
-      T = AFTER_SPOTS.mopsTalk,
-      O = AFTER_SPOTS.out,
-      guard = () => (P() && P().alarm && P().alarm.homeGuard) || null,
-      wait = (s) => [e.run(() => (P().pt = 0)), e.until(() => !P() || P().pt >= s)];
-    e.set("moPose", "stand");
-    e.place("mops", h.homeRoom.mopsDoor.x, h.homeRoom.mopsDoor.y);
-    e.face("mops", -1);
-    h.sound.one("door");
+  /** The ending: its own restart point from here. Squatch comes out from under the bed, and the talk. */
+  function keepGoing(p) {
+    const e = E();
+    p.scene = "P8a";
+    e.forgetSaved();
+    h.control(false);
     e.queue([
-      e.until((dt) => e.step("mops", AFTER_SPOTS.mopsPast.x, AFTER_SPOTS.mopsPast.y, AFTER.walk, dt)),
-      e.until((dt) => e.step("mops", T.x, T.y, AFTER.walk, dt)),
-      // Mops turns to the guard, and the guard looks at him
-      e.run(() => (e.still("mops"), e.face("mops", 1), guard() && (guard().a = Math.atan2(T.y - guard().y, T.x - guard().x)))),
-      h.say("guard", "guard-alarm"),
-      h.say("guard", "guard-ran"),
-      h.say("mops", "mops-wookiee"),
-      h.say("guard", "guard-ridiculous"),
-      h.say("guard", "guard-poker"),
-      h.say("mops", "mops-thumbs"),
-      // the guard leaves
-      e.run(() => guard() && ((guard().held = false), (guard().leaving = true))),
-      e.until(() => !guard()),
       e.run(() => {
-        P().alarm = null;
-        h.sound.one("door");
-        // Squatch comes out from under the bed, still in costume
         e.set("sqPose", "stand");
         P().pose = "stand";
         e.walkOff();
       }),
-      e.until((dt) => e.step("sq", O.x, O.y, AFTER.walk, dt)),
-      e.run(() => (e.still("sq"), e.face("sq", 1))),
-      e.until((dt) => e.step("mops", O.x + AFTER.beside, O.y + 6, AFTER.walk * 0.7, dt)),
-      // Mops looks at the costume (it glows while he looks)
-      e.run(() => (e.still("mops"), e.face("mops", -1), (P().costumeLook = true))),
-      ...wait(AFTER.look),
-      e.run(() => (P().costumeLook = false)),
-      h.say("mops", "mops-went"),
-      h.say("sq", "sq-someone"),
-      h.say("sq", "sq-except"),
-      h.say("mops", "mops-have-me"),
-      // No words: Mops steps close and gently lifts the piece on his head off him (or pats his head).
-      e.until((dt) => e.step("mops", O.x + AFTER.close, O.y + 6, AFTER.walk * 0.5, dt)),
-      e.run(() => {
-        const q = P();
-        e.still("mops");
-        q.lift = { id: wornNow(q).head || "", k: 0 };
-        h.sound.one(q.lift.id ? "fwip" : "pop");
-      }),
-      e.until(() => !P() || !P().lift || P().lift.k >= 1),
-      // He sets the piece down on the floor between them, a little in front (his mouth is for talking, his horn
-      // for the TV): by Squatch's foot, clear of Mops's beard.
-      e.run(() => {
-        const q = P();
-        if (!q.lift.id) return;
-        const m = e.pos("mops"),
-          s = h.sq();
-        Object.assign(q.lift, { held: liftTo(m, s, e.squatchScale()), rest: { x: s.x + AFTER.hatOut, y: Math.max(m.y, s.y) - AFTER.hatUp }, set: 0 });
-      }),
-      e.until(() => !P() || !P().lift || !P().lift.id || P().lift.set >= 1),
-      ...wait(0.6),
-      // Squatch's two questions; Mops answers only the first (Brian 2026-11-24, night)
-      h.say("sq", "sq-why-hide"),
-      h.say("sq", "sq-why-guardians"),
-      h.say("mops", "mops-waiting"),
-      h.say("mops", "mops-heres-why"),
-      // No words: Mops walks to the TV (its button glows) and presses it with his horn; the TV comes on (tick).
-      e.run(() => (P().tv = { phase: "walk", k: 0 })),
-      e.until((dt) => e.step("mops", TV.stand.x, TV.stand.y, AFTER.walk, dt)),
-      e.run(() => (e.still("mops"), e.face("mops", -1), (P().tv = { phase: "press", k: 0 }))),
-      e.until(() => !P() || !P().tv || P().tv.phase === "on"),
-      ...wait(TV.hold),
-      e.run(() => h.finish()),
+      ...talk.steps(),
     ]);
-    return true;
   }
-  /**
-   * Every frame: under the bed in P7 with the search come home (the alarm's own close-up, if it is still playing in
-   * the hall's last moments, has finished), the card shows; and the hat's lift (or the pat) plays itself.
-   */
+  /** Every frame: the card once Mops has sent the guard off (see guardSearched); the talk's own moving parts. */
   function tick(p, dt) {
-    p.scene === "P7" && p.pose === "bed" && p.alarm && p.alarm.phase === "home" && !fullScreenOpen() && underBed(p);
-    p.lift && p.lift.k < 1 && (p.lift.k = Math.min(1, p.lift.k + dt / AFTER.lift));
-    p.lift && p.lift.set != null && p.lift.set < 1 && (p.lift.set = Math.min(1, p.lift.set + dt / AFTER.setDown));
-    // The horn press: a small hop, his horn's top on the button at the top of it, where the TV comes on.
-    const v = p.tv;
-    if (v && v.phase === "press") {
-      const was = v.k,
-        e = E();
-      v.k = Math.min(1, v.k + dt / TV.press);
-      e.place("mops", TV.stand.x, TV.stand.y - Math.sin(Math.PI * v.k) * TV.hop);
-      was < TV.peak && v.k >= TV.peak && (h.sound.one("click"), (v.lit = 0));
-      v.k >= 1 && (v.phase = "on");
-    }
-    v && v.lit != null && (v.lit += dt);
+    talk.tick(p, dt);
   }
-  /** ↺ in "Keep going" (or a link straight to P8a): under the bed, the guard about to come in. */
+  /** ↺ in "Keep going" (or a link straight to P8a): under the bed, Mops in the room, the guard gone; then the talk. */
   function startKeep(p) {
     const e = E(),
       R = h.homeRoom;
     e.room() !== "closet" && e.enterRoom("closet", "Q1");
     e.set("scene", "Q1");
     e.set("wardrobe", "closed");
-    e.set("moPose", "hidden");
+    e.set("moPose", "stand");
+    e.place("mops", AFTER_SPOTS.mopsTalk.x, AFTER_SPOTS.mopsTalk.y);
+    e.face("mops", -1);
     e.place("sq", R.bed.x, R.bed.y);
     e.set("sqPose", "under");
     p.pose = "bed";
-    startAlarm(p, { id: "backpack", x: p.people.backpack.x, y: p.people.backpack.y }, "where-home", "who-guard");
-    Object.assign(p.alarm, { phase: "home", t: 0 });
-    // (a restart after the TV came on: it is off again, and its button is not drawn; nothing is lifted yet)
+    p.alarm = null;
+    // (a restart after the TV came on: it is off again, and its button is not drawn; nothing is lifted yet; the
+    // flyer back on the floor where he put it)
     p.tv = null;
     p.lift = null;
+    p.take = null;
+    p.flyerUp = null;
+    p.flyer = "floor";
+    p.mopsIn = true;
     p.choice = "keep";
-    e.forgetSaved();
     h.chip("");
-    h.control(false);
+    keepGoing(p);
   }
-  return { underBed, choose, cardTargets, follow, back, guardSearched, tick, startKeep };
+  return { underBed, choose, cardTargets, follow, back, guardSearched, tick, startKeep, talk };
 }

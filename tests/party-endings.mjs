@@ -4,14 +4,14 @@
  *   - P7's restart: the alarm ringing, the guards coming in at the hallway doorway, Squatch on the dance floor
  *     with the pieces he lost still gone, the chip "Squatch: run home and hide!", his door outlined;
  *   - from P6, seen with fur showing, the alarm begins and the band stops (nothing yanks out of the hallway doorway);
- *   - the kid steers home himself (nothing walks him); HIDE · bed; under the bed the "more to find" card shows
+ *   - the kid steers home himself (nothing walks him); HIDE · bed; Mops sends the guard off; then the "more to find" card
  *     (the card and both of its roads, "Back to the party" and "Keep going", are tests/party-round4.mjs);
  *   - hiding in a plant in P7: "They lost you.", then his door is the goal; walking home, a guard follows a moment
  *     later all the same: HIDE · bed, then the card;
  *   - P8b: the wall speaker's line (name "Station PA"), the band packs up, everyone leaves through the hallway
  *     doorway in the pairs, then the bartender, Isfred and the band, each walking out (nobody vanishes), Mops
  *     mops in, his heart cone is as big as everyone's, the kid walks to him, they walk home through Squatch's
- *     door, the two lines, beat 20;
+ *     door, the talk at home (party-talk.js), beat 20;
  *   - no catch in P8; ↺ restarts an ending; Joe's home theme never plays during the party night; the ta-da and
  *     the band's start are not silent (the chime and the cheer play).
  * Stills at 375 x 812 go to tests/out/party-stills/ (p7-*.png, p8-*.png).
@@ -118,9 +118,10 @@ async function readLines(page, stop, ms = 30000) {
   s = await until(page, (q) => q.act === "HIDE · bed", 4000);
   g.check("at home: HIDE · bed", !!s);
   await press(page);
-  // under the bed, the "more to find" card (tests/party-round4.mjs follows both of its roads to their ends)
-  s = await until(page, (q) => q.now && !!q.now.card, 6000);
-  g.check("once he is under the bed, the \"more to find\" card shows", !!s && s.now.pose === "bed", s && s.now.pose);
+  // under the bed: the guard looks round, Mops comes in and sends him off, then the "more to find" card
+  // (tests/party-round4.mjs follows both of its roads to their ends; tests/party-home.mjs the guard and Mops)
+  s = await until(page, (q) => q.now && !!q.now.card, 40000, async (q) => q.cur === "bub" && (await sleep(150), await next(page)));
+  g.check("once he is under the bed and Mops has sent the guard off, the \"more to find\" card shows", !!s && s.now.pose === "bed" && !s.now.alarm, s && s.now.pose);
   g.check("Joe's home theme never played through the party night", s && s.warm === "", s && s.warm);
   g.check("no errors in P7", errors.length === 0, errors);
   await page.close();
@@ -162,13 +163,13 @@ async function readLines(page, stop, ms = 30000) {
   s = await until(page, (q) => !!q.now.homeGuard, 3000);
   g.check("the guard comes in through the door", !!s);
   await press(page);
-  s = await until(page, (q) => q.now && !!q.now.card, 6000);
-  g.check("under the bed: the same \"more to find\" card", !!s);
+  s = await until(page, (q) => q.now && !!q.now.card, 40000, async (q) => q.cur === "bub" && (await sleep(150), await next(page)));
+  g.check("under the bed: Mops sends the guard off, then the same \"more to find\" card", !!s);
   // "Back to the party": the guard looks and leaves, and "They lost you." is not said a second time for one alarm
   await page.evaluate(() => window.SSQ.beat("ch1-party").cardChoose("back"));
-  s = await until(page, (q) => q.now && q.now.scene === "P6" && q.ctrl, 40000);
+  s = await until(page, (q) => q.now && q.now.scene === "P6" && q.ctrl, 40000, async (q) => q.cur === "bub" && (await next(page)));
   const notes = await page.evaluate(() => (window.__ss.op.log || []).filter((l) => l.k === "safe").length);
-  g.check("back at the party after the plant and then home: \"They lost you.\" was said once for that alarm", !!s && notes === 1, notes);
+  g.check("back at the party after the plant and then home: \"They lost you.\" was said once for that alarm (in the hall; at home Mops sent the guard off)", !!s && notes === 1, notes);
   await page.close();
 }
 
@@ -267,8 +268,10 @@ async function readLines(page, stop, ms = 30000) {
   // the kid does nothing: a moment later Mops walks over to him, and they go home together
   s = await until(page, (q) => q.room === "closet", 25000);
   g.check("they walk home together through his door", !!s && s.walks.slice(-3).join(",").includes("edge:hall"), s && s.walks.slice(-3));
-  const lines = await readLines(page, (q) => q.tv);
-  g.check("at home: the same two lines, then beat 20", lines[0] === "Everyone out there has someone." && lines[1] === "You have me.", lines);
+  const lines = await readLines(page, (q) => q.tv, 90000);
+  // (Brian 2026-11-25: the talk at home in every ending where Mops is there; before, only the two lines)
+  const TALK = ["You went to the party.", "Everyone out there has someone.", "Everyone except me.", "You have me.", "But look. Robots are coming to do your job.", "Nobody is replacing me. They need me here.", "But why do I have to hide from everyone but you?", "And why can't the Guardians and I be together?", "I've been waiting to show you this.", "Here's why you have to hide."];
+  g.check("at home: the whole talk, word for word, in order, then beat 20", JSON.stringify(lines.slice(0, TALK.length)) === JSON.stringify(TALK), lines);
   g.check("no errors in P8b", errors.length === 0, errors);
   await page.close();
 }

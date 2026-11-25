@@ -8,6 +8,8 @@
  *               in blue come in through the hallway doorway with cones.
  *   5. "search": the guards walk the hall from point to point, looking round. A guard that sees him walks at him;
  *               one that reaches him catches him (the LOCKUP card naming who saw him and where; the scene restarts).
+ *               (At home only the guard's beam finds him; after a party alarm the guard looks round until he is
+ *               under the bed.)
  *               Hidden in either plant while no guard is looking, the guards search, give up and leave: "They lost
  *               you." Through his home door, a guard follows him home half a second later and searches the room
  *               (HIDE · bed); not seeing him, he gives up and leaves: "home".
@@ -181,6 +183,13 @@ function searchHome(a, dt, api, sq, hidden) {
   }
   const g = a.homeGuard;
   if (g.leaving) {
+    // (by the way he is given, `exit`, first: along the back of the room, clear of Mops)
+    if (g.exit && g.exit.length) {
+      const w = g.exit[0];
+      step(g, w.x, w.y, ALARM.guard, dt) && g.exit.shift();
+      g.a = Math.atan2(w.y - g.y, w.x - g.x);
+      return;
+    }
     if (step(g, HOME.door.x + 60, HOME.door.y, ALARM.guard, dt)) {
       a.homeGuard = null;
       a.phase = "calm";
@@ -191,8 +200,16 @@ function searchHome(a, dt, api, sq, hidden) {
     g.a = 0;
     return;
   }
-  // Held: his search is over and someone has come in to talk to him (party-after-alarm.js lets him go).
-  if (g.held) return void (g.sees = false);
+  // Held: his search is over and someone has come in to talk to him (party-after-alarm.js lets him go, and may
+  // send him a step aside first, `to`).
+  if (g.held) {
+    g.sees = false;
+    if (g.to) {
+      g.a = Math.atan2(g.to.y - g.y, g.to.x - g.x);
+      step(g, g.to.x, g.to.y, ALARM.guard, dt) && ((g.to = null), g.faceTo != null && (g.a = g.faceTo));
+    }
+    return;
+  }
   // While he sees Squatch (`after`: he saw him last frame) he does not look round or walk back to his looking
   // place: his light stays on Squatch and he keeps coming. Out of his light (under the bed, behind him, too far)
   // Squatch is lost again and he goes back to looking round. (Before, he stepped at Squatch and then back to his
@@ -204,12 +221,17 @@ function searchHome(a, dt, api, sq, hidden) {
     if (arrived) {
       g.sweep += dt;
       g.turn = Math.sin(g.sweep * 1.6);
-      g.a = Math.PI + g.turn * 0.55;
+      // `back`: after a look round with Squatch not under the bed he turns and looks round the other way (the door
+      // side), and so on, until he finds him or he is hidden (Brian 2026-11-25: only his beam finds him)
+      g.a = (g.back ? 0 : Math.PI) + g.turn * 0.55 * (g.back ? -1 : 1);
     } else if (g.door > ALARM.doorLook) ((g.a = Math.atan2(HOME.look.y - g.y, HOME.look.x - g.x)), (g.turn = 0));
     else ((g.turn = Math.sin(g.door * 4)), (g.a = Math.PI + g.turn * 0.4));
   } else g.turn = 0;
+  // At home only his flashlight's beam finds him (Brian 2026-11-25: "It's only if you're in the cone of the
+  // security, they see you"): no "this close whichever way he faces" rule here, so he need not be under the bed
+  // before the guard walks in.
   const c = coneFrom("guard-home", g.x, g.y, g.a, api.size()),
-    sees = !hidden && (coneSees(c, sq) || Math.hypot(sq.x - g.x, sq.y - g.y) < ALARM.feet);
+    sees = !hidden && coneSees(c, sq);
   g.sees = sees;
   g.after = sees;
   if (sees) {
@@ -221,9 +243,15 @@ function searchHome(a, dt, api, sq, hidden) {
       a.phase = "caught";
     }
   }
-  // He gives up after a search: under the bed, or anywhere he has not been seen. He leaves, unless the party has
-  // something to say to him first (`api.guardSearched`: Mops comes in, party-after-alarm.js).
-  if (!sees && g.sweep >= ALARM.homeSearch) api.guardSearched && api.guardSearched(g) ? ((g.held = true), (g.turn = null)) : (g.leaving = true);
+  // He gives up after a search with Squatch under the bed. He leaves, unless the party has something to say to him
+  // first (`api.guardSearched`: Mops comes in, party-after-alarm.js).
+  // Not seeing him, he gives up after a look round (under the bed or not: only the beam finds him). After a party
+  // alarm (`api.hideFirst`: Mops comes in and sends him off, and the card waits under the bed) he gives up only once
+  // Squatch is under the bed; until then he turns and looks round the other way.
+  if (!sees && g.sweep >= ALARM.homeSearch) {
+    if (hidden !== "bed" && api.hideFirst && api.hideFirst()) return void ((g.sweep = 0), (g.back = !g.back));
+    api.guardSearched && api.guardSearched(g) ? ((g.held = true), (g.turn = null)) : (g.leaving = true);
+  }
 }
 
 /** The home guard's cone, while one is in the home room; `draw` moves where it is drawn (his flashlight). */

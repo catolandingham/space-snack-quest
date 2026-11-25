@@ -5,7 +5,8 @@
  *   P2: hidden in the middle plant, the welcome (P3) starts from there.
  *   P4: after hiding at home, on to the dress-up (P5) if he has the flyer; without it he steps back out into his
  *       doorway, and the flyer is still the goal.
- *   P7: at home the card and what follows are party-after-alarm.js; after a plant, he walks home himself.
+ *   P7: at home Mops sending the guard off, the card and what follows are party-after-alarm.js; after a plant, he
+ *       walks home himself.
  */
 import { partyLine, lockupCause } from "./party-lines.js";
 import { HALL, SPOTS } from "./party-hall.js";
@@ -30,6 +31,8 @@ export function createCapture(h) {
       people: () => h.P().people,
       // the home guard has finished looking: with "Keep going" chosen, Mops comes in and the guard stays to talk
       guardSearched: (g) => h.afterAlarm().guardSearched(g),
+      // after a party alarm (P7) the guard looks round until Squatch is under the bed (Mops comes in next)
+      hideFirst: () => h.P().scene === "P7",
       firstTime: () => !h.firstAlarm.seen,
       // the FUR alarm's ringing bell (the sound board's pick)
       bell: () => h.sound.one("bell"),
@@ -63,8 +66,8 @@ export function createCapture(h) {
         e.catchSquatch(lockupCause(whoId, whereId));
       },
       lost() {
-        // "Keep going": the guard leaves because Mops sent him off, and the scene goes straight on (no note).
-        if (h.P().choice === "keep") return;
+        // After a party alarm the guard leaves because Mops sent him off, and the scene goes straight on (no note).
+        if (h.P().choice === "keep" || h.P().mopsIn) return;
         // A guard who follows him home after the hall has already calmed down (`quiet`): "They lost you." was said
         // in the hall; it is not said twice for one alarm.
         if (h.P().alarm && h.P().alarm.quiet) return void h.chip("");
@@ -77,9 +80,8 @@ export function createCapture(h) {
       calmDone(how) {
         const p = h.P();
         h.chip(p.scene === "P2" ? "chip-plant" : p.scene === "P4" ? (p.flyer === "paw" ? "chip-home" : "chip-flyer") : "");
-        // P7, after the search at home: "Back to the party" (party-after-alarm.js).
-        if (how === "home" && p.scene === "P7") return h.afterAlarm().back(p);
-        if (how === "home" && p.scene === "P8a") return;
+        // P7 and P8a at home: Mops sent the guard off, and the card decides (party-after-alarm.js).
+        if (how === "home" && (p.scene === "P7" || p.scene === "P8a")) return;
         if (how === "home") return calmFromHome();
         // Hidden in the middle plant in P2: he made it, and the welcome starts from there.
         if (p.scene === "P2" && p.hideAt === "middle" && p.pose === "hidden") return h.startScene("P3");

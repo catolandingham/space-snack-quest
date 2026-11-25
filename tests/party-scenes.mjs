@@ -28,6 +28,7 @@ mkdirSync(OUT, { recursive: true });
 const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 1 };
 const g = await startGame({ port: 8991, name: "party-scenes" });
 const hall = await import(join(root, "src", "modules", "party-hall.js"));
+const sneak = await import(join(root, "tests", "party-sneak.mjs"));
 const watch = await import(join(root, "src", "modules", "party-watch.js"));
 
 async function open(beat) {
@@ -241,7 +242,9 @@ async function getSeen(page) {
   g.check("in the glancer's cone a \"?\" comes first (seenBy, no alarm yet)", !!s && !s.now.alarm, s && s.now);
   await sleep(200);
   const marks = await page.evaluate(() => ({ q: Math.max(0, ...window.__marks.filter((m) => m.t === "?").map((m) => m.px)), head: 25.5 * window.SSQ.engine().hallSizes().squatch }));
-  g.check("the \"?\" drawn over the watcher is at least as tall as Squatch's head", marks.q >= marks.head, marks);
+  // (Brian 2026-11-25: "The big question marks are a bit confusing" ; before, it was at least as tall as his head.
+  // Now it is small, and still readable: a third or more of his head's height)
+  g.check("the \"?\" drawn over the watcher is small: shorter than Squatch's head, a third of it or more", marks.q < marks.head && marks.q >= marks.head / 3, marks);
   await still(page, "p2-question-mark");
   s = await until(page, (q) => q.now && q.now.alarm === "shout", 3000);
   g.check("staying in sight starts the alarm: the witness shouts", !!s, s);
@@ -535,30 +538,41 @@ let p4Cast = null;
       octopus: [Math.cos(oc.a), Math.sin(oc.a)],
     };
   });
-  g.check("the guests dance in pairs, side by side: by the stage's left they look at each other; the robot looks at the octopus, who eyes the snack bar", pairs.pairs.every((q) => q.apart < 90 && q.face) && pairs.pairs[0].back && !pairs.pairs[1].back && pairs.octopus[0] > 0.5 && pairs.octopus[1] > 0.3, pairs);
+  // (Brian 2026-11-25, "End of the bar, moving cones": in P4 the pairs turn on the spot, so their cones sweep; before,
+  // they stood looking at each other. tests/party-flyer.mjs checks the way past them.)
+  const turns = await page.evaluate(() => {
+    const b = window.SSQ.beat("ch1-party"),
+      p = window.__ss.op.ch1PartyNow,
+      was = p.sweepT,
+      out = {};
+    for (const t of [0, 2, 4, 6]) {
+      p.sweepT = t;
+      for (const c of b.cones()) ["teal", "stilt", "robot", "octopus-guest"].includes(c.id) && (out[c.id] = (out[c.id] || []).concat(+c.a.toFixed(2)));
+    }
+    p.sweepT = was;
+    return out;
+  });
+  g.check("the guests dance in pairs, side by side, and in P4 each turns on the spot (his cone points a different way as P4's clock runs)", pairs.pairs.every((q) => q.apart < 90) && Object.values(turns).every((a) => Math.max(...a) - Math.min(...a) > 0.3), [pairs.pairs.map((q) => q.apart), turns]);
   p4Cast = await page.evaluate(() => {
     const p = window.__ss.op.ch1PartyNow;
     return { people: Object.fromEntries(Object.entries(p.people).map(([k, v]) => [k, [v.x, v.y]])), isfred: [p.isfred.x, p.isfred.y] };
   });
   await walk(page, 470, 600);
   s = await until(page, (q) => q.now && q.now.pose === "stand", 3000);
-  g.check("steering steps him out of the plant, and nothing sticks to his back (the one flyer is still on the stage)", !!s && s.now.flyer === "stage", s && s.now);
+  g.check("steering steps him out of the plant, and nothing sticks to his back (the one flyer is still on the counter)", !!s && s.now.flyer === "stage", s && s.now);
   await sleep(300);
   await still(page, "p4-out-of-the-plant");
-  // round the dancers' sight to the flyer (the way tests/party-flyer.mjs maps), GRAB · flyer, and home
-  for (const [x, y] of [[505, 560], [505, 400], [hall.FLYER.reach.x, hall.FLYER.reach.y + 8]]) {
-    await walk(page, x, y);
-    await until(page, (q) => Math.hypot(q.x - x, q.y - y) < 14 || q.act === "GRAB · flyer" || !q.ctrl, 8000);
-  }
+  // timing the dancers' sweeping cones to the flyer (tests/party-sneak.mjs, as tests/party-flyer.mjs does), GRAB ·
+  // flyer, and home
+  let way = await sneak.sneakTo(page, hall.FLYER.reach);
+  await sneak.resume(page);
   s = await until(page, (q) => q.act === "GRAB · flyer", 3000);
-  g.check("at the stage's end the button is GRAB · flyer", !!s, s && s.act);
+  g.check("at the bar counter's end the button is GRAB · flyer (the way there timed, unseen)", !!s && !!way.plan && !way.walked.seen, s && [s.act, way.walked]);
   await press(page);
   s = await until(page, (q) => q.now.flyer === "paw" && q.ctrl, 3000);
   g.check("he takes it: the flyer is in his paw, and the chip sends him home", !!s && s.chip === "Squatch: sneak home for a disguise", s && [s.now.flyer, s.chip]);
-  for (const [x, y] of [[505, 400], [505, 560]]) {
-    await walk(page, x, y);
-    await until(page, (q) => Math.hypot(q.x - x, q.y - y) < 14 || !q.ctrl, 8000);
-  }
+  way = await sneak.sneakTo(page, { x: 477, y: 540, r: 30 });
+  await sneak.resume(page);
   const homeLines = [];
   s = await until(page, (q) => q.now && q.now.scene === "P5", 20000, async (q) => {
     q.ctrl && q.room === "hall" && (await walk(page, 477, 600));

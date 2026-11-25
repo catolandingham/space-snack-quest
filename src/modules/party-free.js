@@ -98,7 +98,9 @@ export function createFreePlay(h) {
    * song and the clock, his disguise whole again, and at least BACK_MIN_SECONDS left on the clock.
    */
   function resume(p) {
-    Object.assign(p, { scene: "P6", phase: "free", alarm: null, band: true, lights: true, lost: false, calmed: false, choice: "", mopsIn: false, lostPieces: [], fallen: [], flying: [], seenBy: "", seenT: 0, stare: null, bounce: null, pose: "stand" });
+    // (leftDoor: he walks back in through his own door, which takes him home again only once he has walked away
+    // from it: party-home-early.js)
+    Object.assign(p, { leftDoor: false, scene: "P6", phase: "free", alarm: null, band: true, lights: true, lost: false, calmed: false, choice: "", mopsIn: false, lostPieces: [], fallen: [], flying: [], seenBy: "", seenT: 0, stare: null, bounce: null, pose: "stand" });
     for (const g of Object.values(p.people)) Object.assign(g, { task: "", wait: 0 });
     p.oct && Object.assign(p.oct, { mode: "back", arms: 0 });
     // an alarm in the middle of the photo moment: it is over, and the band walks back to the stage first
@@ -266,6 +268,8 @@ export function createFreePlay(h) {
     h.sound.song(-1);
     h.sound.one("scratch");
     startPhoto(p);
+    // a Croc Boy calls it from the stage (Brian 2026-11-25), as the guests set off for the row
+    E().ambient("band", partyLine("band-group-photo"));
   }
   // JOIN · photo: he walks into the gap left for him in the front row and stands there, facing the camera.
   function join(p) {

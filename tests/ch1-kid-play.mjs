@@ -120,8 +120,11 @@ const inDanger = (s, x, y) => {
   for (const c of s.cones) {
     // Mops's cone of hearts at closing time is not someone who could catch him.
     if (c.heart) continue;
-    // Close to a watcher is never safe, whichever way it faces.
-    if (Math.hypot(x - c.ox, y - (c.oy + 28)) < 96) return true;
+    // Close to a watcher is never safe, whichever way it faces: a guard notices him this close (the pinned cone-feet
+    // rule), and the robot keeps the same distance from any watcher it cannot name. A party guest or Isfred only sees
+    // along their cone, so a kid can creep up behind them (the flyer on the counter's end, behind Isfred's back).
+    const named = c.id && !/^guard/.test(c.id);
+    if (!named && Math.hypot(x - c.ox, y - (c.oy + 28)) < 96) return true;
     for (const py of [y, y - 20]) {
       const d = Math.hypot(x - c.ox, py - c.oy);
       if (c.circle) {
