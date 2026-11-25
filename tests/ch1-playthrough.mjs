@@ -493,9 +493,10 @@ const must = [
   "Stay out of their sight!",
   "Let's give a big hello to our friends from Bleep-Bloop Robotics!",
   "Soon their helper robots will be here, to help with the heavy work.",
-  "And now... put your hands together for the Croc Boys!",
+  // his worry, right after the robots line (Brian 2026-11-25)
   "Robots for the heavy work? That's Mops's job!",
   "I have to show Mops.",
+  "And now... put your hands together for the Croc Boys!",
   "Stormtop-vania 1-2-3-4-5!",
   // at home after the flyer sneak (Brian 2026-11-25: the dance wish moved home)
   "I've never gotten to dance at a party.",

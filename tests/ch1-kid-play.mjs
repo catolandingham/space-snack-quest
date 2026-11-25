@@ -19,6 +19,7 @@ import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { join } from "node:path";
 import { root, startGame, sleep } from "./game-page.mjs";
+const sneak = await import(join(root, "tests", "party-sneak.mjs"));
 
 // Problems Brian knows about. Take one off this list in the change that fixes it.
 const KNOWN = {};
@@ -435,6 +436,31 @@ while (now() < MAX_S) {
     say(s, "KEY " + d);
     await tapGame(s, d === "0" ? 480 : 480 + ((i % 3) - 1) * 88, d === "0" ? 514 : 250 + Math.floor(i / 3) * 88);
     await sleep(450);
+    continue;
+  }
+  // The flyer sneak (party P4; Brian 2026-11-25, "End of the bar, moving cones"): the cones sweep on a fixed
+  // rhythm, the same every play, which a kid learns by watching; the robot knows that rhythm (the game's own cones
+  // over time, tests/party-sneak.mjs) and times its way: it waits where no cone reaches, then goes. Its finger is on
+  // the planned place for the moment it is, every tenth of a second.
+  const p4 = s.party && s.party.scene === "P4" && s.room === "hall" && !s.party.alarm ? await page.evaluate(() => window.__ss.op.ch1PartyNow.flyer) : "";
+  if ((p4 === "stage" || p4 === "paw") && (p4 === "paw" || s.btn !== "GRAB · flyer")) {
+    const H = await import(join(root, "src", "modules", "party-hall.js"));
+    const to = p4 === "stage" ? H.FLYER.reach : { x: H.HALL_DOOR.x, y: H.HALL_DOOR.y - 50, r: 30 };
+    const t0p = await page.evaluate(() => window.__ss.op.ch1PartyNow.sweepT || 0),
+      tl = await sneak.coneTimeline(page, t0p + 75),
+      plan = sneak.planSneak(tl, { x: s.x, y: s.y }, t0p + 0.3, to, { hidden: s.pose === "hidden" });
+    say(s, plan ? `TIME the cones to the ${p4 === "stage" ? "flyer" : "door"} (${(plan[plan.length - 1].t - t0p).toFixed(1)} s)` : "NO timed way now");
+    if (plan)
+      for (let k = 0; k < 900; k++) {
+        const q = await page.evaluate(() => { const n = window.__ss.op, p = n.ch1PartyNow; return p ? { t: p.sweepT || 0, x: n.sq.x, y: n.sq.y, alarm: !!p.alarm, ctrl: !!n.ctrl, room: n.room } : null; });
+        if (!q || q.alarm || q.room !== "hall" || q.t > plan[plan.length - 1].t + 1.5) break;
+        const at = plan.find((w) => w.t >= q.t + 0.1) || plan[plan.length - 1];
+        Math.hypot(at.x - q.x, at.y - q.y) > 6 && q.ctrl && (await tapGame(s, at.x, at.y));
+        if (at === plan[plan.length - 1] && Math.hypot(q.x - at.x, q.y - at.y) < 14) break;
+        await sleep(90);
+      }
+    p4 === "paw" && (await tapGame(s, H.HALL_DOOR.x, H.HALL_DOOR.y + 12));
+    await sleep(300);
     continue;
   }
   // Hidden with a cone on screen: stay put, the way a kid holds still while someone is looking.

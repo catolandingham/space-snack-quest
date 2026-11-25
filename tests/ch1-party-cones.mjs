@@ -132,8 +132,9 @@ if (spot) {
 
 // Distance fade, from three places on the floor: which cones are drawn this frame, and how strongly.
 const fade = [];
+// (not in his own doorway at the front, 477,590: since 2026-11-25 standing there in the party takes him home early)
 for (const [x, y] of [
-  [480, 600],
+  [400, 600],
   [200, 520],
   [800, 560],
   [470, 470],
