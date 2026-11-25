@@ -3,11 +3,19 @@
  * drawings). party-free.js calls these two each frame and for each finger; they were its own lines before.
  * `h` is the party's helpers (see party-free.js createFreePlay); `alarm` is the free play's own alarm starter.
  */
-import { tickSnacks, snackPointer, closeSnacks, startTopple, stock, SNACK_STARS } from "./party-snacks.js";
+import { tickSnacks, snackPointer, closeSnacks, startTopple, stock, takeOwed, SNACK_STARS } from "./party-snacks.js";
+
+// Stars for every snack in the bag that has not been paid for (one that landed this frame, or one he was still
+// carrying when the close-up closed). Returns how many were paid.
+function payOwed(p, h) {
+  const n = takeOwed(p);
+  if (n) ((p.done.snacks = true), h.E().addStars(n * SNACK_STARS));
+  return n;
+}
 
 /** One frame of the snack bar's close-up: what happened is heard, said, scored. */
 export function snackFrame(p, dt, h, alarm) {
-  if (!p.snack) return;
+  if (!p.snack) return void payOwed(p, h);
   const e = h.E(),
     ev = tickSnacks(p, dt),
     caught = ev.includes("catch1") || ev.includes("catch2");
@@ -17,8 +25,7 @@ export function snackFrame(p, dt, h, alarm) {
     else if (what === "settle") h.sound.one("bump");
     else if (what === "crack") h.sound.one("uhoh");
     else if (what === "bag") {
-      p.done.snacks = true;
-      e.addStars(SNACK_STARS);
+      payOwed(p, h);
       e.sfx("pickup");
       h.sound.one("tink");
       // his own thought after his first snack (Brian 2026-11-24), unless she is just now catching him
@@ -46,6 +53,7 @@ export function snackFrame(p, dt, h, alarm) {
 /** A finger in the snack close-up (game positions). True when the close-up took it. */
 export function snackTouch(p, kind, x, y, h) {
   if (!p.snack) return false;
-  snackPointer(p, kind, x, y) === "close" && (closeSnacks(p), h.control(true));
+  // LEAVE · bar: a snack still in his paw goes in the bag and is paid for, like any other
+  snackPointer(p, kind, x, y) === "close" && (closeSnacks(p), payOwed(p, h) && h.sound.one("tink"), h.control(true));
   return true;
 }

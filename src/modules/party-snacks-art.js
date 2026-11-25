@@ -24,7 +24,7 @@ const TAU = Math.PI * 2;
 const ease = (k) => k * k * (3 - 2 * k);
 const clamp = (k) => Math.max(0, Math.min(1, k));
 // How big a snack is drawn in the close-up and in the hall (one shape, two sizes), and the hall's spacing.
-export const SNACK_SIZE = Object.freeze({ cut: 2.7, hall: 0.45, hallCol: 7.5, hallRow: 13 });
+export const SNACK_SIZE = Object.freeze({ cut: 3.1, hall: 0.45, hallCol: 7.5, hallRow: 13 });
 
 /**
  * One snack, `sc` times its own size, centred at (x, y). `press` squashes it (0 loose, 1 one snack on it, 2 two
@@ -258,7 +258,7 @@ function drawBag(ctx, s, landed) {
 function drawLeave(ctx) {
   const L = CUT.leave;
   rr(ctx, L.x0, L.y0, L.x1 - L.x0, L.y1 - L.y0, 28, "#2457c5", 6);
-  words(ctx, partyLine("button-leave-bar"), (L.x0 + L.x1) / 2, (L.y0 + L.y1) / 2 + 2, 44, "#ffffff");
+  words(ctx, partyLine("button-leave-bar"), (L.x0 + L.x1) / 2, (L.y0 + L.y1) / 2 + 2, 46, "#ffffff");
 }
 // The wall behind the bar, her shelf of cups and bottles, and the counter the pyramid stands on.
 function drawBarRoom(ctx) {
@@ -289,7 +289,7 @@ function drawPileSnack(ctx, c, slots, i, t, fall) {
   let x = at.x,
     y = at.y,
     rot = 0;
-  const slide = c.slides.find((m) => m.to === i);
+  const slide = (c.slides || []).find((m) => m.to === i);
   if (slide) {
     // it drops into the gap with a small bounce
     const k = clamp(slide.t / BAR.settle),
@@ -308,10 +308,10 @@ function drawPileSnack(ctx, c, slots, i, t, fall) {
     // loose: it jiggles
     rot = Math.sin(t * 9 + i * 1.7) * 0.09;
     y -= Math.abs(Math.sin(t * 9 + i * 1.7)) * 4;
-    for (const sx of [-1, 1]) (ctx.beginPath(), ctx.arc(x + sx * 58, y - 6, 12, sx > 0 ? -0.7 : Math.PI - 0.7, sx > 0 ? 0.7 : Math.PI + 0.7), (ctx.lineWidth = 4), (ctx.strokeStyle = "rgba(30,36,48,.45)"), ctx.stroke());
+    for (const sx of [-1, 1]) (ctx.beginPath(), ctx.arc(x + sx * 62, y - 6, 12, sx > 0 ? -0.7 : Math.PI - 0.7, sx > 0 ? 0.7 : Math.PI + 0.7), (ctx.lineWidth = 4), (ctx.strokeStyle = "rgba(30,36,48,.45)"), ctx.stroke());
   }
   // a squashed snack carries two: strain marks at its sides
-  if (press === 2 && !slide && fall <= 0) for (const sx of [-1, 1]) (line(ctx, [x + sx * 50, y + 30, x + sx * 62, y + 38], "#e5533d", 5), line(ctx, [x + sx * 52, y + 14, x + sx * 66, y + 14], "#e5533d", 5));
+  if (press === 2 && !slide && fall <= 0) for (const sx of [-1, 1]) (line(ctx, [x + sx * 52, y + 36, x + sx * 64, y + 44], "#e5533d", 5), line(ctx, [x + sx * 54, y + 18, x + sx * 68, y + 18], "#e5533d", 5));
   drawSnack(ctx, kindOf(id), x, y + press * 4, SNACK_SIZE.cut, rot, slide || fall > 0 ? 0 : press, 2);
   // a puff where a sliding snack lands
   if (slide && slide.t / BAR.settle > 0.65) {
@@ -352,7 +352,7 @@ export function drawSnackCloseUp(ctx, p, t, drawPawArm) {
   drawLeave(ctx);
   const paw = c.paw || CUT.rest;
   drawPawArm && drawPawArm(ctx, paw);
-  c.held >= 0 && drawSnack(ctx, kindOf(c.held), paw.x, paw.y - 30, SNACK_SIZE.cut, 0, 0, 2);
+  c.held >= 0 && drawSnack(ctx, kindOf(c.held), paw.x, paw.y - 34, SNACK_SIZE.cut, 0, 0, 2);
   // the bag is in front of his arm: his paw dips into it from behind, and the count is never covered
   drawBag(ctx, s, c.landed || 0);
   ctx.restore();

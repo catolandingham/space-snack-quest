@@ -13,7 +13,7 @@
 import { drawBand, drawOutfit, oval, line } from "./party-art.js";
 import { bootsOnFeet } from "./party-outfit.js";
 import { drawSquatchArt, armEnds, SQUATCH_LOOK } from "./squatch-art.js";
-import { DANCE, SONG_LIGHTS, ROUTINE_LENGTH, SPOTS, SPOT_R, danceSquatch, onScreen, spotOnScreen, spotNow, ringLeft, ringRadius, unit } from "./party-dance.js";
+import { DANCE, SONG_LIGHTS, ROUTINE_LENGTH, danceSquatch, onScreen, spotOnScreen, spotStanding, spotNow, ringLeft, ringRadius, unit } from "./party-dance.js";
 
 const FLOORS = ["#5a2c4f", "#1f4f52", "#5a4a22"];
 const INK = "#1e2430",
@@ -188,8 +188,7 @@ export function drawDanceCloseUp(ctx, w, h, guestArt, outfit, t, d, song = 0) {
       continue;
     }
     // (where the spot is on him standing straight: he may be mid-stumble or mid-cheer by now)
-    const base = { x: at.x, y: at.y, rot: 0, scale: unit(w, h) * 1.5 },
-      p = { ...onScreen(base, SPOTS[f.spot].x, SPOTS[f.spot].y), r: Math.max(24, SPOT_R * base.scale) };
+    const p = spotStanding(w, h, f.spot);
     if (f.kind === "hit") {
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r * (1 + k * 1.4), 0, TAU);

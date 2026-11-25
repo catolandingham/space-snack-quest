@@ -231,7 +231,13 @@ const backTurned = (page, need = 1.2) => runUntil(page, `(c) => c && c.phase ===
   const leaveText = s.texts.find((t) => t.text === "LEAVE · bar"),
     L = CUT.leave;
   g.check("LEAVE · bar is drawn in its button, 14 px or more on a phone", !!leaveText && leaveText.x > L.x0 && leaveText.x < L.x1 && leaveText.y > L.y0 && leaveText.y < L.y1 && leaveText.css >= 14, leaveText);
-  g.check("LEAVE · bar is a 44 px target on a phone", ((L.x1 - L.x0) * 359) / 960 >= 44 && ((L.y1 - L.y0) * 359) / 960 >= 30, [((L.x1 - L.x0) * 359) / 960, ((L.y1 - L.y0) * 359) / 960]);
+  // measured on the page: the picture's real width on this phone
+  const perGame = (await page.evaluate(() => document.querySelector("canvas").getBoundingClientRect().width)) / 960,
+    leavePx = [(L.x1 - L.x0) * perGame, (L.y1 - L.y0) * perGame],
+    cellPx = [CUT.cell.w * perGame, CUT.cell.h * perGame];
+  g.check("LEAVE · bar is a 44 px target on a phone, both ways", leavePx[0] >= 44 && leavePx[1] >= 44, leavePx);
+  g.check("each snack's own tap place is 44 px on a phone, both ways", cellPx[0] >= 44 && cellPx[1] >= 44, cellPx);
+  g.check("LEAVE · bar covers no snack and the bag does not either", stack.SLOTS.every((_, i) => !(slotAt(i).x + CUT.cell.w / 2 > L.x0 && slotAt(i).y + CUT.cell.h / 2 > L.y0) && slotAt(i).x - CUT.cell.w / 2 >= CUT.bag.x1 - 14));
   const inBag = (t) => t.x > CUT.bag.x0 && t.x < CUT.bag.x1 && t.y > CUT.bag.y0 && t.y < 640;
   g.check("the bag shows a count, 0 to begin with", s.texts.some((t) => t.text === "0" && inBag(t) && t.css >= 14), s.texts);
   g.check("the close-up's only words are LEAVE · bar and the number", s.texts.every((t) => t.text === "LEAVE · bar" || /^\d+$/.test(t.text)), s.texts.map((t) => t.text));
@@ -375,6 +381,32 @@ const backTurned = (page, need = 1.2) => runUntil(page, `(c) => c && c.phase ===
   s = await st(page);
   g.check("with the pile down the paw icon is gone", !s.now.paw);
   g.check("no page errors in the fall", errors.length === 0, errors);
+  await page.close();
+}
+
+// ---------- LEAVE · bar while his paw is busy ----------
+{
+  const { page, errors } = await open();
+  await toBar(page);
+  await backTurned(page);
+  const stars0 = (await st(page)).stars;
+  // his paw has the cake and is on its way to the bag: he leaves
+  await tapSlot(page, 0);
+  await runUntil(page, "(c) => c.held === 0", 2);
+  await tap(page, CUT.close.x, CUT.close.y);
+  await run(page, 0.1);
+  let s = await st(page);
+  g.check("LEAVE · bar with a snack in his paw: it goes in the bag and he gets its stars", !s.snack && s.snacks.bag === 1 && s.snacks.slots[0] === -1 && s.stars === stars0 + SNACK_STARS && s.now.done.snacks === true, [s.snacks.bag, s.stars - stars0, s.now.done]);
+  // his paw is only reaching: he leaves, and nothing was taken
+  await toBar(page);
+  await backTurned(page);
+  await tapSlot(page, 1);
+  await run(page, BAR.reach * 0.4);
+  await tap(page, CUT.close.x, CUT.close.y);
+  await run(page, 0.1);
+  s = await st(page);
+  g.check("LEAVE · bar while his paw is still reaching: nothing is taken, nothing is paid", !s.snack && s.snacks.bag === 1 && s.snacks.slots[1] === 1 && s.stars === stars0 + SNACK_STARS, [s.snacks.bag, s.snacks.slots, s.stars - stars0]);
+  g.check("no page errors leaving mid-reach", errors.length === 0, errors);
   await page.close();
 }
 

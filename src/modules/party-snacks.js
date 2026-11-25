@@ -27,14 +27,15 @@ export const BAR = Object.freeze({ backs: [5, 4, 6, 4.5], glance: 0.9, face: 2, 
 export const SNACK_LOOK_SECONDS = 4;
 
 // The close-up's layout, in game positions (the picture is 960 x 640; on a phone it is about 360 wide, so one
-// snack's place, CELL, is about 44 x 37 phone pixels). The pyramid stands on the counter left of the middle, the
-// bartender behind the counter on the right, the bag bottom left, LEAVE · bar bottom right, his paw from below.
-const CELL = Object.freeze({ w: 118, h: 100, x: 400, y: 462 });
+// snack's place, CELL, is 44 phone pixels each way, and so is LEAVE · bar's height). The pyramid stands on the
+// counter left of the middle, the bartender behind the counter on the right, the bag bottom left, LEAVE · bar
+// bottom right, his paw from below.
+const CELL = Object.freeze({ w: 118, h: 118, x: 400, y: 456 });
 /** Where slot `i` of the pyramid is drawn in the close-up (its centre). */
 export function slotAt(i) {
   return { x: CELL.x + (SLOTS[i].col - 3) * (CELL.w / 2), y: CELL.y - SLOTS[i].row * CELL.h };
 }
-const LEAVE = Object.freeze({ x0: 640, y0: 540, x1: 946, y1: 628 });
+const LEAVE = Object.freeze({ x0: 640, y0: 516, x1: 948, y1: 636 });
 export const CUT = Object.freeze({
   cell: CELL,
   counter: 514, // the counter's top edge, where the bottom row stands
@@ -63,7 +64,17 @@ export function openSnacks(p) {
   p.snack = { zoom: 0, paw: { ...CUT.rest }, held: -1, phase: "back", t: BAR.away, back: 0, catches: s.catches || 0, reach: null, slides: [], fall: -1, landed: 0 };
   return p.snack;
 }
-/** Closes the close-up. A snack still in his paw goes into the bag; a pile already falling is down. */
+/** How many bagged snacks have not been paid for yet; asking pays them off (the play module adds the stars). */
+export function takeOwed(p) {
+  const n = (p.snacks && p.snacks.owed) || 0;
+  n && (p.snacks.owed = 0);
+  return n;
+}
+/**
+ * Closes the close-up. A snack still in his paw goes into the bag (its stars stay owed). A pile already falling
+ * is down: the close-up only closes mid-fall when the party is leaving P6 (closing time, an alarm), where the
+ * hall's chain does not run, so the pile is shown fallen and no cup flies.
+ */
 export function closeSnacks(p) {
   const c = p.snack,
     s = p.snacks;
@@ -77,9 +88,12 @@ export function closeSnacks(p) {
 const backFor = (c) => BAR.backs[c.back % BAR.backs.length];
 const ease = (k) => k * k * (3 - 2 * k);
 const mix = (a, b, k) => ({ x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k });
+// A snack goes into the bag. Its stars are owed until the play module pays them (takeOwed), so a snack bagged
+// as the close-up closes is paid like any other.
 function bagIt(s, c) {
   s.taken.push(c.held);
   s.bag += 1;
+  s.owed = (s.owed || 0) + 1;
   c.held = -1;
   c.landed = 1;
   snacksLeft(s.slots) === 0 && !s.toppled && (s.all = true);

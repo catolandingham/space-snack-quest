@@ -185,10 +185,13 @@ export function tickDance(d, dt) {
 // ---------- where things are on the screen ----------
 /** How big the dance draws things on a `w` x `h` screen (one unit of the crowd's and the band's sizes). */
 export const unit = (w, h) => Math.min(w / 90, h / 120);
+// How big he is drawn (in the crowd's units), and the smallest a spot's target may be on the screen (48 px across).
+const BIG = 1.5,
+  SMALLEST = 24;
 /** Where Squatch stands in the dance on a `w` x `h` screen: his feet, his scale, his lean, and his pose now. */
 export function danceSquatch(w, h, d) {
   const pose = poseNow(d);
-  return { x: w / 2, y: h * 0.9, scale: unit(w, h) * 1.5 * (1 + (d && d.pop ? d.pop : 0) * 0.05), rot: pose.rot, pose };
+  return { x: w / 2, y: h * 0.9, scale: unit(w, h) * BIG * (1 + (d && d.pop ? d.pop : 0) * 0.05), rot: pose.rot, pose };
 }
 /** A point of his body (his own units) on the screen, for where he stands (`at`, from danceSquatch). */
 export function onScreen(at, x, y) {
@@ -198,7 +201,12 @@ export function onScreen(at, x, y) {
 export function spotOnScreen(w, h, d, spot) {
   const at = danceSquatch(w, h, { ...d, pop: 0 }),
     s = SPOTS[spot];
-  return { ...onScreen(at, s.x, s.y), r: Math.max(24, SPOT_R * at.scale) };
+  return { ...onScreen(at, s.x, s.y), r: Math.max(SMALLEST, SPOT_R * at.scale) };
+}
+/** The same spot on him standing straight (where a "+5" or a cross is shown, whatever he is doing by then). */
+export function spotStanding(w, h, spot) {
+  const at = danceSquatch(w, h, null);
+  return { ...onScreen({ ...at, rot: 0 }, SPOTS[spot].x, SPOTS[spot].y), r: Math.max(SMALLEST, SPOT_R * at.scale) };
 }
 /** True when the screen point (x, y) is on him (his head and what he wears on it, his body, his legs). */
 export function onHim(w, h, d, x, y) {

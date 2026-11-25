@@ -296,20 +296,22 @@ const still = (page, name) => page.screenshot({ path: join(OUT, name + ".png") }
   for (let i = 0; i < 20; i++) (await run(page, 0.1), (await st(page)).texts.forEach((t) => words.add(t.text)));
   g.check("the dance draws no words, only the numbers of stars", [...words].every((t) => /^\+\d+$/.test(t)), [...words]);
 
-  // ---------- doing nothing never ends it ----------
-  await run(page, 2);
-  const starsD = (await st(page)).stars,
-    roundD = (await st(page)).d.round;
-  // (the song's own end closes a dance: hold the song where it is, as a kid who started dancing early has)
-  await page.evaluate(() => (window.__ss.op.ch1PartyNow.songT = 1));
-  await run(page, 30);
-  s = await st(page);
-  g.check("30 seconds of doing nothing: every spot lost, no stars, and he is still dancing", s.full && !!s.d && s.stars === starsD && s.d.round > roundD && s.d.marks.every((m) => m === -1), [s.full, s.stars - starsD, s.d && s.d.round - roundD]);
   // ---------- the close button, and "tried" ----------
   await page.touchscreen.tap(W - 36, 36);
   s = await st(page);
   g.check("the close button ends it; having hit three spots or more, the dance counts", !s.full && s.ctrl && s.done.dance === true && s.clap > 0, [s.full, s.done]);
   g.check("no page errors in the dance", errors.length === 0, errors);
+  await page.close();
+}
+{
+  // Doing nothing never ends it (a fresh dance near the start of a song, so the song itself does not end it).
+  const { page, errors } = await open(false);
+  const stars0 = (await st(page)).stars;
+  await run(page, 30);
+  const s = await st(page);
+  g.check("30 seconds of doing nothing: every spot lost, no stars, and he is still dancing", s.full && !!s.d && s.stars === stars0 && s.d.round >= 1 && s.d.moves === 0 && s.d.marks.every((m) => m === -1), [s.full, s.stars - stars0, s.d && s.d.round, s.d && s.d.marks]);
+  g.check("a routine with every spot lost still ends with the smaller cheer, never the bonus", s.d.round >= 1 && !s.d.big && Object.keys(s.pay).length === 0, s.pay);
+  g.check("no page errors doing nothing", errors.length === 0, errors);
   await page.close();
 }
 {
