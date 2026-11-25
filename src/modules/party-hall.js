@@ -57,10 +57,12 @@ export const CAST = Object.freeze({
   band: Object.freeze([Object.freeze({ x: 258, y: 256 }), Object.freeze({ x: 308, y: 256 }), Object.freeze({ x: 358, y: 256 })]),
   guests: Object.freeze([
     // Partners stand a step apart (72), so no one's body overlaps another's (tests/people-scale.mjs).
-    Object.freeze({ id: "teal", x: 270, y: 390, pair: "stilt" }),
-    Object.freeze({ id: "stilt", x: 342, y: 396, pair: "teal" }),
-    Object.freeze({ id: "robot", x: 590, y: 380, pair: "octopus-guest" }),
-    Object.freeze({ id: "octopus-guest", x: 662, y: 386, pair: "robot" }),
+    // (The two pairs stand 100 further apart since the flyer sneak, Brian 2026-11-24: the open strip between them,
+    // from the floor's front up to the stage's right end, is about 140 wide, 50 px on a phone. Before: 270, 342, 590, 662.)
+    Object.freeze({ id: "teal", x: 220, y: 390, pair: "stilt" }),
+    Object.freeze({ id: "stilt", x: 292, y: 396, pair: "teal" }),
+    Object.freeze({ id: "robot", x: 640, y: 380, pair: "octopus-guest" }),
+    Object.freeze({ id: "octopus-guest", x: 712, y: 386, pair: "robot" }),
     Object.freeze({ id: "backpack", x: 600, y: 490, glancer: true }),
     Object.freeze({ id: "camera", x: 400, y: 452, tripod: Object.freeze({ x: 372, y: 458 }) }),
   ]),
@@ -76,7 +78,7 @@ export const FLYER = Object.freeze({
   y: 290,
   size: 34,
   box: Object.freeze({ x0: 464, x1: 508, y0: 264, y1: 314 }),
-  reach: Object.freeze({ x: 536, y: 324, r: 34 }),
+  reach: Object.freeze({ x: 524, y: 328, r: 34 }),
   set: Object.freeze({ x: 458, y: 262 }),
   hand: Object.freeze({ dx: 24, dy: -58, size: 24 }),
   to: 0.6,
@@ -104,8 +106,9 @@ export const HALL_SOLIDS = Object.freeze([
   Object.freeze({ x0: 412, x1: 476, y0: 520, y1: 552 }),
   Object.freeze({ x0: 360, x1: 386, y0: 447, y1: 468 }),
 ]);
-// Where the camera points: the middle of the stage, where the band plays.
+// Where the camera points: the middle of the stage; once the band plays (Isfred has left the stage), the Croc Boys.
 export const CAMERA_AIM = Object.freeze({ x: 420, y: 280 });
+export const BAND_AIM = Object.freeze({ x: 308, y: 228 });
 // The octopus's spot by the snacks (P6): he strolls there from his dance spot and notices Squatch from there.
 export const OCTOPUS_SNACKS = Object.freeze({ x: 724, y: 592 }); // the counter's front end, clear of where Squatch reaches in
 

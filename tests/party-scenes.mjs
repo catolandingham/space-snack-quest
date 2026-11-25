@@ -545,7 +545,7 @@ let p4Cast = null;
   await sleep(300);
   await still(page, "p4-out-of-the-plant");
   // round the dancers' sight to the flyer (the way tests/party-flyer.mjs maps), GRAB · flyer, and home
-  for (const [x, y] of [[520, 575], [520, 400], [hall.FLYER.reach.x, hall.FLYER.reach.y + 8]]) {
+  for (const [x, y] of [[505, 560], [505, 400], [hall.FLYER.reach.x, hall.FLYER.reach.y + 8]]) {
     await walk(page, x, y);
     await until(page, (q) => Math.hypot(q.x - x, q.y - y) < 14 || q.act === "GRAB · flyer" || !q.ctrl, 8000);
   }
@@ -554,7 +554,7 @@ let p4Cast = null;
   await press(page);
   s = await until(page, (q) => q.now.flyer === "paw" && q.ctrl, 3000);
   g.check("he takes it: the flyer is in his paw, and the chip sends him home", !!s && s.chip === "Squatch: sneak home for a disguise", s && [s.now.flyer, s.chip]);
-  for (const [x, y] of [[520, 400], [520, 575]]) {
+  for (const [x, y] of [[505, 400], [505, 560]]) {
     await walk(page, x, y);
     await until(page, (q) => Math.hypot(q.x - x, q.y - y) < 14 || !q.ctrl, 8000);
   }

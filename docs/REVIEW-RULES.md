@@ -22,7 +22,7 @@
 | 160–168 | ## Mistakes caught building the morning sound (2026-11-24) |
 | 169–180 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
 | 181–192 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
-| 193–201 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
+| 193–205 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
 <!-- /section-index -->
 # Review rules
 
@@ -198,3 +198,7 @@ His words, on the snack close-up, for every piece of the game: "It just needs to
 - The flyer's place was chosen first ("the stage's end") and the dancers' sight mapped second; every way to it was inside a cone. Before choosing where a thing to sneak to goes, map who sees what from the game's own cones (tests/party-flyer.mjs keeps the map as a check: a clear way, how wide, and that the straight line is not clear).
 - The sound suite played every quiet line in Mops's voice, so Squatch's quiet lines "failed". A test plays a line with its own speaker.
 - A test compared a resting place with where Mops stood, read after Mops had walked off. A check about a moment reads the state at that moment, or compares with someone who has not moved since.
+- The independent review of the flyer sneak found the flyer's box typed twice: in the party's own table and again in the goal-outline table. A goal outline for a thing the game draws reads that thing's own box (`GOAL_TARGETS["hall:grab-flyer"].rect` is `FLYER.box`), and a test checks they are one object.
+- The same review found the new ending's restart tested only at its very end (the TV on). A scene that gained steps gets a restart check in the middle of each new step (the hat going down, the horn press), then one clean run to the end.
+- A still tool set a Day 2 flag by hand (the office flag in the hall) and drew a room the game never shows that way. A hand-made state for a still copies a state the game itself makes (read the scene's own set-up first), and the report says which stills are hand-made.
+- The first clear way to the flyer was 48 wide in game numbers and passed its own test; on a phone that is 18 px, less than a finger, and the kid robot (which keeps a kid's distance from watchers) could not get up it. A gap a kid must steer through is judged in phone pixels (the picture is about 0.37 of game size): 100 game px or more, and the kid robot must walk it before it is called clear.

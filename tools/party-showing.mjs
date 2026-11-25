@@ -357,7 +357,7 @@ if (which === "flyer") {
   s || fail("P4 did not start");
   log("P4: the flyer sneak");
   await sleep(2600);
-  for (const [x, y] of [[470, 585], [520, 575], [520, 400]]) await goTo(x, y);
+  for (const [x, y] of [[470, 585], [505, 560], [505, 400]]) await goTo(x, y);
   await goTo(hall.FLYER.reach.x, hall.FLYER.reach.y + 8, (q) => q.act === "GRAB · flyer");
   s = await until((q) => q.act === "GRAB · flyer", 4000);
   s || fail("no GRAB · flyer");
@@ -366,7 +366,7 @@ if (which === "flyer") {
   await until((q) => q.now.flyer === "paw" && q.ctrl, 4000);
   log("GRAB · flyer");
   await sleep(700);
-  for (const [x, y] of [[520, 400], [520, 575]]) await goTo(x, y);
+  for (const [x, y] of [[505, 400], [505, 560]]) await goTo(x, y);
   s = await until((q) => q.now && q.now.scene === "P5" && q.ctrl, 40000, async (q) => {
     if (q.cur === "bub") return read(q);
     q.ctrl && q.room === "hall" && (await floor(hall.HALL_DOOR.x, hall.HALL_DOOR.y + 12), await sleep(600));

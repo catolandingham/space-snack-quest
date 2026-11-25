@@ -115,10 +115,14 @@ if (spot) {
     q = inCam.marks.filter((m) => m.t === "?");
   g.check("inside the camera tourist's cone, he is the one who sees him", inCam.now.seenBy === "camera", inCam.now);
   g.check("in a whole disguise, inside the camera tourist's cone: it is drawn fully and stays a dashed outline (no yellow)", !!camArc && camArc.alpha === 1 && !yellow(camArc), camArc);
+  // Since the pairs stand further apart (the flyer sneak, 2026-11-24) the only floor that is his cone's alone is
+  // straight in front of him, where Squatch stands over the tourist's head: there the game moves the "?" beside
+  // his head, off Squatch (the mark rule). So: one "?", at his head (over it, or just beside it), never on Squatch.
+  const sqBox = { x0: spot.x - 34, x1: spot.x + 34, y0: spot.y - 110, y1: spot.y + 2 };
   g.check(
-    'inside the camera tourist\'s cone: a "?" is drawn over him',
-    !!camGuest && q.some((m) => Math.abs(m.px - camGuest.px) < 12 && m.py < camGuest.py - 20),
-    { camGuest, q },
+    'inside the camera tourist\'s cone: one "?" is drawn at his head (over it, or just beside it when Squatch stands there), never on Squatch',
+    !!camGuest && q.length === 1 && Math.abs(q[0].px - camGuest.px) < 60 && q[0].py < camGuest.py - 20 && !(q[0].px > sqBox.x0 && q[0].px < sqBox.x1 && q[0].py > sqBox.y0 && q[0].py < sqBox.y1),
+    { camGuest, q, spot },
   );
   g.check('in disguise it is only a "?": no "!" is drawn', !inCam.marks.some((m) => m.t === "!"), inCam.marks);
   // Another 1.5 seconds: three in all. Nobody catches him for being seen in disguise.

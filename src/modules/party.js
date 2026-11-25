@@ -30,7 +30,7 @@
  * built in party-view.js); the capture rule's hooks are in party-capture.js.
  */
 import { partyLine } from "./party-lines.js";
-import { HALL, SPOTS, CAST, GLANCE, GLANCE_TIMES, HALL_PICTURE, HALL_SOLIDS, HALLWAY_LANE, DANCE_SPOT, HALL_SPEAKER, BANNER, HOME_ROOM, HALL_DOOR, SNACK_SPOT, FLYER, PYRAMID } from "./party-hall.js";
+import { HALL, SPOTS, CAST, GLANCE, GLANCE_TIMES, HALL_PICTURE, HALL_SOLIDS, HALLWAY_LANE, DANCE_SPOT, HALL_SPEAKER, BANNER, HOME_ROOM, HALL_DOOR, SNACK_SPOT, FLYER, PYRAMID, BAND_AIM } from "./party-hall.js";
 export { HOME_ROOM };
 import { HOME_THINGS, HOME_SPOTS } from "./home-alone.js";
 import { GOAL_TARGETS } from "./goal-targets.js";
@@ -103,8 +103,11 @@ export function createParty(bridge) {
     if (p.mode === "isfred") return lookAt(x, y, { x: p.isfred.x, y: p.isfred.y - 40 });
     // Once the band plays (P3's end and P4) the dancers are busy. The pair by the stage's left look at each other;
     // the robot looks at the octopus, who has turned to eye the snack bar (he heads there in P6); the glancer
-    // watches Isfred go to the bar and stay there. That leaves one clear way, right of the spotlight, from the
-    // floor's front to the stage's right end and the flyer (tests/party-flyer.mjs walks it and maps it).
+    // watches Isfred go to the bar and stay there; the camera tourist films the band. That leaves one wide, clear
+    // strip between the two pairs, from the floor's front to the stage's right end and the flyer
+    // (tests/party-flyer.mjs maps it from these cones and walks it).
+    // (the camera turns back to the stage's middle for the party in disguise, as it always was there)
+    if (p.mode === "pairs" && !late(p) && id === "camera") return lookAt(x, y, BAND_AIM);
     if (p.mode === "pairs" && id === "octopus-guest") return lookAt(x, y, { x: PYRAMID.x, y: PYRAMID.y - 28 });
     if (p.mode === "pairs" && g && g.glancer) return lookAt(x, y, { x: p.isfred.x, y: p.isfred.y - 40 });
     if (p.mode === "pairs" && g && g.pair) {

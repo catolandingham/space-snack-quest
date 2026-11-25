@@ -101,13 +101,13 @@ const walkTo = async (x, y, ok) => {
   await floor(await st(), x, y);
   await until((q) => (ok && ok(q)) || Math.hypot(q.sq[0] - x, q.sq[1] - y) < 16, 8000);
 };
-for (const [x, y] of [[470, 585], [520, 575], [520, 400]]) await walkTo(x, y);
-await walkTo(536, 332, (q) => q.act === "GRAB");
+for (const [x, y] of [[470, 585], [505, 560], [505, 400]]) await walkTo(x, y);
+await walkTo(524, 336, (q) => q.act === "GRAB");
 await until((q) => q.act === "GRAB", 4000);
 await sleep(700);
 await press(await st());
 await until((q) => q.now && q.now.flyer === "paw" && q.ctrl, 4000);
-for (const [x, y] of [[520, 400], [520, 575]]) await walkTo(x, y);
+for (const [x, y] of [[505, 400], [505, 560]]) await walkTo(x, y);
 await floor(await st(), 477, 600);
 await until((q) => q.now && q.now.scene === "P5" && q.ctrl, 30000, readOn);
 // P5: to the closet, dress up, out the door.

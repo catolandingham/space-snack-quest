@@ -4,7 +4,7 @@
  * builds that view for every scene, and draws the party's things over the home room (the music notes at the door,
  * the flyer on the floor, his outfit, the guard who follows him home, Mops out of breath).
  */
-import { HALL, CAST, CAMERA_AIM, HALL_SPEAKER, FLYER } from "./party-hall.js";
+import { HALL, CAST, CAMERA_AIM, BAND_AIM, HALL_SPEAKER, FLYER } from "./party-hall.js";
 import { drawCones } from "./party-watch.js";
 import { guardLook, guardMark, torchShift } from "./party-guard-look.js";
 import { drawHall, flyerInPaw } from "./party-draw.js";
@@ -133,7 +133,8 @@ export function createView(h) {
     };
   }
   // Where the camera points: the row during the photo moment (until everyone walks back), else the stage.
-  const aimNow = (p) => (p.shot && ["gather", "settle", "count", "flash", "polaroid"].includes(p.shot.phase) ? PHOTO_ROW.aim : CAMERA_AIM);
+  // (the stage's middle while Isfred speaks; the Croc Boys once they play)
+  const aimNow = (p) => (p.shot && ["gather", "settle", "count", "flash", "polaroid"].includes(p.shot.phase) ? PHOTO_ROW.aim : p.mode === "pairs" && !LATE.has(p.scene) ? BAND_AIM : CAMERA_AIM);
   let ctx0 = null;
   // The flyer in the hall, with a yellow glow while Squatch thinks about it.
   function drawFlyerLit(ctx, fl) {

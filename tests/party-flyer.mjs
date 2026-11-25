@@ -6,8 +6,9 @@
  *     flyer, and as he walks off to the bar he stops at the stage's right end and sets it down, where it stays;
  *     then "I've never gotten to dance at a party." and "A robot flyer! I'll show Mops." (the flyer glows).
  *   - P4: the flyer is outlined, the chip reads "Squatch: grab the flyer", every cone is drawn whole; the way to
- *     the flyer and back is clear of every cone (mapped from the game's own cones, and walked), and the straight
- *     line to it is not; GRAB · flyer only within reach; his door does nothing before the grab; the flyer goes up
+ *     the flyer and back is clear of every cone (mapped from the game's own cones, and walked), the open strip is
+ *     wide (100 or more: about 37 px on a phone), and the dance floor either side of it is watched; GRAB · flyer only
+ *     within reach; his door does nothing before the grab; the flyer goes up
  *     into his paw, travels with him (no jump), and ends on the home floor; then his two thoughts, once, in order,
  *     before the closet is outlined; ↺ in P5 does not replay them.
  *   - seen on the way: the one capture rule; caught, P4 restarts with the flyer back on the stage; hidden in a
@@ -29,17 +30,17 @@ const lines = await import(join(root, "src", "modules", "party-lines.js"));
 const L = (id) => lines.partyLine(id);
 const { FLYER, SPOTS, HOME_ROOM, HALL, HALL_DOOR } = hall;
 const PAPER = "#fffdf8";
-// The way a kid who looks first walks it: out of the plant, along the front of the floor, up the open strip right
-// of the spotlight to the stage's right end; and back down the same strip to his door.
+// The way a kid who looks first walks it: out of the plant, round its pot, up the open strip between the two
+// dancing pairs to the stage's right end; and back down the same strip to his door.
 const TO_FLYER = [
   [470, 585],
-  [520, 575],
-  [520, 400],
+  [505, 560],
+  [505, 400],
   [FLYER.reach.x, FLYER.reach.y + 8],
 ];
 const HOME = [
-  [520, 400],
-  [520, 575],
+  [505, 400],
+  [505, 560],
   [HALL_DOOR.x, HALL_DOOR.y + 8],
 ];
 
@@ -258,20 +259,21 @@ g.check(
   const plant = [SPOTS.plantMiddle.x, SPOTS.plantMiddle.y + 20];
   const there = along([plant, ...TO_FLYER]),
     back = along([TO_FLYER[TO_FLYER.length - 1], ...HOME]),
-    straight = along([plant, [FLYER.reach.x, FLYER.reach.y]]);
-  g.check("there is a clear way from the plant to the flyer: no cone on it, and at least 14 clear of every cone all the way", there.seen.length === 0 && there.clear >= 14, there);
-  g.check("and a clear way from the flyer home to his door", back.seen.length === 0 && back.clear >= 14, back);
-  g.check("the straight line from the plant to the flyer is not clear (it is a sneak: he has to look and go round)", straight.seen.length > 0, straight);
+    left = along([[505, 400], [380, 380]]),
+    right = along([[505, 340], [640, 330]]);
+  g.check("there is a clear way from the plant to the flyer: no cone on it, and at least 40 clear of every cone all the way", there.seen.length === 0 && there.clear >= 40, there);
+  g.check("and a clear way from the flyer home to his door", back.seen.length === 0 && back.clear >= 40, back);
+  g.check("it is still a sneak: the dance floor to the left of the strip and the floor to its right are watched", left.seen.length > 0 && right.seen.length > 0, [left, right]);
   // the open strip up to the flyer is wide enough to walk without threading a needle
   const widths = [];
-  for (let y = 344; y <= 470; y += 18) {
-    let a = 520,
-      b = 520;
+  for (let y = 326; y <= 470; y += 18) {
+    let a = 505,
+      b = 505;
     while (a > 300 && !seers(a - 4, y).length) a -= 4;
     while (b < 700 && !seers(b + 4, y).length) b += 4;
     widths.push(b - a);
   }
-  g.check("the open strip up to the flyer is at least 48 wide all the way (people are 40% bigger now)", Math.min(...widths) >= 48, widths);
+  g.check("the open strip up to the flyer is at least 100 wide all the way (about 37 px on a phone; people are 40% bigger now)", Math.min(...widths) >= 100, widths);
   g.check("where he stands to take the flyer is in no cone, and the flyer is within arm's reach of it (under 70)", seers(FLYER.reach.x, FLYER.reach.y).length === 0 && Math.hypot(FLYER.reach.x - FLYER.x, FLYER.reach.y - FLYER.y) < 70, seers(FLYER.reach.x, FLYER.reach.y));
   // every cone is drawn whole in P4 (he plans by looking), however far he is from it: what is on screen is told to
   // the tests by the drawing itself (conesDrawn)
@@ -305,7 +307,7 @@ g.check(
   await still(page, "flyer-05-grab-flyer");
   await press(page);
   s = await until(page, (q) => q.now.grab != null && q.now.grab > 0.3, 2000);
-  g.check("he is seen picking it up: the flyer leaves the stage and goes to his paw (drawn between the two)", !!s && !s.ctrl && !s.now.seenBy && s.now.flyer === "stage" && s.now.grab < 1 && s.flyerAt.x > FLYER.x + 3 && s.flyerAt.x < s.x - 4 && (await pixels(page, around({ x: FLYER.x, y: FLYER.y }, 6), PAPER)) < 100, s && [s.now.grab, s.flyerAt, s.x]);
+  g.check("he is seen picking it up: the flyer leaves the stage and goes to his paw (drawn between the two)", !!s && !s.ctrl && !s.now.seenBy && s.now.flyer === "stage" && s.now.grab < 1 && s.flyerAt.x > FLYER.x + 3 && s.flyerAt.x < s.x - 4 && s.flyerAt.y > FLYER.y, s && [s.now.grab, s.flyerAt, s.x]);
   s = await until(page, (q) => q.now.flyer === "paw" && q.ctrl, 3000);
   g.check("then it is in his paw, he has control, the chip reads \"Squatch: sneak home for a disguise\"", !!s && s.chip === "Squatch: sneak home for a disguise", s && [s.now.flyer, s.chip]);
   g.check("and his door is outlined now", (await until(page, (q) => q.ring === "go-home", 2000)) !== null);
@@ -313,7 +315,7 @@ g.check(
   s = await st(page);
   const front = await pixels(page, around(s.flyerAt, 10), PAPER),
     behind = await pixels(page, around({ x: s.x - (s.flyerAt.x - s.x), y: s.flyerAt.y - 8 }, 8), PAPER);
-  g.check("he carries it in his paw, in front of him (paper is drawn there), not on his back", front > 40 && behind === 0 && Math.abs(s.flyerAt.x - s.x) > 12 && s.flyerAt.y < s.y - 20 && (await pixels(page, around({ x: FLYER.x, y: FLYER.y }, 8), PAPER)) === 0, [front, behind, s.flyerAt, s.x]);
+  g.check("he carries it in his paw, in front of him (paper is drawn there), not on his back", front > 40 && behind === 0 && Math.abs(s.flyerAt.x - s.x) > 12 && s.flyerAt.y < s.y - 20 && (await pixels(page, around({ x: FLYER.x - 6, y: FLYER.y - 8 }, 6), PAPER)) === 0, [front, behind, s.flyerAt, s.x]);
   await still(page, "flyer-06-in-his-paw");
 
   // ---------- home with it ----------
@@ -368,7 +370,7 @@ g.check(
   await press(page);
   let s = await until(page, (q) => q.now.flyer === "paw" && q.ctrl, 3000);
   g.check("(he has the flyer)", !!s);
-  await walk(page, 400, 380); // straight across the dance floor, in front of the stage
+  await walk(page, 380, 380); // off the strip, onto the dance floor in front of the dancing pair
   s = await until(page, (q) => q.now.alarm, 8000);
   g.check("walking into a dancer's sight: seen, and the alarm starts (the one capture rule)", !!s && s.now.scene === "P4", s && s.now.alarm);
   s = await until(page, (q) => q.cur === "card" || q.cur === "panel" || /LOCKUP|lockup/i.test(q.text), 40000);
@@ -385,8 +387,8 @@ g.check(
   await until(page, (q) => q.act === "GRAB · flyer", 3000);
   await press(page);
   await until(page, (q) => q.now.flyer === "paw" && q.ctrl, 3000);
-  await route(page, HOME.slice(0, 2));
-  await walk(page, 440, 420);
+  await route(page, HOME.slice(0, 1));
+  await walk(page, 380, 400);
   let s = await until(page, (q) => q.now.alarm, 8000);
   g.check("(seen on the way home)", !!s);
   s = await until(page, (q) => q.act === "HIDE · plant", 8000, async (q) => q.ctrl && (await walk(page, SPOTS.plantMiddle.x, SPOTS.plantMiddle.y)));

@@ -82,8 +82,18 @@ const st = () =>
       party: (() => {
         const b = window.SSQ && window.SSQ.beat("ch1-party"),
           p = b && b.now();
-        return p ? { scene: p.scene, alarm: p.alarm || "", song: p.song == null ? -1 : p.song, dance: !!p.dance, done: p.done ? Object.keys(p.done).length : 0, close: p.close ? p.close.phase : "", mops: p.mops && p.mops.heart > 0 ? { x: Math.round(p.mops.x), y: Math.round(p.mops.y) } : null } : null;
+        return p ? { scene: p.scene, alarm: p.alarm || "", song: p.song == null ? -1 : p.song, dance: !!p.dance, done: p.done ? Object.keys(p.done).length : 0, close: p.close ? p.close.phase : "", bag: p.snacks ? p.snacks.bag : 0, card: p.card ? b.cardTargets() : null, mops: p.mops && p.mops.heart > 0 ? { x: Math.round(p.mops.x), y: Math.round(p.mops.y) } : null } : null;
       })(),
+      // The party's snack close-up (drawn in the game picture): the bartender's turn, his paw, the pile, and where
+      // each snack and LEAVE · bar are (game positions). And the group photo's Polaroid, which fills the screen.
+      snack: (() => {
+        const p = n.ch1PartyNow,
+          c = p && p.snack;
+        if (!c || !(c.zoom >= 1)) return null;
+        const L = window.SSQ.beat("ch1-party").snackLayout().cut;
+        return { phase: c.phase, t: c.t, busy: !!c.reach || c.fall >= 0, slots: (p.snacks.slots || []).slice(), at: L.snacks.map((q) => [q[1], q[2]]), leave: [L.close.x, L.close.y] };
+      })(),
+      polaroid: !!document.querySelector('canvas[aria-label="group photo"]'),
       pad: !!n.ch1PadOn && !!n.ch1Zoom && n.ch1Zoom.zoom >= 1,
       padHave: n.ch1Pad || "",
       zoom: n.ch1Zoom ? n.ch1Zoom.id : "",
@@ -93,8 +103,10 @@ const st = () =>
       // The party's full-screen dress-up (src/modules/party.js): the pieces in the closet and the body spots.
       dress: window.SSQ && window.SSQ.beat("ch1-party") ? window.SSQ.beat("ch1-party").dressTargets() : null,
       placed: ss.placedSpots().map((s) => ({ id: s.id || "", verb: s.verb || "", cap: s.cap || "", x: Math.round(s.x || 0), y: Math.round(s.y || 0), r: s.r || 0 })),
-      // Furniture, plus Mops: the game does not let Squatch walk through him.
-      solids: ss.solids().concat(!ss.ch.mops && n.moPose !== "hidden" && n.moPose !== "sleep" && n.mo.x > 20 && n.mo.x < 1000 ? [{ x0: n.mo.x - 46, x1: n.mo.x + 46, y0: n.mo.y - 46, y1: n.mo.y + 46, mops: true }] : []),
+      // Furniture, plus Mops: the game does not let Squatch walk through him. (Not in the party hall: the party draws
+      // that room itself, Mops is not in it until closing time, and then he is one of the party's own solids. Before,
+      // the robot kept a box where Mops last stood at home, and would not cross it on the way back from the flyer.)
+      solids: ss.solids().concat(!ss.ch.mops && !(window.SSQ && window.SSQ.beat("ch1-party") && window.SSQ.beat("ch1-party").ownsRoom()) && n.moPose !== "hidden" && n.moPose !== "sleep" && n.mo.x > 20 && n.mo.x < 1000 ? [{ x0: n.mo.x - 46, x1: n.mo.x + 46, y0: n.mo.y - 46, y1: n.mo.y + 46, mops: true }] : []),
       bounds: ss.walkBounds(),
       cones: ss.conesDrawn().filter((k) => !k.room || k.room === n.room),
       // The goal ring the game really drew this frame (drawGoalMark keeps n.lastRing). A ring drawn on
@@ -252,6 +264,7 @@ let lastKey = "",
   jailUp = false,
   waitSince = 0,
   hidAt = 0;
+let cardSeen = 0;
 (async () => {
   while (shooting) {
     try {
@@ -305,7 +318,7 @@ while (now() < MAX_S) {
     break;
   }
   loopScene = s.scene;
-  const pk = s.party ? [s.party.scene, s.party.alarm, s.party.song, s.party.done, s.party.close].join(":") : "";
+  const pk = s.party ? [s.party.scene, s.party.alarm, s.party.song, s.party.done, s.party.close, s.party.bag, !!s.party.card, s.polaroid].join(":") : "";
   const key = [s.scene, s.room, s.chip, s.mops, s.zoomKey, done.size, seen.caught.length, s.dress ? JSON.stringify(s.dress.outfit) : "", pk].join("|");
   if (key !== lastKey) ((lastKey = key), (lastChange = Date.now()), progress++);
   if (Date.now() - lastChange > 75000) {
@@ -342,9 +355,53 @@ while (now() < MAX_S) {
     await sleep(400);
     continue;
   }
+  // The group photo's Polaroid fills the screen until it is tapped: a kid looks, then taps it.
+  if (s.polaroid) {
+    say(s, "TAP the Polaroid");
+    await sleep(1500);
+    await tap(187, 430);
+    await sleep(600);
+    continue;
+  }
+  // The "more to find" card after an alarm: a finger on one of its two big buttons. The first time a kid goes back
+  // to the party; the next time he keeps going.
+  if (s.party && s.party.card) {
+    const want = cardSeen++ ? "keep" : "back",
+      b = s.party.card[want] || s.party.card.keep;
+    say(s, "CARD: " + (s.party.card[want] ? want : "keep"));
+    await sleep(1200);
+    await tap(b.x, b.y);
+    await sleep(700);
+    continue;
+  }
   if (s.up) {
     await tapGame(s, 480, 320);
     await sleep(220);
+    continue;
+  }
+  // The snack close-up: a tap on the top snack left (nothing stands on it) while the bartender's back is turned
+  // and stays turned a while; with three in the bag, LEAVE · bar. (A kid who pulls from the middle brings the pile
+  // down: tools/party-robot.mjs plays that.)
+  if (s.snack) {
+    if (s.party.bag >= 3 && !s.snack.busy) {
+      say(s, "TAP LEAVE · bar");
+      await tapGame(s, s.snack.leave[0], s.snack.leave[1]);
+      await sleep(500);
+      continue;
+    }
+    const top = s.snack.slots.findIndex((id) => id >= 0);
+    if (top >= 0 && !s.snack.busy && s.snack.phase === "back" && s.snack.t > 0.5 && s.snack.t < 2.4) {
+      say(s, "TAP a snack (slot " + top + ")");
+      await tapGame(s, s.snack.at[top][0], s.snack.at[top][1]);
+      await sleep(900);
+      continue;
+    }
+    if (top < 0 && !s.snack.busy) {
+      await tapGame(s, s.snack.leave[0], s.snack.leave[1]);
+      await sleep(500);
+      continue;
+    }
+    await sleep(150);
     continue;
   }
   // A visible NEXT closes an inspection even while walking controls are paused.
@@ -375,7 +432,8 @@ while (now() < MAX_S) {
     continue;
   }
   if (s.pose !== "hidden" && s.pose !== "under") hidAt = 0;
-  const verb = s.btn && s.btn !== "ACTION" && !avoid(s.btn) ? s.btn : "";
+  // (with three snacks in his bag he has had enough of the snack bar: he does not open it again)
+  const verb = s.btn && s.btn !== "ACTION" && !avoid(s.btn) && !(s.btn === "GRAB · snacks" && s.party && s.party.bag >= 3) ? s.btn : "";
   const vkey = s.scene + "|" + verb;
   // Press what is offered, but not the same thing over and over when nothing new came of it.
   const pr = presses.get(vkey) || { count: 0, at: -1 };

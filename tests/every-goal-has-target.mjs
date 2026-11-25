@@ -39,7 +39,7 @@ const report = await page.evaluate(async (chips) => {
     // he stands a step from his door, outside its trigger (party-hall.js HALL_DOOR, a 36 px circle round the doorway)
     // P4, the flyer sneak: the flyer on the stage's end first (he stands within reach of it), then, with it in his
     // paw, his door.
-    "Squatch: grab the flyer": { party: "P4", out: true, x: 536, y: 328 },
+    "Squatch: grab the flyer": { party: "P4", out: true, x: 524, y: 332 },
     "Squatch: sneak home for a disguise": { party: "P4", out: true, flyer: "paw", walk: true, x: 477, y: 540 },
     "Squatch: run home and hide!": { party: "P2", alarm: true, walk: true, x: 520, y: 560 },
     "Squatch: pick up the gift": { step: "gift", room: "closet", x: 340, y: 520 },
