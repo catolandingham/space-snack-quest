@@ -36,11 +36,15 @@ export function lateState(p, sizes) {
     homeGuard: g ? { x: g.x, y: g.y, a: g.a, f, tall: sizes.guardTall, sees: !!g.sees, leaving: !!g.leaving, turn: g.turn == null ? null : g.turn, lean: guardLook(g).lean || 0, mark: guardMark(g, sizes.guardTall, f) } : null,
     choice: p.choice || "",
     card: p.card ? { got: { ...p.card.got }, all: p.card.all } : null,
-    lift: p.lift ? { id: p.lift.id, k: p.lift.k } : null,
+    lift: p.lift ? { id: p.lift.id, k: p.lift.k, set: p.lift.set == null ? null : p.lift.set, rest: p.lift.rest || null } : null,
     costumeLook: !!p.costumeLook,
+    tv: p.tv ? { phase: p.tv.phase, k: p.tv.k, lit: p.tv.lit != null } : null,
     close: p.close ? { phase: p.close.phase, gone: Object.keys(p.close.gone) } : null,
     mops: p.mops ? { x: p.mops.x, y: p.mops.y, heart: p.mops.heart } : null,
     people: Object.fromEntries(Object.entries(p.people).map(([id, q]) => [id, { x: Math.round(q.x), y: Math.round(q.y), task: q.task || "" }])),
-    isfred: { x: Math.round(p.isfred.x), y: Math.round(p.isfred.y) },
+    isfred: { x: Math.round(p.isfred.x), y: Math.round(p.isfred.y), walking: !!p.isfred.walking, bend: p.isfred.bend || 0 },
+    flyerGlow: !!p.flyerGlow,
+    grab: p.grab == null ? null : p.grab,
+    put: p.put == null ? null : p.put,
   };
 }

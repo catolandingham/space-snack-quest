@@ -247,11 +247,11 @@ export const BOARD = Object.freeze({
     nz(A, { t, d: 0.35, v: 0.45, f: 3000, f1: 500, q: 2, a: 0.005 });
     tone(A, { t, f: 600, f1: 90, d: 0.35, type: "sawtooth", v: 0.07, a: 0.005 });
   },
-  flyers: (A, t) => nz(A, { t, d: 1.6, v: 0.4, f: 2200, f1: 1200, q: 2, a: 0.1, hold: 1, trem: 0.5, tremF: 14 }),
   dim: (A, t) => (tone(A, { t, f: 240, f1: 70, d: 0.8, v: 0.14, a: 0.02 }), nz(A, { t, d: 0.8, v: 0.08, ft: "lowpass", f: 500, f1: 100, a: 0.02 })),
   sparkle: shimmer,
+  // a button's click, then an old TV waking up
+  click: (A, t) => (tone(A, { t, f: 1800, d: 0.03, type: "square", v: 0.12, a: 0.001 }), nz(A, { t, d: 0.03, v: 0.2, kind: "white", ft: "highpass", f: 3000, a: 0.001 }), tone(A, { t: t + 0.06, f: 300, f1: 1200, d: 0.35, v: 0.06, a: 0.02 })),
   pop: (A, t) => tone(A, { t, f: 400, f1: 900, d: 0.07, v: 0.12, a: 0.003 }),
-  thwap: (A, t) => (nz(A, { t, d: 0.06, v: 0.3, ft: "lowpass", f: 1200, a: 0.002 }), tone(A, { t, f: 300, f1: 150, d: 0.05, v: 0.1, a: 0.002 })),
   door: (A, t) => (nz(A, { t, d: 0.45, v: 0.2, f: 400, f1: 1800, q: 1, a: 0.05 }), tone(A, { t: t + 0.45, f: 120, f1: 60, d: 0.12, v: 0.25, a: 0.003 })),
   hooves(A, t) {
     for (let i = 0; i < 6; i++) clop(quieter(A, 1 - i / 8), t + i * 0.25, i % 2 ? 560 : 700);

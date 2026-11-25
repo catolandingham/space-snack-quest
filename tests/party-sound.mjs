@@ -109,19 +109,22 @@ g.check("the recordings are credited to Kenney, CC0", /Kenney/.test(credits) && 
   const heard = await page.evaluate(async (texts) => {
     const snd = window.SSQ.morningSound,
       out = {};
-    const one = async (text, scene) => {
+    const one = async (text, scene, who = "mops") => {
       const from = snd.debug().log.length;
-      window.SSQ.bubbleSound({ who: "mops", text, style: "say" }, scene);
+      window.SSQ.bubbleSound({ who, text, style: "say" }, scene);
       await new Promise((r) => setTimeout(r, 150));
       return snd.debug().log.slice(from).map((e) => e.name);
     };
     let k = 0;
-    for (const t of texts) out[t] = await one(t, "quiet-test-" + k++);
+    // (each line is spoken by its own speaker: Squatch's quiet lines are his, and he never bleats)
+    for (const [t, who] of texts) out[t] = await one(t, "quiet-test-" + k++, who);
     out.loud = await one("Morning, Squatch.", "quiet-test-loud");
     // a quiet line does not use the scene's meh up
-    out.after = [await one(texts[0], "quiet-test-same"), await one("Morning, Squatch.", "quiet-test-same")];
+    const mops = texts.find(([, who]) => who === "mops")[0];
+    out.after = [await one(mops, "quiet-test-same"), await one("Morning, Squatch.", "quiet-test-same")];
     return out;
-  }, quiet.map((l) => l.text));
+  }, quiet.map((l) => [l.text, l.who]));
+  g.check("Mops's two new lines before the TV are quiet too", ["I've been waiting to show you this.", "Here's why you have to hide."].every((t) => quiet.some((l) => l.who === "mops" && l.text === t)));
   for (const l of quiet) g.check(`"${l.text}" gets the bubble's soft tick and no meh`, heard[l.text].includes("tick") && !heard[l.text].includes("meh") && !heard[l.text].includes("grumpy"), heard[l.text]);
   g.check("another first line of Mops's in a scene still gets the meh (the check can fail)", heard.loud.includes("tick") && heard.loud.includes("meh"), heard.loud);
   g.check("a quiet line does not use the scene's meh up", !heard.after[0].includes("meh") && heard.after[1].includes("meh"), heard.after);

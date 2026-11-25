@@ -45,14 +45,19 @@ function drawPeek(ctx, E, sq, scale) {
   }
 }
 
-/** Squatch standing in the hall, with what he wears, a flyer on his back and a warning shake. */
+/** Where the flyer is in his paw (held out in front of him, where it can be seen), for his feet, facing and size. */
+export const flyerInPaw = (x, y, f, scale) => ({ x: x + f * 13 * scale, y: y - 17 * scale, size: 13 * scale, rot: f * 0.15 });
+/** Squatch standing in the hall, with what he wears, the flyer in his paw and a warning shake. */
 export function drawSquatchInHall(ctx, E, sq, scale, t) {
   const shake = sq.shake > 0 ? Math.sin(t * 60) * 2.5 : 0,
     y = sq.y - (sq.hop || 0); // a bump lifts him off the floor for a moment (the hallway doorway's push back)
   E.drawSquatch(ctx, sq.x + shake, y, scale, { f: sq.f || 1, walk: sq.walk || 0 });
   sq.outfit && drawOutfit(ctx, sq.x + shake, y, scale, sq.outfit, sq.f || 1);
-  // the flyer stuck to his back fur: on the side away from where he faces, big enough to see
-  sq.flyer && drawFlyer(ctx, sq.x + shake - (sq.f || 1) * 9 * scale, y - 24 * scale, 15 * scale, -(sq.f || 1) * 0.35);
+  // the flyer he carries: in his paw, in front of him
+  if (sq.flyer) {
+    const at = flyerInPaw(sq.x + shake, y, sq.f || 1, scale);
+    drawFlyer(ctx, at.x, at.y, at.size, at.rot);
+  }
 }
 
 export function drawHall(ctx, E, guestArt, view) {

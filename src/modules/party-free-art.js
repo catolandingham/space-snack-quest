@@ -162,6 +162,53 @@ export function liftAt(from, to, k) {
     y0 = from.y - 26 * up;
   return { x: from.x + (to.x - from.x) * ease, y: y0 + (to.y - y0) * ease - Math.sin(ease * Math.PI) * 30, rot: Math.sin(ease * Math.PI) * 0.25 };
 }
+/** Where Mops holds a piece he has lifted off Squatch (by his mouth), from where the two of them stand. */
+export const liftTo = (m, s, sk) => ({ x: m.x - Math.sign(m.x - s.x) * 34 * sk * 0.4, y: m.y - 30 * sk });
+/** Setting the piece down: from where he holds it to where it rests on the floor, `k` 0 to 1. */
+export function setDownAt(held, rest, k) {
+  const e = k * k * (3 - 2 * k);
+  return { x: held.x + (rest.x - held.x) * e, y: held.y + (rest.y - held.y) * e, rot: 0 };
+}
+/**
+ * The home room's TV for the horn press ("Keep going"). `tv`: { button: { x, y, r }, screen: { x0, x1, y0, y1 } }.
+ * Before the press (`lit` null) the screen is the room picture's own (off) and a small red button shows on the
+ * frame with a yellow ring pulsing round it (what Mops is walking to). From the press (`lit` seconds ago) the
+ * screen is drawn on (pale blue, flickering, lines rolling down it) with a yellow edge; a ring bursts from the
+ * button, with nothing drawn on the button itself (his horn is on it); after that the button is green.
+ */
+export function drawTv(ctx, tv, t, lit) {
+  const at = tv.button,
+    sc = tv.screen;
+  ctx.save();
+  if (lit == null) {
+    oval(ctx, at.x, at.y, at.r, at.r, "#e5533d", 1.5);
+    ctx.strokeStyle = "#ffcf33";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(at.x, at.y, at.r + 6 + 2 * Math.sin(t * 6), 0, Math.PI * 2);
+    ctx.stroke();
+  } else {
+    ctx.fillStyle = Math.sin(t * 23) > 0.2 ? "#bfe9ff" : "#8fdcff";
+    ctx.fillRect(sc.x0, sc.y0, sc.x1 - sc.x0, sc.y1 - sc.y0);
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(sc.x0, sc.y0, sc.x1 - sc.x0, sc.y1 - sc.y0);
+    ctx.clip();
+    for (let o = 0; o < 5; o++) line(ctx, [sc.x0, sc.y0 + o * 16 + ((t * 40) % 16), sc.x1, sc.y0 + o * 16 + ((t * 40) % 16)], "rgba(255,255,255,.6)", 2);
+    ctx.restore();
+    ctx.strokeStyle = "#ffcf33";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(sc.x0 - 1, sc.y0 - 1, sc.x1 - sc.x0 + 2, sc.y1 - sc.y0 + 2);
+    if (lit < 0.5) {
+      ctx.globalAlpha = 1 - lit / 0.5;
+      ctx.beginPath();
+      ctx.arc(at.x, at.y, at.r + 6 + lit * 44, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    } else oval(ctx, at.x, at.y, at.r, at.r, "#3fbf6b", 1.5);
+  }
+  ctx.restore();
+}
 /** A gentle pat on his head (he wears nothing there): two soft pats, drawn as short curved strokes, and a small heart. */
 export function drawPat(ctx, x, y, k, s) {
   const beat = (k * 2) % 1,

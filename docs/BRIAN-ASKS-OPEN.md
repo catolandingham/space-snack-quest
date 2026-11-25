@@ -11,17 +11,17 @@
 | 66–84 | ### Morning and home |
 | 85–95 | ### Party |
 | 96–107 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
-| 108–113 | ### Party video notes and answers, 2026-11-24 (not built yet) |
-| 114–118 | ### Snacks and dress-up |
-| 119–131 | ### Day 2 and night |
-| 132–136 | ### Escape and later chapters |
-| 137–140 | ### Looks and lines |
-| 141–148 | ### Sound |
-| 149–152 | ### Words and rules |
-| 153–165 | ### How the bots work |
-| 166–173 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
-| 174–189 | ## 5. Merged, in a pull request, and being built |
-| 190–200 | ## 6. Corrections to the checkers |
+| 108–111 | ### Party video notes and answers, 2026-11-24 (not built yet) |
+| 112–116 | ### Snacks and dress-up |
+| 117–129 | ### Day 2 and night |
+| 130–134 | ### Escape and later chapters |
+| 135–138 | ### Looks and lines |
+| 139–146 | ### Sound |
+| 147–150 | ### Words and rules |
+| 151–163 | ### How the bots work |
+| 164–171 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
+| 172–187 | ## 5. Merged, in a pull request, and being built |
+| 188–198 | ## 6. Corrections to the checkers |
 <!-- /section-index -->
 # Brian's asks that are not in the game yet
 
@@ -107,9 +107,7 @@ Brian played the live game on his iPhone on 2026-11-23. His party comments, in h
 
 ### Party video notes and answers, 2026-11-24 (not built yet)
 Brian watched the party video and answered every question the same evening (his clicks and words; the builder's copy is the private ANSWERS file of 2026-11-24). Built already and left off this list: the dance drawn once, the small camera flash, no walk ring on an outlined place, the hallway bounce and its line, the guard's flashlight beam and searching look, no yellow cones in a whole disguise. Still to build, in his words:
-- Snacks: "just make sure that the snacks actually look like the ones that are in the bar in the other shot, and they already exist in pyramid ... it should be really obvious that the bartender's looking at you or they aren't, and that when they aren't looking at you, you can steal a snack ... It needs to give a clear option to leave". Tap a snack and his paw takes it into a bag that shows a count; after the first, Squatch thinks "Got one!"; a "LEAVE · bar" button is always on screen. The crash follows a support rule, not a count: "it just depends on what he takes ... if he pulls something where it's obvious at all the weight was bearing on it then it would fall ... if he starts from the top, you can technically get all the snacks". Loose snacks jiggle, snacks being stood on look pressed. The honor, no extra points: "Snack Bandit: took every snack at the party." on the Chapter 1 end screen.
-- Day 2 and the snack bar (for the Day 2 build, not the party PR): "Next day, if he stole all the snacks, then they can go to the bar and [someone] could say that's strange. I've never seen the snack bar empty before, but if he didn't steal all the snacks then there's a chance to get one the next day". Who says the line is still to ask. The party must save whether he took every snack and how many are left.
-- The dance: touch the glowing spots. "different parts of his body are lighting up, and he has to do the Macarena. So you have to touch each part of his body where he needs to put his hand ... It can build right on top of the current cutaway." About eight spots a routine, a different order per song, a big cheer when a routine is done; no timing, no fail, no points; works with sound off.
+- Day 2 and the snack bar (for the Day 2 build, not the party PR): "Next day, if he stole all the snacks, then they can go to the bar and [someone] could say that's strange. I've never seen the snack bar empty before, but if he didn't steal all the snacks then there's a chance to get one the next day". Who says the line is still to ask. The party saves it: `window.SSQ.beat("ch1-party").snackRecord()` gives { all, left, bag, toppled }.
 
 ### Snacks and dress-up
 - A hint on/off option and a Settings button. "Maybe we have like a Hints on Hints off Option" (P L21); "Maybe We just have like a Settings button Or something" (P L23).

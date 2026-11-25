@@ -3,7 +3,8 @@
  * LOCKUP card, "They lost you.", and the return to calm, including the calm seen from the door gap after hiding
  * under the bed at home. Split out of party.js (half-one review: "split the capture hooks out").
  *   P2: hidden in the middle plant, the welcome (P3) starts from there.
- *   P4: after hiding at home, on to the dress-up (P5).
+ *   P4: after hiding at home, on to the dress-up (P5) if he has the flyer; without it he steps back out into his
+ *       doorway, and the flyer is still the goal.
  *   P7: at home the card and what follows are party-after-alarm.js; after a plant, he walks home himself.
  */
 import { partyLine, lockupCause } from "./party-lines.js";
@@ -70,7 +71,7 @@ export function createCapture(h) {
       },
       calmDone(how) {
         const p = h.P();
-        h.chip(p.scene === "P2" ? "chip-plant" : p.scene === "P4" ? "chip-home" : "");
+        h.chip(p.scene === "P2" ? "chip-plant" : p.scene === "P4" ? (p.flyer === "paw" ? "chip-home" : "chip-flyer") : "");
         // P7, after the search at home: "Back to the party" (party-after-alarm.js).
         if (how === "home" && p.scene === "P7") return h.afterAlarm().back(p);
         if (how === "home" && p.scene === "P8a") return;
@@ -103,19 +104,22 @@ export function createCapture(h) {
       }),
       e.until(() => !h.P() || h.P().pt >= 1.2),
       e.run(() => {
-        if (scene === "P4") {
-          // he was on his way home anyway, to the closet
+        if (scene === "P4" && h.P().flyer === "paw") {
+          // he was on his way home anyway with the flyer: he puts it down, and the closet is next
           e.enterRoom("closet", "Q1");
           e.place("sq", h.homeRoom.inside.x, h.homeRoom.inside.y);
           e.set("sqPose", "stand");
-          return h.startScene("P5");
+          h.P().pose = "stand";
+          return h.flyerHome();
         }
         h.P().pose = "stand";
         e.set("sqPose", "stand");
       }),
-      e.until((dt) => !h.P() || h.P().scene !== "P2" || e.step("sq", SPOTS.doorway.x, SPOTS.doorway.y, h.pace.peekStep, dt)),
-      e.run(() => h.P() && h.P().scene === "P2" && (h.chip("chip-plant"), h.control(true))),
+      // P2, and P4 without the flyer: he steps back out into his doorway and goes on from there
+      e.until((dt) => !h.P() || !back(h.P()) || e.step("sq", SPOTS.doorway.x, SPOTS.doorway.y, h.pace.peekStep, dt)),
+      e.run(() => h.P() && back(h.P()) && (h.chip(h.P().scene === "P2" ? "chip-plant" : "chip-flyer"), h.control(true))),
     ]);
   }
+  const back = (p) => p.scene === "P2" || (p.scene === "P4" && p.flyer !== "paw");
   return { api, calmFromHome };
 }

@@ -4,20 +4,20 @@
 | Lines | Heading |
 | --- | --- |
 | 22–31 | # Space Snack Quest |
-| 32–89 | ## Chapter 1 redesign (on main) |
-| 90–120 | ## Source and build |
-| 121–131 | ## Debug link |
-| 132–137 | ## Automatic checks |
-| 138–141 | ## Screen fit |
-| 142–159 | ## Brian's repeat complaints, as tests (2026-11-22) |
-| 160–165 | ## Scene 1 morning |
-| 166–169 | ## Chapter 1 kid robot |
-| 170–186 | ## Phase 1: kitchen and diner clarity |
-| 187–199 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
-| 200–213 | ## Phase 3: one capture rule, phone HUD, tap to walk |
-| 214–223 | ## Chapter 1 pass: the night out has a purpose, switches say why |
-| 224–241 | ## Progression tests |
-| 242–268 | ## Left as they were |
+| 32–99 | ## Chapter 1 redesign (on main) |
+| 100–130 | ## Source and build |
+| 131–141 | ## Debug link |
+| 142–147 | ## Automatic checks |
+| 148–151 | ## Screen fit |
+| 152–173 | ## Brian's repeat complaints, as tests (2026-11-22) |
+| 174–179 | ## Scene 1 morning |
+| 180–183 | ## Chapter 1 kid robot |
+| 184–200 | ## Phase 1: kitchen and diner clarity |
+| 201–213 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
+| 214–227 | ## Phase 3: one capture rule, phone HUD, tap to walk |
+| 228–237 | ## Chapter 1 pass: the night out has a purpose, switches say why |
+| 238–255 | ## Progression tests |
+| 256–282 | ## Left as they were |
 <!-- /section-index -->
 # Space Snack Quest
 
@@ -30,6 +30,16 @@ Calendar review status (2026-11-16): Brian said yes to merge the calendar (Nov 1
 **Next up (Brian, 2026-11-16):** Chapter 1, one beat at a time in [`docs/CH1-STORY-WALKTHROUGH.md`](docs/CH1-STORY-WALKTHROUGH.md). Do not leave beat 1 until Brian says it is right. Squatch walks around the bed and the bucket, and the Guardian box is in the closet on day 1 (locked home room v5; Brian's yes, Nov 16, 12:50 PM PT). On day 2 he takes the box out at the closet (`tests/bedroom-walk.mjs`). The calendar is tappable. Printed copy: MOONMUNCH / FUZZUARY; Sponsored by MOON PIES; Sock hunt; family Olympics night; Wash outside windows (remember space suit!); Blanket fort night. These are decoration, not new quests. X or NEXT returns to the same scene (`tests/calendar-closeup.mjs`). Closet, bed, desk homework and the already-bitten calendar are built on branch `feat/home-alone` (draft, see below); the purple bed bar is removed there too; still to build: the bucket. The night vent step no longer finishes inside Mops: the morning hum was leaving him marked as walking. Docs match main: yes.
 
 ## Chapter 1 redesign (on main)
+
+2026-11-24 (night), the same draft pull request #87, three more of Brian's asks; not merged to main.
+
+The flyer sneak (P3 and P4; Brian: "I don't get him throwing the sheets, what if he just leaves one on the side of the stage when he leaves and we have to sneak to get it and get back to the room, avoiding lines of sight?"). Isfred no longer tosses flyers: the toss, the fluttering sheets, the flyers on the floor, the one in the plant and the flyer stuck to Squatch's back are deleted. Isfred holds one flyer through his lines, and as he walks off to the bar he stops at the stage's right end and sets it down there (`FLYER` in `src/modules/party-hall.js`). After "I've never gotten to dance at a party." Squatch thinks "A robot flyer! I'll show Mops." and the flyer glows. In P4 the flyer is outlined, the chip reads "Squatch: grab the flyer", and every sight cone is drawn whole so a kid can plan. The dancers leave one clear way: the pair by the stage's left look at each other, the robot looks at the octopus, the octopus has turned to eye the snack bar, the glancer watches Isfred at the bar; the open strip runs right of the spotlight from the front of the floor to the stage's right end. Within reach the button reads "GRAB · flyer"; he is seen taking it and carries it in his paw; then the chip is "Squatch: sneak home for a disguise" and his door is outlined. His door does nothing before he has the flyer. At home he puts it down on the floor by the door and thinks "I deserve one night of normal." and "Costume on. Then I dance!", then the closet is outlined (P5). Seen on the way: the one capture rule; caught, P4 restarts with the flyer back on the stage; hidden until they lose him, he keeps it. After hiding at home without the flyer he steps back out into his doorway and the flyer is still the goal.
+
+After the hat in "Keep going" (Brian: "Shouldn't mops say something and then turn it on?"): Mops sets the lifted piece down on the floor between them; Squatch asks "But why do I have to hide from everyone but you?" and "And why can't the Guardians and I be together?"; Mops says "I've been waiting to show you this." and "Here's why you have to hide." (he answers only the first question, on purpose). With no words Mops walks to the TV, whose button glows, and presses it with his horn; the TV comes on (drawn by the party over the locked picture's TV, measured from the picture: `TV` in `src/modules/party-after-alarm.js`), is held a moment, and beat 20 plays as before.
+
+2026-11-24, the same draft pull request #87, the snacks and the dance (branch `feat/party-snacks-dance`, merged into `feat/party-half-two`); not merged to main. The snack bar's close-up is bright and sharp, and its pyramid is the same ten snacks as the one on the bar in the hall (one table, `src/modules/party-snacks-stack.js`). GRAB · snacks on the action button opens it (no paw icon; the button is not offered once the pile has fallen or every snack is taken). A tap takes a snack: his paw reaches out and puts it in a paper bag that shows a count. The bartender turns her whole body; an eye beside her is shut or open, and her sight lies over the pyramid when she faces him. His paw out while she faces him is a catch. The pyramid falls by what he takes, not by a count: a snack with nothing on it comes out free; a snack with one snack on it lets that one slide down into the gap; a snack with two on it brings the pile down (the hall's topple: the flying cup knocks a piece off and everyone stares). Loose snacks jiggle; snacks stood on look pressed. After his first snack he thinks "Got one!"; "LEAVE · bar" is always on screen. A snack in his paw when the close-up closes (LEAVE · bar, the song ending, an alarm) goes in the bag and is paid (`snackShut`). The octopus starts nothing while the pile falls and everyone stares. Taking all ten is remembered: "Snack Bandit: took every snack at the party." on the Chapter 1 tally (no points), and `snackRecord()` for Day 2.
+
+The dance is touch the glowing spots: one spot on him glows with a ring closing round it (2.5 seconds); a tap in time puts his paw there in a pose of its own and scores 5 stars, shown by the spot; too slow, or a tap elsewhere on him, loses that spot with a stumble and the dance goes on; eight spots a routine, a different order for each song; every spot hit is 25 more and the big cheer. Each song pays for at most eight spots and one bonus. The dance counts as found (the try-again card's picture) after three spots hit.
 
 2026-11-24, the same draft pull request #87 (`feat/party-half-two`), party round four, Brian's answers of that evening; not merged. No tipping: a piece of the disguise comes off only when the snack pyramid crashes and on the octopus's second hug (the warning sign, the crooked piece and the second look are deleted; `party-outfit.js`). The octopus chases for 20 seconds with all his arms out, his first hug is just a hug, and then he gets bored and walks back to the snacks (`party-octopus.js`, `party-octopus-art.js`). At the snack bar the action button alone reads GRAB · snacks. After an alarm, under the bed, a card shows what he has found at the party and offers "Back to the party" (the guard looks and leaves, he puts his disguise back on, the party carries on) or "Keep going" (the guard, Mops, their talk, "You went to the party.", and Mops lifting the hat off him; `party-card.js`, `party-after-alarm.js`). The photo is one group photo when the first song ends: the guests and the Croc Boys line up by the back wall, JOIN · photo marks his place, and a Polaroid of the group fills the screen (`party-photo.js`). Everyone in the hall is 40% bigger (`HALL_BIGGER` in `src/game/12-ch1-redesign.js`); other rooms are unchanged. Main (PR #88) is merged in. Checks: `node tests/party-round4.mjs`, `tests/party-free.mjs`, `tests/party-endings.mjs`, `tests/people-scale.mjs`. Stills for Brian: `tests/out/for-brian-2026-11-24/party-round-4/`. Not yet played by a person.
 
@@ -153,6 +163,10 @@ Four complaints Brian raised again and again now have tests that run with `npm t
 
 - `tests/ch1-plant-eyes.mjs`: hiding in a plant shows two eyes in that plant's leaves (C21), at the loading bay plant and the hall's middle plant.
 
+- `tests/party-flyer.mjs`: the flyer sneak at phone size: no toss and no floor flyers; one flyer in Isfred's hand, set down on the stage's right end as he walks off (he stops and bends); the new thought with the flyer glowing; in P4 the outline and the chip, every cone drawn whole, a way to the flyer and home that is clear of every cone (mapped from the game's own cones and walked) while the straight line is not, the strip at least 48 wide, GRAB · flyer only within reach, his door doing nothing before the grab, the flyer in his paw travelling with him without a jump and ending on the home floor, his two thoughts once and in order before the closet is outlined, ↺ in P5 not replaying them; caught: P4 restarts with the flyer back on the stage; hidden in a plant: he keeps it.
+- `tests/party-snack-stack.mjs`: the pyramid's rule on its own, no browser: every possible order of pulls (1,276 piles, 793,488 orders) ends with every snack taken or exactly one crash, and no snack ever floats.
+- `tests/party-snacks.mjs`: the snack close-up at phone size: the hall and the close-up draw the same snacks in the same places, GRAB · snacks opens it and no paw icon is drawn, her back / turn / front, tap to take, the bag's count, "Got one!" once, LEAVE · bar, loose and pressed, a settle drawn as a slide, the fall (the octopus says nothing until the staring is over), her two catches, a snack in his paw paid when the close-up is closed from outside, the Snack Bandit record and tally line, sound off.
+- `tests/party-dance.mjs`: the dance at phone size: targets 44 px or more and apart, the ring matches the real time left, a hit scores and shows "+5", too slow and wrong spot do not and the dance goes on, the bonus once, the cap, never ends by doing nothing, counted as found after three spots, sound off.
 - `tests/ch1-party-cones.mjs`: sight cones on everyone in the older free play (Brian, 2026-11-23: "let's try all of them and then we can adjust"): the six guests, Isfred, the bartender and the octopus, drawn whole (furniture never cuts a cone short). Faint dashed cones, each shown only when Squatch is near that cone (Brian: "Add the distance fade"; fully shown within 40 of it, gone beyond 120, fading in between); the one Squatch is in fills yellow. In disguise a "?" shows over whoever sees him and nobody catches him; after the snack spill everyone's cone turns to him. The six guests are drawn from Brian's approved Nov 8 pictures (`docs/approved-art/guests/`, `src/modules/guests.js`).
 
 - `tests/party-scenes.mjs`: the party night's first half (P1 to P5) played at phone size: the door outline and PEEK · door, only his head in the gap, the lines in order with no wordless wait, the banner glow, the teach card; his doorway and the plant's step-in spot outside every cone through the glancer's whole rhythm, cones whole and equal to sight; the one capture rule three ways (caught: the LOCKUP card with who and where and P2 again; plant: "They lost you." and P3; home: the guard follows, HIDE · bed, the calm from the door gap); the close-up once a play; the vent's warning and alarm; P3's order, faces and bubble; the flyer on his back and on the floor; the full-screen dress-up's snap, swap, meter, GO · party and ↺; the hand-off to the free play with no arrow dance. Stills of every warning at 375 x 812 go to `tests/out/party-stills/`. `tests/party-lines.mjs` checks `src/modules/party-lines.js` against `docs/PARTY-LINES-FOR-BRIAN.md`.

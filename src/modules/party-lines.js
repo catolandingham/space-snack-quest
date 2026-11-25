@@ -86,6 +86,23 @@ export const PARTY_LINES = Object.freeze([
   { id: "mops-thumbs", half: 2, who: "mops", text: "You know I don't have opposable thumbs.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
   { id: "mops-went", half: 2, who: "mops", text: "You went to the party.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat", quiet: true },
   { id: "sq-except", half: 2, who: "sq", text: "Everyone except me.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  // After the hat, before the TV (Brian 2026-11-24, night: his own words, then his click "Shorter second Mops line").
+  // Mops answers only the first question, on purpose (docs/STORY-DECISIONS.md section 5: the Guardians).
+  { id: "sq-why-hide", half: 2, who: "sq", text: "But why do I have to hide from everyone but you?", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat", quiet: true },
+  { id: "sq-why-guardians", half: 2, who: "sq", text: "And why can't the Guardians and I be together?", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat", quiet: true },
+  { id: "mops-waiting", half: 2, who: "mops", text: "I've been waiting to show you this.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat", quiet: true },
+  { id: "mops-heres-why", half: 2, who: "mops", text: "Here's why you have to hide.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat", quiet: true },
+  // The flyer sneak (Brian 2026-11-24, night: "what if he just leaves one on the side of the stage ... and we have
+  // to sneak to get it and get back to the room"; his click "He wants to show Mops"; then, for getting home, "it
+  // should mention the party and wanting to dance").
+  { id: "sq-flyer", half: 1, who: "sq", text: "A robot flyer! I'll show Mops.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "chip-flyer", half: 1, who: "chip", text: "Squatch: grab the flyer", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "button-grab-flyer", half: 1, who: "button", text: "GRAB · flyer", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "sq-normal", half: 1, who: "sq", text: "I deserve one night of normal.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "sq-costume", half: 1, who: "sq", text: "Costume on. Then I dance!", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "sq-got-one", half: 2, who: "sq", text: "Got one!", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat: \"I like his own thought\"" },
+  { id: "button-leave-bar", half: 2, who: "button", text: "LEAVE · bar", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat: a LEAVE · bar button always on screen" },
+  { id: "honor-snack-bandit", half: 2, who: "card", text: "Snack Bandit: took every snack at the party.", status: "approved", source: "Brian 2026-11-24, click in Snack Quest Chat: \"Snack Bandit (Recommended)\"" },
 ]);
 
 /** Whether this bubble is one of Mops's gentle lines, which never get his "meh" (morning-sound.js, through the bridge). */

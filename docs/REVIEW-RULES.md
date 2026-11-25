@@ -3,24 +3,26 @@
 
 | Lines | Heading |
 | --- | --- |
-| 25–28 | # Review rules |
-| 29–80 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
-| 81–83 | ## Techniques |
-| 84–86 | ## Mistake: locked art was redrawn |
-| 87–91 | ## Mistake: optional inspection interrupted getting out of bed |
-| 92–94 | ## Mistake: a big doc's section index went stale |
-| 95–97 | ## Mistake: a rebuilt beat forgot the step restart |
-| 98–100 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
-| 101–103 | ## Mistake: a killed run was read as a failing test |
-| 104–106 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
-| 107–109 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
-| 110–116 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
-| 117–124 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
-| 125–141 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
-| 142–154 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
-| 155–157 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
-| 158–166 | ## Mistakes caught building the morning sound (2026-11-24) |
-| 167–178 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
+| 27–30 | # Review rules |
+| 31–82 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
+| 83–85 | ## Techniques |
+| 86–88 | ## Mistake: locked art was redrawn |
+| 89–93 | ## Mistake: optional inspection interrupted getting out of bed |
+| 94–96 | ## Mistake: a big doc's section index went stale |
+| 97–99 | ## Mistake: a rebuilt beat forgot the step restart |
+| 100–102 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
+| 103–105 | ## Mistake: a killed run was read as a failing test |
+| 106–108 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
+| 109–111 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
+| 112–118 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
+| 119–126 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
+| 127–143 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
+| 144–156 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
+| 157–159 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
+| 160–168 | ## Mistakes caught building the morning sound (2026-11-24) |
+| 169–180 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
+| 181–192 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
+| 193–201 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
 <!-- /section-index -->
 # Review rules
 
@@ -175,3 +177,24 @@ His words, on the snack close-up, for every piece of the game: "It just needs to
 - The reviewer found the bucket's drips rose through the whistle's own pitches (1.1 to 1.7 kHz), the very mix-up Brian asked to end, and the check compared peaks that were mostly noise. A new sound that plays near another is measured in that sound's band (the drip now falls in pitch, under 700 Hz, and the test measures above 1 kHz).
 - The reviewer found a branch for Mops standing far to the left of his bucket that nothing in the loop can reach, and no test ran it. Code for a case that cannot happen is deleted, not kept.
 - The reviewer found the beard was never measured against the painted bucket (only the shine was), and a level check read the number in the source. Measure the drawn beard and the rendered sound.
+
+## Mistakes caught building the snacks and the dance, and merging them (2026-11-24)
+- A snack in his paw when the close-up closed went into the bag without its stars, because the stars were paid only where a snack lands. When something can be earned on two paths (the usual one, and a close in the middle), pay it in one place both paths go through (`snackShut`), and test closing in the middle of the action.
+- A check labelled "a 44 px target" tested for 30. The number in a check is the number in its label; if the drawing does not meet it, change the drawing or change what is claimed, and say so.
+- The dance's size and its smallest target were typed in the rules file and again in the drawing file. A number the drawing and the rules share is exported by one of them.
+- A long "do nothing" check set the song's clock back so the song would not end the dance. Start a fresh scene with time to spare instead of resetting a clock the player lives with.
+- A drawing read a list only the game's tick creates. A drawing never assumes the tick ran first; it draws a hand-made or brand-new state without throwing.
+- A test that steps the game by its own ticks waited for the bartender to turn while a line was up. The bar waits while a line is up, so the wait ran out without saying so and the next step ran in the wrong moment. A "run until" helper's time-out is checked, and a test taps a line away (or checks for it) before waiting on anything the line pauses.
+- A NEXT pressed in a line's first moments is ignored or only finishes writing the line. A test presses NEXT the way a kid does: after a moment, and again until the line is gone.
+- The paw icon sat on the hall pyramid's top snack and nobody had noticed. Before changing a close-up, look at the picture it opens from, with its icon on.
+- Another guest's line (the octopus's hiccup) can come up in the middle of the thing under test and pause it. A test of one toy either keeps inside the first minute or taps other guests' lines away as a kid would.
+- Merging the two party branches, a new check ("once the staring is over the octopus notices") was written from how the builder thought the scene ends; in the game a kid who stands still after the crash is seen and the alarm starts first. Before writing a check about what happens next, run the scene once and read what does happen.
+
+## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24)
+- The TV's place was typed from the older program's drawing code, which the locked home picture does not follow (the real TV is 37 higher), so the button was drawn in mid-air under the shelf. Measure a thing in a locked picture from the picture itself (a pixel scan in the running game), never from old drawing code.
+- A flag was set for the older program to draw the TV on, and nothing changed on screen: the room is a picture now. After handing a drawing job to other code, look at the frame before writing the test's expectation.
+- The scene after the hat grew by four lines and a walk, and Mops carried the lifted hat on his face to the TV. When a scene is made longer, check what every character is still holding from the moment before.
+- A glow made with a canvas shadow turned the white flyer yellow, because each later shape's shadow falls on the shapes drawn before it. Draw a glow as its own soft patch behind the thing, then the thing with no shadow.
+- The flyer's place was chosen first ("the stage's end") and the dancers' sight mapped second; every way to it was inside a cone. Before choosing where a thing to sneak to goes, map who sees what from the game's own cones (tests/party-flyer.mjs keeps the map as a check: a clear way, how wide, and that the straight line is not clear).
+- The sound suite played every quiet line in Mops's voice, so Squatch's quiet lines "failed". A test plays a line with its own speaker.
+- A test compared a resting place with where Mops stood, read after Mops had walked off. A check about a moment reads the state at that moment, or compares with someone who has not moved since.

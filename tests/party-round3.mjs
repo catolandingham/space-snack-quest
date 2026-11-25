@@ -354,9 +354,10 @@ const frameDiff = (page, change, undo, from) =>
     return { w: c.clientWidth, h: c.clientHeight, k: c.width / c.clientWidth };
   });
   const at = async (m, pts, outfit, lost) => {
-    await set(page, (p, n, a) => ((p.dance.moves = a.m), (p.dance.pop = 0), a.outfit && (p.outfit = a.outfit), (p.lostPieces = a.lost || [])), { m, outfit, lost });
+    // (the dance now moves on by itself, glowing spots and stumbles: the test holds him in pose `m`, nothing glowing)
+    await set(page, (p, n, a) => (Object.assign(p.dance, { moves: a.m, pose: a.m, pop: 0, live: false, hold: 1e6, stumble: 0, party: 0, fx: [] }), a.outfit && (p.outfit = a.outfit), (p.lostPieces = a.lost || [])), { m, outfit, lost });
     await sleep(120);
-    const L = dance.danceSquatch(size.w, size.h, { moves: m, pop: 0 });
+    const L = dance.danceSquatch(size.w, size.h, { moves: m, pose: m, pop: 0 });
     return page.evaluate(
       ([L, pts, k]) => {
         const c = document.querySelector('canvas[aria-label="dance"]'),
@@ -374,7 +375,9 @@ const frameDiff = (page, change, undo, from) =>
     restHands = look.armEnds(null).map((a) => [a.hand.x, a.hand.y]),
     isHis = (c) => like(c, Q.mask, 14) || like(c, Q.fur, 14) || like(c, Q.dark, 14) || like(c, "#1e2430", 14);
   const FULL = { head: "tophat", face: "shades", body: "shirt", legs: "boots" };
-  g.check("the dance has four robot poses", dance.POSES.length === 4, dance.POSES.length);
+  // Brian 2026-11-24, "touch the glowing spots": a pose for each of the seven spots on his body, then standing
+  // ready, the stumble and the cheer (before: four robot poses, one per tap). Every one is checked below.
+  g.check("the dance has ten poses: one for each of his seven spots, standing ready, the stumble, the cheer", dance.POSES.length === 10 && Object.keys(dance.SPOTS).every((s) => dance.poseIndex(s) >= 0), dance.POSES.length);
   for (let m = 0; m < dance.POSES.length; m++) {
     const hands = look.armEnds(dance.POSES[m].arms).map((a) => [a.hand.x, a.hand.y]);
     const got = await at(m, [...hands, ...restHands], FULL);

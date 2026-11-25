@@ -7,6 +7,8 @@
  * A goal with no entry gets no outline (optional things, close-ups, and props the game draws itself,
  * which are still to do: see README "Brian's repeat complaints, as tests").
  */
+import { FLYER } from "./party-hall.js";
+
 // Doorways more than one goal outlines: each typed once.
 const HOME_DOOR = { rect: { x0: 912, x1: 940, y0: 358, y1: 468 } }, // home: the doorway in the right wall
   HALL_HOME_DOOR = { rect: { x0: 426, x1: 528, y0: 600, y1: 622 } }; // the hall: the doorway home, in the front wall
@@ -22,6 +24,7 @@ export const GOAL_TARGETS = {
   // Party hall
   "hall:hide": { trace: { x0: 392, x1: 494, y0: 432, y1: 556 } }, // the plant in the middle (party sneak)
   "hall:go-home": HALL_HOME_DOOR, // party P4, and the alarm
+  "hall:grab-flyer": { rect: FLYER.box }, // party P4: the flyer on the stage's right end (the party's own table)
   "hall:d2-HIDE-plant": { trace: { x0: 392, x1: 494, y0: 432, y1: 556 } }, // the same plant (Day 2)
   "hall:d2-SNEAK-hallway": { rect: { x0: 912, x1: 940, y0: 257, y1: 345 } }, // the doorway to the hallway (hall v2, back corner)
   "hall:d2-GO-home": HALL_HOME_DOOR,

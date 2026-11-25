@@ -4,24 +4,45 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–65 | ## Where main is (Chapter 1 redesign) |
-| 66–80 | ## Register |
-| 81–102 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 103–123 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 124–136 | ## Phase 2 (plan section 4, T13 to T18) |
-| 137–159 | ## Phase 1 (plan section 3, T5 to T12) |
-| 160–173 | ## SS40–SS44 |
-| 174–191 | ## Story rows |
-| 192–210 | ## Reset section |
-| 211–221 | ## Still open |
-| 222–225 | ## Chapter 1 replot, recorded and not built |
-| 226–377 | ## Changelog |
+| 24–86 | ## Where main is (Chapter 1 redesign) |
+| 87–101 | ## Register |
+| 102–123 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 124–144 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 145–157 | ## Phase 2 (plan section 4, T13 to T18) |
+| 158–180 | ## Phase 1 (plan section 3, T5 to T12) |
+| 181–194 | ## SS40–SS44 |
+| 195–212 | ## Story rows |
+| 213–231 | ## Reset section |
+| 232–242 | ## Still open |
+| 243–246 | ## Chapter 1 replot, recorded and not built |
+| 247–398 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-24 (night), draft PR #87, not merged. Done: the flyer sneak (P3 and P4: one flyer set down on the stage's right end, GRAB · flyer, carried home, two thoughts at home; the toss, the floor flyers and the flyer on his back deleted); the four lines after the hat and Mops pressing the TV's button with his horn. Open for Brian:
+- The flyer is on the stage's right end, the end Isfred leaves by. To leave a clear way to it, two guests look somewhere new once the band plays: the octopus eyes the snack bar (his partner the robot still looks at him), and the glancer watches Isfred at the bar. A question for Brian's eye.
+- Placeholders: Isfred's walk to the stage's end 0.6 s, his bend 0.8 s, on to the bar 1.9 s; the grab 0.45 s; putting the flyer down at home 0.5 s; the flyer's size on the stage (34) and where Squatch stands to take it (within 34 of a spot 60 from the flyer). Mops's horn press 0.9 s, the lit TV held 1.6 s, setting the hat down 0.5 s.
+- The TV in the locked home picture has no button. The party draws a small red button on its frame (and the lit screen) only for the horn press. A question for Brian: keep it, or a new locked home picture with a button.
+- On a phone the horn press is small (the TV is about 45 px wide). A wordless close-up of the horn on the button would be bigger; not built.
+- Isfred holds the flyer only from P3 on (in P1 and P2 his hands are as before).
+
+2026-11-24 (night), draft PR #87, not merged. Done: the flyer sneak (P3 and P4: one flyer set down on the stage's right end, GRAB · flyer, carried home, two thoughts at home; the toss, the floor flyers and the flyer on his back deleted); the four lines after the hat and Mops pressing the TV's button with his horn. Open for Brian:
+- The flyer is on the stage's right end, the end Isfred leaves by. To leave a clear way to it, two guests look somewhere new once the band plays: the octopus eyes the snack bar (his partner the robot still looks at him), and the glancer watches Isfred at the bar. A question for Brian's eye.
+- Placeholders: Isfred's walk to the stage's end 0.6 s, his bend 0.8 s, on to the bar 1.9 s; the grab 0.45 s; putting the flyer down at home 0.5 s; the flyer's size on the stage (34) and where Squatch stands to take it (within 34 of a spot 60 from the flyer). Mops's horn press 0.9 s, the lit TV held 1.6 s, setting the hat down 0.5 s.
+- The TV in the locked home picture has no button. The party draws a small red button on its frame (and the lit screen) only for the horn press. A question for Brian: keep it, or a new locked home picture with a button.
+- On a phone the horn press is small (the TV is about 45 px wide). A wordless close-up of the horn on the button would be bigger; not built.
+- Isfred holds the flyer only from P3 on (in P1 and P2 his hands are as before).
+
+2026-11-24, draft PR #87, the snacks and the dance merged in (not merged to main). Done: the snack close-up rebuild (Brian's video notes of 2026-11-24, "Snacks"), opened by GRAB · snacks alone; the dance as touch-the-glowing-spots with stars and a time limit. Open for Brian (placeholders, none are approved pins):
+- Dance numbers: 2.5 seconds a spot; 5 stars a spot; 25 stars for a routine with no miss; the cap (each of the three songs pays for at most eight spots and one bonus: 65 a song, 195 a party).
+- Snack numbers: 5 stars a snack; the bartender's rhythm 5 / 4 / 6 / 4.5 seconds with her back turned, 0.9 turning, 2 facing; his paw takes 0.3 s out and 0.4 s back to the bag; a sliding snack hangs over the gap for 0.3 s (0.1 s more for each one further up the pile), then drops over 0.4 s; the pile shows 0.8 s of falling before the zoom pulls back; after a catch she looks 0.6 s more.
+- The snack close-up is drawn inside the game picture. On a phone held upright the picture is about 359 x 239 px; each snack's tap place and LEAVE · bar are 44 px each way, the smallest they should be. Full screen (like the dress-up and the dance) would make everything about three times bigger; it needs the engine's speech bubbles to show over a full-screen view, which they cannot today. A question for Brian.
+- After the pile falls, the flying cup knocks a piece off and everyone stares; a kid who stands still is seen with fur showing and the alarm starts 0.8 seconds later. A question for Brian: is that the consequence he wants.
+- Day 2: the empty-bar line and its speaker; a snack left to take.
 
 2026-11-24, draft PR #87, party round four (Brian's answers of 2026-11-24), not merged: no tipping (pieces come off only at the pyramid's crash and the octopus's second hug; the second look, the warning sign, the plants' snag and the vent's tug are deleted); the octopus's 20-second chase with his arms out (`party-octopus.js`; pin `chase-seconds` 10 to 20 on his yes); GRAB · snacks on the action button, no paw icon; the "more to find" card under the bed and its two roads, back to the party or the new ending with the guard, Mops and the hat (`party-card.js`, `party-after-alarm.js`; the old P8a is deleted); the one group photo after the first song (`party-photo.js`; the looping camera and plan decision 16 are gone); everyone in the hall 40% bigger (`HALL_BIGGER = 1.4`, new pin `hall-bigger`; other rooms unchanged). Main (PR #88) merged in; Mops's gentle lines never get his meh. Tests: `tests/party-round4.mjs` (new), `party-free`, `party-endings`, `party-round3`, `people-scale`. Still to do before merge: the other builder's snack close-up and dance merged in, the full suite, the kid robot, new videos.
 

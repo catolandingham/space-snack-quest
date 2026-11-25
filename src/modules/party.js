@@ -7,11 +7,15 @@
  *      the teach card on the glancer's cone. He steps into the doorway (his whole body now) and play begins.
  *   P2 Sneak to the plant (restart: in his doorway, the glancer facing the stage). The glancer warns ("?" and a
  *      blip), looks across the lane, turns back. HIDE · plant: eyes in the leaves. Seen: the one capture rule.
- *   P3 The welcome and the band, watched from the plant (↺ restarts it). Three Isfred lines, flyers flutter (one
- *      lands in the plant), the lights dim, the Croc Boys play, the guests pair off and dance; "I've never gotten to
- *      dance at a party."
- *   P4 Sneak home (restart: eyes in the plant, band playing). The pairs are busy; a flyer sticks to his back fur;
- *      he walks out through his door, and it drops on the floor at home.
+ *   P3 The welcome and the band, watched from the plant (↺ restarts it). Three Isfred lines (he holds one flyer),
+ *      the lights dim, the Croc Boys play, and as Isfred walks off to the bar he sets the flyer down on the stage's
+ *      right end; the guests pair off and dance; "I've never gotten to dance at a party."; "A robot flyer! I'll show
+ *      Mops." (the flyer glows).
+ *   P4 The flyer sneak (restart: eyes in the plant, band playing, the flyer on the stage). He sneaks to the flyer
+ *      past the dancers' sight (every cone drawn whole), GRAB · flyer, carries it in his paw home through his
+ *      door (his door is not the goal, and does nothing, until he has it), puts it down on the floor, thinks "I
+ *      deserve one night of normal." and "Costume on. Then I dance!". Seen: the one capture rule; a restart puts
+ *      the flyer back on the stage.
  *   P5 Dress up (home; ↺ restarts it with nothing on). OPEN · closet: the full-screen dress-up (dress-up.js). Then
  *      he walks out through his door in his outfit.
  *   P6 The party in disguise (restart: just inside his door, same outfit, the song that was playing): free play,
@@ -26,7 +30,7 @@
  * built in party-view.js); the capture rule's hooks are in party-capture.js.
  */
 import { partyLine } from "./party-lines.js";
-import { HALL, SPOTS, CAST, GLANCE, GLANCE_TIMES, HALL_PICTURE, HALL_SOLIDS, HALLWAY_LANE, DANCE_SPOT, HALL_SPEAKER, BANNER, HOME_ROOM, HALL_DOOR, SNACK_SPOT } from "./party-hall.js";
+import { HALL, SPOTS, CAST, GLANCE, GLANCE_TIMES, HALL_PICTURE, HALL_SOLIDS, HALLWAY_LANE, DANCE_SPOT, HALL_SPEAKER, BANNER, HOME_ROOM, HALL_DOOR, SNACK_SPOT, FLYER, PYRAMID } from "./party-hall.js";
 export { HOME_ROOM };
 import { HOME_THINGS, HOME_SPOTS } from "./home-alone.js";
 import { GOAL_TARGETS } from "./goal-targets.js";
@@ -42,13 +46,13 @@ import { createEndings } from "./party-endings.js";
 import { createAfterAlarm } from "./party-after-alarm.js";
 import { createPartySound } from "./party-sound.js";
 import { furShows } from "./party-outfit.js";
-import { CUT } from "./party-snacks.js";
+import { CUT, snackRecord } from "./party-snacks.js";
 import { lateState } from "./party-now.js";
 
 // His home door in the right wall: the one box its outline uses too (goal-targets.js).
 const HOME_DOOR = GOAL_TARGETS["closet:peek"].rect;
 // How fast scripted walks go (pixels a second) and how long the P3 moments last (seconds).
-const PACE = Object.freeze({ walk: 240, scurry: 330, peekStep: 120, flyers: 2.2, bandIn: 2.6, watch: 2.5 });
+const PACE = Object.freeze({ walk: 240, scurry: 330, peekStep: 120, bandIn: 2.6, watch: 2.5 });
 // What he wears when a link opens P6 to P8 with no dress-up before it.
 export const JUMP_OUTFIT = Object.freeze({ head: "tophat", face: "shades", body: "shirt", legs: "boots" });
 const BOUNDS = Object.freeze({ x0: 60, x1: 900, y0: HALL.floorTop, y1: 590 });
@@ -97,6 +101,12 @@ export function createParty(bridge) {
     if (late(p) && p.stare) return lookAt(x, y, p.stare.at);
     if (late(p) && p.people[id] && p.people[id].face != null) return p.people[id].face;
     if (p.mode === "isfred") return lookAt(x, y, { x: p.isfred.x, y: p.isfred.y - 40 });
+    // Once the band plays (P3's end and P4) the dancers are busy. The pair by the stage's left look at each other;
+    // the robot looks at the octopus, who has turned to eye the snack bar (he heads there in P6); the glancer
+    // watches Isfred go to the bar and stay there. That leaves one clear way, right of the spotlight, from the
+    // floor's front to the stage's right end and the flyer (tests/party-flyer.mjs walks it and maps it).
+    if (p.mode === "pairs" && id === "octopus-guest") return lookAt(x, y, { x: PYRAMID.x, y: PYRAMID.y - 28 });
+    if (p.mode === "pairs" && g && g.glancer) return lookAt(x, y, { x: p.isfred.x, y: p.isfred.y - 40 });
     if (p.mode === "pairs" && g && g.pair) {
       const to = p.people[g.pair];
       return lookAt(x, y, { x: to.x, y: to.y - 28 });
@@ -181,7 +191,6 @@ export function createParty(bridge) {
       lights: false,
       band: false,
       glow: 0,
-      flyers: -1,
       flyer: "",
       seenBy: "",
       seenT: 0,
@@ -232,33 +241,37 @@ export function createParty(bridge) {
         say("official", "isfred-hello"),
         e.run(() => (P().glow = 1)),
         say("official", "isfred-helpers"),
-        e.run(() => ((P().glow = 0), (P().flyers = 0), sound.one("flyers"))),
-        e.until(() => !P() || P().flyers >= PACE.flyers),
+        e.run(() => (P().glow = 0)),
         say("official", "isfred-band"),
         e.run(() => {
           const q = P();
           bandOn(q);
-          q.isfred = { x: CAST.isfred.x, y: CAST.isfred.y, walking: true };
+          // he walks off to the bar, and on the way sets his flyer down on the stage's right end (tick)
+          q.isfred = { x: CAST.isfred.x, y: CAST.isfred.y, walking: true, wt: 0 };
           q.pt = 0;
           sound.one("cheer");
           sound.one("dim");
         }),
-        e.until(() => !P() || P().pt >= PACE.bandIn),
+        e.until(() => !P() || (P().pt >= PACE.bandIn && !P().isfred.walking)),
         say("band", "band-song", "song"),
         e.run(() => ((P().pt = 0), (P().follow = true))),
         e.until(() => !P() || P().pt >= PACE.watch),
         say("sq", "sq-dance-wish", "whisper"),
+        // the flyer glows while he thinks about it (what a line mentions is visible and glows)
+        e.run(() => (P().flyerGlow = true)),
+        say("sq", "sq-flyer", "whisper"),
         e.run(() => startScene("P4")),
       ]);
       return;
     }
     if (id === "P4") {
-      const p = base("P4", { phase: "home", pose: "hidden", hideAt: "middle", flyers: PACE.flyers + 1 });
+      // (a restart puts the flyer back on the stage, whether or not he had it)
+      const p = base("P4", { phase: "home", pose: "hidden", hideAt: "middle", flyer: "stage" });
       bandOn(p);
       save(p);
       inHall();
       hideIn("middle");
-      chip("chip-home");
+      chip("chip-flyer");
       control(true);
       return;
     }
@@ -436,13 +449,54 @@ export function createParty(bridge) {
       e.until((dt) => (P().alarm ? e.step("sq", HOME_ROOM.runTo.x, HOME_ROOM.runTo.y, PACE.scurry, dt) : e.step("sq", HOME_ROOM.inside.x, HOME_ROOM.inside.y, PACE.walk, dt))),
       e.run(() => {
         const q = P();
-        // the flyer drops off his back by the door
-        q.flyer === "back" && ((q.flyer = "floor"), sound.one("fwip"));
         if (q.alarm) return ((q.phase = "hiding"), caught() || control(true));
         // P7 with the hall already calm: through his door a guard follows a moment later all the same
         if (q.scene === "P7") return afterAlarm.follow(q);
-        startScene("P5");
+        flyerHome();
       }),
+    ]);
+  }
+  // GRAB · flyer: he turns to the stage's end and takes the flyer in his paw; then his door is the goal.
+  function grabFlyer() {
+    const e = E();
+    control(false);
+    e.walkOff();
+    e.face("sq", -1);
+    P().grab = 0;
+    sound.one("fwip");
+    e.queue([
+      e.until(() => !P() || P().grab == null || P().grab >= 1),
+      e.run(() => {
+        const q = P();
+        if (!q) return;
+        q.grab = null;
+        q.flyer = "paw";
+        q.flyerGlow = false;
+        // (an alarm that began just before the grab keeps its own chip)
+        q.alarm || chip("chip-home");
+        caught() || control(true);
+      }),
+    ]);
+  }
+  // Home with the flyer (P4's end): he puts it down on the floor by the door, thinks about the party, and the
+  // closet is next (P5). Also where the calm after hiding at home hands back when he has the flyer.
+  function flyerHome() {
+    const e = E();
+    control(false);
+    e.queue([
+      e.run(() => {
+        const q = P();
+        q.flyer === "paw" && ((q.flyer = "down"), (q.put = 0), sound.one("fwip"));
+      }),
+      e.until(() => !P() || P().put == null || P().put >= 1),
+      e.run(() => {
+        const q = P();
+        q.put = null;
+        q.flyer = "floor";
+      }),
+      say("sq", "sq-normal", "whisper"),
+      say("sq", "sq-costume", "whisper"),
+      e.run(() => startScene("P5")),
     ]);
   }
   function openCloset() {
@@ -514,16 +568,29 @@ export function createParty(bridge) {
     dt = dt || 0;
     p.t += dt;
     p.pt = (p.pt || 0) + dt;
-    p.flyers >= 0 && (p.flyers += dt);
+    p.grab != null && (p.grab = Math.min(1, p.grab + dt / FLYER.grab));
+    p.put != null && (p.put = Math.min(1, p.put + dt / FLYER.put));
     moveTufts(p, dt);
     const s = sq(),
       inHallNow = e.room() === "hall";
-    // Isfred walks off the stage to the bar's top end once the band plays.
+    // Isfred walks off the stage to the bar's top end once the band plays. On the way he stops at the stage's right
+    // end, bends and sets his flyer down there (FLYER: `to` the end, `down` the bend, `off` on to the bar).
     if (p.isfred.walking) {
-      const k = Math.min(1, p.pt / 2.4);
-      p.isfred.x = CAST.isfred.x + (CAST.isfredBar.x - CAST.isfred.x) * k;
-      p.isfred.y = CAST.isfred.y + (CAST.isfredBar.y - CAST.isfred.y) * k;
-      k >= 1 && (p.isfred = { x: CAST.isfredBar.x, y: CAST.isfredBar.y, atBar: true });
+      const w = p.isfred,
+        A = CAST.isfred,
+        S = FLYER.set,
+        B = CAST.isfredBar,
+        mix = (a, b, k) => ((w.x = a.x + (b.x - a.x) * k), (w.y = a.y + (b.y - a.y) * k));
+      w.wt = (w.wt || 0) + dt;
+      if (w.wt < FLYER.to) mix(A, S, w.wt / FLYER.to);
+      else if (w.wt < FLYER.to + FLYER.down) (mix(S, S, 0), (w.bend = (w.wt - FLYER.to) / FLYER.down));
+      else {
+        p.flyer || ((p.flyer = "stage"), sound.one("pop"));
+        w.bend = 0;
+        const k = Math.min(1, (w.wt - FLYER.to - FLYER.down) / FLYER.off);
+        mix(S, B, k);
+        k >= 1 && (p.isfred = { x: B.x, y: B.y, atBar: true });
+      }
     }
     if (p.scene === "P2" && !p.alarm) {
       const before = glancePhase(p).phase;
@@ -537,13 +604,11 @@ export function createParty(bridge) {
     if (free && p.pose === "hidden" && inHallNow && sneak && e.steering()) {
       p.pose = "stand";
       e.set("sqPose", "stand");
-      p.scene === "P4" && !p.flyer && ((p.flyer = "back"), sound.one("thwap"));
     }
     if (free && p.pose === "bed" && !p.alarm && e.steering()) ((p.pose = "stand"), e.set("sqPose", "stand"));
     // Anything else that stood him up (the game's own walk out of a hiding place) counts as stepping out too.
     if (free && p.pose === "hidden" && inHallNow && e.get("sqPose") === "stand" && sneak) {
       p.pose = "stand";
-      p.scene === "P4" && !p.flyer && (p.flyer = "back");
     }
     // Sight: whoever's cone holds him shows "?", then "!" if he stays too long, and the alarm starts.
     if ((p.scene === "P2" || p.scene === "P4") && inHallNow && !p.alarm) {
@@ -599,7 +664,8 @@ export function createParty(bridge) {
       tickAlarm(p, dt, capture.api());
       // Running from the alarm: his doorway takes him home.
       if (P() && P().alarm && free && inHallNow && p.pose === "stand" && Math.hypot(s.x - HALL_DOOR.x, s.y - HALL_DOOR.y) < HALL_DOOR.r && p.alarm.phase !== "calm") walkHome();
-    } else if ((p.scene === "P4" || p.scene === "P7") && free && inHallNow && p.pose === "stand" && Math.hypot(s.x - HALL_DOOR.x, s.y - HALL_DOOR.y) < HALL_DOOR.r) walkHome();
+      // (P4: only with the flyer in his paw; without it his doorway does nothing and the chip still says to grab it)
+    } else if (((p.scene === "P4" && p.flyer === "paw") || p.scene === "P7") && free && inHallNow && p.pose === "stand" && Math.hypot(s.x - HALL_DOOR.x, s.y - HALL_DOOR.y) < HALL_DOOR.r) walkHome();
     if (p.scene === "P5" && p.phase === "out" && free && Math.hypot(s.x - HOME_ROOM.doorSpot.x, s.y - HOME_ROOM.doorSpot.y) < 40) walkToParty();
   }
   function raise(p) {
@@ -634,8 +700,13 @@ export function createParty(bridge) {
       p.scene === "P4" && p.alarm && out.push(plant("middle"), plant("back"));
       p.alarm && out.push(door("go-home", HALL_DOOR.x, HALL_DOOR.y, HALL_DOOR.r));
     }
-    // P4: his door is the goal even while he is still in the plant (stepping out is walking there).
-    p.scene === "P4" && room === "hall" && !p.alarm && out.push(door("go-home", HALL_DOOR.x, HALL_DOOR.y, HALL_DOOR.r));
+    // P4: the flyer on the stage's end is the goal, even while he is still in the plant (stepping out is walking
+    // there); GRAB · flyer is offered only within reach of it. With the flyer in his paw, his door is the goal.
+    if (p.scene === "P4" && room === "hall" && !p.alarm) {
+      const [verb, cap] = partyLine("button-grab-flyer").split(" · ");
+      if (p.flyer === "stage" && p.grab == null) out.push({ id: "grab-flyer", verb, cap, who: "sq", x: FLYER.reach.x, y: FLYER.reach.y, r: FLYER.reach.r, thing: FLYER.box, f: grabFlyer });
+      p.flyer === "paw" && out.push(door("go-home", HALL_DOOR.x, HALL_DOOR.y, HALL_DOOR.r));
+    }
     if (p.alarm && room === "closet" && p.pose !== "bed")
       out.push({ id: "hidebed", verb: "HIDE", cap: partyLine("button-hide-bed").split(" · ")[1], who: "sq", x: HOME_ROOM.bed.x, y: HOME_ROOM.bed.y, r: 700, thing: HOME_THINGS.bed, f: hideUnderBed });
     if (p.scene === "P5" && room === "closet" && p.phase === "closet")
@@ -659,7 +730,7 @@ export function createParty(bridge) {
     if (p.alarm) return room === "closet" ? (p.pose === "bed" ? "" : "hidebed") : p.pose === "hidden" ? "" : "go-home";
     if (p.scene === "P1" && room === "closet") return "peek";
     if (p.scene === "P2" && p.pose === "stand") return "hide";
-    if (p.scene === "P4" && room === "hall") return "go-home";
+    if (p.scene === "P4" && room === "hall") return p.flyer === "paw" ? "go-home" : p.flyer === "stage" && p.grab == null ? "grab-flyer" : "";
     if (p.scene === "P5") return p.phase === "closet" ? "dress" : p.phase === "out" ? "go-party" : "";
     // P6 has no outlines ("Optional things: They discover them"); P7 after the search: home through his door.
     // P7 after the search (standing, or still hidden in a plant): home through his door is the next step
@@ -683,7 +754,7 @@ export function createParty(bridge) {
   }
 
   // ---------- the pieces ----------
-  const helpers = { E, P, sq, say, chip, control, startScene, picture, homeRoom: HOME_ROOM, pace: PACE, firstAlarm, homeDoor: HOME_DOOR, sound, afterAlarm: () => afterAlarm };
+  const helpers = { E, P, sq, say, chip, control, startScene, picture, homeRoom: HOME_ROOM, pace: PACE, firstAlarm, homeDoor: HOME_DOOR, sound, afterAlarm: () => afterAlarm, flyerHome: () => flyerHome() };
   const capture = createCapture(helpers);
   const freePlay = createFreePlay({
     ...helpers,
@@ -708,7 +779,7 @@ export function createParty(bridge) {
   });
   const finish = () => {
     sound.stop();
-    save({ scene: "done", outfit: P() && P().outfit });
+    save({ scene: "done", outfit: P() && P().outfit, snacks: snackRecord(P() && P().snacks) });
     E().tvStory();
   };
   const afterAlarm = createAfterAlarm({ ...helpers, guests: bridge.guests, finish, resume: (p) => freePlay.resume(p) });
@@ -741,7 +812,7 @@ export function createParty(bridge) {
     now() {
       const p = live();
       if (!p) return null;
-      const out = { scene: p.scene, phase: p.phase, pose: p.pose, alarm: p.alarm ? p.alarm.phase : "", seenBy: seenByNow(p), glance: p.scene === "P2" ? glancePhase(p).phase : "", outfit: { ...p.outfit }, flyer: p.flyer, tufts: ventTufts(p), eyes: p.pose === "hidden" ? eyesAt(p, 0) : null, lost: !!p.lost, sound: sound.debug() };
+      const out = { isfred: { x: Math.round(p.isfred.x), y: Math.round(p.isfred.y), walking: !!p.isfred.walking, bend: p.isfred.bend || 0 }, flyerGlow: !!p.flyerGlow, grab: p.grab == null ? null : p.grab, put: p.put == null ? null : p.put, scene: p.scene, phase: p.phase, pose: p.pose, alarm: p.alarm ? p.alarm.phase : "", seenBy: seenByNow(p), glance: p.scene === "P2" ? glancePhase(p).phase : "", outfit: { ...p.outfit }, flyer: p.flyer, tufts: ventTufts(p), eyes: p.pose === "hidden" ? eyesAt(p, 0) : null, lost: !!p.lost, sound: sound.debug() };
       return late(p) ? { ...out, ...lateState(p, { scale: E().hallSizes().squatch, guardTall: views.homeGuardHeight() }) } : out;
     },
     /** The outfit he chose. */
@@ -793,6 +864,8 @@ export function createParty(bridge) {
       if (who === "band") return { x: CAST.band[1].x, y: CAST.band[1].y - adult - 6 };
       if (who === "sq" && p.pose === "hidden") return eyesAt(p, 0);
       if (who === "sq" && p.pose === "peek") return { x: SPOTS.peek.x, y: 590 };
+      // in the snack close-up only his paw shows: his thought sits over it
+      if (who === "sq" && p.snack) return { x: p.snack.paw.x, y: p.snack.paw.y - 60 };
       if (who === "pa") return { x: HALL_SPEAKER.x0, y: (HALL_SPEAKER.y0 + HALL_SPEAKER.y1) / 2 };
       if (who === "tourist" && p.talker && p.people[p.talker]) return { x: p.people[p.talker].x, y: p.people[p.talker].y - adult - 6 };
       if (who === "bartender") return p.snack ? { x: CUT.bartender.x, y: CUT.bartender.y - CUT.bartender.h - 6 } : { x: (p.bartenderAt || CAST.bartender).x, y: (p.bartenderAt || CAST.bartender).y - adult - 6 };
@@ -839,10 +912,28 @@ export function createParty(bridge) {
       const p = live();
       p && p.card && afterAlarm.choose(p, id);
     },
+    /** Tests: where the flyer is drawn now ({ x, y, size }), or null. */
+    flyerAt() {
+      const p = live();
+      return p ? views.flyerAt(p) : null;
+    },
     /** Tests: the cones now, with their people. */
     cones() {
       const p = live();
       return p ? cones(p) : [];
+    },
+    /**
+     * What the party remembers about the snacks, for Day 2: { all (he took every snack), left (how many are still
+     * on the bar), bag (how many he took), toppled (the pile fell) }. It stays readable after the party is over.
+     */
+    snackRecord() {
+      const p = P();
+      return snackRecord(p && p.snacks);
+    },
+    /** The line for the end of Chapter 1 when he took every snack at the party ("Snack Bandit"), or "". */
+    snackHonor() {
+      const p = P();
+      return snackRecord(p && p.snacks).all ? partyLine("honor-snack-bandit") : "";
     },
     /** Tests: where he stands at the snack bar, and the snack close-up's layout (game positions). */
     snackLayout() {

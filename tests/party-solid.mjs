@@ -1,7 +1,7 @@
 /**
  * The party hall is solid (Brian, 2026-11-15: "Make the party hall solid so Squatch can't walk through walls, the stage, or guests").
  * Squatch walks into each thing for a while and must stop at its edge. He can still reach the snack bar, where the
- * paw icon walks him to open the snack close-up. Checked in the party in disguise (P6, src/modules/party.js), where
+ * GRAB · snacks button walks him to open the snack close-up. Checked in the party in disguise (P6, src/modules/party.js), where
  * the kid walks the whole hall, and in the sneak (P2) for the hallway lane that P6 opens.
  *   node tests/party-solid.mjs
  */
@@ -42,9 +42,9 @@ const walk = async (x, y, key, steps = 90, scene = "P6") => {
   return end;
 };
 let e;
-// The snack bar: he can walk to the spot by the bar the paw icon takes him to.
+// The snack bar: he can walk to the spot by the bar GRAB · snacks takes him to.
 e = await walk(hall.SNACK_SPOT.x - 120, hall.SNACK_SPOT.y, "ArrowRight", 40);
-g.check("Squatch can walk up to the snack bar, to where the paw icon takes him", e.x >= hall.SNACK_SPOT.x - 10 && Math.hypot(e.x - hall.SNACK_SPOT.x, e.y - hall.SNACK_SPOT.y) < hall.SNACK_SPOT.r, e);
+g.check("Squatch can walk up to the snack bar, to where GRAB · snacks takes him", e.x >= hall.SNACK_SPOT.x - 10 && Math.hypot(e.x - hall.SNACK_SPOT.x, e.y - hall.SNACK_SPOT.y) < hall.SNACK_SPOT.r, e);
 e = await walk(640, 420, "ArrowUp");
 g.check("walking up stops on the floor, below the window and back wall", e.moved >= 8 && e.y >= 300, e);
 e = await walk(360, 420, "ArrowUp");

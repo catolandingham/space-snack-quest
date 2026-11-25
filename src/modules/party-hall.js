@@ -66,6 +66,25 @@ export const CAST = Object.freeze({
   ]),
   bartender: Object.freeze({ x: 890, y: 482 }),
 });
+// The flyer sneak (P3 and P4; Brian 2026-11-24, "what if he just leaves one on the side of the stage"). Isfred holds
+// one flyer through his lines, and as he walks off to the bar he stops at the stage's right end (`set`) and puts it
+// down there (`x`, `y`: on the stage's right-front corner, `size` across). Squatch takes it from `reach` (within
+// `r`), on the floor right of the stage. Times in seconds: Isfred's walk to the end (`to`), the bend (`down`), the
+// walk on to the bar (`off`), Squatch's reach for it (`grab`), and putting it down at home (`put`). PLACEHOLDERS.
+export const FLYER = Object.freeze({
+  x: 486,
+  y: 290,
+  size: 34,
+  box: Object.freeze({ x0: 464, x1: 508, y0: 264, y1: 314 }),
+  reach: Object.freeze({ x: 536, y: 324, r: 34 }),
+  set: Object.freeze({ x: 458, y: 262 }),
+  hand: Object.freeze({ dx: 24, dy: -58, size: 24 }),
+  to: 0.6,
+  down: 0.8,
+  off: 1.9,
+  grab: 0.45,
+  put: 0.5,
+});
 // The glancer's look across the lane (radians; about 174 degrees, down and to the left), and how far it sweeps
 // either side. Chosen so the lane between the door and the plant is covered while his doorway and the plant's left
 // side, where Squatch steps in, are never in his cone (tests/party-scenes.mjs).

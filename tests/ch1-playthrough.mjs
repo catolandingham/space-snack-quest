@@ -349,10 +349,12 @@ const play = await page.evaluate(() => {
     const pb = window.SSQ.beat("ch1-party"),
       pn = pb && pb.now();
     if (pn && pn.dance) {
-      // The full-screen dance: every tap is a move; it ends with the song.
-      const cv = document.querySelector('canvas[aria-label="dance"]');
-      cv && i % 8 === 0 && cv.dispatchEvent(new PointerEvent("pointerdown", { clientX: 200, clientY: 300, pointerId: 8, bubbles: true }));
-      cv && i % 8 === 0 && cv.dispatchEvent(new PointerEvent("pointerup", { clientX: 200, clientY: 300, pointerId: 8, bubbles: true }));
+      // The full-screen dance: he taps the glowing spot (the dance notes where it is); it ends with the song.
+      const cv = document.querySelector('canvas[aria-label="dance"]'),
+        dn = n.ch1PartyNow && n.ch1PartyNow.dance,
+        gl = dn && dn.live && dn.seen && dn.seen.glow;
+      cv && gl && i % 4 === 0 && cv.dispatchEvent(new PointerEvent("pointerdown", { clientX: gl.x, clientY: gl.y, pointerId: 8, bubbles: true }));
+      cv && gl && i % 4 === 0 && cv.dispatchEvent(new PointerEvent("pointerup", { clientX: gl.x, clientY: gl.y, pointerId: 8, bubbles: true }));
       ss.tick(0.1);
       still = 0;
       continue;
@@ -477,7 +479,7 @@ const play = await page.evaluate(() => {
 g.check("Chapter 1 reaches the tally card", play.end === "tally", { end: play.end, acts: play.acts, scene: play.state.scene });
 // The party night (src/modules/party.js): the peek, the plant, home through his door, the dress-up, out through his
 // door; the party in disguise (the dance), closing time, and walking home with Mops.
-const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "WALK · go-home", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "TAKE · gift", "PUT · box", "DROP · box", "LOOK · calendar", "TAKE · lunch", "SNEAK · hallway", "GIVE · lunch", "FEED · lunch", "FEED · bag", "TAKE · snack", "DROP · snack", "HIDE · plant", "GO · hall", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "LEAVE · food", "PUT · slip", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
+const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "GRAB · flyer", "WALK · go-home", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "TAKE · gift", "PUT · box", "DROP · box", "LOOK · calendar", "TAKE · lunch", "SNEAK · hallway", "GIVE · lunch", "FEED · lunch", "FEED · bag", "TAKE · snack", "DROP · snack", "HIDE · plant", "GO · hall", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "LEAVE · food", "PUT · slip", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
 g.check("the player does the new actions in order", JSON.stringify(play.acts) === JSON.stringify(wantActs), play.acts);
 const must = [
   "Stormtop Cloud Resort, floating above Jupiter.",

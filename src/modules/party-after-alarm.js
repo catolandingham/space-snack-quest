@@ -11,7 +11,8 @@
  *     their six lines; the guard leaves; Squatch comes out from under the bed still in costume; Mops looks at the
  *     costume; "You went to the party."; "Everyone out there has someone."; "Everyone except me."; "You have me.";
  *     Mops gently lifts the piece on his head off him, with no words (nothing on his head: a gentle pat). Then
- *     beat 20.
+ *     Squatch's two questions and Mops's two answers (he answers only the first, on purpose); with no words Mops
+ *     walks to the TV and presses its button with a horn (he has no thumbs); the TV comes on; beat 20.
  *   Hiding in a plant in the hall and walking home later: a guard follows him in a moment later all the same, so
  *     the card and both endings are the same (`follow`).
  */
@@ -20,14 +21,34 @@ import { startAlarm } from "./party-alarm.js";
 import { openFullScreen, closeFullScreen, fullScreenOpen } from "./fullscreen.js";
 import { found, cardLayout, cardButtonAt, drawCard } from "./party-card.js";
 import { wornNow } from "./party-outfit.js";
+import { liftTo } from "./party-free-art.js";
 
 // PLACEHOLDERS for Brian: how fast they walk at home, how far apart they stand to talk and for the hat, how long
 // Mops looks at the costume, how long a piece takes to go back on, and how long the hat's lift (or the pat) plays.
-export const AFTER = Object.freeze({ walk: 150, beside: 170, close: 138, look: 1.4, redress: 0.45, lift: 2.6 });
+export const AFTER = Object.freeze({ walk: 150, beside: 170, close: 138, look: 1.4, redress: 0.45, lift: 2.6, setDown: 0.5, hatUp: 24 });
 // Where they stand in the home room (game positions): Mops walks in past the guard (`mopsPast`, well in front of
 // him) and stops between the guard and the bed to talk (`mopsTalk`), so the guard's way out is clear; and Squatch
 // once he is out from under the bed (beside it, on the open floor in front of the bucket and the Guardian box,
 // which are part of the locked room picture).
+// The TV on the home room's shelf, measured on the locked home picture (v6): its dark frame is 566..683 x 134..225,
+// its screen 572..677 x 141..212, the shelf under it starts at 225. The picture shows it off; lit, and its button,
+// are the party's own drawings, shown only for this moment (party-free-art.js drawTv). The button is on the
+// frame's bottom edge, at the end Mops walks up to. `stand` is where his feet are for the top of his front horn to
+// be `hop` under the button; the press is a small hop that long, and the TV comes on at its top (`peak`). `hold`
+// is how long the lit TV is shown before beat 20 (a wordless moment plays itself: 30a).
+// PLACEHOLDERS for Brian: the press 0.9 s, the hold 1.6 s, setting the hat down 0.5 s.
+const HORN_TOP = Object.freeze({ x: 27 * 3, y: 45 * 3 }); // the top of his front horn from his feet, as he is drawn at home
+const TV_BUTTON = Object.freeze({ x: 672, y: 219, r: 4 });
+const TV_HOP = 14;
+export const TV = Object.freeze({
+  button: TV_BUTTON,
+  screen: Object.freeze({ x: 624, y: 176, x0: 572, x1: 678, y0: 141, y1: 213 }),
+  stand: Object.freeze({ x: TV_BUTTON.x + HORN_TOP.x, y: TV_BUTTON.y + HORN_TOP.y + TV_HOP }),
+  hop: TV_HOP,
+  press: 0.9,
+  peak: 0.5,
+  hold: 1.6,
+});
 export const AFTER_SPOTS = Object.freeze({ mopsPast: Object.freeze({ x: 850, y: 548 }), mopsTalk: Object.freeze({ x: 662, y: 540 }), out: Object.freeze({ x: 400, y: 590 }) });
 
 /**
@@ -205,7 +226,27 @@ export function createAfterAlarm(h) {
         h.sound.one(q.lift.id ? "fwip" : "pop");
       }),
       e.until(() => !P() || !P().lift || P().lift.k >= 1),
+      // He sets the piece down on the floor between them (his mouth is for talking, his horn for the TV).
+      e.run(() => {
+        const q = P();
+        if (!q.lift.id) return;
+        const m = e.pos("mops"),
+          s = h.sq();
+        Object.assign(q.lift, { held: liftTo(m, s, e.squatchScale()), rest: { x: (m.x + s.x) / 2 + 6, y: Math.max(m.y, s.y) - AFTER.hatUp }, set: 0 });
+      }),
+      e.until(() => !P() || !P().lift || !P().lift.id || P().lift.set >= 1),
       ...wait(0.6),
+      // Squatch's two questions; Mops answers only the first (Brian 2026-11-24, night)
+      h.say("sq", "sq-why-hide"),
+      h.say("sq", "sq-why-guardians"),
+      h.say("mops", "mops-waiting"),
+      h.say("mops", "mops-heres-why"),
+      // No words: Mops walks to the TV (its button glows) and presses it with his horn; the TV comes on (tick).
+      e.run(() => (P().tv = { phase: "walk", k: 0 })),
+      e.until((dt) => e.step("mops", TV.stand.x, TV.stand.y, AFTER.walk, dt)),
+      e.run(() => (e.still("mops"), e.face("mops", -1), (P().tv = { phase: "press", k: 0 }))),
+      e.until(() => !P() || !P().tv || P().tv.phase === "on"),
+      ...wait(TV.hold),
       e.run(() => h.finish()),
     ]);
     return true;
@@ -217,6 +258,18 @@ export function createAfterAlarm(h) {
   function tick(p, dt) {
     p.scene === "P7" && p.pose === "bed" && p.alarm && p.alarm.phase === "home" && !fullScreenOpen() && underBed(p);
     p.lift && p.lift.k < 1 && (p.lift.k = Math.min(1, p.lift.k + dt / AFTER.lift));
+    p.lift && p.lift.set != null && p.lift.set < 1 && (p.lift.set = Math.min(1, p.lift.set + dt / AFTER.setDown));
+    // The horn press: a small hop, his horn's top on the button at the top of it, where the TV comes on.
+    const v = p.tv;
+    if (v && v.phase === "press") {
+      const was = v.k,
+        e = E();
+      v.k = Math.min(1, v.k + dt / TV.press);
+      e.place("mops", TV.stand.x, TV.stand.y - Math.sin(Math.PI * v.k) * TV.hop);
+      was < TV.peak && v.k >= TV.peak && (h.sound.one("click"), (v.lit = 0));
+      v.k >= 1 && (v.phase = "on");
+    }
+    v && v.lit != null && (v.lit += dt);
   }
   /** ↺ in "Keep going" (or a link straight to P8a): under the bed, the guard about to come in. */
   function startKeep(p) {
@@ -231,6 +284,9 @@ export function createAfterAlarm(h) {
     p.pose = "bed";
     startAlarm(p, { id: "backpack", x: p.people.backpack.x, y: p.people.backpack.y }, "where-home", "who-guard");
     Object.assign(p.alarm, { phase: "home", t: 0 });
+    // (a restart after the TV came on: it is off again, and its button is not drawn; nothing is lifted yet)
+    p.tv = null;
+    p.lift = null;
     p.choice = "keep";
     e.forgetSaved();
     h.chip("");

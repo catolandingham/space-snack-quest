@@ -11,7 +11,7 @@
  *     a guard follows him home, HIDE · bed, "They lost you.", the calm seen from the door gap, back in his doorway.
  *   - The vent: too close, a tuft and the big warning; staying, the alarm "by the vent".
  *   - P3: Isfred's lines in order, everyone facing him, his bubble never over the banner; then the band and the
- *     pairs; his eyes in the plant, never at the vent. P4: a flyer on his back, home through his door, the flyer
+ *     pairs; his eyes in the plant, never at the vent. P4 (the flyer sneak, checked in full in tests/party-flyer.mjs): out of the plant, round to the flyer, GRAB · flyer, home through his door, the flyer
  *     on the floor. P5: the full-screen dress-up (stick and button hidden), pieces snap to the nearest body spot,
  *     a second piece swaps, the meter (its ta-da chimes), GO · party, ↺ restarts with nothing on; out through the
  *     door into the party in disguise (P6, tests/party-free.mjs), nobody jumping.
@@ -501,14 +501,16 @@ let p4Cast = null;
       }
     },
   );
-  g.check("P3's lines in order", JSON.stringify(lines) === JSON.stringify(["Let's give a big hello to our friends from Bleep-Bloop Robotics!", "Soon their helper robots will be here, to help with the heavy work.", "And now... put your hands together for the Croc Boys!", "Stormtop-vania 1-2-3-4-5!", "I've never gotten to dance at a party."]), lines);
+  g.check("P3's lines in order", JSON.stringify(lines) === JSON.stringify(["Let's give a big hello to our friends from Bleep-Bloop Robotics!", "Soon their helper robots will be here, to help with the heavy work.", "And now... put your hands together for the Croc Boys!", "Stormtop-vania 1-2-3-4-5!", "I've never gotten to dance at a party.", "A robot flyer! I'll show Mops."]), lines);
   g.check("everyone in the crowd looks at Isfred during his lines (their cones point at him)", facing);
-  g.check("every bubble in P3 has a real name over it (the band's says Croc Boys)", names.length === 5 && names.every(([, nm]) => nm && nm !== "undefined" && nm !== "none") && names[3][1] === "Croc Boys", names);
+  g.check("every bubble in P3 has a real name over it (the band's says Croc Boys)", names.length === 6 && names.every(([, nm]) => nm && nm !== "undefined" && nm !== "none") && names[3][1] === "Croc Boys", names);
   g.check("no wordless story wait in P3 (no yellow corner chevron)", waits === 0, waits);
   g.check("Isfred's bubble never covers the banner", !bubbleOverBanner);
   g.check("his eyes are in the middle plant, never at the vent", !!eyesAt && Math.hypot(eyesAt.x - 441, eyesAt.y - 486) < 6, eyesAt);
-  g.check("P4 starts with him in the plant, control back, the door the goal", !!s && s.ctrl && s.now.pose === "hidden", s);
-  // The pairs: partners stand side by side and look at each other; the two without partners watch the band.
+  g.check("P4 starts with him in the plant, control back, the flyer the goal", !!s && s.ctrl && s.now.pose === "hidden" && s.now.flyer === "stage" && s.chip === "Squatch: grab the flyer", s);
+  // The pairs stand side by side. By the stage's left they look at each other; the robot looks at the octopus, who
+  // has turned to eye the snack bar (the flyer sneak, Brian 2026-11-24: that turn leaves the one clear way to the
+  // flyer; before, all four looked at their partners).
   const pairs = await page.evaluate(() => {
     const b = window.SSQ.beat("ch1-party"),
       p = window.__ss.op.ch1PartyNow,
@@ -522,23 +524,46 @@ let p4Cast = null;
         while (d < -Math.PI) d += 2 * Math.PI;
         return Math.abs(d) < 0.1;
       };
-    return [
-      ["teal", "stilt"],
-      ["robot", "octopus-guest"],
-    ].map(([a, c]) => ({ a, c, apart: Math.hypot(at(a).x - at(c).x, at(a).y - at(c).y), face: looksAt(a, c) && looksAt(c, a) }));
+    const oc = cones.find((k) => k.id === "octopus-guest");
+    return {
+      pairs: [
+        ["teal", "stilt"],
+        ["robot", "octopus-guest"],
+      ].map(([a, c]) => ({ a, c, apart: Math.hypot(at(a).x - at(c).x, at(a).y - at(c).y), face: looksAt(a, c), back: looksAt(c, a) })),
+      // toward the bar: to his right and down
+      octopus: [Math.cos(oc.a), Math.sin(oc.a)],
+    };
   });
-  g.check("the guests dance in pairs: partners side by side, looking at each other", pairs.every((q) => q.apart < 90 && q.face), pairs);
+  g.check("the guests dance in pairs, side by side: by the stage's left they look at each other; the robot looks at the octopus, who eyes the snack bar", pairs.pairs.every((q) => q.apart < 90 && q.face) && pairs.pairs[0].back && !pairs.pairs[1].back && pairs.octopus[0] > 0.5 && pairs.octopus[1] > 0.3, pairs);
   p4Cast = await page.evaluate(() => {
     const p = window.__ss.op.ch1PartyNow;
     return { people: Object.fromEntries(Object.entries(p.people).map(([k, v]) => [k, [v.x, v.y]])), isfred: [p.isfred.x, p.isfred.y] };
   });
   await walk(page, 470, 600);
   s = await until(page, (q) => q.now && q.now.pose === "stand", 3000);
-  g.check("steering steps him out of the plant with a flyer stuck to his back", !!s && s.now.flyer === "back", s && s.now);
+  g.check("steering steps him out of the plant, and nothing sticks to his back (the one flyer is still on the stage)", !!s && s.now.flyer === "stage", s && s.now);
   await sleep(300);
-  await still(page, "p4-flyer-on-back");
-  s = await until(page, (q) => q.now && q.now.scene === "P5", 12000, async (q) => q.ctrl && q.room === "hall" && (await walk(page, 477, 600)));
-  g.check("through his door he walks home; the flyer drops on the floor; P5", !!s && s.now.flyer === "floor" && s.room === "closet", s && s.now);
+  await still(page, "p4-out-of-the-plant");
+  // round the dancers' sight to the flyer (the way tests/party-flyer.mjs maps), GRAB · flyer, and home
+  for (const [x, y] of [[520, 575], [520, 400], [hall.FLYER.reach.x, hall.FLYER.reach.y + 8]]) {
+    await walk(page, x, y);
+    await until(page, (q) => Math.hypot(q.x - x, q.y - y) < 14 || q.act === "GRAB · flyer" || !q.ctrl, 8000);
+  }
+  s = await until(page, (q) => q.act === "GRAB · flyer", 3000);
+  g.check("at the stage's end the button is GRAB · flyer", !!s, s && s.act);
+  await press(page);
+  s = await until(page, (q) => q.now.flyer === "paw" && q.ctrl, 3000);
+  g.check("he takes it: the flyer is in his paw, and the chip sends him home", !!s && s.chip === "Squatch: sneak home for a disguise", s && [s.now.flyer, s.chip]);
+  for (const [x, y] of [[520, 400], [520, 575]]) {
+    await walk(page, x, y);
+    await until(page, (q) => Math.hypot(q.x - x, q.y - y) < 14 || !q.ctrl, 8000);
+  }
+  const homeLines = [];
+  s = await until(page, (q) => q.now && q.now.scene === "P5", 20000, async (q) => {
+    q.ctrl && q.room === "hall" && (await walk(page, 477, 600));
+    q.cur === "bub" && (homeLines.includes(q.text) || homeLines.push(q.text), await sleep(450), await tap(page));
+  });
+  g.check("through his door he walks home with it and puts it down; his two thoughts; P5 with the flyer on the floor", !!s && s.now.flyer === "floor" && s.room === "closet" && JSON.stringify(homeLines) === JSON.stringify(["I deserve one night of normal.", "Costume on. Then I dance!"]), [s && s.now.flyer, homeLines]);
   await still(page, "p5-home-flyer");
   const p3Trail = await trailJumps(page);
   g.check("from P3 to P5 nobody teleports: Squatch never jumps over 60 inside a room", p3Trail.jumps.length === 0, p3Trail.jumps.slice(0, 3));

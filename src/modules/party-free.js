@@ -21,8 +21,11 @@ import { tickConga } from "./party-toys.js";
 import { tickPhoto, startPhoto, goBack, photoActive, photoOpen, photoDone, drawGroupPolaroid, PHOTO, PHOTO_BONUS, PHOTO_ROW, POLAROID_LABEL } from "./party-photo.js";
 import { tickOctopus, chasing, OCT } from "./party-octopus.js";
 import { inHallwayZone, startBounce, tickBounce } from "./party-hallway.js";
-import { openSnacks, closeSnacks, tickSnacks, snackPointer, startTopple, tickTopple, SNACK_STARS, SNACK_LOOK_SECONDS } from "./party-snacks.js";
-import { newDance, danceMove, tickDance, drawDanceCloseUp, drawCloseButton, danceClose, DANCE } from "./party-dance.js";
+import { openSnacks, tickTopple, snackRecord, SNACK_LOOK_SECONDS } from "./party-snacks.js";
+import { snackFrame, snackTouch, snackShut } from "./party-snacks-play.js";
+import { newDance, danceClose, danceTried, DANCE } from "./party-dance.js";
+import { drawDanceCloseUp, drawCloseButton } from "./party-dance-art.js";
+import { danceFrame, danceTouch } from "./party-dance-play.js";
 import { openFullScreen, closeFullScreen } from "./fullscreen.js";
 
 // R73 (Brian approved a 3 to 4 minute party; this slice uses 3 minutes). A tuning pin: name and value unchanged.
@@ -197,7 +200,7 @@ export function createFreePlay(h) {
   }
   function endToys(p) {
     p.dance && closeDance(p, true);
-    p.snack && (closeSnacks(p), h.control(true));
+    snackShut(p, h);
     p.conga && (p.conga.joined = false);
     // the photo moment ends where it is (the Polaroid closes; everyone walks back once the party goes on)
     if (photoActive(p)) (p.shot.phase === "polaroid" && closeFullScreen(), goBack(p));
@@ -224,24 +227,23 @@ export function createFreePlay(h) {
       pointer(kind, x, y) {
         const q = h.P();
         if (kind !== "down" || !q || !q.dance) return;
-        // the way out: the close button in the corner (the dance counts once he has made a few moves)
+        // the way out: the close button in the corner (the dance counts once he has hit his first three spots)
         const cb = danceClose(danceView ? danceView.size().w : 375);
         if (Math.hypot(x - cb.x, y - cb.y) < cb.r) return void closeDance(q);
-        danceMove(q.dance);
-        h.sound.one("robot");
-        q.dance.moves % 3 === 1 && h.sound.one("cheer");
+        // a tap on the glowing spot, on him, or nowhere (party-dance-play.js)
+        danceTouch(q, x, y, danceView ? danceView.size() : { w: 375, h: 812 }, h);
       },
     });
   }
   // `forAlarm`: the alarm closes it (control stays off for the capture rule). Otherwise the guests clap and he has
-  // control again; the dance counts once he made a few moves.
+  // control again; the dance counts once he has hit his first three spots.
   function closeDance(p, forAlarm) {
-    const moves = p.dance ? p.dance.moves : 0;
+    const tried = danceTried(p.dance);
     closeFullScreen();
     danceView = null;
     p.dance = null;
     if (forAlarm) return;
-    moves >= 3 && ((p.done.dance = true), (p.clap = DANCE.clap), h.sound.one("clap"));
+    tried && ((p.done.dance = true), (p.clap = DANCE.clap), h.sound.one("clap"));
     h.control(true);
   }
 
@@ -321,13 +323,13 @@ export function createFreePlay(h) {
     // for the pyramid's crash and the stare to be over: one moment at a time)
     if (p.songT >= SONG_SECONDS && !(p.dance && p.dance.t < DANCE.least) && !p.bounce && !(p.oct && p.oct.mode === "hug") && !photoActive(p) && !crashing(p)) {
       // the first song ends: the group photo, once (the second song starts when everyone is back)
-      if (p.song === 0 && !photoDone(p)) return void (p.dance || p.snack ? (p.dance && closeDance(p), p.snack && (closeSnacks(p), h.control(true))) : beginPhoto(p));
-      if (p.song >= 2) return void (p.dance || p.snack ? (p.dance && closeDance(p), p.snack && (closeSnacks(p), h.control(true))) : h.toClosing());
+      if (p.song === 0 && !photoDone(p)) return void (p.dance || p.snack ? (p.dance && closeDance(p), snackShut(p, h)) : beginPhoto(p));
+      if (p.song >= 2) return void (p.dance || p.snack ? (p.dance && closeDance(p), snackShut(p, h)) : h.toClosing());
       p.song += 1;
       p.songT = 0;
       h.sound.song(p.song);
     }
-    p.dance && (tickDance(p.dance, dt), p.dance.song !== p.song && p.dance.t >= DANCE.least && closeDance(p));
+    p.dance && (danceFrame(p, dt, h), p.dance.song !== p.song && p.dance.t >= DANCE.least && closeDance(p));
     // (trying the hallway doorway is not a toy: Brian 2026-11-24)
     const others = ["conga", "photo", "snacks", "octopus"].filter((k) => p.done[k]).length;
     // (never before the group photo has had its moment: it comes when the first song ends)
@@ -389,21 +391,8 @@ export function createFreePlay(h) {
       v === "warn" && (h.sound.one("whoosh"), h.sound.one("fwip"));
       if (v === "fur") return void (e.sfx("zap"), alarm(p, h.nearestGuest(p, s).id, s, "where-vent"));
     }
-    // the snack bar: the bartender in the close-up, and the pyramid's chain
-    const glanced = p.snack && p.snack.phase;
-    const sn = tickSnacks(p, dt);
-    glanced === "back" && p.snack && p.snack.phase === "glance" && h.sound.one("dun");
-    sn === "catch1" && (e.sfx("bleep"), e.queue([h.say("bartender", "bartender-gloves")]));
-    if (sn === "catch2") {
-      e.sfx("bleep");
-      e.queue([
-        h.say("bartender", "bartender-fur"),
-        e.run(() => {
-          const q = h.P();
-          q && q.scene === "P6" && alarm(q, "bartender", h.sq(), "where-bar", "run");
-        }),
-      ]);
-    }
+    // the snack bar: the close-up (party-snacks-play.js), and the pyramid's chain
+    snackFrame(p, dt, h, alarm);
     const tp = tickTopple(p, dt);
     tp === "crash" && h.sound.one("crash");
     if (tp === "cup") {
@@ -468,8 +457,8 @@ export function createFreePlay(h) {
     if (!furShows(p) && !(p.conga && p.conga.joined))
       out.push({ id: "dance", verb: partyLine("button-dance").split(" · ")[0], cap: partyLine("button-dance").split(" · ")[1], who: "sq", x: DANCE_SPOT.x, y: DANCE_SPOT.y, r: DANCE_SPOT.rx, thing: { x0: DANCE_SPOT.x - DANCE_SPOT.rx, x1: DANCE_SPOT.x + DANCE_SPOT.rx, y0: DANCE_SPOT.y - DANCE_SPOT.ry, y1: DANCE_SPOT.y + DANCE_SPOT.ry }, when: inSpot(s), f: () => openDance(h.P()) });
     // The snack bar: standing at it, the action button alone offers the snacks (no ring and no little picture over
-    // the pyramid: Brian 2026-11-24). Not once the pyramid has fallen.
-    if (!p.snacks.toppled) {
+    // the pyramid: Brian 2026-11-24). Not once the pyramid has fallen, and not once he has taken every snack.
+    if (!p.snacks.toppled && snackRecord(p.snacks).left > 0) {
       const [verb, cap] = partyLine("button-grab").split(" · ");
       out.push({ id: "snacks", verb, cap, who: "sq", x: SNACK_SPOT.x, y: SNACK_SPOT.y, r: SNACK_SPOT.r, thing: PYRAMID_BOX, f: () => grab(h.P()) });
     }
@@ -495,13 +484,7 @@ export function createFreePlay(h) {
   /** A finger in the snack close-up. True when the close-up took it. */
   function pointer(p, kind, x, y) {
     if (!p.snack) return false;
-    const e = E();
-    const r = snackPointer(p, kind, x, y);
-    r === "grab" && h.sound.one("crinkle");
-    if (r === "bag" || r === "topple") ((p.done.snacks = true), e.addStars(SNACK_STARS), e.sfx("pickup"), h.sound.one("tink"));
-    if (r === "topple") (closeSnacks(p), startTopple(p), h.sound.one("crash"), h.control(true));
-    r === "close" && (closeSnacks(p), h.control(true));
-    return true;
+    return snackTouch(p, kind, x, y, h);
   }
   return { start, resume, tick, spots, pointer, alarm, closeDance, inSpot };
 }

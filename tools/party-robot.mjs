@@ -111,22 +111,22 @@ for (;;) {
       await sleep(400);
       continue;
     }
-    // the dance: tap anywhere, a kid's rhythm
-    await page.touchscreen.tap(120 + (danceTaps % 5) * 30, 400);
-    danceTaps++;
+    // the dance: tap the spot that glows on him, a kid's rhythm (the dance notes where it is on the screen)
+    const glow = await page.evaluate(() => ((d) => (d && d.live && d.seen && d.seen.glow) || null)(window.__ss.op.ch1PartyNow.dance));
+    glow && (await page.touchscreen.tap(glow.x, glow.y), danceTaps++);
     await sleep(350);
     continue;
   }
   if (s.now.snack) {
-    // drag a snack to the bag when her back is turned; close after three
-    const most = process.env.ROBOT_CAREFUL ? 3 : SEED ? 6 : 5; // a careful kid stops before the pyramid falls
+    // tap a snack when her back is turned (his paw takes it; no dragging); leave by LEAVE · bar after three.
+    // The pile: slots[i] is -1 for a gap; a lower slot number is higher up, so the first snack left is on top and
+    // always safe. A careful kid takes from the top; the others take the fourth snack left, which is often one
+    // that others stand on (a settle, or the fall).
+    const most = process.env.ROBOT_CAREFUL ? 3 : SEED ? 6 : 5;
     if (s.now.snack.phase === "back" && s.now.snacks.bag < most) {
-      const taken = s.now.snacks.bag;
-      const [_, sx, sy] = layout.cut.snacks[(taken * 3) % 10];
-      await pointer("down", sx, sy);
-      await sleep(200);
-      await pointer("move", 100, 540);
-      await pointer("up", 100, 540);
+      const left = await page.evaluate(() => (window.__ss.op.ch1PartyNow.snacks.slots || []).map((id, i) => (id >= 0 ? i : -1)).filter((i) => i >= 0));
+      const pick = left.length ? left[process.env.ROBOT_CAREFUL ? 0 : Math.min(left.length - 1, 3)] : -1;
+      pick >= 0 && (await pointer("down", layout.cut.snacks[pick][1], layout.cut.snacks[pick][2]));
     } else if (s.now.snacks.bag >= Math.min(3, most) && !SEED) await pointer("down", layout.cut.close.x, layout.cut.close.y);
     await sleep(400);
     continue;

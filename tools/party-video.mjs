@@ -35,7 +35,7 @@ const st = () =>
       b = document.querySelector('[role="button"]'),
       r = b && b.getBoundingClientRect(),
       cv = document.querySelector("canvas").getBoundingClientRect();
-    return { act: n.act ? n.act.verb : "", now: window.SSQ.beat("ch1-party").now(), cur: c ? c.k : "", id: c ? c.id || "" : "", ctrl: n.ctrl, room: n.room, btn: r ? { x: r.x + r.width / 2, y: r.y + r.height / 2 } : null, cv: [cv.x, cv.y, cv.width, cv.height], dress: window.SSQ.beat("ch1-party").dressTargets() };
+    return { act: n.act ? n.act.verb : "", now: window.SSQ.beat("ch1-party").now(), cur: c ? c.k : "", id: c ? c.id || "" : "", ctrl: n.ctrl, room: n.room, btn: r ? { x: r.x + r.width / 2, y: r.y + r.height / 2 } : null, cv: [cv.x, cv.y, cv.width, cv.height], sq: [n.sq.x, n.sq.y], dress: window.SSQ.beat("ch1-party").dressTargets() };
   });
 const floor = async (s, x, y) => tap(s.cv[0] + (x * s.cv[2]) / 960, s.cv[1] + (y * s.cv[3]) / 640);
 const press = async (s) => s.btn && tap(s.btn.x, s.btn.y);
@@ -93,15 +93,23 @@ await press(await st());
 await until((q) => q.now && q.now.scene === "P3", 30000);
 log("P3");
 await until((q) => q.now && q.now.scene === "P4" && q.ctrl, 60000, readOn);
-// P4: out of the plant, straight home.
+// P4, the flyer sneak: out of the plant, round the dancers' sight to the flyer on the stage's end (the way
+// tests/party-flyer.mjs maps), GRAB · flyer, back the same way and home; his two thoughts at home.
 log("P4");
-await sleep(1200);
-s = await st();
-await floor(s, 477, 600);
-await until((q) => q.now && q.now.scene === "P4" && q.room === "hall" && q.now.pose === "stand", 4000);
-await sleep(300);
+await sleep(1800);
+const walkTo = async (x, y, ok) => {
+  await floor(await st(), x, y);
+  await until((q) => (ok && ok(q)) || Math.hypot(q.sq[0] - x, q.sq[1] - y) < 16, 8000);
+};
+for (const [x, y] of [[470, 585], [520, 575], [520, 400]]) await walkTo(x, y);
+await walkTo(536, 332, (q) => q.act === "GRAB");
+await until((q) => q.act === "GRAB", 4000);
+await sleep(700);
+await press(await st());
+await until((q) => q.now && q.now.flyer === "paw" && q.ctrl, 4000);
+for (const [x, y] of [[520, 400], [520, 575]]) await walkTo(x, y);
 await floor(await st(), 477, 600);
-await until((q) => q.now && q.now.scene === "P5" && q.ctrl, 15000);
+await until((q) => q.now && q.now.scene === "P5" && q.ctrl, 30000, readOn);
 // P5: to the closet, dress up, out the door.
 log("P5");
 await sleep(1000);

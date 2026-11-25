@@ -1788,6 +1788,8 @@
         "Sneaky! " + i.filter((q) => n.found.has(q)).length + "/" + i.length,
         "Times caught " + s,
         ...(s === 0 ? [NEVER_CAUGHT, NEVER_CAUGHT_WHY] : [NEVER_CAUGHT_TODO]),
+        // The party's honor for taking every snack (src/modules/party-snacks.js): one line, no points.
+        ...(partyBeat() && partyBeat().snackHonor && partyBeat().snackHonor() ? [partyBeat().snackHonor()] : []),
         "Chapter score \u2605 " + n.stars,
       ];
     }

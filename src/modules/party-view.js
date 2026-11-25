@@ -4,17 +4,18 @@
  * builds that view for every scene, and draws the party's things over the home room (the music notes at the door,
  * the flyer on the floor, his outfit, the guard who follows him home, Mops out of breath).
  */
-import { HALL, CAST, CAMERA_AIM, HALL_SPEAKER } from "./party-hall.js";
+import { HALL, CAST, CAMERA_AIM, HALL_SPEAKER, FLYER } from "./party-hall.js";
 import { drawCones } from "./party-watch.js";
 import { guardLook, guardMark, torchShift } from "./party-guard-look.js";
-import { drawHall } from "./party-draw.js";
+import { drawHall, flyerInPaw } from "./party-draw.js";
 import { drawDoorNotes, drawFlyer, drawOutfit, drawPerson, drawMark, cameraLens, BODY_SPOTS } from "./party-art.js";
 import { homeGuardCone } from "./party-alarm.js";
 import { ventTufts } from "./party-vent.js";
 import { wornNow, flyingNow, furShows } from "./party-outfit.js";
-import { drawPyramid, drawSnackCloseUp } from "./party-snacks.js";
+import { drawPyramid, drawSnackCloseUp } from "./party-snacks-art.js";
 import { SONG_LIGHTS } from "./party-dance.js";
-import { drawCountdown, drawFlash, drawBandNotes, drawClap, drawHiccups, drawSpeakerRing, drawLoosePiece, drawHeartCone, liftAt, drawPat } from "./party-free-art.js";
+import { drawCountdown, drawFlash, drawBandNotes, drawClap, drawHiccups, drawSpeakerRing, drawLoosePiece, drawHeartCone, liftAt, liftTo, setDownAt, drawPat, drawTv } from "./party-free-art.js";
+import { TV } from "./party-after-alarm.js";
 import { PHOTO_ROW } from "./party-photo.js";
 import { bounceHop, bumpMark, drawBump } from "./party-hallway.js";
 import { OCT } from "./party-octopus.js";
@@ -38,7 +39,8 @@ export function createView(h) {
       e = E(),
       late = LATE.has(p.scene),
       gone = (p.close && p.close.gone) || {},
-      dancing = p.mode === "pairs";
+      dancing = p.mode === "pairs",
+      fl = flyerNow(p, t);
     const guests = CAST.guests
       .filter((g) => !gone[g.id])
       .map((g) => {
@@ -109,13 +111,14 @@ export function createView(h) {
       tripod: gone.camera ? null : { ...tripodAt, aim: aimNow(p) },
       // closing time: nobody is watching for him any more (they are leaving), so no cones (rule 8: a cone always reacts)
       cones: p.scene === "P8b" ? [] : h.cones(p).filter((c) => !gone[c.id]),
-      allCones: p.scene === "P1",
+      // the peek teaches cones, and the flyer sneak is planned by looking: both draw every cone whole
+      allCones: p.scene === "P1" || p.scene === "P4",
       noteCone: (c) => e.noteCone(c),
       // While a line is up or a scripted walk runs, nobody sees him, so no cone fills yellow (drawn equals sight).
       unseen: !(e.get("ctrl") && !e.current()) || p.scene === "P8b",
       // In a whole disguise nobody knows him: a cone that holds him stays dashed (only the "?" shows).
       fooled: late && !furShows(p),
-      squatch: outlineHidden ? { x: s.x, y: s.y, pose: "hidden" } : { x: s.x, y: s.y, f: s.f || 1, walk: e.walkPhase(), pose: p.pose === "peek" ? "peek" : "stand", flyer: p.flyer === "back", shake, outfit, hop: bounceHop(p) },
+      squatch: outlineHidden ? { x: s.x, y: s.y, pose: "hidden" } : { x: s.x, y: s.y, f: s.f || 1, walk: e.walkPhase(), pose: p.pose === "peek" ? "peek" : "stand", flyer: p.flyer === "paw", shake, outfit, hop: bounceHop(p) },
       eyes,
       marks,
       shout,
@@ -123,12 +126,28 @@ export function createView(h) {
       tufts: ventTufts(p),
       warning: p.vent && p.vent.t > 0 && p.pose === "stand" ? { k: Math.min(1, p.vent.t * 4) } : null,
       floor: (ctx) => floor(ctx, p, t),
-      extra: m ? [{ y: m.y, f: () => e.drawMopsOn(ctx0, m.x, m.y, e.hallSizes().squatch * 1.15, { f: m.f, walk: m.walk ? t * 8 : 0, headDown: !!m.walk, sweep: m.walk ? Math.sin(t * 6) * 4 : 0 }) }] : [],
+      extra: [
+        ...(m ? [{ y: m.y, f: () => e.drawMopsOn(ctx0, m.x, m.y, e.hallSizes().squatch * 1.15, { f: m.f, walk: m.walk ? t * 8 : 0, headDown: !!m.walk, sweep: m.walk ? Math.sin(t * 6) * 4 : 0 }) }] : []),
+        ...(fl ? [{ y: fl.depth, f: () => drawFlyerLit(ctx0, fl) }] : []),
+      ],
     };
   }
   // Where the camera points: the row during the photo moment (until everyone walks back), else the stage.
   const aimNow = (p) => (p.shot && ["gather", "settle", "count", "flash", "polaroid"].includes(p.shot.phase) ? PHOTO_ROW.aim : CAMERA_AIM);
   let ctx0 = null;
+  // The flyer in the hall, with a yellow glow while Squatch thinks about it.
+  function drawFlyerLit(ctx, fl) {
+    if (fl.glow) {
+      // (the glow is its own soft yellow patch behind the paper, so the paper itself stays white)
+      ctx.save();
+      ctx.shadowColor = `rgba(255,207,51,${fl.glow})`;
+      ctx.shadowBlur = 24;
+      ctx.fillStyle = "#ffcf33";
+      ctx.fillRect(fl.x - fl.size * 0.4, fl.y - fl.size * 0.55, fl.size * 0.8, fl.size * 1.1);
+      ctx.restore();
+    }
+    drawFlyer(ctx, fl.x, fl.y, fl.size, fl.rot);
+  }
   // On the floor, under everyone: pieces that fell, Mops's wet streak and his heart cone.
   function floor(ctx, p, t) {
     for (const f of p.fallen || []) f.to === "floor" && drawLoosePiece(ctx, f.id, f.x, f.y, 22, f.rot);
@@ -153,26 +172,46 @@ export function createView(h) {
     const look = p.follow || p.scene === "P4" ? Math.round(Math.sin(t * 0.9)) * 3 : 0;
     return { x: pl.eyes.x + look, y: pl.eyes.y };
   }
-  // The flyers Isfred tosses (P3): they flutter down over the crowd; one lands in the plant.
-  function drawFlyers(ctx, p) {
-    if (p.flyers < 0 || LATE.has(p.scene)) return;
-    const k = Math.min(1, p.flyers / h.pace.flyers);
-    const ends = [
-      [300, 420],
-      [360, 470],
-      [520, 440],
-      [600, 520],
-      [680, 430],
-      [441, 470],
-      [240, 520],
-    ];
-    ends.forEach(([x1, y1], i) => {
-      const x0 = CAST.isfred.x,
-        y0 = CAST.isfred.y - 70,
-        x = x0 + (x1 - x0) * k + Math.sin(k * 10 + i) * 14 * (1 - k),
-        y = y0 + (y1 - y0) * k - Math.sin(k * Math.PI) * 60;
-      drawFlyer(ctx, x, y, 11, k * 4 + i);
-    });
+  // The one flyer in the hall (P3 and P4), wherever it is unless it is in Squatch's paw (he is drawn with it):
+  // in Isfred's hand through his lines, going down onto the stage's right end as he bends, lying there, and going
+  // up into Squatch's paw at GRAB · flyer. Returns { x, y, size, rot, glow, depth } or null.
+  function flyerNow(p, t) {
+    if (LATE.has(p.scene) || !["P3", "P4"].includes(p.scene)) return null;
+    const lie = { x: FLYER.x, y: FLYER.y, size: FLYER.size, rot: 0.2 },
+      mix = (a, b, k) => ({ x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k - Math.sin(k * Math.PI) * 10, size: a.size + (b.size - a.size) * k, rot: a.rot + (b.rot - a.rot) * k });
+    if (!p.flyer) {
+      // still Isfred's: in his raised hand, then down to the stage as he bends
+      const f = p.isfred,
+        hand = { x: f.x + FLYER.hand.dx, y: f.y + FLYER.hand.dy, size: FLYER.hand.size, rot: -0.15 };
+      return { ...(f.bend ? mix(hand, lie, f.bend) : hand), depth: f.y + 1 };
+    }
+    if (p.flyer !== "stage") return null;
+    if (p.grab != null) {
+      const s = h.sq();
+      return { ...mix(lie, flyerInPaw(s.x, s.y, s.f || -1, E().hallSizes().squatch), p.grab), depth: Math.max(FLYER.y, s.y) + 1 };
+    }
+    return { ...lie, glow: p.flyerGlow ? 0.75 + 0.25 * Math.sin(t * 6) : 0, depth: FLYER.y };
+  }
+  // The flyer at home: in his paw as he comes in, going down to the floor by the door, lying there.
+  function flyerAtHome(p) {
+    const to = { x: h.homeRoom.flyer.x, y: h.homeRoom.flyer.y, size: 16, rot: 0.5 };
+    if (p.flyer === "floor") return to;
+    if (p.flyer !== "paw" && p.flyer !== "down") return null;
+    const s = h.sq(),
+      paw = flyerInPaw(s.x, s.y, s.f || -1, E().squatchScale()),
+      k = p.flyer === "down" ? (p.put || 0) ** 2 * (3 - 2 * (p.put || 0)) : 0;
+    return { x: paw.x + (to.x - paw.x) * k, y: paw.y + (to.y - paw.y) * k, size: paw.size + (to.size - paw.size) * k, rot: paw.rot + (to.rot - paw.rot) * k };
+  }
+  /** Tests: where the flyer is drawn now ({ x, y, size }), in the hall or at home, or null when there is none. */
+  function flyerAt(p) {
+    const e = E();
+    if (e.room() === "closet") return flyerAtHome(p);
+    if (e.room() !== "hall") return null;
+    if (p.flyer === "paw") {
+      const s = h.sq();
+      return flyerInPaw(s.x, s.y, s.f || 1, e.hallSizes().squatch);
+    }
+    return flyerNow(p, e.time());
   }
   // Over the hall from P6 on: the pyramid, the music, the camera, the pieces in the air.
   function drawLate(ctx, p, t) {
@@ -204,7 +243,6 @@ export function createView(h) {
       t = e.time();
     ctx0 = ctx;
     drawHall(ctx, e, h.guests, view(p, t));
-    drawFlyers(ctx, p);
     LATE.has(p.scene) && drawLate(ctx, p, t);
     outline(p, "hall");
     return true;
@@ -224,7 +262,11 @@ export function createView(h) {
     p.scene === "P1" && p.phase === "home" && drawDoorNotes(ctx, h.homeDoor, t);
     p.flyer === "floor" && drawFlyer(ctx, h.homeRoom.flyer.x, h.homeRoom.flyer.y, 16, 0.5);
     const s = h.sq();
-    const sk = e.squatchScale(),
+    const sk = e.squatchScale();
+    // coming home with the flyer: in his paw, then put down on the floor by the door (where it lies from then on)
+    const fh = flyerAtHome(p);
+    fh && p.flyer !== "floor" && drawFlyer(ctx, fh.x, fh.y, fh.size, fh.rot);
+    const
       standing = p.pose === "stand" && e.get("sqPose") === "stand";
     let wear = p.scene === "P5" ? p.outfit : LATE.has(p.scene) ? wornNow(p) : null;
     // Mops lifting the piece off his head: it is drawn in the air, not on him.
@@ -241,12 +283,15 @@ export function createView(h) {
       const m = e.pos("mops"),
         hs = BODY_SPOTS.head,
         from = { x: s.x, y: s.y + hs.y * sk - 8 * sk },
-        to = { x: m.x - Math.sign(m.x - s.x) * 34 * sk * 0.4, y: m.y - 30 * sk };
+        to = liftTo(m, s, sk);
       if (lifted) {
-        const at = liftAt(from, to, p.lift.k);
+        // (lifted off him, then set down on the floor between them, where it stays)
+        const at = p.lift.set != null ? setDownAt(p.lift.held, p.lift.rest, p.lift.set) : liftAt(from, to, p.lift.k);
         drawLoosePiece(ctx, lifted.id, at.x, at.y, hs.w * sk, at.rot);
       } else drawPat(ctx, s.x, s.y - 50 * sk, p.lift.k, 26 * sk * 0.5);
     }
+    // the TV's button, for the horn press (the TV itself is the room's)
+    p.tv && drawTv(ctx, TV, t, p.tv.lit == null ? null : p.tv.lit);
     const g = p.alarm && p.alarm.homeGuard;
     if (g) {
       // As tall next to Squatch as in the hall (Squatch is 80% of a grown-up): the home room draws him bigger. He
@@ -272,5 +317,5 @@ export function createView(h) {
   function homeGuardHeight() {
     return (50 * E().squatchScale()) / 0.8;
   }
-  return { view, eyesAt, drawRoom, draw, furShows, homeGuardHeight };
+  return { view, eyesAt, drawRoom, draw, furShows, homeGuardHeight, flyerAt };
 }

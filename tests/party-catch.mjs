@@ -110,13 +110,13 @@ g.check("caught beside the plant: back in the party, not standing in the pot", p
   await page.evaluate(() => (window.__ss.actionDown(), window.__ss.actionUp()));
   let s = await until((q) => q.p.snack, 6000);
   g.check("GRAB · snacks at the bar opens the snack close-up", !!s);
-  // Twice: hold a snack while the bartender turns round to face him.
+  // Twice: he taps a snack while the bartender faces him, so his paw is out in her sight (Brian 2026-11-24: a
+  // tap takes a snack, no dragging; before, the test held a snack while she turned round).
   for (let k = 0; k < 2; k++) {
-    await until((q) => q.p.snack && q.p.snack.phase === "glance", 15000);
+    await until((q) => q.p.snack && q.p.snack.phase === "face", 15000);
     const [, x, y] = L.cut.snacks[k];
     await page.evaluate((a) => window.__ss.ch1Pointer("down", a[0], a[1]), [x, y]);
     await until((q) => !q.p.snack || q.p.snack.catches > k, 6000);
-    await page.evaluate(() => window.__ss.ch1Pointer("up", 100, 100));
     // tap through the bartender's line
     await until((q) => q.cur === "bub", 3000);
     await page.evaluate(() => window.__ss.opTap());

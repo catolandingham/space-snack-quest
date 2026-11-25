@@ -3,30 +3,31 @@
 
 | Lines | Heading |
 | --- | --- |
-| 31–33 | # Space Snack Quest: every decision, in one place |
-| 34–41 | ## How to use this file |
-| 42–50 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 51–54 | ## Sound, 2026-11-23 |
-| 55–78 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 79–90 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 91–115 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 116–124 | ## Which repo is the base, 2026-11-22 |
-| 125–135 | ## Sight cones, 2026-11-22 |
-| 136–140 | ## Latest calendar direction, 2026-11-16 |
-| 141–143 | ## Vent walk, 2026-11-16 |
-| 144–146 | ## Locked home room v5, 2026-11-16 |
-| 147–156 | ## Fidelity system (pictures are locked, not just words) |
-| 157–194 | ## 1. Working rules |
-| 195–261 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 262–286 | ## 3. Characters and look |
-| 287–363 | ## 4. Look, rooms and layout |
-| 364–385 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 386–429 | ## 6. Later chapters (2–4 and travel) |
-| 430–439 | ## 7. Audio |
-| 440–474 | ## 8. Code, controls and process |
-| 475–521 | ## 9. Open / waiting on Brian |
-| 522–616 | ## 10. Earlier entries, kept word for word |
-| 617–713 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 32–34 | # Space Snack Quest: every decision, in one place |
+| 35–42 | ## How to use this file |
+| 43–47 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 48–56 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 57–60 | ## Sound, 2026-11-23 |
+| 61–84 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 85–96 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 97–121 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 122–130 | ## Which repo is the base, 2026-11-22 |
+| 131–141 | ## Sight cones, 2026-11-22 |
+| 142–146 | ## Latest calendar direction, 2026-11-16 |
+| 147–149 | ## Vent walk, 2026-11-16 |
+| 150–152 | ## Locked home room v5, 2026-11-16 |
+| 153–162 | ## Fidelity system (pictures are locked, not just words) |
+| 163–200 | ## 1. Working rules |
+| 201–267 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 268–292 | ## 3. Characters and look |
+| 293–369 | ## 4. Look, rooms and layout |
+| 370–391 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 392–435 | ## 6. Later chapters (2–4 and travel) |
+| 436–445 | ## 7. Audio |
+| 446–480 | ## 8. Code, controls and process |
+| 481–527 | ## 9. Open / waiting on Brian |
+| 528–622 | ## 10. Earlier entries, kept word for word |
+| 623–719 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -38,6 +39,11 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 - **Status words:** **Decided** (Brian said it or approved it) · **Needs Brian's yes** (proposed, or on-screen words waiting on him) · **Superseded** (replaced; the line says by what) · **Open** (a real question nobody has answered yet).
 - **This repo file is the single source of truth.** It was synced on Monday, November 9, 2026 from the designer record through decision R63, and it still holds the earlier snapshot `docs/old/project/DECISIONS-2026-11-08.md` (on `main` at commit 10030f6). Every earlier entry is kept in section 10. Where a later decision replaces an earlier one, the earlier line is marked **Superseded** and says what replaced it. The dated snapshot's full text is in `docs/old/history/DECISIONS-2026-11-08.md`. A short pointer stays at `docs/old/project/DECISIONS-2026-11-08.md`. New decisions get a row in the tables above, through a docs PR (review, "Docs match main: yes", Brian's written yes before merge).
 - Don't invent a decision. If something isn't clear, add it under **Open**.
+
+## Party, 2026-11-24 night (Brian, Snack Quest Chat)
+- **The flyer sneak replaces the party plan's decision 9** ("Isfred's flyers, and one sticks to Squatch's fur"). Brian: "I don't get him throwing the sheets, what if he just leaves one on the side of the stage when he leaves and we have to sneak to get it and get back to the room, avoiding lines of sight?" His click on how the kid learns he wants it: "He wants to show Mops". Isfred sets one flyer down on the stage's right end as he walks off; P4 is: sneak to it with no disguise, GRAB · flyer, sneak home. Words with his yes: "A robot flyer! I'll show Mops.", "Squatch: grab the flyer", "GRAB · flyer", then the existing "Squatch: sneak home for a disguise".
+- **Home with the flyer.** Brian: "When he gets back to room it should mention the party and wanting to dance". His click: "I deserve one night of normal." then "Costume on. Then I dance!", after the flyer is down and before the closet is outlined.
+- **From "You have me." to the TV.** Brian: "Shouldn't mops say something and then turn it on?" Final, his click "Shorter second Mops line": Squatch "But why do I have to hide from everyone but you?" / "And why can't the Guardians and I be together?" / Mops "I've been waiting to show you this." / "Here's why you have to hide." Then Mops presses the TV's button with his horn. Mops does not answer the Guardians question (docs/STORY-DECISIONS.md section 5). The TV story is new to Squatch (his click "New to him, Mops saved it").
 
 ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat)
 - **Party hall picture: "C (Recommended)".** The corner doorway, the bar at full length moved down below it (his note that morning: "A is more correct but you can keep the bar long and just move it south on the screen"). Locked as `hall-room-empty-v2.png`.

@@ -36,7 +36,7 @@ export const RECORDINGS = Object.freeze({
   step: ["sounds/footstep_concrete_000.mp3", "sounds/footstep_concrete_001.mp3", "sounds/footstep_concrete_002.mp3", "sounds/footstep_concrete_003.mp3", "sounds/footstep_concrete_004.mp3"],
 });
 // Made-up stand-ins a real recording would do better (for Brian; none downloaded without his yes).
-export const RECORDING_LATER = Object.freeze(["murmur", "cheer", "clap", "gasp", "shout", "rustle", "huff", "door", "flyers", "hiccup"]);
+export const RECORDING_LATER = Object.freeze(["murmur", "cheer", "clap", "gasp", "shout", "rustle", "huff", "door", "hiccup"]);
 export const PARTY_SOUND = Object.freeze({
   hum: Object.freeze({ url: "music/floating-in-space.mp3", skip: 2.95, level: 0.18, muffle: 520 }),
   ahead: 0.3, // seconds of song notes scheduled ahead
