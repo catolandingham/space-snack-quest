@@ -1,13 +1,12 @@
 /**
- * The party's wordless toys (party plan P6, "The toys"): the conga line, the band photo, the octopus, the plants
- * that snag, and the vent's tug (the hallway doorway's bounce is party-hallway.js). Each is a small state on the party's game-state
+ * The party's wordless toys (party plan P6, "The toys"): the conga line and the band photo (the octopus is
+ * party-octopus.js, the hallway doorway's bounce party-hallway.js). The plants and the vent do nothing to his disguise (Brian
+ * 2026-11-24, "Lose it all"). Each is a small state on the party's game-state
  * object `p` and one tick function. All are optional, and nothing here gives a goal chip or an outline.
  * Numbers marked PLACEHOLDER are the builder's guesses for Brian to tune; "pinned" ones are his approved values
  * (docs/TUNING-PINS.json).
  */
-import { CONGA_ROUTE, PHOTO_FRAME, HALL, OCTOPUS_SNACKS, stepTo, stepClear, CLEAR_OF_SQUATCH } from "./party-hall.js";
-import { VENT, ventDistance } from "./party-vent.js";
-import { bump, tipNext, knockOff, bumpSpot, anyWorn, furShows } from "./party-outfit.js";
+import { CONGA_ROUTE, PHOTO_FRAME, stepTo, stepClear, CLEAR_OF_SQUATCH } from "./party-hall.js";
 
 // ---------- the conga line ----------
 // PLACEHOLDERS: when in each song the conga forms (seconds into the song), how long it lasts, how fast it goes,
@@ -106,95 +105,5 @@ export function tickPhoto(p, dt, s, visible) {
     }
   }
   if (ph.phase === "flash" && ph.t >= PHOTO.flash) ((ph.phase = "wait"), (ph.t = 0));
-  return "";
-}
-
-// ---------- the octopus ----------
-// Pinned (R68): he gives up after 10 seconds, walks at 90, notices within 150 and hugs within 48. PLACEHOLDERS:
-// the wait between chases and his stroll to the snacks. He never starts in Squatch's first minute in the hall.
-export const OCT_CHASE_SECONDS = 10,
-  OCT_SPEED = 90,
-  OCT_NOTICE = 150,
-  OCT_CATCH = 48;
-export const OCT = Object.freeze({ stroll: 40, rest: 14 });
-/** One frame of the octopus (the approved octopus guest). Returns "notice", "hug" or "". */
-export function tickOctopus(p, dt, s, api) {
-  const g = p.people["octopus-guest"];
-  if (!g) return "";
-  const o = p.oct || (p.oct = { mode: "stroll", t: 0, hugs: 0, rest: 0, said: false });
-  o.rest = Math.max(0, o.rest - dt);
-  if (o.mode === "stroll" || o.mode === "back") {
-    g.task = "octopus";
-    const gx = g.x,
-      gy = g.y,
-      // round Squatch, never through him; if he stands on the snack spot, the octopus stops where he is
-      there = stepClear(g, OCTOPUS_SNACKS.x, OCTOPUS_SNACKS.y, OCT.stroll, dt, s, CLEAR_OF_SQUATCH) || (g.x === gx && g.y === gy && Math.hypot(s.x - OCTOPUS_SNACKS.x, s.y - OCTOPUS_SNACKS.y) < CLEAR_OF_SQUATCH * 2);
-    g.face = Math.atan2(OCTOPUS_SNACKS.y - g.y, OCTOPUS_SNACKS.x - g.x);
-    there && ((o.mode = "snacks"), (g.face = Math.PI));
-    return "";
-  }
-  if (o.mode === "snacks") {
-    if (api.firstMinute || o.rest > 0 || !api.canChase || Math.hypot(s.x - g.x, s.y - g.y) >= OCT_NOTICE) return "";
-    o.mode = "chase";
-    o.t = 0;
-    return "notice";
-  }
-  if (o.mode === "chase") {
-    o.t += dt;
-    const d = Math.hypot(s.x - g.x, s.y - g.y) || 1;
-    g.face = Math.atan2(s.y - g.y, s.x - g.x);
-    // He waits while the lines are up; he gives up after his time, or if Squatch hides.
-    if (o.t >= OCT_CHASE_SECONDS || api.hidden) return ((o.mode = "back"), (o.rest = OCT.rest), "");
-    if (!api.canChase) return "";
-    g.x += ((s.x - g.x) / d) * OCT_SPEED * dt;
-    g.y += ((s.y - g.y) / d) * OCT_SPEED * dt;
-    if (d < OCT_CATCH) return ((o.hugs += 1), (o.mode = "back"), (o.rest = OCT.rest), "hug");
-  }
-  return "";
-}
-
-// ---------- the plants (in disguise they snag a piece) ----------
-// PLACEHOLDER: how close to a plant's leaves his feet come to brush past it.
-export const PLANT_BRUSH = 14;
-/** The plant Squatch's feet are brushing past now, or "". */
-export function brushing(s) {
-  for (const pl of HALL.plants) {
-    const b = pl.leaves,
-      pot = pl.pot;
-    if (s.x > b.x0 - PLANT_BRUSH && s.x < b.x1 + PLANT_BRUSH && s.y > b.y1 - 24 && s.y < pot.y1 + PLANT_BRUSH) return pl.id;
-  }
-  return "";
-}
-/** One frame: a new brush past a plant tips a piece, a second knocks it off into the leaves. Returns "tip", "off" or "". */
-export function tickPlants(p, s, scale, firstMinute) {
-  const id = brushing(s),
-    was = p.brush || "";
-  p.brush = id;
-  if (!id || id === was || furShows(p)) return "";
-  const pl = HALL.plants.find((q) => q.id === id);
-  return bump(p, s, scale, "plant", { x: (pl.leaves.x0 + pl.leaves.x1) / 2, y: pl.leaves.y0 + 18 }, firstMinute);
-}
-
-// ---------- the vent, in disguise: it tugs a piece ----------
-/**
- * One frame of the vent's tug (Brian 2026-11-23: "No, it tugs the disguise"): close to it, the next piece tips
- * toward the vent (the warning: a sound, a shake and the piece drawn big over him); if he stays, the piece is
- * sucked in. In his first minute it only tips. With nothing left on, the no-disguise fur rule takes over
- * (party-vent.js). Returns "warn", "off" or "".
- */
-export function tickTug(p, dt, s, scale, firstMinute) {
-  const v = p.tug || (p.tug = { t: 0, shake: 0, spot: "" });
-  v.shake = Math.max(0, v.shake - dt);
-  if (!anyWorn(p) || ventDistance(s) > VENT.near) return ((v.t = 0), (v.spot = ""), "");
-  const first = v.t === 0;
-  v.t += dt;
-  if (first) return ((v.spot = tipNext(p)), (v.shake = 0.4), "warn");
-  if (v.t >= VENT.stay && !firstMinute) {
-    v.t = 0;
-    const spot = bumpSpot(p);
-    spot && knockOff(p, spot, s, scale, "vent");
-    v.spot = "";
-    return "off";
-  }
   return "";
 }

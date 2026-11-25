@@ -5,7 +5,7 @@
  *   id      the line's name in the code and in the tests
  *   half    1 = scenes P1 to P5 (peek to dress-up, built first), 2 = P6 to P8 (free play, alarm, endings)
  *   who     "banner", "isfred", "sq" (Squatch thinks or says it), "card", "chip" (the goal chip), "button" (the big
- *           action button), "tag" (the name over a bubble), "meter", "guest" (a party guest), "bartender", "octopus", "band", "speaker", "mops",
+ *           action button), "tag" (the name over a bubble), "meter", "guest" (a party guest), "bartender", "octopus", "band", "speaker", "mops", "guard" (the guard who follows him home),
  *           "lockup" (the LOCKUP card) or "note" (the small note after hiding)
  *   text    the words, exactly as shown. The lockup line has two blanks, {who} and {where}, filled from the
  *           "who-*" and "where-*" lines.
@@ -70,6 +70,22 @@ export const PARTY_LINES = Object.freeze([
   { id: "mops-have-me", half: 2, who: "mops", text: "You have me.", status: "approved", source: "R52, decided", quiet: true },
   // Added after the first 42 (new lines go at the end, so no number ever shifts)
   { id: "sq-hallway", half: 2, who: "sq", text: "I can't go there. Mops will see me.", status: "approved", source: "Brian 2026-11-24, click in Snack Quest Chat" },
+  // Party round four (Brian's answers of 2026-11-24, asks/video-notes-2026-11-24/ANSWERS.md)
+  { id: "sq-arms", half: 2, who: "sq", text: "Those arms will pull off my disguise!", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "button-grab", half: 2, who: "button", text: "GRAB · snacks", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "button-join", half: 2, who: "button", text: "JOIN · photo", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "card-more", half: 2, who: "card", text: "There's more to find at the party!", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "card-all", half: 2, who: "card", text: "You found everything at the party!", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "button-back", half: 2, who: "button", text: "Back to the party", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "button-keep", half: 2, who: "button", text: "Keep going", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "guard-alarm", half: 2, who: "guard", text: "Someone pulled the fur alarm.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "guard-ran", half: 2, who: "guard", text: "They saw someone run in here.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "mops-wookiee", half: 2, who: "mops", text: "Sure. I'm hiding a Wookiee in here.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "guard-ridiculous", half: 2, who: "guard", text: "Ha! You're right. That's ridiculous.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "guard-poker", half: 2, who: "guard", text: "You coming to poker night?", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "mops-thumbs", half: 2, who: "mops", text: "You know I don't have opposable thumbs.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "mops-went", half: 2, who: "mops", text: "You went to the party.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat", quiet: true },
+  { id: "sq-except", half: 2, who: "sq", text: "Everyone except me.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
 ]);
 
 /** Whether this bubble is one of Mops's gentle lines, which never get his "meh" (morning-sound.js, through the bridge). */

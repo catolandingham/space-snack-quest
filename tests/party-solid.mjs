@@ -69,7 +69,7 @@ e.after = await page.evaluate(() => {
     ss.tick(1 / 30);
     maxX = Math.max(maxX, n.sq.x);
   }
-  return { x: Math.round(n.sq.x), y: Math.round(n.sq.y), maxX: Math.round(maxX), room: n.room, hallway: window.SSQ.beat("ch1-party").now().done.hallway };
+  return { x: Math.round(n.sq.x), y: Math.round(n.sq.y), maxX: Math.round(maxX), room: n.room, hallway: window.SSQ.beat("ch1-party").now().bounced > 0 };
 });
 g.check(
   "in disguise (P6), walking right along the back wall he reaches the hallway doorway, is bounced back, and never goes through",

@@ -27,7 +27,7 @@ export const GUEST_FOR_KIND = {
   spots: "robot",
 };
 // The teal guest is a grown-up's height; the others keep their heights from the approved sheet.
-const TEAL_PX = 622;
+export const TEAL_PX = 622;
 
 export function createGuestArt() {
   const images = {};
@@ -72,6 +72,21 @@ export function createGuestArt() {
       ctx.rotate(tilt);
       ctx.drawImage(img, -w / 2, -h + bob, w, h);
       ctx.restore();
+      return true;
+    },
+    /**
+     * Only the top of a guest's approved picture, down to row `cut` (picture pixels), standing at feet (x, y) as
+     * drawId draws it when not dancing: the octopus's head, hat and collar while his arms are thrown out
+     * (party-octopus-art.js draws the arms). Returns false when the picture is not ready.
+     */
+    drawTop(ctx, id, x, y, adultPx, time, cut) {
+      const img = images[id];
+      if (!img || !img.complete || !img.naturalWidth) return false;
+      const k = adultPx / TEAL_PX,
+        w = img.naturalWidth * k,
+        h = img.naturalHeight * k,
+        bob = Math.sin((time || 0) * 2 + x * 0.01) * 1.5;
+      ctx.drawImage(img, 0, 0, img.naturalWidth, cut, x - w / 2, y - h + bob, w, cut * k);
       return true;
     },
     /** How tall the guest is drawn, in game pixels, with the teal guest `adultPx` tall (heights from the approved sheet). */

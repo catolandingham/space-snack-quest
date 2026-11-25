@@ -14,9 +14,10 @@ import { ventTufts } from "./party-vent.js";
 import { wornNow, flyingNow, furShows } from "./party-outfit.js";
 import { drawPyramid, drawPawIcon, drawSnackCloseUp } from "./party-snacks.js";
 import { SONG_LIGHTS } from "./party-dance.js";
-import { drawCountdown, drawFlash, drawPolaroid, drawBandNotes, drawClap, drawHiccups, drawSpeakerRing, drawPuffs, drawLoosePiece, drawTugWarning, drawFurryFlyer, drawHeartCone } from "./party-free-art.js";
+import { drawCountdown, drawFlash, drawPolaroid, drawBandNotes, drawClap, drawHiccups, drawSpeakerRing, drawPuffs, drawLoosePiece, drawFurryFlyer, drawHeartCone } from "./party-free-art.js";
 import { PHOTO } from "./party-toys.js";
 import { bounceHop, bumpMark, drawBump } from "./party-hallway.js";
+import { OCT } from "./party-octopus.js";
 
 const LATE = new Set(["P6", "P7", "P8a", "P8b"]);
 
@@ -41,18 +42,13 @@ export function createView(h) {
         // P3 and P4: partners dance; the camera tourist and the glancer, with no partner, watch the band. From P6 on,
         // each guest dances when stopped and walks when going somewhere (party-free.js).
         const dance = p.alarm ? 0 : late ? (at.dance ? 1 : 0) : dancing && to ? 1 : 0;
-        // a curious guest stops and turns his whole body to Squatch
-        const turned = p.curious && p.curious.id === g.id && p.curious.phase !== "wait";
-        return { id: g.id, x: at.x, y: at.y, dance: turned ? 0 : dance, lean: turned ? Math.sign(s.x - at.x) : to ? Math.sign(to.x - at.x) : 0 };
+        // the octopus with his arms out: a chase, a hug, or his arms dropping as he gets bored (P6 only)
+        const o = g.id === "octopus-guest" && p.scene === "P6" && p.oct && p.oct.arms > 0.02 ? p.oct : null,
+          arms = o ? { k: o.arms, toward: Math.sign(s.x - at.x) || 1, hug: o.mode === "hug", hugK: o.mode === "hug" ? Math.min(1, o.ht / OCT.squeeze) : 0, bored: o.mode === "bored" } : null;
+        return { id: g.id, x: at.x, y: at.y, dance: arms ? 0 : dance, lean: to ? Math.sign(to.x - at.x) : 0, arms };
       });
     const marks = [];
-    const cur = p.curious && p.curious.phase !== "wait" ? p.curious : null;
-    if (cur) {
-      // the double-take: a big "?" that grows over the turn, then stays big while that guest stares
-      const w = p.people[cur.id],
-        k = cur.phase === "turn" ? Math.min(1, cur.t / 2) : 1;
-      w && marks.push({ x: w.x, y: w.y - 90 - 14 * k, mark: "?", size: 30 + 40 * k });
-    } else if (p.seenBy && p.scene !== "P8b") {
+    if (p.seenBy && p.scene !== "P8b") {
       const w = h.personAt(p, p.seenBy);
       w && marks.push({ x: w.x, y: w.y - 84, mark: "?", size: 42 });
     }
@@ -87,7 +83,7 @@ export function createView(h) {
     const cam = p.people.camera,
       tripodAt = late ? { x: cam.x - 28, y: cam.y + 6 } : CAST.guests.find((g) => g.id === "camera").tripod;
     const outfit = late ? wornNow(p) : null,
-      shake = Math.max((p.vent && p.vent.shake) || 0, (p.tug && p.tug.shake) || 0, p.shake || 0);
+      shake = Math.max((p.vent && p.vent.shake) || 0, p.shake || 0);
     const bartender = a && a.w.id === "bartender" ? { x: a.w.x, y: a.w.y, f: Math.sign(a.w.x - a.w.hx) || -1 } : gone.bartender ? null : { x: (p.bartenderAt || CAST.bartender).x, y: (p.bartenderAt || CAST.bartender).y, f: p.bartenderAt && p.bartenderAt.walk ? 1 : -1 };
     const m = p.mops;
     return {
@@ -109,7 +105,7 @@ export function createView(h) {
       unseen: !(e.get("ctrl") && !e.current()) || p.scene === "P8b",
       // In a whole disguise nobody knows him: a cone that holds him stays dashed (only the "?" shows).
       fooled: late && !furShows(p),
-      squatch: outlineHidden ? { x: s.x, y: s.y, pose: "hidden" } : { x: s.x, y: s.y, f: s.f || 1, walk: e.walkPhase(), pose: p.pose === "peek" ? "peek" : "stand", flyer: p.flyer === "back", shake, outfit, tip: late ? p.tip : null, hop: bounceHop(p) },
+      squatch: outlineHidden ? { x: s.x, y: s.y, pose: "hidden" } : { x: s.x, y: s.y, f: s.f || 1, walk: e.walkPhase(), pose: p.pose === "peek" ? "peek" : "stand", flyer: p.flyer === "back", shake, outfit, hop: bounceHop(p) },
       eyes,
       marks,
       shout,
@@ -166,7 +162,7 @@ export function createView(h) {
       drawFlyer(ctx, x, y, 11, k * 4 + i);
     });
   }
-  // Over the hall from P6 on: the pyramid, the music, the camera, the pieces in the air, the warnings.
+  // Over the hall from P6 on: the pyramid, the music, the camera, the pieces in the air.
   function drawLate(ctx, p, t) {
     const e = E(),
       s = h.sq(),
@@ -180,11 +176,9 @@ export function createView(h) {
     if (p.photo && !gone.camera) drawCountdown(ctx, cam.x - 28, cam.y + 6, p.photo.phase === "count" ? p.photo.n : 0, t);
     p.clap > 0 && Object.entries(p.people).forEach(([id, g]) => id !== "camera" && drawClap(ctx, g.x, g.y - 80, t));
     const oc = p.people["octopus-guest"];
-    p.oct && p.oct.mode === "chase" && drawHiccups(ctx, oc.x, oc.y, t);
+    p.oct && (p.oct.mode === "chase" || p.oct.mode === "hug") && drawHiccups(ctx, oc.x, oc.y, t);
     p.pawIcon && drawPawIcon(ctx, h.pawIcon.x, h.pawIcon.y, t);
     for (const f of flyingNow(p)) drawLoosePiece(ctx, f.id, f.x, f.y, f.w, f.rot);
-    // the warning: the piece about to go, drawn big over him
-    p.warn && p.warn.id && p.pose === "stand" && drawTugWarning(ctx, s.x, s.y - 50 * scale - 34, p.warn.id, t);
     p.speakerOn && drawSpeakerRing(ctx, HALL_SPEAKER, t);
     // the flash: a small burst at the camera's lens (never the whole room)
     gone.camera || drawFlash(ctx, p.flash, cameraLens({ x: cam.x - 28, y: cam.y + 6 }, CAMERA_AIM));

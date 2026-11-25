@@ -2,7 +2,7 @@
 // picture for Brian's picture sheet with the game's own drawing code, and hands each back as a PNG data URL.
 import { drawHall } from "../src/modules/party-draw.js";
 import { BAND_A } from "./party-half-two-art.js";
-import { drawHeartCone, drawCountdown, drawTugWarning, drawPolaroid, drawBandNotes, drawClap, drawHiccups, drawSpeakerRing, drawPuffs, drawLoosePiece, drawFurryFlyer, drawFlash } from "../src/modules/party-free-art.js";
+import { drawHeartCone, drawCountdown, drawPolaroid, drawBandNotes, drawClap, drawHiccups, drawSpeakerRing, drawPuffs, drawLoosePiece, drawFurryFlyer, drawFlash } from "../src/modules/party-free-art.js";
 import { drawDanceCloseUp, SONG_LIGHTS } from "../src/modules/party-dance.js";
 import { drawPyramid, drawPawIcon, drawSnackCloseUp } from "../src/modules/party-snacks.js";
 import { congaAt, CONGA } from "../src/modules/party-toys.js";
@@ -164,13 +164,6 @@ R.v09_vent_tuft = () => {
   v.tufts = [{ x: 215, y: 505, s: 11, rot: -0.4 }];
   v.warning = { k: 1 };
   return crop(hall(v), 100, 380, 280, 180, 700);
-};
-R.v09_vent_tug = () => {
-  const v = base(2);
-  v.squatch = { x: 245, y: 525, f: -1, pose: "stand", outfit: SMART, tip: { spot: "head", a: -0.6 }, shake: 1 };
-  const c = hall(v);
-  drawTugWarning(c.getContext("2d"), 245, 525 - 50 * E().hallSizes().squatch - 34, "tophat", 2);
-  return crop(c, 100, 380, 280, 180, 700);
 };
 for (const song of [0, 1, 2])
   R["v10_lights_song" + (song + 1)] = () => {
@@ -347,13 +340,12 @@ for (const phase of ["back", "glance", "face"])
     drawSnackCloseUp(ctx, p, 1, E().drawPawArm);
     return c;
   };
-R.h2_piece_tip_and_fly = () => {
+R.h2_piece_fly = () => {
   const v = partyView(2);
-  v.squatch = { x: 460, y: 540, f: 1, pose: "stand", outfit: P6, tip: { spot: "head", a: 0.5 }, shake: 1 };
+  v.squatch = { x: 460, y: 540, f: 1, pose: "stand", outfit: { ...P6, head: "" }, shake: 1 };
   const c = hall(v),
     ctx = c.getContext("2d");
-  drawTugWarning(ctx, 460, 540 - 50 * E().hallSizes().squatch - 34, "boots", 2);
-  drawLoosePiece(ctx, "tutu", 530, 470, 25, 1.5);
+  drawLoosePiece(ctx, P6.head, 530, 470, 25, 1.5);
   return crop(c, 360, 380, 260, 200, 650);
 };
 R.h2_clap_and_hiccups = () => {

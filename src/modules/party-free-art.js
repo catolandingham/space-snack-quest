@@ -3,7 +3,7 @@
  * drawn by the game on top of the locked hall picture, which never changes. Every one is on the picture sheet
  * (tools/party-sheet.mjs) for Brian's eye before it counts as his look. Game positions (960 x 640). No words.
  */
-import { rr, oval, line, INK, drawPiece, PIECES, drawWarning, drawNote, drawFlyer, drawTuft } from "./party-art.js";
+import { rr, oval, line, INK, drawPiece, drawNote, drawFlyer, drawTuft } from "./party-art.js";
 
 const TAU = Math.PI * 2;
 
@@ -163,21 +163,6 @@ export function drawPuffs(ctx, x, y, t) {
 /** A piece of the outfit, `w` across, flying or lying where it landed. */
 export function drawLoosePiece(ctx, id, x, y, w, rot) {
   drawPiece(ctx, id, x, y, w, rot);
-}
-/** The vent tugging a piece: the piece, drawn big over him, tipping (the warning's big icon). */
-export function drawTugWarning(ctx, x, y, piece, t) {
-  drawWarning(
-    ctx,
-    x,
-    y,
-    46,
-    (c, s) => {
-      const p = PIECES.find((q) => q.id === piece);
-      drawPiece(c, piece, 0, 0, s * (p && p.h > 0.7 ? 0.7 : 0.9), Math.sin(t * 8) * 0.35);
-    },
-    1,
-    t,
-  );
 }
 /** The flyer Mops finds at home after the alarm: covered in fur and glowing. */
 export function drawFurryFlyer(ctx, x, y, t, glow = 1) {

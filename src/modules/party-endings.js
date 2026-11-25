@@ -41,7 +41,7 @@ export function createEndings(h) {
     p.bartenderAt = p.bartenderAt || { x: CAST.bartender.x, y: CAST.bartender.y };
     p.bandAt = p.bandAt || CAST.band.map((b) => ({ x: b.x, y: b.y }));
     p.mops = null;
-    for (const k of ["dance", "snack", "curious", "stare", "warn"]) p[k] = null;
+    for (const k of ["dance", "snack", "stare"]) p[k] = null;
     // nobody is watching for him any more: no "?" left over from the party
     p.seenBy = "";
     p.seenT = 0;

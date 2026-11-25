@@ -2,9 +2,9 @@
  * Draws the party hall at night from one description of what is on screen (a "view"), so the game (party.js)
  * and the picture sheet for Brian (tools/party-sheet.mjs) draw it the same way. The locked hall picture is drawn
  * first and never changed; everything else goes on top of it.
- *   view = { t, picture, banner: { glow }, lights: { dim } | null, isfred: { x, y, f }, band: { playing }, guests: [{ id, x, y, dance, lean }], bartender: { x, y, f }, guards: [{ x, y, f }],
+ *   view = { t, picture, banner: { glow }, lights: { dim } | null, isfred: { x, y, f }, band: { playing }, guests: [{ id, x, y, dance, lean, arms (the octopus's, out for a chase) }], bartender: { x, y, f }, guards: [{ x, y, f }],
  *            tripod: { x, y, aim, counting }, cones: [cone], allCones, squatch: { x, y, f, walk, pose ("stand",
- *            "peek" or "hidden"), outfit, flyer, tip, shake, hop } | null, eyes: { x, y } | null, marks: [{ x, y,
+ *            "peek" or "hidden"), outfit, flyer, shake, hop } | null, eyes: { x, y } | null, marks: [{ x, y,
  *            mark }], shout: { x, y } | null, alarm: bool, vent: bool, tufts: [{ x, y, s, rot }],
  *            warning: { k } | null (the vent's fur sign), unseen (nobody can see him now), fooled (in a whole
  *            disguise: a cone that holds him stays a dashed outline), floor (ctx) (drawn under
@@ -13,6 +13,7 @@
  */
 import { HALL, BANNER, CAST, DANCE_SPOT } from "./party-hall.js";
 import { drawCones } from "./party-watch.js";
+import { drawOctopusArmsOut, drawHug } from "./party-octopus-art.js";
 import { drawBanner, drawBand, drawPerson, LOOKS, drawTripod, drawVentSwirl, drawAlarmFlash, drawPartyLights, drawOutfit, drawFlyer, drawTuft, drawMark, drawShout, drawWarning } from "./party-art.js";
 
 /** Squatch peeking: only his head and his paws on the door frame show in the doorway gap (Brian S 1372). */
@@ -45,7 +46,7 @@ export function drawSquatchInHall(ctx, E, sq, scale, t) {
   const shake = sq.shake > 0 ? Math.sin(t * 60) * 2.5 : 0,
     y = sq.y - (sq.hop || 0); // a bump lifts him off the floor for a moment (the hallway doorway's push back)
   E.drawSquatch(ctx, sq.x + shake, y, scale, { f: sq.f || 1, walk: sq.walk || 0 });
-  sq.outfit && drawOutfit(ctx, sq.x + shake, y, scale, sq.outfit, sq.f || 1, sq.tip);
+  sq.outfit && drawOutfit(ctx, sq.x + shake, y, scale, sq.outfit, sq.f || 1);
   // the flyer stuck to his back fur: on the side away from where he faces, big enough to see
   sq.flyer && drawFlyer(ctx, sq.x + shake - (sq.f || 1) * 9 * scale, y - 24 * scale, 15 * scale, -(sq.f || 1) * 0.35);
 }
@@ -68,7 +69,12 @@ export function drawHall(ctx, E, guestArt, view) {
   view.floor && view.floor(ctx);
   // Everyone, back to front.
   const people = [];
-  for (const g of view.guests || []) people.push({ y: g.y, f: () => guestArt.drawId(ctx, g.id, g.x, g.y, adult, t, g.dance || 0, g.lean || 0) });
+  for (const g of view.guests || []) {
+    // the octopus with his arms out for a chase (party-octopus-art.js); everyone else is their approved picture
+    people.push({ y: g.y, f: () => (g.arms ? drawOctopusArmsOut(ctx, guestArt, g, adult, t) : guestArt.drawId(ctx, g.id, g.x, g.y, adult, t, g.dance || 0, g.lean || 0)) });
+    // his hug: two arms round Squatch, drawn over both of them
+    g.arms && g.arms.hug && sq && sq.pose === "stand" && people.push({ y: Math.max(g.y, sq.y) + 0.5, f: () => drawHug(ctx, g, sq, sqScale, adult, t, g.arms.hugK) });
+  }
   view.isfred && people.push({ y: view.isfred.y, f: () => E.drawIsfred(ctx, view.isfred.x, view.isfred.y, view.isfred.f || 1) });
   if (view.band) {
     const spots = view.band.spots || CAST.band;

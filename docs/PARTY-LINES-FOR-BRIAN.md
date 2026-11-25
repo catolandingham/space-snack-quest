@@ -53,6 +53,21 @@ Half one is P1 to P5 (peek to dress-up), built first. Half two is P6 to P8. The 
 | 41 | P8. Squatch at home, both endings | Everyone out there has someone. | sq | two | approved | Brian 2026-11-24: Yes to all |
 | 42 | P8. Mops answers, both endings | You have me. | mops | two | approved | R52, decided |
 | 43 | P6. Squatch thinks it each time he walks into the hallway doorway and is bounced back | I can't go there. Mops will see me. | sq | two | approved | Brian 2026-11-24, click in Snack Quest Chat |
+| 44 | P6. Squatch thinks it once, as the octopus's chase starts (all his arms are out) | Those arms will pull off my disguise! | sq | two | approved | Brian 2026-11-24, Snack Quest Chat |
+| 45 | P6. Action button at the snack bar (it opens the snack close-up) | GRAB · snacks | button | two | approved | Brian 2026-11-24, Snack Quest Chat |
+| 46 | P6. Action button on his spot in the group photo's row, after the first song | JOIN · photo | button | two | approved | Brian 2026-11-24, Snack Quest Chat |
+| 47 | P7. The card once he is hidden under the bed, over the party things as pictures (found ones filled in, the rest as "?" shapes) | There's more to find at the party! | card | two | approved | Brian 2026-11-24, Snack Quest Chat |
+| 48 | P7. The same card when he found everything (only "Keep going" under it) | You found everything at the party! | card | two | approved | Brian 2026-11-24, Snack Quest Chat |
+| 49 | P7. The card's first big button: the guard looks and leaves, and he goes back out | Back to the party | button | two | approved | Brian 2026-11-24, Snack Quest Chat |
+| 50 | P7. The card's other big button: the guard, Mops, the talk | Keep going | button | two | approved | Brian 2026-11-24, Snack Quest Chat |
+| 51 | P8a. The guard to Mops, at the door of the home room (Squatch is under the bed) | Someone pulled the fur alarm. | guard | two | approved | Brian 2026-11-24, Snack Quest Chat |
+| 52 | P8a. The guard | They saw someone run in here. | guard | two | approved | Brian 2026-11-24, Snack Quest Chat |
+| 53 | P8a. Mops answers | Sure. I'm hiding a Wookiee in here. | mops | two | approved | Brian 2026-11-24, Snack Quest Chat |
+| 54 | P8a. The guard | Ha! You're right. That's ridiculous. | guard | two | approved | Brian 2026-11-24, Snack Quest Chat |
+| 55 | P8a. The guard | You coming to poker night? | guard | two | approved | Brian 2026-11-24, Snack Quest Chat |
+| 56 | P8a. Mops; then the guard leaves | You know I don't have opposable thumbs. | mops | two | approved | Brian 2026-11-24, Snack Quest Chat |
+| 57 | P8a. Mops, looking at the costume, once Squatch is out from under the bed | You went to the party. | mops | two | approved | Brian 2026-11-24, Snack Quest Chat |
+| 58 | P8a. Squatch, right after "Everyone out there has someone." (line 41) | Everyone except me. | sq | two | approved | Brian 2026-11-24, Snack Quest Chat |
 
 Lines that need your yes: 25 (1 line). Your "Yes to all" (2026-11-24) covered the other 31; line 25, the band's name tag "Croc Boys", was added after it.
 

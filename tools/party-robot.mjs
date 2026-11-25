@@ -133,16 +133,6 @@ for (;;) {
     await sleep(200);
     continue;
   }
-  // a careful kid: when someone turns for a second look (the big "?"), walk away from them
-  if (process.env.ROBOT_CAREFUL && s.now.curious && s.now.curious.phase !== "wait") {
-    const w = s.now.people[s.now.curious.id] || { x: 890, y: 482 };
-    // to whichever open corner of the front floor is further from them (clear of the plants and the vent)
-    const spots = [[650, 595], [560, 330]],
-      far = spots.sort((a, b) => Math.hypot(b[0] - w.x, b[1] - w.y) - Math.hypot(a[0] - w.x, a[1] - w.y))[0];
-    await walk(far[0], far[1]);
-    await sleep(500);
-    continue;
-  }
   // everything done: wait for closing time on the open floor
   if (order.every((k) => s.now.done[k])) {
     const [wx, wy] = (process.env.ROBOT_WAIT || "650,595").split(",").map(Number);

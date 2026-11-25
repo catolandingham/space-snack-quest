@@ -688,9 +688,9 @@ export const BODY_SPOTS = Object.freeze({
 });
 /**
  * Draws the outfit on Squatch standing at feet (x, y), `scale` game pixels to his unit, facing `f`. `outfit` is
- * { head, face, body, legs } -> piece id or "". `tip` is { spot, a } to draw one piece tipping (the vent's tug).
+ * { head, face, body, legs } -> piece id or "".
  */
-export function drawOutfit(ctx, x, y, scale, outfit, f = 1, tip = null) {
+export function drawOutfit(ctx, x, y, scale, outfit, f = 1) {
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(scale * (f < 0 ? -1 : 1), scale);
@@ -699,9 +699,8 @@ export function drawOutfit(ctx, x, y, scale, outfit, f = 1, tip = null) {
     if (!id) continue;
     const s = BODY_SPOTS[spot],
       p = PIECES.find((q) => q.id === id),
-      h = s.w * (p ? p.h : 0.5),
-      a = tip && tip.spot === spot ? tip.a : 0;
-    drawPiece(ctx, id, s.x, s.sit ? s.y - h / 2 + 3 : s.y, s.w, a);
+      h = s.w * (p ? p.h : 0.5);
+    drawPiece(ctx, id, s.x, s.sit ? s.y - h / 2 + 3 : s.y, s.w, 0);
   }
   ctx.restore();
 }

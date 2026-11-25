@@ -92,7 +92,6 @@ export function createParty(bridge) {
     const g = CAST.guests.find((q) => q.id === id);
     // After the topple everyone stares at where he stood (party-snacks.js); otherwise from P6 on each guest looks
     // where the free play turned them (walking, dancing, in the conga).
-    if (late(p) && p.curious && p.curious.id === id && p.curious.at) return lookAt(x, y, p.curious.at);
     if (late(p) && p.stare) return lookAt(x, y, p.stare.at);
     if (late(p) && p.people[id] && p.people[id].face != null) return p.people[id].face;
     if (p.mode === "isfred") return lookAt(x, y, { x: p.isfred.x, y: p.isfred.y - 40 });
@@ -138,7 +137,7 @@ export function createParty(bridge) {
     out.push(coneFrom("isfred", p.isfred.x, p.isfred.y, stare(p.isfred.x, p.isfred.y, isf), size));
     (p.bandAt || CAST.band).forEach((b, i) => out.push(coneFrom("band" + i, b.x, b.y, b.face != null ? b.face : stare(b.x, b.y, Math.PI / 2 + (i - 1) * 0.25), size)));
     const bt = p.bartenderAt || CAST.bartender;
-    const btFace = late(p) && p.curious && p.curious.id === "bartender" && p.curious.at ? lookAt(bt.x, bt.y, p.curious.at) : bt.face != null ? bt.face : stare(bt.x, bt.y, Math.PI);
+    const btFace = bt.face != null ? bt.face : stare(bt.x, bt.y, Math.PI);
     out.push(coneFrom("bartender", bt.x, bt.y, btFace, size));
     p.alarm && out.push(...guardCones(p.alarm, size));
     // During the alarm the witness has left his spot: his cone goes with him (he is looking at the alarm).
@@ -308,7 +307,7 @@ export function createParty(bridge) {
       const p = base(id, { phase: "end", flyer: "floor" });
       Object.values(p.outfit).some(Boolean) || (p.outfit = { ...JUMP_OUTFIT });
       bandOn(p);
-      Object.assign(p, { lostPieces: (was.lostPieces || []).slice(), song: 2, done: was.done || {}, snacks: was.snacks || null, tip: null, flying: [], fallen: (was.fallen || []).slice() });
+      Object.assign(p, { lostPieces: (was.lostPieces || []).slice(), song: 2, done: was.done || {}, snacks: was.snacks || null, flying: [], fallen: (was.fallen || []).slice() });
       save(p);
       if (id === "P8a") {
         opts.restart && (e.room() !== "closet" && e.enterRoom("closet", "Q1"), e.place("sq", HOME_ROOM.inside.x, HOME_ROOM.inside.y));
@@ -638,7 +637,7 @@ export function createParty(bridge) {
     if (p.scene === "P5" && room === "closet" && p.phase === "closet")
       out.push({ id: "dress", verb: "OPEN", cap: partyLine("button-closet").split(" · ")[1], who: "sq", x: HOME_SPOTS.closet.x, y: HOME_SPOTS.closet.y, r: HOME_SPOTS.closet.r, thing: HOME_THINGS.closet, f: openCloset });
     if (p.scene === "P5" && room === "closet" && p.phase === "out") out.push(door("go-party", HOME_ROOM.doorSpot.x, HOME_ROOM.doorSpot.y, 36));
-    // P6: the dance in the spotlight; once fur shows, the plants hide him again (in disguise they snag instead).
+    // P6: the dance in the spotlight; once fur shows, the plants hide him again.
     if (p.scene === "P6" && room === "hall") {
       out.push(...freePlay.spots(p));
       p.pose === "stand" && furShows(p) && !p.dance && !p.snack && out.push(plant("middle"), plant("back"));
@@ -672,7 +671,7 @@ export function createParty(bridge) {
       gone = (p.close && p.close.gone) || {};
     // From P6 on, the floor strip from the bar's top end to the hallway doorway is open (he can head for it).
     const fixed = late(p) ? [...HALL_SOLIDS.filter((b) => !(b.x0 === HALLWAY_LANE.x0 && b.y0 === 0)), { ...HALL_SOLIDS.find((b) => b.x0 === HALLWAY_LANE.x0 && b.y0 === 0), y0: HALLWAY_LANE.y1 }] : HALL_SOLIDS;
-    const people = Object.entries(p.people).filter(([id, g]) => !gone[id] && g.task !== "conga" && !(p.oct && p.oct.mode === "chase" && id === "octopus-guest"));
+    const people = Object.entries(p.people).filter(([id, g]) => !gone[id] && g.task !== "conga" && !(p.oct && (p.oct.mode === "chase" || p.oct.mode === "hug") && id === "octopus-guest"));
     // Isfred (by the bar's top end from P3 on) and Mops at closing time are solid too: nobody stands inside anybody
     const more = [gone.isfred ? null : p.isfred, p.mops].filter(Boolean);
     return [...fixed, ...people.map(([, g]) => feet(g.x, g.y)), ...more.map((g) => feet(g.x, g.y))];
