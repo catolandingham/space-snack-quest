@@ -47,7 +47,12 @@ export function createCapture(h) {
             drawAlarmCloseUp(ctx, w, hgt, h.picture, HALL.alarmPicture, k, t);
             if (t - t0 >= ALARM.closeUp) {
               closeFullScreen();
-              h.control(wasCtrl);
+              // He has control again if he had it, and also if a scripted walk that was running when the close-up
+              // opened (his walk in through his own door) has finished meanwhile: that walk gave him control, and
+              // putting it back to "off" left him at home with no button while the guard came.
+              const q = h.P(),
+                caught = !!(q && q.alarm && q.alarm.phase === "caught");
+              h.control(wasCtrl || (!e.current() && !caught && !(q && q.card)));
               h.sound.one("bell");
               done();
             }

@@ -4,8 +4,8 @@
  * with the game's own sound. The picture is the browser's screencast, the sound is recorded inside the page from
  * the game's master volume, and ffmpeg joins them. Not a test: it reads the game only to know when to act.
  *   npm run build && node tools/party-showing.mjs <keep|back|flyer> <out.mp4>
- *     keep   from the start of P6: the dance (one spot missed), the group photo, the octopus, the snacks and the
- *            crash, the alarm, home, under the bed, the card, "Keep going" to the TV coming on.
+ *     keep   from the start of P6: the dance (one spot missed), the group photo, the octopus (one hug), snacks, the
+ *            bartender's two catches, the alarm, home, under the bed, the card, "Keep going" to the TV coming on.
  *     back   from the start of P6: a snack, the crash, the alarm, home, the card, "Back to the party", the dance,
  *            the group photo, closing time, Mops, home.
  *     flyer  from the start of P3: the welcome, the flyer sneak (P4), home, the dress-up, out to the party.
@@ -187,7 +187,7 @@ async function dance(hits, miss) {
   let done = 0,
     seen = 0,
     lastKey = "";
-  const end = Date.now() + 60000;
+  const end = Date.now() + 90000;
   while (done < hits && Date.now() < end) {
     s = await st();
     if (s.full !== "dance") break;
@@ -227,8 +227,11 @@ async function photo(ms) {
   await until((q) => q.full !== "group photo" && q.ctrl, 20000, read);
   log("the Polaroid");
 }
-// The snack bar: `safe` snacks from the top with her back turned, then (with `crash`) the middle cup of the bottom row.
-async function snacks(safe, crash) {
+// The snack bar: `safe` snacks from the top with her back turned; then, by `end`: "crash" pulls the middle cup of the
+// bottom row (the pile falls), "caught" reaches in twice while she faces him ("Nice gloves.", then the alarm), and
+// anything else leaves by LEAVE · bar.
+async function snacks(safe, end) {
+  const crash = end === true || end === "crash";
   const L = await page.evaluate(() => window.SSQ.beat("ch1-party").snackLayout());
   let s = await goTo(L.spot.x - 10, L.spot.y + 10, (q) => q.act === "GRAB · snacks");
   s = await until((q) => q.act === "GRAB · snacks", 8000, read);
@@ -253,6 +256,22 @@ async function snacks(safe, crash) {
     await until((q) => q.cur !== "bub", 6000, read);
   }
   log(`${safe} snacks in the bag`);
+  if (end === "caught") {
+    for (let n = 1; n <= 2; n++) {
+      // a finger on a snack just after she has turned to face him: his paw is out in her sight
+      const ok = await until((q) => !q.snack || (q.cur !== "bub" && q.snack.phase === "face" && q.snack.t > 0.25 && q.snack.t < 1.2 && !q.snack.reach), 25000, read);
+      if (!ok || !ok.snack) return fail("the close-up closed before she caught him");
+      const top = ok.slots.findIndex((id) => id >= 0);
+      await floor(L.cut.snacks[top][1], L.cut.snacks[top][2]);
+      await until((q) => q.cur === "bub" || !q.snack, 4000);
+      log("caught by the bartender, " + n);
+      await sleep(1700);
+      await tap(187, 300);
+      await sleep(400);
+    }
+    await until((q) => !q.snack, 6000, read);
+    return;
+  }
   if (crash) {
     await sleep(600);
     (await take(7)) || (await fail("the close-up closed before the pull"));
@@ -275,6 +294,7 @@ async function runHomeToCard() {
   });
   // HIDE · bed, pressed as soon as it is offered (and again if the alarm's own close-up was in the way)
   s = await until((q) => q.full === "party card" || (q.now && q.now.pose === "bed"), 20000, async (q) => {
+    process.env.SHOWING_DEBUG && log(`home: act "${q.act}" ctrl ${q.ctrl} full "${q.full}" pose ${q.now && q.now.pose} alarm ${q.now && q.now.alarm} cur ${q.cur} btn ${JSON.stringify(q.btn)}`);
     q.act === "HIDE · bed" && q.ctrl && !q.full && (await sleep(250), await press(), await sleep(500));
   });
   s = await until((q) => q.full === "party card", 30000);
@@ -299,15 +319,11 @@ const toTv = async (ms) => {
 await startRecording();
 await sleep(1800);
 if (which === "keep") {
-  // In his first minute (the octopus leaves him alone until it is over): three snacks from the top, and away.
-  await snacks(3, false);
-  await dance(11, 4);
+  await dance(16, 4);
   // toward the wall by the alarm box, where the row will stand; the first song ends and the photo moment begins
   await goTo(300, 545);
   await photo(70000);
-  // The octopus (after the first minute): near his end of the bar he notices. One hug is just a hug; Squatch runs
-  // for the far wall; the octopus comes after him, arms out, and his second hug knocks the hat off. Fur shows,
-  // someone sees it, and the alarm starts. (If the octopus gets bored first, the snack pyramid does it instead.)
+  // The octopus (after the first minute): near his end of the bar he notices, all arms out. One hug is just a hug.
   await goTo(640, 560, (q) => q.now.oct && q.now.oct.mode === "chase");
   let s = await until((q) => q.now.oct && q.now.oct.mode === "chase", 15000, read);
   s || (await fail("the octopus did not notice"));
@@ -315,13 +331,10 @@ if (which === "keep") {
   await until((q) => q.cur !== "bub" && q.ctrl, 20000, read);
   await until((q) => q.now.oct.hugs >= 1 || q.now.oct.mode !== "chase", 12000, read);
   await until((q) => q.ctrl && q.now.oct.mode === "chase", 6000, read);
-  await goTo(190, 588, (q) => !q.now.oct || q.now.oct.mode !== "chase" || q.now.scene !== "P6");
-  s = await until((q) => q.now.scene !== "P6" || !q.now.oct || !["chase", "hug"].includes(q.now.oct.mode), 30000, read);
-  log("after the chase: " + JSON.stringify({ scene: s && s.now.scene, oct: s && s.now.oct && s.now.oct.mode, hugs: s && s.now.oct && s.now.oct.hugs, gone: s && s.now.gone }));
-  // (with his hat gone he walks back among the guests: the first one to look at him sees fur)
-  s = await until((q) => q.now.scene === "P7", 2500, read);
-  s || (s = await goTo(470, 420, (q) => q.now.scene === "P7", 12000));
-  s && s.now.scene === "P7" ? null : (await until((q) => q.now.scene === "P7", 6000, read)) || (await snacks(0, true));
+  log("one hug; off to the snack bar (he cannot be hugged with his paw in the snacks, and the octopus gets bored)");
+  // Straight to the snack bar: two snacks while her back is turned, then his paw out twice while she is looking.
+  // The second time she sees fur and runs for the alarm; his hat is still on (for Mops to lift at home).
+  await snacks(2, "caught");
   await runHomeToCard();
   await chooseOnCard("keep");
   await toTv(120000);
@@ -334,9 +347,12 @@ if (which === "back") {
   s || (await fail("he did not get back to the party"));
   log("back at the party");
   await sleep(1200);
-  await dance(4, 0);
+  await dance(14, 0);
   await goTo(300, 545);
   await photo(80000);
+  // The dance, the snacks and the photo are found: the last song comes early. He dances it out (the dance ends
+  // with the song), and closing time begins.
+  await dance(40, 0);
   // closing time, then Mops: he walks over to him
   s = await until((q) => q.now && q.now.scene === "P8b" && q.now.mops && q.ctrl, 150000, read);
   s || (await fail("closing time did not come"));

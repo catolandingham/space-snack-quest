@@ -25,7 +25,7 @@ import { liftTo } from "./party-free-art.js";
 
 // PLACEHOLDERS for Brian: how fast they walk at home, how far apart they stand to talk and for the hat, how long
 // Mops looks at the costume, how long a piece takes to go back on, and how long the hat's lift (or the pat) plays.
-export const AFTER = Object.freeze({ walk: 150, beside: 170, close: 138, look: 1.4, redress: 0.45, lift: 2.6, setDown: 0.5, hatUp: 24 });
+export const AFTER = Object.freeze({ walk: 150, beside: 170, close: 138, look: 1.4, redress: 0.45, lift: 2.6, setDown: 0.5, hatUp: 14, hatOut: 52 });
 // Where they stand in the home room (game positions): Mops walks in past the guard (`mopsPast`, well in front of
 // him) and stops between the guard and the bed to talk (`mopsTalk`), so the guard's way out is clear; and Squatch
 // once he is out from under the bed (beside it, on the open floor in front of the bucket and the Guardian box,
@@ -226,13 +226,14 @@ export function createAfterAlarm(h) {
         h.sound.one(q.lift.id ? "fwip" : "pop");
       }),
       e.until(() => !P() || !P().lift || P().lift.k >= 1),
-      // He sets the piece down on the floor between them (his mouth is for talking, his horn for the TV).
+      // He sets the piece down on the floor between them, a little in front (his mouth is for talking, his horn
+      // for the TV): by Squatch's foot, clear of Mops's beard.
       e.run(() => {
         const q = P();
         if (!q.lift.id) return;
         const m = e.pos("mops"),
           s = h.sq();
-        Object.assign(q.lift, { held: liftTo(m, s, e.squatchScale()), rest: { x: (m.x + s.x) / 2 + 6, y: Math.max(m.y, s.y) - AFTER.hatUp }, set: 0 });
+        Object.assign(q.lift, { held: liftTo(m, s, e.squatchScale()), rest: { x: s.x + AFTER.hatOut, y: Math.max(m.y, s.y) - AFTER.hatUp }, set: 0 });
       }),
       e.until(() => !P() || !P().lift || !P().lift.id || P().lift.set >= 1),
       ...wait(0.6),

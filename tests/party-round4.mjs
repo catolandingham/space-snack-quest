@@ -474,6 +474,52 @@ async function keepGoing(name, outfit, lost) {
   g.check("and played once more it runs clean to beat 20 (no left-over wait from the runs before)", !!s && errors.length === 0, [!!s, errors.slice(0, 2)]);
   await page.close();
 }
+{
+  // The first alarm's close-up (the hand on the alarm) can start while he is walking in through his own door. He
+  // must still have control at home when it is over, to hide: before, the close-up put control back to "off" (he
+  // was mid-walk when it began) and he stood there with no button until the guard came.
+  let staged = null;
+  for (const wait of [700, 450, 950, 250]) {
+    const { page } = await open("party:P6");
+    await set(page, (p) => (p.lostPieces = ["head"]));
+    await place(page, 470, 420);
+    let s = await until(page, (q) => q.now && q.now.scene === "P7", 8000);
+    if (!s) { await page.close(); continue; }
+    await sleep(wait);
+    await walk(page, hall.SPOTS.doorway.x, 605);
+    // the moment the close-up opens: was he in the middle of the scripted walk home?
+    const at = await page.evaluate(async () => {
+      const n = window.__ss.op;
+      for (let i = 0; i < 300; i++) {
+        if (document.querySelector('canvas[aria-label="fur alarm"]')) return { ctrl: !!n.ctrl, cur: n.cur ? n.cur.k : "", room: n.room, y: Math.round(n.sq.y) };
+        await new Promise((r) => setTimeout(r, 20));
+      }
+      return null;
+    });
+    if (at && !at.ctrl && at.cur === "until") {
+      // (a kid cannot press anything while the close-up fills the screen: wait for it to end)
+      const over = await page.evaluate(async () => {
+        for (let i = 0; i < 300; i++) {
+          if (!document.querySelector('canvas[aria-label="fur alarm"]')) return true;
+          await new Promise((r) => setTimeout(r, 20));
+        }
+        return false;
+      });
+      s = await until(page, (q) => q.room === "closet" && q.ctrl && q.act === "HIDE · bed", 1500);
+      staged = { wait, at, got: !!s, closeUpOver: over, alarm: s && s.now.alarm };
+      if (s) {
+        await press(page);
+        s = await until(page, (q) => q.full === "party card", 12000);
+        staged.card = !!s;
+      }
+      await page.close();
+      break;
+    }
+    await page.close();
+  }
+  g.check("(staged: the alarm's close-up opened while he was walking in through his door)", !!staged, staged);
+  g.check("when the close-up is over he has control at home and HIDE · bed is offered; he hides and the card comes", !!staged && staged.got && staged.closeUpOver && staged.card, staged);
+}
 
 // ---------- the group photo ----------
 const photo = await import(join(root, "src", "modules", "party-photo.js"));
