@@ -2,15 +2,23 @@
  * The morning, from waking up to Mops leaving (docs/BRIAN-ASKS-OPEN.md "Build next" item 1; the plan's
  * section 1 with Brian's answers of 2026-11-23). Played on a phone (375x812) with touches only.
  * - The steps come in this order, each waiting for a tap: the two cards; the room with Squatch asleep and Mops
- *   mopping (no words); the speaker's ding-dong, then its lines; Mops "Morning, Squatch."; Squatch "Party?";
- *   Mops mopping a few steps along the floor to his bucket, a wet streak behind him (Brian 21a); the
+ *   mopping round his loop (no words; tests/morning-mop-loop.mjs has the loop and a tap at each point of it; here
+ *   the tap comes as he is back at the door end); the speaker's ding-dong, then its lines; Mops "Morning,
+ *   Squatch."; Squatch "Party?"; Mops mopping along the floor to his bucket, a wet streak behind him (21a); the
  *   beard-wringing cutaway (two full-screen pictures); the speaker's Dog Zylan line; Mops "Floating in space! ..."; then the
  *   kid sings (SING ALONG) or walks to Mops (TALK · Mops); the goodbye; Mops walks out; home alone (the homework,
  *   tests/home-alone.mjs); "That evening…".
  * - The words are exactly the lines file's (src/modules/morning-lines.js), said by the right speaker.
- * - Nothing moves on by itself: after every card, bubble, wait and cutaway picture, six game seconds pass and
- *   the same thing is still up. The one step that follows an animation is Mops's song line, after the
- *   stand-up that the Dog Zylan tap started; the card follows the walk-out the last goodbye tap started.
+ * - Nothing with words or something to tap moves on by itself: after every card, bubble, wait and cutaway picture
+ *   that has words or a tap target, six game seconds pass and the same thing is still up. The one step that
+ *   follows an animation is Mops's song line, after the stand-up that the Dog Zylan tap started; the card
+ *   follows the walk-out the last goodbye tap started.
+ * - Brian 30a (2026-11-24): a cutaway picture with no words and nothing to tap (the dunk, the homework desk)
+ *   plays by itself and moves on within 4 seconds (2 at least), a tap does not skip it, and the big button is
+ *   dimmed meanwhile (no NEXT). The wringing picture (a beard to tap) and the homework sheet (words) wait.
+ * - Brian 31a: in the wringing picture the beard glows; a tap on it makes it squirt, the water is drawn flying
+ *   and landing; then Mops says "Hey, stop that!" over the close-up (bubble beside his head, not on his face),
+ *   once; the close-up comes back and waits for NEXT; another tap squirts again with no second line.
  * - While each waits, the action button reads NEXT and no "tap ▸" cue is drawn (Brian 18a: "just next").
  * - Squatch is asleep at the start and sitting up after the speaker's first line; Mops mops (head down) until
  *   he says good morning, then faces Squatch for every line; Mops is never in the rocking "sway" pose.
@@ -72,6 +80,8 @@ async function openMorning() {
         style: c && c.b ? c.b.style : "",
         id: c ? c.id || "" : "",
         panel: c && c.panel !== undefined ? c.panel : null,
+        auto: (c && c.auto) || 0,
+        btnDim: b ? +getComputedStyle(b).opacity : 1,
         ctrl: !!n.ctrl,
         chip: ss.chipNow() || "",
         btn,
@@ -118,14 +128,72 @@ const cueDrawn = (page) =>
     return seen.some((t) => /^tap\b/i.test(t));
   });
 
+// Brian 30a: a cutaway picture that plays by itself. A tap at its start must not skip it; then the game clock
+// runs until it moves on. Returns how long it stayed up and what came next.
+const playsAlone = (page) =>
+  page.evaluate(() => {
+    const ss = window.__ss,
+      n = ss.op,
+      c = n.cur,
+      el0 = c.el || 0;
+    ss.opTap();
+    const skipped = n.cur !== c;
+    let t = 0;
+    for (; t < 8 && n.cur === c; t += 0.05) ss.tick(0.05);
+    // The next step comes up on the next frame.
+    ss.tick(0.05);
+    return { skipped, t: Math.round((el0 + t) * 100) / 100, gone: n.cur !== c, next: n.cur ? n.cur.k + ":" + (n.cur.id || (n.cur.b && n.cur.b.text) || "") + ":" + (n.cur.panel ?? "") : "" };
+  });
+
+// Draws the cutaway picture up now and reads it: what cutaway.js says it drew, the longest dark run across Mops's
+// legs, his nose colour, and (Brian 31a) whether a yellow glow is drawn just left of the beard.
+const cutShot = (page) =>
+  page.evaluate(() => {
+    window.__ss.drawFrame();
+    const last = window.SSQ.cutaway.last(),
+      cv = document.querySelector("canvas"),
+      k = cv.width / 960,
+      px = cv.getContext("2d").getImageData(0, 0, cv.width, cv.height).data;
+    const rgb = (x, y) => {
+      const i = (Math.round(y * k) * cv.width + Math.round(x * k)) * 4;
+      return [px[i], px[i + 1], px[i + 2]];
+    };
+    // Across his legs (40 px above the floor line, left of the bucket): the longest run of outline-dark pixels.
+    let run = 0,
+      longest = 0;
+    for (let x = 0; x < 480; x += 1 / k) {
+      const [r, g, b] = rgb(x, 600);
+      run = r < 80 && g < 80 && b < 90 ? run + 1 / k : 0;
+      longest = Math.max(longest, run);
+    }
+    // The beard lit pale yellow (not white, not the bucket's deep yellow), above the bucket's rim.
+    const beard = window.SSQ.beat("ch1-morning").debug().beard;
+    let yellow = 0;
+    for (let y = beard.y0; y < 450; y += 4)
+      for (let x = beard.x0; x < beard.x1; x += 2) {
+        const [r, g, b] = rgb(x, y);
+        r > 235 && g > 215 && b > 120 && b < 215 && yellow++;
+      }
+    const n = last.mops.nose;
+    return { ...last, legInk: longest, noseRgb: rgb(n.x, n.y), beard, yellow };
+  });
+
 // Plays from the title until the song step gives control back (or something goes wrong). Each waiting card,
-// bubble, wait or cutaway picture is checked and then tapped away.
+// bubble, wait or cutaway picture is checked and then tapped away; a picture that plays by itself is watched.
 async function playToSong(run, opts = {}) {
   const seen = [];
   const bad = { auto: [], next: [], cue: [], sway: [], face: [] };
+  const alone = [];
   let s = await run.st();
   for (let i = 0; i < 80 && !(s.ctrl && s.chip); i++) {
     if (s.moPose === "sway") bad.sway.push(s.text || s.k);
+    if (s.k === "cutaway" && s.auto) {
+      seen.push(s);
+      opts.at && (await opts.at(s, run));
+      alone.push({ id: s.id, panel: s.panel, btn: s.btn, dim: s.btnDim, ...(await playsAlone(run.page)) });
+      s = await run.st();
+      continue;
+    }
     if (["card", "bub", "wait", "cutaway"].includes(s.k)) {
       seen.push(s);
       if (!(await stillAfter6s(run.page))) bad.auto.push(s.text || s.k + ":" + s.id);
@@ -140,7 +208,7 @@ async function playToSong(run, opts = {}) {
     } else await sleep(200);
     s = await run.st();
   }
-  return { seen, bad, last: s };
+  return { seen, bad, alone, last: s };
 }
 
 // ---------- Run A: the kid sings ----------
@@ -158,6 +226,15 @@ const A1 = await playToSong(A, {
       await run.page.keyboard.up("ArrowRight");
       const t = await run.st();
       sleepy.after = { sq: t.sq, pose: t.pose, hop: t.hop };
+      // Mops goes round his mopping loop while the room waits (src/modules/mop-loop.js), so the test chooses
+      // when to tap: as he comes back to the door end of his stretch, a full stretch from his bucket.
+      sleepy.tapAt = await run.page.evaluate(() => {
+        const ss = window.__ss,
+          n = ss.op,
+          lp = () => window.SSQ.beat("ch1-morning").debug().loop;
+        for (let i = 0; i < 1500 && !(lp() && lp().round >= 1 && lp().ph === "down"); i++) ss.tick(1 / 30);
+        return { ph: lp() && lp().ph, k: n.cur ? n.cur.k : "", mo: [n.mo.x, n.mo.y], pose: n.sqPose };
+      });
       // Brian 20a: the tap on the sleeping room rings the speaker's ding-dong first; its words come after it.
       await run.tapAt(480, 330);
       sleepy.ding = await run.page.evaluate(() => {
@@ -219,28 +296,56 @@ const A1 = await playToSong(A, {
       });
       return true;
     }
-    if (s.k === "cutaway")
-      sleepy["cut" + s.panel] = await run.page.evaluate(() => {
-        window.__ss.drawFrame();
-        const last = window.SSQ.cutaway.last(),
-          cv = document.querySelector("canvas"),
-          k = cv.width / 960,
-          px = cv.getContext("2d").getImageData(0, 0, cv.width, cv.height).data;
-        const rgb = (x, y) => {
-          const i = (Math.round(y * k) * cv.width + Math.round(x * k)) * 4;
-          return [px[i], px[i + 1], px[i + 2]];
-        };
-        // Across his legs (40 px above the floor line, left of the bucket): the longest run of outline-dark pixels.
-        let run = 0,
-          longest = 0;
-        for (let x = 0; x < 480; x += 1 / k) {
-          const [r, g, b] = rgb(x, 600);
-          run = r < 80 && g < 80 && b < 90 ? run + 1 / k : 0;
-          longest = Math.max(longest, run);
+    if (s.k === "cutaway" && s.panel === 1 && !sleepy.stop) {
+      // Brian 31a: the glowing beard, tapped. First what the picture draws before the tap.
+      sleepy.cut1 = await cutShot(run.page);
+      const b = sleepy.cut1.beard;
+      await run.tapAt((b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2);
+      // An impatient tap elsewhere and a NEXT while the water flies must not lose his line.
+      await run.tapAt(150, 150);
+      sleepy.impatient = await run.page.evaluate(() => (window.__ss.opTap(), window.__ss.op.cur && window.__ss.op.cur.k));
+      sleepy.stop = await run.page.evaluate(() => {
+        const ss = window.__ss,
+          n = ss.op,
+          frames = [];
+        for (let i = 0; i < 120 && !(n.cur && n.cur.k === "bub"); i++) {
+          ss.tick(1 / 60);
+          ss.drawFrame();
+          const l = window.SSQ.cutaway.last();
+          frames.push({ splat: !!l.splat, glow: l.glow });
         }
-        const n = last.mops.nose;
-        return { ...last, legInk: longest, noseRgb: rgb(n.x, n.y) };
+        ss.drawFrame();
+        const c = n.cur,
+          hud = [...document.querySelectorAll("#ss-hud > *, [data-hud]")].filter((x) => x.offsetParent && getComputedStyle(x).visibility !== "hidden").length;
+        return {
+          frames: frames.length,
+          landed: frames.some((f) => f.splat),
+          glowAfter: frames.length ? frames[frames.length - 1].glow : null,
+          k: c ? c.k : "",
+          who: c && c.b ? c.b.who : "",
+          text: c && c.b ? c.b.text : "",
+          over: !!(c && c.over && c.over.k === "cutaway" && c.over.panel === 1),
+          drawn: window.SSQ.cutaway.last(),
+          bubble: window.__ss.lastBubble,
+          squirt: window.SSQ.beat("ch1-morning").debug().squirt,
+        };
       });
+      // NEXT on the line: the close-up comes back and waits; another tap on the beard squirts with no second line.
+      await run.tapAt(150, 150);
+      await sleep(400);
+      sleepy.back = await run.st();
+      sleepy.backStill = await stillAfter6s(run.page);
+      await run.tapAt((b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2);
+      sleepy.again = await run.page.evaluate(() => {
+        const ss = window.__ss,
+          n = ss.op,
+          kinds = new Set();
+        for (let i = 0; i < 180; i++) (ss.tick(1 / 60), kinds.add(n.cur ? n.cur.k : ""));
+        return { kinds: [...kinds], squirt: window.SSQ.beat("ch1-morning").debug().squirt };
+      });
+      return false;
+    }
+    if (s.k === "cutaway") sleepy["cut" + s.panel] = await cutShot(run.page);
     if (s.k === "bub" && s.text === L["speaker-song"].text) {
       // The tap on this line starts the song and the stand-up; record the stand-up frame by frame.
       await run.tapAt(480, 330);
@@ -279,7 +384,40 @@ const want = [
 ];
 g.check("the morning comes in Brian's order, word for word from the lines file", JSON.stringify(order.slice(0, want.length)) === JSON.stringify(want), order);
 g.check("then Mops: Floating in space! It's our favorite song!", sleepy.standUp && sleepy.standUp.next === L["mops-song"].text, sleepy.standUp);
-g.check("nothing moves on by itself (six seconds after each step, the same step is up)", A1.bad.auto.length === 0, A1.bad.auto);
+g.check("nothing with words or a tap target moves on by itself (six seconds after each such step, the same step is up)", A1.bad.auto.length === 0, A1.bad.auto);
+{
+  // Brian 30a: the dunk has no words and nothing to tap, so it plays by itself; the wringing picture (31a) waits.
+  const d = A1.alone;
+  g.check("Brian 30a: the dunk picture (no words, nothing to tap) is the only morning picture that plays by itself", d.length === 1 && d[0].id === "beard" && d[0].panel === 0, d);
+  g.check("Brian 30a: it moves on by itself after 2 to 4 seconds, to the wringing picture", !!d[0] && d[0].gone && d[0].t >= 2 && d[0].t <= 4 && d[0].next === "cutaway:beard:1", d[0]);
+  g.check("Brian 30a: a tap does not skip it (it plays to its end)", !!d[0] && !d[0].skipped, d[0]);
+  g.check("Brian 30a: meanwhile the big button is dimmed and does not say NEXT", !!d[0] && !/NEXT/.test(d[0].btn) && d[0].dim < 0.6, d[0]);
+}
+{
+  // Brian 31a: the beard in the wringing picture glows, squirts when tapped, and Mops says "Hey, stop that!".
+  const c1 = sleepy.cut1,
+    st = sleepy.stop,
+    back = sleepy.back,
+    again = sleepy.again;
+  g.check("Brian 31a: in the wringing picture the beard glows (drawn lit pale yellow) before it is tapped", !!c1 && c1.glow && c1.yellow > 100, c1 && { glow: c1.glow, yellow: c1.yellow });
+  g.check("Brian 31a: a tap on the beard makes it squirt, and the water is drawn landing on the floor", !!st && st.landed && !!st.squirt && st.squirt.taps === 1, st && { landed: st.landed, squirt: st.squirt });
+  g.check('Brian 31a: then Mops says, word for word, "Hey, stop that!" over the close-up', !!st && st.k === "bub" && st.who === "mops" && st.text === L["mops-stop"].text && st.over && st.drawn.id === "beard" && st.drawn.panel === 1, st);
+  g.check(
+    "Brian 31a: his line waits until the water has landed (about two thirds of a second), and taps meanwhile do not lose it",
+    !!st && !!st.squirt && st.drawn.t - st.squirt.at >= 0.6 && st.drawn.t - st.squirt.at < 1 && sleepy.impatient === "until",
+    st && { wait: st.drawn.t - (st.squirt || {}).at, impatient: sleepy.impatient },
+  );
+  const bub = st && st.bubble,
+    face = { x0: 400, x1: 670, y0: 100, y1: 380 };
+  g.check(
+    "Brian 31a: the bubble sits beside his head over the wall, not on his face or horns, inside the picture",
+    !!bub && bub.text === L["mops-stop"].text && (bub.x >= face.x1 || bub.x + bub.w <= face.x0 || bub.y + bub.h <= face.y0) && bub.x + bub.w <= 960 && bub.y >= 0,
+    bub,
+  );
+  g.check("Brian 31a: after the line the close-up comes back and waits for NEXT", !!back && back.k === "cutaway" && back.panel === 1 && sleepy.backStill && /NEXT$/.test(back.btn), { back, still: sleepy.backStill });
+  g.check("Brian 31a: once tapped the beard stops glowing (the next thing is NEXT)", !!st && st.glowAfter === false, st && st.glowAfter);
+  g.check("Brian 31a: another tap squirts again, with no second line", !!again && again.squirt.taps === 2 && !again.kinds.includes("bub") && again.kinds.every((k) => k === "cutaway"), again);
+}
 g.check("the action button reads NEXT while each step waits", A1.bad.next.length === 0, A1.bad.next);
 g.check('Brian 18a: no "tap ▸" cue is drawn while a step waits (just NEXT)', A1.bad.cue.length === 0, A1.bad.cue);
 g.check(
@@ -297,6 +435,7 @@ g.check(
   g.check("while Mops mops, the big button is dimmed with nothing to tap", !!mb && mb.step === "mopping" && mb.opacity < 0.6 && mb.label === "Action", mb);
 }
 g.check("Squatch is asleep and Mops mops (head down) at the start", sleepy.pose === "sleep" && sleepy.moPose === "mop", sleepy);
+g.check("the quiet room is still waiting, Squatch asleep, when Mops has gone once round his loop", !!sleepy.tapAt && sleepy.tapAt.k === "wait" && sleepy.tapAt.pose === "sleep" && sleepy.tapAt.ph === "down" && Math.abs(sleepy.tapAt.mo[0] - 830) < 1, sleepy.tapAt);
 g.check("the joystick does not move Squatch while he is asleep", !!sleepy.after && sleepy.after.pose === "sleep" && sleepy.after.hop < 0 && Math.abs(sleepy.after.sq[0] - 205) < 1, sleepy.after);
 g.check("the speaker's line wakes him: Squatch sits up, Mops keeps mopping, sound lines at the speaker", !!sleepy.woke && sleepy.woke.pose === "sit" && sleepy.woke.moPose === "mop" && sleepy.woke.fx === "lines", sleepy.woke);
 g.check("the joystick does not move Squatch while he sits in bed (no hop)", !!sleepy.sitAfter && sleepy.sitAfter.pose === "sit" && sleepy.sitAfter.hop < 0, sleepy.sitAfter);
@@ -392,7 +531,14 @@ await sleep(300);
 s = await A.st();
 g.check("once Mops is gone Squatch is home alone, with his homework as the goal", s.ctrl && !s.k && s.chip === "Squatch: do your homework", s);
 await A.page.evaluate(() => (window.__ss.spotsNow() || []).find((x) => x.id === "homework").f());
-await sleep(400);
+await sleep(100);
+// Brian 30a: the desk picture (no words, nothing to tap) plays by itself; the sheet (words to read) waits.
+s = await A.st();
+const desk = s.k === "cutaway" && s.id === "homework" && s.panel === 0 && s.auto ? { btn: s.btn, dim: s.btnDim, ...(await playsAlone(A.page)) } : { s };
+g.check("Brian 30a: the homework desk picture plays by itself and moves on after 2 to 4 seconds, to the sheet", desk.gone && desk.t >= 2 && desk.t <= 4 && desk.next === "cutaway:homework:1" && !desk.skipped, desk);
+g.check("Brian 30a: meanwhile the big button is dimmed and does not say NEXT", !/NEXT/.test(desk.btn || "NEXT") && desk.dim < 0.6, desk);
+s = await A.st();
+g.check("Brian 30a: the homework sheet (words to read) waits: six seconds later it is still up", s.k === "cutaway" && s.panel === 1 && !s.auto && (await stillAfter6s(A.page)), s);
 for (let i = 0; i < 10; i++) {
   s = await A.st();
   if (s.k !== "cutaway") break;

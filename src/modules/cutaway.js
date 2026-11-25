@@ -1,13 +1,18 @@
 /**
  * The full-screen cutaway: the room is hidden and one story picture fills the screen, like the Wookiee TV's
  * "full-screen story" (DECISIONS 2026-11-22) and without a TV box (Brian G 213: "maybe it's similar to TV
- * cutaway but wihtout the box?"). Each picture is one queue step: it waits for a tap or NEXT (the NEXT button
- * is the only cue, Brian 18a), and plays a short loop while it waits (an animation, never a step of the story).
+ * cutaway but wihtout the box?"). Each picture is one queue step. Brian, 2026-11-24, "30a": a picture with no
+ * words and nothing to tap plays by itself for a few seconds (AUTO below, ending on a clear last frame), then
+ * the game goes on; a picture with words, or something to tap, waits for NEXT (the only cue, Brian 18a) and
+ * plays a short loop while it waits (an animation, never a step of the story). Each picture's time starts at 0
+ * when it comes up (the engine counts it in the step's `el`), so its sounds (SOUNDS below) and its loop line up.
  *
  * The morning uses it for Mops wringing his beard (Brian G 561: "then you see him wringing out his beard. I
  * think that would be a good chance to do a cutaway"). Modelled on the reference he picked (G 221, as the bot
  * described it at G 224): he bends over a plain bucket, dunks his beard, and wrings it out right above it so
  * the water pours back in, twice. G 189: Mops is bigger than the bucket and really leans in.
+ * Brian 31a (2026-11-24): in the wringing picture his beard glows; a tap on it makes it squirt, the water lands
+ * on the floor, and Mops says "Hey, stop that!" (morning.js), then the picture goes on.
  *
  * Squatch's homework on the home-alone morning is the second user: its two pictures are in
  * homework-cutaway.js.
@@ -19,6 +24,8 @@
 import { HOMEWORK_PANELS } from "./homework-cutaway.js";
 
 const INK = "#1e2430";
+const GLOW = "#ffcf33",
+  GLOW_BEARD = "#fff3b0";
 const WALL = "#f4f1ea",
   FLOOR = "#ebe6da",
   BUCKET = "#ffcf33",
@@ -34,10 +41,47 @@ const BUCKET_AT = { x: 655, rim: 520, bottom: 690, top: 165, base: 140 };
 
 let last = null;
 
-/** The queue steps for one cutaway: one per picture, in order. */
+/**
+ * Brian 30a: seconds a wordless picture with nothing to tap plays before the game goes on by itself (0: it waits
+ * for NEXT). The dunk is two whole dunks (1.8 s each), ending with Mops upright and his beard dripping; the
+ * homework desk is one whole loop (3 s), ending with all three lines written. The wringing picture has a beard
+ * to tap (31a) and the homework sheet has words to read, so they wait.
+ */
+export const AUTO = Object.freeze({ beard: [3.6, 0], homework: [3.0, 0] });
+
+/**
+ * What each picture sounds like, timed to its drawing (synth.js names): `loop` seconds a loop (0: once), and
+ * [seconds into the loop, sound]. The dunk, "C. Bloop, glug glug, drip drip"; the wring, "A. Squeeeak, shhhh"
+ * (two twists with the pour, then a drip in the rest); the homework, one scribble a line written, then a paper
+ * rustle as the sheet comes up close (Brian 34A, the sound board).
+ */
+export const SOUNDS = Object.freeze({
+  beard: [
+    { loop: 1.8, at: [[0.54, "bloop"], [0.76, "glug"], [0.92, "glug"], [1.12, "drips"]] },
+    { loop: 2.8, at: [[0, "twist"], [1.0, "twist"], [2.2, "plink"], [2.55, "plinkSoft"]] },
+  ],
+  homework: [{ loop: 3, at: [[0, "scribble"], [1, "scribble"], [2, "scribble"]] }, { loop: 0, at: [[0, "rustle"]] }],
+});
+
+/** The queue steps for one cutaway: one per picture, in order. A picture that plays by itself says so (`auto`). */
 export function cutawaySteps(id) {
   const n = PANELS[id] ? PANELS[id].length : 0;
-  return Array.from({ length: n }, (_, panel) => ({ k: "cutaway", id, panel }));
+  return Array.from({ length: n }, (_, panel) => {
+    const auto = (AUTO[id] || [])[panel] || 0;
+    return auto ? { k: "cutaway", id, panel, auto } : { k: "cutaway", id, panel };
+  });
+}
+
+/** The sounds whose time comes after `from` and up to `to` seconds into picture `panel` of cutaway `id`. */
+export function soundsBetween(id, panel, from, to) {
+  const p = (SOUNDS[id] || [])[panel];
+  if (!p || !(to > from)) return [];
+  const out = [];
+  for (const [at, name] of p.at) {
+    if (!p.loop) at > from && at <= to && out.push(name);
+    else if (to >= at && Math.floor((to - at) / p.loop) > Math.floor((from - at) / p.loop)) out.push(name);
+  }
+  return out;
 }
 
 /** True while a cutaway picture is the thing on screen. */
@@ -356,7 +400,7 @@ function mopsHead(ctx, lean) {
 // His beard, the way the game draws it (white, narrow, grey hair lines, a ragged end), but long and big:
 // from his chin down to `bottom`. Its sides wave a little, like hair. With `twist` (the wring), the hair lines
 // run round it instead of down it.
-function beard(ctx, c, bottom, sway, twist) {
+function beard(ctx, c, bottom, sway, twist, glow) {
   const w = c.x1 - c.x0,
     len = bottom - c.y,
     tips = 7,
@@ -375,7 +419,17 @@ function beard(ctx, c, bottom, sway, twist) {
     ctx.quadraticCurveTo(c.x1 + 9 + (sway * i) / waves, (y0 + y1) / 2, c.x1 + (sway * (i - 1)) / waves, y0 - (i === 1 ? 6 : 0));
   }
   ctx.closePath();
-  ctx.fillStyle = BEARD;
+  if (glow) {
+    // Brian 31a: the beard is the thing to tap, so it glows: a soft yellow halo round it (the game's yellow,
+    // pulsing gently) and the beard itself lit a pale yellow.
+    ctx.save();
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 26;
+    ctx.strokeStyle = `rgba(255,207,51,${glow})`;
+    ctx.stroke();
+    ctx.restore();
+  }
+  ctx.fillStyle = glow ? GLOW_BEARD : BEARD;
   ctx.fill();
   ctx.lineWidth = 4;
   ctx.strokeStyle = INK;
@@ -404,6 +458,22 @@ function beard(ctx, c, bottom, sway, twist) {
     ctx.stroke();
   }
   ctx.restore();
+}
+
+// A small four-point star (the glow's twinkle).
+function sparkle(ctx, x, y, r) {
+  ctx.beginPath();
+  for (let i = 0; i < 8; i++) {
+    const a = (i * Math.PI) / 4,
+      d = i % 2 ? r * 0.32 : r;
+    ctx.lineTo(x + Math.cos(a) * d, y + Math.sin(a) * d);
+  }
+  ctx.closePath();
+  ctx.fillStyle = GLOW;
+  ctx.fill();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = INK;
+  ctx.stroke();
 }
 
 function drop(ctx, x, y, r) {
@@ -451,21 +521,87 @@ function dunk(ctx, t) {
   return { bucket, lean };
 }
 
+// Where the beard hangs in the wringing picture (its chin, and its end above the bucket).
+const WRING_LEAN = 0.06;
+const wringBottom = () => BUCKET_AT.rim - 18;
+/**
+ * Brian 31a: the beard in the wringing picture is a thing to tap. Its box (game positions), from just under his
+ * chin to its end above the bucket, a little wider than the beard so a finger finds it.
+ */
+export function beardTarget() {
+  const c = chin(WRING_LEAN);
+  return { x0: c.x0 - 24, x1: c.x1 + 24, y0: c.y + 20, y1: wringBottom() + 16 };
+}
+// The squirt (Brian 31a): from his grip the water shoots up over the bucket and lands on the floor to its right.
+export const SQUIRT = Object.freeze({ fly: 0.38, from: { x: 520, y: 470 }, top: { x: 720, y: 290 }, land: { x: 900, y: 590 } });
+function squirt(ctx, s) {
+  const k = Math.min(1, s / SQUIRT.fly),
+    { from: a, top: b, land: c } = SQUIRT;
+  const along = (u) => ({
+    x: (1 - u) * (1 - u) * a.x + 2 * u * (1 - u) * b.x + u * u * c.x,
+    y: (1 - u) * (1 - u) * a.y + 2 * u * (1 - u) * b.y + u * u * c.y,
+  });
+  // The jet: a stream of drops along its arc, from where it is now back to his grip (fading as it lands).
+  const fade = s < SQUIRT.fly ? 1 : Math.max(0, 1 - (s - SQUIRT.fly) / 0.35);
+  if (fade > 0) {
+    ctx.save();
+    ctx.globalAlpha = fade;
+    // A thick stream of water (outlined, like the drops), and a big drop at its front.
+    ctx.beginPath();
+    for (let i = 0; i <= 20; i++) {
+      const p = along((k * i) / 20);
+      i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
+    }
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 17;
+    ctx.strokeStyle = INK;
+    ctx.stroke();
+    ctx.lineWidth = 11;
+    ctx.strokeStyle = WATER;
+    ctx.stroke();
+    const front = along(k);
+    drop(ctx, front.x, front.y, 13);
+    ctx.restore();
+  }
+  if (s < SQUIRT.fly) return null;
+  // Splat: a puddle on the floor and a star of splashes round it, which stays.
+  ctx.save();
+  ctx.beginPath();
+  ctx.ellipse(c.x, c.y + 6, 58, 13, 0, 0, Math.PI * 2);
+  ctx.fillStyle = WATER;
+  ctx.fill();
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = INK;
+  ctx.stroke();
+  const burst = Math.min(1, (s - SQUIRT.fly) / 0.2);
+  for (let i = 0; i < 6; i++) {
+    const a2 = Math.PI * (1.05 + (i * 0.9) / 5),
+      r = 34 + 26 * burst;
+    drop(ctx, c.x + Math.cos(a2) * r, c.y - 4 + Math.sin(a2) * r * 0.8, 7);
+  }
+  ctx.restore();
+  return { x: c.x, y: c.y };
+}
+
 // Picture 2: standing on three legs, he grips his beard with his near front hoof right above the bucket and
-// wrings it: two hard twists with the water pouring back into the bucket, then a rest (2.8 s a loop).
-function wring(ctx, t) {
+// wrings it: two hard twists with the water pouring back into the bucket, then a rest (2.8 s a loop). Until the
+// kid has tapped it, the beard glows (Brian 31a); after a tap, the squirt flies and lands.
+function wring(ctx, t, engine, extra) {
   const k = (t % 2.8) / 2.8;
   const twist = k < 0.28 ? k / 0.28 : k > 0.36 && k < 0.64 ? (k - 0.36) / 0.28 : 0;
   const twisting = twist > 0;
-  const lean = 0.06;
+  const lean = WRING_LEAN;
+  const x = extra || {};
   room(ctx);
   bucketBack(ctx, twisting ? 2 * Math.sin(t * 30) : 0);
   mopsBody(ctx, lean, true);
   const c = chin(lean);
-  const bottom = BUCKET_AT.rim - 18;
+  const bottom = wringBottom();
   const squeeze = twisting ? Math.sin(twist * Math.PI) * 18 : 0;
   const narrow = { x0: c.x0 + squeeze, x1: c.x1 - squeeze, y: c.y };
-  beard(ctx, narrow, bottom, 0, (twisting ? twist * 2 : 0) * 30);
+  const glow = x.squirt ? 0 : 0.6 + 0.3 * Math.sin((x.now || 0) * 4);
+  beard(ctx, narrow, bottom, 0, (twisting ? twist * 2 : 0) * 30, glow);
   mopsHead(ctx, lean);
   // His near front leg comes up from under the shirt and grips the beard; the dark grey hoof wraps round it.
   const shoulder = at(12, -13, lean),
@@ -493,7 +629,10 @@ function wring(ctx, t) {
   // The water drips back into the bucket while he wrings; a drip while he rests.
   const n = twisting ? 7 : 1;
   for (let i = 0; i < n; i++) drop(ctx, narrow.x0 + 12 + ((i * 37) % Math.max(20, narrow.x1 - narrow.x0 - 12)), bottom + 4 + ((t * 300 + i * 41) % 60), 9);
-  return { bucket, lean };
+  // While it glows, three small stars twinkle round the beard (outlined, so they show over the yellow bucket).
+  if (glow) for (let i = 0; i < 3; i++) sparkle(ctx, [narrow.x0 - 26, narrow.x1 + 22, narrow.x0 - 14][i], [c.y + 70, c.y + 120, bottom - 30][i], 14 + 8 * Math.abs(Math.sin((x.now || 0) * 3 + i * 2.1)));
+  const splat = x.squirt ? squirt(ctx, t - x.squirt.at) : null;
+  return { bucket, lean, glow: glow > 0, splat };
 }
 
 const PANELS = {
@@ -501,23 +640,42 @@ const PANELS = {
   homework: HOMEWORK_PANELS,
 };
 
-/** Draws the cutaway picture `step` fills the screen with. */
-export function drawCutaway(ctx, engine, step, t) {
+/**
+ * Draws the cutaway picture `step` fills the screen with, at its own time (`step.el`, seconds since it came
+ * up). A picture that plays by itself stops on its last frame. `extra` is what the beat adds: `now` (the game
+ * clock, for the glow's pulse) and `squirt` (Brian 31a).
+ */
+export function drawCutaway(ctx, engine, step, extra) {
   const panels = PANELS[step.id];
   if (!panels || !panels[step.panel]) return;
+  const el = step.el || 0,
+    t = step.auto ? Math.min(el, step.auto - 0.01) : el;
   ctx.save();
   ctx.fillStyle = WALL;
   ctx.fillRect(0, 0, 960, 640);
   widest = 0;
-  const drew = panels[step.panel](ctx, t, engine) || {};
+  const drew = panels[step.panel](ctx, t, engine, extra) || {};
   ctx.restore();
-  last = { id: step.id, panel: step.panel, full: true };
+  last = { id: step.id, panel: step.panel, full: true, t, auto: step.auto || 0 };
   if (drew.bucket) {
     // The beard pictures: how big Mops and the bucket are, his outlines, and where his nose is (tests).
     const m = mopsBox();
     last.mops = { w: m.x1 - m.x0, h: m.y1 - m.y0, outline: widest, nose: at(26.7, -26.9, drew.lean) };
     last.bucket = { w: drew.bucket.x1 - drew.bucket.x0, h: drew.bucket.y1 - drew.bucket.y0 };
+    last.glow = !!drew.glow;
+    last.splat = drew.splat || null;
   } else Object.assign(last, drew);
+}
+
+/**
+ * A bubble over the close-up (Brian 31a, "Hey, stop that!"): where its speaker is in the picture (the tail
+ * points there, at his snout) and the box beside his head the bubble sits right of (over the wall, clear of
+ * his face and horns).
+ */
+export function closeUpSpeaker() {
+  const nose = at(26.7, -26.9, WRING_LEAN),
+    horn = at(30, -44, WRING_LEAN);
+  return { at: { x: nose.x + 14, y: nose.y - 14 }, beside: { side: "right", x0: MOPS.x, x1: horn.x + 4, y0: horn.y + 54, y1: nose.y } };
 }
 
 /** What the last cutaway frame drew (tests). */

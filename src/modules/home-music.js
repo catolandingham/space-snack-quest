@@ -3,7 +3,7 @@
  * Brian, 2026-11-23 (Q8): it plays from the Dog Zylan line until "That evening…", then fades; Joe's theme
  * stays for the title and later home scenes.
  *
- * It plays as a decoded buffer through the game's master volume (the same gain every sound effect uses), not
+ * It plays as a decoded buffer through the game's music level, under the master volume (sound-mix.js), not
  * as a second <audio> element: a buffer needs no extra start inside a tap (the sound button's tap already
  * started the sound engine), it loops without a gap, and the dip under the singing works on iPhones, which
  * ignore an <audio> element's volume. It never starts while sound is off. If the file cannot be fetched or
@@ -12,11 +12,17 @@
  * The file's first 3 seconds are near silence (measured with ffmpeg: below -50 dB until 3.05 s), so a
  * play starts at `skip`, just before the first note, and every loop goes back there (Brian, 2026-11-23: "I
  * should be hearing the song before this", at Mops's song line). Mops's line waits for audible() (morning.js).
+ *
+ * Loudness (sound plan section 8, Brian 2026-11-24): the file is 10 dB quieter than Joe's theme, so every level
+ * here is multiplied by MIX.floatingMatch (sound-mix.js); `first` 1 then sounds as loud as Joe's theme, and the
+ * background level is half of that.
  */
+import { MIX, buses } from "./sound-mix.js";
+
 export const HOME_MUSIC = Object.freeze({
   url: "music/floating-in-space.mp3",
   first: 1, // the first play, right after the Dog Zylan line
-  background: 0.4, // every later loop, and a start after sound was turned on late
+  background: 0.5, // every later loop, and a start after sound was turned on late: half the featured level
   dip: 0.35, // share of the level kept while a sung line is up
   fade: 1.5, // seconds to fade out on "That evening…"
   skip: 2.95, // seconds of near silence at the start of the file, skipped (the first note is at 3.05 s)
@@ -73,15 +79,15 @@ export function createHomeMusic(getEngine) {
   }
   function play(asFirst) {
     const ctx = audio(),
-      master = engine() && engine().masterGain();
-    if (!ctx || !master || !buffer || src) return;
+      b = buses(engine());
+    if (!ctx || !b || !buffer || src) return;
     try {
       gain = ctx.createGain();
       firstPlay = asFirst;
       target = level();
-      gain.gain.value = target;
-      gain.connect(master);
-      via = "master";
+      gain.gain.value = target * MIX.floatingMatch;
+      gain.connect(b.music);
+      via = b.music === engine().masterGain() ? "master" : "music";
       src = ctx.createBufferSource();
       src.buffer = buffer;
       src.loop = true;
@@ -177,14 +183,14 @@ export function createHomeMusic(getEngine) {
       if (gain && ctxUsed) {
         target = level();
         try {
-          gain.gain.setTargetAtTime(target, ctxUsed.currentTime, fading ? HOME_MUSIC.fade / 4 : 0.12);
+          gain.gain.setTargetAtTime(target * MIX.floatingMatch, ctxUsed.currentTime, fading ? HOME_MUSIC.fade / 4 : 0.12);
         } catch {}
       }
     },
     /** For tests: what is playing and how loud it is meant to be. */
     debug() {
       const playedFor = src && ctxUsed ? ctxUsed.currentTime - startedAt : 0;
-      return { owns: owning, playing: !!src, target: src ? target : 0, background: HOME_MUSIC.background, via, starts, failed, loaded: !!buffer, playedFor };
+      return { owns: owning, playing: !!src, target: src ? target : 0, gain: src ? target * MIX.floatingMatch : 0, background: HOME_MUSIC.background, via, starts, failed, loaded: !!buffer, playedFor };
     },
   };
 }

@@ -175,7 +175,7 @@
         if (!hud) return;
       }
       // A full-screen cutaway picture (src/modules/cutaway.js) hides the HUD like a card.
-      let card = n.cur && (n.cur.k === "card" || n.cur.k === "fb" || n.cur.k === "panel" || n.cur.k === "cutaway"),
+      let card = n.cur && (n.cur.k === "card" || n.cur.k === "fb" || n.cur.k === "panel" || n.cur.k === "cutaway" || !!n.cur.over),
         facesOnly = !!(card && n.cur.id === "focus" && n.cur.faces),
         on = p.state === "op" && !!n.scene && (!card || facesOnly) && !n.egg;
       for (let z of [hud.where, hud.goal]) hudShow(z, !facesOnly);
