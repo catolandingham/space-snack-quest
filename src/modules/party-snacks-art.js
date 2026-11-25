@@ -349,11 +349,12 @@ export function drawSnackCloseUp(ctx, p, t, drawPawArm) {
     drawSnack(ctx, kindOf(c.dropped), g.x + 30 * fall, g.y + 150 * fall * fall, SNACK_SIZE.cut, fall * 3, 0, 2);
   }
   drawEyeSign(ctx, CUT.bartender.x - 118, CUT.bartender.y - CUT.bartender.h * 0.92, turn, t);
-  drawBag(ctx, s, c.landed || 0);
   drawLeave(ctx);
   const paw = c.paw || CUT.rest;
   drawPawArm && drawPawArm(ctx, paw);
   c.held >= 0 && drawSnack(ctx, kindOf(c.held), paw.x, paw.y - 30, SNACK_SIZE.cut, 0, 0, 2);
+  // the bag is in front of his arm: his paw dips into it from behind, and the count is never covered
+  drawBag(ctx, s, c.landed || 0);
   ctx.restore();
   return { sight, turn, fall };
 }

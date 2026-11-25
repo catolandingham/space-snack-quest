@@ -42,8 +42,8 @@ export const FREE = Object.freeze({ straighten: 8, firstMinute: 60, firstLook: 1
 // Who mills together: the dancing pair, the robot (his partner the octopus heads for the snacks), the glancer. The
 // camera tourist stays with his camera.
 const UNITS = Object.freeze([["teal", "stilt"], ["robot"], ["backpack"]]);
-// The paw icon over the pyramid, which opens the snack close-up.
-export const PAW_ICON = Object.freeze({ x: PYRAMID.x, y: PYRAMID.y - 58, r: 34 });
+// The paw icon above the pyramid (clear of its top snack), which opens the snack close-up.
+export const PAW_ICON = Object.freeze({ x: PYRAMID.x, y: PYRAMID.y - 92, r: 34 });
 const step = stepTo;
 const inSpot = (s) => ((s.x - DANCE_SPOT.x) / DANCE_SPOT.rx) ** 2 + ((s.y - DANCE_SPOT.y) / DANCE_SPOT.ry) ** 2 <= 1;
 /** Which "where-*" line names where he is (the LOCKUP card). */

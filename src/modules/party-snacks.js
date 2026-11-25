@@ -41,7 +41,7 @@ export const CUT = Object.freeze({
   // every slot, top down: [the kind of snack it starts with, x, y]
   snacks: Object.freeze(SLOTS.map((s, i) => [s.kind, slotAt(i).x, slotAt(i).y])),
   bag: Object.freeze({ x0: 8, y0: 400, x1: 176, y1: 632 }),
-  mouth: Object.freeze({ x: 92, y: 430 }), // the bag's open top, where his paw drops a snack
+  mouth: Object.freeze({ x: 92, y: 392 }), // the bag's open top, where his paw drops a snack
   leave: LEAVE,
   // (the old close button's place: the middle of LEAVE · bar)
   close: Object.freeze({ x: (LEAVE.x0 + LEAVE.x1) / 2, y: (LEAVE.y0 + LEAVE.y1) / 2, r: 44 }),
