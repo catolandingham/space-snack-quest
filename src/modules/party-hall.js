@@ -117,9 +117,6 @@ export const CONGA_ROUTE = Object.freeze([
   Object.freeze({ x: 600, y: 430 }),
   Object.freeze({ x: 470, y: 415 }),
 ]);
-// The band photo: the floor between the camera's lens and the stage. Standing here when the flash goes, Squatch
-// is in the picture.
-export const PHOTO_FRAME = Object.freeze({ x0: 390, x1: 450, y0: 330, y1: 400 });
 // The snack bar's pyramid (on the counter's front end) and where Squatch stands to reach into it.
 export const PYRAMID = Object.freeze({ x: 868, y: 560 });
 export const SNACK_SPOT = Object.freeze({ x: 780, y: 497, r: 60 });
@@ -145,14 +142,12 @@ export const HOME_ROOM = Object.freeze({
   inside: Object.freeze({ x: 790, y: 480 }),
   runTo: Object.freeze({ x: 660, y: 545 }),
   inFront: Object.freeze({ x: 330, y: 410 }), // just right of the bed, clear of it (not on its head end)
-  clear: Object.freeze({ x: 620, y: 500 }), // well into the room, clear of the door (P8a)
   bed: Object.freeze({ x: 205, y: 500 }),
   flyer: Object.freeze({ x: 868, y: 520 }),
   guardDoor: Object.freeze({ x: 880, y: 470 }), // where a guard comes in, and where he searches from
   guardLook: Object.freeze({ x: 770, y: 470 }),
   mopsDoor: Object.freeze({ x: 935, y: 470 }), // Mops comes in here, inside the picture
   mopsInside: Object.freeze({ x: 850, y: 472 }),
-  mopsFlyerLook: Object.freeze({ x: 820, y: 476 }),
 });
 // The doorway home in the hall, as a trigger: within `r` of the door spot (SPOTS.doorway) he goes through.
 export const HALL_DOOR = Object.freeze({ x: SPOTS.doorway.x, y: SPOTS.doorway.y, r: 36 });

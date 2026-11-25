@@ -77,30 +77,6 @@ export function drawFlash(ctx, k, lens) {
   }
   ctx.restore();
 }
-/**
- * The Polaroid sliding out of the camera with him in it (`k` 0 to 1 over its time): a white card with the band
- * on the stage and Squatch in his outfit in front, drawn by `inside(ctx, x, y, w, h)`.
- */
-export function drawPolaroid(ctx, x, y, k, inside) {
-  const slide = Math.min(1, k * 4),
-    w = 110,
-    h = 128,
-    px = x - w / 2,
-    py = y - 50 - h * slide;
-  ctx.save();
-  ctx.translate(px + w / 2, py + h / 2);
-  ctx.rotate(-0.08 * slide);
-  rr(ctx, -w / 2, -h / 2, w, h, 4, "#fffdf8", 3);
-  ctx.save();
-  ctx.beginPath();
-  ctx.rect(-w / 2 + 8, -h / 2 + 8, w - 16, h - 36);
-  ctx.clip();
-  ctx.fillStyle = "#2a2f4a";
-  ctx.fillRect(-w / 2 + 8, -h / 2 + 8, w - 16, h - 36);
-  inside && inside(ctx, -w / 2 + 8, -h / 2 + 8, w - 16, h - 36);
-  ctx.restore();
-  ctx.restore();
-}
 
 // ---------- the band and the crowd (sound, drawn) ----------
 // Where each band member's note floats, as steps of its own height `h`: the first out to the left, the middle one
@@ -173,21 +149,30 @@ export function drawPuffs(ctx, x, y, t) {
 export function drawLoosePiece(ctx, id, x, y, w, rot) {
   drawPiece(ctx, id, x, y, w, rot);
 }
-/** The flyer Mops finds at home after the alarm: covered in fur and glowing. */
-export function drawFurryFlyer(ctx, x, y, t, glow = 1) {
+// ---------- the ending after an alarm, at home ----------
+/**
+ * Mops gently lifts the piece off Squatch's head: where the piece is at `k` (0 on his head, 1 held low at Mops's
+ * side). `from` is where it sits on his head, `to` where Mops holds it; it rises straight up first, then floats
+ * over in a soft arc. Returns { x, y, rot }.
+ */
+export function liftAt(from, to, k) {
+  const up = Math.min(1, k / 0.3),
+    over = Math.max(0, (k - 0.3) / 0.7),
+    ease = over * over * (3 - 2 * over),
+    y0 = from.y - 26 * up;
+  return { x: from.x + (to.x - from.x) * ease, y: y0 + (to.y - y0) * ease - Math.sin(ease * Math.PI) * 30, rot: Math.sin(ease * Math.PI) * 0.25 };
+}
+/** A gentle pat on his head (he wears nothing there): two soft pats, drawn as short curved strokes, and a small heart. */
+export function drawPat(ctx, x, y, k, s) {
+  const beat = (k * 2) % 1,
+    on = k < 1 && beat > 0.15 && beat < 0.7;
   ctx.save();
-  if (glow > 0) {
-    ctx.shadowColor = `rgba(255,207,51,${(0.6 + 0.4 * Math.sin(t * 6)) * glow})`;
-    ctx.shadowBlur = 22 * glow;
+  if (on) {
+    ctx.globalAlpha = 0.9;
+    for (const a of [-0.7, 0, 0.7]) line(ctx, [x + Math.sin(a) * s * 0.5, y - s * 0.25 - Math.cos(a) * s * 0.12, x + Math.sin(a) * s * 0.78, y - s * 0.25 - Math.cos(a) * s * 0.42], "#fffdf8", Math.max(2, s * 0.09));
   }
-  drawFlyer(ctx, x, y, 20, 0.5);
   ctx.restore();
-  for (const [dx, dy, r] of [
-    [-6, -4, 0.3],
-    [5, 6, -0.6],
-    [0, -12, 1.2],
-  ])
-    drawTuft(ctx, x + dx, y + dy, 8, r);
+  k > 0.45 && heart(ctx, x + s * 0.7, y - s * 0.7 - (k - 0.45) * s * 0.6, s * 0.22, "#ff5fa8");
 }
 /** A soft dust puff at a guard's feet as he walks (the footsteps, drawn). */
 export function drawStep(ctx, x, y, k) {

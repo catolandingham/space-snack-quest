@@ -48,7 +48,7 @@ const CAPTIONS = {
   v15_caught_mark: "V15. \"!\" when he stays in sight too long: the alarm starts.",
   v15_eyes_plant: "V15. Hidden in the plant: only his eyes in the leaves, watching the pairs dance.",
   h2_conga: "Half two, new. The conga line (three guests) on its loop round the floor, Squatch towed on its end, in his outfit.",
-  h2_camera_count_and_polaroid: "Half two, new. The camera's red light counting 3-2-1 (lit dots on top), and the Polaroid sliding out with Squatch in it (+25).",
+  h2_camera_count: "Half two. The camera's red lights counting 3-2-1, only during the group photo (the Polaroid of the group fills the whole screen: see the round-four stills).",
   h2_flash: "Half two. The camera's flash: a small bright burst at the lens (the room never goes white).",
   h2_pyramid: "Half two. The snack pyramid on the bar's counter. Standing at the bar, the action button reads GRAB · snacks (no ring and no little picture over the pyramid, Brian 2026-11-24).",
   h2_pyramid_topple: "Half two, new. The pyramid toppling in a chain (a cup rolls, the tray slides, the Moon Pie tin falls), a flying cup, and a piece of his outfit knocked off.",
@@ -60,7 +60,6 @@ const CAPTIONS = {
   h2_closing_speaker: "Half two, new. Closing time: the wall speaker's ring lines while it speaks.",
   h2_leaving_in_pairs: "Half two, new. Closing time: the guests walking out through the hallway doorway two by two (the two who came alone leave together).",
   h2_mops_mopping_in: "Half two, new. The empty hall: Mops comes in mopping with his beard, head down, leaving a wet streak.",
-  h2_home_mops_puffs_and_furry_flyer: "Half two, new. After the alarm, at home: Mops in the doorway out of breath (puffs), the flyer on the floor covered in fur and glowing.",
 };
 const FULL = { v05_dance_phone: "phone", v05_dance_computer: "computer", v06_dress_phone_start: "phone", v06_dress_phone_absurd: "phone", v06_dress_computer: "computer", v12_alarm_phone: "phone", v12_alarm_computer: "computer" };
 

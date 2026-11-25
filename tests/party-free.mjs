@@ -4,8 +4,8 @@
  *   - walking in from the dress-up, nobody jumps (Squatch or the cast, 60 at most from one frame to the next),
  *     Isfred stays at the bar, the camera and the octopus where P4 left them, the lights stay down;
  *   - no goal chip and no outline in free play; the guests mill (they move between places, and nobody jumps);
- *   - three songs with a light colour each, closing time after the third (P8b), early closing after the dance and
- *     two other toys; the songs last COOL_HAT_SECONDS (180) in all;
+ *   - three songs with a light colour each (the group photo between the first and the second), closing time after the
+ *     third (P8b), early closing after the dance and two other toys; the songs last COOL_HAT_SECONDS (180) in all;
  *   - in a whole disguise a cone shows "?" only and nobody ever looks twice, however long he stands there; with fur
  *     showing, "?" then "!" as in P2;
  *   - nothing tips (Brian 2026-11-24, "Lose it all"): no crooked piece, no warning sign over him, no straightening;
@@ -14,7 +14,7 @@
  *     rule is back;
  *   - the dance: DANCE · circle in the spotlight opens the whole screen with the stick and button hidden and its
  *     own ↺; every tap is a move and the crowd cheers louder; it ends with the song; the guests clap;
- *   - the photo: in front of the camera at the flash, +25 once, and the Polaroid; the snacks: the paw icon at the
+ *   - the snacks: the paw icon at the
  *     bar opens the close-up, each snack is stars, five topple the pyramid, the flying cup knocks a piece off and
  *     everyone stares for 4 seconds; the bartender's two catches; the octopus only after the first minute, his
  *     lines, the first hug is just a hug and the second knocks a piece off; the hallway doorway (not a toy: it does not
@@ -179,8 +179,12 @@ g.check("the songs last COOL_HAT_SECONDS in all, and the pin is 180", free.COOL_
   const { page } = await open("party:P6");
   await place(page, 150, 560);
   await set(page, (p, n, a) => (p.songT = a - 0.3), free.SONG_SECONDS);
-  let s = await until(page, (q) => q.now.song === 1, 3000);
-  g.check("after a song's time the band plays the next song (song 2)", !!s, s && s.now.song);
+  // the first song's end is the group photo moment (tests/party-round4.mjs); the next song starts when everyone is back
+  let s = await until(page, (q) => q.now.shot && q.now.shot.phase === "gather", 3000);
+  g.check("after the first song's time: the group photo moment, the band quiet", !!s && s.now.song === 0 && s.now.sound.song === -1, s && [s.now.shot, s.now.song]);
+  await page.evaluate(() => { for (let i = 0; i < 800 && window.__ss.op.ch1PartyNow.shot.phase !== "done"; i++) window.__ss.tick(0.05); });
+  s = await until(page, (q) => q.now.song === 1, 3000);
+  g.check("when everyone is back the band plays the next song (song 2)", !!s, s && s.now.song);
   g.check("song 2 sounds", (await played(page)).includes("song1"));
   await still(page, "p6-song-2-light");
   await set(page, (p, n, a) => ((p.song = 2), (p.songT = a - 0.3)), free.SONG_SECONDS);
@@ -200,6 +204,11 @@ g.check("the songs last COOL_HAT_SECONDS in all, and the pin is 180", free.COOL_
   let s = await st(page);
   g.check("two toys but no dance: no early closing", s.now.song === 0 && !s.now.early, s.now);
   await set(page, (p) => (p.done.dance = true));
+  await sleep(600);
+  s = await st(page);
+  g.check("danced and two other toys before the group photo's moment: closing waits for the photo", s.now.song === 0 && !s.now.early, [s.now.song, s.now.early]);
+  // the photo moment is over (the second song is playing)
+  await set(page, (p) => ((p.shot = { phase: "done" }), (p.song = 1), (p.songT = 5)));
   s = await until(page, (q) => q.now.early, 2000);
   g.check("danced and two other toys: the band goes straight to its last song", !!s && s.now.song === 2, s && s.now);
   await page.close();
@@ -208,7 +217,7 @@ g.check("the songs last COOL_HAT_SECONDS in all, and the pin is 180", free.COOL_
   // Trying the hallway doorway is not a toy (Brian 2026-11-24): the dance, one toy and a push back at the doorway do
   // not bring closing time early.
   const { page } = await open("party:P6");
-  await set(page, (p) => ((p.done.dance = true), (p.done.photo = true)));
+  await set(page, (p) => ((p.done.dance = true), (p.done.photo = true), (p.shot = { phase: "done" }), (p.song = 1), (p.songT = 5)));
   await place(page, 830, 322);
   await walk(page, 940, 320);
   let s = await until(page, (q) => q.cur === "bub", 6000);
@@ -217,7 +226,7 @@ g.check("the songs last COOL_HAT_SECONDS in all, and the pin is 180", free.COOL_
   await sleep(600);
   s = await st(page);
   g.check("pushed back at the hallway doorway (it happened)", s.now.bounced === 1, s.now.bounced);
-  g.check("the dance, one toy and the hallway doorway: no early closing (the doorway is not a toy)", s.now.song === 0 && !s.now.early && !("hallway" in s.now.done), [s.now.song, s.now.early, s.now.done]);
+  g.check("the dance, one toy and the hallway doorway: no early closing (the doorway is not a toy)", s.now.song === 1 && !s.now.early && !("hallway" in s.now.done), [s.now.song, s.now.early, s.now.done]);
   await page.close();
 }
 
@@ -449,28 +458,7 @@ const warningDiscs = (page, ms) =>
   await page.close();
 }
 
-// ---------- the photo ----------
-{
-  const { page } = await open("party:P6");
-  const stars0 = (await st(page)).stars;
-  await place(page, (hall.PHOTO_FRAME.x0 + hall.PHOTO_FRAME.x1) / 2, (hall.PHOTO_FRAME.y0 + hall.PHOTO_FRAME.y1) / 2);
-  await set(page, (p) => p.photo && ((p.photo.phase = "wait"), (p.photo.t = 5.9)));
-  let s = await until(page, (q) => q.now.photo && q.now.photo.phase === "count", 3000);
-  await sleep(1200);
-  await still(page, "p6-camera-countdown");
-  const cheese = await page.evaluate(() => (window.__ss.op.log || []).some((l) => l.k === "live" && l.text === "Say cheese!"));
-  const over = await overSquatch(page);
-  g.check("\"Say cheese!\" shows, and neither it nor a label covers Squatch on the photo spot", cheese && !over.bubble && !over.label, over);
-  s = await until(page, (q) => q.now.photo && q.now.photo.taken, 5000);
-  g.check("in front of the camera at the flash: the photo, +25", !!s && s.stars === stars0 + toys.PHOTO_BONUS, s && [s.stars, stars0]);
-  await sleep(500);
-  await still(page, "p6-polaroid");
-  g.check("the camera's sounds: beeps, the flash, the Polaroid", (await played(page)).includes("flash") && (await played(page)).includes("zzzt"));
-  await set(page, (p) => ((p.photo.phase = "wait"), (p.photo.t = 5.9)));
-  await sleep(4500);
-  g.check("the photo bonus comes once", (await st(page)).stars === stars0 + toys.PHOTO_BONUS);
-  await page.close();
-}
+// (The photo is the group photo now, one moment after the first song: tests/party-round4.mjs.)
 
 // ---------- the snacks ----------
 {

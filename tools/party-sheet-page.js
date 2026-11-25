@@ -2,7 +2,7 @@
 // picture for Brian's picture sheet with the game's own drawing code, and hands each back as a PNG data URL.
 import { drawHall } from "../src/modules/party-draw.js";
 import { BAND_A } from "./party-half-two-art.js";
-import { drawHeartCone, drawCountdown, drawPolaroid, drawBandNotes, drawClap, drawHiccups, drawSpeakerRing, drawPuffs, drawLoosePiece, drawFurryFlyer, drawFlash } from "../src/modules/party-free-art.js";
+import { drawHeartCone, drawCountdown, drawBandNotes, drawClap, drawHiccups, drawSpeakerRing, drawLoosePiece, drawFlash } from "../src/modules/party-free-art.js";
 import { drawDanceCloseUp, SONG_LIGHTS } from "../src/modules/party-dance.js";
 import { drawPyramid, drawSnackCloseUp } from "../src/modules/party-snacks.js";
 import { congaAt, CONGA } from "../src/modules/party-toys.js";
@@ -292,19 +292,13 @@ R.h2_conga = () => {
   v.squatch = { x: tail.x, y: tail.y, f: 1, walk: 3, pose: "stand", outfit: P6 };
   return hall(v);
 };
-R.h2_camera_count_and_polaroid = () => {
+R.h2_camera_count = () => {
   const v = partyView(1.1);
-  v.squatch = { x: 420, y: 368, f: 1, pose: "stand", outfit: P6 };
   const c = hall(v),
     ctx = c.getContext("2d"),
     tp = v.tripod;
   drawCountdown(ctx, tp.x, tp.y, 1, 1);
-  drawPolaroid(ctx, tp.x, tp.y - 36, 0.6, (cc, x, y, w, hh) => {
-    cc.fillStyle = "#b08968";
-    cc.fillRect(x, y + hh * 0.55, w, hh * 0.08);
-    E().drawSquatch(cc, x + w * 0.5, y + hh * 0.98, hh * 0.011, { f: 1 });
-  });
-  return crop(c, 250, 220, 300, 280, 600);
+  return crop(c, 250, 300, 300, 240, 600);
 };
 R.h2_flash = () => {
   const c = hall(partyView(1.1)),
@@ -387,16 +381,6 @@ R.h2_mops_mopping_in = () => {
     ctx.fill();
   }
   E().drawMopsOn(ctx, 800, 390, E().hallSizes().squatch * 1.15, { f: -1, walk: 3, headDown: true, sweep: 3 });
-  return c;
-};
-R.h2_home_mops_puffs_and_furry_flyer = () => {
-  const c = canvas(960, 640),
-    ctx = c.getContext("2d");
-  ctx.drawImage(pics.home, 0, 0, 960, 640);
-  drawFurryFlyer(ctx, 868, 520, 1.2, 1);
-  E().drawMopsOn(ctx, 820, 476, E().squatchScale() * 1.15, { f: 1, headDown: true });
-  drawPuffs(ctx, 830, 476 - 62 * E().squatchScale(), 1.2);
-  E().drawSquatch(ctx, 420, 480, E().squatchScale(), { f: 1 });
   return c;
 };
 

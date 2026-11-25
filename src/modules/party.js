@@ -17,9 +17,10 @@
  *   P6 The party in disguise (restart: just inside his door, same outfit, the song that was playing): free play,
  *      the toys and the three songs (party-free.js, party-toys.js, party-snacks.js, party-dance.js).
  *   P7 The FUR alarm and the run home (restart: the alarm ringing, guards coming in, Squatch on the dance floor
- *      with the pieces he lost still gone): the one capture rule.
- *   P8a / P8b The endings, after an alarm or at closing time; both reach "You have me." and then beat 20
- *      (party-endings.js).
+ *      with the pieces he lost still gone): the one capture rule. Under his bed, the "more to find" card: back to
+ *      the party (P6 goes on), or keep going (party-after-alarm.js).
+ *   P8a / P8b The endings, after an alarm ("Keep going") or at closing time; both reach "You have me." and then
+ *      beat 20 (party-after-alarm.js, party-endings.js).
  * Words come only from party-lines.js. The beat's progress lives in the game state as ch1PartyNow, so a restart
  * and the tests can read it. Everything in the hall is drawn by party-draw.js on the locked picture (the view is
  * built in party-view.js); the capture rule's hooks are in party-capture.js.
@@ -38,6 +39,7 @@ import { createCapture } from "./party-capture.js";
 import { createView } from "./party-view.js";
 import { createFreePlay } from "./party-free.js";
 import { createEndings } from "./party-endings.js";
+import { createAfterAlarm } from "./party-after-alarm.js";
 import { createPartySound } from "./party-sound.js";
 import { furShows } from "./party-outfit.js";
 import { CUT } from "./party-snacks.js";
@@ -270,7 +272,7 @@ export function createParty(bridge) {
       bandOn(p);
       save(p);
       inHall();
-      freePlay.start(p, { song: was.song, done: was.done, snacks: was.snacks });
+      freePlay.start(p, { song: was.song, done: was.done, snacks: was.snacks, shot: was.shot });
       opts.restart && (e.place("sq", SPOTS.doorway.x, SPOTS.doorway.y), e.face("sq", 1));
       e.set("sqPose", "stand");
       chip("");
@@ -286,7 +288,7 @@ export function createParty(bridge) {
       bandOn(p);
       save(p);
       inHall();
-      freePlay.start(p, { song: was.song, done: was.done, snacks: was.snacks });
+      freePlay.start(p, { song: was.song, done: was.done, snacks: was.snacks, shot: was.shot });
       p.lostPieces = (was.lostPieces || []).slice();
       p.fallen = (was.fallen || []).slice();
       p.band = false;
@@ -309,10 +311,8 @@ export function createParty(bridge) {
       bandOn(p);
       Object.assign(p, { lostPieces: (was.lostPieces || []).slice(), song: 2, done: was.done || {}, snacks: was.snacks || null, flying: [], fallen: (was.fallen || []).slice() });
       save(p);
-      if (id === "P8a") {
-        opts.restart && (e.room() !== "closet" && e.enterRoom("closet", "Q1"), e.place("sq", HOME_ROOM.inside.x, HOME_ROOM.inside.y));
-        return endings.startAfterAlarm(p);
-      }
+      // "Keep going" from its start: under the bed, the guard about to come in
+      if (id === "P8a") return afterAlarm.startKeep(p);
       inHall();
       opts.restart && e.place("sq", DANCE_SPOT.x, DANCE_SPOT.y + 10);
       e.set("sqPose", "stand");
@@ -439,7 +439,9 @@ export function createParty(bridge) {
         // the flyer drops off his back by the door
         q.flyer === "back" && ((q.flyer = "floor"), sound.one("fwip"));
         if (q.alarm) return ((q.phase = "hiding"), caught() || control(true));
-        startScene(q.scene === "P7" ? "P8a" : "P5");
+        // P7 with the hall already calm: through his door a guard follows a moment later all the same
+        if (q.scene === "P7") return afterAlarm.follow(q);
+        startScene("P5");
       }),
     ]);
   }
@@ -591,7 +593,9 @@ export function createParty(bridge) {
       paused || endings.tick(p, dt, s, free);
       if (!live()) return;
     }
-    if (p.alarm) {
+    late(p) && afterAlarm.tick(p, dt);
+    // (the game waits behind the "more to find" card)
+    if (p.alarm && !p.card) {
       tickAlarm(p, dt, capture.api());
       // Running from the alarm: his doorway takes him home.
       if (P() && P().alarm && free && inHallNow && p.pose === "stand" && Math.hypot(s.x - HALL_DOOR.x, s.y - HALL_DOOR.y) < HALL_DOOR.r && p.alarm.phase !== "calm") walkHome();
@@ -679,7 +683,7 @@ export function createParty(bridge) {
   }
 
   // ---------- the pieces ----------
-  const helpers = { E, P, sq, say, chip, control, startScene, picture, homeRoom: HOME_ROOM, pace: PACE, firstAlarm, homeDoor: HOME_DOOR, sound };
+  const helpers = { E, P, sq, say, chip, control, startScene, picture, homeRoom: HOME_ROOM, pace: PACE, firstAlarm, homeDoor: HOME_DOOR, sound, afterAlarm: () => afterAlarm };
   const capture = createCapture(helpers);
   const freePlay = createFreePlay({
     ...helpers,
@@ -700,12 +704,14 @@ export function createParty(bridge) {
     ...helpers,
     sound,
     // Both endings hand over to beat 20 (the TV story) as today; the party night is over.
-    finish() {
-      sound.stop();
-      save({ scene: "done", outfit: P() && P().outfit });
-      E().tvStory();
-    },
+    finish: () => finish(),
   });
+  const finish = () => {
+    sound.stop();
+    save({ scene: "done", outfit: P() && P().outfit });
+    E().tvStory();
+  };
+  const afterAlarm = createAfterAlarm({ ...helpers, guests: bridge.guests, finish, resume: (p) => freePlay.resume(p) });
   const views = createView({ ...helpers, guests: bridge.guests, cones, glancePhase, personAt, spots, goalId });
   const eyesAt = (p, t) => views.eyesAt(p, t);
   const seenByNow = (p) => p.seenBy;
@@ -779,6 +785,8 @@ export function createParty(bridge) {
     /** Where a speaker's bubble points (Isfred beside him, the band, Squatch's eyes in the plant, the wall speaker). */
     speakerAt(who) {
       const p = live();
+      // the guard who followed him home: over his head (the home room draws him big)
+      if (p && who === "guard" && E().room() === "closet" && p.alarm && p.alarm.homeGuard) return { x: p.alarm.homeGuard.x, y: p.alarm.homeGuard.y - views.homeGuardHeight() - 6 };
       if (!p || E().room() !== "hall") return null;
       const adult = E().hallSizes().adult;
       if (who === "official") return { x: p.isfred.x, y: p.isfred.y - adult - 6 };
@@ -793,7 +801,8 @@ export function createParty(bridge) {
     /** The name over a party speaker's bubble the game has no name for (the band), or "". */
     speakerName(who) {
       // The bartender's tag is the LOCKUP card's approved "The bartender" (listed for Brian to confirm as a tag).
-      return !live() ? "" : who === "band" ? partyLine("tag-band") : who === "bartender" ? partyLine("who-bartender") : "";
+      // The guard's tag is the LOCKUP card's approved "A guard", used the same way.
+      return !live() ? "" : who === "band" ? partyLine("tag-band") : who === "bartender" ? partyLine("who-bartender") : who === "guard" ? partyLine("who-guard") : "";
     },
     /** A bubble that sits beside its speaker instead of over them (Isfred's never covers the banner). */
     bubbleBeside(who) {
@@ -804,7 +813,7 @@ export function createParty(bridge) {
       if (who === "band") return { x0: CAST.band[0].x - 20, x1: CAST.band[2].x + 20, y0: CAST.band[0].y - adult, y1: CAST.band[0].y, side: "right" };
       // the wall speaker's closing line: to its left, below the banner (never over its words)
       if (who === "pa") return { ...HALL_SPEAKER, y0: BANNER.y1 + 40, side: "left" };
-      // the camera tourist's "Say cheese!" sits to his left, off the photo spot where Squatch stands
+      // the camera tourist's "Say cheese!" sits to his left, clear of the row
       if (who === "tourist" && p.talker === "camera") return { x0: p.people.camera.x - 16, x1: p.people.camera.x + 16, y0: p.people.camera.y - adult, y1: p.people.camera.y, side: "left" };
       return null;
     },
@@ -820,6 +829,15 @@ export function createParty(bridge) {
         go: dress.meter(p.dress.outfit) >= 1 ? { x: L.go.x + L.go.w / 2, y: L.go.y + L.go.h / 2 } : null,
         outfit: { ...p.dress.outfit },
       };
+    },
+    /** Tests and the robot: the "more to find" card's buttons on the screen, while it is up; and pressing one. */
+    cardTargets() {
+      return live() ? afterAlarm.cardTargets() : null;
+    },
+    /** Tests that tick the game themselves (no finger): answers the card, "back" or "keep". */
+    cardChoose(id) {
+      const p = live();
+      p && p.card && afterAlarm.choose(p, id);
     },
     /** Tests: the cones now, with their people. */
     cones() {

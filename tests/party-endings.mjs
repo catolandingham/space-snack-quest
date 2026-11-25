@@ -4,10 +4,10 @@
  *   - P7's restart: the alarm ringing, the guards coming in at the hallway doorway, Squatch on the dance floor
  *     with the pieces he lost still gone, the chip "Squatch: run home and hide!", his door outlined;
  *   - from P6, seen with fur showing, the alarm begins and the band stops (nothing yanks out of the hallway doorway);
- *   - the kid steers home himself (nothing walks him); HIDE · bed; "They lost you." with its chime; the calm seen
- *     from the door gap; then P8a: Mops comes in out of breath, the flyer glows, "Everyone out there has
- *     someone." then "You have me.", then beat 20 (the TV story);
- *   - hiding in a plant in P7: "They lost you.", then his door is the goal; walking home gives P8a;
+ *   - the kid steers home himself (nothing walks him); HIDE · bed; under the bed the "more to find" card shows
+ *     (the card and both of its roads, "Back to the party" and "Keep going", are tests/party-round4.mjs);
+ *   - hiding in a plant in P7: "They lost you.", then his door is the goal; walking home, a guard follows a moment
+ *     later all the same: HIDE · bed, then the card;
  *   - P8b: the wall speaker's line (name "Station PA"), the band packs up, everyone leaves through the hallway
  *     doorway in the pairs, then the bartender, Isfred and the band, each walking out (nobody vanishes), Mops
  *     mops in, his heart cone is as big as everyone's, the kid walks to him, they walk home through Squatch's
@@ -118,27 +118,11 @@ async function readLines(page, stop, ms = 30000) {
   s = await until(page, (q) => q.act === "HIDE · bed", 4000);
   g.check("at home: HIDE · bed", !!s);
   await press(page);
-  s = await until(page, (q) => q.note === "They lost you.", 15000);
-  g.check("the guard gives up: \"They lost you.\"", !!s);
-  g.check("\"They lost you.\" plays its sound (the board's phew and two happy notes)", (await played(page)).includes("lost"));
-  await still(page, "p7-they-lost-you");
-  s = await until(page, (q) => q.now && q.now.scene === "P8a", 20000);
-  g.check("after the calm (seen from the door gap): P8a at home", !!s && s.room === "closet", s && s.now && s.now.scene);
+  // under the bed, the "more to find" card (tests/party-round4.mjs follows both of its roads to their ends)
+  s = await until(page, (q) => q.now && !!q.now.card, 6000);
+  g.check("once he is under the bed, the \"more to find\" card shows", !!s && s.now.pose === "bed", s && s.now.pose);
   g.check("Joe's home theme never played through the party night", s && s.warm === "", s && s.warm);
-  s = await until(page, (q) => q.now && q.now.scene === "P8a" && (q.puff > 0 || q.glow > 0), 12000, null);
-  await sleep(200);
-  await still(page, "p8a-mops-out-of-breath");
-  const mops = await page.evaluate(() => ({ x: window.__ss.op.mo.x, puff: window.__ss.op.ch1PartyNow.puff, k: window.SSQ.engine().squatchScale() }));
-  g.check("P8a: Mops comes in out of breath (the puffs are drawn), inside the room picture", mops.puff > 0 && mops.x + 26 * mops.k <= 960, mops);
-  const glowed = await until(page, (q) => q.glow > 0, 6000);
-  g.check("then the flyer on the floor glows (fur on it)", !!glowed);
-  s = await until(page, (q) => q.now && q.now.scene === "P8a" && (q.now.done !== undefined) && q.cur === "bub", 15000);
-  await still(page, "p8a-lines");
-  const lines = await readLines(page, (q) => q.tv);
-  g.check("P8a: \"Everyone out there has someone.\" then \"You have me.\", then the TV story (beat 20)", lines[0] === "Everyone out there has someone." && lines[1] === "You have me.", lines);
-  s = await st(page);
-  g.check("beat 20 begins (the TV is on) and the party night is over", s.tv && !s.now, [s.tv, s.now]);
-  g.check("no errors in P7 and P8a", errors.length === 0, errors);
+  g.check("no errors in P7", errors.length === 0, errors);
   await page.close();
 }
 
@@ -169,9 +153,22 @@ async function readLines(page, stop, ms = 30000) {
   // still hidden in the plant, the next step shows: his door is outlined
   s = await until(page, (q) => q.ring === "go-home", 3000);
   g.check("still hidden in the plant after \"They lost you.\", his door is outlined (the next step)", !!s && s.now.pose === "hidden", s && [s.ring, s.now.pose]);
+  // through his door a guard follows a moment later all the same (Brian 2026-11-24): hide under the bed, then the card
   await walk(page, hall.SPOTS.doorway.x, 600);
-  s = await until(page, (q) => q.now && q.now.scene === "P8a", 12000);
-  g.check("walking home through his door gives P8a", !!s);
+  s = await until(page, (q) => q.room === "closet" && q.now.alarm === "home", 12000);
+  g.check("walking home through his door, the search comes home with him (a guard follows a moment later)", !!s && s.now.scene === "P7", s && [s.now.scene, s.now.alarm]);
+  s = await until(page, (q) => q.act === "HIDE · bed", 4000);
+  g.check("at home: HIDE · bed, and the chip says to hide", !!s && s.chip === "Squatch: run home and hide!", s && s.chip);
+  s = await until(page, (q) => !!q.now.homeGuard, 3000);
+  g.check("the guard comes in through the door", !!s);
+  await press(page);
+  s = await until(page, (q) => q.now && !!q.now.card, 6000);
+  g.check("under the bed: the same \"more to find\" card", !!s);
+  // "Back to the party": the guard looks and leaves, and "They lost you." is not said a second time for one alarm
+  await page.evaluate(() => window.SSQ.beat("ch1-party").cardChoose("back"));
+  s = await until(page, (q) => q.now && q.now.scene === "P6" && q.ctrl, 40000);
+  const notes = await page.evaluate(() => (window.__ss.op.log || []).filter((l) => l.k === "safe").length);
+  g.check("back at the party after the plant and then home: \"They lost you.\" was said once for that alarm", !!s && notes === 1, notes);
   await page.close();
 }
 
@@ -328,7 +325,7 @@ async function readLines(page, stop, ms = 30000) {
   await page.close();
 }
 
-// ---------- ↺ in P7 and in P8a part way through ----------
+// ---------- ↺ in P7 ----------
 {
   const { page } = await open("party:P7");
   await place(page, 300, 500);
@@ -339,15 +336,7 @@ async function readLines(page, stop, ms = 30000) {
   g.check("↺ in P7: the alarm ringing again, Squatch back on the dance floor", s.now && s.now.scene === "P7" && ["ring", "search"].includes(s.now.alarm) && Math.hypot(s.x - hall.DANCE_SPOT.x, s.y - hall.DANCE_SPOT.y) < 20, s.now && [s.now.alarm, s.x, s.y]);
   await page.close();
 }
-{
-  const { page } = await open("party:P8a");
-  await sleep(2500);
-  await page.evaluate(() => window.__ss.sectionReset());
-  await sleep(400);
-  const s = await st(page);
-  g.check("↺ in P8a part way through: Mops comes in again from the door", s.now && s.now.scene === "P8a" && s.room === "closet", s.now && s.now.scene);
-  await page.close();
-}
+// (↺ in "Keep going", P8a, is tests/party-round4.mjs)
 
 // ---------- ↺ in an ending, and the half-one sounds that were silent ----------
 {

@@ -49,7 +49,8 @@ export function startAlarm(P, witness, where, who = "who-tourist") {
 /**
  * One frame. `api`: { E, size (the cone size), sq () (Squatch's feet), hidden () ("plant", "bed" or ""), room (),
  * closeUp (done) (shows the close-up, calls done), firstTime (), caught (whoId, whereId), lost (), calmDone (how),
- * people () (P.people: guests who back away and drift back) }.
+ * people () (P.people: guests who back away and drift back), guardSearched (g) (optional: the home guard has
+ * finished looking; true keeps him standing there, `held`, until someone sets him leaving) }.
  */
 export function tickAlarm(P, dt, api) {
   const a = P.alarm;
@@ -72,8 +73,9 @@ export function tickAlarm(P, dt, api) {
     return;
   }
   if (a.phase === "pull") return;
-  // The bell keeps ringing while the alarm is on; the guests back away toward the walls.
-  if (a.phase === "ring" || a.phase === "search" || a.phase === "home") {
+  // The bell keeps ringing while the alarm is on; the guests back away toward the walls. (Not for a guard who
+  // follows him home after the hall has calmed down, `quiet`, nor while the guard at home stands talking, `held`.)
+  if ((a.phase === "ring" || a.phase === "search" || a.phase === "home") && !a.quiet && !(a.homeGuard && a.homeGuard.held)) {
     a.bell -= dt;
     a.bell <= 0 && ((a.bell = ALARM.bell), api.bell ? api.bell() : E.sfx("alarm"));
     for (const g of Object.values(api.people())) step(g, g.hx + g.ax, g.hy + g.ay, ALARM.calm, dt);
@@ -189,6 +191,8 @@ function searchHome(a, dt, api, sq, hidden) {
     g.a = 0;
     return;
   }
+  // Held: his search is over and someone has come in to talk to him (party-after-alarm.js lets him go).
+  if (g.held) return void (g.sees = false);
   g.door = (g.door || 0) + dt;
   const arrived = g.door > ALARM.doorLook && step(g, HOME.look.x, HOME.look.y, ALARM.guard, dt);
   // `turn` (-1 to 1) is how far his head is turned as he looks round: it follows the very swing his cone makes.
@@ -210,8 +214,9 @@ function searchHome(a, dt, api, sq, hidden) {
       a.phase = "caught";
     }
   }
-  // He gives up after a search: under the bed, or anywhere he has not been seen.
-  if (!sees && g.sweep >= ALARM.homeSearch) g.leaving = true;
+  // He gives up after a search: under the bed, or anywhere he has not been seen. He leaves, unless the party has
+  // something to say to him first (`api.guardSearched`: Mops comes in, party-after-alarm.js).
+  if (!sees && g.sweep >= ALARM.homeSearch) api.guardSearched && api.guardSearched(g) ? ((g.held = true), (g.turn = null)) : (g.leaving = true);
 }
 
 /** The home guard's cone, while one is in the home room; `draw` moves where it is drawn (his flashlight). */

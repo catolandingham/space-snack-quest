@@ -1,12 +1,12 @@
 /**
- * The party's wordless toys (party plan P6, "The toys"): the conga line and the band photo (the octopus is
- * party-octopus.js, the hallway doorway's bounce party-hallway.js). The plants and the vent do nothing to his disguise (Brian
+ * The party's wordless toys (party plan P6, "The toys"): the conga line (the group photo is party-photo.js,
+ * the octopus party-octopus.js, the hallway doorway's bounce party-hallway.js). The plants and the vent do nothing to his disguise (Brian
  * 2026-11-24, "Lose it all"). Each is a small state on the party's game-state
  * object `p` and one tick function. All are optional, and nothing here gives a goal chip or an outline.
  * Numbers marked PLACEHOLDER are the builder's guesses for Brian to tune; "pinned" ones are his approved values
  * (docs/TUNING-PINS.json).
  */
-import { CONGA_ROUTE, PHOTO_FRAME, stepTo, stepClear, CLEAR_OF_SQUATCH } from "./party-hall.js";
+import { CONGA_ROUTE, stepTo, stepClear, CLEAR_OF_SQUATCH } from "./party-hall.js";
 
 // ---------- the conga line ----------
 // PLACEHOLDERS: when in each song the conga forms (seconds into the song), how long it lasts, how fast it goes,
@@ -81,30 +81,4 @@ export function tickConga(p, dt, songT, s, api) {
     api.tow(tail, CONGA.speed * 2.2, dt);
   }
   return out;
-}
-
-// ---------- the band photo ----------
-// PLACEHOLDERS: the camera's rhythm (seconds waiting, then the 3-2-1 count), and how long the Polaroid shows.
-// The bonus is pinned (R60, PHOTO_BONUS in docs/TUNING-PINS.json).
-export const PHOTO = Object.freeze({ wait: 6, count: 3, flash: 0.25, polaroid: 3.2, cheeseNear: 230 });
-export const PHOTO_BONUS = 25;
-export const inPhoto = (s) => s.x > PHOTO_FRAME.x0 && s.x < PHOTO_FRAME.x1 && s.y > PHOTO_FRAME.y0 && s.y < PHOTO_FRAME.y1;
-/** One frame of the camera. Returns "count" when the 3-2-1 starts, "beep" on each count, "flash", "photo" (he is in it), or "". */
-export function tickPhoto(p, dt, s, visible) {
-  const ph = p.photo || (p.photo = { t: 0, phase: "wait", n: 0, taken: false, pol: 0 });
-  ph.pol = Math.max(0, ph.pol - dt);
-  ph.t += dt;
-  if (ph.phase === "wait" && ph.t >= PHOTO.wait) return ((ph.phase = "count"), (ph.t = 0), (ph.n = 3), "count");
-  if (ph.phase === "count") {
-    const n = 3 - Math.floor(ph.t);
-    if (n !== ph.n && n > 0) return ((ph.n = n), "beep");
-    if (ph.t >= PHOTO.count) {
-      ph.phase = "flash";
-      ph.t = 0;
-      if (!ph.taken && visible && inPhoto(s)) return ((ph.taken = true), (ph.pol = PHOTO.polaroid), "photo");
-      return "flash";
-    }
-  }
-  if (ph.phase === "flash" && ph.t >= PHOTO.flash) ((ph.phase = "wait"), (ph.t = 0));
-  return "";
 }

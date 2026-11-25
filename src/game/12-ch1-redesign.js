@@ -86,19 +86,20 @@
         delivery: 101 * (640 / 830),
         home: 129 * (640 / 830),
       },
-      ADULT_OF_DOOR = 0.85,
-      HALL_BIGGER = 1.4,
-      HALL_ADULT_PX = CANVAS_DOOR_PX.hall * ADULT_OF_DOOR * HALL_BIGGER;
+      HALL_BIGGER = 1.4;
     function roomDoorId(room) {
       return room === "passage" ? "hallway" : room === "hangar" ? "delivery" : room === "closet" ? "home" : room === "office" ? "office" : room === "hall" ? "hall" : "hall";
     }
-    function adultPxFor(room) {
-      // The hall itself is bigger (HALL_BIGGER). A room with no door of its own still measures against the hall's
-      // doorway at 85%, as before.
-      if (room === "hall") return HALL_ADULT_PX;
+    // 85% of the door of `room` (a room with no door of its own measures against the hall's doorway).
+    function doorAdultPx(room) {
       let id = CANVAS_DOOR_PX[room] ? room : roomDoorId(room);
-      return (CANVAS_DOOR_PX[id] || CANVAS_DOOR_PX.hall) * ADULT_OF_DOOR;
+      return (CANVAS_DOOR_PX[id] || CANVAS_DOOR_PX.hall) * 0.85;
     }
+    // How tall a grown-up is drawn in `room`: 85% of its door, and in the hall itself HALL_BIGGER times that.
+    function adultPxFor(room) {
+      return doorAdultPx(room) * (room === "hall" ? HALL_BIGGER : 1);
+    }
+    const HALL_ADULT_PX = adultPxFor("hall");
     function alienScale(room) {
       return adultPxFor(room) / 84;
     }
@@ -112,10 +113,10 @@
     // The hall's sizes above are for people in the hall. The few figures drawn with them in other rooms (a tour
     // group, Chapter 1's guard, Qt in the office scene) keep the size they had: only the hall grew.
     function qtHere() {
-      return n.room === "hall" ? QT_ADULT : (CANVAS_DOOR_PX.hall * ADULT_OF_DOOR) / 50;
+      return n.room === "hall" ? QT_ADULT : doorAdultPx("hall") / 50;
     }
     function alienHere() {
-      return n.room === "hall" ? ALIEN_ADULT : (CANVAS_DOOR_PX.hall * ADULT_OF_DOOR) / 84;
+      return n.room === "hall" ? ALIEN_ADULT : doorAdultPx("hall") / 84;
     }
     function sqDrawScale() {
       if (n.room === "closet" && (n.scene || "")[0] !== "Q") return wl;

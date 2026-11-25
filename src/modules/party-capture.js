@@ -4,7 +4,7 @@
  * under the bed at home. Split out of party.js (half-one review: "split the capture hooks out").
  *   P2: hidden in the middle plant, the welcome (P3) starts from there.
  *   P4: after hiding at home, on to the dress-up (P5).
- *   P7: after hiding at home, the ending after an alarm (P8a); after a plant, he walks home himself.
+ *   P7: at home the card and what follows are party-after-alarm.js; after a plant, he walks home himself.
  */
 import { partyLine, lockupCause } from "./party-lines.js";
 import { HALL, SPOTS } from "./party-hall.js";
@@ -13,7 +13,7 @@ import { drawAlarmCloseUp } from "./party-art.js";
 import { openFullScreen, closeFullScreen } from "./fullscreen.js";
 
 /**
- * `h`: { E, P, sq, chip, control, startScene (id), picture, homeRoom, pace, firstAlarm: { seen } }.
+ * `h`: { E, P, sq, chip, control, startScene (id), picture, homeRoom, pace, firstAlarm: { seen }, afterAlarm () }.
  * Returns { api () (what tickAlarm needs), calmFromHome () }.
  */
 export function createCapture(h) {
@@ -27,6 +27,8 @@ export function createCapture(h) {
       hidden: () => (h.P().pose === "hidden" ? "plant" : h.P().pose === "bed" ? "bed" : ""),
       room: () => e.room(),
       people: () => h.P().people,
+      // the home guard has finished looking: with "Keep going" chosen, Mops comes in and the guard stays to talk
+      guardSearched: (g) => h.afterAlarm().guardSearched(g),
       firstTime: () => !h.firstAlarm.seen,
       // the FUR alarm's ringing bell (the sound board's pick)
       bell: () => h.sound.one("bell"),
@@ -55,6 +57,11 @@ export function createCapture(h) {
         e.catchSquatch(lockupCause(whoId, whereId));
       },
       lost() {
+        // "Keep going": the guard leaves because Mops sent him off, and the scene goes straight on (no note).
+        if (h.P().choice === "keep") return;
+        // A guard who follows him home after the hall has already calmed down (`quiet`): "They lost you." was said
+        // in the hall; it is not said twice for one alarm.
+        if (h.P().alarm && h.P().alarm.quiet) return void h.chip("");
         h.P().lost = true;
         // "They lost you.": the run-and-hide goal is over while the room calms down.
         h.chip("");
@@ -64,6 +71,9 @@ export function createCapture(h) {
       calmDone(how) {
         const p = h.P();
         h.chip(p.scene === "P2" ? "chip-plant" : p.scene === "P4" ? "chip-home" : "");
+        // P7, after the search at home: "Back to the party" (party-after-alarm.js).
+        if (how === "home" && p.scene === "P7") return h.afterAlarm().back(p);
+        if (how === "home" && p.scene === "P8a") return;
         if (how === "home") return calmFromHome();
         // Hidden in the middle plant in P2: he made it, and the welcome starts from there.
         if (p.scene === "P2" && p.hideAt === "middle" && p.pose === "hidden") return h.startScene("P3");
@@ -93,12 +103,12 @@ export function createCapture(h) {
       }),
       e.until(() => !h.P() || h.P().pt >= 1.2),
       e.run(() => {
-        if (scene === "P4" || scene === "P7") {
-          // P4: he was on his way home anyway, to the closet. P7: home is where he was running; Mops is coming.
+        if (scene === "P4") {
+          // he was on his way home anyway, to the closet
           e.enterRoom("closet", "Q1");
           e.place("sq", h.homeRoom.inside.x, h.homeRoom.inside.y);
           e.set("sqPose", "stand");
-          return h.startScene(scene === "P4" ? "P5" : "P8a");
+          return h.startScene("P5");
         }
         h.P().pose = "stand";
         e.set("sqPose", "stand");

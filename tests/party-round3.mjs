@@ -19,7 +19,7 @@ mkdirSync(OUT, { recursive: true });
 const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 1 };
 const g = await startGame({ port: 9140, name: "party-round3" });
 const hall = await import(join(root, "src", "modules", "party-hall.js"));
-const toys = await import(join(root, "src", "modules", "party-toys.js"));
+const photo = await import(join(root, "src", "modules", "party-photo.js"));
 const hallway = await import(join(root, "src", "modules", "party-hallway.js"));
 const art = await import(join(root, "src", "modules", "party-art.js"));
 const dance = await import(join(root, "src", "modules", "party-dance.js"));
@@ -261,7 +261,10 @@ const frameDiff = (page, change, undo, from) =>
     const ss = window.__ss,
       n = ss.op,
       p = n.ch1PartyNow;
-    Object.assign(p.photo, { phase: "count", t: 2.99, n: 1 });
+    // the group photo's count, at its last moment (the first song has just ended and everyone has set off)
+    p.songT = 60;
+    ss.tick(1 / 60);
+    Object.assign(p.shot, { phase: "count", t: 2.99, n: 1 });
     let on = 0,
       started = false;
     for (let i = 0; i < 120; i++) {
@@ -271,7 +274,7 @@ const frameDiff = (page, change, undo, from) =>
     }
     return on / 60;
   });
-  g.check("the flash lasts as long as before (0.25 s)", Math.abs(len - toys.PHOTO.flash) < 0.04, len);
+  g.check("the flash lasts as long as before (0.25 s)", Math.abs(len - photo.PHOTO.flash) < 0.04, len);
   await set(page, (p) => (p.flash = 0.2));
   await page.evaluate(() => window.__ss.drawFrame());
   await still(page, "r3-camera-flash-at-lens");
@@ -427,6 +430,9 @@ const runHome = (page, hide) =>
       ss.actionDown();
       ss.actionUp();
       for (let i = 0; i < 300 && n.ch1PartyNow.pose !== "bed"; i++) ss.tick(1 / 30);
+      // under the bed the "more to find" card shows (round four); "Back to the party": the guard comes in and looks
+      for (let i = 0; i < 60 && !n.ch1PartyNow.card; i++) ss.tick(1 / 30);
+      window.SSQ.beat("ch1-party").cardChoose("back");
     }
     for (let i = 0; i < 600 && !(guard() && guard().sweep > 0.05); i++) ss.tick(1 / 30);
     return { room: n.room, pose: n.ch1PartyNow.pose, guard: !!guard(), act };

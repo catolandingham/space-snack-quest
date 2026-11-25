@@ -4,24 +4,26 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–63 | ## Where main is (Chapter 1 redesign) |
-| 64–78 | ## Register |
-| 79–100 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 101–121 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 122–134 | ## Phase 2 (plan section 4, T13 to T18) |
-| 135–157 | ## Phase 1 (plan section 3, T5 to T12) |
-| 158–171 | ## SS40–SS44 |
-| 172–189 | ## Story rows |
-| 190–208 | ## Reset section |
-| 209–219 | ## Still open |
-| 220–223 | ## Chapter 1 replot, recorded and not built |
-| 224–373 | ## Changelog |
+| 24–65 | ## Where main is (Chapter 1 redesign) |
+| 66–80 | ## Register |
+| 81–102 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 103–123 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 124–136 | ## Phase 2 (plan section 4, T13 to T18) |
+| 137–159 | ## Phase 1 (plan section 3, T5 to T12) |
+| 160–173 | ## SS40–SS44 |
+| 174–191 | ## Story rows |
+| 192–210 | ## Reset section |
+| 211–221 | ## Still open |
+| 222–225 | ## Chapter 1 replot, recorded and not built |
+| 226–377 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-24, draft PR #87, party round four (Brian's answers of 2026-11-24), not merged: no tipping (pieces come off only at the pyramid's crash and the octopus's second hug; the second look, the warning sign, the plants' snag and the vent's tug are deleted); the octopus's 20-second chase with his arms out (`party-octopus.js`; pin `chase-seconds` 10 to 20 on his yes); GRAB · snacks on the action button, no paw icon; the "more to find" card under the bed and its two roads, back to the party or the new ending with the guard, Mops and the hat (`party-card.js`, `party-after-alarm.js`; the old P8a is deleted); the one group photo after the first song (`party-photo.js`; the looping camera and plan decision 16 are gone); everyone in the hall 40% bigger (`HALL_BIGGER = 1.4`, new pin `hall-bigger`; other rooms unchanged). Main (PR #88) merged in; Mops's gentle lines never get his meh. Tests: `tests/party-round4.mjs` (new), `party-free`, `party-endings`, `party-round3`, `people-scale`. Still to do before merge: the other builder's snack close-up and dance merged in, the full suite, the kid robot, new videos.
 
 2026-11-24, draft PR on branch `feat/party-half-two` (party rebuild, half two), not merged: P6 the party in disguise (no chips or outlines; milling guests; three songs and early closing; the second-look rule; the free dance full screen, the conga, the band photo +25, the snack close-up and the pyramid topple, the octopus after a minute, the hallway and Mops's beard, plants and the vent take pieces), P7 the alarm and the run home (the beard yanks away), P8a and P8b both reaching "You have me." and beat 20; the party's sounds (the board's picks, an original swing tune, Kenney CC0 recordings). The old free play is deleted from `src/game/`; pins moved, four retired (needs Brian's yes). Then the independent review's fixes: the second look only for a crooked piece and never in his first minute, the octopus's second hug, the door outlined while hidden in P7, words and labels off Squatch (bubble name tags 6 px higher in every chapter), nobody walking through anybody, control and Mops coming over at closing time, the dance's close button. Docs match main: yes. Round three (Brian's notes on the party video, 2026-11-24; `tests/party-round3.mjs`): the dance draws Squatch once, the camera's flash is a small burst at the lens, no walk ring on a place the goal outline marks, the hallway doorway bounces him back with "I can't go there. Mops will see me." (the beard, its yank and its sounds deleted), the home guard's flashlight beam and searching look, and no yellow cones in a whole disguise. Still to build from Brian's answers of 2026-11-24: no tipping, the group photo moment, the 20-second octopus chase, tap-to-grab snacks, the snack bar's ring, and the new ending after an alarm (the choice card, the Wookiee talk, the hat).
 
@@ -222,6 +224,8 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/old/OPEN-ASKS.md`. The
 `docs/DECISIONS.md` rows R29 through R63 are the Nov 8–9 cartoon decisions. R29–R57 cover the home wardrobe, no home vent, the pickup-day crate, the spare blue jacket disguise, Isfred Bar Neshuman, ball-hide timing, the office computer, the connecting hallway, the party with no Mops and no robots, the office cutscene, and the Employee of the Month gallery (5 photos, crooked photo #4, keepsake points still open). R58–R63 are not in the game. R58: returning the balloon gets a wordless smile, a finger to the lips, and a thumbs-up; keeping it makes the kid yell "Scary Wookiee!" (NEEDS BRIAN), pulls the FUR alarm, and brings security; never jumping sends the balloon to the ceiling, the kid is sad, and nothing else happens. R59, delegated by Brian: the kid gasps with "!" and points, then a 6-second wobbly glowing rise while grabbable, one jump grabs it, and it reads with no words. R60: the pair hunt is dropped; a "Find someone who…" picture card is proposed and pending Brian; the octopus is an over-snacked, huggy tourist ("*hic* Fellow tourist!", NEEDS BRIAN) whose two hugs knock the disguise off; a photo corner lets Squatch enter the shot, then a cut to a printing Polaroid, with bonus points if he is in it (amount open); tapes proof is dropped; the third snack-table grab starts a chain reaction that pushes things off the far end and gives a hide window (4-second placeholder, needs Brian). R61: the balloon stays in the party hall later (on the ceiling if missed, tied near the kid's spot if returned) and pops quietly with a comic "POP!" (NEEDS BRIAN) on the last Chapter 1 hall visit. R62: funnier gags are things worn as horns, something in his mouth, and random things on his head, about 16, the Squatch ball-roll photobomb stays, and the crooked photo stays #4; the crayon drawing reads as Squatch and Mops with "Always tied together" (NEEDS BRIAN) underneath; controls are left and right arrows under the photo plus an X that is always visible; swiping past photo 5 always triggers "BEEP BEEP" (NEEDS BRIAN) and the gallery cuts out. R63: kid-handwritten "MOPS" and "ME" (NEEDS BRIAN), and a dotted sight line from Mops to Squatch with hearts rising from it, contrasting with the "!" other characters get. They are not in the game. New on-screen words are marked NEEDS BRIAN in `docs/CH1-CARTOON-LINES.md`. Ball-hide numbers (R43, about 70px for 2 seconds), the 6-second rise (R59), and the 4-second snack-table placeholder (R60) are written down only. This page does not change a timer, a price, or a range in the build.
 
 ## Changelog
+
+2026-11-24, draft PR #87, party round four. Deleted: tipping and the second look (`p.tip`, `p.curious`, `p.warn`, `FREE.straighten/firstLook/curiousAfter/turn/stare/secondLook/forget/warn/pawNear`, `tickPlants`, `tickTug`, `PLANT_BRUSH`, `drawTugWarning`, `bump`, `tipNext`), the paw icon (`PAW_ICON`, the beat's `tap`), the looping camera (`tickPhoto` in `party-toys.js`, `PHOTO_FRAME`, the small sliding Polaroid), and the old P8a (`startAfterAlarm`, the furry flyer, Mops's puffs). New modules: `party-octopus.js`, `party-octopus-art.js`, `party-card.js`, `party-after-alarm.js`, `party-photo.js`. New test: `tests/party-round4.mjs`. Pins: `chase-seconds` 10 to 20 (Brian's yes), new `hall-bigger` 1.4 (Brian's yes), `photo-bonus` and the octopus pins moved with their code, values unchanged.
 
 2026-11-24, draft PR #88 on `feat/morning-sound`, the quiet room. New `mop-loop.js`: Mops's mopping loop before the first tap (`MOP_LOOP`: strides, speeds, the beard's sweep, the shine's drying, the wring's beats; all placeholders), `drawWet` (the wet streak's drawing, moved from `morning.js`), the wrung beard and drops drawn over the room. `morning.js`: `ding()` stops him where he is, the mop-along runs from wherever he stands (`mopAtLeast`: two strokes at least; he faces the bucket all the way), new places `wring` and `water`, `mopsLook()`. `morning-sound.js`: `snoreLevel` 0.4 (was 0.22), `mopSoftEvery` 0.8, `measure` takes a level, a part and a high-pass. `synth.js`: `mopSoft` is a swish with no squeak, new `squeeze` and `dripSoft`, `nz` gains `top`. Engine: `X2` in `60-frame-draw.js` reads `mopsLook()` (guarded). Tests: new `morning-mop-loop`; `morning-order` and `sound-cues` now choose when to tap the quiet room (Mops moves there now); `module-build` reads `mop-loop.js` too.
 

@@ -17,7 +17,8 @@ import { coneSees, lookAt, towardStage, SEEN_TOO_LONG_SECONDS } from "./party-wa
 import { startAlarm, ALARM } from "./party-alarm.js";
 import { tickVent } from "./party-vent.js";
 import { furShows, anyWorn, wornNow, tickPieces, knockNext } from "./party-outfit.js";
-import { tickConga, tickPhoto, PHOTO_BONUS, PHOTO } from "./party-toys.js";
+import { tickConga } from "./party-toys.js";
+import { tickPhoto, startPhoto, goBack, photoActive, photoOpen, photoDone, drawGroupPolaroid, PHOTO, PHOTO_BONUS, PHOTO_ROW, POLAROID_LABEL } from "./party-photo.js";
 import { tickOctopus, chasing, OCT } from "./party-octopus.js";
 import { inHallwayZone, startBounce, tickBounce } from "./party-hallway.js";
 import { openSnacks, closeSnacks, tickSnacks, snackPointer, startTopple, tickTopple, SNACK_STARS, SNACK_LOOK_SECONDS } from "./party-snacks.js";
@@ -28,6 +29,8 @@ import { openFullScreen, closeFullScreen } from "./fullscreen.js";
 export const COOL_HAT_SECONDS = 180;
 // The three songs share the party's length.
 export const SONG_SECONDS = COOL_HAT_SECONDS / 3;
+// PLACEHOLDER for Brian: coming back to the party after hiding at home, at least this much of it is left.
+export const BACK_MIN_SECONDS = 60;
 // PLACEHOLDERS for Brian:
 //   firstMinute  his first minute in the hall: the octopus waits
 //   mill, stops  how slowly guests mill and how long they stop to dance
@@ -75,10 +78,30 @@ export function createFreePlay(h) {
       flash: 0,
       shake: 0,
       flyer: "floor",
+      // the one group photo, when the first song ends (party-photo.js); a restart after it does not bring it again
+      shot: keep.shot && keep.shot.phase === "done" ? { phase: "done" } : null,
     });
     for (const g of Object.values(p.people)) Object.assign(g, { task: "", wait: 0, face: null, dance: 1 });
     UNITS.forEach((u, i) => (p.people[u[0]].spot = -1 - i));
     h.sound.song(p.song);
+  }
+
+  /**
+   * Back to the party after hiding at home (Brian 2026-11-24): P6 goes on from where it was, with what he found, the
+   * song and the clock, his disguise whole again, and at least BACK_MIN_SECONDS left on the clock.
+   */
+  function resume(p) {
+    Object.assign(p, { scene: "P6", phase: "free", alarm: null, band: true, lights: true, lost: false, calmed: false, choice: "", mopsIn: false, lostPieces: [], fallen: [], flying: [], seenBy: "", seenT: 0, stare: null, bounce: null, pose: "stand" });
+    for (const g of Object.values(p.people)) Object.assign(g, { task: "", wait: 0 });
+    p.oct && Object.assign(p.oct, { mode: "back", arms: 0 });
+    // an alarm in the middle of the photo moment: it is over, and the band walks back to the stage first
+    photoActive(p) && ((p.band = false), goBack(p));
+    const left = (2 - p.song) * SONG_SECONDS + (SONG_SECONDS - p.songT);
+    left < BACK_MIN_SECONDS && ((p.song = 2), (p.songT = SONG_SECONDS - BACK_MIN_SECONDS));
+    h.sound.song(p.band ? p.song : -1);
+    E().forgetSaved();
+    h.chip("");
+    h.control(true);
   }
 
   // ---------- the guests mill ----------
@@ -176,6 +199,8 @@ export function createFreePlay(h) {
     p.dance && closeDance(p, true);
     p.snack && (closeSnacks(p), h.control(true));
     p.conga && (p.conga.joined = false);
+    // the photo moment ends where it is (the Polaroid closes; everyone walks back once the party goes on)
+    if (photoActive(p)) (p.shot.phase === "polaroid" && closeFullScreen(), goBack(p));
     // the octopus drops his arms and lets go
     chasing(p.oct) && (p.oct.mode === "hug" && h.control(true), Object.assign(p.oct, { mode: "back", rest: OCT.rest, arms: 0 }));
   }
@@ -221,6 +246,65 @@ export function createFreePlay(h) {
   }
 
 
+  // ---------- the group photo ----------
+  // The first song has ended: the band stops, and everyone sets off for the row (party-photo.js).
+  function beginPhoto(p) {
+    p.conga && ((p.conga.on = false), (p.conga.joined = false));
+    chasing(p.oct) && p.oct.mode === "hug" && h.control(true);
+    // (after the photo he walks back to the snacks and rests before he chases anyone)
+    p.oct && Object.assign(p.oct, { mode: "back", rest: OCT.rest, arms: 0 });
+    p.band = false;
+    h.sound.song(-1);
+    h.sound.one("scratch");
+    startPhoto(p);
+  }
+  // JOIN · photo: he walks into the gap left for him in the front row and stands there, facing the camera.
+  function join(p) {
+    const e = E();
+    h.control(false);
+    e.walkOff();
+    e.queue([
+      e.until((dt) => !h.P() || !photoOpen(h.P()) || e.step("sq", PHOTO_ROW.squatch.x, PHOTO_ROW.squatch.y, PHOTO.join, dt)),
+      e.run(() => {
+        const q = h.P();
+        if (!q || q.scene !== "P6") return;
+        // too late (the click came while he walked): he just has control again
+        if (!photoOpen(q)) return void h.control(true);
+        e.still("sq");
+        e.face("sq", 1);
+        q.shot.in = true;
+      }),
+    ]);
+  }
+  // The Polaroid of the group fills the screen; a tap closes it, and everyone walks back.
+  function openPolaroid(p) {
+    const e = E();
+    let shown = 0;
+    const art = {
+      adult: e.hallSizes().adult,
+      sqScale: e.hallSizes().squatch,
+      squatch: (ctx, x, y, scale) => e.drawSquatch(ctx, x, y, scale, { f: 1 }),
+      guest: (ctx, id, x, y, tall) => h.guests.drawId(ctx, id, x, y, tall, 0),
+    };
+    openFullScreen({
+      label: POLAROID_LABEL,
+      restart: () => e.restartPart(),
+      draw(ctx, w, hgt, t) {
+        const q = h.P();
+        if (!q || !q.shot) return;
+        shown = t;
+        drawGroupPolaroid(ctx, w, hgt, art, wornNow(q), t / 0.5);
+      },
+      pointer(kind) {
+        const q = h.P();
+        if (kind !== "down" || shown < PHOTO.closeAfter || !q || !q.shot || q.shot.phase !== "polaroid") return;
+        closeFullScreen();
+        goBack(q);
+        h.control(true);
+      },
+    });
+  }
+
   // ---------- every frame ----------
   function tick(p, dt, s, free, paused) {
     const e = E(),
@@ -232,9 +316,12 @@ export function createFreePlay(h) {
     p.ft += dt;
     const first = p.ft < FREE.firstMinute;
     // the songs, and closing time
-    p.songT += dt;
-    // (closing time waits for a push back at the hallway doorway and its line to finish, and for a hug to let go)
-    if (p.songT >= SONG_SECONDS && !(p.dance && p.dance.t < DANCE.least) && !p.bounce && !(p.oct && p.oct.mode === "hug")) {
+    photoActive(p) || (p.songT += dt);
+    // (the song's end waits for a push back at the hallway doorway and its line to finish, for a hug to let go, and
+    // for the pyramid's crash and the stare to be over: one moment at a time)
+    if (p.songT >= SONG_SECONDS && !(p.dance && p.dance.t < DANCE.least) && !p.bounce && !(p.oct && p.oct.mode === "hug") && !photoActive(p) && !crashing(p)) {
+      // the first song ends: the group photo, once (the second song starts when everyone is back)
+      if (p.song === 0 && !photoDone(p)) return void (p.dance || p.snack ? (p.dance && closeDance(p), p.snack && (closeSnacks(p), h.control(true))) : beginPhoto(p));
       if (p.song >= 2) return void (p.dance || p.snack ? (p.dance && closeDance(p), p.snack && (closeSnacks(p), h.control(true))) : h.toClosing());
       p.song += 1;
       p.songT = 0;
@@ -243,7 +330,8 @@ export function createFreePlay(h) {
     p.dance && (tickDance(p.dance, dt), p.dance.song !== p.song && p.dance.t >= DANCE.least && closeDance(p));
     // (trying the hallway doorway is not a toy: Brian 2026-11-24)
     const others = ["conga", "photo", "snacks", "octopus"].filter((k) => p.done[k]).length;
-    if (p.done.dance && others >= 2 && p.song < 2 && !p.early) ((p.early = true), (p.song = 2), (p.songT = 0), h.sound.song(2));
+    // (never before the group photo has had its moment: it comes when the first song ends)
+    if (p.done.dance && others >= 2 && p.song < 2 && !p.early && photoDone(p)) ((p.early = true), (p.song = 2), (p.songT = 0), h.sound.song(2));
     p.clap = Math.max(0, p.clap - dt);
     p.shake = Math.max(0, p.shake - dt);
     p.stare && (p.stare.t -= dt) <= 0 && (p.stare = null);
@@ -257,18 +345,19 @@ export function createFreePlay(h) {
     });
     cg === "join" && ((p.done.conga = true), h.sound.one("conga"));
     p.conga && p.conga.joined && (p.congaBeat = (p.congaBeat || 0) + dt) > 0.8 && ((p.congaBeat = 0), h.sound.one("conga"));
-    // the camera
-    const ph = tickPhoto(p, dt, s, stand);
-    if (ph === "count") {
-      h.sound.one("beep");
-      Math.hypot(s.x - p.people.camera.x, s.y - p.people.camera.y) < PHOTO.cheeseNear && ((p.talker = "camera"), e.ambient("tourist", partyLine("guest-cheese")));
-    }
+    // the group photo
+    const ph = tickPhoto(p, dt, s);
+    ph === "cheese" && (h.sound.one("beep"), (p.talker = "camera"), e.ambient("tourist", partyLine("guest-cheese")));
     ph === "beep" && h.sound.one("beep");
-    if (ph === "flash" || ph === "photo") ((p.flash = PHOTO.flash), h.sound.one("flash"));
-    ph === "photo" && ((p.done.photo = true), e.addStars(PHOTO_BONUS), h.sound.one("cheer"), h.sound.one("zzzt"));
-    // the octopus
+    if (ph === "click" || ph === "photo") ((p.flash = PHOTO.flash), h.sound.one("flash"));
+    ph === "photo" && (p.done.photo || ((p.done.photo = true), e.addStars(PHOTO_BONUS)), h.sound.one("cheer"), h.sound.one("zzzt"));
+    ph === "click" && p.shot.in && h.control(true);
+    ph === "close-up" && openPolaroid(p);
+    // everyone is back and the band is on the stage: the second song
+    ph === "done" && ((p.band = true), (p.song = 1), (p.songT = 0), h.sound.song(1));
+    // the octopus (he stands in the photo's row with the others until it is over)
     // (he does not start, or move in, while the pyramid is crashing or everyone is staring: one moment at a time)
-    const oc = tickOctopus(p, dt, s, { firstMinute: first, canChase: stand && !crashing(p), hidden: p.pose !== "stand" });
+    const oc = photoActive(p) && p.shot.phase !== "back" ? "" : tickOctopus(p, dt, s, { firstMinute: first, canChase: stand && !crashing(p), hidden: p.pose !== "stand" });
     if (oc === "notice") {
       p.done.octopus = true;
       h.sound.one("hiccup");
@@ -366,6 +455,16 @@ export function createFreePlay(h) {
     const out = [];
     if (p.scene !== "P6" || p.pose !== "stand" || p.dance || p.snack) return out;
     const s = h.sq();
+    // The photo moment: the one thing offered is his place in the row (no DANCE, no snacks), from anywhere in the hall.
+    if (photoActive(p)) {
+      if (photoOpen(p)) {
+        const [verb, cap] = partyLine("button-join").split(" · "),
+          at = PHOTO_ROW.squatch,
+          tall = 50 * E().hallSizes().squatch;
+        out.push({ id: "photo", verb, cap, who: "sq", x: at.x, y: at.y, r: 900, thing: { x0: at.x - 24, x1: at.x + 24, y0: at.y - tall, y1: at.y }, f: () => join(h.P()) });
+      }
+      return out;
+    }
     if (!furShows(p) && !(p.conga && p.conga.joined))
       out.push({ id: "dance", verb: partyLine("button-dance").split(" · ")[0], cap: partyLine("button-dance").split(" · ")[1], who: "sq", x: DANCE_SPOT.x, y: DANCE_SPOT.y, r: DANCE_SPOT.rx, thing: { x0: DANCE_SPOT.x - DANCE_SPOT.rx, x1: DANCE_SPOT.x + DANCE_SPOT.rx, y0: DANCE_SPOT.y - DANCE_SPOT.ry, y1: DANCE_SPOT.y + DANCE_SPOT.ry }, when: inSpot(s), f: () => openDance(h.P()) });
     // The snack bar: standing at it, the action button alone offers the snacks (no ring and no little picture over
@@ -385,7 +484,11 @@ export function createFreePlay(h) {
       e.until((dt) => e.step("sq", SNACK_SPOT.x, SNACK_SPOT.y, 240, dt)),
       e.run(() => {
         const q = h.P();
-        q && q.scene === "P6" && (openSnacks(q), e.sfx("open"));
+        if (!q || q.scene !== "P6") return;
+        // the photo moment began while he walked to the bar: no snacks now, he just has control again
+        if (photoActive(q)) return void h.control(true);
+        openSnacks(q);
+        e.sfx("open");
       }),
     ]);
   }
@@ -400,5 +503,5 @@ export function createFreePlay(h) {
     r === "close" && (closeSnacks(p), h.control(true));
     return true;
   }
-  return { start, tick, spots, pointer, alarm, closeDance, inSpot };
+  return { start, resume, tick, spots, pointer, alarm, closeDance, inSpot };
 }

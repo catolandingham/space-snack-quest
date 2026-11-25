@@ -1,13 +1,12 @@
 /**
- * P8, the endings: both roads meet at home (party plan P8; no catch; ↺ restarts the ending).
- *   P8a, after an alarm: Mops comes in through the door, out of breath, sees the flyer on the floor (covered in
- *        fur, glowing), then looks at Squatch. Squatch: "Everyone out there has someone." Mops: "You have me."
- *   P8b, never caught: the wall speaker: "The party's over. Good night, Stormtop!" The band packs up. Guests leave
- *        through the hallway doorway two by two, the same pairs he watched from the plant (the two who came alone
- *        leave together), then the bartender, Isfred and the band, until Squatch stands alone in the empty hall
- *        (DECISIONS "Closing-time ending"). Mops comes in from the hallway mopping with his beard, looks up, and
- *        his cone fills with floating hearts (R98, R104; PR #35's look, as big as everyone's). No words. The kid
- *        walks Squatch to Mops and they walk home together through Squatch's door. The same two lines.
+ * P8b, closing time: the ending when he was never caught (party plan P8; no catch; ↺ restarts it). The ending
+ * after an alarm is party-after-alarm.js.
+ *   The wall speaker: "The party's over. Good night, Stormtop!" The band packs up. Guests leave through the hallway
+ *   doorway two by two, the same pairs he watched from the plant (the two who came alone leave together), then the
+ *   bartender, Isfred and the band, until Squatch stands alone in the empty hall (DECISIONS "Closing-time ending").
+ *   Mops comes in from the hallway mopping with his beard, looks up, and his cone fills with floating hearts (R98,
+ *   R104; PR #35's look, as big as everyone's). No words. The kid walks Squatch to Mops and they walk home together
+ *   through Squatch's door. "Everyone out there has someone." "You have me."
  * Then beat 20 (the TV story) as today: the engine's tvStory hand-over.
  */
 import { CAST, EXIT, EXIT_LANE_MOUTH, MOPS_IN, SPOTS, HOME_ROOM, stepTo, stepClear, CLEAR_OF_SQUATCH } from "./party-hall.js";
@@ -18,12 +17,12 @@ import { lookAt } from "./party-watch.js";
 // `comeOver`: if he has not walked to Mops this long after the hearts, Mops walks over to him (the review of PR #87).
 // `clearOf`: someone walking out goes round Squatch this far from him; `giveWay`: how long they wait if he stands on
 // their way to the doorway before heading straight for the doorway round him. `besideHome`: how far from Squatch Mops
-// stops at home in P8a (the home room draws them big, so further than in the hall).
-export const ENDING = Object.freeze({ leave: 110, gap: 1.2, pack: 1.6, mop: 45, reach: 70, walk: 150, puff: 1.4, look: 1.2, heart: 0.8, comeOver: 3, clearOf: CLEAR_OF_SQUATCH, giveWay: 1.5, besideHome: 170 });
+// stops at home (the home room draws them big, so further than in the hall).
+export const ENDING = Object.freeze({ leave: 110, gap: 1.2, pack: 1.6, mop: 45, reach: 70, walk: 150, heart: 0.8, comeOver: 3, clearOf: CLEAR_OF_SQUATCH, giveWay: 1.5, besideHome: 170 });
 // Who leaves, in order: the pairs, the two who came alone, then the bartender, Isfred and the band.
 export const LEAVING = Object.freeze([["teal", "stilt"], ["robot", "octopus-guest"], ["camera", "backpack"], ["bartender"], ["isfred"], ["band0", "band1", "band2"]]);
-// The home room: where Mops comes in (inside the picture), and where he stops to see the flyer (party-hall.js).
-const HOME = Object.freeze({ door: HOME_ROOM.mopsDoor, inside: HOME_ROOM.mopsInside, flyerLook: HOME_ROOM.mopsFlyerLook, clear: HOME_ROOM.clear });
+// The home room: where Mops stops inside the door (party-hall.js).
+const HOME = Object.freeze({ inside: HOME_ROOM.mopsInside });
 const step = stepTo;
 
 /** `h`: { E, P, sq, say, control, chip, sound, finish () (hands over to beat 20), homeRoom }. */
@@ -210,61 +209,8 @@ export function createEndings(h) {
     return [h.say("sq", "sq-someone"), h.say("mops", "mops-have-me"), e.run(() => h.finish())];
   }
 
-  // ---------- P8a at home ----------
-  function startAfterAlarm(p) {
-    const e = E();
-    p.scene = "P8a";
-    p.flyer = "floor";
-    p.glow = 0;
-    p.puff = 0;
-    e.forgetSaved();
-    h.chip("");
-    h.control(false);
-    e.room() !== "closet" && e.enterRoom("closet", "Q1");
-    e.set("scene", "Q1");
-    e.set("sqPose", "stand");
-    e.set("moPose", "stand");
-    e.place("mops", HOME.door.x, HOME.door.y);
-    e.face("mops", -1);
-    e.queue([
-      // he steps into the room, clear of the door, so Mops has room to come in
-      e.until((dt) => h.sq().x <= HOME.clear.x || e.step("sq", HOME.clear.x, HOME.clear.y, ENDING.walk, dt)),
-      e.run(() => (e.still("sq"), e.face("sq", 1), h.sound.one("door"))),
-      e.until((dt) => e.step("mops", HOME.flyerLook.x, HOME.flyerLook.y, ENDING.walk, dt)),
-      e.run(() => {
-        const q = h.P();
-        e.still("mops");
-        q.puff = ENDING.puff;
-        q.pt = 0;
-        h.sound.one("huff");
-      }),
-      e.until(() => !h.P() || h.P().pt >= ENDING.puff),
-      // he sees the flyer on the floor, covered in fur and glowing; then he looks at Squatch
-      e.run(() => {
-        const q = h.P();
-        q.glow = 1;
-        q.pt = 0;
-        h.sound.one("sparkle");
-        e.face("mops", 1);
-      }),
-      e.until(() => !h.P() || h.P().pt >= ENDING.look),
-      e.run(() => {
-        const q = h.P();
-        q.glow = 0;
-        e.face("mops", h.sq().x < e.pos("mops").x ? -1 : 1);
-      }),
-      e.until((dt) => {
-        const sx = h.sq().x,
-          side = sx < e.pos("mops").x ? 1 : -1;
-        return e.step("mops", sx + side * ENDING.besideHome, h.sq().y, ENDING.walk * 0.7, dt);
-      }),
-      e.run(() => (e.still("mops"), e.face("sq", e.pos("mops").x > h.sq().x ? 1 : -1))),
-      ...lines(),
-    ]);
-  }
   function tick(p, dt, s, free) {
-    p.puff = Math.max(0, (p.puff || 0) - dt);
     if (p.scene === "P8b" && p.close) tickClosing(p, dt, s, free);
   }
-  return { startClosing, startAfterAlarm, tick };
+  return { startClosing, tick };
 }

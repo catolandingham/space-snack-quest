@@ -35,6 +35,8 @@ const SCENES = {
   "P6-at-the-bar": { beat: "party:P6", go: async (page) => { await place(page, 780, 497); await run(page, 0.4); } },
   "P6-milling-20s": { beat: "party:P6", go: async (page) => { await place(page, 150, 585); await run(page, 20); } },
   "P6-conga": { beat: "party:P6", go: async (page) => { await place(page, 150, 585); await set(page, (p) => (p.songT = 12)); await run(page, 14); } },
+  "P6-group-photo": { beat: "party:P6", go: async (page) => { await place(page, 150, 585); await set(page, (p) => (p.songT = 59.9)); await run(page, 4); await page.evaluate(() => (window.__ss.actionDown(), window.__ss.actionUp())); await run(page, 2.6); } },
+  "P6-octopus-chase": { beat: "party:P6", go: async (page) => { await place(page, 150, 585); await run(page, 8); await set(page, (p) => ((p.ft = 61), (p.oct.said = true))); await place(page, 600, 560); await run(page, 0.6); } },
   "P7-alarm": { beat: "party:P7", wait: 300, go: async (page) => run(page, 1.6) },
   "P8b-closing": { beat: "party:P8b", go: async (page) => { await tapAll(page, 3); await run(page, 4); } },
   "P8b-mops": { beat: "party:P8b", go: async (page) => { await tapAll(page, 3); await place(page, 480, 520); for (let i = 0; i < 80 && !(await page.evaluate(() => { const p = window.__ss.op.ch1PartyNow; return p.mops && p.close.phase === "look" && p.mops.heart >= 1; })); i++) await run(page, 1); } },

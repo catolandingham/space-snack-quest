@@ -2,15 +2,16 @@
  * The party robot: plays the party in disguise (P6) like a kid on a phone, to see whether three minutes with no
  * goal chips is fun and fair (party plan, step 3: "Is three minutes fun with no chips? Tune here, before polish").
  * It walks to the toys in its own order (or a random one with ROBOT_SEED), dances, joins the conga, stands in the
- * band photo, swipes snacks, heads for the hallway, and taps NEXT on every line. It is not a test suite: it prints
+ * group photo (JOIN · photo when the first song ends), swipes snacks (GRAB · snacks at the bar), meets the octopus,
+ * and taps NEXT on every line. After an alarm it runs home, hides under the bed and answers the "more to find" card
+ * ("Back to the party" the first time, then "Keep going"; ROBOT_CHOICE=keep or back picks one every time). It is not a test suite: it prints
  * what happened (toys done, stars, catches, how the party ended, how long it took) and can save a phone-size video.
  *   node tools/party-robot.mjs                 one run, toys in the planned order
  *   ROBOT_SEED=3 node tools/party-robot.mjs    one run, toys in a shuffled order, wandering between them
- *   ROBOT_CAREFUL=1                            the robot walks away from a guest who turns for a second look
  *   ROBOT_VIDEO=<folder>                       saves a frame every 0.25 s and joins them into party.mp4 (ffmpeg)
  *   ROBOT_START=party:P6                       where to start (default: the dress-up's end, party:P6)
  *   ROBOT_DANCE_TAPS=12                        leaves the dance by its close button after that many moves
- *   ROBOT_ORDER=dance,photo,snacks             the toys to visit, in this order (default: all six)
+ *   ROBOT_ORDER=dance,snacks,conga             the toys to visit, in this order (default: dance, snacks, conga, octopus)
  *   ROBOT_WAIT=560,330                         where it waits on the open floor once its toys are done
  */
 import { mkdirSync, rmSync } from "node:fs";
@@ -46,14 +47,12 @@ const layout = await page.evaluate(() => window.SSQ.beat("ch1-party").snackLayou
 // The toys and where to go for each (game positions).
 const TOYS = {
   dance: { x: 470, y: 362 },
-  photo: { x: 420, y: 365 },
-  snacks: { x: layout.paw.x, y: layout.paw.y, tap: true },
+  snacks: { x: layout.spot.x - 10, y: layout.spot.y + 10, act: "GRAB" },
   conga: null, // the tail of the line, when it is on
-  hallway: { x: 900, y: 325 },
   octopus: { x: 740, y: 560 },
   plant: { x: 420, y: 540 },
 };
-let order = process.env.ROBOT_ORDER ? process.env.ROBOT_ORDER.split(",") : ["dance", "photo", "snacks", "conga", "hallway", "octopus"];
+let order = process.env.ROBOT_ORDER ? process.env.ROBOT_ORDER.split(",") : ["dance", "snacks", "conga", "octopus"];
 if (SEED) order = order.map((k) => [rand(), k]).sort((a, b) => a[0] - b[0]).map((x) => x[1]);
 const log = [];
 let goal = 0,
@@ -74,6 +73,24 @@ for (;;) {
   if (!s.now || s.now.scene === "done") {
     log.push(`${Math.round(secs)}s the party is over: scene ${await page.evaluate(() => window.__ss.op.scene)}, ${s.cur} ${await page.evaluate(() => (window.__ss.op.cur && (window.__ss.op.cur.id || (window.__ss.op.cur.b && window.__ss.op.cur.b.text))) || "")}`);
     break;
+  }
+  // the "more to find" card: a finger on one of its buttons
+  if (s.now.card) {
+    const T = await page.evaluate(() => window.SSQ.beat("ch1-party").cardTargets()),
+      want = process.env.ROBOT_CHOICE || (log.some((l) => l.includes("card: back")) ? "keep" : "back"),
+      b = T[want] || T.keep;
+    log.push(`${Math.round(secs)}s card: ${T[want] ? want : "keep"} (found ${Object.keys(T.got).filter((k) => T.got[k]).join(",") || "nothing"})`);
+    await page.touchscreen.tap(b.x, b.y);
+    await sleep(500);
+    continue;
+  }
+  // the group photo's Polaroid: a tap closes it
+  if (s.now.shot && s.now.shot.phase === "polaroid") {
+    await sleep(900);
+    await page.touchscreen.tap(190, 640);
+    log.push(`${Math.round(s.now.ft)}s in the group photo`);
+    await sleep(400);
+    continue;
   }
   if (s.now.scene === "P8a" || s.now.scene === "P8b") {
     // the endings: walk to Mops when he is there, tap through the lines
@@ -133,6 +150,12 @@ for (;;) {
     await sleep(200);
     continue;
   }
+  // the group photo: walk into the row
+  if (s.act === "JOIN") {
+    await press();
+    await sleep(400);
+    continue;
+  }
   // everything done: wait for closing time on the open floor
   if (order.every((k) => s.now.done[k])) {
     const [wx, wy] = (process.env.ROBOT_WAIT || "650,595").split(",").map(Number);
@@ -141,7 +164,7 @@ for (;;) {
     continue;
   }
   const toy = order[goal % order.length];
-  if (s.now.done[toy] || (toy === "photo" && s.now.photo && s.now.photo.taken)) {
+  if (s.now.done[toy]) {
     log.push(`${Math.round(s.now.ft)}s done ${toy}`);
     goal++;
     continue;
@@ -158,16 +181,15 @@ for (;;) {
     continue;
   }
   const at = TOYS[toy];
-  if (at.tap) {
+  if (at.act) {
     await walk(at.x, at.y);
     await sleep(600);
+    (await st()).act === at.act && (await press());
   } else {
     await walk(at.x, at.y);
     await sleep(500);
     toy === "dance" && s.act === "DANCE" && (await press());
   }
-  // a kid gets bored of waiting for the camera
-  toy === "photo" && Math.hypot(s.x - at.x, s.y - at.y) < 20 && (await sleep(1000));
   SEED && rand() < 0.05 && (await walk(150 + rand() * 650, 330 + rand() * 250));
 }
 const end = await st();
