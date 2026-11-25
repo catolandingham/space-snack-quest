@@ -104,11 +104,12 @@ g.check("caught beside the plant: back in the party, not standing in the pot", p
     }
   };
   const L = await page.evaluate(() => window.SSQ.beat("ch1-party").snackLayout());
-  await page.evaluate(() => ((window.__ss.op.sq.x = 700), (window.__ss.op.sq.y = 520)));
-  await until((s) => s.p.paw, 3000);
-  await page.evaluate((p) => window.__ss.tapAt(p[0], p[1]), [L.paw.x, L.paw.y]);
+  await page.evaluate((p) => ((window.__ss.op.sq.x = p.x - 10), (window.__ss.op.sq.y = p.y + 10)), L.spot);
+  const t1 = Date.now();
+  while (Date.now() - t1 < 3000 && !(await page.evaluate(() => !!window.__ss.op.act && window.__ss.op.act.verb === "GRAB"))) await sleep(100);
+  await page.evaluate(() => (window.__ss.actionDown(), window.__ss.actionUp()));
   let s = await until((q) => q.p.snack, 6000);
-  g.check("the paw icon opens the snack close-up", !!s);
+  g.check("GRAB · snacks at the bar opens the snack close-up", !!s);
   // Twice: hold a snack while the bartender turns round to face him.
   for (let k = 0; k < 2; k++) {
     await until((q) => q.p.snack && q.p.snack.phase === "glance", 15000);

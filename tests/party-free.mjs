@@ -259,7 +259,7 @@ const overSquatch = (page) =>
     }
     return { min: Math.round(min), who };
   }, Math.round(40 / 0.05));
-  g.check("guests milling past never walk into him or right in front of him", near.min >= 36, near);
+  g.check("guests milling past never walk into him or right in front of him", near.min >= free.FREE.clearOf * 0.9, near);
   await run(page, 20);
   let s = await st(page);
   g.check("full disguise, standing still 60 s in the spotlight in his first minute: never caught", s.now.scene === "P6" && !s.now.alarm && s.now.gone.length === 0, [s.now.scene, s.now.alarm]);
@@ -304,7 +304,7 @@ const overSquatch = (page) =>
     return { min: Math.round(min), who, block: Math.round(block * 10) / 10, walked: Object.values(walked).map(Math.round) };
   }, Math.round(50 / 0.05));
   g.check("standing on a milling spot: no group waits on him longer than a moment, and every group keeps moving", r.block <= free.FREE.giveWay + 0.1 && r.walked.every((d) => d > 150), r);
-  g.check("and nobody stands in him or right in front of him", r.min >= 36, r);
+  g.check("and nobody stands in him or right in front of him", r.min >= free.FREE.clearOf * 0.9, r);
   await page.close();
 }
 {
@@ -476,13 +476,36 @@ const warningDiscs = (page, ms) =>
 {
   const { page } = await open("party:P6");
   const L = await page.evaluate(() => window.SSQ.beat("ch1-party").snackLayout());
-  await place(page, 700, 520);
-  let s = await until(page, (q) => q.now.paw, 2000);
-  g.check("near the bar the paw icon shows", !!s);
-  await still(page, "p6-paw-icon");
-  await walk(page, L.paw.x, L.paw.y);
+  // Away from the bar nothing offers the snacks; at the bar the action button alone does (GRAB · snacks): no ring
+  // and no little picture over the pyramid (Brian 2026-11-24).
+  await place(page, 600, 560);
+  await sleep(400);
+  let s = await st(page);
+  g.check("away from the bar, no snack action is offered", s.act !== "GRAB · snacks", s.act);
+  await walk(page, L.spot.x - 20, L.spot.y + 20);
+  s = await until(page, (q) => q.act === "GRAB · snacks", 8000);
+  g.check("walking up to the bar, the action button reads GRAB · snacks", !!s, s && s.act);
+  await sleep(300);
+  const ringsAtBar = await page.evaluate(async () => {
+    // counts round rings stroked in white or near-white (the old paw icon was a white disc with a picture in it)
+    const arc = CanvasRenderingContext2D.prototype.arc,
+      ell = CanvasRenderingContext2D.prototype.ellipse;
+    let n = 0;
+    const near = (ctx, x, y) => { const m = ctx.getTransform(), k = ctx.canvas.width / 960, gx = (m.a * x + m.e) / k, gy = (m.d * y + m.f) / k; return gx > 820 && gx < 920 && gy > 470 && gy < 540; };
+    CanvasRenderingContext2D.prototype.arc = function (x, y, r, ...a) { r > 20 && near(this, x, y) && n++; return arc.call(this, x, y, r, ...a); };
+    CanvasRenderingContext2D.prototype.ellipse = function (x, y, rx, ...a) { rx > 20 && near(this, x, y) && n++; return ell.call(this, x, y, rx, ...a); };
+    await new Promise((ok) => setTimeout(ok, 300));
+    CanvasRenderingContext2D.prototype.arc = arc;
+    CanvasRenderingContext2D.prototype.ellipse = ell;
+    return n;
+  });
+  g.check("no ring or disc is drawn over the pyramid any more", ringsAtBar === 0 && !("paw" in s.now), ringsAtBar);
+  const lab = await overSquatch(page);
+  g.check("the GRAB · snacks label sits clear of Squatch", lab.label_ === "GRAB · snacks" && !lab.label, lab);
+  await still(page, "p6-grab-snacks");
+  await press(page);
   s = await until(page, (q) => q.now.snack, 6000);
-  g.check("tapping the paw icon walks him to the bar and opens the close-up", !!s);
+  g.check("pressing it steps him to the bar and opens the close-up", !!s);
   await sleep(600);
   await still(page, "p6-snack-close-up");
   await set(page, (p) => (p.ft = 61));
@@ -673,6 +696,39 @@ const runAway = (page, secs, stopAt) =>
   await page.close();
 }
 {
+  // One moment at a time: with the octopus at the snacks and Squatch beside him after his first minute, the pyramid
+  // crashing and the stare are never interrupted by the octopus's line; he starts once the stare is over.
+  const { page } = await open("party:P6");
+  await place(page, 150, 585);
+  await run(page, 12);
+  let s = await st(page);
+  g.check("(the octopus has strolled to the snacks)", s.now.oct.mode === "snacks", s.now.oct);
+  await page.evaluate((spot) => {
+    const n = window.__ss.op,
+      p = n.ch1PartyNow;
+    p.ft = 61;
+    // the pyramid starts to fall (what party-snacks.js startTopple does), with Squatch at the bar
+    ((p.snacks.toppled = true), (p.snacks.chain = 0), (n.sq.x = spot.x), (n.sq.y = spot.y));
+  }, hall.SNACK_SPOT);
+  const seen = await page.evaluate(() => {
+    const n = window.__ss.op,
+      p = n.ch1PartyNow,
+      out = { bub: 0, chase: 0, stared: 0, gone: 0 };
+    for (let i = 0; i < 400 && (p.snacks.chain < 1 || p.stare); i++) {
+      window.__ss.tick(0.05);
+      n.cur && n.cur.k === "bub" && out.bub++;
+      p.oct.mode !== "snacks" && out.chase++;
+      p.stare && out.stared++;
+      out.gone = (p.lostPieces || []).length;
+    }
+    return out;
+  });
+  g.check("while the pyramid crashes and everyone stares, the octopus says nothing and stays at the snacks", seen.bub === 0 && seen.chase === 0 && seen.stared > 40 && seen.gone === 1, seen);
+  s = await until(page, (q) => q.cur === "bub" || !!q.now.alarm, 4000);
+  g.check("once the stare is over the party goes on (the octopus starts, or a guest sees his fur)", !!s, s && [s.text, s.now.alarm]);
+  await page.close();
+}
+{
   // An alarm in the middle of a chase: his arms drop and nothing holds Squatch.
   const { page } = await open("party:P6");
   await sleep(3000);
@@ -700,7 +756,7 @@ const runAway = (page, secs, stopAt) =>
   await next(page);
   s = await until(page, (q) => q.ctrl && !q.cur, 4000);
   g.check("he is bounced back out of the doorway and cannot go through", !!s && s.x < hall.HALLWAY_ZONE.x0 && s.x > hall.HALLWAY_ZONE.x0 - 70 && s.room === "hall", s && [s.x, s.y]);
-  g.check("bounced back he stands clear of Isfred (nobody stands inside anybody)", !!s && Math.hypot(s.x - s.now.isfred.x, s.y - s.now.isfred.y) >= 36, s && [s.x, s.y, s.now.isfred]);
+  g.check("bounced back he stands clear of Isfred (nobody stands inside anybody)", !!s && Math.hypot(s.x - s.now.isfred.x, s.y - s.now.isfred.y) >= free.FREE.clearOf * 0.9, s && [s.x, s.y, s.now.isfred]);
   g.check("the bump and the uh-oh sound", (await played(page)).includes("bump") && (await played(page)).includes("uhoh"));
   await page.close();
 }

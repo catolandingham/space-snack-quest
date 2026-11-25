@@ -23,7 +23,9 @@ const col = [];
 for (let y = CAST.isfred.y - 60; y <= CAST.isfred.y - 20; y += 3) col.push(await px(CAST.isfred.x, y));
 g.check("Isfred is drawn on the stage at the mic", col.some((c) => near(c, "#c9b6f2", 45)), col.slice(0, 4));
 const band = [];
-for (const b of CAST.band) for (let y = b.y - 40; y <= b.y - 10; y += 3) band.push(await px(b.x, y));
+// (their shirts are found over the height the hall draws a grown-up, which grew 40% on 2026-11-24)
+const adult = await page.evaluate(() => window.SSQ.engine().hallSizes().adult);
+for (const b of CAST.band) for (let y = b.y - adult * 0.62; y <= b.y - adult * 0.15; y += 3) band.push(await px(b.x, y));
 g.check("the Croc Boys stand on the stage", band.some((c) => near(c, "#ffcf33", 40)) && band.some((c) => near(c, "#3478f6", 40)), band.slice(0, 6));
 g.check("no page errors", errors.length === 0, errors);
 await g.finish("party stage");

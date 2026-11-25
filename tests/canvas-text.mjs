@@ -66,6 +66,11 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
     const note = function (text, x, y) {
       const s = String(text ?? "");
       if (!s.trim()) return;
+      // Words drawn after the picture was moved (ctx.translate, as a "?" over a watcher is) are measured where they
+      // really land: the move is added to x and y (game positions; the game picture is drawn 960 wide).
+      const tr = this.getTransform ? this.getTransform() : null,
+        k0 = this.canvas.width / 960;
+      if (tr && (Math.abs(tr.e) > 0.5 || Math.abs(tr.f) > 0.5)) ((x += tr.e / (tr.a || k0)), (y += tr.f / (tr.d || k0)));
       const m = this.measureText(s);
       const px = Number((/(\d+(?:\.\d+)?)px/.exec(this.font) || [])[1] || 0);
       const ascent = m.actualBoundingBoxAscent || px * 0.8;
@@ -198,15 +203,16 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
       shot("tape review", () => ss.ch1JumpBeat(60)),
       shot("party", party),
       // (The karaoke and the old snack cut-in were deleted with the party rebuild; the free dance is its own
-      // full-screen canvas.) The snack close-up: the paw icon at the bar walks him there and opens it.
+      // full-screen canvas.) The snack close-up: at the bar the action button (GRAB · snacks) opens it.
       shot("snack close-up", () => {
         party();
         const b = window.SSQ.beat("ch1-party"),
           L = b.snackLayout();
-        n.sq.x = 760;
-        n.sq.y = 540;
-        ss.tick(0.05);
-        b.tap(L.paw.x, L.paw.y);
+        n.sq.x = L.spot.x - 10;
+        n.sq.y = L.spot.y + 10;
+        for (let i = 0; i < 3; i++) ss.tick(0.05);
+        ss.actionDown();
+        ss.actionUp();
         for (let i = 0; i < 20; i++) ss.tick(0.05);
       }),
       // Closing time (P8b): the wall speaker's line.
@@ -240,6 +246,10 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
       if (!t.ink || !t.behind) unassessed.push({ size: sizeName, screen: screen.name, text: t.text, why: "color behind the text could not be read" });
       else if (t.text === "♪" || t.text === "♫")
         unassessed.push({ size: sizeName, screen: screen.name, text: t.text, why: "a floating note; the background moves, so contrast is not a fixed check" });
+      else if (t.text === "?" || t.text === "!")
+        // A watcher's mark: one big symbol in its own white bubble with a dark edge (Brian's approved look), not
+        // words. Its contrast as text is reported here, not judged.
+        unassessed.push({ size: sizeName, screen: screen.name, text: t.text, why: "a watcher's mark in its white bubble (a symbol, not words): " + ratio(t.ink, t.behind).toFixed(2) + ":1" });
       else if (ratio(t.ink, t.behind) < CONTRAST)
         failures.push({ size: sizeName, screen: screen.name, text: t.text, reason: "contrast", detail: ratio(t.ink, t.behind).toFixed(2) + ":1" });
       const off = t.x < -2 || t.y < -2 || t.x + t.w > screen.canvas.w + 2 || t.y + t.h > screen.canvas.h + 2;

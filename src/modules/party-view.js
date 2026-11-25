@@ -12,7 +12,7 @@ import { drawDoorNotes, drawFlyer, drawOutfit, drawPerson, drawMark, drawBand, c
 import { homeGuardCone } from "./party-alarm.js";
 import { ventTufts } from "./party-vent.js";
 import { wornNow, flyingNow, furShows } from "./party-outfit.js";
-import { drawPyramid, drawPawIcon, drawSnackCloseUp } from "./party-snacks.js";
+import { drawPyramid, drawSnackCloseUp } from "./party-snacks.js";
 import { SONG_LIGHTS } from "./party-dance.js";
 import { drawCountdown, drawFlash, drawPolaroid, drawBandNotes, drawClap, drawHiccups, drawSpeakerRing, drawPuffs, drawLoosePiece, drawFurryFlyer, drawHeartCone } from "./party-free-art.js";
 import { PHOTO } from "./party-toys.js";
@@ -20,13 +20,18 @@ import { bounceHop, bumpMark, drawBump } from "./party-hallway.js";
 import { OCT } from "./party-octopus.js";
 
 const LATE = new Set(["P6", "P7", "P8a", "P8b"]);
+// A "?" or "!" is at least as tall as Squatch's head however big the hall draws people: its size and how far over
+// a head its middle sits, as shares of a grown-up's height (42 and 18 when a grown-up was 66 tall).
+const MARK = Object.freeze({ size: 0.635, over: 0.27 });
 
 /**
  * `h`: { E, P, sq, picture, guests (the approved art), cones (p), glancePhase (p), personAt (p, id), spots (),
- * goalId (p, room), pawShows (p), pawIcon, homeRoom, pace }.
+ * goalId (p, room), homeRoom, pace }.
  */
 export function createView(h) {
   const E = () => h.E();
+  // How tall a person is drawn in the hall (game pixels): a guest's approved picture, a guard, anyone else a grown-up.
+  const tallOf = (id, adult) => (CAST.guests.some((g) => g.id === id) ? h.guests.height(id, adult) : id === "guard" ? adult * 1.02 : id === "isfred" ? adult * 1.18 : adult);
 
   function view(p, t) {
     const s = h.sq(),
@@ -48,20 +53,24 @@ export function createView(h) {
         return { id: g.id, x: at.x, y: at.y, dance: arms ? 0 : dance, lean: to ? Math.sign(to.x - at.x) : 0, arms };
       });
     const marks = [];
+    // Marks sit over a person's head, however tall the hall draws them (head height comes from the hall's sizes).
+    const adult = e.hallSizes().adult,
+      size = Math.round(adult * MARK.size),
+      over = (id) => tallOf(id, adult) + adult * MARK.over;
     if (p.seenBy && p.scene !== "P8b") {
       const w = h.personAt(p, p.seenBy);
-      w && marks.push({ x: w.x, y: w.y - 84, mark: "?", size: 42 });
+      w && marks.push({ x: w.x, y: w.y - over(p.seenBy), mark: "?", size });
     }
     // the glancer's warning "?" as his head turns
     if (p.scene === "P2" && !p.alarm && h.glancePhase(p).phase === "warn") {
       const g = p.people.backpack;
-      marks.push({ x: g.x, y: g.y - 84, mark: "?", size: 42 });
+      marks.push({ x: g.x, y: g.y - over("backpack"), mark: "?", size });
     }
     const a = p.alarm;
-    const shout = a && (a.phase === "shout" || (a.phase === "run" && a.t < 0.5)) ? { x: a.w.x, y: a.w.y - 96 } : null;
-    a && a.phase === "shout" && marks.push({ x: a.w.x + 40, y: a.w.y - 70, mark: "!", size: 42 });
+    const shout = a && (a.phase === "shout" || (a.phase === "run" && a.t < 0.5)) ? { x: a.w.x, y: a.w.y - over(a.w.id) - 12 } : null;
+    a && a.phase === "shout" && marks.push({ x: a.w.x + 40, y: a.w.y - over(a.w.id) + 14, mark: "!", size });
     // Guards show "!" at once when they see him (party plan, Sight).
-    a && a.guards.forEach((g) => g.room === "hall" && g.sees && marks.push({ x: g.x, y: g.y - 84, mark: "!", size: 42 }));
+    a && a.guards.forEach((g) => g.room === "hall" && g.sees && marks.push({ x: g.x, y: g.y - over("guard"), mark: "!", size }));
     // No mark and no "FUR!" burst sits on Squatch (a guest just below him would put it on his head): it moves beside
     // that guest's head, on the side away from him, else above him.
     if (p.pose === "stand") {
@@ -171,13 +180,14 @@ export function createView(h) {
     drawPyramid(ctx, p, s, t);
     for (const f of p.fallen || []) f.to === "plant" && drawLoosePiece(ctx, f.id, f.x, f.y, 22, f.rot);
     drawBump(ctx, bumpMark(p, scale));
-    p.band && drawBandNotes(ctx, p.bandAt || CAST.band, t, p.song || 0);
     const cam = p.people.camera;
     if (p.photo && !gone.camera) drawCountdown(ctx, cam.x - 28, cam.y + 6, p.photo.phase === "count" ? p.photo.n : 0, t);
-    p.clap > 0 && Object.entries(p.people).forEach(([id, g]) => id !== "camera" && drawClap(ctx, g.x, g.y - 80, t));
+    const adult = e.hallSizes().adult;
+    p.clap > 0 && Object.entries(p.people).forEach(([id, g]) => id !== "camera" && drawClap(ctx, g.x, g.y - tallOf(id, adult) - 14, t));
     const oc = p.people["octopus-guest"];
-    p.oct && (p.oct.mode === "chase" || p.oct.mode === "hug") && drawHiccups(ctx, oc.x, oc.y, t);
-    p.pawIcon && drawPawIcon(ctx, h.pawIcon.x, h.pawIcon.y, t);
+    p.oct && (p.oct.mode === "chase" || p.oct.mode === "hug") && drawHiccups(ctx, oc.x, oc.y - tallOf("octopus-guest", adult), t);
+    // the band's notes float out to the sides and toward the crowd, never up onto the banner
+    p.band && drawBandNotes(ctx, p.bandAt || CAST.band, t, p.song || 0, adult * 0.98);
     for (const f of flyingNow(p)) drawLoosePiece(ctx, f.id, f.x, f.y, f.w, f.rot);
     p.speakerOn && drawSpeakerRing(ctx, HALL_SPEAKER, t);
     // the flash: a small burst at the camera's lens (never the whole room)
@@ -200,7 +210,6 @@ export function createView(h) {
     const e = E(),
       t = e.time();
     ctx0 = ctx;
-    p.pawIcon = h.pawShows(p);
     drawHall(ctx, e, h.guests, view(p, t));
     drawFlyers(ctx, p);
     LATE.has(p.scene) && drawLate(ctx, p, t);

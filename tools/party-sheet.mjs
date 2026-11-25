@@ -50,7 +50,7 @@ const CAPTIONS = {
   h2_conga: "Half two, new. The conga line (three guests) on its loop round the floor, Squatch towed on its end, in his outfit.",
   h2_camera_count_and_polaroid: "Half two, new. The camera's red light counting 3-2-1 (lit dots on top), and the Polaroid sliding out with Squatch in it (+25).",
   h2_flash: "Half two. The camera's flash: a small bright burst at the lens (the room never goes white).",
-  h2_pyramid_and_paw: "Half two, new. The snack pyramid on the bar's counter, and the paw icon over it that opens the snack close-up (no words).",
+  h2_pyramid: "Half two. The snack pyramid on the bar's counter. Standing at the bar, the action button reads GRAB · snacks (no ring and no little picture over the pyramid, Brian 2026-11-24).",
   h2_pyramid_topple: "Half two, new. The pyramid toppling in a chain (a cup rolls, the tray slides, the Moon Pie tin falls), a flying cup, and a piece of his outfit knocked off.",
   h2_snack_closeup_back: "Half two, new. The snack close-up: the bartender's back turned (her apron bow and hair bun), his paw taking a snack, the bag with what he took, the close button (a cross, no words).",
   h2_snack_closeup_glance: "Half two, new. The same, as she glances: her face turns to the side (the warning).",

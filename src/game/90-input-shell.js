@@ -50,7 +50,7 @@
           return;
         }
         if (p.state === "op") {
-          (partyBeat() && partyBeat().tap(l, o)) || ch1WorldTap(l, o) || walkTap(l, o) || nf();
+          ch1WorldTap(l, o) || walkTap(l, o) || nf();
           return;
         }
         if (p.state === "title") {

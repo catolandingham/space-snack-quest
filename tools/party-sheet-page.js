@@ -4,9 +4,8 @@ import { drawHall } from "../src/modules/party-draw.js";
 import { BAND_A } from "./party-half-two-art.js";
 import { drawHeartCone, drawCountdown, drawPolaroid, drawBandNotes, drawClap, drawHiccups, drawSpeakerRing, drawPuffs, drawLoosePiece, drawFurryFlyer, drawFlash } from "../src/modules/party-free-art.js";
 import { drawDanceCloseUp, SONG_LIGHTS } from "../src/modules/party-dance.js";
-import { drawPyramid, drawPawIcon, drawSnackCloseUp } from "../src/modules/party-snacks.js";
+import { drawPyramid, drawSnackCloseUp } from "../src/modules/party-snacks.js";
 import { congaAt, CONGA } from "../src/modules/party-toys.js";
-import { PAW_ICON } from "../src/modules/party-free.js";
 import { HALL_SPEAKER } from "../src/modules/party-hall.js";
 import { HALL, CAST, SPOTS, GLANCE, HALL_PICTURE, CAMERA_AIM } from "../src/modules/party-hall.js";
 import { coneFrom, towardStage, lookAt } from "../src/modules/party-watch.js";
@@ -314,13 +313,12 @@ R.h2_flash = () => {
   drawFlash(ctx, 0.25, cameraLens({ x: cam.x - 28, y: cam.y + 6 }, CAMERA_AIM));
   return crop(c, 250, 300, 300, 240, 600);
 };
-R.h2_pyramid_and_paw = () => {
+R.h2_pyramid = () => {
   const v = partyView(1.4);
   v.squatch = { x: 760, y: 540, f: 1, pose: "stand", outfit: P6 };
   const c = hall(v),
     ctx = c.getContext("2d");
   drawPyramid(ctx, { snacks: { bag: 2, chain: -1, toppled: false } }, v.squatch, 1);
-  drawPawIcon(ctx, PAW_ICON.x, PAW_ICON.y, 1);
   return crop(c, 640, 400, 320, 220, 640);
 };
 R.h2_pyramid_topple = () => {

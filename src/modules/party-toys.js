@@ -11,7 +11,8 @@ import { CONGA_ROUTE, PHOTO_FRAME, stepTo, stepClear, CLEAR_OF_SQUATCH } from ".
 // ---------- the conga line ----------
 // PLACEHOLDERS: when in each song the conga forms (seconds into the song), how long it lasts, how fast it goes,
 // how far apart the dancers are, and how close Squatch must come to its tail to join.
-export const CONGA = Object.freeze({ start: 12, length: 34, speed: 55, gap: 34, join: 34, catchUp: 90, leaveAfter: 0.6 });
+// (gap and join were 34 until everyone in the hall grew 40%, Brian 2026-11-24.)
+export const CONGA = Object.freeze({ start: 12, length: 34, speed: 55, gap: 48, join: 44, catchUp: 90, leaveAfter: 0.6 });
 export const CONGA_DANCERS = Object.freeze(["teal", "stilt", "backpack"]);
 const routeLength = (() => {
   let d = 0;

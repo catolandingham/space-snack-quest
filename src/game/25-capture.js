@@ -196,7 +196,7 @@
         let face = Math.atan2(n.sq.y - 20 - (s.y - 28), n.sq.x - s.x);
         return (
           seenCone(s.x, s.y - 28, face, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.62)", "rgba(160,100,10,.95)"),
-          drawCh1Alien(s.x, s.y, "hat", ALIEN_ADULT, Math.cos(face) < 0 ? -1 : 1)
+          drawCh1Alien(s.x, s.y, "hat", alienHere(), Math.cos(face) < 0 ? -1 : 1)
         );
       }
       if (n.room === "hall") return;

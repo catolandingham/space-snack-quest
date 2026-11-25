@@ -32,7 +32,6 @@ export function lateState(p, sizes) {
     bounced: p.bounced || 0,
     bounce: p.bounce ? { t: p.bounce.t, mark: bumpMark(p, sizes.scale) } : null,
     homeGuard: g ? { x: g.x, y: g.y, a: g.a, f, tall: sizes.guardTall, sees: !!g.sees, leaving: !!g.leaving, turn: g.turn == null ? null : g.turn, lean: guardLook(g).lean || 0, mark: guardMark(g, sizes.guardTall, f) } : null,
-    paw: !!p.pawIcon,
     close: p.close ? { phase: p.close.phase, gone: Object.keys(p.close.gone) } : null,
     mops: p.mops ? { x: p.mops.x, y: p.mops.y, heart: p.mops.heart } : null,
     people: Object.fromEntries(Object.entries(p.people).map(([id, q]) => [id, { x: Math.round(q.x), y: Math.round(q.y), task: q.task || "" }])),

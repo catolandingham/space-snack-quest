@@ -52,7 +52,8 @@ export const BANNER = Object.freeze({ x0: 200, x1: 528, y0: 90, y1: 156 });
  */
 export const CAST = Object.freeze({
   isfred: Object.freeze({ x: 420, y: 258 }),
-  isfredBar: Object.freeze({ x: 800, y: 330 }),
+  // (18 further from the hallway doorway since everyone grew 40%, so a push back at the doorway lands clear of him)
+  isfredBar: Object.freeze({ x: 782, y: 330 }),
   band: Object.freeze([Object.freeze({ x: 258, y: 256 }), Object.freeze({ x: 308, y: 256 }), Object.freeze({ x: 358, y: 256 })]),
   guests: Object.freeze([
     // Partners stand a step apart (72), so no one's body overlaps another's (tests/people-scale.mjs).
@@ -96,12 +97,13 @@ export const HALL_SPEAKER = fromPicture(885, 135, 933, 184);
 // Where the guests mill (P6): the dance floor, the bar and the photo spot, each a place a pair can stand in (the
 // pair stands 36 either side of it). All clear of the vent, the door strip, the plant pots and the tripod.
 export const MILL = Object.freeze([
-  Object.freeze({ id: "floor-left", x: 300, y: 405 }),
-  Object.freeze({ id: "floor-right", x: 610, y: 400 }),
-  Object.freeze({ id: "bar-top", x: 720, y: 405 }),
-  Object.freeze({ id: "bar-low", x: 700, y: 510 }),
-  Object.freeze({ id: "photo", x: 305, y: 478 }),
-  Object.freeze({ id: "middle", x: 560, y: 470 }),
+  // (Spaced out on 2026-11-24, when everyone in the hall grew 40%: a pair in front never covers the pair behind.)
+  Object.freeze({ id: "floor-left", x: 285, y: 400 }),
+  Object.freeze({ id: "floor-right", x: 620, y: 392 }),
+  Object.freeze({ id: "bar-top", x: 725, y: 388 }),
+  Object.freeze({ id: "bar-low", x: 700, y: 494 }),
+  Object.freeze({ id: "photo", x: 290, y: 524 }),
+  Object.freeze({ id: "middle", x: 585, y: 506 }),
 ]);
 // The conga line's loop round the floor (P6). It passes near the vent once (the third point), so staying in the
 // line is not free.
@@ -176,7 +178,8 @@ export function stepTo(o, x, y, speed, dt) {
  */
 const FRONT = 0.6;
 // PLACEHOLDER for Brian: how far everyone walking keeps from Squatch (game pixels, side on; further in front).
-export const CLEAR_OF_SQUATCH = 40;
+// (56 since everyone in the hall is 40% bigger, Brian 2026-11-24; it was 40.)
+export const CLEAR_OF_SQUATCH = 56;
 export function stepClear(o, x, y, speed, dt, s, clear, above = false) {
   const sc = (v) => (v > s.y ? s.y + (v - s.y) * FRONT : v),
     un = (v) => (v > s.y ? s.y + (v - s.y) / FRONT : v),

@@ -8,8 +8,8 @@
  * In a whole disguise a cone that holds him shows "?" only, and nobody ever looks twice: nothing tips, and a piece
  * comes off only in the two big moments, the snack pyramid crashing and the octopus's second hug (Brian 2026-11-24,
  * "Lose it all"). Once a piece is gone and fur shows, guests act as in P2: "?" then "!", and the one capture rule
- * (party-alarm.js) starts P7. The toys are in party-toys.js, the snack bar in party-snacks.js, the dance in
- * party-dance.js.
+ * (party-alarm.js) starts P7. The toys are in party-toys.js and party-octopus.js, the snack bar in party-snacks.js
+ * (GRAB · snacks at the bar opens it), the dance in party-dance.js.
  */
 import { partyLine } from "./party-lines.js";
 import { MILL, DANCE_SPOT, SNACK_SPOT, PYRAMID, CAST, stepTo, stepClear, CLEAR_OF_SQUATCH } from "./party-hall.js";
@@ -30,16 +30,16 @@ export const COOL_HAT_SECONDS = 180;
 export const SONG_SECONDS = COOL_HAT_SECONDS / 3;
 // PLACEHOLDERS for Brian:
 //   firstMinute  his first minute in the hall: the octopus waits
-//   mill, stops  how slowly guests mill and how long they stop to dance; pawNear  how close the paw icon shows
+//   mill, stops  how slowly guests mill and how long they stop to dance
 //   shake        how long he shakes when a piece is knocked off
 //   clearOf      guests walking go round Squatch this far from him (nobody walks through anybody); giveWay  how long a
 //                group waits when he stands on the spot it is heading for, before it heads for another
-export const FREE = Object.freeze({ firstMinute: 60, mill: 38, stops: [5, 7, 6, 8], pawNear: 260, shake: 0.4, clearOf: CLEAR_OF_SQUATCH, giveWay: 1.5 });
+export const FREE = Object.freeze({ firstMinute: 60, mill: 38, stops: [5, 7, 6, 8], shake: 0.4, clearOf: CLEAR_OF_SQUATCH, giveWay: 1.5 });
 // Who mills together: the dancing pair, the robot (his partner the octopus heads for the snacks), the glancer. The
 // camera tourist stays with his camera.
 const UNITS = Object.freeze([["teal", "stilt"], ["robot"], ["backpack"]]);
-// The paw icon over the pyramid, which opens the snack close-up.
-export const PAW_ICON = Object.freeze({ x: PYRAMID.x, y: PYRAMID.y - 58, r: 34 });
+// The snack pyramid on the counter, as the thing the GRAB · snacks label names (game positions).
+export const PYRAMID_BOX = Object.freeze({ x0: PYRAMID.x - 34, x1: PYRAMID.x + 34, y0: PYRAMID.y - 44, y1: PYRAMID.y + 6 });
 const step = stepTo;
 const inSpot = (s) => ((s.x - DANCE_SPOT.x) / DANCE_SPOT.rx) ** 2 + ((s.y - DANCE_SPOT.y) / DANCE_SPOT.ry) ** 2 <= 1;
 /** Which "where-*" line names where he is (the LOCKUP card). */
@@ -139,9 +139,11 @@ export function createFreePlay(h) {
   // "?" and, if he stays in that cone too long, "FUR!".
   function sight(p, dt, s, can) {
     const all = can ? h.cones(p).filter((c) => coneSees(c, s)) : [];
-    const seen = all.find((c) => h.witness[c.id]) || all[0] || null;
+    // Whoever was already looking at him keeps looking (the "?" stays over the same head); with several cones on
+    // him, the time he has been seen does not start over when another guest's cone catches him too.
+    const seen = all.find((c) => c.id === p.seenBy && h.witness[c.id]) || all.find((c) => h.witness[c.id]) || all[0] || null;
     if (!seen) return ((p.seenBy = ""), (p.seenT = 0));
-    p.seenT = furShows(p) && p.seenBy === seen.id ? p.seenT + dt : 0;
+    p.seenT = furShows(p) && p.seenBy ? p.seenT + dt : 0;
     p.seenBy = seen.id;
     p.seenT >= SEEN_TOO_LONG_SECONDS && alarm(p, seen.id, s, whereOf(s));
   }
@@ -265,7 +267,8 @@ export function createFreePlay(h) {
     if (ph === "flash" || ph === "photo") ((p.flash = PHOTO.flash), h.sound.one("flash"));
     ph === "photo" && ((p.done.photo = true), e.addStars(PHOTO_BONUS), h.sound.one("cheer"), h.sound.one("zzzt"));
     // the octopus
-    const oc = tickOctopus(p, dt, s, { firstMinute: first, canChase: stand, hidden: p.pose !== "stand" });
+    // (he does not start, or move in, while the pyramid is crashing or everyone is staring: one moment at a time)
+    const oc = tickOctopus(p, dt, s, { firstMinute: first, canChase: stand && !crashing(p), hidden: p.pose !== "stand" });
     if (oc === "notice") {
       p.done.octopus = true;
       h.sound.one("hiccup");
@@ -323,6 +326,9 @@ export function createFreePlay(h) {
     }
     sight(p, dt, s, stand);
   }
+  // True from the pyramid starting to fall until everyone has stopped staring (party-snacks.js keeps the chain's
+  // progress in p.snacks.chain, 0 to 1, and this file the stare).
+  const crashing = (p) => !!p.stare || (!!p.snacks && p.snacks.chain >= 0 && p.snacks.chain < 1);
   // A big moment knocks his next piece off: it flies off him on screen, with its sound and a short shake.
   function knock(p, s, scale) {
     if (!knockNext(p, s, scale)) return;
@@ -361,17 +367,17 @@ export function createFreePlay(h) {
     if (p.scene !== "P6" || p.pose !== "stand" || p.dance || p.snack) return out;
     const s = h.sq();
     if (!furShows(p) && !(p.conga && p.conga.joined))
-      out.push({ id: "dance", verb: "DANCE", cap: partyLine("button-dance").split(" · ")[1], who: "sq", x: DANCE_SPOT.x, y: DANCE_SPOT.y, r: DANCE_SPOT.rx, thing: { x0: DANCE_SPOT.x - DANCE_SPOT.rx, x1: DANCE_SPOT.x + DANCE_SPOT.rx, y0: DANCE_SPOT.y - DANCE_SPOT.ry, y1: DANCE_SPOT.y + DANCE_SPOT.ry }, when: inSpot(s), f: () => openDance(h.P()) });
+      out.push({ id: "dance", verb: partyLine("button-dance").split(" · ")[0], cap: partyLine("button-dance").split(" · ")[1], who: "sq", x: DANCE_SPOT.x, y: DANCE_SPOT.y, r: DANCE_SPOT.rx, thing: { x0: DANCE_SPOT.x - DANCE_SPOT.rx, x1: DANCE_SPOT.x + DANCE_SPOT.rx, y0: DANCE_SPOT.y - DANCE_SPOT.ry, y1: DANCE_SPOT.y + DANCE_SPOT.ry }, when: inSpot(s), f: () => openDance(h.P()) });
+    // The snack bar: standing at it, the action button alone offers the snacks (no ring and no little picture over
+    // the pyramid: Brian 2026-11-24). Not once the pyramid has fallen.
+    if (!p.snacks.toppled) {
+      const [verb, cap] = partyLine("button-grab").split(" · ");
+      out.push({ id: "snacks", verb, cap, who: "sq", x: SNACK_SPOT.x, y: SNACK_SPOT.y, r: SNACK_SPOT.r, thing: PYRAMID_BOX, f: () => grab(h.P()) });
+    }
     return out;
   }
-  /** True while the paw icon shows: near the bar, the pyramid still standing. */
-  function pawShows(p) {
-    const s = h.sq();
-    return p.scene === "P6" && !p.snack && !p.dance && p.pose === "stand" && !p.snacks.toppled && Math.hypot(s.x - SNACK_SPOT.x, s.y - SNACK_SPOT.y) < FREE.pawNear;
-  }
-  /** A tap on the picture (game positions): the paw icon walks him to the bar and opens the close-up. */
-  function tap(p, x, y) {
-    if (!pawShows(p) || !E().get("ctrl") || Math.hypot(x - PAW_ICON.x, y - PAW_ICON.y) > PAW_ICON.r) return false;
+  // GRAB · snacks: he steps up to the bar and the snack close-up opens.
+  function grab(p) {
     const e = E();
     h.control(false);
     e.walkOff();
@@ -382,7 +388,6 @@ export function createFreePlay(h) {
         q && q.scene === "P6" && (openSnacks(q), e.sfx("open"));
       }),
     ]);
-    return true;
   }
   /** A finger in the snack close-up. True when the close-up took it. */
   function pointer(p, kind, x, y) {
@@ -395,5 +400,5 @@ export function createFreePlay(h) {
     r === "close" && (closeSnacks(p), h.control(true));
     return true;
   }
-  return { start, tick, spots, tap, pointer, pawShows, alarm, closeDance, inSpot };
+  return { start, tick, spots, pointer, alarm, closeDance, inSpot };
 }

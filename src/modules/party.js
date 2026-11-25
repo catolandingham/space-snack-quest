@@ -25,7 +25,7 @@
  * built in party-view.js); the capture rule's hooks are in party-capture.js.
  */
 import { partyLine } from "./party-lines.js";
-import { HALL, SPOTS, CAST, GLANCE, GLANCE_TIMES, HALL_PICTURE, HALL_SOLIDS, HALLWAY_LANE, DANCE_SPOT, HALL_SPEAKER, BANNER, HOME_ROOM, HALL_DOOR } from "./party-hall.js";
+import { HALL, SPOTS, CAST, GLANCE, GLANCE_TIMES, HALL_PICTURE, HALL_SOLIDS, HALLWAY_LANE, DANCE_SPOT, HALL_SPEAKER, BANNER, HOME_ROOM, HALL_DOOR, SNACK_SPOT } from "./party-hall.js";
 export { HOME_ROOM };
 import { HOME_THINGS, HOME_SPOTS } from "./home-alone.js";
 import { GOAL_TARGETS } from "./goal-targets.js";
@@ -36,7 +36,7 @@ import { openFullScreen, closeFullScreen, fullScreenOpen } from "./fullscreen.js
 import * as dress from "./dress-up.js";
 import { createCapture } from "./party-capture.js";
 import { createView } from "./party-view.js";
-import { createFreePlay, PAW_ICON } from "./party-free.js";
+import { createFreePlay } from "./party-free.js";
 import { createEndings } from "./party-endings.js";
 import { createPartySound } from "./party-sound.js";
 import { furShows } from "./party-outfit.js";
@@ -667,7 +667,8 @@ export function createParty(bridge) {
   function solids() {
     const p = live();
     if (!p) return [];
-    const feet = (x, y) => ({ x0: x - 18, x1: x + 18, y0: y - 10, y1: y + 6, person: 1 }),
+    // (a person's feet take up 40% more floor since everyone in the hall grew, Brian 2026-11-24)
+    const feet = (x, y) => ({ x0: x - 25, x1: x + 25, y0: y - 14, y1: y + 8, person: 1 }),
       gone = (p.close && p.close.gone) || {};
     // From P6 on, the floor strip from the bar's top end to the hallway doorway is open (he can head for it).
     const fixed = late(p) ? [...HALL_SOLIDS.filter((b) => !(b.x0 === HALLWAY_LANE.x0 && b.y0 === 0)), { ...HALL_SOLIDS.find((b) => b.x0 === HALLWAY_LANE.x0 && b.y0 === 0), y0: HALLWAY_LANE.y1 }] : HALL_SOLIDS;
@@ -705,7 +706,7 @@ export function createParty(bridge) {
       E().tvStory();
     },
   });
-  const views = createView({ ...helpers, guests: bridge.guests, cones, glancePhase, personAt, spots, goalId, pawShows: (p) => freePlay.pawShows(p), pawIcon: PAW_ICON });
+  const views = createView({ ...helpers, guests: bridge.guests, cones, glancePhase, personAt, spots, goalId });
   const eyesAt = (p, t) => views.eyesAt(p, t);
   const seenByNow = (p) => p.seenBy;
 
@@ -760,11 +761,6 @@ export function createParty(bridge) {
     draw(ctx) {
       const p = live();
       p && views.draw(ctx, p);
-    },
-    /** A tap on the picture (game positions): true when the party took it (the paw icon at the bar). */
-    tap(x, y) {
-      const p = live();
-      return !!p && p.scene === "P6" && freePlay.tap(p, x, y);
     },
     /** A finger in the snack close-up (game positions): true when the close-up took it. */
     pointer(kind, x, y) {
@@ -830,9 +826,9 @@ export function createParty(bridge) {
       const p = live();
       return p ? cones(p) : [];
     },
-    /** Tests: the paw icon and the snack close-up's layout (game positions). */
+    /** Tests: where he stands at the snack bar, and the snack close-up's layout (game positions). */
     snackLayout() {
-      return { paw: PAW_ICON, cut: CUT };
+      return { spot: SNACK_SPOT, cut: CUT };
     },
   };
 }

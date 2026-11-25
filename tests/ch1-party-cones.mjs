@@ -161,10 +161,11 @@ g.check("the six party guests are drawn from Brian's approved Nov 8 pictures", n
 // The snack pyramid topples (five snacks dragged into the bag in the close-up): everyone turns to look at him.
 {
   const L = await page.evaluate(() => window.SSQ.beat("ch1-party").snackLayout());
-  await page.evaluate(() => ((window.__ss.op.sq.x = 700), (window.__ss.op.sq.y = 520)));
+  // at the bar the action button offers GRAB · snacks; pressing it opens the close-up
+  await page.evaluate((p) => ((window.__ss.op.sq.x = p.x - 10), (window.__ss.op.sq.y = p.y + 10)), L.spot);
   const t0 = Date.now();
-  while (Date.now() - t0 < 3000 && !(await page.evaluate(() => window.SSQ.beat("ch1-party").now().paw))) await sleep(100);
-  await page.evaluate((p) => window.__ss.tapAt(p[0], p[1]), [L.paw.x, L.paw.y]);
+  while (Date.now() - t0 < 3000 && !(await page.evaluate(() => !!window.__ss.op.act && window.__ss.op.act.verb === "GRAB"))) await sleep(100);
+  await page.evaluate(() => (window.__ss.actionDown(), window.__ss.actionUp()));
   let last = null;
   const open2 = async (f, ms) => {
     const t1 = Date.now();

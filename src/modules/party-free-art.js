@@ -103,8 +103,16 @@ export function drawPolaroid(ctx, x, y, k, inside) {
 }
 
 // ---------- the band and the crowd (sound, drawn) ----------
-/** Music notes rising from the band while it plays (the song, drawn). */
-export function drawBandNotes(ctx, spots, t, song) {
+// Where each band member's note floats, as steps of its own height `h`: the first out to the left, the middle one
+// forward over the stage's front toward the crowd, the third out to the right. None goes up (the banner hangs just
+// over their heads since everyone in the hall grew, Brian 2026-11-24).
+const NOTE_PATHS = Object.freeze([
+  { x0: -0.2, y0: -0.62, dx: -0.42, dy: -0.12 },
+  { x0: 0.1, y0: -0.2, dx: 0.12, dy: 0.5 },
+  { x0: 0.34, y0: -0.62, dx: 0.5, dy: -0.12 },
+]);
+/** Music notes floating out from the band while it plays (the song, drawn). `h` is how tall a band member is drawn. */
+export function drawBandNotes(ctx, spots, t, song, h = 66) {
   const colors = [
     ["#ff5fa8", "#ffcf33"],
     ["#2bc4aa", "#3478f6"],
@@ -114,7 +122,8 @@ export function drawBandNotes(ctx, spots, t, song) {
     const k = (t * 0.6 + i / 3) % 1;
     ctx.save();
     ctx.globalAlpha = Math.sin(k * Math.PI);
-    drawNote(ctx, s.x + 10 + Math.sin(k * 6 + i) * 8, s.y - 70 - k * 50, 8, colors[i % 2]);
+    const n = NOTE_PATHS[i % NOTE_PATHS.length];
+    drawNote(ctx, s.x + (n.x0 + n.dx * k) * h + Math.sin(k * 6 + i) * 5, s.y + (n.y0 + n.dy * k) * h, 8, colors[i % 2]);
     ctx.restore();
   });
 }
@@ -125,13 +134,13 @@ export function drawClap(ctx, x, y, t) {
   oval(ctx, x + 5 + k * 3, y, 4, 5, "#fffdf8", 1.5);
   for (const a of [-0.8, 0, 0.8]) line(ctx, [x + Math.sin(a) * 9, y - 8, x + Math.sin(a) * 14, y - 14], "#ffcf33", 2);
 }
-/** Hiccup bubbles rising from the octopus (the hiccup, drawn). */
+/** Hiccup bubbles rising from the octopus's head top at (x, y) (the hiccup, drawn). */
 export function drawHiccups(ctx, x, y, t) {
   for (let i = 0; i < 3; i++) {
     const k = (t * 0.8 + i / 3) % 1;
     ctx.save();
     ctx.globalAlpha = 1 - k;
-    oval(ctx, x + 14 + Math.sin(k * 7 + i) * 5, y - 70 - k * 34, 3 + k * 4, 3 + k * 4, "rgba(200,240,255,.7)", 1.5);
+    oval(ctx, x + 14 + Math.sin(k * 7 + i) * 5, y - 8 - k * 34, 3 + k * 4, 3 + k * 4, "rgba(200,240,255,.7)", 1.5);
     ctx.restore();
   }
 }

@@ -72,7 +72,9 @@
       if (n.ch1Chip) return n.ch1Chip;
       return CH1Q_CHIPS[n.scene] || "";
     }
-    // Adult head height is 85% of the door in the room he is standing in.
+    // Adult head height is 85% of the door in the room he is standing in, except in the party hall (room "hall"),
+    // where everyone is 40% bigger: 119% of its doorway (Brian 2026-11-24, after the 100/120/140 mock-ups: "40% is
+    // what I meant!!"). HALL_BIGGER is the one number for that; no other room uses it.
     // Hall and loading-bay openings measure 101px on the 830-tall picture (77.9px on the canvas).
     // The office door and the same door in the hallway are a 160px slab (123.4px on the canvas).
     // Home's right-wall opening is the 129px cut. A room with no door uses the hall.
@@ -84,13 +86,18 @@
         delivery: 101 * (640 / 830),
         home: 129 * (640 / 830),
       },
-      HALL_ADULT_PX = CANVAS_DOOR_PX.hall * 0.85;
+      ADULT_OF_DOOR = 0.85,
+      HALL_BIGGER = 1.4,
+      HALL_ADULT_PX = CANVAS_DOOR_PX.hall * ADULT_OF_DOOR * HALL_BIGGER;
     function roomDoorId(room) {
       return room === "passage" ? "hallway" : room === "hangar" ? "delivery" : room === "closet" ? "home" : room === "office" ? "office" : room === "hall" ? "hall" : "hall";
     }
     function adultPxFor(room) {
+      // The hall itself is bigger (HALL_BIGGER). A room with no door of its own still measures against the hall's
+      // doorway at 85%, as before.
+      if (room === "hall") return HALL_ADULT_PX;
       let id = CANVAS_DOOR_PX[room] ? room : roomDoorId(room);
-      return (CANVAS_DOOR_PX[id] || CANVAS_DOOR_PX.hall) * 0.85;
+      return (CANVAS_DOOR_PX[id] || CANVAS_DOOR_PX.hall) * ADULT_OF_DOOR;
     }
     function alienScale(room) {
       return adultPxFor(room) / 84;
@@ -102,6 +109,14 @@
       ALIEN_ADULT = ADULT_PX / 84,
       QT_ADULT = ADULT_PX / 50,
       SQ_ADULT = (ADULT_PX * 0.8) / 45;
+    // The hall's sizes above are for people in the hall. The few figures drawn with them in other rooms (a tour
+    // group, Chapter 1's guard, Qt in the office scene) keep the size they had: only the hall grew.
+    function qtHere() {
+      return n.room === "hall" ? QT_ADULT : (CANVAS_DOOR_PX.hall * ADULT_OF_DOOR) / 50;
+    }
+    function alienHere() {
+      return n.room === "hall" ? ALIEN_ADULT : (CANVAS_DOOR_PX.hall * ADULT_OF_DOOR) / 84;
+    }
     function sqDrawScale() {
       if (n.room === "closet" && (n.scene || "")[0] !== "Q") return wl;
       return (adultPxFor(n.room) * 0.8) / 45;

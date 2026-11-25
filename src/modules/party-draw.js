@@ -16,26 +16,30 @@ import { drawCones } from "./party-watch.js";
 import { drawOctopusArmsOut, drawHug } from "./party-octopus-art.js";
 import { drawBanner, drawBand, drawPerson, LOOKS, drawTripod, drawVentSwirl, drawAlarmFlash, drawPartyLights, drawOutfit, drawFlyer, drawTuft, drawMark, drawShout, drawWarning } from "./party-art.js";
 
+// Peeking, the top of his head shows this far above the doorway gap's top edge.
+const PEEK_OVER_DOOR = 13;
 /** Squatch peeking: only his head and his paws on the door frame show in the doorway gap (Brian S 1372). */
 function drawPeek(ctx, E, sq, scale) {
-  const d = HALL.homeDoor;
+  const d = HALL.homeDoor,
+    // however big the hall draws him, the top of his head comes just over the doorway's top edge and no higher
+    y = d.y0 - PEEK_OVER_DOOR + 50 * scale;
   ctx.save();
   ctx.beginPath();
   ctx.rect(d.x0 + 3, d.y0 - 30, d.x1 - d.x0 - 6, 80);
   ctx.clip();
-  E.drawSquatch(ctx, sq.x, sq.y, scale, { f: 1, eyes: "wide" });
+  E.drawSquatch(ctx, sq.x, y, scale, { f: 1, eyes: "wide" });
   ctx.restore();
   // his paws round the door frame
   for (const px of [d.x0 + 6, d.x1 - 6]) {
     ctx.beginPath();
-    ctx.ellipse(px, sq.y - 38 * scale, 4.2 * scale, 3.4 * scale, 0, 0, Math.PI * 2);
+    ctx.ellipse(px, y - 38 * scale, 4.2 * scale, 3.4 * scale, 0, 0, Math.PI * 2);
     ctx.fillStyle = "#6b4428";
     ctx.fill();
     ctx.lineWidth = 2;
     ctx.strokeStyle = "#1e2430";
     ctx.stroke();
     ctx.beginPath();
-    ctx.ellipse(px, sq.y - 37 * scale, 2.2 * scale, 1.8 * scale, 0, 0, Math.PI * 2);
+    ctx.ellipse(px, y - 37 * scale, 2.2 * scale, 1.8 * scale, 0, 0, Math.PI * 2);
     ctx.fillStyle = "#f4c39a";
     ctx.fill();
   }

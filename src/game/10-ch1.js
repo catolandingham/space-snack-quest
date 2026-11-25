@@ -1445,8 +1445,8 @@
     function sf(l) {
       let o = l.sp > 0 && l.pause <= 0 && l.alert === 0 ? Math.abs(Math.sin(n.T * 8)) * 3 : 0;
       (l.alert > 0
-        ? (Qt(l.x, l.y - o, l.col, QT_ADULT, n.sq.x > l.x ? 1 : -1), X(l.x, l.y - 58, 4, 5), r(y, 0))
-        : (Qt(l.x, l.y - o, l.col, QT_ADULT, 0), L(l.x, l.y - 64 - o, 16.5), r(l.hair, 2.5)),
+        ? (Qt(l.x, l.y - o, l.col, qtHere(), n.sq.x > l.x ? 1 : -1), X(l.x, l.y - 58, 4, 5), r(y, 0))
+        : (Qt(l.x, l.y - o, l.col, qtHere(), 0), L(l.x, l.y - 64 - o, 16.5), r(l.hair, 2.5)),
         Of(l.x, l.y - 112, l.alert > 0));
     }
     function jp() {
