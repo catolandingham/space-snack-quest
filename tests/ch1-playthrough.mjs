@@ -349,10 +349,12 @@ const play = await page.evaluate(() => {
     const pb = window.SSQ.beat("ch1-party"),
       pn = pb && pb.now();
     if (pn && pn.dance) {
-      // The full-screen dance: every tap is a move; it ends with the song.
-      const cv = document.querySelector('canvas[aria-label="dance"]');
-      cv && i % 8 === 0 && cv.dispatchEvent(new PointerEvent("pointerdown", { clientX: 200, clientY: 300, pointerId: 8, bubbles: true }));
-      cv && i % 8 === 0 && cv.dispatchEvent(new PointerEvent("pointerup", { clientX: 200, clientY: 300, pointerId: 8, bubbles: true }));
+      // The full-screen dance: he taps the glowing spot (the dance notes where it is); it ends with the song.
+      const cv = document.querySelector('canvas[aria-label="dance"]'),
+        dn = n.ch1PartyNow && n.ch1PartyNow.dance,
+        gl = dn && dn.live && dn.seen && dn.seen.glow;
+      cv && gl && i % 4 === 0 && cv.dispatchEvent(new PointerEvent("pointerdown", { clientX: gl.x, clientY: gl.y, pointerId: 8, bubbles: true }));
+      cv && gl && i % 4 === 0 && cv.dispatchEvent(new PointerEvent("pointerup", { clientX: gl.x, clientY: gl.y, pointerId: 8, bubbles: true }));
       ss.tick(0.1);
       still = 0;
       continue;

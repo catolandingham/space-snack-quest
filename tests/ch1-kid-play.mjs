@@ -335,9 +335,10 @@ while (now() < MAX_S) {
     }
     continue;
   }
-  // The party's dance fills the screen: every tap is his next move, the way a kid dances.
+  // The party's dance fills the screen: he taps the spot that glows on Squatch (the dance notes where it is).
   if (s.party && s.party.dance) {
-    await tap(PHONE.width / 2, PHONE.height / 2);
+    const gl = await page.evaluate(() => ((d) => (d && d.live && d.seen && d.seen.glow) || null)(window.__ss.op.ch1PartyNow && window.__ss.op.ch1PartyNow.dance));
+    gl && (await tap(gl.x, gl.y));
     await sleep(400);
     continue;
   }

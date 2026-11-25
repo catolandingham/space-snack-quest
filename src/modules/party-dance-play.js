@@ -5,7 +5,8 @@
  * party-dance.js (dancePays); what the dance has paid in each song is kept on the party's state as p.dancePay.
  * Every sound goes through the party's sounds (the master volume; silent with sound off).
  */
-import { tickDance, danceTap, dancePays } from "./party-dance.js";
+import { tickDance, danceTap, dancePays, spotNow, spotOnScreen, ringLeft, ringRadius } from "./party-dance.js";
+import { fullScreenOpen } from "./fullscreen.js";
 
 // What each thing that can happen sounds like.
 const SOUNDS = Object.freeze({ hit: ["robot"], wrong: ["uhoh"], slow: ["uhoh"], perfect: ["cheer", "sparkle"], round: ["clap"] });
@@ -24,9 +25,20 @@ function settle(p, ev, h) {
     else d.fx.push({ kind: "bonus", t: -0.25, stars });
   }
 }
-/** One frame of the dance: a ring that closes costs him that spot. */
+/**
+ * One frame of the dance: a ring that closes costs him that spot. It also notes on the dance where the glowing
+ * spot is on the screen now (`seen.glow`: { x, y, r, ring, left }, or null), for the tests and the play-through
+ * robots, which tap it as a kid would.
+ */
 export function danceFrame(p, dt, h) {
-  p.dance && settle(p, tickDance(p.dance, dt), h);
+  const d = p.dance;
+  if (!d) return;
+  settle(p, tickDance(d, dt), h);
+  const view = fullScreenOpen(),
+    spot = spotNow(d),
+    size = view ? view.size() : { w: 375, h: 812 },
+    at = spot ? spotOnScreen(size.w, size.h, d, spot) : null;
+  d.seen = { glow: at ? { ...at, left: ringLeft(d), ring: ringRadius(at.r, ringLeft(d)) } : null };
 }
 /** A tap on the dance at screen point (x, y); `size` is the dance view's { w, h }. */
 export function danceTouch(p, x, y, size, h) {

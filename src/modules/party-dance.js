@@ -106,6 +106,8 @@ export const routineOf = (d) => ROUTINES[(d.song || 0) % ROUTINES.length];
 export const spotNow = (d) => (d && d.live ? routineOf(d)[d.i] : "");
 /** How much of the time to tap the glowing spot is left, 1 down to 0 (the ring is drawn from this). */
 export const ringLeft = (d) => (d && d.live ? Math.max(0, d.left / DANCE.spotSeconds) : 0);
+/** The timer ring's radius round a spot of radius `r`: it closes from well outside the spot down onto it. */
+export const ringRadius = (r, left) => r * (1 + 1.3 * Math.max(0, Math.min(1, left)));
 /** True once he has hit enough spots for the dance to count as tried. */
 export const danceTried = (d) => !!d && d.moves >= DANCE.tried;
 /** The pose he is in now: the stumble, the cheer, or the pose of the last spot he hit. */
@@ -118,6 +120,7 @@ export function poseNow(d) {
 // The spot is done (hit or missed): the next one glows after `wait`; after the last, the routine's cheer first.
 function next(d, wait, ev) {
   d.live = false;
+  d.seen = null;
   d.i += 1;
   if (d.i >= ROUTINE_LENGTH) {
     d.big = d.missed === 0;

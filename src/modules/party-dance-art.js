@@ -13,7 +13,7 @@
 import { drawBand, drawOutfit, oval, line } from "./party-art.js";
 import { bootsOnFeet } from "./party-outfit.js";
 import { drawSquatchArt, armEnds, SQUATCH_LOOK } from "./squatch-art.js";
-import { DANCE, SONG_LIGHTS, ROUTINE_LENGTH, SPOTS, SPOT_R, danceSquatch, onScreen, spotOnScreen, spotNow, ringLeft, unit } from "./party-dance.js";
+import { DANCE, SONG_LIGHTS, ROUTINE_LENGTH, SPOTS, SPOT_R, danceSquatch, onScreen, spotOnScreen, spotNow, ringLeft, ringRadius, unit } from "./party-dance.js";
 
 const FLOORS = ["#5a2c4f", "#1f4f52", "#5a4a22"];
 const INK = "#1e2430",
@@ -22,8 +22,6 @@ const INK = "#1e2430",
 const clamp = (k) => Math.max(0, Math.min(1, k));
 /** The timer ring's colour for the share of time left. */
 export const ringColour = (left) => (left > 0.5 ? "#2bc48a" : left > 0.25 ? "#ffb300" : "#e5533d");
-/** The timer ring's radius: it closes from well outside the spot down onto it as the time runs out. */
-export const ringRadius = (r, left) => r * (1 + 1.3 * clamp(left));
 
 function star(ctx, x, y, r, fill, lw = 0) {
   ctx.beginPath();
@@ -114,9 +112,8 @@ function drawMarks(ctx, w, h, d, t) {
 
 /**
  * Draws the dance on a `w` x `h` screen. `guestArt` draws the approved guests; `outfit` is what he has on now;
- * `d` is the dance (party-dance.js newDance); `song` picks the floor and the light. Returns what it drew that a
- * finger aims at ({ glow } or { glow: null }); the same is left on the dance as `d.seen`, for the tests and the
- * play-through robots.
+ * `d` is the dance (party-dance.js newDance); `song` picks the floor and the light. Returns the glowing spot it
+ * drew ({ x, y, r, ring, left }), or null.
  */
 export function drawDanceCloseUp(ctx, w, h, guestArt, outfit, t, d, song = 0) {
   d = d || {};
@@ -225,8 +222,7 @@ export function drawDanceCloseUp(ctx, w, h, guestArt, outfit, t, d, song = 0) {
     }
   }
   drawMarks(ctx, w, h, { marks: d.marks || [], live: d.live }, t);
-  d.seen = { glow };
-  return d.seen;
+  return glow;
 }
 
 /** The close button: a white disc with a cross, no words. */
