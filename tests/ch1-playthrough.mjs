@@ -494,7 +494,10 @@ const must = [
   "Let's give a big hello to our friends from Bleep-Bloop Robotics!",
   "Soon their helper robots will be here, to help with the heavy work.",
   "And now... put your hands together for the Croc Boys!",
+  "Robots for the heavy work? That's Mops's job!",
+  "I have to show Mops.",
   "Stormtop-vania 1-2-3-4-5!",
+  // at home after the flyer sneak (Brian 2026-11-25: the dance wish moved home)
   "I've never gotten to dance at a party.",
   // Closing time and the walk home with Mops (party-endings.js); the raid and Mops finding the flyer went with
   // the old free play.

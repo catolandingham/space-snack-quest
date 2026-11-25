@@ -352,6 +352,14 @@ while (now() < MAX_S) {
   if (s.party && s.party.dance) {
     const gl = await page.evaluate(() => ((d) => (d && d.live && d.seen && d.seen.glow) || null)(window.__ss.op.ch1PartyNow && window.__ss.op.ch1PartyNow.dance));
     gl && (await tap(gl.x, gl.y));
+    // One routine a visit (Brian 2026-11-25): then two buttons. A kid dances once more, faster, then goes back.
+    const end = await page.evaluate(() => ((d) => (d && d.over && d.seen && d.seen.end ? { ...d.seen.end, level: d.level } : null))(window.__ss.op.ch1PartyNow && window.__ss.op.ch1PartyNow.dance));
+    if (end) {
+      const b = end.level >= 1 ? end.back : end.again;
+      say(s, end.level >= 1 ? "TAP Back to the party" : "TAP Dance again");
+      await sleep(700);
+      await tap(b.x, b.y);
+    }
     await sleep(400);
     continue;
   }

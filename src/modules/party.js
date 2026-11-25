@@ -7,14 +7,14 @@
  *      the teach card on the glancer's cone. He steps into the doorway (his whole body now) and play begins.
  *   P2 Sneak to the plant (restart: in his doorway, the glancer facing the stage). The glancer warns ("?" and a
  *      blip), looks across the lane, turns back. HIDE · plant: eyes in the leaves. Seen: the one capture rule.
- *   P3 The welcome and the band, watched from the plant (↺ restarts it). Three Isfred lines (he holds one flyer),
- *      the lights dim, the Croc Boys play, and as Isfred walks off to the bar he sets the flyer down on the stage's
- *      right end; the guests pair off and dance; "I've never gotten to dance at a party."; "A robot flyer! I'll show
- *      Mops." (the flyer glows).
+ *   P3 The welcome and the band, watched from the plant (↺ restarts it). Isfred's lines (he holds one flyer); after
+ *      the robots line Squatch thinks "Robots for the heavy work? That's Mops's job!" (the banner glows) and "I have
+ *      to show Mops." (the flyer in Isfred's hand glows); the lights dim, the Croc Boys
+ *      play, and as Isfred walks off he sets the flyer down; the guests pair off and dance.
  *   P4 The flyer sneak (restart: eyes in the plant, band playing, the flyer on the stage). He sneaks to the flyer
  *      past the dancers' sight (every cone drawn whole), GRAB · flyer, carries it in his paw home through his
- *      door (his door is not the goal, and does nothing, until he has it), puts it down on the floor, thinks "I
- *      deserve one night of normal." and "Costume on. Then I dance!". Seen: the one capture rule; a restart puts
+ *      door (his door is not the goal, and does nothing, until he has it), puts it down on the floor, thinks "I've
+ *      never gotten to dance at a party.", "I deserve one night of normal." and "Costume on. Then I dance!". Seen: the one capture rule; a restart puts
  *      the flyer back on the stage.
  *   P5 Dress up (home; ↺ restarts it with nothing on). OPEN · closet: the full-screen dress-up (dress-up.js). Then
  *      he walks out through his door in his outfit.
@@ -30,7 +30,7 @@
  * built in party-view.js); the capture rule's hooks are in party-capture.js.
  */
 import { partyLine } from "./party-lines.js";
-import { HALL, SPOTS, CAST, GLANCE, GLANCE_TIMES, HALL_PICTURE, HALL_SOLIDS, HALLWAY_LANE, DANCE_SPOT, HALL_SPEAKER, BANNER, HOME_ROOM, HALL_DOOR, SNACK_SPOT, FLYER, PYRAMID, BAND_AIM } from "./party-hall.js";
+import { HALL, SPOTS, CAST, GLANCE, GLANCE_TIMES, HALL_PICTURE, HALL_SOLIDS, HALLWAY_LANE, DANCE_SPOT, HALL_SPEAKER, BANNER, HOME_ROOM, HALL_DOOR, SNACK_SPOT, FLYER, PYRAMID, BAND_AIM, stepTo } from "./party-hall.js";
 export { HOME_ROOM };
 import { HOME_THINGS, HOME_SPOTS } from "./home-alone.js";
 import { GOAL_TARGETS } from "./goal-targets.js";
@@ -53,6 +53,8 @@ import { lateState } from "./party-now.js";
 const HOME_DOOR = GOAL_TARGETS["closet:peek"].rect;
 // How fast scripted walks go (pixels a second) and how long the P3 moments last (seconds).
 const PACE = Object.freeze({ walk: 240, scurry: 330, peekStep: 120, bandIn: 2.6, watch: 2.5 });
+// PLACEHOLDERS: the Croc Boys walk on from this far left of their places, at this speed (pixels a second).
+export const BAND_WALK_ON = Object.freeze({ from: 150, speed: 120 });
 // What he wears when a link opens P6 to P8 with no dress-up before it.
 export const JUMP_OUTFIT = Object.freeze({ head: "tophat", face: "shades", body: "shirt", legs: "boots" });
 const BOUNDS = Object.freeze({ x0: 60, x1: 900, y0: HALL.floorTop, y1: 590 });
@@ -150,7 +152,7 @@ export function createParty(bridge) {
     const stare = (x, y, a) => (late(p) && p.stare ? lookAt(x, y, p.stare.at) : a);
     const isf = p.isfred.face != null ? p.isfred.face : p.isfred.walking ? Math.atan2(CAST.isfredBar.y - p.isfred.y, CAST.isfredBar.x - p.isfred.x) : p.isfred.atBar ? Math.PI : Math.PI / 2;
     out.push(coneFrom("isfred", p.isfred.x, p.isfred.y, stare(p.isfred.x, p.isfred.y, isf), size));
-    (p.bandAt || CAST.band).forEach((b, i) => out.push(coneFrom("band" + i, b.x, b.y, b.face != null ? b.face : stare(b.x, b.y, Math.PI / 2 + (i - 1) * 0.25), size)));
+    p.bandOff || (p.bandAt || CAST.band).forEach((b, i) => out.push(coneFrom("band" + i, b.x, b.y, b.face != null ? b.face : stare(b.x, b.y, Math.PI / 2 + (i - 1) * 0.25), size)));
     const bt = p.bartenderAt || CAST.bartender;
     const btFace = bt.face != null ? bt.face : stare(bt.x, bt.y, Math.PI);
     out.push(coneFrom("bartender", bt.x, bt.y, btFace, size));
@@ -204,14 +206,14 @@ export function createParty(bridge) {
       ...(extra || {}),
     };
   }
-  const bandOn = (p) => ((p.lights = true), (p.band = true), (p.mode = "pairs"), (p.isfred = { x: CAST.isfredBar.x, y: CAST.isfredBar.y, atBar: true }));
+  const bandOn = (p) => ((p.lights = true), (p.band = true), (p.bandOff = false), (p.mode = "pairs"), (p.isfred = { x: CAST.isfredBar.x, y: CAST.isfredBar.y, atBar: true }));
   function startScene(id, opts = {}) {
     const e = E();
     closeFullScreen();
     e.forgetSaved();
     e.set("act", null);
     if (id === "P1") {
-      const p = base("P1", { phase: "home" });
+      const p = base("P1", { phase: "home", bandOff: true });
       save(p);
       e.room() !== "closet" && e.enterRoom("closet", "Q1");
       e.set("scene", "Q1");
@@ -223,7 +225,7 @@ export function createParty(bridge) {
       return;
     }
     if (id === "P2") {
-      save(base("P2", { phase: "sneak" }));
+      save(base("P2", { phase: "sneak", bandOff: true }));
       inHall();
       e.place("sq", SPOTS.doorway.x, SPOTS.doorway.y);
       e.face("sq", -1);
@@ -233,7 +235,7 @@ export function createParty(bridge) {
       return;
     }
     if (id === "P3") {
-      const p = base("P3", { phase: "watch", pose: "hidden", hideAt: "middle" });
+      const p = base("P3", { phase: "watch", pose: "hidden", hideAt: "middle", bandOff: true });
       save(p);
       inHall();
       hideIn("middle");
@@ -244,25 +246,30 @@ export function createParty(bridge) {
         say("official", "isfred-hello"),
         e.run(() => (P().glow = 1)),
         say("official", "isfred-helpers"),
-        e.run(() => (P().glow = 0)),
+        // his worry, while the banner still glows; then the flyer in Isfred's hand glows (Brian 2026-11-25:
+        // "Worry in the hall, shown at home")
+        say("sq", "sq-robots-job", "whisper"),
+        e.run(() => ((P().glow = 0), (P().flyerGlow = true))),
+        say("sq", "sq-show-mops", "whisper"),
         say("official", "isfred-band"),
         e.run(() => {
           const q = P();
-          bandOn(q);
-          // he walks off to the bar, and on the way sets his flyer down on the stage's right end (tick)
+          // Isfred has announced alone; now the Croc Boys walk on from the stage's left end and take their places
+          // (tick), and only then play (Brian 2026-11-25: "Shouldn't he be doing announcement alone and then have
+          // them join?")
+          q.lights = true;
+          q.bandOff = false;
+          q.bandAt = CAST.band.map((b) => ({ x: b.x - BAND_WALK_ON.from, y: b.y, walk: 1 }));
+          // he walks off to the bar, and on the way sets his flyer down (tick)
           q.isfred = { x: CAST.isfred.x, y: CAST.isfred.y, walking: true, wt: 0 };
           q.pt = 0;
           sound.one("cheer");
           sound.one("dim");
         }),
-        e.until(() => !P() || (P().pt >= PACE.bandIn && !P().isfred.walking)),
+        e.until(() => !P() || (P().pt >= PACE.bandIn && !P().isfred.walking && !P().bandAt)),
         say("band", "band-song", "song"),
         e.run(() => ((P().pt = 0), (P().follow = true))),
         e.until(() => !P() || P().pt >= PACE.watch),
-        say("sq", "sq-dance-wish", "whisper"),
-        // the flyer glows while he thinks about it (what a line mentions is visible and glows)
-        e.run(() => (P().flyerGlow = true)),
-        say("sq", "sq-flyer", "whisper"),
         e.run(() => startScene("P4")),
       ]);
       return;
@@ -288,7 +295,7 @@ export function createParty(bridge) {
       bandOn(p);
       save(p);
       inHall();
-      freePlay.start(p, { song: was.song, done: was.done, snacks: was.snacks, shot: was.shot });
+      freePlay.start(p, { song: was.song, done: was.done, snacks: was.snacks, shot: was.shot, danceLevel: was.danceLevel, dancePay: was.dancePay });
       opts.restart && (e.place("sq", SPOTS.doorway.x, SPOTS.doorway.y), e.face("sq", 1));
       e.set("sqPose", "stand");
       chip("");
@@ -304,7 +311,7 @@ export function createParty(bridge) {
       bandOn(p);
       save(p);
       inHall();
-      freePlay.start(p, { song: was.song, done: was.done, snacks: was.snacks, shot: was.shot });
+      freePlay.start(p, { song: was.song, done: was.done, snacks: was.snacks, shot: was.shot, danceLevel: was.danceLevel, dancePay: was.dancePay });
       p.lostPieces = (was.lostPieces || []).slice();
       p.fallen = (was.fallen || []).slice();
       p.band = false;
@@ -497,6 +504,8 @@ export function createParty(bridge) {
         q.put = null;
         q.flyer = "floor";
       }),
+      // (the dance wish is said here, at home, Brian 2026-11-25: "Dance wish moves home")
+      say("sq", "sq-dance-wish", "whisper"),
       say("sq", "sq-normal", "whisper"),
       say("sq", "sq-costume", "whisper"),
       e.run(() => startScene("P5")),
@@ -594,6 +603,12 @@ export function createParty(bridge) {
         mix(S, B, k);
         k >= 1 && (p.isfred = { x: B.x, y: B.y, atBar: true });
       }
+    }
+    // the Croc Boys walk on (P3); once all three are in their places they play and the guests pair off to dance
+    if (p.scene === "P3" && p.bandAt && p.bandAt.some((b) => b.walk)) {
+      let all = true;
+      p.bandAt.forEach((b, i) => (all = stepTo(b, CAST.band[i].x, CAST.band[i].y, BAND_WALK_ON.speed, dt) && all));
+      if (all) ((p.bandAt = null), (p.band = true), (p.mode = "pairs"), (p.pt = Math.max(p.pt, PACE.bandIn - 0.6)));
     }
     if (p.scene === "P2" && !p.alarm) {
       const before = glancePhase(p).phase;
@@ -815,7 +830,7 @@ export function createParty(bridge) {
     now() {
       const p = live();
       if (!p) return null;
-      const out = { isfred: { x: Math.round(p.isfred.x), y: Math.round(p.isfred.y), walking: !!p.isfred.walking, bend: p.isfred.bend || 0 }, flyerGlow: !!p.flyerGlow, grab: p.grab == null ? null : p.grab, put: p.put == null ? null : p.put, scene: p.scene, phase: p.phase, pose: p.pose, alarm: p.alarm ? p.alarm.phase : "", seenBy: seenByNow(p), glance: p.scene === "P2" ? glancePhase(p).phase : "", outfit: { ...p.outfit }, flyer: p.flyer, tufts: ventTufts(p), eyes: p.pose === "hidden" ? eyesAt(p, 0) : null, lost: !!p.lost, sound: sound.debug() };
+      const out = { isfred: { x: Math.round(p.isfred.x), y: Math.round(p.isfred.y), walking: !!p.isfred.walking, bend: p.isfred.bend || 0 }, flyerGlow: !!p.flyerGlow, bannerGlow: p.glow || 0, bandState: p.bandOff ? "off" : p.bandAt && p.bandAt.some((b) => b.walk) ? "walking" : "on", bandPlaying: !!p.band, bandAt: p.bandAt ? p.bandAt.map((b) => ({ x: Math.round(b.x), y: Math.round(b.y) })) : null, grab: p.grab == null ? null : p.grab, put: p.put == null ? null : p.put, scene: p.scene, phase: p.phase, pose: p.pose, alarm: p.alarm ? p.alarm.phase : "", seenBy: seenByNow(p), glance: p.scene === "P2" ? glancePhase(p).phase : "", outfit: { ...p.outfit }, flyer: p.flyer, tufts: ventTufts(p), eyes: p.pose === "hidden" ? eyesAt(p, 0) : null, lost: !!p.lost, sound: sound.debug() };
       return late(p) ? { ...out, ...lateState(p, { scale: E().hallSizes().squatch, guardTall: views.homeGuardHeight() }) } : out;
     },
     /** The outfit he chose. */

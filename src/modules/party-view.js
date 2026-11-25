@@ -105,7 +105,8 @@ export function createView(h) {
       banner: { glow: p.glow || 0 },
       lights: p.lights ? { dim: p.lightK == null ? 1 : p.lightK, color: SONG_LIGHTS[(p.song || 0) % 3] } : null,
       isfred: gone.isfred ? null : p.isfred,
-      band: { playing: p.band, spots: p.bandAt || CAST.band, gone: ["band0", "band1", "band2"].map((id) => !!gone[id]) },
+      // (before the band line the stage is Isfred's alone: Brian 2026-11-25)
+      band: p.bandOff ? null : { playing: p.band, spots: p.bandAt || CAST.band, gone: ["band0", "band1", "band2"].map((id) => !!gone[id]) },
       guests,
       bartender,
       guards: a ? a.guards.filter((g) => g.room === "hall").map((g) => ({ x: g.x, y: g.y, f: Math.cos(g.a) < 0 ? -1 : 1 })) : [],
@@ -186,7 +187,7 @@ export function createView(h) {
       // still Isfred's: in his raised hand, then down to the stage as he bends
       const f = p.isfred,
         hand = { x: f.x + FLYER.hand.dx, y: f.y + FLYER.hand.dy, size: FLYER.hand.size, rot: -0.15 };
-      return { ...(f.bend ? mix(hand, lie, f.bend) : hand), depth: f.y + 1 };
+      return { ...(f.bend ? mix(hand, lie, f.bend) : hand), glow: p.flyerGlow ? 0.75 + 0.25 * Math.sin(t * 6) : 0, depth: f.y + 1 };
     }
     if (p.flyer !== "stage") return null;
     if (p.grab != null) {

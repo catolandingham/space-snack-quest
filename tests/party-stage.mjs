@@ -27,7 +27,11 @@ const band = [];
 // (their shirts are found over the height the hall draws a grown-up, which grew 40% on 2026-11-24)
 const adult = await page.evaluate(() => window.SSQ.engine().hallSizes().adult);
 for (const b of CAST.band) for (let y = b.y - adult * 0.62; y <= b.y - adult * 0.15; y += 3) band.push(await px(b.x, y));
-g.check("the Croc Boys stand on the stage", band.some((c) => near(c, "#ffcf33", 40)) && band.some((c) => near(c, "#3478f6", 40)), band.slice(0, 6));
+// (before 2026-11-25 the Croc Boys stood on the stage from the start; Brian: "Shouldn't he be doing announcement alone
+// and then have them join?", so until Isfred calls them they are not there)
+g.check("in the sneak (before Isfred calls them) the stage is Isfred's alone: no Croc Boy is drawn there", !band.some((c) => near(c, "#ffcf33", 40)) && !band.some((c) => near(c, "#3478f6", 40)), band.slice(0, 6));
+const bandCones = await page.evaluate(() => window.SSQ.beat("ch1-party").cones().filter((c) => /^band/.test(c.id)).length);
+g.check("and no band cone either (nobody is there to see)", bandCones === 0, bandCones);
 g.check("no page errors", errors.length === 0, errors);
 
 // ---------- clear space under the banner (Brian 2026-11-25, "make the fixes you think best") ----------
@@ -88,6 +92,33 @@ async function clearUnder(page, who) {
   g.check(`Isfred's antennae stay ${GAP} or more below the banner's bottom edge (measured over his bobbing)`, r.seen > 0 && r.worst >= GAP, r);
 }
 await page.close();
+// ---------- the host announces alone, then the Croc Boys walk on (Brian 2026-11-25) ----------
+{
+  const o = await g.open("?beat=party:P3", { width: 1280, height: 800, deviceScaleFactor: 1 });
+  await sleep(1500);
+  const read = () => o.page.evaluate(() => { const n = window.__ss.op, b = window.SSQ.beat("ch1-party"), q = b.now(), c = n.cur; return { text: c && c.b ? c.b.text : "", cur: c ? c.k : "", band: q && q.bandState, playing: q && q.bandPlaying, at: q && q.bandAt, cones: b.cones().filter((k) => /^band/.test(k.id)).length, scene: q && q.scene }; });
+  const seen = [];
+  let walkOn = [],
+    t0 = Date.now();
+  for (;;) {
+    const r = await read();
+    seen.push(r);
+    r.band === "walking" && walkOn.push(r.at);
+    if (r.scene !== "P3" || Date.now() - t0 > 60000) break;
+    if (r.cur === "bub" && r.text !== "Stormtop-vania 1-2-3-4-5!") (await sleep(300), await o.page.evaluate(() => window.__ss.opTap()));
+    await sleep(80);
+  }
+  const before = seen.filter((r) => r.text && !/Croc Boys|Stormtop/.test(r.text) && seen.indexOf(r) < seen.findIndex((q) => /Croc Boys!/.test(q.text)));
+  g.check("through Isfred's welcome and the robots line the Croc Boys are not on the stage (and see nothing)", before.length > 3 && before.every((r) => r.band === "off" && r.cones === 0), before.slice(0, 3));
+  const firstWalk = walkOn[0],
+    steps = walkOn.slice(1).map((a, i) => Math.max(...a.map((b, j) => Math.hypot(b.x - walkOn[i][j].x, b.y - walkOn[i][j].y))));
+  g.check("after \"put your hands together for the Croc Boys!\" they walk on from the stage's left end, in a line, to their places (no jumps)", walkOn.length > 5 && firstWalk.every((b, j) => b.x < CAST.band[j].x - 100) && Math.max(...steps) < 30, [walkOn.length, firstWalk, Math.max(...steps)]);
+  g.check("they play only once all three are in their places", seen.filter((r) => r.band === "walking").every((r) => !r.playing) && seen.some((r) => r.band === "on" && r.playing));
+  const song = seen.find((r) => r.text === "Stormtop-vania 1-2-3-4-5!");
+  g.check("their song comes after they are in place", !!song && song.band === "on", song);
+  g.check("no page errors (the band walking on)", o.errors.length === 0, o.errors);
+  await o.page.close();
+}
 {
   const o = await g.open("?beat=party:P6", { width: 1280, height: 800, deviceScaleFactor: 1 });
   await sleep(1800);

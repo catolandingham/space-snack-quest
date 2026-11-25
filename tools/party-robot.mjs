@@ -114,6 +114,13 @@ for (;;) {
     // the dance: tap the spot that glows on him, a kid's rhythm (the dance notes where it is on the screen)
     const glow = await page.evaluate(() => ((d) => (d && d.live && d.seen && d.seen.glow) || null)(window.__ss.op.ch1PartyNow.dance));
     glow && (await page.touchscreen.tap(glow.x, glow.y), danceTaps++);
+    // one routine a visit (Brian 2026-11-25): then "Dance again" once, faster, and "Back to the party"
+    const end = await page.evaluate(() => ((d) => (d && d.over && d.seen && d.seen.end ? { ...d.seen.end, level: d.level } : null))(window.__ss.op.ch1PartyNow.dance));
+    if (end) {
+      await sleep(900);
+      const b = end.level >= 1 ? end.back : end.again;
+      await page.touchscreen.tap(b.x, b.y);
+    }
     await sleep(350);
     continue;
   }

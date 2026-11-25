@@ -25,6 +25,7 @@ import { openSnacks, tickTopple, snackRecord, SNACK_LOOK_SECONDS } from "./party
 import { snackFrame, snackTouch, snackShut } from "./party-snacks-play.js";
 import { newDance, danceClose, danceTried, DANCE } from "./party-dance.js";
 import { drawDanceCloseUp, drawCloseButton } from "./party-dance-art.js";
+import { drawDanceEnd } from "./party-dance-end.js";
 import { danceFrame, danceTouch } from "./party-dance-play.js";
 import { openFullScreen, closeFullScreen } from "./fullscreen.js";
 
@@ -83,6 +84,9 @@ export function createFreePlay(h) {
       flyer: "floor",
       // the one group photo, when the first song ends (party-photo.js); a restart after it does not bring it again
       shot: keep.shot && keep.shot.phase === "done" ? { phase: "done" } : null,
+      // the dance's speed he reached, and what it has paid (a restart keeps both: no farming by restarting)
+      danceLevel: keep.danceLevel || 0,
+      dancePay: keep.dancePay || {},
     });
     for (const g of Object.values(p.people)) Object.assign(g, { task: "", wait: 0, face: null, dance: 1 });
     UNITS.forEach((u, i) => (p.people[u[0]].spot = -1 - i));
@@ -212,7 +216,8 @@ export function createFreePlay(h) {
   function openDance(p) {
     const e = E();
     h.control(false);
-    p.dance = newDance();
+    // at the speed he reached last time (Brian 2026-11-25: leaving and coming back keeps his speed)
+    p.dance = newDance(p.danceLevel || 0);
     p.dance.song = p.song;
     h.sound.one("cheer");
     danceView = openFullScreen({
@@ -222,6 +227,7 @@ export function createFreePlay(h) {
         const q = h.P();
         if (!q || !q.dance) return;
         drawDanceCloseUp(ctx, w, hgt, h.guests, wornNow(q), t, q.dance, q.song);
+        q.dance.over && drawDanceEnd(ctx, w, hgt);
         drawCloseButton(ctx, danceClose(w));
       },
       pointer(kind, x, y) {
@@ -230,8 +236,9 @@ export function createFreePlay(h) {
         // the way out: the close button in the corner (the dance counts once he has hit his first three spots)
         const cb = danceClose(danceView ? danceView.size().w : 375);
         if (Math.hypot(x - cb.x, y - cb.y) < cb.r) return void closeDance(q);
-        // a tap on the glowing spot, on him, or nowhere (party-dance-play.js)
-        danceTouch(q, x, y, danceView ? danceView.size() : { w: 375, h: 812 }, h);
+        // a tap on the glowing spot, on him, or nowhere; once the routine is over, "Dance again" or "Back to the
+        // party" (party-dance-play.js)
+        danceTouch(q, x, y, danceView ? danceView.size() : { w: 375, h: 812 }, h) === "back" && closeDance(q);
       },
     });
   }

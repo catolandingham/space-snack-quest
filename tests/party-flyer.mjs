@@ -156,12 +156,15 @@ async function readLines(page, stop, note, ms = 60000) {
 // ---------- the words ----------
 g.check(
   "the flyer sneak's words are Brian's, word for word, approved",
-  L("sq-flyer") === "A robot flyer! I'll show Mops." &&
+  L("sq-robots-job") === "Robots for the heavy work? That's Mops's job!" &&
+    L("sq-show-mops") === "I have to show Mops." &&
     L("chip-flyer") === "Squatch: grab the flyer" &&
     L("button-grab-flyer") === "GRAB · flyer" &&
     L("sq-normal") === "I deserve one night of normal." &&
     L("sq-costume") === "Costume on. Then I dance!" &&
-    ["sq-flyer", "chip-flyer", "button-grab-flyer", "sq-normal", "sq-costume"].every((id) => { const l = lines.PARTY_LINES.find((x) => x.id === id); return l.status === "approved" && l.source === "Brian 2026-11-24, Snack Quest Chat"; }),
+    ["chip-flyer", "button-grab-flyer", "sq-normal", "sq-costume"].every((id) => { const l = lines.PARTY_LINES.find((x) => x.id === id); return l.status === "approved" && l.source === "Brian 2026-11-24, Snack Quest Chat"; }) &&
+    ["sq-robots-job", "sq-show-mops"].every((id) => { const l = lines.PARTY_LINES.find((x) => x.id === id); return l.status === "approved" && l.source === "Brian 2026-11-25, Snack Quest Chat"; }) &&
+    lines.PARTY_LINES.find((x) => x.id === "sq-flyer").removed,
 );
 
 // ---------- P3: one flyer, set down on the stage's right end ----------
@@ -176,16 +179,16 @@ g.check(
   const read = await readLines(
     page,
     (q) => q.now && q.now.scene === "P4",
-    async (q) => ({ flyer: q.now.flyer, glow: q.now.flyerGlow, onStage: await pixels(page, FLYER.box, PAPER), isfred: q.now.isfred }),
+    async (q) => ({ flyer: q.now.flyer, glow: q.now.flyerGlow, banner: q.now.bannerGlow, onStage: await pixels(page, FLYER.box, PAPER), hand: await pixels(page, around({ x: q.now.isfred.x + FLYER.hand.dx, y: q.now.isfred.y + FLYER.hand.dy }, 16), PAPER), isfred: q.now.isfred }),
   );
   // (Isfred's walk happens between two lines: watched in a second pass below, where nothing is being tapped)
   s = read.end;
   const texts = read.seen.map((l) => l.text);
-  g.check("P3's lines in order, the new thought last", JSON.stringify(texts) === JSON.stringify(["Let's give a big hello to our friends from Bleep-Bloop Robotics!", "Soon their helper robots will be here, to help with the heavy work.", "And now... put your hands together for the Croc Boys!", "Stormtop-vania 1-2-3-4-5!", "I've never gotten to dance at a party.", "A robot flyer! I'll show Mops."]), texts);
-  const wish = read.seen[4],
-    thought = read.seen[5];
-  g.check("by \"I've never gotten to dance at a party.\" the flyer lies on the stage's end, and Isfred is at the bar", !!wish && wish.flyer === "stage" && wish.onStage > 150 && !wish.isfred.walking && Math.abs(wish.isfred.x - hall.CAST.isfredBar.x) < 2, wish);
-  g.check("while he thinks \"A robot flyer! I'll show Mops.\" the flyer is there to see, and glows", !!thought && thought.flyer === "stage" && thought.glow && thought.onStage > 150, thought);
+  g.check("P3's lines in order: his worry right after the robots line (Brian 2026-11-25)", JSON.stringify(texts) === JSON.stringify(["Let's give a big hello to our friends from Bleep-Bloop Robotics!", "Soon their helper robots will be here, to help with the heavy work.", "Robots for the heavy work? That's Mops's job!", "I have to show Mops.", "And now... put your hands together for the Croc Boys!", "Stormtop-vania 1-2-3-4-5!"]), texts);
+  const worry = read.seen[2],
+    show = read.seen[3];
+  g.check("while he thinks \"Robots for the heavy work? That's Mops's job!\" the banner still glows", !!worry && worry.banner === 1, worry);
+  g.check("while he thinks \"I have to show Mops.\" the flyer in Isfred's hand is there to see, and glows", !!show && show.flyer === "" && show.glow && show.hand > 60, show);
   g.check("no toss: nothing like the old flutter is kept or heard (no `flyers` in the party's state, no toss sound)", !s.keys.includes("flyers") && !s.played.includes("flyers") && !s.played.includes("thwap"), s.played.slice(-8));
   // the old sheets ended on the floor at these places, one of them in the plant
   const old = [[300, 420], [360, 470], [520, 440], [600, 520], [680, 430], [441, 470], [240, 520]];
@@ -333,8 +336,8 @@ g.check(
   const tr = await trailEnd(page);
   g.check("the whole way, there and home, nobody saw him and no alarm began", tr.seen === 0 && tr.alarm === 0, tr);
   g.check("the flyer travels with him: it is always somewhere to be seen and never jumps over 60 (nor does he)", tr.flGone === 0 && tr.flJumps === 0 && tr.sqJumps === 0, tr);
-  g.check("at home his two thoughts, once each, in order", JSON.stringify(home.seen.map((l) => l.text)) === JSON.stringify(["I deserve one night of normal.", "Costume on. Then I dance!"]), home.seen);
-  g.check("they come after the flyer is down on the floor (it is drawn there), and before the closet is outlined", home.seen.length === 2 && home.seen.every((l) => l.flyer === "floor" && l.onFloor > 30 && l.room === "closet" && l.scene === "P4" && l.ring !== "dress"), home.seen);
+  g.check("at home his three thoughts, once each, in order (the dance wish first, moved home by Brian 2026-11-25)", JSON.stringify(home.seen.map((l) => l.text)) === JSON.stringify(["I've never gotten to dance at a party.", "I deserve one night of normal.", "Costume on. Then I dance!"]), home.seen);
+  g.check("they come after the flyer is down on the floor (it is drawn there), and before the closet is outlined", home.seen.length === 3 && home.seen.every((l) => l.flyer === "floor" && l.onFloor > 30 && l.room === "closet" && l.scene === "P4" && l.ring !== "dress"), home.seen);
   g.check("then P5: the flyer lies on the home floor where it always did, and the closet is the goal", !!s && s.now.flyer === "floor" && s.room === "closet" && Math.hypot(s.flyerAt.x - HOME_ROOM.flyer.x, s.flyerAt.y - HOME_ROOM.flyer.y) < 1 && (await until(page, (q) => q.ring === "dress", 3000)) !== null, s && [s.now.flyer, s.flyerAt]);
   await sleep(200);
   await still(page, "flyer-09-on-the-home-floor");
@@ -356,7 +359,7 @@ g.check(
   await route(page, HOME);
   const s = await until(page, (q) => q.cur === "bub", 8000);
   await sleep(400);
-  g.check("(home with the flyer: the first thought is up)", !!s && s.text === "I deserve one night of normal.", s && s.text);
+  g.check("(home with the flyer: the first thought is up)", !!s && s.text === "I've never gotten to dance at a party.", s && s.text);
   await still(page, "flyer-08-home-first-thought");
   await page.close();
 }

@@ -10,8 +10,9 @@
  * scores a few stars, shown by the spot. Too slow, or a tap somewhere else on him: no stars for that spot, a short
  * funny stumble, and the next spot glows. A tap that is not on him does nothing. A routine is eight spots, in a
  * different order for each of the three songs; every spot hit is a bonus and the big cheer, a routine with a miss
- * ends with a smaller cheer, and then it goes round again until the song ends or he closes it. A miss never ends
- * the dance. It reads with the sound off: the glow, the ring, the "+5", the stumble and the cheer are all drawn.
+ * ends with a smaller cheer. One routine a visit (Brian 2026-11-25): after its cheer two big buttons show, "Dance
+ * again" (the same routine, faster: DANCE_SPEEDS) and "Back to the party"; the corner's X still closes it any time.
+ * A miss never ends the dance. It reads with the sound off: the glow, the ring, the "+5", the stumble and the cheer are all drawn.
  *
  * This file is the rules and the numbers (no drawing, no browser): party-dance-art.js draws it and
  * party-dance-play.js gives the stars and plays the sounds.
@@ -28,10 +29,23 @@ import { armEnds, SQUATCH_LOOK } from "./squatch-art.js";
 //   first, hold, stumble, bigCheer, smallCheer   the pauses: before the first spot, after a hit (the pose is held),
 //                 the stumble after a miss, the cheer after a whole routine (big with no miss, smaller with one)
 //   tried         the dance counts as tried once he has hit this many spots (it was "three moves")
-// THE CAP (placeholder too): in each of the three songs the dance pays for one routine's worth of spots (eight)
-// and one bonus, however long he dances; a new song pays again. So the most a party's dancing can pay is
-// 3 x (8 x 5 + 25) = 195 stars, and dancing on never farms more.
 export const DANCE = Object.freeze({ least: 12, cheerFade: 0.35, cheerPerMove: 0.18, clap: 2.5, spotSeconds: 3, spotStars: 5, perfectStars: 25, first: 0.9, hold: 0.5, stumble: 0.9, bigCheer: 2, smallCheer: 1.2, tried: 3 });
+// One routine a visit, then "Dance again" (faster) or "Back to the party" (Brian 2026-11-25, his click "One routine,
+// then dance again faster"): each "Dance again" is the next speed, and the speed he reached is kept when he leaves
+// and comes back. The seconds a spot (3, 2.4, 1.9, 1.5) are from his click; what each speed pays is a PLACEHOLDER
+// ("faster rounds pay more"): `spot` stars a spot in time, `bonus` for a routine with every spot in time.
+// The first speed is DANCE's own numbers (3 s, 5, 25).
+export const DANCE_SPEEDS = Object.freeze([
+  Object.freeze({ secs: DANCE.spotSeconds, spot: DANCE.spotStars, bonus: DANCE.perfectStars }),
+  Object.freeze({ secs: 2.4, spot: 6, bonus: 30 }),
+  Object.freeze({ secs: 1.9, spot: 7, bonus: 35 }),
+  Object.freeze({ secs: 1.5, spot: 8, bonus: 40 }),
+]);
+// THE CAP (placeholder too): in each of the three songs each speed pays for one routine (eight spots and its
+// bonus), however often he dances it; a new song pays again. So one song's dancing pays at most
+// 8 x (5 + 6 + 7 + 8) + (25 + 30 + 35 + 40) = 338 stars, the whole party at most 1014, and dancing on at the top
+// speed never farms more.
+export const speedOf = (level) => DANCE_SPEEDS[Math.max(0, Math.min(DANCE_SPEEDS.length - 1, level || 0))];
 // The room's light for each of the three songs (party plan V10): pink, teal, amber.
 export const SONG_LIGHTS = Object.freeze(["rgba(255,95,168,.16)", "rgba(43,196,170,.16)", "rgba(255,190,60,.18)"]);
 
@@ -97,16 +111,26 @@ const READY = poseIndex("ready"),
   CHEER = poseIndex("cheer");
 
 // ---------- the dance ----------
-/** A new dance: standing ready, a quiet crowd, the first spot about to glow. */
-export function newDance() {
-  return { moves: 0, cheer: 0.2, t: 0, pop: 0, song: 0, i: 0, round: 0, missed: 0, marks: [], live: false, left: 0, hold: DANCE.first, pose: READY, stumble: 0, party: 0, big: false, fx: [] };
+/** A new dance at speed `level` (0 to 3): standing ready, a quiet crowd, the first spot about to glow. */
+export function newDance(level = 0) {
+  const lv = Math.max(0, Math.min(DANCE_SPEEDS.length - 1, level || 0));
+  return { moves: 0, cheer: 0.2, t: 0, pop: 0, song: 0, i: 0, round: 0, missed: 0, marks: [], live: false, left: 0, hold: DANCE.first, pose: READY, stumble: 0, party: 0, big: false, fx: [], level: lv, secs: speedOf(lv).secs, finished: false, over: false };
+}
+/**
+ * "Dance again": the same song's routine from its start, one speed faster (the fastest stays the fastest).
+ * The stars and moves he has so far stay.
+ */
+export function danceAgain(d) {
+  const lv = Math.min(DANCE_SPEEDS.length - 1, (d.level || 0) + 1);
+  Object.assign(d, { level: lv, secs: speedOf(lv).secs, i: 0, missed: 0, marks: [], live: false, left: 0, hold: DANCE.first, pose: READY, stumble: 0, party: 0, big: false, finished: false, over: false });
+  return d;
 }
 /** The routine of the song the dance is on. */
 export const routineOf = (d) => ROUTINES[(d.song || 0) % ROUTINES.length];
 /** The spot glowing now ("" while he holds a pose, stumbles or is cheered). */
 export const spotNow = (d) => (d && d.live ? routineOf(d)[d.i] : "");
 /** How much of the time to tap the glowing spot is left, 1 down to 0 (the ring is drawn from this). */
-export const ringLeft = (d) => (d && d.live ? Math.max(0, d.left / DANCE.spotSeconds) : 0);
+export const ringLeft = (d) => (d && d.live ? Math.max(0, d.left / (d.secs || DANCE.spotSeconds)) : 0);
 /** The timer ring's radius round a spot of radius `r`: it closes from well outside the spot down onto it. */
 export const ringRadius = (r, left) => r * (1 + 1.3 * Math.max(0, Math.min(1, left)));
 /** True once he has hit enough spots for the dance to count as tried. */
@@ -115,10 +139,12 @@ export const danceTried = (d) => !!d && d.moves >= DANCE.tried;
 export function poseNow(d) {
   if (!d) return POSES[READY];
   if (d.stumble > 0) return POSES[STUMBLE];
-  if (d.party > 0) return POSES[CHEER];
+  // the routine's cheer, and his arms stay up while the two buttons wait
+  if (d.party > 0 || d.over) return POSES[CHEER];
   return POSES[d.pose == null ? (d.moves || 0) % POSES.length : d.pose] || POSES[READY];
 }
-// The spot is done (hit or missed): the next one glows after `wait`; after the last, the routine's cheer first.
+// The spot is done (hit or missed): the next one glows after `wait`. After the last, the routine's cheer, and
+// then the routine is over (`over`): no spot glows again until he picks "Dance again".
 function next(d, wait, ev) {
   d.live = false;
   d.seen = null;
@@ -127,9 +153,8 @@ function next(d, wait, ev) {
     d.big = d.missed === 0;
     d.party = d.big ? DANCE.bigCheer : DANCE.smallCheer;
     d.cheer = d.big ? 1.6 : 0.9;
-    d.i = 0;
     d.round += 1;
-    d.missed = 0;
+    d.finished = true;
     wait += d.party;
     ev.push(d.big ? "perfect" : "round");
   }
@@ -168,13 +193,14 @@ export function tickDance(d, dt) {
   d.fx = d.fx.filter((f) => (f.t += dt) < 1.1);
   if (d.stumble > 0) d.stumble = Math.max(0, d.stumble - dt);
   else if (d.party > 0) d.party = Math.max(0, d.party - dt);
+  if (d.over) return ev;
   if (!d.live) {
     d.hold -= dt;
     if (d.hold <= 0) {
-      // the next spot glows; a new routine starts with a clean row of marks
-      d.i === 0 && d.marks.length >= ROUTINE_LENGTH && (d.marks = []);
+      // the routine is over: the cheer is done and the two buttons show (party-dance-end.js)
+      if (d.finished) return ((d.over = true), ev.push("over"), ev);
       d.live = true;
-      d.left = DANCE.spotSeconds;
+      d.left = d.secs || DANCE.spotSeconds;
     }
     return ev;
   }
@@ -249,13 +275,16 @@ export function danceTap(d, x, y, w, h) {
   return onHim(w, h, d, x, y) ? miss(d, "wrong") : [];
 }
 /**
- * The stars a hit or a bonus pays, under the cap. `pay` is the party's record of what the dance has paid in each
- * song ({ [song]: { spots, bonus } }); it is changed. `what` is "hit" or "perfect".
+ * The stars a hit or a bonus pays at speed `level`, under the cap. `pay` is the party's record of what the dance
+ * has paid in each song at each speed ({ [song]: { [level]: { spots, bonus } } }); it is changed. `what` is "hit"
+ * or "perfect".
  */
-export function dancePays(pay, song, what) {
-  const rec = pay[song] || (pay[song] = { spots: 0, bonus: false });
-  if (what === "hit" && rec.spots < ROUTINE_LENGTH) return ((rec.spots += 1), DANCE.spotStars);
-  if (what === "perfect" && !rec.bonus) return ((rec.bonus = true), DANCE.perfectStars);
+export function dancePays(pay, song, what, level = 0) {
+  const lv = Math.max(0, Math.min(DANCE_SPEEDS.length - 1, level || 0)),
+    bySong = pay[song] || (pay[song] = {}),
+    rec = bySong[lv] || (bySong[lv] = { spots: 0, bonus: false });
+  if (what === "hit" && rec.spots < ROUTINE_LENGTH) return ((rec.spots += 1), speedOf(lv).spot);
+  if (what === "perfect" && !rec.bonus) return ((rec.bonus = true), speedOf(lv).bonus);
   return 0;
 }
 

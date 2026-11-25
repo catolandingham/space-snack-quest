@@ -495,15 +495,16 @@ let p4Cast = null;
           b && b.x < banner.x1 && b.x + b.w > banner.x0 && b.y < banner.y1 && b.y + b.h > banner.y0 && (bubbleOverBanner = true);
           await still(page, "p3-isfred");
         }
-        q.text.startsWith("I've never") && (await still(page, "p3-eyes-on-pairs"));
+        q.text.startsWith("I have to show") && (await still(page, "p3-eyes-in-the-plant"));
         await sleep(450);
         await tap(page);
       }
     },
   );
-  g.check("P3's lines in order", JSON.stringify(lines) === JSON.stringify(["Let's give a big hello to our friends from Bleep-Bloop Robotics!", "Soon their helper robots will be here, to help with the heavy work.", "And now... put your hands together for the Croc Boys!", "Stormtop-vania 1-2-3-4-5!", "I've never gotten to dance at a party.", "A robot flyer! I'll show Mops."]), lines);
+  // (Brian 2026-11-25: the worry follows the robots line; the dance wish moved home)
+  g.check("P3's lines in order", JSON.stringify(lines) === JSON.stringify(["Let's give a big hello to our friends from Bleep-Bloop Robotics!", "Soon their helper robots will be here, to help with the heavy work.", "Robots for the heavy work? That's Mops's job!", "I have to show Mops.", "And now... put your hands together for the Croc Boys!", "Stormtop-vania 1-2-3-4-5!"]), lines);
   g.check("everyone in the crowd looks at Isfred during his lines (their cones point at him)", facing);
-  g.check("every bubble in P3 has a real name over it (the band's says Croc Boys)", names.length === 6 && names.every(([, nm]) => nm && nm !== "undefined" && nm !== "none") && names[3][1] === "Croc Boys", names);
+  g.check("every bubble in P3 has a real name over it (the band's says Croc Boys)", names.length === 6 && names.every(([, nm]) => nm && nm !== "undefined" && nm !== "none") && names[5][1] === "Croc Boys", names);
   g.check("no wordless story wait in P3 (no yellow corner chevron)", waits === 0, waits);
   g.check("Isfred's bubble never covers the banner", !bubbleOverBanner);
   g.check("his eyes are in the middle plant, never at the vent", !!eyesAt && Math.hypot(eyesAt.x - 441, eyesAt.y - 486) < 6, eyesAt);
@@ -563,7 +564,7 @@ let p4Cast = null;
     q.ctrl && q.room === "hall" && (await walk(page, 477, 600));
     q.cur === "bub" && (homeLines.includes(q.text) || homeLines.push(q.text), await sleep(450), await tap(page));
   });
-  g.check("through his door he walks home with it and puts it down; his two thoughts; P5 with the flyer on the floor", !!s && s.now.flyer === "floor" && s.room === "closet" && JSON.stringify(homeLines) === JSON.stringify(["I deserve one night of normal.", "Costume on. Then I dance!"]), [s && s.now.flyer, homeLines]);
+  g.check("through his door he walks home with it and puts it down; his three thoughts; P5 with the flyer on the floor", !!s && s.now.flyer === "floor" && s.room === "closet" && JSON.stringify(homeLines) === JSON.stringify(["I've never gotten to dance at a party.", "I deserve one night of normal.", "Costume on. Then I dance!"]), [s && s.now.flyer, homeLines]);
   await still(page, "p5-home-flyer");
   const p3Trail = await trailJumps(page);
   g.check("from P3 to P5 nobody teleports: Squatch never jumps over 60 inside a room", p3Trail.jumps.length === 0, p3Trail.jumps.slice(0, 3));

@@ -95,7 +95,8 @@ export const PARTY_LINES = Object.freeze([
   // The flyer sneak (Brian 2026-11-24, night: "what if he just leaves one on the side of the stage ... and we have
   // to sneak to get it and get back to the room"; his click "He wants to show Mops"; then, for getting home, "it
   // should mention the party and wanting to dance").
-  { id: "sq-flyer", half: 1, who: "sq", text: "A robot flyer! I'll show Mops.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  // Removed 2026-11-25 (the row is kept so the sheet's numbers do not shift): "sq-show-mops" below replaced it.
+  { id: "sq-flyer", half: 1, who: "sq", text: "A robot flyer! I'll show Mops.", status: "approved", source: "Removed 2026-11-25: replaced by line 73 (it had Brian's yes of 2026-11-24)", removed: true },
   { id: "chip-flyer", half: 1, who: "chip", text: "Squatch: grab the flyer", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
   { id: "button-grab-flyer", half: 1, who: "button", text: "GRAB · flyer", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
   { id: "sq-normal", half: 1, who: "sq", text: "I deserve one night of normal.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
@@ -103,6 +104,14 @@ export const PARTY_LINES = Object.freeze([
   { id: "sq-got-one", half: 2, who: "sq", text: "Got one!", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat: \"I like his own thought\"" },
   { id: "button-leave-bar", half: 2, who: "button", text: "LEAVE · bar", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat: a LEAVE · bar button always on screen" },
   { id: "honor-snack-bandit", half: 2, who: "card", text: "Snack Bandit: took every snack at the party.", status: "approved", source: "Brian 2026-11-24, click in Snack Quest Chat: \"Snack Bandit (Recommended)\"" },
+  // The showing-4 notes (Brian 2026-11-25 morning, his clicks in Snack Quest Chat; asks/video-notes-2026-11-24/ANSWERS.md,
+  // "Round of notes on the showing-4 videos" and "The talk, reordered").
+  { id: "button-dance-again", half: 2, who: "button", text: "Dance again", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
+  { id: "sq-robots-job", half: 1, who: "sq", text: "Robots for the heavy work? That's Mops's job!", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
+  { id: "sq-show-mops", half: 1, who: "sq", text: "I have to show Mops.", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
+  { id: "band-group-photo", half: 2, who: "band", text: "Group photo!", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
+  { id: "sq-robots-coming", half: 2, who: "sq", text: "But look. Robots are coming to do your job.", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat", quiet: true },
+  { id: "mops-need-me", half: 2, who: "mops", text: "Nobody is replacing me. They need me here.", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat", quiet: true },
 ]);
 
 /** Whether this bubble is one of Mops's gentle lines, which never get his "meh" (morning-sound.js, through the bridge). */

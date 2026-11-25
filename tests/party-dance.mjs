@@ -61,13 +61,31 @@ const { DANCE, SPOTS, ROUTINES, POSES } = D;
   });
   g.check("in each spot's pose a paw is on that spot (inside its glow)", off.every(([, d]) => d <= D.SPOT_R * 0.6), off);
   g.check("every spot has a pose of its own, and no two poses are the same drawing", Object.keys(SPOTS).every((s) => D.poseIndex(s) >= 0) && new Set(POSES.map((q) => JSON.stringify([q.rot, q.arms]))).size === POSES.length, POSES.length);
-  // The cap: a song pays for eight spots and one bonus, however long he dances; a new song pays again.
+  // The cap (Brian 2026-11-25, one routine a visit, then "Dance again" faster; what each speed pays is a placeholder):
+  // in a song each speed pays for one routine (eight spots and its bonus), however often he dances it; a new song pays
+  // again. (Before 2026-11-25 a song paid one routine in all; the design changed with the speeds.)
   const pay = {};
   let got = 0;
-  for (let i = 0; i < 30; i++) got += D.dancePays(pay, 0, "hit");
-  for (let i = 0; i < 4; i++) got += D.dancePays(pay, 0, "perfect");
-  g.check("the cap: one song pays at most eight spots and one bonus", got === 8 * DANCE.spotStars + DANCE.perfectStars, got);
-  g.check("a new song pays again, and the whole party's dancing pays at most 195", D.dancePays(pay, 1, "hit") === DANCE.spotStars && 3 * (8 * DANCE.spotStars + DANCE.perfectStars) === 195);
+  for (let i = 0; i < 30; i++) got += D.dancePays(pay, 0, "hit", 0);
+  for (let i = 0; i < 4; i++) got += D.dancePays(pay, 0, "perfect", 0);
+  g.check("the cap: one song pays at most eight spots and one bonus at the first speed", got === 8 * DANCE.spotStars + DANCE.perfectStars, got);
+  let top = 0;
+  for (let i = 0; i < 30; i++) top += D.dancePays(pay, 0, "hit", 3);
+  for (let i = 0; i < 4; i++) top += D.dancePays(pay, 0, "perfect", 3);
+  g.check("the fastest speed pays its own routine once in a song (8 x 8 + 40), and dancing it again pays nothing", top === 8 * D.DANCE_SPEEDS[3].spot + D.DANCE_SPEEDS[3].bonus && D.dancePays(pay, 0, "hit", 3) === 0, top);
+  const most = D.DANCE_SPEEDS.reduce((n, q) => n + 8 * q.spot + q.bonus, 0);
+  g.check("a new song pays again, and one song's dancing pays at most 338 (the whole party 1014)", D.dancePays(pay, 1, "hit", 0) === DANCE.spotStars && most === 338, most);
+  g.check("the speeds are Brian's: 3, 2.4, 1.9 and 1.5 seconds a spot; faster pays more", D.DANCE_SPEEDS.map((q) => q.secs).join() === "3,2.4,1.9,1.5" && D.DANCE_SPEEDS.every((q, i) => !i || (q.spot > D.DANCE_SPEEDS[i - 1].spot && q.bonus > D.DANCE_SPEEDS[i - 1].bonus)));
+  // one routine: after its eighth spot and the cheer the dance is over (no spot glows again) until "Dance again"
+  const one = D.newDance(0);
+  for (let i = 0; i < 400 && !one.over; i++) D.tickDance(one, 0.1);
+  const after = JSON.stringify([one.i, one.live]);
+  for (let i = 0; i < 300; i++) D.tickDance(one, 0.1);
+  g.check("on its own, one routine runs out and then waits, over, with no spot glowing, however long", one.over && one.round === 1 && !one.live && JSON.stringify([one.i, one.live]) === after && one.marks.length === 8);
+  D.danceAgain(one);
+  g.check("\"Dance again\": the same routine from its start, one speed faster", !one.over && one.i === 0 && one.marks.length === 0 && one.level === 1 && one.secs === 2.4);
+  for (let i = 0; i < 5; i++) D.danceAgain(one);
+  g.check("the fastest speed stays the fastest", one.level === 3 && one.secs === 1.5);
   // (3 seconds a spot since 2026-11-25, a starting number for a 10-year-old on a phone; it was 2.5)
   // His top hat hid the band (Brian 2026-11-25, "make the fixes you think best"): he is framed below the band, hat to
   // boots on the screen, in every pose, with every piece he can wear on his head, popping and hopping in a cheer.
@@ -296,39 +314,59 @@ const still = (page, name) => page.screenshot({ path: join(OUT, name + ".png") }
   await run(page, 0.5);
   await still(page, "dance-10-smaller-cheer-after-a-miss");
 
-  // ---------- the cap in this song: two spots are still unpaid ----------
-  await live(page);
+  // ---------- one routine a visit: the two buttons (Brian 2026-11-25) ----------
+  // (before 2026-11-25 the next routine started by itself; now the routine is over and two buttons wait)
+  const overAt = await runUntil(page, "(d) => d.over", 4);
   s = await st(page);
-  g.check("then the next routine starts, with a clean row of marks", s.d.i === 0 && s.d.marks.length === 0 && D.spotNow(s.d) === routine[0]);
+  const endB = s.d.seen.end;
+  g.check("after the cheer the routine is over: no spot glows, and the two buttons show", overAt >= 0 && !s.d.live && !!endB && !!endB.again && !!endB.back, [overAt, s.d.live, endB]);
+  g.check("their words are drawn: \"Dance again\" and \"Back to the party\"", s.texts.some((t) => t.text === "Dance again") && s.texts.some((t) => t.text === "Back to the party"), s.texts.map((t) => t.text));
+  const sqTop = D.onScreen(D.danceSquatch(W, H, s.d), 0, -D.DANCE_TOP).y;
+  g.check("the buttons sit above him (clear of his tallest hat) and are 44 px tall or more", endB.back.y + 27 < sqTop && endB.again.y - 27 >= 70, [endB, Math.round(sqTop)]);
+  await still(page, "dance-14-one-routine-then-two-buttons");
+  await run(page, 8);
+  s = await st(page);
+  g.check("they wait: 8 seconds later still over, nothing lost, the dance still open", s.d.over && s.full && s.d.marks.length === 8 && s.stars === stars0 + 6 * DANCE.spotStars);
+
+  // ---------- "Dance again": faster, and a whole routine in time pays the faster bonus ----------
+  await page.touchscreen.tap(endB.again.x, endB.again.y);
+  await draw(page);
+  s = await st(page);
+  g.check("\"Dance again\": the same routine from its start at 2.4 seconds a spot", !s.d.over && s.d.level === 1 && s.d.secs === 2.4 && s.d.i === 0 && s.d.marks.length === 0, [s.d.level, s.d.secs]);
+  const starsB = s.stars;
   for (let i = 0; i < 8; i++) (await live(page), await tapGlow(page), await run(page, 0.05));
   s = await st(page);
-  g.check("every spot of a routine hit: the bonus, the big cheer", s.d.big && s.d.party > 0 && s.pay[s.song].bonus, s.d);
-  g.check("the cap: this song has now paid eight spots and one bonus, 65 stars in all", s.stars === stars0 + 8 * DANCE.spotStars + DANCE.perfectStars && s.pay[s.song].spots === 8, [s.stars - stars0, s.pay]);
+  g.check("every spot hit at the second speed: 6 a spot and the bonus of 30, the big cheer", s.d.big && s.stars === starsB + 8 * D.DANCE_SPEEDS[1].spot + D.DANCE_SPEEDS[1].bonus, s.stars - starsB);
   g.check("the big cheer is heard", s.played.includes("cheer") && s.played.includes("sparkle"));
   await run(page, 0.5);
   s = await st(page);
-  g.check("the bonus is shown over his head: \"+25\"", s.texts.some((t) => t.text === "+25"), s.texts);
-  await still(page, "dance-11-the-big-cheer");
-  // a third routine in the same song, every spot hit: nothing more
-  const starsC = s.stars;
-  let shown = 0;
-  for (let i = 0; i < 8; i++) {
-    await live(page);
-    await tapGlow(page);
-    await run(page, 0.15);
-    shown += (await st(page)).texts.filter((t) => /^\+/.test(t.text)).length;
-  }
+  g.check("the bonus is shown over his head: \"+30\"", s.texts.some((t) => t.text === "+30"), s.texts.map((t) => t.text));
+  await still(page, "dance-15-the-big-cheer-faster");
+  await runUntil(page, "(d) => d.over", 4);
   s = await st(page);
-  g.check("the cap holds: another whole routine in the same song pays nothing, and shows no \"+\"", s.stars === starsC && shown === 0 && s.d.big && s.d.round === 3, [s.stars - starsC, shown, s.d.round]);
+  await page.touchscreen.tap(s.d.seen.end.again.x, s.d.seen.end.again.y);
+  await live(page);
+  const took3 = await runUntil(page, "(d) => !d.live", 4);
+  s = await st(page);
+  g.check("the third speed: the ring closes after 1.9 seconds", s.d.level === 2 && Math.abs(took3 - 1.9) <= 2 / 60, [s.d.level, took3]);
   const words = new Set();
   for (let i = 0; i < 20; i++) (await run(page, 0.1), (await st(page)).texts.forEach((t) => words.add(t.text)));
-  g.check("the dance draws no words, only the numbers of stars", [...words].every((t) => /^\+\d+$/.test(t)), [...words]);
+  g.check("while he dances it draws no words, only the numbers of stars", [...words].every((t) => /^\+\d+$/.test(t)), [...words]);
 
-  // ---------- the close button, and "tried" ----------
-  await page.touchscreen.tap(W - 36, 36);
+  // ---------- "Back to the party", and the speed is kept ----------
+  await runUntil(page, "(d) => d.over", 40);
   s = await st(page);
-  g.check("the close button ends it; having hit three spots or more, the dance counts", !s.full && s.ctrl && s.done.dance === true && s.clap > 0, [s.full, s.done]);
+  await page.touchscreen.tap(s.d.seen.end.back.x, s.d.seen.end.back.y);
+  s = await st(page);
+  g.check("\"Back to the party\" closes it; having hit three spots or more, the dance counts", !s.full && s.ctrl && s.done.dance === true && s.clap > 0, [s.full, s.done]);
   g.check("no page errors in the dance", errors.length === 0, errors);
+  // he comes back: the dance opens at the speed he reached
+  // (the game's clock is still the test's: it ticks until the DANCE button is offered again, then presses it)
+  await runUntil(page, "(d, p, n) => n.act && n.act.verb === 'DANCE'", 6);
+  await page.evaluate(() => (window.__ss.actionDown(), window.__ss.actionUp()));
+  await runUntil(page, "(d) => !!d", 2);
+  s = await st(page);
+  g.check("coming back, the dance opens at the speed he reached (1.9 seconds a spot)", s.d.level === 2 && s.d.secs === 1.9, [s.d.level, s.d.secs]);
   await page.close();
 }
 {
@@ -339,7 +377,7 @@ const still = (page, name) => page.screenshot({ path: join(OUT, name + ".png") }
   const idle = Math.ceil(DANCE.first + D.ROUTINE_LENGTH * (DANCE.spotSeconds + DANCE.stumble) + 2);
   await run(page, idle);
   const s = await st(page);
-  g.check(`${idle} seconds of doing nothing (a routine's time): every spot lost, no stars, and he is still dancing`, s.full && !!s.d && s.stars === stars0 && s.d.round >= 1 && s.d.moves === 0 && s.d.marks.every((m) => m === -1), [s.full, s.stars - stars0, s.d && s.d.round, s.d && s.d.marks]);
+  g.check(`${idle} seconds of doing nothing (a routine's time): every spot lost, no stars, and the dance waits open with its two buttons`, s.full && !!s.d && s.d.over && s.stars === stars0 && s.d.round === 1 && s.d.moves === 0 && s.d.marks.length === 8 && s.d.marks.every((m) => m === -1), [s.full, s.stars - stars0, s.d && s.d.round, s.d && s.d.marks]);
   g.check("a routine with every spot lost still ends with the smaller cheer, never the bonus", s.d.round >= 1 && !s.d.big && Object.keys(s.pay).length === 0, s.pay);
   g.check("no page errors doing nothing", errors.length === 0, errors);
   await page.close();
