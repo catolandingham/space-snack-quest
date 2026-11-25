@@ -25,6 +25,9 @@
     }
     function O5(l, o, i) {
       if (p.state === "op" && ch1CalendarTap(l, o)) return;
+      // A morning close-up's own tap (Brian 31a: the beard squirts), src/modules/morning.js.
+      let mb = p.state === "op" && window.SSQ && window.SSQ.beat("ch1-morning");
+      if (mb && mb.pictureTap && mb.pictureTap(l, o)) return void VV();
       if ((VV(), i && !u && ((u = !0), t.onTouch()), p.state === "op" && N0() && l > c - 156 && l < c - 66 && o < 48)) {
         Cs();
         return;

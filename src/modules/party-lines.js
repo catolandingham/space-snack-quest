@@ -12,6 +12,7 @@
  *   status  "approved" (Brian's yes, `source` says where) or "needs-yes" (not final until he says yes). Brian said
  *           "Yes to all" to the 31 lines that needed it on 2026-11-24 (Snack Quest Chat).
  *   removed true for a line the game no longer shows (its row stays, so the sheet's numbers never shift)
+ *   quiet   true for a gentle line of Mops's that must not get his goat "meh" (the bubble's soft tick stays)
  *   source  where the words or the yes came from. "Waiting" = written before, never given his yes. "New" = written
  *           for the party plan.
  * The "That evening…" card is the morning's (morning-lines.js); Isfred's name over his bubble is the engine's.
@@ -66,10 +67,15 @@ export const PARTY_LINES = Object.freeze([
   // P8, the endings
   { id: "speaker-closing", half: 2, who: "speaker", text: "The party's over. Good night, Stormtop!", status: "approved", source: "Brian 2026-11-24: Yes to all" },
   { id: "sq-someone", half: 2, who: "sq", text: "Everyone out there has someone.", status: "approved", source: "Brian 2026-11-24: Yes to all" },
-  { id: "mops-have-me", half: 2, who: "mops", text: "You have me.", status: "approved", source: "R52, decided" },
+  { id: "mops-have-me", half: 2, who: "mops", text: "You have me.", status: "approved", source: "R52, decided", quiet: true },
   // Added after the first 42 (new lines go at the end, so no number ever shifts)
   { id: "sq-hallway", half: 2, who: "sq", text: "I can't go there. Mops will see me.", status: "approved", source: "Brian 2026-11-24, click in Snack Quest Chat" },
 ]);
+
+/** Whether this bubble is one of Mops's gentle lines, which never get his "meh" (morning-sound.js, through the bridge). */
+export function quietLine(b) {
+  return !!b && PARTY_LINES.some((l) => l.quiet && !l.removed && l.who === b.who && l.text === b.text);
+}
 
 /** The words of one line, by id. Throws on an unknown id, so a typo cannot show empty words. */
 export function partyLine(id) {

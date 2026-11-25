@@ -99,4 +99,33 @@ g.check("the recordings are credited to Kenney, CC0", /Kenney/.test(credits) && 
   await page.close();
 }
 
+// ---------- Mops's gentle lines never bleat (the bubble sound, #88; party-lines.js `quiet`) ----------
+{
+  const { page } = await open("party:P8b", true);
+  const lines = await import(join(root, "src", "modules", "party-lines.js"));
+  const quiet = lines.PARTY_LINES.filter((l) => l.quiet && !l.removed);
+  g.check('"You have me." is marked quiet', quiet.some((l) => l.text === "You have me."), quiet.map((l) => l.text));
+  // Each bubble opens in a scene of its own, where it is Mops's first line: the meh would play if it were allowed.
+  const heard = await page.evaluate(async (texts) => {
+    const snd = window.SSQ.morningSound,
+      out = {};
+    const one = async (text, scene) => {
+      const from = snd.debug().log.length;
+      window.SSQ.bubbleSound({ who: "mops", text, style: "say" }, scene);
+      await new Promise((r) => setTimeout(r, 150));
+      return snd.debug().log.slice(from).map((e) => e.name);
+    };
+    let k = 0;
+    for (const t of texts) out[t] = await one(t, "quiet-test-" + k++);
+    out.loud = await one("Morning, Squatch.", "quiet-test-loud");
+    // a quiet line does not use the scene's meh up
+    out.after = [await one(texts[0], "quiet-test-same"), await one("Morning, Squatch.", "quiet-test-same")];
+    return out;
+  }, quiet.map((l) => l.text));
+  for (const l of quiet) g.check(`"${l.text}" gets the bubble's soft tick and no meh`, heard[l.text].includes("tick") && !heard[l.text].includes("meh") && !heard[l.text].includes("grumpy"), heard[l.text]);
+  g.check("another first line of Mops's in a scene still gets the meh (the check can fail)", heard.loud.includes("tick") && heard.loud.includes("meh"), heard.loud);
+  g.check("a quiet line does not use the scene's meh up", !heard.after[0].includes("meh") && heard.after[1].includes("meh"), heard.after);
+  await page.close();
+}
+
 await g.finish("party-sound");

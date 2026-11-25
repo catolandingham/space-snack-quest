@@ -86,10 +86,13 @@
       for (let d of n.sparks) ((d.y -= (d.s === "!" ? 0 : 26) * l), (d.t -= l));
       if (((n.sparks = n.sparks.filter((d) => d.t > 0)), de())) {
         ((n.bt += l), n.cur && n.cur.k === "panel" && (n.panelT += l));
+        // A cutaway picture's own time (src/modules/cutaway.js). Brian 30a: one with no words and nothing to tap
+        // (`auto`) goes on by itself once its seconds are up; the others wait for NEXT.
+        n.cur && n.cur.k === "cutaway" && ((n.cur.el = (n.cur.el || 0) + l), n.cur.auto && n.cur.el >= n.cur.auto && (n.cur = null));
         // A tap kept from the first 0.3 s of this bubble is applied now (task T22).
         n.tapLate && (n.tapLate !== n.cur ? (n.tapLate = null) : n.bt >= 0.3 && ((n.tapLate = null), nf()));
         {
-          let A = n.cur && n.cur.k === "panel" && n.cur.id === "terminal" && !x.typed ? "!SIGN" : n.bt > 3 ? "!NEXT" : "NEXT";
+          let A = !n.cur || n.cur.auto ? "~" : n.cur.k === "panel" && n.cur.id === "terminal" && !x.typed ? "!SIGN" : n.bt > 3 ? "!NEXT" : "NEXT";
           p.verb !== A && ((p.verb = A), t.onVerb(A));
         }
         // S10: a normal spoken line does not freeze walking. Cards, panels, and cutscenes still do.
@@ -1139,6 +1142,9 @@
       return n.room === "hall" && l !== "pa" && !n.fbPic ? { x: o.x - B.camX, y: o.y } : o;
     }
     function T5(l) {
+      // Over a morning close-up (Brian 31a) the speaker is where the close-up draws him.
+      let close = n.cur && n.cur.over && window.SSQ && window.SSQ.beat("ch1-morning");
+      if (close && close.closeUpSpeaker(l)) return close.closeUpSpeaker(l);
       // The party night places its own speakers (Isfred beside him, the band, Squatch's eyes in the plant).
       let at = partyBeat() && partyBeat().speakerAt(l);
       if (at) return at;
@@ -1206,6 +1212,8 @@
     }
     // The speaker's head, in picture pixels. A bubble must sit outside this box.
     function speakerHead(l) {
+      // Over a close-up the room's people are not drawn (the bubble sits beside the close-up's speaker).
+      if (n.cur && n.cur.over) return null;
       if (l === "sq" && n.sq.x > -100) {
         if (n.sqPose === "sit" || n.sqPose === "sleep") {
           let q = wl;
@@ -1276,7 +1284,8 @@
       let spk = l.who === "speaker" && window.SSQ && window.SSQ.speakerBox ? window.SSQ.speakerBox() : null;
       spk && ((_ = w(spk.x0 - 26 - T, 10, c - T - 10)), ($ = w(spk.y0 - 6, 24, b - R - 12)));
       // At the party, Isfred's and the band's bubbles sit beside them, never over the banner.
-      let side = partyBeat() && partyBeat().bubbleBeside(l.who);
+      let close = n.cur && n.cur.over && window.SSQ && window.SSQ.beat("ch1-morning"),
+        side = (partyBeat() && partyBeat().bubbleBeside(l.who)) || (close && close.closeUpBeside(l.who));
       side && ((_ = w(side.side === "left" ? side.x0 - 26 - T : side.x1 + 26, 10, c - T - 10)), ($ = w(side.y0 - 6, 24, b - R - 12)));
       // Never cover the speaker's face. Sit above the head, or beside it if the top of the picture is full.
       let head = ear ? null : speakerHead(l.who);
@@ -2027,7 +2036,11 @@
           d: () => {
             let s = n.moPose,
               q = s === "sway" ? Math.sin(n.T * 2.4) * 0.07 : 0,
-              d = s === "pant" ? Math.abs(Math.sin(n.T * 9)) * 4 : 0;
+              d = s === "pant" ? Math.abs(Math.sin(n.T * 9)) * 4 : 0,
+              // The morning's mopping (src/modules/mop-loop.js) says how far his beard sweeps and how low his
+              // head is; "wring": it draws the beard itself, out over the bucket.
+              mb = window.SSQ && window.SSQ.beat && window.SSQ.beat("ch1-morning"),
+              look = (mb && mb.mopsLook && mb.mopsLook()) || null;
             if (
               (Fe(n.mo.x, n.mo.y - d, wl, {
                 f: n.mo.f,
@@ -2040,6 +2053,7 @@
                 // "mop": head down, only the beard sweeps the floor; "shake": the beard shaken fluffy.
                 headDown: s === "pant" || s === "mop",
                 sweep: s === "mop" ? Math.sin(n.T * 3.4) * 1.6 : s === "shake" ? Math.sin(n.T * 34) * 1.4 : 0,
+                ...look,
               }),
               s === "polish")
             ) {
@@ -2267,6 +2281,12 @@
       }
       if (l && l.k === "cutaway") {
         beat && beat.drawCutaway(e, l);
+        return;
+      }
+      // A line said over a close-up (Brian 31a, "Hey, stop that!"), and the moment before it: the picture stays
+      // behind (and the bubble over it).
+      if (l && l.over) {
+        (beat && beat.drawCutaway(e, l.over), l.k === "bub" && bq(l.b, !1));
         return;
       }
       if (n.egg) {

@@ -20,8 +20,8 @@
 | 156–159 | ### Words and rules |
 | 160–172 | ### How the bots work |
 | 173–180 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
-| 181–195 | ## 5. Merged, in a pull request, and being built |
-| 196–206 | ## 6. Corrections to the checkers |
+| 181–196 | ## 5. Merged, in a pull request, and being built |
+| 197–207 | ## 6. Corrections to the checkers |
 <!-- /section-index -->
 # Brian's asks that are not in the game yet
 
@@ -148,7 +148,7 @@ Brian watched the party video and answered every question the same evening (his 
 ### Sound
 - Snoring in the crate flashback. "By the Way We Should Have Snoring Noises Here" (P L119).
 - Music during the dance. "it's not making any noise music when it's happening" (K 341).
-- More music and laughing. "We need way more music And sounds throughout" (P L24).
+- More music and laughing. "We need way more music And sounds throughout" (P L24). The morning and home alone have their sounds (branch feat/morning-sound, Brian 34A); the party, Day 2 and the night do not yet, and there is no laughing.
 - Robot janitor always bleeping. "the robot janitor should always be making cool robot noises I think." (S 195).
 - Short stings on heart moments (the warm theme, sneak and travel tunes already play). "the music I uploaded is really the, the warm theme for the heart moments." (S 359).
 - Hendersons theme or podcast clips. "there was a Sasquatch theme from Harry and the Henderson." (S 347).
@@ -186,7 +186,8 @@ Merged 2026-11-23: cones on everyone and the six approved guests (#75), controls
 Merged 2026-11-23: home alone after Mops leaves (#84, morning plan PR 3): the homework goal and cutaway, OPEN · closet with the G box, FLOP · bed, the calendar already bitten (13A to 16A).
 
 Not merged yet:
-- Morning fixes (branch feat/morning-fixes, draft), Brian's answers of 2026-11-23 and his iPhone playthrough: 18a (no "tap ▸" note and no yellow bobbing arrow on story waits, NEXT only; the big button dims while the story plays on its own), the title's Sir Mops-a-Lot drawn as the approved Mops, 19a (the faces show only where a switch is possible), 20a (with sound on: Joe's theme on the title and first card, snoring while Squatch sleeps, a ding-dong before "Good morning, Stormtop!"), 21a (Mops mops along the floor to his bucket, leaving a wet streak, before the beard close-up), the song audible before Mops's "Floating in space!" line (it starts past the recording's quiet first 3 seconds), and no paw on the calendar close-up ("It's the calendar paw that doesn't make sense").
+- The quiet room's mopping (the same branch, draft PR #88), Brian after its video, 2026-11-24: "It's hard to tell the difference between the whistle and the squeaking. Can we make the snore and whistle a bit more prominent? ... see the janitor walking around, mopping the floor with his beard ... the water on the floor kind of following ... And then walking back to the bucket to squeeze it out." Built: Mops's loop before the first tap, a louder snore, swish-only strokes while Squatch sleeps (`src/modules/mop-loop.js`). Waiting for his ears and eyes.
+- The morning's sound (branch feat/morning-sound, draft), Brian's answers of 2026-11-24: 34A (every MY PICK on the sound board, in the morning and home alone), 31a (the beard squirts when tapped; "Hey, stop that!"), 30a (a cutaway with no words and nothing to tap plays by itself), the music and effects levels and Brian's recording turned up 10 dB. The morning fixes (18a to 21a) merged on 2026-11-24 as PR #86.
 - The tap-path change.
 - Mops's heart cone in Chapter 1 (PR #35, open since Nov 13) and the rules check on pull requests (PR #34).
 

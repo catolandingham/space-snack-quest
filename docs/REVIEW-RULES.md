@@ -3,22 +3,24 @@
 
 | Lines | Heading |
 | --- | --- |
-| 23–26 | # Review rules |
-| 27–79 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
-| 80–82 | ## Techniques |
-| 83–85 | ## Mistake: locked art was redrawn |
-| 86–90 | ## Mistake: optional inspection interrupted getting out of bed |
-| 91–93 | ## Mistake: a big doc's section index went stale |
-| 94–96 | ## Mistake: a rebuilt beat forgot the step restart |
-| 97–99 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
-| 100–102 | ## Mistake: a killed run was read as a failing test |
-| 103–105 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
-| 106–108 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
-| 109–115 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
-| 116–123 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
-| 124–140 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
-| 141–153 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
-| 154–156 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
+| 25–28 | # Review rules |
+| 29–80 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
+| 81–83 | ## Techniques |
+| 84–86 | ## Mistake: locked art was redrawn |
+| 87–91 | ## Mistake: optional inspection interrupted getting out of bed |
+| 92–94 | ## Mistake: a big doc's section index went stale |
+| 95–97 | ## Mistake: a rebuilt beat forgot the step restart |
+| 98–100 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
+| 101–103 | ## Mistake: a killed run was read as a failing test |
+| 104–106 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
+| 107–109 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
+| 110–116 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
+| 117–124 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
+| 125–141 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
+| 142–154 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
+| 155–157 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
+| 158–166 | ## Mistakes caught building the morning sound (2026-11-24) |
+| 167–178 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
 <!-- /section-index -->
 # Review rules
 
@@ -49,8 +51,7 @@ Run EVERY scene through ALL of these, both at script time and on screenshots aft
     - Ambient chatter is small auto-fading bubbles over the speaker.
     - Overheard lines get an ear icon.
     - No bottom-left dialogue box. The objective chip is hidden while a bubble is up.
-14. **Nothing auto-advances.** Every cutscene card, panel, frame and line waits for a tap/click (the NEXT button shows it; no "tap ▸" note, Brian 18a), including the "Years ago" and "Now" cards.
-    - **Exception, Brian 30a (2026-11-24):** "a cutaway or close-up with no words and nothing to tap plays itself (about 2 to 4 seconds, ending on a clear last frame), then the game goes on. One with a line, or something to tap, still waits for NEXT." This narrows rule 14 for wordless cutaways only (the party's hand pulling the alarm plays 2.4 seconds).
+14. **Nothing auto-advances.** Every cutscene card, panel, frame and line waits for a tap/click (the NEXT button shows it; no "tap ▸" note, Brian 18a), including the "Years ago" and "Now" cards. One exception, Brian 2026-11-24, "30a": "a cutaway with no words and nothing to tap plays by itself (about 2 to 4 seconds, ending on a clear last frame), then the game goes on; one with a line, or something to tap, still waits for NEXT." A tap does not skip it, and the big button is dimmed (no NEXT) while it plays (`src/modules/cutaway.js`, `AUTO`; `tests/morning-order.mjs`, `tests/home-alone.mjs`).
 15. **Simple visual style.** Gameplay looks like the cutscenes: bold flat shapes, a limited palette, no clutter, only what matters, and interactive objects clearly highlighted (pulse/glow).
 16. **Drawn, not described.** Never put a visual in caption text when it can be drawn (crayon drawings, hair on a note, coffee stains, torn edges, paw prints). No "(narration in parentheses)" lines.
 17. **Exact-text rule for briefs:** report scripts to Brian verbatim (speaker + exact text, every card), as clear and warm as the chat version.
@@ -153,3 +154,24 @@ The later full touch run exposed a test-driver gap: it waited whenever walking w
 
 ## Standing rule: painstakingly obvious (Brian, 2026-11-24)
 His words, on the snack close-up, for every piece of the game: "It just needs to be more painstakingly obvious, and we need to kind of build this as a core thing we're looking at all times." Before a picture or a beat goes to Brian, ask of each thing on screen: would a 10-year-old know what it is, what it is doing and what he can do about it, without being told? If the answer needs a sentence of explaining, the drawing is not done.
+
+## Mistakes caught building the morning sound (2026-11-24)
+- A sound timed to a picture was checked against the time read after the frame that played it, so it looked a frame late. A sound check reads the picture's time at the moment the sound played (the step's `el` less that frame), and allows one frame.
+- A wait on a real clock (the snoring's audio clock) met a test that only ticks the game: the room's snores did not come. A test that counts sounds booked on the audio clock lets real time pass there.
+- The first glow (a yellow halo round the beard) vanished against the yellow bucket and under Mops's shirt; the test counted the halo and found none. A glow that says "tap this" must show against everything behind it: the beard itself is lit pale yellow, with outlined stars, and the test measures the drawn colour.
+- An auto-advancing picture clears the step, and the next one comes up on the following frame; a test that reads the button in between reads the dimmed "~". Read what is up a frame after the change.
+- The reviewer found "Hey, stop that!" was queued by a later frame, 0.68 s after the squirt, so a tap or NEXT in between ended the picture and lost the line. A line that follows an animation is queued at once, behind a wait step that plays the animation (taps do nothing during it), and a test taps impatiently in between.
+- The reviewer found Mops's meh was used up by a line said while sound was off. A once-only sound is marked heard only when it really played.
+- The second review found the wringing sounds due while the squirt flew were saved up and all played at once when the picture came back. When a picture's clock runs while something else is up, its sound cue moves on with it; `tests/sound-cues.mjs` checks every wringing sound lands on its beat, and failed on the old code.
+
+## Mistakes caught building the quiet room's mopping loop (2026-11-24)
+- When Mops could start his mop-along from anywhere, a tap beside the bucket left him no floor to mop, so 21a's promise (he mops just before the close-up) was gone. When a fixed start becomes "wherever he stands", re-read the ask the fixed start served and keep it from every start (he now mops two strokes at least).
+- From the wring spot he mopped away from the bucket with his back to it; no test saw it, a still did. When a walk can start from several places, look at a still of each start, not only the one the old code had.
+- The falling drops were drawn blue over the bucket's blue water and could not be seen. Check a new drawing against what is behind it at that exact spot (the drops now fall through the air above the rim).
+- The beard's forward sweep touched the painted bucket at the end of his stretch. A part that moves is checked at both ends of its travel against the things in the locked picture.
+- A "dry again" check sampled a spot the shine never reached, so it passed for nothing. A check that something has gone samples a spot where the same run saw it first.
+- A check read Mops's pose in the same frame as the tap; the tap's step runs on the next frame. Read what a tap did a frame later (the same rule as for a picture that moves on).
+- Loudness checks compared the peaks of noise sounds and sat within 1 dB of their limit, so they flipped between runs. Compare noise sounds by loudness (rms), leave 2 dB or more, and run a sound-level test several times before trusting it.
+- The reviewer found the bucket's drips rose through the whistle's own pitches (1.1 to 1.7 kHz), the very mix-up Brian asked to end, and the check compared peaks that were mostly noise. A new sound that plays near another is measured in that sound's band (the drip now falls in pitch, under 700 Hz, and the test measures above 1 kHz).
+- The reviewer found a branch for Mops standing far to the left of his bucket that nothing in the loop can reach, and no test ran it. Code for a case that cannot happen is deleted, not kept.
+- The reviewer found the beard was never measured against the painted bucket (only the shine was), and a level check read the number in the source. Measure the drawn beard and the rendered sound.

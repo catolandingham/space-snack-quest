@@ -16,10 +16,12 @@ import { createGuestArt } from "./guests.js";
 import { findPath } from "./tap-path.js";
 import { createHomeMusic } from "./home-music.js";
 import { createMorningSound } from "./morning-sound.js";
+import { MIX } from "./sound-mix.js";
 import { lastCutaway } from "./cutaway.js";
 import { SPEAKER } from "./morning.js";
 import { placeLabel } from "./cap-place.js";
 import { walkRingShows } from "./walk-ring.js";
+import { quietLine } from "./party-lines.js";
 
 /**
  * The game-state fields a rebuilt beat may write, through engine().set(field, value). Anything else it
@@ -44,7 +46,9 @@ export function createBridge() {
      * The older program hands over, once at start, the small engine functions rebuilt beats use: the story
      * queue (queue, say, card, run, until, tapWait, current), people (pos, place, face, step, still,
      * moWalking), state (get, and set for the BEAT_WRITES fields only), the chip, the chapter reset, the
-     * evening start, forgetting the step restart's saved start, sound (soundState, audioCtx, masterGain), drawing (drawMops, squatchScale, text) and the clock.
+     * evening start, forgetting the step restart's saved start, sound (soundState, audioCtx, masterGain, and the
+     * music and effects levels under it: musicGain, fxGain), drawing (drawMops, squatchScale, text) and the clock.
+     * cutIn(items) puts story steps in front of the one up now, which comes back after them (Brian 31a).
      * A later hand-over replaces an earlier one (the page made a new game).
      */
     handOver(e) {
@@ -68,8 +72,17 @@ export function createBridge() {
     },
     /** Brian's Floating in Space recording in the morning. See home-music.js. */
     homeMusic,
-    /** The morning's snoring and the speaker's ding-dong, synthesized. See morning-sound.js. */
+    /** The morning's and home alone's made-up sounds (snoring, the ding-dong, mopping...). See morning-sound.js. */
     morningSound,
+    /** How loud music and sound effects are under the master volume; the engine reads it. See sound-mix.js. */
+    mix: MIX,
+    /**
+     * A speech bubble opens: its tick, and Mops's meh on his first line in a scene. His gentle lines
+     * ("You have me.", party-lines.js `quiet`) never get the meh. See morning-sound.js.
+     */
+    bubbleSound(b, scene) {
+      morningSound.bubble(b, scene, homeMusic.debug().playing, quietLine(b));
+    },
     /** The wall speaker in the home room, for placing its bubble. See morning.js. */
     speakerBox() {
       return SPEAKER;

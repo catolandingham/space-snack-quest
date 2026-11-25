@@ -13,6 +13,8 @@
  *   - FLOP · bed (optional): he flops onto the crate bed and lies down on it (14A), hops back off, and says his
  *     line. While he flops, this file draws him (lying turned on his side); the room does not (pose "lie").
  *   - LOOK · calendar stays the older program's close-up (src/game/15-ch1-scene1.js), offered here too.
+ *   - Sounds (Brian 34A, the sound board): the closet door's squeaky hinge and bump, the bump as it shuts, the
+ *     fwump-boing as he lands on the bed (the homework's are the cutaway's, cutaway.js).
  * Its progress lives inside the morning's game-state field (ch1Morning: step "home", `look` for the optional
  * thing being looked at), so the step restart (↺) keeps it. Words come only from home-alone-lines.js.
  */
@@ -60,10 +62,10 @@ export const GUARDIAN_BOX = Object.freeze({ x0: 153, y0: 402, x1: 205, y1: 438, 
 const PICTURE = Object.freeze({ w: 1280, h: 830 });
 
 /**
- * `E()` is the bridge's engine, `M()` the morning's progress, `step(name, extra)` sets it, and `done()` runs
- * after the homework (the morning's "That evening…").
+ * `E()` is the bridge's engine, `M()` the morning's progress, `step(name, extra)` sets it, `done()` runs
+ * after the homework (the morning's "That evening…"), and `sound` plays a sound by name (morning-sound.js).
  */
-export function createHomeAlone({ E, M, step, done }) {
+export function createHomeAlone({ E, M, step, done, sound }) {
   const m = () => {
     const x = M();
     return x && x.step === "home" ? x : null;
@@ -80,6 +82,7 @@ export function createHomeAlone({ E, M, step, done }) {
   const back = () => {
     const e = E(),
       h = m();
+    h && h.look === "closet" && sound.play("closetShut");
     h && ((h.look = ""), (h.phase = ""));
     e.set("ctrl", true);
     e.chipNow();
@@ -164,6 +167,7 @@ export function createHomeAlone({ E, M, step, done }) {
         e.face("sq", -1);
         h.phase = "open";
         e.set("wardrobe", "open");
+        sound.play("closetOpen");
         e.queue([e.say("sq", homeLine("sq-closet")), e.run(back)]);
       }
       if (h.look !== "bed") return;
@@ -176,6 +180,7 @@ export function createHomeAlone({ E, M, step, done }) {
         h.phase = "jump";
         h.pt = 0;
       } else if (h.phase === "jump" && k >= 1) {
+        sound.play("flop");
         h.phase = "rest";
         h.pt = 0;
       } else if (h.phase === "rest" && k >= 1) {

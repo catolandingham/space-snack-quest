@@ -3,7 +3,7 @@
 
 | Lines | Heading |
 | --- | --- |
-| 8–42 | # The morning: every line, for Brian's yes |
+| 8–43 | # The morning: every line, for Brian's yes |
 <!-- /section-index -->
 # The morning: every line, for Brian's yes
 
@@ -35,7 +35,8 @@ Every line is approved. If you want a word changed later, answer by number, for 
 | 16 | Card after Mops is gone (the song fades on it) | That evening… | card | approved | walkthrough beat 3, Nov 14 |
 | 17 | Name over the speaker's bubbles (lines 3, 4 and 7) | Speaker | tag | approved | Brian 2026-11-23: 1A / 2B |
 | 18 | Nowhere now: the small pulsing note at the bottom right of every morning card, bubble and cutaway picture is gone; the NEXT button is the only cue | tap ▸ | cue | removed | Brian 18a, 2026-11-23: just the NEXT button |
+| 19 | Mops, over the beard-wringing close-up, once the kid has tapped his glowing beard and it squirted (said once; a grumpy "meh-EH!" plays under it with sound on) | Hey, stop that! | mops | approved | Brian 2026-11-24: 31a |
 
 Lines that need your yes: none left (you said yes to 3, 4, 7, 11, 17 and 18 on 2026-11-23: "1A", and "2B" for line 17, which is "Speaker"). Line 18 is removed, Brian 18a (2026-11-23): "I don't think I want next and tap here, just next."
 
-The beard-wringing cutaway (two full-screen pictures between lines 6 and 7) has no words.
+The beard-wringing cutaway is two full-screen pictures between lines 6 and 7. The first (the dunk) has no words and plays by itself, then the game goes on (Brian 30a, 2026-11-24). The second (the wring) waits for NEXT: its beard glows, and a tap on it makes it squirt; the first squirt brings line 19 (Brian 31a, 2026-11-24). Line 19 is listed last so the other numbers do not shift.

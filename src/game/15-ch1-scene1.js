@@ -88,7 +88,17 @@
         until: (f) => cV(f),
         // A tap wait with no words (NEXT is the only cue, Brian 18a).
         tapWait: () => ({ k: "wait", t: 0 }),
-        current: () => (n.cur ? { k: n.cur.k, who: n.cur.b ? n.cur.b.who : "", style: n.cur.b ? n.cur.b.style : "", id: n.cur.id || "" } : null),
+        current: () =>
+          n.cur
+            ? { k: n.cur.k, who: n.cur.b ? n.cur.b.who : "", style: n.cur.b ? n.cur.b.style : "", id: n.cur.id || "", panel: n.cur.panel, el: n.cur.el || 0, over: !!n.cur.over }
+            : null,
+        // Steps that come in front of the one up now, which comes back after them (Brian 31a: Mops's line over
+        // the close-up). An item with over: true is drawn over the picture up now.
+        cutIn: (items) => {
+          let c = n.cur;
+          for (let it of items) it.over === !0 && (it.over = c);
+          (c && n.q.unshift(c), n.q.unshift(...items), (n.cur = null));
+        },
         get: (k) => n[k],
         set: (k, val) => {
           n[k] = val;
@@ -124,6 +134,8 @@
         soundState: () => soundState(),
         audioCtx: () => S,
         masterGain: () => M,
+        musicGain: () => MU,
+        fxGain: () => FX,
         drawMops: (x, y, scale, opts) => Fe(x, y, scale, opts || {}),
         // The party night (src/modules/party.js): Squatch and Isfred as the room draws them, the eyes in a plant,
         // and the hall's sizes (a grown-up's height, Squatch's scale).
@@ -189,6 +201,8 @@
     }
     function ch1OpenCalendar(next) {
       n.ch1Calendar = { ctrl: n.ctrl, next, age: 0 };
+      // A paper rustle as the calendar comes up close (Brian 34A, the sound board).
+      window.SSQ && window.SSQ.morningSound && window.SSQ.morningSound.play("rustle");
       n.ctrl = !1;
       n.act = null;
       n.walkTo = null;

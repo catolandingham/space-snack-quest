@@ -52,8 +52,9 @@ g.check("the older program handed the engine over to the bridge", await page.eva
 // (c) The morning (the first rebuilt beat) writes only the game-state fields bridge.js names, and its old
 // code is gone from src/game/ while the calendar it shares with Day 2 stays.
 const { BEAT_WRITES } = await import(new URL("../src/modules/bridge.js", import.meta.url).href).catch(() => ({}));
-// The morning and its home-alone part (home-alone.js), which writes through the same engine.
-const morningSrc = ["morning.js", "home-alone.js"].map((f) => readFileSync(join(root, "src", "modules", f), "utf8")).join("\n");
+// The morning, its home-alone part (home-alone.js) and its mopping loop (mop-loop.js), which write through the
+// same engine.
+const morningSrc = ["morning.js", "home-alone.js", "mop-loop.js"].map((f) => readFileSync(join(root, "src", "modules", f), "utf8")).join("\n");
 const sets = [...morningSrc.matchAll(/\.set\("([A-Za-z0-9]+)"/g)].map((m) => m[1]);
 g.check("bridge.js names the fields a beat may write", Array.isArray(BEAT_WRITES) && BEAT_WRITES.length > 0, BEAT_WRITES);
 g.check("the morning writes only named fields", Array.isArray(BEAT_WRITES) && sets.length > 0 && sets.every((k) => BEAT_WRITES.includes(k)), sets.filter((k) => !(BEAT_WRITES || []).includes(k)));

@@ -16,8 +16,9 @@
  * - FLOP · bed: Squatch flops onto the bed, lies down on it, and hops back off without jumping between frames, then says
  *   "Not sleepy anymore." (waits for a tap), then control is back.
  * - DO · homework: straight into the homework cutaway (no pop-up first): picture 1 Squatch at the desk, picture
- *   2 the sheet with its words from the lines file; each waits for a tap with NEXT and no "tap ▸" cue (Brian 18a); then
- *   "That evening…" and the peek goal.
+ *   2 the sheet with its words from the lines file; no "tap ▸" cue (Brian 18a). Picture 1 has no words and nothing
+ *   to tap, so it plays by itself and moves on within 4 seconds (Brian 30a, 2026-11-24); the sheet has words, so
+ *   it waits for a tap with NEXT; then "That evening…" and the peek goal.
  * - Every action reads "VERB · thing" from the lines file. Hold ↺ at home: still home alone, door shut.
  *   node tests/home-alone.mjs
  */
@@ -406,12 +407,37 @@ for (let i = 0; i < 2; i++) {
     const printed = [...window.__printed];
     return { last: window.SSQ.cutaway.last(), cue: printed.some((t) => /^tap\b/i.test(t)), printed };
   });
+  if (s.panel === 0) {
+    // Brian 30a: no words, nothing to tap: it plays by itself (a tap does not skip it).
+    const alone = await page.evaluate(() => {
+      const ss = window.__ss,
+        n = ss.op,
+        c = n.cur,
+        el0 = c.el || 0;
+      ss.opTap();
+      const skipped = n.cur !== c;
+      let t = 0;
+      for (; t < 8 && n.cur === c; t += 0.05) ss.tick(0.05);
+      ss.tick(0.05);
+      return { skipped, t: el0 + t, next: n.cur ? n.cur.k + ":" + n.cur.panel : "" };
+    });
+    cut.push({ panel: s.panel, btn: s.btn, alone, ...info });
+    // Let a frame or two draw the sheet (the button's word changes on the next frame).
+    await sleep(250);
+    continue;
+  }
   cut.push({ panel: s.panel, btn: s.btn, still: await stillAfter6s(), ...info });
   await tapAt(480, 330);
   await sleep(400);
 }
 g.check("the homework cutaway has two full-screen pictures, in order", cut.length === 2 && cut.every((c, i) => c.panel === i && c.last && c.last.id === "homework" && c.last.full === true), cut.map((c) => c.last));
-g.check('each picture waits for a tap with NEXT on the button, and no "tap ▸" cue (Brian 18a)', cut.every((c) => c.still && /NEXT$/.test(c.btn) && !c.cue), cut.map((c) => [c.still, c.btn, c.cue]));
+g.check('no "tap ▸" cue on either picture (Brian 18a)', cut.length === 2 && cut.every((c) => !c.cue), cut.map((c) => c.cue));
+g.check(
+  "Brian 30a: picture 1 (no words, nothing to tap) plays by itself, moves on to the sheet after 2 to 4 seconds, a tap does not skip it, and the button does not say NEXT",
+  !!cut[0] && !!cut[0].alone && cut[0].alone.t >= 2 && cut[0].alone.t <= 4 && cut[0].alone.next === "cutaway:1" && !cut[0].alone.skipped && !/NEXT/.test(cut[0].btn),
+  cut[0] && [cut[0].alone, cut[0].btn],
+);
+g.check("picture 2 (the sheet, words to read) waits for a tap with NEXT on the button", !!cut[1] && cut[1].still && /NEXT$/.test(cut[1].btn), cut[1] && [cut[1].still, cut[1].btn]);
 g.check("picture 1 shows Squatch at the desk with his pencil", !!cut[0] && !!cut[0].last.squatch && cut[0].last.pencil === true, cut[0] && cut[0].last);
 // 14A: thin outlines like the room's Squatch at his size (the beard close-up's rule: 5 px or less).
 g.check("picture 1: Squatch's outlines are thin (5 px or less), not scaled up", !!cut[0] && cut[0].last.squatch.outline > 0 && cut[0].last.squatch.outline <= 5, cut[0] && cut[0].last.squatch);
