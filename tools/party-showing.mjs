@@ -166,8 +166,11 @@ async function goTo(x, y, ok, ms = 9000) {
     await sleep(120);
   }
 }
-const fail = (m) => {
-  log("STOPPED: " + m);
+const fail = async (m) => {
+  const q = await st();
+  log("STOPPED: " + m + " " + JSON.stringify({ act: q.act, scene: q.now && q.now.scene, ctrl: q.ctrl, cur: q.cur, text: q.text, x: Math.round(q.x), y: Math.round(q.y), oct: q.now && q.now.oct, gone: q.now && q.now.gone, alarm: q.now && q.now.alarm, pose: q.now && q.now.pose, full: q.full }));
+  // (what was recorded so far is still written, so the frames can be looked at)
+  await finishRecording().catch(() => {});
   throw new Error(m);
 };
 
@@ -252,7 +255,7 @@ async function snacks(safe, crash) {
   log(`${safe} snacks in the bag`);
   if (crash) {
     await sleep(600);
-    (await take(7)) || fail("the close-up closed before the pull");
+    (await take(7)) || (await fail("the close-up closed before the pull"));
     await until((q) => !q.snack, 5000);
     log("the pyramid falls");
   } else {
@@ -270,9 +273,10 @@ async function runHomeToCard() {
     if (["bub", "card", "panel"].includes(q.cur)) return read(q);
     q.ctrl && q.room === "hall" && (await floor(hall.HALL_DOOR.x, hall.HALL_DOOR.y + 12), await sleep(500));
   });
-  s = await until((q) => q.act === "HIDE · bed" || q.now.card, 15000);
-  await sleep(400);
-  s && !s.now.card && (await press());
+  // HIDE · bed, pressed as soon as it is offered (and again if the alarm's own close-up was in the way)
+  s = await until((q) => q.full === "party card" || (q.now && q.now.pose === "bed"), 20000, async (q) => {
+    q.act === "HIDE · bed" && q.ctrl && !q.full && (await sleep(250), await press(), await sleep(500));
+  });
   s = await until((q) => q.full === "party card", 30000);
   if (!s) return fail("no card");
   log("the card");
@@ -287,7 +291,7 @@ const chooseOnCard = async (id) => {
 // Beat 20's first panel: the party night is over.
 const toTv = async (ms) => {
   const s = await until((q) => !q.now || q.now.scene === "done" || (q.cur === "panel" && q.id === "ch1tv1"), ms, async (q) => (q.cur === "bub" || q.cur === "card") && (await read(q)));
-  s || fail("beat 20 did not start");
+  s || (await fail("beat 20 did not start"));
   await sleep(2500);
 };
 
@@ -295,34 +299,29 @@ const toTv = async (ms) => {
 await startRecording();
 await sleep(1800);
 if (which === "keep") {
-  await dance(6, 4);
+  // In his first minute (the octopus leaves him alone until it is over): three snacks from the top, and away.
+  await snacks(3, false);
+  await dance(11, 4);
   // toward the wall by the alarm box, where the row will stand; the first song ends and the photo moment begins
   await goTo(300, 545);
   await photo(70000);
-  // the octopus (after the first minute): near his end of the bar he notices; one hug, then keep away until he is bored
+  // The octopus (after the first minute): near his end of the bar he notices. One hug is just a hug; Squatch runs
+  // for the far wall; the octopus comes after him, arms out, and his second hug knocks the hat off. Fur shows,
+  // someone sees it, and the alarm starts. (If the octopus gets bored first, the snack pyramid does it instead.)
   await goTo(640, 560, (q) => q.now.oct && q.now.oct.mode === "chase");
   let s = await until((q) => q.now.oct && q.now.oct.mode === "chase", 15000, read);
-  s || fail("the octopus did not notice");
+  s || (await fail("the octopus did not notice"));
   log("the octopus");
   await until((q) => q.cur !== "bub" && q.ctrl, 20000, read);
   await until((q) => q.now.oct.hugs >= 1 || q.now.oct.mode !== "chase", 12000, read);
   await until((q) => q.ctrl && q.now.oct.mode === "chase", 6000, read);
-  const lap = [
-    [230, 575],
-    [200, 400],
-    [560, 420],
-    [300, 560],
-    [650, 430],
-    [220, 480],
-  ];
-  for (let i = 0; i < 12; i++) {
-    s = await st();
-    if (!s.now.oct || !["chase", "hug"].includes(s.now.oct.mode)) break;
-    await goTo(lap[i % lap.length][0], lap[i % lap.length][1], (q) => !q.now.oct || !["chase", "hug"].includes(q.now.oct.mode), 4500);
-  }
-  await until((q) => q.now.oct && !["chase", "hug"].includes(q.now.oct.mode), 25000, read);
-  log("the octopus is bored");
-  await snacks(3, true);
+  await goTo(190, 588, (q) => !q.now.oct || q.now.oct.mode !== "chase" || q.now.scene !== "P6");
+  s = await until((q) => q.now.scene !== "P6" || !q.now.oct || !["chase", "hug"].includes(q.now.oct.mode), 30000, read);
+  log("after the chase: " + JSON.stringify({ scene: s && s.now.scene, oct: s && s.now.oct && s.now.oct.mode, hugs: s && s.now.oct && s.now.oct.hugs, gone: s && s.now.gone }));
+  // (with his hat gone he walks back among the guests: the first one to look at him sees fur)
+  s = await until((q) => q.now.scene === "P7", 2500, read);
+  s || (s = await goTo(470, 420, (q) => q.now.scene === "P7", 12000));
+  s && s.now.scene === "P7" ? null : (await until((q) => q.now.scene === "P7", 6000, read)) || (await snacks(0, true));
   await runHomeToCard();
   await chooseOnCard("keep");
   await toTv(120000);
@@ -332,7 +331,7 @@ if (which === "back") {
   await runHomeToCard();
   await chooseOnCard("back");
   let s = await until((q) => q.now && q.now.scene === "P6" && q.ctrl && q.room === "hall", 60000, read);
-  s || fail("he did not get back to the party");
+  s || (await fail("he did not get back to the party"));
   log("back at the party");
   await sleep(1200);
   await dance(4, 0);
@@ -340,7 +339,7 @@ if (which === "back") {
   await photo(80000);
   // closing time, then Mops: he walks over to him
   s = await until((q) => q.now && q.now.scene === "P8b" && q.now.mops && q.ctrl, 150000, read);
-  s || fail("closing time did not come");
+  s || (await fail("closing time did not come"));
   log("closing time, Mops is in");
   await until(
     (q) => !q.now || q.now.scene === "done" || (q.cur === "panel" && q.id === "ch1tv1"),
@@ -354,13 +353,13 @@ if (which === "back") {
 }
 if (which === "flyer") {
   let s = await until((q) => q.now && q.now.scene === "P4" && q.ctrl, 90000, read);
-  s || fail("P4 did not start");
+  s || (await fail("P4 did not start"));
   log("P4: the flyer sneak");
   await sleep(2600);
   for (const [x, y] of [[470, 585], [505, 560], [505, 400]]) await goTo(x, y);
   await goTo(hall.FLYER.reach.x, hall.FLYER.reach.y + 8, (q) => q.act === "GRAB · flyer");
   s = await until((q) => q.act === "GRAB · flyer", 4000);
-  s || fail("no GRAB · flyer");
+  s || (await fail("no GRAB · flyer"));
   await sleep(900);
   await press();
   await until((q) => q.now.flyer === "paw" && q.ctrl, 4000);
@@ -371,7 +370,7 @@ if (which === "flyer") {
     if (q.cur === "bub") return read(q);
     q.ctrl && q.room === "hall" && (await floor(hall.HALL_DOOR.x, hall.HALL_DOOR.y + 12), await sleep(600));
   });
-  s || fail("P5 did not start");
+  s || (await fail("P5 did not start"));
   log("P5: the dress-up");
   await sleep(1000);
   await goTo(150, 400, (q) => q.act === "OPEN · closet");

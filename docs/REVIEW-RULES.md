@@ -22,7 +22,7 @@
 | 160–168 | ## Mistakes caught building the morning sound (2026-11-24) |
 | 169–180 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
 | 181–192 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
-| 193–205 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
+| 193–206 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
 <!-- /section-index -->
 # Review rules
 
@@ -202,3 +202,4 @@ His words, on the snack close-up, for every piece of the game: "It just needs to
 - The same review found the new ending's restart tested only at its very end (the TV on). A scene that gained steps gets a restart check in the middle of each new step (the hat going down, the horn press), then one clean run to the end.
 - A still tool set a Day 2 flag by hand (the office flag in the hall) and drew a room the game never shows that way. A hand-made state for a still copies a state the game itself makes (read the scene's own set-up first), and the report says which stills are hand-made.
 - The first clear way to the flyer was 48 wide in game numbers and passed its own test; on a phone that is 18 px, less than a finger, and the kid robot (which keeps a kid's distance from watchers) could not get up it. A gap a kid must steer through is judged in phone pixels (the picture is about 0.37 of game size): 100 game px or more, and the kid robot must walk it before it is called clear.
+- Making the showing-4 video, the robot ran home after an alarm and did not hide; the guard's light fell on him, the guard stepped at him and back to his looking place every frame, gave up, and "They lost you." sent him back to the party. Every place the capture rule can end gets a "do nothing" run (home too, not only the hall): standing in the open he is caught, with the card (`tests/party-catch.mjs`).

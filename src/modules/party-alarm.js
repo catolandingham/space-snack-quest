@@ -193,18 +193,25 @@ function searchHome(a, dt, api, sq, hidden) {
   }
   // Held: his search is over and someone has come in to talk to him (party-after-alarm.js lets him go).
   if (g.held) return void (g.sees = false);
-  g.door = (g.door || 0) + dt;
-  const arrived = g.door > ALARM.doorLook && step(g, HOME.look.x, HOME.look.y, ALARM.guard, dt);
-  // `turn` (-1 to 1) is how far his head is turned as he looks round: it follows the very swing his cone makes.
-  if (arrived) {
-    g.sweep += dt;
-    g.turn = Math.sin(g.sweep * 1.6);
-    g.a = Math.PI + g.turn * 0.55;
-  } else if (g.door > ALARM.doorLook) ((g.a = Math.atan2(HOME.look.y - g.y, HOME.look.x - g.x)), (g.turn = 0));
-  else ((g.turn = Math.sin(g.door * 4)), (g.a = Math.PI + g.turn * 0.4));
+  // While he sees Squatch (`after`: he saw him last frame) he does not look round or walk back to his looking
+  // place: his light stays on Squatch and he keeps coming. Out of his light (under the bed, behind him, too far)
+  // Squatch is lost again and he goes back to looking round. (Before, he stepped at Squatch and then back to his
+  // looking place every frame, gave up, and "They lost you." was said to a kid standing in his flashlight's light.)
+  if (!g.after) {
+    g.door = (g.door || 0) + dt;
+    const arrived = g.door > ALARM.doorLook && step(g, HOME.look.x, HOME.look.y, ALARM.guard, dt);
+    // `turn` (-1 to 1) is how far his head is turned as he looks round: it follows the very swing his cone makes.
+    if (arrived) {
+      g.sweep += dt;
+      g.turn = Math.sin(g.sweep * 1.6);
+      g.a = Math.PI + g.turn * 0.55;
+    } else if (g.door > ALARM.doorLook) ((g.a = Math.atan2(HOME.look.y - g.y, HOME.look.x - g.x)), (g.turn = 0));
+    else ((g.turn = Math.sin(g.door * 4)), (g.a = Math.PI + g.turn * 0.4));
+  } else g.turn = 0;
   const c = coneFrom("guard-home", g.x, g.y, g.a, api.size()),
     sees = !hidden && (coneSees(c, sq) || Math.hypot(sq.x - g.x, sq.y - g.y) < ALARM.feet);
   g.sees = sees;
+  g.after = sees;
   if (sees) {
     // He walks at Squatch; reaching him is the catch (a guard saw him at home).
     step(g, sq.x, sq.y, ALARM.guard, dt);

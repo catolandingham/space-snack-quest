@@ -126,4 +126,60 @@ g.check("caught beside the plant: back in the party, not standing in the pot", p
   g.check("no page errors in the snack catch", errors.length === 0, errors);
   await ctx.close();
 }
+// ---------- home after an alarm, and he does not hide ----------
+// (Found making showing 4: he stood in the open at home, the guard's light fell on him again and again, the guard
+// walked back to his looking place each time, gave up, and "They lost you." sent him back to the party.)
+{
+  const { page, ctx, errors } = await g.open("?beat=party:P7");
+  await page.evaluate(() => window.__ss.lockedReady);
+  await sleep(800);
+  const r = await page.evaluate(() => {
+    const ss = window.__ss,
+      n = ss.op,
+      b = window.SSQ.beat("ch1-party");
+    const jail = () => (n.cur && n.cur.id === "jail" ? n.cur : n.q.find((q) => q.id === "jail")) || null;
+    let i = 0,
+      home = -1,
+      sawAt = -1,
+      drops = 0,
+      was = false,
+      lost = false,
+      card = null,
+      nearest = 999;
+    for (; i < 30 * 60 && !card; i++) {
+      // he runs home through his door, and then does nothing at all
+      n.room === "hall" && n.ctrl && i % 10 === 0 && ss.tapAt(477, 605);
+      ss.tick(1 / 30);
+      const p = n.ch1PartyNow;
+      if (!p || p.scene !== "P7") break;
+      n.room === "closet" && home < 0 && (home = i);
+      const gd = p.alarm && p.alarm.homeGuard;
+      if (gd) {
+        gd.sees && sawAt < 0 && (sawAt = i);
+        // each time his light leaves Squatch after having been on him
+        was && !gd.sees && drops++;
+        was = !!gd.sees;
+        nearest = Math.min(nearest, Math.hypot(gd.x - n.sq.x, gd.y - n.sq.y));
+      }
+      p.lost && (lost = true);
+      card = jail();
+    }
+    const during = { text: card && card.text, cause: card && card.cause, room: n.room, pose: n.ch1PartyNow && n.ch1PartyNow.pose, scene: b.now() && b.now().scene };
+    let k = 0;
+    for (; k < 900; k++) {
+      if (n.cur && ["bub", "card", "panel"].includes(n.cur.k)) ss.opTap();
+      ss.tick(1 / 30);
+      if (!n.cur && !jail() && n.ctrl && b.now() && b.now().scene === "P7") break;
+    }
+    return { home, sawAt, drops, lost, nearest: Math.round(nearest), secs: sawAt >= 0 ? (i - sawAt) / 30 : -1, during, after: { party: b.now() && b.now().scene, room: n.room, ctrl: !!n.ctrl, alarm: b.now() && b.now().alarm } };
+  });
+  g.check("after an alarm he runs home and stands in the open: the guard who follows him in sees him", r.home > 0 && r.sawAt > r.home && r.during.pose === "stand", r);
+  // (his light may pass over Squatch once as he looks in from the door; before the fix it left him every other
+  // frame, 20 times and more, and he never got nearer than 110)
+  g.check("once the guard's light is on him it stays on him (he does not turn back to his looking place) and he reaches him within 8 seconds of first seeing him", r.drops <= 1 && r.secs > 0 && r.secs <= 8 && r.nearest < 40, [r.drops, r.secs, r.nearest]);
+  g.check("caught at home: the LOCKUP card names a guard, at home, and no \"They lost you.\" comes", r.during.text === "LOCKUP" && /guard/i.test(String(r.during.cause)) && /at home/.test(String(r.during.cause)) && !r.lost && r.during.room === "closet", r.during);
+  g.check("after the card P7 starts again in the hall, the alarm ringing", r.after.party === "P7" && r.after.room === "hall" && r.after.ctrl && !!r.after.alarm, r.after);
+  g.check("no page errors in the catch at home", errors.length === 0, errors);
+  await ctx.close();
+}
 await g.finish("party-catch");
