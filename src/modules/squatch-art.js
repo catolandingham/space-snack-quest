@@ -25,12 +25,36 @@ const INK = "#1e2430";
 const MASK_LINE = 1.5 / 2,
   FACE_LINE = 1.1 / 2;
 
+// His arms at rest (the angle from straight down, as the engine has it): the far one, then the near one.
+const REST_ARMS = Object.freeze([{ a: -0.35 }, { a: 0.35 }]);
+/**
+ * Where his two arms are, in his own units (feet at 0, up is negative): the far arm, then the near arm, each
+ * { shoulder, elbow, hand }. `arms` is [far, near], each { a, bend }: `a` is the arm's angle from straight down
+ * (0.35 hangs at rest; half a turn points straight up), and `bend` turns the forearm at the elbow (0 or left out:
+ * a straight arm). With no `arms`, he stands with both at rest. One pair of arms is all he ever has: a pose's
+ * arms are drawn in place of the rest arms, never over them (Brian 2026-11-24: "two sets of arms").
+ */
+export function armEnds(arms) {
+  const q = SQUATCH_LOOK,
+    sh = -q.leg - q.bodyH + 3;
+  return (arms || REST_ARMS).map((arm, i) => {
+    const sx = i === 0 ? -q.bodyW + 1 : q.bodyW - 1,
+      bent = !!arm.bend,
+      upper = bent ? q.arm / 2 : q.arm,
+      elbow = { x: sx + Math.sin(arm.a) * upper, y: sh + Math.cos(arm.a) * upper },
+      fa = arm.a + (arm.bend || 0),
+      hand = bent ? { x: elbow.x + Math.sin(fa) * (q.arm / 2), y: elbow.y + Math.cos(fa) * (q.arm / 2) } : elbow;
+    return { shoulder: { x: sx, y: sh }, elbow, hand };
+  });
+}
+
 /**
  * Draws Squatch with his feet at (x, y), `scale` game pixels to one of his units, facing us. `line` is his
- * outline in game pixels (the room's Squatch: 2 units at scale 3 = 6). Returns where his near paw is and his
- * mouth (game positions) and the outline drawn, for props and tests.
+ * outline in game pixels (the room's Squatch: 2 units at scale 3 = 6). `arms` poses his arms (see armEnds; left
+ * out, they hang at rest). `feet: false` leaves his legs and feet out, for boots that stand where they are.
+ * Returns where his near paw is and his mouth (game positions) and the outline drawn, for props and tests.
  */
-export function drawSquatchArt(ctx, x, y, scale, { line = 4, shadow = true } = {}) {
+export function drawSquatchArt(ctx, x, y, scale, { line = 4, shadow = true, arms = null, feet = true } = {}) {
   const q = SQUATCH_LOOK,
     o = line / scale; // outline in his units
   const T = q.leg,
@@ -94,24 +118,37 @@ export function drawSquatchArt(ctx, x, y, scale, { line = 4, shadow = true } = {
     ctx.fillStyle = "rgba(30,36,48,.15)";
     ctx.fill();
   }
-  limb(-3, -T, -3, 0, 4.2, q.dark);
-  limb(3, -T, 3, 0, 4.2, q.dark);
-  dot(-2.5, 0, 2.4, q.mask);
-  dot(3.5, 0, 2.4, q.mask);
-  // Far arm, body, near arm (arms at rest).
-  const sh = -T - R + 3,
-    near = 0.35,
-    far = -0.35;
-  const fx = -q.bodyW + 1 + Math.sin(far) * q.arm,
-    fy = sh + Math.cos(far) * q.arm;
-  limb(-q.bodyW + 1, sh, fx, fy, 3.6, q.dark);
-  dot(fx, fy, 2.2, q.mask);
+  if (feet) {
+    limb(-3, -T, -3, 0, 4.2, q.dark);
+    limb(3, -T, 3, 0, 4.2, q.dark);
+    dot(-2.5, 0, 2.4, q.mask);
+    dot(3.5, 0, 2.4, q.mask);
+  }
+  // Far arm, body, near arm: at rest, or in the pose given (one pair, never both).
+  const [farArm, nearArm] = armEnds(arms);
+  // An arm: one thick round-ended line through the elbow (so a bent arm has no seam there), then the paw.
+  const arm = (a, color) => {
+    ctx.lineCap = "round";
+    for (const [w, c] of [
+      [3.6 + o * 2, INK],
+      [3.6, color],
+    ]) {
+      ctx.strokeStyle = c;
+      ctx.lineWidth = w;
+      ctx.beginPath();
+      ctx.moveTo(a.shoulder.x, a.shoulder.y);
+      ctx.lineTo(a.elbow.x, a.elbow.y);
+      ctx.lineTo(a.hand.x, a.hand.y);
+      ctx.stroke();
+    }
+    dot(a.hand.x, a.hand.y, 2.2, q.mask);
+  };
+  arm(farArm, q.dark);
   fuzzy(0, -T - R / 2, q.bodyW, R / 2 + 1, 11, q.amp * 0.8, 0.3);
   fill(q.fur, o);
-  const nx = q.bodyW - 1 + Math.sin(near) * q.arm,
-    ny = sh + Math.cos(near) * q.arm;
-  limb(q.bodyW - 1, sh, nx, ny, 3.6, q.fur);
-  dot(nx, ny, 2.2, q.mask);
+  const nx = nearArm.hand.x,
+    ny = nearArm.hand.y;
+  arm(nearArm, q.fur);
   // Ears, head, face mask, eyes, smile.
   for (const ex of [-q.head * 0.95, q.head * 0.95]) {
     ctx.beginPath();

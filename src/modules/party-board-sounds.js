@@ -330,7 +330,8 @@ export const BOARD = Object.freeze({
   rip: (A, t) => (nz(A, { t, d: 0.2, v: 0.22, f: 2500, q: 1, a: 0.003, trem: 0.6, tremF: 60 }), tone(A, { t: t + 0.05, f: 400, f1: 250, d: 0.25, type: "triangle", v: 0.08 })),
   swish: (A, t) => nz(A, { t, d: 0.32, a: 0.09, v: 0.3, f: 800, f1: 1500, q: 0.8 }),
   uhoh: (A, t) => (tone(A, { t, f: midi(79), d: 0.14, type: "square", v: 0.1 }), tone(A, { t: t + 0.17, f: midi(76), d: 0.28, type: "square", v: 0.1 })),
-  zip: (A, t) => (tone(A, { t, f: 300, f1: 2000, d: 0.12, v: 0.12, a: 0.005 }), fwip(A, t, true)),
+  // The hallway doorway's push back: a soft, low thump (new 2026-11-24, not yet picked by Brian on the sound board).
+  bump: (A, t) => (nz(A, { t, d: 0.09, v: 0.35, ft: "lowpass", f: 300, a: 0.003 }), tone(A, { t, f: 150, f1: 70, d: 0.14, v: 0.25, a: 0.003 })),
   underBed: (A, t) => (rustle(A, t, 10, 2000, 0.3), nz(A, { t: t + 0.55, d: 0.14, v: 0.35, ft: "lowpass", f: 400, a: 0.003 })),
   huff(A, t) {
     for (let i = 0; i < 6; i++) nz(A, { t: t + i * 0.33, d: 0.2, v: 0.35, f: i % 2 ? 900 : 1500, q: 1, a: 0.04 });

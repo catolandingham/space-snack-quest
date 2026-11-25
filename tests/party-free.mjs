@@ -16,7 +16,8 @@
  *   - the photo: in front of the camera at the flash, +25 once, and the Polaroid; the snacks: the paw icon at the
  *     bar opens the close-up, each snack is stars, five topple the pyramid, the flying cup knocks a piece off and
  *     everyone stares for 4 seconds; the bartender's two catches; the octopus only after the first minute, his
- *     lines, two hugs knock a piece off; the hallway: "Mops!", the beard, he steps back and cannot go through;
+ *     lines, two hugs knock a piece off; the hallway doorway: he is bounced back and thinks "Mops!" (no beard;
+ *     tests/party-round3.mjs measures the bounce);
  *   - the conga: it forms, its route passes the vent once, walking into its tail joins it and tows him, steering
  *     leaves it; ↺ restarts P6 just inside his door with the same outfit and song; sounds named in the plan play.
  * Stills at 375 x 812 go to tests/out/party-stills/ (p6-*.png).
@@ -582,16 +583,15 @@ const keepCrooked = (page) => async (q) => !q.now.tip && (await set(page, (p) =>
   await place(page, 830, 322);
   await walk(page, 940, 320);
   let s = await until(page, (q) => q.cur === "bub", 6000);
-  g.check("heading for the hallway doorway: he thinks \"Mops!\"", !!s && s.text === "Mops!", s && s.text);
-  g.check("Mops's beard is in the doorway", !!s && s.now.beard.show > 0.5, s && s.now.beard);
+  g.check("walking into the hallway doorway: he thinks \"Mops!\"", !!s && s.text === "Mops!", s && s.text);
   await still(page, "p6-hallway-mops");
   const mb = await overSquatch(page);
   g.check("the \"Mops!\" thought sits clear of Squatch", !mb.bubble, mb);
   await next(page);
   s = await until(page, (q) => q.ctrl && !q.cur, 4000);
-  g.check("he steps back and cannot go through", !!s && Math.abs(s.x - hall.HALLWAY_BACK.x) < 3 && s.room === "hall", s && [s.x, s.y]);
-  g.check("stepping back he stands clear of Isfred (nobody stands inside anybody)", !!s && Math.hypot(s.x - s.now.isfred.x, s.y - s.now.isfred.y) >= 36, s && [s.x, s.y, s.now.isfred]);
-  g.check("the uh-oh and the beard's swish sound", (await played(page)).includes("uhoh"));
+  g.check("he is bounced back out of the doorway and cannot go through", !!s && s.x < hall.HALLWAY_ZONE.x0 && s.x > hall.HALLWAY_ZONE.x0 - 70 && s.room === "hall", s && [s.x, s.y]);
+  g.check("bounced back he stands clear of Isfred (nobody stands inside anybody)", !!s && Math.hypot(s.x - s.now.isfred.x, s.y - s.now.isfred.y) >= 36, s && [s.x, s.y, s.now.isfred]);
+  g.check("the bump and the uh-oh sound", (await played(page)).includes("bump") && (await played(page)).includes("uhoh"));
   await page.close();
 }
 

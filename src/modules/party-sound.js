@@ -5,12 +5,12 @@
  * it's happening"). Everything plays through the game's master volume (its AudioContext and master gain, as
  * morning-sound.js does); nothing plays while sound is off, and nothing here starts the sound engine. Sound starts
  * off (PR #77), so every sound here also has a drawing (notes over the band, the cheer lines, the camera's red
- * light, the hiccup bubbles, the notes from the hallway, the alarm's flashing light).
+ * light, the hiccup bubbles, the alarm's flashing light).
  *   one(name)     a sound by name (party-board-sounds.js BOARD; "crash" and "step" play recordings once loaded)
  *   song(i)       the Croc Boys: 0, 1 or 2 plays that song; -1 stops (see SONGS)
  *   muffle(on)    the band heard through his door when he is at home
  *   ambience(k)   "door" (the party through his door before the peek), "murmur" (the crowd), or "" (none)
- *   hum(level)    Mops humming Floating in Space in the hallway: Brian's recording, quiet and muffled
+ *   hum(level)    Mops humming Floating in Space as he mops his way in at closing time: Brian's recording, quiet
  *   takeBreak()   true once each time the band stops dead and shouts (the game shows the band's line then)
  */
 import { BOARD, tone, nz, muffled, kick, snare, hat, midi } from "./party-board-sounds.js";
@@ -177,7 +177,7 @@ export function createPartySound(getEngine) {
       breakDue = false;
       return b;
     },
-    /** Mops's humming from the hallway, at `level` (0 to 1): his own recording, quiet and muffled. */
+    /** Mops's humming as he mops his way in at closing time, at `level` (0 to 1): his own recording, quiet and muffled. */
     hum(level) {
       const A = live();
       if (!A || !(level > 0)) {

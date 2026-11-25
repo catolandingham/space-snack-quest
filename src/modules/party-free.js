@@ -11,12 +11,13 @@
  * party-dance.js.
  */
 import { partyLine } from "./party-lines.js";
-import { MILL, DANCE_SPOT, SNACK_SPOT, HALLWAY_BACK, PYRAMID, CAST, stepTo, stepClear, CLEAR_OF_SQUATCH } from "./party-hall.js";
+import { MILL, DANCE_SPOT, SNACK_SPOT, PYRAMID, CAST, stepTo, stepClear, CLEAR_OF_SQUATCH } from "./party-hall.js";
 import { coneSees, lookAt, towardStage, SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
 import { startAlarm, ALARM } from "./party-alarm.js";
 import { tickVent } from "./party-vent.js";
 import { furShows, anyWorn, wornNow, tickPieces, bump, knockOff, bumpSpot, tipNext } from "./party-outfit.js";
-import { tickConga, tickPhoto, tickOctopus, tickBeard, tickPlants, tickTug, inHallwayZone, yankBeard, PHOTO_BONUS, PHOTO, BEARD } from "./party-toys.js";
+import { tickConga, tickPhoto, tickOctopus, tickPlants, tickTug, PHOTO_BONUS, PHOTO } from "./party-toys.js";
+import { inHallwayZone, startBounce, tickBounce } from "./party-hallway.js";
 import { openSnacks, closeSnacks, tickSnacks, snackPointer, startTopple, tickTopple, SNACK_STARS, SNACK_LOOK_SECONDS } from "./party-snacks.js";
 import { newDance, danceMove, tickDance, drawDanceCloseUp, drawCloseButton, danceClose, DANCE } from "./party-dance.js";
 import { openFullScreen, closeFullScreen } from "./fullscreen.js";
@@ -218,7 +219,6 @@ export function createFreePlay(h) {
     p.scene = "P7";
     p.band = false;
     h.sound.song(-1);
-    h.sound.hum(0);
     E().forgetSaved();
     h.raise(p);
   }
@@ -275,12 +275,7 @@ export function createFreePlay(h) {
       scale = e.hallSizes().squatch;
     tickPieces(p, dt);
     p.flash = Math.max(0, p.flash - dt);
-    if (p.scene === "P7") {
-      // as the bell starts (after the first alarm's close-up, which hides the hall)
-      p.alarm && ["ring", "search", "home"].includes(p.alarm.phase) && p.beard && !p.beard.gone && p.beard.yank < 0 && (yankBeard(p), h.sound.one("zip"));
-      tickBeard(p, dt);
-      return;
-    }
+    if (p.scene === "P7") return;
     if (paused) return;
     p.ft += dt;
     const first = p.ft < FREE.firstMinute;
@@ -340,12 +335,8 @@ export function createFreePlay(h) {
       if (p.oct.hugs >= 2 && spot && !first) (knockOff(p, spot, s, scale, "floor"), hit(p, "off", s));
       else hit(p, (tipNext(p), "tip"), s);
     }
-    // the hallway: Mops's beard
-    const shown = p.beard && p.beard.show > 0.5;
-    tickBeard(p, dt);
-    !shown && p.beard.show > 0.5 && h.sound.one("swish");
-    h.sound.hum(p.beard && !p.beard.gone ? 0.35 + 0.65 * p.beard.show : 0);
-    if (stand && inHallwayZone(s) && !p.hallStop) meetMops(p);
+    // the hallway doorway: he cannot go that way yet
+    if (stand && inHallwayZone(s) && !p.bounce) bounceBack(p, s);
     // the plants and the vent
     const pl = stand ? tickPlants(p, s, scale, first) : "";
     pl && h.sound.one("rip");
@@ -398,25 +389,29 @@ export function createFreePlay(h) {
     id && (p.warn = { id, t: FREE.warn });
     h.sound.one(what === "off" ? "pieceOff" : "fwip");
   }
-  // He heads for the hallway doorway: Mops's beard is there; he stops short, thinks "Mops!", and steps back.
-  function meetMops(p) {
-    const e = E(),
-      first = !p.done.hallway;
-    p.hallStop = true;
+  // He walks into the hallway doorway: pushed back a short way, quickly, with a small bump (a sound, a hop, a mark
+  // where he hit), and then he thinks his line. Every time he tries (Brian 2026-11-24).
+  function bounceBack(p, s) {
+    const e = E();
     p.done.hallway = true;
-    p.beard.force = BEARD.shows;
-    p.beard.show = 1;
     h.control(false);
+    startBounce(p, s);
+    h.sound.one("bump");
     e.queue([
-      e.run(() => h.sound.one("uhoh")),
-      ...(first ? [h.say("sq", "sq-mops", "whisper")] : []),
-      e.until((dt) => e.step("sq", HALLWAY_BACK.x, HALLWAY_BACK.y, 200, dt)),
+      e.until((dt) => {
+        const q = h.P();
+        if (!q || !q.bounce) return true;
+        const at = tickBounce(q, dt);
+        e.place("sq", at.x, at.y);
+        return at.done;
+      }),
+      e.run(() => (h.P() && (h.P().bounce = null), h.sound.one("uhoh"))),
+      h.say("sq", "sq-mops", "whisper"),
       e.run(() => {
         const q = h.P();
-        q && ((q.hallStop = false), q.scene === "P6" && h.control(true));
+        q && q.scene === "P6" && h.control(true);
       }),
     ]);
-    p.shake = FREE.shake;
   }
 
   // ---------- the kid's actions ----------

@@ -3,7 +3,7 @@
  * party-endings.js, party-capture.js. At phone size:
  *   - P7's restart: the alarm ringing, the guards coming in at the hallway doorway, Squatch on the dance floor
  *     with the pieces he lost still gone, the chip "Squatch: run home and hide!", his door outlined;
- *   - from P6, Mops's beard yanks out of the hallway doorway as the bell starts (and is gone);
+ *   - from P6, seen with fur showing, the alarm begins and the band stops (nothing yanks out of the hallway doorway);
  *   - the kid steers home himself (nothing walks him); HIDE · bed; "They lost you." with its chime; the calm seen
  *     from the door gap; then P8a: Mops comes in out of breath, the flyer glows, "Everyone out there has
  *     someone." then "You have me.", then beat 20 (the TV story);
@@ -104,7 +104,6 @@ async function readLines(page, stop, ms = 30000) {
   g.check("the chip says \"Squatch: run home and hide!\"", s.chip === "Squatch: run home and hide!", s.chip);
   s = await until(page, (q) => q.ring === "go-home", 3000);
   g.check("his door is outlined", !!s);
-  g.check("Mops's beard is already gone from the doorway", s && s.now.beard.gone);
   await still(page, "p7-alarm-run-home");
   // he steers home himself: nothing walks him while the kid does nothing
   const a = await st(page);
@@ -143,18 +142,15 @@ async function readLines(page, stop, ms = 30000) {
   await page.close();
 }
 
-// ---------- the beard yanks out as the bell starts (from P6) ----------
+// ---------- the alarm from P6: the band stops (no beard in the doorway to yank out; tests/party-round3.mjs) ----------
 {
   const { page } = await open("party:P6");
   await set(page, (p) => (p.lostPieces = ["head"]));
   await place(page, 770, 455);
   let s = await until(page, (q) => q.now && q.now.scene === "P7" && ["pull", "ring", "search"].includes(q.now.alarm), 15000);
   g.check("seen with fur showing: P7 begins", !!s);
-  s = await until(page, (q) => q.now.beard && (q.now.beard.yank >= 0 || q.now.beard.gone), 10000);
-  g.check("as the bell starts, Mops's beard yanks out of the doorway", !!s && ["ring", "search", "home"].includes(s.now.alarm), s && s.now.beard);
-  s = await until(page, (q) => q.now.beard.gone, 3000);
-  g.check("and is gone", !!s);
-  g.check("the zip of the beard and the band stops (no song in P7)", (await played(page)).includes("zip") && s.now.sound.song === -1, s && s.now.sound.song);
+  s = await until(page, (q) => ["ring", "search", "home"].includes(q.now.alarm), 10000);
+  g.check("the bell starts and the band stops (no song in P7); no zip of a beard", !!s && !(await played(page)).includes("zip") && s.now.sound.song === -1, s && s.now.sound.song);
   await page.close();
 }
 

@@ -17,7 +17,7 @@
  *   P6 The party in disguise (restart: just inside his door, same outfit, the song that was playing): free play,
  *      the toys and the three songs (party-free.js, party-toys.js, party-snacks.js, party-dance.js).
  *   P7 The FUR alarm and the run home (restart: the alarm ringing, guards coming in, Squatch on the dance floor
- *      with the pieces he lost still gone): the one capture rule, Mops's beard yanks out of the hallway doorway.
+ *      with the pieces he lost still gone): the one capture rule.
  *   P8a / P8b The endings, after an alarm or at closing time; both reach "You have me." and then beat 20
  *      (party-endings.js).
  * Words come only from party-lines.js. The beat's progress lives in the game state as ch1PartyNow, so a restart
@@ -41,6 +41,7 @@ import { createEndings } from "./party-endings.js";
 import { createPartySound } from "./party-sound.js";
 import { furShows, wornNow } from "./party-outfit.js";
 import { CUT } from "./party-snacks.js";
+import { bumpMark } from "./party-hallway.js";
 
 // His home door in the right wall: the one box its outline uses too (goal-targets.js).
 const HOME_DOOR = GOAL_TARGETS["closet:peek"].rect;
@@ -279,7 +280,7 @@ export function createParty(bridge) {
     }
     if (id === "P7") {
       // Restart: the alarm ringing, the guards coming in at the hallway doorway, Squatch on the dance floor with the
-      // pieces he lost still gone, the beard already gone from the doorway.
+      // pieces he lost still gone.
       const was = P() || {};
       const p = base("P7", { phase: "run" });
       Object.values(p.outfit).some(Boolean) || (p.outfit = { ...JUMP_OUTFIT });
@@ -290,7 +291,6 @@ export function createParty(bridge) {
       p.lostPieces = (was.lostPieces || []).slice();
       p.fallen = (was.fallen || []).slice();
       p.band = false;
-      p.beard = { t: 0, show: 0, force: 0, yank: -1, gone: true };
       sound.song(-1);
       startAlarm(p, { id: "backpack", x: SPOTS.alarmRun.x, y: SPOTS.alarmRun.y }, "where-dance");
       p.alarm.w.hx = p.people.backpack.x;
@@ -743,7 +743,7 @@ export function createParty(bridge) {
         conga: p.conga ? { on: p.conga.on, formed: p.conga.formed, joined: p.conga.joined } : null,
         photo: p.photo ? { phase: p.photo.phase, taken: p.photo.taken, pol: p.photo.pol } : null,
         oct: p.oct ? { mode: p.oct.mode, hugs: p.oct.hugs } : null,
-        beard: p.beard ? { show: p.beard.show, gone: p.beard.gone, yank: p.beard.yank } : null,
+        bounce: p.bounce ? { t: p.bounce.t, mark: bumpMark(p, E().hallSizes().squatch) } : null,
         paw: !!p.pawIcon,
         close: p.close ? { phase: p.close.phase, gone: Object.keys(p.close.gone) } : null,
         mops: p.mops ? { x: p.mops.x, y: p.mops.y, heart: p.mops.heart } : null,

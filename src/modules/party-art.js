@@ -512,14 +512,22 @@ export function drawPartyLights(ctx, spot, t, dim = 1, color = SONG_LIGHT) {
 }
 
 // ---------- the camera (V14) ----------
+// The camera's body sits this far above the tripod's feet; its lens is this far out along the way it points.
+const CAMERA = Object.freeze({ up: 40, aimUp: 46, lens: 17 });
+const cameraAngle = (x, y, aim) => Math.atan2(aim.y - (y - CAMERA.aimUp), aim.x - x);
+/** The front of the camera's lens (game position), for a tripod standing at `tripod` and pointing at `aim`. */
+export function cameraLens(tripod, aim) {
+  const a = cameraAngle(tripod.x, tripod.y, aim);
+  return { x: tripod.x + Math.cos(a) * CAMERA.lens, y: tripod.y - CAMERA.up + Math.sin(a) * CAMERA.lens };
+}
 /** The camera on its tripod, standing at (x, y) and pointing at `aim`. */
 export function drawTripod(ctx, x, y, aim) {
-  const a = Math.atan2(aim.y - (y - 46), aim.x - x);
+  const a = cameraAngle(x, y, aim);
   line(ctx, [x, y - 34, x - 14, y], "#6b6256", 3);
   line(ctx, [x, y - 34, x + 13, y], "#6b6256", 3);
   line(ctx, [x, y - 34, x + 1, y + 4], "#6b6256", 3);
   ctx.save();
-  ctx.translate(x, y - 40);
+  ctx.translate(x, y - CAMERA.up);
   ctx.rotate(a);
   rr(ctx, -12, -8, 22, 15, 3, "#1e2430", 2);
   rr(ctx, 9, -5, 8, 9, 2, "#8fdcff", 2);

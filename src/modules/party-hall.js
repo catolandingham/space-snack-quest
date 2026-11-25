@@ -121,9 +121,10 @@ export const PHOTO_FRAME = Object.freeze({ x0: 390, x1: 450, y0: 330, y1: 400 })
 // The snack bar's pyramid (on the counter's front end) and where Squatch stands to reach into it.
 export const PYRAMID = Object.freeze({ x: 868, y: 560 });
 export const SNACK_SPOT = Object.freeze({ x: 780, y: 497, r: 60 });
-// The floor in front of the hallway doorway (P6): walking in here, he meets Mops's beard and steps back.
-export const HALLWAY_ZONE = Object.freeze({ x0: 850, x1: 960, y0: 290, y1: 352 });
-export const HALLWAY_BACK = Object.freeze({ x: 846, y: 344 }); // clear of Isfred by the bar's top end
+// The hallway doorway's own floor (P6): walking in here he is in the doorway, and is bounced back a short way
+// (party-hallway.js). It starts close to the doorway, so he visibly reaches it, and far enough from Isfred at the
+// bar's top end that the push back never puts him on Isfred.
+export const HALLWAY_ZONE = Object.freeze({ x0: 884, x1: 960, y0: 290, y1: 352 });
 // The floor strip from the bar's top end to the hallway doorway (open in P6 to P8, so he can head for it).
 export const HALLWAY_LANE = Object.freeze({ x0: 806, x1: 960, y0: 0, y1: 350 });
 // Leaving at closing time (P8b): a walk to the hallway doorway, then out through it.

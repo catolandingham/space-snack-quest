@@ -34,7 +34,12 @@
       // Never over the people standing there: the outline is left out of their boxes.
       let people = [n.sqPose !== "hidden" ? sqBox() : null, n.moPose && n.moPose !== "hidden" && n.mo.x > -100 ? moBox() : null];
       let box = window.SSQ && window.SSQ.drawGoalOutline ? window.SSQ.drawGoalOutline(e, n.room, spot.id, lockedImg[lockedNow], n.T, people) : null;
-      box && (n.lastRing = { x: (box.x0 + box.x1) / 2, y: (box.y0 + box.y1) / 2, T: n.T, box, id: spot.id, act: spot.verb + " · " + spot.cap });
+      box && (n.lastRing = { x: (box.x0 + box.x1) / 2, y: (box.y0 + box.y1) / 2, T: n.T, box, id: spot.id, act: spot.verb + " · " + spot.cap, place: { verb: spot.verb || "", x: spot.x, y: spot.y, r: spot.r, box: spot.box } });
+    }
+    // The goal outline on screen now and its spot's own place, for the walk ring's rule (src/modules/walk-ring.js).
+    function goalMarkNow() {
+      let r = n.lastRing;
+      return r && r.box && n.T - r.T < 0.1 ? { box: r.box, spot: r.place } : null;
     }
     function ch1MarkGoal() {
       if (n.ch1PadOn || !n.ctrl || n.ch1Zoom || n.sqPose === "hidden") return;

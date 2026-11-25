@@ -1,11 +1,11 @@
 /**
- * The party's wordless toys (party plan P6, "The toys"): the conga line, the band photo, the octopus, the hallway
- * with Mops's beard, the plants that snag, and the vent's tug. Each is a small state on the party's game-state
+ * The party's wordless toys (party plan P6, "The toys"): the conga line, the band photo, the octopus, the plants
+ * that snag, and the vent's tug (the hallway doorway's bounce is party-hallway.js). Each is a small state on the party's game-state
  * object `p` and one tick function. All are optional, and nothing here gives a goal chip or an outline.
  * Numbers marked PLACEHOLDER are the builder's guesses for Brian to tune; "pinned" ones are his approved values
  * (docs/TUNING-PINS.json).
  */
-import { CONGA_ROUTE, PHOTO_FRAME, HALLWAY_ZONE, HALL, OCTOPUS_SNACKS, stepTo, stepClear, CLEAR_OF_SQUATCH } from "./party-hall.js";
+import { CONGA_ROUTE, PHOTO_FRAME, HALL, OCTOPUS_SNACKS, stepTo, stepClear, CLEAR_OF_SQUATCH } from "./party-hall.js";
 import { VENT, ventDistance } from "./party-vent.js";
 import { bump, tipNext, knockOff, bumpSpot, anyWorn, furShows } from "./party-outfit.js";
 
@@ -152,30 +152,6 @@ export function tickOctopus(p, dt, s, api) {
   }
   return "";
 }
-
-// ---------- the hallway: Mops's beard ----------
-// PLACEHOLDERS: how often the beard swishes past the doorway, and for how long.
-export const BEARD = Object.freeze({ every: 5, shows: 1.8, yank: 0.5 });
-/** One frame of the beard. `p.beard.show` (0 to 1) is how much of it is in the doorway now. */
-export function tickBeard(p, dt) {
-  const b = p.beard || (p.beard = { t: 0, show: 0, force: 0, yank: -1, gone: false });
-  if (b.gone) return;
-  if (b.yank >= 0) {
-    b.yank += dt / BEARD.yank;
-    b.yank >= 1 && ((b.gone = true), (b.show = 0));
-    return;
-  }
-  b.t = (b.t + dt) % BEARD.every;
-  b.force = Math.max(0, b.force - dt);
-  const k = b.t < BEARD.shows ? Math.sin((b.t / BEARD.shows) * Math.PI) : 0;
-  b.show = Math.max(k, b.force > 0 ? 1 : 0);
-}
-/** Mops heard the bell: the beard yanks out of the doorway and is gone (he is hurrying home). */
-export function yankBeard(p) {
-  const b = p.beard || (p.beard = { t: 0, show: 0, force: 0, yank: -1, gone: false });
-  b.gone || b.yank >= 0 || (b.yank = 0);
-}
-export const inHallwayZone = (s) => s.x > HALLWAY_ZONE.x0 && s.x < HALLWAY_ZONE.x1 && s.y > HALLWAY_ZONE.y0 && s.y < HALLWAY_ZONE.y1;
 
 // ---------- the plants (in disguise they snag a piece) ----------
 // PLACEHOLDER: how close to a plant's leaves his feet come to brush past it.

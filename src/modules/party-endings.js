@@ -47,7 +47,6 @@ export function createEndings(h) {
     p.seenT = 0;
     p.conga && (p.conga.joined = false);
     for (const g of Object.values(p.people)) g.task = "";
-    h.sound.hum(0);
     p.pose === "hidden" && ((p.pose = "stand"), e.set("sqPose", "stand"));
     e.forgetSaved();
     h.chip("");
@@ -224,7 +223,6 @@ export function createEndings(h) {
     e.room() !== "closet" && e.enterRoom("closet", "Q1");
     e.set("scene", "Q1");
     e.set("sqPose", "stand");
-    h.sound.hum(0);
     e.set("moPose", "stand");
     e.place("mops", HOME.door.x, HOME.door.y);
     e.face("mops", -1);

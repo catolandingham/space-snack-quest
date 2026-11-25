@@ -6,6 +6,7 @@
  * his next robot move and the crowd cheers louder. No arrows, no speed, no fail, no points. It ends with the song.
  */
 import { drawBand, drawOutfit, oval, line } from "./party-art.js";
+import { bootsOnFeet } from "./party-outfit.js";
 import { drawSquatchArt } from "./squatch-art.js";
 
 // PLACEHOLDERS: the shortest dance (if the song is nearly over when he starts, the band plays on this long), how
@@ -31,13 +32,23 @@ export function tickDance(d, dt) {
   d.pop = Math.max(0, d.pop - dt * 4);
 }
 
-// His four robot poses, one per move: arms out straight, one arm up, arms bent, a lean.
-const POSES = Object.freeze([
-  { rot: 0, arms: [-0.2, 0.2] },
-  { rot: 0.06, arms: [-1.4, 0.3] },
-  { rot: 0, arms: [-0.9, 0.9] },
-  { rot: -0.08, arms: [0.3, 1.4] },
+// His four robot poses, one per move: arms out straight, one arm up and one bent down, both bent up, and a lean
+// with one forearm up and one down. `arms` is [far, near] as squatch-art.js armEnds reads them (the angle from
+// straight down, and the turn at the elbow). They are his only arms: the pose replaces the arms at rest.
+const Q = Math.PI / 2;
+export const POSES = Object.freeze([
+  { rot: 0, arms: [{ a: -Q }, { a: Q }] },
+  { rot: 0.06, arms: [{ a: -Q, bend: Q }, { a: Math.PI - 0.9 }] },
+  { rot: 0, arms: [{ a: -Q, bend: -Q }, { a: Q, bend: Q }] },
+  { rot: -0.08, arms: [{ a: -Q, bend: -Q }, { a: Q, bend: -Q }] },
 ]);
+/** How big the dance draws things on a `w` x `h` screen (one unit of the crowd's and the band's sizes). */
+const unit = (w, h) => Math.min(w / 90, h / 120);
+/** Where Squatch stands in the dance on a `w` x `h` screen: his feet, his scale, his lean, and his pose now. */
+export function danceSquatch(w, h, d) {
+  const pose = POSES[(d ? d.moves : 0) % POSES.length];
+  return { x: w / 2, y: h * 0.86, scale: unit(w, h) * 0.9 * (1 + (d ? d.pop : 0) * 0.05), rot: pose.rot, pose };
+}
 
 /**
  * Draws the dance on a `w` x `h` screen. `guestArt` draws the approved guests; `outfit` is what he has on now;
@@ -50,7 +61,7 @@ export function drawDanceCloseUp(ctx, w, h, guestArt, outfit, t, d, song = 0) {
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, w, h);
   const floorY = h * 0.62,
-    s = Math.min(w / 90, h / 120);
+    s = unit(w, h);
   ctx.fillStyle = FLOORS[song % 3];
   ctx.fillRect(0, floorY, w, h - floorY);
   ctx.fillStyle = SONG_LIGHTS[song % 3];
@@ -80,26 +91,15 @@ export function drawDanceCloseUp(ctx, w, h, guestArt, outfit, t, d, song = 0) {
     const top = y - s * 34;
     for (const a of [-0.6, 0, 0.6]) line(ctx, [x + Math.sin(a) * s * 3, top - s * 2, x + Math.sin(a) * s * (3 + 5 * cheer), top - s * (2 + 6 * cheer)], "#ffcf33", Math.max(2, s * 0.6));
   });
-  // Squatch big, doing the robot: arms snap to a new pose on each move
-  const pose = POSES[(d ? d.moves : 0) % POSES.length],
-    sx = w / 2,
-    sy = h * 0.86,
-    sc = s * 0.9 * (1 + (d ? d.pop : 0) * 0.05);
+  // Squatch big, doing the robot: his arms snap to a new pose on each move. He is drawn once: the pose's arms are
+  // his arms, and boots on his legs stand where his feet would be (Brian 2026-11-24: "two sets of arms ... two
+  // sets of shoes").
+  const at = danceSquatch(w, h, d),
+    sc = at.scale;
   ctx.save();
-  ctx.translate(sx, sy);
-  ctx.rotate(pose.rot);
-  drawSquatchArt(ctx, 0, 0, sc, { line: Math.max(2, sc * 0.9) });
-  // his arms in the pose (fur-brown, over his own)
-  for (const [side, a] of [
-    [-1, pose.arms[0]],
-    [1, pose.arms[1]],
-  ]) {
-    ctx.save();
-    ctx.translate(side * 15 * sc, -28 * sc);
-    ctx.rotate(side * (Math.PI / 2) - a * side);
-    oval(ctx, 0, 9 * sc, 3.6 * sc, 9 * sc, "#6b4428", Math.max(2, sc * 0.7));
-    ctx.restore();
-  }
+  ctx.translate(at.x, at.y);
+  ctx.rotate(at.rot);
+  drawSquatchArt(ctx, 0, 0, sc, { line: Math.max(2, sc * 0.9), arms: at.pose.arms, feet: !bootsOnFeet(outfit) });
   drawOutfit(ctx, 0, 0, sc, outfit, 1);
   ctx.restore();
 }

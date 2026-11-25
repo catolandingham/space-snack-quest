@@ -2,16 +2,16 @@
 // picture for Brian's picture sheet with the game's own drawing code, and hands each back as a PNG data URL.
 import { drawHall } from "../src/modules/party-draw.js";
 import { BAND_A } from "./party-half-two-art.js";
-import { drawBeardInDoorway, drawHeartCone, drawCountdown, drawTugWarning, drawPolaroid, drawBandNotes, drawClap, drawHiccups, drawSpeakerRing, drawPuffs, drawLoosePiece, drawFurryFlyer, drawFlash } from "../src/modules/party-free-art.js";
+import { drawHeartCone, drawCountdown, drawTugWarning, drawPolaroid, drawBandNotes, drawClap, drawHiccups, drawSpeakerRing, drawPuffs, drawLoosePiece, drawFurryFlyer, drawFlash } from "../src/modules/party-free-art.js";
 import { drawDanceCloseUp, SONG_LIGHTS } from "../src/modules/party-dance.js";
 import { drawPyramid, drawPawIcon, drawSnackCloseUp } from "../src/modules/party-snacks.js";
 import { congaAt, CONGA } from "../src/modules/party-toys.js";
 import { PAW_ICON } from "../src/modules/party-free.js";
 import { HALL_SPEAKER } from "../src/modules/party-hall.js";
-import { HALL, CAST, SPOTS, GLANCE, HALL_PICTURE } from "../src/modules/party-hall.js";
+import { HALL, CAST, SPOTS, GLANCE, HALL_PICTURE, CAMERA_AIM } from "../src/modules/party-hall.js";
 import { coneFrom, towardStage, lookAt } from "../src/modules/party-watch.js";
 import { createGuestArt } from "../src/modules/guests.js";
-import { drawDoorNotes, drawFlyer, drawAlarmCloseUp } from "../src/modules/party-art.js";
+import { drawDoorNotes, drawFlyer, drawAlarmCloseUp, cameraLens } from "../src/modules/party-art.js";
 import * as dress from "../src/modules/dress-up.js";
 
 const guests = createGuestArt();
@@ -157,11 +157,6 @@ R.v07_outfit_zoom = () => {
   ctx.drawImage(a, 460, 450, 120, 120, 0, 0, 320, 320);
   ctx.drawImage(b, 540, 450, 120, 120, 320, 0, 320, 320);
   return c;
-};
-R.v08_beard = () => {
-  const c = hall(base());
-  drawBeardInDoorway(c.getContext("2d"), HALL.hallwayDoor, 1.2, 1);
-  return crop(c, 760, 220, 200, 160, 600);
 };
 R.v09_vent_tuft = () => {
   const v = base(2);
@@ -322,8 +317,9 @@ R.h2_camera_count_and_polaroid = () => {
 R.h2_flash = () => {
   const c = hall(partyView(1.1)),
     ctx = c.getContext("2d");
-  drawFlash(ctx, 0.12);
-  return c;
+  const cam = CAST.guests.find((q) => q.id === "camera");
+  drawFlash(ctx, 0.25, cameraLens({ x: cam.x - 28, y: cam.y + 6 }, CAMERA_AIM));
+  return crop(c, 250, 300, 300, 240, 600);
 };
 R.h2_pyramid_and_paw = () => {
   const v = partyView(1.4);
@@ -359,13 +355,6 @@ R.h2_piece_tip_and_fly = () => {
   drawTugWarning(ctx, 460, 540 - 50 * E().hallSizes().squatch - 34, "boots", 2);
   drawLoosePiece(ctx, "tutu", 530, 470, 25, 1.5);
   return crop(c, 360, 380, 260, 200, 650);
-};
-R.h2_beard_in_doorway = () => {
-  const v = partyView(1.2);
-  v.squatch = { x: 812, y: 322, f: 1, pose: "stand", outfit: P6 };
-  const c = hall(v);
-  drawBeardInDoorway(c.getContext("2d"), HALL.hallwayDoor, 1.2, 1);
-  return crop(c, 700, 200, 260, 200, 650);
 };
 R.h2_clap_and_hiccups = () => {
   const v = partyView(1.3);

@@ -7,14 +7,15 @@
 import { HALL, CAST, CAMERA_AIM, HALL_SPEAKER } from "./party-hall.js";
 import { drawCones } from "./party-watch.js";
 import { drawHall } from "./party-draw.js";
-import { drawDoorNotes, drawFlyer, drawOutfit, drawPerson, LOOKS, drawMark, drawBand } from "./party-art.js";
+import { drawDoorNotes, drawFlyer, drawOutfit, drawPerson, LOOKS, drawMark, drawBand, cameraLens } from "./party-art.js";
 import { homeGuardCone } from "./party-alarm.js";
 import { ventTufts } from "./party-vent.js";
 import { wornNow, flyingNow, furShows } from "./party-outfit.js";
 import { drawPyramid, drawPawIcon, drawSnackCloseUp } from "./party-snacks.js";
 import { SONG_LIGHTS } from "./party-dance.js";
-import { drawBeardInDoorway, drawCountdown, drawFlash, drawPolaroid, drawBandNotes, drawClap, drawHiccups, drawSpeakerRing, drawPuffs, drawLoosePiece, drawTugWarning, drawFurryFlyer, drawHeartCone } from "./party-free-art.js";
+import { drawCountdown, drawFlash, drawPolaroid, drawBandNotes, drawClap, drawHiccups, drawSpeakerRing, drawPuffs, drawLoosePiece, drawTugWarning, drawFurryFlyer, drawHeartCone } from "./party-free-art.js";
 import { PHOTO } from "./party-toys.js";
+import { bounceHop, bumpMark, drawBump } from "./party-hallway.js";
 
 const LATE = new Set(["P6", "P7", "P8a", "P8b"]);
 
@@ -105,7 +106,7 @@ export function createView(h) {
       noteCone: (c) => e.noteCone(c),
       // While a line is up or a scripted walk runs, nobody sees him, so no cone fills yellow (drawn equals sight).
       unseen: !(e.get("ctrl") && !e.current()) || p.scene === "P8b",
-      squatch: outlineHidden ? { x: s.x, y: s.y, pose: "hidden" } : { x: s.x, y: s.y, f: s.f || 1, walk: e.walkPhase(), pose: p.pose === "peek" ? "peek" : "stand", flyer: p.flyer === "back", shake, outfit, tip: late ? p.tip : null },
+      squatch: outlineHidden ? { x: s.x, y: s.y, pose: "hidden" } : { x: s.x, y: s.y, f: s.f || 1, walk: e.walkPhase(), pose: p.pose === "peek" ? "peek" : "stand", flyer: p.flyer === "back", shake, outfit, tip: late ? p.tip : null, hop: bounceHop(p) },
       eyes,
       marks,
       shout,
@@ -162,7 +163,7 @@ export function createView(h) {
       drawFlyer(ctx, x, y, 11, k * 4 + i);
     });
   }
-  // Over the hall from P6 on: the pyramid, the beard, the music, the camera, the pieces in the air, the warnings.
+  // Over the hall from P6 on: the pyramid, the music, the camera, the pieces in the air, the warnings.
   function drawLate(ctx, p, t) {
     const e = E(),
       s = h.sq(),
@@ -170,7 +171,7 @@ export function createView(h) {
       gone = (p.close && p.close.gone) || {};
     drawPyramid(ctx, p, s, t);
     for (const f of p.fallen || []) f.to === "plant" && drawLoosePiece(ctx, f.id, f.x, f.y, 22, f.rot);
-    p.beard && drawBeardInDoorway(ctx, HALL.hallwayDoor, t, p.beard.show, p.beard.gone ? -1 : p.beard.yank);
+    drawBump(ctx, bumpMark(p, scale));
     p.band && drawBandNotes(ctx, p.bandAt || CAST.band, t, p.song || 0);
     const cam = p.people.camera;
     if (p.photo && !gone.camera) drawCountdown(ctx, cam.x - 28, cam.y + 6, p.photo.phase === "count" ? p.photo.n : 0, t);
@@ -182,7 +183,8 @@ export function createView(h) {
     // the warning: the piece about to go, drawn big over him
     p.warn && p.warn.id && p.pose === "stand" && drawTugWarning(ctx, s.x, s.y - 50 * scale - 34, p.warn.id, t);
     p.speakerOn && drawSpeakerRing(ctx, HALL_SPEAKER, t);
-    drawFlash(ctx, p.flash);
+    // the flash: a small burst at the camera's lens (never the whole room)
+    gone.camera || drawFlash(ctx, p.flash, cameraLens({ x: cam.x - 28, y: cam.y + 6 }, CAMERA_AIM));
     // the Polaroid slides out to the camera's left, clear of Squatch standing in the shot
     p.photo && p.photo.pol > 0 && drawPolaroid(ctx, cam.x - 118, cam.y - 30, 1 - p.photo.pol / PHOTO.polaroid, (c, x, y, w, hh) => polaroidInside(c, x, y, w, hh, p, t));
   }

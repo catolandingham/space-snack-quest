@@ -25,6 +25,13 @@ export function wornNow(p) {
   for (const spot of Object.keys(BODY_SPOTS)) out[spot] = p.outfit && p.outfit[spot] && !(p.lostPieces || []).includes(spot) ? p.outfit[spot] : "";
   return out;
 }
+/**
+ * True when the boots are on his legs: they stand where his feet are, so a drawing that can leave his own legs and
+ * feet out does (the dance), and he is drawn once. Boots worn anywhere else leave his feet alone.
+ */
+export function bootsOnFeet(worn) {
+  return !!worn && worn.legs === "boots";
+}
 /** True once any piece is gone (or he has nothing on): fur shows, and guests see him as in P2. */
 export function furShows(p) {
   const w = wornNow(p);

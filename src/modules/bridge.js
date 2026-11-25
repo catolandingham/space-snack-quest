@@ -19,6 +19,7 @@ import { createMorningSound } from "./morning-sound.js";
 import { lastCutaway } from "./cutaway.js";
 import { SPEAKER } from "./morning.js";
 import { placeLabel } from "./cap-place.js";
+import { walkRingShows } from "./walk-ring.js";
 
 /**
  * The game-state fields a rebuilt beat may write, through engine().set(field, value). Anything else it
@@ -146,6 +147,8 @@ export function createBridge() {
     placeLabel,
     /** Tap to walk around furniture: the corners to walk through. See tap-path.js. */
     findPath,
+    /** False when a walk-tap's ring would sit on a place the goal outline already marks. See walk-ring.js. */
+    walkRingShows,
     /** Seconds a guest watches Squatch with "?" before it turns into "!". See party-watch.js. */
     seenTooLong: SEEN_TOO_LONG_SECONDS,
     /** The approved guest pictures (guests.js), for the party's own drawing. */

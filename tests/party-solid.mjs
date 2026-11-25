@@ -9,7 +9,7 @@ import { join } from "node:path";
 import { startGame, root } from "./game-page.mjs";
 
 const hall = await import(join(root, "src", "modules", "party-hall.js"));
-const toys = await import(join(root, "src", "modules", "party-toys.js"));
+const hallway = await import(join(root, "src", "modules", "party-hallway.js"));
 const g = await startGame({ port: 8942, name: "party-solid" });
 const { page, ctx, errors } = await g.open("?ch=1");
 await page.evaluate(() => window.__ss.lockedReady);
@@ -57,8 +57,8 @@ g.check("walking right into the snack bar stops at the counter", e.moved >= 8 &&
 // In the sneak the hallway lane above the bar is shut: along the back wall he stops at the bar's end too.
 e = await walk(700, 300 + 10, "ArrowRight", 90, "P2");
 g.check("in the sneak (P2), walking right along the back wall stops at the snack bar too", e.moved >= 8 && e.maxX <= 806, e);
-// In disguise the lane to the hallway doorway is open, but Mops's beard is in the doorway: he stops short ("Mops!"),
-// steps back, and never goes through.
+// In disguise the lane to the hallway doorway is open, but he cannot go through it yet: walking into the doorway he
+// is bounced back a short way ("Mops!") and never goes through.
 e = await walk(700, 300 + 10, "ArrowRight", 150);
 e.after = await page.evaluate(() => {
   const ss = window.__ss,
@@ -72,8 +72,8 @@ e.after = await page.evaluate(() => {
   return { x: Math.round(n.sq.x), y: Math.round(n.sq.y), maxX: Math.round(maxX), room: n.room, hallway: window.SSQ.beat("ch1-party").now().done.hallway };
 });
 g.check(
-  "in disguise (P6), walking right along the back wall he reaches Mops's beard in the hallway doorway, steps back, and never goes through",
-  e.room === "hall" && e.maxX > 806 && toys.inHallwayZone({ x: e.maxX, y: e.y }) && e.after.hallway && e.after.room === "hall" && e.after.maxX < 960 && Math.hypot(e.after.x - hall.HALLWAY_BACK.x, e.after.y - hall.HALLWAY_BACK.y) < 10,
+  "in disguise (P6), walking right along the back wall he reaches the hallway doorway, is bounced back, and never goes through",
+  e.room === "hall" && e.maxX > 806 && hallway.inHallwayZone({ x: e.maxX, y: e.y }) && e.after.hallway && e.after.room === "hall" && e.after.maxX < 960 && e.after.x < hall.HALLWAY_ZONE.x0 && e.after.x > hall.HALLWAY_ZONE.x0 - 70,
   e,
 );
 e = await walk(150, 400, "ArrowDown");

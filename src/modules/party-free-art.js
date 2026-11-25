@@ -19,46 +19,6 @@ export function heart(ctx, x, y, s, fill) {
   ctx.stroke();
 }
 
-// ---------- the hallway doorway (V8) ----------
-/**
- * Mops's long white beard swishing past the hallway doorway (`door`), seen only inside the doorway. `show` (0 to 1)
- * is how far it is in; `yank` (0 to 1, or -1) pulls it out of the doorway fast when the bell rings.
- */
-export function drawBeardInDoorway(ctx, door, t, show = 1, yank = -1) {
-  if (show <= 0 && yank < 0) return;
-  const swing = Math.sin(t * 1.6),
-    out = yank >= 0 ? yank * yank * 80 : 0;
-  ctx.save();
-  ctx.beginPath();
-  ctx.rect(door.x0 - 30, door.y0, door.x1 - door.x0 + 60, door.y1 - door.y0);
-  ctx.clip();
-  const bx = door.x0 + 6 + swing * 18 + (1 - Math.max(show, yank >= 0 ? 1 : 0)) * 40 + out,
-    by = door.y1 - 6;
-  ctx.globalAlpha = yank >= 0 ? 1 : Math.max(0, Math.min(1, show * 1.5));
-  ctx.beginPath();
-  ctx.moveTo(bx - 26, door.y0 + 10);
-  ctx.quadraticCurveTo(bx - 32, by - 30, bx - 14 + swing * 8, by);
-  ctx.quadraticCurveTo(bx + 2, by - 10, bx + 14 - swing * 6, by + 2);
-  ctx.quadraticCurveTo(bx + 18, by - 40, bx + 10, door.y0 + 10);
-  ctx.closePath();
-  ctx.fillStyle = "#f4f5f8";
-  ctx.fill();
-  ctx.lineWidth = 2.5;
-  ctx.strokeStyle = "#9aa1ad";
-  ctx.stroke();
-  for (let i = 0; i < 3; i++) line(ctx, [bx - 18 + i * 9, door.y0 + 26, bx - 14 + i * 9 + swing * 4, by - 14], "#c9ced8", 1.5);
-  ctx.restore();
-  // his humming comes through the doorway (drawn, since sound starts off)
-  if (show > 0.2 && yank < 0)
-    for (let i = 0; i < 2; i++) {
-      const k = (t * 0.5 + i / 2) % 1;
-      ctx.save();
-      ctx.globalAlpha = Math.sin(k * Math.PI) * show;
-      drawNote(ctx, door.x0 - 8 - k * 40, door.y0 + 30 - k * 36 + i * 14, 8, "#2bc48a");
-      ctx.restore();
-    }
-}
-
 // ---------- Mops's heart cone (V13) ----------
 /** Mops's warm cone, as big as everyone's, with hearts floating up in it (PR #35's look, R98 and R104). */
 export function drawHeartCone(ctx, ox, oy, a, half, len, t, k = 1) {
@@ -89,11 +49,33 @@ export function drawCountdown(ctx, x, y, n, t) {
   oval(ctx, x - 6, y - 51, 4, 4, on ? "#ff3b30" : "#6b1d18", 1.5);
   for (let i = 0; i < 3; i++) oval(ctx, x - 10 + i * 8, y - 62, 2.6, 2.6, i < n ? "#ff3b30" : "#fffdf8", 1);
 }
-/** The flash: the whole picture goes white for a moment (`k` 1 to 0). */
-export function drawFlash(ctx, k) {
-  if (!(k > 0)) return;
-  ctx.fillStyle = `rgba(255,255,255,${Math.min(0.85, k * 3.4)})`;
-  ctx.fillRect(0, 0, 960, 640);
+// The flash: how far its glow and its rays reach from the lens (game pixels). Small on purpose: the room never
+// goes white (Brian 2026-11-24, on the white screen: "What is the splash").
+export const FLASH = Object.freeze({ glow: 20, rays: 30 });
+/**
+ * The camera's flash: a small bright burst at the lens (`lens`, a game position), for as long as the flash lasts
+ * (`k` 1 to 0). Nothing else on the picture changes.
+ */
+export function drawFlash(ctx, k, lens) {
+  if (!(k > 0) || !lens) return;
+  const a = Math.min(1, k * 6),
+    g = ctx.createRadialGradient(lens.x, lens.y, 1, lens.x, lens.y, FLASH.glow);
+  ctx.save();
+  ctx.globalAlpha = a;
+  g.addColorStop(0, "rgba(255,255,255,1)");
+  g.addColorStop(0.45, "rgba(255,255,240,.95)");
+  g.addColorStop(1, "rgba(255,255,240,0)");
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(lens.x, lens.y, FLASH.glow, 0, TAU);
+  ctx.fill();
+  // eight short rays, long and short in turn
+  for (let i = 0; i < 8; i++) {
+    const r = i % 2 ? FLASH.rays * 0.7 : FLASH.rays,
+      an = (i / 8) * TAU;
+    line(ctx, [lens.x + Math.cos(an) * 8, lens.y + Math.sin(an) * 8, lens.x + Math.cos(an) * r, lens.y + Math.sin(an) * r], "#ffffff", 3);
+  }
+  ctx.restore();
 }
 /**
  * The Polaroid sliding out of the camera with him in it (`k` 0 to 1 over its time): a white card with the band

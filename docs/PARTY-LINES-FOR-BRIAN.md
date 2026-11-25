@@ -47,7 +47,7 @@ Half one is P1 to P5 (peek to dress-up), built first. Half two is P6 to P8. The 
 | 35 | P6. The bartender, the second time; then she runs to the alarm | Wait a second... fur! | bartender | two | approved | Brian 2026-11-24: Yes to all |
 | 36 | P6. The octopus, after Squatch's first minute in the hall | *hic* Fellow tourist! | octopus | two | approved | Brian 2026-11-24: Yes to all |
 | 37 | P6. Squatch thinks it as the octopus follows | I gotta juke this fool. | sq | two | approved | Brian 2026-11-24: Yes to all |
-| 38 | P6. Squatch thinks it if he heads for the hallway while Mops's beard is there | Mops! | sq | two | approved | Brian 2026-11-24: Yes to all |
+| 38 | P6. Squatch thinks it each time he walks into the hallway doorway and is bounced back (standing in until Brian's new words) | Mops! | sq | two | approved | Brian 2026-11-24: Yes to all |
 | 39 | P2 on. Goal chip while the alarm rings (and in P7) | Squatch: run home and hide! | chip | one | approved | Brian 2026-11-24: Yes to all |
 | 40 | P8b. The wall speaker at closing time | The party's over. Good night, Stormtop! | speaker | two | approved | Brian 2026-11-24: Yes to all |
 | 41 | P8. Squatch at home, both endings | Everyone out there has someone. | sq | two | approved | Brian 2026-11-24: Yes to all |

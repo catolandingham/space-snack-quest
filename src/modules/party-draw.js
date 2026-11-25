@@ -4,7 +4,7 @@
  * first and never changed; everything else goes on top of it.
  *   view = { t, picture, banner: { glow }, lights: { dim } | null, isfred: { x, y, f }, band: { playing }, guests: [{ id, x, y, dance, lean }], bartender: { x, y, f }, guards: [{ x, y, f }],
  *            tripod: { x, y, aim, counting }, cones: [cone], allCones, squatch: { x, y, f, walk, pose ("stand",
- *            "peek" or "hidden"), outfit, flyer, tip, shake } | null, eyes: { x, y } | null, marks: [{ x, y,
+ *            "peek" or "hidden"), outfit, flyer, tip, shake, hop } | null, eyes: { x, y } | null, marks: [{ x, y,
  *            mark }], shout: { x, y } | null, alarm: bool, vent: bool, tufts: [{ x, y, s, rot }],
  *            warning: { k } | null (the vent's fur sign), unseen (nobody can see him now), floor (ctx) (drawn under
  *            everyone), extra: [{ y, f }] (more people, sorted by their feet: Mops at closing time) }
@@ -41,11 +41,12 @@ function drawPeek(ctx, E, sq, scale) {
 
 /** Squatch standing in the hall, with what he wears, a flyer on his back and a warning shake. */
 export function drawSquatchInHall(ctx, E, sq, scale, t) {
-  const shake = sq.shake > 0 ? Math.sin(t * 60) * 2.5 : 0;
-  E.drawSquatch(ctx, sq.x + shake, sq.y, scale, { f: sq.f || 1, walk: sq.walk || 0 });
-  sq.outfit && drawOutfit(ctx, sq.x + shake, sq.y, scale, sq.outfit, sq.f || 1, sq.tip);
+  const shake = sq.shake > 0 ? Math.sin(t * 60) * 2.5 : 0,
+    y = sq.y - (sq.hop || 0); // a bump lifts him off the floor for a moment (the hallway doorway's push back)
+  E.drawSquatch(ctx, sq.x + shake, y, scale, { f: sq.f || 1, walk: sq.walk || 0 });
+  sq.outfit && drawOutfit(ctx, sq.x + shake, y, scale, sq.outfit, sq.f || 1, sq.tip);
   // the flyer stuck to his back fur: on the side away from where he faces, big enough to see
-  sq.flyer && drawFlyer(ctx, sq.x + shake - (sq.f || 1) * 9 * scale, sq.y - 24 * scale, 15 * scale, -(sq.f || 1) * 0.35);
+  sq.flyer && drawFlyer(ctx, sq.x + shake - (sq.f || 1) * 9 * scale, y - 24 * scale, 15 * scale, -(sq.f || 1) * 0.35);
 }
 
 export function drawHall(ctx, E, guestArt, view) {
