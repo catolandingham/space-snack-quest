@@ -4,24 +4,29 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–116 | ## Where main is (Chapter 1 redesign) |
-| 117–131 | ## Register |
-| 132–153 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 154–174 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 175–187 | ## Phase 2 (plan section 4, T13 to T18) |
-| 188–210 | ## Phase 1 (plan section 3, T5 to T12) |
-| 211–224 | ## SS40–SS44 |
-| 225–242 | ## Story rows |
-| 243–261 | ## Reset section |
-| 262–272 | ## Still open |
-| 273–276 | ## Chapter 1 replot, recorded and not built |
-| 277–434 | ## Changelog |
+| 24–121 | ## Where main is (Chapter 1 redesign) |
+| 122–136 | ## Register |
+| 137–158 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 159–179 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 180–192 | ## Phase 2 (plan section 4, T13 to T18) |
+| 193–215 | ## Phase 1 (plan section 3, T5 to T12) |
+| 216–229 | ## SS40–SS44 |
+| 230–247 | ## Story rows |
+| 248–266 | ## Reset section |
+| 267–277 | ## Still open |
+| 278–281 | ## Chapter 1 replot, recorded and not built |
+| 282–439 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-26 (round D), draft PR #89 on `feat/ch1-bedtime-story`, not merged. Done (Brian's notes of 2026-11-26): Mops's mop bucket as one drawing (`src/modules/mop-bucket.js`) in the bedtime pictures and over the home room's painted bucket; the baby a furry ball in it; the tourists peeking in (wordless, plays by itself) before "Nothing to see here!"; the crate story's memory look; Joe's theme sung at bedtime from the ask (replaces Reawakening; bedtime added to SINGING_OK); Mops falls asleep like a fainting goat beside the bed (replaces him walking out); Mops's Moon Pie line approved; the Station Official docs agree with the game. Docs match main: yes.
+- Next (the morning branch, `feat/ch1-day2-morning`): Day 2 starts with Mops gone (`ch1Day2Begin` hides him); he should start the morning asleep on his back beside the bed (`mops-asleep-art.js` MOPS_ASLEEP and drawMopsTurned) and get up and leave after the PA, not leave in the dark.
+- Questions for Brian: the new bucket drawn over the locked home picture's painted bucket (his yes was said about the bedtime picture's bucket, "Let's go with it moving forward"; confirm the home room too); the "?" over the tourists (suggested); the light going down by itself; the morning's beard-wringing close-up keeps its own bucket (change it to the new one?); the old flashback "fb1bucket" (scene S4) and the "My baby bed! A mop bucket." hotspot (scene S1) are in the old Chapter 1 code the asks page says to delete (`10-ch1.js`, `11-ch1-hall.js`); left alone.
+- NOT ASSESSED: how the singing lines up with the pictures at a real kid's reading pace; the bedtime video (recorded after the merge).
 
 2026-11-26 (round C), draft PR #89 on `feat/ch1-bedtime-story`, not merged. Done: `feat/party-half-two` merged in (merge commit; the party branch's 00-core.js music and alarm kept as they are; Floating in Space stays deleted). Bedtime plays Reawakening (Brian's music table of 2026-11-26): the bedtime story says when it is showing (`showing()`, as the TV story does) and `bridge.js` turns the home cue into "bedtime" then; no track is written into the beat. Mops's bleat: `window.SSQ.playSoundPick(name)` (bridge.js) plays the game's sound picks through the same player as the morning song's bleat (`music-picks.js` playSound), so the bedtime story's "...Weeee-eenn-nnttt?" now plays `sounds/goat-bleat.mp3`. Tests: `tests/bedtime-story.mjs` (the cue is "bedtime" every frame from the walk to bed to the fade, the bleat on the weent picture only, one bleat in the whole story, the clip started). Docs match main: yes. NOT ASSESSED: how loud Reawakening sits under the snores on a phone speaker. Not yet played by a person.
 - (2026-11-26, the line below about the bleat player is done: `window.SSQ.playSoundPick` exists now.)
@@ -36,7 +41,7 @@
 - Placeholders (not pins): the story drawn 1.6 times the room; walking 160, Mops 150 to 170 a second; each falling-asleep part 2 to 2.7 s; the snore 2.5 times its sound's own level (measured in the video: see the PR).
 
 2026-11-26, draft PR #87, not merged. Done: Brian's five showing-6 notes (README, "Chapter 1 redesign", the 2026-11-26 paragraph): sight sees his whole drawn body (the cone drawn on him is the cone that sees him), the crowd's hiss gone, one music table with no singing away from bedtime, his own Croc Boys song for the band, the photo straight after his first dance, guards round the furniture. Open for Brian:
-- Music (Brian's picks of 2026-11-26, built in `src/modules/music-picks.js`): the home rotation is Carefree, Morning, Rainbows; bedtime's Reawakening waits for the bedtime story's branch to send its "bedtime" cue; Mops's closing-time hum is "track to be chosen by Brian" (stand-in: silence); the "mops-bleat" sound waits for its clip. Mops's approved line "Floating in space! It's our favorite song!" and Squatch's "♪ I'm floating in space! ♪" now sit over Goating in Space: keep or change the words? There is no credits screen in the game: the CC BY credits are in `music/CREDITS.txt` and the README; does he want them on a screen too?
+- Music (Brian's picks of 2026-11-26, built in `src/modules/music-picks.js`): the home rotation is Carefree, Morning, Rainbows; bedtime's Reawakening waits for the bedtime story's branch to send its "bedtime" cue; Mops's closing-time hum is "track to be chosen by Brian" (stand-in: silence); the "mops-bleat" sound waits for its clip. Mops's approved line "Floating in space! It's our favorite song!" and Squatch's "♪ I'm floating in space! ♪" now sit over Goating in Space: keep or change the words? There is no credits screen in the game: the CC BY credits are in `music/CREDITS.txt` and the README; does he want them on a screen too? (Superseded 2026-11-26, round D: bedtime plays Joe's theme with its singing; see the round D entry above.)
 - Brian's answers of 2026-11-26, built: the vent sucking in costume pieces stays (his yes); the octopus stays at 170 and gives Squatch a one-second head start (`OCT.headStart`); the one FUR alarm of Chapter 1 is the red alert whoop (option 1 of `tools/alarm-choices.html`; `BOARD.alarm`, and the older program's alarm sound through `bridge.js` `alarmSound`, so every chapter's alarm uses it); "I've never gotten to dance at a party." is back in P3 after the band's line, before the flyer sneak (at home line 80 says nearly the same, "That party looked so fun. I've never gotten to dance at one.": keep both?); the new party drawings stay as placeholders; Mops's goat bleat (`sounds/goat-bleat.mp3`) on his bleat line and in Goating in Space's three gaps (0:36.6, 1:04.1, 1:35.8).
 - Approval needed, visual: a dashed cone close to Squatch is drawn darker and thicker (`CONE_NEAR` in `party-watch.js`), so a kid sees the cone about to touch him on a phone; the guards' new routes round the plants; the flyer sneak's re-searched sweeping cones.
 - The guards' flashlights: in the hall they carry none (plain sight cones from the moment they walk in until they walk out); at home the guard's flashlight beam is on from the doorway until Mops sends him off (DECISIONS 2026-11-24 says he carries one, not when it is on). On only while searching?

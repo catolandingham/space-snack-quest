@@ -1,7 +1,8 @@
 /**
  * No standing spot in Chapter 1's rooms overlaps furniture or props (Brian 2026-11-25, showing-5 note 11: "Mops
  * stands on the bucket"). Every place someone is put or walked to and stands (the party at home and in the hall,
- * the talk, Mops sending the guard off, the morning, home alone, the bedtime story) is checked against the room's things:
+ * the talk, Mops sending the guard off, the morning, home alone, the bedtime story, and Mops lying asleep there) is
+ * checked against the room's things:
  *   home  the crate bed, the painted bucket and the Guardian box (the locked home picture v6; the same boxes the
  *         room's solids use, src/game/00-core.js), with the room drawing people big: a person standing there takes
  *         up FOOT.home round their feet, up to their knees, so a body drawn over a low prop counts
@@ -63,6 +64,21 @@ for (const [name, p] of Object.entries(homeSpots)) {
   for (const [thing, b] of Object.entries(HOME_FURNITURE)) hit(box, b) && homeBad.push({ spot: name, at: [p.x, p.y], thing });
 }
 check(`home: none of ${Object.keys(homeSpots).length} standing spots overlaps the bed, the bucket or the Guardian box`, homeBad.length === 0, homeBad);
+// Mops asleep on the floor at bedtime (Brian 2026-11-26, #33: tipped over, then on his back, feet in the air), "near the
+// crate bed (not overlapping it)": his whole drawn body, on his side and on his back, at a Mops size of 3.45 game px a unit
+// (no smaller than the room draws him: tests/bedtime-story.mjs checks the size he is drawn asleep at), and the floor under it (FOOT.home.up above the floor line), clear
+// of the bed, the bucket and the Guardian box.
+{
+  const { mopsTurnedBox, MOPS_ASLEEP } = await mod("mops-asleep-art.js");
+  const bad = [];
+  for (const turn of [0, 0.25, 0.5, 0.75, 1]) {
+    const { box } = mopsTurnedBox(MOPS_ASLEEP.x, MOPS_ASLEEP.floor, 3.45, MOPS_ASLEEP.f, turn, MOPS_ASLEEP.headDrop);
+    const floor = { x0: box.x0, x1: box.x1, y0: MOPS_ASLEEP.floor - FOOT.home.up, y1: MOPS_ASLEEP.floor + FOOT.home.down };
+    for (const [thing, f] of Object.entries(HOME_FURNITURE)) hit(floor, f) && bad.push({ turn, thing, box });
+    box.x0 < HOME_FURNITURE.bed.x1 && bad.push({ turn, thing: "bed (drawn over it)", box });
+  }
+  check("home: Mops falling asleep and asleep on his back beside the bed overlaps no bed, bucket or Guardian box", bad.length === 0, bad);
+}
 // the two places Mops stood on the bucket in showing 5 would fail this check (they are kept here as its proof)
 const onBucket = (p) => hit({ x0: p.x - FOOT.home.side, x1: p.x + FOOT.home.side, y0: p.y - FOOT.home.up, y1: p.y + FOOT.home.down }, HOME_FURNITURE.bucket);
 check("the check catches showing 5's Mops on the bucket (sending the guard off at 600, 578; the talk at 570, 596)", onBucket({ x: 600, y: 578 }) && onBucket({ x: 570, y: 596 }));

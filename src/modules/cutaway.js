@@ -24,7 +24,7 @@
  */
 import { HOMEWORK_PANELS } from "./homework-cutaway.js";
 import { WOOKIEE_PANELS } from "./tv-story-art.js";
-import { BEDTIME_PANELS, GUARDIANS_PANELS } from "./bedtime-story-art.js";
+import { BEDTIME_PANELS, GUARDIANS_PANELS, BEDTIME_AUTO } from "./bedtime-story-art.js";
 
 const INK = "#1e2430";
 const GLOW = "#ffcf33",
@@ -50,7 +50,7 @@ let last = null;
  * homework desk is one whole loop (3 s), ending with all three lines written. The wringing picture has a beard
  * to tap (31a) and the homework sheet has words to read, so they wait.
  */
-export const AUTO = Object.freeze({ beard: [3.6, 0], homework: [3.0, 0] });
+export const AUTO = Object.freeze({ beard: [3.6, 0], homework: [3.0, 0], moonpie: BEDTIME_AUTO }); // (moonpie: the tourists peeking in, 2026-11-26)
 
 /**
  * What each picture sounds like, timed to its drawing (synth.js names): `loop` seconds a loop (0: once), and
