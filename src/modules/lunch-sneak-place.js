@@ -58,7 +58,7 @@ export const COUNTER_WATCHER = Object.freeze({ id: "robot", x: 742, y: 500, away
  * in tests/lunch-sneak.mjs: their cones never reach his way (his doorway, the plant, the crates, the hallway doorway
  * and the counter, and the walks between), so the watchers' rhythm stays the whole timing; they are there for life
  * in the hall and for a kid who wanders off the way. Only the left part of the hall leaves room for that (the grid
- * found none elsewhere). PLACEHOLDERS. `v`: game pixels a second; `at`: seconds into the walk as the lunch starts.
+ * found none elsewhere). PLACEHOLDERS. `v`: game pixels a second; `at`: seconds into the walk as the lunch starts (their clock stops during an alarm).
  */
 export const WANDERERS = Object.freeze([
   Object.freeze({ id: "backpack", a: Object.freeze({ x: 240, y: 360 }), b: Object.freeze({ x: 240, y: 575 }), v: 30, turn: 1.4, sweep: 1, at: 2, wander: true }),
@@ -190,8 +190,7 @@ export const LUNCH_PACE = Object.freeze({
   lookRight: 1.2,
   toSquatch: 0.6,
   hearts: 1.2,
-  mopWalk: 40, // how fast he mops his way along the hallway floor
-  wetDries: 6, // a streak fades out over this long
+  mopWalk: 40, // how fast he mops his way along the hallway floor (his streaks stay while the lunch is on)
   give: 0.5,
   heart: 0.9,
   eat: 3.8, // the wordless eating cutaway

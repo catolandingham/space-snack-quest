@@ -113,9 +113,10 @@ export function createLunchSneak(bridge) {
   const mopsScale = () => sqScale() * 1.15;
   const watchers = (l) => (l.counter ? [...WATCHERS, ...WANDERERS, COUNTER_WATCHER] : [...WATCHERS, ...WANDERERS]);
   // Where watcher `w` stands and looks now: a wanderer is on his walk (the beat's clock); the others stand where they
-  // are (l.people: the alarm moves them back and forth) and look on their rhythm.
+  // are (l.people: the alarm moves them back and forth) and look on their rhythm. A wanderer's clock (l.wt) stops
+  // while an alarm is on: he stands where he was until it is over, so nobody jumps when it ends.
   function personNow(l, w) {
-    if (w.wander) return wandererNow(w, l.t);
+    if (w.wander) return wandererNow(w, l.wt || 0);
     const at = l.people[w.id] || w;
     return { x: at.x, y: at.y, a: watcherNow(w, w === COUNTER_WATCHER ? l.counterT || 0 : l.t).a };
   }
@@ -150,6 +151,7 @@ export function createLunchSneak(bridge) {
     mops: null,
     ballNear: {},
     wet: [],
+    wt: 0,
     ...(extra || {}),
   });
 
@@ -562,6 +564,7 @@ export function createLunchSneak(bridge) {
     // the watchers keep their rhythm whenever the hall is on screen
     if (inHall()) {
       l.t += dt;
+      l.alarm || (l.wt = (l.wt || 0) + dt);
       l.counter && (l.counterT = (l.counterT || 0) + dt);
     }
     if (l.step === "handoff" && !inHall()) return void (l.step = "done");
@@ -868,7 +871,8 @@ export function createLunchSneak(bridge) {
       const door = !l.counter && !l.alarm && e.get("ctrl") && !e.current() ? spots().find((q) => q.id === "lu-door") : null;
       if (door) {
         e.markGoal(door);
-        drew.outline = door.id;
+        const mark = bridge.goalMark.now(e.time());
+        drew.outline = mark && mark.box ? door.id : "";
       }
       return true;
     },
@@ -949,7 +953,7 @@ export function createLunchSneak(bridge) {
       if (!l) return [];
       const e = E(),
         feet = (x, y) => ({ x0: x - 25, x1: x + 25, y0: y - 14, y1: y + 8, person: 1 });
-      const people = Object.values(l.people).map((g) => feet(g.x, g.y));
+      const people = [...Object.values(l.people), ...(e.room() === "hall" ? WANDERERS.map((w) => personNow(l, w)) : [])].map((g) => feet(g.x, g.y));
       const mops = l.counter && e.get("moPose") !== "hidden" ? [feet(e.pos("mops").x, e.pos("mops").y)] : [];
       return [...LUNCH_SOLIDS, ...people, ...mops];
     },
