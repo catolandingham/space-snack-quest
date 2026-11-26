@@ -24,6 +24,12 @@
  *                  Squatch asleep) through the night, the wake, the rocket, the Guardian Box, the calendar and the
  *                  lunch bag, to the lunch sneak's first moment in the party hall. A kid's taps: the floor to walk,
  *                  the action button, NEXT. With SHOWING_STILLS=<dir>, a still of each step goes there too.
+ *     lunch        beats 25 to 27, the lunch sneak: from TAKE · lunch at home through the sneak past the guests (the
+ *                  cones timed: the finger goes when the watcher has just looked away), the hallway, GIVE · lunch, Mops
+ *                  eating the lunch and the bag, back behind the snack counter, one Moon Pie, to beat 28's first line.
+ *     lunchseen    the lunch sneak's capture rule: he steps out while a guest looks; FUR!, the alarm, the guards, back
+ *                  into the plant, "They lost you."; then seen again and standing still: the LOCKUP card, and the
+ *                  restart hidden in the plant. Both write a still of each step to SHOWING_STILLS=<dir> if it is set.
  *   SHOWING_SILENT=1 leaves the sound out.
  */
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
@@ -32,7 +38,7 @@ import { join, dirname } from "node:path";
 import { startGame, sleep, root } from "../tests/game-page.mjs";
 
 const [which, outFile] = process.argv.slice(2);
-const WHICH = ["keep", "back", "flyer", "early", "ventfur", "ventcostume", "tv", "bedtime", "morning"];
+const WHICH = ["keep", "back", "flyer", "early", "ventfur", "ventcostume", "tv", "bedtime", "morning", "lunch", "lunchseen"];
 if (!WHICH.includes(which) || !outFile) {
   console.error("Usage: node tools/party-showing.mjs <" + WHICH.join("|") + "> <out.mp4>");
   process.exit(2);
@@ -46,7 +52,7 @@ const hall = await import(join(root, "src", "modules", "party-hall.js"));
 const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 2 };
 const g = await startGame({ port: 9360 + WHICH.indexOf(which), name: "party-showing-" + which });
 const sneak = await import(join(root, "tests", "party-sneak.mjs"));
-const { page, errors } = await g.open(which === "tv" || which === "bedtime" || which === "morning" ? "?ch=1" : "?beat=" + (which === "flyer" ? "party:P3" : which === "ventfur" ? "party:P2" : "party:P6"), PHONE);
+const { page, errors } = await g.open(which === "tv" || which === "bedtime" || which === "morning" || which === "lunch" || which === "lunchseen" ? "?ch=1" : "?beat=" + (which === "flyer" ? "party:P3" : which === "ventfur" ? "party:P2" : "party:P6"), PHONE);
 await sleep(600);
 SILENT || (await page.click("#ss-sound").catch(() => {}));
 await sleep(600);
@@ -442,8 +448,20 @@ if (which === "morning") {
   });
   ok || (await fail("the bedtime story did not reach Squatch asleep"));
 }
+// The lunch videos start at home on Day 2 with the lunch bag in reach (the home morning's last step), or in the hall.
+if (which === "lunch" || which === "lunchseen") {
+  await page.evaluate(() => window.__ss.lockedReady);
+  await page.evaluate((w) => {
+    const ss = window.__ss,
+      n = ss.op;
+    n.q = [];
+    n.cur = null;
+    ss.ch1JumpBeat(22);
+    w === "lunch" ? window.SSQ.beat("ch1-home-morning").jump("lunch") : window.SSQ.beat("ch1-lunch").jump("plant");
+  }, which);
+}
 await startRecording();
-await sleep(which === "morning" ? 300 : 1800);
+await sleep(which === "morning" || which === "lunch" || which === "lunchseen" ? 300 : 1800);
 if (which === "keep") {
   await dance(16, 4);
   // toward the wall by the alarm box, where the row will stand; the first song ends and the photo moment begins
@@ -724,6 +742,135 @@ if (which === "morning") {
   await sleep(600);
   await still("out-the-door-lunch-sneak-starts");
   await sleep(1500);
+}
+if (which === "lunch" || which === "lunchseen") {
+  const STILLS = process.env.SHOWING_STILLS || "";
+  STILLS && mkdirSync(STILLS, { recursive: true });
+  let k = 0;
+  const still = async (name) => STILLS && (await page.screenshot({ path: join(STILLS, (which === "lunch" ? "" : "seen-") + String(++k).padStart(2, "0") + "-" + name + ".png") }));
+  const lu = () =>
+    page.evaluate(() => {
+      const n = window.__ss.op,
+        l = n.ch1Lunch || {},
+        b = window.SSQ.beat("ch1-lunch"),
+        w = (id) => {
+          const q = [...b.place.WATCHERS, b.place.COUNTER_WATCHER].find((x) => x.id === id);
+          return b.place.watcherNow(q, id === "robot" ? l.counterT || 0 : l.t || 0);
+        };
+      return { step: l.step, pose: l.pose, alarm: l.alarm ? l.alarm.phase : "", teal: w("teal"), camera: w("camera"), robot: w("robot"), jail: !!(n.cur && n.cur.id === "jail") };
+    });
+  const next = () => page.evaluate(() => ((window.__ss.op.bt = 1), window.__ss.opTap()));
+  const stepIs = (name, ms = 10000) => until(async (q) => (await lu()).step === name && q.ctrl, ms);
+  const walkTo = async (x, y, act, ms = 9000) => {
+    await floor(x, y);
+    (await until((q) => q.act === act, ms, async (q) => q.ctrl && !q.act && Math.hypot(q.x - x, q.y - y) > 30 && !q.cur && (await sleep(700), await floor(x, y)))) || (await fail("no " + act + " after walking to " + x + ", " + y));
+  };
+  // a kid who has watched the cone: waits for the watcher to have just looked away
+  const awayNow = (id, ms = 9000) => until(async () => ((w) => w.phase === "away" && w.k < 0.08)((await lu())[id]), ms);
+  const lookNow = (id, ms = 9000) => until(async () => ((w) => w.phase === "look" && w.k > 0.1 && w.k < 0.3)((await lu())[id]), ms);
+  if (which === "lunch") {
+    await sleep(700);
+    await still("take-lunch-at-home");
+    await press();
+    await sleep(500);
+    await still("walk-in-mops-mops-his-way-out");
+    await stepIs("plant");
+    await sleep(900);
+    await still("the-plant-glows");
+    await walkTo(396, 552, "HIDE · plant");
+    await press();
+    await sleep(700);
+    await still("hidden-in-the-plant-the-crates-glow");
+    await awayNow("teal");
+    await still("she-looks-away-go");
+    await walkTo(600, 478, "HIDE · crate");
+    await press();
+    await sleep(700);
+    await still("hidden-behind-the-crates-the-doorway-glows");
+    await awayNow("camera");
+    await walkTo(905, 320, "SNEAK · hallway");
+    await still("sneak-hallway");
+    await press();
+    await until((q) => q.room === "passage", 4000);
+    await sleep(900);
+    await still("the-hallway-mops-mopping");
+    await sleep(900);
+    await still("mops-looks-round");
+    await stepIs("give");
+    await sleep(700);
+    await still("mops-glows-give-him-his-lunch");
+    await walkTo(540, 488, "GIVE · lunch");
+    await press();
+    await sleep(300);
+    await still("the-bag-goes-to-mops");
+    await until((q) => q.cur === "bub", 4000);
+    await sleep(700);
+    await still("my-lunch-youre-the-best");
+    await sleep(1400);
+    await next();
+    await until((q) => q.cur === "cutaway", 3000);
+    await sleep(900);
+    await still("mops-eats-the-sandwich");
+    await sleep(1400);
+    await still("then-the-bag");
+    await stepIs("back", 8000);
+    await sleep(600);
+    await still("go-on-the-doorway-is-outlined");
+    await floor(50, 345);
+    await until(async () => (await lu()).step === "one", 9000);
+    await sleep(500);
+    await still("behind-the-counter-ducked-one-pie");
+    await stepIs("snack", 8000);
+    await sleep(500);
+    await still("grab-one-snack-he-looks-away");
+    await press();
+    await sleep(700);
+    await still("he-reaches-over-for-one");
+    await until(async () => (await lu()).step === "chew", 3000);
+    await sleep(400);
+    await still("he-eats-it");
+    await until((q) => q.cur === "bub", 5000);
+    await sleep(800);
+    await still("beat-28-the-ship-is-coming");
+    await sleep(1600);
+  } else {
+    await sleep(600);
+    await walkTo(396, 552, "HIDE · plant");
+    await press();
+    await sleep(600);
+    await still("hidden-in-the-plant");
+    // out into the open while she looks across: a kid who did not wait
+    await lookNow("teal");
+    await floor(498, 520);
+    await until(async () => !!(await lu()).alarm, 4000);
+    await sleep(300);
+    await still("seen-fur");
+    await until(async () => (await lu()).alarm === "pull", 4000);
+    await sleep(900);
+    await still("the-alarm-pulled");
+    await until(async () => (await lu()).alarm === "search", 6000);
+    await sleep(300);
+    await still("guards-come-hide");
+    await walkTo(396, 552, "HIDE · plant", 5000);
+    await press();
+    await sleep(900);
+    await still("hidden-they-search");
+    await until(async () => !(await lu()).alarm, 15000);
+    await sleep(500);
+    await still("they-lost-you");
+    // seen again, and he stands still: a guard catches him
+    await lookNow("teal", 12000);
+    await floor(498, 520);
+    await until(async () => (await lu()).jail, 20000);
+    await sleep(800);
+    await still("caught-the-lockup-card");
+    await sleep(2600);
+    for (let i = 0; i < 6 && (await st()).cur; i++) (await tap(187, 300), await sleep(900));
+    await stepIs("crate", 6000);
+    await sleep(700);
+    await still("restarts-hidden-in-the-plant");
+    await sleep(1200);
+  }
 }
 if (which === "early") {
   await dance(10, 0);
