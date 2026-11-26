@@ -4,24 +4,32 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–104 | ## Where main is (Chapter 1 redesign) |
-| 105–119 | ## Register |
-| 120–141 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 142–162 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 163–175 | ## Phase 2 (plan section 4, T13 to T18) |
-| 176–198 | ## Phase 1 (plan section 3, T5 to T12) |
-| 199–212 | ## SS40–SS44 |
-| 213–230 | ## Story rows |
-| 231–249 | ## Reset section |
-| 250–260 | ## Still open |
-| 261–264 | ## Chapter 1 replot, recorded and not built |
-| 265–420 | ## Changelog |
+| 24–112 | ## Where main is (Chapter 1 redesign) |
+| 113–127 | ## Register |
+| 128–149 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 150–170 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 171–183 | ## Phase 2 (plan section 4, T13 to T18) |
+| 184–206 | ## Phase 1 (plan section 3, T5 to T12) |
+| 207–220 | ## SS40–SS44 |
+| 221–238 | ## Story rows |
+| 239–257 | ## Reset section |
+| 258–268 | ## Still open |
+| 269–272 | ## Chapter 1 replot, recorded and not built |
+| 273–428 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-26, draft PR on `feat/ch1-day2-morning` (stacked on `feat/ch1-bedtime-story`), not merged. Done: beats 22 to 24, the home morning, as a module (`ch1-home-morning`): night to morning and the wake with no words, PICK UP · rocket and the Guardians line, the thought bubble of the box, OPEN · closet, PUT IN · box with the "MY GARDIANS" close-up, the calendar with today marked, "He forgot his lunch!", TAKE · lunch into today's lunch sneak. The old gift, box, calendar and lunch steps are deleted from `src/game/`. Open for Brian:
+- Is the calendar step required (as built, the walkthrough's "Player: Look at the calendar"), or optional with the lunch bag as the goal?
+- Words "needs-yes" (`src/modules/home-morning-lines.js`): PICK UP · rocket and PUT IN · box (the brief's prompts; the game said TAKE · gift and PUT · box). Everything else was in the game, decided or approved.
+- The box stays out on the floor by the closet after the gift goes in (his 2026-11-16 note "takes it out"); the approved closet picture has it in the closet. Out, or back in?
+- Mops leaving is heard, not seen, in the dark. Show him setting the lunch bag down on his way out (it would put him in the room the morning the gift appears)?
+- New drawings waiting for his eye: the toy rocket and its tied-on note (blank), the lunch bag (no words; the old one said MOPS), the box close-up (its approved G front, a taped "MY GARDIANS" label on the lid), Squatch's stretch and his hold-up, the heart, today's crossed-off days.
+- Placeholders (not pins): rocket 46 px (a third of Squatch), bag 30 x 38, the close-up 5.5 times the room; the night 2.0 s, the wake about 2.4 s, the hold 0.9 s, the thought bubble 2.2 s; footsteps every 0.3 s.
 
 2026-11-25 (night), draft PR on `feat/ch1-bedtime-story`, not merged. Done: beat 21, the bedtime story, as a module (`ch1-bedtime-story`): the wordless ask (he pats his crate bed, a thought bubble with a little Moon Pie crate, Mops comes over), the old crate story's pictures from 71ec66e (crate, baby, beard, "...Baaa?") at the home room's proportions, Mops's line unchanged, asleep with a gentle snore, then Day 2. The "ch1moon" caption box is deleted. Open for Brian:
 - Words, all "needs-yes" (`src/modules/bedtime-story-lines.js`): the three old captions, "...Baaa?", the crate's MOON PIES badge, the "!" and "z z z" marks, and his bedtime line.

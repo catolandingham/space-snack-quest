@@ -5,10 +5,10 @@
 | --- | --- |
 | 26–32 | # Brian's asks that are not in the game yet |
 | 33–41 | ## 1. Build next |
-| 42–59 | ## 2. Needs your eyes |
-| 60–63 | ## 3. Your instructions disagree |
-| 64–65 | ## 4. Everything else not built |
-| 66–84 | ### Morning and home |
+| 42–60 | ## 2. Needs your eyes |
+| 61–64 | ## 3. Your instructions disagree |
+| 65–66 | ## 4. Everything else not built |
+| 67–84 | ### Morning and home |
 | 85–95 | ### Party |
 | 96–107 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
 | 108–111 | ### Party video notes and answers, 2026-11-24 (not built yet) |
@@ -43,6 +43,7 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 
 - **Pick the FUR alarm** (2026-11-25, showing-5 note 8). Five made-up alarm sounds on one page, `tools/alarm-choices.html`; the one he picks becomes the only alarm in Chapter 1. Not changed in the game until he picks.
 - **The Moon Pie bedtime story (beat 21).** Brian 2026-11-25: the old crate story "is the bedtime story (beat 21) and gets the same sizing fix". Built on branch `feat/ch1-bedtime-story` (draft, not merged) with the old captions and his bedtime line, all needs-yes; the mop bucket picture is off for his answer. Waiting for his eyes.
+- **The home morning (beats 22 to 24).** Built on branch `feat/ch1-day2-morning` (draft, not merged), including "Make the first gift obvious" ("that needs to be more obvious.", S 92): the rocket is the only thing outlined and glowing when he wakes. Placeholder drawings and two prompts wait for his yes.
 - **Home room objects.** "the new version of the crate in the room is off, at least in the picture you showed." (G 597). Covers crate, bed, bucket, bedtime-story look, janitor facing. Walls and furniture merged today; check.
 - **The dance game.** A scrolling-arrow dance exists but you said it never worked. "The dance game, hopefully that can be done clean and simple. If not, forget it." (G 516). "the fur shows at the dance scene" (G 603) is unclear.
 - **The balloon game.** "The balloon thing has just never worked when we've tried it before ... if it's all wonky and confusing, forget it." (G 516); "the balloon's just total nonsense" (K 336). Still in main (12-ch1-redesign.js:808-834).
@@ -67,7 +68,6 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 - Thought bubbles for animals. "Thought bubble is fine just was pointing out it was not in the version you showed" (S 593).
 - Vent strings, crossed-off planets, toy bin. "Draw strings between postings and make it more obvious he's searching like a detective" (S 590).
 - Mops goat body and tail. "Full beard to floor, remember!! And more goat body" (S 522). He is called "Janitor, goat janitor is what mops is called." (G 565); humor "where do we have humor about him being the planet's first goat / janitor - aka ganitor? Need to add that in." (S 218). Old unused scenes hold some of these words.
-- Make the first gift obvious. "that needs to be more obvious." (S 92).
 - Things to touch on the walk to the room. "maybe look around, maybe there's another thing or two he can interact with on the way." (S 405).
 - Bedtime story flashback: Mops at his desk, Guardians, big furry Sasquatches. "I agree with A, that works really well." (S 429).
 - Janitor finds Squatch and keeps him. "I Know What It's Like To Be One Of A Kind" (P L134).
