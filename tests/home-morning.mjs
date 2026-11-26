@@ -59,7 +59,7 @@ g.check("the bedtime story plays to Squatch asleep first", asleep);
 const run = !(registered && asleep)
   ? null
   : await page.evaluate(
-      ({ GUARDIANS, LUNCH }) => {
+      ({ GUARDIANS, LUNCH, L_BAG }) => {
         const ss = window.__ss,
           n = ss.op,
           beat = window.SSQ.beat("ch1-home-morning"),
@@ -209,6 +209,23 @@ const run = !(registered && asleep)
         // 5. the lunch goal; by the wardrobe the calendar can still be looked at (optional)
         const lunchFar = atStep("lunch-far");
         out.offers = (ss.spotsNow() || []).filter((x) => x && x.verb).map((x) => x.verb + " · " + x.cap);
+        // the words painted on the lunch bag's picture (part of its drawing, not the game's text log): what the room's
+        // canvas writes in one frame with the bag on the floor
+        out.bagWords = (() => {
+          const c = document.querySelector("canvas").getContext("2d"),
+            said = [],
+            fill = c.fillText;
+          c.fillText = function (t, ...rest) {
+            said.push(t);
+            return fill.call(this, t, ...rest);
+          };
+          try {
+            ss.drawFrame();
+          } finally {
+            delete c.fillText;
+          }
+          return said.filter((t) => t === L_BAG);
+        })();
         const cal = lunchFar;
         press();
         tick(0.5);
@@ -238,19 +255,11 @@ const run = !(registered && asleep)
         out.debug = d();
         out.steps = d().steps;
         out.list = { rocket, closetFar, closet, box, cal, lunchFar, lunch };
-        // the words painted on the lunch bag's picture (they are part of its drawing, not the game's text log)
-        out.bagWords = (() => {
-          const c = document.createElement("canvas").getContext("2d"),
-            said = [],
-            fill = c.fillText.bind(c);
-          c.fillText = (t, ...rest) => (said.push(t), fill(t, ...rest));
-          window.SSQ.beat("ch1-home-morning").drawHeldBag(c, 100, 100);
-          return said;
-        })();
+
         // 6. the step restart (↺) at the closet step puts him back there, on that step
         return out;
       },
-      { GUARDIANS, LUNCH },
+      { GUARDIANS, LUNCH, L_BAG: L["sign-bag"] },
     );
 
 const R = run || { prompts: [], wordless: [], list: {}, steps: [], debug: { sounds: {}, sizes: {}, things: {} }, drawn: {} };
@@ -325,7 +334,7 @@ g.check("today's close-up: days 1 to 13 crossed off, the circled Moon Pie day (1
 g.check("the closet shut, the lunch bag is outlined while he says his line, word for word, over him, no chip", R.line2 && R.line2.who === "sq" && R.line2.text === LUNCH && R.line2.chip === "" && !!R.line2.bagOutline, R.line2);
 g.check("the lunch line waits for NEXT", R.line2Held);
 g.check("TAKE · lunch hands over to today's lunch sneak: the party hall, the bag in his paw", R.hall && R.hall.room === "hall" && R.hall.step === "sneak" && R.hall.hold === "lunch" && R.hall.chip === "Squatch: take Mops his lunch", R.hall);
-g.check("the lunch bag has MOPS written on it (Brian 2026-11-26)", JSON.stringify(R.bagWords) === JSON.stringify([L["sign-bag"]]) && L["sign-bag"] === "MOPS", R.bagWords);
+g.check("the lunch bag has MOPS written on it (Brian 2026-11-26)", (R.bagWords || []).length >= 1 && L["sign-bag"] === "MOPS", R.bagWords);
 g.check("the calendar is not a step (Brian 2026-11-26): on the lunch goal TAKE · lunch comes first (the one outlined) and LOOK · calendar is there too", JSON.stringify(R.offers) === JSON.stringify([L["button-lunch"], L["button-cal"]]) && P.lunchFar && P.lunchFar.chip === L["chip-lunch"], R.offers);
 g.check("once he has looked, the button offers only the lunch (a kid pressing it is not sent back to the calendar), and a tap on the calendar still opens it", JSON.stringify(R.offersAfterCal) === JSON.stringify([L["button-lunch"]]) && R.tapCalendar, { offers: R.offersAfterCal, tap: R.tapCalendar });
 g.check("closing the calendar goes back to the lunch goal, with control", R.afterCalendar && R.afterCalendar.step === "lunch" && R.afterCalendar.ctrl && R.afterCalendar.chip === L["chip-lunch"] && !R.afterCalendar.cur, R.afterCalendar);
