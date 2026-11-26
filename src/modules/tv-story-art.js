@@ -270,13 +270,15 @@ function wrap(ctx, engine, text, width, size, weight = 800) {
 // Point in the picture's units -> canvas pixels.
 const px = (x, y) => ({ x: STORY.cx + x * STORY.unit, y: STORY.cy + y * STORY.unit });
 
-function caption(ctx, engine, text) {
+/** The white caption box under a story picture (the bedtime story uses it too: bedtime-story-art.js). */
+export function caption(ctx, engine, text) {
   const lines = wrap(ctx, engine, text, 820, 28, 700),
     h = 36 + lines.length * 34,
     y = 640 - h - 28;
   round(ctx, 40, y, 880, h, 16);
   paint(ctx, "#ffffff", 3);
   lines.forEach((l, i) => words(engine, l, 480, y + 30 + i * 34, 28, INK, "center", 700));
+  return { x0: 40, y0: y, x1: 920, y1: y + h };
 }
 // A name tag over a bubble's top left corner.
 function tag(ctx, engine, name, color, x, y) {
@@ -287,12 +289,15 @@ function tag(ctx, engine, name, color, x, y) {
   paint(ctx, color, 3);
   words(engine, name, x + w / 2, y, 15, "#ffffff");
 }
-// A speech bubble with its tail on (sx, sy), its top no higher than `top`.
-function bubble(ctx, engine, text, sx, sy, size, maxW, name, nameColor, top) {
+/**
+ * A speech bubble with its tail on (sx, sy), its top no higher than `top`, and a name tag when `name` is given (the
+ * bedtime story uses it too, with no tag: bedtime-story-art.js).
+ */
+export function bubble(ctx, engine, text, sx, sy, size, maxW, name, nameColor, top) {
   const lines = wrap(ctx, engine, text, maxW, size, 800),
     lineH = Math.max(size, parseInt(ctx.font.match(/(\d+)px/)[1], 10)) + 6,
     textW = Math.max(...lines.map((l) => ctx.measureText(l).width)),
-    nameW = (engine.text("", -999, -999, 15, INK, "left", 800), ctx.measureText(name).width + 22),
+    nameW = name ? (engine.text("", -999, -999, 15, INK, "left", 800), ctx.measureText(name).width + 22) : 0,
     w = Math.max(110, textW + 44, nameW + 28),
     h = lines.length * lineH + 40,
     x = Math.min(Math.max(sx - w / 2, 10), 960 - w - 10),
@@ -309,7 +314,7 @@ function bubble(ctx, engine, text, sx, sy, size, maxW, name, nameColor, top) {
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(mid - 9, y + h - 5, 18, 7);
   lines.forEach((l, i) => words(engine, l, x + w / 2, y + 24 + lineH / 2 + i * lineH, size));
-  tag(ctx, engine, name, nameColor, x + 14, y);
+  name && tag(ctx, engine, name, nameColor, x + 14, y);
   return { x0: x, y0: y, x1: x + w, y1: y + h };
 }
 
@@ -322,7 +327,15 @@ function picture(ctx, engine, t, scene, after) {
   ctx.scale(STORY.unit, STORY.unit);
   scene(ctx, t);
   ctx.restore();
-  // "years ago": the colours washed out and warmed, a frame round it all
+  storyWash(ctx);
+  words(engine, tvLine("label-years-ago"), 40, 36, 16, "#59657d", "left", 800);
+  return after ? after() : null;
+}
+/**
+ * "Years ago": the colours of the picture drawn so far washed out and warmed, and a frame round it all (the old
+ * story pictures' look; the bedtime story's pictures have it too, bedtime-story-art.js).
+ */
+export function storyWash(ctx) {
   ctx.save();
   ctx.globalCompositeOperation = "saturation";
   ctx.globalAlpha = 0.6;
@@ -334,8 +347,6 @@ function picture(ctx, engine, t, scene, after) {
   ctx.strokeStyle = "#59657d";
   ctx.lineWidth = 6;
   ctx.strokeRect(9, 9, 942, 622);
-  words(engine, tvLine("label-years-ago"), 40, 36, 16, "#59657d", "left", 800);
-  return after ? after() : null;
 }
 // Sizes drawn in every picture, in canvas pixels (tests/tv-story.mjs checks them against the size rule).
 const sizes = () => ({ unit: STORY.unit, adult: STORY.adult * STORY.unit, official: STORY.official * STORY.unit, wookiee: STORY.wookiee * STORY.unit });
