@@ -12,12 +12,12 @@ export const BAY_DAY = "docs/locked-rooms/delivery-room-empty-day-noship-v2.png"
 export const BAY_NIGHT = "docs/locked-rooms/delivery-room-empty-night-v2.png";
 
 // Home (home-room-empty-*-v6): Squatch by the bed's foot, Mops comes in through the door on the right. The pancake
-// brochure (beat 38) is pinned on the wall above the desk.
+// brochure (beat 38) is pinned on the wall above the bed, where Mops's bubble never covers it.
 export const ES_HOME = Object.freeze({
   sq: Object.freeze({ x: 380, y: 556 }),
   door: Object.freeze({ x: 905, y: 470 }),
   mops: Object.freeze({ x: 700, y: 536 }),
-  brochure: Object.freeze({ x0: 396, y0: 146, x1: 486, y1: 232 }),
+  brochure: Object.freeze({ x0: 226, y0: 140, x1: 316, y1: 226 }), // above the bed, clear of Mops's bubble on the right
   closet: Object.freeze({ x: 300, y: 398 }), // where he stands at the wardrobe (home-morning.js HOME_MORNING_SPOTS.closet)
   bedFoot: Object.freeze({ x: 330, y: 560 }),
   wardrobe: Object.freeze({ x0: 30, x1: 172, y0: 188, y1: 352 }), // the wardrobe in the locked home picture (its outline traces it)

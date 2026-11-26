@@ -103,6 +103,12 @@ const run = await page.evaluate(
     until(() => n.cur && n.cur.k === "bub");
     ss.drawFrame();
     out.home = { room: n.room, line: say(), glow: !!(d().drew && d().drew.brochure && d().drew.brochure.glow) };
+    // the bubble (its name tag 24 above it included) leaves the brochure it talks about in sight
+    {
+      const b = window.__ss.lastBubble,
+        r = P.HOME.brochure;
+      out.home.clear = !!b && (b.x > r.x1 || b.x + b.w < r.x0 || b.y - 24 > r.y1 || b.y + b.h < r.y0);
+    }
     next();
     const thinks = [];
     until(() => (S().think && !thinks.includes(S().think.kind) && thinks.push(S().think.kind), n.cur && n.cur.k === "bub"), 20);
@@ -259,7 +265,7 @@ const run = await page.evaluate(
 g.check('43: the card "Six days later" waits for NEXT', run.card === W["card-six-days"] && run.cardWaits, run.card);
 g.check("44: the loading bay, three robots, no Squatch; the robot's line waits for NEXT", run.tease.room === "hangar" && run.tease.sq === "hidden" && run.tease.robots === 3 && run.tease.line === W["robot-replaced"] && run.tease.who === "robot" && run.tease.waits, run.tease);
 g.check("44: Mops answers, word for word, and bleats (the mops-bleat sound pick)", run.tease.mops === W["mops-lying"] && run.bleat, run.tease);
-g.check("45: home; the brochure on the wall glows while Mops talks about the pancake place", run.home.room === "closet" && run.home.line === W["mops-pancake"] && run.home.glow, run.home);
+g.check("45: home; the brochure on the wall is outlined while Mops talks about the pancake place, and his bubble does not cover it", run.home.room === "closet" && run.home.line === W["mops-pancake"] && run.home.glow && run.home.clear, run.home);
 g.check("45: his wordless thought pictures (the crate to the ship, the locked office door) play by themselves", JSON.stringify(run.home.thinks) === '["crate","door"]' && run.home.autoThink, run.home);
 g.check("46: Squatch's slip, his thought of the sheet going into the vent (no words in it), then his vent line", run.sq1 === W["sq-slip"] && run.sq2 === W["sq-vent"] && run.sqThink === "vent", [run.sq1, run.sq2, run.sqThink]);
 g.check("47: the bay at night, the goal, a patrolling robot with its cone", run.ball.room === "hangar" && run.ball.night && run.ball.chip === W["chip-ball"] && run.ball.robot && run.ball.cones === 1, run.ball);
