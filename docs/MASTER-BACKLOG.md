@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–141 | ## Where main is (Chapter 1 redesign) |
-| 142–156 | ## Register |
-| 157–178 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 179–199 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 200–212 | ## Phase 2 (plan section 4, T13 to T18) |
-| 213–235 | ## Phase 1 (plan section 3, T5 to T12) |
-| 236–249 | ## SS40–SS44 |
-| 250–267 | ## Story rows |
-| 268–286 | ## Reset section |
-| 287–297 | ## Still open |
-| 298–301 | ## Chapter 1 replot, recorded and not built |
-| 302–459 | ## Changelog |
+| 24–142 | ## Where main is (Chapter 1 redesign) |
+| 143–157 | ## Register |
+| 158–179 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 180–200 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 201–213 | ## Phase 2 (plan section 4, T13 to T18) |
+| 214–236 | ## Phase 1 (plan section 3, T5 to T12) |
+| 237–250 | ## SS40–SS44 |
+| 251–268 | ## Story rows |
+| 269–287 | ## Reset section |
+| 288–298 | ## Still open |
+| 299–302 | ## Chapter 1 replot, recorded and not built |
+| 303–460 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -34,6 +34,7 @@
 
 2026-11-26 (round C), draft PR #89 on `feat/ch1-bedtime-story`, not merged. Done: `feat/party-half-two` merged in (merge commit; the party branch's 00-core.js music and alarm kept as they are; Floating in Space stays deleted). Bedtime plays Reawakening (Brian's music table of 2026-11-26): the bedtime story says when it is showing (`showing()`, as the TV story does) and `bridge.js` turns the home cue into "bedtime" then; no track is written into the beat. Mops's bleat: `window.SSQ.playSoundPick(name)` (bridge.js) plays the game's sound picks through the same player as the morning song's bleat (`music-picks.js` playSound), so the bedtime story's "...Weeee-eenn-nnttt?" now plays `sounds/goat-bleat.mp3`. Tests: `tests/bedtime-story.mjs` (the cue is "bedtime" every frame from the walk to bed to the fade, the bleat on the weent picture only, one bleat in the whole story, the clip started). Docs match main: yes. NOT ASSESSED: how loud Reawakening sits under the snores on a phone speaker. Not yet played by a person.
 - (2026-11-26, the line below about the bleat player is done: `window.SSQ.playSoundPick` exists now.)
+- Then, from Brian's notes on the lunch video (2026-11-26, "when alarm goes off, I presume music should stop"): when an alarm goes off the music stops, everywhere (a beat's `alarmOn`, the party's included, and the older program's alarm sound through `bridge.js` alarmSound); the alarm's sound and the FUR! sting still play; the music stays quiet in that place after the alarm and comes back only with a visit to another place (`music-picks.js` hushNow). Test: `tests/alarm-music.mjs`. Also `tests/party-round4.mjs` waits for the JOIN · photo label's frame (the lunch branch's fix, brought back here: it failed in this branch's full run).
 
 2026-11-26, draft PR on `feat/ch1-lunch-sneak` (stacked on `feat/ch1-day2-morning`), not merged. (Its questions below were answered by Brian the same day and built in round C, above.) Done: beats 25 to 27, the lunch sneak, as a module (`ch1-lunch`): the sneak past two watchers on fixed rhythms (plant, crates, hallway doorway; one glow at a time), the party's capture rule unchanged, GIVE · lunch and "My lunch! You're the best.", Mops eating the lunch and the bag in a wordless close-up, back behind the snack counter, one Moon Pie, then beat 28 unchanged. Old lunch code deleted. Waiting on Brian:
 - Mops's one-snack line (pending) or the wordless one-pie bubble as built? "Squatch! You should be hiding." (pending): add it when approved?
