@@ -23,7 +23,7 @@
  */
 import { drawSquatchArt, armEnds } from "./squatch-art.js";
 import { morningWords } from "./home-morning-lines.js";
-import { MORNING_THINGS, MORNING_SIZES, drawRocket, drawLunchBag, drawGuardianBox, drawBoxWithGift, drawBoxThought, drawCalendarToday, BOX_CLOSEUP, GBOX_ID } from "./home-morning-art.js";
+import { MORNING_THINGS, MORNING_SIZES, TRACE, drawRocket, drawLunchBag, drawGuardianBox, drawBoxWithGift, drawBoxThought, drawCalendarToday, BOX_CLOSEUP, GBOX_ID } from "./home-morning-art.js";
 import { HOME_THINGS } from "./home-alone.js";
 import { cutawaySteps } from "./cutaway.js";
 import { footfall } from "./footfalls.js";
@@ -41,7 +41,7 @@ export const HOME_MORNING_SPOTS = Object.freeze({
   bed: Object.freeze({ x: 205, y: 470 }),
   woke: Object.freeze({ x: 250, y: 580 }),
   closet: Object.freeze({ x: 300, y: 398 }),
-  lunch: Object.freeze({ x: 820, y: 478 }),
+  lunch: Object.freeze({ x: 760, y: 505 }), // left of the bag, so he never stands on it
 });
 const MOPS_AT_BED = Object.freeze({ x: 380, y: 460 });
 // Where the room draws him sitting on the bed (60-frame-draw.js, sqPose "sit" and "sleep").
@@ -278,10 +278,7 @@ export function createHomeMorning(bridge) {
     const [verb, cap] = words(wordsId);
     return { id, verb, cap, who: "sq", ...place, at: [(thing.x0 + thing.x1) / 2, thing.y0], thing, avoid, f };
   }
-  const rocketBox = () => {
-    const r = MORNING_THINGS.rocket;
-    return { x0: r.x - 12, x1: r.x + 25, y0: r.y - MORNING_SIZES.rocket, y1: r.y };
-  };
+  const rocketBox = () => TRACE.rocket;
   const bagBox = () => {
     const b = MORNING_THINGS.bag,
       s = MORNING_SIZES.bag;
@@ -329,15 +326,18 @@ export function createHomeMorning(bridge) {
     h.bag === "floor" && out.push({ id: "bag", y: MORNING_THINGS.bag.y, draw: (ctx) => drawLunchBag(ctx, MORNING_THINGS.bag.x, MORNING_THINGS.bag.y) });
     return out;
   };
-  // The gift's soft glow while it is the goal (bigger than the rocket, so it shows on a phone).
-  function glow(ctx) {
-    const r = MORNING_THINGS.rocket,
-      a = 0.35 + 0.25 * Math.sin(E().time() * 4),
-      g = ctx.createRadialGradient(r.x + 4, r.y - 24, 4, r.x + 4, r.y - 24, 56);
-    g.addColorStop(0, `rgba(255,224,110,${a})`);
+  // A soft pulsing glow behind a thing while it is the goal (well bigger than it, so it shows on a phone).
+  function glow(ctx, box) {
+    const cx = (box.x0 + box.x1) / 2,
+      cy = (box.y0 + box.y1) / 2,
+      rad = Math.max(box.x1 - box.x0, box.y1 - box.y0) * 0.95,
+      a = 0.5 + 0.25 * Math.sin(E().time() * 4),
+      g = ctx.createRadialGradient(cx, cy, 4, cx, cy, rad);
+    g.addColorStop(0, `rgba(255,214,80,${a})`);
+    g.addColorStop(0.55, `rgba(255,224,110,${a * 0.55})`);
     g.addColorStop(1, "rgba(255,224,110,0)");
     ctx.fillStyle = g;
-    ctx.fillRect(r.x - 60, r.y - 84, 128, 120);
+    ctx.fillRect(cx - rad, cy - rad, rad * 2, rad * 2);
   }
   // Where the box is now: in the closet, on its way out, or out on the floor.
   function boxPlace(h) {
@@ -396,11 +396,11 @@ export function createHomeMorning(bridge) {
       const h = live(),
         e = E();
       if (!h || !e.get("ctrl")) return [];
-      if (h.step === "rocket") return [spot("hm-rocket", "button-rocket", { ...MORNING_THINGS.rocket, r: 120 }, rocketBox(), pickUp)];
+      if (h.step === "rocket") return [spot("hm-rocket", "button-rocket", { ...MORNING_THINGS.rocket, r: 140 }, rocketBox(), pickUp)];
       if (h.step === "closet") return [spot("hm-closet", "button-closet", atCloset, WARDROBE, openCloset)];
       if (h.step === "box") return [spot("hm-box", "button-box", atCloset, MORNING_THINGS.boxIn, putIn)];
       if (h.step === "cal") return [spot("hm-calendar", "button-cal", atCloset, CALENDAR, lookCalendar)];
-      if (h.step === "lunch") return [spot("hm-lunch", "button-lunch", { ...HOME_MORNING_SPOTS.lunch, r: 100 }, bagBox(), takeLunch)];
+      if (h.step === "lunch") return [spot("hm-lunch", "button-lunch", { x: MORNING_THINGS.bag.x - 40, y: MORNING_THINGS.bag.y, r: 110 }, bagBox(), takeLunch)];
       return [];
     },
     /**
@@ -476,7 +476,8 @@ export function createHomeMorning(bridge) {
         on = live();
       if (!on || e.room() !== "closet") return;
       const sy = e.pos("sq").y;
-      on.step === "rocket" && e.get("ctrl") && glow(ctx);
+      on.step === "rocket" && e.get("ctrl") && glow(ctx, TRACE.rocket);
+      (on.step === "notice" || on.step === "lunch") && glow(ctx, TRACE.bag);
       for (const t of floorThings(h)) t.y <= sy && t.draw(ctx);
     },
     /** Drawn over the room after the people: things in front of him, his poses, what he carries, the dark. */

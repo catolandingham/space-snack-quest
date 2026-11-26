@@ -23,13 +23,15 @@ const BOX_W = BOX_PIC.w * PIC_X,
 
 /**
  * How big each thing is in the room (game pixels; placeholders, Brian to approve): Squatch is the room's own size;
- * the rocket a third of him; the lunch bag about a quarter; the box exactly the approved one.
+ * the rocket about half of him (a big toy he can hold up), the lunch bag about a third (a paper bag drawn a little big
+ * so it reads on a phone); the box exactly the approved one. (Coordinator, 2026-11-26: at a third the rocket was about
+ * 10 px tall on a phone.)
  */
 export const MORNING_SIZES = Object.freeze({
   squatch: 48.5 * 3,
-  rocket: 46,
-  rocketW: 24, // fin tip to fin tip
-  bag: { w: 30, h: 38 },
+  rocket: 70,
+  rocketW: 37, // fin tip to fin tip
+  bag: { w: 40, h: 52 },
   box: Object.freeze({ w: BOX_W, h: BOX_H }),
 });
 
@@ -40,16 +42,20 @@ export const MORNING_SIZES = Object.freeze({
  * between the wardrobe and him (BOX_OUT), where it stays.
  */
 export const MORNING_THINGS = Object.freeze({
-  rocket: Object.freeze({ x: 322, y: 592 }), // the middle of its base
-  bag: Object.freeze({ x: 866, y: 474 }), // the middle of its bottom
+  rocket: Object.freeze({ x: 352, y: 600 }), // the middle of its base: open floor in front of the bed's right end
+  bag: Object.freeze({ x: 846, y: 505 }), // the middle of its bottom: open floor just inside the doorway
   boxIn: Object.freeze({ x0: GUARDIAN_BOX.x0 * PIC_X, y0: GUARDIAN_BOX.y0 * PIC_Y, x1: GUARDIAN_BOX.x1 * PIC_X, y1: GUARDIAN_BOX.y1 * PIC_Y }),
   boxOut: Object.freeze({ x0: 192, y0: 362, x1: 192 + BOX_W, y1: 362 + BOX_H }),
 });
 /** The boxes the dashed outline traces each drawn thing inside (a little bigger than the thing, nothing else in them). */
 export const TRACE = Object.freeze({
-  rocket: Object.freeze({ x0: 298, x1: 366, y0: 536, y1: 602 }),
-  bag: Object.freeze({ x0: 840, x1: 892, y0: 424, y1: 484 }),
+  rocket: Object.freeze({ x0: 322, x1: 400, y0: 520, y1: 610 }),
+  bag: Object.freeze({ x0: 814, x1: 878, y0: 442, y1: 514 }),
 });
+/** The dashed outline round the things the game draws: thicker than a room thing's, so it shows on a phone. */
+export const DRAWN_OUTLINE = Object.freeze({ width: 7, dash: 14, gap: 3 });
+// The rocket is drawn in 46 units (base to nose); this many game pixels to a unit at its room size.
+const ROCKET_UNIT = MORNING_SIZES.rocket / 46;
 
 function hmRound(ctx, x, y, w, h, r) {
   ctx.beginPath();
@@ -81,7 +87,7 @@ function giftNote(ctx, lw) {
  * in game pixels. Returns its box (game positions, unturned).
  */
 export function drawRocket(ctx, x, y, { k = 1, a = 0, tag = true, lw = 2.5 } = {}) {
-  const u = k,
+  const u = k * ROCKET_UNIT,
     w = lw / u;
   ctx.save();
   ctx.translate(x, y);
@@ -123,15 +129,16 @@ export function drawRocket(ctx, x, y, { k = 1, a = 0, tag = true, lw = 2.5 } = {
     giftNote(ctx, w);
   }
   ctx.restore();
-  return { x0: x - 12 * k, x1: x + (tag ? 25 : 12) * k, y0: y - 46 * k, y1: y };
+  return { x0: x - 12 * u, x1: x + (tag ? 25 : 12) * u, y0: y - 46 * u, y1: y };
 }
 
 /** Just the note (in the box close-up, where it hangs over the rim). (x, y) its middle, `k` the rocket's scale. */
 export function drawGiftNote(ctx, x, y, k, lw = 2.5) {
   ctx.save();
+  const u = k * ROCKET_UNIT;
   ctx.translate(x, y);
-  ctx.scale(k, k);
-  giftNote(ctx, lw / k);
+  ctx.scale(u, u);
+  giftNote(ctx, lw / u);
   ctx.restore();
 }
 
@@ -267,7 +274,7 @@ export function drawCalendarToday(ctx, zoom, time) {
  * the gift drops in over `fall` (the thunk at `hold + fall`); then it stays.
  * k: how much bigger than the room everything in it is (the box and the rocket keep their room proportion).
  */
-export const BOX_CLOSEUP = Object.freeze({ k: 5.5, hold: 1.0, fall: 0.42, floor: 470, x: 560 });
+export const BOX_CLOSEUP = Object.freeze({ k: 4, hold: 1.0, fall: 0.42, floor: 470, x: 560 });
 
 function gboxCloseUp(ctx, t, engine) {
   const K = BOX_CLOSEUP.k,
@@ -322,25 +329,10 @@ function gboxCloseUp(ctx, t, engine) {
   // the box's front over the gift's lower half (the approved look, made big)
   drawGuardianBox(ctx, x0, y0, K);
   landed && drawGiftNote(ctx, x0 + w * 0.8, y0 + 4, K * 0.9, 5);
-  // his arm reaching in from the top, his paw round the rocket, then letting go and lifting away
+  // his furry arm reaching in from the top, his paw round the rocket, then letting go and lifting away
   const lift = Math.max(0, Math.min(1, (t - T.hold) / 0.3)),
-    paw = { x: cx - 8 + 9 * K, y: held.y - 24 * K - lift * 140 };
-  ctx.lineCap = "round";
-  ctx.beginPath();
-  ctx.moveTo(paw.x, paw.y);
-  ctx.lineTo(paw.x + 70, -40);
-  ctx.strokeStyle = HM_INK;
-  ctx.lineWidth = 58;
-  ctx.stroke();
-  ctx.strokeStyle = "#6b4428";
-  ctx.lineWidth = 48;
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.ellipse(paw.x, paw.y, 32, 26, 0, 0, Math.PI * 2);
-  hmPaint(ctx, "#6b4428", 5);
-  ctx.beginPath();
-  ctx.ellipse(paw.x - 6, paw.y + 4, 15, 11, 0, 0, Math.PI * 2);
-  hmPaint(ctx, "#f4c39a", 3);
+    paw = { x: cx - 8 + 2 * K * ROCKET_UNIT, y: by - 30 * K * ROCKET_UNIT - lift * 150 };
+  furryArm(ctx, paw, { x: paw.x + 120, y: -60 });
   return {
     pic: "gbox",
     label,
@@ -349,6 +341,62 @@ function gboxCloseUp(ctx, t, engine) {
     landed,
     sizes: { k: K, box: { w, h }, rocket: rocketH },
   };
+}
+
+// Squatch's fur and paw colours and his outline (squatch-art.js SQUATCH_LOOK), for his arm in the close-up.
+const FUR = "#6b4428",
+  FUR_DARK = "#55351f",
+  PAD = "#f4c39a";
+/**
+ * Squatch's arm, big, from `from` (off the top of the picture) to his paw at `paw`, closed round something: a furry
+ * outline (little tufts along both sides), his fur colour, a round paw with three knuckles and a pale palm pad.
+ * A placeholder drawing.
+ */
+function furryArm(ctx, paw, from) {
+  const dx = from.x - paw.x,
+    dy = from.y - paw.y,
+    len = Math.hypot(dx, dy),
+    nx = -dy / len,
+    ny = dx / len,
+    half = 30;
+  // the arm: two furry sides, tufts every 22 px
+  const side = (s) => {
+    const pts = [];
+    for (let d = 0; d <= len; d += 22) {
+      const k = d / len,
+        bump = (d / 22) % 2 ? 6 : 0;
+      pts.push({ x: paw.x + dx * k + nx * s * (half + bump), y: paw.y + dy * k + ny * s * (half + bump) });
+    }
+    return pts;
+  };
+  const a = side(1),
+    b = side(-1).reverse();
+  ctx.beginPath();
+  ctx.moveTo(a[0].x, a[0].y);
+  for (const p of a.slice(1)) ctx.lineTo(p.x, p.y);
+  for (const p of b) ctx.lineTo(p.x, p.y);
+  ctx.closePath();
+  hmPaint(ctx, FUR, 5);
+  // a darker streak of fur down the arm
+  ctx.beginPath();
+  ctx.moveTo(paw.x + dx * 0.25 + nx * 8, paw.y + dy * 0.25 + ny * 8);
+  ctx.lineTo(paw.x + dx * 0.9 + nx * 8, paw.y + dy * 0.9 + ny * 8);
+  ctx.strokeStyle = FUR_DARK;
+  ctx.lineWidth = 6;
+  ctx.lineCap = "round";
+  ctx.stroke();
+  // the paw: round, with three knuckles on top, wrapped round the rocket, and its pale palm pad showing
+  ctx.beginPath();
+  ctx.ellipse(paw.x, paw.y, 40, 34, 0, 0, Math.PI * 2);
+  hmPaint(ctx, FUR, 5);
+  for (const k of [-1, 0, 1]) {
+    ctx.beginPath();
+    ctx.arc(paw.x + k * 22 - 6, paw.y + 26, 13, 0, Math.PI * 2);
+    hmPaint(ctx, FUR, 4);
+  }
+  ctx.beginPath();
+  ctx.ellipse(paw.x + 10, paw.y - 2, 17, 13, 0.2, 0, Math.PI * 2);
+  hmPaint(ctx, PAD, 3);
 }
 
 /** The close-up as the cutaway draws it (cutaway.js PANELS "gbox"): one picture, waiting for NEXT (it has words). */

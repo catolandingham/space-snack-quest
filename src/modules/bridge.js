@@ -112,16 +112,16 @@ export function createBridge() {
     },
     /**
      * The dashed outline of the thing inside `box` (game positions) of `source` (a locked room picture or a
-     * canvas the size of the game picture), traced once and kept under `key`. Returns { canvas, x, y } to
-     * draw at (x, y), or null. See outline.js.
+     * canvas the size of the game picture), traced once and kept under `key`, with `opts` (outline.js OUTLINE:
+     * width, dash, gap). Returns { canvas, x, y } to draw at (x, y), or null. See outline.js.
      */
-    outline(key, source, box) {
+    outline(key, source, box, opts) {
       // A picture the browser will not let us read (a page opened straight from disk) gets no outline
       // rather than stopping the game's drawing.
       if (!outlines.has(key)) {
         let o = null;
         try {
-          o = outlineCanvas(source, box);
+          o = outlineCanvas(source, box, opts);
         } catch (e) {
           o = null;
         }
@@ -158,7 +158,7 @@ export function createBridge() {
       } else if (target.source) {
         // a thing the game draws itself (the home morning's rocket and lunch bag): traced from its own drawing
         const src = target.source();
-        const o = src ? this.outline(room + ":" + spotId + ":drawn", src, target.trace) : null;
+        const o = src ? this.outline(room + ":" + spotId + ":drawn", src, target.trace, target.line) : null;
         o && ctx.drawImage(o.canvas, o.x, o.y);
       } else if (picture && picture.complete && picture.naturalWidth) {
         const o = this.outline(room + ":" + spotId + ":" + picture.src, picture, target.trace);

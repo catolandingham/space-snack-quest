@@ -103,6 +103,20 @@ const run = !(registered && asleep)
           const spots = (ss.spotsNow() || []).filter((s) => s && s.verb);
           const offer = ss.offerNow();
           const r = { name, step: step(), chip: ss.chipNow(), offer: offer ? offer.verb + " · " + offer.cap : "", spots: spots.length, outline: n.lastRing && n.T - n.lastRing.T < 0.3 ? { act: n.lastRing.act, box: n.lastRing.box } : null, sq: { x: n.sq.x, y: n.sq.y }, scale: window.SSQ.engine().squatchScale() };
+          // The goal words on the phone's top bar (the HUD chip, a page element): "Outline; words if stuck" (Brian
+          // 2026-11-22, DECISIONS.md): they wait while the outline shows, then come up after 20 s with no progress.
+          const chipEl = () => {
+            const el = [...document.querySelectorAll("div,span")].find((d) => d.children.length === 0 && d.textContent === r.chip);
+            if (!el) return null;
+            const b = el.getBoundingClientRect(),
+              cs = getComputedStyle(el);
+            return { x: Math.round(b.x), y: Math.round(b.y), w: Math.round(b.width), h: Math.round(b.height), shown: cs.display !== "none" && cs.visibility !== "hidden" && b.width > 0, inside: b.x >= 0 && b.x + b.width <= innerWidth && b.y >= 0 };
+          };
+          r.wordsAtFirst = chipEl();
+          for (let i = 0; i < 21 / 0.05; i++) ss.tick(0.05);
+          ss.drawFrame();
+          r.wordsIfStuck = chipEl();
+          r.stillStep = step();
           out.prompts.push(r);
           return r;
         };
@@ -193,7 +207,7 @@ const run = !(registered && asleep)
         tick(0.3);
         // 5. the lunch bag across the room
         const lunchFar = atStep("lunch-far");
-        walkTo(820, 478);
+        walkTo(760, 505);
         const lunch = atStep("lunch");
         out.shownMorning = ss.shown();
         press();
@@ -239,6 +253,12 @@ for (const [k, chip, act] of want) {
   g.check(`${k}: the chip says "${chip}" and the one button says "${act}"`, p.chip === chip && p.offer === act && p.spots === 1, p);
   g.check(`${k}: only the thing to use is outlined (the dashed outline is round "${act}")`, !!p.outline && p.outline.act === act, p.outline);
 }
+for (const [k] of want) {
+  const p = P[k] || {};
+  // (at the wardrobe and the bag he has already waited 20 s across the room: the first look is from there)
+  const first = (P[k + "Far"] || p).wordsAtFirst;
+  g.check(`${k}: on the phone the goal words wait while the outline shows, then come up in the top bar after 20 s (words if stuck)`, !(first && first.shown) && p.wordsIfStuck && p.wordsIfStuck.shown && p.wordsIfStuck.inside && p.stillStep === k, { first, stuck: p.wordsIfStuck });
+}
 g.check("the words are today's: the chips and buttons the game had, PICK UP · rocket and PUT IN · box from the brief, OPEN · closet (approved)", L["chip-gift"] === "Squatch: pick up the gift" && L["chip-box"] === "Squatch: put the gift in the box" && L["chip-cal"] === "Squatch: look at the calendar" && L["chip-lunch"] === "Squatch: take the lunch" && L["button-rocket"] === "PICK UP · rocket" && L["button-box"] === "PUT IN · box" && L["button-closet"] === "OPEN · closet" && L["button-cal"] === "LOOK · calendar" && L["button-lunch"] === "TAKE · lunch");
 g.check("the goal stays up while he walks: the wardrobe is outlined from across the room, the bag from the wardrobe", P.closetFar && P.closetFar.chip === L["chip-box"] && P.closetFar.outline && P.closetFar.outline.act === L["button-closet"] && P.lunchFar && P.lunchFar.chip === L["chip-lunch"] && P.lunchFar.outline && P.lunchFar.outline.act === L["button-lunch"], { closetFar: P.closetFar, lunchFar: P.lunchFar });
 g.check("he gets up right beside the rocket: PICK UP works where he stands", P.rocket && P.rocket.offer === L["button-rocket"]);
@@ -275,14 +295,21 @@ const SQ = (p) => ({ x0: p.sq.x - 18 * p.scale, x1: p.sq.x + 18 * p.scale, y0: p
 const hit = (a, b) => a && b && a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
 const things = R.debug.things || {};
 const CAL = { x0: 99, x1: 167, y0: 196, y1: 279 };
-const rb = things.rocket ? { x0: things.rocket.x - 12, x1: things.rocket.x + 12, y0: things.rocket.y - 46, y1: things.rocket.y } : null;
-g.check("nothing he is told to use is under him: the rocket, the box in the closet, the calendar", P.rocket && P.box && P.cal && !hit(SQ(P.rocket), rb) && !hit(SQ(P.box), things.boxIn) && !hit(SQ(P.cal), CAL), { rocket: P.rocket && SQ(P.rocket), box: P.box && SQ(P.box), cal: P.cal && SQ(P.cal) });
+const Zs = R.debug.sizes || {};
+const rb = things.rocket ? { x0: things.rocket.x - Zs.rocketW / 2, x1: things.rocket.x + Zs.rocketW / 2, y0: things.rocket.y - Zs.rocket, y1: things.rocket.y } : null;
+const bagB = things.bag && Zs.bag ? { x0: things.bag.x - Zs.bag.w / 2, x1: things.bag.x + Zs.bag.w / 2, y0: things.bag.y - Zs.bag.h, y1: things.bag.y } : null;
+g.check("nothing he is told to use is under him: the rocket, the box in the closet, the calendar, the bag", P.rocket && P.box && P.cal && P.lunch && !hit(SQ(P.rocket), rb) && !hit(SQ(P.box), things.boxIn) && !hit(SQ(P.cal), CAL) && !hit(SQ(P.lunch), bagB), { rocket: P.rocket && SQ(P.rocket), box: P.box && SQ(P.box), cal: P.cal && SQ(P.cal), lunch: P.lunch && SQ(P.lunch) });
+const gap = (a, b) => Math.max(b.x0 - a.x1, a.x0 - b.x1);
+g.check("open floor between him and the rocket when he wakes (at least 20 px)", P.rocket && rb && gap(SQ(P.rocket), rb) >= 20, P.rocket && rb && gap(SQ(P.rocket), rb));
 
 // Sizes against the home room (Squatch at the room's scale 3, about 145 px; the approved box at its exact size)
 const Z = R.debug.sizes || {};
 g.check("Squatch is drawn at the room's own size (scale 3)", P.rocket && P.rocket.scale === 3, P.rocket && P.rocket.scale);
-g.check("the rocket is a toy: a quarter to two fifths of Squatch's height", Z.rocket / Z.squatch >= 0.25 && Z.rocket / Z.squatch <= 0.4, Z);
-g.check("the lunch bag is a lunch bag: a fifth to a third of Squatch's height", Z.bag && Z.bag.h / Z.squatch >= 0.2 && Z.bag.h / Z.squatch <= 0.33, Z);
+g.check("the rocket is a big toy he can hold up: about half of Squatch's height (0.4 to 0.55), smaller than the bed and the bucket", Z.rocket / Z.squatch >= 0.4 && Z.rocket / Z.squatch <= 0.55 && Z.rocket < 150 && Z.rocket < 71, Z);
+g.check("the lunch bag is a paper lunch bag: about a third of Squatch's height (0.25 to 0.4), smaller than the bucket", Z.bag && Z.bag.h / Z.squatch >= 0.25 && Z.bag.h / Z.squatch <= 0.4 && Z.bag.h < 71, Z);
+// On a 375-wide phone the picture is 375 / 960 of its size: the rocket and the bag must still be big enough to see.
+const PHONE_K = 375 / 960;
+g.check("on a 375-wide phone the rocket is at least 25 px tall and the bag at least 17 px", Z.rocket * PHONE_K >= 25 && Z.bag.h * PHONE_K >= 17, { rocket: Z.rocket * PHONE_K, bag: Z.bag && Z.bag.h * PHONE_K });
 g.check("the Guardian Box is exactly the approved size (52 x 36 on the 1280 x 830 picture)", Z.box && Math.abs(Z.box.w - 39) < 0.01 && Math.abs(Z.box.h - (36 * 640) / 830) < 0.01, Z.box);
 const cs = cu.last && cu.last.sizes;
 g.check("in the close-up the rocket and the box keep the room's proportion", cs && Math.abs(cs.rocket / cs.box.w - Z.rocket / Z.box.w) < 0.01, { closeUp: cs, room: Z });

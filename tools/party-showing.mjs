@@ -716,7 +716,7 @@ if (which === "morning") {
   await stepIs("lunch");
   await sleep(800);
   await still("lunch-goal");
-  await walkTo(838, 482, "TAKE · lunch");
+  await walkTo(760, 505, "TAKE · lunch");
   await sleep(400);
   await still("take-lunch");
   await press();
