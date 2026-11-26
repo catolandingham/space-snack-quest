@@ -256,7 +256,8 @@ async function snacks(safe, end) {
   const crash = end === true || end === "crash";
   const L = await page.evaluate(() => window.SSQ.beat("ch1-party").snackLayout());
   let s = await goTo(L.spot.x - 10, L.spot.y + 10, (q) => q.act === "GRAB · snacks");
-  s = await until((q) => q.act === "GRAB · snacks", 8000, read);
+  s = await until((q) => q.act === "GRAB · snacks" || (q.now && q.now.scene === "P7"), 8000, read);
+  if (s && s.now && s.now.scene === "P7") return void log("an alarm before the snacks");
   if (!s) return fail("no GRAB · snacks");
   await sleep(600);
   await press();
@@ -271,8 +272,10 @@ async function snacks(safe, end) {
   };
   for (let k = 0; k < safe; k++) {
     s = await st();
+    // (fur showing after the octopus's second hug, a guest may see him at the bar first: the alarm closes it)
+    if (!s.slots || !s.snack) return void log("the snack close-up closed (the alarm)");
     const top = s.slots.findIndex((id) => id >= 0);
-    if (!(await take(top))) return fail("the close-up closed early");
+    if (!(await take(top))) return (await st()).now.scene === "P7" ? void log("the snack close-up closed (the alarm)") : fail("the close-up closed early");
     await until((q) => q.bag >= k + 1, 4000);
     await sleep(700);
     await until((q) => q.cur !== "bub", 6000, read);
@@ -282,6 +285,7 @@ async function snacks(safe, end) {
     for (let n = 1; n <= 2; n++) {
       // a finger on a snack just after she has turned to face him: his paw is out in her sight
       const ok = await until((q) => !q.snack || (q.cur !== "bub" && q.snack.phase === "face" && q.snack.t > 0.25 && q.snack.t < 1.2 && !q.snack.reach), 25000, read);
+      if (ok && !ok.snack && ok.now && ok.now.scene === "P7") return void log("the snack close-up closed (the alarm)");
       if (!ok || !ok.snack) return fail("the close-up closed before she caught him");
       const top = ok.slots.findIndex((id) => id >= 0);
       await floor(L.cut.snacks[top][1], L.cut.snacks[top][2]);
@@ -401,18 +405,21 @@ if (which === "keep") {
   // The octopus (after the first minute): near his end of the bar his "?" fills in, then "*hic* Fellow tourist!", a
   // lunge and a first hug (just a hug, his hat tips), Squatch's two thoughts, and the real chase: he jukes away
   // from him until the octopus gets bored (20 s).
-  await goTo(640, 560, (q) => q.now.oct && q.now.oct.mode !== "snacks" && q.now.oct.mode !== "stroll");
-  let s = await until((q) => q.now.oct && ["ready", "lunge", "hug", "chase"].includes(q.now.oct.mode), 15000, read);
+  // (after the photo he walks back to the snacks and rests there before he looks at anyone)
+  const octOn = (q) => q.now.oct && ["ready", "lunge", "hug", "chase"].includes(q.now.oct.mode);
+  await goTo(640, 560, octOn);
+  let s = await until(octOn, 40000, read);
   s || (await fail("the octopus did not notice"));
   log("the octopus");
   s = await until((q) => q.now.oct.mode === "chase" && q.ctrl && q.cur !== "bub", 30000, read);
   s || (await fail("the real chase did not start"));
   log("the chase: juke");
   await juke(26000);
-  log("the octopus is bored; off to the snack bar");
+  s = await st();
+  log(s.now.gone.length ? "the second hug knocked his " + s.now.gone.join(", ") + " off; off to the snack bar" : "the octopus is bored; off to the snack bar");
   // Straight to the snack bar: two snacks while her back is turned, then his paw out twice while she is looking.
   // The second time she sees fur and runs for the alarm; his hat is still on (for Mops to lift at home).
-  await snacks(2, "caught");
+  (await st()).now.scene === "P6" && (await snacks(2, "caught"));
   await runHomeToCard();
   await chooseOnCard("keep");
   await toTv(120000);
@@ -530,10 +537,14 @@ if (which === "tv") {
     window.SSQ.engine().tvStory();
   });
   // every picture: read it (about 3 s), then NEXT; the ship picture gets 6 s
-  for (let i = 0; i < 12; i++) {
-    const s = await st();
-    if (!["card", "panel", "bub", "cutaway"].includes(s.cur)) break;
+  await until((q) => q.cur === "card", 6000);
+  for (let i = 0; i < 14; i++) {
+    const s = await until((q) => ["card", "panel", "bub", "cutaway"].includes(q.cur), 3000);
+    if (!s) break;
+    // (the "Now" card is the story's last; what comes after it is bedtime, not part of this video)
+    const last = i > 0 && s.cur === "card";
     await sleep(s.cur === "cutaway" ? 6000 : 3200);
+    if (last) break;
     await page.evaluate(() => ((window.__ss.op.bt = 1), window.__ss.opTap()));
     await sleep(500);
   }
