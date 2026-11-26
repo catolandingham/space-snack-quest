@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–97 | ## Where main is (Chapter 1 redesign) |
-| 98–112 | ## Register |
-| 113–134 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 135–155 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 156–168 | ## Phase 2 (plan section 4, T13 to T18) |
-| 169–191 | ## Phase 1 (plan section 3, T5 to T12) |
-| 192–205 | ## SS40–SS44 |
-| 206–223 | ## Story rows |
-| 224–242 | ## Reset section |
-| 243–253 | ## Still open |
-| 254–257 | ## Chapter 1 replot, recorded and not built |
-| 258–413 | ## Changelog |
+| 24–104 | ## Where main is (Chapter 1 redesign) |
+| 105–119 | ## Register |
+| 120–141 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 142–162 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 163–175 | ## Phase 2 (plan section 4, T13 to T18) |
+| 176–198 | ## Phase 1 (plan section 3, T5 to T12) |
+| 199–212 | ## SS40–SS44 |
+| 213–230 | ## Story rows |
+| 231–249 | ## Reset section |
+| 250–260 | ## Still open |
+| 261–264 | ## Chapter 1 replot, recorded and not built |
+| 265–420 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -23,9 +23,16 @@
 
 ## Where main is (Chapter 1 redesign)
 
+2026-11-25 (night), draft PR on `feat/ch1-bedtime-story`, not merged. Done: beat 21, the bedtime story, as a module (`ch1-bedtime-story`): the wordless ask (he pats his crate bed, a thought bubble with a little Moon Pie crate, Mops comes over), the old crate story's pictures from 71ec66e (crate, baby, beard, "...Baaa?") at the home room's proportions, Mops's line unchanged, asleep with a gentle snore, then Day 2. The "ch1moon" caption box is deleted. Open for Brian:
+- Words, all "needs-yes" (`src/modules/bedtime-story-lines.js`): the three old captions, "...Baaa?", the crate's MOON PIES badge, the "!" and "z z z" marks, and his bedtime line.
+- The fourth old picture (Mops hides the baby in the mop bucket when tourists come, "Nothing to see here!"): off behind `BEDTIME_SWITCHES.bucketPicture`. Keep it out, or bring it back?
+- Mops comes over and stands beside the bed: he cannot sit (the approved Mops has no sitting pose; a sitting Mops would be a new drawing).
+- New drawings waiting for his eye: the story crate (the room's crate bed without its pillow), the Moon Pies on its lid, the lid leaning on it, the crumbs, the baby (0.45 of a grown Squatch), the baby's grab and giggle, the thought bubble, Squatch's pat and his hop into bed.
+- Placeholders (not pins): the story drawn 1.6 times the room; walking 160, Mops 150 a second; the pat 2.4 s; asleep 3.4 s with two snores.
+
 2026-11-25 (evening), draft PR #87, not merged. Done: Brian's twelve showing-5 decisions and his two code rules (README, "Chapter 1 redesign", the 2026-11-25 evening paragraph). Open for Brian:
 - Pick the FUR alarm: `tools/alarm-choices.html` (five made-up sounds). The game's alarm is unchanged until he picks.
-- The Moon Pie bedtime story (beat 21, `docs/CHAPTER-1-PROBLEMS.md` 18): not built this round. The old story's captions (commit 71ec66e) differ from the walkthrough's pending line "You came to me in a Moon Pie crate. You've loved Moon Pies ever since.", and beat 21 is not under "Build next"; which words, and is it this round?
+- The Moon Pie bedtime story (beat 21, `docs/CHAPTER-1-PROBLEMS.md` 18): built on branch `feat/ch1-bedtime-story` (see the 2026-11-25 night entry above), waiting for his yes.
 - New drawings waiting for his eye: the TOURS ship in the TV story, the gap glow in the photo row, the dance spot's outline, the small filling "?", the hat tipping in the octopus's hug, the flyer's corner under the bed.
 - The octopus vent trick (his arms sucked into the vent) only if the chase still feels short in the new video.
 

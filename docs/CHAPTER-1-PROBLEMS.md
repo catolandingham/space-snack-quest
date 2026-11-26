@@ -29,8 +29,8 @@
 | 274–277 | ## 15. Running home happens by itself (beat 18) |
 | 278–282 | ## 16. The TV story is a small TV in the room (beat 20) (fixed 2026-11-25, draft PR #87) |
 | 283–286 | ## 17. Mops finds the flyer and fur at the wrong time (beat 19) |
-| 287–290 | ## 18. The bedtime story has no pictures (beat 21) |
-| 291–294 | ## 19. The Croc Boys are barely there (beat 6) |
+| 287–291 | ## 18. The bedtime story has no pictures (beat 21) |
+| 292–295 | ## 19. The Croc Boys are barely there (beat 6) |
 <!-- /section-index -->
 # Chapter 1 problems, ranked
 
@@ -287,6 +287,7 @@ Found by reading the Day 1 code against beats 1 to 21 of `docs/CH1-STORY-WALKTHR
 ## 18. The bedtime story has no pictures (beat 21)
 
 - Walkthrough: tap through story pictures of Mops finding the baby in a Moon Pie crate. Game: one text box.
+- Built, not merged (2026-11-25, branch `feat/ch1-bedtime-story`): the wordless ask, the old crate story's pictures from 71ec66e, Mops's line, asleep, Day 2 (`src/modules/bedtime-story.js`). Check: `tests/bedtime-story.mjs`. Waiting for Brian's yes on the words and drawings.
 
 ## 19. The Croc Boys are barely there (beat 6)
 
