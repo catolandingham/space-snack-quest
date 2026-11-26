@@ -10,7 +10,7 @@
  *   - a thought bubble shows the Guardian Box before the chip names it; "Squatch: put the gift in the box", the
  *     wardrobe outlined, OPEN · closet; the door opens, the box outlined, PUT IN · box;
  *   - the close-up (the first build's box view): the lid's MY GARDIAN BOX, the older notes, his crayon drawing MY
- *     GUARDIANS, the gift drops in and stays (waits for NEXT); the box (2.1 times the approved size) stays out with
+ *     GUARDIANS, the gift drops in and stays (waits for NEXT); the box (2.4 times the approved size) stays out with
  *     the gift in it, the door shuts;
  *   - "Squatch: look at the calendar", LOOK · calendar: today's close-up (days 1 to 13 crossed off, day 14 circled);
  *   - the lunch bag outlined, "He forgot his lunch!" (waits for NEXT); "Squatch: take the lunch", TAKE · lunch; then
@@ -327,8 +327,8 @@ g.check("the lunch bag is a paper lunch bag: about a third of Squatch's height (
 // On a 375-wide phone the picture is 375 / 960 of its size: the rocket and the bag must still be big enough to see.
 const PHONE_K = 375 / 960;
 g.check("on a 375-wide phone the rocket is at least 25 px tall and the bag at least 17 px", Z.rocket * PHONE_K >= 25 && Z.bag.h * PHONE_K >= 17, { rocket: Z.rocket * PHONE_K, bag: Z.bag && Z.bag.h * PHONE_K });
-g.check("the Guardian Box is the approved box made 2.1 times bigger on Day 2 (52 x 36 on the 1280 x 830 picture, times 2.1)", Z.box && Math.abs(Z.box.w - 39 * 2.1) < 0.01 && Math.abs(Z.box.h - ((36 * 640) / 830) * 2.1) < 0.01, Z.box);
-g.check("the box reads clearly bigger than the rocket: wider than the rocket is tall, about twice its fins' width, and nearly as tall (a box it fits in)", Z.box && Z.box.w > Z.rocket && Z.box.w >= 2 * Z.rocketW && Z.box.h >= 0.85 * Z.rocket, Z);
+g.check("the Guardian Box is the approved box made 2.4 times bigger on Day 2 (52 x 36 on the 1280 x 830 picture, times 2.3)", Z.box && Math.abs(Z.box.w - 39 * 2.4) < 0.01 && Math.abs(Z.box.h - ((36 * 640) / 830) * 2.4) < 0.01, Z.box);
+g.check("the box reads clearly bigger than the rocket: wider than the rocket is tall, more than twice its fins' width, and as tall (a box it fits in)", Z.box && Z.box.w > Z.rocket && Z.box.w >= 2 * Z.rocketW && Z.box.h >= Z.rocket, Z);
 const cs = cu.last && cu.last.sizes;
 g.check("in the close-up the rocket and the box keep the room's proportion (the box clearly bigger)", cs && Math.abs(cs.rocket / cs.box.w - Z.rocket / Z.box.w) < 0.01 && cs.box.w > cs.rocket, { closeUp: cs, room: Z });
 
@@ -337,9 +337,11 @@ const known = new Set(HOME_MORNING_LINES.map((l) => l.text));
 // (the speech bubble's name tag, the calendar's close button, and the room's sleep mark were in the game before)
 const before = new Set([...(R.shownBefore || []), "Squatch", "X", "z z z"]);
 const esc = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-// (a line drawn in pieces, wrapped or on two lines like the box's lid label, counts when each piece is a run of whole
-// words of one line)
-const piece = (w) => !!w.trim() && [...known].some((k) => new RegExp("(^|\\s)" + esc(w.trim()) + "(\\s|$)").test(k));
+// (a line drawn in pieces counts when each piece is a run of two or more whole words of one line; the lid label is
+// drawn on two lines, MY GARDIAN / BOX)
+const lid = L["sign-box"].split(" "),
+  lidHalves = new Set([lid.slice(0, 2).join(" "), lid.slice(2).join(" ")]);
+const piece = (w) => lidHalves.has(w.trim()) || (w.trim().split(/\s+/).length >= 2 && [...known].some((k) => new RegExp("(^|\\s)" + esc(w.trim()) + "(\\s|$)").test(k)));
 const stray = (R.shownMorning || []).filter((w) => !before.has(w) && !known.has(w) && !piece(w));
 g.check("no new words: every word drawn this morning is a whole line of home-morning-lines.js (or was on screen before)", R.shownMorning && stray.length === 0, stray);
 g.check('the note\'s "Rule #1" words are not shown (pending)', R.shownMorning && !(R.shownMorning || []).some((w) => /Rule #1|Brave Sasquatches|stay hidden/.test(w)));

@@ -12,7 +12,8 @@
  *   4. falling asleep, every part wordless and 2 to 4 seconds (Brian: "a bit more natural transition and then some
  *      snoring"): a yawn and stretch, he lies down, Mops tucks him in with a blanket, Mops walks to the door, the
  *      light goes down to a night-blue dim and Mops goes out, three snores (each heard, each with a rising "z z z"),
- *      the fade to black; then Day 2 begins and fades in from black.
+ *      the fade to black; then Day 2 begins and the room comes up from black (the home morning's night does it when
+ *      the home morning is here; otherwise the bedtime story fades it in).
  * No goal chip shows at any point from the Now card to Day 2 (the old video showed "Squatch: pick up the gift" over
  * the sleeping room). The old fourth picture (the mop bucket) is off behind its switch. The old "ch1moon" panel is gone.
  *   node tests/bedtime-story.mjs
@@ -145,6 +146,8 @@ const run = !(started && tvDone)
         const r = beat.debug().drew,
           m = hm && hm.debug().drew;
         out.fadeIn.push(Math.max(r && r.fadeIn ? r.black : 0, m && m.dark != null ? m.dark : 0));
+        out.ownFadeIn = (out.ownFadeIn || 0) + (r && r.fadeIn ? 1 : 0);
+        out.morningHere = !!hm;
         ss.tick(0.05);
       }
       out.shownAfter = ss.shown();
@@ -239,6 +242,7 @@ g.check("Squatch ends asleep, lying down, before Day 2", run.debug && run.debug.
 // No goal while he sleeps (2026-11-26: the old video showed "Squatch: pick up the gift" over the sleeping room).
 const chips = run.chips.filter((c) => c.chip);
 g.check("no goal chip shows at any point from the Now card until Day 2 begins", run.chips.length > 100 && chips.length === 0, chips.slice(0, 5));
+g.check("only one fade in: with the home morning here, the bedtime story does not draw its own", !run.morningHere || !run.ownFadeIn, { morning: run.morningHere, own: run.ownFadeIn });
 g.check("then Day 2 begins (the morning, scene QB) and the room fades in from black", run.day2 && run.scene === "QB" && run.fadeIn[0] > 0.8 && run.fadeIn.slice(-1)[0] < 0.01, { day2: run.day2, scene: run.scene, fadeIn: run.fadeIn.filter((_, i) => i % 5 === 0) });
 
 // The old panel is gone

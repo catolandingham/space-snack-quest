@@ -15,7 +15,8 @@
  *      a bit more natural transition and then some snoring"): a big yawn and stretch; he lies down; Mops tucks him
  *      in with a blanket; Mops walks to the door, the light goes down to a night-blue dim and Mops goes out; three
  *      snores, each with a "z z z" rising over him; then the room fades to black. The older program then goes on to
- *      Day 2 (14-ch1-day1.js ch1TvEvening), and the room fades in from black.
+ *      Day 2 (14-ch1-day1.js ch1TvEvening): the home morning's night starts dark and comes up (home-morning.js);
+ *      without the home morning, this file fades the room in from black.
  * Mops has no sleeping spot at home in the game or the docs, so he goes out through the doorway (a question for
  * Brian). While Squatch climbs into bed, and from the yawn until Day 2, this file draws Squatch (squatch-art.js, the
  * room's Squatch: same shapes, sizes and outline; lying down as the home-alone bed flop draws him, which Brian

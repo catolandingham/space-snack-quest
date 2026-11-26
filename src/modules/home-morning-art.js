@@ -1,10 +1,11 @@
 /**
  * The home morning's drawings (Chapter 1, beats 22 to 24). Everything here is a PLACEHOLDER drawing in the game's
  * style (dark outlines, flat colours) until Brian approves a look: the toy rocket with the folded note tied on as a
- * gift tag, Mops's paper lunch bag, the Guardian Box close-up (the box big, its approved blue "G" front, a taped
- * "MY GARDIANS" label on the lid), the thought bubble with the box in it, and today's marks on the calendar
- * close-up (the days before the circled Moon Pie day crossed off). The Guardian Box in the room is the approved
- * one (docs/approved-art/closet/, home-alone.js GUARDIAN_BOX), at exactly its approved size.
+ * gift tag, Mops's paper lunch bag, the Guardian Box close-up (the first build's box view: the open box, the older
+ * notes, the lid's taped MY GARDIAN BOX label, Squatch's crayon drawing MY GUARDIANS), the thought bubbles (the box;
+ * his crayon Guardians), and today's marks on the calendar close-up (the days before the circled Moon Pie day crossed
+ * off). The Guardian Box in the room is the approved one (docs/approved-art/closet/, home-alone.js GUARDIAN_BOX) in its
+ * approved look, DAY2_BOX times its approved size.
  * Sizes are read against the home room: Squatch is 48.5 of his units at the room's scale 3 (about 145 px), and every
  * thing here is a share of that (MORNING_SIZES). Game positions are the 960 x 640 picture.
  */
@@ -27,7 +28,7 @@ const BOX_PIC = Object.freeze({ w: GUARDIAN_BOX.x1 - GUARDIAN_BOX.x0, h: GUARDIA
  * the shirts. Its look is the approved one. Day 1's closet (home-alone.js) keeps the approved size: a question for
  * Brian whether it should match.
  */
-export const DAY2_BOX = 2.1;
+export const DAY2_BOX = 2.4;
 const BOX_W = BOX_PIC.w * PIC_X * DAY2_BOX,
   BOX_H = BOX_PIC.h * PIC_Y * DAY2_BOX;
 

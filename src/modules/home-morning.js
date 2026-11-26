@@ -43,7 +43,6 @@ export const HOME_MORNING_ID = "ch1-home-morning";
  * Where Squatch stands (game positions; tests/standing-spots.mjs checks each against the furniture). bed: his feet as
  * the room draws him getting up; woke: beside the rocket, where getting up ends; closet: right of the wardrobe and the
  * bed's corner, facing left, so neither the box nor the calendar is ever under him (Fable's review, 2026-11-26).
- * mops: where the bedtime story left Mops (beside the bed), for the moment before the room goes dark.
  */
 export const HOME_MORNING_SPOTS = Object.freeze({
   bed: Object.freeze({ x: 205, y: 470 }),
@@ -52,7 +51,7 @@ export const HOME_MORNING_SPOTS = Object.freeze({
   lunch: Object.freeze({ x: 760, y: 505 }), // left of the bag, so he never stands on it
 });
 // Where the room draws him sitting on the bed (60-frame-draw.js, sqPose "sit" and "sleep").
-const BED_SIT = Object.freeze({ x: 205, y: 444 });
+const BED_SIT = BED_POSES.sit;
 // Standing anywhere here counts as "at the wardrobe" (right of it, behind or beside the bed's top corner).
 const AT_CLOSET = Object.freeze({ x0: 150, x1: 440, y0: 350, y1: 480 });
 const CALENDAR = HOME_THINGS.calendar;
@@ -139,6 +138,7 @@ export function createHomeMorning(bridge) {
     e.set("wardrobe", "closed");
     e.set("ctrl", false);
     e.set("ch1Chip", "");
+    e.set("sqLift", 0);
     if (awake) {
       e.set("moPose", "hidden");
       e.place("sq", HOME_MORNING_SPOTS.woke.x, HOME_MORNING_SPOTS.woke.y);
@@ -163,7 +163,8 @@ export function createHomeMorning(bridge) {
     h.t += dt || 0;
     const past = (at) => t0 < at && h.t >= at;
     P.hooves.forEach((at, i) => past(at) && sound.morning("hoof", i));
-    if (past(P.door)) (sound.morning("door"), bridge.homeMusic.start("home-morning"));
+    if (past(P.door)) sound.morning("door");
+    if (past(P.dark)) bridge.homeMusic.start("home-morning");
     if (h.t < P.dark + P.up) return false;
     go("wake");
     return true;
@@ -536,7 +537,8 @@ export function createHomeMorning(bridge) {
       if (h.heart >= 0) {
         const age = e.time() - h.heart,
           y = p.y - 48.5 * k - 26 - Math.min(1, age / 0.8) * 30;
-        heart(ctx, p.x, y, 15);
+        // (beside his head while the crayon thought bubble is up over it)
+        heart(ctx, p.x - (h.step === "hold" && h.t >= P.thought ? 70 : 0), y, 15);
         drew.heart = { x: p.x, y };
       }
       if (h.step === "think") {
