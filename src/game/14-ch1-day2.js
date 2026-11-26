@@ -507,11 +507,11 @@
     }
     function ch1HideSlip() {
       if (n.ch1Slipped) return;
-      ((n.ch1Slipped = !0), (n.ctrl = !1), (n.ch1Hold = ""), ch1SetPaper("box"), D.hide());
+      ((n.ch1Slipped = !0), (n.ctrl = !1), (n.ch1Hold = ""), ch1SetPaper("box"), (n.wardrobe = "open"), D.hide()); // the box is in the closet
       J([
         cV((dt) => (ch1Trail(), mV(n.sq, 205, 470, 160, dt) && mV(n.mo, 380, 460, 160, dt))),
         N(() => {
-          ((n.sqPose = "sleep"), (n.sq.x = 205), (n.sq.y = 470), D.snore());
+          ((n.sqPose = "sleep"), (n.sq.x = 205), (n.sq.y = 470), (n.wardrobe = "closed"), D.snore());
         }),
         uV(0.7),
         N(() => {
@@ -816,7 +816,7 @@
       if (s === "crate") return [ch1At("RETURN", "empty crate", 480, 500, 170, ch1Booked)];
       if (s === "all1") return [ch1At("DROP", "snacks", n.sq.x || 700, n.sq.y || 520, 280, ch1AllDrop)];
       if (s === "all2") return [ch1At("LEAVE", "food", n.sq.x || 700, n.sq.y || 520, 280, ch1LeaveFood)];
-      if (s === "slip") return [ch1At("PUT", "slip", 300, 420, 130, ch1HideSlip)]; // beside the Guardian Box
+      if (s === "slip") return [ch1At("PUT", "slip", 300, 420, 130, ch1HideSlip)]; // by the closet, where the Guardian Box is
       if (s === "pack1") return [ch1At("PACK", "box", n.sq.x || 420, n.sq.y || 520, 280, ch1PackBox)];
       if (s === "pack2") return [ch1At("PACK", "bucket", n.sq.x || 420, n.sq.y || 520, 280, ch1PackBucket)];
       if (s === "jacket") return [ch1At("PUT ON", "jacket", 160, 510, 170, ch1Jacket)];
@@ -944,7 +944,7 @@
       n.ch1Paper === "bin" && (drawSlip(236, 470, "#ff8fb8", 20, 26), drawSlip(252, 476, "#ffe08a", 12, 16));
       n.ch1Paper === "paws" && n.sqPose === "stand" && (drawSlip(n.sq.x + 12, n.sq.y - 70, "#ff8fb8", 18, 24), !n.ch1Mailed && drawSlip(n.sq.x + 24, n.sq.y - 64, "#ffe08a", 12, 16));
       (n.ch1Paper === "pink" || n.ch1Paper === "paw" || n.ch1Hold === "slip") && n.sqPose === "stand" && drawSlip(n.sq.x + 14, n.sq.y - 72, "#ff8fb8", 18, 24);
-      n.ch1Paper === "box" && n.room === "closet" && drawSlip(204, 352, "#ff8fb8", 16, 20); // in the Guardian Box (home-morning-art.js boxOut)
+      n.ch1Paper === "box" && n.room === "closet" && n.wardrobe === "open" && drawSlip(110, 266, "#ff8fb8", 16, 20); // in the Guardian Box, in the closet (home-morning-art.js boxIn)
       if (n.ch1SuckT) {
         let t = Math.min(1, (n.T - n.ch1SuckT) / 1.15),
           x0 = n.sq.x + 18,
@@ -1010,7 +1010,7 @@
         (n.ch1HomeMorning = null),
         (n.ch1Chip = ""));
       if (b === 22 || b === 23) {
-        // the home morning (home-morning.js), awake beside the rocket; 23: the calendar step
+        // the home morning (home-morning.js), awake beside the rocket; 23: the lunch goal by the wardrobe (LOOK · calendar)
         ((n.room = "closet"), (n.scene = "QB"), ch1Day2Begin(!0));
         b === 23 && hmBeat() && hmBeat().jump("cal");
       } else if (b === 25) {

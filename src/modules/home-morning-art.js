@@ -49,8 +49,8 @@ export const MORNING_SIZES = Object.freeze({
 /**
  * Where things are in the room (game positions; placeholders). The rocket stands on the floor at the foot of the bed
  * (in front of its right end); the lunch bag sits on the floor just inside the doorway, where Mops put it down; the
- * Guardian Box is on the closet floor (the approved place) until Squatch takes it out and sets it on the floor
- * between the wardrobe and him (BOX_OUT), where it stays.
+ * Guardian Box is on the closet floor (the approved place); Squatch takes it out onto the floor between the wardrobe
+ * and him (boxOut) to put the gift in, then puts it back (Brian, 2026-11-26).
  */
 export const MORNING_THINGS = Object.freeze({
   rocket: Object.freeze({ x: 352, y: 600 }), // the middle of its base: open floor in front of the bed's right end
@@ -208,8 +208,9 @@ export function drawGuardianBox(ctx, x0, y0, k = DAY2_BOX) {
 }
 
 /**
- * The box out on the floor with the gift in it: the rocket lies in it on the older notes, leaning, its nose sticking out
- * over the front, the note hanging over the rim. `box` is the box's place (game positions).
+ * The box with the gift in it (out on the floor, or back in the closet): the rocket lies in it on the older notes,
+ * leaning, its nose sticking out over the front, the note hanging over the rim. `box` is the box's place (game
+ * positions).
  */
 export function drawBoxWithGift(ctx, box) {
   const cx = (box.x0 + box.x1) / 2;

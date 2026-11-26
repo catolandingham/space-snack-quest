@@ -674,7 +674,7 @@
       (m(318, 478, 64, 44, 6), r("#3478f6", 4), g("G", 350, 501, 22, "#ffffff"));
     }
     // Scene 1 and the rest of chapter 1 at home use the locked room picture. Only then.
-    // The Guardian Box stays in the closet until Day 2, when Squatch takes it out to put the gift in (Brian, 2026-11-16).
+    // The Guardian Box is in the closet; on Day 2 it is out only while Squatch puts the gift in (Brian, 2026-11-26).
     function gboxOut() {
       return !!n.ch1Day2 && !(hmBeat() && hmBeat().boxInCloset());
     }
@@ -687,7 +687,7 @@
     const HOME_FRONT = {
       bucket: { x: 530, y: 506, w: 72, h: 66, back: 566 },
       bed: { x: 92, y: 396, w: 188, h: 132, back: 526 },
-      gbox: { x: 188, y: 356, w: 48, h: 40, back: 390 }, // out on the floor by the closet (home-morning-art.js boxOut)
+      gbox: { x: 188, y: 356, w: 48, h: 40, back: 390 }, // out on the floor by the closet while he puts the gift in (home-morning.js)
     };
     function homeFront() {
       let l = n.sq,
