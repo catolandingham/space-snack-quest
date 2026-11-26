@@ -94,7 +94,7 @@ check(`hall: none of ${Object.keys(hallSpots).length} standing spots overlaps th
 // places Squatch hides (where he was last seen) and back out; at every step of 1/60 s his feet box (as the party's
 // solids count it) touches no stage, stool or plant pot. The bar's strip is where the guards come in, so it is left out.
 {
-  const { SEARCH, guardStep, ALARM, PLANT_LEAVES } = await mod("party-alarm.js");
+  const { SEARCH, guardStep, ALARM, PLANT_LEAVES, catchReach } = await mod("party-alarm.js");
   // (a plant counts as its pot and, behind it, its leaves: PLANT_LEAVES taller on the floor)
   const furniture = HALL_SOLIDS.map((b, i) => ({ ...b, i, y0: b.y0 - (b.plant ? PLANT_LEAVES : 0) })).filter((b) => !b.bar);
   const f = FOOT.hall,
@@ -128,17 +128,18 @@ check(`hall: none of ${Object.keys(hallSpots).length} standing spots overlaps th
     for (const b of furniture) hit(box, b) && chaseBad.length < 8 && chaseBad.push({ t: +t.toFixed(2), at: [Math.round(chaser.x), Math.round(chaser.y)], solid: b.i });
   }
   check("hall: a guard chasing him round the middle plant goes round the pot, never over it, and gets to him (within the catch reach)", chaseBad.length === 0 && near < ALARM.reach, { chaseBad, near: Math.round(near) });
-  // And him standing right behind a pot, as close as his own feet may go (8 above its back edge): a guard still gets
-  // within the catch reach of him from the far side of the leaves (the one capture rule).
+  // And him standing right behind a pot, as close as his own feet may go (8 above its back edge), in the leaves where
+  // guards do not walk: a guard still catches him there, from the far side of the leaves (the one capture rule;
+  // party-alarm.js catchReach adds the leaves to the pinned reach there, and only there).
   const reachOf = (b) => {
     const at = { x: (b.x0 + b.x1) / 2, y: b.y0 - 8 },
       gd = { x: SPOTS.guardIn.x, y: SPOTS.guardIn.y };
     let best = 1e9;
     for (let i = 0; i < 60 * 30; i++) (guardStep(gd, at.x, at.y, ALARM.guard, 1 / 60), (best = Math.min(best, Math.hypot(at.x - gd.x, at.y - gd.y))));
-    return Math.round(best);
+    return { d: Math.round(best), reach: Math.round(catchReach(at)) };
   };
   const pots = HALL_SOLIDS.filter((b) => b.plant).map(reachOf);
-  check("hall: with him right behind a plant pot, a guard gets within the catch reach of him (both plants)", pots.every((d) => d < ALARM.reach), { closest: pots, reach: ALARM.reach });
+  check("hall: with him right behind a plant pot, a guard gets within the catch reach of him (both plants); in the open the reach is the pinned one", pots.every((p) => p.d < p.reach) && catchReach({ x: 600, y: 560 }) === ALARM.reach, pots);
 }
 // ---------- draw order: ties always resolve the same way ----------
 const { drawOrder } = await mod("party-draw.js");

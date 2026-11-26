@@ -53,9 +53,19 @@ const step = stepTo;
  */
 export const GUARD_FEET = Object.freeze({ side: 25, up: 14, down: 8 });
 // (behind a plant pot its leaves stand this much taller on the floor: a guard does not brush through them either)
-// (24 at most: a guard on the far side of the leaves is then still within the pinned catch reach, guard-catch, of
-// Squatch standing right behind the pot; tests/standing-spots.mjs)
-export const PLANT_LEAVES = 24;
+// (the leaves stand about 44 above the pot's back edge in the hall picture: a guard's feet stay behind that, so his
+// legs are never drawn in them)
+export const PLANT_LEAVES = 44;
+/**
+ * The catch reach for a guard and Squatch at feet `sq`: the pinned guard-catch, and, with Squatch in the leaves behind
+ * a pot (floor a guard does not walk on), that much more over the leaves, so a guard still catches him there (the one
+ * capture rule).
+ */
+export function catchReach(sq) {
+  const inLeaves = GUARD_AROUND.some((b, i) => GUARD_PLANT[i] && sq.x > b.x0 && sq.x < b.x1 && sq.y > b.y0 && sq.y < b.y1);
+  return ALARM.reach + (inLeaves ? PLANT_LEAVES + GUARD_FEET.down + 6 : 0);
+}
+const GUARD_PLANT = HALL_SOLIDS.filter((b) => !b.bar).map((b) => !!b.plant);
 export const GUARD_AROUND = Object.freeze(
   HALL_SOLIDS.filter((b) => !b.bar).map((b) => Object.freeze({ x0: b.x0 - GUARD_FEET.side, x1: b.x1 + GUARD_FEET.side, y0: b.y0 - GUARD_FEET.down - (b.plant ? PLANT_LEAVES : 0), y1: b.y1 + GUARD_FEET.up })),
 );
@@ -212,7 +222,7 @@ function searchHall(a, dt, api, sq, hidden) {
       g.a += Math.sin(g.look * 3) * dt * 2.5;
       g.look > 1.2 && ((g.look = 0), (g.next = g.next + 1));
     } else g.a = Math.atan2(to.y - g.y, to.x - g.x);
-    if (!safe && a.phase !== "caught" && Math.hypot(sq.x - g.x, sq.y - g.y) < ALARM.reach) {
+    if (!safe && a.phase !== "caught" && Math.hypot(sq.x - g.x, sq.y - g.y) < catchReach(sq)) {
       api.caught(a.who, a.where);
       a.phase = "caught";
     }
