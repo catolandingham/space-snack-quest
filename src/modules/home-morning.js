@@ -92,8 +92,10 @@ export const HOME_MORNING_WALKS = Object.freeze({
 const BED_SIT = BED_POSES.sit;
 // Standing anywhere here counts as "at the wardrobe" (right of it, behind or beside the bed's top corner).
 const AT_CLOSET = Object.freeze({ x0: 150, x1: 440, y0: 350, y1: 480 });
-// Walking within this many game pixels of the bag (his feet to the bag's middle) is "at the bag": he sees it.
-const AT_BAG = 120;
+// Walking within this many game pixels of where TAKE · lunch works (HOME_MORNING_SPOTS.lunch, its range LUNCH_R) is
+// "at the bag": he sees it, and TAKE · lunch works where he stands, from whichever side he came (code review).
+const LUNCH_R = 110,
+  AT_BAG = LUNCH_R - 10;
 const CALENDAR = HOME_THINGS.calendar;
 const WARDROBE = HOME_THINGS.closet;
 const SPEAKER_BOX = HOME_THINGS.speaker;
@@ -134,7 +136,7 @@ export const HOME_MORNING_PACE = Object.freeze({
 // His arms (the angle from straight down, squatch-art.js): both up to stretch; holding the gift up high.
 const STRETCH = [{ a: -2.75 }, { a: 2.75 }],
   HOLD_UP = [{ a: -2.45 }, { a: 2.95 }];
-const NOTE_COLORS = ["#3478f6", "#e5533d", "#2bb673"];
+const HM_NOTE_COLORS = ["#3478f6", "#e5533d", "#2bb673"];
 
 export function createHomeMorning(bridge) {
   const E = () => bridge.engine();
@@ -215,6 +217,7 @@ export function createHomeMorning(bridge) {
     if (awake) {
       e.set("moPose", "hidden");
       H().music = true;
+      H().musicAt = e.time();
       e.place("sq", HOME_MORNING_SPOTS.woke.x, HOME_MORNING_SPOTS.woke.y);
       e.face("sq", 1);
       go("rocket");
@@ -543,7 +546,7 @@ export function createHomeMorning(bridge) {
       const at = { rocket: "woke", closet: "woke", box: "closet", toBag: "closet", lunch: asked === "cal" ? "closet" : "lunch" }[step];
       if (!h || !at) return;
       const before = (s) => order.indexOf(step) > order.indexOf(s);
-      Object.assign(h, { gift: before("box") ? "box" : before("rocket") ? "held" : "floor", boxOut: false, door: step === "box", heart: -1, mo: null, music: true, leg: 0 });
+      Object.assign(h, { gift: before("box") ? "box" : before("rocket") ? "held" : "floor", boxOut: false, door: step === "box", heart: -1, mo: null, music: true, musicAt: e.time(), leg: 0 });
       e.set("wardrobe", step === "box" ? "open" : "closed");
       e.set("moPose", "hidden");
       e.place("sq", HOME_MORNING_SPOTS[at].x, HOME_MORNING_SPOTS[at].y);
@@ -581,7 +584,7 @@ export function createHomeMorning(bridge) {
       // on the button by the wardrobe until he has looked once (so a kid pressing the button is not sent back to it
       // again and again), and opened any time by a tap on it (tap below)
       if (h.step === "lunch") {
-        const lunch = spot("hm-lunch", "button-lunch", { x: MORNING_THINGS.bag.x - 40, y: MORNING_THINGS.bag.y, r: 110 }, bagBox(), takeLunch);
+        const lunch = spot("hm-lunch", "button-lunch", { x: HOME_MORNING_SPOTS.lunch.x, y: HOME_MORNING_SPOTS.lunch.y, r: LUNCH_R }, bagBox(), takeLunch);
         return h.calSeen ? [lunch] : [lunch, spot("hm-calendar", "button-cal", atCloset, CALENDAR, lookCalendar)];
       }
       return [];
@@ -627,7 +630,7 @@ export function createHomeMorning(bridge) {
       // tap-path.js): once he is beside it, he sees it.
       if (h.step === "toBag" && e.get("ctrl")) {
         const p = e.pos("sq"),
-          b = MORNING_THINGS.bag;
+          b = HOME_MORNING_SPOTS.lunch;
         if (Math.hypot(p.x - b.x, p.y - b.y) <= AT_BAG) seeBag();
       }
       // the gift lands in the box in the close-up: the box's thunk
@@ -809,7 +812,7 @@ export function createHomeMorning(bridge) {
           if (age < 0 || age > P.noteLife) continue;
           ctx.save();
           ctx.globalAlpha = Math.min(1, age * 4) * (1 - age / P.noteLife);
-          e.text(i % 2 ? "\u266b" : "\u266a", sp.x0 - 6 - age * 46, scy - age * 40 + Math.sin(age * 5 + i) * 8, 28, NOTE_COLORS[i % NOTE_COLORS.length], "center", 900);
+          e.text(i % 2 ? "\u266b" : "\u266a", sp.x0 - 6 - age * 46, scy - age * 40 + Math.sin(age * 5 + i) * 8, 28, HM_NOTE_COLORS[i % HM_NOTE_COLORS.length], "center", 900);
           ctx.restore();
           shown++;
         }

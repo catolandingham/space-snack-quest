@@ -590,6 +590,36 @@ g.check("↺ during the PA or Mops leaving starts the morning again from asleep 
 g.check("↺ during the note close-up, his Guardians line or the thought bubble: back on the rocket step, the rocket on the floor", mid.inNote && ["note", "hold", "think"].every((k) => mid[k].step === "rocket" && mid[k].ctrl && mid[k].offer === L["button-rocket"] && mid[k].gift === "floor"), { note: mid.note, hold: mid.hold, think: mid.think });
 g.check("↺ in the box close-up: back on the box step, door open, the gift in his paw", mid.inCloseUp && mid.closeup.step === "box" && mid.closeup.ctrl && mid.closeup.offer === L["button-box"] && mid.closeup.door === "open" && mid.closeup.gift === "held", mid.closeup);
 g.check("↺ in the calendar close-up: back on the lunch step by the wardrobe, LOOK · calendar offered there", mid.inCalendar && mid.calendar.step === "lunch" && mid.calendar.ctrl && mid.calendar.offer === L["button-cal"] && !mid.calendar.cur, mid.calendar);
+// He sees the bag from whichever side he comes, and TAKE · lunch then works where he stands (code review, 2026-11-26):
+// from the left (the wardrobe), from the right (the doorway) and from above (the back wall).
+const sides = await page.evaluate(() => {
+  const ss = window.__ss,
+    n = ss.op,
+    hm = window.SSQ.beat("ch1-home-morning"),
+    out = {};
+  for (const [name, from] of [["left", [300, 398]], ["right", [945, 505]], ["above", [806, 380]]]) {
+    n.q = [];
+    n.cur = null;
+    ss.ch1JumpBeat(22);
+    hm.jump("toBag");
+    n.sq.x = from[0];
+    n.sq.y = from[1];
+    for (let i = 0; i < 6; i++) ss.tick(0.05);
+    let said = null;
+    for (let i = 0; i < 400 && !said; i++) {
+      window.SSQ.engine().step("sq", 846, 505, 160, 0.05);
+      ss.tick(0.05);
+      n.cur && n.cur.k === "bub" && (said = n.cur.b.text);
+    }
+    n.bt = 1;
+    ss.opTap();
+    for (let i = 0; i < 6; i++) ss.tick(0.05);
+    const o = ss.offerNow();
+    out[name] = { said, step: (hm.debug().state || {}).step, offer: o ? o.verb + " · " + o.cap : "" };
+  }
+  return out;
+});
+g.check("he sees the bag from the left, the right or above (\"He forgot his lunch!\"), and TAKE · lunch works where he stands", ["left", "right", "above"].every((k) => sides[k].said === LUNCH && sides[k].step === "lunch" && sides[k].offer === L["button-lunch"]), sides);
 // Later on Day 2 he hides the pink slip in the Guardian Box (14-ch1-day2.js ch1HideSlip): the box is in the closet now,
 // so the closet opens for it and the slip shows in the box there, then the door shuts as they go to bed.
 const slip = await page.evaluate(() => {

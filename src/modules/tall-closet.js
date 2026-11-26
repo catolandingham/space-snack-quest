@@ -37,11 +37,12 @@ export const TALL_GROW = TALL_CLOSET.growPic * GY;
 export const TALL_BOX = Object.freeze({ x0: TALL_CLOSET.x0 * GX, x1: TALL_CLOSET.x1 * GX, y0: (TALL_CLOSET.top - TALL_CLOSET.growPic) * GY, y1: 446 * GY });
 export const TALL_BOX_OPEN = Object.freeze({ ...TALL_BOX, x1: TALL_CLOSET.x1Open * GX });
 
-const tcImgs = {};
+// Both pictures load as the game loads (as the bedtime story's crate front does), so the closet is tall from Day 2's
+// first frame and does not pop up when the door opens (code review).
+const tcImgs = typeof Image === "undefined" ? {} : { closed: Object.assign(new Image(), { src: TALL_CLOSET.pictures.closed }), open: Object.assign(new Image(), { src: TALL_CLOSET.pictures.open }) };
 function tcImg(which) {
-  if (typeof Image === "undefined") return null;
-  tcImgs[which] || (tcImgs[which] = Object.assign(new Image(), { src: TALL_CLOSET.pictures[which] }));
   const im = tcImgs[which];
+  if (!im) return null;
   return im.complete && im.naturalWidth ? im : null;
 }
 // Copies picture rows [r0, r1) of columns [x0, x1) to game position (x0, to) and stretches them to `rows` picture rows.
@@ -51,12 +52,11 @@ function tcCopy(ctx, img, x0, x1, r0, r1, to, rows = r1 - r0) {
   ctx.drawImage(img, x0 * kx, r0 * ky, (x1 - x0) * kx, (r1 - r0) * ky, x0 * GX, to * GY, (x1 - x0) * GX, rows * GY);
 }
 
-let tcLast = null;
 /** Draws the taller closet over the home picture, `open` or closed. Returns its box, or null while not ready. */
 export function drawTallCloset(ctx, open) {
   const T = TALL_CLOSET,
     img = tcImg(open ? "open" : "closed");
-  if (!img) return (tcLast = null);
+  if (!img) return null;
   const g = T.growPic,
     x1 = open ? T.x1Open : T.x1;
   if (open) {
@@ -69,13 +69,8 @@ export function drawTallCloset(ctx, open) {
     tcCopy(ctx, img, T.x0, x1, T.top, T.topEdge, T.top - g);
     tcCopy(ctx, img, T.x0, x1, T.plainRow, T.plainRow + 1, T.topEdge - g, g);
   }
-  return (tcLast = { open: !!open, ...(open ? TALL_BOX_OPEN : TALL_BOX) });
+  return { open: !!open, ...(open ? TALL_BOX_OPEN : TALL_BOX) };
 }
-/** Tests: what the last call drew (its box), or null. */
-export function tallClosetDrawn() {
-  return tcLast;
-}
-
 const tcSources = {};
 /**
  * A canvas the size of the game picture: the locked home picture with the taller closet on it (closed or open), for
