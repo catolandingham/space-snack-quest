@@ -797,16 +797,8 @@
               (n.sq.moving = !1),
               n.pulse.delete("tv"),
               J([
-                { k: "card", id: "fb", text: "Years ago, on Stormtop..." },
-                { k: "fb", pic: "tour", cap: "A Wookie tour group came to visit Stormtop." },
-                { k: "fb", pic: "shed", cap: "They shed. A LOT." },
-                { k: "fb", pic: "clog", cap: "The fur clogged the air scrubbers. Everyone gasped for air!" },
-                { k: "fb", pic: "clog", cap: "*gasp*" },
-                N(() => {
-                  ((n.fbPic = "banish"), (n.banT = n.T));
-                }),
-                v("official", "Nobody can live outside. The scrubbers keep us breathing. NO FUR.", "say"),
-                { k: "card", id: "fb", text: "Now" },
+                // the Wookiee story (src/modules/tv-story.js)
+                ...((window.SSQ && window.SSQ.beat("ch1-tv-story") && window.SSQ.beat("ch1-tv-story").steps()) || []),
                 N(() => {
                   ((n.fbPic = ""), (n.tvOn = !1));
                 }),

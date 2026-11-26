@@ -394,11 +394,11 @@ async function keepGoing(name, outfit, lost) {
   out.on = { tv: s.lit, lit: await tvLit(page), now: !!s.now, bub: s.cur === "bub", horn: await atButton(page, HORN), mopsDown: s.mo.y };
   name === "tophat" && (await still(page, "r4-keep-tv-on"));
   // then beat 20 as today: its first panel, the party night over
-  out.heldFor = await tickUntil(page, '(p, n) => !p || p.scene === "done" || (n.cur && n.cur.k === "panel")', 8);
+  out.heldFor = await tickUntil(page, '(p, n) => !p || p.scene === "done" || (n.cur && (n.cur.k === "panel" || n.cur.k === "card"))', 8);
   s = await st(page);
-  out.tv = s.tv && (!s.now || s.now.scene === "done") && (await page.evaluate(() => { const c = window.__ss.op.cur; return !!c && c.k === "panel" && c.id === "ch1tv1"; }));
+  out.tv = s.tv && (!s.now || s.now.scene === "done") && (await page.evaluate(() => { const c = window.__ss.op.cur; return !!c && c.k === "card" && c.id === "fb" && c.text === "Years ago, on Stormtop..."; }));
   name === "tophat" && (await page.evaluate(() => window.__ss.drawFrame()), await still(page, "r4-keep-tv-story-first-picture"));
-  // the TV story fills the whole picture (Brian 2026-11-25: "the more fullscreen TV"): dark blue in all four corners
+  // the TV story fills the whole picture (Brian 2026-11-25: "the more fullscreen TV"): its first card is dark in all four corners
   out.full = await page.evaluate(() => {
     const c = document.querySelector("canvas"),
       k = c.width / 960,
@@ -424,7 +424,7 @@ async function keepGoing(name, outfit, lost) {
   g.check("he presses the TV's button with his horn: the horn is drawn on the button at the press (and was not there as he walked up), with its click", o.press.horn >= 12 && o.walk.horn === 0 && o.atTv.hornBefore === 0 && o.press.heard.includes("click") && !o.press.bub, [o.atTv, o.press]);
   g.check("the TV comes on at the press, not before (the screen is drawn lit), and stays on while he stands back down", !o.atTv.tv && o.press.tv && o.press.lit && o.on.tv && o.on.lit && o.on.now && !o.on.bub && Math.abs(o.on.mopsDown - after.TV.stand.y) < 1, [o.atTv, o.press, o.on]);
   g.check("the lit TV is held a moment (a clear last frame), then beat 20 (the TV story), and the party night is over", o.heldFor >= 1 && o.heldFor <= 4 && o.tv, [o.heldFor, o.tv]);
-  g.check("the TV story's first picture fills the whole picture (dark blue in all four corners), as before 2026-11-11", o.full.every((c) => Math.abs(c[0] - 0x1b) < 12 && Math.abs(c[1] - 0x21) < 12 && Math.abs(c[2] - 0x40) < 12), o.full);
+  g.check("the TV story starts full screen: its \"Years ago, on Stormtop...\" card is dark in all four corners (tests/tv-story.mjs checks the pictures)", o.full.every((c) => Math.abs(c[0] - 0x1e) < 12 && Math.abs(c[1] - 0x24) < 12 && Math.abs(c[2] - 0x30) < 12), o.full);
   g.check("no errors in \"Keep going\"", o.errors.length === 0, o.errors);
 }
 {

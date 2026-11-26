@@ -15,13 +15,14 @@
  * on the floor, and Mops says "Hey, stop that!" (morning.js), then the picture goes on.
  *
  * Squatch's homework on the home-alone morning is the second user: its two pictures are in
- * homework-cutaway.js.
+ * homework-cutaway.js. The TV story (beat 20) is the third: its Wookiee pictures are in tv-story-art.js.
  *
  * Drawn here in the game's style (dark outlines, flat colours). Mops is drawn by this file too, from the same
  * shapes as the engine's drawMops but with outlines as thin as in Brian's approved picture (see "Mops in the
  * close-up"), and his beard so it can dunk and twist.
  */
 import { HOMEWORK_PANELS } from "./homework-cutaway.js";
+import { WOOKIEE_PANELS } from "./tv-story-art.js";
 
 const INK = "#1e2430";
 const GLOW = "#ffcf33",
@@ -638,6 +639,8 @@ function wring(ctx, t, engine, extra) {
 const PANELS = {
   beard: [dunk, wring],
   homework: HOMEWORK_PANELS,
+  // beat 20, the TV story (tv-story.js): the old Wookiee pictures, each drawing itself full screen
+  wookiee: WOOKIEE_PANELS,
 };
 
 /**

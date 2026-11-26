@@ -1571,142 +1571,16 @@
         r("#ffcf33", 2),
         e.restore());
     }
-    function wf(l, o, i, s = 0) {
-      let q = "#9a4a1c",
-        d = "#5e2a0c",
-        A = Math.sin(i) * 1.5;
-      (m(l - 12, o - 6, 10, 16, 4), r(q, 2), m(l + 2, o - 6, 10, 16, 4), r(q, 2), XV(l, o - 20, 17, 22, 18, 3, 0), wV(q, 2.5));
-      for (let R = 0; R < 6; R++) C([l - 12 + R * 5, o - 30 + (R % 2) * 4, l - 13 + R * 5 + A, o - 6 + (R % 3) * 3], d, 1.1);
-      let T = s === 1;
-      (St(l - 15, o - 30, l - 20, o - 8 + Math.sin(i) * 2, 5, q, 2),
-        T ? St(l + 15, o - 30, l + 22, o - 60, 5, q, 2) : St(l + 15, o - 30, l + 20, o - 8 - Math.sin(i) * 2, 5, q, 2),
-        e.save(),
-        e.translate(l, o - 22),
-        e.rotate(-0.75),
-        m(-20, -3, 40, 6, 1.5),
-        r("#6b4429", 1.5));
-      for (let R = -16; R <= 14; R += 6) (m(R, -2.2, 3.5, 4.4, 0.5), r("#d8d8d8", 0.8));
-      (e.restore(), XV(l, o - 50, 17, 15, 16, 2.6, 0), wV(q, 2.5), XV(l, o - 40, 15, 7, 12, 2.2, 0), wV(q, 1.5));
-      for (let R = 0; R < 5; R++) C([l - 10 + R * 5, o - 62, l - 11 + R * 5, o - 55], d, 1);
-      (s === 2
-        ? (m(l - 11, o - 53, 9, 5, 2), r(y, 0), m(l + 2, o - 53, 9, 5, 2), r(y, 0), C([l - 2, o - 51, l + 2, o - 51], y, 1.5))
-        : (L(l - 5, o - 51, 2.4),
-          r("#ffffff", 1.2),
-          F(l - 5, o - 51, 1.3, y),
-          L(l + 5, o - 51, 2.4),
-          r("#ffffff", 1.2),
-          F(l + 5, o - 51, 1.3, y)),
-        X(l, o - 46, 2.5, 1.5),
-        r(y, 0),
-        X(l, o - 41, 5, 3.2),
-        r("#3a1405", 1.5),
-        C([l - 3, o - 43, l + 3, o - 43], "#ffffff", 1),
-        s === 0 &&
-          (C([l - 10, o - 38, l, o - 22, l + 10, o - 38], y, 1.2),
-          m(l - 7, o - 26, 14, 10, 2),
-          r("#b8bcc4", 1.5),
-          L(l, o - 21, 3),
-          r("#3a3f4b", 1)),
-        s === 1 &&
-          (C([l + 22, o - 58, l + 22, o - 88], y, 1.8),
-          e.beginPath(),
-          e.moveTo(l + 22, o - 88),
-          e.lineTo(l + 44, o - 81),
-          e.lineTo(l + 22, o - 74),
-          e.closePath(),
-          r("#ff6a3d", 1.5),
-          C([l + 24, o - 84, l + 32, o - 80, l + 25, o - 77], "#3478f6", 1.5)));
-    }
     function I2(l, o) {
-      let i = n.T;
-      if (
-        ((e.fillStyle = "#f1f3f6"),
+      // The old picture stories still told this way (fb1, fb2). The Wookiee story is src/modules/tv-story.js.
+      ((e.fillStyle = "#f1f3f6"),
         e.fillRect(0, 0, c, b),
         e.save(),
         e.translate(480, 300),
         e.scale(3, 3),
         l.startsWith("fb2") && (e.save(), e.scale(1 / 3, 1 / 3), e.translate(-480, -300), V6(l), e.restore()),
-        l.startsWith("fb1") && (e.save(), e.scale(1 / 3, 1 / 3), e.translate(-480, -300), f5(l), e.restore()),
-        l === "banish")
-      ) {
-        let A = Math.min(1, (i - n.banT) / 4);
-        (m(70, -30, 70, 50, 10),
-          r("#dfe4ea", 2.5),
-          e.beginPath(),
-          e.moveTo(140, -30),
-          e.lineTo(160, -5),
-          e.lineTo(140, 20),
-          e.closePath(),
-          r("#dfe4ea", 2.5),
-          m(78, -12, 18, 32, 2),
-          r("#2b3a67", 2),
-          g("TOURS", 108, -20, 6, y, "center", 900),
-          [-10, 25, 55].forEach((T, R) => {
-            let P = T + A * 60;
-            P < 85 && (e.save(), e.translate(P, 22), e.scale(0.7, 0.7), wf(0, 0, i * 4, R), e.restore());
-          }),
-          e.save(),
-          e.translate(-90, 22),
-          m(-6, -2, 5, 14, 2),
-          r("#1e2a4a", 1.5),
-          m(1, -2, 5, 14, 2),
-          r("#1e2a4a", 1.5),
-          m(-11, -30, 22, 30, 6),
-          r("#ffffff", 2),
-          C([-10, -28, 10, -4], "#e5533d", 4),
-          St(9, -26, 34, -34, 3.5, "#ffffff", 1.5),
-          L(0, -40, 9),
-          r("#f0bf93", 2),
-          m(-9, -52, 18, 6, 2),
-          r("#1e2a4a", 1.5),
-          F(3, -41, 1.3, y),
-          C([-1, -36, 5, -36], y, 1.3),
-          e.restore());
-      }
-      if ((l === "tour" && [-50, 0, 50].forEach((A, T) => wf(A, 22, i * 3, T)), l === "shed")) {
-        [-50, 0, 50].forEach((A, T) => wf(A, 22, i * 3, T));
-        for (let A = 0; A < 30; A++) {
-          let T = ((A * 37 + i * 30) % 220) - 110,
-            R = ((A * 23 + i * 18) % 120) - 80;
-          (e.beginPath(), e.arc(T, R, 4, 0, 2.2), (e.strokeStyle = "#8b5a3c"), (e.lineWidth = 1.5), e.stroke());
-        }
-      }
-      if (l === "clog") {
-        (m(-44, -64, 88, 56, 4), r("#dfe4ea", 2.5));
-        for (let A = -36; A <= 36; A += 9) C([A, -58, A, -14], y, 1.5);
-        (XV(0, -36, 22, 20, 14, 3, 0), wV("#a0703f", 2.5), g("AIR SCRUBBER", 0, -70, 6, y));
-        for (let [A, T] of [
-          [-72, "#7fd1ff"],
-          [72, "#a98bff"],
-        ])
-          (e.save(),
-            e.translate(A, 26),
-            m(-7, -2, 6, 14, 2),
-            r("#59657d", 2),
-            m(1, -2, 6, 14, 2),
-            r("#59657d", 2),
-            m(-11, -28, 22, 28, 7),
-            r(T, 2.5),
-            St(-8, -24, -3, -33, 3.5, T, 1.5),
-            St(8, -24, 3, -33, 3.5, T, 1.5),
-            L(0, -37, 9),
-            r("#f0bf93", 2.5),
-            X(0, -33, 2.2, 3),
-            r(y, 0),
-            F(-3, -39, 1.2, y),
-            F(3, -39, 1.2, y),
-            e.restore());
-      }
-      if (
-        (l === "nofur" &&
-          (XV(0, -12, 20, 20, 14, 3, 0),
-          wV("#8b5a3c", 2.5),
-          L(0, -12, 36),
-          (e.strokeStyle = "#e5533d"),
-          (e.lineWidth = 6),
-          e.stroke(),
-          C([-25, -37, 25, 13], "#e5533d", 6)),
-        e.restore(),
+        l.startsWith("fb1") && (e.save(), e.scale(1 / 3, 1 / 3), e.translate(-480, -300), f5(l), e.restore()));
+      (e.restore(),
         e.save(),
         (e.globalCompositeOperation = "saturation"),
         (e.globalAlpha = 0.6),
@@ -1718,36 +1592,7 @@
         (e.strokeStyle = "#59657d"),
         (e.lineWidth = 6),
         e.strokeRect(9, 9, c - 18, b - 18),
-        g("YEARS AGO", 40, 36, 16, "#59657d", "left", 800),
-        o === "*gasp*")
-      ) {
-        n.maxB = Math.max(n.maxB, ++qq);
-        let A = 264,
-          T = 224,
-          R = 160,
-          P = 62,
-          _ = A - R / 2,
-          $ = T - P - 26;
-        (e.beginPath(),
-          e.moveTo(A - 10, $ + P - 2),
-          e.lineTo(A, T - 4),
-          e.lineTo(A + 10, $ + P - 2),
-          e.closePath(),
-          r("#ffffff", 4),
-          m(_, $, R, P, 18),
-          r("#ffffff", 4),
-          (e.fillStyle = "#fff"),
-          e.fillRect(A - 8, $ + P - 5, 16, 7),
-          ge(15));
-        let gV = e.measureText(pa.tourist).width + 22;
-        (m(_ + 14, $ - 14, gV, 26, 12),
-          r(Ds.tourist, 3),
-          g(pa.tourist, _ + 14 + gV / 2, $ - 1, 15, "#ffffff"),
-          g(o, _ + R / 2, $ + 32, 26),
-          _ + R - 12,
-          $ + P - 9);
-        return;
-      }
+        g("YEARS AGO", 40, 36, 16, "#59657d", "left", 800));
       if (!o) return;
       let s = zt(o, 820, 28),
         q = 36 + s.length * 34,
@@ -1781,7 +1626,6 @@
         (X(l, o, i * 0.8, i), e.stroke());
     }
     function gq(l, o) {
-      if (l === "ch1tv1" || l === "ch1tv2" || l === "ch1tv3") return drawCh1Tv(l);
       if (l === "ch1moon") return drawCh1Moon();
       if (l === "ch1site") {
         ((e.fillStyle = "rgba(20,24,32,.62)"),

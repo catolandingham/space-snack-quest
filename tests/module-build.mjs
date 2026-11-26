@@ -44,7 +44,7 @@ const bridge = await page.evaluate(() => {
   return out;
 });
 g.check("window.SSQ is the bridge: frozen, not replaceable, version 1", !!bridge && bridge.version === 1 && bridge.frozen && bridge.locked, bridge);
-g.check("the rebuilt beats are the morning and the party night", !!bridge && JSON.stringify(bridge.ids) === JSON.stringify(["ch1-morning", "ch1-party"]) && bridge.unknown === null, bridge);
+g.check("the rebuilt beats are the morning, the party night and the TV story", !!bridge && JSON.stringify(bridge.ids) === JSON.stringify(["ch1-morning", "ch1-party", "ch1-tv-story"]) && bridge.unknown === null, bridge);
 g.check("a beat registers once by id; registering it twice throws", !!bridge && bridge.registered === "test" && bridge.twice === "throws", bridge);
 g.check("the older program still starts (Chapter 1 state is there)", await page.evaluate(() => !!(window.__ss && window.__ss.op)));
 g.check("the older program handed the engine over to the bridge", await page.evaluate(() => !!window.SSQ.engine()));

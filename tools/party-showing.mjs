@@ -325,9 +325,9 @@ const chooseOnCard = async (id) => {
   await until((q) => q.full !== "party card", 4000);
   log("card: " + id);
 };
-// Beat 20's first panel: the party night is over.
+// Beat 20's first card ("Years ago, on Stormtop...", src/modules/tv-story.js): the party night is over.
 const toTv = async (ms) => {
-  const s = await until((q) => !q.now || q.now.scene === "done" || (q.cur === "panel" && q.id === "ch1tv1"), ms, async (q) => (q.cur === "bub" || q.cur === "card") && (await read(q)));
+  const s = await until((q) => !q.now || q.now.scene === "done" || (q.cur === "card" && q.id === "fb"), ms, async (q) => (q.cur === "bub" || q.cur === "card") && (await read(q)));
   s || (await fail("beat 20 did not start"));
   await sleep(2500);
 };
@@ -401,7 +401,7 @@ if (which === "back") {
   s || (await fail("closing time did not come"));
   log("closing time, Mops is in");
   await until(
-    (q) => !q.now || q.now.scene === "done" || (q.cur === "panel" && q.id === "ch1tv1"),
+    (q) => !q.now || q.now.scene === "done" || (q.cur === "card" && q.id === "fb"),
     90000,
     async (q) => {
       if (q.cur === "bub" || q.cur === "card") return read(q);

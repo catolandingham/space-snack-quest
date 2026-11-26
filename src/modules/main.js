@@ -4,10 +4,12 @@
 import { createBridge } from "./bridge.js";
 import { createMorning } from "./morning.js";
 import { createParty } from "./party.js";
+import { createTvStory } from "./tv-story.js";
 
 const bridge = createBridge();
 // The rebuilt beats. The older program asks for each by id where it used to run its own code.
 bridge.registerBeat("ch1-morning", createMorning(bridge));
 bridge.registerBeat("ch1-party", createParty(bridge));
+bridge.registerBeat("ch1-tv-story", createTvStory(bridge));
 // Not writable or replaceable: the older program and every module see the same bridge.
 Object.defineProperty(window, "SSQ", { value: bridge, writable: false, configurable: false, enumerable: true });

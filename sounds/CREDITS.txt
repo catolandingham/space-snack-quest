@@ -6,3 +6,7 @@ are from "Impact Sounds" (1.0) by Kenney (www.kenney.nl), released under Creativ
 http://creativecommons.org/publicdomain/zero/1.0/
 Converted from .ogg to .mp3 (mono, 64 kb/s) so older iPhones can play them. Downloaded with Brian's yes
 (2026-11-24, "35 (A)"). The game plays them through its master volume, only when sound is on.
+
+wookiee-roar (the Wookiees in the TV story, beat 20) is Brian's approved Wookiee recording, from the v2
+prototype's approved assets, 2026-11-25 (Snack Quest Chat: "remember to include wookie sound effects").
+Copied unchanged (mp3, 5.5 s). The game plays it through its sound effects volume, only when sound is on.
