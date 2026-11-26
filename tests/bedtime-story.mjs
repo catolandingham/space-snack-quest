@@ -155,7 +155,11 @@ const run = !(started && tvDone)
       // Day 2's first moments: the room comes up from black.
       // (with the home morning here, its night does it: it starts dark and comes up)
       const hm = window.SSQ.beat("ch1-home-morning");
+      // (the words before it comes up are the morning's own: the bedtime story's words end at the fade)
+      out.shownAtDay2 = ss.shown();
       for (let k = 0; k < 90; k++) {
+        // (the morning's first line in the dark, the PA calling Mops to work, waits for NEXT: tap it)
+        n.cur && n.cur.k === "bub" && ((n.bt = 1), ss.opTap());
         ss.drawFrame();
         const r = beat.debug().drew,
           m = hm && hm.debug().drew;
@@ -191,7 +195,7 @@ const story = run.pics.filter((p) => p.id === "moonpie"),
   pics = story.map((p) => p.drew || {});
 g.check("the six story pictures are the full-screen cutaway of the crate story, then one Guardians picture", story.length === 6 && story.every((p) => p.drew && p.drew.full) && run.pics.length === 7 && run.pics[6].id === "guardians", run.pics.map((p) => p.id));
 g.check("every picture and line waits for NEXT (still up after 6 seconds with no tap)", run.held.length === 9 && run.held.every(Boolean), run.held);
-const shown = new Set(run.shownAfter || []);
+const shown = new Set(run.shownAtDay2 || run.shownAfter || []);
 const joined = [...shown].join(" ");
 const onScreen = (t) => shown.has(t) || joined.includes(t);
 g.check("the captions show word for word as commit 71ec66e had them", ["crate", "baby", "beard", "bucket", "nothing"].every((k) => onScreen(OLD[k])), ["crate", "baby", "beard", "bucket", "nothing"].filter((k) => !onScreen(OLD[k])));
@@ -200,7 +204,7 @@ g.check('no "Baaa" anywhere in the bedtime story (on screen or in its lines)', !
 g.check("the lines file holds the old captions word for word, the goat sound and Mops's line", L["cap-crate"] && L["cap-crate"].text === OLD.crate && L["cap-baby"].text === OLD.baby && L["cap-beard"].text === OLD.beard && L["mops-weent"] && L["mops-weent"].text === OLD.weent && L["mops-moon-pie"].text === MOPS_LINE);
 g.check("the old crate story's words are approved (Brian 2026-11-26: keep them); the goat sound is Brian's; Mops's line is 'in-game, needs-yes'", ["cap-crate", "cap-baby", "cap-beard", "cap-bucket", "mops-nothing", "sign-moon-pies"].every((id) => L[id] && L[id].status === "approved") && L["mops-weent"].status.startsWith("Brian 2026-11-26") && L["mops-moon-pie"] && L["mops-moon-pie"].status === "in-game, needs-yes");
 const known = new Set(BEDTIME_STORY_LINES.map((l) => l.text));
-const fromStory = (run.shownAfter || []).filter((w) => !run.shownBefore.includes(w));
+const fromStory = (run.shownAtDay2 || run.shownAfter || []).filter((w) => !run.shownBefore.includes(w));
 // A caption or bubble wrapped on a phone is drawn a line at a time: a drawn piece counts when it is a whole line of
 // the lines file, or a run of whole words of one (a wrapped bubble's middle line is a run from neither end). (The
 // TV story's last card, "Now", and the bubbles' name tags come from before this beat.)

@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–140 | ## Where main is (Chapter 1 redesign) |
-| 141–155 | ## Register |
-| 156–177 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 178–198 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 199–211 | ## Phase 2 (plan section 4, T13 to T18) |
-| 212–234 | ## Phase 1 (plan section 3, T5 to T12) |
-| 235–248 | ## SS40–SS44 |
-| 249–266 | ## Story rows |
-| 267–285 | ## Reset section |
-| 286–296 | ## Still open |
-| 297–300 | ## Chapter 1 replot, recorded and not built |
-| 301–458 | ## Changelog |
+| 24–141 | ## Where main is (Chapter 1 redesign) |
+| 142–156 | ## Register |
+| 157–178 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 179–199 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 200–212 | ## Phase 2 (plan section 4, T13 to T18) |
+| 213–235 | ## Phase 1 (plan section 3, T5 to T12) |
+| 236–249 | ## SS40–SS44 |
+| 250–267 | ## Story rows |
+| 268–286 | ## Reset section |
+| 287–297 | ## Still open |
+| 298–301 | ## Chapter 1 replot, recorded and not built |
+| 302–459 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -27,6 +27,7 @@
 - Ganitor D (the robot janitor notice): not built; three wordings for Brian in the round C report.
 - Needs Brian's yes (visual, placeholders): the counter close-up's frame and place (it covers the hall's left part at the counter); the Employee of the Month photo and plaque (a layer over the locked hallway picture); the name tag's look; the hay sandwich; the bigger bag (about three quarters of Squatch's height in the hall); the crayon card made a little bigger for the longer label.
 - Placeholders (not pins): the close-up 1.65 times, grows in 0.4 s; the eating close-up 3.8 s (first bite at 0.8 s so the whole sandwich is seen).
+- The two watchers moved and turned (placeholders): once the party's sight saw Squatch's whole drawn body (merged in this round), the old places put his doorway, the plant and the crates inside their cones. Now the teal guest stands at 380, 355 looking down and right, the camera tourist at 480, 400 looking right and a little up; `tests/lunch-sneak.mjs`'s fairness rules pass again.
 - MOPS on the bag as he walks in at the picture's bottom edge is still partly off the canvas for a moment (listed in `tests/canvas-text-allow.json`).
 
 2026-11-26 (round C), draft PR #90 on `feat/ch1-day2-morning`, not merged. Done: `feat/ch1-bedtime-story` merged in (merge commit). The home morning follows Brian's music table of 2026-11-26 (`src/modules/music-picks.js`): it no longer starts the morning song (`bridge.homeMusic`, Goating in Space, which is Day 1's first morning only); while the night is still dark the bedtime story's Reawakening goes on (`home-morning.js` nightNow, `bridge.js` refineCue), and once the room comes up this daytime visit home plays the next track of the home rotation (Carefree, Morning, Rainbows). Tests: `tests/home-morning.mjs` (the cue every frame: "bedtime" while dark, "home" by day; the morning song not playing). Docs match main: yes. Not yet played by a person.
