@@ -4,24 +4,30 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–122 | ## Where main is (Chapter 1 redesign) |
-| 123–137 | ## Register |
-| 138–159 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 160–180 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 181–193 | ## Phase 2 (plan section 4, T13 to T18) |
-| 194–216 | ## Phase 1 (plan section 3, T5 to T12) |
-| 217–230 | ## SS40–SS44 |
-| 231–248 | ## Story rows |
-| 249–267 | ## Reset section |
-| 268–278 | ## Still open |
-| 279–282 | ## Chapter 1 replot, recorded and not built |
-| 283–438 | ## Changelog |
+| 24–128 | ## Where main is (Chapter 1 redesign) |
+| 129–143 | ## Register |
+| 144–165 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 166–186 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 187–199 | ## Phase 2 (plan section 4, T13 to T18) |
+| 200–222 | ## Phase 1 (plan section 3, T5 to T12) |
+| 223–236 | ## SS40–SS44 |
+| 237–254 | ## Story rows |
+| 255–273 | ## Reset section |
+| 274–284 | ## Still open |
+| 285–288 | ## Chapter 1 replot, recorded and not built |
+| 289–444 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-26 (round C), draft PR #91 on `feat/ch1-lunch-sneak`, not merged. Done, Brian's answers of 2026-11-26 (chat): behind the snack counter Mops says "...you know the rule, grab one snack." (approved word for word) in place of the one-pie thought bubble; "Squatch! You should be hiding." stays out (he looks left and right); no balloon anywhere in the lunch sneak (none drawn, as built); the bartender stays away and a guest at the counter watches (as built); ROLL · ball is offered in the hall during the sneak (the ball rule, DECISIONS C20 and R43: noticed only by someone within 70 px for 2 s looking his way; moving unrolls him; not offered in the hallway or behind the counter; the doorway waits until he unrolls); Mops's lunch is a hay sandwich, then the bag; the bag is bigger (62 x 68 at home, 0.88 of that in the hall) so MOPS on it is 20 game px (about 16 CSS px on an iPad standing up, 8 on a 375-wide phone; off the canvas-text allow list for size); the snack counter moment has a framed close-up of the counter's corner 1.65 times bigger (a tap on the plate in it is TAKE · snack). Ganitor (`src/modules/ganitor.js`): A a GANITOR name tag on Mops's pocket in every scene (in place of the old name patch; the word shows in the close-ups, a plain tag elsewhere), B the wall speaker's "Ganitor Mops to the party hall." in the dark before Mops leaves on Day 2 (overheard, ear icon), C an Employee of the Month photo of Mops with the plaque MOPS, GANITOR on the hallway's back wall (a layer over the locked picture, not part of it), E Squatch's crayon card in the hallway says ME / MOPS THE GANITOR (the crayon Guardians drawing has no Mops, so no label). Tests: `tests/lunch-ganitor.mjs`, `tests/lunch-sneak.mjs`, `tests/home-morning.mjs`. Docs match main: yes. Not yet played by a person.
+- Ganitor D (the robot janitor notice): not built; three wordings for Brian in the round C report.
+- Needs Brian's yes (visual, placeholders): the counter close-up's frame and place (it covers the hall's left part at the counter); the Employee of the Month photo and plaque (a layer over the locked hallway picture); the name tag's look; the hay sandwich; the bigger bag (about three quarters of Squatch's height in the hall); the crayon card made a little bigger for the longer label.
+- Placeholders (not pins): the close-up 1.65 times, grows in 0.4 s; the eating close-up 3.8 s (first bite at 0.8 s so the whole sandwich is seen).
+- MOPS on the bag as he walks in at the picture's bottom edge is still partly off the canvas for a moment (listed in `tests/canvas-text-allow.json`).
 
 2026-11-26, draft PR on `feat/ch1-lunch-sneak` (stacked on `feat/ch1-day2-morning`), not merged. Done: beats 25 to 27, the lunch sneak, as a module (`ch1-lunch`): the sneak past two watchers on fixed rhythms (plant, crates, hallway doorway; one glow at a time), the party's capture rule unchanged, GIVE · lunch and "My lunch! You're the best.", Mops eating the lunch and the bag in a wordless close-up, back behind the snack counter, one Moon Pie, then beat 28 unchanged. Old lunch code deleted. Waiting on Brian:
 - Mops's one-snack line (pending) or the wordless one-pie bubble as built? "Squatch! You should be hiding." (pending): add it when approved?
