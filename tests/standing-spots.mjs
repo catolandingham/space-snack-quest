@@ -92,6 +92,58 @@ for (const [name, p] of Object.entries(hallSpots)) {
   HALL_SOLIDS.forEach((b, i) => hit(box, b) && hallBad.push({ spot: name, at: [p.x, p.y], solid: i }));
 }
 check(`hall: none of ${Object.keys(hallSpots).length} standing spots overlaps the stage, the bar, the stools or the plant pots`, hallBad.length === 0, hallBad);
+// ---------- the guards' walks in the hall (Brian 2026-11-26, showing 6: "Security looks like they're on top of plant") ----------
+// Each guard walks in from the hallway doorway, round his search points (party-alarm.js SEARCH) more than once, to the
+// places Squatch hides (where he was last seen) and back out; at every step of 1/60 s his feet box (as the party's
+// solids count it) touches no stage, stool or plant pot. The bar's strip is where the guards come in, so it is left out.
+{
+  const { SEARCH, guardStep, ALARM, PLANT_LEAVES, catchReach } = await mod("party-alarm.js");
+  // (a plant counts as its pot and, behind it, its leaves: PLANT_LEAVES taller on the floor)
+  const furniture = HALL_SOLIDS.map((b, i) => ({ ...b, i, y0: b.y0 - (b.plant ? PLANT_LEAVES : 0) })).filter((b) => !b.bar);
+  const f = FOOT.hall,
+    bad = [];
+  let steps = 0;
+  for (const start of [0, 3]) {
+    const g = { x: SPOTS.guardIn.x, y: SPOTS.guardIn.y },
+      route = [...Array.from({ length: SEARCH.length * 2 }, (_, k) => SEARCH[(start + k) % SEARCH.length]), SPOTS.plantMiddle, SPOTS.plantBack, SEARCH[2], { x: SPOTS.guardIn.x + 40, y: SPOTS.guardIn.y }];
+    for (const to of route)
+      for (let i = 0; i < 60 * 20 && !guardStep(g, to.x, to.y, ALARM.guard, 1 / 60); i++) {
+        steps++;
+        const box = { x0: g.x - f.side, x1: g.x + f.side, y0: g.y - f.up, y1: g.y + f.down };
+        for (const b of furniture) hit(box, b) && bad.length < 8 && bad.push({ from: start, to, at: [Math.round(g.x), Math.round(g.y)], solid: b.i });
+      }
+  }
+  check(`hall: the guards' search walks (${steps} steps) never put a guard's feet on the stage, a stool, a plant pot or the leaves behind it`, bad.length === 0 && steps > 1000, bad);
+  // A guard after Squatch as he runs round the middle plant, past the edge of its leaves (the place moves every step):
+  // the guard goes round the pot, never on it.
+  const chaser = { x: SPOTS.guardIn.x, y: SPOTS.guardIn.y },
+    pot = HALL_SOLIDS.find((b) => b.plant && b.x0 > 300),
+    cx = (pot.x0 + pot.x1) / 2,
+    cy = (pot.y0 + pot.y1) / 2,
+    chaseBad = [];
+  let near = 1e9;
+  for (let i = 0; i < 60 * 30; i++) {
+    const t = i / 60,
+      him = { x: cx + Math.cos(t * 1.2) * 100, y: cy + Math.sin(t * 1.2) * 85 };
+    guardStep(chaser, him.x, him.y, ALARM.guard, 1 / 60);
+    t > 8 && (near = Math.min(near, Math.hypot(him.x - chaser.x, him.y - chaser.y) - catchReach(him)));
+    const box = { x0: chaser.x - f.side, x1: chaser.x + f.side, y0: chaser.y - f.up, y1: chaser.y + f.down };
+    for (const b of furniture) hit(box, b) && chaseBad.length < 8 && chaseBad.push({ t: +t.toFixed(2), at: [Math.round(chaser.x), Math.round(chaser.y)], solid: b.i });
+  }
+  check("hall: a guard chasing him round the middle plant goes round the pot, never over it, and gets to him (within the catch reach)", chaseBad.length === 0 && near < 0, { chaseBad, near: Math.round(near) });
+  // And him standing right behind a pot, as close as his own feet may go (8 above its back edge), in the leaves where
+  // guards do not walk: a guard still catches him there, from the far side of the leaves (the one capture rule;
+  // party-alarm.js catchReach adds the leaves to the pinned reach there, and only there).
+  const reachOf = (b) => {
+    const at = { x: (b.x0 + b.x1) / 2, y: b.y0 - 8 },
+      gd = { x: SPOTS.guardIn.x, y: SPOTS.guardIn.y };
+    let best = 1e9;
+    for (let i = 0; i < 60 * 30; i++) (guardStep(gd, at.x, at.y, ALARM.guard, 1 / 60), (best = Math.min(best, Math.hypot(at.x - gd.x, at.y - gd.y))));
+    return { d: Math.round(best), reach: Math.round(catchReach(at)) };
+  };
+  const pots = HALL_SOLIDS.filter((b) => b.plant).map(reachOf);
+  check("hall: with him right behind a plant pot, a guard gets within the catch reach of him (both plants); in the open the reach is the pinned one", pots.every((p) => p.d < p.reach) && catchReach({ x: 600, y: 560 }) === ALARM.reach, pots);
+}
 // ---------- draw order: ties always resolve the same way ----------
 const { drawOrder } = await mod("party-draw.js");
 const tie = [{ id: "a", y: 500 }, { id: "b", y: 500 }, { id: "c", y: 480 }, { id: "d", y: 500 }];

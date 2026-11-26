@@ -35,6 +35,10 @@ export const COOL_HAT_SECONDS = 180;
 export const SONG_SECONDS = COOL_HAT_SECONDS / 3;
 // PLACEHOLDER for Brian: coming back to the party after hiding at home, at least this much of it is left.
 export const BACK_MIN_SECONDS = 60;
+// Seconds of nothing between the guests' clap for his dance and the group photo's start, when he leaves his first
+// dance before the first song ends (Brian 2026-11-26, showing 6: "Seems to be a long break after finishing dance now
+// and picture?"; the photo waited for the song's end, 28 seconds in that video). The first song ends early instead.
+export const PHOTO_AFTER_DANCE = 0.5;
 // PLACEHOLDERS for Brian:
 //   firstMinute  his first minute in the hall: the octopus waits
 //   mill, stops  how slowly guests mill and how long they stop to dance
@@ -253,6 +257,9 @@ export function createFreePlay(h) {
     p.dance = null;
     if (forAlarm) return;
     tried && ((p.done.dance = true), (p.clap = DANCE.clap), h.sound.one("clap"));
+    // the group photo follows the clap at once (the first song ends early): no long wait with nothing happening. (A
+    // first dance over before the first song's conga, CONGA.start, skips that conga; the next song has its own.)
+    tried && p.song === 0 && !p.shot && (p.songT = Math.max(p.songT, SONG_SECONDS - DANCE.clap - PHOTO_AFTER_DANCE));
     h.control(true);
   }
 

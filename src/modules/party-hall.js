@@ -97,25 +97,28 @@ export const FLYER = Object.freeze({
  * tourist films the band and Isfred looks into the room. Each sweeper's look is `base + amp * sin(2 pi t / period +
  * phase)` radians, `t` the seconds since P4 began (the same every play). tests/party-flyer.mjs searches the game's
  * own cones over time: from the plant, a kid who waits has a way to the flyer whenever he sets off, and walking
- * straight in from the start is caught. PLACEHOLDERS (numbers from that search).
+ * straight in from the start is caught. PLACEHOLDERS (numbers from that search; searched again 2026-11-26 when
+ * sight began to see his whole body, not one point low on him: the old numbers left no way through).
  */
 export const P4_SWEEP = Object.freeze({
-  robot: Object.freeze({ base: 1.68, amp: 0.86, period: 8, phase: 6.23 }),
-  "octopus-guest": Object.freeze({ base: 2.47, amp: 1.13, period: 9, phase: 3.83 }),
-  backpack: Object.freeze({ base: -1.8, amp: 1.06, period: 10, phase: 3.29 }),
-  bartender: Object.freeze({ base: 2.66, amp: 0.31, period: 6, phase: 5.7 }),
-  teal: Object.freeze({ base: 0.3, amp: 0.6, period: 8, phase: 0.5 }),
-  stilt: Object.freeze({ base: 2.84, amp: 0.6, period: 8, phase: 3.64 }),
+  robot: Object.freeze({ base: 2.41, amp: 0.83, period: 8, phase: 0.82 }),
+  "octopus-guest": Object.freeze({ base: 3.21, amp: 0.88, period: 9, phase: 3.97 }),
+  backpack: Object.freeze({ base: -2.15, amp: 0.77, period: 10, phase: 6.08 }),
+  bartender: Object.freeze({ base: 2.18, amp: 0.11, period: 6, phase: 0.64 }),
+  teal: Object.freeze({ base: 0.61, amp: 0.57, period: 8, phase: 5.52 }),
+  stilt: Object.freeze({ base: 2.59, amp: 0.6, period: 8, phase: 4.43 }),
 });
 /** Where a P4 sweeper looks `t` seconds into P4 (radians), or null for someone who does not sweep. */
 export function sweepAngle(id, t) {
   const w = P4_SWEEP[id];
   return w ? w.base + w.amp * Math.sin((2 * Math.PI * t) / w.period + w.phase) : null;
 }
-// The glancer's look across the lane (radians; about 174 degrees, down and to the left), and how far it sweeps
-// either side. Chosen so the lane between the door and the plant is covered while his doorway and the plant's left
-// side, where Squatch steps in, are never in his cone (tests/party-scenes.mjs).
-export const GLANCE = Object.freeze({ a: (174 * Math.PI) / 180, sweep: 0.15 });
+// The glancer's look across the lane (radians), and how far it sweeps either side. Chosen so the lane between the door
+// and the plant is covered while his doorway is never in his cone (tests/party-scenes.mjs).
+// Since 2026-11-26 sight sees his whole body (party-watch.js coneEdge): the look is higher (188 degrees, slightly up
+// and to the left) and narrower, so his doorway stays out of it, and it sweeps the lane and the plant's front, where
+// he steps in (a kid times the dash; hidden in the plant, nobody sees him). It was 174 degrees, sweep 0.15.
+export const GLANCE = Object.freeze({ a: (188 * Math.PI) / 180, sweep: 0.05 });
 // The glancer's rhythm (P2): facing the stage, then head turn with "?", then looking across the lane, then back.
 export const GLANCE_TIMES = Object.freeze({ stage: 3.5, warn: 0.5, look: 2, back: 0.4 });
 
@@ -124,11 +127,11 @@ export const GLANCE_TIMES = Object.freeze({ stage: 3.5, warn: 0.5, look: 2, back
 // there. (The camera's tripod is not in the hall until the group photo, Brian 2026-11-25.)
 export const HALL_SOLIDS = Object.freeze([
   Object.freeze({ x0: 240, x1: 490, y0: 0, y1: 304 }),
-  Object.freeze({ x0: 806, x1: 960, y0: 0, y1: 606 }),
+  Object.freeze({ x0: 806, x1: 960, y0: 0, y1: 606, bar: true }),
   Object.freeze({ x0: 772, x1: 800, y0: 380, y1: 400 }),
   Object.freeze({ x0: 772, x1: 800, y0: 438, y1: 458 }),
-  Object.freeze({ x0: 72, x1: 136, y0: 330, y1: 372 }),
-  Object.freeze({ x0: 412, x1: 476, y0: 520, y1: 552 }),
+  Object.freeze({ x0: 72, x1: 136, y0: 330, y1: 372, plant: true }),
+  Object.freeze({ x0: 412, x1: 476, y0: 520, y1: 552, plant: true }),
 ]);
 // Where the camera points: the middle of the stage; once the band plays (Isfred has left the stage), the Croc Boys.
 export const CAMERA_AIM = Object.freeze({ x: 420, y: 280 });

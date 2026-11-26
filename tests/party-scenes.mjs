@@ -172,40 +172,35 @@ const bubbleName = (page) => page.evaluate(() => (window.__ss.lastBubble ? Strin
 // ---------- P2: the cones ----------
 {
   const { page, errors } = await open("party:P2");
-  const res = await page.evaluate(
-    (spots) => {
-      const b = window.SSQ.beat("ch1-party"),
-        p = window.__ss.op.ch1PartyNow,
-        out = { doorHit: [], plantHit: [], laneCovered: 0, glanceLooks: 0, lengths: new Set() };
-      const lane = [];
-      for (let i = 0; i <= 20; i++) lane.push({ x: 477 + (396 - 477) * (i / 20), y: 590 + (552 - 590) * (i / 20) });
-      const inCone = (c, q) => {
-        const dx = q.x - c.ox,
-          dy = q.y - 20 - c.oy,
-          d = Math.hypot(dx, dy);
-        let a = Math.atan2(dy, dx) - c.a;
-        while (a > Math.PI) a -= 2 * Math.PI;
-        while (a < -Math.PI) a += 2 * Math.PI;
-        return d <= c.len && Math.abs(a) <= c.half;
-      };
-      for (let gt = 0; gt < 6.4; gt += 0.05) {
-        p.gt = gt;
-        for (const c of b.cones()) {
-          out.lengths.add(c.len);
-          inCone(c, spots.doorway) && out.doorHit.push([gt.toFixed(2), c.id]);
-          inCone(c, spots.plantMiddle) && out.plantHit.push([gt.toFixed(2), c.id]);
-          c.id === "backpack" && lane.some((q) => inCone(c, q)) && out.laneCovered++;
-        }
-        b.now().glance === "look" && out.glanceLooks++;
-      }
-      p.gt = 0;
-      out.lengths = [...out.lengths];
-      return out;
-    },
-    { doorway: hall.SPOTS.doorway, plantMiddle: hall.SPOTS.plantMiddle },
-  );
+  // (the cones over the glancer's whole rhythm, read from the game; sight tested here with the game's own rule,
+  // party-watch.js coneSees: his whole body)
+  const timeline = await page.evaluate(() => {
+    const b = window.SSQ.beat("ch1-party"),
+      p = window.__ss.op.ch1PartyNow,
+      out = [];
+    for (let gt = 0; gt < 6.4; gt += 0.05) {
+      p.gt = gt;
+      out.push({ gt, look: b.now().glance === "look", cones: b.cones().map((c) => ({ id: c.id, ox: c.ox, oy: c.oy, a: c.a, half: c.half, len: c.len })) });
+    }
+    p.gt = 0;
+    return out;
+  });
+  const res = { doorHit: [], plantHit: [], laneCovered: 0, glanceLooks: 0, lengths: new Set() };
+  const lane = [];
+  for (let i = 3; i <= 17; i++) lane.push({ x: 477 + (396 - 477) * (i / 20), y: 590 + (552 - 590) * (i / 20) });
+  for (const f of timeline) {
+    f.look && res.glanceLooks++;
+    for (const c of f.cones) {
+      res.lengths.add(c.len);
+      watch.coneSees(c, hall.SPOTS.doorway) && res.doorHit.push([f.gt.toFixed(2), c.id]);
+      // (the plant's front, where he steps in, may be in the glancer's look only: the dash is timed)
+      c.id !== "backpack" && watch.coneSees(c, hall.SPOTS.plantMiddle) && res.plantHit.push([f.gt.toFixed(2), c.id]);
+      c.id === "backpack" && lane.some((q) => watch.coneSees(c, q)) && res.laneCovered++;
+    }
+  }
+  res.lengths = [...res.lengths];
   g.check("his doorway is outside every cone at every moment", res.doorHit.length === 0, res.doorHit.slice(0, 5));
-  g.check("the plant's step-in spot is outside every cone at every moment", res.plantHit.length === 0, res.plantHit.slice(0, 5));
+  g.check("the plant's step-in spot is outside every cone but the glancer's look (the dash to it is timed)", res.plantHit.length === 0, res.plantHit.slice(0, 5));
   g.check("the glancer's look covers the lane between the door and the plant", res.laneCovered > 10, res.laneCovered);
   g.check("every cone is whole (full length, nothing cuts it short)", res.lengths.length === 1 && res.lengths[0] === 210, res.lengths);
   await sleep(300);
@@ -504,10 +499,10 @@ let p4Cast = null;
       }
     },
   );
-  // (Brian 2026-11-25: the worry follows the robots line; the dance wish moved home)
-  g.check("P3's lines in order", JSON.stringify(lines) === JSON.stringify(["Let's give a big hello to our friends from Bleep-Bloop Robotics!", "Soon their helper robots will be here, to help with the heavy work.", "Robots for the heavy work? That's Mops's job!", "I have to show Mops.", "And now... put your hands together for the Croc Boys!", "Stormtop-vania 1-2-3-4-5!"]), lines);
+  // (Brian 2026-11-25: the worry follows the robots line; 2026-11-26: the dance wish is back, watching the band)
+  g.check("P3's lines in order", JSON.stringify(lines) === JSON.stringify(["Let's give a big hello to our friends from Bleep-Bloop Robotics!", "Soon their helper robots will be here, to help with the heavy work.", "Robots for the heavy work? That's Mops's job!", "I have to show Mops.", "And now... put your hands together for the Croc Boys!", "Stormtop-vania 1-2-3-4-5!", "I've never gotten to dance at a party."]), lines);
   g.check("everyone in the crowd looks at Isfred during his lines (their cones point at him)", facing);
-  g.check("every bubble in P3 has a real name over it (the band's says Croc Boys)", names.length === 6 && names.every(([, nm]) => nm && nm !== "undefined" && nm !== "none") && names[5][1] === "Croc Boys", names);
+  g.check("every bubble in P3 has a real name over it (the band's says Croc Boys)", names.length === 7 && names.every(([, nm]) => nm && nm !== "undefined" && nm !== "none") && names[5][1] === "Croc Boys", names);
   g.check("no wordless story wait in P3 (no yellow corner chevron)", waits === 0, waits);
   g.check("Isfred's bubble never covers the banner", !bubbleOverBanner);
   g.check("his eyes are in the middle plant, never at the vent", !!eyesAt && Math.hypot(eyesAt.x - 441, eyesAt.y - 486) < 6, eyesAt);

@@ -7,13 +7,18 @@
  * off (PR #77), so every sound here also has a drawing (notes over the band, the cheer lines, the camera's red
  * light, the hiccup bubbles, the alarm's flashing light).
  *   one(name)     a sound by name (party-board-sounds.js BOARD; "crash" and "step" play recordings once loaded)
- *   song(i)       the Croc Boys: 0, 1 or 2 plays that song; -1 stops (see SONGS)
+ *   song(i)       the Croc Boys: 0, 1 or 2 plays that song; -1 stops. The band's list of recordings in
+ *                 music-picks.js, song i its ith track, from its top, once loaded; SONGS until then
+ *   sting()       the FUR! moment's sting, once
  *   muffle(on)    the band heard through his door when he is at home
  *   ambience(k)   "door" (the party through his door before the peek), "murmur" (the crowd), or "" (none)
- *   hum(level)    Mops humming Floating in Space as he mops his way in at closing time: Brian's recording, quiet
- *   takeBreak()   true once each time the band stops dead and shouts (the game shows the band's line then)
+ *   hum(level)    Mops humming as he mops his way in at closing time: the closing hum's pick (music-picks.js), quiet
+ *   takeBreak()   true once each time the band stops dead and shouts, or (the recording) sings out its line: the
+ *                 game shows the band's line then
  */
 import { BOARD, tone, nz, muffled, kick, snare, hat, midi } from "./party-board-sounds.js";
+import { spanFor, fileFor, matchFor, listFor } from "./music-picks.js";
+import { buses } from "./sound-mix.js";
 
 /**
  * The Croc Boys' three songs (Brian 2026-11-24, question 36, "Yes": "an original swing big-band tune with the same
@@ -38,7 +43,16 @@ export const RECORDINGS = Object.freeze({
 // Made-up stand-ins a real recording would do better (for Brian; none downloaded without his yes).
 export const RECORDING_LATER = Object.freeze(["murmur", "cheer", "clap", "gasp", "shout", "rustle", "huff", "door", "hiccup"]);
 export const PARTY_SOUND = Object.freeze({
-  hum: Object.freeze({ url: "music/floating-in-space.mp3", skip: 2.95, level: 0.18, muffle: 520 }),
+  // The Croc Boys' songs: the band's list in music-picks.js (Stormtop-Sylvania, then Funky Chunk, round the list), each
+  // looping while its song lasts, through the band's bus (so it is muffled through his door at home), at `level` times
+  // the file's loudness match. Until a song's file has loaded, and if it cannot be, the made-up songs below play in
+  // its place. `shouts`: seconds into Stormtop-Sylvania where the band sings out "Stormtop-Sylvania! One, two, three,
+  // four, five!" (from a speech-to-text pass, to about a second): the band's line shows over them then, as in the
+  // made-up songs' breaks. (Funky Chunk has no words: no line.)
+  band: Object.freeze({ level: 0.6, shouts: Object.freeze({ bandSong: Object.freeze([5, 29, 39, 96, 105]) }) }),
+  // (the file and where it starts: the closing hum's pick in music-picks.js; null, silence, until Brian picks one:
+  // the hum was Floating in Space, which is sung)
+  hum: Object.freeze({ url: fileFor("closing-hum"), skip: spanFor("closing-hum") ? spanFor("closing-hum").from : 0, level: 0.18, muffle: 520 }),
   ahead: 0.3, // seconds of song notes scheduled ahead
   door: 3.9, // the party through his door repeats this often
   murmur: 2.8,
@@ -57,7 +71,16 @@ export function createPartySound(getEngine) {
     ambNext = 0,
     bus = null,
     low = null,
-    muffled_ = false;
+    muffled_ = false,
+    bandSrc = null,
+    bandGain = null,
+    bandAt = 0,
+    bandPos = 0,
+    bandTrack = -1,
+    stingBuf = null,
+    stingLoading = false;
+  const bandBufs = {},
+    bandLoading = {};
   const recs = {},
     loading = {};
   const played = []; // tests: what was asked to play (the last 300)
@@ -78,7 +101,9 @@ export function createPartySound(getEngine) {
       low.frequency.value = muffled_ ? 420 : 12000;
       bus = A.c.createGain();
       bus.connect(low);
-      low.connect(A.o);
+      // the band is music: it goes through the music level under the master (sound-mix.js), as all music does
+      const b = buses(getEngine());
+      low.connect(b ? b.music : A.o);
     }
     return { c: A.c, o: bus };
   }
@@ -108,6 +133,58 @@ export function createPartySound(getEngine) {
     crash: (A, t) => [0, 0.22, 0.42, 0.66].every((s, i) => playRec(A, "crash", t + s, 0.6 - i * 0.08)),
     step: (A, t) => playRec(A, "step", t, 0.5),
   };
+  // The band's recordings (the band's list in music-picks.js; song i plays its ith track, round the list): each loaded
+  // once sound is on; started from its top when a song starts; stopped with a short fade when the band stops.
+  function bandLoad(A, n) {
+    const url = fileFor("band", n);
+    if (!url || bandBufs[url] || bandLoading[url] || typeof fetch !== "function") return;
+    bandLoading[url] = true;
+    fetch(url)
+      .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error("band " + r.status))))
+      .then((b) => A.c.decodeAudioData(b))
+      .then((b) => (bandBufs[url] = b))
+      .catch(() => {});
+  }
+  function bandStart(A, n) {
+    const out = songOut(A),
+      sp = spanFor("band", n),
+      buf = bandBufs[fileFor("band", n)];
+    bandSrc = A.c.createBufferSource();
+    bandSrc.buffer = buf;
+    bandSrc.loop = true;
+    bandSrc.loopStart = sp.from;
+    bandSrc.loopEnd = Math.min(sp.to, buf.duration);
+    bandGain = A.c.createGain();
+    bandGain.gain.value = PARTY_SOUND.band.level * matchFor("band", n);
+    bandSrc.connect(bandGain);
+    bandGain.connect(out.o);
+    bandSrc.start(0, sp.from);
+    bandAt = A.c.currentTime;
+    bandPos = 0;
+    bandTrack = n;
+    note("band-recording:" + fileFor("band", n));
+  }
+  function bandStop() {
+    if (!bandSrc) return;
+    try {
+      const t = bandGain.context.currentTime;
+      bandGain.gain.setTargetAtTime(0, t, 0.08);
+      bandSrc.stop(t + 0.5);
+    } catch {}
+    bandSrc = null;
+    bandGain = null;
+  }
+  // The sting (the FUR! moment): loaded once sound is on, played once each time (music-picks.js "caught").
+  function stingLoad(A) {
+    const url = fileFor("caught");
+    if (!url || stingBuf || stingLoading || typeof fetch !== "function") return;
+    stingLoading = true;
+    fetch(url)
+      .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error("sting " + r.status))))
+      .then((b) => A.c.decodeAudioData(b))
+      .then((b) => (stingBuf = b))
+      .catch(() => {});
+  }
   // One bar of the band at time t (bar = index in FORM).
   function bar(A, S, b, t) {
     const beat = 60 / S.bpm,
@@ -157,9 +234,23 @@ export function createPartySound(getEngine) {
       }
       BOARD[name] && BOARD[name](A, t);
     },
+    /** The FUR! moment: the sting, once (music-picks.js "caught"; silent until it has loaded, and while sound is off). */
+    sting() {
+      note("sting");
+      const A = live();
+      if (!A || !stingBuf) return;
+      const src = A.c.createBufferSource(),
+        g = A.c.createGain(),
+        b = buses(getEngine());
+      src.buffer = stingBuf;
+      g.gain.value = matchFor("caught");
+      src.connect(g);
+      g.connect(b ? b.music : A.o);
+      src.start();
+    },
     /** The band: `i` 0, 1 or 2 plays that song; -1 stops. */
     song(i) {
-      i !== song && ((song = i), (beatNo = 0), (nextBeat = 0), i >= 0 && note("song" + i));
+      i !== song && (bandStop(), (song = i), (beatNo = 0), (nextBeat = 0), i >= 0 && note("song" + i));
     },
     /** The party heard through his door ("door"), the crowd ("murmur"), or nothing (""). */
     ambience(k) {
@@ -179,6 +270,7 @@ export function createPartySound(getEngine) {
     },
     /** Mops's humming as he mops his way in at closing time, at `level` (0 to 1): his own recording, quiet and muffled. */
     hum(level) {
+      if (!PARTY_SOUND.hum.url) return; // the closing hum's pick is silence (music-picks.js)
       const A = live();
       if (!A || !(level > 0)) {
         humGain && humGain.gain.setTargetAtTime(0, humGain.context.currentTime, 0.2);
@@ -223,6 +315,7 @@ export function createPartySound(getEngine) {
       const A = live();
       if (!A) return;
       const now = A.c.currentTime;
+      stingLoad(A);
       if (amb) {
         ambNext < now && (ambNext = now + 0.05);
         if (ambNext < now + PARTY_SOUND.ahead) {
@@ -233,6 +326,23 @@ export function createPartySound(getEngine) {
         }
       }
       if (song < 0) return;
+      // this song's recording (Stormtop-Sylvania, Funky Chunk, ...), once it has loaded (the made-up song plays until
+      // then); the next song's is loaded ahead
+      bandLoad(A, song);
+      bandLoad(A, song + 1);
+      const buf = bandBufs[fileFor("band", song)];
+      if (buf) {
+        bandSrc && (bandSrc.context !== A.c || bandTrack !== song) && bandStop();
+        bandSrc || bandStart(A, song);
+        // where the recording is now (it loops): crossing one of its shouts shows the band's line
+        const sp = spanFor("band", song),
+          len = Math.min(sp.to, buf.duration) - sp.from,
+          pos = (now - bandAt) % len,
+          crossed = (x) => (pos >= bandPos ? x > bandPos && x <= pos : x > bandPos || x <= pos);
+        (PARTY_SOUND.band.shouts[listFor("band")[song % listFor("band").length]] || []).some(crossed) && (breakDue = true);
+        bandPos = pos;
+        return;
+      }
       const S = SONGS[song],
         barLen = (60 / S.bpm) * 4;
       nextBeat < now && (nextBeat = now + 0.05);
@@ -244,6 +354,7 @@ export function createPartySound(getEngine) {
     },
     /** Stops the band, the ambience and the humming (the party is over, or a restart). */
     stop() {
+      bandStop();
       song = -1;
       amb = "";
       ambGain && ambGain.gain.setTargetAtTime(0, ambGain.context.currentTime, 0.05);
@@ -252,7 +363,7 @@ export function createPartySound(getEngine) {
     },
     /** Tests: every sound asked for, in order, the song now, and which recordings have loaded. */
     debug() {
-      return { played: played.slice(), song, ambience: amb, recordings: Object.keys(recs) };
+      return { played: played.slice(), song, ambience: amb, recordings: Object.keys(recs), band: { loaded: Object.keys(bandBufs), playing: bandSrc ? fileFor("band", bandTrack) : "", level: PARTY_SOUND.band.level }, sting: !!stingBuf };
     },
   };
 }

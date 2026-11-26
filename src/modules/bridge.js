@@ -16,7 +16,8 @@ import { createGuestArt } from "./guests.js";
 import { findPath } from "./tap-path.js";
 import { createHomeMusic } from "./home-music.js";
 import { createMorningSound } from "./morning-sound.js";
-import { MIX } from "./sound-mix.js";
+import { MIX, buses } from "./sound-mix.js";
+import { BOARD } from "./party-board-sounds.js";
 import { lastCutaway } from "./cutaway.js";
 import { SPEAKER } from "./morning.js";
 import { placeLabel } from "./cap-place.js";
@@ -26,6 +27,7 @@ import { quietBedtimeLine } from "./bedtime-story-lines.js";
 import { adultPxFor, doorAdultPx } from "./room-sizes.js";
 import { createGoalMark } from "./goal-mark.js";
 import { singingNow } from "./music-rules.js";
+import { keepInSpan, seeCue } from "./music-picks.js";
 
 /**
  * The game-state fields a rebuilt beat may write, through engine().set(field, value). Anything else it
@@ -45,6 +47,11 @@ export function createBridge() {
   const homeMusic = createHomeMusic(() => engine);
   const morningSound = createMorningSound(() => engine);
   const goalMark = createGoalMark();
+  // At home, while the TV story is on the screen, the music's cue is "tv" (music-picks.js).
+  const refineCue = (cue) => {
+    const tv = beats.get("ch1-tv-story");
+    return cue === "home" && tv && tv.showing && tv.showing() ? "tv" : cue;
+  };
   return Object.freeze({
     version: 1,
     /**
@@ -77,6 +84,29 @@ export function createBridge() {
     },
     /** Brian's Floating in Space recording in the morning. See home-music.js. */
     homeMusic,
+    /**
+     * The music element, every frame it plays: the file and stretch its cue plays, and how loud now (music-picks.js).
+     * At home while the TV story is on the screen the cue is "tv".
+     */
+    musicSpan(el, cue) {
+      return keepInSpan(el, refineCue(cue));
+    },
+    /**
+     * The one FUR alarm of Chapter 1 (Brian 2026-11-26, the red alert whoop: party-board-sounds.js BOARD.alarm), for
+     * the older program's alarm sound. True once played; false while sound is off (the older program then plays
+     * nothing either).
+     */
+    alarmSound() {
+      const b = buses(engine);
+      if (!b) return false;
+      BOARD.alarm({ c: b.ctx, o: b.fx }, b.ctx.currentTime + 0.01);
+      return true;
+    },
+    /** The older program's music cue, every frame once its music has started: where the music is (music-picks.js). */
+    musicCue(cue) {
+      seeCue(refineCue(cue));
+      return cue;
+    },
     /** The morning's and home alone's made-up sounds (snoring, the ding-dong, mopping...). See morning-sound.js. */
     morningSound,
     /** How loud music and sound effects are under the master volume; the engine reads it. See sound-mix.js. */

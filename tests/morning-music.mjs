@@ -1,9 +1,9 @@
 /**
- * Brian's Floating in Space recording in the morning (plan section 3, "home-music.js"; Q8 answer 2026-11-23:
+ * The morning's music (music-picks.js; Brian's Floating in Space until 2026-11-26, a stand-in with no singing since) (plan section 3, "home-music.js"; Q8 answer 2026-11-23:
  * from the Dog Zylan line until "That evening…", then it fades; Joe's theme stays everywhere else).
  * - Sound off (the default): nothing plays, but the notes still come out of the speaker.
  * - The morning keeps the room quiet before the song (Joe's theme does not play under the speaker).
- * - Sound on: the recording music/floating-in-space.mp3 starts on the tap after "Now here's a classic hit
+ * - Sound on: the morning's song (music-picks.js; Goating in Space since 2026-11-26, once, no loop) starts on the tap after "Now here's a classic hit
  *   from Dog Zylan!", never before; it plays as a decoded buffer through the game's master volume (no new
  *   <audio> element) on the music level, turned up 10 dB to sit level with Joe's theme (sound plan section 8);
  *   Joe's theme is quiet while it plays; it dips under each sung line and comes back; the
@@ -149,8 +149,8 @@ const waitFor = async (r, ok, ms = 8000) => {
 // ---------- The recording's quiet start (Brian: "I should be hearing the song before this") ----------
 {
   const { ctx, page } = await g.open("?ch=1", PHONE);
-  const lv = await page.evaluate(async (skip) => {
-    const data = await (await fetch("music/floating-in-space.mp3")).arrayBuffer();
+  const lv = await page.evaluate(async (skip, url) => {
+    const data = await (await fetch(url)).arrayBuffer();
     const ac = new OfflineAudioContext(1, 22050, 22050);
     const b = await ac.decodeAudioData(data);
     const ch = b.getChannelData(0);
@@ -159,10 +159,11 @@ const waitFor = async (r, ok, ms = 8000) => {
       for (let i = Math.floor(t0 * b.sampleRate); i < Math.min(ch.length, t1 * b.sampleRate); i++) (sum += ch[i] * ch[i]), n++;
       return 10 * Math.log10(sum / Math.max(1, n) + 1e-12);
     };
-    return { intro: db(0, 2.5), atStart: db(skip, skip + 0.6), skip };
-  }, SKIP);
-  g.check("the recording's first seconds are nearly silent (so starting at 0 is a long quiet gap)", lv.intro < -45, lv);
-  g.check("it starts where the music is clearly audible", SKIP > 2 && lv.atStart > -35, lv);
+    return { intro: skip > 0 ? db(0, Math.min(2.5, skip)) : null, atStart: db(skip, skip + 0.6), skip, dur: b.duration };
+  }, SKIP, HOME_MUSIC.url);
+  // (Goating in Space starts at once, so it plays from 0; a file with a quiet start skips it)
+  g.check("before where it starts, the file is nearly silent (or it starts at 0)", SKIP === 0 || lv.intro < -45, lv);
+  g.check("it starts where the music is clearly audible", lv.atStart > -35, lv);
   await ctx.close();
 }
 
@@ -180,11 +181,12 @@ const waitFor = async (r, ok, ms = 8000) => {
   }, MOPS_SONG);
   g.check("the song has been playing for over a second before Mops's \"Floating in space!\" line",atLine.playing && atLine.playedFor >= 1.2, atLine);
   s = await waitFor(r, (s) => s.m.playing);
-  g.check("the tap after the Dog Zylan line starts the recording (32.6 s), past its quiet start", s.m.playing && s.mm.starts.length === 1 && Math.abs(s.mm.starts[0].dur - 32.6) < 0.5 && Math.abs(s.mm.starts[0].offset - SKIP) < 0.01 && SKIP > 2, s.mm.starts);
-  g.check("it plays through the music level under the game's master volume, not a new <audio> element", s.m.via === "music" && !s.mm.audios.some((a) => /floating/.test(a)), { via: s.m.via, audios: s.mm.audios });
+  g.check("the tap after the Dog Zylan line starts the morning's music (Goating in Space, 1:44, the whole file loaded), from its start, once (no loop)", s.m.playing && s.mm.starts.length === 1 && Math.abs(s.mm.starts[0].dur - 103.96) < 1 && Math.abs(s.mm.starts[0].offset - SKIP) < 0.01 && s.mm.starts[0].loop === false && s.m.once, s.mm.starts);
+  g.check("it plays through the music level under the game's master volume, not a new <audio> element", s.m.via === "music" && !s.mm.audios.some((a) => /goating/.test(a)), { via: s.m.via, audios: s.mm.audios });
   g.check("first play at full level", Math.abs(s.m.target - 1) < 0.01, s.m);
-  // Sound plan section 8: the file is 10 dB quieter than Joe's theme (ffmpeg: -27.1 against -17.1 LUFS).
-  g.check("Brian's recording is turned up 10 dB to sit level with Joe's theme", Math.abs(s.m.gain - 3.16) < 0.01, s.m);
+  // Sound plan section 8: each file is turned up to sit level with Joe's theme (Floating in Space by 10 dB; ffmpeg:
+  // -27.1 against -17.1 LUFS); the morning's pick is in music-picks.js.
+  g.check("the morning's music is turned up to sit level with Joe's theme (its file's match)", Math.abs(s.m.gain - HOME_MUSIC.match) < 0.01, [s.m, HOME_MUSIC.match]);
   s = await waitFor(r, (s) => s.warmPaused !== false, 3000);
   g.check("Joe's theme is quiet while the recording plays", s.warmCue === "" && s.warmPaused !== false && s.m.playing, { warmCue: s.warmCue, warmPaused: s.warmPaused });
   s = await tapUntil(r, (s) => s.ctrl && !!s.chip);
@@ -224,7 +226,7 @@ const waitFor = async (r, ok, ms = 8000) => {
   let s = await tapUntil(r, (s) => s.ctrl && !!s.chip);
   await r.page.click("#ss-sound");
   s = await waitFor(r, (s) => s.m.playing);
-  g.check("sound turned on during the song: the recording starts from the top (past the quiet start) at background level", s.m.playing && s.mm.starts.length === 1 && Math.abs(s.mm.starts[0].offset - SKIP) < 0.01 && Math.abs(s.m.target - s.m.background) < 0.01, s);
+  g.check("sound turned on during the song: the recording starts from the top at background level", s.m.playing && s.mm.starts.length === 1 && Math.abs(s.mm.starts[0].offset - SKIP) < 0.01 && Math.abs(s.m.target - s.m.background) < 0.01, s);
   g.check("no page errors (sound on later)", r.errors.length === 0, r.errors);
   await r.ctx.close();
 }
