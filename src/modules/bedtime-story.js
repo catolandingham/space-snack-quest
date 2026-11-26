@@ -195,6 +195,7 @@ export function createBedtimeStory(bridge) {
   const E = () => bridge.engine();
   const sound = createBedtimeSound(() => bridge.engine());
   let S = null; // this bedtime: { phase, t, sq: how this file draws Squatch, or null, ... }
+  let on = false; // from the walk to bed until the fade to black ends (showing(): the bedtime music)
   let drew = null,
     record = { lastPose: "", mopsAt: null, hooves: [], phases: [], tuck: null, door: null };
   const phase = (p) => {
@@ -246,6 +247,7 @@ export function createBedtimeStory(bridge) {
     const e = E();
     S = { phase: "", t: 0, at: e.time(), sq: null, leg: 0, mopsLeg: 0, mopsArrived: false, mopsThere: null, ff: {}, hooves: 0, blanket: 0, dim: 0, black: 0, snored: 0, endAt: -1 };
     record = { lastPose: "", mopsAt: null, hooves: [], phases: [], tuck: null, door: null };
+    on = true;
     sound.reset();
     e.set("sqPose", "stand");
     e.set("moPose", "stand");
@@ -417,6 +419,7 @@ export function createBedtimeStory(bridge) {
     record.lastPose = S.sq && S.sq.eyes === "closed" && S.sq.a === LIE.a ? "asleep, lying down" : E().get("sqPose");
     // the room fades in from black, unless the home morning is here: its night starts dark and comes up itself
     S.endAt = bridge.beat && bridge.beat("ch1-home-morning") ? -1 : E().time();
+    on = false;
     phase("end");
     return true;
   }
@@ -517,6 +520,20 @@ export function createBedtimeStory(bridge) {
       }
       wash(ctx, "#000", S.black);
       drew.black = +S.black.toFixed(2);
+    },
+    /**
+     * True while the bedtime story plays, from the walk to bed until the fade to black ends: a step of it is up (its
+     * walks and wordless parts, the lines over Squatch and Mops, the story and Guardians pictures), at home, with the
+     * player not in control. bridge.js turns the home music cue into "bedtime" then (music-picks.js: Reawakening).
+     */
+    showing() {
+      const e = E();
+      if (!on || !e) return false;
+      const c = e.current(),
+        mine = !c || c.k === "do" || c.k === "until" || (c.k === "bub" && (c.who === "sq" || c.who === "mops")) || (c.k === "cutaway" && (c.id === BEDTIME_STORY_ID || c.id === GUARDIANS_ID));
+      // (something else up, or the player has control, or he is out of the room: cut short by a restart; it is over)
+      if (!mine || e.get("ctrl") || e.room() !== "closet") on = false;
+      return on;
     },
     /** Tests: the part playing now, what the last frame drew, and what happened. */
     debug() {

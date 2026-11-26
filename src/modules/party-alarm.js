@@ -19,8 +19,9 @@
  * The state lives in the party's game-state field (P.alarm), so a restart clears it. Numbers marked "pinned" are
  * Brian's approved values (docs/TUNING-PINS.json: guard-speed, guard-catch, home-search-delay, cone-feet).
  */
-import { SPOTS, HALL, HOME_ROOM, stepTo } from "./party-hall.js";
-import { coneFrom, coneSees, lookAt } from "./party-watch.js";
+import { SPOTS, HALL, HOME_ROOM, HALL_SOLIDS, stepTo } from "./party-hall.js";
+import { findPath } from "./tap-path.js";
+import { coneFrom, coneSees, coneSeesPoint, lookAt } from "./party-watch.js";
 
 export const ALARM = Object.freeze({
   shout: 0.9, // seconds the FUR! shows before the witness runs
@@ -34,7 +35,7 @@ export const ALARM = Object.freeze({
   search: 3.5, // how long the guards search a hidden Squatch before giving up
   homeSearch: 3, // how long the guard searches the home room
   doorLook: 0.8, // the home guard first looks round from the doorway
-  bell: 1.6, // the bell rings again this often while the alarm is on
+  bell: 2.1, // the alarm (three whoops, 1.8 s) sounds again this often while it is on (was 1.6 for the old bell)
   backAway: 34, // how far guests back away toward the walls
   calm: 140, // walking back to calm (pixels a second)
 });
@@ -42,6 +43,68 @@ export const ALARM = Object.freeze({
 const HOME = Object.freeze({ door: HOME_ROOM.guardDoor, look: HOME_ROOM.guardLook });
 
 const step = stepTo;
+
+/**
+ * A guard in the hall walks round the furniture, never over it (Brian 2026-11-26, showing 6: "Security looks like
+ * they're on top of plant"; they walked straight from point to point, through the middle plant's pot). `GUARD_AROUND`
+ * is the floor a guard's feet may not touch: the stage, the bar's two stools and the two plant pots, each grown by a
+ * person's feet box (party.js solids: 25 either side, 14 behind, 8 in front). The bar's strip is left out: the
+ * guards come in past it, from the hallway doorway, and leave that way.
+ */
+export const GUARD_FEET = Object.freeze({ side: 25, up: 14, down: 8 });
+// (behind a plant pot its leaves stand this much taller on the floor: a guard does not brush through them either)
+// (the leaves stand about 44 above the pot's back edge in the hall picture; a guard's feet stay 16 further back, so his
+// legs are never drawn in them)
+export const PLANT_LEAVES = 60;
+/**
+ * The catch reach for a guard and Squatch at feet `sq`: the pinned guard-catch, and, with Squatch in the leaves behind
+ * a pot (floor a guard does not walk on), that much more over the leaves, so a guard still catches him there (the one
+ * capture rule).
+ */
+export function catchReach(sq) {
+  const inLeaves = GUARD_AROUND.some((b, i) => GUARD_PLANT[i] && sq.x > b.x0 && sq.x < b.x1 && sq.y > b.y0 && sq.y < b.y1);
+  return ALARM.reach + (inLeaves ? PLANT_LEAVES + GUARD_FEET.down + 6 : 0);
+}
+const GUARD_PLANT = HALL_SOLIDS.filter((b) => !b.bar).map((b) => !!b.plant);
+export const GUARD_AROUND = Object.freeze(
+  HALL_SOLIDS.filter((b) => !b.bar).map((b) => Object.freeze({ x0: b.x0 - GUARD_FEET.side, x1: b.x1 + GUARD_FEET.side, y0: b.y0 - GUARD_FEET.down - (b.plant ? PLANT_LEAVES : 0), y1: b.y1 + GUARD_FEET.up })),
+);
+const GUARD_FLOOR = Object.freeze({ x0: 40, x1: 960, y0: 290, y1: 600 });
+const GUARD_REPATH = 20;
+// True when the straight walk from (ax, ay) to (bx, by) touches none of GUARD_AROUND (checked every 4 pixels).
+function clearOfFurniture(ax, ay, bx, by) {
+  const k = Math.ceil(Math.hypot(bx - ax, by - ay) / 4);
+  for (let i = 0; i <= k; i++) {
+    const x = ax + ((bx - ax) * i) / k,
+      y = ay + ((by - ay) * i) / k;
+    if (GUARD_AROUND.some((b) => x > b.x0 && x < b.x1 && y > b.y0 && y < b.y1)) return false;
+  }
+  return true;
+}
+/**
+ * One step of a hall guard toward (x, y), round the furniture (tap-path.js findPath on GUARD_AROUND). A place on the
+ * furniture is swapped for the free floor nearest it. True once there.
+ */
+export function guardStep(g, x, y, speed, dt) {
+  // A new way is worked out when the place is new or has moved 20 or more since (a guard after Squatch follows him
+  // without working it out every frame); a smaller move only moves the walk's last point, when that was the place
+  // and the last stretch to the new place is still clear of the furniture.
+  const moved = g.path ? Math.hypot(g.pathFor.x - x, g.pathFor.y - y) : Infinity,
+    n = g.path ? g.path.length : 0,
+    from = n > 1 ? g.path[n - 2] : g,
+    keep = moved < GUARD_REPATH && g.path[n - 1].x === g.pathTo.x && g.path[n - 1].y === g.pathTo.y && clearOfFurniture(from.x, from.y, x, y);
+  if (keep) g.path[n - 1] = { x, y };
+  else if (moved > 0) {
+    g.pathFor = { x, y };
+    // (no way found: straight there only if that is clear of the furniture, else he stays where he is)
+    g.path = findPath({ x: g.x, y: g.y }, { x, y }, GUARD_FLOOR, GUARD_AROUND) || [clearOfFurniture(g.x, g.y, x, y) ? { x, y } : { x: g.x, y: g.y }];
+  }
+  g.pathTo = { x, y };
+  const at = step(g, g.path[0].x, g.path[0].y, speed, dt);
+  if (!at || g.path.length === 1) return at;
+  g.path.shift();
+  return false;
+}
 
 /** Starts the rule: `witness` is { id, x, y } of who saw him, `where` the lockup card's "where-*" line id. */
 export function startAlarm(P, witness, where, who = "who-tourist") {
@@ -105,7 +168,7 @@ export function tickAlarm(P, dt, api) {
   if (a.phase === "calm") {
     let still = false;
     for (const g of a.guards) {
-      const gone = g.room !== "hall" || step(g, SPOTS.guardIn.x + 40, SPOTS.guardIn.y, ALARM.guard, dt);
+      const gone = g.room !== "hall" || guardStep(g, SPOTS.guardIn.x + 40, SPOTS.guardIn.y, ALARM.guard, dt);
       g.a = Math.atan2(SPOTS.guardIn.y - g.y, SPOTS.guardIn.x + 40 - g.x);
       gone ? (g.room = "out") : (still = true);
     }
@@ -131,7 +194,7 @@ export function guardCones(a, size) {
 }
 
 // Where the guards look when nobody has seen him: they walk the hall from point to point, looking round at each.
-const SEARCH = Object.freeze([
+export const SEARCH = Object.freeze([
   { x: 470, y: 460 },
   { x: 300, y: 520 },
   { x: 650, y: 540 },
@@ -152,14 +215,15 @@ function searchHall(a, dt, api, sq, hidden) {
     // Seen: at him. Lost him: to where he was last seen. Otherwise the search walk, point to point.
     g.next = g.next == null ? i * 3 : g.next;
     const to = sees || (a.last && !safe) ? a.last : SEARCH[g.next % SEARCH.length];
-    const there = step(g, to.x, to.y, ALARM.guard, dt);
+    const there = guardStep(g, to.x, to.y, ALARM.guard, dt);
     if (there && !sees) {
-      a.last && Math.hypot(a.last.x - g.x, a.last.y - g.y) < 2 && (a.last = null);
+      // (where he was last seen may be on the furniture: the guard got as near as the floor lets him)
+      a.last && to === a.last && (a.last = null);
       g.look = (g.look || 0) + dt;
       g.a += Math.sin(g.look * 3) * dt * 2.5;
       g.look > 1.2 && ((g.look = 0), (g.next = g.next + 1));
     } else g.a = Math.atan2(to.y - g.y, to.x - g.x);
-    if (!safe && a.phase !== "caught" && Math.hypot(sq.x - g.x, sq.y - g.y) < ALARM.reach) {
+    if (!safe && a.phase !== "caught" && Math.hypot(sq.x - g.x, sq.y - g.y) < catchReach(sq)) {
       api.caught(a.who, a.where);
       a.phase = "caught";
     }
@@ -232,7 +296,7 @@ function searchHome(a, dt, api, sq, hidden) {
   // security, they see you"): no "this close whichever way he faces" rule here, so he need not be under the bed
   // before the guard walks in.
   const c = coneFrom("guard-home", g.x, g.y, g.a, api.size()),
-    sees = !hidden && !a.over && coneSees(c, sq);
+    sees = !hidden && !a.over && coneSeesPoint(c, sq);
   g.sees = sees;
   g.after = sees;
   if (sees) {

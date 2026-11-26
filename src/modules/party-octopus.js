@@ -24,7 +24,9 @@ export const OCT_CHASE_SECONDS = 20,
 // hiccups on the spot after letting go (the kid's head start), how long he stands bored before walking back, how
 // fast his arms come out and drop, and how fast his first lunge is.
 // `notice`: how long his "?" takes to fill before he grabs (the same time a guest's "?" takes to turn into "!").
-export const OCT = Object.freeze({ stroll: 40, rest: 14, squeeze: 1.1, letGo: 1.6, bored: 1.4, armsOut: 5, armsDrop: 1.2, lunge: 300, notice: SEEN_TOO_LONG_SECONDS });
+// `headStart` (Brian 2026-11-26: "give Squatch a one-second head start before it chases"): every chase starts with him
+// standing a second, arms out, before he moves (the first real chase, after Squatch's thoughts, waits `letGo`, longer).
+export const OCT = Object.freeze({ stroll: 40, rest: 14, squeeze: 1.1, letGo: 1.6, bored: 1.4, armsOut: 5, armsDrop: 1.2, lunge: 300, notice: SEEN_TOO_LONG_SECONDS, headStart: 1 });
 
 /** True while his arms are out for Squatch (the lunge, the chase, a hug, and the pause before the chase). */
 export const chasing = (o) => !!o && (o.mode === "chase" || o.mode === "hug" || o.mode === "lunge" || o.mode === "ready");
@@ -65,7 +67,7 @@ export function tickOctopus(p, dt, s, api) {
     if (o.qT < OCT.notice) return "";
     o.qT = 0;
     // the first time: arms out, and he waits for his line before he lunges; later: the chase at once
-    Object.assign(o, o.said ? { mode: "chase", t: 0, wait: 0, arms: 1 } : { mode: "ready", t: 0, wait: 0, arms: 1, first: true });
+    Object.assign(o, o.said ? { mode: "chase", t: 0, wait: OCT.headStart, arms: 1 } : { mode: "ready", t: 0, wait: 0, arms: 1, first: true });
     return "notice";
   }
   if (o.mode === "ready") {
@@ -118,5 +120,5 @@ export function lunge(p) {
 }
 /** After the first hug and Squatch's two thoughts: the real chase starts, his 20 seconds from now. */
 export function startChase(p) {
-  p.oct && p.oct.mode === "ready" && Object.assign(p.oct, { mode: "chase", t: 0, wait: OCT.letGo });
+  p.oct && p.oct.mode === "ready" && Object.assign(p.oct, { mode: "chase", t: 0, wait: Math.max(OCT.letGo, OCT.headStart) });
 }

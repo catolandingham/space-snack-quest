@@ -16,7 +16,8 @@ import { createGuestArt } from "./guests.js";
 import { findPath } from "./tap-path.js";
 import { createHomeMusic } from "./home-music.js";
 import { createMorningSound } from "./morning-sound.js";
-import { MIX } from "./sound-mix.js";
+import { MIX, buses } from "./sound-mix.js";
+import { BOARD } from "./party-board-sounds.js";
 import { lastCutaway } from "./cutaway.js";
 import { SPEAKER } from "./morning.js";
 import { placeLabel } from "./cap-place.js";
@@ -26,6 +27,7 @@ import { quietBedtimeLine } from "./bedtime-story-lines.js";
 import { adultPxFor, doorAdultPx } from "./room-sizes.js";
 import { createGoalMark } from "./goal-mark.js";
 import { singingNow } from "./music-rules.js";
+import { keepInSpan, seeCue, visitNow, playSound, soundsPlayed } from "./music-picks.js";
 
 /**
  * The game-state fields a rebuilt beat may write, through engine().set(field, value). Anything else it
@@ -45,6 +47,15 @@ export function createBridge() {
   const homeMusic = createHomeMusic(() => engine);
   const morningSound = createMorningSound(() => engine);
   const goalMark = createGoalMark();
+  // At home, while the TV story is on the screen, the music's cue is "tv"; while the bedtime story plays, "bedtime"
+  // (music-picks.js: Reawakening).
+  let musicCueNow = ""; // the cue the music last followed (refined), for tests
+  const refineCue = (cue) => {
+    if (cue !== "home") return cue;
+    const tv = beats.get("ch1-tv-story"),
+      bed = beats.get("ch1-bedtime-story");
+    return tv && tv.showing && tv.showing() ? "tv" : bed && bed.showing && bed.showing() ? "bedtime" : cue;
+  };
   return Object.freeze({
     version: 1,
     /**
@@ -75,8 +86,48 @@ export function createBridge() {
     beatWrites() {
       return [...written];
     },
-    /** Brian's Floating in Space recording in the morning. See home-music.js. */
+    /** The morning's music at home (its pick in music-picks.js: Goating in Space). See home-music.js. */
     homeMusic,
+    /**
+     * The music element, every frame it plays: the file and stretch its cue plays, and how loud now (music-picks.js).
+     * At home while the TV story is on the screen the cue is "tv".
+     */
+    musicSpan(el, cue) {
+      return keepInSpan(el, refineCue(cue));
+    },
+    /**
+     * The one FUR alarm of Chapter 1 (Brian 2026-11-26, the red alert whoop: party-board-sounds.js BOARD.alarm), for
+     * the older program's alarm sound. True once played; false while sound is off (the older program then plays
+     * nothing either).
+     */
+    alarmSound() {
+      const b = buses(engine);
+      if (!b) return false;
+      BOARD.alarm({ c: b.ctx, o: b.fx }, b.ctx.currentTime + 0.01);
+      return true;
+    },
+    /** The older program's music cue, every frame once its music has started: where the music is (music-picks.js). */
+    musicCue(cue) {
+      seeCue((musicCueNow = refineCue(cue)));
+      return cue;
+    },
+    /** Tests: the cue the music follows now (after the TV story's and the bedtime story's), and where it is. */
+    musicNow() {
+      return { ...visitNow(), visitCue: visitNow().cue, cue: musicCueNow };
+    },
+    /**
+     * Plays one of the game's sounds that are not music by its name (music-picks.js SOUND_PICKS: Mops's bleat),
+     * at the effects level under the master volume. The same player as the morning's bleat (music-picks.js
+     * playSound); nothing plays while sound is off. True once asked for.
+     */
+    playSoundPick(name) {
+      const b = buses(engine);
+      return !!b && playSound(b.ctx, b.fx, name, b.ctx.currentTime + 0.05);
+    },
+    /** Tests: every sound pick asked for so far ({ name, at, started }). */
+    soundPicksPlayed() {
+      return soundsPlayed();
+    },
     /** The morning's and home alone's made-up sounds (snoring, the ding-dong, mopping...). See morning-sound.js. */
     morningSound,
     /** How loud music and sound effects are under the master volume; the engine reads it. See sound-mix.js. */

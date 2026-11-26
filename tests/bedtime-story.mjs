@@ -41,6 +41,11 @@ const L = Object.fromEntries(BEDTIME_STORY_LINES.map((l) => [l.id, l]));
 const g = await startGame({ port: 9741, name: "bedtime-story" });
 const { page, errors } = await g.open("?ch=1", { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
 await page.evaluate(() => window.__ss.lockedReady);
+// Sound on (the music and the bleat are heard): the sound button, as a player taps it.
+await new Promise((r) => setTimeout(r, 1200));
+await page.click("#ss-sound");
+await new Promise((r) => setTimeout(r, 600));
+const soundOn = await page.evaluate(() => !!window.SSQ.engine() && !!window.SSQ.engine().soundState && window.SSQ.playSoundPick("none-such") === false);
 
 // Beat 20 as the party's endings start it, with the queue cleared; tap through it to its "Now" card.
 const started = await page.evaluate(() => {
@@ -68,12 +73,14 @@ g.check("the TV story plays to its Now card first", tvDone);
 // 6 seconds with no tap (it must still be up), then tapped. Every few frames the room is drawn and the page's goal
 // chip is read (it must never show before Day 2).
 const run = !(started && tvDone)
-  ? { steps: [], wordless: [], pics: [], held: [], lines: [], askAt: null, shownBefore: [], newWords: [], room: [], chips: [], fadeIn: [], debug: null }
+  ? { steps: [], wordless: [], pics: [], held: [], lines: [], askAt: null, shownBefore: [], newWords: [], room: [], chips: [], fadeIn: [], debug: null, music: [], picMusic: [], bleats: [] }
   : await page.evaluate(() => {
       const ss = window.__ss,
         n = ss.op,
         beat = window.SSQ.beat("ch1-bedtime-story"),
-        out = { steps: [], wordless: [], pics: [], held: [], lines: [], askAt: null, shownBefore: [], newWords: [], day2: false, scene: "", room: [], chips: [], fadeIn: [], debug: null };
+        out = { steps: [], wordless: [], pics: [], held: [], lines: [], askAt: null, shownBefore: [], newWords: [], day2: false, scene: "", room: [], chips: [], fadeIn: [], debug: null, music: [], picMusic: [], bleats: [] };
+      const picksBefore = window.SSQ.soundPicksPlayed().length;
+      let mark = picksBefore;
       const chip = () => {
         const el = document.getElementById("ss-chip");
         return el && el.style.display !== "none" ? el.textContent : "";
@@ -99,6 +106,10 @@ const run = !(started && tvDone)
           note("pic:" + (drew && drew.pic));
           out.pics.push({ id: c.id, panel: c.panel, drew });
           for (let k = 0; k < 120; k++) ss.tick(0.05);
+          out.picMusic.push({ pic: drew && drew.pic, cue: window.SSQ.musicNow().cue });
+          // (the sounds asked for from the tap that brought this picture up until it is tapped away)
+          out.bleats.push({ pic: drew && drew.pic, picks: window.SSQ.soundPicksPlayed().slice(mark).map((p) => p.name) });
+          mark = window.SSQ.soundPicksPlayed().length;
           out.held.push(!!n.cur && n.cur === c);
           (n.bt = 1), ss.opTap();
           since = 0;
@@ -111,6 +122,7 @@ const run = !(started && tvDone)
             out.askAt = { pose: n.sqPose, sq: { x: n.sq.x, y: n.sq.y }, mops: { x: Math.round(n.mo.x), y: Math.round(n.mo.y), f: n.mo.f, pose: n.moPose } };
           }
           out.lines.push({ who: c.b.who, text: c.b.text });
+          mark = window.SSQ.soundPicksPlayed().length;
           ss.drawFrame();
           out.chips.push({ phase: "bubble " + c.b.who, chip: chip() });
           for (let k = 0; k < 120; k++) ss.tick(0.05);
@@ -133,6 +145,7 @@ const run = !(started && tvDone)
           const r = beat.debug().drew;
           r && out.room.push({ phase, t: +since.toFixed(2), ...r });
           out.chips.push({ phase, chip: chip() });
+          out.music.push({ phase, cue: window.SSQ.musicNow().cue, warm: ss.warmCue });
         }
       }
       wordless.includes(phase) && out.wordless.push({ phase, secs: +since.toFixed(2) });
@@ -152,6 +165,7 @@ const run = !(started && tvDone)
         ss.tick(0.05);
       }
       out.shownAfter = ss.shown();
+      out.picksAll = window.SSQ.soundPicksPlayed().slice(picksBefore).map((p) => p.name);
       return out;
     });
 
@@ -197,6 +211,26 @@ const stray = fromStory.filter((w) => !(known.has(w) || before.has(w) || piece(w
 g.check("no other new words show in the bedtime story (every word drawn is in the lines file)", stray.length === 0, stray);
 g.check("the fourth picture is on (Brian 2026-11-26): Mops hides the baby in his mop bucket, then \"Nothing to see here!\" in a bubble over him", BEDTIME_SWITCHES.bucketPicture === true && pics.some((p) => p.pic === "bucket" && p.caption) && pics.some((p) => p.pic === "hide" && p.bubble && !p.caption) && onScreen(OLD.bucket) && onScreen(OLD.nothing));
 g.check("Mops's bleat is asked for once, as his \"...Weeee-eenn-nnttt?\" comes up (the mops-bleat sound hook)", run.debug && run.debug.sounds.bleat === 1, run.debug && run.debug.sounds);
+// The bleat plays (window.SSQ.playSoundPick, the same player as the morning song's bleat), and nothing else does.
+g.check("sound is on for this run (the sound button)", soundOn);
+const weentPick = run.bleats.find((b) => b.pic === "weent");
+g.check("the goat bleat plays as \"...Weeee-eenn-nnttt?\" comes up: sounds/goat-bleat.mp3 is asked for there through window.SSQ.playSoundPick", !!weentPick && JSON.stringify(weentPick.picks) === '["mops-bleat"]', run.bleats);
+g.check("no other picture or part of the bedtime story plays a bleat (one in the whole story)", JSON.stringify(run.picksAll) === '["mops-bleat"]' && run.bleats.filter((b) => b.picks.length).length === 1, { all: run.picksAll, bleats: run.bleats });
+await new Promise((r) => setTimeout(r, 1500));
+const startedBleat = await page.evaluate(() => window.SSQ.soundPicksPlayed().filter((p) => p.name === "mops-bleat" && p.started).length);
+g.check("the bleat clip loaded and started (its sound reached the effects level)", startedBleat >= 1, startedBleat);
+// One player for the bleat (music-picks.js playSound): the bedtime story reaches it through window.SSQ.playSoundPick,
+// the morning song's line and Goating in Space call it directly; no other module asks for the bleat.
+const MODS = Object.fromEntries(readdirSync(join(root, "src", "modules")).filter((f) => f.endsWith(".js")).map((f) => [f, readFileSync(join(root, "src", "modules", f), "utf8")]));
+const askers = Object.keys(MODS).filter((f) => /"mops-bleat"/.test(MODS[f])).sort();
+g.check("the bleat is asked for only by the bedtime story, the morning song's bleat line and Goating in Space's gaps (and named in the music table)", JSON.stringify(askers) === JSON.stringify(["bedtime-story-sound.js", "home-music.js", "morning-sound.js", "music-picks.js"]), askers);
+g.check("window.SSQ.playSoundPick plays through music-picks.js playSound (no second sound system)", /playSoundPick\(name\)[\s\S]{0,200}playSound\(b\.ctx, b\.fx, name/.test(MODS["bridge.js"]));
+// The music (Brian's music table, 2026-11-26): bedtime plays Reawakening, nothing hard-coded.
+const PICKS = await import(join(root, "src", "modules", "music-picks.js"));
+const bedMusic = run.music.filter((m) => m.phase && m.phase !== "end");
+g.check("from the walk to bed until the fade, the music follows the \"bedtime\" cue (every frame)", bedMusic.length > 100 && bedMusic.every((m) => m.cue === "bedtime"), bedMusic.filter((m) => m.cue !== "bedtime").slice(0, 5));
+g.check("and through every story picture and the Guardians picture", run.picMusic.length === 7 && run.picMusic.every((m) => m.cue === "bedtime"), run.picMusic);
+g.check("the bedtime cue plays Reawakening (music-picks.js), and only it", PICKS.fileFor("bedtime") === "music/reawakening.mp3" && PICKS.listFor("bedtime").length === 1);
 g.check("only Mops and baby Squatch are in the pictures (no parents, nobody else)", pics.length === 6 && pics.every((p) => Array.isArray(p.cast) && p.cast.every((c) => c === "mops" || c === "baby")) && pics.some((p) => p.cast.includes("baby")), pics.map((p) => p.cast));
 // Sizes (Brian: "Look at how small mops and squatch are versus box."): the crate and Mops in the room's own
 // proportion (the crate bed in the locked home room and Mops as the room draws him), the same in every picture.

@@ -40,11 +40,11 @@ export async function coneTimeline(page, secs) {
     STEP,
   );
 }
-// How far the point on Squatch that is seen is from the nearest cone at timeline step k (0 inside one).
+// How far Squatch (his whole outline, party-watch.js coneEdge) is from the nearest cone at timeline step k (0 in one).
 function nearest(tl, k, x, y) {
   const cs = tl.cones[Math.min(k, tl.cones.length - 1)];
   let d = 1e9;
-  for (const c of cs) d = Math.min(d, watch.distToCone(x, y - watch.SQUATCH_SEEN_ABOVE_FEET, c.ox, c.oy, c.a, c.half, c.len));
+  for (const c of cs) d = Math.min(d, watch.coneEdge(c, { x, y }));
   return d;
 }
 // (the vent counts as a wall: lingering by it with no disguise starts the fur alarm, party-vent.js)

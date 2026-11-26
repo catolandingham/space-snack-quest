@@ -11,8 +11,7 @@
  * uses, so his drawing is the save/translate(x, y)/.../restore block that starts there.
  * Each fill or stroke is kept with its colour and the box of its path, in Mops's own units
  * (facing right, feet at 0, the body is about x -17..17 and y -26..-8, the head is at the right).
- * Also, since it came in the same change: music/floating-in-space.mp3 (Brian's recording) is
- * served by the test page. Nothing in the game plays it yet; the morning rebuild wires it in.
+ * Also: every music file in music/ is served by the test page as an mp3.
  *   node tests/mops-look.mjs
  */
 import { startGame } from "./game-page.mjs";
@@ -269,16 +268,21 @@ const MO = { x: 611.25, y: 503.5, f: 1, moving: false };
   g.check("title: no page errors", errors.length === 0, errors);
   await ctx.close();
 }
-// Floating in Space is in music/ and the test page serves it (the morning rebuild will load it).
+// Every music file is in music/ and the test page serves it as an mp3 (src/modules/music-picks.js says where each plays).
 {
   const { page, ctx } = await g.open("?ch=1");
-  const got = await page.evaluate(async () => {
-    const r = await fetch("music/floating-in-space.mp3");
+  const { readdirSync } = await import("node:fs");
+  const { join } = await import("node:path");
+  const { root } = await import("./game-page.mjs");
+  for (const file of readdirSync(join(root, "music")).filter((f) => f.endsWith(".mp3")).map((f) => "music/" + f)) {
+  const got = await page.evaluate(async (file) => {
+    const r = await fetch(file);
     const b = new Uint8Array(await r.arrayBuffer());
     return { status: r.status, type: r.headers.get("content-type"), bytes: b.length, head: [b[0], b[1], b[2]] };
-  });
+  }, file);
   const mp3 = (got.head[0] === 0x49 && got.head[1] === 0x44 && got.head[2] === 0x33) || (got.head[0] === 0xff && (got.head[1] & 0xe0) === 0xe0);
-  g.check("music/floating-in-space.mp3 is served as an mp3", got.status === 200 && got.type === "audio/mpeg" && got.bytes > 100000 && mp3, got);
+  g.check(file + " is served as an mp3", got.status === 200 && got.type === "audio/mpeg" && got.bytes > 100000 && mp3, got);
+  }
   await ctx.close();
 }
 await g.finish("mops look");

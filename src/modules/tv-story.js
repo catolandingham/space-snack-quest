@@ -75,6 +75,8 @@ export function createTvStory(bridge) {
     play(pic);
   }
   const picture = (pic) => ({ k: "cutaway", id: TV_STORY_ID, panel: PICTURES.indexOf(pic) });
+  // while the story is on the screen (its music plays then: music-picks.js "tv")
+  let on = false;
   return {
     /** The queue steps of the whole story, cards included. */
     steps() {
@@ -82,6 +84,7 @@ export function createTvStory(bridge) {
         A = out();
       A && load(A.c);
       return [
+        e.run(() => (on = true)),
         e.card("fb", tvLine("card-years-ago")),
         e.run(() => roar("tour")),
         picture("tour"),
@@ -94,7 +97,16 @@ export function createTvStory(bridge) {
         picture("banish"),
         e.run(stop),
         e.card("fb", tvLine("card-now")),
+        e.run(() => (on = false)),
       ];
+    },
+    /** True while the story is on the screen: a step of it is up (its cards or its pictures). */
+    showing() {
+      const c = E() && E().current(),
+        mine = !!c && ((c.k === "cutaway" && c.id === TV_STORY_ID) || (c.k === "card" && c.id === "fb"));
+      // (something else up, not one of its steps: the story was cut short, a restart or a capture; it is over)
+      c && !mine && c.k !== "run" && (on = false);
+      return on && mine;
     },
     /** Tests: every Wookiee sound asked for so far, by picture ("tour", "shed", "banish"). */
     roars() {

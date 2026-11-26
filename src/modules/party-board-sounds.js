@@ -172,17 +172,50 @@ function clop(A, t, f) {
   nz(A, { t, d: 0.02, v: 0.08, kind: "white", ft: "highpass", f: 3000, a: 0.001 });
 }
 
+// One syllable of someone talking: a buzzy voice through a mouth-shaped filter, its pitch rising or falling.
+function voice(A, t, f) {
+  const d = rnd(0.12, 0.3),
+    c = A.c,
+    os = c.createOscillator(),
+    fl = c.createBiquadFilter(),
+    g = c.createGain();
+  os.type = "sawtooth";
+  os.frequency.setValueAtTime(f, t);
+  os.frequency.linearRampToValueAtTime(f * rnd(0.85, 1.2), t + d);
+  fl.type = "bandpass";
+  fl.Q.value = 4;
+  fl.frequency.setValueAtTime(rnd(450, 700), t);
+  fl.frequency.linearRampToValueAtTime(rnd(700, 1000), t + d);
+  env(g, t, 0.03, d, 0.09, d * 0.4);
+  os.connect(fl);
+  fl.connect(g);
+  g.connect(A.o);
+  os.start(t);
+  os.stop(t + d + 0.05);
+}
+// Someone laughing across the room: "ha-ha-ha", each a little lower.
+function laugh(A, t) {
+  const f = rnd(180, 260);
+  for (let i = 0; i < 4; i++) voice(A, t + i * 0.16, f * (1 - i * 0.05));
+}
+// A glass clinking somewhere in the room: two bright rings that die away.
+function clink(A, t) {
+  const f = rnd(2400, 3000);
+  tone(A, { t, f, d: 0.35, v: 0.025, a: 0.002 });
+  tone(A, { t, f: f * 1.51, d: 0.22, v: 0.012, a: 0.002 });
+}
+
 /** Every one-shot sound by name: (A, t). */
 export const BOARD = Object.freeze({
   // P1 to P5 (the board's picks)
+  // The crowd in the hall: people chatting, a laugh, a glass clinking. No steady noise under it (Brian 2026-11-26,
+  // showing 6: "The background noise here still throws me off- sounds like a HVAC system or something"; the steady
+  // filtered hiss that was under the chatter here was that sound).
   murmur(A, t, d = 3) {
     const M = muffled(A, 1100);
-    nz(M, { t, d, v: 0.15, f: 600, q: 0.5, a: 0.4, hold: d - 0.8, trem: 0.3, tremF: 3 });
-    for (let i = 0; i < 14; i++) {
-      const at = t + rnd(0, d - 0.4),
-        f = rnd(140, 260);
-      tone(M, { t: at, f, f1: f * rnd(0.85, 1.2), d: rnd(0.15, 0.35), type: "sawtooth", v: 0.04, a: 0.03 });
-    }
+    for (let i = 0; i < 12; i++) voice(M, t + rnd(0, d - 0.4), rnd(110, 240));
+    rnd(0, 1) < 0.5 && laugh(M, t + rnd(0.2, d - 0.8));
+    clink(A, t + rnd(0.1, d - 0.4));
   },
   isfredMuffled(A, t) {
     const M = muffled(A, 900);
@@ -199,6 +232,11 @@ export const BOARD = Object.freeze({
     tone(A, { t: t + 0.15, f: 330, f1: 540, d: 0.18, type: "triangle", v: 0.16, a: 0.02 });
   },
   rustle: (A, t) => rustle(A, t, 10, 3000, 0.4),
+  // The one FUR alarm of Chapter 1 (Brian 2026-11-26: option 1 of tools/alarm-choices.html, the red alert whoop): a
+  // rising whoop, three times, as on that page. The party's alarm and the older program's (bridge.js alarmSound) play it.
+  alarm(A, t) {
+    for (let i = 0; i < 3; i++) tone(A, { t: t + i * 0.62, f: 380, f1: 1250, d: 0.55, type: "sawtooth", v: 0.18, a: 0.01 });
+  },
   bell(A, t, d = 1.8) {
     const c = A.c,
       g = c.createGain(),

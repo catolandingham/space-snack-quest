@@ -100,6 +100,7 @@ const around = (at, r) => ({ x0: at.x - r, x1: at.x + r, y0: at.y - r, y1: at.y 
 const trailStart = (page) =>
   page.evaluate(() => {
     window.__trail = [];
+    window.__trailMark = 0;
     window.__trailT = setInterval(() => {
       const n = window.__ss.op,
         f = window.SSQ.beat("ch1-party").flyerAt();
@@ -112,7 +113,7 @@ const trailEnd = (page) =>
     const t = window.__trail,
       out = { n: t.length, sqJumps: 0, flJumps: 0, flGone: 0, seen: 0, alarm: 0, flMax: 0 };
     for (let i = 1; i < t.length; i++) {
-      t[i].seen && out.seen++;
+      t[i].seen && i >= (window.__trailMark || 0) && out.seen++;
       t[i].alarm && out.alarm++;
       t[i].fl || out.flGone++;
       if (t[i].room !== t[i - 1].room) continue;
@@ -163,7 +164,9 @@ g.check(
     L("sq-sneak-back") === "I'll sneak back in a costume and dance!" &&
     ["chip-flyer", "button-grab-flyer"].every((id) => { const l = lines.PARTY_LINES.find((x) => x.id === id); return l.status === "approved" && l.source === "Brian 2026-11-24, Snack Quest Chat"; }) &&
     ["sq-robots-job", "sq-show-mops", "sq-phew", "chip-save-flyer", "button-save-flyer", "sq-party-fun", "sq-sneak-back"].every((id) => { const l = lines.PARTY_LINES.find((x) => x.id === id); return l.status === "approved" && l.source === "Brian 2026-11-25, Snack Quest Chat"; }) &&
-    ["sq-flyer", "sq-normal", "sq-costume", "sq-dance-wish"].every((id) => lines.PARTY_LINES.find((x) => x.id === id).removed),
+    ["sq-flyer", "sq-normal", "sq-costume"].every((id) => lines.PARTY_LINES.find((x) => x.id === id).removed) &&
+    // (put back 2026-11-26, in P3: tests/party-showing6.mjs)
+    !lines.PARTY_LINES.find((x) => x.id === "sq-dance-wish").removed,
 );
 
 // ---------- P3: one flyer, set down on the stage's right end ----------
@@ -183,7 +186,7 @@ g.check(
   // (Isfred's walk happens between two lines: watched in a second pass below, where nothing is being tapped)
   s = read.end;
   const texts = read.seen.map((l) => l.text);
-  g.check("P3's lines in order: his worry right after the robots line (Brian 2026-11-25)", JSON.stringify(texts) === JSON.stringify(["Let's give a big hello to our friends from Bleep-Bloop Robotics!", "Soon their helper robots will be here, to help with the heavy work.", "Robots for the heavy work? That's Mops's job!", "I have to show Mops.", "And now... put your hands together for the Croc Boys!", "Stormtop-vania 1-2-3-4-5!"]), texts);
+  g.check("P3's lines in order: his worry right after the robots line (Brian 2026-11-25), and the dance wish last (back 2026-11-26)", JSON.stringify(texts) === JSON.stringify(["Let's give a big hello to our friends from Bleep-Bloop Robotics!", "Soon their helper robots will be here, to help with the heavy work.", "Robots for the heavy work? That's Mops's job!", "I have to show Mops.", "And now... put your hands together for the Croc Boys!", "Stormtop-vania 1-2-3-4-5!", "I've never gotten to dance at a party."]), texts);
   const worry = read.seen[2],
     show = read.seen[3];
   g.check("while he thinks \"Robots for the heavy work? That's Mops's job!\" the banner still glows", !!worry && worry.banner === 1, worry);
@@ -267,7 +270,7 @@ g.check(
     close = new Set();
   for (const q of plan0) {
     const k = Math.round(q.t / sneak.STEP);
-    for (const c of tl.cones[k]) hall.P4_SWEEP[c.id] && W.distToCone(q.x, q.y - W.SQUATCH_SEEN_ABOVE_FEET, c.ox, c.oy, c.a, c.half, c.len) < 40 && close.add(c.id);
+    for (const c of tl.cones[k]) hall.P4_SWEEP[c.id] && W.coneEdge(c, q) < 40 && close.add(c.id);
   }
   g.check("it is a maze: three or more sweeping cones pass within 40 of him on the way", close.size >= 3, [...close]);
   g.check("the flyer is on the bar counter's far end, within arm's reach (under 70) of where he takes it", FLYER.x > hall.HALL.bar.x0 && Math.hypot(FLYER.reach.x - FLYER.x, FLYER.reach.y - FLYER.y) < 70);
@@ -317,6 +320,9 @@ g.check(
   g.check("every cone is drawn, whole, from where he hides (also the ones far from him: he plans by looking)", drawn.cones >= 8 && drawn.drawn === drawn.cones && drawn.whole && drawn.far > 300, drawn);
 
   // ---------- his door does nothing before the grab ----------
+  // (this walk to the door is a check of the door, walked straight in real time, not the timed sneak: since
+  // 2026-11-26 sight sees his whole body, and a sweeping cone may brush him on it for a moment, which must start no
+  // alarm. The trail watches it for an alarm; "nobody saw him" is checked from the sneak on, `__trailMark`.)
   await trailStart(page);
   await walk(page, HALL_DOOR.x, HALL_DOOR.y + 8);
   await sleep(3000);
@@ -325,6 +331,7 @@ g.check(
   g.check("and the flyer is still the one thing outlined (not his door)", (await until(page, (q) => q.ring === "grab-flyer", 1500)) !== null);
 
   // ---------- the sneak to the flyer ----------
+  await page.evaluate(() => (window.__trailMark = window.__trail.length));
   await sneak.stopLoop(page);
   // (from the doorway, where the door check left him)
   let way = await sneak.sneakTo(page, FLYER.reach, { upTo: 0.6 });
