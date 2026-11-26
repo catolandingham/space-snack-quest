@@ -21,7 +21,7 @@
  *            sign    a robot holds up the form set; a close-up grows out of it: the white copy, the big pink order
  *                    sheet with ORDER MORE ROBOTS and its box, the small yellow copy stuck under the pink. Isfred signs
  *                    the white, writes his office code on the pink, the numbers come through grey on the yellow, the
- *                    box glows; Mops: "So futuristic and we still order on paper."
+ *                    box is outlined; Mops: "So futuristic and we still order on paper."
  *            call    wordless: the wall speaker chimes (sound waves); Isfred looks up at it, gives the robot the papers,
  *                    points at the doorway and hurries out; the robot rolls out after him with the whole set
  *            back    the robot rolls back in holding only the pink and the yellow, stuck together, and stops by Mops:
@@ -34,7 +34,7 @@
  *                    stuck, into the bin by the plant: "Ptoo!" (they stay there, poking out of the bin)
  *   home     (36) two robots roll out into the hallway; Mops waves him out of the plant (hearts: Mops sees him); they
  *            walk out together. In the hallway the two robots wait at the office door, turned to it: "We got to
- *            watch out for these robots." (they glow); as they pass, Squatch "What's the difference between fur and
+ *            watch out for these robots." (they are outlined); as they pass, Squatch "What's the difference between fur and
  *            hair?", Mops "Paperwork."; the robots roll away into the bay; then beat 37 (walkHomeDone).
  * Nobody who could see Squatch is in the bay while he can move, and in beats 30 to 36 he has no control, so this beat
  * needs no capture of its own (CLAUDE.md, one capture rule): every cone is drawn, and tests/loading-bay.mjs checks that
@@ -43,8 +43,7 @@
  */
 import { BAY, BAY_SPOTS, HALLWAY, BAY_PACE, BAY_PICTURES, BAY_CLOSEUPS, BAY_PARTS } from "./loading-bay-place.js";
 import { bayWords } from "./loading-bay-lines.js";
-import { drawRobot, robotHand, drawFormSet, drawStuck, drawCrumbs, drawFormCloseUp, closeUpBox, drawCloseUpBack, drawCloseUpFront, drawWave } from "./loading-bay-art.js";
-import { drawNextGlow } from "./lunch-sneak-art.js";
+import { drawRobot, robotHand, drawFormSet, drawStuck, drawCrumbs, drawFormCloseUp, closeUpBox, drawCloseUpBack, drawCloseUpFront, drawWave, drawDashedOutline } from "./loading-bay-art.js";
 import { drawSpeakerRing, drawHeartCone } from "./party-free-art.js";
 import { HALL_SPEAKER } from "./party-hall.js";
 import { COUNTER_SPOTS } from "./lunch-sneak-place.js";
@@ -181,7 +180,7 @@ export function createLoadingBay(bridge) {
       chime: -1,
       wave: -1,
       point: false,
-      glow: false,
+      outline: false,
       hidden: false,
     };
   }
@@ -460,7 +459,7 @@ export function createLoadingBay(bridge) {
           b.closeUp = { id: "form", at: e.time() };
           sound.morning("rustle");
         }),
-        // the signature, then the code a number at a time (a scribble each), then the box glows
+        // the signature, then the code a number at a time (a scribble each), then the box is outlined
         e.until(() => {
           const b = B(),
             el = e.time() - b.sign - P.grow,
@@ -603,9 +602,9 @@ export function createLoadingBay(bridge) {
           HALLWAY.robots.forEach((p, k) => Object.assign(robot(k + 1), p, { show: true, room: "passage", f: 0, wi: 0 }));
         }),
         bothWays([HALLWAY.in.mops], [HALLWAY.in.sq], BAY_PACE.walk),
-        e.run(() => (B().glow = true)),
+        e.run(() => (B().outline = true)),
         say("mops", "mops-robots"),
-        e.run(() => (B().glow = false)),
+        e.run(() => (B().outline = false)),
         // Mops walks on the robots' side, Squatch along the back wall
         bothWays([HALLWAY.pass.mops], [HALLWAY.pass.sq], BAY_PACE.walk * 0.8),
         e.run(() => (e.face("sq", 1), e.face("mops", -1))),
@@ -929,11 +928,11 @@ export function createLoadingBay(bridge) {
     if (e.room() === "passage") {
       const s = e.pos("sq"),
         robots = b.robots.filter((r) => r.show && r.room === "passage");
-      // the robots glow while Mops's line names them
-      b.glow && robots.forEach((r) => drawNextGlow(ctx, { x0: r.x - 24, x1: r.x + 24, y0: r.y - 64, y1: r.y }, t, 0.9));
       const cones = drawAllCones(ctx, b, t);
       robots.forEach((r) => drawRobot(ctx, r.x, r.y, r.f, 1, r.moving ? Math.abs(Math.sin(t * 14)) * 2 : 0, 0));
-      drew = { step: b.step, room: "passage", cones: cones.map((c) => ({ id: c.id, inside: c.inside, show: c.show, hearts: !!c.hearts })), robots: robots.map((r) => ({ x: r.x, y: r.y, f: r.f })) };
+      // while Mops's line names them, the robots get the game's one highlight: the dashed gold outline (no glow)
+      const outlined = b.outline ? robots.map((r) => drawDashedOutline(ctx, { x0: r.x - 26, x1: r.x + 26, y0: r.y - 74, y1: r.y + 8 }, t)) : [];
+      drew = { step: b.step, room: "passage", outlined, cones: cones.map((c) => ({ id: c.id, inside: c.inside, show: c.show, hearts: !!c.hearts })), robots: robots.map((r) => ({ x: r.x, y: r.y, f: r.f })) };
     }
   }
 

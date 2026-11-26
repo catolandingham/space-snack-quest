@@ -44,7 +44,7 @@ Every word is in `src/modules/loading-bay-lines.js`, word for word from the walk
 | Mops | Mmf mrrf! | Beat 34, at the plant | Pending |
 | Squatch (from the plant) | You're gumbling! (goat mumbling) | Beat 34 | Approved |
 | Mops | Ptoo! | Beat 35, the copies into the bin | Pending |
-| Mops | We got to watch out for these robots. | Beat 36, the hallway, the robots glow | Pending |
+| Mops | We got to watch out for these robots. | Beat 36, the hallway, the robots outlined (dashed gold) | Pending |
 | Squatch | What's the difference between fur and hair? | Beat 36 | Decided |
 | Mops | Paperwork. | Beat 36 | Decided |
 

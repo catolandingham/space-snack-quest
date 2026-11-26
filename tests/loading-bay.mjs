@@ -13,7 +13,7 @@
  *     robot leave with the papers; the robot comes back with only the pink and the yellow; the bite close-up and its
  *     chomp; Mops at the plant (the close-up shows the eyes, him and the bin); Squatch's bubble from the eyes; the
  *     copies fly into the bin by the plant and stay there;
- *   - 36: Mops waves him out; Mops's hearts; the hallway robots at the office door glow on Mops's line; their cones
+ *   - 36: Mops waves him out; Mops's hearts; the hallway robots at the office door are outlined (dashed gold) on Mops's line; their cones
  *     never hold him; they leave; beat 37 (ch1Step "photos", "Squatch: go on").
  * Also: only the lines file's words, pending lines still pending; ↺ in every part; the debug link; the old code gone.
  *   node tests/loading-bay.mjs
@@ -87,7 +87,7 @@ const run = await page.evaluate(
           for (let i = 0; i < 8; i++) (ss.tick(0.05), ss.drawFrame());
           const lb = window.__ss.lastBubble;
           out.lines.push(b.text);
-          out.bubbles[b.text] = { who: b.who, box: lb ? { x: lb.x, y: lb.y, w: lb.w, h: lb.h } : null, head: lb && lb.head ? { ...lb.head } : null, step: st().step, ring: (beat.debug().drew || {}).ring || "", closeUp: (beat.debug().drew || {}).closeUp ? beat.debug().drew.closeUp.id : "", papers: st().papers ? st().papers.where : "", glow: !!st().glow, room: n.room };
+          out.bubbles[b.text] = { who: b.who, box: lb ? { x: lb.x, y: lb.y, w: lb.w, h: lb.h } : null, head: lb && lb.head ? { ...lb.head } : null, step: st().step, ring: (beat.debug().drew || {}).ring || "", closeUp: (beat.debug().drew || {}).closeUp ? beat.debug().drew.closeUp.id : "", papers: st().papers ? st().papers.where : "", outlined: ((beat.debug().drew || {}).outlined || []).length, room: n.room };
         }
         n.bt = 1;
         ss.opTap();
@@ -165,7 +165,7 @@ g.check("34: \"Mmf mrrf!\" by the plant in a close-up; Squatch's line from his e
 g.check("35: the copies fly into the bin by the plant and stay there", run.papersSeen.includes("flying") && run.bubbles["Ptoo!"].papers === "bin" && run.end.papers === "bin", run.papersSeen);
 // beat 36
 g.check("36: Mops's cone holds him (hearts) once he is out of the plant", run.mopsSaw);
-g.check("36: in the hallway the robots glow on Mops's line", run.bubbles["We got to watch out for these robots."].glow && run.bubbles["We got to watch out for these robots."].room === "passage");
+g.check("36: in the hallway both robots get the dashed gold outline on Mops's line (the game's one highlight, no glow)", run.bubbles["We got to watch out for these robots."].outlined === 2 && run.bubbles["We got to watch out for these robots."].room === "passage", run.bubbles["We got to watch out for these robots."]);
 // the hallway's lines sit beside the speaker's head: not on it, and no further than 60 from it (the photo wall's heading
 // once pushed one to the far corner)
 const besideHead = ["We got to watch out for these robots.", "What's the difference between fur and hair?", "Paperwork."].map((t) => {

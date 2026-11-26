@@ -5,6 +5,7 @@
  * close-up sits in. The locked room pictures are never redrawn here; these are layers on top of them.
  */
 import { ROBOT_SIZE } from "./loading-bay-place.js";
+import { OUTLINE } from "./outline.js";
 
 const BAY_INK = "#1e2430";
 export const PAPER = Object.freeze({ white: "#fffdf8", pink: "#ff9cc2", yellow: "#ffe27a", carbon: "#7d6f86" });
@@ -175,7 +176,7 @@ export function drawCrumbs(ctx, x, y, u, s = 1) {
  * signature writing itself along its line (`sign`, 0 to 1); on the right the big pink order sheet with its ORDER MORE
  * ROBOTS box (`words`) and the office code written on it a number at a time (`code` digits shown, of `codeText`);
  * the small yellow copy stuck under the pink's bottom corner, where the same numbers come through grey (the carbon).
- * `pulse` (0 to 1) makes the ORDER MORE ROBOTS box glow. Returns where each part was drawn (tests).
+ * `pulse` (0 to 1) outlines the ORDER MORE ROBOTS box (dashed gold). Returns where each part was drawn (tests).
  */
 export function drawFormCloseUp(ctx, box, { sign = 0, code = 0, codeText = "", pulse = 0, words = "", pen = null, t = 0 }) {
   const W = box.x1 - box.x0,
@@ -234,21 +235,15 @@ export function drawFormCloseUp(ctx, box, { sign = 0, code = 0, codeText = "", p
   const pink = { x0: X(258), y0: Y(30), x1: X(592), y1: Y(470) };
   bayRound(ctx, pink.x0, pink.y0, pink.x1 - pink.x0, pink.y1 - pink.y0, 10 * k);
   fillStroke(ctx, PAPER.pink, 5 * k);
-  // ORDER MORE ROBOTS, and its box (drawn, empty), glowing when it matters
+  // ORDER MORE ROBOTS, and its box (drawn, empty), outlined when it matters
   const boxAt = { x0: X(286), y0: Y(80), x1: X(338), y1: Y(132) };
-  if (pulse > 0) {
-    const g = ctx.createRadialGradient((boxAt.x0 + boxAt.x1) / 2, (boxAt.y0 + boxAt.y1) / 2, 4, (boxAt.x0 + boxAt.x1) / 2, (boxAt.y0 + boxAt.y1) / 2, 90 * k);
-    const a = (0.55 + 0.35 * Math.sin(t * 6)) * pulse;
-    g.addColorStop(0, `rgba(255,224,90,${a})`);
-    g.addColorStop(1, "rgba(255,224,90,0)");
-    ctx.fillStyle = g;
-    ctx.fillRect(boxAt.x0 - 90 * k, boxAt.y0 - 90 * k, 232 * k, 232 * k);
-  }
   ctx.lineWidth = 5 * k;
   ctx.strokeStyle = BAY_INK;
   ctx.fillStyle = "#fffdf8";
   ctx.fillRect(boxAt.x0, boxAt.y0, boxAt.x1 - boxAt.x0, boxAt.y1 - boxAt.y0);
   ctx.strokeRect(boxAt.x0, boxAt.y0, boxAt.x1 - boxAt.x0, boxAt.y1 - boxAt.y0);
+  // when it matters, the game's one highlight round the box: the dashed gold outline, no glow (Brian 2026-11-26)
+  pulse > 0 && drawDashedOutline(ctx, { x0: boxAt.x0 - 8 * k, y0: boxAt.y0 - 8 * k, x1: boxAt.x1 + 8 * k, y1: boxAt.y1 + 8 * k }, t);
   const wordsAt = { x: X(350), y: Y(106), size: Math.round(32 * k) };
   ctx.font = `900 ${wordsAt.size}px sans-serif`;
   ctx.textAlign = "left";
@@ -340,6 +335,22 @@ export function drawCloseUpFront(ctx, b) {
   ctx.strokeStyle = BAY_INK;
   ctx.strokeRect(b.x0 - 5, b.y0 - 5, b.x1 - b.x0 + 10, b.y1 - b.y0 + 10);
   ctx.restore();
+}
+
+/**
+ * The game's one highlight (Brian 2026-11-26: the dashed gold line, no glow, no ring, no arrow), round `box`, with the
+ * goal outline's width, dash and colour (outline.js OUTLINE) and its gentle pulse, for things this beat draws itself.
+ */
+export function drawDashedOutline(ctx, box, t) {
+  ctx.save();
+  ctx.globalAlpha = 0.85 + 0.15 * Math.sin((t || 0) * 4);
+  ctx.setLineDash([OUTLINE.dash, OUTLINE.dash * 0.7]);
+  ctx.lineWidth = OUTLINE.width;
+  ctx.strokeStyle = OUTLINE.color;
+  bayRound(ctx, box.x0, box.y0, box.x1 - box.x0, box.y1 - box.y0, 8);
+  ctx.stroke();
+  ctx.restore();
+  return box;
 }
 
 /** Mops waving Squatch out of the plant (wordless): a little curl of motion lines by his raised hoof. */
