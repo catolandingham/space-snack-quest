@@ -595,7 +595,7 @@
     }
     function ch1WorldTap(x, y) {
       if (!n.ch1Day2 || !n.ctrl || n.ch1Zoom || n.ch1PadOn) return !1;
-      if (hmBeat() && hmBeat().active()) return hmBeat().tap(x, y); // a tap on the glowing thing itself
+      for (let b of [hmBeat(), luBeat()]) if (b && b.active() && b.tap) return b.tap(x, y); // a tap on the glowing thing (or the lunch's close-up)
       if (n.ch1Step === "photos" && ch1HallDoorHit(x, y)) return (ch1LeavePhotos(), !0);
       if (n.ch1Step === "family" && Math.hypot(x - 430, y - 530) < 80) return (ch1HideFamily(), !0);
       return !1;
@@ -724,10 +724,8 @@
       n.ch1Crayon &&
         !n.ch1Keepsake &&
         !n.ch1Office &&
-        (m(592, 118, 96, 68, 6),
-        r("#fffdf8", 3),
-        g("ME", 640, 142, 17, "#1e2430", "center", 800),
-        g("MOPS", 640, 170, 17, "#1e2430", "center", 800));
+        // Squatch's crayon card: "ME" and "MOPS THE GANITOR" (Brian 2026-11-26; src/modules/ganitor.js)
+        (window.SSQ && window.SSQ.drawHallwayCrayon ? window.SSQ.drawHallwayCrayon(e) : (m(592, 118, 96, 68, 6), r("#fffdf8", 3), g("ME", 640, 142, 17, "#1e2430", "center", 800), g("MOPS", 640, 170, 17, "#1e2430", "center", 800)));
       n.ch1Beep && !n.ch1Office && drawMailRobot(860, 520);
       (n.moPose !== "hidden" && Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 }),
         n.sqPose === "ball" && drawL2Ball(n.sq.x, n.sq.y - 16),

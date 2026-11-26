@@ -17,17 +17,17 @@
  *           heart, "My lunch! You're the best." (NEXT), then the wordless cutaway: Mops eats the lunch, then the bag.
  *   back    "Squatch: go on"; Mops waits in the left doorway, which is outlined; walking there takes them both back
  *           into the hall, down behind the snack counter, where Squatch ducks (only the counter's guest is near).
- *   one     wordless: the counter guest's cone lies over the ducked Squatch and stays grey; Mops thinks of ONE Moon
- *           Pie (a picture bubble) and the plate of Moon Pies glows.
+ *   one     the counter guest's cone lies over the ducked Squatch and stays grey; the plate of Moon Pies glows and
+ *           Mops says "...you know the rule, grab one snack." (NEXT).
  *   snack   "Squatch: grab one snack"; TAKE · snack (first offered as the guest turns away): he stands up, reaches,
  *           takes the top pie and ducks. Seen while up: the pie stays on the plate and the same capture rule runs.
  *   chew    wordless: he eats it. Then beat 28, unchanged.
  * Its progress lives in the game-state field ch1Lunch, and ch1Step is "lu-<step>" at each step the player controls,
  * so the step restart (↺, 20-ch2.js) brings back the step he is on.
  */
-import { LUNCH_PLACES, DOOR_WAY, WATCHERS, COUNTER_WATCHER, RHYTHM, RHYTHM_LENGTH, watcherNow, AISLE, COUNTER_SPOTS, HALLWAY_SPOTS, LUNCH_SOLIDS, LUNCH_BOUNDS, LUNCH_PACE, LUNCH_SIZES } from "./lunch-sneak-place.js";
+import { LUNCH_PLACES, DOOR_WAY, WATCHERS, COUNTER_WATCHER, RHYTHM, RHYTHM_LENGTH, watcherNow, AISLE, COUNTER_SPOTS, HALLWAY_SPOTS, LUNCH_SOLIDS, LUNCH_BOUNDS, LUNCH_PACE, LUNCH_SIZES, COUNTER_CLOSEUP } from "./lunch-sneak-place.js";
 import { lunchWords } from "./lunch-sneak-lines.js";
-import { drawCrates, drawPlate, drawNextGlow, drawHeart, drawBagInPaw, drawDucked, drawReach, drawPie, drawOnePieThought, sqPawAt, pieY, BAG_IN_HALL } from "./lunch-sneak-art.js";
+import { drawCrates, drawPlate, drawNextGlow, drawHeart, drawBagInPaw, drawDucked, drawReach, drawPie, sqPawAt, pieY, BAG_IN_HALL, drawCounterCloseUp, counterCloseUpBox } from "./lunch-sneak-art.js";
 import { drawLunchBag } from "./home-morning-art.js";
 import { HALL, HALL_PICTURE, SPOTS } from "./party-hall.js";
 import { coneFrom, coneSees, lookAt, SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
@@ -42,6 +42,7 @@ import { createHomeMorningSound, HOME_MORNING_SOUND } from "./home-morning-sound
 import { cutawaySteps, LUNCH_EAT } from "./cutaway.js";
 import { footfall } from "./footfalls.js";
 import { adultPxFor } from "./room-sizes.js";
+import { drawGanitorWall } from "./ganitor.js";
 
 export const LUNCH_ID = "ch1-lunch";
 // The eating cutaway (cutaway.js PANELS "lunch") and its sounds: [seconds into it, synth.js sound].
@@ -69,6 +70,7 @@ export function createLunchSneak(bridge) {
     return l && e && e.get("ch1Day2") && l.step && l.step !== "done" ? l : null;
   };
   let ff = {},
+    wallDrew = null,
     closeUpNow = null,
     pads = 0,
     drew = null,
@@ -130,6 +132,7 @@ export function createLunchSneak(bridge) {
     qs: {},
     counter: false,
     mops: null,
+    ballNear: {},
     ...(extra || {}),
   });
 
@@ -170,7 +173,34 @@ export function createLunchSneak(bridge) {
   }
   // Squatch is hidden (plant, crates, or ducked behind the counter): no cone can see him.
   const inAisle = (p) => p.x > AISLE.x0 && p.x < AISLE.x1 && p.y > AISLE.y0 && p.y < AISLE.y1 + 8;
-  const hiddenNow = (l) => l.pose === "hidden" || (l.pose === "ducked" && inAisle(E().pos("sq")));
+  // Rolled into a ball he is hidden too, until someone has noticed him by the ball rule (ballNoticed).
+  const hiddenNow = (l) => l.pose === "hidden" || (l.pose === "ducked" && inAisle(E().pos("sq"))) || (l.pose === "ball" && !ballNoticed(l));
+  // The ball rule (DECISIONS C20, R43; the older program's numbers, engine().ball): a balled-up Squatch is noticed only
+  // by someone who stays within `radius` of him for `seconds`, looking his way (his cone would see him standing).
+  const BALL = () => E().ball || { radius: 70, seconds: 2 };
+  const ballNoticed = (l) => Object.values(l.ballNear || {}).some((t) => t >= BALL().seconds);
+  function ballWatch(l, dt) {
+    const s = sqPoint(),
+      B = BALL(),
+      near = {};
+    for (const c of l.pose === "ball" ? coneList(l) : []) Math.hypot(s.x - c.x, s.y - c.y) <= B.radius && coneSees(c, s) && (near[c.id] = true);
+    const was = l.ballNear || {};
+    l.ballNear = {};
+    for (const id of Object.keys(near)) l.ballNear[id] = (was[id] || 0) + dt;
+  }
+  /** ROLL · ball (C20, "ball anytime"; Brian 2026-11-26: offered in the lunch sneak): he rolls up where he stands. */
+  function rollUp() {
+    const e = E(),
+      l = L();
+    // a guard watching him roll up knows where he is (as stepping into a hiding place)
+    l.alarm && (l.alarm.spotted = l.alarm.guards.some((g) => g.sees));
+    e.still("sq");
+    e.set("sqPose", "ball");
+    l.pose = "ball";
+    l.hideAt = "";
+    l.ballNear = {};
+    sound.effect("hide");
+  }
   function hideIn(where) {
     const e = E(),
       l = L(),
@@ -301,9 +331,10 @@ export function createLunchSneak(bridge) {
         L().counterT = 0;
         go("one", { oneAt: e.time() });
       }),
-      // Mops's picture bubble while the guest at the counter looks over him (the cone stays grey); TAKE · snack
-      // comes up as that guest turns away.
-      e.until(() => e.time() - L().oneAt >= LUNCH_PACE.oneBubble && watcherNow(COUNTER_WATCHER, L().counterT).phase === "away"),
+      // Mops's one-snack line (Brian 2026-11-26, approved word for word), waiting for NEXT, while the guest at the
+      // counter looks over him (the cone stays grey); TAKE · snack comes up as that guest turns away.
+      e.say("mops", lunchWords("mops-one-snack")),
+      e.until(() => watcherNow(COUNTER_WATCHER, L().counterT).phase === "away"),
       e.run(() => (go("snack"), control("chip-snack"))),
     ]);
   }
@@ -440,12 +471,16 @@ export function createLunchSneak(bridge) {
     };
   }
 
+  // The snack counter close-up shows from Mops's line to the chew (lunch-sneak-place.js COUNTER_CLOSEUP).
+  const closeUpShows = (l) => !!l && l.counter && COUNTER_CLOSEUP.steps.includes(l.step) && inHall();
+
   // ---------- every frame ----------
   function tick(dt) {
     const l = live(),
       e = E();
     if (!l) return;
     dt = dt || 0;
+    closeUpShows(l) ? l.cuAt == null && (l.cuAt = e.time()) : (l.cuAt = null);
     const free = e.get("ctrl") && !e.current();
     // the watchers keep their rhythm whenever the hall is on screen
     if (inHall()) {
@@ -456,7 +491,7 @@ export function createLunchSneak(bridge) {
     // Out of the aisle behind the counter he is standing again (the counter hides him only there).
     if (l.pose === "ducked" && l.step !== "grab" && free && !inAisle(e.pos("sq"))) ((l.pose = "stand"), e.set("sqPose", "stand"));
     // Steering steps him out of a hiding place (as at the party).
-    if (free && inHall() && l.pose === "hidden" && e.steering()) {
+    if (free && inHall() && (l.pose === "hidden" || l.pose === "ball") && e.steering()) {
       l.pose = "stand";
       l.hideAt = "";
       e.set("sqPose", "stand");
@@ -479,6 +514,13 @@ export function createLunchSneak(bridge) {
         }
       }
     } else ((l.seenBy = ""), (l.seenT = 0));
+    // Rolled up: the ball rule. Noticed (and no alarm yet): the one capture rule, as for being seen standing.
+    inHall() && l.pose === "ball" ? ballWatch(l, dt) : (l.ballNear = {});
+    if (inHall() && l.pose === "ball" && free && !l.alarm && ballNoticed(l)) {
+      const id = Object.keys(l.ballNear).find((k) => l.ballNear[k] >= BALL().seconds),
+        w = watchers(l).find((q) => q.id === id);
+      w && raise(w);
+    }
     l.seenBy && (showing[l.seenBy] = l.seenT / SEEN_TOO_LONG_SECONDS);
     // each watcher's warning: "?" over his head before he turns back to look (as the party's glancer)
     if (inHall() && !l.alarm)
@@ -538,6 +580,12 @@ export function createLunchSneak(bridge) {
   const plantSpot = () => spot("lu-plant", "button-plant", { x: LUNCH_PLACES.plant.stand.x, y: LUNCH_PLACES.plant.stand.y, r: 60 }, LUNCH_PLACES.plant.thing, () => hideIn("plant"));
   const crateSpot = () => spot("lu-crate", "button-crate", { x: LUNCH_PLACES.crate.stand.x, y: LUNCH_PLACES.crate.stand.y, r: 60 }, LUNCH_PLACES.crate.box, () => hideIn("crate"));
   const doorSpot = () => spot("lu-door", "button-door", { x: LUNCH_PLACES.door.stand.x, y: LUNCH_PLACES.door.stand.y, r: LUNCH_PLACES.door.r }, LUNCH_PLACES.door.box, toHallway);
+  // ROLL · ball: offered wherever he stands in the hall during the sneak (no ring: it is him), the words as elsewhere.
+  const ballSpot = () => {
+    const s = E().pos("sq");
+    const [verb, cap] = words("button-ball");
+    return { id: "lu-ball", verb, cap, who: "sq", at: [s.x, s.y - 70], f: rollUp };
+  };
   // The next place to go, after the furthest he has reached: 0 the plant, 1 the crates, 2 the doorway.
   const nextPlace = (l) => ["plant", "crate", "door"][Math.min(2, l.reached)];
   function spots() {
@@ -546,13 +594,15 @@ export function createLunchSneak(bridge) {
     if (!l || !e.get("ctrl")) return [];
     const standing = l.pose === "stand";
     if (inHall() && !l.counter) {
-      // the alarm: every hiding place (the doorway waits)
-      if (l.alarm) return standing ? [plantSpot(), crateSpot()] : [];
+      // the alarm: every hiding place (the doorway waits), and the ball anywhere else
+      if (l.alarm) return standing ? [plantSpot(), crateSpot(), ballSpot()] : [];
       const next = nextPlace(l),
         out = [next === "door" ? doorSpot() : next === "crate" ? crateSpot() : plantSpot()];
       // the places behind him still hide him (they do not glow)
       standing && l.reached >= 1 && next !== "plant" && out.push(plantSpot());
       standing && l.reached >= 2 && out.push(crateSpot());
+      // anywhere else in the open: ROLL · ball (last, so a place's own button wins where he stands at one)
+      standing && out.push(ballSpot());
       return out;
     }
     if (e.room() === "passage" && l.step === "give") return [spot("lu-give", "button-give", { x: HALLWAY_SPOTS.give.x, y: HALLWAY_SPOTS.give.y, r: HALLWAY_SPOTS.give.r }, null, give)];
@@ -598,9 +648,11 @@ export function createLunchSneak(bridge) {
     a && a.phase === "shout" && marks.push({ x: a.w.x + 40, y: a.w.y - over(a.w.id) + 14, mark: "!", size: Math.round(adult * 0.635) });
     a && a.guards.forEach((g) => g.room === "hall" && g.sees && marks.push({ x: g.x, y: g.y - adult * 1.29, mark: "!", size: Math.round(adult * 0.635) }));
     const ducked = l.pose === "ducked" || (l.step === "handoff" && Math.hypot(s.x - COUNTER_SPOTS.sq.x, s.y - COUNTER_SPOTS.sq.y) < 6);
-    const hidden = l.pose === "hidden";
+    const hidden = l.pose === "hidden" || l.pose === "ball";
     const extra = [];
     extra.push({ y: LUNCH_PLACES.crate.box.y1, f: () => drawCrates(ctx0) });
+    // rolled up: the L2 ball (the older program's drawing, DECISIONS C3) at his size, where he stands
+    l.pose === "ball" && e.ball && extra.push({ y: s.y, f: () => e.ball.drawOn(ctx0, s.x, s.y - 16 * (k / 1.65), k / 1.65) });
     l.counter && extra.push({ y: COUNTER_SPOTS.plate.y, f: () => drawPlate(ctx0, l.pies) });
     // what he carries: the lunch bag in his paw on the way to Mops
     !l.counter && !hidden && l.bag === "paw" && extra.push({ y: s.y + 0.5, f: () => drawBagInPaw(ctx0, s.x, s.y, s.f || 1, k) });
@@ -619,12 +671,6 @@ export function createLunchSneak(bridge) {
       const u = Math.min(1, (t - (l.chewAt || t)) / LUNCH_PACE.chew),
         paw = sqPawAt(s.x, s.y - 14, s.f || -1, k);
       u < 1 && extra.push({ y: s.y + 0.6, f: () => drawPie(ctx0, paw.x, paw.y, 1 - u * 0.85) });
-    }
-    // Mops thinks of ONE Moon Pie (no words), over his head, while the plate starts to glow
-    if (l.step === "one") {
-      const mo = e.pos("mops"),
-        a = Math.min(1, (t - (l.oneAt || t)) / 0.25);
-      extra.push({ y: 9999, f: () => (drew && (drew.thought = drawOnePieThought(ctx0, { x: mo.x - 60, y: mo.y - adult * 1.05 }, a))) });
     }
     // Mops: mopping in the hallway doorway at the start; behind the counter with him in beat 27
     const m = l.mops;
@@ -697,11 +743,34 @@ export function createLunchSneak(bridge) {
     },
     tick,
     spots,
+    /**
+     * A tap on the picture (game positions; 14-ch1-day2.js ch1WorldTap). On the counter close-up a tap is a tap on
+     * what it shows: on the plate it is TAKE · snack when that is offered; anywhere else on it, nothing (he must not
+     * walk off into the hall the close-up covers). True when it was used.
+     */
+    tap(x, y) {
+      const l = live();
+      if (!closeUpShows(l)) return false;
+      const b = counterCloseUpBox(1),
+        C = COUNTER_CLOSEUP;
+      if (x < b.x0 || x > b.x1 || y < b.y0 || y > b.y1) return false;
+      const gx = C.src.x0 + (x - b.x0) / C.k,
+        gy = C.src.y0 + (y - b.y0) / C.k,
+        p = plateBox(),
+        snack = spots().find((q) => q.id === "lu-snack");
+      snack && gx >= p.x0 - 24 && gx <= p.x1 + 24 && gy >= p.y0 - 24 && gy <= p.y1 + 24 && snack.f();
+      return true;
+    },
     drawRoom(ctx) {
       const l = live();
       if (!l || !inHall()) return false;
       const e = E();
       drew = { step: l.step, cones: drawHall(ctx, e, bridge.guests, view(l, ctx)), glow: glowing(l) };
+      // at the snack counter: the close-up of the counter's corner, so a kid on a phone sees the plate, the pie and him
+      if (closeUpShows(l)) {
+        const u = Math.min(1, Math.max(0, (e.time() - (l.cuAt == null ? e.time() : l.cuAt)) / COUNTER_CLOSEUP.grow));
+        drew.closeUp = { ...drawCounterCloseUp(ctx, u), u: +u.toFixed(2) };
+      }
       // Hidden, the older program draws no goal outline (it would sit on him): this beat draws the next place's.
       const next = l.pose === "hidden" && e.get("ctrl") && !l.alarm ? spots()[0] : null;
       if (next) {
@@ -715,6 +784,10 @@ export function createLunchSneak(bridge) {
     draw(ctx) {
       const l = live(),
         e = E();
+      // The hallway's Employee of the Month photo of Mops, MOPS, GANITOR (Brian 2026-11-26, Ganitor C): a layer over the
+      // locked hallway picture on every Chapter 1 visit (not the office). Drawn here because this beat draws over the
+      // hallway; it does not belong to the lunch.
+      wallDrew = e && e.room() === "passage" && !e.get("ch1Office") && (e.get("scene") || "")[0] === "Q" ? drawGanitorWall(ctx, e.drawMopsOn) : null;
       if (!l || e.room() !== "passage") return;
       const t = e.time(),
         k = sqScale(),
@@ -783,7 +856,7 @@ export function createLunchSneak(bridge) {
     /** Tests: the state, what the last frame drew, the cones now, what was heard. */
     debug() {
       const l = L();
-      return { state: l ? JSON.parse(JSON.stringify(l)) : null, active: !!live(), drew, steps: record.steps.slice(), sounds: sound.asked(), cones: l && live() && inHall() ? coneList(l) : [], firstAlarm: firstAlarm.seen };
+      return { state: l ? JSON.parse(JSON.stringify(l)) : null, active: !!live(), drew, wall: wallDrew, steps: record.steps.slice(), sounds: sound.asked(), cones: l && live() && inHall() ? coneList(l) : [], firstAlarm: firstAlarm.seen };
     },
   };
 

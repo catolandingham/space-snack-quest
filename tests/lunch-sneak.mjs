@@ -234,10 +234,17 @@ const run = !registered
         n.sq.y = 345;
         tick(0.2);
         until(() => st().step === "one", 6);
-        tick(0.6);
+        until(() => n.cur && n.cur.k === "bub", 3);
         snap("one");
+        out.oneLine = n.cur && n.cur.b ? { who: n.cur.b.who, text: n.cur.b.text } : null;
+        out.oneWaits = (() => {
+          tick(3);
+          return !!(n.cur && n.cur.k === "bub");
+        })();
+        next();
         until(() => n.ctrl && st().step === "snack", 8);
         snap("snack");
+        out.closeUp = beat.debug().drew && beat.debug().drew.closeUp;
         out.snackWatcher = window.__lu.watcherNow(window.__lu.COUNTER_WATCHER, st().counterT).phase;
         press();
         tick(0.9);
@@ -273,7 +280,7 @@ if (run) {
   g.check("the eating cutaway plays by itself in 2 to 4 s: the sandwich eaten bite by bite, then the bag, both gone on screen", run.cutSecs >= 2 && run.cutSecs <= 4.2 && cut.length > 10 && cut[0].sandwich === 1 && cut[0].bag === 1 && sandwichGone && bagGone && sandwichGone.t < bagGone.t && cut.some((c) => c.bag > 0 && c.bag < 1), { secs: run.cutSecs, first: cut[0], sandwichGone, bagGone });
   g.check("chomps and crunches are heard with the bites", (run.sounds.chomp || 0) >= 3 && (run.sounds.crunch || 0) >= 3, run.sounds);
   g.check("after lunch: \"Squatch: go on\", the left doorway outlined, the bag eaten", A.back.chip === L["chip-back"] && A.back.drew && !!A.back.drew.outline && A.back.bag === "eaten", A.back);
-  g.check("behind the counter: ducked, Mops's wordless one-pie bubble, the plate glows, no chip yet", A.one.room === "hall" && A.one.pose === "ducked" && !A.one.ctrl && A.one.chip === "" && A.one.drew && A.one.drew.glow.length === 1, A.one);
+  g.check("behind the counter: ducked, the plate glows, no chip; Mops says \"...you know the rule, grab one snack.\" (Brian 2026-11-26, word for word) in place of the thought bubble, waiting for NEXT", A.one.room === "hall" && A.one.pose === "ducked" && !A.one.ctrl && A.one.chip === "" && A.one.drew && A.one.drew.glow.length === 1 && !A.one.drew.thought && run.oneLine && run.oneLine.who === "mops" && run.oneLine.text === "...you know the rule, grab one snack." && L["mops-one-snack"] === run.oneLine.text && run.oneWaits, { one: A.one, line: run.oneLine, waits: run.oneWaits });
   g.check("\"Squatch: grab one snack\" and TAKE · snack come up as the counter guest turns away", A.snack.chip === L["chip-snack"] && A.snack.offer === L["button-snack"] && run.snackWatcher === "away", { snack: A.snack, watcher: run.snackWatcher });
   g.check("TAKE · snack: he stands up and takes ONE pie into his paw (two stay), then ducks and eats it", A.grab.pose === "up" && A.grab.pie === "paw" && A.grab.pies === 2 && A.chew.step === "chew" && run.after.pie === "eaten" && run.after.pies === 2, { grab: A.grab, chew: A.chew, after: run.after });
   g.check("then beat 28, unchanged: \"Universal Postal Service ship arriving!\"", run.ship, A.handoff);
@@ -285,7 +292,7 @@ if (run) {
   g.check("the pending lines are not shown", !run.words.some((t) => PENDING.includes(t)), run.words);
   g.check("footsteps only through footfalls.js, and heard", (run.sounds.pad || 0) > 0, run.sounds);
 }
-g.check("the lines file names a status and a source for every line, all in the game before or decided", LUNCH_LINES.length >= 11 && LUNCH_LINES.every((l) => l.id && l.who && l.text && ["in-game", "decided"].includes(l.status) && l.source));
+g.check("the lines file names a status and a source for every line, all in the game before, decided or approved by Brian", LUNCH_LINES.length >= 11 && LUNCH_LINES.every((l) => l.id && l.who && l.text && ["in-game", "decided", "approved"].includes(l.status) && l.source));
 
 // ---------- sizes against the hall ----------
 const sizes = !registered
@@ -301,7 +308,7 @@ if (sizes && P) {
   const S = P.LUNCH_SIZES,
     crate = P.LUNCH_PLACES.crate.box.y1 - P.LUNCH_PLACES.crate.box.y0,
     pie = 36 * S.pie,
-    bag = 52 * 0.68;
+    bag = 68 * 0.88; // (home-morning-art.js MORNING_SIZES.bag.h, lunch-sneak-art.js BAG_IN_HALL)
   g.check("Squatch is 80% of the hall's grown-up; the guests are their approved heights", Math.abs(sizes.sq / sizes.adult - 0.8 * (48.5 / 45)) < 0.02 && sizes.teal === sizes.adult, sizes);
   g.check("the crates are about Squatch's height (he hides behind them), the pies and the bag are big enough for a phone (over a third of him)", crate / sizes.sq > 0.7 && crate / sizes.sq < 1.2 && pie / sizes.sq > 0.4 && bag / sizes.sq > 0.33, { crate: crate / sizes.sq, pie: pie / sizes.sq, bag: bag / sizes.sq });
   g.check("the plate is not under Squatch where he crouches (it is below his feet)", P.COUNTER_SPOTS.plate.y - 20 > P.COUNTER_SPOTS.sq.y, { plate: P.COUNTER_SPOTS.plate, sq: P.COUNTER_SPOTS.sq });

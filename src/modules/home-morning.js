@@ -3,8 +3,9 @@
  * calendar (delivery day, there to look at), and Mops's forgotten lunch. It follows the bedtime story (beat 21, bedtime-story.js) and
  * hands over to the lunch sneak (lunch-sneak.js, through src/game/14-ch1-day2.js ch1TakeLunch). What the player sees, step by step
  * (plan reviewed 2026-11-26; every word is from home-morning-lines.js, every drawing from home-morning-art.js):
- *   night   wordless: the night the bedtime story ended on goes on: the room is dark, Squatch asleep in bed under the
- *           blanket (as bedtime-story.js left him); Mops's hooves walk away and the door shuts in the dark; the room
+ *   night   the night the bedtime story ended on goes on: the room is dark, Squatch asleep in bed under the blanket
+ *           (as bedtime-story.js left him); the wall speaker says "Ganitor Mops to the party hall." (overheard, the ear
+ *           icon; NEXT); Mops's hooves walk away and the door shuts in the dark; the room
  *           comes up and the morning song starts. Mops is gone; the rocket (the note tied on) stands at the foot of
  *           the bed.
  *   wake    wordless: he sits up in bed (the blanket slides off), stretches both arms up, gets up and steps down beside
@@ -37,6 +38,7 @@ import { drawBedtimeSquatch, drawBedBlanket, BED_POSES } from "./bedtime-story.j
 import { HOME_THINGS } from "./home-alone.js";
 import { cutawaySteps } from "./cutaway.js";
 import { footfall } from "./footfalls.js";
+import { ganitorWords } from "./ganitor.js";
 import { createHomeMorningSound, HOME_MORNING_SOUND } from "./home-morning-sound.js";
 
 export const HOME_MORNING_ID = "ch1-home-morning";
@@ -155,7 +157,9 @@ export function createHomeMorning(bridge) {
     e.set("moPose", "hidden");
     e.place("mops", -400, HOME_MORNING_SPOTS.bed.y);
     go("night");
-    e.queue([e.until(night), e.until(wake), e.run(() => (go("rocket"), control("chip-gift")))]);
+    // In the dark the wall speaker calls Mops to work (Brian 2026-11-26, Ganitor B: approved words), overheard (the
+    // ear icon), waiting for NEXT; then he goes.
+    e.queue([e.say("speaker", ganitorWords("pa-ganitor"), "say", true), e.until(night), e.until(wake), e.run(() => (go("rocket"), control("chip-gift")))]);
   }
   // Night to morning: still dark, Mops leaves for work (heard, not seen), light again, the morning song.
   function night(dt) {

@@ -25,6 +25,7 @@ import { quietLine } from "./party-lines.js";
 import { quietBedtimeLine } from "./bedtime-story-lines.js";
 import { adultPxFor, doorAdultPx } from "./room-sizes.js";
 import { createGoalMark } from "./goal-mark.js";
+import { drawGanitorTag, drawHallwayCrayon, ganitorTagsDrawn, hallwayCrayonDrawn } from "./ganitor.js";
 import { singingNow } from "./music-rules.js";
 
 /**
@@ -74,6 +75,25 @@ export function createBridge() {
     /** Every game-state field a beat has written so far (tests). */
     beatWrites() {
       return [...written];
+    },
+    /**
+     * Mops's GANITOR name tag (ganitor.js), drawn by his drawing (60-frame-draw.js Fe) in his own units on `ctx`, at his
+     * scale `scale` (game pixels to one of his units).
+     */
+    drawGanitorTag(ctx, scale) {
+      return drawGanitorTag(ctx, scale);
+    },
+    /** Tests: Mops's name tags drawn since the last call ({ readable, scale }). */
+    ganitorTags() {
+      return ganitorTagsDrawn();
+    },
+    /** Tests: what the hallway's crayon card drew last (ganitor.js), or null. */
+    hallwayCrayonDrawn() {
+      return hallwayCrayonDrawn();
+    },
+    /** Squatch's crayon card on the hallway wall, "ME" and "MOPS THE GANITOR" (ganitor.js), for 14-ch1-day2.js. */
+    drawHallwayCrayon(ctx) {
+      return drawHallwayCrayon(ctx);
     },
     /** Brian's Floating in Space recording in the morning. See home-music.js. */
     homeMusic,

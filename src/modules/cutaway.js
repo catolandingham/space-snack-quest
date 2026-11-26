@@ -25,7 +25,8 @@
 import { HOMEWORK_PANELS } from "./homework-cutaway.js";
 import { WOOKIEE_PANELS } from "./tv-story-art.js";
 import { BEDTIME_PANELS, GUARDIANS_PANELS } from "./bedtime-story-art.js";
-import { GBOX_PANELS, drawLunchBag } from "./home-morning-art.js";
+import { GBOX_PANELS, drawLunchBag, MORNING_SIZES } from "./home-morning-art.js";
+import { drawGanitorTag } from "./ganitor.js";
 
 const INK = "#1e2430";
 const GLOW = "#ffcf33",
@@ -44,13 +45,15 @@ const MOPS = { x: 300, y: 640, scale: 12 };
 const BUCKET_AT = { x: 655, rim: 520, bottom: 690, top: 165, base: 140 };
 
 let last = null;
+let tagDrew = null; // Mops's name tag in the picture just drawn (tests)
 
 /**
  * Beat 26 (lunch-sneak.js): Mops eats his lunch, then the empty paper bag, in one wordless picture that plays by
  * itself (Brian 30a). Seconds: three bites of the sandwich (`bites`), a look at the empty bag, the bag lifted to his
  * mouth, three bites of the bag, then chewing with nothing in his hoof (the clear last frame). PLACEHOLDER timing.
  */
-export const LUNCH_EAT = Object.freeze({ length: 3.6, bites: Object.freeze([0.5, 0.9, 1.3]), bagUp: 1.9, bagBites: Object.freeze([2.1, 2.5, 2.9]) });
+// (2026-11-26: the first bite waits 0.9 s, so the whole hay sandwich is seen first)
+export const LUNCH_EAT = Object.freeze({ length: 4.0, bites: Object.freeze([0.9, 1.3, 1.7]), bagUp: 2.3, bagBites: Object.freeze([2.6, 3.0, 3.4]) });
 
 /**
  * Brian 30a: seconds a wordless picture with nothing to tap plays before the game goes on by itself (0: it waits
@@ -351,7 +354,16 @@ function mopsBody(ctx, lean, lifted) {
     SHIRT,
     FINE,
   );
-  shape(ctx, lean, (c) => c.ellipse(6, -19.4, 2.3, 1.1, 0, 0, Math.PI * 2), WHITE, FINE);
+  // His GANITOR name tag on the pocket (Brian 2026-11-26; ganitor.js), in place of the old name patch: big enough
+  // here for its word to read.
+  ctx.save();
+  ctx.translate(MOPS.x, MOPS.y);
+  ctx.scale(S, S);
+  ctx.translate(PIVOT.x, PIVOT.y);
+  ctx.rotate(lean);
+  ctx.translate(-PIVOT.x, -PIVOT.y);
+  tagDrew = drawGanitorTag(ctx, S, FINE / S);
+  ctx.restore();
   ctx.restore();
 }
 
@@ -649,30 +661,37 @@ function wring(ctx, t, engine, extra) {
 // ---------- beat 26: Mops eats his lunch, then the bag (LUNCH_EAT) ----------
 const BREAD = "#f3d9a4",
   CRUST = "#c98d4a",
-  LETTUCE = "#6cc36a",
-  CHEESE = "#ffd447",
+  HAY = "#f2c230",
+  HAY_DARK = "#b8912a",
   CRUMB = "#d9a865";
-// A sandwich (two slices with lettuce and cheese between), its middle at (x, y), `left` of it still there (0 to 1):
-// each bite takes a round chunk off its left end, toward his mouth.
+// A hay sandwich (Brian 2026-11-26: "hay between two slices of bread"): two slices with a thick layer of hay between,
+// its straws sticking out at both ends. Its middle at (x, y), `left` of it still there (0 to 1): each bite takes a
+// round chunk off its left end, toward his mouth. PLACEHOLDER drawing.
 function sandwich(ctx, x, y, left) {
   if (left <= 0) return;
-  const w = 170,
-    h = 80;
+  const w = 190,
+    h = 90;
   ctx.save();
+  // drawn a third bigger round its middle, so the hay reads on a phone
+  ctx.translate(x, y);
+  ctx.scale(1.35, 1.35);
+  ctx.translate(-x, -y);
   ctx.beginPath();
-  ctx.rect(x - w / 2 + w * (1 - left) - 6, y - h, w * left + 12, h * 2);
+  // (room for the straws at the ends; once bitten, the left edge is the bite)
+  const pad = left < 1 ? 6 : 36;
+  ctx.rect(x - w / 2 + w * (1 - left) - pad, y - h, w * left + pad + 36, h * 2);
   ctx.clip();
   // the bitten edge: a bite shape cut out of the left end
   if (left < 1) {
     const bx = x - w / 2 + w * (1 - left);
     ctx.beginPath();
     ctx.rect(x - w, y - h, w * 2, h * 2);
-    for (const dy of [-26, 0, 26]) ctx.moveTo(bx + 18, y + dy), ctx.arc(bx, y + dy, 18, 0, Math.PI * 2);
+    for (const dy of [-30, 0, 30]) ctx.moveTo(bx + 20, y + dy), ctx.arc(bx, y + dy, 20, 0, Math.PI * 2);
     ctx.clip("evenodd");
   }
   const slice = (yy) => {
     ctx.beginPath();
-    ctx.roundRect(x - w / 2, yy - 18, w, 36, 14);
+    ctx.roundRect(x - w / 2, yy - 15, w, 30, 13);
     ctx.fillStyle = BREAD;
     ctx.fill();
     ctx.lineWidth = LINE;
@@ -682,20 +701,50 @@ function sandwich(ctx, x, y, left) {
     ctx.strokeStyle = INK;
     ctx.stroke();
   };
-  slice(y + 20);
+  slice(y + 30);
+  // the hay: a thick yellow layer between the slices, ragged, its straws poking out past the bread at both ends
   ctx.beginPath();
-  for (let i = 0; i <= 8; i++) ctx.lineTo(x - w / 2 - 6 + (i * (w + 12)) / 8, y + (i % 2 ? 6 : -4));
-  ctx.lineTo(x + w / 2, y + 10);
-  ctx.lineTo(x - w / 2, y + 10);
+  ctx.moveTo(x - w / 2 - 4, y + 18);
+  for (let i = 0; i <= 14; i++) ctx.lineTo(x - w / 2 - 4 + (i * (w + 8)) / 14, y - 18 + (i % 2 ? -5 : 3));
+  ctx.lineTo(x + w / 2 + 4, y + 18);
   ctx.closePath();
-  ctx.fillStyle = LETTUCE;
+  ctx.fillStyle = HAY;
   ctx.fill();
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 2.5;
   ctx.strokeStyle = INK;
   ctx.stroke();
-  ctx.fillStyle = CHEESE;
-  ctx.fillRect(x - w / 2 + 6, y - 6, w - 12, 8);
-  slice(y - 18);
+  ctx.lineCap = "round";
+  const straw = (x0, y0, x1, y1) => {
+    ctx.beginPath();
+    ctx.moveTo(x + x0, y + y0);
+    ctx.lineTo(x + x1, y + y1);
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = INK;
+    ctx.stroke();
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = HAY;
+    ctx.stroke();
+  };
+  for (const [y0, dx, dy] of [
+    [-10, -30, -12],
+    [-2, -34, 0],
+    [6, -26, 12],
+    [12, -18, 20],
+  ]) {
+    straw(-w / 2 + 2, y0, -w / 2 + dx, y0 + dy);
+    straw(w / 2 - 2, y0, w / 2 - dx, y0 + dy);
+  }
+  // darker straws all through the layer
+  ctx.lineWidth = 2.5;
+  ctx.strokeStyle = HAY_DARK;
+  for (let i = 0; i < 12; i++) {
+    const sx = x - w / 2 + 6 + (i * (w - 12)) / 11;
+    ctx.beginPath();
+    ctx.moveTo(sx, y - 12 + (i % 3) * 5);
+    ctx.lineTo(sx + 16, y + 6 - (i % 2) * 8);
+    ctx.stroke();
+  }
+  slice(y - 30);
   ctx.restore();
 }
 // A few crumbs falling from his mouth, `age` seconds after a bite.
@@ -742,11 +791,11 @@ function lunchEat(ctx, t) {
     lift = Math.min(1, Math.max(0, (t - E.bagUp + 0.4) / 0.4)),
     bagX = mouth.x + 96 - lift * 16,
     bagBottom = 560 - lift * 40,
-    bagK = 3.6,
-    bagH = 52 * bagK,
+    bagK = 3.6 * (52 / MORNING_SIZES.bag.h), // (the same height in the picture as before the bag grew)
+    bagH = MORNING_SIZES.bag.h * bagK,
     eaten = bagDone / 3;
   const shoulder = at(12, -13, lean),
-    hoof = { x: bagX, y: bagBottom - bagH * 0.35 };
+    hoof = { x: bagX, y: bagBottom - bagH * 0.1 }; // (holding it low, so MOPS on it shows)
   band(ctx, [shoulder, { cx: shoulder.x + 60, cy: hoof.y + 70, x: hoof.x - 30, y: hoof.y + 6 }], 3.4 * S, WHITE);
   // the paper bag, bitten from the top down once he eats it
   if (bagDone < 3) {
@@ -768,7 +817,7 @@ function lunchEat(ctx, t) {
   ctx.strokeStyle = INK;
   ctx.stroke();
   lastBite != null && eatCrumbs(ctx, mouth.x + 10, mouth.y + 20, t - lastBite);
-  return { lunch: { sandwich: Math.max(0, 1 - bitesDone / 3), bag: bagDone < 3 ? 1 - eaten : 0, chewing: chew > 0.05 } };
+  return { lunch: { sandwich: Math.max(0, 1 - bitesDone / 3), filling: "hay", bag: bagDone < 3 ? 1 - eaten : 0, chewing: chew > 0.05, bagBox: { x0: bagX - (MORNING_SIZES.bag.w * bagK) / 2, x1: bagX + (MORNING_SIZES.bag.w * bagK) / 2, y0: bagBottom - bagH, y1: bagBottom }, hoof } };
 }
 
 const PANELS = {
@@ -800,9 +849,10 @@ export function drawCutaway(ctx, engine, step, extra) {
   ctx.fillStyle = WALL;
   ctx.fillRect(0, 0, 960, 640);
   widest = 0;
+  tagDrew = null;
   const drew = panels[step.panel](ctx, t, engine, extra) || {};
   ctx.restore();
-  last = { id: step.id, panel: step.panel, full: true, t, auto: step.auto || 0 };
+  last = { id: step.id, panel: step.panel, full: true, t, auto: step.auto || 0, ...(tagDrew ? { tag: tagDrew } : {}) };
   if (drew.bucket) {
     // The beard pictures: how big Mops and the bucket are, his outlines, and where his nose is (tests).
     const m = mopsBox();

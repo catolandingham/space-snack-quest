@@ -74,6 +74,15 @@ const run = !(registered && asleep)
         // the bedtime story's sleep, then Day 2 starts (no tap)
         for (let i = 0; i < 400 && !n.ch1Day2; i++) ss.tick(0.05);
         out.day2 = !!n.ch1Day2;
+        // 0. in the dark the wall speaker calls Mops to work, overheard (Brian 2026-11-26, Ganitor B), waiting for NEXT
+        for (let i = 0; i < 40 && !(n.cur && n.cur.k === "bub"); i++) ss.tick(0.05);
+        out.pa = n.cur && n.cur.k === "bub" ? { who: n.cur.b.who, text: n.cur.b.text, ear: !!n.cur.b.ear, step: step(), mops: n.moPose } : null;
+        ss.drawFrame();
+        out.paDrawn = ss.lastBubble ? { text: ss.lastBubble.text, ear: !!ss.lastBubble.ear, name: ss.lastBubble.name } : null;
+        out.paHoovesBefore = (d().sounds || {}).hoof || 0;
+        tick(3);
+        out.paWaits = !!(n.cur && n.cur.k === "bub");
+        next();
         // 1. the wordless parts: count how long each plays, and that nothing waits for a tap
         let phase = step(),
           since = 0,
@@ -267,6 +276,12 @@ const R = run || { prompts: [], wordless: [], list: {}, steps: [], debug: { soun
 const P = R.list;
 g.check("Day 2 starts from the bedtime story's sleep", !!R.day2, R.day2);
 
+// 0. the PA (Ganitor B)
+const GAN = existsSync(join(root, "src", "modules", "ganitor.js")) ? await import(join(root, "src", "modules", "ganitor.js")) : { GANITOR_LINES: [] };
+const PA = (GAN.GANITOR_LINES.find((l) => l.id === "pa-ganitor") || {}).text;
+g.check('in the dark, before Mops goes, the wall speaker says "Ganitor Mops to the party hall." (Brian 2026-11-26, approved words)', PA === "Ganitor Mops to the party hall." && R.pa && R.pa.who === "speaker" && R.pa.text === PA && R.pa.step === "night" && R.paHoovesBefore === 0, { pa: R.pa, hooves: R.paHoovesBefore });
+g.check("it is an overheard line: drawn with the ear icon, the Speaker's name on it, and it waits for NEXT", R.paDrawn && R.paDrawn.ear && R.paDrawn.text === PA && R.paDrawn.name === "Speaker" && R.paWaits, { drawn: R.paDrawn, waits: R.paWaits });
+
 // 1. the wordless start
 const night = R.wordless.find((w) => w.phase === "night"),
   wake = R.wordless.find((w) => w.phase === "wake");
@@ -357,7 +372,7 @@ g.check("open floor between him and the rocket when he wakes (at least 20 px)", 
 const Z = R.debug.sizes || {};
 g.check("Squatch is drawn at the room's own size (scale 3)", P.rocket && P.rocket.scale === 3, P.rocket && P.rocket.scale);
 g.check("the rocket is a big toy he can hold up: about half of Squatch's height (0.4 to 0.55), smaller than the bed and the bucket", Z.rocket / Z.squatch >= 0.4 && Z.rocket / Z.squatch <= 0.55 && Z.rocket < 150 && Z.rocket < 71, Z);
-g.check("the lunch bag is a paper lunch bag: about a third of Squatch's height (0.25 to 0.4), smaller than the bucket", Z.bag && Z.bag.h / Z.squatch >= 0.25 && Z.bag.h / Z.squatch <= 0.4 && Z.bag.h < 71, Z);
+g.check("the lunch bag is a big paper lunch bag (Brian 2026-11-26: MOPS on it must read): about half of Squatch's height (0.4 to 0.5), smaller than the bucket", Z.bag && Z.bag.h / Z.squatch >= 0.4 && Z.bag.h / Z.squatch <= 0.5 && Z.bag.h < 71, Z);
 // On a 375-wide phone the picture is 375 / 960 of its size: the rocket and the bag must still be big enough to see.
 const PHONE_K = 375 / 960;
 g.check("on a 375-wide phone the rocket is at least 25 px tall and the bag at least 17 px", Z.rocket * PHONE_K >= 25 && Z.bag.h * PHONE_K >= 17, { rocket: Z.rocket * PHONE_K, bag: Z.bag && Z.bag.h * PHONE_K });
@@ -367,9 +382,9 @@ const cs = cu.last && cu.last.sizes;
 g.check("in the close-up the rocket and the box keep the room's proportion (the box clearly bigger)", cs && Math.abs(cs.rocket / cs.box.w - Z.rocket / Z.box.w) < 0.01 && cs.box.w > cs.rocket, { closeUp: cs, room: Z });
 
 // No new words
-const known = new Set(HOME_MORNING_LINES.map((l) => l.text));
+const known = new Set([...HOME_MORNING_LINES, ...GAN.GANITOR_LINES].map((l) => l.text));
 // (the speech bubble's name tag, the calendar's close button, and the room's sleep mark were in the game before)
-const before = new Set([...(R.shownBefore || []), "Squatch", "X", "z z z"]);
+const before = new Set([...(R.shownBefore || []), "Squatch", "X", "z z z", "Speaker"]); // (Speaker: the wall speaker's name tag, morning-lines.js)
 const esc = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 // (a line drawn in pieces counts when each piece is a run of two or more whole words of one line; the lid label is
 // drawn on two lines, MY GARDIAN / BOX)
@@ -433,6 +448,8 @@ const mid = await page.evaluate(() => {
   tick(0.8);
   ss.sectionReset();
   out.night = after();
+  // (the PA's line in the dark waits for NEXT)
+  n.cur && n.cur.k === "bub" && next();
   tick(6);
   out.nightThen = after();
   open(22);

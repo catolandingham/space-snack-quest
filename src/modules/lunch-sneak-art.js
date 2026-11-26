@@ -2,14 +2,13 @@
  * The lunch sneak's own drawings (Chapter 1, beats 25 to 27). Every drawing here is a PLACEHOLDER in the game's style
  * (dark outlines, flat colours) until Brian approves a look: the stack of two crates in the hall, the plate of Moon
  * Pies on the snack counter's end, the glow behind the next thing, one heart, Squatch ducked behind the counter and
- * reaching over it, and Mops's wordless thought bubble with one Moon Pie in it. The lunch bag is the home morning's
- * (home-morning-art.js), the Moon Pie is the party's snack (party-snacks-art.js), the bubble is the bedtime story's.
+ * reaching over it. The lunch bag is the home morning's (home-morning-art.js), the Moon Pie is the party's snack
+ * (party-snacks-art.js).
  */
 import { drawSnack } from "./party-snacks-art.js";
-import { drawThought } from "./bedtime-story-art.js";
 import { drawLunchBag } from "./home-morning-art.js";
 import { armEnds } from "./squatch-art.js";
-import { LUNCH_PLACES, COUNTER_SPOTS, LUNCH_SIZES } from "./lunch-sneak-place.js";
+import { LUNCH_PLACES, COUNTER_SPOTS, LUNCH_SIZES, COUNTER_CLOSEUP } from "./lunch-sneak-place.js";
 
 const LU_INK = "#1e2430";
 const CARD = "#c99a5b",
@@ -119,14 +118,15 @@ export function sqPawAt(x, y, f, scale) {
   const hand = armEnds()[1].hand;
   return { x: x + (f || 1) * hand.x * scale, y: y + hand.y * scale };
 }
-/** The lunch bag in his paw, at his size (a bag a little over a third of him, so it reads on a phone). */
+/** The lunch bag in his paw, at his size (a big bag, about three quarters of him, so MOPS on it reads). */
 export function drawBagInPaw(ctx, x, y, f, scale) {
   const p = sqPawAt(x, y, f, scale);
   drawLunchBag(ctx, p.x, p.y + 10 * (scale / 1.65), BAG_IN_HALL * (scale / 1.65));
   return p;
 }
-// The bag's size in the hall (a share of its home-room size): the hall's Squatch is about half the home room's.
-export const BAG_IN_HALL = 0.68;
+// The bag's size in the hall (a share of its home-room size; the hall's Squatch is about half the home room's): big
+// enough that MOPS on it is about 14 CSS px on an iPad standing up (Brian 2026-11-26: MOPS readable). PLACEHOLDER.
+export const BAG_IN_HALL = 0.88;
 
 /**
  * Squatch ducked behind the counter: the room's Squatch (E.drawSquatch), squashed down to `LOW` of his height, his
@@ -169,9 +169,65 @@ export function drawPie(ctx, x, y, k = 1) {
   drawSnack(ctx, "pie", x, y, LUNCH_SIZES.pie * k);
 }
 
-/** Mops's thought bubble over his head with one Moon Pie in it, big, and no words. Returns its box. */
-export function drawOnePieThought(ctx, head, a = 1) {
-  return drawThought(ctx, head, a, (c, cx, cy) => drawSnack(c, "pie", cx, cy, 1.9));
+
+/** Where the counter close-up sits on the picture (game positions), grown `u` of the way (0 to 1) out of its corner. */
+export function counterCloseUpBox(u = 1) {
+  const C = COUNTER_CLOSEUP,
+    w = (C.src.x1 - C.src.x0) * C.k,
+    h = (C.src.y1 - C.src.y0) * C.k,
+    e = u * u * (3 - 2 * u),
+    mix = (a, b) => a + (b - a) * e;
+  return { x0: mix(C.src.x0, C.dst.x0), y0: mix(C.src.y0, C.dst.y0), x1: mix(C.src.x1, C.dst.x0 + w), y1: mix(C.src.y1, C.dst.y0 + h) };
+}
+let closeUpCopy = null;
+/**
+ * The counter close-up, drawn over the hall once the hall is drawn: the counter's corner (COUNTER_CLOSEUP.src) copied
+ * from the picture as it is now and drawn bigger in a white frame, with the corner it shows framed too and joined to it,
+ * so it reads as "this, close up". `u`: how far it has grown (0 to 1). Returns the box it sits in.
+ */
+export function drawCounterCloseUp(ctx, u) {
+  const C = COUNTER_CLOSEUP,
+    s = C.src,
+    m = ctx.getTransform(),
+    sx = Math.round(m.a * s.x0 + m.e),
+    sy = Math.round(m.d * s.y0 + m.f),
+    sw = Math.max(1, Math.round(m.a * (s.x1 - s.x0))),
+    sh = Math.max(1, Math.round(m.d * (s.y1 - s.y0))),
+    b = counterCloseUpBox(u);
+  if (typeof document === "undefined") return b;
+  closeUpCopy = closeUpCopy || document.createElement("canvas");
+  (closeUpCopy.width !== sw || closeUpCopy.height !== sh) && ((closeUpCopy.width = sw), (closeUpCopy.height = sh));
+  const cc = closeUpCopy.getContext("2d");
+  cc.clearRect(0, 0, sw, sh);
+  cc.drawImage(ctx.canvas, sx, sy, sw, sh, 0, 0, sw, sh);
+  ctx.save();
+  // the corner it shows, framed, and two lines from it to the close-up
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = "#fffdf8";
+  ctx.setLineDash([10, 6]);
+  ctx.strokeRect(s.x0, s.y0, s.x1 - s.x0, s.y1 - s.y0);
+  ctx.setLineDash([]);
+  ctx.beginPath();
+  ctx.moveTo(b.x1, b.y0);
+  ctx.lineTo(s.x0, s.y0);
+  ctx.moveTo(b.x1, b.y1);
+  ctx.lineTo(s.x0, s.y1);
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = "rgba(255,253,248,.85)";
+  ctx.stroke();
+  // the close-up: a shadow, the picture bigger, a thick white frame with a dark edge
+  ctx.fillStyle = "rgba(30,36,48,.28)";
+  ctx.fillRect(b.x0 + 8, b.y0 + 10, b.x1 - b.x0, b.y1 - b.y0);
+  ctx.imageSmoothingEnabled = true;
+  ctx.drawImage(closeUpCopy, 0, 0, sw, sh, b.x0, b.y0, b.x1 - b.x0, b.y1 - b.y0);
+  ctx.lineWidth = 10;
+  ctx.strokeStyle = "#fffdf8";
+  ctx.strokeRect(b.x0, b.y0, b.x1 - b.x0, b.y1 - b.y0);
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = LU_INK;
+  ctx.strokeRect(b.x0 - 5, b.y0 - 5, b.x1 - b.x0 + 10, b.y1 - b.y0 + 10);
+  ctx.restore();
+  return b;
 }
 
 // ---------- the outlines' sources: the crates and the plate alone on a plain floor, once ----------

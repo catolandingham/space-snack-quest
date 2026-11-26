@@ -85,6 +85,21 @@ export const COUNTER_SPOTS = Object.freeze({
   top: Object.freeze({ x: 893, y: 336 }),
 });
 
+/**
+ * The snack counter close-up (Brian 2026-11-26: "the plate of pies and the ducked Squatch are too small" on a phone):
+ * from Mops's line to the chew, the counter's corner of the hall (`src`: the counter guest, Mops, the aisle, Squatch
+ * ducked and the plate) is shown again `k` times bigger in a framed close-up on the left of the picture (`dst`, which
+ * covers only the hall's left part: nothing there matters at the counter). It grows out of its corner over `grow`
+ * seconds, so a kid sees where it is. PLACEHOLDER framing and look.
+ */
+export const COUNTER_CLOSEUP = Object.freeze({
+  src: Object.freeze({ x0: 716, y0: 262, x1: 956, y1: 616 }),
+  k: 1.65,
+  dst: Object.freeze({ x0: 24, y0: 34 }),
+  grow: 0.4,
+  steps: Object.freeze(["one", "snack", "grab", "chew"]),
+});
+
 // ---------- beat 26: the hallway ----------
 export const HALLWAY_SPOTS = Object.freeze({
   in: Object.freeze({ x: 10, y: 330 }),
@@ -120,9 +135,8 @@ export const LUNCH_PACE = Object.freeze({
   lookBoth: 1.2,
   give: 0.5,
   heart: 0.9,
-  eat: 3.6, // the wordless eating cutaway
+  eat: 4.0, // the wordless eating cutaway
   mopsWalk: 170,
-  oneBubble: 2.0,
   up: 0.3,
   reach: 0.45,
   back: 0.35,

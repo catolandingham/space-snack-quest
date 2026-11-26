@@ -401,8 +401,8 @@
         ].forEach(([a, b, c2, d2, f2, g2]) => (e.beginPath(), e.moveTo(a, b), e.lineTo(c2, d2), e.lineTo(f2, g2), e.closePath(), r("#3478f6", 1))),
         m(3, -19, 6, 6, 1.5),
         r("#3478f6", 1),
-        X(6, -19, 2.2, 1.1),
-        r("#ffffff", 0.8));
+        // His GANITOR name tag on the pocket (Brian 2026-11-26; src/modules/ganitor.js); without it, the old name patch.
+        window.SSQ && window.SSQ.drawGanitorTag ? window.SSQ.drawGanitorTag(e, i) : (X(6, -19, 2.2, 1.1), r("#ffffff", 0.8)));
       // headDrop lowers his head (the morning cutaway); sweep swings the beard's ragged end (mopping);
       // noBeard leaves the beard to the caller (the cutaway draws it dunking and twisting).
       let A = s.headDrop != null ? s.headDrop : s.headDown ? 6 : 0,
