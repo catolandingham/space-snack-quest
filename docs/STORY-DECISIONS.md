@@ -73,6 +73,7 @@ Your answers to the old questions:
 - The note and the box are not the whole reveal.
 - A later "who they are" scene is wanted, and Squatch still does not know during it.
 - The lid spelling stays on purpose.
+- 2026-11-26 (Brian, chat 18b A): at bedtime, after the crate story, Mops says "And you've always had your Guardians, watching over you." over a picture of Squatch's crayon drawing of the Guardians, with no hint that he writes the notes. The player still learns that only at the vent (beat 48). Details: `docs/DECISIONS.md`, "Bedtime story, 2026-11-26".
 
 Still open (O18): whether Chapter 2's "Years ago, on Stormtop..." flashback still happens, now that the Guardians flashback is at Chapter 1 bedtime (S37). The hoof-stamp line "A hoof stamp. Mops signed it." is a cut (L2). That cut is in [PR #17](https://github.com/catolandingham/space-snack-quest/pull/17), and it waits on your written yes there.
 

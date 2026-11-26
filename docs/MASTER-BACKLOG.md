@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–113 | ## Where main is (Chapter 1 redesign) |
-| 114–128 | ## Register |
-| 129–150 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 151–171 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 172–184 | ## Phase 2 (plan section 4, T13 to T18) |
-| 185–207 | ## Phase 1 (plan section 3, T5 to T12) |
-| 208–221 | ## SS40–SS44 |
-| 222–239 | ## Story rows |
-| 240–258 | ## Reset section |
-| 259–269 | ## Still open |
-| 270–273 | ## Chapter 1 replot, recorded and not built |
-| 274–429 | ## Changelog |
+| 24–114 | ## Where main is (Chapter 1 redesign) |
+| 115–129 | ## Register |
+| 130–151 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 152–172 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 173–185 | ## Phase 2 (plan section 4, T13 to T18) |
+| 186–208 | ## Phase 1 (plan section 3, T5 to T12) |
+| 209–222 | ## SS40–SS44 |
+| 223–240 | ## Story rows |
+| 241–259 | ## Reset section |
+| 260–270 | ## Still open |
+| 271–274 | ## Chapter 1 replot, recorded and not built |
+| 275–430 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -32,12 +32,13 @@
 - New drawings waiting for his eye: the toy rocket and its tied-on note (blank), the lunch bag (no words; the old one said MOPS), the box close-up (its approved G front, a taped "MY GARDIANS" label on the lid), Squatch's stretch and his hold-up, the heart, today's crossed-off days.
 - Placeholders (not pins): rocket 70 px (about half of Squatch, so it reads on a phone), lunch bag 40 x 52 (about a third), the close-up 4 times the room; the night 2.0 s, the wake about 2.4 s, the hold 0.9 s, the thought bubble 2.2 s; footsteps every 0.3 s.
 
-2026-11-25 (night), draft PR on `feat/ch1-bedtime-story`, not merged. Done: beat 21, the bedtime story, as a module (`ch1-bedtime-story`): the wordless ask (he pats his crate bed, a thought bubble with a little Moon Pie crate, Mops comes over), the old crate story's pictures from 71ec66e (crate, baby, beard, "...Baaa?") at the home room's proportions, Mops's line unchanged, asleep with a gentle snore, then Day 2. The "ch1moon" caption box is deleted. Open for Brian:
-- Words, all "needs-yes" (`src/modules/bedtime-story-lines.js`): the three old captions, "...Baaa?", the crate's MOON PIES badge, the "!" and "z z z" marks, and his bedtime line.
+2026-11-26, draft PR #89 on `feat/ch1-bedtime-story`, not merged. Done: beat 21, the bedtime story, as a module (`ch1-bedtime-story`): to bed with no words (he walks to his crate bed and climbs in, Mops comes over), Squatch asks "Tell me about when we first met?", the old crate story's pictures from 71ec66e (crate, baby, beard, "...Weeee-eenn-nnttt?") at the home room's proportions, Mops's line unchanged, the Guardians picture (Squatch's crayon drawing, Mops's approved line "And you've always had your Guardians, watching over you."), then falling asleep (yawn, lie down, blanket, Mops out by the door, light down to night-blue, three snores with rising "z z z", fade to black, Day 2 fades in). No goal chip from the Now card to Day 2. The "ch1moon" caption box is deleted. Brian's 2026-11-26 notes built: 0:12 (the ask in words), 0:25 (the vocal song stays, untouched), 0:28 (goats say "weeeent"), and "a bit more natural transition and then some snoring". Open for Brian:
+- Words (`src/modules/bedtime-story-lines.js`): "Tell me about when we first met?" is his suggestion with the exact words to confirm; the three old captions, the crate's MOON PIES badge, the "!" and "z z z" marks and his bedtime line are needs-yes; "...Weeee-eenn-nnttt?" is his spelling; the Guardians line is approved.
 - The fourth old picture (Mops hides the baby in the mop bucket when tourists come, "Nothing to see here!"): off behind `BEDTIME_SWITCHES.bucketPicture`. Keep it out, or bring it back?
+- Where Mops sleeps: nothing in the game or the docs says, so he goes out through the doorway after the light. A spot at home instead?
 - Mops comes over and stands beside the bed: he cannot sit (the approved Mops has no sitting pose; a sitting Mops would be a new drawing).
-- New drawings waiting for his eye: the story crate (the room's crate bed without its pillow), the Moon Pies on its lid, the lid leaning on it, the crumbs, the baby (0.45 of a grown Squatch), the baby's grab and giggle, the thought bubble, Squatch's pat and his hop into bed.
-- Placeholders (not pins): the story drawn 1.6 times the room; walking 160, Mops 150 a second; the pat 2.4 s; asleep 3.4 s with two snores.
+- New drawings waiting for his eye (placeholders): the story crate, the Moon Pies on its lid, the lid, the crumbs, the baby, the baby's grab and giggle, Squatch's hop into bed, his yawn and stretch, the blanket, the night-blue dim, the rising "z z z", the crayon Guardians drawing and its picture.
+- Placeholders (not pins): the story drawn 1.6 times the room; walking 160, Mops 150 to 170 a second; each falling-asleep part 2 to 2.7 s; the snore 2.5 times its sound's own level (measured in the video: see the PR).
 
 2026-11-25 (evening), draft PR #87, not merged. Done: Brian's twelve showing-5 decisions and his two code rules (README, "Chapter 1 redesign", the 2026-11-25 evening paragraph). Open for Brian:
 - Pick the FUR alarm: `tools/alarm-choices.html` (five made-up sounds). The game's alarm is unchanged until he picks.

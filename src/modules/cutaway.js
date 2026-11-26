@@ -24,7 +24,7 @@
  */
 import { HOMEWORK_PANELS } from "./homework-cutaway.js";
 import { WOOKIEE_PANELS } from "./tv-story-art.js";
-import { BEDTIME_PANELS } from "./bedtime-story-art.js";
+import { BEDTIME_PANELS, GUARDIANS_PANELS } from "./bedtime-story-art.js";
 import { GBOX_PANELS } from "./home-morning-art.js";
 
 const INK = "#1e2430";
@@ -646,6 +646,8 @@ const PANELS = {
   wookiee: WOOKIEE_PANELS,
   // beat 21, the bedtime story (bedtime-story.js): the old crate story's pictures
   moonpie: BEDTIME_PANELS,
+  // and its last picture, after Mops's bedtime line: Squatch's crayon drawing of the Guardians, Mops's Guardians line
+  guardians: GUARDIANS_PANELS,
   // beats 22 to 24, the home morning (home-morning.js): the gift drops into the Guardian Box
   gbox: GBOX_PANELS,
 };

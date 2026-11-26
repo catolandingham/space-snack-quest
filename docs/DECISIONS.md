@@ -3,31 +3,32 @@
 
 | Lines | Heading |
 | --- | --- |
-| 32–34 | # Space Snack Quest: every decision, in one place |
-| 35–42 | ## How to use this file |
-| 43–47 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 48–56 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 57–60 | ## Sound, 2026-11-23 |
-| 61–84 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 85–96 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 97–121 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 122–130 | ## Which repo is the base, 2026-11-22 |
-| 131–141 | ## Sight cones, 2026-11-22 |
-| 142–146 | ## Latest calendar direction, 2026-11-16 |
-| 147–149 | ## Vent walk, 2026-11-16 |
-| 150–152 | ## Locked home room v5, 2026-11-16 |
-| 153–162 | ## Fidelity system (pictures are locked, not just words) |
-| 163–200 | ## 1. Working rules |
-| 201–267 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 268–292 | ## 3. Characters and look |
-| 293–369 | ## 4. Look, rooms and layout |
-| 370–391 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 392–435 | ## 6. Later chapters (2–4 and travel) |
-| 436–445 | ## 7. Audio |
-| 446–480 | ## 8. Code, controls and process |
-| 481–527 | ## 9. Open / waiting on Brian |
-| 528–622 | ## 10. Earlier entries, kept word for word |
-| 623–719 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 33–35 | # Space Snack Quest: every decision, in one place |
+| 36–43 | ## How to use this file |
+| 44–50 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
+| 51–55 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 56–64 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 65–68 | ## Sound, 2026-11-23 |
+| 69–92 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 93–104 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 105–129 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 130–138 | ## Which repo is the base, 2026-11-22 |
+| 139–149 | ## Sight cones, 2026-11-22 |
+| 150–154 | ## Latest calendar direction, 2026-11-16 |
+| 155–157 | ## Vent walk, 2026-11-16 |
+| 158–160 | ## Locked home room v5, 2026-11-16 |
+| 161–170 | ## Fidelity system (pictures are locked, not just words) |
+| 171–208 | ## 1. Working rules |
+| 209–275 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 276–300 | ## 3. Characters and look |
+| 301–377 | ## 4. Look, rooms and layout |
+| 378–399 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 400–443 | ## 6. Later chapters (2–4 and travel) |
+| 444–453 | ## 7. Audio |
+| 454–488 | ## 8. Code, controls and process |
+| 489–535 | ## 9. Open / waiting on Brian |
+| 536–630 | ## 10. Earlier entries, kept word for word |
+| 631–727 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -39,6 +40,13 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 - **Status words:** **Decided** (Brian said it or approved it) · **Needs Brian's yes** (proposed, or on-screen words waiting on him) · **Superseded** (replaced; the line says by what) · **Open** (a real question nobody has answered yet).
 - **This repo file is the single source of truth.** It was synced on Monday, November 9, 2026 from the designer record through decision R63, and it still holds the earlier snapshot `docs/old/project/DECISIONS-2026-11-08.md` (on `main` at commit 10030f6). Every earlier entry is kept in section 10. Where a later decision replaces an earlier one, the earlier line is marked **Superseded** and says what replaced it. The dated snapshot's full text is in `docs/old/history/DECISIONS-2026-11-08.md`. A short pointer stays at `docs/old/project/DECISIONS-2026-11-08.md`. New decisions get a row in the tables above, through a docs PR (review, "Docs match main: yes", Brian's written yes before merge).
 - Don't invent a decision. If something isn't clear, add it under **Open**.
+
+## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat)
+- **Mops tells Squatch about the Guardians at bedtime.** After "You came to me in a Moon Pie crate. You've loved Moon Pies ever since.", Mops says "And you've always had your Guardians, watching over you." over a full-screen picture of Squatch's crayon drawing of the Guardians (big furry Sasquatches; the same drawing shows in the morning's thought bubble and in the Guardian Box). Mops gives no hint that he writes the notes. Words approved: Brian, chat 18b A. **Decided.** This adds to STORY-DECISIONS section 5: the bedtime story is still about Mops finding him plus this one line, and the player still learns who writes the notes only at the vent (beat 48).
+- **Goats say "Weeee-eenn-nnttt".** Brian, video note 0:28: "Goats say "weeeent" not baaaah". Mops's "...Baaa?" in the bedtime story picture becomes "...Weeee-eenn-nnttt?" (the spelling of R96). **Decided.**
+- **Squatch asks for the story in words.** Brian, video note 0:12: "is squash asking for a story? Maybe he should just say, tell me about when we first met or something like that?" Built as "Tell me about when we first met?" in one bubble over him in bed. **Needs Brian's yes** on the exact words.
+- **Falling asleep plays out, with snoring.** Brian: "After story when squatch falls asleep, should be a bit more natural transition and then some snoring". Built wordless: a yawn and stretch, he lies down, Mops tucks him in, Mops goes out by the door and the light goes down, three snores, fade to black, the morning fades in. **Decided** (the ask); the drawings are placeholders.
+- **The vocal song stays at bedtime.** Brian, video note 0:25: "This is the one place in ch 1 that I think this song with vocals actually works - we can leave it here". **Decided.**
 
 ## Party, 2026-11-24 night (Brian, Snack Quest Chat)
 - **The flyer sneak replaces the party plan's decision 9** ("Isfred's flyers, and one sticks to Squatch's fur"). Brian: "I don't get him throwing the sheets, what if he just leaves one on the side of the stage when he leaves and we have to sneak to get it and get back to the room, avoiding lines of sight?" His click on how the kid learns he wants it: "He wants to show Mops". Isfred sets one flyer down on the stage's right end as he walks off; P4 is: sneak to it with no disguise, GRAB · flyer, sneak home. Words with his yes: "A robot flyer! I'll show Mops.", "Squatch: grab the flyer", "GRAB · flyer", then the existing "Squatch: sneak home for a disguise".

@@ -3,23 +3,34 @@
 
 | Lines | Heading |
 | --- | --- |
-| 20–23 | # Chapter 1 lines for Brian |
-| 24–39 | ## Calendar revision, Nov 16 (PR 58, not live) |
-| 40–47 | ## Earlier chapter lines |
-| 48–62 | ## Goal chips |
-| 63–146 | ## What people say |
-| 147–160 | ## Words painted on things |
-| 161–184 | ## Buttons |
-| 185–271 | ## Day 2 onward (beats 22–61), pending |
-| 272–279 | ## Ball hiding |
-| 280–287 | ## Off-screen lines, for Brian (playtest 12) |
-| 288–297 | ## Homework desk, approved Nov 16 |
-| 298–336 | ## Questions still open |
-| 337–362 | ## Day 1 stand-ins, pending |
+| 21–24 | # Chapter 1 lines for Brian |
+| 25–34 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
+| 35–50 | ## Calendar revision, Nov 16 (PR 58, not live) |
+| 51–58 | ## Earlier chapter lines |
+| 59–73 | ## Goal chips |
+| 74–157 | ## What people say |
+| 158–171 | ## Words painted on things |
+| 172–195 | ## Buttons |
+| 196–282 | ## Day 2 onward (beats 22–61), pending |
+| 283–290 | ## Ball hiding |
+| 291–298 | ## Off-screen lines, for Brian (playtest 12) |
+| 299–308 | ## Homework desk, approved Nov 16 |
+| 309–347 | ## Questions still open |
+| 348–373 | ## Day 1 stand-ins, pending |
 <!-- /section-index -->
 # Chapter 1 lines for Brian
 
 The rebuilt morning (2026-11-23, draft PR, waking up to Mops leaving) has its own numbered sheet: `docs/MORNING-LINES-FOR-BRIAN.md`. Its words replace the Nov 14 morning lines below where they differ.
+
+## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged)
+
+Every word of the bedtime story is in `src/modules/bedtime-story-lines.js`; these are the lines that changed or were added on 2026-11-26.
+
+| Who | Line | Status |
+| --- | --- | --- |
+| Squatch, in bed, before the story pictures | Tell me about when we first met? | Suggested by Brian 2026-11-26 (video note 0:12), exact words to confirm |
+| Mops, in the story picture of the baby holding his beard | ...Weeee-eenn-nnttt? | Brian 2026-11-26 (video note 0:28, "Goats say "weeeent" not baaaah"); his approved goat spelling (`MORNING-LINES-FOR-BRIAN.md` row 13, DECISIONS R96). Replaces "...Baaa?" |
+| Mops, after "You came to me in a Moon Pie crate. You've loved Moon Pies ever since.", over the picture of Squatch's crayon drawing of the Guardians | And you've always had your Guardians, watching over you. | Approved, Brian 2026-11-26, chat 18b A |
 
 ## Calendar revision, Nov 16 (PR 58, not live)
 
