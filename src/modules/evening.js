@@ -41,7 +41,9 @@
  * controls, so the step restart (↺) brings back the step he is on; ↺ in a step he does not control goes back to the
  * last one he did (restart()).
  */
-import { HALLWAY, BAR, FAMILY, HOME, BAY, BAY_FURNITURE, BAY_BOUNDS, BAY_SEARCH, EVENING_PACE as P, EVENING_LOOK, nightLook } from "./evening-place.js";
+import { HALLWAY, BAR, FAMILY, HOME, BAY, BAY_FURNITURE, BAY_EXTRA, BAY_BOUNDS, BAY_SEARCH, BAY_VENT, EVENING_PACE as P, EVENING_LOOK, nightLook, mopsSleepAt, mopsSleepBox, robotLook } from "./evening-place.js";
+import { drawNightTint, noteNightPicture, nightDrawn } from "./night-look.js";
+import { VENT } from "./party-vent.js";
 import { eveningWords } from "./evening-lines.js";
 import { drawPhoto, drawCrayonDrawing, drawBrochure, drawPictureBubble, drawPapers, drawPawPrint, drawFurArm, drawSleepingMops, drawPlaque, drawCutInBack, drawCloseX, drawArrow, fitDesign, PAPERS, PHOTO_POOL, drawHeartShape } from "./evening-art.js";
 import { HALL, HALL_PICTURE } from "./party-hall.js";
@@ -51,7 +53,7 @@ import { OUTLINE } from "./outline.js";
 import { coneFrom, coneSees, drawCones, lookAt, SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
 import { startAlarm, tickAlarm, guardCones, addAlarmPlace, ALARM, GUARD_FEET } from "./party-alarm.js";
 import { drawHall, drawOrder } from "./party-draw.js";
-import { drawPerson, LOOKS, drawMark, drawAlarmFlash } from "./party-art.js";
+import { drawPerson, LOOKS, drawMark, drawAlarmFlash, drawVentSwirl, drawTuft } from "./party-art.js";
 import { partyLine } from "./party-lines.js";
 import { tickQuestions, questions } from "./party-question.js";
 import { openFullScreen, closeFullScreen } from "./fullscreen.js";
@@ -82,8 +84,11 @@ addAlarmPlace("bay", {
   run: BAY.alarmRun,
   guardIn: BAY.guardIn,
   search: BAY_SEARCH,
-  around: BAY_FURNITURE.map((b) => ({ x0: b.x0 - GUARD_FEET.side, x1: b.x1 + GUARD_FEET.side, y0: b.y0 - GUARD_FEET.down, y1: b.y1 + GUARD_FEET.up })),
+  around: [...BAY_FURNITURE, ...BAY_EXTRA].map((b) => ({ x0: b.x0 - GUARD_FEET.side, x1: b.x1 + GUARD_FEET.side, y0: b.y0 - GUARD_FEET.down, y1: b.y1 + GUARD_FEET.up })),
   floor: { x0: 20, x1: 920, y0: 310, y1: 600 },
+  // a guard sees him only once his drawn cone has been on him a moment (no "this close" circle: Brian 2026-11-26)
+  feet: 0,
+  register: P.robotSee,
 });
 const BAY_PICTURE = "docs/locked-rooms/delivery-room-empty-night-v2.png";
 const NIGHT_STEPS = ["out", "nighthall", "nightway", "bin", "order", "post", "robots", "back", "backway", "backhall", "tobed", "sleep"];
@@ -104,6 +109,7 @@ export function createEvening(bridge) {
     return s && s.step && s.step !== "done" ? s : null;
   };
   let ff = {},
+    bayDrew = {},
     pads = 0,
     drew = null,
     view = null, // the full-screen close-up open now: { kind, at } (the gallery, the brochure, the papers)
@@ -240,16 +246,19 @@ export function createEvening(bridge) {
     if (!robot) return (go("wall"), control("chip-go-on"));
     // past photo 5: a robot rolls through the hallway; Squatch rolls up as it comes (the L2 ball, DECISIONS C3)
     s.galleryDone = true;
-    s.robot = { x: HALLWAY.robotIn.x, y: HALLWAY.robotIn.y - 230, k: 0 };
+    s.robot = { x: HALLWAY.robotIn.x, y: HALLWAY.robotIn.y, a: Math.PI, k: 0 };
     go("robot");
-    const leg = (x, y) => e.until((dt) => moveRobot(x, y, dt));
+    const leg = (x, y) => e.until((dt) => moveRobot(x, y, dt)),
+      lane = HALLWAY.robotLane;
     e.queue([
-      leg(820, 520),
+      leg(HALLWAY.robotDoorR.x, HALLWAY.robotDoorR.y),
+      leg(800, lane),
       e.run(() => (setPose("ball"), sound.effect("hide"))),
-      leg(Math.max(240, e.pos("sq").x + 210), 520),
+      leg(Math.max(260, e.pos("sq").x + 210), lane),
       e.say("robot", eveningWords("robot-beep")),
-      leg(150, 520),
-      leg(HALLWAY.robotOut.x, 330),
+      leg(150, lane),
+      leg(HALLWAY.robotDoorL.x, HALLWAY.robotDoorL.y),
+      leg(HALLWAY.robotOut.x, HALLWAY.robotOut.y),
       e.run(() => ((S().robot = null), setPose("stand"))),
       timer(P.ballOut),
       e.run(() => (go("wall"), control("chip-go-on"))),
@@ -260,6 +269,7 @@ export function createEvening(bridge) {
       d = Math.hypot(x - r.x, y - r.y),
       k = Math.min(d, P.robotRoll * dt);
     if (d < 0.5) return true;
+    r.a = Math.atan2(y - r.y, x - r.x); // it looks where it rolls
     r.x += ((x - r.x) / d) * k;
     r.y += ((y - r.y) / d) * k;
     return false;
@@ -309,6 +319,7 @@ export function createEvening(bridge) {
       timer(0.6),
       // overheard (the ear icon): the first of the two in line, to the other
       e.say("tourist", eveningWords("tourist-moonpies"), "say", true),
+      e.say("tourist", eveningWords("tourist-moonpies-2"), "say", true),
       // they leave, through the home doorway
       e.until((dt) => {
         let done = true;
@@ -384,6 +395,7 @@ export function createEvening(bridge) {
       });
     e.queue([
       walk(() => BAR.via),
+      walk((i) => ({ x: BAR.via.x, y: BAR.family[i].at.y })),
       walk((i) => BAR.family[i].at),
       e.run(() => {
         S().family.forEach((f) => (f.a = 0));
@@ -483,6 +495,8 @@ export function createEvening(bridge) {
     e.queue([
       timer(P.hold),
       e.say("mops", eveningWords("mops-mars")),
+      e.say("mops", eveningWords("mops-mars-2")),
+      e.say("mops", eveningWords("mops-mars-3")),
       e.run(() => {
         S().brochure = "home";
         go("bed");
@@ -537,7 +551,7 @@ export function createEvening(bridge) {
           e.moWalking(true);
           // (round the bucket: along above it first, then down to his place)
           s.mopsLeg = s.mopsLeg || 0;
-          const w = [HOME.sleepVia, HOME.sleep][s.mopsLeg];
+          const w = [HOME.sleepVia, mopsSleepAt(mopsScale("closet"))][s.mopsLeg];
           w && e.step("mops", w.x, w.y, P.mopsWalk * 0.8, dt || 0) && s.mopsLeg++;
           return s.mopsLeg >= 2 && s.t0 >= P.lights;
         }),
@@ -784,11 +798,16 @@ export function createEvening(bridge) {
       const n = nightLook(s.nightT),
         nr = at({ id: BAY.robot.id, x: BAY.robot.x, y: BAY.robot.y, a: n.a });
       out.push({ ...coneFrom(BAY.robot.id, nr.x, nr.y, look({ ...nr, id: BAY.robot.id, a: n.a }, BAY.alarm), size), always: true, bold: true, catch: n.catch || (a && a.w.id === BAY.robot.id), robot: true });
-      if (s.woke && s.step !== "robots")
+      // parked in the mail room on standby: their cones look down into its corner
+      if (!s.woke)
+        BAY.parked.forEach((r) => out.push({ ...coneFrom(r.id, r.x, r.y, robotLook(r.id), size), always: true, bold: true, catch: true, robot: true }));
+      if (s.woke)
         s.woke.forEach((r, i) => {
           const id = "robot-" + (i + 2),
             q = at({ id, x: r.x, y: r.y });
-          out.push({ ...coneFrom(id, q.x, q.y, look({ id, a: -Math.PI / 2 }, BAY.alarm), size), always: true, bold: true, catch: true, robot: true });
+          // (rolling out they look where they roll; at the ramp's foot, up the ramp)
+          const a2 = r.leg < 2 ? Math.atan2((r.leg ? BAY.woke[i].y : BAY.gap.y) - r.y, (r.leg ? BAY.woke[i].x : BAY.gap.x) - r.x) : -Math.PI / 2;
+          out.push({ ...coneFrom(id, q.x, q.y, look({ id, a: a2 }, BAY.alarm), size), always: true, bold: true, catch: s.step !== "robots", robot: true });
         });
     }
     if (s.alarm) out.push(...guardCones(s.alarm, size).map((c) => ({ ...c, catch: true })));
@@ -797,19 +816,20 @@ export function createEvening(bridge) {
   const witnessAt = (s, id) => {
     if (room() === "hangar") {
       if (id === BAY.robot.id) return { id, x: BAY.robot.x, y: BAY.robot.y };
-      const i = +id.split("-")[1] - 2;
-      return s.woke && s.woke[i] ? { id, x: s.woke[i].x, y: s.woke[i].y } : null;
+      const i = +id.split("-")[1] - 2,
+        r = s.woke ? s.woke[i] : BAY.parked[i];
+      return r ? { id, x: r.x, y: r.y } : null;
     }
     const f = (s.family || []).find((q) => q.id === id) || (s.line || []).find((q) => q.id === id);
     return f ? { id, x: f.x, y: f.y } : null;
   };
-  function raise(id) {
+  function raise(id, whereId) {
     const e = E(),
       s = S(),
       w = witnessAt(s, id);
     if (!w) return;
     const bay = room() === "hangar";
-    startAlarm(s, w, bay ? "where-bay" : "where-bar", bay ? "who-robot" : "who-tourist", bay ? "bay" : "");
+    startAlarm(s, w, whereId || (bay ? "where-bay" : "where-bar"), bay ? "who-robot" : "who-tourist", bay ? "bay" : "");
     e.sfx("bleep");
     psound.sting();
     s.seenBy = "";
@@ -901,6 +921,24 @@ export function createEvening(bridge) {
         if (s.seenT >= (seen.robot ? P.robotSee : SEEN_TOO_LONG_SECONDS)) raise(seen.id);
       }
     } else ((s.seenBy = ""), (s.seenT = 0));
+    // The bay's floor vent is on (its swirl is in the locked night picture): the party's vent rule (party-vent.js VENT).
+    // Standing too close, a tuft of his fur lifts off him and drifts in; staying, the fur goes in and the night robot
+    // sounds the alarm ("by the vent"). Rolled up or hidden, the vent takes nothing.
+    const v = s.vent || (s.vent = { t: 0, tufts: [] });
+    for (const tf of v.tufts) tf.k += dt / VENT.drift;
+    v.tufts = v.tufts.filter((tf) => tf.k < 1);
+    const fv = BAY_VENT.floor;
+    if (r === "hangar" && on && s.pose === "stand" && !s.alarm && Math.hypot(sqAt.x - fv.x, (sqAt.y - fv.y) * 1.4) <= VENT.near) {
+      const first = v.t === 0;
+      v.t += dt;
+      (first || !v.tufts.length) && v.tufts.push({ k: 0, x0: sqAt.x, y0: sqAt.y - 30 });
+      first && sound.effect("slip");
+      if (v.t >= VENT.stay) {
+        v.t = 0;
+        for (let i = 0; i < 6; i++) v.tufts.push({ k: -i * 0.08, x0: sqAt.x + (i % 3) * 6 - 6, y0: sqAt.y - 20 - i * 4 });
+        raise(BAY.robot.id, "where-vent");
+      }
+    } else v.t = 0;
     // Rolled up: the ball rule (R43, the lunch's own reading of it): someone looking his way within reach for 2 s
     // notices the ball, the guards of an alarm too (then they see him, and the search goes on). Noticed with no alarm on:
     // the one capture rule, as for being seen standing.
@@ -916,7 +954,8 @@ export function createEvening(bridge) {
         s.alarm && (s.alarm.spotted = true);
       }
     } else s.ballNear = {};
-    s.seenBy && !(coneList(s).find((c) => c.id === s.seenBy) || {}).robot && (showing[s.seenBy] = s.seenT / SEEN_TOO_LONG_SECONDS);
+    // the "?" while a watcher registers him (a guest until it turns to "!", a robot for its half second)
+    s.seenBy && (showing[s.seenBy] = s.seenT / ((coneList(s).find((c) => c.id === s.seenBy) || {}).robot ? P.robotSee : SEEN_TOO_LONG_SECONDS));
     tickQuestions(s, dt, showing);
     if (s.alarm && (r === "hall" || r === "hangar")) {
       tickAlarm(s, dt, alarmApi());
@@ -1291,13 +1330,15 @@ export function createEvening(bridge) {
       allCones: true,
       noteCone: (c) => e.noteCone(c),
       unseen: !free(),
-      vent: true,
+      // (Day 2's hall vent is off, as in the lunch sneak: no swirl, no pull)
+      vent: false,
       squatch: s.pose === "stand" ? { x: sq.x, y: sq.y, f: sq.f || -1, walk: e.walkPhase(), pose: "stand" } : { x: sq.x, y: sq.y, pose: "hidden" },
       eyes: null,
       marks,
       shout,
       alarm: !!a && a.phase !== "shout" && a.phase !== "run" && a.phase !== "calm",
-      floor: null,
+      // night one: the hall's night look (night-look.js), under the people, the window onto space kept bright
+      floor: NIGHT_STEPS.includes(s.step) ? (ctx) => drawNightTint(ctx, "hall", hallPic, 1) : null,
       extra,
     };
   }
@@ -1308,8 +1349,14 @@ export function createEvening(bridge) {
       sq = e.pos("sq"),
       k = sqScale("hangar"),
       hidden = hiddenNow(s);
+    // (the bay is only ever shown at night here: its own locked night picture is its night look, night-look.js)
     if (bayPic && bayPic.complete && bayPic.naturalWidth) ctx.drawImage(bayPic, 0, 0, 960, 640);
     else ((ctx.fillStyle = "#7f8597"), ctx.fillRect(0, 0, 960, 640));
+    noteNightPicture("hangar");
+    // the big wall vent shows the same swirl as every vent while it sucks
+    const sucking = s.suck >= 0 || (s.step === "robots" && s.pink !== "vent");
+    sucking && drawVentSwirl(ctx, BAY_VENT.wall, t);
+    bayDrew = { swirl: sucking };
     const a = s.alarm;
     a && a.phase !== "shout" && a.phase !== "run" && a.phase !== "calm" && drawAlarmFlash(ctx, BAY.alarm, t);
     const cones = drawCones(ctx, coneList(s).map((c) => (c.catch === false ? { ...c, bold: false, always: true } : c)), sq, hidden || !free(), true, (c) => e.noteCone(c));
@@ -1367,8 +1414,22 @@ export function createEvening(bridge) {
       paper(ctx, 0, 0, "#ff9ec4", 30 * (1 - u * 0.5));
       ctx.restore();
     }
-    // "!" over a robot that sees him, and over guards who see him
+    // his fur drifting into the floor vent
+    for (const tf of (s.vent && s.vent.tufts) || []) {
+      if (tf.k < 0) continue;
+      const kk = tf.k * tf.k,
+        V = BAY_VENT.floor;
+      drawTuft(ctx, tf.x0 + (V.x - tf.x0) * kk + Math.sin(tf.k * 8) * 10 * (1 - tf.k), tf.y0 + (V.y - tf.y0) * kk, 9 * (1 - tf.k * 0.6), tf.k * 6);
+    }
     const adult = adultPxFor("hangar");
+    // "?" over a robot (or a guard) while its cone is on him and it is registering him
+    for (const q of questions(s)) {
+      const id = q.id.replace(/^warn:/, ""),
+        w = id === BAY.robot.id ? nr : s.woke ? s.woke[+id.split("-")[1] - 2] : BAY.parked.find((p) => p.id === id);
+      w && drawMark(ctx, w.x + 22, w.y - adult * 1.1, "?", Math.round(adult * 0.45), t, q);
+    }
+    for (const g of a ? a.guards : []) g.room === "hangar" && !g.sees && g.seeT > 0 && drawMark(ctx, g.x + 20, g.y - adult * 1.29, "?", Math.round(adult * 0.45), t, null);
+    // "!" over a robot that sees him, and over guards who see him
     a && (a.phase === "shout" || a.phase === "run") && drawMark(ctx, a.w.x + 24, a.w.y - adult * 1.1, "!", Math.round(adult * 0.6), t, null);
     a && a.guards.forEach((g) => g.room === "hangar" && g.sees && drawMark(ctx, g.x, g.y - adult * 1.29, "!", Math.round(adult * 0.6), t, null));
     return cones;
@@ -1435,33 +1496,35 @@ export function createEvening(bridge) {
       out.held = { x, y, w, h };
     }
     const mopsK = mopsScale("closet");
-    if (s.mopsSleep) {
-      const m = s.mopsSleep;
-      drawSleepingMops(ctx, (c, x, y, sc, o) => e.drawMopsOn(c, x, y, sc, { ...o, eyes: m.eyes > 0.6 || m.tip > 0 ? "closed" : "", headDrop: m.tip > 0 ? 0 : m.eyes * 4 }), HOME.sleep.x, HOME.sleep.y, mopsK, m.tip, m.roll, t);
-      out.mops = { tip: +m.tip.toFixed(2), roll: +m.roll.toFixed(2) };
-    }
-    // the night (the bedtime story's dim)
-    if (s.dim > 0) {
-      ctx.save();
-      ctx.globalAlpha = Math.min(1, s.dim * BEDTIME_NIGHT.dim);
-      ctx.fillStyle = BEDTIME_NIGHT.color;
-      ctx.fillRect(-2000, -2000, 6000, 5000);
-      ctx.restore();
-      out.dim = +(s.dim * BEDTIME_NIGHT.dim).toFixed(2);
-    }
-    // him in bed (lying, the blanket), or up and about in the dark: drawn over the night so a kid sees him
+    // the night: the one night look (night-look.js), the room under the tint, the people over it, lit
+    if (s.dim > 0) out.night = drawNightTint(ctx, "closet", null, s.dim);
+    const people = [];
+    // him in bed (lying, the blanket), or up and about in the dark
     if (s.bed) {
-      drawBedtimeSquatch(ctx, s.bed, k, false);
-      out.blanket = drawBedBlanket(ctx, s.bed.cover);
-      out.bed = { x: Math.round(s.bed.x), y: Math.round(s.bed.y), a: +s.bed.a.toFixed(2) };
+      people.push({ y: 470, f: () => {
+        drawBedtimeSquatch(ctx, s.bed, k, false);
+        out.blanket = drawBedBlanket(ctx, s.bed.cover);
+        out.bed = { x: Math.round(s.bed.x), y: Math.round(s.bed.y), a: +s.bed.a.toFixed(2) };
+      } });
     } else if (s.dim > 0 && s.pose === "stand") {
-      e.drawSquatch(ctx, sq.x, sq.y, k, { f: sq.f || 1, walk: e.walkPhase() });
+      people.push({ y: sq.y, f: () => e.drawSquatch(ctx, sq.x, sq.y, k, { f: sq.f || 1, walk: e.walkPhase() }) });
       out.squatchLit = true;
     }
+    // Mops asleep on his back on the floor, his head on his bucket (in front of anyone further back)
+    if (s.mopsSleep) {
+      const m = s.mopsSleep,
+        at = mopsSleepAt(mopsK);
+      people.push({ y: at.y, f: () => {
+        const d = drawSleepingMops(ctx, (c, x, y, sc, o) => e.drawMopsOn(c, x, y, sc, { ...o, eyes: m.eyes > 0.6 || m.tip > 0 ? "closed" : "", headDrop: m.tip > 0 ? 0 : m.eyes * 4 }), at.x, at.y, mopsK, m.tip, m.roll, t);
+        out.mops = { tip: +m.tip.toFixed(2), roll: +m.roll.toFixed(2), head: { x: Math.round(d.head.x), y: Math.round(d.head.y) } };
+      } });
+    }
+    drawOrder(people).forEach((q) => q.f());
     // the snores: "z z z" rising from Mops (the first night) or from him (back in bed)
     if (s.zzz >= 0) {
       // (over his head lying in bed: LIE turned a quarter, his head left of his feet)
-      const from = s.step === "sleep" ? { x: BED_POSES.lie.x - 30 * k + 30, y: BED_POSES.lie.y - 10 } : { x: HOME.sleep.x + 30, y: HOME.sleep.y - 50 },
+      const mh = out.mops && out.mops.head,
+        from = s.step === "sleep" || !mh ? { x: BED_POSES.lie.x - 30 * k + 30, y: BED_POSES.lie.y - 10 } : { x: mh.x - 10, y: mh.y - 40 },
         Z = BEDTIME_NIGHT.zzz;
       ctx.save();
       ctx.globalAlpha = Math.min(1, s.zzz * 4) * (1 - Math.max(0, (s.zzz - 0.7) / 0.3));
@@ -1531,7 +1594,7 @@ export function createEvening(bridge) {
           drew.outline && bridge.goalMark.drew(drew.outline, sp, E().time());
         }
       }
-      else drew = { step: s.step, cones: drawBay(ctx, s) };
+      else drew = { step: s.step, cones: drawBay(ctx, s), ...bayDrew };
       return true;
     },
     /** Over the rooms the older program draws (the hallway and home): the robot, Mops asleep, the night. */
@@ -1540,9 +1603,19 @@ export function createEvening(bridge) {
         e = E();
       if (!s) return;
       if (room() === "passage" && s.robot) {
+        // the robot's cone goes where it looks (every robot shows its cone, rule 8); Squatch is rolled up
+        const sq = e.pos("sq"),
+          cone = { ...coneFrom("hallway-robot", s.robot.x, s.robot.y, s.robot.a == null ? Math.PI : s.robot.a, e.coneSize()), bold: true };
+        drawCones(ctx, [cone], sq, s.pose !== "stand", true, (c) => e.noteCone(c));
         e.drawRobot && e.drawRobot(ctx, s.robot.x, s.robot.y);
-        drew = { step: s.step, robot: { x: Math.round(s.robot.x), y: Math.round(s.robot.y) } };
+        drew = { step: s.step, robot: { x: Math.round(s.robot.x), y: Math.round(s.robot.y) }, robotCone: { a: +cone.a.toFixed(2) } };
       } else if (room() === "passage") drew = { step: s.step };
+      // night one in the hallway: its night look, then him again over it, lit
+      if (room() === "passage" && NIGHT_STEPS.includes(s.step)) {
+        drew.night = drawNightTint(ctx, "passage", null, 1);
+        const sq = e.pos("sq");
+        s.pose === "stand" && e.drawSquatch(ctx, sq.x, sq.y, sqScale("passage"), { f: sq.f || 1, walk: e.walkPhase() });
+      }
       if (room() === "closet" && STEP_ROOM[s.step] === "closet") drew = { step: s.step, ...drawHome(ctx, s) };
     },
     /** Where a speaker's bubble points: the robot in the hallway, the one in line, Squatch rolled up, the mailbox. */
@@ -1574,10 +1647,10 @@ export function createEvening(bridge) {
     extraSolids(r) {
       const s = live();
       if (!s) return [];
-      if (r === "closet" && s.mopsSleep) return [HOME.mopsBox];
+      if (r === "closet" && s.mopsSleep) return [mopsSleepBox(mopsScale("closet"))];
       if (r === "hangar" && STEP_ROOM[s.step] === "hangar") {
         const feet = (x, y) => ({ x0: x - 22, x1: x + 22, y0: y - 14, y1: y + 8, person: 1 });
-        return [feet(BAY.robot.x, BAY.robot.y), ...(s.woke || BAY.parked).map((q) => feet(q.x, q.y))];
+        return [feet(BAY.robot.x, BAY.robot.y), ...(s.woke || BAY.parked).map((q) => feet(q.x, q.y)), ...BAY_EXTRA];
       }
       return [];
     },
@@ -1617,7 +1690,7 @@ export function createEvening(bridge) {
     /** Tests: the state, what the last frame drew, the steps, the close-ups opened, what was heard. */
     debug() {
       const s = S();
-      return { state: s ? JSON.parse(JSON.stringify(s)) : null, active: !!live(), drew, view: view ? { kind: view.kind, drew: view.drew || null } : null, steps: record.steps.slice(), cutIns: record.cutIns.slice(), lost: record.lost || 0, sounds: sound.asked(), snores: bsound.asked(), partySounds: psound.debug().played };
+      return { state: s ? JSON.parse(JSON.stringify(s)) : null, active: !!live(), drew, night: nightDrawn(), view: view ? { kind: view.kind, drew: view.drew || null } : null, steps: record.steps.slice(), cutIns: record.cutIns.slice(), lost: record.lost || 0, sounds: sound.asked(), snores: bsound.asked(), partySounds: psound.debug().played };
     },
   };
 

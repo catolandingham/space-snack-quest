@@ -24,7 +24,9 @@ export const EVENING_LINES = Object.freeze(
     { id: "sign-tied", who: "sign", text: "TIED TOGETHER FOREVER", status: "approved", source: "Brian 2026-11-13 (DECISIONS R62)" },
     { id: "robot-beep", who: "robot", text: "BEEP BEEP", status: "approved", source: "Brian 2026-11-13 (DECISIONS R62)" },
     // ---------- beat 38: the snack bar ----------
-    { id: "tourist-moonpies", who: "tourist", text: "I swear we had more Moon Pies... is that what they stole at lunch?", status: "pending", source: "walkthrough beat 38 (DECISIONS S33)" },
+    // (a line over about 12 words is shown as two or three bubbles, the words unchanged: Brian 2026-11-26, [40 0:05])
+    { id: "tourist-moonpies", who: "tourist", text: "I swear we had more Moon Pies...", status: "pending", source: "walkthrough beat 38 (DECISIONS S33), first part" },
+    { id: "tourist-moonpies-2", who: "tourist", text: "is that what they stole at lunch?", status: "pending", source: "walkthrough beat 38 (DECISIONS S33), second part" },
     { id: "mops-hide", who: "mops", text: "Quick, hide.", status: "pending", source: "walkthrough beat 38 (DECISIONS S33)" },
     { id: "chip-hide", who: "chip", text: "Squatch: hide", status: "in-game", source: DAY2 + " (beat 38)" },
     { id: "button-counter", who: "button", text: "HIDE · counter", status: "suggested", source: "new: hiding behind the snack counter (DECISIONS R107)" },
@@ -37,7 +39,9 @@ export const EVENING_LINES = Object.freeze(
     // ---------- beat 40: the Mars talk ----------
     { id: "chip-show", who: "chip", text: "Squatch: show Mops the brochure", status: "suggested", source: "new: Call 14 (Squatch holds up the brochure, no new words in a bubble); Brian P 36:07 \"Squatch should show him the brochure\"" },
     { id: "button-show", who: "button", text: "SHOW · brochure", status: "suggested", source: "new, as above" },
-    { id: "mops-mars", who: "mops", text: "Didn't you hear what the manager said? They need me here, they're not going to replace me. Plus the Guardians are here.", status: "pending", source: "walkthrough beat 40" },
+    { id: "mops-mars", who: "mops", text: "Didn't you hear what the manager said?", status: "pending", source: "walkthrough beat 40, first part" },
+    { id: "mops-mars-2", who: "mops", text: "They need me here, they're not going to replace me.", status: "pending", source: "walkthrough beat 40, second part" },
+    { id: "mops-mars-3", who: "mops", text: "Plus the Guardians are here.", status: "pending", source: "walkthrough beat 40, third part" },
     // ---------- beat 41: lights out ----------
     { id: "chip-bed", who: "chip", text: "Squatch: go to sleep in your bed", status: "in-game", source: "src/game/10-ch1.js (O8)" },
     { id: "button-bed", who: "button", text: "SLEEP · bed", status: "in-game", source: "src/game/10-ch1.js (O8)" },

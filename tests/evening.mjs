@@ -32,9 +32,13 @@ const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true };
 // ---------- the words ----------
 const SPOKEN = EVENING_LINES.filter((l) => !["chip", "button", "sign", "lockup"].includes(l.who));
 g.check("no spoken line is new (every spoken line is from the walkthrough or approved)", SPOKEN.every((l) => l.status !== "suggested"), SPOKEN.filter((l) => l.status === "suggested"));
-const PENDING = ["I swear we had more Moon Pies... is that what they stole at lunch?", "Quick, hide.", "Are those other Sasquatches?", "I need to get back to work, we'll talk about it tonight.", "Didn't you hear what the manager said? They need me here, they're not going to replace me. Plus the Guardians are here.", "Mail scanned. Pawature accepted.", "ORDER MORE ROBOTS", "MARK · order", "GRAB · copies"];
+const PENDING = ["I swear we had more Moon Pies...", "is that what they stole at lunch?", "Quick, hide.", "Are those other Sasquatches?", "I need to get back to work, we'll talk about it tonight.", "Didn't you hear what the manager said?", "They need me here, they're not going to replace me.", "Plus the Guardians are here.", "Mail scanned. Pawature accepted.", "ORDER MORE ROBOTS", "MARK · order", "GRAB · copies"];
 g.check("the pending lines are still pending", PENDING.every((t) => (EVENING_LINES.find((l) => l.text === t) || {}).status === "pending"), PENDING.filter((t) => (EVENING_LINES.find((l) => l.text === t) || {}).status !== "pending"));
 g.check("the tourists' cut lines are gone (Call 16)", !EVENING_LINES.some((l) => /We ate at a pancake place|Here, a brochure/.test(l.text)));
+// (Brian 2026-11-26, [40 0:05]: a line over about 12 words is split into bubbles, its words unchanged)
+const long = SPOKEN.filter((l) => l.text.split(/\s+/).length > 12);
+g.check("no bubble holds more than 12 words (longer lines are split into two or three bubbles)", long.length === 0, long.map((l) => l.text));
+g.check("the split lines read word for word as the walkthrough's", ["tourist-moonpies", "tourist-moonpies-2"].map((id) => SPOKEN.find((l) => l.id === id).text).join(" ") === "I swear we had more Moon Pies... is that what they stole at lunch?" && ["mops-mars", "mops-mars-2", "mops-mars-3"].map((id) => SPOKEN.find((l) => l.id === id).text).join(" ") === "Didn't you hear what the manager said? They need me here, they're not going to replace me. Plus the Guardians are here.");
 g.check("the office code on the pink sheet is Brian's 169556", EVENING_LINES.find((l) => l.id === "sign-code").text === "169556");
 
 // ---------- the night robot's rhythm, from the numbers (no browser) ----------
@@ -149,7 +153,7 @@ r = await ev(() => {
   window.__run(8, () => window.__st() === "line" && n.cur && n.cur.k === "bub");
   return { room: n.room, text: n.cur.b.text, ear: !!n.cur.b.ear, who: n.cur.b.who };
 });
-g.check("walking into the doorway takes them to the snack bar, where Squatch overhears the line (the ear)", r.room === "hall" && r.text === "I swear we had more Moon Pies... is that what they stole at lunch?" && r.ear, r);
+g.check("walking into the doorway takes them to the snack bar, where Squatch overhears the line (the ear)", r.room === "hall" && r.text === "I swear we had more Moon Pies..." && r.ear, r);
 r = await ev(() => {
   const n = window.__ss.op;
   window.__run(12, () => n.cur && n.cur.b && n.cur.b.who === "mops");
@@ -232,7 +236,7 @@ r = await ev(() => {
     s.dim > 0.5 && !n.ctrl && (seen.bedtime = seen.bedtime || window.SSQ.refinedCue("home") === "bedtime");
     return window.__st() === "out" && n.ctrl;
   });
-  const solid = window.__ss.solids().some((q) => q.x0 === 376 && q.y0 === 500);
+  const solid = window.__ss.solids().some((q) => q.x1 === 536 && q.y0 === 550 && q.y1 === 580);
   const inBed = !!n.ch1Evening.bed;
   // his first move gets him out of bed (the kid's to start)
   n.walkTo = { x: 600, y: 470, room: n.room, lx: n.sq.x, ly: n.sq.y, lt: n.T };
@@ -379,7 +383,36 @@ r = await ev(() => {
   out.offers = window.__ss.spotsNow().map((s) => s.verb + " · " + s.cap);
   return out;
 });
-g.check("seen in the bay: the robot shows \"!\" at once and runs to the FUR alarm on the bay's wall; guards come", r.alarm && r.by === "night-robot" && r.place === "bay" && r.ran && r.guards.length === 2 && r.guards.every((q) => q === "hangar"), r);
+// a robot reacts only once its drawn cone has stayed on him about half a second ("?" while it registers him), and a
+// cone that stops short of him never sees him
+const reg = await ev(() => {
+  const n = window.__ss.op,
+    b = window.SSQ.beat("ch1-evening");
+  window.__jump(142);
+  window.__run(8, () => b.place.nightLook(n.ch1Evening.nightT).phase === "down" && b.place.nightLook(n.ch1Evening.nightT - 0.06).phase !== "down");
+  // just past the cone's end, straight below the robot: the cone stops short of him
+  n.sq.x = 480;
+  n.sq.y = 372 + 210 + 100;
+  const short = b.seenNow();
+  n.sq.y = 585;
+  const on = b.seenNow();
+  for (let i = 0; i < 6; i++) window.__ss.tick(0.05);
+  const at03 = { alarm: !!n.ch1Evening.alarm, q: (b.debug().state.qs || {}) };
+  window.__ss.drawFrame();
+  const marks = [];
+  const P = CanvasRenderingContext2D.prototype,
+    keep = P.fillText;
+  P.fillText = function (t) {
+    marks.push(t);
+    return keep.apply(this, arguments);
+  };
+  window.__ss.drawFrame();
+  P.fillText = keep;
+  for (let i = 0; i < 6; i++) window.__ss.tick(0.05);
+  return { short, on, alarmAt03: at03.alarm, questionDrawn: marks.includes("?"), alarmAt06: !!n.ch1Evening.alarm };
+});
+g.check("a robot's cone that stops short of him does not see him; on him it registers for half a second (a \"?\") before the alarm", !reg.short && reg.on && !reg.alarmAt03 && reg.questionDrawn && reg.alarmAt06, reg);
+g.check("seen in the bay: the robot shows \"!\" and runs to the FUR alarm on the bay's wall; guards come", r.alarm && r.by === "night-robot" && r.place === "bay" && r.ran && r.guards.length === 2 && r.guards.every((q) => q === "hangar"), r);
 g.check("during the alarm every hiding place is offered (the plant, the ball)", r.offers.includes("ROLL · ball") && r.offers.includes("HIDE · plant"), r);
 // again, and this time he hides in the plant as soon as the robot shouts
 r = await ev(() => {

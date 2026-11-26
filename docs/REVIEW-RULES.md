@@ -27,7 +27,7 @@
 | 219–229 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
 | 230–239 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
 | 240–245 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
-| 246–253 | ## Mistakes caught building the evening and night one (2026-11-26) |
+| 246–256 | ## Mistakes caught building the evening and night one (2026-11-26) |
 <!-- /section-index -->
 # Review rules
 
@@ -250,3 +250,6 @@ His words, on the snack close-up, for every piece of the game: "It just needs to
 - The ball rule was paused during an alarm, so a rolled-up Squatch was never found by the guards (the reviewer). The ball rule runs with every cone, the guards' included, alarm or not, as in the lunch sneak.
 - ROLL · ball is on the button almost everywhere in a sneak, and the kid robot pressed it, then walked on (which unrolls him) into a cone, over and over. The robot leaves the ball alone except where rolling up is the goal, rolls up when seen in the night's bay, and crosses the night robot's column on its rhythm, as the flyer sneak's robot does; a kid robot started from `KID_START=evening:37` reached the tally card caught 0 times.
 - A way home was tested by moving him in straight lines through the mail room's wall, which a kid's walk goes round, into a robot's cone; the showing video found it. A route a test calls fair is stepped against the room's solids at every step, and the kid robot or the showing tool walks it.
+- The hall alone was darkened at night, and the hallway, home and the office stayed in daylight (Brian: "Make sure it's not just the hall dark at night, but all rooms are different at night versus daytime."). Night is one rule for every room, `src/modules/night-look.js` (the locked night picture where one exists, else the day picture under the night tint with its lights kept bright, the characters drawn lit over it); a beat at night draws its rooms through it, and a test checks every room a night beat shows.
+- A robot rolled across a doorway and Squatch walked over the sleeping Mops, because scripted walks went in straight lines and never met the room's solids. Every scripted walk (robots, the family, Mops) is stepped against the solids in a test, people included, and a robot's cone is drawn whenever it is on screen.
+- A cone that stopped short of him still caught him, and a cone that touched him for one frame did too. A sighting needs the drawn cone to reach him and hold about half a second, with a "?" while it registers.

@@ -108,14 +108,15 @@ export function guardStep(g, x, y, speed, dt, around = GUARD_AROUND, floor = GUA
 
 /**
  * Rooms other than the party hall where the one capture rule runs (2026-11-26, the night's loading bay, evening.js):
- * by id, { room, run (where the witness runs to pull the room's FUR alarm), guardIn, search, around, floor }. A room
- * with no entry is the hall (SPOTS, SEARCH, GUARD_AROUND).
+ * by id, { room, run (where the witness runs to pull the room's FUR alarm), guardIn, search, around, floor, feet (the
+ * "this close" circle, the pinned cone-feet when left out), register (seconds a guard's cone must stay on him before
+ * he has seen him, 0 when left out) }. A room with no entry is the hall (SPOTS, SEARCH, GUARD_AROUND).
  */
 const ALARM_PLACES = new Map();
 export function addAlarmPlace(id, place) {
   ALARM_PLACES.set(id, Object.freeze({ ...place }));
 }
-const HALL_PLACE = Object.freeze({ room: "hall", run: SPOTS.alarmRun, guardIn: SPOTS.guardIn, search: null, around: null, floor: null });
+const HALL_PLACE = Object.freeze({ room: "hall", run: SPOTS.alarmRun, guardIn: SPOTS.guardIn, search: null, around: null, floor: null, feet: null, register: 0 });
 const placeOf = (a) => (a && a.place && ALARM_PLACES.get(a.place)) || HALL_PLACE;
 
 /**
@@ -227,7 +228,11 @@ function searchHall(a, dt, api, sq, hidden, PL = HALL_PLACE) {
   const safe = !!hidden && !a.spotted;
   a.guards.forEach((g, i) => {
     const c = coneFrom("guard" + i, g.x, g.y, g.a, size),
-      sees = !safe && ((api.sees ? api.sees(c, sq) : coneSees(c, sq)) || Math.hypot(sq.x - g.x, sq.y - g.y) < ALARM.feet);
+      feet = PL.feet == null ? ALARM.feet : PL.feet,
+      onHim = !safe && ((api.sees ? api.sees(c, sq) : coneSees(c, sq)) || Math.hypot(sq.x - g.x, sq.y - g.y) < feet);
+    // (a place with `register`: the cone must stay on him that long before the guard has seen him; the hall: at once)
+    g.seeT = onHim ? (g.seeT || 0) + dt : 0;
+    const sees = onHim && g.seeT >= (PL.register || 0);
     g.sees = sees;
     sees && (a.last = { x: sq.x, y: sq.y });
     // Seen: at him. Lost him: to where he was last seen. Otherwise the search walk, point to point.

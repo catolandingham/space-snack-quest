@@ -592,33 +592,40 @@ export function drawFurArm(ctx, bx, by, x, y, r) {
 }
 
 // ---------- Mops asleep ----------
+/** Where Mops's head is in his own units (his drawing faces right, feet at 0, 0; the face buttons' framing). */
+export const MOPS_HEAD = Object.freeze({ x: 17, y: -29 });
+/** The middle of his body in his own units: he turns round it as he tips over, so his back comes to rest on the floor. */
+export const MOPS_MIDDLE = Object.freeze({ x: 0, y: -20 });
 /**
  * Mops falling asleep the fainting-goat way (Brian, 2026-11-26): standing with his eyes shut, then stiff and tipped
- * over onto his side (`tip` 0 to 1), then rolled onto his back with his four feet in the air (`roll` 0 to 1). His feet
- * are at (x, y) standing; lying, he rests on the floor round there. `mops` is the engine's Mops drawing. PLACEHOLDER:
- * his own drawing turned; the bedtime branch had no drawing of this yet.
+ * over (`tip` 0 to 1, a quarter turn: his legs stick out stiff), then over onto his back with his four feet in the air
+ * (`roll` 0 to 1). He faces left (toward the bed) as he stands, so on his back his head lies to the right, resting
+ * against his mop bucket (Brian, [42 0:00]: "maybe [Mops] rests his head on the bucket"); his back is on the floor
+ * (his feet's line `y`), with a shadow under him. `x` is where his feet stand. `mops` is the engine's Mops drawing.
+ * PLACEHOLDER pose: his own drawing turned, no new art. Returns his drawn box (game positions), lying, for tests.
  */
 export function drawSleepingMops(ctx, mops, x, y, scale, tip, roll, t = 0) {
-  const a = (Math.PI / 2) * tip + (Math.PI / 2) * roll,
-    lie = Math.min(1, tip + roll);
-  // turned round the middle of his body (about 30 of his units up), lowered so he rests on the floor
-  const mid = 30 * scale;
+  const a = -(Math.PI / 2) * (tip + roll),
+    lie = Math.min(1, tip + roll),
+    c = { x: x + MOPS_MIDDLE.x * scale, y: y + MOPS_MIDDLE.y * scale };
+  // the shadow on the floor under him, wider as he comes down, breathing slowly once he lies there
   ctx.save();
-  ctx.translate(x, y - mid + lie * mid * 0.55);
-  ctx.rotate(a);
-  ctx.translate(0, mid);
-  mops(ctx, 0, 0, scale, { f: 1, walk: 0, eyes: "closed" });
+  ctx.globalAlpha = 0.22 + 0.1 * lie;
+  ctx.beginPath();
+  ctx.ellipse(x + 2 * scale * lie, y + 3, (14 + 12 * lie) * scale + (lie > 0.9 ? Math.sin(t * 2) * 2 : 0), 3.2 * scale, 0, 0, TAU);
+  ctx.fillStyle = INK;
+  ctx.fill();
   ctx.restore();
-  // a soft breathing shadow under him once he lies down
-  if (lie > 0.5) {
-    ctx.save();
-    ctx.globalAlpha = 0.18;
-    ctx.beginPath();
-    ctx.ellipse(x, y + 6, 46 * scale * 0.5 + 10 * Math.sin(t * 2), 6, 0, 0, TAU);
-    ctx.fillStyle = INK;
-    ctx.fill();
-    ctx.restore();
-  }
+  ctx.save();
+  ctx.translate(c.x, c.y);
+  ctx.rotate(a);
+  ctx.translate(-c.x, -c.y);
+  mops(ctx, x, y, scale, { f: -1, walk: 0, eyes: "closed" });
+  ctx.restore();
+  // his head, turned with him (the left-facing drawing has it at -MOPS_HEAD.x)
+  const hx = -MOPS_HEAD.x * scale + x - c.x,
+    hy = MOPS_HEAD.y * scale + y - c.y;
+  return { head: { x: c.x + hx * Math.cos(a) - hy * Math.sin(a), y: c.y + hx * Math.sin(a) + hy * Math.cos(a) } };
 }
 
 // ---------- the plaque under each photo ----------

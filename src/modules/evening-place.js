@@ -13,16 +13,24 @@ export const HALLWAY = Object.freeze({
   in: Object.freeze({ x: 950, y: 330 }),
   stop: Object.freeze({ x: 760, y: 430 }),
   // Mops walks on to the hall's end and waits there for him
-  mops: Object.freeze({ x: 130, y: 300 }),
+  // (a step in from the doorway, clear of the way the robot rolls out through it)
+  mops: Object.freeze({ x: 210, y: 300 }),
   // the photo wall (the locked picture's grid, picture 367 to 913 wide, 140 to 279 high): LOOK · photos from below it
   wall: Object.freeze({ x0: 274, x1: 686, y0: 104, y1: 216 }),
   look: Object.freeze({ x: 480, y: 300, r: 70 }),
   // the doorway to the hall (left end) and to the loading bay (right end): walking into one goes through
   left: Object.freeze({ x: 50, y: 330, r: 45 }),
   right: Object.freeze({ x: 910, y: 330, r: 45 }),
-  // the robot that rolls through after photo 5 (BEEP BEEP): in at the right end, out at the left, along the front
-  robotIn: Object.freeze({ x: 1000, y: 560 }),
-  robotOut: Object.freeze({ x: -60, y: 560 }),
+  // the robot that rolls through after photo 5 (BEEP BEEP): in through the loading bay's doorway (right end), along
+  // the middle of the floor (clear of the office door in the front wall, picture 575 to 705 wide, from 630 down), and
+  // out through the hall's doorway (left end); it looks where it rolls
+  robotIn: Object.freeze({ x: 990, y: 310 }),
+  // just inside each doorway (the robot comes and goes straight through it)
+  robotDoorR: Object.freeze({ x: 880, y: 310 }),
+  robotDoorL: Object.freeze({ x: 80, y: 310 }),
+  robotLane: 400,
+  robotOut: Object.freeze({ x: -60, y: 310 }),
+  officeDoor: Object.freeze({ x0: 431, x1: 529, y0: 486, y1: 609 }),
 });
 
 // ---------- beat 38: the snack bar (party hall v2) ----------
@@ -54,8 +62,8 @@ export const BAR = Object.freeze({
     Object.freeze({ id: "teal", door: Object.freeze({ x: 975, y: 318 }), at: Object.freeze({ x: 746, y: 572 }), kid: false }),
     Object.freeze({ id: "octopus-guest", door: Object.freeze({ x: 1010, y: 322 }), at: Object.freeze({ x: 700, y: 548 }), kid: true }),
   ]),
-  // the family walks round by the strip (clear of the stools) to the counter's front
-  via: Object.freeze({ x: 760, y: 338 }),
+  // the family walks round by the strip, then down the floor left of the stools, to the counter's front
+  via: Object.freeze({ x: 728, y: 338 }),
   kidK: 0.62,
   // reading the brochure, they look down at it; then up and across the room, toward him in the strip
   read: Math.PI / 2,
@@ -79,15 +87,23 @@ export const HOME = Object.freeze({
   show: Object.freeze({ x: 560, y: 470, r: 80 }),
   // SLEEP · bed at the bed's right end (bedtime-story.js BEDTIME_SPOTS.side)
   bed: Object.freeze({ x: 330, y: 458, r: 60 }),
-  // where Mops falls asleep: on the open floor below the way from the bed to the door, clear of the bed and bucket
-  sleep: Object.freeze({ x: 456, y: 572 }),
+  // where Mops falls asleep: on his back on the floor, his head resting against the left side of his mop bucket (the
+  // locked picture's bucket, 536 to 596 wide, 500 to 571 high); his feet stand where mopsSleepAt says
+  sleepHead: Object.freeze({ x: 530, y: 572 }),
   sleepVia: Object.freeze({ x: 500, y: 478 }),
   // out of bed at night, beside it
   up: Object.freeze({ x: 340, y: 470 }),
   door: Object.freeze({ x: 870, y: 440, r: 40 }),
-  // Mops lying asleep (game positions round `sleep`): his box, so nobody walks through him
-  mopsBox: Object.freeze({ x0: 376, x1: 532, y0: 500, y1: 578 }),
 });
+/** Where Mops stands before he tips over (his feet), so that on his back his head rests at HOME.sleepHead (`k`: his scale at home). */
+export function mopsSleepAt(k) {
+  return { x: HOME.sleepHead.x - 17 * k, y: HOME.sleepHead.y };
+}
+/** The floor Mops takes up lying on his back (a solid while he sleeps, so nobody walks through him). */
+export function mopsSleepBox(k) {
+  const at = mopsSleepAt(k);
+  return { x0: Math.round(at.x - 26 * k), x1: 536, y0: at.y - 22, y1: at.y + 8 };
+}
 
 // ---------- beat 42: the loading bay at night ----------
 /**
@@ -106,14 +122,15 @@ export const BAY = Object.freeze({
   // (the right one stands left of the mail room's wall, so the way from the vent down past that wall stays clear)
   woke: Object.freeze([Object.freeze({ x: 372, y: 470 }), Object.freeze({ x: 540, y: 470 })]),
   // the mail room's opening (between its two wall pieces) the woken robots roll out through
-  gap: Object.freeze({ x: 688, y: 463 }),
+  gap: Object.freeze({ x: 700, y: 463 }),
   bin: Object.freeze({ x: 212, y: 398, r: 50, box: Object.freeze({ x0: 186, x1: 240, y0: 312, y1: 376 }) }),
   mail: Object.freeze({ x: 862, y: 500, r: 52, box: Object.freeze({ x0: 838, x1: 914, y0: 366, y1: 480 }) }),
   // the big wall vent (picture 1070 to 1200 wide, 238 to 332 high): he hides under it, it pulls the pink sheet in
   vent: Object.freeze({ x0: 802, x1: 900, y0: 183, y1: 256, mouth: Object.freeze({ x: 851, y: 220 }) }),
   underVent: Object.freeze({ x: 850, y: 334 }),
-  // the way he runs from the mailbox to the vent (out of the mail room's opening, then up)
-  run: Object.freeze([Object.freeze({ x: 720, y: 466 }), Object.freeze({ x: 760, y: 340 }), Object.freeze({ x: 850, y: 334 })]),
+  // the way he runs from the mailbox to the vent: out of the mail room through its opening (never through its fence),
+  // up outside it, then along above the fence to under the vent
+  run: Object.freeze([Object.freeze({ x: 720, y: 466 }), Object.freeze({ x: 645, y: 463 }), Object.freeze({ x: 645, y: 336 }), Object.freeze({ x: 850, y: 334 })]),
   // the plant (HIDE · plant during an alarm): where he steps in, where his eyes show (12-ch1-redesign.js CH1_PLANT_EYES)
   plant: Object.freeze({ x: 125, y: 388, r: 46, eyes: Object.freeze({ x: 125, y: 308 }), box: Object.freeze({ x0: 70, x1: 180, y0: 244, y1: 382 }) }),
   // the red FUR alarm on the back wall by the door (picture 90 to 127 wide, 178 to 219 high), where a robot runs
@@ -147,6 +164,24 @@ export const BAY_FURNITURE = Object.freeze([
   Object.freeze({ x0: 675, x1: 699, y0: 507, y1: 609 }), // mail room wall, below its opening
   Object.freeze({ x0: 848, x1: 908, y0: 452, y1: 476 }), // robot mailbox
 ]);
+/**
+ * Walls the older program's furniture list leaves out, in the bay: the mail room's fence along its top (picture 915 to
+ * 1230 wide at 470 high; 24 deep so nobody pops through it). Nobody walks through it (Brian, [42 0:26]).
+ */
+export const BAY_EXTRA = Object.freeze([Object.freeze({ x0: 683, x1: 930, y0: 352, y1: 376 })]);
+/**
+ * The bay's floor vent (the locked night picture paints its swirl: it is on), and the big wall vent (its swirl shows
+ * while it sucks). The floor vent's rule is the party hall's (party-vent.js VENT): too close, fur lifts off him and
+ * drifts in; staying, the fur goes in and the robot that watches sounds the alarm.
+ */
+export const BAY_VENT = Object.freeze({ floor: Object.freeze({ x: 165, y: 540 }), wall: Object.freeze({ x: 851, y: 220 }) });
+/**
+ * Where each robot parked in the mail room looks while it stands there: one down and left into the room's corner, the
+ * other right along the wall, so their cones show on the floor and stay clear of the way to the mailbox.
+ */
+export function robotLook(id) {
+  return id === "robot-3" ? 0.2 : 2.6;
+}
 /** The loading bay's floor at night (feet). */
 export const BAY_BOUNDS = Object.freeze({ x0: 60, x1: 900, y0: 320, y1: 590 });
 /** Where the guards look round in the bay when nobody has seen him. */
@@ -196,7 +231,9 @@ export const EVENING_PACE = Object.freeze({
   runTo: 260,
   suck: 1.3,
   sleepEnd: 2.6,
-  robotSee: 0.1, // a robot shows "!" at once (DECISIONS 2026-11-22: robots "!" at once); 0.1 s so a graze of one frame is not a sighting
+  // a robot or a guard reacts only once its drawn cone has been on him this long (a short "?" while it registers;
+  // Brian 2026-11-26: never when the cone stops short)
+  robotSee: 0.5,
 });
 /** Night at home: the dim (bedtime-story.js BEDTIME_NIGHT), and the evening's warm light. */
 export const EVENING_LOOK = Object.freeze({ warm: "rgba(255,170,90,1)", warmA: 0.14 });

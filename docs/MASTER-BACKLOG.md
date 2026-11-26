@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–148 | ## Where main is (Chapter 1 redesign) |
-| 149–163 | ## Register |
-| 164–185 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 186–206 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 207–219 | ## Phase 2 (plan section 4, T13 to T18) |
-| 220–242 | ## Phase 1 (plan section 3, T5 to T12) |
-| 243–256 | ## SS40–SS44 |
-| 257–274 | ## Story rows |
-| 275–293 | ## Reset section |
-| 294–304 | ## Still open |
-| 305–308 | ## Chapter 1 replot, recorded and not built |
-| 309–466 | ## Changelog |
+| 24–149 | ## Where main is (Chapter 1 redesign) |
+| 150–164 | ## Register |
+| 165–186 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 187–207 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 208–220 | ## Phase 2 (plan section 4, T13 to T18) |
+| 221–243 | ## Phase 1 (plan section 3, T5 to T12) |
+| 244–257 | ## SS40–SS44 |
+| 258–275 | ## Story rows |
+| 276–294 | ## Reset section |
+| 295–305 | ## Still open |
+| 306–309 | ## Chapter 1 replot, recorded and not built |
+| 310–467 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -23,6 +23,7 @@
 
 ## Where main is (Chapter 1 redesign)
 
+2026-11-26 (later), draft PR #94 on `feat/ch1-evening`: Brian's video notes on 37 to 42 built (night look for every room in `src/modules/night-look.js`, robot cones and routes, walks round solids and people, Mops asleep on his bucket, vents, cones that must hold half a second, split bubbles), tested in `tests/evening-physics.mjs`. Open: the party night and escape night rooms should draw through `night-look.js` too; the tint's strength and the lit boxes are a PLACEHOLDER for Brian; the bay plant by the door is in the locked picture (Brian to decide).
 2026-11-26, draft PR on `feat/ch1-evening` (stacked on `feat/ch1-lunch-sneak`), not merged. Done: beats 37 to 42 as a module (`ch1-evening`): the Employee of the Month gallery (5 photos, crooked #4 and the crayon drawing, the robot and BEEP BEEP), the snack bar (the Moon Pie line, the family, HIDE · counter, the brochure close-up), the walk home, the Mars talk (SHOW · brochure), lights out (Mops asleep the fainting-goat way), night one (the bay at night on R64, the paw-order close-up, the mailbox, the robots wake, the vent takes the pink sheet, home to bed); the one capture rule in the bay (`party-alarm.js` alarm places); the old Day 2 code for these beats deleted. Hand-over from beat 36: `ch1BayLines` ends with `window.SSQ.beat("ch1-evening").start()` (the loading-bay branch replaces that function: call `start()` when Mops and Squatch walk into the hallway from the bay). Hand-over to beat 43: the older program's `ch1SixDays` (the engine's `sixDays`), with the night's record set (`ch1Paw`, `ch1Mailed`, `ch1PinkSucked`, `ch1Brochure`, `ch1Lights`, the papers' log "paws" then "vent").
 - Needs Brian's yes (words, in `src/modules/evening-lines.js`): pending "I swear we had more Moon Pies... is that what they stole at lunch?", "Quick, hide.", "Are those other Sasquatches?", "I need to get back to work, we'll talk about it tonight.", Mops's Mars line, "Mail scanned. Pawature accepted.", ORDER MORE ROBOTS, GRAB · copies, MARK · order; new (suggested) HIDE · counter, SHOW · brochure, "Squatch: show Mops the brochure".
 - Needs Brian's yes (pictures, all placeholders): the gallery's photos (his approved movie-scene pictures are not in the repo), the crayon drawing, the brochure's front and whether it has words, the family (two approved guests and a smaller one as their child), the picture bubble, the papers, the station robots, Mops asleep feet up.

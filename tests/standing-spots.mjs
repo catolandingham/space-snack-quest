@@ -160,13 +160,14 @@ const orders = new Set();
 for (let k = 0; k < 6; k++) orders.add(drawOrder(k % 2 ? tie.slice() : [...tie]).map((p) => p.id).join(""));
 check("draw order: front last, and people on the same feet line always in the order they are listed", orders.size === 1 && [...orders][0] === "cabd", [...orders]);
 // ---------- the evening (evening.js) ----------
-// Mops asleep on his back at home: the floor he lies on (HOME.mopsBox, a solid while he sleeps) is clear of the bed and
-// the bucket, and of where Squatch gets out of bed and walks to the door.
+// Mops asleep on his back at home: the floor he lies on (mopsSleepBox, a solid while he sleeps) is clear of the bed and
+// of where Squatch gets out of bed; his head rests against the bucket (the box ends at its left side).
 {
+  // (his scale at home is the room's, 3: Mops's head at the bucket, measured in tests/evening-physics.mjs)
   const H = EVP.HOME,
-    lie = H.mopsBox,
+    lie = EVP.mopsSleepBox(3),
     up = { x0: H.up.x - FOOT.home.side, x1: H.up.x + FOOT.home.side, y0: H.up.y - FOOT.home.up, y1: H.up.y + FOOT.home.down };
-  check("evening: Mops lies on open floor (not on the bed or the bucket, not where Squatch gets out of bed)", !hit(lie, HOME_FURNITURE.bed) && !hit(lie, HOME_FURNITURE.bucket) && !hit(lie, up), { lie, up });
+  check("evening: Mops lies on open floor (not on the bed or the bucket, not where Squatch gets out of bed)", !hit(lie, HOME_FURNITURE.bed) && !hit(lie, HOME_FURNITURE.bucket) && !hit(lie, up) && lie.x1 === HOME_FURNITURE.bucket.x0, { lie, up });
 }
 // The snack bar (beat 38): Squatch in the strip, Mops, the two in line, the family at the counter's front. On purpose:
 // Squatch hidden in the aisle behind the counter (BAR.hidden), the family reading in the hallway doorway past the bar.

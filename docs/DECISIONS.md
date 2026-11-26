@@ -3,32 +3,33 @@
 
 | Lines | Heading |
 | --- | --- |
-| 33–35 | # Space Snack Quest: every decision, in one place |
-| 36–43 | ## How to use this file |
-| 44–55 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
-| 56–60 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 61–69 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 70–73 | ## Sound, 2026-11-23 |
-| 74–97 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 98–109 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 110–134 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 135–143 | ## Which repo is the base, 2026-11-22 |
-| 144–154 | ## Sight cones, 2026-11-22 |
-| 155–159 | ## Latest calendar direction, 2026-11-16 |
-| 160–162 | ## Vent walk, 2026-11-16 |
-| 163–165 | ## Locked home room v5, 2026-11-16 |
-| 166–175 | ## Fidelity system (pictures are locked, not just words) |
-| 176–213 | ## 1. Working rules |
-| 214–280 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 281–305 | ## 3. Characters and look |
-| 306–382 | ## 4. Look, rooms and layout |
-| 383–404 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 405–448 | ## 6. Later chapters (2–4 and travel) |
-| 449–458 | ## 7. Audio |
-| 459–493 | ## 8. Code, controls and process |
-| 494–540 | ## 9. Open / waiting on Brian |
-| 541–635 | ## 10. Earlier entries, kept word for word |
-| 636–732 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 34–36 | # Space Snack Quest: every decision, in one place |
+| 37–45 | ## How to use this file |
+| 46–54 | ## Evening and night one, look and physics, 2026-11-26 (Brian, video notes on beats 37 to 42) |
+| 55–66 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
+| 67–71 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 72–80 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 81–84 | ## Sound, 2026-11-23 |
+| 85–108 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 109–120 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 121–145 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 146–154 | ## Which repo is the base, 2026-11-22 |
+| 155–165 | ## Sight cones, 2026-11-22 |
+| 166–170 | ## Latest calendar direction, 2026-11-16 |
+| 171–173 | ## Vent walk, 2026-11-16 |
+| 174–176 | ## Locked home room v5, 2026-11-16 |
+| 177–186 | ## Fidelity system (pictures are locked, not just words) |
+| 187–224 | ## 1. Working rules |
+| 225–291 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 292–316 | ## 3. Characters and look |
+| 317–393 | ## 4. Look, rooms and layout |
+| 394–415 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 416–459 | ## 6. Later chapters (2–4 and travel) |
+| 460–469 | ## 7. Audio |
+| 470–504 | ## 8. Code, controls and process |
+| 505–551 | ## 9. Open / waiting on Brian |
+| 552–646 | ## 10. Earlier entries, kept word for word |
+| 647–743 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -40,6 +41,16 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 - **Status words:** **Decided** (Brian said it or approved it) · **Needs Brian's yes** (proposed, or on-screen words waiting on him) · **Superseded** (replaced; the line says by what) · **Open** (a real question nobody has answered yet).
 - **This repo file is the single source of truth.** It was synced on Monday, November 9, 2026 from the designer record through decision R63, and it still holds the earlier snapshot `docs/old/project/DECISIONS-2026-11-08.md` (on `main` at commit 10030f6). Every earlier entry is kept in section 10. Where a later decision replaces an earlier one, the earlier line is marked **Superseded** and says what replaced it. The dated snapshot's full text is in `docs/old/history/DECISIONS-2026-11-08.md`. A short pointer stays at `docs/old/project/DECISIONS-2026-11-08.md`. New decisions get a row in the tables above, through a docs PR (review, "Docs match main: yes", Brian's written yes before merge).
 - Don't invent a decision. If something isn't clear, add it under **Open**.
+
+
+## Evening and night one, look and physics, 2026-11-26 (Brian, video notes on beats 37 to 42)
+- **Every room has a night look.** Brian: "Make sure it's not just the hall dark at night, but all rooms are different at night versus daytime." Built as one rule in `src/modules/night-look.js`: at night a room shows its locked night picture where one exists (the loading bay), and otherwise its day picture under a dim blue night tint (the bedtime story's night colour), with windows, screens and lamps kept bright and the characters drawn lit over it. Every room shown in a night beat is tested for it (`tests/evening-physics.mjs`). The party night and the escape night should use the same helper. **Decided** (the rule); the tint's strength and the lit boxes are a PLACEHOLDER look, **Needs Brian's yes**.
+- **Robots always show their cones, and roll only through open floor.** From Brian's video notes: a robot never rolls across a doorway, through a wall or through furniture, and every robot, parked or rolling, shows its cone. **Decided.**
+- **Nobody walks over anyone or anything.** From Brian's video notes (Squatch walked over the sleeping Mops): every walk, scripted or the player's, goes round furniture, walkways and people. **Decided.**
+- **Mops's fainting-goat sleep sits on the floor.** From Brian's video notes: a shadow under him, his back on the floor, his head resting on his mop bucket, feet up. **Decided.**
+- **A cone reacts only once it has held him.** From Brian's video notes: a guard or robot reacts only after its drawn cone reaches him and stays about half a second (a "?" shows while it registers), never when the cone stops short; flashlight cones never vanish mid-search. **Decided** (0.5 s is `EVENING_PACE.robotSee`).
+- **Vents behave the same everywhere.** From Brian's video notes: the big wall vent shows swirl lines while it sucks; the floor-vent fur rule applies at night unless the vent is off. **Decided.**
+- **Long bubbles are split.** From Brian's video notes: a bubble over about 12 words is said as several bubbles, word for word, one at a time. **Decided.**
 
 ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat)
 - **Mops tells Squatch about the Guardians at bedtime.** After "You came to me in a Moon Pie crate. You've loved Moon Pies ever since.", Mops says "And you've always had your Guardians, watching over you." over a full-screen picture of Squatch's crayon drawing of the Guardians (big furry Sasquatches; the same drawing shows in the morning's thought bubble and in the Guardian Box). Mops gives no hint that he writes the notes. Words approved: Brian, chat 18b A. **Decided.** This adds to STORY-DECISIONS section 5: the bedtime story is still about Mops finding him plus this one line, and the player still learns who writes the notes only at the vent (beat 48).
