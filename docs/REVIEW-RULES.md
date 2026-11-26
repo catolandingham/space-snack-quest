@@ -27,7 +27,7 @@
 | 219–229 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
 | 230–239 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
 | 240–245 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
-| 246–252 | ## Mistakes caught building the evening and night one (2026-11-26) |
+| 246–253 | ## Mistakes caught building the evening and night one (2026-11-26) |
 <!-- /section-index -->
 # Review rules
 
@@ -248,4 +248,5 @@ His words, on the snack close-up, for every piece of the game: "It just needs to
 - A spot was built by spreading a place object that also held the thing's own box (the bin's outline box), so the spot had a `box` and the action button looked for his feet inside the bin: GRAB · copies and POST · mailbox never came up where he stood. Build a spot from `x`, `y` and `r` only, and test it by `offerNow()` where the kid stands, not by calling the spot's function.
 - On a walk through a doorway the room changed first and the step only after the walk in, so for a moment the room and the step disagreed: ↺ there gave him control in a step whose doorway was in another room (stuck), and the older program drew the room for those frames. A step changes with the room (`evening.js` intoRoom), and a test presses ↺ in the middle of a walk in.
 - The ball rule was paused during an alarm, so a rolled-up Squatch was never found by the guards (the reviewer). The ball rule runs with every cone, the guards' included, alarm or not, as in the lunch sneak.
+- ROLL · ball is on the button almost everywhere in a sneak, and the kid robot pressed it, then walked on (which unrolls him) into a cone, over and over. The robot leaves the ball alone except where rolling up is the goal, rolls up when seen in the night's bay, and crosses the night robot's column on its rhythm, as the flyer sneak's robot does; a kid robot started from `KID_START=evening:37` reached the tally card caught 0 times.
 - A way home was tested by moving him in straight lines through the mail room's wall, which a kid's walk goes round, into a robot's cone; the showing video found it. A route a test calls fair is stepped against the room's solids at every step, and the kid robot or the showing tool walks it.

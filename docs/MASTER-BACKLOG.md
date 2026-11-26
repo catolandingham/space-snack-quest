@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–147 | ## Where main is (Chapter 1 redesign) |
-| 148–162 | ## Register |
-| 163–184 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 185–205 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 206–218 | ## Phase 2 (plan section 4, T13 to T18) |
-| 219–241 | ## Phase 1 (plan section 3, T5 to T12) |
-| 242–255 | ## SS40–SS44 |
-| 256–273 | ## Story rows |
-| 274–292 | ## Reset section |
-| 293–303 | ## Still open |
-| 304–307 | ## Chapter 1 replot, recorded and not built |
-| 308–465 | ## Changelog |
+| 24–148 | ## Where main is (Chapter 1 redesign) |
+| 149–163 | ## Register |
+| 164–185 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 186–206 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 207–219 | ## Phase 2 (plan section 4, T13 to T18) |
+| 220–242 | ## Phase 1 (plan section 3, T5 to T12) |
+| 243–256 | ## SS40–SS44 |
+| 257–274 | ## Story rows |
+| 275–293 | ## Reset section |
+| 294–304 | ## Still open |
+| 305–308 | ## Chapter 1 replot, recorded and not built |
+| 309–466 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -26,6 +26,7 @@
 2026-11-26, draft PR on `feat/ch1-evening` (stacked on `feat/ch1-lunch-sneak`), not merged. Done: beats 37 to 42 as a module (`ch1-evening`): the Employee of the Month gallery (5 photos, crooked #4 and the crayon drawing, the robot and BEEP BEEP), the snack bar (the Moon Pie line, the family, HIDE · counter, the brochure close-up), the walk home, the Mars talk (SHOW · brochure), lights out (Mops asleep the fainting-goat way), night one (the bay at night on R64, the paw-order close-up, the mailbox, the robots wake, the vent takes the pink sheet, home to bed); the one capture rule in the bay (`party-alarm.js` alarm places); the old Day 2 code for these beats deleted. Hand-over from beat 36: `ch1BayLines` ends with `window.SSQ.beat("ch1-evening").start()` (the loading-bay branch replaces that function: call `start()` when Mops and Squatch walk into the hallway from the bay). Hand-over to beat 43: the older program's `ch1SixDays` (the engine's `sixDays`), with the night's record set (`ch1Paw`, `ch1Mailed`, `ch1PinkSucked`, `ch1Brochure`, `ch1Lights`, the papers' log "paws" then "vent").
 - Needs Brian's yes (words, in `src/modules/evening-lines.js`): pending "I swear we had more Moon Pies... is that what they stole at lunch?", "Quick, hide.", "Are those other Sasquatches?", "I need to get back to work, we'll talk about it tonight.", Mops's Mars line, "Mail scanned. Pawature accepted.", ORDER MORE ROBOTS, GRAB · copies, MARK · order; new (suggested) HIDE · counter, SHOW · brochure, "Squatch: show Mops the brochure".
 - Needs Brian's yes (pictures, all placeholders): the gallery's photos (his approved movie-scene pictures are not in the repo), the crayon drawing, the brochure's front and whether it has words, the family (two approved guests and a smaller one as their child), the picture bubble, the papers, the station robots, Mops asleep feet up.
+- Open: `ch1-kid-play` from the chapter's start stops in the lunch sneak (hidden in the middle plant, the robot never sets off for the crates); the same happens on this branch's base, 78c8d8b (checked 2026-11-26), so it is the lunch branch's to fix. From beat 37 (`KID_START=evening:37`) the robot plays the evening and the rest of Chapter 1 to the tally card, caught 0 times.
 - Open: the keypad (beat 50) still takes 4723 while the pink sheet shows Brian's 169556 (the escape branch's beat, and the 4723 tuning pin); a night look for the hall and hallway; music for the hallway and the loading bay (none in the table); how long the wordless lights-out and the family scene run.
 
 2026-11-26 (round C), draft PR #91 on `feat/ch1-lunch-sneak`, not merged. Done, Brian's answers of 2026-11-26 (chat): behind the snack counter Mops says "...you know the rule, grab one snack." (approved word for word) in place of the one-pie thought bubble; "Squatch! You should be hiding." stays out (he looks left and right); no balloon anywhere in the lunch sneak (none drawn, as built); the bartender stays away and a guest at the counter watches (as built); ROLL · ball is offered in the hall during the sneak (the ball rule, DECISIONS C20 and R43: noticed only by someone within 70 px for 2 s looking his way; moving unrolls him; not offered in the hallway or behind the counter; the doorway waits until he unrolls); Mops's lunch is a hay sandwich, then the bag; the bag is bigger (62 x 68 at home, 0.88 of that in the hall) so MOPS on it is 20 game px (about 16 CSS px on an iPad standing up, 8 on a 375-wide phone; off the canvas-text allow list for size); the snack counter moment has a framed close-up of the counter's corner 1.65 times bigger (a tap on the plate in it is TAKE · snack). Ganitor (`src/modules/ganitor.js`): A a GANITOR name tag on Mops's pocket in every scene (in place of the old name patch; the word shows in the close-ups, a plain tag elsewhere), B the wall speaker's "Ganitor Mops to the party hall." in the dark before Mops leaves on Day 2 (overheard, ear icon), C an Employee of the Month photo of Mops with the plaque MOPS, GANITOR on the hallway's back wall (a layer over the locked picture, not part of it), E Squatch's crayon card in the hallway says ME / MOPS THE GANITOR (the crayon Guardians drawing has no Mops, so no label). Tests: `tests/lunch-ganitor.mjs`, `tests/lunch-sneak.mjs`, `tests/home-morning.mjs`. Docs match main: yes. Not yet played by a person.
