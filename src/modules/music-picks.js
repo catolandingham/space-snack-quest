@@ -154,7 +154,7 @@ export function newVisits() {
 }
 const clock = () => (typeof performance !== "undefined" ? performance.now() : Date.now()) / 1000;
 /**
- * Every frame (the older program calls this with its music cue, sound on or off once its music has started): moves
+ * Every frame while sound is on (the older program calls this with its music cue once its music has started): moves
  * to a new visit once the cue's place has held for HOLD seconds. Returns the cue. `now` (seconds) is for tests.
  */
 export function seeCue(cue, now = clock()) {
@@ -175,12 +175,14 @@ export function visitNow() {
  * Every frame while the older program's music element plays or fades (it was Joe's theme's element; it plays every
  * file here now): plays the visit's track and keeps it inside its span, and returns how loud it should be just now
  * (the fades times the file's loudness match; 0 for silence, and for a `once` track that has played out in this
- * visit). With no place yet, or none ("" ), it leaves the element as it is (its own fade takes it out).
+ * visit, and while there is no music place: the old track's own fade has taken it out by then).
  */
 export function keepInSpan(el, cue) {
   if (!el) return 1;
   visit.place === null && cue && seeCue(cue, -1e9) && seeCue(cue, 0);
-  if (!visit.place) return 1;
+  // no music here (a place with none, held a second: the old track has faded out by then), or waiting for a new
+  // place to hold: quiet, so nothing old is heard again
+  if (!visit.place) return 0;
   const s = spanFor(visit.cue, visit.n);
   if (!s) return 0;
   const file = MUSIC_FILES[s.file];
@@ -222,7 +224,11 @@ export function loadSound(c, name) {
     m[name] ||
     fetch(pick.url)
       .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(name + " " + r.status))))
-      .then((b) => c.decodeAudioData(b)));
+      .then((b) => c.decodeAudioData(b))
+      .catch((e) => {
+        delete m[name]; // (a failed load is tried again next time)
+        throw e;
+      }));
 }
 /** Plays the sound `name` at time `t` into node `out` (at its level times `v`), once it has loaded. */
 export function playSound(c, out, name, t, v = 1) {
