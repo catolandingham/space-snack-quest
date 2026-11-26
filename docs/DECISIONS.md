@@ -5,30 +5,30 @@
 | --- | --- |
 | 33–35 | # Space Snack Quest: every decision, in one place |
 | 36–43 | ## How to use this file |
-| 44–50 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
-| 51–55 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 56–64 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 65–68 | ## Sound, 2026-11-23 |
-| 69–92 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 93–104 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 105–129 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 130–138 | ## Which repo is the base, 2026-11-22 |
-| 139–149 | ## Sight cones, 2026-11-22 |
-| 150–154 | ## Latest calendar direction, 2026-11-16 |
-| 155–157 | ## Vent walk, 2026-11-16 |
-| 158–160 | ## Locked home room v5, 2026-11-16 |
-| 161–170 | ## Fidelity system (pictures are locked, not just words) |
-| 171–208 | ## 1. Working rules |
-| 209–275 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 276–300 | ## 3. Characters and look |
-| 301–377 | ## 4. Look, rooms and layout |
-| 378–399 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 400–443 | ## 6. Later chapters (2–4 and travel) |
-| 444–453 | ## 7. Audio |
-| 454–488 | ## 8. Code, controls and process |
-| 489–535 | ## 9. Open / waiting on Brian |
-| 536–630 | ## 10. Earlier entries, kept word for word |
-| 631–727 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 44–51 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
+| 52–56 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 57–65 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 66–69 | ## Sound, 2026-11-23 |
+| 70–93 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 94–105 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 106–130 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 131–139 | ## Which repo is the base, 2026-11-22 |
+| 140–150 | ## Sight cones, 2026-11-22 |
+| 151–155 | ## Latest calendar direction, 2026-11-16 |
+| 156–158 | ## Vent walk, 2026-11-16 |
+| 159–161 | ## Locked home room v5, 2026-11-16 |
+| 162–171 | ## Fidelity system (pictures are locked, not just words) |
+| 172–209 | ## 1. Working rules |
+| 210–276 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 277–301 | ## 3. Characters and look |
+| 302–378 | ## 4. Look, rooms and layout |
+| 379–400 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 401–444 | ## 6. Later chapters (2–4 and travel) |
+| 445–454 | ## 7. Audio |
+| 455–489 | ## 8. Code, controls and process |
+| 490–536 | ## 9. Open / waiting on Brian |
+| 537–631 | ## 10. Earlier entries, kept word for word |
+| 632–728 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -46,6 +46,7 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 - **Goats say "Weeee-eenn-nnttt".** Brian, video note 0:28: "Goats say "weeeent" not baaaah". Mops's "...Baaa?" in the bedtime story picture becomes "...Weeee-eenn-nnttt?" (the spelling of R96). **Decided.**
 - **Squatch asks for the story in words.** Brian, video note 0:12: "is squash asking for a story? Maybe he should just say, tell me about when we first met or something like that?" Built as "Tell me about when we first met?" in one bubble over him in bed. **Needs Brian's yes** on the exact words.
 - **Falling asleep plays out, with snoring.** Brian: "After story when squatch falls asleep, should be a bit more natural transition and then some snoring". Built wordless: a yawn and stretch, he lies down, Mops tucks him in, Mops goes out by the door and the light goes down, three snores, fade to black, the morning fades in. **Decided** (the ask); the drawings are placeholders.
+- **Mops is a "Ganitor".** Brian, in chat: "Ganitor is what mops is - goat janitor - that should be an ongoing reference in the game." **Decided** (the fact). Where the word shows on screen: **Open**, asked 2026-11-26; nothing shows it yet.
 - **The vocal song stays at bedtime.** Brian, video note 0:25: "This is the one place in ch 1 that I think this song with vocals actually works - we can leave it here". **Decided.**
 
 ## Party, 2026-11-24 night (Brian, Snack Quest Chat)
