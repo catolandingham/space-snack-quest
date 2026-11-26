@@ -16,8 +16,8 @@
  *           on a thing), "mark" (a sign drawn over someone: the game's sleep mark, a surprise mark)
  *   text    the words, exactly as shown
  *   status  "restored from 71ec66e, needs-yes" (old words brought back, waiting for Brian's yes for this place),
- *           "in-game, needs-yes" (already in the game today, waiting for his yes), "suggested by Brian ..." (his idea,
- *           the exact words to confirm), "Brian ..." (his words), "approved" (Brian's yes, source says where)
+ *           "in-game, needs-yes" (already in the game today, waiting for his yes), "Brian ..." (his words), "approved"
+ *           (Brian's yes, source says where)
  *   source  where the words came from
  */
 const OLD = "Old crate story, commit 71ec66e (2026-11-02)";
@@ -25,18 +25,18 @@ const OLD = "Old crate story, commit 71ec66e (2026-11-02)";
 export const BEDTIME_STORY_LINES = Object.freeze(
   [
     // in bed, before the pictures: he asks for the story
-    { id: "sq-first-met", who: "sq", text: "Tell me about when we first met?", status: "suggested by Brian 2026-11-26 (video note 0:12), exact words to confirm", source: "Brian video note" },
+    { id: "sq-first-met", who: "sq", text: "Tell me about when we first met?", status: "approved", source: "Brian video note 0:12, 2026-11-26; approved word for word the same day" },
     // the delivery crate's painted badge: the same words as on his crate bed in the locked home room
-    { id: "sign-moon-pies", who: "sign", text: "MOON PIES", status: "restored from 71ec66e, needs-yes", source: OLD + "; the same badge as the crate bed in docs/locked-rooms/home-room-empty-closed-v6.png" },
-    { id: "cap-crate", who: "caption", text: "A delivery crate of Moon Pies came to Stormtop.", status: "restored from 71ec66e, needs-yes", source: OLD },
-    { id: "mark-surprise", who: "mark", text: "!", status: "restored from 71ec66e, needs-yes", source: OLD + " (over Mops as he finds the baby)" },
-    { id: "mark-sleep", who: "mark", text: "z z z", status: "restored from 71ec66e, needs-yes", source: OLD + "; the game's sleep mark today, and over Squatch as he snores at bedtime" },
-    { id: "cap-baby", who: "caption", text: "Inside: a sleeping baby Sasquatch. Covered in crumbs.", status: "restored from 71ec66e, needs-yes", source: OLD },
-    { id: "cap-beard", who: "caption", text: "He woke up, grabbed Mops's beard, and giggled.", status: "restored from 71ec66e, needs-yes", source: OLD },
+    { id: "sign-moon-pies", who: "sign", text: "MOON PIES", status: "approved", source: OLD + "; the same badge as the crate bed in docs/locked-rooms/home-room-empty-closed-v6.png; Brian 2026-11-26: keep the old crate story words" },
+    { id: "cap-crate", who: "caption", text: "A delivery crate of Moon Pies came to Stormtop.", status: "approved", source: OLD + "; Brian 2026-11-26: keep the old crate story words" },
+    { id: "mark-surprise", who: "mark", text: "!", status: "approved", source: OLD + " (over Mops as he finds the baby); Brian 2026-11-26: keep the old crate story words" },
+    { id: "mark-sleep", who: "mark", text: "z z z", status: "approved", source: OLD + "; the game's sleep mark today, and over Squatch as he snores at bedtime; Brian 2026-11-26: keep the old crate story words" },
+    { id: "cap-baby", who: "caption", text: "Inside: a sleeping baby Sasquatch. Covered in crumbs.", status: "approved", source: OLD + "; Brian 2026-11-26: keep the old crate story words" },
+    { id: "cap-beard", who: "caption", text: "He woke up, grabbed Mops's beard, and giggled.", status: "approved", source: OLD + "; Brian 2026-11-26: keep the old crate story words" },
     { id: "mops-weent", who: "mops", text: "...Weeee-eenn-nnttt?", status: "Brian 2026-11-26 (video note 0:28), his approved goat spelling", source: OLD + ' had "...Baaa?" here; Brian: "Goats say "weeeent" not baaaah"; spelling from docs/MORNING-LINES-FOR-BRIAN.md row 13 and DECISIONS R96' },
-    // The fourth old picture. Left out for now (BEDTIME_SWITCHES.bucketPicture): it is a question for Brian.
-    { id: "cap-bucket", who: "caption", text: "Tourists were coming! Mops hid him in the mop bucket.", status: "restored from 71ec66e, needs-yes", source: OLD + "; shown only with BEDTIME_SWITCHES.bucketPicture on" },
-    { id: "mops-nothing", who: "mops", text: "Nothing to see here!", status: "restored from 71ec66e, needs-yes", source: OLD + "; shown only with BEDTIME_SWITCHES.bucketPicture on" },
+    // The fourth old picture (Brian 2026-11-26: turn it on).
+    { id: "cap-bucket", who: "caption", text: "Tourists were coming! Mops hid him in the mop bucket.", status: "approved", source: OLD + "; the fourth picture, on (Brian 2026-11-26); Brian 2026-11-26: keep the old crate story words" },
+    { id: "mops-nothing", who: "mops", text: "Nothing to see here!", status: "approved", source: OLD + "; the fourth picture, on (Brian 2026-11-26); Brian 2026-11-26: keep the old crate story words" },
     // back in the room, after the pictures
     { id: "mops-moon-pie", who: "mops", text: "You came to me in a Moon Pie crate. You've loved Moon Pies ever since.", status: "in-game, needs-yes", source: "The bedtime line the game showed before this change (beat 21, docs/CH1-STORY-WALKTHROUGH.md, pending)" },
     // then, over the picture of Squatch's crayon drawing of the Guardians (Brian, 2026-11-26: Mops tells him about the
@@ -47,9 +47,9 @@ export const BEDTIME_STORY_LINES = Object.freeze(
 
 /**
  * The one switch of the bedtime story. bucketPicture: the old fourth picture (Mops hides the baby in his mop bucket
- * when tourists come, "Nothing to see here!"). Off: it is a question for Brian whether it stays.
+ * when tourists come, "Nothing to see here!"). On: Brian's answer of 2026-11-26 (Snack Quest Chat).
  */
-export const BEDTIME_SWITCHES = Object.freeze({ bucketPicture: false });
+export const BEDTIME_SWITCHES = Object.freeze({ bucketPicture: true });
 
 /** The words of one line, by id. Throws on an unknown id, so a typo cannot show empty words. */
 export function bedLine(id) {

@@ -9,7 +9,8 @@
  *   weent   the same picture, Mops's "...Weeee-eenn-nnttt?" in a bubble over him (one bubble, no caption: the TV
  *           story split its "*gasp*" off the same way; the old picture had "...Baaa?", Brian 2026-11-26: "Goats say
  *           "weeeent" not baaaah")
- *   bucket, hide   (only with BEDTIME_SWITCHES.bucketPicture on) Mops beside his mop bucket, the baby hidden in it
+ *   bucket, hide   Mops beside his mop bucket, the baby hidden in it (BEDTIME_SWITCHES.bucketPicture, on since
+ *                  Brian's answer of 2026-11-26)
  * Only Mops and baby Squatch are in the pictures (docs/GUARDIANS-STORY-BRIEF.md: the story is only about Mops finding
  * him; no parents, no other Sasquatches, no hints of them).
  * Sizes: everything is drawn as the home room draws it, 1.6 times bigger (BED_STORY.k). Mops is the room's Mops (the
@@ -230,21 +231,35 @@ function beardScene(ctx, engine, t) {
   return { cast: ["mops", "baby"], mopsHead: m.head, mouth: m.mouth };
 }
 function bucketScene(ctx, engine) {
-  // his mop bucket as the home room draws it (yellow, a little water on top), the baby's eyes over its rim
+  // his mop bucket as the home room draws it (yellow), drawn so it reads as a bucket: wider at the top, a thick rim,
+  // a wire handle and two little wheels; the baby's eyes over its rim
   const cx = 560,
-    w0 = 150,
-    w1 = 120,
-    h = 140,
-    top = BED_STORY.floor - h;
-  shadow(ctx, cx, w0 + 20);
+    wTop = 176,
+    wBot = 128,
+    h = 132,
+    wheel = 12,
+    bottom = BED_STORY.floor - wheel,
+    top = bottom - h;
+  shadow(ctx, cx, wTop + 10);
+  // the handle, behind (an arc up over the rim)
+  ctx.beginPath();
+  ctx.ellipse(cx, top + 4, wTop / 2 - 8, 70, 0, Math.PI, 0);
+  ctx.strokeStyle = DARK;
+  ctx.lineWidth = 5;
+  ctx.stroke();
   baby(ctx, cx, top + 46, { shadow: false });
   ctx.beginPath();
-  ctx.moveTo(cx - w1 / 2 - 15, top);
-  ctx.lineTo(cx + w1 / 2 + 15, top);
-  ctx.lineTo(cx + w0 / 2, BED_STORY.floor);
-  ctx.lineTo(cx - w0 / 2, BED_STORY.floor);
+  ctx.moveTo(cx - wTop / 2, top);
+  ctx.lineTo(cx + wTop / 2, top);
+  ctx.lineTo(cx + wBot / 2, bottom);
+  ctx.lineTo(cx - wBot / 2, bottom);
   ctx.closePath();
   paint(ctx, "#ffcf33", 4.2, DARK);
+  // the rim, a darker band round the top, and two ribs down the side
+  round(ctx, cx - wTop / 2 - 6, top - 6, wTop + 12, 18, 8);
+  paint(ctx, "#e0a81c", 4.2, DARK);
+  for (const k of [-0.25, 0.25]) seg(ctx, cx + k * wTop, top + 22, cx + k * wBot, bottom - 10, "#d9a514", 4);
+  for (const wx of [cx - wBot / 2 + 18, cx + wBot / 2 - 18]) (disc(ctx, wx, bottom + wheel / 2, wheel / 2 + 2), paint(ctx, "#59657d", 3, DARK));
   const m = mops(ctx, engine, 330, 1);
   return { cast: ["mops", "baby"], mopsHead: m.head, mouth: m.mouth };
 }
