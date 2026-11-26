@@ -59,7 +59,7 @@ const WARDROBE = HOME_THINGS.closet;
 export const HOME_MORNING_PACE = Object.freeze({
   dim: 0.6,
   dark: 0.3,
-  up: 0.6,
+  up: 1.1,
   hooves: Object.freeze([0.6, 0.85, 1.1]),
   door: 1.3,
   lift: 0.45,
@@ -67,7 +67,7 @@ export const HOME_MORNING_PACE = Object.freeze({
   rise: 0.45,
   walk: 160,
   hold: 0.9,
-  think: 1.6,
+  think: 2.2,
   thinkIn: 0.25,
   toCloset: 220,
   boxOut: 0.5,
@@ -94,17 +94,17 @@ export function createHomeMorning(bridge) {
       e = E();
     return h && e && e.get("ch1Day2") && h.step !== "done" ? h : null;
   };
-  // A new step: its name, a fresh clock, and ch1Step so the step restart saves each step on its own.
+  // A new step: its name and a fresh clock.
   const go = (step, extra) => {
-    const e = E(),
-      h = H();
-    Object.assign(h, { step, t: 0, phase: "" }, extra || {});
-    e.set("ch1Step", "hm-" + step);
+    Object.assign(H(), { step, t: 0, phase: "" }, extra || {});
     record.steps.push(step);
   };
-  // The player has Squatch: the chip for this step comes up.
+  // The player has Squatch: the chip for this step comes up. Only these steps set ch1Step ("hm-<step>"), so the step
+  // restart (↺, 20-ch2.js) saves each of them, and ↺ in a part between them (the line, the close-up, the calendar)
+  // goes back to the last one, with what was true then (code review, 2026-11-26).
   const control = (chip) => {
     const e = E();
+    e.set("ch1Step", "hm-" + H().step);
     e.set("sqPose", "stand");
     e.set("ch1Chip", morningWords(chip));
     e.set("ctrl", true);
@@ -354,6 +354,16 @@ export function createHomeMorning(bridge) {
 
   return {
     start,
+    /**
+     * ↺ while the morning plays with no control yet (the night, the wake): no step start is saved then, so the
+     * morning starts again from Squatch asleep. True when it did (20-ch2.js reSec).
+     */
+    restart() {
+      const h = live();
+      if (!h || !["night", "wake"].includes(h.step)) return false;
+      start();
+      return true;
+    },
     /**
      * A test jump (ch1JumpBeat 23, tests): straight to one of the player's steps ("rocket", "closet", "box", "cal",
      * "lunch"), with everything before it done (the gift held, then in the box out on the floor).

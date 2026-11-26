@@ -217,7 +217,7 @@ g.check("Day 2 starts from the bedtime story's sleep", !!R.day2, R.day2);
 // 1. the wordless start
 const night = R.wordless.find((w) => w.phase === "night"),
   wake = R.wordless.find((w) => w.phase === "wake");
-g.check("night to morning plays by itself: the room goes dark and comes back (1 to 4 s)", night && night.secs >= 1 && night.secs <= 4 && R.dark > 0.9, { night, dark: R.dark });
+g.check("night to morning plays by itself: the room goes dark and comes back (2 to 4 s)", night && night.secs >= 2 && night.secs <= 4 && R.dark > 0.9, { night, dark: R.dark });
 g.check("he wakes, stretches and gets up by himself (2 to 4 s)", wake && wake.secs >= 2 && wake.secs <= 4 && R.stretched, { wake, stretched: R.stretched });
 g.check("the wordless start has nothing to tap and no line (no control, no bubble)", R.tapsDuringWordless === 0, R.tapsDuringWordless);
 g.check("Mops leaves while it is dark: there for the night, gone in the morning", R.darkMops === "hidden" && R.mopsAfter === "hidden", { dark: R.darkMops, after: R.mopsAfter });
@@ -318,6 +318,78 @@ const restart = await page.evaluate(() => {
   return { before, after: { step: n.ch1Step, x: Math.round(n.sq.x), y: Math.round(n.sq.y), ctrl: n.ctrl, chip: ss.chipNow() } };
 });
 g.check("↺ on the rocket step puts him back beside the rocket, same step, same goal", restart.before.step === "hm-rocket" && restart.after.step === "hm-rocket" && restart.after.x === restart.before.x && restart.after.ctrl && restart.after.chip === "Squatch: pick up the gift", restart);
+// ↺ in the parts with no control (code review 2026-11-26: they used to leave him with control and no goal): back to
+// the last step he had, with what was true then; in the night or the wake, the morning starts again from asleep.
+const mid = await page.evaluate(() => {
+  const ss = window.__ss,
+    n = ss.op,
+    hm = window.SSQ.beat("ch1-home-morning"),
+    tick = (s) => {
+      for (let i = 0; i < Math.round(s / 0.05); i++) ss.tick(0.05);
+    },
+    press = () => {
+      const o = ss.offerNow();
+      o && o.f();
+    },
+    next = () => ((n.bt = 1), ss.opTap()),
+    after = () => {
+      tick(0.3);
+      const o = ss.offerNow();
+      return { step: (hm.debug().state || {}).step, ctrl: n.ctrl, cur: n.cur ? n.cur.k : "", offer: o ? o.verb + " · " + o.cap : "", gift: (hm.debug().state || {}).gift, door: n.wardrobe };
+    },
+    open = (beat, step) => {
+      n.q = [];
+      n.cur = null;
+      ss.ch1JumpBeat(beat);
+      step && hm.jump(step);
+      tick(0.5);
+    },
+    out = {};
+  open(22);
+  hm.start();
+  tick(0.8);
+  ss.sectionReset();
+  out.night = after();
+  tick(6);
+  out.nightThen = after();
+  open(22);
+  press();
+  tick(1.2);
+  ss.sectionReset();
+  out.hold = after();
+  open(22);
+  press();
+  tick(1.2);
+  next();
+  tick(0.6);
+  ss.sectionReset();
+  out.think = after();
+  open(22, "box");
+  press();
+  tick(1.0);
+  out.inCloseUp = n.cur && n.cur.k === "cutaway";
+  ss.sectionReset();
+  out.closeup = after();
+  open(23);
+  press();
+  tick(0.4);
+  out.inCalendar = !!n.ch1Calendar;
+  ss.sectionReset();
+  out.calendar = after();
+  open(23);
+  press();
+  tick(0.4);
+  ss.tapAt(880, 540);
+  tick(0.4);
+  out.inNotice = n.cur && n.cur.k === "bub";
+  ss.sectionReset();
+  out.notice = after();
+  return out;
+});
+g.check("↺ in the night starts the morning again from asleep, and it plays on to the rocket", mid.night.step === "night" && !mid.night.ctrl && mid.nightThen.step === "rocket" && mid.nightThen.offer === L["button-rocket"], { night: mid.night, then: mid.nightThen });
+g.check("↺ during his Guardians line or the thought bubble: back on the rocket step, the rocket on the floor", ["hold", "think"].every((k) => mid[k].step === "rocket" && mid[k].ctrl && mid[k].offer === L["button-rocket"] && mid[k].gift === "floor"), { hold: mid.hold, think: mid.think });
+g.check("↺ in the box close-up: back on the box step, door open, the gift in his paw", mid.inCloseUp && mid.closeup.step === "box" && mid.closeup.ctrl && mid.closeup.offer === L["button-box"] && mid.closeup.door === "open" && mid.closeup.gift === "held", mid.closeup);
+g.check("↺ in the calendar close-up or the lunch line: back on the calendar step", mid.inCalendar && mid.inNotice && ["calendar", "notice"].every((k) => mid[k].step === "cal" && mid[k].ctrl && mid[k].offer === L["button-cal"] && !mid[k].cur), { calendar: mid.calendar, notice: mid.notice });
 g.check("no page errors", errors.length === 0, errors);
 await page.close();
 await g.finish("home-morning");
