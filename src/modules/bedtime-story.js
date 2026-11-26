@@ -51,20 +51,38 @@ export const BEDTIME_SPOTS = Object.freeze({
   // comes to the bed round the top of the bucket.
   mopsStart: Object.freeze({ x: 790, y: 560 }),
   mopsVia: Object.freeze({ x: 660, y: 470 }),
-  mops: Object.freeze({ x: 380, y: 460 }),
-  tuck: Object.freeze({ x: 325, y: 460 }),
+  // (beside the crate bed, never over it: his drawn body reaches about 76 px in front of his feet; Brian 2026-11-26,
+  // video note 0:58: "Mops also looks like he's overlapping the crate")
+  mops: Object.freeze({ x: 405, y: 460 }),
+  tuck: Object.freeze({ x: 366, y: 460 }),
   door: Object.freeze({ x: 880, y: 462 }),
 });
-// Where the room draws him sitting on the bed (60-frame-draw.js, sqPose "sit" and "sleep": his feet at 205, 444),
-// and where his feet are lying on the locked picture's mattress, head to the left, a quarter turn (the home-alone bed
-// flop's own spot, home-alone.js LIE).
-const SIT = Object.freeze({ x: 205, y: 444 });
-const LIE = Object.freeze({ x: 266, y: 386, a: -Math.PI / 2 });
+// In his crate bed (Brian 2026-11-26, video notes 0:14 and 0:58: "it does look like Squatch just lost his lower body
+// half... make that look like he's actually inside of a crib or crate"): this file draws him sitting down inside the
+// crate, his feet below its front wall's top edge, and lying inside it, his body sinking a little behind that edge; then
+// the crate's front wall is drawn again over him (CRATE_FRONT), so he reads as in a box bed, the mattress behind him.
+const SIT = Object.freeze({ x: 205, y: 458 });
+const LIE = Object.freeze({ x: 266, y: 404, a: -Math.PI / 2 });
+/**
+ * The crate bed's front wall on the locked home picture (game positions: its top edge, just under the purple mattress,
+ * down to the floor), drawn again from the picture itself over Squatch in bed. Nothing of the picture changes.
+ */
+export const CRATE_FRONT = Object.freeze({ x0: 82, x1: 290, y0: 423, y1: 550, picture: "docs/locked-rooms/home-room-empty-closed-v6.png" });
+const crateImg = typeof Image !== "undefined" ? Object.assign(new Image(), { src: CRATE_FRONT.picture }) : null;
+/** Draws the crate bed's front wall from the locked picture over what is in the bed. Returns its box, or null. */
+export function drawCrateFront(ctx) {
+  const F = CRATE_FRONT;
+  if (!crateImg || !crateImg.complete || !crateImg.naturalWidth) return null;
+  const kx = crateImg.naturalWidth / 960,
+    ky = crateImg.naturalHeight / 640;
+  ctx.drawImage(crateImg, F.x0 * kx, F.y0 * ky, (F.x1 - F.x0) * kx, (F.y1 - F.y0) * ky, F.x0, F.y0, F.x1 - F.x0, F.y1 - F.y0);
+  return { x0: F.x0, x1: F.x1, y0: F.y0, y1: F.y1 };
+}
 // Out through the doorway on the right wall (x 912 to 940), where Mops goes out after the light.
 const DOOR_OUT = Object.freeze({ x: 950, y: 462 });
 // The blanket over him lying there: from his neck (x0) to past his feet (x1), from over his body (top) down to the
 // mattress (bottom).
-const BLANKET = Object.freeze({ x0: 200, x1: 292, top: 342, bottom: 424 });
+const BLANKET = Object.freeze({ x0: 200, x1: 292, top: 360, bottom: 442 });
 /**
  * Timing in seconds (placeholders); every wordless part plays 2 to 4 seconds. walk/mops/mopsOut: walking speeds
  * (game pixels a second). mopsGo: when Mops sets off for the bed (into Squatch's walk). hop: his climb into bed.
@@ -213,18 +231,17 @@ export function createBedtimeStory(bridge) {
       P = BEDTIME_PACE,
       t = S.t;
     mopsComes(dt);
-    if (S.sq) {
+    if (S.sq && !S.sq.sitting) {
       const k = Math.min(1, t / P.hop),
         q = ease(k);
       S.sq.x = BEDTIME_SPOTS.side.x + (SIT.x - BEDTIME_SPOTS.side.x) * q;
       S.sq.y = BEDTIME_SPOTS.side.y + (SIT.y - BEDTIME_SPOTS.side.y) * q - Math.sin(k * Math.PI) * 34;
       S.sq.feet = k < 0.5;
       if (k >= 1) {
-        // sitting on the bed, as the room draws him
-        S.sq = null;
+        // sitting inside the crate bed (this file draws him there: SIT, the crate's front over his legs)
+        S.sq = { x: SIT.x, y: SIT.y, a: 0, arms: REST, feet: false, eyes: "", yawn: 0, sitting: true };
         e.place("sq", BEDTIME_SPOTS.inBed.x, BEDTIME_SPOTS.inBed.y);
         e.face("sq", 1);
-        e.set("sqPose", "sit");
       }
       return false;
     }
@@ -237,9 +254,9 @@ export function createBedtimeStory(bridge) {
   // 3. Back in the room after the pictures: he sits in bed, Mops beside him.
   function backInRoom() {
     const e = E();
-    S.sq = null;
+    S.sq = { x: SIT.x, y: SIT.y, a: 0, arms: REST, feet: false, eyes: "", yawn: 0, sitting: true };
     e.place("sq", BEDTIME_SPOTS.inBed.x, BEDTIME_SPOTS.inBed.y);
-    e.set("sqPose", "sit");
+    e.set("sqPose", "lie"); // (this file draws him, sitting in the crate)
     e.place("mops", BEDTIME_SPOTS.mops.x, BEDTIME_SPOTS.mops.y);
     e.face("mops", -1);
     e.set("moPose", "stand");
@@ -249,7 +266,7 @@ export function createBedtimeStory(bridge) {
   function toSleep() {
     const e = E();
     e.set("sqPose", "lie");
-    S.sq = { x: SIT.x, y: SIT.y, a: 0, arms: REST, feet: false, eyes: "", yawn: 0 };
+    S.sq = { x: SIT.x, y: SIT.y, a: 0, arms: REST, feet: false, eyes: "", yawn: 0, sitting: true };
     S.yawned = false;
     S.at = e.time(); // drawn from this frame on (the room no longer draws him)
     phase("yawn");
@@ -475,15 +492,21 @@ export function createBedtimeStory(bridge) {
         drew = { black: +(1 - ease(k)).toFixed(2), fadeIn: true };
         return;
       }
-      if (!["bed", ...ASLEEP_PARTS].includes(S.phase) || e.time() - S.at > 0.25) return;
+      // Squatch in the crate bed (sitting from the hop in, through the ask and Mops's line, then falling asleep): drawn
+      // by this file whenever the story is on, with the crate's front wall over him
+      const inBed = on && S.sq && e.get("sqPose") === "lie" && ["bed", "ask", "line", ...ASLEEP_PARTS].includes(S.phase);
       const c = e.current();
-      if (!c || c.k !== "until") return;
+      const wordless = ["bed", ...ASLEEP_PARTS].includes(S.phase) && e.time() - S.at <= 0.25 && c && c.k === "until";
+      if (!inBed && !wordless) return;
       drew = {};
-      if (S.sq && e.get("sqPose") === "lie") {
+      if (inBed) {
         const d = drawSquatch(ctx);
-        drew.squatch = { x: Math.round(S.sq.x), y: Math.round(S.sq.y), a: +(S.sq.a || 0).toFixed(2), eyes: S.sq.eyes, yawn: +S.sq.yawn.toFixed(2), arms: S.sq.arms.map((r) => +r.a.toFixed(2)) };
+        drew.squatch = { x: Math.round(S.sq.x), y: Math.round(S.sq.y), a: +(S.sq.a || 0).toFixed(2), eyes: S.sq.eyes, yawn: +S.sq.yawn.toFixed(2), arms: S.sq.arms.map((r) => +r.a.toFixed(2)), sitting: !!S.sq.sitting };
         d.blanket && (drew.blanket = d.blanket);
+        // (once he is over the bed: the crate's front wall in front of him)
+        S.sq.x < CRATE_FRONT.x1 + 10 && (drew.crateFront = drawCrateFront(ctx));
       }
+      if (!wordless) return;
       const m = e.pos("mops");
       drew.mops = { x: Math.round(m.x), y: Math.round(m.y), shown: e.get("moPose") !== "hidden" };
       wash(ctx, BEDTIME_NIGHT.color, S.dim * BEDTIME_NIGHT.dim);
@@ -520,6 +543,13 @@ export function createBedtimeStory(bridge) {
       // (something else up, or the player has control, or he is out of the room: cut short by a restart; it is over)
       if (!mine || e.get("ctrl") || e.room() !== "closet") on = false;
       return on;
+    },
+    /**
+     * True while he walks to bed and climbs in (Brian 2026-11-26, video note 0:03: "either be only during the film or
+     * only when we're back in the room"): the room is quiet after the film; the bedtime music starts as he asks.
+     */
+    quietNow() {
+      return this.showing() && (S.phase === "walk" || S.phase === "bed");
     },
     /** Tests: the part playing now, what the last frame drew, and what happened. */
     debug() {

@@ -112,7 +112,9 @@ export const MUSIC_PLACE = Object.freeze({ gift: "home" });
 // The moments where a sung track may play (Brian 2026-11-26): the morning's Goating in Space, and the band.
 export const SINGING_OK = Object.freeze(["morning", "band"]);
 // Seconds of fade at the end of a span (before it goes back to its start, or stops), and in again after.
-export const SPAN_FADE = Object.freeze({ out: 0.8, in: 0.3 });
+// `quiet`: seconds a track fades out when its moment goes quiet (Brian 2026-11-26: the TV story's music stops when the
+// film ends; it does not play on a second and stop).
+export const SPAN_FADE = Object.freeze({ out: 0.8, in: 0.3, quiet: 0.8 });
 
 // Where each rotation is (the next track for that moment's next visit).
 const turn = {};
@@ -215,6 +217,8 @@ export function keepInSpan(el, cue) {
   if (!visit.place || visit.hush) return 0;
   const s = spanFor(visit.cue, visit.n);
   if (!s) return 0;
+  // going quiet (the cue has left for a moment with no music, not held for HOLD yet): fade out now
+  const quiet = visit.pend && visit.pend.place === "" ? Math.max(0, 1 - (clock() - visit.pend.since) / SPAN_FADE.quiet) : 1;
   const file = MUSIC_FILES[s.file];
   if (visit.fresh) {
     visit.fresh = false;
@@ -239,7 +243,7 @@ export function keepInSpan(el, cue) {
     } catch {}
     return 0;
   }
-  return file.match * Math.max(0, Math.min(1, (s.to - t) / SPAN_FADE.out, (t - s.from + 0.05) / SPAN_FADE.in));
+  return quiet * file.match * Math.max(0, Math.min(1, (s.to - t) / SPAN_FADE.out, (t - s.from + 0.05) / SPAN_FADE.in));
 }
 
 // One decoded copy of each sound per audio context (the bleat is shared by the morning's line and the song).

@@ -144,7 +144,7 @@ const run = !(started && tvDone)
           const r = beat.debug().drew;
           r && out.room.push({ phase, t: +since.toFixed(2), ...r });
           out.chips.push({ phase, chip: chip() });
-          out.music.push({ phase, cue: window.SSQ.musicNow().cue, warm: ss.warmCue });
+          out.music.push({ phase: beat.debug().phase, cue: window.SSQ.musicNow().cue, warm: ss.warmCue });
         }
       }
       wordless.includes(phase) && out.wordless.push({ phase, secs: +since.toFixed(2) });
@@ -179,7 +179,15 @@ g.check("Mops comes over and stays beside the bed (facing him) for the story", r
 // The ask
 const ask = run.lines.find((l) => l.who === "sq");
 g.check('Squatch asks in one bubble over him: "Tell me about when we first met?"', ask && ask.text === ASK && run.lines.filter((l) => l.who === "sq").length === 1, run.lines);
-g.check("he asks sitting in his bed, with Mops beside the bed", run.askAt && run.askAt.pose === "sit" && run.askAt.mops.x < 420 && run.askAt.mops.pose === "stand", run.askAt);
+const askDrawn = run.room.filter((r) => r.phase === "ask" && r.squatch);
+g.check("he asks sitting inside his crate bed (drawn sitting, the crate's front wall drawn over his legs), with Mops beside the bed", run.askAt && askDrawn.length > 0 && askDrawn.every((r) => r.squatch.sitting && r.crateFront && r.squatch.y > r.crateFront.y0) && run.askAt.mops.x < 420 && run.askAt.mops.pose === "stand", { askAt: run.askAt, drawn: askDrawn[0] });
+// Brian 2026-11-26 (video note 0:58, "Mops also looks like he's overlapping the crate"): Mops stands beside the crate
+// bed, never over it. His drawn body reaches about 22 of his units in front of his feet (60-frame-draw.js Fe), at the
+// home room's Mops size (3.45 game px a unit).
+const CRATE_X1 = 290,
+  MOPS_FRONT = 22 * 3.45;
+const mopsXs = run.room.filter((r) => r.mops && r.mops.shown && r.mops.x < 500).map((r) => r.mops.x);
+g.check("Mops never overlaps the crate bed: beside it for the story, and when he steps in to tuck him in", mopsXs.length > 0 && Math.min(...mopsXs) - MOPS_FRONT >= CRATE_X1, { nearest: Math.min(...mopsXs), front: MOPS_FRONT, crate: CRATE_X1 });
 g.check("the ask's words are in the lines file, approved word for word (Brian 2026-11-26)", L["sq-first-met"] && L["sq-first-met"].text === ASK && L["sq-first-met"].who === "sq" && L["sq-first-met"].status === "approved");
 g.check("the wordless pat and the thought bubble are gone (no pat sound, no thought drawn)", run.debug && !("pat" in run.debug.sounds) && run.room.every((r) => !r.thought), run.debug && run.debug.sounds);
 
@@ -224,8 +232,13 @@ g.check("the bleat is asked for only by the bedtime story, the morning song's bl
 g.check("window.SSQ.playSoundPick plays through music-picks.js playSound (no second sound system)", /playSoundPick\(name\)[\s\S]{0,200}playSound\(b\.ctx, b\.fx, name/.test(MODS["bridge.js"]));
 // The music (Brian's music table, 2026-11-26): bedtime plays Reawakening, nothing hard-coded.
 const PICKS = await import(join(root, "src", "modules", "music-picks.js"));
-const bedMusic = run.music.filter((m) => m.phase && m.phase !== "end");
-g.check("from the walk to bed until the fade, the music follows the \"bedtime\" cue (every frame)", bedMusic.length > 100 && bedMusic.every((m) => m.cue === "bedtime"), bedMusic.filter((m) => m.cue !== "bedtime").slice(0, 5));
+const bedMusic = run.music.filter((m) => m.phase && m.phase !== "end"),
+  toBed = bedMusic.filter((m) => m.phase === "walk" || m.phase === "bed"),
+  afterAsk = bedMusic.filter((m) => m.phase !== "walk" && m.phase !== "bed");
+// Brian 2026-11-26 (video note 0:03, "either be only during the film or only when we're back in the room"): the film's
+// music ends with the film; the walk to bed is quiet; the bedtime music starts as he asks.
+g.check("after the film the walk to bed and the climb in are quiet (no music cue)", toBed.length > 30 && toBed.every((m) => m.cue === ""), toBed.filter((m) => m.cue !== "").slice(0, 5));
+g.check("from his ask until the fade, the music follows the \"bedtime\" cue (every frame)", afterAsk.length > 60 && afterAsk.every((m) => m.cue === "bedtime"), afterAsk.filter((m) => m.cue !== "bedtime").slice(0, 5));
 g.check("and through every story picture and the Guardians picture", run.picMusic.length === 7 && run.picMusic.every((m) => m.cue === "bedtime"), run.picMusic);
 g.check("after the fade the bedtime story is over: not showing, and the home cue is no longer \"bedtime\" from it", run.showingAfter === false && (run.cueAfter === "home" || run.cueAfter === "bedtime"), { showing: run.showingAfter, cue: run.cueAfter });
 g.check("the bedtime cue plays Reawakening (music-picks.js), and only it", PICKS.fileFor("bedtime") === "music/reawakening.mp3" && PICKS.listFor("bedtime").length === 1);
@@ -258,9 +271,9 @@ const at = (p) => run.room.filter((r) => r.phase === p);
 const yawn = at("yawn");
 g.check("he gives a big yawn and stretches: both arms go up and his mouth opens wide, sitting in bed", yawn.some((r) => r.squatch && r.squatch.yawn > 0.8 && Math.abs(r.squatch.arms[0]) > 2.5 && Math.abs(r.squatch.arms[1]) > 2.5 && r.squatch.a === 0), yawn.filter((_, i) => i % 6 === 0).map((r) => r.squatch));
 const lieEnd = at("lie").slice(-1)[0];
-g.check("he lies down on his side on the mattress and his eyes close", lieEnd && lieEnd.squatch && Math.abs(lieEnd.squatch.a + Math.PI / 2) < 0.02 && lieEnd.squatch.eyes === "closed" && lieEnd.squatch.x === 266 && lieEnd.squatch.y === 386, lieEnd);
+g.check("he lies down on his side in the crate bed (the crate's front wall in front of him) and his eyes close", lieEnd && lieEnd.squatch && Math.abs(lieEnd.squatch.a + Math.PI / 2) < 0.02 && lieEnd.squatch.eyes === "closed" && lieEnd.squatch.x === 266 && lieEnd.squatch.y === 404 && !!lieEnd.crateFront, lieEnd);
 const tuck = at("tuck");
-g.check("Mops steps in to the bed and pulls a blanket up over him", tuck.some((r) => r.mops.x < 360 && r.blanket && r.blanket.cover > 0 && r.blanket.cover < 1) && tuck.slice(-1)[0].blanket && tuck.slice(-1)[0].blanket.cover === 1, tuck.filter((_, i) => i % 6 === 0).map((r) => ({ mops: r.mops, blanket: r.blanket })));
+g.check("Mops steps in to the bed and pulls a blanket up over him", tuck.some((r) => r.mops.x < 380 && r.blanket && r.blanket.cover > 0 && r.blanket.cover < 1) && tuck.slice(-1)[0].blanket && tuck.slice(-1)[0].blanket.cover === 1, tuck.filter((_, i) => i % 6 === 0).map((r) => ({ mops: r.mops, blanket: r.blanket })));
 g.check("then Mops walks to the doorway on the right wall", run.debug && run.debug.door && run.debug.door.x >= 860, run.debug && run.debug.door);
 const lights = at("lights");
 g.check("at the door the room light goes down to a night-blue dim, and Mops goes out", lights.length > 0 && lights[0].dim < 0.1 && lights.slice(-1)[0].dim >= 0.55 && lights[0].mops.shown && !lights.slice(-1)[0].mops.shown, lights.filter((_, i) => i % 5 === 0).map((r) => ({ dim: r.dim, mops: r.mops })));

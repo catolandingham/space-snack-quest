@@ -64,7 +64,9 @@ export function createBridge() {
     if (cue !== "home") return cue;
     const tv = beats.get("ch1-tv-story"),
       bed = beats.get("ch1-bedtime-story");
-    return tv && tv.showing && tv.showing() ? "tv" : bed && bed.showing && bed.showing() ? "bedtime" : cue;
+    // (the bedtime story's walk to bed and climb in are quiet: the TV story's music has ended with the film, and the
+    // bedtime music starts as Squatch asks; Brian 2026-11-26, video note 0:03)
+    return tv && tv.showing && tv.showing() ? "tv" : bed && bed.quietNow && bed.quietNow() ? "" : bed && bed.showing && bed.showing() ? "bedtime" : cue;
   };
   return Object.freeze({
     version: 1,
