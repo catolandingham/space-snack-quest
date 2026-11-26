@@ -4,24 +4,30 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–97 | ## Where main is (Chapter 1 redesign) |
-| 98–112 | ## Register |
-| 113–134 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 135–155 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 156–168 | ## Phase 2 (plan section 4, T13 to T18) |
-| 169–191 | ## Phase 1 (plan section 3, T5 to T12) |
-| 192–205 | ## SS40–SS44 |
-| 206–223 | ## Story rows |
-| 224–242 | ## Reset section |
-| 243–253 | ## Still open |
-| 254–257 | ## Chapter 1 replot, recorded and not built |
-| 258–413 | ## Changelog |
+| 24–103 | ## Where main is (Chapter 1 redesign) |
+| 104–118 | ## Register |
+| 119–140 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 141–161 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 162–174 | ## Phase 2 (plan section 4, T13 to T18) |
+| 175–197 | ## Phase 1 (plan section 3, T5 to T12) |
+| 198–211 | ## SS40–SS44 |
+| 212–229 | ## Story rows |
+| 230–248 | ## Reset section |
+| 249–259 | ## Still open |
+| 260–263 | ## Chapter 1 replot, recorded and not built |
+| 264–421 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-26, draft PR #87, not merged. Done: Brian's five showing-6 notes (README, "Chapter 1 redesign", the 2026-11-26 paragraph): sight sees his whole drawn body (the cone drawn on him is the cone that sees him), the crowd's hiss gone, one music table with no singing away from bedtime, his own Croc Boys song for the band, the photo straight after his first dance, guards round the furniture. Open for Brian:
+- Music (Brian's picks of 2026-11-26, built in `src/modules/music-picks.js`): the home rotation is Carefree, Morning, Rainbows; bedtime's Reawakening waits for the bedtime story's branch to send its "bedtime" cue; Mops's closing-time hum is "track to be chosen by Brian" (stand-in: silence); the "mops-bleat" sound waits for its clip. Mops's approved line "Floating in space! It's our favorite song!" and Squatch's "♪ I'm floating in space! ♪" now sit over Goating in Space: keep or change the words? There is no credits screen in the game: the CC BY credits are in `music/CREDITS.txt` and the README; does he want them on a screen too?
+- Approval needed, visual: a dashed cone close to Squatch is drawn darker and thicker (`CONE_NEAR` in `party-watch.js`), so a kid sees the cone about to touch him on a phone; the guards' new routes round the plants; the flyer sneak's re-searched sweeping cones.
+- The guards' flashlights: in the hall they carry none (plain sight cones from the moment they walk in until they walk out); at home the guard's flashlight beam is on from the doorway until Mops sends him off (DECISIONS 2026-11-24 says he carries one, not when it is on). On only while searching?
+- The P4 sweeping cones were searched again (placeholders) because his whole body is now seen: the flyer sneak is harder.
 
 2026-11-25 (evening), draft PR #87, not merged. Done: Brian's twelve showing-5 decisions and his two code rules (README, "Chapter 1 redesign", the 2026-11-25 evening paragraph). Open for Brian:
 - Pick the FUR alarm: `tools/alarm-choices.html` (five made-up sounds). The game's alarm is unchanged until he picks.
@@ -256,6 +262,8 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/old/OPEN-ASKS.md`. The
 `docs/DECISIONS.md` rows R29 through R63 are the Nov 8–9 cartoon decisions. R29–R57 cover the home wardrobe, no home vent, the pickup-day crate, the spare blue jacket disguise, Isfred Bar Neshuman, ball-hide timing, the office computer, the connecting hallway, the party with no Mops and no robots, the office cutscene, and the Employee of the Month gallery (5 photos, crooked photo #4, keepsake points still open). R58–R63 are not in the game. R58: returning the balloon gets a wordless smile, a finger to the lips, and a thumbs-up; keeping it makes the kid yell "Scary Wookiee!" (NEEDS BRIAN), pulls the FUR alarm, and brings security; never jumping sends the balloon to the ceiling, the kid is sad, and nothing else happens. R59, delegated by Brian: the kid gasps with "!" and points, then a 6-second wobbly glowing rise while grabbable, one jump grabs it, and it reads with no words. R60: the pair hunt is dropped; a "Find someone who…" picture card is proposed and pending Brian; the octopus is an over-snacked, huggy tourist ("*hic* Fellow tourist!", NEEDS BRIAN) whose two hugs knock the disguise off; a photo corner lets Squatch enter the shot, then a cut to a printing Polaroid, with bonus points if he is in it (amount open); tapes proof is dropped; the third snack-table grab starts a chain reaction that pushes things off the far end and gives a hide window (4-second placeholder, needs Brian). R61: the balloon stays in the party hall later (on the ceiling if missed, tied near the kid's spot if returned) and pops quietly with a comic "POP!" (NEEDS BRIAN) on the last Chapter 1 hall visit. R62: funnier gags are things worn as horns, something in his mouth, and random things on his head, about 16, the Squatch ball-roll photobomb stays, and the crooked photo stays #4; the crayon drawing reads as Squatch and Mops with "Always tied together" (NEEDS BRIAN) underneath; controls are left and right arrows under the photo plus an X that is always visible; swiping past photo 5 always triggers "BEEP BEEP" (NEEDS BRIAN) and the gallery cuts out. R63: kid-handwritten "MOPS" and "ME" (NEEDS BRIAN), and a dotted sight line from Mops to Squatch with hearts rising from it, contrasting with the "!" other characters get. They are not in the game. New on-screen words are marked NEEDS BRIAN in `docs/CH1-CARTOON-LINES.md`. Ball-hide numbers (R43, about 70px for 2 seconds), the 6-second rise (R59), and the 4-second snack-table placeholder (R60) are written down only. This page does not change a timer, a price, or a range in the build.
 
 ## Changelog
+
+2026-11-26, draft PR #87, Brian's showing-6 notes. New: `music-picks.js` (one table: moment to a stretch of a music file, or silence; `window.SSQ.musicSpan` keeps Joe's theme element in its stretch, called from `warmTick` in `00-core.js`, the same number of lines), `music/stormtop-sylvania.mp3` (the Croc Boys' song, played by `party-sound.js` through the band's bus and the music level), `music/goating-in-space.mp3` (the morning, once: `home-music.js`), Kevin MacLeod's Carefree, Der Kleber Sting, Funky Chunk (cut to 1:10), Lobby Time, Odyssey (cut to 1:15) and Sneaky Snitch, credited in `music/CREDITS.txt`; the older program's music element plays every file through `keepInSpan` (its cues: title, home, gift, heart, hall, sneak, and the party's `musicCue`; at home the TV story's cue is "tv", `tv-story.js` `showing`); `party-sound.js` plays the band's list and the sting; `music/floating-in-space.mp3` removed (nothing plays it; `MIX.floatingMatch` gone), `tests/party-showing6.mjs`. Changed: `party-watch.js` (`SQUATCH_OUTLINE`, `coneEdge`; `coneSeesPoint` for the home guard), `party-hall.js` (`P4_SWEEP` searched again; the bar strip marked `bar`), `party-alarm.js` (`guardStep`, `GUARD_AROUND`), `party-board-sounds.js` (the murmur without its noise), `party-free.js` (`PHOTO_AFTER_DANCE`), `home-music.js` and `party-sound.js` read the table; `tests/party-sneak.mjs`, `tests/ch1-party-cones.mjs`, `tests/party-flyer.mjs`, `tests/morning-music.mjs` and `tests/sound-cues.mjs` follow the outline and the table; `tests/standing-spots.mjs` walks the guards.
 
 2026-11-25 (evening), draft PR #87, Brian's showing-5 decisions. New modules: `room-sizes.js` (`HALL_BIGGER`, `adultPxFor`, `doorAdultPx`, moved from `src/game/12-ch1-redesign.js`), `goal-mark.js` (the goal outline's place for the walk ring, was `goalMarkNow` and `lastRing.place`), `music-rules.js` (`singingNow`, was `singNow`'s body in `00-core.js`), `party-question.js` (the filling "?"), `footfalls.js` (footsteps only while moving), `tv-story.js`, `tv-story-art.js`, `tv-story-lines.js` (beat 20). `party-photo.js`: phases `settle`, `pose`, `call`, `camera`, `gather`, `join`, `count`; `PHOTO.click` retired for `settle`, `pose`, `call`, `step`, `carry`, `walk` 125, `joinTime`; `tripodOut`, `bandPosing`. `party-octopus.js`: modes `ready` and `lunge`, `lunge()`, `startChase()`, `OCT.lunge`, `OCT.notice`. `party-hall.js`: `HOME_ROOM.flyer` under the bed, `HOME_ROOM.saveAt`; the tripod's solid and `CAST` tripod retired; `isfredBar` x 780 (was 782). `party-talk.js`: `TALK_SPOTS.sq` 680, 590 (was 400), `take` = `saveAt`. `party-after-alarm.js`: `mopsTalk` 800, 584 (was 600, 578). `party-alarm.js`: `alarm.over`. The flyer's state "floor" is now "bed". Pins: `oct-speed` 90 to 170 (Brian's written yes), `hall-bigger` and `adult-door-share` moved to `room-sizes.js` (values unchanged). Lines 77 to 83 new; 27, 66 and 67 removed (rows kept). New tests: `game-no-growth`, `standing-spots`, `footsteps`, `tv-story`. Placeholders: `PHOTO` steps, `OCT.lunge`, `QUESTION_LOOK`, the hat's tip, the gap glow.
 

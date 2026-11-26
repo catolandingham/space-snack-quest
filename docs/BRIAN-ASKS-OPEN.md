@@ -5,23 +5,23 @@
 | --- | --- |
 | 26–32 | # Brian's asks that are not in the game yet |
 | 33–41 | ## 1. Build next |
-| 42–59 | ## 2. Needs your eyes |
-| 60–63 | ## 3. Your instructions disagree |
-| 64–65 | ## 4. Everything else not built |
-| 66–84 | ### Morning and home |
-| 85–95 | ### Party |
-| 96–107 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
-| 108–111 | ### Party video notes and answers, 2026-11-24 (not built yet) |
-| 112–116 | ### Snacks and dress-up |
-| 117–129 | ### Day 2 and night |
-| 130–134 | ### Escape and later chapters |
-| 135–138 | ### Looks and lines |
-| 139–146 | ### Sound |
-| 147–150 | ### Words and rules |
-| 151–163 | ### How the bots work |
-| 164–171 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
-| 172–188 | ## 5. Merged, in a pull request, and being built |
-| 189–199 | ## 6. Corrections to the checkers |
+| 42–60 | ## 2. Needs your eyes |
+| 61–64 | ## 3. Your instructions disagree |
+| 65–66 | ## 4. Everything else not built |
+| 67–85 | ### Morning and home |
+| 86–96 | ### Party |
+| 97–108 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
+| 109–112 | ### Party video notes and answers, 2026-11-24 (not built yet) |
+| 113–117 | ### Snacks and dress-up |
+| 118–130 | ### Day 2 and night |
+| 131–135 | ### Escape and later chapters |
+| 136–139 | ### Looks and lines |
+| 140–147 | ### Sound |
+| 148–151 | ### Words and rules |
+| 152–164 | ### How the bots work |
+| 165–172 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
+| 173–189 | ## 5. Merged, in a pull request, and being built |
+| 190–200 | ## 6. Corrections to the checkers |
 <!-- /section-index -->
 # Brian's asks that are not in the game yet
 
@@ -46,7 +46,8 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 - **Home room objects.** "the new version of the crate in the room is off, at least in the picture you showed." (G 597). Covers crate, bed, bucket, bedtime-story look, janitor facing. Walls and furniture merged today; check.
 - **The dance game.** A scrolling-arrow dance exists but you said it never worked. "The dance game, hopefully that can be done clean and simple. If not, forget it." (G 516). "the fur shows at the dance scene" (G 603) is unclear.
 - **The balloon game.** "The balloon thing has just never worked when we've tried it before ... if it's all wonky and confusing, forget it." (G 516); "the balloon's just total nonsense" (K 336). Still in main (12-ch1-redesign.js:808-834).
-- **The theme song.** "don't like the theme song :/ definitely not the singing part" (G 318). Joe's track is one he uploaded ("This should be main theme", S 354; "It's all good", S 361). Ask which song he meant before building.
+- **Which music where** (2026-11-26, showing 6: "I don't think we should default to the vocal part of this song"; "let's find alts to very where else"). Built: his picks of 2026-11-26 in one table (`src/modules/music-picks.js`): Goating in Space the first time home on day one, a home rotation every other daytime visit (Carefree, Morning, Rainbows), Reawakening at bedtime (with the bedtime branch), Odyssey for the TV story, Lobby Time in the empty hall, Sneaky Snitch for sneaking, Der Kleber Sting when caught, Stormtop-Sylvania then Funky Chunk for the band, Joe's opening tune on the title. Waiting: the goat bleat clip ("mops-bleat"); Mops's closing-time hum (stand-in: silence).
+- **The guards' flashlights** (2026-11-26, showing 6: "should they always come with flashlights on?"). In the hall the guards carry none (plain sight cones while they are in the hall); at home the guard's beam is on from the doorway until Mops sends him off. On only while searching, off walking in and out? Not changed until he says.
 - **Hallway and corners.** "Adding The Airlock Button Here For No Reason Doesn't Really Make Sense" (P L198). "The Alarm Can Not Be In The Bush Here" (P L163). The hall asks about the speaker and FUR alarm on one wall and the window wrap (S 457, 463, 466) are checked against the locked hall picture, which has the speaker and alarm on the back wall and no wrap.
 - **Sizes and looks of people.** Room-door sizing is built, cutscene sizes unchecked. "please go ahead with sizing people by each room's door, even tho it risks running out" (S 1163). "It could just be is Fred." (S 982). "I hate the arms on the green guys - just make them normal" (K 314).
 - **Room changes and camera.** "it kind of jumps to him dropping into the middle of the next scene versus like a smooth walk" (S 195); "the camera being in off placement and so so so many of those things" (K 328). Characters jumping: "All Of A Sudden You're Hidden Like We Need An Actual Transition Here" (P L90) means show how he got hidden.
@@ -177,7 +178,7 @@ Merged 2026-11-23: cones on everyone and the six approved guests (#75), controls
 Merged 2026-11-23: home alone after Mops leaves (#84, morning plan PR 3): the homework goal and cutaway, OPEN · closet with the G box, FLOP · bed, the calendar already bitten (13A to 16A).
 
 Not merged yet:
-- The party night (draft PR #87, branch feat/party-half-two): Brian's showing-5 decisions of 2026-11-25 are built, with the Wookiee TV story back (his Wookiee recording plays on it); showing 6 waits for his eyes.
+- The party night (draft PR #87, branch feat/party-half-two): Brian's showing-5 decisions of 2026-11-25 and his showing-6 notes of 2026-11-26 are built (sight sees his whole body, no hiss under the crowd, no singing away from bedtime, his Croc Boys song, the photo right after the dance, guards round the furniture); showing 7 waits for his eyes.
 - The quiet room's mopping (the same branch, draft PR #88), Brian after its video, 2026-11-24: "It's hard to tell the difference between the whistle and the squeaking. Can we make the snore and whistle a bit more prominent? ... see the janitor walking around, mopping the floor with his beard ... the water on the floor kind of following ... And then walking back to the bucket to squeeze it out." Built: Mops's loop before the first tap, a louder snore, swish-only strokes while Squatch sleeps (`src/modules/mop-loop.js`). Waiting for his ears and eyes.
 - The morning's sound (branch feat/morning-sound, draft), Brian's answers of 2026-11-24: 34A (every MY PICK on the sound board, in the morning and home alone), 31a (the beard squirts when tapped; "Hey, stop that!"), 30a (a cutaway with no words and nothing to tap plays by itself), the music and effects levels and Brian's recording turned up 10 dB. The morning fixes (18a to 21a) merged on 2026-11-24 as PR #86.
 - The tap-path change.

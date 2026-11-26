@@ -513,24 +513,22 @@
         }
       } else warmEl.volume = Math.max(0, Math.min(1, 0.5 * z * v));
     }
-    // A1: Joe's recording is the warm theme. It plays on the title, at home (not during the search or
-    // dress-up), while the morning gift is out, and on the balloon kid's happy faces. Sneak and journey
-    // stay generated. The file is made and first started inside a tap (warmPrime), since iPhones refuse to
+    // The music element: which file plays for each cue (title, home, gift, heart, hall, sneak, and the party's
+    // musicCue) is src/modules/music-picks.js (Brian 2026-11-26); the journey stays generated. The file is made and first started inside a tap (warmPrime), since iPhones refuse to
     // start it otherwise; after that warmTick plays and pauses it.
     function warmWhy() {
       if (G) return "";
       if (p.state === "title") return "title";
       if (p.state !== "op") return "";
-      // The morning has the room's music (Brian's Floating in Space) until "That evening…".
+      // The morning has the room's music (its pick in src/modules/music-picks.js) until "That evening…".
       if (window.SSQ && window.SSQ.homeMusic && window.SSQ.homeMusic.owns()) return "";
-      // The party night has its own music (the Croc Boys, muffled at home; src/modules/party-sound.js), never Joe's theme.
-      if (window.SSQ && window.SSQ.beat("ch1-party") && window.SSQ.beat("ch1-party").active()) return "";
+      // The party night has its own music (the band; src/modules/party-sound.js), except the moments it names (musicCue).
+      if (window.SSQ && window.SSQ.beat("ch1-party") && window.SSQ.beat("ch1-party").active()) return (window.SSQ.beat("ch1-party").musicCue && window.SSQ.beat("ch1-party").musicCue()) || "";
       if (n.roomWalk) return "";
-      if (n.ch1Night && n.scene === "Q4" && n.ctrl) return "";
+      if ((n.ch1Night && n.scene === "Q4" && n.ctrl) || (n.ch1Sneak && n.ctrl)) return "sneak";
       if (n.ch1Heart) return "heart";
       if (n.gift || n.holdToy) return "gift";
-      if (n.room === "closet") return "home";
-      return "";
+      return n.room === "closet" ? "home" : n.room === "hall" && !n.ch1Night ? "hall" : "";
     }
     function musicWant() {
       if (singNow()) return "";
@@ -575,7 +573,7 @@
       warmFade += (goal - warmFade) * step;
       if (warmFade < 0.02 && !goal) ((warmFade = 0), (warmStarting = !1), warmEl.paused || warmEl.pause());
       else {
-        warmLevel(warmFade);
+        warmLevel(warmFade * (window.SSQ && window.SSQ.musicSpan ? window.SSQ.musicSpan(warmEl, warmWhy()) : 1));
         if (warmEl.paused && goal > 0 && !warmStarting) {
           warmStarting = !0;
           warmPlayState = "pending";
@@ -587,7 +585,7 @@
             );
         }
       }
-      window.__ss && ((window.__ss.warmPlay = warmPlayState), (window.__ss.warmCue = warmWhy()), (window.__ss.warmPaused = !!warmEl.paused), (window.__ss.warmVia = warmVia));
+      window.__ss && ((window.__ss.warmPlay = warmPlayState), (window.__ss.warmCue = window.SSQ && window.SSQ.musicCue ? window.SSQ.musicCue(warmWhy()) : warmWhy()), (window.__ss.warmPaused = !!warmEl.paused), (window.__ss.warmVia = warmVia));
     }
     function musicTick(l) {
       // Brian's Floating in Space (the morning, src/modules/home-music.js): it fades out off the game screen.

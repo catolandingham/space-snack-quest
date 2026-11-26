@@ -83,7 +83,7 @@ const frameAt = (x, y, n = 1) =>
   );
 // The arc a cone was drawn with (same centre and radius), or null when it was not drawn.
 const arcOf = (f, c) => f.arcs.find((a) => Math.abs(a.x - c.ox) < 0.01 && Math.abs(a.y - c.oy) < 0.01 && Math.abs(a.r - c.len) < 0.01) || null;
-const edgeOf = (c, s) => watch.distToCone(s.x, s.y - watch.SQUATCH_SEEN_ABOVE_FEET, c.ox, c.oy, c.a, c.half, c.len);
+const edgeOf = (c, s) => watch.coneEdge(c, s);
 const yellow = (a) => !!a && /255,\s*234,\s*120/.test(a.fill);
 
 // Out in the open first, to read where everyone stands.
@@ -98,14 +98,16 @@ g.check("every cone is the same full length", lens.length === 1 && lens[0] > 100
 // A place inside the camera tourist's cone and no one else's (he stays by his camera; his cone is steady).
 const spot = (() => {
   const cam = open.cones.find((c) => c.id === "camera");
-  for (const d of [90, 110, 70, 130, 60, 150])
-    for (const da of [0, 0.15, -0.15, 0.3, -0.3]) {
-      const x = cam.ox + Math.cos(cam.a + da) * d,
-        y = cam.oy + Math.sin(cam.a + da) * d + watch.SQUATCH_SEEN_ABOVE_FEET;
-      if (y < 310 || y > 585 || x < 70 || x > 890) continue;
-      const s = { x, y };
-      if (edgeOf(cam, s) <= 0 && open.cones.filter((c) => c.id !== "camera").every((c) => edgeOf(c, s) > 0)) return s;
+  // (sight sees his whole outline, party-watch.js coneEdge: every place on the floor is tried, and the one furthest
+  // from everyone else's cone is used)
+  let best = null;
+  for (let x = 70; x <= 890; x += 10)
+    for (let y = 310; y <= 585; y += 10) {
+      const s = { x, y },
+        others = Math.min(...open.cones.filter((c) => c.id !== "camera").map((c) => edgeOf(c, s)));
+      if (edgeOf(cam, s) <= 0 && others > 0 && (!best || others > best.others)) best = { x, y, others };
     }
+  if (best) return { x: best.x, y: best.y };
   return null;
 })();
 g.check("there is floor inside the camera tourist's cone only (the test can stand there)", !!spot, spot);

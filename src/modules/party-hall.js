@@ -97,15 +97,16 @@ export const FLYER = Object.freeze({
  * tourist films the band and Isfred looks into the room. Each sweeper's look is `base + amp * sin(2 pi t / period +
  * phase)` radians, `t` the seconds since P4 began (the same every play). tests/party-flyer.mjs searches the game's
  * own cones over time: from the plant, a kid who waits has a way to the flyer whenever he sets off, and walking
- * straight in from the start is caught. PLACEHOLDERS (numbers from that search).
+ * straight in from the start is caught. PLACEHOLDERS (numbers from that search; searched again 2026-11-26 when
+ * sight began to see his whole body, not one point low on him: the old numbers left no way through).
  */
 export const P4_SWEEP = Object.freeze({
-  robot: Object.freeze({ base: 1.68, amp: 0.86, period: 8, phase: 6.23 }),
-  "octopus-guest": Object.freeze({ base: 2.47, amp: 1.13, period: 9, phase: 3.83 }),
-  backpack: Object.freeze({ base: -1.8, amp: 1.06, period: 10, phase: 3.29 }),
-  bartender: Object.freeze({ base: 2.66, amp: 0.31, period: 6, phase: 5.7 }),
-  teal: Object.freeze({ base: 0.3, amp: 0.6, period: 8, phase: 0.5 }),
-  stilt: Object.freeze({ base: 2.84, amp: 0.6, period: 8, phase: 3.64 }),
+  robot: Object.freeze({ base: 2.41, amp: 0.83, period: 8, phase: 0.82 }),
+  "octopus-guest": Object.freeze({ base: 3.21, amp: 0.88, period: 9, phase: 3.97 }),
+  backpack: Object.freeze({ base: -2.15, amp: 0.77, period: 10, phase: 6.08 }),
+  bartender: Object.freeze({ base: 2.18, amp: 0.11, period: 6, phase: 0.64 }),
+  teal: Object.freeze({ base: 0.61, amp: 0.57, period: 8, phase: 5.52 }),
+  stilt: Object.freeze({ base: 2.59, amp: 0.6, period: 8, phase: 4.43 }),
 });
 /** Where a P4 sweeper looks `t` seconds into P4 (radians), or null for someone who does not sweep. */
 export function sweepAngle(id, t) {
@@ -124,11 +125,11 @@ export const GLANCE_TIMES = Object.freeze({ stage: 3.5, warn: 0.5, look: 2, back
 // there. (The camera's tripod is not in the hall until the group photo, Brian 2026-11-25.)
 export const HALL_SOLIDS = Object.freeze([
   Object.freeze({ x0: 240, x1: 490, y0: 0, y1: 304 }),
-  Object.freeze({ x0: 806, x1: 960, y0: 0, y1: 606 }),
+  Object.freeze({ x0: 806, x1: 960, y0: 0, y1: 606, bar: true }),
   Object.freeze({ x0: 772, x1: 800, y0: 380, y1: 400 }),
   Object.freeze({ x0: 772, x1: 800, y0: 438, y1: 458 }),
-  Object.freeze({ x0: 72, x1: 136, y0: 330, y1: 372 }),
-  Object.freeze({ x0: 412, x1: 476, y0: 520, y1: 552 }),
+  Object.freeze({ x0: 72, x1: 136, y0: 330, y1: 372, plant: true }),
+  Object.freeze({ x0: 412, x1: 476, y0: 520, y1: 552, plant: true }),
 ]);
 // Where the camera points: the middle of the stage; once the band plays (Isfred has left the stage), the Croc Boys.
 export const CAMERA_AIM = Object.freeze({ x: 420, y: 280 });

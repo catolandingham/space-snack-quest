@@ -7,7 +7,7 @@
  *   g.known("name", stillHappens, detail) for a known problem: printed as KNOWN, never a failure.
  */
 import http from "node:http";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -44,8 +44,8 @@ export async function startGame({ port, name }) {
     process.exit(1);
   }
   const html = await readFile(join(root, "index.html"));
-  // The music files the game may load: Joe's theme, and Brian's Floating in Space (not wired yet).
-  const MUSIC = ["music/main-theme-from-brian.mp3", "music/floating-in-space.mp3"];
+  // The music files the game may load: every mp3 in music/ (src/modules/music-picks.js says which plays where).
+  const MUSIC = readdirSync(join(root, "music")).filter((f) => f.endsWith(".mp3")).map((f) => "music/" + f);
   const musicBufs = new Map();
   const server = http.createServer((req, res) => {
     let pathname = "/";

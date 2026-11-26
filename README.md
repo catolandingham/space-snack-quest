@@ -3,21 +3,22 @@
 
 | Lines | Heading |
 | --- | --- |
-| 22–31 | # Space Snack Quest |
-| 32–103 | ## Chapter 1 redesign (on main) |
-| 104–134 | ## Source and build |
-| 135–145 | ## Debug link |
-| 146–151 | ## Automatic checks |
-| 152–155 | ## Screen fit |
-| 156–177 | ## Brian's repeat complaints, as tests (2026-11-22) |
-| 178–183 | ## Scene 1 morning |
-| 184–187 | ## Chapter 1 kid robot |
-| 188–204 | ## Phase 1: kitchen and diner clarity |
-| 205–217 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
-| 218–231 | ## Phase 3: one capture rule, phone HUD, tap to walk |
-| 232–241 | ## Chapter 1 pass: the night out has a purpose, switches say why |
-| 242–259 | ## Progression tests |
-| 260–286 | ## Left as they were |
+| 23–32 | # Space Snack Quest |
+| 33–106 | ## Chapter 1 redesign (on main) |
+| 107–120 | ## Music credits |
+| 121–151 | ## Source and build |
+| 152–162 | ## Debug link |
+| 163–168 | ## Automatic checks |
+| 169–172 | ## Screen fit |
+| 173–194 | ## Brian's repeat complaints, as tests (2026-11-22) |
+| 195–200 | ## Scene 1 morning |
+| 201–204 | ## Chapter 1 kid robot |
+| 205–221 | ## Phase 1: kitchen and diner clarity |
+| 222–234 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
+| 235–248 | ## Phase 3: one capture rule, phone HUD, tap to walk |
+| 249–258 | ## Chapter 1 pass: the night out has a purpose, switches say why |
+| 259–276 | ## Progression tests |
+| 277–303 | ## Left as they were |
 <!-- /section-index -->
 # Space Snack Quest
 
@@ -30,6 +31,8 @@ Calendar review status (2026-11-16): Brian said yes to merge the calendar (Nov 1
 **Next up (Brian, 2026-11-16):** Chapter 1, one beat at a time in [`docs/CH1-STORY-WALKTHROUGH.md`](docs/CH1-STORY-WALKTHROUGH.md). Do not leave beat 1 until Brian says it is right. Squatch walks around the bed and the bucket, and the Guardian box is in the closet on day 1 (locked home room v5; Brian's yes, Nov 16, 12:50 PM PT). On day 2 he takes the box out at the closet (`tests/bedroom-walk.mjs`). The calendar is tappable. Printed copy: MOONMUNCH / FUZZUARY; Sponsored by MOON PIES; Sock hunt; family Olympics night; Wash outside windows (remember space suit!); Blanket fort night. These are decoration, not new quests. X or NEXT returns to the same scene (`tests/calendar-closeup.mjs`). Closet, bed, desk homework and the already-bitten calendar are built on branch `feat/home-alone` (draft, see below); the purple bed bar is removed there too; still to build: the bucket. The night vent step no longer finishes inside Mops: the morning hum was leaving him marked as walking. Docs match main: yes.
 
 ## Chapter 1 redesign (on main)
+
+2026-11-26, the same draft pull request #87, Brian's notes on the showing-6 videos; not merged to main. Sight cones: sight now sees Squatch's whole drawn body (his outline at hall size, `SQUATCH_OUTLINE` and `coneEdge` in `party-watch.js`), so a cone drawn on any part of him sees him and a cone that does not see him is not drawn on him (before, sight was tested at one point a quarter of the way up him, so the octopus's cone across his head did not see him); the home guard's flashlight keeps its approved one-point rule; a dashed cone close to him is drawn darker and thicker, the closer the more (`CONE_NEAR`, a placeholder), so on a phone a kid sees which cone is about to touch him; the flyer sneak's sweeping cones were searched again so a kid who waits still has a way there and home (`P4_SWEEP`, placeholders). The crowd's sound in the hall is voices, a laugh now and then and a glass clinking, with no steady hiss under it (the hiss sounded like an air vent). Music: one table says what plays where (`src/modules/music-picks.js`; Brian's picks of 2026-11-26). The title and the heart moments: the opening tune of Joe's theme (0:01 to 0:18.5; it is sung from 0:19). The first time Squatch is home on day one (the morning): Brian's "Goating in Space", once. Every other time at home, bedtime included: the next track of the home rotation, once a visit (Carefree for now; a list, so more tracks are a data change). The TV story: Odyssey. The hall with no party on: Lobby Time. Sneaking (the night and lunch sneaks, the party's sneak to the plant): Sneaky Snitch; in the flyer sneak the band plays and its song wins. The FUR! moment at the party: Der Kleber Sting, once. The Croc Boys: Brian's "Stormtop-Sylvania" for their first song, then Funky Chunk, alternating, through the music level, muffled through his door at home; their line "Stormtop-vania 1-2-3-4-5!" shows over them where Stormtop-Sylvania sings it out; the made-up swing songs play only until a song's file has loaded. Mops's closing-time hum is silent ("track to be chosen by Brian"), and a "mops-bleat" sound waits for its file. A track plays once a visit where Brian said so ("I don't think it should play all the way thru a lot of times"). Floating in Space left the repo (nothing plays it). Credits: `music/CREDITS.txt` and "Music credits" below. After his first dance the guests clap and the group photo starts within a second (it waited for the song to end). Guards in the hall walk round the stage, the stools and the plant pots (and the leaves behind a pot), never over them (`guardStep` in `party-alarm.js`). Checks: `node tests/party-showing6.mjs`, `tests/standing-spots.mjs`. Not yet played by a person.
 
 2026-11-25 (evening), the same draft pull request #87, Brian's decisions on the showing-5 videos (twelve notes and two code rules); not merged to main. Flyer night: the camera's tripod is out of sight until the group photo, and while the Croc Boys play on the stage the lights are in their eyes (no cones; they come back when the band steps down for the photo or the music stops). Home with the flyer: "Phew, made it!", his bed glows, the chip reads "Squatch: put the flyer under your bed for Mops", SAVE · flyer slides it under the bed (a corner peeks out), then "That party looked so fun. I've never gotten to dance at one." and "I'll sneak back in a costume and dance!" ("I deserve one night of normal." and "Costume on. Then I dance!" are dropped); the party's music keeps coming through his door; in the talk he takes the flyer from under his bed. In disguise: the crowd's murmur is off while the band plays; standing at the floor vent after his first minute it sucks in a piece of his costume, the hat first (R108; built for note 3's "the vent sucking in his costume" video, and a third way to lose a piece beside the pyramid and the octopus's second hug, so it needs Brian's yes); the dance spot has the gold dashed, gently pulsing outline whenever he can dance (hidden while he dances); the group photo goes one thing at a time (the hall settles, the band poses and the crowd claps, one Croc Boy steps forward with "Group photo!", the camera tourist carries the tripod over, everyone walks to the rows a little slower, the gap glows, and only then "Squatch: join the group photo" and JOIN · photo; `party-photo.js`). Every "?" starts small and pale with no bubble, fills in and grows while he stays in sight, and pops into "!" or, for the octopus, the grab; out of sight first, it fades (`party-question.js`). The octopus: "*hic* Fellow tourist!", a lunge and a first harmless hug that tips his hat, then "Those arms will pull off my disguise!" and "I gotta juke this fool.", then the real chase at 170 (the pin, was 90; Squatch walks at 190) with the chip "Squatch: get away from the octopus!" and no bar, snack, dance or photo buttons. After an alarm at home, once Mops has sent the guard off the alarm is over for good (no bell, no flashlight, no "run home and hide!"), and the card follows the guard leaving. Footsteps sound only while someone actually walks (`footfalls.js`, checked across Chapter 1 by `tests/footsteps.mjs`). Mops no longer stands on the bucket: the talk at home and his talk with the guard are on the clear floor right of it (`tests/standing-spots.mjs` checks every standing spot in Chapter 1's rooms against the furniture). Five made-up FUR alarm sounds to choose from: `tools/alarm-choices.html` (the game's alarm is unchanged until Brian picks). Beat 20, the TV story, is the old Wookiee picture story again (commit 71ec66e), full screen, sized to the game's rule, with Brian's Wookiee recording (`tv-story.js`, `tv-story-art.js`, `tv-story-lines.js`, `sounds/wookiee-roar.mp3`); the "Fur in the scrubber." stand-in is deleted. Code: the hall's 40% sizing (`room-sizes.js`), the walk ring's goal-outline bookkeeping (`goal-mark.js`) and the singing-or-music rule (`music-rules.js`) moved out of `src/game/`, and `tests/game-no-growth.mjs` fails if `src/game/` grows. Not yet played by a person.
 
@@ -100,6 +103,20 @@ Every new line is listed for Brian in `docs/CH1-LINES-FOR-BRIAN.md`. He said yes
 Playtest 6 and round 1 polish, not merged: the picture keeps its place when NEXT appears, and it takes the keyboard on load so Esc skips a card. Isfred's party line sits under the office monitor. Putting on the tourist disguise fades through black. No new words. At the party, guests are drawn at 1.8 and Squatch stays at his normal hall size, so the adults are clearly taller (R67). R65 does not enlarge him at home or in the other rooms. R66 is superseded. At bedtime Mops walks to (380, 460) and stays there, with no snap. Squatch lies down. Joe's warm theme is `music/main-theme-from-brian.mp3`. It plays on the title, at home, and for the gift. It never plays under singing: it fades out while a song plays and comes back after (2026-11-15). Day 1 plays from the song at home through bedtime. After that, the old Day 2 still runs. New lines are pending. The night robot looks down for 2 seconds, turns for 0.3 seconds without catching, then looks at the back wall for 4 seconds (R64), and that cone is outlined. Mops stands clear of the mop bucket. Docs match main: yes. Do not merge.
 
 The older Chapter 1 scenes are still in the program so a debug link such as `?scene=S9` can open them. They are not what a new game plays. Those old scenes are drawn in the new home room. The ball Squatch rolls into, including in the Chapter 2 kitchen, is the L2 ball. A robot notices that ball only after staying within 70 pixels for 2 seconds, in every room. Standing and walking sight is unchanged. The manager's name on his bubbles is Isfred Bar Neshuman. Chapter 2 now opens with "They put us off here. This is the gas stop." instead of a fuel light.
+
+## Music credits
+
+Which plays where: `src/modules/music-picks.js`; the files and their credits: `music/CREDITS.txt`. Joe's theme (`main-theme-from-brian.mp3`) is Brian's friend Joe's song, used with Brian's yes. Goating in Space, Brian's song made with Suno, 2026-11-26. Stormtop-Sylvania, Brian's song made with Suno, 2026-11-26.
+
+"Carefree" Kevin MacLeod (incompetech.com), Licensed under Creative Commons: By Attribution 4.0 License, http://creativecommons.org/licenses/by/4.0/  
+"Der Kleber Sting" Kevin MacLeod (incompetech.com), Licensed under Creative Commons: By Attribution 4.0 License, http://creativecommons.org/licenses/by/4.0/  
+"Funky Chunk" Kevin MacLeod (incompetech.com), Licensed under Creative Commons: By Attribution 4.0 License, http://creativecommons.org/licenses/by/4.0/  
+"Lobby Time" Kevin MacLeod (incompetech.com), Licensed under Creative Commons: By Attribution 4.0 License, http://creativecommons.org/licenses/by/4.0/  
+"Morning" Kevin MacLeod (incompetech.com), Licensed under Creative Commons: By Attribution 4.0 License, http://creativecommons.org/licenses/by/4.0/  
+"Odyssey" Kevin MacLeod (incompetech.com), Licensed under Creative Commons: By Attribution 4.0 License, http://creativecommons.org/licenses/by/4.0/  
+"Rainbows" Kevin MacLeod (incompetech.com), Licensed under Creative Commons: By Attribution 4.0 License, http://creativecommons.org/licenses/by/4.0/  
+"Reawakening" Kevin MacLeod (incompetech.com), Licensed under Creative Commons: By Attribution 4.0 License, http://creativecommons.org/licenses/by/4.0/  
+"Sneaky Snitch" Kevin MacLeod (incompetech.com), Licensed under Creative Commons: By Attribution 4.0 License, http://creativecommons.org/licenses/by/4.0/  
 
 ## Source and build
 
