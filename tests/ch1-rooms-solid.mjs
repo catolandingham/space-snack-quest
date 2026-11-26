@@ -36,7 +36,7 @@ const ROOMS = [
   },
   {
     id: "loading bay by day",
-    set: { room: "hangar", scene: "Q4", ch1D: true, ch1Night: false },
+    set: { room: "hangar", scene: "Q4", ch1D: true, ch1Night: false, ch1Ship: true }, // (the scanner arch's posts are there only with a ship docked)
     floor: true,
     things: [
       { name: "plant", box: pic(137, 197, 455, 480) },

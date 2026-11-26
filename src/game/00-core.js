@@ -1315,8 +1315,8 @@
         hangar: [
           { x0: 103, x1: 148, y0: 346, y1: 370 }, // plant
           { x0: 189, x1: 237, y0: 350, y1: 374 }, // bin
-          { x0: 344, x1: 369, y0: 392, y1: 416 }, // scanner arch, left post
-          { x0: 563, x1: 588, y0: 392, y1: 416 }, // scanner arch, right post
+          { x0: 344, x1: 369, y0: 392, y1: 416, ship: 1 }, // scanner arch, left post (only while a ship is docked: R15)
+          { x0: 563, x1: 588, y0: 392, y1: 416, ship: 1 }, // scanner arch, right post
           { x0: 675, x1: 699, y0: 360, y1: 420 }, // mail room wall, above its door
           { x0: 675, x1: 699, y0: 507, y1: 609 }, // mail room wall, below its door
           { x0: 848, x1: 908, y0: 452, y1: 476 }, // robot mailbox
@@ -1363,7 +1363,7 @@
         n.room === "port")
       )
         for (let i of xf) l.push(nt(i.x, i.y, 26, 14, 10));
-      if ((n.scene || "")[0] === "Q" && CH1_FURNITURE[n.room] && (n.room !== "office" || n.ch1Office)) for (let i of CH1_FURNITURE[n.room]) l.push(i);
+      if ((n.scene || "")[0] === "Q" && CH1_FURNITURE[n.room] && (n.room !== "office" || n.ch1Office)) for (let i of CH1_FURNITURE[n.room]) (!i.ship || n.ch1Ship || (hallBeat() && hallBeat().docked && hallBeat().docked())) && l.push(i);
       return (n.room === "van" && l.push({ x0: Tt.x - 100, x1: Tt.x + 100, y0: 380, y1: 470 }), l);
     }
     // What blocks a walker's feet: the room's solids, plus a standing Mops when the walker is Squatch.

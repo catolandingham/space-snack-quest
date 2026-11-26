@@ -14,7 +14,7 @@
  *   source  where the words came from
  */
 const WALK = "docs/CH1-STORY-WALKTHROUGH.md beat ";
-const DAY2 = "src/game/14-ch1-day2.js before this change";
+const BAY_DAY2 = "src/game/14-ch1-day2.js before this change";
 
 export const BAY_LINES = Object.freeze(
   [
@@ -22,11 +22,11 @@ export const BAY_LINES = Object.freeze(
     { id: "mops-see", who: "mops", text: "I better go see what that is.", status: "pending", source: WALK + "28" },
     { id: "sq-follow", who: "sq", text: "Please let me follow you, I'll be really sneaky.", status: "pending", source: WALK + "28" },
     { id: "mops-ok", who: "mops", text: "Okay, just this time, but hide carefully.", status: "pending", source: WALK + "28" },
-    { id: "chip-hide", who: "chip", text: "Squatch: hide in the plant", status: "in-game", source: DAY2 },
-    { id: "button-hide", who: "button", text: "HIDE · plant", status: "in-game", source: DAY2 },
+    { id: "chip-hide", who: "chip", text: "Squatch: hide in the plant", status: "in-game", source: BAY_DAY2 },
+    { id: "button-hide", who: "button", text: "HIDE · plant", status: "in-game", source: BAY_DAY2 },
     { id: "isfred-promise", who: "official", text: "Mops, don't worry, you know how much we love you here. Even our visitors always love you.", status: "pending", source: WALK + "31" },
     { id: "order-box", who: "paper", text: "ORDER MORE ROBOTS", status: "pending", source: WALK + "32 (\"ORDER MORE ROBOTS ☐\"; the box is drawn, not typed)" },
-    { id: "paper-joke", who: "mops", text: "So futuristic and we still order on paper.", status: "pending", source: WALK + "32 (optional; Mops said it in " + DAY2 + ")" },
+    { id: "paper-joke", who: "mops", text: "So futuristic and we still order on paper.", status: "pending", source: WALK + "32 (optional; Mops said it in " + BAY_DAY2 + ")" },
     { id: "robot-copies", who: "robot", text: "Left one of the copies in the office. What do I do with the other two?", status: "pending", source: WALK + "33" },
     { id: "mops-take", who: "mops", text: "I'll take care of it.", status: "pending", source: WALK + "33" },
     { id: "mops-delicious", who: "mops", text: "Delicious.", status: "pending", source: WALK + "33" },

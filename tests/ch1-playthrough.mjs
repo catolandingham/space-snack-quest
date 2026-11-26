@@ -402,7 +402,7 @@ const play = await page.evaluate(() => {
     }
     if (n.ctrl && !n.cur && n.q.length === 0 && (n.scene || "")[0] === "Q") {
       if (n.ch1PadOn) {
-        for (const d of ["4", "7", "2", "3"]) ss.ch1PadPress(d);
+        for (const d of window.SSQ.engine().officeCode()) ss.ch1PadPress(d);
         ss.tick(0.05);
         still = 0;
         continue;
@@ -460,7 +460,7 @@ const play = await page.evaluate(() => {
     acts,
     texts: texts(),
     state: ss.ch1State(),
-    shown: shown.filter((s) => /IDEAS FOR GUARDIANS|HAVE YOU SEEN|Order new box|Return empty crate|PULL DOWN|Brave Sasquatches|ORDER MORE ROBOTS|MARS LOST|MY GARDIANS|TIED TOGETHER|4723/.test(s)),
+    shown: shown.filter((s) => /IDEAS FOR GUARDIANS|HAVE YOU SEEN|Order new box|Return empty crate|PULL DOWN|Brave Sasquatches|ORDER MORE ROBOTS|MARS LOST|MY GARDIANS|TIED TOGETHER|169556/.test(s)),
     tally: ss.chTally(),
     vent: n.ch1VentLunch || 0,
     paw: n.ch1Paw || 0,
@@ -475,6 +475,9 @@ const play = await page.evaluate(() => {
     slipped: !!n.ch1Slipped,
     packed: n.ch1Packed || 0,
     paper: n.ch1PaperLog || [],
+    // the loading bay (loading-bay.js): where the day's two stuck copies went
+    bayPapers: n.ch1Bay && n.ch1Bay.papers ? n.ch1Bay.papers.where : "",
+    officeCode: window.SSQ.engine().officeCode(),
   };
 });
 g.check("Chapter 1 reaches the tally card", play.end === "tally", { end: play.end, acts: play.acts, scene: play.state.scene });
@@ -516,7 +519,8 @@ const must = [
   "Please let me follow you, I'll be really sneaky.",
   "Okay, just this time, but hide carefully.",
   "Mops, don't worry, you know how much we love you here. Even our visitors always love you.",
-  "Isfred! A crate is damaged in the mail room.",
+  // (what calls Isfred away is wordless now: the bay's wall speaker chimes; loading-bay.js)
+  "So futuristic and we still order on paper.",
   "Left one of the copies in the office. What do I do with the other two?",
   "I'll take care of it.",
   "Delicious.",
@@ -579,20 +583,18 @@ const binAt = paper.indexOf("bin");
 const pawsAt = paper.indexOf("paws");
 const ventAt = paper.indexOf("vent");
 g.check(
-  "the pink copy reaches the bin before any vent, and the vent is only after the paw check",
+  "the pink copy reaches the bin before any vent (the bay's copies end in the bin), and the vent is only after the paw check",
   binAt >= 0 &&
     pawsAt > binAt &&
-    paper.indexOf("bite") >= 0 &&
-    paper.indexOf("bite") < binAt &&
-    paper.indexOf("mouth") > paper.indexOf("bite") &&
-    paper.indexOf("mouth") < binAt &&
+    play.bayPapers === "bin" &&
     (ventAt < 0 || ventAt > pawsAt) &&
     play.vent === 0 &&
     play.paw === 1 &&
     play.sucked === 1 &&
     play.one === 1 &&
     play.lights === 1 &&
-    play.code === "4723" &&
+    play.code === "169556" &&
+    play.officeCode === "169556" &&
     play.brochure &&
     play.boxed &&
     play.left &&
@@ -647,17 +649,16 @@ const pad = await page.evaluate(() => {
   n.ch1Pad = "";
   n.ch1Step = "pad";
   n.ch1Door = false;
-  ss.ch1PadPress("4");
+  // Isfred's office code (Brian 2026-11-26, chat): 169556
+  ss.ch1PadPress("1");
   ss.ch1PadPress("9");
   const cleared = n.ch1Pad === "" && !n.ch1Door;
-  ss.ch1PadPress("4");
-  ss.ch1PadPress("7");
-  ss.ch1PadPress("2");
+  for (const d of "16955") ss.ch1PadPress(d);
   const mid = n.ch1Pad;
-  ss.ch1PadPress("3");
+  ss.ch1PadPress("6");
   return { cleared, mid, code: n.ch1Code, door: n.ch1Door, on: n.ch1PadOn };
 });
-g.check("a wrong keypad digit clears, and 4723 opens the door", pad.cleared && pad.mid === "472" && pad.code === "4723" && pad.door && !pad.on, pad);
+g.check("a wrong keypad digit clears, and 169556 opens the door", pad.cleared && pad.mid === "16955" && pad.code === "169556" && pad.door && !pad.on, pad);
 await ctx.close();
 await g.finish("ch1-playthrough");
 

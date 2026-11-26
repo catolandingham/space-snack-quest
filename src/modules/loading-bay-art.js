@@ -6,10 +6,10 @@
  */
 import { ROBOT_SIZE } from "./loading-bay-place.js";
 
-const INK = "#1e2430";
+const BAY_INK = "#1e2430";
 export const PAPER = Object.freeze({ white: "#fffdf8", pink: "#ff9cc2", yellow: "#ffe27a", carbon: "#7d6f86" });
 
-function rr(ctx, x, y, w, h, r) {
+function bayRound(ctx, x, y, w, h, r) {
   ctx.beginPath();
   ctx.moveTo(x + r, y);
   ctx.arcTo(x + w, y, x + w, y + h, r);
@@ -22,7 +22,7 @@ function fillStroke(ctx, fill, lw = 2.5) {
   ctx.fillStyle = fill;
   ctx.fill();
   ctx.lineWidth = lw;
-  ctx.strokeStyle = INK;
+  ctx.strokeStyle = BAY_INK;
   ctx.stroke();
 }
 
@@ -49,17 +49,17 @@ export function drawRobot(ctx, x, y, f = 0, k = 1, bob = 0, arm = 0) {
     fillStroke(ctx, "#59657d", 2);
   }
   // body
-  rr(ctx, -w / 2, -h * 0.62, w, h * 0.52, 7);
+  bayRound(ctx, -w / 2, -h * 0.62, w, h * 0.52, 7);
   fillStroke(ctx, "#f3f5f8");
   // head
-  rr(ctx, -w * 0.42, -h * 0.95, w * 0.84, h * 0.33, 8);
+  bayRound(ctx, -w * 0.42, -h * 0.95, w * 0.84, h * 0.33, 8);
   fillStroke(ctx, "#f3f5f8");
   // antenna and its light
   ctx.beginPath();
   ctx.moveTo(0, -h * 0.95);
   ctx.lineTo(0, -h * 1.08);
   ctx.lineWidth = 2;
-  ctx.strokeStyle = INK;
+  ctx.strokeStyle = BAY_INK;
   ctx.stroke();
   ctx.beginPath();
   ctx.arc(0, -h * 1.1, 3.4, 0, Math.PI * 2);
@@ -67,7 +67,7 @@ export function drawRobot(ctx, x, y, f = 0, k = 1, bob = 0, arm = 0) {
   // visor: toward us it shows the whole visor and the eye; side on, the eye looks that way; away, the back of the head
   if (f !== 2) {
     const vx = f === 1 ? -w * 0.12 : f === -1 ? -w * 0.32 : -w * 0.3;
-    rr(ctx, vx, -h * 0.88, w * (f ? 0.44 : 0.6), h * 0.16, 4);
+    bayRound(ctx, vx, -h * 0.88, w * (f ? 0.44 : 0.6), h * 0.16, 4);
     fillStroke(ctx, "#2b3a67", 1.6);
     ctx.beginPath();
     ctx.arc(f === 1 ? w * 0.18 : f === -1 ? -w * 0.18 : 0, -h * 0.8, 3.2, 0, Math.PI * 2);
@@ -75,7 +75,7 @@ export function drawRobot(ctx, x, y, f = 0, k = 1, bob = 0, arm = 0) {
     ctx.fill();
   }
   // a panel on its chest
-  rr(ctx, -w * 0.22, -h * 0.5, w * 0.44, h * 0.18, 3);
+  bayRound(ctx, -w * 0.22, -h * 0.5, w * 0.44, h * 0.18, 3);
   fillStroke(ctx, "#dfe4ea", 1.6);
   // its gripper arm, on the side it faces (raised to hold something)
   const side = f === -1 ? -1 : 1,
@@ -88,7 +88,7 @@ export function drawRobot(ctx, x, y, f = 0, k = 1, bob = 0, arm = 0) {
   ctx.lineTo(ex, ey);
   ctx.lineWidth = 4;
   ctx.lineCap = "round";
-  ctx.strokeStyle = INK;
+  ctx.strokeStyle = BAY_INK;
   ctx.stroke();
   ctx.lineWidth = 2;
   ctx.strokeStyle = "#9aa3b2";
@@ -106,11 +106,11 @@ export function robotHand(x, y, f = 0, k = 1, arm = 1) {
 }
 
 /** One sheet of paper, its top-left corner at (x, y), `w` by `h`, a little turned (`rot`), with faint lines on it. */
-function sheet(ctx, x, y, w, h, color, rot = 0, lines = 4) {
+function baySheet(ctx, x, y, w, h, color, rot = 0, lines = 4) {
   ctx.save();
   ctx.translate(x + w / 2, y + h / 2);
   ctx.rotate(rot);
-  rr(ctx, -w / 2, -h / 2, w, h, Math.min(3, w * 0.06));
+  bayRound(ctx, -w / 2, -h / 2, w, h, Math.min(3, w * 0.06));
   fillStroke(ctx, color, Math.max(1, Math.min(2.5, w * 0.08)));
   ctx.strokeStyle = "rgba(30,36,48,.35)";
   ctx.lineWidth = Math.max(0.6, w * 0.03);
@@ -131,7 +131,7 @@ function sheet(ctx, x, y, w, h, color, rot = 0, lines = 4) {
 export function drawFormSet(ctx, x, y, s = 16, white = true) {
   const w = s,
     h = s * 1.25;
-  white && sheet(ctx, x - w * 0.9, y - h * 0.62, w * 0.95, h * 1.05, PAPER.white, -0.12, 3);
+  white && baySheet(ctx, x - w * 0.9, y - h * 0.62, w * 0.95, h * 1.05, PAPER.white, -0.12, 3);
   drawStuck(ctx, x, y, s, 0);
 }
 
@@ -152,8 +152,8 @@ export function drawStuck(ctx, x, y, s = 16, bite = 0, rot = 0) {
     ctx.arc(w * 0.5, -h * 0.5, w * 0.44 * Math.min(1, bite), 0, Math.PI * 2, true);
     ctx.clip("evenodd");
   }
-  sheet(ctx, -w * 0.2, -h * 0.36, w * 0.75, h * 0.8, PAPER.yellow, 0.1, 2);
-  sheet(ctx, -w / 2, -h / 2, w, h, PAPER.pink, -0.04, 3);
+  baySheet(ctx, -w * 0.2, -h * 0.36, w * 0.75, h * 0.8, PAPER.yellow, 0.1, 2);
+  baySheet(ctx, -w / 2, -h / 2, w, h, PAPER.pink, -0.04, 3);
   ctx.restore();
 }
 
@@ -194,7 +194,7 @@ export function drawFormCloseUp(ctx, box, { sign = 0, code = 0, codeText = "", p
   ctx.save();
   ctx.translate((white.x0 + white.x1) / 2, (white.y0 + white.y1) / 2);
   ctx.rotate(-0.06);
-  rr(ctx, -(white.x1 - white.x0) / 2, -(white.y1 - white.y0) / 2, white.x1 - white.x0, white.y1 - white.y0, 8 * k);
+  bayRound(ctx, -(white.x1 - white.x0) / 2, -(white.y1 - white.y0) / 2, white.x1 - white.x0, white.y1 - white.y0, 8 * k);
   fillStroke(ctx, PAPER.white, 4 * k);
   ctx.strokeStyle = "rgba(30,36,48,.32)";
   ctx.lineWidth = 3 * k;
@@ -206,7 +206,7 @@ export function drawFormCloseUp(ctx, box, { sign = 0, code = 0, codeText = "", p
     ctx.stroke();
   }
   // the signature line, and Isfred's signature writing itself along it
-  ctx.strokeStyle = INK;
+  ctx.strokeStyle = BAY_INK;
   ctx.lineWidth = 3 * k;
   ctx.beginPath();
   ctx.moveTo(-95 * k, 118 * k);
@@ -228,11 +228,11 @@ export function drawFormCloseUp(ctx, box, { sign = 0, code = 0, codeText = "", p
   ctx.restore();
   // the small yellow copy, stuck under the pink's bottom right corner
   const yellow = { x0: X(420), y0: Y(380), x1: X(616), y1: Y(584) };
-  rr(ctx, yellow.x0, yellow.y0, yellow.x1 - yellow.x0, yellow.y1 - yellow.y0, 8 * k);
+  bayRound(ctx, yellow.x0, yellow.y0, yellow.x1 - yellow.x0, yellow.y1 - yellow.y0, 8 * k);
   fillStroke(ctx, PAPER.yellow, 4 * k);
   // the big pink order sheet
   const pink = { x0: X(258), y0: Y(30), x1: X(592), y1: Y(470) };
-  rr(ctx, pink.x0, pink.y0, pink.x1 - pink.x0, pink.y1 - pink.y0, 10 * k);
+  bayRound(ctx, pink.x0, pink.y0, pink.x1 - pink.x0, pink.y1 - pink.y0, 10 * k);
   fillStroke(ctx, PAPER.pink, 5 * k);
   // ORDER MORE ROBOTS, and its box (drawn, empty), glowing when it matters
   const boxAt = { x0: X(286), y0: Y(80), x1: X(338), y1: Y(132) };
@@ -245,7 +245,7 @@ export function drawFormCloseUp(ctx, box, { sign = 0, code = 0, codeText = "", p
     ctx.fillRect(boxAt.x0 - 90 * k, boxAt.y0 - 90 * k, 232 * k, 232 * k);
   }
   ctx.lineWidth = 5 * k;
-  ctx.strokeStyle = INK;
+  ctx.strokeStyle = BAY_INK;
   ctx.fillStyle = "#fffdf8";
   ctx.fillRect(boxAt.x0, boxAt.y0, boxAt.x1 - boxAt.x0, boxAt.y1 - boxAt.y0);
   ctx.strokeRect(boxAt.x0, boxAt.y0, boxAt.x1 - boxAt.x0, boxAt.y1 - boxAt.y0);
@@ -253,7 +253,7 @@ export function drawFormCloseUp(ctx, box, { sign = 0, code = 0, codeText = "", p
   ctx.font = `900 ${wordsAt.size}px sans-serif`;
   ctx.textAlign = "left";
   ctx.textBaseline = "middle";
-  ctx.fillStyle = INK;
+  ctx.fillStyle = BAY_INK;
   // two lines, so the words stay big inside the sheet
   const [w1, ...rest] = words.split(" ");
   ctx.fillText(w1 + " " + (rest[0] || ""), wordsAt.x, wordsAt.y - 16 * k);
@@ -286,7 +286,7 @@ export function drawFormCloseUp(ctx, box, { sign = 0, code = 0, codeText = "", p
     ctx.save();
     ctx.translate(px, py);
     ctx.rotate(0.6);
-    rr(ctx, -6 * k, -110 * k, 12 * k, 100 * k, 5 * k);
+    bayRound(ctx, -6 * k, -110 * k, 12 * k, 100 * k, 5 * k);
     fillStroke(ctx, "#c9b6f2", 3 * k);
     ctx.beginPath();
     ctx.moveTo(-6 * k, -10 * k);
@@ -337,7 +337,7 @@ export function drawCloseUpFront(ctx, b) {
   ctx.strokeStyle = "#fffdf8";
   ctx.strokeRect(b.x0, b.y0, b.x1 - b.x0, b.y1 - b.y0);
   ctx.lineWidth = 3;
-  ctx.strokeStyle = INK;
+  ctx.strokeStyle = BAY_INK;
   ctx.strokeRect(b.x0 - 5, b.y0 - 5, b.x1 - b.x0 + 10, b.y1 - b.y0 + 10);
   ctx.restore();
 }

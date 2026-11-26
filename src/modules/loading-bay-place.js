@@ -32,9 +32,6 @@ export const BAY = Object.freeze({
   // The wall speaker (picture 1090 to 1138, 125 to 173) and the big wall vent under it (picture 1070 to 1200, 238 to 332).
   speaker: Object.freeze({ x0: 817, x1: 853, y0: 96, y1: 133 }),
   vent: Object.freeze({ x0: 802, x1: 900, y0: 183, y1: 256 }),
-  // The walls (bounds) feet keep inside while this beat is on: the back wall's foot to the front, as the older program's
-  // loading bay with a ship (00-core.js sn, ch1D).
-  floorTop: 320,
 });
 
 /** Where people stand (feet), each checked against the bay's furniture in tests/loading-bay.mjs. */
@@ -45,18 +42,24 @@ export const BAY_SPOTS = Object.freeze({
   // beats 30 to 35: Mops waits here, between the plant and the ramp, looking at the ship
   mopsWatch: Object.freeze({ x: 250, y: 470 }),
   isfred: Object.freeze({ x: 330, y: 440 }),
-  workers: Object.freeze([Object.freeze({ x: 392, y: 520, name: "Dot" }), Object.freeze({ x: 458, y: 534, name: "Bob" }), Object.freeze({ x: 524, y: 520, name: "Lou" })]),
-  robots: Object.freeze([Object.freeze({ x: 408, y: 456 }), Object.freeze({ x: 474, y: 462 }), Object.freeze({ x: 540, y: 456 })]),
+  // (in the order they come in, the first one furthest in, so nobody walks through the one before him)
+  workers: Object.freeze([Object.freeze({ x: 480, y: 520, name: "Dot" }), Object.freeze({ x: 420, y: 540, name: "Bob" }), Object.freeze({ x: 360, y: 520, name: "Lou" })]),
+  // the robots wait right of the ramp's foot, so the workers have a clear way up it
+  robots: Object.freeze([Object.freeze({ x: 534, y: 468 }), Object.freeze({ x: 588, y: 470 }), Object.freeze({ x: 560, y: 532 })]),
   // beat 32: the robot holds the form set up to Isfred
   robotSign: Object.freeze({ x: 384, y: 448 }),
   // beat 33: the robot brings the other two copies back to Mops
   robotToMops: Object.freeze({ x: 314, y: 474 }),
   // beat 33: Mops by the big wall vent, his back to the robots; the way there goes round the robots and the scanner
   mopsVent: Object.freeze({ x: 848, y: 334 }),
-  ventWay: Object.freeze([Object.freeze({ x: 330, y: 560 }), Object.freeze({ x: 640, y: 556 }), Object.freeze({ x: 640, y: 340 })]),
+  ventWay: Object.freeze([Object.freeze({ x: 330, y: 588 }), Object.freeze({ x: 640, y: 588 }), Object.freeze({ x: 640, y: 340 })]),
   // beats 34 and 35: Mops beside the plant (talking to the eyes), the bin just behind him
   mopsPlant: Object.freeze({ x: 196, y: 404 }),
-  plantWay: Object.freeze([Object.freeze({ x: 640, y: 340 }), Object.freeze({ x: 640, y: 556 }), Object.freeze({ x: 300, y: 520 })]),
+  plantWay: Object.freeze([Object.freeze({ x: 640, y: 340 }), Object.freeze({ x: 640, y: 588 }), Object.freeze({ x: 330, y: 588 }), Object.freeze({ x: 300, y: 520 })]),
+  // people coming in past Mops (who waits at mopsWatch) go behind him, then on to their places
+  behindMops: Object.freeze([Object.freeze({ x: 196, y: 436 }), Object.freeze({ x: 330, y: 436 })]),
+  // the two robots that go off into the hallway in beat 36: in front of Mops and the plant, then out by the doorway
+  robotsOut: Object.freeze([Object.freeze({ x: 640, y: 584 }), Object.freeze({ x: 360, y: 584 }), Object.freeze({ x: 120, y: 470 })]),
   // beat 36: out of the plant, then out through the doorway
   sqOut: Object.freeze({ x: 150, y: 420 }),
 });
@@ -85,7 +88,7 @@ export const BAY_PACE = Object.freeze({
   ramp: 1.0, // the ramp comes down
   shake: 0.6, // one handshake
   sign: 1.0, // Isfred's signature on the white copy
-  code: 1.6, // the four numbers of the office code on the pink, copying through to the yellow
+  code: 1.6, // the office code's numbers on the pink, one after another, copying through to the yellow
   box: 1.0, // the ORDER MORE ROBOTS box pulses
   grow: 0.4, // a close-up growing out of its place
   chime: 1.2, // the wall speaker's chime

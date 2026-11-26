@@ -11,6 +11,7 @@
  * alarm and the hallway doorway are, past the bar) are listed with their reason.
  *   node tests/standing-spots.mjs
  */
+import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -151,44 +152,53 @@ check(`hall: none of ${Object.keys(hallSpots).length} standing spots overlaps th
 // ---------- the loading bay (beats 28 to 36, src/modules/loading-bay.js) ----------
 {
   const { BAY, BAY_SPOTS } = await mod("loading-bay-place.js");
-  // the bay's furniture, as the older program's solids for it (src/game/00-core.js CH1_FURNITURE.hangar)
-  const BAY_FURNITURE = {
-    plant: { x0: 103, x1: 148, y0: 346, y1: 370 },
-    bin: { x0: 189, x1: 237, y0: 350, y1: 374 },
-    "scanner left post": { x0: 344, x1: 369, y0: 392, y1: 416 },
-    "scanner right post": { x0: 563, x1: 588, y0: 392, y1: 416 },
-    "mail room wall, above its door": { x0: 675, x1: 699, y0: 360, y1: 420 },
-    "mail room wall, below its door": { x0: 675, x1: 699, y0: 507, y1: 609 },
-    "robot mailbox": { x0: 848, x1: 908, y0: 452, y1: 476 },
-  };
+  // the bay's furniture: the older program's solids for it, read from src/game/00-core.js (CH1_FURNITURE.hangar)
+  const core = readFileSync(join(root, "src", "game", "00-core.js"), "utf8"),
+    block = core.slice(core.indexOf("hangar: [", core.indexOf("CH1_FURNITURE")), core.indexOf("],", core.indexOf("hangar: [", core.indexOf("CH1_FURNITURE"))));
+  const BAY_FURNITURE = Object.fromEntries([...block.matchAll(/\{ x0: (\d+), x1: (\d+), y0: (\d+), y1: (\d+)[^}]*\}, \/\/ ([^\n(]+)/g)].map((m) => [m[5].trim(), { x0: +m[1], x1: +m[2], y0: +m[3], y1: +m[4] }]));
+  check("loading bay: its seven pieces of furniture are read from the older program's solids", Object.keys(BAY_FURNITURE).length === 7, Object.keys(BAY_FURNITURE));
   const F = FOOT.hall,
     feet = (p) => ({ x0: p.x - F.side, x1: p.x + F.side, y0: p.y - F.up, y1: p.y + F.down }),
-    onThing = (p) => Object.entries(BAY_FURNITURE).filter(([, b]) => hit(feet(p), b)).map(([k]) => k);
+    onThing = (p, people = {}) =>
+      [...Object.entries(BAY_FURNITURE), ...Object.entries(people).map(([k, q]) => [k, feet(q)])].filter(([, b]) => hit(feet(p), b)).map(([k]) => k);
   const spots = { ...Object.fromEntries(Object.entries(BAY_SPOTS).filter(([, v]) => v && v.x != null)), "door step": BAY.door.step };
-  BAY_SPOTS.workers.forEach((w, i) => (spots["worker " + w.name] = w));
+  BAY_SPOTS.workers.forEach((w) => (spots["worker " + w.name] = w));
   BAY_SPOTS.robots.forEach((r, i) => (spots["robot " + (i + 1)] = r));
   const bad = Object.entries(spots).map(([k, p]) => [k, onThing(p)]).filter(([, t]) => t.length);
   check(`loading bay: none of ${Object.keys(spots).length} standing spots overlaps the plant, the bin, the scanner, the mail room's wall or the mailbox`, bad.length === 0, bad);
-  // every walk in the bay, step by step (the doorway in and out, Mops round to the vent and back to the plant)
-  const ways = {
-    "in through the doorway": [BAY.door, BAY.door.step, BAY_SPOTS.sqIn],
-    "out through the doorway": [BAY_SPOTS.sqOut, BAY.door.step, BAY.door],
-    "Mops to the vent": [BAY_SPOTS.mopsWatch, ...BAY_SPOTS.ventWay, BAY_SPOTS.mopsVent],
-    "Mops back to the plant": [BAY_SPOTS.mopsVent, ...BAY_SPOTS.plantWay, BAY_SPOTS.mopsPlant],
-  };
+  // every walk in the bay, step by step, with the people standing there at that moment as obstacles too
+  const R = BAY_SPOTS.robots,
+    W = BAY_SPOTS.workers,
+    inPast = (to) => [BAY.door, BAY.door.step, ...BAY_SPOTS.behindMops, to],
+    mops = { "Mops (waiting)": BAY_SPOTS.mopsWatch },
+    robots = Object.fromEntries(R.map((r, i) => ["robot " + (i + 1), r]));
+  const ways = [
+    ["Squatch and Mops in through the doorway", [BAY.door, BAY.door.step, BAY_SPOTS.sqIn], {}],
+    ["Isfred in past Mops", inPast(BAY_SPOTS.isfred), mops],
+    ...W.map((w, i) => [`${w.name} in past Mops`, inPast(w), { ...mops, ...Object.fromEntries(W.slice(0, i).map((q) => [q.name, q])) }]),
+    ...R.map((r, i) => [`robot ${i + 1} down the ramp to its place`, [BAY.rampFoot, r], { ...mops, ...Object.fromEntries(W.map((q) => [q.name, q])), "Isfred": BAY_SPOTS.isfred }]),
+    ...W.map((w, i) => [`${w.name} up the ramp`, [w, BAY.rampFoot], { ...mops, ...robots, ...Object.fromEntries(W.slice(i + 1).map((q) => [q.name, q])) }]),
+    ["robot 1 to Isfred with the form", [R[0], BAY_SPOTS.robotSign], { ...mops, "robot 2": R[1], "robot 3": R[2] }],
+    ["robot 1 back to Mops", inPast(BAY_SPOTS.robotToMops), { ...mops, "robot 2": R[1], "robot 3": R[2] }],
+    ["Mops to the vent", [BAY_SPOTS.mopsWatch, ...BAY_SPOTS.ventWay, BAY_SPOTS.mopsVent], robots],
+    ["Mops back to the plant", [BAY_SPOTS.mopsVent, ...BAY_SPOTS.plantWay, BAY_SPOTS.mopsPlant], robots],
+    ...[1, 2].map((i) => [`robot ${i + 1} out to the hallway`, [R[i], ...BAY_SPOTS.robotsOut, BAY.door.step, BAY.door], { "Mops (at the plant)": BAY_SPOTS.mopsPlant, "robot 1": R[0] }]),
+    ["Squatch and Mops out through the doorway", [BAY_SPOTS.sqOut, BAY.door.step, BAY.door], { "robot 1": R[0] }],
+  ];
   const walkBad = [];
-  for (const [name, way] of Object.entries(ways))
+  for (const [name, way, people] of ways)
     for (let i = 1; i < way.length; i++) {
       const a = way[i - 1],
         b = way[i],
         k = Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / 4);
       for (let j = 0; j <= k; j++) {
         const p = { x: a.x + ((b.x - a.x) * j) / k, y: a.y + ((b.y - a.y) * j) / k },
-          t = onThing(p);
+          // (where a walk starts or ends beside someone, being next to them is the point: only the way between counts)
+          t = onThing(p, i === 1 && j === 0 ? {} : people);
         t.length && walkBad.push(`${name} at ${Math.round(p.x)},${Math.round(p.y)}: ${t}`);
       }
     }
-  check("loading bay: every walk goes round the furniture, checked every 4 pixels", walkBad.length === 0, [...new Set(walkBad)].slice(0, 6));
+  check(`loading bay: all ${ways.length} walks go round the furniture and the people standing there, checked every 4 pixels`, walkBad.length === 0, [...new Set(walkBad)].slice(0, 8));
 }
 // ---------- draw order: ties always resolve the same way ----------
 const { drawOrder } = await mod("party-draw.js");

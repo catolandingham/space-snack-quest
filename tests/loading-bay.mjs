@@ -32,10 +32,16 @@ const g = await startGame({ port: 9800, name: "loading-bay" });
 
 // ---------- the lines file ----------
 const walk = readFileSync(join(root, "docs", "CH1-STORY-WALKTHROUGH.md"), "utf8");
-const notInWalk = BAY_LINES.filter((l) => !["chip", "button"].includes(l.who) && !walk.includes(l.text));
-g.check("every spoken or painted line is word for word in the walkthrough (beats 28 to 36)", notInWalk.length === 0, notInWalk.map((l) => l.text));
-const pendingWalk = BAY_LINES.filter((l) => l.status !== "pending" && !["chip", "button"].includes(l.who) && !["sq-gumbling", "sq-fur", "mops-paperwork"].includes(l.id));
-g.check("lines the walkthrough marks pending stay pending (only the gumbling, fur and Paperwork lines are decided)", pendingWalk.length === 0, pendingWalk.map((l) => l.id));
+// (beats 28 to 36 only: from "### 28." to "### 37.", after the section index)
+const body = walk.slice(walk.indexOf("<!-- /section-index -->")),
+  beats = body.slice(body.indexOf("### 28. The ship is coming"), body.indexOf("### 37."));
+const said = BAY_LINES.filter((l) => !["chip", "button"].includes(l.who));
+const notInWalk = said.filter((l) => !beats.includes(`"${l.text}"`) && !beats.includes(`"${l.text} ☐"`));
+g.check("every spoken or painted line is word for word in the walkthrough's beats 28 to 36", notInWalk.length === 0, notInWalk.map((l) => l.text));
+// what the walkthrough says of each line: "*(pending" or "*(decided" right after its words
+const marked = (l) => ((beats.split(`"${l.text}`)[1] || "").match(/\*\((pending|decided)/) || [])[1];
+const statusWrong = said.filter((l) => (marked(l) === "pending") !== (l.status === "pending"));
+g.check("each line's status follows the walkthrough: pending stays pending, decided is decided or approved", statusWrong.length === 0, statusWrong.map((l) => [l.id, l.status, marked(l)]));
 
 // ---------- the beat, played ----------
 const { page, errors } = await g.open("?beat=bay:pa", { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 1 });
@@ -181,6 +187,34 @@ const restarts = await page.evaluate((parts) => {
     for (let i = 0; i < 2; i++) ss.tick(0.05);
     out[p] = { before, after: beat.debug().state.step, hidden: n.sqPose, room: n.room, queued: n.q.length + (n.cur ? 1 : 0) };
   }
+  // behind the counter (beat 28): its lines again from the first, with no control
+  n.q = [];
+  n.cur = null;
+  ss.ch1JumpBeat(28);
+  for (let i = 0; i < 20; i++) (ss.tick(0.05), n.cur && n.cur.k === "bub" && n.cur.b.text.startsWith("Universal") && ((n.bt = 1), ss.opTap()));
+  ss.sectionReset();
+  ss.tick(0.05);
+  out.pa = { after: beat.debug().state.step, room: n.room, ctrl: n.ctrl, line: n.cur && n.cur.b ? n.cur.b.text : "" };
+  // the hide step: walked off, ↺ brings back its start (where he came in, with control and the plant to hide in)
+  n.q = [];
+  n.cur = null;
+  ss.ch1JumpBeat(29);
+  for (let i = 0; i < 4; i++) ss.tick(0.05);
+  n.sq.x = 700;
+  n.sq.y = 560;
+  ss.tick(0.05);
+  ss.sectionReset();
+  ss.tick(0.05);
+  out.hide = { after: beat.debug().state.step, room: n.room, ctrl: n.ctrl, x: Math.round(n.sq.x), y: Math.round(n.sq.y), pose: n.sqPose };
+  // the walk home, already in the hallway: back to the start of the walk home, in the plant
+  n.q = [];
+  n.cur = null;
+  ss.ch1JumpBeat(29);
+  beat.jump("home");
+  for (let i = 0; i < 2000 && n.room !== "passage"; i++) (ss.tick(0.05), n.cur && n.cur.k === "bub" && ((n.bt = 1), ss.opTap()));
+  ss.sectionReset();
+  ss.tick(0.05);
+  out.hallway = { after: beat.debug().state.step, room: n.room, pose: n.sqPose, robots: beat.debug().state.robots.filter((r) => r.show && r.room === "passage").length };
   // in the walk: back to the bay's hide step, with control
   n.q = [];
   n.cur = null;
@@ -192,8 +226,9 @@ const restarts = await page.evaluate((parts) => {
   out.walk = { after: beat.debug().state.step, ctrl: n.ctrl, room: n.room, chip: ss.chipNow() };
   return out;
 }, BAY_PARTS);
-const badRestart = Object.entries(restarts).filter(([p, r]) => (p === "walk" ? !(r.after === "hide" && r.ctrl && r.room === "hangar") : !(r.after === p && r.room === (p === "home" ? "hangar" : "hangar") && r.queued > 0)));
-g.check("↺ in each part of the cutscene starts that part again (from the walk: the hide step, with control)", badRestart.length === 0, restarts);
+const special = { walk: (r) => r.after === "hide" && r.ctrl && r.room === "hangar", pa: (r) => r.after === "pa" && r.room === "hall" && !r.ctrl && r.line === "Universal Postal Service ship arriving!", hide: (r) => r.after === "hide" && r.ctrl && r.room === "hangar" && r.x === 236 && r.y === 470 && r.pose === "stand", hallway: (r) => r.after === "home" && r.room === "hangar" && r.pose === "hidden" && r.robots === 0 };
+const badRestart = Object.entries(restarts).filter(([p, r]) => (special[p] ? !special[p](r) : !(r.after === p && r.room === "hangar" && r.hidden === "hidden" && r.queued > 0)));
+g.check("↺ in each part of the cutscene starts that part again (beat 28: its first line; the hide step: where he came in; the walk: the hide step; the hallway: the walk home's start, in the plant)", badRestart.length === 0, restarts);
 g.check("the chapter reset clears the loading bay", await page.evaluate(() => (window.__ss.op.ch1Bay = { step: "sign" }, window.SSQ.engine().resetChapter(), window.__ss.op.ch1Bay == null)));
 
 // ---------- the old code is gone ----------

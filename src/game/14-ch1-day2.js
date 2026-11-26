@@ -724,7 +724,7 @@
     }
     function drawCh1Day2() {
       n.ch1Paper === "slip" && drawSlip(n.mo.x - 6, n.mo.y - 84, "#ff8fb8", 18, 24);
-      n.ch1Paper === "bin" && (drawSlip(236, 470, "#ff8fb8", 20, 26), drawSlip(252, 476, "#ffe08a", 12, 16));
+      n.ch1Paper === "bin" && (drawSlip(198, 294, "#ff8fb8", 20, 26), drawSlip(214, 300, "#ffe08a", 12, 16)); // in the bin's opening, where Mops spat them (loading-bay.js)
       n.ch1Paper === "paws" && n.sqPose === "stand" && (drawSlip(n.sq.x + 12, n.sq.y - 70, "#ff8fb8", 18, 24), !n.ch1Mailed && drawSlip(n.sq.x + 24, n.sq.y - 64, "#ffe08a", 12, 16));
       (n.ch1Paper === "pink" || n.ch1Paper === "paw" || n.ch1Hold === "slip") && n.sqPose === "stand" && drawSlip(n.sq.x + 14, n.sq.y - 72, "#ff8fb8", 18, 24);
       n.ch1Paper === "box" && n.room === "closet" && n.wardrobe === "open" && drawSlip(110, 266, "#ff8fb8", 16, 20); // in the Guardian Box, in the closet (home-morning-art.js boxIn)

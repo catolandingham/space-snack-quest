@@ -124,6 +124,8 @@ export function createLoadingBay(bridge) {
   };
   // in through the bay's doorway to `to`, and out of it from wherever one stands
   const inWay = (to) => [BAY.door, BAY.door.step, to];
+  // in through the doorway once Mops waits by the plant: behind him, then on
+  const pastMops = (to) => [BAY.door, BAY.door.step, ...BAY_SPOTS.behindMops, to];
   const outWay = () => [BAY.door.step, BAY.door, BAY.door.off];
   // Mops or Squatch (the engine's people) along a way; Mops is not solid while he walks
   const engineWay = (who, way, speed) => {
@@ -350,7 +352,7 @@ export function createLoadingBay(bridge) {
         }),
         e.until((dt) => {
           const b = B();
-          const ways = [b.isfred, ...b.workers].map((o, i) => [o, inWay(i ? BAY_SPOTS.workers[i - 1] : BAY_SPOTS.isfred), i]);
+          const ways = [b.isfred, ...b.workers].map((o, i) => [o, pastMops(i ? BAY_SPOTS.workers[i - 1] : BAY_SPOTS.isfred), i]);
           let all = true;
           for (const [o, way, i] of ways) {
             // each sets off once the one before him is through the doorway
@@ -503,7 +505,7 @@ export function createLoadingBay(bridge) {
           Object.assign(robot(0), BAY.door.off, { show: true, arm: 1, wi: 0 });
           B().papers = { where: "robot0", white: false, bite: 0, flyAt: -1 };
         }),
-        e.until((dt) => along(robot(0), inWay(BAY_SPOTS.robotToMops), BAY_PACE.robot, dt)),
+        e.until((dt) => along(robot(0), pastMops(BAY_SPOTS.robotToMops), BAY_PACE.robot, dt)),
         e.run(() => ((robot(0).f = -1), e.face("mops", 1))),
         say("robot", "robot-copies"),
         say("mops", "mops-take"),
@@ -567,7 +569,7 @@ export function createLoadingBay(bridge) {
             const r = robot(i);
             if (!r.show || r.room !== "hangar") return;
             if (e.time() - b.t0 < (i - 1) * 0.8) return void (all = false);
-            along(r, [{ x: 330, y: 540 }, { x: 120, y: 470 }, ...outWay()], BAY_PACE.robot, dt) && (r.show = false);
+            along(r, [...BAY_SPOTS.robotsOut, ...outWay()], BAY_PACE.robot, dt) && (r.show = false);
             all = all && !r.show;
           });
           return all;
@@ -854,21 +856,21 @@ export function createLoadingBay(bridge) {
    * Everyone's cones (dashed, yellow on him), and Mops's: dashed, and while it holds Squatch his warm cone with hearts
    * floating up in it (the party's look, PR #35, R98 and R104), never yellow. Returns the cones as drawn.
    */
-  function drawAllCones(ctx, b, t) {
+  function drawAllCones(ctx, b, t, again = false) {
     const e = E(),
       s = e.pos("sq"),
       mops = e.get("moPose") !== "hidden" ? mopsCone() : null,
       warm = mops && mopsSees(b);
-    const out = drawCones(ctx, [...watcherCones(b), ...(mops && !warm ? [mops] : [])], s, !sqStanding(b), false, (c) => e.noteCone(c));
+    // (`again`: the room drawn a second time inside a close-up; its cones are not told to the tests twice)
+    const out = drawCones(ctx, [...watcherCones(b), ...(mops && !warm ? [mops] : [])], s, !sqStanding(b), false, again ? null : (c) => e.noteCone(c));
     warm && (drawHeartCone(ctx, mops.ox, mops.oy, mops.a, mops.half, mops.len, t, 1), out.push({ ...mops, inside: false, show: 1, hearts: true }));
     return out;
   }
   /** The bay: the locked picture(s), the bin's copies, the cones, the eyes in the plant, everyone, the close-up. */
-  function drawScene(ctx, b, t) {
-    const e = E(),
-      s = e.pos("sq");
+  function drawScene(ctx, b, t, again = false) {
+    const e = E();
     drawPicture(ctx, b);
-    const cones = drawAllCones(ctx, b, t);
+    const cones = drawAllCones(ctx, b, t, again);
     b.hidden && e.drawEyes(ctx, BAY.plant.eyes.x, BAY.plant.eyes.y);
     drawPeople(ctx, b, t);
     b.chime >= 0 && drawSpeakerRing(ctx, BAY.speaker, t);
@@ -904,7 +906,7 @@ export function createLoadingBay(bridge) {
       const k = (box.x1 - box.x0) / (C.src.x1 - C.src.x0);
       ctx.translate(box.x0 - C.src.x0 * k, box.y0 - C.src.y0 * k);
       ctx.scale(k, k);
-      drawScene(ctx, b, t);
+      drawScene(ctx, b, t, true);
     }
     ctx.restore();
     drawCloseUpFront(ctx, box);
@@ -936,13 +938,16 @@ export function createLoadingBay(bridge) {
   return {
     start,
     /**
-     * ↺ in a part where the player has no control (no step start was saved for it): the part starts again. True when
-     * it did (20-ch2.js reSec). In beat 28 (still at the counter) false: the lunch's own snack step comes back.
+     * ↺ in a part where the player has no control (no step start was saved for it): the part starts again (beat 28's
+     * lines from the first; the walk from the hide step). True when it did (20-ch2.js reSec). At the hide step false:
+     * the step restart brings it back.
      */
     restart() {
       const b = live();
       if (!b) return false;
-      if (b.step === "pa" || b.step === "hide") return false;
+      // behind the counter (beat 28): its lines again from the first; the hide step has its own saved start
+      if (b.step === "pa") return (jump("pa"), true);
+      if (b.step === "hide") return false;
       if (b.step === "walk") return (jump("hide"), true);
       if (BAY_PARTS.includes(b.step)) return (jump(b.step), true);
       return false;
@@ -974,8 +979,10 @@ export function createLoadingBay(bridge) {
       const feet = (x, y) => ({ x0: x - 22, x1: x + 22, y0: y - 12, y1: y + 8, person: 1 });
       return [...(b.isfred.show ? [feet(b.isfred.x, b.isfred.y)] : []), ...b.workers.filter((w) => w.show).map((w) => feet(w.x, w.y)), ...b.robots.filter((r) => r.show && r.room === "hangar").map((r) => feet(r.x, r.y))];
     },
-    bounds() {
-      return { x0: 60, x1: 900, y0: BAY.floorTop, y1: 590 };
+    /** True once the ship's ramp is down (the fur scanner's posts are there, and solid: 00-core.js CH1_FURNITURE). */
+    docked() {
+      const b = live();
+      return !!b && b.ramp > 0.5;
     },
     /** Where a speaker's bubble points: the wall speakers, Isfred, the robot, Squatch's eyes in the plant. */
     speakerAt(who) {
@@ -997,7 +1004,8 @@ export function createLoadingBay(bridge) {
         e = E();
       if (!b) return null;
       if (who === "pa" && e.room() === "hall") return { ...HALL_SPEAKER, side: "left" };
-      if (who === "mops" && b.closeUp && b.closeUp.id === "form") return { x0: 30, x1: 40, y0: 40, y1: 80, side: "left" };
+      // (top right, over the close-up's top edge: the top left is the HUD's corner on a computer)
+      if (who === "mops" && b.closeUp && b.closeUp.id === "form") return { x0: 950, x1: 955, y0: 40, y1: 80, side: "left" };
       // the walk home in the hallway: beside the speaker's head, on the side away from the other one (never over him)
       if (e.room() === "passage" && b.step === "home" && (who === "sq" || who === "mops")) {
         const s = e.pos("sq"),
@@ -1068,7 +1076,8 @@ export function createLoadingBay(bridge) {
       go("hide");
       return control();
     }
-    if (!BAY_PARTS.includes(part)) return;
+    // (any other name: the start, behind the counter)
+    if (!BAY_PARTS.includes(part)) return jump("pa");
     worldAt(part);
     busy();
     e.queue(partsFrom(part));
