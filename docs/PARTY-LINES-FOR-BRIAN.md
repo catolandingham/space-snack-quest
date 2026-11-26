@@ -80,21 +80,26 @@ Half one is P1 to P5 (peek to dress-up), built first. Half two is P6 to P8. The 
 | 68 | P6. Squatch thinks it in the snack close-up, once, after his first snack lands in the bag | Got one! | sq | two | approved | Brian 2026-11-24, Snack Quest Chat: "I like his own thought" |
 | 69 | P6. The button in the snack close-up, on screen the whole time | LEAVE · bar | button | two | approved | Brian 2026-11-24, Snack Quest Chat: a LEAVE · bar button always on screen |
 | 70 | The Chapter 1 end screen (the tally), only when he took every snack at the party | Snack Bandit: took every snack at the party. | card | two | approved | Brian 2026-11-24, click in Snack Quest Chat: "Snack Bandit (Recommended)" |
-| 71 | P6. The dance, once a routine is over: the green button (the same routine again, faster) | Dance again | button | two | approved | Brian 2026-11-25, Snack Quest Chat |
+| 71 | REMOVED 2026-11-26 (the speed words, lines 84 to 87, are on the button now). It was the green button after a routine | Dance again | button | two | approved | Brian 2026-11-25, Snack Quest Chat; replaced 2026-11-26 by the speed words (lines 84 to 87) |
 | 72 | P3. Squatch thinks it in the plant, right after Isfred's "Soon their helper robots will be here, to help with the heavy work." (line 23); the banner glows | Robots for the heavy work? That's Mops's job! | sq | one | approved | Brian 2026-11-25, Snack Quest Chat |
 | 73 | P3. Squatch thinks it next, once Isfred has set the flyer down on the far end of the bar; the flyer glows | I have to show Mops. | sq | one | approved | Brian 2026-11-25, Snack Quest Chat |
 | 74 | P6. A Croc Boy calls it from the stage as the first song ends; everyone gathers by the alarm box | Group photo! | band | two | approved | Brian 2026-11-25, Snack Quest Chat |
 | 75 | P8. Squatch at home, every ending where Mops is there, after Mops lifts the hat (or pats him); he holds up the flyer | But look. Robots are coming to do your job. | sq | two | approved | Brian 2026-11-25, Snack Quest Chat |
 | 76 | P8. Mops answers; then Squatch's two questions (lines 59 and 60) | Nobody is replacing me. They need me here. | mops | two | approved | Brian 2026-11-25, Snack Quest Chat |
 | 77 | P4. Squatch, home with the flyer, just inside his door; the party music still comes through the doorway | Phew, made it! | sq | one | approved | Brian 2026-11-25, Snack Quest Chat |
-| 78 | P4. Goal chip next; his bed glows | Squatch: put the flyer under your bed for Mops | chip | one | approved | Brian 2026-11-25, Snack Quest Chat |
-| 79 | P4. Action button at his bed; he slides the flyer under it | SAVE · flyer | button | one | approved | Brian 2026-11-25, Snack Quest Chat |
-| 80 | P4. Squatch thinks it once the flyer is under the bed | That party looked so fun. I've never gotten to dance at one. | sq | one | approved | Brian 2026-11-25, Snack Quest Chat |
+| 78 | P4. Goal chip next; his bed glows | Squatch: put the flyer on your bed for Mops | chip | one | needs your yes | Brian 2026-11-25, Snack Quest Chat; "under" changed to "on" 2026-11-26 because Brian answered #42: he lays it on top of the bed |
+| 79 | P4. Action button at his bed; he lays the flyer on top of it | SAVE · flyer | button | one | approved | Brian 2026-11-25, Snack Quest Chat |
+| 80 | P4. Squatch thinks it once the flyer is on the bed | That party looked so fun. | sq | one | approved | Brian 2026-11-25, Snack Quest Chat; cut to its first sentence by Brian 2026-11-26 (#29) |
 | 81 | P4. Squatch thinks it next; then the closet is outlined (P5) | I'll sneak back in a costume and dance! | sq | one | approved | Brian 2026-11-25, Snack Quest Chat |
 | 82 | P6. Goal chip during the octopus's real chase, after his first hug and Squatch's lines 44 and 37 | Squatch: get away from the octopus! | chip | two | approved | Brian 2026-11-25, Snack Quest Chat |
-| 83 | P6. Goal chip once everyone is in the photo's two rows and the gap left for Squatch glows; JOIN · photo shows with it | Squatch: join the group photo | chip | two | approved | Brian 2026-11-25, Snack Quest Chat |
+| 83 | P6. Goal chip as the photo's 3-2-1 starts (everyone in the two rows): the gap left for Squatch glows and JOIN · photo shows (before the count, stepping in gets him seen: Brian 2026-11-26, #46) | Squatch: join the group photo | chip | two | approved | Brian 2026-11-25, Snack Quest Chat |
+| 84 | P6. The dance: the word that pops up as his first routine starts (speed 1 of 4) | Dance! | button | two | approved | Brian 2026-11-26 (#45): the speed words Dance! / Faster! / Super fast! / Top speed! and a gold Super dancer! badge |
+| 85 | P6. The dance: on the green button after a routine, and the word that pops up as the next, faster routine starts (speed 2) | Faster! | button | two | approved | Brian 2026-11-26 (#45): the speed words Dance! / Faster! / Super fast! / Top speed! and a gold Super dancer! badge |
+| 86 | P6. The dance: the same, speed 3 | Super fast! | button | two | approved | Brian 2026-11-26 (#45): the speed words Dance! / Faster! / Super fast! / Top speed! and a gold Super dancer! badge |
+| 87 | P6. The dance: the same, speed 4 (the fastest; the button keeps it after that) | Top speed! | button | two | approved | Brian 2026-11-26 (#45): the speed words Dance! / Faster! / Super fast! / Top speed! and a gold Super dancer! badge |
+| 88 | P6. The dance: a gold badge over him after a perfect routine at top speed | Super dancer! | badge | two | approved | Brian 2026-11-26 (#45): the speed words Dance! / Faster! / Super fast! / Top speed! and a gold Super dancer! badge |
 
-Lines that need your yes: 25 (1 line). Your "Yes to all" (2026-11-24) covered the other 31; line 25, the band's name tag "Croc Boys", was added after it.
+Lines that need your yes: 25, 78 (2 lines). Your "Yes to all" (2026-11-24) covered the other 31; line 25, the band's name tag "Croc Boys", was added after it; line 78 changed "under your bed" to "on your bed" (2026-11-26) after your answer that he lays the flyer on top of the bed.
 
 The Croc Boys: you picked look B on 2026-11-24 ("25 i like B but they don't look like crocs"); their heads are redrawn as real crocodiles (long snout, teeth, eyes on top, tail).
 

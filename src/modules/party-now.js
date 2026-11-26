@@ -37,7 +37,7 @@ export function lateState(p, sizes) {
     choice: p.choice || "",
     card: p.card ? { got: { ...p.card.got }, all: p.card.all } : null,
     lift: p.lift ? { id: p.lift.id, k: p.lift.k, set: p.lift.set == null ? null : p.lift.set, rest: p.lift.rest || null } : null,
-    costumeLook: !!p.costumeLook,
+    mopsHearts: p.mopsHeartsAt != null,
     tv: p.tv ? { phase: p.tv.phase, k: p.tv.k, lit: p.tv.lit != null } : null,
     close: p.close ? { phase: p.close.phase, gone: Object.keys(p.close.gone) } : null,
     mops: p.mops ? { x: p.mops.x, y: p.mops.y, heart: p.mops.heart } : null,

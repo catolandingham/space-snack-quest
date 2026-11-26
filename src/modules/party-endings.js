@@ -1,16 +1,21 @@
 /**
  * P8b, closing time: the ending when he was never caught (party plan P8; no catch; ↺ restarts it). The ending
  * after an alarm is party-after-alarm.js.
- *   The wall speaker: "The party's over. Good night, Stormtop!" The band packs up. Guests leave through the hallway
+ *   First the song ends (a fade), the crowd cheers and claps and the Croc Boys bow (ENDING.cheer), the lights dim a
+ *   step (ENDING.dim), then the wall speaker's chime and "The party's over. Good night, Stormtop!" with its sound-wave
+ *   arcs (Brian 2026-11-26: "transition from the dance being over to the party ending. How can we smooth that out").
+ *   The band packs up. Guests leave through the hallway
  *   doorway two by two, the same pairs he watched from the plant (the two who came alone leave together), then the
  *   bartender, Isfred and the band, until Squatch stands alone in the empty hall (DECISIONS "Closing-time ending").
  *   Mops comes in from the hallway mopping with his beard, looks up, and his cone fills with floating hearts (R98,
  *   R104; PR #35's look, as big as everyone's). No words. The kid walks Squatch to Mops and they walk home together
- *   through Squatch's door. At home, the talk (party-talk.js): he takes the flyer he left by the door, "You went to
+ *   through Squatch's door. Or, any time after the speaker's line, he walks home through his door on his own; Mops
+ *   comes home a moment later and the talk starts there (Brian 2026-11-26, #50). At home, the talk (party-talk.js): he takes the flyer he left by the door, "You went to
  *   the party." ... "Here's why you have to hide.", the horn press and the TV; then beat 20 (the TV story).
  */
 import { footfall } from "./footfalls.js";
-import { CAST, EXIT, EXIT_LANE_MOUTH, MOPS_IN, SPOTS, HOME_ROOM, stepTo, stepClear, CLEAR_OF_SQUATCH } from "./party-hall.js";
+import { CAST, EXIT, EXIT_LANE_MOUTH, MOPS_IN, SPOTS, HOME_ROOM, HALL_DOOR, inHallDoorway, stepTo, stepClear, CLEAR_OF_SQUATCH } from "./party-hall.js";
+import { BAND_FADE } from "./party-band-order.js";
 import { lookAt } from "./party-watch.js";
 
 // PLACEHOLDERS for Brian: how fast people walk out, the gap between one pair leaving and the next, how slowly Mops
@@ -19,7 +24,9 @@ import { lookAt } from "./party-watch.js";
 // `clearOf`: someone walking out goes round Squatch this far from him; `giveWay`: how long they wait if he stands on
 // their way to the doorway before heading straight for the doorway round him. `besideHome`: how far from Squatch Mops
 // stops at home (the home room draws them big, so further than in the hall).
-export const ENDING = Object.freeze({ leave: 110, gap: 1.2, pack: 1.6, mop: 45, reach: 70, walk: 150, heart: 0.8, comeOver: 3, clearOf: CLEAR_OF_SQUATCH, giveWay: 1.5, besideHome: 170 });
+// `cheer`: the crowd's cheer and the band's bow; `dim`: the lights a step darker before the speaker; `darker`: how much;
+// `mopsHome`: how long after he walks home on his own Mops comes in.
+export const ENDING = Object.freeze({ cheer: 2.6, dim: 2, darker: 1.35, mopsHome: 2.5, leave: 110, gap: 1.2, pack: 1.6, mop: 45, reach: 70, walk: 150, heart: 0.8, comeOver: 3, clearOf: CLEAR_OF_SQUATCH, giveWay: 1.5, besideHome: 170 });
 // Who leaves, in order: the pairs, the two who came alone, then the bartender, Isfred and the band.
 export const LEAVING = Object.freeze([["teal", "stilt"], ["robot", "octopus-guest"], ["camera", "backpack"], ["bartender"], ["isfred"], ["band0", "band1", "band2"]]);
 const step = stepTo;
@@ -31,11 +38,13 @@ export function createEndings(h) {
   // ---------- P8b in the hall ----------
   function startClosing(p) {
     const e = E();
+    // the song ends on a fade, never a dead stop
+    h.sound.song(-1, BAND_FADE);
     p.scene = "P8b";
     p.lights = true;
     p.band = true;
     p.closeT = 0;
-    p.close = { phase: "speak", t: 0, gi: -1, gt: 0, gone: {} };
+    p.close = { phase: "cheer", t: 0, gi: -1, gt: 0, gone: {} };
     p.bartenderAt = p.bartenderAt || { x: CAST.bartender.x, y: CAST.bartender.y };
     p.bandAt = p.bandAt || CAST.band.map((b) => ({ x: b.x, y: b.y }));
     p.mops = null;
@@ -49,6 +58,16 @@ export function createEndings(h) {
     e.forgetSaved();
     h.chip("");
     h.control(false);
+    // the crowd cheers and claps, the band's flourish, and they bow (tickClosing: then the lights, then the speaker)
+    h.sound.one("cheer");
+    h.sound.one("clap");
+    h.sound.one("tada");
+  }
+  // The speaker's chime and line, with its arcs (party-view.js draws them while `speakerOn`).
+  function speak(p) {
+    const e = E();
+    p.close.phase = "speak";
+    p.close.t = 0;
     h.sound.one("chime");
     p.speakerOn = true;
     e.queue([
@@ -57,6 +76,9 @@ export function createEndings(h) {
         const q = h.P();
         // the party is over: he can walk about while everyone leaves (nobody looks for him any more)
         q && q.close && ((q.speakerOn = false), (q.close.phase = "pack"), (q.close.t = 0), (q.band = false), h.sound.song(-1), h.control(true));
+        // (his door works at once unless he stands in it already; then once he has stepped away from it)
+        const s = h.sq();
+        q && q.close && s && (q.close.leftDoor = Math.hypot(s.x - HALL_DOOR.x, s.y - HALL_DOOR.y) > HALL_DOOR.r);
       }),
     ]);
   }
@@ -82,9 +104,19 @@ export function createEndings(h) {
     const c = p.close,
       e = E();
     c.t += dt;
+    if (c.phase === "cheer") return void (c.t >= ENDING.cheer && ((c.phase = "dim"), (c.t = 0)));
+    if (c.phase === "dim") {
+      p.lightK = 1 + (ENDING.darker - 1) * Math.min(1, c.t / 0.8);
+      c.t >= ENDING.dim && speak(p);
+      return;
+    }
+    if (c.phase === "speak") return;
+    // after the speaker's line, his own door takes him home (once he has been away from it), and Mops follows
+    Math.hypot(s.x - HALL_DOOR.x, s.y - HALL_DOOR.y) > HALL_DOOR.r + 40 && (c.leftDoor = true);
+    if (c.phase !== "home" && c.leftDoor && free && e.room() === "hall" && p.pose === "stand" && inHallDoorway(s)) return void walkHomeAlone(p);
     if (c.phase === "pack") {
       // the band packs up, the lights come up
-      p.lightK = Math.max(0, 1 - c.t / ENDING.pack);
+      p.lightK = Math.max(0, ENDING.darker * (1 - c.t / ENDING.pack));
       if (c.t >= ENDING.pack) ((c.phase = "leave"), (c.t = 0), (p.lights = false));
       return;
     }
@@ -205,8 +237,37 @@ export function createEndings(h) {
     ]);
   }
 
+  // He walks home through his own door at closing time; Mops comes home a moment later and the talk starts there.
+  function walkHomeAlone(p) {
+    const e = E(),
+      R = h.homeRoom;
+    h.control(false);
+    p.close.phase = "home";
+    p.mops = null;
+    h.sound.hum(0);
+    e.walkOff();
+    e.queue([
+      e.until((dt) => (e.trail(), e.step("sq", HALL_DOOR.x, 636, ENDING.walk, dt))),
+      e.run(() => {
+        h.sound.one("door");
+        e.enterRoom("closet", "Q1");
+        e.place("sq", R.doorIn.x, R.doorIn.y);
+        e.face("sq", -1);
+        e.set("moPose", "hidden");
+        e.place("mops", R.mopsDoor.x, R.mopsDoor.y + 6);
+        e.face("mops", -1);
+      }),
+      e.until((dt) => e.step("sq", R.inside.x, R.inside.y, ENDING.walk, dt)),
+      e.run(() => ((h.P().pt = 0), e.still("sq"))),
+      e.until(() => !h.P() || h.P().pt >= ENDING.mopsHome),
+      // Mops's key in the door: he comes home, and the talk (party-talk.js)
+      e.run(() => (h.sound.one("door"), (h.P().doorHeard = true))),
+      ...h.afterAlarm().talk.steps(),
+    ]);
+  }
+
   function tick(p, dt, s, free) {
     if (p.scene === "P8b" && p.close) tickClosing(p, dt, s, free);
   }
-  return { startClosing, tick };
+  return { startClosing, tick, walkHomeAlone };
 }

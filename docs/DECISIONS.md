@@ -3,34 +3,35 @@
 
 | Lines | Heading |
 | --- | --- |
-| 35–37 | # Space Snack Quest: every decision, in one place |
-| 38–45 | ## How to use this file |
-| 46–56 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
-| 57–66 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
-| 67–78 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
-| 79–83 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 84–92 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 93–96 | ## Sound, 2026-11-23 |
-| 97–120 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 121–132 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 133–157 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 158–166 | ## Which repo is the base, 2026-11-22 |
-| 167–177 | ## Sight cones, 2026-11-22 |
-| 178–182 | ## Latest calendar direction, 2026-11-16 |
-| 183–185 | ## Vent walk, 2026-11-16 |
-| 186–188 | ## Locked home room v5, 2026-11-16 |
-| 189–198 | ## Fidelity system (pictures are locked, not just words) |
-| 199–236 | ## 1. Working rules |
-| 237–303 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 304–328 | ## 3. Characters and look |
-| 329–405 | ## 4. Look, rooms and layout |
-| 406–427 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 428–471 | ## 6. Later chapters (2–4 and travel) |
-| 472–481 | ## 7. Audio |
-| 482–516 | ## 8. Code, controls and process |
-| 517–563 | ## 9. Open / waiting on Brian |
-| 564–658 | ## 10. Earlier entries, kept word for word |
-| 659–755 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 36–38 | # Space Snack Quest: every decision, in one place |
+| 39–46 | ## How to use this file |
+| 47–57 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
+| 58–67 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
+| 68–78 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
+| 79–102 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
+| 103–107 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 108–116 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 117–120 | ## Sound, 2026-11-23 |
+| 121–144 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 145–156 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 157–181 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 182–190 | ## Which repo is the base, 2026-11-22 |
+| 191–201 | ## Sight cones, 2026-11-22 |
+| 202–206 | ## Latest calendar direction, 2026-11-16 |
+| 207–209 | ## Vent walk, 2026-11-16 |
+| 210–212 | ## Locked home room v5, 2026-11-16 |
+| 213–222 | ## Fidelity system (pictures are locked, not just words) |
+| 223–260 | ## 1. Working rules |
+| 261–327 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 328–352 | ## 3. Characters and look |
+| 353–429 | ## 4. Look, rooms and layout |
+| 430–451 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 452–495 | ## 6. Later chapters (2–4 and travel) |
+| 496–505 | ## 7. Audio |
+| 506–540 | ## 8. Code, controls and process |
+| 541–587 | ## 9. Open / waiting on Brian |
+| 588–682 | ## 10. Earlier entries, kept word for word |
+| 683–779 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -75,6 +76,29 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 - **Mops is a "Ganitor".** Brian, in chat: "Ganitor is what mops is - goat janitor - that should be an ongoing reference in the game." **Decided** (the fact). Where it shows, Brian's pick the same day ("I like all of them a b c d e"): a GANITOR name tag on Mops's shirt in every scene; the Station PA, "Ganitor Mops to the party hall." (words approved); the hallway Employee of the Month photo labeled "MOPS, GANITOR"; the robot janitor notice plays on it (wording needs his yes); "MOPS THE GANITOR" on Squatch's crayon drawings where Mops is in them. **Decided**, not built yet (a later round; `docs/BRIAN-ASKS-OPEN.md` item 14).
 - **The home morning, Brian's answers.** 2026-11-26, chat: the calendar is optional (the lunch bag is the goal; LOOK · calendar stays); PICK UP · rocket and PUT IN · box approved; after the gift goes in, the Guardian Box goes back in the closet; Mops leaving is heard in the dark, as built; the note on the rocket shows its words, "Brave Sasquatches stay hidden. — The Guardians" (no "Rule #1"); the lunch bag has MOPS on it; keep the 20-second goal-words rule; drawings fine as placeholders. **Decided.**
 - **The vocal song stays at bedtime.** Brian, video note 0:25: "This is the one place in ch 1 that I think this song with vocals actually works - we can leave it here". **Decided.**
+## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes)
+- **Music names, Decided 2026-11-26:** "The new Ganitor song is still called Floating in Space. It just happens to have the lyrics goating in space. We're not doing the old song anytime." The track in `music/goating-in-space.mp3` is titled Floating in Space everywhere a title shows; the old floating-in-space.mp3 never comes back. Built on feat/party-half-two.
+- **Bedtime song (#37), Decided 2026-11-26:** "The song I liked playing during the flashback was the original theme song." Bedtime plays the main theme from the ask "Tell me about when we first met?". For feat/ch1-bedtime-story.
+- **Mops sleeps (#33), Decided 2026-11-26:** "Let's have him fall asleep standing and then tip over onto his side and sleep upside down with his feet in the air." For feat/ch1-bedtime-story.
+- **Mops's cone (#48), Decided 2026-11-26:** "We answered this already. We had a cone, but when he sees Squatch, it always sends up hearts rather than question marks or exclamation points." In the talk at home Mops turns to him and hearts float up; the yellow glow on Squatch is gone. Built on feat/party-half-two (the lunch hallway is the lunch branch's).
+- **Flyer (#42), Decided 2026-11-26:** he lays it on top of the bed, with no shrink; Mops sees it there when he comes home, and the talk starts with Mops noticing it on the bed. Built; the goal chip's words changed "under" to "on" and wait for his yes (party line 78).
+- **Walk-tap ring (#51), Decided 2026-11-26:** remove the white walk-tap ring everywhere. Built.
+- **Doorways (#47), Decided 2026-11-26:** walk through any open doorway everywhere; closed doors keep OPEN · door; the doorway counts only when he walks into the opening itself. The party's doorways were already walk-through (his home door in P4, P6, P7 and the alarm; his door out at P5); closing time is added, and his hall door now counts only in its opening (`HALL_DOOR_OPENING`). The lunch's SNEAK · hallway is the lunch branch's.
+- **Closing (#50), Decided 2026-11-26:** he can walk home on his own any time at closing; Mops then comes home and the talk starts there. Built.
+- **Photo (#46), Decided 2026-11-26:** stepping in before the 3-2-1 starts gets him seen; safe during the 3-2-1; about 2 s to leave after the flash or he's seen. Built (JOIN · photo now comes with the count; a robot test makes it).
+- **Dance speed (#45), Decided 2026-11-26:** the speed words Dance! / Faster! / Super fast! / Top speed! on the button and a pop-up, and a gold "Super dancer!" badge for a perfect top-speed round. Built (party lines 84 to 88).
+- **Band order (#43), Decided 2026-11-26:** "Funky Chunk until he dances; his dance starts Stormtop-Sylvania; after his dance back to Funky Chunk; never restart a song from the top." Built.
+- **Chase music (#44), Decided 2026-11-26:** sample A: the band cuts to a comic chase tune, Kevin MacLeod's "Run Amok" (CC BY 4.0). Built.
+- **Mops's closing hum (#28), Decided 2026-11-26:** the hum recording (`music/mops-hum.mp3`), looped, quiet and muffled; credit "Mops's hum: recorded for the game by a family member, 2026-11-26, used with permission". Built.
+- **TV (#39 and #40), Decided 2026-11-26:** yes to the tape and a news report: Squatch puts a tape in, an old "STORMTOP NEWS" title card (the title words are a suggestion: **Needs Brian's yes**), then the story. The Station Official's line is "We rely on the air scrubbers to keep us breathing. NO FUR." (approved word for word). Built.
+- **Flashback look (#38), Decided 2026-11-26:** soft cloud-shaped edges and a warm old-photo tint. For feat/ch1-bedtime-story.
+- **Morning PA (#41), 2026-11-26:** words pending; build it with the suggested line "Good morning, Stormtop! Ganitor Mops to the party hall. The new robot janitors arrive today!" (**Needs Brian's yes**). For feat/ch1-day2-morning.
+- **Alarm sound (#52), Decided 2026-11-26:** the in-game alarm's "boing, boing, boing" goes everywhere; the three rising whoops as on the alarm page, for as long as security searches. Fixed: each whoop holds its level (`ALARM_HOLD`). Brian may pick a different alarm later.
+- **Highlight style, Decided 2026-11-26:** "A is a bit too thick, but B and E are too little. So we'd like a thicker dashed line. So E, but thicker, but not quite as thick as A." One highlight for the whole game: the dashed gold line (`outline.js` OUTLINE), 7.5 game pixels wide (about 3 px on a 375-wide phone; E was 4, A about 10), no glow, no arrow. Built on feat/party-half-two: the banner, the flyer, the shirt in the dress-up and the photo gap now use it (their glows are gone). The lunch branch's soft glow is replaced after the merge. Whether the on-screen words ("PUT IN · box" and the like) stay: **Open**, Brian to answer (round-d/outline-final.png shows both).
+- **Crowd sound, Decided 2026-11-26:** "I don't like any of the crowd sounds. They don't sound like crowds at all." None of the three made-up options goes in. The crowd is one swappable file entry (`music-picks.js` SOUND_PICKS.crowd, a recording looped under the band); until it has a file the game's made-up murmur plays as before. The voice under bubbles still waits on his pick (A plays).
+- **Party crowd, Decided 2026-11-26 (music page):** "crowd 1 with the band on top", and later "fine with the crowd noise without the music when that makes sense". The crowd is a recording (`sounds/party-crowd.mp3`, BigSoundBank "Crowd of 50-60 People #1", CC0), the party's room sound whenever guests are in the hall, with or without the band, quietly under the band; muffled at home through his door while the party is on; quiet with the alarm; gone once the hall empties at closing. It replaces the made-up murmur. Built.
+- **Voices under speech bubbles, Decided 2026-11-26 (music page):** the syllable pack, "a man" style (OpenGameArt "Dialog vocal samples", CC0): a random syllable from the speaker's set about every 0.09 s for the bubble's length, a short pause every 5, quiet under the music, never over sung lines; most grown-ups a man's standard voice with a small pitch shift each, the Croc Boys the deep one, female guests a woman's standard or light, robots the robot one, Squatch the standard one pitched up a little; Mops keeps his meh and goat bleat. Built (the made-up voices stay as a switch).
+- **Also approved 2026-11-26:** the darker cone near him (#26, already built), flashlights only while searching (#27, built), the home dance line cut to "That party looked so fun." (#29, built), keep "Floating in space! It's our favorite song!" and "♪ I'm floating in space! ♪" (#30), a small Credits screen from the title screen (#31, built; its wording waits for his yes), heart moments count as the same home visit (#32, built), the Day 1 Guardian Box at the Day 2 size (#34, for feat/ch1-day2-morning, where the box lives), keep the box close-up's front view (#35), Mops's crate line approved as written (#36, "You came to me in a Moon Pie crate. You've loved Moon Pies ever since.").
 
 ## Party, 2026-11-24 night (Brian, Snack Quest Chat)
 - **The flyer sneak replaces the party plan's decision 9** ("Isfred's flyers, and one sticks to Squatch's fur"). Brian: "I don't get him throwing the sheets, what if he just leaves one on the side of the stage when he leaves and we have to sneak to get it and get back to the room, avoiding lines of sight?" His click on how the kid learns he wants it: "He wants to show Mops". Isfred sets one flyer down on the stage's right end as he walks off; P4 is: sneak to it with no disguise, GRAB · flyer, sneak home. Words with his yes: "A robot flyer! I'll show Mops.", "Squatch: grab the flyer", "GRAB · flyer", then the existing "Squatch: sneak home for a disguise".

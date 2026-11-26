@@ -1,6 +1,6 @@
 /**
- * The morning's music (the morning's pick in music-picks.js): Brian's Goating in Space (2026-11-26, his remake of
- * his Floating in Space recording, which it replaces everywhere at home). It plays once from the top, fades out at
+ * The morning's music (the morning's pick in music-picks.js): Brian's Floating in Space (2026-11-26, his new
+ * recording, whose words sing "goating in space"; the old recording is gone for good). It plays once from the top, fades out at
  * its end, and the room is quiet after it until the next morning (Brian: "I don't think it should play all the way
  * thru a lot of times").
  * Brian, 2026-11-23 (Q8): it plays from the Dog Zylan line until "That evening…", then fades; Joe's theme
@@ -110,7 +110,7 @@ export function createHomeMusic(getEngine) {
       ctxUsed = ctx;
       startedAt = ctx.currentTime;
       starts++;
-      // Mops's goat bleat in the song's gaps for it (Goating in Space: music-picks.js `bleats`), through the song's
+      // Mops's goat bleat in the song's gaps for it (Floating in Space: music-picks.js `bleats`), through the song's
       // own level, so it dips and fades with the song
       for (const at of spanFor("morning").bleats || []) at > skip && playSound(ctx, gain, "mops-bleat", startedAt + (at - skip), 1 / HOME_MUSIC.match);
     } catch {

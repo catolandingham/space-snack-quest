@@ -7,8 +7,11 @@
  * off (PR #77), so every sound here also has a drawing (notes over the band, the cheer lines, the camera's red
  * light, the hiccup bubbles, the alarm's flashing light).
  *   one(name)     a sound by name (party-board-sounds.js BOARD; "crash" and "step" play recordings once loaded)
- *   song(i)       the Croc Boys: 0, 1 or 2 plays that song; -1 stops. The band's list of recordings in
- *                 music-picks.js, song i its ith track, from its top, once loaded; SONGS until then
+ *   song(i, fade) the Croc Boys: i plays the ith track of the band's list in music-picks.js (party-band-order.js
+ *                 picks which); -1 stops, fading out over about `fade` seconds (0.4 if not given). A track that
+ *                 comes back carries on where it stopped, never from the top (Brian 2026-11-26). Until a recording
+ *                 has loaded, SONGS[i] plays in its place
+ *   chase(on)     the octopus chase's music (music-picks.js "chase", Run Amok), looping while on
  *   sting()       the FUR! moment's sting, once
  *   muffle(on)    the band heard through his door when he is at home
  *   ambience(k)   "door" (the party through his door before the peek), "murmur" (the crowd), or "" (none)
@@ -17,7 +20,7 @@
  *                 game shows the band's line then
  */
 import { BOARD, tone, nz, muffled, kick, snare, hat, midi } from "./party-board-sounds.js";
-import { spanFor, fileFor, matchFor, listFor } from "./music-picks.js";
+import { spanFor, fileFor, matchFor, listFor, SOUND_PICKS } from "./music-picks.js";
 import { buses } from "./sound-mix.js";
 
 /**
@@ -54,6 +57,8 @@ export const PARTY_SOUND = Object.freeze({
   // the hum was Floating in Space, which is sung)
   hum: Object.freeze({ url: fileFor("closing-hum"), skip: spanFor("closing-hum") ? spanFor("closing-hum").from : 0, level: 0.18, muffle: 520 }),
   ahead: 0.3, // seconds of song notes scheduled ahead
+  // the crowd's recording at home, through his door: this share of its level (and muffled)
+  crowdHome: 0.6,
   door: 3.9, // the party through his door repeats this often
   murmur: 2.8,
 });
@@ -77,10 +82,18 @@ export function createPartySound(getEngine) {
     bandAt = 0,
     bandPos = 0,
     bandTrack = -1,
+    bandOff = 0,
+    chaseSrc = null,
+    chaseGain = null,
+    chaseBuf = null,
+    chaseLoading = false,
+    chaseOn = false,
     stingBuf = null,
     stingLoading = false;
   const bandBufs = {},
-    bandLoading = {};
+    bandLoading = {},
+    // where each track was when it stopped (seconds into its file): it carries on from there next time
+    resumeAt = {};
   const recs = {},
     loading = {};
   const played = []; // tests: what was asked to play (the last 300)
@@ -158,18 +171,27 @@ export function createPartySound(getEngine) {
     bandGain.gain.value = PARTY_SOUND.band.level * matchFor("band", n);
     bandSrc.connect(bandGain);
     bandGain.connect(out.o);
-    bandSrc.start(0, sp.from);
+    bandOff = resumeAt[n] != null && resumeAt[n] >= sp.from && resumeAt[n] < bandSrc.loopEnd ? resumeAt[n] : sp.from;
+    bandSrc.start(0, bandOff);
     bandAt = A.c.currentTime;
     bandPos = 0;
     bandTrack = n;
     note("band-recording:" + fileFor("band", n));
   }
-  function bandStop() {
+  // Where the playing track is now, seconds into its file.
+  function bandWhere() {
+    const sp = spanFor("band", bandTrack),
+      len = bandSrc.loopEnd - sp.from;
+    return sp.from + ((bandOff - sp.from + bandGain.context.currentTime - bandAt) % len);
+  }
+  function bandStop(fade) {
     if (!bandSrc) return;
     try {
-      const t = bandGain.context.currentTime;
-      bandGain.gain.setTargetAtTime(0, t, 0.08);
-      bandSrc.stop(t + 0.5);
+      const t = bandGain.context.currentTime,
+        f = fade == null ? 0.4 : fade;
+      resumeAt[bandTrack] = bandWhere();
+      bandGain.gain.setTargetAtTime(0, t, f / 5);
+      bandSrc.stop(t + f + 0.2);
     } catch {}
     bandSrc = null;
     bandGain = null;
@@ -184,6 +206,79 @@ export function createPartySound(getEngine) {
       .then((b) => A.c.decodeAudioData(b))
       .then((b) => (stingBuf = b))
       .catch(() => {});
+  }
+  // The party's crowd (music-picks.js SOUND_PICKS.crowd: Brian's pick of 2026-11-26, a real recording, "crowd 1 with
+  // the band on top"): looped whenever guests are in the hall (crowd(on, muffled) says so every frame), quietly under
+  // the band, muffled through his door at home; loaded once sound is on. Until it has loaded (or with no file), the
+  // made-up murmur plays in its place (the ambience below).
+  let crowdBuf = null,
+    crowdLoading = false,
+    crowdSrc = null,
+    crowdGain = null,
+    crowdLow = null,
+    crowdWant = false,
+    crowdMuffled = false;
+  function crowdLoad(A) {
+    const pick = SOUND_PICKS.crowd;
+    if (!pick || !pick.url || crowdBuf || crowdLoading || typeof fetch !== "function") return;
+    crowdLoading = true;
+    fetch(pick.url)
+      .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error("crowd " + r.status))))
+      .then((b) => A.c.decodeAudioData(b))
+      .then((b) => (crowdBuf = b))
+      .catch(() => (crowdLoading = false));
+  }
+  // Every frame: the crowd's loop at its level while wanted (faded out otherwise). True while the recording plays.
+  function crowdTick(A) {
+    crowdLoad(A);
+    if (!crowdBuf) return false;
+    if (!crowdSrc || crowdSrc.context !== A.c) {
+      const b = buses(getEngine());
+      crowdSrc = A.c.createBufferSource();
+      crowdSrc.buffer = crowdBuf;
+      crowdSrc.loop = true;
+      crowdLow = A.c.createBiquadFilter();
+      crowdLow.type = "lowpass";
+      crowdLow.frequency.value = 12000;
+      crowdGain = A.c.createGain();
+      crowdGain.gain.value = 0.0001;
+      crowdSrc.connect(crowdLow);
+      crowdLow.connect(crowdGain);
+      crowdGain.connect(b ? b.fx : A.o);
+      crowdSrc.start(0, Math.random() * Math.max(0, crowdBuf.duration - 1));
+      note("crowd-recording:" + SOUND_PICKS.crowd.url);
+    }
+    crowdLow.frequency.setTargetAtTime(crowdMuffled ? 420 : 12000, A.c.currentTime, 0.1);
+    crowdGain.gain.setTargetAtTime(crowdWant ? SOUND_PICKS.crowd.level * (crowdMuffled ? PARTY_SOUND.crowdHome : 1) : 0.0001, A.c.currentTime, 0.25);
+    return true;
+  }
+  // The chase music: loaded once sound is on, started (from its top) while the chase is on.
+  function chaseTick(A) {
+    const url = fileFor("chase");
+    if (!url) return;
+    if (!chaseBuf && !chaseLoading && typeof fetch === "function") {
+      chaseLoading = true;
+      fetch(url)
+        .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error("chase " + r.status))))
+        .then((b) => A.c.decodeAudioData(b))
+        .then((b) => (chaseBuf = b))
+        .catch(() => {});
+    }
+    if (!chaseOn || !chaseBuf || (chaseSrc && chaseSrc.context === A.c)) return;
+    const sp = spanFor("chase"),
+      b = buses(getEngine());
+    chaseSrc = A.c.createBufferSource();
+    chaseSrc.buffer = chaseBuf;
+    chaseSrc.loop = true;
+    chaseSrc.loopStart = sp.from;
+    chaseSrc.loopEnd = Math.min(sp.to, chaseBuf.duration);
+    chaseGain = A.c.createGain();
+    chaseGain.gain.value = 0.0001;
+    chaseGain.gain.setTargetAtTime(PARTY_SOUND.band.level * matchFor("chase"), A.c.currentTime, 0.05);
+    chaseSrc.connect(chaseGain);
+    chaseGain.connect(b ? b.music : A.o);
+    chaseSrc.start(0, sp.from);
+    note("chase-recording:" + url);
   }
   // One bar of the band at time t (bar = index in FORM).
   function bar(A, S, b, t) {
@@ -248,11 +343,36 @@ export function createPartySound(getEngine) {
       g.connect(b ? b.music : A.o);
       src.start();
     },
-    /** The band: `i` 0, 1 or 2 plays that song; -1 stops. */
-    song(i) {
-      i !== song && (bandStop(), (song = i), (beatNo = 0), (nextBeat = 0), i >= 0 && note("song" + i));
+    /** The band: `i` plays the ith track of the band's list; -1 stops, fading over `fade` seconds. */
+    song(i, fade) {
+      i !== song && (bandStop(fade), (song = i), (beatNo = 0), (nextBeat = 0), i >= 0 && note("song" + i), i < 0 && fade != null && note("fade"));
     },
-    /** The party heard through his door ("door"), the crowd ("murmur"), or nothing (""). */
+    /** The octopus chase's music, Run Amok (music-picks.js "chase"): on starts it, off stops it with a short fade. */
+    chase(on) {
+      on = !!on;
+      if (on === chaseOn) return;
+      chaseOn = on;
+      note(on ? "chase" : "chase-off");
+      if (!on && chaseSrc) {
+        try {
+          const t = chaseGain.context.currentTime;
+          chaseGain.gain.setTargetAtTime(0, t, 0.08);
+          chaseSrc.stop(t + 0.6);
+        } catch {}
+        chaseSrc = null;
+        chaseGain = null;
+      }
+    },
+    /**
+     * The crowd: `on` while guests are in the hall (the band playing or not), `muffled` while he hears it through his
+     * door at home. Its recording plays; until it has loaded, the made-up stand-ins do (the ambience).
+     */
+    crowd(on, muffledNow) {
+      crowdWant = !!on;
+      crowdMuffled = !!muffledNow;
+      crowdBuf || this.ambience(on ? (muffledNow ? "door" : "murmur") : "");
+    },
+    /** The party heard through his door ("door"), the crowd ("murmur"), or nothing (""): the stand-ins. */
     ambience(k) {
       if (k === amb) return;
       amb = k;
@@ -316,11 +436,16 @@ export function createPartySound(getEngine) {
       if (!A) return;
       const now = A.c.currentTime;
       stingLoad(A);
+      chaseTick(A);
+      // (the crowd's recording, once loaded, takes the place of the made-up murmur and the party through his door)
+      crowdTick(A) && amb && ((amb = ""), ambGain && ambGain.gain.setTargetAtTime(0, ambGain.context.currentTime, 0.05), (ambGain = null));
       if (amb) {
         ambNext < now && (ambNext = now + 0.05);
         if (ambNext < now + PARTY_SOUND.ahead) {
           if (!ambGain || ambGain.context !== A.c) ((ambGain = A.c.createGain()), ambGain.connect(A.o));
           const B = { c: A.c, o: ambGain };
+          // (the crowd: its recording, once Brian picks one and it has loaded, round and round; until then the
+          // made-up murmur: crowdTick)
           amb === "door" ? throughDoor(B, ambNext) : BOARD.murmur(muffled(B, 900), ambNext, PARTY_SOUND.murmur + 0.4);
           ambNext += amb === "door" ? PARTY_SOUND.door : PARTY_SOUND.murmur;
         }
@@ -337,7 +462,7 @@ export function createPartySound(getEngine) {
         // where the recording is now (it loops): crossing one of its shouts shows the band's line
         const sp = spanFor("band", song),
           len = Math.min(sp.to, buf.duration) - sp.from,
-          pos = (now - bandAt) % len,
+          pos = (bandOff - sp.from + now - bandAt) % len,
           crossed = (x) => (pos >= bandPos ? x > bandPos && x <= pos : x > bandPos || x <= pos);
         (PARTY_SOUND.band.shouts[listFor("band")[song % listFor("band").length]] || []).some(crossed) && (breakDue = true);
         bandPos = pos;
@@ -355,6 +480,9 @@ export function createPartySound(getEngine) {
     /** Stops the band, the ambience and the humming (the party is over, or a restart). */
     stop() {
       bandStop();
+      crowdWant = false;
+      crowdGain && crowdGain.gain.setTargetAtTime(0, crowdGain.context.currentTime, 0.2);
+      this.chase(false);
       song = -1;
       amb = "";
       ambGain && ambGain.gain.setTargetAtTime(0, ambGain.context.currentTime, 0.05);
@@ -363,7 +491,7 @@ export function createPartySound(getEngine) {
     },
     /** Tests: every sound asked for, in order, the song now, and which recordings have loaded. */
     debug() {
-      return { played: played.slice(), song, ambience: amb, recordings: Object.keys(recs), band: { loaded: Object.keys(bandBufs), playing: bandSrc ? fileFor("band", bandTrack) : "", level: PARTY_SOUND.band.level }, sting: !!stingBuf };
+      return { played: played.slice(), song, ambience: amb, recordings: Object.keys(recs), band: { loaded: Object.keys(bandBufs), playing: bandSrc ? fileFor("band", bandTrack) : "", at: bandSrc ? Math.round(bandWhere() * 10) / 10 : null, resumeAt: { ...resumeAt }, level: PARTY_SOUND.band.level }, chase: { on: chaseOn, playing: !!chaseSrc }, crowd: { want: crowdWant, muffled: crowdMuffled, playing: !!crowdSrc && crowdWant, loaded: !!crowdBuf }, sting: !!stingBuf };
     },
   };
 }

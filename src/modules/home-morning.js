@@ -14,7 +14,7 @@
  *           (a heart: Brian 2026-11-26, #48), and walks out of the door (round the bucket and the bag).
  *   wake    wordless: Squatch sits up in the crate (the blanket slides off), stretches both arms up, hops out over the
  *           crate's side and walks round its foot to beside the rocket (the note tied on).
- *   rocket  "Squatch: pick up the gift"; only the rocket is outlined and glows. PICK UP · rocket.
+ *   rocket  "Squatch: pick up the gift"; only the rocket is outlined (the one dashed line). PICK UP · rocket.
  *   note    the note tied to it opens, a close-up with its approved words "Brave Sasquatches stay hidden. — The
  *           Guardians" (NEXT) (Brian 2026-11-26, video note 0:24: "when he picks up the rocket, he should also read
  *           the note at that moment").
@@ -29,7 +29,7 @@
  *           the folded note still tied on, not read again (NEXT).
  *   putBack back in the room he puts the box, the gift in it, back in the closet (Brian, 2026-11-26);
  *   shut    and shuts the closet: the calendar on its door is back.
- *   toBag   the lunch bag by the door (MOPS on it) glows and is outlined; the player walks him to it (Brian
+ *   toBag   the lunch bag by the door (MOPS on it) is outlined; the player walks him to it (Brian
  *           2026-11-26, video note 0:30: "he should have to walk over to the lunch and see it first"); the goal
  *           words come up after 20 seconds, as everywhere.
  *   notice  as he gets there: "He forgot his lunch!" (NEXT)
@@ -387,7 +387,7 @@ export function createHomeMorning(bridge) {
         H().door = false;
         e.set("wardrobe", "closed");
         sound.morning("closetShut");
-        // the lunch bag by the door glows: he walks over to it and sees it (Brian 2026-11-26, video note 0:30)
+        // the lunch bag by the door is outlined: he walks over to it and sees it (Brian 2026-11-26, video note 0:30)
         go("toBag");
         control("chip-bag");
       }),
@@ -472,19 +472,6 @@ export function createHomeMorning(bridge) {
     h.bag === "floor" && out.push({ id: "bag", y: MORNING_THINGS.bag.y, draw: (ctx) => drawLunchBag(ctx, MORNING_THINGS.bag.x, MORNING_THINGS.bag.y) });
     return out;
   };
-  // A soft pulsing glow behind a thing while it is the goal (well bigger than it, so it shows on a phone).
-  function glow(ctx, box) {
-    const cx = (box.x0 + box.x1) / 2,
-      cy = (box.y0 + box.y1) / 2,
-      rad = Math.max(box.x1 - box.x0, box.y1 - box.y0) * 0.95,
-      a = 0.5 + 0.25 * Math.sin(E().time() * 4),
-      g = ctx.createRadialGradient(cx, cy, 4, cx, cy, rad);
-    g.addColorStop(0, `rgba(255,214,80,${a})`);
-    g.addColorStop(0.55, `rgba(255,224,110,${a * 0.55})`);
-    g.addColorStop(1, "rgba(255,224,110,0)");
-    ctx.fillStyle = g;
-    ctx.fillRect(cx - rad, cy - rad, rad * 2, rad * 2);
-  }
   // Where the box is now: in the closet, on its way out or back in, or out on the floor.
   function boxPlace(h) {
     const a = MORNING_THINGS.boxIn,
@@ -591,7 +578,7 @@ export function createHomeMorning(bridge) {
     },
     /**
      * A tap on the picture (game positions): a tap on the thing the goal outlines does its action, as the button
-     * would, when the button is offered there now (a kid taps the glowing calendar). True when it was used.
+     * would, when the button is offered there now (a kid taps the outlined calendar). True when it was used.
      */
     tap(x, y) {
       const e = E(),
@@ -676,8 +663,7 @@ export function createHomeMorning(bridge) {
         on = live();
       if (!on || e.room() !== "closet") return;
       const sy = e.pos("sq").y;
-      on.step === "rocket" && e.get("ctrl") && glow(ctx, TRACE.rocket);
-      (on.step === "toBag" || on.step === "notice" || on.step === "lunch") && glow(ctx, TRACE.bag);
+      // (no glow behind the goal thing: its dashed goal line is the one highlight, Brian 2026-11-26)
       for (const t of floorThings(h)) t.y <= sy && t.draw(ctx);
     },
     /** Drawn over the room after the people: things in front of him, his poses, what he carries, the dark. */

@@ -16,7 +16,8 @@
  *
  * Squatch's homework on the home-alone morning is the second user: its two pictures are in
  * homework-cutaway.js. The TV story (beat 20) is the third: its Wookiee pictures are in tv-story-art.js. The
- * bedtime story (beat 21) is the fourth: its crate story pictures are in bedtime-story-art.js.
+ * party's Croc Boy close-up (P3) is the fourth: croc-cutaway.js. The bedtime story (beat 21) is the fifth: its crate
+ * story pictures are in bedtime-story-art.js.
  *
  * Drawn here in the game's style (dark outlines, flat colours). Mops is drawn by this file too, from the same
  * shapes as the engine's drawMops but with outlines as thin as in Brian's approved picture (see "Mops in the
@@ -26,6 +27,8 @@ import { HOMEWORK_PANELS } from "./homework-cutaway.js";
 import { WOOKIEE_PANELS } from "./tv-story-art.js";
 import { BEDTIME_PANELS, GUARDIANS_PANELS, BEDTIME_AUTO } from "./bedtime-story-art.js";
 import { GBOX_PANELS, NOTE_PANELS } from "./home-morning-art.js";
+import { CROC_PANELS } from "./croc-cutaway.js";
+import { TAPE_PANELS } from "./tv-tape-art.js";
 
 const INK = "#1e2430";
 const GLOW = "#ffcf33",
@@ -49,9 +52,10 @@ let last = null;
  * Brian 30a: seconds a wordless picture with nothing to tap plays before the game goes on by itself (0: it waits
  * for NEXT). The dunk is two whole dunks (1.8 s each), ending with Mops upright and his beard dripping; the
  * homework desk is one whole loop (3 s), ending with all three lines written. The wringing picture has a beard
- * to tap (31a) and the homework sheet has words to read, so they wait.
+ * to tap (31a) and the homework sheet has words to read, so they wait. The Croc Boy close-up (croc-cutaway.js, P3,
+ * Brian 2026-11-26) plays 2.6 s by itself: his head bops on the band's first notes.
  */
-export const AUTO = Object.freeze({ beard: [3.6, 0], homework: [3.0, 0], moonpie: BEDTIME_AUTO }); // (moonpie: the tourists peeking in, 2026-11-26)
+export const AUTO = Object.freeze({ beard: [3.6, 0], homework: [3.0, 0], croc: [2.6], tvtape: [2.4, 0], moonpie: BEDTIME_AUTO }); // (moonpie: the tourists peeking in, 2026-11-26)
 
 /**
  * What each picture sounds like, timed to its drawing (synth.js names): `loop` seconds a loop (0: once), and
@@ -652,6 +656,10 @@ const PANELS = {
   gbox: GBOX_PANELS,
   // and the note tied to the gift, read as he picks it up (Brian 2026-11-26, video note 0:24)
   note: NOTE_PANELS,
+  // P3, the band's first notes: a Croc Boy bopping, close up (croc-cutaway.js)
+  croc: CROC_PANELS,
+  // beat 20's start: the tape going in, then the news report's title card (tv-tape-art.js)
+  tvtape: TAPE_PANELS,
 };
 
 /**

@@ -1,7 +1,7 @@
 Music in this folder (which plays where: src/modules/music-picks.js)
 
 main-theme-from-brian.mp3: Joe's song, Brian's friend; Brian's yes to use it (DECISIONS A1, 2026-11-08).
-goating-in-space.mp3: Goating in Space, Brian's song made with Suno, 2026-11-26
+goating-in-space.mp3: Floating in Space (the new recording; its words sing "goating in space"), Brian's song made with Suno, 2026-11-26
 stormtop-sylvania.mp3: Stormtop-Sylvania, Brian's song made with Suno, 2026-11-26
 
 Kevin MacLeod's tracks, Brian's picks of 2026-11-26 (112 kb/s; funky-chunk.mp3 is the first 1:10 and odyssey.mp3 the
@@ -14,4 +14,7 @@ first 1:15 of the track, each with a 3 s fade at the end):
 "Odyssey" Kevin MacLeod (incompetech.com), Licensed under Creative Commons: By Attribution 4.0 License, http://creativecommons.org/licenses/by/4.0/
 "Rainbows" Kevin MacLeod (incompetech.com), Licensed under Creative Commons: By Attribution 4.0 License, http://creativecommons.org/licenses/by/4.0/
 "Reawakening" Kevin MacLeod (incompetech.com), Licensed under Creative Commons: By Attribution 4.0 License, http://creativecommons.org/licenses/by/4.0/
+"Run Amok" Kevin MacLeod (incompetech.com), Licensed under Creative Commons: By Attribution 4.0 License, http://creativecommons.org/licenses/by/4.0/
 "Sneaky Snitch" Kevin MacLeod (incompetech.com), Licensed under Creative Commons: By Attribution 4.0 License, http://creativecommons.org/licenses/by/4.0/
+
+mops-hum.mp3: Mops's hum: recorded for the game by a family member, 2026-11-26, used with permission
