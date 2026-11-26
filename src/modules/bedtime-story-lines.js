@@ -36,9 +36,12 @@ export const BEDTIME_STORY_LINES = Object.freeze(
     { id: "mops-weent", who: "mops", text: "...Weeee-eenn-nnttt?", status: "Brian 2026-11-26 (video note 0:28), his approved goat spelling", source: OLD + ' had "...Baaa?" here; Brian: "Goats say "weeeent" not baaaah"; spelling from docs/MORNING-LINES-FOR-BRIAN.md row 13 and DECISIONS R96' },
     // The fourth old picture (Brian 2026-11-26: turn it on).
     { id: "cap-bucket", who: "caption", text: "Tourists were coming! Mops hid him in the mop bucket.", status: "approved", source: OLD + "; the fourth picture, on (Brian 2026-11-26); Brian 2026-11-26: keep the old crate story words" },
+    // the wordless picture before his line: two tourists peek in at the door, a "?" over each (Brian 2026-11-26, video
+    // note 0:39: "Would we actually want people to walk in so we see that tourists are suspicious?")
+    { id: "mark-wonder", who: "mark", text: "?", status: "suggested, needs-yes", source: "A mark over each tourist peeking in (the cause Brian asked for, 2026-11-26 video note 0:39); the game's '?' over a guest who wonders (party-watch.js)" },
     { id: "mops-nothing", who: "mops", text: "Nothing to see here!", status: "approved", source: OLD + "; the fourth picture, on (Brian 2026-11-26); Brian 2026-11-26: keep the old crate story words" },
     // back in the room, after the pictures
-    { id: "mops-moon-pie", who: "mops", text: "You came to me in a Moon Pie crate. You've loved Moon Pies ever since.", status: "in-game, needs-yes", source: "The bedtime line the game showed before this change (beat 21, docs/CH1-STORY-WALKTHROUGH.md, pending)" },
+    { id: "mops-moon-pie", who: "mops", text: "You came to me in a Moon Pie crate. You've loved Moon Pies ever since.", status: "approved", source: "The bedtime line the game showed before (beat 21, docs/CH1-STORY-WALKTHROUGH.md); Brian 2026-11-26, #36: approved as written" },
     // then, over the picture of Squatch's crayon drawing of the Guardians (Brian, 2026-11-26: Mops tells him about the
     // Guardians without hinting it's him)
     { id: "mops-guardians", who: "mops", text: "And you've always had your Guardians, watching over you.", status: "approved", source: "Brian 2026-11-26, chat 18b A" },

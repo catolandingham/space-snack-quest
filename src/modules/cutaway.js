@@ -24,8 +24,8 @@
  */
 import { HOMEWORK_PANELS } from "./homework-cutaway.js";
 import { WOOKIEE_PANELS } from "./tv-story-art.js";
-import { BEDTIME_PANELS, GUARDIANS_PANELS } from "./bedtime-story-art.js";
-import { GBOX_PANELS, drawLunchBag, MORNING_SIZES } from "./home-morning-art.js";
+import { BEDTIME_PANELS, GUARDIANS_PANELS, BEDTIME_AUTO } from "./bedtime-story-art.js";
+import { GBOX_PANELS, NOTE_PANELS, drawLunchBag, MORNING_SIZES } from "./home-morning-art.js";
 import { drawGanitorTag } from "./ganitor.js";
 
 const INK = "#1e2430";
@@ -61,7 +61,7 @@ export const LUNCH_EAT = Object.freeze({ length: 3.8, bites: Object.freeze([0.8,
  * homework desk is one whole loop (3 s), ending with all three lines written. The wringing picture has a beard
  * to tap (31a) and the homework sheet has words to read, so they wait.
  */
-export const AUTO = Object.freeze({ beard: [3.6, 0], homework: [3.0, 0], lunch: [LUNCH_EAT.length] });
+export const AUTO = Object.freeze({ beard: [3.6, 0], homework: [3.0, 0], lunch: [LUNCH_EAT.length], moonpie: BEDTIME_AUTO }); // (moonpie: the tourists peeking in, 2026-11-26)
 
 /**
  * What each picture sounds like, timed to its drawing (synth.js names): `loop` seconds a loop (0: once), and
@@ -833,6 +833,8 @@ const PANELS = {
   guardians: GUARDIANS_PANELS,
   // beats 22 to 24, the home morning (home-morning.js): the gift drops into the Guardian Box
   gbox: GBOX_PANELS,
+  // and the note tied to the gift, read as he picks it up (Brian 2026-11-26, video note 0:24)
+  note: NOTE_PANELS,
 };
 
 /**

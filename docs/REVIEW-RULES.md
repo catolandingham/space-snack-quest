@@ -3,30 +3,31 @@
 
 | Lines | Heading |
 | --- | --- |
-| 31–34 | # Review rules |
-| 35–86 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
-| 87–89 | ## Techniques |
-| 90–92 | ## Mistake: locked art was redrawn |
-| 93–97 | ## Mistake: optional inspection interrupted getting out of bed |
-| 98–100 | ## Mistake: a big doc's section index went stale |
-| 101–103 | ## Mistake: a rebuilt beat forgot the step restart |
-| 104–106 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
-| 107–109 | ## Mistake: a killed run was read as a failing test |
-| 110–112 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
-| 113–115 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
-| 116–122 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
-| 123–130 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
-| 131–147 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
-| 148–160 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
-| 161–163 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
-| 164–172 | ## Mistakes caught building the morning sound (2026-11-24) |
-| 173–184 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
-| 185–196 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
-| 197–210 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
-| 211–217 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
-| 218–228 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
-| 229–236 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
-| 237–242 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
+| 32–35 | # Review rules |
+| 36–87 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
+| 88–90 | ## Techniques |
+| 91–93 | ## Mistake: locked art was redrawn |
+| 94–98 | ## Mistake: optional inspection interrupted getting out of bed |
+| 99–101 | ## Mistake: a big doc's section index went stale |
+| 102–104 | ## Mistake: a rebuilt beat forgot the step restart |
+| 105–107 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
+| 108–110 | ## Mistake: a killed run was read as a failing test |
+| 111–113 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
+| 114–116 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
+| 117–123 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
+| 124–131 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
+| 132–148 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
+| 149–161 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
+| 162–164 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
+| 165–167 | ## Standing rule: nobody walks through furniture (Brian, 2026-11-26) |
+| 168–176 | ## Mistakes caught building the morning sound (2026-11-24) |
+| 177–188 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
+| 189–200 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
+| 201–214 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
+| 215–221 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
+| 222–232 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
+| 233–240 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
+| 241–246 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
 <!-- /section-index -->
 # Review rules
 
@@ -160,6 +161,9 @@ The later full touch run exposed a test-driver gap: it waited whenever walking w
 
 ## Standing rule: painstakingly obvious (Brian, 2026-11-24)
 His words, on the snack close-up, for every piece of the game: "It just needs to be more painstakingly obvious, and we need to kind of build this as a core thing we're looking at all times." Before a picture or a beat goes to Brian, ask of each thing on screen: would a 10-year-old know what it is, what it is doing and what he can do about it, without being told? If the answer needs a sentence of explaining, the drawing is not done.
+
+## Standing rule: nobody walks through furniture (Brian, 2026-11-26)
+His note on the home morning (video note 0:18): "he kind of glitches through the crate... is there a physics rule we can adopt for the future?" The rule, word for word as the phase-3 brief gives it: "Nobody walks through furniture: every walk goes round it, checked by a test over every scripted walk." Every walk a beat scripts is a list of corners in its own module (the home morning's `HOME_MORNING_WALKS`, the bedtime story's `BEDTIME_WALKS`) that the code walks, and `tests/scripted-walks.mjs` samples each one every 2 px against the furniture boxes (`tests/data/home-furniture.json`, the ones `tests/standing-spots.mjs` uses) and the things on the floor. A new scripted walk goes in such a list and in that test in the same change.
 
 ## Mistakes caught building the morning sound (2026-11-24)
 - A sound timed to a picture was checked against the time read after the frame that played it, so it looked a frame late. A sound check reads the picture's time at the moment the sound played (the step's `el` less that frame), and allows one frame.

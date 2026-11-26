@@ -12,6 +12,7 @@
 import { FLYER } from "./party-hall.js";
 import { TRACE, MORNING_THINGS, DRAWN_OUTLINE, outlineSource } from "./home-morning-art.js";
 import { LUNCH_TRACE, lunchOutlineSource } from "./lunch-sneak-art.js";
+import { TALL_BOX, tallClosetSource } from "./tall-closet.js";
 
 // Doorways more than one goal outlines: each typed once.
 const HOME_DOOR = { rect: { x0: 912, x1: 940, y0: 358, y1: 468 } }, // home: the doorway in the right wall
@@ -31,7 +32,8 @@ export const GOAL_TARGETS = {
   "closet:undress": { trace: { x0: 30, x1: 172, y0: 188, y1: 352 } }, // the closet (party P8c, home early: costume off)
   // The home morning, Day 2 (home-morning.js): one thing at a time
   "closet:hm-rocket": { trace: TRACE.rocket, source: () => outlineSource("rocket"), line: DRAWN_OUTLINE }, // the Guardians' toy rocket
-  "closet:hm-closet": { trace: { x0: 30, x1: 172, y0: 188, y1: 352 } }, // the wardrobe (the box is in it)
+  // the wardrobe (the box is in it), taller on Day 2 (tall-closet.js): traced from the home picture with it drawn on
+  "closet:hm-closet": { trace: { x0: 30, x1: 172, y0: Math.floor(TALL_BOX.y0) - 8, y1: 352 }, source: () => tallClosetSource(false) },
   "closet:hm-box": { rect: pad(MORNING_THINGS.boxIn, 4) }, // the Guardian Box on the closet floor, door open
   "closet:hm-calendar": { rect: { x0: 99, x1: 167, y0: 196, y1: 279 } }, // the calendar on the wardrobe door
   "closet:hm-lunch": { trace: TRACE.bag, source: () => outlineSource("bag"), line: DRAWN_OUTLINE }, // Mops's lunch bag by the door

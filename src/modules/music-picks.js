@@ -51,6 +51,11 @@ export const MUSIC_FILES = Object.freeze({
 export const SPANS = Object.freeze({
   themeTune: Object.freeze({ file: "theme", from: 1.0, to: 18.5, words: false }),
   themeBreak: Object.freeze({ file: "theme", from: 154, to: 178, words: false }), // an option, not used
+  // bedtime (Brian 2026-11-26, #37: "The song I liked playing during the flashback was the original theme song"): Joe's
+  // song from its opening tune, sung part and all, once (the file is 3:54.6); it starts as Squatch asks "Tell me about
+  // when we first met?", so the singing (from 0:19.5) comes in about 19.5 s later (HOLD, then 18.5 s of opening tune),
+  // over the crate story's pictures
+  themeSong: Object.freeze({ file: "theme", from: 1.0, to: 233.5, words: true, once: true }),
   // `bleats`: seconds into the song where Mops's goat bleat plays over it, in its three quiet gaps (found by loudness:
   // the music dips about 15 dB at 0:36.5 to 0:38.9 after "A really long way from home", at 1:04.0 to 1:06.4 after
   // "It's really a pretty nice room", and at 1:35 to 1:38 after "He means I love you"; estimates to about 0.2 s).
@@ -58,7 +63,7 @@ export const SPANS = Object.freeze({
   carefreeOnce: Object.freeze({ file: "carefree", from: 0, to: 205, words: false, once: true }),
   morningOnce: Object.freeze({ file: "morning", from: 0, to: 153, words: false, once: true }),
   rainbowsOnce: Object.freeze({ file: "rainbows", from: 0, to: 219, words: false, once: true }),
-  reawakeningOnce: Object.freeze({ file: "reawakening", from: 0, to: 214, words: false, once: true }),
+  reawakeningOnce: Object.freeze({ file: "reawakening", from: 0, to: 214, words: false, once: true }), // an option, not used since 2026-11-26
   bandSong: Object.freeze({ file: "band", from: 0, to: 119.6, words: true }), // ends on its count, "...six."
   funkySong: Object.freeze({ file: "funky", from: 0, to: 70, words: false }),
   lobbyLoop: Object.freeze({ file: "lobby", from: 0, to: 193, words: false }),
@@ -76,7 +81,10 @@ export const SPANS = Object.freeze({
  *            the next track of the home rotation each visit, Carefree, Morning, Rainbows, then Carefree again (Brian:
  *            "so it isn't repetitive")
  *   bedtime  the bedtime story (beat 21: bedtime-story.js says when it is showing, bridge.js makes the cue "bedtime"):
- *            Reawakening
+ *            Joe's theme with its singing, from Squatch's ask (Brian 2026-11-26, #37; it was Reawakening)
+ *   day2am   Day 2's home morning, after the station PA (home-morning.js musicCue; Brian 2026-11-26, #41: "then the
+ *            music from the speaker"): Kevin MacLeod's "Morning", once, as if the speaker plays it. Its own place, so
+ *            the home rotation is not stepped on by it; quiet as the room comes up and while the PA talks.
  *   gift     the gift, out at home: the same visit as home (MUSIC_PLACE), so the home track carries on
  *   heart    the heart moments
  *   tv       the TV story (beat 20; tv-story.js says when it is showing)
@@ -93,7 +101,8 @@ export const MUSIC_PICKS = Object.freeze({
   morning: "goatingOnce",
   home: Object.freeze(["carefreeOnce", "morningOnce", "rainbowsOnce"]),
   gift: Object.freeze(["carefreeOnce", "morningOnce", "rainbowsOnce"]),
-  bedtime: "reawakeningOnce",
+  bedtime: "themeSong",
+  day2am: "morningOnce",
   heart: "themeTune",
   tv: "odysseyOnce",
   hall: "lobbyLoop",
@@ -109,10 +118,13 @@ export const MUSIC_PICKS = Object.freeze({
 export const SOUND_PICKS = Object.freeze({ "mops-bleat": Object.freeze({ url: "sounds/goat-bleat.mp3", level: 0.7 }) });
 // Cues that are the same place (one visit): moving between them does not start a `once` track again.
 export const MUSIC_PLACE = Object.freeze({ gift: "home" });
-// The moments where a sung track may play (Brian 2026-11-26): the morning's Goating in Space, and the band.
-export const SINGING_OK = Object.freeze(["morning", "band"]);
+// The moments where a sung track may play (Brian 2026-11-26): the morning's Goating in Space, the band, and bedtime
+// (Joe's theme sung over the crate story, #37).
+export const SINGING_OK = Object.freeze(["morning", "band", "bedtime"]);
 // Seconds of fade at the end of a span (before it goes back to its start, or stops), and in again after.
-export const SPAN_FADE = Object.freeze({ out: 0.8, in: 0.3 });
+// `quiet`: seconds a track fades out when its moment goes quiet (Brian 2026-11-26: the TV story's music stops when the
+// film ends; it does not play on a second and stop).
+export const SPAN_FADE = Object.freeze({ out: 0.8, in: 0.3, quiet: 0.8 });
 
 // Where each rotation is (the next track for that moment's next visit).
 const turn = {};
@@ -215,6 +227,8 @@ export function keepInSpan(el, cue) {
   if (!visit.place || visit.hush) return 0;
   const s = spanFor(visit.cue, visit.n);
   if (!s) return 0;
+  // going quiet (the cue has left for a moment with no music, not held for HOLD yet): fade out now
+  const quiet = visit.pend && visit.pend.place === "" ? Math.max(0, 1 - (clock() - visit.pend.since) / SPAN_FADE.quiet) : 1;
   const file = MUSIC_FILES[s.file];
   if (visit.fresh) {
     visit.fresh = false;
@@ -239,7 +253,7 @@ export function keepInSpan(el, cue) {
     } catch {}
     return 0;
   }
-  return file.match * Math.max(0, Math.min(1, (s.to - t) / SPAN_FADE.out, (t - s.from + 0.05) / SPAN_FADE.in));
+  return quiet * file.match * Math.max(0, Math.min(1, (s.to - t) / SPAN_FADE.out, (t - s.from + 0.05) / SPAN_FADE.in));
 }
 
 // One decoded copy of each sound per audio context (the bleat is shared by the morning's line and the song).

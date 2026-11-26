@@ -1,9 +1,9 @@
 /**
  * The bedtime story's sounds: Mops's hooves as he walks (the morning's hoof, synth.js), and as Squatch falls asleep
- * a big yawn, the blanket's rustle as Mops tucks him in, the light switch's click, and three snores (Brian asked
+ * a big yawn, the blanket's rustle as Mops tucks him in, a soft thump as Mops tips over asleep, and three snores (Brian asked
  * for a snore at bedtime, Nov 8 playtest P L119, and on 2026-11-26: "some snoring"). The snore is the game's snore
  * (synth.js "snore", the morning's, with its whistle), played louder than the morning's so it is clearly heard over
- * the bedtime music (Reawakening, music-picks.js). Levels are placeholders.
+ * the bedtime music (Joe's theme, music-picks.js). Levels are placeholders.
  * Every sound goes through the effects level under the game's master volume (sound-mix.js); nothing plays while
  * sound is off. Each sound asked for is counted, sound on or off (tests).
  */
@@ -14,7 +14,7 @@ export const BEDTIME_SOUND = Object.freeze({
   snore: 2.5, // the snore's level, clearly over the bedtime song (the morning plays the same snore at 0.4, morning-sound.js snoreLevel)
   yawn: 0.22,
   rustle: 0.3,
-  click: 0.25,
+  thump: 0.5,
 });
 
 /** The sound pick Mops's bleat is asked for by (music-picks.js SOUND_PICKS "mops-bleat"). */
@@ -50,7 +50,7 @@ function breath(c, o, t, { f, v, rise, fall }) {
   src.start(t);
   src.stop(t + rise + fall + 0.05);
 }
-// A tone gliding from f to f1 over d seconds, rising over `a` and dying away (the yawn's voice, the click).
+// A tone gliding from f to f1 over d seconds, rising over `a` and dying away (the yawn's voice, the thump).
 function glide(c, o, t, { f, f1, d, v, a, type = "sine" }) {
   const os = c.createOscillator(),
     g = c.createGain();
@@ -68,7 +68,7 @@ function glide(c, o, t, { f, f1, d, v, a, type = "sine" }) {
 }
 
 export function createBedtimeSound(getEngine) {
-  const asked = { snore: 0, yawn: 0, rustle: 0, click: 0, hoof: 0, bleat: 0 };
+  const asked = { snore: 0, yawn: 0, rustle: 0, thump: 0, hoof: 0, bleat: 0 };
   const out = () => {
     const b = buses(getEngine());
     return b ? { c: b.ctx, o: b.fx } : null;
@@ -111,10 +111,13 @@ export function createBedtimeSound(getEngine) {
         breath(c, o, t, { f: 2400, v: BEDTIME_SOUND.rustle, rise: 0.25, fall: 0.5 });
       });
     },
-    /** The light switch by the door. */
-    click() {
-      asked.click++;
-      safe(({ c, o }, t) => glide(c, o, t, { f: 2200, f1: 900, d: 0.05, v: BEDTIME_SOUND.click, a: 0.002, type: "square" }));
+    /** Mops landing on the floor as he tips over asleep: a soft, low thump. */
+    thump() {
+      asked.thump++;
+      safe(({ c, o }, t) => {
+        glide(c, o, t, { f: 120, f1: 45, d: 0.28, v: BEDTIME_SOUND.thump, a: 0.005 });
+        breath(c, o, t, { f: 300, v: BEDTIME_SOUND.thump * 0.4, rise: 0.01, fall: 0.18 });
+      });
     },
     /**
      * Mops's bleat, under his "...Weeee-eenn-nnttt?" (Brian 2026-11-26: Mops's bleat lines get a real goat bleat). It

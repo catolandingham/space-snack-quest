@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–142 | ## Where main is (Chapter 1 redesign) |
-| 143–157 | ## Register |
-| 158–179 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 180–200 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 201–213 | ## Phase 2 (plan section 4, T13 to T18) |
-| 214–236 | ## Phase 1 (plan section 3, T5 to T12) |
-| 237–250 | ## SS40–SS44 |
-| 251–268 | ## Story rows |
-| 269–287 | ## Reset section |
-| 288–298 | ## Still open |
-| 299–302 | ## Chapter 1 replot, recorded and not built |
-| 303–460 | ## Changelog |
+| 24–151 | ## Where main is (Chapter 1 redesign) |
+| 152–166 | ## Register |
+| 167–188 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 189–209 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 210–222 | ## Phase 2 (plan section 4, T13 to T18) |
+| 223–245 | ## Phase 1 (plan section 3, T5 to T12) |
+| 246–259 | ## SS40–SS44 |
+| 260–277 | ## Story rows |
+| 278–296 | ## Reset section |
+| 297–307 | ## Still open |
+| 308–311 | ## Chapter 1 replot, recorded and not built |
+| 312–469 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -29,6 +29,15 @@
 - Placeholders (not pins): the close-up 1.65 times, grows in 0.4 s; the eating close-up 3.8 s (first bite at 0.8 s so the whole sandwich is seen).
 - The two watchers moved and turned (placeholders): once the party's sight saw Squatch's whole drawn body (merged in this round), the old places put his doorway, the plant and the crates inside their cones. Now the teal guest stands at 380, 355 looking down and right, the camera tourist at 480, 400 looking right and a little up; `tests/lunch-sneak.mjs`'s fairness rules pass again.
 - MOPS on the bag as he walks in at the picture's bottom edge is still partly off the canvas for a moment (listed in `tests/canvas-text-allow.json`).
+2026-11-26 (round D), draft PR #90 on `feat/ch1-day2-morning`, not merged. Done: `feat/ch1-bedtime-story` (round D) merged in (merge commit). Brian's notes of 2026-11-26 on the morning: the PA beat (#41, suggested words; "Morning" from the speaker, music table row "day2am"); Mops asleep by the bed until the PA, then up and out (#33, a heart #48); the note read in a close-up at PICK UP (0:24), not again in the box; thought bubbles bigger than their drawing with a thought trail (0:11); nobody walks through furniture (0:18: the rule in REVIEW-RULES, `tests/scripted-walks.mjs`); the closet taller on Day 2 (0:20, Brian's yes; `tall-closet.js` layer); walk to the bag before "He forgot his lunch!" (0:30). Docs match main: yes. Not yet played by a person.
+- Waiting on Brian: the outline pick (A to E sheet) and the no-label still (0:18, 0:20); the PA words; the chip "Squatch: go to the bag by the door"; the taller closet on Day 1 too?
+- Done on the merge into `feat/ch1-lunch-sneak` (2026-11-26): its night PA ("Ganitor Mops to the party hall.", `ganitor.js` pa-ganitor, used in `home-morning.js` start and checked in `tests/home-morning.mjs`) is replaced by this branch's morning PA: on the merge forward drop its PA step and check, keep `ganitor.js` for the tag, wall and crayon labels.
+- NOT ASSESSED: the morning video (recorded after the merge); how loud "Morning" sits after the PA on a phone.
+
+2026-11-26 (round D), draft PR #89 on `feat/ch1-bedtime-story`, not merged. Done (Brian's notes of 2026-11-26): Mops's mop bucket as one drawing (`src/modules/mop-bucket.js`) in the bedtime pictures and over the home room's painted bucket; the baby a furry ball in it; the tourists peeking in (wordless, plays by itself) before "Nothing to see here!"; the crate story's memory look; Joe's theme sung at bedtime from the ask (replaces Reawakening; bedtime added to SINGING_OK); Mops falls asleep like a fainting goat beside the bed (replaces him walking out); Mops's Moon Pie line approved; the Station Official docs agree with the game. Docs match main: yes.
+- Next (the morning branch, `feat/ch1-day2-morning`): Day 2 starts with Mops gone (`ch1Day2Begin` hides him); he should start the morning asleep on his back beside the bed (`mops-asleep-art.js` MOPS_ASLEEP and drawMopsTurned) and get up and leave after the PA, not leave in the dark.
+- Questions for Brian: the new bucket drawn over the locked home picture's painted bucket (his yes was said about the bedtime picture's bucket, "Let's go with it moving forward"; confirm the home room too); the "?" over the tourists (suggested); the light going down by itself; the morning's beard-wringing close-up keeps its own bucket (change it to the new one?); the old flashback "fb1bucket" (scene S4) and the "My baby bed! A mop bucket." hotspot (scene S1) are in the old Chapter 1 code the asks page says to delete (`10-ch1.js`, `11-ch1-hall.js`); left alone.
+- NOT ASSESSED: how the singing lines up with the pictures at a real kid's reading pace; the bedtime video (recorded after the merge).
 
 2026-11-26 (round C), draft PR #90 on `feat/ch1-day2-morning`, not merged. Done: `feat/ch1-bedtime-story` merged in (merge commit). The home morning follows Brian's music table of 2026-11-26 (`src/modules/music-picks.js`): it no longer starts the morning song (`bridge.homeMusic`, Goating in Space, which is Day 1's first morning only); while the night is still dark the bedtime story's Reawakening goes on (`home-morning.js` nightNow, `bridge.js` refineCue), and once the room comes up this daytime visit home plays the next track of the home rotation (Carefree, Morning, Rainbows). Tests: `tests/home-morning.mjs` (the cue every frame: "bedtime" while dark, "home" by day; the morning song not playing). Docs match main: yes. Not yet played by a person.
 
@@ -62,7 +71,7 @@
 - Placeholders (not pins): the story drawn 1.6 times the room; walking 160, Mops 150 to 170 a second; each falling-asleep part 2 to 2.7 s; the snore 2.5 times its sound's own level (measured in the video: see the PR).
 
 2026-11-26, draft PR #87, not merged. Done: Brian's five showing-6 notes (README, "Chapter 1 redesign", the 2026-11-26 paragraph): sight sees his whole drawn body (the cone drawn on him is the cone that sees him), the crowd's hiss gone, one music table with no singing away from bedtime, his own Croc Boys song for the band, the photo straight after his first dance, guards round the furniture. Open for Brian:
-- Music (Brian's picks of 2026-11-26, built in `src/modules/music-picks.js`): the home rotation is Carefree, Morning, Rainbows; bedtime's Reawakening waits for the bedtime story's branch to send its "bedtime" cue; Mops's closing-time hum is "track to be chosen by Brian" (stand-in: silence); the "mops-bleat" sound waits for its clip. Mops's approved line "Floating in space! It's our favorite song!" and Squatch's "♪ I'm floating in space! ♪" now sit over Goating in Space: keep or change the words? There is no credits screen in the game: the CC BY credits are in `music/CREDITS.txt` and the README; does he want them on a screen too?
+- Music (Brian's picks of 2026-11-26, built in `src/modules/music-picks.js`): the home rotation is Carefree, Morning, Rainbows; bedtime's Reawakening waits for the bedtime story's branch to send its "bedtime" cue; Mops's closing-time hum is "track to be chosen by Brian" (stand-in: silence); the "mops-bleat" sound waits for its clip. Mops's approved line "Floating in space! It's our favorite song!" and Squatch's "♪ I'm floating in space! ♪" now sit over Goating in Space: keep or change the words? There is no credits screen in the game: the CC BY credits are in `music/CREDITS.txt` and the README; does he want them on a screen too? (Superseded 2026-11-26, round D: bedtime plays Joe's theme with its singing; see the round D entry above.)
 - Brian's answers of 2026-11-26, built: the vent sucking in costume pieces stays (his yes); the octopus stays at 170 and gives Squatch a one-second head start (`OCT.headStart`); the one FUR alarm of Chapter 1 is the red alert whoop (option 1 of `tools/alarm-choices.html`; `BOARD.alarm`, and the older program's alarm sound through `bridge.js` `alarmSound`, so every chapter's alarm uses it); "I've never gotten to dance at a party." is back in P3 after the band's line, before the flyer sneak (at home line 80 says nearly the same, "That party looked so fun. I've never gotten to dance at one.": keep both?); the new party drawings stay as placeholders; Mops's goat bleat (`sounds/goat-bleat.mp3`) on his bleat line and in Goating in Space's three gaps (0:36.6, 1:04.1, 1:35.8).
 - Approval needed, visual: a dashed cone close to Squatch is drawn darker and thicker (`CONE_NEAR` in `party-watch.js`), so a kid sees the cone about to touch him on a phone; the guards' new routes round the plants; the flyer sneak's re-searched sweeping cones.
 - The guards' flashlights: in the hall they carry none (plain sight cones from the moment they walk in until they walk out); at home the guard's flashlight beam is on from the doorway until Mops sends him off (DECISIONS 2026-11-24 says he carries one, not when it is on). On only while searching?

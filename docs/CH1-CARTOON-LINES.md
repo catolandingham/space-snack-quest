@@ -107,7 +107,8 @@ Rules: never invent why the parents never came back (W21). No new words go on a 
 ### 4 · TV story *(no panel yet)* [S19]
 | Speaker / surface | Exact text | Status |
 |---|---|---|
-| *(no words decided; "Nobody can live outside" is cut)* | — | — |
+| Station Official, in the last picture | Nobody can live outside. The scrubbers keep us breathing. NO FUR. | In the game since 2026-11-25 (Brian brought the old Wookiee story back word for word, `src/modules/tv-story-lines.js`; S19's cut no longer applies) |
+| Station Official, new wording | We rely on the air scrubbers to keep us breathing. NO FUR. | Approved word for word, Brian 2026-11-26 (replaces the line above; the game changes on the party branch) |
 
 ### 5 · Lunch → the PA *(on the way to panel 01)* [S24]
 | Speaker / surface | Exact text | Status |
@@ -299,4 +300,4 @@ Rules: never invent why the parents never came back (W21). No new words go on a 
 ## D. Counts (rows in section C, plus the room labels in B)
 **APPROVED: 1 · EXISTING: 21 · NEEDS BRIAN: 63** (rows whose status starts with those words). Struck and removed rows are not counted. "No words" rows are not counted. Isfred's name tag and every new R58–R63 line are NEEDS BRIAN because they are not in the game yet. The kid's gasp "!" is the game's existing sight mark (R59).
 
-Removed and not to be used: "MAIL ROOM" label (R17), the inspection announcement (S52), "Nobody can live outside" (S19), "A hoof stamp. Mops signed it." (Chapter 2, L2), "Mops, it's a mistake!" (R50), "Cool hat!" as the party knock-off (R60), and "more photos / move on" (R62).
+Removed and not to be used: "MAIL ROOM" label (R17), the inspection announcement (S52), "A hoof stamp. Mops signed it." (Chapter 2, L2), "Mops, it's a mistake!" (R50), "Cool hat!" as the party knock-off (R60), and "more photos / move on" (R62).
