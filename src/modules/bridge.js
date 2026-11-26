@@ -47,14 +47,16 @@ export function createBridge() {
   const homeMusic = createHomeMusic(() => engine);
   const morningSound = createMorningSound(() => engine);
   const goalMark = createGoalMark();
-  // At home, while the TV story is on the screen, the music's cue is "tv"; while the bedtime story plays, "bedtime"
-  // (music-picks.js: Reawakening).
+  // At home, while the TV story is on the screen, the music's cue is "tv"; while the bedtime story plays and the night
+  // after it is still dark (the home morning's start), "bedtime" (music-picks.js: Reawakening).
   let musicCueNow = ""; // the cue the music last followed (refined), for tests
   const refineCue = (cue) => {
     if (cue !== "home") return cue;
     const tv = beats.get("ch1-tv-story"),
-      bed = beats.get("ch1-bedtime-story");
-    return tv && tv.showing && tv.showing() ? "tv" : bed && bed.showing && bed.showing() ? "bedtime" : cue;
+      bed = beats.get("ch1-bedtime-story"),
+      hm = beats.get("ch1-home-morning"),
+      night = (bed && bed.showing && bed.showing()) || (hm && hm.nightNow && hm.nightNow());
+    return tv && tv.showing && tv.showing() ? "tv" : night ? "bedtime" : cue;
   };
   return Object.freeze({
     version: 1,
@@ -110,6 +112,10 @@ export function createBridge() {
     musicCue(cue) {
       seeCue((musicCueNow = refineCue(cue)));
       return cue;
+    },
+    /** Tests: the cue the music follows for the older program's cue `cue` (after the TV and bedtime stories'). */
+    refinedCue(cue) {
+      return refineCue(cue);
     },
     /** Tests: the cue the music follows now (after the TV story's and the bedtime story's), and where it is. */
     musicNow() {

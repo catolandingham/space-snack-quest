@@ -4,24 +4,26 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–122 | ## Where main is (Chapter 1 redesign) |
-| 123–137 | ## Register |
-| 138–159 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 160–180 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 181–193 | ## Phase 2 (plan section 4, T13 to T18) |
-| 194–216 | ## Phase 1 (plan section 3, T5 to T12) |
-| 217–230 | ## SS40–SS44 |
-| 231–248 | ## Story rows |
-| 249–267 | ## Reset section |
-| 268–278 | ## Still open |
-| 279–282 | ## Chapter 1 replot, recorded and not built |
-| 283–440 | ## Changelog |
+| 24–124 | ## Where main is (Chapter 1 redesign) |
+| 125–139 | ## Register |
+| 140–161 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 162–182 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 183–195 | ## Phase 2 (plan section 4, T13 to T18) |
+| 196–218 | ## Phase 1 (plan section 3, T5 to T12) |
+| 219–232 | ## SS40–SS44 |
+| 233–250 | ## Story rows |
+| 251–269 | ## Reset section |
+| 270–280 | ## Still open |
+| 281–284 | ## Chapter 1 replot, recorded and not built |
+| 285–442 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-26 (round C), draft PR #90 on `feat/ch1-day2-morning`, not merged. Done: `feat/ch1-bedtime-story` merged in (merge commit). The home morning follows Brian's music table of 2026-11-26 (`src/modules/music-picks.js`): it no longer starts the morning song (`bridge.homeMusic`, Goating in Space, which is Day 1's first morning only); while the night is still dark the bedtime story's Reawakening goes on (`home-morning.js` nightNow, `bridge.js` refineCue), and once the room comes up this daytime visit home plays the next track of the home rotation (Carefree, Morning, Rainbows). Tests: `tests/home-morning.mjs` (the cue every frame: "bedtime" while dark, "home" by day; the morning song not playing). Docs match main: yes. Not yet played by a person.
 
 2026-11-26 (round C), draft PR #89 on `feat/ch1-bedtime-story`, not merged. Done: `feat/party-half-two` merged in (merge commit; the party branch's 00-core.js music and alarm kept as they are; Floating in Space stays deleted). Bedtime plays Reawakening (Brian's music table of 2026-11-26): the bedtime story says when it is showing (`showing()`, as the TV story does) and `bridge.js` turns the home cue into "bedtime" then; no track is written into the beat. Mops's bleat: `window.SSQ.playSoundPick(name)` (bridge.js) plays the game's sound picks through the same player as the morning song's bleat (`music-picks.js` playSound), so the bedtime story's "...Weeee-eenn-nnttt?" now plays `sounds/goat-bleat.mp3`. Tests: `tests/bedtime-story.mjs` (the cue is "bedtime" every frame from the walk to bed to the fade, the bleat on the weent picture only, one bleat in the whole story, the clip started). Docs match main: yes. NOT ASSESSED: how loud Reawakening sits under the snores on a phone speaker. Not yet played by a person.
 - (2026-11-26, the line below about the bleat player is done: `window.SSQ.playSoundPick` exists now.)
