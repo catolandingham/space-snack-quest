@@ -95,6 +95,8 @@ const st = () =>
         return { phase: c.phase, t: c.t, busy: !!c.reach || c.fall >= 0, slots: (p.snacks.slots || []).slice(), at: L.snacks.map((q) => [q[1], q[2]]), leave: [L.close.x, L.close.y] };
       })(),
       polaroid: !!document.querySelector('canvas[aria-label="group photo"]'),
+      // The evening's full-screen close-ups (src/modules/evening.js): the photo wall, the brochure, the order papers.
+      evening: window.SSQ && window.SSQ.beat("ch1-evening") ? window.SSQ.beat("ch1-evening").viewTargets() : null,
       pad: !!n.ch1PadOn && !!n.ch1Zoom && n.ch1Zoom.zoom >= 1,
       padHave: n.ch1Pad || "",
       zoom: n.ch1Zoom ? n.ch1Zoom.id : "",
@@ -365,6 +367,32 @@ while (now() < MAX_S) {
       await tap(b.x, b.y);
     }
     await sleep(400);
+    continue;
+  }
+  // The evening's close-ups fill the screen: a kid looks, then taps what it shows. In the gallery he lifts the crooked
+  // photo #4 and taps on through the photos; on the brochure he taps its X; on the order papers he puts his paw on
+  // the box.
+  if (s.evening) {
+    const v = s.evening;
+    if (!v.ready) {
+      await sleep(200);
+      continue;
+    }
+    await sleep(900);
+    if (v.kind === "gallery") {
+      const lift = v.i === 3 && !v.lifted;
+      say(s, lift ? "TAP the crooked photo" : "TAP next photo");
+      await tap(lift ? v.photo.x : v.next.x, lift ? v.photo.y : v.next.y);
+    } else if (v.kind === "brochure") {
+      say(s, "TAP the brochure's X");
+      await tap(v.close.x, v.close.y);
+    } else if (v.kind === "order") {
+      say(s, "PAW on the order box");
+      await page.touchscreen.touchStart(v.box.x, v.box.y);
+      await sleep(500);
+      await page.touchscreen.touchEnd();
+    }
+    await sleep(500);
     continue;
   }
   // The group photo's Polaroid fills the screen until it is tapped: a kid looks, then taps it.

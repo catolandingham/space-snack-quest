@@ -13,8 +13,9 @@
  *     guards give up ("They lost you."). The first alarm's close-up of the hand (wordless, about 2.4 s, Brian 30a)
  *     plays between the run and the bell.
  * (b) The Day 2 lunch sneak (src/modules/lunch-sneak.js) uses (a)'s rule: the witness runs to the FUR alarm, the
- *     guards come, hidden in the plant he gets away, standing he is caught. The night robot: the alarm and a guard
- *     come first, rolling into a ball gets him away, standing gets him caught.
+ *     guards come, hidden in the plant he gets away, standing he is caught. Night one's loading bay
+ *     (src/modules/evening.js) too: the night robot runs to the bay's FUR alarm, the guards come, rolling into a ball
+ *     gets him away, standing gets him caught.
  *   node tests/ch1-security.mjs
  */
 import { join } from "node:path";
@@ -164,99 +165,8 @@ g.check("party: during the alarm the plant offers HIDE · plant and he hides in 
 g.check('party: hidden in the plant he is never caught; the guards give up ("They lost you.")', hid.after.lockupAt === null && hid.after.lostAt !== null, hid.after);
 g.check("party: no page errors", open.errors.length === 0 && hid.errors.length === 0, [...open.errors, ...hid.errors]);
 
-// (b) Places that can see him outside the party: stand him on a grid until one sees him. Brian's rule:
-// the alarm and a guard come first (no instant LOCKUP); rolled into a ball he gets away ("They lost
-// you."); standing in the open the guard reaches him (LOCKUP).
-async function watched(id, beat, grid) {
-  // ?beat= works only on a preview host, so open Chapter 1 and jump to the beat the same way it does.
-  const { page, ctx, errors } = await g.open("?ch=1");
-  await page.evaluate(() => window.__ss.lockedReady);
-  const run = (roll) =>
-    page.evaluate(
-      ([grid, beat, roll]) => {
-        const ss = window.__ss, n = ss.op;
-        const lockedUp = () => (n.cur && n.cur.id === "jail") || n.q.some((q) => q.id === "jail");
-        ((n.q = []), (n.cur = null), ss.ch1JumpBeat(beat));
-        const start = { scene: n.scene, room: n.room, step: n.ch1Step };
-        let seenAt = null;
-        for (const [x, y] of grid) {
-          Object.assign(n, { q: [], cur: null, ctrl: true, sqPose: "stand", walkTo: null, ch1Zoom: null });
-          n.sq.x = x;
-          n.sq.y = y;
-          ss.tick(1 / 30);
-          if (lockedUp() || ss.secNow() || n.ch1LunchRun) {
-            seenAt = [x, y];
-            break;
-          }
-        }
-        if (!seenAt) return { start, seenAt };
-        const instant = lockedUp();
-        // A guest who saw him runs to the FUR alarm first (lunch); then the alarm and the guard, within 1.5 s.
-        const witnessRan = !!n.ch1LunchRun && !ss.secNow();
-        let guardAfter = null;
-        for (let i = 0; i <= 45 && guardAfter === null && !lockedUp(); i++) {
-          if (ss.secNow()) guardAfter = Math.round((i / 30) * 100) / 100;
-          else ss.tick(1 / 30);
-        }
-        const alarmGuard = guardAfter !== null;
-        // While the guard is coming the only way out is to hide: nothing walks him out of the room.
-        const offers = (ss.spotsNow() || []).filter((o) => o && o.verb).map((o) => o.verb);
-        let t = 0, lockupAt = null, lostAt = null;
-        if (roll) n.sqPose = "ball";
-        // Hold still (rolled up, or standing where he was seen) for up to 12 seconds.
-        for (let i = 0; i < 360 && lockupAt === null && lostAt === null; i++) {
-          if (n.cur && n.cur.id !== "jail") ((n.cur = null), (n.q = n.q.filter((q) => q.id === "jail")));
-          ss.tick(1 / 30);
-          t += 1 / 30;
-          if (lockedUp()) lockupAt = Math.round(t * 10) / 10;
-          if (!ss.secNow() && n.log.some((l) => l.text === "They lost you.")) lostAt = Math.round(t * 10) / 10;
-        }
-        // After the guard gives up, the guest who ran to the alarm walks back to his place (lunch).
-        let homeAfter = null;
-        if (roll && lostAt !== null)
-          for (let i = 0; i < 300 && homeAfter === null; i++) {
-            ss.tick(1 / 30);
-            if (!n.ch1LunchRun) homeAfter = Math.round((i / 30) * 10) / 10;
-          }
-        return { start, seenAt, instant, witnessRan, guardAfter, alarmGuard, offers, lockupAt, lostAt, homeAfter };
-      },
-      [grid, beat, roll],
-    );
-  const stand = await run(false);
-  g.check(`${id}: beat ${beat} opens where someone can see Squatch`, stand.seenAt !== null, stand);
-  g.check(`${id}: being seen brings the alarm and a guard within 1.5 s, not an instant LOCKUP`, stand.seenAt && !stand.instant && stand.alarmGuard, stand);
-  id === "lunch" && g.check("lunch: the guest who saw him runs to the FUR alarm before the guard comes", stand.witnessRan, stand);
-  g.check(`${id}: standing in the open, the guard reaches him (LOCKUP)`, stand.lockupAt !== null, stand);
-  g.check(`${id}: while the guard is coming, no action walks him out of the room`, stand.offers && !stand.offers.some((v) => v === "SNEAK" || v === "GO"), stand.offers);
-  // A guard stays in the room he came into: if the story moves Squatch to another room, the guard is gone.
-  const left = await page.evaluate(
-    ([grid, beat]) => {
-      const ss = window.__ss, n = ss.op;
-      ((n.q = []), (n.cur = null), ss.ch1JumpBeat(beat));
-      for (const [x, y] of grid) {
-        Object.assign(n, { q: [], cur: null, ctrl: true, sqPose: "stand", walkTo: null, ch1Zoom: null });
-        n.sq.x = x;
-        n.sq.y = y;
-        ss.tick(1 / 30);
-        if (ss.secNow() || n.ch1LunchRun) break;
-      }
-      for (let i = 0; i < 60 && !ss.secNow(); i++) ss.tick(1 / 30);
-      const came = !!ss.secNow();
-      n.room = n.room === "hall" ? "passage" : "hall";
-      ss.tick(1 / 30);
-      return { came, after: ss.secNow() };
-    },
-    [grid, beat],
-  );
-  g.check(`${id}: a guard does not follow him into another room`, left.came && !left.after, left);
-  const roll = await run(true);
-  g.check(`${id}: rolled into a ball, he gets away ("They lost you.")`, roll.lostAt !== null && roll.lockupAt === null, roll);
-  id === "lunch" && g.check("lunch: after the guard gives up, the guest walks back to his place", roll.homeAfter !== null, roll);
-  await ctx.close();
-  g.check(`${id}: no page errors`, errors.length === 0, errors);
-}
-const grid = [];
-for (let y = 300; y <= 580; y += 40) for (let x = 120; x <= 860; x += 60) grid.push([x, y]);
+// (b) Outside the party. Brian's rule: the alarm and a guard come first (no instant LOCKUP); hidden or rolled into a
+// ball he gets away ("They lost you."); standing in the open the guard reaches him (LOCKUP).
 // The Day 2 lunch sneak (src/modules/lunch-sneak.js) uses the party's own rule (party-alarm.js), as in (a): seen in the
 // teal guest's look, the witness runs to the FUR alarm, the bell, the guards; hidden in the plant they give up;
 // standing in the open a guard catches him (LOCKUP). No action walks him out of the hall while the alarm is on.
@@ -315,6 +225,59 @@ for (let y = 300; y <= 580; y += 40) for (let x = 120; x <= 860; x += 60) grid.p
   await ctx.close();
   g.check("lunch: no page errors", errors.length === 0, errors);
 }
-await watched("night", 42, grid);
+// Night one (beat 42, src/modules/evening.js) uses the same rule in the loading bay: seen in the night robot's look, the
+// robot shows "!" and runs to the bay's FUR alarm, the bell, the guards; rolled into a ball they give up ("They lost
+// you."); standing in the open a guard catches him (LOCKUP). No action walks him out of the bay while the alarm is on.
+{
+  const { page, ctx, errors } = await g.open("?ch=1");
+  await page.evaluate(() => window.__ss.lockedReady);
+  const night = (roll) =>
+    page.evaluate((roll) => {
+      const ss = window.__ss,
+        n = ss.op,
+        ev = window.SSQ.beat("ch1-evening"),
+        st = () => n.ch1Evening || {},
+        lockedUp = () => (n.cur && n.cur.id === "jail") || n.q.some((q) => q.id === "jail");
+      ((n.q = []), (n.cur = null), ss.ch1JumpBeat(142));
+      for (let i = 0; i < 300 && ev.place.nightLook(st().nightT).phase !== "down"; i++) ss.tick(1 / 30);
+      n.sq.x = 480;
+      n.sq.y = 585;
+      let shoutAt = null,
+        runAt = null,
+        ringAt = null,
+        guardAt = null,
+        lockupAt = null,
+        lostAt = null,
+        offers = [],
+        t = 0;
+      const lost0 = ev.debug().lost;
+      for (let i = 0; i < 30 * 30 && lockupAt === null && lostAt === null; i++) {
+        ss.tick(1 / 30);
+        t += 1 / 30;
+        const a = st().alarm;
+        a && shoutAt === null && (shoutAt = t);
+        a && a.phase === "run" && runAt === null && (runAt = t);
+        a && a.phase === "ring" && ringAt === null && ((ringAt = t), (offers = (ss.spotsNow() || []).filter((o) => o && o.verb).map((o) => o.verb + " · " + o.cap)));
+        a && a.guards.length && guardAt === null && (guardAt = t);
+        if (roll && a && a.phase === "shout" && st().pose === "stand") {
+          const o = (ss.spotsNow() || []).find((q) => q && q.verb === "ROLL");
+          o && o.f();
+        }
+        if (n.cur && n.cur.id !== "jail") ((n.cur = null), (n.q = n.q.filter((q) => q.id === "jail")));
+        lockedUp() && (lockupAt = t);
+        ev.debug().lost > lost0 && (lostAt = t);
+      }
+      return { shoutAt, runAt, ringAt, guardAt, lockupAt, lostAt, offers };
+    }, roll);
+  const stand = await night(false);
+  g.check("night: seen, the robot runs to the bay's FUR alarm before any guard comes (not an instant LOCKUP)", stand.shoutAt !== null && stand.runAt !== null && stand.guardAt > stand.runAt, stand);
+  g.check("night: the first guard walks in as the bell rings", stand.ringAt !== null && stand.guardAt !== null && stand.guardAt - stand.ringAt < 0.1, stand);
+  g.check("night: while the alarm rings, only hiding places and the ball are offered (nothing walks him out of the bay)", stand.offers.length > 0 && stand.offers.every((v) => /^HIDE/.test(v) || v === "ROLL · ball"), stand.offers);
+  g.check("night: standing in the open, a guard reaches him (LOCKUP)", stand.lockupAt !== null, stand);
+  const rolled = await night(true);
+  g.check('night: rolled into a ball, he gets away ("They lost you.")', rolled.lockupAt === null && rolled.lostAt !== null, rolled);
+  await ctx.close();
+  g.check("night: no page errors", errors.length === 0, errors);
+}
 
 await g.finish("ch1-security");

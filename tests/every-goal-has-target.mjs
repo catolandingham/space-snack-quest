@@ -10,7 +10,7 @@
 import { readFileSync } from "node:fs";
 import { startGame } from "./game-page.mjs";
 
-const src = ["game/12-ch1-redesign.js", "game/13-ch1-slice.js", "game/14-ch1-day2.js", "modules/party-lines.js", "modules/home-morning-lines.js", "modules/lunch-sneak-lines.js"]
+const src = ["game/12-ch1-redesign.js", "game/13-ch1-slice.js", "game/14-ch1-day2.js", "modules/party-lines.js", "modules/home-morning-lines.js", "modules/lunch-sneak-lines.js", "modules/evening-lines.js"]
   .map((f) => readFileSync(new URL("../src/" + f, import.meta.url), "utf8"))
   .join("\n");
 const chips = [...src.matchAll(/Squatch: [^"]+/g)].map((m) => m[0]);
@@ -58,14 +58,21 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: give Mops his lunch": { lu: "give", x: 540, y: 488 },
     "Squatch: grab one snack": { lu: "snack" },
     "Squatch: hide in the plant": { step: "hide", room: "hangar", bay: true, x: 230, y: 400 },
-    "Squatch: go on": { step: "photos", room: "passage", x: 480, y: 560 },
-    "Squatch: hide": { step: "family", room: "hall", scene: "Q3", x: 520, y: 530 },
-    "Squatch: go home": { step: "gohome", room: "hall", scene: "Q3", x: 480, y: 560 },
-    "Squatch: get the copies from the bin": { step: "grab", room: "hangar", bay: true, scene: "Q4", x: 212, y: 370 },
-    "Squatch: get the yellow copy to the mailbox": { step: "post", room: "hangar", bay: true, scene: "Q4", x: 878, y: 450 },
-    "Squatch: check the order": { step: "mark", room: "hangar", bay: true, zoom: "paw", x: 212, y: 370 },
-    "Squatch: post the yellow copy": { step: "post", room: "hangar", bay: true, scene: "Q4", x: 878, y: 450 },
-    "Squatch: sneak home": { step: "out", room: "hangar", bay: true, x: 90, y: 540 },
+    // the evening and night one (src/modules/evening.js), each opened by its own jump with everything before it done;
+    // a doorway walked through is the action there (walk), as at the party
+    // (he stands a step from each doorway, outside the circle that takes him through it)
+    "Squatch: go on": { ev: "wall", galleryDone: true, walk: true, x: 100, y: 300 },
+    "Squatch: hide": { ev: "hide", x: 852, y: 326 },
+    "Squatch: grab the brochure": { ev: "brochure" },
+    "Squatch: go home": { ev: "gohome", walk: true, x: 477, y: 555 },
+    "Squatch: show Mops the brochure": { ev: "show" },
+    "Squatch: go to sleep in your bed": { ev: "bed", x: 330, y: 458 },
+    "Squatch: sneak out the door": { ev: "out", walk: true, x: 860, y: 380 },
+    "Squatch: get the copies from the bin": { ev: "bin", x: 212, y: 398 },
+    "Squatch: get the yellow copy to the mailbox": { ev: "post", x: 862, y: 500 },
+    "Squatch: post the yellow copy": { ev: "post", x: 862, y: 500 },
+    // (ROLL · ball works anywhere in the night's loading bay, so it is what the button offers on the way to the doorway)
+    "Squatch: sneak home": { ev: "back", walk: true, x: 105, y: 290, anywhere: "ROLL · ball" },
     "Squatch: roll into a ball by the vent": { step: "roll", room: "hangar", bay: true, scene: "Q5", x: 820, y: 470 },
     "Squatch: hide by the vent": { step: "roll", room: "hangar", bay: true, scene: "Q5", x: 820, y: 470 },
     "Squatch: grab the pink slip": { step: "pink", room: "hangar", bay: true, scene: "Q6", x: 640, y: 500 },
@@ -156,6 +163,13 @@ const report = await page.evaluate(async (chips) => {
       window.SSQ.beat("ch1-lunch").jump(spec.lu);
       spec.x && ((n.sq.x = spec.x), (n.sq.y = spec.y));
       ((n.chip = chip), (n.moved = 200));
+    } else if (spec.ev) {
+      Object.assign(n, { ch1PartyNow: null, ch1Morning: null, ch1Zoom: null, ch1PadOn: false, q: [], cur: null });
+      ss.ch1JumpBeat(37);
+      window.SSQ.beat("ch1-evening").jump(spec.ev);
+      spec.galleryDone && (n.ch1Evening.galleryDone = true);
+      spec.x && ((n.sq.x = spec.x), (n.sq.y = spec.y));
+      ((n.chip = chip), (n.moved = 200));
     } else if (spec.party) {
       Object.assign(n, { ch1Day2: false, ch1Lunch: null, ch1Zoom: null, ch1PadOn: false, ch1Morning: null, q: [], cur: null, moPose: "hidden" });
       window.SSQ.beat("ch1-party").jump(spec.party);
@@ -170,6 +184,7 @@ const report = await page.evaluate(async (chips) => {
     n.ch1PartyNow = null;
     n.ch1HomeMorning = null;
     n.ch1Lunch = null;
+    n.ch1Evening = null;
     n.ch1Day2 = spec.day2 !== false;
     // The song step of the morning module (src/modules/morning.js), with Mops beside the bucket.
     n.ch1Morning = spec.song ? { step: "song", t: 0, notes: true } : null;
@@ -212,7 +227,7 @@ const report = await page.evaluate(async (chips) => {
     if (n.lastRing && n.lastRing.box) {
       outlined.push(chip);
       const offered = offer && offer.verb ? offer.verb + " · " + offer.cap : "";
-      offered && offered !== n.lastRing.act && farOutline.push(`${chip}: outline for ${n.lastRing.act}, action offered is ${offered}`);
+      offered && offered !== n.lastRing.act && offered !== spec.anywhere && farOutline.push(`${chip}: outline for ${n.lastRing.act}, action offered is ${offered}`);
     } else unoutlined.push(chip);
     if (!target || yellow < 1 || !prompt) bad.push({ chip, target, yellow, prompt, verb: offer && offer.verb, spots: spots.length });
   }

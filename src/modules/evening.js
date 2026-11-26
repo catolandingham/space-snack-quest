@@ -961,8 +961,11 @@ export function createEvening(bridge) {
         return [spot("ev-brochure", "button-brochure", BAR.grab, box(BAR.brochure.x, BAR.brochure.y, BAR.brochure.w + 8, BAR.brochure.h + 8), grabBrochure)];
       case "gohome":
         return [doorSpot("ev-home", BAR.home)];
-      case "show":
-        return [spot("ev-show", "button-show", HOME.show, null, showBrochure)];
+      case "show": {
+        // he holds it up where he stands (the action is where he is: no outline, the prompt only)
+        const at = e.pos("sq");
+        return [spot("ev-show", "button-show", { x: at.x, y: at.y, r: 60 }, null, showBrochure)];
+      }
       case "bed":
         return [spot("ev-bed", "button-bed", HOME.bed, null, () => toBed(true))];
       case "out":
@@ -1399,7 +1402,8 @@ export function createEvening(bridge) {
     }
     // the snores: "z z z" rising from Mops (the first night) or from him (back in bed)
     if (s.zzz >= 0) {
-      const from = s.step === "sleep" ? { x: BED_POSES.lie.x - 40 * k, y: BED_POSES.lie.y - 20 * k } : { x: HOME.sleep.x + 30, y: HOME.sleep.y - 50 },
+      // (over his head lying in bed: LIE turned a quarter, his head left of his feet)
+      const from = s.step === "sleep" ? { x: BED_POSES.lie.x - 30 * k + 30, y: BED_POSES.lie.y - 10 } : { x: HOME.sleep.x + 30, y: HOME.sleep.y - 50 },
         Z = BEDTIME_NIGHT.zzz;
       ctx.save();
       ctx.globalAlpha = Math.min(1, s.zzz * 4) * (1 - Math.max(0, (s.zzz - 0.7) / 0.3));
@@ -1508,6 +1512,22 @@ export function createEvening(bridge) {
     },
     /** The open close-up's taps (tests and the kid robot), or null. */
     viewTargets,
+    /** The close-up open now ("gallery", "brochure", "order"), or "" (tests). */
+    viewOpen() {
+      return view ? view.kind : "";
+    },
+    /**
+     * Tests that step the game without drawing frames: does what the open close-up asks next, as a tap would (the
+     * gallery's next photo, the brochure's X once it has zoomed in, the paw on the order's box). The words it did.
+     */
+    viewAct() {
+      const s = live();
+      if (!view || !s) return "";
+      if (view.kind === "gallery" && s.gallery) return s.gallery.i >= 4 ? (galleryEnd(true), "past 5") : ((s.gallery.i += 1), "next");
+      if (view.kind === "brochure") return E().time() - view.at > P.zoomIn ? (brochureClosed(), "X") : "";
+      if (view.kind === "order") return s.order && s.order.pressAt < 0 && E().time() - view.at > P.zoomIn ? (markOrder(), "MARK · order") : "";
+      return "";
+    },
     /** Tests: the places (evening-place.js). */
     place: Object.freeze({ HALLWAY, BAR, HOME, BAY, nightLook }),
     /** Tests: true when a cone holds Squatch standing where he is now (the game's own sight test). */

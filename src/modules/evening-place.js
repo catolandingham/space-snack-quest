@@ -80,13 +80,13 @@ export const HOME = Object.freeze({
   // SLEEP · bed at the bed's right end (bedtime-story.js BEDTIME_SPOTS.side)
   bed: Object.freeze({ x: 330, y: 458, r: 60 }),
   // where Mops falls asleep: on the open floor below the way from the bed to the door, clear of the bed and bucket
-  sleep: Object.freeze({ x: 430, y: 560 }),
+  sleep: Object.freeze({ x: 456, y: 572 }),
   sleepVia: Object.freeze({ x: 500, y: 478 }),
   // out of bed at night, beside it
   up: Object.freeze({ x: 340, y: 470 }),
   door: Object.freeze({ x: 870, y: 440, r: 40 }),
   // Mops lying asleep (game positions round `sleep`): his box, so nobody walks through him
-  mopsBox: Object.freeze({ x0: 330, x1: 530, y0: 500, y1: 578 }),
+  mopsBox: Object.freeze({ x0: 376, x1: 532, y0: 500, y1: 578 }),
 });
 
 // ---------- beat 42: the loading bay at night ----------
@@ -103,7 +103,8 @@ export const BAY = Object.freeze({
   robot: Object.freeze({ id: "night-robot", x: 480, y: 400 }),
   parked: Object.freeze([Object.freeze({ id: "robot-2", x: 770, y: 575 }), Object.freeze({ id: "robot-3", x: 840, y: 585 })]),
   // after the mailbox wakes them they roll out of the mail room to the ramp's foot and look up the ramp at the ship
-  woke: Object.freeze([Object.freeze({ x: 372, y: 470 }), Object.freeze({ x: 596, y: 470 })]),
+  // (the right one stands left of the mail room's wall, so the way from the vent down past that wall stays clear)
+  woke: Object.freeze([Object.freeze({ x: 372, y: 470 }), Object.freeze({ x: 540, y: 470 })]),
   // the mail room's opening (between its two wall pieces) the woken robots roll out through
   gap: Object.freeze({ x: 688, y: 463 }),
   bin: Object.freeze({ x: 212, y: 398, r: 50, box: Object.freeze({ x0: 186, x1: 240, y0: 312, y1: 376 }) }),

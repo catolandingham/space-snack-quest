@@ -335,6 +335,8 @@ const wall = await page.evaluate(() => {
   const ss = window.__ss,
     n = ss.op;
   ss.ch1JumpBeat(37);
+  // (the crayon card is on the wall once he has lifted the crooked photo #4, src/modules/evening.js)
+  n.ch1Crayon = true;
   for (let i = 0; i < 6; i++) ss.tick(0.05);
   ss.drawFrame();
   const out = { wall: window.SSQ.beat("ch1-lunch").debug().wall, crayon: window.SSQ.hallwayCrayonDrawn() };

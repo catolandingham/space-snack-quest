@@ -231,7 +231,7 @@ r = await ev(() => {
     seen.dim = Math.max(seen.dim, s.dim);
     return window.__st() === "out" && n.ctrl;
   });
-  const solid = window.__ss.solids().some((q) => q.x0 === 330 && q.y0 === 500);
+  const solid = window.__ss.solids().some((q) => q.x0 === 376 && q.y0 === 500);
   return { pressed, seen, step: window.__st(), sqPose: n.sqPose, music: window.SSQ.refinedCue("home"), solid, sneak: n.ch1Sneak };
 });
 g.check("beat 41: SLEEP · bed; the light goes down; Mops tips over like a fainting goat, sleeps on his back, snores", r.pressed && r.seen.tip >= 1 && r.seen.roll >= 1 && r.seen.zzz > 0 && r.seen.dim >= 1, r);
@@ -298,8 +298,12 @@ r = await ev(() => {
   const seenHere = () => b.seenNow();
   const standSeen = seenHere();
   window.__run(8, () => look(n.ch1Evening.nightT).phase === "up" && look(n.ch1Evening.nightT - 0.06).phase !== "up");
-  const legs = [{ x: 680, y: 345 }, { x: 660, y: 585 }, { x: 300, y: 585 }, { x: 70, y: 330 }];
-  let seenOnWay = 0;
+  // (left along the back to beside the mail room's wall, down past it, then along the front: the way a kid walks,
+  // round the furniture: every step is checked against the room's solids)
+  const legs = [{ x: 650, y: 342 }, { x: 650, y: 585 }, { x: 300, y: 585 }, { x: 70, y: 330 }];
+  const solids = window.__ss.solids();
+  let seenOnWay = 0,
+    inSolid = 0;
   for (const w of legs)
     for (let i = 0; i < 400; i++) {
       const dx = w.x - n.sq.x,
@@ -310,14 +314,15 @@ r = await ev(() => {
       n.sq.x += (dx / d) * k;
       n.sq.y += (dy / d) * k;
       seenHere() && seenOnWay++;
+      solids.some((q) => n.sq.x > q.x0 && n.sq.x < q.x1 && n.sq.y > q.y0 && n.sq.y < q.y1) && inSolid++;
       window.__ss.tick(0.05);
       if (window.__st() !== "back") break;
     }
   window.__run(4, () => window.__st() === "backway" && n.ctrl);
-  const out = { standSeen, seenOnWay, step: window.__st(), room: n.room, alarm: !!(n.ch1Evening && n.ch1Evening.alarm) };
+  const out = { standSeen, seenOnWay, inSolid, step: window.__st(), room: n.room, alarm: !!(n.ch1Evening && n.ch1Evening.alarm) };
   return out;
 });
-g.check("a fair way back: under the vent nobody sees him; going along the front while the robot looks up, nobody does", !r.standSeen && r.seenOnWay === 0 && !r.alarm && r.step === "backway" && r.room === "passage", r);
+g.check("a fair way back: under the vent nobody sees him; going along the front while the robot looks up, nobody does", !r.standSeen && r.seenOnWay === 0 && r.inSolid === 0 && !r.alarm && r.step === "backway" && r.room === "passage", r);
 r = await ev(() => {
   const n = window.__ss.op;
   const walk = (x, y, step) => ((n.sq.x = x), (n.sq.y = y), window.__run(10, () => window.__st() === step && n.ctrl));

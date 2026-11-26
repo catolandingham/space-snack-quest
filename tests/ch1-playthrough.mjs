@@ -400,6 +400,15 @@ const play = await page.evaluate(() => {
       still = 0;
       continue;
     }
+    // The evening's close-ups (src/modules/evening.js): the brochure's X, the paw on the order's box.
+    const evb = window.SSQ.beat("ch1-evening");
+    if (evb && evb.viewOpen()) {
+      const did = evb.viewAct();
+      did === "MARK · order" && acts.push(did);
+      ss.tick(0.05);
+      still = 0;
+      continue;
+    }
     if (n.ctrl && !n.cur && n.q.length === 0 && (n.scene || "")[0] === "Q") {
       if (n.ch1PadOn) {
         for (const d of ["4", "7", "2", "3"]) ss.ch1PadPress(d);
@@ -475,12 +484,13 @@ const play = await page.evaluate(() => {
     slipped: !!n.ch1Slipped,
     packed: n.ch1Packed || 0,
     paper: n.ch1PaperLog || [],
+    order: window.SSQ.beat("ch1-evening").debug().cutIns.includes("order"),
   };
 });
 g.check("Chapter 1 reaches the tally card", play.end === "tally", { end: play.end, acts: play.acts, scene: play.state.scene });
 // The party night (src/modules/party.js): the peek, the plant, home through his door, the dress-up, out through his
 // door; the party in disguise (the dance), closing time, and walking home with Mops.
-const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "GRAB · flyer", "WALK · go-home", "SAVE · flyer", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "PICK UP · rocket", "OPEN · closet", "PUT IN · box", "TAKE · lunch", "HIDE · plant", "HIDE · crate", "SNEAK · hallway", "GIVE · lunch", "WALK · lu-back", "TAKE · snack", "HIDE · plant", "GO · hall", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "LEAVE · food", "PUT · slip", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
+const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "GRAB · flyer", "WALK · go-home", "SAVE · flyer", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "PICK UP · rocket", "OPEN · closet", "PUT IN · box", "TAKE · lunch", "HIDE · plant", "HIDE · crate", "SNEAK · hallway", "GIVE · lunch", "WALK · lu-back", "TAKE · snack", "HIDE · plant", "WALK · ev-hall", "HIDE · counter", "GRAB · brochure", "WALK · ev-home", "SHOW · brochure", "SLEEP · bed", "WALK · ev-out", "WALK · ev-hallway", "WALK · ev-bay", "GRAB · copies", "MARK · order", "POST · mailbox", "WALK · ev-bayout", "WALK · ev-hall", "WALK · ev-home", "SLEEP · bed", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "LEAVE · food", "PUT · slip", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
 g.check("the player does the new actions in order", JSON.stringify(play.acts) === JSON.stringify(wantActs), play.acts);
 const must = [
   "Stormtop Cloud Resort, floating above Jupiter.",
@@ -605,8 +615,9 @@ g.check(
 );
 g.check(
   "the order box, the Mars letter, and the Guardian box are drawn",
-  play.shown.includes("ORDER MORE ROBOTS") && play.shown.includes("MARS LOST & FOUND") && play.shown.includes("MY GARDIANS"),
-  play.shown,
+  // (ORDER MORE ROBOTS is on the pink sheet in the evening's paw-order close-up, src/modules/evening.js)
+  play.order && play.shown.includes("MARS LOST & FOUND") && play.shown.includes("MY GARDIANS"),
+  { shown: play.shown, order: play.order },
 );
 g.check("the vent board and the Moon Pie buttons are drawn", play.shown.includes("IDEAS FOR GUARDIANS") && play.shown.includes("Return empty crate"), play.shown);
 // The red FUR alarm is part of the locked party hall picture now (its words are in the picture, not drawn text):
