@@ -4,24 +4,31 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–142 | ## Where main is (Chapter 1 redesign) |
-| 143–157 | ## Register |
-| 158–179 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 180–200 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 201–213 | ## Phase 2 (plan section 4, T13 to T18) |
-| 214–236 | ## Phase 1 (plan section 3, T5 to T12) |
-| 237–250 | ## SS40–SS44 |
-| 251–268 | ## Story rows |
-| 269–287 | ## Reset section |
-| 288–298 | ## Still open |
-| 299–302 | ## Chapter 1 replot, recorded and not built |
-| 303–460 | ## Changelog |
+| 24–149 | ## Where main is (Chapter 1 redesign) |
+| 150–164 | ## Register |
+| 165–186 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 187–207 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 208–220 | ## Phase 2 (plan section 4, T13 to T18) |
+| 221–243 | ## Phase 1 (plan section 3, T5 to T12) |
+| 244–257 | ## SS40–SS44 |
+| 258–275 | ## Story rows |
+| 276–294 | ## Reset section |
+| 295–305 | ## Still open |
+| 306–309 | ## Chapter 1 replot, recorded and not built |
+| 310–467 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-26, draft PR on `feat/ch1-escape` (stacked on `feat/ch1-lunch-sneak`), not merged. Done: beats 43 to 52, the escape, as a module (`ch1-escape`): the card, the tease, the pancake plan at home with wordless thought pictures, the night walk, ROLL · ball by the vent past a patrolling robot (the one capture rule), the vent workstation (placeholder room; the wall, the letter and the new note as close-ups), the pink slip, the keypad (169556, Brian chat 2026-11-26), the Moon Pie site in the office, all the snacks and the Guardians' plate, the slip into the Guardian Box, bed, beat 53. Old escape code deleted. Waiting on Brian:
+- Every story line here is pending (the walkthrough's words); "— The Guardians" on the new note is new words.
+- The wordless thought pictures in beats 45 and 46 (the crate into the ship; the locked office door; the sheet into the vent), added because no words say the plan.
+- The night robot in beat 47 (where it patrols, the FUR alarm on the bay wall, docking in the mail room), the vent room's look (no locked picture), the Guardians' plate with a G card on the counter, four snacks for him and two for the Guardians.
+- Not built: the office desk is not solid (the office's solids come only with Isfred's flag); no music pick for the bay, hallway, office or vent at night; Mops assuming the bin was emptied (no words or picture for it).
+- Placeholders (not pins): the robot's patrol (x 250 to 700, 42 a second), its run (170), the thought pictures (2.6 s), the crawl (1.2 s), the wait rolled up (2.2 s), the keypad's keys (120 across), the booked picture (2.4 s), the carry (0.45 s), the hearts (1.8 s). The office code pin changed from 4723 to 169556 on Brian's word in chat.
 
 2026-11-26 (round C), draft PR #91 on `feat/ch1-lunch-sneak`, not merged. Done, Brian's answers of 2026-11-26 (chat): behind the snack counter Mops says "...you know the rule, grab one snack." (approved word for word) in place of the one-pie thought bubble; "Squatch! You should be hiding." stays out (he looks left and right); no balloon anywhere in the lunch sneak (none drawn, as built); the bartender stays away and a guest at the counter watches (as built); ROLL · ball is offered in the hall during the sneak (the ball rule, DECISIONS C20 and R43: noticed only by someone within 70 px for 2 s looking his way; moving unrolls him; not offered in the hallway or behind the counter; the doorway waits until he unrolls); Mops's lunch is a hay sandwich, then the bag; the bag is bigger (62 x 68 at home, 0.88 of that in the hall) so MOPS on it is 20 game px (about 16 CSS px on an iPad standing up, 8 on a 375-wide phone; off the canvas-text allow list for size); the snack counter moment has a framed close-up of the counter's corner 1.65 times bigger (a tap on the plate in it is TAKE · snack). Ganitor (`src/modules/ganitor.js`): A a GANITOR name tag on Mops's pocket in every scene (in place of the old name patch; the word shows in the close-ups, a plain tag elsewhere), B the wall speaker's "Ganitor Mops to the party hall." in the dark before Mops leaves on Day 2 (overheard, ear icon), C an Employee of the Month photo of Mops with the plaque MOPS, GANITOR on the hallway's back wall (a layer over the locked picture, not part of it), E Squatch's crayon card in the hallway says ME / MOPS THE GANITOR (the crayon Guardians drawing has no Mops, so no label). Tests: `tests/lunch-ganitor.mjs`, `tests/lunch-sneak.mjs`, `tests/home-morning.mjs`. Docs match main: yes. Not yet played by a person.
 - Ganitor D (the robot janitor notice): not built; three wordings for Brian in the round C report.

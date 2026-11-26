@@ -4,21 +4,21 @@
 | Lines | Heading |
 | --- | --- |
 | 23–32 | # Space Snack Quest |
-| 33–106 | ## Chapter 1 redesign (on main) |
-| 107–120 | ## Music credits |
-| 121–151 | ## Source and build |
-| 152–162 | ## Debug link |
-| 163–168 | ## Automatic checks |
-| 169–172 | ## Screen fit |
-| 173–194 | ## Brian's repeat complaints, as tests (2026-11-22) |
-| 195–200 | ## Scene 1 morning |
-| 201–204 | ## Chapter 1 kid robot |
-| 205–221 | ## Phase 1: kitchen and diner clarity |
-| 222–234 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
-| 235–248 | ## Phase 3: one capture rule, phone HUD, tap to walk |
-| 249–258 | ## Chapter 1 pass: the night out has a purpose, switches say why |
-| 259–276 | ## Progression tests |
-| 277–303 | ## Left as they were |
+| 33–119 | ## Chapter 1 redesign (on main) |
+| 120–133 | ## Music credits |
+| 134–164 | ## Source and build |
+| 165–175 | ## Debug link |
+| 176–181 | ## Automatic checks |
+| 182–185 | ## Screen fit |
+| 186–207 | ## Brian's repeat complaints, as tests (2026-11-22) |
+| 208–213 | ## Scene 1 morning |
+| 214–217 | ## Chapter 1 kid robot |
+| 218–234 | ## Phase 1: kitchen and diner clarity |
+| 235–247 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
+| 248–261 | ## Phase 3: one capture rule, phone HUD, tap to walk |
+| 262–271 | ## Chapter 1 pass: the night out has a purpose, switches say why |
+| 272–289 | ## Progression tests |
+| 290–316 | ## Left as they were |
 <!-- /section-index -->
 # Space Snack Quest
 
@@ -31,6 +31,8 @@ Calendar review status (2026-11-16): Brian said yes to merge the calendar (Nov 1
 **Next up (Brian, 2026-11-16):** Chapter 1, one beat at a time in [`docs/CH1-STORY-WALKTHROUGH.md`](docs/CH1-STORY-WALKTHROUGH.md). Do not leave beat 1 until Brian says it is right. Squatch walks around the bed and the bucket, and the Guardian box is in the closet on day 1 (locked home room v5; Brian's yes, Nov 16, 12:50 PM PT). On day 2 he takes the box out at the closet (`tests/bedroom-walk.mjs`). The calendar is tappable. Printed copy: MOONMUNCH / FUZZUARY; Sponsored by MOON PIES; Sock hunt; family Olympics night; Wash outside windows (remember space suit!); Blanket fort night. These are decoration, not new quests. X or NEXT returns to the same scene (`tests/calendar-closeup.mjs`). Closet, bed, desk homework and the already-bitten calendar are built on branch `feat/home-alone` (draft, see below); the purple bed bar is removed there too; still to build: the bucket. The night vent step no longer finishes inside Mops: the morning hum was leaving him marked as walking. Docs match main: yes.
 
 ## Chapter 1 redesign (on main)
+
+2026-11-26, draft pull request on branch `feat/ch1-escape` (from `feat/ch1-lunch-sneak`), not merged. Beats 43 to 52, the escape, are a module (`src/modules/escape.js`, registered as `ch1-escape`; places, routes and timing in `escape-place.js`, drawings in `escape-art.js`, words in `escape-lines.js`) in place of the old steps, which are deleted from `src/game/14-ch1-day2.js` (`ch1SixDays` is the hand-over in, `ch1PackStart`, beat 53, the hand-over out). "Six days later" (a card, NEXT). The robots tease Mops in the loading bay by day (Squatch is not there; three robots circle him, one mimics his beard-mopping): both walkthrough lines, then Mops's bleat (`mops-bleat`). Home that night: the pancake brochure is pinned on the wall and glows while Mops says his line; two wordless thought pictures over him (the Moon Pie crate going into the ship with two pairs of eyes in it; the office door with its keypad and a red padlock); Squatch's slip; his thought picture of the pink sheet flying into the vent; "Didn't a copy get sucked into the vent?". The night walk to the bay's big wall vent; Mops swings the grille open and crawls in. ROLL · ball by the vent (outlined; goal words after 20 s); a night robot patrols the bay with its cone; seen standing it shows "!", rolls round the plant to the FUR alarm and pulls it, a guard comes (the older program's one capture rule); rolled up he is lost, caught it is the LOCKUP card and the ball step again; rolled up by the vent the robot docks in the mail room and powers down. Inside the vent (no locked picture: a placeholder room): the grille on the left with his eyes between the slats, Mops at his desk with his back to it, the IDEAS FOR GUARDIANS board, the detective wall, the TOYS bin; close-ups of the detective wall (Mars crossed off, HAVE YOU SEEN? flyers) and of the Mars letter stamped NO (NEXT each); the pink sheet glows for "I hope Mops doesn't notice..."; a close-up of Mops writing the new Guardian note, signed "— The Guardians" with a white hair on it; he takes the sheet in his mouth without looking. In the bay: "Hurry, hurry, pink slip, got it!", "Get it before he sees it.", GRAB · pink slip. The hallway: Mops looks at the photo wall; a close-up of the sheet in Squatch's paw (the paw print in the ORDER MORE ROBOTS box, the code 169556 lit, Brian's code from chat 2026-11-26); the keypad over the blurred hallway: a wrong key buzzes red and clears (no penalty), the keyboard's digits work too; 169556 opens the door. The office (the locked office picture, Mops drawn in it): RETURN · empty crate at the desk opens the Moon Pie site: MOON PIES, a small grey "Order new box", a big lit "Return empty crate"; the crate rides into the ship, a green tick. The snack counter: "This time, take all the snacks you want."; four snacks into his bag (a count), "I'm worried about the Guardians. I'll leave them some food.", a plate with a little G card shows and the last two go on it; hearts over Mops, no words. Home: OPEN · closet, PUT IN · box, the Day 2 box close-up (MY GARDIAN BOX, MY GUARDIANS) with the slip tucked under the notes; the door shuts; asleep in bed; beat 53. The bridge gained `speakerAt` (the party's and the escape's speakers) and lets a beat draw the loading bay and the vent (`hallOwner`); the hand-over gained `goTo`, `packStart`, `callSecurity`, `secOn`, `drawRobot`. Localhost link: `?beat=escape` (or `escape:ball|grab|pad|computer|snacks|closet`). Check: `tests/escape.mjs`. Showing tool: `node tools/escape-showing.mjs escape|seen <out.mp4>`. Docs match main: yes. Not yet played by a person.
 
 2026-11-26 (round C), draft pull request #91 on branch `feat/ch1-lunch-sneak`, not merged. Brian's answers of 2026-11-26 are built in the lunch sneak: Mops's approved "...you know the rule, grab one snack." behind the counter (the thought bubble is gone), ROLL · ball in the hall (the game's ball rule), a framed close-up of the snack counter so the plate, the pie and Squatch read on a phone, a hay sandwich, and a bigger bag whose MOPS reads on a phone and an iPad. "Ganitor" (goat + janitor, `src/modules/ganitor.js`): a GANITOR name tag on Mops in every scene, the wall speaker's "Ganitor Mops to the party hall." before he leaves on Day 2 (with the ear icon), an Employee of the Month photo labelled MOPS, GANITOR in the hallway (a layer over the locked picture), and MOPS THE GANITOR on Squatch's crayon card. The robot janitor notice (D) waits for Brian's pick of wording. Docs match main: yes. Not yet played by a person.
 
