@@ -626,13 +626,18 @@ export function createLoadingBay(bridge) {
       ];
     },
   };
-  // The end of beat 36: beat 37 follows (the engine's walkHomeDone, the older program's ch1WalkHomeDone).
+  /**
+   * The end of beat 36: Squatch and Mops in the hallway, past the robots. Beat 37 follows: the rebuilt evening
+   * (ch1-evening, beats 37 to 42, its own branch) when it is there; otherwise the engine's walkHomeDone (the older
+   * program's ch1WalkHomeDone, the photo wall's "go on" step).
+   */
   function finish() {
     const e = E();
     go("done");
     e.face("sq", 1);
     e.face("mops", -1);
-    e.walkHomeDone && e.walkHomeDone();
+    const evening = bridge.beat("ch1-evening");
+    evening && evening.start ? evening.start() : e.walkHomeDone && e.walkHomeDone();
   }
   const codeText = () => {
     const e = E();
@@ -1081,7 +1086,8 @@ export function createLoadingBay(bridge) {
     }
     // (any other name: the start, behind the counter)
     if (!BAY_PARTS.includes(part)) return jump("pa");
-    worldAt(part);
+    // (the part is on from now, not only once its first queued step runs: the bay is this beat's from this frame)
+    Object.assign(worldAt(part), { step: part, t0: e.time() });
     busy();
     e.queue(partsFrom(part));
   }

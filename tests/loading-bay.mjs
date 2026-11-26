@@ -243,6 +243,23 @@ const badRestart = Object.entries(restarts).filter(([p, r]) => (special[p] ? !sp
 g.check("↺ in each part of the cutscene starts that part again (beat 28: its first line; the hide step: where he came in; the walk: the hide step; the hallway: the walk home's start, in the plant)", badRestart.length === 0, restarts);
 g.check("the chapter reset clears the loading bay", await page.evaluate(() => (window.__ss.op.ch1Bay = { step: "sign" }, window.SSQ.engine().resetChapter(), window.__ss.op.ch1Bay == null)));
 
+// ---------- beat 37 follows: the rebuilt evening when it is there ----------
+const evening = await page.evaluate(() => {
+  const ss = window.__ss,
+    n = ss.op,
+    beat = window.SSQ.beat("ch1-bay"),
+    called = [];
+  // a stand-in for the evening's module (beats 37 to 42, its own branch): only its start is asked for
+  window.SSQ.beat("ch1-evening") || window.SSQ.registerBeat("ch1-evening", { start: () => called.push({ room: n.room, step: n.ch1Step }) });
+  n.q = [];
+  n.cur = null;
+  ss.ch1JumpBeat(29);
+  beat.jump("home");
+  for (let i = 0; i < 3000 && beat.active(); i++) (ss.tick(0.05), n.cur && n.cur.k === "bub" && ((n.bt = 1), ss.opTap()));
+  return { called, active: beat.active(), step: n.ch1Step };
+});
+g.check("36 ends in the hallway and hands over to the evening's start() when that beat is there (not the older program's step)", evening.called.length === 1 && evening.called[0].room === "passage" && !evening.active && evening.step !== "photos", evening);
+
 // ---------- the old code is gone ----------
 const game = readdirSync(join(root, "src", "game")).map((f) => readFileSync(join(root, "src", "game", f), "utf8")).join("\n");
 const old = ["function ch1HideBay", "function ch1BayLines", "function ch1AtDelivery", "So futuristic and we still order on paper.", "Isfred! A crate is damaged in the mail room."].filter((s) => game.includes(s));
