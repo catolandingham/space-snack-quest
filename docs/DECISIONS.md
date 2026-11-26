@@ -3,33 +3,34 @@
 
 | Lines | Heading |
 | --- | --- |
-| 34–36 | # Space Snack Quest: every decision, in one place |
-| 37–44 | ## How to use this file |
-| 45–54 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
-| 55–66 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
-| 67–71 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 72–80 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 81–84 | ## Sound, 2026-11-23 |
-| 85–108 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 109–120 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 121–145 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 146–154 | ## Which repo is the base, 2026-11-22 |
-| 155–165 | ## Sight cones, 2026-11-22 |
-| 166–170 | ## Latest calendar direction, 2026-11-16 |
-| 171–173 | ## Vent walk, 2026-11-16 |
-| 174–176 | ## Locked home room v5, 2026-11-16 |
-| 177–186 | ## Fidelity system (pictures are locked, not just words) |
-| 187–224 | ## 1. Working rules |
-| 225–291 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 292–316 | ## 3. Characters and look |
-| 317–393 | ## 4. Look, rooms and layout |
-| 394–415 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 416–459 | ## 6. Later chapters (2–4 and travel) |
-| 460–469 | ## 7. Audio |
-| 470–504 | ## 8. Code, controls and process |
-| 505–551 | ## 9. Open / waiting on Brian |
-| 552–646 | ## 10. Earlier entries, kept word for word |
-| 647–743 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 35–37 | # Space Snack Quest: every decision, in one place |
+| 38–45 | ## How to use this file |
+| 46–56 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
+| 57–66 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
+| 67–78 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
+| 79–83 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 84–92 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 93–96 | ## Sound, 2026-11-23 |
+| 97–120 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 121–132 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 133–157 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 158–166 | ## Which repo is the base, 2026-11-22 |
+| 167–177 | ## Sight cones, 2026-11-22 |
+| 178–182 | ## Latest calendar direction, 2026-11-16 |
+| 183–185 | ## Vent walk, 2026-11-16 |
+| 186–188 | ## Locked home room v5, 2026-11-16 |
+| 189–198 | ## Fidelity system (pictures are locked, not just words) |
+| 199–236 | ## 1. Working rules |
+| 237–303 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 304–328 | ## 3. Characters and look |
+| 329–405 | ## 4. Look, rooms and layout |
+| 406–427 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 428–471 | ## 6. Later chapters (2–4 and travel) |
+| 472–481 | ## 7. Audio |
+| 482–516 | ## 8. Code, controls and process |
+| 517–563 | ## 9. Open / waiting on Brian |
+| 564–658 | ## 10. Earlier entries, kept word for word |
+| 659–755 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -41,6 +42,17 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 - **Status words:** **Decided** (Brian said it or approved it) · **Needs Brian's yes** (proposed, or on-screen words waiting on him) · **Superseded** (replaced; the line says by what) · **Open** (a real question nobody has answered yet).
 - **This repo file is the single source of truth.** It was synced on Monday, November 9, 2026 from the designer record through decision R63, and it still holds the earlier snapshot `docs/old/project/DECISIONS-2026-11-08.md` (on `main` at commit 10030f6). Every earlier entry is kept in section 10. Where a later decision replaces an earlier one, the earlier line is marked **Superseded** and says what replaced it. The dated snapshot's full text is in `docs/old/history/DECISIONS-2026-11-08.md`. A short pointer stays at `docs/old/project/DECISIONS-2026-11-08.md`. New decisions get a row in the tables above, through a docs PR (review, "Docs match main: yes", Brian's written yes before merge).
 - Don't invent a decision. If something isn't clear, add it under **Open**.
+
+## Home morning, 2026-11-26 (Brian's video notes and answers, round D)
+- **The station PA wakes Mops on Day 2.** Brian (#41): the exact words are pending, and he also wants the robot janitors' arrival announced. Built with the line marked suggested: "Good morning, Stormtop! Ganitor Mops to the party hall. The new robot janitors arrive today!" from the wall speaker (it is on the locked home picture, so no ear icon), with its ding-dong and sound lines, waiting for NEXT; then the speaker plays Kevin MacLeod's "Morning" (`music/morning.mp3`), notes rising from it. The music table has its own row for it ("day2am", `src/modules/music-picks.js`), so the home rotation (Carefree, Morning, Rainbows) is not stepped on; the room is quiet as it comes up and while the PA talks. This replaces round C's night line "Ganitor Mops to the party hall." (built on `feat/ch1-lunch-sneak`), whose approved words are kept inside the new one. **Decided** (the beat); the words **need Brian's yes**.
+- **Mops sleeps by the bed until the PA.** Brian (#33, "fall asleep standing and then tip over onto his side and sleep upside down with his feet in the air") and #41 ("Mops, asleep on the floor since bedtime, gets up and leaves after the PA"): Day 2 starts with Mops asleep on his back beside the crate bed, feet in the air (`mops-asleep-art.js` MOPS_ASLEEP, drawn by the home morning); the PA wakes him; he rolls onto his side, gets up, looks at Squatch asleep (one heart, Brian #48: "when he sees Squatch, it always sends up hearts"), and walks out of the door round the bucket and the bag. **Decided.**
+- **The note is read when he picks up the gift.** Brian, video note 0:24: "it's not clear that he got a note with the rocket. So maybe when he picks up the rocket, he should also read the note at that moment... put it in there with everything else when he gets to the closet." PICK UP · rocket opens a close-up of the note with its approved words, "Brave Sasquatches stay hidden. — The Guardians" (NEXT); then the Guardians thought bubble and "The Guardians came! They always come when I'm scared."; in the box close-up the rocket drops in with the folded note still tied on, not read again. **Decided.**
+- **Thought bubbles are bigger than what is in them, with a thought trail.** Brian, video note 0:11: "The thought bubble is smaller than the drawing." The home morning's two thought bubbles (the crayon Guardians, the Guardian Box) are sized to the drawing, with a margin all round, and have three small circles shrinking down to his head (`src/modules/thought-bubble.js`). **Decided.** (The bedtime story's crate thought bubble and the party's are not changed here; phase-3 item 13 is the party builder's.)
+- **Nobody walks through furniture.** Brian, video note 0:18: "he kind of glitches through the crate... is there a physics rule we can adopt for the future?" The rule (phase-3 brief): "Nobody walks through furniture: every walk goes round it, checked by a test over every scripted walk." In `docs/REVIEW-RULES.md`; `tests/scripted-walks.mjs` checks every scripted walk of the home morning and the bedtime story. He now hops out over the crate's side (as he climbed in) and walks round its foot. **Decided.**
+- **The closet is taller.** Brian, video note 0:20: "We should make the closet taller... the box is taking up way too much space... and the clothes should be over the box." His note is his yes to changing the look of the locked home picture's wardrobe, on Day 2: a drawn layer over the locked picture (`src/modules/tall-closet.js`; the picture files are not changed), the wardrobe about 85 game pixels taller, made of pieces of the locked picture itself; open, the clothes hang on the rail up high and the Guardian Box sits on the closet floor below them. **Decided** (Brian's yes, 2026-11-26). Open question: also on Day 1 (home alone, the dress-up)?
+- **He walks to the lunch bag and sees it.** Brian, video note 0:30: "too quick after him putting away the box to when it jumps to he forgot his lunch. Maybe he should have to walk over to the lunch and see it first." After the closet shuts, the lunch bag (MOPS on it) glows and is outlined; the player walks him over; there he says "He forgot his lunch!", then TAKE · lunch. The goal words on the way, after 20 seconds: "Squatch: go to the bag by the door" (**needs Brian's yes**). **Decided** (the beat).
+- **The box close-up keeps its front view.** Brian (#35): keep the box close-up's front view. **Decided** (as built).
+- **The goal outline is not changed yet.** Brian, video note 0:18: "I really don't see the yellow outline on the closet or other places... thicker and maybe darker... a universal rule change... look at a few options." An options sheet (A to E, each on the closet, the party plant and Mops) and a still of option A with no label on the picture (his 0:20 note, "I also don't know that we need the put in box on the screen if we've got it on the button below") are for his pick. **Waiting on Brian.**
 
 ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D)
 - **This mop bucket is Mops's mop bucket, everywhere.** Brian, video note 0:39 on the bedtime story: "I like this mop bucket... Let's go with it moving forward." The bucket the bedtime story's bucket pictures drew (yellow, wider at the top, a thick rim, a wire handle, two little wheels) is one drawing (`src/modules/mop-bucket.js`), used in the bedtime pictures and in the home room, where it is drawn as a layer over the locked picture's painted bucket, in the same place and size (the picture itself is unchanged). **Decided.** Open: the morning's beard-wringing close-up keeps its own bucket, which Brian approved separately (see docs/BRIAN-ASKS-OPEN.md).

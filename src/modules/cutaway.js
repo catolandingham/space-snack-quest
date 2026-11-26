@@ -25,7 +25,7 @@
 import { HOMEWORK_PANELS } from "./homework-cutaway.js";
 import { WOOKIEE_PANELS } from "./tv-story-art.js";
 import { BEDTIME_PANELS, GUARDIANS_PANELS, BEDTIME_AUTO } from "./bedtime-story-art.js";
-import { GBOX_PANELS } from "./home-morning-art.js";
+import { GBOX_PANELS, NOTE_PANELS } from "./home-morning-art.js";
 
 const INK = "#1e2430";
 const GLOW = "#ffcf33",
@@ -650,6 +650,8 @@ const PANELS = {
   guardians: GUARDIANS_PANELS,
   // beats 22 to 24, the home morning (home-morning.js): the gift drops into the Guardian Box
   gbox: GBOX_PANELS,
+  // and the note tied to the gift, read as he picks it up (Brian 2026-11-26, video note 0:24)
+  note: NOTE_PANELS,
 };
 
 /**

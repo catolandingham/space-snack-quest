@@ -178,6 +178,9 @@ const run = !(started && tvDone)
       // Day 2's first moments: the room comes up from black.
       // (with the home morning here, its night does it: it starts dark and comes up)
       const hm = window.SSQ.beat("ch1-home-morning");
+      // (the words the bedtime story showed, before Day 2's own: the home morning's PA comes up within these frames,
+      // and its words are checked by tests/home-morning.mjs)
+      out.shownStory = ss.shown();
       for (let k = 0; k < 90; k++) {
         ss.drawFrame();
         const r = beat.debug().drew,
@@ -235,7 +238,7 @@ g.check('no "Baaa" anywhere in the bedtime story (on screen or in its lines)', !
 g.check("the lines file holds the old captions word for word, the goat sound and Mops's line", L["cap-crate"] && L["cap-crate"].text === OLD.crate && L["cap-baby"].text === OLD.baby && L["cap-beard"].text === OLD.beard && L["mops-weent"] && L["mops-weent"].text === OLD.weent && L["mops-moon-pie"].text === MOPS_LINE);
 g.check("the old crate story's words are approved (Brian 2026-11-26: keep them); the goat sound is Brian's; Mops's Moon Pie line is approved as written (Brian 2026-11-26, #36)", ["cap-crate", "cap-baby", "cap-beard", "cap-bucket", "mops-nothing", "sign-moon-pies", "mops-moon-pie"].every((id) => L[id] && L[id].status === "approved") && L["mops-weent"].status.startsWith("Brian 2026-11-26") && /#36/.test(L["mops-moon-pie"].source));
 const known = new Set(BEDTIME_STORY_LINES.map((l) => l.text));
-const fromStory = (run.shownAfter || []).filter((w) => !run.shownBefore.includes(w));
+const fromStory = (run.shownStory || []).filter((w) => !run.shownBefore.includes(w));
 // A caption or bubble wrapped on a phone is drawn a line at a time: a drawn piece counts when it is a whole line of
 // the lines file, or a run of whole words of one (a wrapped bubble's middle line is a run from neither end). (The
 // TV story's last card, "Now", and the bubbles' name tags come from before this beat.)
@@ -283,7 +286,9 @@ const bedMusic = run.music.filter((m) => m.phase && m.phase !== "end"),
 g.check("after the film the walk to bed and the climb in are quiet (no music cue)", toBed.length > 30 && toBed.every((m) => m.cue === ""), toBed.filter((m) => m.cue !== "").slice(0, 5));
 g.check("from his ask until the fade, the music follows the \"bedtime\" cue (every frame)", afterAsk.length > 60 && afterAsk.every((m) => m.cue === "bedtime"), afterAsk.filter((m) => m.cue !== "bedtime").slice(0, 5));
 g.check("and through every story picture and the Guardians picture", run.picMusic.length === 8 && run.picMusic.every((m) => m.cue === "bedtime"), run.picMusic);
-g.check("after the fade the bedtime story is over: not showing, and the home cue is no longer \"bedtime\" from it", run.showingAfter === false && (run.cueAfter === "home" || run.cueAfter === "bedtime"), { showing: run.showingAfter, cue: run.cueAfter });
+// (with the home morning here, Day 2 starts dark with the bedtime music still on, then goes quiet as the room comes up
+// and the station PA talks: home-morning.js musicCue, Brian 2026-11-26 #41)
+g.check("after the fade the bedtime story is over: not showing, and the home cue is no longer \"bedtime\" from it", run.showingAfter === false && (run.cueAfter === "home" || run.cueAfter === "bedtime" || run.cueAfter === ""), { showing: run.showingAfter, cue: run.cueAfter });
 const song = PICKS.spanFor("bedtime");
 g.check("the bedtime cue plays Joe's theme (music/main-theme-from-brian.mp3), and only it, once, sung part and all, from its opening tune (Brian 2026-11-26, #37)", PICKS.fileFor("bedtime") === "music/main-theme-from-brian.mp3" && PICKS.listFor("bedtime").length === 1 && song.words === true && song.once === true && song.from <= 1.5 && song.to > 200 && PICKS.SINGING_OK.includes("bedtime"), song);
 // the singing (from 0:19.5 of the file) comes in about 19.5 s after the ask: HOLD, then the opening tune from `from`

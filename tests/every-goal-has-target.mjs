@@ -51,6 +51,8 @@ const report = await page.evaluate(async (chips) => {
     // the home morning (src/modules/home-morning.js), each opened by its own jump with everything before it done
     "Squatch: pick up the gift": { hm: "rocket" },
     "Squatch: put the gift in the box": { hm: "closet" },
+    // (Brian 2026-11-26, video note 0:30: he walks over to the bag and sees it first; the bag is outlined, no button)
+    "Squatch: go to the bag by the door": { hm: "toBag", walk: true, x: 846, y: 480 },
     "Squatch: take the lunch": { hm: "lunch" },
     "Squatch: take Mops his lunch": { step: "sneak", room: "hall", x: 700, y: 540 },
     "Squatch: give Mops his lunch": { step: "give", room: "passage", x: 500, y: 510 },
@@ -123,13 +125,18 @@ const report = await page.evaluate(async (chips) => {
     if (Math.min(rx, ry) >= 20 && Math.abs(a1 - a0) >= Math.PI) arcs.push(`${Math.round(x)},${Math.round(y)} e${Math.round(rx)}x${Math.round(ry)}`);
     return ellipse.apply(this, arguments);
   };
+  // Mops's mop bucket is yellow (mop-bucket.js, Brian's yes of 2026-11-26) and drawn in the home room on every visit:
+  // its straight-sided body is a thing in the room, not a goal mark, so what its drawing functions draw is not counted.
+  const inBucket = () => /drawMopBucket/.test(new Error().stack || "");
   proto.stroke = function () {
+    if ((isYellow(this.strokeStyle) || isYellow(this.fillStyle)) && inBucket()) return stroke.apply(this, arguments);
     if (isYellow(this.strokeStyle)) arcs.forEach((a) => yellowCircles.add(a));
     // A stroked chevron: two or three straight lines, no curve, not dashed (outlines of doorways use strokeRect).
     if (isYellow(this.strokeStyle) && lines >= 2 && lines <= 4 && !arcs.length && !this.getLineDash().length) yellowCircles.add("arrow");
     return stroke.apply(this, arguments);
   };
   proto.fill = function () {
+    if (isYellow(this.fillStyle) && inBucket()) return fill.apply(this, arguments);
     if (isYellow(this.fillStyle)) arcs.forEach((a) => yellowCircles.add(a));
     if (isYellow(this.fillStyle) && lines >= 2 && lines <= 4 && !arcs.length) yellowCircles.add("arrow");
     return fill.apply(this, arguments);

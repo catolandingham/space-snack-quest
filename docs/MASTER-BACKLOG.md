@@ -4,24 +4,29 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–131 | ## Where main is (Chapter 1 redesign) |
-| 132–146 | ## Register |
-| 147–168 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 169–189 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 190–202 | ## Phase 2 (plan section 4, T13 to T18) |
-| 203–225 | ## Phase 1 (plan section 3, T5 to T12) |
-| 226–239 | ## SS40–SS44 |
-| 240–257 | ## Story rows |
-| 258–276 | ## Reset section |
-| 277–287 | ## Still open |
-| 288–291 | ## Chapter 1 replot, recorded and not built |
-| 292–449 | ## Changelog |
+| 24–136 | ## Where main is (Chapter 1 redesign) |
+| 137–151 | ## Register |
+| 152–173 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 174–194 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 195–207 | ## Phase 2 (plan section 4, T13 to T18) |
+| 208–230 | ## Phase 1 (plan section 3, T5 to T12) |
+| 231–244 | ## SS40–SS44 |
+| 245–262 | ## Story rows |
+| 263–281 | ## Reset section |
+| 282–292 | ## Still open |
+| 293–296 | ## Chapter 1 replot, recorded and not built |
+| 297–454 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-26 (round D), draft PR #90 on `feat/ch1-day2-morning`, not merged. Done: `feat/ch1-bedtime-story` (round D) merged in (merge commit). Brian's notes of 2026-11-26 on the morning: the PA beat (#41, suggested words; "Morning" from the speaker, music table row "day2am"); Mops asleep by the bed until the PA, then up and out (#33, a heart #48); the note read in a close-up at PICK UP (0:24), not again in the box; thought bubbles bigger than their drawing with a thought trail (0:11); nobody walks through furniture (0:18: the rule in REVIEW-RULES, `tests/scripted-walks.mjs`); the closet taller on Day 2 (0:20, Brian's yes; `tall-closet.js` layer); walk to the bag before "He forgot his lunch!" (0:30). Docs match main: yes. Not yet played by a person.
+- Waiting on Brian: the outline pick (A to E sheet) and the no-label still (0:18, 0:20); the PA words; the chip "Squatch: go to the bag by the door"; the taller closet on Day 1 too?
+- For the lunch branch (`feat/ch1-lunch-sneak`): its night PA ("Ganitor Mops to the party hall.", `ganitor.js` pa-ganitor, used in `home-morning.js` start and checked in `tests/home-morning.mjs`) is replaced by this branch's morning PA: on the merge forward drop its PA step and check, keep `ganitor.js` for the tag, wall and crayon labels.
+- NOT ASSESSED: the morning video (recorded after the merge); how loud "Morning" sits after the PA on a phone.
 
 2026-11-26 (round D), draft PR #89 on `feat/ch1-bedtime-story`, not merged. Done (Brian's notes of 2026-11-26): Mops's mop bucket as one drawing (`src/modules/mop-bucket.js`) in the bedtime pictures and over the home room's painted bucket; the baby a furry ball in it; the tourists peeking in (wordless, plays by itself) before "Nothing to see here!"; the crate story's memory look; Joe's theme sung at bedtime from the ask (replaces Reawakening; bedtime added to SINGING_OK); Mops falls asleep like a fainting goat beside the bed (replaces him walking out); Mops's Moon Pie line approved; the Station Official docs agree with the game. Docs match main: yes.
 - Next (the morning branch, `feat/ch1-day2-morning`): Day 2 starts with Mops gone (`ch1Day2Begin` hides him); he should start the morning asleep on his back beside the bed (`mops-asleep-art.js` MOPS_ASLEEP and drawMopsTurned) and get up and leave after the PA, not leave in the dark.

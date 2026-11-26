@@ -13,6 +13,7 @@
  *   node tests/standing-spots.mjs
  */
 import { join, dirname } from "node:path";
+import { readFileSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -33,16 +34,13 @@ const hit = (a, b) => a.x0 < b.x1 && a.x1 > b.x0 && a.y0 < b.y1 && a.y1 > b.y0;
 // ---------- home ----------
 // A person's feet as the solids count them (party.js solids: 25 either side, 14 behind, 8 in front); at home, where
 // the room draws people three times bigger, up to the shins as well (30 behind), so someone drawn standing on a low
-// prop (Mops on the bucket, 2026-11-25) counts.
-const FOOT = Object.freeze({ home: { side: 25, up: 30, down: 8 }, hall: { side: 25, up: 14, down: 8 } });
-// The floor each thing takes up (the same boxes as the home room's solids in src/game/00-core.js, "the locked
-// picture: these boxes match the bucket, Guardian Box and bed drawn in it").
-const HOME_FURNITURE = {
-  bed: { x0: 83, x1: 286, y0: 409, y1: 526 },
-  bucket: { x0: 536, x1: 596, y0: 500, y1: 571 },
-  // Day 2 on: out of the closet, on the floor between the wardrobe and the bed's top corner (home-morning-art.js)
-  "Guardian box": { x0: 188, x1: 236, y0: 366, y1: 394 },
-};
+// prop (Mops on the bucket, 2026-11-25) counts. The floor each home thing takes up: the same boxes as the home room's
+// solids in src/game/00-core.js ("the locked picture: these boxes match the bucket, Guardian Box and bed drawn in it");
+// the Guardian box is where it stands out of the closet on Day 2 (home-morning-art.js). Both in
+// tests/data/home-furniture.json (tests/scripted-walks.mjs uses them too).
+const FURN = JSON.parse(readFileSync(join(root, "tests", "data", "home-furniture.json"), "utf8"));
+const FOOT = FURN.foot;
+const HOME_FURNITURE = FURN.home;
 const S = TALK_SPOTS.sq;
 const homeSpots = {
   ...Object.fromEntries(Object.entries(HOME_ROOM).filter(([k]) => !["bed", "flyer"].includes(k)).map(([k, v]) => ["party " + k, v])),

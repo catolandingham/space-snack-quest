@@ -63,6 +63,18 @@ export const BEDTIME_SPOTS = Object.freeze({
   mops: Object.freeze({ x: 405, y: 460 }),
   tuck: Object.freeze({ x: 366, y: 460 }),
 });
+/**
+ * Every walk the bedtime story makes, as its start and the corners it goes through (game positions), round the crate
+ * bed and the bucket (docs/REVIEW-RULES.md "Nobody walks through furniture", Brian 2026-11-26; tests/scripted-walks.mjs
+ * samples each). squatch: from where the TV evening seats him (src/game/14-ch1-day1.js ch1TvEvening, 640, 545) up past
+ * the bucket and across to the crate's right end; mops: from the TV round the top of the bucket to beside the bed;
+ * tuck: Mops's step in to the bed's foot and back.
+ */
+export const BEDTIME_WALKS = Object.freeze({
+  squatch: Object.freeze({ who: "sq", from: Object.freeze({ x: 640, y: 545 }), via: Object.freeze([BEDTIME_SPOTS.via, BEDTIME_SPOTS.side]) }),
+  mops: Object.freeze({ who: "mops", from: BEDTIME_SPOTS.mopsStart, via: Object.freeze([BEDTIME_SPOTS.mopsVia, BEDTIME_SPOTS.mops]) }),
+  tuck: Object.freeze({ who: "mops", from: BEDTIME_SPOTS.mops, via: Object.freeze([BEDTIME_SPOTS.tuck, BEDTIME_SPOTS.mops]) }),
+});
 // In his crate bed (Brian 2026-11-26, video notes 0:14 and 0:58: "it does look like Squatch just lost his lower body
 // half... make that look like he's actually inside of a crib or crate"): this file draws him sitting down inside the
 // crate, his feet below its front wall's top edge, and lying inside it, his body sinking a little behind that edge; then
@@ -263,7 +275,7 @@ export function createBedtimeStory(bridge) {
   // Mops comes over to the bed (round the top of the bucket); true once he stands there, facing Squatch.
   const mopsComes = (dt) => {
     if (S.mopsArrived) return true;
-    if (!mopsRoute([BEDTIME_SPOTS.mopsVia, BEDTIME_SPOTS.mops], dt)) return false;
+    if (!mopsRoute(BEDTIME_WALKS.mops.via, dt)) return false;
     const e = E();
     e.face("mops", -1);
     S.mopsArrived = true;
@@ -294,7 +306,7 @@ export function createBedtimeStory(bridge) {
   function walk(dt) {
     beatFrame(dt);
     const e = E(),
-      to = S.leg === 0 ? BEDTIME_SPOTS.via : BEDTIME_SPOTS.side;
+      to = BEDTIME_WALKS.squatch.via[S.leg];
     S.t >= BEDTIME_PACE.mopsGo && mopsComes(dt);
     if (!e.step("sq", to.x, to.y, BEDTIME_PACE.walk, dt || 0)) return false;
     if (S.leg === 0) {
