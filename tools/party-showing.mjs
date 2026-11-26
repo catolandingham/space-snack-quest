@@ -12,6 +12,11 @@
  *            waits from the game's own cones, and the finger follows the plan in real time), home, the dress-up, out.
  *     early  from the start of P6: a dance, then home early through his own door, the card, "Keep going", the
  *            closet (the costume off), Mops comes home, the talk, the TV.
+ *     ventfur      from the start of P2 (no disguise): he stands by the floor vent; a tuft of his fur goes in, then
+ *                  a cloud of it; a guest sees it and the alarm rings.
+ *     ventcostume  from the start of P6 (in disguise): a dance (his first minute passes), then he stands by the vent;
+ *                  it sucks his hat in, then he steps away.
+ *     tv           beat 20 on its own: the TV story (the Wookiee story), every picture, with its sounds.
  *   SHOWING_SILENT=1 leaves the sound out.
  */
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
@@ -20,8 +25,9 @@ import { join, dirname } from "node:path";
 import { startGame, sleep, root } from "../tests/game-page.mjs";
 
 const [which, outFile] = process.argv.slice(2);
-if (!["keep", "back", "flyer", "early"].includes(which) || !outFile) {
-  console.error("Usage: node tools/party-showing.mjs <keep|back|flyer|early> <out.mp4>");
+const WHICH = ["keep", "back", "flyer", "early", "ventfur", "ventcostume", "tv"];
+if (!WHICH.includes(which) || !outFile) {
+  console.error("Usage: node tools/party-showing.mjs <" + WHICH.join("|") + "> <out.mp4>");
   process.exit(2);
 }
 const SILENT = !!process.env.SHOWING_SILENT;
@@ -31,9 +37,9 @@ mkdirSync(join(WORK, "fr"), { recursive: true });
 mkdirSync(dirname(outFile), { recursive: true });
 const hall = await import(join(root, "src", "modules", "party-hall.js"));
 const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 2 };
-const g = await startGame({ port: 9360 + ["keep", "back", "flyer", "early"].indexOf(which), name: "party-showing-" + which });
+const g = await startGame({ port: 9360 + WHICH.indexOf(which), name: "party-showing-" + which });
 const sneak = await import(join(root, "tests", "party-sneak.mjs"));
-const { page, errors } = await g.open("?beat=" + (which === "flyer" ? "party:P3" : "party:P6"), PHONE);
+const { page, errors } = await g.open(which === "tv" ? "?ch=1" : "?beat=" + (which === "flyer" ? "party:P3" : which === "ventfur" ? "party:P2" : "party:P6"), PHONE);
 await sleep(600);
 SILENT || (await page.click("#ss-sound").catch(() => {}));
 await sleep(600);
@@ -358,6 +364,32 @@ async function follow(to, hidden) {
   q.now && q.now.alarm && (await fail("seen on the way"));
 }
 
+// The octopus chases him: the finger keeps tapping the floor away from the octopus (turning along a wall when it
+// would run into one), until the octopus gives up or `ms` is over.
+async function juke(ms) {
+  const end = Date.now() + ms,
+    B = { x0: 120, x1: 760, y0: 380, y1: 585 };
+  for (;;) {
+    const s = await st();
+    if (Date.now() > end || !s.now || !s.now.oct || !["chase", "hug", "ready"].includes(s.now.oct.mode)) break;
+    if (["bub", "card", "panel"].includes(s.cur)) {
+      await read(s);
+      continue;
+    }
+    const o = await page.evaluate(() => window.__ss.op.ch1PartyNow.people["octopus-guest"]);
+    let dx = s.x - o.x,
+      dy = s.y - o.y;
+    const d = Math.hypot(dx, dy) || 1;
+    (dx /= d), (dy /= d);
+    let to = { x: s.x + dx * 160, y: s.y + dy * 160 };
+    // a wall ahead: run along it instead, toward the roomier side
+    if (to.x < B.x0 || to.x > B.x1) to = { x: Math.min(B.x1, Math.max(B.x0, to.x)), y: s.y + (s.y < (B.y0 + B.y1) / 2 ? 150 : -150) };
+    if (to.y < B.y0 || to.y > B.y1) to = { x: s.x + (s.x < (B.x0 + B.x1) / 2 ? 170 : -170), y: Math.min(B.y1, Math.max(B.y0, to.y)) };
+    s.ctrl && (await floor(to.x, to.y));
+    await sleep(260);
+  }
+}
+
 // ---------- the showings ----------
 await startRecording();
 await sleep(1800);
@@ -366,15 +398,18 @@ if (which === "keep") {
   // toward the wall by the alarm box, where the row will stand; the first song ends and the photo moment begins
   await goTo(300, 545);
   await photo(70000);
-  // The octopus (after the first minute): near his end of the bar he notices, all arms out. One hug is just a hug.
-  await goTo(640, 560, (q) => q.now.oct && q.now.oct.mode === "chase");
-  let s = await until((q) => q.now.oct && q.now.oct.mode === "chase", 15000, read);
+  // The octopus (after the first minute): near his end of the bar his "?" fills in, then "*hic* Fellow tourist!", a
+  // lunge and a first hug (just a hug, his hat tips), Squatch's two thoughts, and the real chase: he jukes away
+  // from him until the octopus gets bored (20 s).
+  await goTo(640, 560, (q) => q.now.oct && q.now.oct.mode !== "snacks" && q.now.oct.mode !== "stroll");
+  let s = await until((q) => q.now.oct && ["ready", "lunge", "hug", "chase"].includes(q.now.oct.mode), 15000, read);
   s || (await fail("the octopus did not notice"));
   log("the octopus");
-  await until((q) => q.cur !== "bub" && q.ctrl, 20000, read);
-  await until((q) => q.now.oct.hugs >= 1 || q.now.oct.mode !== "chase", 12000, read);
-  await until((q) => q.ctrl && q.now.oct.mode === "chase", 6000, read);
-  log("one hug; off to the snack bar (he cannot be hugged with his paw in the snacks, and the octopus gets bored)");
+  s = await until((q) => q.now.oct.mode === "chase" && q.ctrl && q.cur !== "bub", 30000, read);
+  s || (await fail("the real chase did not start"));
+  log("the chase: juke");
+  await juke(26000);
+  log("the octopus is bored; off to the snack bar");
   // Straight to the snack bar: two snacks while her back is turned, then his paw out twice while she is looking.
   // The second time she sees fur and runs for the alarm; his hat is still on (for Mops to lift at home).
   await snacks(2, "caught");
@@ -424,8 +459,11 @@ if (which === "flyer") {
   log("GRAB · flyer");
   await sleep(700);
   await follow({ x: hall.HALL_DOOR.x, y: hall.HALL_DOOR.y - 50, r: 30 }, false);
+  // home: "Phew, made it!", then SAVE · flyer at his bed (it glows), then his two thoughts
+  let saved = false;
   s = await until((q) => q.now && q.now.scene === "P5" && q.ctrl, 40000, async (q) => {
     if (q.cur === "bub") return read(q);
+    if (!saved && q.act === "SAVE · flyer" && q.ctrl) return void ((saved = true), await sleep(1500), await press(), log("SAVE · flyer"));
     q.ctrl && q.room === "hall" && (await floor(hall.HALL_DOOR.x, hall.HALL_DOOR.y + 12), await sleep(600));
   });
   s || (await fail("P5 did not start"));
@@ -456,6 +494,50 @@ if (which === "flyer") {
   s = await until((q) => q.now && q.now.scene === "P6" && q.ctrl, 15000);
   log(s ? "P6: out at the party in disguise" : "P6 did not start");
   await sleep(2500);
+}
+if (which === "ventfur") {
+  // P2, no disguise: from his doorway to the floor vent, then he stands there
+  let s = await until((q) => q.now && q.now.scene === "P2" && q.ctrl, 8000, read);
+  s || (await fail("P2 did not start"));
+  await sleep(1500);
+  await goTo(hall.HALL.vent.x + 40, hall.HALL.vent.y - 20, (q) => q.now.alarm, 9000);
+  log("by the vent");
+  s = await until((q) => q.now.alarm, 12000);
+  s || (await fail("the vent took no fur"));
+  log("the fur went in: the alarm");
+  await until((q) => q.now.alarm === "ring" || q.now.alarm === "search", 12000, read);
+  await sleep(5000);
+}
+if (which === "ventcostume") {
+  // in disguise: a dance first (nothing comes off in his first minute), then he stands by the vent
+  await dance(14, 0);
+  const ready = await until((q) => q.now.ft >= 61, 70000, read);
+  log(ready ? "his first minute is over" : "(first minute: not read, going on)");
+  await goTo(hall.HALL.vent.x + 40, hall.HALL.vent.y - 20, null, 9000);
+  log("by the vent");
+  const s = await until((q) => q.now.gone && q.now.gone.length, 15000);
+  s || (await fail("the vent took no piece"));
+  log("the vent took " + JSON.stringify(s.now.gone));
+  await sleep(2500);
+  await goTo(480, 450);
+  await sleep(3000);
+}
+if (which === "tv") {
+  await page.evaluate(() => {
+    const n = window.__ss.op;
+    n.q = [];
+    n.cur = null;
+    window.SSQ.engine().tvStory();
+  });
+  // every picture: read it (about 3 s), then NEXT; the ship picture gets 6 s
+  for (let i = 0; i < 12; i++) {
+    const s = await st();
+    if (!["card", "panel", "bub", "cutaway"].includes(s.cur)) break;
+    await sleep(s.cur === "cutaway" ? 6000 : 3200);
+    await page.evaluate(() => ((window.__ss.op.bt = 1), window.__ss.opTap()));
+    await sleep(500);
+  }
+  await sleep(1500);
 }
 if (which === "early") {
   await dance(10, 0);
