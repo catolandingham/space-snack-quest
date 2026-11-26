@@ -2,7 +2,8 @@
  * Beat 20, the TV story (Brian 2026-11-25, "1"): the old Wookiee picture story from commit 71ec66e is back in
  * place of the stand-in, full screen, each picture waiting for NEXT.
  *   - it plays in order: the "Years ago, on Stormtop..." card, tour, shed, clog, the "*gasp*", the Station
- *     Official and the TOURS ship, the "Now" card; then bedtime goes on (the Moon Pie panel) as before;
+ *     Official and the TOURS ship, the "Now" card; then bedtime goes on (beat 21, the bedtime story:
+ *     tests/bedtime-story.mjs);
  *   - every word is the old approved wording (src/modules/tv-story-lines.js), word for word, and shows on screen;
  *   - each picture fills the screen and waits (it is still up after 6 seconds with no tap);
  *   - Brian's Wookiee recording is asked for on the tour, the shed and the ship pictures, and nowhere else;
@@ -57,7 +58,7 @@ for (let i = 0; started && i < 40; i++) {
     };
   });
   seen.push(s);
-  if (s.k === "panel" && s.id === "ch1moon") break;
+  if (s.k === "card" && s.text === L["card-now"]) break;
   // the first picture: no tap for 6 seconds, it is still up (it waits for NEXT)
   if (s.k === "cutaway" && waited == null) {
     waited = await page.evaluate(() => {
@@ -79,8 +80,17 @@ for (let i = 0; started && i < 40; i++) {
 }
 
 const order = seen.filter((s) => s.k !== "until").map((s) => (s.k === "card" ? "card:" + s.text : s.k === "cutaway" ? "pic:" + (s.drew && s.drew.pic) : s.k + ":" + s.id));
-const want = ["card:" + L["card-years-ago"], "pic:tour", "pic:shed", "pic:clog", "pic:gasp", "pic:banish", "card:" + L["card-now"], "panel:ch1moon"];
-g.check("the story plays in order: Years ago, tour, shed, clog, *gasp*, the ship, Now; then bedtime as before", JSON.stringify(order) === JSON.stringify(want), order);
+const want = ["card:" + L["card-years-ago"], "pic:tour", "pic:shed", "pic:clog", "pic:gasp", "pic:banish", "card:" + L["card-now"]];
+g.check("the story plays in order: Years ago, tour, shed, clog, *gasp*, the ship, Now", JSON.stringify(order) === JSON.stringify(want), order);
+// after the Now card, bedtime (beat 21, the bedtime story) begins
+const bedtime = await page.evaluate(() => {
+  const ss = window.__ss;
+  (ss.op.bt = 1), ss.opTap();
+  for (let k = 0; k < 4; k++) ss.tick(0.05);
+  const b = window.SSQ.beat("ch1-bedtime-story");
+  return b ? b.debug().phase : "";
+});
+g.check("then bedtime goes on: the bedtime story starts (Squatch walks to his bed)", bedtime === "walk", bedtime);
 g.check("every picture is the full-screen cutaway of the Wookiee story", seen.filter((s) => s.k === "cutaway").length === 5 && seen.filter((s) => s.k === "cutaway").every((s) => s.id === "wookiee" && s.drew && s.drew.full), seen.filter((s) => s.k === "cutaway").map((s) => s.id));
 g.check("a picture waits for NEXT (still up after 6 seconds with no tap)", waited === true, waited);
 

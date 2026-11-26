@@ -1,7 +1,7 @@
 /**
  * No standing spot in Chapter 1's rooms overlaps furniture or props (Brian 2026-11-25, showing-5 note 11: "Mops
  * stands on the bucket"). Every place someone is put or walked to and stands (the party at home and in the hall,
- * the talk, Mops sending the guard off, the morning, home alone) is checked against the room's things:
+ * the talk, Mops sending the guard off, the morning, home alone, the bedtime story) is checked against the room's things:
  *   home  the crate bed, the painted bucket and the Guardian box (the locked home picture v6; the same boxes the
  *         room's solids use, src/game/00-core.js), with the room drawing people big: a person standing there takes
  *         up FOOT.home round their feet, up to their knees, so a body drawn over a low prop counts
@@ -22,6 +22,7 @@ const { AFTER_SPOTS } = await mod("party-after-alarm.js");
 const { MORNING_PLACES } = await mod("morning.js");
 const { HOME_SPOTS } = await mod("home-alone.js");
 const { PHOTO_ROW } = await mod("party-photo.js");
+const { BEDTIME_SPOTS } = await mod("bedtime-story.js");
 
 let fails = 0;
 const check = (name, ok, info) => (console.log(`${ok ? "PASS" : "FAIL"} ${name}${ok || info == null ? "" : "\n      " + JSON.stringify(info)}`), ok || fails++);
@@ -51,6 +52,8 @@ const homeSpots = {
   ...Object.fromEntries(["outOfBed", "mops", "mopFrom", "wring", "door"].map((k) => ["morning " + k, MORNING_PLACES[k]])),
   "morning: Squatch steps back (talk floor, left of Mops)": { x: MORNING_PLACES.mops.x - MORNING_PLACES.talkGap, y: MORNING_PLACES.talkFloor },
   ...Object.fromEntries(Object.entries(HOME_SPOTS).map(([k, v]) => ["home alone " + k, v])),
+  // the bedtime story (beat 21): Squatch in bed is on the bed on purpose (not listed)
+  ...Object.fromEntries(Object.entries(BEDTIME_SPOTS).filter(([k]) => k !== "inBed").map(([k, v]) => ["bedtime " + k, v])),
 };
 // Squatch under his bed, and his flop onto it, are on the bed on purpose (not listed above).
 const homeBad = [];

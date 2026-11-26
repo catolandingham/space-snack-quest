@@ -1626,7 +1626,6 @@
         (X(l, o, i * 0.8, i), e.stroke());
     }
     function gq(l, o) {
-      if (l === "ch1moon") return drawCh1Moon();
       if (l === "ch1site") {
         ((e.fillStyle = "rgba(20,24,32,.62)"),
           e.fillRect(0, 0, c, b),
@@ -2152,6 +2151,7 @@
         // The morning's sound lines and notes at the wall speaker, and the wet floor where Mops mops.
         beat && beat.draw(e);
         partyBeat() && partyBeat().draw(e);
+        window.SSQ && window.SSQ.beat("ch1-bedtime-story") && window.SSQ.beat("ch1-bedtime-story").draw(e);
         if (n.ch1Calendar) {
           drawCh1Calendar();
           return;

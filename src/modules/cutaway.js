@@ -15,7 +15,8 @@
  * on the floor, and Mops says "Hey, stop that!" (morning.js), then the picture goes on.
  *
  * Squatch's homework on the home-alone morning is the second user: its two pictures are in
- * homework-cutaway.js. The TV story (beat 20) is the third: its Wookiee pictures are in tv-story-art.js.
+ * homework-cutaway.js. The TV story (beat 20) is the third: its Wookiee pictures are in tv-story-art.js. The
+ * bedtime story (beat 21) is the fourth: its crate story pictures are in bedtime-story-art.js.
  *
  * Drawn here in the game's style (dark outlines, flat colours). Mops is drawn by this file too, from the same
  * shapes as the engine's drawMops but with outlines as thin as in Brian's approved picture (see "Mops in the
@@ -23,6 +24,7 @@
  */
 import { HOMEWORK_PANELS } from "./homework-cutaway.js";
 import { WOOKIEE_PANELS } from "./tv-story-art.js";
+import { BEDTIME_PANELS } from "./bedtime-story-art.js";
 
 const INK = "#1e2430";
 const GLOW = "#ffcf33",
@@ -641,6 +643,8 @@ const PANELS = {
   homework: HOMEWORK_PANELS,
   // beat 20, the TV story (tv-story.js): the old Wookiee pictures, each drawing itself full screen
   wookiee: WOOKIEE_PANELS,
+  // beat 21, the bedtime story (bedtime-story.js): the old crate story's pictures
+  moonpie: BEDTIME_PANELS,
 };
 
 /**

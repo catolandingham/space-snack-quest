@@ -22,6 +22,7 @@ import { SPEAKER } from "./morning.js";
 import { placeLabel } from "./cap-place.js";
 import { walkRingShows } from "./walk-ring.js";
 import { quietLine } from "./party-lines.js";
+import { quietBedtimeLine } from "./bedtime-story-lines.js";
 import { adultPxFor, doorAdultPx } from "./room-sizes.js";
 import { createGoalMark } from "./goal-mark.js";
 import { singingNow } from "./music-rules.js";
@@ -82,10 +83,11 @@ export function createBridge() {
     mix: MIX,
     /**
      * A speech bubble opens: its tick, and Mops's meh on his first line in a scene. His gentle lines
-     * ("You have me.", party-lines.js `quiet`) never get the meh. See morning-sound.js.
+     * ("You have me.", party-lines.js `quiet`; his bedtime line, bedtime-story-lines.js) never get the meh. See
+     * morning-sound.js.
      */
     bubbleSound(b, scene) {
-      morningSound.bubble(b, scene, homeMusic.debug().playing, quietLine(b));
+      morningSound.bubble(b, scene, homeMusic.debug().playing, quietLine(b) || quietBedtimeLine(b));
     },
     /** The wall speaker in the home room, for placing its bubble. See morning.js. */
     speakerBox() {

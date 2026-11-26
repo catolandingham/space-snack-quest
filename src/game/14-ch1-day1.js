@@ -1,6 +1,6 @@
-// Day 1's evening at home after the party: beat 20 (the TV story), bedtime and the Moon Pie card.
+// Day 1's evening at home after the party: beat 20 (the TV story), then beat 21 (the bedtime story).
     // Beat 20, the TV story, after "You have me." (both party endings hand over here: src/modules/party-endings.js).
-    // Then bedtime, the Moon Pie card, and Day 2.
+    // Then beat 21, the bedtime story (src/modules/bedtime-story.js), and Day 2.
     function ch1TvEvening() {
       return [
         N(() => {
@@ -11,19 +11,10 @@
         N(() => {
           n.ch1Couch = !1;
         }),
-        cV((dt) => mV(n.sq, 205, 470, 160, dt) && mV(n.mo, 380, 460, 160, dt)),
-        N(() => {
-          ((n.sqPose = "sleep"), (n.sq.x = 205), (n.sq.y = 470), (n.mo.x = 380), (n.mo.y = 460));
-        }),
-        { k: "panel", id: "ch1moon" },
+        // the old Moon Pie crate story at bedtime, ending with Squatch asleep (src/modules/bedtime-story.js)
+        ...((window.SSQ && window.SSQ.beat("ch1-bedtime-story") && window.SSQ.beat("ch1-bedtime-story").steps()) || []),
         N(() => {
           ((n.sqPose = "stand"), (n.moPose = "stand"), ch1Day2Begin());
         }),
       ];
-    }
-    function drawCh1Moon() {
-      (m(150, 48, 660, 78, 16),
-        r("#fffdf8", 4),
-        g("You came to me in a Moon Pie crate.", 480, 72, 22, "#1e2430", "center", 800),
-        g("You've loved Moon Pies ever since.", 480, 104, 18, "#1e2430", "center", 700));
     }
