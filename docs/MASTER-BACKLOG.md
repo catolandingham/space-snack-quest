@@ -4,24 +4,26 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–138 | ## Where main is (Chapter 1 redesign) |
-| 139–153 | ## Register |
-| 154–175 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 176–196 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 197–209 | ## Phase 2 (plan section 4, T13 to T18) |
-| 210–232 | ## Phase 1 (plan section 3, T5 to T12) |
-| 233–246 | ## SS40–SS44 |
-| 247–264 | ## Story rows |
-| 265–283 | ## Reset section |
-| 284–294 | ## Still open |
-| 295–298 | ## Chapter 1 replot, recorded and not built |
-| 299–456 | ## Changelog |
+| 24–140 | ## Where main is (Chapter 1 redesign) |
+| 141–155 | ## Register |
+| 156–177 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 178–198 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 199–211 | ## Phase 2 (plan section 4, T13 to T18) |
+| 212–234 | ## Phase 1 (plan section 3, T5 to T12) |
+| 235–248 | ## SS40–SS44 |
+| 249–266 | ## Story rows |
+| 267–285 | ## Reset section |
+| 286–296 | ## Still open |
+| 297–300 | ## Chapter 1 replot, recorded and not built |
+| 301–458 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-26 (round D, merge), draft PR #89 on `feat/ch1-bedtime-story`, not merged. Done: `feat/party-half-two` (fe5a558) merged in (merge commit); bedtime keeps Joe's theme sung (SINGING_OK has bedtime); test fixes for the kid-play robot's no-button doorways and the mop bucket in the arrow check. NOT ASSESSED: the bedtime video after the merge (recorded from the lunch tip). Docs match main: yes.
 
 2026-11-26 (round D), draft PR #89 on `feat/ch1-bedtime-story`, not merged. Done (Brian's notes of 2026-11-26): Mops's mop bucket as one drawing (`src/modules/mop-bucket.js`) in the bedtime pictures and over the home room's painted bucket; the baby a furry ball in it; the tourists peeking in (wordless, plays by itself) before "Nothing to see here!"; the crate story's memory look; Joe's theme sung at bedtime from the ask (replaces Reawakening; bedtime added to SINGING_OK); Mops falls asleep like a fainting goat beside the bed (replaces him walking out); Mops's Moon Pie line approved; the Station Official docs agree with the game. Docs match main: yes.
 - Next (the morning branch, `feat/ch1-day2-morning`): Day 2 starts with Mops gone (`ch1Day2Begin` hides him); he should start the morning asleep on his back beside the bed (`mops-asleep-art.js` MOPS_ASLEEP and drawMopsTurned) and get up and leave after the PA, not leave in the dark.

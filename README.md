@@ -4,21 +4,21 @@
 | Lines | Heading |
 | --- | --- |
 | 23–32 | # Space Snack Quest |
-| 33–115 | ## Chapter 1 redesign (on main) |
-| 116–130 | ## Music credits |
-| 131–161 | ## Source and build |
-| 162–172 | ## Debug link |
-| 173–178 | ## Automatic checks |
-| 179–182 | ## Screen fit |
-| 183–206 | ## Brian's repeat complaints, as tests (2026-11-22) |
-| 207–212 | ## Scene 1 morning |
-| 213–216 | ## Chapter 1 kid robot |
-| 217–233 | ## Phase 1: kitchen and diner clarity |
-| 234–246 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
-| 247–260 | ## Phase 3: one capture rule, phone HUD, tap to walk |
-| 261–270 | ## Chapter 1 pass: the night out has a purpose, switches say why |
-| 271–288 | ## Progression tests |
-| 289–315 | ## Left as they were |
+| 33–117 | ## Chapter 1 redesign (on main) |
+| 118–132 | ## Music credits |
+| 133–163 | ## Source and build |
+| 164–174 | ## Debug link |
+| 175–180 | ## Automatic checks |
+| 181–184 | ## Screen fit |
+| 185–208 | ## Brian's repeat complaints, as tests (2026-11-22) |
+| 209–214 | ## Scene 1 morning |
+| 215–218 | ## Chapter 1 kid robot |
+| 219–235 | ## Phase 1: kitchen and diner clarity |
+| 236–248 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
+| 249–262 | ## Phase 3: one capture rule, phone HUD, tap to walk |
+| 263–272 | ## Chapter 1 pass: the night out has a purpose, switches say why |
+| 273–290 | ## Progression tests |
+| 291–317 | ## Left as they were |
 <!-- /section-index -->
 # Space Snack Quest
 
@@ -31,6 +31,8 @@ Calendar review status (2026-11-16): Brian said yes to merge the calendar (Nov 1
 **Next up (Brian, 2026-11-16):** Chapter 1, one beat at a time in [`docs/CH1-STORY-WALKTHROUGH.md`](docs/CH1-STORY-WALKTHROUGH.md). Do not leave beat 1 until Brian says it is right. Squatch walks around the bed and the bucket, and the Guardian box is in the closet on day 1 (locked home room v5; Brian's yes, Nov 16, 12:50 PM PT). On day 2 he takes the box out at the closet (`tests/bedroom-walk.mjs`). The calendar is tappable. Printed copy: MOONMUNCH / FUZZUARY; Sponsored by MOON PIES; Sock hunt; family Olympics night; Wash outside windows (remember space suit!); Blanket fort night. These are decoration, not new quests. X or NEXT returns to the same scene (`tests/calendar-closeup.mjs`). Closet, bed, desk homework and the already-bitten calendar are built on branch `feat/home-alone` (draft, see below); the purple bed bar is removed there too; still to build: the bucket. The night vent step no longer finishes inside Mops: the morning hum was leaving him marked as walking. Docs match main: yes.
 
 ## Chapter 1 redesign (on main)
+
+2026-11-26 (round D, merge), draft pull request #89, not merged. The party branch's round D is merged in (Brian's answers and phase 4, the one highlight style, the crowd recording and syllable voices, Floating in Space as the title, the walk-tap ring and its goal-mark code gone, walk-through doorways, Run Amok, Mops's hum, the tape and news card). Bedtime still plays Joe's theme sung from the ask (the music table keeps both branches' rows). Two test fixes, the game unchanged: the kid-play robot no longer marks a doorway with no button done when it presses HIDE (it hid in a plant over and over and stood still at the party), and taps the place itself when its small steps do not move him; the goal-marks check does not count Mops's yellow mop bucket as a yellow arrow (`tests/ch1-kid-play.mjs`, `tests/every-goal-has-target.mjs`). Full suite: 105 of 105 after the fixes. Docs match main: yes. Not yet played by a person.
 
 2026-11-26 (round D), draft pull request #89, not merged. Brian's notes of 2026-11-26 on the bedtime story. Mops's mop bucket is one drawing (`src/modules/mop-bucket.js`, "Let's go with it moving forward"): the bedtime pictures draw it, and the home room draws it over the locked picture's painted bucket, in the same place and size, under the people and again over Squatch when he stands behind it (`window.SSQ.drawHomeBucket`; the picture itself is unchanged). In the bucket pictures the baby is a curled-up furry ball with no face, and a wordless picture plays by itself before "Nothing to see here!": two tourists (the approved camera and backpack guests) peek in at a door, a "?" over each. The crate story's pictures have a memory look: soft cloud-shaped edges and a warm old-photo tint. Bedtime plays Joe's theme with its singing (`music/main-theme-from-brian.mp3`), from Squatch's ask, so the singing comes in over the pictures; it replaces Reawakening there. After the tuck-in Mops falls asleep standing, goes stiff, tips over onto his side and rolls onto his back with his feet in the air, beside the bed (`src/modules/mops-asleep-art.js`, the room's own Mops drawing turned); the light goes down by itself as he settles. Mops's Moon Pie line is approved. The docs now agree that the TV story's Station Official line came back (and record Brian's new wording). Tests: `tests/bedtime-story.mjs`, `tests/mop-bucket.mjs`, `tests/standing-spots.mjs`, `tests/party-showing6.mjs`. Docs match main: yes. Not yet played by a person.
 

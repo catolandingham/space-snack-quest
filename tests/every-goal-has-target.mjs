@@ -124,13 +124,18 @@ const report = await page.evaluate(async (chips) => {
     if (Math.min(rx, ry) >= 20 && Math.abs(a1 - a0) >= Math.PI) arcs.push(`${Math.round(x)},${Math.round(y)} e${Math.round(rx)}x${Math.round(ry)}`);
     return ellipse.apply(this, arguments);
   };
+  // Mops's mop bucket is yellow (mop-bucket.js, Brian's yes 2026-11-26, "Let's go with it moving forward"): a prop,
+  // not a highlight, so its own drawing is not counted (it is found by the bucket's drawing functions on the stack).
+  const prop = () => /drawMopBucket(Back|Front)|drawHomeMopBucket/.test(new Error().stack || "");
   proto.stroke = function () {
+    if (prop()) return stroke.apply(this, arguments);
     if (isYellow(this.strokeStyle)) arcs.forEach((a) => yellowCircles.add(a));
     // A stroked chevron: two or three straight lines, no curve, not dashed (outlines of doorways use strokeRect).
     if (isYellow(this.strokeStyle) && lines >= 2 && lines <= 4 && !arcs.length && !this.getLineDash().length) yellowCircles.add("arrow");
     return stroke.apply(this, arguments);
   };
   proto.fill = function () {
+    if (prop()) return fill.apply(this, arguments);
     if (isYellow(this.fillStyle)) arcs.forEach((a) => yellowCircles.add(a));
     if (isYellow(this.fillStyle) && lines >= 2 && lines <= 4 && !arcs.length) yellowCircles.add("arrow");
     return fill.apply(this, arguments);
