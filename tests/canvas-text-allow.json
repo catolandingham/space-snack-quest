@@ -42,6 +42,20 @@
       "reason": "size",
       "text": "MOPS",
       "why": "Brian 2026-11-26: MOPS written on the lunch bag. The bag is 40 x 52 in the room, so its word is about 9 to 10 CSS px on an iPad: a label on a thing, not words to read. Brian to say whether the bag (and its word) should be bigger."
+    },
+    {
+      "size": "iPad portrait",
+      "screen": "lunch sneak",
+      "reason": "off-screen",
+      "text": "MOPS",
+      "why": "Brian 2026-11-26: MOPS written on the lunch bag. In the lunch sneak's first moment the bag in his paw is at the bottom edge of the picture, so its small word is partly off the canvas; a label on a thing, not words to read."
+    },
+    {
+      "size": "iPad landscape",
+      "screen": "lunch sneak",
+      "reason": "off-screen",
+      "text": "MOPS",
+      "why": "Brian 2026-11-26: MOPS written on the lunch bag. In the lunch sneak's first moment the bag in his paw is at the bottom edge of the picture, so its small word is partly off the canvas; a label on a thing, not words to read."
     }
   ]
 }
