@@ -24,6 +24,7 @@ import { placeLabel } from "./cap-place.js";
 import { walkRingShows } from "./walk-ring.js";
 import { quietLine } from "./party-lines.js";
 import { quietBedtimeLine } from "./bedtime-story-lines.js";
+import { drawHomeMopBucket, lastHomeMopBucket } from "./mop-bucket.js"; // (bedtime branch, 2026-11-26: Mops's mop bucket)
 import { adultPxFor, doorAdultPx } from "./room-sizes.js";
 import { createGoalMark } from "./goal-mark.js";
 import { singingNow } from "./music-rules.js";
@@ -48,7 +49,7 @@ export function createBridge() {
   const morningSound = createMorningSound(() => engine);
   const goalMark = createGoalMark();
   // At home, while the TV story is on the screen, the music's cue is "tv"; while the bedtime story plays and the night
-  // after it is still dark (the home morning's start), "bedtime" (music-picks.js: Reawakening).
+  // after it is still dark (the home morning's start), "bedtime" (music-picks.js: Joe's theme with its singing, 2026-11-26).
   let musicCueNow = ""; // the cue the music last followed (refined), for tests
   const refineCue = (cue) => {
     // While a beat's alarm is on (the one capture rule: FUR!, the alarm, the search), no music; after it, the music
@@ -66,7 +67,9 @@ export function createBridge() {
       bed = beats.get("ch1-bedtime-story"),
       hm = beats.get("ch1-home-morning"),
       night = (bed && bed.showing && bed.showing()) || (hm && hm.nightNow && hm.nightNow());
-    return tv && tv.showing && tv.showing() ? "tv" : night ? "bedtime" : cue;
+    // (the bedtime story's walk to bed and climb in are quiet: the TV story's music has ended with the film, and the
+    // bedtime music starts as Squatch asks; Brian 2026-11-26, video note 0:03)
+    return tv && tv.showing && tv.showing() ? "tv" : bed && bed.quietNow && bed.quietNow() ? "" : night ? "bedtime" : cue;
   };
   return Object.freeze({
     version: 1,
@@ -164,6 +167,14 @@ export function createBridge() {
     speakerBox() {
       return SPEAKER;
     },
+    /**
+     * (bedtime branch, 2026-11-26) Mops's mop bucket in the home room (Brian: "Let's go with it moving forward"), drawn
+     * over the painted bucket of the locked picture, under the people, and again over Squatch when he stands behind it.
+     * Returns its box, or null while not ready (the painted bucket shows). See mop-bucket.js.
+     */
+    drawHomeBucket: drawHomeMopBucket,
+    /** Tests: where the home bucket was last drawn. */
+    homeBucketDrawn: lastHomeMopBucket,
     /** The full-screen cutaway (tests read what its last frame drew). See cutaway.js. */
     cutaway: Object.freeze({ last: lastCutaway }),
     /** Register a rebuilt beat. Ids are unique; registering one twice is a mistake, so it throws. */

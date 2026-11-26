@@ -33,7 +33,7 @@
 import { drawSquatchArt, armEnds } from "./squatch-art.js";
 import { morningWords } from "./home-morning-lines.js";
 import { MORNING_THINGS, MORNING_SIZES, TRACE, drawRocket, drawLunchBag, drawGuardianBox, drawBoxWithGift, drawBoxThought, drawCrayonThought, drawCalendarToday, BOX_CLOSEUP, GBOX_ID } from "./home-morning-art.js";
-import { drawBedtimeSquatch, drawBedBlanket, BED_POSES } from "./bedtime-story.js";
+import { drawBedtimeSquatch, drawBedBlanket, drawCrateFront, BED_POSES } from "./bedtime-story.js";
 import { HOME_THINGS } from "./home-alone.js";
 import { cutawaySteps } from "./cutaway.js";
 import { footfall } from "./footfalls.js";
@@ -540,11 +540,14 @@ export function createHomeMorning(bridge) {
           pose = { x: L.x + (S0.x - L.x) * q, y: L.y + (S0.y - L.y) * q, a: L.a * (1 - q), arms: null, feet: false, eyes: h.step === "night" ? "closed" : "", yawn: 0 };
         drawBedtimeSquatch(ctx, pose, k);
         const b = drawBedBlanket(ctx, 1 - q);
+        // inside the crate bed, as the bedtime story draws him: the crate's front wall over him
+        drew.crateFront = drawCrateFront(ctx);
         drew.pose = h.step === "night" ? "asleep" : "sitUp";
         drew.inBed = { x: Math.round(pose.x), y: Math.round(pose.y), a: +pose.a.toFixed(2), eyes: pose.eyes, blanket: b ? b.cover : 0 };
       }
       if (e.get("sqPose") === "lie" && h.step === "wake" && h.phase === "stretch") {
         drawSquatchArt(ctx, BED_SIT.x, BED_SIT.y, k, { line: 2 * k, arms: STRETCH, feet: false, shadow: false });
+        drew.crateFront = drawCrateFront(ctx);
         drew.pose = "stretch";
       }
       if (e.get("sqPose") === "lie" && h.step === "hold") {

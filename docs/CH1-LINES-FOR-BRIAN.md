@@ -4,19 +4,19 @@
 | Lines | Heading |
 | --- | --- |
 | 21–24 | # Chapter 1 lines for Brian |
-| 25–35 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
-| 36–51 | ## Calendar revision, Nov 16 (PR 58, not live) |
-| 52–59 | ## Earlier chapter lines |
-| 60–74 | ## Goal chips |
-| 75–158 | ## What people say |
-| 159–172 | ## Words painted on things |
-| 173–196 | ## Buttons |
-| 197–283 | ## Day 2 onward (beats 22–61), pending |
-| 284–291 | ## Ball hiding |
-| 292–299 | ## Off-screen lines, for Brian (playtest 12) |
-| 300–309 | ## Homework desk, approved Nov 16 |
-| 310–348 | ## Questions still open |
-| 349–374 | ## Day 1 stand-ins, pending |
+| 25–37 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
+| 38–53 | ## Calendar revision, Nov 16 (PR 58, not live) |
+| 54–61 | ## Earlier chapter lines |
+| 62–76 | ## Goal chips |
+| 77–160 | ## What people say |
+| 161–174 | ## Words painted on things |
+| 175–198 | ## Buttons |
+| 199–285 | ## Day 2 onward (beats 22–61), pending |
+| 286–293 | ## Ball hiding |
+| 294–301 | ## Off-screen lines, for Brian (playtest 12) |
+| 302–311 | ## Homework desk, approved Nov 16 |
+| 312–350 | ## Questions still open |
+| 351–376 | ## Day 1 stand-ins, pending |
 <!-- /section-index -->
 # Chapter 1 lines for Brian
 
@@ -31,7 +31,9 @@ Every word of the bedtime story is in `src/modules/bedtime-story-lines.js`; thes
 | Squatch, in bed, before the story pictures | Tell me about when we first met? | Approved word for word, Brian 2026-11-26 (his video note 0:12) |
 | The old crate story's captions and bubbles, the MOON PIES badge, the "!" and "z z z" marks, the mop bucket picture's "Tourists were coming! Mops hid him in the mop bucket." and "Nothing to see here!" | (as in `bedtime-story-lines.js`) | Approved, Brian 2026-11-26 (keep the old crate story words; the fourth picture on) |
 | Mops, in the story picture of the baby holding his beard | ...Weeee-eenn-nnttt? | Brian 2026-11-26 (video note 0:28, "Goats say "weeeent" not baaaah"); his approved goat spelling (`MORNING-LINES-FOR-BRIAN.md` row 13, DECISIONS R96). Replaces "...Baaa?" |
+| Mops, back in the room after the story pictures | You came to me in a Moon Pie crate. You've loved Moon Pies ever since. | Approved as written, Brian 2026-11-26 (#36) |
 | Mops, after "You came to me in a Moon Pie crate. You've loved Moon Pies ever since.", over the picture of Squatch's crayon drawing of the Guardians | And you've always had your Guardians, watching over you. | Approved, Brian 2026-11-26, chat 18b A |
+| A mark over each of the two tourists peeking in at the door, in the wordless picture before "Nothing to see here!" (Brian 2026-11-26, video note 0:39: "Would we actually want people to walk in so we see that tourists are suspicious?") | ? | Suggested, needs Brian's yes (a mark, no words) |
 
 ## Calendar revision, Nov 16 (PR 58, not live)
 
@@ -356,7 +358,7 @@ These are on screen in this unmerged slice so the day can be played. NEEDS BRIAN
 | 87 | Mops, answer | You have me. |
 | 88 | TV picture | Fur in the scrubber. |
 | 89 | TV picture | Onto the ship. |
-| 90 | Mops, bedtime picture | You came to me in a Moon Pie crate. You've loved Moon Pies ever since. |
+| 90 | Mops, bedtime picture (approved as written, Brian 2026-11-26, #36; see the bedtime story section) | You came to me in a Moon Pie crate. You've loved Moon Pies ever since. |
 | 91 | Squatch, when the octopus comes | I gotta juke this fool. |
 | 92 | Octopus | *hic* Fellow tourist! |
 | 93 | Camera tourist | Say cheese! |
