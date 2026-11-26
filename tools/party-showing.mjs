@@ -693,15 +693,8 @@ if (which === "bedtime") {
     await sleep(wait);
     await still(name);
   }
-  // 5. the morning: in the dark the wall speaker calls Mops to work (Ganitor B, on the lunch branch), then it fades in
+  // 5. the morning fades in
   await until(() => page.evaluate(() => !!window.__ss.op.ch1Day2), 8000);
-  if (await until((q) => q.cur === "bub", 2500)) {
-    mark("pa");
-    await sleep(1500);
-    await still("pa-ganitor-mops-to-the-party-hall");
-    await sleep(2000);
-    await next();
-  }
   await sleep(500);
   await still("morning-fades-in");
   await sleep(2500);
@@ -728,14 +721,6 @@ if (which === "morning") {
   await sleep(900);
   await still("bedtime-fades-to-black");
   await until(async () => (await hm()) === "night", 4000);
-  // in the dark the wall speaker calls Mops to work, overheard (Ganitor B): read it, then NEXT
-  if (await until((q) => q.cur === "bub", 3000)) {
-    mark("pa");
-    await sleep(1500);
-    await still("pa-ganitor-mops-to-the-party-hall");
-    await sleep(2000);
-    await next();
-  }
   mark("part night");
   await sleep(700);
   await still("dark-mops-leaves-heard");
@@ -820,7 +805,7 @@ if (which === "lunch" || which === "lunchseen") {
           const q = [...b.place.WATCHERS, b.place.COUNTER_WATCHER].find((x) => x.id === id);
           return b.place.watcherNow(q, id === "robot" ? l.counterT || 0 : l.t || 0);
         };
-      return { step: l.step, pose: l.pose, alarm: l.alarm ? l.alarm.phase : "", teal: w("teal"), camera: w("camera"), robot: w("robot"), jail: !!(n.cur && n.cur.id === "jail") };
+      return { step: l.step, pose: l.pose, alarm: l.alarm ? l.alarm.phase : "", look: l.mops ? l.mops.phase || "" : "", teal: w("teal"), camera: w("camera"), robot: w("robot"), jail: !!(n.cur && n.cur.id === "jail") };
     });
   const next = () => page.evaluate(() => ((window.__ss.op.bt = 1), window.__ss.opTap()));
   const stepIs = (name, ms = 10000) => until(async (q) => (await lu()).step === name && q.ctrl, ms);
@@ -828,6 +813,8 @@ if (which === "lunch" || which === "lunchseen") {
     await floor(x, y);
     (await until((q) => q.act === act, ms, async (q) => q.ctrl && !q.act && Math.hypot(q.x - x, q.y - y) > 30 && !q.cur && (await sleep(700), await floor(x, y)))) || (await fail("no " + act + " after walking to " + x + ", " + y));
   };
+  // inside the hallway doorway's opening (lunch-sneak-place.js LUNCH_PLACES.door.walkTo)
+  const LUNCH_DOOR = (await import(join(root, "src", "modules", "lunch-sneak-place.js"))).LUNCH_PLACES.door.walkTo;
   // a kid who has watched the cone: waits for the watcher to have just looked away
   const awayNow = (id, ms = 9000) => until(async () => ((w) => w.phase === "away" && w.k < 0.08)((await lu())[id]), ms);
   const lookNow = (id, ms = 9000) => until(async () => ((w) => w.phase === "look" && w.k > 0.1 && w.k < 0.3)((await lu())[id]), ms);
@@ -839,7 +826,7 @@ if (which === "lunch" || which === "lunchseen") {
     await still("walk-in-mops-mops-his-way-out");
     await stepIs("plant");
     await sleep(900);
-    await still("the-plant-glows");
+    await still("only-the-hallway-doorway-glows");
     // ROLL · ball (Brian 2026-11-26): he rolls up where he stands, then walks on (moving unrolls him)
     if ((await st()).act === "ROLL · ball") {
       await press();
@@ -850,22 +837,31 @@ if (which === "lunch" || which === "lunchseen") {
     await walkTo(396, 552, "HIDE · plant");
     await press();
     await sleep(700);
-    await still("hidden-in-the-plant-the-crates-glow");
+    await still("hidden-in-the-plant");
     await awayNow("teal");
     await still("she-looks-away-go");
     await walkTo(600, 478, "HIDE · crate");
     await press();
     await sleep(700);
-    await still("hidden-behind-the-crates-the-doorway-glows");
+    await still("hidden-behind-the-crates-eyes-at-the-seam");
     await awayNow("camera");
-    await walkTo(905, 320, "SNEAK · hallway");
-    await still("sneak-hallway");
-    await press();
-    await until((q) => q.room === "passage", 4000);
+    // the doorway is walk-through (Brian #47): he walks up the strip and on into the opening, no button
+    await floor(905, 320);
+    await sleep(1400);
+    await still("at-the-hallway-doorway");
+    await floor(LUNCH_DOOR.x, LUNCH_DOOR.y);
+    await until((q) => q.room === "passage", 6000);
     await sleep(900);
-    await still("the-hallway-mops-mopping");
-    await sleep(900);
-    await still("mops-looks-round");
+    await still("the-hallway-mops-mops-with-his-beard");
+    await until(async () => ((await lu()).look || "") === "left", 4000);
+    await sleep(700);
+    await still("mops-looks-left");
+    await until(async () => ((await lu()).look || "") === "right", 3000);
+    await sleep(700);
+    await still("mops-looks-right");
+    await until(async () => ((await lu()).look || "") === "hearts", 3000);
+    await sleep(500);
+    await still("mops-sees-him-hearts");
     await stepIs("give");
     await sleep(700);
     await still("mops-glows-give-him-his-lunch");

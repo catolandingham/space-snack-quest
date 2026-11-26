@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–151 | ## Where main is (Chapter 1 redesign) |
-| 152–166 | ## Register |
-| 167–188 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 189–209 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 210–222 | ## Phase 2 (plan section 4, T13 to T18) |
-| 223–245 | ## Phase 1 (plan section 3, T5 to T12) |
-| 246–259 | ## SS40–SS44 |
-| 260–277 | ## Story rows |
-| 278–296 | ## Reset section |
-| 297–307 | ## Still open |
-| 308–311 | ## Chapter 1 replot, recorded and not built |
-| 312–469 | ## Changelog |
+| 24–156 | ## Where main is (Chapter 1 redesign) |
+| 157–171 | ## Register |
+| 172–193 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 194–214 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 215–227 | ## Phase 2 (plan section 4, T13 to T18) |
+| 228–250 | ## Phase 1 (plan section 3, T5 to T12) |
+| 251–264 | ## SS40–SS44 |
+| 265–282 | ## Story rows |
+| 283–301 | ## Reset section |
+| 302–312 | ## Still open |
+| 313–316 | ## Chapter 1 replot, recorded and not built |
+| 317–474 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -23,6 +23,11 @@
 
 ## Where main is (Chapter 1 redesign)
 
+2026-11-26 (round D), draft PR #91 on `feat/ch1-lunch-sneak`, not merged. Done: `feat/ch1-day2-morning` (round D) merged in (merge commit; this branch's night PA step and its checks dropped, `ganitor.js` pa-ganitor marked merged into the morning PA). Brian's lunch notes and answers of 2026-11-26: only the hallway doorway lit up (0:38; no glow or outline on the plant or the crates), two wandering guests with cones (0:38), the walk-through hallway doorway (#47; SNEAK · hallway retired), crate eyes at the seam (0:13), Mops in the hallway mopping with his beard, wet streaks, his bucket, a slow look left and right, hearts (0:17.6, 0:17.9, #48), the duck as the L2 ball (0:38, 0:39.8). Docs match main: yes.
+- Needs Brian's yes: the goal words "Squatch: take Mops his lunch in the hallway" (suggested; or keep "Squatch: take Mops his lunch"); the wanderers' places (only the hall's left part leaves their cones off his way); Mops's turn (his drawing flips as his cone passes straight up) and his plain look cone; the hallway bucket's place and size; the streaks' look.
+- Kept: during an alarm the plant and the crates still glow (the capture rule's "every hiding place glows"); say if that should go too.
+- Placeholders (not pins): the counter close-up 1.7 times (from 1.65); Mops's look 0.5 + 1.2 + 1.2 + 0.6 s, hearts 1.2 s; his mopping 40 px a second.
+- NOT ASSESSED: the lunch videos (the coordinator records them after merging; `tools/party-showing.mjs lunch` follows the walk-through doorway and Mops's look); how the wanderers read at a kid's pace.
 2026-11-26 (round C), draft PR #91 on `feat/ch1-lunch-sneak`, not merged. Done, Brian's answers of 2026-11-26 (chat): behind the snack counter Mops says "...you know the rule, grab one snack." (approved word for word) in place of the one-pie thought bubble; "Squatch! You should be hiding." stays out (he looks left and right); no balloon anywhere in the lunch sneak (none drawn, as built); the bartender stays away and a guest at the counter watches (as built); ROLL · ball is offered in the hall during the sneak (the ball rule, DECISIONS C20 and R43: noticed only by someone within 70 px for 2 s looking his way; moving unrolls him; not offered in the hallway or behind the counter; the doorway waits until he unrolls); Mops's lunch is a hay sandwich, then the bag; the bag is bigger (62 x 68 at home, 0.88 of that in the hall) so MOPS on it is 20 game px (about 16 CSS px on an iPad standing up, 8 on a 375-wide phone; off the canvas-text allow list for size); the snack counter moment has a framed close-up of the counter's corner 1.65 times bigger (a tap on the plate in it is TAKE · snack). Ganitor (`src/modules/ganitor.js`): A a GANITOR name tag on Mops's pocket in every scene (in place of the old name patch; the word shows in the close-ups, a plain tag elsewhere), B the wall speaker's "Ganitor Mops to the party hall." in the dark before Mops leaves on Day 2 (overheard, ear icon), C an Employee of the Month photo of Mops with the plaque MOPS, GANITOR on the hallway's back wall (a layer over the locked picture, not part of it), E Squatch's crayon card in the hallway says ME / MOPS THE GANITOR (the crayon Guardians drawing has no Mops, so no label). Tests: `tests/lunch-ganitor.mjs`, `tests/lunch-sneak.mjs`, `tests/home-morning.mjs`. Docs match main: yes. Not yet played by a person.
 - Ganitor D (the robot janitor notice): not built; three wordings for Brian in the round C report.
 - Needs Brian's yes (visual, placeholders): the counter close-up's frame and place (it covers the hall's left part at the counter); the Employee of the Month photo and plaque (a layer over the locked hallway picture); the name tag's look; the hay sandwich; the bigger bag (about three quarters of Squatch's height in the hall); the crayon card made a little bigger for the longer label.

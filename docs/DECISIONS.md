@@ -3,34 +3,35 @@
 
 | Lines | Heading |
 | --- | --- |
-| 35–37 | # Space Snack Quest: every decision, in one place |
-| 38–45 | ## How to use this file |
-| 46–56 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
-| 57–66 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
-| 67–78 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
-| 79–83 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 84–92 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 93–96 | ## Sound, 2026-11-23 |
-| 97–120 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 121–132 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 133–157 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 158–166 | ## Which repo is the base, 2026-11-22 |
-| 167–177 | ## Sight cones, 2026-11-22 |
-| 178–182 | ## Latest calendar direction, 2026-11-16 |
-| 183–185 | ## Vent walk, 2026-11-16 |
-| 186–188 | ## Locked home room v5, 2026-11-16 |
-| 189–198 | ## Fidelity system (pictures are locked, not just words) |
-| 199–236 | ## 1. Working rules |
-| 237–303 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 304–328 | ## 3. Characters and look |
-| 329–405 | ## 4. Look, rooms and layout |
-| 406–427 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 428–471 | ## 6. Later chapters (2–4 and travel) |
-| 472–481 | ## 7. Audio |
-| 482–516 | ## 8. Code, controls and process |
-| 517–563 | ## 9. Open / waiting on Brian |
-| 564–658 | ## 10. Earlier entries, kept word for word |
-| 659–755 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 36–38 | # Space Snack Quest: every decision, in one place |
+| 39–46 | ## How to use this file |
+| 47–55 | ## Lunch sneak, 2026-11-26 (Brian's video notes and answers, round D) |
+| 56–66 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
+| 67–76 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
+| 77–88 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
+| 89–93 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 94–102 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 103–106 | ## Sound, 2026-11-23 |
+| 107–130 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 131–142 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 143–167 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 168–176 | ## Which repo is the base, 2026-11-22 |
+| 177–187 | ## Sight cones, 2026-11-22 |
+| 188–192 | ## Latest calendar direction, 2026-11-16 |
+| 193–195 | ## Vent walk, 2026-11-16 |
+| 196–198 | ## Locked home room v5, 2026-11-16 |
+| 199–208 | ## Fidelity system (pictures are locked, not just words) |
+| 209–246 | ## 1. Working rules |
+| 247–313 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 314–338 | ## 3. Characters and look |
+| 339–415 | ## 4. Look, rooms and layout |
+| 416–437 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 438–481 | ## 6. Later chapters (2–4 and travel) |
+| 482–491 | ## 7. Audio |
+| 492–526 | ## 8. Code, controls and process |
+| 527–573 | ## 9. Open / waiting on Brian |
+| 574–668 | ## 10. Earlier entries, kept word for word |
+| 669–765 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -42,6 +43,15 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 - **Status words:** **Decided** (Brian said it or approved it) · **Needs Brian's yes** (proposed, or on-screen words waiting on him) · **Superseded** (replaced; the line says by what) · **Open** (a real question nobody has answered yet).
 - **This repo file is the single source of truth.** It was synced on Monday, November 9, 2026 from the designer record through decision R63, and it still holds the earlier snapshot `docs/old/project/DECISIONS-2026-11-08.md` (on `main` at commit 10030f6). Every earlier entry is kept in section 10. Where a later decision replaces an earlier one, the earlier line is marked **Superseded** and says what replaced it. The dated snapshot's full text is in `docs/old/history/DECISIONS-2026-11-08.md`. A short pointer stays at `docs/old/project/DECISIONS-2026-11-08.md`. New decisions get a row in the tables above, through a docs PR (review, "Docs match main: yes", Brian's written yes before merge).
 - Don't invent a decision. If something isn't clear, add it under **Open**.
+
+## Lunch sneak, 2026-11-26 (Brian's video notes and answers, round D)
+
+- **Walk through any open doorway.** Brian (#47): "yes, walk through any open doorway everywhere; closed doors keep OPEN · door. The doorway only counts when he walks into the opening itself." Built in the lunch sneak: the hallway doorway has no button (SNEAK · hallway retired); his feet inside its opening take him into the hallway. **Decided.**
+- **Mops keeps his cone; seeing Squatch sends up hearts.** Brian (#48): "We answered this already. We had a cone, but when he sees Squatch, it always sends up hearts rather than question marks or exclamation points." In the hallway Mops looks round with his cone sweeping, then faces Squatch: his cone fills with hearts and hearts float up; never "?" or "!" (checked in `tests/lunch-sneak.mjs`). **Decided.**
+- **Only the hallway lights up in the sneak.** Brian (lunch note 0:38): "I don't know that we need the bush to light up here... maybe one or two more folks milling around... the only thing I would imagine we really care about having lit up is actually the hallway." Built: no glow on the plant or the crates (they still hide him), the hallway doorway glows and is outlined, two more guests wander slowly on the left of the hall with cones. **Decided** (the wandering guests' places are placeholders).
+- **Crate eyes where the plant's are.** Brian (lunch note 0:13): "You can't really see the eyes on the boxes... more centrally placed so they're visible like they are in the plant... same size." Built: the eyes in the middle of the crates' front, at the seam under the small crate. **Decided.**
+- **Mops in the hallway, slower and clearer.** Brian (lunch notes 0:17.6 and 0:17.9): "I see how he looks around, but it's not enough. We need to slow it down, have it be way more obvious." and "mop should have a bucket, and we should see streaks of him wiping his beard on the floor". Built: he mops with his beard (no separate mop), wet streaks behind him, his bucket (the one mop bucket, `mop-bucket.js`) beside him; he looks left 1.2 s and right 1.2 s. **Decided** (placeholder drawing).
+- **The duck is the ball.** Brian (lunch notes 0:38 and 0:39.8): "he should be able to duck beneath the bar into the ball" and "remember how I like it, that he goes into the ball, not this weird look". Behind the snack counter he is the approved L2 ball (C3), never the squashed Squatch (C5, superseded). **Decided.**
 
 ## Home morning, 2026-11-26 (Brian's video notes and answers, round D)
 - **The station PA wakes Mops on Day 2.** Brian (#41): the exact words are pending, and he also wants the robot janitors' arrival announced. Built with the line marked suggested: "Good morning, Stormtop! Ganitor Mops to the party hall. The new robot janitors arrive today!" from the wall speaker (it is on the locked home picture, so no ear icon), with its ding-dong and sound lines, waiting for NEXT; then the speaker plays Kevin MacLeod's "Morning" (`music/morning.mp3`), notes rising from it. The music table has its own row for it ("day2am", `src/modules/music-picks.js`), so the home rotation (Carefree, Morning, Rainbows) is not stepped on; the room is quiet as it comes up and while the PA talks. This replaces round C's night line "Ganitor Mops to the party hall." (built on `feat/ch1-lunch-sneak`), whose approved words are kept inside the new one. **Decided** (the beat); the words **need Brian's yes**.

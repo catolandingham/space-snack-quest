@@ -7,18 +7,19 @@
  *   id      the line's name in the code and in tests/lunch-sneak.mjs
  *   who     "chip" (the goal chip), "button" (the big action button), "mops" (Mops says it)
  *   text    the words, exactly as shown
- *   status  "in-game" (the game showed these words before), "decided" (the walkthrough says so) or "approved" (Brian's
- *           yes, word for word)
+ *   status  "in-game" (the game showed these words before), "decided" (the walkthrough says so), "approved" (Brian's
+ *           yes, word for word), "suggested" (shown, waiting for Brian's yes: docs/CH1-LINES-FOR-BRIAN.md) or "retired"
+ *           (never shown now; kept for the record)
  *   source  where the words came from
  */
 const DAY2 = "src/game/14-ch1-day2.js before this change";
 
 export const LUNCH_LINES = Object.freeze(
   [
-    { id: "chip-sneak", who: "chip", text: "Squatch: take Mops his lunch", status: "in-game", source: DAY2 },
+    { id: "chip-sneak", who: "chip", text: "Squatch: take Mops his lunch in the hallway", status: "suggested", source: DAY2 + ' (the words before: take Mops his lunch); "in the hallway" added 2026-11-26 so the goal words, which come up after 20 s, point to the hallway, the one thing lit up (Brian\'s lunch note 0:38). Needs Brian\'s yes' },
     { id: "button-plant", who: "button", text: "HIDE · plant", status: "in-game", source: DAY2 + "; party-lines.js button-hide-plant" },
     { id: "button-crate", who: "button", text: "HIDE · crate", status: "in-game", source: "src/game/11-ch1-hall.js (the old hall's crate)" },
-    { id: "button-door", who: "button", text: "SNEAK · hallway", status: "in-game", source: DAY2 },
+    { id: "button-door", who: "button", text: "SNEAK · hallway", status: "retired", source: DAY2 + "; retired 2026-11-26: the hallway doorway is walk-through (Brian #47), no button. Kept so tests/lunch-sneak.mjs can check it is never offered" },
     { id: "button-ball", who: "button", text: "ROLL · ball", status: "in-game", source: "src/game/12-ch1-redesign.js (the night mailbox's ROLL · ball); offered here on Brian's yes, chat 2026-11-26" },
     { id: "chip-hide", who: "chip", text: "Squatch: hide", status: "in-game", source: DAY2 + " (beat 38)" },
     { id: "chip-give", who: "chip", text: "Squatch: give Mops his lunch", status: "in-game", source: DAY2 },

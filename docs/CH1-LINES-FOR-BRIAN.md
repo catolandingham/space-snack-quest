@@ -6,19 +6,19 @@
 | 23–26 | # Chapter 1 lines for Brian |
 | 27–36 | ## Home morning (beats 22 to 24), 2026-11-26 round D (branch feat/ch1-day2-morning, not merged) |
 | 37–49 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
-| 50–64 | ## Lunch sneak and Ganitor, 2026-11-26 (branch feat/ch1-lunch-sneak, not merged) |
-| 65–80 | ## Calendar revision, Nov 16 (PR 58, not live) |
-| 81–88 | ## Earlier chapter lines |
-| 89–103 | ## Goal chips |
-| 104–187 | ## What people say |
-| 188–201 | ## Words painted on things |
-| 202–225 | ## Buttons |
-| 226–312 | ## Day 2 onward (beats 22–61), pending |
-| 313–320 | ## Ball hiding |
-| 321–328 | ## Off-screen lines, for Brian (playtest 12) |
-| 329–338 | ## Homework desk, approved Nov 16 |
-| 339–377 | ## Questions still open |
-| 378–403 | ## Day 1 stand-ins, pending |
+| 50–66 | ## Lunch sneak and Ganitor, 2026-11-26 (branch feat/ch1-lunch-sneak, not merged) |
+| 67–82 | ## Calendar revision, Nov 16 (PR 58, not live) |
+| 83–90 | ## Earlier chapter lines |
+| 91–105 | ## Goal chips |
+| 106–189 | ## What people say |
+| 190–203 | ## Words painted on things |
+| 204–227 | ## Buttons |
+| 228–314 | ## Day 2 onward (beats 22–61), pending |
+| 315–322 | ## Ball hiding |
+| 323–330 | ## Off-screen lines, for Brian (playtest 12) |
+| 331–340 | ## Homework desk, approved Nov 16 |
+| 341–379 | ## Questions still open |
+| 380–405 | ## Day 1 stand-ins, pending |
 <!-- /section-index -->
 # Chapter 1 lines for Brian
 
@@ -59,6 +59,8 @@ The words are in `src/modules/lunch-sneak-lines.js` and `src/modules/ganitor.js`
 | Plaque under Mops's photo on the hallway wall | MOPS, GANITOR | The hallway, Employee of the Month photo | Brian, chat 2026-11-26 | Approved |
 | Squatch's crayon card on the hallway wall | MOPS THE GANITOR (with ME, unchanged) | The hallway, the keepsake card (was "MOPS") | Brian, chat 2026-11-26 | Approved |
 | Button | ROLL · ball | The lunch sneak in the hall (the game's existing words for the ball) | Brian, chat 2026-11-26 (offer it) | Approved |
+| Goal chip | Squatch: take Mops his lunch in the hallway | The lunch sneak in the hall, after 20 s (was "...take Mops his lunch"): round D, so the goal words point to the hallway, the one thing lit up (lunch note 0:38) | Claude, round D 2026-11-26 | Suggested, needs Brian's yes |
+| Button | SNEAK · hallway | Retired (round D, 2026-11-26): the hallway doorway is walk-through (Brian #47), no button; kept in `lunch-sneak-lines.js` marked retired | In the game before | Retired |
 
 Left out on purpose (Brian, chat 2026-11-26): Mops's "Squatch! You should be hiding." (he looks left and right instead).
 

@@ -43,8 +43,8 @@ export const GOAL_TARGETS = {
   "hall:grab-flyer": { rect: FLYER.box }, // party P4: the flyer on the bar counter's far end (the party's own table)
   "hall:d2-HIDE-plant": { trace: { x0: 392, x1: 494, y0: 432, y1: 556 } }, // the same plant (Day 2, beat 38)
   // The lunch sneak, Day 2 (lunch-sneak.js): one thing at a time
-  "hall:lu-plant": { trace: { x0: 392, x1: 494, y0: 432, y1: 556 } }, // the middle plant
-  "hall:lu-crate": { trace: LUNCH_TRACE.crate, source: () => lunchOutlineSource("crate"), line: DRAWN_OUTLINE }, // the crates
+  // (the plant and the crates of the lunch sneak have no outline: they still hide him, but only the hallway doorway is
+  // lit up, Brian 2026-11-26, lunch note 0:38)
   "hall:lu-door": { rect: { x0: 912, x1: 940, y0: 257, y1: 345 } }, // the doorway to the hallway (hall v2, back corner)
   "hall:lu-snack": { trace: LUNCH_TRACE.plate, source: () => lunchOutlineSource("plate"), line: DRAWN_OUTLINE }, // the plate of Moon Pies
   "hall:d2-GO-home": HALL_HOME_DOOR,

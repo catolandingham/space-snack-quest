@@ -55,8 +55,9 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: go to the bag by the door": { hm: "toBag", walk: true, x: 846, y: 480 },
     "Squatch: take the lunch": { hm: "lunch" },
     // the lunch sneak (src/modules/lunch-sneak.js), each opened by its own jump with everything before it done; he
-    // stands where its button comes up (beside the plant; by Mops; behind the counter)
-    "Squatch: take Mops his lunch": { lu: "plant", x: 400, y: 552 },
+    // stands where its button comes up (by Mops; behind the counter). The sneak's goal is the hallway doorway, which
+    // is walk-through (Brian #47): he is hidden behind the crates (no button), a step from the doorway's opening.
+    "Squatch: take Mops his lunch in the hallway": { lu: "door", walk: true, x: 900, y: 330 },
     "Squatch: give Mops his lunch": { lu: "give", x: 540, y: 488 },
     "Squatch: grab one snack": { lu: "snack" },
     "Squatch: hide in the plant": { step: "hide", room: "hangar", bay: true, x: 230, y: 400 },

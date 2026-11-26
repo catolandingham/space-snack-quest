@@ -20,8 +20,8 @@
 | 148–151 | ### Words and rules |
 | 152–164 | ### How the bots work |
 | 165–172 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
-| 173–189 | ## 5. Merged, in a pull request, and being built |
-| 190–200 | ## 6. Corrections to the checkers |
+| 173–190 | ## 5. Merged, in a pull request, and being built |
+| 191–201 | ## 6. Corrections to the checkers |
 <!-- /section-index -->
 # Brian's asks that are not in the game yet
 
@@ -178,7 +178,7 @@ Merged 2026-11-23: cones on everyone and the six approved guests (#75), controls
 Merged 2026-11-23: home alone after Mops leaves (#84, morning plan PR 3): the homework goal and cutaway, OPEN · closet with the G box, FLOP · bed, the calendar already bitten (13A to 16A).
 
 Not merged yet:
-- The lunch sneak, beats 25 to 27 (draft PR #91, branch feat/ch1-lunch-sneak, stacked on feat/ch1-day2-morning): the sneak past the guests to the hallway, GIVE · lunch, Mops eats a hay sandwich and the bag, one snack behind the counter. Brian's answers of 2026-11-26 are built there (round C: the one-snack line, ROLL · ball, the counter close-up, the bigger MOPS bag, Ganitor A, B, C and E). Its questions for Brian are in docs/MASTER-BACKLOG.md.
+- The lunch sneak, beats 25 to 27 (draft PR #91, branch feat/ch1-lunch-sneak, stacked on feat/ch1-day2-morning): the sneak past the guests to the hallway, GIVE · lunch, Mops eats a hay sandwich and the bag, one snack behind the counter. Brian's answers of 2026-11-26 are built there (round C: the one-snack line, ROLL · ball, the counter close-up, the bigger MOPS bag, Ganitor A, B, C and E; round D: only the hallway lit up, two wandering guests, the walk-through doorway, crate eyes at the seam, Mops mopping with his beard by his bucket, a slow look and hearts, the duck as the ball). Its questions for Brian are in docs/MASTER-BACKLOG.md.
 - The party night (draft PR #87, branch feat/party-half-two): Brian's showing-5 decisions of 2026-11-25 and his showing-6 notes of 2026-11-26 are built (sight sees his whole body, no hiss under the crowd, no singing away from bedtime, his Croc Boys song, the photo right after the dance, guards round the furniture); showing 7 waits for his eyes.
 - The quiet room's mopping (the same branch, draft PR #88), Brian after its video, 2026-11-24: "It's hard to tell the difference between the whistle and the squeaking. Can we make the snore and whistle a bit more prominent? ... see the janitor walking around, mopping the floor with his beard ... the water on the floor kind of following ... And then walking back to the bucket to squeeze it out." Built: Mops's loop before the first tap, a louder snore, swish-only strokes while Squatch sleeps (`src/modules/mop-loop.js`). Waiting for his ears and eyes.
 - The morning's sound (branch feat/morning-sound, draft), Brian's answers of 2026-11-24: 34A (every MY PICK on the sound board, in the morning and home alone), 31a (the beard squirts when tapped; "Hey, stop that!"), 30a (a cutaway with no words and nothing to tap plays by itself), the music and effects levels and Brian's recording turned up 10 dB. The morning fixes (18a to 21a) merged on 2026-11-24 as PR #86.

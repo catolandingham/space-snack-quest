@@ -434,7 +434,7 @@ g.check("today's close-up: days 1 to 13 crossed off, the circled Moon Pie day (1
 // the lunch
 g.check("as he gets to the bag (not before), the bag is outlined while he says his line, word for word, over him, no chip", R.line2 && R.line2.who === "sq" && R.line2.text === LUNCH && R.line2.chip === "" && !!R.line2.bagOutline && R.line2.at.x > 640 && R.toBag && !R.toBag.line, R.line2);
 g.check("the lunch line waits for NEXT", R.line2Held);
-g.check("TAKE · lunch hands over to the lunch sneak (lunch-sneak.js): the party hall, the bag in his paw", R.hall && R.hall.room === "hall" && R.hall.step === "lu-plant" && R.hall.bag === "paw" && R.hall.chip === "Squatch: take Mops his lunch", R.hall);
+g.check("TAKE · lunch hands over to the lunch sneak (lunch-sneak.js): the party hall, the bag in his paw", R.hall && R.hall.room === "hall" && R.hall.step === "lu-plant" && R.hall.bag === "paw" && R.hall.chip === "Squatch: take Mops his lunch in the hallway", R.hall);
 g.check("the lunch bag has MOPS written on it (Brian 2026-11-26)", (R.bagWords || []).length >= 1 && L["sign-bag"] === "MOPS", R.bagWords);
 g.check("the calendar is not a step (Brian 2026-11-26): on the lunch goal TAKE · lunch comes first (the one outlined) and LOOK · calendar is there too", JSON.stringify(R.offers) === JSON.stringify([L["button-lunch"], L["button-cal"]]) && P.lunchFar && P.lunchFar.chip === L["chip-lunch"], R.offers);
 g.check("once he has looked, the button offers only the lunch (a kid pressing it is not sent back to the calendar), and a tap on the calendar still opens it", JSON.stringify(R.offersAfterCal) === JSON.stringify([L["button-lunch"]]) && R.tapCalendar, { offers: R.offersAfterCal, tap: R.tapCalendar });
