@@ -151,7 +151,8 @@ export function createHomeMusic(getEngine) {
     },
     /**
      * The Dog Zylan tap: the recording plays from now on, at once if sound is on. `who` names the beat playing it
-     * ("morning" when left out; the home morning of Day 2 is "home-morning"), so one beat's stop never ends another's.
+     * ("morning" when left out), so one beat's stop never ends another's. (Day 2's home morning plays no song of its own:
+     * the music table's home rotation, bridge.js.)
      */
     start(who) {
       by = who || "morning";

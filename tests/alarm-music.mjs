@@ -66,15 +66,21 @@ await new Promise((r) => setTimeout(r, 600));
 const game = await page.evaluate(() => {
   const S = window.SSQ,
     out = {};
-  let on = false;
-  // a beat with an alarm (as the party's and the lunch sneak's alarmOn)
-  S.registerBeat("test-alarm", { alarmOn: () => on });
+  let on = false,
+    state = { part: 1 };
+  // a beat with an alarm (as the party's and the lunch sneak's alarmOn), and its state (alarmKey)
+  S.registerBeat("test-alarm", { alarmOn: () => on, alarmKey: () => state });
   out.before = S.refinedCue("hall");
   on = true;
   out.during = S.refinedCue("hall");
   out.duringHome = S.refinedCue("home");
   on = false;
   out.after = S.refinedCue("hall");
+  out.hushedAfter = S.musicNow().hush;
+  // the part starts again (a restart after the LOCKUP card, or ↺): its state is a new one, and the quiet ends
+  state = { part: 1 };
+  S.refinedCue("hall");
+  out.hushedAfterRestart = S.musicNow().hush;
   out.soundOn = S.engine().soundState() === "on";
   out.alarmPlays = S.alarmSound();
   out.hushedByAlarmSound = S.musicNow().hush;
@@ -82,6 +88,7 @@ const game = await page.evaluate(() => {
   return out;
 });
 g.check("2: while a beat's alarm is on, the music's cue is nothing (in the hall and at home); before and after, the place's own", game.before === "hall" && game.during === "" && game.duringHome === "" && game.after === "hall", game);
+g.check("2: after the alarm, the same part goes on quiet; when the part starts again (a restart after the LOCKUP card, or ↺) the quiet ends and its music comes back", game.hushedAfter === true && game.hushedAfterRestart === false, game);
 g.check("2: the older program's alarm sound plays (sound on) and hushes the music", game.soundOn && game.alarmPlays === true && game.hushedByAlarmSound === true, game);
 // the party's own alarm answers the same question (its musicCue was already nothing during the alarm)
 const party = await page.evaluate(() => {
