@@ -2048,7 +2048,7 @@
       let t = n.walkTo;
       if (!t || (de() && !(n.ctrl && n.cur && n.cur.k === "bub" && !n.cutOn))) return;
       // Not on a place the goal's outline already marks (Brian 2026-11-24; src/modules/walk-ring.js).
-      if (window.SSQ && window.SSQ.walkRingShows && !window.SSQ.walkRingShows(t, goalMarkNow())) return;
+      if (window.SSQ && window.SSQ.walkRingShows && !window.SSQ.walkRingShows(t, window.SSQ.goalMark.now(n.T))) return;
       let k = 0.5 + 0.5 * Math.sin(n.T * 8),
         sx = t.x - (n.room === "hall" ? B.camX : 0);
       (e.save(), (e.globalAlpha = 0.7), X(sx, t.y, 16 + 4 * k, 7 + 2 * k), (e.lineWidth = 3), (e.strokeStyle = "#ffffff"), e.stroke(), e.restore());

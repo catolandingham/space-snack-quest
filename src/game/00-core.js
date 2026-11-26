@@ -415,11 +415,10 @@
       for (let i = 0; i < o; i += 0.395) lV(Da(i % 0.79 < 0.395 ? 50 : 57), 0.3, "sine", 0.06, i);
       songUntil = p.t + o;
     }
-    // Singing or music, never both: no background music while a song line is up or its tune is still
-    // playing. The music fades back in after.
+    // Singing or music, never both (src/modules/music-rules.js).
     let songUntil = 0;
     function singNow() {
-      return p.t < songUntil || !!(n.cur && n.cur.k === "bub" && n.cur.b.style === "song");
+      return !!(window.SSQ && window.SSQ.singingNow && window.SSQ.singingNow(p.t, songUntil, n.cur));
     }
     let vV = [],
       ea = [],

@@ -22,6 +22,9 @@ import { SPEAKER } from "./morning.js";
 import { placeLabel } from "./cap-place.js";
 import { walkRingShows } from "./walk-ring.js";
 import { quietLine } from "./party-lines.js";
+import { adultPxFor, doorAdultPx } from "./room-sizes.js";
+import { createGoalMark } from "./goal-mark.js";
+import { singingNow } from "./music-rules.js";
 
 /**
  * The game-state fields a rebuilt beat may write, through engine().set(field, value). Anything else it
@@ -40,6 +43,7 @@ export function createBridge() {
   const written = new Set();
   const homeMusic = createHomeMusic(() => engine);
   const morningSound = createMorningSound(() => engine);
+  const goalMark = createGoalMark();
   return Object.freeze({
     version: 1,
     /**
@@ -162,6 +166,14 @@ export function createBridge() {
     findPath,
     /** False when a walk-tap's ring would sit on a place the goal outline already marks. See walk-ring.js. */
     walkRingShows,
+    /** The goal outline drawn this frame (drew) and the one on screen now (now), for the walk ring. See goal-mark.js. */
+    goalMark,
+    /** How tall a grown-up is drawn in a room (85% of its door; the party hall 40% bigger). See room-sizes.js. */
+    adultPxFor,
+    /** 85% of a room's door, with no party-hall growth. See room-sizes.js. */
+    doorAdultPx,
+    /** True while singing is on (no background music then). See music-rules.js. */
+    singingNow,
     /** Seconds a guest watches Squatch with "?" before it turns into "!". See party-watch.js. */
     seenTooLong: SEEN_TOO_LONG_SECONDS,
     /** The approved guest pictures (guests.js), for the party's own drawing. */

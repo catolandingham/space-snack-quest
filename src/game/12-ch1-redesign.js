@@ -34,12 +34,8 @@
       // Never over the people standing there: the outline is left out of their boxes.
       let people = [n.sqPose !== "hidden" ? sqBox() : null, n.moPose && n.moPose !== "hidden" && n.mo.x > -100 ? moBox() : null];
       let box = window.SSQ && window.SSQ.drawGoalOutline ? window.SSQ.drawGoalOutline(e, n.room, spot.id, lockedImg[lockedNow], n.T, people) : null;
-      box && (n.lastRing = { x: (box.x0 + box.x1) / 2, y: (box.y0 + box.y1) / 2, T: n.T, box, id: spot.id, act: spot.verb + " · " + spot.cap, place: { verb: spot.verb || "", x: spot.x, y: spot.y, r: spot.r, box: spot.box } });
-    }
-    // The goal outline on screen now and its spot's own place, for the walk ring's rule (src/modules/walk-ring.js).
-    function goalMarkNow() {
-      let r = n.lastRing;
-      return r && r.box && n.T - r.T < 0.1 ? { box: r.box, spot: r.place } : null;
+      box && (n.lastRing = { x: (box.x0 + box.x1) / 2, y: (box.y0 + box.y1) / 2, T: n.T, box, id: spot.id, act: spot.verb + " · " + spot.cap });
+      window.SSQ && window.SSQ.goalMark && window.SSQ.goalMark.drew(box, spot, n.T);
     }
     function ch1MarkGoal() {
       if (n.ch1PadOn || !n.ctrl || n.ch1Zoom || n.sqPose === "hidden") return;
@@ -72,32 +68,12 @@
       if (n.ch1Chip) return n.ch1Chip;
       return CH1Q_CHIPS[n.scene] || "";
     }
-    // Adult head height is 85% of the door in the room he is standing in, except in the party hall (room "hall"),
-    // where everyone is 40% bigger: 119% of its doorway (Brian 2026-11-24, after the 100/120/140 mock-ups: "40% is
-    // what I meant!!"). HALL_BIGGER is the one number for that; no other room uses it.
-    // Hall and loading-bay openings measure 101px on the 830-tall picture (77.9px on the canvas).
-    // The office door and the same door in the hallway are a 160px slab (123.4px on the canvas).
-    // Home's right-wall opening is the 129px cut. A room with no door uses the hall.
-    // Alien heads are that height / 84. Qt heads are that height / 50. Squatch is 80% of the adult, / 45.
-    const CANVAS_DOOR_PX = {
-        hall: 101 * (640 / 830),
-        hallway: 160 * (640 / 830),
-        office: 160 * (640 / 830),
-        delivery: 101 * (640 / 830),
-        home: 129 * (640 / 830),
-      },
-      HALL_BIGGER = 1.4;
-    function roomDoorId(room) {
-      return room === "passage" ? "hallway" : room === "hangar" ? "delivery" : room === "closet" ? "home" : room === "office" ? "office" : room === "hall" ? "hall" : "hall";
-    }
-    // 85% of the door of `room` (a room with no door of its own measures against the hall's doorway).
+    // How tall people are drawn in each room: src/modules/room-sizes.js (85% of a room's door; the hall 40% bigger).
     function doorAdultPx(room) {
-      let id = CANVAS_DOOR_PX[room] ? room : roomDoorId(room);
-      return (CANVAS_DOOR_PX[id] || CANVAS_DOOR_PX.hall) * 0.85;
+      return window.SSQ && window.SSQ.doorAdultPx ? window.SSQ.doorAdultPx(room) : 66;
     }
-    // How tall a grown-up is drawn in `room`: 85% of its door, and in the hall itself HALL_BIGGER times that.
     function adultPxFor(room) {
-      return doorAdultPx(room) * (room === "hall" ? HALL_BIGGER : 1);
+      return window.SSQ && window.SSQ.adultPxFor ? window.SSQ.adultPxFor(room) : doorAdultPx(room);
     }
     const HALL_ADULT_PX = adultPxFor("hall");
     function alienScale(room) {
