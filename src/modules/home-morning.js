@@ -270,6 +270,7 @@ export function createHomeMorning(bridge) {
   // back to the lunch goal.
   function lookCalendar() {
     const e = E();
+    H().calSeen = true;
     busy();
     go("calendar");
     e.openCalendar(() => (go("lunch"), control("chip-lunch")));
@@ -419,9 +420,13 @@ export function createHomeMorning(bridge) {
       if (h.step === "rocket") return [spot("hm-rocket", "button-rocket", { ...MORNING_THINGS.rocket, r: 140 }, rocketBox(), pickUp)];
       if (h.step === "closet") return [spot("hm-closet", "button-closet", atCloset, WARDROBE, openCloset)];
       if (h.step === "box") return [spot("hm-box", "button-box", atCloset, MORNING_THINGS.boxIn, putIn)];
-      // the lunch bag is the goal (listed first: the only thing outlined); the calendar is there to look at too
-      if (h.step === "lunch")
-        return [spot("hm-lunch", "button-lunch", { x: MORNING_THINGS.bag.x - 40, y: MORNING_THINGS.bag.y, r: 110 }, bagBox(), takeLunch), spot("hm-calendar", "button-cal", atCloset, CALENDAR, lookCalendar)];
+      // the lunch bag is the goal (listed first: the only thing outlined); the calendar is there to look at too, offered
+      // on the button by the wardrobe until he has looked once (so a kid pressing the button is not sent back to it
+      // again and again), and opened any time by a tap on it (tap below)
+      if (h.step === "lunch") {
+        const lunch = spot("hm-lunch", "button-lunch", { x: MORNING_THINGS.bag.x - 40, y: MORNING_THINGS.bag.y, r: 110 }, bagBox(), takeLunch);
+        return h.calSeen ? [lunch] : [lunch, spot("hm-calendar", "button-cal", atCloset, CALENDAR, lookCalendar)];
+      }
       return [];
     },
     /**
@@ -430,8 +435,12 @@ export function createHomeMorning(bridge) {
      */
     tap(x, y) {
       const e = E(),
-        o = e.offer && e.offer();
-      if (!live() || !o || !o.spot || !o.spot.thing) return false;
+        o = e.offer && e.offer(),
+        h = live();
+      // on the lunch goal a tap on the calendar itself always opens it (it is there to look at)
+      const near = (t) => x >= t.x0 - 24 && x <= t.x1 + 24 && y >= t.y0 - 24 && y <= t.y1 + 24;
+      if (h && h.step === "lunch" && e.get("ctrl") && near(CALENDAR)) return (lookCalendar(), true);
+      if (!h || !o || !o.spot || !o.spot.thing) return false;
       const t = o.spot.thing;
       if (x < t.x0 - 24 || x > t.x1 + 24 || y < t.y0 - 24 || y > t.y1 + 24) return false; // a finger is not exact
       o.spot.f();
