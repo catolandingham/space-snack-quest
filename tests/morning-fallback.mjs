@@ -28,7 +28,7 @@ page.on("request", (req) => {
   else req.continue();
 });
 await page.setViewport({ width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 1 });
-await page.goto("http://127.0.0.1:8973/index.html?ch=1", { waitUntil: "domcontentloaded" });
+await page.goto(`http://127.0.0.1:${8973 + Number(process.env.SSQ_PORT_OFFSET || 0)}/index.html?ch=1`, { waitUntil: "domcontentloaded" });
 await page.waitForFunction(() => window.__ss && window.__ss.op, { timeout: 15000 });
 await sleep(300);
 g.check("no bridge on the page", await page.evaluate(() => !window.SSQ));
