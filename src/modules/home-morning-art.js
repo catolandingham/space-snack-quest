@@ -49,8 +49,8 @@ export const MORNING_SIZES = Object.freeze({
 /**
  * Where things are in the room (game positions; placeholders). The rocket stands on the floor at the foot of the bed
  * (in front of its right end); the lunch bag sits on the floor just inside the doorway, where Mops put it down; the
- * Guardian Box is on the closet floor (the approved place) until Squatch takes it out and sets it on the floor
- * between the wardrobe and him (BOX_OUT), where it stays.
+ * Guardian Box is on the closet floor (the approved place); Squatch takes it out onto the floor between the wardrobe
+ * and him (boxOut) to put the gift in, then puts it back (Brian, 2026-11-26).
  */
 export const MORNING_THINGS = Object.freeze({
   rocket: Object.freeze({ x: 352, y: 600 }), // the middle of its base: open floor in front of the bed's right end
@@ -153,7 +153,7 @@ export function drawGiftNote(ctx, x, y, k, lw = 2.5) {
   ctx.restore();
 }
 
-/** Mops's paper lunch bag, the middle of its bottom at (x, y): a brown bag with its top folded over. No words. */
+/** Mops's paper lunch bag, the middle of its bottom at (x, y): a brown bag with its top folded over, MOPS on it. */
 export function drawLunchBag(ctx, x, y, k = 1) {
   const W = MORNING_SIZES.bag.w,
     H = MORNING_SIZES.bag.h;
@@ -171,13 +171,12 @@ export function drawLunchBag(ctx, x, y, k = 1) {
   ctx.lineTo(W / 2 - 2, -H + 9);
   ctx.closePath();
   hmPaint(ctx, "#a87f4b", w);
-  // a crease down the middle
-  ctx.beginPath();
-  ctx.moveTo(0, -H + 12);
-  ctx.lineTo(0, -4);
-  ctx.strokeStyle = "rgba(30,36,48,.3)";
-  ctx.lineWidth = w;
-  ctx.stroke();
+  // MOPS written on it in marker (Brian, 2026-11-26; words from home-morning-lines.js)
+  ctx.font = "900 12px system-ui, -apple-system, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillStyle = HM_INK;
+  ctx.fillText(morningWords("sign-bag"), 0, -H / 2 + 6, W - 6);
   ctx.restore();
 }
 
@@ -209,8 +208,9 @@ export function drawGuardianBox(ctx, x0, y0, k = DAY2_BOX) {
 }
 
 /**
- * The box out on the floor with the gift in it: the rocket lies in it on the older notes, leaning, its nose sticking out
- * over the front, the note hanging over the rim. `box` is the box's place (game positions).
+ * The box with the gift in it (out on the floor, or back in the closet): the rocket lies in it on the older notes,
+ * leaning, its nose sticking out over the front, the note hanging over the rim. `box` is the box's place (game
+ * positions).
  */
 export function drawBoxWithGift(ctx, box) {
   const cx = (box.x0 + box.x1) / 2;
@@ -403,7 +403,24 @@ function gboxCloseUp(ctx, t, engine) {
   ctx.textBaseline = "middle";
   ctx.fillStyle = "#ffffff";
   ctx.fillText("G", cx, B.y0 + h / 2 + 6); // the approved box's letter, part of its picture
-  landed && drawGiftNote(ctx, rx + 70, B.y0 + 8, K * 0.9, 5);
+  // landed: the note, untied, lies open over the box's front with its words (Brian, 2026-11-26)
+  let note = null;
+  if (landed) {
+    const nx = rx + 110,
+      ny = B.y0 + 70;
+    ctx.save();
+    ctx.translate(nx, ny);
+    ctx.rotate(-0.05);
+    hmRound(ctx, -180, -72, 360, 144, 6);
+    hmPaint(ctx, "#fff4c2", 4);
+    const [l1, l2] = morningWords("note-words").split(". ");
+    const w1 = l1.split(" ");
+    say(w1.slice(0, 2).join(" "), 0, -38, 25, "#2b3a67");
+    say(w1.slice(2).join(" ") + ".", 0, -6, 25, "#2b3a67");
+    say(l2, 40, 36, 23, "#2b3a67");
+    ctx.restore();
+    note = { x: nx, y: ny, w: 360, h: 144 };
+  }
   // the crayon drawing, leaning on the box's right side, with its title in crayon
   const D = C.drawing,
     title = morningWords("sign-drawing");
@@ -420,6 +437,7 @@ function gboxCloseUp(ctx, t, engine) {
     label,
     labelBox: lab,
     title,
+    note,
     drawing: sheet,
     notes: notes.length,
     held: t < C.hold,

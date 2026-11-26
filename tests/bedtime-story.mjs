@@ -15,7 +15,8 @@
  *      the fade to black; then Day 2 begins and the room comes up from black (the home morning's night does it when
  *      the home morning is here; otherwise the bedtime story fades it in).
  * No goal chip shows at any point from the Now card to Day 2 (the old video showed "Squatch: pick up the gift" over
- * the sleeping room). The old fourth picture (the mop bucket) is off behind its switch. The old "ch1moon" panel is gone.
+ * the sleeping room). The old fourth picture (the mop bucket) is on (Brian 2026-11-26), and Mops's bleat is asked for
+ * under his goat sound. The old "ch1moon" panel is gone.
  *   node tests/bedtime-story.mjs
  */
 import { readFileSync, readdirSync, existsSync } from "node:fs";
@@ -155,8 +156,8 @@ const run = !(started && tvDone)
     });
 
 const order = run.steps.filter((s) => !s.startsWith("phase:end"));
-const want = ["phase:walk", "phase:bed", "phase:ask", "bub:sq", "phase:story", "pic:crate", "pic:baby", "pic:beard", "pic:weent", "phase:line", "bub:mops", "phase:guardians", "pic:guardians", "phase:yawn", "phase:lie", "phase:tuck", "phase:door", "phase:lights", "phase:snore1", "phase:snore2", "phase:snore3", "phase:fade"];
-g.check("the bedtime story plays in order: to bed (Mops comes), the ask, crate, baby, beard, ...Weeee-eenn-nnttt?, Mops's line, the Guardians picture, yawn, lie down, tuck in, Mops to the door, lights down, three snores, fade", JSON.stringify(order) === JSON.stringify(want), order);
+const want = ["phase:walk", "phase:bed", "phase:ask", "bub:sq", "phase:story", "pic:crate", "pic:baby", "pic:beard", "pic:weent", "pic:bucket", "pic:hide", "phase:line", "bub:mops", "phase:guardians", "pic:guardians", "phase:yawn", "phase:lie", "phase:tuck", "phase:door", "phase:lights", "phase:snore1", "phase:snore2", "phase:snore3", "phase:fade"];
+g.check("the bedtime story plays in order: to bed (Mops comes), the ask, crate, baby, beard, ...Weeee-eenn-nnttt?, the mop bucket (two pictures), Mops's line, the Guardians picture, yawn, lie down, tuck in, Mops to the door, lights down, three snores, fade", JSON.stringify(order) === JSON.stringify(want), order);
 g.check("no words show from the Now card until Squatch asks", run.newWords.filter((w) => w !== ASK && w !== "Squatch").length === 0, run.newWords);
 const wl = run.wordless;
 g.check("each wordless part (to bed, into bed, yawn, lie down, tuck in, to the door, lights, each snore, the fade) plays by itself for 2 to 4 seconds", wl.length === 11 && wl.every((w) => w.secs >= 2 && w.secs <= 4.05), wl);
@@ -168,22 +169,22 @@ g.check("Mops comes over and stays beside the bed (facing him) for the story", r
 const ask = run.lines.find((l) => l.who === "sq");
 g.check('Squatch asks in one bubble over him: "Tell me about when we first met?"', ask && ask.text === ASK && run.lines.filter((l) => l.who === "sq").length === 1, run.lines);
 g.check("he asks sitting in his bed, with Mops beside the bed", run.askAt && run.askAt.pose === "sit" && run.askAt.mops.x < 420 && run.askAt.mops.pose === "stand", run.askAt);
-g.check("the ask's words are in the lines file, 'suggested by Brian 2026-11-26 (video note 0:12), exact words to confirm', source 'Brian video note'", L["sq-first-met"] && L["sq-first-met"].text === ASK && L["sq-first-met"].who === "sq" && L["sq-first-met"].status === "suggested by Brian 2026-11-26 (video note 0:12), exact words to confirm" && L["sq-first-met"].source === "Brian video note");
+g.check("the ask's words are in the lines file, approved word for word (Brian 2026-11-26)", L["sq-first-met"] && L["sq-first-met"].text === ASK && L["sq-first-met"].who === "sq" && L["sq-first-met"].status === "approved");
 g.check("the wordless pat and the thought bubble are gone (no pat sound, no thought drawn)", run.debug && !("pat" in run.debug.sounds) && run.room.every((r) => !r.thought), run.debug && run.debug.sounds);
 
 // The pictures
 const story = run.pics.filter((p) => p.id === "moonpie"),
   pics = story.map((p) => p.drew || {});
-g.check("the four story pictures are the full-screen cutaway of the crate story, then one Guardians picture", story.length === 4 && story.every((p) => p.drew && p.drew.full) && run.pics.length === 5 && run.pics[4].id === "guardians", run.pics.map((p) => p.id));
-g.check("every picture and line waits for NEXT (still up after 6 seconds with no tap)", run.held.length === 7 && run.held.every(Boolean), run.held);
+g.check("the six story pictures are the full-screen cutaway of the crate story, then one Guardians picture", story.length === 6 && story.every((p) => p.drew && p.drew.full) && run.pics.length === 7 && run.pics[6].id === "guardians", run.pics.map((p) => p.id));
+g.check("every picture and line waits for NEXT (still up after 6 seconds with no tap)", run.held.length === 9 && run.held.every(Boolean), run.held);
 const shown = new Set(run.shownAfter || []);
 const joined = [...shown].join(" ");
 const onScreen = (t) => shown.has(t) || joined.includes(t);
-g.check("the captions show word for word as commit 71ec66e had them", ["crate", "baby", "beard"].every((k) => onScreen(OLD[k])), ["crate", "baby", "beard"].filter((k) => !onScreen(OLD[k])));
+g.check("the captions show word for word as commit 71ec66e had them", ["crate", "baby", "beard", "bucket", "nothing"].every((k) => onScreen(OLD[k])), ["crate", "baby", "beard", "bucket", "nothing"].filter((k) => !onScreen(OLD[k])));
 g.check("Mops's goat sound is ...Weeee-eenn-nnttt? in a bubble over him in its own picture, with no caption under it", onScreen(OLD.weent) && pics.find((p) => p.pic === "weent" && p.bubble && !p.caption && p.bubble.y1 < p.mopsHead.y + 10), pics.find((p) => p.pic === "weent"));
 g.check('no "Baaa" anywhere in the bedtime story (on screen or in its lines)', !joined.includes("Baa") && BEDTIME_STORY_LINES.every((l) => !/baa/i.test(l.text)));
 g.check("the lines file holds the old captions word for word, the goat sound and Mops's line", L["cap-crate"] && L["cap-crate"].text === OLD.crate && L["cap-baby"].text === OLD.baby && L["cap-beard"].text === OLD.beard && L["mops-weent"] && L["mops-weent"].text === OLD.weent && L["mops-moon-pie"].text === MOPS_LINE);
-g.check("the old captions are 'restored from 71ec66e, needs-yes'; the goat sound is Brian's; Mops's line is 'in-game, needs-yes'", ["cap-crate", "cap-baby", "cap-beard"].every((id) => L[id] && L[id].status === "restored from 71ec66e, needs-yes") && L["mops-weent"].status.startsWith("Brian 2026-11-26") && L["mops-moon-pie"] && L["mops-moon-pie"].status === "in-game, needs-yes");
+g.check("the old crate story's words are approved (Brian 2026-11-26: keep them); the goat sound is Brian's; Mops's line is 'in-game, needs-yes'", ["cap-crate", "cap-baby", "cap-beard", "cap-bucket", "mops-nothing", "sign-moon-pies"].every((id) => L[id] && L[id].status === "approved") && L["mops-weent"].status.startsWith("Brian 2026-11-26") && L["mops-moon-pie"] && L["mops-moon-pie"].status === "in-game, needs-yes");
 const known = new Set(BEDTIME_STORY_LINES.map((l) => l.text));
 const fromStory = (run.shownAfter || []).filter((w) => !run.shownBefore.includes(w));
 // A caption or bubble wrapped on a phone is drawn a line at a time: a drawn piece counts when it is a whole line of
@@ -194,12 +195,13 @@ const esc = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const piece = (w) => !!w.trim() && [...known].some((k) => new RegExp("(^|\\s)" + esc(w.trim()) + "(\\s|$)").test(k));
 const stray = fromStory.filter((w) => !(known.has(w) || before.has(w) || piece(w)));
 g.check("no other new words show in the bedtime story (every word drawn is in the lines file)", stray.length === 0, stray);
-g.check("the bucket picture is off behind its one switch", BEDTIME_SWITCHES.bucketPicture === false && !pics.some((p) => p.pic === "bucket") && !onScreen(OLD.bucket) && !onScreen(OLD.nothing));
-g.check("only Mops and baby Squatch are in the pictures (no parents, nobody else)", pics.length === 4 && pics.every((p) => Array.isArray(p.cast) && p.cast.every((c) => c === "mops" || c === "baby")) && pics.some((p) => p.cast.includes("baby")), pics.map((p) => p.cast));
+g.check("the fourth picture is on (Brian 2026-11-26): Mops hides the baby in his mop bucket, then \"Nothing to see here!\" in a bubble over him", BEDTIME_SWITCHES.bucketPicture === true && pics.some((p) => p.pic === "bucket" && p.caption) && pics.some((p) => p.pic === "hide" && p.bubble && !p.caption) && onScreen(OLD.bucket) && onScreen(OLD.nothing));
+g.check("Mops's bleat is asked for once, as his \"...Weeee-eenn-nnttt?\" comes up (the mops-bleat sound hook)", run.debug && run.debug.sounds.bleat === 1, run.debug && run.debug.sounds);
+g.check("only Mops and baby Squatch are in the pictures (no parents, nobody else)", pics.length === 6 && pics.every((p) => Array.isArray(p.cast) && p.cast.every((c) => c === "mops" || c === "baby")) && pics.some((p) => p.cast.includes("baby")), pics.map((p) => p.cast));
 // Sizes (Brian: "Look at how small mops and squatch are versus box."): the crate and Mops in the room's own
 // proportion (the crate bed in the locked home room and Mops as the room draws him), the same in every picture.
 const sz = pics.filter((p) => p.sizes).map((p) => p.sizes);
-g.check("Mops and the crate are the same size in every picture", sz.length === 4 && sz.every((s) => s.mops === sz[0].mops && s.crate.h === sz[0].crate.h), sz);
+g.check("Mops and the crate are the same size in every picture", sz.length === 6 && sz.every((s) => s.mops === sz[0].mops && s.crate.h === sz[0].crate.h), sz);
 const room = run.debug && run.debug.roomSizes;
 const ratio = sz[0] ? sz[0].mops / sz[0].crate.h : 0,
   roomRatio = room ? room.mops / room.crate.h : 0;

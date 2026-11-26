@@ -5,7 +5,7 @@
  *      Brian 30a). Then Squatch asks, in one bubble over him: "Tell me about when we first met?" (waits for NEXT;
  *      Brian, 2026-11-26, video note 0:12, in place of the wordless pat and thought bubble).
  *   2. The old crate story from commit 71ec66e, full screen, each picture waiting for NEXT (bedtime-story-art.js;
- *      the words are bedtime-story-lines.js; the bucket picture is off behind BEDTIME_SWITCHES).
+ *      the words are bedtime-story-lines.js; the fourth, the mop bucket, is on behind BEDTIME_SWITCHES).
  *   3. Back in the room: Mops's bedtime line, as the game showed it before, in one bubble over him (waits for NEXT).
  *      Then a full-screen picture of Squatch's crayon drawing of the Guardians (big furry Sasquatches) with Mops beside
  *      it saying, in a bubble over him, his Guardians line (waits for NEXT; Brian, 2026-11-26: Mops tells him about
@@ -26,7 +26,7 @@
  * beat adds to the room with .draw(ctx) (60-frame-draw.js).
  */
 import { drawSquatchArt } from "./squatch-art.js";
-import { ROOM_SIZES } from "./bedtime-story-art.js";
+import { ROOM_SIZES, BEDTIME_PICTURES } from "./bedtime-story-art.js";
 import { bedLine } from "./bedtime-story-lines.js";
 import { cutawaySteps } from "./cutaway.js";
 import { footfall } from "./footfalls.js";
@@ -454,7 +454,8 @@ export function createBedtimeStory(bridge) {
         e.until(bed),
         e.say("sq", bedLine("sq-first-met")),
         e.run(() => phase("story")),
-        ...cutawaySteps(BEDTIME_STORY_ID),
+        // the story pictures; as Mops's "...Weeee-eenn-nnttt?" comes up, his bleat
+        ...cutawaySteps(BEDTIME_STORY_ID).flatMap((c) => (BEDTIME_PICTURES[c.panel] === "weent" ? [e.run(() => sound.bleat()), c] : [c])),
         e.run(backInRoom),
         e.say("mops", bedLine("mops-moon-pie")),
         e.run(() => phase("guardians")),

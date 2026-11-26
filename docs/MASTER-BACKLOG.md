@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–126 | ## Where main is (Chapter 1 redesign) |
-| 127–141 | ## Register |
-| 142–163 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 164–184 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 185–197 | ## Phase 2 (plan section 4, T13 to T18) |
-| 198–220 | ## Phase 1 (plan section 3, T5 to T12) |
-| 221–234 | ## SS40–SS44 |
-| 235–252 | ## Story rows |
-| 253–271 | ## Reset section |
-| 272–282 | ## Still open |
-| 283–286 | ## Chapter 1 replot, recorded and not built |
-| 287–442 | ## Changelog |
+| 24–121 | ## Where main is (Chapter 1 redesign) |
+| 122–136 | ## Register |
+| 137–158 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 159–179 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 180–192 | ## Phase 2 (plan section 4, T13 to T18) |
+| 193–215 | ## Phase 1 (plan section 3, T5 to T12) |
+| 216–229 | ## SS40–SS44 |
+| 230–247 | ## Story rows |
+| 248–266 | ## Reset section |
+| 267–277 | ## Still open |
+| 278–281 | ## Chapter 1 replot, recorded and not built |
+| 282–437 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -32,21 +32,16 @@
 - New drawings waiting for his eye: the crates, the plate of Moon Pies, the eating close-up (sandwich, bag bitten away), Squatch ducked and reaching, the one-pie thought bubble, the bolder cone look for these watchers.
 - Placeholders (not pins): the watchers' places and angles and their rhythm (away 3.0 s, "?" 0.6 s, turn 0.3 s, look 2.4 s); walk 190; the eating close-up 3.6 s; the grab 1.4 s; the chew 1.2 s; pies 1.25 times the party's snack; the bag in the hall 0.68 of its home size.
 
-2026-11-26, draft PR on `feat/ch1-day2-morning` (stacked on `feat/ch1-bedtime-story`), not merged. Done: beats 22 to 24, the home morning, as a module (`ch1-home-morning`): the night going on from the bedtime story (dark, asleep under the blanket) to morning and the wake in bed with no words, PICK UP · rocket with the crayon Guardians thought bubble and the Guardians line, the thought bubble of the box, OPEN · closet, PUT IN · box with the first build's box view (commit 18c9157: older notes, MY GARDIAN BOX lid, the MY GUARDIANS crayon drawing), the calendar with today marked, "He forgot his lunch!", TAKE · lunch into today's lunch sneak. The old gift, box, calendar and lunch steps are deleted from `src/game/`. Open for Brian:
+2026-11-26, draft PR on `feat/ch1-day2-morning` (stacked on `feat/ch1-bedtime-story`), not merged. Done: beats 22 to 24, the home morning, as a module (`ch1-home-morning`): the night going on from the bedtime story (dark, asleep under the blanket) to morning and the wake in bed with no words, PICK UP · rocket with the crayon Guardians thought bubble and the Guardians line, the thought bubble of the box, OPEN · closet, PUT IN · box with the first build's box view (commit 18c9157: older notes, MY GARDIAN BOX lid, the MY GUARDIANS crayon drawing, the note's words), the box back in the closet, "He forgot his lunch!" (MOPS on the bag), TAKE · lunch into today's lunch sneak; the calendar with today marked is optional (LOOK · calendar). Brian's answers of 2026-11-26 are built: calendar optional, PICK UP · rocket and PUT IN · box approved, the box back in the closet, Mops heard leaving as built, the note's words "Brave Sasquatches stay hidden. — The Guardians", MOPS on the bag, the 20-second goal-words rule kept, drawings fine as placeholders. The old gift, box, calendar and lunch steps are deleted from `src/game/`. Open for Brian:
 - The Guardian Box is 2.4 times its approved size on Day 2 (so it is clearly bigger than the rocket, his note 0:21); Day 1's closet still has it at the approved size. Make Day 1 match?
 - The close-up is a front view of the open box (the first build's was seen from above, with the notes' words readable); the old notes show no words now (their lines are pending). Front view as built, or the top-down view?
 - The drawing's title: built as MY GUARDIANS (STORY-DECISIONS section 5); the first build's drawing said MY GARDIANS with a backwards S and "by Squatch age 6". Which?
-- Is the calendar step required (as built, the walkthrough's "Player: Look at the calendar"), or optional with the lunch bag as the goal?
-- The goal words on the phone's top bar follow his "Outline; words if stuck" rule (DECISIONS.md, 2026-11-22): hidden while the outline shows, up after 20 s with no progress. The coordinator's review of the stills asked for them up at once. Keep the rule, or show the goal words from the start (in this morning, or everywhere)?
-- Words "needs-yes" (`src/modules/home-morning-lines.js`): PICK UP · rocket and PUT IN · box (the brief's prompts; the game said TAKE · gift and PUT · box). Everything else was in the game, decided or approved.
-- The box stays out on the floor by the closet after the gift goes in (his 2026-11-16 note "takes it out"); the approved closet picture has it in the closet. Out, or back in?
-- Mops leaving is heard, not seen, in the dark (he went out by the door at bedtime). Show him setting the lunch bag down on his way out (it would put him in the room the morning the gift appears)?
-- New drawings waiting for his eye: the toy rocket and its tied-on note (blank), the lunch bag (no words; the old one said MOPS), the box close-up (the open box, the older notes, the lid's taped MY GARDIAN BOX label), the crayon Guardians drawing in his thought bubble, Squatch sitting up in bed, his stretch and his hold-up, the heart, today's crossed-off days.
+- New drawings waiting for his eye: the toy rocket and its tied-on note, the lunch bag with MOPS on it, the box close-up (the open box, the older notes, the lid's taped MY GARDIAN BOX label), the crayon Guardians drawing in his thought bubble, Squatch sitting up in bed, his stretch and his hold-up, the heart, today's crossed-off days.
 - Placeholders (not pins): rocket 64 px (about two fifths of Squatch, 25 px on a phone), the box 2.4 times its approved size, lunch bag 40 x 52 (about a third), the close-up in the room's proportion; the night 2.6 s, the wake about 2.6 s, the hold with the crayon thought 2.8 s, the box thought bubble 2.2 s; footsteps every 0.3 s.
 
-2026-11-26, draft PR #89 on `feat/ch1-bedtime-story`, not merged. Done: beat 21, the bedtime story, as a module (`ch1-bedtime-story`): to bed with no words (he walks to his crate bed and climbs in, Mops comes over), Squatch asks "Tell me about when we first met?", the old crate story's pictures from 71ec66e (crate, baby, beard, "...Weeee-eenn-nnttt?") at the home room's proportions, Mops's line unchanged, the Guardians picture (Squatch's crayon drawing, Mops's approved line "And you've always had your Guardians, watching over you."), then falling asleep (yawn, lie down, blanket, Mops out by the door, light down to night-blue, three snores with rising "z z z", fade to black, Day 2 fades in). No goal chip from the Now card to Day 2. The "ch1moon" caption box is deleted. Brian's 2026-11-26 notes built: 0:12 (the ask in words), 0:25 (the vocal song stays, untouched), 0:28 (goats say "weeeent"), and "a bit more natural transition and then some snoring". Open for Brian:
-- Words (`src/modules/bedtime-story-lines.js`): "Tell me about when we first met?" is his suggestion with the exact words to confirm; the three old captions, the crate's MOON PIES badge, the "!" and "z z z" marks and his bedtime line are needs-yes; "...Weeee-eenn-nnttt?" is his spelling; the Guardians line is approved.
-- The fourth old picture (Mops hides the baby in the mop bucket when tourists come, "Nothing to see here!"): off behind `BEDTIME_SWITCHES.bucketPicture`. Keep it out, or bring it back?
+2026-11-26, draft PR #89 on `feat/ch1-bedtime-story`, not merged. Done: beat 21, the bedtime story, as a module (`ch1-bedtime-story`): to bed with no words (he walks to his crate bed and climbs in, Mops comes over), Squatch asks "Tell me about when we first met?", the old crate story's pictures from 71ec66e (crate, baby, beard, "...Weeee-eenn-nnttt?" with Mops's bleat asked for through the `mops-bleat` sound hook, and the mop bucket picture, on since Brian's answer of 2026-11-26) at the home room's proportions, Mops's line unchanged, the Guardians picture (Squatch's crayon drawing, Mops's approved line "And you've always had your Guardians, watching over you."), then falling asleep (yawn, lie down, blanket, Mops out by the door, light down to night-blue, three snores with rising "z z z", fade to black, Day 2 fades in). No goal chip from the Now card to Day 2. The "ch1moon" caption box is deleted. Brian's 2026-11-26 notes built: 0:12 (the ask in words), 0:25 (the vocal song stays, untouched), 0:28 (goats say "weeeent"), and "a bit more natural transition and then some snoring". Open for Brian:
+- Words (`src/modules/bedtime-story-lines.js`): approved (Brian 2026-11-26): "Tell me about when we first met?", the old crate story's words (all six captions and bubbles, the MOON PIES badge, the "!" and "z z z" marks), the Guardians line; "...Weeee-eenn-nnttt?" is his spelling; his bedtime line ("You came to me in a Moon Pie crate...") is still needs-yes.
+- Mops's bleat: the bedtime story asks for the `mops-bleat` sound pick through `window.SSQ.playSoundPick` as "...Weeee-eenn-nnttt?" comes up. The party branch has the `mops-bleat` entry in its music table but nothing that plays it yet; after the merge forward, that player must be `window.SSQ.playSoundPick(name)` (or the call renamed).
 - Where Mops sleeps: nothing in the game or the docs says, so he goes out through the doorway after the light. A spot at home instead?
 - Mops comes over and stands beside the bed: he cannot sit (the approved Mops has no sitting pose; a sitting Mops would be a new drawing).
 - New drawings waiting for his eye (placeholders): the story crate, the Moon Pies on its lid, the lid, the crumbs, the baby, the baby's grab and giggle, Squatch's hop into bed, his yawn and stretch, the blanket, the night-blue dim, the rising "z z z", the crayon Guardians drawing and its picture.

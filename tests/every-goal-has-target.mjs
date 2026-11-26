@@ -51,7 +51,6 @@ const report = await page.evaluate(async (chips) => {
     // the home morning (src/modules/home-morning.js), each opened by its own jump with everything before it done
     "Squatch: pick up the gift": { hm: "rocket" },
     "Squatch: put the gift in the box": { hm: "closet" },
-    "Squatch: look at the calendar": { hm: "cal" },
     "Squatch: take the lunch": { hm: "lunch" },
     // the lunch sneak (src/modules/lunch-sneak.js), each opened by its own jump with everything before it done; he
     // stands where its button comes up (beside the plant; by Mops; behind the counter)

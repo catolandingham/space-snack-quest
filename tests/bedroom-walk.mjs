@@ -101,8 +101,8 @@ const blueAt = (x, y) =>
   );
 g.check("beat 1: the Guardian Box is not drawn", !(await blueAt(335, 510)));
 
-// Day 2: the box comes out of the closet when Squatch puts the gift in it (src/modules/home-morning.js), onto the
-// floor between the wardrobe and the bed's top corner.
+// Day 2: the box comes out of the closet while Squatch puts the gift in it (src/modules/home-morning.js), then goes
+// back in (Brian, 2026-11-26).
 await page.evaluate(() => {
   const n = window.__ss.op;
   Object.assign(n, { q: [], cur: null, ch1Morning: null });
@@ -114,8 +114,8 @@ g.check("Day 2 before PUT: still in the closet (none on the floor)", !(await blu
 const put = await page.evaluate(() => (window.__ss.spotsNow() || []).find((s) => s.verb === "PUT IN"));
 g.check("Day 2: PUT IN · box is at the closet", put && put.x < 330 && put.y < 410, await page.evaluate(() => JSON.stringify(window.__ss.spotsNow()) + " " + window.__ss.op.scene + " " + window.__ss.op.ch1Step));
 await page.evaluate(() => window.SSQ.beat("ch1-home-morning").jump("cal"));
-g.check("Day 2 after PUT: the box is on the floor", await blueAt(198, 368));
+g.check("Day 2 after PUT: the box is back in the closet (none on the floor)", !(await blueAt(198, 368)));
 const solids2 = await page.evaluate(() => window.__ss.solids());
-g.check("Day 2 after PUT: the box is solid", solids2.some((o) => o.x0 === 188));
+g.check("Day 2 after PUT: nothing solid where it stood", !solids2.some((o) => o.x0 === 188));
 
 await g.finish("bedroom-walk");
