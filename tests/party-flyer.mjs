@@ -186,7 +186,7 @@ g.check(
   // (Isfred's walk happens between two lines: watched in a second pass below, where nothing is being tapped)
   s = read.end;
   const texts = read.seen.map((l) => l.text);
-  g.check("P3's lines in order: his worry right after the robots line (Brian 2026-11-25)", JSON.stringify(texts) === JSON.stringify(["Let's give a big hello to our friends from Bleep-Bloop Robotics!", "Soon their helper robots will be here, to help with the heavy work.", "Robots for the heavy work? That's Mops's job!", "I have to show Mops.", "And now... put your hands together for the Croc Boys!", "Stormtop-vania 1-2-3-4-5!"]), texts);
+  g.check("P3's lines in order: his worry right after the robots line (Brian 2026-11-25), and the dance wish last (back 2026-11-26)", JSON.stringify(texts) === JSON.stringify(["Let's give a big hello to our friends from Bleep-Bloop Robotics!", "Soon their helper robots will be here, to help with the heavy work.", "Robots for the heavy work? That's Mops's job!", "I have to show Mops.", "And now... put your hands together for the Croc Boys!", "Stormtop-vania 1-2-3-4-5!", "I've never gotten to dance at a party."]), texts);
   const worry = read.seen[2],
     show = read.seen[3];
   g.check("while he thinks \"Robots for the heavy work? That's Mops's job!\" the banner still glows", !!worry && worry.banner === 1, worry);
