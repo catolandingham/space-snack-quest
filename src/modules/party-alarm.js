@@ -53,9 +53,9 @@ const step = stepTo;
  */
 export const GUARD_FEET = Object.freeze({ side: 25, up: 14, down: 8 });
 // (behind a plant pot its leaves stand this much taller on the floor: a guard does not brush through them either)
-// (the leaves stand about 44 above the pot's back edge in the hall picture: a guard's feet stay behind that, so his
+// (the leaves stand about 44 above the pot's back edge in the hall picture; a guard's feet stay 16 further back, so his
 // legs are never drawn in them)
-export const PLANT_LEAVES = 44;
+export const PLANT_LEAVES = 60;
 /**
  * The catch reach for a guard and Squatch at feet `sq`: the pinned guard-catch, and, with Squatch in the leaves behind
  * a pot (floor a guard does not walk on), that much more over the leaves, so a guard still catches him there (the one
@@ -96,7 +96,8 @@ export function guardStep(g, x, y, speed, dt) {
   if (keep) g.path[n - 1] = { x, y };
   else if (moved > 0) {
     g.pathFor = { x, y };
-    g.path = findPath({ x: g.x, y: g.y }, { x, y }, GUARD_FLOOR, GUARD_AROUND) || [{ x, y }];
+    // (no way found: straight there only if that is clear of the furniture, else he stays where he is)
+    g.path = findPath({ x: g.x, y: g.y }, { x, y }, GUARD_FLOOR, GUARD_AROUND) || [clearOfFurniture(g.x, g.y, x, y) ? { x, y } : { x: g.x, y: g.y }];
   }
   g.pathTo = { x, y };
   const at = step(g, g.path[0].x, g.path[0].y, speed, dt);

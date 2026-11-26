@@ -111,7 +111,7 @@ check(`hall: none of ${Object.keys(hallSpots).length} standing spots overlaps th
       }
   }
   check(`hall: the guards' search walks (${steps} steps) never put a guard's feet on the stage, a stool, a plant pot or the leaves behind it`, bad.length === 0 && steps > 1000, bad);
-  // A guard after Squatch as he runs round the middle plant, clear of its pot and leaves (the place moves every step):
+  // A guard after Squatch as he runs round the middle plant, past the edge of its leaves (the place moves every step):
   // the guard goes round the pot, never on it.
   const chaser = { x: SPOTS.guardIn.x, y: SPOTS.guardIn.y },
     pot = HALL_SOLIDS.find((b) => b.plant && b.x0 > 300),
@@ -123,11 +123,11 @@ check(`hall: none of ${Object.keys(hallSpots).length} standing spots overlaps th
     const t = i / 60,
       him = { x: cx + Math.cos(t * 1.2) * 100, y: cy + Math.sin(t * 1.2) * 85 };
     guardStep(chaser, him.x, him.y, ALARM.guard, 1 / 60);
-    t > 8 && (near = Math.min(near, Math.hypot(him.x - chaser.x, him.y - chaser.y)));
+    t > 8 && (near = Math.min(near, Math.hypot(him.x - chaser.x, him.y - chaser.y) - catchReach(him)));
     const box = { x0: chaser.x - f.side, x1: chaser.x + f.side, y0: chaser.y - f.up, y1: chaser.y + f.down };
     for (const b of furniture) hit(box, b) && chaseBad.length < 8 && chaseBad.push({ t: +t.toFixed(2), at: [Math.round(chaser.x), Math.round(chaser.y)], solid: b.i });
   }
-  check("hall: a guard chasing him round the middle plant goes round the pot, never over it, and gets to him (within the catch reach)", chaseBad.length === 0 && near < ALARM.reach, { chaseBad, near: Math.round(near) });
+  check("hall: a guard chasing him round the middle plant goes round the pot, never over it, and gets to him (within the catch reach)", chaseBad.length === 0 && near < 0, { chaseBad, near: Math.round(near) });
   // And him standing right behind a pot, as close as his own feet may go (8 above its back edge), in the leaves where
   // guards do not walk: a guard still catches him there, from the far side of the leaves (the one capture rule;
   // party-alarm.js catchReach adds the leaves to the pinned reach there, and only there).
