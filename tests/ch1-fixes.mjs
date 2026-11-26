@@ -27,7 +27,8 @@ async function walk(x, y, frames, day2 = false) {
       n.sq.x = x;
       n.sq.y = y;
       window.dispatchEvent(new KeyboardEvent("keydown", { code: "ArrowLeft", bubbles: true }));
-      for (let i = 0; i < frames; i++) window.__ss.tick(0.05);
+      window.__trail = [];
+      for (let i = 0; i < frames; i++) (window.__ss.tick(0.05), window.__trail.push([n.sq.x, n.sq.y]));
       window.dispatchEvent(new KeyboardEvent("keyup", { code: "ArrowLeft", bubbles: true }));
       window.__ss.tick(0.05);
       return [Math.round(n.sq.x), Math.round(n.sq.y)];
@@ -39,9 +40,11 @@ async function walk(x, y, frames, day2 = false) {
   );
 }
 
-// The G box is in the closet on day 1 (Brian, 2026-11-15); from day 2 it sits on the floor and stops a walk.
-const gbox = await walk(420, 500, 50, true);
-g.check("day 2: the blue G box stops a walk through it", gbox[0] >= 370 && gbox[0] < 420, gbox);
+// The G box is in the closet on day 1 (Brian, 2026-11-15); from day 2 it sits on the floor by the closet, between
+// the wardrobe and the bed's top corner (src/modules/home-morning-art.js), and stops a walk.
+const gbox = await walk(320, 384, 50, true);
+const through = await page.evaluate(() => window.__trail.filter(([x, y]) => x > 188 && x < 236 && y > 366 && y < 394));
+g.check("day 2: the blue G box stops a walk through it (he goes round it, never over it)", gbox[0] < 320 && through.length === 0, { end: gbox, through });
 const bed = await walk(320, 450, 30);
 g.check("the bed stops a walk through it", bed[0] >= 280 && bed[0] < 320, bed);
 const floor = await walk(420, 540, 50);

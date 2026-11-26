@@ -1,0 +1,323 @@
+/**
+ * Beats 22 to 24, the home morning (src/modules/home-morning.js), at phone size, from the bedtime story's last
+ * picture to the lunch out the door. In order, each checked as the player meets it:
+ *   - wordless: the room dims and comes back up (Mops gone, heard leaving), then Squatch wakes, stretches and gets
+ *     up beside the toy rocket (each part plays by itself, under 4 seconds, nothing to tap);
+ *   - "Squatch: pick up the gift", only the rocket outlined, PICK UP · rocket; he holds it up, one heart, and says
+ *     "The Guardians came! They always come when I'm scared." (waits for NEXT);
+ *   - a thought bubble shows the Guardian Box before the chip names it; "Squatch: put the gift in the box", the
+ *     wardrobe outlined, OPEN · closet; the door opens, the box outlined, PUT IN · box;
+ *   - the close-up: "MY GARDIANS", the gift drops in and stays (waits for NEXT); the box stays out on the floor with
+ *     the gift in it, the door shuts;
+ *   - "Squatch: look at the calendar", LOOK · calendar: today's close-up (days 1 to 13 crossed off, day 14 circled);
+ *   - the lunch bag outlined, "He forgot his lunch!" (waits for NEXT); "Squatch: take the lunch", TAKE · lunch; then
+ *     today's lunch sneak in the party hall, the bag in his paw.
+ * Also: no new words (every word drawn is a whole line of home-morning-lines.js, or was on screen before), nothing he
+ * is told to tap is under him, sizes against the room, nothing disappears, the old code is gone.
+ *   node tests/home-morning.mjs
+ */
+import { readFileSync, readdirSync, existsSync } from "node:fs";
+import { join } from "node:path";
+import { startGame, root } from "./game-page.mjs";
+
+const linesFile = join(root, "src", "modules", "home-morning-lines.js");
+const { HOME_MORNING_LINES = [] } = existsSync(linesFile) ? await import(linesFile) : {};
+const L = Object.fromEntries(HOME_MORNING_LINES.map((l) => [l.id, l.text]));
+const GUARDIANS = "The Guardians came! They always come when I'm scared.";
+const LUNCH = "He forgot his lunch!";
+
+const g = await startGame({ port: 9743, name: "home-morning" });
+const { page, errors } = await g.open("?ch=1", { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
+await page.evaluate(() => window.__ss.lockedReady);
+await page.evaluate(() => (window.requestAnimationFrame = () => 0));
+
+const registered = await page.evaluate(() => !!(window.SSQ && window.SSQ.beat("ch1-home-morning")));
+g.check("the home morning beat is registered (ch1-home-morning)", registered);
+
+// The TV story and the bedtime story, tapped through fast, to the bedtime story's sleep.
+const asleep = await page.evaluate(() => {
+  const ss = window.__ss,
+    n = ss.op;
+  n.q = [];
+  n.cur = null;
+  window.SSQ.engine().tvStory();
+  const bed = window.SSQ.beat("ch1-bedtime-story");
+  for (let i = 0; i < 6000; i++) {
+    if (bed.debug().phase === "asleep") return true;
+    ss.tick(0.05);
+    const c = n.cur;
+    c && ["card", "cutaway", "bub", "panel", "wait"].includes(c.k) && ((n.bt = 1), ss.opTap());
+  }
+  return false;
+});
+g.check("the bedtime story plays to Squatch asleep first", asleep);
+
+const run = !(registered && asleep)
+  ? null
+  : await page.evaluate(
+      ({ GUARDIANS, LUNCH }) => {
+        const ss = window.__ss,
+          n = ss.op,
+          beat = window.SSQ.beat("ch1-home-morning"),
+          out = { log: [], wordless: [], prompts: [], chips: [], outlines: [], under: [], fails: [], drawn: {} };
+        const d = () => beat.debug();
+        const step = () => (d().state || {}).step || "";
+        const tick = (s) => {
+          for (let i = 0; i < Math.round(s / 0.05); i++) ss.tick(0.05);
+        };
+        const next = () => ((n.bt = 1), ss.opTap());
+        out.shownBefore = ss.shown();
+        // the bedtime story's sleep, then Day 2 starts (no tap)
+        for (let i = 0; i < 400 && !n.ch1Day2; i++) ss.tick(0.05);
+        out.day2 = !!n.ch1Day2;
+        // 1. the wordless parts: count how long each plays, and that nothing waits for a tap
+        let phase = step(),
+          since = 0,
+          taps = 0;
+        const sqAt = [];
+        for (let i = 0; i < 400; i++) {
+          if (step() !== phase) {
+            out.wordless.push({ phase, secs: +since.toFixed(2) });
+            phase = step();
+            since = 0;
+          }
+          if (step() === "rocket" && n.ctrl) break;
+          (n.cur && ["bub", "card", "cutaway"].includes(n.cur.k)) && taps++;
+          n.ctrl && taps++;
+          ss.drawFrame();
+          const r = d().drew;
+          r && r.dark != null && (out.dark = Math.max(out.dark || 0, r.dark));
+          r && r.pose === "stretch" && (out.stretched = true);
+          r && r.dark != null && r.dark > 0.5 && (out.darkMops = n.moPose);
+          r && step() === "night" && d().state.t < 0.5 && (out.thingsWhileMopsHere = (out.thingsWhileMopsHere || 0) + r.things.length);
+          sqAt.push([n.sq.x, n.sq.y]);
+          ss.tick(0.05);
+          since += 0.05;
+        }
+        out.tapsDuringWordless = taps;
+        out.mopsAfter = n.moPose;
+        // At a control step: what the chip and the button say, what is outlined (the goal outline the room drew).
+        const atStep = (name) => {
+          for (let i = 0; i < 6; i++) ss.tick(0.05);
+          ss.drawFrame();
+          const spots = (ss.spotsNow() || []).filter((s) => s && s.verb);
+          const offer = ss.offerNow();
+          const r = { name, step: step(), chip: ss.chipNow(), offer: offer ? offer.verb + " · " + offer.cap : "", spots: spots.length, outline: n.lastRing && n.T - n.lastRing.T < 0.3 ? { act: n.lastRing.act, box: n.lastRing.box } : null, sq: { x: n.sq.x, y: n.sq.y }, scale: window.SSQ.engine().squatchScale() };
+          out.prompts.push(r);
+          return r;
+        };
+        // Walk him (as a kid would) to where a spot's action works.
+        const walkTo = (x, y) => {
+          n.walkTo = null;
+          for (let i = 0; i < 400; i++) {
+            const done = window.SSQ.engine().step("sq", x, y, 200, 0.05);
+            ss.tick(0.05);
+            if (done) break;
+          }
+          window.SSQ.engine().still("sq");
+        };
+        const press = () => {
+          const o = ss.offerNow();
+          o && o.f && o.f();
+          return !!o;
+        };
+        // 2. the rocket
+        const rocket = atStep("rocket");
+        out.walkedTo = sqAt.slice(-1)[0];
+        out.pads0 = d().sounds.pad || 0;
+        press();
+        tick(0.3);
+        ss.drawFrame();
+        out.drawn.holdUp = d().drew && d().drew.heldUp;
+        out.drawn.heart = d().drew && d().drew.heart;
+        tick(1);
+        out.line1 = n.cur && n.cur.k === "bub" ? { who: n.cur.b.who, text: n.cur.b.text, chip: ss.chipNow() } : null;
+        tick(6);
+        out.line1Held = !!(n.cur && n.cur.k === "bub" && n.cur.b.text === GUARDIANS);
+        next();
+        tick(0.6);
+        ss.drawFrame();
+        out.thought = { step: step(), drew: d().drew && d().drew.thought, chip: ss.chipNow(), ctrl: n.ctrl };
+        tick(1.4);
+        // 3. the closet: he carries the gift there
+        const closetFar = atStep("closet-far");
+        out.pads1 = d().sounds.pad || 0;
+        walkTo(320, 420);
+        ss.drawFrame();
+        out.drawn.carried = d().drew && d().drew.carried;
+        out.pads2 = d().sounds.pad || 0;
+        const closet = atStep("closet");
+        press();
+        tick(2);
+        const box = atStep("box");
+        out.boxInCloset = d().box;
+        out.wardrobeOpen = n.wardrobe;
+        press();
+        tick(0.2);
+        ss.drawFrame();
+        out.boxMoving = d().box;
+        tick(0.6);
+        // the close-up: held over the box, then dropped in; it waits for NEXT
+        const cu = [];
+        for (let i = 0; i < 60; i++) {
+          if (n.cur && n.cur.k === "cutaway") {
+            ss.drawFrame();
+            cu.push({ ...window.SSQ.cutaway.last() });
+          }
+          ss.tick(0.05);
+        }
+        tick(4);
+        out.closeUp = { first: cu[0], last: cu[cu.length - 1], heldAfter: !!(n.cur && n.cur.k === "cutaway" && n.cur.id === "gbox"), thunks: d().sounds.hide || 0 };
+        next();
+        tick(0.2);
+        ss.drawFrame();
+        out.boxAfter = d().box;
+        tick(0.6);
+        const cal = atStep("cal");
+        out.wardrobeShut = n.wardrobe;
+        ss.drawFrame();
+        out.boxAfterShut = d().box;
+        // 4. the calendar
+        press();
+        tick(0.5);
+        out.calendarOpen = !!n.ch1Calendar;
+        ss.drawFrame();
+        out.calendar = d().drew && d().drew.calendar;
+        ss.tapAt(880, 540);
+        tick(0.3);
+        ss.drawFrame();
+        out.line2 = n.cur && n.cur.k === "bub" ? { who: n.cur.b.who, text: n.cur.b.text, chip: ss.chipNow(), bagOutline: d().drew && d().drew.bagOutline } : null;
+        tick(6);
+        out.line2Held = !!(n.cur && n.cur.k === "bub" && n.cur.b.text === LUNCH);
+        next();
+        tick(0.3);
+        // 5. the lunch bag across the room
+        const lunchFar = atStep("lunch-far");
+        walkTo(820, 478);
+        const lunch = atStep("lunch");
+        out.shownMorning = ss.shown();
+        press();
+        out.music = window.SSQ.homeMusic.debug();
+        for (let i = 0; i < 200 && !(n.room === "hall" && n.ctrl); i++) ss.tick(0.05);
+        ss.drawFrame();
+        out.hall = { room: n.room, step: n.ch1Step, hold: n.ch1Hold, chip: ss.chipNow() };
+        out.debug = d();
+        out.steps = d().steps;
+        out.list = { rocket, closetFar, closet, box, cal, lunchFar, lunch };
+        // 6. the step restart (↺) at the closet step puts him back there, on that step
+        return out;
+      },
+      { GUARDIANS, LUNCH },
+    );
+
+const R = run || { prompts: [], wordless: [], list: {}, steps: [], debug: { sounds: {}, sizes: {}, things: {} }, drawn: {} };
+const P = R.list;
+g.check("Day 2 starts from the bedtime story's sleep", !!R.day2, R.day2);
+
+// 1. the wordless start
+const night = R.wordless.find((w) => w.phase === "night"),
+  wake = R.wordless.find((w) => w.phase === "wake");
+g.check("night to morning plays by itself: the room goes dark and comes back (1 to 4 s)", night && night.secs >= 1 && night.secs <= 4 && R.dark > 0.9, { night, dark: R.dark });
+g.check("he wakes, stretches and gets up by himself (2 to 4 s)", wake && wake.secs >= 2 && wake.secs <= 4 && R.stretched, { wake, stretched: R.stretched });
+g.check("the wordless start has nothing to tap and no line (no control, no bubble)", R.tapsDuringWordless === 0, R.tapsDuringWordless);
+g.check("Mops leaves while it is dark: there for the night, gone in the morning", R.darkMops === "hidden" && R.mopsAfter === "hidden", { dark: R.darkMops, after: R.mopsAfter });
+g.check("the gift and the bag are not there while Mops still stands by the bed (they come in the night)", (R.thingsWhileMopsHere || 0) === 0, R.thingsWhileMopsHere);
+const S = R.debug.sounds || {};
+g.check("Mops is heard leaving in the dark: his hooves, then the door", S.hoof === 3 && S.door === 1, S);
+g.check("the morning song (home-music.js) plays from the morning until he takes the lunch", R.music && R.music.owns, R.music);
+
+// 2. each control step: the chip, the one button, the one outline round its thing
+const want = [
+  ["rocket", L["chip-gift"], L["button-rocket"]],
+  ["closet", L["chip-box"], L["button-closet"]],
+  ["box", L["chip-box"], L["button-box"]],
+  ["cal", L["chip-cal"], L["button-cal"]],
+  ["lunch", L["chip-lunch"], L["button-lunch"]],
+];
+for (const [k, chip, act] of want) {
+  const p = P[k] || {};
+  g.check(`${k}: the chip says "${chip}" and the one button says "${act}"`, p.chip === chip && p.offer === act && p.spots === 1, p);
+  g.check(`${k}: only the thing to use is outlined (the dashed outline is round "${act}")`, !!p.outline && p.outline.act === act, p.outline);
+}
+g.check("the words are today's: the chips and buttons the game had, PICK UP · rocket and PUT IN · box from the brief, OPEN · closet (approved)", L["chip-gift"] === "Squatch: pick up the gift" && L["chip-box"] === "Squatch: put the gift in the box" && L["chip-cal"] === "Squatch: look at the calendar" && L["chip-lunch"] === "Squatch: take the lunch" && L["button-rocket"] === "PICK UP · rocket" && L["button-box"] === "PUT IN · box" && L["button-closet"] === "OPEN · closet" && L["button-cal"] === "LOOK · calendar" && L["button-lunch"] === "TAKE · lunch");
+g.check("the goal stays up while he walks: the wardrobe is outlined from across the room, the bag from the wardrobe", P.closetFar && P.closetFar.chip === L["chip-box"] && P.closetFar.outline && P.closetFar.outline.act === L["button-closet"] && P.lunchFar && P.lunchFar.chip === L["chip-lunch"] && P.lunchFar.outline && P.lunchFar.outline.act === L["button-lunch"], { closetFar: P.closetFar, lunchFar: P.lunchFar });
+g.check("he gets up right beside the rocket: PICK UP works where he stands", P.rocket && P.rocket.offer === L["button-rocket"]);
+
+// the rocket and the line
+g.check("PICK UP: he holds the rocket up (drawn in his raised paw), with one heart over him", R.drawn.holdUp && R.drawn.holdUp.rocket.y0 < R.drawn.holdUp.head + 20 && !!R.drawn.heart, { hold: R.drawn.holdUp, heart: R.drawn.heart });
+g.check("then his line, word for word, in one bubble over him, with no chip", R.line1 && R.line1.who === "sq" && R.line1.text === GUARDIANS && R.line1.chip === "", R.line1);
+g.check("the line waits for NEXT (still up after 6 seconds)", R.line1Held);
+g.check("before the chip names the box, a thought bubble over him shows it (no words, no control)", R.thought && R.thought.step === "think" && R.thought.drew && R.thought.drew.box && R.thought.drew.box.y1 < R.thought.drew.head.y && R.thought.chip === "" && !R.thought.ctrl, R.thought);
+g.check("he carries the gift in his paw on the way to the wardrobe (it never vanishes)", !!R.drawn.carried, R.drawn.carried);
+g.check("his footsteps sound only while he walks (footfalls.js)", R.pads2 > R.pads1 && R.pads1 === R.pads0, { before: R.pads0, standing: R.pads1, walked: R.pads2 });
+
+// the closet and the box
+g.check("OPEN · closet opens the door (squeaky hinge) and the Guardian Box shows on the closet floor", R.wardrobeOpen === "open" && R.boxInCloset && R.boxInCloset.where === "closet" && S.closetOpen === 1, { wardrobe: R.wardrobeOpen, box: R.boxInCloset, hinge: S.closetOpen });
+g.check("PUT IN · box: he takes the box out of the closet onto the floor", R.boxMoving && R.boxMoving.where === "moving", R.boxMoving);
+const cu = R.closeUp || {};
+g.check('the close-up shows the box with its "MY GARDIANS" label, the gift held over it first', cu.first && cu.first.id === "gbox" && cu.first.label === "MY GARDIANS" && cu.first.held && !cu.first.landed, cu.first);
+g.check("then the gift drops into the box and stays (a thunk), and the close-up waits for NEXT", cu.last && cu.last.landed && cu.heldAfter && cu.thunks === 1, { last: cu.last, held: cu.heldAfter, thunks: cu.thunks });
+g.check("back in the room the box stays out on the floor with the gift in it (nothing disappears)", R.boxAfter && R.boxAfter.where === "floor" && R.boxAfter.gift && R.boxAfterShut && R.boxAfterShut.gift, { after: R.boxAfter, shut: R.boxAfterShut });
+g.check("he shuts the closet (bump): the calendar on its door is back", R.wardrobeShut === "closed" && S.closetShut === 1, { wardrobe: R.wardrobeShut, bump: S.closetShut });
+
+// the calendar
+g.check("LOOK · calendar opens the calendar close-up", R.calendarOpen);
+g.check("today's close-up: days 1 to 13 crossed off, the circled Moon Pie day (14) is today", R.calendar && R.calendar.today === 14 && R.calendar.crossed.length === 13 && R.calendar.crossed[12] === 13, R.calendar);
+
+// the lunch
+g.check("closing it: the lunch bag is outlined while he says his line, word for word, over him, no chip", R.line2 && R.line2.who === "sq" && R.line2.text === LUNCH && R.line2.chip === "" && !!R.line2.bagOutline, R.line2);
+g.check("the lunch line waits for NEXT", R.line2Held);
+g.check("TAKE · lunch hands over to today's lunch sneak: the party hall, the bag in his paw", R.hall && R.hall.room === "hall" && R.hall.step === "sneak" && R.hall.hold === "lunch" && R.hall.chip === "Squatch: take Mops his lunch", R.hall);
+g.check("the steps came in order", JSON.stringify(R.steps) === JSON.stringify(["night", "wake", "rocket", "hold", "think", "closet", "toCloset", "box", "lift", "closeup", "shut", "cal", "calendar", "notice", "lunch", "done"]), R.steps);
+
+// Nothing he is told to tap is under him (Fable's review): at OPEN, PUT IN and LOOK he stands right of the wardrobe.
+const SQ = (p) => ({ x0: p.sq.x - 18 * p.scale, x1: p.sq.x + 18 * p.scale, y0: p.sq.y - 50 * p.scale, y1: p.sq.y });
+const hit = (a, b) => a && b && a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
+const things = R.debug.things || {};
+const CAL = { x0: 99, x1: 167, y0: 196, y1: 279 };
+const rb = things.rocket ? { x0: things.rocket.x - 12, x1: things.rocket.x + 12, y0: things.rocket.y - 46, y1: things.rocket.y } : null;
+g.check("nothing he is told to use is under him: the rocket, the box in the closet, the calendar", P.rocket && P.box && P.cal && !hit(SQ(P.rocket), rb) && !hit(SQ(P.box), things.boxIn) && !hit(SQ(P.cal), CAL), { rocket: P.rocket && SQ(P.rocket), box: P.box && SQ(P.box), cal: P.cal && SQ(P.cal) });
+
+// Sizes against the home room (Squatch at the room's scale 3, about 145 px; the approved box at its exact size)
+const Z = R.debug.sizes || {};
+g.check("Squatch is drawn at the room's own size (scale 3)", P.rocket && P.rocket.scale === 3, P.rocket && P.rocket.scale);
+g.check("the rocket is a toy: a quarter to two fifths of Squatch's height", Z.rocket / Z.squatch >= 0.25 && Z.rocket / Z.squatch <= 0.4, Z);
+g.check("the lunch bag is a lunch bag: a fifth to a third of Squatch's height", Z.bag && Z.bag.h / Z.squatch >= 0.2 && Z.bag.h / Z.squatch <= 0.33, Z);
+g.check("the Guardian Box is exactly the approved size (52 x 36 on the 1280 x 830 picture)", Z.box && Math.abs(Z.box.w - 39) < 0.01 && Math.abs(Z.box.h - (36 * 640) / 830) < 0.01, Z.box);
+const cs = cu.last && cu.last.sizes;
+g.check("in the close-up the rocket and the box keep the room's proportion", cs && Math.abs(cs.rocket / cs.box.w - Z.rocket / Z.box.w) < 0.01, { closeUp: cs, room: Z });
+
+// No new words
+const known = new Set(HOME_MORNING_LINES.map((l) => l.text));
+// (the speech bubble's name tag, the calendar's close button, and the room's sleep mark were in the game before)
+const before = new Set([...(R.shownBefore || []), "Squatch", "X", "z z z"]);
+const esc = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const piece = (w) => w.trim().split(/\s+/).length >= 2 && [...known].some((k) => new RegExp("(^" + esc(w) + "(\\s|$))|((^|\\s)" + esc(w) + "$)").test(k));
+const stray = (R.shownMorning || []).filter((w) => !before.has(w) && !known.has(w) && !piece(w));
+g.check("no new words: every word drawn this morning is a whole line of home-morning-lines.js (or was on screen before)", R.shownMorning && stray.length === 0, stray);
+g.check('the note\'s "Rule #1" words are not shown (pending)', R.shownMorning && !(R.shownMorning || []).some((w) => /Rule #1|Brave Sasquatches|stay hidden/.test(w)));
+g.check("the lines file names a status and a source for every line", HOME_MORNING_LINES.length >= 12 && HOME_MORNING_LINES.every((l) => l.id && l.who && l.text && l.status && l.source));
+
+// The old code is gone
+const GAME = readdirSync(join(root, "src", "game")).map((f) => readFileSync(join(root, "src", "game", f), "utf8")).join("\n");
+const DAY2 = readFileSync(join(root, "src", "game", "14-ch1-day2.js"), "utf8");
+g.check("the old gift, box, calendar and lunch steps are gone from src/game (and the old note's words from Day 2)", !/ch1TakeGift|ch1PutBox|ch1DropBox|ch1LookCal|"dropbox"|pick up the gift|circle delivery day/.test(GAME) && !/Rule #1|Brave Sasquatches/.test(DAY2));
+
+// The step restart (↺) at the wardrobe step puts him back where that step began, on it
+const restart = await page.evaluate(() => {
+  const ss = window.__ss,
+    n = ss.op;
+  n.q = [];
+  n.cur = null;
+  ss.ch1JumpBeat(22);
+  for (let i = 0; i < 10; i++) ss.tick(1 / 30);
+  const before = { step: n.ch1Step, x: Math.round(n.sq.x), y: Math.round(n.sq.y) };
+  n.sq.x += 200;
+  ss.sectionReset();
+  for (let i = 0; i < 10; i++) ss.tick(1 / 30);
+  return { before, after: { step: n.ch1Step, x: Math.round(n.sq.x), y: Math.round(n.sq.y), ctrl: n.ctrl, chip: ss.chipNow() } };
+});
+g.check("↺ on the rocket step puts him back beside the rocket, same step, same goal", restart.before.step === "hm-rocket" && restart.after.step === "hm-rocket" && restart.after.x === restart.before.x && restart.after.ctrl && restart.after.chip === "Squatch: pick up the gift", restart);
+g.check("no page errors", errors.length === 0, errors);
+await page.close();
+await g.finish("home-morning");

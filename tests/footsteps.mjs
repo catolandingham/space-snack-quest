@@ -7,7 +7,8 @@
  *   - the FUR alarm (P7): the guards walking the hall, the guard who follows him home, his search, Mops sending him
  *     off (they stand and talk: no footsteps), the guard leaving;
  *   - closing time (P8b): the guests walking out;
- *   - the morning: Mops's hooves as he walks out.
+ *   - the morning: Mops's hooves as he walks out;
+ *   - the home morning of Day 2 (home-morning.js): Squatch's own soft footsteps as he walks, none while he stands.
  *   node tests/footsteps.mjs
  */
 import { join } from "node:path";
@@ -151,5 +152,42 @@ const partySteps = "window.SSQ.beat('ch1-party').now() ? window.SSQ.beat('ch1-pa
   g.check("the morning: Mops's hooves were heard as he walked out", steps.length >= 3, [steps.length, await page.evaluate(() => window.__noSing)]);
   g.check("the morning: every hoof came while Mops walked", bad.length === 0, bad.slice(0, 6));
   g.check("no page errors (morning)", errors.length === 0, errors);
+}
+// ---------- the home morning (Day 2): Squatch's footsteps ----------
+{
+  const { page, errors } = await g.open("?beat=day2", PHONE);
+  await sleep(1400);
+  const r = await page.evaluate(() => {
+    window.requestAnimationFrame = () => 0;
+    const ss = window.__ss,
+      n = ss.op,
+      hm = window.SSQ.beat("ch1-home-morning"),
+      pads = () => hm.debug().sounds.pad || 0,
+      out = { stood: 0, walked: 0, stoodAgain: 0, bad: [] };
+    let last = [n.sq.x, n.sq.y],
+      heard = pads();
+    const frame = (move) => {
+      move && window.SSQ.engine().step("sq", 640, 560, 200, 1 / 60);
+      ss.tick(1 / 60);
+      const now = [n.sq.x, n.sq.y],
+        moved = Math.hypot(now[0] - last[0], now[1] - last[1]) > 0.2,
+        p = pads();
+      p > heard && !moved && !out.lastMoved && out.bad.push({ at: now });
+      out.lastMoved = moved;
+      heard = p;
+      last = now;
+    };
+    for (let i = 0; i < 90; i++) frame(false);
+    out.stood = pads();
+    for (let i = 0; i < 90; i++) frame(true);
+    out.walked = pads() - out.stood;
+    window.SSQ.engine().still("sq");
+    for (let i = 0; i < 90; i++) frame(false);
+    out.stoodAgain = pads() - out.stood - out.walked;
+    return out;
+  });
+  g.check("the home morning: Squatch's footsteps were heard while he walked", r.walked >= 3, r);
+  g.check("the home morning: none while he stood, before or after", r.stood === 0 && r.stoodAgain === 0 && r.bad.length === 0, r);
+  g.check("no page errors (home morning)", errors.length === 0, errors);
 }
 await g.finish();

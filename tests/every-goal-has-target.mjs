@@ -10,7 +10,7 @@
 import { readFileSync } from "node:fs";
 import { startGame } from "./game-page.mjs";
 
-const src = ["game/12-ch1-redesign.js", "game/13-ch1-slice.js", "game/14-ch1-day2.js", "modules/party-lines.js"]
+const src = ["game/12-ch1-redesign.js", "game/13-ch1-slice.js", "game/14-ch1-day2.js", "modules/party-lines.js", "modules/home-morning-lines.js"]
   .map((f) => readFileSync(new URL("../src/" + f, import.meta.url), "utf8"))
   .join("\n");
 const chips = [...src.matchAll(/Squatch: [^"]+/g)].map((m) => m[0]);
@@ -48,11 +48,11 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: put the flyer under your bed for Mops": { party: "P4", home: true, flyer: "paw", x: 790, y: 480 },
     // the group photo once everyone is in place (Brian 2026-11-25): JOIN · photo, the gap glows
     "Squatch: join the group photo": { party: "P6", shot: true, x: 600, y: 470 },
-    "Squatch: pick up the gift": { step: "gift", room: "closet", x: 340, y: 520 },
-    "Squatch: put the gift in the box": { step: "box", room: "closet", x: 230, y: 392 },
-    "Squatch: look at the calendar": { step: "cal", room: "closet", x: 230, y: 392 },
-    "Squatch: circle delivery day": { step: "cal", room: "closet", x: 230, y: 392 },
-    "Squatch: take the lunch": { step: "lunch", room: "closet", x: 500, y: 520 },
+    // the home morning (src/modules/home-morning.js), each opened by its own jump with everything before it done
+    "Squatch: pick up the gift": { hm: "rocket" },
+    "Squatch: put the gift in the box": { hm: "closet" },
+    "Squatch: look at the calendar": { hm: "cal" },
+    "Squatch: take the lunch": { hm: "lunch" },
     "Squatch: take Mops his lunch": { step: "sneak", room: "hall", x: 700, y: 540 },
     "Squatch: give Mops his lunch": { step: "give", room: "passage", x: 500, y: 510 },
     "Squatch: feed Mops": { step: "feed1", room: "passage", zoom: "eat", x: 240, y: 510 },
@@ -143,7 +143,14 @@ const report = await page.evaluate(async (chips) => {
     return lineTo.apply(this, arguments);
   };
   for (const [chip, spec] of Object.entries(play)) {
-    if (spec.party) {
+    if (spec.hm) {
+      Object.assign(n, { ch1PartyNow: null, ch1Morning: null, ch1Zoom: null, ch1PadOn: false, q: [], cur: null });
+      ss.ch1JumpBeat(22);
+      window.SSQ.beat("ch1-home-morning").jump(spec.hm);
+      // at the wardrobe step he has walked there (where OPEN · closet works)
+      spec.hm === "closet" && ((n.sq.x = 300), (n.sq.y = 398));
+      ((n.chip = chip), (n.moved = 200));
+    } else if (spec.party) {
       Object.assign(n, { ch1Day2: false, ch1Zoom: null, ch1PadOn: false, ch1Morning: null, q: [], cur: null, moPose: "hidden" });
       window.SSQ.beat("ch1-party").jump(spec.party);
       const p = n.ch1PartyNow;
@@ -155,6 +162,7 @@ const report = await page.evaluate(async (chips) => {
       ((n.sq.x = spec.x), (n.sq.y = spec.y), (n.ch1Chip = chip), (n.chip = chip), (n.moved = 200));
     } else {
     n.ch1PartyNow = null;
+    n.ch1HomeMorning = null;
     n.ch1Day2 = spec.day2 !== false;
     // The song step of the morning module (src/modules/morning.js), with Mops beside the bucket.
     n.ch1Morning = spec.song ? { step: "song", t: 0, notes: true } : null;

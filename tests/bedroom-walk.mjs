@@ -101,17 +101,21 @@ const blueAt = (x, y) =>
   );
 g.check("beat 1: the Guardian Box is not drawn", !(await blueAt(335, 510)));
 
-// Day 2: the box comes out of the closet when Squatch puts the gift in it.
+// Day 2: the box comes out of the closet when Squatch puts the gift in it (src/modules/home-morning.js), onto the
+// floor between the wardrobe and the bed's top corner.
 await page.evaluate(() => {
   const n = window.__ss.op;
-  Object.assign(n, { q: [], cur: null, ch1Morning: null, ch1Day2: true, ch1Step: "box", scene: "QB", room: "closet", ctrl: true, sqPose: "stand", wardrobe: "closed" });
+  Object.assign(n, { q: [], cur: null, ch1Morning: null });
+  window.__ss.ch1JumpBeat(22);
+  window.SSQ.beat("ch1-home-morning").jump("box");
+  for (let i = 0; i < 4; i++) window.__ss.tick(0.05);
 });
-g.check("Day 2 before PUT: still in the closet", !(await blueAt(335, 510)));
-const put = await page.evaluate(() => (window.__ss.spotsNow() || []).find((s) => s.verb === "PUT"));
-g.check("Day 2: PUT · box is at the closet", put && put.x < 260 && put.y < 410, await page.evaluate(() => JSON.stringify(window.__ss.spotsNow()) + " " + window.__ss.op.scene + " " + window.__ss.op.ch1Step));
-await page.evaluate(() => (window.__ss.op.ch1Step = "cal"));
-g.check("Day 2 after PUT: the box is on the floor", await blueAt(335, 510));
+g.check("Day 2 before PUT: still in the closet (none on the floor)", !(await blueAt(198, 368)));
+const put = await page.evaluate(() => (window.__ss.spotsNow() || []).find((s) => s.verb === "PUT IN"));
+g.check("Day 2: PUT IN · box is at the closet", put && put.x < 330 && put.y < 410, await page.evaluate(() => JSON.stringify(window.__ss.spotsNow()) + " " + window.__ss.op.scene + " " + window.__ss.op.ch1Step));
+await page.evaluate(() => window.SSQ.beat("ch1-home-morning").jump("cal"));
+g.check("Day 2 after PUT: the box is on the floor", await blueAt(198, 368));
 const solids2 = await page.evaluate(() => window.__ss.solids());
-g.check("Day 2 after PUT: the box is solid", solids2.some((o) => o.x0 === 307));
+g.check("Day 2 after PUT: the box is solid", solids2.some((o) => o.x0 === 188));
 
 await g.finish("bedroom-walk");

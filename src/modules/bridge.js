@@ -33,7 +33,7 @@ import { singingNow } from "./music-rules.js";
  * to write another field stops with an error; tests/module-build.mjs checks the morning (and its home-alone
  * part) and the party night against this list.
  */
-export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe"]);
+export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1HomeMorning", "ch1Step", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe"]);
 
 export function createBridge() {
   const beats = new Map();
@@ -155,6 +155,11 @@ export function createBridge() {
         ctx.lineWidth = OUTLINE.width;
         ctx.strokeStyle = OUTLINE.color;
         ctx.strokeRect(b.x0, b.y0, b.x1 - b.x0, b.y1 - b.y0);
+      } else if (target.source) {
+        // a thing the game draws itself (the home morning's rocket and lunch bag): traced from its own drawing
+        const src = target.source();
+        const o = src ? this.outline(room + ":" + spotId + ":drawn", src, target.trace) : null;
+        o && ctx.drawImage(o.canvas, o.x, o.y);
       } else if (picture && picture.complete && picture.naturalWidth) {
         const o = this.outline(room + ":" + spotId + ":" + picture.src, picture, target.trace);
         o && ctx.drawImage(o.canvas, o.x, o.y);

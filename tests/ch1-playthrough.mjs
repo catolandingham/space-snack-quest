@@ -469,7 +469,7 @@ const play = await page.evaluate(() => {
     lights: n.ch1Lights || 0,
     code: n.ch1Code || "",
     brochure: !!n.ch1Brochure,
-    boxed: !!n.ch1Boxed,
+    boxed: !!(n.ch1HomeMorning && n.ch1HomeMorning.gift === "box"), // the gift in the Guardian Box (home-morning.js)
     left: !!n.ch1Left,
     slipped: !!n.ch1Slipped,
     packed: n.ch1Packed || 0,
@@ -479,7 +479,7 @@ const play = await page.evaluate(() => {
 g.check("Chapter 1 reaches the tally card", play.end === "tally", { end: play.end, acts: play.acts, scene: play.state.scene });
 // The party night (src/modules/party.js): the peek, the plant, home through his door, the dress-up, out through his
 // door; the party in disguise (the dance), closing time, and walking home with Mops.
-const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "GRAB · flyer", "WALK · go-home", "SAVE · flyer", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "TAKE · gift", "PUT · box", "DROP · box", "LOOK · calendar", "TAKE · lunch", "SNEAK · hallway", "GIVE · lunch", "FEED · lunch", "FEED · bag", "TAKE · snack", "DROP · snack", "HIDE · plant", "GO · hall", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "LEAVE · food", "PUT · slip", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
+const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "GRAB · flyer", "WALK · go-home", "SAVE · flyer", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "PICK UP · rocket", "OPEN · closet", "PUT IN · box", "LOOK · calendar", "TAKE · lunch", "SNEAK · hallway", "GIVE · lunch", "FEED · lunch", "FEED · bag", "TAKE · snack", "DROP · snack", "HIDE · plant", "GO · hall", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "LEAVE · food", "PUT · slip", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
 g.check("the player does the new actions in order", JSON.stringify(play.acts) === JSON.stringify(wantActs), play.acts);
 const must = [
   "Stormtop Cloud Resort, floating above Jupiter.",

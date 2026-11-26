@@ -102,7 +102,7 @@ async function open(query, consoleErrors = false) {
   await ctx.close();
 }
 
-// Localhost: ?beat=day2 opens Day 2 at the gift. A numbered beat still does nothing here.
+// Localhost: ?beat=day2 opens Day 2 at the gift (src/modules/home-morning.js, awake beside the rocket). A numbered beat still does nothing here.
 {
   const { ctx, page, errors } = await open("?beat=day2");
   const s = await page.evaluate(() => {
@@ -112,7 +112,7 @@ async function open(query, consoleErrors = false) {
   });
   check("day2 jump opens Day 2", s.day2 === true, s);
   check("day2 jump is in the closet", s.room === "closet" && s.scene === "QB", s);
-  check("day2 jump is at the gift, the way to the box and the lunch", s.step === "gift" && s.chip === "Squatch: pick up the gift" && s.ctrl === true, s);
+  check("day2 jump is at the gift (the home morning: the rocket, then the box, the calendar and the lunch)", s.step === "hm-rocket" && s.chip === "Squatch: pick up the gift" && s.ctrl === true, s);
   check("day2 jump adds no page errors", errors.length === 0, errors.slice(0, 3));
   await ctx.close();
 }

@@ -4,14 +4,21 @@
  *   trace: the thing inside this box is traced from the locked picture (the box must be a little bigger
  *          than the thing and must not touch any other line).
  *   rect:  a doorway or opening, or a flat rectangle on a wall: the dashed line goes round this box.
+ *   source: with trace, a thing the game draws itself, traced from its own drawing (a canvas the size of the game
+ *          picture with only that thing on it: home-morning-art.js outlineSource).
  * A goal with no entry gets no outline (optional things, close-ups, and props the game draws itself,
  * which are still to do: see README "Brian's repeat complaints, as tests").
  */
 import { FLYER } from "./party-hall.js";
+import { TRACE, MORNING_THINGS, outlineSource } from "./home-morning-art.js";
 
 // Doorways more than one goal outlines: each typed once.
 const HOME_DOOR = { rect: { x0: 912, x1: 940, y0: 358, y1: 468 } }, // home: the doorway in the right wall
   HALL_HOME_DOOR = { rect: { x0: 426, x1: 528, y0: 600, y1: 622 } }; // the hall: the doorway home, in the front wall
+// A box `k` pixels bigger all round (the line sits outside the thing).
+function pad(b, k) {
+  return { x0: b.x0 - k, x1: b.x1 + k, y0: b.y0 - k, y1: b.y1 + k };
+}
 export const GOAL_TARGETS = {
   // Home
   "closet:peek": HOME_DOOR,
@@ -21,8 +28,12 @@ export const GOAL_TARGETS = {
   "closet:dress": { trace: { x0: 30, x1: 172, y0: 188, y1: 352 } }, // the closet (party P5: dress up)
   "closet:go-party": HOME_DOOR, // party P5, dressed: out through it
   "closet:undress": { trace: { x0: 30, x1: 172, y0: 188, y1: 352 } }, // the closet (party P8c, home early: costume off)
-  "closet:d2-PUT-box": { trace: { x0: 30, x1: 172, y0: 188, y1: 352 } }, // the wardrobe (the box is in it)
-  "closet:d2-LOOK-calendar": { rect: { x0: 99, x1: 167, y0: 196, y1: 279 } }, // the calendar on the wardrobe door
+  // The home morning, Day 2 (home-morning.js): one thing at a time
+  "closet:hm-rocket": { trace: TRACE.rocket, source: () => outlineSource("rocket") }, // the Guardians' toy rocket
+  "closet:hm-closet": { trace: { x0: 30, x1: 172, y0: 188, y1: 352 } }, // the wardrobe (the box is in it)
+  "closet:hm-box": { rect: pad(MORNING_THINGS.boxIn, 4) }, // the Guardian Box on the closet floor, door open
+  "closet:hm-calendar": { rect: { x0: 99, x1: 167, y0: 196, y1: 279 } }, // the calendar on the wardrobe door
+  "closet:hm-lunch": { trace: TRACE.bag, source: () => outlineSource("bag") }, // Mops's lunch bag by the door
   // Party hall
   "hall:hide": { trace: { x0: 392, x1: 494, y0: 432, y1: 556 } }, // the plant in the middle (party sneak)
   "hall:go-home": HALL_HOME_DOOR, // party P4, and the alarm

@@ -164,12 +164,13 @@ for (const viewport of [
   await page.evaluate(() => { window.__ss.op.wardrobe = "open"; });
   await tap(179, 214);
   g.check(`${tag}: open wardrobe does not expose calendar front`, await page.evaluate(() => !window.__ss.op.ch1Calendar));
-  // Day 2 must show the close-up, then still continue to the lunch.
+  // Day 2 must show the close-up, then still continue to the lunch (the home morning's calendar step,
+  // src/modules/home-morning.js: a tap on the glowing calendar does LOOK · calendar).
   await page.evaluate(() => {
     const n = window.__ss.op;
-    Object.assign(n, { q: [], cur: null, scene: "QB", room: "closet", wardrobe: "closed",
-      ch1Day2: true, ch1Step: "cal", ctrl: true });
-    n.sq.x = 230; n.sq.y = 392;
+    // (the party night is over by Day 2)
+    Object.assign(n, { q: [], cur: null, wardrobe: "closed", ch1PartyNow: null });
+    window.__ss.ch1JumpBeat(23);
   });
   await tap(179, 214);
   g.check(`${tag}: day-two calendar uses close-up`, await page.evaluate(() => !!window.__ss.op.ch1Calendar));
@@ -180,7 +181,7 @@ for (const viewport of [
   await sleep(350);
   g.check(`${tag}: visible NEXT button closes the day-two inspection`, await page.evaluate(() => !window.__ss.op.ch1Calendar));
   for (let i = 0; i < 6; i++) { await page.keyboard.press("Space"); await sleep(350); }
-  g.check(`${tag}: day-two close continues to lunch`, await page.evaluate(() => window.__ss.op.ch1Step === "lunch"));
+  g.check(`${tag}: day-two close continues to lunch`, await page.evaluate(() => window.__ss.op.ch1Step === "hm-lunch"));
   await page.evaluate(() => window.__ss.startOpening());
   g.check(`${tag}: a new game closes the overlay`, await page.evaluate(() => !window.__ss.op.ch1Calendar));
   g.check(`${tag}: seated Squatch is not offered a walking LOOK target`, await page.evaluate(() => {

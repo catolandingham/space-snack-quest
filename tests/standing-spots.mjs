@@ -23,6 +23,7 @@ const { MORNING_PLACES } = await mod("morning.js");
 const { HOME_SPOTS } = await mod("home-alone.js");
 const { PHOTO_ROW } = await mod("party-photo.js");
 const { BEDTIME_SPOTS } = await mod("bedtime-story.js");
+const { HOME_MORNING_SPOTS } = await mod("home-morning.js");
 
 let fails = 0;
 const check = (name, ok, info) => (console.log(`${ok ? "PASS" : "FAIL"} ${name}${ok || info == null ? "" : "\n      " + JSON.stringify(info)}`), ok || fails++);
@@ -38,7 +39,8 @@ const FOOT = Object.freeze({ home: { side: 25, up: 30, down: 8 }, hall: { side: 
 const HOME_FURNITURE = {
   bed: { x0: 83, x1: 286, y0: 409, y1: 526 },
   bucket: { x0: 536, x1: 596, y0: 500, y1: 571 },
-  "Guardian box": { x0: 307, x1: 375, y0: 473, y1: 522 },
+  // Day 2 on: out of the closet, on the floor between the wardrobe and the bed's top corner (home-morning-art.js)
+  "Guardian box": { x0: 188, x1: 236, y0: 366, y1: 394 },
 };
 const S = TALK_SPOTS.sq;
 const homeSpots = {
@@ -54,6 +56,8 @@ const homeSpots = {
   ...Object.fromEntries(Object.entries(HOME_SPOTS).map(([k, v]) => ["home alone " + k, v])),
   // the bedtime story (beat 21): Squatch in bed is on the bed on purpose (not listed)
   ...Object.fromEntries(Object.entries(BEDTIME_SPOTS).filter(([k]) => k !== "inBed").map(([k, v]) => ["bedtime " + k, v])),
+  // the home morning (beats 22 to 24): getting out of bed starts on the bed on purpose (not listed)
+  ...Object.fromEntries(Object.entries(HOME_MORNING_SPOTS).filter(([k]) => k !== "bed").map(([k, v]) => ["home morning " + k, v])),
 };
 // Squatch under his bed, and his flop onto it, are on the bed on purpose (not listed above).
 const homeBad = [];

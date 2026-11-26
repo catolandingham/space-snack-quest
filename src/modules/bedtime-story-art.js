@@ -312,9 +312,10 @@ export const BEDTIME_PANELS = Object.freeze(ALL.map((p) => (ctx, t, engine) => (
 
 /**
  * The thought bubble over Squatch's head in the room, with a little Moon Pie crate in it and no words. `head` is
- * the top of his head (canvas). Returns its box. `a` fades it in (0 to 1).
+ * the top of his head (canvas). Returns its box. `a` fades it in (0 to 1). `inside(ctx, cx, cy)` draws something else
+ * in it instead of the crate (the home morning's Guardian Box, home-morning-art.js).
  */
-export function drawThought(ctx, head, a = 1) {
+export function drawThought(ctx, head, a = 1, inside = null) {
   const w = 172,
     h = 118,
     cx = Math.min(940 - w / 2, Math.max(20 + w / 2, head.x + 70)),
@@ -348,7 +349,7 @@ export function drawThought(ctx, head, a = 1) {
   }
   // the little Moon Pie crate (his bed, before it was a bed), with no words
   const u = 0.4;
-  drawCrate(ctx, cx, cy + ((CRATE.body + CRATE.legs) * u) / 2, u, { words: false });
+  inside ? inside(ctx, cx, cy) : drawCrate(ctx, cx, cy + ((CRATE.body + CRATE.legs) * u) / 2, u, { words: false });
   ctx.restore();
   return { x0: cx - w / 2 - 6, y0: cy - h / 2 - 6, x1: cx + w / 2 + 6, y1: cy + h / 2 + 6 };
 }

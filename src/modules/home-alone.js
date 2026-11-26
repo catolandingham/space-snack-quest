@@ -21,6 +21,7 @@
 import { homeLine } from "./home-alone-lines.js";
 import { cutawaySteps } from "./cutaway.js";
 import { drawSquatchArt } from "./squatch-art.js";
+import { GUARDIAN_BOX } from "./guardian-box.js";
 
 // The things in the home room (the locked picture v6, game positions). A "VERB · thing" label sits next to the
 // thing it names and covers neither Squatch nor any of these (the label rule in drawCap, 60-frame-draw.js).
@@ -53,12 +54,8 @@ const LIE = Object.freeze({ x: 266, y: 386, a: -Math.PI / 2 });
 const SQ_BOX = Object.freeze({ x0: -18, x1: 18, y0: -50, y1: 1.5 });
 const PACE = Object.freeze({ walk: 230, jump: 0.5, rest: 0.8, arc: 44 });
 
-/**
- * The Guardian Box, in picture pixels of the locked home picture (1280 x 830), exactly as Brian approved it on
- * 2026-11-23 ("11a", docs/approved-art/closet/closet-gbox-approved-2026-11-23.png): outline included it spans
- * x 153 to 205 and y 402 to 438, under the spare shirt.
- */
-export const GUARDIAN_BOX = Object.freeze({ x0: 153, y0: 402, x1: 205, y1: 438, fill: "rgb(52,120,246)", ink: "rgb(34,36,44)", line: 3, radius: 4, letter: 21 });
+// The Guardian Box's approved place and look: guardian-box.js (shared with the home morning, home-morning-art.js).
+export { GUARDIAN_BOX };
 const PICTURE = Object.freeze({ w: 1280, h: 830 });
 
 /**

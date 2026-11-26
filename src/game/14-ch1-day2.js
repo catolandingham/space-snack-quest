@@ -5,7 +5,6 @@
       { x: 360, y: 400, face: Math.PI / 2 },
       { x: 620, y: 430, face: Math.PI },
     ];
-    const CH1_CLOSET_SPOT = [230, 392]; // the floor in front of the closet, behind the bed
     function ch1Ready(step, chip, scene) {
       ((n.ch1Step = step), (n.ch1Chip = chip), scene && (n.scene = scene), (n.ctrl = !0), (n.act = null), chipNow());
     }
@@ -22,7 +21,11 @@
     function ch1At(verb, cap, x, y, r, fn) {
       return spot({ id: "d2-" + verb + "-" + cap, verb, cap, who: "sq", x, y, r, hot: !0, f: fn });
     }
-    function ch1Day2Begin() {
+    // Beats 22 to 24, the home morning: src/modules/home-morning.js. Without it, Day 2 goes straight to the lunch sneak.
+    function hmBeat() {
+      return (window.SSQ && window.SSQ.beat && window.SSQ.beat("ch1-home-morning")) || null;
+    }
+    function ch1Day2Begin(awake) {
       ((n.ch1Day2 = !0),
         (n.ch1VentLunch = 0),
         (n.wardrobe = "closed"),
@@ -44,34 +47,9 @@
         (n.ch1Zoom = null),
         (n.ch1PadOn = !1),
         (n.ctrl = !1));
-      J([N(() => ch1Ready("gift", "Squatch: pick up the gift", "QB"))]);
+      hmBeat() ? hmBeat().start({ awake: !!awake }) : ch1TakeLunch();
     }
-    function ch1TakeGift() {
-      ((n.ctrl = !1), (n.ch1Hold = "gift"), (n.ch1Heart = !0), D.grab());
-      J([
-        v("sq", "The Guardians came! They always come when I'm scared."),
-        N(() => {
-          ((n.ch1Heart = !1), ch1Ready("box", "Squatch: put the gift in the box", "QB"));
-        }),
-      ]);
-    }
-    function ch1PutBox() {
-      ((n.ctrl = !1), (n.ch1Zoom = { id: "box", zoom: 0, paw: { x: 220, y: 560 } }), (n.ch1Step = "dropbox"), (n.ch1Chip = "Squatch: put the gift in the box"), chipNow());
-    }
-    function ch1DropBox() {
-      if (n.ch1Boxed) return;
-      ((n.ch1Boxed = !0), (n.ch1Hold = ""), D.hide(), ch1CloseZoom(() => ch1Ready("cal", "Squatch: look at the calendar", "QB")));
-    }
-    function ch1LookCal() {
-      ch1OpenCalendar(() => {
-        ((n.ctrl = !1), (n.ch1Cal = 1.6));
-        J([
-          uV(0.7),
-          v("sq", "He forgot his lunch!"),
-          N(() => ch1Ready("lunch", "Squatch: take the lunch", "QB")),
-        ]);
-      });
-    }
+    // The hand-over from the home morning to the lunch sneak (TAKE · lunch, home-morning.js).
     function ch1TakeLunch() {
       ((n.ch1Hold = "lunch"), (n.ctrl = !1), D.grab());
       ch1GoDay("hall", { who: "sq", scene: "QB", stand: [220, 580] }, () => {
@@ -665,9 +643,7 @@
     }
     function ch1ZoomAct() {
       let s = n.ch1Step;
-      s === "dropbox"
-        ? ch1DropBox()
-        : s === "feed1"
+      s === "feed1"
           ? ch1Feed1()
           : s === "feed2"
             ? ch1Feed2()
@@ -694,8 +670,8 @@
     }
     function ch1WorldTap(x, y) {
       if (!n.ch1Day2 || !n.ctrl || n.ch1Zoom || n.ch1PadOn) return !1;
+      if (hmBeat() && hmBeat().active()) return hmBeat().tap(x, y); // a tap on the glowing thing itself
       if (n.ch1Step === "photos" && ch1HallDoorHit(x, y)) return (ch1LeavePhotos(), !0);
-      if (n.ch1Step === "cal" && ch1CalHit(x, y)) return (ch1LookCal(), !0);
       if (n.ch1Step === "family" && Math.hypot(x - 430, y - 530) < 80) return (ch1HideFamily(), !0);
       return !1;
     }
@@ -707,7 +683,7 @@
       if (s === "feed1" || s === "feed2") return Math.hypot(x - 480, y - 250) < 90;
       if (s === "onesnack" || s === "all1") return x < 210 && y > 450;
       if (s === "all2") return Math.hypot(x - 700, y - 430) < 80;
-      if (s === "dropbox" || s === "pack1" || s === "pack2") return Math.hypot(x - 480, y - 330) < 110;
+      if (s === "pack1" || s === "pack2") return Math.hypot(x - 480, y - 330) < 110;
       return !1;
     }
     function ch1Day2Pointer(kind, x, y) {
@@ -785,7 +761,6 @@
     }
     function ch1Day2Tick(dt) {
       if (!n.ch1Day2) return;
-      (n.ch1Cal || 0) > 0 && (n.ch1Cal -= dt || 0);
       (n.ch1BrochureBig || 0) > 0 && (n.ch1BrochureBig -= dt || 0);
       let z = n.ch1Zoom;
       if (z && n.ch1ZoomClosing) {
@@ -811,16 +786,12 @@
           ch1HideFamily());
     }
     function ch1Day2Spots() {
+      if (hmBeat() && hmBeat().active()) return hmBeat().spots();
       if (!n.ch1Day2 || !n.ctrl || n.ch1PadOn) return [];
       let s = n.ch1Step;
       if (s === "sneak" && n.sqPose === "ball")
         return ch2.sec || (n.ch1LunchRun && n.ch1LunchRun.phase !== "back") ? [] : [ch1At("SNEAK", "hallway", 860, 560, 110, ch1ToMops)];
       if (n.sqPose === "hidden" || n.sqPose === "ball" || n.sqPose === "sleep") return [];
-      if (s === "gift") return [ch1At("TAKE", "gift", 340, 520, 100, ch1TakeGift)];
-      if (s === "box") return [ch1At("PUT", "box", CH1_CLOSET_SPOT[0], CH1_CLOSET_SPOT[1], 90, ch1PutBox)]; // the box is in the closet: he takes it out here
-      if (s === "dropbox") return [ch1At("DROP", "box", n.sq.x || 350, n.sq.y || 520, 240, ch1DropBox)];
-      if (s === "cal") return [ch1At("LOOK", "calendar", 230, 392, 110, ch1LookCal)];
-      if (s === "lunch") return [ch1At("TAKE", "lunch", 500, 520, 100, ch1TakeLunch)];
       // Seen (the guest is running to the alarm) or a guard is coming: the only way out is to hide, so ROLL is
       // offered where he stands (C20) and SNEAK waits.
       if (s === "sneak" && (ch2.sec || (n.ch1LunchRun && n.ch1LunchRun.phase !== "back"))) return [ch1At("ROLL", "ball", n.sq.x, n.sq.y, 60, () => (n.sqPose = "ball"))];
@@ -845,7 +816,7 @@
       if (s === "crate") return [ch1At("RETURN", "empty crate", 480, 500, 170, ch1Booked)];
       if (s === "all1") return [ch1At("DROP", "snacks", n.sq.x || 700, n.sq.y || 520, 280, ch1AllDrop)];
       if (s === "all2") return [ch1At("LEAVE", "food", n.sq.x || 700, n.sq.y || 520, 280, ch1LeaveFood)];
-      if (s === "slip") return [ch1At("PUT", "slip", 350, 520, 130, ch1HideSlip)];
+      if (s === "slip") return [ch1At("PUT", "slip", 300, 420, 130, ch1HideSlip)]; // beside the Guardian Box
       if (s === "pack1") return [ch1At("PACK", "box", n.sq.x || 420, n.sq.y || 520, 280, ch1PackBox)];
       if (s === "pack2") return [ch1At("PACK", "bucket", n.sq.x || 420, n.sq.y || 520, 280, ch1PackBucket)];
       if (s === "jacket") return [ch1At("PUT ON", "jacket", 160, 510, 170, ch1Jacket)];
@@ -941,14 +912,6 @@
             let k = ch1PadKey(d);
             (L(k.x, k.y, 36), r("#fffdf8", 4), g(d, k.x, k.y, 28, "#1e2430", "center", 900));
           }));
-      } else if (id === "box") {
-        (m(360, 220, 240, 180, 10), r("#3478f6", 5), g("MY GARDIANS", 480, 300, 26, "#ffffff", "center", 900));
-        n.ch1Hold === "gift" &&
-          (m(24, 156, 320, 112, 8),
-          r("#fff4c2", 3),
-          g("Rule #1", 184, 188, 17, "#1e2430", "center", 800),
-          g("Brave Sasquatches", 184, 216, 17, "#1e2430", "center", 700),
-          g("stay hidden.", 184, 244, 17, "#1e2430", "center", 700));
       } else if (id === "pack") {
         (m(360, 240, 240, 160, 8), r("#d7c4a3", 4), g("MOON PIES", 480, 280, 18, "#1e2430", "center", 900));
         n.ch1Packed && (m(430, 300, 80, 50, 4), r("#3478f6", 3), g("MY GARDIANS", 470, 326, 10, "#fff", "center", 800), drawSlip(448, 312, "#ff8fb8", 22, 18));
@@ -975,20 +938,13 @@
             e.stroke(),
             drawCh1Alien(gue.x, gue.y, gue.face > 2 ? "antenna" : "hat", ALIEN_ADULT, gue.face > 2 ? -1 : 1));
         }
-      n.ch1Hold === "gift" &&
-        n.sqPose === "stand" &&
-        (m(n.sq.x + 16, n.sq.y - 78, 36, 28, 3),
-        r("#e5533d", 2),
-        m(n.sq.x + 34, n.sq.y - 58, 78, 28, 4),
-        r("#fff4c2", 2),
-        g("Rule #1", n.sq.x + 73, n.sq.y - 44, 17, "#1e2430", "center", 800));
-      n.ch1Hold === "lunch" && n.sqPose === "stand" && (m(n.sq.x + 10, n.sq.y - 70, 22, 28, 3), r("#cdbb98", 2));
+      n.ch1Hold === "lunch" && n.sqPose === "stand" && hmBeat() && hmBeat().drawHeldBag(e, n.sq.x + 44 * (n.sq.f || 1), n.sq.y - 4);
       if (n.ch1Paper === "bite" || n.ch1Paper === "mouth") (drawSlip(n.mo.x - 8, n.mo.y - 86, "#ff8fb8", 22, 28), drawSlip(n.mo.x + 8, n.mo.y - 80, "#ffe08a", 14, 18));
       n.ch1Paper === "slip" && drawSlip(n.mo.x - 6, n.mo.y - 84, "#ff8fb8", 18, 24);
       n.ch1Paper === "bin" && (drawSlip(236, 470, "#ff8fb8", 20, 26), drawSlip(252, 476, "#ffe08a", 12, 16));
       n.ch1Paper === "paws" && n.sqPose === "stand" && (drawSlip(n.sq.x + 12, n.sq.y - 70, "#ff8fb8", 18, 24), !n.ch1Mailed && drawSlip(n.sq.x + 24, n.sq.y - 64, "#ffe08a", 12, 16));
       (n.ch1Paper === "pink" || n.ch1Paper === "paw" || n.ch1Hold === "slip") && n.sqPose === "stand" && drawSlip(n.sq.x + 14, n.sq.y - 72, "#ff8fb8", 18, 24);
-      n.ch1Paper === "box" && n.room === "closet" && drawSlip(332, 470, "#ff8fb8", 16, 20);
+      n.ch1Paper === "box" && n.room === "closet" && drawSlip(204, 352, "#ff8fb8", 16, 20); // in the Guardian Box (home-morning-art.js boxOut)
       if (n.ch1SuckT) {
         let t = Math.min(1, (n.T - n.ch1SuckT) / 1.15),
           x0 = n.sq.x + 18,
@@ -1051,12 +1007,12 @@
         (n.ch1Crouch = !1),
         (n.ch1Wide = !1),
         (n.ch1Morning = null),
+        (n.ch1HomeMorning = null),
         (n.ch1Chip = ""));
-      if (b === 22) {
-        ((n.room = "closet"), (n.scene = "QB"), (n.sq.x = 360), (n.sq.y = 520), (n.moPose = "hidden"), (n.ch1Hold = "gift"));
-        n.ch1Zoom = { id: "box", zoom: 1, paw: { x: 420, y: 360 } };
-        n.ch1Step = "dropbox";
-        n.ch1Chip = "Squatch: put the gift in the box";
+      if (b === 22 || b === 23) {
+        // the home morning (home-morning.js), awake beside the rocket; 23: the calendar step
+        ((n.room = "closet"), (n.scene = "QB"), ch1Day2Begin(!0));
+        b === 23 && hmBeat() && hmBeat().jump("cal");
       } else if (b === 25) {
         ((n.room = "hall"), (n.scene = "QB"), (n.ch1Sneak = !0), (n.ch1Step = "sneak"), (n.ch1Hold = "lunch"), (n.sq.x = 220), (n.sq.y = 580), (n.moPose = "hidden"));
       } else if (b === 27) {
@@ -1091,8 +1047,6 @@
           (n.ch1SuckT = n.T - 0.4),
           (n.ch1Chip = "Squatch: hide by the vent"),
           ch1SetPaper(""));
-      } else if (b === 23) {
-        ((n.room = "closet"), (n.scene = "QB"), (n.wardrobe = "closed"), (n.ch1Cal = 2), (n.sq.x = 360), (n.sq.y = 520), (n.moPose = "hidden"), (n.ch1Step = "cal"), (n.ch1Chip = "Squatch: circle delivery day"));
       } else if (b === 29) {
         ((n.room = "hangar"), (n.ch1D = !0), (n.ch1Ship = !0), (n.scene = "QB"), (n.sq.x = 420), (n.sq.y = 520), (n.mo.x = 520), (n.mo.y = 510), (n.ch1ShowBots = !0), (n.ch1Ramp = 1));
       } else if (b === 43) {
