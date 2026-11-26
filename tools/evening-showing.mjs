@@ -281,8 +281,12 @@ if (which === "home") {
   await press();
   for (const [ms, name] of [[2200, "in-bed"], [2600, "lights-down"], [2000, "mops-dozes"], [1000, "mops-tips-over"], [2000, "feet-in-the-air"], [1600, "snore"]]) (await sleep(ms), await still(name));
   await stepIs("out", 20000);
-  await sleep(1000);
-  await still("night-one-out-of-bed");
+  await sleep(1200);
+  await still("night-one-mops-snores-the-doorway-outlined");
+  // the kid's first move gets him out of bed
+  await floor(600, 470);
+  await sleep(1800);
+  await still("he-slips-out-of-bed");
 }
 // Night one: the night robot's rhythm is the same every play (R64); a kid who watched it goes along the back while
 // it looks down and along the front while it looks at the back wall.
