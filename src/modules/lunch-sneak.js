@@ -749,6 +749,10 @@ export function createLunchSneak(bridge) {
       const l = live();
       return !!(l && l.alarm);
     },
+    /** The lunch's state now: when it is a new one (a restart after the LOCKUP card, or ↺) the alarm's quiet ends. */
+    alarmKey() {
+      return live() || null;
+    },
     /** True from TAKE · lunch until beat 28 takes them out of the hall. */
     active() {
       return !!live();

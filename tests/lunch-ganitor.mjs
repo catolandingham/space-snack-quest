@@ -105,6 +105,11 @@ const ball = await page.evaluate(() => {
   out.sting = (beat.debug().partySounds || []).filter((p) => p.name === "sting" || p === "sting").length;
   // noticed rolled up: staying rolled up there does not hide him through the search (the guards come for him)
   out.nearSpotted = !!(st().alarm && st().alarm.spotted);
+  // ↺ in the alarm: the part starts again, a new visit: the quiet ends and the sneak's music comes back
+  ss.sectionReset();
+  tick(0.3);
+  out.cueAfterRestart = window.SSQ.refinedCue("sneak");
+  out.hushedAfterRestart = window.SSQ.musicNow().hush;
   // ↺ while rolled up: he stands at the step's start, nothing of the ball left
   fresh(150, true);
   ss.sectionReset();
@@ -149,6 +154,7 @@ g.check("a ball out in a guest's look, but more than 70 px from her, is not noti
 g.check("standing in that same spot, he is seen (the ball is what hid him)", ball.farStanding.alarm, ball.farStanding);
 g.check("a ball within 70 px of her, in her look, is noticed after 2 s (not before), and the one capture rule starts (FUR!)", !ball.nearEarly.alarm && ball.near.alarm && ball.near.shout === "shout", { early: ball.nearEarly, near: ball.near });
 g.check("when the alarm goes off the music stops (no music cue while the alarm is on; hushed after it) and the FUR! sting is asked for", ball.cueDuring === "" && ball.hushed === true && ball.sting >= 1, { cue: ball.cueDuring, hushed: ball.hushed, sting: ball.sting });
+g.check("↺ during the alarm starts the part again: no alarm, the sneak's music cue is back and the quiet is over", ball.cueAfterRestart === "sneak" && ball.hushedAfterRestart === false, { cue: ball.cueAfterRestart, hushed: ball.hushedAfterRestart });
 g.check("noticed rolled up, he is not safe staying put: the guards know where he is (as a guard who saw him hide)", ball.nearSpotted, ball);
 g.check("↺ while rolled up: he stands again at the step's start, nothing of the ball left", ball.afterReset.pose !== "ball" && ball.afterReset.sqPose !== "ball" && ball.afterReset.ballNear === "{}", ball.afterReset);
 g.check("moving unrolls him (as stepping out of a hiding place)", ball.beforeSteer === "ball" && ball.afterSteer.pose === "stand" && ball.afterSteer.sqPose === "stand", { before: ball.beforeSteer, after: ball.afterSteer });

@@ -174,17 +174,27 @@ export function seeCue(cue, now = clock()) {
 /**
  * The alarm goes off (Brian 2026-11-26: "when alarm goes off, I presume music should stop"): the music stops now, and
  * stays quiet through the alarm and after it, in this place, even when the alarm is over; it comes back only with a
- * visit to another place (then that place's pick plays, as the table says). Called every frame while an alarm is
- * on (`now`: seconds, for tests). The alarm's own sound and the FUR!
+ * visit to another place (then that place's pick plays, as the table says), or when the part with the alarm starts
+ * again (a restart after the LOCKUP card, or ↺: bridge.js compares `key`, the state of the beat `owner` that had the
+ * alarm, and calls unhush when it is not the same any more). Called every frame while an alarm is on (`now`: seconds,
+ * for tests). The alarm's own sound and the FUR!
  * moment's sting are sound effects, not music: they still play.
  */
-export function hushNow(now = clock()) {
+export function hushNow(now = clock(), key = null, owner = "") {
   const place = visit.hush ? visit.hush.place : visit.place || (visit.pend && visit.pend.place) || "";
-  visit.hush = { place, at: now };
+  visit.hush = { place, at: now, key: key || (visit.hush && visit.hush.key) || null, owner: owner || (visit.hush && visit.hush.owner) || "" };
+}
+/** Who hushed the music and with what state ({ owner, key }), or null (bridge.js). */
+export function hushKey() {
+  return visit.hush ? { owner: visit.hush.owner, key: visit.hush.key } : null;
+}
+/** The quiet after an alarm ends at once (the part with the alarm started again: a restart is a new visit). */
+export function unhush() {
+  visit.hush = null;
 }
 /** Tests: whether the music is hushed by an alarm now (and for which place). */
 export function hushed() {
-  return visit.hush ? { ...visit.hush } : null;
+  return visit.hush ? { place: visit.hush.place, at: visit.hush.at, owner: visit.hush.owner } : null;
 }
 /** Tests: where the music is. */
 export function visitNow() {
@@ -199,7 +209,7 @@ export function visitNow() {
  */
 export function keepInSpan(el, cue) {
   if (!el) return 1;
-  visit.place === null && cue && seeCue(cue, -1e9) && seeCue(cue, 0);
+  visit.place === null && cue && seeCue(cue, clock() - 1e9) && seeCue(cue, clock());
   // no music here (a place with none, held a second: the old track has faded out by then), or waiting for a new
   // place to hold: quiet, so nothing old is heard again; and after an alarm, until another place (hushNow)
   if (!visit.place || visit.hush) return 0;
