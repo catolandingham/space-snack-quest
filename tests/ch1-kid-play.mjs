@@ -28,7 +28,7 @@ const MAX_S = +(process.env.KID_MAX_S || 900);
 const OUT = process.env.KID_OUT || join(root, "tests", "out", "kid-play");
 const SHOTS = process.env.KID_SHOTS === "1";
 const AVOID = (process.env.KID_AVOID || "").split(",").filter(Boolean);
-const SLIP_CODE = "4723"; // what the pink slip says
+const SLIP_CODE = "169556"; // what the pink slip says (Brian, chat, 2026-11-26)
 const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 1 };
 mkdirSync(OUT, { recursive: true });
 if (SHOTS) (rmSync(join(OUT, "fr"), { recursive: true, force: true }), mkdirSync(join(OUT, "fr"), { recursive: true }));
@@ -95,8 +95,14 @@ const st = () =>
         return { phase: c.phase, t: c.t, busy: !!c.reach || c.fall >= 0, slots: (p.snacks.slots || []).slice(), at: L.snacks.map((q) => [q[1], q[2]]), leave: [L.close.x, L.close.y] };
       })(),
       polaroid: !!document.querySelector('canvas[aria-label="group photo"]'),
-      pad: !!n.ch1PadOn && !!n.ch1Zoom && n.ch1Zoom.zoom >= 1,
-      padHave: n.ch1Pad || "",
+      // The escape's close-ups (src/modules/escape.js): the keypad, the Moon Pie site, the snack counter.
+      esc: (() => {
+        const b = window.SSQ && window.SSQ.beat("ch1-escape"),
+          e = b && b.active() && b.debug().state;
+        if (!e || !e.cu) return null;
+        const P = b.place;
+        return { cu: e.cu, step: e.step, typed: e.typed || "", keys: Object.fromEntries([..."0123456789"].map((d) => [d, P.keyAt(d)])), ret: P.SITE.ret, snacks: P.SNACKS.at.filter((_, i) => !e.snacks.gone[i]), carry: !!e.snacks.carry };
+      })(),
       zoom: n.ch1Zoom ? n.ch1Zoom.id : "",
       zoomKey: n.ch1Zoom ? [n.ch1Zoom.id, n.ch1Zoom.bag || 0, n.ch1Packed || 0].join(":") : "",
       jailBy: n.jailBy || "",
@@ -429,12 +435,21 @@ while (now() < MAX_S) {
     continue;
   }
   const avoid = (v) => AVOID.some((a) => v.startsWith(a));
-  // The door keypad: type the number printed on the pink slip beside it, one key at a time.
-  if (s.pad) {
-    const d = SLIP_CODE[s.padHave.length] || SLIP_CODE[0];
-    const i = +d - 1;
-    say(s, "KEY " + d);
-    await tapGame(s, d === "0" ? 480 : 480 + ((i % 3) - 1) * 88, d === "0" ? 514 : 250 + Math.floor(i / 3) * 88);
+  // The escape's close-ups: the office keypad (type the number on the pink slip beside it, one key at a time), the
+  // Moon Pie site (its big button), the snack counter (each snack in turn).
+  if (s.esc) {
+    const E = s.esc;
+    if (E.step === "pad") {
+      const d = SLIP_CODE[E.typed.length] || SLIP_CODE[0];
+      say(s, "KEY " + d);
+      await tapGame(s, E.keys[d].x, E.keys[d].y);
+    } else if (E.step === "site") {
+      say(s, "TAP Return empty crate");
+      await tapGame(s, (E.ret.x0 + E.ret.x1) / 2, (E.ret.y0 + E.ret.y1) / 2);
+    } else if ((E.step === "snacks" || E.step === "food") && !E.carry && E.snacks.length) {
+      say(s, "TAP a snack");
+      await tapGame(s, E.snacks[0].x, E.snacks[0].y);
+    }
     await sleep(450);
     continue;
   }

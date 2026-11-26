@@ -27,6 +27,7 @@ import { WOOKIEE_PANELS } from "./tv-story-art.js";
 import { BEDTIME_PANELS, GUARDIANS_PANELS } from "./bedtime-story-art.js";
 import { GBOX_PANELS, drawLunchBag, MORNING_SIZES } from "./home-morning-art.js";
 import { drawGanitorTag } from "./ganitor.js";
+import { ESCAPE_PANELS } from "./escape-art.js";
 
 const INK = "#1e2430";
 const GLOW = "#ffcf33",
@@ -833,6 +834,9 @@ const PANELS = {
   guardians: GUARDIANS_PANELS,
   // beats 22 to 24, the home morning (home-morning.js): the gift drops into the Guardian Box
   gbox: GBOX_PANELS,
+  // beats 48, 50 and 52, the escape (escape.js): the detective wall, the Mars letter, the new Guardian note, the pink
+  // slip in his paw, the Guardian Box (each has words: each waits for NEXT)
+  ...ESCAPE_PANELS,
 };
 
 /**

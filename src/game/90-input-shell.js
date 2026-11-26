@@ -72,6 +72,7 @@
     //   ?beat=42            on a preview host only, open that Chapter 1 beat
     //   ?beat=day2          on localhost or a preview host, open Day 2 at the gift in the closet. The live site ignores it.
     //   ?beat=party         on localhost or a preview host, open the party night at P1 (party:P3 opens P3). Ignored live.
+    //   ?beat=escape        on localhost or a preview host, open the escape after night one (escape:pad opens the keypad...).
     //   &debug=1            show the state strip under the game; the backtick key hides and shows it
     function debugLink() {
       let q;
@@ -87,7 +88,8 @@
         linkBeatRaw = q.get("beat") || "",
         linkBeat = parseInt(linkBeatRaw, 10) || 0,
         linkDay2 = linkBeatRaw === "day2",
-        linkParty = /^party(:P([1-7]|8a|8b|8c))?$/.test(linkBeatRaw) ? linkBeatRaw.slice(6) || "P1" : "";
+        linkParty = /^party(:P([1-7]|8a|8b|8c))?$/.test(linkBeatRaw) ? linkBeatRaw.slice(6) || "P1" : "",
+        linkEscape = /^escape(:(start|ball|grab|pad|computer|snacks|closet))?$/.test(linkBeatRaw) ? linkBeatRaw.slice(7) || "start" : "";
       let previewBeat = !1,
         day2Jump = !1,
         partyJump = !1;
@@ -97,7 +99,7 @@
           local = host === "localhost" || host === "127.0.0.1" || host === "";
         previewBeat = !!linkBeat && !live && !local;
         day2Jump = linkDay2 && !live;
-        partyJump = !!linkParty && !live;
+        partyJump = !!(linkParty || linkEscape) && !live;
       } catch {}
       if (!linkCh && !linkPhase && !linkScene && !linkDebug && !previewBeat && !day2Jump && !partyJump) return;
       !linkCh && linkPhase && (linkCh = 2);
@@ -115,7 +117,8 @@
         linkDebug && debugStrip();
         previewBeat && (startStory(1), (n.q = []), (n.cur = null), ch1JumpBeat(linkBeat));
         day2Jump && (startStory(1), (n.q = []), (n.cur = null), ch1Day2Begin(!0));
-        partyJump && partyBeat() && (startStory(1), (n.q = []), (n.cur = null), ch1ResetState(), (n.moPose = "hidden"), partyBeat().jump(linkParty));
+        partyJump && linkParty && partyBeat() && (startStory(1), (n.q = []), (n.cur = null), ch1ResetState(), (n.moPose = "hidden"), partyBeat().jump(linkParty));
+        partyJump && linkEscape && (startStory(1), (n.q = []), (n.cur = null), ch1ResetState(), (n.ch1Day2 = !0), esBeat() && esBeat().jump(linkEscape));
       }, 0);
     }
     function roomLine(text) {
@@ -264,7 +267,6 @@
           ch1SlicePointer(kind, x, y);
           ch1Day2Pointer(kind, x, y);
         },
-        ch1PadPress,
         ch1JumpBeat,
         shown: () => Array.from(p.shown),
         op: n,

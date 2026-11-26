@@ -24,6 +24,7 @@ const { HOME_SPOTS } = await mod("home-alone.js");
 const { PHOTO_ROW } = await mod("party-photo.js");
 const { BEDTIME_SPOTS } = await mod("bedtime-story.js");
 const { HOME_MORNING_SPOTS } = await mod("home-morning.js");
+const { HOME: ESCAPE_HOME } = await mod("escape-place.js");
 
 let fails = 0;
 const check = (name, ok, info) => (console.log(`${ok ? "PASS" : "FAIL"} ${name}${ok || info == null ? "" : "\n      " + JSON.stringify(info)}`), ok || fails++);
@@ -58,6 +59,8 @@ const homeSpots = {
   ...Object.fromEntries(Object.entries(BEDTIME_SPOTS).filter(([k]) => k !== "inBed").map(([k, v]) => ["bedtime " + k, v])),
   // the home morning (beats 22 to 24): getting out of bed starts on the bed on purpose (not listed)
   ...Object.fromEntries(Object.entries(HOME_MORNING_SPOTS).filter(([k]) => k !== "bed").map(([k, v]) => ["home morning " + k, v])),
+  // the escape (beats 45, 46 and 52): lying in bed is on the bed on purpose (not listed); the brochure is on the wall
+  ...Object.fromEntries(["sq", "door", "mops", "closet", "bedFoot", "mopsNight"].map((k) => ["escape " + k, ESCAPE_HOME[k]])),
 };
 // Squatch under his bed, and his flop onto it, are on the bed on purpose (not listed above).
 const homeBad = [];
@@ -84,7 +87,8 @@ const hallSpots = {
   "photo: Squatch's gap": PHOTO_ROW.squatch,
   "photo: the camera": PHOTO_ROW.camera,
 };
-// On purpose: hiding in a plant (SPOTS.plantMiddle, plantBack); the peek below the picture; Isfred and the band on
+// On purpose: the escape's snack counter (escape-place.js BAR) is the lunch's aisle behind the bar, past the bar's
+// solid (lunch-sneak-place.js COUNTER_SPOTS). On purpose: hiding in a plant (SPOTS.plantMiddle, plantBack); the peek below the picture; Isfred and the band on
 // the stage (CAST.isfred, CAST.band, PHOTO_ROW.stageEnd: the stage is solid for walkers); the bartender behind his
 // counter (CAST.bartender); the alarm and the guards' way in at the hallway doorway past the bar (SPOTS.alarmRun,
 // guardIn).

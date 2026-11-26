@@ -321,7 +321,7 @@ export const BOX_CLOSEUP = Object.freeze({
 });
 
 // One of the older notes standing in the box: a white paper, a little turned, with grey pencil lines and no words.
-function oldNote(ctx, x, y, w, h, a) {
+export function oldNote(ctx, x, y, w, h, a) {
   ctx.save();
   ctx.translate(x, y);
   ctx.rotate(a);
@@ -459,7 +459,7 @@ const FUR = "#6b4428",
  * outline (little tufts along both sides), his fur colour, a round paw with three knuckles and a pale palm pad.
  * A placeholder drawing.
  */
-function furryArm(ctx, paw, from) {
+export function furryArm(ctx, paw, from) {
   const dx = from.x - paw.x,
     dy = from.y - paw.y,
     len = Math.hypot(dx, dy),

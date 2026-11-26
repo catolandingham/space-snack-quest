@@ -22,6 +22,7 @@
         (n.ch1Office = !1),
         (n.ch1PartyNow = null),
         (n.ch1Lunch = null),
+        (n.ch1Escape = null),
         (n.ch1SureEnd = !1),
         (n.ch1Day2 = !1),
         (n.ch1Zoom = null),
@@ -185,6 +186,13 @@
         openCalendar: (next) => ch1OpenCalendar(next),
         takeLunch: () => ch1TakeLunch(),
         shipCall: () => ch1ShipCall(), // beat 28 after the lunch sneak (src/modules/lunch-sneak.js)
+        // The escape (src/modules/escape.js): the walk between rooms, beat 53 after it, the one capture rule's guard
+        // (and whether it is out), the robot drawing.
+        goTo: (dest, flags, next) => ch1GoDay(dest, flags, next),
+        packStart: () => ch1PackStart(),
+        callSecurity: (by) => ch1CallSecurity(by),
+        secOn: () => !!ch2.sec,
+        drawRobot: (ctx, x, y, mail, k) => onCtx(ctx, () => dq(x, y, !!mail, k)),
         offer: () => pick(ch1QSpots()),
         // Holding ↺ inside a full-screen view: the same restart as the page's ↺.
         restartPart: () => sectionReset(),
