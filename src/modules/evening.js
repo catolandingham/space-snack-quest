@@ -22,7 +22,7 @@
  *            tonight." Mops goes back to work.
  * * gohome   the home doorway is outlined (the goal words only if he stalls); walking into it takes him home.
  *   evening  home: the light warms to evening, Mops comes home.
- * * show     SHOW · brochure (Mops glows): he holds it up, no words; Mops: "Didn't you hear what the manager said?..."
+ * * show     SHOW · brochure (where he stands): he holds it up, no words; Mops: "Didn't you hear what the manager said?..."
  * * bed      SLEEP · bed (the bed outlined).
  *   asleep   wordless: he climbs in and lies down; the light goes down; Mops dozes off standing, goes stiff, tips over
  *            like a fainting goat, rolls onto his back with his four feet in the air, and snores (z z z). Squatch
@@ -46,7 +46,8 @@ import { eveningWords } from "./evening-lines.js";
 import { drawPhoto, drawCrayonDrawing, drawBrochure, drawPictureBubble, drawPapers, drawPawPrint, drawFurArm, drawSleepingMops, drawPlaque, drawCutInBack, drawCloseX, drawArrow, fitDesign, PAPERS, PHOTO_POOL, drawHeartShape } from "./evening-art.js";
 import { HALL, HALL_PICTURE } from "./party-hall.js";
 import { LUNCH_SOLIDS, LUNCH_BOUNDS, LUNCH_PLACES } from "./lunch-sneak-place.js";
-import { drawCrates, drawNextGlow, sqPawAt } from "./lunch-sneak-art.js";
+import { drawCrates, sqPawAt } from "./lunch-sneak-art.js";
+import { OUTLINE } from "./outline.js";
 import { coneFrom, coneSees, drawCones, lookAt, SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
 import { startAlarm, tickAlarm, guardCones, addAlarmPlace, ALARM, GUARD_FEET } from "./party-alarm.js";
 import { drawHall, drawOrder } from "./party-draw.js";
@@ -1013,9 +1014,9 @@ export function createEvening(bridge) {
         return [doorSpot("ev-hallway", { ...LUNCH_PLACES.door.stand, r: LUNCH_PLACES.door.r })];
       case "nightway":
         return [doorSpot("ev-bay", HALLWAY.right)];
+      // (the plant is a hiding place during an alarm only: on the way past it, the button stays on the next thing)
       case "bin": {
         const out = [spot("ev-bin", "button-copies", BAY.bin, BAY.bin.box, grabCopies)];
-        standing && Math.hypot(e.pos("sq").x - BAY.plant.x, e.pos("sq").y - BAY.plant.y) < BAY.plant.r && out.push(spot("ev-plant", "button-plant", BAY.plant, BAY.plant.box, hidePlant));
         standing && out.push(ballSpot());
         return out;
       }
@@ -1026,7 +1027,6 @@ export function createEvening(bridge) {
       }
       case "back": {
         const out = [doorSpot("ev-bayout", BAY.door)];
-        standing && Math.hypot(e.pos("sq").x - BAY.plant.x, e.pos("sq").y - BAY.plant.y) < BAY.plant.r && out.push(spot("ev-plant", "button-plant", BAY.plant, BAY.plant.box, hidePlant));
         standing && out.push(ballSpot());
         return out;
       }
@@ -1113,7 +1113,8 @@ export function createEvening(bridge) {
       f = fitDesign(w, h, D.W, D.H),
       zoom = Math.min(1, (E().time() - view.at) / P.zoomIn),
       z = 0.6 + 0.4 * (zoom * zoom * (3 - 2 * zoom)),
-      now = E().time();
+      now = E().time(),
+      px = 1 / (f.k * z); // one screen pixel in the close-up's own units
     ctx.save();
     ctx.translate(f.x + (D.W * f.k * (1 - z)) / 2, f.y + (D.H * f.k * (1 - z)) / 2);
     ctx.scale(f.k * z, f.k * z);
@@ -1140,14 +1141,8 @@ export function createEvening(bridge) {
       ctx.strokeRect(Ph.x - 10, Ph.y - 10, Ph.w + 20, Ph.h + 20);
       drawPhoto(ctx, id, Ph.x, Ph.y, Ph.w, Ph.h, (c, x, y, k, o) => E().drawMopsOn(c, x, y, k, o), now);
       ctx.strokeRect(Ph.x, Ph.y, Ph.w, Ph.h);
-      // the crooked one glows: a kid sees it can be moved
-      if (crooked && lift === 0) {
-        ctx.globalAlpha = 0.55 + 0.35 * Math.sin(now * 5);
-        ctx.lineWidth = 8;
-        ctx.strokeStyle = "#ffd23f";
-        ctx.strokeRect(Ph.x - 18, Ph.y - 18, Ph.w + 36, Ph.h + 36);
-        ctx.globalAlpha = 1;
-      }
+      // the crooked one gets the game's one highlight, the dashed gold outline just outside it (Brian 2026-11-26)
+      crooked && lift === 0 && dashedOutline(ctx, Ph.x - 16, Ph.y - 16, Ph.w + 32, Ph.h + 32, px, now);
       ctx.restore();
       drawPlaque(ctx, GALLERY.plaque.x, GALLERY.plaque.y, GALLERY.plaque.size);
       for (let i = 0; i < 5; i++) {
@@ -1157,7 +1152,7 @@ export function createEvening(bridge) {
         ctx.fill();
       }
       g.i > 0 && drawArrow(ctx, GALLERY.left.x, GALLERY.left.y, GALLERY.left.r, -1);
-      drawArrow(ctx, GALLERY.right.x, GALLERY.right.y, GALLERY.right.r, 1, crooked && lift === 0 ? 0 : 0.5 + 0.5 * Math.sin(now * 4));
+      drawArrow(ctx, GALLERY.right.x, GALLERY.right.y, GALLERY.right.r, 1);
       drawCloseX(ctx, GALLERY.close.x, GALLERY.close.y, GALLERY.close.r);
       Object.assign(out, { photo: g.i + 1, id, crooked, lifted: lift >= 1, crayon: crooked });
     } else if (view.kind === "brochure") {
@@ -1169,7 +1164,9 @@ export function createEvening(bridge) {
     } else if (view.kind === "order" && s.order) {
       const o = s.order,
         B = PAPERS.box;
-      drawPapers(ctx, { mark: o.mark, tear: o.tear, glow: o.pressAt < 0 ? 1 : 0, t: now });
+      drawPapers(ctx, { mark: o.mark, tear: o.tear });
+      // the box gets the dashed gold outline until his paw is on it
+      o.pressAt < 0 && dashedOutline(ctx, B.x - 8, B.y - 8, B.s + 16, B.s + 16, px, now);
       // the prompt beside the box until he presses it
       if (o.pressAt < 0) {
         const label = eveningWords("label-mark");
@@ -1196,6 +1193,20 @@ export function createEvening(bridge) {
     }
     ctx.restore();
     view.drew = out;
+  }
+  /**
+   * The game's one highlight in a close-up (Brian 2026-11-26): the goal outline's dashed gold line (outline.js OUTLINE:
+   * its colour and dashes) just outside the thing, about 3 screen pixels wide whatever the close-up's size (`px` is one
+   * screen pixel in its units), pulsing gently as the room's outlines do. No glow, ring or arrow.
+   */
+  function dashedOutline(ctx, x, y, w, h, px, t) {
+    ctx.save();
+    ctx.globalAlpha = 0.85 + 0.15 * Math.sin((t || 0) * 4);
+    ctx.setLineDash([OUTLINE.dash * 1.4 * px, OUTLINE.dash * px]);
+    ctx.lineWidth = 3 * px;
+    ctx.strokeStyle = OUTLINE.color;
+    ctx.strokeRect(x, y, w, h);
+    ctx.restore();
   }
   /** Where to tap (screen pixels) to do what the open close-up asks next (tests and the kid robot). */
   function viewTargets() {
@@ -1286,10 +1297,7 @@ export function createEvening(bridge) {
       marks,
       shout,
       alarm: !!a && a.phase !== "shout" && a.phase !== "run" && a.phase !== "calm",
-      floor: (ctx) => {
-        if (s.step === "show" || !e.get("ctrl")) return;
-        s.step === "brochure" && drawNextGlow(ctx, box(BAR.brochure.x, BAR.brochure.y, BAR.brochure.w + 6, BAR.brochure.h + 6), t, 0.9);
-      },
+      floor: null,
       extra,
     };
   }
@@ -1319,9 +1327,6 @@ export function createEvening(bridge) {
       paper(ctx, 0, 0, "#ffe27a", 14);
       ctx.restore();
     }
-    // the next thing glows (on the floor, under everyone)
-    e.get("ctrl") && s.step === "bin" && drawNextGlow(ctx, BAY.bin.box, t, 0.6);
-    e.get("ctrl") && s.step === "post" && drawNextGlow(ctx, BAY.mail.box, t, 0.6);
     const people = [];
     const robotAt = (id, x, y) => (a && a.w.id === id ? { x: a.w.x, y: a.w.y } : { x, y });
     const nr = robotAt(BAY.robot.id, BAY.robot.x, BAY.robot.y);
@@ -1516,7 +1521,16 @@ export function createEvening(bridge) {
     drawRoom(ctx) {
       const s = live();
       if (!s || !this.ownsRoom()) return false;
-      if (room() === "hall") drew = { step: s.step, cones: drawHall(ctx, E(), bridge.guests, hallView(s, ctx)) };
+      if (room() === "hall") {
+        drew = { step: s.step, cones: drawHall(ctx, E(), bridge.guests, hallView(s, ctx)) };
+        // Hidden behind the counter, the older program draws no goal outline (it would sit on him): this beat draws the
+        // brochure's (the game's one highlight, the dashed gold outline).
+        if (s.step === "brochure" && s.pose === "hidden" && E().get("ctrl")) {
+          const sp = spots().find((q) => q.id === "ev-brochure");
+          drew.outline = sp && bridge.drawGoalOutline(ctx, "hall", sp.id, null, E().time(), []);
+          drew.outline && bridge.goalMark.drew(drew.outline, sp, E().time());
+        }
+      }
       else drew = { step: s.step, cones: drawBay(ctx, s) };
       return true;
     },

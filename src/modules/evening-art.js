@@ -85,8 +85,7 @@ export function drawCloseX(ctx, x, y, r) {
   ctx.restore();
 }
 /** A round arrow button (the gallery's left and right). */
-export function drawArrow(ctx, x, y, r, dir, glow = 0) {
-  glow > 0 && evDisc(ctx, x, y, r + 8, `rgba(255,214,90,${(0.35 + 0.3 * glow).toFixed(2)})`);
+export function drawArrow(ctx, x, y, r, dir) {
   evDisc(ctx, x, y, r, "#fffaf0", INK, 4);
   ctx.beginPath();
   ctx.moveTo(x - dir * r * 0.3, y - r * 0.42);
@@ -543,9 +542,9 @@ function sheetPrint(ctx, x, y, w, h, ink, mark, code) {
 /**
  * The two stuck-together copies in the close-up (design units, PAPERS): the yellow under the pink, peeking out below
  * and to the right. `mark` (0 to 1): his paw print in the box; `tear` (0 to 1): the yellow sliding out from under the
- * pink and away down to his paw (from 0.3 on it shows its own carbon print); `glow` pulses round the box.
+ * pink and away down to his paw (from 0.3 on it shows its own carbon print).
  */
-export function drawPapers(ctx, { mark = 0, tear = 0, glow = 0, t = 0 } = {}) {
+export function drawPapers(ctx, { mark = 0, tear = 0 } = {}) {
   const P = PAPERS.pink,
     Y = PAPERS.yellow;
   // (it slides down out from under the pink, so its own carbon print shows, then a little further to his paw)
@@ -571,13 +570,6 @@ export function drawPapers(ctx, { mark = 0, tear = 0, glow = 0, t = 0 } = {}) {
   // the pink sheet (over)
   rrect(ctx, P.x, P.y, P.w, P.h, 4, "#ff9ec4", INK, 3);
   sheetPrint(ctx, P.x, P.y, P.w, P.h, INK, mark, true);
-  if (glow > 0 && mark < 1) {
-    const B = PAPERS.box;
-    ctx.save();
-    ctx.globalAlpha = 0.5 + 0.4 * Math.sin(t * 5);
-    rrect(ctx, B.x - 8, B.y - 8, B.s + 16, B.s + 16, 8, null, "#ffd23f", 6);
-    ctx.restore();
-  }
 }
 
 /** Squatch's furry arm in a close-up: from the bottom of the screen (bx, by) to his paw at (x, y), `r` the paw's size. */

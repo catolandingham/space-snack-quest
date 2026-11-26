@@ -14,6 +14,7 @@
  *   KID_MAX_S  most seconds to play (default 900)   KID_OUT  folder for kid-play.json and the log
  *   KID_SHOTS=1  saves pictures while playing and joins them into chapter-1.mp4 (needs ffmpeg)
  *   KID_AVOID=HIDE,DANCE  buttons (verbs) the robot leaves alone (default: none)
+ *   KID_START=evening:37  start from that debug link (localhost) instead of the start of Chapter 1
  */
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
@@ -34,7 +35,8 @@ mkdirSync(OUT, { recursive: true });
 if (SHOTS) (rmSync(join(OUT, "fr"), { recursive: true, force: true }), mkdirSync(join(OUT, "fr"), { recursive: true }));
 
 const g = await startGame({ port: 8902, name: "ch1-kid-play" });
-const { page, errors } = await g.open("?ch=1", PHONE);
+// KID_START=evening:37 starts from a debug link (localhost) instead of the chapter's start: the rest of Chapter 1 from there.
+const { page, errors } = await g.open(process.env.KID_START ? "?beat=" + process.env.KID_START : "?ch=1", PHONE);
 const tap = async (x, y) => {
   await page.touchscreen.touchStart(x, y);
   await sleep(40);
@@ -456,7 +458,9 @@ while (now() < MAX_S) {
     await sleep(200);
     continue;
   }
-  const avoid = (v) => AVOID.some((a) => v.startsWith(a));
+  // (ROLL · ball works anywhere in the lunch sneak and the night's loading bay, so it is on the button nearly all the
+  // time; a kid who has a hiding place to go to goes there: the robot leaves the ball alone)
+  const avoid = (v) => AVOID.some((a) => v.startsWith(a)) || v === "ROLL · ball";
   // The door keypad: type the number printed on the pink slip beside it, one key at a time.
   if (s.pad) {
     const d = SLIP_CODE[s.padHave.length] || SLIP_CODE[0];
@@ -491,12 +495,52 @@ while (now() < MAX_S) {
     await sleep(300);
     continue;
   }
-  // Hidden with a cone on screen: stay put, the way a kid holds still while someone is looking.
-  if ((s.pose === "hidden" || s.pose === "under") && (s.cones.length || (s.party && s.party.alarm)) && Date.now() - (hidAt || (hidAt = Date.now())) < 20000) {
+  // Night one's loading bay (src/modules/evening.js): the night robot's look is the same every play (down 2 s, at the
+  // back wall 4 s, R64), which a kid learns by watching. Seen, he rolls up at once where he is (ROLL · ball) and holds
+  // still. To cross the robot's column he waits on its far side, at the front, until it has just turned to the back
+  // wall, then walks along the front.
+  const night = s.room === "hangar" ? await page.evaluate(() => ((b, n) => (b && n ? { step: n.step, alarm: !!n.alarm, look: b.place.nightLook(n.nightT || 0).phase, t: n.nightT || 0 } : null))(window.SSQ.beat("ch1-evening"), window.__ss.op.ch1Evening)) : null;
+  if (night && night.alarm && s.btn === "ROLL · ball" && s.pose === "stand") {
+    say(s, "PRESS ROLL · ball (seen in the bay)");
+    await tap(s.btnR[0] + s.btnR[2] / 2, s.btnR[1] + s.btnR[3] / 2);
+    await sleep(400);
+    continue;
+  }
+  if (night && !night.alarm && (night.step === "post" || night.step === "back") && s.pose === "stand") {
+    const west = night.step === "back", // going home: from the mail room's side to the door's side
+      far = west ? s.x > 560 : s.x < 400;
+    if (far) {
+      const wait = west ? { x: 650, y: 585 } : { x: 330, y: 585 };
+      if (Math.hypot(s.x - wait.x, s.y - wait.y) > 20) {
+        say(s, `WALK to the corner by the robot's column (${wait.x},${wait.y})`);
+        const st2 = nextStep(s, wait.x, wait.y, 12);
+        await tapGame(s, st2.wait ? wait.x : st2.x, st2.wait ? wait.y : st2.y);
+        await sleep(500);
+        continue;
+      }
+      // wait for the turn to the back wall, then along the front
+      const q = await page.evaluate(() => ((b, n) => b.place.nightLook(n.nightT).phase)(window.SSQ.beat("ch1-evening"), window.__ss.op.ch1Evening));
+      if (q !== "turn") {
+        await sleep(60);
+        continue;
+      }
+      say(s, "CROSS the robot's column along the front (it looks at the back wall)");
+      const to = west ? { x: 300, y: 585 } : { x: 640, y: 585 };
+      await tapGame(s, to.x, to.y);
+      for (let i = 0; i < 40; i++) {
+        await sleep(100);
+        const q2 = await st();
+        if (west ? q2.x < 330 : q2.x > 610) break;
+      }
+      continue;
+    }
+  }
+  // Hidden (or rolled up) with a cone on screen: stay put, the way a kid holds still while someone is looking.
+  if ((s.pose === "hidden" || s.pose === "under" || s.pose === "ball") && (s.cones.length || (s.party && s.party.alarm)) && Date.now() - (hidAt || (hidAt = Date.now())) < 20000) {
     await sleep(250);
     continue;
   }
-  if (s.pose !== "hidden" && s.pose !== "under") hidAt = 0;
+  if (s.pose !== "hidden" && s.pose !== "under" && s.pose !== "ball") hidAt = 0;
   // (with three snacks in his bag he has had enough of the snack bar: he does not open it again)
   const verb = s.btn && s.btn !== "ACTION" && !avoid(s.btn) && !(s.btn === "GRAB · snacks" && s.party && s.party.bag >= 3) ? s.btn : "";
   const vkey = s.scene + "|" + verb;

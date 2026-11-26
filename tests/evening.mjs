@@ -464,6 +464,18 @@ r = await ev(() => {
   window.__jump(142);
   const solids = window.__ss.solids();
   const same = b.place.BAY_FURNITURE.every((f) => solids.some((q) => q.x0 === f.x0 && q.x1 === f.x1 && q.y0 === f.y0 && q.y1 === f.y1));
+  // (the plant is a hiding place during an alarm only: walking past it the button stays on the next thing)
+  n.sq.x = B.plant.x;
+  n.sq.y = B.plant.y;
+  window.__ss.tick(0.05);
+  const calmOffer = (window.__ss.offerNow() || {}).verb || "";
+  // seen first, in the robot's look
+  n.sq.x = 300;
+  n.sq.y = 585;
+  window.__run(8, () => b.place.nightLook(n.ch1Evening.nightT).phase === "down");
+  n.sq.x = 480;
+  n.sq.y = 585;
+  window.__run(1, () => !!n.ch1Evening.alarm);
   n.sq.x = B.plant.x;
   n.sq.y = B.plant.y;
   window.__ss.tick(0.05);
@@ -481,10 +493,10 @@ r = await ev(() => {
   P.ellipse = el;
   const box = B.plant.box,
     inLeaves = eyes.filter(([x, y]) => x > box.x0 && x < box.x1 && y > box.y0 && y < box.y1);
-  return { same, hid: o && o.verb + " · " + o.cap, pose: n.ch1Evening.pose, eyes: inLeaves.length };
+  return { same, calmOffer, hid: o && o.verb + " · " + o.cap, pose: n.ch1Evening.pose, eyes: inLeaves.length };
 });
 g.check("the bay's furniture in evening-place.js is the room's own (the older program's solids)", r.same, r);
-g.check("hidden in the bay's plant, his two eyes show in its leaves", r.hid === "HIDE · plant" && r.pose === "hidden" && r.eyes >= 2, r);
+g.check("the bay's plant is offered as a hiding place during an alarm, not on the way past it; hidden there, his two eyes show in its leaves", r.calmOffer !== "HIDE" && r.hid === "HIDE · plant" && r.pose === "hidden" && r.eyes >= 2, r);
 // ↺ while he walks in through a night doorway: control comes back in a step of the room he is in
 r = await ev(() => {
   const n = window.__ss.op,
