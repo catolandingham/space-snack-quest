@@ -252,9 +252,9 @@ const run = !(registered && asleep)
         walkTo(760, 505);
         const lunch = atStep("lunch");
         out.shownMorning = ss.shown();
+        out.lunchCue = window.SSQ.refinedCue(ss.warmWhy());
         press();
         out.music = window.SSQ.homeMusic.debug();
-        out.lunchCue = window.SSQ.refinedCue(ss.warmWhy());
         for (let i = 0; i < 200 && !(n.room === "hall" && n.ctrl); i++) ss.tick(0.05);
         ss.drawFrame();
         out.hall = { room: n.room, step: n.ch1Step, hold: n.ch1Hold, chip: ss.chipNow() };
