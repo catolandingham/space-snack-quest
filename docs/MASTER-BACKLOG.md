@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–110 | ## Where main is (Chapter 1 redesign) |
-| 111–125 | ## Register |
-| 126–147 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 148–168 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 169–181 | ## Phase 2 (plan section 4, T13 to T18) |
-| 182–204 | ## Phase 1 (plan section 3, T5 to T12) |
-| 205–218 | ## SS40–SS44 |
-| 219–236 | ## Story rows |
-| 237–255 | ## Reset section |
-| 256–266 | ## Still open |
-| 267–270 | ## Chapter 1 replot, recorded and not built |
-| 271–428 | ## Changelog |
+| 24–119 | ## Where main is (Chapter 1 redesign) |
+| 120–134 | ## Register |
+| 135–156 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 157–177 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 178–190 | ## Phase 2 (plan section 4, T13 to T18) |
+| 191–213 | ## Phase 1 (plan section 3, T5 to T12) |
+| 214–227 | ## SS40–SS44 |
+| 228–245 | ## Story rows |
+| 246–264 | ## Reset section |
+| 265–275 | ## Still open |
+| 276–279 | ## Chapter 1 replot, recorded and not built |
+| 280–437 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -23,8 +23,17 @@
 
 ## Where main is (Chapter 1 redesign)
 
+2026-11-26 (evening), draft PR #87, not merged. Done: Brian's answers of 2026-11-26 and phase 4 items 1 to 8 (README, "Chapter 1 redesign", the 2026-11-26 evening paragraph; DECISIONS, "Brian's answers of 2026-11-26"). Open for Brian:
+- Words waiting for his yes: party line 78, "Squatch: put the flyer on your bed for Mops" ("under" changed to "on" after #42); the TV's "STORMTOP NEWS" title card (a suggestion); the Credits screen's words (`credits-lines.js`, from the credit files).
+- The photo's 2 s to step out counts while he can move: not while the Polaroid fills the screen (a kid must close it first).
+- Band order and P3: Funky Chunk now plays from the band's first notes in P3 (until he dances), but P3's sung bubble "Stormtop-vania 1-2-3-4-5!" still shows over it. Drop that bubble in P3 (my pick), or let the band open with Stormtop-Sylvania in P3 only?
+- The photo rule raises the alarm even in a whole disguise (being in the row at the wrong moment is seen up close). Keep, or only "?" in disguise?
+- Sounds to pick from (round-d/sounds): crowd A, B or C; voice A, B or C (A plays now).
+- Not built here: the Day 1 Guardian Box at the Day 2 size (#34): the box and its Day 2 size live on feat/ch1-day2-morning. The docs that still say the TV line was cut (phase 4 item 13) were not changed.
+- Placeholders: the closing beats (2.6 s cheer, 2 s dim), Mops home 2.5 s after he walks in, 2 s to leave the photo, the flyer's place on the bed, the tape and news drawings, the band's fade (1.5 s).
+
 2026-11-26 (afternoon), draft PR #87, not merged. Done: Brian's party showing-7 notes 12 to 18 (README, "Chapter 1 redesign", the 2026-11-26 afternoon paragraph): a "wah-wah" voice under every speech bubble, thought trails and speech tails that end on the speaker, the slower band start with the mic stand and the Croc Boy close-up, notes from the band and the beat bob, faint notes under his door at home, the flyer keeping its size under the bed, the shirt needed for a disguise. Open for Brian:
-- 0:51, the flyer: "He should lay it on top of the bed." The talk later has Mops find it under the bed. Built for now: no shrink, it slides under the bed's front edge. On the bed instead (the talk's words about it would need a look)?
+- 0:51, the flyer: "He should lay it on top of the bed." Answered the same day (#42): on top of the bed, built in the evening round.
 - 1:05, the disguise rule was "any four pieces on the four spots"; it is now "all four spots covered and the shirt on his body". Brian's words were "the shirt... and then it's a combo of everything else": fewer than four pieces would leave fur showing, and fur showing makes guests see him in P6 (`furShows`), so four stay needed. Keep, or shirt plus any one piece (and fur-showing rules changed to match)?
 - The wall speaker's three sound lines are part of the locked hall picture, so they still show while the band plays. Cover them with the wall's colour while the band plays (a change to how the locked picture looks: needs his yes)?
 - New drawings waiting for his eye (placeholders): the Croc Boy close-up, the mic stand, the faint door notes; the voices' sound and level (`MIX.voices` 0.35); the beat the band bobs to is measured from the songs, but where the first beat falls is not lined up with the recording (NOT ASSESSED by ear).

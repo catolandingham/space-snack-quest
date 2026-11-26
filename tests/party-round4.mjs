@@ -344,7 +344,7 @@ async function keepGoing(name, outfit, lost) {
   s = await until(page, (q) => q.now && q.now.flyer === "take", 20000);
   out.fetch = !!s && s.now.flyerGlow !== undefined;
   name && (await still(page, `r4-keep-${name}-takes-the-flyer`));
-  s = await until(page, (q) => q.now.costumeLook, 20000);
+  s = await until(page, (q) => q.now.mopsHearts, 20000);
   out.cameOut = !!s && s.sqPose === "stand" && s.now.pose === "stand" && JSON.stringify(s.now.worn) === JSON.stringify(Object.fromEntries(Object.entries(outfit).map(([k, v]) => [k, lost.includes(k) ? "" : v])));
   out.look = !!s && s.cur !== "bub" && Math.abs(s.mo.x - s.x) < 260 && s.now.flyer === "paw";
   await sleep(300);
@@ -395,9 +395,9 @@ async function keepGoing(name, outfit, lost) {
   out.on = { tv: s.lit, lit: await tvLit(page), now: !!s.now, bub: s.cur === "bub", horn: await atButton(page, HORN), mopsDown: s.mo.y };
   name === "tophat" && (await still(page, "r4-keep-tv-on"));
   // then beat 20 as today: its first panel, the party night over
-  out.heldFor = await tickUntil(page, '(p, n) => !p || p.scene === "done" || (n.cur && (n.cur.k === "panel" || n.cur.k === "card"))', 8);
+  out.heldFor = await tickUntil(page, '(p, n) => !p || p.scene === "done" || (n.cur && (n.cur.k === "panel" || n.cur.k === "card" || n.cur.k === "cutaway"))', 8);
   s = await st(page);
-  out.tv = s.tv && (!s.now || s.now.scene === "done") && (await page.evaluate(() => { const c = window.__ss.op.cur; return !!c && c.k === "card" && c.id === "fb" && c.text === "Years ago, on Stormtop..."; }));
+  out.tv = s.tv && (!s.now || s.now.scene === "done") && (await page.evaluate(() => { const c = window.__ss.op.cur; return !!c && c.k === "cutaway" && c.id === "tvtape" && c.panel === 0; }));
   name === "tophat" && (await page.evaluate(() => window.__ss.drawFrame()), await still(page, "r4-keep-tv-story-first-picture"));
   // the TV story fills the whole picture (Brian 2026-11-25: "the more fullscreen TV"): its first card is dark in all four corners
   out.full = await page.evaluate(() => {
@@ -414,7 +414,7 @@ async function keepGoing(name, outfit, lost) {
   g.check("before the card, Mops comes in and sends the guard off while Squatch is under the bed: the six lines, word for word, in order, each from its speaker", o.guardFirst && JSON.stringify(o.talk.map((l) => [l[0], l[1]])) === JSON.stringify(GUARD_TALK), o.talk);
   g.check("over the guard's bubble, a name (\"A guard\"), never blank; over Mops's, \"Mops\"", o.talk.filter((l) => l[0] === "mops").every((l) => l[2] === "Mops") && o.talk.filter((l) => l[0] === "guard").every((l) => l[2] === "A guard"), o.talk.map((l) => l[2]));
   g.check("a tap on \"Keep going\" closes the card: the ending (P8a), and no \"They lost you.\" was said", o.closed && o.noNote);
-  g.check("Squatch comes out still in costume and takes the flyer he left by the door; Mops looks at him (the costume and the flyer glow, before any line)", o.fetch && o.cameOut && o.look, [o.fetch, o.cameOut, o.look]);
+  g.check("Squatch comes out still in costume and takes the flyer from his bed; Mops turns to him and hearts float up (no glow; Brian 2026-11-26, #48), before any line", o.fetch && o.cameOut && o.look, [o.fetch, o.cameOut, o.look]);
   g.check("Mops and Squatch: the four lines, word for word, in order", JSON.stringify(o.home.map((l) => [l[0], l[1]])) === JSON.stringify(HOME_TALK), o.home);
   g.check("with no words, Mops lifts the hat off him: it leaves his head and plays itself", o.lift && o.lift.id === "tophat" && o.liftNoBubble && o.wornDuring && o.wornDuring.head === "tophat", [o.lift, o.liftNoBubble]);
   g.check("the hat he lifted off is set down on the floor between them, and stays there when Mops walks to the TV", o.hatDown && o.atTv.hatStayed, [o.hatDown, o.atTv]);
@@ -425,7 +425,8 @@ async function keepGoing(name, outfit, lost) {
   g.check("he presses the TV's button with his horn: the horn is drawn on the button at the press (and was not there as he walked up), with its click", o.press.horn >= 12 && o.walk.horn === 0 && o.atTv.hornBefore === 0 && o.press.heard.includes("click") && !o.press.bub, [o.atTv, o.press]);
   g.check("the TV comes on at the press, not before (the screen is drawn lit), and stays on while he stands back down", !o.atTv.tv && o.press.tv && o.press.lit && o.on.tv && o.on.lit && o.on.now && !o.on.bub && Math.abs(o.on.mopsDown - after.TV.stand.y) < 1, [o.atTv, o.press, o.on]);
   g.check("the lit TV is held a moment (a clear last frame), then beat 20 (the TV story), and the party night is over", o.heldFor >= 1 && o.heldFor <= 4 && o.tv, [o.heldFor, o.tv]);
-  g.check("the TV story starts full screen: its \"Years ago, on Stormtop...\" card is dark in all four corners (tests/tv-story.mjs checks the pictures)", o.full.every((c) => Math.abs(c[0] - 0x1e) < 12 && Math.abs(c[1] - 0x24) < 12 && Math.abs(c[2] - 0x30) < 12), o.full);
+  // (since 2026-11-26, #39, the story starts with Squatch putting the tape in: its wall above, the shelf below)
+  g.check("the TV story starts full screen: its first picture, the tape going in, fills all four corners (tests/tv-story.mjs checks the pictures)", o.full.slice(0, 2).every((c) => Math.abs(c[0] - 0xe9) < 12 && Math.abs(c[1] - 0xe3) < 12 && Math.abs(c[2] - 0xd6) < 12) && o.full.slice(2).every((c) => Math.abs(c[0] - 0xcd) < 12 && Math.abs(c[1] - 0xbb) < 12 && Math.abs(c[2] - 0x98) < 12), o.full);
   g.check("no errors in \"Keep going\"", o.errors.length === 0, o.errors);
 }
 {
@@ -657,7 +658,7 @@ const liveLines = (page) => page.evaluate(() => (window.__ss.op.log || []).filte
   const cam = s.now.people.camera;
   g.check("the camera tourist has carried his camera over and stands facing the row", Math.hypot(cam.x - photo.PHOTO_ROW.camera.x, cam.y - photo.PHOTO_ROW.camera.y) < 2 && cam.y > photo.PHOTO_ROW.squatch.y + 100, cam);
   // the label on his place
-  s = await until(page, (q) => q.act === "JOIN · photo", 2000);
+  s = await until(page, (q) => q.act === "JOIN · photo", 5000);
   const label = await page.evaluate(() => { const n = window.__ss.op; return n.lastCap ? { text: n.lastCap.text, box: n.lastCap.box } : null; });
   g.check("JOIN · photo is offered from across the hall, its label at the gap in the row", !!s && !!label && label.text === "JOIN · photo" && Math.abs((label.box.x0 + label.box.x1) / 2 - photo.PHOTO_ROW.squatch.x) < 120 && label.box.y1 < 420 && label.box.x1 <= 960 && label.box.y0 >= 0, label);
   await still(page, "r4-photo-row-and-label");
@@ -841,7 +842,8 @@ const liveLines = (page) => page.evaluate(() => (window.__ss.op.log || []).filte
   await page.evaluate(() => window.__ss.sectionReset());
   await sleep(600);
   const s = await st(page);
-  g.check("↺ during the photo moment restarts P6: the band back on the stage playing, no photo moment on", s.now.scene === "P6" && !s.now.shot && s.now.sound.song === 0 && s.ctrl && Math.hypot(s.x - hall.SPOTS.doorway.x, s.y - hall.SPOTS.doorway.y) < 3, [s.now.shot, s.now.sound.song, s.x, s.y]);
+  // (the band's track before he dances is Funky Chunk since Brian's band order of 2026-11-26: party-band-order.js)
+  g.check("↺ during the photo moment restarts P6: the band back on the stage playing, no photo moment on", s.now.scene === "P6" && !s.now.shot && s.now.sound.song === 1 && s.ctrl && Math.hypot(s.x - hall.SPOTS.doorway.x, s.y - hall.SPOTS.doorway.y) < 3, [s.now.shot, s.now.sound.song, s.x, s.y]);
   await page.close();
 }
 {

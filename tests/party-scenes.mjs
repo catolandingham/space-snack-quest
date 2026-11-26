@@ -575,7 +575,7 @@ let p4Cast = null;
     q.ctrl && q.room === "closet" && q.act === "SAVE · flyer" && (await press(page), await sleep(300));
     q.cur === "bub" && (homeLines.includes(q.text) || homeLines.push(q.text), await sleep(450), await tap(page));
   });
-  g.check("through his door he walks home with it: \"Phew, made it!\", SAVE · flyer puts it under his bed, his two thoughts; P5 with the flyer under the bed", !!s && s.now.flyer === "bed" && s.room === "closet" && JSON.stringify(homeLines) === JSON.stringify(["Phew, made it!", "That party looked so fun. I've never gotten to dance at one.", "I'll sneak back in a costume and dance!"]), [s && s.now.flyer, homeLines]);
+  g.check("through his door he walks home with it: \"Phew, made it!\", SAVE · flyer lays it on his bed, his two thoughts; P5 with the flyer on the bed", !!s && s.now.flyer === "bed" && s.room === "closet" && JSON.stringify(homeLines) === JSON.stringify(["Phew, made it!", "That party looked so fun.", "I'll sneak back in a costume and dance!"]), [s && s.now.flyer, homeLines]);
   await still(page, "p5-home-flyer");
   const p3Trail = await trailJumps(page);
   g.check("from P3 to P5 nobody teleports: Squatch never jumps over 60 inside a room", p3Trail.jumps.length === 0, p3Trail.jumps.slice(0, 3));

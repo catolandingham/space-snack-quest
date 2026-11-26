@@ -25,6 +25,7 @@
 import { HOMEWORK_PANELS } from "./homework-cutaway.js";
 import { WOOKIEE_PANELS } from "./tv-story-art.js";
 import { CROC_PANELS } from "./croc-cutaway.js";
+import { TAPE_PANELS } from "./tv-tape-art.js";
 
 const INK = "#1e2430";
 const GLOW = "#ffcf33",
@@ -51,7 +52,7 @@ let last = null;
  * to tap (31a) and the homework sheet has words to read, so they wait. The Croc Boy close-up (croc-cutaway.js, P3,
  * Brian 2026-11-26) plays 2.6 s by itself: his head bops on the band's first notes.
  */
-export const AUTO = Object.freeze({ beard: [3.6, 0], homework: [3.0, 0], croc: [2.6] });
+export const AUTO = Object.freeze({ beard: [3.6, 0], homework: [3.0, 0], croc: [2.6], tvtape: [2.4, 0] });
 
 /**
  * What each picture sounds like, timed to its drawing (synth.js names): `loop` seconds a loop (0: once), and
@@ -646,6 +647,8 @@ const PANELS = {
   wookiee: WOOKIEE_PANELS,
   // P3, the band's first notes: a Croc Boy bopping, close up (croc-cutaway.js)
   croc: CROC_PANELS,
+  // beat 20's start: the tape going in, then the news report's title card (tv-tape-art.js)
+  tvtape: TAPE_PANELS,
 };
 
 /**

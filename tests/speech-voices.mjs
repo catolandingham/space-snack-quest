@@ -27,7 +27,7 @@ let failed = 0;
 const check = (name, ok, detail) => (console.log(`${ok ? "PASS" : "FAIL"} ${name}`), ok || (failed++, console.log(JSON.stringify(detail))));
 
 // Lines that are not said by someone in a bubble: cards, chips, buttons, tags, signs and the like.
-const NOT_SPOKEN = new Set(["card", "chip", "button", "tag", "banner", "meter", "lockup", "note", "cue", "sheet", "sign", "label", "caption"]);
+const NOT_SPOKEN = new Set(["card", "chip", "button", "tag", "banner", "meter", "lockup", "note", "cue", "sheet", "sign", "label", "caption", "badge"]);
 const tv = Array.isArray(TV_STORY_LINES) ? TV_STORY_LINES : Object.values(TV_STORY_LINES).flat();
 const speakers = new Set([...PARTY_LINES, ...MORNING_LINES, ...HOME_ALONE_LINES, ...tv].map((l) => l.who).filter((w) => w && !NOT_SPOKEN.has(w)));
 const missing = [...speakers].filter((w) => !V.LINE_SPEAKERS[w] || V.LINE_SPEAKERS[w].some((b) => !V.VOICES[b]));
@@ -83,6 +83,16 @@ const syllableGains = c.nodes.filter((n) => n.kind === "gain" && n.gain.calls.le
 check("every syllable starts silent (no click on its first sample)", syllableGains.length === long.syllables.length && syllableGains.every((g) => g.gain.first <= 0.001), syllableGains.map((g) => g.gain.first));
 const reaches = (n, seen = new Set()) => (n === dest ? true : seen.has(n) ? false : (seen.add(n), n.out.length > 0 && n.out.every((o) => reaches(o, seen))));
 check("everything it makes ends at the node it was given (the effects level)", c.nodes.every((n) => reaches(n)), c.nodes.map((n) => n.kind));
+// the three styles Brian can choose from (#4): each starts silent and plays only into the node given
+for (const style of ["A", "B", "C"]) {
+  const c2 = fakeContext(),
+    d2 = { kind: "dest", out: [] };
+  V.playBabble({ c: c2, o: d2 }, 0, long, style);
+  const gs = c2.nodes.filter((n) => n.kind === "gain" && n.gain.calls.length),
+    reach2 = (n, seen = new Set()) => (n === d2 ? true : seen.has(n) ? false : (seen.add(n), n.out.length > 0 && n.out.every((o) => reach2(o, seen))));
+  check(`voice style ${style}: a syllable each, every one starting silent, all ending at the node given`, gs.length === long.syllables.length && gs.every((g) => g.gain.first <= 0.001) && c2.nodes.every((n) => reach2(n)), gs.length);
+}
+check("the game uses style A, the muted trombone (one line to switch: speech-voice.js VOICE_STYLE)", V.VOICE_STYLE === "A");
 check("a trombone with a mute: sawtooth through a low filter", c.nodes.filter((n) => n.kind === "osc").every((o) => o.type === "sawtooth") && c.nodes.filter((n) => n.kind === "filter").every((f) => f.type === "lowpass"));
 check("the voices sit under the music (MIX.voices below MIX.music and the effects)", MIX.voices > 0 && MIX.voices < MIX.music && MIX.voices < MIX.effects, MIX);
 

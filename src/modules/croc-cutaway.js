@@ -6,11 +6,13 @@
  *
  * A PLACEHOLDER drawing, until Brian picks a look: the Croc Boy at the mic (the middle one, blue shirt) drawn big from
  * the shoulders up, with the same shapes and colours as the hall's Croc Boys (party-art.js drawPerson, look B) but
- * with thin outlines. His head bops on Stormtop-Sylvania's beat (music-picks.js bandSong bpm), his jaw opens on each
+ * with thin outlines. His head bops on the beat of the band's first track (Funky Chunk since Brian's band order of
+ * 2026-11-26: music-picks.js bpm), his jaw opens on each
  * beat, notes rise from his mouth, and the stage light shines on him.
  */
 import { rr, oval, line, drawNote, LOOKS } from "./party-art.js";
 import { SPANS } from "./music-picks.js";
+import { BAND_ORDER } from "./party-band-order.js";
 
 const INK = "#1e2430",
   STAGE_BACK = "#3b2b5c",
@@ -22,7 +24,8 @@ const INK = "#1e2430",
 // The singer, in the close-up: his neck at (x, y), drawn `k` screen pixels to one of his own units (he is 100 tall),
 // with outlines `ow` of his units (4 screen pixels).
 const CROC = Object.freeze({ x: 400, y: 470, k: 9.5, ow: 4 / 9.5 });
-const BPM = SPANS.bandSong.bpm;
+// (the band's first notes: the track it plays before he dances, party-band-order.js)
+const BPM = SPANS[BAND_ORDER.idle].bpm;
 
 /** The close-up at `t` seconds into it. Returns what it drew (tests read it through cutaway.js lastCutaway). */
 export function drawCrocBop(ctx, t) {

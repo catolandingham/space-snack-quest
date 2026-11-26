@@ -54,6 +54,7 @@
           return;
         }
         if (p.state === "title") {
+          if (window.SSQ && window.SSQ.credits && window.SSQ.credits.tap(l, o)) return;
           for (let s = 0; s < 4; s++) {
             let q = 40 + s * 225;
             if (l >= q && l <= q + 205 && o >= 466 && o <= 616) {

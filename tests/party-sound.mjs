@@ -58,18 +58,20 @@ g.check("the recordings are credited to Kenney, CC0", /Kenney/.test(credits) && 
 {
   const { page, errors } = await open("party:P6", true);
   let d = await dbg(page);
-  g.check("sound on: the Croc Boys play (song 1) through the master volume", d.on === "on" && d.song === 0, d);
+  // (Brian's band order, 2026-11-26: Funky Chunk, the 2nd of the band's list, until he dances)
+  g.check("sound on: the Croc Boys play (Funky Chunk before he dances) through the master volume", d.on === "on" && d.song === 1, d);
   await sleep(2000);
   d = await dbg(page);
   g.check("the band's notes are really made (oscillators run)", d.ps.osc > 20, d.ps);
   // the break: the band stops dead and shouts its line, shown over the band (he waits behind the crowd, out of sight)
   await page.evaluate(() => ((window.__ss.op.sq.x = 150), (window.__ss.op.sq.y = 590)));
   let shout = false;
-  for (let i = 0; i < 60 && !shout; i++) {
+  for (let i = 0; i < 24 && !shout; i++) {
     shout = await page.evaluate(() => (window.__ss.op.log || []).some((l) => l.k === "live" && l.text === "Stormtop-vania 1-2-3-4-5!"));
     await sleep(500);
   }
-  g.check("in the song's break the band shouts \"Stormtop-vania 1-2-3-4-5!\" (shown over the band)", shout);
+  // (Funky Chunk has no words: the band sings out its line only over Stormtop-Sylvania, which plays while he dances)
+  g.check("while Funky Chunk plays the band sings out no line (it has no words)", !shout);
   // the recordings decode (the crash and the footsteps play them through the master volume)
   const decoded = await page.evaluate(async (files) => {
     const c = new (window.AudioContext || window.webkitAudioContext)();
@@ -95,7 +97,7 @@ g.check("the recordings are credited to Kenney, CC0", /Kenney/.test(credits) && 
   const { page } = await open("party:P5", true);
   await sleep(500);
   const d = await dbg(page);
-  g.check("at home in the dress-up: the band plays on, muffled, and Joe's theme stays off", d.song === 0 && d.warm === "", d);
+  g.check("at home in the dress-up: the band plays on, muffled, and Joe's theme stays off", d.song === 1 && d.warm === "", d);
   await page.close();
 }
 

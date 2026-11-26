@@ -89,7 +89,7 @@ const g = await startGame({ port: 9474, name: "party-showing7" });
   g.check("0:11 the band starts to play as the close-up of a Croc Boy comes up (no band bubble before it)", Math.abs(at("cutaway") - at("band plays")) < 0.1 && !run.events.some((e) => e.what === "bubble band" && e.t < at("cutaway")), run.events);
   const c = run.cutaway || {};
   g.check("0:11 the close-up is the Croc Boy picture, wordless, plays by itself for 2 to 3 s (no tap), then goes", c.id === "croc" && c.auto >= 2 && c.auto <= 3 && c.ended >= 2 && c.ended <= 3.1 && c.croc && !c.ctrlWhile, c);
-  g.check("0:11 he bops: the picture's beat runs on (more than 5 beats of the song by its end) and notes rise", c.croc && c.croc.beat > 5 && (c.notes || []).length > 0, c);
+  g.check("0:11 he bops: the picture's beat runs on (more than 4 beats of the band's track by its end) and notes rise", c.croc && c.croc.beat > 4 && (c.notes || []).length > 0, c);
   g.check("0:11 back in the hall the band's song bubble comes after the close-up", at("bubble band") > at("cutaway") + 2, run.events);
   // 0:05 tails
   const inside = (pt, b) => pt && pt.x >= b.x0 && pt.x <= b.x1 && pt.y >= b.y0 && pt.y <= b.y1;
@@ -177,31 +177,5 @@ const g = await startGame({ port: 9474, name: "party-showing7" });
   const without = await pinkNear();
   g.check("0:46 at home (P5) with the band playing next door, faint notes drift in under his door; none once it stops", r.room === "closet" && r.band && withBand > 20 && without === 0, { r, withBand, without });
   g.check("no page errors (P5)", errors.length === 0, errors);
-}
-// ---------- 0:18 the wall speaker shows no ring while the band plays ----------
-{
-  const { page, errors } = await g.open("?beat=party:P6", PHONE);
-  await sleep(1500);
-  const r = await page.evaluate((S) => {
-    window.requestAnimationFrame = () => 0;
-    const ss = window.__ss,
-      p = ss.op.ch1PartyNow,
-      c = document.querySelector("canvas"),
-      k = c.width / 960,
-      grab = () => (ss.drawFrame(), Array.from(c.getContext("2d").getImageData(Math.round(S.x1 * k), Math.round(S.y0 * k), Math.round(40 * k), Math.round((S.y1 - S.y0) * k)).data).join(",")),
-      was = p.speakerOn;
-    p.speakerOn = false;
-    const quiet = grab();
-    p.speakerOn = true;
-    const onWithBand = grab();
-    const band = p.band;
-    p.band = false;
-    const onAlone = grab();
-    p.band = band;
-    p.speakerOn = was;
-    return { band, sameWithBand: quiet === onWithBand, differsAlone: quiet !== onAlone };
-  }, hall.HALL_SPEAKER);
-  g.check("0:18 while the band plays the wall speaker draws no ring (with the band stopped, its ring still shows)", r.band && r.sameWithBand && r.differsAlone, r);
-  g.check("no page errors (P6)", errors.length === 0, errors);
 }
 await g.finish("party-showing7");

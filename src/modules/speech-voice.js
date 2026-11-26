@@ -85,11 +85,74 @@ export function babbleFor(b) {
 }
 
 /**
- * Plays a babble (babbleFor) into A = { c: an AudioContext, o: the node it plays into } from time t: each syllable a
- * sawtooth through a low filter that opens and closes ("wah"), like a trombone with a plunger mute. Returns the gain
- * node it all goes through.
+ * The voice under bubbles, three ways for Brian to choose from (Brian 2026-11-26; samples in
+ * tests/out/.../round-d/sounds/): "A" a muted trombone's "wah-wah" (the default), "B" a mumbly hum, "C" a short blip
+ * a syllable. One line to switch.
  */
-export function playBabble(A, t, plan) {
+export const VOICE_STYLE = "A";
+
+/**
+ * Plays a babble (babbleFor) into A = { c: an AudioContext, o: the node it plays into } from time t, in `style`
+ * (VOICE_STYLE unless given). Returns the gain node it all goes through.
+ */
+export function playBabble(A, t, plan, style = VOICE_STYLE) {
+  return (VOICE_PLAYERS[style] || VOICE_PLAYERS.A)(A, t, plan);
+}
+// One syllable's level: silent before it starts (no click), up quickly, held, then away by its end.
+function syllableGain(c, t0, d, level, hold = 0.7) {
+  const g = c.createGain();
+  g.gain.value = 0.0001;
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(level, t0 + Math.min(0.03, d * 0.3));
+  g.gain.setValueAtTime(level, t0 + d * hold);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + d);
+  return g;
+}
+// B: a mumbly hum, "mm-hm-mm": a soft triangle through a low, closed filter, each syllable gliding into the next.
+function playHum(A, t, plan) {
+  const c = A.c,
+    out = c.createGain();
+  out.connect(A.o);
+  for (const s of plan.syllables) {
+    const t0 = t + s.at,
+      os = c.createOscillator(),
+      lp = c.createBiquadFilter(),
+      g = syllableGain(c, t0, s.d + 0.03, BABBLE.level * 0.9, 0.8);
+    os.type = "triangle";
+    os.frequency.setValueAtTime(s.f * 0.98, t0);
+    os.frequency.linearRampToValueAtTime(s.f * 1.02, t0 + s.d);
+    lp.type = "lowpass";
+    lp.Q.value = 2;
+    lp.frequency.value = 480;
+    os.connect(lp);
+    lp.connect(g);
+    g.connect(out);
+    os.start(t0);
+    os.stop(t0 + s.d + 0.08);
+  }
+  return out;
+}
+// C: a short square blip a syllable, like an old game's talking text.
+function playBlips(A, t, plan) {
+  const c = A.c,
+    out = c.createGain();
+  out.connect(A.o);
+  for (const s of plan.syllables) {
+    const t0 = t + s.at,
+      d = Math.min(0.07, s.d * 0.5),
+      os = c.createOscillator(),
+      g = syllableGain(c, t0, d, BABBLE.level * 0.35, 0.6);
+    os.type = "square";
+    os.frequency.setValueAtTime(s.f * 2, t0);
+    os.connect(g);
+    g.connect(out);
+    os.start(t0);
+    os.stop(t0 + d + 0.03);
+  }
+  return out;
+}
+// A: the muted trombone: each syllable a sawtooth through a low filter that opens and closes ("wah").
+function playWah(A, t, plan) {
   const c = A.c,
     out = c.createGain();
   out.gain.value = 1;
@@ -121,6 +184,7 @@ export function playBabble(A, t, plan) {
   }
   return out;
 }
+const VOICE_PLAYERS = Object.freeze({ A: playWah, B: playHum, C: playBlips });
 
 /** The voices for the game: speak(b) when a bubble opens (bridge.js bubbleSound). `getEngine` is the bridge's engine. */
 export function createSpeechVoice(getEngine) {

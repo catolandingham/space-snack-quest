@@ -81,5 +81,40 @@ check("every party sound ends at the master volume it was given", stray.length =
   for (let t = 30; t < 35; t += 0.1) ((c.currentTime = t), sound.tick());
   check("with sound off nothing is made", c.nodes.length === before, c.nodes.length - before);
 }
+// The alarm (Brian 2026-11-26: "boing, boing, boing" is gone): each whoop's level, worked out from its gain's own
+// automation, stays within 3 dB of its peak from 0.02 s to 0.45 s into it (the alarm page's whoop holds; a plucked
+// one falls away from the start).
+{
+  const gains = [];
+  const c = {
+    currentTime: 0,
+    createGain() {
+      const pts = [];
+      const g = { gain: { value: 1, setValueAtTime: (v, t) => pts.push(["set", v, t]), exponentialRampToValueAtTime: (v, t) => pts.push(["exp", v, t]), linearRampToValueAtTime: (v, t) => pts.push(["lin", v, t]), setTargetAtTime() {} }, connect: (x) => x, disconnect() {}, pts };
+      gains.push(g);
+      return g;
+    },
+    createOscillator: () => ({ frequency: { setValueAtTime() {}, exponentialRampToValueAtTime() {}, linearRampToValueAtTime() {} }, connect: (x) => x, start() {}, stop() {}, type: "" }),
+  };
+  BOARD.alarm({ c, o: { connect() {} } }, 10);
+  // the level at time x from a list of automation points (exponential ramps between points)
+  const level = (pts, x) => {
+    let prev = null;
+    for (const [kind, v, t] of pts) {
+      if (t >= x) return !prev || kind === "set" ? (prev ? prev[1] : v) : prev[1] * (v / prev[1]) ** ((x - prev[2]) / (t - prev[2]));
+      prev = [kind, v, t];
+    }
+    return prev ? prev[1] : 0;
+  };
+  const whoops = gains.filter((g) => g.pts.length),
+    worst = whoops.map((g) => {
+      const t0 = g.pts[0][2],
+        peak = Math.max(...g.pts.map((q) => q[1])),
+        dbs = [];
+      for (let x = 0.02; x <= 0.45; x += 0.01) dbs.push(20 * Math.log10(level(g.pts, t0 + x) / peak));
+      return Math.round(Math.min(...dbs) * 10) / 10;
+    });
+  check("the alarm is three whoops, each holding within 3 dB of its peak from 0.02 s to 0.45 s (no boing)", whoops.length === 3 && worst.every((d) => d > -3), worst);
+}
 console.log(failed ? `${failed} checks failed` : "party-sound-units checks passed");
 process.exit(failed ? 1 : 0);

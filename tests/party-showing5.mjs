@@ -3,9 +3,9 @@
  * move it). Each check names its note:
  *   1  the camera's tripod is out of sight until the group photo; the Croc Boys show no cones while they play on the
  *      stage, and their cones come back when they step down for the photo
- *   2  home with the flyer: "Phew, made it!", the bed glows (it is the goal), the chip, SAVE · flyer slides it under
- *      the bed, then his two new thoughts (the two dropped ones are not said); the party's music keeps coming through
- *      his door the whole time; in the talk he takes it from under his bed
+ *   2  home with the flyer: "Phew, made it!", the bed glows (it is the goal), the chip, SAVE · flyer lays it on top of
+ *      the bed (since 2026-11-26, #42), then his two new thoughts (the two dropped ones are not said); the party's
+ *      music keeps coming through his door the whole time; in the talk he takes it from his bed
  *   3  the crowd's murmur is off while the band plays; the vent sucks a piece of his costume in (after his first
  *      minute), and still takes fur with nothing on
  *   4  the dance spot's outline shows whenever he can dance, and not while he dances
@@ -90,30 +90,30 @@ const cones = (page) => page.evaluate(() => window.SSQ.beat("ch1-party").cones()
   t = await run(page, "(p, n) => n.ctrl && !n.cur", 6);
   await run(page, "() => false", 0.2);
   s = await st(page);
-  g.check("2: then the chip \"Squatch: put the flyer under your bed for Mops\", his bed outlined (it glows), and SAVE · flyer", s.chip === L("chip-save-flyer") && s.ring === "save-flyer" && s.act === L("button-save-flyer") && s.now.flyer === "paw", [s.chip, s.ring, s.act, s.now.flyer]);
+  g.check("2: then the chip \"Squatch: put the flyer on your bed for Mops\", his bed outlined (it glows), and SAVE · flyer", s.chip === L("chip-save-flyer") && s.ring === "save-flyer" && s.act === L("button-save-flyer") && s.now.flyer === "paw", [s.chip, s.ring, s.act, s.now.flyer]);
   music.push(s.now.sound.song);
   await page.evaluate(() => (window.__ss.actionDown(), window.__ss.actionUp()));
   t = await run(page, "(p) => p.scene === 'P5'", 20);
   s = await st(page);
   music.push(s.now.sound.song);
   const heard = await said(page);
-  g.check("2: SAVE · flyer slides it under the bed (it lies there, a corner out), then \"That party looked so fun...\" and \"I'll sneak back in a costume and dance!\", then P5", t >= 0 && s.now.flyer === "bed" && JSON.stringify(heard.slice(-2)) === JSON.stringify([L("sq-party-fun"), L("sq-sneak-back")]), [t, s.now.flyer, heard]);
+  g.check("2: SAVE · flyer lays it on top of the bed (Brian 2026-11-26, #42), then \"That party looked so fun...\" and \"I'll sneak back in a costume and dance!\", then P5", t >= 0 && s.now.flyer === "bed" && JSON.stringify(heard.slice(-2)) === JSON.stringify([L("sq-party-fun"), L("sq-sneak-back")]), [t, s.now.flyer, heard]);
   const flyerAt = await page.evaluate(() => window.SSQ.beat("ch1-party").flyerAt());
-  g.check("2: the flyer is drawn under the bed's front corner", !!flyerAt && Math.hypot(flyerAt.x - hall.HOME_ROOM.flyer.x, flyerAt.y - hall.HOME_ROOM.flyer.y) < 1, flyerAt);
+  g.check("2: the flyer is drawn on the bed", !!flyerAt && Math.hypot(flyerAt.x - hall.HOME_ROOM.flyer.x, flyerAt.y - hall.HOME_ROOM.flyer.y) < 1, flyerAt);
   // (the dance wish is said again since 2026-11-26, in P3 before the sneak, not at home: tests/party-showing6.mjs)
   g.check("2: the dropped lines are not said (\"I deserve one night of normal.\", \"Costume on. Then I dance!\"), and at home not the dance wish", !heard.includes(L("sq-normal")) && !heard.includes(L("sq-costume")) && !heard.includes(L("sq-dance-wish")), heard);
   g.check("2: the party's music plays the whole time he is home (muffled through his door)", music.every((m) => m >= 0) && s.now.sound.song >= 0, music);
   g.check("no page errors (2)", errors.length === 0, errors);
   await page.close();
 }
-// ---------- 2: in the talk he takes the flyer from under the bed ----------
+// ---------- 2: in the talk he takes the flyer from the bed ----------
 {
   const { page, errors } = await open("party:P8a");
   // (from its start: the page ran a moment before the clock was stopped)
   await page.evaluate(() => window.__ss.sectionReset());
   const t = await run(page, "(p) => p.flyer === 'take'", 20);
   const s = await page.evaluate(() => ({ x: window.__ss.op.sq.x, y: window.__ss.op.sq.y }));
-  g.check("2: in the talk Squatch takes the flyer from under his bed (he stands at the bed's front corner to take it)", t >= 0 && Math.hypot(s.x - hall.HOME_ROOM.saveAt.x, s.y - hall.HOME_ROOM.saveAt.y) < 4, [t, s]);
+  g.check("2: in the talk Squatch takes the flyer from his bed (he stands at the bed's front corner to take it)", t >= 0 && Math.hypot(s.x - hall.HOME_ROOM.saveAt.x, s.y - hall.HOME_ROOM.saveAt.y) < 4, [t, s]);
   g.check("no page errors (2, the talk)", errors.length === 0, errors);
   await page.close();
 }
@@ -147,7 +147,11 @@ const cones = (page) => page.evaluate(() => window.SSQ.beat("ch1-party").cones()
   g.check("5: one thing at a time: settle, pose, call, camera, gather, then join", JSON.stringify(phases) === JSON.stringify(["settle", "pose", "call", "camera", "gather", "join"]), phases);
   const byPh = Object.fromEntries(steps.map((x) => [x.ph, x]));
   g.check("5: no chip and no JOIN · photo until everyone is in place", steps.filter((x) => x.ph !== "join").every((x) => !x.join && x.chip !== L("chip-join-photo")), steps.map((x) => [x.ph, x.join, x.chip]));
-  g.check("5: then the gap glows, the chip reads \"Squatch: join the group photo\" and JOIN · photo is offered", s.chip === L("chip-join-photo") && s.spots.includes("photo"), [s.chip, s.spots]);
+  // (since 2026-11-26, #46: the chip and JOIN · photo come with the 3-2-1; before it, stepping in gets him seen)
+  g.check("5: everyone in place: still no chip and no JOIN · photo until the 3-2-1", s.chip !== L("chip-join-photo") && !s.spots.includes("photo"), [s.chip, s.spots]);
+  await run(page, "(p) => p.shot && p.shot.phase === 'count'", 5);
+  s = await st(page);
+  g.check("5: then, with the 3-2-1, the gap glows, the chip reads \"Squatch: join the group photo\" and JOIN · photo is offered", s.chip === L("chip-join-photo") && s.spots.includes("photo"), [s.chip, s.spots]);
   g.check("5: nobody moves while the Croc Boy calls \"Group photo!\" and the camera tourist carries the tripod over alone", !!byPh.call && !!byPh.camera && JSON.stringify(byPh.call.guests) === JSON.stringify(byPh.camera.guests), [byPh.call && byPh.call.guests, byPh.camera && byPh.camera.guests]);
   g.check("1: the Croc Boys show no cones on the stage until they step down for the photo, then their cones come back", ["settle", "pose", "call", "camera"].every((ph) => byPh[ph] && byPh[ph].cones === 0) && !!byPh.gather && byPh.gather.cones === 3, steps.map((x) => [x.ph, x.cones]));
   g.check("5: one Croc Boy steps forward for the call (the middle one, toward the edge of the stage)", !!byPh.call && !!byPh.camera && (await page.evaluate(() => window.__callStep || 0)) > 8, await page.evaluate(() => window.__callStep));

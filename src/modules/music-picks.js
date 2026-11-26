@@ -9,9 +9,11 @@
  *             at 0:01 and dips quiet at 0:18.5) and about 2:33 to 2:59; sung otherwise (judged with a speech-to-text
  *             program, whisper.cpp on this Mac, and spectrum pictures of the stereo's middle against its sides: a
  *             curving middle-only voice line starts at 0:19.5; edges are estimates).
- *   goating   goating-in-space.mp3, "Goating in Space, Brian's song made with Suno, 2026-11-26", his remake of
- *             Floating in Space with new words, 1:44, sung almost all through, -15.7 LUFS. (His Floating in Space
- *             recording left the repo the same day: nothing plays it.)
+ *   floating  goating-in-space.mp3, "Floating in Space, Brian's song made with Suno, 2026-11-26", his new recording
+ *             of Floating in Space (its words sing "goating in space"; Brian 2026-11-26: "The new Ganitor song is
+ *             still called Floating in Space. It just happens to have the lyrics goating in space"), 1:44, sung almost
+ *             all through, -15.7 LUFS. (The old Floating in Space recording left the repo the same day and never
+ *             comes back.)
  *   band      stormtop-sylvania.mp3, "Stormtop-Sylvania, Brian's song made with Suno, 2026-11-26", for the Croc Boys,
  *             2:00, sung all through, -15.1 LUFS.
  *   Kevin MacLeod (incompetech.com), CC BY 4.0, Brian's picks of 2026-11-26, 112 kbps:
@@ -26,6 +28,9 @@
  *   morning   morning.mp3, "Morning", 2:33, -18.5 LUFS.
  *   rainbows  rainbows.mp3, "Rainbows", 3:39, -15.7 LUFS.
  *   reawakening  reawakening.mp3, "Reawakening", 3:34, -35.6 LUFS (very quiet).
+ *   runamok   run-amok.mp3, "Run Amok", 1:47, re-encoded at 112 kbps (Brian 2026-11-26: the octopus chase), -16.6 LUFS.
+ *   mopshum   mops-hum.mp3, Mops's hum at closing time (Brian 2026-11-26): recorded for the game, pitched down to
+ *             sound like Mops, his goat bleat, then more of the hum; 0:32, mono, -18.8 LUFS. Played quiet and muffled.
  * A span plays from `from` to `to` seconds and goes back to `from` (a short fade at the end and the start), or,
  * `once`, plays to `to` a single time, fades out, and stays quiet until the next visit (Brian: "I don't think it should
  * play all the way thru a lot of times").
@@ -34,7 +39,7 @@
 // Each file, and how much it is turned up or down to sound as loud as Joe's theme.
 export const MUSIC_FILES = Object.freeze({
   theme: Object.freeze({ url: "music/main-theme-from-brian.mp3", match: 1 }),
-  goating: Object.freeze({ url: "music/goating-in-space.mp3", match: 0.85 }),
+  floating: Object.freeze({ url: "music/goating-in-space.mp3", match: 0.85 }),
   band: Object.freeze({ url: "music/stormtop-sylvania.mp3", match: 0.79 }),
   funky: Object.freeze({ url: "music/funky-chunk.mp3", match: 0.68 }),
   lobby: Object.freeze({ url: "music/lobby-time.mp3", match: 0.98 }),
@@ -45,6 +50,8 @@ export const MUSIC_FILES = Object.freeze({
   morning: Object.freeze({ url: "music/morning.mp3", match: 1.17 }),
   rainbows: Object.freeze({ url: "music/rainbows.mp3", match: 0.85 }),
   // (a very quiet track, -35.6 LUFS: turned up 12 dB, not the full 18.5, so its hiss stays down)
+  runamok: Object.freeze({ url: "music/run-amok.mp3", match: 0.94 }),
+  mopshum: Object.freeze({ url: "music/mops-hum.mp3", match: 1 }),
   reawakening: Object.freeze({ url: "music/reawakening.mp3", match: 4 }),
 });
 // Stretches of the files that can be picked.
@@ -54,7 +61,7 @@ export const SPANS = Object.freeze({
   // `bleats`: seconds into the song where Mops's goat bleat plays over it, in its three quiet gaps (found by loudness:
   // the music dips about 15 dB at 0:36.5 to 0:38.9 after "A really long way from home", at 1:04.0 to 1:06.4 after
   // "It's really a pretty nice room", and at 1:35 to 1:38 after "He means I love you"; estimates to about 0.2 s).
-  goatingOnce: Object.freeze({ file: "goating", from: 0, to: 102.7, words: true, once: true, bleats: Object.freeze([36.6, 64.1, 95.8]) }),
+  floatingOnce: Object.freeze({ file: "floating", from: 0, to: 102.7, words: true, once: true, bleats: Object.freeze([36.6, 64.1, 95.8]) }),
   carefreeOnce: Object.freeze({ file: "carefree", from: 0, to: 205, words: false, once: true }),
   morningOnce: Object.freeze({ file: "morning", from: 0, to: 153, words: false, once: true }),
   rainbowsOnce: Object.freeze({ file: "rainbows", from: 0, to: 219, words: false, once: true }),
@@ -67,31 +74,39 @@ export const SPANS = Object.freeze({
   odysseyOnce: Object.freeze({ file: "odyssey", from: 0, to: 75, words: false, once: true }),
   sneakyLoop: Object.freeze({ file: "sneaky", from: 0, to: 136.5, words: false }),
   stingOnce: Object.freeze({ file: "sting", from: 0, to: 8, words: false, once: true }),
+  runAmokLoop: Object.freeze({ file: "runamok", from: 0, to: 107, words: false }),
+  // the whole file, round and round (party-sound.js hum: quiet and muffled)
+  mopsHumLoop: Object.freeze({ file: "mopshum", from: 0, to: 32.1, words: false }),
 });
 /**
  * Every moment music plays. A list is stepped through in order, one track a visit, round and round. null is
  * silence.
  *   title    the title screen (the older program's "title" cue, src/game/00-core.js warmWhy)
  *   morning  Day 1's morning at home, from the Dog Zylan line to "That evening..." (home-music.js): the first time
- *            Squatch is home on day one, so Goating in Space (Brian 2026-11-26: only there)
+ *            Squatch is home on day one, so Floating in Space (Brian 2026-11-26: only there)
  *   home     every other daytime visit home (the "home" cue, and the talk at home after the party: party.js musicCue):
  *            the next track of the home rotation each visit, Carefree, Morning, Rainbows, then Carefree again (Brian:
  *            "so it isn't repetitive")
  *   bedtime  the bedtime story (beat 21, on its own branch: it adds the "bedtime" cue): Reawakening
  *   gift     the gift, out at home: the same visit as home (MUSIC_PLACE), so the home track carries on
- *   heart    the heart moments
+ *   heart    the heart moments: the same visit as home (MUSIC_PLACE, Brian 2026-11-26 #32), so the home track carries
+ *            on through them
  *   tv       the TV story (beat 20; tv-story.js says when it is showing)
  *   hall     the party hall with no party going on (the Day 2 hall)
  *   sneak    sneaking: the night sneak and the lunch sneak (the older program's sneak cue), and P2's sneak to the
  *            plant at the party (party.js musicCue). In P4, the flyer sneak, the band plays: the band's song wins.
  *   caught   the FUR! moment at the party: the sting, once (party-sound.js)
- *   band     the Croc Boys on the stage: Stormtop-Sylvania for their first song, Funky Chunk for the next, and so on
- *            (party-sound.js)
- *   closing-hum  Mops humming at the party's closing time: track to be chosen by Brian (stand-in: silence)
+ *   band     the Croc Boys on the stage (Brian 2026-11-26, band order): Funky Chunk until he dances, Stormtop-Sylvania
+ *            while he dances, then Funky Chunk again; a song that comes back carries on where it stopped, never
+ *            from the top (party-band-order.js chooses, party-sound.js plays)
+ *   chase    the octopus chase (Brian 2026-11-26, sample A): the band fades out and Run Amok plays until the chase
+ *            ends (party-sound.js chase)
+ *   closing-hum  Mops humming at the party's closing time: his hum recording, the whole file round and round, quiet
+ *            and muffled (Brian 2026-11-26)
  */
 export const MUSIC_PICKS = Object.freeze({
   title: "themeTune",
-  morning: "goatingOnce",
+  morning: "floatingOnce",
   home: Object.freeze(["carefreeOnce", "morningOnce", "rainbowsOnce"]),
   gift: Object.freeze(["carefreeOnce", "morningOnce", "rainbowsOnce"]),
   bedtime: "reawakeningOnce",
@@ -101,15 +116,17 @@ export const MUSIC_PICKS = Object.freeze({
   sneak: "sneakyLoop",
   caught: "stingOnce",
   band: Object.freeze(["bandSong", "funkySong"]),
-  "closing-hum": null,
+  chase: "runAmokLoop",
+  "closing-hum": "mopsHumLoop",
 });
 // Sounds that are not music. Mops's bleat (Brian 2026-11-26, "Bleat 2": sounds/goat-bleat.mp3, 1.2 s, cut from
 // Wikimedia Commons "Herd of goats bleating.ogg" by stephan, public domain): on his bleat line only (the morning song's
-// "♪ Weeee-eenn-nnttt! ♪", morning-sound.js), and over Goating in Space where it leaves a gap for one (`bleats`).
+// "♪ Weeee-eenn-nnttt! ♪", morning-sound.js), and over Floating in Space where it leaves a gap for one (`bleats`).
 export const SOUND_PICKS = Object.freeze({ "mops-bleat": Object.freeze({ url: "sounds/goat-bleat.mp3", level: 0.7 }) });
 // Cues that are the same place (one visit): moving between them does not start a `once` track again.
-export const MUSIC_PLACE = Object.freeze({ gift: "home" });
-// The moments where a sung track may play (Brian 2026-11-26): the morning's Goating in Space, and the band.
+// (Brian 2026-11-26, #32: the heart moments at home count as the same home visit, so the home track carries on)
+export const MUSIC_PLACE = Object.freeze({ gift: "home", heart: "home" });
+// The moments where a sung track may play (Brian 2026-11-26): the morning's Floating in Space, and the band.
 export const SINGING_OK = Object.freeze(["morning", "band"]);
 // Seconds of fade at the end of a span (before it goes back to its start, or stops), and in again after.
 export const SPAN_FADE = Object.freeze({ out: 0.8, in: 0.3 });

@@ -2016,16 +2016,6 @@
           s.s === "ha ha!" ? (X(s.x, s.y, 34, 16), r("#fff6dc", 2), g(s.s, s.x, s.y, 16, "#b45309")) : g(s.s, s.x, s.y, 28, "#ff5fa8"));
       e.globalAlpha = 1;
     }
-    // Where a walk-tap is heading: a small ring on the floor while the player walks there.
-    function drawWalkTo() {
-      let t = n.walkTo;
-      if (!t || (de() && !(n.ctrl && n.cur && n.cur.k === "bub" && !n.cutOn))) return;
-      // Not on a place the goal's outline already marks (Brian 2026-11-24; src/modules/walk-ring.js).
-      if (window.SSQ && window.SSQ.walkRingShows && !window.SSQ.walkRingShows(t, window.SSQ.goalMark.now(n.T))) return;
-      let k = 0.5 + 0.5 * Math.sin(n.T * 8),
-        sx = t.x - (n.room === "hall" ? B.camX : 0);
-      (e.save(), (e.globalAlpha = 0.7), X(sx, t.y, 16 + 4 * k, 7 + 2 * k), (e.lineWidth = 3), (e.strokeStyle = "#ffffff"), e.stroke(), e.restore());
-    }
     // A tap was heard while the game could not take it yet: a ring spreads in the bottom right corner.
     function drawTapHeard() {
       let k = n.T - (n.tapT == null ? -9 : n.tapT);
@@ -2140,7 +2130,6 @@
       if (!walking) ringsLeft();
       xp();
       drawSec();
-      drawWalkTo();
       for (let i of n.sparks)
         if (i.x !== 300 && i.s === "!") {
           let s = Math.sin(i.t * 14) * 4,

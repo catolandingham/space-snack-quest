@@ -35,6 +35,19 @@ const started = await page.evaluate(() => {
   return true;
 });
 g.check("the TV story beat is registered and starts", started);
+// Its first step: Squatch puts the tape in, a wordless picture that plays by itself (Brian 2026-11-26, #39)
+const tape = await page.evaluate(() => {
+  const ss = window.__ss,
+    n = ss.op;
+  for (let k = 0; k < 10 && !(n.cur && n.cur.k === "cutaway"); k++) ss.tick(0.05);
+  ss.drawFrame();
+  const c = n.cur,
+    first = c ? { k: c.k, id: c.id, panel: c.panel, auto: c.auto || 0, drew: window.SSQ.cutaway.last() } : null;
+  let t = 0;
+  for (; t < 6 && n.cur === c; t += 0.05) (ss.tick(0.05), ss.drawFrame());
+  return { first, went: Math.round(t * 100) / 100 };
+});
+g.check("first the tape goes in: a wordless picture of his paw pushing it into the player; it plays by itself (2 to 3 s)", !!tape.first && tape.first.id === "tvtape" && tape.first.panel === 0 && tape.first.drew && tape.first.drew.pic === "tape" && tape.went >= 2 && tape.went <= 3, tape);
 
 const seen = [];
 let waited = null;
@@ -42,7 +55,8 @@ for (let i = 0; started && i < 40; i++) {
   const s = await page.evaluate(() => {
     const ss = window.__ss,
       n = ss.op;
-    for (let k = 0; k < 10 && !(n.cur && ["card", "cutaway", "panel", "bub"].includes(n.cur.k)); k++) ss.tick(0.05);
+    // (a wordless picture plays by itself: the tape going in; it is ticked through)
+    for (let k = 0; k < 80 && (!(n.cur && ["card", "cutaway", "panel", "bub"].includes(n.cur.k)) || (n.cur.k === "cutaway" && n.cur.auto)); k++) ss.tick(0.05);
     ss.drawFrame();
     const c = n.cur,
       last = window.SSQ.cutaway.last();
@@ -59,12 +73,12 @@ for (let i = 0; started && i < 40; i++) {
   seen.push(s);
   if (s.k === "panel" && s.id === "ch1moon") break;
   // the first picture: no tap for 6 seconds, it is still up (it waits for NEXT)
-  if (s.k === "cutaway" && waited == null) {
+  if (s.k === "cutaway" && s.id === "wookiee" && waited == null) {
     waited = await page.evaluate(() => {
       const ss = window.__ss;
       for (let k = 0; k < 120; k++) ss.tick(0.05);
       const c = ss.op.cur;
-      return !!c && c.k === "cutaway" && c.panel === 0;
+      return !!c && c.k === "cutaway" && c.id === "wookiee" && c.panel === 0;
     });
   }
   // the ship picture: let the Wookiees walk to the end of their walk
@@ -79,28 +93,28 @@ for (let i = 0; started && i < 40; i++) {
 }
 
 const order = seen.filter((s) => s.k !== "until").map((s) => (s.k === "card" ? "card:" + s.text : s.k === "cutaway" ? "pic:" + (s.drew && s.drew.pic) : s.k + ":" + s.id));
-const want = ["card:" + L["card-years-ago"], "pic:tour", "pic:shed", "pic:clog", "pic:gasp", "pic:banish", "card:" + L["card-now"], "panel:ch1moon"];
-g.check("the story plays in order: Years ago, tour, shed, clog, *gasp*, the ship, Now; then bedtime as before", JSON.stringify(order) === JSON.stringify(want), order);
-g.check("every picture is the full-screen cutaway of the Wookiee story", seen.filter((s) => s.k === "cutaway").length === 5 && seen.filter((s) => s.k === "cutaway").every((s) => s.id === "wookiee" && s.drew && s.drew.full), seen.filter((s) => s.k === "cutaway").map((s) => s.id));
+const want = ["pic:news", "card:" + L["card-years-ago"], "pic:tour", "pic:shed", "pic:clog", "pic:gasp", "pic:banish", "card:" + L["card-now"], "panel:ch1moon"];
+g.check("the story plays in order: the tape goes in, the STORMTOP NEWS card (Brian 2026-11-26, #39), Years ago, tour, shed, clog, *gasp*, the ship, Now; then bedtime as before", JSON.stringify(order) === JSON.stringify(want), order);
+g.check("every picture is the full-screen cutaway: the tape and the news card, then the Wookiee story", seen.filter((s) => s.k === "cutaway").length === 6 && seen.filter((s) => s.k === "cutaway").every((s) => (s.id === "wookiee" || s.id === "tvtape") && s.drew && s.drew.full), seen.filter((s) => s.k === "cutaway").map((s) => s.id));
 g.check("a picture waits for NEXT (still up after 6 seconds with no tap)", waited === true, waited);
 
 const final = seen[seen.length - 1] || { shown: [], roars: [] };
 const shown = new Set(final.shown);
 const wordsOf = (t) => t;
-const mustShow = ["card-years-ago", "cap-tour", "cap-shed", "cap-clog", "tourist-gasp", "official-no-fur", "card-now", "tag-tourist", "tag-official", "sign-scrubber", "sign-tours", "label-years-ago"];
+const mustShow = ["news-title", "card-years-ago", "cap-tour", "cap-shed", "cap-clog", "tourist-gasp", "official-no-fur", "card-now", "tag-tourist", "tag-official", "sign-scrubber", "sign-tours", "label-years-ago"];
 // captions and bubbles may be wrapped on a phone: every word of each line must have been drawn, in order, across its lines
 const drawn = [...shown].join(" \u0001 ");
 const lineShown = (t) => [...shown].some((s) => s === t) || drawn.replace(/ \u0001 /g, " ").includes(wordsOf(t));
 const missing = mustShow.filter((id) => !lineShown(L[id]));
 g.check("every line of the story shows on screen word for word (tv-story-lines.js)", missing.length === 0, missing);
-g.check("the captions are the old approved wording", L["cap-tour"] === "A Wookie tour group came to visit Stormtop." && L["cap-shed"] === "They shed. A LOT." && L["cap-clog"] === "The fur clogged the air scrubbers. Everyone gasped for air!" && L["official-no-fur"] === "Nobody can live outside. The scrubbers keep us breathing. NO FUR." && L["tourist-gasp"] === "*gasp*", L);
-g.check("every line is approved, with its source", TV_STORY_LINES.every((l) => l.status === "approved" && /71ec66e/.test(l.source) && /Brian 2026-11-25/.test(l.source)));
+g.check("the captions are the old approved wording", L["cap-tour"] === "A Wookie tour group came to visit Stormtop." && L["cap-shed"] === "They shed. A LOT." && L["cap-clog"] === "The fur clogged the air scrubbers. Everyone gasped for air!" && L["official-no-fur"] === "We rely on the air scrubbers to keep us breathing. NO FUR." && L["tourist-gasp"] === "*gasp*", L);
+g.check("every line is approved, with its source (the old story's, or Brian's own words of 2026-11-26), except the news title, a suggestion waiting for his yes", TV_STORY_LINES.every((l) => (l.id === "news-title" ? l.status === "needs-yes" && /Suggested/.test(l.source) : l.status === "approved" && (/71ec66e/.test(l.source) || /Brian 2026-11-26/.test(l.source)))));
 
 const roars = final.roars;
 g.check("Brian's Wookiee recording is asked for on the tour, the shed and the ship, and nowhere else", JSON.stringify(roars) === JSON.stringify(["tour", "shed", "banish"]), roars);
 
 // Sizes
-const pics = Object.fromEntries(seen.filter((s) => s.drew).map((s) => [s.drew.pic, s.drew]));
+const pics = Object.fromEntries(seen.filter((s) => s.drew && s.id === "wookiee").map((s) => [s.drew.pic, s.drew]));
 const adults = Object.values(pics).map((d) => d.adult);
 g.check("a grown-up is the same height in every picture", adults.length === 5 && adults.every((a) => a === adults[0]), adults);
 const ratio = pics.tour ? pics.tour.wookiee / pics.tour.adult : 0;

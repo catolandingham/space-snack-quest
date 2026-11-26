@@ -4,21 +4,21 @@
 | Lines | Heading |
 | --- | --- |
 | 23–32 | # Space Snack Quest |
-| 33–108 | ## Chapter 1 redesign (on main) |
-| 109–122 | ## Music credits |
-| 123–153 | ## Source and build |
-| 154–164 | ## Debug link |
-| 165–170 | ## Automatic checks |
-| 171–174 | ## Screen fit |
-| 175–197 | ## Brian's repeat complaints, as tests (2026-11-22) |
-| 198–203 | ## Scene 1 morning |
-| 204–207 | ## Chapter 1 kid robot |
-| 208–224 | ## Phase 1: kitchen and diner clarity |
-| 225–237 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
-| 238–251 | ## Phase 3: one capture rule, phone HUD, tap to walk |
-| 252–261 | ## Chapter 1 pass: the night out has a purpose, switches say why |
-| 262–279 | ## Progression tests |
-| 280–306 | ## Left as they were |
+| 33–110 | ## Chapter 1 redesign (on main) |
+| 111–125 | ## Music credits |
+| 126–156 | ## Source and build |
+| 157–167 | ## Debug link |
+| 168–173 | ## Automatic checks |
+| 174–177 | ## Screen fit |
+| 178–201 | ## Brian's repeat complaints, as tests (2026-11-22) |
+| 202–207 | ## Scene 1 morning |
+| 208–211 | ## Chapter 1 kid robot |
+| 212–228 | ## Phase 1: kitchen and diner clarity |
+| 229–241 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
+| 242–255 | ## Phase 3: one capture rule, phone HUD, tap to walk |
+| 256–265 | ## Chapter 1 pass: the night out has a purpose, switches say why |
+| 266–283 | ## Progression tests |
+| 284–310 | ## Left as they were |
 <!-- /section-index -->
 # Space Snack Quest
 
@@ -31,6 +31,8 @@ Calendar review status (2026-11-16): Brian said yes to merge the calendar (Nov 1
 **Next up (Brian, 2026-11-16):** Chapter 1, one beat at a time in [`docs/CH1-STORY-WALKTHROUGH.md`](docs/CH1-STORY-WALKTHROUGH.md). Do not leave beat 1 until Brian says it is right. Squatch walks around the bed and the bucket, and the Guardian box is in the closet on day 1 (locked home room v5; Brian's yes, Nov 16, 12:50 PM PT). On day 2 he takes the box out at the closet (`tests/bedroom-walk.mjs`). The calendar is tappable. Printed copy: MOONMUNCH / FUZZUARY; Sponsored by MOON PIES; Sock hunt; family Olympics night; Wash outside windows (remember space suit!); Blanket fort night. These are decoration, not new quests. X or NEXT returns to the same scene (`tests/calendar-closeup.mjs`). Closet, bed, desk homework and the already-bitten calendar are built on branch `feat/home-alone` (draft, see below); the purple bed bar is removed there too; still to build: the bucket. The night vent step no longer finishes inside Mops: the morning hum was leaving him marked as walking. Docs match main: yes.
 
 ## Chapter 1 redesign (on main)
+
+2026-11-26 (evening), the same draft pull request #87, Brian's answers of 2026-11-26 and phase 4 of his video notes; not merged to main. The alarm's three whoops now hold their level (it sounded like "boing, boing, boing": `ALARM_HOLD` in `party-board-sounds.js`). The wall speaker's sound-wave arcs show whenever it talks again (closing time had lost them). Closing time is smoother: the song fades, the crowd cheers and claps and the Croc Boys bow, the lights dim a step, then the speaker's chime and line; after it his own door takes him home, Mops comes home and the talk starts there. No record scratch when the band stops for the photo: a fade, a cheer and claps. The band plays Funky Chunk until he dances, Stormtop-Sylvania while he dances, then Funky Chunk again, each carrying on where it stopped (`party-band-order.js`); the octopus chase cuts to Kevin MacLeod's "Run Amok" (`music/run-amok.mp3`); Mops hums at closing time (`music/mops-hum.mp3`). The morning's song is titled Floating in Space everywhere. Home early ("Keep going") the party is still heard through his door, with notes under it, until Mops comes home. In the talk at home Mops sees the flyer lying on the bed (SAVE · flyer lays it on top now, same size), then turns to Squatch and hearts float up; no yellow glow. The group photo no longer stalls when he stands by the dance spot (a guest edging round him now gives way); JOIN · photo comes with the 3-2-1, standing in his place before it, or 2 s after the click, gets him seen. The dance shows its speed words ("Dance!", "Faster!", "Super fast!", "Top speed!") on the button and as a pop-up, and a gold "Super dancer!" badge after a perfect top-speed routine (`dance-words.js`). The vent's pull is a rising rush of air, not a squeak. The home guard's flashlight is on only while he searches. The walk-tap ring is gone everywhere. The TV story starts with Squatch putting a tape in and a "STORMTOP NEWS" title card (suggested words), and the Station Official says "We rely on the air scrubbers to keep us breathing. NO FUR." The title screen has a Credits button and screen (`credits.js`, `credits-lines.js`). Three crowd sounds and three voices under bubbles to choose from (`CROWD_STYLE`, `VOICE_STYLE`: one line each; samples by `node tools/sound-samples.mjs <folder>`). Tests: `party-phase4`, `party-phase4-units`, `credits` (new); `party-flyer`, `party-scenes`, `party-showing5`, `party-showing6`, `party-showing7`, `party-round3`, `party-sound-units`, `tv-story`, `speech-voices`, `morning-music`, `every-goal-has-target`, `ch1-playthrough` updated. Docs match main: yes. Not yet played by a person.
 
 2026-11-26 (afternoon), the same draft pull request #87, Brian's notes on party showing 7 (items 12 to 18 of his video notes); not merged to main. Voices: every speech bubble now has a short muffled "wah-wah" trombone babble under it, made up in code (no recording), its length following the line's and its pitch the speaker's (Isfred in the middle, the Croc Boys low, each guest a little different, Squatch higher, the wall speaker tinny); Mops keeps his goat meh and bleat, and there is none under a sung line or a thought; it plays through the effects level at `MIX.voices` (0.35, a placeholder), well under the music (`src/modules/speech-voice.js`, from `bridge.js` `bubbleSound`). Bubble tails: every speech bubble's pointed tail now runs from the bubble's side that faces the speaker to the speaker's head, and every thought of Squatch's has a thin trail of three shrinking circles ending on him, or in the plant's leaves while he hides there (`src/modules/bubble-tail.js`; the older program's bubble drawing calls it through the bridge, and `src/game/` shrank by 27 lines). The band's start in P3 is slower: the Croc Boys take 2 seconds to walk on and take their places, Isfred carries a mic stand to the singer and sets it down once they stand there, walks to the bar and sets the flyer down, a beat, then the band plays and a wordless 2.6-second close-up of the singing Croc Boy bopping to the first notes plays by itself (`src/modules/croc-cutaway.js`, a placeholder drawing; `MIC` and `BAND_WALK_ON` in `party-stage-walks.js`). While the band plays (P3 on), notes rise from the Croc Boys and they bob together on their song's beat (Stormtop-Sylvania about 160 a minute, Funky Chunk about 115, estimated from the files: `bpm` in `music-picks.js`), and the wall speaker draws no ring then; the speaker's own sound lines are part of the locked hall picture and stay. At home while the band plays next door, three faint notes drift in under his door. SAVE · flyer: the flyer keeps its size (it was shrinking from 39 to 16) and slides under the bed's front edge until only a corner peeks out (`HOME_ROOM.flyer`, `flyerSlide`, `FLYER.put` 1.2 s). The dress-up: the party shirt is now needed for a disguise. Before, any four pieces on the four spots filled "Disguised enough"; now the meter stops at three quarters until the shirt is on his body, and the shirt glows until it is (`MUST_WEAR` in `dress-up.js`). Tests: `party-showing7` and `speech-voices` (new); `party-flyer`, `party-scenes` updated. The test servers take `SSQ_PORT_OFFSET`. Docs match main: yes. Not yet played by a person.
 
@@ -108,7 +110,7 @@ The older Chapter 1 scenes are still in the program so a debug link such as `?sc
 
 ## Music credits
 
-Which plays where: `src/modules/music-picks.js`; the files and their credits: `music/CREDITS.txt`. Joe's theme (`main-theme-from-brian.mp3`) is Brian's friend Joe's song, used with Brian's yes. Goating in Space, Brian's song made with Suno, 2026-11-26. Stormtop-Sylvania, Brian's song made with Suno, 2026-11-26. Mops's goat bleat (`sounds/goat-bleat.mp3`): 1.2 s cut from Wikimedia Commons "Herd of goats bleating.ogg" by stephan, public domain.
+Which plays where: `src/modules/music-picks.js`; the files and their credits: `music/CREDITS.txt`. Joe's theme (`main-theme-from-brian.mp3`) is Brian's friend Joe's song, used with Brian's yes. Floating in Space (`goating-in-space.mp3`, the new recording; its words sing "goating in space"), Brian's song made with Suno, 2026-11-26. Stormtop-Sylvania, Brian's song made with Suno, 2026-11-26. Mops's hum (`mops-hum.mp3`): recorded for the game by a family member, 2026-11-26, used with permission. Mops's goat bleat (`sounds/goat-bleat.mp3`): 1.2 s cut from Wikimedia Commons "Herd of goats bleating.ogg" by stephan, public domain.
 
 "Carefree" Kevin MacLeod (incompetech.com), Licensed under Creative Commons: By Attribution 4.0 License, http://creativecommons.org/licenses/by/4.0/  
 "Der Kleber Sting" Kevin MacLeod (incompetech.com), Licensed under Creative Commons: By Attribution 4.0 License, http://creativecommons.org/licenses/by/4.0/  
@@ -118,6 +120,7 @@ Which plays where: `src/modules/music-picks.js`; the files and their credits: `m
 "Odyssey" Kevin MacLeod (incompetech.com), Licensed under Creative Commons: By Attribution 4.0 License, http://creativecommons.org/licenses/by/4.0/  
 "Rainbows" Kevin MacLeod (incompetech.com), Licensed under Creative Commons: By Attribution 4.0 License, http://creativecommons.org/licenses/by/4.0/  
 "Reawakening" Kevin MacLeod (incompetech.com), Licensed under Creative Commons: By Attribution 4.0 License, http://creativecommons.org/licenses/by/4.0/  
+"Run Amok" Kevin MacLeod (incompetech.com), Licensed under Creative Commons: By Attribution 4.0 License, http://creativecommons.org/licenses/by/4.0/  
 "Sneaky Snitch" Kevin MacLeod (incompetech.com), Licensed under Creative Commons: By Attribution 4.0 License, http://creativecommons.org/licenses/by/4.0/  
 
 ## Source and build
@@ -192,6 +195,7 @@ Four complaints Brian raised again and again now have tests that run with `npm t
 - `tests/party-dance.mjs`: the dance at phone size: targets 44 px or more and apart, the ring matches the real time left, a hit scores and shows "+5", too slow and wrong spot do not and the dance goes on, the bonus once, the cap, never ends by doing nothing, counted as found after three spots, sound off.
 - `tests/ch1-party-cones.mjs`: sight cones on everyone in the older free play (Brian, 2026-11-23: "let's try all of them and then we can adjust"): the six guests, Isfred, the bartender and the octopus, drawn whole (furniture never cuts a cone short). Faint dashed cones, each shown only when Squatch is near that cone (Brian: "Add the distance fade"; fully shown within 40 of it, gone beyond 120, fading in between); the one Squatch is in fills yellow. In disguise a "?" shows over whoever sees him and nobody catches him; after the snack spill everyone's cone turns to him. The six guests are drawn from Brian's approved Nov 8 pictures (`docs/approved-art/guests/`, `src/modules/guests.js`).
 
+- `tests/party-phase4.mjs`: Brian's answers of 2026-11-26 in the game at phone size: closing time's cheer, dim and speaker with its arcs, walking home on his own, Mops's hearts, the party heard at home early, the photo with no stall, its fade and its rule (a robot joins at the count and steps out in time), the vent's suction, the chase music, the home guard's flashlight. `tests/party-phase4-units.mjs` (no browser): the band order and carrying on where a track stopped, the chase and hum files and credits, the speed words and badge, the photo rule, the sound options' switches. `tests/credits.mjs`: the title screen's Credits button and screen.
 - `tests/party-showing7.mjs`: Brian's showing-7 notes in the game at phone size: the Croc Boys' 2-second walk on, the mic stand set once they stand in place, the flyer, the beat, the wordless Croc Boy close-up playing by itself, every P3 bubble's tail ending inside its speaker's box (thoughts as three circles into the plant), a voice under each of Isfred's lines and none under the song or a thought, notes from the band in P4, no wall-speaker ring while the band plays, faint notes under his door at home. `tests/speech-voices.mjs` (no browser): every bubble speaker in the lines files and the modules has a voice, Mops keeps his meh, the pitches, lengths, no clicks, the level under the music, and tails ending inside their target boxes.
 - `tests/party-scenes.mjs`: the party night's first half (P1 to P5) played at phone size: the door outline and PEEK · door, only his head in the gap, the lines in order with no wordless wait, the banner glow, the teach card; his doorway and the plant's step-in spot outside every cone through the glancer's whole rhythm, cones whole and equal to sight; the one capture rule three ways (caught: the LOCKUP card with who and where and P2 again; plant: "They lost you." and P3; home: the guard follows, HIDE · bed, the calm from the door gap); the close-up once a play; the vent's warning and alarm; P3's order, faces and bubble; the flyer on his back and on the floor; the full-screen dress-up's snap, swap, meter, GO · party and ↺; the hand-off to the free play with no arrow dance. Stills of every warning at 375 x 812 go to `tests/out/party-stills/`. `tests/party-lines.mjs` checks `src/modules/party-lines.js` against `docs/PARTY-LINES-FOR-BRIAN.md`.
 

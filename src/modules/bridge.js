@@ -21,14 +21,13 @@ import { BOARD } from "./party-board-sounds.js";
 import { lastCutaway } from "./cutaway.js";
 import { SPEAKER } from "./morning.js";
 import { placeLabel } from "./cap-place.js";
-import { walkRingShows } from "./walk-ring.js";
 import { quietLine } from "./party-lines.js";
 import { adultPxFor, doorAdultPx } from "./room-sizes.js";
-import { createGoalMark } from "./goal-mark.js";
 import { singingNow } from "./music-rules.js";
 import { keepInSpan, seeCue } from "./music-picks.js";
 import { drawBubbleTail } from "./bubble-tail.js";
 import { createSpeechVoice } from "./speech-voice.js";
+import { drawCreditsButton, creditsTap, creditsShown } from "./credits.js";
 
 /**
  * The game-state fields a rebuilt beat may write, through engine().set(field, value). Anything else it
@@ -48,7 +47,6 @@ export function createBridge() {
   const homeMusic = createHomeMusic(() => engine);
   const morningSound = createMorningSound(() => engine);
   const speechVoice = createSpeechVoice(() => engine);
-  const goalMark = createGoalMark();
   // At home, while the TV story is on the screen, the music's cue is "tv" (music-picks.js).
   const refineCue = (cue) => {
     const tv = beats.get("ch1-tv-story");
@@ -122,6 +120,8 @@ export function createBridge() {
       morningSound.bubble(b, scene, homeMusic.debug().playing, quietLine(b));
       speechVoice.speak(b);
     },
+    /** The title screen's Credits button (drawn by the older program's title) and a tap on it. See credits.js. */
+    credits: Object.freeze({ drawButton: drawCreditsButton, tap: creditsTap, shown: creditsShown }),
     /** The voices under speech bubbles (tests read what played). See speech-voice.js. */
     speechVoice,
     /**
@@ -206,10 +206,6 @@ export function createBridge() {
     placeLabel,
     /** Tap to walk around furniture: the corners to walk through. See tap-path.js. */
     findPath,
-    /** False when a walk-tap's ring would sit on a place the goal outline already marks. See walk-ring.js. */
-    walkRingShows,
-    /** The goal outline drawn this frame (drew) and the one on screen now (now), for the walk ring. See goal-mark.js. */
-    goalMark,
     /** How tall a grown-up is drawn in a room (85% of its door; the party hall 40% bigger). See room-sizes.js. */
     adultPxFor,
     /** 85% of a room's door, with no party-hall growth. See room-sizes.js. */
