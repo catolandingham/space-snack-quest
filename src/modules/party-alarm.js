@@ -35,7 +35,7 @@ export const ALARM = Object.freeze({
   search: 3.5, // how long the guards search a hidden Squatch before giving up
   homeSearch: 3, // how long the guard searches the home room
   doorLook: 0.8, // the home guard first looks round from the doorway
-  bell: 1.6, // the bell rings again this often while the alarm is on
+  bell: 2.1, // the alarm (three whoops, 1.8 s) sounds again this often while it is on (was 1.6 for the old bell)
   backAway: 34, // how far guests back away toward the walls
   calm: 140, // walking back to calm (pixels a second)
 });

@@ -113,10 +113,12 @@ export function sweepAngle(id, t) {
   const w = P4_SWEEP[id];
   return w ? w.base + w.amp * Math.sin((2 * Math.PI * t) / w.period + w.phase) : null;
 }
-// The glancer's look across the lane (radians; about 174 degrees, down and to the left), and how far it sweeps
-// either side. Chosen so the lane between the door and the plant is covered while his doorway and the plant's left
-// side, where Squatch steps in, are never in his cone (tests/party-scenes.mjs).
-export const GLANCE = Object.freeze({ a: (174 * Math.PI) / 180, sweep: 0.15 });
+// The glancer's look across the lane (radians), and how far it sweeps either side. Chosen so the lane between the door
+// and the plant is covered while his doorway is never in his cone (tests/party-scenes.mjs).
+// Since 2026-11-26 sight sees his whole body (party-watch.js coneEdge): the look is higher (188 degrees, slightly up
+// and to the left) and narrower, so his doorway stays out of it, and it sweeps the lane and the plant's front, where
+// he steps in (a kid times the dash; hidden in the plant, nobody sees him). It was 174 degrees, sweep 0.15.
+export const GLANCE = Object.freeze({ a: (188 * Math.PI) / 180, sweep: 0.05 });
 // The glancer's rhythm (P2): facing the stage, then head turn with "?", then looking across the lane, then back.
 export const GLANCE_TIMES = Object.freeze({ stage: 3.5, warn: 0.5, look: 2, back: 0.4 });
 

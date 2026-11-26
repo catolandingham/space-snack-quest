@@ -16,7 +16,8 @@ import { createGuestArt } from "./guests.js";
 import { findPath } from "./tap-path.js";
 import { createHomeMusic } from "./home-music.js";
 import { createMorningSound } from "./morning-sound.js";
-import { MIX } from "./sound-mix.js";
+import { MIX, buses } from "./sound-mix.js";
+import { BOARD } from "./party-board-sounds.js";
 import { lastCutaway } from "./cutaway.js";
 import { SPEAKER } from "./morning.js";
 import { placeLabel } from "./cap-place.js";
@@ -88,6 +89,17 @@ export function createBridge() {
      */
     musicSpan(el, cue) {
       return keepInSpan(el, refineCue(cue));
+    },
+    /**
+     * The one FUR alarm of Chapter 1 (Brian 2026-11-26, the red alert whoop: party-board-sounds.js BOARD.alarm), for
+     * the older program's alarm sound. True once played; false while sound is off (the older program then plays
+     * nothing either).
+     */
+    alarmSound() {
+      const b = buses(engine);
+      if (!b) return false;
+      BOARD.alarm({ c: b.ctx, o: b.fx }, b.ctx.currentTime + 0.01);
+      return true;
     },
     /** The older program's music cue, every frame once its music has started: where the music is (music-picks.js). */
     musicCue(cue) {

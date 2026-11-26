@@ -232,6 +232,11 @@ export const BOARD = Object.freeze({
     tone(A, { t: t + 0.15, f: 330, f1: 540, d: 0.18, type: "triangle", v: 0.16, a: 0.02 });
   },
   rustle: (A, t) => rustle(A, t, 10, 3000, 0.4),
+  // The one FUR alarm of Chapter 1 (Brian 2026-11-26: option 1 of tools/alarm-choices.html, the red alert whoop): a
+  // rising whoop, three times, as on that page. The party's alarm and the older program's (bridge.js alarmSound) play it.
+  alarm(A, t) {
+    for (let i = 0; i < 3; i++) tone(A, { t: t + i * 0.62, f: 380, f1: 1250, d: 0.55, type: "sawtooth", v: 0.18, a: 0.01 });
+  },
   bell(A, t, d = 1.8) {
     const c = A.c,
       g = c.createGain(),

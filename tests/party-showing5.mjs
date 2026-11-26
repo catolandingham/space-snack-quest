@@ -100,7 +100,8 @@ const cones = (page) => page.evaluate(() => window.SSQ.beat("ch1-party").cones()
   g.check("2: SAVE · flyer slides it under the bed (it lies there, a corner out), then \"That party looked so fun...\" and \"I'll sneak back in a costume and dance!\", then P5", t >= 0 && s.now.flyer === "bed" && JSON.stringify(heard.slice(-2)) === JSON.stringify([L("sq-party-fun"), L("sq-sneak-back")]), [t, s.now.flyer, heard]);
   const flyerAt = await page.evaluate(() => window.SSQ.beat("ch1-party").flyerAt());
   g.check("2: the flyer is drawn under the bed's front corner", !!flyerAt && Math.hypot(flyerAt.x - hall.HOME_ROOM.flyer.x, flyerAt.y - hall.HOME_ROOM.flyer.y) < 1, flyerAt);
-  g.check("2: the dropped lines are not said (\"I deserve one night of normal.\", \"Costume on. Then I dance!\", and the old dance wish)", !heard.includes(L("sq-normal")) && !heard.includes(L("sq-costume")) && !heard.includes(L("sq-dance-wish")), heard);
+  // (the dance wish is said again since 2026-11-26, in P3 before the sneak, not at home: tests/party-showing6.mjs)
+  g.check("2: the dropped lines are not said (\"I deserve one night of normal.\", \"Costume on. Then I dance!\"), and at home not the dance wish", !heard.includes(L("sq-normal")) && !heard.includes(L("sq-costume")) && !heard.includes(L("sq-dance-wish")), heard);
   g.check("2: the party's music plays the whole time he is home (muffled through his door)", music.every((m) => m >= 0) && s.now.sound.song >= 0, music);
   g.check("no page errors (2)", errors.length === 0, errors);
   await page.close();
@@ -300,7 +301,7 @@ const cones = (page) => page.evaluate(() => window.SSQ.beat("ch1-party").cones()
     return { chips: [...out.chips], card: !!(n.ch1PartyNow && n.ch1PartyNow.card), alarmNow: n.ch1PartyNow && n.ch1PartyNow.alarm, played: played.slice(heard0), notOver: !!out.notOver, frames: out.frames, heard0 };
   });
   g.check("10: after Mops sends the guard off the alarm is over: no \"run home and hide!\" while the guard leaves, and the card follows", after.card && !after.chips.includes(L("chip-run")) && !after.notOver, after);
-  g.check("10: no bell rings again once the guard has been sent off (his footsteps as he walks out, then the door)", !after.tooLong && !after.played.includes("bell") && after.played.includes("door"), after.played);
+  g.check("10: no bell rings again once the guard has been sent off (his footsteps as he walks out, then the door)", !after.tooLong && !after.played.includes("bell") && !after.played.includes("alarm") && after.played.includes("door"), after.played);
   // past the card ("Keep going"): the talk at home; nothing rings, nobody comes back, no chip to run
   const later = await page.evaluate(() => {
     const ss = window.__ss,
@@ -313,7 +314,7 @@ const cones = (page) => page.evaluate(() => window.SSQ.beat("ch1-party").cones()
     const now = window.SSQ.beat("ch1-party").now();
     return { played: now ? now.sound.played.slice(from) : [], chips: [...chips], alarm };
   });
-  g.check("10: after the card (\"Keep going\"), nothing restarts the alarm: no bell, no guard, no \"run home and hide!\"", !later.alarm && !later.played.includes("bell") && !later.chips.includes(L("chip-run")), later);
+  g.check("10: after the card (\"Keep going\"), nothing restarts the alarm: no bell, no guard, no \"run home and hide!\"", !later.alarm && !later.played.includes("bell") && !later.played.includes("alarm") && !later.chips.includes(L("chip-run")), later);
   g.check("no page errors (10)", errors.length === 0, errors);
   await page.close();
 }

@@ -211,7 +211,7 @@
         },
         pickup: () => ji([72, 76, 79, 84], 0.1),
         alarm: () => {
-          (lV(700, 0.18, "sawtooth", 0.06), lV(1e3, 0.18, "sawtooth", 0.06, 0.2));
+          (window.SSQ && window.SSQ.alarmSound && window.SSQ.alarmSound()) || (lV(700, 0.18, "sawtooth", 0.06), lV(1e3, 0.18, "sawtooth", 0.06, 0.2));
         },
         slip: () => {
           (lV(700, 0.6, "sine", 0.18, 0, 140), lV(300, 0.3, "triangle", 0.1, 0.25, 900));

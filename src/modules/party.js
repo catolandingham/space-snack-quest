@@ -280,6 +280,8 @@ export function createParty(bridge) {
         say("band", "band-song", "song"),
         e.run(() => ((P().pt = 0), (P().follow = true))),
         e.until(() => !P() || P().pt >= PACE.watch),
+        // watching them dance, before the flyer sneak (Brian 2026-11-26: put it back where it was before the dance)
+        say("sq", "sq-dance-wish", "whisper"),
         e.run(() => startScene("P4")),
       ]);
       return;

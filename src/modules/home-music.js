@@ -21,7 +21,7 @@
  * Joe's theme, and the background level is half of that.
  */
 import { buses } from "./sound-mix.js";
-import { spanFor, fileFor, matchFor, SPAN_FADE } from "./music-picks.js";
+import { spanFor, fileFor, matchFor, SPAN_FADE, playSound } from "./music-picks.js";
 
 export const HOME_MUSIC = Object.freeze({
   url: fileFor("morning"), // the morning's pick (music-picks.js; since 2026-11-26 a stand-in with no singing)
@@ -109,6 +109,9 @@ export function createHomeMusic(getEngine) {
       ctxUsed = ctx;
       startedAt = ctx.currentTime;
       starts++;
+      // Mops's goat bleat in the song's gaps for it (Goating in Space: music-picks.js `bleats`), through the song's
+      // own level, so it dips and fades with the song
+      for (const at of spanFor("morning").bleats || []) at > skip && playSound(ctx, gain, "mops-bleat", startedAt + (at - skip), 1 / HOME_MUSIC.match);
     } catch {
       src = null;
     }

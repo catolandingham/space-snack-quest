@@ -51,7 +51,10 @@ export const MUSIC_FILES = Object.freeze({
 export const SPANS = Object.freeze({
   themeTune: Object.freeze({ file: "theme", from: 1.0, to: 18.5, words: false }),
   themeBreak: Object.freeze({ file: "theme", from: 154, to: 178, words: false }), // an option, not used
-  goatingOnce: Object.freeze({ file: "goating", from: 0, to: 102.7, words: true, once: true }),
+  // `bleats`: seconds into the song where Mops's goat bleat plays over it, in its three quiet gaps (found by loudness:
+  // the music dips about 15 dB at 0:36.5 to 0:38.9 after "A really long way from home", at 1:04.0 to 1:06.4 after
+  // "It's really a pretty nice room", and at 1:35 to 1:38 after "He means I love you"; estimates to about 0.2 s).
+  goatingOnce: Object.freeze({ file: "goating", from: 0, to: 102.7, words: true, once: true, bleats: Object.freeze([36.6, 64.1, 95.8]) }),
   carefreeOnce: Object.freeze({ file: "carefree", from: 0, to: 205, words: false, once: true }),
   morningOnce: Object.freeze({ file: "morning", from: 0, to: 153, words: false, once: true }),
   rainbowsOnce: Object.freeze({ file: "rainbows", from: 0, to: 219, words: false, once: true }),
@@ -98,9 +101,10 @@ export const MUSIC_PICKS = Object.freeze({
   band: Object.freeze(["bandSong", "funkySong"]),
   "closing-hum": null,
 });
-// Sounds that are not music, waiting for a file: Mops's bleat on his bleat lines (Brian 2026-11-26: a real goat
-// bleat; the clip is still being chosen). null plays nothing.
-export const SOUND_PICKS = Object.freeze({ "mops-bleat": null });
+// Sounds that are not music. Mops's bleat (Brian 2026-11-26, "Bleat 2": sounds/goat-bleat.mp3, 1.2 s, cut from
+// Wikimedia Commons "Herd of goats bleating.ogg" by stephan, public domain): on his bleat line only (the morning song's
+// "♪ Weeee-eenn-nnttt! ♪", morning-sound.js), and over Goating in Space where it leaves a gap for one (`bleats`).
+export const SOUND_PICKS = Object.freeze({ "mops-bleat": Object.freeze({ url: "sounds/goat-bleat.mp3", level: 0.7 }) });
 // Cues that are the same place (one visit): moving between them does not start a `once` track again.
 export const MUSIC_PLACE = Object.freeze({ gift: "home" });
 // The moments where a sung track may play (Brian 2026-11-26): the morning's Goating in Space, and the band.
@@ -204,4 +208,36 @@ export function keepInSpan(el, cue) {
     return 0;
   }
   return file.match * Math.max(0, Math.min(1, (s.to - t) / SPAN_FADE.out, (t - s.from + 0.05) / SPAN_FADE.in));
+}
+
+// One decoded copy of each sound per audio context (the bleat is shared by the morning's line and the song).
+const decoded = new WeakMap();
+/** The decoded sound `name` of SOUND_PICKS for audio context `c` (a promise), or null when it has no file. */
+export function loadSound(c, name) {
+  const pick = SOUND_PICKS[name];
+  if (!pick || !c || typeof fetch !== "function") return null;
+  let m = decoded.get(c);
+  m || decoded.set(c, (m = {}));
+  return (m[name] =
+    m[name] ||
+    fetch(pick.url)
+      .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(name + " " + r.status))))
+      .then((b) => c.decodeAudioData(b)));
+}
+/** Plays the sound `name` at time `t` into node `out` (at its level times `v`), once it has loaded. */
+export function playSound(c, out, name, t, v = 1) {
+  const p = loadSound(c, name);
+  p &&
+    p
+      .then((buf) => {
+        const src = c.createBufferSource(),
+          g = c.createGain();
+        src.buffer = buf;
+        g.gain.value = SOUND_PICKS[name].level * v;
+        src.connect(g);
+        g.connect(out);
+        src.start(Math.max(t, c.currentTime));
+      })
+      .catch(() => {});
+  return !!p;
 }

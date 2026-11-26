@@ -164,7 +164,9 @@ g.check(
     L("sq-sneak-back") === "I'll sneak back in a costume and dance!" &&
     ["chip-flyer", "button-grab-flyer"].every((id) => { const l = lines.PARTY_LINES.find((x) => x.id === id); return l.status === "approved" && l.source === "Brian 2026-11-24, Snack Quest Chat"; }) &&
     ["sq-robots-job", "sq-show-mops", "sq-phew", "chip-save-flyer", "button-save-flyer", "sq-party-fun", "sq-sneak-back"].every((id) => { const l = lines.PARTY_LINES.find((x) => x.id === id); return l.status === "approved" && l.source === "Brian 2026-11-25, Snack Quest Chat"; }) &&
-    ["sq-flyer", "sq-normal", "sq-costume", "sq-dance-wish"].every((id) => lines.PARTY_LINES.find((x) => x.id === id).removed),
+    ["sq-flyer", "sq-normal", "sq-costume"].every((id) => lines.PARTY_LINES.find((x) => x.id === id).removed) &&
+    // (put back 2026-11-26, in P3: tests/party-showing6.mjs)
+    !lines.PARTY_LINES.find((x) => x.id === "sq-dance-wish").removed,
 );
 
 // ---------- P3: one flyer, set down on the stage's right end ----------

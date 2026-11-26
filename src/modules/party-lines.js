@@ -47,7 +47,7 @@ export const PARTY_LINES = Object.freeze([
   { id: "isfred-band", half: 1, who: "isfred", text: "And now... put your hands together for the Croc Boys!", status: "approved", source: "Brian 2026-11-24: Yes to all" },
   { id: "tag-band", half: 1, who: "tag", text: "Croc Boys", status: "needs-yes", source: "New: the name over the band's song bubble (Isfred has just called them the Croc Boys); coordinator, 2026-11-24" },
   { id: "band-song", half: 1, who: "band", text: "Stormtop-vania 1-2-3-4-5!", status: "approved", source: "Brian 2026-11-24: Yes to all" },
-  { id: "sq-dance-wish", half: 1, who: "sq", text: "I've never gotten to dance at a party.", status: "approved", source: "Removed 2026-11-25: replaced by line 80 (it had Brian's yes of 2026-11-24)", removed: true },
+  { id: "sq-dance-wish", half: 1, who: "sq", text: "I've never gotten to dance at a party.", status: "approved", source: "Brian's yes of 2026-11-24; removed 2026-11-25 (line 80 said it); put back 2026-11-26 in P3, watching the band, before the flyer sneak (Brian: put it back where it was before the dance)" },
   { id: "chip-home", half: 1, who: "chip", text: "Squatch: sneak home for a disguise", status: "approved", source: "Brian 2026-11-24: Yes to all" },
   // P5, dress-up
   { id: "button-closet", half: 1, who: "button", text: "OPEN · closet", status: "approved", source: "Brian 2026-11-23: 6A (home alone)" },

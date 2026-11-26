@@ -5,23 +5,23 @@
 | --- | --- |
 | 26–32 | # Brian's asks that are not in the game yet |
 | 33–41 | ## 1. Build next |
-| 42–60 | ## 2. Needs your eyes |
-| 61–64 | ## 3. Your instructions disagree |
-| 65–66 | ## 4. Everything else not built |
-| 67–85 | ### Morning and home |
-| 86–96 | ### Party |
-| 97–108 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
-| 109–112 | ### Party video notes and answers, 2026-11-24 (not built yet) |
-| 113–117 | ### Snacks and dress-up |
-| 118–130 | ### Day 2 and night |
-| 131–135 | ### Escape and later chapters |
-| 136–139 | ### Looks and lines |
-| 140–147 | ### Sound |
-| 148–151 | ### Words and rules |
-| 152–164 | ### How the bots work |
-| 165–172 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
-| 173–189 | ## 5. Merged, in a pull request, and being built |
-| 190–200 | ## 6. Corrections to the checkers |
+| 42–59 | ## 2. Needs your eyes |
+| 60–63 | ## 3. Your instructions disagree |
+| 64–65 | ## 4. Everything else not built |
+| 66–84 | ### Morning and home |
+| 85–95 | ### Party |
+| 96–107 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
+| 108–111 | ### Party video notes and answers, 2026-11-24 (not built yet) |
+| 112–116 | ### Snacks and dress-up |
+| 117–129 | ### Day 2 and night |
+| 130–134 | ### Escape and later chapters |
+| 135–138 | ### Looks and lines |
+| 139–146 | ### Sound |
+| 147–150 | ### Words and rules |
+| 151–163 | ### How the bots work |
+| 164–171 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
+| 172–188 | ## 5. Merged, in a pull request, and being built |
+| 189–199 | ## 6. Corrections to the checkers |
 <!-- /section-index -->
 # Brian's asks that are not in the game yet
 
@@ -41,7 +41,6 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 
 ## 2. Needs your eyes
 
-- **Pick the FUR alarm** (2026-11-25, showing-5 note 8). Five made-up alarm sounds on one page, `tools/alarm-choices.html`; the one he picks becomes the only alarm in Chapter 1. Not changed in the game until he picks.
 - **The Moon Pie bedtime story (beat 21).** Brian 2026-11-25: the old crate story "is the bedtime story (beat 21) and gets the same sizing fix". Not built yet: its old captions differ from the walkthrough's pending line, and it is not under "Build next". Ask which words, and whether it is this round.
 - **Home room objects.** "the new version of the crate in the room is off, at least in the picture you showed." (G 597). Covers crate, bed, bucket, bedtime-story look, janitor facing. Walls and furniture merged today; check.
 - **The dance game.** A scrolling-arrow dance exists but you said it never worked. "The dance game, hopefully that can be done clean and simple. If not, forget it." (G 516). "the fur shows at the dance scene" (G 603) is unclear.

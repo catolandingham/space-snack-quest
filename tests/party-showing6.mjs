@@ -21,6 +21,7 @@ import { startGame, sleep, root } from "./game-page.mjs";
 
 const W = await import(join(root, "src", "modules", "party-watch.js"));
 const picks = await import(join(root, "src", "modules", "music-picks.js"));
+const lines = await import(join(root, "src", "modules", "party-lines.js"));
 const board = await import(join(root, "src", "modules", "party-board-sounds.js"));
 const dance = await import(join(root, "src", "modules", "party-dance.js"));
 const free = await import(join(root, "src", "modules", "party-free.js"));
@@ -370,6 +371,76 @@ for (const [beat, times, what] of [
   g.check("P2, sneaking to the plant (no band yet): the music cue is the sneak's (Sneaky Snitch)", r.cue === "sneak", r);
   g.check("the FUR! moment plays the sting, once, and the sneak music stops for the alarm", r.alarm && r.played.filter((x) => x === "sting").length === 1 && r.after === "", r);
   g.check("no page errors (sting)", errors.length === 0, errors);
+  await page.close();
+}
+
+// ---------- Brian's answers of 2026-11-26 ----------
+{
+  // the octopus gives him a one-second head start, every chase
+  const oct = await import(join(root, "src", "modules", "party-octopus.js"));
+  const hallM = await import(join(root, "src", "modules", "party-hall.js"));
+  const p = { people: { "octopus-guest": { x: hallM.OCTOPUS_SNACKS.x, y: hallM.OCTOPUS_SNACKS.y } }, oct: { mode: "snacks", t: 0, hugs: 0, rest: 0, said: true, arms: 0, wait: 0, ht: 0 } };
+  const sq = { x: hallM.OCTOPUS_SNACKS.x - 60, y: hallM.OCTOPUS_SNACKS.y - 10 };
+  let ev = "",
+    t = 0;
+  for (; t < 3 && ev !== "notice"; t += 1 / 60) ev = oct.tickOctopus(p, 1 / 60, sq, { firstMinute: false, canChase: true, hidden: false });
+  const at = { ...p.people["octopus-guest"] };
+  let still = 0;
+  for (let k = 0; k < 120; k++) {
+    oct.tickOctopus(p, 1 / 60, sq, { firstMinute: false, canChase: true, hidden: false });
+    const o = p.people["octopus-guest"];
+    o.x === at.x && o.y === at.y && still++;
+  }
+  g.check("the octopus stands a second (his head start, Brian 2026-11-26) before he chases, then comes on", ev === "notice" && oct.OCT.headStart === 1 && still >= 58 && still <= 62, { ev, still });
+  g.check("the first real chase waits at least that long too", Math.max(oct.OCT.letGo, oct.OCT.headStart) >= 1);
+  // the one FUR alarm: the red alert whoop (three rising whoops)
+  const board = await import(join(root, "src", "modules", "party-board-sounds.js"));
+  const made = [];
+  const node = () => ({ connect() {}, gain: { value: 0, setValueAtTime() {}, exponentialRampToValueAtTime() {}, linearRampToValueAtTime() {} }, frequency: { setValueAtTime(v) { this.v = v; }, exponentialRampToValueAtTime(v) { this.to = v; } } });
+  const c = { createOscillator: () => { const o = { ...node(), type: "", start() {}, stop() {} }; made.push(o); return o; }, createGain: node };
+  board.BOARD.alarm({ c, o: node() }, 0);
+  g.check("the FUR alarm is the red alert whoop: three sawtooth whoops rising 380 to 1250 Hz", made.length === 3 && made.every((o) => o.type === "sawtooth" && o.frequency.v === 380 && o.frequency.to === 1250), made.map((o) => [o.type, o.frequency.v, o.frequency.to]));
+}
+{
+  // "I've never gotten to dance at a party." is said again in P3, watching the band, before the flyer sneak
+  const { page, errors } = await open("party:P3", PHONE);
+  const heard = await page.evaluate(() => {
+    const ss = window.__ss,
+      seen = [];
+    let up = 0;
+    for (let i = 0; i < 60 * 90; i++) {
+      const n = ss.op,
+        p = n.ch1PartyNow;
+      if (p && p.scene === "P4") break;
+      if (n.cur && n.cur.k === "bub") {
+        seen[seen.length - 1] !== n.cur.b.text && seen.push(n.cur.b.text);
+        up += 1 / 60;
+      } else up = 0;
+      up > 0.6 && ((n.bt = 1), ss.opTap(), (up = 0));
+      ss.tick(1 / 60);
+    }
+    return { seen, scene: ss.op.ch1PartyNow && ss.op.ch1PartyNow.scene };
+  });
+  const L = (id) => (lines.PARTY_LINES.find((l) => l.id === id) || {}).text;
+  g.check("the dance wish \"I've never gotten to dance at a party.\" is back, word for word, in P3 after the band's line, before the flyer sneak", heard.scene === "P4" && heard.seen.includes("I've never gotten to dance at a party.") && heard.seen.indexOf(L("sq-dance-wish")) > heard.seen.indexOf(L("band-song")) && L("sq-dance-wish") === "I've never gotten to dance at a party.", heard);
+  g.check("no page errors (the dance wish)", errors.length === 0, errors);
+  await page.close();
+}
+{
+  // Mops's goat bleat: on his bleat line only, and in Goating in Space's three gaps
+  const { page, errors } = await g.open("?ch=1", PHONE);
+  await sleep(1200);
+  const r = await page.evaluate(async () => {
+    const ms = window.SSQ.morningSound;
+    ms.bubble({ who: "mops", text: "♪ Weeee-eenn-nnttt! ♪", style: "song" }, "Q1", false, false);
+    ms.bubble({ who: "mops", text: "Floating in space! It's our favorite song!", style: "" }, "Q1", false, false);
+    const fetched = await fetch("sounds/goat-bleat.mp3");
+    return { asked: ms.debug ? ms.debug() : null, status: fetched.status };
+  });
+  g.check("the bleat clip is in the game (sounds/goat-bleat.mp3) and the hook names it", picks.SOUND_PICKS["mops-bleat"].url === "sounds/goat-bleat.mp3" && existsSync(join(root, "sounds", "goat-bleat.mp3")));
+  g.check("Mops's bleat line asks for the bleat, his other lines do not", !!r.asked && JSON.stringify(r.asked).split("mops-bleat").length === 2, r);
+  g.check("Goating in Space has the bleat in its three gaps (0:36.6, 1:04.1, 1:35.8)", JSON.stringify(picks.SPANS.goatingOnce.bleats) === JSON.stringify([36.6, 64.1, 95.8]));
+  g.check("no page errors (the bleat)", errors.length === 0, errors);
   await page.close();
 }
 
