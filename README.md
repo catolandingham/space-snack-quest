@@ -4,21 +4,21 @@
 | Lines | Heading |
 | --- | --- |
 | 23–32 | # Space Snack Quest |
-| 33–130 | ## Chapter 1 redesign (on main) |
-| 131–145 | ## Music credits |
-| 146–176 | ## Source and build |
-| 177–187 | ## Debug link |
-| 188–193 | ## Automatic checks |
-| 194–197 | ## Screen fit |
-| 198–221 | ## Brian's repeat complaints, as tests (2026-11-22) |
-| 222–227 | ## Scene 1 morning |
-| 228–231 | ## Chapter 1 kid robot |
-| 232–248 | ## Phase 1: kitchen and diner clarity |
-| 249–261 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
-| 262–275 | ## Phase 3: one capture rule, phone HUD, tap to walk |
-| 276–285 | ## Chapter 1 pass: the night out has a purpose, switches say why |
-| 286–303 | ## Progression tests |
-| 304–330 | ## Left as they were |
+| 33–132 | ## Chapter 1 redesign (on main) |
+| 133–147 | ## Music credits |
+| 148–178 | ## Source and build |
+| 179–189 | ## Debug link |
+| 190–195 | ## Automatic checks |
+| 196–199 | ## Screen fit |
+| 200–223 | ## Brian's repeat complaints, as tests (2026-11-22) |
+| 224–229 | ## Scene 1 morning |
+| 230–233 | ## Chapter 1 kid robot |
+| 234–250 | ## Phase 1: kitchen and diner clarity |
+| 251–263 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
+| 264–277 | ## Phase 3: one capture rule, phone HUD, tap to walk |
+| 278–287 | ## Chapter 1 pass: the night out has a purpose, switches say why |
+| 288–305 | ## Progression tests |
+| 306–332 | ## Left as they were |
 <!-- /section-index -->
 # Space Snack Quest
 
@@ -37,6 +37,8 @@ Calendar review status (2026-11-16): Brian said yes to merge the calendar (Nov 1
 2026-11-26 (round D), draft pull request #91 on branch `feat/ch1-lunch-sneak`, not merged. The home morning's round D is merged in (its PA replaces this branch's night PA; "Ganitor Mops to the party hall." is said inside it). Brian's notes and answers of 2026-11-26 on the lunch sneak: only the hallway doorway glows and is outlined (the plant and the crates still hide him but do not glow), and the goal words after 20 s read "Squatch: take Mops his lunch in the hallway" (suggested words); the doorway is walk-through, no SNEAK · hallway button (#47); two more guests wander slowly up and down the left of the hall with cones (their cones never reach his way; `WANDERERS` in `src/modules/lunch-sneak-place.js`); his eyes in the crates sit in the middle of the front at the seam, like the plant's; in the hallway Mops mops with his beard, wet streaks behind him, his mop bucket beside him, then stops, looks left (1.2 s) and right (1.2 s) with his cone sweeping, turns to Squatch, and his cone fills with hearts as hearts float up (never "?" or "!", #48); behind the snack counter Squatch ducks into the approved L2 ball, never the squashed Squatch (the counter close-up is 1.7 times, from 1.65, so the ball is 28 px on a phone). Stills: `tools/lunch-stills.mjs`. Docs match main: yes. Not yet played by a person.
 
 2026-11-26 (round C), draft pull request #91 on branch `feat/ch1-lunch-sneak`, not merged. Brian's answers of 2026-11-26 are built in the lunch sneak: Mops's approved "...you know the rule, grab one snack." behind the counter (the thought bubble is gone), ROLL · ball in the hall (the game's ball rule), a framed close-up of the snack counter so the plate, the pie and Squatch read on a phone, a hay sandwich, and a bigger bag whose MOPS reads on a phone and an iPad. "Ganitor" (goat + janitor, `src/modules/ganitor.js`): a GANITOR name tag on Mops in every scene, the wall speaker's "Ganitor Mops to the party hall." (since round D said inside the morning PA), an Employee of the Month photo labelled MOPS, GANITOR in the hallway (a layer over the locked picture), and MOPS THE GANITOR on Squatch's crayon card. The robot janitor notice (D) waits for Brian's pick of wording. Docs match main: yes. Not yet played by a person.
+2026-11-26 (round D, merge), draft pull request #89, not merged. The party branch's round D is merged in (Brian's answers and phase 4, the one highlight style, the crowd recording and syllable voices, Floating in Space as the title, the walk-tap ring and its goal-mark code gone, walk-through doorways, Run Amok, Mops's hum, the tape and news card). Bedtime still plays Joe's theme sung from the ask (the music table keeps both branches' rows). Two test fixes, the game unchanged: the kid-play robot no longer marks a doorway with no button done when it presses HIDE (it hid in a plant over and over and stood still at the party), and taps the place itself when its small steps do not move him; the goal-marks check does not count Mops's yellow mop bucket as a yellow arrow (`tests/ch1-kid-play.mjs`, `tests/every-goal-has-target.mjs`). Full suite: 105 of 105 after the fixes. Docs match main: yes. Not yet played by a person.
+
 2026-11-26 (round D), draft pull request #89, not merged. Brian's notes of 2026-11-26 on the bedtime story. Mops's mop bucket is one drawing (`src/modules/mop-bucket.js`, "Let's go with it moving forward"): the bedtime pictures draw it, and the home room draws it over the locked picture's painted bucket, in the same place and size, under the people and again over Squatch when he stands behind it (`window.SSQ.drawHomeBucket`; the picture itself is unchanged). In the bucket pictures the baby is a curled-up furry ball with no face, and a wordless picture plays by itself before "Nothing to see here!": two tourists (the approved camera and backpack guests) peek in at a door, a "?" over each. The crate story's pictures have a memory look: soft cloud-shaped edges and a warm old-photo tint. Bedtime plays Joe's theme with its singing (`music/main-theme-from-brian.mp3`), from Squatch's ask, so the singing comes in over the pictures; it replaces Reawakening there. After the tuck-in Mops falls asleep standing, goes stiff, tips over onto his side and rolls onto his back with his feet in the air, beside the bed (`src/modules/mops-asleep-art.js`, the room's own Mops drawing turned); the light goes down by itself as he settles. Mops's Moon Pie line is approved. The docs now agree that the TV story's Station Official line came back (and record Brian's new wording). Tests: `tests/bedtime-story.mjs`, `tests/mop-bucket.mjs`, `tests/standing-spots.mjs`, `tests/party-showing6.mjs`. Docs match main: yes. Not yet played by a person.
 
 2026-11-26 (round C), draft pull request #89, not merged. The party branch (`feat/party-half-two`, its showing-6 fixes, music table and goat bleat) is merged into the bedtime story. At bedtime the music is Reawakening, from the music table (`src/modules/music-picks.js` MUSIC_PICKS.bedtime): the bedtime story says when it is showing and `src/modules/bridge.js` makes the cue "bedtime" for that time, so nothing in the beat names a track. Mops's goat bleat (`sounds/goat-bleat.mp3`) plays as his "...Weeee-eenn-nnttt?" comes up in the story, through `window.SSQ.playSoundPick("mops-bleat")`, the same player as the morning song's bleat; it plays nowhere else in the bedtime story. When an alarm goes off anywhere, the music stops (the alarm's sound and the FUR! sting still play) and stays quiet in that place; it comes back at the next place, with what the music table picks there (Brian's note of 2026-11-26). Docs match main: yes. Not yet played by a person.

@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–177 | ## Where main is (Chapter 1 redesign) |
-| 178–192 | ## Register |
-| 193–214 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 215–235 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 236–248 | ## Phase 2 (plan section 4, T13 to T18) |
-| 249–271 | ## Phase 1 (plan section 3, T5 to T12) |
-| 272–285 | ## SS40–SS44 |
-| 286–303 | ## Story rows |
-| 304–322 | ## Reset section |
-| 323–333 | ## Still open |
-| 334–337 | ## Chapter 1 replot, recorded and not built |
-| 338–495 | ## Changelog |
+| 24–178 | ## Where main is (Chapter 1 redesign) |
+| 179–193 | ## Register |
+| 194–215 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 216–236 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 237–249 | ## Phase 2 (plan section 4, T13 to T18) |
+| 250–272 | ## Phase 1 (plan section 3, T5 to T12) |
+| 273–286 | ## SS40–SS44 |
+| 287–304 | ## Story rows |
+| 305–323 | ## Reset section |
+| 324–334 | ## Still open |
+| 335–338 | ## Chapter 1 replot, recorded and not built |
+| 339–496 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -42,6 +42,7 @@
 - Waiting on Brian: the outline pick (A to E sheet) and the no-label still (0:18, 0:20); the PA words; the chip "Squatch: go to the bag by the door"; the taller closet on Day 1 too?
 - Done on the merge into `feat/ch1-lunch-sneak` (2026-11-26): its night PA ("Ganitor Mops to the party hall.", `ganitor.js` pa-ganitor, used in `home-morning.js` start and checked in `tests/home-morning.mjs`) is replaced by this branch's morning PA: on the merge forward drop its PA step and check, keep `ganitor.js` for the tag, wall and crayon labels.
 - NOT ASSESSED: the morning video (recorded after the merge); how loud "Morning" sits after the PA on a phone.
+2026-11-26 (round D, merge), draft PR #89 on `feat/ch1-bedtime-story`, not merged. Done: `feat/party-half-two` (fe5a558) merged in (merge commit); bedtime keeps Joe's theme sung (SINGING_OK has bedtime); test fixes for the kid-play robot's no-button doorways and the mop bucket in the arrow check. NOT ASSESSED: the bedtime video after the merge (recorded from the lunch tip). Docs match main: yes.
 
 2026-11-26 (round D), draft PR #89 on `feat/ch1-bedtime-story`, not merged. Done (Brian's notes of 2026-11-26): Mops's mop bucket as one drawing (`src/modules/mop-bucket.js`) in the bedtime pictures and over the home room's painted bucket; the baby a furry ball in it; the tourists peeking in (wordless, plays by itself) before "Nothing to see here!"; the crate story's memory look; Joe's theme sung at bedtime from the ask (replaces Reawakening; bedtime added to SINGING_OK); Mops falls asleep like a fainting goat beside the bed (replaces him walking out); Mops's Moon Pie line approved; the Station Official docs agree with the game. Docs match main: yes.
 - Next (the morning branch, `feat/ch1-day2-morning`): Day 2 starts with Mops gone (`ch1Day2Begin` hides him); he should start the morning asleep on his back beside the bed (`mops-asleep-art.js` MOPS_ASLEEP and drawMopsTurned) and get up and leave after the PA, not leave in the dark.
