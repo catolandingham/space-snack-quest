@@ -49,7 +49,6 @@
         (n.ch1Paper = ""),
         (n.ch1PaperLog = []),
         (n.ch1Zoom = null),
-        (n.ch1PadOn = !1),
         (n.ctrl = !1));
       hmBeat() ? hmBeat().start({ awake: !!awake }) : ch1TakeLunch();
     }
@@ -390,7 +389,7 @@
       return Math.hypot(x - 179, y - 214) < 80;
     }
     function ch1WorldTap(x, y) {
-      if (!n.ch1Day2 || !n.ctrl || n.ch1Zoom || n.ch1PadOn) return !1;
+      if (!n.ch1Day2 || !n.ctrl || n.ch1Zoom) return !1;
       for (let b of [hmBeat(), luBeat(), esBeat()]) if (b && b.active() && b.tap && b.tap(x, y)) return !0; // a tap on the glowing thing (or the lunch's close-up)
       if (n.ch1Step === "photos" && ch1HallDoorHit(x, y)) return (ch1LeavePhotos(), !0);
       if (n.ch1Step === "family" && Math.hypot(x - 430, y - 530) < 80) return (ch1HideFamily(), !0);
@@ -440,7 +439,7 @@
       if (hmBeat() && hmBeat().active()) return hmBeat().spots();
       if (luBeat() && luBeat().active()) return luBeat().spots();
       if (esBeat() && esBeat().active()) return esBeat().spots();
-      if (!n.ch1Day2 || !n.ctrl || n.ch1PadOn) return [];
+      if (!n.ch1Day2 || !n.ctrl) return [];
       let s = n.ch1Step;
       if (n.sqPose === "hidden" || n.sqPose === "ball" || n.sqPose === "sleep") return [];
       if (s === "hide") return [ch1At("HIDE", "plant", CH1_PLANT.x, CH1_PLANT.y, 130, ch1HideBay)];
@@ -564,7 +563,6 @@
         (n.ctrl = !0),
         (n.ch1Day2 = !0),
         (n.ch1Zoom = null),
-        (n.ch1PadOn = !1),
         (n.ch1Office = !1),
         (n.ch1Night = !1),
         (n.ch1Duct = !1),

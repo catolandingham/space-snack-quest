@@ -3,30 +3,31 @@
 
 | Lines | Heading |
 | --- | --- |
-| 31–34 | # Review rules |
-| 35–86 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
-| 87–89 | ## Techniques |
-| 90–92 | ## Mistake: locked art was redrawn |
-| 93–97 | ## Mistake: optional inspection interrupted getting out of bed |
-| 98–100 | ## Mistake: a big doc's section index went stale |
-| 101–103 | ## Mistake: a rebuilt beat forgot the step restart |
-| 104–106 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
-| 107–109 | ## Mistake: a killed run was read as a failing test |
-| 110–112 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
-| 113–115 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
-| 116–122 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
-| 123–130 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
-| 131–147 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
-| 148–160 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
-| 161–163 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
-| 164–172 | ## Mistakes caught building the morning sound (2026-11-24) |
-| 173–184 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
-| 185–196 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
-| 197–210 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
-| 211–217 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
-| 218–228 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
-| 229–236 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
-| 237–242 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
+| 32–35 | # Review rules |
+| 36–87 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
+| 88–90 | ## Techniques |
+| 91–93 | ## Mistake: locked art was redrawn |
+| 94–98 | ## Mistake: optional inspection interrupted getting out of bed |
+| 99–101 | ## Mistake: a big doc's section index went stale |
+| 102–104 | ## Mistake: a rebuilt beat forgot the step restart |
+| 105–107 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
+| 108–110 | ## Mistake: a killed run was read as a failing test |
+| 111–113 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
+| 114–116 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
+| 117–123 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
+| 124–131 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
+| 132–148 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
+| 149–161 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
+| 162–164 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
+| 165–173 | ## Mistakes caught building the morning sound (2026-11-24) |
+| 174–185 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
+| 186–197 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
+| 198–211 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
+| 212–218 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
+| 219–229 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
+| 230–239 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
+| 240–245 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
+| 246–254 | ## Mistakes caught building the escape (2026-11-26) |
 <!-- /section-index -->
 # Review rules
 
@@ -241,3 +242,12 @@ His words, on the snack close-up, for every piece of the game: "It just needs to
 - Sight was tested at one point a quarter of the way up Squatch while he is drawn about 85 tall, so a cone drawn across his head did not see him ("It looks like he's right in the octopus' cone, what am I missing??"). What a cone is drawn on is what it sees: sight tests his whole drawn outline (`party-watch.js` `coneEdge`), and `tests/party-showing6.mjs` checks the drawn cone against his drawn pixels. A change to sight re-checks every layout built on it (P2's glancer, P4's sweeps, the guards' reach).
 - Guards walked straight from point to point, through a plant pot. Anyone who walks a route round the room goes round its furniture (`guardStep`), and a route's whole walk is checked step by step (`tests/standing-spots.mjs`), not only where it stops.
 - A wait was tied to the end of a song (the photo after the dance, 28 s of nothing). After an action ends, the next beat starts within about a second, or the wait is shown.
+
+## Mistakes caught building the escape (2026-11-26)
+
+- Mops walked into the office and vanished: the office's own drawing (12-ch1-redesign.js drawCh1OfficeRoom) draws only Squatch unless the old Isfred flag is on. When a beat moves someone into a room another drawing owns, check that drawing draws them, and test their drawn pixels (they go when he is hidden).
+- The night robot's sight tested one point above his feet while its cone was coloured by his whole outline, so the cone went yellow on him for most of a second with no reaction. Sight uses the same test as the drawing (`coneSees`), and a test checks every frame the drawn cone holds him.
+- Walks and a robot's run went in straight lines through the bay's bin and the mail room's wall. Every route is a list of corners in the place file, and a test walks each one step by step against the room's solids.
+- A wordless thought picture that plays by itself showed the pink sheet with its words at 6 to 8 game pixels. A picture that plays by itself has no words: draw things in it with their words left out.
+- Restart tests changed `debug().state`, a JSON copy, so they changed nothing in the game and passed for nothing. A test that changes a beat's state changes the live game-state field.
+- New art helpers (`rr`, `paint`, `words`, `clamp`, `INK`...) reused top-level names other modules use; esbuild renames them. Give a new module's top-level names its own prefix (`es...`).

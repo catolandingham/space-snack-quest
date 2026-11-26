@@ -13,13 +13,14 @@ export const BAY_NIGHT = "docs/locked-rooms/delivery-room-empty-night-v2.png";
 
 // Home (home-room-empty-*-v6): Squatch by the bed's foot, Mops comes in through the door on the right. The pancake
 // brochure (beat 38) is pinned on the wall above the desk.
-export const HOME = Object.freeze({
+export const ES_HOME = Object.freeze({
   sq: Object.freeze({ x: 380, y: 556 }),
   door: Object.freeze({ x: 905, y: 470 }),
   mops: Object.freeze({ x: 700, y: 536 }),
   brochure: Object.freeze({ x0: 396, y0: 146, x1: 486, y1: 232 }),
   closet: Object.freeze({ x: 300, y: 398 }), // where he stands at the wardrobe (home-morning.js HOME_MORNING_SPOTS.closet)
   bedFoot: Object.freeze({ x: 330, y: 560 }),
+  wardrobe: Object.freeze({ x0: 30, x1: 172, y0: 188, y1: 352 }), // the wardrobe in the locked home picture (its outline traces it)
   bed: Object.freeze({ x: 205, y: 470 }), // lying in bed (the room draws him there: sqPose "sleep")
   mopsNight: Object.freeze({ x: 640, y: 470 }), // Mops at the end of the day, by the TV, his back to the closet
 });
@@ -37,11 +38,16 @@ export const BAY = Object.freeze({
   // the night robot on patrol across the bay below the ramp's frame, from the bin toward the vent and back; going right
   // it looks up at the vent, going left the way it goes
   patrol: Object.freeze({ x0: 250, x1: 700, y: 446, speed: 42 }),
-  furAlarm: Object.freeze({ x: 81, y: 153, under: Object.freeze({ x: 110, y: 330 }) }), // the FUR alarm on the left wall
+  furAlarm: Object.freeze({ x: 81, y: 153 }), // the FUR alarm on the left wall (picture x 92-126, y 178-218)
+  // routes round the bay's things (the bin at x 189-237, y 350-374; the plant's pot at x 103-147, y 331-369; the mail
+  // room's left wall at x 675-699, y 360-420 and 505-610; tests/escape.mjs walks each one step by step):
+  toAlarm: Object.freeze([Object.freeze({ x: 80, y: 446 }), Object.freeze({ x: 76, y: 330 })]), // under the FUR alarm, left of the plant
+  toDock: Object.freeze([Object.freeze({ x: 660, y: 462 }), Object.freeze({ x: 740, y: 462 }), Object.freeze({ x: 830, y: 560 })]), // in through the mail room's opening
+  toVent: Object.freeze({ x: 660, y: 336 }), // their walk in goes along the back, above the mail room's wall
 });
 
 // The night robot's sight (the older program's standing cone: 210 long, 0.42 each side; party-watch.js coneFrom).
-export const ROBOT_SIGHT = Object.freeze({ len: 210, half: 0.42, seen: 0.8, run: 170, eyeUp: 28 });
+export const ROBOT_SIGHT = Object.freeze({ len: 210, half: 0.42, run: 170 });
 
 // Inside the vent (no locked picture: a placeholder room, drawn by escape-art.js). The grille is on the left (Squatch
 // outside it, rolled up, his eyes between the slats); Mops's desk on the right, his back to the grille.
@@ -102,7 +108,7 @@ export const SITE = Object.freeze({
 });
 
 // The snack bar at night (the party hall, hall-room-empty-v2): the counter's aisle (lunch-sneak-place.js COUNTER_SPOTS).
-export const BAR = Object.freeze({
+export const ES_BAR = Object.freeze({
   sq: Object.freeze({ x: 893, y: 506 }),
   mops: Object.freeze({ x: 893, y: 396 }),
   top: Object.freeze({ x: 893, y: 336 }),
@@ -130,15 +136,13 @@ export const SNACKS = Object.freeze({
 });
 
 // Timing (seconds) and walking speeds (game pixels a second).
-export const PACE = Object.freeze({
+export const ES_PACE = Object.freeze({
   tease: 2.4, // the robots circle Mops, laughing, before the first line
   sad: 1.0,
   mopsIn: 150,
   think: 2.6, // a wordless thought picture over someone's head
   crawl: 1.2, // Mops crawling into (or out of) the vent
   ballWait: 2.2, // rolled up at the vent, the robot rolls by, then the picture goes inside
-  writeNote: 3.2,
-  hop: 0.5,
   grab: 0.45,
   walk: 150,
   hearts: 1.8,

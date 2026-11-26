@@ -27,7 +27,6 @@
         (n.ch1Day2 = !1),
         (n.ch1Zoom = null),
         (n.ch1Calendar = null),
-        (n.ch1PadOn = !1),
         (n.ch1Morning = null),
         (n.sqLift = 0),
         (n.mo.walking = !1),

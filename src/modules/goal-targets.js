@@ -12,6 +12,7 @@
 import { FLYER } from "./party-hall.js";
 import { TRACE, MORNING_THINGS, DRAWN_OUTLINE, outlineSource } from "./home-morning-art.js";
 import { LUNCH_TRACE, lunchOutlineSource } from "./lunch-sneak-art.js";
+import { BAY, OFFICE, ES_HOME } from "./escape-place.js";
 
 // Doorways more than one goal outlines: each typed once.
 const HOME_DOOR = { rect: { x0: 912, x1: 940, y0: 358, y1: 468 } }, // home: the doorway in the right wall
@@ -50,9 +51,9 @@ export const GOAL_TARGETS = {
   "passage:d2-GO-hall": { rect: { x0: 20, x1: 48, y0: 266, y1: 354 } }, // the doorway to the hall (left; the walk uses it)
   // The escape (escape.js): the big wall vent, the slip in Mops's mouth (a box round where it is drawn), the office
   // computer, the wardrobe, the Guardian Box in it
-  "hangar:es-ball": { rect: { x0: 796, x1: 906, y0: 177, y1: 262 } },
-  "office:es-computer": { rect: { x0: 658, x1: 812, y0: 297, y1: 418 } },
-  "closet:es-closet": { trace: { x0: 30, x1: 172, y0: 188, y1: 352 } },
+  "hangar:es-ball": { rect: pad(BAY.vent, 6) },
+  "office:es-computer": { rect: pad(OFFICE.monitor, 6) },
+  "closet:es-closet": { trace: ES_HOME.wardrobe },
   "closet:es-box": { rect: pad(MORNING_THINGS.boxIn, 4) },
   "passage:lu-back": { rect: { x0: 20, x1: 48, y0: 266, y1: 354 } }, // the doorway to the hall (left), after lunch
   "passage:d2-GO-ship": { rect: { x0: 912, x1: 940, y0: 266, y1: 354 } }, // the doorway to the loading bay

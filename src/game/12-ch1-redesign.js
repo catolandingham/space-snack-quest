@@ -38,7 +38,7 @@
       window.SSQ && window.SSQ.goalMark && window.SSQ.goalMark.drew(box, spot, n.T);
     }
     function ch1MarkGoal() {
-      if (n.ch1PadOn || !n.ctrl || n.ch1Zoom || n.sqPose === "hidden") return;
+      if (!n.ctrl || n.ch1Zoom || n.sqPose === "hidden") return;
       // The party night draws its own outline (src/modules/party.js).
       if (partyBeat() && partyBeat().active()) return;
       let spots =

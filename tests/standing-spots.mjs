@@ -24,7 +24,7 @@ const { HOME_SPOTS } = await mod("home-alone.js");
 const { PHOTO_ROW } = await mod("party-photo.js");
 const { BEDTIME_SPOTS } = await mod("bedtime-story.js");
 const { HOME_MORNING_SPOTS } = await mod("home-morning.js");
-const { HOME: ESCAPE_HOME } = await mod("escape-place.js");
+const { ES_HOME: ESCAPE_HOME } = await mod("escape-place.js");
 
 let fails = 0;
 const check = (name, ok, info) => (console.log(`${ok ? "PASS" : "FAIL"} ${name}${ok || info == null ? "" : "\n      " + JSON.stringify(info)}`), ok || fails++);

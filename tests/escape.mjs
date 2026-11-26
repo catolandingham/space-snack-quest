@@ -37,7 +37,7 @@ const walk = readFileSync(join(root, "docs", "CH1-STORY-WALKTHROUGH.md"), "utf8"
 const body = walk.slice(walk.indexOf("<!-- /section-index -->")),
   beats = body.slice(body.indexOf('### 43. "Six days later"'), body.indexOf("## Pickup day: leaving Stormtop"));
 const story = ESCAPE_LINES.filter((l) => l.status === "pending" && l.source.includes("WALKTHROUGH"));
-g.check("every pending story line is the walkthrough's, word for word", story.length >= 18 && story.every((l) => beats.includes(l.text.split(". ")[0])), story.filter((l) => !beats.includes(l.text.split(". ")[0])).map((l) => l.text));
+g.check("every pending story line is the walkthrough's, word for word (the whole line)", story.length >= 18 && story.every((l) => beats.includes(l.text)), story.filter((l) => !beats.includes(l.text)).map((l) => l.text));
 g.check("lines still waiting for Brian stay pending (none marked approved without his yes)", ESCAPE_LINES.filter((l) => l.status === "approved").every((l) => /Brian/.test(l.source)), ESCAPE_LINES.filter((l) => l.status === "approved"));
 g.check("the office code is 169556 (Brian, chat, 2026-11-26), six digits", P.OFFICE_CODE === "169556");
 g.check("the keypad's keys are a finger wide on a phone (120 game px, about 43 phone px)", P.KEYPAD.r * 2 >= 120 && P.KEYPAD.step >= 128, P.KEYPAD);
@@ -45,6 +45,9 @@ g.check("the keypad's keys are a finger wide on a phone (120 game px, about 43 p
 const game = readdirSync(join(root, "src", "game")).map((f) => readFileSync(join(root, "src", "game", f), "utf8")).join("\n");
 const gone = ["ch1TeaseLines", "ch1EscapeHome", "ch1ToVent", "ch1RollVent", "ch1VentLines", "ch1GrabPinkNow", "ch1ToPad", "ch1PadPress", "ch1OfficeIn", "ch1Booked", "ch1AllStart", "ch1BagSnack", "ch1LeaveFood", "ch1HideSlip", "4723"];
 g.check("the old escape code (and the old code 4723) is gone from src/game", gone.every((f) => !game.includes(f)), gone.filter((f) => game.includes(f)));
+// the code is typed in three places (the keypad's, night one's close-up in 14-ch1-day2.js, the old keypad picture in
+// 50-story-frame.js): they must be the same digits
+g.check("the office code is the same everywhere it is drawn", game.includes(`CH1_OFFICE_CODE = "${P.OFFICE_CODE}"`) && game.includes(`"${[...P.OFFICE_CODE].join(" ")}"`));
 
 const { ctx, page, errors } = await g.open("?beat=escape", { width: 375, height: 812, isMobile: true, hasTouch: true });
 await page.evaluate(() => window.__ss.lockedReady);
@@ -107,10 +110,11 @@ const run = await page.evaluate(
     out.home.autoThink = !n.cur || n.cur.k === "bub"; // (they played by themselves, to the next line)
     out.sq1 = say();
     next();
-    out.sq2 = say();
-    next();
     until(() => S().think, 5);
     out.sqThink = S().think && S().think.kind;
+    until(() => n.cur && n.cur.k === "bub", 10);
+    out.sq2 = say();
+    next();
     // 47
     until(() => S().step === "ball" && n.ctrl, 120);
     ss.drawFrame();
@@ -183,6 +187,22 @@ const run = await page.evaluate(
     // 51
     until(() => S().step === "computer" && n.ctrl, 20);
     out.office = { room: n.room, chip: n.ch1Chip };
+    // Mops is drawn in the office (the office picture's own drawing has none): his pixels go when he is hidden
+    {
+      const cv = document.querySelector("canvas"),
+        k = cv.width / 960,
+        cx = cv.getContext("2d", { willReadFrequently: true }),
+        box = () => cx.getImageData(Math.round((n.mo.x - 40) * k), Math.round((n.mo.y - 90) * k), Math.round(80 * k), Math.round(90 * k)).data;
+      ss.drawFrame();
+      const a = box();
+      n.moPose = "hidden";
+      ss.drawFrame();
+      const b = box();
+      n.moPose = "stand";
+      let diff = 0;
+      for (let i = 0; i < a.length; i += 4) Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) > 60 && diff++;
+      out.office.mopsPixels = diff;
+    }
     n.sq.x = P.OFFICE.sq.x;
     n.sq.y = P.OFFICE.sq.y;
     out.office.press = press();
@@ -241,7 +261,7 @@ g.check("44: the loading bay, three robots, no Squatch; the robot's line waits f
 g.check("44: Mops answers, word for word, and bleats (the mops-bleat sound pick)", run.tease.mops === W["mops-lying"] && run.bleat, run.tease);
 g.check("45: home; the brochure on the wall glows while Mops talks about the pancake place", run.home.room === "closet" && run.home.line === W["mops-pancake"] && run.home.glow, run.home);
 g.check("45: his wordless thought pictures (the crate to the ship, the locked office door) play by themselves", JSON.stringify(run.home.thinks) === '["crate","door"]' && run.home.autoThink, run.home);
-g.check("46: Squatch's two lines, then his thought of the sheet going into the vent", run.sq1 === W["sq-slip"] && run.sq2 === W["sq-vent"] && run.sqThink === "vent", [run.sq1, run.sq2, run.sqThink]);
+g.check("46: Squatch's slip, his thought of the sheet going into the vent (no words in it), then his vent line", run.sq1 === W["sq-slip"] && run.sq2 === W["sq-vent"] && run.sqThink === "vent", [run.sq1, run.sq2, run.sqThink]);
 g.check("47: the bay at night, the goal, a patrolling robot with its cone", run.ball.room === "hangar" && run.ball.night && run.ball.chip === W["chip-ball"] && run.ball.robot && run.ball.cones === 1, run.ball);
 g.check("47: ROLL · ball comes up by the vent; he rolls into the L2 ball", run.ball.awayOffer === "" && run.ball.press === W["button-ball"] && run.ball.pose === "ball", run.ball);
 g.check("48: inside the vent Mops has his back to Squatch at the grille", run.vent.room === "duct" && run.vent.mopsFacesAway, run.vent);
@@ -256,6 +276,7 @@ g.check("50: the keypad: the goal, ten keys", run.pad.chip === W["chip-code"] &&
 g.check("50: a wrong key buzzes, the screen clears, no stars are lost", run.pad.buzz && run.pad.cleared && run.pad.stars, run.pad);
 g.check("50: the keyboard's digits work, and 169556 opens the door", run.pad.keyboard && run.pad.typed === "169556", run.pad);
 g.check("51: the office, RETURN · empty crate at the desk", run.office.room === "office" && run.office.chip === W["chip-crate"] && run.office.press === W["button-computer"], run.office);
+g.check("51: Mops is drawn in the office with him", run.office.mopsPixels > 300, run.office);
 g.check('51: the site: "Order new box" does nothing, "Return empty crate" books the crate', run.site.open && run.site.orderNothing && run.site.booked, run.site);
 g.check("52: the snack counter; Mops's line; four into the bag; Squatch's Guardians line", run.bar.room === "hall" && run.bar.line === W["mops-all"] && run.bar.bag === 4 && run.bar.guardians === W["sq-guardians"], run.bar);
 g.check("52: the Guardians' plate, the last two on it (a tap on the plate works); hearts, and Mops says nothing", run.bar.plate && run.bar.onPlate === 2 && run.bar.hearts && !run.bar.mopsSaid, run.bar);
@@ -295,6 +316,43 @@ const rule = await page.evaluate(() => {
   until(() => !window.SSQ.engine().secOn(), 20);
   out.lost = !window.SSQ.engine().secOn() && n.sqPose === "ball";
   out.back = until(() => S().robot.phase === "patrol", 20);
+  // what the cone is drawn yellow on is what it sees: on any frame the drawn cone holds him while the robot patrols, it
+  // has left its patrol by the next tick
+  jump();
+  n.sq.x = 520;
+  n.sq.y = 360;
+  const late = [];
+  for (let i = 0; i < 400 && S().robot.phase === "patrol"; i++) {
+    ss.drawFrame();
+    const c = (B.debug().drew.cones || [])[0],
+      was = S().robot.phase;
+    tick();
+    c && c.inside && was === "patrol" && S().robot.phase === "patrol" && late.push(i);
+  }
+  out.late = late.length;
+  out.sawHim = S().robot.phase !== "patrol";
+  // every route in the bay, step by step, keeps clear of the bay's things (the older program's solids there)
+  const solids = ss.solids(),
+    inSolid = (x, y) => solids.find((b) => x > b.x0 && x < b.x1 && y > b.y0 && y < b.y1);
+  const walk = (pts) => {
+    const bad = [];
+    for (let k = 1; k < pts.length; k++)
+      for (let u = 0; u <= 1; u += 0.02) {
+        const x = pts[k - 1].x + (pts[k].x - pts[k - 1].x) * u,
+          y = pts[k - 1].y + (pts[k].y - pts[k - 1].y) * u,
+          b = inSolid(x, y);
+        b && bad.length < 3 && bad.push([Math.round(x), Math.round(y), b]);
+      }
+    return bad;
+  };
+  const Y = P.BAY;
+  out.routes = {
+    solids: solids.length,
+    walkIn: walk([Y.enter, Y.toVent, { x: Y.ventStand.x, y: Y.ventStand.y + 40 }]),
+    patrol: walk([{ x: Y.patrol.x0, y: Y.patrol.y }, { x: Y.patrol.x1, y: Y.patrol.y }]),
+    toAlarm: walk([{ x: Y.patrol.x1, y: Y.patrol.y }, ...Y.toAlarm]),
+    toDock: walk([{ x: Y.patrol.x0, y: Y.patrol.y }, ...Y.toDock]),
+  };
   // caught: standing still in the open, the guard reaches him: the LOCKUP card, then the step again
   jump();
   n.sq.x = P.BAY.ventStand.x - 80;
@@ -309,51 +367,81 @@ const rule = await page.evaluate(() => {
 g.check("47: the robot sees him standing: \"!\" at once, it rolls to the FUR alarm, a guard comes", rule.seen === "bang" && rule.bang && rule.guard, rule);
 g.check("47: rolled up anywhere while the guard is out (ROLL · ball), he is lost; the robot goes back to its rounds", rule.anyRoll === "ROLL" && rule.lost && rule.back, rule);
 g.check("47: caught standing in the open: the LOCKUP card, then the ball step again", rule.lockup && rule.after.step === "ball" && rule.after.ch1Step === "es-ball" && rule.after.room === "hangar", rule);
+g.check("47: the robot sees him on the frame its drawn cone holds him (never yellow with no reaction)", rule.sawHim && rule.late === 0, rule);
+g.check("47: every route in the bay (the walk in, the patrol, to the FUR alarm, to the dock) keeps clear of its things", rule.routes.solids > 0 && Object.entries(rule.routes).every(([k, v]) => k === "solids" || v.length === 0), rule.routes);
 
 // ---------- ↺ in every step, and the chapter reset ----------
 const restarts = await page.evaluate(() => {
   const ss = window.__ss,
     n = ss.op,
     B = window.SSQ.beat("ch1-escape"),
-    S = () => B.debug().state;
+    S = () => n.ch1Escape; // (the live state: a change here is a change in the game)
   const tick = (s = 0.05) => ss.tick(s);
   const out = {};
-  for (const [beat, step] of [
+  // each step the player controls: jumped to, changed, then ↺ (the step restart brings back its start)
+  for (const [beat, step, sub] of [
     [47, "ball"],
     [48, "grab"],
     [50, "pad"],
     [51, "computer"],
+    [51, "site"],
     [52, "snacks"],
+    [52, "food"],
+    [52, "closet"],
+    [52, "box"],
   ]) {
     ((n.q = []), (n.cur = null), ss.ch1JumpBeat(beat));
+    step === "closet" || step === "box" ? B.jump("closet") : null;
+    step === "site" && ((n.sq.x = B.place.OFFICE.sq.x), (n.sq.y = B.place.OFFICE.sq.y), tick(), ss.offerNow().f());
+    step === "food" && (Object.assign(S(), { step: "food" }), (S().snacks.plate = true), (n.ch1Step = "es-food"));
+    step === "box" && ((n.sq.x = B.place.HOME.closet.x), (n.sq.y = B.place.HOME.closet.y), tick(), ss.offerNow().f());
     for (let i = 0; i < 4; i++) tick();
+    const at = { x: Math.round(n.sq.x), y: Math.round(n.sq.y) };
     // something changes in the step, then ↺
     step === "pad" && ((S().typed = "16"), tick());
-    step === "snacks" && ((S().snacks.bag = 2), (S().snacks.gone = { 0: 1, 1: 1 }));
+    (step === "snacks" || step === "food") && ((S().snacks.bag = 2), (S().snacks.gone = { 0: 1, 1: 1 }));
     n.sq.x += 40;
     ss.sectionReset();
     for (let i = 0; i < 4; i++) tick();
-    out[step] = { step: S().step, typed: S().typed, bag: S().snacks.bag, ctrl: n.ctrl };
+    out[step] = { step: S().step, typed: S().typed, bag: S().snacks.bag, ctrl: n.ctrl, back: Math.round(n.sq.x) === at.x && Math.round(n.sq.y) === at.y, wardrobe: n.wardrobe };
   }
-  // between steps: the vent's cutscene goes back to the ball step
+  // the steps he does not control go back to the last step he did (escape.js RESTART_TO); a hand-made state for each
+  // (the step's name, with a story wait up so the step restart has nothing saved for it)
+  out.cut = {};
+  for (const [step, from] of [["tease", "start"], ["home", "start"], ["tobay", "ball"], ["rolled", "ball"], ["vent", "ball"], ["out", "ball"], ["tohall", "grab"], ["slipview", "grab"], ["open", "pad"], ["booked", "computer"], ["tobar", "computer"], ["mopsall", "computer"], ["guardians", "snacks"], ["hearts", "snacks"], ["tohome", "snacks"], ["boxview", "closet"], ["bed", "closet"]]) {
+    ((n.q = []), (n.cur = null), B.jump(from));
+    tick();
+    (n.q = []), (n.cur = null);
+    S().step = step;
+    n.ch1Step = "";
+    n.q = [{ k: "wait", t: 0 }];
+    ss.sectionReset();
+    for (let i = 0; i < 4; i++) tick();
+    out.cut[step] = S().step;
+  }
+  // between steps, for real: the vent's cutscene goes back to the ball step
   ((n.q = []), (n.cur = null), ss.ch1JumpBeat(47));
   tick();
   n.sq.x = B.place.BAY.ventStand.x;
   n.sq.y = B.place.BAY.ventStand.y;
   tick();
   ss.offerNow().f();
-  for (let i = 0; i < 80 && S().step !== "vent"; i++) tick();
+  for (let i = 0; i < 400 && S().step !== "vent"; i++) tick();
   out.between = S().step;
   ss.sectionReset();
   for (let i = 0; i < 4; i++) tick();
   out.betweenAfter = { step: S().step, room: n.room, ctrl: n.ctrl };
-  window.__ss.ch1JumpBeat(22);
-  out.reset = n.ch1Escape === null || n.ch1Escape === undefined;
+  // the chapter reset (ch1ResetState) forgets the escape
+  window.SSQ.engine().resetChapter();
+  out.reset = n.ch1Escape === null;
   return out;
 });
-g.check("↺ in each step starts that step again (the keypad clears, the snacks come back)", ["ball", "grab", "pad", "computer", "snacks"].every((k) => restarts[k].step === k && restarts[k].ctrl) && restarts.pad.typed === "" && restarts.snacks.bag === 0, restarts);
-g.check("↺ between steps (inside the vent) goes back to the ball step", restarts.between === "vent" && restarts.betweenAfter.step === "ball" && restarts.betweenAfter.room === "hangar" && restarts.betweenAfter.ctrl, restarts);
-g.check("a jump back to Day 2 forgets the escape", restarts.reset, restarts);
+const ctrlSteps = ["ball", "grab", "pad", "computer", "site", "snacks", "food", "closet", "box"];
+g.check("↺ in each step he controls starts that step again, with him back where it started (the keypad clears, the snacks come back)", ctrlSteps.every((k) => restarts[k].step === k && restarts[k].ctrl && restarts[k].back) && restarts.pad.typed === "" && restarts.snacks.bag === 0 && restarts.food.bag === 0 && restarts.box.wardrobe === "open", restarts);
+const want = { tease: "card", home: "card", tobay: "ball", rolled: "ball", vent: "ball", out: "ball", tohall: "grab", slipview: "grab", open: "pad", booked: "computer", tobar: "computer", mopsall: "computer", guardians: "snacks", hearts: "snacks", tohome: "snacks", boxview: "closet", bed: "closet" };
+g.check("↺ in a step he does not control goes back to the last step he did (hand-made states)", Object.entries(want).every(([k, v]) => restarts.cut[k] === v), restarts.cut);
+g.check("↺ between steps (inside the vent, played there) goes back to the ball step", restarts.between === "vent" && restarts.betweenAfter.step === "ball" && restarts.betweenAfter.room === "hangar" && restarts.betweenAfter.ctrl, restarts);
+g.check("the chapter reset (ch1ResetState) forgets the escape", restarts.reset, restarts);
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();
 await g.finish("escape");

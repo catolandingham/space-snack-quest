@@ -32,7 +32,7 @@
         Cs();
         return;
       }
-      if (p.state === "op" && (n.ch1PadOn || n.ch1Zoom || partyCutOpen())) {
+      if (p.state === "op" && (n.ch1Zoom || partyCutOpen())) {
         // A bubble or a card still goes away on a tap. The snack bar used to swallow that tap.
         if (de()) return void nf();
         ch1SlicePointer("down", l, o);
