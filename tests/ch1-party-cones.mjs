@@ -105,6 +105,8 @@ const spot = (() => {
     for (let y = 310; y <= 585; y += 10) {
       const s = { x, y },
         others = Math.min(...open.cones.filter((c) => c.id !== "camera").map((c) => edgeOf(c, s)));
+      // (not right in front of him, where his "?" has to move aside for Squatch)
+      if (Math.hypot(x - cam.ox, y - (cam.oy + 28)) < 100) continue;
       if (edgeOf(cam, s) <= 0 && others > 0 && (!best || others > best.others)) best = { x, y, others };
     }
   if (best) return { x: best.x, y: best.y };
