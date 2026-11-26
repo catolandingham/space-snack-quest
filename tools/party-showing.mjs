@@ -688,8 +688,15 @@ if (which === "bedtime") {
     await sleep(wait);
     await still(name);
   }
-  // 5. the morning fades in
+  // 5. the morning: in the dark the wall speaker calls Mops to work (Ganitor B, on the lunch branch), then it fades in
   await until(() => page.evaluate(() => !!window.__ss.op.ch1Day2), 8000);
+  if (await until((q) => q.cur === "bub", 2500)) {
+    mark("pa");
+    await sleep(1500);
+    await still("pa-ganitor-mops-to-the-party-hall");
+    await sleep(2000);
+    await next();
+  }
   await sleep(500);
   await still("morning-fades-in");
   await sleep(2500);
@@ -716,6 +723,14 @@ if (which === "morning") {
   await sleep(900);
   await still("bedtime-fades-to-black");
   await until(async () => (await hm()) === "night", 4000);
+  // in the dark the wall speaker calls Mops to work, overheard (Ganitor B): read it, then NEXT
+  if (await until((q) => q.cur === "bub", 3000)) {
+    mark("pa");
+    await sleep(1500);
+    await still("pa-ganitor-mops-to-the-party-hall");
+    await sleep(2000);
+    await next();
+  }
   mark("part night");
   await sleep(700);
   await still("dark-mops-leaves-heard");
@@ -820,6 +835,13 @@ if (which === "lunch" || which === "lunchseen") {
     await stepIs("plant");
     await sleep(900);
     await still("the-plant-glows");
+    // ROLL · ball (Brian 2026-11-26): he rolls up where he stands, then walks on (moving unrolls him)
+    if ((await st()).act === "ROLL · ball") {
+      await press();
+      await sleep(900);
+      await still("roll-ball");
+      await sleep(600);
+    }
     await walkTo(396, 552, "HIDE · plant");
     await press();
     await sleep(700);
@@ -861,8 +883,11 @@ if (which === "lunch" || which === "lunchseen") {
     await still("go-on-the-doorway-is-outlined");
     await floor(50, 345);
     await until(async () => (await lu()).step === "one", 9000);
-    await sleep(500);
-    await still("behind-the-counter-ducked-one-pie");
+    await until((q) => q.cur === "bub", 5000);
+    await sleep(900);
+    await still("counter-close-up-mops-grab-one-snack");
+    await sleep(2200);
+    await next();
     await stepIs("snack", 8000);
     await sleep(500);
     await still("grab-one-snack-he-looks-away");
