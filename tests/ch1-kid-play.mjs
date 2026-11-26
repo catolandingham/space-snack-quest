@@ -459,8 +459,9 @@ while (now() < MAX_S) {
     continue;
   }
   // (ROLL · ball works anywhere in the lunch sneak and the night's loading bay, so it is on the button nearly all the
-  // time; a kid who has a hiding place to go to goes there: the robot leaves the ball alone)
-  const avoid = (v) => AVOID.some((a) => v.startsWith(a)) || v === "ROLL · ball";
+  // time; a kid who has a hiding place to go to goes there: the robot leaves the ball alone, except where rolling up
+  // is the goal itself, the escape night's wait by the vent, step "roll")
+  const avoid = (v) => AVOID.some((a) => v.startsWith(a)) || (v === "ROLL · ball" && s.step !== "roll");
   // The door keypad: type the number printed on the pink slip beside it, one key at a time.
   if (s.pad) {
     const d = SLIP_CODE[s.padHave.length] || SLIP_CODE[0];
