@@ -29,7 +29,7 @@ const server = http.createServer((req, res) => {
   res.writeHead(200, { "content-type": "text/html" });
   res.end(html);
 });
-await new Promise((r) => server.listen(8772, "127.0.0.1", r));
+await new Promise((r) => server.listen(8772 + Number(process.env.SSQ_PORT_OFFSET || 0), "127.0.0.1", r));
 let browser;
 try {
   browser = await puppeteer.launch({ executablePath: chrome, headless: "new", args: ["--no-sandbox", "--disable-gpu"] });
@@ -56,7 +56,7 @@ async function open(query, consoleErrors = false) {
       if (msg.type() === "error") errors.push(msg.text());
     });
   await page.setViewport({ width: 1100, height: 800, deviceScaleFactor: 1 });
-  await page.goto(`http://127.0.0.1:8772/index.html${query}`, { waitUntil: "domcontentloaded" });
+  await page.goto(`http://127.0.0.1:${8772 + Number(process.env.SSQ_PORT_OFFSET || 0)}/index.html${query}`, { waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => window.__ss && window.__ss.op, { timeout: 15000 });
   await sleep(700);
   return { ctx, page, errors };

@@ -76,7 +76,8 @@ export const CAST = Object.freeze({
 // it down on the counter's far end (`x`, `y`, `size` across; `box` is the thing GRAB · flyer names), then stands
 // there facing the room with his back to it. Squatch takes it from `reach` (within `r`), on the floor in front of
 // the counter's end, between the two bar stools (clear of Isfred, who stands a little up the room). Times in seconds: Isfred's walk to the bar (`to`), the
-// bend (`down`), Squatch's reach for it (`grab`), and putting it down at home (`put`). PLACEHOLDERS.
+// bend (`down`), Squatch's reach for it (`grab`), and putting it down at home and sliding it under the bed (`put`;
+// 0.5 until 2026-11-26, when the slide was added). PLACEHOLDERS.
 export const FLYER = Object.freeze({
   x: 838,
   y: 418,
@@ -88,7 +89,7 @@ export const FLYER = Object.freeze({
   to: 2.1,
   down: 0.8,
   grab: 0.45,
-  put: 0.5,
+  put: 1.2,
 });
 /**
  * P4, the moving cones (Brian 2026-11-25): while the band plays, the dancing pairs turn on the spot, the glancer looks
@@ -192,9 +193,13 @@ export const HOME_ROOM = Object.freeze({
   runTo: Object.freeze({ x: 660, y: 545 }),
   inFront: Object.freeze({ x: 330, y: 410 }), // just right of the bed, clear of it (not on its head end)
   bed: Object.freeze({ x: 205, y: 500 }),
-  // the flyer under his bed for Mops (Brian 2026-11-25): a corner peeks out at the crate bed's front right; he
-  // stands at `saveAt` (right of it, facing it) to slide it under, and to take it back out in the talk
-  flyer: Object.freeze({ x: 270, y: 556 }),
+  // the flyer under his bed for Mops (Brian 2026-11-25): a corner peeks out below the crate bed's front edge (y 545),
+  // near its right end; he stands at `saveAt` (right of it, facing it) to slide it under, and to take it back out in
+  // the talk. It keeps the size it has in his paw (Brian 2026-11-26: "It shouldn't shrink"). `flyerSlide`: where it
+  // first lands on the floor in front of the bed (from `flyer`), and the part of SAVE · flyer spent getting there
+  // (the rest is the slide under the edge). PLACEHOLDERS.
+  flyer: Object.freeze({ x: 250, y: 526 }),
+  flyerSlide: Object.freeze({ dx: 14, dy: 46, at: 0.45 }),
   saveAt: Object.freeze({ x: 350, y: 560 }),
   guardDoor: Object.freeze({ x: 880, y: 470 }), // where a guard comes in, and where he searches from
   guardLook: Object.freeze({ x: 770, y: 470 }),

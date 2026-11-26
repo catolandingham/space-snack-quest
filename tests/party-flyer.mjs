@@ -104,14 +104,16 @@ const trailStart = (page) =>
     window.__trailT = setInterval(() => {
       const n = window.__ss.op,
         f = window.SSQ.beat("ch1-party").flyerAt();
-      window.__trail.push({ room: n.room, sq: [n.sq.x, n.sq.y], fl: f ? [f.x, f.y] : null, seen: n.ch1PartyNow ? n.ch1PartyNow.seenBy || "" : "", alarm: !!(n.ch1PartyNow && n.ch1PartyNow.alarm) });
+      window.__trail.push({ room: n.room, sq: [n.sq.x, n.sq.y], fl: f ? [f.x, f.y] : null, sz: f ? f.size : null, seen: n.ch1PartyNow ? n.ch1PartyNow.seenBy || "" : "", alarm: !!(n.ch1PartyNow && n.ch1PartyNow.alarm) });
     }, 50);
   });
 const trailEnd = (page) =>
   page.evaluate(() => {
     clearInterval(window.__trailT);
     const t = window.__trail,
-      out = { n: t.length, sqJumps: 0, flJumps: 0, flGone: 0, seen: 0, alarm: 0, flMax: 0 };
+      out = { n: t.length, sqJumps: 0, flJumps: 0, flGone: 0, seen: 0, alarm: 0, flMax: 0, homeSizes: [] };
+    // (every size the flyer is drawn at home, in his paw and slid under the bed)
+    for (const q of t) q.room === "closet" && q.sz != null && !out.homeSizes.includes(Math.round(q.sz * 10) / 10) && out.homeSizes.push(Math.round(q.sz * 10) / 10);
     for (let i = 1; i < t.length; i++) {
       t[i].seen && i >= (window.__trailMark || 0) && out.seen++;
       t[i].alarm && out.alarm++;
@@ -369,7 +371,7 @@ g.check(
   await sleep(150);
   await still(page, "flyer-07-carrying-it-home");
   await walk(page, HOME[2][0], HOME[2][1]);
-  const lineAt = async (q) => ({ flyer: q.now.flyer, scene: q.now.scene, ring: q.ring, onFloor: await pixels(page, around(HOME_ROOM.flyer, 12), PAPER), room: q.room });
+  const lineAt = async (q) => ({ flyer: q.now.flyer, scene: q.now.scene, ring: q.ring, onFloor: await pixels(page, { x0: HOME_ROOM.flyer.x - 14, x1: HOME_ROOM.flyer.x + 20, y0: 546, y1: 562 }, PAPER), hidden: await pixels(page, { x0: HOME_ROOM.flyer.x - 10, x1: HOME_ROOM.flyer.x + 10, y0: 515, y1: 540 }, PAPER), room: q.room });
   // (Brian 2026-11-25) "Phew, made it!", then the bed glows and SAVE · flyer puts it under the bed for Mops
   const phew = await readLines(page, (q) => q.now && q.now.scene === "P4" && q.room === "closet" && q.ctrl && q.act === "SAVE · flyer", lineAt, 30000);
   s = await until(page, (q) => q.ring === "save-flyer", 2000);
@@ -381,8 +383,10 @@ g.check(
   const tr = await trailEnd(page);
   g.check("the whole way, there and home, nobody saw him and no alarm began", tr.seen === 0 && tr.alarm === 0, tr);
   g.check("the flyer travels with him: it is always somewhere to be seen and never jumps over 60 (nor does he)", tr.flGone === 0 && tr.flJumps === 0 && tr.sqJumps === 0, tr);
+  // Brian 2026-11-26 (showing 7, 0:51): "It shouldn't shrink and go on the floor"
+  g.check("at home the flyer keeps one size the whole time: in his paw, going down, and slid under the bed (it never shrinks)", tr.homeSizes.length === 1, tr.homeSizes);
   g.check("then his two thoughts, once each, in order (Brian 2026-11-25)", JSON.stringify(home.seen.map((l) => l.text)) === JSON.stringify(["That party looked so fun. I've never gotten to dance at one.", "I'll sneak back in a costume and dance!"]), home.seen);
-  g.check("they come after the flyer is under the bed (a corner is drawn there), and before the closet is outlined", home.seen.length === 2 && home.seen.every((l) => l.flyer === "bed" && l.onFloor > 30 && l.room === "closet" && l.scene === "P4" && l.ring !== "dress"), home.seen);
+  g.check("they come after the flyer is under the bed (a corner peeks out below its front edge, the rest is hidden under it), and before the closet is outlined", home.seen.length === 2 && home.seen.every((l) => l.flyer === "bed" && l.onFloor > 30 && l.hidden === 0 && l.room === "closet" && l.scene === "P4" && l.ring !== "dress"), home.seen);
   g.check("then P5: the flyer lies under the bed, and the closet is the goal", !!s && s.now.flyer === "bed" && s.room === "closet" && Math.hypot(s.flyerAt.x - HOME_ROOM.flyer.x, s.flyerAt.y - HOME_ROOM.flyer.y) < 1 && (await until(page, (q) => q.ring === "dress", 3000)) !== null, s && [s.now.flyer, s.flyerAt]);
   await sleep(200);
   await still(page, "flyer-09-under-the-bed");

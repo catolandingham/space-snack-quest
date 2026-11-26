@@ -59,8 +59,10 @@ export const SPANS = Object.freeze({
   morningOnce: Object.freeze({ file: "morning", from: 0, to: 153, words: false, once: true }),
   rainbowsOnce: Object.freeze({ file: "rainbows", from: 0, to: 219, words: false, once: true }),
   reawakeningOnce: Object.freeze({ file: "reawakening", from: 0, to: 214, words: false, once: true }),
-  bandSong: Object.freeze({ file: "band", from: 0, to: 119.6, words: true }), // ends on its count, "...six."
-  funkySong: Object.freeze({ file: "funky", from: 0, to: 70, words: false }),
+  // `bpm`: the beat the Croc Boys bob to while it plays (party-art.js drawBand). Estimated 2026-11-26 from 40 s of each
+  // file (the loudness rises' repeat time): Stormtop-Sylvania about 160 a minute, Funky Chunk about 115.
+  bandSong: Object.freeze({ file: "band", from: 0, to: 119.6, words: true, bpm: 160 }), // ends on its count, "...six."
+  funkySong: Object.freeze({ file: "funky", from: 0, to: 70, words: false, bpm: 115 }),
   lobbyLoop: Object.freeze({ file: "lobby", from: 0, to: 193, words: false }),
   odysseyOnce: Object.freeze({ file: "odyssey", from: 0, to: 75, words: false, once: true }),
   sneakyLoop: Object.freeze({ file: "sneaky", from: 0, to: 136.5, words: false }),

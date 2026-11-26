@@ -7,7 +7,11 @@
  *     sized to fit, whatever it is (boots dropped by his head go on his head). Dropped on the closet, it goes back.
  *   - A new piece on a taken spot sends the old one back to the closet.
  *   - Each covered spot fills a quarter of the "Disguised enough" meter. No timer, no fail, no SHUFFLE.
- *   - Meter full: a ta-da hop, and one big GO · party button under him (never on him).
+ *   - The party shirt must be on his body (Brian 2026-11-26, showing 7 at 1:05: "he probably has to put on the shirt
+ *     or it's not disguised enough, and then it's a combo of everything else"). Until it is, the meter stops at three
+ *     quarters and the shirt glows, wherever it is. Before, any four pieces on the four spots filled it.
+ *   - Meter full (all four spots covered, the shirt on his body): a ta-da hop, and one big GO · party button under
+ *     him (never on him).
  * The layout works for any screen: `layout(w, h)` places everything in screen pixels.
  */
 import { partyLine } from "./party-lines.js";
@@ -58,9 +62,19 @@ export function nearestSpot(L, x, y) {
 export function newOutfit() {
   return { head: "", face: "", body: "", legs: "" };
 }
-/** How full the "Disguised enough" meter is, 0 to 1: a quarter for each covered spot. */
+/** The piece every disguise needs, and where (Brian 2026-11-26: "he probably has to put on the shirt"). */
+export const MUST_WEAR = Object.freeze({ id: "shirt", spot: "body" });
+/** True once the shirt is on his body. */
+export function shirtOn(outfit) {
+  return outfit[MUST_WEAR.spot] === MUST_WEAR.id;
+}
+/**
+ * How full the "Disguised enough" meter is, 0 to 1: a quarter for each covered spot, but never full without the
+ * shirt on his body (three quarters at most until then).
+ */
 export function meter(outfit) {
-  return SPOT_NAMES.filter((s) => outfit[s]).length / 4;
+  const k = SPOT_NAMES.filter((s) => outfit[s]).length / 4;
+  return shirtOn(outfit) ? k : Math.min(k, 0.75);
 }
 /** Puts `id` on `spot`; whatever was there goes back to the closet (and the piece leaves any other spot). */
 export function wear(outfit, id, spot) {
@@ -161,12 +175,18 @@ export function draw(ctx, L, st, t, tada = 0) {
     ctx.strokeStyle = "#8b5a3c";
     ctx.stroke();
   }
-  for (const s of L.slots) worn(st.outfit, s.id) || (st.drag && st.drag.id === s.id) || drawPiece(ctx, s.id, s.x, s.y, s.w);
+  // the shirt glows until it is on his body (in the closet, or on another spot of him)
+  const glow = shirtOn(st.outfit) || (st.drag && st.drag.id === MUST_WEAR.id) ? 0 : 0.75 + 0.25 * Math.sin(t * 6);
+  const lit = (f) => (ctx.save(), glow && ((ctx.shadowColor = `rgba(255,207,51,${glow})`), (ctx.shadowBlur = 30)), f(), ctx.restore());
+  for (const s of L.slots) worn(st.outfit, s.id) || (st.drag && st.drag.id === s.id) || (s.id === MUST_WEAR.id ? lit(() => drawPiece(ctx, s.id, s.x, s.y, s.w)) : drawPiece(ctx, s.id, s.x, s.y, s.w));
   // Squatch big on white, with what he has on; a ta-da hop when he is disguised enough
   const hop = tada > 0 ? Math.sin(Math.min(1, tada) * Math.PI) * h * 0.03 : 0,
     pop = st.pop && st.pop.t > 0 ? st.pop : null;
   drawSquatchArt(ctx, L.sq.x, L.sq.y - hop, L.sq.scale, { line: Math.max(2, L.sq.scale * 0.9) });
   drawOutfit(ctx, L.sq.x, L.sq.y - hop, L.sq.scale, st.outfit, 1, pop ? { spot: pop.spot, a: Math.sin(pop.t * 30) * 0.15 } : null);
+  // the shirt on him, but not on his body (on his head, say): it glows there too
+  const wrongSpot = SPOT_NAMES.find((s) => s !== MUST_WEAR.spot && st.outfit[s] === MUST_WEAR.id);
+  wrongSpot && glow && lit(() => drawOutfit(ctx, L.sq.x, L.sq.y - hop, L.sq.scale, { [wrongSpot]: MUST_WEAR.id }, 1, null));
   if (full >= 1) {
     // sparkles round him, and the one big GO · party button below him
     for (let i = 0; i < 6; i++) {

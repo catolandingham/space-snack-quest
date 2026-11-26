@@ -15,7 +15,8 @@
  * on the floor, and Mops says "Hey, stop that!" (morning.js), then the picture goes on.
  *
  * Squatch's homework on the home-alone morning is the second user: its two pictures are in
- * homework-cutaway.js. The TV story (beat 20) is the third: its Wookiee pictures are in tv-story-art.js.
+ * homework-cutaway.js. The TV story (beat 20) is the third: its Wookiee pictures are in tv-story-art.js. The
+ * party's Croc Boy close-up (P3) is the fourth: croc-cutaway.js.
  *
  * Drawn here in the game's style (dark outlines, flat colours). Mops is drawn by this file too, from the same
  * shapes as the engine's drawMops but with outlines as thin as in Brian's approved picture (see "Mops in the
@@ -23,6 +24,7 @@
  */
 import { HOMEWORK_PANELS } from "./homework-cutaway.js";
 import { WOOKIEE_PANELS } from "./tv-story-art.js";
+import { CROC_PANELS } from "./croc-cutaway.js";
 
 const INK = "#1e2430";
 const GLOW = "#ffcf33",
@@ -46,9 +48,10 @@ let last = null;
  * Brian 30a: seconds a wordless picture with nothing to tap plays before the game goes on by itself (0: it waits
  * for NEXT). The dunk is two whole dunks (1.8 s each), ending with Mops upright and his beard dripping; the
  * homework desk is one whole loop (3 s), ending with all three lines written. The wringing picture has a beard
- * to tap (31a) and the homework sheet has words to read, so they wait.
+ * to tap (31a) and the homework sheet has words to read, so they wait. The Croc Boy close-up (croc-cutaway.js, P3,
+ * Brian 2026-11-26) plays 2.6 s by itself: his head bops on the band's first notes.
  */
-export const AUTO = Object.freeze({ beard: [3.6, 0], homework: [3.0, 0] });
+export const AUTO = Object.freeze({ beard: [3.6, 0], homework: [3.0, 0], croc: [2.6] });
 
 /**
  * What each picture sounds like, timed to its drawing (synth.js names): `loop` seconds a loop (0: once), and
@@ -641,6 +644,8 @@ const PANELS = {
   homework: HOMEWORK_PANELS,
   // beat 20, the TV story (tv-story.js): the old Wookiee pictures, each drawing itself full screen
   wookiee: WOOKIEE_PANELS,
+  // P3, the band's first notes: a Croc Boy bopping, close up (croc-cutaway.js)
+  croc: CROC_PANELS,
 };
 
 /**

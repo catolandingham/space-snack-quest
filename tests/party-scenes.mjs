@@ -626,7 +626,12 @@ let p4Cast = null;
     await drag(piece, d.spots[spot]);
     d = await page.evaluate(() => window.SSQ.beat("ch1-party").dressTargets());
   }
-  g.check("four covered spots fill the meter and bring GO · party", !!d.go && Object.values(d.outfit).every(Boolean), d);
+  // Brian 2026-11-26 (showing 7, 1:05): "he probably has to put on the shirt or it's not disguised enough"
+  g.check("four covered spots without the shirt are not disguised enough: no GO · party, the meter at three quarters, the shirt glows", !d.go && Object.values(d.outfit).every(Boolean) && d.meter === 0.75 && d.shirtGlows, d);
+  await still(page, "p5-dress-no-shirt");
+  await drag(d.pieces.find((p) => p.id === "shirt"), d.spots.body);
+  d = await page.evaluate(() => window.SSQ.beat("ch1-party").dressTargets());
+  g.check("the shirt on his body (the tutu back in the closet) fills the meter and brings GO · party; the shirt stops glowing", !!d.go && d.outfit.body === "shirt" && Object.values(d.outfit).every(Boolean) && d.meter === 1 && !d.shirtGlows, d);
   await sleep(400);
   g.check("the full outfit's ta-da is not silent (the ta-da plays)", (await page.evaluate(() => window.SSQ.beat("ch1-party").now().sound.played)).includes("tada"));
   await still(page, "p5-dress-full");

@@ -9,8 +9,10 @@
  *      blip), looks across the lane, turns back. HIDE · plant: eyes in the leaves. Seen: the one capture rule.
  *   P3 The welcome and the band, watched from the plant (↺ restarts it). Isfred's lines (he holds one flyer); after
  *      the robots line Squatch thinks "Robots for the heavy work? That's Mops's job!" (the banner glows) and "I have
- *      to show Mops." (the flyer in Isfred's hand glows); the lights dim, the Croc Boys
- *      play, and as Isfred walks off he sets the flyer down; the guests pair off and dance.
+ *      to show Mops." (the flyer in Isfred's hand glows); the lights dim, the Croc Boys walk on and take their places
+ *      while Isfred carries a mic stand to the singer and sets it down, then he walks off and sets the flyer down at
+ *      the bar; a beat; the band plays, a wordless close-up of a Croc Boy bopping plays by itself (croc-cutaway.js),
+ *      and back in the hall the guests pair off and dance (Brian 2026-11-26, showing 7 at 0:11).
  *   P4 The flyer sneak (restart: eyes in the plant, band playing, the flyer on the bar counter's far end). He sneaks
  *      to it past the dancers' sweeping cones (every cone drawn whole; party-hall.js P4_SWEEP), GRAB · flyer, carries
  *      it in his paw home through his door (his door is not the goal, and does nothing, until he has it). At home:
@@ -48,6 +50,7 @@ import { createEndings } from "./party-endings.js";
 import { createAfterAlarm } from "./party-after-alarm.js";
 import { createHomeEarly } from "./party-home-early.js";
 import { tickStageWalks, bandOffStage } from "./party-stage-walks.js";
+import { cutawaySteps } from "./cutaway.js";
 import { createPartySound } from "./party-sound.js";
 import { furShows } from "./party-outfit.js";
 import { CUT, snackRecord } from "./party-snacks.js";
@@ -60,7 +63,9 @@ import { OCT } from "./party-octopus.js";
 // His home door in the right wall: the one box its outline uses too (goal-targets.js).
 const HOME_DOOR = GOAL_TARGETS["closet:peek"].rect;
 // How fast scripted walks go (pixels a second) and how long the P3 moments last (seconds).
-const PACE = Object.freeze({ walk: 240, scurry: 330, peekStep: 120, bandIn: 2.6, watch: 2.5 });
+// (`see`: the beat after Isfred has set the flyer down, before the band starts; Brian 2026-11-26. `bandIn`, 2.6 s,
+// went the same day: the band's coming on is now its walk, the mic and the flyer, party-stage-walks.js)
+const PACE = Object.freeze({ walk: 240, scurry: 330, peekStep: 120, see: 0.8, watch: 2.5 });
 // What he wears when a link opens P6 to P8 with no dress-up before it.
 export const JUMP_OUTFIT = Object.freeze({ head: "tophat", face: "shades", body: "shirt", legs: "boots" });
 const BOUNDS = Object.freeze({ x0: 60, x1: 900, y0: HALL.floorTop, y1: 590 });
@@ -216,7 +221,7 @@ export function createParty(bridge) {
       ...(extra || {}),
     };
   }
-  const bandOn = (p) => ((p.lights = true), (p.band = true), (p.bandOff = false), (p.mode = "pairs"), (p.isfred = { x: CAST.isfredBar.x, y: CAST.isfredBar.y, atBar: true }));
+  const bandOn = (p) => ((p.lights = true), (p.band = true), (p.mic = true), (p.bandOff = false), (p.mode = "pairs"), (p.isfred = { x: CAST.isfredBar.x, y: CAST.isfredBar.y, atBar: true }));
   function startScene(id, opts = {}) {
     const e = E();
     closeFullScreen();
@@ -276,7 +281,19 @@ export function createParty(bridge) {
           sound.one("cheer");
           sound.one("dim");
         }),
-        e.until(() => !P() || (P().pt >= PACE.bandIn && !P().isfred.walking && !P().bandAt)),
+        // the Croc Boys walk on, Isfred sets the mic stand in front of the singer, then the flyer down at the bar
+        // (party-stage-walks.js), and a beat to see it all (Brian 2026-11-26: "Take a moment for us to see what's happening")
+        e.until(() => !P() || (!P().isfred.walking && !P().bandAt)),
+        e.until((dt) => !P() || (P().see = (P().see || 0) + dt) >= PACE.see),
+        // they start to play, and the wordless close-up of the singer bopping to the first notes (croc-cutaway.js;
+        // it plays by itself, rule 3), then back to the hall: the guests pair off and dance
+        e.run(() => {
+          const q = P();
+          q.band = true;
+          q.mode = "pairs";
+          q.bandT = 0;
+        }),
+        ...cutawaySteps("croc"),
         say("band", "band-song", "song"),
         e.run(() => ((P().pt = 0), (P().follow = true))),
         e.until(() => !P() || P().pt >= PACE.watch),
@@ -621,7 +638,7 @@ export function createParty(bridge) {
     const s = sq(),
       inHallNow = e.room() === "hall";
     // Isfred's walk to the bar, the Croc Boys walking on, P4's clock (party-stage-walks.js)
-    tickStageWalks(p, dt, sound, PACE.bandIn);
+    tickStageWalks(p, dt, sound);
     if (p.scene === "P2" && !p.alarm) {
       const before = glancePhase(p).phase;
       p.gt += dt;
@@ -810,7 +827,7 @@ export function createParty(bridge) {
   }
 
   // ---------- the pieces ----------
-  const helpers = { E, P, sq, say, chip, control, startScene, picture, homeRoom: HOME_ROOM, pace: PACE, firstAlarm, homeDoor: HOME_DOOR, sound, afterAlarm: () => afterAlarm, flyerHome: () => flyerHome() };
+  const helpers = { E, P, sq, say, chip, control, startScene, picture, homeRoom: HOME_ROOM, homeThings: HOME_THINGS, pace: PACE, firstAlarm, homeDoor: HOME_DOOR, sound, afterAlarm: () => afterAlarm, flyerHome: () => flyerHome() };
   const capture = createCapture(helpers);
   const freePlay = createFreePlay({
     ...helpers,
@@ -940,6 +957,24 @@ export function createParty(bridge) {
       if (who === "bartender") return p.snack ? { x: CUT.bartender.x, y: CUT.bartender.y - CUT.bartender.h - 6 } : { x: (p.bartenderAt || CAST.bartender).x, y: (p.bartenderAt || CAST.bartender).y - adult - 6 };
       return null;
     },
+    /**
+     * The box a bubble's tail ends in (bubble-tail.js): the speaker's head, the plant he hides in, his head in the
+     * doorway gap, his paw in the snack close-up, the wall speaker. Null where the older program knows its speaker.
+     */
+    speakerBox(who) {
+      const p = live(),
+        at = this.speakerAt(who);
+      if (!p || !at) return null;
+      if (who === "sq" && p.pose === "hidden") return HALL.plants.find((q) => q.id === (p.hideAt || "middle")).leaves;
+      if (who === "pa") return HALL_SPEAKER;
+      if (who === "sq" && p.pose === "peek") return { x0: HALL.homeDoor.x0, x1: HALL.homeDoor.x1, y0: HALL.homeDoor.y0 - 20, y1: HALL.homeDoor.y1 };
+      if (who === "sq" && p.snack) return { x0: at.x - 24, x1: at.x + 24, y0: at.y + 30, y1: at.y + 90 };
+      // a person: `at` is just over the head; the head is the top fifth of a grown-up's height
+      // (at home only the guard who followed him has a box here: the home room draws him big)
+      const adult = E().room() === "hall" ? E().hallSizes().adult : views.homeGuardHeight(),
+        r = adult * 0.14;
+      return { x0: at.x - r, x1: at.x + r, y0: at.y + 6, y1: at.y + 6 + adult * 0.22 };
+    },
     /** The name over a party speaker's bubble the game has no name for (the band), or "". */
     speakerName(who) {
       // The bartender's tag is the LOCKUP card's approved "The bartender" (listed for Brian to confirm as a tag).
@@ -970,6 +1005,9 @@ export function createParty(bridge) {
         sq: { x: L.sq.x, y: L.sq.y, scale: L.sq.scale },
         spots: Object.fromEntries(dress.SPOT_NAMES.map((n) => [n, dress.spotAt(L, n)])),
         go: dress.meter(p.dress.outfit) >= 1 ? { x: L.go.x + L.go.w / 2, y: L.go.y + L.go.h / 2 } : null,
+        // the shirt glows until it is on his body (dress-up.js MUST_WEAR)
+        shirtGlows: !dress.shirtOn(p.dress.outfit),
+        meter: dress.meter(p.dress.outfit),
         outfit: { ...p.dress.outfit },
       };
     },

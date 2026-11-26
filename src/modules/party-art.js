@@ -236,6 +236,22 @@ export const LOOKS = Object.freeze({
   ],
 });
 
+/**
+ * The mic stand (a PLACEHOLDER drawing, Brian 2026-11-26): a thin grey pole on a round foot at (x, y), with the mic
+ * at about a grown-up's mouth height (`h` tall). `carried`: tipped over in Isfred's hand as he walks it over.
+ */
+export function drawMicStand(ctx, x, y, h, carried) {
+  const k = h / 100;
+  ctx.save();
+  ctx.translate(x, y);
+  carried && ctx.rotate(-0.35);
+  ctx.scale(k, k);
+  oval(ctx, 0, 0, 9, 2.6, "#4a505c", 1.2);
+  line(ctx, [0, 0, 0, -62], "#4a505c", 3);
+  line(ctx, [0, -62, 6, -70], "#4a505c", 2.6);
+  rr(ctx, 4, -78, 6, 10, 3, "#2b2f3c", 1.2);
+  ctx.restore();
+}
 /** A small drum on a stand in front of the third band member. */
 export function drawDrum(ctx, x, y, h) {
   const k = h / 100;
@@ -246,10 +262,12 @@ export function drawDrum(ctx, x, y, h) {
 }
 
 /** The three Croc Boys standing at their spots; `playing` makes them bob and strum. `looks` is for the picture sheet. */
-export function drawBand(ctx, spots, h, t, playing, looks = LOOKS.band, gone = null, pose = false) {
+export function drawBand(ctx, spots, h, t, playing, looks = LOOKS.band, gone = null, pose = false, beat = null) {
   spots.forEach((s, i) => {
     if (gone && gone[i]) return;
-    const jump = playing ? Math.abs(Math.sin(t * 6 + i)) * h * 0.04 : 0;
+    // `beat`: beats since their song began (the song's bpm): all three bob together, up on each beat (Brian
+    // 2026-11-26, showing 7 at 0:18: "I don't think it's super obvious that the music's coming from the Croc Boys")
+    const jump = !playing ? 0 : beat != null ? Math.abs(Math.cos(Math.PI * beat)) ** 3 * h * 0.06 : Math.abs(Math.sin(t * 6 + i)) * h * 0.04;
     // `pose`: the song is over and they pose for the crowd, an arm up high (the group photo's first step)
     const armUp = pose ? 0.95 : playing && i === 0 ? 0.3 + 0.2 * Math.sin(t * 8) : 0;
     drawPerson(ctx, s.x, s.y - jump, h, { ...looks[i], armUp }, 1, playing ? t : 0);
@@ -316,21 +334,28 @@ export function drawBanner(ctx, box, glow, t = 0) {
 }
 
 // ---------- the door at home (V2) ----------
-/** Music notes drifting in under (and round) Squatch's home door, and the door's edge thumping to the beat. */
-export function drawDoorNotes(ctx, door, t) {
-  const cx = (door.x0 + door.x1) / 2,
+/**
+ * Music notes drifting in under (and round) Squatch's home door, and the door's edge thumping to the beat. `faint`:
+ * the band heard next door (Brian 2026-11-26, "We should see music notes floating in from the door"): three paler,
+ * smaller notes drifting in low under the door, and no thump.
+ */
+export function drawDoorNotes(ctx, door, t, opts) {
+  const faint = !!(opts && opts.faint),
+    cx = (door.x0 + door.x1) / 2,
     beat = Math.max(0, Math.sin(t * Math.PI * 2 * 2)) ** 6;
   // thump lines at the door edge
-  for (const s of [-1, 1]) line(ctx, [door.x0 - 4 - beat * 8, (door.y0 + door.y1) / 2 + s * 20, door.x0 - 12 - beat * 14, (door.y0 + door.y1) / 2 + s * 30], "rgba(30,36,48," + (0.25 + 0.6 * beat) + ")", 3);
-  const colors = ["#ff5fa8", "#3478f6", "#e07b00", "#2bc48a"];
-  for (let i = 0; i < 4; i++) {
-    const k = (t * 0.45 + i / 4) % 1,
-      x = cx - k * 150,
-      y = door.y1 - 18 - k * 60 + Math.sin(k * 9 + i) * 8,
+  if (!faint)
+    for (const s of [-1, 1]) line(ctx, [door.x0 - 4 - beat * 8, (door.y0 + door.y1) / 2 + s * 20, door.x0 - 12 - beat * 14, (door.y0 + door.y1) / 2 + s * 30], "rgba(30,36,48," + (0.25 + 0.6 * beat) + ")", 3);
+  const colors = ["#ff5fa8", "#3478f6", "#e07b00", "#2bc48a"],
+    n = faint ? 3 : 4;
+  for (let i = 0; i < n; i++) {
+    const k = (t * (faint ? 0.3 : 0.45) + i / n) % 1,
+      x = cx - k * (faint ? 110 : 150),
+      y = door.y1 - (faint ? 8 : 18) - k * (faint ? 30 : 60) + Math.sin(k * 9 + i) * (faint ? 5 : 8),
       a = k < 0.15 ? k / 0.15 : k > 0.75 ? (1 - k) / 0.25 : 1;
     ctx.save();
-    ctx.globalAlpha = a;
-    drawNote(ctx, x, y, 9, colors[i]);
+    ctx.globalAlpha = a * (faint ? 0.5 : 1);
+    drawNote(ctx, x, y, faint ? 7 : 9, colors[i]);
     ctx.restore();
   }
 }

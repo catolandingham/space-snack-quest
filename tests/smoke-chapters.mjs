@@ -30,7 +30,7 @@ const server = http.createServer((req, res) => {
   res.writeHead(200, { "content-type": "text/html" });
   res.end(html);
 });
-await new Promise((r) => server.listen(8770, "127.0.0.1", r));
+await new Promise((r) => server.listen(8770 + Number(process.env.SSQ_PORT_OFFSET || 0), "127.0.0.1", r));
 let browser;
 try {
   browser = await puppeteer.launch({ executablePath: chrome, headless: "new", args: ["--no-sandbox", "--disable-gpu"] });
@@ -59,7 +59,7 @@ for (const chapter of [1, 2, 3, 4]) {
     } catch {}
   });
   await page.setViewport({ width: 1100, height: 800, deviceScaleFactor: 1 });
-  await page.goto("http://127.0.0.1:8770/index.html", { waitUntil: "domcontentloaded" });
+  await page.goto(`http://127.0.0.1:${8770 + Number(process.env.SSQ_PORT_OFFSET || 0)}/index.html`, { waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => window.__ss && window.__ss.op, { timeout: 15000 });
   await sleep(300);
   await page.keyboard.press(`Digit${chapter}`);

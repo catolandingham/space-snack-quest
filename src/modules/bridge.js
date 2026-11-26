@@ -27,6 +27,8 @@ import { adultPxFor, doorAdultPx } from "./room-sizes.js";
 import { createGoalMark } from "./goal-mark.js";
 import { singingNow } from "./music-rules.js";
 import { keepInSpan, seeCue } from "./music-picks.js";
+import { drawBubbleTail } from "./bubble-tail.js";
+import { createSpeechVoice } from "./speech-voice.js";
 
 /**
  * The game-state fields a rebuilt beat may write, through engine().set(field, value). Anything else it
@@ -45,6 +47,7 @@ export function createBridge() {
   const written = new Set();
   const homeMusic = createHomeMusic(() => engine);
   const morningSound = createMorningSound(() => engine);
+  const speechVoice = createSpeechVoice(() => engine);
   const goalMark = createGoalMark();
   // At home, while the TV story is on the screen, the music's cue is "tv" (music-picks.js).
   const refineCue = (cue) => {
@@ -112,11 +115,20 @@ export function createBridge() {
     mix: MIX,
     /**
      * A speech bubble opens: its tick, and Mops's meh on his first line in a scene. His gentle lines
-     * ("You have me.", party-lines.js `quiet`) never get the meh. See morning-sound.js.
+     * ("You have me.", party-lines.js `quiet`) never get the meh. See morning-sound.js. Everyone else's speech gets
+     * a muffled "wah-wah" voice under it (never a sung line or a thought). See speech-voice.js.
      */
     bubbleSound(b, scene) {
       morningSound.bubble(b, scene, homeMusic.debug().playing, quietLine(b));
+      speechVoice.speak(b);
     },
+    /** The voices under speech bubbles (tests read what played). See speech-voice.js. */
+    speechVoice,
+    /**
+     * A bubble's tail, drawn after the older program draws the bubble: pointed to the speaker's head, or a thought's
+     * three circles to the thinker. Returns what it drew (tests). See bubble-tail.js.
+     */
+    drawBubbleTail,
     /** The wall speaker in the home room, for placing its bubble. See morning.js. */
     speakerBox() {
       return SPEAKER;

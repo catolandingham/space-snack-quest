@@ -4,24 +4,31 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–103 | ## Where main is (Chapter 1 redesign) |
-| 104–118 | ## Register |
-| 119–140 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 141–161 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 162–174 | ## Phase 2 (plan section 4, T13 to T18) |
-| 175–197 | ## Phase 1 (plan section 3, T5 to T12) |
-| 198–211 | ## SS40–SS44 |
-| 212–229 | ## Story rows |
-| 230–248 | ## Reset section |
-| 249–259 | ## Still open |
-| 260–263 | ## Chapter 1 replot, recorded and not built |
-| 264–421 | ## Changelog |
+| 24–110 | ## Where main is (Chapter 1 redesign) |
+| 111–125 | ## Register |
+| 126–147 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 148–168 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 169–181 | ## Phase 2 (plan section 4, T13 to T18) |
+| 182–204 | ## Phase 1 (plan section 3, T5 to T12) |
+| 205–218 | ## SS40–SS44 |
+| 219–236 | ## Story rows |
+| 237–255 | ## Reset section |
+| 256–266 | ## Still open |
+| 267–270 | ## Chapter 1 replot, recorded and not built |
+| 271–428 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-26 (afternoon), draft PR #87, not merged. Done: Brian's party showing-7 notes 12 to 18 (README, "Chapter 1 redesign", the 2026-11-26 afternoon paragraph): a "wah-wah" voice under every speech bubble, thought trails and speech tails that end on the speaker, the slower band start with the mic stand and the Croc Boy close-up, notes from the band and the beat bob, faint notes under his door at home, the flyer keeping its size under the bed, the shirt needed for a disguise. Open for Brian:
+- 0:51, the flyer: "He should lay it on top of the bed." The talk later has Mops find it under the bed. Built for now: no shrink, it slides under the bed's front edge. On the bed instead (the talk's words about it would need a look)?
+- 1:05, the disguise rule was "any four pieces on the four spots"; it is now "all four spots covered and the shirt on his body". Brian's words were "the shirt... and then it's a combo of everything else": fewer than four pieces would leave fur showing, and fur showing makes guests see him in P6 (`furShows`), so four stay needed. Keep, or shirt plus any one piece (and fur-showing rules changed to match)?
+- The wall speaker's three sound lines are part of the locked hall picture, so they still show while the band plays. Cover them with the wall's colour while the band plays (a change to how the locked picture looks: needs his yes)?
+- New drawings waiting for his eye (placeholders): the Croc Boy close-up, the mic stand, the faint door notes; the voices' sound and level (`MIX.voices` 0.35); the beat the band bobs to is measured from the songs, but where the first beat falls is not lined up with the recording (NOT ASSESSED by ear).
+- Mops's lines get no babble (he keeps his meh on his first line in a scene, so his other lines are silent apart from the tick). A babble for his other lines too?
 
 2026-11-26, draft PR #87, not merged. Done: Brian's five showing-6 notes (README, "Chapter 1 redesign", the 2026-11-26 paragraph): sight sees his whole drawn body (the cone drawn on him is the cone that sees him), the crowd's hiss gone, one music table with no singing away from bedtime, his own Croc Boys song for the band, the photo straight after his first dance, guards round the furniture. Open for Brian:
 - Music (Brian's picks of 2026-11-26, built in `src/modules/music-picks.js`): the home rotation is Carefree, Morning, Rainbows; bedtime's Reawakening waits for the bedtime story's branch to send its "bedtime" cue; Mops's closing-time hum is "track to be chosen by Brian" (stand-in: silence); the "mops-bleat" sound waits for its clip. Mops's approved line "Floating in space! It's our favorite song!" and Squatch's "♪ I'm floating in space! ♪" now sit over Goating in Space: keep or change the words? There is no credits screen in the game: the CC BY credits are in `music/CREDITS.txt` and the README; does he want them on a screen too?
