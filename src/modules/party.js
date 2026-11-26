@@ -871,6 +871,10 @@ export function createParty(bridge) {
       const p = live();
       return !!(p && p.alarm);
     },
+    /** The party's state now (its alarm's music quiet ends when this is a new one: a restart). */
+    alarmKey() {
+      return live() || null;
+    },
     musicCue() {
       const p = live();
       if (!p || p.alarm) return "";

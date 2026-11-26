@@ -27,7 +27,7 @@ import { quietBedtimeLine } from "./bedtime-story-lines.js";
 import { adultPxFor, doorAdultPx } from "./room-sizes.js";
 import { createGoalMark } from "./goal-mark.js";
 import { singingNow } from "./music-rules.js";
-import { keepInSpan, seeCue, visitNow, playSound, soundsPlayed, hushNow } from "./music-picks.js";
+import { keepInSpan, seeCue, visitNow, playSound, soundsPlayed, hushNow, hushKey, unhush } from "./music-picks.js";
 
 /**
  * The game-state fields a rebuilt beat may write, through engine().set(field, value). Anything else it
@@ -53,7 +53,14 @@ export function createBridge() {
   const refineCue = (cue) => {
     // While a beat's alarm is on (the one capture rule: FUR!, the alarm, the search), no music; after it, the music
     // stays quiet in this place until a visit to another place (music-picks.js hushNow; Brian 2026-11-26).
-    for (const b of beats.values()) if (b.alarmOn && b.alarmOn()) return (hushNow(), "");
+    for (const [id, b] of beats) if (b.alarmOn && b.alarmOn()) return (hushNow(undefined, b.alarmKey ? b.alarmKey() : null, id), "");
+    // the part that had the alarm started again (its state is a new one: a restart after the LOCKUP card, or ↺): a new
+    // visit, so the music comes back
+    const h = hushKey();
+    if (h && h.owner) {
+      const b = beats.get(h.owner);
+      (!b || !b.alarmKey || b.alarmKey() !== h.key) && unhush();
+    }
     if (cue !== "home") return cue;
     const tv = beats.get("ch1-tv-story"),
       bed = beats.get("ch1-bedtime-story");
@@ -104,10 +111,11 @@ export function createBridge() {
      * (the older program then plays nothing either).
      */
     alarmSound() {
-      // (the music stops with the alarm, and stays quiet here until another place: music-picks.js hushNow)
-      hushNow();
       const b = buses(engine);
       if (!b) return false;
+      // (the music stops with the alarm, and stays quiet here until another place: music-picks.js hushNow; the older
+      // program calls this each time its alarm sounds)
+      hushNow();
       BOARD.alarm({ c: b.ctx, o: b.fx }, b.ctx.currentTime + 0.01);
       return true;
     },
