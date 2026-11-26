@@ -19,6 +19,7 @@ export const GANITOR_LINES = Object.freeze(
     { id: "pa-ganitor", who: "speaker", text: "Ganitor Mops to the party hall.", status: "approved", source: "Brian, chat 2026-11-26 (B, approved words)" },
     { id: "sign-wall", who: "sign", text: "MOPS, GANITOR", status: "approved", source: "Brian, chat 2026-11-26 (C: the Employee of the Month photo's label)" },
     { id: "sign-crayon", who: "sign", text: "MOPS THE GANITOR", status: "approved", source: "Brian, chat 2026-11-26 (E: on Squatch's crayon drawings where Mops is in one)" },
+    { id: "sign-crayon-me", who: "sign", text: "ME", status: "approved", source: "Brian 2026-11-13 (the crayon labels ME / MOPS, CH1-LINES-FOR-BRIAN row 130); unchanged" },
   ].map((l) => Object.freeze(l)),
 );
 /** The words of one Ganitor line, by id. Throws on an unknown id. */
@@ -166,9 +167,7 @@ export const HALLWAY_CRAYON = Object.freeze({ x0: 586, y0: 110, w: 108, h: 84, s
 export function drawHallwayCrayon(ctx) {
   const C = HALLWAY_CRAYON,
     cx = C.x0 + C.w / 2,
-    label = crayonGanitorLabel(),
-    i = label.indexOf(" THE "),
-    lines = ["ME", label.slice(0, i + 4), label.slice(i + 5)];
+    lines = [ganitorWords("sign-crayon-me")];
   ctx.save();
   ctx.beginPath();
   ctx.roundRect(C.x0, C.y0, C.w, C.h, 6);
@@ -181,6 +180,12 @@ export function drawHallwayCrayon(ctx) {
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillStyle = TAG_INK;
+  // Mops's label, wrapped a word at a time to the card's width
+  for (const w of crayonGanitorLabel().split(" ")) {
+    const k = lines.length - 1,
+      joined = k > 0 ? lines[k] + " " + w : "";
+    k > 0 && ctx.measureText(joined).width <= C.w - 10 ? (lines[k] = joined) : lines.push(w);
+  }
   lines.forEach((t, k) => ctx.fillText(t, cx, C.y0 + 20 + k * 22, C.w - 8));
   ctx.restore();
   return (lastCrayon = { box: { x0: C.x0, y0: C.y0, x1: C.x0 + C.w, y1: C.y0 + C.h }, lines });

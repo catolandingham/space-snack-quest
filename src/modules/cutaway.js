@@ -52,8 +52,8 @@ let tagDrew = null; // Mops's name tag in the picture just drawn (tests)
  * itself (Brian 30a). Seconds: three bites of the sandwich (`bites`), a look at the empty bag, the bag lifted to his
  * mouth, three bites of the bag, then chewing with nothing in his hoof (the clear last frame). PLACEHOLDER timing.
  */
-// (2026-11-26: the first bite waits 0.9 s, so the whole hay sandwich is seen first)
-export const LUNCH_EAT = Object.freeze({ length: 4.0, bites: Object.freeze([0.9, 1.3, 1.7]), bagUp: 2.3, bagBites: Object.freeze([2.6, 3.0, 3.4]) });
+// (2026-11-26: the first bite waits 0.8 s, so the whole hay sandwich is seen first)
+export const LUNCH_EAT = Object.freeze({ length: 3.8, bites: Object.freeze([0.8, 1.2, 1.6]), bagUp: 2.1, bagBites: Object.freeze([2.4, 2.8, 3.2]) });
 
 /**
  * Brian 30a: seconds a wordless picture with nothing to tap plays before the game goes on by itself (0: it waits

@@ -25,7 +25,7 @@ const HM = await import(M("home-morning-art.js"));
 const PHONE_K = 375 / 960; // a 375-wide phone shows the 960-wide picture at this size
 
 const g = await startGame({ port: 9748, name: "lunch-ganitor" });
-g.check("ganitor.js holds the Ganitor words, each approved by Brian in chat on 2026-11-26", !!GAN && GAN.GANITOR_LINES.length === 4 && GAN.GANITOR_LINES.every((l) => l.status === "approved" && /Brian, chat 2026-11-26/.test(l.source)));
+g.check("ganitor.js holds the Ganitor words, the four new ones approved by Brian in chat on 2026-11-26 (and his approved ME)", !!GAN && GAN.GANITOR_LINES.length >= 4 && GAN.GANITOR_LINES.every((l) => l.status === "approved" && /Brian/.test(l.source)) && GAN.GANITOR_LINES.filter((l) => /Brian, chat 2026-11-26/.test(l.source)).length === 4);
 
 const { page, errors } = await g.open("?ch=1", { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
 await page.evaluate(() => window.__ss.lockedReady);
@@ -95,6 +95,34 @@ const ball = await page.evaluate(() => {
   out.nearEarly = { alarm: !!st().alarm };
   tick(0.7);
   out.near = { alarm: !!st().alarm, shout: st().alarm && st().alarm.phase };
+  // noticed rolled up: staying rolled up there does not hide him through the search (the guards come for him)
+  out.nearSpotted = !!(st().alarm && st().alarm.spotted);
+  // ↺ while rolled up: he stands at the step's start, nothing of the ball left
+  fresh(150, true);
+  ss.sectionReset();
+  tick(0.3);
+  out.afterReset = { pose: st().pose, sqPose: n.sqPose, ballNear: JSON.stringify(st().ballNear || {}) };
+  // steering unrolls him
+  fresh(150, true);
+  out.beforeSteer = st().pose;
+  // a tap on the floor to his right (the game's walk: n.walkTo)
+  n.walkTo = { x: n.sq.x + 80, y: n.sq.y, room: n.room, lx: n.sq.x, ly: n.sq.y, lt: n.T, at: n.T };
+  tick(0.3);
+  out.afterSteer = { pose: st().pose, sqPose: n.sqPose };
+  // rolled up in the hallway doorway's ring: SNEAK · hallway is not offered (he unrolls first)
+  n.q = [];
+  n.cur = null;
+  ss.ch1JumpBeat(25);
+  tick(0.2);
+  st().reached = 2;
+  n.walkTo = null;
+  n.sq.x = lu.LUNCH_PLACES.door.stand.x;
+  n.sq.y = lu.LUNCH_PLACES.door.stand.y;
+  tick(0.05);
+  out.doorStanding = offer();
+  beat.spots().find((q) => q.id === "lu-ball").f();
+  tick(0.05);
+  out.doorBall = (beat.spots() || []).map((q) => q.verb + " · " + q.cap);
   // not offered in the hallway or behind the counter
   n.q = [];
   n.cur = null;
@@ -112,6 +140,10 @@ g.check("in the open in the hall, the button offers ROLL · ball; pressed, he ro
 g.check("a ball out in a guest's look, but more than 70 px from her, is not noticed in her whole look", ball.farOffer === "ROLL · ball" && !ball.far.alarm && ball.far.pose === "ball", ball.far);
 g.check("standing in that same spot, he is seen (the ball is what hid him)", ball.farStanding.alarm, ball.farStanding);
 g.check("a ball within 70 px of her, in her look, is noticed after 2 s (not before), and the one capture rule starts (FUR!)", !ball.nearEarly.alarm && ball.near.alarm && ball.near.shout === "shout", { early: ball.nearEarly, near: ball.near });
+g.check("noticed rolled up, he is not safe staying put: the guards know where he is (as a guard who saw him hide)", ball.nearSpotted, ball);
+g.check("↺ while rolled up: he stands again at the step's start, nothing of the ball left", ball.afterReset.pose !== "ball" && ball.afterReset.sqPose !== "ball" && ball.afterReset.ballNear === "{}", ball.afterReset);
+g.check("moving unrolls him (as stepping out of a hiding place)", ball.beforeSteer === "ball" && ball.afterSteer.pose === "stand" && ball.afterSteer.sqPose === "stand", { before: ball.beforeSteer, after: ball.afterSteer });
+g.check("rolled up in the hallway doorway, SNEAK · hallway is not offered (he must unroll first)", ball.doorStanding === "SNEAK · hallway" && !ball.doorBall.includes("SNEAK · hallway"), { standing: ball.doorStanding, ball: ball.doorBall });
 g.check("ROLL · ball is not offered in the hallway or behind the counter", !ball.hallwayOffers.includes("ROLL · ball") && !ball.counterOffers.includes("ROLL · ball"), { hallway: ball.hallwayOffers, counter: ball.counterOffers });
 
 // ---------- the snack counter close-up ----------
@@ -146,10 +178,32 @@ const after = () =>
     for (let i = 0; i < 10; i++) ss.tick(0.05);
     return { x: n.sq.x, y: n.sq.y, step: n.ch1Lunch.step, pose: n.ch1Lunch.pose };
   });
-// a tap on the close-up away from the plate (its top left: the counter guest's corner): nothing, he does not walk off
-await touch(60, 120);
+// a tap on open hall floor that the close-up covers (game 100, 560; in the close-up, not the plate): at the counter it does nothing...
+await touch(100, 560);
 cu.afterTapOff = await after();
 cu.afterTapOff.moved = Math.hypot(cu.afterTapOff.x - cu.sq0.x, cu.afterTapOff.y - cu.sq0.y) > 1;
+// ...while in the sneak (no close-up) the same tap walks him there
+const sq1 = await page.evaluate(() => {
+  const ss = window.__ss,
+    n = ss.op;
+  n.q = [];
+  n.cur = null;
+  ss.ch1JumpBeat(25);
+  for (let i = 0; i < 6; i++) ss.tick(0.05);
+  return { x: n.sq.x, y: n.sq.y };
+});
+await touch(100, 560);
+const walked = await after();
+cu.sameTapInSneak = Math.hypot(walked.x - sq1.x, walked.y - sq1.y) > 5;
+await page.evaluate(() => {
+  const ss = window.__ss,
+    n = ss.op;
+  n.q = [];
+  n.cur = null;
+  ss.ch1JumpBeat(27);
+  for (let i = 0; i < 12; i++) ss.tick(0.05);
+  ss.drawFrame();
+});
 // a tap on the plate in the close-up: TAKE · snack
 const plateIn = { x: (cu.drew ? cu.drew.x0 : 0) + (P.COUNTER_SPOTS.plate.x - P.COUNTER_CLOSEUP.src.x0) * P.COUNTER_CLOSEUP.k, y: (cu.drew ? cu.drew.y0 : 0) + (P.COUNTER_SPOTS.plate.y - 10 - P.COUNTER_CLOSEUP.src.y0) * P.COUNTER_CLOSEUP.k };
 await touch(plateIn.x, plateIn.y);
@@ -162,7 +216,7 @@ g.check("the close-up holds the plate, Squatch ducked, Mops and the counter gues
 const duckPx = 48.5 * 1.65 * ART.LOW * C.k * PHONE_K,
   platePx = P.LUNCH_SIZES.plate.w * C.k * PHONE_K;
 g.check("on a 375-wide phone, in the close-up the ducked Squatch is at least 28 px tall and the plate at least 50 px wide", duckPx >= 28 && platePx >= 50, { duckPx, platePx });
-g.check("a tap on the close-up away from the plate does nothing: he stays behind the counter", cu.offer === "TAKE · snack" && !cu.afterTapOff.moved && cu.afterTapOff.step === "snack", cu);
+g.check("a tap on the hall floor the close-up covers does nothing at the counter (he stays behind it), though the same tap in the sneak walks him there", cu.offer === "TAKE · snack" && !cu.afterTapOff.moved && cu.afterTapOff.step === "snack" && cu.sameTapInSneak, cu);
 g.check("a tap on the plate in the close-up is TAKE · snack: he stands up and reaches for one pie", ["grab", "chew"].includes(cu.afterTapPlate.step) && cu.afterTapPlate.pose !== "ducked", cu.afterTapPlate);
 
 // ---------- the bag and the hay sandwich ----------
@@ -229,6 +283,19 @@ const tags = await page.evaluate(() => {
 const one = (a) => Array.isArray(a) && a.length >= 1;
 g.check("A: Mops wears his GANITOR name tag in the hallway, in the hall and in the photo wall's picture", one(tags.hallway) && one(tags.hall) && one(tags.photos), tags);
 g.check("A: in a room he is too small for the word to read (a clear tag shape); in the eating close-up the word GANITOR is written", [...tags.hallway, ...tags.hall].every((t) => !t.readable) && eat.length && eat[0].tag && eat[0].tag.readable && eat[0].tag.scale === 12, { room: tags.hall, closeUp: eat[0] && eat[0].tag });
+const left = await page.evaluate(() => {
+  const c = document.createElement("canvas");
+  c.width = 960;
+  c.height = 640;
+  const ctx = c.getContext("2d"),
+    seen = [];
+  const fill = ctx.fillText.bind(ctx);
+  ctx.fillText = (t, ...a) => (seen.push({ t, a: ctx.getTransform().a }), fill(t, ...a));
+  window.SSQ.engine().drawMopsOn(ctx, 480, 600, 12, { f: -1, walk: 0 });
+  window.SSQ.engine().drawMopsOn(ctx, 300, 600, 12, { f: 1, walk: 0 });
+  return seen.filter((s) => s.t === "GANITOR");
+});
+g.check("A: drawn big facing left or right, the tag's word GANITOR reads the right way round (not mirrored)", left.length === 2 && left.every((s) => s.a > 0), left);
 const FE = readFileSync(join(root, "src", "game", "60-frame-draw.js"), "utf8");
 g.check("A: Mops's drawing gains only the tag (it takes the old name patch's place; nothing else in his drawing changed)", /window\.SSQ\.drawGanitorTag\(e, i\) : \(X\(6, -19, 2\.2, 1\.1\), r\("#ffffff", 0\.8\)\)/.test(FE));
 
@@ -249,8 +316,9 @@ const wall = await page.evaluate(() => {
 // (the locked picture's photo grid ends at about x 685 in its top three rows, 650 in the bottom row, y 214 and up)
 g.check("C: in the hallway, a framed photo of Mops on the back wall labelled MOPS, GANITOR, right of the locked picture's photo grid", wall.wall && wall.wall.word === "MOPS, GANITOR" && wall.wall.frame.x0 >= 690 && wall.wall.plaque.x0 >= 655 && wall.wall.plaque.x1 <= 940 && wall.wall.plaque.y1 < 260, wall.wall);
 g.check("C: not in the office", wall.office === null, wall.office);
-const locked = execFileSync("git", ["-C", root, "status", "--porcelain", "--", "docs/locked-rooms"], { encoding: "utf8" }).trim();
-g.check("C: the locked hallway picture is not changed (the wall is a layer drawn over it)", locked === "", locked);
+const base = execFileSync("git", ["-C", root, "merge-base", "HEAD", "origin/main"], { encoding: "utf8" }).trim();
+const locked = execFileSync("git", ["-C", root, "diff", "--name-only", base, "--", "docs/locked-rooms/*.png"], { encoding: "utf8" }).trim();
+g.check("C: the locked room pictures are not changed on this branch (the wall is a layer drawn over the hallway)", locked === "", locked);
 g.check("E: Squatch's crayon card on the hallway wall says ME and MOPS THE GANITOR", wall.crayon && JSON.stringify(wall.crayon.lines) === JSON.stringify(["ME", "MOPS THE", "GANITOR"]) && GAN.crayonGanitorLabel() === "MOPS THE GANITOR", wall.crayon);
 const GD = readFileSync(M("guardians-drawing.js"), "utf8");
 g.check("E: the crayon Guardians drawing has no Mops in it, so it writes no label (it draws no words at all)", !/fillText|strokeText/.test(GD) && !/GANITOR/.test(GD));

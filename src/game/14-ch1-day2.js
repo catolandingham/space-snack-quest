@@ -595,7 +595,7 @@
     }
     function ch1WorldTap(x, y) {
       if (!n.ch1Day2 || !n.ctrl || n.ch1Zoom || n.ch1PadOn) return !1;
-      for (let b of [hmBeat(), luBeat()]) if (b && b.active() && b.tap) return b.tap(x, y); // a tap on the glowing thing (or the lunch's close-up)
+      for (let b of [hmBeat(), luBeat()]) if (b && b.active() && b.tap && b.tap(x, y)) return !0; // a tap on the glowing thing (or the lunch's close-up)
       if (n.ch1Step === "photos" && ch1HallDoorHit(x, y)) return (ch1LeavePhotos(), !0);
       if (n.ch1Step === "family" && Math.hypot(x - 430, y - 530) < 80) return (ch1HideFamily(), !0);
       return !1;

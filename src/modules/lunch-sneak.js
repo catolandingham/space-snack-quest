@@ -179,6 +179,8 @@ export function createLunchSneak(bridge) {
   // by someone who stays within `radius` of him for `seconds`, looking his way (his cone would see him standing).
   const BALL = () => E().ball || { radius: 70, seconds: 2 };
   const ballNoticed = (l) => Object.values(l.ballNear || {}).some((t) => t >= BALL().seconds);
+  // (Time counts while someone is within reach AND looking his way: R43 reads "within 70 px for 2 s, whose cone would
+  // see him"; the older program's night check only asks the cone at the end. Brian's "same ball rule" read this way.)
   function ballWatch(l, dt) {
     const s = sqPoint(),
       B = BALL(),
@@ -224,6 +226,10 @@ export function createLunchSneak(bridge) {
     const e = E(),
       l = L();
     busy();
+    // (never into the hallway rolled up)
+    l.pose = "stand";
+    l.ballNear = {};
+    e.set("sqPose", "stand");
     e.set("ch1Sneak", false);
     go("tohall");
     e.walkOff();
@@ -519,7 +525,8 @@ export function createLunchSneak(bridge) {
     if (inHall() && l.pose === "ball" && free && !l.alarm && ballNoticed(l)) {
       const id = Object.keys(l.ballNear).find((k) => l.ballNear[k] >= BALL().seconds),
         w = watchers(l).find((q) => q.id === id);
-      w && raise(w);
+      // (noticed where he lies: staying rolled up there does not count as hidden through the search)
+      w && (raise(w), (l.alarm.spotted = true));
     }
     l.seenBy && (showing[l.seenBy] = l.seenT / SEEN_TOO_LONG_SECONDS);
     // each watcher's warning: "?" over his head before he turns back to look (as the party's glancer)
@@ -597,7 +604,8 @@ export function createLunchSneak(bridge) {
       // the alarm: every hiding place (the doorway waits), and the ball anywhere else
       if (l.alarm) return standing ? [plantSpot(), crateSpot(), ballSpot()] : [];
       const next = nextPlace(l),
-        out = [next === "door" ? doorSpot() : next === "crate" ? crateSpot() : plantSpot()];
+        // (rolled up he must unroll first: the doorway is not offered to a ball)
+        out = l.pose === "ball" ? [] : [next === "door" ? doorSpot() : next === "crate" ? crateSpot() : plantSpot()];
       // the places behind him still hide him (they do not glow)
       standing && l.reached >= 1 && next !== "plant" && out.push(plantSpot());
       standing && l.reached >= 2 && out.push(crateSpot());

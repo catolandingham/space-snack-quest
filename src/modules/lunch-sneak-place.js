@@ -135,7 +135,7 @@ export const LUNCH_PACE = Object.freeze({
   lookBoth: 1.2,
   give: 0.5,
   heart: 0.9,
-  eat: 4.0, // the wordless eating cutaway
+  eat: 3.8, // the wordless eating cutaway
   mopsWalk: 170,
   up: 0.3,
   reach: 0.45,
