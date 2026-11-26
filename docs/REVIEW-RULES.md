@@ -3,28 +3,29 @@
 
 | Lines | Heading |
 | --- | --- |
-| 29–32 | # Review rules |
-| 33–84 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
-| 85–87 | ## Techniques |
-| 88–90 | ## Mistake: locked art was redrawn |
-| 91–95 | ## Mistake: optional inspection interrupted getting out of bed |
-| 96–98 | ## Mistake: a big doc's section index went stale |
-| 99–101 | ## Mistake: a rebuilt beat forgot the step restart |
-| 102–104 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
-| 105–107 | ## Mistake: a killed run was read as a failing test |
-| 108–110 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
-| 111–113 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
-| 114–120 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
-| 121–128 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
-| 129–145 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
-| 146–158 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
-| 159–161 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
-| 162–170 | ## Mistakes caught building the morning sound (2026-11-24) |
-| 171–182 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
-| 183–194 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
-| 195–208 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
-| 209–215 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
-| 216–226 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
+| 30–33 | # Review rules |
+| 34–85 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
+| 86–88 | ## Techniques |
+| 89–91 | ## Mistake: locked art was redrawn |
+| 92–96 | ## Mistake: optional inspection interrupted getting out of bed |
+| 97–99 | ## Mistake: a big doc's section index went stale |
+| 100–102 | ## Mistake: a rebuilt beat forgot the step restart |
+| 103–105 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
+| 106–108 | ## Mistake: a killed run was read as a failing test |
+| 109–111 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
+| 112–114 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
+| 115–121 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
+| 122–129 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
+| 130–146 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
+| 147–159 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
+| 160–162 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
+| 163–171 | ## Mistakes caught building the morning sound (2026-11-24) |
+| 172–183 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
+| 184–195 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
+| 196–209 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
+| 210–216 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
+| 217–227 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
+| 228–235 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
 <!-- /section-index -->
 # Review rules
 
@@ -223,3 +224,11 @@ His words, on the snack close-up, for every piece of the game: "It just needs to
 - A still of one exact frame (a small "?" beside a guest) came out without the "?": the test that drew it read the canvas calls in the same moment, but by the time the screenshot was taken the game's own loop had drawn later frames, in which the "?" was gone. A still of one exact frame is copied from the canvas in the same call that draws it (`toDataURL`), and the check reads a pixel of the thing, not only that it was asked to be drawn.
 - Going home early through his door needs him to have walked away from it first (`leftDoor`); coming back from the alarm's card, the walk in ends inside the door's circle, and with `leftDoor` still set from before the alarm he was sent straight home again (the photo test froze). Every way back into a scene resets the "has walked away" kind of flag (`resume` now does), and a test stands him just inside the door after each way back.
 - The reviewer of this round found Squatch detouring round the back of the room for a Mops who had not come in yet (`between` read Mops's place without asking whether he is in the room). A helper that reads someone's position first asks whether that someone is there.
+
+## Mistakes caught building Brian's showing-5 notes (2026-11-25)
+
+- Places where people stand were typed without checking them against the room's furniture, and Mops stood on the bucket at home in two scenes. Every new standing spot goes into `tests/standing-spots.mjs`, which checks it against the floor each thing takes up (at home up to the shins, since the room draws people three times bigger).
+- Boots sounded every 0.45 s while any guard was "in the hall", even while the guard at home stood talking to Mops. A footstep plays only when that person's feet moved (`src/modules/footfalls.js`); `tests/footsteps.mjs` checks it across Chapter 1 from the game state, not from the footstep code.
+- Logic for the party went into `src/game/` (sizes, the walk ring's bookkeeping, the singing rule) although the rule said modules. `tests/game-no-growth.mjs` now fails when `src/game/` grows.
+- Moving the talk off the bucket put Squatch's held-out flyer over Mops: a drawn person is wider than his feet (his arm and what he holds). A new place for two people talking is checked with the drawn boxes (`tests/party-home.mjs`), not only with the feet.
+- A test that opens a scene, waits a moment in real time and only then stops the clock reads a scene that has already moved on (the talk had fetched the flyer before the first look). Stop the clock and restart the part (`__ss.sectionReset()`) before reading where it starts; the beat's own `restart()` does not clear the story queue.

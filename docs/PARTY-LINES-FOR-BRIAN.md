@@ -36,7 +36,7 @@ Half one is P1 to P5 (peek to dress-up), built first. Half two is P6 to P8. The 
 | 24 | P3. Isfred, one flyer in his hand; then the Croc Boys walk on (until now the stage was his alone), and he walks off to the bar and sets the flyer down on the counter's far end | And now... put your hands together for the Croc Boys! | isfred | one | approved | Brian 2026-11-24: Yes to all |
 | 25 | P3. The name over the band's song bubble | Croc Boys | tag | one | needs your yes | New: the name over the band's song bubble (Isfred has just called them the Croc Boys); coordinator, 2026-11-24 |
 | 26 | P3. The Croc Boys sing it once they are in their places; the lights dim and the pairs dance | Stormtop-vania 1-2-3-4-5! | band | one | approved | Brian 2026-11-24: Yes to all |
-| 27 | P4. Squatch thinks it at home, once the flyer is down on the floor (moved from the plant, Brian 2026-11-25: "Dance wish moves home") | I've never gotten to dance at a party. | sq | one | approved | Brian 2026-11-24: Yes to all |
+| 27 | REMOVED 2026-11-25 (not in the game; line 80 replaced it). It was Squatch's thought at home once the flyer was down | I've never gotten to dance at a party. | sq | one | approved | Removed 2026-11-25: replaced by line 80 (it had Brian's yes of 2026-11-24) |
 | 28 | P4, once the flyer is in his paw. Goal chip (his door is outlined) | Squatch: sneak home for a disguise | chip | one | approved | Brian 2026-11-24: Yes to all |
 | 29 | P5. Action button at the closet | OPEN · closet | button | one | approved | Brian 2026-11-23: 6A (home alone) |
 | 30 | P5. Over the meter in the full-screen dress-up | Disguised enough | meter | one | approved | Brian 2026-11-24: Yes to all |
@@ -45,15 +45,15 @@ Half one is P1 to P5 (peek to dress-up), built first. Half two is P6 to P8. The 
 | 33 | P6. The camera tourist, as the red light counts 3-2-1 | Say cheese! | guest | two | approved | Brian 2026-11-24: Yes to all |
 | 34 | P6. The bartender, the first time she glances at his paw in the snacks | ...Nice gloves. | bartender | two | approved | Brian 2026-11-24: Yes to all |
 | 35 | P6. The bartender, the second time; then she runs to the alarm | Wait a second... fur! | bartender | two | approved | Brian 2026-11-24: Yes to all |
-| 36 | P6. The octopus, after Squatch's first minute in the hall | *hic* Fellow tourist! | octopus | two | approved | Brian 2026-11-24: Yes to all |
-| 37 | P6. Squatch thinks it as the octopus follows | I gotta juke this fool. | sq | two | approved | Brian 2026-11-24: Yes to all |
+| 36 | P6. The octopus, after Squatch's first minute in the hall; then he lunges and gives a first, harmless hug | *hic* Fellow tourist! | octopus | two | approved | Brian 2026-11-24: Yes to all |
+| 37 | P6. Squatch thinks it after line 44, after the first hug; then the real chase | I gotta juke this fool. | sq | two | approved | Brian 2026-11-24: Yes to all |
 | 38 | REMOVED 2026-11-24 (not in the game; line 43 replaced it). It was Squatch's thought at the hallway doorway | Mops! | sq | two | approved | Removed 2026-11-24: replaced by line 43 (it had Brian's yes of 2026-11-24) |
 | 39 | P2 on. Goal chip while the alarm rings (and in P7) | Squatch: run home and hide! | chip | one | approved | Brian 2026-11-24: Yes to all |
 | 40 | P8b. The wall speaker at closing time | The party's over. Good night, Stormtop! | speaker | two | approved | Brian 2026-11-24: Yes to all |
 | 41 | P8. The talk at home, both endings: Squatch, after "You went to the party." (line 57) | Everyone out there has someone. | sq | two | approved | Brian 2026-11-24: Yes to all |
 | 42 | P8. Mops answers, both endings; then he lifts the hat off (or pats him) | You have me. | mops | two | approved | R52, decided |
 | 43 | P6. Squatch thinks it each time he walks into the hallway doorway and is bounced back | I can't go there. Mops will see me. | sq | two | approved | Brian 2026-11-24, click in Snack Quest Chat |
-| 44 | P6. Squatch thinks it once, as the octopus's chase starts (all his arms are out) | Those arms will pull off my disguise! | sq | two | approved | Brian 2026-11-24, Snack Quest Chat |
+| 44 | P6. Squatch thinks it after the octopus's first hug (squeeze, hat tips) | Those arms will pull off my disguise! | sq | two | approved | Brian 2026-11-24, Snack Quest Chat |
 | 45 | P6. Action button at the snack bar (it opens the snack close-up) | GRAB · snacks | button | two | approved | Brian 2026-11-24, Snack Quest Chat |
 | 46 | P6. Action button on his spot in the group photo's row, after the first song | JOIN · photo | button | two | approved | Brian 2026-11-24, Snack Quest Chat |
 | 47 | P7. The card, once Mops has sent the guard off and Squatch is still under the bed, over the party things as pictures (found ones filled in, the rest as "?" shapes) | There's more to find at the party! | card | two | approved | Brian 2026-11-24, Snack Quest Chat |
@@ -75,8 +75,8 @@ Half one is P1 to P5 (peek to dress-up), built first. Half two is P6 to P8. The 
 | 63 | REMOVED 2026-11-25 (not in the game; line 73 replaced it). It was Squatch's thought in the plant as the flyer glowed | A robot flyer! I'll show Mops. | sq | one | approved | Removed 2026-11-25: replaced by line 73 (it had Brian's yes of 2026-11-24) |
 | 64 | P4. Goal chip until he has the flyer (the flyer is outlined) | Squatch: grab the flyer | chip | one | approved | Brian 2026-11-24, Snack Quest Chat |
 | 65 | P4. Action button within reach of the flyer on the bar counter's far end | GRAB · flyer | button | one | approved | Brian 2026-11-24, Snack Quest Chat |
-| 66 | P4. Squatch thinks it at home, right after line 27 | I deserve one night of normal. | sq | one | approved | Brian 2026-11-24, Snack Quest Chat |
-| 67 | P4. Squatch thinks it next; then the closet is outlined (P5) | Costume on. Then I dance! | sq | one | approved | Brian 2026-11-24, Snack Quest Chat |
+| 66 | REMOVED 2026-11-25 (not in the game; you dropped it). It was Squatch's thought at home after line 27 | I deserve one night of normal. | sq | one | approved | Removed 2026-11-25: Brian dropped it (it had his yes of 2026-11-24) |
+| 67 | REMOVED 2026-11-25 (not in the game; you dropped it, line 81 replaced it). It was Squatch's thought before the closet | Costume on. Then I dance! | sq | one | approved | Removed 2026-11-25: Brian dropped it; line 81 replaced it (it had his yes of 2026-11-24) |
 | 68 | P6. Squatch thinks it in the snack close-up, once, after his first snack lands in the bag | Got one! | sq | two | approved | Brian 2026-11-24, Snack Quest Chat: "I like his own thought" |
 | 69 | P6. The button in the snack close-up, on screen the whole time | LEAVE · bar | button | two | approved | Brian 2026-11-24, Snack Quest Chat: a LEAVE · bar button always on screen |
 | 70 | The Chapter 1 end screen (the tally), only when he took every snack at the party | Snack Bandit: took every snack at the party. | card | two | approved | Brian 2026-11-24, click in Snack Quest Chat: "Snack Bandit (Recommended)" |
@@ -86,6 +86,13 @@ Half one is P1 to P5 (peek to dress-up), built first. Half two is P6 to P8. The 
 | 74 | P6. A Croc Boy calls it from the stage as the first song ends; everyone gathers by the alarm box | Group photo! | band | two | approved | Brian 2026-11-25, Snack Quest Chat |
 | 75 | P8. Squatch at home, every ending where Mops is there, after Mops lifts the hat (or pats him); he holds up the flyer | But look. Robots are coming to do your job. | sq | two | approved | Brian 2026-11-25, Snack Quest Chat |
 | 76 | P8. Mops answers; then Squatch's two questions (lines 59 and 60) | Nobody is replacing me. They need me here. | mops | two | approved | Brian 2026-11-25, Snack Quest Chat |
+| 77 | P4. Squatch, home with the flyer, just inside his door; the party music still comes through the doorway | Phew, made it! | sq | one | approved | Brian 2026-11-25, Snack Quest Chat |
+| 78 | P4. Goal chip next; his bed glows | Squatch: put the flyer under your bed for Mops | chip | one | approved | Brian 2026-11-25, Snack Quest Chat |
+| 79 | P4. Action button at his bed; he slides the flyer under it | SAVE · flyer | button | one | approved | Brian 2026-11-25, Snack Quest Chat |
+| 80 | P4. Squatch thinks it once the flyer is under the bed | That party looked so fun. I've never gotten to dance at one. | sq | one | approved | Brian 2026-11-25, Snack Quest Chat |
+| 81 | P4. Squatch thinks it next; then the closet is outlined (P5) | I'll sneak back in a costume and dance! | sq | one | approved | Brian 2026-11-25, Snack Quest Chat |
+| 82 | P6. Goal chip during the octopus's real chase, after his first hug and Squatch's lines 44 and 37 | Squatch: get away from the octopus! | chip | two | approved | Brian 2026-11-25, Snack Quest Chat |
+| 83 | P6. Goal chip once everyone is in the photo's two rows and the gap left for Squatch glows; JOIN · photo shows with it | Squatch: join the group photo | chip | two | approved | Brian 2026-11-25, Snack Quest Chat |
 
 Lines that need your yes: 25 (1 line). Your "Yes to all" (2026-11-24) covered the other 31; line 25, the band's name tag "Croc Boys", was added after it.
 

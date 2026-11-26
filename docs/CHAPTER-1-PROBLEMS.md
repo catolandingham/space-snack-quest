@@ -27,10 +27,10 @@
 | 266–269 | ## 13. Sneaking to the plant plays itself (beat 4) — fixed Nov 14 (see "Do first" step 5) |
 | 270–273 | ## 14. The octopus and the photo have buttons that do the moment (beats 12, 13) |
 | 274–277 | ## 15. Running home happens by itself (beat 18) |
-| 278–281 | ## 16. The TV story is a small TV in the room (beat 20) |
-| 282–285 | ## 17. Mops finds the flyer and fur at the wrong time (beat 19) |
-| 286–289 | ## 18. The bedtime story has no pictures (beat 21) |
-| 290–293 | ## 19. The Croc Boys are barely there (beat 6) |
+| 278–282 | ## 16. The TV story is a small TV in the room (beat 20) (fixed 2026-11-25, draft PR #87) |
+| 283–286 | ## 17. Mops finds the flyer and fur at the wrong time (beat 19) |
+| 287–290 | ## 18. The bedtime story has no pictures (beat 21) |
+| 291–294 | ## 19. The Croc Boys are barely there (beat 6) |
 <!-- /section-index -->
 # Chapter 1 problems, ranked
 
@@ -275,9 +275,10 @@ Found by reading the Day 1 code against beats 1 to 21 of `docs/CH1-STORY-WALKTHR
 
 - Walkthrough: the kid runs home and hides; guards search; if a guard reaches him he goes to jail. Game: if the kid does nothing Squatch walks home on his own, and hiding in the hall plant ends the chase. Pull request 38 (jail card, then the bedroom) is waiting on Brian and covers the catch.
 
-## 16. The TV story is a small TV in the room (beat 20)
+## 16. The TV story is a small TV in the room (beat 20) (fixed 2026-11-25, draft PR #87)
 
 - Walkthrough and Brian (t287u): cut away to full-screen story pictures. Game: three pictures on the TV set, with two captions that Brian has not approved ("Fur in the scrubber." and "Onto the ship.").
+- Fixed 2026-11-25 (Brian: "1", bring back the Wookiee story): the old picture story of commit 71ec66e, full screen, its approved captions word for word, sized to the game's rule, with his Wookiee recording (`src/modules/tv-story.js`; `tests/tv-story.mjs`). The stand-in is deleted.
 
 ## 17. Mops finds the flyer and fur at the wrong time (beat 19)
 

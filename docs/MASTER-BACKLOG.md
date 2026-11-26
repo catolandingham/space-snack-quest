@@ -4,24 +4,30 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–91 | ## Where main is (Chapter 1 redesign) |
-| 92–106 | ## Register |
-| 107–128 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 129–149 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 150–162 | ## Phase 2 (plan section 4, T13 to T18) |
-| 163–185 | ## Phase 1 (plan section 3, T5 to T12) |
-| 186–199 | ## SS40–SS44 |
-| 200–217 | ## Story rows |
-| 218–236 | ## Reset section |
-| 237–247 | ## Still open |
-| 248–251 | ## Chapter 1 replot, recorded and not built |
-| 252–405 | ## Changelog |
+| 24–97 | ## Where main is (Chapter 1 redesign) |
+| 98–112 | ## Register |
+| 113–134 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 135–155 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 156–168 | ## Phase 2 (plan section 4, T13 to T18) |
+| 169–191 | ## Phase 1 (plan section 3, T5 to T12) |
+| 192–205 | ## SS40–SS44 |
+| 206–223 | ## Story rows |
+| 224–242 | ## Reset section |
+| 243–253 | ## Still open |
+| 254–257 | ## Chapter 1 replot, recorded and not built |
+| 258–413 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-25 (evening), draft PR #87, not merged. Done: Brian's twelve showing-5 decisions and his two code rules (README, "Chapter 1 redesign", the 2026-11-25 evening paragraph). Open for Brian:
+- Pick the FUR alarm: `tools/alarm-choices.html` (five made-up sounds). The game's alarm is unchanged until he picks.
+- The Moon Pie bedtime story (beat 21, `docs/CHAPTER-1-PROBLEMS.md` 18): not built this round. The old story's captions (commit 71ec66e) differ from the walkthrough's pending line "You came to me in a Moon Pie crate. You've loved Moon Pies ever since.", and beat 21 is not under "Build next"; which words, and is it this round?
+- New drawings waiting for his eye: the TOURS ship in the TV story, the gap glow in the photo row, the dance spot's outline, the small filling "?", the hat tipping in the octopus's hug, the flyer's corner under the bed.
+- The octopus vent trick (his arms sucked into the vent) only if the chase still feels short in the new video.
 
 2026-11-25, draft PR #87, not merged. Done: Brian's picks for the snack close-up ("C and 1 but I don't think we need the extra eye icon"): his paw in the party shirt's long orange sleeve with a fur cuff, the bartender drawn for the close-up in three views (back, side, front), no eye sign; the party shirt has long sleeves everywhere he wears it. Four fixes (Brian: "make the fixes you think best"): the banner 16 higher, clear of Isfred's antennae and the band; the dance framed so the band shows above his top hat; the group photo's row wider and staggered and the Polaroid with every face showing; starting numbers 3 s a dance spot and 8 s to join the photo. Open for Brian:
 - Placeholders (not pins): 3 s a dance spot (was 2.5), 8 s to join the photo (was 5); 5 stars a spot, 25 for a clean routine, 65 a song, 60 s left when he goes back to the party, unchanged.
@@ -250,6 +256,8 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/old/OPEN-ASKS.md`. The
 `docs/DECISIONS.md` rows R29 through R63 are the Nov 8–9 cartoon decisions. R29–R57 cover the home wardrobe, no home vent, the pickup-day crate, the spare blue jacket disguise, Isfred Bar Neshuman, ball-hide timing, the office computer, the connecting hallway, the party with no Mops and no robots, the office cutscene, and the Employee of the Month gallery (5 photos, crooked photo #4, keepsake points still open). R58–R63 are not in the game. R58: returning the balloon gets a wordless smile, a finger to the lips, and a thumbs-up; keeping it makes the kid yell "Scary Wookiee!" (NEEDS BRIAN), pulls the FUR alarm, and brings security; never jumping sends the balloon to the ceiling, the kid is sad, and nothing else happens. R59, delegated by Brian: the kid gasps with "!" and points, then a 6-second wobbly glowing rise while grabbable, one jump grabs it, and it reads with no words. R60: the pair hunt is dropped; a "Find someone who…" picture card is proposed and pending Brian; the octopus is an over-snacked, huggy tourist ("*hic* Fellow tourist!", NEEDS BRIAN) whose two hugs knock the disguise off; a photo corner lets Squatch enter the shot, then a cut to a printing Polaroid, with bonus points if he is in it (amount open); tapes proof is dropped; the third snack-table grab starts a chain reaction that pushes things off the far end and gives a hide window (4-second placeholder, needs Brian). R61: the balloon stays in the party hall later (on the ceiling if missed, tied near the kid's spot if returned) and pops quietly with a comic "POP!" (NEEDS BRIAN) on the last Chapter 1 hall visit. R62: funnier gags are things worn as horns, something in his mouth, and random things on his head, about 16, the Squatch ball-roll photobomb stays, and the crooked photo stays #4; the crayon drawing reads as Squatch and Mops with "Always tied together" (NEEDS BRIAN) underneath; controls are left and right arrows under the photo plus an X that is always visible; swiping past photo 5 always triggers "BEEP BEEP" (NEEDS BRIAN) and the gallery cuts out. R63: kid-handwritten "MOPS" and "ME" (NEEDS BRIAN), and a dotted sight line from Mops to Squatch with hearts rising from it, contrasting with the "!" other characters get. They are not in the game. New on-screen words are marked NEEDS BRIAN in `docs/CH1-CARTOON-LINES.md`. Ball-hide numbers (R43, about 70px for 2 seconds), the 6-second rise (R59), and the 4-second snack-table placeholder (R60) are written down only. This page does not change a timer, a price, or a range in the build.
 
 ## Changelog
+
+2026-11-25 (evening), draft PR #87, Brian's showing-5 decisions. New modules: `room-sizes.js` (`HALL_BIGGER`, `adultPxFor`, `doorAdultPx`, moved from `src/game/12-ch1-redesign.js`), `goal-mark.js` (the goal outline's place for the walk ring, was `goalMarkNow` and `lastRing.place`), `music-rules.js` (`singingNow`, was `singNow`'s body in `00-core.js`), `party-question.js` (the filling "?"), `footfalls.js` (footsteps only while moving), `tv-story.js`, `tv-story-art.js`, `tv-story-lines.js` (beat 20). `party-photo.js`: phases `settle`, `pose`, `call`, `camera`, `gather`, `join`, `count`; `PHOTO.click` retired for `settle`, `pose`, `call`, `step`, `carry`, `walk` 125, `joinTime`; `tripodOut`, `bandPosing`. `party-octopus.js`: modes `ready` and `lunge`, `lunge()`, `startChase()`, `OCT.lunge`, `OCT.notice`. `party-hall.js`: `HOME_ROOM.flyer` under the bed, `HOME_ROOM.saveAt`; the tripod's solid and `CAST` tripod retired; `isfredBar` x 780 (was 782). `party-talk.js`: `TALK_SPOTS.sq` 680, 590 (was 400), `take` = `saveAt`. `party-after-alarm.js`: `mopsTalk` 800, 584 (was 600, 578). `party-alarm.js`: `alarm.over`. The flyer's state "floor" is now "bed". Pins: `oct-speed` 90 to 170 (Brian's written yes), `hall-bigger` and `adult-door-share` moved to `room-sizes.js` (values unchanged). Lines 77 to 83 new; 27, 66 and 67 removed (rows kept). New tests: `game-no-growth`, `standing-spots`, `footsteps`, `tv-story`. Placeholders: `PHOTO` steps, `OCT.lunge`, `QUESTION_LOOK`, the hat's tip, the gap glow.
 
 2026-11-25, draft PR #87, Brian's notes on the showing-4 videos. New modules: `party-dance-end.js` (the dance's two buttons), `party-talk.js` (the talk at home, the flyer fetched and held up, the hat, the horn press; `TV` and the talk's spots moved here from `party-after-alarm.js`, which re-exports `TV`), `party-home-early.js` (his door home in P6, the card, P8c). `party-dance.js`: `DANCE_SPEEDS`, `danceAgain`, one routine a visit (`finished`, `over`), the cap per song per speed. `party-hall.js`: `FLYER` on the counter's far end (`off` retired), `P4_SWEEP`, `sweepAngle`. `party-photo.js`: `PHOTO.click` (8) replaces `gatherMax` and `settle`; walk 150. `party-view.js`: `QUESTION` (the guest's "?": 0.42 of a grown-up, 14 clear of Squatch and his hat). `party-alarm.js`: at home only the beam sees him (the pinned `cone-feet` 70 is unchanged and still used in the hall); `hideFirst`, `back`, `to`, `exit`. `src/game/14-ch1-day1.js`: `drawCh1Tv` restored to the full-screen look of ba9102d^. New lines 71 to 76; line 63 removed (row kept). New tests: `tests/party-home.mjs`; helper `tests/party-sneak.mjs` (not a suite). Placeholders: the dance's pay per speed (5/6/7/8 a spot, 25/30/35/40 a routine), `BAND_WALK_ON`, `P4_SWEEP`, `PHOTO.click`, `QUESTION`, `TALK`, `HOME_EARLY` (away 70, 2.5 s, 15 s).
 

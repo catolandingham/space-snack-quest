@@ -4,24 +4,24 @@
 | Lines | Heading |
 | --- | --- |
 | 26–32 | # Brian's asks that are not in the game yet |
-| 33–42 | ## 1. Build next |
-| 43–58 | ## 2. Needs your eyes |
-| 59–62 | ## 3. Your instructions disagree |
-| 63–64 | ## 4. Everything else not built |
-| 65–83 | ### Morning and home |
-| 84–94 | ### Party |
-| 95–106 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
-| 107–110 | ### Party video notes and answers, 2026-11-24 (not built yet) |
-| 111–115 | ### Snacks and dress-up |
-| 116–128 | ### Day 2 and night |
-| 129–133 | ### Escape and later chapters |
-| 134–137 | ### Looks and lines |
-| 138–145 | ### Sound |
-| 146–149 | ### Words and rules |
-| 150–162 | ### How the bots work |
-| 163–170 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
-| 171–186 | ## 5. Merged, in a pull request, and being built |
-| 187–197 | ## 6. Corrections to the checkers |
+| 33–41 | ## 1. Build next |
+| 42–59 | ## 2. Needs your eyes |
+| 60–63 | ## 3. Your instructions disagree |
+| 64–65 | ## 4. Everything else not built |
+| 66–84 | ### Morning and home |
+| 85–95 | ### Party |
+| 96–107 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
+| 108–111 | ### Party video notes and answers, 2026-11-24 (not built yet) |
+| 112–116 | ### Snacks and dress-up |
+| 117–129 | ### Day 2 and night |
+| 130–134 | ### Escape and later chapters |
+| 135–138 | ### Looks and lines |
+| 139–146 | ### Sound |
+| 147–150 | ### Words and rules |
+| 151–163 | ### How the bots work |
+| 164–171 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
+| 172–188 | ## 5. Merged, in a pull request, and being built |
+| 189–199 | ## 6. Corrections to the checkers |
 <!-- /section-index -->
 # Brian's asks that are not in the game yet
 
@@ -34,7 +34,6 @@ Brian's G Bot messages 419 to 603 were written while he looked at the old "v2" b
 
 Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win over older words.
 
-5. **Wookiee growl.** Brian agreed today to copy his recording into the game. "the Wookie noise kind of sounds like like a whoopee cut cushion." (S 192).
 9. **No outline unless required.** Only the thing the player must go to next gets an outline. "I don't think we should have yellow outlines in Squatch when it's not actually requiring you to do the thing." (G 567). Outline of props the game draws itself, dashed and outside: "For the bush outline, I'd still like it to be outside of the object and dashed." (G 438). The glowing circle and bouncing arrow still draw outside Chapter 1 (60-frame-draw.js:522-545): "it doesn't need an arrow!!" (S 1153).
 11. **A check that catches drift.** Open PR #34 checks his rules on each pull request; a first try is closed PR #34 (rules check on every PR); nothing compares the game to DECISIONS.md. "I think we basically need to have a recurring built-in check to make sure we're not drifting." (G 433).
 12. **Delete the old Chapter 1.** "we didn't get rid of the wrong ideas as we went" (G 433); "deleting bad code" (G 516). The old opening is still in 10-ch1.js and 11-ch1-hall.js.
@@ -42,6 +41,8 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 
 ## 2. Needs your eyes
 
+- **Pick the FUR alarm** (2026-11-25, showing-5 note 8). Five made-up alarm sounds on one page, `tools/alarm-choices.html`; the one he picks becomes the only alarm in Chapter 1. Not changed in the game until he picks.
+- **The Moon Pie bedtime story (beat 21).** Brian 2026-11-25: the old crate story "is the bedtime story (beat 21) and gets the same sizing fix". Not built yet: its old captions differ from the walkthrough's pending line, and it is not under "Build next". Ask which words, and whether it is this round.
 - **Home room objects.** "the new version of the crate in the room is off, at least in the picture you showed." (G 597). Covers crate, bed, bucket, bedtime-story look, janitor facing. Walls and furniture merged today; check.
 - **The dance game.** A scrolling-arrow dance exists but you said it never worked. "The dance game, hopefully that can be done clean and simple. If not, forget it." (G 516). "the fur shows at the dance scene" (G 603) is unclear.
 - **The balloon game.** "The balloon thing has just never worked when we've tried it before ... if it's all wonky and confusing, forget it." (G 516); "the balloon's just total nonsense" (K 336). Still in main (12-ch1-redesign.js:808-834).
@@ -176,6 +177,7 @@ Merged 2026-11-23: cones on everyone and the six approved guests (#75), controls
 Merged 2026-11-23: home alone after Mops leaves (#84, morning plan PR 3): the homework goal and cutaway, OPEN · closet with the G box, FLOP · bed, the calendar already bitten (13A to 16A).
 
 Not merged yet:
+- The party night (draft PR #87, branch feat/party-half-two): Brian's showing-5 decisions of 2026-11-25 are built, with the Wookiee TV story back (his Wookiee recording plays on it); showing 6 waits for his eyes.
 - The quiet room's mopping (the same branch, draft PR #88), Brian after its video, 2026-11-24: "It's hard to tell the difference between the whistle and the squeaking. Can we make the snore and whistle a bit more prominent? ... see the janitor walking around, mopping the floor with his beard ... the water on the floor kind of following ... And then walking back to the bucket to squeeze it out." Built: Mops's loop before the first tap, a louder snore, swish-only strokes while Squatch sleeps (`src/modules/mop-loop.js`). Waiting for his ears and eyes.
 - The morning's sound (branch feat/morning-sound, draft), Brian's answers of 2026-11-24: 34A (every MY PICK on the sound board, in the morning and home alone), 31a (the beard squirts when tapped; "Hey, stop that!"), 30a (a cutaway with no words and nothing to tap plays by itself), the music and effects levels and Brian's recording turned up 10 dB. The morning fixes (18a to 21a) merged on 2026-11-24 as PR #86.
 - The tap-path change.
