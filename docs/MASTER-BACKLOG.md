@@ -4,24 +4,27 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–112 | ## Where main is (Chapter 1 redesign) |
-| 113–127 | ## Register |
-| 128–149 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 150–170 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 171–183 | ## Phase 2 (plan section 4, T13 to T18) |
-| 184–206 | ## Phase 1 (plan section 3, T5 to T12) |
-| 207–220 | ## SS40–SS44 |
-| 221–238 | ## Story rows |
-| 239–257 | ## Reset section |
-| 258–268 | ## Still open |
-| 269–272 | ## Chapter 1 replot, recorded and not built |
-| 273–430 | ## Changelog |
+| 24–115 | ## Where main is (Chapter 1 redesign) |
+| 116–130 | ## Register |
+| 131–152 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 153–173 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 174–186 | ## Phase 2 (plan section 4, T13 to T18) |
+| 187–209 | ## Phase 1 (plan section 3, T5 to T12) |
+| 210–223 | ## SS40–SS44 |
+| 224–241 | ## Story rows |
+| 242–260 | ## Reset section |
+| 261–271 | ## Still open |
+| 272–275 | ## Chapter 1 replot, recorded and not built |
+| 276–433 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-26 (round C), draft PR #89 on `feat/ch1-bedtime-story`, not merged. Done: `feat/party-half-two` merged in (merge commit; the party branch's 00-core.js music and alarm kept as they are; Floating in Space stays deleted). Bedtime plays Reawakening (Brian's music table of 2026-11-26): the bedtime story says when it is showing (`showing()`, as the TV story does) and `bridge.js` turns the home cue into "bedtime" then; no track is written into the beat. Mops's bleat: `window.SSQ.playSoundPick(name)` (bridge.js) plays the game's sound picks through the same player as the morning song's bleat (`music-picks.js` playSound), so the bedtime story's "...Weeee-eenn-nnttt?" now plays `sounds/goat-bleat.mp3`. Tests: `tests/bedtime-story.mjs` (the cue is "bedtime" every frame from the walk to bed to the fade, the bleat on the weent picture only, one bleat in the whole story, the clip started). Docs match main: yes. NOT ASSESSED: how loud Reawakening sits under the snores on a phone speaker. Not yet played by a person.
+- (2026-11-26, the line below about the bleat player is done: `window.SSQ.playSoundPick` exists now.)
 
 2026-11-26, draft PR #89 on `feat/ch1-bedtime-story`, not merged. Done: beat 21, the bedtime story, as a module (`ch1-bedtime-story`): to bed with no words (he walks to his crate bed and climbs in, Mops comes over), Squatch asks "Tell me about when we first met?", the old crate story's pictures from 71ec66e (crate, baby, beard, "...Weeee-eenn-nnttt?" with Mops's bleat asked for through the `mops-bleat` sound hook, and the mop bucket picture, on since Brian's answer of 2026-11-26) at the home room's proportions, Mops's line unchanged, the Guardians picture (Squatch's crayon drawing, Mops's approved line "And you've always had your Guardians, watching over you."), then falling asleep (yawn, lie down, blanket, Mops out by the door, light down to night-blue, three snores with rising "z z z", fade to black, Day 2 fades in). No goal chip from the Now card to Day 2. The "ch1moon" caption box is deleted. Brian's 2026-11-26 notes built: 0:12 (the ask in words), 0:25 (the vocal song stays, untouched), 0:28 (goats say "weeeent"), and "a bit more natural transition and then some snoring". Open for Brian:
 - Words (`src/modules/bedtime-story-lines.js`): approved (Brian 2026-11-26): "Tell me about when we first met?", the old crate story's words (all six captions and bubbles, the MOON PIES badge, the "!" and "z z z" marks), the Guardians line; "...Weeee-eenn-nnttt?" is his spelling; his bedtime line ("You came to me in a Moon Pie crate...") is still needs-yes.

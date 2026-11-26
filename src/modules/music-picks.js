@@ -75,7 +75,8 @@ export const SPANS = Object.freeze({
  *   home     every other daytime visit home (the "home" cue, and the talk at home after the party: party.js musicCue):
  *            the next track of the home rotation each visit, Carefree, Morning, Rainbows, then Carefree again (Brian:
  *            "so it isn't repetitive")
- *   bedtime  the bedtime story (beat 21, on its own branch: it adds the "bedtime" cue): Reawakening
+ *   bedtime  the bedtime story (beat 21: bedtime-story.js says when it is showing, bridge.js makes the cue "bedtime"):
+ *            Reawakening
  *   gift     the gift, out at home: the same visit as home (MUSIC_PLACE), so the home track carries on
  *   heart    the heart moments
  *   tv       the TV story (beat 20; tv-story.js says when it is showing)
@@ -102,8 +103,9 @@ export const MUSIC_PICKS = Object.freeze({
   "closing-hum": null,
 });
 // Sounds that are not music. Mops's bleat (Brian 2026-11-26, "Bleat 2": sounds/goat-bleat.mp3, 1.2 s, cut from
-// Wikimedia Commons "Herd of goats bleating.ogg" by stephan, public domain): on his bleat line only (the morning song's
-// "♪ Weeee-eenn-nnttt! ♪", morning-sound.js), and over Goating in Space where it leaves a gap for one (`bleats`).
+// Wikimedia Commons "Herd of goats bleating.ogg" by stephan, public domain): on his bleat lines only (the morning song's
+// "♪ Weeee-eenn-nnttt! ♪", morning-sound.js, and the bedtime story's "...Weeee-eenn-nnttt?", bedtime-story-sound.js
+// through window.SSQ.playSoundPick), and over Goating in Space where it leaves a gap for one (`bleats`).
 export const SOUND_PICKS = Object.freeze({ "mops-bleat": Object.freeze({ url: "sounds/goat-bleat.mp3", level: 0.7 }) });
 // Cues that are the same place (one visit): moving between them does not start a `once` track again.
 export const MUSIC_PLACE = Object.freeze({ gift: "home" });
@@ -230,9 +232,17 @@ export function loadSound(c, name) {
         throw e;
       }));
 }
+// Every sound pick asked for (tests): its name, the audio clock time it was asked for, and whether it started.
+const played = [];
+/** Tests: every sound pick asked for so far ({ name, at, started }), oldest first (the last 50). */
+export function soundsPlayed() {
+  return played.map((p) => ({ ...p }));
+}
 /** Plays the sound `name` at time `t` into node `out` (at its level times `v`), once it has loaded. */
 export function playSound(c, out, name, t, v = 1) {
   const p = loadSound(c, name);
+  const rec = { name, at: c ? +c.currentTime.toFixed(2) : 0, started: false };
+  p && (played.push(rec), played.length > 50 && played.shift());
   p &&
     p
       .then((buf) => {
@@ -243,6 +253,7 @@ export function playSound(c, out, name, t, v = 1) {
         src.connect(g);
         g.connect(out);
         src.start(Math.max(t, c.currentTime));
+        rec.started = true;
       })
       .catch(() => {});
   return !!p;

@@ -305,7 +305,7 @@ for (const [beat, times, what] of [
   g.check("3: at home the first rotation track (Carefree) starts from its top, plays, fades over its last 0.8 s, then stays quiet for the rest of that visit (a moment's gap and the gift are the same visit)", home1 === 0 && swapped && Math.abs(mid - m) < 1e-9 && fading > 0 && fading < 0.5 * m && over === 0 && after === 0, r);
   g.check("3: a one-frame flicker to the TV cue is not a new visit; the TV story plays Odyssey", flick === "home" && tv === "music/odyssey.mp3", r);
   g.check("3: each new visit home takes the next track: Carefree, Morning, Rainbows, then Carefree again; with no music place the element is quiet (nothing old heard again)", home2 === "music/morning.mp3" && home3 === "music/rainbows.mp3" && home4 === "music/carefree.mp3" && none === 0, r);
-  g.check("3: bedtime (its cue comes with the bedtime story's branch) plays Reawakening", picks.fileFor("bedtime") === "music/reawakening.mp3");
+  g.check("3: bedtime (the bedtime story's cue, bridge.js) plays Reawakening", picks.fileFor("bedtime") === "music/reawakening.mp3");
   // in the game: the theme cue on the title is kept in the tune
   const { page, errors } = await open("party:P6", { width: 1100, height: 800 });
   const live = await page.evaluate(() => {
