@@ -49,6 +49,10 @@
     function partyBeat() {
       return (window.SSQ && window.SSQ.beat && window.SSQ.beat("ch1-party")) || null;
     }
+    // The module that draws the hall now (the party night, or the lunch sneak), or null.
+    function hallBeat() {
+      return (window.SSQ && window.SSQ.hallOwner && window.SSQ.hallOwner()) || null;
+    }
     // True while the party's snack close-up is open (src/modules/party-snacks.js): taps and drags go to it.
     function partyCutOpen() {
       return !!(partyBeat() && partyBeat().cutOpen && partyBeat().cutOpen());
@@ -180,6 +184,7 @@
         // The home morning (src/modules/home-morning.js): the calendar close-up, then on to the lunch sneak.
         openCalendar: (next) => ch1OpenCalendar(next),
         takeLunch: () => ch1TakeLunch(),
+        shipCall: () => ch1ShipCall(), // beat 28 after the lunch sneak (src/modules/lunch-sneak.js)
         offer: () => pick(ch1QSpots()),
         // Holding ↺ inside a full-screen view: the same restart as the page's ↺.
         restartPart: () => sectionReset(),

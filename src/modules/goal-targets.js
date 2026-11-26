@@ -11,6 +11,7 @@
  */
 import { FLYER } from "./party-hall.js";
 import { TRACE, MORNING_THINGS, DRAWN_OUTLINE, outlineSource } from "./home-morning-art.js";
+import { LUNCH_TRACE, lunchOutlineSource } from "./lunch-sneak-art.js";
 
 // Doorways more than one goal outlines: each typed once.
 const HOME_DOOR = { rect: { x0: 912, x1: 940, y0: 358, y1: 468 } }, // home: the doorway in the right wall
@@ -38,11 +39,16 @@ export const GOAL_TARGETS = {
   "hall:hide": { trace: { x0: 392, x1: 494, y0: 432, y1: 556 } }, // the plant in the middle (party sneak)
   "hall:go-home": HALL_HOME_DOOR, // party P4, and the alarm
   "hall:grab-flyer": { rect: FLYER.box }, // party P4: the flyer on the bar counter's far end (the party's own table)
-  "hall:d2-HIDE-plant": { trace: { x0: 392, x1: 494, y0: 432, y1: 556 } }, // the same plant (Day 2)
-  "hall:d2-SNEAK-hallway": { rect: { x0: 912, x1: 940, y0: 257, y1: 345 } }, // the doorway to the hallway (hall v2, back corner)
+  "hall:d2-HIDE-plant": { trace: { x0: 392, x1: 494, y0: 432, y1: 556 } }, // the same plant (Day 2, beat 38)
+  // The lunch sneak, Day 2 (lunch-sneak.js): one thing at a time
+  "hall:lu-plant": { trace: { x0: 392, x1: 494, y0: 432, y1: 556 } }, // the middle plant
+  "hall:lu-crate": { trace: LUNCH_TRACE.crate, source: () => lunchOutlineSource("crate"), line: DRAWN_OUTLINE }, // the crates
+  "hall:lu-door": { rect: { x0: 912, x1: 940, y0: 257, y1: 345 } }, // the doorway to the hallway (hall v2, back corner)
+  "hall:lu-snack": { trace: LUNCH_TRACE.plate, source: () => lunchOutlineSource("plate"), line: DRAWN_OUTLINE }, // the plate of Moon Pies
   "hall:d2-GO-home": HALL_HOME_DOOR,
   // Hallway
   "passage:d2-GO-hall": { rect: { x0: 20, x1: 48, y0: 266, y1: 354 } }, // the doorway to the hall (left; the walk uses it)
+  "passage:lu-back": { rect: { x0: 20, x1: 48, y0: 266, y1: 354 } }, // the doorway to the hall (left), after lunch
   "passage:d2-GO-ship": { rect: { x0: 912, x1: 940, y0: 266, y1: 354 } }, // the doorway to the loading bay
   // Loading bay
   "hangar:d2-HIDE-plant": { trace: { x0: 70, x1: 180, y0: 244, y1: 382 } },

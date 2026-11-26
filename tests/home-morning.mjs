@@ -11,7 +11,7 @@
  *     the gift in it, the door shuts;
  *   - "Squatch: look at the calendar", LOOK · calendar: today's close-up (days 1 to 13 crossed off, day 14 circled);
  *   - the lunch bag outlined, "He forgot his lunch!" (waits for NEXT); "Squatch: take the lunch", TAKE · lunch; then
- *     today's lunch sneak in the party hall, the bag in his paw.
+ *     the lunch sneak in the party hall (lunch-sneak.js), the bag in his paw.
  * Also: no new words (every word drawn is a whole line of home-morning-lines.js, or was on screen before), nothing he
  * is told to tap is under him, sizes against the room, nothing disappears, the old code is gone.
  *   node tests/home-morning.mjs
@@ -214,7 +214,8 @@ const run = !(registered && asleep)
         out.music = window.SSQ.homeMusic.debug();
         for (let i = 0; i < 200 && !(n.room === "hall" && n.ctrl); i++) ss.tick(0.05);
         ss.drawFrame();
-        out.hall = { room: n.room, step: n.ch1Step, hold: n.ch1Hold, chip: ss.chipNow() };
+        const lu = window.SSQ.beat("ch1-lunch") && window.SSQ.beat("ch1-lunch").debug().state;
+        out.hall = { room: n.room, step: n.ch1Step, bag: lu ? lu.bag : "", chip: ss.chipNow() };
         out.debug = d();
         out.steps = d().steps;
         out.list = { rocket, closetFar, closet, box, cal, lunchFar, lunch };
@@ -287,7 +288,7 @@ g.check("today's close-up: days 1 to 13 crossed off, the circled Moon Pie day (1
 // the lunch
 g.check("closing it: the lunch bag is outlined while he says his line, word for word, over him, no chip", R.line2 && R.line2.who === "sq" && R.line2.text === LUNCH && R.line2.chip === "" && !!R.line2.bagOutline, R.line2);
 g.check("the lunch line waits for NEXT", R.line2Held);
-g.check("TAKE · lunch hands over to today's lunch sneak: the party hall, the bag in his paw", R.hall && R.hall.room === "hall" && R.hall.step === "sneak" && R.hall.hold === "lunch" && R.hall.chip === "Squatch: take Mops his lunch", R.hall);
+g.check("TAKE · lunch hands over to the lunch sneak (lunch-sneak.js): the party hall, the bag in his paw", R.hall && R.hall.room === "hall" && R.hall.step === "lu-plant" && R.hall.bag === "paw" && R.hall.chip === "Squatch: take Mops his lunch", R.hall);
 g.check("the steps came in order", JSON.stringify(R.steps) === JSON.stringify(["night", "wake", "rocket", "hold", "think", "closet", "toCloset", "box", "lift", "closeup", "shut", "cal", "calendar", "notice", "lunch", "done"]), R.steps);
 
 // Nothing he is told to tap is under him (Fable's review): at OPEN, PUT IN and LOOK he stands right of the wardrobe.

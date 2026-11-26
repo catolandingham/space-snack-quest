@@ -1,10 +1,6 @@
 // Chapter 1 beats 22-61. Day 1 calls ch1Day2Begin. This file owns the lunch, the night order, the escape, and pickup day.
     // The office code is the one already drawn on the old keypad (4 7 2 3). It is not a new number.
     const CH1_OFFICE_CODE = "4723";
-    const CH1_LUNCH_WATCH = [
-      { x: 360, y: 400, face: Math.PI / 2 },
-      { x: 620, y: 430, face: Math.PI },
-    ];
     function ch1Ready(step, chip, scene) {
       ((n.ch1Step = step), (n.ch1Chip = chip), scene && (n.scene = scene), (n.ctrl = !0), (n.act = null), chipNow());
     }
@@ -24,6 +20,10 @@
     // Beats 22 to 24, the home morning: src/modules/home-morning.js. Without it, Day 2 goes straight to the lunch sneak.
     function hmBeat() {
       return (window.SSQ && window.SSQ.beat && window.SSQ.beat("ch1-home-morning")) || null;
+    }
+    // Beats 25 to 27, the lunch sneak: src/modules/lunch-sneak.js. Without it, TAKE · lunch goes straight to beat 28.
+    function luBeat() {
+      return (window.SSQ && window.SSQ.beat && window.SSQ.beat("ch1-lunch")) || null;
     }
     function ch1Day2Begin(awake) {
       ((n.ch1Day2 = !0),
@@ -51,54 +51,7 @@
     }
     // The hand-over from the home morning to the lunch sneak (TAKE · lunch, home-morning.js).
     function ch1TakeLunch() {
-      ((n.ch1Hold = "lunch"), (n.ctrl = !1), D.grab());
-      ch1GoDay("hall", { who: "sq", scene: "QB", stand: [220, 580] }, () => {
-        ((n.ch1Sneak = !0), ch1Ready("sneak", "Squatch: take Mops his lunch", "QB"));
-      });
-    }
-    function ch1ToMops() {
-      ((n.ch1Sneak = !1), (n.sqPose = "stand"), (n.ctrl = !1));
-      ch1GoDay("passage", { who: "sq", scene: "QB", stand: [240, 520], mo: [720, 540] }, () => ch1Ready("give", "Squatch: give Mops his lunch", "QB"));
-    }
-    function ch1GiveLunch() {
-      ((n.ctrl = !1), (n.ch1Heart = !1));
-      J([
-        v("mops", "Squatch! You should be hiding."),
-        N(() => (n.ch1Heart = !0)),
-        v("mops", "My lunch! You're the best."),
-        N(() => {
-          ((n.ch1Heart = !1),
-            (n.ch1Zoom = { id: "eat", zoom: 0, paw: { x: 300, y: 580 } }),
-            (n.ch1Step = "feed1"),
-            (n.ch1Chip = "Squatch: feed Mops"),
-            chipNow());
-        }),
-      ]);
-    }
-    function ch1Feed1() {
-      if (n.ch1Fed) return;
-      ((n.ch1Fed = 1), (n.ch1Step = "feed2"), D.grab());
-    }
-    function ch1Feed2() {
-      if (n.ch1Fed !== 1) return;
-      ((n.ch1Fed = 2), (n.ch1Hold = ""), ch1CloseZoom(ch1AfterLunch));
-    }
-    function ch1AfterLunch() {
-      // Squatch stands left of the snack, off the plant pot. Mops stands on the open left floor, not on the door and not in the way.
-      ch1GoDay("hall", { who: "both", scene: "Q3", stand: [620, 580], mo: [240, 560] }, () => {
-        ((n.ctrl = !1),
-          J([
-            v("mops", "I know you, Squatch, you're probably hungry... you know the rule, grab one snack."),
-            N(() => ch1Ready("snack", "Squatch: grab one snack", "Q3")),
-          ]));
-      });
-    }
-    function ch1TakeOne() {
-      ((n.ctrl = !1), (n.ch1Zoom = { id: "one", zoom: 0, paw: { x: 400, y: 580 }, bag: 0 }), (n.ch1Step = "onesnack"));
-    }
-    function ch1OneDrop() {
-      if (n.ch1One) return;
-      ((n.ch1One = 1), n.ch1Zoom && (n.ch1Zoom.bag = 1), D.hide(), ch1CloseZoom(ch1ShipCall));
+      luBeat() ? luBeat().start() : ch1ShipCall();
     }
     function ch1ShipCall() {
       ((n.ctrl = !1),
@@ -243,28 +196,6 @@
         (n.ch1ZoomClosing = !1),
         (n.ch1Sneak = !0),
         (n.ch1Chip = "Squatch: get the copies from the bin"),
-        chipNow());
-    }
-    function ch1RestartLunch() {
-      ((n.ch1Day2 = !0),
-        (n.ch1LunchRun = null),
-        (n.scene = "QB"),
-        (n.room = "hall"),
-        (n.ch1D = !1),
-        (n.ch1Duct = !1),
-        (n.ch1Night = !1),
-        (n.ch1Sneak = !0),
-        (n.ch1Hold = "lunch"),
-        (n.ch1Zoom = null),
-        (n.sqPose = "stand"),
-        (n.sq.x = 220),
-        (n.sq.y = 580),
-        (n.moPose = "hidden"),
-        (n.q = []),
-        (n.cur = null),
-        (n.ctrl = !0),
-        (n.ch1Step = "sneak"),
-        (n.ch1Chip = "Squatch: take Mops his lunch"),
         chipNow());
     }
     function ch1GrabCopies() {
@@ -643,21 +574,15 @@
     }
     function ch1ZoomAct() {
       let s = n.ch1Step;
-      s === "feed1"
-          ? ch1Feed1()
-          : s === "feed2"
-            ? ch1Feed2()
-            : s === "onesnack"
-              ? ch1OneDrop()
-              : s === "mark"
-                ? ch1Mark()
-                : s === "all1"
-                  ? ch1AllDrop()
-                  : s === "all2"
-                    ? ch1LeaveFood()
-                    : s === "pack1"
-                      ? ch1PackBox()
-                      : s === "pack2" && ch1PackBucket();
+      s === "mark"
+        ? ch1Mark()
+        : s === "all1"
+          ? ch1AllDrop()
+          : s === "all2"
+            ? ch1LeaveFood()
+            : s === "pack1"
+              ? ch1PackBox()
+              : s === "pack2" && ch1PackBucket();
     }
     function ch1OkHit(x, y) {
       return x > 760 && x < 940 && y > 500 && y < 600;
@@ -680,8 +605,7 @@
       if (ch1OkHit(x, y)) return !0;
       if (Math.hypot(x - 880, y - 540) < 42) return !0;
       if (s === "mark") return Math.hypot(x - 470, y - 310) < 80;
-      if (s === "feed1" || s === "feed2") return Math.hypot(x - 480, y - 250) < 90;
-      if (s === "onesnack" || s === "all1") return x < 210 && y > 450;
+      if (s === "all1") return x < 210 && y > 450;
       if (s === "all2") return Math.hypot(x - 700, y - 430) < 80;
       if (s === "pack1" || s === "pack2") return Math.hypot(x - 480, y - 330) < 110;
       return !1;
@@ -696,13 +620,6 @@
         }
       }
       if (!z || z.zoom < 1 || n.ch1ZoomClosing) return;
-      if (kind === "down" && z.id === "one" && ch1OkHit(x, y)) return ch1OneDrop();
-      if (kind === "down" && z.id === "one" && Math.hypot(x - 480, y - 240) < 48) z.held = 1;
-      if (kind === "up" && z.id === "one") {
-        z.held = 0;
-        if (x < 210 && y > 450) ch1OneDrop();
-        return;
-      }
       if (kind === "down" && z.id === "all") {
         z.held = -1;
         for (let i = 0; i < 6; i++) {
@@ -721,44 +638,6 @@
       let onX = Math.hypot(x - 880, y - 540) < 42;
       kind === "up" && ch1ZoomHit(x, y) && !(onX && (n.ch1Step === "all1" || n.ch1Step === "pad")) && ch1ZoomAct();
     }
-    function ch1ConeHit(px, py, ox, oy, face) {
-      let T = px - ox,
-        R = py - oy,
-        P = Math.hypot(T, R);
-      if (P < STAND_FEET) return !0;
-      if (P > STAND_CONE_LEN || P < 1) return !1;
-      let a = Math.atan2(R, T) - face;
-      for (; a > Math.PI; ) a -= 2 * Math.PI;
-      for (; a < -Math.PI; ) a += 2 * Math.PI;
-      return Math.abs(a) < STAND_CONE_HALF;
-    }
-    // The guest who saw him runs to the FUR alarm on the wall and pulls it; then the alarm sounds and the
-    // guard comes (Brian, Nov 15: "someone should run over to the fur alarm"; the party does the same).
-    // After the guard has gone, the guest walks back. The floor under the wall alarm in the hall picture:
-    const CH1_LUNCH_ALARM = { x: 885, y: 270 };
-    function ch1LunchRunTick(dt) {
-      let run = n.ch1LunchRun;
-      if (!run) return;
-      let home = CH1_LUNCH_WATCH[run.i];
-      if (run.phase === "run") mV(run, CH1_LUNCH_ALARM.x, CH1_LUNCH_ALARM.y, 420, dt || 0) && ((run.phase = "wait"), ch1CallSecurity("s6"));
-      else if (run.phase === "wait") ch2.sec || (run.phase = "back");
-      else if (run.phase === "back") mV(run, home.x, home.y, 120, dt || 0) && (n.ch1LunchRun = null);
-    }
-    function ch1LunchSee(dt) {
-      if (n.sqPose === "hidden") return;
-      for (let i = 0; i < CH1_LUNCH_WATCH.length; i++) {
-        if (n.ch1LunchRun && n.ch1LunchRun.i === i) continue; // running to the alarm or back: not watching
-        let gue = CH1_LUNCH_WATCH[i],
-          dist = Math.hypot(n.sq.x - gue.x, n.sq.y - gue.y),
-          standing = ch1ConeHit(n.sq.x, n.sq.y - 20, gue.x, gue.y - 28, gue.face),
-          seen = n.sqPose === "ball" ? ballNotice("lunch" + i, dist, dt || 0, standing) : standing;
-        (n.sqPose !== "ball" && ballNotice("lunch" + i, STAND_FEET + 99, 0, !1),
-          seen &&
-            !ch2.sec &&
-            // A guest walking back from the alarm: the other one who sees him calls the guard at once.
-            (n.ch1LunchRun ? n.ch1LunchRun.phase === "back" && ch1CallSecurity("s6") : (n.ch1LunchRun = { i, x: gue.x, y: gue.y, phase: "run" })));
-      }
-    }
     function ch1Day2Tick(dt) {
       if (!n.ch1Day2) return;
       (n.ch1BrochureBig || 0) > 0 && (n.ch1BrochureBig -= dt || 0);
@@ -773,7 +652,6 @@
       }
       (z && z.zoom < 1 && (z.zoom = Math.min(1, z.zoom + (dt || 0) / 0.5)),
         z && z.zoom >= 1 && !n.cur && n.q.length === 0 && (n.ctrl = !0),
-        n.ch1Step === "sneak" && n.room === "hall" && n.ctrl && !z && (ch1LunchSee(dt), ch1LunchRunTick(dt)),
         n.ch1Step === "hide" &&
           n.ctrl &&
           n.sqPose === "stand" &&
@@ -787,21 +665,10 @@
     }
     function ch1Day2Spots() {
       if (hmBeat() && hmBeat().active()) return hmBeat().spots();
+      if (luBeat() && luBeat().active()) return luBeat().spots();
       if (!n.ch1Day2 || !n.ctrl || n.ch1PadOn) return [];
       let s = n.ch1Step;
-      if (s === "sneak" && n.sqPose === "ball")
-        return ch2.sec || (n.ch1LunchRun && n.ch1LunchRun.phase !== "back") ? [] : [ch1At("SNEAK", "hallway", 860, 560, 110, ch1ToMops)];
       if (n.sqPose === "hidden" || n.sqPose === "ball" || n.sqPose === "sleep") return [];
-      // Seen (the guest is running to the alarm) or a guard is coming: the only way out is to hide, so ROLL is
-      // offered where he stands (C20) and SNEAK waits.
-      if (s === "sneak" && (ch2.sec || (n.ch1LunchRun && n.ch1LunchRun.phase !== "back"))) return [ch1At("ROLL", "ball", n.sq.x, n.sq.y, 60, () => (n.sqPose = "ball"))];
-      if (s === "sneak")
-        return [ch1At("SNEAK", "hallway", 700, 540, 520, ch1ToMops), ch1At("ROLL", "ball", 140, 360, 55, () => (n.sqPose = "ball"))];
-      if (s === "give") return [ch1At("GIVE", "lunch", 500, 510, 130, ch1GiveLunch)];
-      if (s === "feed1") return [ch1At("FEED", "lunch", n.sq.x || 240, n.sq.y || 510, 280, ch1Feed1)];
-      if (s === "feed2") return [ch1At("FEED", "bag", n.sq.x || 240, n.sq.y || 510, 280, ch1Feed2)];
-      if (s === "snack") return [ch1At("TAKE", "snack", 760, 530, 120, ch1TakeOne)];
-      if (s === "onesnack") return [ch1At("DROP", "snack", n.sq.x || 740, n.sq.y || 520, 280, ch1OneDrop)];
       if (s === "hide") return [ch1At("HIDE", "plant", CH1_PLANT.x, CH1_PLANT.y, 130, ch1HideBay)];
       if (s === "photos")
         return [ch1At("GO", "hall", 480, 560, 130, ch1LeavePhotos), ch1At("LOOK", "photos", 480, 320, 110, ch1LookPhotos)];
@@ -884,13 +751,6 @@
           (e.save(), e.translate(325, 230), e.rotate(-0.2), (e.strokeStyle = "#6b4428"), (e.lineWidth = 6), (e.lineCap = "round"), e.beginPath(), e.moveTo(-16, 4), e.lineTo(0, 18), e.lineTo(22, -16), e.stroke(), e.restore());
         }
         g(CH1_OFFICE_CODE, 470, 420, 28, "#1e2430", "center", 900);
-      } else if (id === "eat") {
-        (Fe(480, 380, 2.4, { f: 1, walk: 0, mop: !1 }), m(280, 470, 400, 18, 6), r("#d7c4a3", 3));
-        n.ch1Fed < 1 && drawSnack("pie", 600, 300, 1.1);
-        n.ch1Fed === 1 && drawOpenBag(520, 280, 0);
-      } else if (id === "one") {
-        (drawSnack("pie", z.held ? z.paw.x : 480, z.held ? z.paw.y : 240, 1.4), drawOpenBag(20, 450, z.bag || 0), Fe(160, 240, 1.5, { f: 1, walk: 0, mop: !1 }));
-        (m(790, 520, 130, 56, 12), r("#ffcf33", 4), g("OK", 855, 548, 28, "#1e2430", "center", 900));
       } else if (id === "all") {
         for (let i = 0; i < (n.ch1Step === "all2" ? 5 : 6); i++) {
           if ((z.gone && z.gone[i]) || z.held === i) continue;
@@ -917,28 +777,9 @@
         n.ch1Packed && (m(430, 300, 80, 50, 4), r("#3478f6", 3), g("MY GARDIANS", 470, 326, 10, "#fff", "center", 800), drawSlip(448, 312, "#ff8fb8", 22, 18));
         n.ch1Packed === 2 && (L(560, 250, 22), r("#8a93a3", 3));
       }
-      (drawPawArm(z.paw), z.id === "one" || drawZoomX(), (e.globalAlpha = 1));
+      (drawPawArm(z.paw), drawZoomX(), (e.globalAlpha = 1));
     }
     function drawCh1Day2() {
-      if (n.ch1Step === "sneak" && n.room === "hall")
-        for (let gi = 0; gi < CH1_LUNCH_WATCH.length; gi++) {
-          let gue = CH1_LUNCH_WATCH[gi],
-            run = n.ch1LunchRun && n.ch1LunchRun.i === gi ? n.ch1LunchRun : null;
-          if (run) {
-            // Running to the alarm (or walking back): no cone while running, facing the way he goes.
-            let to = run.phase === "back" ? gue : CH1_LUNCH_ALARM;
-            drawCh1Alien(run.x, run.y, gue.face > 2 ? "antenna" : "hat", ALIEN_ADULT, to.x < run.x ? -1 : 1);
-            continue;
-          }
-          (seenCone(gue.x, gue.y - 28, gue.face, STAND_CONE_HALF, STAND_CONE_LEN, "rgba(255,234,120,.55)", "rgba(160,100,10,.95)"),
-            e.beginPath(),
-            e.arc(gue.x, gue.y, STAND_FEET, 0, 7),
-            (e.strokeStyle = "rgba(160,100,10,.9)"),
-            (e.lineWidth = 2),
-            e.stroke(),
-            drawCh1Alien(gue.x, gue.y, gue.face > 2 ? "antenna" : "hat", ALIEN_ADULT, gue.face > 2 ? -1 : 1));
-        }
-      n.ch1Hold === "lunch" && n.sqPose === "stand" && hmBeat() && hmBeat().drawHeldBag(e, n.sq.x + 44 * (n.sq.f || 1), n.sq.y - 4);
       if (n.ch1Paper === "bite" || n.ch1Paper === "mouth") (drawSlip(n.mo.x - 8, n.mo.y - 86, "#ff8fb8", 22, 28), drawSlip(n.mo.x + 8, n.mo.y - 80, "#ffe08a", 14, 18));
       n.ch1Paper === "slip" && drawSlip(n.mo.x - 6, n.mo.y - 84, "#ff8fb8", 18, 24);
       n.ch1Paper === "bin" && (drawSlip(236, 470, "#ff8fb8", 20, 26), drawSlip(252, 476, "#ffe08a", 12, 16));
@@ -976,7 +817,6 @@
       let b = beat | 0;
       ((ch2.qCheck = null),
         (ch2.sec = null),
-        (n.ch1LunchRun = null),
         (n.q = []),
         (n.cur = null),
         (n.ctrl = !0),
@@ -1013,12 +853,9 @@
         // the home morning (home-morning.js), awake beside the rocket; 23: the calendar step
         ((n.room = "closet"), (n.scene = "QB"), ch1Day2Begin(!0));
         b === 23 && hmBeat() && hmBeat().jump("cal");
-      } else if (b === 25) {
-        ((n.room = "hall"), (n.scene = "QB"), (n.ch1Sneak = !0), (n.ch1Step = "sneak"), (n.ch1Hold = "lunch"), (n.sq.x = 220), (n.sq.y = 580), (n.moPose = "hidden"));
-      } else if (b === 27) {
-        ((n.room = "hall"), (n.scene = "Q3"), (n.sq.x = 720), (n.sq.y = 520), (n.mo.x = 640), (n.mo.y = 510));
-        n.ch1Zoom = { id: "one", zoom: 1, paw: { x: 480, y: 360 }, bag: 0 };
-        n.ch1Step = "onesnack";
+      } else if (b === 25 || b === 27) {
+        // the lunch sneak (lunch-sneak.js): 25 at its start in the hall, 27 behind the counter
+        ((n.scene = "QB"), luBeat() && luBeat().jump(b === 25 ? "plant" : "snack"));
       } else if (b === 33) {
         ((n.room = "hangar"), (n.ch1D = !0), (n.ch1Ship = !0), (n.scene = "QB"), (n.sqPose = "hidden"), (n.sq.x = CH1_PLANT.x), (n.sq.y = CH1_PLANT.y), (n.mo.x = 640), (n.mo.y = 500), (n.ch1ShowBots = !0), (n.ch1Ramp = 1), ch1SetPaper("mouth"));
       } else if (b === 37) {

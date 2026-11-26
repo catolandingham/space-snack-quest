@@ -1,7 +1,7 @@
 /**
  * The home morning, Chapter 1 beats 22 to 24 (docs/CH1-STORY-WALKTHROUGH.md): a gift from the Guardians, the
  * calendar (delivery day), and Mops's forgotten lunch. It follows the bedtime story (beat 21, bedtime-story.js) and
- * hands over to today's lunch sneak (src/game/14-ch1-day2.js ch1TakeLunch). What the player sees, step by step
+ * hands over to the lunch sneak (lunch-sneak.js, through src/game/14-ch1-day2.js ch1TakeLunch). What the player sees, step by step
  * (plan reviewed 2026-11-26; every word is from home-morning-lines.js, every drawing from home-morning-art.js):
  *   night   wordless: the room dims and comes back up; while it is dark Mops's hooves walk away and the door shuts;
  *           the morning song starts. Mops is gone; the rocket (the note tied on) stands at the foot of the bed.
@@ -16,7 +16,7 @@
  *   cal     "Squatch: look at the calendar"; the calendar is outlined. LOOK · calendar opens the older program's
  *           close-up, with today's marks (home-morning-art.js drawCalendarToday).
  *   notice  the lunch bag by the door is outlined; "He forgot his lunch!" (NEXT)
- *   lunch   "Squatch: take the lunch"; TAKE · lunch hands over to the lunch sneak (the bag in his paw).
+ *   lunch   "Squatch: take the lunch"; TAKE · lunch hands over to the lunch sneak (lunch-sneak.js; the bag in his paw).
  * Its progress lives in the game-state field ch1HomeMorning (and ch1Step, "hm-<step>"), so the step restart (↺)
  * brings back the step the player is on. While he wakes, stretches and holds the gift up this file draws Squatch
  * (squatch-art.js, the room's Squatch: same shapes, size and outline) and the room leaves him out (sqPose "lie").
@@ -540,10 +540,6 @@ export function createHomeMorning(bridge) {
       const h = live();
       if (!h || h.step !== "calendar") return null;
       return (drew = { step: h.step, calendar: drawCalendarToday(ctx, zoom, E().time()) });
-    },
-    /** The lunch bag in his paw (the older program draws it while he carries it to Mops: 14-ch1-day2.js). */
-    drawHeldBag(ctx, x, y) {
-      drawLunchBag(ctx, x, y);
     },
     /** Tests: the step, what the last frame drew, and what was heard. */
     debug() {

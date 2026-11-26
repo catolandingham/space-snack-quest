@@ -25,7 +25,7 @@
 import { HOMEWORK_PANELS } from "./homework-cutaway.js";
 import { WOOKIEE_PANELS } from "./tv-story-art.js";
 import { BEDTIME_PANELS } from "./bedtime-story-art.js";
-import { GBOX_PANELS } from "./home-morning-art.js";
+import { GBOX_PANELS, drawLunchBag } from "./home-morning-art.js";
 
 const INK = "#1e2430";
 const GLOW = "#ffcf33",
@@ -46,12 +46,19 @@ const BUCKET_AT = { x: 655, rim: 520, bottom: 690, top: 165, base: 140 };
 let last = null;
 
 /**
+ * Beat 26 (lunch-sneak.js): Mops eats his lunch, then the empty paper bag, in one wordless picture that plays by
+ * itself (Brian 30a). Seconds: three bites of the sandwich (`bites`), a look at the empty bag, the bag lifted to his
+ * mouth, three bites of the bag, then chewing with nothing in his hoof (the clear last frame). PLACEHOLDER timing.
+ */
+export const LUNCH_EAT = Object.freeze({ length: 3.6, bites: Object.freeze([0.5, 0.9, 1.3]), bagUp: 1.9, bagBites: Object.freeze([2.1, 2.5, 2.9]) });
+
+/**
  * Brian 30a: seconds a wordless picture with nothing to tap plays before the game goes on by itself (0: it waits
  * for NEXT). The dunk is two whole dunks (1.8 s each), ending with Mops upright and his beard dripping; the
  * homework desk is one whole loop (3 s), ending with all three lines written. The wringing picture has a beard
  * to tap (31a) and the homework sheet has words to read, so they wait.
  */
-export const AUTO = Object.freeze({ beard: [3.6, 0], homework: [3.0, 0] });
+export const AUTO = Object.freeze({ beard: [3.6, 0], homework: [3.0, 0], lunch: [LUNCH_EAT.length] });
 
 /**
  * What each picture sounds like, timed to its drawing (synth.js names): `loop` seconds a loop (0: once), and
@@ -639,7 +646,134 @@ function wring(ctx, t, engine, extra) {
   return { bucket, lean, glow: glow > 0, splat };
 }
 
+// ---------- beat 26: Mops eats his lunch, then the bag (LUNCH_EAT) ----------
+const BREAD = "#f3d9a4",
+  CRUST = "#c98d4a",
+  LETTUCE = "#6cc36a",
+  CHEESE = "#ffd447",
+  CRUMB = "#d9a865";
+// A sandwich (two slices with lettuce and cheese between), its middle at (x, y), `left` of it still there (0 to 1):
+// each bite takes a round chunk off its left end, toward his mouth.
+function sandwich(ctx, x, y, left) {
+  if (left <= 0) return;
+  const w = 170,
+    h = 80;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(x - w / 2 + w * (1 - left) - 6, y - h, w * left + 12, h * 2);
+  ctx.clip();
+  // the bitten edge: a bite shape cut out of the left end
+  if (left < 1) {
+    const bx = x - w / 2 + w * (1 - left);
+    ctx.beginPath();
+    ctx.rect(x - w, y - h, w * 2, h * 2);
+    for (const dy of [-26, 0, 26]) ctx.moveTo(bx + 18, y + dy), ctx.arc(bx, y + dy, 18, 0, Math.PI * 2);
+    ctx.clip("evenodd");
+  }
+  const slice = (yy) => {
+    ctx.beginPath();
+    ctx.roundRect(x - w / 2, yy - 18, w, 36, 14);
+    ctx.fillStyle = BREAD;
+    ctx.fill();
+    ctx.lineWidth = LINE;
+    ctx.strokeStyle = CRUST;
+    ctx.stroke();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = INK;
+    ctx.stroke();
+  };
+  slice(y + 20);
+  ctx.beginPath();
+  for (let i = 0; i <= 8; i++) ctx.lineTo(x - w / 2 - 6 + (i * (w + 12)) / 8, y + (i % 2 ? 6 : -4));
+  ctx.lineTo(x + w / 2, y + 10);
+  ctx.lineTo(x - w / 2, y + 10);
+  ctx.closePath();
+  ctx.fillStyle = LETTUCE;
+  ctx.fill();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = INK;
+  ctx.stroke();
+  ctx.fillStyle = CHEESE;
+  ctx.fillRect(x - w / 2 + 6, y - 6, w - 12, 8);
+  slice(y - 18);
+  ctx.restore();
+}
+// A few crumbs falling from his mouth, `age` seconds after a bite.
+function eatCrumbs(ctx, x, y, age) {
+  if (age < 0 || age > 0.7) return;
+  for (let i = 0; i < 5; i++) {
+    const cx = x + (i - 2) * 11 + Math.sin(i * 2.3) * 6,
+      cy = y + age * (180 + i * 30);
+    ctx.beginPath();
+    ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+    ctx.fillStyle = CRUMB;
+    ctx.fill();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = INK;
+    ctx.stroke();
+  }
+}
+function lunchEat(ctx, t) {
+  const E = LUNCH_EAT,
+    bitesDone = E.bites.filter((b) => t >= b).length,
+    bagDone = E.bagBites.filter((b) => t >= b).length,
+    lastBite = [...E.bites, ...E.bagBites].filter((b) => t >= b).pop(),
+    sinceBite = lastBite == null ? 9 : t - lastBite,
+    chew = sinceBite < 0.35 ? Math.sin((sinceBite / 0.35) * Math.PI) : t > E.bagBites[2] ? 0.5 * Math.abs(Math.sin(t * 9)) : 0;
+  const lean = 0.03 + chew * 0.03;
+  room(ctx);
+  mopsBody(ctx, lean, true);
+  const c = chin(lean);
+  beard(ctx, c, 560 - chew * 10, Math.sin(t * 3) * 4, null, 0);
+  mopsHead(ctx, lean);
+  // his cheek full while he chews
+  if (chew > 0.05) {
+    const ch = at(19, -25, lean);
+    ctx.beginPath();
+    ctx.ellipse(ch.x, ch.y, 24 + chew * 8, 18 + chew * 6, 0, 0, Math.PI * 2);
+    ctx.fillStyle = WHITE;
+    ctx.fill();
+    ctx.lineWidth = FINE;
+    ctx.strokeStyle = INK;
+    ctx.stroke();
+  }
+  // His near front leg comes up from under the shirt; the hoof holds the bag up to his mouth.
+  const mouth = at(25.5, -24.8, lean),
+    lift = Math.min(1, Math.max(0, (t - E.bagUp + 0.4) / 0.4)),
+    bagX = mouth.x + 96 - lift * 16,
+    bagBottom = 560 - lift * 40,
+    bagK = 3.6,
+    bagH = 52 * bagK,
+    eaten = bagDone / 3;
+  const shoulder = at(12, -13, lean),
+    hoof = { x: bagX, y: bagBottom - bagH * 0.35 };
+  band(ctx, [shoulder, { cx: shoulder.x + 60, cy: hoof.y + 70, x: hoof.x - 30, y: hoof.y + 6 }], 3.4 * S, WHITE);
+  // the paper bag, bitten from the top down once he eats it
+  if (bagDone < 3) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, bagBottom - bagH * (1 - eaten) - 4, 960, 640);
+    ctx.clip();
+    drawLunchBag(ctx, bagX, bagBottom, bagK);
+    ctx.restore();
+  }
+  // the sandwich sticks up out of the bag's top, at his mouth, until it is eaten
+  bitesDone < 3 && sandwich(ctx, mouth.x + 70, mouth.y + 10, 1 - bitesDone / 3);
+  // the hoof round it (or empty, once it is gone)
+  ctx.beginPath();
+  ctx.ellipse(hoof.x - 26, hoof.y + 4, 26, 20, 0.3, 0, Math.PI * 2);
+  ctx.fillStyle = HOOF;
+  ctx.fill();
+  ctx.lineWidth = LINE;
+  ctx.strokeStyle = INK;
+  ctx.stroke();
+  lastBite != null && eatCrumbs(ctx, mouth.x + 10, mouth.y + 20, t - lastBite);
+  return { lunch: { sandwich: Math.max(0, 1 - bitesDone / 3), bag: bagDone < 3 ? 1 - eaten : 0, chewing: chew > 0.05 } };
+}
+
 const PANELS = {
+  // beat 26, the lunch sneak (lunch-sneak.js): Mops eats his lunch, then the bag
+  lunch: [lunchEat],
   beard: [dunk, wring],
   homework: HOMEWORK_PANELS,
   // beat 20, the TV story (tv-story.js): the old Wookiee pictures, each drawing itself full screen

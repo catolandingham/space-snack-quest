@@ -846,6 +846,7 @@
     function drawCh1DayHall() {
       drawLockedRoom("hall");
       if (n.roomOnly) return;
+      luBeat() && luBeat().drawProps(e); // the crates and the plate of Moon Pies stay after the lunch sneak
       n.scene === "Q3" && !(n.ch1Step === "family" || n.ch1Step === "gohome") && drawCh1Alien(640, 500, "hat", ALIEN_ADULT, 1);
       n.moPose !== "hidden" && n.mo.x > -50 && n.mo.x < 1100 && Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 });
       n.sqPose === "ball" && drawL2Ball(n.sq.x, n.sq.y - 16);

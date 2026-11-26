@@ -12,8 +12,9 @@
  *     catches him (the LOCKUP card names who saw him and where); hidden in a plant he is never caught, and the
  *     guards give up ("They lost you."). The first alarm's close-up of the hand (wordless, about 2.4 s, Brian 30a)
  *     plays between the run and the bell.
- * (b) Every other place in Chapter 1 that can see Squatch (the Day 2 lunch guests, the night robot):
- *     the alarm and a guard come first, rolling into a ball gets him away, standing gets him caught.
+ * (b) The Day 2 lunch sneak (src/modules/lunch-sneak.js) uses (a)'s rule: the witness runs to the FUR alarm, the
+ *     guards come, hidden in the plant he gets away, standing he is caught. The night robot: the alarm and a guard
+ *     come first, rolling into a ball gets him away, standing gets him caught.
  *   node tests/ch1-security.mjs
  */
 import { join } from "node:path";
@@ -256,7 +257,63 @@ async function watched(id, beat, grid) {
 }
 const grid = [];
 for (let y = 300; y <= 580; y += 40) for (let x = 120; x <= 860; x += 60) grid.push([x, y]);
-await watched("lunch", 25, grid);
+// The Day 2 lunch sneak (src/modules/lunch-sneak.js) uses the party's own rule (party-alarm.js), as in (a): seen in the
+// teal guest's look, the witness runs to the FUR alarm, the bell, the guards; hidden in the plant they give up;
+// standing in the open a guard catches him (LOCKUP). No action walks him out of the hall while the alarm is on.
+{
+  const { page, ctx, errors } = await g.open("?ch=1");
+  await page.evaluate(() => window.__ss.lockedReady);
+  const lunch = (hide) =>
+    page.evaluate((hide) => {
+      const ss = window.__ss,
+        n = ss.op,
+        beat = window.SSQ.beat("ch1-lunch"),
+        lu = beat.place,
+        st = () => n.ch1Lunch || {},
+        lockedUp = () => (n.cur && n.cur.id === "jail") || n.q.some((q) => q.id === "jail");
+      ((n.q = []), (n.cur = null), ss.ch1JumpBeat(25));
+      for (let i = 0; i < 300 && lu.watcherNow(lu.WATCHERS[0], st().t).phase !== "look"; i++) ss.tick(1 / 30);
+      n.sq.x = 498;
+      n.sq.y = 520;
+      let shoutAt = null,
+        runAt = null,
+        ringAt = null,
+        guardAt = null,
+        lockupAt = null,
+        lostAt = null,
+        offers = [],
+        t = 0;
+      for (let i = 0; i < 30 * 30 && lockupAt === null && lostAt === null; i++) {
+        ss.tick(1 / 30);
+        t += 1 / 30;
+        const a = st().alarm;
+        a && shoutAt === null && (shoutAt = t);
+        a && a.phase === "run" && runAt === null && (runAt = t);
+        a && a.phase === "ring" && ringAt === null && ((ringAt = t), (offers = (ss.spotsNow() || []).filter((o) => o && o.verb).map((o) => o.verb + " · " + o.cap)));
+        a && a.guards.length && guardAt === null && (guardAt = t);
+        if (hide && a && a.phase === "ring" && n.sqPose === "stand") {
+          n.sq.x = 396;
+          n.sq.y = 552;
+          ss.tick(1 / 30);
+          const o = ss.offerNow();
+          o && o.verb === "HIDE" && o.f();
+        }
+        if (n.cur && n.cur.id !== "jail") ((n.cur = null), (n.q = n.q.filter((q) => q.id === "jail")));
+        lockedUp() && (lockupAt = t);
+        shoutAt !== null && !st().alarm && (lostAt = t);
+      }
+      return { shoutAt, runAt, ringAt, guardAt, lockupAt, lostAt, offers };
+    }, hide);
+  const stand = await lunch(false);
+  g.check("lunch: seen, the witness shouts FUR! and runs to the wall alarm before any guard comes", stand.shoutAt !== null && stand.runAt !== null && stand.guardAt > stand.runAt, stand);
+  g.check("lunch: the first guard walks in as the bell rings", stand.ringAt !== null && stand.guardAt !== null && stand.guardAt - stand.ringAt < 0.1, stand);
+  g.check("lunch: while the alarm rings, only hiding places are offered (nothing walks him out of the hall)", stand.offers.every((v) => /^HIDE/.test(v)), stand.offers);
+  g.check("lunch: standing in the open, a guard reaches him (LOCKUP)", stand.lockupAt !== null, stand);
+  const hid = await lunch(true);
+  g.check('lunch: hidden in the plant he is never caught; the guards give up ("They lost you.")', hid.lockupAt === null && hid.lostAt !== null, hid);
+  await ctx.close();
+  g.check("lunch: no page errors", errors.length === 0, errors);
+}
 await watched("night", 42, grid);
 
 await g.finish("ch1-security");

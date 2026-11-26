@@ -1,107 +1,65 @@
 /**
- * Squatch and Mops do not stand inside each other at the lunch handoff or the snack hall.
- * The snack hall check is the end of the walk after two feeds, not the numbers written beside "mo:".
+ * Squatch and Mops do not stand inside each other at the lunch handoff (the hallway) or behind the snack counter
+ * (the hall), in the lunch sneak (src/modules/lunch-sneak.js): the places come from lunch-sneak-place.js, and the hall's
+ * walk ends where the game really leaves them. Neither stands on the counter, the stools, the plants or the crates
+ * (LUNCH_SOLIDS, read off the locked hall picture v2), and Mops is not between Squatch and the plate of Moon Pies.
  *   node tests/apart.mjs
  */
-import { readFileSync } from "node:fs";
-import { startGame } from "./game-page.mjs";
+import { join } from "node:path";
+import { startGame, root } from "./game-page.mjs";
 
-const src = readFileSync(new URL("../src/game/14-ch1-day2.js", import.meta.url), "utf8");
-const give = src.match(/stand: \[(\d+), (\d+)\], mo: \[(\d+), (\d+)\] \}, \(\) => ch1Ready\("give"/);
-if (!give) {
-  console.error("could not read the lunch handoff stands");
-  process.exit(1);
-}
-
-const PROPS = [
-  { name: "stage", x0: 240, x1: 490, y0: 0, y1: 304 },
-  { name: "poster", x0: 490, x1: 582, y0: 0, y1: 300 },
-  { name: "bar", x0: 798, x1: 960, y0: 0, y1: 528 },
-  { name: "stool", x0: 772, x1: 800, y0: 316, y1: 336 },
-  { name: "stool2", x0: 772, x1: 800, y0: 398, y1: 418 },
-  { name: "back plant", x0: 72, x1: 136, y0: 330, y1: 372 },
-  { name: "plant pot", x0: 412, x1: 476, y0: 520, y1: 552 },
-  { name: "snack table", x0: 496, x1: 574, y0: 494, y1: 530 },
-  { name: "tripod", x0: 228, x1: 274, y0: 340, y1: 368 },
-];
+const P = await import(join(root, "src", "modules", "lunch-sneak-place.js"));
 
 const g = await startGame({ port: 8881, name: "apart" });
 const { page } = await g.open("?ch=1");
+await page.evaluate(() => window.__ss.lockedReady);
 const out = await page.evaluate(
-  (spots) => {
-    const ss = window.__ss;
-    const n = ss.op;
+  ({ give, mopsAt, solids, plate }) => {
+    const ss = window.__ss,
+      n = ss.op;
     const gap = (room) => {
       const sq = (ss.adultPxFor(room) * 0.8) / 45;
-      const mo = sq * 1.15;
-      return 24 * sq + 30 * mo;
+      return 24 * sq + 30 * sq * 1.15;
     };
-    const onProp = (x, y, pad) => spots.props.find((b) => x > b.x0 - pad && x < b.x1 + pad && y > b.y0 - pad && y < b.y1 + pad);
-    const giveCheck = () => {
-      const need = gap("passage");
-      const dist = Math.hypot(spots.give.sq[0] - spots.give.mo[0], spots.give.sq[1] - spots.give.mo[1]);
-      return { dist: Math.round(dist), need: Math.round(need), clear: dist >= need };
-    };
-    n.ch1Day2 = true;
-    n.room = "passage";
-    n.scene = "QB";
-    n.ch1Step = "feed2";
-    n.ch1Fed = 1;
-    n.ch1Hold = "lunch";
-    n.ch1Zoom = { id: "eat", zoom: 1, paw: { x: 300, y: 580 } };
-    n.sqPose = "stand";
-    n.moPose = "stand";
-    n.sq.x = 240;
-    n.sq.y = 520;
-    n.mo.x = 720;
-    n.mo.y = 540;
-    n.mo.walking = false;
-    n.ctrl = true;
+    const onProp = (x, y, pad) => solids.find((b) => x > b.x0 - pad && x < b.x1 + pad && y > b.y0 - pad && y < b.y1 + pad);
+    const hallway = { dist: Math.round(Math.hypot(give.x - mopsAt.x, give.y - mopsAt.y)), need: Math.round(gap("passage")) };
+    // the walk behind the counter, played: from the hallway's left doorway after lunch
     n.q = [];
     n.cur = null;
-    const act = ss.offerNow();
-    if (!act || act.verb !== "FEED") return { error: "no second feed", act: act && act.verb };
-    act.f();
-    let last = "";
-    for (let i = 0; i < 500; i++) {
-      ss.tick(0.05);
-      if (n.cur && (n.cur.k === "bub" || n.cur.k === "card" || n.cur.k === "wait")) ss.opTap();
-      const mark = n.room + "|" + Math.round(n.sq.x) + "|" + Math.round(n.mo.x) + "|" + (n.cur && n.cur.k) + "|" + n.q.length;
-      if (n.room === "hall" && n.ch1Step === "snack" && mark === last) break;
-      last = mark;
-    }
-    const need = gap("hall");
-    const dist = Math.hypot(n.sq.x - n.mo.x, n.sq.y - n.mo.y);
-    const snack = { x: 760, y: 530 };
-    const dx = snack.x - n.sq.x,
-      dy = snack.y - n.sq.y,
-      len2 = dx * dx + dy * dy || 1,
-      t = Math.max(0, Math.min(1, ((n.mo.x - n.sq.x) * dx + (n.mo.y - n.sq.y) * dy) / len2)),
+    ss.ch1JumpBeat(22);
+    window.SSQ.beat("ch1-lunch").jump("back");
+    ss.tick(0.05);
+    n.sq.x = 50;
+    n.sq.y = 345;
+    for (let i = 0; i < 300 && !(n.ctrl && n.ch1Lunch && n.ch1Lunch.step === "snack"); i++) ss.tick(0.05);
+    const need = gap("hall"),
+      dist = Math.hypot(n.sq.x - n.mo.x, n.sq.y - n.mo.y);
+    // Mops is not on the way from Squatch's paw down to the plate
+    const dx = plate.x - n.sq.x,
+      dy = plate.y - n.sq.y,
+      t = Math.max(0, Math.min(1, ((n.mo.x - n.sq.x) * dx + (n.mo.y - n.sq.y) * dy) / (dx * dx + dy * dy || 1))),
       path = Math.hypot(n.mo.x - (n.sq.x + dx * t), n.mo.y - (n.sq.y + dy * t));
     return {
-      give: giveCheck(),
+      hallway: { ...hallway, clear: hallway.dist >= hallway.need },
       hall: {
         room: n.room,
-        step: n.ch1Step,
+        step: n.ch1Lunch && n.ch1Lunch.step,
         sq: [Math.round(n.sq.x), Math.round(n.sq.y)],
         mo: [Math.round(n.mo.x), Math.round(n.mo.y)],
         dist: Math.round(dist),
         need: Math.round(need),
         clear: dist >= need,
-        sqProp: (onProp(n.sq.x, n.sq.y, 8) || {}).name || "",
-        moProp: (onProp(n.mo.x, n.mo.y, 8) || {}).name || "",
+        sqProp: !!onProp(n.sq.x, n.sq.y, 0),
+        moProp: !!onProp(n.mo.x, n.mo.y, 0),
         path: Math.round(path),
         pathClear: path >= need,
       },
     };
   },
-  {
-    give: { sq: [Number(give[1]), Number(give[2])], mo: [Number(give[3]), Number(give[4])] },
-    props: PROPS,
-  },
+  { give: P.HALLWAY_SPOTS.give, mopsAt: P.HALLWAY_SPOTS.mops, solids: P.LUNCH_SOLIDS, plate: P.COUNTER_SPOTS.plate },
 );
-g.check("passage: Squatch is not inside Mops", out.give && out.give.clear, out.give || out);
-g.check("snack hall: the walk ends with them apart", out.hall && out.hall.room === "hall" && out.hall.clear, out.hall || out);
-g.check("snack hall: neither one stands on a prop", out.hall && !out.hall.sqProp && !out.hall.moProp, out.hall || out);
-g.check("snack hall: Mops is not in the way of the snack", out.hall && out.hall.pathClear, out.hall || out);
+g.check("hallway: where GIVE · lunch is offered, Squatch is not inside Mops", out.hallway.clear, out.hallway);
+g.check("behind the counter: the walk ends with them apart", out.hall.room === "hall" && out.hall.step === "snack" && out.hall.clear, out.hall);
+g.check("behind the counter: neither one stands on the counter, a stool, a plant or the crates", !out.hall.sqProp && !out.hall.moProp, out.hall);
+g.check("behind the counter: Mops is not in the way of the plate", out.hall.pathClear, out.hall);
 await g.finish("apart");

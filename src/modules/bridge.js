@@ -33,7 +33,7 @@ import { singingNow } from "./music-rules.js";
  * to write another field stops with an error; tests/module-build.mjs checks the morning (and its home-alone
  * part) and the party night against this list.
  */
-export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1HomeMorning", "ch1Step", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe"]);
+export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1HomeMorning", "ch1Lunch", "ch1Sneak", "ch1Step", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe"]);
 
 export function createBridge() {
   const beats = new Map();
@@ -105,6 +105,14 @@ export function createBridge() {
     /** The rebuilt beat with this id, or null while the older program still runs it. */
     beat(id) {
       return beats.get(id) || null;
+    },
+    /**
+     * The rebuilt beat that draws the party hall now (the party night, or the lunch sneak), or null: the older
+     * program asks it for the hall's picture, its walls (bounds) and what feet cannot walk through (solids).
+     */
+    hallOwner() {
+      for (const b of beats.values()) if (b.ownsRoom && b.ownsRoom()) return b;
+      return null;
     },
     /** Ids of every rebuilt beat, in the order they were registered. */
     beatIds() {

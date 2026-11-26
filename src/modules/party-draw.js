@@ -71,7 +71,8 @@ export function drawHall(ctx, E, guestArt, view) {
   if (pic && pic.complete && pic.naturalWidth) ctx.drawImage(pic, 0, 0, 960, 640);
   else ((ctx.fillStyle = "#e2e5ed"), ctx.fillRect(0, 0, 960, 640));
   view.vent !== false && drawVentSwirl(ctx, HALL.vent, t);
-  drawBanner(ctx, BANNER, view.banner ? view.banner.glow || 0 : 0, t);
+  // (banner: false, the day after the party: the lunch sneak's hall has no party banner)
+  view.banner !== false && drawBanner(ctx, BANNER, view.banner ? view.banner.glow || 0 : 0, t);
   view.alarm && drawAlarmFlash(ctx, HALL.alarm, t);
   view.lights && drawPartyLights(ctx, DANCE_SPOT, t, view.lights.dim, view.lights.color);
   // the dance spot's gold dashed outline, pulsing gently like every usable thing's, whenever he can dance there
