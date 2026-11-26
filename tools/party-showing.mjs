@@ -17,6 +17,9 @@
  *     ventcostume  from the start of P6 (in disguise): a dance (his first minute passes), then he stands by the vent;
  *                  it sucks his hat in, then he steps away.
  *     tv           beat 20 on its own: the TV story (the Wookiee story), every picture, with its sounds.
+ *     bedtime      beat 21: from the TV story's last picture, the bedtime story (Squatch asks with no words, the
+ *                  crate story's pictures, Mops's line, asleep) to Day 2's first frame. With SHOWING_STILLS=<dir>, a
+ *                  still of each step goes there too.
  *   SHOWING_SILENT=1 leaves the sound out.
  */
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
@@ -25,7 +28,7 @@ import { join, dirname } from "node:path";
 import { startGame, sleep, root } from "../tests/game-page.mjs";
 
 const [which, outFile] = process.argv.slice(2);
-const WHICH = ["keep", "back", "flyer", "early", "ventfur", "ventcostume", "tv"];
+const WHICH = ["keep", "back", "flyer", "early", "ventfur", "ventcostume", "tv", "bedtime"];
 if (!WHICH.includes(which) || !outFile) {
   console.error("Usage: node tools/party-showing.mjs <" + WHICH.join("|") + "> <out.mp4>");
   process.exit(2);
@@ -39,7 +42,7 @@ const hall = await import(join(root, "src", "modules", "party-hall.js"));
 const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 2 };
 const g = await startGame({ port: 9360 + WHICH.indexOf(which), name: "party-showing-" + which });
 const sneak = await import(join(root, "tests", "party-sneak.mjs"));
-const { page, errors } = await g.open(which === "tv" ? "?ch=1" : "?beat=" + (which === "flyer" ? "party:P3" : which === "ventfur" ? "party:P2" : "party:P6"), PHONE);
+const { page, errors } = await g.open(which === "tv" || which === "bedtime" ? "?ch=1" : "?beat=" + (which === "flyer" ? "party:P3" : which === "ventfur" ? "party:P2" : "party:P6"), PHONE);
 await sleep(600);
 SILENT || (await page.click("#ss-sound").catch(() => {}));
 await sleep(600);
@@ -150,7 +153,7 @@ const until = async (f, ms = 20000, each) => {
   const end = Date.now() + ms;
   for (;;) {
     const s = await st();
-    if (f(s)) return s;
+    if (await f(s)) return s;
     if (Date.now() > end) return null;
     each && (await each(s));
     await sleep(110);
@@ -395,6 +398,25 @@ async function juke(ms) {
 }
 
 // ---------- the showings ----------
+// The bedtime video starts at the TV story's last picture: the story before it plays unrecorded, fast.
+if (which === "bedtime") {
+  await page.evaluate(() => window.__ss.lockedReady);
+  const ok = await page.evaluate(() => {
+    const ss = window.__ss,
+      n = ss.op;
+    n.q = [];
+    n.cur = null;
+    window.SSQ.engine().tvStory();
+    for (let i = 0; i < 600; i++) {
+      ss.tick(0.05);
+      const c = n.cur;
+      if (c && c.k === "cutaway" && c.id === "wookiee" && c.panel === 4) return true;
+      c && ["card", "cutaway"].includes(c.k) && ((n.bt = 1), ss.opTap());
+    }
+    return false;
+  });
+  ok || (await fail("the TV story did not reach its last picture"));
+}
 await startRecording();
 await sleep(1800);
 if (which === "keep") {
@@ -549,6 +571,56 @@ if (which === "tv") {
     await sleep(500);
   }
   await sleep(1500);
+}
+if (which === "bedtime") {
+  const STILLS = process.env.SHOWING_STILLS || "";
+  STILLS && mkdirSync(STILLS, { recursive: true });
+  let k = 0;
+  const still = async (name) => STILLS && (await page.screenshot({ path: join(STILLS, String(++k).padStart(2, "0") + "-" + name + ".png") }));
+  const bed = () => page.evaluate(() => window.SSQ.beat("ch1-bedtime-story").debug().phase);
+  const next = () => page.evaluate(() => ((window.__ss.op.bt = 1), window.__ss.opTap()));
+  // the TV story's last picture, then its Now card
+  await sleep(2500);
+  await next();
+  await until((q) => q.cur === "card", 3000);
+  await sleep(2500);
+  await next();
+  log("bedtime");
+  // 1. the wordless ask: he walks to his bed and pats it (the thought bubble), into bed, Mops comes over
+  await until(async () => (await bed()) === "walk", 3000);
+  await sleep(1300);
+  await still("walks-to-bed");
+  await until(async () => (await bed()) === "pat", 6000);
+  await sleep(1500);
+  await still("pats-bed-thought-bubble");
+  await until(async () => (await bed()) === "bed", 6000);
+  await sleep(1900);
+  await still("in-bed-mops-comes-over");
+  // 2. the pictures: read each (about 4 s), then NEXT
+  for (let i = 0; i < 6; i++) {
+    const s = await until((q) => q.cur === "cutaway" || q.cur === "bub", 8000);
+    if (!s || s.cur !== "cutaway") break;
+    await sleep(1200);
+    const pic = await page.evaluate(() => window.SSQ.cutaway.last().pic);
+    await still("picture-" + pic);
+    await sleep(3000);
+    await next();
+    await sleep(300);
+  }
+  // 3. Mops's line
+  await until((q) => q.cur === "bub", 6000);
+  await sleep(1500);
+  await still("mops-line");
+  await sleep(2800);
+  await next();
+  // 4. asleep, then Day 2
+  await until(async () => (await bed()) === "asleep", 4000);
+  await sleep(1600);
+  await still("asleep");
+  await until(() => page.evaluate(() => !!window.__ss.op.ch1Day2), 8000);
+  await sleep(250);
+  await still("day2-first-frame");
+  await sleep(1200);
 }
 if (which === "early") {
   await dance(10, 0);
