@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–175 | ## Where main is (Chapter 1 redesign) |
-| 176–190 | ## Register |
-| 191–212 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 213–233 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 234–246 | ## Phase 2 (plan section 4, T13 to T18) |
-| 247–269 | ## Phase 1 (plan section 3, T5 to T12) |
-| 270–283 | ## SS40–SS44 |
-| 284–301 | ## Story rows |
-| 302–320 | ## Reset section |
-| 321–331 | ## Still open |
-| 332–335 | ## Chapter 1 replot, recorded and not built |
-| 336–493 | ## Changelog |
+| 24–177 | ## Where main is (Chapter 1 redesign) |
+| 178–192 | ## Register |
+| 193–214 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 215–235 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 236–248 | ## Phase 2 (plan section 4, T13 to T18) |
+| 249–271 | ## Phase 1 (plan section 3, T5 to T12) |
+| 272–285 | ## SS40–SS44 |
+| 286–303 | ## Story rows |
+| 304–322 | ## Reset section |
+| 323–333 | ## Still open |
+| 334–337 | ## Chapter 1 replot, recorded and not built |
+| 338–495 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -24,6 +24,8 @@
 ## Where main is (Chapter 1 redesign)
 
 2026-11-26 (round D, merge), draft PR #90 on `feat/ch1-day2-morning`, not merged. Done: `feat/ch1-bedtime-story` (with the party's round D) merged in (merge commit); the morning's goal things (the rocket, the lunch bag) keep only the dashed goal line, no glow (`tests/highlight-style.mjs`). NOT ASSESSED: whether a kid on a phone still finds the bag at once without the glow (the stills). Docs match main: yes.
+
+2026-11-26 (round D, merge), draft PR #91 on `feat/ch1-lunch-sneak`, not merged. Done: `feat/ch1-day2-morning` (with the party's round D) merged in (merge commit); the lunch's glows are the one dashed line (the doorway, Mops at GIVE, the plate, the alarm's plant and crates; `tests/highlight-style.mjs`); the kid-play robot's lunch-sneak loop fixed (a test bug: a no-button doorway was marked done by any press). Open for Brian: during an alarm the plant and crates still get the line (the capture rule's "every hiding place"); the line round Mops at GIVE is a rounded box (he is not part of a locked picture, so nothing to trace). NOT ASSESSED: how the lines read on a phone at a kid's pace (see the round-d stills). Docs match main: yes.
 
 2026-11-26 (round D), draft PR #91 on `feat/ch1-lunch-sneak`, not merged. Done: `feat/ch1-day2-morning` (round D) merged in (merge commit; this branch's night PA step and its checks dropped, `ganitor.js` pa-ganitor marked merged into the morning PA). Brian's lunch notes and answers of 2026-11-26: only the hallway doorway lit up (0:38; no glow or outline on the plant or the crates), two wandering guests with cones (0:38), the walk-through hallway doorway (#47; SNEAK · hallway retired), crate eyes at the seam (0:13), Mops in the hallway mopping with his beard, wet streaks, his bucket, a slow look left and right, hearts (0:17.6, 0:17.9, #48), the duck as the L2 ball (0:38, 0:39.8). Docs match main: yes.
 - Needs Brian's yes: the goal words "Squatch: take Mops his lunch in the hallway" (suggested; or keep "Squatch: take Mops his lunch"); the wanderers' places (only the hall's left part leaves their cones off his way); Mops's turn (his drawing flips as his cone passes straight up) and his plain look cone; the hallway bucket's place and size; the streaks' look.

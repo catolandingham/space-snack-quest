@@ -4,21 +4,21 @@
 | Lines | Heading |
 | --- | --- |
 | 23–32 | # Space Snack Quest |
-| 33–128 | ## Chapter 1 redesign (on main) |
-| 129–143 | ## Music credits |
-| 144–174 | ## Source and build |
-| 175–185 | ## Debug link |
-| 186–191 | ## Automatic checks |
-| 192–195 | ## Screen fit |
-| 196–219 | ## Brian's repeat complaints, as tests (2026-11-22) |
-| 220–225 | ## Scene 1 morning |
-| 226–229 | ## Chapter 1 kid robot |
-| 230–246 | ## Phase 1: kitchen and diner clarity |
-| 247–259 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
-| 260–273 | ## Phase 3: one capture rule, phone HUD, tap to walk |
-| 274–283 | ## Chapter 1 pass: the night out has a purpose, switches say why |
-| 284–301 | ## Progression tests |
-| 302–328 | ## Left as they were |
+| 33–130 | ## Chapter 1 redesign (on main) |
+| 131–145 | ## Music credits |
+| 146–176 | ## Source and build |
+| 177–187 | ## Debug link |
+| 188–193 | ## Automatic checks |
+| 194–197 | ## Screen fit |
+| 198–221 | ## Brian's repeat complaints, as tests (2026-11-22) |
+| 222–227 | ## Scene 1 morning |
+| 228–231 | ## Chapter 1 kid robot |
+| 232–248 | ## Phase 1: kitchen and diner clarity |
+| 249–261 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
+| 262–275 | ## Phase 3: one capture rule, phone HUD, tap to walk |
+| 276–285 | ## Chapter 1 pass: the night out has a purpose, switches say why |
+| 286–303 | ## Progression tests |
+| 304–330 | ## Left as they were |
 <!-- /section-index -->
 # Space Snack Quest
 
@@ -31,6 +31,8 @@ Calendar review status (2026-11-16): Brian said yes to merge the calendar (Nov 1
 **Next up (Brian, 2026-11-16):** Chapter 1, one beat at a time in [`docs/CH1-STORY-WALKTHROUGH.md`](docs/CH1-STORY-WALKTHROUGH.md). Do not leave beat 1 until Brian says it is right. Squatch walks around the bed and the bucket, and the Guardian box is in the closet on day 1 (locked home room v5; Brian's yes, Nov 16, 12:50 PM PT). On day 2 he takes the box out at the closet (`tests/bedroom-walk.mjs`). The calendar is tappable. Printed copy: MOONMUNCH / FUZZUARY; Sponsored by MOON PIES; Sock hunt; family Olympics night; Wash outside windows (remember space suit!); Blanket fort night. These are decoration, not new quests. X or NEXT returns to the same scene (`tests/calendar-closeup.mjs`). Closet, bed, desk homework and the already-bitten calendar are built on branch `feat/home-alone` (draft, see below); the purple bed bar is removed there too; still to build: the bucket. The night vent step no longer finishes inside Mops: the morning hum was leaving him marked as walking. Docs match main: yes.
 
 ## Chapter 1 redesign (on main)
+
+2026-11-26 (round D, merge), draft pull request #91, not merged. The home morning's merge of the party's round D is merged in (the one highlight style, the crowd and voices, Floating in Space as the title, the walk-tap ring gone, walk-through doorways). The lunch sneak follows the one highlight style (Brian 2026-11-26: "So E, but thicker, but not quite as thick as A"): no pulsing yellow glow anywhere in it; the hallway doorway has its dashed goal line, Mops has the line round him at GIVE · lunch, the plate its traced line (also while Mops says his line), and during an alarm the plant its traced line and the crates a line, drawn just after each thing so nothing covers it (`lunch-sneak-art.js` `drawLunchGoalLine`; `tests/highlight-style.mjs` covers the lunch). The kid-play robot gets through the lunch sneak again: it had marked the walk-through hallway doorway (a place with no button) as done whenever it pressed HIDE or ROLL, so it hid in the plant over and over until its 900 s ran out; the game was right (`tests/ch1-kid-play.mjs`). Docs match main: yes. Not yet played by a person.
 
 2026-11-26 (round D), draft pull request #91 on branch `feat/ch1-lunch-sneak`, not merged. The home morning's round D is merged in (its PA replaces this branch's night PA; "Ganitor Mops to the party hall." is said inside it). Brian's notes and answers of 2026-11-26 on the lunch sneak: only the hallway doorway glows and is outlined (the plant and the crates still hide him but do not glow), and the goal words after 20 s read "Squatch: take Mops his lunch in the hallway" (suggested words); the doorway is walk-through, no SNEAK · hallway button (#47); two more guests wander slowly up and down the left of the hall with cones (their cones never reach his way; `WANDERERS` in `src/modules/lunch-sneak-place.js`); his eyes in the crates sit in the middle of the front at the seam, like the plant's; in the hallway Mops mops with his beard, wet streaks behind him, his mop bucket beside him, then stops, looks left (1.2 s) and right (1.2 s) with his cone sweeping, turns to Squatch, and his cone fills with hearts as hearts float up (never "?" or "!", #48); behind the snack counter Squatch ducks into the approved L2 ball, never the squashed Squatch (the counter close-up is 1.7 times, from 1.65, so the ball is 28 px on a phone). Stills: `tools/lunch-stills.mjs`. Docs match main: yes. Not yet played by a person.
 
