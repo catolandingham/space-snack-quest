@@ -72,12 +72,12 @@ export const GUARD_AROUND = Object.freeze(
 const GUARD_FLOOR = Object.freeze({ x0: 40, x1: 960, y0: 290, y1: 600 });
 const GUARD_REPATH = 20;
 // True when the straight walk from (ax, ay) to (bx, by) touches none of GUARD_AROUND (checked every 4 pixels).
-function clearOfFurniture(ax, ay, bx, by) {
+function clearOfFurniture(ax, ay, bx, by, around = GUARD_AROUND) {
   const k = Math.ceil(Math.hypot(bx - ax, by - ay) / 4);
   for (let i = 0; i <= k; i++) {
     const x = ax + ((bx - ax) * i) / k,
       y = ay + ((by - ay) * i) / k;
-    if (GUARD_AROUND.some((b) => x > b.x0 && x < b.x1 && y > b.y0 && y < b.y1)) return false;
+    if (around.some((b) => x > b.x0 && x < b.x1 && y > b.y0 && y < b.y1)) return false;
   }
   return true;
 }
@@ -85,19 +85,19 @@ function clearOfFurniture(ax, ay, bx, by) {
  * One step of a hall guard toward (x, y), round the furniture (tap-path.js findPath on GUARD_AROUND). A place on the
  * furniture is swapped for the free floor nearest it. True once there.
  */
-export function guardStep(g, x, y, speed, dt) {
+export function guardStep(g, x, y, speed, dt, around = GUARD_AROUND, floor = GUARD_FLOOR) {
   // A new way is worked out when the place is new or has moved 20 or more since (a guard after Squatch follows him
   // without working it out every frame); a smaller move only moves the walk's last point, when that was the place
   // and the last stretch to the new place is still clear of the furniture.
   const moved = g.path ? Math.hypot(g.pathFor.x - x, g.pathFor.y - y) : Infinity,
     n = g.path ? g.path.length : 0,
     from = n > 1 ? g.path[n - 2] : g,
-    keep = moved < GUARD_REPATH && g.path[n - 1].x === g.pathTo.x && g.path[n - 1].y === g.pathTo.y && clearOfFurniture(from.x, from.y, x, y);
+    keep = moved < GUARD_REPATH && g.path[n - 1].x === g.pathTo.x && g.path[n - 1].y === g.pathTo.y && clearOfFurniture(from.x, from.y, x, y, around);
   if (keep) g.path[n - 1] = { x, y };
   else if (moved > 0) {
     g.pathFor = { x, y };
     // (no way found: straight there only if that is clear of the furniture, else he stays where he is)
-    g.path = findPath({ x: g.x, y: g.y }, { x, y }, GUARD_FLOOR, GUARD_AROUND) || [clearOfFurniture(g.x, g.y, x, y) ? { x, y } : { x: g.x, y: g.y }];
+    g.path = findPath({ x: g.x, y: g.y }, { x, y }, floor, around) || [clearOfFurniture(g.x, g.y, x, y, around) ? { x, y } : { x: g.x, y: g.y }];
   }
   g.pathTo = { x, y };
   const at = step(g, g.path[0].x, g.path[0].y, speed, dt);
@@ -106,9 +106,24 @@ export function guardStep(g, x, y, speed, dt) {
   return false;
 }
 
-/** Starts the rule: `witness` is { id, x, y } of who saw him, `where` the lockup card's "where-*" line id. */
-export function startAlarm(P, witness, where, who = "who-tourist") {
-  P.alarm = { phase: "shout", t: 0, w: { id: witness.id, x: witness.x, y: witness.y, hx: witness.x, hy: witness.y }, where, who, guards: [], bell: 0, last: null, hidden: "", lost: false };
+/**
+ * Rooms other than the party hall where the one capture rule runs (2026-11-26, the night's loading bay, evening.js):
+ * by id, { room, run (where the witness runs to pull the room's FUR alarm), guardIn, search, around, floor }. A room
+ * with no entry is the hall (SPOTS, SEARCH, GUARD_AROUND).
+ */
+const ALARM_PLACES = new Map();
+export function addAlarmPlace(id, place) {
+  ALARM_PLACES.set(id, Object.freeze({ ...place }));
+}
+const HALL_PLACE = Object.freeze({ room: "hall", run: SPOTS.alarmRun, guardIn: SPOTS.guardIn, search: null, around: null, floor: null });
+const placeOf = (a) => (a && a.place && ALARM_PLACES.get(a.place)) || HALL_PLACE;
+
+/**
+ * Starts the rule: `witness` is { id, x, y } of who saw him, `where` the lockup card's "where-*" line id, `place` the
+ * id of an addAlarmPlace room (none: the hall).
+ */
+export function startAlarm(P, witness, where, who = "who-tourist", place = "") {
+  P.alarm = { phase: "shout", t: 0, w: { id: witness.id, x: witness.x, y: witness.y, hx: witness.x, hy: witness.y }, where, who, guards: [], bell: 0, last: null, hidden: "", lost: false, ...(place ? { place } : {}) };
 }
 
 /**
@@ -123,13 +138,14 @@ export function tickAlarm(P, dt, api) {
   a.t += dt;
   const E = api.E,
     sq = api.sq(),
-    hidden = api.hidden();
+    hidden = api.hidden(),
+    PL = placeOf(a);
   if (a.phase === "shout") {
     a.t >= ALARM.shout && ((a.phase = "run"), (a.t = 0));
     return;
   }
   if (a.phase === "run") {
-    if (step(a.w, SPOTS.alarmRun.x, SPOTS.alarmRun.y, ALARM.run, dt)) {
+    if (step(a.w, PL.run.x, PL.run.y, ALARM.run, dt)) {
       a.phase = "pull";
       a.t = 0;
       if (api.firstTime()) ((a.closeUp = true), api.closeUp(() => ((a.closeUp = false), ring(a, E))));
@@ -147,18 +163,18 @@ export function tickAlarm(P, dt, api) {
     for (const g of Object.values(api.people())) step(g, g.hx + g.ax, g.hy + g.ay, ALARM.calm, dt);
   }
   if (a.phase === "ring") {
-    a.guards.length < 2 && a.t >= a.guards.length * ALARM.guardGap && a.guards.push({ x: SPOTS.guardIn.x, y: SPOTS.guardIn.y, a: Math.PI, room: "hall" });
+    a.guards.length < 2 && a.t >= a.guards.length * ALARM.guardGap && a.guards.push({ x: PL.guardIn.x, y: PL.guardIn.y, a: PL.room === "hall" ? Math.PI : 0, room: PL.room });
     a.guards.length === 2 && ((a.phase = "search"), (a.t = 0));
   }
   if (a.phase === "ring" || a.phase === "search") {
-    if (api.room() !== "hall") {
+    if (api.room() !== PL.room) {
       // He went through his door: a guard follows him home half a second later.
       a.phase = "home";
       a.t = 0;
       a.homeGuard = null;
       return;
     }
-    searchHall(a, dt, api, sq, hidden);
+    searchHall(a, dt, api, sq, hidden, PL);
     return;
   }
   if (a.phase === "home") {
@@ -168,8 +184,9 @@ export function tickAlarm(P, dt, api) {
   if (a.phase === "calm") {
     let still = false;
     for (const g of a.guards) {
-      const gone = g.room !== "hall" || guardStep(g, SPOTS.guardIn.x + 40, SPOTS.guardIn.y, ALARM.guard, dt);
-      g.a = Math.atan2(SPOTS.guardIn.y - g.y, SPOTS.guardIn.x + 40 - g.x);
+      const out = { x: PL.guardIn.x + (PL.room === "hall" ? 40 : -40), y: PL.guardIn.y },
+        gone = g.room !== PL.room || guardStep(g, out.x, out.y, ALARM.guard, dt, PL.around || GUARD_AROUND, PL.floor || GUARD_FLOOR);
+      g.a = Math.atan2(out.y - g.y, out.x - g.x);
       gone ? (g.room = "out") : (still = true);
     }
     step(a.w, a.w.hx, a.w.hy, ALARM.calm, dt) || (still = true);
@@ -190,7 +207,8 @@ function ring(a, E) {
 
 /** The guards' cones (for drawing and for sight). */
 export function guardCones(a, size) {
-  return (a ? a.guards : []).filter((g) => g.room === "hall").map((g, i) => ({ ...coneFrom("guard" + i, g.x, g.y, g.a, size), hot: !!g.sees }));
+  const room = placeOf(a).room;
+  return (a ? a.guards : []).filter((g) => g.room === room).map((g, i) => ({ ...coneFrom("guard" + i, g.x, g.y, g.a, size), hot: !!g.sees }));
 }
 
 // Where the guards look when nobody has seen him: they walk the hall from point to point, looking round at each.
@@ -203,19 +221,20 @@ export const SEARCH = Object.freeze([
   { x: 700, y: 430 },
 ]);
 
-function searchHall(a, dt, api, sq, hidden) {
+function searchHall(a, dt, api, sq, hidden, PL = HALL_PLACE) {
   const size = api.size();
   // A hide only counts if no guard was looking at him as he stepped in (a.spotted is set then).
   const safe = !!hidden && !a.spotted;
   a.guards.forEach((g, i) => {
     const c = coneFrom("guard" + i, g.x, g.y, g.a, size),
-      sees = !safe && (coneSees(c, sq) || Math.hypot(sq.x - g.x, sq.y - g.y) < ALARM.feet);
+      sees = !safe && ((api.sees ? api.sees(c, sq) : coneSees(c, sq)) || Math.hypot(sq.x - g.x, sq.y - g.y) < ALARM.feet);
     g.sees = sees;
     sees && (a.last = { x: sq.x, y: sq.y });
     // Seen: at him. Lost him: to where he was last seen. Otherwise the search walk, point to point.
     g.next = g.next == null ? i * 3 : g.next;
-    const to = sees || (a.last && !safe) ? a.last : SEARCH[g.next % SEARCH.length];
-    const there = guardStep(g, to.x, to.y, ALARM.guard, dt);
+    const search = PL.search || SEARCH,
+      to = sees || (a.last && !safe) ? a.last : search[g.next % search.length];
+    const there = guardStep(g, to.x, to.y, ALARM.guard, dt, PL.around || GUARD_AROUND, PL.floor || GUARD_FLOOR);
     if (there && !sees) {
       // (where he was last seen may be on the furniture: the guard got as near as the floor lets him)
       a.last && to === a.last && (a.last = null);
@@ -223,7 +242,7 @@ function searchHall(a, dt, api, sq, hidden) {
       g.a += Math.sin(g.look * 3) * dt * 2.5;
       g.look > 1.2 && ((g.look = 0), (g.next = g.next + 1));
     } else g.a = Math.atan2(to.y - g.y, to.x - g.x);
-    if (!safe && a.phase !== "caught" && Math.hypot(sq.x - g.x, sq.y - g.y) < catchReach(sq)) {
+    if (!safe && a.phase !== "caught" && Math.hypot(sq.x - g.x, sq.y - g.y) < (PL.room === "hall" ? catchReach(sq) : ALARM.reach)) {
       api.caught(a.who, a.where);
       a.phase = "caught";
     }

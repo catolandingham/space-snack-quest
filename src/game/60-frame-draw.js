@@ -18,6 +18,7 @@
         party && party.tick(l);
         hmBeat() && hmBeat().tick(l);
         luBeat() && luBeat().tick(l);
+        evBeat() && evBeat().tick(l);
       }
       (n.sqHop &&
         ((n.sqHop.t += l),
@@ -1149,7 +1150,7 @@
       let close = n.cur && n.cur.over && window.SSQ && window.SSQ.beat("ch1-morning");
       if (close && close.closeUpSpeaker(l)) return close.closeUpSpeaker(l);
       // The party night places its own speakers (Isfred beside him, the band, Squatch's eyes in the plant).
-      let at = partyBeat() && partyBeat().speakerAt(l);
+      let at = (partyBeat() && partyBeat().speakerAt(l)) || (evBeat() && evBeat().speakerAt(l));
       if (at) return at;
       let o = IA(l);
       if (o) return o;
@@ -2072,7 +2073,7 @@
     function drawRoom() {
       if (n.room === "office") return drawCh1OfficeRoom();
       // The party night's hall is the party module's drawing, on the locked picture.
-      if (n.room === "hall" && hallBeat() && hallBeat().drawRoom(e)) return;
+      if ((n.room === "hall" || n.room === "hangar") && hallBeat() && hallBeat().drawRoom(e)) return;
       (n.room === "closet"
         ? (P2(), X2(), g5(), z2())
         : n.room === "deck"
@@ -2157,6 +2158,7 @@
         window.SSQ && window.SSQ.beat("ch1-bedtime-story") && window.SSQ.beat("ch1-bedtime-story").draw(e);
         hmBeat() && hmBeat().draw(e);
         luBeat() && luBeat().draw(e);
+        evBeat() && evBeat().draw(e);
         if (n.ch1Calendar) {
           drawCh1Calendar();
           return;

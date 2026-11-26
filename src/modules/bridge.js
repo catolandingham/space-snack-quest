@@ -36,7 +36,9 @@ import { keepInSpan, seeCue, visitNow, playSound, soundsPlayed, hushNow, hushKey
  * to write another field stops with an error; tests/module-build.mjs checks the morning (and its home-alone
  * part) and the party night against this list.
  */
-export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1HomeMorning", "ch1Lunch", "ch1Sneak", "ch1Step", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe"]);
+// (the evening, evening.js, also keeps the older program's record of night one: the crayon drawing on the wall, the
+// brochure, the paw print, the posted yellow copy, the pink sheet in the vent, the lights; and ch1D, the loading bay)
+export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1HomeMorning", "ch1Lunch", "ch1Evening", "ch1Sneak", "ch1Step", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe", "ch1Crayon", "ch1Brochure", "ch1Paw", "ch1Signed", "ch1Mailed", "ch1PinkSucked", "ch1Lights", "ch1D"]);
 
 export function createBridge() {
   const beats = new Map();
@@ -66,7 +68,8 @@ export function createBridge() {
     const tv = beats.get("ch1-tv-story"),
       bed = beats.get("ch1-bedtime-story"),
       hm = beats.get("ch1-home-morning"),
-      night = (bed && bed.showing && bed.showing()) || (hm && hm.nightNow && hm.nightNow());
+      ev = beats.get("ch1-evening"),
+      night = (bed && bed.showing && bed.showing()) || (hm && hm.nightNow && hm.nightNow()) || (ev && ev.nightNow && ev.nightNow());
     return tv && tv.showing && tv.showing() ? "tv" : night ? "bedtime" : cue;
   };
   return Object.freeze({
@@ -204,6 +207,12 @@ export function createBridge() {
     hallOwner() {
       for (const b of beats.values()) if (b.ownsRoom && b.ownsRoom()) return b;
       return null;
+    },
+    /** Feet nobody walks through that a rebuilt beat adds to a room the older program draws (00-core.js). */
+    extraSolids(room) {
+      const out = [];
+      for (const b of beats.values()) b.extraSolids && out.push(...b.extraSolids(room));
+      return out;
     },
     /** Ids of every rebuilt beat, in the order they were registered. */
     beatIds() {
