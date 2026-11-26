@@ -219,6 +219,12 @@ const run = !(registered && asleep)
         tick(0.4);
         out.afterCalendar = { step: step(), ctrl: n.ctrl, chip: ss.chipNow(), cur: n.cur ? n.cur.k : "" };
         n.ctrl && (window.SSQ.engine().place("sq", 300, 398), tick(0.2));
+        out.offersAfterCal = (ss.spotsNow() || []).filter((x) => x && x.verb).map((x) => x.verb + " · " + x.cap);
+        ss.tapAt(133, 237);
+        tick(0.4);
+        out.tapCalendar = !!n.ch1Calendar;
+        ss.tapAt(880, 540);
+        tick(0.4);
         ss.drawFrame();
         out.boxInClosetAfter = window.SSQ.beat("ch1-home-morning").boxInCloset();
         walkTo(760, 505);
@@ -277,8 +283,7 @@ const want = [
 ];
 for (const [k, chip, act] of want) {
   const p = P[k] || {};
-  // (on the lunch goal the calendar can be looked at too: two spots, the bag's first)
-  g.check(`${k}: the chip says "${chip}" and the button says "${act}"`, p.chip === chip && p.offer === act && p.spots === (k === "lunch" ? 2 : 1), p);
+  g.check(`${k}: the chip says "${chip}" and the button says "${act}"`, p.chip === chip && p.offer === act && p.spots === 1, p);
   g.check(`${k}: only the thing to use is outlined (the dashed outline is round "${act}")`, !!p.outline && p.outline.act === act, p.outline);
 }
 for (const [k] of want) {
@@ -323,8 +328,9 @@ g.check("the lunch line waits for NEXT", R.line2Held);
 g.check("TAKE · lunch hands over to the lunch sneak (lunch-sneak.js): the party hall, the bag in his paw", R.hall && R.hall.room === "hall" && R.hall.step === "lu-plant" && R.hall.bag === "paw" && R.hall.chip === "Squatch: take Mops his lunch", R.hall);
 g.check("the lunch bag has MOPS written on it (Brian 2026-11-26)", JSON.stringify(R.bagWords) === JSON.stringify([L["sign-bag"]]) && L["sign-bag"] === "MOPS", R.bagWords);
 g.check("the calendar is not a step (Brian 2026-11-26): on the lunch goal TAKE · lunch comes first (the one outlined) and LOOK · calendar is there too", JSON.stringify(R.offers) === JSON.stringify([L["button-lunch"], L["button-cal"]]) && P.lunchFar && P.lunchFar.chip === L["chip-lunch"], R.offers);
+g.check("once he has looked, the button offers only the lunch (a kid pressing it is not sent back to the calendar), and a tap on the calendar still opens it", JSON.stringify(R.offersAfterCal) === JSON.stringify([L["button-lunch"]]) && R.tapCalendar, { offers: R.offersAfterCal, tap: R.tapCalendar });
 g.check("closing the calendar goes back to the lunch goal, with control", R.afterCalendar && R.afterCalendar.step === "lunch" && R.afterCalendar.ctrl && R.afterCalendar.chip === L["chip-lunch"] && !R.afterCalendar.cur, R.afterCalendar);
-g.check("the steps came in order", JSON.stringify(R.steps) === JSON.stringify(["night", "wake", "rocket", "hold", "think", "closet", "toCloset", "box", "lift", "closeup", "putBack", "shut", "notice", "lunch", "calendar", "lunch", "done"]), R.steps);
+g.check("the steps came in order", JSON.stringify(R.steps) === JSON.stringify(["night", "wake", "rocket", "hold", "think", "closet", "toCloset", "box", "lift", "closeup", "putBack", "shut", "notice", "lunch", "calendar", "lunch", "calendar", "lunch", "done"]), R.steps);
 
 // Nothing he is told to tap is under him (Fable's review): at OPEN, PUT IN and LOOK he stands right of the wardrobe.
 const SQ = (p) => ({ x0: p.sq.x - 18 * p.scale, x1: p.sq.x + 18 * p.scale, y0: p.sq.y - 50 * p.scale, y1: p.sq.y });
