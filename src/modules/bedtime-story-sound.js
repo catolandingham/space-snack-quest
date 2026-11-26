@@ -17,6 +17,9 @@ export const BEDTIME_SOUND = Object.freeze({
   click: 0.25,
 });
 
+/** The sound pick Mops's bleat is asked for by (the party branch's music-picks.js SOUND_PICKS "mops-bleat"). */
+export const BLEAT_HOOK = "mops-bleat";
+
 const BROWN = new WeakMap();
 // Two seconds of brown noise (a soft rumble), made once per audio context.
 function brown(c) {
@@ -65,7 +68,7 @@ function glide(c, o, t, { f, f1, d, v, a, type = "sine" }) {
 }
 
 export function createBedtimeSound(getEngine) {
-  const asked = { snore: 0, yawn: 0, rustle: 0, click: 0, hoof: 0 };
+  const asked = { snore: 0, yawn: 0, rustle: 0, click: 0, hoof: 0, bleat: 0 };
   const out = () => {
     const b = buses(getEngine());
     return b ? { c: b.ctx, o: b.fx } : null;
@@ -112,6 +115,18 @@ export function createBedtimeSound(getEngine) {
     click() {
       asked.click++;
       safe(({ c, o }, t) => glide(c, o, t, { f: 2200, f1: 900, d: 0.05, v: BEDTIME_SOUND.click, a: 0.002, type: "square" }));
+    },
+    /**
+     * Mops's bleat, under his "...Weeee-eenn-nnttt?" (Brian 2026-11-26: Mops's bleat lines get a real goat bleat). It
+     * asks for the sound by its hook name, BLEAT_HOOK, from whatever plays the game's sound picks (window.SSQ.playSoundPick,
+     * which the party branch's music table brings, with its file still to be chosen); until then it plays nothing.
+     */
+    bleat() {
+      asked.bleat++;
+      try {
+        const play = typeof window !== "undefined" && window.SSQ && window.SSQ.playSoundPick;
+        play && play(BLEAT_HOOK);
+      } catch {}
     },
     /** One of Mops's hooves (the morning's, synth.js), `k` counting his steps. */
     hoof(k) {
