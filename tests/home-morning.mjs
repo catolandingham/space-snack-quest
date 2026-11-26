@@ -494,19 +494,19 @@ g.check("↺ in the night starts the morning again from asleep, and it plays on 
 g.check("↺ during his Guardians line or the thought bubble: back on the rocket step, the rocket on the floor", ["hold", "think"].every((k) => mid[k].step === "rocket" && mid[k].ctrl && mid[k].offer === L["button-rocket"] && mid[k].gift === "floor"), { hold: mid.hold, think: mid.think });
 g.check("↺ in the box close-up: back on the box step, door open, the gift in his paw", mid.inCloseUp && mid.closeup.step === "box" && mid.closeup.ctrl && mid.closeup.offer === L["button-box"] && mid.closeup.door === "open" && mid.closeup.gift === "held", mid.closeup);
 g.check("↺ in the calendar close-up: back on the lunch step by the wardrobe, LOOK · calendar offered there", mid.inCalendar && mid.calendar.step === "lunch" && mid.calendar.ctrl && mid.calendar.offer === L["button-cal"] && !mid.calendar.cur, mid.calendar);
-// Later on Day 2 he hides the pink slip in the Guardian Box (14-ch1-day2.js ch1HideSlip): the box is in the closet now,
-// so the closet opens for it and the slip shows in the box there, then the door shuts as they go to bed.
+// Later (beat 52) he hides the pink slip in the Guardian Box (the escape, src/modules/escape.js): the box is in the
+// closet, so OPEN · closet shows it there with the gift, PUT IN · box tucks the slip in, and the door shuts at bedtime.
 const slip = await page.evaluate(() => {
   const ss = window.__ss,
     n = ss.op,
-    hm = window.SSQ.beat("ch1-home-morning");
+    hm = window.SSQ.beat("ch1-home-morning"),
+    es = window.SSQ.beat("ch1-escape");
   n.q = [];
   n.cur = null;
-  ss.ch1JumpBeat(22);
-  n.ch1HomeMorning.step = "done";
-  Object.assign(n, { ch1Step: "slip", ctrl: true, ch1Hold: "slip", ch1Slipped: false, sqPose: "stand", wardrobe: "closed" });
+  ss.ch1JumpBeat(52);
+  es.jump("closet");
   n.sq.x = 300;
-  n.sq.y = 420;
+  n.sq.y = 398;
   ss.tick(0.05);
   const o = ss.offerNow(),
     offer = o ? o.verb + " · " + o.cap : "";
@@ -515,10 +515,12 @@ const slip = await page.evaluate(() => {
   ss.drawFrame();
   const open = n.wardrobe,
     box = hm.debug().box;
-  for (let i = 0; i < 200 && n.sqPose !== "sleep"; i++) ss.tick(0.05);
-  return { offer, open, box, paper: n.ch1Paper, after: n.wardrobe };
+  const put = ss.offerNow();
+  put && put.f();
+  for (let i = 0; i < 400 && n.sqPose !== "sleep"; i++) ((n.cur && ((n.bt = 1), ss.opTap())), ss.tick(0.05));
+  return { offer, open, box, put: put ? put.verb + " · " + put.cap : "", slip: n.ch1Escape && n.ch1Escape.slip, after: n.wardrobe };
 });
-g.check("hiding the pink slip later: the closet opens on the Guardian Box (with the gift) and the slip goes in, then the door shuts at bedtime", slip.offer === "PUT · slip" && slip.open === "open" && slip.box && slip.box.where === "closet" && slip.box.gift && slip.paper === "box" && slip.after === "closed", slip);
+g.check("hiding the pink slip later: the closet opens on the Guardian Box (with the gift) and the slip goes in, then the door shuts at bedtime", slip.offer === "OPEN · closet" && slip.open === "open" && slip.box && slip.box.where === "closet" && slip.box.gift && slip.put === "PUT IN · box" && slip.slip === "box" && slip.after === "closed", slip);
 g.check("no page errors", errors.length === 0, errors);
 await page.close();
 await g.finish("home-morning");
