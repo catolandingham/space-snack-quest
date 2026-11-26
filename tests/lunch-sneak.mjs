@@ -467,6 +467,54 @@ if (resets) {
   g.check("↺ in the eating cutaway goes back to GIVE · lunch (the bag back in his paw)", resets.inCutaway && resets.cutaway.step === "give", resets.cutaway);
 }
 
+// ---------- ↺ while the alarm's close-up is up; a chapter reset ----------
+const edge = !registered
+  ? null
+  : await page.evaluate(() => {
+      const ss = window.__ss,
+        n = ss.op,
+        beat = window.SSQ.beat("ch1-lunch"),
+        lu = beat.place,
+        st = () => n.ch1Lunch || {},
+        until = (f, s) => {
+          for (let i = 0; i < s / 0.05 && !f(); i++) ss.tick(0.05);
+          return !!f();
+        };
+      // a fresh play, so the first alarm's close-up shows again
+      n.q = [];
+      n.cur = null;
+      ss.ch1JumpBeat(22);
+      window.SSQ.beat("ch1-home-morning").jump("lunch");
+      ss.tick(0.3);
+      ss.offerNow().f();
+      until(() => n.ctrl && st().step === "plant", 5);
+      n.sq.x = 396;
+      n.sq.y = 552;
+      ss.tick(0.05);
+      ss.offerNow().f();
+      ss.tick(0.1);
+      until(() => lu.watcherNow(lu.WATCHERS[0], st().t).phase === "look", 8);
+      n.ch1Lunch.pose = "stand";
+      n.sqPose = "stand";
+      n.sq.x = 498;
+      n.sq.y = 520;
+      until(() => st().alarm && st().alarm.phase === "pull", 4);
+      const pulled = st().alarm && st().alarm.phase === "pull";
+      ss.sectionReset();
+      ss.tick(0.05);
+      const closedAtOnce = !document.querySelector('canvas[aria-label="fur alarm"]');
+      ss.tick(3.5);
+      for (let i = 0; i < 70; i++) ss.tick(0.05);
+      const after = { alarm: !!st().alarm, ctrl: n.ctrl, step: st().step, pose: st().pose, closeUp: !!document.querySelector('canvas[aria-label="fur alarm"]') };
+      // a chapter reset forgets the lunch
+      window.SSQ.engine().resetChapter();
+      return { pulled, closedAtOnce, after, activeAfterReset: beat.active(), lunchAfterReset: n.ch1Lunch == null };
+    });
+if (edge) {
+  g.check("↺ while the alarm's close-up is up: it closes, the alarm is gone and stays gone, he is hidden in the plant with control", edge.pulled && edge.closedAtOnce && !edge.after.alarm && !edge.after.closeUp && edge.after.ctrl && edge.after.pose === "hidden", edge);
+  g.check("a chapter reset forgets the lunch (ch1Lunch cleared)", edge.lunchAfterReset && !edge.activeAfterReset, edge);
+}
+
 // ---------- the old code is gone ----------
 const GAME = readdirSync(join(root, "src", "game")).map((f) => readFileSync(join(root, "src", "game", f), "utf8")).join("\n");
 g.check("the old lunch is gone from src/game (its guests, sight, zooms, FEED buttons and restart)", !/CH1_LUNCH_WATCH|ch1LunchSee|ch1LunchRun|ch1GiveLunch|ch1Feed1|ch1OneDrop|ch1TakeOne|ch1RestartLunch|ch1ToMops|"onesnack"|"feed1"/.test(GAME));

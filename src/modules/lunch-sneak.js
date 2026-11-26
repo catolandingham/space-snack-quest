@@ -138,6 +138,7 @@ export function createLunchSneak(bridge) {
   function start() {
     const e = E();
     ff = {};
+    firstAlarm.seen = false; // a new lunch: the first alarm shows its close-up again (as the party's start does)
     eatHeard = -1;
     e.set("ch1Lunch", fresh({ mops: { x: LUNCH_PLACES.door.stand.x + 4, y: 316, f: 1, mop: true } }));
     busy();
@@ -168,7 +169,8 @@ export function createLunchSneak(bridge) {
     ]);
   }
   // Squatch is hidden (plant, crates, or ducked behind the counter): no cone can see him.
-  const hiddenNow = (l) => l.pose === "hidden" || l.pose === "ducked";
+  const inAisle = (p) => p.x > AISLE.x0 && p.x < AISLE.x1 && p.y > AISLE.y0 && p.y < AISLE.y1 + 8;
+  const hiddenNow = (l) => l.pose === "hidden" || (l.pose === "ducked" && inAisle(E().pos("sq")));
   function hideIn(where) {
     const e = E(),
       l = L(),
@@ -355,6 +357,8 @@ export function createLunchSneak(bridge) {
   }
   function handOff() {
     const e = E();
+    // (drawn ducked only while he is still at his place behind the counter: view())
+    L().pose = "stand";
     go("handoff");
     e.set("ch1Sneak", false);
     chip("");
@@ -449,6 +453,8 @@ export function createLunchSneak(bridge) {
       l.counter && (l.counterT = (l.counterT || 0) + dt);
     }
     if (l.step === "handoff" && !inHall()) return void (l.step = "done");
+    // Out of the aisle behind the counter he is standing again (the counter hides him only there).
+    if (l.pose === "ducked" && l.step !== "grab" && free && !inAisle(e.pos("sq"))) ((l.pose = "stand"), e.set("sqPose", "stand"));
     // Steering steps him out of a hiding place (as at the party).
     if (free && inHall() && l.pose === "hidden" && e.steering()) {
       l.pose = "stand";
@@ -481,6 +487,8 @@ export function createLunchSneak(bridge) {
         n.phase === "warn" && !(w.id in showing) && (showing["warn:" + w.id] = n.k);
       }
     tickQuestions(l, dt, showing);
+    // a restart (↺, or the step restart) took the alarm away while its close-up was up: close it, nothing follows
+    if (closeUpNow && !(l.alarm && l.alarm.phase === "pull")) ((closeUpNow = null), closeFullScreen());
     // the alarm's close-up ends after its time (game time, so it also ends where frames are not drawn)
     if (closeUpNow && e.time() - closeUpNow.at >= ALARM.closeUp) {
       const c = closeUpNow;

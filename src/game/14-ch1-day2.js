@@ -848,14 +848,15 @@
         (n.ch1Wide = !1),
         (n.ch1Morning = null),
         (n.ch1HomeMorning = null),
+        (n.ch1Lunch = null),
         (n.ch1Chip = ""));
       if (b === 22 || b === 23) {
         // the home morning (home-morning.js), awake beside the rocket; 23: the calendar step
         ((n.room = "closet"), (n.scene = "QB"), ch1Day2Begin(!0));
         b === 23 && hmBeat() && hmBeat().jump("cal");
-      } else if (b === 25 || b === 27) {
-        // the lunch sneak (lunch-sneak.js): 25 at its start in the hall, 27 behind the counter
-        ((n.scene = "QB"), luBeat() && luBeat().jump(b === 25 ? "plant" : "snack"));
+      } else if (b >= 25 && b <= 27) {
+        // the lunch sneak (lunch-sneak.js): 25 at its start in the hall, 26 in the hallway, 27 behind the counter
+        ((n.scene = "QB"), luBeat() && luBeat().jump(["plant", "give", "snack"][b - 25]));
       } else if (b === 33) {
         ((n.room = "hangar"), (n.ch1D = !0), (n.ch1Ship = !0), (n.scene = "QB"), (n.sqPose = "hidden"), (n.sq.x = CH1_PLANT.x), (n.sq.y = CH1_PLANT.y), (n.mo.x = 640), (n.mo.y = 500), (n.ch1ShowBots = !0), (n.ch1Ramp = 1), ch1SetPaper("mouth"));
       } else if (b === 37) {

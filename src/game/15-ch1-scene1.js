@@ -21,6 +21,7 @@
         (n.ch1SiteRoom = ""),
         (n.ch1Office = !1),
         (n.ch1PartyNow = null),
+        (n.ch1Lunch = null),
         (n.ch1SureEnd = !1),
         (n.ch1Day2 = !1),
         (n.ch1Zoom = null),
