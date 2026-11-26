@@ -375,7 +375,7 @@ export function createLunchSneak(bridge) {
     for (const w of watchers(l)) {
       const at = l.people[w.id] || w;
       const clock = w === COUNTER_WATCHER ? l.counterT || 0 : t;
-      out.push({ ...coneFrom(w.id, at.x, at.y, watcherNow(w, clock).a, size), always: true });
+      out.push({ ...coneFrom(w.id, at.x, at.y, watcherNow(w, clock).a, size), always: true, bold: true });
     }
     if (l.alarm) {
       out.push(...guardCones(l.alarm, size));

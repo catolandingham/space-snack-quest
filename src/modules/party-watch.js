@@ -138,6 +138,15 @@ export function drawCones(ctx, cones, sq, hidden, all, note, fooled = false) {
       ctx.lineWidth = 3;
       ctx.strokeStyle = "rgba(160,100,10,.95)";
       ctx.stroke();
+    } else if (c.bold) {
+      // (bold: the lunch sneak's watchers, whose cones a kid plans the whole sneak by: a darker dashed edge and a
+      // pale fill, so the cone reads on a phone; PLACEHOLDER look for Brian)
+      ctx.setLineDash([10, 6]);
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "rgba(70,76,92,.9)";
+      ctx.fillStyle = "rgba(255,244,200,.28)";
+      ctx.fill();
+      ctx.stroke();
     } else {
       ctx.setLineDash([8, 7]);
       ctx.lineWidth = 2;
