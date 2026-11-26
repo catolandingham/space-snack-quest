@@ -10,6 +10,8 @@
  */
 import { GUARDIAN_BOX } from "./guardian-box.js";
 import { drawThought } from "./bedtime-story-art.js";
+import { drawGuardiansCrayon } from "./guardians-drawing.js";
+import { morningWords } from "./home-morning-lines.js";
 
 const HM_INK = "#1e2430";
 const ROCKET_RED = "#e5533d";
@@ -18,19 +20,27 @@ const PIC_X = 960 / 1280,
   PIC_Y = 640 / 830;
 // The approved box in picture pixels (outline included) and on the game picture.
 const BOX_PIC = Object.freeze({ w: GUARDIAN_BOX.x1 - GUARDIAN_BOX.x0, h: GUARDIAN_BOX.y1 - GUARDIAN_BOX.y0 });
-const BOX_W = BOX_PIC.w * PIC_X,
-  BOX_H = BOX_PIC.h * PIC_Y;
+/**
+ * On Day 2 the Guardian Box is drawn DAY2_BOX times its approved size, in the closet and out on the floor, so it reads
+ * clearly bigger than the toy rocket, a box the rocket fits in (Brian, 2026-11-26, video note 0:21: "Box shouldn't look
+ * so small versus the rocket"). In the closet it keeps its approved bottom-right corner and grows up and left, under
+ * the shirts. Its look is the approved one. Day 1's closet (home-alone.js) keeps the approved size: a question for
+ * Brian whether it should match.
+ */
+export const DAY2_BOX = 2.1;
+const BOX_W = BOX_PIC.w * PIC_X * DAY2_BOX,
+  BOX_H = BOX_PIC.h * PIC_Y * DAY2_BOX;
 
 /**
  * How big each thing is in the room (game pixels; placeholders, Brian to approve): Squatch is the room's own size;
- * the rocket about half of him (a big toy he can hold up), the lunch bag about a third (a paper bag drawn a little big
- * so it reads on a phone); the box exactly the approved one. (Coordinator, 2026-11-26: at a third the rocket was about
- * 10 px tall on a phone.)
+ * the rocket about two fifths of him (a big toy he can hold up; coordinator, 2026-11-26: at a third it was about 10 px
+ * tall on a phone), the lunch bag about a third (a paper bag drawn a little big so it reads on a phone); the box the
+ * approved one, DAY2_BOX times bigger, so the rocket fits in it.
  */
 export const MORNING_SIZES = Object.freeze({
   squatch: 48.5 * 3,
-  rocket: 70,
-  rocketW: 37, // fin tip to fin tip
+  rocket: 64,
+  rocketW: 34, // fin tip to fin tip
   bag: { w: 40, h: 52 },
   box: Object.freeze({ w: BOX_W, h: BOX_H }),
 });
@@ -44,8 +54,8 @@ export const MORNING_SIZES = Object.freeze({
 export const MORNING_THINGS = Object.freeze({
   rocket: Object.freeze({ x: 352, y: 600 }), // the middle of its base: open floor in front of the bed's right end
   bag: Object.freeze({ x: 846, y: 505 }), // the middle of its bottom: open floor just inside the doorway
-  boxIn: Object.freeze({ x0: GUARDIAN_BOX.x0 * PIC_X, y0: GUARDIAN_BOX.y0 * PIC_Y, x1: GUARDIAN_BOX.x1 * PIC_X, y1: GUARDIAN_BOX.y1 * PIC_Y }),
-  boxOut: Object.freeze({ x0: 192, y0: 362, x1: 192 + BOX_W, y1: 362 + BOX_H }),
+  boxIn: Object.freeze({ x0: GUARDIAN_BOX.x1 * PIC_X - BOX_W, y0: GUARDIAN_BOX.y1 * PIC_Y - BOX_H, x1: GUARDIAN_BOX.x1 * PIC_X, y1: GUARDIAN_BOX.y1 * PIC_Y }),
+  boxOut: Object.freeze({ x0: 160, y0: 338, x1: 160 + BOX_W, y1: 338 + BOX_H }),
 });
 /** The boxes the dashed outline traces each drawn thing inside (a little bigger than the thing, nothing else in them). */
 export const TRACE = Object.freeze({
@@ -172,9 +182,10 @@ export function drawLunchBag(ctx, x, y, k = 1) {
 
 /**
  * The approved Guardian Box (home-alone.js GUARDIAN_BOX: Brian's look of 2026-11-23), its top left at (x0, y0) on
- * the game picture, `k` times its approved size. Drawn exactly as home-alone.js draws it on the closet floor.
+ * the game picture, `k` times its approved size (Day 2's size unless told). Drawn as home-alone.js draws it on the
+ * closet floor.
  */
-export function drawGuardianBox(ctx, x0, y0, k = 1) {
+export function drawGuardianBox(ctx, x0, y0, k = DAY2_BOX) {
   const b = GUARDIAN_BOX,
     half = b.line / 2;
   ctx.save();
@@ -197,19 +208,33 @@ export function drawGuardianBox(ctx, x0, y0, k = 1) {
 }
 
 /**
- * The box out on the floor with the gift in it: the rocket stands in it, leaning, its top half sticking out over the
- * front, the note hanging over the rim. `box` is the box's place (game positions).
+ * The box out on the floor with the gift in it: the rocket lies in it on the older notes, leaning, its nose sticking out
+ * over the front, the note hanging over the rim. `box` is the box's place (game positions).
  */
 export function drawBoxWithGift(ctx, box) {
   const cx = (box.x0 + box.x1) / 2;
-  drawRocket(ctx, cx - 2, box.y1 - 4, { a: -0.22, tag: false });
+  drawRocket(ctx, cx - 6, box.y1 - 30, { a: -0.18, tag: false });
   drawGuardianBox(ctx, box.x0, box.y0);
   drawGiftNote(ctx, box.x1 - 9, box.y0 + 3, 1);
 }
 
 /** The thought bubble over Squatch's head with the Guardian Box in it (no words). Returns its box. */
 export function drawBoxThought(ctx, head, a = 1) {
-  return drawThought(ctx, head, a, (c, cx, cy) => drawGuardianBox(c, cx - BOX_W * 1.1, cy - BOX_H * 1.1, 2.2));
+  const k = 2.2,
+    w = BOX_PIC.w * PIC_X * k,
+    h = BOX_PIC.h * PIC_Y * k;
+  return drawThought(ctx, head, a, (c, cx, cy) => drawGuardianBox(c, cx - w / 2, cy - h / 2, k));
+}
+
+/**
+ * The thought bubble over Squatch's head with his crayon drawing of the Guardians in it (guardians-drawing.js, the
+ * same drawing as in the box and at bedtime): who he thinks they are, as he holds up their gift (no words).
+ */
+export const CRAYON_THOUGHT = Object.freeze({ w: 210, cloud: Object.freeze({ w: 270, h: 196 }) });
+export function drawCrayonThought(ctx, head, a = 1) {
+  let drawing = null;
+  const box = drawThought(ctx, head, a, (c, cx, cy) => (drawing = drawGuardiansCrayon(c, cx, cy, CRAYON_THOUGHT.w)), CRAYON_THOUGHT.cloud);
+  return { box, drawing };
 }
 
 // ---------- the outlines' sources: each drawn thing alone on a plain floor, once ----------
@@ -270,76 +295,135 @@ export function drawCalendarToday(ctx, zoom, time) {
 
 // ---------- the Guardian Box close-up (one full-screen cutaway picture, waits for NEXT) ----------
 /**
- * The close-up's timing (seconds; placeholders): his paw holds the gift over the open box until `hold`, lets go, and
- * the gift drops in over `fall` (the thunk at `hold + fall`); then it stays.
- * k: how much bigger than the room everything in it is (the box and the rocket keep their room proportion).
+ * The close-up, brought back from the first build's box view (commit 18c9157, 2026-11-02, its "gbox" panel; Brian,
+ * 2026-11-26, video note 0:21: "I thought the view we had in much earlier versions was better - when we also had the
+ * note and you could see the my guardians drawing etc"): the box open and big on the left, the older notes standing in
+ * it, its lid open behind it with the taped label MY GARDIAN BOX, and Squatch's crayon drawing of the Guardians (MY
+ * GUARDIANS) leaning against its side (guardians-drawing.js, the same drawing as the bedtime picture and the thought
+ * bubble). His furry paw holds the gift over the box until `hold`, lets go, and the rocket drops in over `fall` (the
+ * thunk at `hold + fall`), the note tied on going in with it and then hanging over the rim. The old notes show no
+ * readable words (their lines are pending). Timing in seconds and places in game pixels are placeholders.
+ *   box      the box's front (game pixels); the rocket is drawn in the room's proportion to it (a box it fits in)
+ *   drawing  the crayon drawing: its middle, width and tilt
  */
-export const BOX_CLOSEUP = Object.freeze({ k: 4, hold: 1.0, fall: 0.42, floor: 470, x: 560 });
+export const BOX_CLOSEUP = Object.freeze({
+  hold: 1.0,
+  fall: 0.45,
+  floor: 540,
+  box: Object.freeze({ x0: 215, y0: 362, x1: 575, y1: 602 }),
+  lid: Object.freeze({ x0: 22, x1: 200, y0: 250, y1: 560 }),
+  drawing: Object.freeze({ x: 770, y: 300, w: 330, tilt: 0.05 }),
+});
+
+// One of the older notes standing in the box: a white paper, a little turned, with grey pencil lines and no words.
+function oldNote(ctx, x, y, w, h, a) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(a);
+  hmRound(ctx, -w / 2, -h, w, h, 4);
+  hmPaint(ctx, "#ffffff", 3);
+  ctx.strokeStyle = "rgba(89,101,125,.55)";
+  ctx.lineWidth = 3;
+  ctx.lineCap = "round";
+  for (let i = 0; i < 3; i++) {
+    const ly = -h + 22 + i * 18;
+    ctx.beginPath();
+    ctx.moveTo(-w / 2 + 16, ly);
+    ctx.lineTo(w / 2 - 16 - (i === 2 ? w * 0.3 : 0), ly);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
 
 function gboxCloseUp(ctx, t, engine) {
-  const K = BOX_CLOSEUP.k,
-    w = BOX_W * K,
-    h = BOX_H * K,
-    cx = BOX_CLOSEUP.x,
-    x0 = cx - w / 2,
-    y0 = 600 - h;
-  // the floor under the box
+  const C = BOX_CLOSEUP,
+    B = C.box,
+    w = B.x1 - B.x0,
+    h = B.y1 - B.y0,
+    cx = (B.x0 + B.x1) / 2,
+    rim = 46; // how far back the box's open top reaches
+  const say = (text, x, y, size, color) => (engine && engine.text ? (engine.text(text, x, y, size, color, "center", 900), text) : "");
+  // the wall and the floor
+  ctx.fillStyle = "#f4f1ea";
+  ctx.fillRect(0, 0, 960, 640);
   ctx.fillStyle = "#ebe6da";
-  ctx.fillRect(0, BOX_CLOSEUP.floor, 960, 640 - BOX_CLOSEUP.floor);
-  ctx.strokeStyle = "rgba(30,36,48,.18)";
-  ctx.lineWidth = 4;
+  ctx.fillRect(0, C.floor, 960, 640 - C.floor);
+  // the lid, off and leaning against the box's left side, its label taped on (clear of the gift and his arm)
+  const lid = C.lid;
   ctx.beginPath();
-  ctx.moveTo(0, BOX_CLOSEUP.floor);
-  ctx.lineTo(960, BOX_CLOSEUP.floor);
-  ctx.stroke();
-  // the lid, folded open against the box's left side, with its taped label (never behind the gift)
-  const lid = { x0: x0 - 214, x1: x0 - 8, y0: y0 - 40, y1: y0 + 70 };
-  ctx.beginPath();
-  ctx.moveTo(lid.x1, lid.y0 + 18);
-  ctx.lineTo(lid.x0, lid.y0);
-  ctx.lineTo(lid.x0 + 10, lid.y1);
-  ctx.lineTo(lid.x1, lid.y1 + 8);
+  ctx.moveTo(lid.x0 + 24, lid.y0);
+  ctx.lineTo(lid.x1, lid.y0 + 16);
+  ctx.lineTo(lid.x1 - 6, lid.y1);
+  ctx.lineTo(lid.x0, lid.y1 - 8);
   ctx.closePath();
   hmPaint(ctx, GUARDIAN_BOX.fill, 5);
-  const lab = { x0: lid.x0 + 16, y0: lid.y0 + 34, x1: lid.x1 - 12, y1: lid.y0 + 82 };
-  hmRound(ctx, lab.x0, lab.y0, lab.x1 - lab.x0, lab.y1 - lab.y0, 3);
+  const lmid = (lid.x0 + lid.x1) / 2 + 4,
+    lab = { x0: lmid - 78, x1: lmid + 78, y0: lid.y0 + 60, y1: lid.y0 + 150 };
+  hmRound(ctx, lab.x0, lab.y0, lab.x1 - lab.x0, lab.y1 - lab.y0, 4);
   hmPaint(ctx, "#fffdf8", 3);
   ctx.fillStyle = "rgba(255,248,200,.9)";
-  ctx.fillRect(lab.x0 - 8, lab.y0 - 7, 28, 14);
-  ctx.fillRect(lab.x1 - 20, lab.y0 - 7, 28, 14);
-  const label = engine && engine.text ? (engine.text("MY GARDIANS", (lab.x0 + lab.x1) / 2, (lab.y0 + lab.y1) / 2 + 2, 24, HM_INK, "center", 900), "MY GARDIANS") : "";
-  // the open top: the dark inside of the box
+  ctx.fillRect(lab.x0 - 10, lab.y0 - 8, 34, 16);
+  ctx.fillRect(lab.x1 - 24, lab.y0 - 8, 34, 16);
+  // MY GARDIAN BOX in his hand, on two lines so it is big on a phone
+  const [l1, l2] = [morningWords("sign-box").split(" ").slice(0, 2).join(" "), morningWords("sign-box").split(" ").slice(2).join(" ")];
+  say(l1, lmid, lab.y0 + 30, 24, HM_INK);
+  say(l2, lmid, lab.y0 + 62, 24, HM_INK);
+  const label = l1 + " " + l2;
+  // the open top: the dark inside, back rim higher than the front
   ctx.beginPath();
-  ctx.moveTo(x0 + 8, y0 + 6);
-  ctx.lineTo(x0 + 22, y0 - 30);
-  ctx.lineTo(x0 + w - 22, y0 - 30);
-  ctx.lineTo(x0 + w - 8, y0 + 6);
+  ctx.moveTo(B.x0, B.y0);
+  ctx.lineTo(B.x0 + 26, B.y0 - rim);
+  ctx.lineTo(B.x1 - 26, B.y0 - rim);
+  ctx.lineTo(B.x1, B.y0);
   ctx.closePath();
   hmPaint(ctx, "#1b3f86", 5);
-  // the gift: held over the box, falling in, then standing in it
-  const T = BOX_CLOSEUP,
-    fallK = Math.max(0, Math.min(1, (t - T.hold) / T.fall)),
-    landed = t >= T.hold + T.fall,
-    held = { y: y0 - 70 },
-    rest = { y: 600 - 22 },
+  // the older notes, standing in the box
+  const notes = [
+    [cx - 100, B.y0 + 30, 150, 140, -0.12],
+    [cx + 10, B.y0 + 30, 160, 156, 0.05],
+    [cx + 105, B.y0 + 30, 130, 130, 0.16],
+  ];
+  for (const n of notes) oldNote(ctx, ...n);
+  // the gift: held over the box, falling in, then standing in it among the notes
+  const K = w / BOX_W, // the room's proportion: the box here is K times the box in the room, and so is the rocket
+    fallK = Math.max(0, Math.min(1, (t - C.hold) / C.fall)),
+    landed = t >= C.hold + C.fall,
+    held = { y: B.y0 - rim - 6 },
+    rest = { y: B.y0 + 100 },
     by = held.y + (rest.y - held.y) * fallK * fallK,
-    a = 0.16 * Math.min(1, fallK * 1.4);
-  const rocketH = MORNING_SIZES.rocket * K;
-  drawRocket(ctx, cx - 8, by, { k: K, a, tag: !landed, lw: 5 });
-  // the box's front over the gift's lower half (the approved look, made big)
-  drawGuardianBox(ctx, x0, y0, K);
-  landed && drawGiftNote(ctx, x0 + w * 0.8, y0 + 4, K * 0.9, 5);
+    a = 0.14 * Math.min(1, fallK * 1.4),
+    rx = cx - 30;
+  const rocket = drawRocket(ctx, rx, by, { k: K, a, tag: !landed, lw: 5 });
+  // the box's front over the notes and the gift's lower part: the approved look (the white G), made big
+  hmRound(ctx, B.x0, B.y0, w, h, 14);
+  hmPaint(ctx, GUARDIAN_BOX.fill, 6);
+  ctx.font = `900 ${Math.round(h * 0.55)}px system-ui, -apple-system, sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillStyle = "#ffffff";
+  ctx.fillText("G", cx, B.y0 + h / 2 + 6); // the approved box's letter, part of its picture
+  landed && drawGiftNote(ctx, rx + 70, B.y0 + 8, K * 0.9, 5);
+  // the crayon drawing, leaning on the box's right side, with its title in crayon
+  const D = C.drawing,
+    title = morningWords("sign-drawing");
+  const sheet = drawGuardiansCrayon(ctx, D.x, D.y, D.w, {
+    tilt: D.tilt,
+    title: (x, y, size) => say(title, x, y, size, "#e5533d"),
+  });
   // his furry arm reaching in from the top, his paw round the rocket, then letting go and lifting away
-  const lift = Math.max(0, Math.min(1, (t - T.hold) / 0.3)),
-    paw = { x: cx - 8 + 2 * K * ROCKET_UNIT, y: by - 30 * K * ROCKET_UNIT - lift * 150 };
+  const lift = Math.max(0, Math.min(1, (t - C.hold) / 0.3)),
+    paw = { x: rx + 2 * K * ROCKET_UNIT, y: by - 30 * K * ROCKET_UNIT - lift * 160 };
   furryArm(ctx, paw, { x: paw.x + 120, y: -60 });
   return {
     pic: "gbox",
     label,
     labelBox: lab,
-    held: t < T.hold,
+    title,
+    drawing: sheet,
+    notes: notes.length,
+    held: t < C.hold,
     landed,
-    sizes: { k: K, box: { w, h }, rocket: rocketH },
+    sizes: { k: K, box: { w, h }, rocket: MORNING_SIZES.rocket * K },
   };
 }
 

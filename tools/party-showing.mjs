@@ -21,8 +21,8 @@
  *                  story's pictures, Mops's line, the Guardians picture, falling asleep: the yawn, lying down, the
  *                  tuck, the light, three snores, the fade to black) to the morning fading in. With SHOWING_STILLS=<dir>, a still of each
  *                  step goes there too.
- *     morning      beats 22 to 24, the home morning: from the bedtime story's sleep (played unrecorded, fast, up to
- *                  Squatch asleep) through the night, the wake, the rocket, the Guardian Box, the calendar and the
+ *     morning      beats 22 to 24, the home morning: from the bedtime story's fade to black (played unrecorded,
+ *                  fast, up to the fade) through the night, the wake, the rocket, the Guardian Box, the calendar and the
  *                  lunch bag, to the lunch sneak's first moment in the party hall. A kid's taps: the floor to walk,
  *                  the action button, NEXT. With SHOWING_STILLS=<dir>, a still of each step goes there too.
  *   SHOWING_SILENT=1 leaves the sound out.
@@ -427,8 +427,8 @@ if (which === "bedtime") {
   });
   ok || (await fail("the TV story did not reach its last picture"));
 }
-// The morning video starts with Squatch asleep after the bedtime story: the TV story and the bedtime story before it
-// play unrecorded, fast.
+// The morning video starts at the bedtime story's fade to black: the TV story and the bedtime story before it play
+// unrecorded, fast.
 if (which === "morning") {
   await page.evaluate(() => window.__ss.lockedReady);
   const ok = await page.evaluate(() => {
@@ -439,14 +439,14 @@ if (which === "morning") {
     n.cur = null;
     window.SSQ.engine().tvStory();
     for (let i = 0; i < 6000; i++) {
-      if (bed.debug().phase === "asleep") return true;
+      if (bed.debug().phase === "fade") return true;
       ss.tick(0.05);
       const c = n.cur;
       c && ["card", "cutaway", "bub", "panel", "wait"].includes(c.k) && ((n.bt = 1), ss.opTap());
     }
     return false;
   });
-  ok || (await fail("the bedtime story did not reach Squatch asleep"));
+  ok || (await fail("the bedtime story did not reach its fade to black"));
 }
 await startRecording();
 await sleep(which === "morning" ? 300 : 1800);
@@ -694,21 +694,30 @@ if (which === "morning") {
     await floor(x, y);
     (await until((q) => q.act === act, 9000)) || (await fail("no " + act + " after walking to " + x + ", " + y));
   };
-  log("asleep");
-  await still("asleep-after-bedtime");
+  log("the bedtime story's fade to black");
+  await sleep(900);
+  await still("bedtime-fades-to-black");
   await until(async () => (await hm()) === "night", 4000);
-  await sleep(800);
-  await still("night-mops-leaves-in-the-dark");
+  mark("part night");
+  await sleep(700);
+  await still("dark-mops-leaves-heard");
+  await sleep(1300);
+  await still("room-comes-up-asleep-under-the-blanket");
   await until(async () => (await hm()) === "wake", 4000);
-  await sleep(800);
-  await still("wakes-and-stretches");
+  mark("part wake");
+  await sleep(450);
+  await still("sits-up-blanket-slides-off");
+  await sleep(700);
+  await still("stretches");
   await stepIs("rocket");
   await sleep(1200);
   await still("rocket-glows-pick-up");
   await press();
+  await sleep(1500);
+  await still("holds-it-up-thinks-of-the-guardians");
   await until((q) => q.cur === "bub", 4000);
   await sleep(900);
-  await still("holds-it-up-guardians-line");
+  await still("guardians-line");
   await sleep(2600);
   await next();
   await sleep(700);

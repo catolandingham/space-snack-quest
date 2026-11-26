@@ -138,10 +138,13 @@ const run = !(started && tvDone)
       out.scene = n.scene;
       out.debug = beat.debug();
       // Day 2's first moments: the room comes up from black.
-      for (let k = 0; k < 30; k++) {
+      // (with the home morning here, its night does it: it starts dark and comes up)
+      const hm = window.SSQ.beat("ch1-home-morning");
+      for (let k = 0; k < 90; k++) {
         ss.drawFrame();
-        const r = beat.debug().drew;
-        out.fadeIn.push(r && r.fadeIn ? r.black : 0);
+        const r = beat.debug().drew,
+          m = hm && hm.debug().drew;
+        out.fadeIn.push(Math.max(r && r.fadeIn ? r.black : 0, m && m.dark != null ? m.dark : 0));
         ss.tick(0.05);
       }
       out.shownAfter = ss.shown();
@@ -236,7 +239,7 @@ g.check("Squatch ends asleep, lying down, before Day 2", run.debug && run.debug.
 // No goal while he sleeps (2026-11-26: the old video showed "Squatch: pick up the gift" over the sleeping room).
 const chips = run.chips.filter((c) => c.chip);
 g.check("no goal chip shows at any point from the Now card until Day 2 begins", run.chips.length > 100 && chips.length === 0, chips.slice(0, 5));
-g.check("then Day 2 begins (the morning, scene QB) and the room fades in from black", run.day2 && run.scene === "QB" && run.fadeIn[0] > 0.8 && run.fadeIn.slice(-1)[0] === 0, { day2: run.day2, scene: run.scene, fadeIn: run.fadeIn.filter((_, i) => i % 5 === 0) });
+g.check("then Day 2 begins (the morning, scene QB) and the room fades in from black", run.day2 && run.scene === "QB" && run.fadeIn[0] > 0.8 && run.fadeIn.slice(-1)[0] < 0.01, { day2: run.day2, scene: run.scene, fadeIn: run.fadeIn.filter((_, i) => i % 5 === 0) });
 
 // The old panel is gone
 const GAME = readdirSync(join(root, "src", "game")).map((f) => readFileSync(join(root, "src", "game", f), "utf8")).join("\n");

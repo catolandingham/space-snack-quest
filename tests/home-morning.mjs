@@ -1,13 +1,16 @@
 /**
  * Beats 22 to 24, the home morning (src/modules/home-morning.js), at phone size, from the bedtime story's last
  * picture to the lunch out the door. In order, each checked as the player meets it:
- *   - wordless: the room dims and comes back up (Mops gone, heard leaving), then Squatch wakes, stretches and gets
- *     up beside the toy rocket (each part plays by itself, under 4 seconds, nothing to tap);
- *   - "Squatch: pick up the gift", only the rocket outlined, PICK UP · rocket; he holds it up, one heart, and says
- *     "The Guardians came! They always come when I'm scared." (waits for NEXT);
+ *   - wordless: the night goes on from the bedtime story (dark, Squatch asleep under the blanket, Mops gone, heard
+ *     leaving), the room comes up, then Squatch sits up in bed, stretches and gets up beside the toy rocket (each
+ *     part plays by itself, under 4 seconds, nothing to tap);
+ *   - "Squatch: pick up the gift", only the rocket outlined, PICK UP · rocket; he holds it up, one heart, and a
+ *     thought bubble shows his crayon drawing of the Guardians; then he says "The Guardians came! They always come
+ *     when I'm scared." (waits for NEXT);
  *   - a thought bubble shows the Guardian Box before the chip names it; "Squatch: put the gift in the box", the
  *     wardrobe outlined, OPEN · closet; the door opens, the box outlined, PUT IN · box;
- *   - the close-up: "MY GARDIANS", the gift drops in and stays (waits for NEXT); the box stays out on the floor with
+ *   - the close-up (the first build's box view): the lid's MY GARDIAN BOX, the older notes, his crayon drawing MY
+ *     GUARDIANS, the gift drops in and stays (waits for NEXT); the box (2.1 times the approved size) stays out with
  *     the gift in it, the door shuts;
  *   - "Squatch: look at the calendar", LOOK · calendar: today's close-up (days 1 to 13 crossed off, day 14 circled);
  *   - the lunch bag outlined, "He forgot his lunch!" (waits for NEXT); "Squatch: take the lunch", TAKE · lunch; then
@@ -43,7 +46,7 @@ const asleep = await page.evaluate(() => {
   window.SSQ.engine().tvStory();
   const bed = window.SSQ.beat("ch1-bedtime-story");
   for (let i = 0; i < 6000; i++) {
-    if (bed.debug().phase === "asleep") return true;
+    if (bed.debug().phase === "fade") return true;
     ss.tick(0.05);
     const c = n.cur;
     c && ["card", "cutaway", "bub", "panel", "wait"].includes(c.k) && ((n.bt = 1), ss.opTap());
@@ -89,7 +92,8 @@ const run = !(registered && asleep)
           r && r.dark != null && (out.dark = Math.max(out.dark || 0, r.dark));
           r && r.pose === "stretch" && (out.stretched = true);
           r && r.dark != null && r.dark > 0.5 && (out.darkMops = n.moPose);
-          r && step() === "night" && d().state.t < 0.5 && (out.thingsWhileMopsHere = (out.thingsWhileMopsHere || 0) + r.things.length);
+          r && step() === "night" && (out.nightStart = out.nightStart || { dark: r.dark, mops: n.moPose, pose: r.pose, inBed: r.inBed, chip: ss.chipNow() });
+          r && r.pose === "sitUp" && (out.satUp = out.satUp || []).push(r.inBed);
           sqAt.push([n.sq.x, n.sq.y]);
           ss.tick(0.05);
           since += 0.05;
@@ -145,7 +149,12 @@ const run = !(registered && asleep)
         out.drawn.holdUp = d().drew && d().drew.heldUp;
         out.drawn.heart = d().drew && d().drew.heart;
         tick(1);
+        ss.drawFrame();
+        out.crayon = { drew: d().drew && d().drew.crayonThought, bub: !!(n.cur && n.cur.k === "bub") };
+        tick(1.8);
         out.line1 = n.cur && n.cur.k === "bub" ? { who: n.cur.b.who, text: n.cur.b.text, chip: ss.chipNow() } : null;
+        ss.drawFrame();
+        out.crayonDuringLine = !!(d().drew && d().drew.crayonThought);
         tick(6);
         out.line1Held = !!(n.cur && n.cur.k === "bub" && n.cur.b.text === GUARDIANS);
         next();
@@ -235,7 +244,11 @@ g.check("night to morning plays by itself: the room goes dark and comes back (2 
 g.check("he wakes, stretches and gets up by himself (2 to 4 s)", wake && wake.secs >= 2 && wake.secs <= 4 && R.stretched, { wake, stretched: R.stretched });
 g.check("the wordless start has nothing to tap and no line (no control, no bubble)", R.tapsDuringWordless === 0, R.tapsDuringWordless);
 g.check("Mops leaves while it is dark: there for the night, gone in the morning", R.darkMops === "hidden" && R.mopsAfter === "hidden", { dark: R.darkMops, after: R.mopsAfter });
-g.check("the gift and the bag are not there while Mops still stands by the bed (they come in the night)", (R.thingsWhileMopsHere || 0) === 0, R.thingsWhileMopsHere);
+// One night: the morning starts where the bedtime story ended (dark, Squatch asleep under the blanket, Mops gone).
+const NS = R.nightStart || {};
+g.check("the morning starts where the night ended: the room dark, Squatch asleep lying in bed under the blanket, Mops gone, no chip", NS.dark === 1 && NS.mops === "hidden" && NS.pose === "asleep" && NS.inBed && NS.inBed.eyes === "closed" && Math.abs(NS.inBed.a + Math.PI / 2) < 0.02 && NS.inBed.blanket === 1 && NS.chip === "", NS);
+const SU = R.satUp || [];
+g.check("he wakes in bed: he sits up from lying down, eyes open, the blanket sliding off", SU.length > 2 && SU[0].a < -1 && SU.slice(-1)[0].a > -0.1 && SU.slice(-1)[0].blanket < 0.1 && SU.every((u) => u.eyes === ""), [SU[0], SU.slice(-1)[0]]);
 const S = R.debug.sounds || {};
 g.check("Mops is heard leaving in the dark: his hooves, then the door", S.hoof === 3 && S.door === 1, S);
 g.check("the morning song (home-music.js) plays from the morning until he takes the lunch", R.music && R.music.owns, R.music);
@@ -265,6 +278,10 @@ g.check("he gets up right beside the rocket: PICK UP works where he stands", P.r
 
 // the rocket and the line
 g.check("PICK UP: he holds the rocket up (drawn in his raised paw), with one heart over him", R.drawn.holdUp && R.drawn.holdUp.rocket.y0 < R.drawn.holdUp.head + 20 && !!R.drawn.heart, { hold: R.drawn.holdUp, heart: R.drawn.heart });
+const CT = R.crayon && R.crayon.drew;
+g.check("as he holds it up, a thought bubble over him shows his crayon drawing of the Guardians (two big furry Sasquatches), before any words", CT && CT.drawing && CT.drawing.figures.guardians === 2 && CT.box.y1 < CT.head.y && !R.crayon.bub, R.crayon);
+g.check("on a phone the drawing in the thought bubble is at least 50 px wide", CT && (CT.drawing.x1 - CT.drawing.x0) * (375 / 960) >= 50, CT && CT.drawing);
+g.check("the thought bubble is gone when he says his line (one bubble at a time)", R.crayonDuringLine === false);
 g.check("then his line, word for word, in one bubble over him, with no chip", R.line1 && R.line1.who === "sq" && R.line1.text === GUARDIANS && R.line1.chip === "", R.line1);
 g.check("the line waits for NEXT (still up after 6 seconds)", R.line1Held);
 g.check("before the chip names the box, a thought bubble over him shows it (no words, no control)", R.thought && R.thought.step === "think" && R.thought.drew && R.thought.drew.box && R.thought.drew.box.y1 < R.thought.drew.head.y && R.thought.chip === "" && !R.thought.ctrl, R.thought);
@@ -275,7 +292,7 @@ g.check("his footsteps sound only while he walks (footfalls.js)", R.pads2 > R.pa
 g.check("OPEN · closet opens the door (squeaky hinge) and the Guardian Box shows on the closet floor", R.wardrobeOpen === "open" && R.boxInCloset && R.boxInCloset.where === "closet" && S.closetOpen === 1, { wardrobe: R.wardrobeOpen, box: R.boxInCloset, hinge: S.closetOpen });
 g.check("PUT IN · box: he takes the box out of the closet onto the floor", R.boxMoving && R.boxMoving.where === "moving", R.boxMoving);
 const cu = R.closeUp || {};
-g.check('the close-up shows the box with its "MY GARDIANS" label, the gift held over it first', cu.first && cu.first.id === "gbox" && cu.first.label === "MY GARDIANS" && cu.first.held && !cu.first.landed, cu.first);
+g.check('the close-up is the first build\'s box view: the open box with its lid labelled "MY GARDIAN BOX", the older notes in it, his crayon drawing titled "MY GUARDIANS" (two big Sasquatches), the gift held over it first', cu.first && cu.first.id === "gbox" && cu.first.label === "MY GARDIAN BOX" && cu.first.title === "MY GUARDIANS" && cu.first.notes >= 2 && cu.first.drawing && cu.first.drawing.figures.guardians === 2 && cu.first.held && !cu.first.landed, cu.first);
 g.check("then the gift drops into the box and stays (a thunk), and the close-up waits for NEXT", cu.last && cu.last.landed && cu.heldAfter && cu.thunks === 1, { last: cu.last, held: cu.heldAfter, thunks: cu.thunks });
 g.check("back in the room the box stays out on the floor with the gift in it (nothing disappears)", R.boxAfter && R.boxAfter.where === "floor" && R.boxAfter.gift && R.boxAfterShut && R.boxAfterShut.gift, { after: R.boxAfter, shut: R.boxAfterShut });
 g.check("he shuts the closet (bump): the calendar on its door is back", R.wardrobeShut === "closed" && S.closetShut === 1, { wardrobe: R.wardrobeShut, bump: S.closetShut });
@@ -310,16 +327,19 @@ g.check("the lunch bag is a paper lunch bag: about a third of Squatch's height (
 // On a 375-wide phone the picture is 375 / 960 of its size: the rocket and the bag must still be big enough to see.
 const PHONE_K = 375 / 960;
 g.check("on a 375-wide phone the rocket is at least 25 px tall and the bag at least 17 px", Z.rocket * PHONE_K >= 25 && Z.bag.h * PHONE_K >= 17, { rocket: Z.rocket * PHONE_K, bag: Z.bag && Z.bag.h * PHONE_K });
-g.check("the Guardian Box is exactly the approved size (52 x 36 on the 1280 x 830 picture)", Z.box && Math.abs(Z.box.w - 39) < 0.01 && Math.abs(Z.box.h - (36 * 640) / 830) < 0.01, Z.box);
+g.check("the Guardian Box is the approved box made 2.1 times bigger on Day 2 (52 x 36 on the 1280 x 830 picture, times 2.1)", Z.box && Math.abs(Z.box.w - 39 * 2.1) < 0.01 && Math.abs(Z.box.h - ((36 * 640) / 830) * 2.1) < 0.01, Z.box);
+g.check("the box reads clearly bigger than the rocket: wider than the rocket is tall, about twice its fins' width, and nearly as tall (a box it fits in)", Z.box && Z.box.w > Z.rocket && Z.box.w >= 2 * Z.rocketW && Z.box.h >= 0.85 * Z.rocket, Z);
 const cs = cu.last && cu.last.sizes;
-g.check("in the close-up the rocket and the box keep the room's proportion", cs && Math.abs(cs.rocket / cs.box.w - Z.rocket / Z.box.w) < 0.01, { closeUp: cs, room: Z });
+g.check("in the close-up the rocket and the box keep the room's proportion (the box clearly bigger)", cs && Math.abs(cs.rocket / cs.box.w - Z.rocket / Z.box.w) < 0.01 && cs.box.w > cs.rocket, { closeUp: cs, room: Z });
 
 // No new words
 const known = new Set(HOME_MORNING_LINES.map((l) => l.text));
 // (the speech bubble's name tag, the calendar's close button, and the room's sleep mark were in the game before)
 const before = new Set([...(R.shownBefore || []), "Squatch", "X", "z z z"]);
 const esc = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-const piece = (w) => w.trim().split(/\s+/).length >= 2 && [...known].some((k) => new RegExp("(^" + esc(w) + "(\\s|$))|((^|\\s)" + esc(w) + "$)").test(k));
+// (a line drawn in pieces, wrapped or on two lines like the box's lid label, counts when each piece is a run of whole
+// words of one line)
+const piece = (w) => !!w.trim() && [...known].some((k) => new RegExp("(^|\\s)" + esc(w.trim()) + "(\\s|$)").test(k));
 const stray = (R.shownMorning || []).filter((w) => !before.has(w) && !known.has(w) && !piece(w));
 g.check("no new words: every word drawn this morning is a whole line of home-morning-lines.js (or was on screen before)", R.shownMorning && stray.length === 0, stray);
 g.check('the note\'s "Rule #1" words are not shown (pending)', R.shownMorning && !(R.shownMorning || []).some((w) => /Rule #1|Brave Sasquatches|stay hidden/.test(w)));

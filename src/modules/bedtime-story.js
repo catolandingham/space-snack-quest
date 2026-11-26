@@ -60,6 +60,8 @@ export const BEDTIME_SPOTS = Object.freeze({
 // flop's own spot, home-alone.js LIE).
 const SIT = Object.freeze({ x: 205, y: 444 });
 const LIE = Object.freeze({ x: 266, y: 386, a: -Math.PI / 2 });
+/** Where he sits up and where he lies in bed (the morning wakes him from LIE). */
+export const BED_POSES = Object.freeze({ sit: SIT, lie: LIE });
 // Out through the doorway on the right wall (x 912 to 940), where Mops goes out after the light.
 const DOOR_OUT = Object.freeze({ x: 950, y: 462 });
 // The blanket over him lying there: from his neck (x0) to past his feet (x1), from over his body (top) down to the
@@ -117,6 +119,76 @@ const ease = (k) => {
 const between = (t, a, b) => ease((t - a) / (b - a));
 // The wordless parts of falling asleep, in order (the snores are snore1 to snore3).
 const ASLEEP_PARTS = ["yawn", "lie", "tuck", "door", "lights", "snore1", "snore2", "snore3", "fade"];
+
+/**
+ * Squatch in bed as the bedtime story draws him (and the morning, waking, home-morning.js): the room's Squatch at the
+ * room's size, his feet at (s.x, s.y), turned by s.a round them (0 sitting up, LIE's quarter turn lying down), with
+ * s.arms, s.eyes, s.feet, and s.yawn (0 to 1: his mouth wide open over the smile).
+ */
+export function drawBedtimeSquatch(ctx, s, scale, shadow = false) {
+  ctx.save();
+  ctx.translate(s.x, s.y);
+  ctx.rotate(s.a || 0);
+  const d = drawSquatchArt(ctx, 0, 0, scale, { line: 2 * scale, arms: s.arms, feet: s.feet, eyes: s.eyes, shadow });
+  if (s.yawn > 0.05 && d && d.mouth) {
+    ctx.beginPath();
+    ctx.ellipse(d.mouth.x, d.mouth.y + 1.5 * scale, 4.2 * scale * (0.5 + 0.5 * s.yawn), 5.2 * scale * s.yawn, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "#4a1f1a";
+    ctx.fill();
+    ctx.lineWidth = 1.1 * scale;
+    ctx.strokeStyle = INK;
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+/**
+ * The blanket over him as he lies on the mattress, a soft quilt from beyond his feet to his neck, `cover` (0 to 1) of
+ * it showing from the feet end (Mops pulls it up at bedtime; it slides off as he wakes). A placeholder drawing. Game
+ * positions round where he lies (LIE).
+ */
+export function drawBedBlanket(ctx, cover) {
+  if (!(cover > 0)) return null;
+  const B = BLANKET,
+    left = B.x1 - (B.x1 - B.x0) * cover;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(left, 0, 2000, 2000);
+  ctx.clip();
+  ctx.beginPath();
+  ctx.moveTo(B.x0, B.bottom);
+  ctx.lineTo(B.x0 - 2, B.top + 18);
+  ctx.quadraticCurveTo(B.x0 + 4, B.top, B.x0 + 26, B.top - 2);
+  ctx.lineTo(B.x1 - 40, B.top + 4);
+  ctx.quadraticCurveTo(B.x1 - 4, B.top + 12, B.x1, B.top + 46);
+  ctx.lineTo(B.x1 + 2, B.bottom);
+  ctx.quadraticCurveTo((B.x0 + B.x1) / 2, B.bottom + 8, B.x0, B.bottom);
+  ctx.closePath();
+  ctx.fillStyle = "#6f8fd6";
+  ctx.fill();
+  ctx.lineWidth = 5;
+  ctx.strokeStyle = INK;
+  ctx.lineJoin = "round";
+  ctx.stroke();
+  // the turned-down top edge at his neck, and two soft folds
+  ctx.beginPath();
+  ctx.roundRect(B.x0 - 2, B.top + 2, 16, B.bottom - B.top - 2, 6);
+  ctx.fillStyle = "#b8c9f2";
+  ctx.fill();
+  ctx.lineWidth = 4;
+  ctx.stroke();
+  for (const fx of [0.45, 0.72]) {
+    const x = B.x0 + (B.x1 - B.x0) * fx;
+    ctx.beginPath();
+    ctx.moveTo(x, B.top + 16);
+    ctx.quadraticCurveTo(x + 6, (B.top + B.bottom) / 2, x - 2, B.bottom - 10);
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#4f6db3";
+    ctx.stroke();
+  }
+  ctx.restore();
+  return { cover: +cover.toFixed(2), x0: Math.round(left), x1: B.x1, top: B.top, bottom: B.bottom };
+}
 
 export function createBedtimeStory(bridge) {
   const E = () => bridge.engine();
@@ -342,75 +414,17 @@ export function createBedtimeStory(bridge) {
     S.black = between(S.t, 0, BEDTIME_PACE.fade);
     if (S.t < BEDTIME_PACE.fade) return false;
     record.lastPose = S.sq && S.sq.eyes === "closed" && S.sq.a === LIE.a ? "asleep, lying down" : E().get("sqPose");
-    S.endAt = E().time();
+    // the room fades in from black, unless the home morning is here: its night starts dark and comes up itself
+    S.endAt = bridge.beat && bridge.beat("ch1-home-morning") ? -1 : E().time();
     phase("end");
     return true;
   }
 
-  // Squatch as this file draws him: the room's Squatch, at the room's size, turned by `a` round his feet.
+  // Squatch as this file draws him, and the blanket over him.
   function drawSquatch(ctx) {
-    const s = S.sq,
-      scale = (E().squatchScale && E().squatchScale()) || 3;
-    ctx.save();
-    ctx.translate(s.x, s.y);
-    ctx.rotate(s.a || 0);
-    const d = drawSquatchArt(ctx, 0, 0, scale, { line: 2 * scale, arms: s.arms, feet: s.feet, eyes: s.eyes, shadow: S.phase === "bed" && s.feet });
-    // the yawn: his mouth wide open over the smile
-    if (s.yawn > 0.05 && d && d.mouth) {
-      ctx.beginPath();
-      ctx.ellipse(d.mouth.x, d.mouth.y + 1.5 * scale, 4.2 * scale * (0.5 + 0.5 * s.yawn), 5.2 * scale * s.yawn, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "#4a1f1a";
-      ctx.fill();
-      ctx.lineWidth = 1.1 * scale;
-      ctx.strokeStyle = INK;
-      ctx.stroke();
-    }
-    ctx.restore();
-    return { blanket: drawBlanket(ctx) };
-  }
-  // The blanket Mops pulls up over him as he lies on the mattress, a soft quilt over his body from beyond his feet to
-  // his neck, drawn coming up from the feet end (a placeholder drawing). Game positions round where he lies (LIE).
-  function drawBlanket(ctx) {
-    if (!(S.blanket > 0)) return null;
-    const B = BLANKET,
-      left = B.x1 - (B.x1 - B.x0) * S.blanket;
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(left, 0, 2000, 2000);
-    ctx.clip();
-    ctx.beginPath();
-    ctx.moveTo(B.x0, B.bottom);
-    ctx.lineTo(B.x0 - 2, B.top + 18);
-    ctx.quadraticCurveTo(B.x0 + 4, B.top, B.x0 + 26, B.top - 2);
-    ctx.lineTo(B.x1 - 40, B.top + 4);
-    ctx.quadraticCurveTo(B.x1 - 4, B.top + 12, B.x1, B.top + 46);
-    ctx.lineTo(B.x1 + 2, B.bottom);
-    ctx.quadraticCurveTo((B.x0 + B.x1) / 2, B.bottom + 8, B.x0, B.bottom);
-    ctx.closePath();
-    ctx.fillStyle = "#6f8fd6";
-    ctx.fill();
-    ctx.lineWidth = 5;
-    ctx.strokeStyle = INK;
-    ctx.lineJoin = "round";
-    ctx.stroke();
-    // the turned-down top edge at his neck, and two soft folds
-    ctx.beginPath();
-    ctx.roundRect(B.x0 - 2, B.top + 2, 16, B.bottom - B.top - 2, 6);
-    ctx.fillStyle = "#b8c9f2";
-    ctx.fill();
-    ctx.lineWidth = 4;
-    ctx.stroke();
-    for (const fx of [0.45, 0.72]) {
-      const x = B.x0 + (B.x1 - B.x0) * fx;
-      ctx.beginPath();
-      ctx.moveTo(x, B.top + 16);
-      ctx.quadraticCurveTo(x + 6, (B.top + B.bottom) / 2, x - 2, B.bottom - 10);
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = "#4f6db3";
-      ctx.stroke();
-    }
-    ctx.restore();
-    return { cover: +S.blanket.toFixed(2), x0: Math.round(left), x1: B.x1, top: B.top, bottom: B.bottom };
+    const scale = (E().squatchScale && E().squatchScale()) || 3;
+    drawBedtimeSquatch(ctx, S.sq, scale, S.phase === "bed" && S.sq.feet);
+    return { blanket: drawBedBlanket(ctx, S.blanket) };
   }
   // Where his head is now (game positions): over his feet when he sits, to the left of them lying down.
   function headAt() {

@@ -357,11 +357,12 @@ export const GUARDIANS_PANELS = Object.freeze([(ctx, t, engine) => guardiansPict
 /**
  * The thought bubble over Squatch's head in the room, with a little Moon Pie crate in it and no words. `head` is
  * the top of his head (canvas). Returns its box. `a` fades it in (0 to 1). `inside(ctx, cx, cy)` draws something else
- * in it instead of the crate (the home morning's Guardian Box, home-morning-art.js).
+ * in it instead of the crate (the home morning's Guardian Box and crayon drawing, home-morning-art.js); `size` ({ w, h })
+ * makes the cloud bigger than its usual 172 x 118.
  */
-export function drawThought(ctx, head, a = 1, inside = null) {
-  const w = 172,
-    h = 118,
+export function drawThought(ctx, head, a = 1, inside = null, size = null) {
+  const w = (size && size.w) || 172,
+    h = (size && size.h) || 118,
     cx = Math.min(940 - w / 2, Math.max(20 + w / 2, head.x + 70)),
     cy = Math.max(20 + h / 2, head.y - 34 - h / 2);
   ctx.save();

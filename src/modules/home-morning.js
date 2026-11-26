@@ -3,27 +3,35 @@
  * calendar (delivery day), and Mops's forgotten lunch. It follows the bedtime story (beat 21, bedtime-story.js) and
  * hands over to today's lunch sneak (src/game/14-ch1-day2.js ch1TakeLunch). What the player sees, step by step
  * (plan reviewed 2026-11-26; every word is from home-morning-lines.js, every drawing from home-morning-art.js):
- *   night   wordless: the room dims and comes back up; while it is dark Mops's hooves walk away and the door shuts;
- *           the morning song starts. Mops is gone; the rocket (the note tied on) stands at the foot of the bed.
- *   wake    wordless: "z z z" stops, he lifts his head, stretches both arms up, gets up and steps down beside the rocket.
+ *   night   wordless: the night the bedtime story ended on goes on: the room is dark, Squatch asleep in bed under the
+ *           blanket (as bedtime-story.js left him); Mops's hooves walk away and the door shuts in the dark; the room
+ *           comes up and the morning song starts. Mops is gone; the rocket (the note tied on) stands at the foot of
+ *           the bed.
+ *   wake    wordless: he sits up in bed (the blanket slides off), stretches both arms up, gets up and steps down beside
+ *           the rocket.
  *   rocket  "Squatch: pick up the gift"; only the rocket is outlined and glows. PICK UP · rocket.
- *   hold    he holds it up high, one heart; "The Guardians came! They always come when I'm scared." (NEXT)
+ *   hold    he holds it up high, one heart, and a thought bubble shows his crayon drawing of the Guardians (who he
+ *           thinks they are; the same drawing as at bedtime and in the box), wordless; then "The Guardians came! They
+ *           always come when I'm scared." (NEXT)
  *   think   wordless: a thought bubble shows the Guardian Box, so the box is seen before the chip names it.
  *   closet  "Squatch: put the gift in the box"; the wardrobe is outlined. OPEN · closet (he steps to its right).
  *   box     the door is open; the G box on the closet floor is outlined. PUT IN · box.
- *   lift    he takes the box out onto the floor; the close-up: the box big, "MY GARDIANS", the gift drops in (NEXT).
+ *   lift    he takes the box out onto the floor; the close-up (the first build's box view): the open box with the
+ *           older notes, its lid labelled MY GARDIAN BOX, his crayon drawing MY GUARDIANS, the gift drops in (NEXT).
  *   shut    back in the room the gift sticks out of the box on the floor; he shuts the closet: the calendar is back.
  *   cal     "Squatch: look at the calendar"; the calendar is outlined. LOOK · calendar opens the older program's
  *           close-up, with today's marks (home-morning-art.js drawCalendarToday).
  *   notice  the lunch bag by the door is outlined; "He forgot his lunch!" (NEXT)
  *   lunch   "Squatch: take the lunch"; TAKE · lunch hands over to the lunch sneak (the bag in his paw).
  * Its progress lives in the game-state field ch1HomeMorning (and ch1Step, "hm-<step>"), so the step restart (↺)
- * brings back the step the player is on. While he wakes, stretches and holds the gift up this file draws Squatch
- * (squatch-art.js, the room's Squatch: same shapes, size and outline) and the room leaves him out (sqPose "lie").
+ * brings back the step the player is on. While he sleeps, wakes, stretches and holds the gift up this file draws
+ * Squatch (squatch-art.js, the room's Squatch: same shapes, size and outline; asleep and sitting up as the bedtime
+ * story draws him) and the room leaves him out (sqPose "lie").
  */
 import { drawSquatchArt, armEnds } from "./squatch-art.js";
 import { morningWords } from "./home-morning-lines.js";
-import { MORNING_THINGS, MORNING_SIZES, TRACE, drawRocket, drawLunchBag, drawGuardianBox, drawBoxWithGift, drawBoxThought, drawCalendarToday, BOX_CLOSEUP, GBOX_ID } from "./home-morning-art.js";
+import { MORNING_THINGS, MORNING_SIZES, TRACE, drawRocket, drawLunchBag, drawGuardianBox, drawBoxWithGift, drawBoxThought, drawCrayonThought, drawCalendarToday, BOX_CLOSEUP, GBOX_ID } from "./home-morning-art.js";
+import { drawBedtimeSquatch, drawBedBlanket, BED_POSES } from "./bedtime-story.js";
 import { HOME_THINGS } from "./home-alone.js";
 import { cutawaySteps } from "./cutaway.js";
 import { footfall } from "./footfalls.js";
@@ -43,7 +51,6 @@ export const HOME_MORNING_SPOTS = Object.freeze({
   closet: Object.freeze({ x: 300, y: 398 }),
   lunch: Object.freeze({ x: 760, y: 505 }), // left of the bag, so he never stands on it
 });
-const MOPS_AT_BED = Object.freeze({ x: 380, y: 460 });
 // Where the room draws him sitting on the bed (60-frame-draw.js, sqPose "sit" and "sleep").
 const BED_SIT = Object.freeze({ x: 205, y: 444 });
 // Standing anywhere here counts as "at the wardrobe" (right of it, behind or beside the bed's top corner).
@@ -53,20 +60,22 @@ const WARDROBE = HOME_THINGS.closet;
 
 /**
  * Timing in seconds and speeds in game pixels a second (placeholders). Each wordless part plays 2 to 4 seconds.
- * night: dim (to dark), dark (held), up (back to light); hooves while it is dark, the door after them, the song as
- * it comes back up. wake: lift (head up), stretch (arms up), rise (getting up), then a walk to beside the rocket.
+ * night: dark (held, from the bedtime story's black), up (back to light); hooves while it is dark, the door after
+ * them, the song as it comes up. wake: sitUp (from lying asleep to sitting, the blanket sliding off), stretch (arms
+ * up), rise (getting up), then a walk to beside the rocket. hold: he holds the gift up; the crayon thought bubble comes
+ * up at thought (fading in over thinkIn).
  */
 export const HOME_MORNING_PACE = Object.freeze({
-  dim: 0.6,
-  dark: 0.3,
-  up: 1.1,
-  hooves: Object.freeze([0.6, 0.85, 1.1]),
-  door: 1.3,
-  lift: 0.45,
+  dark: 1.4,
+  up: 1.2,
+  hooves: Object.freeze([0.2, 0.45, 0.7]),
+  door: 0.95,
+  sitUp: 0.9,
   stretch: 0.8,
   rise: 0.45,
   walk: 160,
-  hold: 0.9,
+  hold: 2.8,
+  thought: 0.5,
   think: 2.2,
   thinkIn: 0.25,
   toCloset: 220,
@@ -138,28 +147,24 @@ export function createHomeMorning(bridge) {
       go("rocket");
       return control("chip-gift");
     }
-    // Asleep in bed as the bedtime story left him, Mops beside the bed.
-    e.set("sqPose", "sleep");
+    // Asleep in bed under the blanket, in the dark, as the bedtime story left him; Mops went out at bedtime.
+    e.set("sqPose", "lie");
     e.place("sq", HOME_MORNING_SPOTS.bed.x, HOME_MORNING_SPOTS.bed.y);
-    e.set("moPose", "stand");
-    e.place("mops", MOPS_AT_BED.x, MOPS_AT_BED.y);
-    e.face("mops", -1);
+    e.set("moPose", "hidden");
+    e.place("mops", -400, HOME_MORNING_SPOTS.bed.y);
     go("night");
     e.queue([e.until(night), e.until(wake), e.run(() => (go("rocket"), control("chip-gift")))]);
   }
-  // Night to morning: dark, Mops leaves (heard, not seen), light again, the morning song.
+  // Night to morning: still dark, Mops leaves for work (heard, not seen), light again, the morning song.
   function night(dt) {
-    const e = E(),
-      h = H(),
+    const h = H(),
       P = HOME_MORNING_PACE,
       t0 = h.t;
     h.t += dt || 0;
-    e.set("zzz", (e.get("zzz") || 0) + (dt || 0));
     const past = (at) => t0 < at && h.t >= at;
-    if (past(P.dim)) e.set("moPose", "hidden");
     P.hooves.forEach((at, i) => past(at) && sound.morning("hoof", i));
     if (past(P.door)) (sound.morning("door"), bridge.homeMusic.start("home-morning"));
-    if (h.t < P.dim + P.dark + P.up) return false;
+    if (h.t < P.dark + P.up) return false;
     go("wake");
     return true;
   }
@@ -170,15 +175,14 @@ export function createHomeMorning(bridge) {
       P = HOME_MORNING_PACE;
     h.t += dt || 0;
     const t = h.t;
-    if (h.phase === "") ((h.phase = "lift"), e.set("sqPose", "sit"), e.set("sqLift", -1));
-    if (h.phase === "lift") {
-      e.set("sqLift", Math.min(0, -1 + t / P.lift));
-      if (t >= P.lift) ((h.phase = "stretch"), e.set("sqLift", 0), e.set("sqPose", "lie"));
+    if (h.phase === "") ((h.phase = "sitUp"), e.set("sqPose", "lie"));
+    if (h.phase === "sitUp") {
+      if (t >= P.sitUp) h.phase = "stretch";
     } else if (h.phase === "stretch") {
-      if (t >= P.lift + P.stretch) ((h.phase = "rise"), e.set("sqPose", "sit"));
+      if (t >= P.sitUp + P.stretch) ((h.phase = "rise"), e.set("sqPose", "sit"));
     } else if (h.phase === "rise") {
-      e.set("sqLift", Math.min(1, (t - P.lift - P.stretch) / P.rise));
-      if (t >= P.lift + P.stretch + P.rise) {
+      e.set("sqLift", Math.min(1, (t - P.sitUp - P.stretch) / P.rise));
+      if (t >= P.sitUp + P.stretch + P.rise) {
         h.phase = "out";
         e.set("sqLift", 0);
         e.set("sqPose", "stand");
@@ -320,8 +324,6 @@ export function createHomeMorning(bridge) {
   };
   const floorThings = (h) => {
     const out = [];
-    // they are left there in the night: none before the room is dark (Mops is still beside the bed)
-    if (h.step === "night" && h.t < HOME_MORNING_PACE.dim) return out;
     h.gift === "floor" && out.push({ id: "rocket", y: MORNING_THINGS.rocket.y, draw: (ctx) => drawRocket(ctx, MORNING_THINGS.rocket.x, MORNING_THINGS.rocket.y) });
     h.bag === "floor" && out.push({ id: "bag", y: MORNING_THINGS.bag.y, draw: (ctx) => drawLunchBag(ctx, MORNING_THINGS.bag.x, MORNING_THINGS.bag.y) });
     return out;
@@ -494,8 +496,20 @@ export function createHomeMorning(bridge) {
         t.y > p.y && t.draw(ctx);
         drew.things.push(t.id);
       }
-      // Squatch as this file draws him: stretching in bed, or holding the gift up high (with one heart).
-      if (e.get("sqPose") === "lie" && h.step === "wake") {
+      // Squatch as this file draws him: asleep under the blanket in the night, sitting up as he wakes (the blanket
+      // sliding off), stretching in bed, or holding the gift up high (with one heart and the crayon thought bubble).
+      if (e.get("sqPose") === "lie" && (h.step === "night" || (h.step === "wake" && h.phase === "sitUp"))) {
+        const L = BED_POSES.lie,
+          S0 = BED_POSES.sit,
+          up = h.step === "night" ? 0 : Math.max(0, Math.min(1, h.t / (P.sitUp * 0.8))),
+          q = up * up * (3 - 2 * up),
+          pose = { x: L.x + (S0.x - L.x) * q, y: L.y + (S0.y - L.y) * q, a: L.a * (1 - q), arms: null, feet: false, eyes: h.step === "night" ? "closed" : "", yawn: 0 };
+        drawBedtimeSquatch(ctx, pose, k);
+        const b = drawBedBlanket(ctx, 1 - q);
+        drew.pose = h.step === "night" ? "asleep" : "sitUp";
+        drew.inBed = { x: Math.round(pose.x), y: Math.round(pose.y), a: +pose.a.toFixed(2), eyes: pose.eyes, blanket: b ? b.cover : 0 };
+      }
+      if (e.get("sqPose") === "lie" && h.step === "wake" && h.phase === "stretch") {
         drawSquatchArt(ctx, BED_SIT.x, BED_SIT.y, k, { line: 2 * k, arms: STRETCH, feet: false, shadow: false });
         drew.pose = "stretch";
       }
@@ -511,6 +525,13 @@ export function createHomeMorning(bridge) {
       if (h.gift === "held" && e.get("sqPose") === "stand") {
         const at = pawNow();
         drew.carried = drawRocket(ctx, at.x, at.y + 16, {});
+      }
+      // (gone once he speaks: one bubble at a time)
+      const now = e.current();
+      if (h.step === "hold" && h.t >= P.thought && !(now && now.k === "bub")) {
+        const head = { x: p.x, y: p.y - 48.5 * k },
+          th = drawCrayonThought(ctx, head, Math.min(1, (h.t - P.thought) / P.thinkIn));
+        drew.crayonThought = { box: th.box, drawing: th.drawing, head };
       }
       if (h.heart >= 0) {
         const age = e.time() - h.heart,
@@ -528,10 +549,11 @@ export function createHomeMorning(bridge) {
         c && c.k === "bub" && (drew.bagOutline = bridge.drawGoalOutline(ctx, "closet", "hm-lunch", null, e.time(), [sqBox()]));
       }
       if (h.step === "night") {
+        // dark as the bedtime story's fade left it, then the room comes up
         const t = h.t,
-          a = t < P.dim ? t / P.dim : t < P.dim + P.dark ? 1 : Math.max(0, 1 - (t - P.dim - P.dark) / P.up);
-        ctx.fillStyle = `rgba(14,18,32,${(0.92 * a).toFixed(3)})`;
-        ctx.fillRect(0, 0, 960, 640);
+          a = t < P.dark ? 1 : Math.max(0, 1 - (t - P.dark) / P.up);
+        ctx.fillStyle = `rgba(0,0,0,${a.toFixed(3)})`;
+        ctx.fillRect(-2000, -2000, 6000, 5000);
         drew.dark = a;
       }
     },

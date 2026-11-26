@@ -30,9 +30,10 @@ function wobbler(seed) {
 /**
  * Draws the drawing on its sheet, the sheet's middle at (cx, cy), `w` canvas pixels wide, turned by `tilt`
  * (radians). `paper: false` leaves the sheet out (the drawing alone). Returns the sheet's box (unturned) and where
- * the figures are, for tests.
+ * the figures are, for tests. `title(x, y, size)`, when given, writes the drawing's crayon title across its top (the
+ * caller writes it with the game's text, so the words are counted like every word on screen).
  */
-export function drawGuardiansCrayon(ctx, cx, cy, w, { tilt = 0, paper = true, edge = true } = {}) {
+export function drawGuardiansCrayon(ctx, cx, cy, w, { tilt = 0, paper = true, edge = true, title = null } = {}) {
   const h = w * CRAYON.aspect,
     u = w / 100, // one unit of the drawing (the sheet is 100 x 72 units)
     rnd = wobbler(7),
@@ -145,6 +146,7 @@ export function drawGuardiansCrayon(ctx, cx, cy, w, { tilt = 0, paper = true, ed
   ctx.bezierCurveTo((hx + 3) * u, (hy - 6) * u, (hx + 7) * u, (hy - 1) * u, hx * u, (hy + 4) * u);
   ctx.fillStyle = CRAYON.heart;
   ctx.fill();
+  title && title(44 * u, 8 * u, Math.round(6.5 * u));
   ctx.restore();
   return { x0: cx - w / 2, y0: cy - h / 2, x1: cx + w / 2, y1: cy + h / 2, figures: { guardians: 2, squatch: 1 }, big: 48, little: 22 };
 }
