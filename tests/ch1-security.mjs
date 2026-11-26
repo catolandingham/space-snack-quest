@@ -14,8 +14,8 @@
  *     plays between the run and the bell.
  * (b) The Day 2 lunch sneak (src/modules/lunch-sneak.js) uses (a)'s rule: the witness runs to the FUR alarm, the
  *     guards come, hidden in the plant he gets away, standing he is caught. Night one's loading bay
- *     (src/modules/evening.js) too: the night robot runs to the bay's FUR alarm, the guards come, rolling into a ball
- *     gets him away, standing gets him caught.
+ *     (src/modules/evening.js) too: the night robot runs to the bay's FUR alarm, the guards come, hidden in the plant
+ *     he gets away, standing gets him caught.
  *   node tests/ch1-security.mjs
  */
 import { join } from "node:path";
@@ -226,7 +226,7 @@ g.check("party: no page errors", open.errors.length === 0 && hid.errors.length =
   g.check("lunch: no page errors", errors.length === 0, errors);
 }
 // Night one (beat 42, src/modules/evening.js) uses the same rule in the loading bay: seen in the night robot's look, the
-// robot shows "!" and runs to the bay's FUR alarm, the bell, the guards; rolled into a ball they give up ("They lost
+// robot shows "!" and runs to the bay's FUR alarm, the bell, the guards; hidden in the plant they give up ("They lost
 // you."); standing in the open a guard catches him (LOCKUP). No action walks him out of the bay while the alarm is on.
 {
   const { page, ctx, errors } = await g.open("?ch=1");
@@ -259,8 +259,12 @@ g.check("party: no page errors", open.errors.length === 0 && hid.errors.length =
         a && a.phase === "run" && runAt === null && (runAt = t);
         a && a.phase === "ring" && ringAt === null && ((ringAt = t), (offers = (ss.spotsNow() || []).filter((o) => o && o.verb).map((o) => o.verb + " · " + o.cap)));
         a && a.guards.length && guardAt === null && (guardAt = t);
+        // (he runs for the plant as the robot shouts, and hides in it)
         if (roll && a && a.phase === "shout" && st().pose === "stand") {
-          const o = (ss.spotsNow() || []).find((q) => q && q.verb === "ROLL");
+          n.sq.x = ev.place.BAY.plant.x;
+          n.sq.y = ev.place.BAY.plant.y;
+          ss.tick(1 / 30);
+          const o = (ss.spotsNow() || []).find((q) => q && q.verb === "HIDE");
           o && o.f();
         }
         if (n.cur && n.cur.id !== "jail") ((n.cur = null), (n.q = n.q.filter((q) => q.id === "jail")));
@@ -275,7 +279,7 @@ g.check("party: no page errors", open.errors.length === 0 && hid.errors.length =
   g.check("night: while the alarm rings, only hiding places and the ball are offered (nothing walks him out of the bay)", stand.offers.length > 0 && stand.offers.every((v) => /^HIDE/.test(v) || v === "ROLL · ball"), stand.offers);
   g.check("night: standing in the open, a guard reaches him (LOCKUP)", stand.lockupAt !== null, stand);
   const rolled = await night(true);
-  g.check('night: rolled into a ball, he gets away ("They lost you.")', rolled.lockupAt === null && rolled.lostAt !== null, rolled);
+  g.check('night: hidden in the plant, he gets away ("They lost you.")', rolled.lockupAt === null && rolled.lostAt !== null, rolled);
   await ctx.close();
   g.check("night: no page errors", errors.length === 0, errors);
 }

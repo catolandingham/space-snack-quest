@@ -223,19 +223,27 @@ r = await ev(() => {
     b = window.SSQ.beat("ch1-evening");
   window.__run(6, () => window.__st() === "bed" && n.ctrl);
   const pressed = window.__press("SLEEP · bed");
-  const seen = { tip: 0, roll: 0, zzz: 0, dim: 0 };
+  const seen = { tip: 0, roll: 0, zzz: 0, dim: 0, bedtime: false };
   window.__run(40, () => {
     const s = n.ch1Evening;
     s.mopsSleep && ((seen.tip = Math.max(seen.tip, s.mopsSleep.tip)), (seen.roll = Math.max(seen.roll, s.mopsSleep.roll)));
     seen.zzz = Math.max(seen.zzz, s.zzz);
     seen.dim = Math.max(seen.dim, s.dim);
+    s.dim > 0.5 && !n.ctrl && (seen.bedtime = seen.bedtime || window.SSQ.refinedCue("home") === "bedtime");
     return window.__st() === "out" && n.ctrl;
   });
   const solid = window.__ss.solids().some((q) => q.x0 === 376 && q.y0 === 500);
-  return { pressed, seen, step: window.__st(), sqPose: n.sqPose, music: window.SSQ.refinedCue("home"), solid, sneak: n.ch1Sneak };
+  const inBed = !!n.ch1Evening.bed;
+  // his first move gets him out of bed (the kid's to start)
+  n.walkTo = { x: 600, y: 470, room: n.room, lx: n.sq.x, ly: n.sq.y, lt: n.T };
+  window.__ss.tick(0.05);
+  window.__run(4, () => !n.ch1Evening.bed && n.ctrl);
+  const up = { bed: !!n.ch1Evening.bed, x: Math.round(n.sq.x), y: Math.round(n.sq.y), ctrl: n.ctrl };
+  return { pressed, seen, inBed, up, step: window.__st(), sqPose: n.sqPose, solid, sneak: n.ch1Sneak };
 });
-g.check("beat 41: SLEEP · bed; the light goes down; Mops tips over like a fainting goat, sleeps on his back, snores", r.pressed && r.seen.tip >= 1 && r.seen.roll >= 1 && r.seen.zzz > 0 && r.seen.dim >= 1, r);
-g.check("night one: he is up, Mops lies asleep on the floor and nobody walks through him; the music is the night's", r.step === "out" && r.solid && r.sneak, r);
+g.check("beat 41: SLEEP · bed; the light goes down (the bedtime music); Mops tips over like a fainting goat, sleeps on his back, snores", r.pressed && r.seen.tip >= 1 && r.seen.roll >= 1 && r.seen.zzz > 0 && r.seen.dim >= 1 && r.seen.bedtime, r);
+g.check("night one: Squatch is still in bed, the kid's to move; his first move gets him out of bed beside it", r.step === "out" && r.inBed && !r.up.bed && r.up.ctrl && r.up.x === 340 && r.up.y === 470, r);
+g.check("night one: Mops lies asleep on the floor and nobody walks through him; the sneaking music is on", r.solid && r.sneak, r);
 
 // beat 42
 r = await ev(() => {
@@ -253,7 +261,16 @@ r = await ev(async () => {
     b = window.SSQ.beat("ch1-evening");
   const pressed = window.__press("GRAB · copies");
   window.__run(0.7);
-  await new Promise((q) => setTimeout(q, 200));
+  // the words the close-up draws (read from its own canvas's calls while it is up)
+  const words = [],
+    P = CanvasRenderingContext2D.prototype,
+    keep = P.fillText;
+  P.fillText = function (t) {
+    this.canvas.getAttribute("aria-label") === "order papers" && words.push(t);
+    return keep.apply(this, arguments);
+  };
+  await new Promise((q) => setTimeout(q, 300));
+  P.fillText = keep;
   const t = b.viewTargets();
   const before = n.ch1Paw;
   window.__tapView("order papers", t.box, "pointerdown");
@@ -265,8 +282,9 @@ r = await ev(async () => {
   const through = b.debug().view && b.debug().view.drew;
   window.__tapView("order papers", t.box, "pointerup");
   window.__run(3, () => window.__st() === "post" && n.ctrl);
-  return { pressed, view: t.kind, before, after: n.ch1Paw, pressing, through, step: window.__st(), open: !!document.querySelector('canvas[aria-label="order papers"]'), papers: n.ch1Evening.papers };
+  return { pressed, view: t.kind, words: [...new Set(words)], before, after: n.ch1Paw, pressing, through, step: window.__st(), open: !!document.querySelector('canvas[aria-label="order papers"]'), papers: n.ch1Evening.papers };
 });
+g.check("the close-up draws the pink sheet's words: ORDER MORE ROBOTS, the office code 169556, and MARK · order", ["ORDER MORE ROBOTS", "169556", "MARK · order"].every((w) => r.words.includes(w)), r.words);
 g.check("GRAB · copies opens the paw-order close-up; his paw on the box marks it (a paw print)", r.pressed && r.view === "order" && !r.before && r.after === 1 && r.pressing && r.pressing.mark > 0, r);
 g.check("the yellow copy, with the print pressed through, tears off into his paw, and the close-up closes itself", r.through && r.through.tear > 0 && r.step === "post" && !r.open && r.papers === "both", r);
 r = await ev(() => {
@@ -288,41 +306,47 @@ r = await ev(() => {
 });
 g.check("POST · mailbox: \"Mail scanned. Pawature accepted.\" from the mailbox", r.pressed && r.line === "Mail scanned. Pawature accepted." && r.who === "ups" && r.mailed === 1, r);
 g.check("then, with no control, the robots wake and roll out, he runs under the big wall vent and it takes the pink sheet", r.seen.woke && r.seen.suck > 0.5 && !r.seen.ctrlDuring && r.step === "back" && r.sucked === 1 && r.pink === "vent" && r.paper === "vent" && Math.hypot(r.at.x - PL.BAY.underVent.x, r.at.y - PL.BAY.underVent.y) < 4, r);
-// a fair way back: wait for the night robot to look up at the back wall, then along the front to the doorway
+// A fair way back, walked as a kid does (every step checked against the room's solids): from under the vent left
+// along the back to beside the mail room's wall and down past it to the front corner, where nobody can see him at any
+// moment (he can wait there as long as he likes); then, when the night robot has just turned to the back wall, along
+// the front past its column, and up to the doorway. The column crossing takes far less than the robot's 4 s look.
 r = await ev(() => {
   const n = window.__ss.op,
     b = window.SSQ.beat("ch1-evening"),
     look = b.place.nightLook;
-  const save = JSON.stringify(n.ch1Evening);
-  const startT = n.ch1Evening.nightT;
   const seenHere = () => b.seenNow();
   const standSeen = seenHere();
-  window.__run(8, () => look(n.ch1Evening.nightT).phase === "up" && look(n.ch1Evening.nightT - 0.06).phase !== "up");
-  // (left along the back to beside the mail room's wall, down past it, then along the front: the way a kid walks,
-  // round the furniture: every step is checked against the room's solids)
-  const legs = [{ x: 650, y: 342 }, { x: 650, y: 585 }, { x: 300, y: 585 }, { x: 70, y: 330 }];
   const solids = window.__ss.solids();
   let seenOnWay = 0,
-    inSolid = 0;
-  for (const w of legs)
-    for (let i = 0; i < 400; i++) {
-      const dx = w.x - n.sq.x,
-        dy = w.y - n.sq.y,
-        d = Math.hypot(dx, dy);
-      if (d < 2) break;
-      const k = Math.min(d, 190 * 0.05);
-      n.sq.x += (dx / d) * k;
-      n.sq.y += (dy / d) * k;
-      seenHere() && seenOnWay++;
-      solids.some((q) => n.sq.x > q.x0 && n.sq.x < q.x1 && n.sq.y > q.y0 && n.sq.y < q.y1) && inSolid++;
-      window.__ss.tick(0.05);
-      if (window.__st() !== "back") break;
-    }
+    inSolid = 0,
+    cornerSeen = 0,
+    inColumn = 0;
+  const walk = (legs) => {
+    for (const w of legs)
+      for (let i = 0; i < 400; i++) {
+        const dx = w.x - n.sq.x,
+          dy = w.y - n.sq.y,
+          d = Math.hypot(dx, dy);
+        if (d < 2) break;
+        const k = Math.min(d, 190 * 0.05);
+        n.sq.x += (dx / d) * k;
+        n.sq.y += (dy / d) * k;
+        seenHere() && seenOnWay++;
+        n.sq.x > 360 && n.sq.x < 600 && (inColumn += 0.05);
+        solids.some((q) => n.sq.x > q.x0 && n.sq.x < q.x1 && n.sq.y > q.y0 && n.sq.y < q.y1) && inSolid++;
+        window.__ss.tick(0.05);
+        if (window.__st() !== "back") return;
+      }
+  };
+  walk([{ x: 650, y: 342 }, { x: 650, y: 585 }]);
+  // waiting in the front corner through a whole turn of the robot's look: never seen
+  for (let i = 0; i < 140; i++) (seenHere() && cornerSeen++, window.__ss.tick(0.05));
+  window.__run(8, () => look(n.ch1Evening.nightT).phase === "up" && look(n.ch1Evening.nightT - 0.06).phase !== "up");
+  walk([{ x: 300, y: 585 }, { x: 70, y: 330 }]);
   window.__run(4, () => window.__st() === "backway" && n.ctrl);
-  const out = { standSeen, seenOnWay, inSolid, step: window.__st(), room: n.room, alarm: !!(n.ch1Evening && n.ch1Evening.alarm) };
-  return out;
+  return { standSeen, seenOnWay, cornerSeen, inColumn: +inColumn.toFixed(2), inSolid, step: window.__st(), room: n.room, alarm: !!(n.ch1Evening && n.ch1Evening.alarm) };
 });
-g.check("a fair way back: under the vent nobody sees him; going along the front while the robot looks up, nobody does", !r.standSeen && r.seenOnWay === 0 && r.inSolid === 0 && !r.alarm && r.step === "backway" && r.room === "passage", r);
+g.check("a fair way back: under the vent and in the front corner nobody sees him; along the front while the robot looks at the back wall nobody does, and the column takes under half its 4 s look", !r.standSeen && r.cornerSeen === 0 && r.seenOnWay === 0 && r.inColumn < 2 && r.inSolid === 0 && !r.alarm && r.step === "backway" && r.room === "passage", r);
 r = await ev(() => {
   const n = window.__ss.op;
   const walk = (x, y, step) => ((n.sq.x = x), (n.sq.y = y), window.__run(10, () => window.__st() === step && n.ctrl));
@@ -356,7 +380,7 @@ r = await ev(() => {
   return out;
 });
 g.check("seen in the bay: the robot shows \"!\" at once and runs to the FUR alarm on the bay's wall; guards come", r.alarm && r.by === "night-robot" && r.place === "bay" && r.ran && r.guards.length === 2 && r.guards.every((q) => q === "hangar"), r);
-g.check("during the alarm every hiding place is offered (the plant, the ball)", r.offers.includes("ROLL · ball"), r);
+g.check("during the alarm every hiding place is offered (the plant, the ball)", r.offers.includes("ROLL · ball") && r.offers.includes("HIDE · plant"), r);
 // again, and this time he hides in the plant as soon as the robot shouts
 r = await ev(() => {
   const n = window.__ss.op,
@@ -431,6 +455,56 @@ r = await ev(() => {
   return out;
 });
 g.check("↺ in a part with no control goes back to the last step he controlled; in a step he controls, that step starts again", Object.keys(r).filter((k) => k.endsWith("Ok") || k === "binBack").every((k) => r[k]), r);
+
+// the bay's furniture (the guards' way round it) is the room's own; hidden in the bay's plant his two eyes show in it
+r = await ev(() => {
+  const n = window.__ss.op,
+    b = window.SSQ.beat("ch1-evening"),
+    B = b.place.BAY;
+  window.__jump(142);
+  const solids = window.__ss.solids();
+  const same = b.place.BAY_FURNITURE.every((f) => solids.some((q) => q.x0 === f.x0 && q.x1 === f.x1 && q.y0 === f.y0 && q.y1 === f.y1));
+  n.sq.x = B.plant.x;
+  n.sq.y = B.plant.y;
+  window.__ss.tick(0.05);
+  const o = window.__ss.offerNow();
+  o && o.verb === "HIDE" && o.f();
+  window.__ss.tick(0.05);
+  const P = CanvasRenderingContext2D.prototype,
+    el = P.ellipse,
+    eyes = [];
+  P.ellipse = function (x, y, rx) {
+    rx >= 5 && rx <= 8 && eyes.push([x, y]);
+    return el.apply(this, arguments);
+  };
+  window.__ss.drawFrame();
+  P.ellipse = el;
+  const box = B.plant.box,
+    inLeaves = eyes.filter(([x, y]) => x > box.x0 && x < box.x1 && y > box.y0 && y < box.y1);
+  return { same, hid: o && o.verb + " · " + o.cap, pose: n.ch1Evening.pose, eyes: inLeaves.length };
+});
+g.check("the bay's furniture in evening-place.js is the room's own (the older program's solids)", r.same, r);
+g.check("hidden in the bay's plant, his two eyes show in its leaves", r.hid === "HIDE · plant" && r.pose === "hidden" && r.eyes >= 2, r);
+// ↺ while he walks in through a night doorway: control comes back in a step of the room he is in
+r = await ev(() => {
+  const n = window.__ss.op,
+    out = {};
+  for (const [beat, x, y] of [[42, 860, 440], [144, 70, 330]]) {
+    window.__jump(beat);
+    n.ch1Evening.bed = null;
+    n.sq.x = x;
+    n.sq.y = y;
+    window.__run(3, () => !n.ctrl && n.room !== (beat === 42 ? "closet" : "hangar"));
+    window.__ss.tick(0.1);
+    const mid = { room: n.room, step: window.__st(), ctrl: n.ctrl };
+    window.__ss.sectionReset();
+    window.__run(2, () => n.ctrl);
+    const ev = window.SSQ.beat("ch1-evening");
+    out[beat] = { mid, room: n.room, step: window.__st(), ctrl: n.ctrl, ok: n.ctrl && ev.debug().state && n.room === { out: "closet", nighthall: "hall", back: "hangar", backway: "passage" }[window.__st()] };
+  }
+  return out;
+});
+g.check("↺ while walking in through a doorway at night: control comes back in a step that belongs to the room he is in", r[42].ok && r[144].ok && !r[42].mid.ctrl && r[42].mid.room === "hall" && !r[144].mid.ctrl && r[144].mid.room === "passage", r);
 
 // the old code is gone from src/game; the debug link
 const game = readdirSync(join(root, "src", "game"))

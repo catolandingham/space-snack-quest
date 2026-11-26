@@ -614,7 +614,7 @@ g.check(
   { paper, vent: play.vent, paw: play.paw },
 );
 g.check(
-  "the order box, the Mars letter, and the Guardian box are drawn",
+  "the paw-order close-up opened (its words are measured in tests/evening.mjs), and the Mars letter and the Guardian box are drawn",
   // (ORDER MORE ROBOTS is on the pink sheet in the evening's paw-order close-up, src/modules/evening.js)
   play.order && play.shown.includes("MARS LOST & FOUND") && play.shown.includes("MY GARDIANS"),
   { shown: play.shown, order: play.order },

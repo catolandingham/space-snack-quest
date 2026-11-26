@@ -41,7 +41,7 @@ function rrect(ctx, x, y, w, h, r, fill, line, lw = 3) {
   fill && ((ctx.fillStyle = fill), ctx.fill());
   line && ((ctx.lineWidth = lw), (ctx.strokeStyle = line), ctx.stroke());
 }
-function disc(ctx, x, y, r, fill, line, lw = 3) {
+function evDisc(ctx, x, y, r, fill, line, lw = 3) {
   ctx.beginPath();
   ctx.arc(x, y, r, 0, TAU);
   fill && ((ctx.fillStyle = fill), ctx.fill());
@@ -71,7 +71,7 @@ export function drawCutInBack(ctx, w, h) {
 
 /** The round white X of every close-up (CUT-IN-SPEC: bottom right, at least 64 px). */
 export function drawCloseX(ctx, x, y, r) {
-  disc(ctx, x, y, r, "#ffffff", INK, 4);
+  evDisc(ctx, x, y, r, "#ffffff", INK, 4);
   ctx.save();
   ctx.lineWidth = Math.max(4, r * 0.16);
   ctx.lineCap = "round";
@@ -86,8 +86,8 @@ export function drawCloseX(ctx, x, y, r) {
 }
 /** A round arrow button (the gallery's left and right). */
 export function drawArrow(ctx, x, y, r, dir, glow = 0) {
-  glow > 0 && disc(ctx, x, y, r + 8, `rgba(255,214,90,${(0.35 + 0.3 * glow).toFixed(2)})`);
-  disc(ctx, x, y, r, "#fffaf0", INK, 4);
+  glow > 0 && evDisc(ctx, x, y, r + 8, `rgba(255,214,90,${(0.35 + 0.3 * glow).toFixed(2)})`);
+  evDisc(ctx, x, y, r, "#fffaf0", INK, 4);
   ctx.beginPath();
   ctx.moveTo(x - dir * r * 0.3, y - r * 0.42);
   ctx.lineTo(x + dir * r * 0.38, y);
@@ -111,14 +111,14 @@ function sky(ctx, x, y, w, h, top, bottom) {
   ctx.fillRect(x, y, w, h);
 }
 function stars(ctx, x, y, w, h, n = 14) {
-  for (let i = 0; i < n; i++) disc(ctx, x + ((i * 53) % w), y + ((i * 37) % (h * 0.6)), 1.6, "#ffffff");
+  for (let i = 0; i < n; i++) evDisc(ctx, x + ((i * 53) % w), y + ((i * 37) % (h * 0.6)), 1.6, "#ffffff");
 }
 // A small Squatch face (his brown head with ears and two eyes), for the photos.
 function squatchHead(ctx, x, y, r, eyes = true) {
-  disc(ctx, x - r * 0.85, y - r * 0.55, r * 0.35, FUR, INK, 2);
-  disc(ctx, x + r * 0.85, y - r * 0.55, r * 0.35, FUR, INK, 2);
-  disc(ctx, x, y, r, FUR, INK, 2.5);
-  eyes && (disc(ctx, x - r * 0.35, y - r * 0.1, r * 0.16, INK), disc(ctx, x + r * 0.35, y - r * 0.1, r * 0.16, INK));
+  evDisc(ctx, x - r * 0.85, y - r * 0.55, r * 0.35, FUR, INK, 2);
+  evDisc(ctx, x + r * 0.85, y - r * 0.55, r * 0.35, FUR, INK, 2);
+  evDisc(ctx, x, y, r, FUR, INK, 2.5);
+  eyes && (evDisc(ctx, x - r * 0.35, y - r * 0.1, r * 0.16, INK), evDisc(ctx, x + r * 0.35, y - r * 0.1, r * 0.16, INK));
 }
 function crate(ctx, x, y, w, h) {
   rrect(ctx, x, y, w, h, 3, "#d9a35b", INK, 2.5);
@@ -141,7 +141,7 @@ export function drawPhoto(ctx, id, x, y, w, h, mops, t = 0) {
   if (id === "karate") {
     // the crane on a crate at sunset, a red headband
     sky(ctx, x, y, w, h, "#ff9a5a", "#ffd27a");
-    disc(ctx, x + w * 0.75, y + h * 0.35, h * 0.16, "#fff3b0");
+    evDisc(ctx, x + w * 0.75, y + h * 0.35, h * 0.16, "#fff3b0");
     crate(ctx, x + w * 0.3, floor - h * 0.22, w * 0.3, h * 0.22);
     mops(ctx, x + w * 0.38, floor - h * 0.22, k, { f: 1, walk: 0.6 });
     ctx.fillStyle = "#e5533d";
@@ -152,7 +152,7 @@ export function drawPhoto(ctx, id, x, y, w, h, mops, t = 0) {
     stars(ctx, x, y, w, h);
     const hx = x + w * 0.33,
       hy = y + h * 0.5;
-    for (let i = -4; i <= 4; i++) disc(ctx, hx + i * 7, hy + h * 0.28, 7, FUR);
+    for (let i = -4; i <= 4; i++) evDisc(ctx, hx + i * 7, hy + h * 0.28, 7, FUR);
     ctx.beginPath();
     ctx.moveTo(hx - h * 0.3, hy + h * 0.3);
     ctx.quadraticCurveTo(hx - h * 0.32, hy - h * 0.35, hx, hy - h * 0.36);
@@ -163,8 +163,8 @@ export function drawPhoto(ctx, id, x, y, w, h, mops, t = 0) {
     ctx.lineWidth = 2;
     ctx.strokeStyle = "#5b6070";
     ctx.stroke();
-    disc(ctx, hx - h * 0.1, hy - h * 0.02, h * 0.04, "#ffcf33");
-    disc(ctx, hx + h * 0.1, hy - h * 0.02, h * 0.04, "#ffcf33");
+    evDisc(ctx, hx - h * 0.1, hy - h * 0.02, h * 0.04, "#ffcf33");
+    evDisc(ctx, hx + h * 0.1, hy - h * 0.02, h * 0.04, "#ffcf33");
     mops(ctx, x + w * 0.62, floor, k, { f: -1 });
     ctx.save();
     ctx.shadowColor = "#ff3b3b";
@@ -178,17 +178,17 @@ export function drawPhoto(ctx, id, x, y, w, h, mops, t = 0) {
     stars(ctx, x, y, w, h, 18);
     const mx = x + w * 0.52,
       my = y + h * 0.46;
-    disc(ctx, mx, my, h * 0.36, "#f3f0dc");
+    evDisc(ctx, mx, my, h * 0.36, "#f3f0dc");
     ctx.save();
     ctx.translate(mx - w * 0.06, my + h * 0.06);
     ctx.fillStyle = "#101421";
-    disc(ctx, -h * 0.17, h * 0.14, h * 0.09, null, "#101421", 3);
-    disc(ctx, h * 0.17, h * 0.14, h * 0.09, null, "#101421", 3);
+    evDisc(ctx, -h * 0.17, h * 0.14, h * 0.09, null, "#101421", 3);
+    evDisc(ctx, h * 0.17, h * 0.14, h * 0.09, null, "#101421", 3);
     ctx.fillRect(-h * 0.17, h * 0.1, h * 0.34, 3);
     ctx.fillRect(h * 0.13, -h * 0.02, h * 0.14, h * 0.07); // the basket
-    disc(ctx, h * 0.2, -h * 0.05, h * 0.06, "#101421"); // Squatch's head in the basket
-    disc(ctx, h * 0.16, -h * 0.1, h * 0.025, "#101421");
-    disc(ctx, h * 0.24, -h * 0.1, h * 0.025, "#101421");
+    evDisc(ctx, h * 0.2, -h * 0.05, h * 0.06, "#101421"); // Squatch's head in the basket
+    evDisc(ctx, h * 0.16, -h * 0.1, h * 0.025, "#101421");
+    evDisc(ctx, h * 0.24, -h * 0.1, h * 0.025, "#101421");
     ctx.beginPath();
     ctx.ellipse(-h * 0.04, -h * 0.06, h * 0.1, h * 0.12, 0, 0, TAU); // Mops pedalling
     ctx.fill();
@@ -227,8 +227,8 @@ export function drawPhoto(ctx, id, x, y, w, h, mops, t = 0) {
     sky(ctx, x, y, w, h, "#bfe3ff", "#e8f5ff");
     mops(ctx, x + w * 0.42, floor, k, { f: 1 });
     rrect(ctx, x + w * 0.42 - 2 * k, floor - 34 * k, 26 * k, 22 * k, 4, "rgba(52,120,246,.85)", INK, 2);
-    disc(ctx, x + w * 0.42 + 20 * k, floor - 50 * k, 7 * k, "#ffe066", INK, 3);
-    disc(ctx, x + w * 0.42 + 20 * k, floor - 50 * k, 3 * k, INK);
+    evDisc(ctx, x + w * 0.42 + 20 * k, floor - 50 * k, 7 * k, "#ffe066", INK, 3);
+    evDisc(ctx, x + w * 0.42 + 20 * k, floor - 50 * k, 3 * k, INK);
   } else if (id === "dunk") {
     // the goat dunk: Mops in the air at a hoop
     sky(ctx, x, y, w, h, "#ffe3c4", "#ffd0a0");
@@ -239,15 +239,15 @@ export function drawPhoto(ctx, id, x, y, w, h, mops, t = 0) {
     ctx.strokeStyle = "#e5533d";
     ctx.stroke();
     mops(ctx, x + w * 0.42, floor - h * 0.28, k, { f: 1, walk: 1.2 });
-    disc(ctx, x + w * 0.68, y + h * 0.3, h * 0.07, "#f08a2a", INK, 2);
+    evDisc(ctx, x + w * 0.68, y + h * 0.3, h * 0.07, "#f08a2a", INK, 2);
   } else {
     // "ball": Mops holding up his trophy, and in the back Squatch rolled up as a ball (S#843)
     sky(ctx, x, y, w, h, "#e6f0d8", "#cfe3b8");
     ctx.save();
     ctx.globalAlpha = 0.95;
-    disc(ctx, x + w * 0.82, floor - h * 0.1, h * 0.1, FUR, INK, 2.5);
-    disc(ctx, x + w * 0.79, floor - h * 0.12, h * 0.018, INK);
-    disc(ctx, x + w * 0.85, floor - h * 0.12, h * 0.018, INK);
+    evDisc(ctx, x + w * 0.82, floor - h * 0.1, h * 0.1, FUR, INK, 2.5);
+    evDisc(ctx, x + w * 0.79, floor - h * 0.12, h * 0.018, INK);
+    evDisc(ctx, x + w * 0.85, floor - h * 0.12, h * 0.018, INK);
     ctx.restore();
     mops(ctx, x + w * 0.36, floor, k, { f: 1 });
     rrect(ctx, x + w * 0.52, y + h * 0.3, w * 0.08, h * 0.16, 3, "#e9c46a", INK, 2);
@@ -282,11 +282,11 @@ export function drawCrayonDrawing(ctx, x, y, w, h) {
   ctx.ellipse(82, 130, 34, 44, 0, 0, TAU);
   ctx.fill();
   ctx.stroke();
-  disc(ctx, 82, 78, 24, "#8a5a36", "#5a3418", 3);
-  disc(ctx, 62, 62, 8, "#8a5a36", "#5a3418", 3);
-  disc(ctx, 102, 62, 8, "#8a5a36", "#5a3418", 3);
-  disc(ctx, 74, 76, 3.5, INK);
-  disc(ctx, 90, 76, 3.5, INK);
+  evDisc(ctx, 82, 78, 24, "#8a5a36", "#5a3418", 3);
+  evDisc(ctx, 62, 62, 8, "#8a5a36", "#5a3418", 3);
+  evDisc(ctx, 102, 62, 8, "#8a5a36", "#5a3418", 3);
+  evDisc(ctx, 74, 76, 3.5, INK);
+  evDisc(ctx, 90, 76, 3.5, INK);
   ctx.beginPath();
   ctx.arc(82, 84, 9, 0.2, Math.PI - 0.2);
   ctx.lineWidth = 3;
@@ -299,7 +299,7 @@ export function drawCrayonDrawing(ctx, x, y, w, h) {
   ctx.ellipse(214, 132, 34, 42, 0, 0, TAU);
   ctx.fill();
   ctx.stroke();
-  disc(ctx, 214, 80, 22, "#ffffff", "#3b3f4a", 3);
+  evDisc(ctx, 214, 80, 22, "#ffffff", "#3b3f4a", 3);
   ctx.beginPath();
   ctx.moveTo(200, 62);
   ctx.quadraticCurveTo(190, 40, 202, 34);
@@ -315,8 +315,8 @@ export function drawCrayonDrawing(ctx, x, y, w, h) {
   ctx.closePath();
   ctx.fillStyle = "#d8d8d8";
   ctx.fill();
-  disc(ctx, 207, 78, 3, INK);
-  disc(ctx, 221, 78, 3, INK);
+  evDisc(ctx, 207, 78, 3, INK);
+  evDisc(ctx, 221, 78, 3, INK);
   rrect(ctx, 224, 118, 18, 9, 2, "#ffffff", "#1d4fb8", 2);
   // holding hands, a loop of string round both
   ctx.beginPath();
@@ -372,19 +372,19 @@ function bigSasquatch(ctx, x, y, s, fur, dark, hat) {
   ctx.strokeStyle = INK;
   ctx.stroke();
   // fur tufts round the head
-  for (let i = 0; i < 10; i++) disc(ctx, Math.cos((i / 10) * TAU) * 30, -6 + Math.sin((i / 10) * TAU) * 30, 9, fur, null);
-  disc(ctx, -30, -24, 9, fur, INK, 3);
-  disc(ctx, 30, -24, 9, fur, INK, 3);
-  disc(ctx, 0, -6, 30, fur, INK, 3);
+  for (let i = 0; i < 10; i++) evDisc(ctx, Math.cos((i / 10) * TAU) * 30, -6 + Math.sin((i / 10) * TAU) * 30, 9, fur, null);
+  evDisc(ctx, -30, -24, 9, fur, INK, 3);
+  evDisc(ctx, 30, -24, 9, fur, INK, 3);
+  evDisc(ctx, 0, -6, 30, fur, INK, 3);
   // a lighter face, two kind eyes, a big smile
   ctx.beginPath();
   ctx.ellipse(0, 0, 20, 18, 0, 0, TAU);
   ctx.fillStyle = "#c79a72";
   ctx.fill();
-  disc(ctx, -8, -4, 3.6, INK);
-  disc(ctx, 8, -4, 3.6, INK);
-  disc(ctx, -6.8, -5.2, 1.1, "#ffffff");
-  disc(ctx, 9.2, -5.2, 1.1, "#ffffff");
+  evDisc(ctx, -8, -4, 3.6, INK);
+  evDisc(ctx, 8, -4, 3.6, INK);
+  evDisc(ctx, -6.8, -5.2, 1.1, "#ffffff");
+  evDisc(ctx, 9.2, -5.2, 1.1, "#ffffff");
   ctx.beginPath();
   ctx.arc(0, 4, 9, 0.15, Math.PI - 0.15);
   ctx.lineWidth = 3;
@@ -392,17 +392,17 @@ function bigSasquatch(ctx, x, y, s, fur, dark, hat) {
   ctx.stroke();
   if (hat === "chef") {
     rrect(ctx, -18, -50, 36, 16, 4, "#ffffff", INK, 2.5);
-    disc(ctx, -10, -56, 10, "#ffffff", INK, 2.5);
-    disc(ctx, 10, -56, 10, "#ffffff", INK, 2.5);
-    disc(ctx, 0, -62, 11, "#ffffff", INK, 2.5);
+    evDisc(ctx, -10, -56, 10, "#ffffff", INK, 2.5);
+    evDisc(ctx, 10, -56, 10, "#ffffff", INK, 2.5);
+    evDisc(ctx, 0, -62, 11, "#ffffff", INK, 2.5);
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(-16, -52, 32, 8);
   } else if (hat === "flower") {
-    for (let i = 0; i < 5; i++) disc(ctx, 24 + Math.cos((i / 5) * TAU) * 7, -32 + Math.sin((i / 5) * TAU) * 7, 5, "#ff5fa8", INK, 1.5);
-    disc(ctx, 24, -32, 4, "#ffcf33");
+    for (let i = 0; i < 5; i++) evDisc(ctx, 24 + Math.cos((i / 5) * TAU) * 7, -32 + Math.sin((i / 5) * TAU) * 7, 5, "#ff5fa8", INK, 1.5);
+    evDisc(ctx, 24, -32, 4, "#ffcf33");
   }
   // a waving paw
-  disc(ctx, hat === "chef" ? -44 : 44, 6, 11, dark, INK, 3);
+  evDisc(ctx, hat === "chef" ? -44 : 44, 6, 11, dark, INK, 3);
   ctx.restore();
 }
 function pancakes(ctx, x, y, s) {
@@ -430,10 +430,10 @@ function pancakes(ctx, x, y, s) {
 }
 /** Mars: a red planet with craters. */
 export function drawMars(ctx, x, y, r) {
-  disc(ctx, x, y, r, "#d9583b", INK, Math.max(1.5, r * 0.08));
-  disc(ctx, x - r * 0.3, y - r * 0.2, r * 0.18, "#b8432c");
-  disc(ctx, x + r * 0.35, y + r * 0.25, r * 0.13, "#b8432c");
-  disc(ctx, x + r * 0.05, y + r * 0.45, r * 0.09, "#b8432c");
+  evDisc(ctx, x, y, r, "#d9583b", INK, Math.max(1.5, r * 0.08));
+  evDisc(ctx, x - r * 0.3, y - r * 0.2, r * 0.18, "#b8432c");
+  evDisc(ctx, x + r * 0.35, y + r * 0.25, r * 0.13, "#b8432c");
+  evDisc(ctx, x + r * 0.05, y + r * 0.45, r * 0.09, "#b8432c");
 }
 /**
  * The brochure's front inside (x, y, w, h): a big furry Sasquatch couple smiling behind a pancake counter, a stack of
@@ -593,9 +593,9 @@ export function drawFurArm(ctx, bx, by, x, y, r) {
   ctx.strokeStyle = FUR;
   ctx.lineWidth = r * 1.5;
   ctx.stroke();
-  disc(ctx, x, y, r, FUR, INK, 3);
-  for (const [dx, dy] of [[-0.55, -0.7], [0, -0.9], [0.55, -0.7]]) disc(ctx, x + dx * r, y + dy * r, r * 0.32, FUR, INK, 2.5);
-  disc(ctx, x, y + r * 0.1, r * 0.4, FUR_DARK);
+  evDisc(ctx, x, y, r, FUR, INK, 3);
+  for (const [dx, dy] of [[-0.55, -0.7], [0, -0.9], [0.55, -0.7]]) evDisc(ctx, x + dx * r, y + dy * r, r * 0.32, FUR, INK, 2.5);
+  evDisc(ctx, x, y + r * 0.1, r * 0.4, FUR_DARK);
   ctx.restore();
 }
 
