@@ -120,9 +120,8 @@
           (who === "mops" ? n.mo : n.sq).f = f;
         },
         step: (who, x, y, speed, dt) => mV(who === "mops" ? n.mo : n.sq, x, y, speed, dt),
-        still: (who) => {
-          (who === "mops" ? n.mo : n.sq).moving = !1;
-        },
+        still: (who) => ((who === "mops" ? n.mo : n.sq).moving = !1),
+        stopWalk: () => (n.walkTo = null), // a tap's walk ends (he hid where he stands: src/modules/lunch-sneak.js)
         // While Mops walks, he is not solid (he would shove Squatch in a jump; see R0).
         moWalking: (on) => {
           n.mo.walking = !!on;

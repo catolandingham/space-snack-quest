@@ -136,6 +136,21 @@ const ball = await page.evaluate(() => {
   beat.spots().find((q) => q.id === "lu-ball").f();
   tick(0.05);
   out.doorBall = (beat.spots() || []).map((q) => q.verb + " · " + q.cap);
+  // a tap on the floor past the plant: he walks there; HIDE · plant comes up as he reaches the plant's ring, a press
+  // hides him, and he stays hidden (the tap's walk ends; it used to count as steering and step him out at once)
+  n.q = [];
+  n.cur = null;
+  ss.ch1JumpBeat(25);
+  tick(0.2);
+  const pl = lu.LUNCH_PLACES.plant.stand;
+  n.sq.x = pl.x + 120;
+  n.sq.y = pl.y;
+  n.walkTo = { x: pl.x - 40, y: pl.y, room: n.room, lx: n.sq.x, ly: n.sq.y, lt: n.T, at: n.T };
+  for (let i = 0; i < 60 && offer() !== "HIDE · plant"; i++) ss.tick(0.05);
+  out.hideWhileWalking = { offer: offer(), walking: !!n.walkTo };
+  ss.offerNow() && ss.offerNow().f();
+  tick(0.5);
+  out.hideWhileWalking.after = { pose: st().pose, sqPose: n.sqPose };
   // not offered in the hallway or behind the counter
   n.q = [];
   n.cur = null;
@@ -159,6 +174,7 @@ g.check("noticed rolled up, he is not safe staying put: the guards know where he
 g.check("↺ while rolled up: he stands again at the step's start, nothing of the ball left", ball.afterReset.pose !== "ball" && ball.afterReset.sqPose !== "ball" && ball.afterReset.ballNear === "{}", ball.afterReset);
 g.check("moving unrolls him (as stepping out of a hiding place)", ball.beforeSteer === "ball" && ball.afterSteer.pose === "stand" && ball.afterSteer.sqPose === "stand", { before: ball.beforeSteer, after: ball.afterSteer });
 g.check("rolled up in the hallway doorway, SNEAK · hallway is not offered (he must unroll first)", ball.doorStanding === "SNEAK · hallway" && !ball.doorBall.includes("SNEAK · hallway"), { standing: ball.doorStanding, ball: ball.doorBall });
+g.check("HIDE · plant pressed while a tap's walk is still taking him there: he hides and stays hidden", ball.hideWhileWalking.offer === "HIDE · plant" && ball.hideWhileWalking.walking && ball.hideWhileWalking.after.pose === "hidden" && ball.hideWhileWalking.after.sqPose === "hidden", ball.hideWhileWalking);
 g.check("ROLL · ball is not offered in the hallway or behind the counter", !ball.hallwayOffers.includes("ROLL · ball") && !ball.counterOffers.includes("ROLL · ball"), { hallway: ball.hallwayOffers, counter: ball.counterOffers });
 
 // ---------- the snack counter close-up ----------

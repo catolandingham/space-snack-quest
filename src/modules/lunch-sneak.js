@@ -197,6 +197,7 @@ export function createLunchSneak(bridge) {
     // a guard watching him roll up knows where he is (as stepping into a hiding place)
     l.alarm && (l.alarm.spotted = l.alarm.guards.some((g) => g.sees));
     e.still("sq");
+    e.stopWalk && e.stopWalk();
     e.set("sqPose", "ball");
     l.pose = "ball";
     l.hideAt = "";
@@ -211,6 +212,8 @@ export function createLunchSneak(bridge) {
     l.alarm && (l.alarm.spotted = l.alarm.guards.some((g) => g.sees));
     e.place("sq", place.stand.x, place.stand.y);
     e.still("sq");
+    // (a tap's walk that brought him here ends: still going, it would count as steering and step him out at once)
+    e.stopWalk && e.stopWalk();
     e.set("sqPose", "hidden");
     l.pose = "hidden";
     l.hideAt = where;
