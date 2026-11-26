@@ -123,4 +123,5 @@ These three were not in the eight questions above. They are listed so this page 
 
 - **Ship (VEHICLE, L19).** 2026-11-08. The Mars vehicle is a ship, not the van. Which ship is still open (O22).
 - **Dad's line (DAD, L20).** 2026-11-08. The pancake-hair joke ("You'll get hair in the pancakes.") replaces "Health rules."
+- **Mops is a "Ganitor" (2026-11-26).** Brian, in chat: "Ganitor is what mops is - goat janitor - that should be an ongoing reference in the game." Decided as a fact about Mops (goat + janitor, his job title). Where it shows, his pick the same day ("I like all of them a b c d e"): five places, listed in `docs/BRIAN-ASKS-OPEN.md` item 14 and `docs/DECISIONS.md` ("Bedtime story, 2026-11-26"), to be built in a later round. Not on screen anywhere yet.
 - **Ending (ENDING, L21).** 2026-11-08. One closing picture instead of the long "Ever since..." card. A sketch comes first. Mops cleans with his beard.

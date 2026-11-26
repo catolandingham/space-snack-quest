@@ -4,24 +4,24 @@
 | Lines | Heading |
 | --- | --- |
 | 26–32 | # Brian's asks that are not in the game yet |
-| 33–41 | ## 1. Build next |
-| 42–60 | ## 2. Needs your eyes |
-| 61–64 | ## 3. Your instructions disagree |
-| 65–66 | ## 4. Everything else not built |
-| 67–84 | ### Morning and home |
-| 85–95 | ### Party |
-| 96–107 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
-| 108–111 | ### Party video notes and answers, 2026-11-24 (not built yet) |
-| 112–116 | ### Snacks and dress-up |
-| 117–129 | ### Day 2 and night |
-| 130–134 | ### Escape and later chapters |
-| 135–138 | ### Looks and lines |
-| 139–146 | ### Sound |
-| 147–150 | ### Words and rules |
-| 151–163 | ### How the bots work |
-| 164–171 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
-| 172–188 | ## 5. Merged, in a pull request, and being built |
-| 189–199 | ## 6. Corrections to the checkers |
+| 33–42 | ## 1. Build next |
+| 43–61 | ## 2. Needs your eyes |
+| 62–65 | ## 3. Your instructions disagree |
+| 66–67 | ## 4. Everything else not built |
+| 68–85 | ### Morning and home |
+| 86–96 | ### Party |
+| 97–108 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
+| 109–112 | ### Party video notes and answers, 2026-11-24 (not built yet) |
+| 113–117 | ### Snacks and dress-up |
+| 118–130 | ### Day 2 and night |
+| 131–135 | ### Escape and later chapters |
+| 136–139 | ### Looks and lines |
+| 140–147 | ### Sound |
+| 148–151 | ### Words and rules |
+| 152–164 | ### How the bots work |
+| 165–172 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
+| 173–189 | ## 5. Merged, in a pull request, and being built |
+| 190–200 | ## 6. Corrections to the checkers |
 <!-- /section-index -->
 # Brian's asks that are not in the game yet
 
@@ -38,6 +38,7 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 11. **A check that catches drift.** Open PR #34 checks his rules on each pull request; a first try is closed PR #34 (rules check on every PR); nothing compares the game to DECISIONS.md. "I think we basically need to have a recurring built-in check to make sure we're not drifting." (G 433).
 12. **Delete the old Chapter 1.** "we didn't get rid of the wrong ideas as we went" (G 433); "deleting bad code" (G 516). The old opening is still in 10-ch1.js and 11-ch1-hall.js.
 13. **Last, if time allows: karaoke.** Brian, 2026-11-23. Karaoke with the Moon Pie song: "For karaoke, let's actually do a different song." (S 1013); "I'm good with the Moon Pie's song." (S 1019). Today it is tap-to-howl only.
+14. **"Ganitor".** Brian, 2026-11-26: "Ganitor is what mops is - goat janitor - that should be an ongoing reference in the game." Make "Ganitor" (goat + janitor, Mops's job title) an ongoing reference in the game. Where it shows, Brian's pick the same day ("I like all of them a b c d e"), five places, to be built in a later round: A) a GANITOR name tag on Mops's shirt in every scene; B) the Station PA calls him, approved words: "Ganitor Mops to the party hall."; C) the hallway Employee of the Month wall, Mops's photo labeled "MOPS, GANITOR"; D) the robot janitor notice plays on it (robots can be janitors, only Mops is a Ganitor; exact wording still needs Brian's yes); E) Squatch's crayon drawings labeled "MOPS THE GANITOR" where Mops appears in them. Not on screen anywhere yet (decided as a fact in `docs/STORY-DECISIONS.md`, "Also answered").
 
 ## 2. Needs your eyes
 
