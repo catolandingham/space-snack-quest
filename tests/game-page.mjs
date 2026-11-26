@@ -30,7 +30,14 @@ export function readLines({ where = false } = {}) {
 // "HIDE · crate (note)" -> "HIDE · crate"
 export const actionOf = (cell) => (cell.match(/^([A-Z][A-Z ]* \u00b7 [^(]+?)\s*(\(|$)/) || [])[1] || "";
 
-export async function startGame({ port, name }) {
+/**
+ * Every test server's port is moved up by SSQ_PORT_OFFSET (default 0), so two worktrees can run npm test at the same
+ * time without one suite's page loading the other worktree's game (2026-11-26: two builders' runs shared ports).
+ */
+export const PORT_OFFSET = Number(process.env.SSQ_PORT_OFFSET || 0);
+
+export async function startGame({ port: asked, name }) {
+  const port = asked + PORT_OFFSET;
   let puppeteer;
   try {
     puppeteer = (await import("puppeteer-core")).default;

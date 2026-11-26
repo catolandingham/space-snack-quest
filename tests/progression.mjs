@@ -43,7 +43,7 @@ const server = http.createServer((req, res) => {
   res.writeHead(404);
   res.end();
 });
-await new Promise((r) => server.listen(8766, "127.0.0.1", r));
+await new Promise((r) => server.listen(8766 + Number(process.env.SSQ_PORT_OFFSET || 0), "127.0.0.1", r));
 
 let browser;
 try {
@@ -71,7 +71,7 @@ async function keys(codes) {
 }
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-await page.goto("http://127.0.0.1:8766/index.html", { waitUntil: "domcontentloaded" });
+await page.goto(`http://127.0.0.1:${8766 + Number(process.env.SSQ_PORT_OFFSET || 0)}/index.html`, { waitUntil: "domcontentloaded" });
 await page.waitForFunction(() => window.__ss);
 
 async function boot(sceneFn) {
