@@ -4,24 +4,24 @@
 | Lines | Heading |
 | --- | --- |
 | 26–32 | # Brian's asks that are not in the game yet |
-| 33–41 | ## 1. Build next |
-| 42–60 | ## 2. Needs your eyes |
-| 61–64 | ## 3. Your instructions disagree |
-| 65–66 | ## 4. Everything else not built |
-| 67–84 | ### Morning and home |
-| 85–95 | ### Party |
-| 96–107 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
-| 108–111 | ### Party video notes and answers, 2026-11-24 (not built yet) |
-| 112–116 | ### Snacks and dress-up |
-| 117–129 | ### Day 2 and night |
-| 130–134 | ### Escape and later chapters |
-| 135–138 | ### Looks and lines |
-| 139–146 | ### Sound |
-| 147–150 | ### Words and rules |
-| 151–163 | ### How the bots work |
-| 164–171 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
-| 172–188 | ## 5. Merged, in a pull request, and being built |
-| 189–199 | ## 6. Corrections to the checkers |
+| 33–42 | ## 1. Build next |
+| 43–61 | ## 2. Needs your eyes |
+| 62–65 | ## 3. Your instructions disagree |
+| 66–67 | ## 4. Everything else not built |
+| 68–85 | ### Morning and home |
+| 86–96 | ### Party |
+| 97–108 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
+| 109–112 | ### Party video notes and answers, 2026-11-24 (not built yet) |
+| 113–117 | ### Snacks and dress-up |
+| 118–130 | ### Day 2 and night |
+| 131–135 | ### Escape and later chapters |
+| 136–139 | ### Looks and lines |
+| 140–147 | ### Sound |
+| 148–151 | ### Words and rules |
+| 152–164 | ### How the bots work |
+| 165–172 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
+| 173–189 | ## 5. Merged, in a pull request, and being built |
+| 190–200 | ## 6. Corrections to the checkers |
 <!-- /section-index -->
 # Brian's asks that are not in the game yet
 
@@ -38,12 +38,13 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 11. **A check that catches drift.** Open PR #34 checks his rules on each pull request; a first try is closed PR #34 (rules check on every PR); nothing compares the game to DECISIONS.md. "I think we basically need to have a recurring built-in check to make sure we're not drifting." (G 433).
 12. **Delete the old Chapter 1.** "we didn't get rid of the wrong ideas as we went" (G 433); "deleting bad code" (G 516). The old opening is still in 10-ch1.js and 11-ch1-hall.js.
 13. **Last, if time allows: karaoke.** Brian, 2026-11-23. Karaoke with the Moon Pie song: "For karaoke, let's actually do a different song." (S 1013); "I'm good with the Moon Pie's song." (S 1019). Today it is tap-to-howl only.
+14. **"Ganitor".** Brian, 2026-11-26: "Ganitor is what mops is - goat janitor - that should be an ongoing reference in the game." Make "Ganitor" (goat + janitor, Mops's job title) an ongoing reference in the game. Where it shows, Brian's pick the same day ("I like all of them a b c d e"), five places, to be built in a later round: A) a GANITOR name tag on Mops's shirt in every scene; B) the Station PA calls him, approved words: "Ganitor Mops to the party hall."; C) the hallway Employee of the Month wall, Mops's photo labeled "MOPS, GANITOR"; D) the robot janitor notice plays on it (robots can be janitors, only Mops is a Ganitor; exact wording still needs Brian's yes); E) Squatch's crayon drawings labeled "MOPS THE GANITOR" where Mops appears in them. Not on screen anywhere yet (decided as a fact in `docs/STORY-DECISIONS.md`, "Also answered").
 
 ## 2. Needs your eyes
 
 - **Pick the FUR alarm** (2026-11-25, showing-5 note 8). Five made-up alarm sounds on one page, `tools/alarm-choices.html`; the one he picks becomes the only alarm in Chapter 1. Not changed in the game until he picks.
-- **The Moon Pie bedtime story (beat 21).** Brian 2026-11-25: the old crate story "is the bedtime story (beat 21) and gets the same sizing fix". Built on branch `feat/ch1-bedtime-story` (draft, not merged) with the old captions and his bedtime line, all needs-yes; the mop bucket picture is off for his answer. Waiting for his eyes.
-- **The home morning (beats 22 to 24).** Built on branch `feat/ch1-day2-morning` (draft, not merged), including "Make the first gift obvious" ("that needs to be more obvious.", S 92): the rocket is the only thing outlined and glowing when he wakes. Placeholder drawings and two prompts wait for his yes.
+- **The Moon Pie bedtime story (beat 21).** Brian 2026-11-25: the old crate story "is the bedtime story (beat 21) and gets the same sizing fix". Built on branch `feat/ch1-bedtime-story` (PR #89, draft, not merged) with the old captions and his bedtime line, needs-yes; the mop bucket picture is off for his answer. His 2026-11-26 notes are built there too: Squatch asks "Tell me about when we first met?" (exact words to confirm), Mops's "...Weeee-eenn-nnttt?", the vocal song kept, the Guardians picture with his approved line, and falling asleep with a yawn, the tuck, the light going down and three snores. Waiting for his eyes. Open: where Mops sleeps (built: he goes out by the door).
+- **The home morning (beats 22 to 24).** Built on branch `feat/ch1-day2-morning` (draft, not merged), including "Make the first gift obvious" ("that needs to be more obvious.", S 92): the rocket is the only thing outlined and glowing when he wakes. His 2026-11-26 notes are built there too: the box clearly bigger than the rocket (0:21), the first build's box view with the older notes and the crayon drawing (0:21), and his crayon Guardians in a thought bubble as he holds up the gift (0:30, the story hole; with Mops's Guardians line at bedtime). Placeholder drawings and two prompts wait for his yes.
 - **Home room objects.** "the new version of the crate in the room is off, at least in the picture you showed." (G 597). Covers crate, bed, bucket, bedtime-story look, janitor facing. Walls and furniture merged today; check.
 - **The dance game.** A scrolling-arrow dance exists but you said it never worked. "The dance game, hopefully that can be done clean and simple. If not, forget it." (G 516). "the fur shows at the dance scene" (G 603) is unclear.
 - **The balloon game.** "The balloon thing has just never worked when we've tried it before ... if it's all wonky and confusing, forget it." (G 516); "the balloon's just total nonsense" (K 336). Still in main (12-ch1-redesign.js:808-834).

@@ -6,8 +6,9 @@
  *   crate   a delivery crate of Moon Pies, three Moon Pies on its lid
  *   baby    the crate open, a sleeping baby Sasquatch in it covered in crumbs, Mops beside it with a "!"
  *   beard   the baby out of the crate, holding Mops's beard and giggling
- *   baa     the same picture, Mops's "...Baaa?" in a bubble over him (one bubble, no caption: the TV story split
- *           its "*gasp*" off the same way)
+ *   weent   the same picture, Mops's "...Weeee-eenn-nnttt?" in a bubble over him (one bubble, no caption: the TV
+ *           story split its "*gasp*" off the same way; the old picture had "...Baaa?", Brian 2026-11-26: "Goats say
+ *           "weeeent" not baaaah")
  *   bucket, hide   (only with BEDTIME_SWITCHES.bucketPicture on) Mops beside his mop bucket, the baby hidden in it
  * Only Mops and baby Squatch are in the pictures (docs/GUARDIANS-STORY-BRIEF.md: the story is only about Mops finding
  * him; no parents, no other Sasquatches, no hints of them).
@@ -23,6 +24,7 @@
 import { caption, bubble, storyWash } from "./tv-story-art.js";
 import { drawSquatchArt, armEnds } from "./squatch-art.js";
 import { bedLine, BEDTIME_SWITCHES } from "./bedtime-story-lines.js";
+import { drawGuardiansCrayon } from "./guardians-drawing.js";
 
 const INK = "#1e2430";
 // Canvas pixels to one unit of docs/locked-rooms/home_room.py (its S maps a unit to 1.4286 picture pixels, and the
@@ -275,13 +277,13 @@ const ALL = [
     draw: (ctx, t, engine) => storyPicture(ctx, () => beardScene(ctx, engine, t), () => ({ caption: caption(ctx, engine, bedLine("cap-beard")) })),
   },
   {
-    pic: "baa",
+    pic: "weent",
     draw: (ctx, t, engine) => {
       let d = null;
       return storyPicture(
         ctx,
         () => (d = beardScene(ctx, engine, t)),
-        () => ({ caption: null, bubble: bubble(ctx, engine, bedLine("mops-baa"), d.mouth.x - 8, d.mopsHead.y, 28, 300, "", "", 70) }),
+        () => ({ caption: null, bubble: bubble(ctx, engine, bedLine("mops-weent"), d.mouth.x - 8, d.mopsHead.y, 28, 300, "", "", 70) }),
       );
     },
   },
@@ -311,13 +313,56 @@ export const BEDTIME_PICTURES = Object.freeze(ALL.map((p) => p.pic));
 export const BEDTIME_PANELS = Object.freeze(ALL.map((p) => (ctx, t, engine) => ({ pic: p.pic, sizes: sizes(), ...p.draw(ctx, t, engine) })));
 
 /**
+ * After Mops's bedtime line, one more picture (Brian, 2026-11-26): Squatch's crayon drawing of the Guardians, big, and
+ * Mops beside it saying his Guardians line in a bubble over him (waits for NEXT). It is now, not years ago, so it has
+ * no wash. Mops is the room's Mops exactly as the room draws him (no pose, face or look of his own here, no wink),
+ * facing the drawing: nothing hints that he writes the notes (the player learns that at the vent, beat 48). The
+ * cutaway "guardians".
+ */
+export const GUARDIANS_PICTURE = Object.freeze({ sheet: Object.freeze({ x: 330, y: 300, w: 500, tilt: -0.035 }), mops: Object.freeze({ x: 790, floor: 560 }) });
+function guardiansPicture(ctx, t, engine) {
+  const G = GUARDIANS_PICTURE;
+  ctx.fillStyle = "#f4f1ea";
+  ctx.fillRect(0, 0, 960, 640);
+  ctx.fillStyle = "#ebe6da";
+  ctx.fillRect(0, G.mops.floor - 40, 960, 640);
+  // the sheet, held up to the wall with two strips of tape
+  const sheet = drawGuardiansCrayon(ctx, G.sheet.x, G.sheet.y, G.sheet.w, { tilt: G.sheet.tilt });
+  for (const tx of [-0.36, 0.36]) {
+    ctx.save();
+    ctx.translate(G.sheet.x + tx * G.sheet.w, sheet.y0 + 6);
+    ctx.rotate(tx * 0.5);
+    ctx.fillStyle = "rgba(240,226,170,.85)";
+    ctx.fillRect(-34, -12, 68, 24);
+    ctx.restore();
+  }
+  const f = -1,
+    x = G.mops.x,
+    floor = G.mops.floor;
+  ctx.beginPath();
+  ctx.ellipse(x, floor + 2, 90, 8, 0, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(30,36,48,.15)";
+  ctx.fill();
+  const o = { f, walk: 0, mop: false };
+  if (engine && engine.drawMopsOn) engine.drawMopsOn(ctx, x, floor, MOPS_SCALE, o);
+  else if (engine && engine.drawMops) engine.drawMops(x, floor, MOPS_SCALE, o);
+  const head = { x: x + 17 * MOPS_SCALE * f, y: floor - BED_STORY.tall * MOPS_SCALE },
+    mouth = { x: x + 22 * MOPS_SCALE * f, y: floor - 24 * MOPS_SCALE };
+  const b = bubble(ctx, engine, bedLine("mops-guardians"), mouth.x + 30, head.y, 28, 330, "", "", 24);
+  return { pic: "guardians", cast: ["mops"], drawing: sheet, bubble: b, mopsHead: head, caption: null, mopsLook: Object.keys(o).sort().join(",") };
+}
+/** The Guardians picture as the cutaway draws it (cutaway "guardians"). */
+export const GUARDIANS_PANELS = Object.freeze([(ctx, t, engine) => guardiansPicture(ctx, t, engine)]);
+
+/**
  * The thought bubble over Squatch's head in the room, with a little Moon Pie crate in it and no words. `head` is
  * the top of his head (canvas). Returns its box. `a` fades it in (0 to 1). `inside(ctx, cx, cy)` draws something else
- * in it instead of the crate (the home morning's Guardian Box, home-morning-art.js).
+ * in it instead of the crate (the home morning's Guardian Box and crayon drawing, home-morning-art.js); `size` ({ w, h })
+ * makes the cloud bigger than its usual 172 x 118.
  */
-export function drawThought(ctx, head, a = 1, inside = null) {
-  const w = 172,
-    h = 118,
+export function drawThought(ctx, head, a = 1, inside = null, size = null) {
+  const w = (size && size.w) || 172,
+    h = (size && size.h) || 118,
     cx = Math.min(940 - w / 2, Math.max(20 + w / 2, head.x + 70)),
     cy = Math.max(20 + h / 2, head.y - 34 - h / 2);
   ctx.save();
