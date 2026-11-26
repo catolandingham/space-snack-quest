@@ -164,8 +164,9 @@ export function seeCue(cue, now = clock()) {
   if (place === visit.place) return ((visit.pend = null), cue);
   if (!visit.pend || visit.pend.place !== place) return ((visit.pend = { place, cue, since: now }), cue);
   if (now - visit.pend.since >= HOLD || visit.place === null) {
-    // (after an alarm the music stays quiet until a visit to another place: hushNow)
-    place && visit.hush && place !== visit.hush.place && (visit.hush = null);
+    // (after an alarm the music stays quiet until a visit to another place, music or none: hushNow; while the alarm is
+    // still going, hushNow keeps it, so the alarm's own quiet is not a new place)
+    visit.hush && place !== visit.hush.place && now - visit.hush.at > HOLD && (visit.hush = null);
     Object.assign(visit, { place, cue: visit.pend.cue, n: place ? nextTurn(place) : 0, done: false, fresh: !!place, pend: null });
   }
   return cue;
@@ -173,12 +174,13 @@ export function seeCue(cue, now = clock()) {
 /**
  * The alarm goes off (Brian 2026-11-26: "when alarm goes off, I presume music should stop"): the music stops now, and
  * stays quiet through the alarm and after it, in this place, even when the alarm is over; it comes back only with a
- * visit to another place (then that place's pick plays, as the table says). The alarm's own sound and the FUR!
+ * visit to another place (then that place's pick plays, as the table says). Called every frame while an alarm is
+ * on (`now`: seconds, for tests). The alarm's own sound and the FUR!
  * moment's sting are sound effects, not music: they still play.
  */
-export function hushNow() {
-  const place = visit.place || (visit.pend && visit.pend.place) || "";
-  visit.hush = { place: visit.hush && !place ? visit.hush.place : place };
+export function hushNow(now = clock()) {
+  const place = visit.hush ? visit.hush.place : visit.place || (visit.pend && visit.pend.place) || "";
+  visit.hush = { place, at: now };
 }
 /** Tests: whether the music is hushed by an alarm now (and for which place). */
 export function hushed() {

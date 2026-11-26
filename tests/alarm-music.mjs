@@ -25,26 +25,34 @@ const g = await startGame({ port: 9749, name: "alarm-music" });
   frame("sneak", 1.5); // (a new visit starts the track: the first frame is quiet while it seeks)
   el.currentTime = 5;
   const playing = frame("sneak", 2);
-  P.hushNow();
+  P.hushNow(2);
   el.currentTime = 6;
   const atAlarm = frame("sneak", 2.1),
     hushAt = P.hushed();
-  // the alarm is over: the cue goes quiet for a while, then back to the same place
-  frame("", 3);
-  frame("", 4.5);
-  frame("sneak", 5);
-  frame("sneak", 6.5);
+  // the alarm goes on (no music cue while it is on; it keeps the hush), then it is over and the cue is back here
+  for (let t = 2.2; t < 6; t += 0.1) (P.hushNow(t), frame("", t));
+  frame("sneak", 6.1);
+  frame("sneak", 7.6);
   el.currentTime = 7;
-  const samePlace = frame("sneak", 7);
+  const samePlace = frame("sneak", 8);
+  // he goes through a door to a place with no music (the hallway), then comes back: the place's music plays again
+  frame("", 8.2);
+  frame("", 9.7);
+  const quietPlace = P.hushed();
+  frame("sneak", 9.8);
+  frame("sneak", 11.3);
+  el.currentTime = 9;
+  const backAgain = frame("sneak", 11.5);
   // a visit to another place
-  frame("hall", 8);
-  frame("hall", 9.5);
+  frame("hall", 12);
+  frame("hall", 13.5);
   el.currentTime = 2;
-  const nextPlace = frame("hall", 10);
+  const nextPlace = frame("hall", 14);
   const now = P.visitNow();
   g.check("1: the sneak's music plays (Sneaky Snitch) before the alarm", playing > 0 && P.fileFor("sneak") === "music/sneaky-snitch.mp3", { playing });
   g.check("1: the alarm stops the music at once", atAlarm === 0 && !!hushAt && hushAt.place === "sneak", { atAlarm, hushAt });
-  g.check("1: after the alarm it stays quiet in the same place, even when the cue goes away and comes back", samePlace === 0, { samePlace });
+  g.check("1: through the alarm and after it the music stays quiet in the same place", samePlace === 0, { samePlace });
+  g.check("1: a visit to a place with no music (a hallway) ends the quiet: back in the first place, its music plays again", quietPlace === null && backAgain > 0, { quietPlace, backAgain });
   g.check("1: a visit to another place brings the music back with that place's pick (the empty hall: Lobby Time)", nextPlace > 0 && now.file === "music/lobby-time.mp3" && !P.hushed(), { nextPlace, now });
   P.newVisits();
 }
