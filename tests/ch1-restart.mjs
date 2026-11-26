@@ -38,7 +38,9 @@ async function tryRestart(label, setUp) {
       const moved = { x: Math.round(n.sq.x), y: Math.round(n.sq.y) };
       ss.sectionReset();
       for (let i = 0; i < 10; i++) ss.tick(1 / 30);
-      const after = { scene: n.scene, room: n.room, step: n.ch1Step || "", x: Math.round(n.sq.x), y: Math.round(n.sq.y), ctrl: !!n.ctrl, chip: n.ch1Chip || n.chip || "" };
+      // (cut: a part that is a cutscene, the loading bay's beats 30 to 36, plays again from its start: the story queue
+      // has its steps; loading-bay.js restart)
+      const after = { scene: n.scene, room: n.room, step: n.ch1Step || "", x: Math.round(n.sq.x), y: Math.round(n.sq.y), ctrl: !!n.ctrl, chip: n.ch1Chip || n.chip || "", cut: !n.ctrl && !!(n.cur || n.q.length) && !!(window.SSQ.beat("ch1-bay") && window.SSQ.beat("ch1-bay").active()) };
       const putBack = after.x !== moved.x || after.y !== moved.y || after.step !== before.step;
       return { label, playing, before, moved, after, putBack };
     },
@@ -56,8 +58,8 @@ const toOpening = results.filter((r) => r.before.scene !== "O1" && r.after.scene
 g.check("↺ never sends him back to the opening from a later part of Chapter 1", toOpening.length === 0, toOpening);
 const otherPart = results.filter((r) => r.after.scene !== r.before.scene && r.after.scene !== "O1");
 g.check("↺ keeps him in the same part of the chapter", otherPart.length === 0, otherPart);
-const stuck = results.filter((r) => !r.after.ctrl || (r.before.chip && !r.after.chip));
-g.check("after ↺ he can move and has a goal", stuck.length === 0, stuck);
+const stuck = results.filter((r) => (!r.after.ctrl && !r.after.cut) || (r.before.chip && !r.after.chip));
+g.check("after ↺ he can move and has a goal (or, in the loading bay's cutscene, the part plays again)", stuck.length === 0, stuck);
 // The party (QA) and the night (Q4) keep their own restarts (CH1_CHECKPOINTS). Everywhere else ↺ puts
 // him back where the step he is on began, on that same step (noteCh1Step in src/game/20-ch2.js).
 // Only beats that open with the player in control: a beat that opens in a cutscene has no step start yet.

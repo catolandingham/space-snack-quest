@@ -127,6 +127,8 @@ export function createLoadingBay(bridge) {
   // in through the doorway once Mops waits by the plant: behind him, then on
   const pastMops = (to) => [BAY.door, BAY.door.step, ...BAY_SPOTS.behindMops, to];
   const outWay = () => [BAY.door.step, BAY.door, BAY.door.off];
+  // Squatch and Mops go only as far as the doorway's edge (walks stay on the picture)
+  const edgeWay = () => [BAY.door.step, BAY.door, BAY.door.edge];
   // Mops or Squatch (the engine's people) along a way; Mops is not solid while he walks
   const engineWay = (who, way, speed) => {
     const e = E();
@@ -294,8 +296,8 @@ export function createLoadingBay(bridge) {
       // the loading bay, no ship yet: in through the doorway by the plant
       e.run(() => {
         e.enterRoom("hangar", "QB");
-        e.place("mops", BAY.door.off.x + 30, BAY.door.off.y);
-        e.place("sq", BAY.door.off.x, BAY.door.off.y + 4);
+        e.place("mops", BAY.door.edge.x + 24, BAY.door.edge.y);
+        e.place("sq", BAY.door.edge.x, BAY.door.edge.y + 4);
         e.face("mops", 1);
         e.face("sq", 1);
       }),
@@ -590,7 +592,7 @@ export function createLoadingBay(bridge) {
         wait(0.5),
         // out together through the doorway
         e.run(() => e.walkOff()),
-        bothWays(outWay(), [BAY_SPOTS.sqOut, ...outWay()], BAY_PACE.walk),
+        bothWays(edgeWay(), [BAY_SPOTS.sqOut, ...edgeWay()], BAY_PACE.walk),
         // the hallway: the two robots wait at the office door, turned to it
         e.run(() => {
           e.enterRoom("passage", "QB");

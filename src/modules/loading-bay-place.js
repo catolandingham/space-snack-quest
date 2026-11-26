@@ -16,7 +16,9 @@ export const BAY = Object.freeze({
   // The doorway in the left wall (picture x 40, y 350 to 455): where people come in from the hallway and go out.
   // `step`: the first step in from it, left of the plant's pot and in front of it (nobody walks through the pot or the
   // bin, which stand right beside the doorway).
-  door: Object.freeze({ x: 44, y: 336, off: Object.freeze({ x: -40, y: 332 }), step: Object.freeze({ x: 72, y: 416 }) }),
+  // `off`: out of sight beyond it (Isfred, the workers, a robot); `edge`: where Squatch and Mops cross into the next room
+  // (walks stay on the picture: tests/ch1-playthrough.mjs).
+  door: Object.freeze({ x: 44, y: 336, off: Object.freeze({ x: -40, y: 332 }), edge: Object.freeze({ x: 8, y: 334 }), step: Object.freeze({ x: 72, y: 416 }) }),
   // The potted plant by the doorway: its leaves (the eyes go in their middle, Brian's brief 2026-11-26: "only his
   // eyes show, centered in the plant"), and where he stands to hide in it (in front of the pot).
   plant: Object.freeze({ leaves: Object.freeze({ x0: 81, x1: 170, y0: 256, y1: 338 }), eyes: Object.freeze({ x: 125, y: 300 }), stand: Object.freeze({ x: 126, y: 384 }) }),
