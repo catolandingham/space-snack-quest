@@ -1015,7 +1015,9 @@ export function createLoadingBay(bridge) {
           me = who === "sq" ? s : m,
           other = who === "sq" ? m : s,
           tall = adultPxFor("passage") * (who === "sq" ? 0.8 : 0.92);
-        return { x0: me.x - 26, x1: me.x + 26, y0: me.y - tall, y1: me.y, side: other.x > me.x ? "left" : "right" };
+        // (the box takes in his whole head: facing left, Mops's head reaches well left of his feet)
+        const reach = (f) => (who === "mops" && f ? tall * 0.85 : 26);
+        return { x0: me.x - reach((me.f || 1) < 0), x1: me.x + reach((me.f || 1) > 0), y0: me.y - tall, y1: me.y, side: other.x > me.x ? "left" : "right" };
       }
       return null;
     },

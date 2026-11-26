@@ -87,7 +87,7 @@ const run = await page.evaluate(
           for (let i = 0; i < 8; i++) (ss.tick(0.05), ss.drawFrame());
           const lb = window.__ss.lastBubble;
           out.lines.push(b.text);
-          out.bubbles[b.text] = { who: b.who, box: lb ? { x: lb.x, y: lb.y, w: lb.w, h: lb.h } : null, step: st().step, ring: (beat.debug().drew || {}).ring || "", closeUp: (beat.debug().drew || {}).closeUp ? beat.debug().drew.closeUp.id : "", papers: st().papers ? st().papers.where : "", glow: !!st().glow, room: n.room };
+          out.bubbles[b.text] = { who: b.who, box: lb ? { x: lb.x, y: lb.y, w: lb.w, h: lb.h } : null, head: lb && lb.head ? { ...lb.head } : null, step: st().step, ring: (beat.debug().drew || {}).ring || "", closeUp: (beat.debug().drew || {}).closeUp ? beat.debug().drew.closeUp.id : "", papers: st().papers ? st().papers.where : "", glow: !!st().glow, room: n.room };
         }
         n.bt = 1;
         ss.opTap();
@@ -166,6 +166,18 @@ g.check("35: the copies fly into the bin by the plant and stay there", run.paper
 // beat 36
 g.check("36: Mops's cone holds him (hearts) once he is out of the plant", run.mopsSaw);
 g.check("36: in the hallway the robots glow on Mops's line", run.bubbles["We got to watch out for these robots."].glow && run.bubbles["We got to watch out for these robots."].room === "passage");
+// the hallway's lines sit beside the speaker's head: not on it, and no further than 60 from it (the photo wall's heading
+// once pushed one to the far corner)
+const besideHead = ["We got to watch out for these robots.", "What's the difference between fur and hair?", "Paperwork."].map((t) => {
+  const b = run.bubbles[t] || {},
+    x = b.box,
+    h = b.head;
+  if (!x || !h) return { t, bad: "no box" };
+  const over = x.x < h.x + h.w && x.x + x.w > h.x && x.y < h.y + h.h && x.y + x.h > h.y,
+    gap = Math.max(h.x - (x.x + x.w), x.x - (h.x + h.w), h.y - (x.y + x.h), x.y - (h.y + h.h), 0);
+  return { t, over, gap: Math.round(gap) };
+});
+g.check("36: in the hallway each bubble sits beside its speaker's head, not on it", besideHead.every((b) => b.over === false && b.gap <= 60), besideHead);
 g.check("36: then the fur and hair question and \"Paperwork.\"", run.lines.slice(-2).join(" / ") === "What's the difference between fur and hair? / Paperwork.", run.lines.slice(-2));
 g.check("36 ends with beat 37: the hallway, \"Squatch: go on\", control (ch1WalkHomeDone)", run.end.room === "passage" && run.end.ch1Step === "photos" && run.end.chip === "Squatch: go on" && run.end.ctrl && !run.end.active, run.end);
 g.check("only the lines file's words were said", run.lines.every((t) => WORDS.has(t)), run.lines.filter((t) => !WORDS.has(t)));
