@@ -13,14 +13,14 @@
 | 97–108 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
 | 109–112 | ### Party video notes and answers, 2026-11-24 (not built yet) |
 | 113–117 | ### Snacks and dress-up |
-| 118–130 | ### Day 2 and night |
-| 131–135 | ### Escape and later chapters |
-| 136–139 | ### Looks and lines |
-| 140–147 | ### Sound |
-| 148–151 | ### Words and rules |
-| 152–164 | ### How the bots work |
-| 165–172 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
-| 173–189 | ## 5. Merged, in a pull request, and being built |
+| 118–129 | ### Day 2 and night |
+| 130–134 | ### Escape and later chapters |
+| 135–138 | ### Looks and lines |
+| 139–146 | ### Sound |
+| 147–150 | ### Words and rules |
+| 151–163 | ### How the bots work |
+| 164–171 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
+| 172–189 | ## 5. Merged, in a pull request, and being built |
 | 190–200 | ## 6. Corrections to the checkers |
 <!-- /section-index -->
 # Brian's asks that are not in the game yet
@@ -120,7 +120,6 @@ Brian watched the party video and answered every question the same evening (his 
 - Gallery with arrows and an X always there. "arrows to sweep left or right, and then an X that's there at all times" (S 883).
 - Janitor gets sucked out when robots land. "Is there a way where, like, the janitor can get sucked out when the robots land or something?" (S 223).
 - Squatch sneaks to the grate, music distracts robots. "we should have squatch sneak over to grate after distracting robots with music" (S 596).
-- Manager shakes the robots' hands. "The Guy Who Ordered Them Should Shake The Hands Of Dot Bob And Lou As They Leave" (P L103).
 - Foreshadow rolling into a ball. "Foreshadowing The Fact That You Can Roll Up Into A Ball" (P L182).
 - Ship cutscene, security cameras. "We got a call from The From Stormtop Uh Security cameras" (P L222).
 - Squatch shows the brochure. "Squatch Should Show Him The Brochure" (P L165).

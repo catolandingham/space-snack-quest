@@ -4,21 +4,21 @@
 | Lines | Heading |
 | --- | --- |
 | 23–32 | # Space Snack Quest |
-| 33–106 | ## Chapter 1 redesign (on main) |
-| 107–120 | ## Music credits |
-| 121–151 | ## Source and build |
-| 152–162 | ## Debug link |
-| 163–168 | ## Automatic checks |
-| 169–172 | ## Screen fit |
-| 173–194 | ## Brian's repeat complaints, as tests (2026-11-22) |
-| 195–200 | ## Scene 1 morning |
-| 201–204 | ## Chapter 1 kid robot |
-| 205–221 | ## Phase 1: kitchen and diner clarity |
-| 222–234 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
-| 235–248 | ## Phase 3: one capture rule, phone HUD, tap to walk |
-| 249–258 | ## Chapter 1 pass: the night out has a purpose, switches say why |
-| 259–276 | ## Progression tests |
-| 277–303 | ## Left as they were |
+| 33–119 | ## Chapter 1 redesign (on main) |
+| 120–133 | ## Music credits |
+| 134–164 | ## Source and build |
+| 165–175 | ## Debug link |
+| 176–181 | ## Automatic checks |
+| 182–185 | ## Screen fit |
+| 186–207 | ## Brian's repeat complaints, as tests (2026-11-22) |
+| 208–213 | ## Scene 1 morning |
+| 214–217 | ## Chapter 1 kid robot |
+| 218–234 | ## Phase 1: kitchen and diner clarity |
+| 235–247 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
+| 248–261 | ## Phase 3: one capture rule, phone HUD, tap to walk |
+| 262–271 | ## Chapter 1 pass: the night out has a purpose, switches say why |
+| 272–289 | ## Progression tests |
+| 290–316 | ## Left as they were |
 <!-- /section-index -->
 # Space Snack Quest
 
@@ -31,6 +31,8 @@ Calendar review status (2026-11-16): Brian said yes to merge the calendar (Nov 1
 **Next up (Brian, 2026-11-16):** Chapter 1, one beat at a time in [`docs/CH1-STORY-WALKTHROUGH.md`](docs/CH1-STORY-WALKTHROUGH.md). Do not leave beat 1 until Brian says it is right. Squatch walks around the bed and the bucket, and the Guardian box is in the closet on day 1 (locked home room v5; Brian's yes, Nov 16, 12:50 PM PT). On day 2 he takes the box out at the closet (`tests/bedroom-walk.mjs`). The calendar is tappable. Printed copy: MOONMUNCH / FUZZUARY; Sponsored by MOON PIES; Sock hunt; family Olympics night; Wash outside windows (remember space suit!); Blanket fort night. These are decoration, not new quests. X or NEXT returns to the same scene (`tests/calendar-closeup.mjs`). Closet, bed, desk homework and the already-bitten calendar are built on branch `feat/home-alone` (draft, see below); the purple bed bar is removed there too; still to build: the bucket. The night vent step no longer finishes inside Mops: the morning hum was leaving him marked as walking. Docs match main: yes.
 
 ## Chapter 1 redesign (on main)
+
+2026-11-26, draft pull request on branch `feat/ch1-loading-bay` (from `feat/ch1-lunch-sneak`), not merged. Beats 28 to 36, the loading bay, are a module (`src/modules/loading-bay.js`, registered as `ch1-bay`; places and timings in `loading-bay-place.js`, drawings in `loading-bay-art.js`, words in `loading-bay-lines.js`) in place of the old ship call, plant hide and bay lines, which are deleted from `src/game/14-ch1-day2.js` and `12-ch1-redesign.js`. Behind the snack counter the hall's wall speaker says "Universal Postal Service ship arriving!" in a bubble beside it, with sound waves coming off it; Mops and Squatch talk (four lines, each waits for NEXT). Then a cutscene walk: up the aisle, through the hallway (nothing there can be used yet) and into the loading bay, no ship yet. "Squatch: hide in the plant", the plant outlined, HIDE · plant: only his eyes show, in the middle of the leaves. From there he watches, with no control and nobody able to see him: Isfred and the three leaving workers walk in past the plant; the ship glides into the window and its ramp comes down (the locked "day" picture shows through, over the "noship" one); three robots roll down through the fur scanner; Isfred shakes each worker's hand and they go up the ramp; "Mops, don't worry, ..."; a robot holds up the delivery form and a close-up grows out of it: the white copy (Isfred signs it), the big pink order sheet with ORDER MORE ROBOTS and its box, his office code 169556 written on the pink and coming through grey on the small yellow copy stuck under it (Mops: "So futuristic and we still order on paper."); with no words the bay's wall speaker chimes, Isfred points the robot to the doorway and hurries out, and the robot rolls out with the papers; it comes back holding only the pink and the yellow; Mops takes them, walks round to the big wall vent with his back to the robots and bites the corner off both (a close-up, "Delicious."; nothing goes into the vent); he walks over to the plant with them in his mouth ("Mmf mrrf!", Squatch: "You're gumbling! (goat mumbling)", a close-up of him, the eyes and the bin) and spits them, still stuck together, into the bin by the plant ("Ptoo!"); they stay there, poking out of the bin. Beat 36: two robots roll off into the hallway, Mops waves Squatch out (his warm cone with hearts), they walk out, and in the hallway the two robots wait at the office door, turned to it: "We got to watch out for these robots." (they glow), "What's the difference between fur and hair?", "Paperwork.", the robots roll away and beat 37 starts (`ch1WalkHomeDone` in `src/game/14-ch1-day2.js`, the engine's `walkHomeDone`). Isfred's office code is 169556 (Brian, chat, 2026-11-26; the pin `office-code`). The bridge gained `speakerAt` and `bubbleBeside` (any beat places its speakers' bubbles) and the hand-over `drawLocked`, `drawWorker`, `officeCode`, `walkHomeDone`; `hallOwner()` now names the beat that draws any room. On localhost `?beat=bay:pa` (or `bay:hide`, `bay:sign`, any part) opens it. Check: `tests/loading-bay.mjs`. Showing tool: `node tools/party-showing.mjs bay <out.mp4>`. Docs match main: yes. Not yet played by a person.
 
 2026-11-26 (round C), draft pull request #91 on branch `feat/ch1-lunch-sneak`, not merged. Brian's answers of 2026-11-26 are built in the lunch sneak: Mops's approved "...you know the rule, grab one snack." behind the counter (the thought bubble is gone), ROLL · ball in the hall (the game's ball rule), a framed close-up of the snack counter so the plate, the pie and Squatch read on a phone, a hay sandwich, and a bigger bag whose MOPS reads on a phone and an iPad. "Ganitor" (goat + janitor, `src/modules/ganitor.js`): a GANITOR name tag on Mops in every scene, the wall speaker's "Ganitor Mops to the party hall." before he leaves on Day 2 (with the ear icon), an Employee of the Month photo labelled MOPS, GANITOR in the hallway (a layer over the locked picture), and MOPS THE GANITOR on Squatch's crayon card. The robot janitor notice (D) waits for Brian's pick of wording. Docs match main: yes. Not yet played by a person.
 

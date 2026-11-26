@@ -18,6 +18,7 @@
         party && party.tick(l);
         hmBeat() && hmBeat().tick(l);
         luBeat() && luBeat().tick(l);
+        bayBeat() && bayBeat().tick(l);
       }
       (n.sqHop &&
         ((n.sqHop.t += l),
@@ -1149,7 +1150,7 @@
       let close = n.cur && n.cur.over && window.SSQ && window.SSQ.beat("ch1-morning");
       if (close && close.closeUpSpeaker(l)) return close.closeUpSpeaker(l);
       // The party night places its own speakers (Isfred beside him, the band, Squatch's eyes in the plant).
-      let at = partyBeat() && partyBeat().speakerAt(l);
+      let at = window.SSQ && window.SSQ.speakerAt && window.SSQ.speakerAt(l);
       if (at) return at;
       let o = IA(l);
       if (o) return o;
@@ -1288,7 +1289,7 @@
       spk && ((_ = w(spk.x0 - 26 - T, 10, c - T - 10)), ($ = w(spk.y0 - 6, 24, b - R - 12)));
       // At the party, Isfred's and the band's bubbles sit beside them, never over the banner.
       let close = n.cur && n.cur.over && window.SSQ && window.SSQ.beat("ch1-morning"),
-        side = (partyBeat() && partyBeat().bubbleBeside(l.who)) || (close && close.closeUpBeside(l.who));
+        side = (window.SSQ && window.SSQ.bubbleBeside && window.SSQ.bubbleBeside(l.who)) || (close && close.closeUpBeside(l.who));
       side && ((_ = w(side.side === "left" ? side.x0 - 26 - T : side.x1 + 26, 10, c - T - 10)), ($ = w(side.y0 - 6, 24, b - R - 12)));
       // Never cover the speaker's face. Sit above the head, or beside it if the top of the picture is full.
       let head = ear ? null : speakerHead(l.who);
@@ -2072,7 +2073,7 @@
     function drawRoom() {
       if (n.room === "office") return drawCh1OfficeRoom();
       // The party night's hall is the party module's drawing, on the locked picture.
-      if (n.room === "hall" && hallBeat() && hallBeat().drawRoom(e)) return;
+      if (hallBeat() && hallBeat().drawRoom(e)) return;
       (n.room === "closet"
         ? (P2(), X2(), g5(), z2())
         : n.room === "deck"
@@ -2156,7 +2157,7 @@
         partyBeat() && partyBeat().draw(e);
         window.SSQ && window.SSQ.beat("ch1-bedtime-story") && window.SSQ.beat("ch1-bedtime-story").draw(e);
         hmBeat() && hmBeat().draw(e);
-        luBeat() && luBeat().draw(e);
+        luBeat() && luBeat().draw(e), bayBeat() && bayBeat().draw(e);
         if (n.ch1Calendar) {
           drawCh1Calendar();
           return;

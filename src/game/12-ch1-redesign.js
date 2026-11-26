@@ -434,39 +434,6 @@
         return (ch1Trail(), sqOk && moOk);
       });
     }
-    function ch1AtDelivery() {
-      ((n.scene = "Q2"),
-        (n.sqPose = "stand"),
-        J([
-          ch1Step("sq", CH1_PLANT.x, CH1_PLANT.y, 180),
-          N(() => {
-            ((n.sqPose = "hidden"), (n.sq.x = CH1_PLANT.x), (n.sq.y = CH1_PLANT.y));
-          }),
-          ch1Step("mo", 640, 500, 180),
-          v("official", "Mops, don't worry, you know how much we love you here. Even our visitors always love you."),
-          v("tourist", "Isfred Bar Neshuman! The dock needs you."),
-          v("ups", "Left one of the copies in the office. What do I do with the other two?"),
-          v("mops", "I'll take care of it."),
-          v("mops", "So futuristic and we still order on paper."),
-          N(() => {
-            ((n.ch1Prop = "delicious"), D.slurp());
-          }),
-          v("mops", "Delicious."),
-          N(() => {
-            n.ch1Prop = "gumble";
-          }),
-          v("mops", "Mmf mrrf!"),
-          v("sq", "You're gumbling! (goat mumbling)"),
-          N(() => {
-            n.ch1Prop = "bin";
-          }),
-          v("mops", "Ptoo!"),
-          v("mops", "We got to watch out for these robots."),
-          N(() => {
-            ((n.sqPose = "stand"), (n.ch1Prop = ""), ch1Go("hall", { scene: "Q3" }, ch1Snack));
-          }),
-        ]));
-    }
     function ch1Snack() {
       ((n.scene = "Q3"),
         J([
@@ -974,12 +941,6 @@
       n.sqPose === "hidden" && !n.ch1InCrate && ch1HideEyes();
       n.ch1InCrate && ga(830, 510);
       n.scene === "Q2" && Qt(700, 530, "#e8a87c", qtScale("hangar"), -1),
-      (n.ch1Crew === "day" || n.ch1Crew === "leave") &&
-        [
-          ["Dot", 250, 580],
-          ["Bob", 330, 565],
-          ["Lou", 410, 580],
-        ].forEach((w) => u5({ x: w[1] - (n.ch1Crew === "leave" ? (n.ch1Leave || 0) * 520 : 0), y: w[2], name: w[0] }));
       !night && n.ch1Ship && n.scene !== "Q9" && n.ch1BossX !== -1 && Qt(n.ch1BossX == null ? 560 : n.ch1BossX, 500, "#c9b6f2", qtScale("hangar"), 0.2);
       n.ch1Crew === "tease" && [360, 480, 600].forEach((px) => dq(px, 460, !1));
       night &&

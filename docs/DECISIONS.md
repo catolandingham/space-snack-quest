@@ -3,32 +3,33 @@
 
 | Lines | Heading |
 | --- | --- |
-| 33–35 | # Space Snack Quest: every decision, in one place |
-| 36–43 | ## How to use this file |
-| 44–55 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
-| 56–60 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 61–69 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 70–73 | ## Sound, 2026-11-23 |
-| 74–97 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 98–109 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 110–134 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 135–143 | ## Which repo is the base, 2026-11-22 |
-| 144–154 | ## Sight cones, 2026-11-22 |
-| 155–159 | ## Latest calendar direction, 2026-11-16 |
-| 160–162 | ## Vent walk, 2026-11-16 |
-| 163–165 | ## Locked home room v5, 2026-11-16 |
-| 166–175 | ## Fidelity system (pictures are locked, not just words) |
-| 176–213 | ## 1. Working rules |
-| 214–280 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 281–305 | ## 3. Characters and look |
-| 306–382 | ## 4. Look, rooms and layout |
-| 383–404 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 405–448 | ## 6. Later chapters (2–4 and travel) |
-| 449–458 | ## 7. Audio |
-| 459–493 | ## 8. Code, controls and process |
-| 494–540 | ## 9. Open / waiting on Brian |
-| 541–635 | ## 10. Earlier entries, kept word for word |
-| 636–732 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 34–36 | # Space Snack Quest: every decision, in one place |
+| 37–44 | ## How to use this file |
+| 45–48 | ## Office code and the loading bay, 2026-11-26 (Brian, chat) |
+| 49–60 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
+| 61–65 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 66–74 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 75–78 | ## Sound, 2026-11-23 |
+| 79–102 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 103–114 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 115–139 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 140–148 | ## Which repo is the base, 2026-11-22 |
+| 149–159 | ## Sight cones, 2026-11-22 |
+| 160–164 | ## Latest calendar direction, 2026-11-16 |
+| 165–167 | ## Vent walk, 2026-11-16 |
+| 168–170 | ## Locked home room v5, 2026-11-16 |
+| 171–180 | ## Fidelity system (pictures are locked, not just words) |
+| 181–218 | ## 1. Working rules |
+| 219–285 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 286–310 | ## 3. Characters and look |
+| 311–387 | ## 4. Look, rooms and layout |
+| 388–409 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 410–453 | ## 6. Later chapters (2–4 and travel) |
+| 454–463 | ## 7. Audio |
+| 464–498 | ## 8. Code, controls and process |
+| 499–545 | ## 9. Open / waiting on Brian |
+| 546–640 | ## 10. Earlier entries, kept word for word |
+| 641–737 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -40,6 +41,10 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 - **Status words:** **Decided** (Brian said it or approved it) · **Needs Brian's yes** (proposed, or on-screen words waiting on him) · **Superseded** (replaced; the line says by what) · **Open** (a real question nobody has answered yet).
 - **This repo file is the single source of truth.** It was synced on Monday, November 9, 2026 from the designer record through decision R63, and it still holds the earlier snapshot `docs/old/project/DECISIONS-2026-11-08.md` (on `main` at commit 10030f6). Every earlier entry is kept in section 10. Where a later decision replaces an earlier one, the earlier line is marked **Superseded** and says what replaced it. The dated snapshot's full text is in `docs/old/history/DECISIONS-2026-11-08.md`. A short pointer stays at `docs/old/project/DECISIONS-2026-11-08.md`. New decisions get a row in the tables above, through a docs PR (review, "Docs match main: yes", Brian's written yes before merge).
 - Don't invent a decision. If something isn't clear, add it under **Open**.
+
+## Office code and the loading bay, 2026-11-26 (Brian, chat)
+- **Isfred's office code is 169556** (six digits). Brian, chat, 2026-11-26: Isfred writes it on the pink sheet in beat 32, readable in the close-up, and it is the office keypad's code (beat 50). **Decided.** It replaces 4723 (the number drawn on the old keypad, R84 and the 2026-11-22 keypad answer below). The tuning pin `office-code` changes with Brian's word (`docs/TUNING-PINS.json`).
+- **The party hall picture is version 2** (`docs/locked-rooms/hall-room-empty-v2.png`), which the game already uses. Brian confirmed, chat, 2026-11-26.
 
 ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat)
 - **Mops tells Squatch about the Guardians at bedtime.** After "You came to me in a Moon Pie crate. You've loved Moon Pies ever since.", Mops says "And you've always had your Guardians, watching over you." over a full-screen picture of Squatch's crayon drawing of the Guardians (big furry Sasquatches; the same drawing shows in the morning's thought bubble and in the Guardian Box). Mops gives no hint that he writes the notes. Words approved: Brian, chat 18b A. **Decided.** This adds to STORY-DECISIONS section 5: the bedtime story is still about Mops finding him plus this one line, and the player still learns who writes the notes only at the vent (beat 48).
@@ -88,7 +93,7 @@ Brian does not read the long files; he confirms assumptions by multiple choice i
 - **Dress-up: "Drag-on close-up".** A close-up of Squatch on a white background; the kid drags pieces on, more or less anywhere; the "Disguised enough" meter fills as pieces go on.
 - **Wookiee TV: "Full-screen story".** Cut away to full-screen story pictures, as walkthrough beat 20 says.
 - **Hangar robot (problem 3): "No close catch".** While the night robot looks away it cannot catch Squatch, however close; only its cone counts.
-- **Keypad: "We need the code for the office door, not the hangar"** (his own answer). v1 already puts the code (4723, from the pink slip) on the office door, walkthrough beat 50; no hangar code. No change needed.
+- **Keypad: "We need the code for the office door, not the hangar"** (his own answer). v1 already puts the code (from the pink slip) on the office door, walkthrough beat 50; no hangar code. No change needed. (The code was 4723; since 2026-11-26 it is 169556, Brian, chat, above.)
 - **Raising the alarm: "Ch 1 wall, later shout".** In Chapter 1 whoever sees Squatch runs to the FUR ALARM on the wall and pulls it, giving him time to hide; shouting for security is allowed in later chapters.
 - **Goal words: "Outline; words if stuck".** The next place or thing gets a soft outline (his settled rule, Squatchbot #1343 to #1345: "You just light up that entrance"). No goal line at first; if the kid does nothing useful for about 20 seconds, a short goal line fades in. This replaces v1's always-on goal bar.
 - **Outfit: "Yes, his outfit".** What the kid drags on in dress-up is what Squatch wears all party; snags and tugs pull off whatever is on him.
@@ -711,7 +716,7 @@ These lines were added to the 2026-11-08 snapshot (now `docs/old/history/DECISIO
 - 2026-11-11 (playtest 6): "PUT ON · tourist disguise" turned the costume on in one frame, and the dress-up screen popped in the same way. Both now fade through black in about 0.4 seconds. No new words.
   **In this unmerged slice.**
 
-- 2026-11-11: R84. Chapter 1 beats 22–61 use the walkthrough defaults where a question was still open. Mops is in the hallway at lunch. The calendar shows delivery morning, and the PA still says the ship is here. A robot calls Isfred away because a crate is damaged in the mail room. Squatch posts the yellow copy, then a cutscene sends the pink sheet into the vent. He hides that pink slip in the Guardian Box after the office. On pickup day the Moon Pie crate is already loaded and is not in the scanner shot. The hallway door is the north end of the party hall's right wall. Mops walks him to the snack bar, then goes back to work, and Squatch walks home. He waits at the vent as the L2 ball. The office code on the pink slip is 4723, the same digits already drawn on the old keypad. The keepsake gives no points until Brian picks a number. Lunch guests use the night robot's cone (210, 0.42, 70) so no new sight number was invented. Joe's warm theme is still the generated stand-in. None of this is a yes to merge.
+- 2026-11-11: R84. Chapter 1 beats 22–61 use the walkthrough defaults where a question was still open. Mops is in the hallway at lunch. The calendar shows delivery morning, and the PA still says the ship is here. A robot calls Isfred away because a crate is damaged in the mail room. Squatch posts the yellow copy, then a cutscene sends the pink sheet into the vent. He hides that pink slip in the Guardian Box after the office. On pickup day the Moon Pie crate is already loaded and is not in the scanner shot. The hallway door is the north end of the party hall's right wall. Mops walks him to the snack bar, then goes back to work, and Squatch walks home. He waits at the vent as the L2 ball. The office code on the pink slip is 4723, the same digits already drawn on the old keypad (superseded 2026-11-26: 169556, Brian, chat). The keepsake gives no points until Brian picks a number. Lunch guests use the night robot's cone (210, 0.42, 70) so no new sight number was invented. Joe's warm theme is still the generated stand-in. None of this is a yes to merge.
   **Decided** as the build default. The words and the open questions stay pending for Brian. R67–R83 are already numbered in the 2026-11-10 planning record (the walkthrough and the decisions copy). This row does not reuse those numbers.
 
 - 2026-11-16: Process checks (Brian t341), borrowed as ideas, not files. Every report uses the handover note (`docs/HANDOVER-TEMPLATE.md`): PASSED, FAILED, NOT ASSESSED, GUESSED, and "Not yet played by a person" unless a QA log covers that commit. Anything not checked is NOT ASSESSED, never passed. Long docs carry a section index, and agents read one section. `tests/canvas-text.mjs` records on-screen canvas words at the iPad sizes and flags type under 14 CSS px, contrast under 3:1, text off the canvas, and overlap over 25% of the smaller box. It does not change words, sizes, or layout; known failures wait for Brian. `docs/TUNING-PINS.json` pins the approved numbers, including the 85% door rule and Squatch at 80% of an adult. Changing a pin needs Brian's written yes in the PR.

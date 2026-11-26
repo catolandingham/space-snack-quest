@@ -72,6 +72,7 @@
     //   ?beat=42            on a preview host only, open that Chapter 1 beat
     //   ?beat=day2          on localhost or a preview host, open Day 2 at the gift in the closet. The live site ignores it.
     //   ?beat=party         on localhost or a preview host, open the party night at P1 (party:P3 opens P3). Ignored live.
+    //   ?beat=bay:hide      on localhost or a preview host, open the loading bay (beats 28 to 36) at that part. Ignored live.
     //   &debug=1            show the state strip under the game; the backtick key hides and shows it
     function debugLink() {
       let q;
@@ -87,7 +88,8 @@
         linkBeatRaw = q.get("beat") || "",
         linkBeat = parseInt(linkBeatRaw, 10) || 0,
         linkDay2 = linkBeatRaw === "day2",
-        linkParty = /^party(:P([1-7]|8a|8b|8c))?$/.test(linkBeatRaw) ? linkBeatRaw.slice(6) || "P1" : "";
+        linkParty = /^party(:P([1-7]|8a|8b|8c))?$/.test(linkBeatRaw) ? linkBeatRaw.slice(6) || "P1" : "",
+        linkBay = /^bay(:[a-z]+)?$/.test(linkBeatRaw) ? linkBeatRaw.slice(4) || "pa" : "";
       let previewBeat = !1,
         day2Jump = !1,
         partyJump = !1;
@@ -97,7 +99,7 @@
           local = host === "localhost" || host === "127.0.0.1" || host === "";
         previewBeat = !!linkBeat && !live && !local;
         day2Jump = linkDay2 && !live;
-        partyJump = !!linkParty && !live;
+        partyJump = !!(linkParty || linkBay) && !live;
       } catch {}
       if (!linkCh && !linkPhase && !linkScene && !linkDebug && !previewBeat && !day2Jump && !partyJump) return;
       !linkCh && linkPhase && (linkCh = 2);
@@ -115,7 +117,8 @@
         linkDebug && debugStrip();
         previewBeat && (startStory(1), (n.q = []), (n.cur = null), ch1JumpBeat(linkBeat));
         day2Jump && (startStory(1), (n.q = []), (n.cur = null), ch1Day2Begin(!0));
-        partyJump && partyBeat() && (startStory(1), (n.q = []), (n.cur = null), ch1ResetState(), (n.moPose = "hidden"), partyBeat().jump(linkParty));
+        partyJump && linkParty && partyBeat() && (startStory(1), (n.q = []), (n.cur = null), ch1ResetState(), (n.moPose = "hidden"), partyBeat().jump(linkParty));
+        partyJump && linkBay && bayBeat() && (startStory(1), (n.q = []), (n.cur = null), ch1JumpBeat(28), linkBay !== "pa" && ((n.q = []), (n.cur = null), bayBeat().jump(linkBay)));
       }, 0);
     }
     function roomLine(text) {

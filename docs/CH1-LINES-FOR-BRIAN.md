@@ -3,25 +3,52 @@
 
 | Lines | Heading |
 | --- | --- |
-| 22–25 | # Chapter 1 lines for Brian |
-| 26–36 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
-| 37–51 | ## Lunch sneak and Ganitor, 2026-11-26 (branch feat/ch1-lunch-sneak, not merged) |
-| 52–67 | ## Calendar revision, Nov 16 (PR 58, not live) |
-| 68–75 | ## Earlier chapter lines |
-| 76–90 | ## Goal chips |
-| 91–174 | ## What people say |
-| 175–188 | ## Words painted on things |
-| 189–212 | ## Buttons |
-| 213–299 | ## Day 2 onward (beats 22–61), pending |
-| 300–307 | ## Ball hiding |
-| 308–315 | ## Off-screen lines, for Brian (playtest 12) |
-| 316–325 | ## Homework desk, approved Nov 16 |
-| 326–364 | ## Questions still open |
-| 365–390 | ## Day 1 stand-ins, pending |
+| 23–26 | # Chapter 1 lines for Brian |
+| 27–52 | ## Loading bay (beats 28 to 36), 2026-11-26 (branch feat/ch1-loading-bay, not merged) |
+| 53–63 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
+| 64–78 | ## Lunch sneak and Ganitor, 2026-11-26 (branch feat/ch1-lunch-sneak, not merged) |
+| 79–94 | ## Calendar revision, Nov 16 (PR 58, not live) |
+| 95–102 | ## Earlier chapter lines |
+| 103–117 | ## Goal chips |
+| 118–201 | ## What people say |
+| 202–215 | ## Words painted on things |
+| 216–239 | ## Buttons |
+| 240–326 | ## Day 2 onward (beats 22–61), pending |
+| 327–334 | ## Ball hiding |
+| 335–342 | ## Off-screen lines, for Brian (playtest 12) |
+| 343–352 | ## Homework desk, approved Nov 16 |
+| 353–391 | ## Questions still open |
+| 392–417 | ## Day 1 stand-ins, pending |
 <!-- /section-index -->
 # Chapter 1 lines for Brian
 
 The rebuilt morning (2026-11-23, draft PR, waking up to Mops leaving) has its own numbered sheet: `docs/MORNING-LINES-FOR-BRIAN.md`. Its words replace the Nov 14 morning lines below where they differ.
+
+## Loading bay (beats 28 to 36), 2026-11-26 (branch feat/ch1-loading-bay, not merged)
+
+Every word is in `src/modules/loading-bay-lines.js`, word for word from the walkthrough. Each waits for your yes unless it says decided or approved.
+
+| Who | Line | Where | Status |
+| --- | --- | --- | --- |
+| The wall speaker in the hall (beside it, sound waves) | Universal Postal Service ship arriving! | Beat 28, behind the snack counter (the walkthrough's other wording: "The Universal Postal Service ship is arriving.") | Pending |
+| Mops | I better go see what that is. | Beat 28 | Pending |
+| Squatch | Please let me follow you, I'll be really sneaky. | Beat 28 | Pending |
+| Mops | Okay, just this time, but hide carefully. | Beat 28 | Pending |
+| Isfred | Mops, don't worry, you know how much we love you here. Even our visitors always love you. | Beat 31, Squatch in the plant | Pending |
+| The pink sheet (painted, with a drawn box) | ORDER MORE ROBOTS | Beat 32, the form close-up | Pending |
+| Isfred's handwriting on the pink, and through it on the yellow | 169556 | Beat 32, the form close-up (his office code) | Brian, chat 2026-11-26 |
+| Mops | So futuristic and we still order on paper. | Beat 32, over the form close-up (the walkthrough marks it optional) | Pending |
+| A robot | Left one of the copies in the office. What do I do with the other two? | Beat 33 | Pending |
+| Mops | I'll take care of it. | Beat 33 | Pending |
+| Mops | Delicious. | Beat 33, the bite close-up by the vent | Pending |
+| Mops | Mmf mrrf! | Beat 34, at the plant | Pending |
+| Squatch (from the plant) | You're gumbling! (goat mumbling) | Beat 34 | Approved |
+| Mops | Ptoo! | Beat 35, the copies into the bin | Pending |
+| Mops | We got to watch out for these robots. | Beat 36, the hallway, the robots glow | Pending |
+| Squatch | What's the difference between fur and hair? | Beat 36 | Decided |
+| Mops | Paperwork. | Beat 36 | Decided |
+
+No words on purpose (questions for Brian in the pull request): what calls Isfred away in beat 32 (built: the bay's wall speaker chimes, he looks up at it, points the robot at the doorway and hurries out); Mops waving Squatch out of the plant in beat 36. The old lines "Isfred! A crate is damaged in the mail room." and "Isfred Bar Neshuman! The dock needs you." are not shown.
 
 ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged)
 

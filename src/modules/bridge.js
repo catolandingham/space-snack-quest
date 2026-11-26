@@ -36,7 +36,7 @@ import { keepInSpan, seeCue, visitNow, playSound, soundsPlayed, hushNow, hushKey
  * to write another field stops with an error; tests/module-build.mjs checks the morning (and its home-alone
  * part) and the party night against this list.
  */
-export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1HomeMorning", "ch1Lunch", "ch1Sneak", "ch1Step", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe"]);
+export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1HomeMorning", "ch1Lunch", "ch1Bay", "ch1Sneak", "ch1Step", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe"]);
 
 export function createBridge() {
   const beats = new Map();
@@ -198,11 +198,31 @@ export function createBridge() {
       return beats.get(id) || null;
     },
     /**
-     * The rebuilt beat that draws the party hall now (the party night, or the lunch sneak), or null: the older
-     * program asks it for the hall's picture, its walls (bounds) and what feet cannot walk through (solids).
+     * The rebuilt beat that draws the room now (the party night or the lunch sneak in the party hall, the loading bay
+     * in the bay), or null: the older program asks it for the room's picture, its walls (bounds) and what feet cannot
+     * walk through (solids).
      */
     hallOwner() {
       for (const b of beats.values()) if (b.ownsRoom && b.ownsRoom()) return b;
+      return null;
+    },
+    /**
+     * Where a speaker's bubble points, from the rebuilt beat that places it (Isfred beside him at the party, the wall
+     * speakers, Squatch's eyes in a plant...), or null: the older program's own place for that speaker.
+     */
+    speakerAt(who) {
+      for (const b of beats.values()) {
+        const at = b.speakerAt && b.speakerAt(who);
+        if (at) return at;
+      }
+      return null;
+    },
+    /** A bubble that sits beside its speaker instead of over him, from the rebuilt beat that says so, or null. */
+    bubbleBeside(who) {
+      for (const b of beats.values()) {
+        const at = b.bubbleBeside && b.bubbleBeside(who);
+        if (at) return at;
+      }
       return null;
     },
     /** Ids of every rebuilt beat, in the order they were registered. */

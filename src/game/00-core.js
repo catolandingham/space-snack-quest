@@ -1011,7 +1011,7 @@
       if (who === "pa") return !0;
       if (who === "mops") return n.moPose !== "hidden" && n.mo.x > 20 && n.mo.x < 940 && n.mo.y > 40 && n.mo.y < 620;
       // Peeking round his door at the party, only his head shows at the picture's edge (src/modules/party.js).
-      if (who === "sq" && partyBeat() && partyBeat().speakerAt("sq")) return !0;
+      if (who === "sq" && window.SSQ && window.SSQ.speakerAt && window.SSQ.speakerAt("sq")) return !0;
       if (who === "sq") return n.sq.x > -20 && n.sq.x < 980 && n.sq.y > 0 && n.sq.y < 640;
       if (who === "ups") return !!(n.room === "hangar" && n.ch1D) || !!n.ch1Beep;
       return !0;
@@ -1283,7 +1283,7 @@
           : n.room === "duct"
             ? { x0: 100, x1: 880, y0: 400, y1: 470 }
               : n.room === "hangar"
-              ? { x0: 60, x1: 900, y0: n.ch1D ? 320 : 400, y1: 590 }
+              ? { x0: 60, x1: 900, y0: n.ch1D || hallBeat() ? 320 : 400, y1: 590 }
               : n.room === "closet"
                 ? { x0: 100, x1: 860, y0: 372, y1: 578 }
                 : n.room === "deck"
@@ -1345,7 +1345,7 @@
         n.room === "deck")
       )
         for (let i of qn) l.push(i.kind === "plant" ? nt(i.x, i.y, 26, 14, 10) : nt(i.x, i.y, 40, 14, 10));
-      if (n.room === "window" && l.push(nt(rt.x, rt.y, 26, 14, 10)), n.room === "hall" && hallBeat()) for (let i of hallBeat().solids()) l.push(i);
+      if (n.room === "window" && l.push(nt(rt.x, rt.y, 26, 14, 10)), hallBeat()) for (let i of hallBeat().solids()) l.push(i);
       else if (n.room === "hall") {
         (l.push(nt(ne.x, ne.y, 26, 14, 10)),
           l.push(nt(DV.x, DV.y, 26, 16, 8)),

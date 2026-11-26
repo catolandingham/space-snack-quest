@@ -31,6 +31,11 @@
  *     lunchseen    the lunch sneak's capture rule: he steps out while a guest looks; FUR!, the alarm, the guards, back
  *                  into the plant, "They lost you."; then seen again and standing still: the LOCKUP card, and the
  *                  restart hidden in the plant. Both write a still of each step to SHOWING_STILLS=<dir> if it is set.
+ *     bay          beats 28 to 36, the loading bay: from the lunch's end behind the snack counter (the wall speaker, the
+ *                  talk), the walk through the hallway, HIDE · plant in the bay (a finger on the floor, then the button),
+ *                  everything watched from the plant (the ship, the robots, the handshakes, the promise, the form
+ *                  close-up, the chime, the robot back with two copies, the bite, the gumbling, the bin), the walk
+ *                  home past the robots, to beat 37's first step. With SHOWING_STILLS=<dir>, a still of each step.
  *   SHOWING_SILENT=1 leaves the sound out.
  */
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
@@ -39,7 +44,7 @@ import { join, dirname } from "node:path";
 import { startGame, sleep, root } from "../tests/game-page.mjs";
 
 const [which, outFile] = process.argv.slice(2);
-const WHICH = ["keep", "back", "flyer", "early", "ventfur", "ventcostume", "tv", "bedtime", "morning", "lunch", "lunchseen"];
+const WHICH = ["keep", "back", "flyer", "early", "ventfur", "ventcostume", "tv", "bedtime", "morning", "lunch", "lunchseen", "bay"];
 if (!WHICH.includes(which) || !outFile) {
   console.error("Usage: node tools/party-showing.mjs <" + WHICH.join("|") + "> <out.mp4>");
   process.exit(2);
@@ -53,7 +58,7 @@ const hall = await import(join(root, "src", "modules", "party-hall.js"));
 const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 2 };
 const g = await startGame({ port: 9360 + WHICH.indexOf(which), name: "party-showing-" + which });
 const sneak = await import(join(root, "tests", "party-sneak.mjs"));
-const { page, errors } = await g.open(which === "tv" || which === "bedtime" || which === "morning" || which === "lunch" || which === "lunchseen" ? "?ch=1" : "?beat=" + (which === "flyer" ? "party:P3" : which === "ventfur" ? "party:P2" : "party:P6"), PHONE);
+const { page, errors } = await g.open(which === "tv" || which === "bedtime" || which === "morning" || which === "lunch" || which === "lunchseen" || which === "bay" ? "?ch=1" : "?beat=" + (which === "flyer" ? "party:P3" : which === "ventfur" ? "party:P2" : "party:P6"), PHONE);
 await sleep(600);
 SILENT || (await page.click("#ss-sound").catch(() => {}));
 await sleep(600);
@@ -466,8 +471,19 @@ if (which === "lunch" || which === "lunchseen") {
     w === "lunch" ? window.SSQ.beat("ch1-home-morning").jump("lunch") : window.SSQ.beat("ch1-lunch").jump("plant");
   }, which);
 }
+// The loading bay video starts behind the snack counter as the lunch sneak ends (its own jump, then beat 28 starts).
+if (which === "bay") {
+  await page.evaluate(() => window.__ss.lockedReady);
+  await page.evaluate(() => {
+    const ss = window.__ss,
+      n = ss.op;
+    n.q = [];
+    n.cur = null;
+    ss.ch1JumpBeat(28);
+  });
+}
 await startRecording();
-await sleep(which === "morning" || which === "lunch" || which === "lunchseen" ? 300 : 1800);
+await sleep(which === "morning" || which === "lunch" || which === "lunchseen" || which === "bay" ? 300 : 1800);
 if (which === "keep") {
   await dance(16, 4);
   // toward the wall by the alarm box, where the row will stand; the first song ends and the photo moment begins
@@ -944,6 +960,58 @@ if (which === "lunch" || which === "lunchseen") {
     await still("restarts-hidden-in-the-plant");
     await sleep(1200);
   }
+}
+if (which === "bay") {
+  const STILLS = process.env.SHOWING_STILLS || "";
+  STILLS && mkdirSync(STILLS, { recursive: true });
+  let k = 0;
+  const still = async (name) => (mark(name), STILLS && (await page.screenshot({ path: join(STILLS, String(++k).padStart(2, "0") + "-" + name + ".png") })));
+  const bay = () =>
+    page.evaluate(() => {
+      const b = window.SSQ.beat("ch1-bay"),
+        s = (b.debug().state || {}),
+        d = b.debug().drew || {};
+      return { step: s.step || "", active: b.active(), closeUp: d.closeUp && d.closeUp.u === 1 ? d.closeUp.id : "", papers: s.papers ? s.papers.where : "", ship: s.ship || 0 };
+    });
+  const slug = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 48);
+  // Reads every line as a kid does (a still of it first), and takes a still whenever something new is on screen:
+  // a new part, a close-up grown full, the copies somewhere new. Stops when `done` says so.
+  async function watch(done, ms) {
+    const end = Date.now() + ms;
+    let seen = "";
+    for (;;) {
+      const s = await st(),
+        b = await bay();
+      if (await done(s, b)) return true;
+      if (Date.now() > end) return false;
+      const key = [b.step, b.closeUp, b.papers, b.ship >= 1 ? "ship" : ""].join("|");
+      if (key !== seen) {
+        seen = key;
+        s.cur !== "bub" && (await sleep(500), await still(slug([b.step, b.closeUp && b.closeUp + " close-up", b.ship >= 1 && b.step === "dock" && "ship docked"].filter(Boolean).join(" "))));
+      }
+      if (s.cur === "bub") {
+        await sleep(700);
+        await still(slug(s.text));
+        await sleep(900);
+        await tap(s.btn.x, s.btn.y);
+        await sleep(300);
+      }
+      await sleep(120);
+    }
+  }
+  (await watch((s, b) => b.step === "hide" && s.ctrl, 60000)) || (await fail("the bay's hide step did not come"));
+  await sleep(800);
+  await still("in-the-bay-hide-in-the-plant-the-plant-is-outlined");
+  await goTo(126, 392, (q) => q.act === "HIDE · plant");
+  await sleep(300);
+  await still("hide-plant");
+  await press();
+  await sleep(900);
+  await still("hidden-only-his-eyes");
+  (await watch((s, b) => !b.active, 240000)) || (await fail("the loading bay did not reach beat 37"));
+  await sleep(1200);
+  await still("beat-37-the-hallway-go-on");
+  await sleep(800);
 }
 if (which === "early") {
   await dance(10, 0);

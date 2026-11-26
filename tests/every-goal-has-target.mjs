@@ -10,7 +10,7 @@
 import { readFileSync } from "node:fs";
 import { startGame } from "./game-page.mjs";
 
-const src = ["game/12-ch1-redesign.js", "game/13-ch1-slice.js", "game/14-ch1-day2.js", "modules/party-lines.js", "modules/home-morning-lines.js", "modules/lunch-sneak-lines.js"]
+const src = ["game/12-ch1-redesign.js", "game/13-ch1-slice.js", "game/14-ch1-day2.js", "modules/party-lines.js", "modules/home-morning-lines.js", "modules/lunch-sneak-lines.js", "modules/loading-bay-lines.js"]
   .map((f) => readFileSync(new URL("../src/" + f, import.meta.url), "utf8"))
   .join("\n");
 const chips = [...src.matchAll(/Squatch: [^"]+/g)].map((m) => m[0]);
@@ -57,7 +57,8 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: take Mops his lunch": { lu: "plant", x: 400, y: 552 },
     "Squatch: give Mops his lunch": { lu: "give", x: 540, y: 488 },
     "Squatch: grab one snack": { lu: "snack" },
-    "Squatch: hide in the plant": { step: "hide", room: "hangar", bay: true, x: 230, y: 400 },
+    // the loading bay (src/modules/loading-bay.js), opened by its own jump; he stands a step from the plant
+    "Squatch: hide in the plant": { bayPart: 29, x: 160, y: 410 },
     "Squatch: go on": { step: "photos", room: "passage", x: 480, y: 560 },
     "Squatch: hide": { step: "family", room: "hall", scene: "Q3", x: 520, y: 530 },
     "Squatch: go home": { step: "gohome", room: "hall", scene: "Q3", x: 480, y: 560 },
@@ -156,8 +157,13 @@ const report = await page.evaluate(async (chips) => {
       window.SSQ.beat("ch1-lunch").jump(spec.lu);
       spec.x && ((n.sq.x = spec.x), (n.sq.y = spec.y));
       ((n.chip = chip), (n.moved = 200));
+    } else if (spec.bayPart) {
+      Object.assign(n, { ch1PartyNow: null, ch1Morning: null, ch1Zoom: null, ch1PadOn: false, q: [], cur: null });
+      ss.ch1JumpBeat(spec.bayPart);
+      spec.x && ((n.sq.x = spec.x), (n.sq.y = spec.y));
+      ((n.chip = chip), (n.moved = 200));
     } else if (spec.party) {
-      Object.assign(n, { ch1Day2: false, ch1Lunch: null, ch1Zoom: null, ch1PadOn: false, ch1Morning: null, q: [], cur: null, moPose: "hidden" });
+      Object.assign(n, { ch1Day2: false, ch1Lunch: null, ch1Bay: null, ch1Zoom: null, ch1PadOn: false, ch1Morning: null, q: [], cur: null, moPose: "hidden" });
       window.SSQ.beat("ch1-party").jump(spec.party);
       const p = n.ch1PartyNow;
       spec.out && ((p.pose = "stand"), (n.sqPose = "stand"));
@@ -170,6 +176,7 @@ const report = await page.evaluate(async (chips) => {
     n.ch1PartyNow = null;
     n.ch1HomeMorning = null;
     n.ch1Lunch = null;
+    n.ch1Bay = null;
     n.ch1Day2 = spec.day2 !== false;
     // The song step of the morning module (src/modules/morning.js), with Mops beside the bucket.
     n.ch1Morning = spec.song ? { step: "song", t: 0, notes: true } : null;

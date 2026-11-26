@@ -148,6 +148,48 @@ check(`hall: none of ${Object.keys(hallSpots).length} standing spots overlaps th
   const pots = HALL_SOLIDS.filter((b) => b.plant).map(reachOf);
   check("hall: with him right behind a plant pot, a guard gets within the catch reach of him (both plants); in the open the reach is the pinned one", pots.every((p) => p.d < p.reach) && catchReach({ x: 600, y: 560 }) === ALARM.reach, pots);
 }
+// ---------- the loading bay (beats 28 to 36, src/modules/loading-bay.js) ----------
+{
+  const { BAY, BAY_SPOTS } = await mod("loading-bay-place.js");
+  // the bay's furniture, as the older program's solids for it (src/game/00-core.js CH1_FURNITURE.hangar)
+  const BAY_FURNITURE = {
+    plant: { x0: 103, x1: 148, y0: 346, y1: 370 },
+    bin: { x0: 189, x1: 237, y0: 350, y1: 374 },
+    "scanner left post": { x0: 344, x1: 369, y0: 392, y1: 416 },
+    "scanner right post": { x0: 563, x1: 588, y0: 392, y1: 416 },
+    "mail room wall, above its door": { x0: 675, x1: 699, y0: 360, y1: 420 },
+    "mail room wall, below its door": { x0: 675, x1: 699, y0: 507, y1: 609 },
+    "robot mailbox": { x0: 848, x1: 908, y0: 452, y1: 476 },
+  };
+  const F = FOOT.hall,
+    feet = (p) => ({ x0: p.x - F.side, x1: p.x + F.side, y0: p.y - F.up, y1: p.y + F.down }),
+    onThing = (p) => Object.entries(BAY_FURNITURE).filter(([, b]) => hit(feet(p), b)).map(([k]) => k);
+  const spots = { ...Object.fromEntries(Object.entries(BAY_SPOTS).filter(([, v]) => v && v.x != null)), "door step": BAY.door.step };
+  BAY_SPOTS.workers.forEach((w, i) => (spots["worker " + w.name] = w));
+  BAY_SPOTS.robots.forEach((r, i) => (spots["robot " + (i + 1)] = r));
+  const bad = Object.entries(spots).map(([k, p]) => [k, onThing(p)]).filter(([, t]) => t.length);
+  check(`loading bay: none of ${Object.keys(spots).length} standing spots overlaps the plant, the bin, the scanner, the mail room's wall or the mailbox`, bad.length === 0, bad);
+  // every walk in the bay, step by step (the doorway in and out, Mops round to the vent and back to the plant)
+  const ways = {
+    "in through the doorway": [BAY.door, BAY.door.step, BAY_SPOTS.sqIn],
+    "out through the doorway": [BAY_SPOTS.sqOut, BAY.door.step, BAY.door],
+    "Mops to the vent": [BAY_SPOTS.mopsWatch, ...BAY_SPOTS.ventWay, BAY_SPOTS.mopsVent],
+    "Mops back to the plant": [BAY_SPOTS.mopsVent, ...BAY_SPOTS.plantWay, BAY_SPOTS.mopsPlant],
+  };
+  const walkBad = [];
+  for (const [name, way] of Object.entries(ways))
+    for (let i = 1; i < way.length; i++) {
+      const a = way[i - 1],
+        b = way[i],
+        k = Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / 4);
+      for (let j = 0; j <= k; j++) {
+        const p = { x: a.x + ((b.x - a.x) * j) / k, y: a.y + ((b.y - a.y) * j) / k },
+          t = onThing(p);
+        t.length && walkBad.push(`${name} at ${Math.round(p.x)},${Math.round(p.y)}: ${t}`);
+      }
+    }
+  check("loading bay: every walk goes round the furniture, checked every 4 pixels", walkBad.length === 0, [...new Set(walkBad)].slice(0, 6));
+}
 // ---------- draw order: ties always resolve the same way ----------
 const { drawOrder } = await mod("party-draw.js");
 const tie = [{ id: "a", y: 500 }, { id: "b", y: 500 }, { id: "c", y: 480 }, { id: "d", y: 500 }];
