@@ -312,7 +312,7 @@ export const BOX_CLOSEUP = Object.freeze({
   fall: 0.45,
   floor: 540,
   box: Object.freeze({ x0: 215, y0: 362, x1: 575, y1: 602 }),
-  lid: Object.freeze({ x0: 22, x1: 200, y0: 250, y1: 560 }),
+  lid: Object.freeze({ x0: 8, x1: 206, y0: 250, y1: 560 }),
   drawing: Object.freeze({ x: 770, y: 300, w: 330, tilt: 0.05 }),
 });
 
@@ -359,7 +359,7 @@ function gboxCloseUp(ctx, t, engine) {
   ctx.closePath();
   hmPaint(ctx, GUARDIAN_BOX.fill, 5);
   const lmid = (lid.x0 + lid.x1) / 2 + 4,
-    lab = { x0: lmid - 78, x1: lmid + 78, y0: lid.y0 + 60, y1: lid.y0 + 150 };
+    lab = { x0: lmid - 90, x1: lmid + 90, y0: lid.y0 + 56, y1: lid.y0 + 156 };
   hmRound(ctx, lab.x0, lab.y0, lab.x1 - lab.x0, lab.y1 - lab.y0, 4);
   hmPaint(ctx, "#fffdf8", 3);
   ctx.fillStyle = "rgba(255,248,200,.9)";
@@ -367,8 +367,8 @@ function gboxCloseUp(ctx, t, engine) {
   ctx.fillRect(lab.x1 - 24, lab.y0 - 8, 34, 16);
   // MY GARDIAN BOX in his hand, on two lines so it is big on a phone
   const [l1, l2] = [morningWords("sign-box").split(" ").slice(0, 2).join(" "), morningWords("sign-box").split(" ").slice(2).join(" ")];
-  say(l1, lmid, lab.y0 + 30, 24, HM_INK);
-  say(l2, lmid, lab.y0 + 62, 24, HM_INK);
+  say(l1, lmid, lab.y0 + 32, 26, HM_INK);
+  say(l2, lmid, lab.y0 + 68, 26, HM_INK);
   const label = l1 + " " + l2;
   // the open top: the dark inside, back rim higher than the front
   ctx.beginPath();
