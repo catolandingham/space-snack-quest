@@ -45,7 +45,7 @@ await page.evaluate(() => window.__ss.lockedReady);
 await new Promise((r) => setTimeout(r, 1200));
 await page.click("#ss-sound");
 await new Promise((r) => setTimeout(r, 600));
-const soundOn = await page.evaluate(() => !!window.SSQ.engine() && !!window.SSQ.engine().soundState && window.SSQ.playSoundPick("none-such") === false);
+const soundOn = await page.evaluate(() => !!window.SSQ.engine() && window.SSQ.engine().soundState() === "on");
 
 // Beat 20 as the party's endings start it, with the queue cleared; tap through it to its "Now" card.
 const started = await page.evaluate(() => {
@@ -165,6 +165,9 @@ const run = !(started && tvDone)
         ss.tick(0.05);
       }
       out.shownAfter = ss.shown();
+      // the bedtime music is over once the story is (Day 2 has begun)
+      out.showingAfter = beat.showing();
+      out.cueAfter = window.SSQ.refinedCue("home");
       out.picksAll = window.SSQ.soundPicksPlayed().slice(picksBefore).map((p) => p.name);
       return out;
     });
@@ -230,6 +233,7 @@ const PICKS = await import(join(root, "src", "modules", "music-picks.js"));
 const bedMusic = run.music.filter((m) => m.phase && m.phase !== "end");
 g.check("from the walk to bed until the fade, the music follows the \"bedtime\" cue (every frame)", bedMusic.length > 100 && bedMusic.every((m) => m.cue === "bedtime"), bedMusic.filter((m) => m.cue !== "bedtime").slice(0, 5));
 g.check("and through every story picture and the Guardians picture", run.picMusic.length === 7 && run.picMusic.every((m) => m.cue === "bedtime"), run.picMusic);
+g.check("after the fade the bedtime story is over: not showing, and the home cue is no longer \"bedtime\" from it", run.showingAfter === false && (run.cueAfter === "home" || run.cueAfter === "bedtime"), { showing: run.showingAfter, cue: run.cueAfter });
 g.check("the bedtime cue plays Reawakening (music-picks.js), and only it", PICKS.fileFor("bedtime") === "music/reawakening.mp3" && PICKS.listFor("bedtime").length === 1);
 g.check("only Mops and baby Squatch are in the pictures (no parents, nobody else)", pics.length === 6 && pics.every((p) => Array.isArray(p.cast) && p.cast.every((c) => c === "mops" || c === "baby")) && pics.some((p) => p.cast.includes("baby")), pics.map((p) => p.cast));
 // Sizes (Brian: "Look at how small mops and squatch are versus box."): the crate and Mops in the room's own

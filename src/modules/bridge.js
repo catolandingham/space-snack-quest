@@ -27,7 +27,7 @@ import { quietBedtimeLine } from "./bedtime-story-lines.js";
 import { adultPxFor, doorAdultPx } from "./room-sizes.js";
 import { createGoalMark } from "./goal-mark.js";
 import { singingNow } from "./music-rules.js";
-import { keepInSpan, seeCue, visitNow, playSound, soundsPlayed } from "./music-picks.js";
+import { keepInSpan, seeCue, visitNow, playSound, soundsPlayed, hushNow } from "./music-picks.js";
 
 /**
  * The game-state fields a rebuilt beat may write, through engine().set(field, value). Anything else it
@@ -51,6 +51,9 @@ export function createBridge() {
   // after it is still dark (the home morning's start), "bedtime" (music-picks.js: Reawakening).
   let musicCueNow = ""; // the cue the music last followed (refined), for tests
   const refineCue = (cue) => {
+    // While a beat's alarm is on (the one capture rule: FUR!, the alarm, the search), no music; after it, the music
+    // stays quiet in this place until a visit to another place (music-picks.js hushNow; Brian 2026-11-26).
+    for (const b of beats.values()) if (b.alarmOn && b.alarmOn()) return (hushNow(), "");
     if (cue !== "home") return cue;
     const tv = beats.get("ch1-tv-story"),
       bed = beats.get("ch1-bedtime-story"),
@@ -99,10 +102,12 @@ export function createBridge() {
     },
     /**
      * The one FUR alarm of Chapter 1 (Brian 2026-11-26, the red alert whoop: party-board-sounds.js BOARD.alarm), for
-     * the older program's alarm sound. True once played; false while sound is off (the older program then plays
-     * nothing either).
+     * the older program's alarm sound. The music stops with it (hushNow). True once played; false while sound is off
+     * (the older program then plays nothing either).
      */
     alarmSound() {
+      // (the music stops with the alarm, and stays quiet here until another place: music-picks.js hushNow)
+      hushNow();
       const b = buses(engine);
       if (!b) return false;
       BOARD.alarm({ c: b.ctx, o: b.fx }, b.ctx.currentTime + 0.01);
@@ -119,7 +124,8 @@ export function createBridge() {
     },
     /** Tests: the cue the music follows now (after the TV story's and the bedtime story's), and where it is. */
     musicNow() {
-      return { ...visitNow(), visitCue: visitNow().cue, cue: musicCueNow };
+      const v = visitNow();
+      return { ...v, visitCue: v.cue, cue: musicCueNow };
     },
     /**
      * Plays one of the game's sounds that are not music by its name (music-picks.js SOUND_PICKS: Mops's bleat),
