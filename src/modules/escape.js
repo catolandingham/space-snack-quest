@@ -8,7 +8,7 @@
  *   tease     44  the loading bay by day, no Squatch: Mops mops the floor with his beard, three robots circle him,
  *                 bobbing and mimicking him; "HQ sent us a message..." (NEXT), then Mops: "Replaced? The manager was
  *                 lying to me." (NEXT), a sad bleat.
- *   home      45  home that night: Mops comes in; the pancake brochure on the wall glows while he says his line (NEXT);
+ *   home      45  home that night: Mops comes in; the pancake brochure on the wall is outlined while he says his line (NEXT);
  *                 wordless thought pictures over Mops: the Moon Pie crate, both of them peeking out, going into the ship;
  *                 then the office door with its keypad and a red padlock.
  *             46  Squatch: "Oh, it was on the form I sent..." (NEXT), "Didn't a copy get sucked into the vent?" (NEXT),
@@ -22,7 +22,7 @@
  *   rolled        rolled up at the vent, the robot rolls on; then the picture goes inside the vent.
  *   vent      48  inside the vent (no locked picture: a placeholder room): the grille on the left with Squatch's eyes
  *                 between its slats; Mops walks to his desk, his back to the grille. Close-ups: the detective wall
- *                 (Mars crossed off) (NEXT), the reply letter stamped NO (NEXT). The pink sheet on the desk glows:
+ *                 (Mars crossed off) (NEXT), the reply letter stamped NO (NEXT). The pink sheet on the desk is outlined:
  *                 Squatch, thinking: "I hope Mops doesn't notice..." (NEXT). Close-up: Mops writes the new Guardian note,
  *                 signs it "— The Guardians", a white hair on it (NEXT). He takes the pink sheet in his mouth without
  *                 looking at it.
@@ -67,7 +67,7 @@ import {
   drawSite,
   drawSnackCounter,
   drawHearts,
-  glowBox,
+  markBox,
   escapeDrawnWords,
 } from "./escape-art.js";
 import { cutawaySteps } from "./cutaway.js";
@@ -769,10 +769,9 @@ export function createEscape(bridge) {
       (r.phase === "bang" || r.phase === "run") && drawBang(ctx, r.x, r.y - 70);
       out.robot = { x: Math.round(r.x), y: Math.round(r.y), phase: r.phase };
     }
-    // the slip in Mops's mouth glows while he is to grab it
-    l.step === "grab" && e.get("ctrl") && glowBox(ctx, mouthBox(), t, 1);
-    // the vent glows while he is to roll up by it
-    l.step === "ball" && e.get("ctrl") && l.pose === "stand" && glowBox(ctx, BAY.vent, t, 0.8);
+    // the slip in Mops's mouth is outlined while he is to grab it (it moves with him, so it is not a goal-targets entry)
+    l.step === "grab" && e.get("ctrl") && markBox(ctx, mouthBox(), t);
+    // (the vent's outline while he is to roll up by it is the goal outline: goal-targets.js "hangar:es-ball")
     people(ctx, l, "hangar");
     return out;
   }
@@ -809,7 +808,7 @@ export function createEscape(bridge) {
     drew = { step: l.step, room };
     if (room === "closet") {
       // the pancake brochure on the wall (lit while Mops talks about it)
-      l.glow === "brochure" && glowBox(ctx, ES_HOME.brochure, t, 1.1);
+      l.glow === "brochure" && markBox(ctx, ES_HOME.brochure, t);
       drawBrochure(ctx, ES_HOME.brochure);
       drew.brochure = { glow: l.glow === "brochure" };
     }

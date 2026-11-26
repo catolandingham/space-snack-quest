@@ -17,6 +17,7 @@ import { morningWords } from "./home-morning-lines.js";
 import { BOX_CLOSEUP, drawRocket, oldNote, furryArm, MORNING_SIZES } from "./home-morning-art.js";
 import { drawSnack } from "./party-snacks-art.js";
 import { drawHeart } from "./lunch-sneak-art.js";
+import { OUTLINE } from "./outline.js";
 
 const ES_INK = "#1e2430";
 const ES_PINK = "#ff9cc2",
@@ -77,21 +78,21 @@ function esWrap(ctx, s, w, size, weight = 700) {
   return out;
 }
 
-/** A soft yellow glow behind a box (drawn as its own patch, never a canvas shadow). */
-export function glowBox(ctx, b, t, grow = 1) {
-  const cx = (b.x0 + b.x1) / 2,
-    cy = (b.y0 + b.y1) / 2,
-    rad = Math.max(50, Math.max(b.x1 - b.x0, b.y1 - b.y0) * 0.85) * grow,
-    a = 0.7 + 0.25 * Math.sin((t || 0) * 4),
-    g = ctx.createRadialGradient(cx, cy, 4, cx, cy, rad);
-  g.addColorStop(0, `rgba(255,214,80,${a})`);
-  g.addColorStop(0.55, `rgba(255,224,110,${a * 0.5})`);
-  g.addColorStop(1, "rgba(255,224,110,0)");
+/**
+ * The one highlight (Brian, 2026-11-26: the dashed gold line, no glow, no ring, no arrow): a dashed line round box `b`,
+ * `pad` outside it, with the goal outline's own width, dash and colour (outline.js OUTLINE, which the shared drawing
+ * owns) and its gentle pulse (bridge.js drawGoalOutline). Returns the box it went round.
+ */
+export function markBox(ctx, b, t, pad = 6) {
+  const box = { x0: b.x0 - pad, y0: b.y0 - pad, x1: b.x1 + pad, y1: b.y1 + pad };
   ctx.save();
-  ctx.fillStyle = g;
-  ctx.fillRect(cx - rad, cy - rad, rad * 2, rad * 2);
+  ctx.globalAlpha = 0.85 + 0.15 * Math.sin((t || 0) * 4);
+  ctx.setLineDash([OUTLINE.dash, OUTLINE.dash * 0.7]);
+  ctx.lineWidth = OUTLINE.width;
+  ctx.strokeStyle = OUTLINE.color;
+  ctx.strokeRect(box.x0, box.y0, box.x1 - box.x0, box.y1 - box.y0);
   ctx.restore();
-  return { x: cx, y: cy, r: rad };
+  return box;
 }
 
 /** Squatch's paw print: a pad and four toes, his fur colour, its middle at (x, y), `r` its size. */
@@ -152,7 +153,7 @@ export function drawPinkSheet(ctx, x, y, w, { glowCode = false, t = 0, paw = tru
   }
   // the code in the corner, and the little door with its keypad drawn beside it
   const code = { x: 64 * u, y: 114 * u, size: 15 * u };
-  glowCode && glowBox(ctx, { x0: 34 * u, y0: 102 * u, x1: 96 * u, y1: 126 * u }, t, 1.1);
+  glowCode && markBox(ctx, { x0: 34 * u, y0: 102 * u, x1: 96 * u, y1: 126 * u }, t);
   text ? hand(ctx, OFFICE_CODE, code.x, code.y, code.size, "#2b3a67") : ((ctx.fillStyle = "#2b3a67"), ctx.fillRect(code.x - 22 * u, code.y - 3 * u, 44 * u, 6 * u));
   esRect(ctx, 10 * u, 100 * u, 14 * u, 24 * u, u);
   esPaint(ctx, "#8b93a7", Math.max(1.5, u));
@@ -555,7 +556,7 @@ export function drawVentDesk(ctx, t, { slip = "desk", glowSlip = false } = {}) {
   esPaint(ctx, ES_CREAM, 2);
   let sheet = null;
   if (slip === "desk") {
-    glowSlip && glowBox(ctx, { x0: V.slip.x - 60, y0: V.slip.y - 50, x1: V.slip.x + 60, y1: V.slip.y + 10 }, t, 1.2);
+    glowSlip && markBox(ctx, { x0: V.slip.x - 60, y0: V.slip.y - 50, x1: V.slip.x + 60, y1: V.slip.y + 10 }, t);
     // lying on the desk top (seen from the front, so it is drawn flattened), the paw print side up
     ctx.save();
     ctx.translate(V.slip.x, V.slip.y);
@@ -820,7 +821,7 @@ export function drawSite(ctx, { booked = -1, t = 0 } = {}) {
     esRect(ctx, o.x0, o.y0, o.x1 - o.x0, o.y1 - o.y0, 12);
     esPaint(ctx, "#dfe4ea", 3, "#8a93a3");
     esWords(ctx, escapeWords("site-order"), (o.x0 + o.x1) / 2, (o.y0 + o.y1) / 2, 30, "#59657d", "center", 700);
-    glowBox(ctx, r, t, 0.9);
+    markBox(ctx, r, t);
     esRect(ctx, r.x0, r.y0, r.x1 - r.x0, r.y1 - r.y0, 18);
     esPaint(ctx, "#2bc48a", 6);
     esWords(ctx, escapeWords("site-return"), (r.x0 + r.x1) / 2, (r.y0 + r.y1) / 2, 50, "#ffffff", "center", 900);
@@ -877,7 +878,7 @@ export function drawSnackCounter(ctx, st, t) {
   // the Guardians' plate and its card
   const P = S.plate;
   if (st.plate) {
-    st.next === "plate" && glowBox(ctx, { x0: P.x - P.r, y0: P.y - 60, x1: P.x + P.r, y1: P.y + 20 }, t, 1.1);
+    st.next === "plate" && markBox(ctx, { x0: P.x - P.r, y0: P.y - 60, x1: P.x + P.r, y1: P.y + 20 }, t);
     ctx.beginPath();
     ctx.ellipse(P.x, P.y, P.r, 18, 0, 0, ES_TAU);
     esPaint(ctx, "#ffffff", 4);
@@ -889,7 +890,7 @@ export function drawSnackCounter(ctx, st, t) {
   // what is still on the counter (the one he is reaching for stays until his paw has it)
   for (let i = 0; i < S.kinds.length; i++) {
     if (st.gone[i] || (st.carry && st.carry.i === i && st.carry.k > 0.4)) continue;
-    st.next && !st.carry && glowBox(ctx, { x0: S.at[i].x - 40, y0: S.at[i].y - 40, x1: S.at[i].x + 40, y1: S.at[i].y + 40 }, t, 0.75);
+    st.next && !st.carry && markBox(ctx, { x0: S.at[i].x - 40, y0: S.at[i].y - 40, x1: S.at[i].x + 40, y1: S.at[i].y + 40 }, t);
     drawSnack(ctx, S.kinds[i], S.at[i].x, S.at[i].y, 3.1, 0, 0, 2);
   }
   // the bag: its open top, and how many are in it
