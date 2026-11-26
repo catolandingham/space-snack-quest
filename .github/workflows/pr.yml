@@ -14,7 +14,7 @@ concurrency:
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 90  # the full suite outgrew 30 minutes (2026-11-26: the check on PR #87 was cut off before it finished)
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
