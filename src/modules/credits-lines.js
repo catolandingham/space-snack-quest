@@ -24,6 +24,8 @@ export const CREDITS_LINES = Object.freeze(
     { id: "head-sounds", who: "head", text: "Sounds" },
     { id: "kenney", who: "credit", text: "\"Impact Sounds\" by Kenney (www.kenney.nl), CC0" },
     { id: "goat", who: "credit", text: "Goat bleat: \"Herd of goats bleating\" by stephan, Wikimedia Commons, public domain" },
+    { id: "crowd", who: "credit", text: "Party crowd: \"Crowd of 50-60 People #1\" by Joseph SARDIN, BigSoundBank.com, CC0" },
+    { id: "voices", who: "credit", text: "Voices: \"Dialog vocal samples\", OpenGameArt.org, CC0" },
   ].map((l) => Object.freeze({ ...l, status: "needs-yes", source: SOURCE })),
 );
 /** The Kevin MacLeod tracks credited (tests check each is in music/CREDITS.txt). */

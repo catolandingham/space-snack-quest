@@ -124,7 +124,8 @@ const cones = (page) => page.evaluate(() => window.SSQ.beat("ch1-party").cones()
   let s = await st(page);
   g.check("1: in the party the band plays and the Croc Boys show no cones (the stage lights are in their eyes)", s.now.bandPlaying && !(await cones(page)).some((id) => id.startsWith("band")), await cones(page));
   g.check("1: the camera's tripod is out of sight before the group photo (it comes out with the photo's camera step)", !s.now.shot && !photo.tripodOut({ shot: null }) && !photo.tripodOut({ shot: { phase: "call" } }) && photo.tripodOut({ shot: { phase: "camera" } }), s.now.shot);
-  g.check("3: no crowd murmur while the band plays", s.now.sound.ambience !== "murmur", s.now.sound.ambience);
+  // (since Brian's pick of 2026-11-26 the crowd's recording plays under the band, "crowd 1 with the band on top")
+  g.check("3: the crowd is heard under the band (the crowd's recording, quietly)", s.now.sound.crowd.want && !s.now.sound.crowd.muffled, s.now.sound.crowd);
   g.check("4: the dance spot is outlined (he can dance)", await page.evaluate(() => !!window.SSQ.beat("ch1-party").now() && window.SSQ.beat("ch1-party").spots().some((q) => q.id === "dance")), null);
   // to the song's end: the photo moment, step by step
   await page.evaluate(() => {

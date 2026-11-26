@@ -122,10 +122,12 @@ export const MUSIC_PICKS = Object.freeze({
 // Sounds that are not music. Mops's bleat (Brian 2026-11-26, "Bleat 2": sounds/goat-bleat.mp3, 1.2 s, cut from
 // Wikimedia Commons "Herd of goats bleating.ogg" by stephan, public domain): on his bleat line only (the morning song's
 // "♪ Weeee-eenn-nnttt! ♪", morning-sound.js), and over Floating in Space where it leaves a gap for one (`bleats`).
-// The crowd in the hall (Brian 2026-11-26: "I don't like any of the crowd sounds. They don't sound like crowds at all."):
-// a recording to be dropped in later, looped under the band, quiet. Its pick is this one line (`url`); with none, the
-// made-up murmur plays as before (party-sound.js).
-export const SOUND_PICKS = Object.freeze({ "mops-bleat": Object.freeze({ url: "sounds/goat-bleat.mp3", level: 0.7 }), crowd: Object.freeze({ url: null, level: 0.35 }) });
+// The crowd in the hall (Brian 2026-11-26: "I don't like any of the crowd sounds. They don't sound like crowds at all.";
+// then his pick, "crowd 1 with the band on top", and "fine with the crowd noise without the music when that makes
+// sense"): sounds/party-crowd.mp3 (BigSoundBank "Crowd of 50-60 People #1", CC0; 60 s, looped), -20.7 LUFS. `level`
+// puts it about 3 dB under the band (his demo: the crowd at 0.55 against the music at 0.8), through the sound
+// effects level. A swap is this one line (`url`); with none, the made-up murmur plays (party-sound.js).
+export const SOUND_PICKS = Object.freeze({ "mops-bleat": Object.freeze({ url: "sounds/goat-bleat.mp3", level: 0.7 }), crowd: Object.freeze({ url: "sounds/party-crowd.mp3", level: 0.5 }) });
 // Cues that are the same place (one visit): moving between them does not start a `once` track again.
 // (Brian 2026-11-26, #32: the heart moments at home count as the same home visit, so the home track carries on)
 export const MUSIC_PLACE = Object.freeze({ gift: "home", heart: "home" });

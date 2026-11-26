@@ -28,7 +28,7 @@
 - The photo's 2 s to step out counts while he can move: not while the Polaroid fills the screen (a kid must close it first).
 - Band order and P3: Funky Chunk now plays from the band's first notes in P3 (until he dances), but P3's sung bubble "Stormtop-vania 1-2-3-4-5!" still shows over it. Drop that bubble in P3 (my pick), or let the band open with Stormtop-Sylvania in P3 only?
 - The photo rule raises the alarm even in a whole disguise (being in the row at the wrong moment is seen up close). Keep, or only "?" in disguise?
-- Sounds to pick from (round-d/sounds): voice A, B or C (A plays now). The crowd: a recording to drop in (`SOUND_PICKS.crowd`), none of the made-up three.
+- Sounds: built with Brian's picks of 2026-11-26 (the crowd recording, the syllable voices). Which guests count as women for the voices is a guess (teal and backpack: `GUEST_VOICES`); NOT ASSESSED by ear.
 - The on-screen words by outlined things ("PUT IN · box" and the like): keep or drop? (round-d/outline-final.png shows both, with the new line.)
 - Not built here: the Day 1 Guardian Box at the Day 2 size (#34): the box and its Day 2 size live on feat/ch1-day2-morning. The docs that still say the TV line was cut (phase 4 item 13) were not changed.
 - Placeholders: the closing beats (2.6 s cheer, 2 s dim), Mops home 2.5 s after he walks in, 2 s to leave the photo, the flyer's place on the bed, the tape and news drawings, the band's fade (1.5 s).

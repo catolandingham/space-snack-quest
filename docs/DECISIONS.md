@@ -5,30 +5,30 @@
 | --- | --- |
 | 33–35 | # Space Snack Quest: every decision, in one place |
 | 36–43 | ## How to use this file |
-| 44–65 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
-| 66–70 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 71–79 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 80–83 | ## Sound, 2026-11-23 |
-| 84–107 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 108–119 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 120–144 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 145–153 | ## Which repo is the base, 2026-11-22 |
-| 154–164 | ## Sight cones, 2026-11-22 |
-| 165–169 | ## Latest calendar direction, 2026-11-16 |
-| 170–172 | ## Vent walk, 2026-11-16 |
-| 173–175 | ## Locked home room v5, 2026-11-16 |
-| 176–185 | ## Fidelity system (pictures are locked, not just words) |
-| 186–223 | ## 1. Working rules |
-| 224–290 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 291–315 | ## 3. Characters and look |
-| 316–392 | ## 4. Look, rooms and layout |
-| 393–414 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 415–458 | ## 6. Later chapters (2–4 and travel) |
-| 459–468 | ## 7. Audio |
-| 469–503 | ## 8. Code, controls and process |
-| 504–550 | ## 9. Open / waiting on Brian |
-| 551–645 | ## 10. Earlier entries, kept word for word |
-| 646–742 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 44–67 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
+| 68–72 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 73–81 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 82–85 | ## Sound, 2026-11-23 |
+| 86–109 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 110–121 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 122–146 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 147–155 | ## Which repo is the base, 2026-11-22 |
+| 156–166 | ## Sight cones, 2026-11-22 |
+| 167–171 | ## Latest calendar direction, 2026-11-16 |
+| 172–174 | ## Vent walk, 2026-11-16 |
+| 175–177 | ## Locked home room v5, 2026-11-16 |
+| 178–187 | ## Fidelity system (pictures are locked, not just words) |
+| 188–225 | ## 1. Working rules |
+| 226–292 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 293–317 | ## 3. Characters and look |
+| 318–394 | ## 4. Look, rooms and layout |
+| 395–416 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 417–460 | ## 6. Later chapters (2–4 and travel) |
+| 461–470 | ## 7. Audio |
+| 471–505 | ## 8. Code, controls and process |
+| 506–552 | ## 9. Open / waiting on Brian |
+| 553–647 | ## 10. Earlier entries, kept word for word |
+| 648–744 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -61,6 +61,8 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 - **Alarm sound (#52), Decided 2026-11-26:** the in-game alarm's "boing, boing, boing" goes everywhere; the three rising whoops as on the alarm page, for as long as security searches. Fixed: each whoop holds its level (`ALARM_HOLD`). Brian may pick a different alarm later.
 - **Highlight style, Decided 2026-11-26:** "A is a bit too thick, but B and E are too little. So we'd like a thicker dashed line. So E, but thicker, but not quite as thick as A." One highlight for the whole game: the dashed gold line (`outline.js` OUTLINE), 7.5 game pixels wide (about 3 px on a 375-wide phone; E was 4, A about 10), no glow, no arrow. Built on feat/party-half-two: the banner, the flyer, the shirt in the dress-up and the photo gap now use it (their glows are gone). The lunch branch's soft glow is replaced after the merge. Whether the on-screen words ("PUT IN · box" and the like) stay: **Open**, Brian to answer (round-d/outline-final.png shows both).
 - **Crowd sound, Decided 2026-11-26:** "I don't like any of the crowd sounds. They don't sound like crowds at all." None of the three made-up options goes in. The crowd is one swappable file entry (`music-picks.js` SOUND_PICKS.crowd, a recording looped under the band); until it has a file the game's made-up murmur plays as before. The voice under bubbles still waits on his pick (A plays).
+- **Party crowd, Decided 2026-11-26 (music page):** "crowd 1 with the band on top", and later "fine with the crowd noise without the music when that makes sense". The crowd is a recording (`sounds/party-crowd.mp3`, BigSoundBank "Crowd of 50-60 People #1", CC0), the party's room sound whenever guests are in the hall, with or without the band, quietly under the band; muffled at home through his door while the party is on; quiet with the alarm; gone once the hall empties at closing. It replaces the made-up murmur. Built.
+- **Voices under speech bubbles, Decided 2026-11-26 (music page):** the syllable pack, "a man" style (OpenGameArt "Dialog vocal samples", CC0): a random syllable from the speaker's set about every 0.09 s for the bubble's length, a short pause every 5, quiet under the music, never over sung lines; most grown-ups a man's standard voice with a small pitch shift each, the Croc Boys the deep one, female guests a woman's standard or light, robots the robot one, Squatch the standard one pitched up a little; Mops keeps his meh and goat bleat. Built (the made-up voices stay as a switch).
 - **Also approved 2026-11-26:** the darker cone near him (#26, already built), flashlights only while searching (#27, built), the home dance line cut to "That party looked so fun." (#29, built), keep "Floating in space! It's our favorite song!" and "♪ I'm floating in space! ♪" (#30), a small Credits screen from the title screen (#31, built; its wording waits for his yes), heart moments count as the same home visit (#32, built), the Day 1 Guardian Box at the Day 2 size (#34, for feat/ch1-day2-morning, where the box lives), keep the box close-up's front view (#35), Mops's crate line approved as written (#36, "You came to me in a Moon Pie crate. You've loved Moon Pies ever since.").
 
 ## Party, 2026-11-24 night (Brian, Snack Quest Chat)

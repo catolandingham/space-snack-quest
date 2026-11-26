@@ -51,7 +51,7 @@ import { createAfterAlarm } from "./party-after-alarm.js";
 import { createHomeEarly } from "./party-home-early.js";
 import { tickStageWalks, bandOffStage } from "./party-stage-walks.js";
 import { cutawaySteps } from "./cutaway.js";
-import { bandTrackNow, partyOnNow } from "./party-band-order.js";
+import { bandTrackNow, partyOnNow, guestsInHall } from "./party-band-order.js";
 import { createPartySound } from "./party-sound.js";
 import { furShows } from "./party-outfit.js";
 import { CUT, snackRecord } from "./party-snacks.js";
@@ -697,7 +697,9 @@ export function createParty(bridge) {
     sound.muffle(e.room() === "closet");
     // before the band plays: the party heard through his door at home, the crowd's murmur in the hall. The murmur is
     // off whenever the band plays (Brian 2026-11-25, showing-5 note 3: the swishing under the music).
-    sound.ambience(p.scene === "P1" && p.phase === "home" ? "door" : e.room() === "hall" && !p.alarm && !p.band && ["P1", "P2", "P6"].includes(p.scene) ? "murmur" : "");
+    // the crowd (its recording, Brian 2026-11-26): whenever guests are in the hall, with the band or without it,
+    // quietly under it; muffled through his door at home; quiet with the alarm, and gone once the hall has emptied
+    sound.crowd(guestsInHall(p), e.room() === "closet");
     sound.tick();
     // the guards' boots, only while a guard in the room he is in actually walks (footfalls.js; footstep recordings)
     if (p.alarm) {
@@ -900,6 +902,11 @@ export function createParty(bridge) {
       // (home early, the party still on: the band through his door, not the home music)
       if ((p.scene === "P8a" || p.scene === "P8b" || p.scene === "P8c") && E().room() === "closet" && !partyOnNow(p)) return "home";
       return "";
+    },
+    /** The guest saying a guest's line now (party state `talker`), or "" (speech-voice.js, each guest's voice). */
+    talker() {
+      const p = live();
+      return (p && p.talker) || "";
     },
     /** The locked hall picture this beat draws the hall on (goal outlines are traced from it), or null. */
     roomPicture() {

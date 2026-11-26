@@ -46,7 +46,11 @@ export function createBridge() {
   const written = new Set();
   const homeMusic = createHomeMusic(() => engine);
   const morningSound = createMorningSound(() => engine);
-  const speechVoice = createSpeechVoice(() => engine);
+  // (a guest's line: which guest says it, for the guest's own voice)
+  const speechVoice = createSpeechVoice(() => engine, () => {
+    const party = beats.get("ch1-party");
+    return party && party.talker ? party.talker() : "";
+  });
   // At home, while the TV story is on the screen, the music's cue is "tv" (music-picks.js).
   const refineCue = (cue) => {
     const tv = beats.get("ch1-tv-story");

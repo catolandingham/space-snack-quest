@@ -63,6 +63,8 @@ g.check("the recordings are credited to Kenney, CC0", /Kenney/.test(credits) && 
   await sleep(2000);
   d = await dbg(page);
   g.check("the band's notes are really made (oscillators run)", d.ps.osc > 20, d.ps);
+  // the crowd's recording (Brian 2026-11-26: "crowd 1 with the band on top"): loaded and playing under the band
+  g.check("the party's crowd recording (sounds/party-crowd.mp3) plays in the hall, under the band", d.crowd.loaded && d.crowd.playing && !d.crowd.muffled && d.played.includes("crowd-recording:sounds/party-crowd.mp3"), d.crowd);
   // the break: the band stops dead and shouts its line, shown over the band (he waits behind the crowd, out of sight)
   await page.evaluate(() => ((window.__ss.op.sq.x = 150), (window.__ss.op.sq.y = 590)));
   let shout = false;
@@ -89,7 +91,7 @@ g.check("the recordings are credited to Kenney, CC0", /Kenney/.test(credits) && 
 {
   const { page } = await open("party", true);
   const d = await dbg(page);
-  g.check("before the peek, at home: the party is heard through his door", d.ambience === "door", d.ambience);
+  g.check("before the peek, at home: the party's crowd is heard through his door (muffled)", d.crowd.want && d.crowd.muffled, d.crowd);
   g.check("and Joe's home theme stays off", d.warm === "", d.warm);
   await page.close();
 }

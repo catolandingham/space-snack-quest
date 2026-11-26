@@ -29,3 +29,15 @@ export function partyOnNow(p) {
   if (["P3", "P4", "P5", "P6"].includes(p.scene)) return !!p.band;
   return p.scene === "P8c" && !p.mopsComing;
 }
+
+/**
+ * True while guests are in the hall, so the crowd is heard (Brian 2026-11-26, "fine with the crowd noise without the
+ * music when that makes sense"): from the evening's start (P1) through the party, home early until Mops comes home,
+ * and at closing time until the hall has emptied; never while the alarm rings.
+ */
+export function guestsInHall(p) {
+  if (!p || p.alarm) return false;
+  if (["P1", "P2", "P3", "P4", "P5", "P6"].includes(p.scene)) return true;
+  if (p.scene === "P8b") return !!p.close && ["cheer", "dim", "speak", "pack", "leave"].includes(p.close.phase);
+  return p.scene === "P8c" && !p.mopsComing;
+}

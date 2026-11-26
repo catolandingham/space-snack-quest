@@ -134,7 +134,8 @@ check("#46 during the 3-2-1 he is safe in his place, and JOIN · photo is open o
 }
 
 // ---------- the sound options ----------
-check("the crowd sound is one swappable file entry (music-picks.js SOUND_PICKS.crowd): none yet, so the made-up murmur plays (Brian 2026-11-26: none of the three options)", picks.SOUND_PICKS.crowd && picks.SOUND_PICKS.crowd.url === null && picks.SOUND_PICKS.crowd.level > 0 && !("CROWD" in board) && /SOUND_PICKS\.crowd/.test(readFileSync(join(root, "src", "modules", "party-sound.js"), "utf8")));
+check("the crowd sound is one swappable file entry (music-picks.js SOUND_PICKS.crowd): Brian's pick, the crowd recording, in the repo (the made-up options are gone)", picks.SOUND_PICKS.crowd && picks.SOUND_PICKS.crowd.url === "sounds/party-crowd.mp3" && existsSync(join(root, "sounds", "party-crowd.mp3")) && picks.SOUND_PICKS.crowd.level > 0 && picks.SOUND_PICKS.crowd.level < 1 && !("CROWD" in board) && /SOUND_PICKS\.crowd/.test(readFileSync(join(root, "src", "modules", "party-sound.js"), "utf8")));
+check("the crowd is heard whenever guests are in the hall, with or without the band; not with the alarm; gone once the hall empties at closing", order.guestsInHall({ scene: "P6", band: false }) && order.guestsInHall({ scene: "P4", band: true }) && order.guestsInHall({ scene: "P1" }) && !order.guestsInHall({ scene: "P6", alarm: {} }) && order.guestsInHall({ scene: "P8b", close: { phase: "leave" } }) && !order.guestsInHall({ scene: "P8b", close: { phase: "empty" } }) && !order.guestsInHall({ scene: "P8a" }));
 
 console.log(failed ? `${failed} failed` : "party-phase4-units checks passed");
 process.exit(failed ? 1 : 0);

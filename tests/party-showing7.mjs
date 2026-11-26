@@ -105,9 +105,15 @@ const g = await startGame({ port: 9474, name: "party-showing7" });
   g.check("0:05 everyone else's bubble keeps a pointed tail", run.bubbles.filter((q) => q.who !== "sq").every((q) => q.tail.kind === "speech"), run.bubbles.map((q) => [q.who, q.tail && q.tail.kind]));
   // 0:05 voices
   const spoken = run.bubbles.filter((q) => q.who === "official").length;
-  g.check("0:05 each of Isfred's lines has its wah-wah voice", run.voices.filter((v) => v.who === "official").length === spoken && spoken === 3, run.voices);
+  g.check("0:05 each of Isfred's lines has its voice", run.voices.filter((v) => v.who === "official").length === spoken && spoken === 3, run.voices);
   g.check("0:05 no voice under the sung line or Squatch's thoughts", !run.voices.some((v) => v.who === "band" || v.who === "sq"), run.voices);
   g.check("0:05 a longer line's voice lasts longer (\"Let's give a big hello...\" against \"And now...\")", run.voices.length === 3 && run.voices[0].len > run.voices[2].len, run.voices);
+  // the voice is Brian's pick of 2026-11-26: recorded syllables (sounds/voices/), loaded once sound is on
+  await page.evaluate(() => ((window.requestAnimationFrame = (f) => setTimeout(() => f(performance.now()), 16)), window.SSQ.bubbleSound({ who: "official", text: "Welcome, everybody, welcome!", style: "say" }, "voice-test")));
+  await sleep(1500);
+  const vd = await page.evaluate(() => window.SSQ.speechVoice.debug());
+  const lastV = vd.log[vd.log.length - 1] || {};
+  g.check("0:05 the voice plays recorded syllables (a man's standard voice for Isfred), all four of its files loaded", lastV.recorded === true && lastV.set === "male_standard" && vd.loaded.male_standard === 4, { lastV, loaded: vd.loaded });
   g.check("no page errors (P3)", errors.length === 0, errors);
 }
 

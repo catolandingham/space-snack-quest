@@ -1,10 +1,13 @@
 /**
  * The voices under speech bubbles (Brian 2026-11-26, showing 7 at 0:05: "We don't hear something happen when he's
  * talking from the stage... like the Charlie Brown teacher noise... maybe we can do that anytime there's someone
- * speaking"): a short muffled-trombone "wah-wah" babble, made up here (no recording), under every speech bubble.
- *   - Its length follows the line's: a syllable or so a word, a little over a second for a long line.
- *   - Each speaker has a pitch: Isfred in the middle, the Croc Boys low, the guests each a little different, Squatch
- *     higher, the wall speaker a tinny middle (VOICES).
+ * speaking"). Brian's pick of 2026-11-26 (the music page, "a man" style): recorded syllables (OpenGameArt "Dialog
+ * vocal samples", CC0; sounds/voices/), a random one from the speaker's set about every 0.09 s for the line's length,
+ * a short pause every 5 (SYLLABLES, VOICE_SETS). The made-up "wah-wah" options (A, B, C) stay as one-line switches.
+ *   - Its length follows the line's.
+ *   - Each speaker has a set and a pitch: most grown-ups (Isfred, the guests, the bartender, security, the speakers)
+ *     a man's standard voice, each a little shifted; the Croc Boys the deep one; some guests a woman's (standard or
+ *     light); the robot guest the robot voice; Squatch the standard one pitched up a little (VOICES, GUEST_VOICES).
  *   - Mops keeps his own goat "meh" and bleat (morning-sound.js): no babble for him.
  *   - None over a sung line, and none for a thought (Squatch's "whisper" lines are thoughts: nobody says them).
  *   - Quiet against the music: it plays through the sound effects level at MIX.voices (sound-mix.js).
@@ -20,16 +23,50 @@ import { MIX, buses } from "./sound-mix.js";
  * the speaker's own, played elsewhere ("meh": Mops, morning-sound.js).
  */
 export const VOICES = Object.freeze({
-  official: Object.freeze({ f: 196, bright: 1 }), // Isfred, in the middle
-  band: Object.freeze({ f: 98, bright: 0.85 }), // the Croc Boys, low
-  tourist: Object.freeze({ f: 175, spread: 0.35, bright: 1 }), // the party guests, each a little different
-  bartender: Object.freeze({ f: 233, bright: 1.05 }),
-  guard: Object.freeze({ f: 131, bright: 0.9 }),
-  sq: Object.freeze({ f: 294, bright: 1.15 }), // Squatch, higher
-  speaker: Object.freeze({ f: 220, bright: 1.4 }), // the wall speaker at home: tinny
-  pa: Object.freeze({ f: 220, bright: 1.4 }), // the party hall's wall speaker
+  official: Object.freeze({ f: 196, bright: 1, set: "male_standard", rate: 1 }), // Isfred, in the middle
+  band: Object.freeze({ f: 98, bright: 0.85, set: "male_deep", rate: 1 }), // the Croc Boys, low
+  // the party guests, each a little different (which guest: GUEST_VOICES)
+  tourist: Object.freeze({ f: 175, spread: 0.35, bright: 1, set: "male_standard", rate: 1.05 }),
+  bartender: Object.freeze({ f: 233, bright: 1.05, set: "female_standard", rate: 1 }),
+  guard: Object.freeze({ f: 131, bright: 0.9, set: "male_standard", rate: 0.9 }),
+  sq: Object.freeze({ f: 294, bright: 1.15, set: "male_standard", rate: 1.22 }), // Squatch, higher
+  speaker: Object.freeze({ f: 220, bright: 1.4, set: "male_standard", rate: 1.02 }), // the wall speaker at home
+  pa: Object.freeze({ f: 220, bright: 1.4, set: "male_standard", rate: 1.02 }), // the party hall's wall speaker
   mops: Object.freeze({ own: "meh" }),
 });
+/** The party's guests (party.js `talker`, the one saying a "tourist" line): each one's set and pitch. */
+export const GUEST_VOICES = Object.freeze({
+  teal: Object.freeze({ set: "female_standard", rate: 1 }),
+  stilt: Object.freeze({ set: "male_standard", rate: 0.93 }),
+  robot: Object.freeze({ set: "robot", rate: 1 }),
+  "octopus-guest": Object.freeze({ set: "male_standard", rate: 1.1 }),
+  backpack: Object.freeze({ set: "female_light", rate: 1 }),
+  camera: Object.freeze({ set: "male_standard", rate: 1.04 }),
+});
+/** The recorded syllables: four of each set (sounds/voices/<set>_<1..4>.mp3). */
+export const VOICE_SETS = Object.freeze(["male_standard", "male_deep", "female_standard", "female_light", "robot"]);
+export const voiceFile = (set, i) => `sounds/voices/${set}_${i + 1}.mp3`;
+// PLACEHOLDERS: a syllable every `every` seconds, a pause of `pause` after each `group`, about `chars` letters a
+// syllable, at most `most`, each at `level` (under MIX.voices), its pitch moved up to `wobble` either way.
+export const SYLLABLES = Object.freeze({ every: 0.09, pause: 0.16, group: 5, chars: 3.2, least: 3, most: 30, level: 0.7, wobble: 0.04 });
+
+/**
+ * The syllables a bubble gets, or null for none (a sung line, a thought, Mops): { who, set, rate, at: [seconds from
+ * its start], len }. `guest` is the guest saying a "tourist" line (GUEST_VOICES), if known.
+ */
+export function syllablesFor(b, guest) {
+  const plan = babbleFor(b);
+  if (!plan) return null;
+  const v = (b.who === "tourist" && GUEST_VOICES[guest]) || plan.voice,
+    n = Math.max(SYLLABLES.least, Math.min(SYLLABLES.most, Math.round(b.text.replace(/[^A-Za-z0-9]/g, "").length / SYLLABLES.chars))),
+    at = [];
+  let t = 0;
+  for (let i = 0; i < n; i++) {
+    at.push(Math.round(t * 1000) / 1000);
+    t += SYLLABLES.every + ((i + 1) % SYLLABLES.group === 0 ? SYLLABLES.pause : 0);
+  }
+  return { who: b.who, guest: guest || "", set: v.set, rate: v.rate, at, len: Math.round(t * 1000) / 1000 };
+}
 
 /**
  * The lines files' speakers (who: in party-lines.js, morning-lines.js, home-alone-lines.js, tv-story-lines.js) and
@@ -89,7 +126,7 @@ export function babbleFor(b) {
  * tests/out/.../round-d/sounds/): "A" a muted trombone's "wah-wah" (the default), "B" a mumbly hum, "C" a short blip
  * a syllable. One line to switch.
  */
-export const VOICE_STYLE = "A";
+export const VOICE_STYLE = "S"; // "S": the recorded syllables (Brian's pick); "A", "B", "C": the made-up ones
 
 /**
  * Plays a babble (babbleFor) into A = { c: an AudioContext, o: the node it plays into } from time t, in `style`
@@ -187,10 +224,43 @@ function playWah(A, t, plan) {
 const VOICE_PLAYERS = Object.freeze({ A: playWah, B: playHum, C: playBlips });
 
 /** The voices for the game: speak(b) when a bubble opens (bridge.js bubbleSound). `getEngine` is the bridge's engine. */
-export function createSpeechVoice(getEngine) {
+export function createSpeechVoice(getEngine, getGuest = () => "") {
   let now = null,
     nowCtx = null;
-  const log = [];
+  const log = [],
+    bufs = {},
+    loading = {};
+  // the syllables of a set, loaded once sound is on (four files a set)
+  function loadSet(c, set) {
+    if (loading[set] || typeof fetch !== "function") return loading[set] || Promise.resolve();
+    bufs[set] = [];
+    loading[set] = Promise.all(
+      [0, 1, 2, 3].map((i) =>
+        fetch(voiceFile(set, i))
+          .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error("voice " + r.status))))
+          .then((b) => c.decodeAudioData(b))
+          .then((d) => bufs[set].push(d))
+          .catch(() => {}),
+      ),
+    );
+    return loading[set];
+  }
+  // the recorded syllables into `out` from time t; false while the set has not loaded (then the made-up voice plays)
+  function playSyllables(c, out, t, plan) {
+    const set = bufs[plan.set];
+    if (!set || !set.length) return false;
+    for (const s of plan.at) {
+      const src = c.createBufferSource(),
+        g = c.createGain();
+      src.buffer = set[Math.floor(Math.random() * set.length)];
+      src.playbackRate.value = plan.rate * (1 + (Math.random() * 2 - 1) * SYLLABLES.wobble);
+      g.gain.value = SYLLABLES.level;
+      src.connect(g);
+      g.connect(out);
+      src.start(t + s);
+    }
+    return true;
+  }
   function stop() {
     if (!now) return;
     try {
@@ -212,22 +282,34 @@ export function createSpeechVoice(getEngine) {
         bus = buses(getEngine());
       if (!plan || !bus) return false;
       try {
-        const lvl = bus.ctx.createGain();
+        const lvl = bus.ctx.createGain(),
+          t = bus.ctx.currentTime + 0.02;
         lvl.gain.value = MIX.voices;
         lvl.connect(bus.fx);
-        playBabble({ c: bus.ctx, o: lvl }, bus.ctx.currentTime + 0.02, plan);
+        const syl = VOICE_STYLE === "S" ? syllablesFor(b, b.who === "tourist" ? getGuest() : "") : null;
         now = lvl;
         nowCtx = bus.ctx;
-        log.push({ who: plan.who, n: plan.syllables.length, len: plan.len });
+        if (syl) {
+          // the first line of a voice waits a moment for its syllables to load (the bubble is up meanwhile)
+          const c = bus.ctx,
+            entry = { who: plan.who, n: syl.at.length, len: syl.len, set: syl.set, rate: syl.rate, recorded: false };
+          log.push(entry);
+          playSyllables(c, lvl, t, syl)
+            ? (entry.recorded = true)
+            : loadSet(c, syl.set).then(() => now === lvl && playSyllables(c, lvl, c.currentTime + 0.02, syl) && (entry.recorded = true));
+        } else {
+          playBabble({ c: bus.ctx, o: lvl }, t, plan, VOICE_STYLE);
+          log.push({ who: plan.who, n: plan.syllables.length, len: plan.len, recorded: false });
+        }
         log.length > 200 && log.shift();
         return true;
       } catch {
         return false;
       }
     },
-    /** For tests: every babble played (who, how many syllables, how long). */
+    /** For tests: every voice played (who, how many syllables, how long, which set, recorded or made up). */
     debug() {
-      return { log: log.slice() };
+      return { log: log.slice(), loaded: Object.fromEntries(Object.entries(bufs).map(([k, v]) => [k, v.length])) };
     },
   };
 }

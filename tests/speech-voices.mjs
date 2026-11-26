@@ -92,7 +92,18 @@ for (const style of ["A", "B", "C"]) {
     reach2 = (n, seen = new Set()) => (n === d2 ? true : seen.has(n) ? false : (seen.add(n), n.out.length > 0 && n.out.every((o) => reach2(o, seen))));
   check(`voice style ${style}: a syllable each, every one starting silent, all ending at the node given`, gs.length === long.syllables.length && gs.every((g) => g.gain.first <= 0.001) && c2.nodes.every((n) => reach2(n)), gs.length);
 }
-check("the game uses style A, the muted trombone (one line to switch: speech-voice.js VOICE_STYLE)", V.VOICE_STYLE === "A");
+check("the game uses the recorded syllables (Brian's pick of 2026-11-26; one line to switch: speech-voice.js VOICE_STYLE)", V.VOICE_STYLE === "S");
+// the recorded syllables
+const { existsSync } = await import("node:fs");
+const sets = [...Object.values(V.VOICES), ...Object.values(V.GUEST_VOICES)].filter((v) => !v.own);
+check("every voice (and every guest's) uses a set of recorded syllables, and all four files of each set are in sounds/voices/", sets.every((v) => V.VOICE_SETS.includes(v.set) && v.rate > 0.5 && v.rate < 1.6) && V.VOICE_SETS.every((set) => [0, 1, 2, 3].every((i) => existsSync(join(root, V.voiceFile(set, i))))), sets);
+const syl = (who, text, style, guest) => V.syllablesFor({ who, text, style }, guest);
+check("syllables: none for Mops (his meh), a sung line or a thought",  syl("mops", "Morning, Squatch.") === null &&  syl("band", "Stormtop-vania 1-2-3-4-5!", "song") === null &&  syl("sq", "Robots?", "whisper") === null);
+const isf =  syl("official", "Let's give a big hello to our friends from Bleep-Bloop Robotics!"),
+  shortL =  syl("official", "Hello!");
+check("syllables: about every 0.09 s, a short pause every 5, and a longer line has more", isf.at.length > shortL.at.length && Math.abs(isf.at[1] - isf.at[0] - V.SYLLABLES.every) < 0.001 && isf.at[5] - isf.at[4] > V.SYLLABLES.every + 0.1, isf.at.slice(0, 7));
+check("syllables: Isfred and the grown-ups a man's standard voice, the Croc Boys the deep one, Squatch pitched up a little", isf.set === "male_standard" &&  syl("band", "Group photo!").set === "male_deep" &&  syl("sq", "Party?").rate > 1.1 &&  syl("guard", "Someone pulled the fur alarm.").set === "male_standard");
+check("syllables: each guest their own voice: the robot guest the robot one, some guests a woman's",  syl("tourist", "Say cheese!", "", "robot").set === "robot" && ["female_standard", "female_light"].includes(syl("tourist", "Hi!", "", "teal").set) && ["female_standard", "female_light"].includes(syl("tourist", "Hi!", "", "backpack").set) &&  syl("tourist", "Say cheese!", "", "camera").set === "male_standard");
 check("a trombone with a mute: sawtooth through a low filter", c.nodes.filter((n) => n.kind === "osc").every((o) => o.type === "sawtooth") && c.nodes.filter((n) => n.kind === "filter").every((f) => f.type === "lowpass"));
 check("the voices sit under the music (MIX.voices below MIX.music and the effects)", MIX.voices > 0 && MIX.voices < MIX.music && MIX.voices < MIX.effects, MIX);
 
