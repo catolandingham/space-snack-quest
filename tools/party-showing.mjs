@@ -740,14 +740,9 @@ if (which === "morning") {
   await still("close-up-gift-in-the-box");
   await sleep(1500);
   await next();
-  await stepIs("cal");
-  await sleep(900);
-  await still("box-out-calendar-glows");
-  await press();
-  await sleep(1300);
-  await still("calendar-today");
-  await sleep(2600);
-  await floor(880, 540);
+  // the box goes back in the closet, the door shuts, and the bag by the door is outlined for his line
+  await sleep(500);
+  await still("box-goes-back-in-the-closet");
   await until((q) => q.cur === "bub", 4000);
   await sleep(1000);
   await still("bag-glows-he-forgot-his-lunch");
@@ -756,6 +751,14 @@ if (which === "morning") {
   await stepIs("lunch");
   await sleep(800);
   await still("lunch-goal");
+  // the calendar is there to look at (not a step): LOOK · calendar by the wardrobe, then back to the lunch
+  await press();
+  await sleep(1300);
+  await still("calendar-today-optional");
+  await sleep(2400);
+  await floor(880, 540);
+  await stepIs("lunch");
+  await sleep(600);
   await walkTo(760, 505, "TAKE · lunch");
   await sleep(400);
   await still("take-lunch");

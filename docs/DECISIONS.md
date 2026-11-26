@@ -5,30 +5,30 @@
 | --- | --- |
 | 33–35 | # Space Snack Quest: every decision, in one place |
 | 36–43 | ## How to use this file |
-| 44–54 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
-| 55–59 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 60–68 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 69–72 | ## Sound, 2026-11-23 |
-| 73–96 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 97–108 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 109–133 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 134–142 | ## Which repo is the base, 2026-11-22 |
-| 143–153 | ## Sight cones, 2026-11-22 |
-| 154–158 | ## Latest calendar direction, 2026-11-16 |
-| 159–161 | ## Vent walk, 2026-11-16 |
-| 162–164 | ## Locked home room v5, 2026-11-16 |
-| 165–174 | ## Fidelity system (pictures are locked, not just words) |
-| 175–212 | ## 1. Working rules |
-| 213–279 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 280–304 | ## 3. Characters and look |
-| 305–381 | ## 4. Look, rooms and layout |
-| 382–403 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 404–447 | ## 6. Later chapters (2–4 and travel) |
-| 448–457 | ## 7. Audio |
-| 458–492 | ## 8. Code, controls and process |
-| 493–539 | ## 9. Open / waiting on Brian |
-| 540–634 | ## 10. Earlier entries, kept word for word |
-| 635–731 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 44–55 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
+| 56–60 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 61–69 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 70–73 | ## Sound, 2026-11-23 |
+| 74–97 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 98–109 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 110–134 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 135–143 | ## Which repo is the base, 2026-11-22 |
+| 144–154 | ## Sight cones, 2026-11-22 |
+| 155–159 | ## Latest calendar direction, 2026-11-16 |
+| 160–162 | ## Vent walk, 2026-11-16 |
+| 163–165 | ## Locked home room v5, 2026-11-16 |
+| 166–175 | ## Fidelity system (pictures are locked, not just words) |
+| 176–213 | ## 1. Working rules |
+| 214–280 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 281–305 | ## 3. Characters and look |
+| 306–382 | ## 4. Look, rooms and layout |
+| 383–404 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 405–448 | ## 6. Later chapters (2–4 and travel) |
+| 449–458 | ## 7. Audio |
+| 459–493 | ## 8. Code, controls and process |
+| 494–540 | ## 9. Open / waiting on Brian |
+| 541–635 | ## 10. Earlier entries, kept word for word |
+| 636–732 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -50,6 +50,7 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 - **The Guardian Box in the morning.** Brian, video note 0:21: "Box shouldn't look so small versus the rocket. Also, I thought the view we had in much earlier versions was better - when we also had the note and you could see the my guardians drawing etc". Built on `feat/ch1-day2-morning`: on Day 2 the box is the approved look at 2.4 times its size; the close-up brings back the first build's box view (commit 18c9157: the older notes, the crayon drawing) with the lid labelled MY GARDIAN BOX and the drawing titled MY GUARDIANS. **Needs Brian's yes** (the look and sizes).
 - **Who he thinks the Guardians are.** Brian, video note 0:30, asked whether it is a story hole. Built: as he holds up the gift, a thought bubble shows his crayon drawing of the Guardians (big furry Sasquatches), before his line; and Mops's Guardians line at bedtime (above). **Decided** (Brian's chat answers that day).
 - **Mops is a "Ganitor".** Brian, in chat: "Ganitor is what mops is - goat janitor - that should be an ongoing reference in the game." **Decided** (the fact). Where it shows, Brian's pick the same day ("I like all of them a b c d e"): a GANITOR name tag on Mops's shirt in every scene; the Station PA, "Ganitor Mops to the party hall." (words approved); the hallway Employee of the Month photo labeled "MOPS, GANITOR"; the robot janitor notice plays on it (wording needs his yes); "MOPS THE GANITOR" on Squatch's crayon drawings where Mops is in them. **Decided**, not built yet (a later round; `docs/BRIAN-ASKS-OPEN.md` item 14).
+- **The home morning, Brian's answers.** 2026-11-26, chat: the calendar is optional (the lunch bag is the goal; LOOK · calendar stays); PICK UP · rocket and PUT IN · box approved; after the gift goes in, the Guardian Box goes back in the closet; Mops leaving is heard in the dark, as built; the note on the rocket shows its words, "Brave Sasquatches stay hidden. — The Guardians" (no "Rule #1"); the lunch bag has MOPS on it; keep the 20-second goal-words rule; drawings fine as placeholders. **Decided.**
 - **The vocal song stays at bedtime.** Brian, video note 0:25: "This is the one place in ch 1 that I think this song with vocals actually works - we can leave it here". **Decided.**
 
 ## Party, 2026-11-24 night (Brian, Snack Quest Chat)

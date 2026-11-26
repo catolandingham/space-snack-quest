@@ -192,30 +192,34 @@ const run = !(registered && asleep)
         tick(4);
         out.closeUp = { first: cu[0], last: cu[cu.length - 1], heldAfter: !!(n.cur && n.cur.k === "cutaway" && n.cur.id === "gbox"), thunks: d().sounds.hide || 0 };
         next();
-        tick(0.2);
+        tick(0.25);
         ss.drawFrame();
-        out.boxAfter = d().box;
-        tick(0.6);
-        const cal = atStep("cal");
+        out.boxBack = d().box;
+        tick(0.85);
         out.wardrobeShut = n.wardrobe;
+        // 4. the lunch bag by the door: his line (the calendar is not a step)
         ss.drawFrame();
         out.boxAfterShut = d().box;
-        // 4. the calendar
+        out.line2 = n.cur && n.cur.k === "bub" ? { who: n.cur.b.who, text: n.cur.b.text, chip: ss.chipNow(), bagOutline: d().drew && d().drew.bagOutline } : null;
+        tick(6);
+        out.line2Held = !!(n.cur && n.cur.k === "bub" && n.cur.b.text === LUNCH);
+        next();
+        tick(0.3);
+        // 5. the lunch goal; by the wardrobe the calendar can still be looked at (optional)
+        const lunchFar = atStep("lunch-far");
+        out.offers = (ss.spotsNow() || []).filter((x) => x && x.verb).map((x) => x.verb + " · " + x.cap);
+        const cal = lunchFar;
         press();
         tick(0.5);
         out.calendarOpen = !!n.ch1Calendar;
         ss.drawFrame();
         out.calendar = d().drew && d().drew.calendar;
         ss.tapAt(880, 540);
-        tick(0.3);
+        tick(0.4);
+        out.afterCalendar = { step: step(), ctrl: n.ctrl, chip: ss.chipNow(), cur: n.cur ? n.cur.k : "" };
+        n.ctrl && (window.SSQ.engine().place("sq", 300, 398), tick(0.2));
         ss.drawFrame();
-        out.line2 = n.cur && n.cur.k === "bub" ? { who: n.cur.b.who, text: n.cur.b.text, chip: ss.chipNow(), bagOutline: d().drew && d().drew.bagOutline } : null;
-        tick(6);
-        out.line2Held = !!(n.cur && n.cur.k === "bub" && n.cur.b.text === LUNCH);
-        next();
-        tick(0.3);
-        // 5. the lunch bag across the room
-        const lunchFar = atStep("lunch-far");
+        out.boxInClosetAfter = window.SSQ.beat("ch1-home-morning").boxInCloset();
         walkTo(760, 505);
         const lunch = atStep("lunch");
         out.shownMorning = ss.shown();
@@ -227,6 +231,15 @@ const run = !(registered && asleep)
         out.debug = d();
         out.steps = d().steps;
         out.list = { rocket, closetFar, closet, box, cal, lunchFar, lunch };
+        // the words painted on the lunch bag's picture (they are part of its drawing, not the game's text log)
+        out.bagWords = (() => {
+          const c = document.createElement("canvas").getContext("2d"),
+            said = [],
+            fill = c.fillText.bind(c);
+          c.fillText = (t, ...rest) => (said.push(t), fill(t, ...rest));
+          window.SSQ.beat("ch1-home-morning").drawHeldBag(c, 100, 100);
+          return said;
+        })();
         // 6. the step restart (↺) at the closet step puts him back there, on that step
         return out;
       },
@@ -258,12 +271,12 @@ const want = [
   ["rocket", L["chip-gift"], L["button-rocket"]],
   ["closet", L["chip-box"], L["button-closet"]],
   ["box", L["chip-box"], L["button-box"]],
-  ["cal", L["chip-cal"], L["button-cal"]],
   ["lunch", L["chip-lunch"], L["button-lunch"]],
 ];
 for (const [k, chip, act] of want) {
   const p = P[k] || {};
-  g.check(`${k}: the chip says "${chip}" and the one button says "${act}"`, p.chip === chip && p.offer === act && p.spots === 1, p);
+  // (on the lunch goal the calendar can be looked at too: two spots, the bag's first)
+  g.check(`${k}: the chip says "${chip}" and the button says "${act}"`, p.chip === chip && p.offer === act && p.spots === (k === "lunch" ? 2 : 1), p);
   g.check(`${k}: only the thing to use is outlined (the dashed outline is round "${act}")`, !!p.outline && p.outline.act === act, p.outline);
 }
 for (const [k] of want) {
@@ -272,7 +285,7 @@ for (const [k] of want) {
   const first = (P[k + "Far"] || p).wordsAtFirst;
   g.check(`${k}: on the phone the goal words wait while the outline shows, then come up in the top bar after 20 s (words if stuck)`, !(first && first.shown) && p.wordsIfStuck && p.wordsIfStuck.shown && p.wordsIfStuck.inside && p.stillStep === k, { first, stuck: p.wordsIfStuck });
 }
-g.check("the words are today's: the chips and buttons the game had, PICK UP · rocket and PUT IN · box from the brief, OPEN · closet (approved)", L["chip-gift"] === "Squatch: pick up the gift" && L["chip-box"] === "Squatch: put the gift in the box" && L["chip-cal"] === "Squatch: look at the calendar" && L["chip-lunch"] === "Squatch: take the lunch" && L["button-rocket"] === "PICK UP · rocket" && L["button-box"] === "PUT IN · box" && L["button-closet"] === "OPEN · closet" && L["button-cal"] === "LOOK · calendar" && L["button-lunch"] === "TAKE · lunch");
+g.check("the words are today's: the chips and buttons the game had (no calendar chip: it is optional), PICK UP · rocket and PUT IN · box and OPEN · closet (approved)", L["chip-gift"] === "Squatch: pick up the gift" && L["chip-box"] === "Squatch: put the gift in the box" && !("chip-cal" in L) && L["chip-lunch"] === "Squatch: take the lunch" && L["button-rocket"] === "PICK UP · rocket" && L["button-box"] === "PUT IN · box" && L["button-closet"] === "OPEN · closet" && L["button-cal"] === "LOOK · calendar" && L["button-lunch"] === "TAKE · lunch");
 g.check("the goal stays up while he walks: the wardrobe is outlined from across the room, the bag from the wardrobe", P.closetFar && P.closetFar.chip === L["chip-box"] && P.closetFar.outline && P.closetFar.outline.act === L["button-closet"] && P.lunchFar && P.lunchFar.chip === L["chip-lunch"] && P.lunchFar.outline && P.lunchFar.outline.act === L["button-lunch"], { closetFar: P.closetFar, lunchFar: P.lunchFar });
 g.check("he gets up right beside the rocket: PICK UP works where he stands", P.rocket && P.rocket.offer === L["button-rocket"]);
 
@@ -294,7 +307,8 @@ g.check("PUT IN · box: he takes the box out of the closet onto the floor", R.bo
 const cu = R.closeUp || {};
 g.check('the close-up is the first build\'s box view: the open box with its lid labelled "MY GARDIAN BOX", the older notes in it, his crayon drawing titled "MY GUARDIANS" (two big Sasquatches), the gift held over it first', cu.first && cu.first.id === "gbox" && cu.first.label === "MY GARDIAN BOX" && cu.first.title === "MY GUARDIANS" && cu.first.notes >= 2 && cu.first.drawing && cu.first.drawing.figures.guardians === 2 && cu.first.held && !cu.first.landed, cu.first);
 g.check("then the gift drops into the box and stays (a thunk), and the close-up waits for NEXT", cu.last && cu.last.landed && cu.heldAfter && cu.thunks === 1, { last: cu.last, held: cu.heldAfter, thunks: cu.thunks });
-g.check("back in the room the box stays out on the floor with the gift in it (nothing disappears)", R.boxAfter && R.boxAfter.where === "floor" && R.boxAfter.gift && R.boxAfterShut && R.boxAfterShut.gift, { after: R.boxAfter, shut: R.boxAfterShut });
+g.check("the close-up shows the note's words, approved: \"Brave Sasquatches stay hidden. — The Guardians\" (no Rule #1), once the gift is in", cu.last && cu.last.note && !cu.first.note && (R.shownMorning || []).some((w) => w === "Brave Sasquatches") && (R.shownMorning || []).some((w) => w === "— The Guardians") && !(R.shownMorning || []).some((w) => /Rule/.test(w)), { note: cu.last && cu.last.note });
+g.check("back in the room the box, the gift in it, goes back in the closet (Brian 2026-11-26), and stays there after", R.boxBack && R.boxBack.where === "moving" && R.boxBack.gift && R.boxAfterShut === null && R.boxInClosetAfter === true, { back: R.boxBack, shut: R.boxAfterShut, inCloset: R.boxInClosetAfter });
 g.check("he shuts the closet (bump): the calendar on its door is back", R.wardrobeShut === "closed" && S.closetShut === 1, { wardrobe: R.wardrobeShut, bump: S.closetShut });
 
 // the calendar
@@ -302,10 +316,13 @@ g.check("LOOK · calendar opens the calendar close-up", R.calendarOpen);
 g.check("today's close-up: days 1 to 13 crossed off, the circled Moon Pie day (14) is today", R.calendar && R.calendar.today === 14 && R.calendar.crossed.length === 13 && R.calendar.crossed[12] === 13, R.calendar);
 
 // the lunch
-g.check("closing it: the lunch bag is outlined while he says his line, word for word, over him, no chip", R.line2 && R.line2.who === "sq" && R.line2.text === LUNCH && R.line2.chip === "" && !!R.line2.bagOutline, R.line2);
+g.check("the closet shut, the lunch bag is outlined while he says his line, word for word, over him, no chip", R.line2 && R.line2.who === "sq" && R.line2.text === LUNCH && R.line2.chip === "" && !!R.line2.bagOutline, R.line2);
 g.check("the lunch line waits for NEXT", R.line2Held);
 g.check("TAKE · lunch hands over to today's lunch sneak: the party hall, the bag in his paw", R.hall && R.hall.room === "hall" && R.hall.step === "sneak" && R.hall.hold === "lunch" && R.hall.chip === "Squatch: take Mops his lunch", R.hall);
-g.check("the steps came in order", JSON.stringify(R.steps) === JSON.stringify(["night", "wake", "rocket", "hold", "think", "closet", "toCloset", "box", "lift", "closeup", "shut", "cal", "calendar", "notice", "lunch", "done"]), R.steps);
+g.check("the lunch bag has MOPS written on it (Brian 2026-11-26)", JSON.stringify(R.bagWords) === JSON.stringify([L["sign-bag"]]) && L["sign-bag"] === "MOPS", R.bagWords);
+g.check("the calendar is not a step (Brian 2026-11-26): on the lunch goal TAKE · lunch comes first (the one outlined) and LOOK · calendar is there too", JSON.stringify(R.offers) === JSON.stringify([L["button-lunch"], L["button-cal"]]) && P.lunchFar && P.lunchFar.chip === L["chip-lunch"], R.offers);
+g.check("closing the calendar goes back to the lunch goal, with control", R.afterCalendar && R.afterCalendar.step === "lunch" && R.afterCalendar.ctrl && R.afterCalendar.chip === L["chip-lunch"] && !R.afterCalendar.cur, R.afterCalendar);
+g.check("the steps came in order", JSON.stringify(R.steps) === JSON.stringify(["night", "wake", "rocket", "hold", "think", "closet", "toCloset", "box", "lift", "closeup", "putBack", "shut", "notice", "lunch", "calendar", "lunch", "done"]), R.steps);
 
 // Nothing he is told to tap is under him (Fable's review): at OPEN, PUT IN and LOOK he stands right of the wardrobe.
 const SQ = (p) => ({ x0: p.sq.x - 18 * p.scale, x1: p.sq.x + 18 * p.scale, y0: p.sq.y - 50 * p.scale, y1: p.sq.y });
@@ -344,7 +361,7 @@ const lid = L["sign-box"].split(" "),
 const piece = (w) => lidHalves.has(w.trim()) || (w.trim().split(/\s+/).length >= 2 && [...known].some((k) => new RegExp("(^|\\s)" + esc(w.trim()) + "(\\s|$)").test(k)));
 const stray = (R.shownMorning || []).filter((w) => !before.has(w) && !known.has(w) && !piece(w));
 g.check("no new words: every word drawn this morning is a whole line of home-morning-lines.js (or was on screen before)", R.shownMorning && stray.length === 0, stray);
-g.check('the note\'s "Rule #1" words are not shown (pending)', R.shownMorning && !(R.shownMorning || []).some((w) => /Rule #1|Brave Sasquatches|stay hidden/.test(w)));
+g.check('the note\'s old "Rule #1" words are not shown', R.shownMorning && !(R.shownMorning || []).some((w) => /Rule #1/.test(w)));
 g.check("the lines file names a status and a source for every line", HOME_MORNING_LINES.length >= 12 && HOME_MORNING_LINES.every((l) => l.id && l.who && l.text && l.status && l.source));
 
 // The old code is gone
@@ -425,20 +442,12 @@ const mid = await page.evaluate(() => {
   out.inCalendar = !!n.ch1Calendar;
   ss.sectionReset();
   out.calendar = after();
-  open(23);
-  press();
-  tick(0.4);
-  ss.tapAt(880, 540);
-  tick(0.4);
-  out.inNotice = n.cur && n.cur.k === "bub";
-  ss.sectionReset();
-  out.notice = after();
   return out;
 });
 g.check("↺ in the night starts the morning again from asleep, and it plays on to the rocket", mid.night.step === "night" && !mid.night.ctrl && mid.nightThen.step === "rocket" && mid.nightThen.offer === L["button-rocket"], { night: mid.night, then: mid.nightThen });
 g.check("↺ during his Guardians line or the thought bubble: back on the rocket step, the rocket on the floor", ["hold", "think"].every((k) => mid[k].step === "rocket" && mid[k].ctrl && mid[k].offer === L["button-rocket"] && mid[k].gift === "floor"), { hold: mid.hold, think: mid.think });
 g.check("↺ in the box close-up: back on the box step, door open, the gift in his paw", mid.inCloseUp && mid.closeup.step === "box" && mid.closeup.ctrl && mid.closeup.offer === L["button-box"] && mid.closeup.door === "open" && mid.closeup.gift === "held", mid.closeup);
-g.check("↺ in the calendar close-up or the lunch line: back on the calendar step", mid.inCalendar && mid.inNotice && ["calendar", "notice"].every((k) => mid[k].step === "cal" && mid[k].ctrl && mid[k].offer === L["button-cal"] && !mid[k].cur), { calendar: mid.calendar, notice: mid.notice });
+g.check("↺ in the calendar close-up: back on the lunch step by the wardrobe, LOOK · calendar offered there", mid.inCalendar && mid.calendar.step === "lunch" && mid.calendar.ctrl && mid.calendar.offer === L["button-cal"] && !mid.calendar.cur, mid.calendar);
 g.check("no page errors", errors.length === 0, errors);
 await page.close();
 await g.finish("home-morning");

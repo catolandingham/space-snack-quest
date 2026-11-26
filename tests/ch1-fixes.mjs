@@ -40,11 +40,11 @@ async function walk(x, y, frames, day2 = false) {
   );
 }
 
-// The G box is in the closet on day 1 (Brian, 2026-11-15); from day 2 it sits on the floor by the closet, between
-// the wardrobe and the bed's top corner (src/modules/home-morning-art.js), and stops a walk.
+// The G box is in the closet on day 1 (Brian, 2026-11-15); on day 2 it comes out only while he puts the gift in, then
+// goes back in the closet (Brian, 2026-11-26; src/modules/home-morning.js), so nothing on the floor there stops a walk.
 const gbox = await walk(320, 384, 50, true);
 const through = await page.evaluate(() => window.__trail.filter(([x, y]) => x > 188 && x < 236 && y > 366 && y < 394));
-g.check("day 2: the blue G box stops a walk through it (he goes round it, never over it)", gbox[0] < 320 && through.length === 0, { end: gbox, through });
+g.check("day 2, after the gift: the box is back in the closet, so a walk by the wardrobe goes through where it stood", gbox[0] < 236 && through.length > 0, { end: gbox, through: through.length });
 const bed = await walk(320, 450, 30);
 g.check("the bed stops a walk through it", bed[0] >= 280 && bed[0] < 320, bed);
 const floor = await walk(420, 540, 50);

@@ -1,6 +1,6 @@
 /**
  * The home morning, Chapter 1 beats 22 to 24 (docs/CH1-STORY-WALKTHROUGH.md): a gift from the Guardians, the
- * calendar (delivery day), and Mops's forgotten lunch. It follows the bedtime story (beat 21, bedtime-story.js) and
+ * calendar (delivery day, there to look at), and Mops's forgotten lunch. It follows the bedtime story (beat 21, bedtime-story.js) and
  * hands over to today's lunch sneak (src/game/14-ch1-day2.js ch1TakeLunch). What the player sees, step by step
  * (plan reviewed 2026-11-26; every word is from home-morning-lines.js, every drawing from home-morning-art.js):
  *   night   wordless: the night the bedtime story ended on goes on: the room is dark, Squatch asleep in bed under the
@@ -17,12 +17,14 @@
  *   closet  "Squatch: put the gift in the box"; the wardrobe is outlined. OPEN · closet (he steps to its right).
  *   box     the door is open; the G box on the closet floor is outlined. PUT IN · box.
  *   lift    he takes the box out onto the floor; the close-up (the first build's box view): the open box with the
- *           older notes, its lid labelled MY GARDIAN BOX, his crayon drawing MY GUARDIANS, the gift drops in (NEXT).
- *   shut    back in the room the gift sticks out of the box on the floor; he shuts the closet: the calendar is back.
- *   cal     "Squatch: look at the calendar"; the calendar is outlined. LOOK · calendar opens the older program's
- *           close-up, with today's marks (home-morning-art.js drawCalendarToday).
- *   notice  the lunch bag by the door is outlined; "He forgot his lunch!" (NEXT)
- *   lunch   "Squatch: take the lunch"; TAKE · lunch hands over to the lunch sneak (the bag in his paw).
+ *           older notes, its lid labelled MY GARDIAN BOX, his crayon drawing MY GUARDIANS, the gift drops in and the note's
+ *           words show: "Brave Sasquatches stay hidden. — The Guardians" (NEXT).
+ *   putBack back in the room he puts the box, the gift in it, back in the closet (Brian, 2026-11-26);
+ *   shut    and shuts the closet: the calendar on its door is back.
+ *   notice  the lunch bag by the door (MOPS on it) is outlined; "He forgot his lunch!" (NEXT)
+ *   lunch   "Squatch: take the lunch"; TAKE · lunch hands over to the lunch sneak (the bag in his paw). The calendar
+ *           is not a step (Brian, 2026-11-26: optional): LOOK · calendar, by the wardrobe, opens the older program's
+ *           close-up with today's marks (home-morning-art.js drawCalendarToday) and comes back to this step.
  * Its progress lives in the game-state field ch1HomeMorning (and ch1Step, "hm-<step>"), so the step restart (↺)
  * brings back the step the player is on. While he sleeps, wakes, stretches and holds the gift up this file draws
  * Squatch (squatch-art.js, the room's Squatch: same shapes, size and outline; asleep and sitting up as the bedtime
@@ -241,8 +243,14 @@ export function createHomeMorning(bridge) {
         go("closeup");
       }),
       ...cutawaySteps(GBOX_ID),
+      // the box, the gift in it, goes back in the closet (Brian, 2026-11-26), and he shuts the door
       e.run(() => {
         H().gift = "box";
+        go("putBack");
+      }),
+      e.until((dt) => (H().t += dt || 0) >= HOME_MORNING_PACE.boxOut),
+      e.run(() => {
+        H().boxOut = false;
         go("shut");
       }),
       e.until((dt) => (H().t += dt || 0) >= HOME_MORNING_PACE.shut),
@@ -250,21 +258,21 @@ export function createHomeMorning(bridge) {
         H().door = false;
         e.set("wardrobe", "closed");
         sound.morning("closetShut");
-        go("cal");
-        control("chip-cal");
+        // the lunch bag by the door: his line, then the goal (the calendar stays there to look at, not a step)
+        go("notice");
+        e.face("sq", 1);
       }),
+      e.say("sq", morningWords("sq-lunch")),
+      e.run(() => (go("lunch"), control("chip-lunch"))),
     ]);
   }
+  // LOOK · calendar, any time on the lunch step (Brian, 2026-11-26: the calendar is optional): today's close-up, then
+  // back to the lunch goal.
   function lookCalendar() {
     const e = E();
     busy();
     go("calendar");
-    e.openCalendar(() => {
-      busy();
-      go("notice");
-      e.face("sq", 1);
-      e.queue([e.say("sq", morningWords("sq-lunch")), e.run(() => (go("lunch"), control("chip-lunch")))]);
-    });
+    e.openCalendar(() => (go("lunch"), control("chip-lunch")));
   }
   function takeLunch() {
     const e = E(),
@@ -342,15 +350,19 @@ export function createHomeMorning(bridge) {
     ctx.fillStyle = g;
     ctx.fillRect(cx - rad, cy - rad, rad * 2, rad * 2);
   }
-  // Where the box is now: in the closet, on its way out, or out on the floor.
+  // Where the box is now: in the closet, on its way out or back in, or out on the floor.
   function boxPlace(h) {
     const a = MORNING_THINGS.boxIn,
       b = MORNING_THINGS.boxOut;
-    if (h.step === "lift") {
-      const k = Math.min(1, h.t / HOME_MORNING_PACE.boxOut),
+    if (h.step === "lift" || h.step === "putBack") {
+      const back = h.step === "putBack",
+        k0 = Math.min(1, h.t / HOME_MORNING_PACE.boxOut),
+        k = back ? 1 - k0 : k0,
         ease = k * k * (3 - 2 * k),
         up = Math.sin(k * Math.PI) * 30;
-      return { x0: a.x0 + (b.x0 - a.x0) * ease, y0: a.y0 + (b.y0 - a.y0) * ease - up };
+      const x0 = a.x0 + (b.x0 - a.x0) * ease,
+        y0 = a.y0 + (b.y0 - a.y0) * ease - up;
+      return { x0, y0, x1: x0 + (a.x1 - a.x0), y1: y0 + (a.y1 - a.y0) };
     }
     return h.boxOut ? b : a;
   }
@@ -368,31 +380,36 @@ export function createHomeMorning(bridge) {
       return true;
     },
     /**
-     * A test jump (ch1JumpBeat 23, tests): straight to one of the player's steps ("rocket", "closet", "box", "cal",
-     * "lunch"), with everything before it done (the gift held, then in the box out on the floor).
+     * A test jump (ch1JumpBeat 23, tests): straight to one of the player's steps ("rocket", "closet", "box",
+     * "lunch"), with everything before it done (the gift held, then in the box back in the closet). "cal" (beat 23,
+     * the calendar) is the lunch step with him standing by the wardrobe, where LOOK · calendar is offered.
      */
-    jump(step) {
+    jump(asked) {
       const e = E(),
-        h = H();
-      const at = { rocket: "woke", closet: "woke", box: "closet", cal: "closet", lunch: "lunch" }[step];
+        h = H(),
+        step = asked === "cal" ? "lunch" : asked;
+      const at = { rocket: "woke", closet: "woke", box: "closet", lunch: asked === "cal" ? "closet" : "lunch" }[step];
       if (!h || !at) return;
-      const before = (s) => ["rocket", "closet", "box", "cal", "lunch"].indexOf(step) > ["rocket", "closet", "box", "cal", "lunch"].indexOf(s);
-      Object.assign(h, { gift: before("box") ? "box" : before("rocket") ? "held" : "floor", boxOut: before("box"), door: step === "box", heart: -1 });
+      const before = (s) => ["rocket", "closet", "box", "lunch"].indexOf(step) > ["rocket", "closet", "box", "lunch"].indexOf(s);
+      Object.assign(h, { gift: before("box") ? "box" : before("rocket") ? "held" : "floor", boxOut: false, door: step === "box", heart: -1 });
       e.set("wardrobe", step === "box" ? "open" : "closed");
       e.set("moPose", "hidden");
       e.place("sq", HOME_MORNING_SPOTS[at].x, HOME_MORNING_SPOTS[at].y);
       e.face("sq", at === "closet" ? -1 : 1);
       go(step);
-      control({ rocket: "chip-gift", closet: "chip-box", box: "chip-box", cal: "chip-cal", lunch: "chip-lunch" }[step]);
+      control({ rocket: "chip-gift", closet: "chip-box", box: "chip-box", lunch: "chip-lunch" }[step]);
     },
     /** True from Day 2's start until he takes the lunch. */
     active() {
       return !!live();
     },
-    /** True while the Guardian Box is still in the closet on Day 2 (60-frame-draw.js gboxOut). */
+    /**
+     * True while the Guardian Box is in the closet on Day 2 (60-frame-draw.js gboxOut): all of Day 2 except the moment
+     * he has it out on the floor to put the gift in.
+     */
     boxInCloset() {
       const h = live();
-      return !!h && !h.boxOut;
+      return !(h && (h.boxOut || h.step === "lift"));
     },
     /** The spots for the step the player is on: one at a time, its thing outlined (goal-targets.js "closet:hm-..."). */
     spots() {
@@ -402,8 +419,9 @@ export function createHomeMorning(bridge) {
       if (h.step === "rocket") return [spot("hm-rocket", "button-rocket", { ...MORNING_THINGS.rocket, r: 140 }, rocketBox(), pickUp)];
       if (h.step === "closet") return [spot("hm-closet", "button-closet", atCloset, WARDROBE, openCloset)];
       if (h.step === "box") return [spot("hm-box", "button-box", atCloset, MORNING_THINGS.boxIn, putIn)];
-      if (h.step === "cal") return [spot("hm-calendar", "button-cal", atCloset, CALENDAR, lookCalendar)];
-      if (h.step === "lunch") return [spot("hm-lunch", "button-lunch", { x: MORNING_THINGS.bag.x - 40, y: MORNING_THINGS.bag.y, r: 110 }, bagBox(), takeLunch)];
+      // the lunch bag is the goal (listed first: the only thing outlined); the calendar is there to look at too
+      if (h.step === "lunch")
+        return [spot("hm-lunch", "button-lunch", { x: MORNING_THINGS.bag.x - 40, y: MORNING_THINGS.bag.y, r: 110 }, bagBox(), takeLunch), spot("hm-calendar", "button-cal", atCloset, CALENDAR, lookCalendar)];
       return [];
     },
     /**
@@ -452,8 +470,9 @@ export function createHomeMorning(bridge) {
       if (e.get("sqPose") === "stand" && footfall(ff, p.x, p.y, dt, HOME_MORNING_SOUND.padEvery)) sound.pad(pads++);
     },
     /**
-     * The Guardian Box on Day 2: in the closet (seen only with the door open) until he takes it out, then on the floor
-     * by the closet for good, the gift in it. Also drawn again over Squatch when he stands behind it (60-frame-draw.js).
+     * The Guardian Box on Day 2: in the closet (seen only with the door open), out on the floor by the closet while he
+     * puts the gift in, then back in the closet with the gift in it (Brian, 2026-11-26). Also drawn again over Squatch
+     * when he stands behind it (60-frame-draw.js).
      */
     drawBox(ctx) {
       const e = E();
@@ -461,14 +480,15 @@ export function createHomeMorning(bridge) {
       if (!e || e.room() !== "closet" || !e.get("ch1Day2")) return;
       const h = H(),
         on = live();
-      if (!on || h.boxOut || h.step === "lift") {
-        const b = on ? boxPlace(h) : MORNING_THINGS.boxOut,
-          gift = !(on && h.gift !== "box");
-        gift ? drawBoxWithGift(ctx, MORNING_THINGS.boxOut) : drawGuardianBox(ctx, b.x0, b.y0);
-        boxDrawn = { where: gift || h.boxOut ? "floor" : "moving", x0: Math.round(b.x0), y0: Math.round(b.y0), gift };
+      const gift = !on || h.gift === "box";
+      if (on && (h.boxOut || h.step === "lift" || h.step === "putBack")) {
+        const b = boxPlace(h);
+        gift ? drawBoxWithGift(ctx, b) : drawGuardianBox(ctx, b.x0, b.y0);
+        boxDrawn = { where: h.step === "lift" || h.step === "putBack" ? "moving" : "floor", x0: Math.round(b.x0), y0: Math.round(b.y0), gift };
       } else if (e.get("wardrobe") === "open") {
-        drawGuardianBox(ctx, MORNING_THINGS.boxIn.x0, MORNING_THINGS.boxIn.y0);
-        boxDrawn = { where: "closet", gift: false };
+        // in the closet (seen only with the door open): before the gift, and back in with it after
+        gift ? drawBoxWithGift(ctx, MORNING_THINGS.boxIn) : drawGuardianBox(ctx, MORNING_THINGS.boxIn.x0, MORNING_THINGS.boxIn.y0);
+        boxDrawn = { where: "closet", gift };
       }
     },
     /** Drawn on the room picture under the people: the box, and things on the floor behind Squatch. */

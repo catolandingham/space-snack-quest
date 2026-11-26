@@ -153,7 +153,7 @@ export function drawGiftNote(ctx, x, y, k, lw = 2.5) {
   ctx.restore();
 }
 
-/** Mops's paper lunch bag, the middle of its bottom at (x, y): a brown bag with its top folded over. No words. */
+/** Mops's paper lunch bag, the middle of its bottom at (x, y): a brown bag with its top folded over, MOPS on it. */
 export function drawLunchBag(ctx, x, y, k = 1) {
   const W = MORNING_SIZES.bag.w,
     H = MORNING_SIZES.bag.h;
@@ -171,13 +171,12 @@ export function drawLunchBag(ctx, x, y, k = 1) {
   ctx.lineTo(W / 2 - 2, -H + 9);
   ctx.closePath();
   hmPaint(ctx, "#a87f4b", w);
-  // a crease down the middle
-  ctx.beginPath();
-  ctx.moveTo(0, -H + 12);
-  ctx.lineTo(0, -4);
-  ctx.strokeStyle = "rgba(30,36,48,.3)";
-  ctx.lineWidth = w;
-  ctx.stroke();
+  // MOPS written on it in marker (Brian, 2026-11-26; words from home-morning-lines.js)
+  ctx.font = "900 12px system-ui, -apple-system, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillStyle = HM_INK;
+  ctx.fillText(morningWords("sign-bag"), 0, -H / 2 + 6, W - 6);
   ctx.restore();
 }
 
@@ -403,7 +402,24 @@ function gboxCloseUp(ctx, t, engine) {
   ctx.textBaseline = "middle";
   ctx.fillStyle = "#ffffff";
   ctx.fillText("G", cx, B.y0 + h / 2 + 6); // the approved box's letter, part of its picture
-  landed && drawGiftNote(ctx, rx + 70, B.y0 + 8, K * 0.9, 5);
+  // landed: the note, untied, lies open over the box's front with its words (Brian, 2026-11-26)
+  let note = null;
+  if (landed) {
+    const nx = rx + 110,
+      ny = B.y0 + 70;
+    ctx.save();
+    ctx.translate(nx, ny);
+    ctx.rotate(-0.05);
+    hmRound(ctx, -180, -72, 360, 144, 6);
+    hmPaint(ctx, "#fff4c2", 4);
+    const [l1, l2] = morningWords("note-words").split(". ");
+    const w1 = l1.split(" ");
+    say(w1.slice(0, 2).join(" "), 0, -38, 25, "#2b3a67");
+    say(w1.slice(2).join(" ") + ".", 0, -6, 25, "#2b3a67");
+    say(l2, 40, 36, 23, "#2b3a67");
+    ctx.restore();
+    note = { x: nx, y: ny, w: 360, h: 144 };
+  }
   // the crayon drawing, leaning on the box's right side, with its title in crayon
   const D = C.drawing,
     title = morningWords("sign-drawing");
@@ -420,6 +436,7 @@ function gboxCloseUp(ctx, t, engine) {
     label,
     labelBox: lab,
     title,
+    note,
     drawing: sheet,
     notes: notes.length,
     held: t < C.hold,
