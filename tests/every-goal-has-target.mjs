@@ -28,6 +28,8 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: hide and watch",
     "Squatch: talk with Mops at home",
     "Squatch: watch Mops",
+    // (the octopus's chase, Brian 2026-11-25: the goal is to keep away from him; there is no thing to go to)
+    "Squatch: get away from the octopus!",
   ]);
   const play = {
     "Squatch: walk around the room": { scene: "O1", room: "closet", day2: false, walk: true, x: 500, y: 530 },
@@ -42,6 +44,10 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: grab the flyer": { party: "P4", out: true, x: 788, y: 420 },
     "Squatch: sneak home for a disguise": { party: "P4", out: true, flyer: "paw", walk: true, x: 477, y: 540 },
     "Squatch: run home and hide!": { party: "P2", alarm: true, walk: true, x: 520, y: 560 },
+    // home with the flyer (Brian 2026-11-25): his bed glows and SAVE · flyer slides it under
+    "Squatch: put the flyer under your bed for Mops": { party: "P4", home: true, flyer: "paw", x: 790, y: 480 },
+    // the group photo once everyone is in place (Brian 2026-11-25): JOIN · photo, the gap glows
+    "Squatch: join the group photo": { party: "P6", shot: true, x: 600, y: 470 },
     "Squatch: pick up the gift": { step: "gift", room: "closet", x: 340, y: 520 },
     "Squatch: put the gift in the box": { step: "box", room: "closet", x: 230, y: 392 },
     "Squatch: look at the calendar": { step: "cal", room: "closet", x: 230, y: 392 },
@@ -143,6 +149,8 @@ const report = await page.evaluate(async (chips) => {
       const p = n.ch1PartyNow;
       spec.out && ((p.pose = "stand"), (n.sqPose = "stand"));
       spec.flyer && (p.flyer = spec.flyer);
+      spec.home && (window.SSQ.engine().enterRoom("closet", "Q1"), (p.phase = "save"), (p.pose = "stand"), (n.sqPose = "stand"));
+      spec.shot && ((p.shot = { phase: "join", t: 0, n: 0, in: false, got: false }), (p.bandAt = [[258, 256], [308, 256], [358, 256]].map(([x, y]) => ({ x, y }))));
       spec.alarm && (p.alarm = { phase: "search", t: 0, st: 0, w: { id: "backpack", x: 880, y: 318, hx: 600, hy: 490 }, where: "where-hall", who: "who-tourist", guards: [], bell: 9, last: null, hidden: "" });
       ((n.sq.x = spec.x), (n.sq.y = spec.y), (n.ch1Chip = chip), (n.chip = chip), (n.moved = 200));
     } else {
@@ -206,7 +214,7 @@ g.check("no goal is marked with a yellow circle, a floor ring or an arrow", repo
 g.check("at least 14 goals outline their real thing (doors, plants, bin, mailbox, vent, calendar, wardrobe)", report.outlined.length >= 14, report.outlined);
 g.check("each outline is round the thing whose action is offered where the goal is done", report.farOutline.length === 0, report.farOutline);
 g.known(`${report.unoutlined.length} of ${report.checked} goals have no outline yet (props the game draws, Mops, close-ups, and Squatch's own spot)`, report.unoutlined.length > 0, report.unoutlined);
-g.check("story goals are named", report.story.length === 4, report.story);
+g.check("story goals are named (the four story goals and the octopus chase)", report.story.length === 5, report.story);
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();
 await g.finish("every-goal");
