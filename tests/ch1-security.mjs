@@ -307,7 +307,8 @@ for (let y = 300; y <= 580; y += 40) for (let x = 120; x <= 860; x += 60) grid.p
   const stand = await lunch(false);
   g.check("lunch: seen, the witness shouts FUR! and runs to the wall alarm before any guard comes", stand.shoutAt !== null && stand.runAt !== null && stand.guardAt > stand.runAt, stand);
   g.check("lunch: the first guard walks in as the bell rings", stand.ringAt !== null && stand.guardAt !== null && stand.guardAt - stand.ringAt < 0.1, stand);
-  g.check("lunch: while the alarm rings, only hiding places are offered (nothing walks him out of the hall)", stand.offers.every((v) => /^HIDE/.test(v)), stand.offers);
+  // (ROLL · ball is a hiding move too: the ball rule, DECISIONS C20 and R43; offered in the lunch on Brian's yes, 2026-11-26)
+  g.check("lunch: while the alarm rings, only hiding places and the ball are offered (nothing walks him out of the hall)", stand.offers.every((v) => /^HIDE/.test(v) || v === "ROLL · ball"), stand.offers);
   g.check("lunch: standing in the open, a guard reaches him (LOCKUP)", stand.lockupAt !== null, stand);
   const hid = await lunch(true);
   g.check('lunch: hidden in the plant he is never caught; the guards give up ("They lost you.")', hid.lockupAt === null && hid.lostAt !== null, hid);

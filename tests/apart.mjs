@@ -59,7 +59,8 @@ const out = await page.evaluate(
   { give: P.HALLWAY_SPOTS.give, mopsAt: P.HALLWAY_SPOTS.mops, solids: P.LUNCH_SOLIDS, plate: P.COUNTER_SPOTS.plate },
 );
 g.check("hallway: where GIVE · lunch is offered, Squatch is not inside Mops", out.hallway.clear, out.hallway);
-g.check("behind the counter: the walk ends with them apart", out.hall.room === "hall" && out.hall.step === "snack" && out.hall.clear, out.hall);
+// (the walk ends at "one": Mops's one-snack line, Brian 2026-11-26, waits for NEXT before TAKE · snack)
+g.check("behind the counter: the walk ends with them apart", out.hall.room === "hall" && ["one", "snack"].includes(out.hall.step) && out.hall.clear, out.hall);
 g.check("behind the counter: neither one stands on the counter, a stool, a plant or the crates", !out.hall.sqProp && !out.hall.moProp, out.hall);
 g.check("behind the counter: Mops is not in the way of the plate", out.hall.pathClear, out.hall);
 await g.finish("apart");
