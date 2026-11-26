@@ -8,6 +8,7 @@
  * grown-up: head about a fifth of the height). The six approved guests themselves are pictures (guests.js).
  * Words come only from party-lines.js.
  */
+import { highlightLine, highlightBox } from "./outline.js";
 import { questionLook } from "./party-question.js";
 import { partyLine } from "./party-lines.js";
 import { drawShirt, drawShirtSleeves } from "./party-shirt-art.js";
@@ -236,6 +237,22 @@ export const LOOKS = Object.freeze({
   ],
 });
 
+/**
+ * The mic stand (a PLACEHOLDER drawing, Brian 2026-11-26): a thin grey pole on a round foot at (x, y), with the mic
+ * at about a grown-up's mouth height (`h` tall). `carried`: tipped over in Isfred's hand as he walks it over.
+ */
+export function drawMicStand(ctx, x, y, h, carried) {
+  const k = h / 100;
+  ctx.save();
+  ctx.translate(x, y);
+  carried && ctx.rotate(-0.35);
+  ctx.scale(k, k);
+  oval(ctx, 0, 0, 9, 2.6, "#4a505c", 1.2);
+  line(ctx, [0, 0, 0, -62], "#4a505c", 3);
+  line(ctx, [0, -62, 6, -70], "#4a505c", 2.6);
+  rr(ctx, 4, -78, 6, 10, 3, "#2b2f3c", 1.2);
+  ctx.restore();
+}
 /** A small drum on a stand in front of the third band member. */
 export function drawDrum(ctx, x, y, h) {
   const k = h / 100;
@@ -246,10 +263,12 @@ export function drawDrum(ctx, x, y, h) {
 }
 
 /** The three Croc Boys standing at their spots; `playing` makes them bob and strum. `looks` is for the picture sheet. */
-export function drawBand(ctx, spots, h, t, playing, looks = LOOKS.band, gone = null, pose = false) {
+export function drawBand(ctx, spots, h, t, playing, looks = LOOKS.band, gone = null, pose = false, beat = null) {
   spots.forEach((s, i) => {
     if (gone && gone[i]) return;
-    const jump = playing ? Math.abs(Math.sin(t * 6 + i)) * h * 0.04 : 0;
+    // `beat`: beats since their song began (the song's bpm): all three bob together, up on each beat (Brian
+    // 2026-11-26, showing 7 at 0:18: "I don't think it's super obvious that the music's coming from the Croc Boys")
+    const jump = !playing ? 0 : beat != null ? Math.abs(Math.cos(Math.PI * beat)) ** 3 * h * 0.06 : Math.abs(Math.sin(t * 6 + i)) * h * 0.04;
     // `pose`: the song is over and they pose for the crowd, an arm up high (the group photo's first step)
     const armUp = pose ? 0.95 : playing && i === 0 ? 0.3 + 0.2 * Math.sin(t * 8) : 0;
     drawPerson(ctx, s.x, s.y - jump, h, { ...looks[i], armUp }, 1, playing ? t : 0);
@@ -257,17 +276,14 @@ export function drawBand(ctx, spots, h, t, playing, looks = LOOKS.band, gone = n
   });
 }
 
-/** The gap in the photo's front row, glowing on the floor where Squatch's feet go (`r` across), pulsing gently. */
+/** The gap in the photo's front row, outlined on the floor where Squatch's feet go (`r` across), pulsing gently. */
 export function drawGapGlow(ctx, x, y, r, t) {
+  // the one highlight (outline.js): a dashed gold ellipse round the place on the floor, no glow (Brian 2026-11-26)
   ctx.save();
-  const k = 0.75 + 0.25 * Math.sin(t * 4);
-  const g = ctx.createRadialGradient(x, y, 2, x, y, r * 1.6);
-  g.addColorStop(0, `rgba(255,207,51,${0.75 * k})`);
-  g.addColorStop(1, "rgba(255,207,51,0)");
-  ctx.fillStyle = g;
+  highlightLine(ctx, t);
   ctx.beginPath();
-  ctx.ellipse(x, y, r * 1.6, r * 0.6, 0, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.ellipse(x, y, r * 1.3, r * 0.5, 0, 0, Math.PI * 2);
+  ctx.stroke();
   ctx.restore();
 }
 
@@ -280,10 +296,6 @@ export function drawBanner(ctx, box, glow, t = 0) {
   line(ctx, [x0 + 14, 0, x0 + 14, y0 + 4], INK, 2);
   line(ctx, [x1 - 14, 0, x1 - 14, y0 + 4], INK, 2);
   ctx.save();
-  if (glow > 0) {
-    ctx.shadowColor = "rgba(255,207,51," + (0.6 + 0.4 * Math.sin(t * 6)) * glow + ")";
-    ctx.shadowBlur = 26 * glow;
-  }
   // The cloth: a gentle sag along the bottom edge.
   ctx.beginPath();
   ctx.moveTo(x0, y0);
@@ -293,11 +305,12 @@ export function drawBanner(ctx, box, glow, t = 0) {
   ctx.closePath();
   ctx.fillStyle = "#3478f6";
   ctx.fill();
-  ctx.shadowBlur = 0;
   ctx.lineWidth = 3;
   ctx.strokeStyle = INK;
   ctx.stroke();
   ctx.restore();
+  // while a line names it: the one highlight round it (outline.js), no glow (Brian 2026-11-26)
+  glow > 0 && highlightBox(ctx, { x0, y0, x1, y1: y1 + sag }, t, 6);
   const mid = y0 + (y1 - y0) * 0.33,
     low = y0 + (y1 - y0) * 0.72;
   rr(ctx, x0 + 34, low - 12, w - 68, 24, 4, "#fffdf8");
@@ -316,21 +329,28 @@ export function drawBanner(ctx, box, glow, t = 0) {
 }
 
 // ---------- the door at home (V2) ----------
-/** Music notes drifting in under (and round) Squatch's home door, and the door's edge thumping to the beat. */
-export function drawDoorNotes(ctx, door, t) {
-  const cx = (door.x0 + door.x1) / 2,
+/**
+ * Music notes drifting in under (and round) Squatch's home door, and the door's edge thumping to the beat. `faint`:
+ * the band heard next door (Brian 2026-11-26, "We should see music notes floating in from the door"): three paler,
+ * smaller notes drifting in low under the door, and no thump.
+ */
+export function drawDoorNotes(ctx, door, t, opts) {
+  const faint = !!(opts && opts.faint),
+    cx = (door.x0 + door.x1) / 2,
     beat = Math.max(0, Math.sin(t * Math.PI * 2 * 2)) ** 6;
   // thump lines at the door edge
-  for (const s of [-1, 1]) line(ctx, [door.x0 - 4 - beat * 8, (door.y0 + door.y1) / 2 + s * 20, door.x0 - 12 - beat * 14, (door.y0 + door.y1) / 2 + s * 30], "rgba(30,36,48," + (0.25 + 0.6 * beat) + ")", 3);
-  const colors = ["#ff5fa8", "#3478f6", "#e07b00", "#2bc48a"];
-  for (let i = 0; i < 4; i++) {
-    const k = (t * 0.45 + i / 4) % 1,
-      x = cx - k * 150,
-      y = door.y1 - 18 - k * 60 + Math.sin(k * 9 + i) * 8,
+  if (!faint)
+    for (const s of [-1, 1]) line(ctx, [door.x0 - 4 - beat * 8, (door.y0 + door.y1) / 2 + s * 20, door.x0 - 12 - beat * 14, (door.y0 + door.y1) / 2 + s * 30], "rgba(30,36,48," + (0.25 + 0.6 * beat) + ")", 3);
+  const colors = ["#ff5fa8", "#3478f6", "#e07b00", "#2bc48a"],
+    n = faint ? 3 : 4;
+  for (let i = 0; i < n; i++) {
+    const k = (t * (faint ? 0.3 : 0.45) + i / n) % 1,
+      x = cx - k * (faint ? 110 : 150),
+      y = door.y1 - (faint ? 8 : 18) - k * (faint ? 30 : 60) + Math.sin(k * 9 + i) * (faint ? 5 : 8),
       a = k < 0.15 ? k / 0.15 : k > 0.75 ? (1 - k) / 0.25 : 1;
     ctx.save();
-    ctx.globalAlpha = a;
-    drawNote(ctx, x, y, 9, colors[i]);
+    ctx.globalAlpha = a * (faint ? 0.5 : 1);
+    drawNote(ctx, x, y, faint ? 7 : 9, colors[i]);
     ctx.restore();
   }
 }

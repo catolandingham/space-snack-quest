@@ -40,6 +40,8 @@ function env(g, t, a, d, v, hold) {
   if (hold > 0) g.gain.setValueAtTime(v, t + a + hold);
   g.gain.exponentialRampToValueAtTime(0.0001, t + Math.max(d, a + hold + 0.01));
 }
+/** How long each alarm whoop holds its level (seconds): its length less the attack and the last 0.04 s. */
+export const ALARM_HOLD = 0.5;
 export function tone(A, o) {
   const c = A.c,
     t = o.t,
@@ -234,8 +236,10 @@ export const BOARD = Object.freeze({
   rustle: (A, t) => rustle(A, t, 10, 3000, 0.4),
   // The one FUR alarm of Chapter 1 (Brian 2026-11-26: option 1 of tools/alarm-choices.html, the red alert whoop): a
   // rising whoop, three times, as on that page. The party's alarm and the older program's (bridge.js alarmSound) play it.
+  // Each whoop holds its level to 0.04 s before its end, as the page's does (Brian 2026-11-26: the game's sounded like
+  // "boing, boing, boing": with no hold its level fell away from the start, a plucked sound).
   alarm(A, t) {
-    for (let i = 0; i < 3; i++) tone(A, { t: t + i * 0.62, f: 380, f1: 1250, d: 0.55, type: "sawtooth", v: 0.18, a: 0.01 });
+    for (let i = 0; i < 3; i++) tone(A, { t: t + i * 0.62, f: 380, f1: 1250, d: 0.55, type: "sawtooth", v: 0.18, a: 0.01, hold: ALARM_HOLD });
   },
   bell(A, t, d = 1.8) {
     const c = A.c,
@@ -364,6 +368,11 @@ export const BOARD = Object.freeze({
       tone(M, { t: t + rnd(0, 0.08), f, f1: f * 1.15, d: 0.35, type: "sawtooth", v: 0.02, a: 0.02 });
     }
   },
+  // The vent's suction (Brian 2026-11-26, the fur video at 0:15: the old sound was "kind of squeaky... like wet
+  // shoes"): air rushing in, rising in pitch and level as it pulls, no tone in it. `suction` as it starts to pull,
+  // `suckIn` as the fur (or a piece) goes in.
+  suction: (A, t) => (nz(A, { t, d: 0.9, v: 0.3, ft: "lowpass", f: 280, f1: 2200, q: 0.8, a: 0.6, kind: "white" }), nz(A, { t, d: 0.9, v: 0.12, f: 500, f1: 1800, q: 1.5, a: 0.55 })),
+  suckIn: (A, t) => (nz(A, { t, d: 1.3, v: 0.38, ft: "lowpass", f: 240, f1: 3200, q: 0.9, a: 0.95, kind: "white" }), nz(A, { t, d: 1.3, v: 0.15, f: 400, f1: 2600, q: 1.5, a: 0.9 })),
   whoosh: (A, t) => nz(A, { t, d: 1.2, v: 0.16, ft: "lowpass", f: 500, f1: 250, q: 2, a: 0.3, hold: 0.4 }),
   rip: (A, t) => (nz(A, { t, d: 0.2, v: 0.22, f: 2500, q: 1, a: 0.003, trem: 0.6, tremF: 60 }), tone(A, { t: t + 0.05, f: 400, f1: 250, d: 0.25, type: "triangle", v: 0.08 })),
   swish: (A, t) => nz(A, { t, d: 0.32, a: 0.09, v: 0.3, f: 800, f1: 1500, q: 0.8 }),

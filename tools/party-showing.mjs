@@ -256,6 +256,8 @@ async function photo(ms) {
   await sleep(2800);
   await tap(190, 640);
   await until((q) => q.full !== "group photo" && q.ctrl, 20000, read);
+  // out of his place in the row at once: 2 s after the click he would be seen (Brian 2026-11-26, #46)
+  await floor(560, 470);
   log("the Polaroid");
 }
 // The snack bar: `safe` snacks from the top with her back turned; then, by `end`: "crash" pulls the middle cup of the

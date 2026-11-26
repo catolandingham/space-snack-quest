@@ -13,6 +13,9 @@
 export const MIX = Object.freeze({
   music: 0.8, // music sits a little under the effects, so an effect is always easy to hear over it
   effects: 1,
+  // the "wah-wah" voices under speech bubbles (speech-voice.js), under the effects level: well below the music
+  // (Brian 2026-11-26: the Charlie Brown teacher noise "anytime there's someone speaking"). A placeholder.
+  voices: 0.35,
 });
 
 /**

@@ -9,13 +9,15 @@
  *   camera   the camera tourist carries his tripod to its spot facing the back wall (the first time it is seen);
  *   gather   then the guests walk into two rows in front of the back wall beside the alarm box, and the Croc Boys walk
  *            off the stage's end and squeeze in, a little slower than before;
- *   join     everyone is in place: the gap left for Squatch in the front row glows, and only now the chip "Squatch:
- *            join the group photo" and JOIN · photo; he has PHOTO.join seconds before the count;
- *   count    "Say cheese!", three red lights on the camera, a beep each second: 3, 2, 1;
+ *   join     everyone is in place (PHOTO.joinTime): standing in the gap now gets him seen (Brian 2026-11-26, #46);
+ *   count    "Say cheese!", three red lights on the camera, a beep each second: 3, 2, 1. Now the gap left for
+ *            Squatch in the front row glows, the chip "Squatch: join the group photo" and JOIN · photo: safe until
+ *            the click;
  *   flash    the click: a small burst at the lens. In his place, the photo has him in it (+25, once): the whole
  *            screen shows the Polaroid of the group with him in costume, closed with a tap. Not there: the photo
  *            is taken without him and no close-up shows;
- *   back     everyone walks back, the band onto the stage; then the second song starts.
+ *   back     everyone walks back, the band onto the stage; then the second song starts. Still in the row
+ *            PHOTO.leave seconds after the click, he is seen (photoSeen).
  * No camera countdown and no flash at any other time. The state is `p.shot`; party-free.js runs it.
  */
 import { CAST, stepTo, stepClear, CLEAR_OF_SQUATCH } from "./party-hall.js";
@@ -30,7 +32,8 @@ export const PHOTO_BONUS = 25;
 // camera tourist carries his tripod at `carry`, the rows walk at `walk` (125, a little slower than 150), and once
 // everyone is in place the kid has `joinTime` before the count (the click comes `joinTime + count` after the gap
 // glows). About 3 to 4 seconds longer than before.
-export const PHOTO = Object.freeze({ settle: 0.7, pose: 1.2, call: 1.3, step: 16, carry: 150, walk: 125, joinTime: 2.5, count: 3, flash: 0.25, hold: 0.9, join: 240, closeAfter: 0.6, giveWay: 1.2 });
+// `inRow`: how near his place in the row counts as standing in it; `leave`: seconds after the click to step out of it.
+export const PHOTO = Object.freeze({ inRow: 40, leave: 2, settle: 0.7, pose: 1.2, call: 1.3, step: 16, carry: 150, walk: 125, joinTime: 2.5, count: 3, flash: 0.25, hold: 0.9, join: 240, closeAfter: 0.6, giveWay: 1.2 });
 // The two rows in front of the back wall, left of the lane to the hallway doorway and clear of the snack bar: who
 // stands where (feet, game positions), the gap for Squatch in the front row, the camera tourist's place facing
 // them, where the camera points, and the stage's end, where the band steps down.
@@ -67,7 +70,26 @@ const DOWN = Math.PI / 2;
 /** True from the first song's end until everyone is back (the Polaroid included). */
 export const photoActive = (p) => !!p.shot && p.shot.phase !== "done";
 /** True while he can still walk into the photo (JOIN · photo shows): only once everyone is in place. */
-export const photoOpen = (p) => !!p.shot && ["join", "count"].includes(p.shot.phase) && !p.shot.in;
+// (Brian 2026-11-26, #46: stepping in before the 3-2-1 gets him seen, so JOIN · photo comes with the count)
+export const photoOpen = (p) => !!p.shot && p.shot.phase === "count" && !p.shot.in;
+/**
+ * The photo's rule (Brian 2026-11-26, #46): standing in his place in the row before the 3-2-1 starts gets him seen
+ * (they look right at him); during the 3-2-1 and the click he is safe; after the click he has PHOTO.leave seconds to
+ * step out of the row, or he is seen. `s` his feet, `free` true while the kid steers him (a scripted walk is never
+ * seen). Returns true the moment he is seen. `sh.after` counts the seconds since the click (not while the Polaroid
+ * fills the screen).
+ */
+export function photoSeen(p, s, dt, free) {
+  const sh = p.shot;
+  if (!sh || !s || !free) return false;
+  const inRow = Math.hypot(s.x - PHOTO_ROW.squatch.x, s.y - PHOTO_ROW.squatch.y) < PHOTO.inRow;
+  if (sh.phase === "gather" || sh.phase === "join") return inRow;
+  if (sh.phase === "flash" || sh.phase === "back") {
+    sh.after = (sh.after || 0) + dt;
+    return inRow && sh.after > PHOTO.leave;
+  }
+  return false;
+}
 /** True once the camera tourist has picked up his tripod (it is drawn from then on). */
 export const tripodOut = (p) => !!p.shot && !["settle", "pose", "call"].includes(p.shot.phase);
 /** True while the photo moment has begun but the Croc Boys are still on the stage (before they step down). */
@@ -110,8 +132,13 @@ function walkWay(b, dt, s, round, speed = PHOTO.walk) {
     x0 = b.x,
     y0 = b.y;
   b.face = Math.atan2(to.y - b.y, to.x - b.x);
-  const there = round && (b.wayT || 0) < PHOTO.giveWay ? stepClear(b, to.x, to.y, speed, dt, s, CLEAR_OF_SQUATCH) : stepTo(b, to.x, to.y, speed, dt);
-  b.wayT = !there && b.x === x0 && b.y === y0 ? (b.wayT || 0) + dt : 0;
+  const d0 = Math.hypot(to.x - x0, to.y - y0),
+    there = round && (b.wayT || 0) < PHOTO.giveWay ? stepClear(b, to.x, to.y, speed, dt, s, CLEAR_OF_SQUATCH) : stepTo(b, to.x, to.y, speed, dt);
+  // Waiting counts whenever the step brought them no nearer (standing still, or edging round Squatch where he stands
+  // by their place): after PHOTO.giveWay they walk straight on. (Before 2026-11-26 only standing still counted, and a
+  // guest could edge round him for half a minute: Brian's costume video, 0:56, "nothing's happening".)
+  const nearer = d0 - Math.hypot(to.x - b.x, to.y - b.y);
+  b.wayT = !there && nearer < speed * dt * 0.25 ? (b.wayT || 0) + dt : there ? 0 : b.wayT || 0;
   there && b.way.shift();
   return !b.way.length;
 }

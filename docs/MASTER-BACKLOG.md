@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–121 | ## Where main is (Chapter 1 redesign) |
-| 122–136 | ## Register |
-| 137–158 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 159–179 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 180–192 | ## Phase 2 (plan section 4, T13 to T18) |
-| 193–215 | ## Phase 1 (plan section 3, T5 to T12) |
-| 216–229 | ## SS40–SS44 |
-| 230–247 | ## Story rows |
-| 248–266 | ## Reset section |
-| 267–277 | ## Still open |
-| 278–281 | ## Chapter 1 replot, recorded and not built |
-| 282–439 | ## Changelog |
+| 24–138 | ## Where main is (Chapter 1 redesign) |
+| 139–153 | ## Register |
+| 154–175 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 176–196 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 197–209 | ## Phase 2 (plan section 4, T13 to T18) |
+| 210–232 | ## Phase 1 (plan section 3, T5 to T12) |
+| 233–246 | ## SS40–SS44 |
+| 247–264 | ## Story rows |
+| 265–283 | ## Reset section |
+| 284–294 | ## Still open |
+| 295–298 | ## Chapter 1 replot, recorded and not built |
+| 299–456 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -39,6 +39,23 @@
 - Mops comes over and stands beside the bed: he cannot sit (the approved Mops has no sitting pose; a sitting Mops would be a new drawing).
 - New drawings waiting for his eye (placeholders): the story crate, the Moon Pies on its lid, the lid, the crumbs, the baby, the baby's grab and giggle, Squatch's hop into bed, his yawn and stretch, the blanket, the night-blue dim, the rising "z z z", the crayon Guardians drawing and its picture.
 - Placeholders (not pins): the story drawn 1.6 times the room; walking 160, Mops 150 to 170 a second; each falling-asleep part 2 to 2.7 s; the snore 2.5 times its sound's own level (measured in the video: see the PR).
+2026-11-26 (evening), draft PR #87, not merged. Done: Brian's answers of 2026-11-26 and phase 4 items 1 to 8 (README, "Chapter 1 redesign", the 2026-11-26 evening paragraph; DECISIONS, "Brian's answers of 2026-11-26"). Open for Brian:
+- Words waiting for his yes: party line 78, "Squatch: put the flyer on your bed for Mops" ("under" changed to "on" after #42); the TV's "STORMTOP NEWS" title card (a suggestion); the Credits screen's words (`credits-lines.js`, from the credit files).
+- The photo's 2 s to step out counts while he can move: not while the Polaroid fills the screen (a kid must close it first).
+- Band order and P3: Funky Chunk now plays from the band's first notes in P3 (until he dances), but P3's sung bubble "Stormtop-vania 1-2-3-4-5!" still shows over it. Drop that bubble in P3 (my pick), or let the band open with Stormtop-Sylvania in P3 only?
+- The photo rule raises the alarm even in a whole disguise (being in the row at the wrong moment is seen up close). Keep, or only "?" in disguise?
+- Sounds: built with Brian's picks of 2026-11-26 (the crowd recording, the syllable voices). Which guests count as women for the voices is a guess (teal and backpack: `GUEST_VOICES`); NOT ASSESSED by ear.
+- The on-screen words by outlined things ("PUT IN · box" and the like): keep or drop? (round-d/outline-final.png shows both, with the new line.)
+- Not built here: the Day 1 Guardian Box at the Day 2 size (#34): the box and its Day 2 size live on feat/ch1-day2-morning. The docs that still say the TV line was cut (phase 4 item 13) were not changed.
+- Placeholders: the closing beats (2.6 s cheer, 2 s dim), Mops home 2.5 s after he walks in, 2 s to leave the photo, the flyer's place on the bed, the tape and news drawings, the band's fade (1.5 s).
+- Still outside the one highlight style (to confirm they count as highlights): the TV's gold ring and frame when Mops presses its button, the beard's soft halo in the morning's wringing close-up (a tap target), the dance close-up's glowing spots (its game). Docs match main: yes.
+
+2026-11-26 (afternoon), draft PR #87, not merged. Done: Brian's party showing-7 notes 12 to 18 (README, "Chapter 1 redesign", the 2026-11-26 afternoon paragraph): a "wah-wah" voice under every speech bubble, thought trails and speech tails that end on the speaker, the slower band start with the mic stand and the Croc Boy close-up, notes from the band and the beat bob, faint notes under his door at home, the flyer keeping its size under the bed, the shirt needed for a disguise. Open for Brian:
+- 0:51, the flyer: "He should lay it on top of the bed." Answered the same day (#42): on top of the bed, built in the evening round.
+- 1:05, the disguise rule was "any four pieces on the four spots"; it is now "all four spots covered and the shirt on his body". Brian's words were "the shirt... and then it's a combo of everything else": fewer than four pieces would leave fur showing, and fur showing makes guests see him in P6 (`furShows`), so four stay needed. Keep, or shirt plus any one piece (and fur-showing rules changed to match)?
+- The wall speaker's three sound lines are part of the locked hall picture, so they still show while the band plays. Cover them with the wall's colour while the band plays (a change to how the locked picture looks: needs his yes)?
+- New drawings waiting for his eye (placeholders): the Croc Boy close-up, the mic stand, the faint door notes; the voices' sound and level (`MIX.voices` 0.35); the beat the band bobs to is measured from the songs, but where the first beat falls is not lined up with the recording (NOT ASSESSED by ear).
+- Mops's lines get no babble (he keeps his meh on his first line in a scene, so his other lines are silent apart from the tick). A babble for his other lines too?
 
 2026-11-26, draft PR #87, not merged. Done: Brian's five showing-6 notes (README, "Chapter 1 redesign", the 2026-11-26 paragraph): sight sees his whole drawn body (the cone drawn on him is the cone that sees him), the crowd's hiss gone, one music table with no singing away from bedtime, his own Croc Boys song for the band, the photo straight after his first dance, guards round the furniture. Open for Brian:
 - Music (Brian's picks of 2026-11-26, built in `src/modules/music-picks.js`): the home rotation is Carefree, Morning, Rainbows; bedtime's Reawakening waits for the bedtime story's branch to send its "bedtime" cue; Mops's closing-time hum is "track to be chosen by Brian" (stand-in: silence); the "mops-bleat" sound waits for its clip. Mops's approved line "Floating in space! It's our favorite song!" and Squatch's "♪ I'm floating in space! ♪" now sit over Goating in Space: keep or change the words? There is no credits screen in the game: the CC BY credits are in `music/CREDITS.txt` and the README; does he want them on a screen too? (Superseded 2026-11-26, round D: bedtime plays Joe's theme with its singing; see the round D entry above.)

@@ -1314,39 +1314,12 @@
             head: head && { x: head.x, y: head.y, w: head.w, h: head.h },
             at: performance.now(),
           }));
-      head && (P = { x: head.x + head.w / 2, y: head.y });
-      let gV = w(P.x, _ + 24, _ + T - 24),
-        oe = l.style === "song" ? "#ffe3f1" : l.style === "whisper" ? "#f6f7fb" : "#ffffff";
-      l.style === "whisper" && e.setLineDash([4, 6]);
-      let ve = Math.min(P.y - 6, $ + R + 22);
-      if (
-        (l.style !== "whisper" &&
-          !spk &&
-          (e.beginPath(),
-          e.moveTo(gV - 11, $ + R - 2),
-          e.lineTo(gV + (P.x > gV ? 8 : P.x < gV ? -8 : 0), ve),
-          e.lineTo(gV + 11, $ + R - 2),
-          e.closePath(),
-          r(oe, i ? 3 : 4)),
-        m(_, $, T, R, l.style === "song" ? 26 : 18),
-        r(oe, i ? 3 : 4),
-        e.setLineDash([]),
-        l.style !== "whisper")
-      )
-        spk
-          ? (() => {
-              let sy = (spk.y0 + spk.y1) / 2,
-                ty = w(sy, $ + 18, $ + R - 18);
-              (e.beginPath(), e.moveTo(_ + T - 3, ty - 12), e.lineTo(spk.x0 - 8, sy), e.lineTo(_ + T - 3, ty + 12), e.closePath(), r(oe, 4));
-              ((e.fillStyle = oe), e.fillRect(_ + T - 8, ty - 9, 7, 18));
-            })()
-          : ((e.fillStyle = oe), e.fillRect(gV - 9, $ + R - 5, 18, 7));
-      else
-        for (let [CV, NV] of [
-          [10, 5],
-          [22, 3],
-        ])
-          (L(gV + ((P.x - gV) * CV) / 30, $ + R + CV, NV), e.setLineDash([3, 3]), r(oe, 2), e.setLineDash([]));
+      let oe = l.style === "song" ? "#ffe3f1" : l.style === "whisper" ? "#f6f7fb" : "#ffffff";
+      (l.style === "whisper" && e.setLineDash([4, 6]), m(_, $, T, R, l.style === "song" ? 26 : 18), r(oe, i ? 3 : 4), e.setLineDash([]));
+      // The tail: pointed to the speaker's head, or a thought's three circles to the thinker (src/modules/bubble-tail.js).
+      let to = spk || (partyBeat() && partyBeat().speakerBox && partyBeat().speakerBox(l.who)) || (head ? { x0: head.x, y0: head.y, x1: head.x + head.w, y1: head.y + head.h } : { x0: P.x - 12, y0: P.y - 6, x1: P.x + 12, y1: P.y + 18 });
+      let tail = window.SSQ && window.SSQ.drawBubbleTail && window.SSQ.drawBubbleTail(e, { x: _, y: $, w: T, h: R }, to, l.style === "whisper" && l.who === "sq" ? "thought" : "speech", oe, y, i ? 3 : 4);
+      window.__ss && window.__ss.lastBubble && ((window.__ss.lastBubble.tail = tail), (window.__ss.lastBubble.target = to));
       if ((l.style === "song" && (g("\u266A", _ + 4, $ + 4, 22, "#ff5fa8"), g("\u266B", _ + T - 4, $ + R - 2, 22, "#ff5fa8")), !o)) {
         let beat = l.who === "speaker" && window.SSQ && window.SSQ.beat("ch1-morning"),
           CV = beat ? beat.speakerName() : (partyBeat() && partyBeat().speakerName(l.who)) || pa[l.who] || "";
@@ -2042,16 +2015,6 @@
           s.s === "ha ha!" ? (X(s.x, s.y, 34, 16), r("#fff6dc", 2), g(s.s, s.x, s.y, 16, "#b45309")) : g(s.s, s.x, s.y, 28, "#ff5fa8"));
       e.globalAlpha = 1;
     }
-    // Where a walk-tap is heading: a small ring on the floor while the player walks there.
-    function drawWalkTo() {
-      let t = n.walkTo;
-      if (!t || (de() && !(n.ctrl && n.cur && n.cur.k === "bub" && !n.cutOn))) return;
-      // Not on a place the goal's outline already marks (Brian 2026-11-24; src/modules/walk-ring.js).
-      if (window.SSQ && window.SSQ.walkRingShows && !window.SSQ.walkRingShows(t, window.SSQ.goalMark.now(n.T))) return;
-      let k = 0.5 + 0.5 * Math.sin(n.T * 8),
-        sx = t.x - (n.room === "hall" ? B.camX : 0);
-      (e.save(), (e.globalAlpha = 0.7), X(sx, t.y, 16 + 4 * k, 7 + 2 * k), (e.lineWidth = 3), (e.strokeStyle = "#ffffff"), e.stroke(), e.restore());
-    }
     // A tap was heard while the game could not take it yet: a ring spreads in the bottom right corner.
     function drawTapHeard() {
       let k = n.T - (n.tapT == null ? -9 : n.tapT);
@@ -2167,7 +2130,6 @@
       if (!walking) ringsLeft();
       xp();
       drawSec();
-      drawWalkTo();
       for (let i of n.sparks)
         if (i.x !== 300 && i.s === "!") {
           let s = Math.sin(i.t * 14) * 4,

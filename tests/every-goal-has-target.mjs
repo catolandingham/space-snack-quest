@@ -44,9 +44,9 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: grab the flyer": { party: "P4", out: true, x: 788, y: 420 },
     "Squatch: sneak home for a disguise": { party: "P4", out: true, flyer: "paw", walk: true, x: 477, y: 540 },
     "Squatch: run home and hide!": { party: "P2", alarm: true, walk: true, x: 520, y: 560 },
-    // home with the flyer (Brian 2026-11-25): his bed glows and SAVE · flyer slides it under
-    "Squatch: put the flyer under your bed for Mops": { party: "P4", home: true, flyer: "paw", x: 790, y: 480 },
-    // the group photo once everyone is in place (Brian 2026-11-25): JOIN · photo, the gap glows
+    // home with the flyer (Brian 2026-11-25): his bed glows and SAVE · flyer lays it on top (2026-11-26)
+    "Squatch: put the flyer on your bed for Mops": { party: "P4", home: true, flyer: "paw", x: 790, y: 480 },
+    // the group photo once the 3-2-1 starts (Brian 2026-11-26, #46): JOIN · photo, the gap glows
     "Squatch: join the group photo": { party: "P6", shot: true, x: 600, y: 470 },
     "Squatch: pick up the gift": { step: "gift", room: "closet", x: 340, y: 520 },
     "Squatch: put the gift in the box": { step: "box", room: "closet", x: 230, y: 392 },
@@ -150,7 +150,7 @@ const report = await page.evaluate(async (chips) => {
       spec.out && ((p.pose = "stand"), (n.sqPose = "stand"));
       spec.flyer && (p.flyer = spec.flyer);
       spec.home && (window.SSQ.engine().enterRoom("closet", "Q1"), (p.phase = "save"), (p.pose = "stand"), (n.sqPose = "stand"));
-      spec.shot && ((p.shot = { phase: "join", t: 0, n: 0, in: false, got: false }), (p.bandAt = [[258, 256], [308, 256], [358, 256]].map(([x, y]) => ({ x, y }))));
+      spec.shot && ((p.shot = { phase: "count", t: 0, n: 3, in: false, got: false }), (p.bandAt = [[258, 256], [308, 256], [358, 256]].map(([x, y]) => ({ x, y }))));
       spec.alarm && (p.alarm = { phase: "search", t: 0, st: 0, w: { id: "backpack", x: 880, y: 318, hx: 600, hy: 490 }, where: "where-hall", who: "who-tourist", guards: [], bell: 9, last: null, hidden: "" });
       ((n.sq.x = spec.x), (n.sq.y = spec.y), (n.ch1Chip = chip), (n.chip = chip), (n.moved = 200));
     } else {
