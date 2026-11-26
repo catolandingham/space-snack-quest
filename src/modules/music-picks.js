@@ -148,10 +148,10 @@ export function nextTurn(place) {
 // started (fresh). A cue that changes for less than HOLD (a frame between two story steps, a moment's walk) is not a
 // new visit.
 export const HOLD = 1;
-const visit = { place: null, cue: "", n: 0, done: false, fresh: false, pend: null };
+const visit = { place: null, cue: "", n: 0, done: false, fresh: false, pend: null, hush: null };
 /** Tests: forget the visits and the rotations (as if the page were new). */
 export function newVisits() {
-  Object.assign(visit, { place: null, cue: "", n: 0, done: false, fresh: false, pend: null });
+  Object.assign(visit, { place: null, cue: "", n: 0, done: false, fresh: false, pend: null, hush: null });
   for (const k of Object.keys(turn)) delete turn[k];
 }
 const clock = () => (typeof performance !== "undefined" ? performance.now() : Date.now()) / 1000;
@@ -164,13 +164,29 @@ export function seeCue(cue, now = clock()) {
   if (place === visit.place) return ((visit.pend = null), cue);
   if (!visit.pend || visit.pend.place !== place) return ((visit.pend = { place, cue, since: now }), cue);
   if (now - visit.pend.since >= HOLD || visit.place === null) {
+    // (after an alarm the music stays quiet until a visit to another place: hushNow)
+    place && visit.hush && place !== visit.hush.place && (visit.hush = null);
     Object.assign(visit, { place, cue: visit.pend.cue, n: place ? nextTurn(place) : 0, done: false, fresh: !!place, pend: null });
   }
   return cue;
 }
+/**
+ * The alarm goes off (Brian 2026-11-26: "when alarm goes off, I presume music should stop"): the music stops now, and
+ * stays quiet through the alarm and after it, in this place, even when the alarm is over; it comes back only with a
+ * visit to another place (then that place's pick plays, as the table says). The alarm's own sound and the FUR!
+ * moment's sting are sound effects, not music: they still play.
+ */
+export function hushNow() {
+  const place = visit.place || (visit.pend && visit.pend.place) || "";
+  visit.hush = { place: visit.hush && !place ? visit.hush.place : place };
+}
+/** Tests: whether the music is hushed by an alarm now (and for which place). */
+export function hushed() {
+  return visit.hush ? { ...visit.hush } : null;
+}
 /** Tests: where the music is. */
 export function visitNow() {
-  return { place: visit.place, cue: visit.cue, n: visit.n, done: visit.done, file: visit.place ? fileFor(visit.cue, visit.n) : null };
+  return { place: visit.place, cue: visit.cue, n: visit.n, done: visit.done, hush: !!visit.hush, file: visit.place ? fileFor(visit.cue, visit.n) : null };
 }
 
 /**
@@ -183,8 +199,8 @@ export function keepInSpan(el, cue) {
   if (!el) return 1;
   visit.place === null && cue && seeCue(cue, -1e9) && seeCue(cue, 0);
   // no music here (a place with none, held a second: the old track has faded out by then), or waiting for a new
-  // place to hold: quiet, so nothing old is heard again
-  if (!visit.place) return 0;
+  // place to hold: quiet, so nothing old is heard again; and after an alarm, until another place (hushNow)
+  if (!visit.place || visit.hush) return 0;
   const s = spanFor(visit.cue, visit.n);
   if (!s) return 0;
   const file = MUSIC_FILES[s.file];

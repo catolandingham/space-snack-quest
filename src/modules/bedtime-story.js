@@ -513,7 +513,8 @@ export function createBedtimeStory(bridge) {
      */
     showing() {
       const e = E();
-      if (!on || !e) return false;
+      // (over once the fade has ended, whatever else happened)
+      if (!on || !e || !S || S.phase === "end") return (on = false);
       const c = e.current(),
         mine = !c || c.k === "do" || c.k === "until" || (c.k === "bub" && (c.who === "sq" || c.who === "mops")) || (c.k === "cutaway" && (c.id === BEDTIME_STORY_ID || c.id === GUARDIANS_ID));
       // (something else up, or the player has control, or he is out of the room: cut short by a restart; it is over)
