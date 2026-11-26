@@ -3,9 +3,10 @@
  * "The talk, reordered": "Worry comes after You have me"). It ends both party endings: "Keep going" after an alarm
  * (party-after-alarm.js) and closing time, when Mops finds him in the empty hall and they walk home together
  * (party-endings.js). One bubble at a time, each waiting for NEXT (the wordless walks and the hat play themselves).
- *   Squatch goes to the flyer he slid under his bed (it glows: the thing he wanted to show Mops), takes it
- *   in his paw and comes to the middle of the room (round the back of the room when Mops is in the way: nobody walks
- *   through anybody). Mops steps over beside him and looks at him: the costume and the flyer in his paw glow.
+ *   Mops comes in (if he is not in the room yet) and sees the flyer lying on Squatch's bed, where Squatch laid it (it
+ *   glows; Brian 2026-11-26, #42). Squatch takes it from the bed in his paw and comes to the middle of the room (round
+ *   the back of the room when Mops is in the way: nobody walks through anybody). Mops turns to him and hearts float up
+ *   from Mops (Brian 2026-11-26, #48: hearts, never "?" or "!"; no yellow glow on Squatch).
  *   Mops "You went to the party." / Squatch "Everyone out there has someone." / "Everyone except me." / Mops "You
  *   have me." / Mops lifts the piece on his head off him and sets it down by his foot (nothing on his head: a pat) /
  *   Squatch holds the flyer up: "But look. Robots are coming to do your job." / Mops "Nobody is replacing me. They
@@ -22,7 +23,7 @@ import { liftTo } from "./party-free-art.js";
 // How fast they walk at home, how far apart they stand to talk and for the hat, how long Mops looks, how long the
 // hat's lift (or the pat) and setting it down take, where the hat is set down (up and out from his foot), and how
 // long taking the flyer and holding it up take.
-export const TALK = Object.freeze({ walk: 150, beside: 195, close: 138, look: 1.4, lift: 2.6, setDown: 0.5, hatUp: 14, hatOut: 52, take: 0.45, up: 0.35 });
+export const TALK = Object.freeze({ walk: 150, beside: 195, close: 138, notice: 1.2, look: 1.4, lift: 2.6, setDown: 0.5, hatUp: 14, hatOut: 52, take: 0.45, up: 0.35 });
 // Where they stand. Squatch on the open floor between the bucket and the door (`sq`), Mops beside
 // him on the door side. Squatch takes the flyer standing at `take` (right of the bed's front corner). He never walks
 // through Mops (the home room draws them big): when Mops stands between him and the flyer, he goes round along the
@@ -92,9 +93,21 @@ export function createTalk(h) {
         q.flyerGlow = q.flyer === "bed";
         e.walkOff();
       }),
-      e.until((dt) => !mopsIn() || e.step("mops", S.x + TALK.beside, S.y + 6, TALK.walk * 0.7, dt)),
-      e.run(() => mopsIn() && (e.still("mops"), e.face("mops", -1))),
-      // Squatch fetches the flyer from under his bed (if it is not in his paw already)
+      // Mops comes in through the door now if he is not in the room yet (Brian 2026-11-26, #42: he sees the flyer on
+      // the bed when he comes home)
+      e.run(() => {
+        if (mopsIn()) return;
+        e.set("moPose", "stand");
+        e.place("mops", HOME_ROOM.mopsDoor.x, HOME_ROOM.mopsDoor.y);
+        e.face("mops", -1);
+        // (his door was heard a moment ago already, going home early or at closing time)
+        P().doorHeard || h.sound.one("door");
+      }),
+      e.until((dt) => e.step("mops", S.x + TALK.beside, S.y + 6, TALK.walk * 0.7, dt)),
+      e.run(() => (e.still("mops"), e.face("mops", -1), (P().mopsSaw = P().flyer === "bed"))),
+      // he notices the flyer lying on the bed (it glows)
+      ...wait(TALK.notice),
+      // Squatch fetches the flyer from his bed (if it is not in his paw already)
       walkVia(() => {
         const s = h.sq();
         if (P().flyer !== "bed") return [];
@@ -134,10 +147,10 @@ export function createTalk(h) {
         P().doorHeard || h.sound.one("door");
       }),
       e.until((dt) => e.step("mops", S.x + TALK.beside, S.y + 6, TALK.walk * 0.7, dt)),
-      // Mops looks at him: the costume and the flyer in his paw glow
-      e.run(() => (e.still("mops"), e.face("mops", -1), (P().costumeLook = true))),
+      // Mops turns to him and sees him: hearts float up from Mops (Brian 2026-11-26, #48: "when he sees Squatch, it
+      // always sends up hearts rather than question marks or exclamation points"; no yellow glow on Squatch)
+      e.run(() => (e.still("mops"), e.face("mops", -1), (P().mopsHeartsAt = E().time()))),
       ...wait(TALK.look),
-      e.run(() => (P().costumeLook = false)),
       h.say("mops", "mops-went"),
       h.say("sq", "sq-someone"),
       h.say("sq", "sq-except"),

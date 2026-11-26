@@ -34,7 +34,7 @@
  */
 import { LUNCH_PLACES, DOOR_WAY, WATCHERS, WANDERERS, wandererNow, COUNTER_WATCHER, RHYTHM, RHYTHM_LENGTH, watcherNow, AISLE, COUNTER_SPOTS, HALLWAY_SPOTS, LUNCH_SOLIDS, LUNCH_BOUNDS, LUNCH_PACE, LUNCH_SIZES, COUNTER_CLOSEUP } from "./lunch-sneak-place.js";
 import { lunchWords } from "./lunch-sneak-lines.js";
-import { drawCrates, drawPlate, drawNextGlow, drawHeart, drawBagInPaw, drawReach, drawPie, sqPawAt, pieY, BAG_IN_HALL, drawCounterCloseUp, counterCloseUpBox, drawWetStreaks, drawLookCone, drawHeartsUp } from "./lunch-sneak-art.js";
+import { drawCrates, drawPlate, drawLunchGoalLine, drawHeart, drawBagInPaw, drawReach, drawPie, sqPawAt, pieY, BAG_IN_HALL, drawCounterCloseUp, counterCloseUpBox, drawWetStreaks, drawLookCone, drawHeartsUp } from "./lunch-sneak-art.js";
 import { drawMopBucketBack, drawMopBucketFront } from "./mop-bucket.js";
 import { drawHeartCone } from "./party-free-art.js";
 import { drawLunchBag } from "./home-morning-art.js";
@@ -736,6 +736,18 @@ export function createLunchSneak(bridge) {
     // rolled up: the L2 ball (the older program's drawing, DECISIONS C3) at his size, where he stands
     l.pose === "ball" && e.ball && extra.push({ y: s.y, f: () => e.ball.drawOn(ctx0, s.x, s.y - 16 * (k / 1.65), k / 1.65) });
     l.counter && extra.push({ y: COUNTER_SPOTS.plate.y, f: () => drawPlate(ctx0, l.pies) });
+    // The one highlight (the dashed gold line, no glow; Brian 2026-11-26) round what `glowing` names, drawn just after
+    // the thing at its depth (so the crates and the plate do not cover it): the hallway doorway's line is the goal mark
+    // (drawRoom, markGoal); the plate's is its traced goal outline (drawn here while Mops says his line and there is no
+    // control yet; with control the goal mark draws it); during an alarm the plant's traced outline and a line round
+    // the crates. Never over Squatch while he stands there.
+    const me = l.pose === "stand" || l.pose === "up" ? { x0: s.x - 40 * (k / 1.65), x1: s.x + 40 * (k / 1.65), y0: s.y - 90 * (k / 1.65), y1: s.y + 6 } : null;
+    for (const b of glowing(l)) {
+      if (b === LUNCH_PLACES.door.box) continue;
+      if (b === LUNCH_PLACES.plant.thing) extra.push({ y: b.y1 + 0.5, f: () => bridge.drawGoalOutline(ctx0, "hall", "hide", picture, t, [me]) });
+      else if (b === LUNCH_PLACES.crate.box) extra.push({ y: b.y1 + 0.5, f: () => drawLunchGoalLine(ctx0, b, t) });
+      else if (!e.get("ctrl")) extra.push({ y: COUNTER_SPOTS.plate.y + 0.5, f: () => bridge.drawGoalOutline(ctx0, "hall", "lu-snack", picture, t, [me]) });
+    }
     // what he carries: the lunch bag in his paw on the way to Mops
     !l.counter && !hidden && l.bag === "paw" && extra.push({ y: s.y + 0.5, f: () => drawBagInPaw(ctx0, s.x, s.y, s.f || 1, k) });
     // ducked behind the counter: he is in his ball (the approved L2 ball, as ROLL · ball; never the squashed Squatch,
@@ -784,9 +796,6 @@ export function createLunchSneak(bridge) {
       marks,
       shout,
       alarm: !!a && a.phase !== "shout" && a.phase !== "run" && a.phase !== "calm",
-      floor: (ctx) => {
-        for (const b of glowing(l)) drawNextGlow(ctx, b, t);
-      },
       extra,
     };
   }
@@ -870,8 +879,7 @@ export function createLunchSneak(bridge) {
       // outlines a goal with a button, would not). markGoal keeps it as the goal mark, so the goal words wait 20 s.
       const door = !l.counter && !l.alarm && e.get("ctrl") && !e.current() ? spots().find((q) => q.id === "lu-door") : null;
       if (door) {
-        e.markGoal(door);
-        const mark = bridge.goalMark.now(e.time());
+        const mark = e.markGoal(door);
         drew.outline = mark && mark.box ? door.id : "";
       }
       return true;
@@ -892,7 +900,8 @@ export function createLunchSneak(bridge) {
       drew = { step: l.step, things: [] };
       if (l.step === "give" && e.get("ctrl")) {
         const top = mo.y - adultPxFor("passage") * 1.05;
-        drew.glow = drawNextGlow(ctx, { x0: mo.x - 40, x1: mo.x + 40, y0: top, y1: mo.y }, t, 1.1);
+        // Mops is the goal: the one dashed line round him (no glow)
+        drew.glow = drawLunchGoalLine(ctx, { x0: mo.x - 40, x1: mo.x + 40, y0: top, y1: mo.y + 4 }, t);
       }
       if (l.step === "back" && e.get("ctrl")) drew.outline = bridge.drawGoalOutline(ctx, "passage", "lu-back", null, t, []);
       // his mop bucket beside him (mop-bucket.js, the one bucket everywhere), with water in it

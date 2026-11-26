@@ -244,13 +244,13 @@ for (const [beat, times, what] of [
   const rows = Object.entries(picks.MUSIC_PICKS);
   const want = { title: "music/main-theme-from-brian.mp3", morning: "music/goating-in-space.mp3", home: "music/carefree.mp3", tv: "music/odyssey.mp3", hall: "music/lobby-time.mp3", sneak: "music/sneaky-snitch.mp3", caught: "music/der-kleber-sting.mp3", band: "music/stormtop-sylvania.mp3" };
   const got = Object.fromEntries(Object.keys(want).map((k) => [k, picks.fileFor(k)]));
-  g.check("3: every moment has its row and Brian's track: title Joe's tune, morning Goating in Space, home Carefree, TV Odyssey, hall Lobby Time, sneaking Sneaky Snitch, caught Der Kleber Sting, band Stormtop-Sylvania", JSON.stringify(got) === JSON.stringify(want), got);
+  g.check("3: every moment has its row and Brian's track: title Joe's tune, morning Floating in Space, home Carefree, TV Odyssey, hall Lobby Time, sneaking Sneaky Snitch, caught Der Kleber Sting, band Stormtop-Sylvania", JSON.stringify(got) === JSON.stringify(want), got);
   g.check("3: the band's second song is Funky Chunk, and they alternate", picks.fileFor("band", 1) === "music/funky-chunk.mp3" && picks.fileFor("band", 2) === "music/stormtop-sylvania.mp3");
-  g.check("3: home is a rotation (a list stepped through a visit at a time), and the gift is the same visit", Array.isArray(picks.MUSIC_PICKS.home) && picks.MUSIC_PLACE.gift === "home");
-  g.check("3: a mops-bleat hook waits for its file, and the closing hum is silent until Brian picks", "mops-bleat" in picks.SOUND_PICKS && picks.fileFor("closing-hum") === null);
-  g.check("3: singing plays only in the morning (Goating in Space), from the band, and at bedtime (Joe's theme, Brian 2026-11-26 #37); elsewhere no words, or silence", rows.every(([k]) => picks.listFor(k).every((n) => picks.SPANS[n].words === false) || picks.SINGING_OK.includes(k)) && JSON.stringify(picks.SINGING_OK) === JSON.stringify(["morning", "band", "bedtime"]), rows);
+  g.check("3: home is a rotation (a list stepped through a visit at a time), and the gift and the heart moments are the same visit (#32)", Array.isArray(picks.MUSIC_PICKS.home) && picks.MUSIC_PLACE.gift === "home" && picks.MUSIC_PLACE.heart === "home");
+  g.check("3: a mops-bleat hook waits for its file, and the closing hum is Mops's hum (Brian 2026-11-26, #28)", "mops-bleat" in picks.SOUND_PICKS && picks.fileFor("closing-hum") === "music/mops-hum.mp3");
+  g.check("3: singing plays only in the morning (Floating in Space), from the band, and at bedtime (Joe's theme, Brian 2026-11-26 #37); elsewhere no words, or silence", rows.every(([k]) => picks.listFor(k).every((n) => picks.SPANS[n].words === false) || picks.SINGING_OK.includes(k)) && JSON.stringify(picks.SINGING_OK) === JSON.stringify(["morning", "band", "bedtime"]), rows);
   g.check("3: the theme's opening tune ends before its singing starts (0:19)", picks.SPANS.themeTune.to <= 19 && picks.SPANS.themeTune.file === "theme");
-  g.check("3: every file in the table is in music/, credited in music/CREDITS.txt", Object.values(picks.MUSIC_FILES).every((f) => existsSync(join(root, f.url))) && ["Carefree", "Der Kleber Sting", "Funky Chunk", "Lobby Time", "Morning", "Odyssey", "Rainbows", "Reawakening", "Sneaky Snitch"].every((t) => credits.includes('"' + t + '" Kevin MacLeod (incompetech.com), Licensed under Creative Commons: By Attribution 4.0 License, http://creativecommons.org/licenses/by/4.0/')) && credits.includes("Goating in Space, Brian's song made with Suno, 2026-11-26") && credits.includes("Stormtop-Sylvania, Brian's song made with Suno, 2026-11-26"));
+  g.check("3: every file in the table is in music/, credited in music/CREDITS.txt", Object.values(picks.MUSIC_FILES).every((f) => existsSync(join(root, f.url))) && ["Carefree", "Der Kleber Sting", "Funky Chunk", "Lobby Time", "Morning", "Odyssey", "Rainbows", "Reawakening", "Sneaky Snitch", "Run Amok"].every((t) => credits.includes('"' + t + '" Kevin MacLeod (incompetech.com), Licensed under Creative Commons: By Attribution 4.0 License, http://creativecommons.org/licenses/by/4.0/')) && credits.includes("Floating in Space (the new recording; its words sing \"goating in space\"), Brian's song made with Suno, 2026-11-26") && credits.includes("Stormtop-Sylvania, Brian's song made with Suno, 2026-11-26"));
   // the older program's music element, past the tune's end: back to its start, silent for that frame; then a fade
   picks.newVisits();
   const el = { src: "http://x/music/main-theme-from-brian.mp3", currentTime: 18.6 };
@@ -330,7 +330,8 @@ for (const [beat, times, what] of [
     await sleep(250);
     d = await o.page.evaluate(() => window.SSQ.beat("ch1-party").now().sound);
   }
-  g.check("the band plays Brian's \"Stormtop-Sylvania\" (music/stormtop-sylvania.mp3) for their first song, through the band's bus", !!d && d.band.playing === "music/stormtop-sylvania.mp3" && d.song === 0 && d.played.includes("band-recording:music/stormtop-sylvania.mp3"), d && { band: d.band, song: d.song });
+  // (Brian's band order, 2026-11-26: Funky Chunk until he dances, Stormtop-Sylvania while he dances)
+  g.check("before he dances the band plays Funky Chunk (music/funky-chunk.mp3), through the band's bus", !!d && d.band.playing === "music/funky-chunk.mp3" && d.song === 1 && d.played.includes("band-recording:music/funky-chunk.mp3"), d && { band: d.band, song: d.song });
   // the band stops (the photo, an alarm): the recording stops with it
   await o.page.evaluate(() => window.__ss.op.ch1PartyNow && (window.__ss.op.ch1PartyNow.band = false));
   await sleep(600);
@@ -427,7 +428,7 @@ for (const [beat, times, what] of [
   await page.close();
 }
 {
-  // Mops's goat bleat: on his bleat line only, and in Goating in Space's three gaps
+  // Mops's goat bleat: on his bleat line only, and in Floating in Space's three gaps
   const { page, errors } = await g.open("?ch=1", PHONE);
   await sleep(1200);
   await page.click("#ss-sound");
@@ -441,7 +442,7 @@ for (const [beat, times, what] of [
   });
   g.check("the bleat clip is in the game (sounds/goat-bleat.mp3) and the hook names it", picks.SOUND_PICKS["mops-bleat"].url === "sounds/goat-bleat.mp3" && existsSync(join(root, "sounds", "goat-bleat.mp3")));
   g.check("Mops's bleat line asks for the bleat, his other lines do not", !!r.asked && JSON.stringify(r.asked).split("mops-bleat").length === 2, r);
-  g.check("Goating in Space has the bleat in its three gaps (0:36.6, 1:04.1, 1:35.8)", JSON.stringify(picks.SPANS.goatingOnce.bleats) === JSON.stringify([36.6, 64.1, 95.8]));
+  g.check("Floating in Space has the bleat in its three gaps (0:36.6, 1:04.1, 1:35.8)", JSON.stringify(picks.SPANS.floatingOnce.bleats) === JSON.stringify([36.6, 64.1, 95.8]));
   g.check("no page errors (the bleat)", errors.length === 0, errors);
   await page.close();
 }

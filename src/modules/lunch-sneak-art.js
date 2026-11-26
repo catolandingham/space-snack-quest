@@ -8,6 +8,7 @@
 import { drawSnack } from "./party-snacks-art.js";
 import { drawLunchBag } from "./home-morning-art.js";
 import { armEnds } from "./squatch-art.js";
+import { highlightBox } from "./outline.js";
 import { LUNCH_PLACES, COUNTER_SPOTS, LUNCH_SIZES, COUNTER_CLOSEUP } from "./lunch-sneak-place.js";
 
 const LU_INK = "#1e2430";
@@ -79,21 +80,14 @@ export function drawPlate(ctx, n) {
 /** Where pie `i` (0 at the bottom) sits in the stack on the plate. */
 export const pieY = (i) => COUNTER_SPOTS.plate.y - 5 - i * 11;
 
-/** A soft pulsing yellow glow behind a thing (well bigger than it, so it reads on a phone). */
-export function drawNextGlow(ctx, box, time, grow = 1) {
-  const cx = (box.x0 + box.x1) / 2,
-    cy = (box.y0 + box.y1) / 2,
-    rad = Math.max(56, Math.max(box.x1 - box.x0, box.y1 - box.y0) * 0.95) * grow,
-    a = 0.75 + 0.2 * Math.sin((time || 0) * 4),
-    g = ctx.createRadialGradient(cx, cy, 4, cx, cy, rad);
-  g.addColorStop(0, `rgba(255,214,80,${a})`);
-  g.addColorStop(0.55, `rgba(255,224,110,${a * 0.55})`);
-  g.addColorStop(1, "rgba(255,224,110,0)");
-  ctx.save();
-  ctx.fillStyle = g;
-  ctx.fillRect(cx - rad, cy - rad, rad * 2, rad * 2);
-  ctx.restore();
-  return { x: cx, y: cy, r: rad };
+/**
+ * The one highlight (Brian 2026-11-26: "So E, but thicker, but not quite as thick as A"; outline.js): the dashed gold
+ * line round `box` (game positions), for a goal thing the lunch draws itself (the crates during an alarm, Mops at
+ * GIVE · lunch). No glow. Returns the box it went round.
+ */
+export function drawLunchGoalLine(ctx, box, time, pad = 6) {
+  highlightBox(ctx, box, time || 0, pad);
+  return { x0: box.x0 - pad, y0: box.y0 - pad, x1: box.x1 + pad, y1: box.y1 + pad };
 }
 
 /** One red heart (a drawn shape, not a letter), its middle at (x, y). */

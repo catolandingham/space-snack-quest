@@ -29,13 +29,12 @@
     }
     // The goal mark is a soft yellow outline round the real thing (src/modules/goal-targets.js), never a
     // circle or an arrow (Brian, raised at least six times). Remember the last one drawn, so tests can check
-    // it is never round Squatch himself.
+    // it is never round Squatch himself; it is returned (the lunch sneak reads it).
     function drawGoalMark(spot) {
       // Never over the people standing there: the outline is left out of their boxes.
       let people = [n.sqPose !== "hidden" ? sqBox() : null, n.moPose && n.moPose !== "hidden" && n.mo.x > -100 ? moBox() : null];
       let box = window.SSQ && window.SSQ.drawGoalOutline ? window.SSQ.drawGoalOutline(e, n.room, spot.id, lockedImg[lockedNow], n.T, people) : null;
-      box && (n.lastRing = { x: (box.x0 + box.x1) / 2, y: (box.y0 + box.y1) / 2, T: n.T, box, id: spot.id, act: spot.verb + " · " + spot.cap });
-      window.SSQ && window.SSQ.goalMark && window.SSQ.goalMark.drew(box, spot, n.T);
+      return box && (n.lastRing = { x: (box.x0 + box.x1) / 2, y: (box.y0 + box.y1) / 2, T: n.T, box, id: spot.id, act: spot.verb + " · " + spot.cap });
     }
     function ch1MarkGoal() {
       if (n.ch1PadOn || !n.ctrl || n.ch1Zoom || n.sqPose === "hidden") return;

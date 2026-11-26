@@ -3,7 +3,7 @@
  * and the picture sheet for Brian (tools/party-sheet.mjs) draw it the same way. The locked hall picture is drawn
  * first and never changed; everything else goes on top of it.
  *   view = { t, picture, banner: { glow }, lights: { dim } | null, isfred: { x, y, f }, band: { playing }, guests: [{ id, x, y, dance, lean, arms (the octopus's, out for a chase) }], bartender: { x, y, f }, guards: [{ x, y, f }],
- *            tripod: { x, y, aim, counting }, cones: [cone], allCones, squatch: { x, y, f, walk, pose ("stand",
+ *            tripod: { x, y, aim, counting }, mic: { x, y, carried } | null (the mic stand), cones: [cone], allCones, squatch: { x, y, f, walk, pose ("stand",
  *            "peek" or "hidden"), outfit, flyer, shake, hop } | null, eyes: { x, y } | null, marks: [{ x, y,
  *            mark }], shout: { x, y } | null, alarm: bool, vent: bool, tufts: [{ x, y, s, rot }],
  *            warning: { k } | null (the vent's fur sign), unseen (nobody can see him now), fooled (in a whole
@@ -12,11 +12,11 @@
  * Returns the cones as drawn (party-watch.js drawCones).
  */
 import { HALL, BANNER, CAST, DANCE_SPOT } from "./party-hall.js";
-import { OUTLINE } from "./outline.js";
+import { OUTLINE, highlightLine } from "./outline.js";
 import { drawCones } from "./party-watch.js";
 import { drawOctopusArmsOut, drawHug } from "./party-octopus-art.js";
 import { walkArms } from "./party-shirt-art.js";
-import { drawBanner, drawBand, drawPerson, LOOKS, drawTripod, drawVentSwirl, drawAlarmFlash, drawPartyLights, drawOutfit, drawFlyer, drawTuft, drawMark, drawShout, drawWarning } from "./party-art.js";
+import { drawBanner, drawBand, drawPerson, LOOKS, drawTripod, drawVentSwirl, drawAlarmFlash, drawPartyLights, drawOutfit, drawFlyer, drawTuft, drawMark, drawShout, drawWarning, drawMicStand } from "./party-art.js";
 
 // Peeking, the top of his head shows this far above the doorway gap's top edge.
 const PEEK_OVER_DOOR = 13;
@@ -92,8 +92,9 @@ export function drawHall(ctx, E, guestArt, view) {
   view.isfred && people.push({ y: view.isfred.y, f: () => E.drawIsfred(ctx, view.isfred.x, view.isfred.y, view.isfred.f || 1) });
   if (view.band) {
     const spots = view.band.spots || CAST.band;
-    people.push({ y: spots[0].y, f: () => drawBand(ctx, spots, adult * 0.98, t, !!view.band.playing, view.band.looks, view.band.gone, !!view.band.pose) });
+    people.push({ y: spots[0].y, f: () => drawBand(ctx, spots, adult * 0.98, t, !!view.band.playing, view.band.looks, view.band.gone, !!view.band.pose, view.band.beat) });
   }
+  view.mic && people.push({ y: view.mic.y, f: () => drawMicStand(ctx, view.mic.x, view.mic.y, adult, view.mic.carried) });
   view.bartender && people.push({ y: view.bartender.y, f: () => drawPerson(ctx, view.bartender.x, view.bartender.y, adult, LOOKS.bartender, view.bartender.f || -1, t) });
   for (const g of view.guards || []) people.push({ y: g.y, f: () => drawPerson(ctx, g.x, g.y, adult * 1.02, LOOKS.guard, g.f || 1, t) });
   view.tripod && people.push({ y: view.tripod.y, f: () => drawTripod(ctx, view.tripod.x, view.tripod.y, view.tripod.aim) });
@@ -125,10 +126,7 @@ export function drawOrder(people) {
  */
 export function drawDanceRing(ctx, t) {
   ctx.save();
-  ctx.globalAlpha = 0.85 + 0.15 * Math.sin(t * 4);
-  ctx.setLineDash([OUTLINE.dash, OUTLINE.dash * 0.7]);
-  ctx.lineWidth = OUTLINE.width;
-  ctx.strokeStyle = OUTLINE.color;
+  highlightLine(ctx, t);
   ctx.beginPath();
   ctx.ellipse(DANCE_SPOT.x, DANCE_SPOT.y, DANCE_SPOT.rx + OUTLINE.width, DANCE_SPOT.ry + OUTLINE.width, 0, 0, Math.PI * 2);
   ctx.stroke();
