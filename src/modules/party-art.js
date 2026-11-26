@@ -8,6 +8,7 @@
  * grown-up: head about a fifth of the height). The six approved guests themselves are pictures (guests.js).
  * Words come only from party-lines.js.
  */
+import { highlightLine, highlightBox } from "./outline.js";
 import { questionLook } from "./party-question.js";
 import { partyLine } from "./party-lines.js";
 import { drawShirt, drawShirtSleeves } from "./party-shirt-art.js";
@@ -275,17 +276,14 @@ export function drawBand(ctx, spots, h, t, playing, looks = LOOKS.band, gone = n
   });
 }
 
-/** The gap in the photo's front row, glowing on the floor where Squatch's feet go (`r` across), pulsing gently. */
+/** The gap in the photo's front row, outlined on the floor where Squatch's feet go (`r` across), pulsing gently. */
 export function drawGapGlow(ctx, x, y, r, t) {
+  // the one highlight (outline.js): a dashed gold ellipse round the place on the floor, no glow (Brian 2026-11-26)
   ctx.save();
-  const k = 0.75 + 0.25 * Math.sin(t * 4);
-  const g = ctx.createRadialGradient(x, y, 2, x, y, r * 1.6);
-  g.addColorStop(0, `rgba(255,207,51,${0.75 * k})`);
-  g.addColorStop(1, "rgba(255,207,51,0)");
-  ctx.fillStyle = g;
+  highlightLine(ctx, t);
   ctx.beginPath();
-  ctx.ellipse(x, y, r * 1.6, r * 0.6, 0, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.ellipse(x, y, r * 1.3, r * 0.5, 0, 0, Math.PI * 2);
+  ctx.stroke();
   ctx.restore();
 }
 
@@ -298,10 +296,6 @@ export function drawBanner(ctx, box, glow, t = 0) {
   line(ctx, [x0 + 14, 0, x0 + 14, y0 + 4], INK, 2);
   line(ctx, [x1 - 14, 0, x1 - 14, y0 + 4], INK, 2);
   ctx.save();
-  if (glow > 0) {
-    ctx.shadowColor = "rgba(255,207,51," + (0.6 + 0.4 * Math.sin(t * 6)) * glow + ")";
-    ctx.shadowBlur = 26 * glow;
-  }
   // The cloth: a gentle sag along the bottom edge.
   ctx.beginPath();
   ctx.moveTo(x0, y0);
@@ -311,11 +305,12 @@ export function drawBanner(ctx, box, glow, t = 0) {
   ctx.closePath();
   ctx.fillStyle = "#3478f6";
   ctx.fill();
-  ctx.shadowBlur = 0;
   ctx.lineWidth = 3;
   ctx.strokeStyle = INK;
   ctx.stroke();
   ctx.restore();
+  // while a line names it: the one highlight round it (outline.js), no glow (Brian 2026-11-26)
+  glow > 0 && highlightBox(ctx, { x0, y0, x1, y1: y1 + sag }, t, 6);
   const mid = y0 + (y1 - y0) * 0.33,
     low = y0 + (y1 - y0) * 0.72;
   rr(ctx, x0 + 34, low - 12, w - 68, 24, 4, "#fffdf8");

@@ -761,7 +761,7 @@ export function createParty(bridge) {
     };
     const door = (id, x, y, r) => ({ id, verb: "", cap: "", who: "sq", x, y, r });
     // (a doorway he walks into: the opening itself is the spot, the same box the walk-in uses, party-hall.js)
-    const doorBox = (id, box) => ({ id, verb: "", cap: "", who: "sq", x: (box.x0 + box.x1) / 2, y: box.y0 + 6, box });
+    const doorBox = (id, box) => ({ id, verb: "", cap: "", who: "sq", x: (box.x0 + box.x1) / 2, y: box.y0 + 6, r: (box.x1 - box.x0) / 2, box });
     if (p.scene === "P1" && p.phase === "home" && room === "closet")
       out.push({ id: "peek", verb: "PEEK", cap: partyLine("button-peek").split(" · ")[1], who: "sq", x: 890, y: 480, r: 160, thing: HOME_DOOR, f: peek });
     if ((p.scene === "P2" || p.scene === "P4") && room === "hall" && p.pose === "stand") {
@@ -900,6 +900,10 @@ export function createParty(bridge) {
       // (home early, the party still on: the band through his door, not the home music)
       if ((p.scene === "P8a" || p.scene === "P8b" || p.scene === "P8c") && E().room() === "closet" && !partyOnNow(p)) return "home";
       return "";
+    },
+    /** The locked hall picture this beat draws the hall on (goal outlines are traced from it), or null. */
+    roomPicture() {
+      return live() && E().room() === "hall" ? picture : null;
     },
     /** True while this beat draws the room on screen (the hall). */
     ownsRoom() {

@@ -328,7 +328,8 @@ const still = (page, name) => page.screenshot({ path: join(OUT, name + ".png") }
   s = await st(page);
   const endB = s.d.seen.end;
   g.check("after the cheer the routine is over: no spot glows, and the two buttons show", overAt >= 0 && !s.d.live && !!endB && !!endB.again && !!endB.back, [overAt, s.d.live, endB]);
-  g.check("their words are drawn: \"Dance again\" and \"Back to the party\"", s.texts.some((t) => t.text === "Dance again") && s.texts.some((t) => t.text === "Back to the party"), s.texts.map((t) => t.text));
+  // (since 2026-11-26 the green button names the next speed, Brian #45: "Faster!" after the first routine)
+  g.check("their words are drawn: \"Faster!\" (the next speed) and \"Back to the party\"", s.texts.some((t) => t.text === "Faster!") && s.texts.some((t) => t.text === "Back to the party"), s.texts.map((t) => t.text));
   const sqTop = D.onScreen(D.danceSquatch(W, H, s.d), 0, -D.DANCE_TOP).y;
   g.check("the buttons sit above him (clear of his tallest hat) and are 44 px tall or more", endB.back.y + 27 < sqTop && endB.again.y - 27 >= 70, [endB, Math.round(sqTop)]);
   await still(page, "dance-14-one-routine-then-two-buttons");

@@ -27,7 +27,7 @@ function bigWords(ctx, text, x, y, size, fill, alpha = 1) {
 
 /** Where the speed word and the badge sit on a `w` x `h` dance (tests). */
 export function danceWordsAt(w, h) {
-  return { pop: { x: w / 2, y: h * 0.3 }, badge: { x: w / 2, y: h * 0.37, w: Math.min(w * 0.7, 300), h: Math.max(44, h * 0.06) } };
+  return { pop: { x: w / 2, y: h * 0.43 }, badge: { x: w / 2, y: h * 0.37, w: Math.min(w * 0.7, 300), h: Math.max(44, h * 0.06) } };
 }
 
 /** Draws the speed word (while it is up) and the badge (once earned). Returns what it drew (tests). */

@@ -416,7 +416,7 @@ const play = await page.evaluate(() => {
       // Optional bedroom inspections are tested separately; this route follows the story goal.
       // A spot with a place to stand: a circle (r) or a box (the home-alone desk). A doorway the party walks him
       // through has no button: standing in it is the action.
-      const spots = ss.spotsNow().filter((s) => s && (s.verb || s.r > 0) && (s.r > 0 || s.box) && s.id !== "home-calendar");
+      const spots = ss.spotsNow().filter((s) => s && (s.verb || s.r > 0 || s.box) && (s.r > 0 || s.box) && s.id !== "home-calendar");
       const spot = spots[0];
       if (!spot) {
         end = "no-spot " + n.scene;

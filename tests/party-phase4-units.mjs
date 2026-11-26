@@ -7,7 +7,8 @@
  *   - the party is on at home (#6 of phase 4): P3 to P6 while the band plays, and P8c until Mops comes home;
  *   - the dance's speed words and the "Super dancer!" badge (#45);
  *   - the photo rule (#46): in his place in the row before the 3-2-1 he is seen, safe during it, 2 s to leave after;
- *   - the crowd's three options and the voice's three options, each with a one-line switch (#4 of phase 4).
+ *   - the crowd sound as one file entry to swap in (none of the three options: Brian 2026-11-26), the voice's three
+ *     options with a one-line switch (#4 of phase 4).
  *   node tests/party-phase4-units.mjs
  */
 import { join } from "node:path";
@@ -133,8 +134,7 @@ check("#46 during the 3-2-1 he is safe in his place, and JOIN · photo is open o
 }
 
 // ---------- the sound options ----------
-check("#4 the crowd has three options and plays A until Brian picks (one line: CROWD_STYLE)", ["A", "B", "C"].every((k) => typeof board.CROWD[k] === "function") && board.CROWD_STYLE === "A");
-check("#4 the party's crowd plays the chosen option", /CROWD\[CROWD_STYLE\]/.test(readFileSync(join(root, "src", "modules", "party-sound.js"), "utf8")));
+check("the crowd sound is one swappable file entry (music-picks.js SOUND_PICKS.crowd): none yet, so the made-up murmur plays (Brian 2026-11-26: none of the three options)", picks.SOUND_PICKS.crowd && picks.SOUND_PICKS.crowd.url === null && picks.SOUND_PICKS.crowd.level > 0 && !("CROWD" in board) && /SOUND_PICKS\.crowd/.test(readFileSync(join(root, "src", "modules", "party-sound.js"), "utf8")));
 
 console.log(failed ? `${failed} failed` : "party-phase4-units checks passed");
 process.exit(failed ? 1 : 0);

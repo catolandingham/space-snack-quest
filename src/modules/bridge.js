@@ -170,7 +170,7 @@ export function createBridge() {
       return outlines.get(key);
     },
     /**
-     * Draws the soft yellow outline round the real thing a Chapter 1 goal needs (GOAL_TARGETS), pulsing
+     * Draws the one highlight (outline.js: the dashed gold line) round the real thing a Chapter 1 goal needs (GOAL_TARGETS), pulsing
      * gently. `picture` is the locked room picture on screen (traced things come from it). `avoid` is a list of
      * boxes (the people standing there): the outline is not drawn inside them, so it never draws over Squatch
      * (Brian, 2026-11-23: "The dash outline drawing over him doesn't work."). Returns the box outlined, or null
@@ -179,6 +179,11 @@ export function createBridge() {
     drawGoalOutline(ctx, room, spotId, picture, time, avoid) {
       const target = GOAL_TARGETS[room + ":" + spotId];
       if (!target) return null;
+      // the party draws the hall on its own locked picture: trace from that one (the older program's last room
+      // picture is another room's, so the plant's outline was traced from the wrong picture and drew nothing)
+      const party = beats.get("ch1-party"),
+        own = party && party.roomPicture ? party.roomPicture() : null;
+      own && (picture = own);
       const alpha = 0.85 + 0.15 * Math.sin((time || 0) * 4); // always clearly visible (Brian G#430: "I can't really see it")
       ctx.save();
       for (const b of avoid || []) {

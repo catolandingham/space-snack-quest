@@ -12,7 +12,7 @@
  * Returns the cones as drawn (party-watch.js drawCones).
  */
 import { HALL, BANNER, CAST, DANCE_SPOT } from "./party-hall.js";
-import { OUTLINE } from "./outline.js";
+import { OUTLINE, highlightLine } from "./outline.js";
 import { drawCones } from "./party-watch.js";
 import { drawOctopusArmsOut, drawHug } from "./party-octopus-art.js";
 import { walkArms } from "./party-shirt-art.js";
@@ -125,10 +125,7 @@ export function drawOrder(people) {
  */
 export function drawDanceRing(ctx, t) {
   ctx.save();
-  ctx.globalAlpha = 0.85 + 0.15 * Math.sin(t * 4);
-  ctx.setLineDash([OUTLINE.dash, OUTLINE.dash * 0.7]);
-  ctx.lineWidth = OUTLINE.width;
-  ctx.strokeStyle = OUTLINE.color;
+  highlightLine(ctx, t);
   ctx.beginPath();
   ctx.ellipse(DANCE_SPOT.x, DANCE_SPOT.y, DANCE_SPOT.rx + OUTLINE.width, DANCE_SPOT.ry + OUTLINE.width, 0, 0, Math.PI * 2);
   ctx.stroke();

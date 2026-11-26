@@ -209,7 +209,7 @@ export const HALL_DOOR = Object.freeze({ x: SPOTS.doorway.x, y: SPOTS.doorway.y,
  * itself"): from just above his door spot down through the opening, as wide as the opening less a step each side.
  * Walking in here takes him home; the floor in front of the door does not. The door's spot entries use this box.
  */
-export const HALL_DOOR_OPENING = Object.freeze({ x0: HALL_DOOR.x - 36, x1: HALL_DOOR.x + 36, y0: HALL_DOOR.y - 6, y1: 660 });
+export const HALL_DOOR_OPENING = Object.freeze({ x0: HALL_DOOR.x - 36, x1: HALL_DOOR.x + 36, y0: HALL_DOOR.y - 16, y1: 660 });
 /** True when his feet are in the doorway's opening (HALL_DOOR_OPENING). */
 export const inHallDoorway = (s) => !!s && s.x > HALL_DOOR_OPENING.x0 && s.x < HALL_DOOR_OPENING.x1 && s.y > HALL_DOOR_OPENING.y0 && s.y < HALL_DOOR_OPENING.y1;
 

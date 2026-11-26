@@ -19,8 +19,8 @@
  *   takeBreak()   true once each time the band stops dead and shouts, or (the recording) sings out its line: the
  *                 game shows the band's line then
  */
-import { BOARD, CROWD, CROWD_STYLE, tone, nz, muffled, kick, snare, hat, midi } from "./party-board-sounds.js";
-import { spanFor, fileFor, matchFor, listFor } from "./music-picks.js";
+import { BOARD, tone, nz, muffled, kick, snare, hat, midi } from "./party-board-sounds.js";
+import { spanFor, fileFor, matchFor, listFor, SOUND_PICKS } from "./music-picks.js";
 import { buses } from "./sound-mix.js";
 
 /**
@@ -205,6 +205,40 @@ export function createPartySound(getEngine) {
       .then((b) => (stingBuf = b))
       .catch(() => {});
   }
+  // The crowd's recording (music-picks.js SOUND_PICKS.crowd: none until Brian picks one, 2026-11-26: "I don't like any
+  // of the crowd sounds"): once its file has loaded, it plays round and round under the band, quiet, while the
+  // crowd should be heard; true then (the made-up murmur is not played). False with no file, or not loaded yet.
+  let crowdBuf = null,
+    crowdLoading = false,
+    crowdSrc = null,
+    crowdGain = null;
+  function crowdOn(A) {
+    const pick = SOUND_PICKS.crowd;
+    if (!pick || !pick.url) return false;
+    if (!crowdBuf) {
+      if (!crowdLoading && typeof fetch === "function") {
+        crowdLoading = true;
+        fetch(pick.url)
+          .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error("crowd " + r.status))))
+          .then((b) => A.c.decodeAudioData(b))
+          .then((b) => (crowdBuf = b))
+          .catch(() => {});
+      }
+      return false;
+    }
+    if (!crowdSrc || crowdSrc.context !== A.c) {
+      crowdSrc = A.c.createBufferSource();
+      crowdSrc.buffer = crowdBuf;
+      crowdSrc.loop = true;
+      crowdGain = A.c.createGain();
+      crowdGain.gain.value = 0.0001;
+      crowdSrc.connect(crowdGain);
+      crowdGain.connect(A.o);
+      crowdSrc.start();
+    }
+    crowdGain.gain.setTargetAtTime(pick.level, A.c.currentTime, 0.2);
+    return true;
+  }
   // The chase music: loaded once sound is on, started (from its top) while the chase is on.
   function chaseTick(A) {
     const url = fileFor("chase");
@@ -325,6 +359,8 @@ export function createPartySound(getEngine) {
       // what is already scheduled stops at once (its own gain fades out); a new ambience gets a new gain
       ambGain && ambGain.gain.setTargetAtTime(0, ambGain.context.currentTime, 0.05);
       ambGain = null;
+      // (the crowd's recording, if there is one, fades out too; it comes back with the crowd)
+      crowdGain && k !== "murmur" && crowdGain.gain.setTargetAtTime(0, crowdGain.context.currentTime, 0.2);
     },
     /** True once each time the band stops dead and shouts (then the game shows the band's line). */
     takeBreak() {
@@ -386,7 +422,9 @@ export function createPartySound(getEngine) {
         if (ambNext < now + PARTY_SOUND.ahead) {
           if (!ambGain || ambGain.context !== A.c) ((ambGain = A.c.createGain()), ambGain.connect(A.o));
           const B = { c: A.c, o: ambGain };
-          amb === "door" ? throughDoor(B, ambNext) : CROWD[CROWD_STYLE](muffled(B, 900), ambNext, PARTY_SOUND.murmur + 0.4);
+          // (the crowd: its recording, once Brian picks one and it has loaded, round and round; until then the
+          // made-up murmur: crowdTick)
+          amb === "door" ? throughDoor(B, ambNext) : crowdOn(A) || BOARD.murmur(muffled(B, 900), ambNext, PARTY_SOUND.murmur + 0.4);
           ambNext += amb === "door" ? PARTY_SOUND.door : PARTY_SOUND.murmur;
         }
       }
@@ -420,6 +458,7 @@ export function createPartySound(getEngine) {
     /** Stops the band, the ambience and the humming (the party is over, or a restart). */
     stop() {
       bandStop();
+      crowdGain && crowdGain.gain.setTargetAtTime(0, crowdGain.context.currentTime, 0.2);
       this.chase(false);
       song = -1;
       amb = "";

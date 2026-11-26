@@ -5,6 +5,7 @@
  * the flyer on the floor, his outfit, the guard who follows him home, Mops out of breath).
  */
 import { spanFor } from "./music-picks.js";
+import { highlightBox } from "./outline.js";
 import { micNow } from "./party-stage-walks.js";
 import { partyOnNow, bandTrackNow } from "./party-band-order.js";
 import { HALL, CAST, CAMERA_AIM, BAND_AIM, HALL_SPEAKER, FLYER, P4_SWEEP, sweepAngle } from "./party-hall.js";
@@ -173,18 +174,14 @@ export function createView(h) {
   // (the stage's middle while Isfred speaks; the Croc Boys once they play)
   const aimNow = (p) => (p.shot && ["camera", "gather", "join", "count", "flash", "polaroid"].includes(p.shot.phase) ? PHOTO_ROW.aim : p.mode === "pairs" && !LATE.has(p.scene) ? BAND_AIM : CAMERA_AIM);
   let ctx0 = null;
-  // The flyer in the hall, with a yellow glow while Squatch thinks about it.
+  // The flyer, outlined (the one highlight) while Squatch thinks about it.
   function drawFlyerLit(ctx, fl) {
-    if (fl.glow) {
-      // (the glow is its own soft yellow patch behind the paper, so the paper itself stays white)
-      ctx.save();
-      ctx.shadowColor = `rgba(255,207,51,${fl.glow})`;
-      ctx.shadowBlur = 24;
-      ctx.fillStyle = "#ffcf33";
-      ctx.fillRect(fl.x - fl.size * 0.4, fl.y - fl.size * 0.55, fl.size * 0.8, fl.size * 1.1);
-      ctx.restore();
-    }
     drawFlyer(ctx, fl.x, fl.y, fl.size, fl.rot);
+    // while it matters: the one highlight round it (outline.js), no glow (Brian 2026-11-26)
+    if (fl.glow) {
+      const r = fl.size * 0.62 * (1 + Math.abs(Math.sin(fl.rot || 0)) * 0.3);
+      highlightBox(ctx, { x0: fl.x - r, y0: fl.y - r * 1.2, x1: fl.x + r, y1: fl.y + r * 1.2 }, E().time(), 3);
+    }
   }
   // On the floor, under everyone: pieces that fell, Mops's wet streak and his heart cone.
   function floor(ctx, p, t) {

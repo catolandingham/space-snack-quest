@@ -207,38 +207,6 @@ function clink(A, t) {
   tone(A, { t, f: f * 1.51, d: 0.22, v: 0.012, a: 0.002 });
 }
 
-// A party guest whooping: a voice that slides up.
-function whoop(A, t) {
-  const f = rnd(220, 320);
-  for (let i = 0; i < 2; i++) voice(A, t + i * 0.12, f * (1 + i * 0.25));
-}
-/**
- * The crowd's sound, three ways for Brian to choose from (Brian 2026-11-26, the costume video at 0:48: "listen to a few
- * different options... varied depending on the part of the game"; samples in tests/out/.../round-d/sounds/). One
- * `d` seconds of it from t; the game plays CROWD[CROWD_STYLE] round and round (party-sound.js).
- *   A  layered murmur with laughs and glasses (the crowd as it is: BOARD.murmur)
- *   B  a lively party: more voices, whoops and cheers, more glasses clinking
- *   C  a quieter lounge: a few low voices, far off, now and then a glass
- */
-export const CROWD = Object.freeze({
-  A: (A, t, d = 3) => BOARD.murmur(A, t, d),
-  B(A, t, d = 3) {
-    const M = muffled(A, 1500);
-    for (let i = 0; i < 18; i++) voice(M, t + rnd(0, d - 0.4), rnd(120, 260));
-    for (let i = 0; i < 2; i++) rnd(0, 1) < 0.7 && laugh(M, t + rnd(0.1, d - 0.8));
-    rnd(0, 1) < 0.6 && whoop(M, t + rnd(0.2, d - 0.6));
-    for (let i = 0; i < 3; i++) clink(A, t + rnd(0.1, d - 0.4));
-  },
-  C(A, t, d = 3) {
-    const M = muffled(quieter(A, 0.6), 700);
-    for (let i = 0; i < 7; i++) voice(M, t + rnd(0, d - 0.4), rnd(90, 180));
-    rnd(0, 1) < 0.25 && laugh(M, t + rnd(0.2, d - 0.8));
-    rnd(0, 1) < 0.35 && clink(quieter(A, 0.6), t + rnd(0.1, d - 0.4));
-  },
-});
-/** The crowd sound the game plays (one line to switch: "A", "B" or "C"; Brian picks). */
-export const CROWD_STYLE = "A";
-
 /** Every one-shot sound by name: (A, t). */
 export const BOARD = Object.freeze({
   // P1 to P5 (the board's picks)

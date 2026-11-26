@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–119 | ## Where main is (Chapter 1 redesign) |
-| 120–134 | ## Register |
-| 135–156 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 157–177 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 178–190 | ## Phase 2 (plan section 4, T13 to T18) |
-| 191–213 | ## Phase 1 (plan section 3, T5 to T12) |
-| 214–227 | ## SS40–SS44 |
-| 228–245 | ## Story rows |
-| 246–264 | ## Reset section |
-| 265–275 | ## Still open |
-| 276–279 | ## Chapter 1 replot, recorded and not built |
-| 280–437 | ## Changelog |
+| 24–121 | ## Where main is (Chapter 1 redesign) |
+| 122–136 | ## Register |
+| 137–158 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 159–179 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 180–192 | ## Phase 2 (plan section 4, T13 to T18) |
+| 193–215 | ## Phase 1 (plan section 3, T5 to T12) |
+| 216–229 | ## SS40–SS44 |
+| 230–247 | ## Story rows |
+| 248–266 | ## Reset section |
+| 267–277 | ## Still open |
+| 278–281 | ## Chapter 1 replot, recorded and not built |
+| 282–439 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -28,9 +28,11 @@
 - The photo's 2 s to step out counts while he can move: not while the Polaroid fills the screen (a kid must close it first).
 - Band order and P3: Funky Chunk now plays from the band's first notes in P3 (until he dances), but P3's sung bubble "Stormtop-vania 1-2-3-4-5!" still shows over it. Drop that bubble in P3 (my pick), or let the band open with Stormtop-Sylvania in P3 only?
 - The photo rule raises the alarm even in a whole disguise (being in the row at the wrong moment is seen up close). Keep, or only "?" in disguise?
-- Sounds to pick from (round-d/sounds): crowd A, B or C; voice A, B or C (A plays now).
+- Sounds to pick from (round-d/sounds): voice A, B or C (A plays now). The crowd: a recording to drop in (`SOUND_PICKS.crowd`), none of the made-up three.
+- The on-screen words by outlined things ("PUT IN · box" and the like): keep or drop? (round-d/outline-final.png shows both, with the new line.)
 - Not built here: the Day 1 Guardian Box at the Day 2 size (#34): the box and its Day 2 size live on feat/ch1-day2-morning. The docs that still say the TV line was cut (phase 4 item 13) were not changed.
 - Placeholders: the closing beats (2.6 s cheer, 2 s dim), Mops home 2.5 s after he walks in, 2 s to leave the photo, the flyer's place on the bed, the tape and news drawings, the band's fade (1.5 s).
+- Still outside the one highlight style (to confirm they count as highlights): the TV's gold ring and frame when Mops presses its button, the beard's soft halo in the morning's wringing close-up (a tap target), the dance close-up's glowing spots (its game). Docs match main: yes.
 
 2026-11-26 (afternoon), draft PR #87, not merged. Done: Brian's party showing-7 notes 12 to 18 (README, "Chapter 1 redesign", the 2026-11-26 afternoon paragraph): a "wah-wah" voice under every speech bubble, thought trails and speech tails that end on the speaker, the slower band start with the mic stand and the Croc Boy close-up, notes from the band and the beat bob, faint notes under his door at home, the flyer keeping its size under the bed, the shirt needed for a disguise. Open for Brian:
 - 0:51, the flyer: "He should lay it on top of the bed." Answered the same day (#42): on top of the bed, built in the evening round.

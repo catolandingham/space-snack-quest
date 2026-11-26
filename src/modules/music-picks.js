@@ -122,7 +122,10 @@ export const MUSIC_PICKS = Object.freeze({
 // Sounds that are not music. Mops's bleat (Brian 2026-11-26, "Bleat 2": sounds/goat-bleat.mp3, 1.2 s, cut from
 // Wikimedia Commons "Herd of goats bleating.ogg" by stephan, public domain): on his bleat line only (the morning song's
 // "♪ Weeee-eenn-nnttt! ♪", morning-sound.js), and over Floating in Space where it leaves a gap for one (`bleats`).
-export const SOUND_PICKS = Object.freeze({ "mops-bleat": Object.freeze({ url: "sounds/goat-bleat.mp3", level: 0.7 }) });
+// The crowd in the hall (Brian 2026-11-26: "I don't like any of the crowd sounds. They don't sound like crowds at all."):
+// a recording to be dropped in later, looped under the band, quiet. Its pick is this one line (`url`); with none, the
+// made-up murmur plays as before (party-sound.js).
+export const SOUND_PICKS = Object.freeze({ "mops-bleat": Object.freeze({ url: "sounds/goat-bleat.mp3", level: 0.7 }), crowd: Object.freeze({ url: null, level: 0.35 }) });
 // Cues that are the same place (one visit): moving between them does not start a `once` track again.
 // (Brian 2026-11-26, #32: the heart moments at home count as the same home visit, so the home track carries on)
 export const MUSIC_PLACE = Object.freeze({ gift: "home", heart: "home" });

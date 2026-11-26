@@ -9,12 +9,13 @@
  *   - Each covered spot fills a quarter of the "Disguised enough" meter. No timer, no fail, no SHUFFLE.
  *   - The party shirt must be on his body (Brian 2026-11-26, showing 7 at 1:05: "he probably has to put on the shirt
  *     or it's not disguised enough, and then it's a combo of everything else"). Until it is, the meter stops at three
- *     quarters and the shirt glows, wherever it is. Before, any four pieces on the four spots filled it.
+ *     quarters and the shirt is outlined (the one highlight), wherever it is. Before, any four pieces on the four spots filled it.
  *   - Meter full (all four spots covered, the shirt on his body): a ta-da hop, and one big GO · party button under
  *     him (never on him).
  * The layout works for any screen: `layout(w, h)` places everything in screen pixels.
  */
 import { partyLine } from "./party-lines.js";
+import { highlightBox, OUTLINE_SCREEN } from "./outline.js";
 import { drawSquatchArt } from "./squatch-art.js";
 import { PIECES, BODY_SPOTS, drawPiece, drawOutfit, words, INK } from "./party-art.js";
 
@@ -175,28 +176,19 @@ export function draw(ctx, L, st, t, tada = 0) {
     ctx.strokeStyle = "#8b5a3c";
     ctx.stroke();
   }
-  // the shirt glows until it is on his body (in the closet, or on another spot of him)
-  const glow = shirtOn(st.outfit) || (st.drag && st.drag.id === MUST_WEAR.id) ? 0 : 0.75 + 0.25 * Math.sin(t * 6);
-  // (the glow is its own soft yellow patch behind the piece, so the piece itself keeps its colours)
-  const halo = (x, y, r) => {
-    if (!glow) return;
-    const gr = ctx.createRadialGradient(x, y, r * 0.2, x, y, r);
-    gr.addColorStop(0, `rgba(255,207,51,${0.85 * glow})`);
-    gr.addColorStop(1, "rgba(255,207,51,0)");
-    ctx.fillStyle = gr;
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2);
-    ctx.fill();
-  };
-  for (const s of L.slots) worn(st.outfit, s.id) || (st.drag && st.drag.id === s.id) || (s.id === MUST_WEAR.id && halo(s.x, s.y, s.w * 0.85), drawPiece(ctx, s.id, s.x, s.y, s.w));
+  // the shirt is outlined (the one highlight, outline.js) until it is on his body (in the closet, or on another spot of
+  // him); no glow (Brian 2026-11-26)
+  const glow = !(shirtOn(st.outfit) || (st.drag && st.drag.id === MUST_WEAR.id));
+  const halo = (x, y, r) => glow && highlightBox(ctx, { x0: x - r * 0.62, y0: y - r * 0.62, x1: x + r * 0.62, y1: y + r * 0.62 }, t, 2, OUTLINE_SCREEN);
+  for (const s of L.slots) worn(st.outfit, s.id) || (st.drag && st.drag.id === s.id) || (drawPiece(ctx, s.id, s.x, s.y, s.w), s.id === MUST_WEAR.id && halo(s.x, s.y, s.w));
   // Squatch big on white, with what he has on; a ta-da hop when he is disguised enough
   const hop = tada > 0 ? Math.sin(Math.min(1, tada) * Math.PI) * h * 0.03 : 0,
     pop = st.pop && st.pop.t > 0 ? st.pop : null;
-  // the shirt on him, but not on his body (on his head, say): it glows there too
+  // the shirt on him, but not on his body (on his head, say): it is outlined there too
   const wrongSpot = SPOT_NAMES.find((s) => s !== MUST_WEAR.spot && st.outfit[s] === MUST_WEAR.id);
-  wrongSpot && halo(spotAt(L, wrongSpot).x, spotAt(L, wrongSpot).y - hop, BODY_SPOTS[wrongSpot].w * L.sq.scale * 0.9);
   drawSquatchArt(ctx, L.sq.x, L.sq.y - hop, L.sq.scale, { line: Math.max(2, L.sq.scale * 0.9) });
   drawOutfit(ctx, L.sq.x, L.sq.y - hop, L.sq.scale, st.outfit, 1, pop ? { spot: pop.spot, a: Math.sin(pop.t * 30) * 0.15 } : null);
+  wrongSpot && halo(spotAt(L, wrongSpot).x, spotAt(L, wrongSpot).y - hop, BODY_SPOTS[wrongSpot].w * L.sq.scale);
   if (full >= 1) {
     // sparkles round him, and the one big GO · party button below him
     for (let i = 0; i < 6; i++) {

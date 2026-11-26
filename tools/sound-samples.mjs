@@ -1,10 +1,10 @@
 /**
- * Sound samples for Brian to choose from (Brian 2026-11-26: the crowd, "listen to a few different options", and the
- * voice under speech bubbles). Renders each option silently in Chrome (an offline audio context, the game's own
+ * Sound samples for Brian to choose from (Brian 2026-11-26): the voice under speech bubbles. (The three made-up crowd
+ * options were turned down the same day: "I don't like any of the crowd sounds"; the crowd waits for a recording.)
+ * Renders each option silently in Chrome (an offline audio context, the game's own
  * recipes in src/modules) and writes 9-second mp3s with ffmpeg. The levels are evened out for listening (ffmpeg
  * loudnorm to -20 LUFS); in the game each plays at its own level under the music. Not a test.
  *   node tools/sound-samples.mjs <out folder>
- *     crowd-A-layered-murmur.mp3, crowd-B-lively-party.mp3, crowd-C-quiet-lounge.mp3 (party-board-sounds.js CROWD)
  *     voice-A-muted-trombone.mp3, voice-B-mumbly-hum.mp3, voice-C-blips.mp3 (speech-voice.js, four lines in turn)
  */
 import http from "node:http";
@@ -20,7 +20,6 @@ if (!out) (console.error("Usage: node tools/sound-samples.mjs <out folder>"), pr
 mkdirSync(out, { recursive: true });
 const port = 9480 + Number(process.env.SSQ_PORT_OFFSET || 0);
 const page0 = `<!doctype html><meta charset="utf-8"><script type="module">
-import { CROWD } from "/src/modules/party-board-sounds.js";
 import { babbleFor, playBabble } from "/src/modules/speech-voice.js";
 const RATE = 44100, LEN = 9;
 async function render(fill) {
@@ -31,7 +30,6 @@ async function render(fill) {
 }
 window.samples = async () => {
   const outs = {};
-  for (const k of ["A", "B", "C"]) outs["crowd-" + k] = await render((A) => { for (let t = 0.05; t < LEN - 0.5; t += 2.8) CROWD[k](A, t, 3.2); });
   const lines = [["official", "Let's give a big hello to our friends from Bleep-Bloop Robotics!"], ["tourist", "Say cheese!"], ["bartender", "Wait a second... fur!"], ["guard", "Someone pulled the fur alarm."]];
   for (const k of ["A", "B", "C"]) outs["voice-" + k] = await render((A) => { let t = 0.2; for (const [who, text] of lines) { const p = babbleFor({ who, text }); playBabble(A, t, p, k); t += p.len + 0.6; } });
   return outs;
@@ -55,7 +53,7 @@ await page.waitForFunction(() => window.ready === true);
 const data = await page.evaluate(() => window.samples());
 await browser.close();
 server.close();
-const NAMES = { "crowd-A": "crowd-A-layered-murmur", "crowd-B": "crowd-B-lively-party", "crowd-C": "crowd-C-quiet-lounge", "voice-A": "voice-A-muted-trombone", "voice-B": "voice-B-mumbly-hum", "voice-C": "voice-C-blips" };
+const NAMES = { "voice-A": "voice-A-muted-trombone", "voice-B": "voice-B-mumbly-hum", "voice-C": "voice-C-blips" };
 const tmp = join(out, ".work");
 mkdirSync(tmp, { recursive: true });
 for (const [k, samples] of Object.entries(data)) {
