@@ -4,8 +4,10 @@
  * alarm"; R12, R108, S 485, G 474). The swirls always turn slowly inward (party-art.js drawVentSwirl). Without his
  * disguise, too close: a tuft of fur lifts off him and drifts in (the warning: a "fwip" sound, a short shake and a
  * big fur sign over him); if he stays, a cloud of fur goes in, the nearest guest sees it, and the one capture rule
- * starts ("by the vent"). No button and no teaching card (Brian 2026-11-07). In disguise (half two) the vent tugs
- * a piece instead and never takes fur.
+ * starts ("by the vent"). No button and no teaching card (Brian 2026-11-07). In disguise the vent sucks in a
+ * piece of the costume instead and never takes fur (R108, "With the disguise on, the vent tugs the disguise"; Brian
+ * 2026-11-25, showing-5 note 3: "the vent sucking in his costume"): the same warning, and if he stays, his next piece
+ * flies off him into the grille and is gone; with fur showing, the guests' sight rule does the rest.
  */
 import { HALL } from "./party-hall.js";
 
@@ -32,9 +34,10 @@ export function moveTufts(P, dt) {
 
 /**
  * One frame of the rule. `P.vent` keeps { t (seconds near), tufts: [{ k, x0, y0 }] }. Returns "warn" the frame he
- * first comes too close, "fur" the frame the fur goes in, else "".
+ * first comes too close, "fur" the frame the fur goes in, "piece" (in `costume`) the frame a piece is sucked off,
+ * else "".
  */
-export function tickVent(P, dt, sq, active) {
+export function tickVent(P, dt, sq, active, costume = false) {
   const v = P.vent || (P.vent = { t: 0, tufts: [], shake: 0 });
   if (!active || ventDistance(sq) > VENT.near) {
     v.t = 0;
@@ -42,9 +45,10 @@ export function tickVent(P, dt, sq, active) {
   }
   const first = v.t === 0;
   v.t += dt;
-  // a tuft drifts in every so often while he stands too close
-  (first || v.tufts.length === 0) && v.tufts.push({ k: 0, x0: sq.x, y0: sq.y - 30 });
+  // a tuft drifts in every so often while he stands too close (in costume no fur comes off: the costume tugs)
+  costume || ((first || v.tufts.length === 0) && v.tufts.push({ k: 0, x0: sq.x, y0: sq.y - 30 }));
   if (first) return ((v.shake = 0.4), "warn");
+  if (costume && v.t >= VENT.stay) return ((v.t = 0), (v.shake = 0.4), "piece");
   if (v.t >= VENT.stay) {
     v.t = 0;
     for (let i = 0; i < 6; i++) v.tufts.push({ k: -i * 0.08, x0: sq.x + (i % 3) * 6 - 6, y0: sq.y - 20 - i * 4 });

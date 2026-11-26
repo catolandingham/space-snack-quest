@@ -77,7 +77,8 @@ export function tickAlarm(P, dt, api) {
   if (a.phase === "pull") return;
   // The bell keeps ringing while the alarm is on; the guests back away toward the walls. (Not for a guard who
   // follows him home after the hall has calmed down, `quiet`, nor while the guard at home stands talking, `held`.)
-  if ((a.phase === "ring" || a.phase === "search" || a.phase === "home") && !a.quiet && !(a.homeGuard && a.homeGuard.held)) {
+  // `over`: Mops has sent the guard off (party-after-alarm.js); the alarm is over for good, nothing rings again.
+  if ((a.phase === "ring" || a.phase === "search" || a.phase === "home") && !a.quiet && !a.over && !(a.homeGuard && a.homeGuard.held)) {
     a.bell -= dt;
     a.bell <= 0 && ((a.bell = ALARM.bell), api.bell ? api.bell() : E.sfx("alarm"));
     for (const g of Object.values(api.people())) step(g, g.hx + g.ax, g.hy + g.ay, ALARM.calm, dt);
@@ -231,7 +232,7 @@ function searchHome(a, dt, api, sq, hidden) {
   // security, they see you"): no "this close whichever way he faces" rule here, so he need not be under the bed
   // before the guard walks in.
   const c = coneFrom("guard-home", g.x, g.y, g.a, api.size()),
-    sees = !hidden && coneSees(c, sq);
+    sees = !hidden && !a.over && coneSees(c, sq);
   g.sees = sees;
   g.after = sees;
   if (sees) {

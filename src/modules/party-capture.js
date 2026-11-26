@@ -112,7 +112,7 @@ export function createCapture(h) {
       e.until(() => !h.P() || h.P().pt >= 1.2),
       e.run(() => {
         if (scene === "P4" && h.P().flyer === "paw") {
-          // he was on his way home anyway with the flyer: he puts it down, and the closet is next
+          // he was on his way home anyway with the flyer: "Phew, made it!", then SAVE · flyer at his bed
           e.enterRoom("closet", "Q1");
           e.place("sq", h.homeRoom.inside.x, h.homeRoom.inside.y);
           e.set("sqPose", "stand");

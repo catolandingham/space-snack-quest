@@ -8,6 +8,7 @@
  * grown-up: head about a fifth of the height). The six approved guests themselves are pictures (guests.js).
  * Words come only from party-lines.js.
  */
+import { questionLook } from "./party-question.js";
 import { partyLine } from "./party-lines.js";
 import { drawShirt, drawShirtSleeves } from "./party-shirt-art.js";
 
@@ -245,13 +246,29 @@ export function drawDrum(ctx, x, y, h) {
 }
 
 /** The three Croc Boys standing at their spots; `playing` makes them bob and strum. `looks` is for the picture sheet. */
-export function drawBand(ctx, spots, h, t, playing, looks = LOOKS.band, gone = null) {
+export function drawBand(ctx, spots, h, t, playing, looks = LOOKS.band, gone = null, pose = false) {
   spots.forEach((s, i) => {
     if (gone && gone[i]) return;
     const jump = playing ? Math.abs(Math.sin(t * 6 + i)) * h * 0.04 : 0;
-    drawPerson(ctx, s.x, s.y - jump, h, { ...looks[i], armUp: playing && i === 0 ? 0.3 + 0.2 * Math.sin(t * 8) : 0 }, 1, playing ? t : 0);
+    // `pose`: the song is over and they pose for the crowd, an arm up high (the group photo's first step)
+    const armUp = pose ? 0.95 : playing && i === 0 ? 0.3 + 0.2 * Math.sin(t * 8) : 0;
+    drawPerson(ctx, s.x, s.y - jump, h, { ...looks[i], armUp }, 1, playing ? t : 0);
     looks[i].instrument === "drum" && drawDrum(ctx, s.x, s.y, h);
   });
+}
+
+/** The gap in the photo's front row, glowing on the floor where Squatch's feet go (`r` across), pulsing gently. */
+export function drawGapGlow(ctx, x, y, r, t) {
+  ctx.save();
+  const k = 0.75 + 0.25 * Math.sin(t * 4);
+  const g = ctx.createRadialGradient(x, y, 2, x, y, r * 1.6);
+  g.addColorStop(0, `rgba(255,207,51,${0.75 * k})`);
+  g.addColorStop(1, "rgba(255,207,51,0)");
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.ellipse(x, y, r * 1.6, r * 0.6, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
 }
 
 // ---------- the banner (V1) ----------
@@ -413,7 +430,25 @@ export function drawWarning(ctx, x, y, s, inside, k = 1, t = 0) {
   ctx.restore();
 }
 /** "?" or "!" over a watcher: at least as tall as Squatch's head, in a white bubble so it reads on any floor. */
-export function drawMark(ctx, x, y, mark, size, t = 0) {
+export function drawMark(ctx, x, y, mark, size, t = 0, q = null) {
+  // a "?" that fills in (party-question.js): no white bubble, small and pale growing to full and dark
+  if (mark === "?" && q) {
+    const L = questionLook(q.k),
+      fs = size * 0.85 * L.scale;
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, Math.min(1, q.a));
+    ctx.font = `900 ${fs}px system-ui, -apple-system, sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = Math.max(1.5, fs * 0.12);
+    ctx.strokeStyle = INK;
+    ctx.strokeText("?", x, y + size * 0.04);
+    ctx.fillStyle = L.color;
+    ctx.fillText("?", x, y + size * 0.04);
+    ctx.restore();
+    return;
+  }
   const s = size,
     wob = mark === "!" ? Math.sin(t * 18) * s * 0.05 : 0;
   ctx.save();
@@ -683,7 +718,8 @@ export function drawOutfit(ctx, x, y, scale, outfit, f = 1, opts = {}) {
     const s = BODY_SPOTS[spot],
       p = PIECES.find((q) => q.id === id),
       h = s.w * (p ? p.h : 0.5);
-    drawPiece(ctx, id, s.x, s.sit ? s.y - h / 2 + 3 : s.y, s.w, 0, spot === "body");
+    // (`hatTip`: the piece on his head tipped over, radians; the octopus's first hug knocks it askew)
+    drawPiece(ctx, id, s.x, s.sit ? s.y - h / 2 + 3 : s.y, s.w, spot === "head" ? (opts && opts.hatTip) || 0 : 0, spot === "body");
   }
   const o = opts || {};
   outfit && outfit.body === "shirt" && drawShirtSleeves(ctx, o.arms || null, Math.max(1, BODY_SPOTS.body.w * 0.045), o);

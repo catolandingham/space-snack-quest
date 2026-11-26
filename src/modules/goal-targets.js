@@ -16,6 +16,7 @@ export const GOAL_TARGETS = {
   // Home
   "closet:peek": HOME_DOOR,
   "closet:hidebed": { trace: { x0: 76, x1: 294, y0: 390, y1: 552 } }, // the bed
+  "closet:save-flyer": { trace: { x0: 76, x1: 294, y0: 390, y1: 552 } }, // the bed (party P4: put the flyer under it for Mops)
   "closet:homework": { trace: { x0: 396, x1: 522, y0: 238, y1: 352 } }, // the desk (home alone: do your homework)
   "closet:dress": { trace: { x0: 30, x1: 172, y0: 188, y1: 352 } }, // the closet (party P5: dress up)
   "closet:go-party": HOME_DOOR, // party P5, dressed: out through it

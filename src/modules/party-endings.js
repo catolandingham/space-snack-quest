@@ -9,6 +9,7 @@
  *   through Squatch's door. At home, the talk (party-talk.js): he takes the flyer he left by the door, "You went to
  *   the party." ... "Here's why you have to hide.", the horn press and the TV; then beat 20 (the TV story).
  */
+import { footfall } from "./footfalls.js";
 import { CAST, EXIT, EXIT_LANE_MOUTH, MOPS_IN, SPOTS, HOME_ROOM, stepTo, stepClear, CLEAR_OF_SQUATCH } from "./party-hall.js";
 import { lookAt } from "./party-watch.js";
 
@@ -108,8 +109,9 @@ export function createEndings(h) {
           const to = b.path[0];
           b.face = Math.atan2(to.y - b.y, to.x - b.x);
           b.walk = true;
-          // a footfall about every 0.3 s for each one walking out
-          (b.stepT = (b.stepT || 0) + dt) > 0.3 && ((b.stepT = 0), h.sound.one("step"));
+          // a footfall about every 0.3 s for each one walking out, only while their feet move (footfalls.js; this
+          // frame's step is counted on the next frame)
+          footfall(b, b.x, b.y, dt, 0.3) && h.sound.one("step");
           // nobody walks through Squatch: a leaver goes round him (or waits, if he stands on the way out)
           const bx = b.x,
             by = b.y,

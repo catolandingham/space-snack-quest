@@ -36,7 +36,8 @@ export const AFTER_SPOTS = Object.freeze({
   guardAside: Object.freeze({ x: 540, y: 385 }),
   guardOut: Object.freeze({ x: 880, y: 385 }),
   mopsPast: Object.freeze({ x: 850, y: 578 }),
-  mopsTalk: Object.freeze({ x: 600, y: 578 }),
+  // (clear of the bucket, Brian 2026-11-25: he stood on it; and clear of the guard's way out along the back)
+  mopsTalk: Object.freeze({ x: 790, y: 590 }),
   out: TALK_OUT,
 });
 
@@ -151,8 +152,14 @@ export function createAfterAlarm(h) {
       h.say("guard", "guard-ridiculous"),
       h.say("guard", "guard-poker"),
       h.say("mops", "mops-thumbs"),
-      // the guard leaves along the back of the room, then out through the door
-      e.run(() => guard() && Object.assign(guard(), { held: false, leaving: true, exit: [{ ...A.guardOut }] })),
+      // The alarm is over for good (Brian 2026-11-25, showing-5 note 10): no bell, no flashlight, no "run home and
+      // hide!"; the guard leaves along the back of the room, then out through the door, and the card follows.
+      e.run(() => {
+        const q = P();
+        q.alarm && (q.alarm.over = true);
+        h.chip("");
+        guard() && Object.assign(guard(), { held: false, leaving: true, exit: [{ ...A.guardOut }] });
+      }),
       e.until(() => !guard()),
       e.run(() => {
         const q = P();
@@ -257,7 +264,7 @@ export function createAfterAlarm(h) {
     p.lift = null;
     p.take = null;
     p.flyerUp = null;
-    p.flyer = "floor";
+    p.flyer = "bed";
     p.mopsIn = true;
     p.choice = "keep";
     h.chip("");

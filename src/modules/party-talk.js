@@ -3,7 +3,7 @@
  * "The talk, reordered": "Worry comes after You have me"). It ends both party endings: "Keep going" after an alarm
  * (party-after-alarm.js) and closing time, when Mops finds him in the empty hall and they walk home together
  * (party-endings.js). One bubble at a time, each waiting for NEXT (the wordless walks and the hat play themselves).
- *   Squatch goes to the flyer he left on the floor by the door (it glows: the thing he wanted to show Mops), takes it
+ *   Squatch goes to the flyer he slid under his bed (it glows: the thing he wanted to show Mops), takes it
  *   in his paw and comes to the middle of the room (round the back of the room when Mops is in the way: nobody walks
  *   through anybody). Mops steps over beside him and looks at him: the costume and the flyer in his paw glow.
  *   Mops "You went to the party." / Squatch "Everyone out there has someone." / "Everyone except me." / Mops "You
@@ -22,14 +22,16 @@ import { liftTo } from "./party-free-art.js";
 // How fast they walk at home, how far apart they stand to talk and for the hat, how long Mops looks, how long the
 // hat's lift (or the pat) and setting it down take, where the hat is set down (up and out from his foot), and how
 // long taking the flyer and holding it up take.
-export const TALK = Object.freeze({ walk: 150, beside: 170, close: 138, look: 1.4, lift: 2.6, setDown: 0.5, hatUp: 14, hatOut: 52, take: 0.45, up: 0.35 });
-// Where they stand. Squatch in the middle of the room in front of the bucket and the Guardian box (`sq`), Mops beside
-// him on the door side. Squatch takes the flyer standing at `take` (left of it, by the door). He never walks
+export const TALK = Object.freeze({ walk: 150, beside: 195, close: 138, look: 1.4, lift: 2.6, setDown: 0.5, hatUp: 14, hatOut: 52, take: 0.45, up: 0.35 });
+// Where they stand. Squatch on the open floor between the bucket and the door (`sq`), Mops beside
+// him on the door side. Squatch takes the flyer standing at `take` (right of the bed's front corner). He never walks
 // through Mops (the home room draws them big): when Mops stands between him and the flyer, he goes round along the
 // back of the room (`backLane`), where he passes behind Mops without touching him.
+// (Since 2026-11-25, Brian's showing-5 note 11, "Mops stands on the bucket": they talk on the clear floor right of
+// the bucket, so neither is drawn over it; tests/standing-spots.mjs checks every spot against the room's things.)
 export const TALK_SPOTS = Object.freeze({
-  sq: Object.freeze({ x: 400, y: 590 }),
-  take: Object.freeze({ x: HOME_ROOM.flyer.x - 60, y: HOME_ROOM.flyer.y + 40 }),
+  sq: Object.freeze({ x: 660, y: 590 }),
+  take: Object.freeze({ ...HOME_ROOM.saveAt }),
   backLane: 395,
 });
 // The TV on the home room's shelf, measured on the locked home picture (v6): its dark frame is 566..683 x 134..225,
@@ -82,23 +84,27 @@ export function createTalk(h) {
         const m = e.pos("mops");
         return m && Math.min(a, b) - 40 < m.x && m.x < Math.max(a, b) + 40;
       };
+    // (Mops already in the room steps over to his place beside the middle first, so Squatch never walks into him)
+    const mopsIn = () => E().get("moPose") !== "hidden";
     return [
       e.run(() => {
         const q = P();
-        q.flyerGlow = q.flyer === "floor";
+        q.flyerGlow = q.flyer === "bed";
         e.walkOff();
       }),
-      // Squatch fetches the flyer from by the door (if it is not in his paw already)
+      e.until((dt) => !mopsIn() || e.step("mops", S.x + TALK.beside, S.y + 6, TALK.walk * 0.7, dt)),
+      e.run(() => mopsIn() && (e.still("mops"), e.face("mops", -1))),
+      // Squatch fetches the flyer from under his bed (if it is not in his paw already)
       walkVia(() => {
         const s = h.sq();
-        if (P().flyer !== "floor") return [];
+        if (P().flyer !== "bed") return [];
         return between(s.x, K.x) ? [{ x: s.x, y: B }, { x: K.x, y: B }, { ...K }] : [{ ...K }];
       }),
       e.run(() => {
         const q = P();
-        if (q.flyer !== "floor") return;
+        if (q.flyer !== "bed") return;
         e.still("sq");
-        e.face("sq", 1);
+        e.face("sq", -1);
         q.flyer = "take";
         q.take = 0;
         h.sound.one("fwip");

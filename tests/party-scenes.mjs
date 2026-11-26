@@ -576,9 +576,11 @@ let p4Cast = null;
   const homeLines = [];
   s = await until(page, (q) => q.now && q.now.scene === "P5", 20000, async (q) => {
     q.ctrl && q.room === "hall" && (await walk(page, 477, 600));
+    // at home: SAVE · flyer at his bed (Brian 2026-11-25)
+    q.ctrl && q.room === "closet" && q.act === "SAVE · flyer" && (await press(page), await sleep(300));
     q.cur === "bub" && (homeLines.includes(q.text) || homeLines.push(q.text), await sleep(450), await tap(page));
   });
-  g.check("through his door he walks home with it and puts it down; his three thoughts; P5 with the flyer on the floor", !!s && s.now.flyer === "floor" && s.room === "closet" && JSON.stringify(homeLines) === JSON.stringify(["I've never gotten to dance at a party.", "I deserve one night of normal.", "Costume on. Then I dance!"]), [s && s.now.flyer, homeLines]);
+  g.check("through his door he walks home with it: \"Phew, made it!\", SAVE · flyer puts it under his bed, his two thoughts; P5 with the flyer under the bed", !!s && s.now.flyer === "bed" && s.room === "closet" && JSON.stringify(homeLines) === JSON.stringify(["Phew, made it!", "That party looked so fun. I've never gotten to dance at one.", "I'll sneak back in a costume and dance!"]), [s && s.now.flyer, homeLines]);
   await still(page, "p5-home-flyer");
   const p3Trail = await trailJumps(page);
   g.check("from P3 to P5 nobody teleports: Squatch never jumps over 60 inside a room", p3Trail.jumps.length === 0, p3Trail.jumps.slice(0, 3));

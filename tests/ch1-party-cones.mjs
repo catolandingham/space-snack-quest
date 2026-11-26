@@ -3,7 +3,7 @@
  * and the party guests drawn from the six pictures Brian approved on Nov 8 (Squatchbot #1349: "The six
  * approved Nov 8 pictures"). Checked in P6, the party in disguise (src/modules/party-free.js), from what is
  * really drawn on the canvas (the cones' arcs, the "?" marks, the guest pictures), not from the source.
- *   - In disguise every guest, Isfred, the band and the bartender has a cone, drawn whole (a cone's arc is its
+ *   - In disguise every guest, Isfred and the bartender has a cone, drawn whole (the band, playing, has none) (a cone's arc is its
  *     full length: furniture never cuts it short).
  *     Squatch inside one, in a whole disguise: that cone stays a dashed outline (no yellow) and a "?" is drawn over
  *     that person, and nobody catches him (Brian 2026-11-24, "No yellow in disguise", replacing "Yellow, then
@@ -26,7 +26,10 @@ await page.evaluate(() => window.__ss.lockedReady);
 await sleep(1500);
 
 // Everyone who should show a cone in the free play.
-const EVERYONE = ["teal", "stilt", "robot", "octopus-guest", "backpack", "camera", "isfred", "band0", "band1", "band2", "bartender"];
+// (the Croc Boys playing on the stage have the lights in their eyes: no cones, Brian 2026-11-25, a small exception to
+// rule 8; their cones come back when they step down for the group photo, tests/party-showing5.mjs)
+const EVERYONE = ["teal", "stilt", "robot", "octopus-guest", "backpack", "camera", "isfred", "bartender"];
+const BAND = ["band0", "band1", "band2"];
 
 // Record what the canvas really draws: every arc (with its alpha and the fill that follows), every "?" or "!"
 // (in canvas pixels), and every approved guest picture drawn (where its feet land, in canvas pixels).
@@ -88,6 +91,7 @@ const open = await frameAt(480, 600, 2);
 g.check("the party in disguise is on (P6)", open.now.scene === "P6", open.now);
 const ids = open.cones.map((c) => c.id);
 g.check("in disguise, everyone at the party has a sight cone", EVERYONE.every((id) => ids.includes(id)), ids);
+g.check("the Croc Boys, playing on the stage, show no cones (the stage lights are in their eyes)", BAND.every((id) => !ids.includes(id)), ids);
 const lens = [...new Set(open.cones.map((c) => c.len))];
 g.check("every cone is the same full length", lens.length === 1 && lens[0] > 100, lens);
 

@@ -47,7 +47,7 @@ export const PARTY_LINES = Object.freeze([
   { id: "isfred-band", half: 1, who: "isfred", text: "And now... put your hands together for the Croc Boys!", status: "approved", source: "Brian 2026-11-24: Yes to all" },
   { id: "tag-band", half: 1, who: "tag", text: "Croc Boys", status: "needs-yes", source: "New: the name over the band's song bubble (Isfred has just called them the Croc Boys); coordinator, 2026-11-24" },
   { id: "band-song", half: 1, who: "band", text: "Stormtop-vania 1-2-3-4-5!", status: "approved", source: "Brian 2026-11-24: Yes to all" },
-  { id: "sq-dance-wish", half: 1, who: "sq", text: "I've never gotten to dance at a party.", status: "approved", source: "Brian 2026-11-24: Yes to all" },
+  { id: "sq-dance-wish", half: 1, who: "sq", text: "I've never gotten to dance at a party.", status: "approved", source: "Removed 2026-11-25: replaced by line 80 (it had Brian's yes of 2026-11-24)", removed: true },
   { id: "chip-home", half: 1, who: "chip", text: "Squatch: sneak home for a disguise", status: "approved", source: "Brian 2026-11-24: Yes to all" },
   // P5, dress-up
   { id: "button-closet", half: 1, who: "button", text: "OPEN · closet", status: "approved", source: "Brian 2026-11-23: 6A (home alone)" },
@@ -99,8 +99,8 @@ export const PARTY_LINES = Object.freeze([
   { id: "sq-flyer", half: 1, who: "sq", text: "A robot flyer! I'll show Mops.", status: "approved", source: "Removed 2026-11-25: replaced by line 73 (it had Brian's yes of 2026-11-24)", removed: true },
   { id: "chip-flyer", half: 1, who: "chip", text: "Squatch: grab the flyer", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
   { id: "button-grab-flyer", half: 1, who: "button", text: "GRAB · flyer", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
-  { id: "sq-normal", half: 1, who: "sq", text: "I deserve one night of normal.", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
-  { id: "sq-costume", half: 1, who: "sq", text: "Costume on. Then I dance!", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat" },
+  { id: "sq-normal", half: 1, who: "sq", text: "I deserve one night of normal.", status: "approved", source: "Removed 2026-11-25: Brian dropped it (it had his yes of 2026-11-24)", removed: true },
+  { id: "sq-costume", half: 1, who: "sq", text: "Costume on. Then I dance!", status: "approved", source: "Removed 2026-11-25: Brian dropped it; line 81 replaced it (it had his yes of 2026-11-24)", removed: true },
   { id: "sq-got-one", half: 2, who: "sq", text: "Got one!", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat: \"I like his own thought\"" },
   { id: "button-leave-bar", half: 2, who: "button", text: "LEAVE · bar", status: "approved", source: "Brian 2026-11-24, Snack Quest Chat: a LEAVE · bar button always on screen" },
   { id: "honor-snack-bandit", half: 2, who: "card", text: "Snack Bandit: took every snack at the party.", status: "approved", source: "Brian 2026-11-24, click in Snack Quest Chat: \"Snack Bandit (Recommended)\"" },
@@ -112,6 +112,14 @@ export const PARTY_LINES = Object.freeze([
   { id: "band-group-photo", half: 2, who: "band", text: "Group photo!", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
   { id: "sq-robots-coming", half: 2, who: "sq", text: "But look. Robots are coming to do your job.", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat", quiet: true },
   { id: "mops-need-me", half: 2, who: "mops", text: "Nobody is replacing me. They need me here.", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat", quiet: true },
+  // The showing-5 notes (Brian 2026-11-25, his notes on the video notes page, each decided in Snack Quest Chat).
+  { id: "sq-phew", half: 1, who: "sq", text: "Phew, made it!", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
+  { id: "chip-save-flyer", half: 1, who: "chip", text: "Squatch: put the flyer under your bed for Mops", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
+  { id: "button-save-flyer", half: 1, who: "button", text: "SAVE · flyer", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
+  { id: "sq-party-fun", half: 1, who: "sq", text: "That party looked so fun. I've never gotten to dance at one.", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
+  { id: "sq-sneak-back", half: 1, who: "sq", text: "I'll sneak back in a costume and dance!", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
+  { id: "chip-octopus", half: 2, who: "chip", text: "Squatch: get away from the octopus!", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
+  { id: "chip-join-photo", half: 2, who: "chip", text: "Squatch: join the group photo", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
 ]);
 
 /** Whether this bubble is one of Mops's gentle lines, which never get his "meh" (morning-sound.js, through the bridge). */

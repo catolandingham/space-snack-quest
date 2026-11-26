@@ -181,8 +181,8 @@ g.check("the songs last COOL_HAT_SECONDS in all, and the pin is 180", free.COOL_
   await place(page, 150, 560);
   await set(page, (p, n, a) => (p.songT = a - 0.3), free.SONG_SECONDS);
   // the first song's end is the group photo moment (tests/party-round4.mjs); the next song starts when everyone is back
-  let s = await until(page, (q) => q.now.shot && q.now.shot.phase === "gather", 3000);
-  g.check("after the first song's time: the group photo moment, the band quiet", !!s && s.now.song === 0 && s.now.sound.song === -1, s && [s.now.shot, s.now.song]);
+  let s = await until(page, (q) => q.now.shot && q.now.shot.phase === "settle", 3000);
+  g.check("after the first song's time: the group photo moment (the hall settles first), the band quiet", !!s && s.now.song === 0 && s.now.sound.song === -1, s && [s.now.shot, s.now.song]);
   await page.evaluate(() => { for (let i = 0; i < 800 && window.__ss.op.ch1PartyNow.shot.phase !== "done"; i++) window.__ss.tick(0.05); });
   s = await until(page, (q) => q.now.song === 1, 3000);
   g.check("when everyone is back the band plays the next song (song 2)", !!s, s && s.now.song);
@@ -406,21 +406,19 @@ const warningDiscs = (page, ms) =>
   await set(page, (p) => (p.ft = 61));
   const before = (await played(page)).length;
   await place(page, hall.HALL.vent.x + 30, hall.HALL.vent.y + 10);
-  const discs = warningDiscs(page, 5000);
-  await sleep(5200);
-  let s = await st(page);
-  const heard = (await played(page)).slice(before).filter((x) => ["rip", "fwip", "pieceOff", "whoosh"].includes(x));
-  g.check("after his first minute, 5 s at the vent in a whole disguise: nothing comes off, no warning sign, no sound, no alarm", s.now.gone.length === 0 && s.now.flying === 0 && !s.now.alarm && (await discs) === 0 && heard.length === 0, [s.now.gone, await discs, heard]);
-  await still(page, "p6-vent-nothing");
-  // one piece gone (fur shows) and still wearing the rest: the vent still does nothing to what he wears
-  await set(page, (p) => (p.lostPieces = ["head"]));
-  await place(page, 150, 590);
-  await sleep(200);
-  await place(page, hall.HALL.vent.x + 30, hall.HALL.vent.y + 10);
-  await run(page, 4);
+  // (Brian 2026-11-25, showing-5 note 3, and R108: in disguise the vent sucks in his costume, a piece at a time)
+  let s = await until(page, (q) => q.now.gone.length >= 1, 4000);
+  const heard = (await played(page)).slice(before).filter((x) => ["fwip", "pieceOff", "whoosh"].includes(x));
+  g.check("after his first minute, staying at the vent in a whole disguise: it sucks his hat in (the warning, then the piece flies into the grille), and no alarm", !!s && s.now.gone[0] === "head" && !s.now.alarm && heard.includes("whoosh") && heard.includes("pieceOff"), s && [s.now.gone, s.now.alarm, heard]);
+  await sleep(250);
+  await still(page, "p6-vent-costume");
+  // stepping away, it takes nothing more
+  await place(page, 480, 470);
+  await sleep(2500);
   s = await st(page);
-  g.check("with one piece gone, the vent takes none of the others", s.now.gone.length === 1 && s.now.flying === 0, s.now.gone);
+  g.check("stepping away from the vent, it takes nothing more", s.now.gone.length === 1, s.now.gone);
   await set(page, (p) => ((p.lostPieces = ["head", "face", "body", "legs"]), (p.seenBy = ""), (p.seenT = 0)));
+  await place(page, hall.HALL.vent.x + 30, hall.HALL.vent.y + 10);
   s = await until(page, (q) => q.now && q.now.alarm, 6000);
   const where = s && (await page.evaluate(() => window.__ss.op.ch1PartyNow.alarm.where));
   g.check("with nothing left on, the vent's fur rule is back: fur goes in and the alarm starts", !!s, s && [s.now.alarm, where]);
@@ -627,7 +625,7 @@ const runAway = (page, secs, stopAt) =>
 {
   const octo = await import(join(root, "src", "modules", "party-octopus.js"));
   const art = await import(join(root, "src", "modules", "party-octopus-art.js"));
-  g.check("the octopus chases for 20 seconds (Brian's yes changed the pinned 10), at his pinned speed", octo.OCT_CHASE_SECONDS === 20 && octo.OCT_SPEED === 90, [octo.OCT_CHASE_SECONDS, octo.OCT_SPEED]);
+  g.check("the octopus chases for 20 seconds (Brian's yes changed the pinned 10), at his pinned speed (170 since Brian's written yes of 2026-11-25; Squatch walks at 190)", octo.OCT_CHASE_SECONDS === 20 && octo.OCT_SPEED === 170, [octo.OCT_CHASE_SECONDS, octo.OCT_SPEED]);
   {
     // his arms thrown out: the outer two point up and out, far wider than hanging down, and the middle two stay under him
     const hang = [0, 5].map((i) => art.armAt(i, 500, 500, 100, 0, 0)),
@@ -656,28 +654,27 @@ const runAway = (page, secs, stopAt) =>
   g.check("as he speaks all his arms are already out (six arms drawn, thrown out)", arms === 6 && s.now.oct.arms === 1, [arms, s.now.oct]);
   await still(page, "p6-octopus");
   await next(page);
-  s = await until(page, (q) => q.cur === "bub" && q.text !== "*hic* Fellow tourist!", 3000);
-  g.check("Squatch thinks \"Those arms will pull off my disguise!\" (once, as the chase starts)", !!s && s.text === "Those arms will pull off my disguise!", s && s.text);
+  // (Brian 2026-11-25, showing-5 note 7) he lunges and gives a first, harmless hug before Squatch thinks anything
+  s = await until(page, (q) => q.now.oct.mode === "hug", 4000);
+  g.check("then he lunges: the octopus catches him, a hug holds him (no control during the squeeze), with its squish", !!s && s.now.oct.hugs === 1 && !s.ctrl && (await played(page)).includes("squish"), s && [s.now.oct, s.ctrl]);
+  await sleep(350);
+  await still(page, "p6-octopus-hug");
+  s = await until(page, (q) => q.cur === "bub", 4000);
+  g.check("only after the hug Squatch thinks \"Those arms will pull off my disguise!\" (once)", !!s && s.text === "Those arms will pull off my disguise!" && s.now.oct.hugs === 1, s && s.text);
+  g.check("the first hug is just a hug: nothing comes off, nothing flies, no fur", !!s && s.now.gone.length === 0 && s.now.flying === 0 && !s.now.fur, s && s.now.gone);
   const ob = await overSquatch(page);
   g.check("that thought sits clear of Squatch", !ob.bubble, ob);
   await next(page);
   s = await until(page, (q) => q.cur === "bub" && q.text !== "Those arms will pull off my disguise!", 3000);
   g.check("then \"I gotta juke this fool.\"", !!s && s.text === "I gotta juke this fool.", s && s.text);
   await next(page);
-  // he stands still: the octopus reaches him and hugs
-  s = await until(page, (q) => q.now.oct.mode === "hug", 6000);
-  g.check("the octopus catches him: a hug holds him (no control during the squeeze), with its squish", !!s && s.now.oct.hugs === 1 && !s.ctrl && (await played(page)).includes("squish"), s && [s.now.oct, s.ctrl]);
-  await sleep(350);
-  await still(page, "p6-octopus-hug");
-  s = await until(page, (q) => q.now.oct.mode !== "hug", 4000);
-  await sleep(200);
-  s = await st(page);
-  g.check("the first hug is just a hug: he is let go, nothing comes off, nothing flies, no fur, and the chase goes on", s.ctrl && s.now.oct.mode === "chase" && s.now.gone.length === 0 && s.now.flying === 0 && !s.now.fur && s.now.scene === "P6", [s.ctrl, s.now.oct, s.now.gone]);
-  // let go, he hiccups on the spot a moment (the kid's head start)
+  s = await until(page, (q) => q.ctrl && q.now.oct.mode === "chase", 3000);
+  g.check("then the real chase: he has control, the octopus is after him, the chip says \"Squatch: get away from the octopus!\"", !!s && s.chip === "Squatch: get away from the octopus!" && s.now.scene === "P6", s && [s.ctrl, s.now.oct, s.chip]);
+  // before the chase, he hiccups on the spot a moment (the kid's head start)
   const o1 = s.now.people["octopus-guest"];
   await sleep(700);
   const o2 = (await st(page)).now.people["octopus-guest"];
-  g.check("after letting go he stays where he is for a moment (a head start)", Math.hypot(o1.x - o2.x, o1.y - o2.y) < 2, [o1, o2]);
+  g.check("at the chase's start he stays where he is for a moment (a head start)", Math.hypot(o1.x - o2.x, o1.y - o2.y) < 2, [o1, o2]);
   // the kid runs: the chase lasts its 20 seconds, then he is bored
   const r = await runAway(page, 26, "back");
   g.check("kept away from, he chases until his 20 seconds are up, then stands bored (arms still out as the sigh starts)", r.boredAt >= 20 && r.boredAt < 20.2 && r.armsAtBored > 0.9 && r.hugs === 1, r);

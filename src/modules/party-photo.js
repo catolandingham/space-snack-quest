@@ -1,13 +1,17 @@
 /**
  * The group photo (Brian 2026-11-24: "maybe it's a group photo. There's room in front of the wall next to the fire
  * alarm, and maybe the band's in it"; his click "Guests and the band"; it replaces the looping camera and plan
- * decision 16, "the photo is of the band"). One clear moment, once a party, when the first song ends:
- *   gather   a Croc Boy calls "Group photo!" from the stage (Brian 2026-11-25, his click "Photo right after the song,
- *            short wait"); the guests walk into two rows in front of the back wall beside the alarm box, the Croc
- *            Boys walk off the stage's end and squeeze in, and the camera tourist carries his tripod over and faces
- *            the wall; JOIN · photo marks the gap left for Squatch in the front row from the call on;
- *   count    "Say cheese!", three red lights on the camera, a beep each second: 3, 2, 1. The click comes
- *            PHOTO.click seconds after the call, whether everyone (or he) is in place or not;
+ * decision 16, "the photo is of the band"). One clear moment, once a party, when the first song ends. Since
+ * 2026-11-25 (Brian, showing-5 note 5: "one thing at a time") it goes step by step, nothing overlapping:
+ *   settle   the dance is over and the hall settles (nobody dances, the music has stopped);
+ *   pose     the Croc Boys pose on the stage and the crowd claps;
+ *   call     one Croc Boy steps forward and calls "Group photo!", with nothing else moving;
+ *   camera   the camera tourist carries his tripod to its spot facing the back wall (the first time it is seen);
+ *   gather   then the guests walk into two rows in front of the back wall beside the alarm box, and the Croc Boys walk
+ *            off the stage's end and squeeze in, a little slower than before;
+ *   join     everyone is in place: the gap left for Squatch in the front row glows, and only now the chip "Squatch:
+ *            join the group photo" and JOIN · photo; he has PHOTO.join seconds before the count;
+ *   count    "Say cheese!", three red lights on the camera, a beep each second: 3, 2, 1;
  *   flash    the click: a small burst at the lens. In his place, the photo has him in it (+25, once): the whole
  *            screen shows the Polaroid of the group with him in costume, closed with a tap. Not there: the photo
  *            is taken without him and no close-up shows;
@@ -19,13 +23,14 @@ import { rr, oval, drawBand, drawOutfit, LOOKS } from "./party-art.js";
 
 // Pinned (R60, docs/TUNING-PINS.json): a photo with Squatch in it is 25.
 export const PHOTO_BONUS = 25;
-// PLACEHOLDERS for Brian: how fast people walk to the row, the longest the gathering may take, the moment the kid
-// has once everyone is there (his time to join: 8 s since 2026-11-25, it was 5; a starting number), the count, the flash, the pause after the click, how fast Squatch walks to his place,
-// and how soon a tap may close the Polaroid.
-// Since 2026-11-25 (Brian, "Photo right after the song, short wait") there is no wait once everyone is there: the
-// count starts `click - count` seconds after the call and the click is `click` (8) after it. (Before: up to 9 s to
-// gather, then 8 s to join, then the count.) The guests walk a little faster (150, was 120) to be in place in time.
-export const PHOTO = Object.freeze({ walk: 150, click: 8, count: 3, flash: 0.25, hold: 0.9, join: 240, closeAfter: 0.6, giveWay: 1.2 });
+// PLACEHOLDERS for Brian: every number below (how long each step lasts, how far the Croc Boy steps forward, how fast
+// people walk, the kid's time to join, the count, the flash, the pause after the click, how fast Squatch walks to
+// his place, and how soon a tap may close the Polaroid).
+// Since 2026-11-25 (showing-5 note 5) the steps come one at a time: `settle`, `pose` and `call` last that long, the
+// camera tourist carries his tripod at `carry`, the rows walk at `walk` (125, a little slower than 150), and once
+// everyone is in place the kid has `joinTime` before the count (the click comes `joinTime + count` after the gap
+// glows). About 3 to 4 seconds longer than before.
+export const PHOTO = Object.freeze({ settle: 0.7, pose: 1.2, call: 1.3, step: 16, carry: 150, walk: 125, joinTime: 2.5, count: 3, flash: 0.25, hold: 0.9, join: 240, closeAfter: 0.6, giveWay: 1.2 });
 // The two rows in front of the back wall, left of the lane to the hallway doorway and clear of the snack bar: who
 // stands where (feet, game positions), the gap for Squatch in the front row, the camera tourist's place facing
 // them, where the camera points, and the stage's end, where the band steps down.
@@ -34,7 +39,9 @@ export const PHOTO = Object.freeze({ walk: 150, click: 8, count: 3, flash: 0.25,
 // the Croc Boys at the back; the rows 54 apart, so every face is above the heads in front of it (and above Squatch's
 // top hat); Squatch in front, one place left of the middle, so his hat sits between faces.
 export const PHOTO_ROW = Object.freeze({
-  back: Object.freeze([["stilt", 506], ["robot", 570], ["band0", 634], ["band1", 698], ["band2", 762]].map(([id, x]) => Object.freeze({ id, x, y: 302 }))),
+  // (the stilt-walker, at the stage's front corner, stands 16 further forward, so his feet are clear of the stage:
+  // tests/standing-spots.mjs, 2026-11-25)
+  back: Object.freeze([["stilt", 506, 318], ["robot", 570], ["band0", 634], ["band1", 698], ["band2", 762]].map(([id, x, y]) => Object.freeze({ id, x, y: y || 302 }))),
   front: Object.freeze([["teal", 538], ["backpack", 666], ["octopus-guest", 730]].map(([id, x]) => Object.freeze({ id, x, y: 356 }))),
   squatch: Object.freeze({ x: 602, y: 356 }),
   camera: Object.freeze({ x: 634, y: 486 }),
@@ -59,8 +66,14 @@ const DOWN = Math.PI / 2;
 
 /** True from the first song's end until everyone is back (the Polaroid included). */
 export const photoActive = (p) => !!p.shot && p.shot.phase !== "done";
-/** True while he can still walk into the photo (JOIN · photo shows). */
-export const photoOpen = (p) => !!p.shot && ["gather", "count"].includes(p.shot.phase) && !p.shot.in;
+/** True while he can still walk into the photo (JOIN · photo shows): only once everyone is in place. */
+export const photoOpen = (p) => !!p.shot && ["join", "count"].includes(p.shot.phase) && !p.shot.in;
+/** True once the camera tourist has picked up his tripod (it is drawn from then on). */
+export const tripodOut = (p) => !!p.shot && !["settle", "pose", "call"].includes(p.shot.phase);
+/** True while the photo moment has begun but the Croc Boys are still on the stage (before they step down). */
+export const bandOnStageForPhoto = (p) => !!p.shot && ["settle", "pose", "call", "camera"].includes(p.shot.phase);
+/** True while the Croc Boys pose on the stage (arms up). */
+export const bandPosing = (p) => !!p.shot && (p.shot.phase === "pose" || p.shot.phase === "call");
 /** True once the party's one photo moment is over. */
 export const photoDone = (p) => !!p.shot && p.shot.phase === "done";
 
@@ -69,29 +82,35 @@ const body = (p, id) => (id.startsWith("band") ? p.bandAt[+id.slice(4)] : p.peop
 
 /** The first song has ended: everyone sets off for the row. */
 export function startPhoto(p) {
-  p.shot = { phase: "gather", t: 0, n: 0, in: false, got: false };
+  p.shot = { phase: "settle", t: 0, n: 0, in: false, got: false };
   p.bandAt = (p.bandAt || CAST.band).map((b) => ({ x: b.x, y: b.y }));
+  // everyone stops where they are (the hall settles); nobody sets off yet
+  for (const r of ROW) {
+    const b = body(p, r.id);
+    b && Object.assign(b, { task: "photo", dance: 0, way: null });
+  }
+  const cam = p.people.camera;
+  cam && Object.assign(cam, { task: "photo", dance: 0, way: null });
+}
+// Everyone sets off for the row (after the camera is in place).
+function setOff(p) {
   for (const r of ROW) {
     const b = body(p, r.id);
     if (!b) continue;
-    b.task = "photo";
-    b.dance = 0;
     // the band walks along the stage to its end, steps down, then into the row
     b.way = r.id.startsWith("band") ? [{ x: PHOTO_ROW.stageEnd.x, y: b.y }, PHOTO_ROW.stageEnd, { x: r.x, y: r.y }] : [{ x: r.x, y: r.y }];
   }
-  const cam = p.people.camera;
-  cam && Object.assign(cam, { task: "photo", dance: 0, way: [{ ...PHOTO_ROW.camera }] });
 }
 
 // One person one step along their way; true once there. Guests go round Squatch (the band, on the stage and in the
 // row, has no need); someone he blocks waits a moment, then walks on.
-function walkWay(b, dt, s, round) {
+function walkWay(b, dt, s, round, speed = PHOTO.walk) {
   if (!b.way || !b.way.length) return true;
   const to = b.way[0],
     x0 = b.x,
     y0 = b.y;
   b.face = Math.atan2(to.y - b.y, to.x - b.x);
-  const there = round && (b.wayT || 0) < PHOTO.giveWay ? stepClear(b, to.x, to.y, PHOTO.walk, dt, s, CLEAR_OF_SQUATCH) : stepTo(b, to.x, to.y, PHOTO.walk, dt);
+  const there = round && (b.wayT || 0) < PHOTO.giveWay ? stepClear(b, to.x, to.y, speed, dt, s, CLEAR_OF_SQUATCH) : stepTo(b, to.x, to.y, speed, dt);
   b.wayT = !there && b.x === x0 && b.y === y0 ? (b.wayT || 0) + dt : 0;
   there && b.way.shift();
   return !b.way.length;
@@ -100,22 +119,42 @@ function walkWay(b, dt, s, round) {
 /**
  * One frame of the photo moment. `s` is Squatch's feet. Returns what just happened: "cheese" (the count starts),
  * "beep" (2 and 1), "click" (the photo is taken without him), "photo" (he is in it), "close-up" (time to show the
- * Polaroid), "back" (everyone sets off back), "done" (the band is on the stage again), or "".
+ * Polaroid), "back" (everyone sets off back), "done" (the band is on the stage again), "pose" (the Croc Boys pose
+ * and the crowd claps), "call" (a Croc Boy calls "Group photo!"), "join" (everyone is in place: JOIN · photo), or "".
  */
 export function tickPhoto(p, dt, s) {
   const sh = p.shot;
   if (!sh || sh.phase === "done" || sh.phase === "polaroid") return "";
   sh.t += dt;
   const cam = p.people.camera;
-  if (sh.phase === "gather" || sh.phase === "settle" || sh.phase === "count" || sh.phase === "flash") {
+  // one thing at a time: the hall settles, the band poses, the call, the camera, the rows, then the gap
+  if (sh.phase === "settle") return sh.t >= PHOTO.settle ? ((sh.phase = "pose"), (sh.t = 0), "pose") : "";
+  if (sh.phase === "pose") return sh.t >= PHOTO.pose ? ((sh.phase = "call"), (sh.t = 0), "call") : "";
+  if (sh.phase === "call") {
+    // the middle Croc Boy steps forward to the stage's edge
+    const b = p.bandAt[1],
+      home = CAST.band[1];
+    b && (b.y = home.y + PHOTO.step * Math.min(1, sh.t / 0.3));
+    if (sh.t < PHOTO.call) return "";
+    // (he stays a step forward; his walk to the row starts from there)
+    cam && (cam.way = [{ ...PHOTO_ROW.camera }]);
+    return ((sh.phase = "camera"), (sh.t = 0), "");
+  }
+  if (sh.phase === "camera") {
+    if (cam && !walkWay(cam, dt, s, true, PHOTO.carry)) return "";
+    cam && (cam.face = -DOWN);
+    setOff(p);
+    return ((sh.phase = "gather"), (sh.t = 0), "");
+  }
+  if (sh.phase === "gather" || sh.phase === "join" || sh.phase === "count" || sh.phase === "flash") {
     let all = true;
     for (const r of ROW) {
       const b = body(p, r.id);
       if (!b) continue;
       walkWay(b, dt, s, !r.id.startsWith("band")) ? (b.face = DOWN) : (all = false);
     }
-    if (cam) walkWay(cam, dt, s, true) ? (cam.face = -DOWN) : (all = false);
-    if (sh.phase === "gather" && sh.t >= PHOTO.click - PHOTO.count) return ((sh.phase = "count"), (sh.t = 0), (sh.n = 3), "cheese");
+    if (sh.phase === "gather") return all ? ((sh.phase = "join"), (sh.t = 0), "join") : "";
+    if (sh.phase === "join" && sh.t >= PHOTO.joinTime) return ((sh.phase = "count"), (sh.t = 0), (sh.n = 3), "cheese");
     else if (sh.phase === "count") {
       const n = 3 - Math.floor(sh.t);
       if (n !== sh.n && n > 0) return ((sh.n = n), "beep");

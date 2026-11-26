@@ -11,8 +11,8 @@
  *     who waits always has a way there and home (tests/party-sneak.mjs), walking straight in is caught, and three or
  *     more sweeping cones pass close to the way; walked in the game with waits, nobody sees him; GRAB · flyer only
  *     within reach; his door does nothing before the grab; the flyer goes up into his paw, travels with him (no
- *     jump), and ends on the home floor; then his three thoughts, once, in order, before the closet is outlined; ↺ in
- *     P5 does not replay them.
+ *     jump); at home "Phew, made it!", his bed outlined and SAVE · flyer, which puts it under the bed; then his two
+ *     thoughts, once, in order, before the closet is outlined; ↺ in P5 does not replay them.
  *   - seen on the way: the one capture rule; caught, P4 restarts with the flyer back on the counter; hidden in a
  *     plant with the flyer in his paw, he keeps it and his door is still the goal.
  * Stills at 375 x 812 go to tests/out/party-stills/ (flyer-*.png), or to STILLS if set.
@@ -156,11 +156,14 @@ g.check(
     L("sq-show-mops") === "I have to show Mops." &&
     L("chip-flyer") === "Squatch: grab the flyer" &&
     L("button-grab-flyer") === "GRAB · flyer" &&
-    L("sq-normal") === "I deserve one night of normal." &&
-    L("sq-costume") === "Costume on. Then I dance!" &&
-    ["chip-flyer", "button-grab-flyer", "sq-normal", "sq-costume"].every((id) => { const l = lines.PARTY_LINES.find((x) => x.id === id); return l.status === "approved" && l.source === "Brian 2026-11-24, Snack Quest Chat"; }) &&
-    ["sq-robots-job", "sq-show-mops"].every((id) => { const l = lines.PARTY_LINES.find((x) => x.id === id); return l.status === "approved" && l.source === "Brian 2026-11-25, Snack Quest Chat"; }) &&
-    lines.PARTY_LINES.find((x) => x.id === "sq-flyer").removed,
+    L("sq-phew") === "Phew, made it!" &&
+    L("chip-save-flyer") === "Squatch: put the flyer under your bed for Mops" &&
+    L("button-save-flyer") === "SAVE · flyer" &&
+    L("sq-party-fun") === "That party looked so fun. I've never gotten to dance at one." &&
+    L("sq-sneak-back") === "I'll sneak back in a costume and dance!" &&
+    ["chip-flyer", "button-grab-flyer"].every((id) => { const l = lines.PARTY_LINES.find((x) => x.id === id); return l.status === "approved" && l.source === "Brian 2026-11-24, Snack Quest Chat"; }) &&
+    ["sq-robots-job", "sq-show-mops", "sq-phew", "chip-save-flyer", "button-save-flyer", "sq-party-fun", "sq-sneak-back"].every((id) => { const l = lines.PARTY_LINES.find((x) => x.id === id); return l.status === "approved" && l.source === "Brian 2026-11-25, Snack Quest Chat"; }) &&
+    ["sq-flyer", "sq-normal", "sq-costume", "sq-dance-wish"].every((id) => lines.PARTY_LINES.find((x) => x.id === id).removed),
 );
 
 // ---------- P3: one flyer, set down on the stage's right end ----------
@@ -310,7 +313,8 @@ g.check(
       on = window.__ss.conesDrawn().filter((k) => k.room === "hall");
     return { cones: mine.length, drawn: on.length, whole: on.every((d) => d.len === 210 && !d.blocked), far: Math.round(Math.max(...mine.map((c) => Math.hypot(c.ox - sq.x, c.oy - sq.y)))) };
   });
-  g.check("every cone is drawn, whole, from where he hides (also the ones far from him: he plans by looking)", drawn.cones >= 10 && drawn.drawn === drawn.cones && drawn.whole && drawn.far > 300, drawn);
+  // (the Croc Boys play on the stage with the lights in their eyes: no cones, Brian 2026-11-25; the other eight)
+  g.check("every cone is drawn, whole, from where he hides (also the ones far from him: he plans by looking)", drawn.cones >= 8 && drawn.drawn === drawn.cones && drawn.whole && drawn.far > 300, drawn);
 
   // ---------- his door does nothing before the grab ----------
   await trailStart(page);
@@ -358,26 +362,28 @@ g.check(
   await sleep(150);
   await still(page, "flyer-07-carrying-it-home");
   await walk(page, HOME[2][0], HOME[2][1]);
-  const home = await readLines(
-    page,
-    (q) => q.now && q.now.scene === "P5",
-    async (q) => ({ flyer: q.now.flyer, scene: q.now.scene, ring: q.ring, onFloor: await pixels(page, around(HOME_ROOM.flyer, 12), PAPER), room: q.room }),
-    30000,
-  );
+  const lineAt = async (q) => ({ flyer: q.now.flyer, scene: q.now.scene, ring: q.ring, onFloor: await pixels(page, around(HOME_ROOM.flyer, 12), PAPER), room: q.room });
+  // (Brian 2026-11-25) "Phew, made it!", then the bed glows and SAVE · flyer puts it under the bed for Mops
+  const phew = await readLines(page, (q) => q.now && q.now.scene === "P4" && q.room === "closet" && q.ctrl && q.act === "SAVE · flyer", lineAt, 30000);
+  s = await until(page, (q) => q.ring === "save-flyer", 2000);
+  g.check("home with the flyer: \"Phew, made it!\", then his bed is outlined, the chip reads \"Squatch: put the flyer under your bed for Mops\", and the button SAVE · flyer", JSON.stringify(phew.seen.map((l) => l.text)) === JSON.stringify(["Phew, made it!"]) && !!s && s.chip === "Squatch: put the flyer under your bed for Mops" && s.now.flyer === "paw", [phew.seen, s && s.chip]);
+  await still(page, "flyer-08-save-flyer");
+  await press(page);
+  const home = await readLines(page, (q) => q.now && q.now.scene === "P5", lineAt, 30000);
   s = home.end;
   const tr = await trailEnd(page);
   g.check("the whole way, there and home, nobody saw him and no alarm began", tr.seen === 0 && tr.alarm === 0, tr);
   g.check("the flyer travels with him: it is always somewhere to be seen and never jumps over 60 (nor does he)", tr.flGone === 0 && tr.flJumps === 0 && tr.sqJumps === 0, tr);
-  g.check("at home his three thoughts, once each, in order (the dance wish first, moved home by Brian 2026-11-25)", JSON.stringify(home.seen.map((l) => l.text)) === JSON.stringify(["I've never gotten to dance at a party.", "I deserve one night of normal.", "Costume on. Then I dance!"]), home.seen);
-  g.check("they come after the flyer is down on the floor (it is drawn there), and before the closet is outlined", home.seen.length === 3 && home.seen.every((l) => l.flyer === "floor" && l.onFloor > 30 && l.room === "closet" && l.scene === "P4" && l.ring !== "dress"), home.seen);
-  g.check("then P5: the flyer lies on the home floor where it always did, and the closet is the goal", !!s && s.now.flyer === "floor" && s.room === "closet" && Math.hypot(s.flyerAt.x - HOME_ROOM.flyer.x, s.flyerAt.y - HOME_ROOM.flyer.y) < 1 && (await until(page, (q) => q.ring === "dress", 3000)) !== null, s && [s.now.flyer, s.flyerAt]);
+  g.check("then his two thoughts, once each, in order (Brian 2026-11-25)", JSON.stringify(home.seen.map((l) => l.text)) === JSON.stringify(["That party looked so fun. I've never gotten to dance at one.", "I'll sneak back in a costume and dance!"]), home.seen);
+  g.check("they come after the flyer is under the bed (a corner is drawn there), and before the closet is outlined", home.seen.length === 2 && home.seen.every((l) => l.flyer === "bed" && l.onFloor > 30 && l.room === "closet" && l.scene === "P4" && l.ring !== "dress"), home.seen);
+  g.check("then P5: the flyer lies under the bed, and the closet is the goal", !!s && s.now.flyer === "bed" && s.room === "closet" && Math.hypot(s.flyerAt.x - HOME_ROOM.flyer.x, s.flyerAt.y - HOME_ROOM.flyer.y) < 1 && (await until(page, (q) => q.ring === "dress", 3000)) !== null, s && [s.now.flyer, s.flyerAt]);
   await sleep(200);
-  await still(page, "flyer-09-on-the-home-floor");
+  await still(page, "flyer-09-under-the-bed");
   // ↺ in P5 restarts the dress-up, as it always did: its opening has no lines, so the two thoughts do not replay
   await page.evaluate(() => window.__ss.sectionReset());
   await sleep(2500);
   s = await st(page);
-  g.check("↺ in P5 does not replay the two thoughts (P5's restart has no lines, as before), and the flyer still lies there", s.now.scene === "P5" && s.cur !== "bub" && s.now.flyer === "floor" && s.ctrl, [s.now.scene, s.cur, s.text]);
+  g.check("↺ in P5 does not replay the two thoughts (P5's restart has no lines, as before), and the flyer still lies there", s.now.scene === "P5" && s.cur !== "bub" && s.now.flyer === "bed" && s.ctrl, [s.now.scene, s.cur, s.text]);
   g.check("no script errors on the sneak", errors.length === 0, errors.slice(0, 3));
   await page.close();
 }
@@ -394,7 +400,7 @@ g.check(
   await walk(page, HOME[2][0], HOME[2][1]);
   const s = await until(page, (q) => q.cur === "bub", 8000);
   await sleep(400);
-  g.check("(home with the flyer: the first thought is up)", !!s && s.text === "I've never gotten to dance at a party.", s && s.text);
+  g.check("(home with the flyer: the first thought is up)", !!s && s.text === "Phew, made it!", s && s.text);
   await still(page, "flyer-08-home-first-thought");
   await page.close();
 }

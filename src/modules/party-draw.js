@@ -12,6 +12,7 @@
  * Returns the cones as drawn (party-watch.js drawCones).
  */
 import { HALL, BANNER, CAST, DANCE_SPOT } from "./party-hall.js";
+import { OUTLINE } from "./outline.js";
 import { drawCones } from "./party-watch.js";
 import { drawOctopusArmsOut, drawHug } from "./party-octopus-art.js";
 import { walkArms } from "./party-shirt-art.js";
@@ -53,7 +54,7 @@ export function drawSquatchInHall(ctx, E, sq, scale, t) {
   const shake = sq.shake > 0 ? Math.sin(t * 60) * 2.5 : 0,
     y = sq.y - (sq.hop || 0); // a bump lifts him off the floor for a moment (the hallway doorway's push back)
   E.drawSquatch(ctx, sq.x + shake, y, scale, { f: sq.f || 1, walk: sq.walk || 0 });
-  sq.outfit && drawOutfit(ctx, sq.x + shake, y, scale, sq.outfit, sq.f || 1, { arms: walkArms(sq.walk || 0) });
+  sq.outfit && drawOutfit(ctx, sq.x + shake, y, scale, sq.outfit, sq.f || 1, { arms: walkArms(sq.walk || 0), hatTip: sq.hatTip || 0 });
   // the flyer he carries: in his paw, in front of him
   if (sq.flyer) {
     const at = flyerInPaw(sq.x + shake, y, sq.f || 1, scale);
@@ -73,6 +74,8 @@ export function drawHall(ctx, E, guestArt, view) {
   drawBanner(ctx, BANNER, view.banner ? view.banner.glow || 0 : 0, t);
   view.alarm && drawAlarmFlash(ctx, HALL.alarm, t);
   view.lights && drawPartyLights(ctx, DANCE_SPOT, t, view.lights.dim, view.lights.color);
+  // the dance spot's gold dashed outline, pulsing gently like every usable thing's, whenever he can dance there
+  view.danceRing && drawDanceRing(ctx, t);
   const sq = view.squatch;
   const drawn = drawCones(ctx, view.cones || [], sq || { x: -999, y: -999 }, !sq || sq.pose !== "stand" || !!view.unseen, !!view.allCones, view.noteCone, !!view.fooled);
   // On the floor, under everyone: what P6 to P8 leave there (fallen pieces, Mops's wet streak, his heart cone).
@@ -88,21 +91,45 @@ export function drawHall(ctx, E, guestArt, view) {
   view.isfred && people.push({ y: view.isfred.y, f: () => E.drawIsfred(ctx, view.isfred.x, view.isfred.y, view.isfred.f || 1) });
   if (view.band) {
     const spots = view.band.spots || CAST.band;
-    people.push({ y: spots[0].y, f: () => drawBand(ctx, spots, adult * 0.98, t, !!view.band.playing, view.band.looks, view.band.gone) });
+    people.push({ y: spots[0].y, f: () => drawBand(ctx, spots, adult * 0.98, t, !!view.band.playing, view.band.looks, view.band.gone, !!view.band.pose) });
   }
   view.bartender && people.push({ y: view.bartender.y, f: () => drawPerson(ctx, view.bartender.x, view.bartender.y, adult, LOOKS.bartender, view.bartender.f || -1, t) });
   for (const g of view.guards || []) people.push({ y: g.y, f: () => drawPerson(ctx, g.x, g.y, adult * 1.02, LOOKS.guard, g.f || 1, t) });
   view.tripod && people.push({ y: view.tripod.y, f: () => drawTripod(ctx, view.tripod.x, view.tripod.y, view.tripod.aim) });
   if (sq && sq.pose === "stand") people.push({ y: sq.y, f: () => drawSquatchInHall(ctx, E, sq, sqScale, t) });
   for (const x of view.extra || []) people.push(x);
-  people.sort((a, b) => a.y - b.y).forEach((p) => p.f());
+  drawOrder(people).forEach((p) => p.f());
   sq && sq.pose === "peek" && drawPeek(ctx, E, sq, sqScale);
   view.eyes && E.drawEyes(ctx, view.eyes.x, view.eyes.y);
   for (const tf of view.tufts || []) drawTuft(ctx, tf.x, tf.y, tf.s || 10, tf.rot || 0);
   // Over everything: the "?" and "!" over watchers, the shout, and the warning sign over Squatch.
-  for (const m of view.marks || []) drawMark(ctx, m.x, m.y, m.mark, m.size || 30, t);
+  for (const m of view.marks || []) drawMark(ctx, m.x, m.y, m.mark, m.size || 30, t, m.q || null);
   view.shout && drawShout(ctx, view.shout.x, view.shout.y, t);
   // The vent's warning: a big fur tuft over him, wobbling.
   if (view.warning && sq) drawWarning(ctx, sq.x, sq.y - 50 * sqScale - 46 * 0.75, 46, (c, s) => drawTuft(c, 0, 0, s * 0.85, Math.sin(t * 6) * 0.3), view.warning.k, t);
   return drawn;
+}
+
+/**
+ * The order people are drawn in: by their feet, front last; two on the same feet line keep the order they were listed
+ * in, every frame (Brian 2026-11-25, showing-5 note 11: ties always resolve the same way).
+ */
+export function drawOrder(people) {
+  return people.map((p, i) => ({ p, i })).sort((a, b) => a.p.y - b.p.y || a.i - b.i).map((x) => x.p);
+}
+
+/**
+ * The dance spot on the floor outlined the way the game outlines every usable thing (outline.js OUTLINE: gold,
+ * dashed, outside the spot, pulsing gently as bridge.js drawGoalOutline does). Brian 2026-11-25, showing-5 note 4.
+ */
+export function drawDanceRing(ctx, t) {
+  ctx.save();
+  ctx.globalAlpha = 0.85 + 0.15 * Math.sin(t * 4);
+  ctx.setLineDash([OUTLINE.dash, OUTLINE.dash * 0.7]);
+  ctx.lineWidth = OUTLINE.width;
+  ctx.strokeStyle = OUTLINE.color;
+  ctx.beginPath();
+  ctx.ellipse(DANCE_SPOT.x, DANCE_SPOT.y, DANCE_SPOT.rx + OUTLINE.width, DANCE_SPOT.ry + OUTLINE.width, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
 }

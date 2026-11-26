@@ -289,6 +289,7 @@ const WHY_TALK = [
   ["mops", L("mops-heres-why")],
 ];
 const after = await import(join(root, "src", "modules", "party-after-alarm.js"));
+const talk = await import(join(root, "src", "modules", "party-talk.js"));
 g.check(
   "the four lines after the hat are Brian's, word for word, approved and quiet (no meh)",
   JSON.stringify(WHY_TALK.map((l) => l[1])) === JSON.stringify(["But why do I have to hide from everyone but you?", "And why can't the Guardians and I be together?", "I've been waiting to show you this.", "Here's why you have to hide."]) &&
@@ -441,16 +442,17 @@ async function keepGoing(name, outfit, lost) {
 // ---------- ↺ in "Keep going" ----------
 {
   const { page } = await open("party:P8a");
+  // (it goes straight on into the talk, and the flyer is near the bed now: read the restart point right after a ↺)
+  await page.evaluate(() => window.__ss.sectionReset());
   let s = await st(page);
-  // (it goes straight on into the talk: a moment later he is already out from under the bed, on his way to the flyer)
-  g.check("the ending's restart point: from under the bed, Mops in the room, the guard gone, no card, the flyer still on the floor", s.now.scene === "P8a" && s.room === "closet" && !s.now.alarm && !s.now.card && s.now.choice === "keep" && s.mo.pose === "stand" && s.now.flyer === "floor", [s.now.scene, s.now.pose, s.now.alarm, s.mo, s.now.flyer]);
+  g.check("the ending's restart point: from under the bed, Mops in the room, the guard gone, no card, the flyer still under the bed", s.now.scene === "P8a" && s.room === "closet" && !s.now.alarm && !s.now.card && s.now.choice === "keep" && s.mo.pose === "stand" && s.now.flyer === "bed", [s.now.scene, s.now.pose, s.now.alarm, s.mo, s.now.flyer]);
   s = await until(page, (q) => q.cur === "bub", 30000);
   await next(page);
   await sleep(300);
   await page.evaluate(() => window.__ss.sectionReset());
   await sleep(600);
   s = await st(page);
-  g.check("↺ in the middle of the talk: \"Keep going\" starts over from under the bed (no line up, the flyer back on the floor)", s.now.scene === "P8a" && s.cur !== "bub" && s.mo.pose === "stand" && !s.now.alarm && (s.now.pose === "bed" || s.now.flyer === "floor"), [s.now.scene, s.now.pose, s.cur, s.mo.pose, s.now.flyer]);
+  g.check("↺ in the middle of the talk: \"Keep going\" starts over from under the bed (no line up, the flyer back under the bed)", s.now.scene === "P8a" && s.cur !== "bub" && s.mo.pose === "stand" && !s.now.alarm && (s.now.pose === "bed" || s.now.flyer === "bed"), [s.now.scene, s.now.pose, s.cur, s.mo.pose, s.now.flyer]);
   s = await until(page, (q) => q.cur === "bub", 30000);
   g.check("and it plays again: Mops's first line", !!s && s.text === L("mops-went"), s && s.text);
   await page.close();
@@ -477,13 +479,14 @@ async function keepGoing(name, outfit, lost) {
   await page.evaluate(() => window.__ss.sectionReset());
   await sleep(600);
   s = await st(page);
-  g.check("↺ while the hat is being set down: \"Keep going\" starts over (nothing lifted, no TV, the flyer back on the floor)", s.now.scene === "P8a" && !s.now.lift && !s.now.tv && s.now.flyer === "floor", [s.now.pose, s.now.lift, s.now.tv, s.now.flyer]);
+  g.check("↺ while the hat is being set down: \"Keep going\" starts over (nothing lifted, no TV, the flyer back under the bed)", s.now.scene === "P8a" && !s.now.lift && !s.now.tv && s.now.flyer === "bed", [s.now.pose, s.now.lift, s.now.tv, s.now.flyer]);
   s = await play((q) => q.now && q.now.tv && q.now.tv.phase === "press" && q.now.tv.k > 0.1);
   g.check("(Mops is in the middle of the horn press)", !!s, s && s.now.tv);
   await page.evaluate(() => window.__ss.sectionReset());
   await sleep(600);
   s = await st(page);
-  g.check("↺ in the middle of the horn press: it starts over, the TV off, Mops back where he sent the guard off", s.now.scene === "P8a" && !s.now.lift && !s.now.tv && !s.lit && Math.abs(s.mo.x - after.AFTER_SPOTS.mopsTalk.x) < 2 && (await tvDark(page)), [s.now.pose, s.now.tv, s.mo]);
+  // (the talk starts at once: Mops steps from where he sent the guard off to his place beside the middle)
+  g.check("↺ in the middle of the horn press: it starts over, the TV off, Mops back where he sent the guard off (or stepping from there to his place for the talk)", s.now.scene === "P8a" && !s.now.lift && !s.now.tv && !s.lit && s.mo.x >= after.AFTER_SPOTS.mopsTalk.x - 2 && s.mo.x <= talk.TALK_SPOTS.sq.x + talk.TALK.beside + 2 && (await tvDark(page)), [s.now.pose, s.now.tv, s.mo]);
   s = await play((q) => q.tv && (!q.now || q.now.scene === "done"), 120000);
   g.check("and played once more it runs clean to beat 20 (no left-over wait from the runs before)", !!s && errors.length === 0, [!!s, errors.slice(0, 2)]);
   await page.close();
@@ -619,28 +622,27 @@ const liveLines = (page) => page.evaluate(() => (window.__ss.op.log || []).filte
   let s = await st(page);
   let heard = await sounds(page, n0);
   g.check("through 50 seconds of the first song: no camera countdown, no flash, no photo moment", !s.now.shot && s.now.song === 0 && !heard.includes("beep") && !heard.includes("flash") && s.now.flash === 0, [s.now.shot, heard.filter((x) => x === "beep" || x === "flash")]);
-  // the first song ends: the band stops and everyone sets off
+  // the first song ends: the band stops; since 2026-11-25 (Brian, showing-5 note 5) one thing at a time
   await set(page, (p, n, a) => (p.songT = a - 0.2), free.SONG_SECONDS);
-  s = await until(page, (q) => q.now.shot && q.now.shot.phase === "gather", 3000);
+  s = await until(page, (q) => q.now.shot && q.now.shot.phase === "settle", 3000);
   g.check("when the first song ends the photo moment begins: the band stops playing", !!s && s.now.sound.song === -1 && s.now.song === 0, s && [s.now.shot, s.now.sound.song]);
-  // (Brian 2026-11-25, "Photo right after the song, short wait": a Croc Boy calls it; before, nobody said anything)
-  g.check("a Croc Boy calls \"Group photo!\" from the stage as it begins", (await liveLines(page)).includes("Group photo!"), await liveLines(page));
-  // in the dance spotlight and at the bar, only JOIN · photo is offered
+  // in the dance spotlight and at the bar, nothing is offered until everyone is in place
   await place(page, hall.DANCE_SPOT.x, hall.DANCE_SPOT.y + 4);
   await sleep(350);
   s = await st(page);
-  g.check("during the photo moment, standing in the spotlight offers JOIN · photo, never DANCE", s.act === "JOIN · photo", s.act);
+  g.check("during the photo moment, before everyone is in place, standing in the spotlight offers nothing (no DANCE, no JOIN yet)", s.act === "" && s.now.shot.phase !== "join", [s.act, s.now.shot.phase]);
   await place(page, hall.SNACK_SPOT.x - 10, hall.SNACK_SPOT.y + 10);
   await sleep(350);
   s = await st(page);
-  g.check("and at the snack bar too (no GRAB during the photo moment)", s.act === "JOIN · photo", s.act);
+  g.check("and at the snack bar nothing either (no GRAB during the photo moment)", s.act === "", s.act);
   await place(page, 150, 585);
-  // (since 2026-11-25 there is no wait once they are there: the count starts click - count = 5 s after the call)
   const nCount = (await played(page)).length;
-  const w = await runWatch(page, photo.PHOTO.click, "count");
+  const w = await runWatch(page, 30, "join");
   s = await st(page);
-  g.check("everyone walks to the row (the band off the stage's end and across the floor) before the count starts: nobody jumps", w.phase === "count" && w.max <= photo.PHOTO.walk * 0.05 + 0.5, w);
-  g.check("the count starts 5 seconds after the call, so the click is 8 seconds after it", s.now.shot.phase === "count" && photo.PHOTO.click === 8 && photo.PHOTO.count === 3);
+  // (a Croc Boy calls it from the stage, Brian 2026-11-25: "Group photo!")
+  g.check("a Croc Boy calls \"Group photo!\" from the stage", (await liveLines(page)).includes("Group photo!"), await liveLines(page));
+  g.check("the camera tourist carries the camera over, then everyone walks to the row (the band off the stage's end and across the floor); nobody jumps", w.phase === "join" && w.max <= Math.max(photo.PHOTO.walk, photo.PHOTO.carry) * 0.05 + 0.5, w);
+  g.check("once everyone is in place the kid has PHOTO.joinTime before the count of 3", s.now.shot.phase === "join" && photo.PHOTO.joinTime > 0 && photo.PHOTO.count === 3, s.now.shot);
   // where they stand: two rows by the back wall, clear of the hallway doorway and the snack bar, under the alarm box
   const adult = await page.evaluate(() => window.SSQ.engine().hallSizes().adult);
   const row = [...photo.PHOTO_ROW.back, ...photo.PHOTO_ROW.front],
@@ -673,7 +675,9 @@ const liveLines = (page) => page.evaluate(() => (window.__ss.op.log || []).filte
     return { max: Math.round(max * 10) / 10, phase: op.ch1PartyNow.shot.phase };
   });
   s = await st(page);
-  g.check("pressing it walks him into the gap (a walk, no jump), facing the camera, before the click", Math.hypot(s.x - photo.PHOTO_ROW.squatch.x, s.y - photo.PHOTO_ROW.squatch.y) < 2 && s.now.shot.in && wj.phase === "count" && wj.max <= photo.PHOTO.join * 0.05 + 0.5, [s.x, s.y, s.now.shot, wj]);
+  g.check("pressing it walks him into the gap (a walk, no jump), facing the camera, before the click", Math.hypot(s.x - photo.PHOTO_ROW.squatch.x, s.y - photo.PHOTO_ROW.squatch.y) < 2 && s.now.shot.in && ["join", "count"].includes(wj.phase) && wj.max <= photo.PHOTO.join * 0.05 + 0.5, [s.x, s.y, s.now.shot, wj]);
+  await runWatch(page, 4, "count");
+  s = await st(page);
   g.check("\"Say cheese!\" as the count starts", (await liveLines(page)).includes("Say cheese!") && s.now.shot.phase === "count", await liveLines(page));
   await sleep(120);
   await still(page, "r4-photo-say-cheese");
@@ -786,7 +790,7 @@ const liveLines = (page) => page.evaluate(() => (window.__ss.op.log || []).filte
   await place(page, 150, 585);
   const stars0 = await page.evaluate(() => window.__ss.op.stars || 0);
   await set(page, (p, n, a) => (p.songT = a - 0.2), free.SONG_SECONDS);
-  await until(page, (q) => q.now.shot && q.now.shot.phase === "gather", 3000);
+  await until(page, (q) => q.now.shot && q.now.shot.phase === "settle", 3000);
   const n0 = (await played(page)).length;
   const w = await runWatch(page, 40, "done");
   const s = await st(page);
@@ -811,7 +815,7 @@ const liveLines = (page) => page.evaluate(() => (window.__ss.op.log || []).filte
     for (let i = 0; i < 400 && (p.snacks.chain < 1 || p.stare); i++) (window.__ss.tick(0.05), n++, p.shot && early++);
     return { early, n };
   });
-  let s = await until(page, (q) => q.now.shot && q.now.shot.phase === "gather", 3000);
+  let s = await until(page, (q) => q.now.shot && q.now.shot.phase === "settle", 3000);
   g.check("the first song ending during the pyramid's crash and the stare: the photo moment waits, then begins", seen.early === 0 && seen.n > 60 && !!s, seen);
   await page.close();
 }
@@ -824,7 +828,7 @@ const liveLines = (page) => page.evaluate(() => (window.__ss.op.log || []).filte
   s = await until(page, (q) => q.now.shot && q.ctrl, 4000);
   await sleep(500);
   s = await st(page);
-  g.check("GRAB pressed as the first song ends: the photo moment begins and no snack close-up opens over it (he has control, JOIN · photo is offered)", !!s.now.shot && !s.now.snack && s.ctrl && s.act === "JOIN · photo", [s.now.shot, s.now.snack, s.ctrl, s.act]);
+  g.check("GRAB pressed as the first song ends: the photo moment begins and no snack close-up opens over it (he has control; JOIN · photo comes once everyone is in place)", !!s.now.shot && !s.now.snack && s.ctrl && s.act !== "GRAB · snacks", [s.now.shot, s.now.snack, s.ctrl, s.act]);
   await page.close();
 }
 {
@@ -832,7 +836,7 @@ const liveLines = (page) => page.evaluate(() => (window.__ss.op.log || []).filte
   const { page } = await open("party:P6");
   await place(page, 150, 585);
   await set(page, (p, n, a) => (p.songT = a - 0.2), free.SONG_SECONDS);
-  await until(page, (q) => q.now.shot && q.now.shot.phase === "gather", 3000);
+  await until(page, (q) => q.now.shot && q.now.shot.phase === "settle", 3000);
   await runWatch(page, 3);
   await page.evaluate(() => window.__ss.sectionReset());
   await sleep(600);
@@ -846,8 +850,8 @@ const liveLines = (page) => page.evaluate(() => (window.__ss.op.log || []).filte
   const { page } = await open("party:P6");
   await set(page, (p, n, a) => ((p.songT = a - 0.2), (p.lostPieces = ["head"])), free.SONG_SECONDS);
   await place(page, 150, 585);
-  await until(page, (q) => q.now.shot && q.now.shot.phase === "gather", 3000);
-  // (in the middle of the gathering: since 2026-11-25 there is no "settle" wait, the count starts 5 s after the call)
+  await until(page, (q) => q.now.shot && q.now.shot.phase === "gather", 10000);
+  // (in the middle of the gathering)
   await runWatch(page, 3, "count");
   await place(page, 630, 430);
   let s = await until(page, (q) => q.now && q.now.scene === "P7", 6000);
@@ -886,7 +890,8 @@ const liveLines = (page) => page.evaluate(() => (window.__ss.op.log || []).filte
             g = p.people[id];
           n.sq.x = g.x + dx;
           n.sq.y = g.y + dy;
-          p.seenBy = id;
+          // (a "?" filled all the way: since 2026-11-25 it starts at half size and grows, party-question.js)
+          p.qs = { [id]: { k: 1, a: 1 } };
           p.pose = "stand";
           const P = CanvasRenderingContext2D.prototype,
             fill = P.fillText,

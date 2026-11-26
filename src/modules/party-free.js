@@ -12,14 +12,14 @@
  * (GRAB · snacks at the bar opens it), the dance in party-dance.js.
  */
 import { partyLine } from "./party-lines.js";
-import { MILL, DANCE_SPOT, SNACK_SPOT, PYRAMID, CAST, stepTo, stepClear, CLEAR_OF_SQUATCH } from "./party-hall.js";
+import { MILL, DANCE_SPOT, SNACK_SPOT, PYRAMID, CAST, HALL, stepTo, stepClear, CLEAR_OF_SQUATCH } from "./party-hall.js";
 import { coneSees, lookAt, towardStage, SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
 import { startAlarm, ALARM } from "./party-alarm.js";
 import { tickVent } from "./party-vent.js";
-import { furShows, anyWorn, wornNow, tickPieces, knockNext } from "./party-outfit.js";
+import { furShows, anyWorn, wornNow, tickPieces, knockNext, knockOff, nextSpot } from "./party-outfit.js";
 import { tickConga } from "./party-toys.js";
 import { tickPhoto, startPhoto, goBack, photoActive, photoOpen, photoDone, drawGroupPolaroid, PHOTO, PHOTO_BONUS, PHOTO_ROW, POLAROID_LABEL } from "./party-photo.js";
-import { tickOctopus, chasing, OCT } from "./party-octopus.js";
+import { tickOctopus, chasing, OCT, lunge, startChase } from "./party-octopus.js";
 import { inHallwayZone, startBounce, tickBounce } from "./party-hallway.js";
 import { openSnacks, tickTopple, snackRecord, SNACK_LOOK_SECONDS } from "./party-snacks.js";
 import { snackFrame, snackTouch, snackShut } from "./party-snacks-play.js";
@@ -81,7 +81,7 @@ export function createFreePlay(h) {
       stare: null,
       flash: 0,
       shake: 0,
-      flyer: "floor",
+      flyer: "bed",
       // the one group photo, when the first song ends (party-photo.js); a restart after it does not bring it again
       shot: keep.shot && keep.shot.phase === "done" ? { phase: "done" } : null,
       // the dance's speed he reached, and what it has paid (a restart keeps both: no farming by restarting)
@@ -267,9 +267,8 @@ export function createFreePlay(h) {
     p.band = false;
     h.sound.song(-1);
     h.sound.one("scratch");
+    // the hall settles first; the pose, the call, the camera and the rows follow one at a time (party-photo.js)
     startPhoto(p);
-    // a Croc Boy calls it from the stage (Brian 2026-11-25), as the guests set off for the row
-    E().ambient("band", partyLine("band-group-photo"));
   }
   // JOIN · photo: he walks into the gap left for him in the front row and stands there, facing the camera.
   function join(p) {
@@ -286,6 +285,7 @@ export function createFreePlay(h) {
         e.still("sq");
         e.face("sq", 1);
         q.shot.in = true;
+        h.chip("");
       }),
     ]);
   }
@@ -332,7 +332,7 @@ export function createFreePlay(h) {
     photoActive(p) || (p.songT += dt);
     // (the song's end waits for a push back at the hallway doorway and its line to finish, for a hug to let go, and
     // for the pyramid's crash and the stare to be over: one moment at a time)
-    if (p.songT >= SONG_SECONDS && !(p.dance && p.dance.t < DANCE.least) && !p.bounce && !(p.oct && p.oct.mode === "hug") && !photoActive(p) && !crashing(p)) {
+    if (p.songT >= SONG_SECONDS && !(p.dance && p.dance.t < DANCE.least) && !p.bounce && !chasing(p.oct) && !photoActive(p) && !crashing(p)) {
       // the first song ends: the group photo, once (the second song starts when everyone is back)
       if (p.song === 0 && !photoDone(p)) return void (p.dance || p.snack ? (p.dance && closeDance(p), snackShut(p, h)) : beginPhoto(p));
       if (p.song >= 2) return void (p.dance || p.snack ? (p.dance && closeDance(p), snackShut(p, h)) : h.toClosing());
@@ -360,7 +360,13 @@ export function createFreePlay(h) {
     p.conga && p.conga.joined && (p.congaBeat = (p.congaBeat || 0) + dt) > 0.8 && ((p.congaBeat = 0), h.sound.one("conga"));
     // the group photo
     const ph = tickPhoto(p, dt, s);
+    // the Croc Boys pose and the crowd claps; one Croc Boy calls it from the stage (Brian 2026-11-25); everyone in
+    // place: the gap glows and only now the chip and JOIN · photo
+    ph === "pose" && ((p.clap = PHOTO.pose), h.sound.one("clap"));
+    ph === "call" && e.ambient("band", partyLine("band-group-photo"));
+    ph === "join" && h.chip("chip-join-photo");
     ph === "cheese" && (h.sound.one("beep"), (p.talker = "camera"), e.ambient("tourist", partyLine("guest-cheese")));
+    (ph === "click" || ph === "photo") && E().get("ch1Chip") === partyLine("chip-join-photo") && h.chip("");
     ph === "beep" && h.sound.one("beep");
     if (ph === "click" || ph === "photo") ((p.flash = PHOTO.flash), h.sound.one("flash"));
     ph === "photo" && (p.done.photo || ((p.done.photo = true), e.addStars(PHOTO_BONUS)), h.sound.one("cheer"), h.sound.one("zzzt"));
@@ -374,32 +380,55 @@ export function createFreePlay(h) {
     if (oc === "notice") {
       p.done.octopus = true;
       h.sound.one("hiccup");
-      // His line and Squatch's two thoughts, the first time he chases (his arms are already out): what those arms
-      // will do, then what to do about it. After that he just hiccups along.
+      // The first time (Brian 2026-11-25, showing-5 note 7): his line, then he lunges and gives Squatch a first,
+      // harmless hug; only after it does Squatch think what those arms will do, and what to do about it; then the
+      // real chase. Later chases start straight away.
       if (!p.oct.said) {
         p.oct.said = true;
         h.control(false);
         p.talker = "octopus-guest";
-        e.queue([h.say("tourist", "octopus-hic"), h.say("sq", "sq-arms", "whisper"), h.say("sq", "sq-juke", "whisper"), e.run(() => h.P() && h.P().scene === "P6" && h.control(true))]);
-      }
+        e.queue([h.say("tourist", "octopus-hic"), e.run(() => h.P() && lunge(h.P()))]);
+      } else h.chip("chip-octopus");
     }
-    // A hug holds him for a squeeze (a squish, a shake, hearts). The first is just a hug: he is let go and the
-    // chase goes on. The second one (and any after it) knocks a piece off as he is let go.
+    // A hug holds him for a squeeze (a squish, a shake, hearts; the first one tips his hat). The first is just a
+    // hug: he is let go and the chase goes on. The second one (and any after it) knocks a piece off as he is let go.
     if (oc === "hug") (h.control(false), h.sound.one("squish"), (p.shake = OCT.squeeze));
-    if (oc === "letgo" || oc === "off") {
+    if (oc === "letgo" && p.oct.mode === "ready") {
+      // after the first hug: Squatch's two thoughts, then the real chase (the chip says what to do)
+      e.queue([
+        h.say("sq", "sq-arms", "whisper"),
+        h.say("sq", "sq-juke", "whisper"),
+        e.run(() => {
+          const q = h.P();
+          if (!q || q.scene !== "P6") return;
+          startChase(q);
+          // (an alarm or the photo may have ended the octopus's chase meanwhile: then no chip)
+          chasing(q.oct) && h.chip("chip-octopus");
+          h.control(true);
+        }),
+      ]);
+    } else if (oc === "letgo" || oc === "off") {
       h.control(true);
-      oc === "off" && knock(p, s, scale);
+      oc === "off" && (knock(p, s, scale), h.chip(""));
     }
     // his 20 seconds are up: a bored sigh, his arms drop, and he walks back to the snacks
-    oc === "bored" && h.sound.one("huff");
+    oc === "bored" && (h.sound.one("huff"), h.chip(""));
+    // (he gave up because Squatch hid: the chase is over)
+    p.oct && !chasing(p.oct) && p.oct.chipOn && E().get("ch1Chip") === partyLine("chip-octopus") && h.chip("");
+    p.oct && (p.oct.chipOn = chasing(p.oct));
     // the hallway doorway: he cannot go that way yet
     // (the rest of this frame is skipped, so no alarm starts in the same frame as the push back)
     if (stand && inHallwayZone(s) && !p.bounce) return void bounceBack(p, s);
-    // The plants and the vent do nothing to a disguise. With nothing left on at all, the vent's no-disguise fur
-    // rule is back (party-vent.js), as in P2.
-    if (!anyWorn(p)) {
-      const v = tickVent(p, dt, s, stand);
+    // The vent (party-vent.js): in costume, staying too close it sucks his next piece in (Brian 2026-11-25, R108);
+    // with nothing left on at all, the no-disguise fur rule, as in P2. The plants do nothing to a disguise.
+    {
+      // (nothing knocks a piece off in his first minute, the vent included)
+      const v = tickVent(p, dt, s, stand && !(first && anyWorn(p)), anyWorn(p));
       v === "warn" && (h.sound.one("whoosh"), h.sound.one("fwip"));
+      if (v === "piece") {
+        const spot = nextSpot(p);
+        spot && (knockOff(p, spot, s, scale, "vent", { x: HALL.vent.x, y: HALL.vent.y }), (p.shake = FREE.shake), h.sound.one("whoosh"), h.sound.one("pieceOff"));
+      }
       if (v === "fur") return void (e.sfx("zap"), alarm(p, h.nearestGuest(p, s).id, s, "where-vent"));
     }
     // the snack bar: the close-up (party-snacks-play.js), and the pyramid's chain
@@ -408,7 +437,8 @@ export function createFreePlay(h) {
     tp === "crash" && h.sound.one("crash");
     if (tp === "cup") {
       h.sound.one("crash");
-      // the pyramid's flying cup knocks a piece off (one of the two big moments), and everyone stares
+      // the pyramid's flying cup knocks a piece off (a big moment, like the octopus's second hug and the vent), and
+      // everyone stares
       knock(p, s, scale);
       p.stare = { t: SNACK_LOOK_SECONDS, at: { x: s.x, y: s.y } };
       h.sound.one("gasp");
@@ -454,6 +484,8 @@ export function createFreePlay(h) {
   function spots(p) {
     const out = [];
     if (p.scene !== "P6" || p.pose !== "stand" || p.dance || p.snack) return out;
+    // While the octopus is after him: no bar, snacks, dance or photo button (Brian 2026-11-25): just get away.
+    if (chasing(p.oct)) return out;
     const s = h.sq();
     // The photo moment: the one thing offered is his place in the row (no DANCE, no snacks), from anywhere in the hall.
     if (photoActive(p)) {

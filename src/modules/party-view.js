@@ -8,17 +8,18 @@ import { HALL, CAST, CAMERA_AIM, BAND_AIM, HALL_SPEAKER, FLYER, P4_SWEEP, sweepA
 import { drawCones } from "./party-watch.js";
 import { guardLook, guardMark, torchShift } from "./party-guard-look.js";
 import { drawHall, flyerInPaw } from "./party-draw.js";
-import { drawDoorNotes, drawFlyer, drawOutfit, drawPerson, drawMark, cameraLens, BODY_SPOTS } from "./party-art.js";
+import { drawDoorNotes, drawFlyer, drawOutfit, drawPerson, drawMark, cameraLens, BODY_SPOTS, drawGapGlow } from "./party-art.js";
 import { homeGuardCone } from "./party-alarm.js";
+import { questions } from "./party-question.js";
 import { ventTufts } from "./party-vent.js";
-import { wornNow, flyingNow, furShows } from "./party-outfit.js";
+import { wornNow, flyingNow, furShows, anyWorn } from "./party-outfit.js";
 import { drawPyramid, drawSnackCloseUp } from "./party-snacks-art.js";
 import { drawSnackPaw } from "./party-snacks-paw.js";
 import { walkArms } from "./party-shirt-art.js";
 import { SONG_LIGHTS } from "./party-dance.js";
 import { drawCountdown, drawFlash, drawBandNotes, drawClap, drawHiccups, drawSpeakerRing, drawLoosePiece, drawHeartCone, liftAt, liftTo, setDownAt, drawPat, drawTv } from "./party-free-art.js";
 import { TV } from "./party-after-alarm.js";
-import { PHOTO_ROW } from "./party-photo.js";
+import { PHOTO_ROW, tripodOut, bandPosing, photoOpen } from "./party-photo.js";
 import { bounceHop, bumpMark, drawBump } from "./party-hallway.js";
 import { OCT } from "./party-octopus.js";
 
@@ -68,14 +69,11 @@ export function createView(h) {
       size = Math.round(adult * MARK.size),
       qSize = Math.round(adult * QUESTION.size),
       over = (id) => tallOf(id, adult) + adult * MARK.over;
-    if (p.seenBy && p.scene !== "P8b") {
-      const w = h.personAt(p, p.seenBy);
-      w && marks.push({ x: w.x, y: w.y - over(p.seenBy), mark: "?", size: qSize, guest: w });
-    }
-    // the glancer's warning "?" as his head turns
-    if (p.scene === "P2" && !p.alarm && h.glancePhase(p).phase === "warn") {
-      const g = p.people.backpack;
-      marks.push({ x: g.x, y: g.y - over("backpack"), mark: "?", size: qSize, guest: g });
+    // Each "?" (whoever has noticed him, the glancer's warning, the octopus about to grab): small and pale, filling in
+    // while he stays in sight, fading once he is out of it (party-question.js)
+    for (const q of p.scene === "P8b" ? [] : questions(p)) {
+      const w = q.id === "glance" ? p.people.backpack : h.personAt(p, q.id);
+      w && marks.push({ x: w.x, y: w.y - over(q.id === "glance" ? "backpack" : q.id), mark: "?", size: qSize, guest: w, q });
     }
     const a = p.alarm;
     const shout = a && (a.phase === "shout" || (a.phase === "run" && a.t < 0.5)) ? { x: a.w.x, y: a.w.y - over(a.w.id) - 12 } : null;
@@ -110,8 +108,10 @@ export function createView(h) {
     for (const mk of marks) delete mk.guest;
     const outlineHidden = p.pose === "hidden" || p.pose === "bed";
     const eyes = p.pose === "hidden" ? eyesAt(p, t) : null;
+    // The camera's tripod is out of sight until the group photo: the camera tourist carries it over then (beside
+    // him as he walks), and it stands where he set it up from then on (Brian 2026-11-25, showing-5 notes 1 and 5).
     const cam = p.people.camera,
-      tripodAt = late ? { x: cam.x - 28, y: cam.y + 6 } : CAST.guests.find((g) => g.id === "camera").tripod;
+      tripodAt = late && tripodOut(p) ? { x: cam.x - 28, y: cam.y + 6 } : null;
     const outfit = late ? wornNow(p) : null,
       shake = Math.max((p.vent && p.vent.shake) || 0, p.shake || 0);
     const bartender = a && a.w.id === "bartender" ? { x: a.w.x, y: a.w.y, f: Math.sign(a.w.x - a.w.hx) || -1 } : gone.bartender ? null : { x: (p.bartenderAt || CAST.bartender).x, y: (p.bartenderAt || CAST.bartender).y, f: p.bartenderAt && p.bartenderAt.walk ? 1 : -1 };
@@ -120,15 +120,17 @@ export function createView(h) {
       t,
       picture: h.picture,
       banner: { glow: p.glow || 0 },
+      // the dance spot's outline, while DANCE · circle is on offer (hidden while he dances: Brian 2026-11-25)
+      danceRing: LATE.has(p.scene) && !p.dance && h.spots().some((q) => q.id === "dance"),
       lights: p.lights ? { dim: p.lightK == null ? 1 : p.lightK, color: SONG_LIGHTS[(p.song || 0) % 3] } : null,
       isfred: gone.isfred ? null : p.isfred,
       // (before the band line the stage is Isfred's alone: Brian 2026-11-25)
-      band: p.bandOff ? null : { playing: p.band, spots: p.bandAt || CAST.band, gone: ["band0", "band1", "band2"].map((id) => !!gone[id]) },
+      band: p.bandOff ? null : { playing: p.band, pose: bandPosing(p), spots: p.bandAt || CAST.band, gone: ["band0", "band1", "band2"].map((id) => !!gone[id]) },
       guests,
       bartender,
       guards: a ? a.guards.filter((g) => g.room === "hall").map((g) => ({ x: g.x, y: g.y, f: Math.cos(g.a) < 0 ? -1 : 1 })) : [],
       // the camera points at the stage, and at the row while the group photo is on
-      tripod: gone.camera ? null : { ...tripodAt, aim: aimNow(p) },
+      tripod: gone.camera || !tripodAt ? null : { ...tripodAt, aim: aimNow(p) },
       // closing time: nobody is watching for him any more (they are leaving), so no cones (rule 8: a cone always reacts)
       cones: p.scene === "P8b" ? [] : h.cones(p).filter((c) => !gone[c.id]),
       // the peek teaches cones, and the flyer sneak is planned by looking: both draw every cone whole
@@ -138,13 +140,14 @@ export function createView(h) {
       unseen: !(e.get("ctrl") && !e.current()) || p.scene === "P8b",
       // In a whole disguise nobody knows him: a cone that holds him stays dashed (only the "?" shows).
       fooled: late && !furShows(p),
-      squatch: outlineHidden ? { x: s.x, y: s.y, pose: "hidden" } : { x: s.x, y: s.y, f: s.f || 1, walk: e.walkPhase(), pose: p.pose === "peek" ? "peek" : "stand", flyer: p.flyer === "paw", shake, outfit, hop: bounceHop(p) },
+      squatch: outlineHidden ? { x: s.x, y: s.y, pose: "hidden" } : { x: s.x, y: s.y, f: s.f || 1, walk: e.walkPhase(), pose: p.pose === "peek" ? "peek" : "stand", flyer: p.flyer === "paw", shake, outfit, hop: bounceHop(p), hatTip: hatTip(p) },
       eyes,
       marks,
       shout,
       alarm: !!a && a.phase !== "shout" && a.phase !== "run" && a.phase !== "calm",
       tufts: ventTufts(p),
-      warning: p.vent && p.vent.t > 0 && p.pose === "stand" ? { k: Math.min(1, p.vent.t * 4) } : null,
+      // (the fur sign only when fur would go in: in costume the vent tugs a piece, and no fur is named before it shows)
+      warning: p.vent && p.vent.t > 0 && p.pose === "stand" && !(LATE.has(p.scene) && anyWorn(p)) ? { k: Math.min(1, p.vent.t * 4) } : null,
       floor: (ctx) => floor(ctx, p, t),
       extra: [
         ...(m ? [{ y: m.y, f: () => e.drawMopsOn(ctx0, m.x, m.y, e.hallSizes().squatch * 1.15, { f: m.f, walk: m.walk ? t * 8 : 0, headDown: !!m.walk, sweep: m.walk ? Math.sin(t * 6) * 4 : 0 }) }] : []),
@@ -154,7 +157,7 @@ export function createView(h) {
   }
   // Where the camera points: the row during the photo moment (until everyone walks back), else the stage.
   // (the stage's middle while Isfred speaks; the Croc Boys once they play)
-  const aimNow = (p) => (p.shot && ["gather", "count", "flash", "polaroid"].includes(p.shot.phase) ? PHOTO_ROW.aim : p.mode === "pairs" && !LATE.has(p.scene) ? BAND_AIM : CAMERA_AIM);
+  const aimNow = (p) => (p.shot && ["camera", "gather", "join", "count", "flash", "polaroid"].includes(p.shot.phase) ? PHOTO_ROW.aim : p.mode === "pairs" && !LATE.has(p.scene) ? BAND_AIM : CAMERA_AIM);
   let ctx0 = null;
   // The flyer in the hall, with a yellow glow while Squatch thinks about it.
   function drawFlyerLit(ctx, fl) {
@@ -216,7 +219,7 @@ export function createView(h) {
   // The flyer at home: in his paw as he comes in, going down to the floor by the door, lying there.
   function flyerAtHome(p) {
     const to = { x: h.homeRoom.flyer.x, y: h.homeRoom.flyer.y, size: 16, rot: 0.5 };
-    if (p.flyer === "floor") return to;
+    if (p.flyer === "bed") return to;
     if (p.flyer !== "paw" && p.flyer !== "down" && p.flyer !== "take") return null;
     // (held up to show Mops in the talk, party-talk.js: `flyerUp` 0 to 1)
     const s = h.sq(),
@@ -250,12 +253,14 @@ export function createView(h) {
     for (const f of p.fallen || []) f.to === "plant" && drawLoosePiece(ctx, f.id, f.x, f.y, 22, f.rot);
     drawBump(ctx, bumpMark(p, scale));
     const cam = p.people.camera;
+    // the gap left for him in the front row glows while he can still join (Brian 2026-11-25)
+    photoOpen(p) && drawGapGlow(ctx, PHOTO_ROW.squatch.x, PHOTO_ROW.squatch.y, 24 * scale, t);
     // the camera's three red lights, only during the group photo's count
     p.shot && p.shot.phase === "count" && !gone.camera && drawCountdown(ctx, cam.x - 28, cam.y + 6, p.shot.n, t);
     const adult = e.hallSizes().adult;
     p.clap > 0 && Object.entries(p.people).forEach(([id, g]) => id !== "camera" && drawClap(ctx, g.x, g.y - tallOf(id, adult) - 14, t));
     const oc = p.people["octopus-guest"];
-    p.oct && (p.oct.mode === "chase" || p.oct.mode === "hug") && drawHiccups(ctx, oc.x, oc.y - tallOf("octopus-guest", adult), t);
+    p.oct && ["chase", "hug", "lunge", "ready"].includes(p.oct.mode) && drawHiccups(ctx, oc.x, oc.y - tallOf("octopus-guest", adult), t);
     // the band's notes float out to the sides and toward the crowd, never up onto the banner
     p.band && drawBandNotes(ctx, p.bandAt || CAST.band, t, p.song || 0, adult * 0.98);
     for (const f of flyingNow(p)) drawLoosePiece(ctx, f.id, f.x, f.y, f.w, f.rot);
@@ -289,12 +294,12 @@ export function createView(h) {
     p.scene === "P1" && p.phase === "home" && drawDoorNotes(ctx, h.homeDoor, t);
     // (it glows when he goes to fetch it, and while Mops looks at him: party-talk.js)
     const homeGlow = p.flyerGlow || p.costumeLook ? 0.75 + 0.25 * Math.sin(t * 6) : 0;
-    p.flyer === "floor" && drawFlyerLit(ctx, { x: h.homeRoom.flyer.x, y: h.homeRoom.flyer.y, size: 16, rot: 0.5, glow: homeGlow });
+    p.flyer === "bed" && drawFlyerLit(ctx, { x: h.homeRoom.flyer.x, y: h.homeRoom.flyer.y, size: 16, rot: 0.5, glow: homeGlow });
     const s = h.sq();
     const sk = e.squatchScale();
     // coming home with the flyer: in his paw, then put down on the floor by the door (where it lies from then on)
     const fh = flyerAtHome(p);
-    fh && p.flyer !== "floor" && drawFlyerLit(ctx, { ...fh, glow: homeGlow });
+    fh && p.flyer !== "bed" && drawFlyerLit(ctx, { ...fh, glow: homeGlow });
     const
       standing = p.pose === "stand" && e.get("sqPose") === "stand";
     let wear = p.scene === "P5" ? p.outfit : LATE.has(p.scene) ? wornNow(p) : null;
@@ -329,12 +334,14 @@ export function createView(h) {
       const tall = homeGuardHeight(),
         f = Math.cos(g.a) < 0 ? -1 : 1,
         c = { ...homeGuardCone(p.alarm, e.coneSize(), torchShift(g, tall, f)), beam: true };
-      drawCones(ctx, [c], s, p.pose === "bed", true, (k) => e.noteCone(k));
+      // (once Mops has sent him off the alarm is over: his flashlight is off as he leaves)
+      p.alarm.over || drawCones(ctx, [c], s, p.pose === "bed", true, (k) => e.noteCone(k));
       // The cone lies under everyone, as in the hall (nothing is drawn over Squatch): standing in the room he is
       // drawn again on top of it, with what he wears, behind the guard or in front of him by where his feet are.
       const again = () => standing && (e.drawSquatch(ctx, s.x, s.y, sk, { f: s.f || 1, walk: e.walkPhase() }), wear && drawOutfit(ctx, s.x, s.y, sk, wear, s.f || 1, { arms: walkArms(e.walkPhase()) }));
       s.y <= g.y && again();
-      drawPerson(ctx, g.x, g.y, tall, { ...guardLook(g), torch: true }, f, t);
+      // (sent off by Mops, the alarm is over: his flashlight is put away as he leaves)
+      drawPerson(ctx, g.x, g.y, tall, { ...guardLook(g), torch: !p.alarm.over }, f, t);
       s.y > g.y && again();
       // "?" while he searches, "!" once he sees him
       const mk = guardMark(g, tall, f);
@@ -345,6 +352,11 @@ export function createView(h) {
   // How tall the guard is drawn in the home room.
   function homeGuardHeight() {
     return (50 * E().squatchScale()) / 0.8;
+  }
+  // The octopus's first hug tips his hat over (it rights itself as he is let go): radians.
+  function hatTip(p) {
+    const o = p.oct;
+    return o && o.mode === "hug" && o.hugs === 1 ? -0.45 * Math.sin(Math.min(1, o.ht / 0.25) * Math.PI * 0.5) : 0;
   }
   // what the snack close-up drew last (tests: where his sleeve ran, which view of the bartender)
   let snackDrawn = null;

@@ -1,4 +1,19 @@
 {
-  "todo": "No known canvas-text failures. Size is checked at 1024x768 and 768x1024. The Mops name chip is also checked at 4.5:1.",
-  "known": []
+  "todo": "Size is checked at 1024x768 and 768x1024. The Mops name chip is also checked at 4.5:1. Known: the party's \"?\" over a guest who has just noticed Squatch starts at half size (Brian 2026-11-25, showing-5 note 6: \"small and pale, about half size, like Mops's hearts\") and grows to full size as it fills; at its smallest it is about 13 CSS px on an iPad. It is a mark, not words; Brian's ask wins over the 14 px rule here.",
+  "known": [
+    {
+      "size": "iPad portrait",
+      "screen": "party",
+      "reason": "size",
+      "text": "?",
+      "why": "Brian 2026-11-25 note 6: the '?' starts at half size and grows"
+    },
+    {
+      "size": "iPad landscape",
+      "screen": "party",
+      "reason": "size",
+      "text": "?",
+      "why": "Brian 2026-11-25 note 6: the '?' starts at half size and grows"
+    }
+  ]
 }

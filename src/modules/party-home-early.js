@@ -112,7 +112,7 @@ export function createHomeEarly(h) {
     p.lift = null;
     p.take = null;
     p.flyerUp = null;
-    p.flyer = "floor";
+    p.flyer = "bed";
     p.lostPieces = [];
     keep(p);
   }

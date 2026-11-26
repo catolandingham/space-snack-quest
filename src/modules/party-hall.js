@@ -54,7 +54,7 @@ export const BANNER = Object.freeze({ x0: 200, x1: 528, y0: 74, y1: 140 });
 export const CAST = Object.freeze({
   isfred: Object.freeze({ x: 420, y: 258 }),
   // (18 further from the hallway doorway since everyone grew 40%, so a push back at the doorway lands clear of him)
-  isfredBar: Object.freeze({ x: 782, y: 330 }),
+  isfredBar: Object.freeze({ x: 780, y: 330 }),
   band: Object.freeze([Object.freeze({ x: 258, y: 256 }), Object.freeze({ x: 308, y: 256 }), Object.freeze({ x: 358, y: 256 })]),
   guests: Object.freeze([
     // Partners stand a step apart (72), so no one's body overlaps another's (tests/people-scale.mjs).
@@ -65,7 +65,7 @@ export const CAST = Object.freeze({
     Object.freeze({ id: "robot", x: 640, y: 380, pair: "octopus-guest" }),
     Object.freeze({ id: "octopus-guest", x: 712, y: 386, pair: "robot" }),
     Object.freeze({ id: "backpack", x: 600, y: 490, glancer: true }),
-    Object.freeze({ id: "camera", x: 400, y: 452, tripod: Object.freeze({ x: 372, y: 458 }) }),
+    Object.freeze({ id: "camera", x: 400, y: 452 }),
   ]),
   bartender: Object.freeze({ x: 890, y: 482 }),
 });
@@ -83,7 +83,7 @@ export const FLYER = Object.freeze({
   size: 34,
   box: Object.freeze({ x0: 816, x1: 860, y0: 392, y1: 442 }),
   reach: Object.freeze({ x: 788, y: 420, r: 30 }),
-  set: Object.freeze({ x: 782, y: 330 }),
+  set: CAST.isfredBar,
   hand: Object.freeze({ dx: 24, dy: -58, size: 24 }),
   to: 2.1,
   down: 0.8,
@@ -120,8 +120,8 @@ export const GLANCE = Object.freeze({ a: (174 * Math.PI) / 180, sweep: 0.15 });
 export const GLANCE_TIMES = Object.freeze({ stage: 3.5, warn: 0.5, look: 2, back: 0.4 });
 
 // Where feet cannot go in the party hall (one list for every scene; from P6 on the strip to the hallway opens): the stage, the
-// snack bar with the wall past it, its two stools, the two plant pots, and the camera's tripod. People's feet are
-// added by whoever stands there.
+// snack bar with the wall past it, its two stools, and the two plant pots. People's feet are added by whoever stands
+// there. (The camera's tripod is not in the hall until the group photo, Brian 2026-11-25.)
 export const HALL_SOLIDS = Object.freeze([
   Object.freeze({ x0: 240, x1: 490, y0: 0, y1: 304 }),
   Object.freeze({ x0: 806, x1: 960, y0: 0, y1: 606 }),
@@ -129,7 +129,6 @@ export const HALL_SOLIDS = Object.freeze([
   Object.freeze({ x0: 772, x1: 800, y0: 438, y1: 458 }),
   Object.freeze({ x0: 72, x1: 136, y0: 330, y1: 372 }),
   Object.freeze({ x0: 412, x1: 476, y0: 520, y1: 552 }),
-  Object.freeze({ x0: 360, x1: 386, y0: 447, y1: 468 }),
 ]);
 // Where the camera points: the middle of the stage; once the band plays (Isfred has left the stage), the Croc Boys.
 export const CAMERA_AIM = Object.freeze({ x: 420, y: 280 });
@@ -190,7 +189,10 @@ export const HOME_ROOM = Object.freeze({
   runTo: Object.freeze({ x: 660, y: 545 }),
   inFront: Object.freeze({ x: 330, y: 410 }), // just right of the bed, clear of it (not on its head end)
   bed: Object.freeze({ x: 205, y: 500 }),
-  flyer: Object.freeze({ x: 868, y: 520 }),
+  // the flyer under his bed for Mops (Brian 2026-11-25): a corner peeks out at the crate bed's front right; he
+  // stands at `saveAt` (right of it, facing it) to slide it under, and to take it back out in the talk
+  flyer: Object.freeze({ x: 270, y: 556 }),
+  saveAt: Object.freeze({ x: 350, y: 560 }),
   guardDoor: Object.freeze({ x: 880, y: 470 }), // where a guard comes in, and where he searches from
   guardLook: Object.freeze({ x: 770, y: 470 }),
   mopsDoor: Object.freeze({ x: 935, y: 470 }), // Mops comes in here, inside the picture
