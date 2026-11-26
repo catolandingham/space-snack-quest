@@ -427,6 +427,8 @@ export function createLunchSneak(bridge) {
       at = l.people[w.id] || w;
     startAlarm(l, { id: w.id, x: at.x, y: at.y }, WHERE, WHO);
     e.sfx("bleep");
+    // the FUR! moment's sting, once, as at the party (music-picks.js "caught"); the music stops (alarmOn)
+    psound.sting();
     l.seenBy = "";
     l.seenT = 0;
     // behind the counter he is already hidden: no "hide" goal there
@@ -487,6 +489,7 @@ export function createLunchSneak(bridge) {
     if (!l) return;
     dt = dt || 0;
     closeUpShows(l) ? l.cuAt == null && (l.cuAt = e.time()) : (l.cuAt = null);
+    psound.tick(); // (loads the FUR! sting once sound is on; this beat has no band or crowd for it to play)
     const free = e.get("ctrl") && !e.current();
     // the watchers keep their rhythm whenever the hall is on screen
     if (inHall()) {
@@ -741,6 +744,11 @@ export function createLunchSneak(bridge) {
       return false;
     },
     jump,
+    /** True while the one capture rule's alarm is on (FUR! to the calm): no music then (bridge.js, music-picks.js hushNow). */
+    alarmOn() {
+      const l = live();
+      return !!(l && l.alarm);
+    },
     /** True from TAKE · lunch until beat 28 takes them out of the hall. */
     active() {
       return !!live();
@@ -864,7 +872,7 @@ export function createLunchSneak(bridge) {
     /** Tests: the state, what the last frame drew, the cones now, what was heard. */
     debug() {
       const l = L();
-      return { state: l ? JSON.parse(JSON.stringify(l)) : null, active: !!live(), drew, wall: wallDrew, steps: record.steps.slice(), sounds: sound.asked(), cones: l && live() && inHall() ? coneList(l) : [], firstAlarm: firstAlarm.seen };
+      return { state: l ? JSON.parse(JSON.stringify(l)) : null, active: !!live(), drew, wall: wallDrew, steps: record.steps.slice(), sounds: sound.asked(), partySounds: psound.debug().played, cones: l && live() && inHall() ? coneList(l) : [], firstAlarm: firstAlarm.seen };
     },
   };
 

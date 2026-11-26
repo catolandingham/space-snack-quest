@@ -29,6 +29,10 @@ g.check("ganitor.js holds the Ganitor words, the four new ones approved by Brian
 
 const { page, errors } = await g.open("?ch=1", { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
 await page.evaluate(() => window.__ss.lockedReady);
+// sound on, as a player taps it (the music's cue is followed only while sound is on)
+await new Promise((r) => setTimeout(r, 1200));
+await page.click("#ss-sound");
+await new Promise((r) => setTimeout(r, 600));
 await page.evaluate(() => (window.requestAnimationFrame = () => 0));
 
 // ---------- ROLL · ball ----------
@@ -95,6 +99,10 @@ const ball = await page.evaluate(() => {
   out.nearEarly = { alarm: !!st().alarm };
   tick(0.7);
   out.near = { alarm: !!st().alarm, shout: st().alarm && st().alarm.phase };
+  // the music stops with the alarm (Brian 2026-11-26); the FUR! sting plays
+  out.cueDuring = window.SSQ.refinedCue("sneak");
+  out.hushed = window.SSQ.musicNow().hush;
+  out.sting = (beat.debug().partySounds || []).filter((p) => p.name === "sting" || p === "sting").length;
   // noticed rolled up: staying rolled up there does not hide him through the search (the guards come for him)
   out.nearSpotted = !!(st().alarm && st().alarm.spotted);
   // ↺ while rolled up: he stands at the step's start, nothing of the ball left
@@ -140,6 +148,7 @@ g.check("in the open in the hall, the button offers ROLL · ball; pressed, he ro
 g.check("a ball out in a guest's look, but more than 70 px from her, is not noticed in her whole look", ball.farOffer === "ROLL · ball" && !ball.far.alarm && ball.far.pose === "ball", ball.far);
 g.check("standing in that same spot, he is seen (the ball is what hid him)", ball.farStanding.alarm, ball.farStanding);
 g.check("a ball within 70 px of her, in her look, is noticed after 2 s (not before), and the one capture rule starts (FUR!)", !ball.nearEarly.alarm && ball.near.alarm && ball.near.shout === "shout", { early: ball.nearEarly, near: ball.near });
+g.check("when the alarm goes off the music stops (no music cue while the alarm is on; hushed after it) and the FUR! sting is asked for", ball.cueDuring === "" && ball.hushed === true && ball.sting >= 1, { cue: ball.cueDuring, hushed: ball.hushed, sting: ball.sting });
 g.check("noticed rolled up, he is not safe staying put: the guards know where he is (as a guard who saw him hide)", ball.nearSpotted, ball);
 g.check("↺ while rolled up: he stands again at the step's start, nothing of the ball left", ball.afterReset.pose !== "ball" && ball.afterReset.sqPose !== "ball" && ball.afterReset.ballNear === "{}", ball.afterReset);
 g.check("moving unrolls him (as stepping out of a hiding place)", ball.beforeSteer === "ball" && ball.afterSteer.pose === "stand" && ball.afterSteer.sqPose === "stand", { before: ball.beforeSteer, after: ball.afterSteer });
