@@ -27,6 +27,7 @@
 - The Guardian Box is 2.4 times its approved size on Day 2 (so it is clearly bigger than the rocket, his note 0:21); Day 1's closet still has it at the approved size. Make Day 1 match?
 - The close-up is a front view of the open box (the first build's was seen from above, with the notes' words readable); the old notes show no words now (their lines are pending). Front view as built, or the top-down view?
 - The drawing's title: built as MY GUARDIANS (STORY-DECISIONS section 5); the first build's drawing said MY GARDIANS with a backwards S and "by Squatch age 6". Which?
+- MOPS on the lunch bag is about 9 to 10 CSS px on an iPad (the canvas-text rule is 14; listed as known in `tests/canvas-text-allow.json`). Make the bag bigger so the word reads, or keep it a small label?
 - New drawings waiting for his eye: the toy rocket and its tied-on note, the lunch bag with MOPS on it, the box close-up (the open box, the older notes, the lid's taped MY GARDIAN BOX label), the crayon Guardians drawing in his thought bubble, Squatch sitting up in bed, his stretch and his hold-up, the heart, today's crossed-off days.
 - Placeholders (not pins): rocket 64 px (about two fifths of Squatch, 25 px on a phone), the box 2.4 times its approved size, lunch bag 40 x 52 (about a third), the close-up in the room's proportion; the night 2.6 s, the wake about 2.6 s, the hold with the crayon thought 2.8 s, the box thought bubble 2.2 s; footsteps every 0.3 s.
 
