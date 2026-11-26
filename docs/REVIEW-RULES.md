@@ -3,29 +3,30 @@
 
 | Lines | Heading |
 | --- | --- |
-| 30–33 | # Review rules |
-| 34–85 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
-| 86–88 | ## Techniques |
-| 89–91 | ## Mistake: locked art was redrawn |
-| 92–96 | ## Mistake: optional inspection interrupted getting out of bed |
-| 97–99 | ## Mistake: a big doc's section index went stale |
-| 100–102 | ## Mistake: a rebuilt beat forgot the step restart |
-| 103–105 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
-| 106–108 | ## Mistake: a killed run was read as a failing test |
-| 109–111 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
-| 112–114 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
-| 115–121 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
-| 122–129 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
-| 130–146 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
-| 147–159 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
-| 160–162 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
-| 163–171 | ## Mistakes caught building the morning sound (2026-11-24) |
-| 172–183 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
-| 184–195 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
-| 196–209 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
-| 210–216 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
-| 217–227 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
-| 228–235 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
+| 31–34 | # Review rules |
+| 35–86 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
+| 87–89 | ## Techniques |
+| 90–92 | ## Mistake: locked art was redrawn |
+| 93–97 | ## Mistake: optional inspection interrupted getting out of bed |
+| 98–100 | ## Mistake: a big doc's section index went stale |
+| 101–103 | ## Mistake: a rebuilt beat forgot the step restart |
+| 104–106 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
+| 107–109 | ## Mistake: a killed run was read as a failing test |
+| 110–112 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
+| 113–115 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
+| 116–122 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
+| 123–130 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
+| 131–147 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
+| 148–160 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
+| 161–163 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
+| 164–172 | ## Mistakes caught building the morning sound (2026-11-24) |
+| 173–184 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
+| 185–196 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
+| 197–210 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
+| 211–217 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
+| 218–228 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
+| 229–236 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
+| 237–242 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
 <!-- /section-index -->
 # Review rules
 
@@ -234,3 +235,9 @@ His words, on the snack close-up, for every piece of the game: "It just needs to
 - A test that opens a scene, waits a moment in real time and only then stops the clock reads a scene that has already moved on (the talk had fetched the flyer before the first look). Stop the clock and restart the part (`__ss.sectionReset()`) before reading where it starts; the beat's own `restart()` does not clear the story queue.
 - Words drawn inside a scaled drawing (the GANITOR tag in Mops's own units, 2026-11-26) were read by `tests/canvas-text.mjs` at their unscaled font size (2 CSS px), because it only adds a move, not a scale. Write words in game pixels: find the spot in the drawing's units, then set the transform to the picture's own scale there and give the font in game pixels (`src/modules/ganitor.js` drawGanitorTag).
 - A test of a ball or hiding rule that only tried the open floor passed while the doorway still let a rolled-up Squatch through and a noticed ball could stay put through the search (the round C code review). Test each button a hiding pose can still reach, and the search after a sighting.
+
+## Mistakes caught building Brian's showing-6 notes (2026-11-26)
+
+- Sight was tested at one point a quarter of the way up Squatch while he is drawn about 85 tall, so a cone drawn across his head did not see him ("It looks like he's right in the octopus' cone, what am I missing??"). What a cone is drawn on is what it sees: sight tests his whole drawn outline (`party-watch.js` `coneEdge`), and `tests/party-showing6.mjs` checks the drawn cone against his drawn pixels. A change to sight re-checks every layout built on it (P2's glancer, P4's sweeps, the guards' reach).
+- Guards walked straight from point to point, through a plant pot. Anyone who walks a route round the room goes round its furniture (`guardStep`), and a route's whole walk is checked step by step (`tests/standing-spots.mjs`), not only where it stops.
+- A wait was tied to the end of a song (the photo after the dance, 28 s of nothing). After an action ends, the next beat starts within about a second, or the wait is shown.

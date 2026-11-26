@@ -280,6 +280,8 @@ export function createParty(bridge) {
         say("band", "band-song", "song"),
         e.run(() => ((P().pt = 0), (P().follow = true))),
         e.until(() => !P() || P().pt >= PACE.watch),
+        // watching them dance, before the flyer sneak (Brian 2026-11-26: put it back where it was before the dance)
+        say("sq", "sq-dance-wish", "whisper"),
         e.run(() => startScene("P4")),
       ]);
       return;
@@ -715,6 +717,8 @@ export function createParty(bridge) {
     // the band stops dead: a record scratch (the alarm's bell takes over)
     p.band && sound.one("scratch");
     e.sfx("bleep");
+    // the FUR! moment's sting, once (music-picks.js "caught")
+    sound.sting();
     p.seenBy = "";
     p.seenT = 0;
     chip("chip-run");
@@ -856,6 +860,18 @@ export function createParty(bridge) {
     /** True while a party scene is on (P1 to P8). */
     active() {
       return !!live();
+    },
+    /**
+     * The older program's music cue while the party is on (music-picks.js): "sneak" for P2's sneak to the plant (no
+     * band yet; in P4 the band plays, and its song wins), "home" for the talk at home after the party (P8a to P8c, no
+     * alarm), otherwise "" (the party's own sounds: the band, the crowd, the party through his door).
+     */
+    musicCue() {
+      const p = live();
+      if (!p || p.alarm) return "";
+      if (p.scene === "P2" && E().room() === "hall" && !p.band) return "sneak";
+      if ((p.scene === "P8a" || p.scene === "P8b" || p.scene === "P8c") && E().room() === "closet") return "home";
+      return "";
     },
     /** True while this beat draws the room on screen (the hall). */
     ownsRoom() {

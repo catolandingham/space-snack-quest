@@ -3,7 +3,7 @@
  * a big yawn, the blanket's rustle as Mops tucks him in, the light switch's click, and three snores (Brian asked
  * for a snore at bedtime, Nov 8 playtest P L119, and on 2026-11-26: "some snoring"). The snore is the game's snore
  * (synth.js "snore", the morning's, with its whistle), played louder than the morning's so it is clearly heard over
- * the bedtime song. Levels are placeholders.
+ * the bedtime music (Reawakening, music-picks.js). Levels are placeholders.
  * Every sound goes through the effects level under the game's master volume (sound-mix.js); nothing plays while
  * sound is off. Each sound asked for is counted, sound on or off (tests).
  */
@@ -17,7 +17,7 @@ export const BEDTIME_SOUND = Object.freeze({
   click: 0.25,
 });
 
-/** The sound pick Mops's bleat is asked for by (the party branch's music-picks.js SOUND_PICKS "mops-bleat"). */
+/** The sound pick Mops's bleat is asked for by (music-picks.js SOUND_PICKS "mops-bleat"). */
 export const BLEAT_HOOK = "mops-bleat";
 
 const BROWN = new WeakMap();
@@ -118,8 +118,8 @@ export function createBedtimeSound(getEngine) {
     },
     /**
      * Mops's bleat, under his "...Weeee-eenn-nnttt?" (Brian 2026-11-26: Mops's bleat lines get a real goat bleat). It
-     * asks for the sound by its hook name, BLEAT_HOOK, from whatever plays the game's sound picks (window.SSQ.playSoundPick,
-     * which the party branch's music table brings, with its file still to be chosen); until then it plays nothing.
+     * asks for the sound by its name, BLEAT_HOOK, through window.SSQ.playSoundPick (bridge.js), which plays the game's
+     * sound picks (music-picks.js SOUND_PICKS: sounds/goat-bleat.mp3, the same bleat as the morning song's).
      */
     bleat() {
       asked.bleat++;

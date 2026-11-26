@@ -147,7 +147,6 @@ export function createHomeMorning(bridge) {
       e.set("moPose", "hidden");
       e.place("sq", HOME_MORNING_SPOTS.woke.x, HOME_MORNING_SPOTS.woke.y);
       e.face("sq", 1);
-      bridge.homeMusic.start("home-morning");
       go("rocket");
       return control("chip-gift");
     }
@@ -161,7 +160,9 @@ export function createHomeMorning(bridge) {
     // ear icon), waiting for NEXT; then he goes.
     e.queue([e.say("speaker", ganitorWords("pa-ganitor"), "say", true), e.until(night), e.until(wake), e.run(() => (go("rocket"), control("chip-gift")))]);
   }
-  // Night to morning: still dark, Mops leaves for work (heard, not seen), light again, the morning song.
+  // Night to morning: still dark, Mops leaves for work (heard, not seen), light again. The music is the music table's
+  // (music-picks.js, Brian 2026-11-26): the bedtime story's Reawakening goes on while it is dark (nightNow), then this
+  // daytime visit home plays the next track of the home rotation (Goating in Space is Day 1's first morning only).
   function night(dt) {
     const h = H(),
       P = HOME_MORNING_PACE,
@@ -170,7 +171,6 @@ export function createHomeMorning(bridge) {
     const past = (at) => t0 < at && h.t >= at;
     P.hooves.forEach((at, i) => past(at) && sound.morning("hoof", i));
     if (past(P.door)) sound.morning("door");
-    if (past(P.dark)) bridge.homeMusic.start("home-morning");
     if (h.t < P.dark + P.up) return false;
     go("wake");
     return true;
@@ -285,7 +285,6 @@ export function createHomeMorning(bridge) {
     busy();
     h.bag = "taken";
     go("done");
-    bridge.homeMusic.stop("home-morning");
     e.takeLunch();
   }
 
@@ -373,6 +372,11 @@ export function createHomeMorning(bridge) {
   }
 
   return {
+    /** True while the night is still dark (the bedtime music goes on then: bridge.js refineCue). */
+    nightNow() {
+      const h = live();
+      return !!h && h.step === "night" && h.t < HOME_MORNING_PACE.dark;
+    },
     start,
     /**
      * ↺ while the morning plays with no control yet (the night, the wake): no step start is saved then, so the

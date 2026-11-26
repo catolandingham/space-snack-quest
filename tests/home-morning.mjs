@@ -33,6 +33,10 @@ const LUNCH = "He forgot his lunch!";
 const g = await startGame({ port: 9743, name: "home-morning" });
 const { page, errors } = await g.open("?ch=1", { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
 await page.evaluate(() => window.__ss.lockedReady);
+// Sound on, as a player taps it (the music's cue is only followed while sound is on).
+await new Promise((r) => setTimeout(r, 1200));
+await page.click("#ss-sound");
+await new Promise((r) => setTimeout(r, 600));
 await page.evaluate(() => (window.requestAnimationFrame = () => 0));
 
 const registered = await page.evaluate(() => !!(window.SSQ && window.SSQ.beat("ch1-home-morning")));
@@ -104,6 +108,7 @@ const run = !(registered && asleep)
           r && r.dark != null && r.dark > 0.5 && (out.darkMops = n.moPose);
           r && step() === "night" && (out.nightStart = out.nightStart || { dark: r.dark, mops: n.moPose, pose: r.pose, inBed: r.inBed, chip: ss.chipNow() });
           r && r.pose === "sitUp" && (out.satUp = out.satUp || []).push(r.inBed);
+          (out.cues = out.cues || []).push({ step: step(), dark: r && r.dark != null ? r.dark : null, cue: window.SSQ.refinedCue(ss.warmWhy()) });
           sqAt.push([n.sq.x, n.sq.y]);
           ss.tick(0.05);
           since += 0.05;
@@ -258,6 +263,7 @@ const run = !(registered && asleep)
         out.shownMorning = ss.shown();
         press();
         out.music = window.SSQ.homeMusic.debug();
+        out.lunchCue = window.SSQ.refinedCue(ss.warmWhy());
         for (let i = 0; i < 200 && !(n.room === "hall" && n.ctrl); i++) ss.tick(0.05);
         ss.drawFrame();
         const lu = window.SSQ.beat("ch1-lunch") && window.SSQ.beat("ch1-lunch").debug().state;
@@ -296,7 +302,13 @@ const SU = R.satUp || [];
 g.check("he wakes in bed: he sits up from lying down, eyes open, the blanket sliding off", SU.length > 2 && SU[0].a < -1 && SU.slice(-1)[0].a > -0.1 && SU.slice(-1)[0].blanket < 0.1 && SU.every((u) => u.eyes === ""), [SU[0], SU.slice(-1)[0]]);
 const S = R.debug.sounds || {};
 g.check("Mops is heard leaving in the dark: his hooves, then the door", S.hoof === 3 && S.door === 1, S);
-g.check("the morning song (home-music.js) plays from the morning until he takes the lunch", R.music && R.music.owns, R.music);
+// The music table (Brian 2026-11-26, music-picks.js): Goating in Space only on Day 1's first morning; this later
+// daytime visit home plays the home rotation; while the night is still dark the bedtime music goes on.
+const CUES = R.cues || [];
+const darkCues = CUES.filter((c) => c.step === "night" && c.dark === 1),
+  dayCues = CUES.filter((c) => c.step === "wake" || c.step === "rocket");
+const PICKS = await import(join(root, "src", "modules", "music-picks.js"));
+g.check("the music follows the music table: Reawakening goes on while the night is dark, then the home rotation (Carefree, Morning, Rainbows) for the day; Goating in Space does not play (it is Day 1's first morning's)", darkCues.length > 3 && darkCues.every((c) => c.cue === "bedtime") && dayCues.length > 3 && dayCues.every((c) => c.cue === "home") && R.lunchCue === "home" && R.music && !R.music.owns && JSON.stringify(PICKS.listFor("home")) === JSON.stringify(["carefreeOnce", "morningOnce", "rainbowsOnce"]) && PICKS.fileFor("morning") === "music/goating-in-space.mp3", { dark: darkCues.slice(0, 2), day: dayCues.slice(0, 2), lunch: R.lunchCue, owns: R.music && R.music.owns });
 
 // 2. each control step: the chip, the one button, the one outline round its thing
 const want = [

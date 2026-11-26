@@ -578,6 +578,11 @@ if (which === "ventfur") {
   let s = await until((q) => q.now && q.now.scene === "P2" && q.ctrl, 8000, read);
   s || (await fail("P2 did not start"));
   await sleep(1500);
+  // (sight sees his whole body since 2026-11-26: he waits for the glancer to face the stage, then goes along the
+  // front of the hall, under the cones, to the vent)
+  await until((q) => q.now.glance === "back", 12000);
+  await until((q) => q.now.glance === "stage", 4000);
+  await goTo(300, 588, (q) => q.now.alarm, 4000);
   await goTo(hall.HALL.vent.x + 40, hall.HALL.vent.y - 20, (q) => q.now.alarm, 9000);
   log("by the vent");
   s = await until((q) => q.now.alarm, 12000);

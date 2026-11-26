@@ -20,6 +20,7 @@
 import { SOUNDS } from "./synth.js";
 import { MIX, buses } from "./sound-mix.js";
 import { line } from "./morning-lines.js";
+import { playSound } from "./music-picks.js";
 
 export const MORNING_SOUND = Object.freeze({
   breathEvery: 3.4, // seconds from one snore to the next
@@ -69,6 +70,11 @@ export function createMorningSound(getEngine) {
     } catch {
       return false;
     }
+  }
+  // The goat bleat, at the effects level (nothing while sound is off).
+  function bleat() {
+    const s = live();
+    s && playSound(s.ctx, s.out, "mops-bleat", s.ctx.currentTime + 0.05) && note("mops-bleat", 0);
   }
   function stopSnore() {
     if (!bus) return;
@@ -127,6 +133,8 @@ export function createMorningSound(getEngine) {
      * scene's meh up.
      */
     bubble(b, scene, songPlaying, quiet) {
+      // Mops's bleat line in the song (a sung line): a real goat bleat (music-picks.js SOUND_PICKS, Brian 2026-11-26)
+      if (b && b.who === "mops" && b.text === line("mops-sing")) return void bleat();
       if (!b || b.style === "song") return;
       play("tick");
       if (b.who !== "mops" || quiet) return;

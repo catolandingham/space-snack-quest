@@ -30,7 +30,8 @@ export function seenPointDrawn(sq, draw) {
 // and only turns into exclamation after he stays too long"). PROVISIONAL: Brian has not set this number
 // yet (docs/DECISIONS.md, Sight cones); it is not a tuning pin until he does.
 export const SEEN_TOO_LONG_SECONDS = 0.8;
-// The point on Squatch that is seen: this far above his feet.
+// At home (the guard's flashlight beam, Brian's approved home rule) the point on Squatch that is seen: this far above
+// his feet. In the hall sight sees his whole outline (SQUATCH_OUTLINE below).
 export const SQUATCH_SEEN_ABOVE_FEET = 20;
 // Distance fade (Brian, 2026-11-23: "Add the distance fade"): a cone shows only when Squatch is near the cone
 // itself, so only the cones he could walk into are on screen. Distances run from the point on Squatch that is
@@ -39,6 +40,8 @@ export const SQUATCH_SEEN_ABOVE_FEET = 20;
 // still cut short at them. Measured from the watcher instead, nearly every cone showed from the middle of the
 // hall, which is small next to a 210-long cone. Both numbers are placeholders for Brian to tune.
 export const CONE_FADE = { full: 40, gone: 120 };
+// A dashed cone this close to him (or closer) is drawn darker and thicker, the closer the more (drawCones). PLACEHOLDER.
+export const CONE_NEAR = 60;
 
 /** How strongly a cone shows (0 to 1) with Squatch this far from the cone. */
 export function coneShow(d) {
@@ -85,8 +88,80 @@ export function lookAt(x, y, to) {
 export function towardStage(x, y) {
   return lookAt(x, y, PARTY_STAGE);
 }
-/** True when the cone sees Squatch standing at feet `sq` (not hidden). */
+/**
+ * Squatch's outline as he is drawn standing in the party hall, in game pixels from his feet (x right, y down),
+ * measured from his drawing at hall size (2026-11-26: the widest he is drawn on each row, standing or at any step of
+ * his walk, either way he faces, plus a pixel; tests/party-showing6.mjs checks it against the drawing). Because it
+ * holds his widest step, a cone up to about 4 pixels off his standing drawing (1.5 on a phone) still sees him. Sight in the hall is tested against this whole
+ * outline (Brian 2026-11-26, showing 6: "It looks like he's right in the octopus' cone, what am I missing??"): a cone
+ * drawn on any part of him sees him, and a cone that sees him is drawn on him. Before, sight was tested at one point
+ * 20 above his feet, a quarter of the way up him, so a cone across his head or chest was drawn on him and did not
+ * see him.
+ */
+const HALF_OUTLINE = [
+  [0, -80], [10, -78], [12, -76], [19, -74], [20, -72], [21, -70], [23, -68], [25, -66], [26, -64], [26, -62], [27, -60],
+  [30, -58], [31, -56], [32, -54], [32, -52], [32, -50], [31, -48], [30, -46], [27, -44], [26, -42], [25, -40],
+  [21, -38], [23, -36], [24, -34], [25, -32], [27, -30], [28, -28], [29, -26], [30, -24], [32, -22], [33, -20],
+  [34, -18], [35, -16], [35, -14], [35, -12], [35, -10], [34, -8], [30, -6], [26, -4], [18, -2], [18, 0], [18, 2],
+  [17, 4], [16, 6], [0, 8],
+];
+export const SQUATCH_OUTLINE = Object.freeze([
+  ...HALF_OUTLINE.map(([x, y]) => Object.freeze([x, y])),
+  ...HALF_OUTLINE.slice(1, -1).reverse().map(([x, y]) => Object.freeze([-x, y])),
+]);
+// Points along the outline every 2 pixels or less: a cone that crosses him crosses his outline, so it holds one of
+// these (a cone on him by less than 2 pixels is not one a kid could see).
+const OUTLINE_PTS = (() => {
+  const out = [];
+  for (let i = 0; i < SQUATCH_OUTLINE.length; i++) {
+    const [x0, y0] = SQUATCH_OUTLINE[i],
+      [x1, y1] = SQUATCH_OUTLINE[(i + 1) % SQUATCH_OUTLINE.length],
+      n = Math.max(1, Math.ceil(Math.hypot(x1 - x0, y1 - y0) / 2));
+    for (let k = 0; k < n; k++) out.push([x0 + ((x1 - x0) * k) / n, y0 + ((y1 - y0) * k) / n]);
+  }
+  return out;
+})();
+// The middle of him, and how far the outline reaches from it at most (a quick "nowhere near" before the full test).
+const BODY_MID = -36,
+  BODY_REACH = Math.max(...OUTLINE_PTS.map(([x, y]) => Math.hypot(x, y - BODY_MID))) + 0.5;
+/** True when (px, py) is inside his outline standing at feet `sq`. */
+function insideOutline(px, py, sq) {
+  const x = px - sq.x,
+    y = py - sq.y;
+  let inside = false;
+  for (let i = 0, j = SQUATCH_OUTLINE.length - 1; i < SQUATCH_OUTLINE.length; j = i++) {
+    const [xi, yi] = SQUATCH_OUTLINE[i],
+      [xj, yj] = SQUATCH_OUTLINE[j];
+    yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi && (inside = !inside);
+  }
+  return inside;
+}
+/**
+ * How far the cone is from Squatch at feet `sq` (0 when it is on him). In the hall: from any part of his outline.
+ * A cone drawn somewhere other than where sight is measured from (`draw`, only the home guard's flashlight beam,
+ * where Squatch is drawn three times hall size) keeps Brian's approved home rule: the one point of him the beam is
+ * drawn to see (seenPointDrawn, on his head as drawn at home).
+ */
+export function coneEdge(c, sq) {
+  if (c.draw) return distToCone(sq.x, sq.y - SQUATCH_SEEN_ABOVE_FEET, c.ox, c.oy, c.a, c.half, c.len);
+  const mid = distToCone(sq.x, sq.y + BODY_MID, c.ox, c.oy, c.a, c.half, c.len);
+  // (far beyond the distance fade, a lower bound is enough: nothing is drawn or seen out there)
+  if (mid - BODY_REACH > CONE_FADE.gone) return mid - BODY_REACH;
+  if (insideOutline(c.ox, c.oy, sq)) return 0;
+  let d = Infinity;
+  for (const [x, y] of OUTLINE_PTS) {
+    const e = distToCone(sq.x + x, sq.y + y, c.ox, c.oy, c.a, c.half, c.len);
+    if (e <= 0) return 0;
+    e < d && (d = e);
+  }
+  return d;
+}
+/** True when the cone sees Squatch standing at feet `sq` (not hidden): it is on him (coneEdge). */
 export function coneSees(c, sq) {
+  return coneEdge(c, sq) <= 0;
+}
+/** The home rule as Brian approved it (2026-11-25): the guard's look sees the one point 20 above his feet. */
+export function coneSeesPoint(c, sq) {
   return distToCone(sq.x, sq.y - SQUATCH_SEEN_ABOVE_FEET, c.ox, c.oy, c.a, c.half, c.len) <= 0;
 }
 
@@ -105,11 +180,10 @@ export function drawCones(ctx, cones, sq, hidden, all, note, fooled = false) {
   ctx.rect(ROOM_INSIDE.x0, ROOM_INSIDE.y0, ROOM_INSIDE.x1 - ROOM_INSIDE.x0, ROOM_INSIDE.y1 - ROOM_INSIDE.y0);
   ctx.clip();
   for (const c of cones) {
-    // (for a cone drawn elsewhere, `draw`, the point of him it is drawn to see moves with it: the same test)
+    // (the cone and the point of him it is drawn to see move together: coneEdge's test is the same)
     const dx = c.ox + ((c.draw && c.draw.dx) || 0),
       dy = c.oy + ((c.draw && c.draw.dy) || 0),
-      pt = seenPointDrawn(sq, c.draw),
-      edge = distToCone(pt.x, pt.y, dx, dy, c.a, c.half, c.len),
+      edge = coneEdge(c, sq),
       inside = !hidden && edge <= 0,
       show = all || c.always ? 1 : coneShow(edge);
     out.push({ ...c, edge, inside, show });
@@ -148,10 +222,14 @@ export function drawCones(ctx, cones, sq, hidden, all, note, fooled = false) {
       ctx.fill();
       ctx.stroke();
     } else {
-      ctx.setLineDash([8, 7]);
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = "rgba(90,96,110,.6)";
-      ctx.fillStyle = "rgba(255,255,255,.08)";
+      // a cone close to him stands out (darker, thicker dashes, a lighter inside), so a kid sees on a phone which
+      // cone is about to touch him and where its edge is (Brian 2026-11-26, showing 6: "It looks like he's right in
+      // the octopus' cone, what am I missing??"); far cones stay faint
+      const near = Math.max(0, Math.min(1, 1 - edge / CONE_NEAR));
+      ctx.setLineDash([8 + 4 * near, 7]);
+      ctx.lineWidth = 2 + 2.5 * near;
+      ctx.strokeStyle = `rgba(${Math.round(90 - 40 * near)},${Math.round(96 - 40 * near)},${Math.round(110 - 30 * near)},${(0.6 + 0.35 * near).toFixed(2)})`;
+      ctx.fillStyle = `rgba(255,255,255,${(0.08 + 0.17 * near).toFixed(2)})`;
       ctx.fill();
       ctx.stroke();
     }

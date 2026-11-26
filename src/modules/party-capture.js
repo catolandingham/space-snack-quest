@@ -34,8 +34,8 @@ export function createCapture(h) {
       // after a party alarm (P7) the guard looks round until Squatch is under the bed (Mops comes in next)
       hideFirst: () => h.P().scene === "P7",
       firstTime: () => !h.firstAlarm.seen,
-      // the FUR alarm's ringing bell (the sound board's pick)
-      bell: () => h.sound.one("bell"),
+      // the FUR alarm ringing: the one alarm of Chapter 1, the red alert whoop (Brian 2026-11-26)
+      bell: () => h.sound.one("alarm"),
       // Wordless, nothing to tap: it plays itself and ends on its clear last frame (Brian 30a, 2026-11-24).
       closeUp(done) {
         h.firstAlarm.seen = true;
