@@ -177,7 +177,7 @@ function reach(x, y, tx, ty) {
 
 // A picture: the scene on the pale story background, then the "years ago" wash and frame (no YEARS AGO mark:
 // the old crate story had none), then its words over the wash.
-function frame(ctx, scene, words) {
+function storyPicture(ctx, scene, words) {
   ctx.fillStyle = "#f1f3f6";
   ctx.fillRect(0, 0, 960, 640);
   const drew = scene() || {};
@@ -253,13 +253,13 @@ const word = (engine, text, x, y, size, color) => engine.text(text, x, y, size, 
 const ALL = [
   {
     pic: "crate",
-    draw: (ctx, t, engine) => frame(ctx, () => crateScene(ctx), () => ({ caption: caption(ctx, engine, bedLine("cap-crate")) })),
+    draw: (ctx, t, engine) => storyPicture(ctx, () => crateScene(ctx), () => ({ caption: caption(ctx, engine, bedLine("cap-crate")) })),
   },
   {
     pic: "baby",
     draw: (ctx, t, engine) => {
       let d = null;
-      return frame(
+      return storyPicture(
         ctx,
         () => (d = babyScene(ctx, engine, t)),
         () => {
@@ -272,13 +272,13 @@ const ALL = [
   },
   {
     pic: "beard",
-    draw: (ctx, t, engine) => frame(ctx, () => beardScene(ctx, engine, t), () => ({ caption: caption(ctx, engine, bedLine("cap-beard")) })),
+    draw: (ctx, t, engine) => storyPicture(ctx, () => beardScene(ctx, engine, t), () => ({ caption: caption(ctx, engine, bedLine("cap-beard")) })),
   },
   {
     pic: "baa",
     draw: (ctx, t, engine) => {
       let d = null;
-      return frame(
+      return storyPicture(
         ctx,
         () => (d = beardScene(ctx, engine, t)),
         () => ({ caption: null, bubble: bubble(ctx, engine, bedLine("mops-baa"), d.mouth.x - 8, d.mopsHead.y, 28, 300, "", "", 70) }),
@@ -288,14 +288,14 @@ const ALL = [
   {
     pic: "bucket",
     off: !BEDTIME_SWITCHES.bucketPicture,
-    draw: (ctx, t, engine) => frame(ctx, () => bucketScene(ctx, engine), () => ({ caption: caption(ctx, engine, bedLine("cap-bucket")) })),
+    draw: (ctx, t, engine) => storyPicture(ctx, () => bucketScene(ctx, engine), () => ({ caption: caption(ctx, engine, bedLine("cap-bucket")) })),
   },
   {
     pic: "hide",
     off: !BEDTIME_SWITCHES.bucketPicture,
     draw: (ctx, t, engine) => {
       let d = null;
-      return frame(
+      return storyPicture(
         ctx,
         () => (d = bucketScene(ctx, engine)),
         () => ({ caption: null, bubble: bubble(ctx, engine, bedLine("mops-nothing"), d.mouth.x - 8, d.mopsHead.y, 28, 340, "", "", 70) }),

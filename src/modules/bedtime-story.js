@@ -77,7 +77,7 @@ export function createBedtimeStory(bridge) {
     record.phases.push(p);
   };
   // One frame of one of this beat's wordless parts: time goes on and the frame is marked as this beat's.
-  const frame = (dt) => {
+  const beatFrame = (dt) => {
     S.t += dt || 0;
     S.at = E().time();
   };
@@ -125,7 +125,7 @@ export function createBedtimeStory(bridge) {
   }
   // 1a. He walks to the right end of his bed: up past the bucket first, then across.
   function walk(dt) {
-    frame(dt);
+    beatFrame(dt);
     const e = E(),
       to = S.leg === 0 ? BEDTIME_SPOTS.via : BEDTIME_SPOTS.pat;
     if (!e.step("sq", to.x, to.y, BEDTIME_PACE.walk, dt || 0)) return false;
@@ -142,7 +142,7 @@ export function createBedtimeStory(bridge) {
   }
   // 1b. He pats the bed; the thought bubble with the little crate comes up and stays.
   function pat(dt) {
-    frame(dt);
+    beatFrame(dt);
     const P = BEDTIME_PACE,
       t = S.t;
     // each pat: the paw comes down on the bed at its time and lifts again
@@ -159,7 +159,7 @@ export function createBedtimeStory(bridge) {
   }
   // 1c. He climbs into bed (a little hop onto it); Mops sees him and comes over beside the bed.
   function bed(dt) {
-    frame(dt);
+    beatFrame(dt);
     const e = E(),
       P = BEDTIME_PACE,
       t = S.t;
@@ -204,7 +204,7 @@ export function createBedtimeStory(bridge) {
     phase("asleep");
   }
   function asleep(dt) {
-    frame(dt);
+    beatFrame(dt);
     const e = E();
     e.set("zzz", (e.get("zzz") || 0) + (dt || 0));
     while (S.snored < BEDTIME_PACE.snores.length && S.t >= BEDTIME_PACE.snores[S.snored]) (sound.snore(), S.snored++);
