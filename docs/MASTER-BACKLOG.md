@@ -4,24 +4,33 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–113 | ## Where main is (Chapter 1 redesign) |
-| 114–128 | ## Register |
-| 129–150 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 151–171 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 172–184 | ## Phase 2 (plan section 4, T13 to T18) |
-| 185–207 | ## Phase 1 (plan section 3, T5 to T12) |
-| 208–221 | ## SS40–SS44 |
-| 222–239 | ## Story rows |
-| 240–258 | ## Reset section |
-| 259–269 | ## Still open |
-| 270–273 | ## Chapter 1 replot, recorded and not built |
-| 274–429 | ## Changelog |
+| 24–122 | ## Where main is (Chapter 1 redesign) |
+| 123–137 | ## Register |
+| 138–159 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 160–180 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 181–193 | ## Phase 2 (plan section 4, T13 to T18) |
+| 194–216 | ## Phase 1 (plan section 3, T5 to T12) |
+| 217–230 | ## SS40–SS44 |
+| 231–248 | ## Story rows |
+| 249–267 | ## Reset section |
+| 268–278 | ## Still open |
+| 279–282 | ## Chapter 1 replot, recorded and not built |
+| 283–438 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-26, draft PR on `feat/ch1-lunch-sneak` (stacked on `feat/ch1-day2-morning`), not merged. Done: beats 25 to 27, the lunch sneak, as a module (`ch1-lunch`): the sneak past two watchers on fixed rhythms (plant, crates, hallway doorway; one glow at a time), the party's capture rule unchanged, GIVE · lunch and "My lunch! You're the best.", Mops eating the lunch and the bag in a wordless close-up, back behind the snack counter, one Moon Pie, then beat 28 unchanged. Old lunch code deleted. Waiting on Brian:
+- Mops's one-snack line (pending) or the wordless one-pie bubble as built? "Squatch! You should be hiding." (pending): add it when approved?
+- The balloon "still there" in beat 25: the balloon beat is out of the game, so none is drawn. Draw one on the ceiling, or leave it?
+- The bartender (beat 27 lists her nearby): her place is the aisle Squatch hides in, so as built she is not there and a guest at the counter watches instead.
+- ROLL · ball (C20, "ball anytime") is not offered in the lunch sneak, as at the party (plants and crates only). Offer it?
+- What Mops eats from the bag (a sandwich, placeholder), and where the crates came from (party supplies left over, placeholder).
+- New drawings waiting for his eye: the crates, the plate of Moon Pies, the eating close-up (sandwich, bag bitten away), Squatch ducked and reaching, the one-pie thought bubble, the bolder cone look for these watchers.
+- Placeholders (not pins): the watchers' places and angles and their rhythm (away 3.0 s, "?" 0.6 s, turn 0.3 s, look 2.4 s); walk 190; the eating close-up 3.6 s; the grab 1.4 s; the chew 1.2 s; pies 1.25 times the party's snack; the bag in the hall 0.68 of its home size.
 
 2026-11-26, draft PR on `feat/ch1-day2-morning` (stacked on `feat/ch1-bedtime-story`), not merged. Done: beats 22 to 24, the home morning, as a module (`ch1-home-morning`): night to morning and the wake with no words, PICK UP · rocket and the Guardians line, the thought bubble of the box, OPEN · closet, PUT IN · box with the "MY GARDIANS" close-up, the calendar with today marked, "He forgot his lunch!", TAKE · lunch into today's lunch sneak. The old gift, box, calendar and lunch steps are deleted from `src/game/`. Open for Brian:
 - Is the calendar step required (as built, the walkthrough's "Player: Look at the calendar"), or optional with the lunch bag as the goal?
