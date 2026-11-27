@@ -305,7 +305,7 @@ export function createEvening(bridge) {
       s.robot = null;
       s.pose === "ball" && setPose("stand");
       go("past");
-      return void control("chip-go-on");
+      return void control("chip-to-hall");
     }
     moveRobot(w.x, w.y, dt) && r.leg++;
     if (!r.beeped && r.x > e.pos("sq").x + 120) ((r.beeped = true), e.queue([e.say("robot", eveningWords("robot-beep"))]));
@@ -1182,7 +1182,8 @@ export function createEvening(bridge) {
       }
     }
     // the hallway robot (beat 37): its cone goes where it looks (every robot shows its cone, rule 8)
-    if (room() === "passage" && s.robot) {
+    // (only once it is in the hallway: waiting outside the doorway it is not in the picture)
+    if (room() === "passage" && s.robot && s.robot.wait <= 0) {
       const q = at({ id: "hallway-robot", x: s.robot.x, y: s.robot.y });
       out.push({ ...coneFrom("hallway-robot", q.x, q.y, look({ id: "hallway-robot", a: s.robot.a }, { x0: 60, x1: 100, y0: 280, y1: 320 }), size), always: true, bold: true, robot: true });
     }
@@ -1262,7 +1263,7 @@ export function createEvening(bridge) {
         s.people = {};
         if (s.postAlarm) return postAlarmDone();
         // the hallway: the robot rolls on out (it has done its job), and the hallway is his again
-        if (room() === "passage") return ((s.robot = null), go("past"), control("chip-go-on"));
+        if (room() === "passage") return ((s.robot = null), go("past"), control("chip-to-hall"));
         if (s.step === "hide") return s.pose === "hidden" && s.hideAt === "counter" ? (go("peek"), control("chip-peek")) : control("chip-hide");
         if (s.step === "peek") return control("chip-peek");
         if (s.step === "duck") return s.pose === "hidden" && !s.peek ? (busy(), go("waitbar")) : control("chip-duck");
@@ -2639,6 +2640,6 @@ export function createEvening(bridge) {
     s.step = step;
     record.steps.push(step);
     setPose(s.pose);
-    control({ wall: "chip-go-on", dodge: "chip-roll", past: "chip-go-on", hide: "chip-hide", peek: "chip-peek", duck: "chip-duck", brochure: "chip-brochure", gohome: "chip-home", box: "chip-box", bite: "chip-bite", chart: "chip-chart", crate: "chip-crate", choose: "", show: "chip-show", bed: "chip-bed", out: "chip-out", nighthall: "chip-bin", nightway: "chip-bin", bin: "chip-bin", post: "chip-post", back: "chip-sneak-home", backway: "chip-sneak-home", backhall: "chip-sneak-home", tobed: "chip-bed" }[step]);
+    control({ wall: "chip-go-on", dodge: "chip-roll", past: "chip-to-hall", hide: "chip-hide", peek: "chip-peek", duck: "chip-duck", brochure: "chip-brochure", gohome: "chip-home", box: "chip-box", bite: "chip-bite", chart: "chip-chart", crate: "chip-crate", choose: "", show: "chip-show", bed: "chip-bed", out: "chip-out", nighthall: "chip-bin", nightway: "chip-bin", bin: "chip-bin", post: "chip-post", back: "chip-sneak-home", backway: "chip-sneak-home", backhall: "chip-sneak-home", tobed: "chip-bed" }[step]);
   }
 }

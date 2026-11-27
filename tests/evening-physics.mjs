@@ -142,7 +142,8 @@ const robots = await ev(() => {
     if (!r) return;
     out.path.push([Math.round(r.x), Math.round(r.y)]);
     window.__ss.drawFrame();
-    out.cones.push(window.__ss.conesDrawn().some((c) => c.id === "hallway-robot"));
+    // (in the hallway: waiting outside the hall's doorway first, it is not in the picture)
+    r.x > 20 && r.x < 940 && out.cones.push(window.__ss.conesDrawn().some((c) => c.id === "hallway-robot"));
   });
   // the bay: before the post (the night robot, the two parked), after (the night robot, the two woken)
   window.__jump(142);

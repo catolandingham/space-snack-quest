@@ -28,6 +28,7 @@ export const EVENING_LINES = Object.freeze(
     { id: "sign-me", who: "sign", text: "ME", status: "approved", source: "story pass 2026-11-26 decided 2026-11-26 (question 2: A, two tags with arrows)" },
     { id: "sign-mops", who: "sign", text: "MOPS", status: "approved", source: "story pass 2026-11-26 decided 2026-11-26 (question 2: A)" },
     { id: "robot-beep", who: "robot", text: "BEEP BEEP", status: "approved", source: "Brian 2026-11-13 (DECISIONS R62)" },
+    { id: "chip-to-hall", who: "chip", text: "Squatch: go on to the hall", status: "suggested", source: "new: after the hallway robot has gone (beat 37), the hall's doorway outlined" },
     { id: "chip-roll", who: "chip", text: "Squatch: roll up!", status: "suggested", source: "new: the robot comes through the hallway (story pass beat 37: ROLL · ball or step back)" },
     { id: "where-hallway", who: "lockup", text: "in the hallway", status: "suggested", source: "new: the lockup card when the hallway robot sees him (beat 37)" },
     // (said by the three cleaning robots of beat 36b when the guests come in; 36b is not on this branch: a hand-over)
