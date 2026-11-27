@@ -100,6 +100,7 @@ const report = await page.evaluate(async (chips) => {
     // keypad, the snacks, the Guardians' plate) are tapped, and their thing glows
     "Squatch: look at your crate": { es: "crate", x: 330, y: 500, look: [184, 392] },
     "Squatch: look at the calendar": { es: "cal", x: 230, y: 392, look: [133, 192] },
+    "Squatch: draw the plan at your desk": { es: "drawplan", x: 550, y: 392, look: [459, 238] }, // (round 7, q: 132: the desk outlined)
     "Squatch: sneak to the big vent": { es: "sneak", walk: true, x: 380, y: 556, look: [916, 362] },
     "Squatch: go to the office door": { es: "tohall", walk: true, look: [36, 262] },
     "Squatch: book the empty crate on the computer": { es: "computer", x: 610, y: 585, look: [735, 300] },

@@ -103,6 +103,13 @@ export const ESCAPE_LINES = Object.freeze(
     pend("sq-locked", "sq", "It's locked.", "45b", "NEW"),
     pend("mops-code", "mops", "There's a code. He wrote it on that form.", "45b", "NEW"),
     pend("mops-pen", "mops", "In pen.", "45b", "NEW"),
+    // round 7 (r5 12:19, r6 0:54, q: 132): the plan is drawn at his desk, one picture a tap, with crayon words
+    r7("mops-plan", "mops", "Let's make a plan.", "r5 12:19, NEW: Brian's words", 132),
+    r7("chip-desk", "chip", "Squatch: draw the plan at your desk", "r5 12:19, NEW goal words", 132),
+    r7("button-draw", "button", "DRAW · plan", "r5 12:19, NEW: one tap a picture", 132),
+    r7("plan-1", "paper", "GET THE CODE", "r5 12:19, NEW: crayon words under the door with its keypad", 132),
+    r7("plan-2", "paper", "BOOK THE CRATE", "r5 12:19, NEW: crayon words under the computer", 132),
+    r7("plan-3", "paper", "RIDE TO MARS", "r5 12:19, NEW: crayon words under the crate, the arrow and the red planet", 132),
     // ---- 46: the almost-slip ----
     pend("mops-ate", "mops", "And I ate that form. Well. Half ate it.", 46, "NEW"),
     pend("mops-bin", "mops", "The bin was emptied days ago.", 46, "NEW"),

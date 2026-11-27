@@ -31,6 +31,8 @@ export const ES_HOME = Object.freeze({
   stamp: Object.freeze({ x: 300, y: 556 }),
   calendar: Object.freeze({ x0: 99, y0: 196, x1: 167, y1: 279 }),
   calAt: Object.freeze({ x: 230, y: 392 }),
+  // round 7 (r5 12:19, q: 132): the plan is drawn at his homework desk (home-alone.js's homework spot)
+  desk: Object.freeze({ x: 550, y: 392, r: 60, box: Object.freeze({ x0: 396, x1: 522, y0: 238, y1: 352 }) }),
   brochureUp: Object.freeze({ x0: 385, y0: 90, x1: 575, y1: 349 }), // (the evening's brochure, its shape)
 });
 // The wardrobe and the Guardian Box in it (home-morning-art.js MORNING_THINGS.boxIn) are read from there.

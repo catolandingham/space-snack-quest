@@ -74,7 +74,7 @@ import { MORNING_THINGS } from "./home-morning-art.js";
 
 export const ESCAPE_ID = "ch1-escape";
 // The steps the player controls (ch1Step "es-<step>"), in order. (jump() takes these, and "start".)
-export const ESCAPE_STEPS = Object.freeze(["mop", "mopoff", "walkhome", "show", "crate", "cal", "sneak", "ball", "tunnel", "lamp", "wall", "toys", "stubs", "note", "slip", "grab", "tohall", "pad", "computer", "duck", "site", "label", "tobar", "snacks", "food", "gohome", "closet", "box"]);
+export const ESCAPE_STEPS = Object.freeze(["mop", "mopoff", "walkhome", "show", "crate", "cal", "drawplan", "sneak", "ball", "tunnel", "lamp", "wall", "toys", "stubs", "note", "slip", "grab", "tohall", "pad", "computer", "duck", "site", "label", "tobar", "snacks", "food", "gohome", "closet", "box"]);
 // The steps where the stick drives Mops (the rest drive Squatch).
 const MOPS_STEPS = Object.freeze(["mop", "mopoff", "walkhome"]);
 // The steps in the vent, where the player is Mops too (48).
@@ -91,6 +91,7 @@ const RESTART_TO = Object.freeze({
   home: "walkhome",
   shown: "show",
   plan0: "show",
+  planned: "drawplan",
   crated: "crate",
   caled: "cal",
   slip46: "cal",
@@ -487,7 +488,9 @@ export function createEscape(bridge) {
     go("plan0", { plan: { has: {}, ticks: {} } });
     e.queue([...sayParts("sq", "sq-how"), ...sayParts("mops", "mops-crate"), e.run(() => (go("crate"), control("chip-crate-look")))]);
   }
-  const planShow = (add) => E().run(() => (Object.assign(L().plan.has, add), (L().cu = "plan"), (L().planAt = E().time()), sfx("pickup")));
+  // (round 7, q: 132: PLAN_AT_DESK false brings back the old pop-up pictures during the talk, option B's nearest)
+  const PLAN_AT_DESK = true;
+  const planShow = (add) => (PLAN_AT_DESK ? wait(0) : E().run(() => (Object.assign(L().plan.has, add), (L().cu = "plan"), (L().planAt = E().time()), sfx("pickup"))));
   function lookCrate() {
     const e = E();
     busy();
@@ -510,8 +513,31 @@ export function createEscape(bridge) {
       ...sayParts("mops", "mops-code"),
       ...sayParts("mops", "mops-pen"),
       e.run(() => (L().cu = "")),
-      e.run(almostSlip),
+      // (round 7, r5 12:19: "he should go to his desk and say let's make a plan")
+      ...(PLAN_AT_DESK ? [...sayParts("mops", "mops-plan"), e.run(() => (go("drawplan", { plan: { has: {}, ticks: {} } }), control("chip-desk")))] : [e.run(almostSlip)]),
     ]);
+  }
+  // the crayon plan small in the top right corner, over the room (round 7, q: 132)
+  function planMini(ctx, l) {
+    return { at: drawPlan(ctx, 690, 14, 250, l.plan, PLAN_WORDS), has: { ...l.plan.has }, ticks: { ...l.plan.ticks }, mini: true };
+  }
+  const PLAN_WORDS = Object.freeze({ door: escapeWords("plan-1"), computer: escapeWords("plan-2"), crate: escapeWords("plan-3") });
+  // DRAW · plan at his desk (round 7, q: 132): each tap draws one picture on the sheet, with its crayon words; the third
+  // finishes it, and the talk goes on (beat 46)
+  const PLAN_ORDER = Object.freeze([{ door: true }, { computer: true }, { crate: true, ship: true }]);
+  function drawPlanStep() {
+    const e = E(),
+      l = L();
+    if (l.step !== "drawplan") return;
+    const n = Object.keys(l.plan.has).filter((k) => k !== "ship").length;
+    if (n >= 3) return;
+    Object.assign(l.plan.has, PLAN_ORDER[n]);
+    Object.assign(l, { cu: "plan", planAt: e.time() });
+    sfx("key");
+    if (n + 1 < 3) return;
+    busy();
+    go("planned");
+    e.queue([e.until(() => e.time() - L().planAt >= 1.0), e.tapWait(), e.run(() => ((L().cu = ""), almostSlip()))]);
   }
 
   // ---------- beat 46: the almost-slip ----------
@@ -800,7 +826,8 @@ export function createEscape(bridge) {
       e.run(toHallway),
     ]);
   }
-  // The crayon plan pops up for a moment and a crayon tick lands on one picture (no words: it plays by itself).
+  // The crayon plan, small in the corner, gets a crayon tick on one picture (no words: it plays by itself). Round 7
+  // (r6 0:54, q: 132): no full-screen pop-up later in the chapter.
   function planTick(id) {
     const e = E();
     return [
@@ -809,7 +836,7 @@ export function createEscape(bridge) {
         l.plan = l.plan || { has: { crate: true, ship: true, computer: true, door: true }, ticks: {} };
         Object.assign(l.plan.has, { crate: true, ship: true, computer: true, door: true });
         l.plan.ticks[id] = true;
-        Object.assign(l, { cu: "plan", planAt: e.time() });
+        Object.assign(l, { cu: "planmini", planAt: e.time() });
         sfx("pickup");
       }),
       e.until(() => e.time() - L().planAt >= ES_PACE.planPop),
@@ -1187,6 +1214,7 @@ export function createEscape(bridge) {
         hot = (id, wordsId, f) => [{ id, verb: escapeWords(wordsId).split(" · ")[0], cap: escapeWords(wordsId).split(" · ")[1], who: "sq", hot: true, x: s.x, y: s.y, r: 40, f }];
       if (l.step === "site") return hot("es-site", "button-computer", returnCrate);
       if (l.step === "label") return hot("es-label", "button-label", takeLabel);
+      if (l.step === "drawplan" && l.cu === "plan") return hot("es-desk", "button-draw", drawPlanStep); // (round 7, q: 132: the next picture)
       if (l.step === "note" && l.cu === "note") return [{ ...hot("es-note", "button-note", writeLine)[0], who: "mo", x: e.pos("mops").x, y: e.pos("mops").y }];
       if (l.step === "snacks" && left >= 0 && !l.snacks.carry) return hot("es-snack", "button-snack", () => takeSnack(left));
       if (l.step === "food" && left >= 0 && !l.snacks.carry) return hot("es-food", "button-food", () => takeSnack(left));
@@ -1219,6 +1247,7 @@ export function createEscape(bridge) {
       return [{ id: "es-show", verb, cap, who: "sq", hot: true, x: s.x, y: s.y, r: 40, at: [s.x, s.y - 70], f: showBrochure }];
     }
     if (l.step === "crate") return [spot("es-crate", "button-crate", { x: ES_HOME.crateAt.x, y: ES_HOME.crateAt.y, r: 90 }, ES_HOME.crate, lookCrate)];
+    if (l.step === "drawplan") return [spot("es-desk", "button-draw", { x: ES_HOME.desk.x, y: ES_HOME.desk.y, r: ES_HOME.desk.r }, ES_HOME.desk.box, drawPlanStep)];
     if (l.step === "cal") return [spot("es-cal", "button-calendar", { x: ES_HOME.calAt.x, y: ES_HOME.calAt.y, r: 60 }, ES_HOME.calendar, lookCalendar)];
     // 44d: his own Employee of the Month photo in the hallway, optional, once
     if (doorSpot.length) return doorSpot;
@@ -1442,7 +1471,8 @@ export function createEscape(bridge) {
     // the star on his GANITOR tag, close (44b); the slip folded in his paw (49); the crayon plan's tick
     if (l.cu === "star") out.star = drawStarCloseup(ctx, l.star, t - l.starAt);
     if (l.cu === "fold") (blurBehind(ctx), (out.fold = drawFoldCloseup(ctx, t - l.foldAt)));
-    if (l.cu === "plan") (blurBehind(ctx), (out.plan = { at: drawPlan(ctx, 180, 90, 600, l.plan), has: { ...l.plan.has }, ticks: { ...l.plan.ticks } }));
+    if (l.cu === "plan") (blurBehind(ctx), (out.plan = { at: drawPlan(ctx, 180, 90, 600, l.plan, PLAN_WORDS), has: { ...l.plan.has }, ticks: { ...l.plan.ticks } }));
+    if (l.cu === "planmini") out.plan = planMini(ctx, l);
     return out;
   }
   function drawVent(ctx, l) {
@@ -1576,6 +1606,7 @@ export function createEscape(bridge) {
       }
       l.step === "crate" && (drew.mark = markBox(ctx, ES_HOME.crate, t));
       l.step === "cal" && (drew.mark = markBox(ctx, ES_HOME.calendar, t));
+      l.step === "drawplan" && !l.cu && (drew.mark = markBox(ctx, ES_HOME.desk.box, t));
     }
     // 45a: a gulp and one sweat drop (he sent that order); the brochure held up, big; hearts over Mops
     if (room === "closet" && l.gulpAt >= 0 && t - l.gulpAt < ES_PACE.gulp) drew.sweat = drawGulpSweat(ctx, headBox("sq"), t - l.gulpAt);
@@ -1594,11 +1625,13 @@ export function createEscape(bridge) {
     }
     // hearts over Mops at the snack counter (he says nothing)
     if (l.heartsAt >= 0 && l.step === "hearts" && room === "hall") drawHearts(ctx, m.x, m.y - 46 * moScale("hall"), t - l.heartsAt);
+    // the plan's tick, small in the corner (round 7, q: 132: no full-screen pop-up)
+    if (l.cu === "planmini") drew.plan = planMini(ctx, l);
     // the close-ups over the blurred room
-    if (l.cu) {
+    if (l.cu && l.cu !== "planmini") {
       blurBehind(ctx);
       if (l.cu === "cal") drew.week = drawWeek(ctx, t - l.calAt, t);
-      else if (l.cu === "plan") drew.plan = { at: drawPlan(ctx, 180, 90, 600, l.plan), has: { ...l.plan.has }, ticks: { ...l.plan.ticks } };
+      else if (l.cu === "plan") drew.plan = { at: drawPlan(ctx, 180, 90, 600, l.plan, PLAN_WORDS), has: { ...l.plan.has }, ticks: { ...l.plan.ticks } };
       else if (l.cu === "pad") {
         const buzz = l.buzzAt >= 0 ? Math.max(0, 1 - (t - l.buzzAt) / KEYPAD.buzz) : 0;
         drew.pad = drawKeypad(ctx, { typed: l.typed, buzz, ok: l.okAt >= 0, t, big: !!l.slipBig });
@@ -1711,7 +1744,7 @@ export function createEscape(bridge) {
       return toBay();
     }
     // 45a, 45b: home at night, Mops just in, the brochure in Squatch's paw
-    if (step === "show" || step === "crate" || step === "cal") {
+    if (step === "show" || step === "crate" || step === "cal" || step === "drawplan") {
       e.set("ch1Escape", fresh({ night: true, star: "star-great", brochure: "paw", plan: { has: {}, ticks: {} } }));
       e.enterRoom("closet", "QB");
       e.set("sqPose", "stand");
@@ -1724,7 +1757,7 @@ export function createEscape(bridge) {
       e.face("mops", -1);
       step === "cal" && (L().plan.has.crate = true);
       go(step);
-      return control(step === "show" ? "chip-show" : step === "crate" ? "chip-crate-look" : "chip-cal-look");
+      return control(step === "show" ? "chip-show" : step === "crate" ? "chip-crate-look" : step === "drawplan" ? "chip-desk" : "chip-cal-look");
     }
     const at = { site: "computer", duck: "computer", label: "computer", tobar: "computer", food: "snacks", gohome: "snacks", box: "closet" }[step] || step;
     const i = ["ball", "grab", "tohall", "pad", "computer", "snacks", "closet"].indexOf(at);

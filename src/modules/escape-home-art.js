@@ -126,7 +126,7 @@ export function drawStampTouch(ctx, touched) {
  * in the order 3, the ship over it, 2, 1: st.has = { crate, ship, computer, door }), `st.ticks` which have a tick.
  * At (x, y), `w` wide. Returns where each picture is.
  */
-export function drawPlan(ctx, x, y, w, st) {
+export function drawPlan(ctx, x, y, w, st, words = null) {
   const h = w * 0.62,
     has = st.has || {},
     ticks = st.ticks || {};
@@ -153,7 +153,16 @@ export function drawPlan(ctx, x, y, w, st) {
   if (has.door) crayonDoor(ctx, at.door.x, at.door.y, k);
   if (has.computer) crayonComputer(ctx, at.computer.x, at.computer.y, k);
   if (has.crate) crayonCrate(ctx, at.crate.x, at.crate.y, k);
-  if (has.ship) drawPlanShip(ctx, at.crate.x - 10 * k, at.crate.y - 120 * k, 1.1 * k, true);
+  // round 7 (r5 12:19, q: 132): with words, the third picture is the crate, an arrow and the red planet (Mars), and each
+  // picture has its crayon words under it; without words, the old ship over the crate
+  if (has.ship && !words) drawPlanShip(ctx, at.crate.x - 10 * k, at.crate.y - 120 * k, 1.1 * k, true);
+  if (has.ship && words) crayonToMars(ctx, at.crate.x, at.crate.y - 105 * k, k);
+  if (words) {
+    ctx.font = esHomeFont(Math.round(26 * k));
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#c2185b";
+    for (const id of ["door", "computer", "crate"]) has[id] && words[id] && ctx.fillText(words[id], at[id].x - 4 * k, h - 18 * k, cw - 12 * k);
+  }
   for (const id of ["door", "computer", "crate"]) if (ticks[id]) tick(ctx, at[id].x + cw * 0.3, at[id].y - 60 * k, k);
   ctx.restore();
   return at;
@@ -183,6 +192,28 @@ function crayonComputer(ctx, x, y, k) {
   ctx.lineTo(x, y + 34 * k);
   ctx.moveTo(x - 34 * k, y + 36 * k);
   ctx.lineTo(x + 34 * k, y + 36 * k);
+  ctx.stroke();
+}
+// (round 7, q: 132) an arrow up from the crate to a red planet with a ring of craters: the ride to Mars
+function crayonToMars(ctx, x, y, k) {
+  crayon(ctx, INK, k);
+  ctx.beginPath();
+  ctx.moveTo(x - 40 * k, y + 50 * k);
+  ctx.quadraticCurveTo(x - 30 * k, y, x + 6 * k, y - 10 * k);
+  ctx.moveTo(x + 6 * k, y - 10 * k);
+  ctx.lineTo(x - 10 * k, y - 20 * k);
+  ctx.moveTo(x + 6 * k, y - 10 * k);
+  ctx.lineTo(x - 6 * k, y + 6 * k);
+  ctx.stroke();
+  ctx.fillStyle = "#e5533d";
+  ctx.beginPath();
+  ctx.arc(x + 44 * k, y - 22 * k, 26 * k, 0, Math.PI * 2);
+  ctx.fill();
+  crayon(ctx, "#a8321f", k * 0.7);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(x + 36 * k, y - 28 * k, 5 * k, 0, Math.PI * 2);
+  ctx.arc(x + 54 * k, y - 14 * k, 4 * k, 0, Math.PI * 2);
   ctx.stroke();
 }
 function crayonCrate(ctx, x, y, k) {

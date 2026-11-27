@@ -117,10 +117,31 @@ const run = await page.evaluate(
     let seenLines = 0,
       thinkAt = -1;
     watch = () => S().think && thinkAt < 0 && (thinkAt = seenLines);
-    out.b3 = lines((i) => ((seenLines = i + 1), (d().drew.plan && plans.push(Object.keys(d().drew.plan.has).sort().join("+")), S().think && thinks.push(i))));
+    out.b3 = lines((i) => d().drew.plan && plans.push(Object.keys(d().drew.plan.has).sort().join("+")));
+    // round 7 (r5 12:19, q: 132): "Let's make a plan.", then the desk: one picture a tap, with its crayon words
+    tick();
+    ss.drawFrame();
+    out.desk = { step: S().step, chip: n.ch1Chip, mark: !!d().drew.mark, presses: [], plans: [], words: [] };
+    n.sq.x = B.place.HOME.desk.x;
+    n.sq.y = B.place.HOME.desk.y;
+    for (let k = 0; k < 3; k++) {
+      out.desk.presses.push(press());
+      tick();
+      const P = CanvasRenderingContext2D.prototype,
+        ft = P.fillText;
+      P.fillText = function (t) {
+        out.desk.words.includes(t) || out.desk.words.push(t);
+        return ft.apply(this, arguments);
+      };
+      ss.drawFrame();
+      P.fillText = ft;
+      d().drew.plan && out.desk.plans.push(Object.keys(d().drew.plan.has).sort().join("+"));
+    }
+    out.b4 = lines((i) => ((seenLines = i + 1), S().think && thinks.push(i)));
     watch = null;
-    out.thinkAt = thinkAt;
-    out.b3 = out.b3.filter(Boolean); // (the walk out starts after the last line)
+    out.thinkAt = thinkAt - out.b4.findIndex(Boolean); // (counted from the first line: the plan's close-up waits for one NEXT first)
+    out.b3 = out.b3.filter(Boolean);
+    out.b4 = out.b4.filter(Boolean); // (the walk out starts after the last line)
     out.plans = [...new Set(plans)];
     out.thinkBefore = thinks;
     until(() => S().step === "ball" || S().step === "tobay" || S().step === "sneak", 20);
@@ -138,10 +159,13 @@ g.check("45a, 45b: \"Let's go find that pancake place.\", Mops touches the worn 
 g.check("45b: LOOK · crate, the crate outlined; ↺ there puts him back", o.crate.step === "crate" && o.crate.chip === W["chip-crate-look"] && o.crate.mark && o.crate.press === W["button-crate"] && o.crate.restart.step === "crate" && o.crate.restart.back, o.crate);
 g.check("45b: the crate picture on the crayon plan, then \"...I can LEAVE in a crate!\" and \"Empty crates ride back on the ship.\"", JSON.stringify(o.b2) === JSON.stringify(w("sq-leave", "mops-empties")), o.b2);
 g.check("45b: LOOK · calendar, the calendar outlined", o.cal.step === "cal" && o.cal.chip === W["chip-cal-look"] && o.cal.mark && o.cal.press === W["button-calendar"], o.cal);
-const talk = w("mops-book", "mops-computer", "sq-office", "sq-locked", "mops-code", "mops-pen", "mops-ate", "mops-bin", "sq-slip", "mops-hm", "sq-vent", "mops-lost", "mops-know");
-g.check("45b, 46: the plan's talk and the almost-slip, word for word, in order", JSON.stringify(o.b3) === JSON.stringify(talk), o.b3);
-g.check("45b: the plan's pictures come one at a time: the crate, the ship over it, the computer, the door", JSON.stringify(o.plans) === JSON.stringify(["crate", "crate+ship", "computer+crate+ship", "computer+crate+door+ship"]), o.plans);
-g.check("46: his thought picture of the vent is up after \"Hm?\" and before he says \"Didn't a copy get sucked into the vent?\"", o.thinkAt === o.b3.indexOf(W["mops-hm"]) + 1 && o.b3.indexOf(W["sq-vent"]) === o.thinkAt, { thinkAt: o.thinkAt, b3: o.b3 });
+const talk = w("mops-book", "mops-computer", "sq-office", "sq-locked", "mops-code", "mops-pen", "mops-plan");
+g.check("45b: the plan's talk, word for word, in order, ending \"Let's make a plan.\" (round 7, q: 132)", JSON.stringify(o.b3) === JSON.stringify(talk), o.b3);
+g.check("45b (round 7, r5 12:19, r6 0:54, q: 132): no plan pictures pop up during the talk", o.plans.length === 0, o.plans);
+g.check("45b (round 7, q: 132): \"Squatch: draw the plan at your desk\", the desk outlined; DRAW · plan three times draws one picture a tap with its crayon words", o.desk.step === "drawplan" && o.desk.chip === W["chip-desk"] && o.desk.mark && o.desk.presses.every((p) => p === W["button-draw"]) && JSON.stringify(o.desk.plans) === JSON.stringify(["door", "computer+door", "computer+crate+door+ship"]) && ["plan-1", "plan-2", "plan-3"].every((k) => o.desk.words.includes(W[k])), o.desk);
+const talk46 = w("mops-ate", "mops-bin", "sq-slip", "mops-hm", "sq-vent", "mops-lost", "mops-know");
+g.check("46: the almost-slip, word for word, in order", JSON.stringify(o.b4) === JSON.stringify(talk46), o.b4);
+g.check("46: his thought picture of the vent is up after \"Hm?\" and before he says \"Didn't a copy get sucked into a vent?\"", o.thinkAt === o.b4.indexOf(W["mops-hm"]) + 1 && o.b4.indexOf(W["sq-vent"]) === o.thinkAt, { thinkAt: o.thinkAt, b4: o.b4 });
 g.check("46: then on to the vent", ["tobay", "ball", "sneak"].includes(o.after), o.after);
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();
