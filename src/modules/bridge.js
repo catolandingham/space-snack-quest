@@ -36,6 +36,7 @@ import { nightPicture, isNightNow, nightDrawn } from "./night-look.js";
 import { snackWord } from "./snack-name.js";
 import { drawStationStamp, crateStampDrawn, setCrayonSource } from "./crate-stamp.js";
 import { cakeChartDrawn } from "./cake-chart.js";
+import { setRoomEngine, roomWaypoint, walkerSolids, freeSpot, homeDepthItems, homeDepthDrawn, physicsNow, physicsLog, clearPhysicsLog, HOME_BASELINES, afterMove } from "./room-model.js";
 
 /**
  * The game-state fields a rebuilt beat may write, through engine().set(field, value). Anything else it
@@ -118,7 +119,24 @@ export function createBridge() {
           e.set(field, value);
         },
       });
+      setRoomEngine(engine);
     },
+    /** The room model (room-model.js): the next corner of a scripted step round the room's solids, or null (straight). */
+    roomWaypoint,
+    /** The room model: right after a walker's own step (a pushed crate keeps out of things). */
+    afterMove,
+    /** The room model: a walker's own solids (grown by how much wider than a feet box his body is). */
+    walkerSolids,
+    /** The room model: the free floor nearest a place, for a walker in the room now. */
+    freeSpot,
+    /** The room model: the home room's things as items in the people's back-to-front list (drawn at their floor lines). */
+    homeDepthItems,
+    homeBaselines: HOME_BASELINES,
+    /** Tests: the room model's record (moves through solids), where everyone stands now, the home things drawn over whom. */
+    physicsNow,
+    physicsLog,
+    clearPhysicsLog,
+    homeDepthDrawn,
     /** The handed-over engine functions, or null before the older program has started. */
     engine() {
       return engine;

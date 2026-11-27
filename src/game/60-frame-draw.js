@@ -667,32 +667,32 @@
       let k = n.scene || "";
       return k[0] === "Q" || k === "O1";
     }
-    // With the picture, the bucket and bed are already drawn in it. When Squatch stands behind
-    // one, paint that piece of the picture again over him, so nothing is drawn twice.
+    // With the picture, the bucket and bed are already drawn in it. Someone behind one gets that piece of the picture
+    // painted again over him: at its floor line in X2's back-to-front list (room-model.js), or without the module when Squatch is.
     const HOME_FRONT = {
       bucket: { x: 530, y: 506, w: 72, h: 66, back: 566 },
       bed: { x: 92, y: 396, w: 188, h: 132, back: 526 },
       gbox: { x: 188, y: 356, w: 48, h: 40, back: 390 }, // out on the floor by the closet while he puts the gift in (home-morning.js)
     };
-    function homeFront() {
+    function homeFront(id0) {
       let l = n.sq,
         img = window.SSQ && window.SSQ.nightPicture ? window.SSQ.nightPicture("home-closed", lockedImg[n.wardrobe === "open" ? "home-open" : "home-closed"]) : lockedImg[n.wardrobe === "open" ? "home-open" : "home-closed"];
-      if (n.sqPose !== "stand" || !img || !img.complete || !img.naturalWidth) return;
+      if ((!id0 && n.sqPose !== "stand") || !img || !img.complete || !img.naturalWidth) return;
       let k = img.naturalWidth / c,
         ky = img.naturalHeight / b;
       for (let id in HOME_FRONT) {
-        let p = HOME_FRONT[id];
+        let p = HOME_FRONT[id], near = id0 ? id === id0 : l.y < p.back && l.x > p.x - 40 && l.x < p.x + p.w + 40;
         if (id === "gbox") {
           // Not in the picture any more: drawn by code, and only once it is out of the closet.
-          gboxOut() && l.y < p.back && l.x > p.x - 40 && l.x < p.x + p.w + 40 && (hmBeat() ? hmBeat().drawBox(e) : L2());
+          gboxOut() && near && (hmBeat() ? hmBeat().drawBox(e) : L2());
           continue;
         }
         // While hopping out of bed he is over the bed, not behind it.
-        !(id === "bed" && n.hopOut >= 0) && !(pkBeat() && pkBeat().gone(id)) && l.y < p.back && l.x > p.x - 40 && l.x < p.x + p.w + 40 && ((id === "bucket" && window.SSQ && window.SSQ.drawHomeBucket && window.SSQ.drawHomeBucket(e, !0)) || e.drawImage(img, p.x * k, p.y * ky, p.w * k, p.h * ky, p.x, p.y, p.w, p.h)); // Mops's mop bucket (mop-bucket.js)
+        !(id === "bed" && n.hopOut >= 0) && !(pkBeat() && pkBeat().gone(id)) && near && ((id === "bucket" && window.SSQ && window.SSQ.drawHomeBucket && window.SSQ.drawHomeBucket(e, !0)) || e.drawImage(img, p.x * k, p.y * ky, p.w * k, p.h * ky, p.x, p.y, p.w, p.h)); // Mops's mop bucket (mop-bucket.js)
       }
     }
     function g5() {
-      if (homePicture()) return homeFront();
+      if (homePicture()) return window.SSQ && window.SSQ.homeDepthItems ? void 0 : homeFront();
       let l = n.sq;
       (!(n.sqPose === "stand" && l.y < 566 && Math.abs(l.x - 610) < 80) &&
         !(n.botOn && n.bot.y >= 566 && Math.abs(n.bot.x - 610) < 90) &&
@@ -1941,7 +1941,7 @@
                 });
             },
           }),
-        l.sort((s, q) => s.y - q.y).forEach((s) => s.d()),
+        (homePicture() && window.SSQ && window.SSQ.homeDepthItems && l.push(...window.SSQ.homeDepthItems([...(n.sqPose === "stand" ? [{ who: "sq", x: o.x, y: o.y, half: 40 }] : []), ...(n.moPose !== "hidden" ? [{ who: "mops", x: n.mo.x, y: n.mo.y, half: 60 }] : []), ...(n.botOn ? [{ who: "bot", x: n.bot.x, y: n.bot.y, half: 40 }] : [])], (id) => homeFront(id), (id) => id === "gbox" && !gboxOut())), l).sort((s, q) => s.y - q.y).forEach((s) => s.d()),
         n.pulse.has("sign") &&
           n.door < 0.3 &&
           (e.save(),

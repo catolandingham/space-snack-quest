@@ -10,7 +10,7 @@
             n.room !== "duct" && R0(s),
             (s.walk += l * 11),
             (s.moving = !0),
-            Math.abs(o.x) > 0.1 && (s.f = o.x > 0 ? 1 : -1));
+            Math.abs(o.x) > 0.1 && (s.f = o.x > 0 ? 1 : -1), window.SSQ && window.SSQ.afterMove && window.SSQ.afterMove("mops")); // (after his step and turn: room-model.js)
         } else n.mo.moving = !1;
       }
       if (

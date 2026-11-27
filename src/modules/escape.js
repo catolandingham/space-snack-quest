@@ -35,6 +35,7 @@
  * one he did (RESTART_TO). Words: escape-lines.js; places and times: escape-place.js; the snack's names:
  * snack-name.js. Every drawing and number is a PLACEHOLDER for Brian.
  */
+import { personBox } from "./room-model.js";
 import { escapeWords } from "./escape-lines.js";
 import { OFFICE_CODE, BAY_DAY, BAY_NIGHT, ES_HOME, ES_BAY, ROBOT_SIGHT, VENT_ROOM, VENT_TUNNEL, ES_HALLWAY, KEYPAD, keyAt, OFFICE, SITE, ES_BAR, SNACKS, ES_PACE, WEEK, MOP_CALM, MOPOFF, NEWS, ROUTE_HOME, ROUTE_VENT, ROUTE_OFFICE, ROUTE_BAR, ROUTE_HOME_NIGHT, HALL_GUEST, PLAQUE, FOLLOW, ES_DOORS } from "./escape-place.js";
 import { freshFloor, goatCells, beardAt, mopCalm, mopGoat, goatClean, wheelsAcross, starFor, bars, robotsAt, drawCalmFloor, drawMopFloor, drawBars, drawStarCloseup, markPatch } from "./escape-mopoff.js";
@@ -1450,7 +1451,7 @@ export function createEscape(bridge) {
     // the one highlight on the next thing (over the dark: it stays bright)
     if (e.get("ctrl") && !e.current() && !l.cu) {
       const sp = spots()[0];
-      sp && sp.thing && (out.mark = markBox(ctx, sp.thing, t));
+      sp && sp.thing && (out.mark = markBox(ctx, sp.thing, t, 6, e.get("moPose") !== "hidden" ? [personBox("mops", m.x, m.y, VENT_ROOM.scale)] : []));
       out.next = sp ? sp.id : "";
     }
     if (l.eyesAt >= 0 && t - l.eyesAt < ES_PACE.eyes) out.eyes = drawEyesInset(ctx, t - l.eyesAt);

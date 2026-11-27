@@ -436,7 +436,8 @@ const restarts = await page.evaluate(() => {
     n.q = [];
     n.cur = null;
     beat.jump(p);
-    for (let i = 0; i < 30; i++) (ss.tick(0.05), n.cur && n.cur.k === "bub" && ((n.bt = 1), ss.opTap()));
+    // (walkby's jump walks both out of the bay first, round the cargo since the room model: room-model.js; 60 ticks)
+    for (let i = 0; i < (p === "walkby" ? 60 : 30); i++) (ss.tick(0.05), n.cur && n.cur.k === "bub" && ((n.bt = 1), ss.opTap()));
     ss.sectionReset();
     for (let i = 0; i < (p === "walkby" ? 80 : 3); i++) ss.tick(0.05);
     out[p] = { after: beat.debug().state.step, room: n.room, ctrl: n.ctrl, busy: !!(n.cur || n.q.length) };

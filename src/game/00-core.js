@@ -1371,7 +1371,7 @@
     // What blocks a walker's feet: the room's solids, plus a standing Mops when the walker is Squatch.
     // R0 pushes feet out of these, and a tap walk goes around them (src/modules/tap-path.js).
     function walkSolids(l) {
-      let solids = ih();
+      let solids = window.SSQ && window.SSQ.walkerSolids ? window.SSQ.walkerSolids(l === n.mo ? "mops" : "sq", l, ih()) : ih(); // (a wide Mops keeps his body off things: room-model.js)
       (n.room === "closet" || n.room === "hall" || n.room === "passage" || n.room === "hangar" || n.room === "duct") &&
         n.moPose !== "hidden" &&
         n.moPose !== "sleep" &&
@@ -1382,7 +1382,7 @@
         solids.push(nt(n.mo.x, n.mo.y, 46, 46, 46));
       return solids;
     }
-    function R0(l) {
+    function R0(l) { window.SSQ && window.SSQ.afterMove && window.SSQ.afterMove(l === n.mo ? "mops" : "sq"); // (what he pushes stays out of things: room-model.js)
       let solids = walkSolids(l);
       let inside = (x, y) => solids.some((o) => x > o.x0 && x < o.x1 && y > o.y0 && y < o.y1);
       if (!inside(l.x, l.y)) return;
