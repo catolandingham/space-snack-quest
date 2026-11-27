@@ -515,7 +515,9 @@ export function createLunchSneak(bridge) {
       room: () => e.room(),
       people: () => L().people,
       firstTime: () => !firstAlarm.seen,
-      bell: () => psound.one("bell"),
+      // the alarm's sound while it rings and they search: the red alert whoops (Brian 2026-11-26, #52: party-board-sounds.js
+      // BOARD.alarm, as at the party), never the old bell
+      bell: () => psound.one("alarm"),
       // Wordless, nothing to tap: it plays itself for ALARM.closeUp seconds of game time (tick ends it), then the bell.
       closeUp(done) {
         firstAlarm.seen = true;

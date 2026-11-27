@@ -425,6 +425,9 @@ const capture = !registered
       hide && hide.f();
       until(() => !st().alarm, 20);
       out.lostNote = !st().alarm;
+      // what rang through the alarm: the red alert whoops again and again, the bell at most once (after the close-up)
+      const rang = beat.debug().partySounds;
+      out.rang = { alarm: rang.filter((x) => x === "alarm").length, bell: rang.filter((x) => x === "bell").length };
       out.afterLost = { ctrl: n.ctrl, chip: ss.chipNow(), step: st().step, pose: st().pose };
       // seen again, and he stays out: a guard reaches him, the LOCKUP card, and the step restarts hidden in the plant
       until(() => lu.watcherNow(lu.WATCHERS[0], st().t).phase === "look", 8);
@@ -456,6 +459,7 @@ const capture = !registered
 if (capture) {
   g.check("seen (standing in a look for 0.8 s): FUR! and the one capture rule starts; \"Squatch: hide\"", capture.seen && capture.shout === "shout" && capture.chip === L["chip-hide"], capture);
   g.check("the first time, the wordless close-up of the hand pulling the alarm (it ends by itself); then two guards come in", capture.closeUp && capture.closeUpGone && capture.guards === 2, capture);
+  g.check("while the alarm rings and they search, the alarm is the red alert whoops again and again (Brian #52), not the old bell", capture.rang && capture.rang.alarm >= 2 && capture.rang.bell <= 1, capture.rang);
   g.check("hidden in the plant through the search: \"They lost you.\", and the sneak goes on with control", capture.hideOffer === L["button-plant"] && capture.lostNote && capture.afterLost.ctrl && capture.afterLost.chip === L["chip-sneak"] && capture.afterLost.pose === "hidden", capture.afterLost);
   g.check("caught: the LOCKUP card names who saw him and where", capture.jail && /tourist/i.test(capture.cause || "") && /hall/.test(capture.cause || ""), { jail: capture.jail, cause: capture.cause });
   const r = capture.restarted;

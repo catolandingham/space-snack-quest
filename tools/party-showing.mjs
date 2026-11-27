@@ -730,65 +730,76 @@ if (which === "morning") {
   await still("room-comes-up-asleep-under-the-blanket");
   await until(async () => (await hm()) === "wake", 4000);
   mark("part wake");
-  await sleep(450);
-  await still("sits-up-blanket-slides-off");
-  await sleep(700);
-  await still("stretches");
-  await stepIs("rocket");
-  await sleep(1200);
-  await still("rocket-glows-pick-up");
-  await press();
-  await sleep(1500);
-  await still("holds-it-up-thinks-of-the-guardians");
-  await until((q) => q.cur === "bub", 4000);
-  await sleep(900);
-  await still("guardians-line");
-  await sleep(2600);
-  await next();
-  await sleep(700);
-  await still("thinks-of-the-guardian-box");
-  await stepIs("closet");
-  await sleep(1000);
-  await still("closet-glows");
-  await walkTo(300, 400, "OPEN · closet");
-  await sleep(500);
-  await still("open-closet");
-  await press();
-  await stepIs("box");
-  await sleep(1000);
-  await still("box-glows-put-in");
-  await press();
-  await until((q) => q.cur === "cutaway", 4000);
-  await sleep(600);
-  await still("close-up-holding-the-gift");
-  await sleep(1400);
-  await still("close-up-gift-in-the-box");
-  await sleep(1500);
-  await next();
-  // the box goes back in the closet, the door shuts, and the bag by the door is outlined for his line
-  await sleep(500);
-  await still("box-goes-back-in-the-closet");
-  await until((q) => q.cur === "bub", 4000);
-  await sleep(1000);
-  await still("bag-glows-he-forgot-his-lunch");
-  await sleep(2000);
-  await next();
-  await stepIs("lunch");
-  await sleep(800);
-  await still("lunch-goal");
-  // the calendar is there to look at (not a step): LOOK · calendar by the wardrobe, then back to the lunch
-  await press();
-  await sleep(1300);
-  await still("calendar-today-optional");
-  await sleep(2400);
-  await floor(880, 540);
-  await stepIs("lunch");
-  await sleep(600);
-  await walkTo(760, 505, "TAKE · lunch");
-  await sleep(400);
-  await still("take-lunch");
-  await press();
-  await until((q) => q.room === "hall" && q.ctrl, 10000);
+  // From the PA on, the morning is played by what is on screen (round D: Mops asleep until the PA, the PA's line,
+  // the note close-up, the Guardians line, the thought bubble, the closet, the box close-up, the walk to the bag):
+  // a line, card or close-up is read and closed with NEXT; with control, the step's action is done the way a kid does.
+  const seenOnce = new Set();
+  const once = async (name) => seenOnce.has(name) || (seenOnce.add(name), await still(name));
+  const t1 = Date.now() + 150000;
+  let calendar = false;
+  for (;;) {
+    if (Date.now() > t1) await fail("the home morning did not reach the hall");
+    const q = await st(),
+      step = await hm();
+    if (q.room === "hall" && q.ctrl) break;
+    if (["bub", "card", "panel", "cutaway"].includes(q.cur)) {
+      await sleep(q.cur === "cutaway" ? 1400 : 900);
+      await once(step + "-" + q.cur + "-" + String(q.text || "").slice(0, 24).replace(/[^A-Za-z0-9]+/g, "-").toLowerCase());
+      await sleep(q.cur === "cutaway" ? 1200 : 1500);
+      const again = await st();
+      again.cur === q.cur && again.text === q.text && (await next());
+      await sleep(400);
+      continue;
+    }
+    if (!q.ctrl) {
+      step === "wake" && (await once("sits-up-and-stretches"));
+      step === "think" && (await sleep(500), await once("thinks-of-the-guardian-box"));
+      step === "mopsUp" && (await sleep(500), await once("mops-gets-up-heart"));
+      await sleep(250);
+      continue;
+    }
+    if (step === "rocket") {
+      await sleep(1000);
+      await once("rocket-outlined-pick-up");
+      await press();
+    } else if (step === "closet") {
+      await sleep(800);
+      await once("closet-outlined");
+      await walkTo(300, 400, "OPEN · closet");
+      await sleep(500);
+      await once("open-closet");
+      await press();
+    } else if (step === "box") {
+      await sleep(900);
+      await once("box-outlined-put-in");
+      await press();
+    } else if (step === "toBag") {
+      await sleep(900);
+      await once("bag-outlined-walk-to-it");
+      await floor(760, 505);
+      // (one tap: a second one while his line is up would close it before it is read)
+      await until(async (q2) => q2.cur === "bub" || (await hm()) !== "toBag", 8000);
+    } else if (step === "lunch") {
+      await sleep(700);
+      await once("lunch-goal");
+      // the calendar is there to look at (not a step): LOOK · calendar by the wardrobe, once, then back to the lunch
+      if (!calendar && q.act === "LOOK · calendar") {
+        calendar = true;
+        await press();
+        await sleep(1300);
+        await once("calendar-today-optional");
+        await sleep(2400);
+        await floor(880, 540);
+        await sleep(600);
+        continue;
+      }
+      await walkTo(760, 505, "TAKE · lunch");
+      await sleep(400);
+      await once("take-lunch");
+      await press();
+      await until((q2) => q2.room === "hall" && q2.ctrl, 10000);
+    } else await sleep(300);
+  }
   await sleep(600);
   await still("out-the-door-lunch-sneak-starts");
   await sleep(1500);
