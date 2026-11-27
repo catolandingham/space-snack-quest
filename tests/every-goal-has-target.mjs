@@ -10,7 +10,7 @@
 import { readFileSync } from "node:fs";
 import { startGame } from "./game-page.mjs";
 
-const src = ["game/12-ch1-redesign.js", "game/13-ch1-slice.js", "game/14-ch1-day2.js", "modules/party-lines.js", "modules/home-morning-lines.js", "modules/lunch-sneak-lines.js", "modules/loading-bay-lines.js", "modules/evening-lines.js"]
+const src = ["game/12-ch1-redesign.js", "game/13-ch1-slice.js", "game/14-ch1-day2.js", "modules/party-lines.js", "modules/home-morning-lines.js", "modules/lunch-sneak-lines.js", "modules/loading-bay-lines.js", "modules/evening-lines.js", "modules/escape-lines.js"]
   .map((f) => readFileSync(new URL("../src/" + f, import.meta.url), "utf8"))
   .join("\n");
 const chips = [...src.matchAll(/Squatch: [^"]+/g)].map((m) => m[0]);
@@ -30,6 +30,8 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: watch Mops",
     // (the octopus's chase, Brian 2026-11-25: the goal is to keep away from him; there is no thing to go to)
     "Squatch: get away from the octopus!",
+    // (night one's vent cutscene, beat 42, its still: 14-ch1-day2.js ch1JumpBeat 142; the player has no control there)
+    "Squatch: hide by the vent",
   ]);
   const play = {
     "Squatch: walk around the room": { scene: "O1", room: "closet", day2: false, walk: true, x: 500, y: 530 },
@@ -83,7 +85,7 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: mark the chart": { ev: "chart", x: 236, y: 440 },
     "Squatch: hold the brochure up to your crate": { ev: "crate", x: 330, y: 458 },
     "Squatch: go home": { ev: "gohome", walk: true, x: 477, y: 555 },
-    "Squatch: show Mops the brochure": { ev: "show" },
+    "Squatch: show Mops the brochure": [{ ev: "show" }, { es: "show", x: 380, y: 556, look: [400, 500] }], // (beat 40, the evening, and beat 45, the escape)
     "Squatch: go to sleep in your bed": { ev: "bed", x: 330, y: 458 },
     "Squatch: sneak out the door": { ev: "out", walk: true, x: 860, y: 380 },
     "Squatch: get the copies from the bin": { ev: "bin", x: 212, y: 398 },
@@ -92,14 +94,24 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: post the yellow copy": { ev: "post", x: 862, y: 500 },
     // (ROLL · ball works anywhere in the night's loading bay, so it is what the button offers on the way to the doorway)
     "Squatch: sneak home": { ev: "back", walk: true, x: 105, y: 290, anywhere: "ROLL · ball" },
-    "Squatch: roll into a ball by the vent": { step: "roll", room: "hangar", bay: true, scene: "Q5", x: 820, y: 470 },
-    "Squatch: hide by the vent": { step: "roll", room: "hangar", bay: true, scene: "Q5", x: 820, y: 470 },
-    "Squatch: grab the pink slip": { step: "pink", room: "hangar", bay: true, scene: "Q6", x: 640, y: 500 },
-    "Squatch: type the code from the pink slip": { step: "pad", room: "passage", pad: true, x: 480, y: 250 },
-    "Squatch: return the empty crate": { step: "crate", room: "hall", scene: "Q7", x: 480, y: 500 },
-    "Squatch: take the snacks": { step: "all1", room: "hall", zoom: "all", x: 700, y: 520 },
-    "Squatch: leave food for the Guardians": { step: "all2", room: "hall", zoom: "all", x: 700, y: 520 },
-    "Squatch: hide the pink slip": { step: "slip", room: "closet", x: 350, y: 520 },
+    // the escape (src/modules/escape.js), each opened by its own jump with everything before it done; `look` is where
+    // its glow or outline is (the vent, the slip in Mops's mouth, the computer, the wardrobe); the close-ups (the
+    // keypad, the snacks, the Guardians' plate) are tapped, and their thing glows
+    "Squatch: look at your crate": { es: "crate", x: 330, y: 500, look: [184, 392] },
+    "Squatch: look at the calendar": { es: "cal", x: 230, y: 392, look: [133, 192] },
+    "Squatch: sneak to the big vent": { es: "sneak", walk: true, x: 380, y: 556, look: [916, 362] },
+    "Squatch: go to the office door": { es: "tohall", walk: true, look: [36, 262] },
+    "Squatch: book the empty crate on the computer": { es: "computer", x: 610, y: 585, look: [735, 300] },
+    "Squatch: hide under the desk": { es: "duck", x: 700, y: 585, look: [600, 446] },
+    "Squatch: take the label": { es: "label", closeUp: true, look: [480, 600] },
+    "Squatch: go to the snack bar": { es: "tobar", walk: true, look: [480, 133] },
+    "Squatch: roll into a ball by the vent": { es: "ball", x: 846, y: 322, look: [800, 220] },
+    "Squatch: grab the pink slip": { es: "grab", x: 850, y: 334, look: [796, 290] },
+    "Squatch: type the code from the pink slip": { es: "pad", closeUp: true, look: [220, 276] },
+    "Squatch: return the empty crate": { es: "computer", x: 610, y: 585, look: [735, 300] },
+    "Squatch: take the snacks": { es: "snacks", closeUp: true, look: [330, 400] },
+    "Squatch: leave food for the Guardians": { es: "food", closeUp: true, look: [850, 420] },
+    "Squatch: hide the pink slip": { es: "closet", x: 300, y: 398, look: [172, 300] },
     "Squatch: pack the crate": { step: "pack1", room: "closet", zoom: "pack", x: 420, y: 520 },
     "Squatch: put on the spare jacket": { step: "jacket", room: "closet", scene: "Q8", x: 160, y: 510 },
     "Squatch: go to the ship": { step: "keepsake", room: "passage", scene: "Q9", x: 820, y: 510 },
@@ -173,7 +185,8 @@ const report = await page.evaluate(async (chips) => {
     lines++;
     return lineTo.apply(this, arguments);
   };
-  for (const [chip, spec] of Object.entries(play)) {
+  // (a chip two beats show has one spec for each)
+  for (const [chip, spec] of Object.entries(play).flatMap(([c, s]) => [].concat(s).map((x) => [c, x]))) {
     if (spec.hm) {
       Object.assign(n, { ch1PartyNow: null, ch1Morning: null, ch1Lunch: null, ch1Zoom: null, ch1PadOn: false, q: [], cur: null });
       ss.ch1JumpBeat(22);
@@ -200,6 +213,10 @@ const report = await page.evaluate(async (chips) => {
       ss.ch1JumpBeat(37);
       window.SSQ.beat("ch1-evening").jump(spec.ev);
       spec.galleryDone && (n.ch1Evening.galleryDone = true);
+    } else if (spec.es) {
+      Object.assign(n, { ch1PartyNow: null, ch1Morning: null, ch1Lunch: null, ch1Zoom: null, ch1PadOn: false, q: [], cur: null, ch1Day2: true });
+      window.SSQ.beat("ch1-escape").jump(spec.es === "food" ? "snacks" : spec.es);
+      spec.es === "food" && Object.assign(n.ch1Escape, { step: "food" }, { snacks: { ...n.ch1Escape.snacks, plate: true } }) && (n.ch1Step = "es-food");
       spec.x && ((n.sq.x = spec.x), (n.sq.y = spec.y));
       ((n.chip = chip), (n.moved = 200));
     } else if (spec.party) {
@@ -218,6 +235,7 @@ const report = await page.evaluate(async (chips) => {
     n.ch1Lunch = null;
     n.ch1Bay = null;
     n.ch1Evening = null;
+    n.ch1Escape = null;
     n.ch1Day2 = spec.day2 !== false;
     // The song step of the morning module (src/modules/morning.js), with Mops beside the bucket.
     n.ch1Morning = spec.song ? { step: "song", t: 0, notes: true } : null;
@@ -250,9 +268,10 @@ const report = await page.evaluate(async (chips) => {
     const at = spots[0] || { x: spec.x, y: spec.y };
     // Rule (Brian, 2026-11-14): no ring when the action happens where Squatch stands, so those goals need only the prompt.
     const onSquatch = !!spots[0] && (!!spots[0].hot || (Math.abs(spots[0].x - n.sq.x) < 2 && Math.abs(spots[0].y - n.sq.y) < 2));
-    const yellow = onSquatch ? 1 : yellowNear(at.x || spec.x, at.y || spec.y);
-    const prompt = spec.pad ? n.ch1PadOn : spec.walk ? true : !!(offer && offer.verb);
-    const target = spec.walk || spec.pad || spots.length > 0;
+    const yellow = onSquatch ? 1 : spec.look ? yellowNear(...spec.look) : yellowNear(at.x || spec.x, at.y || spec.y);
+    // (an escape close-up is its own prompt: the keys, the snacks and the plate are what he taps)
+    const prompt = spec.pad ? n.ch1PadOn : spec.closeUp ? !!(n.ch1Escape && n.ch1Escape.cu) : spec.walk ? true : !!(offer && offer.verb);
+    const target = spec.walk || spec.pad || spec.closeUp || spots.length > 0;
     for (const r of ss.rings()) ringed.push(`${chip} -> ${r.box ? "box" : "circle"} ring and arrow on ${r.id}`);
     for (const c of yellowCircles) ringed.push(`${chip} -> yellow ${c === "arrow" ? "arrow" : "circle at " + c}`);
     // Where the goal's thing is away from Squatch, the outline round it (src/modules/goal-targets.js).
@@ -277,7 +296,7 @@ g.check("no goal is marked with a yellow circle, a floor ring or an arrow", repo
 g.check("at least 14 goals outline their real thing (doors, plants, bin, mailbox, vent, calendar, wardrobe)", report.outlined.length >= 14, report.outlined);
 g.check("each outline is round the thing whose action is offered where the goal is done", report.farOutline.length === 0, report.farOutline);
 g.known(`${report.unoutlined.length} of ${report.checked} goals have no outline yet (props the game draws, Mops, close-ups, and Squatch's own spot)`, report.unoutlined.length > 0, report.unoutlined);
-g.check("story goals are named (the four story goals and the octopus chase)", report.story.length === 5, report.story);
+g.check("story goals are named (the four story goals, the octopus chase and night one's vent cutscene)", report.story.length === 6, report.story);
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();
 await g.finish("every-goal");

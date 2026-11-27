@@ -291,7 +291,8 @@ const play = await page.evaluate(() => {
   const texts = () => n.log.filter((e) => e.k === "bub" || e.k === "card" || e.k === "panel").map((e) => e.text);
   let last = "";
   let still = 0;
-  let acts = [];
+  let acts = [],
+    esRoom = "";
   let end = "stuck";
   for (let i = 0; i < 12000; i++) {
     if (n.ch1Calendar) {
@@ -418,13 +419,37 @@ const play = await page.evaluate(() => {
       still = 0;
       continue;
     }
-    if (n.ctrl && !n.cur && n.q.length === 0 && (n.scene || "")[0] === "Q") {
-      if (n.ch1PadOn) {
-        for (const d of window.SSQ.engine().officeCode()) ss.ch1PadPress(d);
-        ss.tick(0.05);
-        still = 0;
-        continue;
+    // The escape's close-ups (src/modules/escape.js): a tap on the keypad's keys, the site's button, the snacks.
+    const eb = window.SSQ.beat("ch1-escape"),
+      es = eb && eb.active() ? eb.debug().state : null;
+    if (es && es.cu && n.ctrl && !n.cur && n.q.length === 0) {
+      const P = eb.place;
+      ss.drawFrame(); // (a kid sees the close-up before he taps it)
+      if (es.step === "pad") {
+        for (const d of P.OFFICE_CODE) (ss.tapAt(P.keyAt(d).x, P.keyAt(d).y, false), ss.tick(0.05));
+        acts.push("TYPE · " + P.OFFICE_CODE);
+      } else if (es.step === "site") {
+        esRoom = n.room;
+        ss.tapAt((P.SITE.ret.x0 + P.SITE.ret.x1) / 2, (P.SITE.ret.y0 + P.SITE.ret.y1) / 2, false);
+        acts.push("TAP · Return empty crate");
+      } else if (es.step === "label") {
+        // the printed label (51): his paw takes it
+        ss.tapAt(480, 600, false);
+        acts.push("TAKE · label");
+      } else if (es.step === "note") {
+        // the Guardian note (48): a tap writes the next line
+        ss.tapAt(480, 320, false);
+        acts.push("TAP · note");
+      } else if (es.step === "snacks" || es.step === "food") {
+        const i = P.SNACKS.kinds.findIndex((_, k) => !es.snacks.gone[k]);
+        if (i >= 0 && !es.snacks.carry) (ss.tapAt(P.SNACKS.at[i].x, P.SNACKS.at[i].y, false), acts.push(es.step === "food" ? "LEAVE · food" : "TAKE · snack"));
+        for (let k = 0; k < 12; k++) ss.tick(0.05);
       }
+      ss.tick(0.05);
+      still = 0;
+      continue;
+    }
+    if (n.ctrl && !n.cur && n.q.length === 0 && (n.scene || "")[0] === "Q") {
       if (n.scene === "Q5") {
         const rolls = ss.spotsNow().filter((s) => s && s.verb === "ROLL");
         if (rolls.length !== 1 || !(rolls[0].r > 0) || rolls[0].x < 100) return { end: "vent-roll", rolls, acts, texts: texts(), state: ss.ch1State(), shown: [], tally: [] };
@@ -438,13 +463,15 @@ const play = await page.evaluate(() => {
         end = "no-spot " + n.scene;
         break;
       }
-      // (a spot for Mops, where the player is Mops: he goes there; a spot for Squatch: Squatch stands there)
-      if (spot.who === "mo") ((n.mo.x = spot.x), (n.mo.y = spot.y));
-      else ((n.sq.x = spot.x), (n.sq.y = spot.y), (n.sqPose = "stand"));
+      // (the spot names who stands there: Squatch, or Mops when the player is Mops: the escape's 44a to 44d)
+      const who = spot.who === "mo" ? n.mo : n.sq;
+      who.x = spot.x;
+      who.y = spot.y;
+      spot.who === "mo" || (n.sqPose = "stand");
       ss.drawFrame();
       ss.tick(0.05);
       if (!spot.verb) {
-        acts.push("WALK · " + spot.id);
+        acts[acts.length - 1] === "WALK · " + spot.id || acts.push("WALK · " + spot.id);
         ss.tick(0.05);
         still = 0;
         continue;
@@ -478,7 +505,7 @@ const play = await page.evaluate(() => {
     acts,
     texts: texts(),
     state: ss.ch1State(),
-    shown: shown.filter((s) => /IDEAS FOR GUARDIANS|HAVE YOU SEEN|Order new box|Return empty crate|PULL DOWN|Brave Sasquatches|ORDER MORE ROBOTS|MARS LOST|MY GARDIANS|TIED TOGETHER|169556/.test(s)),
+    shown: [...shown, ...(window.SSQ.beat("ch1-escape") ? window.SSQ.beat("ch1-escape").debug().words : [])].filter((s) => /IDEAS FOR GUARDIANS|HAVE YOU SEEN|Order new box|Return empty crate|PULL DOWN|Brave Sasquatches|ORDER MORE ROBOTS|MARS LOST|MY GARDIANS|TIED TOGETHER|169556/.test(s)),
     tally: ss.chTally(),
     vent: n.ch1VentLunch || 0,
     paw: n.ch1Paw || 0,
@@ -486,11 +513,11 @@ const play = await page.evaluate(() => {
     // the lunch sneak (lunch-sneak.js): one snack cake taken and eaten, two left on the plate
     one: n.ch1Lunch && n.ch1Lunch.pie === "eaten" && n.ch1Lunch.pies === 2 ? 1 : 0,
     lights: n.ch1Lights || 0,
-    code: n.ch1Code || "",
+    // the escape (escape.js): the slip ends in the Guardian Box, his last Stars Cake on the Guardians' plate, the computer's room
+    escape: n.ch1Escape ? { slip: n.ch1Escape.slip, plate: n.ch1Escape.snacks.onPlate.length, bag: n.ch1Escape.snacks.bag, typed: n.ch1Escape.typed } : null,
+    siteRoom: esRoom,
     brochure: !!n.ch1Brochure,
     boxed: !!(n.ch1HomeMorning && n.ch1HomeMorning.gift === "box"), // the gift in the Guardian Box (home-morning.js)
-    left: !!n.ch1Left,
-    slipped: !!n.ch1Slipped,
     packed: n.ch1Packed || 0,
     paper: n.ch1PaperLog || [],
     // the loading bay (loading-bay.js): where the day's two stuck copies went
@@ -502,7 +529,7 @@ const play = await page.evaluate(() => {
 g.check("Chapter 1 reaches the tally card", play.end === "tally", { end: play.end, acts: play.acts, scene: play.state.scene });
 // The party night (src/modules/party.js): the peek, the plant, home through his door, the dress-up, out through his
 // door; the party in disguise (the dance), closing time, and walking home with Mops.
-const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "GRAB · flyer", "WALK · go-home", "SAVE · flyer", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "PICK UP · rocket", "OPEN · closet", "PUT IN · box", "WALK · bag", "TAKE · lunch", "WALK · lu-door", "GIVE · lunch", "WALK · lu-back", "TAKE · snack", "WALK · bay-door", "ROLL · ball", "HIDE · plant", "PEEK · form", "TAKE · copies", "EAT · copies", "TALK · Squatch", "SPIT · bin", "PICK UP · box", "GIVE · box", "WALK · bay-home", "WALK · bay-walk", "ROLL · ball", "WALK · ev-hall", "WALK · bay-counter", "HIDE · counter", "PEEK · window", "DUCK · down", "GRAB · brochure", "WALK · ev-home", "OPEN · box", "BITE · cake", "X · chart", "HOLD UP · brochure", "SHOW · brochure", "ASK · again", "SLEEP · bed", "WALK · ev-out", "WALK · ev-hallway", "WALK · ev-bay", "GRAB · copies", "MARK · box", "POST · mailbox", "HIDE · crate", "WALK · ev-bayout", "WALK · ev-hall", "WALK · ev-home", "SLEEP · bed", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "LEAVE · food", "PUT · slip", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
+const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "GRAB · flyer", "WALK · go-home", "SAVE · flyer", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "PICK UP · rocket", "OPEN · closet", "PUT IN · box", "WALK · bag", "TAKE · lunch", "WALK · lu-door", "GIVE · lunch", "WALK · lu-back", "TAKE · snack", "WALK · bay-door", "ROLL · ball", "HIDE · plant", "PEEK · form", "TAKE · copies", "EAT · copies", "TALK · Squatch", "SPIT · bin", "PICK UP · box", "GIVE · box", "WALK · bay-home", "WALK · bay-walk", "ROLL · ball", "WALK · ev-hall", "WALK · bay-counter", "HIDE · counter", "PEEK · window", "DUCK · down", "GRAB · brochure", "WALK · ev-home", "OPEN · box", "BITE · cake", "X · chart", "HOLD UP · brochure", "SHOW · brochure", "ASK · again", "SLEEP · bed", "WALK · ev-out", "WALK · ev-hallway", "WALK · ev-bay", "GRAB · copies", "MARK · box", "POST · mailbox", "HIDE · crate", "WALK · ev-bayout", "WALK · ev-hall", "WALK · ev-home", "SLEEP · bed", "WALK · es-patch", "WALK · es-cell", "WALK · es-door", "SHOW · brochure", "LOOK · crate", "LOOK · calendar", "WALK · es-door", "WALK · es-vent", "ROLL · ball", "WALK · es-tunnel", "LIGHT · lamp", "LOOK · wall", "LOOK · toy bin", "LOOK · stubs", "WRITE · note", "TAP · note", "TAP · note", "TAP · note", "TAKE · pink slip", "GRAB · pink slip", "WALK · es-door", "TYPE · code", "TYPE · 169556", "RETURN · empty crate", "HIDE · desk", "RETURN · empty crate", "TAP · Return empty crate", "TAKE · label", "WALK · es-door", "WALK · es-bar", "TAKE · snack", "TAKE · snack", "TAKE · snack", "TAKE · snack", "LEAVE · food", "WALK · es-door", "OPEN · closet", "PUT IN · box", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
 g.check("the player does the new actions in order", JSON.stringify(play.acts) === JSON.stringify(wantActs), play.acts);
 const must = [
   "Stormtop Cloud Resort, floating above Jupiter.",
@@ -578,16 +605,23 @@ const must = [
   "PAWATURE ACCEPTED.",
   "No! The pink one!",
   "It's done.",
-  "Six days later",
-  "Replaced? The manager was lying to me.",
-  "I'm going to be replaced. The new robots are coming on the ship tomorrow. Remember that pancake place? Let's go find out about it.",
+  // (the escape rebuilt from the story pass of 2026-11-26: escape-lines.js; "Six days later" is drawn on the home
+  // calendar now, tests/escape-mops.mjs)
+  "ROBOT SIDE. GOAT SIDE.",
+  "The manager lied to me.",
+  "Squatch was right.",
+  "They're replacing me.",
+  "Let's go find that pancake place.",
   "Oh, it was on the form I sent, I mean, never mind.",
   "Didn't a copy get sucked into the vent?",
+  "Goat-sized. You keep watch.",
+  "I asked Mars. Mars said no.",
   "I hope Mops doesn't notice...",
-  "Hurry, hurry, pink slip, got it!",
+  "Mmf! Mmf mmf!",
+  "You're gumbling again!",
   "Get it before he sees it.",
   "This time, take all the snacks you want.",
-  "I'm worried about the Guardians. I'll leave them some food.",
+  "What about the Guardians?",
   "Get out. They're checking a crate.",
   "The spare jacket. The beard. And the horns.",
   "More bleat. Less roar.",
@@ -618,9 +652,9 @@ const doors = doorUses(play.state.walks);
 const offPicture = (play.state.walks || []).filter((w) => w.x < 0 || w.x > 960 || w.y < 0 || w.y > 640);
 g.check("walks stay on the picture", offPicture.length === 0, offPicture.slice(0, 6));
 g.check(
-  "the office computer is in the hallway and the walks still use the hall doors",
-  play.state.siteRoom === "passage" && doors.backHome >= 2 && doors.overHall >= 2,
-  { siteRoom: play.state.siteRoom, doors, walks },
+  "the office computer is in the office (R84) and the walks still use the hall doors",
+  play.siteRoom === "office" && doors.backHome >= 2 && doors.overHall >= 2,
+  { siteRoom: play.siteRoom, doors, walks },
 );
 const paper = play.paper || [];
 const binAt = paper.indexOf("bin");
@@ -640,19 +674,19 @@ g.check(
     play.code === "169556" &&
     play.officeCode === "169556" &&
     play.brochure &&
+    play.escape &&
+    play.escape.typed === "169556" &&
     play.boxed &&
-    play.left &&
-    play.slipped &&
-    play.packed === 2 &&
-    paper.includes("slip") &&
-    paper.includes("box") &&
-    paper.indexOf("box") > paper.indexOf("slip"),
+    play.escape.plate === 1 &&
+    play.escape.bag === 4 &&
+    play.escape.slip === "box" &&
+    play.packed === 2,
   { paper, vent: play.vent, paw: play.paw },
 );
 g.check(
   "the paw-order close-up opened (its words are measured in tests/evening.mjs), and the Mars letter and the Guardian box are drawn",
   // (ORDER MORE ROBOTS is on the pink sheet in the evening's paw-order close-up, src/modules/evening.js)
-  play.order && play.shown.includes("MARS LOST & FOUND") && play.shown.includes("MY GARDIANS"),
+  play.order && play.shown.some((s) => /^MARS LOST & FOUND\.?$/.test(s)) && play.shown.includes("MY GARDIANS"),
   { shown: play.shown, order: play.order },
 );
 g.check("the vent board and the snack site's buttons are drawn", play.shown.includes("IDEAS FOR GUARDIANS") && play.shown.includes("Return empty crate"), play.shown);
@@ -687,23 +721,7 @@ g.check("a clean chapter still earns the never-caught bonus", play.tally.some((l
 // The balloon that stayed in later hall scenes went with the old free play on purpose (party rebuild, half two),
 // and so did the snack bar cut-in: the snack close-up is checked in tests/party-free.mjs.
 g.check("no page errors", errors.length === 0, errors);
-const pad = await page.evaluate(() => {
-  const ss = window.__ss;
-  const n = ss.op;
-  n.ch1PadOn = true;
-  n.ch1Pad = "";
-  n.ch1Step = "pad";
-  n.ch1Door = false;
-  // Isfred's office code (Brian 2026-11-26, chat): 169556
-  ss.ch1PadPress("1");
-  ss.ch1PadPress("9");
-  const cleared = n.ch1Pad === "" && !n.ch1Door;
-  for (const d of "16955") ss.ch1PadPress(d);
-  const mid = n.ch1Pad;
-  ss.ch1PadPress("6");
-  return { cleared, mid, code: n.ch1Code, door: n.ch1Door, on: n.ch1PadOn };
-});
-g.check("a wrong keypad digit clears, and 169556 opens the door", pad.cleared && pad.mid === "16955" && pad.code === "169556" && pad.door && !pad.on, pad);
+// (the keypad's wrong key and the code are checked in tests/escape.mjs)
 await ctx.close();
 await g.finish("ch1-playthrough");
 

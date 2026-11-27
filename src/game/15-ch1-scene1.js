@@ -23,11 +23,11 @@
         (n.ch1PartyNow = null),
         (n.ch1Lunch = null), (n.ch1Bay = null),
         (n.ch1Evening = null),
+        (n.ch1Escape = null),
         (n.ch1SureEnd = !1),
         (n.ch1Day2 = !1),
         (n.ch1Zoom = null),
         (n.ch1Calendar = null),
-        (n.ch1PadOn = !1),
         (n.ch1Morning = null),
         (n.sqLift = 0),
         (n.mo.walking = !1),
@@ -193,10 +193,19 @@
         officeCode: () => CH1_OFFICE_CODE,
         // Playing as Mops or Squatch (the one switch rule, announced with its card; `byLine` the card's line).
         switchTo: (who, byLine) => ((SWITCH_WHY.__beat = byLine || ""), switchTo(who, byLine ? "__beat" : "")),
-        // The evening (src/modules/evening.js): a station robot, the papers' record (ch1SetPaper), and beat 43 after night one.
-        drawRobot: (ctx, x, y) => onCtx(ctx, () => dq(x, y, !1)),
+        // The evening (src/modules/evening.js): the papers' record (ch1SetPaper), and beat 43 after night one.
         paper: (p) => ch1SetPaper(p),
         sixDays: () => ch1SixDays(),
+        // The escape (src/modules/escape.js): the walk between rooms, beat 53 after it, the one capture rule's guard
+        // (and whether it is out), the robot drawing (the evening's too).
+        goTo: (dest, flags, next) => ch1GoDay(dest, flags, next),
+        packStart: () => ch1PackStart(),
+        // Who the stick drives (switchTo, announced by the card "You are MOPS now." when `why` is given), and who it is.
+        playAs: (who, why) => switchTo(who, why),
+        playing: () => (x.mops ? "mops" : "sq"),
+        callSecurity: (by) => ch1CallSecurity(by),
+        secOn: () => !!ch2.sec,
+        drawRobot: (ctx, x, y, mail, k) => onCtx(ctx, () => dq(x, y, !!mail, k)),
         offer: () => pick(ch1QSpots()),
         // Holding ↺ inside a full-screen view: the same restart as the page's ↺.
         restartPart: () => sectionReset(),

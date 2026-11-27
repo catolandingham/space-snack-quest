@@ -1011,8 +1011,8 @@
       // Mops who is hidden or off the picture is not. The UPS robot counts when the hangar crew is out, or when the photo-wall beep draws him.
       if (who === "pa") return !0;
       if (who === "mops") return n.moPose !== "hidden" && n.mo.x > 20 && n.mo.x < 940 && n.mo.y > 40 && n.mo.y < 620;
-      // Peeking round his door at the party, only his head shows at the picture's edge (src/modules/party.js).
-      if (who === "sq" && window.SSQ && window.SSQ.speakerAt && window.SSQ.speakerAt("sq")) return !0;
+      // A rebuilt beat that places this speaker draws it (the party's peek round his door, the escape's vent).
+      if (window.SSQ && window.SSQ.speakerAt && window.SSQ.speakerAt(who)) return !0;
       if (who === "sq") return n.sq.x > -20 && n.sq.x < 980 && n.sq.y > 0 && n.sq.y < 640;
       if (who === "ups") return !!(n.room === "hangar" && n.ch1D) || !!n.ch1Beep;
       return !0;
@@ -1346,7 +1346,7 @@
         n.room === "deck")
       )
         for (let i of qn) l.push(i.kind === "plant" ? nt(i.x, i.y, 26, 14, 10) : nt(i.x, i.y, 40, 14, 10));
-      if (n.room === "window" && l.push(nt(rt.x, rt.y, 26, 14, 10)), hallBeat()) for (let i of hallBeat().solids()) l.push(i);
+      if (n.room === "window" && l.push(nt(rt.x, rt.y, 26, 14, 10)), hallBeat()) for (let i of hallBeat().solids()) l.push(i); // (the bay's, the evening's and the escape's)
       else if (n.room === "hall") {
         (l.push(nt(ne.x, ne.y, 26, 14, 10)),
           l.push(nt(DV.x, DV.y, 26, 16, 8)),

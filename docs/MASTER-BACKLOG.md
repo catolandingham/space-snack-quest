@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–26 | # Master backlog |
-| 27–213 | ## Where main is (Chapter 1 redesign) |
-| 214–228 | ## Register |
-| 229–250 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 251–271 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 272–284 | ## Phase 2 (plan section 4, T13 to T18) |
-| 285–307 | ## Phase 1 (plan section 3, T5 to T12) |
-| 308–321 | ## SS40–SS44 |
-| 322–339 | ## Story rows |
-| 340–358 | ## Reset section |
-| 359–369 | ## Still open |
-| 370–373 | ## Chapter 1 replot, recorded and not built |
-| 374–531 | ## Changelog |
+| 27–226 | ## Where main is (Chapter 1 redesign) |
+| 227–241 | ## Register |
+| 242–263 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 264–284 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 285–297 | ## Phase 2 (plan section 4, T13 to T18) |
+| 298–320 | ## Phase 1 (plan section 3, T5 to T12) |
+| 321–334 | ## SS40–SS44 |
+| 335–352 | ## Story rows |
+| 353–371 | ## Reset section |
+| 372–382 | ## Still open |
+| 383–386 | ## Chapter 1 replot, recorded and not built |
+| 387–544 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -57,6 +57,19 @@
 - Needs Brian's yes (pictures, all placeholders): the gallery's photos (his approved movie-scene pictures are not in the repo), the crayon drawing, the brochure's front and whether it has words, the family (two approved guests and a smaller one as their child), the picture bubble, the papers, the station robots, Mops asleep feet up.
 - Open: `ch1-kid-play` from the chapter's start stops in the lunch sneak (hidden in the middle plant, the robot never sets off for the crates); the same happens on this branch's base, 78c8d8b (checked 2026-11-26), so it is the lunch branch's to fix. From beat 37 (`KID_START=evening:37`) the robot plays the evening and the rest of Chapter 1 to the tally card, caught 0 times.
 - Open: the keypad (beat 50) still takes 4723 while the pink sheet shows Brian's 169556 (the escape branch's beat, and the 4723 tuning pin); a night look for the hall and hallway; music for the hallway and the loading bay (none in the table); how long the wordless lights-out and the family scene run.
+2026-11-26 (night, rebuild), draft PR #93 on `feat/ch1-escape`, not merged. Done: beats 43 to 52 rebuilt from the story pass of 2026-11-26, one beat group a commit (43 and 44; 45 and 46; 47 to 49; 50 to 52): the calendar card, the player as Mops (mopping, the Mop-Off "clean better" with FAST and SPARKLE and the GANITOR star, the HQ news in the manager's own words, the walk home), "You were right" and the crayon plan, the almost-slip, the walked sneak to the vent with Mops following, the player as Mops in the vent (tunnel, lamp, wall, toy bin, stubs and chart, the note line by line, the pink slip), "You're gumbling again!", the keypad with the folded slip, the office's optional finds and the duck, the site with "ghjk", the label, the snacks and the last Stars Cake, the Guardian Box, the song. The vent room is locked (`vent-room-empty-v1.png`, Brian question 56). Docs match main: yes.
+- Pending (Brian approves as he watches): every CHANGED and NEW line in `src/modules/escape-lines.js` (status "pending"); the "new" goal lines, buttons and switch reasons there; the crate stamp _ARS CAKES and the MARS CAKES box on the held-up brochure (layers over locked pictures, waiting for his yes); every drawing (the calendar close-up, the cart tracks and dirt, the robots' lanes, the bars, the star close-up, the crayon plan, the tunnel, the stubs and chart, the note close-up, the fold, the folded slip, the office's mug, frame, drawer and passing light, the label).
+- Still-open picks built as placeholders: the brochure has no words but a MARS CAKES box; why Mops made up the Guardians, who turned the family back and how the baby says what he is touch no line here.
+- Not built: the bay plant moved a few steps (a new locked bay picture: beats 28 to 36's builder); a blink with Mops's heart at the Guardians' plate (one heart only); the Guardian note turning up on the pillow and PUT ON · label on pickup day (beat 53 onward); drag (not tap) for the snacks.
+- NOT ASSESSED: how it feels to play (Not yet played by a person); the music in the new rooms (the tunnel, the vent room, the office) is whatever the room's cue gives.
+
+2026-11-26, draft PR on `feat/ch1-escape` (stacked on `feat/ch1-lunch-sneak`), not merged. Done: beats 43 to 52, the escape, as a module (`ch1-escape`): the card, the tease, the pancake plan at home with wordless thought pictures, the night walk, ROLL · ball by the vent past a patrolling robot (the one capture rule), the vent workstation (placeholder room; the wall, the letter and the new note as close-ups), the pink slip, the keypad (169556, Brian chat 2026-11-26), the Moon Pie site in the office, all the snacks and the Guardians' plate, the slip into the Guardian Box, bed, beat 53. Old escape code deleted. Waiting on Brian:
+- The escape's written words (the card, the wall, the letter, the note with "— The Guardians", the goal line, the Moon Pie site) are approved as written (Brian, 2026-11-26, question 55), and the office-code pin ("make 169556"). The spoken lines are still pending: a story rewrite of 43 to 52 is coming. The vent room gets a locked, cleaned-up picture (question 56), not built yet.
+- The wordless thought pictures in beats 45 and 46 (the crate into the ship; the locked office door; the sheet into the vent), added because no words say the plan.
+- The night robot in beat 47 (where it patrols, the FUR alarm on the bay wall, docking in the mail room), the vent room's look (no locked picture), the Guardians' plate with a G card on the counter, four snacks for him and two for the Guardians.
+- Not built: the office desk is not solid (the office's solids come only with Isfred's flag); no music pick for the bay, hallway, office or vent at night; Mops assuming the bin was emptied (no words or picture for it).
+- Brian's video notes (2026-11-26) fixed in physics and look only: solid walkway and furniture, the ball by the vent on the floor, the vent's first view held, thought bubbles above heads, cones that react only once drawn on him (0.5 s, a "?" first), security as the blue guard with its cone shown the whole time, long lines split, the code in pen, a night look in every night room. The plant just inside the bay's left doorway is in the locked picture and stands in the way of anyone coming in: for Brian (move it in a new locked version?).
+- Placeholders (not pins): the robot's patrol (x 250 to 630, 42 a second), its run (170), the thought pictures (2.6 s), the crawl (1.2 s), the wait rolled up (2.2 s), the keypad's keys (120 across), the booked picture (2.4 s), the carry (0.45 s), the hearts (1.8 s). The office code pin changed from 4723 to 169556 on Brian's word in chat.
 
 2026-11-26 (round D, merge), draft PR #90 on `feat/ch1-day2-morning`, not merged. Done: `feat/ch1-bedtime-story` (with the party's round D) merged in (merge commit); the morning's goal things (the rocket, the lunch bag) keep only the dashed goal line, no glow (`tests/highlight-style.mjs`). NOT ASSESSED: whether a kid on a phone still finds the bag at once without the glow (the stills). Docs match main: yes.
 

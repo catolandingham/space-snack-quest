@@ -8,20 +8,20 @@
 | 46–64 | ## 2. Needs your eyes |
 | 65–68 | ## 3. Your instructions disagree |
 | 69–70 | ## 4. Everything else not built |
-| 71–87 | ### Morning and home |
-| 88–98 | ### Party |
-| 99–110 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
-| 111–114 | ### Party video notes and answers, 2026-11-24 (not built yet) |
-| 115–119 | ### Snacks and dress-up |
-| 120–129 | ### Day 2 and night |
-| 130–134 | ### Escape and later chapters |
-| 135–138 | ### Looks and lines |
-| 139–146 | ### Sound |
-| 147–150 | ### Words and rules |
-| 151–163 | ### How the bots work |
-| 164–171 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
-| 172–189 | ## 5. Merged, in a pull request, and being built |
-| 190–200 | ## 6. Corrections to the checkers |
+| 71–85 | ### Morning and home |
+| 86–96 | ### Party |
+| 97–108 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
+| 109–112 | ### Party video notes and answers, 2026-11-24 (not built yet) |
+| 113–117 | ### Snacks and dress-up |
+| 118–127 | ### Day 2 and night |
+| 128–132 | ### Escape and later chapters |
+| 133–136 | ### Looks and lines |
+| 137–144 | ### Sound |
+| 145–148 | ### Words and rules |
+| 149–161 | ### How the bots work |
+| 162–169 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
+| 170–187 | ## 5. Merged, in a pull request, and being built |
+| 188–198 | ## 6. Corrections to the checkers |
 <!-- /section-index -->
 # Brian's asks that are not in the game yet
 
@@ -70,14 +70,12 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 
 ### Morning and home
 - Thought bubbles for animals. "Thought bubble is fine just was pointing out it was not in the version you showed" (S 593).
-- Vent strings, crossed-off planets, toy bin. "Draw strings between postings and make it more obvious he's searching like a detective" (S 590).
 - Mops goat body and tail. "Full beard to floor, remember!! And more goat body" (S 522). He is called "Janitor, goat janitor is what mops is called." (G 565); humor "where do we have humor about him being the planet's first goat / janitor - aka ganitor? Need to add that in." (S 218). Old unused scenes hold some of these words.
 - Things to touch on the walk to the room. "maybe look around, maybe there's another thing or two he can interact with on the way." (S 405).
 - Bedtime story flashback: Mops at his desk, Guardians, big furry Sasquatches. "I agree with A, that works really well." (S 429).
 - Janitor finds Squatch and keeps him. "I Know What It's Like To Be One Of A Kind" (P L134).
 - Sasquatch family visits and is sent back. "We Should Show Sasquatch Family Coming To Visit" (P L120).
 - Pretend to sleep, wait for the janitor. "You Would Just Pretend To Go To Sleep And Then Wait For The Ganitor To Actually Fall Asleep" (P L168).
-- Guardian note in the vent. "we know you're thinking about going to Mars. Don't worry, we'll always be with you." (S 408).
 - Package inspection announcement. "due to suspicious activity, we will be inspecting every package" (S 408).
 - The slip is the confirmation and mail-back form. "this is the confirmation form and also what you mail back to us if you want to order any more." (S 405).
 - UPS-replacing-Amazon joke. "Maybe there's kind of a funny nod, like UPS replacing Amazon" (S 408).

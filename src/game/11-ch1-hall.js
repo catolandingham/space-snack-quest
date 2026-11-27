@@ -1218,7 +1218,7 @@
       let m = who === "mops";
       if (x.mops === m) return;
       let before = !!x.mops,
-        line = why && SWITCH_WHY[why];
+        line = why && (SWITCH_WHY[why] || (/ /.test(why) ? why : "")); // (a whole sentence is its own reason: src/modules/escape.js)
       // Test record: who the player was at the moment this switch (and its card) was queued.
       window.__ss && (window.__ss.switchLog = window.__ss.switchLog || []).push({ to: who, before, why: why || "", card: !!line });
       ((x.mops = m), (n.sq.moving = !1), (n.mo.moving = !1));

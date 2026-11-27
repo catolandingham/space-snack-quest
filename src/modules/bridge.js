@@ -9,6 +9,7 @@
  * The older program must guard every use (`window.SSQ && ...`): if the module script ever fails to
  * load, the game must still run as it did.
  */
+import { drawTagStar } from "./escape-mopoff.js";
 import { outlineCanvas, OUTLINE } from "./outline.js";
 import { GOAL_TARGETS } from "./goal-targets.js";
 import { SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
@@ -25,7 +26,7 @@ import { quietLine } from "./party-lines.js";
 import { quietBedtimeLine } from "./bedtime-story-lines.js";
 import { drawHomeMopBucket, lastHomeMopBucket } from "./mop-bucket.js"; // (bedtime branch, 2026-11-26: Mops's mop bucket)
 import { adultPxFor, doorAdultPx } from "./room-sizes.js";
-import { drawGanitorTag, drawHallwayCrayon, ganitorTagsDrawn, hallwayCrayonDrawn } from "./ganitor.js";
+import { drawGanitorTag, drawHallwayCrayon, ganitorTagsDrawn, hallwayCrayonDrawn, GANITOR_TAG } from "./ganitor.js";
 import { singingNow } from "./music-rules.js";
 import { keepInSpan, seeCue, visitNow, playSound, soundsPlayed, hushNow, hushKey, unhush } from "./music-picks.js";
 import { drawBubbleTail } from "./bubble-tail.js";
@@ -42,8 +43,8 @@ import { drawStationStamp, crateStampDrawn } from "./crate-stamp.js";
  * part) and the party night against this list.
  */
 // (the evening, evening.js, also keeps the older program's record of night one: the crayon drawing on the wall, the
-// brochure, the paw print, the posted yellow copy, the pink sheet in the vent, the lights; and ch1D, the loading bay)
-export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1HomeMorning", "ch1Lunch", "ch1Bay", "ch1Evening", "ch1Sneak", "ch1Step", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe", "ch1Crayon", "ch1Brochure", "ch1Paw", "ch1Signed", "ch1Mailed", "ch1PinkSucked", "ch1Lights", "ch1D"]);
+// brochure, the paw print, the posted yellow copy, the pink sheet in the vent, the lights; and ch1D, the loading bay; the escape, escape.js, the night, the ball and the journey)
+export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1HomeMorning", "ch1Lunch", "ch1Bay", "ch1Evening", "ch1Sneak", "ch1Step", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe", "ch1Crayon", "ch1Brochure", "ch1Paw", "ch1Signed", "ch1Mailed", "ch1PinkSucked", "ch1Lights", "ch1D", "ch1Escape", "ch1Night", "ch1DidBall", "ch1Journey"]);
 
 export function createBridge() {
   const beats = new Map();
@@ -126,7 +127,11 @@ export function createBridge() {
      * scale `scale` (game pixels to one of his units).
      */
     drawGanitorTag(ctx, scale) {
-      return drawGanitorTag(ctx, scale);
+      const drew = drawGanitorTag(ctx, scale);
+      // the gold star he won in the Mop-Off stays on his tag for the rest of the chapter (escape-mopoff.js)
+      const es = beats.get("ch1-escape");
+      es && es.tagStar && es.tagStar() && drawTagStar(ctx, GANITOR_TAG);
+      return drew;
     },
     /** Tests: Mops's name tags drawn since the last call ({ readable, scale }). */
     ganitorTags() {
@@ -269,9 +274,9 @@ export function createBridge() {
       return beats.get(id) || null;
     },
     /**
-     * The rebuilt beat that draws the room now (the party night or the lunch sneak in the party hall, the loading bay
-     * in the bay), or null: the older program asks it for the room's picture, its walls (bounds) and what feet cannot
-     * walk through (solids).
+     * The rebuilt beat that draws the room on screen now (the party night, the lunch sneak, the bay's 36b and the evening in the
+     * hall; the loading bay, the evening and the escape in the loading bay; the escape in the vent), or null: the older program asks it for the room's picture, and in the hall for its
+     * walls (bounds) and what feet cannot walk through (solids).
      */
     hallOwner() {
       for (const b of beats.values()) if (b.ownsRoom && b.ownsRoom()) return b;
@@ -279,11 +284,11 @@ export function createBridge() {
     },
     /**
      * Where a speaker's bubble points, from the rebuilt beat that places it (Isfred beside him at the party, the wall
-     * speakers, Squatch's eyes in a plant...), or null: the older program's own place for that speaker.
+     * speakers, Squatch's eyes in a plant...), or null: the older program's own place for that speaker. Only a beat that is on now (active) answers.
      */
     speakerAt(who) {
       for (const b of beats.values()) {
-        const at = b.speakerAt && b.speakerAt(who);
+        const at = b.speakerAt && (!b.active || b.active()) ? b.speakerAt(who) : null;
         if (at) return at;
       }
       return null;

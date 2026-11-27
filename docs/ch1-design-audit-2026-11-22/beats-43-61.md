@@ -50,12 +50,12 @@ Design sources used: DECISIONS "Brian's confirmations 2026-11-22" (keypad: "offi
 
 ### Beat 50. The office keypad
 - Design (newest): Office door in the hallway is locked by a keypad. The kid types the code from the paper. Brian, 2026-11-22: "We need the code for the office door, not the hangar".
-- v1 today: `CH1_OFFICE_CODE = "4723"` (14-ch1-day2.js:3). `ch1ToPad` (line 413 area) goes to the hallway, shows a zoomed keypad with the slip and "4723" drawn beside it (drawCh1Zoom, lines 945 to 948), and a wrong digit clears with a buzz (`ch1PadPress` 433 to 443). Right code opens the door. The kid taps the digits (`ch1Day2Pointer`, line 780ish). The test confirms 4723 opens and a wrong digit clears. No hangar code anywhere in this path.
+- v1 today: `CH1_OFFICE_CODE = "4723 (now 169556, Brian, chat, 2026-11-26)"` (14-ch1-day2.js:3). `ch1ToPad` (line 413 area) goes to the hallway, shows a zoomed keypad with the slip and "4723 (now 169556, Brian, chat, 2026-11-26)" drawn beside it (drawCh1Zoom, lines 945 to 948), and a wrong digit clears with a buzz (`ch1PadPress` 433 to 443). Right code opens the door. The kid taps the digits (`ch1Day2Pointer`, line 780ish). The test confirms 4723 (now 169556, Brian, chat, 2026-11-26) opens and a wrong digit clears. No hangar code anywhere in this path.
 - Verdict: MATCHES
 - Old-design leftovers (the pink slip, office code, hangar code):
   - `11-ch1-hall.js:1072` "The hangar code was on that slip I ripped." and `:1073` "Half's in the trash. Half's in the vent." These contradict the design (there is no hangar code). Only in the old S8 scene. Reachable only by `?scene=S8` debug link, not from `?ch=1` play (no code path goes from Q scenes to S scenes).
   - `11-ch1-hall.js:882` comment "Mops names the hangar code first, in S8 (rule 20)" and `:1129` "When the bot comes to look, tap my face and grab the slip!" and `:916` "Mops's torn slip. Just paperwork." Same old S scenes; debug links only.
-  - `50-story-frame.js:479` the torn slip is drawn labelled "Hangar code:" with "4 7", and the second half shows "2 3" and "(the rest of the code)" (lines 479 to 484, panels `half1`/`half2`). Reachable only inside old S9/S10. The two halves 47 and 23 are where today's 4723 comes from, so the number is the same, only the label is old.
+  - `50-story-frame.js:479` the torn slip is drawn labelled "Hangar code:" with "4 7", and the second half shows "2 3" and "(the rest of the code)" (lines 479 to 484, panels `half1`/`half2`). Reachable only inside old S9/S10. The two halves 47 and 23 are where today's 4723 (now 169556, Brian, chat, 2026-11-26) comes from, so the number is the same, only the label is old.
   - `10-ch1.js:950` and `:954` goal-bar chips "Mops: grab the slip from the trash" and "Mops: grab the other half of the slip". Old S9/S10 only.
   - The Day 2 file itself says (14-ch1-day2.js:2) the code is "the one already drawn on the old keypad", fine.
 

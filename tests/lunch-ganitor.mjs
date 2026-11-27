@@ -357,7 +357,8 @@ g.check("C: in the hallway, a framed photo of Mops on the back wall labelled MOP
 g.check("C: not in the office", wall.office === null, wall.office);
 const base = execFileSync("git", ["-C", root, "merge-base", "HEAD", "origin/main"], { encoding: "utf8" }).trim();
 // (the delivery room's new locked versions, the plant moved along the wall, have Brian's yes: question 75, 2026-11-26,
-// docs/DECISIONS.md; they are added files, and no locked picture is changed)
+// docs/DECISIONS.md; they are added files, and no locked picture is changed; the same for the vent room's, added with
+// Brian's yes)
 const locked = execFileSync("git", ["-C", root, "diff", "--name-only", "--diff-filter=MDR", base, "--", "docs/locked-rooms/*.png"], { encoding: "utf8" }).trim();
 g.check("C: the locked room pictures are not changed on this branch (the wall is a layer drawn over the hallway)", locked === "", locked);
 g.check("E: Squatch's crayon card on the hallway wall says ME and MOPS THE GANITOR", wall.crayon && JSON.stringify(wall.crayon.lines) === JSON.stringify(["ME", "MOPS THE", "GANITOR"]) && GAN.crayonGanitorLabel() === "MOPS THE GANITOR", wall.crayon);

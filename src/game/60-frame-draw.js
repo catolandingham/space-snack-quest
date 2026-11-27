@@ -20,6 +20,7 @@
         luBeat() && luBeat().tick(l);
         bayBeat() && bayBeat().tick(l);
         evBeat() && evBeat().tick(l);
+        esBeat() && esBeat().tick(l);
       }
       (n.sqHop &&
         ((n.sqHop.t += l),
@@ -1130,7 +1131,7 @@
       // Over a morning close-up (Brian 31a) the speaker is where the close-up draws him.
       let close = n.cur && n.cur.over && window.SSQ && window.SSQ.beat("ch1-morning");
       if (close && close.closeUpSpeaker(l)) return close.closeUpSpeaker(l);
-      // The party night places its own speakers (Isfred beside him, the band, Squatch's eyes in the plant).
+      // The rebuilt beats place their own speakers (Isfred beside him, the band, Squatch's eyes in the plant or the grille).
       let at = window.SSQ && window.SSQ.speakerAt && window.SSQ.speakerAt(l);
       if (at) return at;
       let o = IA(l);
@@ -2103,6 +2104,7 @@
         hmBeat() && hmBeat().draw(e);
         luBeat() && luBeat().draw(e), bayBeat() && bayBeat().draw(e);
         evBeat() && evBeat().draw(e);
+        esBeat() && esBeat().draw(e);
         if (n.ch1Calendar) {
           drawCh1Calendar();
           return;
@@ -2251,8 +2253,8 @@
           N0() ? Cs() : skipStoryCards();
           return;
         }
-        if (n.ch1PadOn && (/^Digit[0-9]$/.test(l.code) || /^Numpad[0-9]$/.test(l.code))) {
-          ch1PadPress(l.code.replace(/\D/g, "").slice(-1));
+        if (esBeat() && esBeat().padOpen() && (/^Digit[0-9]$/.test(l.code) || /^Numpad[0-9]$/.test(l.code))) {
+          esBeat().key(l.code.replace(/\D/g, "").slice(-1)); // the office keypad (src/modules/escape.js)
           return;
         }
         if (l.code === "KeyM") {

@@ -32,7 +32,7 @@
         Cs();
         return;
       }
-      if (p.state === "op" && (n.ch1PadOn || n.ch1Zoom || partyCutOpen())) {
+      if (p.state === "op" && (n.ch1Zoom || partyCutOpen())) {
         // A bubble or a card still goes away on a tap. The snack bar used to swallow that tap.
         if (de()) return void nf();
         ch1SlicePointer("down", l, o);
@@ -75,6 +75,7 @@
     //   ?beat=party         on localhost or a preview host, open the party night at P1 (party:P3 opens P3). Ignored live.
     //   ?beat=bay:hide      on localhost or a preview host, open the loading bay (beats 28 to 36) at that part. Ignored live.
     //   ?beat=evening:38    on localhost or a preview host, open Day 2's evening at that beat (37 to 42; 142 the bin). Ignored live.
+    //   ?beat=escape        on localhost or a preview host, open the escape after night one (escape:pad opens the keypad...).
     //   &debug=1            show the state strip under the game; the backtick key hides and shows it
     function debugLink() {
       let q;
@@ -92,7 +93,8 @@
         linkDay2 = linkBeatRaw === "day2",
         linkParty = /^party(:P([1-7]|8a|8b|8c))?$/.test(linkBeatRaw) ? linkBeatRaw.slice(6) || "P1" : "",
         linkBay = /^bay(:[a-z]+)?$/.test(linkBeatRaw) ? linkBeatRaw.slice(4) || "pa" : "",
-        linkEvening = /^evening(:\d+)?$/.test(linkBeatRaw) ? +linkBeatRaw.slice(8) || 37 : 0;
+        linkEvening = /^evening(:\d+)?$/.test(linkBeatRaw) ? +linkBeatRaw.slice(8) || 37 : 0,
+        linkEscape = /^escape(:[a-z]+)?$/.test(linkBeatRaw) ? linkBeatRaw.slice(7) || "start" : "";
       let previewBeat = !1,
         day2Jump = !1,
         partyJump = !1;
@@ -102,7 +104,7 @@
           local = host === "localhost" || host === "127.0.0.1" || host === "";
         previewBeat = !!linkBeat && !live && !local;
         day2Jump = linkDay2 && !live;
-        partyJump = !!(linkParty || linkBay || linkEvening) && !live;
+        partyJump = !!(linkParty || linkBay || linkEvening || linkEscape) && !live;
       } catch {}
       if (!linkCh && !linkPhase && !linkScene && !linkDebug && !previewBeat && !day2Jump && !partyJump) return;
       !linkCh && linkPhase && (linkCh = 2);
@@ -123,6 +125,7 @@
         partyJump && linkParty && partyBeat() && (startStory(1), (n.q = []), (n.cur = null), ch1ResetState(), (n.moPose = "hidden"), partyBeat().jump(linkParty));
         partyJump && linkBay && bayBeat() && (startStory(1), (n.q = []), (n.cur = null), ch1JumpBeat(28), linkBay !== "pa" && ((n.q = []), (n.cur = null), bayBeat().jump(linkBay)));
         partyJump && linkEvening && (startStory(1), (n.q = []), (n.cur = null), ch1ResetState(), ch1JumpBeat(linkEvening));
+        partyJump && linkEscape && (startStory(1), (n.q = []), (n.cur = null), ch1ResetState(), (n.ch1Day2 = !0), esBeat() && esBeat().jump(linkEscape));
       }, 0);
     }
     function roomLine(text) {
@@ -271,7 +274,6 @@
           ch1SlicePointer(kind, x, y);
           ch1Day2Pointer(kind, x, y);
         },
-        ch1PadPress,
         ch1JumpBeat,
         shown: () => Array.from(p.shown),
         op: n,
