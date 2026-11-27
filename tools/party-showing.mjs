@@ -31,6 +31,11 @@
  *     lunchseen    the lunch sneak's capture rule: he steps out while a guest looks; FUR!, the alarm, the guards, back
  *                  into the plant, "They lost you."; then seen again and standing still: the LOCKUP card, and the
  *                  restart hidden in the plant. Both write a still of each step to SHOWING_STILLS=<dir> if it is set.
+ *     day1end      the new end of Day 1 (story pass 28-52, E2/E4): closing time with the Polaroid (he joined the group
+ *                  photo), he walks home himself, the wall speaker calls Mops, the player is Mops cleaning the hall (the
+ *                  dust, a spill, the full beard and the wring, the fur trail, the Polaroid close-up), home, truth or
+ *                  fib (TELL), the talk, the TV story, the bedtime story (why Mops kept him, the last cake, one heart),
+ *                  to Day 2 fading in. A kid's taps: the floor, the big button, NEXT, the two buttons.
  *   SHOWING_SILENT=1 leaves the sound out.
  */
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
@@ -39,7 +44,7 @@ import { join, dirname } from "node:path";
 import { startGame, sleep, root } from "../tests/game-page.mjs";
 
 const [which, outFile] = process.argv.slice(2);
-const WHICH = ["keep", "back", "flyer", "early", "ventfur", "ventcostume", "tv", "bedtime", "morning", "lunch", "lunchseen"];
+const WHICH = ["keep", "back", "flyer", "early", "ventfur", "ventcostume", "tv", "bedtime", "morning", "lunch", "lunchseen", "day1end"];
 if (!WHICH.includes(which) || !outFile) {
   console.error("Usage: node tools/party-showing.mjs <" + WHICH.join("|") + "> <out.mp4>");
   process.exit(2);
@@ -53,7 +58,7 @@ const hall = await import(join(root, "src", "modules", "party-hall.js"));
 const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 2 };
 const g = await startGame({ port: 9360 + WHICH.indexOf(which), name: "party-showing-" + which });
 const sneak = await import(join(root, "tests", "party-sneak.mjs"));
-const { page, errors } = await g.open(which === "tv" || which === "bedtime" || which === "morning" || which === "lunch" || which === "lunchseen" ? "?ch=1" : "?beat=" + (which === "flyer" ? "party:P3" : which === "ventfur" ? "party:P2" : "party:P6"), PHONE);
+const { page, errors } = await g.open(which === "tv" || which === "bedtime" || which === "morning" || which === "lunch" || which === "lunchseen" ? "?ch=1" : "?beat=" + (which === "flyer" ? "party:P3" : which === "ventfur" ? "party:P2" : which === "day1end" ? "party:P8b" : "party:P6"), PHONE);
 await sleep(600);
 SILENT || (await page.click("#ss-sound").catch(() => {}));
 await sleep(600);
@@ -473,6 +478,8 @@ if (which === "lunch" || which === "lunchseen") {
   }, which);
 }
 await startRecording();
+// (day1end: Squatch joined the group photo, so Mops finds the Polaroid)
+which === "day1end" && (await page.evaluate(() => (window.__ss.op.ch1PartyNow.shot = { phase: "done", got: true })));
 await sleep(which === "morning" || which === "lunch" || which === "lunchseen" ? 300 : 1800);
 if (which === "keep") {
   await dance(16, 4);
@@ -981,6 +988,104 @@ if (which === "early") {
   await until((q) => q.ctrl && q.now && Object.values(q.now.worn).every((v) => !v), 8000);
   log("the costume off");
   await toTv(120000);
+}
+if (which === "day1end") {
+  const C = await import(join(root, "src", "modules", "party-cleanup.js"));
+  const next = () => page.evaluate(() => ((window.__ss.op.bt = 1), window.__ss.opTap()));
+  const more = () =>
+    page.evaluate(() => {
+      const n = window.__ss.op,
+        now = window.SSQ.beat("ch1-party").now();
+      return { mo: { x: n.mo.x, y: n.mo.y }, clean: now && now.clean, truthOpen: !!(now && now.truthOpen), close: now && now.close ? now.close.phase : "" };
+    });
+  // a line, a card or a picture with words: read it, then NEXT (a picture that plays by itself is left alone)
+  const readIt = async (q) => {
+    const auto = await page.evaluate(() => !!(window.__ss.op.cur && window.__ss.op.cur.auto));
+    if (auto) return;
+    await sleep(q.cur === "cutaway" ? 2600 : 1500);
+    await next();
+    await sleep(250);
+  };
+  // the Mops walk: a finger on the floor, again if he stops short
+  const mopsTo = async (x, y, ms = 7000) => {
+    const end = Date.now() + ms;
+    let last = 0;
+    for (;;) {
+      const m = await more(),
+        q = await st();
+      if (Math.hypot(m.mo.x - x, m.mo.y - y) < 14 || Date.now() > end || (q.cur && q.cur !== "until")) return;
+      q.ctrl && Date.now() - last > 900 && ((last = Date.now()), await floor(x, y));
+      await sleep(120);
+    }
+  };
+  // closing time: the speaker, then he walks home through his own door
+  await until((q) => q.ctrl && q.now && q.now.close && q.now.close.phase !== "speak" && q.now.close.phase !== "cheer" && q.now.close.phase !== "dim", 25000, async (q) => ["bub", "card"].includes(q.cur) && (await readIt(q)));
+  await sleep(1500);
+  log("home through his own door");
+  await until((q) => q.now && q.now.scene === "P9" && q.ctrl && !q.cur, 40000, async (q) => {
+    if (["bub", "card", "panel"].includes(q.cur)) return readIt(q);
+    q.ctrl && q.room === "hall" && (await floor(hall.HALL_DOOR.x, hall.HALL_DOOR.y + 12), await sleep(600));
+  });
+  log("the cleanup");
+  // mop a while (the dust and a spill), then on until the beard is full
+  const sp = C.SPILLS[1];
+  await mopsTo(sp.x + 60, sp.y);
+  await mopsTo(sp.x - 90, sp.y);
+  for (let i = 0; i < 30; i++) {
+    const m = await more();
+    if (!m.clean || m.clean.beard >= 1) break;
+    await mopsTo(i % 2 ? 90 : 760, [330, 390, 450, 510, 570][i % 5]);
+  }
+  await sleep(1200);
+  // the bucket (outlined), WRING · beard, the pictures, then the fur
+  for (let i = 0; i < 600; i++) {
+    const q = await st(),
+      m = await more(),
+      c = m.clean;
+    if (q.now && q.now.scene === "P9b") break;
+    if (["bub", "card", "panel", "cutaway"].includes(q.cur)) {
+      await readIt(q);
+      continue;
+    }
+    if (!q.ctrl || !c) {
+      await sleep(120);
+      continue;
+    }
+    if (c.close) {
+      await sleep(1600);
+      const b = c.close === "shirt" ? c.targets.shirt : c.close === "feet" ? c.targets.feet : null;
+      b && (await floor(b.x, b.y));
+      await sleep(400);
+      continue;
+    }
+    if (q.act) {
+      await sleep(700);
+      await press();
+      await sleep(400);
+      continue;
+    }
+    if (c.beard >= 1) await mopsTo(C.WRING_AT.x, C.WRING_AT.y);
+    else if (c.found) (await sleep(800), await floor(477, 622), await sleep(1500));
+    else if (c.phase === "find") await mopsTo(c.find.x, c.find.y + 30);
+    else if (c.lit) {
+      const x = (c.lit.x0 + c.lit.x1) / 2,
+        y = (c.lit.y0 + c.lit.y1) / 2 + 4;
+      await mopsTo(Math.max(70, x - C.BEARD_TIP.dx - 50), y);
+      await mopsTo(x - C.BEARD_TIP.dx + 6, y);
+    } else await sleep(200);
+  }
+  log("home: truth or fib");
+  await until(async () => (await more()).truthOpen, 40000, async (q) => ["bub", "card"].includes(q.cur) && (await readIt(q)));
+  await sleep(2500);
+  const T = await page.evaluate(() => window.SSQ.beat("ch1-party").truthTargets());
+  T ? await tap(T.tell.x, T.tell.y) : await fail("no truth or fib buttons");
+  // the talk, to the TV
+  await toTv(150000);
+  log("the TV story");
+  // the TV story and the bedtime story, read at a kid's pace, to Day 2
+  await until(() => page.evaluate(() => !!window.__ss.op.ch1Day2), 400000, async (q) => ["bub", "card", "panel", "cutaway"].includes(q.cur) && (await readIt(q)));
+  log("Day 2");
+  await sleep(3000);
 }
 await finishRecording();
 console.log("page errors", errors.slice(0, 5));
