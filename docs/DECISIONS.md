@@ -3,36 +3,37 @@
 
 | Lines | Heading |
 | --- | --- |
-| 37–39 | # Space Snack Quest: every decision, in one place |
-| 40–47 | ## How to use this file |
-| 48–56 | ## Lunch sneak, 2026-11-26 (Brian's video notes and answers, round D) |
-| 57–67 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
-| 68–77 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
-| 78–88 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
-| 89–112 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
-| 113–117 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 118–126 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 127–130 | ## Sound, 2026-11-23 |
-| 131–154 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 155–166 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 167–191 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 192–200 | ## Which repo is the base, 2026-11-22 |
-| 201–211 | ## Sight cones, 2026-11-22 |
-| 212–216 | ## Latest calendar direction, 2026-11-16 |
-| 217–219 | ## Vent walk, 2026-11-16 |
-| 220–222 | ## Locked home room v5, 2026-11-16 |
-| 223–232 | ## Fidelity system (pictures are locked, not just words) |
-| 233–270 | ## 1. Working rules |
-| 271–337 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 338–362 | ## 3. Characters and look |
-| 363–439 | ## 4. Look, rooms and layout |
-| 440–461 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 462–505 | ## 6. Later chapters (2–4 and travel) |
-| 506–515 | ## 7. Audio |
-| 516–550 | ## 8. Code, controls and process |
-| 551–597 | ## 9. Open / waiting on Brian |
-| 598–692 | ## 10. Earlier entries, kept word for word |
-| 693–789 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 38–40 | # Space Snack Quest: every decision, in one place |
+| 41–49 | ## How to use this file |
+| 50–57 | ## Evening and night one, look and physics, 2026-11-26 (Brian, video notes on beats 37 to 42) |
+| 58–66 | ## Lunch sneak, 2026-11-26 (Brian's video notes and answers, round D) |
+| 67–77 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
+| 78–87 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
+| 88–98 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
+| 99–122 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
+| 123–127 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 128–136 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 137–140 | ## Sound, 2026-11-23 |
+| 141–164 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 165–176 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 177–201 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 202–210 | ## Which repo is the base, 2026-11-22 |
+| 211–221 | ## Sight cones, 2026-11-22 |
+| 222–226 | ## Latest calendar direction, 2026-11-16 |
+| 227–229 | ## Vent walk, 2026-11-16 |
+| 230–232 | ## Locked home room v5, 2026-11-16 |
+| 233–242 | ## Fidelity system (pictures are locked, not just words) |
+| 243–280 | ## 1. Working rules |
+| 281–347 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 348–372 | ## 3. Characters and look |
+| 373–449 | ## 4. Look, rooms and layout |
+| 450–471 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 472–515 | ## 6. Later chapters (2–4 and travel) |
+| 516–525 | ## 7. Audio |
+| 526–560 | ## 8. Code, controls and process |
+| 561–607 | ## 9. Open / waiting on Brian |
+| 608–702 | ## 10. Earlier entries, kept word for word |
+| 703–799 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -45,6 +46,15 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 - **This repo file is the single source of truth.** It was synced on Monday, November 9, 2026 from the designer record through decision R63, and it still holds the earlier snapshot `docs/old/project/DECISIONS-2026-11-08.md` (on `main` at commit 10030f6). Every earlier entry is kept in section 10. Where a later decision replaces an earlier one, the earlier line is marked **Superseded** and says what replaced it. The dated snapshot's full text is in `docs/old/history/DECISIONS-2026-11-08.md`. A short pointer stays at `docs/old/project/DECISIONS-2026-11-08.md`. New decisions get a row in the tables above, through a docs PR (review, "Docs match main: yes", Brian's written yes before merge).
 - Don't invent a decision. If something isn't clear, add it under **Open**.
 
+
+## Evening and night one, look and physics, 2026-11-26 (Brian, video notes on beats 37 to 42)
+- **Every room has a night look.** Brian: "Make sure it's not just the hall dark at night, but all rooms are different at night versus daytime." Built as one rule in `src/modules/night-look.js`: at night a room shows its locked night picture where one exists (the loading bay), and otherwise its day picture under a dim blue night tint (the bedtime story's night colour), with windows, screens and lamps kept bright and the characters drawn lit over it. Every room shown in a night beat is tested for it (`tests/evening-physics.mjs`). The party night and the escape night should use the same helper. **Decided** (the rule); the tint's strength and the lit boxes are a PLACEHOLDER look, **Needs Brian's yes**.
+- **Robots always show their cones, and roll only through open floor.** From Brian's video notes: a robot never rolls across a doorway, through a wall or through furniture, and every robot, parked or rolling, shows its cone. **Decided.**
+- **Nobody walks over anyone or anything.** From Brian's video notes (Squatch walked over the sleeping Mops): every walk, scripted or the player's, goes round furniture, walkways and people. **Decided.**
+- **Mops's fainting-goat sleep sits on the floor.** From Brian's video notes: a shadow under him, his back on the floor, his head resting on his mop bucket, feet up. **Decided.**
+- **A cone reacts only once it has held him.** From Brian's video notes: a guard or robot reacts only after its drawn cone reaches him and stays about half a second (a "?" shows while it registers), never when the cone stops short; flashlight cones never vanish mid-search. **Decided** (0.5 s is `EVENING_PACE.robotSee`).
+- **Vents behave the same everywhere.** From Brian's video notes: the big wall vent shows swirl lines while it sucks; the floor-vent fur rule applies at night unless the vent is off. **Decided.**
+- **Long bubbles are split.** From Brian's video notes: a bubble over about 12 words is said as several bubbles, word for word, one at a time. **Decided.**
 ## Lunch sneak, 2026-11-26 (Brian's video notes and answers, round D)
 
 - **Walk through any open doorway.** Brian (#47): "yes, walk through any open doorway everywhere; closed doors keep OPEN · door. The doorway only counts when he walks into the opening itself." Built in the lunch sneak: the hallway doorway has no button (SNEAK · hallway retired); his feet inside its opening take him into the hallway. **Decided.**

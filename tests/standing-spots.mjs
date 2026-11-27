@@ -26,6 +26,8 @@ const { HOME_SPOTS } = await mod("home-alone.js");
 const { PHOTO_ROW } = await mod("party-photo.js");
 const { BEDTIME_SPOTS } = await mod("bedtime-story.js");
 const { HOME_MORNING_SPOTS } = await mod("home-morning.js");
+const EVP = await mod("evening-place.js");
+const { LUNCH_SOLIDS } = await mod("lunch-sneak-place.js");
 
 let fails = 0;
 const check = (name, ok, info) => (console.log(`${ok ? "PASS" : "FAIL"} ${name}${ok || info == null ? "" : "\n      " + JSON.stringify(info)}`), ok || fails++);
@@ -57,6 +59,9 @@ const homeSpots = {
   ...Object.fromEntries(Object.entries(BEDTIME_SPOTS).filter(([k]) => k !== "inBed").map(([k, v]) => ["bedtime " + k, v])),
   // the home morning (beats 22 to 24): getting out of bed starts on the bed on purpose (not listed)
   ...Object.fromEntries(Object.entries(HOME_MORNING_SPOTS).filter(([k]) => k !== "bed").map(([k, v]) => ["home morning " + k, v])),
+  // the evening (beats 40 to 42, evening.js): where he stops, where Mops stands, beside the bed at night; Mops's way to
+  // his sleeping place (he lies there: its floor is checked below)
+  ...Object.fromEntries(["stop", "mops", "up", "sleepVia"].map((k) => ["evening " + k, EVP.HOME[k]])),
 };
 // Squatch under his bed, and his flop onto it, are on the bed on purpose (not listed above).
 const homeBad = [];
@@ -168,5 +173,41 @@ const tie = [{ id: "a", y: 500 }, { id: "b", y: 500 }, { id: "c", y: 480 }, { id
 const orders = new Set();
 for (let k = 0; k < 6; k++) orders.add(drawOrder(k % 2 ? tie.slice() : [...tie]).map((p) => p.id).join(""));
 check("draw order: front last, and people on the same feet line always in the order they are listed", orders.size === 1 && [...orders][0] === "cabd", [...orders]);
+// ---------- the evening (evening.js) ----------
+// Mops asleep on his back at home: the floor he lies on (mopsSleepBox, a solid while he sleeps) is clear of the bed and
+// of where Squatch gets out of bed; his head rests against the bucket (the box ends at its left side).
+{
+  // (his scale at home is the room's, 3: Mops's head at the bucket, measured in tests/evening-physics.mjs)
+  const H = EVP.HOME,
+    lie = EVP.mopsSleepBox(3),
+    up = { x0: H.up.x - FOOT.home.side, x1: H.up.x + FOOT.home.side, y0: H.up.y - FOOT.home.up, y1: H.up.y + FOOT.home.down };
+  check("evening: Mops lies on open floor (not on the bed or the bucket, not where Squatch gets out of bed)", !hit(lie, HOME_FURNITURE.bed) && !hit(lie, HOME_FURNITURE.bucket) && !hit(lie, up) && lie.x1 === HOME_FURNITURE.bucket.x0, { lie, up });
+}
+// The snack bar (beat 38): Squatch in the strip, Mops, the two in line, the family at the counter's front. On purpose:
+// Squatch hidden in the aisle behind the counter (BAR.hidden), the family reading in the hallway doorway past the bar.
+{
+  const B = EVP.BAR,
+    spots = { "evening Squatch at the counter's top": B.sq, "evening Mops": B.mops, "evening family's way round": B.via, ...Object.fromEntries(B.line.map((p) => ["evening in line " + p.id, p])), ...Object.fromEntries(B.family.map((p) => ["evening family " + p.id, p.at])) },
+    bad = [];
+  for (const [name, p] of Object.entries(spots)) {
+    const f = FOOT.hall,
+      box = { x0: p.x - f.side, x1: p.x + f.side, y0: p.y - f.up, y1: p.y + f.down };
+    // (Day 2's hall: the lunch's furniture, with the strip to the hallway doorway open and the crates it left,
+    // lunch-sneak-place.js LUNCH_SOLIDS, the list evening.js walks on)
+    LUNCH_SOLIDS.forEach((b, i) => hit(box, b) && bad.push({ spot: name, at: [p.x, p.y], solid: i }));
+  }
+  check(`evening: none of ${Object.keys(spots).length} standing spots at the snack bar overlaps the hall's furniture or the crates`, bad.length === 0, bad);
+}
+// The loading bay at night (beat 42): the robots' places and Squatch's stops are clear of its furniture.
+{
+  const Y = EVP.BAY,
+    spots = { "bay robot": Y.robot, ...Object.fromEntries(Y.parked.map((p) => ["bay parked " + p.id, p])), ...Object.fromEntries(Y.woke.map((p, i) => ["bay woken robot " + i, p])), "bay stop": Y.stop, "bay bin": Y.bin, "bay mailbox": Y.mail, "bay under the vent": Y.underVent, ...Object.fromEntries(Y.run.map((p, i) => ["bay run " + i, p])) },
+    bad = [];
+  for (const [name, p] of Object.entries(spots)) {
+    const box = { x0: p.x - 22, x1: p.x + 22, y0: p.y - 14, y1: p.y + 8 };
+    EVP.BAY_FURNITURE.forEach((b, i) => hit(box, b) && bad.push({ spot: name, at: [p.x, p.y], solid: i }));
+  }
+  check(`evening: none of ${Object.keys(spots).length} standing spots in the loading bay overlaps its furniture`, bad.length === 0, bad);
+}
 console.log(fails ? `${fails} check(s) failed.` : "standing-spots checks passed");
 process.exit(fails ? 1 : 0);

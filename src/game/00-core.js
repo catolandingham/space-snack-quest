@@ -1365,6 +1365,7 @@
       )
         for (let i of xf) l.push(nt(i.x, i.y, 26, 14, 10));
       if ((n.scene || "")[0] === "Q" && CH1_FURNITURE[n.room] && (n.room !== "office" || n.ch1Office)) for (let i of CH1_FURNITURE[n.room]) l.push(i);
+      window.SSQ && window.SSQ.extraSolids && l.push(...window.SSQ.extraSolids(n.room)); // a rebuilt beat's people and things (evening.js)
       return (n.room === "van" && l.push({ x0: Tt.x - 100, x1: Tt.x + 100, y0: 380, y1: 470 }), l);
     }
     // What blocks a walker's feet: the room's solids, plus a standing Mops when the walker is Squatch.

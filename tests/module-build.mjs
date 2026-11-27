@@ -44,7 +44,7 @@ const bridge = await page.evaluate(() => {
   return out;
 });
 g.check("window.SSQ is the bridge: frozen, not replaceable, version 1", !!bridge && bridge.version === 1 && bridge.frozen && bridge.locked, bridge);
-g.check("the rebuilt beats are the morning, the party night, the TV story, the bedtime story, the home morning and the lunch sneak", !!bridge && JSON.stringify(bridge.ids) === JSON.stringify(["ch1-morning", "ch1-party", "ch1-tv-story", "ch1-bedtime-story", "ch1-home-morning", "ch1-lunch"]) && bridge.unknown === null, bridge);
+g.check("the rebuilt beats are the morning, the party night, the TV story, the bedtime story, the home morning, the lunch sneak and the evening", !!bridge && JSON.stringify(bridge.ids) === JSON.stringify(["ch1-morning", "ch1-party", "ch1-tv-story", "ch1-bedtime-story", "ch1-home-morning", "ch1-lunch", "ch1-evening"]) && bridge.unknown === null, bridge);
 g.check("a beat registers once by id; registering it twice throws", !!bridge && bridge.registered === "test" && bridge.twice === "throws", bridge);
 g.check("the older program still starts (Chapter 1 state is there)", await page.evaluate(() => !!(window.__ss && window.__ss.op)));
 g.check("the older program handed the engine over to the bridge", await page.evaluate(() => !!window.SSQ.engine()));
@@ -91,6 +91,14 @@ const luSrc = readdirSync(join(root, "src", "modules"))
 const luSets = [...luSrc.matchAll(/\.set\("([A-Za-z0-9]+)"/g)].map((m) => m[1]);
 g.check("the lunch sneak writes only named fields", luSets.length > 0 && luSets.every((k) => (BEAT_WRITES || []).includes(k)), luSets.filter((k) => !(BEAT_WRITES || []).includes(k)));
 g.check("the lunch sneak never reaches into the game state another way", !/__ss|\.op\b|window\.n\b/.test(luSrc));
+// The evening (evening.js, Day 2's beats 37 to 42) too.
+const evSrc = readdirSync(join(root, "src", "modules"))
+  .filter((f) => /^evening/.test(f))
+  .map((f) => readFileSync(join(root, "src", "modules", f), "utf8"))
+  .join("\n");
+const evSets = [...evSrc.matchAll(/\.set\("([A-Za-z0-9]+)"/g)].map((m) => m[1]);
+g.check("the evening writes only named fields", evSets.length > 0 && evSets.every((k) => (BEAT_WRITES || []).includes(k)), evSets.filter((k) => !(BEAT_WRITES || []).includes(k)));
+g.check("the evening never reaches into the game state another way", !/__ss|\.op\b|window\.n\b/.test(evSrc));
 const writes = await page.evaluate(() => window.SSQ.beatWrites());
 g.check("in the browser the morning wrote only named fields", Array.isArray(writes) && writes.every((k) => (BEAT_WRITES || []).includes(k)), writes);
 const game = readdirSync(join(root, "src", "game"))

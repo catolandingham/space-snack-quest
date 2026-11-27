@@ -38,7 +38,9 @@ import { drawCreditsButton, creditsTap, creditsShown } from "./credits.js";
  * to write another field stops with an error; tests/module-build.mjs checks the morning (and its home-alone
  * part) and the party night against this list.
  */
-export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1HomeMorning", "ch1Lunch", "ch1Sneak", "ch1Step", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe"]);
+// (the evening, evening.js, also keeps the older program's record of night one: the crayon drawing on the wall, the
+// brochure, the paw print, the posted yellow copy, the pink sheet in the vent, the lights; and ch1D, the loading bay)
+export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1HomeMorning", "ch1Lunch", "ch1Evening", "ch1Sneak", "ch1Step", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe", "ch1Crayon", "ch1Brochure", "ch1Paw", "ch1Signed", "ch1Mailed", "ch1PinkSucked", "ch1Lights", "ch1D"]);
 
 export function createBridge() {
   const beats = new Map();
@@ -75,11 +77,15 @@ export function createBridge() {
       hm = beats.get("ch1-home-morning"),
       // the home morning's own music: the bedtime music while the night is dark, quiet as it comes up and through the
       // PA, then "Morning" from the speaker (home-morning.js musicCue; null when it has no say)
-      morning = hm && hm.musicCue ? hm.musicCue() : null;
+      morning = hm && hm.musicCue ? hm.musicCue() : null,
+      ev = beats.get("ch1-evening");
     // (the bedtime story's walk to bed and climb in are quiet: the TV story's music has ended with the film, and the
     // bedtime music starts as Squatch asks; Brian 2026-11-26, video note 0:03)
     if (tv && tv.showing && tv.showing()) return "tv";
     if (bed && bed.quietNow && bed.quietNow()) return "";
+    // (Day 2's night one at home after the fight: no song tonight, story pass beat 41: their song is their bond, and its
+    // absence is felt)
+    if (ev && ev.nightNow && ev.nightNow()) return "";
     return bed && bed.showing && bed.showing() ? "bedtime" : morning != null ? morning : cue;
   };
   return Object.freeze({
@@ -236,6 +242,12 @@ export function createBridge() {
     hallOwner() {
       for (const b of beats.values()) if (b.ownsRoom && b.ownsRoom()) return b;
       return null;
+    },
+    /** Feet nobody walks through that a rebuilt beat adds to a room the older program draws (00-core.js). */
+    extraSolids(room) {
+      const out = [];
+      for (const b of beats.values()) b.extraSolids && out.push(...b.extraSolids(room));
+      return out;
     },
     /** Ids of every rebuilt beat, in the order they were registered. */
     beatIds() {

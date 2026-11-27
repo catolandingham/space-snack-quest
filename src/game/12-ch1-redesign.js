@@ -46,7 +46,7 @@
           : ch1MorningSpots()
             ? ch1MorningSpots()
             : [];
-      let s = (spots || []).find((o) => o && o.verb && o.when !== !1);
+      let s = (spots || []).find((o) => o && (o.verb || o.walk) && o.when !== !1); // walk: a doorway walked through (evening.js)
       s && drawGoalMark(s);
     }
     // The morning module's spots (SING ALONG, TALK · Mops) while its song step has control, and home alone's
@@ -825,8 +825,7 @@
         (n.sq.x = 140),
         (n.sq.y = 540),
         (n.ctrl = !0),
-        (n.ch1LookT = 0),
-        n.ch1Day2 && ch1NightReset());
+        (n.ch1LookT = 0));
     }
     function drawGameBin(px, py) {
       (e.beginPath(),

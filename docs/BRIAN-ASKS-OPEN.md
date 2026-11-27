@@ -8,20 +8,20 @@
 | 43–61 | ## 2. Needs your eyes |
 | 62–65 | ## 3. Your instructions disagree |
 | 66–67 | ## 4. Everything else not built |
-| 68–85 | ### Morning and home |
-| 86–96 | ### Party |
-| 97–108 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
-| 109–112 | ### Party video notes and answers, 2026-11-24 (not built yet) |
-| 113–117 | ### Snacks and dress-up |
-| 118–130 | ### Day 2 and night |
-| 131–135 | ### Escape and later chapters |
-| 136–139 | ### Looks and lines |
-| 140–147 | ### Sound |
-| 148–151 | ### Words and rules |
-| 152–164 | ### How the bots work |
-| 165–172 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
-| 173–190 | ## 5. Merged, in a pull request, and being built |
-| 191–201 | ## 6. Corrections to the checkers |
+| 68–84 | ### Morning and home |
+| 85–95 | ### Party |
+| 96–107 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
+| 108–111 | ### Party video notes and answers, 2026-11-24 (not built yet) |
+| 112–116 | ### Snacks and dress-up |
+| 117–127 | ### Day 2 and night |
+| 128–132 | ### Escape and later chapters |
+| 133–136 | ### Looks and lines |
+| 137–144 | ### Sound |
+| 145–148 | ### Words and rules |
+| 149–161 | ### How the bots work |
+| 162–169 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
+| 170–187 | ## 5. Merged, in a pull request, and being built |
+| 188–198 | ## 6. Corrections to the checkers |
 <!-- /section-index -->
 # Brian's asks that are not in the game yet
 
@@ -78,7 +78,6 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 - Package inspection announcement. "due to suspicious activity, we will be inspecting every package" (S 408).
 - The slip is the confirmation and mail-back form. "this is the confirmation form and also what you mail back to us if you want to order any more." (S 405).
 - UPS-replacing-Amazon joke. "Maybe there's kind of a funny nod, like UPS replacing Amazon" (S 408).
-- Pink note needs a paw print. "pink note needs squatch print remember?" (S 580).
 - Reason Mops dismisses Mars, made obvious. "there's a reason why he thinks it's a waste of time to go to Mars." (S 1058).
 - Order signed in triplicate. "I like Paul signs the order, but it's in triplicate" (S 380).
 - Moon Pies delivered for a reason. "Actually make sure the moonpies get delivered and maybe there's a reason why ?" (K 156).
@@ -116,14 +115,12 @@ Brian watched the party video and answered every question the same evening (his 
 - Ball-hide in every room. "I like the idea he can do it to hide when he wants" (S 705).
 
 ### Day 2 and night
-- Photo gallery with five photos a visit, a crooked picture, movie-still gags. "each visit should by default just be like five photos maybe?" (S 853); "Darth Vader's pretty much near perfect, really no notes there" (S 985).
-- Gallery with arrows and an X always there. "arrows to sweep left or right, and then an X that's there at all times" (S 883).
+- The gallery's approved movie-scene pictures (the gallery itself is built, feat/ch1-evening, with stand-in pictures). "Darth Vader's pretty much near perfect, really no notes there" (S 985).
 - Janitor gets sucked out when robots land. "Is there a way where, like, the janitor can get sucked out when the robots land or something?" (S 223).
 - Squatch sneaks to the grate, music distracts robots. "we should have squatch sneak over to grate after distracting robots with music" (S 596).
 - Manager shakes the robots' hands. "The Guy Who Ordered Them Should Shake The Hands Of Dot Bob And Lou As They Leave" (P L103).
 - Foreshadow rolling into a ball. "Foreshadowing The Fact That You Can Roll Up Into A Ball" (P L182).
 - Ship cutscene, security cameras. "We got a call from The From Stormtop Uh Security cameras" (P L222).
-- Squatch shows the brochure. "Squatch Should Show Him The Brochure" (P L165).
 - Hurtful line, then "I didn't mean that". "He Should Say Something More Like Um I Wish You Would Have Left Me In That Crate Or Something" (P L176).
 - Loading-bay banishment shown, and the office rule issued. "It Should Actually Show Them Getting On The Ship At The Loading Bay" (P L50); "Then Show Him In Like The Office Issuing A New Rule On The Computer" (P L53).
 - Lobby crowd obvious. "I kind of think it should be obvious that they're coming in, it needs to be a change" (S 33).

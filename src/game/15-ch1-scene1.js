@@ -22,6 +22,7 @@
         (n.ch1Office = !1),
         (n.ch1PartyNow = null),
         (n.ch1Lunch = null),
+        (n.ch1Evening = null),
         (n.ch1SureEnd = !1),
         (n.ch1Day2 = !1),
         (n.ch1Zoom = null),
@@ -185,6 +186,10 @@
         openCalendar: (next) => ch1OpenCalendar(next),
         takeLunch: () => ch1TakeLunch(),
         shipCall: () => ch1ShipCall(), // beat 28 after the lunch sneak (src/modules/lunch-sneak.js)
+        // The evening (src/modules/evening.js): a station robot, the papers' record (ch1SetPaper), and beat 43 after night one.
+        drawRobot: (ctx, x, y) => onCtx(ctx, () => dq(x, y, !1)),
+        paper: (p) => ch1SetPaper(p),
+        sixDays: () => ch1SixDays(),
         offer: () => pick(ch1QSpots()),
         // Holding ↺ inside a full-screen view: the same restart as the page's ↺.
         restartPart: () => sectionReset(),

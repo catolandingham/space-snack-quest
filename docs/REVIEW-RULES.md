@@ -3,31 +3,32 @@
 
 | Lines | Heading |
 | --- | --- |
-| 32–35 | # Review rules |
-| 36–87 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
-| 88–90 | ## Techniques |
-| 91–93 | ## Mistake: locked art was redrawn |
-| 94–98 | ## Mistake: optional inspection interrupted getting out of bed |
-| 99–101 | ## Mistake: a big doc's section index went stale |
-| 102–104 | ## Mistake: a rebuilt beat forgot the step restart |
-| 105–107 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
-| 108–110 | ## Mistake: a killed run was read as a failing test |
-| 111–113 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
-| 114–116 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
-| 117–123 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
-| 124–131 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
-| 132–148 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
-| 149–161 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
-| 162–164 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
-| 165–167 | ## Standing rule: nobody walks through furniture (Brian, 2026-11-26) |
-| 168–176 | ## Mistakes caught building the morning sound (2026-11-24) |
-| 177–188 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
-| 189–200 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
-| 201–214 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
-| 215–221 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
-| 222–232 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
-| 233–240 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
-| 241–246 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
+| 33–36 | # Review rules |
+| 37–88 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
+| 89–91 | ## Techniques |
+| 92–94 | ## Mistake: locked art was redrawn |
+| 95–99 | ## Mistake: optional inspection interrupted getting out of bed |
+| 100–102 | ## Mistake: a big doc's section index went stale |
+| 103–105 | ## Mistake: a rebuilt beat forgot the step restart |
+| 106–108 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
+| 109–111 | ## Mistake: a killed run was read as a failing test |
+| 112–114 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
+| 115–117 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
+| 118–124 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
+| 125–132 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
+| 133–149 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
+| 150–162 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
+| 163–165 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
+| 166–168 | ## Standing rule: nobody walks through furniture (Brian, 2026-11-26) |
+| 169–177 | ## Mistakes caught building the morning sound (2026-11-24) |
+| 178–189 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
+| 190–201 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
+| 202–215 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
+| 216–222 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
+| 223–233 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
+| 234–243 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
+| 244–249 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
+| 250–261 | ## Mistakes caught building the evening and night one (2026-11-26) |
 <!-- /section-index -->
 # Review rules
 
@@ -245,3 +246,15 @@ His note on the home morning (video note 0:18): "he kind of glitches through the
 - Sight was tested at one point a quarter of the way up Squatch while he is drawn about 85 tall, so a cone drawn across his head did not see him ("It looks like he's right in the octopus' cone, what am I missing??"). What a cone is drawn on is what it sees: sight tests his whole drawn outline (`party-watch.js` `coneEdge`), and `tests/party-showing6.mjs` checks the drawn cone against his drawn pixels. A change to sight re-checks every layout built on it (P2's glancer, P4's sweeps, the guards' reach).
 - Guards walked straight from point to point, through a plant pot. Anyone who walks a route round the room goes round its furniture (`guardStep`), and a route's whole walk is checked step by step (`tests/standing-spots.mjs`), not only where it stops.
 - A wait was tied to the end of a song (the photo after the dance, 28 s of nothing). After an action ends, the next beat starts within about a second, or the wait is shown.
+
+## Mistakes caught building the evening and night one (2026-11-26)
+
+- A spot was built by spreading a place object that also held the thing's own box (the bin's outline box), so the spot had a `box` and the action button looked for his feet inside the bin: GRAB · copies and POST · mailbox never came up where he stood. Build a spot from `x`, `y` and `r` only, and test it by `offerNow()` where the kid stands, not by calling the spot's function.
+- On a walk through a doorway the room changed first and the step only after the walk in, so for a moment the room and the step disagreed: ↺ there gave him control in a step whose doorway was in another room (stuck), and the older program drew the room for those frames. A step changes with the room (`evening.js` intoRoom), and a test presses ↺ in the middle of a walk in.
+- The ball rule was paused during an alarm, so a rolled-up Squatch was never found by the guards (the reviewer). The ball rule runs with every cone, the guards' included, alarm or not, as in the lunch sneak.
+- ROLL · ball is on the button almost everywhere in a sneak, and the kid robot pressed it, then walked on (which unrolls him) into a cone, over and over. The robot leaves the ball alone except where rolling up is the goal, rolls up when seen in the night's bay, and crosses the night robot's column on its rhythm, as the flyer sneak's robot does; a kid robot started from `KID_START=evening:37` reached the tally card caught 0 times.
+- A way home was tested by moving him in straight lines through the mail room's wall, which a kid's walk goes round, into a robot's cone; the showing video found it. A route a test calls fair is stepped against the room's solids at every step, and the kid robot or the showing tool walks it.
+- The hall alone was darkened at night, and the hallway, home and the office stayed in daylight (Brian: "Make sure it's not just the hall dark at night, but all rooms are different at night versus daytime."). Night is one rule for every room, `src/modules/night-look.js` (the locked night picture where one exists, else the day picture under the night tint with its lights kept bright, the characters drawn lit over it); a beat at night draws its rooms through it, and a test checks every room a night beat shows.
+- A robot rolled across a doorway and Squatch walked over the sleeping Mops, because scripted walks went in straight lines and never met the room's solids. Every scripted walk (robots, the family, Mops) is stepped against the solids in a test, people included, and a robot's cone is drawn whenever it is on screen.
+- A cone that stopped short of him still caught him, and a cone that touched him for one frame did too. A sighting needs the drawn cone to reach him and hold about half a second, with a "?" while it registers.
+- Giving the two robots parked in the mail room their cones (robots always show cones) put the left one's cone out past the mail room's wall onto the way in to the mailbox, so the showing was seen and the alarm went off before POST · mailbox. When a cone is added or turned, walk the step's fair way through it in a test (`tests/evening-physics.mjs` walks the way in to the mailbox).
