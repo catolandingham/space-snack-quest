@@ -443,7 +443,7 @@ r = await ev(() => {
     s.dim > 0.5 && !n.ctrl && (seen.quiet = seen.quiet !== false && window.SSQ.refinedCue("home") === "");
     return window.__st() === "out" && n.ctrl;
   });
-  const solid = window.__ss.solids().some((q) => q.x1 === 536 && q.y0 === 550 && q.y1 === 580);
+  const solid = window.__ss.solids().some((q) => q.x1 === 536 && q.y0 === 562 && q.y1 === 592);
   const inBed = !!n.ch1Evening.bed;
   // his first move gets him out of bed (the kid's to start)
   n.walkTo = { x: 600, y: 470, room: n.room, lx: n.sq.x, ly: n.sq.y, lt: n.T };
@@ -452,7 +452,7 @@ r = await ev(() => {
   const up = { bed: !!n.ch1Evening.bed, x: Math.round(n.sq.x), y: Math.round(n.sq.y), ctrl: n.ctrl };
   return { pressed, seen, inBed, up, step: window.__st(), sqPose: n.sqPose, solid, sneak: n.ch1Sneak };
 });
-g.check("beat 41: SLEEP · bed; the light goes down with no song tonight; Mops tips over like a fainting goat, sleeps on his back, snores", r.pressed && r.seen.tip >= 1 && r.seen.roll >= 1 && r.seen.zzz > 0 && r.seen.dim >= 1 && r.seen.quiet === true, r);
+g.check("beat 41: SLEEP · bed; the light goes down with no song tonight; Mops tips over like a fainting goat and sleeps on his side, his head on his bucket; snores", r.pressed && r.seen.tip >= 1 && r.seen.roll >= 1 && r.seen.zzz > 0 && r.seen.dim >= 1 && r.seen.quiet === true, r);
 g.check("beat 41: his eyes open; the idea above his head in pictures (Mops mopping, robots mopping, the ship to the red dot), his whisper, then the form", r.seen.ideas.join(",") === "mopping,robots,ship,form" && r.seen.said.join("|") === "The floors don't mop themselves...|But those robots do.|The form!", r.seen);
 g.check("night one: Squatch is still in bed, the kid's to move; his first move gets him out of bed beside it", r.step === "out" && r.inBed && !r.up.bed && r.up.ctrl && r.up.x === 340 && r.up.y === 470, r);
 g.check("night one: Mops lies asleep on the floor and nobody walks through him; the sneaking music is on", r.solid && r.sneak, r);

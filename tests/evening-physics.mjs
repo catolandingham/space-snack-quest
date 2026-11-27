@@ -9,7 +9,7 @@
  *   - nobody walks through anything: every scripted walk (the two in line, the family, Mops, the run to the vent, the
  *     woken robots) keeps its feet off the room's furniture and walls (the mail room's fence too), and Squatch's walk
  *     from his bed to the door goes round Mops asleep on the floor;
- *   - Mops asleep: on his back, his head against his bucket, his feet in the air;
+ *   - Mops asleep: tipped over on his side, his head on his bucket;
  *   - the vents: the bay's floor vent pulls his fur in (the party's vent rule) and the alarm follows ("by the vent");
  *     the big wall vent shows its swirl while it sucks.
  *   node tests/evening-physics.mjs
@@ -229,7 +229,7 @@ const walks = await ev(() => {
   window.__run(30, () => window.__st() === "out" && n.ctrl, () => n.moPose !== "hidden" && out.homeMops.push({ x: Math.round(n.mo.x), y: Math.round(n.mo.y) }));
   // asleep: the kid's walk from beside his bed to the door goes round him (the game's own path round the solids)
   const solids = window.__ss.solids(),
-    box = solids.find((q) => q.x1 === 536 && q.y1 === 580);
+    box = solids.find((q) => q.x1 === 536 && q.y1 === 592); // (evening-place.js EV_HOME.sleepFloor + 8)
   const path = window.SSQ.findPath({ x: 340, y: 470 }, { x: 860, y: 440 }, window.__ss.walkBounds(), solids) || [];
   out.mopsBox = box;
   out.walkHome = [{ x: 340, y: 470 }, ...path];
@@ -256,7 +256,7 @@ for (let i = 1; i < seg.length; i++)
   }
 g.check("Mops asleep is solid, and Squatch's walk from his bed to the door goes round him, never over him", !!walks.mopsBox && seg.length >= 2 && over.length === 0, { box: walks.mopsBox, path: seg, over: over.slice(0, 3) });
 
-// ---------- Mops asleep: on his back, his head on his bucket ----------
+// ---------- Mops asleep: on his side, his head on his bucket (round 7, question 127) ----------
 const sleep = await ev(() => {
   const n = window.__ss.op,
     b = window.SSQ.beat("ch1-evening");
@@ -266,7 +266,7 @@ const sleep = await ev(() => {
   window.__ss.drawFrame();
   return b.debug().drew.mops;
 });
-g.check("Mops sleeps on his back (turned all the way over), his head against his mop bucket", sleep && sleep.tip === 1 && sleep.roll === 1 && sleep.head.x >= 515 && sleep.head.x <= 545 && sleep.head.y > 500 && sleep.head.y < 571, sleep);
+g.check("Mops sleeps tipped over on his side (not on his back: turned a little past a quarter, never a half), his head on his mop bucket's rim", sleep && sleep.tip === 1 && sleep.turn > 0.5 && sleep.turn < 0.7 && sleep.head.x >= 530 && sleep.head.x <= 596 && sleep.head.y > 440 && sleep.head.y <= 505, sleep);
 
 // ---------- vents ----------
 const vents = await ev(() => {

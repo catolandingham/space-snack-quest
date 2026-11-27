@@ -6,6 +6,7 @@
  * these numbers.
  */
 import { HALL } from "./party-hall.js";
+import { MOPS_SLEEP, mopsTurnedBox, mopsTurnedHead } from "./mops-asleep-art.js";
 
 // ---------- beat 37: the hallway ----------
 export const EV_HALLWAY = Object.freeze({
@@ -156,7 +157,8 @@ export const EV_HOME = Object.freeze({
   bed: Object.freeze({ x: 330, y: 458, r: 60 }),
   // where Mops falls asleep: on his back on the floor, his head resting against the left side of his mop bucket (the
   // locked picture's bucket, 536 to 596 wide, 500 to 571 high); his feet stand where mopsSleepAt says
-  sleepHead: Object.freeze({ x: 530, y: 572 }),
+  sleepHead: Object.freeze({ x: 540, y: 500 }),
+  sleepFloor: 584,
   sleepVia: Object.freeze({ x: 500, y: 478 }),
   // out of bed at night, beside it
   up: Object.freeze({ x: 340, y: 470 }),
@@ -164,14 +166,19 @@ export const EV_HOME = Object.freeze({
   // Mops's mop bucket on the floor (the room's solid for it, mop-bucket.js): bumping it at night clangs
   bucket: Object.freeze({ x0: 536, x1: 596, y0: 500, y1: 571 }),
 });
-/** Where Mops stands before he tips over (his feet), so that on his back his head rests at EV_HOME.sleepHead (`k`: his scale at home). */
+/**
+ * Where Mops stands before he tips over (his feet; `k`: his scale at home): left of the bucket, so that tipped onto his
+ * side (mops-asleep-art.js MOPS_SLEEP) his head comes down on the bucket's rim (EV_HOME.sleepHead).
+ */
 export function mopsSleepAt(k) {
-  return { x: EV_HOME.sleepHead.x - 17 * k, y: EV_HOME.sleepHead.y };
+  const h = mopsTurnedHead(0, 0, k, -1, MOPS_SLEEP.turn, 0);
+  return { x: Math.round(EV_HOME.sleepHead.x - h.x), y: EV_HOME.sleepFloor };
 }
-/** The floor Mops takes up lying on his back (a solid while he sleeps, so nobody walks through him). */
+/** The floor Mops takes up lying on his side (a solid while he sleeps, so nobody walks through him). */
 export function mopsSleepBox(k) {
-  const at = mopsSleepAt(k);
-  return { x0: Math.round(at.x - 26 * k), x1: 536, y0: at.y - 22, y1: at.y + 8 };
+  const at = mopsSleepAt(k),
+    b = mopsTurnedBox(at.x, at.y, k, -1, MOPS_SLEEP.turn, 0).box;
+  return { x0: Math.round(b.x0), x1: 536, y0: at.y - 22, y1: at.y + 8 };
 }
 
 // ---------- beat 42: the loading bay at night ----------

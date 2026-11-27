@@ -51,7 +51,7 @@ import { HALL_SNEAK, BAY_PACE } from "./loading-bay-place.js";
 import { drawRobot as drawCleaner, drawStreak } from "./loading-bay-art.js";
 import { drawPat } from "./party-free-art.js";
 import { BLEAT_HOOK } from "./bedtime-story-sound.js";
-import { drawPhoto, drawCrayonDrawing, drawBrochure, drawPapers, drawPawPrint, drawFurArm, drawSleepingMops, drawPlaque, drawCutInBack, drawCloseX, drawArrow, fitDesign, PAPERS, PHOTO_POOL, drawHeartShape } from "./evening-art.js";
+import { drawPhoto, drawCrayonDrawing, drawBrochure, drawPapers, drawPawPrint, drawFurArm, drawPlaque, drawCutInBack, drawCloseX, drawArrow, fitDesign, PAPERS, PHOTO_POOL, drawHeartShape } from "./evening-art.js";
 import { HALL, HALL_PICTURE } from "./party-hall.js";
 import { LUNCH_SOLIDS, LUNCH_BOUNDS, LUNCH_PLACES } from "./lunch-sneak-place.js";
 import { drawCrates, sqPawAt } from "./lunch-sneak-art.js";
@@ -68,6 +68,7 @@ import { createHomeMorningSound, HOME_MORNING_SOUND } from "./home-morning-sound
 import { createBedtimeSound } from "./bedtime-story-sound.js";
 import { drawBedtimeSquatch, drawBedBlanket, BED_POSES, BEDTIME_NIGHT } from "./bedtime-story.js";
 import { footfall } from "./footfalls.js";
+import { drawMopsTurned, MOPS_SLEEP, mopsTurnedHead } from "./mops-asleep-art.js";
 import { firstSightHearts } from "./mops-hearts.js";
 import { adultPxFor } from "./room-sizes.js";
 import { findPath } from "./tap-path.js";
@@ -941,7 +942,7 @@ export function createEvening(bridge) {
           k * P.tip >= P.tipFall && !S().mopsSleep.thud && ((S().mopsSleep.thud = 1), sound.effect("hide"));
         }),
         resetT(),
-        // and rolls onto his back, four feet in the air
+        // and settles there on his side, his head on the bucket (no roll onto his back: question 127)
         part(P.roll, (k) => (S().mopsSleep.roll = k * k * (3 - 2 * k))),
         ...Array.from({ length: P.snores }, () => [resetT(), e.run(() => ((S().zzz = 0), bsound.snore())), part(P.snore, (k) => (S().zzz = k))]).flat(),
         // his eyes open in the dark; the idea, in pictures above his head (wordless, about 4 seconds), then in his words
@@ -2260,13 +2261,16 @@ export function createEvening(bridge) {
       }
       out.hearts = hs.length;
     }
-    // Mops asleep on his back on the floor, his head on his bucket (in front of anyone further back)
+    // Mops asleep on his side on the floor, his head on his bucket (mops-asleep-art.js: the same drawing and pose as at
+    // Day 1's bedtime; in front of anyone further back)
     if (s.mopsSleep) {
       const m = s.mopsSleep,
-        at = mopsSleepAt(mopsK);
+        at = mopsSleepAt(mopsK),
+        turn = Math.max(0, MOPS_SLEEP.side * m.tip + (MOPS_SLEEP.turn - MOPS_SLEEP.side) * m.roll - (m.wake || 0) * 0.08);
       people.push({ y: at.y, f: () => {
-        const d = drawSleepingMops(ctx, (c, x, y, sc, o) => e.drawMopsOn(c, x, y, sc, { ...o, eyes: m.eyes > 0.6 || m.tip > 0 ? "closed" : "", headDrop: m.tip > 0 ? 0 : m.eyes * 4 }), at.x, at.y, mopsK, m.tip, m.roll - (m.wake || 0) * 0.35, t);
-        out.mops = { tip: +m.tip.toFixed(2), roll: +m.roll.toFixed(2), head: { x: Math.round(d.head.x), y: Math.round(d.head.y) } };
+        drawMopsTurned(ctx, e, { x: at.x, floor: at.y, scale: mopsK, f: -1, turn, eyes: m.eyes > 0.6 || m.tip > 0 ? "closed" : "", headDrop: m.tip > 0 ? 0 : m.eyes * 4 });
+        const head = mopsTurnedHead(at.x, at.y, mopsK, -1, turn, 0);
+        out.mops = { tip: +m.tip.toFixed(2), roll: +m.roll.toFixed(2), turn: +turn.toFixed(2), head: { x: Math.round(head.x), y: Math.round(head.y) } };
       } });
     }
     drawOrder(people).forEach((q) => q.f());
@@ -2407,8 +2411,9 @@ export function createEvening(bridge) {
       const cl = who === "robot" && room() === "hall" ? (s.cleaners || []).find((r) => r.id === s.talker) : null;
       if (cl) return { x: cl.x, y: cl.y - 70 };
       if (who === "sleeping-mops" && s.mopsSleep) {
-        const at = mopsSleepAt(mopsScale("closet"));
-        return { x: at.x - 10, y: at.y - 70 };
+        const at = mopsSleepAt(mopsScale("closet")),
+          head = mopsTurnedHead(at.x, at.y, mopsScale("closet"), -1, MOPS_SLEEP.turn, 0);
+        return { x: head.x - 10, y: head.y - 40 };
       }
       // the family and the guest (38a, 38b): over each one's head
       const g = (s.guests || []).find((q) => q.role === who);
