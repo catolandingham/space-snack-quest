@@ -23,6 +23,10 @@
 
 ## Where main is (Chapter 1 redesign)
 
+2026-11-26 (night, bedtime), draft PR #89: the night look is merged in and used by the bedtime story (the crate's front wall and Mops's mop bucket at night; lights out dims on top). Open for Brian: lights out over the night look is darker than before (a placeholder; `BEDTIME_NIGHT.dim` could come down). Docs match main: yes.
+
+2026-11-26 (night), draft PR #87: every room has a night look at night (Brian: "all rooms are different at night versus daytime"; `night-look.js`, README "Chapter 1 redesign", the 2026-11-26 night paragraph). Open for Brian: the tint's strength (`NIGHT_TINT`, a placeholder) and which things stay lit; home has no window or lamp in its picture, so only its TV screen stays as it is. NOT ASSESSED: how the night look plays on a phone in daylight. Docs match main: yes.
+
 2026-11-26 (round D, merge), draft PR #90 on `feat/ch1-day2-morning`, not merged. Done: `feat/ch1-bedtime-story` (with the party's round D) merged in (merge commit); the morning's goal things (the rocket, the lunch bag) keep only the dashed goal line, no glow (`tests/highlight-style.mjs`). NOT ASSESSED: whether a kid on a phone still finds the bag at once without the glow (the stills). Docs match main: yes.
 
 2026-11-26 (round D), draft PR #90 on `feat/ch1-day2-morning`, not merged. Done: `feat/ch1-bedtime-story` (round D) merged in (merge commit). Brian's notes of 2026-11-26 on the morning: the PA beat (#41, suggested words; "Morning" from the speaker, music table row "day2am"); Mops asleep by the bed until the PA, then up and out (#33, a heart #48); the note read in a close-up at PICK UP (0:24), not again in the box; thought bubbles bigger than their drawing with a thought trail (0:11); nobody walks through furniture (0:18: the rule in REVIEW-RULES, `tests/scripted-walks.mjs`); the closet taller on Day 2 (0:20, Brian's yes; `tall-closet.js` layer); walk to the bag before "He forgot his lunch!" (0:30). Docs match main: yes. Not yet played by a person.

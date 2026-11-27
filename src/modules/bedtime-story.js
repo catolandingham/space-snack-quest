@@ -37,6 +37,7 @@ import { cutawaySteps } from "./cutaway.js";
 import { footfall } from "./footfalls.js";
 import { createBedtimeSound } from "./bedtime-story-sound.js";
 import { drawMopsTurned, MOPS_ASLEEP } from "./mops-asleep-art.js";
+import { nightPicture, isNightNow } from "./night-look.js";
 
 export const BEDTIME_STORY_ID = "moonpie";
 /** The picture after Mops's bedtime line: Squatch's crayon drawing of the Guardians (bedtime-story-art.js). */
@@ -89,13 +90,15 @@ export const BED_POSES = Object.freeze({ sit: SIT, lie: LIE });
  */
 export const CRATE_FRONT = Object.freeze({ x0: 82, x1: 290, y0: 423, y1: 550, picture: "docs/locked-rooms/home-room-empty-closed-v6.png" });
 const crateImg = typeof Image !== "undefined" ? Object.assign(new Image(), { src: CRATE_FRONT.picture }) : null;
-/** Draws the crate bed's front wall from the locked picture over what is in the bed. Returns its box, or null. */
-export function drawCrateFront(ctx) {
+/** Draws the crate bed's front wall from the locked picture (its night look at night) over what is in the bed. Returns its box, or null. */
+export function drawCrateFront(ctx, night = false) {
   const F = CRATE_FRONT;
   if (!crateImg || !crateImg.complete || !crateImg.naturalWidth) return null;
-  const kx = crateImg.naturalWidth / 960,
-    ky = crateImg.naturalHeight / 640;
-  ctx.drawImage(crateImg, F.x0 * kx, F.y0 * ky, (F.x1 - F.x0) * kx, (F.y1 - F.y0) * ky, F.x0, F.y0, F.x1 - F.x0, F.y1 - F.y0);
+  // (at night, from the room's night look: night-look.js)
+  const pic = nightPicture("home-closed", crateImg, night),
+    kx = pic.naturalWidth / 960,
+    ky = pic.naturalHeight / 640;
+  ctx.drawImage(pic, F.x0 * kx, F.y0 * ky, (F.x1 - F.x0) * kx, (F.y1 - F.y0) * ky, F.x0, F.y0, F.x1 - F.x0, F.y1 - F.y0);
   return { x0: F.x0, x1: F.x1, y0: F.y0, y1: F.y1 };
 }
 // The blanket over him lying there: from his neck (x0) to past his feet (x1), from over his body (top) down to the
@@ -560,7 +563,7 @@ export function createBedtimeStory(bridge) {
         drew.squatch = { x: Math.round(S.sq.x), y: Math.round(S.sq.y), a: +(S.sq.a || 0).toFixed(2), eyes: S.sq.eyes, yawn: +S.sq.yawn.toFixed(2), arms: S.sq.arms.map((r) => +r.a.toFixed(2)), sitting: !!S.sq.sitting };
         d.blanket && (drew.blanket = d.blanket);
         // (once he is over the bed: the crate's front wall in front of him)
-        S.sq.x < CRATE_FRONT.x1 + 10 && (drew.crateFront = drawCrateFront(ctx));
+        S.sq.x < CRATE_FRONT.x1 + 10 && (drew.crateFront = drawCrateFront(ctx, isNightNow(e.get)));
       }
       if (!wordless) return;
       const m = e.pos("mops");

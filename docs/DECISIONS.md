@@ -3,35 +3,36 @@
 
 | Lines | Heading |
 | --- | --- |
-| 36–38 | # Space Snack Quest: every decision, in one place |
-| 39–46 | ## How to use this file |
-| 47–57 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
-| 58–67 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
-| 68–78 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
-| 79–102 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
-| 103–107 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 108–116 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 117–120 | ## Sound, 2026-11-23 |
-| 121–144 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 145–156 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 157–181 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 182–190 | ## Which repo is the base, 2026-11-22 |
-| 191–201 | ## Sight cones, 2026-11-22 |
-| 202–206 | ## Latest calendar direction, 2026-11-16 |
-| 207–209 | ## Vent walk, 2026-11-16 |
-| 210–212 | ## Locked home room v5, 2026-11-16 |
-| 213–222 | ## Fidelity system (pictures are locked, not just words) |
-| 223–260 | ## 1. Working rules |
-| 261–327 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 328–352 | ## 3. Characters and look |
-| 353–429 | ## 4. Look, rooms and layout |
-| 430–451 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 452–495 | ## 6. Later chapters (2–4 and travel) |
-| 496–505 | ## 7. Audio |
-| 506–540 | ## 8. Code, controls and process |
-| 541–587 | ## 9. Open / waiting on Brian |
-| 588–682 | ## 10. Earlier entries, kept word for word |
-| 683–779 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 37–39 | # Space Snack Quest: every decision, in one place |
+| 40–47 | ## How to use this file |
+| 48–49 | ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator) |
+| 50–60 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
+| 61–70 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
+| 71–81 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
+| 82–105 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
+| 106–110 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 111–119 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 120–123 | ## Sound, 2026-11-23 |
+| 124–147 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 148–159 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 160–184 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 185–193 | ## Which repo is the base, 2026-11-22 |
+| 194–204 | ## Sight cones, 2026-11-22 |
+| 205–209 | ## Latest calendar direction, 2026-11-16 |
+| 210–212 | ## Vent walk, 2026-11-16 |
+| 213–215 | ## Locked home room v5, 2026-11-16 |
+| 216–225 | ## Fidelity system (pictures are locked, not just words) |
+| 226–263 | ## 1. Working rules |
+| 264–330 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 331–355 | ## 3. Characters and look |
+| 356–432 | ## 4. Look, rooms and layout |
+| 433–454 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 455–498 | ## 6. Later chapters (2–4 and travel) |
+| 499–508 | ## 7. Audio |
+| 509–543 | ## 8. Code, controls and process |
+| 544–590 | ## 9. Open / waiting on Brian |
+| 591–685 | ## 10. Earlier entries, kept word for word |
+| 686–782 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -44,6 +45,8 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 - **This repo file is the single source of truth.** It was synced on Monday, November 9, 2026 from the designer record through decision R63, and it still holds the earlier snapshot `docs/old/project/DECISIONS-2026-11-08.md` (on `main` at commit 10030f6). Every earlier entry is kept in section 10. Where a later decision replaces an earlier one, the earlier line is marked **Superseded** and says what replaced it. The dated snapshot's full text is in `docs/old/history/DECISIONS-2026-11-08.md`. A short pointer stays at `docs/old/project/DECISIONS-2026-11-08.md`. New decisions get a row in the tables above, through a docs PR (review, "Docs match main: yes", Brian's written yes before merge).
 - Don't invent a decision. If something isn't clear, add it under **Open**.
 
+## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator)
+- **Night look, Decided 2026-11-26:** "Make sure it's not just the hall dark at night, but all rooms are different at night versus daytime." Every room shown while the story is at night has a night look (`src/modules/night-look.js`): the loading bay its locked night picture (`delivery-room-empty-night-v2.png`); every other room its locked day picture under a dim blue tint, with the things that give light (the hall's window onto space and its FUR alarm, home's TV screen, the office's screens and keypad, the hallway's keypad) cut from the same picture and drawn again over the tint. No picture file changes. Night is from the party night's start ("That evening...") until Day 2 begins, and any older night scene. The tint's strength (`NIGHT_TINT`, 0.5 of the bedtime story's night blue) and the lit boxes are placeholders for Brian's eye. The bedtime story's lights-out dim goes on top. Built on feat/party-half-two (the party), then merged forward and applied on the bedtime (the evening and bedtime story), Day 2 morning (the dark start) and lunch branches.
 ## Home morning, 2026-11-26 (Brian's video notes and answers, round D)
 - **The station PA wakes Mops on Day 2.** Brian (#41): the exact words are pending, and he also wants the robot janitors' arrival announced. Built with the line marked suggested: "Good morning, Stormtop! Ganitor Mops to the party hall. The new robot janitors arrive today!" from the wall speaker (it is on the locked home picture, so no ear icon), with its ding-dong and sound lines, waiting for NEXT; then the speaker plays Kevin MacLeod's "Morning" (`music/morning.mp3`), notes rising from it. The music table has its own row for it ("day2am", `src/modules/music-picks.js`), so the home rotation (Carefree, Morning, Rainbows) is not stepped on; the room is quiet as it comes up and while the PA talks. This replaces round C's night line "Ganitor Mops to the party hall." (built on `feat/ch1-lunch-sneak`), whose approved words are kept inside the new one. **Decided** (the beat); the words **need Brian's yes**.
 - **Mops sleeps by the bed until the PA.** Brian (#33, "fall asleep standing and then tip over onto his side and sleep upside down with his feet in the air") and #41 ("Mops, asleep on the floor since bedtime, gets up and leaves after the PA"): Day 2 starts with Mops asleep on his back beside the crate bed, feet in the air (`mops-asleep-art.js` MOPS_ASLEEP, drawn by the home morning); the PA wakes him; he rolls onto his side, gets up, looks at Squatch asleep (one heart, Brian #48: "when he sees Squatch, it always sends up hearts"), and walks out of the door round the bucket and the bag. **Decided.**
