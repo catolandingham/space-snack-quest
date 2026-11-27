@@ -171,6 +171,11 @@ function toysPanel(ctx) {
   return { pic: "estoys", words: [escapeWords("board"), escapeWords("label-toys")], rocket: true };
 }
 // The stubs, close: the blank tags, the spike of pay stubs, and his chart; then the pen strokes ST out and writes M.
+/** A tag's words in two lines: up to the first ". " (the name), then the rest. */
+export function tagLines(s) {
+  const i = String(s).indexOf(". ");
+  return i < 0 ? [String(s)] : [s.slice(0, i + 1), s.slice(i + 2)];
+}
 function stubsPanel(ctx, t) {
   ctx.fillStyle = "#c4a574";
   ctx.fillRect(0, 0, 960, 640);
@@ -179,7 +184,8 @@ function stubsPanel(ctx, t) {
     esRect(ctx, 40 + i * 8, 60 + i * 10, 260, 70, 6);
     esPaint(ctx, CREAM, 3);
   }
-  esWords(ctx, escapeWords("blank-tag"), 186, 112, 26, BLUE_PEN, "center", 700);
+  // (round 7: the longer tag, "For S. A new kind to try.", on two lines so it fits the tag: the name, then the rest)
+  for (const [i, part] of tagLines(escapeWords("blank-tag")).entries()) esWords(ctx, part, 186, 98 + i * 30, 24, BLUE_PEN, "center", 700);
   // the spike of pay stubs
   ctx.beginPath();
   ctx.moveTo(170, 600);

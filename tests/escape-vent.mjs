@@ -21,6 +21,7 @@ import { startGame, root } from "./game-page.mjs";
 const M = (f) => join(root, "src", "modules", f);
 const { ESCAPE_LINES } = await import(M("escape-lines.js"));
 const W = Object.fromEntries(ESCAPE_LINES.map((l) => [l.id, l.text]));
+const { tagLines } = await import(M("escape-vent-art.js"));
 const g = await startGame({ port: 9787, name: "escape-vent" });
 const { ctx, page, errors } = await g.open("?beat=escape:sneak", { width: 375, height: 812, isMobile: true, hasTouch: true });
 await page.evaluate(() => window.__ss.lockedReady);
@@ -220,7 +221,7 @@ g.check("48 (round 7, r5 14:24, q: 133): no whisper at the grate any more (his w
 g.check("48: TAKE · pink slip: close, then his lines", o.slip.chip === W["chip-slip-take"] && o.slip.press === W["button-slip-take"] && JSON.stringify(o.slip.said.slice(0, 3)) === JSON.stringify(["[esslipdesk]", ...w("mops-slip", "mops-code-pen")]), o.slip);
 g.check("49: out in the bay, the slip in his mouth; the switch to Squatch announced; his thought \"I hope he didn't read the order form.\" (round 7, q: 133); \"Mmf! Mmf mmf!\", \"You're gumbling again!\", the thought", o.out.slip === "mops" && JSON.stringify(o.slip.said.slice(3)) === JSON.stringify(["You are SQUATCH now.", W["sq-notice"] + " (whisper)", ...w("mops-mmf", "sq-gumbling"), W["sq-get-it"] + " (whisper)"]) && o.out.playing === "sq", { said: o.slip.said, out: o.out });
 g.check("49: GRAB · pink slip; the fold (paw print inside); \"Got it! The code is on there.\", \"I'll carry it.\"; the plan's tick on the door", o.out.chip === W["chip-grab"] && o.out.press === W["button-grab"] && o.out.fold && o.out.folded && JSON.stringify(o.out.after) === JSON.stringify(w("mops-got-it", "sq-carry")) && o.out.tick, o.out);
-g.check("the close-ups show their words (the board, the flyers, MARS, NO, TOYS, the note and its signature, the stubs)", ["IDEAS FOR GUARDIANS", "HAVE YOU SEEN?", "MARS", "NO", "TOYS", W["note-2"], W["note-3"], W["note-sign"], W["blank-tag"]].every((x) => (o.words || []).includes(x)), o.words);
+g.check("the close-ups show their words (the board, the flyers, MARS, NO, TOYS, the note and its signature, the stubs)", ["IDEAS FOR GUARDIANS", "HAVE YOU SEEN?", "MARS", "NO", "TOYS", W["note-2"], W["note-3"], W["note-sign"], ...tagLines(W["blank-tag"])].every((x) => (o.words || []).includes(x)), o.words);
 g.check("50: out of the bay, a tap on the floor finds a way round (Mops behind him is not in the way)", o.walkOut && o.walkOut.step === "tohall" && o.walkOut.path, o.walkOut);
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();
