@@ -24,7 +24,7 @@ import { startGame, root } from "./game-page.mjs";
 
 const M = (f) => join(root, "src", "modules", f);
 const { BAY_LINES } = await import(M("loading-bay-lines.js"));
-const { BAY, BAY_PARTS } = await import(M("loading-bay-place.js"));
+const { BAY, BAY_PARTS, HALLWAY } = await import(M("loading-bay-place.js"));
 const { HALL_SPEAKER } = await import(M("party-hall.js"));
 const WORDS = new Set(BAY_LINES.map((l) => l.text));
 
@@ -259,6 +259,118 @@ const evening = await page.evaluate(() => {
   return { called, active: beat.active(), step: n.ch1Step };
 });
 g.check("36 ends in the hallway and hands over to the evening's start() when that beat is there (not the older program's step)", evening.called.length === 1 && evening.called[0].room === "passage" && !evening.active && evening.step !== "photos", evening);
+
+// ---------- Brian's notes on the first video (2026-11-26) ----------
+const notes = await page.evaluate(({ BAY, HALLWAY }) => {
+  const ss = window.__ss,
+    n = ss.op,
+    e = window.SSQ.engine(),
+    beat = window.SSQ.beat("ch1-bay"),
+    out = {};
+  const cv = document.querySelector("canvas"),
+    cx = cv.getContext("2d"),
+    px = (x, y) => {
+      const m = cx.getTransform();
+      return [...cx.getImageData(Math.round(m.a * x + m.e), Math.round(m.d * y + m.f), 1, 1).data];
+    };
+  const run = (s) => {
+    for (let i = 0; i < s / 0.05; i++) (ss.tick(0.05), n.cur && n.cur.k === "bub" && ((n.bt = 1), ss.opTap()));
+  };
+  // 0:08.7, "If he's hiding, he should be in the ball": behind the counter (beat 28) and behind the crates (the lunch)
+  const balls = [],
+    keep = e.ball.drawOn;
+  e.ball.drawOn = (ctx, x, y, k) => (balls.push({ x: Math.round(x), y: Math.round(y) }), keep(ctx, x, y, k));
+  n.q = [];
+  n.cur = null;
+  ss.ch1JumpBeat(28);
+  ss.tick(0.05);
+  balls.length = 0;
+  ss.drawFrame();
+  out.counter = { balls: balls.slice(), sq: { x: n.sq.x, y: n.sq.y } };
+  n.q = [];
+  n.cur = null;
+  ss.ch1JumpBeat(22);
+  window.SSQ.beat("ch1-lunch").jump("door");
+  ss.tick(0.05);
+  balls.length = 0;
+  ss.drawFrame();
+  out.crate = { balls: balls.slice(), sq: { x: n.sq.x, y: n.sq.y }, hideAt: n.ch1Lunch.hideAt, eyes: !!(window.SSQ.beat("ch1-lunch").debug().drew || {}).eyes };
+  e.ball.drawOn = keep;
+  // 0:14.8, Mops's horns behind the hallway's photo: Mops's head on the photo's top-left corner is drawn in front of it
+  n.q = [];
+  n.cur = null;
+  ss.ch1JumpBeat(37);
+  // (the room's fade in ends first)
+  for (let i = 0; i < 40; i++) ss.tick(0.05);
+  Object.assign(n, { moPose: "stand", ctrl: false });
+  Object.assign(n.mo, { x: 694, y: 166, f: 1, moving: false });
+  // (white fur counted over his head's patch, with him there and without: the photo under it has sky and its own Mops)
+  const whites = () => {
+    ss.drawFrame();
+    let w = 0;
+    for (let dy = -12; dy <= 12; dy += 3) for (let dx = -12; dx <= 12; dx += 3) ((p) => p[0] > 245 && p[1] > 245 && p[2] > 245 && w++)(px(730 + dx, 104 + dy));
+    return w;
+  };
+  const withMops = whites();
+  n.moPose = "hidden";
+  const without = whites();
+  out.wall = { withMops, without, photoDrawn: !!window.SSQ.beat("ch1-lunch").debug().wall };
+  // 0:32, the ramp goes back up into the ship before the ship leaves; no ship, no ramp
+  n.q = [];
+  n.cur = null;
+  ss.ch1JumpBeat(29);
+  beat.jump("shake");
+  const seq = [];
+  for (let i = 0; i < 2000 && beat.debug().state.step === "shake"; i++) {
+    run(0.05);
+    const s = beat.debug().state;
+    seq.push([s.ship, s.ramp]);
+  }
+  out.leave = { rampGoneWhileShip: seq.some(([sh, r]) => r === 0 && sh === 1), shipWithRamp: seq.some(([sh, r]) => sh < 1 && r > 0), end: seq[seq.length - 1], docked: beat.docked() };
+  // 0:33.2, the robots roll under the scanner arch (its bar stays in front of them) and its field shimmers as they pass
+  n.q = [];
+  n.cur = null;
+  ss.ch1JumpBeat(29);
+  beat.jump("robots");
+  let shimmer = 0,
+    over = null;
+  for (let i = 0; i < 400 && beat.debug().state.step === "robots"; i++) {
+    ss.tick(0.05);
+    ss.drawFrame();
+    const d = beat.debug(),
+      r = d.state.robots.find((q) => q.show && Math.abs(q.x - 465) < 6 && q.y > 330 && q.y < 372);
+    d.drew && d.drew.shimmer && shimmer++;
+    r && !over && (over = { bar: px(465, 314), robotFeet: r.y });
+  }
+  for (let i = 0; i < 20; i++) ss.tick(0.05);
+  ss.drawFrame();
+  out.arch = { shimmer, over, barAlone: px(465, 314) };
+  // 1:37.2, the hallway robots: the bay's size next to the people there, on the floor, not on the office door
+  n.q = [];
+  n.cur = null;
+  ss.ch1JumpBeat(29);
+  beat.jump("home");
+  let seen = null;
+  for (let i = 0; i < 2000 && beat.active() && !seen; i++) {
+    run(0.05);
+    ss.drawFrame();
+    const d = beat.debug().drew;
+    d && d.room === "passage" && d.robots && d.robots.length === 2 && (seen = d.robots);
+  }
+  out.hallway = seen;
+  return out;
+}, { BAY, HALLWAY });
+const near = (b, p) => b.some((q) => Math.abs(q.x - p.x) < 4 && Math.abs(q.y - p.y) < 40);
+g.check("behind the counter (beat 28) he is the L2 ball, not standing or squashed", near(notes.counter.balls, notes.counter.sq), notes.counter);
+g.check("behind the crates (the lunch sneak) he is the L2 ball, and no eyes are drawn", notes.crate.hideAt === "crate" && near(notes.crate.balls, notes.crate.sq) && !notes.crate.eyes, notes.crate);
+g.check("in the hallway Mops's head is drawn in front of the Employee of the Month photo (his white fur shows over it)", notes.wall.photoDrawn && notes.wall.withMops - notes.wall.without >= 15, notes.wall);
+g.check("the ship leaves: its ramp goes back up first; never a ship gone with its ramp still down; then no ship and no ramp (the scanner's posts not solid)", notes.leave.rampGoneWhileShip && !notes.leave.shipWithRamp && notes.leave.end[0] === 0 && notes.leave.end[1] === 0 && !notes.leave.docked, notes.leave);
+g.check("the robots roll under the scanner arch: its bar is drawn in front of a robot passing under it, and its field shimmers", notes.arch.shimmer > 0 && !!notes.arch.over && notes.arch.over.bar.slice(0, 3).join() === notes.arch.barAlone.slice(0, 3).join(), notes.arch);
+const ratio = (await import(join(root, "src", "modules", "room-sizes.js"))).adultPxFor;
+const kHall = ratio("passage") / ratio("hangar"),
+  door = HALLWAY.officeDoor,
+  hit = (a, b) => a.x0 < b.x1 && a.x1 > b.x0 && a.y0 < b.y1 && a.y1 > b.y0;
+g.check("the hallway robots are the bay's size next to the people there, stand on the floor and are not on the office door", !!notes.hallway && notes.hallway.every((r) => Math.abs(r.k - kHall) < 0.01 && !hit(r.box, door) && r.y > 256 && r.y < 600), { kHall, robots: notes.hallway });
 
 // ---------- the old code is gone ----------
 const game = readdirSync(join(root, "src", "game")).map((f) => readFileSync(join(root, "src", "game", f), "utf8")).join("\n");

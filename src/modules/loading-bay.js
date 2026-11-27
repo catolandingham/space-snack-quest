@@ -41,7 +41,7 @@
  * none of them ever holds him. Its progress lives in the game-state field ch1Bay; ch1Step is "bay-hide" at the one step
  * the player controls, so the step restart (↺) brings that back. ↺ in a part he does not control: restart().
  */
-import { BAY, BAY_SPOTS, HALLWAY, BAY_PACE, BAY_PICTURES, BAY_CLOSEUPS, BAY_PARTS } from "./loading-bay-place.js";
+import { BAY, BAY_SPOTS, HALLWAY, BAY_PACE, BAY_PICTURES, BAY_CLOSEUPS, BAY_PARTS, ROBOT_SIZE } from "./loading-bay-place.js";
 import { bayWords } from "./loading-bay-lines.js";
 import { drawRobot, robotHand, drawFormSet, drawStuck, drawCrumbs, drawFormCloseUp, closeUpBox, drawCloseUpBack, drawCloseUpFront, drawWave, drawDashedOutline } from "./loading-bay-art.js";
 import { drawSpeakerRing, drawHeartCone } from "./party-free-art.js";
@@ -60,6 +60,8 @@ const MOPS_K = () => SQ_K() * 1.15;
 // Isfred is drawn at the hall's size by the older program: in the bay he is the bay's grown-up.
 const ISFRED_K = () => adultPxFor("hangar") / adultPxFor("hall");
 const CONE = { half: 0.42, len: 210 };
+// A robot's size in a room: as big next to the people there as in the bay (rooms draw people by their door's size).
+const ROBOT_K = (room) => adultPxFor(room) / adultPxFor("hangar");
 
 export function createLoadingBay(bridge) {
   const E = () => bridge.engine();
@@ -200,6 +202,9 @@ export function createLoadingBay(bridge) {
     shake(b) {
       b.workers.forEach((w) => ((w.show = false), (w.x = BAY.shipDoor.x), (w.y = BAY.shipDoor.y)));
       Object.assign(b.isfred, BAY_SPOTS.isfred, { f: 1 });
+      // the ship has left with them: its ramp went back in first (no ship, no ramp, no scanner)
+      b.ship = 0;
+      b.ramp = 0;
     },
     promise(b) {
       b.isfred.f = 1;
@@ -432,6 +437,12 @@ export function createLoadingBay(bridge) {
           return all;
         }),
         e.run(() => (B().isfred.f = 1)),
+        // the ship leaves with them: first its ramp slides back up into it, then it goes from the window (Brian
+        // 2026-11-26, the video at 0:32: no ship, no ramp)
+        wait(0.4),
+        e.run(() => sound.morning("door")),
+        e.until((dt) => ((B().ramp = Math.max(0, B().ramp - (dt || 0) / BAY_PACE.ramp)), B().ramp <= 0)),
+        e.until((dt) => ((B().ship = Math.max(0, B().ship - (dt || 0) / BAY_PACE.leave)), B().ship <= 0)),
       );
       return steps;
     },
@@ -599,7 +610,7 @@ export function createLoadingBay(bridge) {
           e.place("mops", HALLWAY.right.x + 20, HALLWAY.right.y + 40);
           e.face("sq", -1);
           e.face("mops", -1);
-          HALLWAY.robots.forEach((p, k) => Object.assign(robot(k + 1), p, { show: true, room: "passage", f: 0, wi: 0 }));
+          HALLWAY.robots.forEach((p, k) => Object.assign(robot(k + 1), { x: p.x, y: p.y, f: p.f, show: true, room: "passage", wi: 0 }));
         }),
         bothWays([HALLWAY.in.mops], [HALLWAY.in.sq], BAY_PACE.walk),
         e.run(() => (B().outline = true)),
@@ -837,12 +848,52 @@ export function createLoadingBay(bridge) {
         },
       });
     });
+    // the fur scanner arch's bar and posts stand in front of anyone on the ramp behind them; its field shimmers while
+    // someone passes through it (Brian 2026-11-26, the video at 0:33.2: under the arch, not through its bar)
+    b.ramp >= 0.999 && list.push({ y: BAY.arch.foot, f: () => drawArchFront(ctx, b, t) });
     // the handshake: a little burst between the two hands
     if (b.shaking >= 0 && b.workers[b.shaking]) {
       const w = b.workers[b.shaking];
       list.push({ y: w.y + 1, f: () => drawShake(ctx, (b.isfred.x + w.x) / 2, w.y - 34, t) });
     }
     list.sort((a, c) => a.y - c.y).forEach((p) => p.f());
+  }
+  // Someone passing under the arch now (feet between its bar and its front, between its posts), or null.
+  function underArch(b) {
+    const A = BAY.arch,
+      inField = (o) => o.show && o.x > A.field.x0 && o.x < A.field.x1 && o.y > A.field.y0 + 4 && o.y < A.foot + 8;
+    return [...b.robots.filter((r) => r.room === "hangar"), ...b.workers].find(inField) || null;
+  }
+  function drawArchFront(ctx, b, t) {
+    const A = BAY.arch,
+      e = E();
+    ctx.save();
+    ctx.beginPath();
+    for (const r of [A.bar, ...A.posts]) ctx.rect(r.x0, r.y0, r.x1 - r.x0, r.y1 - r.y0);
+    ctx.clip();
+    e.drawLocked(ctx, BAY_PICTURES.day);
+    ctx.restore();
+    const who = underArch(b);
+    b.shimmer = !!who;
+    if (who) {
+      // the field: a pale blue sheet between the posts with bright lines running down it
+      const F = A.field;
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(F.x0, F.y0, F.x1 - F.x0, F.y1 - F.y0);
+      ctx.clip();
+      ctx.fillStyle = `rgba(140,215,255,${(0.22 + 0.08 * Math.sin(t * 20)).toFixed(3)})`;
+      ctx.fillRect(F.x0, F.y0, F.x1 - F.x0, F.y1 - F.y0);
+      ctx.lineWidth = 2;
+      for (let i = 0; i < 5; i++) {
+        const y = F.y0 + (((t * 90 + i * ((F.y1 - F.y0) / 5)) % (F.y1 - F.y0)) | 0);
+        ctx.strokeStyle = `rgba(110,200,255,${(0.75 - i * 0.08).toFixed(2)})`;
+        ctx.beginPath();
+        for (let x = F.x0; x <= F.x1; x += 12) ctx.lineTo(x, y + Math.sin(x * 0.08 + t * 14) * 2.5);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
   }
   function drawShake(ctx, x, y, t) {
     ctx.save();
@@ -934,10 +985,13 @@ export function createLoadingBay(bridge) {
       const s = e.pos("sq"),
         robots = b.robots.filter((r) => r.show && r.room === "passage");
       const cones = drawAllCones(ctx, b, t);
-      robots.forEach((r) => drawRobot(ctx, r.x, r.y, r.f, 1, r.moving ? Math.abs(Math.sin(t * 14)) * 2 : 0, 0));
+      // robots are the same size as in the bay, next to the people (the hallway draws everyone bigger: its door is)
+      const k = ROBOT_K("passage"),
+        boxOf = (r) => ({ x0: r.x - ROBOT_SIZE.w * 0.75 * k, x1: r.x + ROBOT_SIZE.w * 0.75 * k, y0: r.y - ROBOT_SIZE.h * 1.15 * k, y1: r.y + 6 * k });
+      robots.forEach((r) => drawRobot(ctx, r.x, r.y, r.f, k, r.moving ? Math.abs(Math.sin(t * 14)) * 2 * k : 0, 0));
       // while Mops's line names them, the robots get the game's one highlight: the dashed gold outline (no glow)
-      const outlined = b.outline ? robots.map((r) => drawDashedOutline(ctx, { x0: r.x - 26, x1: r.x + 26, y0: r.y - 74, y1: r.y + 8 }, t)) : [];
-      drew = { step: b.step, room: "passage", outlined, cones: cones.map((c) => ({ id: c.id, inside: c.inside, show: c.show, hearts: !!c.hearts })), robots: robots.map((r) => ({ x: r.x, y: r.y, f: r.f })) };
+      const outlined = b.outline ? robots.map((r) => drawDashedOutline(ctx, boxOf(r), t)) : [];
+      drew = { step: b.step, room: "passage", outlined, cones: cones.map((c) => ({ id: c.id, inside: c.inside, show: c.show, hearts: !!c.hearts })), robots: robots.map((r) => ({ x: r.x, y: r.y, f: r.f, k, box: boxOf(r) })) };
     }
   }
 
@@ -975,7 +1029,7 @@ export function createLoadingBay(bridge) {
       const t = E().time();
       const cones = drawScene(ctx, b, t);
       const closeUp = drawCloseUp(ctx, b, t);
-      drew = { step: b.step, room: "hangar", cones: cones.map((c) => ({ id: c.id, inside: c.inside, show: c.show, hearts: !!c.hearts })), closeUp, papers: b.papers.where };
+      drew = { step: b.step, room: "hangar", shimmer: !!b.shimmer, cones: cones.map((c) => ({ id: c.id, inside: c.inside, show: c.show, hearts: !!c.hearts })), closeUp, papers: b.papers.where };
       return true;
     },
     draw: drawOver,

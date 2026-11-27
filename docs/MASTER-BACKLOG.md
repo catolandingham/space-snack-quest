@@ -23,7 +23,7 @@
 
 ## Where main is (Chapter 1 redesign)
 
-2026-11-26, draft PR on `feat/ch1-loading-bay` (stacked on `feat/ch1-lunch-sneak`), not merged. Done: beats 28 to 36, the loading bay, as a module (`ch1-bay`; see README). Isfred's office code is 169556 (Brian, chat; pin `office-code` changed). Open for Brian:
+2026-11-26, draft PR on `feat/ch1-loading-bay` (stacked on `feat/ch1-lunch-sneak`), not merged. Done: beats 28 to 36, the loading bay, as a module (`ch1-bay`; see README). Brian's notes on its first video (2026-11-26) built: the ball when hidden behind something, Mops in front of the hallway photo, the ramp up before the ship leaves, the robots under the scanner arch with its field shimmering, the hallway robots' size and place. A writer is revising beats 28 to 36's story; lines and order unchanged here. Isfred's office code is 169556 (Brian, chat; pin `office-code` changed). Open for Brian:
 - What calls Isfred away (beat 32)? Built: the bay's wall speaker chimes, no words. Or a robot's damaged crate in the mail room (Call 15; conflicts with R20, the mail room empty until pickup day), or the speaker's "Isfred Bar Neshuman! The dock needs you."
 - Where Isfred and the workers come from: built, through the hallway doorway after Squatch hides (so nobody can see him while he walks to the plant, and the bay needs no capture of its own).
 - Music in the bay and the hallway: the music table has no pick for them; none plays.

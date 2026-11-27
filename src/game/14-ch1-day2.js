@@ -666,6 +666,7 @@
     }
     function drawCh1Passage() {
       drawLockedRoom(n.ch1Office ? "office" : "hallway");
+      luBeat() && luBeat().drawWall && luBeat().drawWall(e); // the Employee of the Month photo of Mops, under the people
       n.ch1Crayon &&
         !n.ch1Keepsake &&
         !n.ch1Office &&

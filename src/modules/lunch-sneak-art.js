@@ -128,19 +128,6 @@ export function drawBagInPaw(ctx, x, y, f, scale) {
 // enough that MOPS on it is about 14 CSS px on an iPad standing up (Brian 2026-11-26: MOPS readable). PLACEHOLDER.
 export const BAG_IN_HALL = 0.88;
 
-/**
- * Squatch ducked behind the counter: the room's Squatch (E.drawSquatch), squashed down to `LOW` of his height, his
- * feet where they are. The counter hides him from the guests (lunch-sneak.js).
- */
-export const LOW = 0.58;
-export function drawDucked(ctx, E, x, y, f, scale) {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.scale(1, LOW);
-  ctx.translate(-x, -y);
-  E.drawSquatch(ctx, x, y, scale, { f, walk: 0 });
-  ctx.restore();
-}
 /** His near arm reaching from his shoulder to (tx, ty), furry, outlined (standing up at the counter). */
 export function drawReach(ctx, x, y, f, scale, tx, ty) {
   const sh = { x: x + f * 10 * scale, y: y - 18 * scale };

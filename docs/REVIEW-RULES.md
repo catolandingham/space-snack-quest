@@ -27,7 +27,7 @@
 | 219–229 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
 | 230–239 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
 | 240–245 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
-| 246–251 | ## Mistakes caught building the loading bay (2026-11-26) |
+| 246–253 | ## Mistakes caught building the loading bay (2026-11-26) |
 <!-- /section-index -->
 # Review rules
 
@@ -247,4 +247,6 @@ His words, on the snack close-up, for every piece of the game: "It just needs to
 - The older program's "pa" bubble style is a banner fixed in the middle of the picture, so the first build's PA line sat over the window, nowhere near the wall speaker (Brian's rule: beside the speaker, with sound waves). A speaker's line is an ordinary bubble placed by the beat (`bubbleBeside`, `speakerAt`), and a test reads the drawn bubble's box against the speaker's (`tests/loading-bay.mjs`).
 - A beat that draws a locked room itself must paint the picture through the older program (`drawLocked`): the goal outline traces whichever locked picture was painted last, so a room painted any other way gets an outline traced from the previous room.
 - A bubble over a close-up covered the close-up (a long line wraps to about 490 wide). Place the close-up and the bubble together, and test the drawn boxes apart.
-
+- A layer over a locked picture (the hallway's Employee of the Month photo) was drawn by a beat's over-the-room hook, after the people, so Mops's horns went behind it (Brian, the loading bay video at 0:14.8). A layer that belongs to the room is painted right after the room's picture (`drawWall` from `drawCh1Passage`), and a test counts his fur's pixels over it, run once with the old order to see it fail.
+- The hallway's robots were drawn at the bay's pixel size, so next to the hallway's bigger people they looked small, and they stood on the office door's painting (Brian, 1:37.2). Anything drawn in two rooms is scaled by each room's grown-up (`adultPxFor`), and a test checks its drawn box against the room's doors and walls.
+- The ramp in the bay picture comes with the ship: a thing that arrives with something else goes away before it (the ramp back up into the ship, then the ship), and the scanner's posts are solid only while it is there.

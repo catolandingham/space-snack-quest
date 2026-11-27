@@ -244,9 +244,11 @@ const C = P.COUNTER_CLOSEUP,
   inSrc = (p) => p.x > C.src.x0 && p.x < C.src.x1 && p.y > C.src.y0 && p.y < C.src.y1;
 g.check("at the snack counter a framed close-up shows the counter's corner bigger, on the left of the picture", !!box && box.u === 1 && box.x0 < 60 && box.x1 < 480 && Math.abs((box.x1 - box.x0) / (C.src.x1 - C.src.x0) - C.k) < 0.01, box);
 g.check("the close-up holds the plate, Squatch ducked, Mops and the counter guest", inSrc(P.COUNTER_SPOTS.plate) && inSrc(P.COUNTER_SPOTS.sq) && inSrc(P.COUNTER_SPOTS.mops) && inSrc(P.COUNTER_WATCHER), C.src);
-const duckPx = 48.5 * 1.65 * ART.LOW * C.k * PHONE_K,
+// (hidden behind the counter he is the L2 ball, Brian 2026-11-26: about 44 of its units tall, drawn at the hall's
+// Squatch scale over 1.65, which is 1)
+const duckPx = 44 * C.k * PHONE_K,
   platePx = P.LUNCH_SIZES.plate.w * C.k * PHONE_K;
-g.check("on a 375-wide phone, in the close-up the ducked Squatch is at least 28 px tall and the plate at least 50 px wide", duckPx >= 28 && platePx >= 50, { duckPx, platePx });
+g.check("on a 375-wide phone, in the close-up the ball (Squatch hidden behind the counter) is at least 24 px tall and the plate at least 50 px wide", duckPx >= 24 && platePx >= 50, { duckPx, platePx });
 g.check("a tap on the hall floor the close-up covers does nothing at the counter (he stays behind it), though the same tap in the sneak walks him there", cu.offer === "TAKE · snack" && !cu.afterTapOff.moved && cu.afterTapOff.step === "snack" && cu.sameTapInSneak, cu);
 g.check("a tap on the plate in the close-up is TAKE · snack: he stands up and reaches for one pie", ["grab", "chew"].includes(cu.afterTapPlate.step) && cu.afterTapPlate.pose !== "ducked", cu.afterTapPlate);
 

@@ -30,6 +30,14 @@ export const BAY = Object.freeze({
   ramp: Object.freeze({ x0: 340, x1: 590, y0: 184, y1: 420 }),
   // The ship's door at the top of the ramp, and the ramp's foot (inside the scanner arch).
   shipDoor: Object.freeze({ x: 465, y: 214 }),
+  // The fur scanner arch at the ramp's foot (in the "day" picture only), measured on it: its top bar and two posts stand
+  // in front of anyone on the ramp behind them (feet above `foot`); between the posts, the scanner's field.
+  arch: Object.freeze({
+    bar: Object.freeze({ x0: 344, x1: 587, y0: 303, y1: 326 }),
+    posts: Object.freeze([Object.freeze({ x0: 347, x1: 364, y0: 325, y1: 416 }), Object.freeze({ x0: 566, x1: 584, y0: 325, y1: 416 })]),
+    field: Object.freeze({ x0: 364, x1: 566, y0: 326, y1: 410 }),
+    foot: 412,
+  }),
   rampFoot: Object.freeze({ x: 465, y: 404 }),
   // The wall speaker (picture 1090 to 1138, 125 to 173) and the big wall vent under it (picture 1070 to 1200, 238 to 332).
   speaker: Object.freeze({ x0: 817, x1: 853, y0: 96, y1: 133 }),
@@ -70,8 +78,10 @@ export const BAY_SPOTS = Object.freeze({
 export const HALLWAY = Object.freeze({
   left: Object.freeze({ x: 14, y: 330 }),
   right: Object.freeze({ x: 946, y: 330 }),
-  // (the office door: picture 575 to 705 at the bottom; the robots wait in front of it, facing it)
-  robots: Object.freeze([Object.freeze({ x: 452, y: 584 }), Object.freeze({ x: 528, y: 584 })]),
+  // the robots wait on the floor either side of the office door (picture 575 to 705 at the bottom), turned to it,
+  // never on the door or a wall (Brian 2026-11-26, the video at 1:37.2)
+  robots: Object.freeze([Object.freeze({ x: 356, y: 548, f: 1 }), Object.freeze({ x: 612, y: 548, f: -1 })]),
+  officeDoor: Object.freeze({ x0: 431, x1: 529, y0: 487, y1: 609 }),
   // beat 36: in from the bay (Mops's line about the robots), where they pass the robots (the two lines), and where they
   // stop for beat 37. Low enough on the floor that a bubble over a head stays under the photo wall's heading; Mops on
   // the front side, between Squatch and the robots.
@@ -87,7 +97,8 @@ export const BAY_PACE = Object.freeze({
   people: 150, // Isfred and the workers
   robot: 150, // a robot rolling
   dock: 1.4, // the ship slides into the window
-  ramp: 1.0, // the ramp comes down
+  ramp: 1.0, // the ramp comes down (and goes back up into the ship before it leaves)
+  leave: 1.2, // the ship fades out of the window
   shake: 0.6, // one handshake
   sign: 1.0, // Isfred's signature on the white copy
   code: 1.6, // the office code's numbers on the pink, one after another, copying through to the yellow
