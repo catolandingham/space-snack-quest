@@ -64,7 +64,7 @@ const report = await page.evaluate(async (chips) => {
     // comes up, or (the hallway's far doorway, the bay's doorway home, the snack counter in the party hall: walked
     // into, no button) a step from it
     "Squatch: follow Mops to the ship": { bayStep: "hallway", walk: true, x: 900, y: 330 },
-    "Squatch: hide behind the cargo": { bayStep: "cargo", x: 110, y: 336 },
+    "Squatch: hide behind the cargo": { bayStep: "cargo", x: 176, y: 350 },
     "Squatch: peek at the form": { bayStep: "peek" },
     "Squatch: go home with Mops": { bayStep: "home", walk: true, x: 90, y: 336 },
     "Squatch: get past the robots": { bayStep: "hall", walk: true, x: 800, y: 560 },

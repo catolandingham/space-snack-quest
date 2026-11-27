@@ -896,10 +896,11 @@ export function createLoadingBay(bridge) {
     const r = room(),
       out = [];
     if (r === "hall" && b.hall) {
-      for (const q of b.hall.robots) out.push({ ...coneFrom(q.id, q.x, q.y, angleOf(q.f), CONE), who: "robot" });
+      // (robots always show their cones, near him or not: the shared rule)
+      for (const q of b.hall.robots) out.push({ ...coneFrom(q.id, q.x, q.y, angleOf(q.f), CONE), who: "robot", always: true });
       return out;
     }
-    for (const [i, q] of b.robots.entries()) if (q.show && q.room === r) out.push({ ...coneFrom("robot" + i, q.x, q.y, angleOf(q.f), CONE), who: "robot" });
+    for (const [i, q] of b.robots.entries()) if (q.show && q.room === r) out.push({ ...coneFrom("robot" + i, q.x, q.y, angleOf(q.f), CONE), who: "robot", always: true });
     if (r === "hangar") {
       b.isfred.show && out.push({ ...coneFrom("isfred", b.isfred.x, b.isfred.y, b.isfred.look ? -1.2 : angleOf(b.isfred.f), CONE), who: "official" });
       b.workers.forEach((w, i) => w.show && w.a > 0.5 && out.push({ ...coneFrom("worker" + i, w.x, w.y, angleOf(w.f), CONE), who: "worker" }));
@@ -1631,7 +1632,7 @@ export function createLoadingBay(bridge) {
       if (!b) return null;
       if (who === "pa" && room() === "hall") return { ...HALL_SPEAKER, side: "left" };
       if (b.closeUp && b.closeUp.id === "form" && ["official", "robot", "mops", "dot"].includes(who)) return { x0: 950, x1: 955, y0: 40, y1: 80, side: "left" };
-      if (room() === "passage" && ["after", "walkby"].includes(b.step) && (who === "sq" || who === "mops")) {
+      if (room() === "passage" && ["after", "walkby", "hallway"].includes(b.step) && (who === "sq" || who === "mops")) {
         const s = e.pos("sq"),
           m = e.pos("mops"),
           me = who === "sq" ? s : m,

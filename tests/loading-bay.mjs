@@ -52,6 +52,7 @@ g.check("the crates' and the tag's snack names come from cakes-brand.js (no load
 
 // the hallway's far ends take him through inside the hallway's walk bounds (x 60 to 900, 00-core.js): a doorway he
 // cannot reach is a dead end (the first video stopped at x 893, short of a trigger at 916)
+g.check("behind the cargo the ball sits against its side, so part of him always shows (never wholly behind it)", BAY.cargo.ball.x >= BAY.cargo.box.x1 + 10, BAY.cargo);
 g.check("the hallway's walk-through ends are inside its walk bounds", HALLWAY.exitRight < 900 - 8 && HALLWAY.exitLeft > 60 + 8 && HALLWAY.trigger < HALLWAY.exitRight, HALLWAY);
 
 // ---------- the beat, played ----------
@@ -261,6 +262,31 @@ const slow = await page.evaluate(() => {
   return { card, alarm };
 });
 g.check("36: too slow to roll, the robot sees fur: the alarm and the one capture rule (the lockup names a robot in the hallway)", slow.alarm && !!slow.card && /LOCKUP/.test(slow.card) && /A robot/.test(slow.card) && /hallway/.test(slow.card), slow);
+
+// ---------- robots always show their cones, however far he is ----------
+const robotCones = await page.evaluate(() => {
+  const ss = window.__ss,
+    n = ss.op,
+    beat = window.SSQ.beat("ch1-bay"),
+    out = {};
+  for (const step of ["sneak", "hall"]) {
+    n.q = [];
+    n.cur = null;
+    beat.jump(step);
+    for (let i = 0; i < 4; i++) ss.tick(0.05);
+    ss.drawFrame();
+    out[step] = ((beat.debug().drew || {}).cones || []).filter((c) => /^(robot|cleaner)/.test(c.id)).map((c) => ({ id: c.id, show: c.show }));
+  }
+  return out;
+});
+g.check("the robots' cones always show (the bay's sneak: all three; the party hall: all three)", robotCones.sneak.length === 3 && robotCones.hall.length === 3 && [...robotCones.sneak, ...robotCones.hall].every((c) => c.show === 1), robotCones);
+// the party hall's doorway, where he comes in, is out of every lane's reach
+g.check("36b: no robot's cone, at either end of its lane, reaches the doorway he comes in by", HALL_SNEAK.lanes.every((L) => {
+  // (a cone 210 long, 0.42 either side of straight ahead, loading-bay.js CONE; with room for his outline)
+  const dx = HALL_SNEAK.in.x - L.x1,
+    dy = HALL_SNEAK.in.y - L.y;
+  return Math.hypot(dx, dy) > 250 || Math.abs(Math.atan2(dy, dx)) > 0.42 + 0.2;
+}), HALL_SNEAK.lanes);
 
 // ---------- the lockup card names who saw him: the manager in the bay ----------
 const byIsfred = await page.evaluate(() => {

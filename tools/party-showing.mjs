@@ -1007,6 +1007,11 @@ if (which === "bay") {
         await sleep(900);
         await tap(s.btn.x, s.btn.y);
         await sleep(300);
+      } else if (s.cur === "card") {
+        // a switch card: a still, then a tap to go on
+        await sleep(900);
+        await still("switch-card");
+        await read(s);
       }
       await sleep(120);
     }
@@ -1041,7 +1046,7 @@ if (which === "bay") {
   }
   // At a step: walk to its spot, wait for its button, a still, then press it.
   async function act(step, x, y, words) {
-    (await watch((s, b) => b.step === step && s.ctrl && s.cur !== "bub", 90000)) || (await fail("the bay's " + step + " step did not come"));
+    (await watch((s, b) => b.step === step && s.ctrl && !s.cur, 90000)) || (await fail("the bay's " + step + " step did not come"));
     await sleep(900);
     await still(step + "-the-goal");
     x != null && (await walk(x, y, (q) => q.act === words));
@@ -1055,10 +1060,10 @@ if (which === "bay") {
   (await watch((s, b) => b.step === "hallway" && s.ctrl, 60000)) || (await fail("the hallway did not come"));
   await sleep(900);
   await still("the-hallway-follow-mops-to-the-ship");
-  await walk(500, 300, (q) => q.cur === "bub");
+  await walk(500, 270, (q) => q.cur === "bub");
   await walk(946, 330, (q) => q.step !== "hallway");
   // 29, 30: behind the cargo, then the robots
-  await act("cargo", 110, 336, "ROLL · ball");
+  await act("cargo", 176, 350, "ROLL · ball");
   await still("in-the-ball-behind-the-cargo");
   // the sneak: the finger goes when the patrolling robot rolls away from the plant
   (await watch((s, b) => b.step === "sneak" && s.ctrl && s.cur !== "bub", 90000)) || (await fail("the sneak did not come"));
@@ -1080,7 +1085,7 @@ if (which === "bay") {
   await act("box", 448, 454, "PICK UP · box");
   await act("give", 330, 404, "GIVE · box");
   // home as Squatch: out of the bay, down the hallway; the office door opens: ROLL · ball in time
-  (await watch((s, b) => b.step === "home" && s.ctrl && s.cur !== "bub", 90000)) || (await fail("the walk home did not come"));
+  (await watch((s, b) => b.step === "home" && s.ctrl && !s.cur, 90000)) || (await fail("the walk home did not come"));
   await sleep(900);
   await still("home-go-home-with-mops");
   await walk(30, 336, (q) => q.step === "walkby");

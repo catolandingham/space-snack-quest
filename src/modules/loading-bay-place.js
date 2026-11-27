@@ -26,7 +26,7 @@ export const BAY = Object.freeze({
   bin: Object.freeze({ x: 212, top: 318, box: Object.freeze({ x0: 186, x1: 238, y0: 312, y1: 376 }) }),
   // The cargo stacked by the doorway (a PLACEHOLDER drawing, where the plant stood before v3): two crates. He hides
   // behind it as a ball (`ball`: between the crates and the back wall).
-  cargo: Object.freeze({ box: Object.freeze({ x0: 70, x1: 150, y0: 304, y1: 384 }), solid: Object.freeze({ x0: 66, x1: 154, y0: 354, y1: 386 }), ball: Object.freeze({ x: 110, y: 336 }) }),
+  cargo: Object.freeze({ box: Object.freeze({ x0: 70, x1: 150, y0: 304, y1: 384 }), solid: Object.freeze({ x0: 66, x1: 154, y0: 354, y1: 386 }), ball: Object.freeze({ x: 176, y: 350 }) }), // (the ball tucked against its right side: the cargo hides part of him, never all)
   // The window the ship docks in and the ramp with the fur scanner under it: the parts of "day" that differ from "noship".
   window: Object.freeze({ x0: 135, x1: 795, y0: 66, y1: 230 }),
   ramp: Object.freeze({ x0: 340, x1: 590, y0: 184, y1: 420 }),
@@ -114,13 +114,14 @@ export const HALLWAY = Object.freeze({
 /** Beat 36b: the party hall (locked v2), three robots mopping in lanes; he crosses from the hallway doorway down to the snack counter's front. */
 export const HALL_SNEAK = Object.freeze({
   in: Object.freeze({ x: 905, y: 320 }),
-  mopsIn: Object.freeze({ x: 870, y: 330 }),
+  mopsIn: Object.freeze({ x: 880, y: 372 }),
   // the counter's front end, where 38a (the storm) begins: reaching it ends this beat
   goal: Object.freeze({ x: 772, y: 584, r: 46 }),
   goalBox: Object.freeze({ x0: 720, x1: 806, y0: 540, y1: 606 }),
   // the lanes the robots mop: from x0 to x1 and back, at y; each robot starts at `at` (0 to 1 along its lane), heading `dir`
   lanes: Object.freeze([
-    Object.freeze({ y: 392, x0: 300, x1: 744, at: 0.1, dir: 1 }),
+    // (the first lane stops short of the doorway, so its cone never reaches him where he comes in)
+    Object.freeze({ y: 392, x0: 300, x1: 600, at: 0.1, dir: 1 }),
     Object.freeze({ y: 462, x0: 150, x1: 744, at: 0.55, dir: -1 }),
     Object.freeze({ y: 532, x0: 150, x1: 700, at: 0.85, dir: 1 }),
   ]),
