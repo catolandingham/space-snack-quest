@@ -802,7 +802,7 @@
         ((n.scene = "QB"), luBeat() && luBeat().jump(["plant", "give", "snack"][b - 25]));
       } else if (b >= 28 && b <= 36) {
         // the loading bay (loading-bay.js): 28 behind the counter, 29 hiding, then each beat's first part
-        ((n.scene = "QB"), bayBeat() && bayBeat().jump(["pa", "hide", "arrive", "promise", "sign", "back", "plant", "plant", "home"][b - 28]));
+        ((n.scene = "QB"), bayBeat() && bayBeat().jump(["pa", "hallway", "robots", "promise", "peek", "take", "talkto", "spit", "walkby"][b - 28]));
       } else if (b === 37) {
         ((n.room = "passage"), (n.scene = "QB"), (n.ch1Step = "photos"), (n.ch1Crayon = !0), (n.sq.x = 420), (n.sq.y = 420), (n.mo.x = 520), (n.mo.y = 420));
       } else if (b === 38) {

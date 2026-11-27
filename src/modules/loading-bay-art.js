@@ -5,7 +5,9 @@
  * close-up sits in. The locked room pictures are never redrawn here; these are layers on top of them.
  */
 import { ROBOT_SIZE } from "./loading-bay-place.js";
-import { OUTLINE } from "./outline.js";
+import { highlightBox } from "./outline.js";
+import { drawPenDigits } from "./pen-digits.js";
+import { CAKES } from "./cakes-brand.js";
 
 const BAY_INK = "#1e2430";
 export const PAPER = Object.freeze({ white: "#fffdf8", pink: "#ff9cc2", yellow: "#ffe27a", carbon: "#7d6f86" });
@@ -263,20 +265,16 @@ export function drawFormCloseUp(ctx, box, { sign = 0, code = 0, codeText = "", p
     ctx.lineTo(X(560), ly);
     ctx.stroke();
   }
-  // the office code, written a number at a time on the pink, and coming through grey on the yellow below it
+  // the office code, written in blue pen a number at a time on the pink, pressing through onto the yellow below it
+  // (pen-digits.js: handwriting, so it reads as a secret someone wrote there)
   const shown = codeText.slice(0, Math.max(0, Math.min(codeText.length, Math.floor(code))));
-  const codeAt = { x: X(425), y: Y(386), size: Math.round(60 * k) };
-  ctx.font = `italic 800 ${codeAt.size}px "Comic Sans MS", "Chalkboard SE", cursive, sans-serif`;
-  ctx.textAlign = "center";
-  ctx.fillStyle = "#2b3a67";
-  shown && ctx.fillText(shown, codeAt.x, codeAt.y);
-  const carbonAt = { x: X(518), y: Y(520), size: Math.round(44 * k) };
-  ctx.font = `italic 800 ${carbonAt.size}px "Comic Sans MS", "Chalkboard SE", cursive, sans-serif`;
-  ctx.fillStyle = PAPER.carbon;
-  shown && ctx.fillText(shown, carbonAt.x, carbonAt.y);
+  const codeAt = { x: X(425), y: Y(386), size: Math.round(52 * k) };
+  shown && drawPenDigits(ctx, shown, codeAt.x - ((codeText.length - shown.length) * 13 * (codeAt.size / 16)) / 2, codeAt.y, codeAt.size);
+  const carbonAt = { x: X(518), y: Y(520), size: Math.round(38 * k) };
+  shown && drawPenDigits(ctx, shown, carbonAt.x - ((codeText.length - shown.length) * 13 * (carbonAt.size / 16)) / 2, carbonAt.y, carbonAt.size, PAPER.carbon);
   // Isfred's pen (purple, as he is), at the end of what it is writing
   if (pen) {
-    const px = pen === "sign" ? X(24 + 40 + 170 * Math.min(1, sign)) : codeAt.x + (shown.length - codeText.length / 2) * codeAt.size * 0.32,
+    const px = pen === "sign" ? X(24 + 40 + 170 * Math.min(1, sign)) : codeAt.x + (shown.length - codeText.length / 2) * codeAt.size * 0.4,
       py = pen === "sign" ? Y(330) : codeAt.y - 4 * k;
     ctx.save();
     ctx.translate(px, py);
@@ -342,14 +340,7 @@ export function drawCloseUpFront(ctx, b) {
  * goal outline's width, dash and colour (outline.js OUTLINE) and its gentle pulse, for things this beat draws itself.
  */
 export function drawDashedOutline(ctx, box, t) {
-  ctx.save();
-  ctx.globalAlpha = 0.85 + 0.15 * Math.sin((t || 0) * 4);
-  ctx.setLineDash([OUTLINE.dash, OUTLINE.dash * 0.7]);
-  ctx.lineWidth = OUTLINE.width;
-  ctx.strokeStyle = OUTLINE.color;
-  bayRound(ctx, box.x0, box.y0, box.x1 - box.x0, box.y1 - box.y0, 8);
-  ctx.stroke();
-  ctx.restore();
+  highlightBox(ctx, box, t, 0);
   return box;
 }
 
@@ -368,3 +359,294 @@ export function drawWave(ctx, x, y, t) {
   }
   ctx.restore();
 }
+
+// ---------- the bay's new things (beats 29 to 35; PLACEHOLDERS) ----------
+/** One wooden crate, its bottom middle at (x, y), `w` wide; `label` stamped on its front (the station's in blue). */
+export function drawCrate(ctx, x, y, w = 56, label = "", color = CAKES.stampColor) {
+  const h = w * 0.62;
+  ctx.save();
+  bayRound(ctx, x - w / 2, y - h, w, h, 3);
+  fillStroke(ctx, "#d9a35b", 2.5);
+  ctx.strokeStyle = "rgba(120,72,30,.6)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x - w / 2 + 4, y - h / 2);
+  ctx.lineTo(x + w / 2 - 4, y - h / 2);
+  ctx.stroke();
+  if (label) {
+    ctx.fillStyle = color;
+    ctx.font = `700 ${Math.round(w * 0.16)}px sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(label, x, y - h * 0.3);
+    // the star
+    star(ctx, x, y - h * 0.72, w * 0.08, color);
+  }
+  ctx.restore();
+  return { x0: x - w / 2, x1: x + w / 2, y0: y - h, y1: y };
+}
+function star(ctx, x, y, r, color) {
+  ctx.beginPath();
+  for (let i = 0; i < 10; i++) {
+    const a = -Math.PI / 2 + (i * Math.PI) / 5,
+      rr = i % 2 ? r * 0.45 : r;
+    ctx.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr);
+  }
+  ctx.closePath();
+  ctx.fillStyle = color;
+  ctx.fill();
+}
+/** The cargo stacked by the bay's doorway: two plain crates, one on the other (`box` its outer box). */
+export function drawCargo(ctx, box) {
+  const w = box.x1 - box.x0,
+    x = (box.x0 + box.x1) / 2;
+  drawCrate(ctx, x, box.y1, w);
+  drawCrate(ctx, x + 4, box.y1 - w * 0.6, w * 0.86);
+}
+/** A paper tag on a string at (x, y), with `text` on it (small; its words are read in a close-up). */
+export function drawTag(ctx, x, y, text, s = 1) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(s, s);
+  bayRound(ctx, -14, -8, 28, 16, 3);
+  fillStroke(ctx, "#fffdf8", 1.5);
+  ctx.fillStyle = BAY_INK;
+  ctx.font = "700 4px sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  text && ctx.fillText(text.slice(0, 14), 0, 0);
+  ctx.restore();
+}
+/** The little box on the ship, tagged for S. (`k` its size), its bottom middle at (x, y). */
+export function drawTaggedBox(ctx, x, y, k = 1) {
+  ctx.save();
+  bayRound(ctx, x - 9 * k, y - 12 * k, 18 * k, 12 * k, 2 * k);
+  fillStroke(ctx, "#f2d5a8", 2);
+  ctx.strokeStyle = "#e5533d";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x, y - 12 * k);
+  ctx.lineTo(x, y);
+  ctx.stroke();
+  // the tag hanging off its corner
+  ctx.beginPath();
+  ctx.rect(x + 7 * k, y - 16 * k, 8 * k, 5 * k);
+  ctx.fillStyle = "#fffdf8";
+  ctx.fill();
+  ctx.lineWidth = 1.2;
+  ctx.strokeStyle = BAY_INK;
+  ctx.stroke();
+  ctx.restore();
+}
+/** The tag's close-up: the little box big, its tag's words readable (`words`). Returns where the words were drawn. */
+export function drawTagCloseUp(ctx, box, words, t) {
+  const W = box.x1 - box.x0,
+    H = box.y1 - box.y0;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(box.x0, box.y0, W, H);
+  ctx.clip();
+  ctx.fillStyle = "#e8e3d9";
+  ctx.fillRect(box.x0, box.y0, W, H);
+  const k = Math.min(W, H) / 60,
+    bx = box.x0 + W * 0.3,
+    by = box.y0 + H * 0.82;
+  drawTaggedBox(ctx, bx, by, k * 2.2);
+  // the tag, big, on its string
+  const tx = box.x0 + W * 0.66,
+    ty = box.y0 + H * 0.42,
+    tw = W * 0.56,
+    th = H * 0.42;
+  ctx.beginPath();
+  ctx.moveTo(bx + 15 * k, by - 30 * k);
+  ctx.quadraticCurveTo(tx - tw / 2 - 20, ty + th / 2, tx - tw / 2, ty);
+  ctx.strokeStyle = BAY_INK;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  bayRound(ctx, tx - tw / 2, ty - th / 2, tw, th, 8);
+  fillStroke(ctx, "#fffdf8", 4);
+  const [first, ...rest] = words.split(" — ");
+  const size = Math.round(Math.min(th * 0.2, tw / 11));
+  ctx.fillStyle = BAY_INK;
+  ctx.font = `italic 700 ${size}px "Comic Sans MS", "Chalkboard SE", cursive, sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  const lines = first.split(". ").map((l, i, a) => (i < a.length - 1 ? l + "." : l));
+  lines.forEach((l, i) => ctx.fillText(l, tx, ty - th * 0.22 + i * size * 1.2));
+  rest.length && ctx.fillText("— " + rest.join(" — "), tx, ty + th * 0.3);
+  ctx.restore();
+  return { x: tx, y: ty, size, text: words };
+}
+/** Isfred's shadow on the floor in the doorway (beat 29), `k` 0 to 1 as he comes nearer. */
+export function drawDoorShadow(ctx, x, y, k) {
+  ctx.save();
+  ctx.globalAlpha = 0.35 * k;
+  ctx.fillStyle = "#1e2430";
+  ctx.beginPath();
+  ctx.ellipse(x + 30 * k, y + 6, 34 * k, 9, -0.15, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(x + 50 * k, y - 4, 12 * k, 6, -0.2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+/** A tool in a hand, at (x, y): "wrench", "broom" (upside down: `flip`) or "clipboard". */
+export function drawTool(ctx, kind, x, y, flip = false, k = 1) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(k, flip ? -k : k);
+  ctx.lineCap = "round";
+  if (kind === "wrench") {
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#8a93a3";
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(0, -16);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(0, -18, 4, 0.6, Math.PI * 2 - 0.6);
+    ctx.stroke();
+  } else if (kind === "broom") {
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = "#8b5a2b";
+    ctx.beginPath();
+    ctx.moveTo(0, 6);
+    ctx.lineTo(0, -22);
+    ctx.stroke();
+    ctx.fillStyle = "#e0c068";
+    ctx.beginPath();
+    ctx.moveTo(-6, -22);
+    ctx.lineTo(6, -22);
+    ctx.lineTo(8, -32);
+    ctx.lineTo(-8, -32);
+    ctx.closePath();
+    ctx.fill();
+  } else {
+    ctx.fillStyle = "#fffdf8";
+    ctx.strokeStyle = BAY_INK;
+    ctx.lineWidth = 1.5;
+    ctx.fillRect(-6, -18, 12, 16);
+    ctx.strokeRect(-6, -18, 12, 16);
+  }
+  ctx.restore();
+}
+/** Lou's fuzzy winter hat, on his head at (x, y) or on the floor. */
+export function drawFuzzyHat(ctx, x, y, k = 1) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(k, k);
+  ctx.fillStyle = "#c0504d";
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 11, 7, 0, Math.PI, 0);
+  ctx.fill();
+  ctx.fillStyle = "#f3e6d0";
+  for (let i = -10; i <= 10; i += 4) {
+    ctx.beginPath();
+    ctx.arc(i, 0, 2.6, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.beginPath();
+  ctx.arc(0, -8, 4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+/** The scanner arch refusing fur: its field flashes red and a red bar drops across it (`k` 0 to 1). */
+export function drawScannerStop(ctx, field, k, t) {
+  ctx.save();
+  ctx.globalAlpha = (0.25 + 0.2 * Math.abs(Math.sin(t * 12))) * Math.min(1, k * 2);
+  ctx.fillStyle = "#e5533d";
+  ctx.fillRect(field.x0, field.y0, field.x1 - field.x0, field.y1 - field.y0);
+  ctx.globalAlpha = 1;
+  const y = field.y0 + (field.y1 - field.y0) * 0.55 * Math.min(1, k * 1.5);
+  ctx.fillStyle = "#e5533d";
+  ctx.strokeStyle = BAY_INK;
+  ctx.lineWidth = 2;
+  ctx.fillRect(field.x0, y - 5, field.x1 - field.x0, 10);
+  ctx.strokeRect(field.x0, y - 5, field.x1 - field.x0, 10);
+  ctx.restore();
+}
+/** A letter in a robot's gripper or going into the mailbox's slot. */
+export function drawLetter(ctx, x, y, k = 1) {
+  ctx.save();
+  bayRound(ctx, x - 7 * k, y - 5 * k, 14 * k, 10 * k, 1.5);
+  fillStroke(ctx, "#fffdf8", 1.5);
+  ctx.beginPath();
+  ctx.moveTo(x - 7 * k, y - 5 * k);
+  ctx.lineTo(x, y);
+  ctx.lineTo(x + 7 * k, y - 5 * k);
+  ctx.stroke();
+  ctx.restore();
+}
+/** The mailbox's slot lighting up (`k` 0 to 1). */
+export function drawSlotLight(ctx, x, y, k) {
+  ctx.save();
+  ctx.globalAlpha = k;
+  ctx.fillStyle = "#8fdcff";
+  ctx.fillRect(x - 18, y - 3, 36, 6);
+  ctx.restore();
+}
+/** A sweat drop by a face at (x, y), falling `u` (0 to 1). */
+export function drawSweat(ctx, x, y, u) {
+  ctx.save();
+  ctx.globalAlpha = 1 - u * 0.6;
+  ctx.fillStyle = "#8fdcff";
+  ctx.strokeStyle = BAY_INK;
+  ctx.lineWidth = 1.5;
+  const yy = y + u * 14;
+  ctx.beginPath();
+  ctx.moveTo(x, yy - 6);
+  ctx.quadraticCurveTo(x + 5, yy + 1, x, yy + 3);
+  ctx.quadraticCurveTo(x - 5, yy + 1, x, yy - 6);
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+}
+/**
+ * The hallway's office door open (beat 36): its two doors slid aside `k` (0 to 1), light spilling out on the floor, and
+ * inside a desk with a glowing computer screen.
+ */
+export function drawOfficeOpen(ctx, door, k) {
+  const w = door.x1 - door.x0,
+    gap = w * 0.9 * k;
+  ctx.save();
+  // the light on the floor
+  ctx.globalAlpha = 0.45 * k;
+  ctx.fillStyle = "#fff3b0";
+  ctx.beginPath();
+  ctx.moveTo(door.x0 + w / 2 - gap / 2, door.y0);
+  ctx.lineTo(door.x0 + w / 2 + gap / 2, door.y0);
+  ctx.lineTo(door.x1 + 40 * k, door.y0 - 70 * k);
+  ctx.lineTo(door.x0 - 40 * k, door.y0 - 70 * k);
+  ctx.closePath();
+  ctx.fill();
+  ctx.globalAlpha = 1;
+  // inside: lit wall, a desk, a computer
+  const ix = door.x0 + w / 2 - gap / 2;
+  ctx.beginPath();
+  ctx.rect(ix, door.y0 + 4, gap, door.y1 - door.y0 - 4);
+  ctx.save();
+  ctx.clip();
+  ctx.fillStyle = "#fff6d8";
+  ctx.fillRect(ix, door.y0, gap, door.y1 - door.y0);
+  ctx.fillStyle = "#8b5a2b";
+  ctx.fillRect(door.x0 + 10, door.y0 + 70, w - 20, 14);
+  ctx.fillStyle = "#2b3a67";
+  ctx.fillRect(door.x0 + w / 2 - 16, door.y0 + 40, 32, 24);
+  ctx.fillStyle = "#8fdcff";
+  ctx.fillRect(door.x0 + w / 2 - 13, door.y0 + 43, 26, 18);
+  ctx.restore();
+  ctx.restore();
+}
+/** A robot's mopping streak on the floor: a grey smear along `pts`. */
+export function drawStreak(ctx, pts) {
+  if (!pts || pts.length < 2) return;
+  ctx.save();
+  ctx.strokeStyle = "rgba(120,126,140,.32)";
+  ctx.lineWidth = 16;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  pts.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
+  ctx.stroke();
+  ctx.restore();
+}
+

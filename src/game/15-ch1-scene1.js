@@ -191,6 +191,9 @@
         drawWorker: (ctx, x, y, name) => onCtx(ctx, () => u5({ x, y, name: name || "" })),
         officeCode: () => CH1_OFFICE_CODE,
         walkHomeDone: () => ch1WalkHomeDone(),
+        // Playing as Mops or Squatch (the one switch rule, announced with its card; `byLine` the card's line) and 36b's end.
+        switchTo: (who, byLine) => ((SWITCH_WHY.__beat = byLine || ""), switchTo(who, byLine ? "__beat" : "")),
+        hallSneakDone: () => ch1SnackLine(),
         offer: () => pick(ch1QSpots()),
         // Holding ↺ inside a full-screen view: the same restart as the page's ↺.
         restartPart: () => sectionReset(),

@@ -249,6 +249,15 @@ export function createBridge() {
       }
       return null;
     },
+    /** The name over a speaker's bubble, from the rebuilt beat that names that speaker, or "". */
+    speakerName(who) {
+      for (const b of beats.values()) {
+        // (only a beat that names speakers by who they are: the morning's speakerName() names its own wall speaker)
+        const name = b.speakerName && b.speakerName.length >= 1 && b.speakerName(who);
+        if (name) return name;
+      }
+      return "";
+    },
     /** A bubble that sits beside its speaker instead of over him, from the rebuilt beat that says so, or null. */
     bubbleBeside(who) {
       for (const b of beats.values()) {

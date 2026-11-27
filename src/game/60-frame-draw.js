@@ -1326,7 +1326,7 @@
       window.__ss && window.__ss.lastBubble && ((window.__ss.lastBubble.tail = tail), (window.__ss.lastBubble.target = to));
       if ((l.style === "song" && (g("\u266A", _ + 4, $ + 4, 22, "#ff5fa8"), g("\u266B", _ + T - 4, $ + R - 2, 22, "#ff5fa8")), !o)) {
         let beat = l.who === "speaker" && window.SSQ && window.SSQ.beat("ch1-morning"),
-          CV = beat ? beat.speakerName() : (partyBeat() && partyBeat().speakerName(l.who)) || pa[l.who] || "";
+          CV = beat ? beat.speakerName() : (window.SSQ && window.SSQ.speakerName && window.SSQ.speakerName(l.who)) || pa[l.who] || "";
         // Tests: the name over the bubble on screen.
         window.__ss && window.__ss.lastBubble && (window.__ss.lastBubble.name = CV);
         ge(17);
