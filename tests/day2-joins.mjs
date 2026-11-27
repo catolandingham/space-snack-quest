@@ -87,10 +87,10 @@ const joins = await page.evaluate(() => {
   }
   return { order, jumps, room: n.room, sq: { x: Math.round(n.sq.x), y: Math.round(n.sq.y) } };
 });
-const story = joins.order.filter((s) => /^(bay:(walkby|after|done|hall\/evening waits)|evening:(walkin|wall|tostorm|storm|hide))$/.test(s));
-const want = ["bay:walkby", "bay:after", "evening:walkin", "evening:wall", "bay:hall/evening waits", "evening:tostorm", "evening:storm", "evening:hide"];
+const story = joins.order.filter((s) => /^(bay:(walkby|after|done|hall\/evening waits|hallout\/evening waits)|evening:(walkin|wall|tostorm|storm|hide))$/.test(s));
+const want = ["bay:walkby", "bay:after", "evening:walkin", "evening:wall", "bay:hall/evening waits", "bay:hallout/evening waits", "evening:tostorm", "evening:storm", "evening:hide"];
 const inOrder = want.every((s, i) => story.indexOf(s) >= 0 && (i === 0 || story.indexOf(s) > story.indexOf(want[i - 1])));
-g.check("36 (the hairball) -> 37 (the photo wall) -> 36b (the party hall's robots) -> 38a (the storm), in that order", inOrder && joins.room === "hall", joins.order);
+g.check("36 (the hairball) -> 37 (the photo wall) -> 36b (the party hall's robots, who roll out when he reaches the counter) -> 38a (the storm), in that order", inOrder && joins.room === "hall", joins.order);
 g.check("nobody jumps across the room at a hand-over (more than 60 in a frame while the game moves them)", joins.jumps.length === 0, joins.jumps.slice(0, 5));
 g.check("after 36b he is behind the counter's strip for the storm (the evening's spot), not where 36b left him", Math.hypot(joins.sq.x - 852, joins.sq.y - 326) < 70, joins.sq);
 

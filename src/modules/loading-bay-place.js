@@ -118,6 +118,9 @@ export const HALL_SNEAK = Object.freeze({
   // the counter's front end, where 38a (the storm) begins: reaching it ends this beat
   goal: Object.freeze({ x: 772, y: 584, r: 46 }),
   goalBox: Object.freeze({ x0: 720, x1: 806, y0: 540, y1: 606 }),
+  // when he has reached it, the robots roll out through the hallway doorway (out, then gone past the picture's edge)
+  out: Object.freeze({ x: 905, y: 318 }),
+  gone: Object.freeze({ x: 1010, y: 314 }),
   // the lanes the robots mop: from x0 to x1 and back, at y; each robot starts at `at` (0 to 1 along its lane), heading `dir`
   lanes: Object.freeze([
     // (the first lane stops short of the doorway, so its cone never reaches him where he comes in)

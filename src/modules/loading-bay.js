@@ -54,6 +54,7 @@
 import { BAY, BAY_SPOTS, HALLWAY, HALL_SNEAK, BAY_PACE as P, BAY_PICTURES, BAY_CLOSEUPS, BAY_PARTS, BAY_STEPS, ROBOT_SIZE } from "./loading-bay-place.js";
 import { bayWords, bayLine, BAY_SPEAKER_NAMES } from "./loading-bay-lines.js";
 import { OFFICE_CODE } from "./office-code.js";
+import { findPath } from "./tap-path.js";
 import { drawRobot, robotHand, drawFormSet, drawStuck, drawCrumbs, drawFormCloseUp, closeUpBox, drawCloseUpBack, drawCloseUpFront, drawWave, drawDashedOutline, drawBayCrate, drawCargo, drawTag, drawTaggedBox, drawTagCloseUp, drawDoorShadow, drawTool, drawFuzzyHat, drawScannerStop, drawLetter, drawSlotLight, drawSweat, drawOfficeOpen, drawStreak } from "./loading-bay-art.js";
 import { drawSpeakerRing, drawHeartCone } from "./party-free-art.js";
 import { HALL, HALL_PICTURE, HALL_SPEAKER } from "./party-hall.js";
@@ -859,8 +860,35 @@ export function createLoadingBay(bridge) {
     control("hall");
   }
   function hallDone() {
-    const e = E();
+    const b = B();
     busy();
+    // the robots' cleaning is done: they roll out of the hall through the hallway doorway before the storm (nobody
+    // vanishes: the evening's hall has no cleaning robots), round the counter, the stools and the crates
+    go("hallout");
+    // (first up from its lane to the back strip, then along it: its cone, the way it rolls, points away from him at the
+    // counter's front)
+    const way = (a, z) => findPath(a, z, LUNCH_BOUNDS, LUNCH_SOLIDS) || [z];
+    for (const r of b.hall.robots) {
+      const up = { x: r.x, y: HALL_SNEAK.out.y + 12 };
+      r.stop = 0;
+      r.route = [...way({ x: r.x, y: r.y }, up), ...way(up, HALL_SNEAK.out), HALL_SNEAK.gone];
+    }
+  }
+  // every frame of "hallout": the robots roll on along their ways; once all are out, the storm (38a) begins
+  function hallOutTick(b, dt) {
+    for (const r of b.hall.robots) {
+      const w = r.route[0];
+      if (!w) continue;
+      const d = Math.hypot(w.x - r.x, w.y - r.y),
+        k = Math.min(d, P.robot * dt);
+      d > 0.5 && ((r.x += ((w.x - r.x) / d) * k), (r.y += ((w.y - r.y) / d) * k));
+      Math.abs(w.x - r.x) > Math.abs(w.y - r.y) ? (r.f = w.x > r.x ? 1 : -1) : (r.f = w.y > r.y ? 0 : 2);
+      d - k < 0.5 && r.route.shift();
+    }
+    b.hall.robots.every((r) => !r.route.length) && hallOver();
+  }
+  function hallOver() {
+    const e = E();
     go("done");
     const evening = bridge.beat("ch1-evening");
     if (evening && evening.startStorm) return evening.startStorm();
@@ -1007,6 +1035,7 @@ export function createLoadingBay(bridge) {
     if (["home", "walkby", "hall"].includes(b.step) && !b.alarm && free) followSquatch(dt);
     if (b.step === "walkby" && room() === "passage") walkbyTick(b, s, dt, free);
     if (b.step === "hall" && room() === "hall") hallTick(b, s, dt, free);
+    if (b.step === "hallout" && room() === "hall") hallOutTick(b, dt);
     // the sneak: one robot rolls to and fro across the floor, looking the way it goes
     if (b.step === "sneak" && room() === "hangar" && !b.alarm && free) {
       const r = robot(1),
@@ -1554,7 +1583,7 @@ export function createLoadingBay(bridge) {
     /** True while this beat draws the room: the bay, and the hall in 36b. */
     ownsRoom() {
       const b = live();
-      return !!b && (room() === "hangar" || (room() === "hall" && b.step === "hall"));
+      return !!b && (room() === "hangar" || (room() === "hall" && (b.step === "hall" || b.step === "hallout")));
     },
     tick,
     spots,
@@ -1563,7 +1592,7 @@ export function createLoadingBay(bridge) {
         e = E();
       if (!b) return false;
       const t = e.time();
-      if (room() === "hall" && b.step === "hall") {
+      if (room() === "hall" && (b.step === "hall" || b.step === "hallout")) {
         const cones = drawHallSneak(ctx, b);
         drew = { step: b.step, room: "hall", cones: cones.map((c) => ({ id: c.id, inside: c.inside, show: c.show })), robots: b.hall.robots.map((r) => ({ x: r.x, y: r.y, f: r.f })) };
         return true;
@@ -1581,7 +1610,7 @@ export function createLoadingBay(bridge) {
       const b = live();
       if (!b) return [];
       const feet = (x, y) => ({ x0: x - 22, x1: x + 22, y0: y - 12, y1: y + 8, person: 1 });
-      if (room() === "hall" && b.step === "hall") return [...LUNCH_SOLIDS, ...b.hall.robots.map((r) => feet(r.x, r.y))];
+      if (room() === "hall" && (b.step === "hall" || b.step === "hallout")) return [...LUNCH_SOLIDS, ...b.hall.robots.map((r) => feet(r.x, r.y))];
       if (room() !== "hangar") return [];
       return [BAY.cargo.solid, ...(b.isfred.show ? [feet(b.isfred.x, b.isfred.y)] : []), ...b.workers.filter((w) => w.show).map((w) => feet(w.x, w.y)), ...b.robots.filter((r) => r.show && r.room === "hangar").map((r) => feet(r.x, r.y))];
     },
