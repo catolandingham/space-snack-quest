@@ -689,12 +689,15 @@ export function drawSite(ctx, { booked = -1, t = 0, page = 0, size = "", label =
     const k = esClamp(booked / 0.7),
       cx = 260 + k * 330,
       cy = 470 - k * 150;
-    ctx.beginPath();
-    ctx.moveTo(220, 500);
-    ctx.lineTo(640, 300);
-    ctx.lineWidth = 10;
-    ctx.strokeStyle = "#8a93a3";
-    ctx.stroke();
+    // (the ramp only while the crate rides it: under the tick and the words it read as a stray line)
+    if (booked <= 0.9) {
+      ctx.beginPath();
+      ctx.moveTo(220, 500);
+      ctx.lineTo(640, 300);
+      ctx.lineWidth = 10;
+      ctx.strokeStyle = "#8a93a3";
+      ctx.stroke();
+    }
     esRect(ctx, 560, 180, 240, 160, 60);
     esPaint(ctx, "#c5ccd8", 4);
     for (const kx of [0, 1, 2]) (ctx.beginPath(), ctx.arc(610 + kx * 60, 240, 18, 0, ES_TAU), esPaint(ctx, "#78b4ea", 3));
