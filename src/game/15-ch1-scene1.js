@@ -95,7 +95,7 @@
         tapWait: () => ({ k: "wait", t: 0 }),
         current: () =>
           n.cur
-            ? { k: n.cur.k, who: n.cur.b ? n.cur.b.who : "", style: n.cur.b ? n.cur.b.style : "", id: n.cur.id || "", panel: n.cur.panel, el: n.cur.el || 0, over: !!n.cur.over }
+            ? { k: n.cur.k, who: n.cur.b ? n.cur.b.who : "", text: n.cur.b ? n.cur.b.text : "", style: n.cur.b ? n.cur.b.style : "", id: n.cur.id || "", panel: n.cur.panel, el: n.cur.el || 0, over: !!n.cur.over }
             : null,
         // Steps that come in front of the one up now, which comes back after them (Brian 31a: Mops's line over
         // the close-up). An item with over: true is drawn over the picture up now.

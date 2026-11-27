@@ -198,6 +198,7 @@ const f = run.drew.codeWritten;
 const inside = (a, b) => a.x0 >= b.x0 - 1 && a.x1 <= b.x1 + 1 && a.y0 >= b.y0 - 1 && a.y1 <= b.y1 + 1;
 g.check("32: the form close-up: ORDER MORE ROBOTS on the pink, with its box", !!f && f.parts && f.parts.words.text === "ORDER MORE ROBOTS" && inside(f.parts.box, f.parts.pink), f && f.parts && f.parts.words);
 g.check("32: the office code 169556 written on the pink and coming through on the yellow while he says so", !!f && run.end.code === "169556" && f.parts.code.text === "169556" && f.parts.carbon.text === "169556", f && f.parts && [f.parts.code.text, f.parts.carbon.text]);
+g.check("32: over the form close-up a short line's bubble sits further in from the right edge, so its speaker's name tag stays on the picture", !!B("isfred-wait") && !!B("isfred-wait").box && B("isfred-wait").box.x + B("isfred-wait").box.w <= 820, B("isfred-wait"));
 g.check("32: the ramp goes up before the ship leaves (never a ramp with no ship)", !!run.samples.shipLeaving && run.samples.shipLeaving.ramp === 0 && !run.samples.rampWithoutShip, run.samples);
 // 33 to 35, as Mops
 g.check("33: the player is switched to Mops with a switch card", run.cards.length >= 1 && B("robot-copies") && run.steps.take && run.steps.take.chip === line("chip-take"), { cards: run.cards, take: run.steps.take });

@@ -1239,7 +1239,7 @@ export function createLoadingBay(bridge) {
         a = c.y < BAY.rampFoot.y ? Math.max(0, (c.y - BAY.shipDoor.y) / (BAY.rampFoot.y - BAY.shipDoor.y)) : 1;
       list.push({ y: c.y, f: () => (ctx.save(), (ctx.globalAlpha = a), drawBayCrate(ctx, c.x, c.y, 46), drawTag(ctx, c.x + 20, c.y - 20, bayWords("crate-empty")), ctx.restore()) });
     }
-    b.hatOnFloor && list.push({ y: BAY.arch.foot + 14, f: () => drawFuzzyHat(ctx, BAY.rampFoot.x - 40, BAY.arch.foot + 14, 1) });
+    b.hatOnFloor && list.push({ y: BAY.arch.foot + 14, f: () => drawFuzzyHat(ctx, BAY.rampFoot.x - 40, BAY.arch.foot + 14, 1.7) }); // (big enough to read as a hat on a phone)
     if (e.get("moPose") !== "hidden")
       list.push({
         y: m.y,
@@ -1631,7 +1631,14 @@ export function createLoadingBay(bridge) {
         e = E();
       if (!b) return null;
       if (who === "pa" && room() === "hall") return { ...HALL_SPEAKER, side: "left" };
-      if (b.closeUp && b.closeUp.id === "form" && ["official", "robot", "mops", "dot"].includes(who)) return { x0: 950, x1: 955, y0: 40, y1: 80, side: "left" };
+      if (b.closeUp && b.closeUp.id === "form" && ["official", "robot", "mops", "dot"].includes(who)) {
+        // (top right, clear of the close-up; a short line sits further in, so the speaker's name tag over its left
+        // edge stays on the picture)
+        const cur = e.current && e.current(),
+          text = (cur && cur.text) || "",
+          right = text.length < 24 ? 800 : 950;
+        return { x0: right, x1: right + 5, y0: 40, y1: 80, side: "left" };
+      }
       if (room() === "passage" && ["after", "walkby", "hallway"].includes(b.step) && (who === "sq" || who === "mops")) {
         const s = e.pos("sq"),
           m = e.pos("mops"),
