@@ -111,6 +111,16 @@ const results = {};
   results.day2 = await frame(page, HOME_PTS);
   g.check("Day 2 (its link): day", !results.day2.night && !Object.keys(results.day2.drew).length, results.day2);
   // (with its zoom-in card and queue cleared, so the room shows plain)
+  // Day 2 at home (beat 22) by day, then in a night scene of the older program (ch1Night: night one): the taller closet,
+  // drawn from the home picture, is cut from the night look too (no bright closet)
+  // (a point in the part the taller closet adds above the picture's own closet: wall in the picture)
+  const CLOSET = { closet: { x: 70, y: 150 } };
+  await page.evaluate(() => (window.__ss.ch1JumpBeat(22), Object.assign(window.__ss.op, { ch1Zoom: null, q: [], cur: null }), window.__ss.settleRoom()));
+  const closetDay = await frame(page, CLOSET);
+  await page.evaluate(() => (window.__ss.op.ch1Night = true));
+  const closetNight = await frame(page, CLOSET);
+  await page.evaluate(() => (window.__ss.op.ch1Night = false));
+  g.check("Day 2 at home at night (ch1Night): the taller closet is the night one", closetNight.night && closetNight.drew.closet && bright(closetDay.px.closet) < 600 && bright(closetNight.px.closet) < bright(closetDay.px.closet) * 0.7, { day: closetDay.px.closet, night: closetNight.px.closet });
   // the lunch sneak (beat 25, Day 2's lunch): day
   await page.evaluate(() => (window.__ss.ch1JumpBeat(25), Object.assign(window.__ss.op, { ch1Zoom: null, q: [], cur: null }), window.__ss.settleRoom()));
   results.lunch = await frame(page, HALL_PTS);
