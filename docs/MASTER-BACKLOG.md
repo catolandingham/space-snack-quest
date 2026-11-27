@@ -23,6 +23,8 @@
 
 ## Where main is (Chapter 1 redesign)
 
+2026-11-26 (night, lunch), draft PR #91: the night look merged in; the lunch sneak is day (checked by `night-look`). Docs match main: yes.
+
 2026-11-26 (night, Day 2's start), draft PR #90: Day 2 starts dark, the black lifts on the night look, then the morning comes up (`home-morning.js` NIGHT_LIFT, the room coming up 2.0 s, placeholders). Docs match main: yes.
 
 2026-11-26 (night, bedtime), draft PR #89: the night look is merged in and used by the bedtime story (the crate's front wall and Mops's mop bucket at night; lights out dims on top). Open for Brian: lights out over the night look is darker than before (a placeholder; `BEDTIME_NIGHT.dim` could come down). Docs match main: yes.
