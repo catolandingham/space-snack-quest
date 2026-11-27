@@ -293,7 +293,7 @@ Words the game already had, and the one you already approved, are not in this li
 | 28 | The mailbox | Mail scanned. Signature pawature accepted. | Mail scanned. Pawature accepted. Or no words, only paw prints. |
 | 29 | A robot, a week later | We could wipe the floor with that beard. | The beard tease had no exact line yet. |
 | 30 | A robot | HQ sent us a message. You're going to be replaced this week anyway. | Your words from 4:14. |
-| 31 | Mops | The new robots come on the ship tomorrow. Let's go find the pancake stand. | |
+| 31 | Mops | The new robots come on the ship tomorrow. Let's go find the pancake stand. | In the game now (question 120, no pancakes): "Let's go find that Mars Cakes stand." |
 | 32 | Squatch | Oh, it was on the form I sent, I mean, never mind. | Your words from 4:20. |
 | 33 | Squatch | A copy got sucked into the vent. | |
 | 34 | Squatch, at the grille | I hope Mops doesn't notice... | |
@@ -416,9 +416,9 @@ These are the new words in this build. Each one is in the game so you can hear i
 | 114 | A robot, calling Isfred away. Open question 9, the default. | Isfred! A crate is damaged in the mail room. | Isfred! The mail room needs you. |
 | 115 | Squatch, walking past the robots. Walkthrough says this is already decided. | What's the difference between fur and hair? | Fur and hair. What's the difference? |
 | 116 | Mops. Now said on that walk. | Paperwork. | It's the form. |
-| 117 | Squatch, looking at the brochure | Are those other Sasquatches? | Are they like me? |
-| 118 | A tourist | We ate at a pancake place on Mars. | The pancakes were on Mars. |
-| 119 | A tourist | Here, a brochure. | Take this. |
+| 117 | Squatch, looking at the brochure | (cut in round 7, question 119: the brochure scene is played as Mops; Squatch stays hidden behind the bar) | At home now: "We always thought it said STARS." / "Maybe it's MARS!" (pending, evening-lines.js) |
+| 118 | The family at the window (overheard) | "Oh, we loved Mars." / "What did you like best?" / "The MARS CAKES!" (in the game since round 7, pending; Brian kept the last two 2026-11-27) | Was "We ate at a pancake place on Mars." |
+| 119 | The dad, to Mops | "In fact, I've got a brochure here." (round 7, pending), after "A family of Wookiees makes them." / "You can only get them at their stand." | Was "Here, a brochure." |
 | 120 | Mops, that evening | Didn't you hear what the manager said? They need me here, they're not going to replace me. Plus the Guardians are here. | The manager said they need me. And the Guardians are here. |
 | 121 | The mailbox. Shorter than row 28. | Mail scanned. Pawature accepted. | Row 28's longer line, or no words. |
 | 122 | Mops, a week later | Replaced? The manager was lying to me. | Replaced? He lied. |
@@ -431,7 +431,7 @@ These are the new words in this build. Each one is in the game so you can hear i
 | 129 | The crayon, under photo 4 | TIED TOGETHER FOREVER | Approved 2026-11-13. Not "Always tied together". |
 | 130 | The crayon labels | ME / MOPS | Approved 2026-11-13. |
 | 131 | The hallway wall | EMPLOYEE OF THE MONTH | |
-| 132 | The brochure | PANCAKES | |
+| 132 | The brochure (a placeholder drawing) | MARS CAKES, on the box at the stand; nobody is drawn on it (round 7, pending) | Was PANCAKES. |
 | 133 | The Mars reply, on the vent desk | MARS LOST & FOUND. Re: a lost baby Sasquatch. We have NO record of any lost baby. There are NO Sasquatches on Mars. | No baby. No Sasquatches. — Mars |
 | 134 | The tape screen | REC | |
 | 135 | Photo 1, optional | Mops, with a cone on his head. | |
