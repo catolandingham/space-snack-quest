@@ -206,8 +206,8 @@ for (const [id, thing] of [
     box = l && l.cap && l.cap.box;
   const sq = l && { x0: l.sq[0] - 56, x1: l.sq[0] + 56, y0: l.sq[1] - 150, y1: l.sq[1] + 6 };
   const covers = box ? Object.entries(HOME).filter(([k, b]) => hit(box, b)).map(([k]) => k) : ["no label"];
-  g.check(`the ${l && l.act} label covers neither Squatch nor ${thing} nor another home object`, !!box && !hit(box, sq) && covers.length === 0, { box, sq, covers });
-  g.check(`the ${l && l.act} label sits next to the ${thing} (within 40)`, !!box && gap(box, HOME[thing]) <= 40, { box, thing: HOME[thing] });
+  // (Brian #110, 2026-11-27: no "VERB · thing" words beside things in Chapter 1; the dashed gold line alone, cap-place.js THING_WORDS)
+  g.check(`${l && l.act}: no words are drawn beside the ${thing} (the gold line alone, #110)`, !!l && !!l.act && !box, { act: l && l.act, box });
 }
 // Brian: "The dash outline drawing over him doesn't work." Squatch at the desk: no outline yellow on him.
 const overHim = await page.evaluate(() => {

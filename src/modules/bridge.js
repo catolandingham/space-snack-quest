@@ -21,7 +21,7 @@ import { MIX, buses } from "./sound-mix.js";
 import { BOARD } from "./party-board-sounds.js";
 import { lastCutaway } from "./cutaway.js";
 import { SPEAKER } from "./morning.js";
-import { placeLabel } from "./cap-place.js";
+import { placeLabel, THING_WORDS } from "./cap-place.js";
 import { quietLine } from "./party-lines.js";
 import { quietBedtimeLine } from "./bedtime-story-lines.js";
 import { drawHomeMopBucket, lastHomeMopBucket } from "./mop-bucket.js"; // (bedtime branch, 2026-11-26: Mops's mop bucket)
@@ -415,6 +415,8 @@ export function createBridge() {
     },
     /** Where a "VERB · thing" label goes: next to its thing, clear of Squatch and other things. See cap-place.js. */
     placeLabel,
+    /** Whether Chapter 1 shows "VERB · thing" words beside the things (false: the gold line alone, #110). See cap-place.js. */
+    thingWords: THING_WORDS,
     /** Tap to walk around furniture: the corners to walk through. See tap-path.js. */
     findPath,
     /** How tall a grown-up is drawn in a room (85% of its door; the party hall 40% bigger). See room-sizes.js. */

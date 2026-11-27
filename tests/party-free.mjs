@@ -437,7 +437,7 @@ const warningDiscs = (page, ms) =>
   g.check("in the spotlight the button is DANCE · circle", !!s, s && s.act);
   await sleep(300);
   const lab = await overSquatch(page);
-  g.check("the DANCE · circle label sits clear of Squatch", lab.label_ === "DANCE · circle" && !lab.label, lab);
+  g.check("DANCE · circle: no words are drawn beside the thing (the gold line alone, #110)", !lab.label_ && !lab.label, lab);
   await press(page);
   s = await until(page, (q) => q.full, 3000);
   g.check("the dance fills the screen", !!s);
@@ -500,7 +500,7 @@ const warningDiscs = (page, ms) =>
   });
   g.check("no ring or disc is drawn over the pyramid any more", ringsAtBar === 0 && !("paw" in s.now), ringsAtBar);
   const lab = await overSquatch(page);
-  g.check("the GRAB · snacks label sits clear of Squatch", lab.label_ === "GRAB · snacks" && !lab.label, lab);
+  g.check("GRAB · snacks: no words are drawn beside the thing (the gold line alone, #110)", !lab.label_ && !lab.label, lab);
   await still(page, "p6-grab-snacks");
   await press(page);
   s = await until(page, (q) => q.now.snack, 6000);
