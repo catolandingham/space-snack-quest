@@ -25,6 +25,9 @@ const SP = (beat, mark) => `story pass 2026-11-26, beat ${beat} (${mark})`;
 const esLine = (id, who, text, status, source) => ({ id, who, text, status, source });
 const kept = (id, who, text, status, source) => esLine(id, who, text, status, source);
 const pend = (id, who, text, beat, mark) => esLine(id, who, text, "pending", SP(beat, mark));
+// round 7 (Brian's video notes 2026-11-27): a changed or new line and the question it hangs on (option A, built before
+// his answer; pending)
+const r7 = (id, who, text, note, q) => esLine(id, who, text, "pending", `round 7 (Brian's video notes 2026-11-27): ${note}; q: ${q} (option A, built before his answer)`);
 const fresh = (id, who, text, beat, why) => esLine(id, who, text, "new", SP(beat, "no words given") + (why ? `; ${why}` : ""));
 
 export const ESCAPE_LINES = Object.freeze(
@@ -99,11 +102,10 @@ export const ESCAPE_LINES = Object.freeze(
     // ---- 46: the almost-slip ----
     pend("mops-ate", "mops", "And I ate that form. Well. Half ate it.", 46, "NEW"),
     pend("mops-bin", "mops", "The bin was emptied days ago.", 46, "NEW"),
-    kept("sq-slip", "sq", "Oh, it was on the form I sent, I mean, never mind.", "pending", ES_WALK + "46; story pass 2026-11-26 (KEEP)"),
+    r7("sq-slip", "sq", "It was on the form. I... never mind.", "r5 12:33, CHANGED from \"Oh, it was on the form I sent, I mean, never mind.\" (he does not say I sent)", 133),
     pend("mops-hm", "mops", "Hm?", 46, "NEW"),
-    kept("sq-vent", "sq", "Didn't a copy get sucked into the vent?", "pending", ES_WALK + "46; story pass 2026-11-26 (KEEP)"),
-    pend("mops-big-vent", "mops", "The big vent!", 46, "NEW"),
-    pend("mops-lost", "mops", "Everything lost ends up in there.", 46, "NEW"),
+    r7("sq-vent", "sq", "Didn't a copy get sucked into a vent?", "r5 13:18, CHANGED from \"...into the vent?\" (the floor vent took it)", 125),
+    r7("mops-lost", "mops", "Everything the vents suck up ends up behind the big vent.", "r5 13:18, CHANGED: replaces \"The big vent!\" and \"Everything lost ends up in there.\"", 125),
     pend("mops-know", "mops", "I'll go in. I know that vent.", 46, "NEW"),
     // ---- 47: sneak to the vent ----
     fresh("chip-sneak", "chip", "Squatch: sneak to the big vent", 47),
@@ -112,8 +114,8 @@ export const ESCAPE_LINES = Object.freeze(
     kept("button-ball", "button", "ROLL · ball", "in-game", ES_OLD + "; approved 2026-11-26 (lunch sneak)"),
     kept("lockup-cause", "card", "A robot saw Squatch in the delivery room. Security caught him.", "in-game", "src/game/25-capture.js CAPTURES.delivery (the LOCKUP card in the loading bay)"),
     // ---- 48: Mops's secret desk (the player is Mops) ----
-    fresh("switch-vent", "switch", "Mops crawls into the vent. Squatch keeps watch.", 48, "the reason on the switch card"),
-    fresh("chip-crawl", "chip", "Mops: crawl through the vent", 48),
+    r7("switch-vent", "switch", "Mops goes into the vent. Squatch keeps watch.", "r5 13:29, CHANGED from \"Mops crawls into the vent...\" (no crawl: the big vent opens straight into his room)", 125),
+    fresh("chip-crawl", "chip", "Mops: crawl through the vent", 48, "round 7: only with VENT_CRAWL on (q: 125 option B)"),
     fresh("chip-lamp", "chip", "Mops: turn on the lamp", 48),
     esLine("button-lamp", "button", "LIGHT · lamp", "pending", SP(48, "named by the story pass")),
     fresh("chip-wall", "chip", "Mops: look at the wall", 48),

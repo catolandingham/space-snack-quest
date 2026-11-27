@@ -173,7 +173,8 @@ export function mopsSleepBox(k) {
  * The night robot (one of the three new robots) stands at the ramp's foot on Brian's rhythm (R64): looks down 2 s,
  * turns 0.3 s (no catch while turning), looks up at the back wall 4 s, turns back. Its cone is the standing cone (210,
  * 0.42); only the cone counts (no "this close" circle; Brian 2026-11-22). The other two robots are parked in the mail
- * room (the old storage corner, R17), switched off, until the mailbox's words wake them.
+ * room (the old storage corner, R17), switched off, until the mailbox's words wake them. Round 7 (r5 9:29, q: 125): all
+ * three sleep (zzz, no cones: an exception to "every robot shows its cone") until the loud post wakes them.
  */
 export const EV_BAY = Object.freeze({
   in: Object.freeze({ x: 40, y: 330 }),
@@ -190,7 +191,10 @@ export const EV_BAY = Object.freeze({
   mail: Object.freeze({ x: 862, y: 500, r: 52, box: Object.freeze({ x0: 838, x1: 914, y0: 366, y1: 480 }) }),
   // the big wall vent (picture 1070 to 1200 wide, 238 to 332 high): he hides under it, it pulls the pink sheet in
   vent: Object.freeze({ x0: 802, x1: 900, y0: 183, y1: 256, mouth: Object.freeze({ x: 851, y: 220 }) }),
-  underVent: Object.freeze({ x: 850, y: 334 }),
+  // round 7 (r5 9:29 and 13:18, q: 125): the crate he hides in after the loud post stands beside the floor vent (a
+  // PLACEHOLDER drawing; the locked picture has no crate there), and the floor vent takes the pink sheet out of his paws.
+  // `stand`: where he steps in (just out of the floor vent's reach, party-vent.js VENT.near).
+  crate: Object.freeze({ stand: Object.freeze({ x: 300, y: 566 }), box: Object.freeze({ x0: 268, x1: 332, y0: 500, y1: 552 }) }),
   // the way he runs from the mailbox to the vent: out of the mail room through its opening (never through its fence),
   // up outside it, then along above the fence to under the vent
   run: Object.freeze([Object.freeze({ x: 720, y: 466 }), Object.freeze({ x: 645, y: 463 }), Object.freeze({ x: 645, y: 336 }), Object.freeze({ x: 850, y: 334 })]),

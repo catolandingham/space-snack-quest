@@ -77,7 +77,7 @@ export const GOAL_TARGETS = {
   "closet:ev-crate": { rect: { x0: 92, x1: 279, y0: 433, y1: 528 } }, // his crate bed's side, its stamp (39b)
   "hangar:ev-bin": { rect: { x0: 182, x1: 244, y0: 308, y1: 380 } }, // the bin by the plant
   "hangar:ev-post": { rect: { x0: 834, x1: 918, y0: 362, y1: 484 } }, // the robot mailbox
-  "hangar:ev-bay-crate": { rect: { x0: 814, x1: 888, y0: 264, y1: 326 } }, // the crate under the big wall vent (42c)
+  "hangar:ev-bay-crate": { rect: { x0: 264, x1: 336, y0: 496, y1: 556 } }, // the crate by the floor vent (42c; round 7, q: 125)
   "hangar:ev-bayout": { rect: { x0: 20, x1: 48, y0: 266, y1: 354 } }, // the loading bay's doorway (left)
   // Loading bay
   "hangar:d2-HIDE-plant": { trace: { x0: 242, x1: 350, y0: 244, y1: 382 } }, // the plant (locked bay pictures v3: right of the bin)

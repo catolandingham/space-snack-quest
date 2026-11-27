@@ -524,7 +524,6 @@ export function createEscape(bridge) {
       wait(ES_PACE.think),
       e.run(() => (L().think = null)),
       ...sayParts("sq", "sq-vent"),
-      ...sayParts("mops", "mops-big-vent"),
       ...sayParts("mops", "mops-lost"),
       ...sayParts("mops", "mops-know"),
       e.run(() => e.set("ch1Brochure", false)),
@@ -657,10 +656,22 @@ export function createEscape(bridge) {
     }
   }
   // ---------- beat 48: Mops's secret desk (the player is Mops) ----------
-  // Rolled up at the vent: the picture goes inside; the switch to Mops is announced; he crawls the tunnel himself.
+  // Rolled up at the vent: the picture goes inside; the switch to Mops is announced. Round 7 (r5 13:29, q: 125): the big
+  // vent opens straight into his room, no crawl (VENT_CRAWL true brings back the tunnel he crawls himself).
+  const VENT_CRAWL = false; // q: 125
   function inside() {
     const e = E();
     busy();
+    if (!VENT_CRAWL) {
+      go("inside", { slip: "desk", pose: "ball", vent: "room", lamp: false });
+      e.enterRoom("duct", "QB");
+      e.set("sqPose", "hidden");
+      e.place("sq", VENT_ROOM.eyes.x, VENT_ROOM.eyes.y + 40);
+      e.set("moPose", "stand");
+      e.place("mops", VENT_ROOM.mopsIn.x, VENT_ROOM.mopsIn.y);
+      e.face("mops", 1);
+      return e.queue([e.run(() => asMops("switch-vent", () => roomIn()))]);
+    }
     go("inside", { slip: "desk", pose: "ball", vent: "tunnel", lamp: false });
     e.enterRoom("duct", "QB");
     e.set("sqPose", "hidden");

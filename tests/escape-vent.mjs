@@ -4,7 +4,7 @@
  *   47  the player walks Squatch from home to the bay himself, Mops behind him on his trail; through each doorway, the
  *       next one outlined; the night robot patrols the bay (seen: "!", the guard, caught: the LOCKUP card and the bay
  *       again); at the vent: "Goat-sized. You keep watch.", Mops goes in, ROLL · ball.
- *   48  the switch to Mops is announced; he crawls the tunnel himself (the lost things bob as he passes); the room is dark
+ *   48  the switch to Mops is announced; he steps straight into his room from the big vent (round 7: no crawl); the room is dark
  *       until LIGHT · lamp; then one thing at a time, each outlined: LOOK · wall (the wall, the letter), his lines,
  *       LOOK · toy bin, LOOK · stubs (the pen strokes ST out for M), his lines, WRITE · note one line per tap and signed
  *       by the fourth; Squatch's eyes at the grille twice; "I hope Mops doesn't notice..."; TAKE · pink slip, close;
@@ -117,17 +117,8 @@ const run = await page.evaluate(
     out.inside = { card: say(), by: n.cur && n.cur.by };
     next();
     until(() => n.ctrl, 5);
-    out.tunnel = { step: S().step, chip: n.ch1Chip, playing: E.playing(), found: [] };
-    // ↺ in the tunnel: still Mops, back at its start
-    for (let i = 0; i < 4; i++) tick();
-    const t0 = Math.round(n.mo.x);
-    walk(300, 462, 2);
-    ss.sectionReset();
-    for (let i = 0; i < 4; i++) tick();
-    out.tunnel.restart = { step: S().step, playing: E.playing(), back: Math.round(n.mo.x) === t0 };
-    watch = () => d().drew && d().drew.tunnel && d().drew.tunnel.found.forEach((f) => out.tunnel.found.includes(f) || out.tunnel.found.push(f));
-    walk(880, 462, 12);
-    watch = null;
+    // (round 7, r5 13:29, q: 125: no crawl; the big vent opens straight into his room)
+    out.tunnel = { step: S().step, chip: n.ch1Chip, playing: E.playing(), vent: S().vent };
     until(() => S().step === "lamp", 2);
     ss.drawFrame();
     out.room = { step: S().step, lamp: d().drew.lamp, picture: d().drew.picture, next: d().drew.next, mark: !!d().drew.mark, chip: n.ch1Chip };
@@ -207,8 +198,7 @@ g.check("47: in the bay at night the robot is on its rounds", o.bay.room === "ha
 g.check("47: seen by the robot, it goes for the alarm and a guard comes; caught: the LOCKUP card, then the bay again (the sneak step)", o.seen.phase !== "patrol" && o.seen.guard && !!o.seen.card && o.seen.after.step === "sneak" && o.seen.after.room === "hangar" && !o.seen.after.guard, o.seen);
 g.check("47: at the vent, \"Goat-sized. You keep watch.\"; Mops goes in; ROLL · ball", JSON.stringify(o.vent.lines) === JSON.stringify(w("mops-goat-sized")) && o.vent.step === "ball" && o.vent.chip === W["chip-ball"] && o.vent.press === W["button-ball"], o.vent);
 g.check("48: the switch to Mops is announced, with why", o.inside.card === "You are MOPS now." && o.inside.by === W["switch-vent"], o.inside);
-g.check("48: he crawls the tunnel himself (the goal says so); the lost things bob as he passes", o.tunnel.step === "tunnel" && o.tunnel.chip === W["chip-crawl"] && o.tunnel.playing === "mops" && ["hat", "sock", "fork"].every((f) => o.tunnel.found.includes(f)), o.tunnel);
-g.check("48: ↺ in the tunnel puts him back at its start, still Mops", o.tunnel.restart.step === "tunnel" && o.tunnel.restart.playing === "mops" && o.tunnel.restart.back, o.tunnel.restart);
+g.check("48 (round 7, r5 13:29, q: 125): no crawl: as Mops he steps straight from the big vent into his dark room (LIGHT · lamp next)", o.tunnel.step === "lamp" && o.tunnel.vent === "room" && o.tunnel.chip === W["chip-lamp"] && o.tunnel.playing === "mops", o.tunnel);
 g.check("48: the room is the locked picture, dark until LIGHT · lamp (the lamp outlined)", o.room.picture && o.room.lamp === false && o.room.next === "es-lamp" && o.room.mark && o.room.chip === W["chip-lamp"] && o.room.lampPress === W["button-lamp"] && o.room.lit, o.room);
 g.check("48: Squatch's eyes at the grille, in their small round picture, after the lamp and after the note", o.room.eyes1 && o.note.eyes2, { a: o.room.eyes1, b: o.note.eyes2 });
 g.check("48: LOOK · wall: the wall, the letter, then his lines", o.wall.press === W["button-wall"] && JSON.stringify(o.wall.said) === JSON.stringify(["[eswall]", "[esletter]", ...w("mops-asked", "mops-cooks")]), o.wall);

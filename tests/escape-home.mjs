@@ -138,7 +138,7 @@ g.check("45a, 45b: \"Let's go find that pancake place.\", Mops touches the worn 
 g.check("45b: LOOK · crate, the crate outlined; ↺ there puts him back", o.crate.step === "crate" && o.crate.chip === W["chip-crate-look"] && o.crate.mark && o.crate.press === W["button-crate"] && o.crate.restart.step === "crate" && o.crate.restart.back, o.crate);
 g.check("45b: the crate picture on the crayon plan, then \"...I can LEAVE in a crate!\" and \"Empty crates ride back on the ship.\"", JSON.stringify(o.b2) === JSON.stringify(w("sq-leave", "mops-empties")), o.b2);
 g.check("45b: LOOK · calendar, the calendar outlined", o.cal.step === "cal" && o.cal.chip === W["chip-cal-look"] && o.cal.mark && o.cal.press === W["button-calendar"], o.cal);
-const talk = w("mops-book", "mops-computer", "sq-office", "sq-locked", "mops-code", "mops-pen", "mops-ate", "mops-bin", "sq-slip", "mops-hm", "sq-vent", "mops-big-vent", "mops-lost", "mops-know");
+const talk = w("mops-book", "mops-computer", "sq-office", "sq-locked", "mops-code", "mops-pen", "mops-ate", "mops-bin", "sq-slip", "mops-hm", "sq-vent", "mops-lost", "mops-know");
 g.check("45b, 46: the plan's talk and the almost-slip, word for word, in order", JSON.stringify(o.b3) === JSON.stringify(talk), o.b3);
 g.check("45b: the plan's pictures come one at a time: the crate, the ship over it, the computer, the door", JSON.stringify(o.plans) === JSON.stringify(["crate", "crate+ship", "computer+crate+ship", "computer+crate+door+ship"]), o.plans);
 g.check("46: his thought picture of the vent is up after \"Hm?\" and before he says \"Didn't a copy get sucked into the vent?\"", o.thinkAt === o.b3.indexOf(W["mops-hm"]) + 1 && o.b3.indexOf(W["sq-vent"]) === o.thinkAt, { thinkAt: o.thinkAt, b3: o.b3 });
