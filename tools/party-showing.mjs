@@ -27,7 +27,7 @@
  *                  the action button, NEXT. With SHOWING_STILLS=<dir>, a still of each step goes there too.
  *     lunch        beats 25 to 27, the lunch sneak: from TAKE · lunch at home through the sneak past the guests (the
  *                  cones timed: the finger goes when the watcher has just looked away), the hallway, GIVE · lunch, Mops
- *                  eating the lunch and the bag, back behind the snack counter, one Moon Pie, to beat 28's first line.
+ *                  eating the lunch and the bag, back behind the snack counter, one snack cake, to beat 28's first line.
  *     lunchseen    the lunch sneak's capture rule: he steps out while a guest looks; FUR!, the alarm, the guards, back
  *                  into the plant, "They lost you."; then seen again and standing still: the LOCKUP card, and the
  *                  restart hidden in the plant. Both write a still of each step to SHOWING_STILLS=<dir> if it is set.

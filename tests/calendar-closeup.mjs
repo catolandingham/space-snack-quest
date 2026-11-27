@@ -1,13 +1,14 @@
 /**
  * Brian Nov 16: tappable calendar, subtle bite, invented months, sponsor and family plans.
  * Brian G 556 (2026-11-23): the bite is there from the start ("It should just have a bite out already"); touching
- * the printed Moon Pie takes no bite.
+ * the printed snack cake takes no bite. The sponsor line names the snack (snack-name.js; Brian 2026-11-26, question 86).
  * Brian 2026-11-23 (chat): "It's the calendar paw that doesn't make sense": no paw is drawn on the close-up, before or
  * after a touch (touching changes nothing anyway).
  * Uses the real picture taps and Space, not direct calls to the new feature.
  * CALENDAR_SHOTS=1 saves review stills outside the repository.
  */
 import { startGame, sleep, toEvening } from "./game-page.mjs";
+import { SNACK } from "../src/modules/snack-name.js";
 const g = await startGame({ port: 8947, name: "calendar-closeup" });
 for (const viewport of [
   { width: 1180, height: 820 },
@@ -50,8 +51,8 @@ for (const viewport of [
     const p = cv.getContext("2d").getImageData(140 * k, 110 * k, 1, 1).data;
     return p[0] > 180 && p[1] < 120 && p[2] < 100;
   }));
-  g.check(`${tag}: invented months and sponsor are actually printed`, await page.evaluate(() =>
-    ["MOONMUNCH", "FUZZUARY", "Sponsored by MOON PIES"].every(s => window.calendarPrinted.has(s))));
+  g.check(`${tag}: invented months and sponsor are actually printed`, await page.evaluate((sponsor) =>
+    ["MOONMUNCH", "FUZZUARY", sponsor].every(s => window.calendarPrinted.has(s)), `Sponsored by ${SNACK.NAME}`));
   g.check(`${tag}: family Olympics and scattered story-fitting plans are printed`, await page.evaluate(() =>
     ["family", "Olympics", "night", "Sock hunt", "Wash outside windows", "(remember space suit!)", "Blanket", "fort night"].every(s => window.calendarPrinted.has(s))));
   g.check(`${tag}: superseded months and routine homework/song reminders are absent`, await page.evaluate(() =>

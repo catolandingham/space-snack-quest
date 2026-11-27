@@ -64,6 +64,9 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
       return p.slice(0, 3);
     };
     const note = function (text, x, y) {
+      // words painted into a room picture's layer (src/modules/crate-stamp.js: the crate bed's stamp), in the picture's
+      // own pixels, are part of the picture, not words at these positions on the game canvas
+      if (this.canvas && this.canvas.pictureLayer) return;
       const s = String(text ?? "");
       if (!s.trim()) return;
       // Words drawn after the picture was moved (ctx.translate, as a "?" over a watcher is) are measured where they

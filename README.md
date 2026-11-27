@@ -3,24 +3,27 @@
 
 | Lines | Heading |
 | --- | --- |
-| 23–32 | # Space Snack Quest |
-| 33–140 | ## Chapter 1 redesign (on main) |
-| 141–155 | ## Music credits |
-| 156–186 | ## Source and build |
-| 187–197 | ## Debug link |
-| 198–203 | ## Automatic checks |
-| 204–207 | ## Screen fit |
-| 208–231 | ## Brian's repeat complaints, as tests (2026-11-22) |
-| 232–237 | ## Scene 1 morning |
-| 238–241 | ## Chapter 1 kid robot |
-| 242–258 | ## Phase 1: kitchen and diner clarity |
-| 259–271 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
-| 272–285 | ## Phase 3: one capture rule, phone HUD, tap to walk |
-| 286–295 | ## Chapter 1 pass: the night out has a purpose, switches say why |
-| 296–313 | ## Progression tests |
-| 314–340 | ## Left as they were |
+| 23–35 | # Space Snack Quest |
+| 36–151 | ## Chapter 1 redesign (on main) |
+| 152–166 | ## Music credits |
+| 167–197 | ## Source and build |
+| 198–208 | ## Debug link |
+| 209–214 | ## Automatic checks |
+| 215–218 | ## Screen fit |
+| 219–242 | ## Brian's repeat complaints, as tests (2026-11-22) |
+| 243–248 | ## Scene 1 morning |
+| 249–252 | ## Chapter 1 kid robot |
+| 253–269 | ## Phase 1: kitchen and diner clarity |
+| 270–282 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
+| 283–296 | ## Phase 3: one capture rule, phone HUD, tap to walk |
+| 297–306 | ## Chapter 1 pass: the night out has a purpose, switches say why |
+| 307–324 | ## Progression tests |
+| 325–351 | ## Left as they were |
 <!-- /section-index -->
 # Space Snack Quest
+
+> **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
+
 
 Calendar review status (2026-11-16): Brian said yes to merge the calendar (Nov 16, 12:50 PM PT). Latest printed copy: FUZZUARY alone beneath MOONMUNCH; Homework and Sing with Mops removed; "Wash outside windows (remember space suit!)"; a slightly larger edge bite that does not touch the grid.
 
@@ -31,6 +34,14 @@ Calendar review status (2026-11-16): Brian said yes to merge the calendar (Nov 1
 **Next up (Brian, 2026-11-16):** Chapter 1, one beat at a time in [`docs/CH1-STORY-WALKTHROUGH.md`](docs/CH1-STORY-WALKTHROUGH.md). Do not leave beat 1 until Brian says it is right. Squatch walks around the bed and the bucket, and the Guardian box is in the closet on day 1 (locked home room v5; Brian's yes, Nov 16, 12:50 PM PT). On day 2 he takes the box out at the closet (`tests/bedroom-walk.mjs`). The calendar is tappable. Printed copy: MOONMUNCH / FUZZUARY; Sponsored by MOON PIES; Sock hunt; family Olympics night; Wash outside windows (remember space suit!); Blanket fort night. These are decoration, not new quests. X or NEXT returns to the same scene (`tests/calendar-closeup.mjs`). Closet, bed, desk homework and the already-bitten calendar are built on branch `feat/home-alone` (draft, see below); the purple bed bar is removed there too; still to build: the bucket. The night vent step no longer finishes inside Mops: the morning hum was leaving him marked as walking. Docs match main: yes.
 
 ## Chapter 1 redesign (on main)
+
+2026-11-26 (late night, lunch), draft pull request #91, not merged. The rename (question 86) and the family crate's stamp are merged in from #87, #89 and #90. The lunch sneak's plate holds the same round cakes, now the station's Stars Cakes (comments and test notes say so; no words are painted on the plate or the lunch crates). Stills for Brian: `tests/out/for-brian-2026-11-26/round-e/rename-stills/`. Not yet played by a person. Docs match main: yes.
+
+2026-11-26 (late night, Day 2's start), draft pull request #90, not merged. The rename (question 86) and the bedtime story's family stamp are merged in from #87 and #89. The home morning's words about the calendar now name the snack's delivery day; the tall wardrobe and the mop bucket, cut from the home pictures, come with the crate bed's new stamp like every home picture. Not yet played by a person. Docs match main: yes.
+
+2026-11-26 (late night, bedtime), draft pull request #89, not merged. The rename (question 86) is merged in from #87, and the bedtime story follows it: the crate caption says "A delivery crate of Stars Cakes came to Stormtop.", Mops's line is "You came to me in a Stars Cakes crate. You've loved Stars Cakes ever since." (words changed, so it waits for Brian's yes again), and the story's crate, as it arrived, has the family crate's worn stamp (fat red letters, first letter scraped off, no crayon yet) in place of the old badge (`crate-stamp.js` drawFamilyStamp). `tests/snack-name.mjs` also checks the bedtime story's pictures. Not yet played by a person. Docs match main: yes.
+
+2026-11-26 (late night), the same draft pull request #87, Brian's question 86 ("A": rename everywhere); not merged to main. The station's snack is now Stars Cakes: every line, label, sign and test reads the name from one file, `src/modules/snack-name.js` (the older program through `window.SSQ.snack`, guarded). The calendar's sponsor, the snack site's header, the delivery notice, the homework sheet, the tourist's line, the old crate flashback and the Chapter 4 poster and lines all say Stars Cakes. The station's crates have a new stamp: a blue star and the name in thin blue letters (`src/modules/crate-stamp.js`). Squatch's crate bed is his family's crate: fat red letters, worn, the first letter scraped off ("_ARS CAKES"), with his old crayon "ST" in the gap, a layer drawn over the locked home pictures (the files are not edited; needs Brian's yes). Ids and file names that hold the old name joined up (`moonpie`, `mops-moon-pie`, `sketch-22-moon-pie-site.png`) stay; no player sees them. `tests/snack-name.mjs` checks that the name is spelled only in snack-name.js, that no lines file or word drawn in the main scenes says the old name, and that the crate bed's stamp is drawn by day and at night. NOT ASSESSED: how the stamp reads to a child on a phone. Not yet played by a person. Docs match main: yes.
 
 2026-11-26 (night, lunch), draft pull request #91, not merged. The night look (`night-look.js`: the party, bedtime and Day 2's start) is merged in. Nothing in the lunch sneak is at night: it plays by day, and `tests/night-look.mjs` checks it (beat 25). Docs match main: yes. Not yet played by a person.
 

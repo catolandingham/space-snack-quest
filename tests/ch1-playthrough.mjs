@@ -9,6 +9,7 @@
  */
 import { readFileSync } from "node:fs";
 import { startGame } from "./game-page.mjs";
+import { SNACK } from "../src/modules/snack-name.js";
 
 const g = await startGame({ port: 8801, name: "ch1-playthrough" });
 const { ctx, page, errors } = await g.open("?ch=1");
@@ -467,7 +468,7 @@ const play = await page.evaluate(() => {
     vent: n.ch1VentLunch || 0,
     paw: n.ch1Paw || 0,
     sucked: n.ch1PinkSucked || 0,
-    // the lunch sneak (lunch-sneak.js): one Moon Pie taken and eaten, two left on the plate
+    // the lunch sneak (lunch-sneak.js): one snack cake taken and eaten, two left on the plate
     one: n.ch1Lunch && n.ch1Lunch.pie === "eaten" && n.ch1Lunch.pies === 2 ? 1 : 0,
     lights: n.ch1Lights || 0,
     code: n.ch1Code || "",
@@ -526,7 +527,7 @@ const must = [
   "Ptoo!",
   "What's the difference between fur and hair?",
   "Paperwork.",
-  "I swear we had more Moon Pies... is that what they stole at lunch?",
+  `I swear we had more ${SNACK.name}... is that what they stole at lunch?`,
   "Quick, hide.",
   "Are those other Sasquatches?",
   "I need to get back to work, we'll talk about it tonight.",
@@ -610,7 +611,7 @@ g.check(
   play.shown.includes("ORDER MORE ROBOTS") && play.shown.includes("MARS LOST & FOUND") && play.shown.includes("MY GARDIANS"),
   play.shown,
 );
-g.check("the vent board and the Moon Pie buttons are drawn", play.shown.includes("IDEAS FOR GUARDIANS") && play.shown.includes("Return empty crate"), play.shown);
+g.check("the vent board and the snack site's buttons are drawn", play.shown.includes("IDEAS FOR GUARDIANS") && play.shown.includes("Return empty crate"), play.shown);
 // The red FUR alarm is part of the locked party hall picture now (its words are in the picture, not drawn text):
 // it shows on the back wall, by the hallway doorway, during the party.
 const { HALL } = await import(new URL("../src/modules/party-hall.js", import.meta.url).href);

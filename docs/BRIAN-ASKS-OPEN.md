@@ -3,27 +3,30 @@
 
 | Lines | Heading |
 | --- | --- |
-| 26–32 | # Brian's asks that are not in the game yet |
-| 33–42 | ## 1. Build next |
-| 43–61 | ## 2. Needs your eyes |
-| 62–65 | ## 3. Your instructions disagree |
-| 66–67 | ## 4. Everything else not built |
-| 68–85 | ### Morning and home |
-| 86–96 | ### Party |
-| 97–108 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
-| 109–112 | ### Party video notes and answers, 2026-11-24 (not built yet) |
-| 113–117 | ### Snacks and dress-up |
-| 118–130 | ### Day 2 and night |
-| 131–135 | ### Escape and later chapters |
-| 136–139 | ### Looks and lines |
-| 140–147 | ### Sound |
-| 148–151 | ### Words and rules |
-| 152–164 | ### How the bots work |
-| 165–172 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
-| 173–190 | ## 5. Merged, in a pull request, and being built |
-| 191–201 | ## 6. Corrections to the checkers |
+| 26–35 | # Brian's asks that are not in the game yet |
+| 36–45 | ## 1. Build next |
+| 46–64 | ## 2. Needs your eyes |
+| 65–68 | ## 3. Your instructions disagree |
+| 69–70 | ## 4. Everything else not built |
+| 71–88 | ### Morning and home |
+| 89–99 | ### Party |
+| 100–111 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
+| 112–115 | ### Party video notes and answers, 2026-11-24 (not built yet) |
+| 116–120 | ### Snacks and dress-up |
+| 121–133 | ### Day 2 and night |
+| 134–138 | ### Escape and later chapters |
+| 139–142 | ### Looks and lines |
+| 143–150 | ### Sound |
+| 151–154 | ### Words and rules |
+| 155–167 | ### How the bots work |
+| 168–175 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
+| 176–193 | ## 5. Merged, in a pull request, and being built |
+| 194–204 | ## 6. Corrections to the checkers |
 <!-- /section-index -->
 # Brian's asks that are not in the game yet
+
+> **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
+
 
 This page lists everything Brian asked for that is not in the game yet, checked against main on 2026-11-23 and against an independent review the same day.
 When an ask gets built, it leaves this page. Bots: read "Build next" before choosing work.
@@ -42,7 +45,7 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 
 ## 2. Needs your eyes
 
-- **The Moon Pie bedtime story (beat 21).** Brian 2026-11-25: the old crate story "is the bedtime story (beat 21) and gets the same sizing fix". Built on branch `feat/ch1-bedtime-story` (PR #89, draft, not merged) with the old captions (approved 2026-11-26, "keep the old crate story words") and his bedtime line (approved as written, #36); the mop bucket picture is on (his answer of 2026-11-26). His 2026-11-26 notes are built there too: Squatch asks "Tell me about when we first met?" (approved), Mops's "...Weeee-eenn-nnttt?", Joe's theme sung from his ask (#37), the Guardians picture with his approved line, the crate story's memory look (#38), the baby a furry ball in his mop bucket and two tourists peeking in before "Nothing to see here!" (video note 0:39), and falling asleep with a yawn, the tuck, Mops falling asleep beside the bed like a fainting goat (#33), the light going down and three snores. Waiting for his eyes. Open: the "?" over the tourists (suggested); the light goes down by itself as Mops settles (nobody turns it off); the new bucket is also drawn over the home room's painted bucket (his yes was said about the bedtime picture's bucket: confirm the room); the morning's beard-wringing close-up keeps its own bucket, not his new mop bucket (he approved that close-up separately): change it too?
+- **The bedtime crate story (beat 21).** Brian 2026-11-25: the old crate story "is the bedtime story (beat 21) and gets the same sizing fix". Built on branch `feat/ch1-bedtime-story` (PR #89, draft, not merged) with the old captions (approved 2026-11-26, "keep the old crate story words") and his bedtime line (approved as written, #36); the mop bucket picture is on (his answer of 2026-11-26). His 2026-11-26 notes are built there too: Squatch asks "Tell me about when we first met?" (approved), Mops's "...Weeee-eenn-nnttt?", Joe's theme sung from his ask (#37), the Guardians picture with his approved line, the crate story's memory look (#38), the baby a furry ball in his mop bucket and two tourists peeking in before "Nothing to see here!" (video note 0:39), and falling asleep with a yawn, the tuck, Mops falling asleep beside the bed like a fainting goat (#33), the light going down and three snores. Waiting for his eyes. Open: the "?" over the tourists (suggested); the light goes down by itself as Mops settles (nobody turns it off); the new bucket is also drawn over the home room's painted bucket (his yes was said about the bedtime picture's bucket: confirm the room); the morning's beard-wringing close-up keeps its own bucket, not his new mop bucket (he approved that close-up separately): change it too?
 - **The home morning (beats 22 to 24).** Built on branch `feat/ch1-day2-morning` (draft, not merged), including "Make the first gift obvious" ("that needs to be more obvious.", S 92): the rocket is the only thing outlined and glowing when he wakes. His 2026-11-26 notes are built there too: the box clearly bigger than the rocket (0:21), the first build's box view with the older notes and the crayon drawing (0:21), and his crayon Guardians in a thought bubble as he holds up the gift (0:30, the story hole; with Mops's Guardians line at bedtime). His answers of 2026-11-26 are built: the calendar optional, the box back in the closet, the note's words, MOPS on the bag, the two prompts approved. Placeholder drawings. Round D (his notes and answers of 2026-11-26) built there too: the PA wakes Mops, asleep by the bed since bedtime (#41, #33; the PA words are suggested, pick them), the note read when he picks up the rocket (0:24), bigger thought bubbles with a trail (0:11), no walking through the crate (0:18), the taller closet (0:20), walking to the bag first (0:30; the chip "Squatch: go to the bag by the door" needs your yes). Pick: the goal outline (options sheet A to E) and whether labels on the picture go (0:18, 0:20).
 - **Home room objects.** "the new version of the crate in the room is off, at least in the picture you showed." (G 597). Covers crate, bed, bucket, bedtime-story look, janitor facing. Walls and furniture merged today; check.
 - **The dance game.** A scrolling-arrow dance exists but you said it never worked. "The dance game, hopefully that can be done clean and simple. If not, forget it." (G 516). "the fur shows at the dance scene" (G 603) is unclear.

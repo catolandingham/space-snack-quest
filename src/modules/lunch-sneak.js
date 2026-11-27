@@ -24,7 +24,7 @@
  *   back    "Squatch: go on"; Mops waits in the left doorway, which is outlined; walking there takes them both back
  *           into the hall, down behind the snack counter, where Squatch ducks into his ball (the L2 ball, as ROLL ·
  *           ball; only the counter's guest is near).
- *   one     the counter guest's cone lies over the ducked Squatch and stays grey; the plate of Moon Pies has its dashed line and
+ *   one     the counter guest's cone lies over the ducked Squatch and stays grey; the plate of snack cakes has its dashed line and
  *           Mops says "...you know the rule, grab one snack." (NEXT).
  *   snack   "Squatch: grab one snack"; TAKE · snack (first offered as the guest turns away): he stands up, reaches,
  *           takes the top pie and ducks. Seen while up: the pie stays on the plate and the same capture rule runs.
@@ -950,7 +950,7 @@ export function createLunchSneak(bridge) {
     },
     /**
      * The hall after the lunch (the older program draws it, 12-ch1-redesign.js drawCh1DayHall): the crates are still
-     * there, and the plate on the counter's end has the Moon Pies he left on it.
+     * there, and the plate on the counter's end has the snack cakes he left on it.
      */
     drawProps(ctx) {
       const l = L(),

@@ -1080,7 +1080,7 @@
           at: [462, 380],
           when: !n.found.has("stash") && n.lunch === "held",
           f: () => {
-            (D.pickup(), ee("secret", "stash", 462, 300), TV([v("sq", "Mops's emergency Moon Pies!")]));
+            (D.pickup(), ee("secret", "stash", 462, 300), TV([v("sq", "Mops's emergency " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("name") : "snacks") + "!")]));
           },
         }),
         spot({
@@ -1114,7 +1114,7 @@
               n.found.add("sched"),
               J([
                 { k: "panel", id: "sched" },
-                v("sq", "Moon Pie day!"),
+                v("sq", (window.SSQ && window.SSQ.snack ? window.SSQ.snack("name") : "Snack") + " day!"),
                 N(() => {
                   n.ctrl = !0;
                 }),

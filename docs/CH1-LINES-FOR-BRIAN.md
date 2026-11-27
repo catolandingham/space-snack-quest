@@ -3,24 +3,28 @@
 
 | Lines | Heading |
 | --- | --- |
-| 23–26 | # Chapter 1 lines for Brian |
-| 27–36 | ## Home morning (beats 22 to 24), 2026-11-26 round D (branch feat/ch1-day2-morning, not merged) |
-| 37–49 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
-| 50–66 | ## Lunch sneak and Ganitor, 2026-11-26 (branch feat/ch1-lunch-sneak, not merged) |
-| 67–82 | ## Calendar revision, Nov 16 (PR 58, not live) |
-| 83–90 | ## Earlier chapter lines |
-| 91–105 | ## Goal chips |
-| 106–189 | ## What people say |
-| 190–203 | ## Words painted on things |
-| 204–227 | ## Buttons |
-| 228–314 | ## Day 2 onward (beats 22–61), pending |
-| 315–322 | ## Ball hiding |
-| 323–330 | ## Off-screen lines, for Brian (playtest 12) |
-| 331–340 | ## Homework desk, approved Nov 16 |
-| 341–379 | ## Questions still open |
-| 380–405 | ## Day 1 stand-ins, pending |
+| 24–30 | # Chapter 1 lines for Brian |
+| 31–40 | ## Home morning (beats 22 to 24), 2026-11-26 round D (branch feat/ch1-day2-morning, not merged) |
+| 41–53 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
+| 54–70 | ## Lunch sneak and Ganitor, 2026-11-26 (branch feat/ch1-lunch-sneak, not merged) |
+| 71–86 | ## Calendar revision, Nov 16 (PR 58, not live) |
+| 87–94 | ## Earlier chapter lines |
+| 95–109 | ## Goal chips |
+| 110–193 | ## What people say |
+| 194–204 | ## The snack's name (2026-11-26, question 86) |
+| 205–218 | ## Words painted on things |
+| 219–242 | ## Buttons |
+| 243–329 | ## Day 2 onward (beats 22–61), pending |
+| 330–337 | ## Ball hiding |
+| 338–345 | ## Off-screen lines, for Brian (playtest 12) |
+| 346–355 | ## Homework desk, approved Nov 16 |
+| 356–394 | ## Questions still open |
+| 395–420 | ## Day 1 stand-ins, pending |
 <!-- /section-index -->
 # Chapter 1 lines for Brian
+
+> **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
+
 
 The rebuilt morning (2026-11-23, draft PR, waking up to Mops leaving) has its own numbered sheet: `docs/MORNING-LINES-FOR-BRIAN.md`. Its words replace the Nov 14 morning lines below where they differ.
 
@@ -41,10 +45,10 @@ Every word of the bedtime story is in `src/modules/bedtime-story-lines.js`; thes
 | Who | Line | Status |
 | --- | --- | --- |
 | Squatch, in bed, before the story pictures | Tell me about when we first met? | Approved word for word, Brian 2026-11-26 (his video note 0:12) |
-| The old crate story's captions and bubbles, the MOON PIES badge, the "!" and "z z z" marks, the mop bucket picture's "Tourists were coming! Mops hid him in the mop bucket." and "Nothing to see here!" | (as in `bedtime-story-lines.js`) | Approved, Brian 2026-11-26 (keep the old crate story words; the fourth picture on) |
+| The old crate story's captions and bubbles (the crate caption renamed with the snack, question 86: "A delivery crate of Stars Cakes came to Stormtop."), the crate's stamp (now the family crate's worn "_ARS CAKES", no crayon yet: "The snack's name" below), the "!" and "z z z" marks, the mop bucket picture's "Tourists were coming! Mops hid him in the mop bucket." and "Nothing to see here!" | (as in `bedtime-story-lines.js`) | Approved, Brian 2026-11-26 (keep the old crate story words; the fourth picture on) |
 | Mops, in the story picture of the baby holding his beard | ...Weeee-eenn-nnttt? | Brian 2026-11-26 (video note 0:28, "Goats say "weeeent" not baaaah"); his approved goat spelling (`MORNING-LINES-FOR-BRIAN.md` row 13, DECISIONS R96). Replaces "...Baaa?" |
-| Mops, back in the room after the story pictures | You came to me in a Moon Pie crate. You've loved Moon Pies ever since. | Approved as written, Brian 2026-11-26 (#36) |
-| Mops, after "You came to me in a Moon Pie crate. You've loved Moon Pies ever since.", over the picture of Squatch's crayon drawing of the Guardians | And you've always had your Guardians, watching over you. | Approved, Brian 2026-11-26, chat 18b A |
+| Mops, back in the room after the story pictures | You came to me in a Stars Cakes crate. You've loved Stars Cakes ever since. | Approved as written, Brian 2026-11-26 (#36), with the old name; the words changed with the rename (question 86): needs your yes again |
+| Mops, after "You came to me in a Stars Cakes crate. You've loved Stars Cakes ever since.", over the picture of Squatch's crayon drawing of the Guardians | And you've always had your Guardians, watching over you. | Approved, Brian 2026-11-26, chat 18b A |
 | A mark over each of the two tourists peeking in at the door, in the wordless picture before "Nothing to see here!" (Brian 2026-11-26, video note 0:39: "Would we actually want people to walk in so we see that tourists are suspicious?") | ? | Suggested, needs Brian's yes (a mark, no words) |
 
 ## Lunch sneak and Ganitor, 2026-11-26 (branch feat/ch1-lunch-sneak, not merged)
@@ -70,13 +74,13 @@ Brian requested fake months, a calendar sponsor, "family Olympics night" and a f
 
 - Month heading: "MOONMUNCH"
 - Month beneath the heading: "FUZZUARY" (Brian's correction)
-- Sponsor: "Sponsored by MOON PIES"
+- Sponsor: "Sponsored by STARS CAKES"
 - Day 2: "Sock hunt"
 - Day 9: "family Olympics night" (Brian's requested words)
 - Day 12: "Wash outside windows (remember space suit!)" (Brian's requested replacement; text extends into the next blank cell)
 - Day 18: "Blanket fort night"
 
-No spoken lines added. These are decorative plans, not new story beats or a change to the day-two delivery sequence. The circled Moon Pie stays in its existing grid position.
+No spoken lines added. These are decorative plans, not new story beats or a change to the day-two delivery sequence. The circled Stars Cakes stays in its existing grid position.
 
 Brian removed the calendar's Homework and Sing with Mops reminders on Nov 16; this does not cancel the desk-homework transition after Mops leaves. Earlier month-strip copy is superseded.
 
@@ -86,7 +90,7 @@ These are the new words in the redesigned Chapter 1. Each one is in the game now
 
 2026-11-13, 4:10 AM ET. Brian approved Mops's Mars gate lines. They are Chapter 4, rows 19.19 and 19.20 in `docs/PHASE-3-LINES-FOR-BRIAN.md`. After "WOOKIE?!", Mops says "He's with me." After "...Do you need help?", Mops says "No thanks. We're getting my goat."
 
-Words the game already had, and the one you already approved, are not in this list: "Stormtop Cloud Resort, floating above Jupiter.", "This is Squatch. He's a Sasquatch.", "My lunch! You're the best.", "You're gumbling! (goat mumbling)", "More bleat. Less roar.", "HAIR... PROBABLY. PROCEED.", "Brave Sasquatches stay hidden.", "— The Guardians", and the room labels STAY IN HERE, DELIVERY, MOON PIES, FRAGILE, G, UPS, DOT, BOB, LOU.
+Words the game already had, and the one you already approved, are not in this list: "Stormtop Cloud Resort, floating above Jupiter.", "This is Squatch. He's a Sasquatch.", "My lunch! You're the best.", "You're gumbling! (goat mumbling)", "More bleat. Less roar.", "HAIR... PROBABLY. PROCEED.", "Brave Sasquatches stay hidden.", "— The Guardians", and the room labels STAY IN HERE, DELIVERY, STARS CAKES, FRAGILE, G, UPS, DOT, BOB, LOU.
 
 ## Goal chips
 
@@ -98,7 +102,7 @@ Words the game already had, and the one you already approved, are not in this li
 | 4 | Night, the yellow copy is still in the bin | Squatch: get the yellow copy to the mailbox | Squatch: mail the yellow copy |
 | 5 | Escape night, outside the vent | Squatch: roll into a ball by the vent | Squatch: ball up under the vent |
 | 6 | Mops comes out with the pink slip | Squatch: grab the pink slip | Squatch: take the pink slip |
-| 7 | The Moon Pie page is on the manager's office computer | Squatch: return the empty crate | Squatch: send the empty crate |
+| 7 | The Stars Cakes page is on the manager's office computer | Squatch: return the empty crate | Squatch: send the empty crate |
 | 8 | The wardrobe is open at home | Squatch: put on the spare jacket | Squatch: put on the spare blue jacket |
 | 9 | The scanner is on | Squatch: walk through the scanner | Squatch: board the ship |
 | 70 | At the party | Squatch: look around the party | NEEDS BRIAN |
@@ -120,7 +124,7 @@ Words the game already had, and the one you already approved, are not in this li
 | 20 | Mops, mouth full | Mmf mrrf! | |
 | 21 | Mops | Ptoo! | |
 | 22 | Mops, walking home | We got to watch out for these robots. | |
-| 23 | A tourist, by the snacks | I swear we had more Moon Pies... is that what they stole at lunch? | Your words from 4:14. |
+| 23 | A tourist, by the snacks | I swear we had more Stars Cakes... is that what they stole at lunch? | Your words from 4:14. |
 | 24 | Mops | Quick, hide. | |
 | 25 | Mops, at home | Didn't you hear what Isfred Bar Neshuman said? They need me here, they're not going to replace me. Plus the Guardians are here. | Your words from 4:14, with his name. |
 | 26 | Mops | I need to get back to work, we'll talk about it tonight. | Your words from 4:14. |
@@ -187,6 +191,17 @@ Words the game already had, and the one you already approved, are not in this li
 | 42 | The PA, on the trip | The base called the ship. It has to stop. | |
 | 43 | A card | Six days later | The week is decided. These are the words on the card. |
 
+## The snack's name (2026-11-26, question 86)
+
+The station's snack is Stars Cakes everywhere (Brian, 2026-11-26, question 86). The crate words live in `src/modules/snack-name.js` (SNACK_LINES).
+
+| Where | Words | Status |
+| --- | --- | --- |
+| The station's crates (a blue star, thin blue letters) | STARS CAKES | approved (question 86) |
+| Squatch's crate bed, his family's crate, worn, the first letter scraped off | _ARS CAKES | approved (Brian's notes, 2026-11-26) |
+| His crayon in the scraped gap | ST | NEW, needs your yes |
+| Mops, bedtime picture | You came to me in a Stars Cakes crate. You've loved Stars Cakes ever since. | words changed by the rename: needs your yes again |
+
 ## Words painted on things
 
 | # | Where | In the game now | Another way to say it |
@@ -198,8 +213,8 @@ Words the game already had, and the one you already approved, are not in this li
 | 48 | A planet label | MARS | |
 | 49 | The stamp on the Mars letter | NO | |
 | 50 | The bin in the vent | TOYS | |
-| 51 | The manager's computer, the Moon Pie page | Order new box | |
-| 52 | The Moon Pie page, the one Squatch presses | Return empty crate | |
+| 51 | The manager's computer, the Stars Cakes page | Order new box | |
+| 52 | The Stars Cakes page, the one Squatch presses | Return empty crate | |
 
 ## Buttons
 
@@ -363,7 +378,7 @@ Approved. Built 2026-11-23 on branch `feat/home-alone` (draft): every home-alone
 
 6. After Squatch grabs the pink slip, the game does not yet show it riding inside the Guardian Box all the way to Mars.
 
-7. The snack stand still does not bring up the pancake brochure (the rest of that beat), and Squatch does not yet take all the snacks or leave food for the Guardians. The Moon Pie line and "Quick, hide." are in.
+7. The snack stand still does not bring up the pancake brochure (the rest of that beat), and Squatch does not yet take all the snacks or leave food for the Guardians. The Stars Cakes line and "Quick, hide." are in.
 
 The office computer is decided (R46). The code on the pink slip opens the manager's computer in the hall. Order new box and Return empty crate are on that screen. They are never on the home TV.
 
@@ -387,11 +402,11 @@ These are on screen in this unmerged slice so the day can be played. NEEDS BRIAN
 | 87 | Mops, answer | You have me. |
 | 88 | TV picture | Fur in the scrubber. |
 | 89 | TV picture | Onto the ship. |
-| 90 | Mops, bedtime picture (approved as written, Brian 2026-11-26, #36; see the bedtime story section) | You came to me in a Moon Pie crate. You've loved Moon Pies ever since. |
+| 90 | Mops, bedtime picture (approved as written, Brian 2026-11-26, #36; words changed by the rename the same day, question 86: needs your yes again; see the bedtime story section) | You came to me in a Stars Cakes crate. You've loved Stars Cakes ever since. |
 | 91 | Squatch, when the octopus comes | I gotta juke this fool. |
 | 92 | Octopus | *hic* Fellow tourist! |
 | 93 | Camera tourist | Say cheese! |
-| 94 | Karaoke screen | Ay-ay-ay-ay, I love my Moon Pies! |
+| 94 | Karaoke screen | Ay-ay-ay-ay, I love my Stars Cakes! |
 | 95 | Karaoke screen | Round and chocolate-y, sweet as the starry skies! |
 | 96 | Karaoke button | Sing |
 

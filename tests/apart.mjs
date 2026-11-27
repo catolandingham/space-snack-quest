@@ -2,7 +2,7 @@
  * Squatch and Mops do not stand inside each other at the lunch handoff (the hallway) or behind the snack counter
  * (the hall), in the lunch sneak (src/modules/lunch-sneak.js): the places come from lunch-sneak-place.js, and the hall's
  * walk ends where the game really leaves them. Neither stands on the counter, the stools, the plants or the crates
- * (LUNCH_SOLIDS, read off the locked hall picture v2), and Mops is not between Squatch and the plate of Moon Pies.
+ * (LUNCH_SOLIDS, read off the locked hall picture v2), and Mops is not between Squatch and the plate of snack cakes.
  *   node tests/apart.mjs
  */
 import { join } from "node:path";
