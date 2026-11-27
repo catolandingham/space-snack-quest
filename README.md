@@ -4,21 +4,21 @@
 | Lines | Heading |
 | --- | --- |
 | 23–35 | # Space Snack Quest |
-| 36–172 | ## Chapter 1 redesign (on main) |
-| 173–187 | ## Music credits |
-| 188–218 | ## Source and build |
-| 219–229 | ## Debug link |
-| 230–235 | ## Automatic checks |
-| 236–239 | ## Screen fit |
-| 240–263 | ## Brian's repeat complaints, as tests (2026-11-22) |
-| 264–269 | ## Scene 1 morning |
-| 270–273 | ## Chapter 1 kid robot |
-| 274–290 | ## Phase 1: kitchen and diner clarity |
-| 291–303 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
-| 304–317 | ## Phase 3: one capture rule, phone HUD, tap to walk |
-| 318–327 | ## Chapter 1 pass: the night out has a purpose, switches say why |
-| 328–345 | ## Progression tests |
-| 346–372 | ## Left as they were |
+| 36–174 | ## Chapter 1 redesign (on main) |
+| 175–189 | ## Music credits |
+| 190–220 | ## Source and build |
+| 221–231 | ## Debug link |
+| 232–237 | ## Automatic checks |
+| 238–241 | ## Screen fit |
+| 242–265 | ## Brian's repeat complaints, as tests (2026-11-22) |
+| 266–271 | ## Scene 1 morning |
+| 272–275 | ## Chapter 1 kid robot |
+| 276–292 | ## Phase 1: kitchen and diner clarity |
+| 293–305 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
+| 306–319 | ## Phase 3: one capture rule, phone HUD, tap to walk |
+| 320–329 | ## Chapter 1 pass: the night out has a purpose, switches say why |
+| 330–347 | ## Progression tests |
+| 348–374 | ## Left as they were |
 <!-- /section-index -->
 # Space Snack Quest
 
@@ -34,6 +34,8 @@ Calendar review status (2026-11-16): Brian said yes to merge the calendar (Nov 1
 **Next up (Brian, 2026-11-16):** Chapter 1, one beat at a time in [`docs/CH1-STORY-WALKTHROUGH.md`](docs/CH1-STORY-WALKTHROUGH.md). Do not leave beat 1 until Brian says it is right. Squatch walks around the bed and the bucket, and the Guardian box is in the closet on day 1 (locked home room v5; Brian's yes, Nov 16, 12:50 PM PT). On day 2 he takes the box out at the closet (`tests/bedroom-walk.mjs`). The calendar is tappable. Printed copy: MOONMUNCH / FUZZUARY; Sponsored by MOON PIES; Sock hunt; family Olympics night; Wash outside windows (remember space suit!); Blanket fort night. These are decoration, not new quests. X or NEXT returns to the same scene (`tests/calendar-closeup.mjs`). Closet, bed, desk homework and the already-bitten calendar are built on branch `feat/home-alone` (draft, see below); the purple bed bar is removed there too; still to build: the bucket. The night vent step no longer finishes inside Mops: the morning hum was leaving him marked as walking. Docs match main: yes.
 
 ## Chapter 1 redesign (on main)
+
+2026-11-27 (Chapter 1 whole), the same draft pull request #96 on `feat/ch1-pickup-day`, now based on `feat/ch1-day2-joined` (#97), not merged. The joined Day 2 (beats 28 to 52) and the newest lunch sneak (299e287: Mops cleans the hall, truth or fib, the bedtime additions, the chart over his bed) are merged in, so Chapter 1 runs on one branch from the first screen to the tally card. Pickup day uses the joined branch's one copy of each shared piece: the snack's names (`snack-name.js`), the crate tags (`loading-bay-lines.js` crate-empty, `escape-lines.js` blank-tag), his crate's family stamp (`crate-stamp.js`, no crayon after 39b; `pickup.js` says `crayonGone`), the renamed helpers (`drawPinnedBrochure`, `drawGulpSweat`, `evening-art.js drawPawPrint`). Pickup day's bay is the plant-moved locked picture (pickup v4, no-ship v3), and TAKE · chart takes down the one chart over his bed (`cake-chart.js`). 36b: Squatch comes into the party hall a step in from the doorway with Mops a step behind (they stood on top of each other). The kid robot (`tests/ch1-kid-play.mjs`) gets through the lunch sneak (it hid over and over instead of walking for the doorway), rolls up when the escape's night robot has seen him, writes the Guardian note, and counts a step that moved on as arriving. No words changed; no difficulty changed. Docs match main: yes.
 
 2026-11-26 (night), draft pull request on branch `feat/ch1-pickup-day` (from `feat/ch1-escape`), not merged. Beats 53 to 61, pickup day, are a module (`src/modules/pickup.js`, registered as `ch1-pickup`; places and timing in `pickup-place.js`, drawings in `pickup-art.js`, words in `pickup-lines.js`), built from the story pass for beats 53 to 61 (2026-11-26). Its eight questions are open with Brian; pick A of each is built as a placeholder (the lines that hang on one carry `q` in the lines file). The old pickup-day steps are deleted from `src/game/14-ch1-day2.js` and `12-ch1-redesign.js`; the escape hands over to the module, and the module hands over to the chapter's end (`ch1ChapterEnd`: the never-caught bonus, the tally card, Chapter 2's Gas Stop). What the player does: READ · note (the Guardian note he wrote in the vent, on his pillow), OPEN · box (a pink corner under the old notes), PACK · note ("Safe."); as Mops he wipes the fur out of his crate bed with his beard (one long white hair left, held close); PACK · box, PACK · bucket, four things off the walls (pale squares), the ship's PA, PUT ON · label, GET IN · crate; as Mops he pushes the crate through the hall ("Hi, Mops!", a bump says "Oof!") and the hallway (a robot reads the label) to the mail room. Through a slat in the crate (his eyes in the corner) the new robots roll down the ramp: "NEW ROBOTS. NEW RULE." / "SCAN EVERY CRATE."; they open a mail bag: "FUR. STOP.", Lou's hat; "The new robots. That was me." As Mops: KNOCK · crate, BLEAT · robot from the opening (the robots turn to him); as Squatch: CLIMB OUT · crate, ROLL · ball or sneak (the robots' cones; the one capture rule), HIDE · plant; from the plant his crate is opened, one white hair, "GOAT HAIR. PROCEED.", up the ramp; the idea in three thought pictures; home: "So make me a goat." As Mops: SNIP · beard; the dress-up (beard, horns, spare jacket; "Disguised enough"); BLEAT · Mops three times ("More bleat. Less roar."); the mirror: "Two goats." The last walk: the hall's guests (a cone holds him dashed with "?", BLEAT · guest pops it, too long and the beard slips, PRESS · beard), LOOK · plate (optional, empty), the PHOTO DAY door, TAKE · drawing (optional). The bay: PICK UP · box (the week's box; Mops takes the mail), "TWO GOATS?", BLEAT · robot; as Mops GO · ship ("It's attached."), "GOAT. PROCEED."; BOARD · scanner, PRESS · beard, "HAIR..." / "...PROBABLY." / "PROCEED.", CLIMB · ramp, the beard in his paws under the camera's red light. The office: the frame, Isfred's five lines, "Later that evening...", the tapes (PLAY · tape, ZOOM · in, NEXT · tape: the furry ball mailing the form, the very silly goat; "That is not a goat." / "A Wookiee!"). The cargo hold: OPEN · box, BITE · cake ("No fizz."), the call, HIDE · crate, "Found him.", "He's with me.", "Then you're both off.", the tally card, Chapter 2. Localhost link: `?beat=pickup` (or `pickup:<step>`). Check: `tests/pickup.mjs`. Showing tool: `node tools/pickup-showing.mjs pickup|seen <out.mp4>`. Docs match main: yes. Not yet played by a person.
 

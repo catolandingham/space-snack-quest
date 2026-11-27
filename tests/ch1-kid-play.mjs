@@ -548,6 +548,10 @@ while (now() < MAX_S) {
       const d = SLIP_CODE[E.typed.length] || SLIP_CODE[0];
       say(s, "KEY " + d);
       await tapGame(s, E.keys[d].x, E.keys[d].y);
+    } else if (E.step === "note") {
+      // the Guardian note's close-up (48): each tap writes a line (before 2026-11-27 the robot left it, and stood 75 s)
+      say(s, "TAP the note");
+      await tapGame(s, 480, 320);
     } else if (E.step === "site") {
       say(s, "TAP Return empty crate");
       await tapGame(s, (E.ret.x0 + E.ret.x1) / 2, (E.ret.y0 + E.ret.y1) / 2);
@@ -678,7 +682,8 @@ while (now() < MAX_S) {
       for (let i = 0; i < 40 && still < 4; i++) {
         await sleep(150);
         s2 = await st();
-        if (!s2.ctrl || s2.up || s2.scene !== s.scene) { got = true; break; }
+        // (or the step moved on: the vent's tunnel ends where its far end is reached, into the room, 48)
+        if (!s2.ctrl || s2.up || s2.scene !== s.scene || s2.step !== s.step) { got = true; break; }
         // (a doorway with no button is reached only by walking into it: "".startsWith is always true, so it waits for
         // the walk; stepping in before it ended stopped him short of the lunch sneak's hallway doorway every time)
         if ((p.verb && s2.btn.startsWith(p.verb)) || Math.hypot(s2.x - p.x, s2.y - p.y) < Math.max(40, (p.r || 0) - 10)) { got = true; break; }
