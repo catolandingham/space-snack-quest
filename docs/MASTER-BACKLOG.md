@@ -23,6 +23,8 @@
 
 ## Where main is (Chapter 1 redesign)
 
+2026-11-26 (night), draft PR #87: every room has a night look at night (Brian: "all rooms are different at night versus daytime"; `night-look.js`, README "Chapter 1 redesign", the 2026-11-26 night paragraph). Open for Brian: the tint's strength (`NIGHT_TINT`, a placeholder) and which things stay lit; home has no window or lamp in its picture, so only its TV screen stays as it is. NOT ASSESSED: how the night look plays on a phone in daylight. Docs match main: yes.
+
 2026-11-26 (round D, merge), draft PR #89 on `feat/ch1-bedtime-story`, not merged. Done: `feat/party-half-two` (fe5a558) merged in (merge commit); bedtime keeps Joe's theme sung (SINGING_OK has bedtime); test fixes for the kid-play robot's no-button doorways and the mop bucket in the arrow check. NOT ASSESSED: the bedtime video after the merge (recorded from the lunch tip). Docs match main: yes.
 
 2026-11-26 (round D), draft PR #89 on `feat/ch1-bedtime-story`, not merged. Done (Brian's notes of 2026-11-26): Mops's mop bucket as one drawing (`src/modules/mop-bucket.js`) in the bedtime pictures and over the home room's painted bucket; the baby a furry ball in it; the tourists peeking in (wordless, plays by itself) before "Nothing to see here!"; the crate story's memory look; Joe's theme sung at bedtime from the ask (replaces Reawakening; bedtime added to SINGING_OK); Mops falls asleep like a fainting goat beside the bed (replaces him walking out); Mops's Moon Pie line approved; the Station Official docs agree with the game. Docs match main: yes.

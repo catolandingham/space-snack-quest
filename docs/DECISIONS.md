@@ -3,34 +3,35 @@
 
 | Lines | Heading |
 | --- | --- |
-| 35–37 | # Space Snack Quest: every decision, in one place |
-| 38–45 | ## How to use this file |
-| 46–55 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
-| 56–63 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
-| 64–87 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
-| 88–92 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 93–101 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 102–105 | ## Sound, 2026-11-23 |
-| 106–129 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 130–141 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 142–166 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 167–175 | ## Which repo is the base, 2026-11-22 |
-| 176–186 | ## Sight cones, 2026-11-22 |
-| 187–191 | ## Latest calendar direction, 2026-11-16 |
-| 192–194 | ## Vent walk, 2026-11-16 |
-| 195–197 | ## Locked home room v5, 2026-11-16 |
-| 198–207 | ## Fidelity system (pictures are locked, not just words) |
-| 208–245 | ## 1. Working rules |
-| 246–312 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 313–337 | ## 3. Characters and look |
-| 338–414 | ## 4. Look, rooms and layout |
-| 415–436 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 437–480 | ## 6. Later chapters (2–4 and travel) |
-| 481–490 | ## 7. Audio |
-| 491–525 | ## 8. Code, controls and process |
-| 526–572 | ## 9. Open / waiting on Brian |
-| 573–667 | ## 10. Earlier entries, kept word for word |
-| 668–764 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 36–38 | # Space Snack Quest: every decision, in one place |
+| 39–46 | ## How to use this file |
+| 47–49 | ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator) |
+| 50–59 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
+| 60–67 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
+| 68–91 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
+| 92–96 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 97–105 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 106–109 | ## Sound, 2026-11-23 |
+| 110–133 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 134–145 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 146–170 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 171–179 | ## Which repo is the base, 2026-11-22 |
+| 180–190 | ## Sight cones, 2026-11-22 |
+| 191–195 | ## Latest calendar direction, 2026-11-16 |
+| 196–198 | ## Vent walk, 2026-11-16 |
+| 199–201 | ## Locked home room v5, 2026-11-16 |
+| 202–211 | ## Fidelity system (pictures are locked, not just words) |
+| 212–249 | ## 1. Working rules |
+| 250–316 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 317–341 | ## 3. Characters and look |
+| 342–418 | ## 4. Look, rooms and layout |
+| 419–440 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 441–484 | ## 6. Later chapters (2–4 and travel) |
+| 485–494 | ## 7. Audio |
+| 495–529 | ## 8. Code, controls and process |
+| 530–576 | ## 9. Open / waiting on Brian |
+| 577–671 | ## 10. Earlier entries, kept word for word |
+| 672–768 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -42,6 +43,9 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 - **Status words:** **Decided** (Brian said it or approved it) · **Needs Brian's yes** (proposed, or on-screen words waiting on him) · **Superseded** (replaced; the line says by what) · **Open** (a real question nobody has answered yet).
 - **This repo file is the single source of truth.** It was synced on Monday, November 9, 2026 from the designer record through decision R63, and it still holds the earlier snapshot `docs/old/project/DECISIONS-2026-11-08.md` (on `main` at commit 10030f6). Every earlier entry is kept in section 10. Where a later decision replaces an earlier one, the earlier line is marked **Superseded** and says what replaced it. The dated snapshot's full text is in `docs/old/history/DECISIONS-2026-11-08.md`. A short pointer stays at `docs/old/project/DECISIONS-2026-11-08.md`. New decisions get a row in the tables above, through a docs PR (review, "Docs match main: yes", Brian's written yes before merge).
 - Don't invent a decision. If something isn't clear, add it under **Open**.
+
+## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator)
+- **Night look, Decided 2026-11-26:** "Make sure it's not just the hall dark at night, but all rooms are different at night versus daytime." Every room shown while the story is at night has a night look (`src/modules/night-look.js`): the loading bay its locked night picture (`delivery-room-empty-night-v2.png`); every other room its locked day picture under a dim blue tint, with the things that give light (the hall's window onto space and its FUR alarm, home's TV screen, the office's screens and keypad, the hallway's keypad) cut from the same picture and drawn again over the tint. No picture file changes. Night is from the party night's start ("That evening...") until Day 2 begins, and any older night scene. The tint's strength (`NIGHT_TINT`, 0.5 of the bedtime story's night blue) and the lit boxes are placeholders for Brian's eye. The bedtime story's lights-out dim goes on top. Built on feat/party-half-two (the party), then merged forward and applied on the bedtime (the evening and bedtime story), Day 2 morning (the dark start) and lunch branches.
 
 ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D)
 - **This mop bucket is Mops's mop bucket, everywhere.** Brian, video note 0:39 on the bedtime story: "I like this mop bucket... Let's go with it moving forward." The bucket the bedtime story's bucket pictures drew (yellow, wider at the top, a thick rim, a wire handle, two little wheels) is one drawing (`src/modules/mop-bucket.js`), used in the bedtime pictures and in the home room, where it is drawn as a layer over the locked picture's painted bucket, in the same place and size (the picture itself is unchanged). **Decided.** Open: the morning's beard-wringing close-up keeps its own bucket, which Brian approved separately (see docs/BRIAN-ASKS-OPEN.md).

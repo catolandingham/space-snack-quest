@@ -26,6 +26,7 @@ import { TV } from "./party-after-alarm.js";
 import { PHOTO_ROW, tripodOut, bandPosing, photoOpen } from "./party-photo.js";
 import { bounceHop, bumpMark, drawBump } from "./party-hallway.js";
 import { OCT } from "./party-octopus.js";
+import { nightPicture } from "./night-look.js";
 
 // How far above his feet Mops's head top is at home, in Squatch's home scale (party-free-art.js drawMopsHearts).
 const MOPS_HEAD_UP = 46;
@@ -131,7 +132,8 @@ export function createView(h) {
     const m = p.mops;
     return {
       t,
-      picture: h.picture,
+      // the party is at night: the hall's night look (night-look.js), its window onto space and FUR alarm kept bright
+      picture: nightPicture("hall", h.picture),
       banner: { glow: p.glow || 0 },
       // the dance spot's outline, while DANCE · circle is on offer (hidden while he dances: Brian 2026-11-25)
       danceRing: LATE.has(p.scene) && !p.dance && h.spots().some((q) => q.id === "dance"),
