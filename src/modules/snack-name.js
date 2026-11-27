@@ -10,7 +10,7 @@
  *
  * Squatch's own crate bed is his family's crate (docs/moonpie-thread spec, Brian 2026-11-26): its stamp is worn, the
  * first letter scraped off, so it reads "_ARS CAKES", and his old crayon fills the gap the way he has always read
- * it. FAMILY.NAME is what the stamp said before it was scraped (the player never reads it in Chapter 1);
+ * it. FAMILY.NAME is what the stamp said before it was scraped (the brochure's cake box has it; FAMILY.name as spoken);
  * FAMILY.FADED is what is left; FAMILY.CRAYON is the two letters he wrote in the gap, so CRAYON + FADED reads as the
  * station's name. The family's name is made from the station's (one letter changed), so the name is still spelled
  * only here.
@@ -27,6 +27,8 @@ export const SNACK = Object.freeze({
 const FAMILY_NAME = ("M" + NAME.slice(2)).toUpperCase();
 export const FAMILY = Object.freeze({
   NAME: FAMILY_NAME,
+  // (as people say it: the family at the big window, and Mops, in the evening of Day 2; round 7, 2026-11-27)
+  name: "M" + NAME.slice(2),
   FADED: FAMILY_NAME.slice(1),
   CRAYON: SNACK.NAME.slice(0, SNACK.NAME.length - FAMILY_NAME.length + 1),
 });
@@ -79,13 +81,6 @@ export const SNACK_LINES = Object.freeze([
     text: SNACK.NAME,
     status: "needs-yes",
     source: "Brian, story pass 28-52, E2/E4: the crayon chart of kinds tried over his bed (cake-chart.js), its title",
-  },
-  {
-    id: "chart-crate-kind",
-    who: "crayon",
-    text: "THE CRATE KIND",
-    status: "needs-yes",
-    source: "Brian, story pass 28-52, E2/E4: the chart's empty circle with the red dot, the one he is still looking for (the Stars Cakes thread's label)",
   },
 ]);
 

@@ -7,7 +7,7 @@
  *     are not in the repo yet, so these are stand-ins
  *   Squatch's crayon drawing behind the crooked photo #4: him and Mops, TIED TOGETHER FOREVER, two tags ME and MOPS
  *     each with an arrow (decided 2026-11-26), and a dotted look from Mops to him with hearts (R63)
- *   the brochure for the Mars Cakes stand: the stand, Mars behind it, a cake box and a cut-open cake (nobody on it)
+ *   the brochure for the family's cake stand on Mars: the stand, Mars behind it, a cake box and a cut-open cake (nobody on it)
  *   the order papers: the big pink sheet with ORDER MORE ROBOTS and its box, the office code, and the small yellow
  *     carbon copy stuck under it; Squatch's paw print
  *   his furry arm and paw in the close-ups; Mops asleep on his back with his four feet in the air

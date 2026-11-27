@@ -82,7 +82,6 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: go on to the hall": { ev: "past", walk: true, x: 100, y: 300 },
     "Squatch: open the box from the Guardians": { ev: "box" },
     "Squatch: bite the cake": { ev: "bite" },
-    "Squatch: mark the chart": { ev: "chart", x: 236, y: 440 },
     "Squatch: hold the brochure up to your crate": { ev: "crate", x: 330, y: 458 },
     "Squatch: go home": { ev: "gohome", walk: true, x: 477, y: 555 },
     "Squatch: show Mops the brochure": [{ ev: "show" }, { es: "show", x: 380, y: 556, look: [400, 500] }], // (beat 40, the evening, and beat 45, the escape)

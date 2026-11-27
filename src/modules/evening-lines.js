@@ -1,7 +1,8 @@
 /**
- * Every word the evening of Day 2 shows (Chapter 1, beats 37 to 42c, the story pass of 2026-11-26: the Employee of
- * the Month wall, Jupiter's big red storm, "They said they were Sasquatches", the brochure, home alone ("No fizz.",
- * "MARS!"), the fight, lights out and the idea, and night one's choice), in the order a player meets them. Lines the
+ * Every word the evening of Day 2 shows (Chapter 1, beats 37 to 42c, the story pass of 2026-11-26 and round 7 of
+ * 2026-11-27: the Employee of the Month wall, Jupiter's big red storm, the kid who pets the goat, Mops asking about the
+ * family's cakes, the brochure, home alone ("No fizz.", "Maybe it's MARS!"), the fight, lights out and the idea, and night
+ * one's choice), in the order a player meets them. Lines the
  * story pass marks KEEP (Brian's own Nov 8 words), CHANGED or NEW are built word for word and stay "pending" until
  * Brian says yes as he watches (Brian 2026-11-26: "Go! Go as far as you can without me.").
  *   id      the line's name in the code and in tests/evening.mjs
@@ -17,7 +18,7 @@
  *   source  where the words came from
  * The snack's names come from snack-name.js (one place for the rename).
  */
-import { SNACK, FAMILY } from "./snack-name.js";
+import { FAMILY } from "./snack-name.js";
 import { OFFICE_CODE } from "./office-code.js";
 
 export const EVENING_LINES = Object.freeze(
@@ -47,7 +48,7 @@ export const EVENING_LINES = Object.freeze(
     { id: "dad-loved", who: "dad", text: "Oh, we loved Mars.", status: "pending", source: "story pass 2026-11-26 beat 38a (KEEP)" },
     { id: "mom-best", who: "mom", text: "What did you like best?", status: "pending", source: "story pass 2026-11-26 beat 38a (KEEP)" },
     // (q: 120, the pick A: nobody says "pancake" in Chapter 1; option B: text: "The PANCAKES!")
-    { id: "kid-mars-cakes", who: "kid", text: "The MARS CAKES!", status: "pending", source: "review 2026-11-27 topic B (CHANGED: was \"The PANCAKES!\"; Brian r5 5:22)" },
+    { id: "kid-mars-cakes", who: "kid", text: `The ${FAMILY.NAME}!`, status: "pending", source: "review 2026-11-27 topic B (CHANGED: was \"The PANCAKES!\"; Brian r5 5:22)" },
     { id: "kid-goat", who: "kid", text: "A GOAT! Can I pet him?", status: "pending", source: "review 2026-11-27 topic B (NEW; Brian r5 5:34)" },
     { id: "mom-ganitor", who: "mom", text: "That's the Ganitor. He's famous.", status: "pending", source: "review 2026-11-27 topic B (NEW; Brian r5 5:34)" },
     { id: "mom-only-goat", who: "mom", text: "The only goat janitor in the whole galaxy.", status: "pending", source: "review 2026-11-27 topic B (NEW; Brian r5 5:34, his words)" },
@@ -55,9 +56,9 @@ export const EVENING_LINES = Object.freeze(
     { id: "chip-greet", who: "chip", text: "Mops: say hello to the kid", status: "pending", source: "review 2026-11-27 topic B (goal words, NEW)" },
     { id: "button-greet", who: "button", text: "GREET · kid", status: "pending", source: "review 2026-11-27 topic B (NEW: the kid pets him)" },
     { id: "mom-bedtime", who: "mom", text: "Come on. Bedtime.", status: "pending", source: "review 2026-11-27 topic B (CHANGED: was \"Bedtime.\")" },
-    { id: "chip-ask", who: "chip", text: "Mops: ask the family about the Mars Cakes", status: "pending", source: "review 2026-11-27 topic B (goal words, NEW)" },
+    { id: "chip-ask", who: "chip", text: `Mops: ask the family about the ${FAMILY.name}`, status: "pending", source: "review 2026-11-27 topic B (goal words, NEW)" },
     { id: "button-talk", who: "button", text: "TALK · family", status: "pending", source: "review 2026-11-27 topic B (NEW)" },
-    { id: "mops-what", who: "mops", text: "Hey. What were you saying about Mars Cakes?", status: "pending", source: "review 2026-11-27 topic B (NEW; Brian r5 5:53, his words: \"hey what were you saying about the Mars cakes\")" },
+    { id: "mops-what", who: "mops", text: `Hey. What were you saying about ${FAMILY.name}?`, status: "pending", source: "review 2026-11-27 topic B (NEW; Brian r5 5:53, his words, the snack named from snack-name.js)" },
     { id: "dad-best-had", who: "dad", text: "The best I've ever had.", status: "pending", source: "review 2026-11-27 topic B (NEW; Brian r5 5:53, his words)" },
     { id: "kid-fizzy", who: "kid", text: "And FIZZY!", status: "pending", source: "review 2026-11-27 topic B (CHANGED: was \"And the fizzy cakes!\"; Brian r5 5:53: \"and fizzy\")" },
     { id: "dad-wookiees", who: "dad", text: "A family of Wookiees makes them.", status: "pending", source: "review 2026-11-27 topic B (CHANGED; Brian r5 6:08: they say Wookiees on purpose)" },
@@ -73,25 +74,24 @@ export const EVENING_LINES = Object.freeze(
     { id: "chip-bite", who: "chip", text: "Squatch: bite the cake", status: "suggested", source: "new: story pass beat 39b (BITE)" },
     { id: "button-bite", who: "button", text: "BITE · cake", status: "suggested", source: "story pass 2026-11-26 beat 39b (BITE; the action buttons read VERB · thing)" },
     { id: "sq-no-fizz", who: "sq", text: "No fizz.", status: "pending", source: "story pass 2026-11-26 beat 39b (NEW)" },
-    { id: "chip-chart", who: "chip", text: "Squatch: mark the chart", status: "suggested", source: "new: story pass beat 39b (X · chart)" },
-    { id: "button-chart", who: "button", text: "X · chart", status: "pending", source: "story pass 2026-11-26 beat 39b (X · chart)" },
-    { id: "sign-chart", who: "sign", text: SNACK.NAME, status: "pending", source: "moonpie thread 2.4: the crayon chart's title (the home room is locked art: Brian's yes)" },
-    { id: "sign-crate-kind", who: "sign", text: "THE CRATE KIND", status: "pending", source: "moonpie thread 2.4: the chart's last circle" },
     { id: "chip-crate", who: "chip", text: "Squatch: hold the brochure up to your crate", status: "suggested", source: "new: story pass beat 39b (HOLD UP · brochure)" },
     { id: "button-hold-up", who: "button", text: "HOLD UP · brochure", status: "pending", source: "story pass 2026-11-26 beat 39b (HOLD UP · brochure)" },
-    { id: "sq-not-stars", who: "sq", text: "Not STARS...", status: "pending", source: "story pass 2026-11-26 beat 39b (NEW)" },
-    { id: "sq-mars-crate", who: "sq", text: "MARS!", status: "pending", source: "story pass 2026-11-26 beat 39b (NEW)" },
+    // (q: 121, the pick A: one close-up, the brochure beside the faded stamp; no slide, no crayon ST)
+    { id: "sq-thought-stars", who: "sq", text: "We always thought it said STARS.", status: "pending", source: "review 2026-11-27 topic C (NEW; Brian r5 7:00, his words)" },
+    { id: "sq-maybe-mars", who: "sq", text: "Maybe it's MARS!", status: "pending", source: "review 2026-11-27 topic C (CHANGED: was \"MARS!\"; Brian r5 7:00)" },
     { id: "card-evening", who: "card", text: "That evening…", status: "approved", source: "the approved card from Day 1, reused (story pass beat 40)" },
     { id: "chip-show", who: "chip", text: "Squatch: show Mops the brochure", status: "suggested", source: "Call 14; Brian P 36:07 \"Squatch should show him the brochure\"" },
     { id: "button-show", who: "button", text: "SHOW · brochure", status: "suggested", source: "Call 14" },
-    { id: "sq-crate-mars", who: "sq", text: "Mops! My crate says MARS!", status: "pending", source: "story pass 2026-11-26 beat 40 (NEW, snack's thread)" },
-    { id: "mops-stars", who: "mops", text: "It says Stars.", status: "pending", source: "story pass 2026-11-26 beat 40 (NEW)" },
-    { id: "sq-can-we", who: "sq", text: "Can we go to Mars?", status: "pending", source: "story pass 2026-11-26 beat 40 (NEW)" },
+    // (q: 122, the pick A: the fight ends on his line; Mops still says "We say things we don't mean all the time.")
+    { id: "sq-crate-mars", who: "sq", text: "Mops! Look. Maybe my crate says MARS.", status: "pending", source: "review 2026-11-27 topic C (CHANGED: was \"Mops! My crate says MARS!\")" },
+    { id: "mops-maybe", who: "mops", text: "...Maybe.", status: "pending", source: "review 2026-11-27 topic C (CHANGED: was \"It says Stars.\"; Brian r5 7:22: he would not insist it says Stars)" },
+    { id: "sq-came", who: "sq", text: "I came in that crate. Maybe I came from Mars!", status: "pending", source: "review 2026-11-27 topic C (NEW: his hope comes from his crate now)" },
+    { id: "sq-can-we", who: "sq", text: "Can we go?", status: "pending", source: "review 2026-11-27 topic C (CHANGED: was \"Can we go to Mars?\")" },
+    { id: "mops-wookiees", who: "mops", text: "The man said Wookiees. You're not a Wookiee.", status: "pending", source: "review 2026-11-27 topic C (NEW; Brian r5 6:08 and 7:34)" },
+    { id: "sq-you-thought", who: "sq", text: "YOU thought I was a Wookiee!", status: "pending", source: "review 2026-11-27 topic C (NEW: Mops's own bedtime-story line turned on him)" },
     { id: "mops-no-others", who: "mops", text: "Squatch. There are no other Sasquatches.", status: "pending", source: "story pass 2026-11-26 beat 40 (NEW)" },
     { id: "mops-one-kind", who: "mops", text: "You're one of a kind. Like me.", status: "pending", source: "story pass 2026-11-26 beat 40 (CHANGED: Brian's Nov 8 words)" },
     { id: "mops-know", who: "mops", text: "I know what it's like to be one of a kind.", status: "pending", source: "story pass 2026-11-26 beat 40 (KEEP: Brian's Nov 8 words)" },
-    { id: "sq-man-said", who: "sq", text: "The man said SASQUATCHES. You heard him!", status: "pending", source: "story pass 2026-11-26 beat 40 (NEW)" },
-    { id: "sq-like-me-2", who: "sq", text: "And they look like ME.", status: "pending", source: "story pass 2026-11-26 beat 40 (CHANGED)" },
     { id: "mops-manager", who: "mops", text: "You heard the manager.", status: "pending", source: "story pass 2026-11-26 beat 40 (CHANGED)" },
     { id: "mops-need-me", who: "mops", text: "They need me here.", status: "pending", source: "story pass 2026-11-26 beat 40 (CHANGED)" },
     { id: "sq-replace", who: "sq", text: "What if they replace you anyway?", status: "pending", source: "story pass 2026-11-26 beat 40 (NEW)" },
@@ -106,7 +106,6 @@ export const EVENING_LINES = Object.freeze(
     { id: "mops-already", who: "mops", text: "Squatch... I already...", status: "pending", source: "story pass 2026-11-26 beat 40 (NEW; decided 2026-11-26, question 5: A)" },
     { id: "mops-family", who: "mops", text: "I AM your family.", status: "pending", source: "story pass 2026-11-26 beat 40 (NEW)" },
     { id: "sq-real", who: "sq", text: "Maybe my REAL family wouldn't make me hide!", status: "pending", source: "story pass 2026-11-26 beat 40 (CHANGED; decided 2026-11-26, question 4: B)" },
-    { id: "sq-didnt", who: "sq", text: "...I didn't mean that.", status: "pending", source: "story pass 2026-11-26 beat 40 (KEEP)" },
     { id: "mops-we-say", who: "mops", text: "We say things we don't mean all the time.", status: "pending", source: "story pass 2026-11-26 beat 40 (KEEP: Brian's Nov 8 words)" },
     { id: "mops-bed", who: "mops", text: "Bed. The floors don't mop themselves.", status: "pending", source: "story pass 2026-11-26 beat 40 (CHANGED: Brian's Nov 8 line)" },
     { id: "chip-bed", who: "chip", text: "Squatch: go to sleep in your bed", status: "in-game", source: "src/game/10-ch1.js (O8)" },

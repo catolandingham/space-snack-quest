@@ -254,7 +254,7 @@ r = await ev(() => {
   const off = ss.offerNow();
   return { said, ears, alarm, step: window.__st(), chip: n.ch1Chip, guests: (d.state.guests || []).map((q) => q.role + ":" + q.to), offer: off && off.verb + " · " + off.cap, eyes: !!d.state.peek, pose: d.state.pose, stepId: n.ch1Step };
 });
-g.check("the guests walk in to the window; the family's Mars talk is overheard (the ear), and nobody says pancakes (question 120)", r.said.slice(0, 5).join("|") === "Whoa. It's SO red.|Red like Mars.|Oh, we loved Mars.|What did you like best?|The MARS CAKES!" && r.ears.slice(0, 5).every(Boolean) && !r.said.some((t) => /pancake/i.test(t)), r);
+g.check("the guests walk in to the window; the family's Mars talk is overheard (the ear), and nobody says pancakes (question 120)", r.said.slice(0, 5).join("|") === "Whoa. It's SO red.|Red like Mars.|Oh, we loved Mars.|What did you like best?|The " + FAMILY.NAME + "!" && r.ears.slice(0, 5).every(Boolean) && !r.said.some((t) => /pancake/i.test(t)), r);
 g.check("the kid sees the goat: \"A GOAT! Can I pet him?\" / \"That's the Ganitor. He's famous.\" / \"The only goat janitor in the whole galaxy.\"", r.said.slice(5).join("|") === "A GOAT! Can I pet him?|That's the Ganitor. He's famous.|The only goat janitor in the whole galaxy.", r);
 g.check("the family comes over to the bar (the other guest stays at the window); Squatch stays rolled up, no eyes peek, nobody sees him; GREET · kid is Mops's", r.step === "greet" && r.guests.join(",") === "dad:bar,mom:bar,kid:bar,guest:window" && r.pose === "hidden" && !r.eyes && !r.alarm && r.offer === "GREET · kid" && r.chip === "Mops: say hello to the kid" && r.stepId === "ev-greet", r);
 r = await ev(() => {
@@ -272,7 +272,7 @@ r = await ev(() => {
   const off = ss.offerNow();
   return { pressed, said, pat, step: window.__st(), offer: off && off.verb + " · " + off.cap, guests: n.ch1Evening.guests.map((q) => q.role + ":" + q.to), chip: n.ch1Chip };
 });
-g.check("GREET · kid: the kid steps up and pets him (wordless); \"Come on. Bedtime.\"; the family turns to go; TALK · family", r.pressed && r.pat && r.said.join("|") === "Come on. Bedtime." && r.step === "ask" && r.offer === "TALK · family" && r.guests.slice(0, 3).join(",") === "dad:leave,mom:leave,kid:leave" && r.chip === "Mops: ask the family about the Mars Cakes", r);
+g.check("GREET · kid: the kid steps up and pets him (wordless); \"Come on. Bedtime.\"; the family turns to go; TALK · family", r.pressed && r.pat && r.said.join("|") === "Come on. Bedtime." && r.step === "ask" && r.offer === "TALK · family" && r.guests.slice(0, 3).join(",") === "dad:leave,mom:leave,kid:leave" && r.chip === "Mops: ask the family about the " + FAMILY.name, r);
 r = await ev(async () => {
   const n = window.__ss.op,
     ss = window.__ss,
@@ -311,7 +311,7 @@ r = await ev(async () => {
   window.__run(60, () => window.__st() === "gohome" && n.ctrl, () => (hear(), (tossed = tossed || n.ch1Evening.brochure === "toss")));
   return { pressed, said, n0, wide, up, open, has, waited, tossed, brochureWords: [...new Set(bw)], step: window.__st(), player: ss.ch.mops ? "mops" : "sq", pose: n.ch1Evening.pose, brochure: n.ch1Evening.brochure, got: n.ch1Brochure, guests: n.ch1Evening.guests, mops: n.moPose, cards: [window.__card] };
 });
-g.check("TALK · family: Mops asks, in Brian's words; the best he ever had, and fizzy (Mops stops, eyes wide); Wookiees; only at their stand", r.pressed && r.said.slice(0, r.n0).join("|") === "Hey. What were you saying about Mars Cakes?|The best I've ever had.|And FIZZY!|A family of Wookiees makes them.|You can only get them at their stand.|In fact, I've got a brochure here." && r.wide && !r.said.some((t) => /Sasquatch/.test(t)), r);
+g.check("TALK · family: Mops asks, in Brian's words; the best he ever had, and fizzy (Mops stops, eyes wide); Wookiees; only at their stand", r.pressed && r.said.slice(0, r.n0).join("|") === "Hey. What were you saying about " + FAMILY.name + "?|The best I've ever had.|And FIZZY!|A family of Wookiees makes them.|You can only get them at their stand.|In fact, I've got a brochure here." && r.wide && !r.said.some((t) => /Sasquatch/.test(t)), r);
 g.check("Dad holds the brochure up and hands it to Mops: its close-up opens and waits for a tap", r.up && r.open === "brochure" && r.has === "mops" && r.waited, r);
 g.check("the brochure is for the stand: no words but his family's name (snack-name.js FAMILY) on the cake box", r.brochureWords.length === 1 && r.brochureWords[0] === FAMILY.NAME, r.brochureWords);
 g.check("the guests leave; the switch back is announced; Mops passes the brochure over the bar: \"Take this home.\" / \"We'll talk tonight.\"; Mops goes back to work", r.said.slice(r.n0).join("|") === "Take this home.|We'll talk tonight." && r.tossed && r.guests === null && r.player === "sq" && /You are SQUATCH now\. The guests are gone\. Squatch can come out\./.test(r.cards.join(" ")) && r.pose === "stand" && r.brochure === "paw" && r.got === true && r.step === "gohome" && r.mops === "hidden", r);
@@ -357,66 +357,57 @@ r = await ev(() => {
   window.__ss.drawFrame();
   out.cake = window.SSQ.beat("ch1-evening").debug().drew.cake;
   const said = [];
-  window.__run(6, () => window.__st() === "chart" && n.ctrl, () => n.cur && n.cur.b && said[said.length - 1] !== n.cur.b.text && said.push(n.cur.b.text));
+  window.__run(6, () => window.__st() === "crate" && n.ctrl, () => n.cur && n.cur.b && said[said.length - 1] !== n.cur.b.text && said.push(n.cur.b.text));
   out.said = said;
   out.chartSpot = !!window.__spot("X · chart");
+  out.crate = !!window.__spot("HOLD UP · brochure");
+  out.chart = window.SSQ.cakeChartDrawn ? window.SSQ.cakeChartDrawn() : null;
   out.ring = n.lastRing && n.lastRing.id;
   return out;
 });
-g.check("beat 39b: home alone (Mops is not back); OPEN · box (the Guardians' box); BITE · cake: a crunch, silence, \"No fizz.\"", r.room === "closet" && r.step === "box" && r.mops === "hidden" && r.open && r.opened && r.bite && r.cake === 1 && r.said.join("|") === "No fizz." && r.chartSpot, r);
+g.check("beat 39b: home alone (Mops is not back); OPEN · box (the Guardians' box); BITE · cake: a crunch, silence, \"No fizz.\"", r.room === "closet" && r.step === "box" && r.mops === "hidden" && r.open && r.opened && r.bite && r.cake === 1 && r.said.join("|") === "No fizz.", r);
+g.check("round 7 (question 129): no X · chart step; the chart over his bed is a picture only (a title, cakes each crossed out, no label); HOLD UP · brochure is next", !r.chartSpot && r.crate && (!r.chart || (r.chart.label === "" && r.chart.crossed === r.chart.tried && r.chart.tried >= 6)), r);
 r = await ev(async () => {
   const n = window.__ss.op,
     b = window.SSQ.beat("ch1-evening");
-  const pressed = window.__press("X · chart");
-  window.__run(1);
-  await new Promise((q) => setTimeout(q, 150));
-  const t = b.viewTargets();
-  window.__tapView("cake chart", t.cake);
-  window.__run(0.6);
-  await new Promise((q) => setTimeout(q, 120));
-  const half = b.debug().view.drew.x;
-  window.__tapView("cake chart", t.cake);
-  window.__run(3, () => window.__st() === "crate" && n.ctrl);
-  return { pressed, view: t.kind, half, step: window.__st(), chartX: n.ch1Evening.chartX, crate: !!window.__spot("HOLD UP · brochure") };
-});
-g.check("X · chart: the chart close-up; two taps draw this week's X (one stroke each); then HOLD UP · brochure at the crate", r.pressed && r.view === "chart" && r.half === 0.5 && r.chartX && r.step === "crate" && r.crate, r);
-r = await ev(async () => {
-  const n = window.__ss.op,
-    b = window.SSQ.beat("ch1-evening");
-  window.__ss.drawFrame();
-  const before = b.debug().drew.stamp;
   const pressed = window.__press("HOLD UP · brochure");
   window.__run(1);
-  await new Promise((q) => setTimeout(q, 150));
-  const t = b.viewTargets(),
-    lit = [];
-  for (let i = 0; i < 3; i++) {
-    window.__tapView("crate", t.card);
-    window.__run(0.1);
-    await new Promise((q) => setTimeout(q, 120));
-    lit.push(b.debug().view.drew.lit);
-  }
+  await new Promise((q) => setTimeout(q, 200));
+  const drew = b.debug().view && b.debug().view.drew,
+    t = b.viewTargets();
+  // it waits for a tap
+  window.__run(4);
+  const waited = b.viewOpen() === "crate" && window.__st() === "hold";
+  window.__tapView("crate", t.close);
   const said = [];
-  window.__run(6, () => window.__st() === "evening", () => n.cur && n.cur.b && said[said.length - 1] !== n.cur.b.text && said.push(n.cur.b.text));
-  return { before, pressed, lit, letters: b.debug().view ? b.debug().view.drew.letters : "", said, st: n.ch1Evening.stampST, step: window.__st() };
+  window.__run(8, () => window.__st() === "evening", () => n.cur && n.cur.b && said[said.length - 1] !== n.cur.b.text && said.push(n.cur.b.text));
+  const stamp = window.SSQ.crateStampDrawn ? window.SSQ.crateStampDrawn() : null;
+  return { pressed, kind: t && t.kind, drew, waited, said, step: window.__st(), crayonNow: stamp && stamp.crayonNow };
 });
-g.check("HOLD UP · brochure: sliding the brochure along the crate's stamp lights its letters in pairs; the M lands; he rubs out his crayon ST", r.pressed && r.lit[0] > 0 && r.lit[2] === 8 && r.st === 0, r);
-g.check("\"Not STARS...\" / \"MARS!\"", r.said.join("|") === "Not STARS...|MARS!", r);
+g.check("HOLD UP · brochure (question 121): one close-up, the family's name on the paper beside the faded stamp on the wood; no slide, no crayon; it waits for a tap", r.pressed && r.kind === "crate" && r.drew && r.drew.paper === FAMILY.NAME && r.drew.letters === FAMILY.NAME.slice(1).replace(/ /g, "") && r.drew.crayon === false && r.drew.slide === undefined && r.waited, r);
+g.check("\"We always thought it said STARS.\" / \"Maybe it's MARS!\"", r.said.join("|") === "We always thought it said STARS.|Maybe it's MARS!", r);
+g.check("no crayon ST layer on his crate bed (crate-stamp.js STAMP_CRAYON)", r.crayonNow !== true, r.crayonNow);
 // beat 40: the fight
 r = await ev(() => {
   const n = window.__ss.op;
   const cards = [];
-  window.__run(16, () => window.__st() === "show" && n.ctrl, () => n.cur && n.cur.k === "card" && cards.push(n.cur.text));
+  window.__heartsIn = 0;
+  window.__run(16, () => window.__st() === "show" && n.ctrl, () => {
+    n.cur && n.cur.k === "card" && cards.push(n.cur.text);
+    // (his hearts as he comes home: the frame's own drawing)
+    if (n.ch1Evening.heartsAt >= 0) (window.__ss.drawFrame(), (window.__heartsIn = Math.max(window.__heartsIn, window.SSQ.beat("ch1-evening").debug().drew.hearts || 0)));
+  });
+  window.__run(3);
   const pressed = window.__press("SHOW · brochure");
   window.__run(0.6);
   window.__ss.drawFrame();
   const held = window.SSQ.beat("ch1-evening").debug().drew;
   const said = [];
   window.__run(60, () => window.__st() === "choose" && n.ctrl, () => n.cur && n.cur.b && said[said.length - 1] !== n.cur.b.text && said.push(n.cur.b.text));
-  return { cards: [...new Set(cards)], pressed, held: held && held.held, hearts: held && held.hearts, said, step: window.__st(), ask: !!window.__spot("ASK · again"), stomp: !!window.__spot("STOMP · to bed") };
+  return { cards: [...new Set(cards)], pressed, held: held && held.held, hearts: held && held.hearts, heartsIn: window.__heartsIn, said, step: window.__st(), ask: !!window.__spot("ASK · again"), stomp: !!window.__spot("STOMP · to bed") };
 });
-g.check("beat 40: \"That evening…\"; Mops comes home with his hearts; SHOW · brochure, he holds it up", r.cards.includes("That evening…") && r.pressed && r.held && r.held.w > 50 && r.hearts === 3, r);
-g.check("the fight, one short bubble each: MARS!, one of a kind, the manager, safe here, the Guardians", r.said.join("|") === "Mops! My crate says MARS!|It says Stars.|Can we go to Mars?|Squatch. There are no other Sasquatches.|You're one of a kind. Like me.|I know what it's like to be one of a kind.|The man said SASQUATCHES. You heard him!|And they look like ME.|You heard the manager.|They need me here.|What if they replace you anyway?|They won't.|And we're safe here.|Safe? I have to HIDE here.|The Guardians are here.", r.said);
+g.check("beat 40: \"That evening…\"; Mops comes home: two or three hearts as he first sees him, then none (question 126); SHOW · brochure, he holds it up", r.cards.includes("That evening…") && r.heartsIn >= 2 && r.heartsIn <= 3 && r.pressed && r.held && r.held.w > 50 && !r.hearts, r);
+g.check("the fight (question 122): maybe MARS, he came in that crate, the man said Wookiees, YOU thought I was a Wookiee, one of a kind, the manager, safe here, the Guardians", r.said.join("|") === "Mops! Look. Maybe my crate says MARS.|...Maybe.|I came in that crate. Maybe I came from Mars!|Can we go?|The man said Wookiees. You're not a Wookiee.|YOU thought I was a Wookiee!|Squatch. There are no other Sasquatches.|You're one of a kind. Like me.|I know what it's like to be one of a kind.|You heard the manager.|They need me here.|What if they replace you anyway?|They won't.|And we're safe here.|Safe? I have to HIDE here.|The Guardians are here." && !r.said.some((t) => /SASQUATCHES|Stars\./.test(t)), r);
 g.check("then the player picks: ASK · again (where he stands) or STOMP · to bed (at the bed)", r.step === "choose" && r.ask, r);
 r = await ev(() => {
   const n = window.__ss.op,
@@ -426,13 +417,16 @@ r = await ev(() => {
   let back = false,
     hearts = [];
   window.__run(40, () => window.__st() === "bed" && n.ctrl, () => {
-    n.cur && n.cur.b && said[said.length - 1] !== n.cur.b.text && (said.push(n.cur.b.text), hearts.push(n.ch1Evening.hearts));
-    b.viewOpen() === "back" && ((back = true), b.viewAct());
+    n.cur && n.cur.b && said[said.length - 1] !== n.cur.b.text && said.push(n.cur.b.text);
+    window.__ss.drawFrame();
+    hearts.push(b.debug().drew.hearts || 0);
+    back = back || !!b.viewOpen();
   });
   return { pressed, said, back, hearts, step: window.__st(), turned: n.ch1Evening.turned };
 });
-g.check("STOMP · to bed: Mops calls him back first; \"Why won't you help me find my family?\" ... \"Squatch... I already...\" and he turns his back (no hearts, the close-up)", r.pressed && r.said[0] === "Squatch. Wait." && r.said[1] === "Why won't you help me find my family?" && r.said[2] === "Squatch... I already..." && r.back && r.turned, r);
-g.check("\"I AM your family.\" / \"Maybe my REAL family wouldn't make me hide!\" / \"...I didn't mean that.\" / one small heart / \"Bed. The floors don't mop themselves.\"", r.said.slice(3).join("|") === "I AM your family.|Maybe my REAL family wouldn't make me hide!|...I didn't mean that.|We say things we don't mean all the time.|Bed. The floors don't mop themselves." && r.hearts[3] === 0 && r.hearts[6] > 0 && r.step === "bed", r);
+g.check("STOMP · to bed: Mops calls him back first; \"Why won't you help me find my family?\" ... \"Squatch... I already...\" and he turns his back in the room (no close-up)", r.pressed && r.said[0] === "Squatch. Wait." && r.said[1] === "Why won't you help me find my family?" && r.said[2] === "Squatch... I already..." && !r.back && r.turned, r);
+g.check("it ends on his line: \"I AM your family.\" / \"Maybe my REAL family wouldn't make me hide!\" / (no take-back) / \"We say things we don't mean all the time.\" / \"Bed. The floors don't mop themselves.\"", r.said.slice(3).join("|") === "I AM your family.|Maybe my REAL family wouldn't make me hide!|We say things we don't mean all the time.|Bed. The floors don't mop themselves.", r);
+g.check("no hearts anywhere in the fight", r.hearts.every((h) => !h), r.hearts.filter(Boolean).length);
 r = await ev(() => {
   const n = window.__ss.op,
     b = window.SSQ.beat("ch1-evening");
@@ -590,9 +584,9 @@ r = await ev(() => {
   const es = window.SSQ.beat("ch1-escape");
   window.__run(10, () => es.active());
   const week = es.active() && es.debug().state;
-  return { a0, a, b, pressed, escape: es.active(), cu: week && week.cu, done: !n.ch1Evening || n.ch1Evening.step === "done", lights: n.ch1Lights, crayonGone: window.SSQ.beat("ch1-evening").crayonGone() };
+  return { a0, a, b, pressed, escape: es.active(), cu: week && week.cu, done: !n.ch1Evening || n.ch1Evening.step === "done", lights: n.ch1Lights };
 });
-g.check("home to bed: SLEEP · bed, he falls asleep, and beat 43 starts (the escape: \"Six days later\" on the home calendar)", r.a0 && r.a && r.b && r.pressed && r.escape && r.cu === "cal" && r.done && r.lights === 1 && r.crayonGone, r);
+g.check("home to bed: SLEEP · bed, he falls asleep, and beat 43 starts (the escape: \"Six days later\" on the home calendar)", r.a0 && r.a && r.b && r.pressed && r.escape && r.cu === "cal" && r.done && r.lights === 1, r);
 
 // the one capture rule in the bay
 r = await ev(() => {
@@ -700,7 +694,7 @@ r = await ev(() => {
     [38, "storm", "hide"],
     [138, "pet", "greet"],
     [39, "talk", "ask"],
-    [141, "slide", "crate"],
+    [141, "hold", "crate"],
     [40, "fight", "show"],
     [41, "asleep", "bed"],
     [142, "order", "bin"],

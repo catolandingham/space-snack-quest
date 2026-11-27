@@ -273,8 +273,6 @@ export const BAY_SEARCH = Object.freeze([
  * the wall above the bed. X · chart from below it; HOLD UP · brochure in front of the crate.
  */
 export const HOME_ALONE = Object.freeze({
-  chart: Object.freeze({ x: 176, y: 262, w: 104, h: 75 }),
-  chartSpot: Object.freeze({ x: 236, y: 440, r: 60 }),
   crateSpot: Object.freeze({ x: 330, y: 458, r: 60 }),
   // the crate's side, where the close-up holds the brochure against it
   crate: Object.freeze({ x0: 96, x1: 275, y0: 437, y1: 524 }),
@@ -301,8 +299,7 @@ export const EVENING_PACE = Object.freeze({
   // 39b: the box opens; after the crunch, the silence where a fizz would be; one stroke of the X; he rubs out "ST"
   boxOpen: 0.6,
   silence: 1.4,
-  xStroke: 0.35,
-  rub: 1.2,
+  hurt: 1.2, // the quiet after "my REAL family wouldn't make me hide!" (40)
   // 41: each picture of the idea; 42b: the don't-send ending's cutaway; 42c: how near the big wall vent the form flutters
   idea: 1.4,
   cutaway: 3.0,

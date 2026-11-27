@@ -6,7 +6,7 @@
  *   the bin of the don't-send ending's cutaway (42b)
  *   the two things on the stand's counter in the brochure (39): one cake box stamped with his family's name (the
  *     brochure's only words) and the cut-open cake that fizzes
- *   the Guardians' little box with its tag, and this week's cake (39b); the crayon chart of kinds tried (39b)
+ *   the Guardians' little box with its tag, and this week's cake (39b)
  *   the thought pictures (41: the idea; 42b: the choice) and the "years later" picture of the don't-send ending
  *   the crate beside the loading bay's big wall vent (42c)
  */
@@ -236,73 +236,6 @@ export function drawWeekCake(ctx, x, y, r, bite = 0) {
   }
   ctx.restore();
 }
-/** The chart's layout in its own units (360 x 260). */
-export const CHART = Object.freeze({ W: 360, H: 260, tried: 5, cell: Object.freeze({ x0: 34, y: 140, step: 48, r: 18 }), crate: Object.freeze({ x: 330, y: 140, r: 22 }) });
-/**
- * The crayon chart above his bed, in (x, y, w, h): the station snack's name (snack-name.js), a row of little cakes each with an X (`tried`), this
- * week's cake with `newX` (0 to 1) of its X drawn, and at the end one empty circle with a red dot and sparks, "THE CRATE
- * KIND". `small` draws it as it hangs on the wall (no fine lines).
- */
-export function drawEveningChart(ctx, x, y, w, h, newX = 0, small = false, crateKind = "") {
-  const k = Math.min(w / CHART.W, h / CHART.H);
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.scale(k, k);
-  pRect(ctx, 0, 0, CHART.W, CHART.H, 6, "#fffdf2", INK, 3);
-  ctx.fillStyle = "rgba(240,230,180,.85)";
-  ctx.fillRect(12, -8, 40, 18);
-  ctx.fillRect(CHART.W - 52, -8, 40, 18);
-  // (on the wall, too small to read: the title is a crayon scribble; the close-up has the words)
-  if (small) {
-    ctx.strokeStyle = "#e5533d";
-    ctx.lineWidth = 6;
-    ctx.beginPath();
-    for (let x = 90; x <= 270; x += 18) ctx.lineTo(x, 44 + (x % 36 ? -6 : 6));
-    ctx.stroke();
-  } else pWords(ctx, SNACK.NAME, CHART.W / 2, 44, 34, "#e5533d", 800, "center", EV_CRAYON_FONT);
-  const C = CHART.cell;
-  const xMark = (cx, cy, r, u) => {
-    ctx.save();
-    ctx.strokeStyle = "#1e2430";
-    ctx.lineWidth = 5;
-    ctx.lineCap = "round";
-    const a = Math.min(1, u * 2),
-      b = Math.max(0, u * 2 - 1);
-    ctx.beginPath();
-    ctx.moveTo(cx - r, cy - r);
-    ctx.lineTo(cx - r + 2 * r * a, cy - r + 2 * r * a);
-    if (b > 0) {
-      ctx.moveTo(cx + r, cy - r);
-      ctx.lineTo(cx + r - 2 * r * b, cy - r + 2 * r * b);
-    }
-    ctx.stroke();
-    ctx.restore();
-  };
-  const colors = ["#f0c94a", "#6fa8ff", "#a8784a", "#ffb347", "#c38cff", "#3b3b3b", "#9ad46a"];
-  for (let i = 0; i <= CHART.tried; i++) {
-    const cx = C.x0 + i * C.step;
-    pDisc(ctx, cx, C.y, C.r, colors[i], INK, 2.5);
-    if (i < CHART.tried) xMark(cx, C.y, C.r * 0.8, 1);
-    else newX > 0 && xMark(cx, C.y, C.r * 0.8, newX);
-  }
-  // the crate kind: an empty circle with a red dot and sparks
-  const K = CHART.crate;
-  pDisc(ctx, K.x, K.y, K.r, null, INK, 3);
-  pDisc(ctx, K.x, K.y, 6, "#e0303a");
-  if (!small)
-    for (let i = 0; i < 6; i++) {
-      const a = (i / 6) * TAU;
-      ctx.beginPath();
-      ctx.moveTo(K.x + Math.cos(a) * (K.r + 4), K.y + Math.sin(a) * (K.r + 4));
-      ctx.lineTo(K.x + Math.cos(a) * (K.r + 12), K.y + Math.sin(a) * (K.r + 12));
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = "#ffb000";
-      ctx.stroke();
-    }
-  crateKind && pWords(ctx, crateKind, K.x - 76, K.y + 62, 22, "#3478f6", 800, "center", EV_CRAYON_FONT);
-  ctx.restore();
-}
-
 // ---------- 41 and 42b: the thought pictures ----------
 /**
  * One small wordless picture inside a thought cloud (x, y the middle, s the size, about 100 units across): "mopping"

@@ -17,14 +17,14 @@
  *            window; the PA; the robots stop and roll out; "You are MOPS now."
  *   window   the guests walk in to the window; the family talks (overheard); the kid sees the goat; they come over.
  * * greet    GREET · kid (as Mops): the kid pets him; "Come on. Bedtime."; they turn to go.
- * * ask      TALK · family (as Mops): "What were you saying about Mars Cakes?"; Wookiees; only at their stand; Dad
+ * * ask      TALK · family (as Mops): Mops asks what they were saying about the cakes; Wookiees; only at their stand; Dad
  *            hands him the brochure (the close-up, read: it waits for a tap); they leave; "You are SQUATCH now.";
  *            Mops passes the brochure down behind the bar (pass): "Take this home." "We'll talk tonight."
  * * gohome   the home doorway outlined.
- * * box, bite, chart, crate   home alone: OPEN · box, BITE · cake, "No fizz.", X · chart (the close-up: two taps draw
- *            the X), HOLD UP · brochure (the close-up: slide it along the crate's worn family stamp; "MARS!").
+ * * box, bite, crate   home alone: OPEN · box, BITE · cake, "No fizz.", HOLD UP · brochure (one close-up, hold: the
+ *            brochure's cake box, the family's name, beside the crate's faded stamp; it waits for a tap; "Maybe it's MARS!").
  * * show, choose   "That evening…", Mops comes home; SHOW · brochure; the fight; ASK · again or STOMP · to bed; he
- *            turns his back (the close-up); "Bed. The floors don't mop themselves."
+ *            turns his back (in the room, no close-up); it ends on "my REAL family wouldn't make me hide!"; "Bed."
  * * bed      SLEEP · bed: lights out, no song; Mops's fainting-goat sleep by the bucket; the idea in pictures.
  * * out, nighthall, nightway   night one: past Mops (a bump on the bucket: "Weee...?"), the hall (its floor vent on),
  *            the hallway, the bay.
@@ -38,7 +38,7 @@
  * last one he did (restart()).
  */
 import { EV_HALLWAY, EV_BAR, STORM, EV_HOME, HOME_ALONE, EV_BAY, BAY_FURNITURE, BAY_EXTRA, BAY_BOUNDS, BAY_SEARCH, BAY_VENT, EVENING_PACE as P, EVENING_LOOK, nightLook, mopsSleepAt, mopsSleepBox, robotLook } from "./evening-place.js";
-import { drawJupiterStorm, drawStormGlow, drawCounterBin, drawEveningThought, drawGuardiansBox, drawWeekCake, drawEveningChart, CHART, drawIdeaPicture, drawYearsLater, drawVentCrate, BAY_CRATE } from "./evening-pictures.js";
+import { drawJupiterStorm, drawStormGlow, drawCounterBin, drawEveningThought, drawGuardiansBox, drawWeekCake, drawIdeaPicture, drawYearsLater, drawVentCrate, BAY_CRATE } from "./evening-pictures.js";
 import { placeThought } from "./thought-place.js";
 import { drawFamilyStampAt, drawFatLetters, familyStampOnRoom } from "./crate-stamp.js";
 import { FAMILY } from "./snack-name.js";
@@ -68,17 +68,18 @@ import { createHomeMorningSound, HOME_MORNING_SOUND } from "./home-morning-sound
 import { createBedtimeSound } from "./bedtime-story-sound.js";
 import { drawBedtimeSquatch, drawBedBlanket, BED_POSES, BEDTIME_NIGHT } from "./bedtime-story.js";
 import { footfall } from "./footfalls.js";
+import { firstSightHearts } from "./mops-hearts.js";
 import { adultPxFor } from "./room-sizes.js";
 import { findPath } from "./tap-path.js";
 
 export const EVENING_ID = "ch1-evening";
 /** The steps the player controls (ch1Step "ev-<step>"), in order. */
-export const EVENING_STEPS = Object.freeze(["wall", "dodge", "past", "hide", "greet", "ask", "gohome", "box", "bite", "chart", "crate", "show", "choose", "bed", "out", "nighthall", "nightway", "bin", "post", "back", "backway", "backhall", "tobed"]);
+export const EVENING_STEPS = Object.freeze(["wall", "dodge", "past", "hide", "greet", "ask", "gohome", "box", "bite", "crate", "show", "choose", "bed", "out", "nighthall", "nightway", "bin", "post", "back", "backway", "backhall", "tobed"]);
 /** Which room each step is in (the step restart and jump() put him there). */
 export const STEP_ROOM = Object.freeze({
   walkin: "passage", wall: "passage", gallery: "passage", dodge: "passage", past: "passage",
   tohall: "hall", tostorm: "hall", storm: "hall", hide: "hall", window: "hall", greet: "hall", pet: "hall", ask: "hall", talk: "hall", read: "hall", leaving: "hall", pass: "hall", gohome: "hall",
-  homein: "closet", box: "closet", bite: "closet", chart: "closet", xchart: "closet", crate: "closet", slide: "closet", mars: "closet",
+  homein: "closet", box: "closet", bite: "closet", crate: "closet", hold: "closet", mars: "closet",
   evening: "closet", show: "closet", fight: "closet", choose: "closet", fightend: "closet", bed: "closet", asleep: "closet", idea: "closet", out: "closet",
   nighthall: "hall", nightway: "passage",
   bin: "hangar", choosing: "hangar", order: "hangar", post: "hangar", posted: "hangar", back: "hangar",
@@ -189,6 +190,7 @@ export function createEvening(bridge) {
     warm: 0,
     dim: 0,
     mopsSleep: null,
+    heartsAt: -1,
     bed: null,
     zzz: -1,
     order: null,
@@ -618,7 +620,7 @@ export function createEvening(bridge) {
       }),
     ]);
   }
-  /** TALK · family (the player is Mops): what were they saying about Mars Cakes? Dad hands him a brochure. */
+  /** TALK · family (the player is Mops): what were they saying about the cakes? Dad hands him a brochure. */
   function askFamily() {
     const e = E();
     busy();
@@ -760,72 +762,28 @@ export function createEvening(bridge) {
       e.run(() => {
         S().cake = -1;
         S().box = "floor";
-        go("chart");
-        control("chip-chart");
+        // (no X · chart step: the chart is a picture only, "No fizz." does the job; Brian r5 6:51, q: 129)
+        go("crate");
+        control("chip-crate");
       }),
     ]);
   }
-  /** X · chart: the chart close-up; the player draws this week's X himself (two strokes). */
-  function lookChart() {
-    const s = S();
-    busy();
-    s.xMark = 0;
-    s.xStroke = 0;
-    sound.effect("grab");
-    go("xchart");
-    openView("chart");
-  }
-  function chartTick(dt) {
-    const s = S();
-    // each tap on the cake draws one stroke of the X (0 to 0.5, then 0.5 to 1)
-    const want = s.xStroke * 0.5;
-    if (s.xMark < want) s.xMark = Math.min(want, s.xMark + dt / P.xStroke);
-    if (s.xMark >= 1 && view && view.kind === "chart") {
-      s.xDone = (s.xDone || 0) + dt;
-      if (s.xDone >= 0.8) {
-        closeView();
-        s.xDone = 0;
-        s.chartX = true;
-        go("crate");
-        control("chip-crate");
-      }
-    }
-  }
-  /** HOLD UP · brochure at the crate: the close-up; sliding the brochure along the stamp lines the letters up. */
+  /**
+   * HOLD UP · brochure at the crate: one close-up (Brian r5 7:00; q: 121, the pick A): the brochure held beside the
+   * crate's faded stamp, the family's name on the paper under the faded stamp on the wood. No slide, no banner, no crayon. It waits
+   * for a tap; then his two lines.
+   */
   function holdUpBrochure() {
-    const s = S();
     busy();
-    s.slide = 0;
-    s.click = 0;
-    s.rub = 0;
     sound.effect("grab");
-    go("slide");
+    go("hold");
     openView("crate");
   }
-  function slideTick(dt) {
-    const s = S();
-    if (!view || view.kind !== "crate") return;
-    if (s.slide >= 1 && s.click < 1) {
-      s.click = Math.min(1, s.click + dt / 0.35);
-      s.click >= 1 && sound.effect("key");
-    }
-    // he licks his thumb and rubs out his crayon "ST"
-    if (s.click >= 1 && s.rub < 1) s.rub = Math.min(1, s.rub + dt / P.rub);
-    if (s.rub >= 1) {
-      s.rubDone = (s.rubDone || 0) + dt;
-      if (s.rubDone >= 0.6) {
-        const e = E();
-        closeView();
-        s.rubDone = 0;
-        s.stampST = 0;
-        go("mars");
-        e.queue([
-          e.say("sq", eveningWords("sq-not-stars")),
-          e.say("sq", eveningWords("sq-mars-crate")),
-          e.run(() => fightStarts()),
-        ]);
-      }
-    }
+  function crateSeen() {
+    const e = E();
+    closeView();
+    go("mars");
+    e.queue([e.say("sq", eveningWords("sq-thought-stars")), e.say("sq", eveningWords("sq-maybe-mars")), e.run(() => fightStarts())]);
   }
 
   // ---------- beat 40: the fight ----------
@@ -837,7 +795,7 @@ export function createEvening(bridge) {
       e.card("later", eveningWords("card-evening")),
       // the room warms to evening; Mops comes home through the doorway, his hearts floating as he sees him
       e.until((dt) => ((S().warm = Math.min(1, S().warm + (dt || 0) / P.evening)), S().warm >= 1)),
-      e.run(() => (e.set("moPose", "stand"), e.place("mops", EV_HOME.mopsIn.x, EV_HOME.mopsIn.y), e.face("mops", -1), sound.morning("door"), (S().hearts = 1))),
+      e.run(() => (e.set("moPose", "stand"), e.place("mops", EV_HOME.mopsIn.x, EV_HOME.mopsIn.y), e.face("mops", -1), sound.morning("door"), (S().heartsAt = e.time()))),
       walkTo("mops", EV_HOME.mops.x, EV_HOME.mops.y, P.mopsWalk),
       e.run(() => {
         e.moWalking(false);
@@ -860,13 +818,15 @@ export function createEvening(bridge) {
     e.queue([
       timer(P.hold),
       e.say("sq", eveningWords("sq-crate-mars")),
-      e.say("mops", eveningWords("mops-stars")),
+      e.say("mops", eveningWords("mops-maybe")),
+      e.say("sq", eveningWords("sq-came")),
       e.say("sq", eveningWords("sq-can-we")),
+      // (q: 122: his reason to say no is what the man said, not what the crate says)
+      e.say("mops", eveningWords("mops-wookiees")),
+      e.say("sq", eveningWords("sq-you-thought")),
       e.say("mops", eveningWords("mops-no-others")),
       e.say("mops", eveningWords("mops-one-kind")),
       e.say("mops", eveningWords("mops-know")),
-      e.say("sq", eveningWords("sq-man-said")),
-      e.say("sq", eveningWords("sq-like-me-2")),
       e.say("mops", eveningWords("mops-manager")),
       e.say("mops", eveningWords("mops-need-me")),
       e.say("sq", eveningWords("sq-replace")),
@@ -892,20 +852,17 @@ export function createEvening(bridge) {
     e.queue([
       ...(stomped ? [e.say("mops", eveningWords("mops-wait"))] : []),
       e.say("sq", eveningWords("sq-why")),
-      // he stops. He turns his back. No hearts. (the close-up: his turned back, Squatch small behind him)
+      // he stops. He turns his back, in the room (no close-up: Brian r5 7:57). No hearts anywhere in the fight.
       e.say("mops", eveningWords("mops-already")),
       e.run(() => {
-        S().hearts = 0;
         S().turned = true;
         e.face("mops", 1);
-        openView("back");
       }),
-      e.until(() => !view),
       e.say("mops", eveningWords("mops-family")),
+      // it ends on his line (Brian r5 8:03: no "...I didn't mean that."); a pause; Mops forgives him without being asked
       e.say("sq", eveningWords("sq-real")),
-      e.say("sq", eveningWords("sq-didnt")),
-      // one small heart comes back
-      e.run(() => (S().hearts = 0.4)),
+      timer(P.hurt),
+      // (q: 122, the pick A. Option B, straight to "Bed.": delete the next line.)
       e.say("mops", eveningWords("mops-we-say")),
       e.say("mops", eveningWords("mops-bed")),
       // he walks to bed himself, past Mops's turned back
@@ -1400,7 +1357,6 @@ export function createEvening(bridge) {
     r === "hall" && s.guests && !s.alarm && guestsTick(dt);
     r === "hall" && (s.cleaners || []).length && cleanersTick(dt);
     view && view.kind === "order" && orderTick();
-    view && view.kind === "chart" && chartTick(dt);
     r === "hangar" && suckTick(dt);
     // the pink sheet flutters toward the big wall vent as he carries it past (the danger shown before it bites)
     if (r === "hangar" && (s.papers === "both" || s.papers === "paw") && Math.hypot(sqAt.x - EV_BAY.vent.mouth.x, sqAt.y - EV_BAY.vent.mouth.y) < P.flutterNear) !s.fluttered && ((s.fluttered = true), sound.effect("slip"));
@@ -1409,9 +1365,8 @@ export function createEvening(bridge) {
       const B = EV_HOME.bucket;
       if (sqAt.x > B.x0 - 16 && sqAt.x < B.x1 + 16 && sqAt.y > B.y0 - 18 && sqAt.y < B.y1 + 14) bumpBucket();
     }
-    view && view.kind === "crate" && slideTick(dt);
     // the close-ups end themselves once the game no longer has what opened them (a restart, the LOCKUP card)
-    if (view && !((view.kind === "gallery" && s.step === "gallery") || (view.kind === "brochure" && s.step === "read") || (view.kind === "chart" && s.step === "xchart") || (view.kind === "crate" && s.step === "slide") || (view.kind === "back" && s.step === "fightend") || (view.kind === "order" && s.step === "order"))) closeView();
+    if (view && !((view.kind === "gallery" && s.step === "gallery") || (view.kind === "brochure" && s.step === "read") || (view.kind === "crate" && s.step === "hold") || (view.kind === "order" && s.step === "order"))) closeView();
     // Night one, still in bed: his first move gets him up.
     if (on && s.step === "out" && s.bed && r === "closet" && e.steering()) return void getUp();
     // Steering steps him out of hiding or unrolls him.
@@ -1587,15 +1542,11 @@ export function createEvening(bridge) {
       }
       case "gohome":
         return [doorSpot("ev-home", EV_BAR.home)];
-      // 39b: the Guardians' box in his paw, the bite, the chart above his bed, the crate
+      // 39b: the Guardians' box in his paw, the bite, the crate
       case "box":
         return [spot("ev-box", "button-open-box", { x: e.pos("sq").x, y: e.pos("sq").y, r: 60 }, null, openBox)];
       case "bite":
         return [spot("ev-bite", "button-bite", { x: e.pos("sq").x, y: e.pos("sq").y, r: 60 }, null, biteCake)];
-      case "chart": {
-        const C = HOME_ALONE.chart;
-        return [spot("ev-chart", "button-chart", HOME_ALONE.chartSpot, { x0: C.x, x1: C.x + C.w, y0: C.y, y1: C.y + C.h }, lookChart)];
-      }
       case "crate":
         return [spot("ev-crate", "button-hold-up", HOME_ALONE.crateSpot, HOME_ALONE.crate, holdUpBrochure)];
       // 40: ASK · again where he stands, or STOMP · to bed at the bed (both reach the same lines)
@@ -1644,11 +1595,8 @@ export function createEvening(bridge) {
   // The design boxes (evening-art.js fitDesign): the gallery's photo, arrows and X; the brochure; the papers.
   const GALLERY = Object.freeze({ W: 400, H: 700, photo: { x: 40, y: 110, w: 320, h: 250 }, plaque: { x: 200, y: 404, size: 20 }, left: { x: 80, y: 520, r: 40 }, right: { x: 320, y: 520, r: 40 }, close: { x: 352, y: 640, r: 36 }, dots: { x: 200, y: 452 }, lift: { x: 130, y: 496, w: 140, h: 48 }, thought: { x: 160, y: 596, w: 280, h: 92 } });
   const BROCHURE = Object.freeze({ W: 360, H: 600, card: { x: 30, y: 60, w: 300, h: 420 }, close: { x: 318, y: 556, r: 34 } });
-  // 39b: the chart close-up (this week's cake to X), the crate close-up (the brochure slid along the stamp)
-  const CHARTV = Object.freeze({ W: 400, H: 700, chart: { x: 20, y: 170, w: 360, h: 260 }, close: { x: 352, y: 640, r: 36 } });
-  const CRATEV = Object.freeze({ W: 400, H: 700, crate: { x: 10, y: 150, w: 380, h: 230 }, stamp: { x: 40, y: 290, h: 40 }, card: { y: 420, w: 220, h: 300 }, close: { x: 352, y: 640, r: 36 } });
-  // 40: Mops's turned back, Squatch small behind him
-  const BACKV = Object.freeze({ W: 400, H: 700, mops: { x: 270, y: 520, k: 4.2 }, sq: { x: 80, y: 540, k: 1.4 }, close: { x: 352, y: 640, r: 36 } });
+  // 39b: the crate close-up: the crate's side with its faded stamp, the brochure held beside it
+  const CRATEV = Object.freeze({ W: 400, H: 700, crate: { x: 10, y: 150, w: 380, h: 190 }, stamp: { x: 40, y: 270, h: 40 }, card: { x: 150, y: 372, w: 190, h: 250 }, close: { x: 352, y: 640, r: 36 } });
   // 42b: the choice above the papers (two thought pictures, each with its button); the papers below; the don't-send ending
   const ORDERV = Object.freeze({
     W: 400,
@@ -1660,13 +1608,13 @@ export function createEvening(bridge) {
     card: { y: 470 },
     goBack: { x: 70, y: 600, w: 260, h: 56 },
   });
-  const designOf = (kind) => ({ gallery: GALLERY, brochure: BROCHURE, chart: CHARTV, crate: CRATEV, back: BACKV, order: ORDERV })[kind] || PAPERS;
+  const designOf = (kind) => ({ gallery: GALLERY, brochure: BROCHURE, crate: CRATEV, order: ORDERV })[kind] || PAPERS;
   function openView(kind) {
     const at = E().time();
     view = { kind, at, paw: null, down: null };
     record.cutIns.push(kind);
     openFullScreen({
-      label: { gallery: "photo wall", brochure: "brochure", chart: "cake chart", crate: "crate", back: "Mops" }[kind] || "order papers",
+      label: { gallery: "photo wall", brochure: "brochure", crate: "crate" }[kind] || "order papers",
       draw: (ctx, w, h, t) => drawView(ctx, w, h, t),
       pointer: (k, x, y) => pointer(k, x, y),
       restart: () => E().restartPart && E().restartPart(),
@@ -1709,28 +1657,14 @@ export function createEvening(bridge) {
       if (back && g.i > 0) return ((g.i -= 1), (g.lift = 0), sound.effect("grab"));
       return;
     }
-    // the brochure in Mops's keeping, and Mops's turned back: a tap anywhere (once it has zoomed in) goes on
-    if (view.kind === "brochure" || view.kind === "back") {
+    // the brochure in Mops's keeping: a tap anywhere (once it has zoomed in) goes on
+    if (view.kind === "brochure") {
       if (kind === "up" && E().time() - view.at > P.zoomIn) closeView();
       return;
     }
-    if (view.kind === "chart") {
-      // a tap on this week's cake draws one stroke of the X (two taps, two strokes)
-      const C = CHARTV.chart,
-        k = C.w / CHART.W,
-        cx = C.x + (CHART.cell.x0 + CHART.tried * CHART.cell.step) * k,
-        cy = C.y + CHART.cell.y * k;
-      if (kind === "up" && E().time() - view.at > P.zoomIn && Math.hypot(p.x - cx, p.y - cy) <= CHART.cell.r * k + 30 && s.xStroke < 2 && s.xMark >= s.xStroke * 0.5) ((s.xStroke += 1), sound.effect("slip"));
-      return;
-    }
+    // the brochure beside the crate's stamp: a tap anywhere goes on to his lines
     if (view.kind === "crate") {
-      // dragging the brochure left along the stamp (or tapping it, a step at a time) slides it
-      if (E().time() - view.at <= P.zoomIn || s.slide >= 1) return;
-      if (kind === "move" && view.down) s.slide = Math.max(s.slide, Math.min(1, (view.down.x - p.x) / 200 + (view.from || 0)));
-      if (kind === "down") view.from = s.slide;
-      if (kind === "up" && view.down && Math.abs(view.down.x - p.x) < 8) s.slide = Math.min(1, s.slide + 0.34);
-      kind === "up" && (view.down = null);
-      s.slide >= 1 && sound.effect("grab");
+      if (kind === "up" && E().time() - view.at > P.zoomIn) crateSeen();
       return;
     }
     if (view.kind === "order") {
@@ -1836,30 +1770,12 @@ export function createEvening(bridge) {
       drawBrochure(ctx, C.x, C.y, C.w, C.h, false, 1, now);
       drawCloseX(ctx, BROCHURE.close.x, BROCHURE.close.y, BROCHURE.close.r);
       Object.assign(out, { card: C });
-    } else if (view.kind === "chart") {
-      const C = CHARTV.chart;
-      drawEveningChart(ctx, C.x, C.y, C.w, C.h, s.xMark || 0, false, eveningWords("sign-crate-kind"));
-      // this week's cake gets the one highlight until its X is drawn
-      if ((s.xStroke || 0) < 2) {
-        const k = C.w / CHART.W;
-        ctx.save();
-        ctx.setLineDash([OUTLINE.dash * 1.4 * px, OUTLINE.dash * px]);
-        ctx.lineWidth = 3 * px;
-        ctx.strokeStyle = OUTLINE.color;
-        ctx.beginPath();
-        ctx.arc(C.x + (CHART.cell.x0 + CHART.tried * CHART.cell.step) * k, C.y + CHART.cell.y * k, CHART.cell.r * k + 8, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.restore();
-      }
-      // his paw with the crayon
-      drawFurArm(ctx, 300, D.H + 40, 290, 470, 30);
-      drawCloseX(ctx, CHARTV.close.x, CHARTV.close.y, CHARTV.close.r);
-      Object.assign(out, { x: +(s.xMark || 0).toFixed(2), strokes: s.xStroke || 0 });
     } else if (view.kind === "crate") {
       const C = CRATEV.crate,
-        T = CRATEV.stamp;
-      // the crate's side, big: wood slats, and its family stamp with his crayon (crate-stamp.js, the same look as on the
-      // crate bed in the room)
+        T = CRATEV.stamp,
+        Cd = CRATEV.card;
+      // the crate's side, big: wood slats, and its family stamp, faded, its first letter scraped off (crate-stamp.js,
+      // the same look as on the crate bed in the room; no crayon)
       ctx.fillStyle = "#d9a35b";
       ctx.fillRect(C.x, C.y, C.w, C.h);
       ctx.lineWidth = 4;
@@ -1868,48 +1784,21 @@ export function createEvening(bridge) {
       ctx.strokeStyle = "#8b5a2b";
       ctx.lineWidth = 2;
       for (let i = 1; i < 4; i++) (ctx.beginPath(), ctx.moveTo(C.x, C.y + (C.h * i) / 4), ctx.lineTo(C.x + C.w, C.y + (C.h * i) / 4), ctx.stroke());
-      const lit = Math.min(8, Math.floor((s.slide || 0) * 4) * 2);
-      const stamp = drawFamilyStampAt(ctx, T.x, T.y, T.h, { crayon: 1 - (s.rub || 0), lit, click: s.click || 0 });
-      // the brochure under it, its cake box's family name lined up below the stamp as it slides left; at the end its M
-      // sits under the scraped patch
-      const Cd = CRATEV.card,
-        u = s.slide || 0,
-        shift = (1 - u) * 160,
-        bx = stamp.patch.x - 34 + shift;
-      drawBrochure(ctx, bx, Cd.y + 40, Cd.w, Cd.h, false, 0, now);
-      // the brochure's cake box, held up close under the stamp: the same fat red letters, his family's name, sliding
-      // left until its first letter sits under the scraped patch and the rest under the crate's
+      const stamp = drawFamilyStampAt(ctx, T.x, T.y, T.h, { crayon: 0, lit: 0, click: 0 });
+      // the brochure held up beside it, and its cake box's name big on the paper, straight under the stamp's letters:
+      // the same fat red letters, one more at the front
+      drawFurArm(ctx, 330, D.H + 40, Cd.x + Cd.w * 0.8, Cd.y + Cd.h * 0.7, 30);
+      drawBrochure(ctx, Cd.x, Cd.y, Cd.w, Cd.h, false, 0, now);
       ctx.beginPath();
-      ctx.roundRect(stamp.patch.x - 10 + shift, T.y + 18, stamp.end - stamp.patch.x + 20, T.h + 22, 6);
+      ctx.roundRect(stamp.patch.x - 12, C.y + C.h + 8, stamp.end - stamp.patch.x + 24, T.h + 22, 6);
       ctx.fillStyle = "#f6e7c8";
       ctx.fill();
       ctx.lineWidth = 3;
       ctx.strokeStyle = "#1e2430";
       ctx.stroke();
-      drawFatLetters(ctx, FAMILY.NAME, stamp.patch.x + shift, T.y + 18 + T.h + 8, T.h);
-      // the M's two feet landing on the two faint marks: a soft click
-      if ((s.click || 0) > 0) {
-        ctx.save();
-        ctx.globalAlpha = 1 - Math.abs(s.click - 0.5) * 2;
-        ctx.strokeStyle = "#ffd23f";
-        ctx.lineWidth = 3 * px;
-        ctx.beginPath();
-        ctx.arc(stamp.patch.x + stamp.patch.w / 2, T.y - T.h * 0.4, 30 + 20 * s.click, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.restore();
-      }
-      // his paw: holding the brochure, then his thumb rubbing the crayon ST out
-      const rubbing = (s.click || 0) >= 1 && (s.rub || 0) < 1;
-      drawFurArm(ctx, 300, D.H + 40, rubbing ? stamp.patch.x + stamp.patch.w / 2 + Math.sin(now * 20) * 8 : bx + Cd.w * 0.8, rubbing ? T.y - T.h * 0.3 : Cd.y + Cd.h * 0.6, 30);
+      drawFatLetters(ctx, FAMILY.NAME, stamp.patch.x, C.y + C.h + 8 + T.h + 8, T.h);
       drawCloseX(ctx, CRATEV.close.x, CRATEV.close.y, CRATEV.close.r);
-      Object.assign(out, { slide: +u.toFixed(2), lit, click: +(s.click || 0).toFixed(2), rub: +(s.rub || 0).toFixed(2), letters: stamp.letters.map((l) => l.c).join("") });
-    } else if (view.kind === "back") {
-      ctx.fillStyle = "#efe6d2";
-      ctx.fillRect(10, 70, 380, 560);
-      E().drawSquatch(ctx, BACKV.sq.x, BACKV.sq.y, BACKV.sq.k, { f: 1 });
-      E().drawMopsOn(ctx, BACKV.mops.x, BACKV.mops.y, BACKV.mops.k, { f: 1 });
-      drawCloseX(ctx, BACKV.close.x, BACKV.close.y, BACKV.close.r);
-      Object.assign(out, { back: true });
+      Object.assign(out, { letters: stamp.letters.map((l) => l.c).join(""), paper: FAMILY.NAME, crayon: false });
     } else if (view.kind === "order" && s.ending) {
       // the don't-send ending: a wordless cutaway (he puts the copies back and sneaks home), years later, the cards
       const g = s.ending,
@@ -2053,13 +1942,7 @@ export function createEvening(bridge) {
       at = (p) => ({ x: f.x + p.x * f.k, y: f.y + p.y * f.k });
     if (view.kind === "gallery" && s.gallery)
       return { kind: "gallery", i: s.gallery.i, next: at(GALLERY.right), back: at(GALLERY.left), close: at(GALLERY.close), photo: at({ x: GALLERY.photo.x + GALLERY.photo.w / 2, y: GALLERY.photo.y + GALLERY.photo.h / 2 }), lift: at({ x: GALLERY.lift.x + GALLERY.lift.w / 2, y: GALLERY.lift.y + GALLERY.lift.h / 2 }), lifted: s.gallery.lifted, ready: E().time() - view.at > P.zoomIn };
-    if (view.kind === "brochure" || view.kind === "back") return { kind: view.kind, close: at(designOf(view.kind).close), ready: E().time() - view.at > P.zoomIn };
-    if (view.kind === "chart") {
-      const C = CHARTV.chart,
-        k = C.w / CHART.W;
-      return { kind: "chart", cake: at({ x: C.x + (CHART.cell.x0 + CHART.tried * CHART.cell.step) * k, y: C.y + CHART.cell.y * k }), ready: E().time() - view.at > P.zoomIn };
-    }
-    if (view.kind === "crate") return { kind: "crate", card: at({ x: CRATEV.stamp.x + 120, y: CRATEV.card.y + 120 }), ready: E().time() - view.at > P.zoomIn };
+    if (view.kind === "brochure" || view.kind === "crate") return { kind: view.kind, close: at(designOf(view.kind).close), ready: E().time() - view.at > P.zoomIn };
     if (view.kind === "order") {
       const btn = (B) => at({ x: B.x + B.w / 2, y: B.y + B.h / 2 });
       return { kind: "order", choose: !!(s.order && !s.order.chose), mark: btn(ORDERV.go.button), putBack: btn(ORDERV.stay.button), box: at({ x: ORDERV.papers.x + PAPERS.box.x + PAPERS.box.s / 2, y: ORDERV.papers.y + PAPERS.box.y + PAPERS.box.s / 2 }), ending: s.ending ? (s.ending.card >= ENDING_CARDS.length - 1 ? "last" : "card") : "", tap: at({ x: 200, y: ORDERV.card.y }), goBack: btn(ORDERV.goBack), ready: E().time() - view.at > P.zoomIn };
@@ -2322,13 +2205,10 @@ export function createEvening(bridge) {
       ctx.restore();
     }
     const out = {};
-    // his crate bed's family stamp is part of the home picture as the game draws it (crate-stamp.js, a layer over the
-    // locked picture; his crayon goes once he has rubbed it out, crayonGone below); the crayon chart of kinds tried
-    // above the bed, this week's X drawn once he has drawn it
+    // his crate bed's family stamp and the crayon chart over his bed are the home picture's own layers (crate-stamp.js,
+    // cake-chart.js): nothing of them is drawn here
     const onRoom = familyStampOnRoom();
     out.stamp = onRoom ? onRoom.text.replace(/[_ ]/g, "").length : 0;
-    const Ch = HOME_ALONE.chart;
-    drawEveningChart(ctx, Ch.x, Ch.y, Ch.w, Ch.h, s.chartX ? 1 : 0, true);
     // the brochure: in his paw, or held up high over his head for Mops to see
     const paw = sqPawAt(sq.x, sq.y, sq.f || 1, k);
     // the Guardians' little box: in his other paw, opening, or put down on the floor; this week's cake, bitten
@@ -2367,18 +2247,18 @@ export function createEvening(bridge) {
       people.push({ y: sq.y, f: () => e.drawSquatch(ctx, sq.x, sq.y, k, { f: sq.f || 1, walk: e.walkPhase() }) });
       out.squatchLit = true;
     }
-    // Mops's hearts float while he looks at him (none once he turns his back; one small one at the end)
-    if (s.hearts > 0 && e.get("moPose") === "stand") {
-      const mo = e.pos("mops"),
-        n = s.hearts >= 1 ? 3 : 1;
-      for (let i = 0; i < n; i++) {
-        const u = (t * 0.6 + i / n) % 1;
+    // Mops's hearts: two or three the first time he sees him this evening (as he comes home), then none; none in the
+    // fight (mops-hearts.js; q: 126)
+    const hs = s.heartsAt >= 0 && e.get("moPose") === "stand" ? firstSightHearts(t - s.heartsAt) : [];
+    if (hs.length) {
+      const mo = e.pos("mops");
+      for (const h of hs) {
         ctx.save();
-        ctx.globalAlpha = Math.sin(u * Math.PI);
-        drawHeartShape(ctx, mo.x - 10 + i * 12, mo.y - 52 * mopsK - u * 30, (s.hearts >= 1 ? 7 : 5) * (mopsK / 1.6));
+        ctx.globalAlpha = h.alpha;
+        drawHeartShape(ctx, mo.x - 12 + h.i * 12, mo.y - 52 * mopsK - h.rise * 34, 7 * (mopsK / 1.6));
         ctx.restore();
       }
-      out.hearts = n;
+      out.hearts = hs.length;
     }
     // Mops asleep on his back on the floor, his head on his bucket (in front of anyone further back)
     if (s.mopsSleep) {
@@ -2441,13 +2321,8 @@ export function createEvening(bridge) {
       if (!s) return false;
       // (a step he controls in a room that is not its own cannot be: back to its start)
       if (EVENING_STEPS.includes(s.step)) return STEP_ROOM[s.step] !== room() ? (jump(s.step), true) : false;
-      const back = { walkin: "wall", gallery: "wall", tohall: "wall", tostorm: "hide", storm: "hide", window: "greet", pet: "greet", talk: "ask", read: "ask", leaving: "ask", pass: "gohome", homein: "box", xchart: "chart", slide: "crate", mars: "crate", evening: "show", fight: "show", fightend: "choose", asleep: "bed", idea: "bed", choosing: "bin", order: "bin", posted: "post", sleep: "tobed" }[s.step];
+      const back = { walkin: "wall", gallery: "wall", tohall: "wall", tostorm: "hide", storm: "hide", window: "greet", pet: "greet", talk: "ask", read: "ask", leaving: "ask", pass: "gohome", homein: "box", hold: "crate", mars: "crate", evening: "show", fight: "show", fightend: "choose", asleep: "bed", idea: "bed", choosing: "bin", order: "bin", posted: "post", sleep: "tobed" }[s.step];
       return back ? (jump(back), true) : false;
-    },
-    /** True once he has rubbed his crayon out of the crate bed's stamp (39b): the home picture's stamp has none. */
-    crayonGone() {
-      const s = S();
-      return !!s && s.stampST === 0;
     },
     /** True from beat 37 until beat 43 takes over. */
     active() {
@@ -2595,9 +2470,8 @@ export function createEvening(bridge) {
         if (g.i === 3 && !g.lifted) return ((g.lift = 0.999), (g.holding = true), galleryTick(0.01), (g.holding = false), "LIFT · photo");
         return g.i >= 4 ? (galleryEnd(true), "past 5") : ((g.i += 1), (g.lift = 0), "next");
       }
-      if (view.kind === "brochure" || view.kind === "back") return E().time() - view.at > P.zoomIn ? (closeView(), "X") : "";
-      if (view.kind === "chart") return E().time() - view.at > P.zoomIn && s.xStroke < 2 ? ((s.xStroke = 2), (s.xMark = 1), "X") : "";
-      if (view.kind === "crate") return E().time() - view.at > P.zoomIn && s.slide < 1 ? ((s.slide = 1), "slide") : "";
+      if (view.kind === "brochure") return E().time() - view.at > P.zoomIn ? (closeView(), "X") : "";
+      if (view.kind === "crate") return E().time() - view.at > P.zoomIn ? (crateSeen(), "X") : "";
       if (view.kind === "order") {
         if (E().time() - view.at <= P.zoomIn || !s.order) return "";
         if (!s.order.chose) return (chooseMark(), "MARK · box");
@@ -2643,7 +2517,6 @@ export function createEvening(bridge) {
         brochure: after("ask") ? (after("show") ? "home" : "paw") : "",
         dim: after("bed") ? 1 : 0,
         warm: after("crate") ? 1 : 0,
-        stampST: after("crate") ? 0 : 1, // (his crayon in the stamp: rubbed out at the crate, 39b)
         mopsSleep: after("bed") ? { tip: 1, roll: 1, eyes: 1 } : null,
         papers: step === "post" ? "both" : after("post") ? "" : "",
         pink: after("post") ? "vent" : "",
@@ -2672,7 +2545,6 @@ export function createEvening(bridge) {
       gohome: STORM.grab,
       box: EV_HOME.stop,
       bite: EV_HOME.stop,
-      chart: EV_HOME.stop,
       crate: EV_HOME.stop,
       choose: EV_HOME.stop,
       show: EV_HOME.stop,
@@ -2691,13 +2563,11 @@ export function createEvening(bridge) {
     e.face("sq", -1);
     // Mops: waiting at the hallway's end, behind the counter, at home, or asleep on the floor
     const mops = { wall: EV_HALLWAY.mops, dodge: EV_HALLWAY.mops, past: EV_HALLWAY.mops, hide: STORM.mops, greet: STORM.mops, ask: STORM.mops, show: EV_HOME.mops, choose: EV_HOME.mops, bed: EV_HOME.mops }[step];
-    // 39b and 40 at home: the box, the cake, the chart's X, the stamp's ST, the light, Mops's hearts
-    if (["box", "bite", "chart", "crate"].includes(step)) ((s.warm = 0.4), (s.box = { box: "paw", bite: "open", chart: "floor", crate: "floor" }[step]));
+    // 39b at home: the box, the cake, the light
+    if (["box", "bite", "crate"].includes(step)) ((s.warm = 0.4), (s.box = { box: "paw", bite: "open", crate: "floor" }[step]));
     step === "bite" && ((s.cake = 0), (s.t0 = P.boxOpen));
-    (after("chart") || step === "crate") && (s.chartX = true);
-    after("crate") && ((s.stampST = 0), (s.box = s.box || "floor"));
-    (step === "show" || step === "choose") && (s.hearts = 1);
-    step === "bed" && ((s.hearts = 0.4), (s.turned = true));
+    after("crate") && (s.box = s.box || "floor");
+    step === "bed" && (s.turned = true);
     e.set("moPose", mops ? "stand" : "hidden");
     mops ? (e.place("mops", mops.x, mops.y), e.face("mops", step === "wall" || step === "dodge" || step === "past" ? 1 : -1)) : e.place("mops", -400, 0);
     // the family: at the bar (greet), a few steps away, turned to go (ask); the other guest at the window
@@ -2714,6 +2584,6 @@ export function createEvening(bridge) {
     s.step = step;
     record.steps.push(step);
     setPose(s.pose);
-    control({ wall: "chip-go-on", dodge: "chip-roll", past: "chip-to-hall", hide: "chip-hide", greet: "chip-greet", ask: "chip-ask", gohome: "chip-home", box: "chip-box", bite: "chip-bite", chart: "chip-chart", crate: "chip-crate", choose: "", show: "chip-show", bed: "chip-bed", out: "chip-out", nighthall: "chip-bin", nightway: "chip-bin", bin: "chip-bin", post: "chip-post", back: "chip-sneak-home", backway: "chip-sneak-home", backhall: "chip-sneak-home", tobed: "chip-bed" }[step]);
+    control({ wall: "chip-go-on", dodge: "chip-roll", past: "chip-to-hall", hide: "chip-hide", greet: "chip-greet", ask: "chip-ask", gohome: "chip-home", box: "chip-box", bite: "chip-bite", crate: "chip-crate", choose: "", show: "chip-show", bed: "chip-bed", out: "chip-out", nighthall: "chip-bin", nightway: "chip-bin", bin: "chip-bin", post: "chip-post", back: "chip-sneak-home", backway: "chip-sneak-home", backhall: "chip-sneak-home", tobed: "chip-bed" }[step]);
   }
 }

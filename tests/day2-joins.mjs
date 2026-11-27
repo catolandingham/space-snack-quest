@@ -124,7 +124,7 @@ const crayon = await page.evaluate(() => {
   out.escape = look(45);
   return out;
 });
-g.check("his crayon is in the crate bed's stamp on Day 2's morning, gone after he rubs it out (40), and in the escape (45)", crayon.morning.crayon && !crayon.evening.crayon && !crayon.escape.crayon, crayon);
+g.check("no crayon ST in the crate bed's stamp anywhere (round 7, question 121): Day 2's morning, the evening (40), the escape (45)", !crayon.morning.crayon && !crayon.evening.crayon && !crayon.escape.crayon, crayon);
 // night one in the loading bay (the evening draws it): the walls are the bay's, not the party hall's counter
 const nightBay = await page.evaluate(() => {
   const ss = window.__ss,
