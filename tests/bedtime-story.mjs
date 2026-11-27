@@ -47,6 +47,7 @@ const { BEDTIME_STORY_LINES = [], BEDTIME_SWITCHES = {} } = existsSync(linesFile
 const L = Object.fromEntries(BEDTIME_STORY_LINES.map((l) => [l.id, l]));
 
 const g = await startGame({ port: 9741, name: "bedtime-story" });
+const SLEEP_TURN = (await import(new URL("../src/modules/mops-asleep-art.js", import.meta.url))).MOPS_SLEEP.turn;
 const { page, errors } = await g.open("?ch=1", { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
 await page.evaluate(() => window.__ss.lockedReady);
 // Sound on (the music and the bleat are heard): the sound button, as a player taps it.
@@ -351,13 +352,13 @@ const droop = at("droop"),
   rollP = at("roll");
 g.check("Mops nods off where he stands: the room stops drawing him, he is drawn standing (turn 0), his eyes shut and his head sinks", droop.length > 0 && droop.every((r) => r.mopsAsleep && r.mopsAsleep.turn === 0 && !r.mops.shown) && droop.slice(-1)[0].mopsAsleep.eyes === "closed" && droop.slice(-1)[0].mopsAsleep.headDrop >= 10 && droop[0].mopsAsleep.headDrop < 2, droop.filter((_, i) => i % 6 === 0).map((r) => r.mopsAsleep));
 g.check("he goes stiff and tips over onto his side (a quarter turn), with a thump as he lands", tipP.length > 0 && tipP[0].mopsAsleep.turn < 0.05 && tipP.slice(-1)[0].mopsAsleep.turn === 0.5 && run.debug.sounds.thump === 1, { first: tipP[0] && tipP[0].mopsAsleep, last: tipP.slice(-1)[0] && tipP.slice(-1)[0].mopsAsleep, sounds: run.debug && run.debug.sounds });
-g.check("then he rolls onto his back (a half turn: his four feet in the air) and stays there, asleep, through the snores and the fade", rollP.slice(-1)[0].mopsAsleep.turn === 1 && run.room.filter((r) => /^snore|^fade/.test(r.phase)).every((r) => r.mopsAsleep && r.mopsAsleep.turn === 1 && r.mopsAsleep.eyes === "closed") && run.debug.asleep && run.debug.asleep.turn === 1, run.debug && run.debug.asleep);
+g.check("then he settles there on his side (a little past a quarter turn; no roll onto his back: round 7, question 127) and stays there, asleep, through the snores and the fade", rollP.slice(-1)[0].mopsAsleep.turn === SLEEP_TURN && SLEEP_TURN > 0.5 && SLEEP_TURN < 0.7 && run.room.filter((r) => /^snore|^fade/.test(r.phase)).every((r) => r.mopsAsleep && r.mopsAsleep.turn === SLEEP_TURN && r.mopsAsleep.eyes === "closed") && run.debug.asleep && run.debug.asleep.turn === SLEEP_TURN, run.debug && run.debug.asleep);
 const lying = run.room.filter((r) => r.mopsAsleep).map((r) => r.mopsAsleep);
 g.check("Mops is drawn asleep at the room's own Mops size, no bigger than tests/standing-spots.mjs checks his lying box at (3.45 a unit)", lying.length > 0 && lying.every((b) => b.scale >= 2.9 && b.scale <= 3.45), [...new Set(lying.map((b) => b.scale))]);
-g.check("lying down he stays near the crate bed but never over it (his drawn box stays right of the bed's x 290), and inside the room", lying.length > 0 && Math.min(...lying.map((b) => b.x0)) >= 290 && Math.max(...lying.map((b) => b.x1)) < 600 && Math.max(...lying.map((b) => b.y1)) <= 462, { x0: Math.min(...lying.map((b) => b.x0)), x1: Math.max(...lying.map((b) => b.x1)), y1: Math.max(...lying.map((b) => b.y1)) });
-g.check("on his back his feet are up and his back is on the floor: his box is wider than tall and rests on the floor line (460)", (() => {
+g.check("falling asleep he is by his bucket, never over the crate bed (his drawn box stays right of the bed's x 290), and inside the room", lying.length > 0 && Math.min(...lying.map((b) => b.x0)) >= 290 && Math.max(...lying.map((b) => b.x1)) < 600 && Math.max(...lying.map((b) => b.y1)) <= 586, { x0: Math.min(...lying.map((b) => b.x0)), x1: Math.max(...lying.map((b) => b.x1)), y1: Math.max(...lying.map((b) => b.y1)) });
+g.check("on his side he lies on the floor line (584) left of his bucket, his head reaching over its rim (the bucket's left side is x 536)", (() => {
   const b = rollP.slice(-1)[0].mopsAsleep;
-  return b.x1 - b.x0 > b.y1 - b.y0 && Math.abs(b.y1 - 460) <= 2;
+  return Math.abs(b.y1 - 584) <= 2 && b.x0 < 536 && b.x1 >= 536;
 })(), rollP.slice(-1)[0] && rollP.slice(-1)[0].mopsAsleep);
 g.check("Mops never walks out: he is never at the door, and the room never draws him again before Day 2", !run.steps.some((s) => s === "phase:door" || s === "phase:lights") && run.room.filter((r) => r.mops && ASLEEP.includes(r.phase)).every((r) => !r.mops.shown));
 g.check("as he settles on his back the light goes down by itself to a night-blue dim", rollP[0].dim < 0.1 && rollP.slice(-1)[0].dim >= 0.55, rollP.filter((_, i) => i % 6 === 0).map((r) => r.dim));

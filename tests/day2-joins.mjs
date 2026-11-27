@@ -93,17 +93,17 @@ const joins = await page.evaluate(() => {
         const o = ss.offerNow();
         o && o.f();
       } else if (b.rollBy < 0 && !b.ball && b.office >= 1) ((n.sq.x = 30), (n.sq.y = 340));
-    } else if (b && b.step === "hall") ((n.sq.x = bay.place.HALL_SNEAK.goal.x), (n.sq.y = bay.place.HALL_SNEAK.goal.y));
+    } else if (b && b.step === "hall") n.ctrl && !n.cur && (() => { const H = window.SSQ.beat("ch1-evening").barSpot(); n.sq.x = H.x; n.sq.y = H.y; window.__ss.tick(0.05); const o = window.__ss.offerNow(); o && o.verb === "HIDE" && o.f(); })();
     else if (ev.active() && n.ch1Evening.step === "wall") ((n.sq.x = ev.place.HALLWAY.left.x), (n.sq.y = ev.place.HALLWAY.left.y));
   }
   return { order, jumps, room: n.room, sq: { x: Math.round(n.sq.x), y: Math.round(n.sq.y) } };
 });
-const story = joins.order.filter((s) => /^(bay:(walkby|after|done|hall\/evening waits|hallout\/evening waits)|evening:(walkin|wall|tostorm|storm|hide))$/.test(s));
-const want = ["bay:walkby", "bay:after", "evening:walkin", "evening:wall", "bay:hall/evening waits", "bay:hallout/evening waits", "evening:tostorm", "evening:storm", "evening:hide"];
+const story = joins.order.filter((s) => /^(bay:(walkby|after|done|hall\/evening waits|hallout\/evening waits)|evening:(walkin|wall|tostorm|storm|window|greet))$/.test(s));
+const want = ["bay:walkby", "bay:after", "evening:walkin", "evening:wall", "bay:hall/evening waits", "evening:tostorm", "evening:storm", "evening:window", "evening:greet"];
 const inOrder = want.every((s, i) => story.indexOf(s) >= 0 && (i === 0 || story.indexOf(s) > story.indexOf(want[i - 1])));
-g.check("36 (the hairball) -> 37 (the photo wall) -> 36b (the party hall's robots, who roll out when he reaches the counter) -> 38a (the storm), in that order", inOrder && joins.room === "hall", joins.order);
+g.check("36 (the hairball) -> 37 (the photo wall) -> 36b (the party hall's robots; HIDE · bar) -> 38a (the storm), in that order", inOrder && joins.room === "hall", joins.order);
 g.check("nobody jumps across the room at a hand-over (more than 60 in a frame while the game moves them)", joins.jumps.length === 0, joins.jumps.slice(0, 5));
-g.check("after 36b he is behind the counter's strip for the storm (the evening's spot), not where 36b left him", Math.hypot(joins.sq.x - 852, joins.sq.y - 326) < 70, joins.sq);
+g.check("after 36b he is rolled up in the aisle behind the bar for the storm (round 7: hidden before the announcement)", Math.hypot(joins.sq.x - 893, joins.sq.y - 470) < 150 && joins.sq.x > 862, joins.sq);
 
 // (b) the crayon
 const crayon = await page.evaluate(() => {
@@ -124,7 +124,7 @@ const crayon = await page.evaluate(() => {
   out.escape = look(45);
   return out;
 });
-g.check("his crayon is in the crate bed's stamp on Day 2's morning, gone after he rubs it out (40), and in the escape (45)", crayon.morning.crayon && !crayon.evening.crayon && !crayon.escape.crayon, crayon);
+g.check("no crayon ST in the crate bed's stamp anywhere (round 7, question 121): Day 2's morning, the evening (40), the escape (45)", !crayon.morning.crayon && !crayon.evening.crayon && !crayon.escape.crayon, crayon);
 // night one in the loading bay (the evening draws it): the walls are the bay's, not the party hall's counter
 const nightBay = await page.evaluate(() => {
   const ss = window.__ss,

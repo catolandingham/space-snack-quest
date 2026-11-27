@@ -4,21 +4,21 @@
 | Lines | Heading |
 | --- | --- |
 | 23–35 | # Space Snack Quest |
-| 36–174 | ## Chapter 1 redesign (on main) |
-| 175–189 | ## Music credits |
-| 190–220 | ## Source and build |
-| 221–231 | ## Debug link |
-| 232–237 | ## Automatic checks |
-| 238–241 | ## Screen fit |
-| 242–265 | ## Brian's repeat complaints, as tests (2026-11-22) |
-| 266–271 | ## Scene 1 morning |
-| 272–275 | ## Chapter 1 kid robot |
-| 276–292 | ## Phase 1: kitchen and diner clarity |
-| 293–305 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
-| 306–319 | ## Phase 3: one capture rule, phone HUD, tap to walk |
-| 320–329 | ## Chapter 1 pass: the night out has a purpose, switches say why |
-| 330–347 | ## Progression tests |
-| 348–374 | ## Left as they were |
+| 36–176 | ## Chapter 1 redesign (on main) |
+| 177–191 | ## Music credits |
+| 192–222 | ## Source and build |
+| 223–233 | ## Debug link |
+| 234–239 | ## Automatic checks |
+| 240–243 | ## Screen fit |
+| 244–267 | ## Brian's repeat complaints, as tests (2026-11-22) |
+| 268–273 | ## Scene 1 morning |
+| 274–277 | ## Chapter 1 kid robot |
+| 278–294 | ## Phase 1: kitchen and diner clarity |
+| 295–307 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
+| 308–321 | ## Phase 3: one capture rule, phone HUD, tap to walk |
+| 322–331 | ## Chapter 1 pass: the night out has a purpose, switches say why |
+| 332–349 | ## Progression tests |
+| 350–376 | ## Left as they were |
 <!-- /section-index -->
 # Space Snack Quest
 
@@ -34,6 +34,8 @@ Calendar review status (2026-11-16): Brian said yes to merge the calendar (Nov 1
 **Next up (Brian, 2026-11-16):** Chapter 1, one beat at a time in [`docs/CH1-STORY-WALKTHROUGH.md`](docs/CH1-STORY-WALKTHROUGH.md). Do not leave beat 1 until Brian says it is right. Squatch walks around the bed and the bucket, and the Guardian box is in the closet on day 1 (locked home room v5; Brian's yes, Nov 16, 12:50 PM PT). On day 2 he takes the box out at the closet (`tests/bedroom-walk.mjs`). The calendar is tappable. Printed copy: MOONMUNCH / FUZZUARY; Sponsored by MOON PIES; Sock hunt; family Olympics night; Wash outside windows (remember space suit!); Blanket fort night. These are decoration, not new quests. X or NEXT returns to the same scene (`tests/calendar-closeup.mjs`). Closet, bed, desk homework and the already-bitten calendar are built on branch `feat/home-alone` (draft, see below); the purple bed bar is removed there too; still to build: the bucket. The night vent step no longer finishes inside Mops: the morning hum was leaving him marked as walking. Docs match main: yes.
 
 ## Chapter 1 redesign (on main)
+
+2026-11-27 (round 7, the evening), draft pull request on branch `feat/ch1-r7-evening` (from `feat/ch1-pickup-day`), not merged. Built from Brian's 83 video notes and his answers of 2026-11-27 (questions 119 to 129, `docs/DECISIONS.md`). Beats 36b to 39: they hide behind the bar as they walk in (HIDE · bar), the player is Mops while the family is at the bar (GREET · kid, TALK · family), the family says Wookiees, Dad hands Mops a brochure for the stand and Mops passes it down; PEEK, DUCK, the coffee guest and the five-tap brochure are gone. 39b and 40: HOLD UP · brochure is one close-up, no crayon ST anywhere, the chart is a picture only, and the fight ends on Squatch's line, then "Bed." Everywhere: Mops's hearts show once when he first sees Squatch in a scene (`src/modules/mops-hearts.js`), and he sleeps tipped over on his side with his head on his bucket (`src/modules/mops-asleep-art.js`). No line in any chapter says "pancake": it is the Mars Cakes stand. Every new line is pending. Not yet played by a person.
 
 2026-11-27 (Chapter 1 whole), the same draft pull request #96 on `feat/ch1-pickup-day`, now based on `feat/ch1-day2-joined` (#97), not merged. The joined Day 2 (beats 28 to 52) and the newest lunch sneak (299e287: Mops cleans the hall, truth or fib, the bedtime additions, the chart over his bed) are merged in, so Chapter 1 runs on one branch from the first screen to the tally card. Pickup day uses the joined branch's one copy of each shared piece: the snack's names (`snack-name.js`), the crate tags (`loading-bay-lines.js` crate-empty, `escape-lines.js` blank-tag), his crate's family stamp (`crate-stamp.js`, no crayon after 39b; `pickup.js` says `crayonGone`), the renamed helpers (`drawPinnedBrochure`, `drawGulpSweat`, `evening-art.js drawPawPrint`). Pickup day's bay is the plant-moved locked picture (pickup v4, no-ship v3), and TAKE · chart takes down the one chart over his bed (`cake-chart.js`). 36b: Squatch comes into the party hall a step in from the doorway with Mops a step behind (they stood on top of each other). The kid robot (`tests/ch1-kid-play.mjs`) gets through the lunch sneak (it hid over and over instead of walking for the doorway), rolls up when the escape's night robot has seen him (beat 47: caught 0 times, was 39), writes the Guardian note, counts a step or room that moved on as arriving, presses TAKE · label with the booking close-up still open, plays Mops without keeping out of cones, and rolls up at pickup day's climb-out until crate two has gone. It still does not reach the tally card by itself: after the climb-out (beat 55) it finds no way to the plant it trusts (open, below). The showing tools play beat 50 through the tally card (`tools/escape-showing.mjs` now stops at the hand-over; `tools/pickup-showing.mjs` walks to the moved plant). No words changed; no difficulty changed. Docs match main: yes.
 

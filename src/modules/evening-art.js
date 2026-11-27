@@ -7,12 +7,10 @@
  *     are not in the repo yet, so these are stand-ins
  *   Squatch's crayon drawing behind the crooked photo #4: him and Mops, TIED TOGETHER FOREVER, two tags ME and MOPS
  *     each with an arrow (decided 2026-11-26), and a dotted look from Mops to him with hearts (R63)
- *   the pancake brochure: a big furry Sasquatch couple behind a pancake counter, Mars in the window behind them (no
- *     words: what it says is still Brian's to pick)
- *   the family's wordless picture bubble (pancakes, Mars)
+ *   the brochure for the family's cake stand on Mars: the stand, Mars behind it, a cake box and a cut-open cake (nobody on it)
  *   the order papers: the big pink sheet with ORDER MORE ROBOTS and its box, the office code, and the small yellow
  *     carbon copy stuck under it; Squatch's paw print
- *   his furry arm and paw in the close-ups; Mops asleep on his back with his four feet in the air
+ *   his furry arm and paw in the close-ups
  */
 import { ganitorWords } from "./ganitor.js";
 import { eveningWords } from "./evening-lines.js";
@@ -373,77 +371,8 @@ export function drawHeartShape(ctx, x, y, r, color = "#e5533d") {
   ctx.fill();
 }
 
-// ---------- the pancake brochure ----------
+// ---------- the stand's brochure ----------
 // One grown-up Sasquatch behind the counter (bigger than Squatch, a different fur: not him; Brian P 33:05 to 33:58).
-function bigSasquatch(ctx, x, y, s, fur, dark, hat) {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.scale(s, s);
-  // shoulders and arms
-  ctx.beginPath();
-  ctx.ellipse(0, 40, 46, 40, 0, 0, TAU);
-  ctx.fillStyle = fur;
-  ctx.fill();
-  ctx.lineWidth = 3;
-  ctx.strokeStyle = INK;
-  ctx.stroke();
-  // fur tufts round the head
-  for (let i = 0; i < 10; i++) evDisc(ctx, Math.cos((i / 10) * TAU) * 30, -6 + Math.sin((i / 10) * TAU) * 30, 9, fur, null);
-  evDisc(ctx, -30, -24, 9, fur, INK, 3);
-  evDisc(ctx, 30, -24, 9, fur, INK, 3);
-  evDisc(ctx, 0, -6, 30, fur, INK, 3);
-  // a lighter face, two kind eyes, a big smile
-  ctx.beginPath();
-  ctx.ellipse(0, 0, 20, 18, 0, 0, TAU);
-  ctx.fillStyle = "#c79a72";
-  ctx.fill();
-  evDisc(ctx, -8, -4, 3.6, INK);
-  evDisc(ctx, 8, -4, 3.6, INK);
-  evDisc(ctx, -6.8, -5.2, 1.1, "#ffffff");
-  evDisc(ctx, 9.2, -5.2, 1.1, "#ffffff");
-  ctx.beginPath();
-  ctx.arc(0, 4, 9, 0.15, Math.PI - 0.15);
-  ctx.lineWidth = 3;
-  ctx.strokeStyle = INK;
-  ctx.stroke();
-  if (hat === "chef") {
-    rrect(ctx, -18, -50, 36, 16, 4, "#ffffff", INK, 2.5);
-    evDisc(ctx, -10, -56, 10, "#ffffff", INK, 2.5);
-    evDisc(ctx, 10, -56, 10, "#ffffff", INK, 2.5);
-    evDisc(ctx, 0, -62, 11, "#ffffff", INK, 2.5);
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(-16, -52, 32, 8);
-  } else if (hat === "flower") {
-    for (let i = 0; i < 5; i++) evDisc(ctx, 24 + Math.cos((i / 5) * TAU) * 7, -32 + Math.sin((i / 5) * TAU) * 7, 5, "#ff5fa8", INK, 1.5);
-    evDisc(ctx, 24, -32, 4, "#ffcf33");
-  }
-  // a waving paw
-  evDisc(ctx, hat === "chef" ? -44 : 44, 6, 11, dark, INK, 3);
-  ctx.restore();
-}
-function pancakes(ctx, x, y, s) {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.scale(s, s);
-  rrect(ctx, -30, 4, 60, 8, 4, "#e8eef5", INK, 2);
-  for (let i = 0; i < 4; i++) {
-    ctx.beginPath();
-    ctx.ellipse(0, -i * 9, 24, 7, 0, 0, TAU);
-    ctx.fillStyle = "#e0a050";
-    ctx.fill();
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = "#8a5a2b";
-    ctx.stroke();
-  }
-  rrect(ctx, -6, -40, 12, 7, 2, "#ffe066", INK, 1.5);
-  ctx.beginPath();
-  ctx.moveTo(-20, -30);
-  ctx.quadraticCurveTo(-24, -14, -18, -4);
-  ctx.lineWidth = 4;
-  ctx.strokeStyle = "rgba(150,70,20,.8)";
-  ctx.stroke();
-  ctx.restore();
-}
 /** Mars: a red planet with craters. */
 export function drawMars(ctx, x, y, r) {
   evDisc(ctx, x, y, r, "#d9583b", INK, Math.max(1.5, r * 0.08));
@@ -452,62 +381,51 @@ export function drawMars(ctx, x, y, r) {
   evDisc(ctx, x + r * 0.05, y + r * 0.45, r * 0.09, "#b8432c");
 }
 /**
- * The brochure's front inside (x, y, w, h): a big furry Sasquatch couple smiling behind a pancake counter, a stack of
- * pancakes, Mars in the round window behind them, and (evening-pictures.js) one cake box stamped with his family's name, a
- * cut-open cake with a red middle (`fizz`: its sparks) and a round paw print. No other words (decided 2026-11-26).
- * `small` leaves out the fine parts (the brochure in a paw or on the counter).
+ * The brochure's front inside (x, y, w, h), a brochure for the stand (Brian, 2026-11-27, r5 6:08: "just more of a
+ * brochure for the stand", nobody on it): the stand with its striped awning, Mars big in the sky behind it, on its
+ * counter one cake box stamped with his family's name (snack-name.js FAMILY) in fat red letters, and one cake cut
+ * open, red inside (`fizz` 0 to 1: its sparks). No cooks, no paw print, no other words. PLACEHOLDER drawing for
+ * Brian's yes. `small` leaves out the fine parts (the brochure in a paw or held up in the room).
  */
 export function drawBrochure(ctx, x, y, w, h, small = false, fizz = 0, t = 0) {
+  const lw = Math.max(1.5, w * 0.012);
   ctx.save();
-  rrect(ctx, x, y, w, h, Math.max(2, w * 0.03), "#fffaf0", INK, Math.max(1.5, w * 0.012));
+  rrect(ctx, x, y, w, h, Math.max(2, w * 0.03), "#fffaf0", INK, lw);
   ctx.beginPath();
   ctx.rect(x + w * 0.04, y + w * 0.04, w * 0.92, h - w * 0.08);
   ctx.clip();
-  // the night sky with Mars in a round window
-  const sh = h * 0.5;
-  sky(ctx, x, y, w, sh + h * 0.1, "#1b2350", "#4b3a7a");
-  !small && stars(ctx, x, y, w, sh, 12);
-  drawMars(ctx, x + w * 0.5, y + h * 0.2, w * 0.14);
-  // the two grown-ups behind the counter
-  const s = w / 300;
-  bigSasquatch(ctx, x + w * 0.3, y + h * 0.5, s * 1.25, "#7a4a2a", "#5a3418", "chef");
-  bigSasquatch(ctx, x + w * 0.7, y + h * 0.5, s * 1.2, "#9a5a32", "#6e3d1e", "flower");
-  // the counter
-  rrect(ctx, x - 4, y + h * 0.7, w + 8, h * 0.32, 2, "#b0784a", INK, Math.max(1.5, w * 0.012));
-  ctx.fillStyle = "#c98c58";
-  ctx.fillRect(x, y + h * 0.7, w, h * 0.04);
-  pancakes(ctx, x + w * 0.5, y + h * 0.72, s * 1.4);
-  // the cake box stamped with his family's name, the cut-open cake, the round paw print (story pass beat 39)
-  !small && drawBrochureExtras(ctx, x, y, w, h, fizz, t);
-  ctx.restore();
-  // the fold
-  if (!small) {
-    ctx.save();
-    ctx.setLineDash([6, 6]);
+  // the night sky, and Mars big behind the stand
+  sky(ctx, x, y, w, h * 0.62, "#1b2350", "#4b3a7a");
+  !small && stars(ctx, x, y, w, h * 0.3, 12);
+  drawMars(ctx, x + w * 0.68, y + h * 0.2, w * 0.26);
+  // the red ground
+  ctx.fillStyle = "#c86a48";
+  ctx.fillRect(x, y + h * 0.6, w, h * 0.4);
+  // the stand: two posts, a striped awning, a counter
+  const sx = x + w * 0.12,
+    sw = w * 0.76,
+    top = y + h * 0.36,
+    ct = y + h * 0.62;
+  for (const px of [sx + sw * 0.04, sx + sw * 0.96 - w * 0.03]) rrect(ctx, px, top, w * 0.03, h * 0.5, 1, "#8b5a2b", INK, lw);
+  const n = small ? 4 : 6;
+  for (let i = 0; i < n; i++) {
     ctx.beginPath();
-    ctx.moveTo(x + w * 0.66, y + 4);
-    ctx.lineTo(x + w * 0.66, y + h * 0.12);
-    ctx.lineWidth = 1.5;
-    ctx.strokeStyle = "rgba(30,36,48,.35)";
+    ctx.moveTo(sx + (sw * i) / n, top);
+    ctx.lineTo(sx + (sw * (i + 1)) / n, top);
+    ctx.lineTo(sx + (sw * (i + 1)) / n, top + h * 0.09);
+    ctx.quadraticCurveTo(sx + (sw * (i + 0.5)) / n, top + h * 0.13, sx + (sw * i) / n, top + h * 0.09);
+    ctx.closePath();
+    ctx.fillStyle = i % 2 ? "#fffaf0" : "#e0303a";
+    ctx.fill();
+    ctx.lineWidth = lw;
+    ctx.strokeStyle = INK;
     ctx.stroke();
-    ctx.restore();
   }
-}
-/** The family's wordless bubble over the speaker: pancakes and Mars (nobody says where; Call 16 cut the words). */
-export function drawPictureBubble(ctx, x, y, a = 1) {
-  ctx.save();
-  ctx.globalAlpha = a;
-  rrect(ctx, x - 62, y - 50, 124, 74, 22, "#ffffff", INK, 3);
-  ctx.beginPath();
-  ctx.moveTo(x - 10, y + 24);
-  ctx.lineTo(x, y + 40);
-  ctx.lineTo(x + 12, y + 24);
-  ctx.closePath();
-  ctx.fillStyle = "#ffffff";
-  ctx.fill();
-  ctx.stroke();
-  pancakes(ctx, x - 26, y - 2, 0.75);
-  drawMars(ctx, x + 30, y - 12, 18);
+  rrect(ctx, sx - w * 0.04, ct, sw + w * 0.08, h * 0.3, 2, "#b0784a", INK, lw);
+  ctx.fillStyle = "#c98c58";
+  ctx.fillRect(sx - w * 0.04 + lw, ct + lw, sw + w * 0.08 - lw * 2, h * 0.035);
+  // on the counter: the cake box stamped with his family's name, and the cake cut open, red and fizzing
+  drawBrochureExtras(ctx, x, y, w, h, small ? 0 : fizz, t, small);
   ctx.restore();
 }
 
@@ -623,43 +541,6 @@ export function drawFurArm(ctx, bx, by, x, y, r) {
   for (const [dx, dy] of [[-0.55, -0.7], [0, -0.9], [0.55, -0.7]]) evDisc(ctx, x + dx * r, y + dy * r, r * 0.32, FUR, INK, 2.5);
   evDisc(ctx, x, y + r * 0.1, r * 0.4, FUR_DARK);
   ctx.restore();
-}
-
-// ---------- Mops asleep ----------
-/** Where Mops's head is in his own units (his drawing faces right, feet at 0, 0; the face buttons' framing). */
-export const MOPS_HEAD = Object.freeze({ x: 17, y: -29 });
-/** The middle of his body in his own units: he turns round it as he tips over, so his back comes to rest on the floor. */
-export const MOPS_MIDDLE = Object.freeze({ x: 0, y: -20 });
-/**
- * Mops falling asleep the fainting-goat way (Brian, 2026-11-26): standing with his eyes shut, then stiff and tipped
- * over (`tip` 0 to 1, a quarter turn: his legs stick out stiff), then over onto his back with his four feet in the air
- * (`roll` 0 to 1). He faces left (toward the bed) as he stands, so on his back his head lies to the right, resting
- * against his mop bucket (Brian, [42 0:00]: "maybe [Mops] rests his head on the bucket"); his back is on the floor
- * (his feet's line `y`), with a shadow under him. `x` is where his feet stand. `mops` is the engine's Mops drawing.
- * PLACEHOLDER pose: his own drawing turned, no new art. Returns his drawn box (game positions), lying, for tests.
- */
-export function drawSleepingMops(ctx, mops, x, y, scale, tip, roll, t = 0) {
-  const a = -(Math.PI / 2) * (tip + roll),
-    lie = Math.min(1, tip + roll),
-    c = { x: x + MOPS_MIDDLE.x * scale, y: y + MOPS_MIDDLE.y * scale };
-  // the shadow on the floor under him, wider as he comes down, breathing slowly once he lies there
-  ctx.save();
-  ctx.globalAlpha = 0.22 + 0.1 * lie;
-  ctx.beginPath();
-  ctx.ellipse(x + 2 * scale * lie, y + 3, (14 + 12 * lie) * scale + (lie > 0.9 ? Math.sin(t * 2) * 2 : 0), 3.2 * scale, 0, 0, TAU);
-  ctx.fillStyle = INK;
-  ctx.fill();
-  ctx.restore();
-  ctx.save();
-  ctx.translate(c.x, c.y);
-  ctx.rotate(a);
-  ctx.translate(-c.x, -c.y);
-  mops(ctx, x, y, scale, { f: -1, walk: 0, eyes: "closed" });
-  ctx.restore();
-  // his head, turned with him (the left-facing drawing has it at -MOPS_HEAD.x)
-  const hx = -MOPS_HEAD.x * scale + x - c.x,
-    hy = MOPS_HEAD.y * scale + y - c.y;
-  return { head: { x: c.x + hx * Math.cos(a) - hy * Math.sin(a), y: c.y + hx * Math.sin(a) + hy * Math.cos(a) } };
 }
 
 // ---------- the plaque under each photo ----------

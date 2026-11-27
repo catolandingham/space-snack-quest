@@ -354,6 +354,12 @@ const LAYERS = {
 /** The locked pictures that get a layer for the snack's name: the two home pictures (the crate bed) and the hall (the tin). */
 export const SNACK_LAYER_PICTURES = Object.freeze(Object.keys(LAYERS));
 
+/**
+ * His old crayon "ST" in the stamp's scraped gap: off everywhere in the chapter (Brian, 2026-11-27, video note r5 7:00:
+ * "I don't like the hand-drawn ST. It should just be faded"; question 121, the pick A, a placeholder until he answers).
+ * q: 121. To bring the crayon layer back, set this to true.
+ */
+export const STAMP_CRAYON = false;
 const layered = new Map();
 // Whether his crayon is still in the stamp's gap (he rubs it out in the evening of Day 2, 39b): asked of the rebuilt
 // beats through the bridge (setCrayonSource), true until one says it is gone.
@@ -376,7 +382,7 @@ let handedHall = 0,
 export function withSnackLayers(id, img, by = "") {
   const layer = LAYERS[id];
   if (!layer || !ready(img) || img.snackLayer) return img;
-  const crayon = !!crayonNow(),
+  const crayon = STAMP_CRAYON && !!crayonNow(),
     key = id + "|" + img.src + "|" + crayon;
   if (!layered.has(key)) {
     if (typeof document === "undefined") return img;

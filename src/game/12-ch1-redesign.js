@@ -506,7 +506,7 @@
           ch1Step("mo", 620, 500, 180),
           v("ups", "We could wipe the floor with that beard."),
           v("ups", "HQ sent us a message. You're going to be replaced this week anyway."),
-          v("mops", "The new robots come on the ship tomorrow. Let's go find the pancake stand."),
+          v("mops", "The new robots come on the ship tomorrow. Let's go find the " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("family") : "Cakes") + " stand."),
           v("sq", "Oh, it was on the form I sent, I mean, never mind."),
           v("sq", "A copy got sucked into the vent.", "whisper"),
           N(() => {

@@ -57,6 +57,7 @@ import { OFFICE_CODE } from "./office-code.js";
 import { findPath } from "./tap-path.js";
 import { drawRobot, robotHand, drawFormSet, drawStuck, drawBiteCrumbs, drawFormCloseUp, closeUpBox, drawCloseUpBack, drawCloseUpFront, drawWave, drawDashedOutline, drawBayCrate, drawCargo, drawTag, drawTaggedBox, drawTagCloseUp, drawDoorShadow, drawTool, drawFuzzyHat, drawScannerStop, drawLetter, drawSlotLight, drawSweat, drawOfficeOpen, drawStreak } from "./loading-bay-art.js";
 import { drawSpeakerRing, drawHeartCone } from "./party-free-art.js";
+import { firstSightHeartsUp } from "./mops-hearts.js";
 import { HALL, HALL_PICTURE, HALL_SPEAKER } from "./party-hall.js";
 import { COUNTER_SPOTS, LUNCH_SOLIDS, LUNCH_BOUNDS, LUNCH_PLACES } from "./lunch-sneak-place.js";
 import { coneFrom, drawCones, distToCone, SQUATCH_OUTLINE, SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
@@ -844,6 +845,7 @@ export function createLoadingBay(bridge) {
     b.qs = {};
     b.hidden = false;
     b.ball = false;
+    b.warmRoom = ""; // (a new scene: his first-sight hearts again, mops-hearts.js)
     b.hall = {
       robots: HALL_SNEAK.lanes.map((L, i) => ({ id: "cleaner" + i, x: L.x0 + (L.x1 - L.x0) * L.at, y: L.y, dir: L.dir, lane: i, f: L.dir, stop: 0, streak: [] })),
       blockedSaid: false,
@@ -857,8 +859,23 @@ export function createLoadingBay(bridge) {
     e.place("mops", HALL_SNEAK.mopsIn.x, HALL_SNEAK.mopsIn.y);
     e.face("sq", -1);
     e.face("mops", -1);
-    control("hall");
+    // round 7 (Brian r5 4:49; q: 119): Mops says where to hide as they walk in, and HIDE · bar is the goal
+    const ev = bridge.beat("ch1-evening"),
+      line = ev && ev.barLine && ev.barLine();
+    if (!line) return control("hall");
+    go("hall");
+    busy();
+    e.queue([e.say("mops", line), e.run(() => (control("hall"), e.set("ch1Chip", ev.barChip()), e.chipNow()))]);
   }
+  /** HIDE · bar (the evening's words and place, evening.js barSpot): the evening takes over, with the robots where they are. */
+  function hideBehindBar() {
+    const b = B(),
+      ev = bridge.beat("ch1-evening");
+    busy();
+    go("done");
+    ev.startStorm({ robots: b.hall.robots.map((r) => ({ id: r.id, x: r.x, y: r.y, f: r.f, dir: r.dir, lane: r.lane, streak: r.streak.slice() })), said: !!b.hall.blockedSaid });
+  }
+  // (without the evening module: he crosses to the counter's front, and the robots roll out)
   function hallDone() {
     const b = B();
     busy();
@@ -1144,10 +1161,15 @@ export function createLoadingBay(bridge) {
     }
     if (h.shookAt && h.t - h.shookAt < 0.9) e.face("mops", Math.floor((h.t - h.shookAt) / 0.15) % 2 ? 1 : -1);
     // the snack counter's front: the storm (38a) begins
-    if (free && !b.alarm && Math.hypot(s.x - HALL_SNEAK.goal.x, s.y - HALL_SNEAK.goal.y) < HALL_SNEAK.goal.r) hallDone();
+    if (!barSpot() && free && !b.alarm && Math.hypot(s.x - HALL_SNEAK.goal.x, s.y - HALL_SNEAK.goal.y) < HALL_SNEAK.goal.r) hallDone();
   }
 
   // ---------- spots ----------
+  // 36b's goal when the evening is there: HIDE · bar (evening.js barSpot), else null (the counter's front, walked to)
+  const barSpot = () => {
+    const ev = bridge.beat("ch1-evening");
+    return ev && ev.barSpot ? ev.barSpot() : null;
+  };
   function spots() {
     const b = live(),
       e = E();
@@ -1179,7 +1201,8 @@ export function createLoadingBay(bridge) {
     if (b.step === "walkby" && room() === "passage" && b.office === 0) return [walkTo("bay-walk", HALLWAY.trigger - 40, HALLWAY.right.y + 30, 24)];
     if (b.step === "walkby" && room() === "passage" && b.rollBy < 0 && !robot(0).show) return [walkTo("bay-walk", HALLWAY.exitLeft - 12, HALLWAY.left.y + 10, 24)];
     if (b.step === "hall" && room() === "hall") {
-      const out = [walkTo("bay-counter", HALL_SNEAK.goal.x, HALL_SNEAK.goal.y, 24)];
+      const H = barSpot();
+      const out = [H ? { id: "bay-hide-bar", verb: H.verb, cap: H.cap, who: "sq", x: H.x, y: H.y, r: H.r, thing: H.thing, at: [(H.thing.x0 + H.thing.x1) / 2, H.thing.y0], f: hideBehindBar } : walkTo("bay-counter", HALL_SNEAK.goal.x, HALL_SNEAK.goal.y, 24)];
       !b.ball && out.push({ ...spot("bay-ball", "button-ball", "sq", s.x, s.y, 40, () => ((B().ball = true), E().set("sqPose", "ball"), E().sfx("hide"))), hot: true, at: [s.x, s.y - 80] });
       return out;
     }
@@ -1195,7 +1218,7 @@ export function createLoadingBay(bridge) {
     if (b.step === "spit") return BAY.bin.box;
     if (b.step === "box" && b.box === "ramp") return { x0: BAY_SPOTS.box.x - 16, x1: BAY_SPOTS.box.x + 16, y0: BAY_SPOTS.box.y - 22, y1: BAY_SPOTS.box.y + 4 };
     if (b.step === "home" && room() === "hangar") return { x0: 20, x1: 48, y0: 266, y1: 354 };
-    if (b.step === "hall" && room() === "hall") return HALL_SNEAK.goalBox;
+    if (b.step === "hall" && room() === "hall") return barSpot() ? barSpot().thing : HALL_SNEAK.goalBox;
     return null;
   }
 
@@ -1386,7 +1409,9 @@ export function createLoadingBay(bridge) {
       warm = mops && mopsSees(b);
     const cones = [...watcherCones(b), ...(b.alarm ? guardCones(b.alarm, { half: CONE.half, len: CONE.len }) : [])];
     const out = drawCones(ctx, [...cones, ...(mops && !warm ? [mops] : [])], s, !sqStanding(b), false, again ? null : (c) => e.noteCone(c));
-    warm && (drawHeartCone(ctx, mops.ox, mops.oy, mops.a, mops.half, mops.len, t, 1), out.push({ ...mops, inside: false, show: 1, hearts: true }));
+    // (his hearts only the first time his cone holds Squatch in this room: mops-hearts.js, question 126)
+    warm && b.warmRoom !== room() && ((b.warmRoom = room()), (b.warmAt = t));
+    warm && (drawHeartCone(ctx, mops.ox, mops.oy, mops.a, mops.half, mops.len, t, 1, t - b.warmAt), out.push({ ...mops, inside: false, show: 1, hearts: true, heartsUp: firstSightHeartsUp(t - b.warmAt) }));
     return out;
   }
   // the "?" filling over whoever is looking at him, and "!" over the one who saw him
@@ -1566,6 +1591,8 @@ export function createLoadingBay(bridge) {
       // (the lines after the hairball play in the hallway: ↺ there is the walk home through it again)
       if (b.step === "after") return (jump("walkby"), true);
       if (BAY_PARTS.includes(b.step)) return (jump(b.step), true);
+      // (36b before control: ↺ during Mops's "Behind the bar. Quick." starts 36b again)
+      if (b.step === "hall" && !E().get("ctrl")) return (startHallSneak(), true);
       return false;
     },
     jump,
@@ -1595,7 +1622,7 @@ export function createLoadingBay(bridge) {
       const t = e.time();
       if (room() === "hall" && (b.step === "hall" || b.step === "hallout")) {
         const cones = drawHallSneak(ctx, b);
-        drew = { step: b.step, room: "hall", cones: cones.map((c) => ({ id: c.id, inside: c.inside, show: c.show })), robots: b.hall.robots.map((r) => ({ x: r.x, y: r.y, f: r.f })) };
+        drew = { step: b.step, room: "hall", outline: highlightNow(b), cones: cones.map((c) => ({ id: c.id, inside: c.inside, show: c.show })), robots: b.hall.robots.map((r) => ({ x: r.x, y: r.y, f: r.f })) };
         return true;
       }
       if (room() !== "hangar") return false;
@@ -1603,7 +1630,7 @@ export function createLoadingBay(bridge) {
       const hl = highlightNow(b);
       hl && drawDashedOutline(ctx, hl, t);
       const closeUp = drawCloseUp(ctx, b, t);
-      drew = { step: b.step, room: "hangar", shimmer: !!b.shimmer, outline: hl, cones: cones.map((c) => ({ id: c.id, inside: c.inside, show: c.show, hearts: !!c.hearts })), closeUp, papers: b.papers.where, box: b.box, formStage: b.formStage };
+      drew = { step: b.step, room: "hangar", shimmer: !!b.shimmer, outline: hl, cones: cones.map((c) => ({ id: c.id, inside: c.inside, show: c.show, hearts: !!c.hearts, heartsUp: !!c.heartsUp })), closeUp, papers: b.papers.where, box: b.box, formStage: b.formStage };
       return true;
     },
     draw: drawOver,

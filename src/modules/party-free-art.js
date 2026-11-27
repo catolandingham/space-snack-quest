@@ -7,6 +7,8 @@ import { rr, oval, line, INK, drawPiece, drawNote, drawFlyer, drawTuft } from ".
 
 const TAU = Math.PI * 2;
 
+import { firstSightHearts } from "./mops-hearts.js";
+
 export function heart(ctx, x, y, s, fill) {
   ctx.beginPath();
   ctx.moveTo(x, y + s * 0.35);
@@ -35,8 +37,12 @@ export function drawMopsHearts(ctx, x, y, s, k) {
   }
 }
 // ---------- Mops's heart cone (V13) ----------
-/** Mops's warm cone, as big as everyone's, with hearts floating up in it (PR #35's look, R98 and R104). */
-export function drawHeartCone(ctx, ox, oy, a, half, len, t, k = 1) {
+/**
+ * Mops's warm cone, as big as everyone's (PR #35's look, R98 and R104). Its hearts float up only the first time he
+ * sees Squatch in a scene: two or three, once, then the cone stays warm and empty (Brian 2026-11-27, "come on with the
+ * hearts"; mops-hearts.js, question 126). `age`: seconds since he first saw him in this scene.
+ */
+export function drawHeartCone(ctx, ox, oy, a, half, len, t, k = 1, age = -1) {
   ctx.save();
   ctx.globalAlpha = k;
   ctx.beginPath();
@@ -48,11 +54,11 @@ export function drawHeartCone(ctx, ox, oy, a, half, len, t, k = 1) {
   ctx.lineWidth = 2.5;
   ctx.strokeStyle = "rgba(214,70,120,.8)";
   ctx.stroke();
-  for (let i = 0; i < 5; i++) {
-    const kk = (t * 0.4 + i / 5) % 1,
-      d = 30 + kk * (len - 40),
-      off = Math.sin(i * 2.1 + t) * half * 0.6;
-    heart(ctx, ox + Math.cos(a + off) * d, oy + Math.sin(a + off) * d - kk * 10, 7 + 3 * Math.sin(kk * Math.PI), "#ff6fa0");
+  for (const h of firstSightHearts(age)) {
+    const d = 30 + h.rise * (len - 40),
+      off = (h.i - 1) * half * 0.5;
+    ctx.globalAlpha = k * h.alpha;
+    heart(ctx, ox + Math.cos(a + off) * d, oy + Math.sin(a + off) * d - h.rise * 10, 7 + 3 * Math.sin(h.rise * Math.PI), "#ff6fa0");
   }
   ctx.restore();
 }

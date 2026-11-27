@@ -7,7 +7,7 @@
  *     the robot from the hall's end: rolled up it passes (BEEP BEEP), standing it sees him (the capture rule);
  *   - 38a: Jupiter's storm, the PA, "Guests! Quick, hide.", the guests seeing a kid who stays out, HIDE · counter, PEEK
  *     · window, the family's Mars talk, DUCK · down; still up, their cones find his eyes;
- *   - 38b and 39: the pancake talk, the close-up, the brochure in the bin, its five taps and the lines after;
+ *   - 38b and 39: as Mops, GREET · kid and TALK · family; the brochure handed to Mops (its close-up) and passed down;
  *   - 39b: OPEN · box, BITE · cake, "No fizz.", the chart's X, the crate's letters, "MARS!";
  *   - 40 and 41: the fight, STOMP · to bed, the turned back, lights out with no song, Mops asleep, the idea;
  *   - 42: the bucket bump, the night rooms, GRAB · copies, PUT BACK · bin and GO BACK, MARK · box, the loud post, the
@@ -36,7 +36,8 @@ g.check("the missing snack line is cut (story pass, thread 24)", !EVENING_LINES.
 const long = SPOKEN.filter((l) => splitLine(l.text).length > 1);
 g.check("no bubble needs splitting (line-split.js): every line is short enough for one bubble", long.length === 0, long.map((l) => l.text));
 const said = (ids) => ids.map((id) => EVENING_LINES.find((l) => l.id === id).text).join(" ");
-g.check("Brian's Nov 8 lines read word for word across their bubbles", said(["sq-look-like", "sq-not-hidden", "sq-like-me"]) === "They look just like the Guardians. But they're not hidden. Just like me." && said(["dad-wookiees", "dad-sasquatches"]) === "I thought it was a pancake stand run by Wookiees. But I talked to them, and they said they were Sasquatches." && said(["sq-floors", "sq-robots-do"]) === "The floors don't mop themselves... But those robots do.");
+g.check("Brian's lines read word for word: the Nov 8 whisper across its bubbles, and his Nov 27 words at the bar", said(["sq-floors", "sq-robots-do"]) === "The floors don't mop themselves... But those robots do." && said(["mom-only-goat"]) === "The only goat janitor in the whole galaxy." && said(["dad-brochure"]) === "In fact, I've got a brochure here.");
+g.check("round 7: every new or changed line of the brochure scene is still pending (Brian approves as he watches)", EVENING_LINES.filter((l) => /review 2026-11-27/.test(l.source)).length >= 20 && EVENING_LINES.filter((l) => /review 2026-11-27/.test(l.source)).every((l) => l.status === "pending"));
 g.check("the office code on the pink sheet is Brian's 169556", EVENING_LINES.find((l) => l.id === "sign-code").text === "169556");
 
 // ---------- the night robot's rhythm, from the numbers (no browser) ----------
@@ -192,89 +193,104 @@ r = await ev(() => {
 g.check("standing in the robot's way: its cone registers him (a \"?\"), then the one capture rule in the hallway (a robot, in the hallway)", r.registering && r.alarm && r.alarm.who === "who-robot" && r.alarm.where === "where-hallway" && r.alarm.place === "hallway", r);
 
 // beat 38a: Jupiter's big red storm
+// 36b to 39, round 7 (Brian's video notes of 2026-11-27, r5 4:49 to 6:08; question 119, the pick A)
 r = await ev(() => {
   const n = window.__ss.op;
+  // (a button of Mops's: offered where he stands)
+  window.__pressMo = (label) => {
+    ss.tick(0.05);
+    const o = ss.offerNow();
+    if (!o || o.verb + " · " + o.cap !== label) return false;
+    o.f();
+    return true;
+  };
+  const ss = window.__ss;
   window.__jump(37);
   n.sq.x = 60;
   n.sq.y = 330;
-  // the hall's doorway starts the party hall's cleaning robots (36b, loading-bay.js); he crosses to the counter's front
+  // the hall's doorway starts the party hall's cleaning robots (36b, loading-bay.js): Mops says where, HIDE · bar
   const bay = window.SSQ.beat("ch1-bay"),
+    said = [],
     sneak = [];
-  window.__run(40, () => window.__st() === "storm", () => {
+  const hear = () => {
     window.__st() && sneak[sneak.length - 1] !== window.__st() && sneak.push(window.__st());
-    bay.active() && n.ctrl && !n.cur && ((n.sq.x = bay.place.HALL_SNEAK.goal.x), (n.sq.y = bay.place.HALL_SNEAK.goal.y));
+    n.cur && n.cur.b && said[said.length - 1] !== n.cur.b.text && said.push(n.cur.b.text);
+    n.cur && n.cur.k === "card" && (window.__card = n.cur.text + " " + (n.cur.by || ""));
+  };
+  window.__run(30, () => bay.active() && n.ctrl && !n.cur && n.room === "hall", hear);
+  ss.drawFrame();
+  const out = { room: n.room, bayStep: (n.ch1Bay || {}).step, chip: n.ch1Chip, first: said.slice(), hide: !!window.__spot("HIDE · bar"), outline: bay.debug().drew && bay.debug().drew.outline, robots: (n.ch1Bay.hall || {}).robots.length, seen: !!n.ch1Bay.alarm };
+  out.pressed = window.__press("HIDE · bar");
+  said.length = 0;
+  let hiddenAtPa = null,
+    cleaners = 0,
+    player = "";
+  window.__run(60, () => window.__st() === "window", () => {
+    hear();
+    cleaners = Math.max(cleaners, (n.ch1Evening.cleaners || []).length);
+    n.cur && n.cur.b && n.cur.b.text === "The Great Red Storm is passing!" && (hiddenAtPa = n.ch1Evening.pose);
   });
-  const out = { room: n.room, step: window.__st(), sneak };
-  const said = [];
-  window.__run(20, () => window.__st() === "hide" && n.ctrl, () => n.cur && n.cur.b && said[said.length - 1] !== n.cur.b.text && said.push(n.cur.b.text));
-  window.__run(1.5);
-  window.__ss.drawFrame();
+  player = ss.ch.mops ? "mops" : "sq";
+  ss.drawFrame();
   const d = window.SSQ.beat("ch1-evening").debug();
-  return { ...out, said, step2: window.__st(), storm: d.state.storm, guests: (d.state.guests || []).map((g) => g.role), ring: n.lastRing && n.lastRing.id, counter: !!window.__spot("HIDE · counter") };
+  return { ...out, sneak, said, hiddenAtPa, cleaners, left: (d.state.cleaners || []).length, player, pose: d.state.pose, storm: d.state.storm, cards: [window.__card] };
 });
-g.check("the hall's doorway starts 36b (the bay's cleaning robots: this beat waits), and 36b's end starts the storm", JSON.stringify(r.sneak.filter((s) => s !== "tohall")) === JSON.stringify(["wall", "hallsneak", "tostorm"]) && r.step === "storm", r);
-g.check("into the hall: Jupiter's big red storm rolls into the big window; the PA calls everyone to it; Mops: hide behind the counter", r.room === "hall" && r.step === "storm" && r.said.join("|") === "The Great Red Storm is passing!|Best view: the big window.|Guests! Quick, hide.|Behind the counter!" && r.storm > 0.5, r);
-g.check("guests come in through the hallway doorway; the counter is outlined: HIDE · counter", r.step2 === "hide" && r.guests.join(",") === "dad,mom,kid,guest" && r.ring === "ev-counter" && r.counter, r);
-// a kid who does not hide: the guests walking in see him
+g.check("36b: as they walk into the hall Mops says \"Behind the bar. Quick.\"; the aisle behind the bar is outlined; HIDE · bar, at once (the robots clean)", r.room === "hall" && r.bayStep === "hall" && r.first.join("|") === "Behind the bar. Quick." && r.chip === "Squatch: hide behind the bar" && r.hide && r.robots === 3 && !r.seen && r.outline && r.outline.x0 === PL.EV_BAR.aisle.x0, r);
+g.check("HIDE · bar hands over to the evening with the three robots; he is rolled up behind the bar before the announcement", r.pressed && r.sneak.includes("tostorm") && r.cleaners === 3 && r.hiddenAtPa === "hidden" && r.pose === "hidden", r);
+g.check("Mops at the bar's front: MOVE, GOAT. / You missed a corner. / CORNERS ARE NOT EFFICIENT.; then the PA; the robots stop and roll out", r.said.join("|") === "MOVE, GOAT.|You missed a corner.|CORNERS ARE NOT EFFICIENT.|The Great Red Storm is passing!|Best view: the big window.|GUESTS PRESENT. CLEANING PAUSED." && r.left === 0 && r.storm > 0.5, r);
+g.check("the switch is announced: the player is Mops now, and why", r.player === "mops" && /You are MOPS now\. Squatch stays hidden\. Mops meets the guests\./.test(r.cards.join(" ")), r);
 r = await ev(() => {
-  const n = window.__ss.op;
-  window.__run(12, () => !!n.ch1Evening.alarm);
-  return { alarm: !!n.ch1Evening.alarm, by: n.ch1Evening.alarm && n.ch1Evening.alarm.w.id };
-});
-g.check("standing in the open as the guests come in: they see him (the one capture rule)", r.alarm && ["camera", "teal", "octopus-guest", "backpack"].includes(r.by), r);
-r = await ev(() => {
-  const n = window.__ss.op;
-  window.__jump(38);
-  const pressed = window.__press("HIDE · counter");
-  window.__run(4, () => window.__st() === "peek" && n.ctrl);
-  return { pressed, step: window.__st(), pose: n.ch1Evening.pose, sqPose: n.sqPose, peek: !!window.__spot("PEEK · window") };
-});
-g.check("HIDE · counter: behind the counter, rolled up; PEEK · window is offered", r.pressed && r.step === "peek" && r.pose === "hidden" && r.peek, r);
-r = await ev(() => {
-  const n = window.__ss.op;
-  const pressed = window.__press("PEEK · window");
+  const n = window.__ss.op,
+    ss = window.__ss;
   const said = [],
     ears = [];
-  window.__run(30, () => window.__st() === "duck" && n.ctrl, () => n.cur && n.cur.b && said[said.length - 1] !== n.cur.b.text && (said.push(n.cur.b.text), ears.push(!!n.cur.b.ear)));
-  window.__ss.drawFrame();
-  const d = window.SSQ.beat("ch1-evening").debug();
-  return { pressed, said, ears, step: window.__st(), peek: d.state.peek, duck: !!window.__spot("DUCK · down"), seenDuring: d.state.alarm };
-});
-g.check("PEEK · window: his eyes over the counter; the family at the window talks about Mars (overheard, the ear)", r.pressed && r.said.join("|") === "Whoa. It's SO red.|Red like Mars.|Oh, we loved Mars.|What did you like best?|The PANCAKES!|Now I'm hungry." && r.ears.every(Boolean) && !r.seenDuring, r);
-g.check("then they turn to the snack bar: DUCK · down is offered", r.step === "duck" && r.peek && r.duck, r);
-// staying up: their cones reach his eyes; the one capture rule
-r = await ev(() => {
-  const n = window.__ss.op;
-  const out = {};
-  window.__run(12, () => !!n.ch1Evening.alarm, () => n.ch1Evening.seenT > 0 && (out.registering = true));
-  out.alarm = !!n.ch1Evening.alarm;
-  return out;
-});
-g.check("still peeking as they come: a guest's cone holds his eyes (a \"?\"), then the alarm", r.registering && r.alarm, r);
-r = await ev(() => {
-  const n = window.__ss.op;
-  window.__jump(138);
-  window.__press("PEEK · window");
-  window.__run(30, () => window.__st() === "duck" && n.ctrl);
-  const ducked = window.__press("DUCK · down");
-  const said = [];
-  let shock = false;
-  window.__run(40, () => window.__st() === "brochure" && n.ctrl, () => {
-    n.cur && n.cur.b && said[said.length - 1] !== n.cur.b.text && said.push(n.cur.b.text);
-    if (window.SSQ.beat("ch1-evening").viewOpen() === "shock") ((shock = true), window.SSQ.beat("ch1-evening").viewAct());
+  let alarm = false;
+  window.__run(60, () => window.__st() === "greet" && n.ctrl, () => {
+    n.cur && n.cur.b && said[said.length - 1] !== n.cur.b.text && (said.push(n.cur.b.text), ears.push(!!n.cur.b.ear));
+    alarm = alarm || !!n.ch1Evening.alarm;
   });
-  return { ducked, said, shock, step: window.__st(), alarm: !!n.ch1Evening.alarm, brochure: n.ch1Evening.brochure, coffee: n.ch1Evening.coffee, guests: n.ch1Evening.guests };
+  ss.drawFrame();
+  const d = window.SSQ.beat("ch1-evening").debug();
+  const off = ss.offerNow();
+  return { said, ears, alarm, step: window.__st(), chip: n.ch1Chip, guests: (d.state.guests || []).map((q) => q.role + ":" + q.to), offer: off && off.verb + " · " + off.cap, eyes: !!d.state.peek, pose: d.state.pose, stepId: n.ch1Step };
 });
-g.check("ducked: the family at the bar asks Mops for pancakes, in Brian's Nov 8 words, and says SASQUATCHES", r.ducked && !r.alarm && ["Got any pancakes?", "Pancakes? We don't have no pancakes.", "By the way, the best pancakes in the galaxy are on Mars.", "I thought it was a pancake stand run by Wookiees.", "But I talked to them, and they said they were Sasquatches."].every((t, i) => r.said[i] === t), r.said);
-g.check("at \"Sasquatches\" the close-up shows Mops's face, his beard stopped, and Squatch's eyes just as wide", r.shock, r);
-g.check("the brochure: Dad holds it up, the guest gets coffee on it and tosses it over the counter into the bin; they leave", r.said.includes("Here's a brochure I got on it.") && r.said.includes("Ugh. Coffee.") && r.said[r.said.length - 1] === "Bedtime." && r.brochure === "bin" && r.coffee === 1 && r.guests === null && r.step === "brochure", r);
-// beat 39: the brochure close-up
+g.check("the guests walk in to the window; the family's Mars talk is overheard (the ear), and no other food is named (question 120)", r.said.slice(0, 5).join("|") === "Whoa. It's SO red.|Red like Mars.|Oh, we loved Mars.|What did you like best?|The " + FAMILY.NAME + "!" && r.ears.slice(0, 5).every(Boolean) && !r.said.some((t) => new RegExp("pan" + "cake", "i").test(t)), r);
+g.check("the kid sees the goat: \"A GOAT! Can I pet him?\" / \"That's the Ganitor. He's famous.\" / \"The only goat janitor in the whole galaxy.\"", r.said.slice(5).join("|") === "A GOAT! Can I pet him?|That's the Ganitor. He's famous.|The only goat janitor in the whole galaxy.", r);
+g.check("the family comes over to the bar (the other guest stays at the window); Squatch stays rolled up, no eyes peek, nobody sees him; GREET · kid is Mops's", r.step === "greet" && r.guests.join(",") === "dad:bar,mom:bar,kid:bar,guest:window" && r.pose === "hidden" && !r.eyes && !r.alarm && r.offer === "GREET · kid" && r.chip === "Mops: say hello to the kid" && r.stepId === "ev-greet", r);
+r = await ev(() => {
+  const n = window.__ss.op,
+    ss = window.__ss;
+  const pressed = window.__pressMo("GREET · kid");
+  const said = [];
+  let pat = false,
+    bleat = window.SSQ.soundPicksPlayed ? window.SSQ.soundPicksPlayed().length : 0;
+  window.__run(30, () => window.__st() === "ask" && n.ctrl, () => {
+    n.cur && n.cur.b && said[said.length - 1] !== n.cur.b.text && said.push(n.cur.b.text);
+    pat = pat || n.ch1Evening.pat >= 0;
+  });
+  const kid = n.ch1Evening.guests.find((q) => q.role === "kid");
+  const off = ss.offerNow();
+  return { pressed, said, pat, step: window.__st(), offer: off && off.verb + " · " + off.cap, guests: n.ch1Evening.guests.map((q) => q.role + ":" + q.to), chip: n.ch1Chip };
+});
+g.check("GREET · kid: the kid steps up and pets him (wordless); \"Come on. Bedtime.\"; the family turns to go; TALK · family", r.pressed && r.pat && r.said.join("|") === "Come on. Bedtime." && r.step === "ask" && r.offer === "TALK · family" && r.guests.slice(0, 3).join(",") === "dad:leave,mom:leave,kid:leave" && r.chip === "Mops: ask the family about the " + FAMILY.name, r);
 r = await ev(async () => {
   const n = window.__ss.op,
+    ss = window.__ss,
     b = window.SSQ.beat("ch1-evening");
-  const pressed = window.__press("GRAB · brochure");
-  window.__run(1);
-  // the words the brochure close-up draws before anything is tapped (its picture only: no thought yet)
+  const pressed = window.__pressMo("TALK · family");
+  const said = [];
+  let wide = false,
+    up = false;
+  const hear = () => {
+    n.cur && n.cur.b && said[said.length - 1] !== n.cur.b.text && said.push(n.cur.b.text);
+    wide = wide || !!n.ch1Evening.mopsWide;
+    up = up || n.ch1Evening.brochure === "up";
+    n.cur && n.cur.k === "card" && (window.__card = n.cur.text + " " + (n.cur.by || ""));
+  };
+  window.__run(60, () => b.viewOpen() === "brochure", hear);
+  const open = b.viewOpen(),
+    has = n.ch1Evening.brochure;
+  // the words the brochure close-up draws (its picture only)
   const bw = [],
     CP = CanvasRenderingContext2D.prototype,
     keep = CP.fillText;
@@ -282,23 +298,78 @@ r = await ev(async () => {
     this.canvas.getAttribute("aria-label") === "brochure" && bw.push(String(t));
     return keep.apply(this, arguments);
   };
-  await new Promise((q) => setTimeout(q, 200));
+  await new Promise((q) => setTimeout(q, 250));
   CP.fillText = keep;
-  const t = b.viewTargets(),
-    thoughts = [];
-  for (const part of ["window", "pancakes", "cake", "paw"]) {
-    window.__tapView("brochure", t.parts[part]);
-    await new Promise((q) => setTimeout(q, 140));
-    thoughts.push(b.debug().view.drew.thought + (b.debug().view.drew.mark ? " +mark" : ""));
-  }
-  const words = [];
-  window.__tapView("brochure", t.parts.cooks);
-  window.__run(30, () => window.__st() === "gohome" && n.ctrl, () => n.cur && n.cur.b && words[words.length - 1] !== n.cur.b.text && words.push(n.cur.b.text));
-  return { pressed, thoughts, words, step: window.__st(), open: b.viewOpen(), brochureWords: [...new Set(bw)] };
+  // it waits for a tap
+  window.__run(4);
+  const waited = b.viewOpen() === "brochure" && window.__st() === "read";
+  window.__run(1);
+  const t = b.viewTargets();
+  window.__tapView("brochure", t.close);
+  const n0 = said.length;
+  let tossed = false;
+  window.__run(60, () => window.__st() === "gohome" && n.ctrl, () => (hear(), (tossed = tossed || n.ch1Evening.brochure === "toss")));
+  return { pressed, said, n0, wide, up, open, has, waited, tossed, brochureWords: [...new Set(bw)], step: window.__st(), player: ss.ch.mops ? "mops" : "sq", pose: n.ch1Evening.pose, brochure: n.ch1Evening.brochure, got: n.ch1Brochure, guests: n.ch1Evening.guests, mops: n.moPose, cards: [window.__card] };
 });
-g.check("GRAB · brochure opens its close-up; tapping the window, the pancakes, the cake and the paw print: \"Mars.\", \"Yum.\", \"It FIZZES.\", the Guardians' mark beside it", r.pressed && r.thoughts.join("|") === "Mars.|Yum.|It FIZZES.|Like the Guardians' mark. Almost. +mark", r);
-g.check("tapping the two cooks: \"They look just like the Guardians.\" ... \"Are those other Sasquatches?\", then Mops: back to work, tonight", r.words.join("|") === "They look just like the Guardians.|But they're not hidden.|Just like me.|Are those other Sasquatches?|I have to get back to work.|We'll talk tonight." && r.step === "gohome" && r.open === "", r);
-g.check("the brochure has no words but his family's name (snack-name.js FAMILY) on the cake box in its picture", r.brochureWords.length === 1 && r.brochureWords[0] === FAMILY.NAME, r.brochureWords);
+g.check("TALK · family: Mops asks, in Brian's words; the best he ever had, and fizzy (Mops stops, eyes wide); Wookiees; only at their stand", r.pressed && r.said.slice(0, r.n0).join("|") === "Hey. What were you saying about " + FAMILY.name + "?|The best I've ever had.|And FIZZY!|A family of Wookiees makes them.|You can only get them at their stand.|In fact, I've got a brochure here." && r.wide && !r.said.some((t) => /Sasquatch/.test(t)), r);
+g.check("Dad holds the brochure up and hands it to Mops: its close-up opens and waits for a tap", r.up && r.open === "brochure" && r.has === "mops" && r.waited, r);
+g.check("the brochure is for the stand: no words but his family's name (snack-name.js FAMILY) on the cake box", r.brochureWords.length === 1 && r.brochureWords[0] === FAMILY.NAME, r.brochureWords);
+g.check("the guests leave; the switch back is announced; Mops passes the brochure over the bar: \"Take this home.\" / \"We'll talk tonight.\"; Mops goes back to work", r.said.slice(r.n0).join("|") === "Take this home.|We'll talk tonight." && r.tossed && r.guests === null && r.player === "sq" && /You are SQUATCH now\. The guests are gone\. Squatch can come out\./.test(r.cards.join(" ")) && r.pose === "stand" && r.brochure === "paw" && r.got === true && r.step === "gohome" && r.mops === "hidden", r);
+// without the bay's 36b (the debug link's beat 38): the same hide, his own button
+r = await ev(() => {
+  const n = window.__ss.op;
+  window.__jump(38);
+  window.__ss.drawFrame();
+  const out = { step: window.__st(), spot: !!window.__spot("HIDE · bar"), player: window.__ss.ch.mops ? "mops" : "sq" };
+  out.pressed = window.__press("HIDE · bar");
+  window.__run(60, () => window.__st() === "greet" && n.ctrl);
+  return { ...out, step2: window.__st(), pose: n.ch1Evening.pose, player2: window.__ss.ch.mops ? "mops" : "sq" };
+});
+g.check("the debug link's beat 38: HIDE · bar, then the same storm and guests with no robots", r.step === "hide" && r.spot && r.player === "sq" && r.pressed && r.step2 === "greet" && r.pose === "hidden" && r.player2 === "mops", r);
+// ↺ while the player is Mops brings the step back, still as Mops; a jump to a Squatch step gives Squatch back
+r = await ev(() => {
+  const n = window.__ss.op,
+    ss = window.__ss;
+  window.__jump(39);
+  const a = { step: window.__st(), player: ss.ch.mops ? "mops" : "sq", offer: (ss.tick(0.05), ss.offerNow()) };
+  window.__jump(139);
+  return { a: { ...a, offer: a.offer && a.offer.verb + " · " + a.offer.cap }, step: window.__st(), player: ss.ch.mops ? "mops" : "sq", brochure: n.ch1Evening.brochure };
+});
+g.check("the debug link's beat 39 opens at TALK · family as Mops; beat 139 at the walk home as Squatch, the brochure in his paw", r.a.step === "ask" && r.a.player === "mops" && r.a.offer === "TALK · family" && r.step === "gohome" && r.player === "sq" && r.brochure === "paw", r);
+// (from the independent review) the player is never left as Mops; Mops stays at the bar; his two goals are outlined
+r = await ev(() => {
+  const n = window.__ss.op,
+    ss = window.__ss,
+    b = window.SSQ.beat("ch1-evening");
+  window.__jump(138);
+  ss.drawFrame();
+  const greet = b.debug().drew.outline,
+    kid = n.ch1Evening.guests.find((q) => q.role === "kid");
+  // he tries to walk off across the hall: he gets a step or two, no further
+  let far = 0;
+  for (let i = 0; i < 60; i++) {
+    n.walkTo = { x: 300, y: 400, room: n.room, lx: n.mo.x, ly: n.mo.y, lt: n.T };
+    ss.tick(0.05);
+    far = Math.max(far, Math.hypot(n.mo.x - b.place.STORM.mops.x, n.mo.y - b.place.STORM.mops.y));
+  }
+  n.walkTo = null;
+  const asMops = ss.ch.mops;
+  window.__jump(39);
+  ss.drawFrame();
+  const ask = b.debug().drew.outline;
+  // the evening goes away while he is Mops (a jump to another beat): Squatch is the player again
+  n.q = [];
+  n.cur = null;
+  ss.ch1JumpBeat(22);
+  for (let i = 0; i < 4; i++) ss.tick(0.05);
+  const after = ss.ch.mops ? "mops" : "sq";
+  // (back to where the next checks go on from: the walk home)
+  window.__jump(139);
+  return { greet, kid: { x: kid.x, y: kid.y }, far: Math.round(far), asMops, ask, after };
+});
+g.check("GREET · kid has the dashed outline round the kid; TALK · family round the family", r.greet && r.greet.x0 < r.kid.x && r.greet.x1 > r.kid.x && r.greet.x1 - r.greet.x0 < 60 && r.ask && r.ask.x1 - r.ask.x0 > 80, r);
+g.check("as Mops the player can shuffle a step or two at the bar and no further (the family comes to him)", r.asMops && r.far > 0 && r.far <= 42, r.far); // (30, evening-place.js STORM.mopsRoam, and one frame's step)
+g.check("when the evening goes away while the player is Mops (a jump to another beat), the player is Squatch again", r.after === "sq", r);
 r = await ev(() => {
   const n = window.__ss.op;
   window.__ss.drawFrame();
@@ -320,66 +391,57 @@ r = await ev(() => {
   window.__ss.drawFrame();
   out.cake = window.SSQ.beat("ch1-evening").debug().drew.cake;
   const said = [];
-  window.__run(6, () => window.__st() === "chart" && n.ctrl, () => n.cur && n.cur.b && said[said.length - 1] !== n.cur.b.text && said.push(n.cur.b.text));
+  window.__run(6, () => window.__st() === "crate" && n.ctrl, () => n.cur && n.cur.b && said[said.length - 1] !== n.cur.b.text && said.push(n.cur.b.text));
   out.said = said;
   out.chartSpot = !!window.__spot("X · chart");
+  out.crate = !!window.__spot("HOLD UP · brochure");
+  out.chart = window.SSQ.cakeChartDrawn ? window.SSQ.cakeChartDrawn() : null;
   out.ring = n.lastRing && n.lastRing.id;
   return out;
 });
-g.check("beat 39b: home alone (Mops is not back); OPEN · box (the Guardians' box); BITE · cake: a crunch, silence, \"No fizz.\"", r.room === "closet" && r.step === "box" && r.mops === "hidden" && r.open && r.opened && r.bite && r.cake === 1 && r.said.join("|") === "No fizz." && r.chartSpot, r);
+g.check("beat 39b: home alone (Mops is not back); OPEN · box (the Guardians' box); BITE · cake: a crunch, silence, \"No fizz.\"", r.room === "closet" && r.step === "box" && r.mops === "hidden" && r.open && r.opened && r.bite && r.cake === 1 && r.said.join("|") === "No fizz.", r);
+g.check("round 7 (question 129): no X · chart step; the chart over his bed is a picture only (a title, cakes each crossed out, no label); HOLD UP · brochure is next", !r.chartSpot && r.crate && !!r.chart && r.chart.label === "" && r.chart.crossed === r.chart.tried && r.chart.tried >= 6, r);
 r = await ev(async () => {
   const n = window.__ss.op,
     b = window.SSQ.beat("ch1-evening");
-  const pressed = window.__press("X · chart");
-  window.__run(1);
-  await new Promise((q) => setTimeout(q, 150));
-  const t = b.viewTargets();
-  window.__tapView("cake chart", t.cake);
-  window.__run(0.6);
-  await new Promise((q) => setTimeout(q, 120));
-  const half = b.debug().view.drew.x;
-  window.__tapView("cake chart", t.cake);
-  window.__run(3, () => window.__st() === "crate" && n.ctrl);
-  return { pressed, view: t.kind, half, step: window.__st(), chartX: n.ch1Evening.chartX, crate: !!window.__spot("HOLD UP · brochure") };
-});
-g.check("X · chart: the chart close-up; two taps draw this week's X (one stroke each); then HOLD UP · brochure at the crate", r.pressed && r.view === "chart" && r.half === 0.5 && r.chartX && r.step === "crate" && r.crate, r);
-r = await ev(async () => {
-  const n = window.__ss.op,
-    b = window.SSQ.beat("ch1-evening");
-  window.__ss.drawFrame();
-  const before = b.debug().drew.stamp;
   const pressed = window.__press("HOLD UP · brochure");
   window.__run(1);
-  await new Promise((q) => setTimeout(q, 150));
-  const t = b.viewTargets(),
-    lit = [];
-  for (let i = 0; i < 3; i++) {
-    window.__tapView("crate", t.card);
-    window.__run(0.1);
-    await new Promise((q) => setTimeout(q, 120));
-    lit.push(b.debug().view.drew.lit);
-  }
+  await new Promise((q) => setTimeout(q, 200));
+  const drew = b.debug().view && b.debug().view.drew,
+    t = b.viewTargets();
+  // it waits for a tap
+  window.__run(4);
+  const waited = b.viewOpen() === "crate" && window.__st() === "hold";
+  window.__tapView("crate", t.close);
   const said = [];
-  window.__run(6, () => window.__st() === "evening", () => n.cur && n.cur.b && said[said.length - 1] !== n.cur.b.text && said.push(n.cur.b.text));
-  return { before, pressed, lit, letters: b.debug().view ? b.debug().view.drew.letters : "", said, st: n.ch1Evening.stampST, step: window.__st() };
+  window.__run(8, () => window.__st() === "evening", () => n.cur && n.cur.b && said[said.length - 1] !== n.cur.b.text && said.push(n.cur.b.text));
+  const stamp = window.SSQ.crateStampDrawn ? window.SSQ.crateStampDrawn() : null;
+  return { pressed, kind: t && t.kind, drew, waited, said, step: window.__st(), crayonNow: stamp && stamp.crayonNow };
 });
-g.check("HOLD UP · brochure: sliding the brochure along the crate's stamp lights its letters in pairs; the M lands; he rubs out his crayon ST", r.pressed && r.lit[0] > 0 && r.lit[2] === 8 && r.st === 0, r);
-g.check("\"Not STARS...\" / \"MARS!\"", r.said.join("|") === "Not STARS...|MARS!", r);
+g.check("HOLD UP · brochure (question 121): one close-up, the family's name on the paper beside the faded stamp on the wood; no slide, no crayon; it waits for a tap", r.pressed && r.kind === "crate" && r.drew && r.drew.paper === FAMILY.NAME && r.drew.letters === FAMILY.NAME.slice(1).replace(/ /g, "") && r.drew.crayon === false && r.waited, r);
+g.check("\"We always thought it said STARS.\" / \"Maybe it's MARS!\"", r.said.join("|") === "We always thought it said STARS.|Maybe it's MARS!", r);
+g.check("no crayon ST layer on his crate bed (crate-stamp.js STAMP_CRAYON)", r.crayonNow === false, r.crayonNow);
 // beat 40: the fight
 r = await ev(() => {
   const n = window.__ss.op;
   const cards = [];
-  window.__run(16, () => window.__st() === "show" && n.ctrl, () => n.cur && n.cur.k === "card" && cards.push(n.cur.text));
+  window.__heartsIn = 0;
+  window.__run(16, () => window.__st() === "show" && n.ctrl, () => {
+    n.cur && n.cur.k === "card" && cards.push(n.cur.text);
+    // (his hearts as he comes home: the frame's own drawing)
+    if (n.ch1Evening.heartsAt >= 0) (window.__ss.drawFrame(), (window.__heartsIn = Math.max(window.__heartsIn, window.SSQ.beat("ch1-evening").debug().drew.hearts || 0)));
+  });
+  window.__run(3);
   const pressed = window.__press("SHOW · brochure");
   window.__run(0.6);
   window.__ss.drawFrame();
   const held = window.SSQ.beat("ch1-evening").debug().drew;
   const said = [];
   window.__run(60, () => window.__st() === "choose" && n.ctrl, () => n.cur && n.cur.b && said[said.length - 1] !== n.cur.b.text && said.push(n.cur.b.text));
-  return { cards: [...new Set(cards)], pressed, held: held && held.held, hearts: held && held.hearts, said, step: window.__st(), ask: !!window.__spot("ASK · again"), stomp: !!window.__spot("STOMP · to bed") };
+  return { cards: [...new Set(cards)], pressed, held: held && held.held, hearts: held && held.hearts, heartsIn: window.__heartsIn, said, step: window.__st(), ask: !!window.__spot("ASK · again"), stomp: !!window.__spot("STOMP · to bed") };
 });
-g.check("beat 40: \"That evening…\"; Mops comes home with his hearts; SHOW · brochure, he holds it up", r.cards.includes("That evening…") && r.pressed && r.held && r.held.w > 50 && r.hearts === 3, r);
-g.check("the fight, one short bubble each: MARS!, one of a kind, the manager, safe here, the Guardians", r.said.join("|") === "Mops! My crate says MARS!|It says Stars.|Can we go to Mars?|Squatch. There are no other Sasquatches.|You're one of a kind. Like me.|I know what it's like to be one of a kind.|The man said SASQUATCHES. You heard him!|And they look like ME.|You heard the manager.|They need me here.|What if they replace you anyway?|They won't.|And we're safe here.|Safe? I have to HIDE here.|The Guardians are here.", r.said);
+g.check("beat 40: \"That evening…\"; Mops comes home: two or three hearts as he first sees him, then none (question 126); SHOW · brochure, he holds it up", r.cards.includes("That evening…") && r.heartsIn >= 2 && r.heartsIn <= 3 && r.pressed && r.held && r.held.w > 50 && !r.hearts, r);
+g.check("the fight (question 122): maybe MARS, he came in that crate, the man said Wookiees, YOU thought I was a Wookiee, one of a kind, the manager, safe here, the Guardians", r.said.join("|") === "Mops! Look. Maybe my crate says MARS.|...Maybe.|I came in that crate. Maybe I came from Mars!|Can we go?|The man said Wookiees. You're not a Wookiee.|YOU thought I was a Wookiee!|Squatch. There are no other Sasquatches.|You're one of a kind. Like me.|I know what it's like to be one of a kind.|You heard the manager.|They need me here.|What if they replace you anyway?|They won't.|And we're safe here.|Safe? I have to HIDE here.|The Guardians are here." && !r.said.some((t) => /SASQUATCHES|Stars\./.test(t)), r);
 g.check("then the player picks: ASK · again (where he stands) or STOMP · to bed (at the bed)", r.step === "choose" && r.ask, r);
 r = await ev(() => {
   const n = window.__ss.op,
@@ -389,13 +451,16 @@ r = await ev(() => {
   let back = false,
     hearts = [];
   window.__run(40, () => window.__st() === "bed" && n.ctrl, () => {
-    n.cur && n.cur.b && said[said.length - 1] !== n.cur.b.text && (said.push(n.cur.b.text), hearts.push(n.ch1Evening.hearts));
-    b.viewOpen() === "back" && ((back = true), b.viewAct());
+    n.cur && n.cur.b && said[said.length - 1] !== n.cur.b.text && said.push(n.cur.b.text);
+    window.__ss.drawFrame();
+    hearts.push(b.debug().drew.hearts || 0);
+    back = back || !!b.viewOpen();
   });
   return { pressed, said, back, hearts, step: window.__st(), turned: n.ch1Evening.turned };
 });
-g.check("STOMP · to bed: Mops calls him back first; \"Why won't you help me find my family?\" ... \"Squatch... I already...\" and he turns his back (no hearts, the close-up)", r.pressed && r.said[0] === "Squatch. Wait." && r.said[1] === "Why won't you help me find my family?" && r.said[2] === "Squatch... I already..." && r.back && r.turned, r);
-g.check("\"I AM your family.\" / \"Maybe my REAL family wouldn't make me hide!\" / \"...I didn't mean that.\" / one small heart / \"Bed. The floors don't mop themselves.\"", r.said.slice(3).join("|") === "I AM your family.|Maybe my REAL family wouldn't make me hide!|...I didn't mean that.|We say things we don't mean all the time.|Bed. The floors don't mop themselves." && r.hearts[3] === 0 && r.hearts[6] > 0 && r.step === "bed", r);
+g.check("STOMP · to bed: Mops calls him back first; \"Why won't you help me find my family?\" ... \"Squatch... I already...\" and he turns his back in the room (no close-up)", r.pressed && r.said[0] === "Squatch. Wait." && r.said[1] === "Why won't you help me find my family?" && r.said[2] === "Squatch... I already..." && !r.back && r.turned, r);
+g.check("it ends on his line (question 122: B): \"I AM your family.\" / \"Maybe my REAL family wouldn't make me hide!\" / (no take-back, no forgiving line) / \"Bed. The floors don't mop themselves.\"", r.said.slice(3).join("|") === "I AM your family.|Maybe my REAL family wouldn't make me hide!|Bed. The floors don't mop themselves.", r);
+g.check("no hearts anywhere in the fight", r.hearts.every((h) => !h), r.hearts.filter(Boolean).length);
 r = await ev(() => {
   const n = window.__ss.op,
     b = window.SSQ.beat("ch1-evening");
@@ -412,7 +477,7 @@ r = await ev(() => {
     s.dim > 0.5 && !n.ctrl && (seen.quiet = seen.quiet !== false && window.SSQ.refinedCue("home") === "");
     return window.__st() === "out" && n.ctrl;
   });
-  const solid = window.__ss.solids().some((q) => q.x1 === 536 && q.y0 === 550 && q.y1 === 580);
+  const solid = window.__ss.solids().some((q) => q.x1 === 536 && q.y0 === 562 && q.y1 === 592);
   const inBed = !!n.ch1Evening.bed;
   // his first move gets him out of bed (the kid's to start)
   n.walkTo = { x: 600, y: 470, room: n.room, lx: n.sq.x, ly: n.sq.y, lt: n.T };
@@ -421,7 +486,7 @@ r = await ev(() => {
   const up = { bed: !!n.ch1Evening.bed, x: Math.round(n.sq.x), y: Math.round(n.sq.y), ctrl: n.ctrl };
   return { pressed, seen, inBed, up, step: window.__st(), sqPose: n.sqPose, solid, sneak: n.ch1Sneak };
 });
-g.check("beat 41: SLEEP · bed; the light goes down with no song tonight; Mops tips over like a fainting goat, sleeps on his back, snores", r.pressed && r.seen.tip >= 1 && r.seen.roll >= 1 && r.seen.zzz > 0 && r.seen.dim >= 1 && r.seen.quiet === true, r);
+g.check("beat 41: SLEEP · bed; the light goes down with no song tonight; Mops tips over like a fainting goat and sleeps on his side, his head on his bucket; snores", r.pressed && r.seen.tip >= 1 && r.seen.roll >= 1 && r.seen.zzz > 0 && r.seen.dim >= 1 && r.seen.quiet === true, r);
 g.check("beat 41: his eyes open; the idea above his head in pictures (Mops mopping, robots mopping, the ship to the red dot), his whisper, then the form", r.seen.ideas.join(",") === "mopping,robots,ship,form" && r.seen.said.join("|") === "The floors don't mop themselves...|But those robots do.|The form!", r.seen);
 g.check("night one: Squatch is still in bed, the kid's to move; his first move gets him out of bed beside it", r.step === "out" && r.inBed && !r.up.bed && r.up.ctrl && r.up.x === 340 && r.up.y === 470, r);
 g.check("night one: Mops lies asleep on the floor and nobody walks through him; the sneaking music is on", r.solid && r.sneak, r);
@@ -553,9 +618,9 @@ r = await ev(() => {
   const es = window.SSQ.beat("ch1-escape");
   window.__run(10, () => es.active());
   const week = es.active() && es.debug().state;
-  return { a0, a, b, pressed, escape: es.active(), cu: week && week.cu, done: !n.ch1Evening || n.ch1Evening.step === "done", lights: n.ch1Lights, crayonGone: window.SSQ.beat("ch1-evening").crayonGone() };
+  return { a0, a, b, pressed, escape: es.active(), cu: week && week.cu, done: !n.ch1Evening || n.ch1Evening.step === "done", lights: n.ch1Lights };
 });
-g.check("home to bed: SLEEP · bed, he falls asleep, and beat 43 starts (the escape: \"Six days later\" on the home calendar)", r.a0 && r.a && r.b && r.pressed && r.escape && r.cu === "cal" && r.done && r.lights === 1 && r.crayonGone, r);
+g.check("home to bed: SLEEP · bed, he falls asleep, and beat 43 starts (the escape: \"Six days later\" on the home calendar)", r.a0 && r.a && r.b && r.pressed && r.escape && r.cu === "cal" && r.done && r.lights === 1, r);
 
 // the one capture rule in the bay
 r = await ev(() => {
@@ -661,8 +726,9 @@ r = await ev(() => {
   for (const [beat, nonControl, want] of [
     [37, "gallery", "wall"],
     [38, "storm", "hide"],
-    [138, "talk", "peek"],
-    [141, "slide", "crate"],
+    [138, "pet", "greet"],
+    [39, "talk", "ask"],
+    [141, "hold", "crate"],
     [40, "fight", "show"],
     [41, "asleep", "bed"],
     [142, "order", "bin"],

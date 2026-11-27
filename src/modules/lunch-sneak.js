@@ -932,7 +932,7 @@ export function createLunchSneak(bridge) {
           c = e.coneSize(),
           eye = { x: m.x + Math.sign(m.f) * MOPS_EYE.x * sc * Math.abs(m.f), y: m.y + MOPS_EYE.y * sc };
         // his cone: where he looks while he looks round; full of hearts once he faces Squatch (never "?" or "!")
-        if (!m.mop && m.hearts >= 0) drawHeartCone(ctx, eye.x, eye.y, Math.PI, c.half, c.len, t, Math.min(1, (t - m.hearts) / 0.4));
+        if (!m.mop && m.hearts >= 0) drawHeartCone(ctx, eye.x, eye.y, Math.PI, c.half, c.len, t, Math.min(1, (t - m.hearts) / 0.4)); // (the hearts are over his head: drawHeartsUp)
         else if (!m.mop) drawLookCone(ctx, eye.x, eye.y, m.look, c.half, c.len);
         e.drawMopsOn(ctx, m.x, m.y, sc, { f: m.f, walk: m.mop ? t * 6 : 0, headDrop: m.mop ? 6 : m.head, sweep: m.mop ? Math.sin(t * 6) * 4 : 0 });
         m.hearts >= 0 && drawHeartsUp(ctx, m.x, m.y - 52 * sc, t - m.hearts);
