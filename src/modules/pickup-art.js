@@ -1,17 +1,16 @@
 /**
  * Pickup day's drawings (Chapter 1, beats 53 to 61). Every one is a PLACEHOLDER drawing in the game's style (dark
  * outlines, flat colours) until Brian approves a look. Locked room pictures are never redrawn: these are layers on top
- * of them (listed for Brian's yes: the camera with a red light over the ramp, the mirror in the wardrobe, Lou's hat on
- * the bay floor, the things on the home walls and the pale squares they leave, the floor where the crate bed and the
- * bucket stood) or close-ups and pictures of their own (the slat view, the cargo hold, the tape screen).
+ * of them (listed for Brian's yes: the camera with a red light upper right in the bay, the mirror in the wardrobe, the
+ * spill by the floor vent, the things on the home walls and the pale squares they leave (the eaten STAY IN HERE poster
+ * too), Mops's beard hair over the crate bed, the floor where the crate bed and the bucket stood) or close-ups and
+ * pictures of their own (the cargo hold, the tape screen).
  * Every word comes from pickup-lines.js (or escape-lines.js for the Guardian note and the frame); every place from
  * pickup-place.js.
  */
 import { drawFamilyStampAt } from "./crate-stamp.js";
 import { pickupWords } from "./pickup-lines.js";
 import { esRect, esPaint, esWords, ES_INK, drawPinkSheet } from "./escape-art.js";
-import { drawPawPrint } from "./evening-art.js";
-import { drawThought } from "./bedtime-story-art.js";
 import { drawSnack } from "./party-snacks-art.js";
 import { drawGuardianBox } from "./home-morning-art.js";
 import { PK_OFFICE, PK_HOLD, PK_CRATE } from "./pickup-place.js";
@@ -154,34 +153,21 @@ export function drawBucket(ctx, cx, bottom, k) {
   esRect(ctx, cx - 18 * k, bottom - 46 * k, 36 * k, 10 * k, 3 * k);
   esPaint(ctx, "#8fd8ff", lw * 0.7);
 }
-/** A big mail bag (the row in the mail room; the first thing the robots open). */
-export function drawMailBag(ctx, cx, bottom, k) {
-  const lw = Math.max(1.5, 3 * k);
-  ctx.beginPath();
-  ctx.ellipse(cx, bottom - 30 * k, 34 * k, 30 * k, 0, 0, PK_TAU);
-  esPaint(ctx, "#a98a5e", lw);
-  ctx.beginPath();
-  ctx.moveTo(cx - 12 * k, bottom - 58 * k);
-  ctx.lineTo(cx, bottom - 70 * k);
-  ctx.lineTo(cx + 12 * k, bottom - 58 * k);
-  ctx.closePath();
-  esPaint(ctx, "#8a6c42", lw);
-}
-/** Lou's fuzzy winter hat (beat 30's hat, held up, then in the bin). */
-export function drawHat(ctx, x, y, k = 1) {
+/** 55: Mops's spill by the floor vent (round 7, #118): a puddle and the bucket on its side (a PLACEHOLDER layer). */
+export function drawPuddle(ctx, p, t) {
   ctx.save();
-  ctx.translate(x, y);
-  ctx.scale(k, k);
   ctx.beginPath();
-  ctx.ellipse(0, 0, 22, 16, 0, Math.PI, 0);
-  ctx.closePath();
-  esPaint(ctx, "#e86f4a", 3);
-  esRect(ctx, -24, -2, 48, 10, 5);
-  esPaint(ctx, "#ffffff", 3);
-  ctx.beginPath();
-  ctx.arc(0, -18, 7, 0, PK_TAU);
-  esPaint(ctx, "#ffffff", 3);
+  ctx.ellipse(p.x, p.y, p.rx + Math.sin(t * 2) * 1.5, p.ry, 0, 0, PK_TAU);
+  ctx.fillStyle = "rgba(120,190,255,.75)";
+  ctx.fill();
+  ctx.strokeStyle = "#4a90d9";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.translate(p.x + p.rx * 0.9, p.y - 4);
+  ctx.rotate(Math.PI / 2);
+  drawBucket(ctx, 0, 0, 0.55);
   ctx.restore();
+  return true;
 }
 /** The weekly box on the ship, tagged with escape-lines.js blank-tag. */
 export function drawTagBox(ctx, x, y, k = 1, glow = false) {
@@ -313,6 +299,32 @@ export function drawPaleSquare(ctx, b) {
   ctx.strokeRect(b.x0, b.y0, b.x1 - b.x0, b.y1 - b.y0);
   ctx.restore();
 }
+/**
+ * Something painted on the locked home picture's wall, gone (53: the STAY IN HERE poster Mops ate): the wall's own
+ * colour, read once from the picture at a spot of bare wall `at`, then the pale square a thing leaves. A layer, for
+ * Brian's yes.
+ */
+const pkWall = {};
+export function drawWallPatch(ctx, b, at) {
+  const key = at.x + "," + at.y;
+  if (!pkWall[key] && pkHomePic && pkHomePic.complete && pkHomePic.naturalWidth) {
+    try {
+      const c = document.createElement("canvas");
+      c.width = c.height = 1;
+      const x = c.getContext("2d");
+      x.drawImage(pkHomePic, Math.round((at.x * pkHomePic.naturalWidth) / 960), Math.round((at.y * pkHomePic.naturalHeight) / 640), 1, 1, 0, 0, 1, 1);
+      const d = x.getImageData(0, 0, 1, 1).data;
+      pkWall[key] = `rgb(${d[0]},${d[1]},${d[2]})`;
+    } catch (err) {
+      pkWall[key] = "#f4efe4";
+    }
+  }
+  ctx.save();
+  ctx.fillStyle = pkWall[key] || "#f4efe4";
+  ctx.fillRect(b.x0 - 3, b.y0 - 3, b.x1 - b.x0 + 6, b.y1 - b.y0 + 6);
+  ctx.restore();
+  drawPaleSquare(ctx, b);
+}
 /** The note folded on his pillow. */
 export function drawFoldedNote(ctx, b) {
   ctx.save();
@@ -379,101 +391,6 @@ export function drawBoxCloseup(ctx, cover, t) {
   ctx.restore();
   return { pinkShows: cover < 1 };
 }
-/** The white hair on the crate's wood, held close for a second (53, 55). */
-export function drawHairCloseup(ctx, t, { wood = true } = {}) {
-  ctx.save();
-  ctx.fillStyle = wood ? PK_WOOD : "#2d323e";
-  ctx.fillRect(0, 0, 960, 640);
-  if (wood) {
-    ctx.strokeStyle = PK_WOOD_DARK;
-    ctx.lineWidth = 6;
-    for (let y = 80; y < 640; y += 140) (ctx.beginPath(), ctx.moveTo(0, y), ctx.lineTo(960, y), ctx.stroke());
-  } else {
-    // the robot's claw holding it up
-    esRect(ctx, 440, 0, 80, 300, 10);
-    esPaint(ctx, "#8a93a3", 6);
-    esRect(ctx, 420, 290, 40, 70, 8);
-    esPaint(ctx, "#8a93a3", 6);
-    esRect(ctx, 500, 290, 40, 70, 8);
-    esPaint(ctx, "#8a93a3", 6);
-  }
-  drawHair(ctx, 480, wood ? 330 : 390, 420, 9);
-  ctx.restore();
-}
-
-// ---------- 54: through a slat ----------
-/**
- * The view through a slat in the crate (the cut-in rule: someone secretly watching): the whole picture dark but a strip
- * across the middle, where `scene(ctx)` (the bay, already drawn) shows through; his two eyes in the corner.
- */
-export const SLAT = Object.freeze({ y0: 250, y1: 430 });
-export function drawSlatFrame(ctx, t) {
-  ctx.save();
-  ctx.fillStyle = "#17110b";
-  ctx.fillRect(0, 0, 960, SLAT.y0);
-  ctx.fillRect(0, SLAT.y1, 960, 640 - SLAT.y1);
-  // the wood grain round the slat
-  ctx.strokeStyle = "rgba(185,129,61,.5)";
-  ctx.lineWidth = 8;
-  for (const y of [SLAT.y0 - 10, SLAT.y1 + 10]) (ctx.beginPath(), ctx.moveTo(0, y), ctx.lineTo(960, y), ctx.stroke());
-  // his eyes in the bottom corner, blinking now and then
-  const blink = Math.sin(t * 1.3) > 0.97;
-  for (const d of [-26, 26]) {
-    ctx.beginPath();
-    ctx.ellipse(110 + d, 540, 20, blink ? 3 : 24, 0, 0, PK_TAU);
-    esPaint(ctx, "#ffffff", 3);
-    if (!blink) {
-      ctx.beginPath();
-      ctx.arc(116 + d, 540, 9, 0, PK_TAU);
-      esPaint(ctx, ES_INK, 0);
-    }
-  }
-  ctx.restore();
-  return { eyes: { x: 110, y: 540 } };
-}
-
-// ---------- 55: the idea ----------
-/** The three wordless thought pictures over the plant: the hat with a red X, the hair with a green tick, Squatch with a beard and "?". */
-export function drawIdea(ctx, head, age) {
-  const a = pkClamp(age / 0.3),
-    i = Math.min(2, Math.floor(age / 0.9));
-  drawThought(ctx, head, a, (c, cx, cy) => {
-    if (i === 0) {
-      drawHat(c, cx, cy + 10, 1.4);
-      c.strokeStyle = PK_RED;
-      c.lineWidth = 7;
-      c.beginPath();
-      c.moveTo(cx - 34, cy - 30);
-      c.lineTo(cx + 34, cy + 30);
-      c.moveTo(cx + 34, cy - 30);
-      c.lineTo(cx - 34, cy + 30);
-      c.stroke();
-    } else if (i === 1) {
-      drawHair(c, cx - 10, cy, 70, 4);
-      c.strokeStyle = PK_GREEN;
-      c.lineWidth = 7;
-      c.beginPath();
-      c.moveTo(cx + 20, cy + 4);
-      c.lineTo(cx + 32, cy + 20);
-      c.lineTo(cx + 54, cy - 20);
-      c.stroke();
-    } else {
-      // Squatch with a beard: his round face, a white beard, a question mark
-      c.beginPath();
-      c.arc(cx - 10, cy - 4, 26, 0, PK_TAU);
-      esPaint(c, PK_FUR, 3);
-      c.beginPath();
-      c.moveTo(cx - 26, cy + 10);
-      c.lineTo(cx + 6, cy + 10);
-      c.lineTo(cx - 10, cy + 44);
-      c.closePath();
-      esPaint(c, "#ffffff", 3);
-      esWords(c, "?", cx + 44, cy - 8, 40, ES_INK, "center", 900);
-    }
-  });
-  return { picture: ["hat", "hair", "beard"][i] };
-}
-
 // ---------- 56: the costume ----------
 /** The scissors at Mops's beard, his GANITOR tag with its gold star at the edge of the frame; `cut` once snipped. */
 export function drawSnipCloseup(ctx, cut, age, star) {
@@ -539,7 +456,8 @@ export const COSTUME_PIECES = Object.freeze([
   Object.freeze({ id: "horns", spot: "head" }),
   Object.freeze({ id: "jacket", spot: "body" }),
 ]);
-export const COSTUME_SPOTS = Object.freeze({ head: { x: 0, y: -52 }, chin: { x: 0, y: -30 }, body: { x: 0, y: -16 } });
+// (r6 6:12, Brian: the beard should sit under his chin, not over his face: the chin spot sits below his mouth)
+export const COSTUME_SPOTS = Object.freeze({ head: { x: 0, y: -52 }, chin: { x: 0, y: -17 }, body: { x: 0, y: -10 } });
 export const DRESS = Object.freeze({ sq: { x: 640, y: 560, scale: 7 }, shelf: Object.freeze([{ x: 170, y: 170 }, { x: 170, y: 320 }, { x: 170, y: 470 }]), r: 70 });
 export function costumeSpotAt(spot) {
   const s = COSTUME_SPOTS[spot];
@@ -590,8 +508,11 @@ export function drawDressCloseup(ctx, engine, st, t) {
   esPaint(ctx, "#efe6d6", 4);
   engine.drawSquatch(ctx, DRESS.sq.x, DRESS.sq.y, DRESS.sq.scale, { f: 1 });
   let right = 0;
-  COSTUME_PIECES.forEach((p, i) => {
-    const on = st.on[p.id];
+  // (the beard is drawn last, so the jacket never covers it)
+  const order = [...COSTUME_PIECES.keys()].sort((a, b) => (COSTUME_PIECES[a].id === "beard") - (COSTUME_PIECES[b].id === "beard"));
+  order.forEach((i) => {
+    const p = COSTUME_PIECES[i],
+      on = st.on[p.id];
     if (on) {
       const at = costumeSpotAt(on);
       drawCostumePiece(ctx, p.id, at.x, at.y, 1.3);
@@ -731,26 +652,6 @@ export function drawPeelCloseup(ctx, pressed, t) {
   drawScanLine(ctx, { x0: 0, y0: 0, x1: 960, y1: 640 }, 0.32);
   ctx.restore();
 }
-/** Halfway up the ramp the beard drops into his paws; in the corner, the camera's red light, blinking. */
-export function drawSlipCloseup(ctx, t) {
-  ctx.save();
-  ctx.fillStyle = "#9aa3b5";
-  ctx.fillRect(0, 0, 960, 640);
-  for (const s of [-1, 1]) {
-    ctx.beginPath();
-    ctx.ellipse(480 + s * 150, 460, 120, 90, s * 0.3, 0, PK_TAU);
-    esPaint(ctx, PK_FUR, 6);
-  }
-  ctx.beginPath();
-  ctx.moveTo(400, 330);
-  ctx.lineTo(560, 330);
-  ctx.lineTo(500, 470);
-  ctx.lineTo(460, 470);
-  ctx.closePath();
-  esPaint(ctx, "#ffffff", 6);
-  drawCamera(ctx, 830, 110, t, 3);
-  ctx.restore();
-}
 /** The ship sliding away past the big window (the ramp in, the bay empty): 0 to 1. */
 export function drawShipAway(ctx, k) {
   ctx.save();
@@ -783,79 +684,71 @@ export function drawPhotoCorner(ctx) {
   ctx.restore();
 }
 /**
- * The tape screen, filling the picture, with the REC badge and the three big buttons (PLAY · tape, ZOOM · in,
- * NEXT · tape; the one to press now bright, the others dim). `clip`: "night" (a furry ball at the bin posts a paper) or
- * "today" (Mops up the ramp, then a very tall goat); `k` how far it has played (0 to 1); `zoom`: "", "paw", "star",
- * "feet".
+ * The tape screen, filling the picture, with the REC badge and its two big buttons (PLAY · tape, ZOOM · in; the one to
+ * press now bright). One clip (round 7, #123 pick A), the bay seen from the camera's corner, upper right, looking down
+ * at the ramp: a goat (Mops) walks up it, then a very tall goat, and halfway up his beard falls off. `k` how far it has
+ * played (0 to 1); `zoom` "tall": close on the very tall goat, the beard in his paws, his fur showing.
  */
-export function drawTapeScreen(ctx, engine, { clip, k, zoom, next, star }, t) {
+export function drawTapeScreen(ctx, engine, { k, zoom, next }, t) {
   const S = PK_OFFICE.screen;
   ctx.save();
   ctx.fillStyle = "#1c2030";
   ctx.fillRect(0, 0, 960, 640);
   esRect(ctx, S.x0, S.y0, S.x1 - S.x0, S.y1 - S.y0, 10);
-  esPaint(ctx, clip === "night" ? "#2b3350" : "#8c94a6", 6);
+  esPaint(ctx, "#8c94a6", 6);
   ctx.save();
   ctx.beginPath();
   ctx.rect(S.x0 + 4, S.y0 + 4, S.x1 - S.x0 - 8, S.y1 - S.y0 - 8);
   ctx.clip();
-  if (!zoom && clip === "night") {
-    // the bin, the robot mailbox; a round furry ball unrolls at the bin, presses a paw on a paper, posts it
-    esRect(ctx, 260, 280, 70, 90, 6);
-    esPaint(ctx, "#8a93a3", 4);
-    esRect(ctx, 620, 250, 90, 120, 10);
-    esPaint(ctx, PK_BLUE, 4);
-    const x = 340 + Math.min(1, k * 1.6) * 230;
+  ctx.filter = "grayscale(0.6)";
+  if (!zoom) {
+    // from up in the corner: the floor, the ramp going up to the ship's door (top left), the arch at its foot
+    ctx.fillStyle = "#cfcabb";
+    ctx.fillRect(S.x0, S.y0, S.x1 - S.x0, S.y1 - S.y0);
     ctx.beginPath();
-    ctx.arc(x, 340, 34, 0, PK_TAU);
-    esPaint(ctx, PK_FUR, 4);
-    k > 0.3 && k < 0.8 && (esRect(ctx, x + 10, 290, 34, 44, 2), esPaint(ctx, "#ffe08a", 3));
-  } else if (!zoom && clip === "today") {
-    // the ramp; Mops walks up; then a very tall goat
-    ctx.beginPath();
-    ctx.moveTo(380, 450);
-    ctx.lineTo(580, 450);
-    ctx.lineTo(530, 80);
-    ctx.lineTo(430, 80);
+    ctx.moveTo(300, 450);
+    ctx.lineTo(470, 450);
+    ctx.lineTo(300, 90);
+    ctx.lineTo(220, 90);
     ctx.closePath();
-    esPaint(ctx, "#6b7385", 4);
-    const mk = Math.min(1, k * 2),
+    esPaint(ctx, "#8e95a4", 4);
+    esRect(ctx, 180, 50, 150, 50, 10);
+    esPaint(ctx, "#2d323e", 4);
+    esRect(ctx, 270, 330, 230, 20, 6);
+    esPaint(ctx, "#c3c8d2", 4);
+    // the goat first, then the very tall goat; past halfway the very tall one's beard falls
+    const up = (u) => ({ x: 400 - u * 130, y: 440 - u * 330 }),
+      mk = Math.min(1, k * 2),
       sk = Math.max(0, k * 2 - 1);
-    mk < 1 && engine.drawMopsOn(ctx, 470, 430 - mk * 300, 2.6, { f: 1, walk: t * 8 });
-    sk > 0 && engine.drawSquatch(ctx, 490, 440 - sk * 200, 3.4, { f: 1, walk: t * 8, jacket: true, horns: true });
-  } else if (zoom === "paw") {
-    esRect(ctx, 300, 120, 360, 300, 4);
-    esPaint(ctx, "#ffe08a", 5);
-    drawPawPrint(ctx, 480, 270, 200); // (his paw print as night one's close-up drew it, evening-art.js)
-  } else if (zoom === "star") {
-    esRect(ctx, 220, 150, 520, 220, 16);
-    esPaint(ctx, PK_PAPER, 6);
-    esWords(ctx, "GANITOR", 480, 260, 64, "#1d4fb8", "center", 900);
-    star && (esWords(ctx, star, 480, 340, 30, ES_INK, "center", 900));
-  } else if (zoom === "feet") {
-    // the beard in two furry paws, two big furry feet
-    for (const s of [-1, 1]) {
-      ctx.beginPath();
-      ctx.ellipse(480 + s * 120, 420, 100, 50, 0, 0, PK_TAU);
-      esPaint(ctx, PK_FUR, 5);
+    mk < 1 && ((p) => engine.drawMopsOn(ctx, p.x, p.y, 2.2 - mk * 0.8, { f: -1, walk: t * 8 }))(up(mk));
+    if (sk > 0) {
+      const p = up(sk * 0.85),
+        sc = 3.4 - sk * 1.1,
+        off = sk > 0.45;
+      engine.drawSquatch(ctx, p.x, p.y, sc, { f: -1, walk: t * 8, jacket: true, horns: true, goatBeard: !off });
+      off && (esRect(ctx, p.x + 4, p.y - 8 * sc + Math.min(1, (sk - 0.45) * 4) * 4 * sc, 10 * sc * 0.6, 14 * sc * 0.6, 2), esPaint(ctx, "#ffffff", 3));
     }
+  } else {
+    // close on the very tall goat: horns, a jacket, big furry feet, the beard in his paws
+    ctx.fillStyle = "#cfcabb";
+    ctx.fillRect(S.x0, S.y0, S.x1 - S.x0, S.y1 - S.y0);
+    engine.drawSquatch(ctx, 480, 470, 7.5, { f: -1, jacket: true, horns: true, goatBeard: false });
     ctx.beginPath();
-    ctx.moveTo(420, 110);
-    ctx.lineTo(540, 110);
-    ctx.lineTo(500, 250);
-    ctx.lineTo(460, 250);
+    ctx.moveTo(430, 300);
+    ctx.lineTo(530, 300);
+    ctx.lineTo(490, 400);
+    ctx.lineTo(470, 400);
     ctx.closePath();
     esPaint(ctx, "#ffffff", 5);
-    for (const s of [-1, 1]) (ctx.beginPath(), ctx.ellipse(480 + s * 110, 200, 60, 46, 0, 0, PK_TAU), esPaint(ctx, PK_FUR, 5));
   }
   ctx.restore();
   // the REC badge and the tape's label
   esRect(ctx, S.x0 + 20, S.y0 + 18, 90, 40, 8);
   esPaint(ctx, "#7a1210", 3);
   esWords(ctx, pickupWords("rec"), S.x0 + 65, S.y0 + 38, 22, "#ffffff", "center", 900);
-  esWords(ctx, pickupWords(clip === "night" ? "tape-night" : "tape-today"), S.x1 - 30, S.y0 + 38, 24, "#ffffff", "right", 900);
-  // the three buttons
-  const W = { play: "button-play", zoom: "button-zoom", next: "button-next-tape" };
+  esWords(ctx, pickupWords("tape-bay"), S.x1 - 30, S.y0 + 38, 24, "#ffffff", "right", 900);
+  // the two buttons
+  const W = { play: "button-play", zoom: "button-zoom" };
   for (const b of PK_OFFICE.buttons) {
     ctx.save();
     ctx.globalAlpha = b.id === next ? 1 : 0.35;

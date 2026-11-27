@@ -120,7 +120,7 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: put the label on the crate": { pk: "label", thing: true },
     "Squatch: get in the crate": { pk: "getin", thing: true },
     "Squatch: climb out of the crate": { pk: "climb" },
-    "Squatch: hide in the bay's plant": { pk: "sneak", x: 300, y: 560, thing: true },
+    "Squatch: hide behind the mail bags": { pk: "sneak", x: 870, y: 590, thing: true },
     "Squatch: walk home with Mops": { pk: "home", walk: true, look: [36, 300] },
     "Squatch: put on the spare jacket": { pk: "dress", closeUp: true },
     "Squatch: practice your bleat": { pk: "practice" },

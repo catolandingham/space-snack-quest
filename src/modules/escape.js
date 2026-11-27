@@ -1003,6 +1003,13 @@ export function createEscape(bridge) {
     if (i < 0 || s.gone[i]) return;
     s.carry = { i, k: 0, to: l.step === "food" ? "plate" : "bag" };
   }
+  // (r6 1:22: over the counter close-up his bubble comes from his paw at the bottom, not from where he stands in the
+  // hall: while he talks there he is taken off the hall's floor, so the bubble's tail goes to speakerAt, then put back)
+  function atPaw(lines) {
+    const e = E(),
+      keep = { ...e.pos("sq") };
+    return [e.run(() => e.place("sq", -400, -400)), ...lines(), e.run(() => e.place("sq", keep.x, keep.y))];
+  }
   function snackTick(l, dt) {
     const e = E(),
       s = l.snacks,
@@ -1017,12 +1024,12 @@ export function createEscape(bridge) {
     if (l.step === "snacks" && s.bag >= SNACKS.forBag) {
       busy();
       go("guardians");
-      e.queue([...sayParts("sq", "sq-what-guardians"), ...sayParts("sq", "sq-leave-food"), e.run(() => ((L().snacks.plate = true), go("food"), control("chip-food")))]);
+      e.queue([...atPaw(() => [...sayParts("sq", "sq-what-guardians"), ...sayParts("sq", "sq-leave-food")]), e.run(() => ((L().snacks.plate = true), go("food"), control("chip-food")))]);
     } else if (l.step === "food") {
       // his last snack cake on their plate: "Their favorite. I think."; Mops says nothing, one heart
       busy();
       go("favorite");
-      e.queue([...sayParts("sq", "sq-favorite"), e.run(() => go("hearts", { cu: "", heartsAt: e.time() })), e.until(() => e.time() - L().heartsAt >= ES_PACE.hearts), e.run(toHome)]);
+      e.queue([...atPaw(() => sayParts("sq", "sq-favorite")), e.run(() => go("hearts", { cu: "", heartsAt: e.time() })), e.until(() => e.time() - L().heartsAt >= ES_PACE.hearts), e.run(toHome)]);
     }
   }
   // home: the player walks him there
@@ -1831,7 +1838,7 @@ export function createEscape(bridge) {
       if (room === "hall" && who === "tourist") return { x: HALL_GUEST.x, y: HALL_GUEST.y - 150 };
       // over the crayon plan (45b): the bubbles go under the sheet, clear of its pictures
       if (room === "closet" && l.cu === "plan" && (who === "sq" || who === "mops")) return { x: who === "sq" ? 330 : 630, y: 640 };
-      if (room === "hall" && who === "sq" && l.cu === "snacks") return { x: SNACKS.rest.x, y: SNACKS.rest.y - 160 };
+      if (room === "hall" && who === "sq" && l.cu === "snacks") return { x: SNACKS.rest.x, y: SNACKS.rest.y };
       return null;
     },
     tick,
