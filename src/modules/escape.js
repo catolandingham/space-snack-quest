@@ -39,6 +39,7 @@
  * one he did (RESTART_TO). Words: escape-lines.js; places and times: escape-place.js; the snack's names:
  * snack-name.js. Every drawing and number is a PLACEHOLDER for Brian.
  */
+import { withCameraLayer } from "./bay-camera.js";
 import { escapeWords } from "./escape-lines.js";
 import { OFFICE_CODE, BAY_DAY, BAY_NIGHT, ES_HOME, ES_BAY, ROBOT_SIGHT, VENT_ROOM, VENT_TUNNEL, ES_HALLWAY, KEYPAD, keyAt, OFFICE, SITE, ES_BAR, SNACKS, ES_PACE, WEEK, MOP_CALM, MOPOFF, NEWS, ROUTE_HOME, ROUTE_VENT, ROUTE_OFFICE, ROUTE_BAR, ROUTE_HOME_NIGHT, HALL_GUEST, PLAQUE, FOLLOW, ES_DOORS } from "./escape-place.js";
 import { freshFloor, goatCells, beardAt, mopCalm, mopGoat, goatClean, wheelsAcross, starFor, bars, robotsAt, drawCalmFloor, drawMopFloor, drawBars, drawStarCloseup, markPatch, drawScrub } from "./escape-mopoff.js";
@@ -1435,7 +1436,8 @@ export function createEscape(bridge) {
       t = e.time(),
       night = !!e.get("ch1Night"),
       p = night ? pics.night : pics.day;
-    p && p.complete && p.naturalWidth ? ctx.drawImage(p, 0, 0, 960, 640) : ((ctx.fillStyle = "#8a8fa0"), ctx.fillRect(0, 0, 960, 640));
+    // (with the security camera Isfred had put up on Day 2: round 7, q: 123, bay-camera.js)
+    p && p.complete && p.naturalWidth ? ctx.drawImage(withCameraLayer(night ? "delivery-night" : "delivery-noship", p), 0, 0, 960, 640) : ((ctx.fillStyle = "#8a8fa0"), ctx.fillRect(0, 0, 960, 640));
     night && noteNightPicture("hangar"); // (the bay's night look is its locked night picture)
     const out = { room: "hangar", night };
     // the grille swung open while Mops goes in or comes out; him, half in the dark hole

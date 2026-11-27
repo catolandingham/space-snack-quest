@@ -113,6 +113,8 @@ const run = await page.evaluate(
     // 47 (the walk to the vent is tests/escape-vent.mjs)
     ss.drawFrame();
     out.ball = { room: n.room, night: !!n.ch1Night, chip: n.ch1Chip, robot: !!S().robot, cones: (d().drew.cones || []).length };
+    ss.drawFrame();
+    out.ball.camera = window.SSQ.cameraLayerDrawn().lastId;
     // the button comes up by the vent only (the goal), not out in the bay
     n.sq.x = 420;
     n.sq.y = 560;
@@ -318,6 +320,7 @@ const run = await page.evaluate(
 );
 g.check("47: rolled up by the vent: on the floor in front of the wall, a shadow under him", run.ball.shadow && run.ball.at.y - 40 > 254 && run.ball.at.y + 8 < 359, run.ball);
 g.check("51, 52: night in the office and at the snack counter; the office's desk, chair and cabinet are solid", run.office.night && run.bar.night && ["desk", "chair", "cabinet"].every((k) => run.office.solids.includes(k)), { office: run.office, bar: run.bar });
+g.check("47 (round 7, q: 123): the bay at night has the security camera Isfred had put up on Day 2", /^delivery-/.test(run.ball.camera || ""), run.ball.camera);
 g.check("47: the bay at night, the goal, a patrolling robot with its cone", run.ball.room === "hangar" && run.ball.night && run.ball.chip === W["chip-ball"] && run.ball.robot && run.ball.cones === 1, run.ball);
 g.check("47: ROLL · ball comes up by the vent; he rolls into the L2 ball", run.ball.awayOffer === "" && run.ball.press === W["button-ball"] && run.ball.pose === "ball", run.ball);
 g.check("49: GRAB · pink slip, and the slip goes to his paw", run.grab.press === W["button-grab"] && run.grab.slip === "paw", run.grab);
