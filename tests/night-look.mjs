@@ -8,6 +8,7 @@
  *     evening at home after the party (TV story and bedtime; the bedtime story's crate front and Mops's mop bucket
  *     under the night look, its lights-out dim on top), against Day 1's morning at home and Day 2 at home, in
  *     the hall and in the hallway;
+ *   - Day 2's start: dark, the black lifts on the night look, then the morning comes up (home-morning.js NIGHT_LIFT);
  *   - pixels: the night room's wall is darker and bluer than the same wall by day, and the lit things (the hall's
  *     window onto space and its FUR alarm, home's TV screen) stay as bright as by day.
  * Stills at 375 px go to tests/out/night-stills/ (day and night of each room).
@@ -198,6 +199,39 @@ for (const [beat, room, name, pts] of [
   const dim = await page.evaluate(() => window.SSQ.beat("ch1-bedtime-story").debug().drew);
   g.check("lights out: the bedtime story's dim goes on top of the night look", results.bedSnore.night && results.bedSnore.drew.closet && dim && dim.dim > 0.4 && bright(results.bedSnore.px.wall) < bright(results.bedAsk.px.wall) * 0.8, { dim, ask: results.bedAsk.px.wall, snore: results.bedSnore.px.wall });
   await still(page, "home-bedtime-lights-out");
+  // Day 2's start (the home morning, beat 22): dark, then the black lifts on the night look, then the morning comes up
+  // (ticks to the night step, then through it, recording each frame; `stopAt`: stop once the black is under it)
+  const dawnRun = (stopAt) =>
+    page.evaluate((stopAt) => {
+      const ss = window.__ss,
+        n = ss.op,
+        hm = window.SSQ.beat("ch1-home-morning"),
+        step = () => hm.debug().state && hm.debug().state.step,
+        out = [];
+      for (let i = 0; i < 8000 && step() !== "night"; i++) {
+        const c = n.cur;
+        c && ["card", "cutaway", "bub", "panel"].includes(c.k) && !c.auto && ((n.bt = 1), ss.opTap());
+        ss.tick(0.05);
+      }
+      for (let i = 0; i < 120 && step() === "night"; i++) {
+        ss.drawFrame();
+        const d = hm.debug().drew || {};
+        out.push({ t: +hm.debug().state.t.toFixed(2), dark: d.dark, k: d.nightK });
+        if (d.dark != null && d.dark < stopAt) break;
+        ss.tick(0.05);
+      }
+      return { out, day2: !!n.ch1Day2, step: step() };
+    }, stopAt);
+  const dawn1 = await dawnRun(0.01);
+  await still(page, "home-day2-start-night");
+  const dawn2 = await dawnRun(-1),
+    dawn = { out: [...dawn1.out, ...dawn2.out], day2: dawn2.day2, step: dawn2.step };
+  const clear = dawn.out.filter((f) => f.dark === 0 && f.k === 1),
+    falls = dawn.out.every((f, i) => !i || (f.k <= dawn.out[i - 1].k && f.dark <= dawn.out[i - 1].dark));
+  const mid = clear[0];
+  g.check("Day 2's start: dark, then the black lifts all the way on the night look (full night tint, several frames), then the morning comes up (no tint left); the black and the tint only ever go down", dawn.day2 && dawn.out.length > 10 && dawn.out[0].dark === 1 && dawn.out[0].k === 1 && clear.length >= 5 && falls && dawn.out[dawn.out.length - 1].k < 0.1, { first: dawn.out[0], mid, last: dawn.out[dawn.out.length - 1], step: dawn.step });
+  results.dawnDay = await frame(page, BED_PTS);
+  g.check("after Day 2's start: day (no night look)", !results.dawnDay.night && !results.dawnDay.drew.closet, results.dawnDay);
   g.check("no page errors (bedtime)", errors.length === 0, errors);
   await ctx.close();
 }

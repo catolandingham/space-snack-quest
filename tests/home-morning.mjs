@@ -539,7 +539,8 @@ const mid = await page.evaluate(() => {
   tick(0.8);
   ss.sectionReset();
   out.night = after();
-  tick(3.5);
+  // (the night 3.4 s, the room coming up on the night look since 2026-11-26, then the ding-dong's wait)
+  tick(4.3);
   out.atPa = { step: (hm.debug().state || {}).step, bub: !!(n.cur && n.cur.k === "bub") };
   next();
   tick(12);
