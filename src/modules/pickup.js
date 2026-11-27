@@ -127,8 +127,8 @@ export function createPickup(bridge) {
     const l = live();
     return !!(l && l.step === "push" && l.crate === "push" && E().get("moPose") !== "hidden");
   };
-  setCarry((who, room) => (who === "mops" && pushing() ? (PK_CRATE.w + PK_CRATE.ahead + 4) * crateK(room) - 25 : 0));
-  addKeeper((who) => who === "mops" && pushing() && lastMops && keepCrateClear(L(), lastMops, lastMops.f || 1));
+  setCarry((who, room) => (who === "mops" && pushing() ? { reach: (PK_CRATE.w + PK_CRATE.ahead + 4) * crateK(room) - 25, f: E().pos("mops").f || 1 } : null));
+  addKeeper((who) => who === "mops" && pushing() && lastMops && lastMops.room === E().room() && keepCrateClear(L(), lastMops, lastMops.f || 1));
   addMovers(() => (pushing() ? [{ who: "crate", room: E().room(), ...pushedCrate(), box: crateFoot(pushedCrate()) }] : []));
   const guests = createGuestArt();
   let drew = null,
@@ -1248,14 +1248,14 @@ export function createPickup(bridge) {
     dt = dt || 0;
     const free = e.get("ctrl") && !e.current();
     // the pushed crate is solid: a step that would put it in something is taken back (room-model.js)
-    l.step === "push" && l.crate === "push" && lastMops && keepCrateClear(l, lastMops, lastMops.f || 1);
+    l.step === "push" && l.crate === "push" && lastMops && lastMops.room === e.room() && keepCrateClear(l, lastMops, lastMops.f || 1);
     const m = e.pos("mops");
     moMoving = !!lastMops && Math.hypot(m.x - lastMops.x, m.y - lastMops.y) > 0.3;
     l.mopping = free && moMoving && l.step === "mop";
     if (free && l.step === "mop") mopTick(l);
     if (free && walking(l)) walkTick(l, dt);
     l.slideHis && (l.slideHis.t += dt) >= PK_SLIDE && (l.slideHis = null);
-    lastMops = m;
+    lastMops = { ...m, room: e.room() };
     // 55: the robots roll back while Mops walks in; the sneak to the plant
     if (["warn", "knock", "bleat"].includes(l.step) && free) bots("new0", "new1").forEach((b) => roll(b, dt));
     if (l.step === "warn" && free && at(m, PK_BAY.knockAt, PK_BAY.knockR)) (go("knock"), control("chip-warn"));
@@ -1375,7 +1375,8 @@ export function createPickup(bridge) {
   // One size for his crate in every room, the size of the row's crates in the bay (Brian r6 3:07: "Crate is way too
   // large"): it was sized against home by the room rule, but home draws its people at three times their scale, so
   // the pushed crate came out about twice the size of the crates it joins.
-  const crateK = (room) => (sqScale(room) / sqScale("closet")) * 0.55;
+  // (home draws its people at three times their scale, not the room rule: there the crate goes by that)
+  const crateK = (room) => ((room === "closet" ? 3 : sqScale(room)) / sqScale("closet")) * 0.55;
   // The floor his crate stands on while pushed (its pallet's width, a strip at its bottom), for the room's solids.
   function crateFoot(c) {
     const half = (PK_CRATE.w / 2 + 4) * c.k;

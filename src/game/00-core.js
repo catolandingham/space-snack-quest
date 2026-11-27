@@ -1382,7 +1382,7 @@
         solids.push(nt(n.mo.x, n.mo.y, 46, 46, 46));
       return solids;
     }
-    function R0(l) { window.SSQ && window.SSQ.afterMove && window.SSQ.afterMove(l === n.mo ? "mops" : "sq"); // (what he pushes stays out of things: room-model.js)
+    function R0(l) {
       let solids = walkSolids(l);
       let inside = (x, y) => solids.some((o) => x > o.x0 && x < o.x1 && y > o.y0 && y < o.y1);
       if (!inside(l.x, l.y)) return;

@@ -40,6 +40,23 @@ const PHONE = { width: 375, height: 812 };
     way.push(at);
   }
   check("the model: a walk past a box goes round it, never into it", way.every((p) => !RM.blockedAt([box], p.x, p.y)) && Math.hypot(at.x - 300, at.y - 150) <= 1, way.find((p) => RM.blockedAt([box], p.x, p.y)));
+  // a second walk by the same walker to the same place, from somewhere else, works its way out again (the reviewer's
+  // case: an old way round, reused, cut through the box)
+  const walk = (id, from) => {
+    let p = { ...from };
+    const pts = [];
+    for (let i = 0; i < 400 && Math.hypot(p.x - 300, p.y - 150) > 1; i++) {
+      const w = RM.waypointAmong(id, p, 300, 150, "test", [box], bounds) || { x: 300, y: 150 },
+        d = Math.hypot(w.x - p.x, w.y - p.y),
+        s = Math.min(d, 4);
+      p = d ? { x: p.x + ((w.x - p.x) / d) * s, y: p.y + ((w.y - p.y) / d) * s } : p;
+      pts.push(p);
+    }
+    return pts;
+  };
+  walk("t4", { x: 50, y: 150 });
+  const again = walk("t4", { x: 50, y: 195 });
+  check("the model: a later walk to the same place never reuses an old way through the box", again.every((p) => !RM.blockedAt([box], p.x, p.y)), again.find((p) => RM.blockedAt([box], p.x, p.y)));
   const out = RM.waypointAmong("t2", { x: 150, y: 190 }, 300, 150, "test", [box], bounds);
   check("the model: someone standing inside a thing walks out of it the shortest way first", !!out && out.y >= 200 && Math.abs(out.x - 150) < 8, out);
   check("the model: a clear walk goes straight (no corner)", RM.waypointAmong("t3", { x: 50, y: 300 }, 350, 300, "test", [box], bounds) === null);

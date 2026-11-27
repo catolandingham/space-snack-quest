@@ -1405,7 +1405,7 @@ export function createEscape(bridge) {
       out.robot = { x: Math.round(r.x), y: Math.round(r.y), phase: r.phase, mark: r.mark || "" };
     }
     // the slip in Mops's mouth is outlined while he is to grab it (it moves with him, so it is not a goal-targets entry)
-    l.step === "grab" && e.get("ctrl") && markBox(ctx, mouthBox(), t);
+    l.step === "grab" && e.get("ctrl") && markBox(ctx, mouthBox(), t, 6, []); // (a thing a person holds keeps its whole line)
     // (the vent's outline while he is to roll up by it is the goal outline: goal-targets.js "hangar:es-ball")
     people(ctx, l, "hangar");
     // security, as the party's guard, with his flashlight cone the whole time he is out (bay-watch.js)
@@ -1548,7 +1548,7 @@ export function createEscape(bridge) {
       // the one highlight on the next thing to look at (45a: the brochure in his paw; 45b: the crate, the calendar)
       if (l.step === "show") {
         const p = sqPawAt(s.x, s.y, s.f || 1, sqScale("closet"));
-        drew.mark = markBox(ctx, { x0: p.x - 6, y0: p.y - 70, x1: p.x + 30, y1: p.y - 36 }, t);
+        drew.mark = markBox(ctx, { x0: p.x - 6, y0: p.y - 70, x1: p.x + 30, y1: p.y - 36 }, t, 6, []); // (in his paw)
       }
       l.step === "crate" && (drew.mark = markBox(ctx, ES_HOME.crate, t));
       l.step === "cal" && (drew.mark = markBox(ctx, ES_HOME.calendar, t));

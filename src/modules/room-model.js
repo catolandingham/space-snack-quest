@@ -37,23 +37,28 @@ export function bodyHalf(who, room) {
 }
 /** How much wider than the lists' feet box a walker is, each side (0 to 20), and more while he pushes something. */
 export function bodyExtra(who, room) {
-  return Math.max(0, Math.min(20, Math.round(bodyHalf(who, room) - FEET_SIDE)), carrying(who, room));
+  // (Squatch's body fits the lists' feet box: only Mops grows them)
+  return who === "mops" ? Math.max(0, Math.min(20, Math.round(bodyHalf(who, room) - FEET_SIDE))) : 0;
 }
 // What a walker pushes in front of him reaches this far past the lists' feet box (a module says: setCarry).
 let carryFn = null;
-/** A module tells the model how far past his feet box a walker's load reaches: fn(who, room) gives game pixels or 0. */
+/**
+ * A module tells the model how far past his feet box a walker's load reaches, and on which side: fn(who, room) gives
+ * { reach, f } (f 1: the load is to his right, -1: to his left) or null.
+ */
 export function setCarry(fn) {
   carryFn = typeof fn === "function" ? fn : null;
 }
 function carrying(who, room) {
-  const c = carryFn ? carryFn(who, room) : 0;
-  return c > 0 ? Math.round(c) : 0;
+  const c = carryFn ? carryFn(who, room) : null;
+  return c && c.reach > 0 ? { reach: Math.round(c.reach), f: c.f < 0 ? -1 : 1 } : null;
 }
 
 let engine = null;
 /** The bridge hands over the engine (pos, room, roomSolids, roomBounds) once it has it. */
 export function setRoomEngine(e) {
   engine = e;
+  paths.clear();
 }
 const inBox = (b, x, y) => x > b.x0 && x < b.x1 && y > b.y0 && y < b.y1;
 // A person's feet box built round the walker himself (a beat lists everyone standing in the room, him too): centred
@@ -66,12 +71,16 @@ const ownBox = (b, at) => !!(b && b.person && at && Math.abs((b.x0 + b.x1) / 2 -
  * feet box with his feet in it), each grown sideways by how much wider than the lists' feet box his body is.
  */
 export function moverSolids(who, at, list, room, keepOwn = false) {
-  const extra = bodyExtra(who, room);
+  const extra = bodyExtra(who, room),
+    load = carrying(who, room),
+    // (a load in front of him reaches past him on that side only: a thing to his right grows leftward by it)
+    left = Math.max(extra, load && load.f > 0 ? load.reach : 0),
+    right = Math.max(extra, load && load.f < 0 ? load.reach : 0);
   const out = [];
   for (const b of list || []) {
     if (!b) continue;
     if (!keepOwn && ownBox(b, at)) continue;
-    out.push(extra ? { ...b, x0: b.x0 - extra, x1: b.x1 + extra } : b);
+    out.push(left || right ? { ...b, x0: b.x0 - left, x1: b.x1 + right } : b);
   }
   return out;
 }
@@ -147,7 +156,7 @@ export function waypointAmong(who, at, x, y, room, solids, bounds) {
     const out = freeNear(solids, bounds, at.x, at.y);
     if (out.x !== at.x || out.y !== at.y) return (paths.delete(who), out);
   }
-  if (!firstHit(solids, at, to)) return null;
+  if (!firstHit(solids, at, to)) return (paths.delete(who), null);
   let p = paths.get(who);
   if (!p || p.room !== room || Math.hypot(p.to.x - to.x, p.to.y - to.y) > 12) {
     const way = findPath(at, to, bounds, solids);
@@ -161,6 +170,12 @@ export function waypointAmong(who, at, x, y, room, solids, bounds) {
     const hit = firstHit(solids, at, to);
     hit && !off({ x, y }) && note("place in a solid", who, room, { x, y }, hit);
     return null;
+  }
+  // (a way worked out before, from somewhere else, that now crosses a solid: worked out again from here)
+  if (firstHit(solids, at, p.way[0])) {
+    const way = findPath(at, to, bounds, solids);
+    p.way = way ? way.slice() : [];
+    if (!p.way.length) return (note("no way round", who, room, at, firstHit(solids, at, to)), null);
   }
   return p.way[0];
 }
@@ -242,7 +257,8 @@ export function homeDepthItems(people, paint, skip) {
   for (const [id, p] of Object.entries(HOME_BASELINES)) {
     if (skip && skip(id)) continue;
     out.push({
-      y: p.back,
+      // (just before anyone standing on the line itself: feet pushed out of the bed stop exactly on it, in front)
+      y: p.back - 0.01,
       d: () => {
         const behind = people.filter((q) => q.y < p.back && q.x + q.half > p.x && q.x - q.half < p.x + p.w);
         if (!behind.length) return;
@@ -330,6 +346,6 @@ export function peopleBoxesNow() {
     s = engine.pos("sq"),
     m = engine.pos("mops");
   engine.get("sqPose") === "stand" && out.push(personBox("sq", s.x, s.y, k));
-  !["hidden"].includes(engine.get("moPose")) && out.push(personBox("mops", m.x, m.y, room === "closet" ? 3 : k * 1.15));
+  !["hidden", "sleep"].includes(engine.get("moPose")) && out.push(personBox("mops", m.x, m.y, room === "closet" ? 3 : k * 1.15));
   return out;
 }
