@@ -1148,7 +1148,7 @@ export function createEvening(bridge) {
         S().postAlarm = true;
         // (control without a new saved step: caught now, the step restarts at POST · mailbox)
         e.set("ctrl", true);
-        chip("chip-hide");
+        chip("chip-hide-alarm");
         raise(EV_BAY.robot.id, "where-bay");
       }),
     ]);
@@ -1307,7 +1307,7 @@ export function createEvening(bridge) {
           d = Math.hypot(dx, dy) || 1;
         s.people[f.id] = { x: f.x, y: f.y, hx: f.x, hy: f.y, ax: (dx / d) * ALARM.backAway, ay: (dy / d) * ALARM.backAway * 0.6 };
       }
-    chip("chip-hide");
+    chip("chip-hide-alarm");
   }
   function alarmApi() {
     const e = E();

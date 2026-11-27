@@ -39,6 +39,7 @@ export const EVENING_LINES = Object.freeze(
     // bar as they walk in, the player is Mops, the kid pets the goat, Mops asks about the cakes, Dad hands him a brochure ----
     { id: "mops-behind-bar", who: "mops", text: "Behind the bar. Quick.", status: "pending", source: "review 2026-11-27 topic B (NEW; Brian r5 4:49: they hide behind the bar when they walk in)" },
     { id: "chip-hide", who: "chip", text: "Squatch: hide behind the bar", status: "pending", source: "review 2026-11-27 topic B (goal words, CHANGED: it said only to hide)" },
+    { id: "chip-hide-alarm", who: "chip", text: "Squatch: hide", status: "in-game", source: "src/game/14-ch1-day2.js (beat 38): the goal words while an alarm is on, in any room" },
     { id: "button-counter", who: "button", text: "HIDE · bar", status: "pending", source: "review 2026-11-27 topic B (CHANGED: was HIDE · counter; Mops calls it the bar)" },
     { id: "pa-storm", who: "pa", text: "The Great Red Storm is passing!", status: "pending", source: "story pass 2026-11-26 beat 38a (KEEP)" },
     { id: "pa-window", who: "pa", text: "Best view: the big window.", status: "pending", source: "story pass 2026-11-26 beat 38a (KEEP)" },
