@@ -32,7 +32,7 @@
 
 2026-11-26 (late night, bedtime), draft PR #89: the rename reaches the bedtime story (the crate caption, Mops's line, the story crate's worn family stamp with no crayon). Waiting on Brian: Mops's line's new words. Docs match main: yes.
 
-2026-11-26 (late night), draft PR #87: the snack is Stars Cakes everywhere (Brian, question 86; `snack-name.js`, `crate-stamp.js`, `tests/snack-name.mjs`; DECISIONS "The snack renamed, and the crate bed's stamp (question 86)"). Waiting on Brian: the bedtime line's new words; the crate bed's stamp layer over the locked home pictures (his yes); the crayon "ST". Not yet played by a person. Docs match main: yes.
+2026-11-26 (late night), draft PR #87: the snack is Stars Cakes everywhere (Brian, question 86; `snack-name.js`, `crate-stamp.js`, `tests/snack-name.mjs`; DECISIONS "The snack renamed, and the crate bed's stamp (question 86)"). Waiting on Brian: the bedtime line's new words; the crate bed's stamp layer over the locked home pictures (his yes); the hall tin's new lid over the locked hall picture (his yes); the crayon "ST". Not yet played by a person. Docs match main: yes.
 
 2026-11-26 (night, lunch), draft PR #91: the night look merged in; the lunch sneak is day (checked by `night-look`). Docs match main: yes.
 
