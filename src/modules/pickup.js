@@ -6,31 +6,41 @@
  * chapter end: the tally card, then the Gas Stop).
  *   53   READ · note: the Guardian note on his pillow (the one the player wrote in the vent), close; "They know!";
  *        OPEN · box: the Guardian Box close, a pink corner under the old notes; PACK · note covers it ("Safe.");
- *        the player is Mops (announced): he wipes the fur out of the crate bed with his beard (MOP · crate, a walk), one
- *        long white hair left behind, held close; Squatch again: PACK · box, PACK · bucket, the things off the walls
- *        (pale squares), "It looks so empty.", the ship's PA, PUT ON · label, GET IN · crate; the player is Mops:
- *        PUSH · pallet through the hall and the hallway to the mail room (a bump: "Oof!", a guest's "?", his bleat).
- *   54   Squatch in the crate: the view through a slat (his eyes in the corner); the new robots roll down the ramp
- *        ("NO FUR. PROCEED."), "NEW ROBOTS. NEW RULE." ... they open the first thing in the row, a mail bag: "FUR. STOP.",
- *        Lou's hat; his thoughts.
- *   55   the player is Mops: walk to the crate, KNOCK · crate, BLEAT · robot from the opening (the robots turn to him);
- *        Squatch: CLIMB OUT · crate, ROLL · ball or sneak (the robots' cones; the one capture rule), HIDE · plant; from
- *        the plant the robots open his crate: one white hair, "GOAT HAIR. PROCEED.", it goes up the ramp; the idea in
- *        three thought pictures; he walks home (Mops behind him); "So make me a goat."
- *   56   the player is Mops: SNIP · beard, close (his GANITOR tag and its gold star at the edge); Squatch: the dress-up
- *        (beard, horns, the spare plain blue jacket: tap a piece, tap him; "Disguised enough"); BLEAT · Mops three times
- *        (a roar, closer, a bleat), "More bleat. Less roar."; the mirror inside the wardrobe door: "Two goats."
+ *        "The scanner stops fur." / "It lets hair through."; the player is Mops (announced): he wipes the fur out of the
+ *        crate bed with his beard (MOP · crate, a walk), then EAT · poster: the STAY IN HERE poster ("We don't need this
+ *        anymore.", a pale square left; "You ATE it." / "Delicious."); Squatch again: PACK · box, PACK · bucket, the
+ *        things off the walls (pale squares), "It looks so empty.", the ship's PA, PUT ON · label (FOR PICKUP.),
+ *        GET IN · crate; Mops lays his beard hair over him on purpose ("So today you're a pile of hair."); the player is
+ *        Mops: PUSH · pallet through the hall and the hallway to the mail room (a bump: "Oof!", a guest's "?", his bleat).
+ *   54   (round 7, #116 to #118 pick A) the room as it is, his eyes in his crate: one upgraded robot rolls down the ramp
+ *        ("NO FUR. PROCEED."), tells Mops "UPGRADE INSTALLED." / "WE CHECK EVERY CORNER NOW." / "AND EVERY CRATE."
+ *        ("...I told them to check the corners."); two passengers board; the old robots load at the ramp; the robot
+ *        opens the first crate and looks in ("They LOOK inside now."), then scans it and sends it up the ramp.
+ *   55   the player is Mops: KNOCK · crate ("Squatch! Get out." / "They're opening the crates."), he takes the bucket off
+ *        the top, walks out into the bay to the floor vent, SPILL · bucket: "SPILL. CLEANING EVERY CORNER.", the robot
+ *        leaves the mail room to clean round it; Squatch: CLIMB OUT · crate, HIDE · mailbox (Brian's #118 B; or ROLL · ball; the robots'
+ *        cones and the one capture rule if he wanders into the bay); from the mailbox's slot he watches the robot come
+ *        back and read the stamp as it is (the family stamp without its first letter, then "LOADING."), the lid opened at the scanner ("ONE BOX. ONE BUCKET."), "HAIR. PROCEED.", up the
+ *        ramp; he walks home (Mops behind him); at home the idea in words: "The hair got through." / "But they
+ *        LOOKED." / "Then you need hair... and you need to look like a goat." / "So make me a goat."
+ *   56   the player is Mops: SNIP · beard, close (his GANITOR tag at the edge); Squatch: the dress-up (beard under his
+ *        chin, horns, the spare plain blue jacket: tap a piece, tap him; "Disguised enough"); BLEAT · Mops three times
+ *        (a roar, closer, a bleat), "More bleat. Less roar.", "I can't bleat. I'm a Sasquatch." / "Today you're a
+ *        goat."; the mirror inside the wardrobe door: "Two goats."
  *   57   the last walk out the front way: the hall's guests and the costume's rule (a dashed cone and "?", BLEAT · guest
  *        pops it; too long and the beard slips: PRESS · beard; fur in a cone too long, the LOCKUP card); LOOK · plate
- *        (optional: empty, crumbs); the hallway's PHOTO DAY door and its flash; TAKE · drawing (optional).
+ *        (optional: empty, crumbs); the hallway's PHOTO DAY door and its flash; LIFT · photo, then TAKE · drawing
+ *        (optional).
  *   58   the bay: the week's box comes down the ramp, PICK UP · box (Mops takes the mail); at the arch the robot's cone:
  *        "TWO GOATS?", BLEAT · robot; the player is Mops: GO · ship ("It's attached."), "GOAT. PROCEED."; Squatch:
  *        BOARD · scanner, the scan line down to the peeling beard, PRESS · beard, "HAIR..." "...PROBABLY." "PROCEED.";
- *        CLIMB · ramp, "Weent.", the beard in his paws under the camera's red light; the ship goes.
+ *        CLIMB · ramp, "Weent.", and in the room, right under the camera's red light, the beard slips off and falls into
+ *        his paws; the ship goes.
  *   59   the office (a cutscene): the frame close, the tripod and stool, Isfred's five lines; "Later that evening..."
- *   60   the tape screen: PLAY · tape, ZOOM · in (the paw), NEXT · tape, PLAY · tape, ZOOM · in (the star), ZOOM · in
- *        (the feet), Isfred's lines, "Get me that ship."
- *   61   the cargo hold: OPEN · box, BITE · cake ("No fizz."), the call, HIDE · crate, the lid lifts: "Found him.",
+ *   60   the one tape, from the camera's corner (#123 pick A): PLAY · tape (a goat, then a very tall goat; the beard falls;
+ *        "My best worker."), ZOOM · in on the tall one: "That is not a goat." / "A Wookiee!" / "Get me that ship."
+ *   61   the cargo hold: OPEN · box, BITE · cake ("No fizz."), the call, HIDE · crate; the crew member walks down the
+ *        stairs ("Out of the way, goat."); the player is Mops: BLEAT · crew ("Nice try."); the lid lifts: "Found him.",
  *        "He's with me.", "Then you're both off."; the chapter's end (14-ch1-day2.js ch1ChapterEnd: the tally card, then
  *        Chapter 2's Gas Stop).
  * Its progress lives in the game-state field ch1Pickup, and ch1Step is "pk-<step>" at each step the player controls, so
@@ -41,9 +51,9 @@
 import { personBox, boxHit, addMovers, setCarry, addKeeper } from "./room-model.js";
 import { pickupWords } from "./pickup-lines.js";
 import { PK_HOME, PK_HALL, PK_HALLWAY, PK_BAY, PK_BAY_PICKUP, PK_BAY_GONE, PK_SIGHT, PK_PACE, PK_CRATE, ROUTE_PUSH, ROUTE_SNEAK, ROUTE_LAST, COSTUME, PK_OFFICE, PK_HOLD } from "./pickup-place.js";
-import { drawPkTuft, drawHair, drawFloorPatch, drawPkCrate, drawBucket, drawMailBag, drawHat, drawNewRobotBits, drawScanLine, drawArchLight, drawCamera, drawKidDrawing, drawPaleSquare, drawFoldedNote, drawBoxCloseup, drawHairCloseup, drawSlatFrame, SLAT, drawIdea, drawSnipCloseup, drawDressCloseup, drawMirror, COSTUME_PIECES, DRESS, costumeSpotAt, drawPkPlate, drawPlateCloseup, drawPhotoSign, drawCrayonCloseup, drawTagBox, drawPeelCloseup, drawSlipCloseup, drawShipAway, drawPhotoCorner, drawTapeScreen, drawHold, drawBiteCloseup, drawLidView } from "./pickup-art.js";
+import { withCameraLayer, BAY_CAMERA } from "./bay-camera.js";
+import { drawPkTuft, drawHair, drawFloorPatch, drawPkCrate, drawBucket, drawPuddle, drawSnackBag, drawNewRobotBits, drawScanLine, drawArchLight, drawKidDrawing, drawPaleSquare, drawWallPatch, drawFoldedNote, drawBoxCloseup, drawSnipCloseup, drawDressCloseup, drawMirror, drawCostumePiece, drawBrochureCorner, COSTUME_PIECES, DRESS, costumeSpotAt, drawPkPlate, drawPlateCloseup, drawPhotoSign, drawCrayonCloseup, drawTagBox, drawPeelCloseup, drawShipAway, drawPhotoCorner, drawTapeScreen, drawHold, drawBiteCloseup, drawLidView } from "./pickup-art.js";
 import { OFFICE_PANELS } from "./escape-office-art.js";
-import { escapeWords } from "./escape-lines.js";
 import { drawPerson, LOOKS } from "./party-art.js";
 import { drawGulpSweat } from "./escape-home-art.js";
 import { ES_HOME, ES_DOORS, FOLLOW } from "./escape-place.js";
@@ -61,24 +71,23 @@ import { adultPxFor } from "./room-sizes.js";
 
 export const PICKUP_ID = "ch1-pickup";
 // The steps the player controls (ch1Step "pk-<step>"), in order. (jump() takes these, and "start".)
-export const PICKUP_STEPS = Object.freeze(["note", "box", "packnote", "mop", "pack", "bucket", "walls", "label", "getin", "push", "warn", "knock", "bleat", "climb", "sneak", "home", "snip", "dress", "practice", "lastwalk", "pickbox", "toscan", "botbleat", "goship", "board", "peel", "ramp", "tape", "cake", "bite", "hide"]);
+export const PICKUP_STEPS = Object.freeze(["note", "box", "packnote", "mop", "poster", "pack", "bucket", "snacks", "walls", "label", "getin", "push", "knock", "spill", "climb", "sneak", "home", "snip", "dress", "practice", "lastwalk", "pickbox", "toscan", "botbleat", "goship", "board", "peel", "ramp", "tape", "cake", "bite", "hide", "crewbleat"]);
 // The steps where the stick drives Mops (the rest drive Squatch).
-const PK_MOPS_STEPS = Object.freeze(["mop", "push", "warn", "knock", "bleat", "snip", "goship"]);
+const PK_MOPS_STEPS = Object.freeze(["mop", "poster", "push", "knock", "spill", "snip", "goship", "crewbleat"]);
 // Where a step the player does not control goes back to on ↺.
 const PK_RESTART_TO = Object.freeze({
   wake: "note",
   noted: "note",
   boxed: "packnote",
   tomop: "packnote",
-  mopped: "mop",
+  ate: "poster",
   emptied: "walls",
   inside: "getin",
   arrive: "push",
-  slat: "push",
+  watch: "push",
   knocked: "knock",
-  bleated: "bleat",
+  spilled: "spill",
   held: "sneak",
-  idea: "sneak",
   athome: "home",
   tosnip: "snip",
   snipped: "snip",
@@ -100,7 +109,9 @@ const PK_RESTART_TO = Object.freeze({
   taping: "tape",
   biting: "bite",
   call: "hide",
-  found: "hide",
+  crewdown: "hide",
+  crewed: "crewbleat",
+  found: "crewbleat",
 });
 // The doorway walks: which route each walking step follows, and its goal line.
 const PK_ROUTES = Object.freeze({ push: ROUTE_PUSH, home: ROUTE_SNEAK, lastwalk: ROUTE_LAST });
@@ -179,11 +190,17 @@ export function createPickup(bridge) {
     cover: 0,
     heartsAt: -1,
     tufts: PK_HOME.tufts.map(() => 0),
-    packed: { box: false, bucket: false, label: false, top: false },
+    posterEaten: false,
+    slipAt: -1,
+    beardOff: false,
+    pile: false,
+    bucketOff: false,
+    spill: null,
+    passengers: null,
+    packed: { box: false, bucket: false, snacks: false, label: false, top: false },
     walls: {},
     crate: "bed", // where his crate is: "bed" (home), "push", "row", "carry", "scan", "up", "ship"
     crateAt: null,
-    hairOut: false,
     trail: null,
     route: "",
     waved: {},
@@ -191,15 +208,12 @@ export function createPickup(bridge) {
     robotRead: false,
     bots: [],
     things: null,
-    hat: null,
     light: "",
     scan: null,
     talker: 0,
     guard: null,
     pose: "stand",
     faceT: 0,
-    two: "row",
-    ideaAt: -1,
     lidOpen: 0,
     roarAt: -1,
     crumbAt: -1,
@@ -213,7 +227,7 @@ export function createPickup(bridge) {
     furT: 0,
     ...(extra || {}),
   });
-  // The bay's row in the mail room: a mail bag, a crate, his crate third (pickup-place.js PK_BAY.row).
+  // The bay's row in the mail room: a crate, then his crate (pickup-place.js PK_BAY.row).
   const freshThings = () => Object.fromEntries(PK_BAY.row.map((r) => [r.kind, { x: r.x, y: r.y, where: "row", open: 0 }]));
   const robot = (id, kind, p, f) => ({ id, kind, x: p.x, y: p.y, f: f || -1, a: null, route: [], speed: PK_PACE.roll, carry: "", seenT: 0, mark: "", phase: "idle" });
 
@@ -287,7 +301,7 @@ export function createPickup(bridge) {
       ...sayP("sq", "sq-safe", "whisper"),
       e.run(() => ((L().cu = ""), e.set("wardrobe", "closed"), go("tomop"))),
       ...sayP("mops", "mops-scanner"),
-      ...sayP("mops", "mops-tuft"),
+      ...sayP("mops", "mops-hair-ok"),
       e.run(() => asMops("switch-mop", () => (go("mop"), control("chip-mop")))),
     ]);
   }
@@ -318,14 +332,25 @@ export function createPickup(bridge) {
       if (l.tufts.every(Boolean)) mopped();
     }
   }
-  // all the fur is off: one long white hair is left on the wood, held close for a second; then Squatch packs
+  // all the fur is off: the poster next (r6 2:21: as Mops, eat the STAY IN HERE poster)
   function mopped() {
+    busy();
+    go("poster");
+    control("chip-poster");
+  }
+  // EAT · poster: "We don't need this anymore." He eats it; a pale square where it hung. Then Squatch packs.
+  function eatPoster() {
     const e = E();
     busy();
-    go("mopped", { hairOut: true, cu: "hair", cuAt: e.time() });
+    e.face("mops", 1);
+    go("ate");
     e.queue([
-      wait(PK_PACE.hold),
-      e.run(() => ((L().cu = ""), asSquatch("switch-pack", () => (e.place("sq", PK_HOME.crateAt.x, PK_HOME.crateAt.y), go("pack"), control("chip-pack"))))),
+      ...sayP("mops", "mops-dont-need"),
+      e.run(() => ((L().posterEaten = true), sfx("slurp"))),
+      wait(0.5),
+      ...sayP("sq", "sq-you-ate"),
+      ...sayP("mops", "mops-delicious"),
+      e.run(() => asSquatch("switch-pack", () => (e.place("sq", PK_HOME.crateAt.x, PK_HOME.crateAt.y), go("pack"), control("chip-pack")))),
     ]);
   }
   function packBox() {
@@ -339,6 +364,14 @@ export function createPickup(bridge) {
     busy();
     sfx("pickup");
     L().packed.bucket = true;
+    go("snacks");
+    control("chip-pack");
+  }
+  // PACK · snacks (a Chapter 2 plant): the snack bag from the snack bar goes into the crate, seen going in
+  function packSnacks() {
+    busy();
+    sfx("pickup");
+    L().packed.snacks = true;
     go("walls");
     control("chip-walls");
   }
@@ -381,6 +414,9 @@ export function createPickup(bridge) {
       ...bridgeWalk("mops", [{ x: PK_HOME.crateAt.x + 40, y: PK_HOME.crateAt.y + 40 }]),
       e.run(() => e.face("mops", -1)),
       ...sayP("mops", "mops-in"),
+      // (on purpose: his beard hair laid over Squatch, for the scanner; round 7 #116)
+      e.run(() => ((L().pile = true), sfx("grab"))),
+      ...sayP("mops", "mops-pile"),
       ...sayP("mops", "mops-sound"),
       e.run(() => ((L().packed.top = true), sfx("grab"))),
       e.run(() => asMops("switch-push", startPush)),
@@ -472,7 +508,8 @@ export function createPickup(bridge) {
     }
     if (room === "passage" && !l.robotRead && at(m, PK_HALLWAY.robot, 200)) ((l.robotRead = true), e.ambient("robot", pickupWords("robot-label")));
   }
-  // The crate is in the mail room, third in the row. Mops walks out; the player is Squatch, inside it (54).
+  // The crate is in the mail room, second in the row. Mops waits at the opening; the room is shown as it is, his eyes in
+  // his crate (r6 3:34: no slat view). One upgraded robot comes down the ramp (round 7, #117 and #118 pick A).
   function arriveRow() {
     const e = E(),
       l = L();
@@ -483,21 +520,17 @@ export function createPickup(bridge) {
     l.things = freshThings();
     // (one last shove: the crate slides from where he left it in the opening to its place in the row)
     l.slideHis = { x: c.x, y: c.y, t: 0 };
-    l.bots = PK_BAY.oldLine.map((p, i) => robot("old" + i, "old", p, -1));
+    l.bots = [...oldBots(), robot("new0", "new", PK_BAY.rampTop, 1)];
+    l.passengers = PK_BAY.passengers.map((q) => ({ id: q.id, wait: q.delay, at: 0, x: PK_BAY.board[0].x, y: PK_BAY.board[0].y, gone: false }));
     e.face("mops", -1);
     go("arrive");
-    e.queue([
-      // (out along the front of the walkway, clear of the old robots' line and the open crate)
-      ...bridgeWalk("mops", [PK_BAY.mailIn, { x: 600, y: 440 }, { x: 380, y: 440 }, { x: 200, y: 440 }, { x: 52, y: 430 }, PK_BAY.door]),
-      e.run(() => {
-        e.set("moPose", "hidden");
-        e.place("mops", -400, -400);
-        asSquatch("switch-crate", slatView);
-      }),
-    ]);
+    e.queue([...bridgeWalk("mops", [PK_BAY.mopsWait]), e.run(() => (e.face("mops", -1), watchRobot()))]);
   }
+  // the old robots load at the ramp, facing it
+  const oldBots = () => PK_BAY.oldLine.map((p, i) => Object.assign(robot("old" + i, "old", p, p.x > PK_BAY.archFront.x ? -1 : 1), { a: Math.atan2(PK_BAY.archFront.y - 30 - p.y, PK_BAY.archFront.x - p.x) }));
+  const newIx = () => L().bots.findIndex((b) => b.id === "new0");
 
-  // ---------- beat 54: the robots open a crate (through a slat) ----------
+  // ---------- beat 54: the upgraded robot opens a crate ----------
   const moveTo = (b, to) => (b.route = [{ ...to }]);
   // a robot rolls along its route; true at its end. A thing it carries goes with it.
   function roll(b, dt) {
@@ -510,24 +543,24 @@ export function createPickup(bridge) {
     return !b.route.length;
   }
   const bots = (...ids) => L().bots.filter((b) => ids.includes(b.id));
-  // the new robots' carry of one thing from the row to the scan place under the arch
-  function carrySteps(kind, ids) {
+  const rollAll = (ids) => E().until((dt) => bots(...ids).map((b) => roll(b, dt || 0)).every(Boolean));
+  // where the robot stands at a crate in the row: behind it, looking down into it (never on the mail bags in front)
+  const atCrate = (th) => ({ x: th.x - 30, y: th.y - 42 });
+  // the robot carries one crate from the row out through the opening to the scan place under the arch
+  function carrySteps(kind) {
     const e = E(),
       th = () => L().things[kind];
     return [
-      e.run(() => bots(...ids).forEach((b, i) => (b.route = [{ x: th().x - 40 + i * 80, y: th().y + 30 }]))),
-      e.until((dt) => bots(...ids).map((b) => roll(b, dt || 0)).every(Boolean)),
-      e.run(() => {
-        th().where = "carry";
-        bots(...ids).forEach((b, i) => (b.route = PK_BAY.carry.map((q) => ({ x: q.x - 30 + i * 60, y: q.y + 10 }))));
-      }),
+      e.run(() => (bots("new0")[0].route = [atCrate(th())])),
+      rollAll(["new0"]),
+      e.run(() => ((th().where = "carry"), (bots("new0")[0].route = PK_BAY.carry.map((q) => ({ ...q }))))),
       e.until((dt) => {
-        const bs = bots(...ids),
-          done = bs.map((b) => roll(b, dt || 0)).every(Boolean);
-        Object.assign(th(), { x: (bs[0].x + bs[1].x) / 2, y: (bs[0].y + bs[1].y) / 2 - 4 });
+        const b = bots("new0")[0],
+          done = roll(b, dt || 0);
+        Object.assign(th(), { x: b.x + 20 * b.f, y: b.y - 4 });
         return done;
       }),
-      e.run(() => (Object.assign(th(), { where: "scan", ...PK_BAY.scanAt }), bots(...ids).forEach((b) => (b.a = -Math.PI / 2)))),
+      e.run(() => (Object.assign(th(), { where: "scan", ...PK_BAY.scanAt }), (bots("new0")[0].a = -Math.PI / 2))),
     ];
   }
   function scanSteps(color) {
@@ -552,58 +585,40 @@ export function createPickup(bridge) {
       e.run(() => ((th().where = "ship"), (L().light = ""))),
     ];
   }
-  function slatView() {
-    const e = E(),
-      l = L();
-    go("slat", { cu: "slat", cuAt: e.time() });
+  // the robot back to the row, to wait by his crate
+  const backToRow = () => [E().run(() => Object.assign(bots("new0")[0], { a: null, route: [PK_BAY.carry[2], PK_BAY.carry[1], PK_BAY.botsBack[0]].map((q) => ({ ...q })) })), rollAll(["new0"])];
+  function watchRobot() {
+    const e = E();
+    go("watch");
     e.set("ch1Ship", true);
-    const nw = [robot("new0", "new", PK_BAY.rampTop, 1), robot("new1", "new", { x: PK_BAY.rampTop.x + 30, y: PK_BAY.rampTop.y + 10 }, 1)];
-    l.bots.push(...nw);
-    l.hat = { where: "bag" };
     e.queue([
-      // the new robots roll down the ramp and through the arch
-      e.run(() => bots("new0", "new1").forEach((b, i) => (b.route = [{ x: PK_BAY.rampFoot.x - 20 + i * 40, y: PK_BAY.rampFoot.y }, { x: 520 + i * 50, y: 470 + i * 20 }]))),
-      e.until((dt) => bots("new0", "new1").map((b) => roll(b, dt || 0)).every(Boolean)),
+      // down the ramp and through the arch: it passes
+      e.run(() => (bots("new0")[0].route = [{ ...PK_BAY.rampFoot }, { ...PK_BAY.archFront }])),
+      rollAll(["new0"]),
       e.run(() => (L().light = "green")),
       ...sayP("scanner", "scan-no-fur", "say", true),
-      e.run(() => (L().light = "")),
-      by(3),
-      ...sayP("robot", "bot-new-rule", "say", true),
-      ...sayP("robot", "bot-scan-every", "say", true),
-      by(0),
-      ...sayP("robot", "bot-never", "say", true),
-      by(3),
-      ...sayP("robot", "bot-why-here", "say", true),
-      // the first thing in the row: the big mail bag
-      ...carrySteps("bag", ["new0", "new1"]),
-      ...scanSteps("red"),
-      ...sayP("scanner", "scan-fur-stop", "say", true),
-      e.run(() => ((L().hat = { where: "claw" }), sfx("grab"))),
-      by(3),
-      ...sayP("robot", "bot-hat", "say", true),
-      by(4),
-      ...sayP("robot", "bot-fur-stop", "say", true),
-      e.run(() => ((L().hat = { where: "bin" }), (L().light = ""), sfx("pop"))),
-      ...upRamp("bag"),
+      e.run(() => ((L().light = ""), (bots("new0")[0].route = [{ ...PK_BAY.mailIn }, { x: 712, y: 468 }]))),
+      rollAll(["new0"]),
+      e.run(() => ((bots("new0")[0].f = 1), (L().talker = newIx()))),
+      ...sayP("robot", "bot-upgrade"),
+      ...sayP("robot", "bot-corners"),
+      ...sayP("robot", "bot-every-crate"),
+      ...sayP("mops", "mops-told"),
+      // the first crate in the row: open, looked into
+      e.run(() => (bots("new0")[0].route = [{ x: 760, y: 512 }, atCrate(PK_BAY.row[0])])),
+      rollAll(["new0"]),
+      e.run(() => ((bots("new0")[0].a = Math.PI / 3), (L().things.crate.open = 1), sfx("open"))),
       ...sayP("sq", "sq-look-inside", "whisper"),
-      ...sayP("sq", "sq-all-fur", "whisper"),
-      ...sayP("sq", "sq-that-was-me", "whisper"),
-      e.run(warn),
+      e.run(() => ((L().things.crate.open = 0), sfx("pickup"))),
+      ...carrySteps("crate"),
+      ...scanSteps("green"),
+      ...upRamp("crate"),
+      ...backToRow(),
+      e.run(() => (go("knock"), control("chip-knock"))),
     ]);
   }
 
-  // ---------- beat 55: Mops warns him ----------
-  function warn() {
-    const e = E(),
-      l = L();
-    l.cu = "";
-    // the new robots roll back for the next crate, cones forward
-    bots("new0", "new1").forEach((b, i) => ((b.a = null), (b.route = [PK_BAY.carry[2], PK_BAY.carry[1], PK_BAY.botsBack[i]].map((q) => ({ ...q }))), (b.speed = 45)));
-    e.set("moPose", "stand");
-    e.place("mops", PK_BAY.door.x, PK_BAY.door.y + 60);
-    e.face("mops", 1);
-    asMops("switch-warn", () => (go("warn"), control("chip-warn")));
-  }
+  // ---------- beat 55: Mops gets him out ----------
   function knock() {
     const e = E();
     busy();
@@ -612,26 +627,41 @@ export function createPickup(bridge) {
     e.queue([
       ...sayP("mops", "mops-get-out"),
       ...sayP("mops", "mops-opening"),
-      e.run(() => (go("bleat"), control("chip-bleat-robot"))),
+      // he takes the bucket off the top of the crate
+      e.run(() => ((L().bucketOff = true), sfx("grab"), go("spill"), control("chip-spill"))),
     ]);
   }
-  // BLEAT · robot: the bucket lid's clang and his bleat; the robots turn to him and tell him off; Squatch's turn
-  function bleat() {
-    const e = E();
+  // SPILL · bucket by the floor vent: the robot must clean every corner, so it leaves the mail room; Squatch's turn
+  function spillBucket() {
+    const e = E(),
+      l = L();
     busy();
     pick("clang");
-    go("bleated");
-    bots("new0", "new1").forEach((b) => ((b.route = []), (b.f = -1), (b.a = Math.PI), (b.phase = "mops")));
+    sfx("slip");
+    l.spill = { at: e.time() };
+    go("spilled");
     e.queue([
-      ...sayP("mops", "mops-bleat-clang"),
-      e.run(() => pick("mops-bleat")),
-      by(3),
-      ...sayP("robot", "bot-replaced"),
-      ...sayP("robot", "bot-stop-helping"),
-      // Mops steps out of the opening, so the way out of the mail room is clear
-      ...bridgeWalk("mops", [PK_BAY.mopsAside]),
-      e.run(() => (e.face("mops", 1), asSquatch("switch-out", () => (go("climb"), control("chip-climb"))))),
+      e.run(() => (L().talker = newIx())),
+      ...sayP("robot", "bot-spill", "say", true),
+      e.run(() => Object.assign(bots("new0")[0], { a: null, phase: "toclean", speed: PK_PACE.rush, route: [PK_BAY.carry[1], { x: 520, y: 470 }, { x: 330, y: 560 }, cleanSpot(0)].map((q) => ({ ...q })) })),
+      // Mops steps back out of its way; Squatch's turn once it is cleaning, far from the mail room
+      ...bridgeWalk("mops", [{ x: 330, y: 612 }]),
+      e.until(() => bots("new0")[0].phase === "clean"),
+      e.run(() => (e.face("mops", -1), asSquatch("switch-out", () => (go("climb"), control("chip-climb"))))),
     ]);
+  }
+  // the cleaning: round and round the puddle, its cone on the puddle (every corner)
+  const cleanSpot = (u) => ({ x: PK_BAY.puddle.x + Math.cos(u) * (PK_BAY.puddle.rx + 34), y: PK_BAY.puddle.y + Math.sin(u) * (PK_BAY.puddle.ry + 22) });
+  function cleanTick(l, dt) {
+    const b = l.bots.find((q) => q.id === "new0");
+    if (!b || !l.spill) return;
+    if (b.phase === "toclean") roll(b, dt) && ((b.phase = "clean"), (b.u = 0));
+    if (b.phase !== "clean") return;
+    b.u = (b.u || 0) + dt * 0.9;
+    const p = cleanSpot(b.u);
+    b.f = p.x < b.x ? -1 : 1;
+    Object.assign(b, p);
+    b.a = Math.atan2(PK_BAY.puddle.y - b.y, PK_BAY.puddle.x - b.x);
   }
   function climbOut() {
     const e = E(),
@@ -641,8 +671,8 @@ export function createPickup(bridge) {
     e.place("sq", PK_BAY.climbOut.x, PK_BAY.climbOut.y);
     e.face("sq", -1);
     l.pose = "stand";
-    go("sneak", { faceT: 0, two: "row", climbed: true });
-    control("chip-plant");
+    go("sneak", { climbed: true });
+    control("chip-mailbox");
   }
   function rollUp() {
     const e = E(),
@@ -673,37 +703,12 @@ export function createPickup(bridge) {
     b.mark = watchTick(b, botCone(b), s, k, e.get("sqPose") !== "stand", dt);
     return b.mark === "!";
   }
-  // 55: after he is out, the robots tell Mops off a little longer, then carry crate two out to the ramp, scan it (it
-  // passes) and send it up; they wait at the ramp, facing it. Any robot that sees him: the FUR alarm, a guard.
+  // 55: while he is out, the robot cleans by the vent and the old robots load; any robot that sees him: the FUR
+  // alarm, a guard (the one capture rule).
   function sneakTick(l, dt) {
     const e = E();
-    l.faceT += dt;
-    if (l.two === "row" && l.faceT >= PK_PACE.faceMops) {
-      l.two = "going";
-      bots("new0", "new1").forEach((b, i) => ((b.a = null), (b.phase = "carry"), (b.route = [{ x: l.things.crate.x - 40 + i * 80, y: l.things.crate.y + 30 }])));
-    }
-    const nw = bots("new0", "new1");
-    if (l.two === "going" && nw.map((b) => roll(b, dt)).every(Boolean)) {
-      l.two = "carry";
-      l.things.crate.where = "carry";
-      nw.forEach((b, i) => (b.route = PK_BAY.carry.map((q) => ({ x: q.x - 30 + i * 60, y: q.y + 10 }))));
-    } else if (l.two === "carry") {
-      const done = nw.map((b) => roll(b, dt)).every(Boolean);
-      Object.assign(l.things.crate, { x: (nw[0].x + nw[1].x) / 2, y: (nw[0].y + nw[1].y) / 2 - 4 });
-      if (done) ((l.two = "scan"), Object.assign(l.things.crate, { where: "scan", ...PK_BAY.scanAt }), (l.scan = { k: 0 }), nw.forEach((b) => (b.a = -Math.PI / 2)));
-    } else if (l.two === "scan") {
-      l.scan.k += dt / PK_PACE.scan;
-      if (l.scan.k >= 1) ((l.scan = null), (l.light = "green"), (l.two = "up"), (l.things.crate.where = "up"));
-    } else if (l.two === "up") {
-      l.things.crate.y -= dt * 90;
-      if (l.things.crate.y <= PK_BAY.rampTop.y) ((l.things.crate.where = "ship"), (l.light = ""), (l.two = "done"));
-    }
-    // their sight, while he is out and nobody is after him
     if (!l.guard && e.get("ctrl") && !e.current() && e.get("sqPose") !== "hidden")
-      for (const b of nw) {
-        if (b.phase === "mops" && l.faceT < PK_PACE.faceMops) continue;
-        if (botSees(b, dt)) return alarm(b);
-      }
+      for (const b of l.bots) if (botSees(b, dt)) return alarm(b);
     if (l.guard && e.get("ctrl")) guardFrame(l, dt);
   }
   // The one capture rule: a robot sees him; the FUR alarm; a guard comes in from the hallway toward where he was seen.
@@ -723,61 +728,51 @@ export function createPickup(bridge) {
       e.catchSquatch(pickupWords("lockup-cause"));
     } else if (res === "lost") {
       l.guard = null;
-      bots("new0", "new1").forEach((b) => ((b.mark = ""), (b.seenT = 0)));
+      L().bots.forEach((b) => ((b.mark = ""), (b.seenT = 0)));
       e.lostYou(partyLine("note-lost"));
     }
   }
-  // HIDE · plant: eyes only. The robots go back and carry his crate to the ramp; he watches it opened (the held moment).
-  function hidePlant() {
+  // HIDE · mailbox (Brian's #118 B): inside the robot mailbox, his eyes in its slot; it stays quiet. The robot finishes the spill and comes back for his crate; he
+  // watches it read, opened, scanned and sent up the ramp without him (the held moment).
+  function hideMailbox() {
     const e = E(),
       l = L();
     busy();
     sfx("hide");
     l.pose = "stand";
     e.set("sqPose", "hidden");
-    e.place("sq", PK_BAY.plantAt.x, PK_BAY.plantAt.y);
+    e.place("sq", PK_BAY.mailboxAt.x, PK_BAY.mailboxAt.y);
     go("held");
     e.queue([
-      // crate two is on its way up first
-      e.until((dt) => (L().two === "done" || sneakTick(L(), dt || 0), L().two === "done")),
-      e.run(() => bots("new0", "new1").forEach((b, i) => ((b.a = null), (b.route = [PK_BAY.carry[2], PK_BAY.carry[1], PK_BAY.botsBack[i]].map((q) => ({ ...q }))), (b.speed = PK_PACE.roll)))),
-      e.until((dt) => bots("new0", "new1").map((b) => roll(b, dt || 0)).every(Boolean)),
-      by(3),
-      ...sayP("robot", "bot-read-label", "say", true),
-      ...sayP("robot", "bot-stars-loading", "say", true),
-      ...carrySteps("his", ["new0", "new1"]),
-      by(4),
-      ...sayP("robot", "bot-scan-first", "say", true),
+      wait(PK_PACE.clean),
+      e.run(() => Object.assign(bots("new0")[0], { phase: "back", a: null, speed: PK_PACE.roll, route: [{ x: 330, y: 560 }, { x: 520, y: 470 }, PK_BAY.carry[1], { x: 760, y: 512 }, atCrate(PK_BAY.row[1])].map((q) => ({ ...q })) })),
+      rollAll(["new0"]),
+      e.run(() => ((bots("new0")[0].a = Math.PI / 3), (L().talker = newIx()))),
+      ...sayP("robot", "bot-ars-loading", "say", true),
+      ...carrySteps("his"),
       e.run(() => ((L().things.his.open = 1), sfx("open"))),
-      by(3),
       ...sayP("robot", "bot-one-box", "say", true),
-      by(4),
-      ...sayP("robot", "bot-label-empty", "say", true),
-      by(0),
-      ...sayP("robot", "bot-goat-stuff", "say", true),
       ...scanSteps("yellow"),
-      ...sayP("scanner", "scan-hair", "say", true),
-      e.run(() => ((L().cu = "hairclaw"), (L().cuAt = e.time()), (L().t0 = 0), sfx("grab"))),
-      wait(PK_PACE.hold),
-      e.run(() => ((L().cu = ""), (L().light = "green"))),
-      ...sayP("scanner", "scan-goat-hair", "say", true),
+      e.run(() => ((L().light = "green"), sfx("bleep"))),
+      ...sayP("scanner", "scan-hair-ok", "say", true),
       e.run(() => ((L().things.his.open = 0), sfx("pickup"))),
       ...upRamp("his"),
       ...sayP("sq", "sq-on-ship", "whisper"),
-      e.run(() => (go("idea", { ideaAt: e.time() }), (L().t0 = 0))),
-      wait(PK_PACE.think + 0.2),
+      // Mops comes back to the mail room for him
+      ...bridgeWalk("mops", [{ x: 520, y: 600 }, { x: 600, y: 530 }, { x: 700, y: 466 }, { x: 740, y: 560 }]),
       e.run(sneakHome),
     ]);
   }
-  // the walk home: out of the plant; Mops at the doorway, behind him on the way
+  // the walk home: out of the mailbox; Mops beside him, behind him on the way
   function sneakHome() {
     const e = E(),
       l = L();
-    l.ideaAt = -1;
+    // (the robot has cleaned it up: no puddle when he comes back that evening)
+    l.spill = null;
     e.set("sqPose", "stand");
-    e.place("sq", PK_BAY.plantAt.x, PK_BAY.plantAt.y);
+    e.place("sq", PK_BAY.mailboxAt.x, PK_BAY.mailboxAt.y);
     e.set("moPose", "stand");
-    e.place("mops", PK_BAY.plantAt.x + 70, PK_BAY.plantAt.y + 30);
+    e.place("mops", PK_BAY.mailboxAt.x - 80, PK_BAY.mailboxAt.y - 20);
     l.trail = freshTrail();
     go("home", { route: "home" });
     control("chip-sneak-home");
@@ -788,10 +783,9 @@ export function createPickup(bridge) {
     busy();
     go("athome");
     e.queue([
-      ...sayP("sq", "sq-stopped-hat"),
-      ...sayP("sq", "sq-passed-hair"),
-      ...sayP("sq", "sq-lets-goats"),
-      ...sayP("mops", "mops-every-day"),
+      ...sayP("sq", "sq-hair-through"),
+      ...sayP("sq", "sq-they-looked"),
+      ...sayP("mops", "mops-need-goat"),
       ...sayP("sq", "sq-make-goat"),
       e.run(costume),
     ]);
@@ -812,7 +806,7 @@ export function createPickup(bridge) {
     const e = E();
     busy();
     sfx("grab");
-    go("snipped", { cu: "snip", cut: true, cuAt: e.time() });
+    go("snipped", { cu: "snip", cut: true, cuAt: e.time(), snipped: true });
     e.queue([
       wait(PK_PACE.snip + PK_PACE.hold),
       e.run(() => ((L().cu = ""), e.set("wardrobe", "open"), asSquatch("switch-dress", dressTalk))),
@@ -865,7 +859,7 @@ export function createPickup(bridge) {
     go("practiced");
     if (l.bleats === 1) {
       pick("squatch-roar");
-      return e.queue([...sayP("sq", "sq-bleat-1"), ...sayP("mops", "mops-less-roar"), ...sayP("sq", "sq-dont-weent"), ...sayP("mops", "mops-goats-do"), e.run(() => (go("practice"), control("chip-bleat")))]);
+      return e.queue([...sayP("sq", "sq-bleat-1"), ...sayP("mops", "mops-less-roar"), ...sayP("sq", "sq-cant-bleat"), ...sayP("mops", "mops-goat-today"), e.run(() => (go("practice"), control("chip-bleat")))]);
     }
     if (l.bleats === 2) return (sfx("baa"), e.queue([wait(0.8), e.run(() => (go("practice"), control("chip-bleat")))]));
     pick("mops-bleat");
@@ -958,13 +952,21 @@ export function createPickup(bridge) {
       e.run(() => ((L().heartsAt = -1), go("lastwalk"), control("chip-last-walk"))),
     ]);
   }
-  // TAKE · drawing (optional): the crayon drawing behind the crooked photo comes off the wall, close
+  // LIFT · photo (optional; round 7, #128 pick A): the crayon drawing hidden behind the crooked photo, close; then
+  // TAKE · drawing takes it off the wall
+  function liftPhoto() {
+    const e = E();
+    busy();
+    sfx("grab");
+    go("lastwalk", { cu: "crayon", cuAt: e.time() });
+    control("chip-last-walk");
+  }
   function takeKeepsake() {
     const e = E();
     busy();
     sfx("pickup");
     e.set("ch1Keepsake", true);
-    go("keepsake", { cu: "crayon", cuAt: e.time(), kept: true });
+    go("keepsake", { cu: "crayon", kept: true });
     e.queue([...sayP("sq", "sq-comes-with"), ...sayP("mops", "mops-tied"), e.run(() => ((L().cu = ""), go("lastwalk"), control("chip-last-walk")))]);
   }
 
@@ -1016,16 +1018,13 @@ export function createPickup(bridge) {
   // GO · ship (the player is Mops): a robot holds out a claw for his tool, the way Dot, Bob and Lou handed theirs over
   function goShip() {
     const e = E(),
-      l = L(),
-      es = e.get("ch1Escape"),
-      star = !!(es && es.star);
+      l = L();
     busy();
     go("claw", { claw: true });
     e.queue([
       ...sayP("robot", "bot-tool"),
       ...sayP("mops", "mops-attached"),
       ...sayP("robot", "bot-beard-mop"),
-      ...(star ? sayP("robot", "bot-stars-count") : []),
       e.run(() => (L().claw = false)),
       ...bridgeWalk("mops", [PK_BAY.archFront, PK_BAY.rampFoot]),
       e.run(() => ((L().light = "green"), sfx("bleep"))),
@@ -1062,7 +1061,8 @@ export function createPickup(bridge) {
       e.run(() => ((L().light = ""), (L().scanSq = -1), go("ramp"), control("chip-board"))),
     ]);
   }
-  // CLIMB · ramp: halfway up, "Weent.", the beard drops into his paws under the camera's red light; on, crooked
+  // CLIMB · ramp: halfway up, "Weent.", and in the room, right under the camera's red light, the beard slips off and
+  // falls into his paws (r6 7:46: no close-up); he goes on up holding it
   function climbRamp() {
     const e = E(),
       half = { x: PK_BAY.rampFoot.x, y: (PK_BAY.rampFoot.y + PK_BAY.rampTop.y) / 2 };
@@ -1071,9 +1071,9 @@ export function createPickup(bridge) {
     e.queue([
       ...bridgeWalk("sq", [half]),
       ...sayP("sq", "sq-weent", "whisper"),
-      e.run(() => ((L().cu = "slip"), (L().cuAt = e.time()), (L().t0 = 0), sfx("slip"))),
+      e.run(() => ((L().slipAt = e.time()), (L().t0 = 0), sfx("slip"))),
       wait(PK_PACE.slip),
-      e.run(() => ((L().cu = ""), (L().crooked = true))),
+      e.run(() => (L().beardOff = true)),
       ...bridgeWalk("sq", [PK_BAY.rampTop]),
       e.run(() => {
         e.set("sqPose", "hidden");
@@ -1117,31 +1117,24 @@ export function createPickup(bridge) {
       ...sayP("robot", "bot-replaced-shipment"),
       ...sayP("official", "isfred-tapes"),
       e.card("later", pickupWords("card-later")),
-      e.run(() => (go("tape", { cu: "tape", tape: { clip: "night", k: 0, zoom: "", next: "play" } }), control("chip-tapes"))),
+      e.run(() => (go("tape", { cu: "tape", tape: { k: 0, zoom: "", next: "play" } }), control("chip-tapes"))),
     ]);
   }
 
-  // ---------- beat 60: the security tapes ----------
-  // The tape screen with its three big buttons; the one to press now is bright. Each ZOOM is the cut-in.
-  const starWord = () => {
-    const es = E().get("ch1Escape"),
-      star = (es && es.star) || "star-great";
-    return { line: { "star-good": "isfred-good-ganitor", "star-great": "isfred-great-ganitor", "star-star": "isfred-star-ganitor" }[star] || "isfred-great-ganitor", tag: escapeWords(star).split(" ")[0] };
-  };
+  // ---------- beat 60: the security tape ----------
+  // One clip from the bay's camera, upper right (round 7, #123 pick A): PLAY · tape, then ZOOM · in on the tall goat.
+  // The one to press now is bright. (The Mop-Off's star is cut, #130: no star zoom and no "Star Ganitor.")
+  const TAPE_BUTTON = Object.freeze({ play: "button-play", zoom: "button-zoom" });
   function tapePress(id) {
     const e = E(),
-      l = L(),
-      tp = l.tape;
+      tp = L().tape;
     if (id !== tp.next) return;
     busy();
     sfx("key");
     go("taping");
     const back = (next) => e.run(() => ((L().tape.next = next), go("tape"), control("chip-tapes")));
-    if (id === "play") return e.queue([e.until((dt) => (L().tape.k = Math.min(1, L().tape.k + (dt || 0) / PK_PACE.tape)) >= 1), back("zoom")]);
-    if (id === "next") return (Object.assign(tp, { clip: "today", k: 0, zoom: "" }), e.queue([back("play")]));
-    if (tp.clip === "night") return ((tp.zoom = "paw"), e.queue([...sayP("official", "isfred-what"), ...sayP("official", "isfred-ordered"), back("next")]));
-    if (!tp.zoom) return ((tp.zoom = "star"), e.queue([...sayP("official", starWord().line), ...sayP("official", "isfred-best"), back("zoom")]));
-    tp.zoom = "feet";
+    if (id === "play") return e.queue([e.until((dt) => (L().tape.k = Math.min(1, L().tape.k + (dt || 0) / PK_PACE.tape)) >= 1), ...sayP("official", "isfred-best"), back("zoom")]);
+    tp.zoom = "tall";
     e.queue([...sayP("official", "isfred-not-goat"), ...sayP("official", "isfred-wookiee"), ...sayP("official", "isfred-ship"), e.run(toHold)]);
   }
 
@@ -1156,7 +1149,7 @@ export function createPickup(bridge) {
     e.enterRoom("hangar", "QB");
     e.set("ch1D", true);
     e.set("costumeOn", true);
-    Object.assign(l, { place: "hold", crate: "ship", cu: "", tape: null, bots: [], things: null, box: { ...PK_HOLD.crate, where: "crate" } });
+    Object.assign(l, { place: "hold", crate: "ship", cu: "", tape: null, crewAt: null, bots: [], things: null, box: { ...PK_HOLD.crate, where: "crate" } });
     e.set("sqPose", "stand");
     e.set("moPose", "stand");
     e.place("sq", PK_HOLD.sq.x, PK_HOLD.sq.y);
@@ -1196,31 +1189,68 @@ export function createPickup(bridge) {
       e.run(() => (go("hide"), control("chip-hide-crate"))),
     ]);
   }
-  // HIDE · crate: inside, dark, a strip of light; boots; the lid lifts. A search always finds; no lockup card.
+  // HIDE · crate: he hides (his eyes in the crate); the crew member walks down the stairs toward it (r6 9:15) and stops
+  // at Mops: "Out of the way, goat."; the player is Mops (round 7, topic F).
+  const crewTo = (to) =>
+    E().until((dt) => {
+      const c = L().crewAt,
+        d = Math.hypot(to.x - c.x, to.y - c.y),
+        v = PK_PACE.walk * (dt || 0);
+      Math.abs(to.x - c.x) > 1 && (c.f = to.x < c.x ? -1 : 1);
+      if (d <= v) return (Object.assign(c, { x: to.x, y: to.y }), true);
+      c.x += ((to.x - c.x) * v) / d;
+      c.y += ((to.y - c.y) * v) / d;
+      return false;
+    });
   function hideCrate() {
     const e = E();
     busy();
     sfx("hide");
     e.set("sqPose", "hidden");
-    go("found", { cu: "lid", lift: 0 });
+    go("crewdown", { crewAt: { ...PK_HOLD.crewTop, f: 1 } });
     L().t0 = 0;
     e.queue([
-      wait(0.5),
+      wait(0.4),
       e.run(() => sfx("key")),
-      wait(0.5),
+      crewTo(PK_HOLD.crewFoot),
       e.run(() => sfx("key")),
-      wait(0.6),
+      // Mops steps between him and the crate
+      ...bridgeWalk("mops", [PK_HOLD.mopsBlock]),
+      e.run(() => e.face("mops", -1)),
+      crewTo(PK_HOLD.crewStop),
+      ...sayP("ups", "crew-out-of-way"),
+      e.run(() => asMops("switch-crew", () => (go("crewbleat"), control("chip-crew")))),
+    ]);
+  }
+  // BLEAT · crew: it fails ("Nice try."); he walks round Mops to the crate; inside, the lid lifts: "Found him."
+  function bleatCrew() {
+    const e = E();
+    busy();
+    pick("mops-bleat");
+    go("crewed");
+    e.queue([
+      ...sayP("mops", "mops-bleat-crew"),
+      ...sayP("ups", "crew-nice-try"),
+      ...bridgeWalk("mops", [{ x: PK_HOLD.mopsBlock.x + 40, y: PK_HOLD.mopsBlock.y + 50 }]),
+      crewTo(PK_HOLD.crewLid),
+      e.run(() => (go("found", { cu: "lid", lift: 0 }), (L().t0 = 0))),
       e.until((dt) => (L().lift = Math.min(1, L().lift + (dt || 0) / PK_PACE.lid)) >= 1),
       ...sayP("ups", "crew-found"),
       e.run(() => {
         Object.assign(L(), { cu: "", crew: true });
         e.set("sqPose", "stand");
-        e.place("sq", PK_HOLD.crate.x - 40, PK_HOLD.crate.y + 10);
+        e.place("sq", PK_HOLD.crate.x + 110, PK_HOLD.crate.y + 16);
+        e.face("sq", -1);
       }),
+      // (a Chapter 2 plant, q 139) the crew takes the beard and the horns; the jacket stays on him. "Nice try." is
+      // already said at the bleat (#133), so it is not said twice here.
+      e.run(() => ((L().stripped = true), (L().takeAt = e.time()), (L().t0 = 0), sfx("grab"))),
+      wait(1.0),
+      e.run(() => (L().takeAt = -1)),
       ...sayP("ups", "crew-stay"),
       // Mops steps between them
-      ...bridgeWalk("mops", [{ x: PK_HOLD.crate.x + 90, y: PK_HOLD.crate.y + 20 }]),
-      e.run(() => e.face("mops", 1)),
+      ...bridgeWalk("mops", [{ x: PK_HOLD.crate.x - 30, y: PK_HOLD.crate.y + 40 }]),
+      e.run(() => e.face("mops", -1)),
       ...sayP("mops", "mops-with-me"),
       e.run(() => (L().heartsAt = e.time())),
       ...sayP("ups", "crew-both-off"),
@@ -1237,6 +1267,25 @@ export function createPickup(bridge) {
     e.chapterEnd();
   }
 
+  // 54: two passengers come in from the hallway and walk up the ramp onto the ship
+  function passengerTick(l, dt) {
+    const B = PK_BAY.board;
+    for (const p of l.passengers) {
+      if (p.gone) continue;
+      if ((p.wait -= dt) > 0) continue;
+      const to = B[p.at + 1];
+      if (!to) {
+        p.gone = true;
+        continue;
+      }
+      const d = Math.hypot(to.x - p.x, to.y - p.y),
+        v = PK_PACE.board * dt;
+      p.f = to.x < p.x - 1 ? -1 : 1;
+      if (d <= v) ((p.x = to.x), (p.y = to.y), p.at++);
+      else ((p.x += ((to.x - p.x) * v) / d), (p.y += ((to.y - p.y) * v) / d));
+    }
+    l.passengers.every((p) => p.gone) && (l.passengers = null);
+  }
   // ---------- every frame ----------
   function tick(dt) {
     const l = live(),
@@ -1256,9 +1305,9 @@ export function createPickup(bridge) {
     if (free && walking(l)) walkTick(l, dt);
     l.slideHis && (l.slideHis.t += dt) >= PK_SLIDE && (l.slideHis = null);
     lastMops = { ...m, room: e.room() };
-    // 55: the robots roll back while Mops walks in; the sneak to the plant
-    if (["warn", "knock", "bleat"].includes(l.step) && free) bots("new0", "new1").forEach((b) => roll(b, dt));
-    if (l.step === "warn" && free && at(m, PK_BAY.knockAt, PK_BAY.knockR)) (go("knock"), control("chip-warn"));
+    // 54: the passengers walk in and board; 55: the robot cleans round the spill; the sneak to the mailbox
+    if (l.passengers) passengerTick(l, dt);
+    if (E().room() === "hangar" && l.spill) cleanTick(l, dt);
     if (l.step === "sneak" && free) sneakTick(l, dt);
     if (free && l.pose === "ball" && l.step === "sneak" && e.steering()) ((l.pose = "stand"), e.set("sqPose", "stand"));
     if (l.cu && free) e.still("sq");
@@ -1305,10 +1354,12 @@ export function createPickup(bridge) {
     }
     if (l.step === "peel" && l.cu === "peel") return [hot("pk-peel", "button-press-beard", pressPeel)];
     if (l.step === "tape" && l.cu === "tape") {
-      const id = l.tape.next;
-      return [{ id: "pk-tape-" + id, verb: pickupWords({ play: "button-play", zoom: "button-zoom", next: "button-next-tape" }[id]).split(" · ")[0], cap: pickupWords({ play: "button-play", zoom: "button-zoom", next: "button-next-tape" }[id]).split(" · ")[1], who: "sq", hot: true, x: 480, y: 560, r: 40, f: () => tapePress(id) }];
+      const id = l.tape.next,
+        [verb, cap] = pickupWords(TAPE_BUTTON[id]).split(" · ");
+      return [{ id: "pk-tape-" + id, verb, cap, who: "sq", hot: true, x: 480, y: 560, r: 40, f: () => tapePress(id) }];
     }
     if (l.step === "bite" && l.cu === "bite") return [hot("pk-bite", "button-bite", biteCake)];
+    if (l.step === "lastwalk" && l.cu === "crayon") return [hot("pk-keepsake", "button-take-keepsake", takeKeepsake)];
     if (l.cu) return [];
     if (l.step === "practice") return [hot("pk-practice", "button-bleat-mops", practice)];
     if (l.step === "lastwalk") {
@@ -1321,7 +1372,7 @@ export function createPickup(bridge) {
       else if (Object.values(l.watch || {}).some((w) => w.mark === "?")) out.push(hot("pk-bleat-guest", "button-bleat-guest", bleatGuest));
       // optional: the plate on the snack bar, the drawing on the photo wall (no outline: they are optional)
       e.room() === "hall" && !l.plateSeen && out.push({ ...spot("pk-plate", "button-plate", { x: PK_HALL.plateAt.x, y: PK_HALL.plateAt.y, r: PK_HALL.plateR }, PK_HALL.plate, lookPlate), extra: true });
-      e.room() === "passage" && !l.kept && out.push({ ...spot("pk-keepsake", "button-take-keepsake", { x: PK_HALLWAY.crayonAt.x, y: PK_HALLWAY.crayonAt.y, r: PK_HALLWAY.crayonR }, PK_HALLWAY.crayon, takeKeepsake), extra: true });
+      e.room() === "passage" && !l.kept && out.push({ ...spot("pk-lift-photo", "button-lift-photo", { x: PK_HALLWAY.crayonAt.x, y: PK_HALLWAY.crayonAt.y, r: PK_HALLWAY.crayonR }, PK_HALLWAY.crayon, liftPhoto), extra: true });
       return out;
     }
     if (l.step === "pickbox" && l.box && l.box.where === "ramp") return [walkSpot("pk-box", "sq", { x: PK_BAY.box.x + 40, y: PK_BAY.box.y + 10 }, 20)];
@@ -1333,9 +1384,11 @@ export function createPickup(bridge) {
     if (l.step === "ramp") return [hot("pk-ramp", "button-ramp", climbRamp)];
     const holdCrate = { x0: PK_HOLD.crate.x - 90, y0: PK_HOLD.crate.y - 132, x1: PK_HOLD.crate.x + 90, y1: PK_HOLD.crate.y };
     if (l.step === "cake") return [spot("pk-cake", "button-open-cake", { x: PK_HOLD.sq.x, y: PK_HOLD.sq.y, r: 80 }, { x0: PK_HOLD.crate.x - 30, y0: PK_HOLD.crate.y - 184, x1: PK_HOLD.crate.x + 70, y1: PK_HOLD.crate.y - 132 }, openCake)];
+    if (l.step === "crewbleat") return [hot("pk-bleat-crew", "button-bleat-crew", bleatCrew, "mo")];
     if (l.step === "hide") return [spot("pk-hide", "button-hide-crate", { x: PK_HOLD.sq.x, y: PK_HOLD.sq.y, r: 80 }, holdCrate, hideCrate)];
     if (l.step === "note") return [spot("pk-note", "button-note", { x: PK_HOME.noteAt.x, y: PK_HOME.noteAt.y, r: 90 }, PK_HOME.note, readNote)];
     if (l.step === "box") return [spot("pk-box", "button-open-box", { x: PK_HOME.closet.x, y: PK_HOME.closet.y, r: 90 }, MORNING_THINGS.boxIn, openBox)];
+    if (l.step === "poster") return [spot("pk-poster", "button-poster", { x: PK_HOME.posterAt.x, y: PK_HOME.posterAt.y, r: PK_HOME.posterR }, PK_HOME.poster, eatPoster, "mo")];
     if (l.step === "mop") {
       const i = l.tufts.findIndex((v) => !v),
         q = PK_HOME.tufts[i];
@@ -1343,6 +1396,7 @@ export function createPickup(bridge) {
     }
     if (l.step === "pack") return [spot("pk-pack-box", "button-pack-box", { x: PK_HOME.crateAt.x, y: PK_HOME.crateAt.y, r: 90 }, PK_HOME.crate, packBox)];
     if (l.step === "bucket") return [spot("pk-pack-bucket", "button-pack-bucket", { x: PK_HOME.bucketAt.x, y: PK_HOME.bucketAt.y, r: 70 }, PK_HOME.bucket, packBucket)];
+    if (l.step === "snacks") return [spot("pk-pack-snacks", "button-pack-snacks", { x: PK_HOME.crateAt.x, y: PK_HOME.crateAt.y, r: 90 }, PK_HOME.snackBag, packSnacks)];
     if (l.step === "walls")
       return PK_HOME.walls
         .filter((w) => !l.walls[w.id])
@@ -1350,19 +1404,15 @@ export function createPickup(bridge) {
     if (l.step === "label") return [spot("pk-label", "button-label", { x: PK_HOME.crateAt.x, y: PK_HOME.crateAt.y, r: 90 }, PK_HOME.crate, putLabel)];
     if (l.step === "getin") return [spot("pk-get-in", "button-get-in", { x: PK_HOME.crateAt.x, y: PK_HOME.crateAt.y, r: 90 }, PK_HOME.crate, getIn)];
     if (l.step === "push" && e.room() === "hangar") return [walkSpot("pk-row", "mo", PK_BAY.pushTo, PK_BAY.pushR - 6)];
-    if (l.step === "warn") return [walkSpot("pk-to-crate", "mo", PK_BAY.knockAt, PK_BAY.knockR - 8)];
     if (l.step === "knock") return [spot("pk-knock", "button-knock", { x: PK_BAY.knockAt.x, y: PK_BAY.knockAt.y, r: PK_BAY.knockR + 10 }, hisCrateBox(), knock, "mo")];
-    if (l.step === "bleat") {
-      const b = bots("new0")[0];
-      return [spot("pk-bleat", "button-bleat-robot", { x: PK_BAY.bleatAt.x, y: PK_BAY.bleatAt.y, r: PK_BAY.bleatR }, b ? { x0: b.x - 30, y0: b.y - 80, x1: b.x + 30, y1: b.y } : null, bleat, "mo")];
-    }
+    if (l.step === "spill") return [spot("pk-spill", "button-spill", { x: PK_BAY.spillAt.x, y: PK_BAY.spillAt.y, r: PK_BAY.spillR }, PK_BAY.vent, spillBucket, "mo")];
     if (l.step === "climb") return [hot("pk-climb", "button-climb", climbOut)];
     if (l.step === "sneak" && l.pose === "stand") {
       const out = [];
-      !l.guard && out.push(spot("pk-plant", "button-plant", { x: PK_BAY.plantAt.x, y: PK_BAY.plantAt.y, r: PK_BAY.plantR }, PK_BAY.plant, hidePlant));
+      !l.guard && out.push(spot("pk-mailbox", "button-mailbox", { x: PK_BAY.mailboxAt.x, y: PK_BAY.mailboxAt.y, r: PK_BAY.mailboxR }, PK_BAY.mailbox, hideMailbox));
       // he can always roll up where he stands (the ball fools a look)
       const s = e.pos("sq");
-      at(s, PK_BAY.plantAt, PK_BAY.plantR) || out.push({ ...hot("pk-ball", "button-ball", rollUp), extra: true });
+      at(s, PK_BAY.mailboxAt, PK_BAY.mailboxR) || out.push({ ...hot("pk-ball", "button-ball", rollUp), extra: true });
       return out;
     }
     const door = walking(l) && doorTo(e.room(), routeOf(l)[e.room()]);
@@ -1451,13 +1501,20 @@ export function createPickup(bridge) {
       s = e.pos("sq"),
       m = e.pos("mops"),
       list = [];
-    if (e.get("moPose") !== "hidden") list.push({ y: m.y, f: () => e.drawMopsOn(ctx, m.x, m.y, moScale("hangar"), { f: m.f || 1, walk: moMoving ? t * 8 : 0 }) });
+    if (e.get("moPose") !== "hidden") list.push({ y: m.y, f: () => (e.drawMopsOn(ctx, m.x, m.y, moScale("hangar"), { f: m.f || 1, walk: moMoving ? t * 8 : 0 }), l.snipped && snipMark(ctx, m, moScale("hangar"))) });
     if (e.get("sqPose") === "ball" || l.pose === "ball") list.push({ y: s.y, f: () => e.ball.drawOn(ctx, s.x, s.y - 16, 1) });
     else if (e.get("sqPose") === "stand" && s.x > -100) {
       const c = !!e.get("costumeOn");
-      list.push({ y: s.y, f: () => e.drawSquatch(ctx, s.x, s.y, sqScale("hangar"), { f: s.f || 1, walk: e.walkPhase(), jacket: c, goatBeard: c, horns: c }) });
+      const slipping = l.slipAt >= 0 && l.slipAt != null;
+      list.push({
+        y: s.y,
+        f: () => (e.drawSquatch(ctx, s.x, s.y, sqScale("hangar"), { f: s.f || 1, walk: e.walkPhase(), jacket: c, goatBeard: c && !slipping, horns: c }), slipping && fallingBeard(ctx, s, Math.min(1, (t - l.slipAt) / PK_PACE.slip))),
+      });
     }
     for (const b of l.bots || []) list.push({ y: b.y, f: () => drawBot(ctx, b, t) });
+    for (const p of l.passengers || []) p.gone || p.wait > 0 || list.push({ y: p.y, f: () => guests.drawId(ctx, p.id, p.x, p.y, adultPxFor("hangar"), t) });
+    // 55: the bucket in Mops's paw, from the knock to the spill
+    if (l.bucketOff && !l.spill && e.get("moPose") !== "hidden") list.push({ y: m.y + 1, f: () => drawBucket(ctx, m.x + 22 * (m.f || 1), m.y - 6, 0.55) });
     for (const [kind, th] of Object.entries(l.things || {})) if (th.where !== "ship") list.push({ y: th.y + (th.where === "carry" ? 2 : 0), f: () => drawThing(ctx, kind, th, l) });
     list.sort((a, b) => a.y - b.y).forEach((p) => p.f());
   }
@@ -1475,11 +1532,10 @@ export function createPickup(bridge) {
   }
   function drawThing(ctx, kind, th, l) {
     const k = crateK("hangar");
-    if (kind === "bag") return drawMailBag(ctx, th.x, th.y, 0.8);
     const sl = kind === "his" && l.slideHis,
       u = sl ? Math.min(1, sl.t / PK_SLIDE) : 1;
     sl && (th = { ...th, x: sl.x + (th.x - sl.x) * u, y: sl.y + (th.y - sl.y) * u });
-    drawPkCrate(ctx, th.x, th.y, k, { label: kind === "his", bucket: kind === "his" && l.packed.top, open: th.open || 0, eyes: kind === "his" && l.crate === "row" && ["warn", "knock", "bleat", "bleated", "climb"].includes(l.step) });
+    drawPkCrate(ctx, th.x, th.y, k, { label: kind === "his", bucket: kind === "his" && l.packed.top && !l.bucketOff, open: th.open || 0, eyes: kind === "his" && l.crate === "row" && ["arrive", "watch", "knock", "knocked", "spill", "spilled", "climb"].includes(l.step) });
   }
   const m0 = () => E().pos("mops");
   function drawBay(ctx, l) {
@@ -1487,31 +1543,28 @@ export function createPickup(bridge) {
     const e = E(),
       t = e.time(),
       p = l.place === "gone" ? pics.gone : pics.pickup;
-    p && p.complete && p.naturalWidth ? ctx.drawImage(p, 0, 0, 960, 640) : ((ctx.fillStyle = "#8a8fa0"), ctx.fillRect(0, 0, 960, 640));
-    const out = { room: "hangar" };
-    // the camera with a red light over the ramp (a layer, for Brian's yes)
-    out.camera = drawCamera(ctx, PK_BAY.camera.x, PK_BAY.camera.y, t);
+    // (the bay's one security camera, upper right by the speaker box: bay-camera.js, the same layer as Day 2 and the escape)
+    p && p.complete && p.naturalWidth ? ctx.drawImage(withCameraLayer(l.place === "gone" ? "delivery-noship" : "delivery-pickup", p), 0, 0, 960, 640) : ((ctx.fillStyle = "#8a8fa0"), ctx.fillRect(0, 0, 960, 640));
+    const out = { room: "hangar", camera: BAY_CAMERA.game };
     drawArchLight(ctx, PK_BAY.arch, l.light, t);
     out.light = l.light;
-    // Lou's hat: in the bag, in the claw, in the bin
-    if (l.hat && l.hat.where === "bin") drawHat(ctx, PK_BAY.bin.x, PK_BAY.bin.y + 8, 0.8);
+    // 55: the spill by the floor vent: the puddle and the bucket on its side
+    if (l.spill && l.place !== "bay") out.spill = drawPuddle(ctx, PK_BAY.puddle, t);
     bayPeople(ctx, l);
     if (l.scan) {
       const th = Object.values(l.things || {}).find((q) => q.where === "scan");
       th && drawScanLine(ctx, { x0: th.x - 44, y0: th.y - 70, x1: th.x + 44, y1: th.y }, l.scan.k);
       out.scan = +l.scan.k.toFixed(2);
     }
-    if (l.hat && l.hat.where === "claw") drawHat(ctx, PK_BAY.scanAt.x, PK_BAY.scanAt.y - 110, 1.2);
-    // 55: he hides in the plant: his eyes in its leaves
-    if (e.get("sqPose") === "hidden" && ["held", "idea"].includes(l.step)) e.drawEyes(ctx, PK_BAY.eyes.x, PK_BAY.eyes.y);
+    // 55: he hides in the mailbox: his eyes in its slot
+    if (e.get("sqPose") === "hidden" && l.step === "held") (e.drawEyes(ctx, PK_BAY.slotEyes.x, PK_BAY.slotEyes.y), (out.eyes = "mailbox"));
     if (l.guard) out.guard = drawGuard(ctx, l.guard, e.pos("sq"), sqScale("hangar"), e.get("sqPose") !== "stand", t).inside;
     // the goal's outline
     if (e.get("ctrl") && !e.current() && !l.cu) {
       const sp = spots().find((q) => q.thing && !q.extra);
       sp && (out.mark = markBox(ctx, sp.thing, t, 6, peopleBoxes("hangar")));
       walking(l) && markDoor(ctx, doorTo("hangar", routeOf(l).hangar), t);
-      l.step === "push" && (out.mark = markBox(ctx, { x0: PK_BAY.row[2].x - 40, y0: PK_BAY.row[2].y - 64, x1: PK_BAY.row[2].x + 40, y1: PK_BAY.row[2].y }, t));
-      l.step === "warn" && (out.mark = markBox(ctx, hisCrateBox(), t));
+      l.step === "push" && (out.mark = markBox(ctx, { x0: PK_BAY.row[1].x - 40, y0: PK_BAY.row[1].y - 64, x1: PK_BAY.row[1].x + 40, y1: PK_BAY.row[1].y }, t));
     }
     // 58: the week's box (on the ramp, on the floor, under Mops's arm); the robot's claw out for his tool
     if (l.box && l.box.where !== "sq" && l.box.where !== "mops") out.box = drawTagBox(ctx, l.box.x, l.box.y, 1);
@@ -1532,14 +1585,46 @@ export function createPickup(bridge) {
       const c = pushedCrate();
       drawPkCrate(ctx, c.x, c.y, c.k, { label: true, bucket: true });
     }
-    // 55: the idea, three thought pictures over the plant
-    if (l.ideaAt >= 0) out.idea = drawIdea(ctx, { x: PK_BAY.eyes.x - 20, y: PK_BAY.plant.y0 - 6, w: 40, h: 30 }, t - l.ideaAt).picture;
     // the close-ups
-    if (l.cu === "slat") ((out.slat = drawSlatFrame(ctx, t)), (out.slatStrip = { ...SLAT }));
-    if (l.cu === "hairclaw") (drawHairCloseup(ctx, t, { wood: false }), (out.hair = "claw"));
     if (l.cu === "peel") (drawPeelCloseup(ctx, !!l.pressed, t), (out.peel = !l.pressed));
-    if (l.cu === "slip") (drawSlipCloseup(ctx, t), (out.slip = true));
+    if (l.slipAt >= 0 && l.slipAt != null) out.slip = l.beardOff ? "paws" : "falling";
     return out;
+  }
+  // His snipped beard (56 on): a jagged cut across the beard near its end (his beard runs from his chin, about 25 units
+  // up, to the floor in front of him, 14 to 23 units out the way he faces: 60-frame-draw.js). A PLACEHOLDER mark.
+  function snipMark(ctx, m, k) {
+    const f = m.f || 1,
+      X = (u) => m.x + f * u * k,
+      Y = (v) => m.y + v * k;
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(X(13.5), Y(-7));
+    [15.5, 17.5, 19.5, 21.5, 23.5].forEach((u, i) => ctx.lineTo(X(u), Y(i % 2 ? -7 : -9.5)));
+    ctx.strokeStyle = "#8a8f9c";
+    ctx.lineWidth = Math.max(1.2, 0.9 * k);
+    ctx.stroke();
+    ctx.restore();
+    return true;
+  }
+  // 58: the goat beard slipping off his chin and falling into his paws (0 to 1), drawn in the room (a PLACEHOLDER)
+  function fallingBeard(ctx, s, k) {
+    const q = sqScale("hangar"),
+      x = s.x + 2 * q * (s.f || 1),
+      y = s.y - 52 * q + k * 26 * q;
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(k * 0.9 * (s.f || 1));
+    ctx.beginPath();
+    ctx.moveTo(-6 * q, 0);
+    ctx.lineTo(6 * q, 0);
+    ctx.lineTo(0, 18 * q);
+    ctx.closePath();
+    ctx.fillStyle = "#ffffff";
+    ctx.strokeStyle = "#1e2430";
+    ctx.lineWidth = 2;
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
   }
   // 61: the cargo hold (a drawing of its own, a PLACEHOLDER), their crate, the two of them, the crew once found
   function drawHoldNow(ctx, l) {
@@ -1550,30 +1635,36 @@ export function createPickup(bridge) {
       out = { room: "hangar", place: "hold" };
     drawHold(ctx, t);
     const k = 1.1;
-    out.crate = drawPkCrate(ctx, PK_HOLD.crate.x, PK_HOLD.crate.y, k, { label: true, bucket: !l.crew, open: l.crew ? 1 : 0 });
+    out.crate = drawPkCrate(ctx, PK_HOLD.crate.x, PK_HOLD.crate.y, k, { label: true, bucket: !l.crew, open: l.crew ? 1 : 0, eyes: e.get("sqPose") === "hidden" && ["crewdown", "crewbleat", "crewed"].includes(l.step) });
     l.box && l.box.where === "crate" && drawTagBox(ctx, PK_HOLD.crate.x + 10, PK_HOLD.crate.y - 136, 1.6);
     // (the hold is close up: the two of them drawn bigger than in the bay)
     const sk = sqScale("hangar") * 2.2,
       mk = moScale("hangar") * 2.2;
-    e.get("moPose") !== "hidden" && e.drawMopsOn(ctx, m.x, m.y, mk, { f: m.f || -1, walk: moMoving ? t * 8 : 0 });
+    e.get("moPose") !== "hidden" && (e.drawMopsOn(ctx, m.x, m.y, mk, { f: m.f || -1, walk: moMoving ? t * 8 : 0 }), l.snipped && snipMark(ctx, { ...m, f: m.f || -1 }, mk));
     if (e.get("sqPose") === "stand") {
-      e.drawSquatch(ctx, s.x, s.y, sk, { f: s.f || 1, jacket: true, horns: true, goatBeard: false });
-      // the beard, off, in his lap
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(s.x + 6, s.y - 26 * sk);
-      ctx.lineTo(s.x + 30, s.y - 26 * sk);
-      ctx.lineTo(s.x + 18, s.y - 10 * sk);
-      ctx.closePath();
-      ctx.fillStyle = "#ffffff";
-      ctx.strokeStyle = "#1e2430";
-      ctx.lineWidth = 2.5;
-      ctx.fill();
-      ctx.stroke();
-      ctx.restore();
+      e.drawSquatch(ctx, s.x, s.y, sk, { f: s.f || 1, jacket: true, horns: !l.stripped, goatBeard: false });
+      // the brochure in the jacket's pocket (a Chapter 2 plant: it rides with him, not in the Box)
+      drawBrochureCorner(ctx, s.x + 10 * sk * (s.f || 1), s.y - 22 * sk, sk * 0.5);
+      // the beard, off, in his lap (until the crew takes it)
+      if (!l.stripped) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(s.x + 6, s.y - 26 * sk);
+        ctx.lineTo(s.x + 30, s.y - 26 * sk);
+        ctx.lineTo(s.x + 18, s.y - 10 * sk);
+        ctx.closePath();
+        ctx.fillStyle = "#ffffff";
+        ctx.strokeStyle = "#1e2430";
+        ctx.lineWidth = 2.5;
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
     }
     // the crew (a PLACEHOLDER: the party's guard look until the ship's crew has a look)
-    if (l.crew) (drawPerson(ctx, PK_HOLD.crate.x + 230, PK_HOLD.crate.y + 20, adultPxFor("hangar") * 1.5, LOOKS.guard, -1, t), (out.crew = true));
+    if (l.crewAt) (drawPerson(ctx, l.crewAt.x, l.crewAt.y, adultPxFor("hangar") * PK_HOLD.crewK, LOOKS.guard, l.crewAt.f || 1, t), (out.crew = { x: Math.round(l.crewAt.x), y: Math.round(l.crewAt.y) }));
+    // the crew holds up the beard and the horns he took (one drawn second, a Chapter 2 plant)
+    if (l.takeAt >= 0 && l.takeAt != null && l.crewAt) (drawCostumePiece(ctx, "beard", l.crewAt.x + 60, l.crewAt.y - adultPxFor("hangar") * 1.3, 0.45), drawCostumePiece(ctx, "horns", l.crewAt.x + 60, l.crewAt.y - adultPxFor("hangar") * 1.8, 0.4), (out.taken = true));
     if (l.heartsAt >= 0) drawHearts(ctx, m.x, m.y - 50 * mk, t - l.heartsAt);
     if (e.get("ctrl") && !e.current() && !l.cu) {
       const sp = spots().find((q) => q.thing);
@@ -1640,18 +1731,19 @@ export function createPickup(bridge) {
     // 57: the hallway: the office door's sign and the flash under it; a gulp if he saw the frame in the office
     if (room === "passage" && l.step !== "push") drew.sign = drawPhotoSign(ctx, PK_HALLWAY.sign, PK_HALLWAY.under, t);
     if (l.gulpAt >= 0 && t - l.gulpAt < 1.2) drew.sweat = drawGulpSweat(ctx, headBox("sq"), t - l.gulpAt);
+    // 56 on (a Chapter 2 plant): the ragged end of his beard where it was snipped, to the chapter's end
+    l.snipped && e.get("moPose") !== "hidden" && !l.cu && ["closet", "hall", "passage"].includes(room) && (drew.snipMark = snipMark(ctx, m, moScale(room)));
     if (l.heartsAt >= 0) drawHearts(ctx, m.x, m.y - 46 * moScale(room), t - l.heartsAt);
     // 59, 60: the office on photo day: the camera on its tripod and the stool; the robot is one of the new ones
     if (room === "office") {
       drawPhotoCorner(ctx);
       drawNewRobotBits(ctx, 280, 500, adultPxFor("office") / 47, 1, t);
       if (l.cu === "frame") (OFFICE_PANELS.esframe[0](ctx), (drew.frame = true));
-      if (l.cu === "tape") drew.tape = (drawTapeScreen(ctx, e, { ...l.tape, star: starWord().tag }, t), { ...l.tape });
+      if (l.cu === "tape") drew.tape = (drawTapeScreen(ctx, e, l.tape, t), { ...l.tape });
     }
     // close-ups over the blurred room
     if (l.cu === "note") (blurBehind(ctx), (drew.note = drawNoteCloseup(ctx, 4, t)));
     if (l.cu === "box") (blurBehind(ctx), (drew.box = drawBoxCloseup(ctx, l.cover, t)));
-    if (l.cu === "hair") (drawHairCloseup(ctx, t), (drew.hair = "wood"));
     if (l.cu === "snip") (drawSnipCloseup(ctx, !!l.cut, t - l.cuAt, !!(e.get("ch1Escape") && e.get("ch1Escape").star)), (drew.snip = { cut: !!l.cut }));
     if (l.cu === "dress") drew.dress = drawDressCloseup(ctx, e, l.dress, t);
     if (l.cu === "plate") (drawPlateCloseup(ctx), (drew.plate = true));
@@ -1674,10 +1766,17 @@ export function createPickup(bridge) {
     else {
       ["wake", "note"].includes(l.step) && drawFoldedNote(ctx, PK_HOME.note);
       PK_HOME.tufts.forEach((q, i) => l.tufts[i] || drawPkTuft(ctx, q.x, q.y, 1.4));
-      l.hairOut && !l.packed.box && drawHair(ctx, PK_HOME.hair.x, PK_HOME.hair.y, 46, 2.5);
       l.packed.box && markPacked(ctx, l);
+      // his beard hair laid over Squatch in the crate (on purpose, for the scanner)
+      l.pile && PK_HOME.pile.forEach((q) => (ctx.save(), ctx.translate(q.x, q.y), ctx.rotate(q.a), drawHair(ctx, 0, 0, 52, 3), ctx.restore()));
     }
     d.tufts = l.tufts.filter((v) => !v).length;
+    // the STAY IN HERE poster, eaten: a pale square where it hung
+    l.posterEaten && drawWallPatch(ctx, PK_HOME.poster, PK_HOME.wallAt);
+    d.poster = !l.posterEaten;
+    d.pile = !!l.pile;
+    // his snack bag on the floor by the crate bed, until he packs it
+    l.crate === "bed" && !l.packed.snacks && drawSnackBag(ctx, PK_HOME.snackBag);
     // the bucket packed: the floor where it stood (the painted bucket and the bucket drawn over it)
     if (l.packed.bucket) drawFloorPatch(ctx, PK_HOME.bucketPatch, PK_HOME.floorAt);
     drewHome = d;
@@ -1741,6 +1840,7 @@ export function createPickup(bridge) {
     ctx.strokeRect(c.x0 + 40, c.y0 + 2, 52, 28);
     ctx.restore();
     l.packed.bucket && drawBucket(ctx, c.x0 + 150, c.y0 + 24, 0.9);
+    l.packed.snacks && drawSnackBag(ctx, { x0: c.x0 + 100, y0: c.y0 - 4, x1: c.x0 + 136, y1: c.y0 + 30 });
     if (l.packed.label) {
       ctx.save();
       ctx.fillStyle = "#fffdf8";
@@ -1764,6 +1864,7 @@ export function createPickup(bridge) {
       return true;
     }
     if (l.cu === "bite" && l.step === "bite") return (biteCake(), true);
+    if (l.cu === "crayon" && l.step === "lastwalk") return (takeKeepsake(), true);
     if (l.cu === "dress" && l.step === "dress") {
       const st = l.dress,
         i = DRESS.shelf.findIndex((p) => Math.hypot(x - p.x, y - p.y) <= DRESS.r);
@@ -1799,8 +1900,10 @@ export function createPickup(bridge) {
     const done = (s) => i > PICKUP_STEPS.indexOf(s);
     const l = fresh({
       tufts: PK_HOME.tufts.map(() => (done("mop") ? 1 : 0)),
-      hairOut: done("mop"),
-      packed: { box: done("pack"), bucket: done("bucket"), label: done("label"), top: done("getin") },
+      posterEaten: done("poster"),
+      snipped: done("snip"),
+      pile: done("getin"),
+      packed: { box: done("pack"), bucket: done("bucket"), snacks: done("snacks"), label: done("label"), top: done("getin") },
       walls: done("walls") ? Object.fromEntries(PK_HOME.walls.map((w) => [w.id, 1])) : {},
       crate: done("getin") ? "push" : "bed",
     });
@@ -1817,18 +1920,24 @@ export function createPickup(bridge) {
     if (i <= PICKUP_STEPS.indexOf("getin")) {
       e.enterRoom("closet", "QB");
       e.place("sq", step === "box" || step === "packnote" ? PK_HOME.closet.x : step === "note" ? PK_HOME.wake.x : PK_HOME.crateAt.x, step === "box" || step === "packnote" ? PK_HOME.closet.y : step === "note" ? PK_HOME.wake.y : PK_HOME.crateAt.y);
-      e.place("mops", step === "mop" ? tuftStand(0).x + 60 : PK_HOME.mops.x, step === "mop" ? PK_HOME.tuftY : PK_HOME.mops.y);
+      e.place("mops", step === "mop" ? tuftStand(0).x + 60 : step === "poster" ? PK_HOME.posterAt.x - 120 : PK_HOME.mops.x, step === "mop" ? PK_HOME.tuftY : step === "poster" ? PK_HOME.posterAt.y + 40 : PK_HOME.mops.y);
       e.face("mops", -1);
       go(step, step === "packnote" ? { cu: "box" } : {});
-      return control({ note: "chip-note", box: "chip-box", packnote: "chip-box", mop: "chip-mop", pack: "chip-pack", bucket: "chip-pack", walls: "chip-walls", label: "chip-label", getin: "chip-get-in" }[step]);
+      return control({ note: "chip-note", box: "chip-box", packnote: "chip-box", mop: "chip-mop", poster: "chip-poster", pack: "chip-pack", bucket: "chip-pack", snacks: "chip-pack", walls: "chip-walls", label: "chip-label", getin: "chip-get-in" }[step]);
     }
     if (step === "tape") return (Object.assign(L(), { crate: "ship" }), toOffice());
-    if (step === "cake" || step === "bite" || step === "hide") {
+    if (step === "cake" || step === "bite" || step === "hide" || step === "crewbleat") {
       Object.assign(L(), { crate: "ship" });
       toHold();
       if (step !== "cake") (L().box.where = "open");
       if (step === "bite") return (go("bite", { cu: "bite", bitten: false }), control("chip-hold"));
       if (step === "hide") return (go("hide"), control("chip-hide-crate"));
+      if (step === "crewbleat") {
+        e.set("sqPose", "hidden");
+        e.place("mops", PK_HOLD.mopsBlock.x, PK_HOLD.mopsBlock.y);
+        e.face("mops", -1);
+        return (go("crewbleat", { crewAt: { ...PK_HOLD.crewStop, f: 1 } }), control("chip-crew"));
+      }
       return;
     }
     if (i >= PICKUP_STEPS.indexOf("snip")) return jumpLater(step);
@@ -1838,25 +1947,27 @@ export function createPickup(bridge) {
       e.place("sq", -400, -400);
       return startPush();
     }
-    // the bay: his crate third in the row; the old robots by the ramp; the new robots back from the scan
+    // the bay: his crate in the row (the first crate gone up the ramp); the old robots at the ramp; the upgraded robot
+    // back by the row (knock), or cleaning by the vent (after the spill)
     e.enterRoom("hangar", "QB");
     e.set("ch1D", true);
     e.set("ch1Ship", true);
-    Object.assign(L(), { crate: "row", things: freshThings(), hat: { where: "bin" } });
-    L().things.bag.where = "ship";
-    L().bots = [...PK_BAY.oldLine.map((p, k) => robot("old" + k, "old", p, -1)), robot("new0", "new", PK_BAY.botsBack[0], 1), robot("new1", "new", PK_BAY.botsBack[1], 1)];
+    Object.assign(L(), { crate: "row", things: freshThings() });
+    L().things.crate.where = "ship";
+    L().bots = [...oldBots(), robot("new0", "new", PK_BAY.botsBack[0], -1)];
     e.set("sqPose", "hidden");
-    e.place("sq", PK_BAY.row[2].x, PK_BAY.row[2].y);
-    e.place("mops", step === "warn" ? PK_BAY.door.x : step === "bleat" ? PK_BAY.bleatAt.x : PK_BAY.knockAt.x, step === "warn" ? PK_BAY.door.y + 60 : step === "bleat" ? PK_BAY.bleatAt.y : PK_BAY.knockAt.y);
-    if (step === "warn" || step === "knock" || step === "bleat") return (go(step), control(step === "bleat" ? "chip-bleat-robot" : "chip-warn"));
-    bots("new0", "new1").forEach((b) => ((b.f = -1), (b.a = Math.PI), (b.phase = "mops")));
-    e.place("mops", PK_BAY.mopsAside.x, PK_BAY.mopsAside.y);
+    e.place("sq", PK_BAY.row[1].x, PK_BAY.row[1].y);
+    if (step === "knock") return (e.place("mops", PK_BAY.mopsWait.x, PK_BAY.mopsWait.y), go("knock"), control("chip-knock"));
+    L().bucketOff = true;
+    if (step === "spill") return (e.place("mops", PK_BAY.knockAt.x, PK_BAY.knockAt.y), go("spill"), control("chip-spill"));
+    // (after the spill: the puddle, the robot cleaning round it, Mops stepped back)
+    L().spill = { at: e.time() };
+    Object.assign(L().bots[L().bots.length - 1], { phase: "clean", u: 0, ...cleanSpot(0) });
+    e.place("mops", 330, 612);
     if (step === "climb") return (go("climb"), control("chip-climb"));
     if (step === "sneak") return climbOut();
-    // home: the crate is on the ship; he walks home from the plant
+    // home: the crate is on the ship; he walks home from the mailbox
     L().things.his.where = "ship";
-    L().things.crate.where = "ship";
-    L().two = "done";
     sneakHome();
   }
 
@@ -1928,9 +2039,8 @@ export function createPickup(bridge) {
         e = E();
       if (!l) return null;
       const room = e.room();
-      if (who === "sq" && l.cu === "slat") return { x: 110, y: 500 };
       if (who === "sq" && e.get("sqPose") === "hidden") {
-        if (room === "hangar" && ["held", "idea"].includes(l.step)) return { x: PK_BAY.eyes.x, y: PK_BAY.eyes.y - 20 };
+        if (room === "hangar" && l.step === "held") return { x: PK_BAY.slotEyes.x, y: PK_BAY.slotEyes.y - 20 };
         if (l.crate === "push") {
           const c = pushedCrate();
           return { x: c.x, y: c.y - 100 * c.k };
@@ -1951,9 +2061,9 @@ export function createPickup(bridge) {
       if (room === "passage" && who === "robot") return { x: PK_HALLWAY.robot.x, y: PK_HALLWAY.robot.y - 80 };
       if (room === "office" && who === "robot") return { x: 280, y: 400 };
       if (room === "office" && who === "official") return l.cu === "tape" ? { x: 480, y: 640 } : { x: 430, y: 390 };
-      if (room === "hangar" && l.place === "hold" && who === "ups") return l.crew ? { x: PK_HOLD.crate.x + 230, y: PK_HOLD.crate.y - 220 } : { x: 120, y: 120 };
+      if (room === "hangar" && l.place === "hold" && who === "ups") return l.crewAt ? { x: l.crewAt.x, y: l.crewAt.y - adultPxFor("hangar") * (PK_HOLD.crewK + 0.15) } : { x: 120, y: 120 };
       // over a close-up (the snip, the dress-up, the plate, the drawing, the peel): the bubbles go along the bottom
-      if (l.cu && l.cu !== "slat" && (who === "sq" || who === "mops")) return { x: who === "sq" ? 330 : 630, y: 640 };
+      if (l.cu && (who === "sq" || who === "mops")) return { x: who === "sq" ? 330 : 630, y: 640 };
       return null;
     },
     tick,

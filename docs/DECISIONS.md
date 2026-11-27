@@ -110,6 +110,58 @@ Brian answered these on 2026-11-27 after his 83 video notes on Chapter 1 (relaye
 - **Question 127: A.** Mops goes stiff, tips onto his side and sleeps with his head on his bucket, the same at Day 1's bedtime, the morning after and night one (`mops-asleep-art.js` MOPS_SLEEP). This replaces question 33 (on his back, feet in the air). The pose is a placeholder for his yes.
 - **Question 129: A.** The chart over his bed is a picture only: cakes each crossed off, no "THE CRATE KIND" label, no X · chart step. This replaces question 114.
 
+| 47–57 | ## Pickup day, round 7: Brian's answers of 2026-11-27 (questions #116 to #133, relayed by Snack Quest Chat) |
+| 58–61 | ## The escape's words and the vent room, 2026-11-26 (Brian, notes page questions 55 and 56) |
+| 62–64 | ## The office code, 2026-11-26 (Brian, chat) |
+| 65–73 | ## Day 1 after the party: Mops cleans the hall, then truth or fib (story pass 28-52, E2; 2026-11-26) |
+| 74–79 | # Space Snack Quest: every decision, in one place |
+| 80–88 | ## Day 1 bedtime: why Mops kept him, the last cake, and the chart over his bed (story pass 28-52, E4; 2026-11-26) |
+| 89–96 | ## How to use this file |
+| 97–100 | ## Office code and the loading bay, 2026-11-26 (Brian, chat) |
+| 101–108 | ## The snack renamed, and the crate bed's stamp (question 86), 2026-11-26 (Brian, relayed by the coordinator) |
+| 109–112 | ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator) |
+| 113–119 | ## Evening and night one rebuilt from the story pass, 2026-11-26 night (Brian: "Go! Go as far as you can without me.") |
+| 120–127 | ## Evening and night one, look and physics, 2026-11-26 (Brian, video notes on beats 37 to 42) |
+| 128–136 | ## Lunch sneak, 2026-11-26 (Brian's video notes and answers, round D) |
+| 137–147 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
+| 148–157 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
+| 158–168 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
+| 169–192 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
+| 193–197 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 198–206 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 207–210 | ## Sound, 2026-11-23 |
+| 211–235 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 236–247 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 248–272 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 273–281 | ## Which repo is the base, 2026-11-22 |
+| 282–292 | ## Sight cones, 2026-11-22 |
+| 293–297 | ## Latest calendar direction, 2026-11-16 |
+| 298–300 | ## Vent walk, 2026-11-16 |
+| 301–303 | ## Locked home room v5, 2026-11-16 |
+| 304–313 | ## Fidelity system (pictures are locked, not just words) |
+| 314–351 | ## 1. Working rules |
+| 352–418 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 419–443 | ## 3. Characters and look |
+| 444–520 | ## 4. Look, rooms and layout |
+| 521–542 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 543–586 | ## 6. Later chapters (2–4 and travel) |
+| 587–596 | ## 7. Audio |
+| 597–631 | ## 8. Code, controls and process |
+| 632–678 | ## 9. Open / waiting on Brian |
+| 679–773 | ## 10. Earlier entries, kept word for word |
+| 774–871 | ## 11. Decisions recorded on main on 2026-11-09 |
+<!-- /section-index -->
+## Pickup day, round 7: Brian's answers of 2026-11-27 (questions #116 to #133, relayed by Snack Quest Chat)
+The choices are decided; every new or changed line stays pending until Brian sees it in a video.
+- #116 A: hair passes the scanner, fur stops. Mops: "It lets hair through." and lays his beard hair over Squatch in the crate on purpose ("So today you're a pile of hair."). The arch: "HAIR. PROCEED." at his crate. At home the idea is said in words, not thought pictures.
+- #117 A: the robots check crates because Mops's own complaint got them upgraded ("UPGRADE INSTALLED." / "WE CHECK EVERY CORNER NOW." / "AND EVERY CRATE." / Mops: "...I told them to check the corners."). Squatch's "That was me" is gone.
+- #118 B (his idea): one robot works the mail room; Mops spills his bucket out in the bay and the robot cleans every corner; Squatch climbs out and hides INSIDE the robot mailbox, his eyes in its slot; the mailbox stays quiet while he is in it (no "MAIL SCANNED."). No slat view: the room with his eyes in the crate. The old robots load at the ramp; passengers board.
+- #120: pancakes are gone from the whole game; any pancake word becomes Mars Cakes.
+- #123 A: the camera hangs upper right by the speaker box (a layer for his yes); the beard slips off in the room under it (no close-up); one tape clip from the camera's corner (PLAY, then ZOOM on the tall goat).
+- #124 A: the crate tag reads "FOR PICKUP." (no "EMPTY.").
+- #128 A: on the last walk, LIFT · photo shows the hidden drawing, then TAKE · drawing.
+- #130 A: the Star Ganitor is cut, with "STARS DO NOT COUNT." and Isfred's "Star Ganitor."
+- #133 A: the small fixes, among them the robot reads the faded stamp as written ("...ARS CAKES. LOADING."), Mops eats the STAY IN HERE poster, "I can't bleat. I'm a Sasquatch." / "Today you're a goat.", the crew member walks down the stairs and BLEAT · crew fails ("Nice try.").
 ## The escape's words and the vent room, 2026-11-26 (Brian, notes page questions 55 and 56)
 - **The escape's written words are approved as written** (Brian, 2026-11-26, notes page question 55: "Approve all as written", PR #93 comment): the card "Six days later", the board IDEAS FOR GUARDIANS, HAVE YOU SEEN?, the labels MARS / NO / TOYS, the Mars letter, the Guardian note with "— The Guardians", the goal line "Squatch: type the code from the pink slip", and the site's "Order new box" and "Return empty crate". The office-code pin is "make 169556". **Decided.** (The site's header is renamed STARS CAKES in the rebuild of 2026-11-26 night, the Stars Cakes thread: that new word waits for his yes.)
 - **The vent room is a locked picture** (Brian, 2026-11-26, notes page question 56: a locked, cleaned-up vent room): `docs/locked-rooms/vent-room-empty-v1.png`, drawn once by `tools/vent-room-picture.mjs`. The room with no one in it, the lamp off, nothing on the desk; what changes is drawn on top. **Decided.**

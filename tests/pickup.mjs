@@ -3,14 +3,17 @@
  * plays: NEXT on every bubble and card, and at each step the player controls, the walker stands on the step's spot and
  * presses its button. Checked as the player meets them:
  *   53: the note on the pillow (READ · note), its close-up; OPEN · box and the pink corner, PACK · note covers it; the
- *       switch to Mops; the four tufts wiped by walking (the next one outlined); the white hair held close; PACK · box,
- *       PACK · bucket, four things off the walls (pale squares); the PA; PUT ON · label; GET IN · crate; the push as
- *       Mops through the hall (the guests' "Hi, Mops!") and the hallway (the robot reads the label) to the mail room;
- *   54: the slat view (his eyes in the corner), the new robots' lines, the bag opened, Lou's hat in the bin;
- *   55: Mops walks to the crate, KNOCK · crate, BLEAT · robot (the robots turn to him); CLIMB OUT · crate; ROLL · ball
- *       is offered where he stands; HIDE · plant; the held moment ("GOAT HAIR. PROCEED."); the idea; the walk home.
+ *       switch to Mops; the four tufts wiped by walking (the next one outlined); EAT · poster (a pale square where the
+ *       STAY IN HERE poster hung); PACK · box, PACK · bucket, four things off the walls (pale squares); the PA;
+ *       PUT ON · label (FOR PICKUP.); GET IN · crate and Mops's hair laid over him on purpose; the push as Mops through
+ *       the hall (the guests' "Hi, Mops!") and the hallway (the robot reads the label) to the mail room;
+ *   54: no slat view: his eyes in his crate; one upgraded robot's lines; the first crate opened, scanned, up the ramp;
+ *   55: KNOCK · crate, SPILL · bucket by the floor vent (the robot leaves the mail room to clean); CLIMB OUT · crate;
+ *       ROLL · ball is offered where he stands; HIDE · mailbox (Brian's #118 B); the held moment (the stamp read as it is, "HAIR.
+ *       PROCEED."); the walk home; the idea in words at home.
  *   56 to 61: played the same way to the tally card (the snip, the dress-up's button, three bleats, the last walk, the
- *       scanner, the office, the tapes, the hold).
+ *       scanner, the beard slipping off in the room, the office, the one tape, the hold, the crew's walk down the
+ *       stairs and BLEAT · crew).
  * Also: every line's words come from the lines files; ↺ in a step he controls brings it back, and between steps goes
  * back to the last one he did; the chapter reset forgets pickup day; a robot that sees him sneaking shows "?", then the
  * alarm and a guard; a guest's cone on him in costume ("?", BLEAT · guest, the beard slipping, PRESS · beard); the old
@@ -23,6 +26,7 @@ import { startGame, root } from "./game-page.mjs";
 
 const M = (f) => join(root, "src", "modules", f);
 const { PICKUP_LINES } = await import(M("pickup-lines.js"));
+const { FAMILY } = await import(M("snack-name.js"));
 const g = await startGame({ port: 9789, name: "pickup" });
 
 // ---------- without a browser ----------
@@ -108,9 +112,18 @@ const run = await page.evaluate(
     }
     out.tufts = S().tufts;
     out.hairCu = S().cu;
+    ss.drawFrame();
+    out.poster0 = { step: S().step, driving: d().driving, chip: n.ch1Chip, mark: d().drew.next, poster: d().drew.poster };
+    play("poster");
     nextAll("pack");
+    ss.drawFrame();
+    out.posterGone = d().drew.poster === false && S().posterEaten;
     play("pack");
     play("bucket");
+    ss.drawFrame();
+    out.bagOnFloor = !!S() && S().step === "snacks";
+    play("snacks");
+    out.snacksPacked = S().packed.snacks;
     for (let k = 0; k < 4; k++) play("walls");
     ss.drawFrame();
     out.wallsLeft = d().drew.walls;
@@ -118,6 +131,7 @@ const run = await page.evaluate(
     play("label");
     play("getin");
     nextAll("push");
+    out.pile = S().pile;
     out.push0 = { room: n.room, driving: d().driving, sqPose: n.sqPose, crate: S().crate };
     // the push: walk to each doorway (the robot stands in it), through the hall and the hallway, to the mail room
     for (let k = 0; k < 6 && S().step === "push"; k++) {
@@ -140,25 +154,30 @@ const run = await page.evaluate(
     }
     out.pushLog = n.log.filter((e) => e.k === "live").map((e) => e.text);
     // ---- 54 ----
-    nextAll("warn", 800);
+    for (let i = 0; i < 30 && S().step !== "watch"; i++) (n.cur && ((n.bt = 1), ss.opTap()), tick(0.1));
+    ss.drawFrame();
+    out.watch0 = { cu: S().cu, eyes: !!d().drew, bots: S().bots.map((b) => b.id), pass: (S().passengers || []).length };
+    nextAll("knock", 1200);
     out.slatSaid = out.said.slice();
-    out.hat = S().hat;
-    out.bag = S().things && S().things.bag.where;
+    out.crateOne = S().things && S().things.crate.where;
+    out.newBots = S().bots.filter((b) => b.kind === "new").length;
     // ---- 55 ----
-    out.warn0 = { driving: d().driving, step: S().step };
-    play("warn");
-    tick();
+    out.knock0 = { driving: d().driving, step: S().step, chip: n.ch1Chip };
     play("knock");
-    nextAll("bleat");
-    play("bleat");
-    nextAll("climb");
-    out.botsFaceMops = S().bots.filter((b) => b.kind === "new").every((b) => b.f < 0);
+    nextAll("spill");
+    out.spill0 = { chip: n.ch1Chip, bucketOff: S().bucketOff };
+    play("spill");
+    nextAll("climb", 800);
+    for (let i = 0; i < 120; i++) tick(0.1);
+    const nb = S().bots.find((b) => b.id === "new0");
+    out.cleaning = { phase: nb.phase, x: Math.round(nb.x), y: Math.round(nb.y), spill: !!S().spill };
     play("climb");
     tick();
     out.ballOffered = ss.spotsNow().some((s) => s && s.verb === "ROLL");
     play("sneak");
     nextAll("home", 1200);
     out.heldSteps = d().steps.slice(-6);
+    out.hidAt = { x: Math.round(n.sq.x), y: Math.round(n.sq.y) };
     out.his = S().things.his.where;
     out.homeRoom = n.room;
     for (let k = 0; k < 6 && S() && S().step === "home"; k++) {
@@ -173,6 +192,8 @@ const run = await page.evaluate(
         out.tally = true;
         break;
       }
+      const sl = S();
+      sl && (sl.beardOff && (out.slipSeen = true), sl.cu === "slip" && (out.slipCu = sl.cu));
       if (n.cur || !n.ctrl || n.q.length) {
         nextAll("", 60);
         continue;
@@ -181,6 +202,7 @@ const run = await page.evaluate(
       if (!st || !B.active()) break;
       ss.drawFrame();
       const dr = d().drew || {};
+      st.snipped && n.room === "hall" && (out.snipHall = out.snipHall || !!dr.snipMark);
       seen[st.step] = seen[st.step] || { room: n.room, cu: st.cu, chip: n.ch1Chip, mark: !!dr.mark, mirror: dr.mirror, dress: dr.dress && dr.dress.meter, tape: dr.tape && dr.tape.next, crew: dr.crew, place: st.place };
       // (nothing to press yet, e.g. the week's box still coming down the ramp: wait a moment)
       if (!ss.spotsNow().some((q) => q && (q.r > 0 || q.box) && !q.extra)) {
@@ -194,6 +216,7 @@ const run = await page.evaluate(
     }
     out.seen = seen;
     out.costume = n.costumeOn;
+    out.stripped = !!(S() && S().stripped);
     out.end = { step: S() && S().step, scene: n.scene, room: n.room, ch1Step: n.ch1Step, active: B.active(), cur: n.cur && (n.cur.id || n.cur.k) };
     out.allSaid = out.said;
     out.steps = d().steps;
@@ -206,26 +229,32 @@ g.check("53: home in the morning, the note's outline, READ · note", run.note0.r
 g.check("53: the note close-up shows the Guardian note, signed", run.cu.note && run.cu.note.signed, run.cu.note);
 g.check("53: \"They know!\" and \"They're not mad.\"", run.said.includes(W["sq-know"]) && run.said.includes(W["sq-not-mad"]));
 g.check("53: the box close-up shows the pink corner, then PACK · note", run.cu.box && run.cu.box.pinkShows && run.acts.includes("PACK · note"), run.cu.box);
-g.check("53: \"Safe.\", then Mops's two lines, then the player is Mops", run.said.includes(W["sq-safe"]) && run.said.includes(W["mops-tuft"]) && run.mopDriving === "mops");
-g.check("53: the four tufts are wiped by walking (the next one is the walk spot)", run.tufts.every(Boolean) && run.marks.tuft === "pk-tuft" && run.hairCu === "hair", { tufts: run.tufts, mark: run.marks.tuft, cu: run.hairCu });
-g.check("53: PACK · box, PACK · bucket, four things off the walls, PUT ON · label, GET IN · crate", ["PACK · box", "PACK · bucket", "TAKE · chart", "TAKE · brochure", "TAKE · drawing", "PUT ON · label", "GET IN · crate"].every((a) => run.acts.includes(a)) && run.wallsLeft.length === 0, run.acts);
+g.check("53: \"Safe.\", then \"The scanner stops fur.\" / \"It lets hair through.\", then the player is Mops", run.said.includes(W["sq-safe"]) && run.said.includes(W["mops-scanner"]) && run.said.includes(W["mops-hair-ok"]) && run.mopDriving === "mops");
+g.check("53: the four tufts are wiped by walking (the next one is the walk spot); no stray hair close-up", run.tufts.every(Boolean) && run.marks.tuft === "pk-tuft" && run.hairCu === "", { tufts: run.tufts, mark: run.marks.tuft, cu: run.hairCu });
+g.check("53 (r6 2:21): as Mops, EAT · poster on the outlined STAY IN HERE poster; his line, Squatch's, \"Delicious.\"; a pale square where it hung", run.poster0.step === "poster" && run.poster0.driving === "mops" && run.poster0.chip === W["chip-poster"] && run.poster0.mark === "pk-poster" && run.poster0.poster === true && run.acts.includes("EAT · poster") && [W["mops-dont-need"], W["sq-you-ate"], W["mops-delicious"]].every((w) => run.said.includes(w)) && run.posterGone, run.poster0);
+g.check("53 (#116): Mops lays his beard hair over him in the crate on purpose: \"So today you're a pile of hair.\"", run.pile === true && run.said.includes(W["mops-pile"]) && run.said.indexOf(W["mops-in"]) < run.said.indexOf(W["mops-pile"]));
+g.check("53: PACK · box, PACK · bucket, four things off the walls, PUT ON · label, GET IN · crate", ["PACK · box", "PACK · bucket", "PACK · snacks", "TAKE · chart", "TAKE · brochure", "TAKE · drawing", "PUT ON · label", "GET IN · crate"].every((a) => run.acts.includes(a)) && run.wallsLeft.length === 0, run.acts);
 g.check("53: the bare walls, the PA, \"In you go.\"", [W["sq-empty"], W["mops-empty"], W["pa-ship"], W["mops-in"], W["mops-sound"]].every((w) => run.said.includes(w)));
 g.check("53: the push: the player is Mops, Squatch hidden in the crate", run.push0.driving === "mops" && run.push0.sqPose === "hidden" && run.push0.crate === "push", run.push0);
 g.check("53: a guest waves at Mops in the hall; the hallway robot reads the label", run.pushLog.includes(W["guest-hi"]) && run.pushLog.includes(W["robot-label"]), run.pushLog);
-g.check("54: the new robots' lines and the hat", [W["scan-no-fur"], W["bot-new-rule"], W["bot-scan-every"], W["bot-never"], W["bot-why-here"], W["scan-fur-stop"], W["bot-hat"], W["sq-that-was-me"]].every((w) => run.slatSaid.includes(w)) && run.hat.where === "bin" && run.bag === "ship", { hat: run.hat, bag: run.bag });
-g.check("55: the player is Mops at the bay door", run.warn0.driving === "mops" && run.warn0.step === "warn", run.warn0);
-g.check("55: KNOCK · crate, BLEAT · robot; the robots turn to Mops", run.acts.includes("KNOCK · crate") && run.acts.includes("BLEAT · robot") && run.botsFaceMops);
-g.check("55: CLIMB OUT · crate; ROLL · ball offered where he stands; HIDE · plant", run.acts.includes("CLIMB OUT · crate") && run.ballOffered && run.acts.includes("HIDE · plant"));
-g.check("55: the held moment: his crate scanned, the white hair, \"GOAT HAIR. PROCEED.\", up the ramp", run.said.includes(W["scan-goat-hair"]) && run.said.includes(W["bot-one-box"]) && run.his === "ship", { his: run.his });
-g.check("55: the walk home, and their lines at home", [W["sq-stopped-hat"], W["sq-lets-goats"], W["sq-make-goat"]].every((w) => run.said.includes(w)), run.end);
+g.check("54 (r6 3:34): no slat view: the room, his eyes in his crate; one upgraded robot, two passengers boarding", run.watch0.cu === "" && run.watch0.bots.filter((b) => b === "new0").length === 1 && run.watch0.pass === 2 && run.newBots === 1, run.watch0);
+g.check("54 (#117): the upgrade lines and Mops's \"...I told them to check the corners.\"; the first crate opened, scanned, up the ramp; no hat, no mail bag", [W["scan-no-fur"], W["bot-upgrade"], W["bot-corners"], W["bot-every-crate"], W["mops-told"], W["sq-look-inside"]].every((w) => run.slatSaid.includes(w)) && run.crateOne === "ship" && !run.slatSaid.some((w) => /HAT|hat\.|NEW RULE/.test(w)), { crateOne: run.crateOne });
+g.check("55: the player is Mops at his crate: KNOCK · crate, then he has the bucket", run.knock0.driving === "mops" && run.knock0.step === "knock" && run.knock0.chip === W["chip-knock"] && run.acts.includes("KNOCK · crate") && run.spill0.bucketOff && run.spill0.chip === W["chip-spill"], { knock0: run.knock0, spill0: run.spill0 });
+g.check("55 (#118): SPILL · bucket by the floor vent: \"SPILL. CLEANING EVERY CORNER.\"; the robot cleans round the puddle, out of the mail room", run.acts.includes("SPILL · bucket") && run.said.includes(W["bot-spill"]) && run.cleaning.phase === "clean" && run.cleaning.x < 400 && run.cleaning.spill, run.cleaning);
+g.check("55: CLIMB OUT · crate; ROLL · ball offered where he stands; HIDE · mailbox, his eyes in its slot (he stays in the mail room)", run.acts.includes("CLIMB OUT · crate") && run.ballOffered && run.acts.includes("HIDE · mailbox") && run.hidAt.x > 700, run.hidAt);
+g.check("55 (D, #116): the held moment: the stamp read as written, \"ONE BOX. ONE BUCKET.\", \"HAIR. PROCEED.\", up the ramp", [W["bot-ars-loading"], W["bot-one-box"], W["scan-hair-ok"]].every((w) => run.said.includes(w)) && W["bot-ars-loading"] === FAMILY.FADED + ". LOADING." && run.his === "ship", { his: run.his });
+g.check("55 (r6 5:33): the idea said at home, no thought pictures", [W["sq-hair-through"], W["sq-they-looked"], W["mops-need-goat"], W["sq-make-goat"]].every((w) => run.said.includes(w)), run.end);
 g.check("56: SNIP · beard as Mops; the dress-up's big button puts on the beard, the horns, the jacket; BLEAT · Mops three times", ["SNIP · beard", "PUT ON · beard", "PUT ON · horns", "PUT ON · jacket", "BLEAT · Mops"].every((a) => run.acts.includes(a)) && run.acts.filter((a) => a === "BLEAT · Mops").length === 3, run.acts);
-g.check("56: \"More bleat. Less roar.\" answers his roar; the mirror: \"Two goats.\"", [W["sq-bleat-1"], W["mops-less-roar"], W["sq-dont-weent"], W["mops-close-enough"], W["mops-two-goats"], W["mops-not-one"]].every((w) => run.said.includes(w)));
+g.check("56: \"More bleat. Less roar.\" answers his roar; the mirror: \"Two goats.\"", [W["sq-bleat-1"], W["mops-less-roar"], W["sq-cant-bleat"], W["mops-goat-today"], W["mops-close-enough"], W["mops-two-goats"], W["mops-not-one"]].every((w) => run.said.includes(w)));
 g.check("57: the last walk through the hall and the hallway in costume", run.seen.lastwalk && run.costume === true, run.seen.lastwalk);
 g.check("58: PICK UP · box, the robot's \"TWO GOATS?\", BLEAT · robot, GO · ship as Mops, BOARD · scanner, PRESS · beard, CLIMB · ramp", ["PICK UP · box", "BLEAT · robot", "GO · ship", "BOARD · scanner", "PRESS · beard", "CLIMB · ramp"].every((a) => run.acts.includes(a)) && run.said.includes(W["bot-two-goats"]), run.acts);
 g.check("58: \"It's attached.\", \"GOAT. PROCEED.\", then the scanner in three bubbles", [W["mops-attached"], W["scan-goat"], W["scan-hair-58"], W["scan-probably"], W["scan-proceed"], W["sq-weent"]].every((w) => run.said.includes(w)));
 g.check("59: Isfred's five lines, word for word, then \"Later that evening...\"", ["isfred-photo", "bot-not-here", "isfred-not-here", "bot-replaced-shipment", "isfred-tapes", "card-later"].every((id) => run.said.includes(W[id])));
-g.check("60: the tapes: PLAY · tape, ZOOM · in, NEXT · tape; \"That is not a goat.\" / \"A Wookiee!\"", ["PLAY · tape", "ZOOM · in", "NEXT · tape"].every((a) => run.acts.includes(a)) && [W["isfred-what"], W["isfred-not-goat"], W["isfred-wookiee"], W["isfred-ship"]].every((w) => run.said.includes(w)), run.acts);
+g.check("60 (#123, #130): one tape: PLAY · tape, \"My best worker.\", ZOOM · in; \"That is not a goat.\" / \"A Wookiee!\"; no NEXT, no star", ["PLAY · tape", "ZOOM · in"].every((a) => run.acts.includes(a)) && !run.acts.includes("NEXT · tape") && [W["isfred-best"], W["isfred-not-goat"], W["isfred-wookiee"], W["isfred-ship"]].every((w) => run.said.includes(w)) && !run.allSaid.some((w) => /Star Ganitor|STARS DO NOT/.test(w)), run.acts);
+g.check("58 (r6 7:46): the beard slips off in the room, no close-up", run.slipSeen === true && !run.slipCu, { slip: run.slipSeen, cu: run.slipCu });
 g.check("61: OPEN · box, BITE · cake, \"No fizz.\", the call, HIDE · crate, \"Found him.\", \"He's with me.\"", ["OPEN · box", "BITE · cake", "HIDE · crate"].every((a) => run.acts.includes(a)) && [W["sq-no-fizz"], W["ship-call"], W["ship-wookiee"], W["sq-sasquatch"], W["crew-found"], W["mops-with-me"], W["crew-both-off"]].every((w) => run.said.includes(w)), run.acts);
+g.check("61 (r6 9:15, F): the crew member walks down the stairs (\"Out of the way, goat.\"); the player is Mops: BLEAT · crew, \"Nice try.\", then the lid", run.acts.includes("BLEAT · crew") && run.seen.crewbleat && run.seen.crewbleat.chip === W["chip-crew"] && [W["crew-out-of-way"], W["crew-nice-try"], W["crew-found"]].every((w) => run.said.includes(w)) && run.said.indexOf(W["crew-nice-try"]) < run.said.indexOf(W["crew-found"]), run.seen.crewbleat);
+g.check("Chapter 2 plants (pending): PACK · snacks after the bucket; the snipped beard's ragged end still drawn on the last walk; the crew takes the beard and horns (the jacket stays)", run.bagOnFloor && run.snacksPacked && run.snipHall === true && run.stripped === true, { bag: run.bagOnFloor, packed: run.snacksPacked, snip: run.snipHall, stripped: run.stripped });
 g.check("the end of Chapter 1: the tally card", run.tally === true, run.end);
 // every bubble and card shown is a pickup line (or a piece of one), the Guardian note's or the frame's words
 // (escape-lines.js), a switch card, or the chapter's own end; nothing else is said
@@ -260,7 +289,7 @@ const more = await page2.evaluate(() => {
     out.restart[step] = { step: S().step, ctrl: n.ctrl, back: Math.round(n.sq.x) === at.x && Math.round(n.sq.y) === at.y, walls: Object.keys(S().walls || {}).length, dress: S().dress ? Object.keys(S().dress.on).length : 0, next: S().tape ? S().tape.next : "" };
   }
   // the steps he does not control go back to the last one he did (pickup.js PK_RESTART_TO)
-  for (const [step, from] of [["slat", "push"], ["held", "sneak"], ["mirror", "practice"], ["climbing", "ramp"], ["found", "hide"]]) {
+  for (const [step, from] of [["watch", "push"], ["held", "sneak"], ["mirror", "practice"], ["climbing", "ramp"], ["crewdown", "hide"], ["found", "crewbleat"]]) {
     ((n.q = []), (n.cur = null), B.jump(from));
     tick();
     (n.q = []), (n.cur = null);
@@ -271,11 +300,12 @@ const more = await page2.evaluate(() => {
     for (let i = 0; i < 4; i++) tick();
     out.cut[step] = S().step;
   }
-  // 55: standing in front of the robots once they turn back to the row: "?", "!", the FUR alarm, a guard
+  // 55: walking out into the bay, into an old robot's cone at the ramp: "?", "!", the FUR alarm, a guard
   ((n.q = []), (n.cur = null), B.jump("sneak"));
   for (let i = 0; i < 4; i++) tick();
-  n.sq.x = 900;
-  n.sq.y = 606;
+  const ob = S().bots.find((b) => b.id === "old0");
+  n.sq.x = ob.x + Math.cos(ob.a) * 90;
+  n.sq.y = ob.y + Math.sin(ob.a) * 90 + 30;
   let mark = "";
   for (let i = 0; i < 200 && !S().guard; i++) (tick(), (mark = mark || (S().bots.find((b) => b.mark === "?") ? "?" : "")));
   out.alarm = { registered: mark, guard: !!S().guard, alarmOn: B.alarmOn() };
@@ -308,15 +338,33 @@ const more = await page2.evaluate(() => {
   out.cone.press = ss.spotsNow().some((q) => q.verb === "PRESS");
   ss.drawFrame();
   out.cone.drew = (B.debug().drew.guests || []).some((q) => q.filled) || !Object.values(S().watch).some((w) => w.mark);
+  // 57 (#128): in the hallway, LIFT · photo shows the drawing hidden behind the crooked photo; TAKE · drawing takes it
+  ((n.q = []), (n.cur = null), B.jump("lastwalk"));
+  for (let i = 0; i < 4; i++) tick();
+  window.SSQ.engine().enterRoom("passage", "QB");
+  const H = B.place.PK_HALLWAY;
+  n.sq.x = H.crayonAt.x;
+  n.sq.y = H.crayonAt.y;
+  tick();
+  const lift = ss.spotsNow().find((q) => q.verb === "LIFT");
+  out.photo = { lift: lift ? lift.verb + " · " + lift.cap : "", takeFirst: ss.spotsNow().some((q) => q.verb === "TAKE") };
+  lift && lift.f();
+  tick();
+  const take = ss.spotsNow().find((q) => q.verb === "TAKE");
+  Object.assign(out.photo, { cu: S().cu, take: take ? take.verb + " · " + take.cap : "" });
+  take && take.f();
+  for (let i = 0; i < 40; i++) ((n.cur && ((n.bt = 1), ss.opTap())), tick(0.1));
+  Object.assign(out.photo, { kept: S().kept, after: S().step, cuAfter: S().cu });
   // the chapter reset forgets pickup day
   window.SSQ.engine().resetChapter();
   out.reset = n.ch1Pickup === null;
   return out;
 });
 g.check("↺ in a step he controls starts that step again, him back where it started (the walls back up, the costume back on the shelf, the tape at its start)", Object.entries(more.restart).every(([k, r]) => r.step === k && r.ctrl && r.back) && more.restart.walls.walls === 0 && more.restart.dress.dress === 0 && more.restart.tape.next === "play", more.restart);
-g.check("↺ in a step he does not control goes back to the last step he did", more.cut.slat === "push" && more.cut.held === "sneak" && more.cut.mirror === "practice" && more.cut.climbing === "ramp" && more.cut.found === "hide", more.cut);
+g.check("↺ in a step he does not control goes back to the last step he did", more.cut.watch === "push" && more.cut.held === "sneak" && more.cut.mirror === "practice" && more.cut.climbing === "ramp" && more.cut.crewdown === "hide" && more.cut.found === "crewbleat", more.cut);
 g.check("55: a robot that sees him shows \"?\" first, then the FUR alarm and a guard (no music: the alarm is on)", more.alarm.registered === "?" && more.alarm.guard && more.alarm.alarmOn, more.alarm);
 g.check("57: a guest's cone on him in costume shows \"?\"; BLEAT · guest pops it; too long without a bleat and the beard slips, PRESS · beard", more.cone.seen && more.cone.bleat && more.cone.popped && more.cone.slipped && more.cone.press, more.cone);
+g.check("57 (G, #128): LIFT · photo first (no TAKE before it), the drawing close; TAKE · drawing; back to the walk", more.photo.lift === "LIFT · photo" && !more.photo.takeFirst && more.photo.cu === "crayon" && more.photo.take === "TAKE · drawing" && more.photo.kept === true && more.photo.after === "lastwalk" && more.photo.cuAfter === "", more.photo);
 g.check("the chapter reset forgets pickup day", more.reset);
 g.check("no page errors", errors.length === 0, errors);
 console.log(JSON.stringify({ acts: run.acts, end: run.end }));
