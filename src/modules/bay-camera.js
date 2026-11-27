@@ -27,7 +27,7 @@ export const BAY_CAMERA = Object.freeze({
 export const OFFICE_BAY_SCREEN = Object.freeze({ x0: 221, y0: 216, x1: 317, y1: 279 });
 
 const BAY_IDS = new Set(["delivery-day", "delivery-noship", "delivery-pickup", "delivery-night"]);
-const INK = "#2a2f3a";
+const CAMERA_INK = "#2a2f3a";
 
 /**
  * Draws the camera at (x, y) (the middle of its wall plate) in the units of `ctx`; `k` its size; `light` whether the red
@@ -39,7 +39,7 @@ export function drawBayCamera(ctx, x, y, k = 1, light = true, a = 1) {
   ctx.translate(x, y);
   ctx.scale(k, k);
   ctx.lineWidth = 2.5;
-  ctx.strokeStyle = INK;
+  ctx.strokeStyle = CAMERA_INK;
   // the wall plate
   ctx.fillStyle = "#8e96a6";
   ctx.beginPath();
@@ -145,7 +145,7 @@ export function cameraUpFrom(get) {
 }
 
 const cameraPicReady = (img) => !!img && !!img.complete && !!img.naturalWidth;
-const layered = new Map();
+const cameraLayered = new Map();
 let handed = 0;
 /** Tests: how many pictures were handed out with the camera layer, and the last one's id. */
 let lastId = "";
@@ -161,7 +161,7 @@ export function withCameraLayer(id, img) {
   const bay = BAY_IDS.has(id);
   if (!(bay || id === "office") || !cameraPicReady(img) || img.cameraLayer || !cameraNow()) return img;
   const key = id + "|" + img.src;
-  if (!layered.has(key)) {
+  if (!cameraLayered.has(key)) {
     if (typeof document === "undefined") return img;
     const w = img.naturalWidth,
       h = img.naturalHeight,
@@ -176,9 +176,9 @@ export function withCameraLayer(id, img) {
     bay ? drawBayCamera(c, BAY_CAMERA.x, BAY_CAMERA.y, 1.3) : drawBayOnScreen(c);
     c.restore();
     Object.assign(cv, { complete: true, naturalWidth: w, naturalHeight: h, src: img.src + "#camera", cameraLayer: true, nightLook: !!img.nightLook, snackLayer: !!img.snackLayer });
-    layered.set(key, cv);
+    cameraLayered.set(key, cv);
   }
   handed++;
   lastId = id;
-  return layered.get(key);
+  return cameraLayered.get(key);
 }

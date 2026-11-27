@@ -335,11 +335,26 @@ const counter = await page.evaluate(() => {
     ss.drawFrame();
   }
   out.seen = { alarm: !!n.ch1Lunch.alarm, chip: ss.chipNow() };
+  // the place to hide is shown: back behind the counter (its aisle outlined, a place to walk to)
+  for (let i = 0; i < 30; i++) (ss.tick(0.05), ss.drawFrame());
+  out.hideShown = { outline: (beat.debug().drew || {}).outline || null, spots: ss.spotsNow().map((q) => q.id), phase: n.ch1Lunch.alarm && n.ch1Lunch.alarm.phase };
+  // he walks back into the aisle: ducked, hidden; the search ends with "They lost you" and the goal is the doorway again
+  (n.sq.x = 893), (n.sq.y = 420);
+  let jail = false;
+  for (let i = 0; i < 1600 && n.ch1Lunch.alarm; i++) {
+    if (n.cur && n.cur.k === "bub") ((n.bt = 1), ss.opTap());
+    jail = jail || (n.cur && n.cur.id === "jail") || n.q.some((q) => q.id === "jail");
+    ss.tick(0.05);
+    ss.drawFrame();
+  }
+  for (let i = 0; i < 10; i++) ss.tick(0.05);
+  out.hidden = { alarm: !!n.ch1Lunch.alarm, pose: n.ch1Lunch.pose, jail, chip: ss.chipNow(), step: beat.debug().state.step };
   // ↺ there: the counter step again, ducked, no alarm
   beat.restart();
   out.again = { step: beat.debug().state.step, pose: n.ch1Lunch.pose, alarm: !!n.ch1Lunch.alarm, room: n.room };
   return out;
 });
+g.check("29 (round 7, r5 0:20): seen at the counter, the aisle behind it is outlined as the place to hide; ducked there, the search loses him and the goal is the doorway again", !!counter.hideShown.outline && counter.hideShown.outline.y0 >= 340 && counter.hideShown.spots.includes("bay-counter-hide") && !counter.hidden.alarm && counter.hidden.pose === "ducked" && !counter.hidden.jail && counter.hidden.chip === line("chip-follow") && counter.hidden.step === "counter", { shown: counter.hideShown, hidden: counter.hidden });
 g.check("29 (round 7, r5 0:20): ducked in the counter's aisle no one sees him; stood up in a watcher's cone the lunch's alarm starts (\"Squatch: hide\"); ↺ puts him back behind the counter", counter.step === "counter" && counter.pose === "ducked" && !counter.ducked.alarm && counter.ducked.step === "counter" && counter.seen.alarm && /hide/.test(counter.seen.chip) && counter.again.step === "counter" && counter.again.pose === "ducked" && !counter.again.alarm && counter.again.room === "hall", counter);
 
 // ---------- robots always show their cones, however far he is ----------

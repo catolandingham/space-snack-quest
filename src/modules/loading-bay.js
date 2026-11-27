@@ -398,19 +398,27 @@ export function createLoadingBay(bridge) {
     const lu = E().get("ch1Lunch");
     return lu && lu.step === "handoff" ? lu : null;
   };
+  // seen standing at the counter: "Squatch: hide", and the place to hide is back down behind the counter (its aisle)
+  const COUNTER_HIDE = { x0: AISLE.x0, x1: AISLE.x1, y0: AISLE.y0, y1: AISLE.y0 + 90 };
+  const counterHide = () => {
+    const lu = lunchNow();
+    return !!lu && !!lu.alarm && lu.alarm.phase !== "calm" && lu.alarm.phase !== "caught" && lu.pose === "stand";
+  };
   const inCounterAisle = (p) => p.x > AISLE.x0 && p.x < AISLE.x1 && p.y > AISLE.y0 && p.y < AISLE.y1 + 8;
   function counterTick(b, dt, free) {
     const e = E(),
       lu = lunchNow(),
       s = e.pos("sq");
-    if (!lu) return;
+    const O = LUNCH_PLACES.door.opening,
+      atDoor = s.x >= O.x0 && s.x <= O.x1 && s.y >= O.y0 && s.y <= O.y1;
+    // (never stuck: with the lunch's sight gone, the doorway still takes him through)
+    if (!lu) return void (free && atDoor && throughHallDoor());
     // back in the aisle he ducks behind the counter again (the lunch stands him up once he is out of it)
     free && lu.pose === "stand" && inCounterAisle(s) && (lu.pose = "ducked");
     // after the lunch's alarm (seen, then hidden through the search): the goal is the doorway again
     const follow = bayWords("chip-follow");
     if (!lu.alarm && free && e.get("ch1Chip") !== follow) (e.set("ch1Chip", follow), e.chipNow());
-    const O = LUNCH_PLACES.door.opening;
-    if (free && !lu.alarm && s.x >= O.x0 && s.x <= O.x1 && s.y >= O.y0 && s.y <= O.y1) throughHallDoor();
+    if (free && !lu.alarm && atDoor) throughHallDoor();
   }
   function throughHallDoor() {
     const e = E();
@@ -1241,7 +1249,8 @@ export function createLoadingBay(bridge) {
     // places walked into, no button (as the lunch's doorway): the hallway's far doorway, the bay's doorway home, along
     // the hallway home (past the office door, then its far end), the snack counter in the party hall
     const walkTo = (id, x, y, r) => ({ id, verb: "", cap: "", who: "sq", x, y, r });
-    if (b.step === "counter" && room() === "hall" && lunchNow() && !lunchNow().alarm) return [walkTo("bay-hall-door", LUNCH_PLACES.door.walkTo.x, LUNCH_PLACES.door.walkTo.y, 24)];
+    if (b.step === "counter" && room() === "hall" && counterHide()) return [walkTo("bay-counter-hide", COUNTER_SPOTS.sq.x, AISLE.y0 + 40, 24)];
+    if (b.step === "counter" && room() === "hall" && !(lunchNow() && lunchNow().alarm)) return [walkTo("bay-hall-door", LUNCH_PLACES.door.walkTo.x, LUNCH_PLACES.door.walkTo.y, 24)];
     if (b.step === "hallway" && room() === "passage") return [walkTo("bay-door", HALLWAY.exitRight + 12, HALLWAY.right.y, 24)];
     if (b.step === "home" && room() === "hangar") return [walkTo("bay-home", BAY.door.x + 18, BAY.door.y, 24)];
     if (b.step === "walkby" && room() === "passage" && b.office === 0) return [walkTo("bay-walk", HALLWAY.trigger - 40, HALLWAY.right.y + 30, 24)];
@@ -1259,7 +1268,7 @@ export function createLoadingBay(bridge) {
     // the camera glows while Isfred talks about it (rule 4; round 7, q: 123)
     if (b.camGlow && room() === "hangar") return CAMERA_BOX;
     if (!e.get("ctrl") || b.alarm || e.current()) return null;
-    if (b.step === "counter" && room() === "hall") return lunchNow() && !lunchNow().alarm ? LUNCH_PLACES.door.box : null;
+    if (b.step === "counter" && room() === "hall") return counterHide() ? COUNTER_HIDE : lunchNow() && lunchNow().alarm ? null : LUNCH_PLACES.door.box;
     if (b.step === "hallway" && room() === "passage") return { x0: 912, x1: 948, y0: 266, y1: 354 };
     if (b.step === "cargo" && room() === "hangar") return BAY.cargo.box;
     if ((b.step === "talkto" || b.step === "give") && room() === "hangar") return { x0: BAY.plant.leaves.x0, x1: BAY.plant.leaves.x1, y0: BAY.plant.leaves.y0, y1: 372 };
