@@ -22,7 +22,3 @@ export function placeThought(head, size) {
   }
   return { cx, cy, w, h, beside, to: { x: hx, y: beside ? top + head.h * 0.2 : top - 12 } };
 }
-/** True when the cloud placed at `p` covers any of `head`. */
-export function thoughtCoversHead(p, head) {
-  return p.cx - p.w / 2 < head.x + head.w && p.cx + p.w / 2 > head.x && p.cy - p.h / 2 < head.y + head.h && p.cy + p.h / 2 > head.y;
-}

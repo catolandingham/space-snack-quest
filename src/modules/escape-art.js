@@ -310,16 +310,6 @@ export function drawOpenVent(ctx, v) {
   esPaint(ctx, "#8a93a3", 3);
   ctx.restore();
 }
-/** A "!" over a robot that has seen him (robots show "!" at once: DECISIONS 2026-11-22, sight cones). */
-export function drawBang(ctx, x, y, size = 34) {
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(x, y, size * 0.62, 0, ES_TAU);
-  esPaint(ctx, ES_GOLD, 4);
-  esWords(ctx, "!", x, y + 1, size, ES_RED, "center", 900);
-  ctx.restore();
-}
-
 // ---------- inside the vent (beat 48; no locked picture: placeholder) ----------
 function planet(ctx, x, y, r, col, ring) {
   ctx.beginPath();

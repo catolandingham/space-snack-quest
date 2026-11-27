@@ -71,7 +71,7 @@ import {
 } from "./escape-art.js";
 import { cutawaySteps } from "./cutaway.js";
 import { coneFrom, lookAt } from "./party-watch.js";
-import { BAY_SOLIDS, BAY_DOOR, SIGHT, coneOnBody, watchTick, drawWatchCone, drawWatchMark, newGuard, guardTick, drawGuard } from "./bay-watch.js";
+import { BAY_SOLIDS, BAY_DOOR, SIGHT, bayPath, coneOnBody, watchTick, drawWatchCone, drawWatchMark, newGuard, guardTick, drawGuard } from "./bay-watch.js";
 import { splitLine } from "./line-split.js";
 import { drawNightTint } from "./night-look.js";
 import { partyLine } from "./party-lines.js";
@@ -298,8 +298,9 @@ export function createEscape(bridge) {
             e.place("sq", BAY_DOOR.out.x, BAY_DOOR.out.y);
             e.place("mops", BAY_DOOR.out.x - 40, BAY_DOOR.out.y);
             e.set("moPose", "stand");
-            // the night robot is on its rounds as they come in
-            L().robot = freshRobot();
+            // the night robot is at the bin end, looking up at the vent, as they come in along the front (its rounds start
+            // when he has control)
+            L().robot = { ...freshRobot(), phase: "hold" };
           }),
           ...walkRoute(BAY.walkIn, ES_PACE.walk, BAY.mopsVent),
           e.run(() => (e.face("sq", -1), e.face("mops", 1), go("crawl", { crawl: { dir: "in", k: 0 } }))),
@@ -307,6 +308,7 @@ export function createEscape(bridge) {
           e.run(() => {
             e.set("moPose", "hidden");
             L().crawl = null;
+            L().robot && L().robot.phase === "hold" && (L().robot.phase = "patrol");
             go("ball");
             e.face("sq", -1);
             control("chip-ball");
@@ -326,7 +328,7 @@ export function createEscape(bridge) {
     e.set("ch1DidBall", true); // (the chapter's record that he hid as a ball: 90-input-shell.js ch1State)
     sfx("hide");
   }
-  const atVent = () => Math.hypot(E().pos("sq").x - BAY.ventStand.x, E().pos("sq").y - BAY.ventStand.y) < 50;
+  const atVent = () => Math.hypot(E().pos("sq").x - BAY.ventStand.x, E().pos("sq").y - BAY.ventStand.y) <= BAY.ventReach;
   // The night robot: its cone, its patrol, and the one capture rule when it sees him (bay-watch.js: its drawn cone on
   // him as he is drawn here, for SIGHT.register seconds, a "?" filling in meanwhile).
   const robotCone = (r) => coneFrom("es-robot", r.x, r.y, r.f > 0 ? lookAt(r.x, r.y, BAY.ventStand) : Math.PI, { half: SIGHT.half, len: SIGHT.len });
@@ -338,12 +340,15 @@ export function createEscape(bridge) {
       k = sqScale("hangar");
     if (L().pose === "ball") {
       const B = e.ball || { radius: 70, seconds: 2 };
+      r.seenT = 0; // (a count from before he rolled up never carries over)
       r.near = coneOnBody(robotCone(r), s, k) && Math.hypot(s.x - r.x, s.y - r.y) <= B.radius ? r.near + dt : 0;
       r.mark = r.near > 0 ? "?" : "";
+      r.markK = r.near / B.seconds;
       return r.near >= B.seconds;
     }
     r.near = 0;
     r.mark = watchTick(r, robotCone(r), s, k, sqHidden(), dt);
+    r.markK = (r.seenT || 0) / SIGHT.register;
     return r.mark === "!";
   }
   // Rolls along a route of corners; true at its end.
@@ -466,7 +471,8 @@ export function createEscape(bridge) {
     go("tohall");
     // back the way they came, round the bay's things (BAY.walkIn backwards), out of the left doorway, and into the
     // hallway at its right doorway
-    const back = [...BAY.walkIn.slice(0, -1).reverse(), BAY_DOOR.out];
+    // (from wherever he grabbed it, round the bay's things to the walk's corner by the vent, then the walk in backwards)
+    const back = [...bayPath(e.pos("sq"), BAY.walkIn[3]), ...BAY.walkIn.slice(0, 3).reverse(), BAY_DOOR.out];
     e.queue([
       ...walkRoute(back, ES_PACE.walk, { x: BAY_DOOR.out.x - 30, y: BAY_DOOR.out.y }),
       e.run(() => {
@@ -547,11 +553,14 @@ export function createEscape(bridge) {
     const e = E();
     go("tobar");
     e.queue([
-      e.until((dt) => {
-        e.moWalking(true);
-        const a = e.step("mops", OFFICE.door.x - 40, OFFICE.door.y, ES_PACE.walk, dt || 0);
-        return e.step("sq", OFFICE.door.x, OFFICE.door.y, ES_PACE.walk, dt || 0) && a;
-      }),
+      // out round the desk and the chair (OFFICE.out), Mops from where he stood
+      ...[...OFFICE.out, OFFICE.door].map((to) =>
+        e.until((dt) => {
+          e.moWalking(true);
+          const a = e.step("mops", OFFICE.door.x - 40, OFFICE.door.y, ES_PACE.walk, dt || 0);
+          return e.step("sq", to.x, to.y, ES_PACE.walk, dt || 0) && a;
+        }),
+      ),
       e.run(() => {
         e.moWalking(false);
         e.enterRoom("passage", "QB");
@@ -736,7 +745,7 @@ export function createEscape(bridge) {
       // ROLL · ball by the vent (the goal: its outline, goal-targets.js "hangar:es-ball"); while the robot is after him
       // or a guard is out, wherever he stands (C20), so he can always hide
       if (l.guard || (l.robot && l.robot.phase !== "patrol")) return [{ id: "es-ball-any", verb, cap, who: "sq", hot: true, x: s.x, y: s.y, r: 40, at: [s.x, s.y - 70], f: rollUp }];
-      return [{ id: "es-ball", verb, cap, who: "sq", x: BAY.ventStand.x, y: BAY.ventStand.y, r: 60, at: [BAY.ventStand.x, BAY.ventStand.y - 70], thing: BAY.vent, f: rollUp }];
+      return [{ id: "es-ball", verb, cap, who: "sq", x: BAY.ventStand.x, y: BAY.ventStand.y, r: BAY.ventReach, at: [BAY.ventStand.x, BAY.ventStand.y - 70], thing: BAY.vent, f: rollUp }];
     }
     if (l.step === "grab" && e.room() === "hangar") {
       const m = e.pos("mops");
@@ -863,7 +872,7 @@ export function createEscape(bridge) {
       r.phase === "asleep" && (ctx.globalAlpha = 0.75);
       e.drawRobot(ctx, r.x, r.y, false, adultPxFor("hangar") / 47);
       ctx.restore();
-      drawWatchMark(ctx, r.x, r.y - 70, r.mark, (r.seenT || r.near || 0) / SIGHT.register, t);
+      drawWatchMark(ctx, r.x, r.y - 70, r.mark, r.markK || 0, t);
       out.robot = { x: Math.round(r.x), y: Math.round(r.y), phase: r.phase, mark: r.mark || "" };
     }
     // the slip in Mops's mouth is outlined while he is to grab it (it moves with him, so it is not a goal-targets entry)
@@ -1005,7 +1014,7 @@ export function createEscape(bridge) {
       e.enterRoom("hangar", "QB");
       e.set("ch1D", true);
       e.set("ch1Night", true);
-      e.place("sq", BAY.ventStand.x, BAY.ventStand.y + (at === "ball" ? 40 : 0));
+      e.place("sq", BAY.ventStand.x, BAY.ventStand.y);
       e.face("sq", -1);
       if (at === "ball") (e.set("moPose", "hidden"), go("ball", { robot: freshRobot() }));
       else (e.place("mops", BAY.mopsVent.x, BAY.mopsVent.y), e.face("mops", -1), go("grab", { slip: "mops", robot: { ...freshRobot(), ...BAY.toDock[BAY.toDock.length - 1], phase: "asleep" } }));

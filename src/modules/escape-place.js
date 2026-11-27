@@ -35,15 +35,18 @@ export const BAY = Object.freeze({
   // wall in front (y 359), with a shadow under him (Brian 2026-11-26, escape 0:47: not looking inside the wall)
   ventStand: Object.freeze({ x: 846, y: 322 }),
   mopsVent: Object.freeze({ x: 800, y: 326 }), // where Mops starts his crawl, left of Squatch
-  // in from the hallway: through the left doorway, down past the plant's front, across in front of the walkway, up the
-  // gap between the walkway and the mail room, and along above the mail room's wall to the vent
-  walkIn: Object.freeze([
+  // in from the hallway: through the left doorway, down past the plant's front to the front of the bay, along the front
+  // (well away from the robot, who waits at the bin end looking at the vent while they come in), up the gap between the
+  // walkway and the mail room, and along above the mail room's wall to the vent
+walkIn: Object.freeze([
     Object.freeze({ x: 50, y: 330 }),
-    Object.freeze({ x: 52, y: 440 }),
-    Object.freeze({ x: 630, y: 450 }),
+    Object.freeze({ x: 52, y: 570 }),
+    Object.freeze({ x: 636, y: 570 }),
     Object.freeze({ x: 636, y: 330 }),
     Object.freeze({ x: 846, y: 322 }),
   ]),
+  // how near the vent he must be to roll up there (the ROLL spot's circle, and "at the vent")
+  ventReach: 60,
   // the tease (beat 44): Mops mops in front of the walkway, the three robots round him
   teaseMops: Object.freeze({ x: 470, y: 500 }),
   teaseBots: Object.freeze([Object.freeze({ x: 320, y: 470 }), Object.freeze({ x: 630, y: 470 }), Object.freeze({ x: 560, y: 580 })]),
@@ -56,7 +59,7 @@ export const BAY = Object.freeze({
 });
 
 // The night robot's sight (the older program's standing cone: 210 long, 0.42 each side; party-watch.js coneFrom).
-export const ROBOT_SIGHT = Object.freeze({ len: 210, half: 0.42, run: 170 });
+export const ROBOT_SIGHT = Object.freeze({ run: 170 }); // (its cone: bay-watch.js SIGHT)
 
 // Inside the vent (no locked picture: a placeholder room, drawn by escape-art.js). The grille is on the left (Squatch
 // outside it, rolled up, his eyes between the slats); Mops's desk on the right, his back to the grille.
@@ -105,6 +108,8 @@ export function keyAt(d) {
 // The office (office-room-empty-v2): in through the back-wall door; the computer on the desk.
 export const OFFICE = Object.freeze({
   door: Object.freeze({ x: 480, y: 300 }),
+  // the walk out from the computer to the door, round the desk and the chair
+  out: Object.freeze([Object.freeze({ x: 440, y: 585 }), Object.freeze({ x: 440, y: 300 })]),
   monitor: Object.freeze({ x0: 664, y0: 303, x1: 806, y1: 412 }),
   // what feet cannot walk through in the office (the locked picture's desk, chair and filing cabinet; feet-sized)
   solids: Object.freeze([

@@ -28,7 +28,7 @@
 | 231–240 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
 | 241–246 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
 | 247–255 | ## Mistakes caught building the escape (2026-11-26) |
-| 256–262 | ## Mistakes Brian's videos of the escape caught (2026-11-26) |
+| 256–266 | ## Mistakes Brian's videos of the escape caught (2026-11-26) |
 <!-- /section-index -->
 # Review rules
 
@@ -259,3 +259,7 @@ His words, on the snack close-up, for every piece of the game: "It just needs to
 - A robot's sight used his outline at party-hall size while the bay draws him smaller, so it reacted while its drawn cone stopped short of him. Sight uses the points of him as he is drawn in that room (`bay-watch.js` coneOnBody), and a reaction waits until the drawn cone has been on him for half a second, a "?" filling in meanwhile.
 - A thought bubble was placed from a head height worked out with the wrong scale, so it sat on his face. A thought takes the box of the head as the room draws it and sits above it with a gap (`thought-place.js`), and a test measures the gap.
 - The ball by the vent sat on the mail room's wall line, so it looked like it was inside the wall. A hiding pose that sits on the floor gets a shadow, and its place is checked against the lines of the room behind and in front of it.
+- The independent review of round two found the scripted walk into the bay passing right through the patrolling robot, its cone yellow on him for seconds with no reaction: a scripted walk past a watcher is tested frame by frame with the watcher live (no cone on him, the distance between them), or the watcher waits out of the way while the story walks.
+- It also found a stale block left at the end of a test that overwrote the new block's results, so the new check could not fail: when a test block is replaced, delete the old one, and run the check once against the old code to see it fail.
+- Two numbers for one place (the ROLL button's circle 60, "at the vent" 50) left a kid rolled up at 55 with nothing happening: one number, used by both.
+

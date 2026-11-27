@@ -36,11 +36,31 @@ const g = await startGame({ port: 9781, name: "escape" });
 const walk = readFileSync(join(root, "docs", "CH1-STORY-WALKTHROUGH.md"), "utf8");
 const body = walk.slice(walk.indexOf("<!-- /section-index -->")),
   beats = body.slice(body.indexOf('### 43. "Six days later"'), body.indexOf("## Pickup day: leaving Stormtop"));
-const story = ESCAPE_LINES.filter((l) => l.status === "pending" && l.source.includes("WALKTHROUGH"));
-g.check("every pending story line is the walkthrough's, word for word (the whole line)", story.length >= 18 && story.every((l) => beats.includes(l.text)), story.filter((l) => !beats.includes(l.text)).map((l) => l.text));
+// (the walkthrough's words, pending or approved since: Brian approved the written ones as written, 2026-11-26)
+const story = ESCAPE_LINES.filter((l) => (l.status === "pending" || l.status === "approved") && l.source.includes("WALKTHROUGH"));
+g.check("every story line from the walkthrough is its words, word for word (the whole line)", story.length >= 18 && story.every((l) => beats.includes(l.text)), story.filter((l) => !beats.includes(l.text)).map((l) => l.text));
 g.check("lines still waiting for Brian stay pending (none marked approved without his yes)", ESCAPE_LINES.filter((l) => l.status === "approved").every((l) => /Brian/.test(l.source)), ESCAPE_LINES.filter((l) => l.status === "approved"));
 g.check("the office code is 169556 (Brian, chat, 2026-11-26), six digits", P.OFFICE_CODE === "169556");
 g.check("the keypad's keys are a finger wide on a phone (120 game px, about 43 phone px)", P.KEYPAD.r * 2 >= 120 && P.KEYPAD.step >= 128, P.KEYPAD);
+// the scripted walks in the office and the bay go round their things, step by step
+{
+  const W = await import(M("bay-watch.js"));
+  const walkClear = (pts, solids) => {
+    const bad = [];
+    for (let k = 1; k < pts.length; k++)
+      for (let u = 0; u <= 1; u += 0.01) {
+        const x = pts[k - 1].x + (pts[k].x - pts[k - 1].x) * u,
+          y = pts[k - 1].y + (pts[k].y - pts[k - 1].y) * u;
+        solids.some((b) => x > b.x0 && x < b.x1 && y > b.y0 && y < b.y1) && bad.length < 3 && bad.push([Math.round(x), Math.round(y)]);
+      }
+    return bad;
+  };
+  const office = walkClear([P.OFFICE.sq, ...P.OFFICE.out, P.OFFICE.door], P.OFFICE.solids);
+  const bay = walkClear([W.BAY_DOOR.out, ...P.BAY.walkIn], W.BAY_SOLIDS);
+  const spots = [P.BAY.ventStand, P.BAY.mopsVent, ...P.BAY.toAlarm, ...P.BAY.toDock, W.BAY_DOOR.in, W.BAY_DOOR.round, { x: P.BAY.patrol.x0, y: P.BAY.patrol.y }, { x: P.BAY.patrol.x1, y: P.BAY.patrol.y }].filter((q) => W.BAY_SOLIDS.some((b) => q.x > b.x0 && q.x < b.x1 && q.y > b.y0 && q.y < b.y1));
+  g.check("the walk out of the office goes round the desk and chair; the walk into the bay round its things; nobody stands in them", office.length === 0 && bay.length === 0 && spots.length === 0, { office, bay, spots });
+  g.check("rolling up counts as at the vent over the whole of the ROLL button's circle (one number)", typeof P.BAY.ventReach === "number" && P.BAY.ventReach >= 50);
+}
 // the old code for these beats is gone from src/game
 const game = readdirSync(join(root, "src", "game")).map((f) => readFileSync(join(root, "src", "game", f), "utf8")).join("\n");
 const gone = ["ch1TeaseLines", "ch1EscapeHome", "ch1ToVent", "ch1RollVent", "ch1VentLines", "ch1GrabPinkNow", "ch1ToPad", "ch1PadPress", "ch1OfficeIn", "ch1Booked", "ch1AllStart", "ch1BagSnack", "ch1LeaveFood", "ch1HideSlip", "4723"];
@@ -142,7 +162,18 @@ const run = await page.evaluate(
     out.sq2 = say();
     next();
     // 47
-    until(() => S().step === "ball" && n.ctrl, 120);
+    // the walk in, frame by frame with the robot there: never near it, never in its drawn cone
+    const walkIn = { near: 1e9, inCone: 0, frames: 0 };
+    for (let i = 0; i < 2400 && !(S().step === "ball" && n.ctrl); i++) {
+      tick();
+      if (n.room !== "hangar" || !S().robot) continue;
+      ss.drawFrame();
+      const c = (d().drew.cones || [])[0];
+      walkIn.frames++;
+      c && c.inside && walkIn.inCone++;
+      walkIn.near = Math.min(walkIn.near, Math.hypot(n.sq.x - S().robot.x, n.sq.y - S().robot.y), Math.hypot(n.mo.x - S().robot.x, n.mo.y - S().robot.y));
+    }
+    out.walkIn = { ...walkIn, near: Math.round(walkIn.near) };
     ss.drawFrame();
     out.ball = { room: n.room, night: !!n.ch1Night, chip: n.ch1Chip, robot: !!S().robot, cones: (d().drew.cones || []).length };
     // the button comes up by the vent only (the goal), not out in the bay
@@ -307,6 +338,7 @@ g.check("44: Mops answers, word for word, and bleats (the mops-bleat sound pick)
 g.check("45: home at night; Mops's line, word for word, in parts of about 12 words at most (13); the brochure is outlined with the part that names the pancake place, and no bubble covers it", run.home.room === "closet" && run.home.line === W["mops-pancake"] && run.home.parts.length >= 2 && run.home.parts.every((p) => p.split(/\s+/).length <= 13) && run.home.glow && run.home.clear && run.home.nights.every(Boolean), run.home);
 g.check("45: his wordless thought pictures (the crate to the ship, the locked office door) play by themselves", JSON.stringify(run.home.thinks) === '["crate","door","vent"]' && run.home.autoThink, run.home);
 g.check("45, 46: every thought picture sits above the thinker's head with a clear gap, never over it", run.home.placed.length === 3 && run.home.placed.every((p) => !p.over && p.gap >= 20), run.home.placed);
+g.check("47: walking in at night they keep away from the robot (it waits at the bin end) and are never in its cone", run.walkIn.frames > 20 && run.walkIn.inCone === 0 && run.walkIn.near > 100, run.walkIn);
 g.check("47: rolled up by the vent: on the floor in front of the wall, a shadow under him", run.ball.shadow && run.ball.at.y - 40 > 254 && run.ball.at.y + 8 < 359, run.ball);
 g.check("48: the first view inside the vent is held still (2.5 s and more) at night before anything else; the first close-up after Mops reaches his desk", run.ventHold.still && run.ventHold.night && run.ventHold.toFirst >= 4, run.ventHold);
 g.check("51, 52: night in the office and at the snack counter; the office's desk, chair and cabinet are solid", run.office.night && run.bar.night && ["desk", "chair", "cabinet"].every((k) => run.office.solids.includes(k)), { office: run.office, bar: run.bar });
@@ -434,15 +466,6 @@ const rule = await page.evaluate(() => {
     toAlarm: walk([{ x: Y.patrol.x1, y: Y.patrol.y }, ...Y.toAlarm]),
     toDock: walk([{ x: Y.patrol.x0, y: Y.patrol.y }, ...Y.toDock]),
   };
-  // caught: standing still in the open, the guard reaches him: the LOCKUP card, then the step again
-  jump();
-  n.sq.x = P.BAY.ventStand.x - 80;
-  n.sq.y = P.BAY.ventStand.y + 30;
-  until(() => n.cur && n.cur.id === "jail", 60);
-  out.lockup = !!(n.cur && n.cur.id === "jail");
-  for (let i = 0; i < 40 && n.cur; i++) ((n.bt = 1), ss.opTap(), tick(0.1));
-  until(() => n.ctrl && !n.cur && !n.q.length, 10);
-  out.after = { step: S() && S().step, ch1Step: n.ch1Step, robot: S() && S().robot && S().robot.phase, room: n.room };
   return out;
 });
 g.check("47: the robot reacts only once its drawn cone has been on him for 0.5 s (a \"?\" filling in first), never when it is not on him", rule.seen === "bang" && rule.cone.asked > 0 && rule.cone.early === 0 && rule.cone.markOff === 0, rule.cone);

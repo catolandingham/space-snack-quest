@@ -10,10 +10,12 @@ const wordCount = (s) => s.split(/\s+/).filter(Boolean).length;
 export function splitLine(text, max = BUBBLE_WORDS) {
   if (wordCount(text) <= max) return [text];
   const sentences = (text.match(/[^.?!]+[.?!]+["')]*\s*|[^.?!]+$/g) || [text]).map((s) => s.trim()).filter(Boolean);
+  // a line that needs splitting: one sentence to a bubble, except that a question keeps the sentence after it (they
+  // read as one thought: "Remember that pancake place? Let's go find out about it.")
   const out = [];
   for (const s of sentences) {
     const last = out[out.length - 1];
-    if (last && wordCount(last + " " + s) <= max) out[out.length - 1] = last + " " + s;
+    if (last && /\?["')]*$/.test(last) && wordCount(last + " " + s) <= max) out[out.length - 1] = last + " " + s;
     else if (wordCount(s) <= max) out.push(s);
     else {
       // one sentence too long by itself: after its commas

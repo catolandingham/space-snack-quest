@@ -10,7 +10,7 @@
  * Game positions are the 960 x 640 picture (the locked bay pictures are 1280 x 830: x * 0.75, y * 0.771). Places are
  * PLACEHOLDERS for Brian, except what the locked picture fixes.
  */
-import { distToCone, coneFrom } from "./party-watch.js";
+import { distToCone, coneFrom, SQUATCH_OUTLINE } from "./party-watch.js";
 import { findPath } from "./tap-path.js";
 import { drawPerson, LOOKS, drawMark } from "./party-art.js";
 import { adultPxFor } from "./room-sizes.js";
@@ -29,14 +29,8 @@ export const BAY_SOLIDS = Object.freeze([
   Object.freeze({ id: "mail room wall, low", x0: 655, x1: 719, y0: 492, y1: 640 }),
   Object.freeze({ id: "mailbox", x0: 822, x1: 934, y0: 430, y1: 486 }),
 ]);
-/** The floor feet can be on in the bay (the back wall's foot at the top; the picture's edges). */
-export const BAY_BOUNDS = Object.freeze({ x0: 40, x1: 930, y0: 300, y1: 600 });
 /** The left doorway, from the hallway (picture y 350 to 455), and the way in round the plant's front. */
 export const BAY_DOOR = Object.freeze({ out: Object.freeze({ x: 6, y: 318 }), in: Object.freeze({ x: 50, y: 330 }), round: Object.freeze({ x: 52, y: 430 }) });
-/** True when feet at (x, y) are inside one of the bay's things. */
-export function inBaySolid(x, y, solids = BAY_SOLIDS) {
-  return solids.find((b) => x > b.x0 && x < b.x1 && y > b.y0 && y < b.y1) || null;
-}
 /** The corners of a walk from `a` to `b` round the bay's things (tap-path.js), or the straight line when it is clear. */
 export function bayPath(a, b) {
   return findPath(a, b, { x0: 0, x1: 960, y0: 290, y1: 620 }, BAY_SOLIDS) || [{ x: b.x, y: b.y }];
@@ -48,17 +42,21 @@ export function bayPath(a, b) {
  *   register  seconds the cone must stay on him before the watcher reacts ("?" filling in meanwhile)
  */
 export const SIGHT = Object.freeze({ register: 0.5, len: 210, half: 0.42 });
-const BODY = Object.freeze([
-  [0, -2],
-  [-9, -8],
-  [9, -8],
-  [-12, -22],
-  [12, -22],
-  [0, -26],
-  [-10, -38],
-  [10, -38],
-  [0, -46],
-]);
+// His drawn outline (party-watch.js SQUATCH_OUTLINE, measured at the party hall's size, HALL_K), every 2 pixels or less,
+// plus points inside him: scaled to the room's size, these are where a cone is on him.
+const HALL_K = 1.648;
+const BODY = (() => {
+  const out = [];
+  for (let i = 0; i < SQUATCH_OUTLINE.length; i++) {
+    const [x0, y0] = SQUATCH_OUTLINE[i],
+      [x1, y1] = SQUATCH_OUTLINE[(i + 1) % SQUATCH_OUTLINE.length],
+      n = Math.max(1, Math.ceil(Math.hypot(x1 - x0, y1 - y0) / 2));
+    for (let k = 0; k < n; k++) out.push([(x0 + ((x1 - x0) * k) / n) / HALL_K, (y0 + ((y1 - y0) * k) / n) / HALL_K]);
+  }
+  for (const [x, y] of [[0, -2], [0, -22], [0, -40], [-10, -30], [10, -30]]) out.push([x, y]);
+  return out;
+})();
+/** The points of him (his outline and inside it) at feet `sq`, drawn at scale `k` (his units to game pixels). */
 export function bodyPoints(sq, k) {
   return BODY.map(([x, y]) => ({ x: sq.x + x * k, y: sq.y + y * k }));
 }
@@ -118,7 +116,9 @@ function rollAlong(g, speed, dt) {
 }
 /** The guard's flashlight cone (from his eyes, the way he looks). */
 export function guardCone(g) {
-  return { ...coneFrom("guard", g.x, g.y, g.a, { half: SIGHT.half, len: SIGHT.len }), beam: true };
+  const c = coneFrom("guard", g.x, g.y, g.a, { half: SIGHT.half, len: SIGHT.len }),
+    eye = g.y - adultPxFor("hangar") * 0.82; // (his flashlight at his eyes as the bay draws him)
+  return { ...c, oy: eye, beam: true };
 }
 /**
  * One frame of the guard. `sq` his feet, `k` his drawn scale, `hidden` true while he is rolled up or hidden. Returns
