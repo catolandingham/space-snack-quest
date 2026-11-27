@@ -116,14 +116,21 @@ function drawerPanel(ctx) {
   esRect(ctx, 120, 140, 720, 420, 12);
   esPaint(ctx, "#2d323e", 6);
   // one snack cake, a bite out of it
+  // (round 7: the bite is cut out of the cake, not a bump on it: the cake, then the drawer's dark inside where the bite
+  // was, its edge drawn only on the cake)
   ctx.save();
   ctx.beginPath();
   ctx.ellipse(480, 360, 170, 110, 0, 0, TAU);
-  ctx.arc(620, 300, 60, 0, TAU, true);
   ctx.fillStyle = "#c98b4a";
-  ctx.fill("evenodd");
+  ctx.fill();
   ctx.strokeStyle = ES_INK;
   ctx.lineWidth = 6;
+  ctx.stroke();
+  ctx.clip();
+  ctx.beginPath();
+  ctx.arc(620, 300, 60, 0, TAU);
+  ctx.fillStyle = "#2d323e";
+  ctx.fill();
   ctx.stroke();
   ctx.restore();
   return { pic: "esdrawer", bite: true };
