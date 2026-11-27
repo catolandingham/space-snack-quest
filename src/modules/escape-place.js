@@ -181,3 +181,72 @@ export const ES_PACE = Object.freeze({
   hearts: 1.8,
   lie: 1.0,
 });
+
+// ---------- the rebuild of 2026-11-26 night (the story pass): every number a PLACEHOLDER for Brian ----------
+// Beat 43: the home calendar close-up. Seven squares for the week; six get a red X, one at a time; the seventh says
+// DELIVERY and has the one highlight.
+export const WEEK = Object.freeze({ x0: 120, y0: 170, w: 102, h: 150, gap: 10, xEvery: 0.45, settle: 0.6 });
+// Beat 44a: Mops mops the bay by day. Cart tracks across the floor, with dirty patches on them (one pass cleans each).
+export const MOP_CALM = Object.freeze({
+  start: Object.freeze({ x: 160, y: 520 }),
+  patches: Object.freeze([
+    Object.freeze({ x: 250, y: 520 }),
+    Object.freeze({ x: 360, y: 470 }),
+    Object.freeze({ x: 470, y: 540 }),
+    Object.freeze({ x: 600, y: 480 }),
+  ]),
+  r: 34, // a patch is cleaned when his beard passes within this of it
+  tracks: Object.freeze([Object.freeze({ y: 470 }), Object.freeze({ y: 540 })]),
+});
+// Beat 44b: the Mop-Off. The line splits the front floor: the robots' side on the left, the goat's side on the right
+// (cells of floor; sticky ones need two passes; the four corner cells are its corners).
+export const MOPOFF = Object.freeze({
+  line: 470, // x of the painted line
+  floor: Object.freeze({ y0: 432, y1: 590 }),
+  goat: Object.freeze({ x0: 476, x1: 650, cols: 3, rows: 4 }),
+  sticky: Object.freeze(["1,1", "2,2", "0,2"]),
+  robotLanes: Object.freeze([460, 510, 560]), // y of each robot's lane on its side
+  robotX: Object.freeze([90, 450]),
+  robotsDone: 15, // seconds the robots take for their side
+  goatTime: 45, // seconds until the buzzer
+  wheels: Object.freeze({ at: 24, y: 510, speed: 160 }), // a robot rolls its dirty wheels across the goat side, once
+  boxes: Object.freeze({ x: 230, y: 455, at: 6 }), // a stack of boxes the robots knock over
+  taunts: Object.freeze([
+    Object.freeze({ at: 15, id: "robot-done" }),
+    Object.freeze({ at: 19, id: "robot-slow" }),
+    Object.freeze({ at: 24.5, id: "robot-efficient" }),
+    Object.freeze({ at: 30, id: "robot-done" }),
+    Object.freeze({ at: 34, id: "robot-beard" }),
+    Object.freeze({ at: 40, id: "robot-corners" }),
+  ]),
+  board: Object.freeze({ x0: 640, y0: 14, x1: 944, y1: 128 }), // the two bars, on the bay's back wall (top right)
+  robotSparkle: 0.3, // the robots' side never sparkles more than this
+  goatFast: 0.3, // the goat's FAST bar creeps: at most this, all clean
+  hold: 2.0, // the picture holds on the two sides after the buzzer
+  zip: 1.6, // the robots zip in
+});
+// Mops's place in the bay when the robots tell him the news (44c), and the robots round him.
+export const NEWS = Object.freeze({ mops: Object.freeze({ x: 560, y: 520 }), bots: Object.freeze([Object.freeze({ x: 400, y: 500 }), Object.freeze({ x: 720, y: 560 })]) });
+// Walking between rooms (44d, 47, 50, 52): each doorway's opening (his feet in it take him through) and where he comes in
+// on the other side. Doors join home and the hall, the hall and the hallway, the hallway and the bay.
+export const ES_DOORS = Object.freeze({
+  closet: Object.freeze([Object.freeze({ to: "hall", box: Object.freeze({ x0: 846, x1: 900, y0: 436, y1: 504 }), at: Object.freeze({ x: 476, y: 556 }), f: 1, mark: Object.freeze({ x0: 872, y0: 360, x1: 960, y1: 500 }) })]),
+  hall: Object.freeze([
+    Object.freeze({ to: "closet", box: Object.freeze({ x0: 432, x1: 522, y0: 580, y1: 640 }), at: Object.freeze({ x: 820, y: 470 }), f: -1, mark: Object.freeze({ x0: 430, y0: 584, x1: 524, y1: 638 }) }),
+    Object.freeze({ to: "passage", box: Object.freeze({ x0: 912, x1: 960, y0: 286, y1: 346 }), at: Object.freeze({ x: 96, y: 345 }), f: 1, mark: Object.freeze({ x0: 880, y0: 258, x1: 946, y1: 348 }) }),
+  ]),
+  passage: Object.freeze([
+    Object.freeze({ to: "hall", box: Object.freeze({ x0: 0, x1: 66, y0: 318, y1: 374 }), at: Object.freeze({ x: 880, y: 318 }), f: -1, mark: Object.freeze({ x0: 14, y0: 250, x1: 72, y1: 372 }) }),
+    Object.freeze({ to: "hangar", box: Object.freeze({ x0: 894, x1: 960, y0: 300, y1: 364 }), at: Object.freeze({ x: 76, y: 332 }), f: 1, mark: Object.freeze({ x0: 890, y0: 250, x1: 950, y1: 362 }) }),
+  ]),
+  hangar: Object.freeze([Object.freeze({ to: "passage", box: Object.freeze({ x0: 0, x1: 66, y0: 318, y1: 352 }), at: Object.freeze({ x: 870, y: 332 }), f: -1, mark: Object.freeze({ x0: 8, y0: 260, x1: 64, y1: 352 }) })]),
+});
+// The way home through the rooms (44d: from the bay), and out to the vent (47: from home).
+export const ROUTE_HOME = Object.freeze({ hangar: "passage", passage: "hall", hall: "closet" });
+export const ROUTE_VENT = Object.freeze({ closet: "hall", hall: "passage", passage: "hangar" });
+// The hall by day on the walk home: the guest who waves at Mops, and how near Mops must be for her "Hi, Mops!".
+export const HALL_GUEST = Object.freeze({ x: 560, y: 450, near: 170, kind: "teal" });
+// The Employee of the Month photo in the hallway (ganitor.js drawGanitorWall), where Mops can LOOK · plaque.
+export const PLAQUE = Object.freeze({ x: 767, y: 300, r: 70 });
+// Mops follows Squatch this far behind along his trail (47, 50, 52).
+export const FOLLOW = Object.freeze({ gap: 60, speed: 190 });

@@ -439,13 +439,15 @@ const play = await page.evaluate(() => {
         end = "no-spot " + n.scene;
         break;
       }
-      n.sq.x = spot.x;
-      n.sq.y = spot.y;
-      n.sqPose = "stand";
+      // (the spot names who stands there: Squatch, or Mops when the player is Mops: the escape's 44a to 44d)
+      const who = spot.who === "mo" ? n.mo : n.sq;
+      who.x = spot.x;
+      who.y = spot.y;
+      spot.who === "mo" || (n.sqPose = "stand");
       ss.drawFrame();
       ss.tick(0.05);
       if (!spot.verb) {
-        acts.push("WALK · " + spot.id);
+        acts[acts.length - 1] === "WALK · " + spot.id || acts.push("WALK · " + spot.id);
         ss.tick(0.05);
         still = 0;
         continue;
@@ -499,7 +501,7 @@ const play = await page.evaluate(() => {
 g.check("Chapter 1 reaches the tally card", play.end === "tally", { end: play.end, acts: play.acts, scene: play.state.scene });
 // The party night (src/modules/party.js): the peek, the plant, home through his door, the dress-up, out through his
 // door; the party in disguise (the dance), closing time, and walking home with Mops.
-const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "GRAB · flyer", "WALK · go-home", "SAVE · flyer", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "PICK UP · rocket", "OPEN · closet", "PUT IN · box", "WALK · bag", "TAKE · lunch", "WALK · lu-door", "GIVE · lunch", "WALK · lu-back", "TAKE · snack", "HIDE · plant", "GO · hall", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "ROLL · ball", "GRAB · pink slip", "TYPE · 169556", "RETURN · empty crate", "TAP · Return empty crate", "TAKE · snack", "TAKE · snack", "TAKE · snack", "TAKE · snack", "LEAVE · food", "LEAVE · food", "OPEN · closet", "PUT IN · box", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
+const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "GRAB · flyer", "WALK · go-home", "SAVE · flyer", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "PICK UP · rocket", "OPEN · closet", "PUT IN · box", "WALK · bag", "TAKE · lunch", "WALK · lu-door", "GIVE · lunch", "WALK · lu-back", "TAKE · snack", "HIDE · plant", "GO · hall", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "WALK · es-patch", "WALK · es-cell", "WALK · es-door", "ROLL · ball", "GRAB · pink slip", "TYPE · 169556", "RETURN · empty crate", "TAP · Return empty crate", "TAKE · snack", "TAKE · snack", "TAKE · snack", "TAKE · snack", "LEAVE · food", "LEAVE · food", "OPEN · closet", "PUT IN · box", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
 g.check("the player does the new actions in order", JSON.stringify(play.acts) === JSON.stringify(wantActs), play.acts);
 const must = [
   "Stormtop Cloud Resort, floating above Jupiter.",
@@ -549,19 +551,20 @@ const must = [
   "I need to get back to work, we'll talk about it tonight.",
   "Didn't you hear what the manager said? They need me here, they're not going to replace me. Plus the Guardians are here.",
   "Mail scanned. Pawature accepted.",
-  "Six days later",
-  "Replaced? The manager was lying to me.",
-  // (Mops's pancake line in bubbles of about 12 words at most: line-split.js, Brian 2026-11-26)
-  "I'm going to be replaced.",
-  "The new robots are coming on the ship tomorrow.",
-  "Remember that pancake place? Let's go find out about it.",
+  // (the escape rebuilt from the story pass of 2026-11-26: escape-lines.js; "Six days later" is drawn on the home
+  // calendar now, tests/escape-mops.mjs)
+  "ROBOT SIDE. GOAT SIDE.",
+  "The manager lied to me.",
+  "Squatch was right.",
+  "They're replacing me.",
+  "Let's go find that pancake place.",
   "Oh, it was on the form I sent, I mean, never mind.",
   "Didn't a copy get sucked into the vent?",
   "I hope Mops doesn't notice...",
-  "Hurry, hurry, pink slip, got it!",
+  "Mmf! Mmf mmf!",
   "Get it before he sees it.",
   "This time, take all the snacks you want.",
-  "I'm worried about the Guardians. I'll leave them some food.",
+  "What about the Guardians?",
   "Get out. They're checking a crate.",
   "The spare jacket. The beard. And the horns.",
   "More bleat. Less roar.",

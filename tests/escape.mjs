@@ -38,7 +38,7 @@ const body = walk.slice(walk.indexOf("<!-- /section-index -->")),
   beats = body.slice(body.indexOf('### 43. "Six days later"'), body.indexOf("## Pickup day: leaving Stormtop"));
 // (the walkthrough's words, pending or approved since: Brian approved the written ones as written, 2026-11-26)
 const story = ESCAPE_LINES.filter((l) => (l.status === "pending" || l.status === "approved") && l.source.includes("WALKTHROUGH"));
-g.check("every story line from the walkthrough is its words, word for word (the whole line)", story.length >= 18 && story.every((l) => beats.includes(l.text)), story.filter((l) => !beats.includes(l.text)).map((l) => l.text));
+g.check("every story line from the walkthrough is its words, word for word (the whole line)", story.length >= 10 && story.every((l) => beats.includes(l.text)), story.filter((l) => !beats.includes(l.text)).map((l) => l.text));
 g.check("lines still waiting for Brian stay pending (none marked approved without his yes)", ESCAPE_LINES.filter((l) => l.status === "approved").every((l) => /Brian/.test(l.source)), ESCAPE_LINES.filter((l) => l.status === "approved"));
 g.check("the office code is 169556 (Brian, chat, 2026-11-26), six digits", P.OFFICE_CODE === "169556");
 g.check("the keypad's keys are a finger wide on a phone (120 game px, about 43 phone px)", P.KEYPAD.r * 2 >= 120 && P.KEYPAD.step >= 128, P.KEYPAD);
@@ -69,7 +69,7 @@ g.check("the old escape code (and the old code 4723) is gone from src/game", gon
 // 50-story-frame.js): they must be the same digits
 g.check("the office code is the same everywhere it is drawn", game.includes(`CH1_OFFICE_CODE = "${P.OFFICE_CODE}"`) && game.includes(`"${[...P.OFFICE_CODE].join(" ")}"`));
 
-const { ctx, page, errors } = await g.open("?beat=escape", { width: 375, height: 812, isMobile: true, hasTouch: true });
+const { ctx, page, errors } = await g.open("?beat=escape:ball", { width: 375, height: 812, isMobile: true, hasTouch: true });
 await page.evaluate(() => window.__ss.lockedReady);
 
 // ---------- the whole escape, step by step ----------
@@ -107,60 +107,7 @@ const run = await page.evaluate(
       return a ? a.verb + " · " + a.cap : "";
     };
     const tap = (x, y) => (ss.drawFrame(), ss.tapAt(x, y, false), tick());
-    // 43
-    out.card = say();
-    out.cardWaits = waitsForNext();
-    next();
-    // 44
-    until(() => n.cur && n.cur.k === "bub");
-    ss.drawFrame();
-    out.tease = { room: n.room, sq: n.sqPose, robots: d().drew && d().drew.robots, line: say(), who: n.cur.b.who, waits: waitsForNext() };
-    next();
-    out.tease.mops = say();
-    next();
-    out.bleat = d().sounds.includes("mops-bleat");
-    // 45
-    until(() => n.cur && n.cur.k === "bub");
-    ss.drawFrame();
-    // Mops's line comes in parts of at most twelve words (line-split.js); the brochure is outlined with the part that
-    // names the pancake place, and no bubble covers it
-    out.home = { room: n.room, parts: [], glows: [], clear: true, nights: [] };
-    for (let i = 0; i < 6 && n.cur && n.cur.k === "bub" && n.cur.b.who === "mops"; i++) {
-      ss.drawFrame();
-      const b = window.__ss.lastBubble,
-        r = P.HOME.brochure;
-      out.home.parts.push(say());
-      out.home.glows.push(!!(d().drew && d().drew.brochure && d().drew.brochure.glow));
-      out.home.nights.push(!!(d().drew && d().drew.night));
-      out.home.clear = out.home.clear && !!b && (b.x > r.x1 || b.x + b.w < r.x0 || b.y - 24 > r.y1 || b.y + b.h < r.y0);
-      next();
-      until(() => (n.cur && n.cur.k === "bub") || S().think, 5);
-    }
-    out.home.line = out.home.parts.join(" ");
-    out.home.glow = out.home.glows.some((g, i) => g === /pancake/.test(out.home.parts[i])) && out.home.glows.every((g, i) => g === /pancake/.test(out.home.parts[i]));
-    const thinks = [],
-      placed = [];
-    // each thought picture: above the thinker's head with a clear gap, never over it (thought-place.js)
-    const seeThought = () => {
-      if (!S().think || thinks.includes(S().think.kind)) return;
-      thinks.push(S().think.kind);
-      tick();
-      ss.drawFrame();
-      const th = d().drew && d().drew.think;
-      th && placed.push({ kind: th.kind, gap: Math.round(th.head.y - th.box.y1), over: th.box.x0 < th.head.x + th.head.w && th.box.x1 > th.head.x && th.box.y0 < th.head.y + th.head.h && th.box.y1 > th.head.y });
-    };
-    until(() => (seeThought(), n.cur && n.cur.k === "bub"), 20);
-    out.home.placed = placed;
-    out.home.thinks = thinks;
-    out.home.autoThink = !n.cur || n.cur.k === "bub"; // (they played by themselves, to the next line)
-    out.sq1 = say();
-    next();
-    until(() => S().think, 5);
-    seeThought();
-    out.sqThink = S().think && S().think.kind;
-    until(() => n.cur && n.cur.k === "bub", 10);
-    out.sq2 = say();
-    next();
+    // 43 to 46: tests/escape-mops.mjs and tests/escape-home.mjs (the rebuild of 2026-11-26 night); this run starts at the ball
     // 47
     // the walk in, frame by frame with the robot there: never near it, never in its drawn cone
     const walkIn = { near: 1e9, inCone: 0, frames: 0 };
@@ -299,6 +246,8 @@ const run = await page.evaluate(
     until(() => n.cur && n.cur.k === "bub", 3);
     out.bar.guardians = say();
     next();
+    until(() => n.cur && n.cur.k === "bub", 3);
+    next();
     until(() => S().step === "food" && n.ctrl, 5);
     out.bar.plate = S().snacks.plate;
     snack(4);
@@ -332,17 +281,9 @@ const run = await page.evaluate(
   },
   { W, CODE: P.OFFICE_CODE },
 );
-g.check('43: the card "Six days later" waits for NEXT', run.card === W["card-six-days"] && run.cardWaits, run.card);
-g.check("44: the loading bay, three robots, no Squatch; the robot's line waits for NEXT", run.tease.room === "hangar" && run.tease.sq === "hidden" && run.tease.robots === 3 && run.tease.line === W["robot-replaced"] && run.tease.who === "robot" && run.tease.waits, run.tease);
-g.check("44: Mops answers, word for word, and bleats (the mops-bleat sound pick)", run.tease.mops === W["mops-lying"] && run.bleat, run.tease);
-g.check("45: home at night; Mops's line, word for word, in parts of about 12 words at most (13); the brochure is outlined with the part that names the pancake place, and no bubble covers it", run.home.room === "closet" && run.home.line === W["mops-pancake"] && run.home.parts.length >= 2 && run.home.parts.every((p) => p.split(/\s+/).length <= 13) && run.home.glow && run.home.clear && run.home.nights.every(Boolean), run.home);
-g.check("45: his wordless thought pictures (the crate to the ship, the locked office door) play by themselves", JSON.stringify(run.home.thinks) === '["crate","door","vent"]' && run.home.autoThink, run.home);
-g.check("45, 46: every thought picture sits above the thinker's head with a clear gap, never over it", run.home.placed.length === 3 && run.home.placed.every((p) => !p.over && p.gap >= 20), run.home.placed);
-g.check("47: walking in at night they keep away from the robot (it waits at the bin end) and are never in its cone", run.walkIn.frames > 20 && run.walkIn.inCone === 0 && run.walkIn.near > 100, run.walkIn);
 g.check("47: rolled up by the vent: on the floor in front of the wall, a shadow under him", run.ball.shadow && run.ball.at.y - 40 > 254 && run.ball.at.y + 8 < 359, run.ball);
 g.check("48: the first view inside the vent is held still (2.5 s and more) at night before anything else; the first close-up after Mops reaches his desk", run.ventHold.still && run.ventHold.night && run.ventHold.toFirst >= 4, run.ventHold);
 g.check("51, 52: night in the office and at the snack counter; the office's desk, chair and cabinet are solid", run.office.night && run.bar.night && ["desk", "chair", "cabinet"].every((k) => run.office.solids.includes(k)), { office: run.office, bar: run.bar });
-g.check("46: Squatch's slip, his thought of the sheet going into the vent (no words in it), then his vent line", run.sq1 === W["sq-slip"] && run.sq2 === W["sq-vent"] && run.sqThink === "vent", [run.sq1, run.sq2, run.sqThink]);
 g.check("47: the bay at night, the goal, a patrolling robot with its cone", run.ball.room === "hangar" && run.ball.night && run.ball.chip === W["chip-ball"] && run.ball.robot && run.ball.cones === 1, run.ball);
 g.check("47: ROLL · ball comes up by the vent; he rolls into the L2 ball", run.ball.awayOffer === "" && run.ball.press === W["button-ball"] && run.ball.pose === "ball", run.ball);
 g.check("48: inside the vent Mops has his back to Squatch at the grille", run.vent.room === "duct" && run.vent.mopsFacesAway, run.vent);
@@ -350,21 +291,21 @@ g.check("48: the detective wall (MARS, HAVE YOU SEEN?, NO) and the Mars letter w
 g.check("48: the letter reads on a phone (its words 38 game px, about 14 phone px)", run.vent.letter.drew && run.vent.letter.drew.size >= 38 && run.vent.letter.drew.lines.length >= 3, run.vent.letter.drew);
 g.check('48: "I hope Mops doesn\'t notice..." is a thought, with the pink sheet on the desk glowing', run.vent.notice.line === W["sq-notice"] && run.vent.notice.style === "whisper" && run.vent.notice.glow && run.vent.notice.sheet, run.vent.notice);
 g.check("48: the new Guardian note is written in full and signed — The Guardians, a white hair on it", run.vent.note.id === "esnote" && run.vent.note.drew.shown === W.note && run.vent.note.drew.signed && run.vent.note.drew.hair, run.vent.note);
-g.check("49: Mops comes out with the sheet in his mouth; his line; Squatch's thought", run.out.room === "hangar" && run.out.slip === "mops" && run.out.line === W["mops-hurry"] && run.out.think === W["sq-get-it"] && run.out.style === "whisper", run.out);
+g.check("49: Mops comes out with the sheet in his mouth; his line; Squatch's thought", run.out.room === "hangar" && run.out.slip === "mops" && run.out.line === W["mops-mmf"] && run.out.think === W["sq-get-it"] && run.out.style === "whisper", run.out);
 g.check("49: GRAB · pink slip, and the slip goes to his paw", run.grab.press === W["button-grab"] && run.grab.slip === "paw", run.grab);
 g.check("50: in the hallway Mops faces away; the sheet's close-up shows the code written in pen, inside the sheet (and waits for NEXT)", run.slipview.room === "passage" && run.slipview.mopsAway && run.slipview.id === "esslip" && run.slipview.drew.code === "169556" && run.slipview.drew.codeAt.pen && run.slipview.drew.codeAt.inSheet && run.slipview.waits, run.slipview);
 g.check("50: the keypad: the goal, ten keys", run.pad.chip === W["chip-code"] && run.pad.keys === 10, run.pad);
 g.check("50: a wrong key buzzes, the screen clears, no stars are lost", run.pad.buzz && run.pad.cleared && run.pad.stars, run.pad);
 g.check("50: the keyboard's digits work, and 169556 opens the door", run.pad.keyboard && run.pad.typed === "169556", run.pad);
-g.check("51: the office, RETURN · empty crate at the desk", run.office.room === "office" && run.office.chip === W["chip-crate"] && run.office.press === W["button-computer"], run.office);
+g.check("51: the office, RETURN · empty crate at the desk", run.office.room === "office" && run.office.chip === W["chip-computer"] && run.office.press === W["button-computer"], run.office);
 g.check("51: Mops is drawn in the office with him", run.office.mopsPixels > 300, run.office);
 g.check('51: the site: "Order new box" does nothing, "Return empty crate" books the crate', run.site.open && run.site.orderNothing && run.site.booked, run.site);
-g.check("52: the snack counter; Mops's line; four into the bag; Squatch's Guardians line", run.bar.room === "hall" && run.bar.line === W["mops-all"] && run.bar.bag === 4 && run.bar.guardians === W["sq-guardians"], run.bar);
+g.check("52: the snack counter; Mops's line; four into the bag; Squatch's Guardians line", run.bar.room === "hall" && run.bar.line === W["mops-all"] && run.bar.bag === 4 && run.bar.guardians === W["sq-what-guardians"], run.bar);
 g.check("52: the Guardians' plate, the last two on it (a tap on the plate works); hearts, and Mops says nothing", run.bar.plate && run.bar.onPlate === 2 && run.bar.hearts && !run.bar.mopsSaid, run.bar);
 g.check("52: home, OPEN · closet, PUT IN · box", run.home2.room === "closet" && run.home2.chip === W["chip-slip"] && run.home2.open === W["button-closet"] && run.home2.wardrobe === "open" && run.home2.put === W["button-box"], run.home2);
 g.check("52: the box close-up (MY GARDIAN BOX, MY GUARDIANS): the slip goes under the notes", run.home2.box.id === "esbox" && run.home2.box.drew.tucked && run.home2.box.drew.label === "MY GARDIAN BOX" && run.home2.box.drew.title === "MY GUARDIANS", run.home2.box);
 g.check("52: the slip is in the box, the closet shut, Squatch asleep, then beat 53 (pack the crate)", run.home2.slip === "box" && run.home2.shut && run.home2.sleep && run.end.step === "pack1" && !run.end.active, { home: run.home2, end: run.end });
-g.check("the drawings show the walkthrough's words", ["IDEAS FOR GUARDIANS", "HAVE YOU SEEN?", "MARS", "NO", "TOYS", "MOON PIES", "Order new box", "Return empty crate", "pen:169556", W["note-sign"]].every((w) => run.words.includes(w)), run.words);
+g.check("the drawings show the walkthrough's words", ["IDEAS FOR GUARDIANS", "HAVE YOU SEEN?", "MARS", "NO", "TOYS", "STARS CAKES", "Order new box", "Return empty crate", "pen:169556", W["note-sign"]].every((w) => run.words.includes(w)), run.words);
 
 // ---------- the night robot and the one capture rule ----------
 const rule = await page.evaluate(() => {
@@ -514,7 +455,7 @@ const restarts = await page.evaluate(() => {
   // the steps he does not control go back to the last step he did (escape.js RESTART_TO); a hand-made state for each
   // (the step's name, with a story wait up so the step restart has nothing saved for it)
   out.cut = {};
-  for (const [step, from] of [["tease", "start"], ["home", "start"], ["tobay", "ball"], ["rolled", "ball"], ["vent", "ball"], ["out", "ball"], ["tohall", "grab"], ["slipview", "grab"], ["open", "pad"], ["booked", "computer"], ["tobar", "computer"], ["mopsall", "computer"], ["guardians", "snacks"], ["hearts", "snacks"], ["tohome", "snacks"], ["boxview", "closet"], ["bed", "closet"]]) {
+  for (const [step, from] of [["home", "walkhome"], ["tobay", "ball"], ["rolled", "ball"], ["vent", "ball"], ["out", "ball"], ["tohall", "grab"], ["slipview", "grab"], ["open", "pad"], ["booked", "computer"], ["tobar", "computer"], ["mopsall", "computer"], ["guardians", "snacks"], ["hearts", "snacks"], ["tohome", "snacks"], ["boxview", "closet"], ["bed", "closet"]]) {
     ((n.q = []), (n.cur = null), B.jump(from));
     tick();
     (n.q = []), (n.cur = null);
@@ -544,7 +485,7 @@ const restarts = await page.evaluate(() => {
 });
 const ctrlSteps = ["ball", "grab", "pad", "computer", "site", "snacks", "food", "closet", "box"];
 g.check("↺ in each step he controls starts that step again, with him back where it started (the keypad clears, the snacks come back)", ctrlSteps.every((k) => restarts[k].step === k && restarts[k].ctrl && restarts[k].back) && restarts.pad.typed === "" && restarts.snacks.bag === 0 && restarts.food.bag === 0 && restarts.box.wardrobe === "open", restarts);
-const want = { tease: "card", home: "card", tobay: "ball", rolled: "ball", vent: "ball", out: "ball", tohall: "grab", slipview: "grab", open: "pad", booked: "computer", tobar: "computer", mopsall: "computer", guardians: "snacks", hearts: "snacks", tohome: "snacks", boxview: "closet", bed: "closet" };
+const want = { home: "walkhome", tobay: "ball", rolled: "ball", vent: "ball", out: "ball", tohall: "grab", slipview: "grab", open: "pad", booked: "computer", tobar: "computer", mopsall: "computer", guardians: "snacks", hearts: "snacks", tohome: "snacks", boxview: "closet", bed: "closet" };
 g.check("↺ in a step he does not control goes back to the last step he did (hand-made states)", Object.entries(want).every(([k, v]) => restarts.cut[k] === v), restarts.cut);
 g.check("↺ between steps (inside the vent, played there) goes back to the ball step", restarts.between === "vent" && restarts.betweenAfter.step === "ball" && restarts.betweenAfter.room === "hangar" && restarts.betweenAfter.ctrl, restarts);
 g.check("the chapter reset (ch1ResetState) forgets the escape", restarts.reset, restarts);

@@ -9,6 +9,7 @@
  * The older program must guard every use (`window.SSQ && ...`): if the module script ever fails to
  * load, the game must still run as it did.
  */
+import { drawTagStar } from "./escape-mopoff.js";
 import { outlineCanvas, OUTLINE } from "./outline.js";
 import { GOAL_TARGETS } from "./goal-targets.js";
 import { SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
@@ -25,7 +26,7 @@ import { quietLine } from "./party-lines.js";
 import { quietBedtimeLine } from "./bedtime-story-lines.js";
 import { drawHomeMopBucket, lastHomeMopBucket } from "./mop-bucket.js"; // (bedtime branch, 2026-11-26: Mops's mop bucket)
 import { adultPxFor, doorAdultPx } from "./room-sizes.js";
-import { drawGanitorTag, drawHallwayCrayon, ganitorTagsDrawn, hallwayCrayonDrawn } from "./ganitor.js";
+import { drawGanitorTag, drawHallwayCrayon, ganitorTagsDrawn, hallwayCrayonDrawn, GANITOR_TAG } from "./ganitor.js";
 import { singingNow } from "./music-rules.js";
 import { keepInSpan, seeCue, visitNow, playSound, soundsPlayed, hushNow, hushKey, unhush } from "./music-picks.js";
 import { drawBubbleTail } from "./bubble-tail.js";
@@ -117,7 +118,11 @@ export function createBridge() {
      * scale `scale` (game pixels to one of his units).
      */
     drawGanitorTag(ctx, scale) {
-      return drawGanitorTag(ctx, scale);
+      const drew = drawGanitorTag(ctx, scale);
+      // the gold star he won in the Mop-Off stays on his tag for the rest of the chapter (escape-mopoff.js)
+      const es = beats.get("ch1-escape");
+      es && es.tagStar && es.tagStar() && drawTagStar(ctx, GANITOR_TAG);
+      return drew;
     },
     /** Tests: Mops's name tags drawn since the last call ({ readable, scale }). */
     ganitorTags() {

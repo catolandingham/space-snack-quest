@@ -189,6 +189,9 @@
         // (and whether it is out), the robot drawing.
         goTo: (dest, flags, next) => ch1GoDay(dest, flags, next),
         packStart: () => ch1PackStart(),
+        // Who the stick drives (switchTo, announced by the card "You are MOPS now." when `why` is given), and who it is.
+        playAs: (who, why) => switchTo(who, why),
+        playing: () => (x.mops ? "mops" : "sq"),
         callSecurity: (by) => ch1CallSecurity(by),
         secOn: () => !!ch2.sec,
         drawRobot: (ctx, x, y, mail, k) => onCtx(ctx, () => dq(x, y, !!mail, k)),

@@ -38,8 +38,9 @@ async function tryRestart(label, setUp) {
       const moved = { x: Math.round(n.sq.x), y: Math.round(n.sq.y) };
       ss.sectionReset();
       for (let i = 0; i < 10; i++) ss.tick(1 / 30);
-      // (up: a card or a line waiting for NEXT, as at a beat that opens with one: the escape's "Six days later")
-      const after = { scene: n.scene, room: n.room, step: n.ch1Step || "", x: Math.round(n.sq.x), y: Math.round(n.sq.y), ctrl: !!n.ctrl, up: !!(n.cur && ["card", "bub"].includes(n.cur.k)), chip: n.ch1Chip || n.chip || "" };
+      // (up: a card, a line or a picture waiting for NEXT, as at a beat that opens with one: the escape's "Six days later"
+      // on the home calendar)
+      const after = { scene: n.scene, room: n.room, step: n.ch1Step || "", x: Math.round(n.sq.x), y: Math.round(n.sq.y), ctrl: !!n.ctrl, up: !!(n.cur && ["card", "bub", "wait"].includes(n.cur.k)), chip: n.ch1Chip || n.chip || "" };
       const putBack = after.x !== moved.x || after.y !== moved.y || after.step !== before.step;
       return { label, playing, before, moved, after, putBack };
     },
