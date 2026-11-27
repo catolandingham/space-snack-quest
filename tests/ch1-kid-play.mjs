@@ -549,7 +549,8 @@ while (now() < MAX_S) {
   const pr = presses.get(vkey) || { count: 0, at: -1 };
   if (verb && (pr.count < 2 || pr.at !== progress)) {
     presses.set(vkey, { count: pr.count + 1, at: progress });
-    for (const p of s.placed) if (verb.startsWith(p.verb)) done.add(s.scene + "|" + (p.id || p.verb + p.cap));
+    // (a walk-only spot, a doorway with no button, has no verb: pressing anything must not mark it done)
+    for (const p of s.placed) if (p.verb && verb.startsWith(p.verb)) done.add(s.scene + "|" + (p.id || p.verb + p.cap));
     say(s, "PRESS " + verb);
     await tap(s.btnR[0] + s.btnR[2] / 2, s.btnR[1] + s.btnR[3] / 2);
     await sleep(500);

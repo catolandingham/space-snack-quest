@@ -42,7 +42,7 @@
  * last one he did (restart()).
  */
 import { HALLWAY, BAR, FAMILY, HOME, BAY, BAY_FURNITURE, BAY_EXTRA, BAY_BOUNDS, BAY_SEARCH, BAY_VENT, EVENING_PACE as P, EVENING_LOOK, nightLook, mopsSleepAt, mopsSleepBox, robotLook } from "./evening-place.js";
-import { drawNightTint, noteNightPicture, nightDrawn } from "./night-look.js";
+import { drawNightTint, noteNightPicture, nightDrawn, nightPictureFor } from "./night-look.js";
 import { VENT } from "./party-vent.js";
 import { eveningWords } from "./evening-lines.js";
 import { drawPhoto, drawCrayonDrawing, drawBrochure, drawPictureBubble, drawPapers, drawPawPrint, drawFurArm, drawSleepingMops, drawPlaque, drawCutInBack, drawCloseX, drawArrow, fitDesign, PAPERS, PHOTO_POOL, drawHeartShape } from "./evening-art.js";
@@ -90,7 +90,7 @@ addAlarmPlace("bay", {
   feet: 0,
   register: P.robotSee,
 });
-const BAY_PICTURE = "docs/locked-rooms/delivery-room-empty-night-v2.png";
+const BAY_PICTURE = nightPictureFor("hangar");
 const NIGHT_STEPS = ["out", "nighthall", "nightway", "bin", "order", "post", "robots", "back", "backway", "backhall", "tobed", "sleep"];
 
 export function createEvening(bridge) {
