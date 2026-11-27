@@ -479,28 +479,8 @@
       (St(l, o - 120, l + 14, o, 6, "#b8a07e", 2.5), XV(l + 16, o + 2, 16, 8, 9, 4, 0), wV("#8fdcff", 2.5));
     }
     function rq(l, o, i) {
-      (e.save(),
-        e.translate(l, o),
-        e.scale(i, i),
-        m(-62, -15, 124, 30, 15),
-        r("#2b3a67", 2.5),
-        L(-47, 0, 10),
-        r("#8b5a3c", 2),
-        C([-56, 0, -38, 0], "#fff3d6", 2.5),
-        e.beginPath(),
-        e.arc(-32, 0, 7, -1.2, 1.2, !0),
-        (e.strokeStyle = "#ffcf33"),
-        (e.lineWidth = 0),
-        e.beginPath(),
-        e.arc(50, -3, 6, 0, 7),
-        (e.fillStyle = "#ffcf33"),
-        e.fill(),
-        e.beginPath(),
-        e.arc(53, -5, 5, 0, 7),
-        (e.fillStyle = "#2b3a67"),
-        e.fill(),
-        g("MOON PIES", 1, 1, 14, "#ffcf33", "center", 900),
-        e.restore());
+      // the station's stamp: a blue star and the snack's name in thin blue letters (src/modules/crate-stamp.js)
+      window.SSQ && window.SSQ.drawSnackStamp ? window.SSQ.drawSnackStamp(e, l, o, i) : (e.save(), e.translate(l, o), e.scale(i, i), m(-62, -15, 124, 30, 15), r("#2b3a67", 2.5), e.restore());
     }
     function p5(l, o, i) {
       (e.save(), e.translate(l, o), e.scale(i, i), m(-46, -40, 92, 80, 10), r("#7b3fe4", 3));
@@ -1606,7 +1586,7 @@
           e.fillRect(0, 0, c, b),
           m(230, 180, 500, 280, 16),
           r("#fffdf8", 4),
-          g("MOON PIES", 480, 230, 28, "#b45309", "center", 900),
+          g((window.SSQ && window.SSQ.snack ? window.SSQ.snack("NAME") : "SNACKS"), 480, 230, 28, "#b45309", "center", 900),
           m(280, 280, 180, 70, 10),
           r("#ffffff", 3),
           g("Order new box", 370, 315, 18, y, "center", 800),
@@ -1665,7 +1645,7 @@
             e.translate(0, -70),
             rq(0, 0, 1.6),
             e.restore(),
-            g("MOON PIES \xD7500", 0, 20, 28, "#b45309", "center", 900),
+            g((window.SSQ && window.SSQ.snack ? window.SSQ.snack("NAME") : "SNACKS") + " \xD7500", 0, 20, 28, "#b45309", "center", 900),
             g("EVERY WEEK", 0, 62, 22, y, "center", 800));
           for (let i = 0; i < 7; i++) (m(-168 + i * 48, 110, 40, 40, 4), r(i === 4 ? "#ffe27a" : "#ffffff", 2.5));
           (L(44, 130, 26),

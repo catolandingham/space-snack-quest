@@ -1,5 +1,5 @@
 /**
- * Every word of the bedtime story (Chapter 1, beat 21: why Moon Pies), in the order a player meets them. Nothing
+ * Every word of the bedtime story (Chapter 1, beat 21: why he loves the station's snack), in the order a player meets them. Nothing
  * else in the bedtime story shows words: he walks to bed with no words, and he falls asleep with no words.
  * Squatch asks for the story in words (Brian, 2026-11-26, video note 0:12: "is squash asking for a story? Maybe he
  * should just say, tell me about when we first met or something like that?"; it was a wordless pat and a thought
@@ -20,15 +20,17 @@
  *           (Brian's yes, source says where)
  *   source  where the words came from
  */
+import { SNACK } from "./snack-name.js";
+
 const OLD = "Old crate story, commit 71ec66e (2026-11-02)";
 
 export const BEDTIME_STORY_LINES = Object.freeze(
   [
     // in bed, before the pictures: he asks for the story
     { id: "sq-first-met", who: "sq", text: "Tell me about when we first met?", status: "approved", source: "Brian video note 0:12, 2026-11-26; approved word for word the same day" },
-    // the delivery crate's painted badge: the same words as on his crate bed in the locked home room
-    { id: "sign-moon-pies", who: "sign", text: "MOON PIES", status: "approved", source: OLD + "; the same badge as the crate bed in docs/locked-rooms/home-room-empty-closed-v6.png; Brian 2026-11-26: keep the old crate story words" },
-    { id: "cap-crate", who: "caption", text: "A delivery crate of Moon Pies came to Stormtop.", status: "approved", source: OLD + "; Brian 2026-11-26: keep the old crate story words" },
+    // (the delivery crate's stamp, as it arrived: the family crate's worn stamp, first letter scraped off, no crayon yet; its words are the
+    // snack's lines, snack-name.js SNACK_LINES "stamp-family-faded")
+    { id: "cap-crate", who: "caption", text: `A delivery crate of ${SNACK.name} came to Stormtop.`, status: "approved", source: OLD + "; Brian 2026-11-26: keep the old crate story words; the snack renamed the same day (question 86)" },
     { id: "mark-surprise", who: "mark", text: "!", status: "approved", source: OLD + " (over Mops as he finds the baby); Brian 2026-11-26: keep the old crate story words" },
     { id: "mark-sleep", who: "mark", text: "z z z", status: "approved", source: OLD + "; the game's sleep mark today, and over Squatch as he snores at bedtime; Brian 2026-11-26: keep the old crate story words" },
     { id: "cap-baby", who: "caption", text: "Inside: a sleeping baby Sasquatch. Covered in crumbs.", status: "approved", source: OLD + "; Brian 2026-11-26: keep the old crate story words" },
@@ -41,7 +43,7 @@ export const BEDTIME_STORY_LINES = Object.freeze(
     { id: "mark-wonder", who: "mark", text: "?", status: "suggested, needs-yes", source: "A mark over each tourist peeking in (the cause Brian asked for, 2026-11-26 video note 0:39); the game's '?' over a guest who wonders (party-watch.js)" },
     { id: "mops-nothing", who: "mops", text: "Nothing to see here!", status: "approved", source: OLD + "; the fourth picture, on (Brian 2026-11-26); Brian 2026-11-26: keep the old crate story words" },
     // back in the room, after the pictures
-    { id: "mops-moon-pie", who: "mops", text: "You came to me in a Moon Pie crate. You've loved Moon Pies ever since.", status: "approved", source: "The bedtime line the game showed before (beat 21, docs/CH1-STORY-WALKTHROUGH.md); Brian 2026-11-26, #36: approved as written" },
+    { id: "mops-moon-pie", who: "mops", text: `You came to me in a ${SNACK.name} crate. You've loved ${SNACK.name} ever since.`, status: "renamed, needs-yes", source: "Words changed by the rename (Brian 2026-11-26, question 86: the snack's new name), so his yes is asked again. Before: The bedtime line the game showed before (beat 21, docs/CH1-STORY-WALKTHROUGH.md); Brian 2026-11-26, #36: approved as written" },
     // then, over the picture of Squatch's crayon drawing of the Guardians (Brian, 2026-11-26: Mops tells him about the
     // Guardians without hinting it's him)
     { id: "mops-guardians", who: "mops", text: "And you've always had your Guardians, watching over you.", status: "approved", source: "Brian 2026-11-26, chat 18b A" },

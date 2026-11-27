@@ -11,7 +11,7 @@
         N(() => {
           n.ch1Couch = !1;
         }),
-        // the old Moon Pie crate story at bedtime, ending with Squatch asleep (src/modules/bedtime-story.js)
+        // the old crate story at bedtime, ending with Squatch asleep (src/modules/bedtime-story.js)
         ...((window.SSQ && window.SSQ.beat("ch1-bedtime-story") && window.SSQ.beat("ch1-bedtime-story").steps()) || []),
         N(() => {
           ((n.sqPose = "stand"), (n.moPose = "stand"), ch1Day2Begin());

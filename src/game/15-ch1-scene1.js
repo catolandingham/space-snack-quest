@@ -302,7 +302,7 @@
         }
         item.lines.forEach((line, i) => calendarText(line, x, y + 49 + (i - (item.lines.length - 1) / 2) * 22, 22));
       }
-      calendarText("Sponsored by MOON PIES", 360, 492, 25, "#8b5a3c", "center", 700);
+      calendarText("Sponsored by " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("NAME") : "SNACKS"), 360, 492, 25, "#8b5a3c", "center", 700);
       // A very enthusiastic red crayon circle, not an extra clue or a new delivery date.
       ctx.strokeStyle = "#e5533d";
       ctx.lineWidth = 3;

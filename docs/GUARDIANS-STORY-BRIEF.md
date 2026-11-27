@@ -1,10 +1,12 @@
 # The Guardians: the story so far · UPDATED t312u
+
+> **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
 For Brian · Tuesday, November 10, 2026 · built from the existing docs, the game and your answers (t310u, t311u, t312u; DECISIONS R81, R82, R83). Anything not decided is marked **(proposal)**.
 
 ## Your answers (t311u)
 - Squatch pictures the Guardians as **big furry Sasquatches**.
 - The first Chapter 1 note comes **the morning after the party scare**.
-- The player learns Mops is the Guardian **only at the vent**. Bedtime is just the Moon Pie crate story. The Chapter 1 bedtime flashback and Chapter 2's "Years ago" flashback are dropped.
+- The player learns Mops is the Guardian **only at the vent**. Bedtime is just the Stars Cakes crate story. The Chapter 1 bedtime flashback and Chapter 2's "Years ago" flashback are dropped.
 - The parents are first glimpsed as **a Sasquatch couple on the pancake brochure** (beat 38).
 - The paw goes on the order form, and the vent takes the paper later, at night, not at lunch.
 - t312u/t313u: the vent moment is a short, minimal cutscene (control paused), and Mars is option A, just the big NO letter.
@@ -26,7 +28,7 @@ For Brian · Tuesday, November 10, 2026 · built from the existing docs, the gam
 | Ch1 beat 40, the Mars talk | Mops: "...Plus the Guardians are here." |
 | Ch1 beat 48, the vent | **The only reveal.** New note: "We know you're thinking about going to Mars. Don't worry, we'll always be with you." (pending) |
 | Ch1 beat 52, the last snacks | Squatch leaves food for the Guardians; Mops says nothing |
-| Ch1 beat 53, packing | The Guardian Box goes inside the Moon Pie crate |
+| Ch1 beat 53, packing | The Guardian Box goes inside the Stars Cakes crate |
 | Ch2, the soup | "You're not alone out here. — The Guardians" → "THE GUARDIANS FOUND ME IN SPACE!" |
 | Ch4, the pancake stand | The pink slip falls out of the box: "...That's his paw." Then the reveal, and Mops: "...Brave Sasquatches don't hide. I was wrong about that." |
 
@@ -39,14 +41,14 @@ For Brian · Tuesday, November 10, 2026 · built from the existing docs, the gam
 
 ## Mops's search for the parents
 - The detective wall in the vent shows red strings, crossed-off planets, "HAVE YOU SEEN?" flyers, a baby photo, and **Mars crossed off**.
-- Mops knows only that he found a baby. The bedtime story is just finding him in a Moon Pie crate (R81).
+- Mops knows only that he found a baby. The bedtime story is just finding him in a Stars Cakes crate (R81).
 - **Why Mars looks like a waste of time (you picked A, t312u):** pinned beside the crossed-off Mars is a big reply letter you can read on screen, with a huge red NO stamp: "MARS LOST & FOUND. Re: a lost baby Sasquatch. We have NO record of any lost baby. There are NO Sasquatches on Mars." *(words pending)* No search party.
 
 ## Where the parents enter
 1. **Ch1 beat 38:** a big furry Sasquatch couple smiles behind the pancake counter on the brochure. Nobody names them, and Squatch only hopes ("Are those other Sasquatches?").
 2. **Hints along the way:** the Ch2 Mars postcard and Ch3 Zip: "Sasquatches on Mars? Sure, they buy all my pretzels."
 3. **Chapter 4:** the poster "our baby HARRY / Please bring him home", the birthday stack "every year, just in case", "Harry? ...HARRY! It's you!", and "Sweetie, we didn't know where you were."
-- That still fits: they lost him in a Moon Pie shipment and never knew which stop kept him, and Mops's one answer from Mars (the Lost & Found letter) said no. We never invent why they didn't come back.
+- That still fits: they lost him in a Stars Cakes shipment and never knew which stop kept him, and Mops's one answer from Mars (the Lost & Found letter) said no. We never invent why they didn't come back.
 
 ## New gaps to check
 1. **When he posts the yellow copy.** You didn't say, so I put it right after the paw check, before the robots come out. *(proposal)*

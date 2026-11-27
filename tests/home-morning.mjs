@@ -423,7 +423,7 @@ g.check("he shuts the closet (bump): the calendar on its door is back", R.wardro
 
 // the calendar
 g.check("LOOK · calendar opens the calendar close-up", R.calendarOpen);
-g.check("today's close-up: days 1 to 13 crossed off, the circled Moon Pie day (14) is today", R.calendar && R.calendar.today === 14 && R.calendar.crossed.length === 13 && R.calendar.crossed[12] === 13, R.calendar);
+g.check("today's close-up: days 1 to 13 crossed off, the circled snack delivery day (14) is today", R.calendar && R.calendar.today === 14 && R.calendar.crossed.length === 13 && R.calendar.crossed[12] === 13, R.calendar);
 
 // the lunch
 g.check("as he gets to the bag (not before), the bag is outlined while he says his line, word for word, over him, no chip", R.line2 && R.line2.who === "sq" && R.line2.text === LUNCH && R.line2.chip === "" && !!R.line2.bagOutline && R.line2.at.x > 640 && R.toBag && !R.toBag.line, R.line2);

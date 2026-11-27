@@ -3,24 +3,27 @@
 
 | Lines | Heading |
 | --- | --- |
-| 23–32 | # Space Snack Quest |
-| 33–131 | ## Chapter 1 redesign (on main) |
-| 132–146 | ## Music credits |
-| 147–177 | ## Source and build |
-| 178–188 | ## Debug link |
-| 189–194 | ## Automatic checks |
-| 195–198 | ## Screen fit |
-| 199–222 | ## Brian's repeat complaints, as tests (2026-11-22) |
-| 223–228 | ## Scene 1 morning |
-| 229–232 | ## Chapter 1 kid robot |
-| 233–249 | ## Phase 1: kitchen and diner clarity |
-| 250–262 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
-| 263–276 | ## Phase 3: one capture rule, phone HUD, tap to walk |
-| 277–286 | ## Chapter 1 pass: the night out has a purpose, switches say why |
-| 287–304 | ## Progression tests |
-| 305–331 | ## Left as they were |
+| 23–35 | # Space Snack Quest |
+| 36–140 | ## Chapter 1 redesign (on main) |
+| 141–155 | ## Music credits |
+| 156–186 | ## Source and build |
+| 187–197 | ## Debug link |
+| 198–203 | ## Automatic checks |
+| 204–207 | ## Screen fit |
+| 208–231 | ## Brian's repeat complaints, as tests (2026-11-22) |
+| 232–237 | ## Scene 1 morning |
+| 238–241 | ## Chapter 1 kid robot |
+| 242–258 | ## Phase 1: kitchen and diner clarity |
+| 259–271 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
+| 272–285 | ## Phase 3: one capture rule, phone HUD, tap to walk |
+| 286–295 | ## Chapter 1 pass: the night out has a purpose, switches say why |
+| 296–313 | ## Progression tests |
+| 314–340 | ## Left as they were |
 <!-- /section-index -->
 # Space Snack Quest
+
+> **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
+
 
 Calendar review status (2026-11-16): Brian said yes to merge the calendar (Nov 16, 12:50 PM PT). Latest printed copy: FUZZUARY alone beneath MOONMUNCH; Homework and Sing with Mops removed; "Wash outside windows (remember space suit!)"; a slightly larger edge bite that does not touch the grid.
 
@@ -31,6 +34,12 @@ Calendar review status (2026-11-16): Brian said yes to merge the calendar (Nov 1
 **Next up (Brian, 2026-11-16):** Chapter 1, one beat at a time in [`docs/CH1-STORY-WALKTHROUGH.md`](docs/CH1-STORY-WALKTHROUGH.md). Do not leave beat 1 until Brian says it is right. Squatch walks around the bed and the bucket, and the Guardian box is in the closet on day 1 (locked home room v5; Brian's yes, Nov 16, 12:50 PM PT). On day 2 he takes the box out at the closet (`tests/bedroom-walk.mjs`). The calendar is tappable. Printed copy: MOONMUNCH / FUZZUARY; Sponsored by MOON PIES; Sock hunt; family Olympics night; Wash outside windows (remember space suit!); Blanket fort night. These are decoration, not new quests. X or NEXT returns to the same scene (`tests/calendar-closeup.mjs`). Closet, bed, desk homework and the already-bitten calendar are built on branch `feat/home-alone` (draft, see below); the purple bed bar is removed there too; still to build: the bucket. The night vent step no longer finishes inside Mops: the morning hum was leaving him marked as walking. Docs match main: yes.
 
 ## Chapter 1 redesign (on main)
+
+2026-11-26 (late night, Day 2's start), draft pull request #90, not merged. The rename (question 86) and the bedtime story's family stamp are merged in from #87 and #89. The home morning's words about the calendar now name the snack's delivery day; the tall wardrobe and the mop bucket, cut from the home pictures, come with the crate bed's new stamp like every home picture. Not yet played by a person. Docs match main: yes.
+
+2026-11-26 (late night, bedtime), draft pull request #89, not merged. The rename (question 86) is merged in from #87, and the bedtime story follows it: the crate caption says "A delivery crate of Stars Cakes came to Stormtop.", Mops's line is "You came to me in a Stars Cakes crate. You've loved Stars Cakes ever since." (words changed, so it waits for Brian's yes again), and the story's crate, as it arrived, has the family crate's worn stamp (fat red letters, first letter scraped off, no crayon yet) in place of the old badge (`crate-stamp.js` drawFamilyStamp). `tests/snack-name.mjs` also checks the bedtime story's pictures. Not yet played by a person. Docs match main: yes.
+
+2026-11-26 (late night), the same draft pull request #87, Brian's question 86 ("A": rename everywhere); not merged to main. The station's snack is now Stars Cakes: every line, label, sign and test reads the name from one file, `src/modules/snack-name.js` (the older program through `window.SSQ.snack`, guarded). The calendar's sponsor, the snack site's header, the delivery notice, the homework sheet, the tourist's line, the old crate flashback and the Chapter 4 poster and lines all say Stars Cakes. The station's crates have a new stamp: a blue star and the name in thin blue letters (`src/modules/crate-stamp.js`). Squatch's crate bed is his family's crate: fat red letters, worn, the first letter scraped off ("_ARS CAKES"), with his old crayon "ST" in the gap, a layer drawn over the locked home pictures (the files are not edited; needs Brian's yes). Ids and file names that hold the old name joined up (`moonpie`, `mops-moon-pie`, `sketch-22-moon-pie-site.png`) stay; no player sees them. `tests/snack-name.mjs` checks that the name is spelled only in snack-name.js, that no lines file or word drawn in the main scenes says the old name, and that the crate bed's stamp is drawn by day and at night. NOT ASSESSED: how the stamp reads to a child on a phone. Not yet played by a person. Docs match main: yes.
 
 2026-11-26 (night, Day 2's start), draft pull request #90, not merged. The night look (`night-look.js`, from the party and bedtime branches) is merged in. Day 2 starts in the dark the bedtime story ended on; the black lifts (0.8 s) onto the room at night (the night tint over the room and everyone in it, as at lights out, so the TV is dimmed too), the night holds a moment (0.4 s), then the morning light comes up (0.8 s; `NIGHT_LIFT` in `home-morning.js`), so a kid sees night turn into day. The room coming up takes 2.0 s (was 1.2 s; a placeholder; the whole wordless part is 3.4 s). The rest of Day 2 is day; in a night scene of the older program (night one) the taller closet is cut from the night look too (`drawTallCloset(ctx, open, night)`). Tests: `night-look` (Day 2's start and the closet at night added). Docs match main: yes. Not yet played by a person.
 
