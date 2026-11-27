@@ -913,11 +913,11 @@ export function drawBiteCloseup(ctx, bitten) {
   ctx.save();
   ctx.fillStyle = "#5c6476";
   ctx.fillRect(0, 0, 960, 640);
-  drawSnack(ctx, "pie", 480, 330, 3.2, 0, 0, 5);
+  drawSnack(ctx, "pie", 480, 330, 9, 0, 0, 6);
   if (bitten) {
     ctx.fillStyle = "#5c6476";
     ctx.beginPath();
-    ctx.arc(620, 260, 70, 0, PK_TAU);
+    ctx.arc(640, 230, 110, 0, PK_TAU);
     ctx.fill();
   }
   ctx.restore();

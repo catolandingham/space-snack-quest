@@ -1313,8 +1313,8 @@ export function createPickup(bridge) {
     if (l.step === "goship") return [spot("pk-go-ship", "button-go-ship", { x: PK_BAY.archFront.x + 60, y: PK_BAY.archFront.y + 20, r: 80 }, PK_BAY.arch, goShip, "mo")];
     if (l.step === "board") return [spot("pk-board", "button-board", { x: PK_BAY.archFront.x, y: PK_BAY.archFront.y + 10, r: 90 }, PK_BAY.arch, board)];
     if (l.step === "ramp") return [hot("pk-ramp", "button-ramp", climbRamp)];
-    const holdCrate = { x0: PK_HOLD.crate.x - 82, y0: PK_HOLD.crate.y - 130, x1: PK_HOLD.crate.x + 82, y1: PK_HOLD.crate.y };
-    if (l.step === "cake") return [spot("pk-cake", "button-open-cake", { x: PK_HOLD.sq.x, y: PK_HOLD.sq.y, r: 80 }, { x0: PK_HOLD.crate.x - 30, y0: PK_HOLD.crate.y - 150, x1: PK_HOLD.crate.x + 40, y1: PK_HOLD.crate.y - 118 }, openCake)];
+    const holdCrate = { x0: PK_HOLD.crate.x - 90, y0: PK_HOLD.crate.y - 132, x1: PK_HOLD.crate.x + 90, y1: PK_HOLD.crate.y };
+    if (l.step === "cake") return [spot("pk-cake", "button-open-cake", { x: PK_HOLD.sq.x, y: PK_HOLD.sq.y, r: 80 }, { x0: PK_HOLD.crate.x - 30, y0: PK_HOLD.crate.y - 184, x1: PK_HOLD.crate.x + 70, y1: PK_HOLD.crate.y - 132 }, openCake)];
     if (l.step === "hide") return [spot("pk-hide", "button-hide-crate", { x: PK_HOLD.sq.x, y: PK_HOLD.sq.y, r: 80 }, holdCrate, hideCrate)];
     if (l.step === "note") return [spot("pk-note", "button-note", { x: PK_HOME.noteAt.x, y: PK_HOME.noteAt.y, r: 90 }, PK_HOME.note, readNote)];
     if (l.step === "box") return [spot("pk-box", "button-open-box", { x: PK_HOME.closet.x, y: PK_HOME.closet.y, r: 90 }, MORNING_THINGS.boxIn, openBox)];
@@ -1477,11 +1477,12 @@ export function createPickup(bridge) {
       m = e.pos("mops"),
       out = { room: "hangar", place: "hold" };
     drawHold(ctx, t);
-    const k = 0.9;
+    const k = 1.1;
     out.crate = drawPkCrate(ctx, PK_HOLD.crate.x, PK_HOLD.crate.y, k, { label: true, bucket: !l.crew, open: l.crew ? 1 : 0 });
-    l.box && l.box.where === "crate" && drawTagBox(ctx, PK_HOLD.crate.x + 10, PK_HOLD.crate.y - 118, 1);
-    const sk = sqScale("hangar") * 1.5,
-      mk = moScale("hangar") * 1.5;
+    l.box && l.box.where === "crate" && drawTagBox(ctx, PK_HOLD.crate.x + 10, PK_HOLD.crate.y - 136, 1.6);
+    // (the hold is close up: the two of them drawn bigger than in the bay)
+    const sk = sqScale("hangar") * 2.2,
+      mk = moScale("hangar") * 2.2;
     e.get("moPose") !== "hidden" && e.drawMopsOn(ctx, m.x, m.y, mk, { f: m.f || -1, walk: moMoving ? t * 8 : 0 });
     if (e.get("sqPose") === "stand") {
       e.drawSquatch(ctx, s.x, s.y, sk, { f: s.f || 1, jacket: true, horns: true, goatBeard: false });
@@ -1526,22 +1527,7 @@ export function createPickup(bridge) {
       t = e.time(),
       m = e.pos("mops");
     if (room === "hangar") return;
-    drew = { step: l.step, room };
-    if (room === "closet") {
-      // the things on the walls, or the pale squares where they hung
-      PK_HOME.walls.forEach((w, i) => (l.walls[w.id] ? drawPaleSquare(ctx, w.box) : w.id === "chart" ? drawChart(ctx, w.box) : w.id === "brochure" ? drawBrochure(ctx, w.box) : drawKidDrawing(ctx, w.box, i % 2)));
-      drew.walls = PK_HOME.walls.filter((w) => !l.walls[w.id]).map((w) => w.id);
-      // the crate bed: the note on the pillow, the fur, the white hair; once it is pushed out, the floor where it stood
-      if (l.crate !== "bed") drawFloorPatch(ctx, PK_HOME.bedBox, PK_HOME.floorAt);
-      else {
-        ["wake", "note"].includes(l.step) && drawFoldedNote(ctx, PK_HOME.note);
-        PK_HOME.tufts.forEach((q, i) => l.tufts[i] || drawPkTuft(ctx, q.x, q.y, 1.4));
-        l.hairOut && !l.packed.box && drawHair(ctx, PK_HOME.hair.x, PK_HOME.hair.y, 46, 2.5);
-        l.packed.box && markPacked(ctx, l);
-      }
-      drew.tufts = l.tufts.filter((v) => !v).length;
-      if (l.packed.bucket) drawFloorPatch(ctx, PK_HOME.bucket, PK_HOME.floorAt);
-    }
+    drew = { step: l.step, room, ...(drewHome || {}) };
     // the hall by day: its guests (53), each with a cone (they only wave at Mops)
     if (room === "hall" && l.step === "push") {
       drew.guests = PK_HALL.guests.map((g) => {
@@ -1597,6 +1583,30 @@ export function createPickup(bridge) {
     if (l.cu === "dress") drew.dress = drawDressCloseup(ctx, e, l.dress, t);
     if (l.cu === "plate") (drawPlateCloseup(ctx), (drew.plate = true));
     if (l.cu === "crayon") (drawCrayonCloseup(ctx, t - l.cuAt), (drew.crayon = true));
+  }
+  // Home: the things on the room, under the people (the older program calls this as it draws the home picture)
+  let drewHome = null;
+  function drawOnRoom(ctx) {
+    const l = live(),
+      e = E();
+    drewHome = null;
+    if (!l || !e || e.room() !== "closet") return;
+    const d = {};
+    // the things on the walls, or the pale squares where they hung
+    PK_HOME.walls.forEach((w, i) => (l.walls[w.id] ? drawPaleSquare(ctx, w.box) : w.id === "chart" ? drawChart(ctx, w.box) : w.id === "brochure" ? drawBrochure(ctx, w.box) : drawKidDrawing(ctx, w.box, i % 2)));
+    d.walls = PK_HOME.walls.filter((w) => !l.walls[w.id]).map((w) => w.id);
+    // the crate bed: the note on the pillow, the fur, the white hair; once it is pushed out, the floor where it stood
+    if (l.crate !== "bed") drawFloorPatch(ctx, PK_HOME.bedBox, PK_HOME.floorAt);
+    else {
+      ["wake", "note"].includes(l.step) && drawFoldedNote(ctx, PK_HOME.note);
+      PK_HOME.tufts.forEach((q, i) => l.tufts[i] || drawPkTuft(ctx, q.x, q.y, 1.4));
+      l.hairOut && !l.packed.box && drawHair(ctx, PK_HOME.hair.x, PK_HOME.hair.y, 46, 2.5);
+      l.packed.box && markPacked(ctx, l);
+    }
+    d.tufts = l.tufts.filter((v) => !v).length;
+    // the bucket packed: the floor where it stood (the painted bucket and the bucket drawn over it)
+    if (l.packed.bucket) drawFloorPatch(ctx, PK_HOME.bucketPatch, PK_HOME.floorAt);
+    drewHome = d;
   }
   // the guests in the hall by day and their cones: dashed with "?" while one holds him; filled once fur shows
   function drawHallGuests(ctx, l, t) {
@@ -1876,6 +1886,12 @@ export function createPickup(bridge) {
     spots,
     tap,
     draw,
+    drawOnRoom,
+    /** True when the home picture's bed or bucket is gone (pushed out, packed): the older program does not draw it over him. */
+    gone(id) {
+      const l = live();
+      return !!(l && E().room() === "closet" && ((id === "bed" && l.crate !== "bed") || (id === "bucket" && l.packed.bucket)));
+    },
     drawRoom,
     bounds() {
       const l = live();

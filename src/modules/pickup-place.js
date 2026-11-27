@@ -37,6 +37,7 @@ export const PK_HOME = Object.freeze({
   // Mops's mop bucket (the locked picture's bucket: home-furniture.json "bucket")
   bucket: Object.freeze({ x0: 536, y0: 500, x1: 596, y1: 571 }),
   bucketAt: Object.freeze({ x: 640, y: 560 }),
+  bucketPatch: Object.freeze({ x0: 520, y0: 440, x1: 612, y1: 580 }), // the bucket drawn over the painted one, handle and wheels included
   // the things on the walls he takes down (layers on the locked picture: his crayon chart of cake kinds, the pancake
   // brochure from beat 38, two of his drawings), each with where he stands for it
   walls: Object.freeze([
@@ -147,8 +148,8 @@ export const PK_SIGHT = Object.freeze({ len: 200, half: 0.42 });
 // round window with stars.
 export const PK_HOLD = Object.freeze({
   crate: Object.freeze({ x: 480, y: 560 }),
-  sq: Object.freeze({ x: 400, y: 560 }),
-  mops: Object.freeze({ x: 600, y: 566 }),
+  sq: Object.freeze({ x: 300, y: 566 }),
+  mops: Object.freeze({ x: 670, y: 570 }),
   window: Object.freeze({ x: 760, y: 200, r: 64 }),
   stairs: Object.freeze({ x0: 40, y0: 120, x1: 200, y1: 560 }),
 });
