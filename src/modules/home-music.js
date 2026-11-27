@@ -50,6 +50,7 @@ export function createHomeMusic(getEngine) {
     ctxUsed = null,
     startedAt = 0,
     firstPlay = false,
+    by = "",
     target = 0,
     via = "",
     starts = 0,
@@ -135,6 +136,7 @@ export function createHomeMusic(getEngine) {
     /** The morning starts: it has the room's music from now on (quiet until the song; no Joe's theme). */
     hold() {
       silence();
+      by = "morning";
       playedOut = false;
       owning = true;
       fading = dipped = wantFirst = wanted = false;
@@ -143,11 +145,17 @@ export function createHomeMusic(getEngine) {
     /** A new morning with its opening cards: no recording, and the room's music is free (Joe's theme may play). */
     release() {
       silence();
+      by = "";
       playedOut = false;
       owning = fading = dipped = wantFirst = wanted = false;
     },
-    /** The Dog Zylan tap: the recording plays from now on, at once if sound is on. */
-    start() {
+    /**
+     * The Dog Zylan tap: the recording plays from now on, at once if sound is on. `who` names the beat playing it
+     * ("morning" when left out), so one beat's stop never ends another's. (Day 2's home morning plays no song of its own:
+     * the music table's home rotation, bridge.js.)
+     */
+    start(who) {
+      by = who || "morning";
       owning = true;
       playedOut = false;
       wanted = true;
@@ -168,9 +176,12 @@ export function createHomeMusic(getEngine) {
     dip(on) {
       dipped = !!on;
     },
-    /** "That evening…": fade out, then give the room back to Joe's theme. */
-    stop() {
-      if (!owning || fading) return;
+    /**
+     * "That evening…": fade out, then give the room back to Joe's theme. `who`: only the beat that started it stops it
+     * (left out: whoever started it, as when the game leaves the story).
+     */
+    stop(who) {
+      if (!owning || fading || (who && by && who !== by)) return;
       fading = true;
       fadeLeft = HOME_MUSIC.fade;
     },

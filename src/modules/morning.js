@@ -277,7 +277,7 @@ export function createMorning(bridge) {
       const m = live(),
         e = E();
       // Left the morning some other way (another chapter, a debug jump): the recording fades out.
-      if (!m) return void (bridge.homeMusic.stop(), sound.snore(false));
+      if (!m) return void (bridge.homeMusic.stop("morning"), sound.snore(false));
       m.t = (m.t || 0) + (dt || 0);
       sound.snore(snoring(m));
       stepSounds(m, dt || 0);

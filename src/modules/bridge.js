@@ -41,7 +41,7 @@ import { cakeChartDrawn } from "./cake-chart.js";
  * to write another field stops with an error; tests/module-build.mjs checks the morning (and its home-alone
  * part) and the party night against this list.
  */
-export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe"]);
+export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1HomeMorning", "ch1Step", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe"]);
 
 export function createBridge() {
   const beats = new Map();
@@ -57,8 +57,9 @@ export function createBridge() {
     const party = beats.get("ch1-party");
     return party && party.talker ? party.talker() : "";
   });
-  // At home, while the TV story is on the screen, the music's cue is "tv"; while the bedtime story plays, "bedtime"
-  // (music-picks.js: Joe's theme with its singing, 2026-11-26).
+  // At home, while the TV story is on the screen, the music's cue is "tv"; while the bedtime story plays and the night
+  // after it is still dark (the home morning's start), "bedtime" (music-picks.js: Joe's theme with its singing,
+  // 2026-11-26); through the rest of the home morning, what it says (quiet for the PA, then "day2am").
   let musicCueNow = ""; // the cue the music last followed (refined), for tests
   const refineCue = (cue) => {
     // While a beat's alarm is on (the one capture rule: FUR!, the alarm, the search), no music; after it, the music
@@ -73,10 +74,16 @@ export function createBridge() {
     }
     if (cue !== "home") return cue;
     const tv = beats.get("ch1-tv-story"),
-      bed = beats.get("ch1-bedtime-story");
+      bed = beats.get("ch1-bedtime-story"),
+      hm = beats.get("ch1-home-morning"),
+      // the home morning's own music: the bedtime music while the night is dark, quiet as it comes up and through the
+      // PA, then "Morning" from the speaker (home-morning.js musicCue; null when it has no say)
+      morning = hm && hm.musicCue ? hm.musicCue() : null;
     // (the bedtime story's walk to bed and climb in are quiet: the TV story's music has ended with the film, and the
     // bedtime music starts as Squatch asks; Brian 2026-11-26, video note 0:03)
-    return tv && tv.showing && tv.showing() ? "tv" : bed && bed.quietNow && bed.quietNow() ? "" : bed && bed.showing && bed.showing() ? "bedtime" : cue;
+    if (tv && tv.showing && tv.showing()) return "tv";
+    if (bed && bed.quietNow && bed.quietNow()) return "";
+    return bed && bed.showing && bed.showing() ? "bedtime" : morning != null ? morning : cue;
   };
   return Object.freeze({
     version: 1,
@@ -244,16 +251,16 @@ export function createBridge() {
     },
     /**
      * The dashed outline of the thing inside `box` (game positions) of `source` (a locked room picture or a
-     * canvas the size of the game picture), traced once and kept under `key`. Returns { canvas, x, y } to
-     * draw at (x, y), or null. See outline.js.
+     * canvas the size of the game picture), traced once and kept under `key`, with `opts` (outline.js OUTLINE:
+     * width, dash, gap). Returns { canvas, x, y } to draw at (x, y), or null. See outline.js.
      */
-    outline(key, source, box) {
+    outline(key, source, box, opts) {
       // A picture the browser will not let us read (a page opened straight from disk) gets no outline
       // rather than stopping the game's drawing.
       if (!outlines.has(key)) {
         let o = null;
         try {
-          o = outlineCanvas(source, box);
+          o = outlineCanvas(source, box, opts);
         } catch (e) {
           o = null;
         }
@@ -292,6 +299,11 @@ export function createBridge() {
         ctx.lineWidth = OUTLINE.width;
         ctx.strokeStyle = OUTLINE.color;
         ctx.strokeRect(b.x0, b.y0, b.x1 - b.x0, b.y1 - b.y0);
+      } else if (target.source) {
+        // a thing the game draws itself (the home morning's rocket and lunch bag): traced from its own drawing
+        const src = target.source();
+        const o = src ? this.outline(room + ":" + spotId + ":drawn", src, target.trace, target.line) : null;
+        o && ctx.drawImage(o.canvas, o.x, o.y);
       } else if (picture && picture.complete && picture.naturalWidth) {
         const o = this.outline(room + ":" + spotId + ":" + picture.src, picture, target.trace);
         o && ctx.drawImage(o.canvas, o.x, o.y);

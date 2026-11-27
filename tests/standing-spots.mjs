@@ -13,6 +13,7 @@
  *   node tests/standing-spots.mjs
  */
 import { join, dirname } from "node:path";
+import { readFileSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -24,6 +25,7 @@ const { MORNING_PLACES } = await mod("morning.js");
 const { HOME_SPOTS } = await mod("home-alone.js");
 const { PHOTO_ROW } = await mod("party-photo.js");
 const { BEDTIME_SPOTS } = await mod("bedtime-story.js");
+const { HOME_MORNING_SPOTS } = await mod("home-morning.js");
 
 let fails = 0;
 const check = (name, ok, info) => (console.log(`${ok ? "PASS" : "FAIL"} ${name}${ok || info == null ? "" : "\n      " + JSON.stringify(info)}`), ok || fails++);
@@ -32,15 +34,13 @@ const hit = (a, b) => a.x0 < b.x1 && a.x1 > b.x0 && a.y0 < b.y1 && a.y1 > b.y0;
 // ---------- home ----------
 // A person's feet as the solids count them (party.js solids: 25 either side, 14 behind, 8 in front); at home, where
 // the room draws people three times bigger, up to the shins as well (30 behind), so someone drawn standing on a low
-// prop (Mops on the bucket, 2026-11-25) counts.
-const FOOT = Object.freeze({ home: { side: 25, up: 30, down: 8 }, hall: { side: 25, up: 14, down: 8 } });
-// The floor each thing takes up (the same boxes as the home room's solids in src/game/00-core.js, "the locked
-// picture: these boxes match the bucket, Guardian Box and bed drawn in it").
-const HOME_FURNITURE = {
-  bed: { x0: 83, x1: 286, y0: 409, y1: 526 },
-  bucket: { x0: 536, x1: 596, y0: 500, y1: 571 },
-  "Guardian box": { x0: 307, x1: 375, y0: 473, y1: 522 },
-};
+// prop (Mops on the bucket, 2026-11-25) counts. The floor each home thing takes up: the same boxes as the home room's
+// solids in src/game/00-core.js ("the locked picture: these boxes match the bucket, Guardian Box and bed drawn in it");
+// the Guardian box is where it stands out of the closet on Day 2 (home-morning-art.js). Both in
+// tests/data/home-furniture.json (tests/scripted-walks.mjs uses them too).
+const FURN = JSON.parse(readFileSync(join(root, "tests", "data", "home-furniture.json"), "utf8"));
+const FOOT = FURN.foot;
+const HOME_FURNITURE = FURN.home;
 const S = TALK_SPOTS.sq;
 const homeSpots = {
   ...Object.fromEntries(Object.entries(HOME_ROOM).filter(([k]) => !["bed", "flyer"].includes(k)).map(([k, v]) => ["party " + k, v])),
@@ -55,6 +55,8 @@ const homeSpots = {
   ...Object.fromEntries(Object.entries(HOME_SPOTS).map(([k, v]) => ["home alone " + k, v])),
   // the bedtime story (beat 21): Squatch in bed is on the bed on purpose (not listed)
   ...Object.fromEntries(Object.entries(BEDTIME_SPOTS).filter(([k]) => k !== "inBed").map(([k, v]) => ["bedtime " + k, v])),
+  // the home morning (beats 22 to 24): getting out of bed starts on the bed on purpose (not listed)
+  ...Object.fromEntries(Object.entries(HOME_MORNING_SPOTS).filter(([k]) => k !== "bed").map(([k, v]) => ["home morning " + k, v])),
 };
 // Squatch under his bed, and his flop onto it, are on the bed on purpose (not listed above).
 const homeBad = [];

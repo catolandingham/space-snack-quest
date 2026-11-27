@@ -3,38 +3,39 @@
 
 | Lines | Heading |
 | --- | --- |
-| 39–47 | ## Day 1 after the party: Mops cleans the hall, then truth or fib (story pass 28-52, E2; 2026-11-26) |
-| 48–53 | # Space Snack Quest: every decision, in one place |
-| 54–62 | ## Day 1 bedtime: why Mops kept him, the last cake, and the chart over his bed (story pass 28-52, E4; 2026-11-26) |
-| 63–70 | ## How to use this file |
-| 71–78 | ## The snack renamed, and the crate bed's stamp (question 86), 2026-11-26 (Brian, relayed by the coordinator) |
-| 79–81 | ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator) |
-| 82–91 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
-| 92–99 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
-| 100–123 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
-| 124–128 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 129–137 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 138–141 | ## Sound, 2026-11-23 |
-| 142–165 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 166–177 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 178–202 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 203–211 | ## Which repo is the base, 2026-11-22 |
-| 212–222 | ## Sight cones, 2026-11-22 |
-| 223–227 | ## Latest calendar direction, 2026-11-16 |
-| 228–230 | ## Vent walk, 2026-11-16 |
-| 231–233 | ## Locked home room v5, 2026-11-16 |
-| 234–243 | ## Fidelity system (pictures are locked, not just words) |
-| 244–281 | ## 1. Working rules |
-| 282–348 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 349–373 | ## 3. Characters and look |
-| 374–450 | ## 4. Look, rooms and layout |
-| 451–472 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 473–516 | ## 6. Later chapters (2–4 and travel) |
-| 517–526 | ## 7. Audio |
-| 527–561 | ## 8. Code, controls and process |
-| 562–608 | ## 9. Open / waiting on Brian |
-| 609–703 | ## 10. Earlier entries, kept word for word |
-| 704–800 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 40–48 | ## Day 1 after the party: Mops cleans the hall, then truth or fib (story pass 28-52, E2; 2026-11-26) |
+| 49–54 | # Space Snack Quest: every decision, in one place |
+| 55–63 | ## Day 1 bedtime: why Mops kept him, the last cake, and the chart over his bed (story pass 28-52, E4; 2026-11-26) |
+| 64–71 | ## How to use this file |
+| 72–79 | ## The snack renamed, and the crate bed's stamp (question 86), 2026-11-26 (Brian, relayed by the coordinator) |
+| 80–82 | ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator) |
+| 83–93 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
+| 94–103 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
+| 104–114 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
+| 115–138 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
+| 139–143 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 144–152 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 153–156 | ## Sound, 2026-11-23 |
+| 157–180 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 181–192 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 193–217 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 218–226 | ## Which repo is the base, 2026-11-22 |
+| 227–237 | ## Sight cones, 2026-11-22 |
+| 238–242 | ## Latest calendar direction, 2026-11-16 |
+| 243–245 | ## Vent walk, 2026-11-16 |
+| 246–248 | ## Locked home room v5, 2026-11-16 |
+| 249–258 | ## Fidelity system (pictures are locked, not just words) |
+| 259–296 | ## 1. Working rules |
+| 297–363 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 364–388 | ## 3. Characters and look |
+| 389–465 | ## 4. Look, rooms and layout |
+| 466–487 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 488–531 | ## 6. Later chapters (2–4 and travel) |
+| 532–541 | ## 7. Audio |
+| 542–576 | ## 8. Code, controls and process |
+| 577–623 | ## 9. Open / waiting on Brian |
+| 624–718 | ## 10. Earlier entries, kept word for word |
+| 719–815 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 ## Day 1 after the party: Mops cleans the hall, then truth or fib (story pass 28-52, E2; 2026-11-26)
 
@@ -79,6 +80,17 @@ Brian's words: "Build this pass: yes" (new and changed lines built and marked pe
 ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator)
 - **Night look, Decided 2026-11-26:** "Make sure it's not just the hall dark at night, but all rooms are different at night versus daytime." Every room shown while the story is at night has a night look (`src/modules/night-look.js`): the loading bay its locked night picture (`delivery-room-empty-night-v2.png`); every other room its locked day picture under a dim blue tint, with the things that give light (the hall's window onto space and its FUR alarm, home's TV screen, the office's screens and keypad, the hallway's keypad) cut from the same picture and drawn again over the tint. No picture file changes. Night is from the party night's start ("That evening...") until Day 2 begins, and any older night scene. The tint's strength (`NIGHT_TINT`, 0.5 of the bedtime story's night blue) and the lit boxes are placeholders for Brian's eye. The bedtime story's lights-out dim goes on top. Built on feat/party-half-two (the party), then merged forward and applied on the bedtime (the evening and bedtime story), Day 2 morning (the dark start) and lunch branches.
 
+## Home morning, 2026-11-26 (Brian's video notes and answers, round D)
+- **The station PA wakes Mops on Day 2.** Brian (#41): the exact words are pending, and he also wants the robot janitors' arrival announced. Built with the line marked suggested: "Good morning, Stormtop! Ganitor Mops to the party hall. The new robot janitors arrive today!" from the wall speaker (it is on the locked home picture, so no ear icon), with its ding-dong and sound lines, waiting for NEXT; then the speaker plays Kevin MacLeod's "Morning" (`music/morning.mp3`), notes rising from it. The music table has its own row for it ("day2am", `src/modules/music-picks.js`), so the home rotation (Carefree, Morning, Rainbows) is not stepped on; the room is quiet as it comes up and while the PA talks. This replaces round C's night line "Ganitor Mops to the party hall." (built on `feat/ch1-lunch-sneak`), whose approved words are kept inside the new one. **Decided** (the beat); the words **need Brian's yes**.
+- **Mops sleeps by the bed until the PA.** Brian (#33, "fall asleep standing and then tip over onto his side and sleep upside down with his feet in the air") and #41 ("Mops, asleep on the floor since bedtime, gets up and leaves after the PA"): Day 2 starts with Mops asleep on his back beside the crate bed, feet in the air (`mops-asleep-art.js` MOPS_ASLEEP, drawn by the home morning); the PA wakes him; he rolls onto his side, gets up, looks at Squatch asleep (one heart, Brian #48: "when he sees Squatch, it always sends up hearts"), and walks out of the door round the bucket and the bag. **Decided.**
+- **The note is read when he picks up the gift.** Brian, video note 0:24: "it's not clear that he got a note with the rocket. So maybe when he picks up the rocket, he should also read the note at that moment... put it in there with everything else when he gets to the closet." PICK UP · rocket opens a close-up of the note with its approved words, "Brave Sasquatches stay hidden. — The Guardians" (NEXT); then the Guardians thought bubble and "The Guardians came! They always come when I'm scared."; in the box close-up the rocket drops in with the folded note still tied on, not read again. **Decided.**
+- **Thought bubbles are bigger than what is in them, with a thought trail.** Brian, video note 0:11: "The thought bubble is smaller than the drawing." The home morning's two thought bubbles (the crayon Guardians, the Guardian Box) are sized to the drawing, with a margin all round, and have three small circles shrinking down to his head (`src/modules/thought-bubble.js`). **Decided.** (The bedtime story's crate thought bubble and the party's are not changed here; phase-3 item 13 is the party builder's.)
+- **Nobody walks through furniture.** Brian, video note 0:18: "he kind of glitches through the crate... is there a physics rule we can adopt for the future?" The rule (phase-3 brief): "Nobody walks through furniture: every walk goes round it, checked by a test over every scripted walk." In `docs/REVIEW-RULES.md`; `tests/scripted-walks.mjs` checks every scripted walk of the home morning and the bedtime story. He now hops out over the crate's side (as he climbed in) and walks round its foot. **Decided.**
+- **The closet is taller.** Brian, video note 0:20: "We should make the closet taller... the box is taking up way too much space... and the clothes should be over the box." His note is his yes to changing the look of the locked home picture's wardrobe, on Day 2: a drawn layer over the locked picture (`src/modules/tall-closet.js`; the picture files are not changed), the wardrobe about 85 game pixels taller, made of pieces of the locked picture itself; open, the clothes hang on the rail up high and the Guardian Box sits on the closet floor below them. **Decided** (Brian's yes, 2026-11-26). Open question: also on Day 1 (home alone, the dress-up)?
+- **He walks to the lunch bag and sees it.** Brian, video note 0:30: "too quick after him putting away the box to when it jumps to he forgot his lunch. Maybe he should have to walk over to the lunch and see it first." After the closet shuts, the lunch bag (MOPS on it) glows and is outlined; the player walks him over; there he says "He forgot his lunch!", then TAKE · lunch. The goal words on the way, after 20 seconds: "Squatch: go to the bag by the door" (**needs Brian's yes**). **Decided** (the beat).
+- **The box close-up keeps its front view.** Brian (#35): keep the box close-up's front view. **Decided** (as built).
+- **The goal outline is not changed yet.** Brian, video note 0:18: "I really don't see the yellow outline on the closet or other places... thicker and maybe darker... a universal rule change... look at a few options." An options sheet (A to E, each on the closet, the party plant and Mops) and a still of option A with no label on the picture (his 0:20 note, "I also don't know that we need the put in box on the screen if we've got it on the button below") are for his pick. **Waiting on Brian.**
+
 ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D)
 - **This mop bucket is Mops's mop bucket, everywhere.** Brian, video note 0:39 on the bedtime story: "I like this mop bucket... Let's go with it moving forward." The bucket the bedtime story's bucket pictures drew (yellow, wider at the top, a thick rim, a wire handle, two little wheels) is one drawing (`src/modules/mop-bucket.js`), used in the bedtime pictures and in the home room, where it is drawn as a layer over the locked picture's painted bucket, in the same place and size (the picture itself is unchanged). **Decided.** Open: the morning's beard-wringing close-up keeps its own bucket, which Brian approved separately (see docs/BRIAN-ASKS-OPEN.md).
 - **The baby hides as a furry ball.** Brian, same note: "Maybe he should look more like a ball rather than us being able to see his head here." In the bucket pictures the baby is curled into a furry ball, no face showing. **Decided** (the drawing is a placeholder).
@@ -95,7 +107,10 @@ Brian's words: "Build this pass: yes" (new and changed lines built and marked pe
 - **Squatch asks for the story in words.** Brian, video note 0:12: "is squash asking for a story? Maybe he should just say, tell me about when we first met or something like that?" Built as "Tell me about when we first met?" in one bubble over him in bed. **Decided**: approved word for word (Brian's chat answers, 2026-11-26).
 - **The old crate story's words stay, and its fourth picture is on.** Brian's chat answers, 2026-11-26: keep the old crate story words; turn on the fourth picture (Mops hides the baby in the mop bucket, "Nothing to see here!"). Bedtime drawings fine as placeholders. Mops's "...Weeee-eenn-nnttt?" gets the real goat bleat through the `mops-bleat` sound pick once its file is in. **Decided.**
 - **Falling asleep plays out, with snoring.** Brian: "After story when squatch falls asleep, should be a bit more natural transition and then some snoring". Built wordless: a yawn and stretch, he lies down, Mops tucks him in, Mops goes out by the door and the light goes down, three snores, fade to black, the morning fades in. **Decided** (the ask); the drawings are placeholders. (Mops going out by the door is **Superseded** 2026-11-26 by Brian's #33: he falls asleep beside the bed, on his back, feet in the air.)
+- **The Guardian Box in the morning.** Brian, video note 0:21: "Box shouldn't look so small versus the rocket. Also, I thought the view we had in much earlier versions was better - when we also had the note and you could see the my guardians drawing etc". Built on `feat/ch1-day2-morning`: on Day 2 the box is the approved look at 2.4 times its size; the close-up brings back the first build's box view (commit 18c9157: the older notes, the crayon drawing) with the lid labelled MY GARDIAN BOX and the drawing titled MY GUARDIANS. **Needs Brian's yes** (the look and sizes).
+- **Who he thinks the Guardians are.** Brian, video note 0:30, asked whether it is a story hole. Built: as he holds up the gift, a thought bubble shows his crayon drawing of the Guardians (big furry Sasquatches), before his line; and Mops's Guardians line at bedtime (above). **Decided** (Brian's chat answers that day).
 - **Mops is a "Ganitor".** Brian, in chat: "Ganitor is what mops is - goat janitor - that should be an ongoing reference in the game." **Decided** (the fact). Where it shows, Brian's pick the same day ("I like all of them a b c d e"): a GANITOR name tag on Mops's shirt in every scene; the Station PA, "Ganitor Mops to the party hall." (words approved); the hallway Employee of the Month photo labeled "MOPS, GANITOR"; the robot janitor notice plays on it (wording needs his yes); "MOPS THE GANITOR" on Squatch's crayon drawings where Mops is in them. **Decided**, not built yet (a later round; `docs/BRIAN-ASKS-OPEN.md` item 14).
+- **The home morning, Brian's answers.** 2026-11-26, chat: the calendar is optional (the lunch bag is the goal; LOOK · calendar stays); PICK UP · rocket and PUT IN · box approved; after the gift goes in, the Guardian Box goes back in the closet; Mops leaving is heard in the dark, as built; the note on the rocket shows its words, "Brave Sasquatches stay hidden. — The Guardians" (no "Rule #1"); the lunch bag has MOPS on it; keep the 20-second goal-words rule; drawings fine as placeholders. **Decided.**
 - **The vocal song stays at bedtime.** Brian, video note 0:25: "This is the one place in ch 1 that I think this song with vocals actually works - we can leave it here". **Decided.**
 ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes)
 - **Music names, Decided 2026-11-26:** "The new Ganitor song is still called Floating in Space. It just happens to have the lyrics goating in space. We're not doing the old song anytime." The track in `music/goating-in-space.mp3` is titled Floating in Space everywhere a title shows; the old floating-in-space.mp3 never comes back. Built on feat/party-half-two.

@@ -3,23 +3,24 @@
 
 | Lines | Heading |
 | --- | --- |
-| 24–30 | # Chapter 1 lines for Brian |
-| 31–43 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
-| 44–59 | ## Calendar revision, Nov 16 (PR 58, not live) |
-| 60–67 | ## Earlier chapter lines |
-| 68–82 | ## Goal chips |
-| 83–166 | ## What people say |
-| 167–178 | ## The snack's name (2026-11-26, question 86) |
-| 179–192 | ## Words painted on things |
-| 193–216 | ## Buttons |
-| 217–303 | ## Day 2 onward (beats 22–61), pending |
-| 304–311 | ## Ball hiding |
-| 312–319 | ## Off-screen lines, for Brian (playtest 12) |
-| 320–329 | ## Homework desk, approved Nov 16 |
-| 330–368 | ## Questions still open |
-| 369–406 | ## After the party: the cleanup and truth or fib (story pass 28-52, E2), pending |
-| 407–426 | ## Bedtime additions and the chart over his bed (story pass 28-52, E4), pending |
-| 427–452 | ## Day 1 stand-ins, pending |
+| 25–31 | # Chapter 1 lines for Brian |
+| 32–41 | ## Home morning (beats 22 to 24), 2026-11-26 round D (branch feat/ch1-day2-morning, not merged) |
+| 42–54 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
+| 55–70 | ## Calendar revision, Nov 16 (PR 58, not live) |
+| 71–78 | ## Earlier chapter lines |
+| 79–93 | ## Goal chips |
+| 94–177 | ## What people say |
+| 178–189 | ## The snack's name (2026-11-26, question 86) |
+| 190–203 | ## Words painted on things |
+| 204–227 | ## Buttons |
+| 228–314 | ## Day 2 onward (beats 22–61), pending |
+| 315–322 | ## Ball hiding |
+| 323–330 | ## Off-screen lines, for Brian (playtest 12) |
+| 331–340 | ## Homework desk, approved Nov 16 |
+| 341–379 | ## Questions still open |
+| 380–417 | ## After the party: the cleanup and truth or fib (story pass 28-52, E2), pending |
+| 418–437 | ## Bedtime additions and the chart over his bed (story pass 28-52, E4), pending |
+| 438–463 | ## Day 1 stand-ins, pending |
 <!-- /section-index -->
 # Chapter 1 lines for Brian
 
@@ -27,6 +28,16 @@
 
 
 The rebuilt morning (2026-11-23, draft PR, waking up to Mops leaving) has its own numbered sheet: `docs/MORNING-LINES-FOR-BRIAN.md`. Its words replace the Nov 14 morning lines below where they differ.
+
+## Home morning (beats 22 to 24), 2026-11-26 round D (branch feat/ch1-day2-morning, not merged)
+
+Every word of the home morning is in `src/modules/home-morning-lines.js`; these are the lines added on 2026-11-26 (round D).
+
+| Who | Line | Status |
+| --- | --- | --- |
+| The wall speaker (the station PA), as the room comes up on Day 2, before Mops wakes | Good morning, Stormtop! Ganitor Mops to the party hall. The new robot janitors arrive today! | Suggested, needs Brian's yes (his answer #41, 2026-11-26: build it with this line marked suggested). Keeps his approved "Ganitor Mops to the party hall." inside it |
+| Goal chip, after the closet shuts, while he walks to the bag by the door (words if stuck, after 20 s) | Squatch: go to the bag by the door | New, needs Brian's yes (for his video note 0:30, "he should have to walk over to the lunch and see it first") |
+| The note close-up, as he picks up the rocket | Brave Sasquatches stay hidden. — The Guardians | Approved, Brian 2026-11-26 (unchanged words; shown now when he picks the rocket up, video note 0:24, not again in the box) |
 
 ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged)
 

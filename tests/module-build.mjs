@@ -44,7 +44,7 @@ const bridge = await page.evaluate(() => {
   return out;
 });
 g.check("window.SSQ is the bridge: frozen, not replaceable, version 1", !!bridge && bridge.version === 1 && bridge.frozen && bridge.locked, bridge);
-g.check("the rebuilt beats are the morning, the party night, the TV story and the bedtime story", !!bridge && JSON.stringify(bridge.ids) === JSON.stringify(["ch1-morning", "ch1-party", "ch1-tv-story", "ch1-bedtime-story"]) && bridge.unknown === null, bridge);
+g.check("the rebuilt beats are the morning, the party night, the TV story, the bedtime story and the home morning", !!bridge && JSON.stringify(bridge.ids) === JSON.stringify(["ch1-morning", "ch1-party", "ch1-tv-story", "ch1-bedtime-story", "ch1-home-morning"]) && bridge.unknown === null, bridge);
 g.check("a beat registers once by id; registering it twice throws", !!bridge && bridge.registered === "test" && bridge.twice === "throws", bridge);
 g.check("the older program still starts (Chapter 1 state is there)", await page.evaluate(() => !!(window.__ss && window.__ss.op)));
 g.check("the older program handed the engine over to the bridge", await page.evaluate(() => !!window.SSQ.engine()));
@@ -75,6 +75,14 @@ const bedSrc = readdirSync(join(root, "src", "modules"))
 const bedSets = [...bedSrc.matchAll(/\.set\("([A-Za-z0-9]+)"/g)].map((m) => m[1]);
 g.check("the bedtime story writes only named fields", bedSets.length > 0 && bedSets.every((k) => (BEAT_WRITES || []).includes(k)), bedSets.filter((k) => !(BEAT_WRITES || []).includes(k)));
 g.check("the bedtime story never reaches into the game state another way", !/__ss|\.op\b|window\.n\b/.test(bedSrc));
+// The home morning (home-morning.js, Day 2's beats 22 to 24) writes through the same engine, only named fields.
+const hmSrc = readdirSync(join(root, "src", "modules"))
+  .filter((f) => /^home-morning/.test(f))
+  .map((f) => readFileSync(join(root, "src", "modules", f), "utf8"))
+  .join("\n");
+const hmSets = [...hmSrc.matchAll(/\.set\("([A-Za-z0-9]+)"/g)].map((m) => m[1]);
+g.check("the home morning writes only named fields", hmSets.length > 0 && hmSets.every((k) => (BEAT_WRITES || []).includes(k)), hmSets.filter((k) => !(BEAT_WRITES || []).includes(k)));
+g.check("the home morning never reaches into the game state another way", !/__ss|\.op\b|window\.n\b/.test(hmSrc));
 const writes = await page.evaluate(() => window.SSQ.beatWrites());
 g.check("in the browser the morning wrote only named fields", Array.isArray(writes) && writes.every((k) => (BEAT_WRITES || []).includes(k)), writes);
 const game = readdirSync(join(root, "src", "game"))

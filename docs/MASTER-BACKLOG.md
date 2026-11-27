@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–26 | # Master backlog |
-| 27–155 | ## Where main is (Chapter 1 redesign) |
-| 156–170 | ## Register |
-| 171–192 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 193–213 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 214–226 | ## Phase 2 (plan section 4, T13 to T18) |
-| 227–249 | ## Phase 1 (plan section 3, T5 to T12) |
-| 250–263 | ## SS40–SS44 |
-| 264–281 | ## Story rows |
-| 282–300 | ## Reset section |
-| 301–311 | ## Still open |
-| 312–315 | ## Chapter 1 replot, recorded and not built |
-| 316–473 | ## Changelog |
+| 27–175 | ## Where main is (Chapter 1 redesign) |
+| 176–190 | ## Register |
+| 191–212 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 213–233 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 234–246 | ## Phase 2 (plan section 4, T13 to T18) |
+| 247–269 | ## Phase 1 (plan section 3, T5 to T12) |
+| 270–283 | ## SS40–SS44 |
+| 284–301 | ## Story rows |
+| 302–320 | ## Reset section |
+| 321–331 | ## Still open |
+| 332–335 | ## Chapter 1 replot, recorded and not built |
+| 336–493 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -30,14 +30,24 @@
 
 2026-11-26 (late night), draft PR #87: story pass 28-52, E2: Mops cleans the hall after the party (P9) and truth or fib at home (P9b) (`party-cleanup.js`, `party-truth.js`, `tests/party-cleanup.mjs`; DECISIONS "Day 1 after the party: Mops cleans the hall, then truth or fib"). Waiting on Brian: party lines 91 to 119; the open conflicts listed there (Mops finding him in the hall at closing time; the flyer's place in the talk; Isfred's sales-visit line; the TV story's office and scanner pictures). Not yet played by a person. Docs match main: yes.
 
+2026-11-26 (late night, Day 2's start), draft PR #90: the rename and the family stamp merged in; nothing new waiting on Brian from this merge. Docs match main: yes.
+
 2026-11-26 (late night, bedtime), draft PR #89: the rename reaches the bedtime story (the crate caption, Mops's line, the story crate's worn family stamp with no crayon). Waiting on Brian: Mops's line's new words. Docs match main: yes.
 
 2026-11-26 (late night), draft PR #87: the snack is Stars Cakes everywhere (Brian, question 86; `snack-name.js`, `crate-stamp.js`, `tests/snack-name.mjs`; DECISIONS "The snack renamed, and the crate bed's stamp (question 86)"). Waiting on Brian: the bedtime line's new words; the crate bed's stamp layer over the locked home pictures (his yes); the hall tin's new lid over the locked hall picture (his yes); the crayon "ST". Not yet played by a person. Docs match main: yes.
+
+2026-11-26 (night, Day 2's start), draft PR #90: Day 2 starts dark, the black lifts on the night look, then the morning comes up (`home-morning.js` NIGHT_LIFT, the room coming up 2.0 s, placeholders). Docs match main: yes.
 
 2026-11-26 (night, bedtime), draft PR #89: the night look is merged in and used by the bedtime story (the crate's front wall and Mops's mop bucket at night; lights out dims on top). Open for Brian: lights out over the night look is darker than before (a placeholder; `BEDTIME_NIGHT.dim` could come down). Docs match main: yes.
 
 2026-11-26 (night), draft PR #87: every room has a night look at night (Brian: "all rooms are different at night versus daytime"; `night-look.js`, README "Chapter 1 redesign", the 2026-11-26 night paragraph). Open for Brian: the tint's strength (`NIGHT_TINT`, a placeholder) and which things stay lit; home has no window or lamp in its picture, so only its TV screen stays as it is. NOT ASSESSED: how the night look plays on a phone in daylight. Docs match main: yes.
 
+2026-11-26 (round D, merge), draft PR #90 on `feat/ch1-day2-morning`, not merged. Done: `feat/ch1-bedtime-story` (with the party's round D) merged in (merge commit); the morning's goal things (the rocket, the lunch bag) keep only the dashed goal line, no glow (`tests/highlight-style.mjs`). NOT ASSESSED: whether a kid on a phone still finds the bag at once without the glow (the stills). Docs match main: yes.
+
+2026-11-26 (round D), draft PR #90 on `feat/ch1-day2-morning`, not merged. Done: `feat/ch1-bedtime-story` (round D) merged in (merge commit). Brian's notes of 2026-11-26 on the morning: the PA beat (#41, suggested words; "Morning" from the speaker, music table row "day2am"); Mops asleep by the bed until the PA, then up and out (#33, a heart #48); the note read in a close-up at PICK UP (0:24), not again in the box; thought bubbles bigger than their drawing with a thought trail (0:11); nobody walks through furniture (0:18: the rule in REVIEW-RULES, `tests/scripted-walks.mjs`); the closet taller on Day 2 (0:20, Brian's yes; `tall-closet.js` layer); walk to the bag before "He forgot his lunch!" (0:30). Docs match main: yes. Not yet played by a person.
+- Waiting on Brian: the outline pick (A to E sheet) and the no-label still (0:18, 0:20); the PA words; the chip "Squatch: go to the bag by the door"; the taller closet on Day 1 too?
+- For the lunch branch (`feat/ch1-lunch-sneak`): its night PA ("Ganitor Mops to the party hall.", `ganitor.js` pa-ganitor, used in `home-morning.js` start and checked in `tests/home-morning.mjs`) is replaced by this branch's morning PA: on the merge forward drop its PA step and check, keep `ganitor.js` for the tag, wall and crayon labels.
+- NOT ASSESSED: the morning video (recorded after the merge); how loud "Morning" sits after the PA on a phone.
 2026-11-26 (round D, merge), draft PR #89 on `feat/ch1-bedtime-story`, not merged. Done: `feat/party-half-two` (fe5a558) merged in (merge commit); bedtime keeps Joe's theme sung (SINGING_OK has bedtime); test fixes for the kid-play robot's no-button doorways and the mop bucket in the arrow check. NOT ASSESSED: the bedtime video after the merge (recorded from the lunch tip). Docs match main: yes.
 
 2026-11-26 (round D), draft PR #89 on `feat/ch1-bedtime-story`, not merged. Done (Brian's notes of 2026-11-26): Mops's mop bucket as one drawing (`src/modules/mop-bucket.js`) in the bedtime pictures and over the home room's painted bucket; the baby a furry ball in it; the tourists peeking in (wordless, plays by itself) before "Nothing to see here!"; the crate story's memory look; Joe's theme sung at bedtime from the ask (replaces Reawakening; bedtime added to SINGING_OK); Mops falls asleep like a fainting goat beside the bed (replaces him walking out); Mops's Moon Pie line approved; the Station Official docs agree with the game. Docs match main: yes.
@@ -45,9 +55,19 @@
 - Questions for Brian: the new bucket drawn over the locked home picture's painted bucket (his yes was said about the bedtime picture's bucket, "Let's go with it moving forward"; confirm the home room too); the "?" over the tourists (suggested); the light going down by itself; the morning's beard-wringing close-up keeps its own bucket (change it to the new one?); the old flashback "fb1bucket" (scene S4) and the "My baby bed! A mop bucket." hotspot (scene S1) are in the old Chapter 1 code the asks page says to delete (`10-ch1.js`, `11-ch1-hall.js`); left alone.
 - NOT ASSESSED: how the singing lines up with the pictures at a real kid's reading pace; the bedtime video (recorded after the merge).
 
+2026-11-26 (round C), draft PR #90 on `feat/ch1-day2-morning`, not merged. Done: `feat/ch1-bedtime-story` merged in (merge commit). The home morning follows Brian's music table of 2026-11-26 (`src/modules/music-picks.js`): it no longer starts the morning song (`bridge.homeMusic`, Goating in Space, which is Day 1's first morning only); while the night is still dark the bedtime story's Reawakening goes on (`home-morning.js` nightNow, `bridge.js` refineCue), and once the room comes up this daytime visit home plays the next track of the home rotation (Carefree, Morning, Rainbows). Tests: `tests/home-morning.mjs` (the cue every frame: "bedtime" while dark, "home" by day; the morning song not playing). Docs match main: yes. Not yet played by a person.
+
 2026-11-26 (round C), draft PR #89 on `feat/ch1-bedtime-story`, not merged. Done: `feat/party-half-two` merged in (merge commit; the party branch's 00-core.js music and alarm kept as they are; Floating in Space stays deleted). Bedtime plays Reawakening (Brian's music table of 2026-11-26): the bedtime story says when it is showing (`showing()`, as the TV story does) and `bridge.js` turns the home cue into "bedtime" then; no track is written into the beat. Mops's bleat: `window.SSQ.playSoundPick(name)` (bridge.js) plays the game's sound picks through the same player as the morning song's bleat (`music-picks.js` playSound), so the bedtime story's "...Weeee-eenn-nnttt?" now plays `sounds/goat-bleat.mp3`. Tests: `tests/bedtime-story.mjs` (the cue is "bedtime" every frame from the walk to bed to the fade, the bleat on the weent picture only, one bleat in the whole story, the clip started). Docs match main: yes. NOT ASSESSED: how loud Reawakening sits under the snores on a phone speaker. Not yet played by a person.
 - (2026-11-26, the line below about the bleat player is done: `window.SSQ.playSoundPick` exists now.)
 - Then, from Brian's notes on the lunch video (2026-11-26, "when alarm goes off, I presume music should stop"): when an alarm goes off the music stops, everywhere (a beat's `alarmOn`, the party's included, and the older program's alarm sound through `bridge.js` alarmSound); the alarm's sound and the FUR! sting still play; the music stays quiet in that place after the alarm and comes back only with a visit to another place (`music-picks.js` hushNow). A restart of the part that had the alarm (after the LOCKUP card, or ↺) is a new visit too, so its music comes back (`bridge.js`, the beat's `alarmKey`). The older program's own alarms hush the music each time their sound plays; how long it stays quiet after their last sound is NOT ASSESSED. Test: `tests/alarm-music.mjs`. Also `tests/party-round4.mjs` waits for the JOIN · photo label's frame (the lunch branch's fix, brought back here: it failed in this branch's full run).
+
+2026-11-26, draft PR on `feat/ch1-day2-morning` (stacked on `feat/ch1-bedtime-story`), not merged. Done: beats 22 to 24, the home morning, as a module (`ch1-home-morning`): the night going on from the bedtime story (dark, asleep under the blanket) to morning and the wake in bed with no words, PICK UP · rocket with the crayon Guardians thought bubble and the Guardians line, the thought bubble of the box, OPEN · closet, PUT IN · box with the first build's box view (commit 18c9157: older notes, MY GARDIAN BOX lid, the MY GUARDIANS crayon drawing, the note's words), the box back in the closet, "He forgot his lunch!" (MOPS on the bag), TAKE · lunch into today's lunch sneak; the calendar with today marked is optional (LOOK · calendar). Brian's answers of 2026-11-26 are built: calendar optional, PICK UP · rocket and PUT IN · box approved, the box back in the closet, Mops heard leaving as built, the note's words "Brave Sasquatches stay hidden. — The Guardians", MOPS on the bag, the 20-second goal-words rule kept, drawings fine as placeholders. The old gift, box, calendar and lunch steps are deleted from `src/game/`. Open for Brian:
+- The Guardian Box is 2.4 times its approved size on Day 2 (so it is clearly bigger than the rocket, his note 0:21); Day 1's closet still has it at the approved size. Make Day 1 match?
+- The close-up is a front view of the open box (the first build's was seen from above, with the notes' words readable); the old notes show no words now (their lines are pending). Front view as built, or the top-down view?
+- The drawing's title: built as MY GUARDIANS (STORY-DECISIONS section 5); the first build's drawing said MY GARDIANS with a backwards S and "by Squatch age 6". Which?
+- MOPS on the lunch bag is about 9 to 10 CSS px on an iPad (the canvas-text rule is 14; listed as known in `tests/canvas-text-allow.json`). Make the bag bigger so the word reads, or keep it a small label?
+- New drawings waiting for his eye: the toy rocket and its tied-on note, the lunch bag with MOPS on it, the box close-up (the open box, the older notes, the lid's taped MY GARDIAN BOX label), the crayon Guardians drawing in his thought bubble, Squatch sitting up in bed, his stretch and his hold-up, the heart, today's crossed-off days.
+- Placeholders (not pins): rocket 64 px (about two fifths of Squatch, 25 px on a phone), the box 2.4 times its approved size, lunch bag 40 x 52 (about a third), the close-up in the room's proportion; the night 2.6 s, the wake about 2.6 s, the hold with the crayon thought 2.8 s, the box thought bubble 2.2 s; footsteps every 0.3 s.
 
 2026-11-26, draft PR #89 on `feat/ch1-bedtime-story`, not merged. Done: beat 21, the bedtime story, as a module (`ch1-bedtime-story`): to bed with no words (he walks to his crate bed and climbs in, Mops comes over), Squatch asks "Tell me about when we first met?", the old crate story's pictures from 71ec66e (crate, baby, beard, "...Weeee-eenn-nnttt?" with Mops's bleat asked for through the `mops-bleat` sound hook, and the mop bucket picture, on since Brian's answer of 2026-11-26) at the home room's proportions, Mops's line unchanged, the Guardians picture (Squatch's crayon drawing, Mops's approved line "And you've always had your Guardians, watching over you."), then falling asleep (yawn, lie down, blanket, Mops out by the door, light down to night-blue, three snores with rising "z z z", fade to black, Day 2 fades in). No goal chip from the Now card to Day 2. The "ch1moon" caption box is deleted. Brian's 2026-11-26 notes built: 0:12 (the ask in words), 0:25 (the vocal song stays, untouched), 0:28 (goats say "weeeent"), and "a bit more natural transition and then some snoring". Open for Brian:
 - Words (`src/modules/bedtime-story-lines.js`): approved (Brian 2026-11-26): "Tell me about when we first met?", the old crate story's words (all six captions and bubbles, the MOON PIES badge, the "!" and "z z z" marks), the Guardians line; "...Weeee-eenn-nnttt?" is his spelling; his bedtime line ("You came to me in a Moon Pie crate...") is still needs-yes.

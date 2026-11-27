@@ -1,5 +1,5 @@
 {
-  "todo": "Size is checked at 1024x768 and 768x1024. The Mops name chip is also checked at 4.5:1. Known: the party's \"?\" over a guest who has just noticed Squatch starts at half size (Brian 2026-11-25, showing-5 note 6: \"small and pale, about half size, like Mops's hearts\") and grows to full size as it fills; at its smallest it is about 13 CSS px on an iPad. It is a mark, not words; Brian's ask wins over the 14 px rule here.",
+  "todo": "Size is checked at 1024x768 and 768x1024. The Mops name chip is also checked at 4.5:1. Known: the party's \"?\" over a guest who has just noticed Squatch starts at half size (Brian 2026-11-25, showing-5 note 6: \"small and pale, about half size, like Mops's hearts\") and grows to full size as it fills; at its smallest it is about 13 CSS px on an iPad. It is a mark, not words; Brian's ask wins over the 14 px rule here. Known: MOPS on the lunch bag (Brian 2026-11-26) is about 9 to 10 CSS px on an iPad; a label on a thing, the bag's size is Brian's call.",
   "known": [
     {
       "size": "iPad portrait",
@@ -14,6 +14,34 @@
       "reason": "size",
       "text": "?",
       "why": "Brian 2026-11-25 note 6: the '?' starts at half size and grows"
+    },
+    {
+      "size": "iPad portrait",
+      "screen": "home start",
+      "reason": "size",
+      "text": "MOPS",
+      "why": "Brian 2026-11-26: MOPS written on the lunch bag. The bag is 40 x 52 in the room, so its word is about 9 to 10 CSS px on an iPad: a label on a thing, not words to read. Brian to say whether the bag (and its word) should be bigger."
+    },
+    {
+      "size": "iPad portrait",
+      "screen": "lunch sneak",
+      "reason": "size",
+      "text": "MOPS",
+      "why": "Brian 2026-11-26: MOPS written on the lunch bag. The bag is 40 x 52 in the room, so its word is about 9 to 10 CSS px on an iPad: a label on a thing, not words to read. Brian to say whether the bag (and its word) should be bigger."
+    },
+    {
+      "size": "iPad landscape",
+      "screen": "home start",
+      "reason": "size",
+      "text": "MOPS",
+      "why": "Brian 2026-11-26: MOPS written on the lunch bag. The bag is 40 x 52 in the room, so its word is about 9 to 10 CSS px on an iPad: a label on a thing, not words to read. Brian to say whether the bag (and its word) should be bigger."
+    },
+    {
+      "size": "iPad landscape",
+      "screen": "lunch sneak",
+      "reason": "size",
+      "text": "MOPS",
+      "why": "Brian 2026-11-26: MOPS written on the lunch bag. The bag is 40 x 52 in the room, so its word is about 9 to 10 CSS px on an iPad: a label on a thing, not words to read. Brian to say whether the bag (and its word) should be bigger."
     }
   ]
 }

@@ -18,9 +18,13 @@
  *                  it sucks his hat in, then he steps away.
  *     tv           beat 20 on its own: the TV story (the Wookiee story), every picture, with its sounds.
  *     bedtime      beat 21: from the TV story's last picture, the bedtime story (to bed, Squatch asks, the crate
- *                  story's pictures, Mops's line, the Guardians picture, falling asleep: the yawn, lying down, the tuck, the light, three
- *                  snores, the fade to black) to the morning fading in. With SHOWING_STILLS=<dir>, a still of each
+ *                  story's pictures, Mops's line, the Guardians picture, falling asleep: the yawn, lying down, the
+ *                  tuck, the light, three snores, the fade to black) to the morning fading in. With SHOWING_STILLS=<dir>, a still of each
  *                  step goes there too.
+ *     morning      beats 22 to 24, the home morning: from the bedtime story's fade to black (played unrecorded,
+ *                  fast, up to the fade) through the night, the wake, the rocket, the Guardian Box, the calendar and the
+ *                  lunch bag, to the lunch sneak's first moment in the party hall. A kid's taps: the floor to walk,
+ *                  the action button, NEXT. With SHOWING_STILLS=<dir>, a still of each step goes there too.
  *   SHOWING_SILENT=1 leaves the sound out.
  */
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
@@ -29,7 +33,7 @@ import { join, dirname } from "node:path";
 import { startGame, sleep, root } from "../tests/game-page.mjs";
 
 const [which, outFile] = process.argv.slice(2);
-const WHICH = ["keep", "back", "flyer", "early", "ventfur", "ventcostume", "tv", "bedtime"];
+const WHICH = ["keep", "back", "flyer", "early", "ventfur", "ventcostume", "tv", "bedtime", "morning"];
 if (!WHICH.includes(which) || !outFile) {
   console.error("Usage: node tools/party-showing.mjs <" + WHICH.join("|") + "> <out.mp4>");
   process.exit(2);
@@ -43,7 +47,7 @@ const hall = await import(join(root, "src", "modules", "party-hall.js"));
 const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 2 };
 const g = await startGame({ port: 9360 + WHICH.indexOf(which), name: "party-showing-" + which });
 const sneak = await import(join(root, "tests", "party-sneak.mjs"));
-const { page, errors } = await g.open(which === "tv" || which === "bedtime" ? "?ch=1" : "?beat=" + (which === "flyer" ? "party:P3" : which === "ventfur" ? "party:P2" : "party:P6"), PHONE);
+const { page, errors } = await g.open(which === "tv" || which === "bedtime" || which === "morning" ? "?ch=1" : "?beat=" + (which === "flyer" ? "party:P3" : which === "ventfur" ? "party:P2" : "party:P6"), PHONE);
 await sleep(600);
 SILENT || (await page.click("#ss-sound").catch(() => {}));
 await sleep(600);
@@ -425,8 +429,29 @@ if (which === "bedtime") {
   });
   ok || (await fail("the TV story did not reach its last picture"));
 }
+// The morning video starts at the bedtime story's fade to black: the TV story and the bedtime story before it play
+// unrecorded, fast.
+if (which === "morning") {
+  await page.evaluate(() => window.__ss.lockedReady);
+  const ok = await page.evaluate(() => {
+    const ss = window.__ss,
+      n = ss.op,
+      bed = window.SSQ.beat("ch1-bedtime-story");
+    n.q = [];
+    n.cur = null;
+    window.SSQ.engine().tvStory();
+    for (let i = 0; i < 6000; i++) {
+      if (bed.debug().phase === "fade") return true;
+      ss.tick(0.05);
+      const c = n.cur;
+      c && ["card", "cutaway", "bub", "panel", "wait"].includes(c.k) && ((n.bt = 1), ss.opTap());
+    }
+    return false;
+  });
+  ok || (await fail("the bedtime story did not reach its fade to black"));
+}
 await startRecording();
-await sleep(1800);
+await sleep(which === "morning" ? 300 : 1800);
 if (which === "keep") {
   await dance(16, 4);
   // toward the wall by the alarm box, where the row will stand; the first song ends and the photo moment begins
@@ -659,6 +684,96 @@ if (which === "bedtime") {
   await sleep(2500);
   await still("morning");
   await sleep(1000);
+}
+if (which === "morning") {
+  const STILLS = process.env.SHOWING_STILLS || "";
+  STILLS && mkdirSync(STILLS, { recursive: true });
+  let k = 0;
+  const still = async (name) => STILLS && (await page.screenshot({ path: join(STILLS, String(++k).padStart(2, "0") + "-" + name + ".png") }));
+  const hm = () => page.evaluate(() => {
+    const d = window.SSQ.beat("ch1-home-morning").debug();
+    return d.state ? d.state.step : "";
+  });
+  const next = () => page.evaluate(() => ((window.__ss.op.bt = 1), window.__ss.opTap()));
+  const stepIs = (name, ms = 8000) => until(async (q) => (await hm()) === name && (q.ctrl || !["rocket", "closet", "box", "cal", "lunch"].includes(name)), ms);
+  // a kid's walk: tap the floor where he should go, then wait until the button offers the action
+  const walkTo = async (x, y, act) => {
+    await floor(x, y);
+    (await until((q) => q.act === act, 9000)) || (await fail("no " + act + " after walking to " + x + ", " + y));
+  };
+  log("the bedtime story's fade to black");
+  await sleep(900);
+  await still("bedtime-fades-to-black");
+  await until(async () => (await hm()) === "night", 4000);
+  mark("part night");
+  await sleep(700);
+  await still("dark-mops-leaves-heard");
+  await sleep(1300);
+  await still("room-comes-up-asleep-under-the-blanket");
+  await until(async () => (await hm()) === "wake", 4000);
+  mark("part wake");
+  await sleep(450);
+  await still("sits-up-blanket-slides-off");
+  await sleep(700);
+  await still("stretches");
+  await stepIs("rocket");
+  await sleep(1200);
+  await still("rocket-glows-pick-up");
+  await press();
+  await sleep(1500);
+  await still("holds-it-up-thinks-of-the-guardians");
+  await until((q) => q.cur === "bub", 4000);
+  await sleep(900);
+  await still("guardians-line");
+  await sleep(2600);
+  await next();
+  await sleep(700);
+  await still("thinks-of-the-guardian-box");
+  await stepIs("closet");
+  await sleep(1000);
+  await still("closet-glows");
+  await walkTo(300, 400, "OPEN · closet");
+  await sleep(500);
+  await still("open-closet");
+  await press();
+  await stepIs("box");
+  await sleep(1000);
+  await still("box-glows-put-in");
+  await press();
+  await until((q) => q.cur === "cutaway", 4000);
+  await sleep(600);
+  await still("close-up-holding-the-gift");
+  await sleep(1400);
+  await still("close-up-gift-in-the-box");
+  await sleep(1500);
+  await next();
+  // the box goes back in the closet, the door shuts, and the bag by the door is outlined for his line
+  await sleep(500);
+  await still("box-goes-back-in-the-closet");
+  await until((q) => q.cur === "bub", 4000);
+  await sleep(1000);
+  await still("bag-glows-he-forgot-his-lunch");
+  await sleep(2000);
+  await next();
+  await stepIs("lunch");
+  await sleep(800);
+  await still("lunch-goal");
+  // the calendar is there to look at (not a step): LOOK · calendar by the wardrobe, then back to the lunch
+  await press();
+  await sleep(1300);
+  await still("calendar-today-optional");
+  await sleep(2400);
+  await floor(880, 540);
+  await stepIs("lunch");
+  await sleep(600);
+  await walkTo(760, 505, "TAKE · lunch");
+  await sleep(400);
+  await still("take-lunch");
+  await press();
+  await until((q) => q.room === "hall" && q.ctrl, 10000);
+  await sleep(600);
+  await still("out-the-door-lunch-sneak-starts");
+  await sleep(1500);
 }
 if (which === "early") {
   await dance(10, 0);

@@ -115,7 +115,7 @@
         }
         linkDebug && debugStrip();
         previewBeat && (startStory(1), (n.q = []), (n.cur = null), ch1JumpBeat(linkBeat));
-        day2Jump && (startStory(1), (n.q = []), (n.cur = null), ch1Day2Begin());
+        day2Jump && (startStory(1), (n.q = []), (n.cur = null), ch1Day2Begin(!0));
         partyJump && partyBeat() && (startStory(1), (n.q = []), (n.cur = null), ch1ResetState(), (n.moPose = "hidden"), partyBeat().jump(linkParty));
       }, 0);
     }

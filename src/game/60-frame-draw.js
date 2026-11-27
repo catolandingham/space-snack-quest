@@ -16,6 +16,7 @@
         // The party night (src/modules/party.js): its scenes, sight, the alarm and the vent.
         let party = partyBeat();
         party && party.tick(l);
+        hmBeat() && hmBeat().tick(l);
       }
       (n.sqHop &&
         ((n.sqHop.t += l),
@@ -653,9 +654,9 @@
       (m(318, 478, 64, 44, 6), r("#3478f6", 4), g("G", 350, 501, 22, "#ffffff"));
     }
     // Scene 1 and the rest of chapter 1 at home use the locked room picture. Only then.
-    // The Guardian Box stays in the closet until Day 2, when Squatch takes it out to put the gift in (Brian, 2026-11-16).
+    // The Guardian Box is in the closet; on Day 2 it is out only while Squatch puts the gift in (Brian, 2026-11-26).
     function gboxOut() {
-      return !!n.ch1Day2 && n.ch1Step !== "gift" && n.ch1Step !== "box";
+      return !!n.ch1Day2 && !(hmBeat() && hmBeat().boxInCloset());
     }
     function homePicture() {
       let k = n.scene || "";
@@ -666,7 +667,7 @@
     const HOME_FRONT = {
       bucket: { x: 530, y: 506, w: 72, h: 66, back: 566 },
       bed: { x: 92, y: 396, w: 188, h: 132, back: 526 },
-      gbox: { x: 304, y: 470, w: 76, h: 56, back: 522 },
+      gbox: { x: 188, y: 356, w: 48, h: 40, back: 390 }, // out on the floor by the closet while he puts the gift in (home-morning.js)
     };
     function homeFront() {
       let l = n.sq,
@@ -678,7 +679,7 @@
         let p = HOME_FRONT[id];
         if (id === "gbox") {
           // Not in the picture any more: drawn by code, and only once it is out of the closet.
-          gboxOut() && l.y < p.back && l.x > p.x - 40 && l.x < p.x + p.w + 40 && L2();
+          gboxOut() && l.y < p.back && l.x > p.x - 40 && l.x < p.x + p.w + 40 && (hmBeat() ? hmBeat().drawBox(e) : L2());
           continue;
         }
         // While hopping out of bed he is over the bed, not behind it.
@@ -700,7 +701,8 @@
     function P2() {
       if (homePicture()) {
         drawLockedRoom(n.wardrobe === "open" ? "home-open" : "home-closed");
-        (window.SSQ && window.SSQ.drawHomeBucket && window.SSQ.drawHomeBucket(e), gboxOut() && L2()); // Mops's mop bucket over the painted one (mop-bucket.js)
+        // Day 2: the Guardian Box (in the closet, then out on the floor) and the home morning's things on the floor; Mops's mop bucket over the painted one (mop-bucket.js)
+        (window.SSQ && window.SSQ.drawHomeBucket && window.SSQ.drawHomeBucket(e), hmBeat() ? hmBeat().drawOnRoom(e) : gboxOut() && L2());
         // Home alone with the closet open: the morning module draws the G box on the closet floor.
         {
           let beat = window.SSQ && window.SSQ.beat("ch1-morning");
@@ -2095,6 +2097,7 @@
         beat && beat.draw(e);
         partyBeat() && partyBeat().draw(e);
         window.SSQ && window.SSQ.beat("ch1-bedtime-story") && window.SSQ.beat("ch1-bedtime-story").draw(e);
+        hmBeat() && hmBeat().draw(e);
         if (n.ch1Calendar) {
           drawCh1Calendar();
           return;

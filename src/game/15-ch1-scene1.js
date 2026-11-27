@@ -177,6 +177,10 @@
           n.stars = (n.stars || 0) + k;
         },
         tvStory: () => J(ch1TvEvening()),
+        // The home morning (src/modules/home-morning.js): the calendar close-up, then on to the lunch sneak.
+        openCalendar: (next) => ch1OpenCalendar(next),
+        takeLunch: () => ch1TakeLunch(),
+        offer: () => pick(ch1QSpots()),
         // Holding ↺ inside a full-screen view: the same restart as the page's ↺.
         restartPart: () => sectionReset(),
         squatchScale: () => wl,
@@ -333,6 +337,7 @@
       e.translate(460, 320); e.scale(0.92 + 0.08 * zoom, 0.92 + 0.08 * zoom);
       e.drawImage(paper, -360, -265);
       e.restore();
+      hmBeat() && hmBeat().drawCalendar(e, zoom); // Day 2: today's marks (src/modules/home-morning-art.js)
       // No paw on the close-up (Brian 2026-11-23: "It's the calendar paw that doesn't make sense").
       // At 375px wide this remains a roughly 44px target, unlike the older cut-in X.
       L(880, 540, 58); r("#ffffff", 4); g("X", 880, 540, 40, "#1e2430", "center", 900);

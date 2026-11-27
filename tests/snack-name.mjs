@@ -2,7 +2,7 @@
  * The station's snack has its new name everywhere (Brian, 2026-11-26, question 86; the name: src/modules/snack-name.js).
  *   (a) The name is spelled in one place, src/modules/snack-name.js: no other file in src/, tests/ or tools/ spells
  *       it (they all read it from there), and nothing in src/, tests/, tools/ or the built index.html says the old
- *       name as words. Ids that keep the old name joined up ("moonpie", "mops-moon-pie", "sign-moon-pies") are ids,
+ *       name as words. Ids that keep the old name joined up ("moonpie", "mops-moon-pie") are ids,
  *       never shown; README.md lists them.
  *   (b) No lines file (src/modules/*-lines.js) has a line with the old name.
  *   (c) No word the canvas draws in the main scenes says the old name: every Chapter 1 beat the game can jump to,

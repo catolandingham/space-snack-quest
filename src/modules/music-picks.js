@@ -94,6 +94,9 @@ export const SPANS = Object.freeze({
  *            "so it isn't repetitive")
  *   bedtime  the bedtime story (beat 21: bedtime-story.js says when it is showing, bridge.js makes the cue "bedtime"):
  *            Joe's theme with its singing, from Squatch's ask (Brian 2026-11-26, #37; it was Reawakening)
+ *   day2am   Day 2's home morning, after the station PA (home-morning.js musicCue; Brian 2026-11-26, #41: "then the
+ *            music from the speaker"): Kevin MacLeod's "Morning", once, as if the speaker plays it. Its own place, so
+ *            the home rotation is not stepped on by it; quiet as the room comes up and while the PA talks.
  *   gift     the gift, out at home: the same visit as home (MUSIC_PLACE), so the home track carries on
  *   heart    the heart moments: the same visit as home (MUSIC_PLACE, Brian 2026-11-26 #32), so the home track carries
  *            on through them
@@ -116,6 +119,7 @@ export const MUSIC_PICKS = Object.freeze({
   home: Object.freeze(["carefreeOnce", "morningOnce", "rainbowsOnce"]),
   gift: Object.freeze(["carefreeOnce", "morningOnce", "rainbowsOnce"]),
   bedtime: "themeSong",
+  day2am: "morningOnce",
   heart: "themeTune",
   tv: "odysseyOnce",
   hall: "lobbyLoop",

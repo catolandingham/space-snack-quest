@@ -14,7 +14,8 @@
  *      the bed (Brian 2026-11-26, #33, like a fainting goat): his eyes shut and his head sinks, he goes stiff and
  *      tips over onto his side, he rolls onto his back with his four feet in the air, and the light goes down to a
  *      night-blue dim; three snores (each heard, each with a rising "z z z"), the fade to black; then Day 2 begins
- *      and fades in from black.
+ *      and the room comes up from black (the home morning's night does it when the home morning is here; otherwise the
+ *      bedtime story fades it in).
  * Brian's notes of 2026-11-26 also checked here: the bucket pictures use Mops's mop bucket (mop-bucket.js, the one
  * drawing) with the baby curled into a furry ball (no face); before "Nothing to see here!" a wordless picture plays by
  * itself, two tourists peeking in at a door with a "?" over each; the crate story's pictures have the memory look
@@ -176,10 +177,18 @@ const run = !(started && tvDone)
       out.scene = n.scene;
       out.debug = beat.debug();
       // Day 2's first moments: the room comes up from black.
-      for (let k = 0; k < 30; k++) {
+      // (with the home morning here, its night does it: it starts dark and comes up)
+      const hm = window.SSQ.beat("ch1-home-morning");
+      // (the words the bedtime story showed, before Day 2's own: the home morning's PA comes up within these frames,
+      // and its words are checked by tests/home-morning.mjs)
+      out.shownStory = ss.shown();
+      for (let k = 0; k < 90; k++) {
         ss.drawFrame();
-        const r = beat.debug().drew;
-        out.fadeIn.push(r && r.fadeIn ? r.black : 0);
+        const r = beat.debug().drew,
+          m = hm && hm.debug().drew;
+        out.fadeIn.push(Math.max(r && r.fadeIn ? r.black : 0, m && m.dark != null ? m.dark : 0));
+        out.ownFadeIn = (out.ownFadeIn || 0) + (r && r.fadeIn ? 1 : 0);
+        out.morningHere = !!hm;
         ss.tick(0.05);
       }
       out.shownAfter = ss.shown();
@@ -230,7 +239,7 @@ g.check('no "Baaa" anywhere in the bedtime story (on screen or in its lines)', !
 g.check("the lines file holds the old captions word for word, the goat sound and Mops's line", L["cap-crate"] && L["cap-crate"].text === OLD.crate && L["cap-baby"].text === OLD.baby && L["cap-beard"].text === OLD.beard && L["mops-weent"] && L["mops-weent"].text === OLD.weent && L["mops-moon-pie"].text === MOPS_LINE);
 g.check("the old crate story's words are approved (Brian 2026-11-26: keep them); the goat sound is Brian's; Mops's line was approved (#36) and waits for his yes again with the snack's new name (question 86)", ["cap-crate", "cap-baby", "cap-beard", "cap-bucket", "mops-nothing"].every((id) => L[id] && L[id].status === "approved") && L["mops-moon-pie"].status === "renamed, needs-yes" && /question 86/.test(L["mops-moon-pie"].source) && L["mops-weent"].status.startsWith("Brian 2026-11-26") && /#36/.test(L["mops-moon-pie"].source));
 const known = new Set([...BEDTIME_STORY_LINES.map((l) => l.text), FAMILY.FADED]); // (and the crate's worn stamp: snack-name.js)
-const fromStory = (run.shownAfter || []).filter((w) => !run.shownBefore.includes(w));
+const fromStory = (run.shownStory || []).filter((w) => !run.shownBefore.includes(w));
 // A caption or bubble wrapped on a phone is drawn a line at a time: a drawn piece counts when it is a whole line of
 // the lines file, or a run of whole words of one (a wrapped bubble's middle line is a run from neither end). (The
 // TV story's last card, "Now", and the bubbles' name tags come from before this beat.)
@@ -278,7 +287,9 @@ const bedMusic = run.music.filter((m) => m.phase && m.phase !== "end"),
 g.check("after the film the walk to bed and the climb in are quiet (no music cue)", toBed.length > 30 && toBed.every((m) => m.cue === ""), toBed.filter((m) => m.cue !== "").slice(0, 5));
 g.check("from his ask until the fade, the music follows the \"bedtime\" cue (every frame)", afterAsk.length > 60 && afterAsk.every((m) => m.cue === "bedtime"), afterAsk.filter((m) => m.cue !== "bedtime").slice(0, 5));
 g.check("and through every story picture, the last cake's three and the Guardians picture", run.picMusic.length === 11 && run.picMusic.every((m) => m.cue === "bedtime"), run.picMusic);
-g.check("after the fade the bedtime story is over: not showing, and the home cue is no longer \"bedtime\" from it", run.showingAfter === false && (run.cueAfter === "home" || run.cueAfter === "bedtime"), { showing: run.showingAfter, cue: run.cueAfter });
+// (with the home morning here, Day 2 starts dark with the bedtime music still on, then goes quiet as the room comes up
+// and the station PA talks: home-morning.js musicCue, Brian 2026-11-26 #41)
+g.check("after the fade the bedtime story is over: not showing, and the home cue is no longer \"bedtime\" from it", run.showingAfter === false && (run.cueAfter === "home" || run.cueAfter === "bedtime" || run.cueAfter === ""), { showing: run.showingAfter, cue: run.cueAfter });
 const song = PICKS.spanFor("bedtime");
 g.check("the bedtime cue plays Joe's theme (music/main-theme-from-brian.mp3), and only it, once, sung part and all, from its opening tune (Brian 2026-11-26, #37)", PICKS.fileFor("bedtime") === "music/main-theme-from-brian.mp3" && PICKS.listFor("bedtime").length === 1 && song.words === true && song.once === true && song.from <= 1.5 && song.to > 200 && PICKS.SINGING_OK.includes("bedtime"), song);
 // the singing (from 0:19.5 of the file) comes in about 19.5 s after the ask: HOLD, then the opening tune from `from`
@@ -359,7 +370,8 @@ g.check("Squatch ends asleep, lying down, before Day 2", run.debug && run.debug.
 // No goal while he sleeps (2026-11-26: the old video showed "Squatch: pick up the gift" over the sleeping room).
 const chips = run.chips.filter((c) => c.chip);
 g.check("no goal chip shows at any point from the Now card until Day 2 begins", run.chips.length > 100 && chips.length === 0, chips.slice(0, 5));
-g.check("then Day 2 begins (the morning, scene QB) and the room fades in from black", run.day2 && run.scene === "QB" && run.fadeIn[0] > 0.8 && run.fadeIn.slice(-1)[0] === 0, { day2: run.day2, scene: run.scene, fadeIn: run.fadeIn.filter((_, i) => i % 5 === 0) });
+g.check("only one fade in: with the home morning here, the bedtime story does not draw its own", !run.morningHere || !run.ownFadeIn, { morning: run.morningHere, own: run.ownFadeIn });
+g.check("then Day 2 begins (the morning, scene QB) and the room fades in from black", run.day2 && run.scene === "QB" && run.fadeIn[0] > 0.8 && run.fadeIn.slice(-1)[0] < 0.01, { day2: run.day2, scene: run.scene, fadeIn: run.fadeIn.filter((_, i) => i % 5 === 0) });
 
 // The old panel is gone
 const GAME = readdirSync(join(root, "src", "game")).map((f) => readFileSync(join(root, "src", "game", f), "utf8")).join("\n");

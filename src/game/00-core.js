@@ -1338,7 +1338,7 @@
         n.room === "closet" &&
           ((n.scene || "")[0] === "Q" || n.scene === "O1" // the locked picture: these boxes match the bucket, Guardian Box and bed drawn in it
             ? (l.push({ x0: 536, x1: 596, y0: 500, y1: 571 }),
-              gboxOut() && l.push({ x0: 307, x1: 375, y0: 473, y1: 522 }),
+              gboxOut() && l.push({ x0: 188, x1: 236, y0: 366, y1: 394 }), // the Guardian Box, out by the closet while the gift goes in (home-morning.js)
               l.push({ x0: 83, x1: 286, y0: 409, y1: 526 }))
             : (l.push(nt(610, 546, 26, 16, 10)),
               l.push({ x0: 326, x1: 374, y0: 484, y1: 516 }),

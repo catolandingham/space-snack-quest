@@ -6,7 +6,9 @@
  *   - the goal outline round the flyer on the counter (P4), the banner while a line names it (P3), the flyer in
  *     Isfred's hand (P3), the gap in the photo row (P6) and the shirt in the dress-up (P5): no shadow-blur glow and
  *     no radial glow is drawn there, and a dashed gold line of the one width is;
- *   - the line's width is the new one (7.5 game pixels; 3 screen pixels in a full-screen view).
+ *   - the line's width is the new one (7.5 game pixels; 3 screen pixels in a full-screen view);
+ *   - the home morning (Day 2): the rocket and the lunch bag, while each is the goal, have the one dashed line and no
+ *     glow behind them (home-morning.js drew a pulsing radial glow there until 2026-11-26).
  *   node tests/highlight-style.mjs
  */
 import { join } from "node:path";
@@ -99,5 +101,26 @@ const oneStyle = (h, w = OUTLINE.width) => h.blur === 0 && h.gold.length > 0 && 
   const dress = await o.page.evaluate(() => window.__hl);
   g.check("P5: in the dress-up the shirt is marked by the one dashed line (3 screen px) and no radial glow or blur", dress.radial.length === 0 && dress.blur === 0 && dress.gold.some((s) => s.dashed && s.w === OUTLINE_SCREEN.width), { radial: dress.radial.length, blur: dress.blur, gold: dress.gold.slice(0, 4) });
   g.check("no page errors (P5)", o.errors.length === 0, o.errors);
+}
+{
+  // the home morning: the rocket (PICK UP · rocket) and the lunch bag (the walk to it), each while it is the goal
+  const { page, errors } = await open("day2");
+  const { TRACE } = await import(join(root, "src", "modules", "home-morning-art.js"));
+  const near = (h, b) => h.radial.filter(([x, y]) => x >= b.x0 - 40 && x <= b.x1 + 40 && y >= b.y0 - 40 && y <= b.y1 + 40);
+  for (const [step, box, x, y] of [["rocket", TRACE.rocket, 300, 470], ["toBag", TRACE.bag, 600, 470]]) {
+    const h = await frame(page, `(ss, n) => { n.q = []; n.cur = null; ss.ch1JumpBeat(22); const hm = window.SSQ.beat("ch1-home-morning"); hm.jump(${JSON.stringify(step)}); n.sq.x = ${x}; n.sq.y = ${y}; for (let i = 0; i < 6; i++) ss.tick(0.05); }`);
+    const st = await page.evaluate(() => (window.SSQ.beat("ch1-home-morning").debug().state || {}).step);
+    // the goal line is a traced picture (outline.js) drawn as an image: count its gold on the screen round the thing
+    const gold = await page.evaluate((L) => {
+      const c = document.querySelector("canvas"),
+        k = c.width / 960,
+        d = c.getContext("2d").getImageData(Math.round((L.x0 - 16) * k), Math.round((L.y0 - 16) * k), Math.round((L.x1 - L.x0 + 32) * k), Math.round((L.y1 - L.y0 + 32) * k)).data;
+      let n = 0;
+      for (let i = 0; i < d.length; i += 4) d[i] > 240 && d[i + 1] > 190 && d[i + 1] < 220 && d[i + 2] < 90 && n++;
+      return Math.round(n / (k * k));
+    }, box);
+    g.check(`home morning (${step}): the goal thing has the one dashed line and no glow behind it (no radial glow, no blur)`, st === step && near(h, box).length === 0 && h.blur === 0 && gold > 60 && h.gold.every((s) => s.dashed && Math.abs(s.w - OUTLINE.width) < 0.01), { st, radial: near(h, box), blur: h.blur, gold, strokes: h.gold.slice(0, 4) });
+  }
+  g.check("no page errors (home morning)", errors.length === 0, errors);
 }
 await g.finish("highlight-style");

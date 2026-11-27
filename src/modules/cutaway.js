@@ -26,6 +26,7 @@
 import { HOMEWORK_PANELS } from "./homework-cutaway.js";
 import { WOOKIEE_PANELS } from "./tv-story-art.js";
 import { BEDTIME_PANELS, GUARDIANS_PANELS, BEDTIME_AUTO, LASTCAKE_PANELS } from "./bedtime-story-art.js";
+import { GBOX_PANELS, NOTE_PANELS } from "./home-morning-art.js";
 import { CROC_PANELS } from "./croc-cutaway.js";
 import { TAPE_PANELS } from "./tv-tape-art.js";
 
@@ -651,6 +652,10 @@ const PANELS = {
   moonpie: BEDTIME_PANELS,
   // and its last picture, after Mops's bedtime line: Squatch's crayon drawing of the Guardians, Mops's Guardians line
   guardians: GUARDIANS_PANELS,
+  // beats 22 to 24, the home morning (home-morning.js): the gift drops into the Guardian Box
+  gbox: GBOX_PANELS,
+  // and the note tied to the gift, read as he picks it up (Brian 2026-11-26, video note 0:24)
+  note: NOTE_PANELS,
   lastcake: LASTCAKE_PANELS,
   // P3, the band's first notes: a Croc Boy bopping, close up (croc-cutaway.js)
   croc: CROC_PANELS,
