@@ -85,7 +85,6 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: bite the cake": { ev: "bite" },
     "Squatch: mark the chart": { ev: "chart", x: 236, y: 440 },
     "Squatch: hold the brochure up to your crate": { ev: "crate", x: 330, y: 458 },
-    "Squatch: go home": { ev: "gohome", walk: true, x: 477, y: 555 },
     "Squatch: show Mops the brochure": [{ ev: "show" }, { es: "show", x: 380, y: 556, look: [400, 500] }], // (beat 40, the evening, and beat 45, the escape)
     "Squatch: go to sleep in your bed": { ev: "bed", x: 330, y: 458 },
     "Squatch: sneak out the door": { ev: "out", walk: true, x: 860, y: 380 },
@@ -103,10 +102,10 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: draw the plan at your desk": { es: "drawplan", x: 550, y: 392, look: [459, 238] }, // (round 7, q: 132: the desk outlined)
     "Squatch: sneak to the big vent": { es: "sneak", walk: true, x: 380, y: 556, look: [916, 362] },
     "Squatch: go to the office door": { es: "tohall", walk: true, look: [36, 262] },
-    "Squatch: book the empty crate on the computer": { es: "computer", x: 610, y: 585, look: [735, 300] },
+    "Squatch: book a pickup on the computer": { es: "computer", x: 610, y: 585, look: [735, 300] },
     "Squatch: hide under the desk": { es: "duck", x: 700, y: 585, look: [600, 446] },
     "Squatch: take the label": { es: "label", closeUp: true, look: [480, 600] },
-    "Squatch: go to the snack bar": { es: "tobar", walk: true, look: [480, 133] },
+    "Squatch: go home": [{ ev: "gohome", walk: true, x: 477, y: 555 }, { es: "tobar", walk: true, look: [480, 133] }], // (round 7, q: 133: the walk home from the office passes the snack bar)
     "Squatch: roll into a ball by the vent": { es: "ball", x: 846, y: 322, look: [800, 220] },
     "Squatch: grab the pink slip": { es: "grab", x: 850, y: 334, look: [796, 290] },
     "Squatch: type the code from the pink slip": { es: "pad", closeUp: true, look: [220, 276] },

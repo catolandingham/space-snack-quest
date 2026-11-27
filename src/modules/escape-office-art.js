@@ -76,21 +76,21 @@ export function drawSpinStars(ctx, head, age, t) {
   }
   ctx.restore();
 }
-/** A robot's flashlight cone sliding past the open door, across the floor (`k` 0 to 1 of its pass). */
-export function drawPassingLight(ctx, k) {
-  const ox = OFFICE.door.x,
-    oy = OFFICE.door.y - 30,
-    a = 0.6 + k * 1.9;
+/**
+ * Dust off the filing cabinet as the office robot wipes it (round 7, r6 0:37: a robot comes in and dusts one thing).
+ * A few grey puffs rising and fading. PLACEHOLDER drawing for Brian.
+ */
+export function drawDustPuff(ctx, x, y, t) {
   ctx.save();
-  ctx.fillStyle = "rgba(214,232,255,.42)"; // (a cold white flashlight, not the goal's gold)
-  ctx.beginPath();
-  ctx.moveTo(ox, oy);
-  ctx.lineTo(ox + Math.cos(a - 0.22) * 420, oy + Math.sin(a - 0.22) * 420);
-  ctx.lineTo(ox + Math.cos(a + 0.22) * 420, oy + Math.sin(a + 0.22) * 420);
-  ctx.closePath();
-  ctx.fill();
+  for (let i = 0; i < 4; i++) {
+    const u = (t * 1.3 + i / 4) % 1;
+    ctx.globalAlpha = 0.55 * (1 - u);
+    ctx.fillStyle = "#b9bfca";
+    ctx.beginPath();
+    ctx.arc(x + (i - 1.5) * 12 + Math.sin(u * 6 + i) * 4, y - u * 34, 7 + u * 6, 0, Math.PI * 2);
+    ctx.fill();
+  }
   ctx.restore();
-  return { a: +a.toFixed(2) };
 }
 
 // ---------- the close-ups (cutaway.js PANELS; each waits for NEXT) ----------

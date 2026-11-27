@@ -1165,6 +1165,8 @@ export function createEvening(bridge) {
     s.hideAt = "crate";
     sound.effect("hide");
     if (s.papers === "pink" && s.suck < 0) ((s.suck = 0), (s.pink = "flying"), e.sfx("slurp"));
+    // (unseen after the post: the floor vent takes the sheet and the way home follows by itself; round 7, q: 125)
+    s.postHide && !s.alarm && s.suck >= 0 && busy();
   }
   // Every frame: the vent pulling the pink sheet out of his paws (wordless, about 3 seconds), then his whisper.
   function suckTick(dt) {

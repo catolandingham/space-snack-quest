@@ -632,47 +632,58 @@ export function drawDoorOpen(ctx) {
   esPaint(ctx, "#8b93a7", 3);
 }
 /**
- * The snack site on the office computer (beat 51), close up: the snack's name as its header, a small grey "Order new box"
- * button and a big lit "Return empty crate" button. `booked` (0 to 1): after the tap, the crate rides up a ramp into
- * the ship and a big green tick comes. Returns the buttons' boxes.
+ * The office computer (beat 51), close up. Round 7 (r5 15:23 and 15:29, q: 124): a Universal Postal Service page, "just
+ * schedule a pickup": `page` 0 the big SCHEDULE A PICKUP button; 1 "How big?" (SMALL, MEDIUM, BIG: three boxes of three
+ * sizes, BIG outlined); 2 "What's inside?" (OLD MOPS, GOAT STUFF outlined, ONE SASQUATCH). `booked` (0 to 1): after the
+ * last tap, the crate rides up a ramp into the ship and a big green tick comes. PLACEHOLDER page for Brian.
+ * Returns the buttons' boxes on the page shown.
  */
-export function drawSite(ctx, { booked = -1, t = 0, ghjk = false, label = -1 } = {}) {
+export function drawSite(ctx, { booked = -1, t = 0, page = 0, size = "", label = -1 } = {}) {
   const S = SITE,
     sc = S.screen;
   esRect(ctx, sc.x0 - 20, sc.y0 - 20, sc.x1 - sc.x0 + 40, sc.y1 - sc.y0 + 40, 18);
   esPaint(ctx, "#2d323e", 6);
   esRect(ctx, sc.x0, sc.y0, sc.x1 - sc.x0, sc.y1 - sc.y0, 8);
   esPaint(ctx, "#eaf4ff", 3);
-  ctx.fillStyle = "#8b5a3c";
+  // the header band: the postal service's blue, its name in white, a little envelope
+  ctx.fillStyle = "#2f5aa8";
   ctx.fillRect(sc.x0 + 3, sc.y0 + 3, sc.x1 - sc.x0 - 6, 110);
-  esWords(ctx, escapeWords("site"), (sc.x0 + sc.x1) / 2, sc.y0 + 58, 60, "#fff3d6", "center", 900);
-  const o = S.order,
-    r = S.ret;
-  // the kinds already ordered, one a week (the hunt seen from the manager's side): a column of little cakes, each ticked
-  for (let i = 0; i < 6; i++) {
-    const kx = sc.x1 - 46,
-      ky = sc.y0 + 150 + i * 62;
-    ctx.beginPath();
-    ctx.ellipse(kx, ky, 26, 18, 0, 0, ES_TAU);
-    esPaint(ctx, ["#c98b4a", "#e0b070", "#9b6b3c", "#f0c890", "#b8763a", "#d9a35b"][i], 3);
-    ctx.beginPath();
-    ctx.moveTo(kx - 46, ky - 4);
-    ctx.lineTo(kx - 38, ky + 6);
-    ctx.lineTo(kx - 26, ky - 10);
-    ctx.strokeStyle = "#2bc48a";
-    ctx.lineWidth = 4;
-    ctx.stroke();
-  }
-  // Mops tried first: his hooves hit four keys at once
-  ghjk && (esRect(ctx, o.x0, sc.y0 + 124, 300, 60, 8), esPaint(ctx, "#ffffff", 3), esWords(ctx, escapeWords("keys-ghjk"), o.x0 + 20, sc.y0 + 156, 34, ES_INK, "left", 700));
+  esWords(ctx, escapeWords("site"), (sc.x0 + sc.x1) / 2 + 30, sc.y0 + 58, 44, "#ffffff", "center", 900);
+  esRect(ctx, sc.x0 + 24, sc.y0 + 32, 64, 46, 4);
+  esPaint(ctx, "#ffffff", 3);
+  ctx.beginPath();
+  ctx.moveTo(sc.x0 + 24, sc.y0 + 32);
+  ctx.lineTo(sc.x0 + 56, sc.y0 + 58);
+  ctx.lineTo(sc.x0 + 88, sc.y0 + 32);
+  ctx.strokeStyle = ES_INK;
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  const button = (b, words, goal, size2 = 40, fill = "#ffffff", ink = ES_INK) => {
+    goal && markBox(ctx, b, t);
+    esRect(ctx, b.x0, b.y0, b.x1 - b.x0, b.y1 - b.y0, 14);
+    esPaint(ctx, fill, 4);
+    esWords(ctx, words, (b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2, size2, ink, "center", 900);
+  };
+  let boxes = {};
   if (booked < 0) {
-    esRect(ctx, o.x0, o.y0, o.x1 - o.x0, o.y1 - o.y0, 12);
-    esPaint(ctx, "#dfe4ea", 3, "#8a93a3");
-    esWords(ctx, escapeWords("site-order"), (o.x0 + o.x1) / 2, (o.y0 + o.y1) / 2, 30, "#59657d", "center", 700);
-    markBox(ctx, r, t);
-    esRect(ctx, r.x0, r.y0, r.x1 - r.x0, r.y1 - r.y0, 18);
-    esPaint(ctx, "#2bc48a", 6);
-    esWords(ctx, escapeWords("site-return"), (r.x0 + r.x1) / 2, (r.y0 + r.y1) / 2, 50, "#ffffff", "center", 900);
+    if (page === 0) {
+      button(S.schedule, escapeWords("site-schedule"), true, 46, "#2bc48a", "#ffffff");
+      boxes = { schedule: S.schedule };
+    } else if (page === 1) {
+      esWords(ctx, escapeWords("site-size"), (sc.x0 + sc.x1) / 2, sc.y0 + 170, 48, ES_INK, "center", 900);
+      for (const [i, b] of S.sizes.entries()) {
+        button(b, "", b.id === "size-big");
+        // a crate drawn at its size, its word under it
+        const k = [0.35, 0.5, 0.68][i];
+        drawCrate(ctx, (b.x0 + b.x1) / 2, b.y0 + 70, k, { words: false });
+        esWords(ctx, escapeWords(b.id), (b.x0 + b.x1) / 2, b.y1 - 26, 30, ES_INK, "center", 900);
+      }
+      boxes = { sizes: S.sizes };
+    } else {
+      esWords(ctx, escapeWords("site-inside"), (sc.x0 + sc.x1) / 2, sc.y0 + 165, 48, ES_INK, "center", 900);
+      for (const b of S.inside) button(b, escapeWords(b.id), b.id === "in-goat", 36);
+      boxes = { inside: S.inside };
+    }
   } else {
     // booked: the crate rides up the ramp into the ship, then a big green tick
     const k = esClamp(booked / 0.7),
@@ -714,7 +725,7 @@ export function drawSite(ctx, { booked = -1, t = 0, ghjk = false, label = -1 } =
     esWords(ctx, escapeWords("label"), (L.x0 + L.x1) / 2, L.y0 + 44, 34, ES_INK, "center", 900);
     lab = L;
   }
-  return { order: o, ret: r, booked: booked >= 0, label: lab, ghjk };
+  return { ...boxes, page, size, booked: booked >= 0, label: lab };
 }
 /** His big furry arm and paw coming up from below (for the close-ups over the room), the paw at `paw`. */
 export function drawArmUp(ctx, paw) {

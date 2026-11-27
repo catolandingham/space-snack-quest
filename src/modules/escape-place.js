@@ -133,16 +133,34 @@ export const OFFICE = Object.freeze({
   drawer: Object.freeze({ at: Object.freeze({ x: 230, y: 500 }), thing: Object.freeze({ x0: 68, y0: 352, x1: 158, y1: 396 }) }),
   frame: Object.freeze({ at: Object.freeze({ x: 905, y: 585 }), thing: Object.freeze({ x0: 846, y0: 396, x1: 884, y1: 444 }) }),
   hide: Object.freeze({ at: Object.freeze({ x: 700, y: 585 }), thing: Object.freeze({ x0: 600, y0: 444, x1: 870, y1: 552 }), under: Object.freeze({ x: 735, y: 520 }) }),
+  // round 7 (r5 15:01, q: 124): the wall of security screens (they show the bay: bay-camera.js) and the NO FUR poster
+  screens: Object.freeze({ at: Object.freeze({ x: 160, y: 300 }), thing: Object.freeze({ x0: 60, y0: 83, x1: 254, y1: 231 }) }),
+  poster: Object.freeze({ at: Object.freeze({ x: 650, y: 300 }), thing: Object.freeze({ x0: 606, y0: 96, x1: 700, y1: 210 }) }),
   r: 45,
-  sweep: 2.6, // seconds the robot's light takes to pass the open door
+  // round 7 (r6 0:37, q: 133): a robot comes in through the door, dusts the filing cabinet and goes; `sweep` seconds in
+  // all. Its cone shows once it is in the room (below `inside`); in the doorway it has none yet.
+  sweep: 5,
+  robotWay: Object.freeze([Object.freeze({ x: 480, y: 300 }), Object.freeze({ x: 470, y: 400 }), Object.freeze({ x: 250, y: 470 })]),
+  inside: 340,
 });
 // The way from the bay to the office door (50): the hallway, where the keypad is.
 export const ROUTE_OFFICE = Object.freeze({ hangar: "passage" });
 // The snack site close-up (over the blurred office): the screen, its header and two buttons.
+// Round 7 (r5 15:23 and 15:29, q: 124): a Universal Postal Service page, three pages: SCHEDULE A PICKUP; How big?;
+// What's inside? (`schedule`, `sizes`, `inside`: the buttons' boxes on each page).
 export const SITE = Object.freeze({
   screen: Object.freeze({ x0: 110, y0: 40, x1: 850, y1: 600 }),
-  order: Object.freeze({ x0: 200, y0: 210, x1: 760, y1: 290 }),
-  ret: Object.freeze({ x0: 200, y0: 330, x1: 760, y1: 500 }),
+  schedule: Object.freeze({ x0: 200, y0: 260, x1: 760, y1: 430 }),
+  sizes: Object.freeze([
+    Object.freeze({ id: "size-small", x0: 150, y0: 300, x1: 340, y1: 470 }),
+    Object.freeze({ id: "size-medium", x0: 385, y0: 300, x1: 575, y1: 470 }),
+    Object.freeze({ id: "size-big", x0: 620, y0: 300, x1: 810, y1: 470 }),
+  ]),
+  inside: Object.freeze([
+    Object.freeze({ id: "in-old", x0: 200, y0: 250, x1: 760, y1: 325 }),
+    Object.freeze({ id: "in-goat", x0: 200, y0: 345, x1: 760, y1: 420 }),
+    Object.freeze({ id: "in-sq", x0: 200, y0: 440, x1: 760, y1: 515 }),
+  ]),
   booked: 2.4, // seconds the booked picture (the crate rides to the ship) plays before the close-up closes
 });
 
