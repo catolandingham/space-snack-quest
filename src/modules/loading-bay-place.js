@@ -129,8 +129,8 @@ export const HALL_SNEAK = Object.freeze({
     // (in front of the lunch's stack of crates, which stays in the hall, lunch-sneak-place.js LUNCH_PLACES.crate: never
     // through it)
     Object.freeze({ y: 500, x0: 150, x1: 744, at: 0.55, dir: -1 }),
-    // (right of the middle plant's pot: never through it)
-    Object.freeze({ y: 532, x0: 500, x1: 700, at: 0.85, dir: 1 }),
+    // (in front of the middle plant's pot: never through it)
+    Object.freeze({ y: 566, x0: 150, x1: 700, at: 0.85, dir: 1 }),
   ]),
 });
 

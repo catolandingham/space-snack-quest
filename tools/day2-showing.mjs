@@ -363,7 +363,7 @@ await join_("37-to-36b-the-party-hall-robots");
   await sleep(900);
   await still("36b-get-past-the-robots");
   await walk(850, 340);
-  await until(async () => ((q) => q.hall && [1, 2].every((i) => q.hall[i].dir < 0 && q.hall[i].x < 600))(await who()), 45000);
+  await until(async () => ((q) => q.hall && [1, 2].every((i) => q.hall[i].dir < 0 && q.hall[i].x < 520))(await who()), 45000);
   await walk(772, 584, (q) => q.step !== "hall", 15000);
   (await until((s) => s.step === "tostorm" || s.step === "storm", 8000)) || (await fail("the storm did not follow 36b"));
   await join_("36b-to-38a-to-the-storm");
