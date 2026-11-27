@@ -3,36 +3,39 @@
 
 | Lines | Heading |
 | --- | --- |
-| 35–46 | # Chapter 1 problems, ranked |
-| 47–50 | ## Recommendation: do not rebuild Chapter 1 |
-| 51–52 | ## Do first: scene 1 (beats 1–3), Brian 2026-11-14 |
-| 53–61 | ### Current priority: finish beat 1 before moving on |
-| 62–69 | ### Home room sheet for this calendar change |
-| 70–82 | ### Earlier scene work |
-| 83–122 | ## Party hall: room sheet (every decision about how it looks, in one place) |
-| 123–154 | ## Party hall picture check, graded 2026-11-15 |
-| 155–164 | ## 1. A catch at the party leaves the game stuck in the bedroom |
-| 165–175 | ## 2. Tapping a spot behind furniture walks Squatch into the furniture and stops (fixed 2026-11-23) |
-| 176–187 | ## 3. The hangar robot catches Squatch with no warning when he is close |
-| 188–196 | ## 4. The big button changes width with every label (fixed 2026-11-14) |
-| 197–204 | ## 5. The whole page jumps down once at the start (fixed 2026-11-14) |
-| 205–215 | ## 6. A yellow ring is drawn around Squatch himself |
-| 216–226 | ## 7. Squatch walks through the bed when he gets up |
-| 227–232 | ## 8. Mops's sight cone lights up too soon (pull request 35, parked) |
-| 233–239 | ## 9. Party extras are buttons, and the dance circle plays itself |
-| 240–243 | ## 10. A start-over with no card (seen once) |
-| 244–247 | ## Day 1 does not yet play the way the walkthrough says (added 2026-11-14) |
-| 248–260 | ## 11. Sight cones: a dashed outline that lights up, on everyone, in every scene |
-| 261–265 | ## 12. The peek is not a peek (beat 3) — fixed Nov 14 (see "Do first" step 4) |
-| 266–269 | ## 13. Sneaking to the plant plays itself (beat 4) — fixed Nov 14 (see "Do first" step 5) |
-| 270–273 | ## 14. The octopus and the photo have buttons that do the moment (beats 12, 13) |
-| 274–277 | ## 15. Running home happens by itself (beat 18) |
-| 278–282 | ## 16. The TV story is a small TV in the room (beat 20) (fixed 2026-11-25, draft PR #87) |
-| 283–286 | ## 17. Mops finds the flyer and fur at the wrong time (beat 19) |
-| 287–290 | ## 18. The bedtime story has no pictures (beat 21) |
-| 291–294 | ## 19. The Croc Boys are barely there (beat 6) |
+| 35–49 | # Chapter 1 problems, ranked |
+| 50–53 | ## Recommendation: do not rebuild Chapter 1 |
+| 54–55 | ## Do first: scene 1 (beats 1–3), Brian 2026-11-14 |
+| 56–64 | ### Current priority: finish beat 1 before moving on |
+| 65–72 | ### Home room sheet for this calendar change |
+| 73–85 | ### Earlier scene work |
+| 86–125 | ## Party hall: room sheet (every decision about how it looks, in one place) |
+| 126–157 | ## Party hall picture check, graded 2026-11-15 |
+| 158–167 | ## 1. A catch at the party leaves the game stuck in the bedroom |
+| 168–178 | ## 2. Tapping a spot behind furniture walks Squatch into the furniture and stops (fixed 2026-11-23) |
+| 179–190 | ## 3. The hangar robot catches Squatch with no warning when he is close |
+| 191–199 | ## 4. The big button changes width with every label (fixed 2026-11-14) |
+| 200–207 | ## 5. The whole page jumps down once at the start (fixed 2026-11-14) |
+| 208–218 | ## 6. A yellow ring is drawn around Squatch himself |
+| 219–229 | ## 7. Squatch walks through the bed when he gets up |
+| 230–235 | ## 8. Mops's sight cone lights up too soon (pull request 35, parked) |
+| 236–242 | ## 9. Party extras are buttons, and the dance circle plays itself |
+| 243–246 | ## 10. A start-over with no card (seen once) |
+| 247–250 | ## Day 1 does not yet play the way the walkthrough says (added 2026-11-14) |
+| 251–263 | ## 11. Sight cones: a dashed outline that lights up, on everyone, in every scene |
+| 264–268 | ## 12. The peek is not a peek (beat 3) — fixed Nov 14 (see "Do first" step 4) |
+| 269–272 | ## 13. Sneaking to the plant plays itself (beat 4) — fixed Nov 14 (see "Do first" step 5) |
+| 273–276 | ## 14. The octopus and the photo have buttons that do the moment (beats 12, 13) |
+| 277–280 | ## 15. Running home happens by itself (beat 18) |
+| 281–285 | ## 16. The TV story is a small TV in the room (beat 20) (fixed 2026-11-25, draft PR #87) |
+| 286–289 | ## 17. Mops finds the flyer and fur at the wrong time (beat 19) |
+| 290–293 | ## 18. The bedtime story has no pictures (beat 21) |
+| 294–297 | ## 19. The Croc Boys are barely there (beat 6) |
 <!-- /section-index -->
 # Chapter 1 problems, ranked
+
+> **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
+
 
 Written 2026-11-13 from robot playthroughs of Chapter 1 on a phone-size screen (375 by 812, touch only). The robot is `tests/ch1-kid-play.mjs`. It taps like a kid: taps through speech, presses the big button, taps the spot it wants to reach. It reached the score card in 344, 367 and 482 seconds.
 
@@ -54,14 +57,14 @@ A kid can finish the chapter today. The problems below have ten separate, small 
 
 Brian's Nov 16 direction overrides the older party-first ordering below. One beat at a time; no move to the next beat without his sign-off.
 
-- Calendar (PR 58, unmerged): latest copy has MOONMUNCH / FUZZUARY; Sponsored by MOON PIES; Sock hunt; family Olympics night; Wash outside windows (remember space suit!); Blanket fort night. Brian removed calendar Homework and Sing with Mops, and asked for the small edge nibble to be a little larger. Desk homework remains approved separately. The day-two LOOK position is beside the wardrobe, not inside the bed. `tests/calendar-closeup.mjs`.
+- Calendar (PR 58, unmerged): latest copy has MOONMUNCH / FUZZUARY; Sponsored by STARS CAKES; Sock hunt; family Olympics night; Wash outside windows (remember space suit!); Blanket fort night. Brian removed calendar Homework and Sing with Mops, and asked for the small edge nibble to be a little larger. Desk homework remains approved separately. The day-two LOOK position is beside the wardrobe, not inside the bed. `tests/calendar-closeup.mjs`.
 - Walking/Guardian box: PR 57 remains separate and unmerged. This calendar branch is based on main and does not include it.
 - Approved but not built: closet look, bed flop/hop and their approved lines; homework at the desk to pass time after Mops leaves, with wording still awaiting approval.
 - Still open: bucket readability and Mops taking it to work, music. (The purple bed bar is removed on branch feat/home-alone, PR #84: Brian, 2026-11-23, "that weird extra line back on the bed".) TV stays for beat 20. No clip needed.
 
 ### Home room sheet for this calendar change
 
-- Keep the locked room picture unchanged. Calendar stays on the wardrobe door and faces away when that door is open (R31, R34). Close-up keeps its red pin, red strip, 5-by-4 grid, and circled Moon Pie.
+- Keep the locked room picture unchanged. Calendar stays on the wardrobe door and faces away when that door is open (R31, R34). Close-up keeps its red pin, red strip, 5-by-4 grid, and circled Stars Cake.
 - Optional opening inspection must not advance the day, move Squatch, start the song or overwrite the story queue. No arrows or floor ring added.
 - Close-ups use a blurred room behind, a furry paw following the finger, and a white X. X must be usable on a phone. Brian now requested invented calendar names and dated decoration; these do not change story timing or the Guardian story. No new spoken dialogue.
 - Delivery-day inspection must still lead into the existing lunch sequence. The bite must not erase the delivery clue.
@@ -73,7 +76,7 @@ Brian: make scene 1 right before anything else. The story is in `docs/CH1-STORY-
 
 1. Done (tidy, no change in play): everything scene 1 runs is now in `src/game/15-ch1-scene1.js` (the start, the song, Mops walking out, the peek). `Sp` in `10-ch1.js` is an old copy kept for debug links; never edit it. The goal-bar labels still live in the `Q1` table in `12-ch1-redesign.js`.
 2. Done (steady screen): the big button is one size for every label, the page no longer jumps, phone sideways fits, iPad sideways picture grows from about a third to over half the screen. Phone upright is limited by the phone's width; turning it sideways gives a picture about twice as big. Check: `tests/screen-fit.mjs`.
-3. Done (morning): after the cards, short bubbles while Squatch is in bed (Brian: not a lot of text at once): Mops "Morning, Squatch." / "Big party in the hall tonight." / Squatch "Party?" / Mops "Stay in here." Squatch hops out of bed (no sliding through the frame) and walks; Mops walks to the door humming; they sing there as his goodbye (Brian yes, Nov 14); Mops leaves, a "That evening…" card, then the peek goal. The room is the locked picture from the first moment, so there is one bucket and nothing jumps when the song starts. Removed: floor arrows, "Tap the floor to walk there." (Chapter 1 only; other chapters keep it), the touch help line, the yellow polish sparkle, the "go with Mops to the ship" goal. New calendar picture (`home-room-empty-closed-v4.png`): a real calendar with the Moon Pie delivery day circled. Rule (Brian, Nov 14): no yellow ring and no "VERB · thing" tag when the action happens where Squatch stands (`actsWhereSquatchStands`). Check: `tests/scene1-morning.mjs`.
+3. Done (morning): after the cards, short bubbles while Squatch is in bed (Brian: not a lot of text at once): Mops "Morning, Squatch." / "Big party in the hall tonight." / Squatch "Party?" / Mops "Stay in here." Squatch hops out of bed (no sliding through the frame) and walks; Mops walks to the door humming; they sing there as his goodbye (Brian yes, Nov 14); Mops leaves, a "That evening…" card, then the peek goal. The room is the locked picture from the first moment, so there is one bucket and nothing jumps when the song starts. Removed: floor arrows, "Tap the floor to walk there." (Chapter 1 only; other chapters keep it), the touch help line, the yellow polish sparkle, the "go with Mops to the ship" goal. New calendar picture (`home-room-empty-closed-v4.png`): a real calendar with the Stars Cakes delivery day circled. Rule (Brian, Nov 14): no yellow ring and no "VERB · thing" tag when the action happens where Squatch stands (`actsWhereSquatchStands`). Check: `tests/scene1-morning.mjs`.
 4. Done (peek): Squatch leans in at his doorway (stands in the gap of the bottom wall, half hidden), the hall is already full on the first frame, the goal bar is empty, Isfred's muffled "Mmf mmf... mm-mmf... mmf!" (Brian yes, Nov 14), then "Robots?" once. Then he walks to the plant and the announcement plays there. Check: the peek part of `tests/scene1-morning.mjs`.
 5. Done (sneak): after "Robots?" the player steers Squatch from his doorway to the middle plant and presses HIDE there. The yellow guest by the door faces the stage for 3.5 seconds, turns, then looks toward the plant for 2 seconds with a sight cone (the cone covers the floor between the door and the plant, not the plant). If he sees Squatch out in the open, a red "!" shows and Squatch hurries back to his doorway to try again. Goal bar: "Squatch: sneak to the plant" (Brian yes and merged, Nov 15, pull request 48). Check: the sneak part of `tests/scene1-morning.mjs`; `ch1-playthrough` has the new "HIDE · plant".
 6. Next: the party hall picture. Brian, Nov 15: the hall has many design problems apart from play. Read the room sheet and the graded list just below, then fix them in the order given there, one per pull request.
@@ -106,7 +109,7 @@ Snack bar (Brian, 2026-11-15, R107)
 - The bartender (she) works behind the counter, not in front of it.
 - Squatch can hide behind the counter when nobody is back there. This matters later (beat 27, "One snack, behind the counter").
 - No sign on it.
-- Snacks on it are the picture's own (snack box, red snack bag, Moon Pie tin). Do not draw extra snacks on top.
+- Snacks on it are the picture's own (snack box, red snack bag, Stars Cakes tin). Do not draw extra snacks on top.
 
 Floor vent (Brian, 2026-11-15, R108; also D15, S61, A22)
 - Soft swirls, always moving inward (A22). In the picture today they are still drawn and never move.
@@ -286,7 +289,7 @@ Found by reading the Day 1 code against beats 1 to 21 of `docs/CH1-STORY-WALKTHR
 
 ## 18. The bedtime story has no pictures (beat 21)
 
-- Walkthrough: tap through story pictures of Mops finding the baby in a Moon Pie crate. Game: one text box.
+- Walkthrough: tap through story pictures of Mops finding the baby in a Stars Cakes crate. Game: one text box.
 
 ## 19. The Croc Boys are barely there (beat 6)
 

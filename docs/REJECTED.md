@@ -1,5 +1,7 @@
 # Rejected (do not build again)
 
+> **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
+
 Things Brian said no to, said were wrong, or asked to remove, from the Grok threads and the Nov 8 recording. **Brian: strike anything you have since changed your mind on.** Tags: `[G#]` G Bot (most recent), `[S#]` Squatchbot, `[K#]` Grok Bot, `[Nov 8 @mm:ss]` the Nov 8 recording (machine transcript; its odd capital letters come from the transcription tool). Quotes are word for word. Where a later message reversed a no, it is noted. Drafted 2026-11-22; every quote was checked by script against the message its tag names.
 
 ## How it should feel

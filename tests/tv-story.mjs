@@ -2,7 +2,7 @@
  * Beat 20, the TV story (Brian 2026-11-25, "1"): the old Wookiee picture story from commit 71ec66e is back in
  * place of the stand-in, full screen, each picture waiting for NEXT.
  *   - it plays in order: the "Years ago, on Stormtop..." card, tour, shed, clog, the "*gasp*", the Station
- *     Official and the TOURS ship, the "Now" card; then bedtime goes on (the Moon Pie panel) as before;
+ *     Official and the TOURS ship, the "Now" card; then bedtime goes on (the snack card) as before;
  *   - every word is the old approved wording (src/modules/tv-story-lines.js), word for word, and shows on screen;
  *   - each picture fills the screen and waits (it is still up after 6 seconds with no tap);
  *   - Brian's Wookiee recording is asked for on the tour, the shed and the ship pictures, and nowhere else;

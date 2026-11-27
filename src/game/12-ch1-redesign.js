@@ -469,7 +469,7 @@
     function ch1Snack() {
       ((n.scene = "Q3"),
         J([
-          v("tourist", "I swear we had more Moon Pies... is that what they stole at lunch?", "say", !0),
+          v("tourist", "I swear we had more " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("name") : "snacks") + "... is that what they stole at lunch?", "say", !0),
           v("mops", "Quick, hide."),
           ch1Step("sq", ne.x, ne.y, 200),
           N(() => {
@@ -602,7 +602,7 @@
         ]));
     }
     function ch1Site() {
-      // The Moon Pie page is on the manager's computer in the hall (R46), never on the home TV.
+      // The snack's order page is on the manager's computer in the hall (R46), never on the home TV.
       ((n.scene = "Q7"),
         (n.room = "hall"),
         (n.ch1D = !1),

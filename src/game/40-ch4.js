@@ -261,8 +261,8 @@
               n.pulse.add("sdoor"),
               TV([
                 { k: "panel", id: "poster4" },
-                v("mops", "...Lost in a Moon Pie shipment."),
-                v("mops", "Your crib was a Moon Pie crate.", "whisper"),
+                v("mops", "...Lost in a " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("name") : "snack") + " shipment."),
+                v("mops", "Your crib was a " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("name") : "snack") + " crate.", "whisper"),
                 v("sq", "...That's ME?", "whisper"),
               ]));
           },
@@ -966,7 +966,7 @@
           F(-7, -48, 3, y),
           F(7, -48, 3, y),
           g("Lost in a", 0, 70, 26, y, "center", 800),
-          g("MOON PIE shipment", 0, 108, 30, "#3478f6", "center", 900),
+          g((window.SSQ && window.SSQ.snack ? window.SSQ.snack("NAME") : "SNACK") + " shipment", 0, 108, 30, "#3478f6", "center", 900),
           g("Please bring him home.", 0, 160, 22, "#59657d", "center", 700),
           g("\u2014 Big Furry Pancakes, Crater Row", 0, 200, 16, "#59657d", "center", 700),
           e.restore(),

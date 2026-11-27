@@ -3,27 +3,30 @@
 
 | Lines | Heading |
 | --- | --- |
-| 26–32 | # Brian's asks that are not in the game yet |
-| 33–41 | ## 1. Build next |
-| 42–59 | ## 2. Needs your eyes |
-| 60–63 | ## 3. Your instructions disagree |
-| 64–65 | ## 4. Everything else not built |
-| 66–84 | ### Morning and home |
-| 85–95 | ### Party |
-| 96–107 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
-| 108–111 | ### Party video notes and answers, 2026-11-24 (not built yet) |
-| 112–116 | ### Snacks and dress-up |
-| 117–129 | ### Day 2 and night |
-| 130–134 | ### Escape and later chapters |
-| 135–138 | ### Looks and lines |
-| 139–146 | ### Sound |
-| 147–150 | ### Words and rules |
-| 151–163 | ### How the bots work |
-| 164–171 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
-| 172–188 | ## 5. Merged, in a pull request, and being built |
-| 189–199 | ## 6. Corrections to the checkers |
+| 26–35 | # Brian's asks that are not in the game yet |
+| 36–44 | ## 1. Build next |
+| 45–62 | ## 2. Needs your eyes |
+| 63–66 | ## 3. Your instructions disagree |
+| 67–68 | ## 4. Everything else not built |
+| 69–87 | ### Morning and home |
+| 88–98 | ### Party |
+| 99–110 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
+| 111–114 | ### Party video notes and answers, 2026-11-24 (not built yet) |
+| 115–119 | ### Snacks and dress-up |
+| 120–132 | ### Day 2 and night |
+| 133–137 | ### Escape and later chapters |
+| 138–141 | ### Looks and lines |
+| 142–149 | ### Sound |
+| 150–153 | ### Words and rules |
+| 154–166 | ### How the bots work |
+| 167–174 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
+| 175–191 | ## 5. Merged, in a pull request, and being built |
+| 192–202 | ## 6. Corrections to the checkers |
 <!-- /section-index -->
 # Brian's asks that are not in the game yet
+
+> **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
+
 
 This page lists everything Brian asked for that is not in the game yet, checked against main on 2026-11-23 and against an independent review the same day.
 When an ask gets built, it leaves this page. Bots: read "Build next" before choosing work.
@@ -41,7 +44,7 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 
 ## 2. Needs your eyes
 
-- **The Moon Pie bedtime story (beat 21).** Brian 2026-11-25: the old crate story "is the bedtime story (beat 21) and gets the same sizing fix". Not built yet: its old captions differ from the walkthrough's pending line, and it is not under "Build next". Ask which words, and whether it is this round.
+- **The bedtime crate story (beat 21).** Brian 2026-11-25: the old crate story "is the bedtime story (beat 21) and gets the same sizing fix". Not built yet: its old captions differ from the walkthrough's pending line, and it is not under "Build next". Ask which words, and whether it is this round.
 - **Home room objects.** "the new version of the crate in the room is off, at least in the picture you showed." (G 597). Covers crate, bed, bucket, bedtime-story look, janitor facing. Walls and furniture merged today; check.
 - **The dance game.** A scrolling-arrow dance exists but you said it never worked. "The dance game, hopefully that can be done clean and simple. If not, forget it." (G 516). "the fur shows at the dance scene" (G 603) is unclear.
 - **The balloon game.** "The balloon thing has just never worked when we've tried it before ... if it's all wonky and confusing, forget it." (G 516); "the balloon's just total nonsense" (K 336). Still in main (12-ch1-redesign.js:808-834).

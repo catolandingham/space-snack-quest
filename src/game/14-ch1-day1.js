@@ -1,6 +1,6 @@
-// Day 1's evening at home after the party: beat 20 (the TV story), bedtime and the Moon Pie card.
+// Day 1's evening at home after the party: beat 20 (the TV story), bedtime and the snack card.
     // Beat 20, the TV story, after "You have me." (both party endings hand over here: src/modules/party-endings.js).
-    // Then bedtime, the Moon Pie card, and Day 2.
+    // Then bedtime, the snack card, and Day 2.
     function ch1TvEvening() {
       return [
         N(() => {
@@ -24,6 +24,6 @@
     function drawCh1Moon() {
       (m(150, 48, 660, 78, 16),
         r("#fffdf8", 4),
-        g("You came to me in a Moon Pie crate.", 480, 72, 22, "#1e2430", "center", 800),
-        g("You've loved Moon Pies ever since.", 480, 104, 18, "#1e2430", "center", 700));
+        g("You came to me in a " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("name") : "snack") + " crate.", 480, 72, 22, "#1e2430", "center", 800),
+        g("You've loved " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("name") : "snacks") + " ever since.", 480, 104, 18, "#1e2430", "center", 700));
     }

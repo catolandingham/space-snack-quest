@@ -3,24 +3,27 @@
 
 | Lines | Heading |
 | --- | --- |
-| 23–32 | # Space Snack Quest |
-| 33–112 | ## Chapter 1 redesign (on main) |
-| 113–127 | ## Music credits |
-| 128–158 | ## Source and build |
-| 159–169 | ## Debug link |
-| 170–175 | ## Automatic checks |
-| 176–179 | ## Screen fit |
-| 180–203 | ## Brian's repeat complaints, as tests (2026-11-22) |
-| 204–209 | ## Scene 1 morning |
-| 210–213 | ## Chapter 1 kid robot |
-| 214–230 | ## Phase 1: kitchen and diner clarity |
-| 231–243 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
-| 244–257 | ## Phase 3: one capture rule, phone HUD, tap to walk |
-| 258–267 | ## Chapter 1 pass: the night out has a purpose, switches say why |
-| 268–285 | ## Progression tests |
-| 286–312 | ## Left as they were |
+| 23–35 | # Space Snack Quest |
+| 36–117 | ## Chapter 1 redesign (on main) |
+| 118–132 | ## Music credits |
+| 133–163 | ## Source and build |
+| 164–174 | ## Debug link |
+| 175–180 | ## Automatic checks |
+| 181–184 | ## Screen fit |
+| 185–208 | ## Brian's repeat complaints, as tests (2026-11-22) |
+| 209–214 | ## Scene 1 morning |
+| 215–218 | ## Chapter 1 kid robot |
+| 219–235 | ## Phase 1: kitchen and diner clarity |
+| 236–248 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
+| 249–262 | ## Phase 3: one capture rule, phone HUD, tap to walk |
+| 263–272 | ## Chapter 1 pass: the night out has a purpose, switches say why |
+| 273–290 | ## Progression tests |
+| 291–317 | ## Left as they were |
 <!-- /section-index -->
 # Space Snack Quest
+
+> **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
+
 
 Calendar review status (2026-11-16): Brian said yes to merge the calendar (Nov 16, 12:50 PM PT). Latest printed copy: FUZZUARY alone beneath MOONMUNCH; Homework and Sing with Mops removed; "Wash outside windows (remember space suit!)"; a slightly larger edge bite that does not touch the grid.
 
@@ -31,6 +34,8 @@ Calendar review status (2026-11-16): Brian said yes to merge the calendar (Nov 1
 **Next up (Brian, 2026-11-16):** Chapter 1, one beat at a time in [`docs/CH1-STORY-WALKTHROUGH.md`](docs/CH1-STORY-WALKTHROUGH.md). Do not leave beat 1 until Brian says it is right. Squatch walks around the bed and the bucket, and the Guardian box is in the closet on day 1 (locked home room v5; Brian's yes, Nov 16, 12:50 PM PT). On day 2 he takes the box out at the closet (`tests/bedroom-walk.mjs`). The calendar is tappable. Printed copy: MOONMUNCH / FUZZUARY; Sponsored by MOON PIES; Sock hunt; family Olympics night; Wash outside windows (remember space suit!); Blanket fort night. These are decoration, not new quests. X or NEXT returns to the same scene (`tests/calendar-closeup.mjs`). Closet, bed, desk homework and the already-bitten calendar are built on branch `feat/home-alone` (draft, see below); the purple bed bar is removed there too; still to build: the bucket. The night vent step no longer finishes inside Mops: the morning hum was leaving him marked as walking. Docs match main: yes.
 
 ## Chapter 1 redesign (on main)
+
+2026-11-26 (late night), the same draft pull request #87, Brian's question 86 ("A": rename everywhere); not merged to main. The station's snack is now Stars Cakes: every line, label, sign and test reads the name from one file, `src/modules/snack-name.js` (the older program through `window.SSQ.snack`, guarded). The calendar's sponsor, the snack site's header, the delivery notice, the homework sheet, the tourist's line, the old crate flashback and the Chapter 4 poster and lines all say Stars Cakes. The station's crates have a new stamp: a blue star and the name in thin blue letters (`src/modules/crate-stamp.js`). Squatch's crate bed is his family's crate: fat red letters, worn, the first letter scraped off ("_ARS CAKES"), with his old crayon "ST" in the gap, a layer drawn over the locked home pictures (the files are not edited; needs Brian's yes). Ids and file names that hold the old name joined up (`moonpie`, `mops-moon-pie`, `sketch-22-moon-pie-site.png`) stay; no player sees them. `tests/snack-name.mjs` checks that the name is spelled only in snack-name.js, that no lines file or word drawn in the main scenes says the old name, and that the crate bed's stamp is drawn by day and at night. NOT ASSESSED: how the stamp reads to a child on a phone. Not yet played by a person. Docs match main: yes.
 
 2026-11-26 (night), the same draft pull request #87, Brian's note "Make sure it's not just the hall dark at night, but all rooms are different at night versus daytime."; not merged to main. Every room shown at night now looks like night: the party hall through the whole party night, home during the party, after it (the talk, the TV story, bedtime) until Day 2 begins, and any older night scene. A room with a locked night picture shows it (the loading bay); every other room shows its locked day picture under a dim blue tint, with its window onto space, FUR alarm, TV screen, screens and keypads cut from the same picture and drawn again over the tint so they stay lit. Characters are drawn after the room and stay bright. No picture file changes. One shared module, `src/modules/night-look.js` (`isNightNow`, `nightPicture`, `drawNightTint`, `NIGHT_TINT`, `LIT_BY_NIGHT`, `NIGHT_PICTURES`); the older program draws every locked picture, and the pieces it cuts from one, through `window.SSQ.nightPicture` (two lines changed in `src/game/`, none added); the party's hall view uses `nightPicture("hall", ...)`. The tint's strength and the lit boxes are placeholders for Brian's eye. Tests: `night-look` (new). Docs match main: yes. Not yet played by a person.
 

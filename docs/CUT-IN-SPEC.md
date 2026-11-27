@@ -1,4 +1,6 @@
 # Cut-in spec (reusable close-up)
+
+> **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
 For Brian and the coder · Tuesday, November 10, 2026 · DECISIONS **R80** (Brian t308u)
 
 Brian's word for the original Sneaky Sasquatch's close-ups is a **cut-in**. This page is the one recipe every Space Snack Quest cut-in uses, so they all look and feel the same. It was written from Brian's reference video `reference/original-food-closeups.mp4` (58 seconds: the stove, the cooler and eating).
@@ -41,7 +43,7 @@ Front-facing close-up of the eater behind a table, the same blur and vignette be
 | 22 The Guardians gift | Drag the toy rocket and the note into the Guardian Box (the box is the drop target) | Optional |
 | 42 The paw order | Drag the yellow copy out of the bin, press the paw on it, drag it into the mailbox slot | Optional |
 | 52 Take all the snacks | Bar cut-in with no bartender threat; one drop target is "leave for the Guardians" | Recommended reuse |
-| 53 Packing the crate | Drag the Guardian Box into the Moon Pie crate, then the bucket on top | Optional |
+| 53 Packing the crate | Drag the Guardian Box into the Stars Cakes crate, then the bucket on top | Optional |
 | 7 Dress-up | Already its own zoomed-in game on a white background. It can share the zoom, the paw-follows-finger drag, snapping and the X exit; its background stays plain white (R74) | Share the code, keep the look |
 | Ch2 dish scrub | The game already shows the dish, Squatch's paw and a sponge. Can move onto the cut-in later | Later, needs Brian's yes |
 

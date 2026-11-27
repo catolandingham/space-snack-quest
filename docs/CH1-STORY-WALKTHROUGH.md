@@ -3,100 +3,103 @@
 
 | Lines | Heading |
 | --- | --- |
-| 99–109 | # Chapter 1: the story, beat by beat (words only) |
-| 110–112 | ## Day 1: the party |
-| 113–127 | ### 1. Meet Squatch `UPDATED t-nov14` |
-| 128–139 | ### 2. Their song, then Mops leaves `UPDATED t-nov14` |
-| 140–152 | ### 3. The peek `UPDATED t-nov14` |
-| 153–160 | ### 4. Sneak in and hide `UPDATED` |
-| 161–172 | ### 5. Isfred's announcement `UPDATED` |
-| 173–181 | ### 6. The Croc Boys `UPDATED` |
-| 182–194 | ### 7. The dress-up game `UPDATED` |
-| 195–203 | ### 8. Into the party `UPDATED t303u` |
-| 204–210 | ### 9. A real party `UPDATED` |
-| 211–219 | ### 10. Dance mini-game `UPDATED t296u` |
-| 220–231 | ### 11. Karaoke: the Moon Pie song `UPDATED t302u` |
-| 232–241 | ### 12. Juke the octopus `UPDATED t296u` |
-| 242–250 | ### 13. The photo corner `UPDATED t296u` |
-| 251–260 | ### 14. Snack trips: the bar cut-in and the pyramid `UPDATED t308u` |
-| 261–269 | ### 15. The balloon |
-| 270–279 | ### 16. The disguise comes off `UPDATED t303u` |
-| 280–288 | ### 17. FUR! Security! `UPDATED t303u` |
-| 289–295 | ### 18. Run home; security searches the room `UPDATED t328u` |
-| 296–304 | ### 19. Mops comes home: "You have me" `UPDATED` |
-| 305–313 | ### 20. The TV story |
-| 314–322 | ### 21. Bedtime story: why Moon Pies `UPDATED t310u` |
-| 323–324 | ## Day 2: lunch and the first delivery |
-| 325–335 | ### 22. A gift from the Guardians `UPDATED t311u` |
-| 336–344 | ### 23. The calendar: delivery day |
-| 345–353 | ### 24. Mops forgot his lunch |
-| 354–360 | ### 25. Sneak the lunch to Mops |
-| 361–370 | ### 26. "My lunch! You're the best." |
-| 371–379 | ### 27. One snack, behind the counter |
-| 380–390 | ### 28. The ship is coming |
-| 391–397 | ### 29. Walk to the loading bay |
-| 398–404 | ### 30. The robots arrive |
-| 405–412 | ### 31. The promise |
-| 413–421 | ### 32. Three copies `UPDATED t311u` |
-| 422–431 | ### 33. "Delicious." `UPDATED t311u` |
-| 432–440 | ### 34. Gumbling `UPDATED t311u` |
-| 441–448 | ### 35. Spit into the bin `UPDATED t311u` |
-| 449–458 | ### 36. Walk home past the robots |
-| 459–470 | ### 37. The Employee of the Month wall |
-| 471–480 | ### 38. Missing Moon Pies and a pancake brochure `UPDATED t311u` |
-| 481–490 | ### 39. Other Sasquatches? `UPDATED t311u` |
-| 491–498 | ### 40. The Mars talk |
-| 499–504 | ### 41. Lights out `UPDATED t311u` |
-| 505–514 | ### 42. Night one: the paw order `UPDATED t312u` |
-| 515–516 | ## One week later: the escape |
-| 517–523 | ### 43. "Six days later" |
-| 524–532 | ### 44. The robots tease Mops |
-| 533–540 | ### 45. "Let's go find that pancake place" |
-| 541–549 | ### 46. The almost-slip |
-| 550–556 | ### 47. Sneak to the vent |
-| 557–569 | ### 48. Mops's secret workstation `UPDATED t312u` |
-| 570–578 | ### 49. Grab the pink slip `UPDATED t311u` |
-| 579–585 | ### 50. The office keypad |
-| 586–595 | ### 51. Return empty crate |
-| 596–605 | ### 52. Take all the snacks `UPDATED t311u` |
-| 606–607 | ## Pickup day: leaving Stormtop |
-| 608–613 | ### 53. Packing the crate |
-| 614–620 | ### 54. The robots open a crate |
-| 621–627 | ### 55. Mops warns him |
-| 628–636 | ### 56. The goat costume |
-| 637–645 | ### 57. Last walk: POP! and the keepsake |
-| 646–654 | ### 58. Through the scanner |
-| 655–666 | ### 59. Where's Mops? |
-| 667–675 | ### 60. The security tapes |
-| 676–683 | ### 61. The call to the ship |
-| 684–685 | ## Open questions |
-| 686–689 | ### 1. CLOSED: hiding first, then the disguise from the home wardrobe |
-| 690–692 | ### 2. CLOSED: "Everybody has somebody" moved to the homecoming |
-| 693–695 | ### 3. CLOSED: robot dancing |
-| 696–702 | ### 4. The "Cool hat!" fallback |
-| 703–706 | ### 5. Where is Mops at lunch? |
-| 707–710 | ### 6. Does the calendar replace the loudspeaker announcement? |
-| 711–713 | ### 7. CLOSED: the bedtime story |
-| 714–716 | ### 8. CLOSED: the Guardians gift (toy and note) |
-| 717–719 | ### 9. What pulls Isfred away after signing? (O15) |
-| 720–723 | ### 10. CLOSED: the paw print and the pink sheet (t311u) |
-| 724–726 | ### 25. CLOSED: why Mops thinks Mars is a waste of time |
-| 727–729 | ### 11. The crate on pickup day |
-| 730–732 | ### 12. The hallway exit in the party hall |
-| 733–735 | ### 13. Walking home |
-| 736–738 | ### 14. Waiting at the vent |
-| 739–742 | ### 17. The dance and karaoke games: scope |
-| 743–745 | ### 21. Squatch on the stage |
-| 746–748 | ### 22. Many snacks at the party vs the one-snack rule |
-| 749–751 | ### 18. Isfred's desk nameplate |
-| 752–755 | ### 20. Does the dress-up outfit carry over to the party? (for the coding later) |
-| 756–758 | ### 19. Dim lights at the party |
-| 759–762 | ### 23. Snacks can now cost the disguise |
-| 763–766 | ### 24. Other cut-ins (t308u) |
-| 767–769 | ### 15. Numbers and words still waiting |
-| 770–792 | ## What the comic v9 got wrong |
+| 99–112 | # Chapter 1: the story, beat by beat (words only) |
+| 113–115 | ## Day 1: the party |
+| 116–130 | ### 1. Meet Squatch `UPDATED t-nov14` |
+| 131–142 | ### 2. Their song, then Mops leaves `UPDATED t-nov14` |
+| 143–155 | ### 3. The peek `UPDATED t-nov14` |
+| 156–163 | ### 4. Sneak in and hide `UPDATED` |
+| 164–175 | ### 5. Isfred's announcement `UPDATED` |
+| 176–184 | ### 6. The Croc Boys `UPDATED` |
+| 185–197 | ### 7. The dress-up game `UPDATED` |
+| 198–206 | ### 8. Into the party `UPDATED t303u` |
+| 207–213 | ### 9. A real party `UPDATED` |
+| 214–222 | ### 10. Dance mini-game `UPDATED t296u` |
+| 223–234 | ### 11. Karaoke: the Stars Cakes song `UPDATED t302u` |
+| 235–244 | ### 12. Juke the octopus `UPDATED t296u` |
+| 245–253 | ### 13. The photo corner `UPDATED t296u` |
+| 254–263 | ### 14. Snack trips: the bar cut-in and the pyramid `UPDATED t308u` |
+| 264–272 | ### 15. The balloon |
+| 273–282 | ### 16. The disguise comes off `UPDATED t303u` |
+| 283–291 | ### 17. FUR! Security! `UPDATED t303u` |
+| 292–298 | ### 18. Run home; security searches the room `UPDATED t328u` |
+| 299–307 | ### 19. Mops comes home: "You have me" `UPDATED` |
+| 308–316 | ### 20. The TV story |
+| 317–325 | ### 21. Bedtime story: why Stars Cakes `UPDATED t310u` |
+| 326–327 | ## Day 2: lunch and the first delivery |
+| 328–338 | ### 22. A gift from the Guardians `UPDATED t311u` |
+| 339–347 | ### 23. The calendar: delivery day |
+| 348–356 | ### 24. Mops forgot his lunch |
+| 357–363 | ### 25. Sneak the lunch to Mops |
+| 364–373 | ### 26. "My lunch! You're the best." |
+| 374–382 | ### 27. One snack, behind the counter |
+| 383–393 | ### 28. The ship is coming |
+| 394–400 | ### 29. Walk to the loading bay |
+| 401–407 | ### 30. The robots arrive |
+| 408–415 | ### 31. The promise |
+| 416–424 | ### 32. Three copies `UPDATED t311u` |
+| 425–434 | ### 33. "Delicious." `UPDATED t311u` |
+| 435–443 | ### 34. Gumbling `UPDATED t311u` |
+| 444–451 | ### 35. Spit into the bin `UPDATED t311u` |
+| 452–461 | ### 36. Walk home past the robots |
+| 462–473 | ### 37. The Employee of the Month wall |
+| 474–483 | ### 38. Missing Stars Cakes and a pancake brochure `UPDATED t311u` |
+| 484–493 | ### 39. Other Sasquatches? `UPDATED t311u` |
+| 494–501 | ### 40. The Mars talk |
+| 502–507 | ### 41. Lights out `UPDATED t311u` |
+| 508–517 | ### 42. Night one: the paw order `UPDATED t312u` |
+| 518–519 | ## One week later: the escape |
+| 520–526 | ### 43. "Six days later" |
+| 527–535 | ### 44. The robots tease Mops |
+| 536–543 | ### 45. "Let's go find that pancake place" |
+| 544–552 | ### 46. The almost-slip |
+| 553–559 | ### 47. Sneak to the vent |
+| 560–572 | ### 48. Mops's secret workstation `UPDATED t312u` |
+| 573–581 | ### 49. Grab the pink slip `UPDATED t311u` |
+| 582–588 | ### 50. The office keypad |
+| 589–598 | ### 51. Return empty crate |
+| 599–608 | ### 52. Take all the snacks `UPDATED t311u` |
+| 609–610 | ## Pickup day: leaving Stormtop |
+| 611–616 | ### 53. Packing the crate |
+| 617–623 | ### 54. The robots open a crate |
+| 624–630 | ### 55. Mops warns him |
+| 631–639 | ### 56. The goat costume |
+| 640–648 | ### 57. Last walk: POP! and the keepsake |
+| 649–657 | ### 58. Through the scanner |
+| 658–669 | ### 59. Where's Mops? |
+| 670–678 | ### 60. The security tapes |
+| 679–686 | ### 61. The call to the ship |
+| 687–688 | ## Open questions |
+| 689–692 | ### 1. CLOSED: hiding first, then the disguise from the home wardrobe |
+| 693–695 | ### 2. CLOSED: "Everybody has somebody" moved to the homecoming |
+| 696–698 | ### 3. CLOSED: robot dancing |
+| 699–705 | ### 4. The "Cool hat!" fallback |
+| 706–709 | ### 5. Where is Mops at lunch? |
+| 710–713 | ### 6. Does the calendar replace the loudspeaker announcement? |
+| 714–716 | ### 7. CLOSED: the bedtime story |
+| 717–719 | ### 8. CLOSED: the Guardians gift (toy and note) |
+| 720–722 | ### 9. What pulls Isfred away after signing? (O15) |
+| 723–726 | ### 10. CLOSED: the paw print and the pink sheet (t311u) |
+| 727–729 | ### 25. CLOSED: why Mops thinks Mars is a waste of time |
+| 730–732 | ### 11. The crate on pickup day |
+| 733–735 | ### 12. The hallway exit in the party hall |
+| 736–738 | ### 13. Walking home |
+| 739–741 | ### 14. Waiting at the vent |
+| 742–745 | ### 17. The dance and karaoke games: scope |
+| 746–748 | ### 21. Squatch on the stage |
+| 749–751 | ### 22. Many snacks at the party vs the one-snack rule |
+| 752–754 | ### 18. Isfred's desk nameplate |
+| 755–758 | ### 20. Does the dress-up outfit carry over to the party? (for the coding later) |
+| 759–761 | ### 19. Dim lights at the party |
+| 762–765 | ### 23. Snacks can now cost the disguise |
+| 766–769 | ### 24. Other cut-ins (t308u) |
+| 770–772 | ### 15. Numbers and words still waiting |
+| 773–795 | ## What the comic v9 got wrong |
 <!-- /section-index -->
 # Chapter 1: the story, beat by beat (words only)
+
+> **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
+
 
 **2026-11-22: newer decisions win over this file.** Where a beat below disagrees with a 2026-11-22 section of `docs/DECISIONS.md`, the decision wins. Beats changed that day: 1 and 2 (new morning order: speaker wakes him, Mops mopping, beard-wringing cutaway, song, sing along, Mops leaves; the Nov 14 bubbles are replaced; new words need Brian's yes), 4 and every goal line (soft outline on the next place; a goal line only if stuck for about 20 seconds), 7 (pieces stay where dropped; any piece fills the meter), 9 (conga, chicken dance, bouquet toss are background only), 10 and 15 and the balloon in 16, 25 and 57 (dance game and balloon out for now), 11 (karaoke last, only if the core plays well), 14 (swipe mini-game; the pyramid topples only after too many snacks), 16 (no 3-minute timer; cones on everyone, dashed then yellow, guests "?" then "!"; caught or closing time), 17 (Chapter 1: run to the wall alarm), 18 (every catch: lockup card, then restart the current scene, K29), 20 (full-screen story pictures, no words until approved), 32 (called away to a damaged crate), 38 (v1's extra lines cut), 56 (cutscene, then a three-piece drag-on), and points (a clean check per part). Open questions 4 and 5 are closed by those decisions. Full beat-by-beat check against the code: `docs/ch1-design-audit-2026-11-22/`.
 For Brian · v2, Tuesday, November 10, 2026 · built from the agreed story in DECISIONS.md, not from the comic.
@@ -113,7 +116,7 @@ Mops is at work. Squatch is home alone.
 ### 1. Meet Squatch `UPDATED t-nov14`
 - **Where:** Home (Squatch and Mops's room), morning
 - **Who:** Squatch, Mops
-- **What happens:** Stormtop floats in the clouds of a giant planet. A big, furry kid lives in a small, hidden room. Squatch wakes up in his bed. Mops stands by the mop bucket; the room is clean. A poster by the door says to stay inside. UPDATED Nov 16: the calendar is tappable and opens a close-up; touching its Moon Pie picture makes a bite in the paper. Closet and bed looks are approved but still to build. This replaces "Nothing in the room is tappable yet." TV stays off until beat 20.
+- **What happens:** Stormtop floats in the clouds of a giant planet. A big, furry kid lives in a small, hidden room. Squatch wakes up in his bed. Mops stands by the mop bucket; the room is clean. A poster by the door says to stay inside. UPDATED Nov 16: the calendar is tappable and opens a close-up; touching its Stars Cakes picture makes a bite in the paper. Closet and bed looks are approved but still to build. This replaces "Nothing in the room is tappable yet." TV stays off until beat 20.
 - **Words:**
   - Card: "This is Squatch. He's a Sasquatch." *(decided)*
   - Poster: "STAY IN HERE! — Mops" *(decided)*
@@ -121,7 +124,7 @@ Mops is at work. Squatch is home alone.
   - The song is Mops's goodbye: he hums on his way to the door, Squatch sings with him there, then Mops leaves (Brian yes, Nov 14).
 - **Player:** Walk around the room.
 - **Approved room looks, not yet built:** closet: "Mops's costumes. And my Guardian Box."; back to bed: he flops down, then hops back up, "Not sleepy anymore." Desk homework replaces the proposed work-list line; new homework words need Brian's yes.
-- **Calendar revision for review (Nov 16, PR 58 unmerged):** latest copy is MOONMUNCH with FUZZUARY alone underneath; Sponsored by MOON PIES; Sock hunt; family Olympics night; Wash outside windows (remember space suit!); Blanket fort night. Brian removed the calendar's Homework and Sing with Mops reminders, not the desk-homework transition. Scattered dates are fixed decoration, not new playable beats. He requested a slightly larger margin nibble, still clear of all dates and the circled pie.
+- **Calendar revision for review (Nov 16, PR 58 unmerged):** latest copy is MOONMUNCH with FUZZUARY alone underneath; Sponsored by STARS CAKES; Sock hunt; family Olympics night; Wash outside windows (remember space suit!); Blanket fort night. Brian removed the calendar's Homework and Sing with Mops reminders, not the desk-homework transition. Scattered dates are fixed decoration, not new playable beats. He requested a slightly larger margin nibble, still clear of all dates and the circled pie.
 - **Rebuilt 2026-11-23 (draft PR, morning plan PR 2, not merged):** Brian's newer order (G 547 to 567, answers of 2026-11-23) replaces the Nov 14 one above: Squatch wakes in bed to the wall speaker's party announcement while Mops mops with his beard; Mops: "Morning, Squatch."; Squatch: "Party?"; the beard-wringing cutaway; the speaker announces Dog Zylan and Brian's Floating in Space recording plays. "Big party in the hall tonight." is now the speaker's line. Every word, with its status, is in `docs/MORNING-LINES-FOR-BRIAN.md`.
 <sub>replot 01 · R29 R35 R36 · Brian chat Nov 14</sub>
 
@@ -217,14 +220,14 @@ Mops is at work. Squatch is home alone.
 - **Player:** Tap the arrow buttons as each arrow reaches the hit box. Proposed: 10 points per hit, about 30 arrows, so a perfect dance is about 300, close to the "Never caught!" +250 bonus (pending). No combo needed.
 <sub>R75 R73 · v2 beat 10</sub>
 
-### 11. Karaoke: the Moon Pie song `UPDATED t302u`
+### 11. Karaoke: the Stars Cakes song `UPDATED t302u`
 - **Where:** Party hall stage, at the mic between Croc Boys songs
 - **Who:** Squatch (disguised), the Croc Boys, cheering guests
-- **What happens:** After the dance game, Squatch can walk up to the mic on the stage and tap "Sing?". It's optional. He sings an original Moon Pie jingle to the old public-domain tune "Cielito Lindo" (ay-ay-ay-ay). He sings it in grunts and howls while the words bounce on a screen. The camera zooms in from behind Squatch, looking out at the cheering crowd. About 15 seconds. No fail.
+- **What happens:** After the dance game, Squatch can walk up to the mic on the stage and tap "Sing?". It's optional. He sings an original Stars Cakes jingle to the old public-domain tune "Cielito Lindo" (ay-ay-ay-ay). He sings it in grunts and howls while the words bounce on a screen. The camera zooms in from behind Squatch, looking out at the cheering crowd. About 15 seconds. No fail.
 - **Words:**
   - Prompt at the mic: "Sing?" *(pending)*
   - Big button: "Sing" *(pending)*
-  - Song line 1 (on screen): "Ay-ay-ay-ay, I love my Moon Pies!" *(pending)*
+  - Song line 1 (on screen): "Ay-ay-ay-ay, I love my Stars Cakes!" *(pending)*
   - Song line 2 (on screen): "Round and chocolate-y, sweet as the starry skies!" *(pending)*
 - **Player:** Tap the big Sing button: each tap makes him howl louder, and more taps mean a bigger cheer and more bonus points (up to the pending 50, scaled by the cheer).
 <sub>R77 R75 · v2 beat 11</sub>
@@ -311,12 +314,12 @@ Mops is at work. Squatch is home alone.
 - **Player:** Tap through the story pictures.
 <sub>S18 S19 S21 · Brian note P14 · v1 beat 15 (Brian t291u: keep as agreed)</sub>
 
-### 21. Bedtime story: why Moon Pies `UPDATED t310u`
+### 21. Bedtime story: why Stars Cakes `UPDATED t310u`
 - **Where:** Home, in bed
 - **Who:** Squatch, Mops; in the story pictures: Mops and baby Squatch only
-- **What happens:** Squatch asks for the story again. Mops tells how he found a baby asleep in a Moon Pie crate on the loading bay, and has looked after him ever since. The story is only about Mops finding him. No parents: not in the words, not in the pictures, no hints. At this point Squatch still has the Guardians, and the parents stay a mystery until much later. That's why Moon Pies have always been Squatch's favorite, why his bed is a Moon Pie crate, and why he circles Moon Pie delivery day on the calendar (beat 23).
+- **What happens:** Squatch asks for the story again. Mops tells how he found a baby asleep in a Stars Cakes crate on the loading bay, and has looked after him ever since. The story is only about Mops finding him. No parents: not in the words, not in the pictures, no hints. At this point Squatch still has the Guardians, and the parents stay a mystery until much later. That's why Stars Cakes have always been Squatch's favorite, why his bed is a Stars Cakes crate, and why he circles Stars Cakes delivery day on the calendar (beat 23).
 - **Words:**
-  - Mops: "You came to me in a Moon Pie crate. You've loved Moon Pies ever since." *(pending)*
+  - Mops: "You came to me in a Stars Cakes crate. You've loved Stars Cakes ever since." *(pending)*
 - **Player:** Tap through the story pictures.
 <sub>R81 R75 R70 · Brian t310u · v2 beat 20</sub>
 
@@ -336,9 +339,9 @@ Mops is at work. Squatch is home alone.
 ### 23. The calendar: delivery day
 - **Where:** Home, the wardrobe door
 - **Who:** Squatch
-- **What happens:** The calendar on the wardrobe door has Moon Pie delivery day circled. It's today. That's how we know a delivery is coming. No plain sign or announcement is needed for it.
+- **What happens:** The calendar on the wardrobe door has Stars Cakes delivery day circled. It's today. That's how we know a delivery is coming. No plain sign or announcement is needed for it.
 - **Words:**
-  - Calendar: "DELIVERY / MOON PIES (existing room art), with today circled" *(decided (calendar decided R70; circle is new art))*
+  - Calendar: "DELIVERY / STARS CAKES (existing room art), with today circled" *(decided (calendar decided R70; circle is new art))*
 - **Player:** Look at the calendar.
 <sub>R70 R31 · Brian t289u, note P12 · v1 beat 18</sub>
 
@@ -468,12 +471,12 @@ Mops is at work. Squatch is home alone.
 - **Player:** Optional: swipe the gallery; lift the crooked photo.
 <sub>R55 R56 R57 R62–R69 · v1 beat 32</sub>
 
-### 38. Missing Moon Pies and a pancake brochure `UPDATED t311u`
+### 38. Missing Stars Cakes and a pancake brochure `UPDATED t311u`
 - **Where:** Party hall snack bar
 - **Who:** Squatch, Mops, people in line, a tourist family
-- **What happens:** People in line talk about missing Moon Pies. A tourist family walks up, and Squatch hides. The family talks about a pancake place on Mars, and Squatch ends up with their brochure. On the front of the brochure, a big furry Sasquatch couple smiles behind the pancake counter. It's the player's first glimpse of his parents. Nobody says so, and Squatch can only hope.
+- **What happens:** People in line talk about missing Stars Cakes. A tourist family walks up, and Squatch hides. The family talks about a pancake place on Mars, and Squatch ends up with their brochure. On the front of the brochure, a big furry Sasquatch couple smiles behind the pancake counter. It's the player's first glimpse of his parents. Nobody says so, and Squatch can only hope.
 - **Words:**
-  - Person in line: "I swear we had more Moon Pies... is that what they stole at lunch?" *(pending)*
+  - Person in line: "I swear we had more Stars Cakes... is that what they stole at lunch?" *(pending)*
   - Mops: "Quick, hide." *(pending)*
 - **Player:** Hide when the family comes.
 <sub>R82 S33 S35 S9 · Brian t311u · v1 beat 33</sub>
@@ -533,7 +536,7 @@ Mops is at work. Squatch is home alone.
 ### 45. "Let's go find that pancake place"
 - **Where:** Home, that night
 - **Who:** Mops, Squatch
-- **What happens:** Mops tells Squatch the new robots come on tomorrow's ship. He's ready to go to Mars. They'll mail themselves in the empty Moon Pie crate, which they book on the office computer. To get into the office, they need the code.
+- **What happens:** Mops tells Squatch the new robots come on tomorrow's ship. He's ready to go to Mars. They'll mail themselves in the empty Stars Cakes crate, which they book on the office computer. To get into the office, they need the code.
 - **Words:**
   - Mops: "I'm going to be replaced. The new robots are coming on the ship tomorrow. Remember that pancake place? Let's go find out about it." *(pending)*
 <sub>S39 R46 S5 · v1 beat 40</sub>
@@ -586,9 +589,9 @@ Mops is at work. Squatch is home alone.
 ### 51. Return empty crate
 - **Where:** Manager's office, computer
 - **Who:** Squatch, Mops
-- **What happens:** The office computer has the Moon Pie site. They click "Return empty crate," which books the crate on tomorrow's ship.
+- **What happens:** The office computer has the Stars Cakes site. They click "Return empty crate," which books the crate on tomorrow's ship.
 - **Words:**
-  - Site header: "MOON PIES" *(pending)*
+  - Site header: "STARS CAKES" *(pending)*
   - Buttons: "Order new box / Return empty crate" *(pending)*
 - **Player:** Click Return empty crate.
 <sub>S48 R46 · v1 beat 46</sub>
@@ -608,7 +611,7 @@ Mops is at work. Squatch is home alone.
 ### 53. Packing the crate
 - **Where:** Home → mail room
 - **Who:** Squatch, Mops
-- **What happens:** They pack: the little Guardian Box goes inside the big Moon Pie crate, with Mops's bucket on top. They take their things off the walls and roll the crate out on a pallet.
+- **What happens:** They pack: the little Guardian Box goes inside the big Stars Cakes crate, with Mops's bucket on top. They take their things off the walls and roll the crate out on a pallet.
 <sub>S50 · Brian 4:20 PM · v1 beat 48</sub>
 
 ### 54. The robots open a crate
@@ -725,7 +728,7 @@ Mops is at work. Squatch is home alone.
 - Brian (t312u) picked A: just the big Mars Lost & Found reply letter on the detective wall, stamped NO, readable on screen (beat 48). No search party. Letter words pending.
 
 ### 11. The crate on pickup day
-- They pack the crate, Squatch hides in a crate, they see a crate opened, then both board on foot in costume. What happens to the Moon Pie crate and Guardian Box? (State Q4: already loaded, pushed by a robot, or carried.)
+- They pack the crate, Squatch hides in a crate, they see a crate opened, then both board on foot in costume. What happens to the Stars Cakes crate and Guardian Box? (State Q4: already loaded, pushed by a robot, or carried.)
 
 ### 12. The hallway exit in the party hall
 - Brian thought the exit moved. The locked room has it at the north (far) end of the right wall, which matches his memory. The comic drew the snack bar in front of it. Redraws should follow the locked room.
@@ -737,7 +740,7 @@ Mops is at work. Squatch is home alone.
 - Brian once said Squatch sings to distract the robots. The later decision (S42) is that he waits rolled into a ball. I used the ball.
 
 ### 17. The dance and karaoke games: scope
-- Dance: Guitar Hero style, arrows slide across to a hit box, one song, about 30 seconds, no fail, proposed 10 points per hit. Karaoke: optional, an original Moon Pie jingle to the public-domain tune Cielito Lindo, about 15 seconds, tap Sing to howl louder, bonus up to the pending 50 scaled by the cheer. Both are small enough to write ourselves (no outside code, no copyrighted songs or lyrics). The dance tune still needs writing.
+- Dance: Guitar Hero style, arrows slide across to a hit box, one song, about 30 seconds, no fail, proposed 10 points per hit. Karaoke: optional, an original Stars Cakes jingle to the public-domain tune Cielito Lindo, about 15 seconds, tap Sing to howl louder, bonus up to the pending 50 scaled by the cheer. Both are small enough to write ourselves (no outside code, no copyrighted songs or lyrics). The dance tune still needs writing.
 - Recommend: neither game can knock the disguise off, and the 3-minute party clock pauses while they play.
 
 ### 21. Squatch on the stage
@@ -774,7 +777,7 @@ Mops is at work. Squatch is home alone.
 - The party is thin, with only a few guests and no bartender. The kid changes from panel to panel, the octopus keeps sitting on the bar, and there are no Croc Boys.
 - The party extras play in a row as if they all happen, and the disguise comes off more than once (cool hat, then the octopus) while the party keeps going.
 - It skips the guard chasing Squatch home and searching the room, and Mops finding the flyer and fur.
-- Between the TV story and lunch it skips the night, the Guardians gift and the calendar. Panel 12 just shows walking into the room. It should show the closet calendar with Moon Pie delivery day circled (R70).
+- Between the TV story and lunch it skips the night, the Guardians gift and the calendar. Panel 12 just shows walking into the room. It should show the closet calendar with Stars Cakes delivery day circled (R70).
 - The lunch order is backwards. The snack (panels 17–18) and the announcement (19) come before "My lunch!" (20). The real order is lunch to Mops in the hallway, the walk back, one snack behind the counter, then the announcement.
 - It doesn't show Squatch sneaking the lunch to Mops in the hallway, and the snack scene is in front of the counter instead of behind it.
 - The promise, the three-copy signing, Isfred being called away and the robot's "What do I do with the other two?" are missing. The ramp panel jumps straight to "Delicious."

@@ -16,4 +16,6 @@ The game paints each one, scaled to the 960×640 picture, as the room background
 | `delivery-room-empty-night-v2.png` | Loading bay at night. |
 | `delivery-room-empty-pickup-v3.png` | Loading bay on pickup day. |
 
+The crate bed in both home pictures still has its old MOON PIES badge. Since 2026-11-26 (Brian, question 86: the snack is Stars Cakes) the game draws a layer over it, never editing the file: the badge painted out in the crate's own wood and the family crate's worn stamp ("_ARS CAKES", his crayon "ST") on top (`src/modules/crate-stamp.js`). The layer needs Brian's yes; until then it is a proposal, listed in `docs/DECISIONS.md`.
+
 The `.py` files are the scripts that drew the pictures (`mockups/rooms/`).

@@ -3,25 +3,30 @@
 
 | Lines | Heading |
 | --- | --- |
-| 20–23 | # Master backlog |
-| 24–123 | ## Where main is (Chapter 1 redesign) |
-| 124–138 | ## Register |
-| 139–160 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 161–181 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 182–194 | ## Phase 2 (plan section 4, T13 to T18) |
-| 195–217 | ## Phase 1 (plan section 3, T5 to T12) |
-| 218–231 | ## SS40–SS44 |
-| 232–249 | ## Story rows |
-| 250–268 | ## Reset section |
-| 269–279 | ## Still open |
-| 280–283 | ## Chapter 1 replot, recorded and not built |
-| 284–441 | ## Changelog |
+| 20–26 | # Master backlog |
+| 27–128 | ## Where main is (Chapter 1 redesign) |
+| 129–143 | ## Register |
+| 144–165 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 166–186 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 187–199 | ## Phase 2 (plan section 4, T13 to T18) |
+| 200–222 | ## Phase 1 (plan section 3, T5 to T12) |
+| 223–236 | ## SS40–SS44 |
+| 237–254 | ## Story rows |
+| 255–273 | ## Reset section |
+| 274–284 | ## Still open |
+| 285–288 | ## Chapter 1 replot, recorded and not built |
+| 289–446 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
+
+> **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
+
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-26 (late night), draft PR #87: the snack is Stars Cakes everywhere (Brian, question 86; `snack-name.js`, `crate-stamp.js`, `tests/snack-name.mjs`; DECISIONS "The snack renamed, and the crate bed's stamp (question 86)"). Waiting on Brian: the bedtime line's new words; the crate bed's stamp layer over the locked home pictures (his yes); the crayon "ST". Not yet played by a person. Docs match main: yes.
 
 2026-11-26 (night), draft PR #87: every room has a night look at night (Brian: "all rooms are different at night versus daytime"; `night-look.js`, README "Chapter 1 redesign", the 2026-11-26 night paragraph). Open for Brian: the tint's strength (`NIGHT_TINT`, a placeholder) and which things stay lit; home has no window or lamp in its picture, so only its TV screen stays as it is. NOT ASSESSED: how the night look plays on a phone in daylight. Docs match main: yes.
 

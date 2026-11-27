@@ -459,7 +459,7 @@
         spot({
           id: "crate",
           verb: "GRAB",
-          cap: "Moon Pie",
+          cap: (window.SSQ && window.SSQ.snack ? window.SSQ.snack("one") : "snack"),
           who: "sq",
           at: [Ct.x, Ct.y - 40],
           when: !!le.inCrate && !n.found.has("pie500"),
@@ -486,7 +486,7 @@
         J([
           v("sq", "I came in a crate like this.", "whisper"),
           { k: "card", id: "fb", text: "Years ago, on Stormtop..." },
-          { k: "fb", pic: "fb1crate", cap: "A delivery crate of Moon Pies came to Stormtop." },
+          { k: "fb", pic: "fb1crate", cap: "A delivery crate of " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("name") : "snacks") + " came to Stormtop." },
           { k: "fb", pic: "fb1lid", cap: "Mops opened it. Inside: a sleeping baby Sasquatch, covered in crumbs." },
           { k: "fb", pic: "fb1beard", cap: "The baby woke up, grabbed Mops's beard, and giggled." },
           v("mops", "...Baaa?"),
