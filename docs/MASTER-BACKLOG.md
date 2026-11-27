@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–26 | # Master backlog |
-| 27–241 | ## Where main is (Chapter 1 redesign) |
-| 242–256 | ## Register |
-| 257–278 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 279–299 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 300–312 | ## Phase 2 (plan section 4, T13 to T18) |
-| 313–335 | ## Phase 1 (plan section 3, T5 to T12) |
-| 336–349 | ## SS40–SS44 |
-| 350–367 | ## Story rows |
-| 368–386 | ## Reset section |
-| 387–397 | ## Still open |
-| 398–401 | ## Chapter 1 replot, recorded and not built |
-| 402–561 | ## Changelog |
+| 27–243 | ## Where main is (Chapter 1 redesign) |
+| 244–258 | ## Register |
+| 259–280 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 281–301 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 302–314 | ## Phase 2 (plan section 4, T13 to T18) |
+| 315–337 | ## Phase 1 (plan section 3, T5 to T12) |
+| 338–351 | ## SS40–SS44 |
+| 352–369 | ## Story rows |
+| 370–388 | ## Reset section |
+| 389–399 | ## Still open |
+| 400–403 | ## Chapter 1 replot, recorded and not built |
+| 404–563 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -25,6 +25,8 @@
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-27 (round 7, loading bay builder), draft PR #98 on `feat/ch1-r7-bay` (from `feat/ch1-pickup-day`), not merged. Done: Brian's round 7 notes for beats 28 to 36 and 42 to 52 with his answers of 2026-11-27 (see README), including r5 0:20 (he walks out from behind the snack counter himself, under the lunch's cones) and r5 3:58 (the hallway's office door shuts again); after looking at the 375 px stills: the camera in the escape's bay, one Mars in the plan, the old tags' words, the cabinet's bitten cake, the booked page's stray ramp, Mops's office lines said before the page opens. Open for Brian: every Pending line in CH1-LINES-FOR-BRIAN (loading bay table and the round 7 table); the placeholders (the camera and its red light, the bay on the office screen, the floor-vent crate, the mail by the box, the green arch glow, the bucket and soap swishes, the plan's pictures, the postal page, the dust puff); whether a lunch watcher should look toward the hallway doorway so standing up at the wrong moment can get him caught (no cone reaches the doorway today). Not done here: pancakes elsewhere in the game (the evening builder's sweep, question 120). NOT ASSESSED: how it plays for a person. Docs match main: yes.
 
 2026-11-27 (Chapter 1 whole), draft PR #96 on `feat/ch1-pickup-day`, now stacked on `feat/ch1-day2-joined` (#97), not merged. Done: #97 and the lunch tip 299e287 merged in (merge commits, no rebase); pickup day on the joined shared modules (see README); pickup's bay on the plant-moved pictures; one chart over his bed; 36b's entry spots apart; the kid robot through the lunch sneak, beat 47 (0 catches) and the note. Open: the kid robot stops at pickup day's beat 55 after the climb-out (rolled up, no catches, but it finds no path to the plant it calls safe; the showing tool's route along the front works); the evening's own wall chart (`evening-pictures.js drawEveningChart`, beat 39 home) and the chart layer from the lunch branch (`cake-chart.js`) both hang over his bed in the evening, one over the other (which one is Brian's call); older shared top-level names the reviewer listed (`PAPER`, `DAY2`, `INK`, `last`, `tick`, `draw`) are not from this round. NOT ASSESSED: how it plays for a person (Not yet played by a person). Docs match main: yes.
 

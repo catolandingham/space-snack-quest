@@ -113,8 +113,10 @@ const run = await page.evaluate(
     // 47 (the walk to the vent is tests/escape-vent.mjs)
     ss.drawFrame();
     out.ball = { room: n.room, night: !!n.ch1Night, chip: n.ch1Chip, robot: !!S().robot, cones: (d().drew.cones || []).length };
+    const before = window.SSQ.cameraLayerDrawn().handed;
     ss.drawFrame();
-    out.ball.camera = window.SSQ.cameraLayerDrawn().lastId;
+    // (this frame's own draw handed out a camera-layered bay picture, not an earlier frame's)
+    out.ball.camera = window.SSQ.cameraLayerDrawn().handed > before ? window.SSQ.cameraLayerDrawn().lastId : "";
     // the button comes up by the vent only (the goal), not out in the bay
     n.sq.x = 420;
     n.sq.y = 560;
