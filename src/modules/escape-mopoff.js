@@ -101,7 +101,7 @@ export function robotsAt(t) {
 }
 
 // ---------- drawing ----------
-function sparkle(ctx, x, y, s, a) {
+function mopoffSparkle(ctx, x, y, s, a) {
   ctx.save();
   ctx.globalAlpha = a;
   ctx.translate(x, y);
@@ -151,7 +151,7 @@ function drawSparkles(ctx, floor, t) {
     const age = t - s.at;
     // a burst as it gets clean, then a soft twinkle that stays
     const big = age < 0.6 ? 14 + age * 20 : 9 + Math.sin(t * 4 + s.x) * 2;
-    sparkle(ctx, s.x, s.y - 4, big, age < 0.6 ? 1 : 0.8);
+    mopoffSparkle(ctx, s.x, s.y - 4, big, age < 0.6 ? 1 : 0.8);
   }
 }
 /** 44b: the line and the two sides' words, the boxes, the robots' streaks, the goat side's dirt, the wheel marks. */

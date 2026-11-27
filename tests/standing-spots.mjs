@@ -248,7 +248,7 @@ check("draw order: front last, and people on the same feet line always in the or
 // The snack bar (beat 38): Squatch in the strip, Mops, the two in line, the family at the counter's front. On purpose:
 // Squatch hidden in the aisle behind the counter (BAR.hidden), the family reading in the hallway doorway past the bar.
 {
-  const B = EVP.BAR,
+  const B = EVP.EV_BAR,
     spots = { "evening Squatch at the counter's top": B.sq, "evening Mops": B.mops, "evening family's way round": B.via, ...Object.fromEntries(B.line.map((p) => ["evening in line " + p.id, p])), ...Object.fromEntries(B.family.map((p) => ["evening family " + p.id, p.at])) },
     bad = [];
   for (const [name, p] of Object.entries(spots)) {
@@ -262,7 +262,7 @@ check("draw order: front last, and people on the same feet line always in the or
 }
 // The loading bay at night (beat 42): the robots' places and Squatch's stops are clear of its furniture.
 {
-  const Y = EVP.BAY,
+  const Y = EVP.EV_BAY,
     spots = { "bay robot": Y.robot, ...Object.fromEntries(Y.parked.map((p) => ["bay parked " + p.id, p])), ...Object.fromEntries(Y.woke.map((p, i) => ["bay woken robot " + i, p])), "bay stop": Y.stop, "bay bin": Y.bin, "bay mailbox": Y.mail, "bay under the vent": Y.underVent, ...Object.fromEntries(Y.run.map((p, i) => ["bay run " + i, p])) },
     bad = [];
   for (const [name, p] of Object.entries(spots)) {

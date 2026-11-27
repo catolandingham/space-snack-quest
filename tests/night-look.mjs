@@ -140,10 +140,10 @@ const results = {};
   g.check("the hallway in a night scene (ch1Night): its night look", results.passageNight.night && results.passageNight.drew.passage && results.passageNight.drew.passage.lit === 1, results.passageNight);
   await still(page, "hallway-night");
   await page.evaluate(() => (window.__ss.op.ch1Night = false));
-  // the loading bay at night (beat 42): its own locked night picture
-  await page.evaluate(() => (window.__ss.ch1JumpBeat(42), window.__ss.settleRoom()));
+  // the loading bay at night (night one, beat 42b: the evening's bin, debug beat 142): its own locked night picture
+  await page.evaluate(() => (window.__ss.ch1JumpBeat(142), window.__ss.settleRoom()));
   results.bayNight = await frame(page, {});
-  g.check("the loading bay at night (beat 42): its locked night picture", results.bayNight.room === "hangar" && results.bayNight.night && results.bayNight.drew.hangar && results.bayNight.drew.hangar.picture, results.bayNight);
+  g.check("the loading bay at night (beat 42b): its locked night picture", results.bayNight.room === "hangar" && results.bayNight.drew.hangar && results.bayNight.drew.hangar.picture, results.bayNight);
   g.check("no page errors (Day 2)", errors.length === 0, errors);
   await ctx.close();
 }

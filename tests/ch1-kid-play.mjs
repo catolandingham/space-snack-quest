@@ -30,7 +30,8 @@ const MAX_S = +(process.env.KID_MAX_S || 900);
 const OUT = process.env.KID_OUT || join(root, "tests", "out", "kid-play");
 const SHOTS = process.env.KID_SHOTS === "1";
 const AVOID = (process.env.KID_AVOID || "").split(",").filter(Boolean);
-const SLIP_CODE = "169556"; // what the pink slip says (Brian, chat, 2026-11-26)
+// what the pink slip says: Isfred's office code, as the game has it (src/modules/office-code.js)
+const { OFFICE_CODE: SLIP_CODE } = await import(join(root, "src", "modules", "office-code.js"));
 const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 1 };
 mkdirSync(OUT, { recursive: true });
 if (SHOTS) (rmSync(join(OUT, "fr"), { recursive: true, force: true }), mkdirSync(join(OUT, "fr"), { recursive: true }));
@@ -100,7 +101,7 @@ const st = () =>
       polaroid: !!document.querySelector('canvas[aria-label="group photo"]'),
       // The evening's full-screen close-ups (src/modules/evening.js): the photo wall, the brochure, the order papers.
       evening: window.SSQ && window.SSQ.beat("ch1-evening") ? window.SSQ.beat("ch1-evening").viewTargets() : null,
-      // The escape's close-ups (src/modules/escape.js): the keypad, the Moon Pie site, the snack counter.
+      // The escape's close-ups (src/modules/escape.js): the keypad, the snack site, the snack counter.
       esc: (() => {
         const b = window.SSQ && window.SSQ.beat("ch1-escape"),
           e = b && b.active() && b.debug().state;
@@ -489,7 +490,7 @@ while (now() < MAX_S) {
   // is the goal itself, the escape night's wait by the vent, step "es-ball")
   const avoid = (v) => AVOID.some((a) => v.startsWith(a)) || (v === "ROLL · ball" && s.step !== "es-ball" && s.step !== "ev-dodge");
   // The escape's close-ups: the office keypad (type the number on the pink slip beside it, one key at a time), the
-  // Moon Pie site (its big button), the snack counter (each snack in turn).
+  // snack site (its big button), the snack counter (each snack in turn).
   if (s.esc) {
     const E = s.esc;
     if (E.step === "pad") {

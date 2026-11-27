@@ -513,7 +513,7 @@ const play = await page.evaluate(() => {
     // the lunch sneak (lunch-sneak.js): one snack cake taken and eaten, two left on the plate
     one: n.ch1Lunch && n.ch1Lunch.pie === "eaten" && n.ch1Lunch.pies === 2 ? 1 : 0,
     lights: n.ch1Lights || 0,
-    // the escape (escape.js): the slip ends in the Guardian Box, his last Stars Cake on the Guardians' plate, the computer's room
+    // the escape (escape.js): the slip ends in the Guardian Box, his last snack cake on the Guardians' plate, the computer's room
     escape: n.ch1Escape ? { slip: n.ch1Escape.slip, plate: n.ch1Escape.snacks.onPlate.length, bag: n.ch1Escape.snacks.bag, typed: n.ch1Escape.typed } : null,
     siteRoom: esRoom,
     brochure: !!n.ch1Brochure,
@@ -522,7 +522,7 @@ const play = await page.evaluate(() => {
     paper: n.ch1PaperLog || [],
     // the loading bay (loading-bay.js): where the day's two stuck copies went
     bayPapers: n.ch1Bay && n.ch1Bay.papers ? n.ch1Bay.papers.where : "",
-    officeCode: window.SSQ.engine().officeCode(),
+    officeCode: window.SSQ.beat("ch1-escape").place.OFFICE_CODE,
     order: window.SSQ.beat("ch1-evening").debug().cutIns.includes("order"),
   };
 });
@@ -562,7 +562,7 @@ const must = [
   "My lunch! You're the best.",
   // the loading bay, rebuilt from the story pass of 2026-11-26 (loading-bay-lines.js): a few lines from each beat
   "Universal Postal Service ship arriving!",
-  "The Stars Cakes ship!",
+  `The ${SNACK.name} ship!`,
   "Hide when I say hide.",
   "Quick! The manager is coming!",
   "NO FUR. PROCEED.",

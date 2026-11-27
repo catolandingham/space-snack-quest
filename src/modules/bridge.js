@@ -34,7 +34,7 @@ import { createSpeechVoice } from "./speech-voice.js";
 import { drawCreditsButton, creditsTap, creditsShown } from "./credits.js";
 import { nightPicture, isNightNow, nightDrawn } from "./night-look.js";
 import { snackWord } from "./snack-name.js";
-import { drawStationStamp, crateStampDrawn } from "./crate-stamp.js";
+import { drawStationStamp, crateStampDrawn, setCrayonSource } from "./crate-stamp.js";
 
 /**
  * The game-state fields a rebuilt beat may write, through engine().set(field, value). Anything else it
@@ -48,6 +48,9 @@ export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1HomeM
 
 export function createBridge() {
   const beats = new Map();
+  // His crayon in the crate bed's stamp is there until a rebuilt beat says he has rubbed it out (the evening's 39b, and
+  // every beat after it: crayonGone()).
+  setCrayonSource(() => ![...beats.values()].some((b) => b.crayonGone && b.crayonGone()));
   const outlines = new Map();
   const guests = createGuestArt();
   // The engine functions the older program hands over (see handOver), and the fields beats have written.

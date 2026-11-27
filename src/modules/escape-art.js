@@ -4,13 +4,15 @@
  * (the paw print in the ORDER MORE ROBOTS box, the office code written in its corner), the open vent grille, the inside
  * of the vent (no locked picture exists: Mops's secret desk, the IDEAS FOR GUARDIANS board, the detective wall, the
  * TOYS bin), the close-ups (the detective wall, the Mars letter, the new Guardian note, the slip in his paw, the
- * keypad, the Moon Pie site, the snack counter, the Guardian Box) and the wordless thought pictures. Locked room
+ * keypad, the snack site, the snack counter, the Guardian Box) and the wordless thought pictures. Locked room
  * pictures are never redrawn: these are layers on top of them, or whole pictures of their own.
  * Every word comes from escape-lines.js; every place from escape-place.js.
  */
-import { STARS_CAKES } from "./stars-cakes.js";
+import { FAMILY } from "./snack-name.js";
+import { drawBrochure, drawPawPrint } from "./evening-art.js";
+import { drawCoffeeStain } from "./evening-pictures.js";
 import { escapeWords } from "./escape-lines.js";
-import { VENT_ROOM, KEYPAD, keyAt, SITE, SNACKS, OFFICE_CODE, HALLWAY } from "./escape-place.js";
+import { VENT_ROOM, KEYPAD, keyAt, SITE, SNACKS, OFFICE_CODE, ES_HALLWAY } from "./escape-place.js";
 import { drawThought, drawCrate } from "./bedtime-story-art.js";
 import { drawGuardiansCrayon } from "./guardians-drawing.js";
 import { GUARDIAN_BOX } from "./guardian-box.js";
@@ -88,25 +90,6 @@ export function markBox(ctx, b, t, pad = 6) {
   return box;
 }
 
-/** Squatch's paw print: a pad and four toes, his fur colour, its middle at (x, y), `r` its size. */
-export function drawPawPrint(ctx, x, y, r, color = ES_FUR) {
-  ctx.save();
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  ctx.ellipse(x, y + r * 0.25, r * 0.62, r * 0.5, 0, 0, ES_TAU);
-  ctx.fill();
-  for (const [dx, dy] of [
-    [-0.62, -0.42],
-    [-0.22, -0.72],
-    [0.22, -0.72],
-    [0.62, -0.42],
-  ]) {
-    ctx.beginPath();
-    ctx.ellipse(x + dx * r, y + dy * r, r * 0.2, r * 0.25, 0, 0, ES_TAU);
-    ctx.fill();
-  }
-  ctx.restore();
-}
 
 /**
  * The big pink order sheet, `w` wide with its top left at (x, y): a header bar, the ORDER MORE ROBOTS box with
@@ -127,7 +110,7 @@ export function drawPinkSheet(ctx, x, y, w, { glowCode = false, t = 0, paw = tru
   const box = { x: 8 * u, y: 16 * u, s: 22 * u };
   esRect(ctx, box.x, box.y, box.s, box.s, 2 * u);
   esPaint(ctx, ES_PAPER, Math.max(2, 1.2 * u));
-  paw && drawPawPrint(ctx, box.x + box.s / 2, box.y + box.s / 2 + u, 8.5 * u);
+  paw && drawPawPrint(ctx, box.x + box.s / 2, box.y + box.s / 2 + u, 19 * u); // (his paw print as night one's close-up drew it, evening-art.js)
   const order = escapeWords("sheet-order");
   let fit = 10 * u;
   ctx.font = `900 ${fit}px system-ui, -apple-system, sans-serif`;
@@ -172,46 +155,20 @@ export function drawSlipSmall(ctx, x, y, k = 1, a = 0) {
 }
 
 /**
- * The pancake brochure (beat 38) pinned on the home wall: PANCAKES over the smiling Sasquatch couple behind a counter.
- * PANCAKES was the brochure's word in the game before (14-ch1-day2.js).
+ * The pancake brochure (beat 39, the evening) pinned on the home wall above his bed, or held up big (45a): the
+ * evening's own drawing of it (evening-art.js drawBrochure: the two cooks, Mars in the window, the pancakes and, held
+ * up big, the cake box stamped with his family's name), with the guest's coffee stain from the snack bar (38c). On
+ * the wall, a red pin. In box `b`; `big` held up. Returns what it drew.
  */
-export function drawBrochure(ctx, b, big = false) {
+export function drawPinnedBrochure(ctx, b, big = false) {
   const w = b.x1 - b.x0,
     h = b.y1 - b.y0;
-  esRect(ctx, b.x0, b.y0, w, h, 4);
-  esPaint(ctx, ES_PAPER, 3);
-  ctx.fillStyle = "#b45309";
-  ctx.fillRect(b.x0 + 3, b.y0 + 3, w - 6, h * 0.22);
-  // the couple: two big furry heads and the counter in front
-  const cx = (b.x0 + b.x1) / 2,
-    cy = b.y0 + h * 0.62,
-    s = w / 100;
-  for (const [ox, col] of [
-    [-20, "#6b4428"],
-    [20, "#7a5233"],
-  ]) {
-    ctx.beginPath();
-    ctx.ellipse(cx + ox * s, cy - 6 * s, 17 * s, 16 * s, 0, 0, ES_TAU);
-    esPaint(ctx, col, 2);
-    for (const ex of [-6, 6]) (ctx.beginPath(), ctx.arc(cx + (ox + ex) * s, cy - 9 * s, 2.4 * s, 0, ES_TAU), esPaint(ctx, ES_INK));
-    ctx.beginPath();
-    ctx.arc(cx + ox * s, cy - 2 * s, 5 * s, 0.2, Math.PI - 0.2);
-    ctx.strokeStyle = ES_INK;
-    ctx.lineWidth = 2;
-    ctx.stroke();
-  }
-  esRect(ctx, b.x0 + 8, cy + 8 * s, w - 16, 14 * s, 3);
-  esPaint(ctx, "#ffe08a", 2);
-  // held up big (45a): a box of cakes on the counter, stamped MARS CAKES (stars-cakes.js; a pick Brian has not made yet)
-  if (big) {
-    esRect(ctx, b.x1 - 30 * s, cy + 2 * s, 24 * s, 14 * s, 2);
-    esPaint(ctx, "#d9a35b", 2);
-    esWords(ctx, STARS_CAKES.family, b.x1 - 18 * s, cy + 11 * s, 3.4 * s, ES_RED, "center", 900);
-    return { big, stamp: STARS_CAKES.family };
-  }
+  drawBrochure(ctx, b.x0, b.y0, w, h, !big);
+  drawCoffeeStain(ctx, b.x0, b.y0, w, h);
+  if (big) return { big, stamp: FAMILY.NAME };
   // a red pin
   ctx.beginPath();
-  ctx.arc(cx, b.y0 + 2, 5, 0, ES_TAU);
+  ctx.arc((b.x0 + b.x1) / 2, b.y0 + 2, 5, 0, ES_TAU);
   esPaint(ctx, ES_RED, 2);
   return { big };
 }
@@ -312,7 +269,7 @@ function flyer(ctx, x, y, w, size) {
   sasquatchShape(ctx, x + w / 2, y + w * 0.62, w / 70);
   pin(ctx, x + w / 2, y + 4);
 }
-/** The baby photo: tiny Squatch in a Moon Pie crate, in a white frame. */
+/** The baby photo: tiny Squatch in a snack crate, in a white frame. */
 function babyPhoto(ctx, x, y, w) {
   esRect(ctx, x, y, w, w * 0.8, 3);
   esPaint(ctx, ES_PAPER, 2.5);
@@ -572,7 +529,7 @@ function boxPanel(ctx, t) {
     sx = cx - 10;
   k < 1 && drawSlipSmall(ctx, sx, sy, 4.2, -0.1);
   // unfolded for a moment: the paw print shows (Mops can never see this), then it goes in
-  k < 0.5 && drawPawPrint(ctx, sx + 6, sy + 10, 16);
+  k < 0.5 && drawPawPrint(ctx, sx + 6, sy + 10, 35);
   // the older notes (the gift's rocket among them), in front of the slip once it is under them
   const notes = [
     [cx - 100, B.y0 + 30, 150, 140, -0.12],
@@ -594,7 +551,7 @@ function boxPanel(ctx, t) {
 }
 export const ESCAPE_PANELS = Object.freeze({ eswall: [wallPanel], esletter: [letterPanel], esbox: [boxPanel] });
 
-// ---------- close-ups drawn over the room (the keypad, the Moon Pie site, the snack counter) ----------
+// ---------- close-ups drawn over the room (the keypad, the snack site, the snack counter) ----------
 /** The room behind a close-up: blurred and darkened, as in the cut-in recipe (docs/CUT-IN-SPEC.md). */
 export function blurBehind(ctx) {
   ctx.save();
@@ -663,7 +620,7 @@ export function drawKeypad(ctx, { typed = "", buzz = 0, ok = false, t = 0, big =
 }
 /** The open office door over the hallway's locked door: the dark room through it. */
 export function drawDoorOpen(ctx) {
-  const d = HALLWAY.door;
+  const d = ES_HALLWAY.door;
   esRect(ctx, d.x0 + 4, d.y0 + 4, d.x1 - d.x0 - 8, d.y1 - d.y0 - 4, 3);
   esPaint(ctx, "#22252e", 3);
   ctx.beginPath();
@@ -675,7 +632,7 @@ export function drawDoorOpen(ctx) {
   esPaint(ctx, "#8b93a7", 3);
 }
 /**
- * The Moon Pie site on the office computer (beat 51), close up: the MOON PIES header, a small grey "Order new box"
+ * The snack site on the office computer (beat 51), close up: the snack's name as its header, a small grey "Order new box"
  * button and a big lit "Return empty crate" button. `booked` (0 to 1): after the tap, the crate rides up a ramp into
  * the ship and a big green tick comes. Returns the buttons' boxes.
  */

@@ -12,14 +12,16 @@
  *   status  "pending" (waiting for Brian's yes), "decided", "approved" (Brian's yes, word for word), "in-game"
  *   source  where the words came from
  */
+import { SNACK } from "./snack-name.js";
+
 const PASS = "story pass 2026-11-26, beat ";
 const BAY_DAY2 = "src/game/14-ch1-day2.js before this change";
 
 export const BAY_LINES = Object.freeze(
   [
-    // ---- 28. The Stars Cakes ship (behind the snack counter) ----
+    // ---- 28. The snack's ship (behind the snack counter) ----
     { id: "pa-ship", who: "pa", style: "ear", text: "Universal Postal Service ship arriving!", status: "pending", source: PASS + "28 (KEEP)" },
-    { id: "sq-stars-ship", who: "sq", text: "The Stars Cakes ship!", status: "pending", source: PASS + "28 (NEW)" },
+    { id: "sq-stars-ship", who: "sq", text: `The ${SNACK.name} ship!`, status: "pending", source: PASS + "28 (NEW)" },
     { id: "sq-new-kind", who: "sq", text: "A new kind from the Guardians!", status: "pending", source: PASS + "28 (NEW)" },
     { id: "sq-crate-kind", who: "sq", text: "Maybe it's the crate kind!", status: "pending", source: PASS + "28 (NEW)" },
     { id: "mops-maybe", who: "mops", text: "Maybe.", status: "pending", source: PASS + "28 (NEW)" },

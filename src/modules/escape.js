@@ -11,7 +11,7 @@
  *   44c  "HQ got the order form." ... "The manager lied to me."
  *   44d  Mops walks home himself (LOOK · plaque, optional; a guest's "Hi, Mops!").
  *   45a  the switch back to Squatch; "Squatch. You were right." in short bubbles; his gulp; SHOW · brochure; Mops touches
- *        his crate's worn letter (_ARS CAKES): "...Mars."
+ *        his crate's worn letter (the family stamp's scraped first letter): "...Mars."
  *   45b  the crayon plan: LOOK · crate, LOOK · calendar, and the talk add its pictures one at a time.
  *   46   the almost-slip.
  *   47   Squatch walks to the bay himself, Mops behind him; the night robot on its rounds (the one capture rule);
@@ -22,30 +22,30 @@
  *   49   out in the bay, Squatch again: "Mmf! Mmf mmf!", "You're gumbling again!", GRAB · pink slip, the fold, the plan's
  *        tick.
  *   50   Squatch walks to the office door ("CLOSED. Back at 9."); TYPE · code: the keypad and the folded slip (tap it
- *        bigger); a wrong code buzzes, "Shh! Try again."; 169556 opens it.
+ *        bigger); a wrong code buzzes, "Shh! Try again."; the office code (office-code.js) opens it.
  *   51   the office (escape-office-art.js): SPIN · chair, LOOK · mug, OPEN · drawer, LOOK · frame (+50), each optional;
  *        the first try at the computer, "Robot! Duck!" and HIDE · desk; RETURN · empty crate: "ghjk", "Hooves. You do
  *        it.", "Not that one!", "Pickup booked." / "Tomorrow's ship.", TAKE · label, the plan's tick, "We're really
  *        going."
- *   52   Squatch walks to the snack bar; Mops's lines; the snacks into his bag; his last Stars Cake on the Guardians'
+ *   52   Squatch walks to the snack bar; Mops's lines; the snacks into his bag; his last snack cake on the Guardians'
  *        plate ("Their favorite. I think."); he walks home; OPEN · closet, PUT IN · box, "Mops can never see this.",
  *        "Big day tomorrow.", their song; bed; beat 53.
  * Its progress lives in the game-state field ch1Escape, and ch1Step is "es-<step>" at each step the player controls,
  * so the step restart (↺, 20-ch2.js) brings back the step he is on; the steps he does not control go back to the last
- * one he did (RESTART_TO). Words: escape-lines.js; places and times: escape-place.js; the Stars Cakes names:
- * stars-cakes.js. Every drawing and number is a PLACEHOLDER for Brian.
+ * one he did (RESTART_TO). Words: escape-lines.js; places and times: escape-place.js; the snack's names:
+ * snack-name.js. Every drawing and number is a PLACEHOLDER for Brian.
  */
 import { escapeWords } from "./escape-lines.js";
-import { OFFICE_CODE, BAY_DAY, BAY_NIGHT, ES_HOME, BAY, ROBOT_SIGHT, VENT_ROOM, VENT_TUNNEL, HALLWAY, KEYPAD, keyAt, OFFICE, SITE, ES_BAR, SNACKS, ES_PACE, NIGHT_LIT, WEEK, MOP_CALM, MOPOFF, NEWS, ROUTE_HOME, ROUTE_VENT, ROUTE_OFFICE, ROUTE_BAR, ROUTE_HOME_NIGHT, HALL_GUEST, PLAQUE, FOLLOW, ES_DOORS } from "./escape-place.js";
+import { OFFICE_CODE, BAY_DAY, BAY_NIGHT, ES_HOME, ES_BAY, ROBOT_SIGHT, VENT_ROOM, VENT_TUNNEL, ES_HALLWAY, KEYPAD, keyAt, OFFICE, SITE, ES_BAR, SNACKS, ES_PACE, WEEK, MOP_CALM, MOPOFF, NEWS, ROUTE_HOME, ROUTE_VENT, ROUTE_OFFICE, ROUTE_BAR, ROUTE_HOME_NIGHT, HALL_GUEST, PLAQUE, FOLLOW, ES_DOORS } from "./escape-place.js";
 import { freshFloor, goatCells, beardAt, mopCalm, mopGoat, goatClean, wheelsAcross, starFor, bars, robotsAt, drawCalmFloor, drawMopFloor, drawBars, drawStarCloseup, markPatch } from "./escape-mopoff.js";
 import { doorAt, doorTo, markDoor, freshTrail, followStep } from "./escape-doors.js";
-import { drawWeek, drawCrateStamp, drawPlan, drawSweat } from "./escape-home-art.js";
+import { drawWeek, drawStampTouch, drawPlan, drawGulpSweat } from "./escape-home-art.js";
 import { drawClosedSign, drawOfficeThings, drawSpinStars, drawPassingLight } from "./escape-office-art.js";
 import { drawTunnel, drawDark, drawDeskThings, drawNotePad, drawEyesInset, drawNoteCloseup, drawFoldCloseup } from "./escape-vent-art.js";
 import { LUNCH_SOLIDS, LUNCH_BOUNDS } from "./lunch-sneak-place.js";
 import { createGuestArt } from "./guests.js";
 import {
-  drawBrochure,
+  drawPinnedBrochure,
   thinkSlipVent,
   drawOpenVent,
   drawVentRoomPicture,
@@ -65,7 +65,7 @@ import { cutawaySteps } from "./cutaway.js";
 import { coneFrom, lookAt } from "./party-watch.js";
 import { BAY_SOLIDS, SIGHT, bayPath, coneOnBody, watchTick, drawWatchCone, drawWatchMark, newGuard, guardTick, drawGuard } from "./bay-watch.js";
 import { splitLine } from "./line-split.js";
-import { drawNightTint } from "./night-look.js";
+import { nightPicture, nightPictureFor, noteNightPicture, isNightNow } from "./night-look.js";
 import { partyLine } from "./party-lines.js";
 import { adultPxFor } from "./room-sizes.js";
 import { sqPawAt } from "./lunch-sneak-art.js";
@@ -557,7 +557,7 @@ export function createEscape(bridge) {
     busy();
     e.face("sq", -1);
     go("togoat");
-    const way = bayPath(e.pos("mops"), BAY.mopsVent);
+    const way = bayPath(e.pos("mops"), ES_BAY.mopsVent);
     e.queue([
       ...way.map((to) => e.until((dt) => (e.moWalking(true), e.step("mops", to.x, to.y, ES_PACE.walk, dt || 0)))),
       e.run(() => (e.moWalking(false), e.still("mops"), e.face("mops", 1))),
@@ -573,7 +573,7 @@ export function createEscape(bridge) {
       }),
     ]);
   }
-  const freshRobot = () => ({ x: BAY.patrol.x0, y: BAY.patrol.y, f: 1, phase: "patrol", t: 0, seenT: 0, near: 0, route: [] });
+  const freshRobot = () => ({ x: ES_BAY.patrol.x0, y: ES_BAY.patrol.y, f: 1, phase: "patrol", t: 0, seenT: 0, near: 0, route: [] });
   function rollUp() {
     const e = E(),
       l = L();
@@ -584,10 +584,10 @@ export function createEscape(bridge) {
     e.set("ch1DidBall", true); // (the chapter's record that he hid as a ball: 90-input-shell.js ch1State)
     sfx("hide");
   }
-  const atVent = () => Math.hypot(E().pos("sq").x - BAY.ventStand.x, E().pos("sq").y - BAY.ventStand.y) <= BAY.ventReach;
+  const atVent = () => Math.hypot(E().pos("sq").x - ES_BAY.ventStand.x, E().pos("sq").y - ES_BAY.ventStand.y) <= ES_BAY.ventReach;
   // The night robot: its cone, its patrol, and the one capture rule when it sees him (bay-watch.js: its drawn cone on
   // him as he is drawn here, for SIGHT.register seconds, a "?" filling in meanwhile).
-  const robotCone = (r) => coneFrom("es-robot", r.x, r.y, r.f > 0 ? lookAt(r.x, r.y, BAY.ventStand) : Math.PI, { half: SIGHT.half, len: SIGHT.len });
+  const robotCone = (r) => coneFrom("es-robot", r.x, r.y, r.f > 0 ? lookAt(r.x, r.y, ES_BAY.ventStand) : Math.PI, { half: SIGHT.half, len: SIGHT.len });
   const sqHidden = () => L().pose === "ball" || E().get("sqPose") !== "stand";
   // Rolled up, the ball rule (R43): seen only by a robot that stays within 70 of him, its cone on him, for 2 s.
   function robotSees(r, dt) {
@@ -620,7 +620,7 @@ export function createEscape(bridge) {
   function robotTick(l, dt) {
     const e = E(),
       r = l.robot,
-      P = BAY.patrol;
+      P = ES_BAY.patrol;
     r.t += dt;
     if (r.phase === "patrol") {
       r.x += r.f * P.speed * dt;
@@ -629,9 +629,9 @@ export function createEscape(bridge) {
       if (e.get("ctrl") && !e.current() && robotSees(r, dt)) Object.assign(r, { phase: "bang", t: 0, saw: { ...e.pos("sq") } });
       else if (!e.get("ctrl") || e.current()) ((r.seenT = 0), (r.mark = ""));
     } else if (r.phase === "bang") {
-      // "!" (robots: DECISIONS sight cones, 2026-11-22), then it rolls off round the plant to pull the FUR alarm
+      // "!" (robots: DECISIONS sight cones, 2026-11-22), then it rolls off round the bin to pull the FUR alarm
       r.mark = "!";
-      r.t >= 0.5 && Object.assign(r, { phase: "run", t: 0, route: BAY.toAlarm.map((q) => ({ ...q })) });
+      r.t >= 0.5 && Object.assign(r, { phase: "run", t: 0, route: ES_BAY.toAlarm.map((q) => ({ ...q })) });
     } else if (r.phase === "run") {
       if (roll(r, ROBOT_SIGHT.run, dt)) {
         // the alarm: a guard comes in (the one capture rule; bay-watch.js), toward where the robot saw him
@@ -642,7 +642,7 @@ export function createEscape(bridge) {
       }
     } else if (r.phase === "pull") {
       // it waits by the alarm until security has gone ("They lost you."), then goes back to its patrol
-      !l.guard && r.t > 1 && Object.assign(r, { phase: "back", t: 0, route: [...BAY.toAlarm.slice(0, -1).reverse(), { x: P.x0, y: P.y }].map((q) => ({ ...q })) });
+      !l.guard && r.t > 1 && Object.assign(r, { phase: "back", t: 0, route: [...ES_BAY.toAlarm.slice(0, -1).reverse(), { x: P.x0, y: P.y }].map((q) => ({ ...q })) });
     } else if (r.phase === "back") {
       roll(r, P.speed * 2, dt) && Object.assign(r, { phase: "patrol", t: 0, f: 1, seenT: 0 });
     } else if (r.phase === "dock") {
@@ -755,9 +755,9 @@ export function createEscape(bridge) {
     e.set("ch1D", true);
     e.set("ch1Night", true);
     e.set("sqPose", "ball");
-    e.place("sq", BAY.ventStand.x, BAY.ventStand.y);
+    e.place("sq", ES_BAY.ventStand.x, ES_BAY.ventStand.y);
     e.set("moPose", "stand");
-    e.place("mops", BAY.mopsVent.x, BAY.mopsVent.y);
+    e.place("mops", ES_BAY.mopsVent.x, ES_BAY.mopsVent.y);
     e.face("mops", -1);
     go("out", { crawl: { dir: "out", k: 0 }, slip: "mops", vent: "" });
     e.queue([
@@ -845,8 +845,8 @@ export function createEscape(bridge) {
         e.run(() => (Object.assign(L(), { cu: "", door: true }), sfx("open"))),
         e.until((dt) => {
           e.moWalking(true);
-          const a = e.step("mops", HALLWAY.doorIn.x - 40, HALLWAY.doorIn.y - 30, ES_PACE.walk, dt || 0);
-          return e.step("sq", HALLWAY.doorIn.x, HALLWAY.doorIn.y, ES_PACE.walk, dt || 0) && a;
+          const a = e.step("mops", ES_HALLWAY.doorIn.x - 40, ES_HALLWAY.doorIn.y - 30, ES_PACE.walk, dt || 0);
+          return e.step("sq", ES_HALLWAY.doorIn.x, ES_HALLWAY.doorIn.y, ES_PACE.walk, dt || 0) && a;
         }),
         e.run(() => {
           e.moWalking(false);
@@ -996,7 +996,7 @@ export function createEscape(bridge) {
     const l = L(),
       s = l.snacks;
     if (s.carry || s.gone[i]) return;
-    // his last Stars Cake is kept for the Guardians' plate: the bag takes the others
+    // his last snack cake is kept for the Guardians' plate: the bag takes the others
     const cake = SNACKS.kinds.lastIndexOf("cake");
     if (l.step === "snacks" && i === cake) i = SNACKS.kinds.findIndex((_, j) => j !== cake && !s.gone[j]);
     if (l.step === "food") i = cake;
@@ -1019,7 +1019,7 @@ export function createEscape(bridge) {
       go("guardians");
       e.queue([...sayParts("sq", "sq-what-guardians"), ...sayParts("sq", "sq-leave-food"), e.run(() => ((L().snacks.plate = true), go("food"), control("chip-food")))]);
     } else if (l.step === "food") {
-      // his last Stars Cake on their plate: "Their favorite. I think."; Mops says nothing, one heart
+      // his last snack cake on their plate: "Their favorite. I think."; Mops says nothing, one heart
       busy();
       go("favorite");
       e.queue([...sayParts("sq", "sq-favorite"), e.run(() => go("hearts", { cu: "", heartsAt: e.time() })), e.until(() => e.time() - L().heartsAt >= ES_PACE.hearts), e.run(toHome)]);
@@ -1139,7 +1139,7 @@ export function createEscape(bridge) {
       busy();
       go("rolled");
       const r = l.robot;
-      Object.assign(r, { phase: "dock", t: 0, route: [{ x: Math.max(r.x, BAY.patrol.x0), y: BAY.patrol.y }, ...BAY.toDock].map((q) => ({ ...q })) });
+      Object.assign(r, { phase: "dock", t: 0, route: [{ x: Math.max(r.x, ES_BAY.patrol.x0), y: ES_BAY.patrol.y }, ...ES_BAY.toDock].map((q) => ({ ...q })) });
     }
     if (l.step === "rolled" && l.robot && l.robot.phase === "asleep" && (l.t0 += dt) >= ES_PACE.ballWait) inside();
     // a close-up is open: he stays where he is (the stick does not walk him off behind it)
@@ -1193,7 +1193,7 @@ export function createEscape(bridge) {
       return [walkSpot("es-cell", "mo", { x: (c.x0 + c.x1) / 2 - 24 * f, y: (c.y0 + c.y1) / 2 }, 14)];
     }
     // 47: in the bay, the vent is where he is going; 48: the tunnel's far end
-    if (l.step === "sneak" && e.room() === "hangar" && l.pose === "stand" && !l.guard && !(l.robot && l.robot.phase !== "patrol")) return [walkSpot("es-vent", "sq", BAY.ventStand, BAY.ventReach - 10)];
+    if (l.step === "sneak" && e.room() === "hangar" && l.pose === "stand" && !l.guard && !(l.robot && l.robot.phase !== "patrol")) return [walkSpot("es-vent", "sq", ES_BAY.ventStand, ES_BAY.ventReach - 10)];
     if (l.step === "tunnel") return [walkSpot("es-tunnel", "mo", { x: VENT_TUNNEL.end + 24, y: VENT_TUNNEL.y }, 16)];
     if (l.step === "tobar" && e.room() === "hall") return [{ ...walkSpot("es-bar", "sq", ES_BAR.sq, ES_BAR.r - 6), thing: ES_BAR.aisle }];
     const door = walking(l) && doorTo(e.room(), routeOf(l)[e.room()]);
@@ -1229,14 +1229,14 @@ export function createEscape(bridge) {
       // ROLL · ball by the vent (the goal: its outline, goal-targets.js "hangar:es-ball"); while the robot is after him
       // or a guard is out, wherever he stands (C20), so he can always hide
       if (l.guard || (l.robot && l.robot.phase !== "patrol")) return [{ id: "es-ball-any", verb, cap, who: "sq", hot: true, x: s.x, y: s.y, r: 40, at: [s.x, s.y - 70], f: rollUp }];
-      return [{ id: "es-ball", verb, cap, who: "sq", x: BAY.ventStand.x, y: BAY.ventStand.y, r: BAY.ventReach, at: [BAY.ventStand.x, BAY.ventStand.y - 70], thing: BAY.vent, f: rollUp }];
+      return [{ id: "es-ball", verb, cap, who: "sq", x: ES_BAY.ventStand.x, y: ES_BAY.ventStand.y, r: ES_BAY.ventReach, at: [ES_BAY.ventStand.x, ES_BAY.ventStand.y - 70], thing: ES_BAY.vent, f: rollUp }];
     }
     if (l.step === "grab" && e.room() === "hangar") {
       const m = e.pos("mops");
       return [spot("es-grab", "button-grab", { x: m.x + 30, y: m.y, r: 90 }, mouthBox(), grab)];
     }
     // 50: TYPE · code at the keypad by the office door
-    if (l.step === "tohall" && e.room() === "passage") return [spot("es-pad", "button-code", { x: HALLWAY.sq.x, y: HALLWAY.sq.y, r: 70 }, HALLWAY.keypad, openPad)];
+    if (l.step === "tohall" && e.room() === "passage") return [spot("es-pad", "button-code", { x: ES_HALLWAY.sq.x, y: ES_HALLWAY.sq.y, r: 70 }, ES_HALLWAY.keypad, openPad)];
     // 51: the computer (the goal), and the fun things, each once
     if (l.step === "duck" && e.room() === "office") return [spot("es-hide", "button-hide-desk", { x: OFFICE.hide.at.x, y: OFFICE.hide.at.y, r: 70 }, OFFICE.hide.thing, hideDesk)];
     if (l.step === "computer" && e.room() === "office") {
@@ -1341,15 +1341,16 @@ export function createEscape(bridge) {
       night = !!e.get("ch1Night"),
       p = night ? pics.night : pics.day;
     p && p.complete && p.naturalWidth ? ctx.drawImage(p, 0, 0, 960, 640) : ((ctx.fillStyle = "#8a8fa0"), ctx.fillRect(0, 0, 960, 640));
+    night && noteNightPicture("hangar"); // (the bay's night look is its locked night picture)
     const out = { room: "hangar", night };
     // the grille swung open while Mops goes in or comes out; him, half in the dark hole
     if (l.crawl) {
-      drawOpenVent(ctx, BAY.vent);
-      const v = BAY.vent,
+      drawOpenVent(ctx, ES_BAY.vent);
+      const v = ES_BAY.vent,
         k = l.crawl.dir === "in" ? l.crawl.k : 1 - l.crawl.k,
         km = moScale("hangar"),
-        x = BAY.mopsVent.x + (((v.x0 + v.x1) / 2) - BAY.mopsVent.x) * k,
-        y = BAY.mopsVent.y + (v.y1 - 8 - BAY.mopsVent.y) * k;
+        x = ES_BAY.mopsVent.x + (((v.x0 + v.x1) / 2) - ES_BAY.mopsVent.x) * k,
+        y = ES_BAY.mopsVent.y + (v.y1 - 8 - ES_BAY.mopsVent.y) * k;
       ctx.save();
       ctx.beginPath();
       ctx.rect(0, k > 0.6 ? 0 : 0, 960, k > 0.6 ? v.y1 : 640);
@@ -1379,7 +1380,7 @@ export function createEscape(bridge) {
     // a walk between rooms: the next doorway's outline (44d, 50)
     walking(l) && e.get("ctrl") && markDoor(ctx, doorTo("hangar", routeOf(l).hangar), t);
     // 47: in the bay the vent is where he is going
-    l.step === "sneak" && e.get("ctrl") && !e.current() && (out.ventMark = markBox(ctx, BAY.vent, t));
+    l.step === "sneak" && e.get("ctrl") && !e.current() && (out.ventMark = markBox(ctx, ES_BAY.vent, t));
     // the night robot on patrol, its cone (dashed, yellow while he is in it), and its "!"
     const r = l.robot;
     if (r) {
@@ -1430,8 +1431,10 @@ export function createEscape(bridge) {
       return out;
     }
     // the room: its locked picture (the room drawn the same way until the picture has loaded), then what changes on it
-    const p = pics.vent;
+    // (at night, after the lamp, the room's night look: night-look.js, the one rule; the people are drawn over it, lit)
+    const p = pics.vent && nightPicture("duct", pics.vent, !!l.night && l.lamp !== false);
     p && p.complete && p.naturalWidth ? ctx.drawImage(p, 0, 0, 960, 640) : drawVentRoomPicture(ctx);
+    out.night = !!(p && p.nightLook);
     out.picture = !!(p && p.complete && p.naturalWidth);
     drawVentEyes(ctx);
     l.lamp !== false && drawLampBeam(ctx);
@@ -1440,9 +1443,8 @@ export function createEscape(bridge) {
     e.get("moPose") !== "hidden" && e.drawMopsOn(ctx, m.x, m.y, VENT_ROOM.scale, { f: m.f || 1, walk: moMoving ? t * 8 : 0 });
     mopsSlip(ctx, l, m, VENT_ROOM.scale);
     const d = drawVentDesk(ctx, t, { slip: l.slip === "desk" ? "desk" : "", glowSlip: false });
-    // before the lamp: dark; after it, the night look with the lamp's light kept bright
+    // before the lamp: dark (after it, the room's own night look, drawn with its picture above)
     if (l.lamp === false) drawDark(ctx);
-    else if (l.night) out.night = !!drawNightTint(ctx, NIGHT_LIT.duct);
     out.lamp = l.lamp !== false;
     // the one highlight on the next thing (over the dark: it stays bright)
     if (e.get("ctrl") && !e.current() && !l.cu) {
@@ -1492,23 +1494,23 @@ export function createEscape(bridge) {
     if (room === "hangar" || room === "duct") return;
     drew = { step: l.step, room };
     // things in the room (under the night tint, like the room)
-    // home: the brochure on the wall (in his paw from 45a to 46); his crate bed's stamp, "_ARS CAKES" (stars-cakes.js)
-    room === "closet" && l.brochure !== "paw" && l.brochure !== "up" && drawBrochure(ctx, ES_HOME.brochure);
-    room === "closet" && (drew.stamp = drawCrateStamp(ctx, ES_HOME.crateStamp, l.touchAt >= 0));
+    // home: the brochure on the wall (in his paw from 45a to 46); his crate bed's stamp (the home picture's layer, crate-stamp.js)
+    room === "closet" && l.brochure !== "paw" && l.brochure !== "up" && drawPinnedBrochure(ctx, ES_HOME.brochure);
+    room === "closet" && (drew.stamp = drawStampTouch(ctx, l.touchAt >= 0));
     // the slip in his paw (the older program draws him in these rooms)
     room !== "closet" || l.step !== "bed" ? pawSlip(ctx, l, s, sqScale(room)) : null;
     if (room === "passage" && l.door) drawDoorOpen(ctx);
     // 50: the sign on the office door; 51: the office's things, his stars after the spin, the passing light, his eyes
     // under the desk
     room === "passage" && !l.door && (drew.sign = drawClosedSign(ctx));
-    room === "passage" && l.step === "tohall" && e.get("ctrl") && !e.current() && (drew.mark = markBox(ctx, HALLWAY.keypad, t));
+    room === "passage" && l.step === "tohall" && e.get("ctrl") && !e.current() && (drew.mark = markBox(ctx, ES_HALLWAY.keypad, t));
     if (room === "office") {
       drawOfficeThings(ctx);
       l.step === "spin" && drawSpinStars(ctx, headBox("sq"), t - l.spinAt, t);
       // the robot's light at the open door from Mops's warning on; it passes once he is hidden
       (l.step === "duckcall" || l.step === "duck") && (drew.light = drawPassingLight(ctx, 0.04 * Math.sin(t * 3)));
       l.step === "hidden" && ((drew.light = drawPassingLight(ctx, Math.min(1, (t - l.sweepAt) / OFFICE.sweep))), e.drawEyes(ctx, OFFICE.hide.under.x, OFFICE.hide.under.y - 30));
-      l.gulpAt >= 0 && t - l.gulpAt < ES_PACE.gulp && (drew.sweat = drawSweat(ctx, headBox("sq"), t - l.gulpAt));
+      l.gulpAt >= 0 && t - l.gulpAt < ES_PACE.gulp && (drew.sweat = drawGulpSweat(ctx, headBox("sq"), t - l.gulpAt));
       if (e.get("ctrl") && !e.current() && !l.cu) {
         const sp = spots().filter((q) => q.thing && !q.extra)[0];
         sp && (drew.mark = markBox(ctx, sp.thing, t));
@@ -1532,8 +1534,9 @@ export function createEscape(bridge) {
       e.drawMopsOn(ctx, m.x, m.y, moScale("office"), { f: m.f || 1, walk: moMoving ? t * 8 : 0 });
       drew.mops = { x: Math.round(m.x), y: Math.round(m.y) };
     }
-    // night: the room's night look (night-look.js; Brian 2026-11-26), its lights kept bright
-    if (l.night) drew.night = drawNightTint(ctx, NIGHT_LIT[room] || []);
+    // night: the room the older program draws has its night look already (night-look.js, from ch1Night: its picture
+    // under the tint, its lights kept bright; the people drawn over it stay lit)
+    if (l.night) drew.night = isNightNow(e.get);
     // the brochure's outline while Mops talks about it (over the tint: the one highlight stays bright)
     if (room === "closet") {
       l.glow === "brochure" && markBox(ctx, ES_HOME.brochure, t);
@@ -1549,10 +1552,10 @@ export function createEscape(bridge) {
       l.step === "cal" && (drew.mark = markBox(ctx, ES_HOME.calendar, t));
     }
     // 45a: a gulp and one sweat drop (he sent that order); the brochure held up, big; hearts over Mops
-    if (room === "closet" && l.gulpAt >= 0 && t - l.gulpAt < ES_PACE.gulp) drew.sweat = drawSweat(ctx, headBox("sq"), t - l.gulpAt);
+    if (room === "closet" && l.gulpAt >= 0 && t - l.gulpAt < ES_PACE.gulp) drew.sweat = drawGulpSweat(ctx, headBox("sq"), t - l.gulpAt);
     if (room === "closet" && l.step === "shown" && l.heartsAt >= 0) {
       drawHearts(ctx, m.x, m.y - 46 * moScale("closet"), t - l.heartsAt);
-      t - l.heartsAt < ES_PACE.brochureUp && (drew.brochureUp = drawBrochure(ctx, ES_HOME.brochureUp, true));
+      t - l.heartsAt < ES_PACE.brochureUp && (drew.brochureUp = drawPinnedBrochure(ctx, ES_HOME.brochureUp, true));
     }
     // the thought pictures, above the thinker's head with a clear gap (thought-place.js, through drawThought)
     if (l.think && room === "closet") {
@@ -1708,27 +1711,27 @@ export function createEscape(bridge) {
       e.enterRoom("hangar", "QB");
       e.set("ch1D", true);
       e.set("ch1Night", true);
-      e.place("sq", BAY.ventStand.x, BAY.ventStand.y);
+      e.place("sq", ES_BAY.ventStand.x, ES_BAY.ventStand.y);
       e.face("sq", -1);
       if (at === "ball") (e.set("moPose", "hidden"), go("ball", { robot: freshRobot() }));
-      else (e.place("mops", BAY.mopsVent.x, BAY.mopsVent.y), e.face("mops", -1), go("grab", { slip: "mops", robot: { ...freshRobot(), ...BAY.toDock[BAY.toDock.length - 1], phase: "asleep" } }));
+      else (e.place("mops", ES_BAY.mopsVent.x, ES_BAY.mopsVent.y), e.face("mops", -1), go("grab", { slip: "mops", robot: { ...freshRobot(), ...ES_BAY.toDock[ES_BAY.toDock.length - 1], phase: "asleep" } }));
       return control(at === "ball" ? "chip-ball" : "chip-grab");
     }
     if (at === "tohall") {
       e.enterRoom("hangar", "QB");
       e.set("ch1D", true);
       e.set("ch1Night", true);
-      e.place("sq", BAY.ventStand.x - 40, BAY.ventStand.y + 10);
-      e.place("mops", BAY.mopsVent.x - 30, BAY.mopsVent.y + 10);
+      e.place("sq", ES_BAY.ventStand.x - 40, ES_BAY.ventStand.y + 10);
+      e.place("mops", ES_BAY.mopsVent.x - 30, ES_BAY.mopsVent.y + 10);
       e.face("sq", -1);
       e.face("mops", -1);
-      Object.assign(L(), { folded: true, robot: { ...freshRobot(), ...BAY.toDock[BAY.toDock.length - 1], phase: "asleep" } });
+      Object.assign(L(), { folded: true, robot: { ...freshRobot(), ...ES_BAY.toDock[ES_BAY.toDock.length - 1], phase: "asleep" } });
       return toHallway();
     }
     if (at === "pad") {
       e.enterRoom("passage", "QB");
-      e.place("sq", HALLWAY.sq.x, HALLWAY.sq.y);
-      e.place("mops", HALLWAY.mops.x, HALLWAY.mops.y);
+      e.place("sq", ES_HALLWAY.sq.x, ES_HALLWAY.sq.y);
+      e.place("mops", ES_HALLWAY.mops.x, ES_HALLWAY.mops.y);
       e.face("sq", -1);
       e.face("mops", -1);
       go("pad", { cu: "pad" });
@@ -1862,7 +1865,7 @@ export function createEscape(bridge) {
       return r === "office" ? OFFICE.solids.map((b) => ({ ...b })) : [];
     },
     /** Tests: the code, the places. */
-    place: Object.freeze({ OFFICE_CODE, BAY, HALLWAY, OFFICE, BAR: ES_BAR, HOME: ES_HOME, KEYPAD, SITE, SNACKS, VENT_ROOM, keyAt, MOP_CALM, MOPOFF, PLAQUE, ES_DOORS }),
+    place: Object.freeze({ OFFICE_CODE, BAY: ES_BAY, ES_BAY, HALLWAY: ES_HALLWAY, ES_HALLWAY, OFFICE, BAR: ES_BAR, HOME: ES_HOME, KEYPAD, SITE, SNACKS, VENT_ROOM, keyAt, MOP_CALM, MOPOFF, PLAQUE, ES_DOORS }),
     /** Tests: the state, what the last frame drew, the steps so far. */
     debug() {
       const l = L();

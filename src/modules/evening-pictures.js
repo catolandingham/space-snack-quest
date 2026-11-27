@@ -5,13 +5,14 @@
  *   Jupiter's big red storm rolling past the hall's big window, and the red glow it gives the hall (38a)
  *   the bin behind the snack counter the brochure lands in (38b); the coffee stain on the brochure
  *   the brochure's picture parts a kid taps (39): Mars in the window, the pancakes, the cut-open cake that fizzes, the
- *     paw print, the two cooks, and one cake box stamped MARS CAKES (the brochure's only words)
+ *     paw print, the two cooks, and one cake box stamped with his family's name (the brochure's only words)
  *   the Guardians' mark (their "paw" print, slightly off: made with a hoof)
  *   the Guardians' little box with its tag, and this week's cake (39b); the crayon chart of kinds tried (39b)
  *   the thought pictures (41: the idea; 42b: the choice) and the "years later" picture of the don't-send ending
  *   the crate beside the loading bay's big wall vent (42c)
  */
-import { MARS_CAKES, STARS_CAKES, drawFatLetters } from "./stars-cakes.js";
+import { FAMILY, SNACK } from "./snack-name.js";
+import { drawFatLetters } from "./crate-stamp.js";
 
 const INK = "#1e2430",
   TAU = Math.PI * 2,
@@ -135,7 +136,7 @@ export function drawCoffeeStain(ctx, x, y, w, h) {
 /**
  * Where each thing a kid taps sits on the brochure's front, as fractions of its box (evening-art.js drawBrochure):
  * Mars in the window, the pancakes, the cut-open cake, the paw print, the two cooks; and the cake box stamped
- * MARS CAKES. Each is { fx, fy, fr } (middle and reach, fractions of the width).
+ * his family's name. Each is { fx, fy, fr } (middle and reach, fractions of the width).
  */
 export const BROCHURE_PARTS = Object.freeze({
   window: Object.freeze({ fx: 0.5, fy: 0.2, fr: 0.17 }),
@@ -146,7 +147,7 @@ export const BROCHURE_PARTS = Object.freeze({
   box: Object.freeze({ fx: 0.2, fy: 0.84, fw: 0.32, fh: 0.13 }),
 });
 /**
- * The brochure's extra things, drawn over its front (x, y, w, h): the cake box stamped MARS CAKES on the counter, the
+ * The brochure's extra things, drawn over its front (x, y, w, h): the cake box stamped with his family's name (snack-name.js FAMILY) on the counter, the
  * cake cut open with its red middle (`fizz` 0 to 1: little sparks), and the round real paw print in the corner.
  */
 export function drawBrochureExtras(ctx, x, y, w, h, fizz = 0, t = 0) {
@@ -159,11 +160,11 @@ export function drawBrochureExtras(ctx, x, y, w, h, fizz = 0, t = 0) {
   const size = bh * 0.42;
   ctx.save();
   ctx.font = `900 ${size}px "Arial Black", Impact, system-ui, sans-serif`;
-  const tw = ctx.measureText(MARS_CAKES).width,
+  const tw = ctx.measureText(FAMILY.NAME).width,
     sk = Math.min(1, (bw * 0.9) / tw);
   ctx.translate(bx + bw / 2 - (tw * sk) / 2, by + bh * 0.68);
   ctx.scale(sk, 1);
-  drawFatLetters(ctx, MARS_CAKES, 0, 0, size);
+  drawFatLetters(ctx, FAMILY.NAME, 0, 0, size);
   ctx.restore();
   // the cut-open cake: a round cake with a slice out, the red marshmallow middle showing
   const C = BROCHURE_PARTS.cake,
@@ -284,7 +285,7 @@ export function drawWeekCake(ctx, x, y, r, bite = 0) {
 /** The chart's layout in its own units (360 x 260). */
 export const CHART = Object.freeze({ W: 360, H: 260, tried: 5, cell: Object.freeze({ x0: 34, y: 140, step: 48, r: 18 }), crate: Object.freeze({ x: 330, y: 140, r: 22 }) });
 /**
- * The crayon chart above his bed, in (x, y, w, h): "STARS CAKES", a row of little cakes each with an X (`tried`), this
+ * The crayon chart above his bed, in (x, y, w, h): the station snack's name (snack-name.js), a row of little cakes each with an X (`tried`), this
  * week's cake with `newX` (0 to 1) of its X drawn, and at the end one empty circle with a red dot and sparks, "THE CRATE
  * KIND". `small` draws it as it hangs on the wall (no fine lines).
  */
@@ -304,7 +305,7 @@ export function drawCakeChart(ctx, x, y, w, h, newX = 0, small = false, crateKin
     ctx.beginPath();
     for (let x = 90; x <= 270; x += 18) ctx.lineTo(x, 44 + (x % 36 ? -6 : 6));
     ctx.stroke();
-  } else pWords(ctx, STARS_CAKES, CHART.W / 2, 44, 34, "#e5533d", 800, "center", CRAYON_FONT);
+  } else pWords(ctx, SNACK.NAME, CHART.W / 2, 44, 34, "#e5533d", 800, "center", CRAYON_FONT);
   const C = CHART.cell;
   const xMark = (cx, cy, r, u) => {
     ctx.save();
@@ -514,7 +515,7 @@ export function drawYearsLater(ctx, x, y, w, h, mops, poster) {
 // ---------- 42c: the crate by the big wall vent ----------
 /** The crate under the loading bay's big wall vent (a hiding place): its box in game positions. */
 export const BAY_CRATE = Object.freeze({ x0: 818, x1: 884, y0: 268, y1: 322 });
-export function drawBayCrate(ctx) {
+export function drawVentCrate(ctx) {
   const B = BAY_CRATE;
   pRect(ctx, B.x0, B.y0, B.x1 - B.x0, B.y1 - B.y0, 3, "#b98a4e", INK, 2.5);
   ctx.beginPath();

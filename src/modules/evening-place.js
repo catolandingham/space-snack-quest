@@ -1,17 +1,21 @@
 /**
  * Where everything is in the evening of Day 2 (Chapter 1, beats 37 to 42; evening.js), and how long each wordless
  * part takes. Game positions (960 x 640) on the locked pictures: the hallway v6, the party hall v2, home closed v6 and
- * the loading bay at night v2. Every number here is a PLACEHOLDER for Brian, chosen so tests/evening.mjs passes its
+ * the loading bay at night v3. Every number here is a PLACEHOLDER for Brian, chosen so tests/evening.mjs passes its
  * fairness rules (the night robot's cone, the safe places, the way back after the robots wake). Nothing else types
  * these numbers.
  */
 import { HALL } from "./party-hall.js";
 
 // ---------- beat 37: the hallway ----------
-export const HALLWAY = Object.freeze({
+export const EV_HALLWAY = Object.freeze({
   // they walk in from the loading bay's end (right) after beat 36
   in: Object.freeze({ x: 950, y: 330 }),
   stop: Object.freeze({ x: 760, y: 430 }),
+  // after beat 36 (the loading bay's walk home, loading-bay.js) they are already at the hallway's hall end: he steps
+  // out of the hall's doorway to here, clear of it and of the way the robot rolls in after photo 5, so the photo wall is
+  // his choice (PLACEHOLDER)
+  fromBay: Object.freeze({ x: 150, y: 460 }),
   // Mops walks on to the hall's end and waits there for him
   // (a step in from the doorway, clear of the way the robot rolls out through it)
   mops: Object.freeze({ x: 210, y: 300 }),
@@ -42,7 +46,7 @@ export const HALLWAY = Object.freeze({
  * the L2 ball (DECISIONS R107: he can hide there when nobody else is back there). The family comes in at the hallway
  * doorway reading their brochure, looks up into the room, and walks round to the counter's front.
  */
-export const BAR = Object.freeze({
+export const EV_BAR = Object.freeze({
   in: Object.freeze({ x: 952, y: 312 }),
   sq: Object.freeze({ x: 852, y: 326 }),
   // Mops stands on the floor left of the stools, not behind the counter (only Squatch hides back there, R107)
@@ -77,7 +81,6 @@ export const BAR = Object.freeze({
   door: HALL.homeDoor,
 });
 /** The family's rhythm: seconds reading the brochure in the doorway before they look up. */
-export const FAMILY = Object.freeze({ read: 4, walk: 95, lineWalk: 120 });
 
 // ---------- beats 38a and 38b: the storm at the big window (story pass 2026-11-26) ----------
 /**
@@ -115,6 +118,13 @@ export const STORM = Object.freeze({
   mops: Object.freeze({ x: 778, y: 510 }),
   // his way to and from it: along the strip above the counter's top end, then down the floor left of the stools
   mopsVia: Object.freeze([Object.freeze({ x: 730, y: 330 }), Object.freeze({ x: 730, y: 510 })]),
+  // after the party hall's cleaning robots (36b, loading-bay-place.js HALL_SNEAK: he ends at the counter's front end,
+  // Mops beside him): Mops round to the counter's front, then Squatch up the floor left of the stools and along the
+  // strip to the aisle's top (EV_BAR.sq), never over the counter or a stool
+  fromSneak: Object.freeze({
+    mops: Object.freeze([Object.freeze({ x: 740, y: 540 }), Object.freeze({ x: 778, y: 510 })]),
+    sq: Object.freeze([Object.freeze({ x: 730, y: 560 }), Object.freeze({ x: 730, y: 330 }), Object.freeze({ x: 852, y: 326 })]),
+  }),
   // his eyes over the counter's edge while he peeks
   eyes: Object.freeze({ x: 866, y: 446 }),
   bin: Object.freeze({ x: 896, y: 540 }),
@@ -165,7 +175,7 @@ export function mopsSleepBox(k) {
  * 0.42); only the cone counts (no "this close" circle; Brian 2026-11-22). The other two robots are parked in the mail
  * room (the old storage corner, R17), switched off, until the mailbox's words wake them.
  */
-export const BAY = Object.freeze({
+export const EV_BAY = Object.freeze({
   in: Object.freeze({ x: 40, y: 330 }),
   stop: Object.freeze({ x: 92, y: 330 }),
   door: Object.freeze({ x: 70, y: 330, r: 40 }),
@@ -185,7 +195,9 @@ export const BAY = Object.freeze({
   // up outside it, then along above the fence to under the vent
   run: Object.freeze([Object.freeze({ x: 720, y: 466 }), Object.freeze({ x: 645, y: 463 }), Object.freeze({ x: 645, y: 336 }), Object.freeze({ x: 850, y: 334 })]),
   // the plant (HIDE · plant during an alarm): where he steps in, where his eyes show (12-ch1-redesign.js CH1_PLANT_EYES)
-  plant: Object.freeze({ x: 125, y: 388, r: 46, eyes: Object.freeze({ x: 125, y: 308 }), box: Object.freeze({ x0: 70, x1: 180, y0: 244, y1: 382 }) }),
+  // (the locked bay pictures v3: the plant right of the bin, Brian's yes to question 75; the bay's own spot,
+  // loading-bay-place.js EV_BAY.plant, and the older program's CH1_PLANT and CH1_PLANT_EYES)
+  plant: Object.freeze({ x: 295, y: 388, r: 46, eyes: Object.freeze({ x: 295, y: 308 }), box: Object.freeze({ x0: 240, x1: 350, y0: 244, y1: 382 }) }),
   // the red FUR alarm on the back wall by the door (picture 90 to 127 wide, 178 to 219 high), where a robot runs
   alarm: Object.freeze({ x0: 68, y0: 137, x1: 95, y1: 169 }),
   alarmRun: Object.freeze({ x: 112, y: 330 }),
@@ -209,7 +221,7 @@ export function nightLook(t) {
  * src/game/00-core.js; tests/evening.mjs checks they are the game's own): for the guards' way round it.
  */
 export const BAY_FURNITURE = Object.freeze([
-  Object.freeze({ x0: 103, x1: 148, y0: 346, y1: 370 }), // plant
+  Object.freeze({ x0: 273, x1: 318, y0: 346, y1: 370 }), // plant (v3: right of the bin)
   Object.freeze({ x0: 189, x1: 237, y0: 350, y1: 374 }), // bin
   Object.freeze({ x0: 344, x1: 369, y0: 392, y1: 416 }), // scanner arch, left post
   Object.freeze({ x0: 563, x1: 588, y0: 392, y1: 416 }), // scanner arch, right post
@@ -250,12 +262,11 @@ export const BAY_SEARCH = Object.freeze([
 
 // ---------- beat 39b: home alone (story pass 2026-11-26) ----------
 /**
- * Home, late afternoon. His crate bed is the locked picture's crate (picture 112 to 382 by 517 to 706); its faded stamp
- * "_ARS CAKES" (stars-cakes.js) is drawn across its side over the old label. The crayon chart of kinds tried hangs on
+ * Home, late afternoon. His crate bed is the locked picture's crate (picture 112 to 382 by 517 to 706); its family
+ * stamp is the home picture's layer (crate-stamp.js), the same in every beat. The crayon chart of kinds tried hangs on
  * the wall above the bed. X · chart from below it; HOLD UP · brochure in front of the crate.
  */
 export const HOME_ALONE = Object.freeze({
-  stamp: Object.freeze({ x: 112, y: 472, h: 20 }),
   chart: Object.freeze({ x: 176, y: 262, w: 104, h: 75 }),
   chartSpot: Object.freeze({ x: 236, y: 440, r: 60 }),
   crateSpot: Object.freeze({ x: 330, y: 458, r: 60 }),

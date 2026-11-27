@@ -18,7 +18,7 @@ import { escapeWords } from "./escape-lines.js";
 import { VENT_ROOM, VENT_TUNNEL } from "./escape-place.js";
 import { esRect, esPaint, esWords, esWrap, ES_INK, ideasBoard, toysBin, drawPinkSheet } from "./escape-art.js";
 import { drawRocket } from "./home-morning-art.js";
-import { STARS_CAKES } from "./stars-cakes.js";
+import { SNACK } from "./snack-name.js";
 import { OFFICE_CODE } from "./escape-place.js";
 
 const TAU = Math.PI * 2;
@@ -234,7 +234,7 @@ function stubsPanel(ctx, t) {
     ctx.lineWidth = 6;
     ctx.stroke();
   }
-  return { pic: "esstubs", title, crossed: k >= 1, m: m >= 1, stub, tag: escapeWords("blank-tag"), names: STARS_CAKES.station };
+  return { pic: "esstubs", title, crossed: k >= 1, m: m >= 1, stub, tag: escapeWords("blank-tag"), names: SNACK.NAME };
 }
 // The pink slip on the desk, close: the paw print in its box; Mops's eyes on the pen corner only.
 function slipDeskPanel(ctx, t) {

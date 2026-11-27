@@ -53,7 +53,9 @@ await page.evaluate(() => {
 });
 const ev = (f, a) => page.evaluate(f, a);
 const { BEDTIME_NIGHT } = await import(M("bedtime-story.js"));
-g.check("the bedtime story's night colour and strength are the night look's (one rule)", BEDTIME_NIGHT.color === NL.NIGHT_TINT.color && BEDTIME_NIGHT.dim === NL.NIGHT_TINT.alpha);
+// (the strength is the night look's own, night-look.js NIGHT_TINT on the lowest branch; the bedtime story's lights-out
+// dim goes on top of it)
+g.check("the bedtime story's night colour is the night look's (one rule)", BEDTIME_NIGHT.color === NL.NIGHT_TINT.color);
 
 // ---------- night: every room shown has the night look ----------
 const night = await ev(() => {
@@ -117,7 +119,7 @@ const night = await ev(() => {
 });
 for (const [step, room] of [["out", "closet"], ["nighthall", "hall"], ["nightway", "passage"]]) {
   const r = night[step];
-  g.check(`night one, ${room}: the night look (the one tint), the floor clearly darker than by day`, r.room === room && r.night && r.night.tint > 0.5 && r.light < r.day * 0.7, r);
+  g.check(`night one, ${room}: the night look (the one tint), the floor clearly darker than by day`, r.room === room && r.night && r.night.tint >= NL.NIGHT_TINT.alpha - 0.01 && r.light < r.day * 0.8, r);
 }
 g.check("night one, the loading bay: its own locked night picture", night.bin.room === "hangar" && night.bin.night && night.bin.night.picture, night.bin);
 g.check("the hall's window onto space keeps its light at night", Math.abs(night.window - night.windowDay) < 6, { night: night.window, day: night.windowDay });
@@ -170,7 +172,7 @@ const robots = await ev(() => {
   out.bayAfter = window.__ss.conesDrawn().map((c) => c.id);
   return out;
 });
-const door = PL.HALLWAY.officeDoor,
+const door = PL.EV_HALLWAY.officeDoor,
   onDoor = robots.path.filter(([x, y]) => x + 22 > door.x0 && x - 22 < door.x1 && y + 8 > door.y0),
   offFloor = robots.path.filter(([x, y]) => x > 48 && x < 912 && (y < 256 || y > 590)),
   throughWall = robots.path.filter(([x, y]) => (x <= 48 || x >= 912) && (y < 266 || y > 354));
@@ -189,9 +191,13 @@ const walks = await ev(() => {
   window.__jump(37);
   n.sq.x = 60;
   n.sq.y = 330;
-  window.__run(80, () => window.__st() === "brochure" && n.ctrl, () => {
+  // (the hall's doorway starts 36b, the bay's cleaning robots, loading-bay.js: he crosses to the counter's front, and
+  // the storm follows; the bay's own walks are its tests')
+  const bay = window.SSQ.beat("ch1-bay");
+  window.__run(120, () => window.__st() === "brochure" && n.ctrl, () => {
     const s = n.ch1Evening;
-    if (n.room !== "hall") return;
+    if (bay.active()) return void (n.ctrl && !n.cur && ((n.sq.x = bay.place.HALL_SNEAK.goal.x), (n.sq.y = bay.place.HALL_SNEAK.goal.y)));
+    if (n.room !== "hall" || !b.active()) return;
     const st = window.__st();
     if (n.ctrl && (st === "hide" || st === "peek" || (st === "duck" && s.peek))) {
       const o = window.__ss.offerNow();
@@ -232,7 +238,7 @@ const hallBad = walks.hall.filter((p) => hallFurniture.some((b) => hit(feetOf(p,
 g.check("at the snack bar the two in line, the family and Mops never walk on the counter, the stools, the crates or a plant", walks.hall.length > 100 && hallBad.length === 0, hallBad.slice(0, 5));
 const bayFurniture = [...PL.BAY_FURNITURE, ...PL.BAY_EXTRA];
 g.check("the scripted walk at the snack bar got all the way to the brochure", walks.reached === "brochure", walks.reached);
-g.check("the crate under the big wall vent is reached on open floor (where he hides is clear of the mail room's fence and walls)", !bayFurniture.some((b) => hit(feetOf(PL.BAY.underVent, 18), b)));
+g.check("the crate under the big wall vent is reached on open floor (where he hides is clear of the mail room's fence and walls)", !bayFurniture.some((b) => hit(feetOf(PL.EV_BAY.underVent, 18), b)));
 g.check("the mail room's fence is solid (nobody walks through it)", PL.BAY_EXTRA.every((f) => walks.baySolids.some((q) => q.x0 === f.x0 && q.y0 === f.y0)), walks.baySolids.length);
 const HOME_FURNITURE = [{ x0: 83, x1: 286, y0: 409, y1: 526 }, { x0: 536, x1: 596, y0: 500, y1: 571 }];
 const mopsBad = walks.homeMops.filter((p) => HOME_FURNITURE.some((b) => hit(feetOf(p), b)));

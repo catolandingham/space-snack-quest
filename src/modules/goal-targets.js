@@ -12,7 +12,7 @@
 import { FLYER } from "./party-hall.js";
 import { TRACE, MORNING_THINGS, DRAWN_OUTLINE, outlineSource } from "./home-morning-art.js";
 import { LUNCH_TRACE, lunchOutlineSource } from "./lunch-sneak-art.js";
-import { BAY, OFFICE, ES_HOME } from "./escape-place.js";
+import { ES_BAY, OFFICE, ES_HOME } from "./escape-place.js";
 import { TALL_BOX, tallClosetSource } from "./tall-closet.js";
 
 // Doorways more than one goal outlines: each typed once.
@@ -53,7 +53,7 @@ export const GOAL_TARGETS = {
   "passage:d2-GO-hall": { rect: { x0: 20, x1: 48, y0: 266, y1: 354 } }, // the doorway to the hall (left; the walk uses it)
   // The escape (escape.js): the big wall vent, the slip in Mops's mouth (a box round where it is drawn), the office
   // computer, the wardrobe, the Guardian Box in it
-  "hangar:es-ball": { rect: pad(BAY.vent, 6) },
+  "hangar:es-ball": { rect: pad(ES_BAY.vent, 6) },
   "office:es-computer": { rect: pad(OFFICE.monitor, 6) },
   "closet:es-closet": { trace: ES_HOME.wardrobe },
   "closet:es-box": { rect: pad(MORNING_THINGS.boxIn, 4) },

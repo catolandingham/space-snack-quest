@@ -16,7 +16,7 @@
  *            "Quick! The manager is coming!" "Hide!"
  * * cargo    the cargo by the doorway outlined: ROLL · ball, behind it (the ball, never standing "hidden")
  *   robots   30: Isfred walks in; three robots roll down under the scanner arch (its field shimmers; "NO FUR. PROCEED."),
- *            new STARS CAKES crates come down with a little tagged box; last week's empty crate goes up the ramp; Isfred,
+ *            new crates with the station's stamp come down with a little tagged box; last week's empty crate goes up the ramp; Isfred,
  *            far away: "Mmf mmf... mmf!" (muffled: he is behind the cargo)
  * * sneak    the plant by the bin outlined: he unrolls and sneaks to it past the robots' cones (seen: "?", then "!", the
  *            robot runs to the bay's FUR alarm: the one capture rule); HIDE · plant, eyes only, and now the words are clear
@@ -53,6 +53,7 @@
  */
 import { BAY, BAY_SPOTS, HALLWAY, HALL_SNEAK, BAY_PACE as P, BAY_PICTURES, BAY_CLOSEUPS, BAY_PARTS, BAY_STEPS, ROBOT_SIZE } from "./loading-bay-place.js";
 import { bayWords, bayLine, BAY_SPEAKER_NAMES } from "./loading-bay-lines.js";
+import { OFFICE_CODE } from "./office-code.js";
 import { drawRobot, robotHand, drawFormSet, drawStuck, drawCrumbs, drawFormCloseUp, closeUpBox, drawCloseUpBack, drawCloseUpFront, drawWave, drawDashedOutline, drawBayCrate, drawCargo, drawTag, drawTaggedBox, drawTagCloseUp, drawDoorShadow, drawTool, drawFuzzyHat, drawScannerStop, drawLetter, drawSlotLight, drawSweat, drawOfficeOpen, drawStreak } from "./loading-bay-art.js";
 import { drawSpeakerRing, drawHeartCone } from "./party-free-art.js";
 import { HALL, HALL_PICTURE, HALL_SPEAKER } from "./party-hall.js";
@@ -64,7 +65,6 @@ import { drawMark, drawPerson, LOOKS } from "./party-art.js";
 import { drawHeart } from "./lunch-sneak-art.js";
 import { partyLine } from "./party-lines.js";
 import { tickQuestions, questions } from "./party-question.js";
-import { CAKES } from "./cakes-brand.js";
 import { createHomeMorningSound, HOME_MORNING_SOUND } from "./home-morning-sound.js";
 import { createPartySound } from "./party-sound.js";
 import { footfall } from "./footfalls.js";
@@ -241,7 +241,7 @@ export function createLoadingBay(bridge) {
     });
   const codeText = () => {
     const e = E();
-    return (e && e.officeCode && e.officeCode()) || "";
+    return OFFICE_CODE;
   };
   const playAs = (who, cardId) => {
     const e = E();
@@ -351,7 +351,7 @@ export function createLoadingBay(bridge) {
     return b;
   }
 
-  // ---------- 28: the Stars Cakes ship (behind the snack counter) ----------
+  // ---------- 28: the snack's ship (behind the snack counter) ----------
   /** The lunch sneak's end hands over here (14-ch1-day2.js ch1ShipCall). */
   function start() {
     const e = E();
@@ -1232,7 +1232,7 @@ export function createLoadingBay(bridge) {
       const u = ease(Math.min(1, b.crates)),
         x = BAY.rampFoot.x + (BAY_SPOTS.crates.x - BAY.rampFoot.x) * u,
         y = BAY.shipDoor.y + (BAY_SPOTS.crates.y - BAY.shipDoor.y) * u;
-      list.push({ y, f: () => (drawBayCrate(ctx, x, y, 54, CAKES.station), drawBayCrate(ctx, x + 2, y - 34, 48, CAKES.station)) });
+      list.push({ y, f: () => (drawBayCrate(ctx, x, y, 54, true), drawBayCrate(ctx, x + 2, y - 34, 48, true)) });
     }
     b.box === "ramp" && list.push({ y: BAY_SPOTS.box.y, f: () => drawTaggedBox(ctx, BAY_SPOTS.box.x, BAY_SPOTS.box.y) });
     if (b.emptyCrate.show) {
@@ -1674,6 +1674,8 @@ export function createLoadingBay(bridge) {
   function jump(part) {
     const e = E();
     e.set("ctrl", false);
+    // (a jump back forgets what came after: the evening, beats 37 to 42c, starts again from beat 36's end)
+    e.set("ch1Evening", null);
     ff = {};
     moFF = {};
     const lu = e.get("ch1Lunch");

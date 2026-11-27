@@ -7,7 +7,7 @@
 import { ROBOT_SIZE } from "./loading-bay-place.js";
 import { highlightBox } from "./outline.js";
 import { drawPenDigits } from "./pen-digits.js";
-import { CAKES } from "./cakes-brand.js";
+import { drawStationStamp } from "./crate-stamp.js";
 
 const BAY_INK = "#1e2430";
 export const PAPER = Object.freeze({ white: "#fffdf8", pink: "#ff9cc2", yellow: "#ffe27a", carbon: "#7d6f86" });
@@ -361,8 +361,11 @@ export function drawWave(ctx, x, y, t) {
 }
 
 // ---------- the bay's new things (beats 29 to 35; PLACEHOLDERS) ----------
-/** One wooden crate, its bottom middle at (x, y), `w` wide; `label` stamped on its front (the station's in blue). */
-export function drawBayCrate(ctx, x, y, w = 56, label = "", color = CAKES.stampColor) {
+/**
+ * One wooden crate, its bottom middle at (x, y), `w` wide; `stamped`: the station's stamp on its front (crate-stamp.js
+ * drawStationStamp, the stamp every station crate in the game has).
+ */
+export function drawBayCrate(ctx, x, y, w = 56, stamped = false) {
   const h = w * 0.62;
   ctx.save();
   bayRound(ctx, x - w / 2, y - h, w, h, 3);
@@ -373,28 +376,9 @@ export function drawBayCrate(ctx, x, y, w = 56, label = "", color = CAKES.stampC
   ctx.moveTo(x - w / 2 + 4, y - h / 2);
   ctx.lineTo(x + w / 2 - 4, y - h / 2);
   ctx.stroke();
-  if (label) {
-    ctx.fillStyle = color;
-    ctx.font = `700 ${Math.round(w * 0.16)}px sans-serif`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(label, x, y - h * 0.3);
-    // the star
-    bayStar(ctx, x, y - h * 0.72, w * 0.08, color);
-  }
+  stamped && drawStationStamp(ctx, x - (8 * w) / 130, y - h * 0.62, w / 130);
   ctx.restore();
   return { x0: x - w / 2, x1: x + w / 2, y0: y - h, y1: y };
-}
-function bayStar(ctx, x, y, r, color) {
-  ctx.beginPath();
-  for (let i = 0; i < 10; i++) {
-    const a = -Math.PI / 2 + (i * Math.PI) / 5,
-      rr = i % 2 ? r * 0.45 : r;
-    ctx.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr);
-  }
-  ctx.closePath();
-  ctx.fillStyle = color;
-  ctx.fill();
 }
 /** The cargo stacked by the bay's doorway: two plain crates, one on the other (`box` its outer box). */
 export function drawCargo(ctx, box) {

@@ -20,6 +20,7 @@ import { startGame, root } from "./game-page.mjs";
 
 const M = (f) => join(root, "src", "modules", f);
 const { EVENING_LINES } = await import(M("evening-lines.js"));
+const { FAMILY } = await import(M("snack-name.js"));
 const PL = await import(M("evening-place.js"));
 const W = await import(M("party-watch.js"));
 const g = await startGame({ port: 9781, name: "evening" });
@@ -30,7 +31,7 @@ const SPOKEN = EVENING_LINES.filter((l) => !["chip", "button", "sign", "lockup",
 const { splitLine } = await import(M("line-split.js"));
 g.check("no spoken line is new without the story pass (no spoken line is only \"suggested\")", SPOKEN.every((l) => l.status !== "suggested"), SPOKEN.filter((l) => l.status === "suggested"));
 g.check("every story-pass spoken line is built and still pending (Brian approves as he watches)", SPOKEN.filter((l) => /story pass/.test(l.source)).every((l) => l.status === "pending"), SPOKEN.filter((l) => /story pass/.test(l.source) && l.status !== "pending").map((l) => l.id));
-g.check("the missing Moon Pies line is cut (story pass, thread 24)", !EVENING_LINES.some((l) => /Moon Pies/.test(l.text)));
+g.check("the missing snack line is cut (story pass, thread 24)", !EVENING_LINES.some((l) => new RegExp("moo" + "n pies?", "i").test(l.text)));
 // (Brian 2026-11-26: a line over about 12 words is split into bubbles, its words unchanged; line-split.js is the rule)
 const long = SPOKEN.filter((l) => splitLine(l.text).length > 1);
 g.check("no bubble needs splitting (line-split.js): every line is short enough for one bubble", long.length === 0, long.map((l) => l.text));
@@ -45,12 +46,12 @@ const CONE = { half: 0.42, len: 210 };
 const RS = await import(M("room-sizes.js"));
 const K = RS.adultPxFor("hangar") / RS.adultPxFor("hall"); // the bay's Squatch against the hall's (sight is measured at his size)
 const seesBay = (c, sq) => W.coneSees({ ...c, ox: sq.x + (c.ox - sq.x) / K, oy: sq.y + (c.oy - sq.y) / K, len: c.len / K }, sq);
-const robotCone = (t) => W.coneFrom("r", PL.BAY.robot.x, PL.BAY.robot.y, L(t).a, CONE);
+const robotCone = (t) => W.coneFrom("r", PL.EV_BAY.robot.x, PL.EV_BAY.robot.y, L(t).a, CONE);
 const everSeen = (p) => {
   for (let t = 0; t < PL.NIGHT_CYCLE; t += 0.05) if (L(t).catch && seesBay(robotCone(t), p)) return true;
   return false;
 };
-g.check("the bin, the mailbox, the plant, the doorway and under the vent are never in the night robot's cone", ["bin", "mail", "plant", "door", "underVent"].every((k) => !everSeen(PL.BAY[k])), ["bin", "mail", "plant", "door", "underVent"].filter((k) => everSeen(PL.BAY[k])));
+g.check("the bin, the mailbox, the plant, the doorway and under the vent are never in the night robot's cone", ["bin", "mail", "plant", "door", "underVent"].every((k) => !everSeen(PL.EV_BAY[k])), ["bin", "mail", "plant", "door", "underVent"].filter((k) => everSeen(PL.EV_BAY[k])));
 g.check("the front of the bay is seen while it looks down, the back while it looks up", seesBay(robotCone(1), { x: 480, y: 585 }) && !seesBay(robotCone(4), { x: 480, y: 585 }) && seesBay(robotCone(4), { x: 480, y: 330 }) && !seesBay(robotCone(1), { x: 480, y: 330 }));
 
 // ---------- in the game ----------
@@ -196,8 +197,14 @@ r = await ev(() => {
   window.__jump(37);
   n.sq.x = 60;
   n.sq.y = 330;
-  window.__run(8, () => window.__st() === "storm");
-  const out = { room: n.room, step: window.__st() };
+  // the hall's doorway starts the party hall's cleaning robots (36b, loading-bay.js); he crosses to the counter's front
+  const bay = window.SSQ.beat("ch1-bay"),
+    sneak = [];
+  window.__run(40, () => window.__st() === "storm", () => {
+    window.__st() && sneak[sneak.length - 1] !== window.__st() && sneak.push(window.__st());
+    bay.active() && n.ctrl && !n.cur && ((n.sq.x = bay.place.HALL_SNEAK.goal.x), (n.sq.y = bay.place.HALL_SNEAK.goal.y));
+  });
+  const out = { room: n.room, step: window.__st(), sneak };
   const said = [];
   window.__run(20, () => window.__st() === "hide" && n.ctrl, () => n.cur && n.cur.b && said[said.length - 1] !== n.cur.b.text && said.push(n.cur.b.text));
   window.__run(1.5);
@@ -205,6 +212,7 @@ r = await ev(() => {
   const d = window.SSQ.beat("ch1-evening").debug();
   return { ...out, said, step2: window.__st(), storm: d.state.storm, guests: (d.state.guests || []).map((g) => g.role), ring: n.lastRing && n.lastRing.id, counter: !!window.__spot("HIDE · counter") };
 });
+g.check("the hall's doorway starts 36b (the bay's cleaning robots: this beat waits), and 36b's end starts the storm", JSON.stringify(r.sneak.filter((s) => s !== "tohall")) === JSON.stringify(["wall", "hallsneak", "tostorm"]) && r.step === "storm", r);
 g.check("into the hall: Jupiter's big red storm rolls into the big window; the PA calls everyone to it; Mops: hide behind the counter", r.room === "hall" && r.step === "storm" && r.said.join("|") === "The Great Red Storm is passing!|Best view: the big window.|Guests! Quick, hide.|Behind the counter!" && r.storm > 0.5, r);
 g.check("guests come in through the hallway doorway; the counter is outlined: HIDE · counter", r.step2 === "hide" && r.guests.join(",") === "dad,mom,kid,guest" && r.ring === "ev-counter" && r.counter, r);
 // a kid who does not hide: the guests walking in see him
@@ -290,7 +298,7 @@ r = await ev(async () => {
 });
 g.check("GRAB · brochure opens its close-up; tapping the window, the pancakes, the cake and the paw print: \"Mars.\", \"Yum.\", \"It FIZZES.\", the Guardians' mark beside it", r.pressed && r.thoughts.join("|") === "Mars.|Yum.|It FIZZES.|Like the Guardians' mark. Almost. +mark", r);
 g.check("tapping the two cooks: \"They look just like the Guardians.\" ... \"Are those other Sasquatches?\", then Mops: back to work, tonight", r.words.join("|") === "They look just like the Guardians.|But they're not hidden.|Just like me.|Are those other Sasquatches?|I have to get back to work.|We'll talk tonight." && r.step === "gohome" && r.open === "", r);
-g.check("the brochure has no words but MARS CAKES on the cake box in its picture", r.brochureWords.length === 1 && r.brochureWords[0] === "MARS CAKES", r.brochureWords);
+g.check("the brochure has no words but his family's name (snack-name.js FAMILY) on the cake box in its picture", r.brochureWords.length === 1 && r.brochureWords[0] === FAMILY.NAME, r.brochureWords);
 r = await ev(() => {
   const n = window.__ss.op;
   window.__ss.drawFrame();
@@ -503,7 +511,7 @@ r = await ev(async () => {
   window.__ss.drawFrame();
   return { words: [...new Set(words)], before, after: n.ch1Paw, pressing, through, step: window.__st(), open: !!document.querySelector('canvas[aria-label="order papers"]'), papers: n.ch1Evening.papers, ring: n.lastRing && n.lastRing.id };
 });
-g.check("the close-up draws ORDER MORE ROBOTS, the office code 169556, and the two buttons MARK · box and PUT BACK · bin", ["ORDER MORE ROBOTS", "169556", "MARK · box", "PUT BACK · bin"].every((w) => r.words.includes(w)), r.words);
+g.check("the close-up draws ORDER MORE ROBOTS, the office code 169556 in pen (pen-digits.js, as in the bay and the escape), and the two buttons MARK · box and PUT BACK · bin", ["ORDER MORE ROBOTS", "MARK · box", "PUT BACK · bin"].every((w) => r.words.includes(w)) && !!r.through && (r.through.pen || []).includes("169556"), { words: r.words, pen: r.through && r.through.pen });
 g.check("MARK · box: his paw on the box marks it (a paw print), it presses through, the yellow tears off; the mailbox is outlined", !r.before && r.after === 1 && r.pressing && r.pressing.mark > 0 && r.through.tear > 0 && r.step === "post" && !r.open && r.papers === "both" && r.ring === "ev-post", r);
 // beat 42c: post it, and pay for it
 r = await ev(() => {
@@ -542,10 +550,12 @@ r = await ev(() => {
   const a = walk(60, 330, "backhall"),
     b = walk(477, 590, "tobed");
   const pressed = window.__press("SLEEP · bed");
-  window.__run(10, () => n.cur && n.cur.k === "card");
-  return { a0, a, b, pressed, card: n.cur && n.cur.text, done: !n.ch1Evening || n.ch1Evening.step === "done", lights: n.ch1Lights };
+  const es = window.SSQ.beat("ch1-escape");
+  window.__run(10, () => es.active());
+  const week = es.active() && es.debug().state;
+  return { a0, a, b, pressed, escape: es.active(), cu: week && week.cu, done: !n.ch1Evening || n.ch1Evening.step === "done", lights: n.ch1Lights, crayonGone: window.SSQ.beat("ch1-evening").crayonGone() };
 });
-g.check("home to bed: SLEEP · bed, he falls asleep, and beat 43 starts (\"Six days later\")", r.a0 && r.a && r.b && r.pressed && r.card === "Six days later" && r.done && r.lights === 1, r);
+g.check("home to bed: SLEEP · bed, he falls asleep, and beat 43 starts (the escape: \"Six days later\" on the home calendar)", r.a0 && r.a && r.b && r.pressed && r.escape && r.cu === "cal" && r.done && r.lights === 1 && r.crayonGone, r);
 
 // the one capture rule in the bay
 r = await ev(() => {

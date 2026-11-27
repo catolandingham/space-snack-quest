@@ -11,9 +11,11 @@
  *   text    the words, exactly as shown
  *   status  "pending" (waiting for Brian's yes), "in-game" (shown before), "approved" (his yes), "new" (needs his yes)
  *   source  where the words came from
- * The Stars Cakes names come from stars-cakes.js (one place for the rename).
+ * The snack's names come from snack-name.js (one place for the rename); the empty crate's tag is the loading bay's
+ * (loading-bay-lines.js "crate-empty"), the same tag on the same kind of crate.
  */
-import { STARS_CAKES } from "./stars-cakes.js";
+import { SNACK } from "./snack-name.js";
+import { bayWords } from "./loading-bay-lines.js";
 
 const ES_WALK = "docs/CH1-STORY-WALKTHROUGH.md beat ";
 const ES_OLD = "src/game/14-ch1-day2.js before the first escape rebuild";
@@ -79,7 +81,7 @@ export const ESCAPE_LINES = Object.freeze(
     fresh("chip-show", "chip", "Squatch: show Mops the brochure", "45a"),
     line("button-show", "button", "SHOW · brochure", "pending", SP("45a", "the same button as the night of the fight, beat 40")),
     pend("mops-pancake-go", "mops", "Let's go find that pancake place.", "45a", "CHANGED, with hearts"),
-    pend("mops-mars", "mops", "...Mars.", "45a", "NEW, the Stars Cakes thread: he touches the crate's worn letter"),
+    pend("mops-mars", "mops", "...Mars.", "45a", "NEW, the snack's thread: he touches the crate's worn letter"),
     // ---- 45b: the plan, in crayon ----
     pend("sq-how", "sq", "How? The scanner stops fur.", "45b", "NEW"),
     pend("mops-crate", "mops", "You came here in a crate.", "45b", "NEW"),
@@ -129,9 +131,9 @@ export const ESCAPE_LINES = Object.freeze(
     line("button-toys", "button", "LOOK · toy bin", "pending", SP(48, "named by the story pass")),
     fresh("chip-stubs", "chip", "Mops: look at the stubs", 48),
     line("button-stubs", "button", "LOOK · stubs", "pending", SP(48, "named by the story pass")),
-    line("stub", "paper", `PAY: 10 · ${STARS_CAKES.station}, NEW KIND: 3 · paid by MOPS`, "pending", SP(48, "the pay stubs' words")),
-    line("blank-tag", "paper", STARS_CAKES.tag, "pending", SP(48, "the blank tags; the Stars Cakes thread")),
-    line("chart", "paper", STARS_CAKES.station, "pending", SP(48, "Mops's chart, its ST crossed out for M in pen")),
+    line("stub", "paper", `PAY: 10 · ${SNACK.NAME}, NEW KIND: 3 · paid by MOPS`, "pending", SP(48, "the pay stubs' words")),
+    line("blank-tag", "paper", "For S. A new kind.", "pending", SP(48, "the blank tags; the snack's thread")),
+    line("chart", "paper", SNACK.NAME, "pending", SP(48, "Mops's chart, its ST crossed out for M in pen")),
     pend("mops-wrong", "mops", "Maybe Mars was wrong.", 48, "NEW, after the pen stroke from ST to M"),
     pend("mops-one-kind", "mops", "Maybe he is not one of a kind.", 48, "NEW"),
     fresh("chip-note", "chip", "Mops: write a Guardian note", 48),
@@ -179,13 +181,13 @@ export const ESCAPE_LINES = Object.freeze(
     kept("button-computer", "button", "RETURN · empty crate", "in-game", ES_OLD + " (DECISIONS calls 2026-11-22, call 10); story pass 2026-11-26 (KEEP)"),
     pend("keys-ghjk", "paper", "ghjk", 51, "NEW: his hooves hit four keys at once"),
     pend("mops-hooves", "mops", "Hooves. You do it.", 51, "NEW"),
-    line("site", "paper", STARS_CAKES.station, "pending", SP(51, "CHANGED, the rename; was MOON PIES (approved, question 55)")),
+    line("site", "paper", SNACK.NAME, "pending", SP(51, "CHANGED, the rename (question 86); the old name was approved, question 55")),
     kept("site-order", "paper", "Order new box", "approved", ES_WALK + "51" + Q55),
     kept("site-return", "paper", "Return empty crate", "approved", ES_WALK + "51" + Q55),
     pend("mops-not-that", "mops", "Not that one!", 51, "NEW"),
     pend("site-booked", "paper", "Pickup booked.", 51, "NEW"),
     pend("site-tomorrow", "paper", "Tomorrow's ship.", 51, "NEW"),
-    line("label", "paper", STARS_CAKES.pickup, "pending", SP(51, "NEW: the label the printer gives, the same tag as last week's crate")),
+    line("label", "paper", bayWords("crate-empty"), "pending", SP(51, "NEW: the label the printer gives, the same tag as last week's crate")),
     line("button-label", "button", "TAKE · label", "pending", SP(51, "NEW")),
     fresh("chip-label", "chip", "Squatch: take the label", 51),
     pend("sq-going", "sq", "We're really going.", 51, "NEW"),
@@ -201,7 +203,7 @@ export const ESCAPE_LINES = Object.freeze(
     pend("sq-leave-food", "sq", "I'll leave them some food.", 52, "CHANGED"),
     kept("button-food", "button", "LEAVE · food", "in-game", ES_OLD + " (LEAVE · food, beat 52)"),
     kept("chip-food", "chip", "Squatch: leave food for the Guardians", "in-game", ES_OLD),
-    pend("sq-favorite", "sq", "Their favorite. I think.", 52, "NEW, the last Stars Cake"),
+    pend("sq-favorite", "sq", "Their favorite. I think.", 52, "NEW, the last snack cake"),
     fresh("chip-home-night", "chip", "Squatch: go home", 52),
     kept("chip-slip", "chip", "Squatch: hide the pink slip", "in-game", ES_OLD),
     kept("button-closet", "button", "OPEN · closet", "approved", "home-morning-lines.js (Brian 2026-11-23, 6A)"),

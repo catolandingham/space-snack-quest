@@ -32,7 +32,7 @@
  *                  into the plant, "They lost you."; then seen again and standing still: the LOCKUP card, and the
  *                  restart hidden in the plant. Both write a still of each step to SHOWING_STILLS=<dir> if it is set.
  *     bay          beats 28 to 36 and 36b, the loading bay (the story pass of 2026-11-26): from the lunch's end behind
- *                  the snack counter (the station speaker, the Stars Cakes talk), the hallway walked (up to the photo
+ *                  the snack counter (the station speaker, the snack ship talk), the hallway walked (up to the photo
  *                  wall first: "Later. The ship!"), ROLL · ball behind the cargo, the robots and the crates, the sneak
  *                  to the plant past the patrolling robot (the finger goes when it rolls away), Lou's hat at the
  *                  scanner, PEEK · form and the code, then as Mops: TAKE, EAT, TALK, SPIT, PICK UP and GIVE (the tag),

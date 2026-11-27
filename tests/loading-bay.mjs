@@ -2,10 +2,10 @@
  * Beats 28 to 36 and 36b, the loading bay (src/modules/loading-bay.js), rebuilt from the story pass of 2026-11-26, at
  * phone size. The beat is played from behind the snack counter to the snack counter's front in the party hall, the
  * player's steps taken the way a kid would (stand on the spot, press the button), and each checked as it comes:
- *   - 28: the station speaker's line beside the hall speaker with sound waves; then the Stars Cakes lines in order;
+ *   - 28: the station speaker's line beside the hall speaker with sound waves; then the snack ship's lines in order;
  *   - 29: the hallway is the player's (follow Mops to the ship); the photo wall turns him back with "Later. The ship!";
  *     in the bay "Hide!" and ROLL · ball behind the cargo, where he is the ball;
- *   - 30: the robots roll under the scanner arch (NO FUR. PROCEED.), the STARS CAKES crates come down, the robot mailbox
+ *   - 30: the robots roll under the scanner arch (NO FUR. PROCEED.), the station's crates come down, the robot mailbox
  *     takes a letter (Mail scanned.); the sneak to the plant past a patrolling robot (HIDE · plant); Isfred's lines;
  *     three workers each hand a robot their tool; Lou is stopped at the arch for his fuzzy hat, which stays on the floor;
  *   - 31 and 32: the promise; PEEK · form opens the form close-up: ORDER MORE ROBOTS on the pink, the office code 169556
@@ -29,7 +29,6 @@ const M = (f) => join(root, "src", "modules", f);
 const { BAY_LINES } = await import(M("loading-bay-lines.js"));
 const { BAY, BAY_SPOTS, HALLWAY, HALL_SNEAK } = await import(M("loading-bay-place.js"));
 const { HALL, HALL_SPEAKER } = await import(M("party-hall.js"));
-const { CAKES } = await import(M("cakes-brand.js"));
 const WORDS = new Set(BAY_LINES.map((l) => l.text));
 const line = (id) => BAY_LINES.find((l) => l.id === id).text;
 
@@ -47,8 +46,8 @@ g.check("every NEW or CHANGED line from the story pass is still pending", notPen
 
 // ---------- the snack's names in one place ----------
 const mods = readdirSync(join(root, "src", "modules")).filter((f) => f.startsWith("loading-bay"));
-const typed = mods.filter((f) => /["'`][^"'`\n]*(STARS|MARS) CAKES/.test(readFileSync(M(f), "utf8")));
-g.check("the crates' and the tag's snack names come from cakes-brand.js (no loading bay file types them)", typed.length === 0 && CAKES.station === "STARS CAKES" && CAKES.family === "MARS CAKES" && CAKES.faded === "_ARS CAKES", typed);
+const typed = mods.filter((f) => new RegExp("cakes-brand|stars-cakes|[a-z]ar" + "s cakes", "i").test(readFileSync(M(f), "utf8")));
+g.check("the bay's crates carry the station's stamp (crate-stamp.js drawStationStamp, its words from snack-name.js): no loading bay file spells the snack's name", typed.length === 0 && /drawStationStamp/.test(readFileSync(M("loading-bay-art.js"), "utf8")), typed);
 
 // the hallway's far ends take him through inside the hallway's walk bounds (x 60 to 900, 00-core.js): a doorway he
 // cannot reach is a dead end (the first video stopped at x 893, short of a trigger at 916)
@@ -71,6 +70,10 @@ await page.evaluate(
         n = ss.op,
         beat = window.SSQ.beat("ch1-bay"),
         st = () => beat.debug().state || {},
+        // the evening (evening.js) follows beat 36 in the hallway (37, the photo wall) and starts 36b from there
+        ev = window.SSQ.beat("ch1-evening"),
+        evStep = () => (n.ch1Evening && n.ch1Evening.step) || "",
+        evBetween = () => !beat.active() && !!ev && ["walkin", "wall", "tohall", "hallsneak"].includes(evStep()),
         out = { lines: [], bubbles: {}, rooms: [], parts: [], steps: {}, jumps: [], seenInCutscene: [], drew: {}, samples: {}, cards: [] };
       let prev = null,
         lastLine = "";
@@ -79,6 +82,8 @@ await page.evaluate(
         ss.tick(0.05);
         ss.drawFrame();
         if (opts.until && opts.until(st())) return "stop";
+        out.evening = out.evening || [];
+        evStep() && out.evening[out.evening.length - 1] !== evStep() && out.evening.push(evStep());
         const s = st(),
           d = beat.debug().drew || {};
         const at = { room: n.room, ctrl: n.ctrl, sq: { x: n.sq.x, y: n.sq.y }, mo: { x: n.mo.x, y: n.mo.y } };
@@ -128,6 +133,11 @@ await page.evaluate(
           return;
         }
         lastLine = "";
+        // beat 37 (the evening): he walks straight on into the hall's doorway, which starts 36b
+        if (evBetween()) {
+          if (n.ctrl && !n.cur && evStep() === "wall") ((n.sq.x = ev.place.HALLWAY.left.x), (n.sq.y = ev.place.HALLWAY.left.y));
+          return;
+        }
         // the player's steps
         if (n.ctrl && !n.cur && !s.alarm) {
           const S = s.step;
@@ -163,9 +173,9 @@ await page.evaluate(
       };
       for (let i = 0; i < (opts.frames || 12000); i++) {
         if (frame() === "stop") break;
-        if (!beat.active() && !opts.pastEnd) break;
+        if (!beat.active() && !opts.pastEnd && !evBetween()) break;
       }
-      out.end = { step: st().step, room: n.room, ctrl: n.ctrl, ch1Step: n.ch1Step, chip: ss.chipNow(), active: beat.active(), code: beat.debug().code, papers: st().papers ? st().papers.where : "", box: st().box, sq: { x: n.sq.x, y: n.sq.y }, alarm: !!st().alarm };
+      out.end = { evening: evStep(), step: st().step, room: n.room, ctrl: n.ctrl, ch1Step: n.ch1Step, chip: ss.chipNow(), active: beat.active(), code: beat.debug().code, papers: st().papers ? st().papers.where : "", box: st().box, sq: { x: n.sq.x, y: n.sq.y }, alarm: !!st().alarm };
       return out;
     };
   },
@@ -179,7 +189,7 @@ const B = (id) => run.bubbles[line(id)];
 const pa = B("pa-ship");
 g.check("28: the station speaker's line sits beside the hall speaker, to its left and level with it, sound waves coming off it", !!pa && !!pa.box && pa.box.x + pa.box.w <= HALL_SPEAKER.x0 && pa.box.y < HALL_SPEAKER.y1 + 20 && pa.ring === "hall", pa);
 const order28 = ["pa-ship", "sq-stars-ship", "sq-new-kind", "sq-crate-kind", "mops-maybe", "mops-see", "sq-come", "mops-once", "mops-hide-when"].map(line);
-g.check("28: then the Stars Cakes lines, word for word and in order", run.lines.slice(0, order28.length).join(" / ") === order28.join(" / "), run.lines.slice(0, order28.length));
+g.check("28: then the snack ship's lines, word for word and in order", run.lines.slice(0, order28.length).join(" / ") === order28.join(" / "), run.lines.slice(0, order28.length));
 // 29
 g.check("29: the hallway is the player's: control, \"Squatch: follow Mops to the ship\"", !!run.steps.hallway && run.steps.hallway.room === "passage" && run.steps.hallway.chip === line("chip-follow") && run.steps.hallway.ch1Step === "bay-hallway", run.steps.hallway);
 g.check("29: in the bay, \"Quick! The manager is coming!\" then \"Hide!\", and the goal is the cargo", run.lines.indexOf(line("mops-manager")) >= 0 && run.lines.indexOf(line("mops-hide")) === run.lines.indexOf(line("mops-manager")) + 1 && run.steps.cargo && run.steps.cargo.chip === line("chip-cargo"), run.steps.cargo);
@@ -216,7 +226,8 @@ g.check("36: then \"We have to watch out for these robots.\", the fur and hair q
 g.check("hall, hallway, bay, hallway, party hall", run.rooms.join(",") === "hall,passage,hangar,passage,hall", run.rooms);
 // 36b
 g.check("36b: in the party hall, \"Squatch: get past the robots\" with control", run.steps.hall && run.steps.hall.room === "hall" && run.steps.hall.chip === line("chip-hall"), run.steps.hall);
-g.check("36b: reaching the snack counter hands over (the older program's step when the evening is not there)", !run.end.active && run.end.step === "done" && run.end.room === "hall", run.end);
+g.check("36b: reaching the snack counter hands over (the evening's storm, 38a)", !run.end.active && run.end.step === "done" && run.end.room === "hall" && ["tostorm", "storm"].includes(run.end.evening), run.end);
+g.check("beat 36's end goes on to the evening's photo wall (37) in the hallway, and walking into the hall's doorway starts 36b", JSON.stringify((run.evening || []).filter((s) => s !== "tohall").slice(0, 3)) === JSON.stringify(["walkin", "wall", "hallsneak"]), run.evening);
 // all through
 g.check("in the cutscenes nobody's cone ever holds him", run.seenInCutscene.length === 0, run.seenInCutscene.slice(0, 5));
 g.check("nobody the game walks jumps more than 60 between frames", run.jumps.length === 0, run.jumps.slice(0, 5));

@@ -1,6 +1,4 @@
 // Chapter 1 beats 22-61. Day 1 calls ch1Day2Begin. This file owns the lunch, the night order, the escape, and pickup day.
-    // The office code, written on the pink sheet (Brian, chat, 2026-11-26: 169556; the keypad is src/modules/escape.js).
-    const CH1_OFFICE_CODE = "169556";
     function ch1Ready(step, chip, scene) {
       ((n.ch1Step = step), (n.ch1Chip = chip), scene && (n.scene = scene), (n.ctrl = !0), (n.act = null), chipNow());
     }

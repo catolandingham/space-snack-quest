@@ -15,7 +15,10 @@
  *           walkthrough or the lines file, waiting for his yes) or "suggested" (new words this beat needed; his yes
  *           first, listed in the pull request)
  *   source  where the words came from
+ * The snack's names come from snack-name.js (one place for the rename).
  */
+import { SNACK, FAMILY } from "./snack-name.js";
+import { OFFICE_CODE } from "./office-code.js";
 
 export const EVENING_LINES = Object.freeze(
   [
@@ -54,14 +57,14 @@ export const EVENING_LINES = Object.freeze(
     { id: "dad-best", who: "dad", text: "By the way, the best pancakes in the galaxy are on Mars.", status: "pending", source: "story pass 2026-11-26 beat 38b (KEEP: Brian's Nov 8 words)" },
     { id: "dad-wookiees", who: "dad", text: "I thought it was a pancake stand run by Wookiees.", status: "pending", source: "story pass 2026-11-26 beat 38b (KEEP: Brian's Nov 8 words, split)" },
     { id: "dad-sasquatches", who: "dad", text: "But I talked to them, and they said they were Sasquatches.", status: "pending", source: "story pass 2026-11-26 beat 38b (KEEP: Brian's Nov 8 words, same line)" },
-    { id: "kid-fizzy", who: "kid", text: "And the fizzy cakes!", status: "pending", source: "story pass 2026-11-26 beat 38b (NEW, Stars Cakes thread)" },
+    { id: "kid-fizzy", who: "kid", text: "And the fizzy cakes!", status: "pending", source: "story pass 2026-11-26 beat 38b (NEW, snack's thread)" },
     { id: "guest-check", who: "guest", text: "A Sasquatch pancake stand? I have to check it out.", status: "pending", source: "story pass 2026-11-26 beat 38b (KEEP: Brian's Nov 8 words)" },
     { id: "dad-brochure", who: "dad", text: "Here's a brochure I got on it.", status: "pending", source: "story pass 2026-11-26 beat 38b (CHANGED: Brian's word was \"flyer\")" },
     { id: "guest-coffee", who: "guest", text: "Ugh. Coffee.", status: "pending", source: "story pass 2026-11-26 beat 38b (NEW)" },
     { id: "mom-bedtime", who: "mom", text: "Bedtime.", status: "pending", source: "story pass 2026-11-26 beat 38b (NEW)" },
     { id: "chip-brochure", who: "chip", text: "Squatch: grab the brochure", status: "in-game", source: "src/game/10-ch1.js (S5:bro)" },
     { id: "button-brochure", who: "button", text: "GRAB · brochure", status: "in-game", source: "src/game/11-ch1-hall.js (the old brochure)" },
-    { id: "sign-mars-cakes", who: "sign", text: "MARS CAKES", status: "pending", source: "rebuild 2026-11-26: the one cake box in the brochure picture (still open, the pick)" },
+    { id: "sign-mars-cakes", who: "sign", text: FAMILY.NAME, status: "pending", source: "rebuild 2026-11-26: the one cake box in the brochure picture (still open, the pick)" },
     { id: "sq-mars", who: "sq", text: "Mars.", status: "pending", source: "story pass 2026-11-26 beat 39 (NEW, a thought)" },
     { id: "sq-yum", who: "sq", text: "Yum.", status: "pending", source: "story pass 2026-11-26 beat 39 (NEW, a thought)" },
     { id: "sq-fizzes", who: "sq", text: "It FIZZES.", status: "pending", source: "story pass 2026-11-26 beat 39 (NEW, a thought)" },
@@ -80,7 +83,7 @@ export const EVENING_LINES = Object.freeze(
     { id: "sq-no-fizz", who: "sq", text: "No fizz.", status: "pending", source: "story pass 2026-11-26 beat 39b (NEW)" },
     { id: "chip-chart", who: "chip", text: "Squatch: mark the chart", status: "suggested", source: "new: story pass beat 39b (X · chart)" },
     { id: "button-chart", who: "button", text: "X · chart", status: "pending", source: "story pass 2026-11-26 beat 39b (X · chart)" },
-    { id: "sign-chart", who: "sign", text: "STARS CAKES", status: "pending", source: "moonpie thread 2.4: the crayon chart's title (the home room is locked art: Brian's yes)" },
+    { id: "sign-chart", who: "sign", text: SNACK.NAME, status: "pending", source: "moonpie thread 2.4: the crayon chart's title (the home room is locked art: Brian's yes)" },
     { id: "sign-crate-kind", who: "sign", text: "THE CRATE KIND", status: "pending", source: "moonpie thread 2.4: the chart's last circle" },
     { id: "chip-crate", who: "chip", text: "Squatch: hold the brochure up to your crate", status: "suggested", source: "new: story pass beat 39b (HOLD UP · brochure)" },
     { id: "button-hold-up", who: "button", text: "HOLD UP · brochure", status: "pending", source: "story pass 2026-11-26 beat 39b (HOLD UP · brochure)" },
@@ -89,7 +92,7 @@ export const EVENING_LINES = Object.freeze(
     { id: "card-evening", who: "card", text: "That evening…", status: "approved", source: "the approved card from Day 1, reused (story pass beat 40)" },
     { id: "chip-show", who: "chip", text: "Squatch: show Mops the brochure", status: "suggested", source: "Call 14; Brian P 36:07 \"Squatch should show him the brochure\"" },
     { id: "button-show", who: "button", text: "SHOW · brochure", status: "suggested", source: "Call 14" },
-    { id: "sq-crate-mars", who: "sq", text: "Mops! My crate says MARS!", status: "pending", source: "story pass 2026-11-26 beat 40 (NEW, Stars Cakes thread)" },
+    { id: "sq-crate-mars", who: "sq", text: "Mops! My crate says MARS!", status: "pending", source: "story pass 2026-11-26 beat 40 (NEW, snack's thread)" },
     { id: "mops-stars", who: "mops", text: "It says Stars.", status: "pending", source: "story pass 2026-11-26 beat 40 (NEW)" },
     { id: "sq-can-we", who: "sq", text: "Can we go to Mars?", status: "pending", source: "story pass 2026-11-26 beat 40 (NEW)" },
     { id: "mops-no-others", who: "mops", text: "Squatch. There are no other Sasquatches.", status: "pending", source: "story pass 2026-11-26 beat 40 (NEW)" },
@@ -125,7 +128,7 @@ export const EVENING_LINES = Object.freeze(
     { id: "chip-bin", who: "chip", text: "Squatch: get the form from the bin", status: "pending", source: "story pass 2026-11-26 beat 42a (CHANGED)" },
     { id: "button-copies", who: "button", text: "GRAB · copies", status: "pending", source: "src/game/14-ch1-day2.js (beat 42; pending in the lines file)" },
     { id: "sign-order", who: "sign", text: "ORDER MORE ROBOTS", status: "pending", source: "walkthrough beat 32 (the box is drawn)" },
-    { id: "sign-code", who: "sign", text: "169556", status: "approved", source: "Brian, chat 2026-11-26: Isfred's office code is 169556" },
+    { id: "sign-code", who: "sign", text: OFFICE_CODE, status: "approved", source: "Brian, chat 2026-11-26: Isfred's office code (office-code.js)" },
     { id: "sq-if-replace", who: "sq", text: "If they replace Mops...", status: "pending", source: "story pass 2026-11-26 beat 42b (CHANGED: Brian's Nov 8 words)" },
     { id: "sq-come-with", who: "sq", text: "Maybe he would come with me.", status: "pending", source: "story pass 2026-11-26 beat 42b (CHANGED, same line)" },
     { id: "sq-or-stay", who: "sq", text: "Or put it back. And stay.", status: "pending", source: "story pass 2026-11-26 beat 42b (NEW)" },

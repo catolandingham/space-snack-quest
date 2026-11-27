@@ -16,9 +16,10 @@
  */
 import { ganitorWords } from "./ganitor.js";
 import { eveningWords } from "./evening-lines.js";
+import { drawPenDigits } from "./pen-digits.js";
 import { drawBrochureExtras } from "./evening-pictures.js";
 
-export const INK = "#1e2430";
+const INK = "#1e2430"; // (the evening's ink; its own name inside this file only)
 const TAU = Math.PI * 2;
 const FUR = "#6b4428",
   FUR_DARK = "#4e3019";
@@ -452,7 +453,7 @@ export function drawMars(ctx, x, y, r) {
 }
 /**
  * The brochure's front inside (x, y, w, h): a big furry Sasquatch couple smiling behind a pancake counter, a stack of
- * pancakes, Mars in the round window behind them, and (evening-pictures.js) one cake box stamped MARS CAKES, a
+ * pancakes, Mars in the round window behind them, and (evening-pictures.js) one cake box stamped with his family's name, a
  * cut-open cake with a red middle (`fizz`: its sparks) and a round paw print. No other words (decided 2026-11-26).
  * `small` leaves out the fine parts (the brochure in a paw or on the counter).
  */
@@ -476,7 +477,7 @@ export function drawBrochure(ctx, x, y, w, h, small = false, fizz = 0, t = 0) {
   ctx.fillStyle = "#c98c58";
   ctx.fillRect(x, y + h * 0.7, w, h * 0.04);
   pancakes(ctx, x + w * 0.5, y + h * 0.72, s * 1.4);
-  // the cake box stamped MARS CAKES, the cut-open cake, the round paw print (story pass beat 39)
+  // the cake box stamped with his family's name, the cut-open cake, the round paw print (story pass beat 39)
   !small && drawBrochureExtras(ctx, x, y, w, h, fizz, t);
   ctx.restore();
   // the fold
@@ -538,6 +539,8 @@ export function drawPawPrint(ctx, x, y, s, color = "#5a3418", a = 1) {
 }
 // One sheet's printing (pink or its yellow carbon copy): grey lines, the order row with its box, the office code
 // written by hand, a signature; `ink` is the carbon's own colour on the copy.
+// (tests: the office codes written in pen since the last drawPapers)
+const penWrote = new Set();
 function sheetPrint(ctx, x, y, w, h, ink, mark, code) {
   ctx.save();
   ctx.fillStyle = ink;
@@ -547,17 +550,15 @@ function sheetPrint(ctx, x, y, w, h, ink, mark, code) {
     by = y + B.y - PAPERS.pink.y;
   text(ctx, eveningWords("sign-order"), x + 16, by + B.s / 2, 16, ink, 900, "left");
   rrect(ctx, bx, by, B.s, B.s, 4, "rgba(255,255,255,.6)", ink, 3);
-  // the office code, written in blue pen in the corner (handwriting: a secret someone wrote, story pass beat 42b)
+  // the office code, written in blue pen in the corner (story pass beat 42b): Isfred's own pen strokes, as on the
+  // same sheet in the loading bay (beat 32) and in the escape (pen-digits.js)
   if (code) {
     ctx.save();
     ctx.translate(x + w * 0.7, y + h - 34);
     ctx.rotate(-0.06);
-    ctx.font = `700 28px "Comic Sans MS", "Chalkboard SE", "Bradley Hand", cursive`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillStyle = "#1d4fb8";
-    ctx.fillText(eveningWords("sign-code"), 0, 0);
+    drawPenDigits(ctx, eveningWords("sign-code"), 0, 0, 24, "#1d4fb8");
     ctx.restore();
+    penWrote.add(eveningWords("sign-code"));
   }
   ctx.beginPath();
   ctx.moveTo(x + 40, y + h - 40);
@@ -575,6 +576,7 @@ function sheetPrint(ctx, x, y, w, h, ink, mark, code) {
  * pink and away down to his paw (from 0.3 on it shows its own carbon print).
  */
 export function drawPapers(ctx, { mark = 0, tear = 0 } = {}) {
+  penWrote.clear();
   const P = PAPERS.pink,
     Y = PAPERS.yellow;
   // (it slides down out from under the pink, so its own carbon print shows, then a little further to his paw)
@@ -600,6 +602,8 @@ export function drawPapers(ctx, { mark = 0, tear = 0 } = {}) {
   // the pink sheet (over)
   rrect(ctx, P.x, P.y, P.w, P.h, 4, "#ff9ec4", INK, 3);
   sheetPrint(ctx, P.x, P.y, P.w, P.h, INK, mark, true);
+  // (what was written in pen, for the tests)
+  return { pen: [...penWrote] };
 }
 
 /** Squatch's furry arm in a close-up: from the bottom of the screen (bx, by) to his paw at (x, y), `r` the paw's size. */

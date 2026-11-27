@@ -187,10 +187,9 @@
         takeLunch: () => ch1TakeLunch(),
         shipCall: () => ch1ShipCall(), // beat 28 after the lunch sneak (src/modules/lunch-sneak.js)
         // The loading bay (src/modules/loading-bay.js): a locked room picture by the older program's name (it is then the
-        // one goal outlines trace), Dot, Bob and Lou as the room draws workers, Isfred's office code.
+        // one goal outlines trace), Dot, Bob and Lou as the room draws workers.
         drawLocked: (ctx, id) => onCtx(ctx, () => drawLockedRoom(id)),
         drawWorker: (ctx, x, y, name) => onCtx(ctx, () => u5({ x, y, name: name || "" })),
-        officeCode: () => CH1_OFFICE_CODE,
         // Playing as Mops or Squatch (the one switch rule, announced with its card; `byLine` the card's line).
         switchTo: (who, byLine) => ((SWITCH_WHY.__beat = byLine || ""), switchTo(who, byLine ? "__beat" : "")),
         // The evening (src/modules/evening.js): the papers' record (ch1SetPaper), and beat 43 after night one.
