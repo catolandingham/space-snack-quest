@@ -2558,9 +2558,14 @@ export function createEvening(bridge) {
       return null;
     },
     /** Feet nobody walks through: the hall's furniture (the crates stay) and Mops; the robots in the bay. */
+    /**
+     * What feet cannot walk through in the hall while this beat draws it. (The older program asks the beat that draws
+     * the room in every room since the join: in the loading bay at night the bay's own furniture and extraSolids are
+     * the walls, so the hall's counter and stools are not.)
+     */
     solids() {
       const s = live();
-      if (!s) return [];
+      if (!s || room() !== "hall") return [];
       const e = E(),
         feet = (x, y) => ({ x0: x - 25, x1: x + 25, y0: y - 14, y1: y + 8, person: 1 });
       const out = [...LUNCH_SOLIDS];

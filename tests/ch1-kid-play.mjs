@@ -487,8 +487,11 @@ while (now() < MAX_S) {
   }
   // (ROLL · ball works anywhere in the lunch sneak and the night's loading bay, so it is on the button nearly all the
   // time; a kid who has a hiding place to go to goes there: the robot leaves the ball alone, except where rolling up
-  // is the goal itself, the escape night's wait by the vent, step "es-ball")
-  const avoid = (v) => AVOID.some((a) => v.startsWith(a)) || (v === "ROLL · ball" && s.step !== "es-ball" && s.step !== "ev-dodge");
+  // is the goal itself: ROLL_STEPS)
+  // (the steps where rolling up is the goal: behind the bay's cargo, the hairball in the hallway, the evening's robot
+  // in the hallway, the escape night's wait by the vent)
+  const ROLL_STEPS = ["bay-cargo", "bay-walkby", "ev-dodge", "es-ball"];
+  const avoid = (v) => AVOID.some((a) => v.startsWith(a)) || (v === "ROLL · ball" && !ROLL_STEPS.includes(s.step));
   // The escape's close-ups: the office keypad (type the number on the pink slip beside it, one key at a time), the
   // snack site (its big button), the snack counter (each snack in turn).
   if (s.esc) {

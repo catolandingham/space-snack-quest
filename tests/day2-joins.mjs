@@ -125,5 +125,16 @@ const crayon = await page.evaluate(() => {
   return out;
 });
 g.check("his crayon is in the crate bed's stamp on Day 2's morning, gone after he rubs it out (40), and in the escape (45)", crayon.morning.crayon && !crayon.evening.crayon && !crayon.escape.crayon, crayon);
+// night one in the loading bay (the evening draws it): the walls are the bay's, not the party hall's counter
+const nightBay = await page.evaluate(() => {
+  const ss = window.__ss,
+    n = ss.op;
+  n.q = [];
+  n.cur = null;
+  ss.ch1JumpBeat(143);
+  for (let i = 0; i < 40 && !(n.ctrl && !n.cur); i++) ss.tick(0.05);
+  return { room: n.room, counter: ss.solids().some((b) => b.x0 === 806 && b.x1 === 862 && b.y0 === 350) };
+});
+g.check("in the loading bay at night none of the party hall's solids stand in his way (the mailbox can be reached)", nightBay.room === "hangar" && !nightBay.counter, nightBay);
 g.check("no page errors", errors.length === 0, errors.slice(0, 5));
 await g.finish("day2-joins");
