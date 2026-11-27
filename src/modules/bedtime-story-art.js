@@ -31,7 +31,7 @@ import { caption, bubble } from "./tv-story-art.js";
 import { MOP_BUCKET, drawMopBucketBack, drawMopBucketFront } from "./mop-bucket.js";
 import { createGuestArt } from "./guests.js";
 import { drawSquatchArt, armEnds } from "./squatch-art.js";
-import { bedLine, BEDTIME_SWITCHES } from "./bedtime-story-lines.js";
+import { bedLine, BEDTIME_SWITCHES, LAST_CAKE } from "./bedtime-story-lines.js";
 import { CRATE_BED, drawFamilyStamp } from "./crate-stamp.js";
 import { drawGuardiansCrayon } from "./guardians-drawing.js";
 
@@ -506,6 +506,56 @@ function guardiansPicture(ctx, t, engine) {
   const b = bubble(ctx, engine, bedLine("mops-guardians"), mouth.x + 30, head.y, 28, 330, "", "", 24);
   return { pic: "guardians", cast: ["mops"], drawing: sheet, bubble: b, mopsHead: head, caption: null, mopsLook: Object.keys(o).sort().join(",") };
 }
+/**
+ * The last cake (Brian, story pass 28-52, E4; the snack thread (docs: the crate-kind thread)): years ago, the scraped crate empty but for
+ * crumbs and one cake, cut open: red in the middle, sparking. Mops beside it says one line a picture (LAST_CAKE, each
+ * waiting for NEXT); the memory look, as the crate story has. No parents (the bedtime rule). The cutaway "lastcake".
+ */
+export const LAST_CAKE_PICTURE = Object.freeze({ crate: 560, cake: Object.freeze({ dx: 10, r: 62 }), mops: 250 });
+function cutCake(ctx, x, y, r, t) {
+  // the bottom half of the cake, cut across: brown outside, cream, and the red middle
+  ctx.beginPath();
+  ctx.ellipse(x, y - r * 0.55, r, r * 0.55, 0, 0, Math.PI);
+  paint(ctx, "#8b5a3c", 3, INK);
+  ctx.beginPath();
+  ctx.ellipse(x, y - r * 0.55, r, r * 0.3, 0, 0, Math.PI * 2);
+  paint(ctx, "#fff3d6", 2.5, INK);
+  ctx.beginPath();
+  ctx.ellipse(x, y - r * 0.55, r * 0.42, r * 0.17, 0, 0, Math.PI * 2);
+  paint(ctx, "#e5332a", 2, INK);
+  // its sparks: the fizz
+  ctx.strokeStyle = "#ffb400";
+  ctx.lineWidth = 3;
+  ctx.lineCap = "round";
+  for (let i = 0; i < 7; i++) {
+    const a = -Math.PI * (0.1 + (0.8 * i) / 6),
+      k = 0.6 + 0.4 * Math.abs(Math.sin(t * 6 + i));
+    ctx.beginPath();
+    ctx.moveTo(x + Math.cos(a) * r * 0.5, y - r * 0.7 + Math.sin(a) * r * 0.3);
+    ctx.lineTo(x + Math.cos(a) * r * (0.5 + 0.5 * k), y - r * 0.7 + Math.sin(a) * r * (0.3 + 0.7 * k));
+    ctx.stroke();
+  }
+}
+function lastCakePicture(ctx, t, engine, lineId) {
+  const L = LAST_CAKE_PICTURE;
+  let d = null;
+  return storyPicture(
+    ctx,
+    () => {
+      shadow(ctx, L.crate, CRATE.w * U + 30);
+      const c = drawCrate(ctx, L.crate, BED_STORY.floor, U);
+      crumbs(ctx, L.crate - 30, c.top + 2, 60, 12);
+      cutCake(ctx, L.crate + L.cake.dx, c.top + 2, L.cake.r, t);
+      const m = mops(ctx, engine, L.mops, 1);
+      d = { cast: ["mops"], mopsHead: m.head, mouth: m.mouth, cake: { x: L.crate + L.cake.dx, y: c.top - L.cake.r * 0.55, red: true }, crate: c };
+      return d;
+    },
+    () => ({ caption: null, bubble: bubble(ctx, engine, bedLine(lineId), d.mouth.x - 8, d.mopsHead.y, 28, 300, "", "", 70) }),
+  );
+}
+/** The last cake's pictures as the cutaway draws them (cutaway "lastcake"), one for each of Mops's lines. */
+export const LASTCAKE_PANELS = Object.freeze(LAST_CAKE.map((id) => (ctx, t, engine) => ({ pic: "lastcake", line: id, sizes: sizes(), ...lastCakePicture(ctx, t, engine, id) })));
+
 /** The Guardians picture as the cutaway draws it (cutaway "guardians"). */
 export const GUARDIANS_PANELS = Object.freeze([(ctx, t, engine) => guardiansPicture(ctx, t, engine)]);
 
