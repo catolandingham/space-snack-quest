@@ -8,7 +8,8 @@
  *   (c) No word the canvas draws in the main scenes says the old name: every Chapter 1 beat the game can jump to,
  *       the party night's scenes, the calendar close-up, the panels (the delivery notice, the snack site, the Chapter 4
  *       poster) and the old crate flashback, by day and by night. The snack site and the calendar show the new name.
- *   (d) Squatch's crate bed, his family's crate, carries its own stamp, layered over the locked home picture (the file
+ *   (d) The party hall's snack tin, painted in the locked hall picture with the old name, gets a new lid as a layer.
+ *       Squatch's crate bed, his family's crate, carries its own stamp, layered over the locked home picture (the file
  *       never changes): fat red letters, the first one scraped off (FAMILY.FADED), with his crayon "ST" in the scraped gap, by day and at
  *       night, and the old badge's navy is gone from the crate. The station's crates have the thin blue stamp.
  *   node tests/snack-name.mjs
@@ -70,7 +71,7 @@ for (const f of lineFiles) {
   for (const [k, v] of Object.entries(mod)) visit(v, k);
 }
 g.check(`no line in the ${lineFiles.length} lines files says the old name (${lineCount} lines read)`, lineCount > 50 && badLines.length === 0, badLines);
-g.check("the crate words are in the snack's lines: the station's stamp, the faded stamp and his crayon", SNACK_LINES.map((l) => l.text).join("|") === `${SNACK.NAME}|_${FAMILY.FADED}|${FAMILY.CRAYON}`, SNACK_LINES);
+g.check("the painted words are in the snack's lines: the station's stamp, the hall tin's lid, the faded stamp and his crayon", SNACK_LINES.map((l) => l.text).join("|") === `${SNACK.NAME}|${SNACK.name}|_${FAMILY.FADED}|${FAMILY.CRAYON}`, SNACK_LINES);
 
 // (c) and (d) In the game.
 const { page, errors } = await g.open("?ch=1", { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
@@ -190,6 +191,24 @@ for (const [tag, r] of [
   );
 }
 g.check("by day: the old badge's navy pill is gone from the crate", day.navy.c < day.navy.of * 0.02, day.navy);
+// The party hall's snack tin (painted in the locked hall picture with the old name on its lid) gets a new lid.
+const hall = await page.evaluate(
+  (T) => {
+    const ss = window.__ss,
+      n = ss.op;
+    n.q = [];
+    n.cur = null;
+    window.SSQ.beat("ch1-party").jump("P2");
+    const before = window.SSQ.crateStampDrawn().handedHall;
+    for (let i = 0; i < 4; i++) ss.tick(0.05);
+    ss.drawFrame();
+    const d = window.SSQ.crateStampDrawn();
+    return { handedThisFrame: d.handedHall - before, tin: d.tin };
+  },
+  null,
+);
+g.check(`the hall picture is drawn with the tin's new lid: "${SNACK.name}" under a star`, hall.handedThisFrame > 0 && !!hall.tin && hall.tin.words.join(" ") === SNACK.name, hall);
+
 // The picture files are as main has them (git's own record of each file's contents).
 const git = (...a) => {
   try {
@@ -198,11 +217,11 @@ const git = (...a) => {
     return "";
   }
 };
-const pics = ["home-room-empty-closed-v6.png", "home-room-empty-open-v6.png"].map((f) => {
+const pics = ["home-room-empty-closed-v6.png", "home-room-empty-open-v6.png", "hall-room-empty-v2.png"].map((f) => {
   const p = "docs/locked-rooms/" + f;
   // (main as origin/main has it; on a checkout without it, the last commit, which the branch's own history guards)
   return { f, now: git("hash-object", p), main: git("rev-parse", "origin/main:" + p) || git("rev-parse", "HEAD:" + p) };
 });
-g.check("the locked home pictures are not edited (the stamp is a layer drawn over them)", pics.every((p) => p.now && p.main && p.now === p.main), pics);
+g.check("the locked home and hall pictures are not edited (the stamp and the tin's lid are layers drawn over them)", pics.every((p) => p.now && p.main && p.now === p.main), pics);
 g.check("no page errors", errors.length === 0, errors);
 await g.finish("snack-name");

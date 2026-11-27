@@ -14,7 +14,7 @@
  * One shared module (feat/ch1-evening has its own copy with NIGHT_TINT, LIT_BY_NIGHT, nightPictureFor, drawNightTint,
  * nightDrawn and noteNightPicture, which this one keeps with the same meaning; the two are meant to become one file). PLACEHOLDER look (the tint's strength and the lit boxes) for Brian.
  */
-import { withCrateStamp } from "./crate-stamp.js";
+import { withSnackLayers } from "./crate-stamp.js";
 
 export const NIGHT_TINT = Object.freeze({ color: "rgb(14,22,58)", alpha: 0.5 });
 /** Rooms with a locked night picture of their own (game room names). */
@@ -126,11 +126,12 @@ function tintedPicture(room, img) {
  * The picture to draw for a room: at night (`night`), the room's locked night picture if it has one, else the tinted
  * day picture; by day, `img` itself. `id` is a game room name or the older program's locked picture id
  * (ROOM_OF_PICTURE). Falls back to `img` while a picture is still loading. The home pictures come with the crate
- * bed's new stamp layered over them, by day and by night (crate-stamp.js withCrateStamp; the files never change).
+ * bed's new stamp layered over them, and the hall with its snack tin's new lid, by day and by night (crate-stamp.js
+ * withSnackLayers; the files never change).
  */
 export function nightPicture(id, img, night = true) {
   if (!nightReady(img)) return img;
-  img = withCrateStamp(id, img);
+  img = withSnackLayers(id, img);
   if (!night) return img;
   const room = ROOM_OF_PICTURE[id] || id;
   if (NIGHT_ALREADY.has(id)) return noteNightPicture(room), img;

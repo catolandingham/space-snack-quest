@@ -53,6 +53,13 @@ export const SNACK_LINES = Object.freeze([
     source: "Brian 2026-11-26, question 86: the station's snack is Stars Cakes; thin blue letters with a star (the spec's 2.3 and 2.12)",
   },
   {
+    id: "tin-label",
+    who: "tin",
+    text: SNACK.name,
+    status: "approved",
+    source: "Brian 2026-11-26, question 86: the snack tin painted on the party hall's snack bar (docs/locked-rooms/hall-room-empty-v2.png) had the old name on its lid",
+  },
+  {
     id: "stamp-family-faded",
     who: "crate",
     text: "_" + FAMILY.FADED,

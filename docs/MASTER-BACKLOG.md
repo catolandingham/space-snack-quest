@@ -26,7 +26,7 @@
 
 ## Where main is (Chapter 1 redesign)
 
-2026-11-26 (late night), draft PR #87: the snack is Stars Cakes everywhere (Brian, question 86; `snack-name.js`, `crate-stamp.js`, `tests/snack-name.mjs`; DECISIONS "The snack renamed, and the crate bed's stamp (question 86)"). Waiting on Brian: the bedtime line's new words; the crate bed's stamp layer over the locked home pictures (his yes); the crayon "ST". Not yet played by a person. Docs match main: yes.
+2026-11-26 (late night), draft PR #87: the snack is Stars Cakes everywhere (Brian, question 86; `snack-name.js`, `crate-stamp.js`, `tests/snack-name.mjs`; DECISIONS "The snack renamed, and the crate bed's stamp (question 86)"). Waiting on Brian: the bedtime line's new words; the crate bed's stamp layer over the locked home pictures (his yes); the hall tin's new lid over the locked hall picture (his yes); the crayon "ST". Not yet played by a person. Docs match main: yes.
 
 2026-11-26 (night), draft PR #87: every room has a night look at night (Brian: "all rooms are different at night versus daytime"; `night-look.js`, README "Chapter 1 redesign", the 2026-11-26 night paragraph). Open for Brian: the tint's strength (`NIGHT_TINT`, a placeholder) and which things stay lit; home has no window or lamp in its picture, so only its TV screen stays as it is. NOT ASSESSED: how the night look plays on a phone in daylight. Docs match main: yes.
 
