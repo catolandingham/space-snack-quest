@@ -11,5 +11,13 @@ wookiee-roar (the Wookiees in the TV story, beat 20) is Brian's approved Wookiee
 prototype's approved assets, 2026-11-25 (Snack Quest Chat: "remember to include wookie sound effects").
 Copied unchanged (mp3, 5.5 s). The game plays it through its sound effects volume, only when sound is on.
 
-goat-bleat (Mops's bleat: his bleat line in the morning song, and the gaps for it in Goating in Space) is "Bleat 2",
+goat-bleat (Mops's bleat: his bleat line in the morning song, and the gaps for it in Floating in Space) is "Bleat 2",
 Brian's pick of 2026-11-26: 1.2 s cut from Wikimedia Commons "Herd of goats bleating.ogg" by stephan, public domain.
+
+party-crowd (the crowd at the party, looped; Brian's pick of 2026-11-26, "crowd 1 with the band on top") is "Crowd of
+50-60 People #1" by Joseph SARDIN, BigSoundBank.com, released under Creative Commons Zero (CC0). Re-encoded to mp3
+(112 kb/s).
+
+voices/ (the voices under speech bubbles; Brian's pick of 2026-11-26, "a man" style): male_standard, male_deep,
+female_standard, female_light and robot, 1 to 4, from "Dialog vocal samples", OpenGameArt.org, CC0. Converted from
+.ogg to .mp3 (mono, 48 kb/s).

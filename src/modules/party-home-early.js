@@ -11,7 +11,7 @@
  *     with nothing on his head, Mops pats him). Mops still learns from the flyer.
  * Words come only from party-lines.js; this file adds none.
  */
-import { HALL_DOOR } from "./party-hall.js";
+import { HALL_DOOR, inHallDoorway } from "./party-hall.js";
 import { HOME_THINGS, HOME_SPOTS } from "./home-alone.js";
 import { partyLine } from "./party-lines.js";
 import { anyWorn } from "./party-outfit.js";
@@ -29,7 +29,7 @@ export function createHomeEarly(h) {
   function hallTick(p, s, free) {
     const d = Math.hypot(s.x - HALL_DOOR.x, s.y - HALL_DOOR.y);
     d > HALL_DOOR.r + HOME_EARLY.away && (p.leftDoor = true);
-    if (!p.leftDoor || !free || p.pose !== "stand" || p.dance || p.snack || d >= HALL_DOOR.r) return false;
+    if (!p.leftDoor || !free || p.pose !== "stand" || p.dance || p.snack || !inHallDoorway(s)) return false;
     goHome(p);
     return true;
   }

@@ -5,16 +5,19 @@
  * (Brian, 2026-11-26), so it has no goal chip. The calendar close-up's own words
  * ("MOONMUNCH", "FUZZUARY", the reminders, "Sponsored by MOON PIES") are the older program's, unchanged.
  *   id      the line's name in the code and in tests/home-morning.mjs
- *   who     "chip" (the goal chip), "button" (the big action button), "sq" (Squatch says it), "sign" (painted on a thing)
+ *   who     "chip" (the goal chip), "button" (the big action button), "sq" (Squatch says it), "sign" (painted on a thing),
+ *           "speaker" (the wall speaker, the station's PA)
  *   text    the words, exactly as shown
  *   status  "in-game" (the game showed these words here before this change), "decided" or "approved" (Brian's yes,
- *           `source` says where), "needs-yes" (named by the brief, waiting for Brian's yes)
+ *           `source` says where), "needs-yes" (named by the brief, waiting for Brian's yes), "suggested" (Brian asked
+ *           for it to be built with these words while he decides)
  *   source  where the words came from
  */
 const DAY2 = "src/game/14-ch1-day2.js before this change";
 
 export const HOME_MORNING_LINES = Object.freeze(
   [
+    { id: "pa-morning", who: "speaker", text: "Good morning, Stormtop! Ganitor Mops to the party hall. The new robot janitors arrive today!", status: "suggested", source: "Brian 2026-11-26 answers (#41, the morning PA): built with this line marked suggested; it keeps his approved \"Ganitor Mops to the party hall.\" (Ganitor B) inside it and announces the robot janitors" },
     { id: "chip-gift", who: "chip", text: "Squatch: pick up the gift", status: "in-game", source: DAY2 },
     { id: "button-rocket", who: "button", text: "PICK UP · rocket", status: "approved", source: "Brian 2026-11-26 (chat answers); the game said TAKE · gift" },
     { id: "sq-guardians", who: "sq", text: "The Guardians came! They always come when I'm scared.", status: "in-game", source: DAY2 + "; walkthrough beat 22, pending (from the original story outline)" },
@@ -26,6 +29,7 @@ export const HOME_MORNING_LINES = Object.freeze(
     { id: "sign-drawing", who: "sign", text: "MY GUARDIANS", status: "decided", source: "docs/STORY-DECISIONS.md section 5: the title says MY GUARDIANS; the crayon title on Squatch's drawing of the Guardians in the box close-up" },
     { id: "button-cal", who: "button", text: "LOOK · calendar", status: "in-game", source: DAY2 + " and src/game/15-ch1-scene1.js" },
     { id: "sign-bag", who: "sign", text: "MOPS", status: "approved", source: "Brian 2026-11-26 (chat answers): the lunch bag gets MOPS written on it (the old one said MOPS)" },
+    { id: "chip-bag", who: "chip", text: "Squatch: go to the bag by the door", status: "needs-yes", source: "new 2026-11-26 for Brian's video note 0:30 (\"he should have to walk over to the lunch and see it first\"): the goal before he sees it is his lunch (the 20-second rule shows it)" },
     { id: "sq-lunch", who: "sq", text: "He forgot his lunch!", status: "decided", source: "walkthrough beat 24, decided (in the game today)" },
     { id: "chip-lunch", who: "chip", text: "Squatch: take the lunch", status: "in-game", source: DAY2 },
     { id: "button-lunch", who: "button", text: "TAKE · lunch", status: "in-game", source: DAY2 },

@@ -21,14 +21,16 @@ import { BOARD } from "./party-board-sounds.js";
 import { lastCutaway } from "./cutaway.js";
 import { SPEAKER } from "./morning.js";
 import { placeLabel } from "./cap-place.js";
-import { walkRingShows } from "./walk-ring.js";
 import { quietLine } from "./party-lines.js";
 import { quietBedtimeLine } from "./bedtime-story-lines.js";
+import { drawHomeMopBucket, lastHomeMopBucket } from "./mop-bucket.js"; // (bedtime branch, 2026-11-26: Mops's mop bucket)
 import { adultPxFor, doorAdultPx } from "./room-sizes.js";
-import { createGoalMark } from "./goal-mark.js";
 import { drawGanitorTag, drawHallwayCrayon, ganitorTagsDrawn, hallwayCrayonDrawn } from "./ganitor.js";
 import { singingNow } from "./music-rules.js";
 import { keepInSpan, seeCue, visitNow, playSound, soundsPlayed, hushNow, hushKey, unhush } from "./music-picks.js";
+import { drawBubbleTail } from "./bubble-tail.js";
+import { createSpeechVoice } from "./speech-voice.js";
+import { drawCreditsButton, creditsTap, creditsShown } from "./credits.js";
 
 /**
  * The game-state fields a rebuilt beat may write, through engine().set(field, value). Anything else it
@@ -49,9 +51,14 @@ export function createBridge() {
   const written = new Set();
   const homeMusic = createHomeMusic(() => engine);
   const morningSound = createMorningSound(() => engine);
-  const goalMark = createGoalMark();
+  // (a guest's line: which guest says it, for the guest's own voice)
+  const speechVoice = createSpeechVoice(() => engine, () => {
+    const party = beats.get("ch1-party");
+    return party && party.talker ? party.talker() : "";
+  });
   // At home, while the TV story is on the screen, the music's cue is "tv"; while the bedtime story plays and the night
-  // after it is still dark (the home morning's start), "bedtime" (music-picks.js: Reawakening).
+  // after it is still dark (the home morning's start), "bedtime" (music-picks.js: Joe's theme with its singing,
+  // 2026-11-26); through the rest of the home morning, what it says (quiet for the PA, then "day2am").
   let musicCueNow = ""; // the cue the music last followed (refined), for tests
   const refineCue = (cue) => {
     // While a beat's alarm is on (the one capture rule: FUR!, the alarm, the search), no music; after it, the music
@@ -68,9 +75,17 @@ export function createBridge() {
     const tv = beats.get("ch1-tv-story"),
       bed = beats.get("ch1-bedtime-story"),
       hm = beats.get("ch1-home-morning"),
-      ev = beats.get("ch1-evening"),
-      night = (bed && bed.showing && bed.showing()) || (hm && hm.nightNow && hm.nightNow()) || (ev && ev.nightNow && ev.nightNow());
-    return tv && tv.showing && tv.showing() ? "tv" : night ? "bedtime" : cue;
+      // the home morning's own music: the bedtime music while the night is dark, quiet as it comes up and through the
+      // PA, then "Morning" from the speaker (home-morning.js musicCue; null when it has no say)
+      morning = hm && hm.musicCue ? hm.musicCue() : null,
+      ev = beats.get("ch1-evening");
+    // (the bedtime story's walk to bed and climb in are quiet: the TV story's music has ended with the film, and the
+    // bedtime music starts as Squatch asks; Brian 2026-11-26, video note 0:03)
+    if (tv && tv.showing && tv.showing()) return "tv";
+    if (bed && bed.quietNow && bed.quietNow()) return "";
+    // (Day 2's night one at home: the bedtime music while the evening beat says it is night)
+    if (ev && ev.nightNow && ev.nightNow()) return "bedtime";
+    return bed && bed.showing && bed.showing() ? "bedtime" : morning != null ? morning : cue;
   };
   return Object.freeze({
     version: 1,
@@ -121,7 +136,7 @@ export function createBridge() {
     drawHallwayCrayon(ctx) {
       return drawHallwayCrayon(ctx);
     },
-    /** The morning's music at home (its pick in music-picks.js: Goating in Space). See home-music.js. */
+    /** The morning's music at home (its pick in music-picks.js: Floating in Space). See home-music.js. */
     homeMusic,
     /**
      * The music element, every frame it plays: the file and stretch its cue plays, and how loud now (music-picks.js).
@@ -178,15 +193,34 @@ export function createBridge() {
     /**
      * A speech bubble opens: its tick, and Mops's meh on his first line in a scene. His gentle lines
      * ("You have me.", party-lines.js `quiet`; his bedtime line, bedtime-story-lines.js) never get the meh. See
-     * morning-sound.js.
+     * morning-sound.js. Everyone else's speech gets a muffled "wah-wah" voice under it (never a sung line or a
+     * thought). See speech-voice.js.
      */
     bubbleSound(b, scene) {
       morningSound.bubble(b, scene, homeMusic.debug().playing, quietLine(b) || quietBedtimeLine(b));
+      speechVoice.speak(b);
     },
+    /** The title screen's Credits button (drawn by the older program's title) and a tap on it. See credits.js. */
+    credits: Object.freeze({ drawButton: drawCreditsButton, tap: creditsTap, shown: creditsShown }),
+    /** The voices under speech bubbles (tests read what played). See speech-voice.js. */
+    speechVoice,
+    /**
+     * A bubble's tail, drawn after the older program draws the bubble: pointed to the speaker's head, or a thought's
+     * three circles to the thinker. Returns what it drew (tests). See bubble-tail.js.
+     */
+    drawBubbleTail,
     /** The wall speaker in the home room, for placing its bubble. See morning.js. */
     speakerBox() {
       return SPEAKER;
     },
+    /**
+     * (bedtime branch, 2026-11-26) Mops's mop bucket in the home room (Brian: "Let's go with it moving forward"), drawn
+     * over the painted bucket of the locked picture, under the people, and again over Squatch when he stands behind it.
+     * Returns its box, or null while not ready (the painted bucket shows). See mop-bucket.js.
+     */
+    drawHomeBucket: drawHomeMopBucket,
+    /** Tests: where the home bucket was last drawn. */
+    homeBucketDrawn: lastHomeMopBucket,
     /** The full-screen cutaway (tests read what its last frame drew). See cutaway.js. */
     cutaway: Object.freeze({ last: lastCutaway }),
     /** Register a rebuilt beat. Ids are unique; registering one twice is a mistake, so it throws. */
@@ -238,7 +272,7 @@ export function createBridge() {
       return outlines.get(key);
     },
     /**
-     * Draws the soft yellow outline round the real thing a Chapter 1 goal needs (GOAL_TARGETS), pulsing
+     * Draws the one highlight (outline.js: the dashed gold line) round the real thing a Chapter 1 goal needs (GOAL_TARGETS), pulsing
      * gently. `picture` is the locked room picture on screen (traced things come from it). `avoid` is a list of
      * boxes (the people standing there): the outline is not drawn inside them, so it never draws over Squatch
      * (Brian, 2026-11-23: "The dash outline drawing over him doesn't work."). Returns the box outlined, or null
@@ -247,6 +281,11 @@ export function createBridge() {
     drawGoalOutline(ctx, room, spotId, picture, time, avoid) {
       const target = GOAL_TARGETS[room + ":" + spotId];
       if (!target) return null;
+      // the party draws the hall on its own locked picture: trace from that one (the older program's last room
+      // picture is another room's, so the plant's outline was traced from the wrong picture and drew nothing)
+      const party = beats.get("ch1-party"),
+        own = party && party.roomPicture ? party.roomPicture() : null;
+      own && (picture = own);
       const alpha = 0.85 + 0.15 * Math.sin((time || 0) * 4); // always clearly visible (Brian G#430: "I can't really see it")
       ctx.save();
       for (const b of avoid || []) {
@@ -279,10 +318,6 @@ export function createBridge() {
     placeLabel,
     /** Tap to walk around furniture: the corners to walk through. See tap-path.js. */
     findPath,
-    /** False when a walk-tap's ring would sit on a place the goal outline already marks. See walk-ring.js. */
-    walkRingShows,
-    /** The goal outline drawn this frame (drew) and the one on screen now (now), for the walk ring. See goal-mark.js. */
-    goalMark,
     /** How tall a grown-up is drawn in a room (85% of its door; the party hall 40% bigger). See room-sizes.js. */
     adultPxFor,
     /** 85% of a room's door, with no party-hall growth. See room-sizes.js. */

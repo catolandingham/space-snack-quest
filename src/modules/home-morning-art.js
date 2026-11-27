@@ -10,8 +10,8 @@
  * thing here is a share of that (MORNING_SIZES). Game positions are the 960 x 640 picture.
  */
 import { GUARDIAN_BOX } from "./guardian-box.js";
-import { drawThought } from "./bedtime-story-art.js";
-import { drawGuardiansCrayon } from "./guardians-drawing.js";
+import { drawThoughtCloud } from "./thought-bubble.js";
+import { drawGuardiansCrayon, CRAYON } from "./guardians-drawing.js";
 import { morningWords } from "./home-morning-lines.js";
 
 const HM_INK = "#1e2430";
@@ -223,23 +223,28 @@ export function drawBoxWithGift(ctx, box) {
   drawGiftNote(ctx, box.x1 - 9, box.y0 + 3, 1);
 }
 
-/** The thought bubble over Squatch's head with the Guardian Box in it (no words). Returns its box. */
+/**
+ * The thought bubble over Squatch's head with the Guardian Box in it (no words): the cloud clearly bigger than the box,
+ * with the thought trail down to his head (thought-bubble.js). Returns what it drew.
+ */
 export function drawBoxThought(ctx, head, a = 1) {
   const k = 2.2,
     w = BOX_PIC.w * PIC_X * k,
     h = BOX_PIC.h * PIC_Y * k;
-  return drawThought(ctx, head, a, (c, cx, cy) => drawGuardianBox(c, cx - w / 2, cy - h / 2, k));
+  return drawThoughtCloud(ctx, head, a, { w, h }, (c, cx, cy) => drawGuardianBox(c, cx - w / 2, cy - h / 2, k));
 }
 
 /**
  * The thought bubble over Squatch's head with his crayon drawing of the Guardians in it (guardians-drawing.js, the
- * same drawing as in the box and at bedtime): who he thinks they are, as he holds up their gift (no words).
+ * same drawing as in the box and at bedtime): who he thinks they are, as he holds up their gift (no words). The cloud
+ * is sized to the drawing (Brian, 2026-11-26, video note 0:11: "The thought bubble is smaller than the drawing").
  */
-export const CRAYON_THOUGHT = Object.freeze({ w: 210, cloud: Object.freeze({ w: 270, h: 196 }) });
+export const CRAYON_THOUGHT = Object.freeze({ w: 180 });
 export function drawCrayonThought(ctx, head, a = 1) {
   let drawing = null;
-  const box = drawThought(ctx, head, a, (c, cx, cy) => (drawing = drawGuardiansCrayon(c, cx, cy, CRAYON_THOUGHT.w)), CRAYON_THOUGHT.cloud);
-  return { box, drawing };
+  const C = CRAYON_THOUGHT,
+    th = drawThoughtCloud(ctx, head, a, { w: C.w, h: C.w * CRAYON.aspect }, (c, cx, cy) => (drawing = drawGuardiansCrayon(c, cx, cy, C.w)));
+  return { ...th, drawing };
 }
 
 // ---------- the outlines' sources: each drawn thing alone on a plain floor, once ----------
@@ -298,6 +303,65 @@ export function drawCalendarToday(ctx, zoom, time) {
   return { crossed, today: CALENDAR_TODAY.day };
 }
 
+// ---------- the note close-up (one full-screen cutaway picture, waits for NEXT) ----------
+/**
+ * The note tied to the rocket, read as he picks the gift up (Brian, 2026-11-26, video note 0:24: "it's not clear that
+ * he got a note with the rocket. So maybe when he picks up the rocket, he should also read the note at that moment"):
+ * the folded note opens over `open` seconds, then its approved words show, big. The rocket it was tied to stands below
+ * it, the string still on. Waits for NEXT. Placeholder drawing; places in game pixels.
+ */
+export const NOTE_CLOSEUP = Object.freeze({
+  open: 0.5,
+  paper: Object.freeze({ cx: 470, cy: 250, w: 640, h: 300 }),
+  rocket: Object.freeze({ x: 300, y: 612, k: 1.6 }),
+});
+function noteCloseUp(ctx, t, engine) {
+  const N = NOTE_CLOSEUP,
+    P = N.paper,
+    say = (text, x, y, size, color) => (engine && engine.text ? (engine.text(text, x, y, size, color, "center", 900), text) : "");
+  ctx.fillStyle = "#f4f1ea";
+  ctx.fillRect(0, 0, 960, 640);
+  ctx.fillStyle = "#ebe6da";
+  ctx.fillRect(0, 560, 960, 80);
+  // the rocket below, its string up to the note
+  const R = N.rocket;
+  drawRocket(ctx, R.x, R.y, { k: R.k, tag: false, lw: 4 });
+  ctx.beginPath();
+  ctx.moveTo(R.x + 8, R.y - MORNING_SIZES.rocket * R.k * 0.62);
+  ctx.quadraticCurveTo(R.x + 40, 440, P.cx - 120, P.cy + P.h / 2 - 6);
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = "#b3412f";
+  ctx.stroke();
+  // the note unfolding: from a narrow fold to the open sheet
+  const k = Math.max(0, Math.min(1, t / N.open)),
+    open = 0.12 + 0.88 * k * k * (3 - 2 * k),
+    h = P.h * open;
+  ctx.save();
+  ctx.translate(P.cx, P.cy);
+  ctx.rotate(-0.03);
+  hmRound(ctx, -P.w / 2, -h / 2, P.w, h, 10);
+  hmPaint(ctx, "#fff4c2", 6);
+  // the fold line across the middle while it opens
+  if (open < 0.98) {
+    ctx.beginPath();
+    ctx.moveTo(-P.w / 2 + 10, 0);
+    ctx.lineTo(P.w / 2 - 10, 0);
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "rgba(43,58,103,.35)";
+    ctx.stroke();
+  }
+  let words = null;
+  if (open >= 0.98) {
+    const [l1, l2] = morningWords("note-words").split(". "),
+      w1 = l1.split(" ");
+    words = [say(w1.slice(0, 2).join(" "), 0, -78, 58, "#2b3a67"), say(w1.slice(2).join(" ") + ".", 0, -8, 58, "#2b3a67"), say(l2, 60, 84, 46, "#2b3a67")];
+  }
+  ctx.restore();
+  return { pic: "note", open: +open.toFixed(2), words, paper: { x0: P.cx - P.w / 2, x1: P.cx + P.w / 2, y0: P.cy - h / 2, y1: P.cy + h / 2 } };
+}
+export const NOTE_PANELS = Object.freeze([noteCloseUp]);
+export const NOTE_ID = "note";
+
 // ---------- the Guardian Box close-up (one full-screen cutaway picture, waits for NEXT) ----------
 /**
  * The close-up, brought back from the first build's box view (commit 18c9157, 2026-11-02, its "gbox" panel; Brian,
@@ -306,7 +370,8 @@ export function drawCalendarToday(ctx, zoom, time) {
  * it, its lid open behind it with the taped label MY GARDIAN BOX, and Squatch's crayon drawing of the Guardians (MY
  * GUARDIANS) leaning against its side (guardians-drawing.js, the same drawing as the bedtime picture and the thought
  * bubble). His furry paw holds the gift over the box until `hold`, lets go, and the rocket drops in over `fall` (the
- * thunk at `hold + fall`), the note tied on going in with it and then hanging over the rim. The old notes show no
+ * thunk at `hold + fall`), the folded note tied on going in with it, not read again (he read it as he picked the gift
+ * up: the note close-up, NOTE_CLOSEUP; Brian 2026-11-26, video note 0:24). The old notes show no
  * readable words (their lines are pending). Timing in seconds and places in game pixels are placeholders.
  *   box      the box's front (game pixels); the rocket is drawn in the room's proportion to it (a box it fits in)
  *   drawing  the crayon drawing: its middle, width and tilt
@@ -398,7 +463,8 @@ function gboxCloseUp(ctx, t, engine) {
     by = held.y + (rest.y - held.y) * fallK * fallK,
     a = 0.14 * Math.min(1, fallK * 1.4),
     rx = cx - 30;
-  const rocket = drawRocket(ctx, rx, by, { k: K, a, tag: !landed, lw: 5 });
+  // (the folded note stays tied on as it drops in: he read it when he picked the gift up, Brian 2026-11-26, 0:24)
+  const rocket = drawRocket(ctx, rx, by, { k: K, a, tag: true, lw: 5 });
   // the box's front over the notes and the gift's lower part: the approved look (the white G), made big
   hmRound(ctx, B.x0, B.y0, w, h, 14);
   hmPaint(ctx, GUARDIAN_BOX.fill, 6);
@@ -407,24 +473,6 @@ function gboxCloseUp(ctx, t, engine) {
   ctx.textBaseline = "middle";
   ctx.fillStyle = "#ffffff";
   ctx.fillText("G", cx, B.y0 + h / 2 + 6); // the approved box's letter, part of its picture
-  // landed: the note, untied, lies open over the box's front with its words (Brian, 2026-11-26)
-  let note = null;
-  if (landed) {
-    const nx = rx + 110,
-      ny = B.y0 + 70;
-    ctx.save();
-    ctx.translate(nx, ny);
-    ctx.rotate(-0.05);
-    hmRound(ctx, -180, -72, 360, 144, 6);
-    hmPaint(ctx, "#fff4c2", 4);
-    const [l1, l2] = morningWords("note-words").split(". ");
-    const w1 = l1.split(" ");
-    say(w1.slice(0, 2).join(" "), 0, -38, 25, "#2b3a67");
-    say(w1.slice(2).join(" ") + ".", 0, -6, 25, "#2b3a67");
-    say(l2, 40, 36, 23, "#2b3a67");
-    ctx.restore();
-    note = { x: nx, y: ny, w: 360, h: 144 };
-  }
   // the crayon drawing, leaning on the box's right side, with its title in crayon
   const D = C.drawing,
     title = morningWords("sign-drawing");
@@ -441,7 +489,8 @@ function gboxCloseUp(ctx, t, engine) {
     label,
     labelBox: lab,
     title,
-    note,
+    note: null, // not read again here (the note close-up after PICK UP shows its words)
+    noteTied: true,
     drawing: sheet,
     notes: notes.length,
     held: t < C.hold,

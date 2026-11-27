@@ -1,5 +1,7 @@
 /**
- * Beat 20, the TV story: why Squatch has to hide (Brian 2026-11-25, "1": bring back the old Wookiee story in
+ * Beat 20, the TV story: why Squatch has to hide. Since 2026-11-26 (Brian, #39) it starts with Squatch putting an old
+ * tape in and the news report's title card (tv-tape-art.js), and the Station Official says "We rely on the air
+ * scrubbers to keep us breathing. NO FUR." (#40, approved word for word). (Brian 2026-11-25, "1": bring back the old Wookiee story in
  * place of the "Fur in the scrubber." stand-in). Full screen, one picture at a time, each waiting for NEXT
  * (review rule 3): the "Years ago, on Stormtop..." card; the Wookiee tour; they shed; the fur clogs the air
  * scrubbers; a tourist's "*gasp*"; the Station Official sends them onto the TOURS ship ("Nobody can live
@@ -11,6 +13,7 @@
  * The older program asks for the steps through window.SSQ.beat("ch1-tv-story").steps() (14-ch1-day1.js).
  */
 import { tvLine } from "./tv-story-lines.js";
+import { cutawaySteps } from "./cutaway.js";
 
 export const TV_STORY_ID = "wookiee";
 export const WOOKIEE_SOUND = Object.freeze({ url: "sounds/wookiee-roar.mp3", level: 0.9, rate: Object.freeze({ tour: 1, shed: 1.06, banish: 0.9 }) });
@@ -85,6 +88,8 @@ export function createTvStory(bridge) {
       A && load(A.c);
       return [
         e.run(() => (on = true)),
+        // Squatch puts the tape in, then the old news report's title card (Brian 2026-11-26, #39: tv-tape-art.js)
+        ...cutawaySteps("tvtape"),
         e.card("fb", tvLine("card-years-ago")),
         e.run(() => roar("tour")),
         picture("tour"),
@@ -103,7 +108,7 @@ export function createTvStory(bridge) {
     /** True while the story is on the screen: a step of it is up (its cards or its pictures). */
     showing() {
       const c = E() && E().current(),
-        mine = !!c && ((c.k === "cutaway" && c.id === TV_STORY_ID) || (c.k === "card" && c.id === "fb"));
+        mine = !!c && ((c.k === "cutaway" && (c.id === TV_STORY_ID || c.id === "tvtape")) || (c.k === "card" && c.id === "fb"));
       // (something else up, not one of its steps: the story was cut short, a restart or a capture; it is over)
       c && !mine && c.k !== "run" && (on = false);
       return on && mine;

@@ -45,6 +45,13 @@ export const DANCE_SPEEDS = Object.freeze([
 // bonus), however often he dances it; a new song pays again. So one song's dancing pays at most
 // 8 x (5 + 6 + 7 + 8) + (25 + 30 + 35 + 40) = 338 stars, the whole party at most 1014, and dancing on at the top
 // speed never farms more.
+/**
+ * The speed words (Brian 2026-11-26, #45): one for each speed (party-lines.js speed-0 to speed-3). The word pops up
+ * as a routine starts, and the green button after a routine shows the next speed's word (the fastest keeps its own).
+ */
+export const SPEED_LINES = Object.freeze(["speed-0", "speed-1", "speed-2", "speed-3"]);
+/** Seconds the speed word stays up as a routine starts. */
+export const SPEED_POP = 1.4;
 export const speedOf = (level) => DANCE_SPEEDS[Math.max(0, Math.min(DANCE_SPEEDS.length - 1, level || 0))];
 // The room's light for each of the three songs (party plan V10): pink, teal, amber.
 export const SONG_LIGHTS = Object.freeze(["rgba(255,95,168,.16)", "rgba(43,196,170,.16)", "rgba(255,190,60,.18)"]);
@@ -114,7 +121,7 @@ const READY = poseIndex("ready"),
 /** A new dance at speed `level` (0 to 3): standing ready, a quiet crowd, the first spot about to glow. */
 export function newDance(level = 0) {
   const lv = Math.max(0, Math.min(DANCE_SPEEDS.length - 1, level || 0));
-  return { moves: 0, cheer: 0.2, t: 0, pop: 0, song: 0, i: 0, round: 0, missed: 0, marks: [], live: false, left: 0, hold: DANCE.first, pose: READY, stumble: 0, party: 0, big: false, fx: [], level: lv, secs: speedOf(lv).secs, finished: false, over: false };
+  return { moves: 0, cheer: 0.2, t: 0, pop: 0, song: 0, i: 0, round: 0, missed: 0, marks: [], live: false, left: 0, hold: DANCE.first, pose: READY, stumble: 0, party: 0, big: false, fx: [], level: lv, secs: speedOf(lv).secs, finished: false, over: false, popAt: 0, superDancer: false };
 }
 /**
  * "Dance again": the same song's routine from its start, one speed faster (the fastest stays the fastest).
@@ -122,7 +129,7 @@ export function newDance(level = 0) {
  */
 export function danceAgain(d) {
   const lv = Math.min(DANCE_SPEEDS.length - 1, (d.level || 0) + 1);
-  Object.assign(d, { level: lv, secs: speedOf(lv).secs, i: 0, missed: 0, marks: [], live: false, left: 0, hold: DANCE.first, pose: READY, stumble: 0, party: 0, big: false, finished: false, over: false });
+  Object.assign(d, { popAt: d.t || 0, level: lv, secs: speedOf(lv).secs, i: 0, missed: 0, marks: [], live: false, left: 0, hold: DANCE.first, pose: READY, stumble: 0, party: 0, big: false, finished: false, over: false });
   return d;
 }
 /** The routine of the song the dance is on. */
@@ -155,6 +162,8 @@ function next(d, wait, ev) {
     d.cheer = d.big ? 1.6 : 0.9;
     d.round += 1;
     d.finished = true;
+    // a perfect routine at top speed: the gold "Super dancer!" badge (Brian 2026-11-26, #45)
+    d.big && d.level === DANCE_SPEEDS.length - 1 && (d.superDancer = true);
     wait += d.party;
     ev.push(d.big ? "perfect" : "round");
   }

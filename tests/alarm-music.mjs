@@ -57,6 +57,29 @@ const g = await startGame({ port: 9749, name: "alarm-music" });
   P.newVisits();
 }
 
+// ---------- 1b. a track going quiet fades out within a second (the TV story's music as the film ends) ----------
+{
+  P.newVisits();
+  const el = { src: "", currentTime: 0, ended: false, paused: false };
+  const real = () => performance.now() / 1000;
+  let t0 = real();
+  P.seeCue("tv", t0 - 5);
+  P.seeCue("tv", t0 - 3);
+  el.currentTime = 4;
+  P.keepInSpan(el, "tv");
+  el.currentTime = 4.2;
+  const before = P.keepInSpan(el, "tv");
+  // the film ends: the cue goes quiet
+  P.seeCue("", real());
+  const start = P.keepInSpan(el, "");
+  await new Promise((r) => setTimeout(r, 450));
+  const half = P.keepInSpan(el, "");
+  await new Promise((r) => setTimeout(r, 450));
+  const end = P.keepInSpan(el, "");
+  g.check("1b: when the film ends its music fades out in under a second (not played on and cut)", before > 0 && start > 0 && half < start && end === 0, { before, start, half, end });
+  P.newVisits();
+}
+
 // ---------- 2. in the game ----------
 const { page, errors } = await g.open("?ch=1", { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
 await page.evaluate(() => window.__ss.lockedReady);

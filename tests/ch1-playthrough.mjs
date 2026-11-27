@@ -263,6 +263,8 @@ const hat = await page.evaluate(() => {
   const before = b.now().scene;
   ss.tick(0.2);
   ss.tick(0.05);
+  // (closing time opens with the cheer, the band's bow and the lights a step darker, about 4.6 s: Brian 2026-11-26)
+  for (let i = 0; i < 120 && !(n.cur && n.cur.k === "bub"); i++) ss.tick(0.05);
   const said = n.log.filter((e) => e.k === "bub").map((e) => e.text).concat(n.cur && n.cur.b ? [n.cur.b.text] : []);
   return { before, after: b.now() && b.now().scene, said };
 });
@@ -423,7 +425,7 @@ const play = await page.evaluate(() => {
       // Optional bedroom inspections are tested separately; this route follows the story goal.
       // A spot with a place to stand: a circle (r) or a box (the home-alone desk). A doorway the party walks him
       // through has no button: standing in it is the action.
-      const spots = ss.spotsNow().filter((s) => s && (s.verb || s.r > 0) && (s.r > 0 || s.box) && s.id !== "home-calendar");
+      const spots = ss.spotsNow().filter((s) => s && (s.verb || s.r > 0 || s.box) && (s.r > 0 || s.box) && s.id !== "home-calendar");
       const spot = spots[0];
       if (!spot) {
         end = "no-spot " + n.scene;
@@ -490,7 +492,7 @@ const play = await page.evaluate(() => {
 g.check("Chapter 1 reaches the tally card", play.end === "tally", { end: play.end, acts: play.acts, scene: play.state.scene });
 // The party night (src/modules/party.js): the peek, the plant, home through his door, the dress-up, out through his
 // door; the party in disguise (the dance), closing time, and walking home with Mops.
-const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "GRAB · flyer", "WALK · go-home", "SAVE · flyer", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "PICK UP · rocket", "OPEN · closet", "PUT IN · box", "TAKE · lunch", "HIDE · plant", "HIDE · crate", "SNEAK · hallway", "GIVE · lunch", "WALK · lu-back", "TAKE · snack", "HIDE · plant", "WALK · ev-hall", "HIDE · counter", "GRAB · brochure", "WALK · ev-home", "SHOW · brochure", "SLEEP · bed", "WALK · ev-out", "WALK · ev-hallway", "WALK · ev-bay", "GRAB · copies", "MARK · order", "POST · mailbox", "WALK · ev-bayout", "WALK · ev-hall", "WALK · ev-home", "SLEEP · bed", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "LEAVE · food", "PUT · slip", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
+const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "GRAB · flyer", "WALK · go-home", "SAVE · flyer", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "PICK UP · rocket", "OPEN · closet", "PUT IN · box", "WALK · bag", "TAKE · lunch", "WALK · lu-door", "GIVE · lunch", "WALK · lu-back", "TAKE · snack", "HIDE · plant", "WALK · ev-hall", "HIDE · counter", "GRAB · brochure", "WALK · ev-home", "SHOW · brochure", "SLEEP · bed", "WALK · ev-out", "WALK · ev-hallway", "WALK · ev-bay", "GRAB · copies", "MARK · order", "POST · mailbox", "WALK · ev-bayout", "WALK · ev-hall", "WALK · ev-home", "SLEEP · bed", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "LEAVE · food", "PUT · slip", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
 g.check("the player does the new actions in order", JSON.stringify(play.acts) === JSON.stringify(wantActs), play.acts);
 const must = [
   "Stormtop Cloud Resort, floating above Jupiter.",
@@ -511,7 +513,7 @@ const must = [
   "Stormtop-vania 1-2-3-4-5!",
   // at home after the flyer sneak (Brian 2026-11-25, showing-5 note 2: "Phew", the flyer under the bed, two thoughts)
   "Phew, made it!",
-  "That party looked so fun. I've never gotten to dance at one.",
+  "That party looked so fun.",
   "I'll sneak back in a costume and dance!",
   // Closing time and the walk home with Mops (party-endings.js); the raid and Mops finding the flyer went with
   // the old free play.

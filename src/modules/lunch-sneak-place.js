@@ -16,9 +16,15 @@ export const LUNCH_PLACES = Object.freeze({
   start: Object.freeze({ x: SPOTS.doorway.x, y: SPOTS.doorway.y, from: Object.freeze({ x: SPOTS.doorway.x, y: 640 }) }),
   plant: Object.freeze({ id: "plant", stand: SPOTS.plantMiddle, eyes: PLANT.eyes, thing: PLANT.leaves }),
   // A stack of two crates (PLACEHOLDER drawing, lunch-sneak-art.js), on open floor halfway to the bar.
-  crate: Object.freeze({ id: "crate", stand: Object.freeze({ x: 600, y: 478 }), eyes: Object.freeze({ x: 646, y: 408 }), box: Object.freeze({ x0: 616, x1: 700, y0: 404, y1: 478 }) }),
-  // The hallway doorway in the right wall's back corner: SNEAK · hallway in its strip of floor.
-  door: Object.freeze({ id: "door", stand: Object.freeze({ x: 905, y: 320 }), r: 46, box: Object.freeze({ x0: 880, x1: 946, y0: 258, y1: 348 }) }),
+  // His eyes peek from the middle of the crates' front, at the seam just under the small crate (docs/STYLE-GUIDE.md,
+  // peek-eyes; Brian 2026-11-26, lunch note 0:13: "more centrally placed so they're visible like they are in the plant",
+  // the same eyes as the plant's). The seam is at 44% of the stack (drawCrates).
+  crate: Object.freeze({ id: "crate", stand: Object.freeze({ x: 600, y: 478 }), eyes: Object.freeze({ x: 658, y: 443 }), box: Object.freeze({ x0: 616, x1: 700, y0: 404, y1: 478 }) }),
+  // The hallway doorway in the right wall's back corner. It is walk-through (Brian 2026-11-26, #47: "walk through any
+  // open doorway"): his feet inside the opening's floor (`opening`, never just near it) take him through. `stand`: the
+  // end of the way to it (DOOR_WAY), in the strip of floor before it; `walkTo`: where a test or the robot stands him
+  // to go through.
+  door: Object.freeze({ id: "door", stand: Object.freeze({ x: 905, y: 320 }), r: 46, box: Object.freeze({ x0: 880, x1: 946, y0: 258, y1: 348 }), opening: Object.freeze({ x0: 914, x1: 960, y0: 286, y1: 346 }), walkTo: Object.freeze({ x: 930, y: 318 }) }),
 });
 // The way from the crates to the doorway goes up first (clear of the bar stools), then along the strip.
 export const DOOR_WAY = Object.freeze([Object.freeze({ x: 740, y: 336 }), LUNCH_PLACES.door.stand]);
@@ -43,6 +49,42 @@ export const WATCHERS = Object.freeze([
 // (its clock starts as they come into the hall: it is looking at the counter as Squatch ducks, and turns away as Mops's
 // picture bubble ends, so TAKE · snack first comes up as he looks away)
 export const COUNTER_WATCHER = Object.freeze({ id: "robot", x: 742, y: 500, away: Math.PI, look: 0.02, at: 3.2, guards: "snack" });
+
+/**
+ * Guests milling around (Brian 2026-11-26, lunch note 0:38: "maybe one or two more folks milling around"): each walks
+ * slowly from `a` to `b` and back, looking where he walks, and turns round at each end over `turn` seconds, his look
+ * sweeping by `sweep` (+1 clockwise on the picture, -1 the other way) at `b` and back the same way at `a`, so at both
+ * ends it passes over the hall's left wall, never over Squatch's way. Their cones are as everyone's. Placed by trying every place and length on a grid against the rules
+ * in tests/lunch-sneak.mjs: their cones never reach his way (his doorway, the plant, the crates, the hallway doorway
+ * and the counter, and the walks between), so the watchers' rhythm stays the whole timing; they are there for life
+ * in the hall and for a kid who wanders off the way. Only the left part of the hall leaves room for that (the grid
+ * found none elsewhere). PLACEHOLDERS. `v`: game pixels a second; `at`: seconds into the walk as the lunch starts (their clock stops during an alarm).
+ */
+export const WANDERERS = Object.freeze([
+  Object.freeze({ id: "backpack", a: Object.freeze({ x: 240, y: 360 }), b: Object.freeze({ x: 240, y: 575 }), v: 30, turn: 1.4, sweep: 1, at: 2, wander: true }),
+  Object.freeze({ id: "stilt", a: Object.freeze({ x: 112, y: 410 }), b: Object.freeze({ x: 112, y: 578 }), v: 24, turn: 1.4, sweep: 1, at: 5, wander: true }),
+]);
+/** How long one wanderer's walk there and back takes (seconds). */
+export function wanderLength(w) {
+  return (2 * Math.hypot(w.b.x - w.a.x, w.b.y - w.a.y)) / w.v + 2 * w.turn;
+}
+/** Where wanderer `w` is at beat time `t`: { x, y, a (where he looks, radians), walking (true while he walks) }. */
+export function wandererNow(w, t) {
+  const dx = w.b.x - w.a.x,
+    dy = w.b.y - w.a.y,
+    T = Math.hypot(dx, dy) / w.v,
+    L = wanderLength(w),
+    s = (((t + (w.at || 0)) % L) + L) % L,
+    h = Math.atan2(dy, dx),
+    ease = (k) => k * k * (3 - 2 * k);
+  if (s < T) return { x: w.a.x + (dx * s) / T, y: w.a.y + (dy * s) / T, a: h, walking: true };
+  if (s < T + w.turn) return { x: w.b.x, y: w.b.y, a: h + w.sweep * Math.PI * ease((s - T) / w.turn), walking: false };
+  if (s < 2 * T + w.turn) {
+    const u = (s - T - w.turn) / T;
+    return { x: w.b.x - dx * u, y: w.b.y - dy * u, a: h + w.sweep * Math.PI, walking: true };
+  }
+  return { x: w.a.x, y: w.a.y, a: h + w.sweep * Math.PI * (1 - ease((s - 2 * T - w.turn) / w.turn)), walking: false };
+}
 
 /** One rhythm's length (seconds). */
 export const RHYTHM_LENGTH = RHYTHM.away + RHYTHM.warn + RHYTHM.turn + RHYTHM.look + RHYTHM.turn;
@@ -98,7 +140,7 @@ export const COUNTER_SPOTS = Object.freeze({
  */
 export const COUNTER_CLOSEUP = Object.freeze({
   src: Object.freeze({ x0: 716, y0: 262, x1: 956, y1: 616 }),
-  k: 1.65,
+  k: 1.7, // (1.65 until 2026-11-26: a little bigger so his ball, smaller than the old squashed Squatch, is 28 px on a phone)
   dst: Object.freeze({ x0: 24, y0: 34 }),
   grow: 0.4,
   steps: Object.freeze(["one", "snack", "grab", "chew"]),
@@ -109,6 +151,12 @@ export const HALLWAY_SPOTS = Object.freeze({
   in: Object.freeze({ x: 10, y: 330 }),
   stop: Object.freeze({ x: 210, y: 470 }),
   mops: Object.freeze({ x: 660, y: 480 }),
+  // Mops mops his way from here to `mops` (facing away from where Squatch comes in), his beard leaving wet streaks
+  // behind him (he has mopped from `wetFrom`); his mop bucket stands beside him (`bucket`: its middle and the floor under its wheels; `k` its size,
+  // the home room's bucket made as much bigger as people are in the hallway). PLACEHOLDERS.
+  mopFrom: Object.freeze({ x: 590, y: 480 }),
+  wetFrom: 500, // he has mopped from here (his feet) along to mopFrom before Squatch comes in (past the front door)
+  bucket: Object.freeze({ cx: 800, floor: 492, k: 0.46 }),
   give: Object.freeze({ x: 540, y: 488, r: 70 }),
   // the left opening back to the hall, where Mops waits after lunch, and where the kid walks Squatch
   back: Object.freeze({ x: 50, y: 345, r: 45 }),
@@ -135,8 +183,14 @@ export const LUNCH_PACE = Object.freeze({
   walkIn: 1.0,
   mopsOut: 1.4, // Mops mops his way out through the hallway doorway at the start
   hallwayWalk: 150,
-  noticeStop: 0.5,
-  lookBoth: 1.2,
+  noticeStop: 0.5, // he stops mopping and lifts his head
+  // then turns his whole head slowly to look left, then right, his cone sweeping (Brian 2026-11-26, lunch note 0:17.6:
+  // "slow it down, have it be way more obvious"), then turns to Squatch and hearts float up (#48: never "?" or "!")
+  lookLeft: 1.2,
+  lookRight: 1.2,
+  toSquatch: 0.6,
+  hearts: 1.2,
+  mopWalk: 40, // how fast he mops his way along the hallway floor (his streaks stay while the lunch is on)
   give: 0.5,
   heart: 0.9,
   eat: 3.8, // the wordless eating cutaway

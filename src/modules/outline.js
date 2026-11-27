@@ -12,7 +12,35 @@
  */
 
 // How far outside the thing the line sits, how thick it is, and how long the dashes are (game pixels).
-export const OUTLINE = { gap: 1, width: 4, dash: 12, color: "#ffcf33", tolerance: 38 };
+// The one highlight style of the whole game (Brian 2026-11-26, the outline options: "A is a bit too thick, but B and E
+// are too little. So we'd like a thicker dashed line. So E, but thicker, but not quite as thick as A."): this dashed
+// gold line, 7.5 game pixels wide (about 3 px on a 375-wide phone; E was 4, about 1.6 px; A about 4 px), no glow.
+export const OUTLINE = { gap: 1, width: 7.5, dash: 12, color: "#ffcf33", tolerance: 38 };
+// The same line on a full-screen view drawn in screen pixels (the dress-up): 3 px wide, its dashes to scale.
+export const OUTLINE_SCREEN = Object.freeze({ width: 3, dash: 5 });
+
+/**
+ * Sets up `ctx` to stroke the one highlight line: gold, dashed, `width` wide (OUTLINE unless `screen` is OUTLINE_SCREEN),
+ * pulsing gently with the clock `t`. Call inside ctx.save()/restore(); then build a path and stroke it.
+ */
+export function highlightLine(ctx, t = 0, screen = null) {
+  const s = screen || OUTLINE;
+  ctx.globalAlpha = 0.85 + 0.15 * Math.sin((t || 0) * 4);
+  ctx.setLineDash([s.dash, s.dash * 0.7]);
+  ctx.lineWidth = s.width;
+  ctx.strokeStyle = OUTLINE.color;
+  ctx.lineCap = "butt";
+  ctx.shadowBlur = 0;
+}
+/** The one highlight round a box (x0, y0, x1, y1) with rounded corners, `pad` outside it. */
+export function highlightBox(ctx, b, t = 0, pad = 4, screen = null) {
+  ctx.save();
+  highlightLine(ctx, t, screen);
+  ctx.beginPath();
+  ctx.roundRect(b.x0 - pad, b.y0 - pad, b.x1 - b.x0 + pad * 2, b.y1 - b.y0 + pad * 2, 8);
+  ctx.stroke();
+  ctx.restore();
+}
 
 const near = (a, b, tol) => Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2]) <= tol;
 
@@ -83,6 +111,7 @@ const CLOSE = 4;
 
 // Pixels within r of the mask (a round brush), as a new mask.
 function grow(mask, w, h, r) {
+  r = Math.round(r); // (whole pixels: the line's width may be a half, 7.5)
   const out = new Uint8Array(w * h);
   const offs = [];
   for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) if (dx * dx + dy * dy <= r * r) offs.push([dx, dy]);
@@ -139,7 +168,7 @@ export function traceOutline(rgba, w, h, opts = {}) {
 export function outlineCanvas(source, box, opts = {}) {
   if (typeof document === "undefined") return null;
   const { gap, width, color } = { ...OUTLINE, ...opts };
-  const pad = gap + width + 2;
+  const pad = Math.ceil(gap + width) + 2;
   const x = Math.floor(box.x0) - pad,
     y = Math.floor(box.y0) - pad,
     w = Math.ceil(box.x1 - box.x0) + 2 * pad,

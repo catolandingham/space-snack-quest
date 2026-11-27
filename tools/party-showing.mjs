@@ -266,6 +266,8 @@ async function photo(ms) {
   await sleep(2800);
   await tap(190, 640);
   await until((q) => q.full !== "group photo" && q.ctrl, 20000, read);
+  // out of his place in the row at once: 2 s after the click he would be seen (Brian 2026-11-26, #46)
+  await floor(560, 470);
   log("the Polaroid");
 }
 // The snack bar: `safe` snacks from the top with her back turned; then, by `end`: "crash" pulls the middle cup of the
@@ -693,15 +695,8 @@ if (which === "bedtime") {
     await sleep(wait);
     await still(name);
   }
-  // 5. the morning: in the dark the wall speaker calls Mops to work (Ganitor B, on the lunch branch), then it fades in
+  // 5. the morning fades in
   await until(() => page.evaluate(() => !!window.__ss.op.ch1Day2), 8000);
-  if (await until((q) => q.cur === "bub", 2500)) {
-    mark("pa");
-    await sleep(1500);
-    await still("pa-ganitor-mops-to-the-party-hall");
-    await sleep(2000);
-    await next();
-  }
   await sleep(500);
   await still("morning-fades-in");
   await sleep(2500);
@@ -728,14 +723,6 @@ if (which === "morning") {
   await sleep(900);
   await still("bedtime-fades-to-black");
   await until(async () => (await hm()) === "night", 4000);
-  // in the dark the wall speaker calls Mops to work, overheard (Ganitor B): read it, then NEXT
-  if (await until((q) => q.cur === "bub", 3000)) {
-    mark("pa");
-    await sleep(1500);
-    await still("pa-ganitor-mops-to-the-party-hall");
-    await sleep(2000);
-    await next();
-  }
   mark("part night");
   await sleep(700);
   await still("dark-mops-leaves-heard");
@@ -743,65 +730,76 @@ if (which === "morning") {
   await still("room-comes-up-asleep-under-the-blanket");
   await until(async () => (await hm()) === "wake", 4000);
   mark("part wake");
-  await sleep(450);
-  await still("sits-up-blanket-slides-off");
-  await sleep(700);
-  await still("stretches");
-  await stepIs("rocket");
-  await sleep(1200);
-  await still("rocket-glows-pick-up");
-  await press();
-  await sleep(1500);
-  await still("holds-it-up-thinks-of-the-guardians");
-  await until((q) => q.cur === "bub", 4000);
-  await sleep(900);
-  await still("guardians-line");
-  await sleep(2600);
-  await next();
-  await sleep(700);
-  await still("thinks-of-the-guardian-box");
-  await stepIs("closet");
-  await sleep(1000);
-  await still("closet-glows");
-  await walkTo(300, 400, "OPEN · closet");
-  await sleep(500);
-  await still("open-closet");
-  await press();
-  await stepIs("box");
-  await sleep(1000);
-  await still("box-glows-put-in");
-  await press();
-  await until((q) => q.cur === "cutaway", 4000);
-  await sleep(600);
-  await still("close-up-holding-the-gift");
-  await sleep(1400);
-  await still("close-up-gift-in-the-box");
-  await sleep(1500);
-  await next();
-  // the box goes back in the closet, the door shuts, and the bag by the door is outlined for his line
-  await sleep(500);
-  await still("box-goes-back-in-the-closet");
-  await until((q) => q.cur === "bub", 4000);
-  await sleep(1000);
-  await still("bag-glows-he-forgot-his-lunch");
-  await sleep(2000);
-  await next();
-  await stepIs("lunch");
-  await sleep(800);
-  await still("lunch-goal");
-  // the calendar is there to look at (not a step): LOOK · calendar by the wardrobe, then back to the lunch
-  await press();
-  await sleep(1300);
-  await still("calendar-today-optional");
-  await sleep(2400);
-  await floor(880, 540);
-  await stepIs("lunch");
-  await sleep(600);
-  await walkTo(760, 505, "TAKE · lunch");
-  await sleep(400);
-  await still("take-lunch");
-  await press();
-  await until((q) => q.room === "hall" && q.ctrl, 10000);
+  // From the PA on, the morning is played by what is on screen (round D: Mops asleep until the PA, the PA's line,
+  // the note close-up, the Guardians line, the thought bubble, the closet, the box close-up, the walk to the bag):
+  // a line, card or close-up is read and closed with NEXT; with control, the step's action is done the way a kid does.
+  const seenOnce = new Set();
+  const once = async (name) => seenOnce.has(name) || (seenOnce.add(name), await still(name));
+  const t1 = Date.now() + 150000;
+  let calendar = false;
+  for (;;) {
+    if (Date.now() > t1) await fail("the home morning did not reach the hall");
+    const q = await st(),
+      step = await hm();
+    if (q.room === "hall" && q.ctrl) break;
+    if (["bub", "card", "panel", "cutaway"].includes(q.cur)) {
+      await sleep(q.cur === "cutaway" ? 1400 : 900);
+      await once(step + "-" + q.cur + "-" + String(q.text || "").slice(0, 24).replace(/[^A-Za-z0-9]+/g, "-").toLowerCase());
+      await sleep(q.cur === "cutaway" ? 1200 : 1500);
+      const again = await st();
+      again.cur === q.cur && again.text === q.text && (await next());
+      await sleep(400);
+      continue;
+    }
+    if (!q.ctrl) {
+      step === "wake" && (await once("sits-up-and-stretches"));
+      step === "think" && (await sleep(500), await once("thinks-of-the-guardian-box"));
+      step === "mopsUp" && (await sleep(500), await once("mops-gets-up-heart"));
+      await sleep(250);
+      continue;
+    }
+    if (step === "rocket") {
+      await sleep(1000);
+      await once("rocket-outlined-pick-up");
+      await press();
+    } else if (step === "closet") {
+      await sleep(800);
+      await once("closet-outlined");
+      await walkTo(300, 400, "OPEN · closet");
+      await sleep(500);
+      await once("open-closet");
+      await press();
+    } else if (step === "box") {
+      await sleep(900);
+      await once("box-outlined-put-in");
+      await press();
+    } else if (step === "toBag") {
+      await sleep(900);
+      await once("bag-outlined-walk-to-it");
+      await floor(760, 505);
+      // (one tap: a second one while his line is up would close it before it is read)
+      await until(async (q2) => q2.cur === "bub" || (await hm()) !== "toBag", 8000);
+    } else if (step === "lunch") {
+      await sleep(700);
+      await once("lunch-goal");
+      // the calendar is there to look at (not a step): LOOK · calendar by the wardrobe, once, then back to the lunch
+      if (!calendar && q.act === "LOOK · calendar") {
+        calendar = true;
+        await press();
+        await sleep(1300);
+        await once("calendar-today-optional");
+        await sleep(2400);
+        await floor(880, 540);
+        await sleep(600);
+        continue;
+      }
+      await walkTo(760, 505, "TAKE · lunch");
+      await sleep(400);
+      await once("take-lunch");
+      await press();
+      await until((q2) => q2.room === "hall" && q2.ctrl, 10000);
+    } else await sleep(300);
+  }
   await sleep(600);
   await still("out-the-door-lunch-sneak-starts");
   await sleep(1500);
@@ -820,7 +818,7 @@ if (which === "lunch" || which === "lunchseen") {
           const q = [...b.place.WATCHERS, b.place.COUNTER_WATCHER].find((x) => x.id === id);
           return b.place.watcherNow(q, id === "robot" ? l.counterT || 0 : l.t || 0);
         };
-      return { step: l.step, pose: l.pose, alarm: l.alarm ? l.alarm.phase : "", teal: w("teal"), camera: w("camera"), robot: w("robot"), jail: !!(n.cur && n.cur.id === "jail") };
+      return { step: l.step, pose: l.pose, alarm: l.alarm ? l.alarm.phase : "", look: l.mops ? l.mops.phase || "" : "", teal: w("teal"), camera: w("camera"), robot: w("robot"), jail: !!(n.cur && n.cur.id === "jail") };
     });
   const next = () => page.evaluate(() => ((window.__ss.op.bt = 1), window.__ss.opTap()));
   const stepIs = (name, ms = 10000) => until(async (q) => (await lu()).step === name && q.ctrl, ms);
@@ -828,6 +826,8 @@ if (which === "lunch" || which === "lunchseen") {
     await floor(x, y);
     (await until((q) => q.act === act, ms, async (q) => q.ctrl && !q.act && Math.hypot(q.x - x, q.y - y) > 30 && !q.cur && (await sleep(700), await floor(x, y)))) || (await fail("no " + act + " after walking to " + x + ", " + y));
   };
+  // inside the hallway doorway's opening (lunch-sneak-place.js LUNCH_PLACES.door.walkTo)
+  const LUNCH_DOOR = (await import(join(root, "src", "modules", "lunch-sneak-place.js"))).LUNCH_PLACES.door.walkTo;
   // a kid who has watched the cone: waits for the watcher to have just looked away
   const awayNow = (id, ms = 9000) => until(async () => ((w) => w.phase === "away" && w.k < 0.08)((await lu())[id]), ms);
   const lookNow = (id, ms = 9000) => until(async () => ((w) => w.phase === "look" && w.k > 0.1 && w.k < 0.3)((await lu())[id]), ms);
@@ -839,7 +839,7 @@ if (which === "lunch" || which === "lunchseen") {
     await still("walk-in-mops-mops-his-way-out");
     await stepIs("plant");
     await sleep(900);
-    await still("the-plant-glows");
+    await still("only-the-hallway-doorway-glows");
     // ROLL · ball (Brian 2026-11-26): he rolls up where he stands, then walks on (moving unrolls him)
     if ((await st()).act === "ROLL · ball") {
       await press();
@@ -850,22 +850,31 @@ if (which === "lunch" || which === "lunchseen") {
     await walkTo(396, 552, "HIDE · plant");
     await press();
     await sleep(700);
-    await still("hidden-in-the-plant-the-crates-glow");
+    await still("hidden-in-the-plant");
     await awayNow("teal");
     await still("she-looks-away-go");
     await walkTo(600, 478, "HIDE · crate");
     await press();
     await sleep(700);
-    await still("hidden-behind-the-crates-the-doorway-glows");
+    await still("hidden-behind-the-crates-eyes-at-the-seam");
     await awayNow("camera");
-    await walkTo(905, 320, "SNEAK · hallway");
-    await still("sneak-hallway");
-    await press();
-    await until((q) => q.room === "passage", 4000);
+    // the doorway is walk-through (Brian #47): he walks up the strip and on into the opening, no button
+    await floor(905, 320);
+    await sleep(1400);
+    await still("at-the-hallway-doorway");
+    await floor(LUNCH_DOOR.x, LUNCH_DOOR.y);
+    await until((q) => q.room === "passage", 6000);
     await sleep(900);
-    await still("the-hallway-mops-mopping");
-    await sleep(900);
-    await still("mops-looks-round");
+    await still("the-hallway-mops-mops-with-his-beard");
+    await until(async () => ((await lu()).look || "") === "left", 4000);
+    await sleep(700);
+    await still("mops-looks-left");
+    await until(async () => ((await lu()).look || "") === "right", 3000);
+    await sleep(700);
+    await still("mops-looks-right");
+    await until(async () => ((await lu()).look || "") === "hearts", 3000);
+    await sleep(500);
+    await still("mops-sees-him-hearts");
     await stepIs("give");
     await sleep(700);
     await still("mops-glows-give-him-his-lunch");

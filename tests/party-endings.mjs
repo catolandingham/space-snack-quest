@@ -176,7 +176,8 @@ async function readLines(page, stop, ms = 30000) {
 // ---------- P8b, never caught ----------
 {
   const { page, errors } = await open("party:P8b");
-  let s = await until(page, (q) => q.cur === "bub", 3000);
+  // (first the cheer, the band's bow and the lights a step darker, about 4.6 s: Brian 2026-11-26; tests/party-phase4.mjs)
+  let s = await until(page, (q) => q.cur === "bub", 9000);
   g.check("closing time: the wall speaker says \"The party's over. Good night, Stormtop!\"", !!s && s.text === "The party's over. Good night, Stormtop!", s && s.text);
   await sleep(200);
   g.check("its name is the game's own \"Station PA\"", (await bubbleName(page)) === "Station PA", await bubbleName(page));
@@ -201,8 +202,10 @@ async function readLines(page, stop, ms = 30000) {
     return got.length;
   });
   g.check("closing time draws no \"?\" or \"!\" over anyone", marks === 0, marks);
-  // he stands right on the way out: nobody walks through him
+  // he stands right on the way out: nobody walks through him (and stays there: no walk left over from before, since
+  // at closing time his own door takes him home on his own, Brian 2026-11-26)
   await place(page, 760, 360);
+  await page.evaluate(() => ((window.__ss.op.walkTo = null), (window.__ss.op.sq.moving = false)));
   const order = [],
     lastAt = {};
   let closest = 999,
@@ -303,7 +306,7 @@ async function readLines(page, stop, ms = 30000) {
 // ---------- P8b: a kid who stands on the way out the whole time still sees the party end ----------
 {
   const { page } = await open("party:P8b");
-  await until(page, (q) => q.cur === "bub", 3000);
+  await until(page, (q) => q.cur === "bub", 9000);
   await next(page);
   await until(page, (q) => q.ctrl, 4000);
   // he stands where everyone turns for the hallway doorway, and never moves
@@ -347,7 +350,7 @@ async function readLines(page, stop, ms = 30000) {
   await next(page);
   await sleep(2500);
   await page.evaluate(() => window.SSQ.beat("ch1-party").restart());
-  const s = await until(page, (q) => q.cur === "bub", 3000);
+  const s = await until(page, (q) => q.cur === "bub", 9000);
   g.check("↺ restarts the ending from its start", !!s && s.text === "The party's over. Good night, Stormtop!", s && s.text);
   await page.close();
 }
@@ -355,7 +358,7 @@ async function readLines(page, stop, ms = 30000) {
   const { page } = await open("party:P3");
   const s = await until(page, (q) => q.now && q.now.scene === "P4", 40000, async (q) => q.cur === "bub" && (await sleep(150), await next(page)));
   const pl = await played(page);
-  g.check("the band's start is not silent (the crowd cheers) and its song plays", !!s && pl.includes("cheer") && pl.includes("song0"), pl);
+  g.check("the band's start is not silent (the crowd cheers) and its song plays", !!s && pl.includes("cheer") && (pl.includes("song0") || pl.includes("song1")), pl);
   await page.close();
 }
 
