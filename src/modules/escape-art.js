@@ -18,6 +18,7 @@ import { BOX_CLOSEUP, drawRocket, oldNote, furryArm, MORNING_SIZES } from "./hom
 import { drawSnack } from "./party-snacks-art.js";
 import { drawHeart } from "./lunch-sneak-art.js";
 import { OUTLINE } from "./outline.js";
+import { drawPenDigits } from "./pen-digits.js";
 
 const ES_INK = "#1e2430";
 const ES_PINK = "#ff9cc2",
@@ -53,15 +54,6 @@ export function esWords(ctx, s, x, y, size, color = ES_INK, align = "center", we
   ctx.textBaseline = "middle";
   ctx.fillStyle = color;
   ctx.fillText(s, x, y);
-  return s;
-}
-// Handwriting: the same words, leaning a little.
-function hand(ctx, s, x, y, size, color = "#2b3a67", align = "center") {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.rotate(-0.04);
-  esWords(ctx, s, 0, 0, size, color, align, 700);
-  ctx.restore();
   return s;
 }
 // Words split into lines no wider than `w`.
@@ -152,15 +144,18 @@ export function drawPinkSheet(ctx, x, y, w, { glowCode = false, t = 0, paw = tru
     ctx.stroke();
   }
   // the code in the corner, and the little door with its keypad drawn beside it
-  const code = { x: 64 * u, y: 114 * u, size: 15 * u };
+  const code = { x: 66 * u, y: 114 * u, size: 11 * u }; // (in pen: six digits fit between the door drawing and the edge)
   glowCode && markBox(ctx, { x0: 34 * u, y0: 102 * u, x1: 96 * u, y1: 126 * u }, t);
-  text ? hand(ctx, OFFICE_CODE, code.x, code.y, code.size, "#2b3a67") : ((ctx.fillStyle = "#2b3a67"), ctx.fillRect(code.x - 22 * u, code.y - 3 * u, 44 * u, 6 * u));
+  // written by hand in pen (pen-digits.js; Brian 2026-11-26), so it reads as someone wrote it there
+  let pen = null;
+  text ? ((pen = drawPenDigits(ctx, OFFICE_CODE, code.x, code.y, code.size, "#1d3fa8")), drawnWords.add("pen:" + OFFICE_CODE)) : ((ctx.fillStyle = "#2b3a67"), ctx.fillRect(code.x - 22 * u, code.y - 3 * u, 44 * u, 6 * u));
   esRect(ctx, 10 * u, 100 * u, 14 * u, 24 * u, u);
   esPaint(ctx, "#8b93a7", Math.max(1.5, u));
   esRect(ctx, 26 * u, 110 * u, 5 * u, 8 * u, u * 0.6);
   esPaint(ctx, "#59657d", Math.max(1, u * 0.7));
   ctx.restore();
-  return { code: { x: x + code.x, y: y + code.y, size: code.size }, paw: { x: x + box.x + box.s / 2, y: y + box.y + box.s / 2 }, box: { x0: x, y0: y, x1: x + w, y1: y + h } };
+  const inSheet = pen && pen.box.x0 > 32 * u && pen.box.x1 < w - 2 * u; // (clear of the door drawing and the sheet's edge)
+  return { code: { x: x + code.x, y: y + code.y, size: code.size, pen: !!pen, inSheet }, paw: { x: x + box.x + box.s / 2, y: y + box.y + box.s / 2 }, box: { x0: x, y0: y, x1: x + w, y1: y + h } };
 }
 
 /** A small folded pink slip (in a paw, or in Mops's mouth): `k` its size (1 is 24 x 30 game pixels). */

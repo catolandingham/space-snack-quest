@@ -36,6 +36,7 @@ export const ESCAPE_LINES = Object.freeze(
     { id: "note-sign", who: "paper", text: "— The Guardians", status: "new", source: "the Guardians' signature on every note (the gift note, beat 22); on this note it needs Brian's yes" },
     { id: "mops-hurry", who: "mops", text: "Hurry, hurry, pink slip, got it!", status: "pending", source: ES_WALK + "49" },
     { id: "sq-get-it", who: "sq", text: "Get it before he sees it.", status: "pending", source: ES_WALK + "49" },
+    { id: "lockup-cause", who: "card", text: "A robot saw Squatch in the delivery room. Security caught him.", status: "in-game", source: "src/game/25-capture.js CAPTURES.delivery (the LOCKUP card in the loading bay)" },
     { id: "chip-grab", who: "chip", text: "Squatch: grab the pink slip", status: "in-game", source: ES_OLD },
     { id: "button-grab", who: "button", text: "GRAB · pink slip", status: "in-game", source: ES_OLD },
     { id: "sheet-order", who: "paper", text: "ORDER MORE ROBOTS", status: "in-game", source: ES_OLD + " (the paw order's close-up, beat 42)" },

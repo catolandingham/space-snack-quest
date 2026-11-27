@@ -71,7 +71,7 @@ const report = await page.evaluate(async (chips) => {
     // the escape (src/modules/escape.js), each opened by its own jump with everything before it done; `look` is where
     // its glow or outline is (the vent, the slip in Mops's mouth, the computer, the wardrobe); the close-ups (the
     // keypad, the snacks, the Guardians' plate) are tapped, and their thing glows
-    "Squatch: roll into a ball by the vent": { es: "ball", x: 850, y: 334, look: [851, 220] },
+    "Squatch: roll into a ball by the vent": { es: "ball", x: 846, y: 322, look: [800, 220] },
     "Squatch: grab the pink slip": { es: "grab", x: 850, y: 334, look: [796, 290] },
     "Squatch: type the code from the pink slip": { es: "pad", closeUp: true, look: [273, 553] },
     "Squatch: return the empty crate": { es: "computer", x: 610, y: 585, look: [735, 300] },

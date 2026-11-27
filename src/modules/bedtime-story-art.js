@@ -22,6 +22,7 @@
  * Drawn here, new, for Brian's yes: the crate's shape in a picture, the Moon Pies on the lid, the lid leaning on the
  * crate, the crumbs, the baby's pose and the bucket picture.
  */
+import { placeThought } from "./thought-place.js";
 import { caption, bubble, storyWash } from "./tv-story-art.js";
 import { drawSquatchArt, armEnds } from "./squatch-art.js";
 import { bedLine, BEDTIME_SWITCHES } from "./bedtime-story-lines.js";
@@ -378,8 +379,12 @@ export const GUARDIANS_PANELS = Object.freeze([(ctx, t, engine) => guardiansPict
 export function drawThought(ctx, head, a = 1, inside = null, size = null) {
   const w = (size && size.w) || 172,
     h = (size && size.h) || 118,
-    cx = Math.min(940 - w / 2, Math.max(20 + w / 2, head.x + 70)),
-    cy = Math.max(20 + h / 2, head.y - 34 - h / 2);
+    // A head given as its drawn box ({ x, y, w, h }) follows the one placement rule (thought-place.js: above it with a
+    // clear gap, never over the face; Brian 2026-11-26); a head given as a point keeps this picture's own place.
+    placed = head.w != null ? placeThought(head, { w, h }) : null,
+    cx = placed ? placed.cx : Math.min(940 - w / 2, Math.max(20 + w / 2, head.x + 70)),
+    cy = placed ? placed.cy : Math.max(20 + h / 2, head.y - 34 - h / 2),
+    tail = placed ? placed.to : { x: head.x, y: head.y - 4 };
   ctx.save();
   ctx.globalAlpha = a;
   // the cloud: puffs round an oval, then two small puffs down to his head
@@ -397,14 +402,14 @@ export function drawThought(ctx, head, a = 1, inside = null, size = null) {
   }
   ctx.closePath();
   paint(ctx, "#ffffff", 3.5, INK);
-  const bx = cx - w * 0.28,
-    by = cy + h / 2 + 6;
+  const bx = placed && placed.beside ? (tail.x > cx ? cx + w * 0.4 : cx - w * 0.4) : placed ? cx : cx - w * 0.28,
+    by = placed && placed.beside ? cy + h * 0.2 : cy + h / 2 + 6;
   for (const [k, r] of [
     [0.35, 9],
     [0.75, 6],
   ]) {
     ctx.beginPath();
-    ctx.ellipse(bx + (head.x - bx) * k, by + (head.y - 4 - by) * k, r * 1.3, r, 0, 0, Math.PI * 2);
+    ctx.ellipse(bx + (tail.x - bx) * k, by + (tail.y - by) * k, r * 1.3, r, 0, 0, Math.PI * 2);
     paint(ctx, "#ffffff", 3, INK);
   }
   // the little Moon Pie crate (his bed, before it was a bed), with no words

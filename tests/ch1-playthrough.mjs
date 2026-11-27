@@ -549,7 +549,10 @@ const must = [
   "Mail scanned. Pawature accepted.",
   "Six days later",
   "Replaced? The manager was lying to me.",
-  "I'm going to be replaced. The new robots are coming on the ship tomorrow. Remember that pancake place? Let's go find out about it.",
+  // (Mops's pancake line in bubbles of about 12 words at most: line-split.js, Brian 2026-11-26)
+  "I'm going to be replaced.",
+  "The new robots are coming on the ship tomorrow. Remember that pancake place?",
+  "Let's go find out about it.",
   "Oh, it was on the form I sent, I mean, never mind.",
   "Didn't a copy get sucked into the vent?",
   "I hope Mops doesn't notice...",

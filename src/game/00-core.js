@@ -1345,7 +1345,7 @@
         n.room === "deck")
       )
         for (let i of qn) l.push(i.kind === "plant" ? nt(i.x, i.y, 26, 14, 10) : nt(i.x, i.y, 40, 14, 10));
-      if (n.room === "window" && l.push(nt(rt.x, rt.y, 26, 14, 10)), n.room === "hall" && hallBeat()) for (let i of hallBeat().solids()) l.push(i);
+      if (n.room === "window" && l.push(nt(rt.x, rt.y, 26, 14, 10)), hallBeat()) for (let i of hallBeat().solids()) l.push(i); // (and the escape's bay and office)
       else if (n.room === "hall") {
         (l.push(nt(ne.x, ne.y, 26, 14, 10)),
           l.push(nt(DV.x, DV.y, 26, 16, 8)),

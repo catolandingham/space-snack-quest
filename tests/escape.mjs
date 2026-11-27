@@ -102,21 +102,41 @@ const run = await page.evaluate(
     // 45
     until(() => n.cur && n.cur.k === "bub");
     ss.drawFrame();
-    out.home = { room: n.room, line: say(), glow: !!(d().drew && d().drew.brochure && d().drew.brochure.glow) };
-    // the bubble (its name tag 24 above it included) leaves the brochure it talks about in sight
-    {
+    // Mops's line comes in parts of at most twelve words (line-split.js); the brochure is outlined with the part that
+    // names the pancake place, and no bubble covers it
+    out.home = { room: n.room, parts: [], glows: [], clear: true, nights: [] };
+    for (let i = 0; i < 6 && n.cur && n.cur.k === "bub" && n.cur.b.who === "mops"; i++) {
+      ss.drawFrame();
       const b = window.__ss.lastBubble,
         r = P.HOME.brochure;
-      out.home.clear = !!b && (b.x > r.x1 || b.x + b.w < r.x0 || b.y - 24 > r.y1 || b.y + b.h < r.y0);
+      out.home.parts.push(say());
+      out.home.glows.push(!!(d().drew && d().drew.brochure && d().drew.brochure.glow));
+      out.home.nights.push(!!(d().drew && d().drew.night));
+      out.home.clear = out.home.clear && !!b && (b.x > r.x1 || b.x + b.w < r.x0 || b.y - 24 > r.y1 || b.y + b.h < r.y0);
+      next();
+      until(() => (n.cur && n.cur.k === "bub") || S().think, 5);
     }
-    next();
-    const thinks = [];
-    until(() => (S().think && !thinks.includes(S().think.kind) && thinks.push(S().think.kind), n.cur && n.cur.k === "bub"), 20);
+    out.home.line = out.home.parts.join(" ");
+    out.home.glow = out.home.glows.some((g, i) => g === /pancake/.test(out.home.parts[i])) && out.home.glows.every((g, i) => g === /pancake/.test(out.home.parts[i]));
+    const thinks = [],
+      placed = [];
+    // each thought picture: above the thinker's head with a clear gap, never over it (thought-place.js)
+    const seeThought = () => {
+      if (!S().think || thinks.includes(S().think.kind)) return;
+      thinks.push(S().think.kind);
+      tick();
+      ss.drawFrame();
+      const th = d().drew && d().drew.think;
+      th && placed.push({ kind: th.kind, gap: Math.round(th.head.y - th.box.y1), over: th.box.x0 < th.head.x + th.head.w && th.box.x1 > th.head.x && th.box.y0 < th.head.y + th.head.h && th.box.y1 > th.head.y });
+    };
+    until(() => (seeThought(), n.cur && n.cur.k === "bub"), 20);
+    out.home.placed = placed;
     out.home.thinks = thinks;
     out.home.autoThink = !n.cur || n.cur.k === "bub"; // (they played by themselves, to the next line)
     out.sq1 = say();
     next();
     until(() => S().think, 5);
+    seeThought();
     out.sqThink = S().think && S().think.kind;
     until(() => n.cur && n.cur.k === "bub", 10);
     out.sq2 = say();
@@ -135,8 +155,22 @@ const run = await page.evaluate(
     out.ball.awayOffer = away ? away.verb : "";
     out.ball.press = press();
     out.ball.pose = n.sqPose;
+    // rolled up on the floor in front of the vent's wall, a shadow under him (clear of the wall's foot, y 254, and of
+    // the mail room's wall in front, y 359)
+    ss.drawFrame();
+    out.ball.shadow = d().drew.ballShadow;
+    out.ball.at = { y: Math.round(n.sq.y) };
+    const ventStart = n.T;
     // 48
+    // the first view inside the vent is held still before anything else (Mops does not move; his eyes at the grille)
+    until(() => S().step === "vent" && n.room === "duct", 20);
+    const inAt = n.T,
+      mo0 = n.mo.x;
+    for (let i = 0; i < 48; i++) tick();
+    ss.drawFrame();
+    out.ventHold = { still: n.mo.x === mo0, night: !!(d().drew && d().drew.night) };
     until(() => n.cur && n.cur.k === "cutaway", 20);
+    out.ventHold.toFirst = +(n.T - inAt).toFixed(1);
     out.vent = { room: n.room, mopsFacesAway: n.mo.f > 0 && n.mo.x > n.sq.x };
     const panel = () => window.SSQ.cutaway.last();
     ss.drawFrame();
@@ -171,6 +205,7 @@ const run = await page.evaluate(
     // 50
     until(() => n.cur && n.cur.k === "cutaway", 60);
     ss.drawFrame();
+    out.hallNight = !!(d().drew && d().drew.night) || null;
     out.slipview = { id: n.cur.id, drew: panel(), room: n.room, mopsAway: n.mo.f < 0 && n.mo.x < n.sq.x, waits: waitsForNext() };
     next();
     until(() => S().step === "pad" && n.ctrl, 10);
@@ -193,6 +228,9 @@ const run = await page.evaluate(
     // 51
     until(() => S().step === "computer" && n.ctrl, 20);
     out.office = { room: n.room, chip: n.ch1Chip };
+    ss.drawFrame();
+    out.office.night = !!(d().drew && d().drew.night);
+    out.office.solids = ss.solids().filter((b) => b.id).map((b) => b.id);
     // Mops is drawn in the office (the office picture's own drawing has none): his pixels go when he is hidden
     {
       const cv = document.querySelector("canvas"),
@@ -223,6 +261,7 @@ const run = await page.evaluate(
     out.bar = { room: n.room, line: say() };
     next();
     until(() => S().step === "snacks" && n.ctrl, 5);
+    out.bar.night = !!(d().drew && d().drew.night);
     const snack = (i) => (tap(P.SNACKS.at[i].x, P.SNACKS.at[i].y), until(() => !S().snacks.carry, 3));
     for (const i of [0, 1, 2, 3]) snack(i);
     out.bar.bag = S().snacks.bag;
@@ -265,8 +304,12 @@ const run = await page.evaluate(
 g.check('43: the card "Six days later" waits for NEXT', run.card === W["card-six-days"] && run.cardWaits, run.card);
 g.check("44: the loading bay, three robots, no Squatch; the robot's line waits for NEXT", run.tease.room === "hangar" && run.tease.sq === "hidden" && run.tease.robots === 3 && run.tease.line === W["robot-replaced"] && run.tease.who === "robot" && run.tease.waits, run.tease);
 g.check("44: Mops answers, word for word, and bleats (the mops-bleat sound pick)", run.tease.mops === W["mops-lying"] && run.bleat, run.tease);
-g.check("45: home; the brochure on the wall is outlined while Mops talks about the pancake place, and his bubble does not cover it", run.home.room === "closet" && run.home.line === W["mops-pancake"] && run.home.glow && run.home.clear, run.home);
-g.check("45: his wordless thought pictures (the crate to the ship, the locked office door) play by themselves", JSON.stringify(run.home.thinks) === '["crate","door"]' && run.home.autoThink, run.home);
+g.check("45: home at night; Mops's line, word for word, in parts of about 12 words at most (13); the brochure is outlined with the part that names the pancake place, and no bubble covers it", run.home.room === "closet" && run.home.line === W["mops-pancake"] && run.home.parts.length >= 2 && run.home.parts.every((p) => p.split(/\s+/).length <= 13) && run.home.glow && run.home.clear && run.home.nights.every(Boolean), run.home);
+g.check("45: his wordless thought pictures (the crate to the ship, the locked office door) play by themselves", JSON.stringify(run.home.thinks) === '["crate","door","vent"]' && run.home.autoThink, run.home);
+g.check("45, 46: every thought picture sits above the thinker's head with a clear gap, never over it", run.home.placed.length === 3 && run.home.placed.every((p) => !p.over && p.gap >= 20), run.home.placed);
+g.check("47: rolled up by the vent: on the floor in front of the wall, a shadow under him", run.ball.shadow && run.ball.at.y - 40 > 254 && run.ball.at.y + 8 < 359, run.ball);
+g.check("48: the first view inside the vent is held still (2.5 s and more) at night before anything else; the first close-up after Mops reaches his desk", run.ventHold.still && run.ventHold.night && run.ventHold.toFirst >= 4, run.ventHold);
+g.check("51, 52: night in the office and at the snack counter; the office's desk, chair and cabinet are solid", run.office.night && run.bar.night && ["desk", "chair", "cabinet"].every((k) => run.office.solids.includes(k)), { office: run.office, bar: run.bar });
 g.check("46: Squatch's slip, his thought of the sheet going into the vent (no words in it), then his vent line", run.sq1 === W["sq-slip"] && run.sq2 === W["sq-vent"] && run.sqThink === "vent", [run.sq1, run.sq2, run.sqThink]);
 g.check("47: the bay at night, the goal, a patrolling robot with its cone", run.ball.room === "hangar" && run.ball.night && run.ball.chip === W["chip-ball"] && run.ball.robot && run.ball.cones === 1, run.ball);
 g.check("47: ROLL · ball comes up by the vent; he rolls into the L2 ball", run.ball.awayOffer === "" && run.ball.press === W["button-ball"] && run.ball.pose === "ball", run.ball);
@@ -277,7 +320,7 @@ g.check('48: "I hope Mops doesn\'t notice..." is a thought, with the pink sheet 
 g.check("48: the new Guardian note is written in full and signed — The Guardians, a white hair on it", run.vent.note.id === "esnote" && run.vent.note.drew.shown === W.note && run.vent.note.drew.signed && run.vent.note.drew.hair, run.vent.note);
 g.check("49: Mops comes out with the sheet in his mouth; his line; Squatch's thought", run.out.room === "hangar" && run.out.slip === "mops" && run.out.line === W["mops-hurry"] && run.out.think === W["sq-get-it"] && run.out.style === "whisper", run.out);
 g.check("49: GRAB · pink slip, and the slip goes to his paw", run.grab.press === W["button-grab"] && run.grab.slip === "paw", run.grab);
-g.check("50: in the hallway Mops faces away; the sheet's close-up shows the code (and waits for NEXT)", run.slipview.room === "passage" && run.slipview.mopsAway && run.slipview.id === "esslip" && run.slipview.drew.code === "169556" && run.slipview.waits, run.slipview);
+g.check("50: in the hallway Mops faces away; the sheet's close-up shows the code written in pen, inside the sheet (and waits for NEXT)", run.slipview.room === "passage" && run.slipview.mopsAway && run.slipview.id === "esslip" && run.slipview.drew.code === "169556" && run.slipview.drew.codeAt.pen && run.slipview.drew.codeAt.inSheet && run.slipview.waits, run.slipview);
 g.check("50: the keypad: the goal, ten keys", run.pad.chip === W["chip-code"] && run.pad.keys === 10, run.pad);
 g.check("50: a wrong key buzzes, the screen clears, no stars are lost", run.pad.buzz && run.pad.cleared && run.pad.stars, run.pad);
 g.check("50: the keyboard's digits work, and 169556 opens the door", run.pad.keyboard && run.pad.typed === "169556", run.pad);
@@ -289,7 +332,7 @@ g.check("52: the Guardians' plate, the last two on it (a tap on the plate works)
 g.check("52: home, OPEN · closet, PUT IN · box", run.home2.room === "closet" && run.home2.chip === W["chip-slip"] && run.home2.open === W["button-closet"] && run.home2.wardrobe === "open" && run.home2.put === W["button-box"], run.home2);
 g.check("52: the box close-up (MY GARDIAN BOX, MY GUARDIANS): the slip goes under the notes", run.home2.box.id === "esbox" && run.home2.box.drew.tucked && run.home2.box.drew.label === "MY GARDIAN BOX" && run.home2.box.drew.title === "MY GUARDIANS", run.home2.box);
 g.check("52: the slip is in the box, the closet shut, Squatch asleep, then beat 53 (pack the crate)", run.home2.slip === "box" && run.home2.shut && run.home2.sleep && run.end.step === "pack1" && !run.end.active, { home: run.home2, end: run.end });
-g.check("the drawings show the walkthrough's words", ["IDEAS FOR GUARDIANS", "HAVE YOU SEEN?", "MARS", "NO", "TOYS", "MOON PIES", "Order new box", "Return empty crate", "169556", W["note-sign"]].every((w) => run.words.includes(w)), run.words);
+g.check("the drawings show the walkthrough's words", ["IDEAS FOR GUARDIANS", "HAVE YOU SEEN?", "MARS", "NO", "TOYS", "MOON PIES", "Order new box", "Return empty crate", "pen:169556", W["note-sign"]].every((w) => run.words.includes(w)), run.words);
 
 // ---------- the night robot and the one capture rule ----------
 const rule = await page.evaluate(() => {
@@ -306,40 +349,72 @@ const rule = await page.evaluate(() => {
   const jump = () => ((n.q = []), (n.cur = null), ss.ch1JumpBeat(47), tick());
   const out = {};
   jump();
-  // he stands by the vent; the robot comes along, looks up at the vent and sees him
-  n.sq.x = P.BAY.ventStand.x - 80;
-  n.sq.y = P.BAY.ventStand.y + 30;
-  out.seen = until(() => S().robot.phase !== "patrol", 30) && S().robot.phase;
-  ss.drawFrame();
+  const solids = ss.solids(),
+    inSolid = (x, y) => solids.find((b) => x > b.x0 && x < b.x1 && y > b.y0 && y < b.y1);
+  // he stands in front of the walkway, in the robot's way; frame by frame: its drawn cone, its mark, its phase
+  n.sq.x = 600;
+  n.sq.y = 440;
+  const frames = [];
+  for (let i = 0; i < 600 && S().robot.phase === "patrol"; i++) {
+    ss.drawFrame();
+    const c = (B.debug().drew.cones || [])[0];
+    frames.push({ inside: !!(c && c.inside), mark: S().robot.mark || "", phase: S().robot.phase });
+    tick();
+  }
+  out.seen = S().robot.phase;
+  // the "?" shows only while the drawn cone is on him; the "!" comes only after it has been on him for 0.5 s
+  let run = 0,
+    early = 0,
+    markOff = 0,
+    asked = 0;
+  for (const f of frames) {
+    run = f.inside ? run + 1 : 0;
+    f.mark && !f.inside && markOff++;
+    f.mark === "?" && asked++;
+    f.mark === "!" && run * 0.05 < 0.45 && early++;
+  }
+  out.cone = { frames: frames.length, early, markOff, asked };
   out.bang = until(() => S().robot.phase === "run", 2);
-  out.alarm = until(() => S().robot.phase === "pull", 10) && ss.secOn ? true : !!window.SSQ.engine().secOn();
-  out.guard = window.SSQ.engine().secOn();
-  // rolled up where he stands: hidden, the guard gives up ("They lost you."), the robot goes back to its rounds
+  // its run to the FUR alarm, and the guard who comes in: every step clear of the bay's things, his flashlight cone
+  // drawn the whole time he is out
+  const steps = [],
+    noBeam = [];
+  for (let i = 0; i < 400 && !S().guard; i++) (tick(), steps.push([S().robot.x, S().robot.y]));
+  out.guard = !!S().guard;
+  // rolled up where he stands while the guard is out: hidden, the guard gives up ("They lost you."), the robot goes
+  // back to its rounds
   tick();
   const a = ss.offerNow();
   out.anyRoll = a ? a.verb : "";
   a && a.f();
-  until(() => !window.SSQ.engine().secOn(), 20);
-  out.lost = !window.SSQ.engine().secOn() && n.sqPose === "ball";
-  out.back = until(() => S().robot.phase === "patrol", 20);
-  // what the cone is drawn yellow on is what it sees: on any frame the drawn cone holds him while the robot patrols, it
-  // has left its patrol by the next tick
-  jump();
-  n.sq.x = 520;
-  n.sq.y = 360;
-  const late = [];
-  for (let i = 0; i < 400 && S().robot.phase === "patrol"; i++) {
+  for (let i = 0; i < 800 && S().guard; i++) {
     ss.drawFrame();
-    const c = (B.debug().drew.cones || [])[0],
-      was = S().robot.phase;
+    const g = B.debug().drew.guard;
+    g ? steps.push([g.x, g.y]) : noBeam.push(i);
     tick();
-    c && c.inside && was === "patrol" && S().robot.phase === "patrol" && late.push(i);
   }
-  out.late = late.length;
-  out.sawHim = S().robot.phase !== "patrol";
-  // every route in the bay, step by step, keeps clear of the bay's things (the older program's solids there)
-  const solids = ss.solids(),
-    inSolid = (x, y) => solids.find((b) => x > b.x0 && x < b.x1 && y > b.y0 && y < b.y1);
+  out.lost = !S().guard && n.sqPose === "ball" && !(n.cur && n.cur.id === "jail");
+  out.beam = noBeam.length;
+  out.back = until(() => S().robot.phase === "patrol", 20);
+  out.inThings = steps.filter(([x, y]) => inSolid(x, y)).slice(0, 4);
+  // standing where the patrol's cone never reaches (the floor's front left corner, behind it as it looks up at the vent,
+  // below it as it rolls back): no "?" and no alarm through two whole rounds
+  jump();
+  n.sq.x = 100;
+  n.sq.y = 590;
+  let marks = 0;
+  for (let i = 0; i < 2 * 22 * 20; i++) (tick(), S().robot.mark && marks++);
+  out.short = { marks, phase: S().robot.phase };
+  // caught: standing still in the guard's way: the LOCKUP card, then the step again
+  jump();
+  n.sq.x = 600;
+  n.sq.y = 440;
+  until(() => n.cur && n.cur.id === "jail", 90);
+  out.lockup = !!(n.cur && n.cur.id === "jail");
+  for (let i = 0; i < 40 && n.cur; i++) ((n.bt = 1), ss.opTap(), tick(0.1));
+  until(() => n.ctrl && !n.cur && !n.q.length, 10);
+  out.after = { step: S() && S().step, ch1Step: n.ch1Step, robot: S() && S().robot && S().robot.phase, room: n.room, guard: !!(S() && S().guard) };
+  // every route in the bay, step by step, keeps clear of the bay's things (its solids: bay-watch.js BAY_SOLIDS)
   const walk = (pts) => {
     const bad = [];
     for (let k = 1; k < pts.length; k++)
@@ -354,7 +429,7 @@ const rule = await page.evaluate(() => {
   const Y = P.BAY;
   out.routes = {
     solids: solids.length,
-    walkIn: walk([Y.enter, Y.toVent, { x: Y.ventStand.x, y: Y.ventStand.y + 40 }]),
+    walkIn: walk(Y.walkIn),
     patrol: walk([{ x: Y.patrol.x0, y: Y.patrol.y }, { x: Y.patrol.x1, y: Y.patrol.y }]),
     toAlarm: walk([{ x: Y.patrol.x1, y: Y.patrol.y }, ...Y.toAlarm]),
     toDock: walk([{ x: Y.patrol.x0, y: Y.patrol.y }, ...Y.toDock]),
@@ -370,11 +445,13 @@ const rule = await page.evaluate(() => {
   out.after = { step: S() && S().step, ch1Step: n.ch1Step, robot: S() && S().robot && S().robot.phase, room: n.room };
   return out;
 });
-g.check("47: the robot sees him standing: \"!\" at once, it rolls to the FUR alarm, a guard comes", rule.seen === "bang" && rule.bang && rule.guard, rule);
+g.check("47: the robot reacts only once its drawn cone has been on him for 0.5 s (a \"?\" filling in first), never when it is not on him", rule.seen === "bang" && rule.cone.asked > 0 && rule.cone.early === 0 && rule.cone.markOff === 0, rule.cone);
+g.check("47: standing where its cone never reaches, no \"?\" and no alarm through two rounds", rule.short.marks === 0 && rule.short.phase === "patrol", rule.short);
+g.check("47: it pulls the FUR alarm and a guard (security, as the party's guard) comes in; his flashlight cone shows the whole time", rule.bang && rule.guard && rule.beam === 0, rule);
 g.check("47: rolled up anywhere while the guard is out (ROLL · ball), he is lost; the robot goes back to its rounds", rule.anyRoll === "ROLL" && rule.lost && rule.back, rule);
-g.check("47: caught standing in the open: the LOCKUP card, then the ball step again", rule.lockup && rule.after.step === "ball" && rule.after.ch1Step === "es-ball" && rule.after.room === "hangar", rule);
-g.check("47: the robot sees him on the frame its drawn cone holds him (never yellow with no reaction)", rule.sawHim && rule.late === 0, rule);
-g.check("47: every route in the bay (the walk in, the patrol, to the FUR alarm, to the dock) keeps clear of its things", rule.routes.solids > 0 && Object.entries(rule.routes).every(([k, v]) => k === "solids" || v.length === 0), rule.routes);
+g.check("47: caught standing in the guard's way: the LOCKUP card, then the ball step again (no guard, the robot on its rounds)", rule.lockup && rule.after.step === "ball" && rule.after.ch1Step === "es-ball" && rule.after.room === "hangar" && !rule.after.guard && rule.after.robot === "patrol", rule);
+g.check("47: the robot's run and the guard's walk never go into the walkway, the plant, the bin or the mail room's walls", rule.inThings.length === 0, rule.inThings);
+g.check("47: every route in the bay (the walk in, the patrol, to the FUR alarm, to the dock) keeps clear of its things", rule.routes.solids >= 7 && Object.entries(rule.routes).every(([k, v]) => k === "solids" || v.length === 0), rule.routes);
 
 // ---------- ↺ in every step, and the chapter reset ----------
 const restarts = await page.evaluate(() => {

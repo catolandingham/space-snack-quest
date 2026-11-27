@@ -26,24 +26,33 @@ export const ES_HOME = Object.freeze({
 });
 // The wardrobe and the Guardian Box in it (home-morning-art.js MORNING_THINGS.boxIn) are read from there.
 
-// The loading bay. The big wall vent (the grille under the speaker, right wall): picture x 1070-1200, y 237-332.
+// The loading bay. The big wall vent (the grille under the speaker, right wall): picture x 1070-1200, y 237-332. Its things
+// are solid (bay-watch.js BAY_SOLIDS: the walkway, the plant, the bin, the mail room's walls); every walk here is a
+// list of corners that goes round them (tests/escape.mjs walks each one).
 export const BAY = Object.freeze({
   vent: Object.freeze({ x0: 802, y0: 183, x1: 900, y1: 256 }),
-  ventStand: Object.freeze({ x: 850, y: 334 }), // just below the grille, on the floor (the bay's floor starts at y 320)
-  mopsVent: Object.freeze({ x: 806, y: 336 }), // where Mops starts his crawl, left of Squatch
-  enter: Object.freeze({ x: 150, y: 400 }), // where they come in from the hallway (the left doorway)
-  // the tease (beat 44): Mops mops in the middle, the three robots round him
-  teaseMops: Object.freeze({ x: 470, y: 470 }),
-  teaseBots: Object.freeze([Object.freeze({ x: 330, y: 440 }), Object.freeze({ x: 610, y: 430 }), Object.freeze({ x: 560, y: 560 })]),
-  // the night robot on patrol across the bay below the ramp's frame, from the bin toward the vent and back; going right
-  // it looks up at the vent, going left the way it goes
-  patrol: Object.freeze({ x0: 250, x1: 700, y: 446, speed: 42 }),
+  // where he rolls up: on the floor in front of the vent's wall, clear of the wall's foot (y 254) and of the mail room's
+  // wall in front (y 359), with a shadow under him (Brian 2026-11-26, escape 0:47: not looking inside the wall)
+  ventStand: Object.freeze({ x: 846, y: 322 }),
+  mopsVent: Object.freeze({ x: 800, y: 326 }), // where Mops starts his crawl, left of Squatch
+  // in from the hallway: through the left doorway, down past the plant's front, across in front of the walkway, up the
+  // gap between the walkway and the mail room, and along above the mail room's wall to the vent
+  walkIn: Object.freeze([
+    Object.freeze({ x: 50, y: 330 }),
+    Object.freeze({ x: 52, y: 440 }),
+    Object.freeze({ x: 630, y: 450 }),
+    Object.freeze({ x: 636, y: 330 }),
+    Object.freeze({ x: 846, y: 322 }),
+  ]),
+  // the tease (beat 44): Mops mops in front of the walkway, the three robots round him
+  teaseMops: Object.freeze({ x: 470, y: 500 }),
+  teaseBots: Object.freeze([Object.freeze({ x: 320, y: 470 }), Object.freeze({ x: 630, y: 470 }), Object.freeze({ x: 560, y: 580 })]),
+  // the night robot on patrol across the bay in front of the walkway, from the bin toward the vent and back; going
+  // right it looks up at the vent, going left the way it goes
+  patrol: Object.freeze({ x0: 250, x1: 630, y: 452, speed: 42 }),
   furAlarm: Object.freeze({ x: 81, y: 153 }), // the FUR alarm on the left wall (picture x 92-126, y 178-218)
-  // routes round the bay's things (the bin at x 189-237, y 350-374; the plant's pot at x 103-147, y 331-369; the mail
-  // room's left wall at x 675-699, y 360-420 and 505-610; tests/escape.mjs walks each one step by step):
-  toAlarm: Object.freeze([Object.freeze({ x: 80, y: 446 }), Object.freeze({ x: 76, y: 330 })]), // under the FUR alarm, left of the plant
-  toDock: Object.freeze([Object.freeze({ x: 660, y: 462 }), Object.freeze({ x: 740, y: 462 }), Object.freeze({ x: 830, y: 560 })]), // in through the mail room's opening
-  toVent: Object.freeze({ x: 660, y: 336 }), // their walk in goes along the back, above the mail room's wall
+  toAlarm: Object.freeze([Object.freeze({ x: 52, y: 452 }), Object.freeze({ x: 52, y: 330 })]), // under the FUR alarm, left of the plant
+  toDock: Object.freeze([Object.freeze({ x: 640, y: 462 }), Object.freeze({ x: 760, y: 462 }), Object.freeze({ x: 790, y: 560 })]), // in through the mail room's opening
 });
 
 // The night robot's sight (the older program's standing cone: 210 long, 0.42 each side; party-watch.js coneFrom).
@@ -70,6 +79,7 @@ export const HALLWAY = Object.freeze({
   keypad: Object.freeze({ x0: 543, y0: 567, x1: 569, y1: 601 }),
   sq: Object.freeze({ x: 630, y: 548 }),
   mops: Object.freeze({ x: 330, y: 470 }), // off to the left, facing the photo wall (he never sees the slip's front)
+  right: Object.freeze({ x: 930, y: 330 }), // the right doorway, from the loading bay
   doorIn: Object.freeze({ x: 481, y: 590 }),
 });
 
@@ -96,6 +106,12 @@ export function keyAt(d) {
 export const OFFICE = Object.freeze({
   door: Object.freeze({ x: 480, y: 300 }),
   monitor: Object.freeze({ x0: 664, y0: 303, x1: 806, y1: 412 }),
+  // what feet cannot walk through in the office (the locked picture's desk, chair and filing cabinet; feet-sized)
+  solids: Object.freeze([
+    Object.freeze({ id: "desk", x0: 561, x1: 910, y0: 430, y1: 559 }),
+    Object.freeze({ id: "chair", x0: 470, x1: 580, y0: 480, y1: 525 }),
+    Object.freeze({ id: "cabinet", x0: 33, x1: 193, y0: 470, y1: 517 }),
+  ]),
   sq: Object.freeze({ x: 610, y: 585 }),
   mops: Object.freeze({ x: 380, y: 470 }),
 });
@@ -135,12 +151,24 @@ export const SNACKS = Object.freeze({
   rest: Object.freeze({ x: 470, y: 600 }),
 });
 
+// What gives light at night in each room (night-look.js keeps these bright under the night tint): the office's screen,
+// the hall's big window, the desk lamp's light in the vent.
+export const NIGHT_LIT = Object.freeze({
+  office: Object.freeze([Object.freeze({ x0: 672, y0: 309, x1: 798, y1: 404 })]),
+  hall: Object.freeze([Object.freeze({ x0: 20, y0: 70, x1: 610, y1: 225 })]),
+  duct: Object.freeze([Object.freeze({ x0: 600, y0: 300, x1: 920, y1: 440, round: true })]),
+  passage: Object.freeze([]),
+  closet: Object.freeze([]),
+});
+
 // Timing (seconds) and walking speeds (game pixels a second).
 export const ES_PACE = Object.freeze({
   tease: 2.4, // the robots circle Mops, laughing, before the first line
   sad: 1.0,
   mopsIn: 150,
   think: 2.6, // a wordless thought picture over someone's head
+  ventLook: 2.6, // the first view inside the vent, held still: where they are, his eyes at the grille (Brian 2026-11-26)
+  atDesk: 1.4, // Mops at his desk before the first close-up
   crawl: 1.2, // Mops crawling into (or out of) the vent
   ballWait: 2.2, // rolled up at the vent, the robot rolls by, then the picture goes inside
   grab: 0.45,

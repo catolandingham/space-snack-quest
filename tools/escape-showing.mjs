@@ -124,7 +124,7 @@ const st = () =>
       es: d.state,
       active: es.active(),
       ch1Step: n.ch1Step || "",
-      sec: !!window.SSQ.engine().secOn(),
+      sec: !!(d.state && d.state.guard),
     };
   });
 const at = async (x, y) => {
@@ -303,10 +303,12 @@ if (which === "escape") {
   // the night robot's capture rule at the vent
   await sleep(1000);
   await still("ball-start");
-  const vent = await page.evaluate(() => window.SSQ.beat("ch1-escape").place.BAY.ventStand);
-  await walkTo(vent.x - 80, vent.y + 30);
+  // in front of the walkway, in the robot's way
+  await walkTo(600, 440);
   log("standing in the robot's way");
-  await until((s) => s.es.robot && s.es.robot.phase === "bang", 30000);
+  await until((s) => s.es.robot && s.es.robot.mark === "?", 30000);
+  await still("robot-registers");
+  await until((s) => s.es.robot && s.es.robot.phase === "bang", 5000);
   await still("robot-sees");
   await until((s) => s.sec, 10000);
   await sleep(500);
@@ -320,7 +322,7 @@ if (which === "escape") {
   await sleep(1500);
   await still("lost-you");
   // unroll and stand still in the way until caught
-  await at(vent.x - 120, vent.y + 30);
+  await at(600, 440);
   await until((s) => s.cur === "card" && s.id === "jail", 60000);
   await sleep(1500);
   await still("lockup");
