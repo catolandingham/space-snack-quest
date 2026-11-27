@@ -18,7 +18,7 @@
  *            they wake, NIGHT SHIFT.), HIDE · crate by the floor vent, the floor vent takes the pink sheet, home, SLEEP ·
  *            bed, "Six days later" (round 7, q: 125)
  *     seen   the capture rule in the bay after the post: seen by the night robot, the alarm, guards, "They lost you.";
- *            seen again and standing still: the LOCKUP card and the restart at the post
+ *            seen again and standing still: the LOCKUP card and the step again from the crate
  *   SHOWING_STILLS=<dir> writes a still of each step there too. SHOWING_SILENT=1 leaves the sound out.
  */
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
@@ -504,7 +504,7 @@ if (which === "seen") {
   await walkTo(360, 585, null, 6000);
   await waitStart("down");
   await walkTo(450, 585, (s) => !!s.alarm, 4000);
-  // (caught after the post: the step restarts at POST · mailbox)
+  // (caught on the way home: the step restarts where it began, in the crate by the floor vent)
   await sleep(300);
   await still("seen-again-and-standing-still");
   await until((s) => s.id === "jail", 25000);
@@ -514,7 +514,7 @@ if (which === "seen") {
   await press();
   await until((s) => s.ctrl && !s.cur, 8000);
   await sleep(800);
-  await still("restarts-at-the-post");
+  await still("restarts-the-step-in-the-crate");
 }
 await finishRecording();
 console.log("page errors", errors.slice(0, 5));

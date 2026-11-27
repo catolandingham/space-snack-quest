@@ -152,7 +152,7 @@ export function drawPlan(ctx, x, y, w, st, words = null) {
   ["1", "2", "3"].forEach((n, i) => (has[["door", "computer", "crate"][i]] ? ctx.fillText(n, cw * (i + 0.15), 36 * k) : null));
   if (has.door) crayonDoor(ctx, at.door.x, at.door.y, k);
   if (has.computer) crayonComputer(ctx, at.computer.x, at.computer.y, k);
-  if (has.crate) crayonCrate(ctx, at.crate.x, at.crate.y, k);
+  if (has.crate) crayonCrate(ctx, at.crate.x, at.crate.y, k, !words); // (with words the arrow to Mars is crayonToMars's: one Mars, not two)
   // round 7 (r5 12:19, q: 132): with words, the third picture is the crate, an arrow and the red planet (Mars), and each
   // picture has its crayon words under it; without words, the old ship over the crate
   if (has.ship && !words) drawPlanShip(ctx, at.crate.x - 10 * k, at.crate.y - 120 * k, 1.1 * k, true);
@@ -216,7 +216,7 @@ function crayonToMars(ctx, x, y, k) {
   ctx.arc(x + 54 * k, y - 14 * k, 4 * k, 0, Math.PI * 2);
   ctx.stroke();
 }
-function crayonCrate(ctx, x, y, k) {
+function crayonCrate(ctx, x, y, k, redDot = true) {
   crayon(ctx, "#c77d2a", k);
   ctx.strokeRect(x - 60 * k, y - 34 * k, 96 * k, 70 * k);
   // two faces peeking out over the top: a furry one and a goat
@@ -226,6 +226,7 @@ function crayonCrate(ctx, x, y, k) {
     crayon(ctx, col, k);
     ctx.stroke();
   }
+  if (!redDot) return;
   // an arrow to a red dot
   crayon(ctx, RED, k);
   ctx.beginPath();
