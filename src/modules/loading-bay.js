@@ -1591,6 +1591,8 @@ export function createLoadingBay(bridge) {
       // (the lines after the hairball play in the hallway: ↺ there is the walk home through it again)
       if (b.step === "after") return (jump("walkby"), true);
       if (BAY_PARTS.includes(b.step)) return (jump(b.step), true);
+      // (36b before control: ↺ during Mops's "Behind the bar. Quick." starts 36b again)
+      if (b.step === "hall" && !E().get("ctrl")) return (startHallSneak(), true);
       return false;
     },
     jump,

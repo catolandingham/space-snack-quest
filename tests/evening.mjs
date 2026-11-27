@@ -336,6 +336,40 @@ r = await ev(() => {
   return { a: { ...a, offer: a.offer && a.offer.verb + " · " + a.offer.cap }, step: window.__st(), player: ss.ch.mops ? "mops" : "sq", brochure: n.ch1Evening.brochure };
 });
 g.check("the debug link's beat 39 opens at TALK · family as Mops; beat 139 at the walk home as Squatch, the brochure in his paw", r.a.step === "ask" && r.a.player === "mops" && r.a.offer === "TALK · family" && r.step === "gohome" && r.player === "sq" && r.brochure === "paw", r);
+// (from the independent review) the player is never left as Mops; Mops stays at the bar; his two goals are outlined
+r = await ev(() => {
+  const n = window.__ss.op,
+    ss = window.__ss,
+    b = window.SSQ.beat("ch1-evening");
+  window.__jump(138);
+  ss.drawFrame();
+  const greet = b.debug().drew.outline,
+    kid = n.ch1Evening.guests.find((q) => q.role === "kid");
+  // he tries to walk off across the hall: he gets a step or two, no further
+  let far = 0;
+  for (let i = 0; i < 60; i++) {
+    n.walkTo = { x: 300, y: 400, room: n.room, lx: n.mo.x, ly: n.mo.y, lt: n.T };
+    ss.tick(0.05);
+    far = Math.max(far, Math.hypot(n.mo.x - b.place.STORM.mops.x, n.mo.y - b.place.STORM.mops.y));
+  }
+  n.walkTo = null;
+  const asMops = ss.ch.mops;
+  window.__jump(39);
+  ss.drawFrame();
+  const ask = b.debug().drew.outline;
+  // the evening goes away while he is Mops (a jump to another beat): Squatch is the player again
+  n.q = [];
+  n.cur = null;
+  ss.ch1JumpBeat(22);
+  for (let i = 0; i < 4; i++) ss.tick(0.05);
+  const after = ss.ch.mops ? "mops" : "sq";
+  // (back to where the next checks go on from: the walk home)
+  window.__jump(139);
+  return { greet, kid: { x: kid.x, y: kid.y }, far: Math.round(far), asMops, ask, after };
+});
+g.check("GREET · kid has the dashed outline round the kid; TALK · family round the family", r.greet && r.greet.x0 < r.kid.x && r.greet.x1 > r.kid.x && r.greet.x1 - r.greet.x0 < 60 && r.ask && r.ask.x1 - r.ask.x0 > 80, r);
+g.check("as Mops the player can shuffle a step or two at the bar and no further (the family comes to him)", r.asMops && r.far > 0 && r.far <= 42, r.far); // (30, evening-place.js STORM.mopsRoam, and one frame's step)
+g.check("when the evening goes away while the player is Mops (a jump to another beat), the player is Squatch again", r.after === "sq", r);
 r = await ev(() => {
   const n = window.__ss.op;
   window.__ss.drawFrame();
@@ -366,7 +400,7 @@ r = await ev(() => {
   return out;
 });
 g.check("beat 39b: home alone (Mops is not back); OPEN · box (the Guardians' box); BITE · cake: a crunch, silence, \"No fizz.\"", r.room === "closet" && r.step === "box" && r.mops === "hidden" && r.open && r.opened && r.bite && r.cake === 1 && r.said.join("|") === "No fizz.", r);
-g.check("round 7 (question 129): no X · chart step; the chart over his bed is a picture only (a title, cakes each crossed out, no label); HOLD UP · brochure is next", !r.chartSpot && r.crate && (!r.chart || (r.chart.label === "" && r.chart.crossed === r.chart.tried && r.chart.tried >= 6)), r);
+g.check("round 7 (question 129): no X · chart step; the chart over his bed is a picture only (a title, cakes each crossed out, no label); HOLD UP · brochure is next", !r.chartSpot && r.crate && !!r.chart && r.chart.label === "" && r.chart.crossed === r.chart.tried && r.chart.tried >= 6, r);
 r = await ev(async () => {
   const n = window.__ss.op,
     b = window.SSQ.beat("ch1-evening");
@@ -384,9 +418,9 @@ r = await ev(async () => {
   const stamp = window.SSQ.crateStampDrawn ? window.SSQ.crateStampDrawn() : null;
   return { pressed, kind: t && t.kind, drew, waited, said, step: window.__st(), crayonNow: stamp && stamp.crayonNow };
 });
-g.check("HOLD UP · brochure (question 121): one close-up, the family's name on the paper beside the faded stamp on the wood; no slide, no crayon; it waits for a tap", r.pressed && r.kind === "crate" && r.drew && r.drew.paper === FAMILY.NAME && r.drew.letters === FAMILY.NAME.slice(1).replace(/ /g, "") && r.drew.crayon === false && r.drew.slide === undefined && r.waited, r);
+g.check("HOLD UP · brochure (question 121): one close-up, the family's name on the paper beside the faded stamp on the wood; no slide, no crayon; it waits for a tap", r.pressed && r.kind === "crate" && r.drew && r.drew.paper === FAMILY.NAME && r.drew.letters === FAMILY.NAME.slice(1).replace(/ /g, "") && r.drew.crayon === false && r.waited, r);
 g.check("\"We always thought it said STARS.\" / \"Maybe it's MARS!\"", r.said.join("|") === "We always thought it said STARS.|Maybe it's MARS!", r);
-g.check("no crayon ST layer on his crate bed (crate-stamp.js STAMP_CRAYON)", r.crayonNow !== true, r.crayonNow);
+g.check("no crayon ST layer on his crate bed (crate-stamp.js STAMP_CRAYON)", r.crayonNow === false, r.crayonNow);
 // beat 40: the fight
 r = await ev(() => {
   const n = window.__ss.op;

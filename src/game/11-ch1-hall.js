@@ -585,7 +585,7 @@
         (n.sq.y = rt.y + 6),
         J([
           uV(0.4),
-          v("gary", "Did you hear? Big furry folks run the " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("family") : "Cakes") + " stand on Mars!", "say", !0),
+          v("gary", "Did you hear? Big furry folks run a cake stand on Mars!", "say", !0),
           v("linda", "Big furry folks? Like... a whole family?", "say", !0),
           v("sq", "Big. Furry. Folks. Like ME?", "whisper"),
           rn((l) => {

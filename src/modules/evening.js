@@ -136,6 +136,8 @@ export function createEvening(bridge) {
     bayDrew = {},
     pads = 0,
     mopsWas = { x: 0, y: 0 },
+    outlined = null, // the box the hall's own goal outline was drawn round last frame (GREET · kid, TALK · family)
+    driving = "", // "mops" while this beat has made the player Mops (it gives Squatch back if the evening goes away)
     drew = null,
     view = null, // the full-screen close-up open now: { kind, at } (the gallery, the brochure, the papers)
     record = { steps: [], cutIns: [] };
@@ -384,6 +386,7 @@ export function createEvening(bridge) {
         looked: !!(was && was.looked),
         cleaners: ((from && from.robots) || []).map((r) => ({ id: r.id, x: r.x, y: r.y, f: r.f, dir: r.dir, lane: r.lane, streak: (r.streak || []).slice(), route: null, stop: false })),
         cornerSaid: !!(from && from.said),
+        fromBay: !!from,
       }),
     );
     busy();
@@ -428,7 +431,7 @@ export function createEvening(bridge) {
       e.until((dt) => e.step("sq", EV_BAR.aisleTop.x, EV_BAR.aisleTop.y, P.hallWalk * 1.3, dt || 0)),
       e.until((dt) => e.step("sq", EV_BAR.hidden.x, EV_BAR.hidden.y, P.hallWalk * 1.3, dt || 0)),
       e.run(() => (setPose("hidden"), sound.effect("hide"), e.still("sq"))),
-      ...legs("mops", [...STORM.mopsVia, STORM.mops], P.mopsWalk),
+      ...(Math.hypot(e.pos("mops").x - STORM.mops.x, e.pos("mops").y - STORM.mops.y) < 4 ? [] : legs("mops", [...STORM.mopsVia, STORM.mops], P.mopsWalk)),
       e.run(() => (e.moWalking(false), e.still("mops"), e.face("mops", -1))),
       // the corner exchange (36b's, the Mop-Off's setup), if a robot has not said it to him already
       ...(near && !s.cornerSaid
@@ -508,6 +511,7 @@ export function createEvening(bridge) {
         : []),
       // the switch, announced: the player is Mops now (Squatch stays rolled up behind the bar)
       e.run(() => {
+        driving = "mops";
         e.playAs("mops", eveningWords("switch-mops"));
         e.queue(windowTalk());
       }),
@@ -597,14 +601,19 @@ export function createEvening(bridge) {
   const guestBy = (role) => (S().guests || []).find((g) => g.role === role);
 
   // ---------- beat 38b: pet the goat, and Mops asks about the cakes (Brian r5 5:34 to 6:08; q: 119) ----------
+  // Mops back on his spot at the bar's front (he is never more than a step or two from it), facing the family
+  const backToBar = () => {
+    const e = E();
+    return [walkTo("mops", STORM.mops.x, STORM.mops.y, P.mopsWalk), e.run(() => (e.moWalking(false), e.still("mops"), e.face("mops", -1)))];
+  };
   /** GREET · kid (the player is Mops): the kid steps up and pets him; then the family turns to go. */
   function greetKid() {
     const e = E();
     busy();
     go("pet");
-    e.face("mops", -1);
     sound.effect("grab");
     e.queue([
+      ...backToBar(),
       e.run(() => (guestBy("kid").to = "pet")),
       e.until(() => guestThere(guestBy("kid"))),
       // wordless, about 2 seconds: two soft pats on his head, and his bleat
@@ -626,8 +635,8 @@ export function createEvening(bridge) {
     const e = E();
     busy();
     go("talk");
-    e.face("mops", -1);
     e.queue([
+      ...backToBar(),
       e.say("mops", eveningWords("mops-what")),
       // they turn back and come to the bar again
       e.run(() => S().guests.forEach((g) => g.role !== "guest" && (g.to = "bar"))),
@@ -660,6 +669,7 @@ export function createEvening(bridge) {
       // the switch back, announced; then Mops passes the brochure down behind the bar
       e.run(() => {
         S().guests = null;
+        driving = "";
         e.playAs("squatch", eveningWords("switch-squatch"));
         e.queue(passDown());
       }),
@@ -1340,8 +1350,13 @@ export function createEvening(bridge) {
   function tick(dt) {
     const s = live(),
       e = E();
-    // a close-up open when the evening is gone (a chapter reset, a jump elsewhere) ends itself
-    if (!s) return void (view && closeView());
+    // a close-up open when the evening is gone (a chapter reset, a jump elsewhere) ends itself, and the player is
+    // Squatch again if this beat had made him Mops
+    if (!s) {
+      view && closeView();
+      driving && ((driving = ""), e && e.playAs("squatch"));
+      return;
+    }
     dt = dt || 0;
     psound.tick();
     const r = room(),
@@ -1356,6 +1371,12 @@ export function createEvening(bridge) {
     r === "hall" && s.storm >= 0 && (s.storm = Math.min(1, s.storm + dt / STORM.stormIn));
     r === "hall" && s.guests && !s.alarm && guestsTick(dt);
     r === "hall" && (s.cleaners || []).length && cleanersTick(dt);
+    // the player as Mops stays at the bar's front (a step or two each way): the family comes to him there
+    if (r === "hall" && (s.step === "greet" || s.step === "ask") && e.playing() === "mops") {
+      const m = e.pos("mops"),
+        d = Math.hypot(m.x - STORM.mops.x, m.y - STORM.mops.y);
+      d > STORM.mopsRoam && (e.place("mops", STORM.mops.x + ((m.x - STORM.mops.x) / d) * STORM.mopsRoam, STORM.mops.y + ((m.y - STORM.mops.y) / d) * STORM.mopsRoam), e.stopWalk && e.stopWalk());
+    }
     view && view.kind === "order" && orderTick();
     r === "hangar" && suckTick(dt);
     // the pink sheet flutters toward the big wall vent as he carries it past (the danger shown before it bites)
@@ -2052,6 +2073,17 @@ export function createEvening(bridge) {
             if (s.storm >= 0) (drawJupiterStorm(ctx, s.storm, t), drawStormGlow(ctx, s.storm));
             for (const r of s.cleaners || []) drawStreak(ctx, r.streak);
             // HIDE · bar (36b without the bay): the game's one highlight round the aisle behind the bar
+            if ((s.step === "greet" || s.step === "ask") && e.get("ctrl") && !e.current()) {
+              // GREET · kid, TALK · family: the outline round who it is about (the kid; the family)
+              const who = (s.guests || []).filter((g) => (s.step === "greet" ? g.role === "kid" : g.role !== "guest"));
+              const tall = (g) => (g.kid ? adult * EV_BAR.kidK : bridge.guests.height(g.id, adult));
+              const x0 = Math.min(...who.map((g) => g.x - 20)),
+                x1 = Math.max(...who.map((g) => g.x + 20)),
+                y0 = Math.min(...who.map((g) => g.y - tall(g) - 6)),
+                y1 = Math.max(...who.map((g) => g.y + 6));
+              who.length && dashedOutline(ctx, x0, y0, x1 - x0, y1 - y0, 1, t);
+              outlined = who.length ? { x0, x1, y0, y1 } : null;
+            } else outlined = null;
             s.step === "hide" && e.get("ctrl") && !e.current() && dashedOutline(ctx, EV_BAR.aisle.x0, EV_BAR.aisle.y0, EV_BAR.aisle.x1 - EV_BAR.aisle.x0, EV_BAR.aisle.y1 - EV_BAR.aisle.y0, 1, t);
           },
       extra,
@@ -2324,6 +2356,9 @@ export function createEvening(bridge) {
       if (!s) return false;
       // (a step he controls in a room that is not its own cannot be: back to its start)
       if (EVENING_STEPS.includes(s.step)) return STEP_ROOM[s.step] !== room() ? (jump(s.step), true) : false;
+      // (↺ before the guests come, after the bay's 36b: 36b again, with its robots)
+      const bay = bridge.beat("ch1-bay");
+      if ((s.step === "tostorm" || s.step === "storm") && s.fromBay && bay && bay.startHallSneak) return (closeView(), setPose("stand"), go("hallsneak"), bay.startHallSneak(), true);
       const back = { walkin: "wall", gallery: "wall", tohall: "wall", tostorm: "hide", storm: "hide", window: "greet", pet: "greet", talk: "ask", read: "ask", leaving: "ask", pass: "gohome", homein: "box", hold: "crate", mars: "crate", evening: "show", fight: "show", fightend: "choose", asleep: "bed", idea: "bed", choosing: "bin", order: "bin", posted: "post", sleep: "tobed" }[s.step];
       return back ? (jump(back), true) : false;
     },
@@ -2362,7 +2397,7 @@ export function createEvening(bridge) {
       const s = live();
       if (!s || !this.ownsRoom()) return false;
       if (room() === "hall") {
-        drew = { step: s.step, cones: drawHall(ctx, E(), bridge.guests, hallView(s, ctx)), cleaners: (s.cleaners || []).length, brochure: s.brochure, pat: s.pat >= 0, wide: !!s.mopsWide };
+        drew = { step: s.step, cones: drawHall(ctx, E(), bridge.guests, hallView(s, ctx)), cleaners: (s.cleaners || []).length, outline: outlined, brochure: s.brochure, pat: s.pat >= 0, wide: !!s.mopsWide };
       }
       else drew = { step: s.step, cones: drawBay(ctx, s), ...bayDrew };
       return true;
@@ -2484,7 +2519,7 @@ export function createEvening(bridge) {
       return "";
     },
     /** Tests: the places (evening-place.js). */
-    place: Object.freeze({ HALLWAY: EV_HALLWAY, BAR: EV_BAR, HOME: EV_HOME, BAY: EV_BAY, BAY_FURNITURE, nightLook }),
+    place: Object.freeze({ HALLWAY: EV_HALLWAY, BAR: EV_BAR, STORM, HOME: EV_HOME, BAY: EV_BAY, BAY_FURNITURE, nightLook }),
     /** Tests: true when a cone holds Squatch standing where he is now (the game's own sight test). */
     seenNow() {
       const s = live();
@@ -2584,7 +2619,8 @@ export function createEvening(bridge) {
     if (step === "dodge") s.robot = { x: EV_HALLWAY.robotOut.x, y: EV_HALLWAY.robotOut.y, a: 0, leg: 0, wait: P.robotWait, beeped: false };
     if (step === "greet" || step === "ask") ((s.pose = "hidden"), (s.hideAt = "counter"));
     // who the player is: Mops while the family is at the bar, Squatch everywhere else (no card: a jump announces nothing)
-    e.playAs(step === "greet" || step === "ask" ? "mops" : "squatch");
+    driving = step === "greet" || step === "ask" ? "mops" : "";
+    e.playAs(driving || "squatch");
     s.step = step;
     record.steps.push(step);
     setPose(s.pose);

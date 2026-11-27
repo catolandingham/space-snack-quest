@@ -118,6 +118,8 @@ export const STORM = Object.freeze({
   ids: Object.freeze({ dad: "camera", mom: "teal", kid: "octopus-guest", guest: "backpack" }),
   // Mops at the counter's front below the stools (picture's, game x 772 to 800 at y 390 and 447), wiping it
   mops: Object.freeze({ x: 778, y: 510 }),
+  // while the player is Mops he can shuffle this far from that spot, no further (the family comes to him)
+  mopsRoam: 30,
   // his way to and from it: along the strip above the counter's top end, then down the floor left of the stools
   mopsVia: Object.freeze([Object.freeze({ x: 730, y: 330 }), Object.freeze({ x: 730, y: 510 })]),
   // where he stands up behind the bar when the guests have gone, and Mops passes the brochure over it to him
