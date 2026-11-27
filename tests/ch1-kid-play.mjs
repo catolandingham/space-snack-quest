@@ -533,6 +533,14 @@ while (now() < MAX_S) {
       continue;
     }
     const step = nextStep(s, p.x, Math.max(s.bounds.y0, Math.min(s.bounds.y1, p.y)), Math.max(28, (p.r || 70) - 30));
+    // A doorway with no button right beside him (his feet a step from its opening) that no safe way leads into (the
+    // grid keeps clear of the walls round it): a kid just taps the doorway.
+    if (step.wait && !p.verb && Math.hypot(p.x - s.x, p.y - s.y) < 110) {
+      say(s, `TAP the doorway beside him (${p.x},${p.y})`);
+      await tapGame(s, p.x, p.y);
+      await sleep(900);
+      continue;
+    }
     if (step.wait) {
       waitSince = waitSince || Date.now();
       if (Date.now() - waitSince > 12000) {
