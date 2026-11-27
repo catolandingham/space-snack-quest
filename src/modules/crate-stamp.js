@@ -52,7 +52,7 @@ let last = null,
  * last on any crate (the bedtime story's too) and how many times it has been drawn.
  */
 export function crateStampDrawn() {
-  return { made, handed, tin: tinMade, handedHall, last, stamps };
+  return { made, handed, tin: tinMade, handedHall, last, stamps, byLunch };
 }
 
 // The stamp's letter sheets, made once each (drawFamilyStamp).
@@ -281,14 +281,15 @@ export const SNACK_LAYER_PICTURES = Object.freeze(Object.keys(LAYERS));
 
 const layered = new Map();
 const ready = (img) => !!img && !!img.complete && !!img.naturalWidth;
-let handedHall = 0;
+let handedHall = 0,
+  byLunch = 0; // (tests: the lunch sneak's own hall drawing)
 /**
  * The locked picture `img` for picture id `id` with its layer for the snack's name: the family's stamp over the crate
  * bed's old badge (the home pictures), the new lid on the snack bar's tin (the hall). A canvas the picture's size that
  * draws like the Image (complete, naturalWidth, naturalHeight, src), made once. Any other picture, or one still
- * loading, comes back as it is.
+ * loading, comes back as it is. `by` names the caller for the tests ("lunch": the lunch sneak draws the hall itself).
  */
-export function withSnackLayers(id, img) {
+export function withSnackLayers(id, img, by = "") {
   const layer = LAYERS[id];
   if (!layer || !ready(img) || img.snackLayer) return img;
   const key = id + "|" + img.src;
@@ -311,6 +312,7 @@ export function withSnackLayers(id, img) {
     layered.set(key, cv);
   }
   id === "hall" ? handedHall++ : handed++;
+  by === "lunch" && byLunch++;
   return layered.get(key);
 }
 

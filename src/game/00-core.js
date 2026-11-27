@@ -1289,8 +1289,8 @@
                 ? { x0: 100, x1: 860, y0: 372, y1: 578 }
                 : n.room === "deck"
                   ? { x0: 60, x1: 900, y0: 196, y1: 590 }
-                  : n.room === "hall" && partyBeat() && partyBeat().ownsRoom()
-                    ? partyBeat().bounds()
+                  : n.room === "hall" && hallBeat()
+                    ? hallBeat().bounds()
                   : n.room === "hall"
                     ? { x0: 60 + B.camX, x1: 900 + B.camX, y0: (n.scene || "")[0] === "Q" ? CH1_WALL_FOOT : 200, y1: 590 }
                     : n.room === "window"
@@ -1346,7 +1346,7 @@
         n.room === "deck")
       )
         for (let i of qn) l.push(i.kind === "plant" ? nt(i.x, i.y, 26, 14, 10) : nt(i.x, i.y, 40, 14, 10));
-      if (n.room === "window" && l.push(nt(rt.x, rt.y, 26, 14, 10)), n.room === "hall" && partyBeat() && partyBeat().ownsRoom()) for (let i of partyBeat().solids()) l.push(i);
+      if (n.room === "window" && l.push(nt(rt.x, rt.y, 26, 14, 10)), n.room === "hall" && hallBeat()) for (let i of hallBeat().solids()) l.push(i);
       else if (n.room === "hall") {
         (l.push(nt(ne.x, ne.y, 26, 14, 10)),
           l.push(nt(DV.x, DV.y, 26, 16, 8)),

@@ -20,8 +20,8 @@
 | 151–154 | ### Words and rules |
 | 155–167 | ### How the bots work |
 | 168–175 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
-| 176–192 | ## 5. Merged, in a pull request, and being built |
-| 193–203 | ## 6. Corrections to the checkers |
+| 176–193 | ## 5. Merged, in a pull request, and being built |
+| 194–204 | ## 6. Corrections to the checkers |
 <!-- /section-index -->
 # Brian's asks that are not in the game yet
 
@@ -41,7 +41,7 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 11. **A check that catches drift.** Open PR #34 checks his rules on each pull request; a first try is closed PR #34 (rules check on every PR); nothing compares the game to DECISIONS.md. "I think we basically need to have a recurring built-in check to make sure we're not drifting." (G 433).
 12. **Delete the old Chapter 1.** "we didn't get rid of the wrong ideas as we went" (G 433); "deleting bad code" (G 516). The old opening is still in 10-ch1.js and 11-ch1-hall.js.
 13. **Last, if time allows: karaoke.** Brian, 2026-11-23. Karaoke with the Moon Pie song: "For karaoke, let's actually do a different song." (S 1013); "I'm good with the Moon Pie's song." (S 1019). Today it is tap-to-howl only.
-14. **"Ganitor".** Brian, 2026-11-26: "Ganitor is what mops is - goat janitor - that should be an ongoing reference in the game." Make "Ganitor" (goat + janitor, Mops's job title) an ongoing reference in the game. Where it shows, Brian's pick the same day ("I like all of them a b c d e"), five places, to be built in a later round: A) a GANITOR name tag on Mops's shirt in every scene; B) the Station PA calls him, approved words: "Ganitor Mops to the party hall."; C) the hallway Employee of the Month wall, Mops's photo labeled "MOPS, GANITOR"; D) the robot janitor notice plays on it (robots can be janitors, only Mops is a Ganitor; exact wording still needs Brian's yes); E) Squatch's crayon drawings labeled "MOPS THE GANITOR" where Mops appears in them. Not on screen anywhere yet (decided as a fact in `docs/STORY-DECISIONS.md`, "Also answered").
+14. **"Ganitor", D only.** Brian, 2026-11-26: "Ganitor is what mops is - goat janitor - that should be an ongoing reference in the game." A, B, C and E are built on branch `feat/ch1-lunch-sneak` (round C, not merged; `src/modules/ganitor.js`). Left: D) the robot janitor notice (robots can be janitors, only Mops is a Ganitor); three wordings went to Brian in the round C report, not built until he picks one.
 
 ## 2. Needs your eyes
 
@@ -180,6 +180,7 @@ Merged 2026-11-23: cones on everyone and the six approved guests (#75), controls
 Merged 2026-11-23: home alone after Mops leaves (#84, morning plan PR 3): the homework goal and cutaway, OPEN · closet with the G box, FLOP · bed, the calendar already bitten (13A to 16A).
 
 Not merged yet:
+- The lunch sneak, beats 25 to 27 (draft PR #91, branch feat/ch1-lunch-sneak, stacked on feat/ch1-day2-morning): the sneak past the guests to the hallway, GIVE · lunch, Mops eats a hay sandwich and the bag, one snack behind the counter. Brian's answers of 2026-11-26 are built there (round C: the one-snack line, ROLL · ball, the counter close-up, the bigger MOPS bag, Ganitor A, B, C and E; round D: only the hallway lit up, two wandering guests, the walk-through doorway, crate eyes at the seam, Mops mopping with his beard by his bucket, a slow look and hearts, the duck as the ball). Its questions for Brian are in docs/MASTER-BACKLOG.md.
 - The party night (draft PR #87, branch feat/party-half-two): Brian's showing-5 decisions of 2026-11-25 and his showing-6 notes of 2026-11-26 are built (sight sees his whole body, no hiss under the crowd, no singing away from bedtime, his Croc Boys song, the photo right after the dance, guards round the furniture); his showing-7 notes 12 to 18 of 2026-11-26 are built (voices under bubbles, thought trails, the slower band start with the mic and the close-up, notes from the band, notes under his door, the flyer's size, the shirt for a disguise); his answers of 2026-11-26 are built too (the flyer on the bed, the band order, the chase music, the photo rule, the dance speed words, closing time, the Credits screen and the rest: DECISIONS "Brian's answers of 2026-11-26").
 - The quiet room's mopping (the same branch, draft PR #88), Brian after its video, 2026-11-24: "It's hard to tell the difference between the whistle and the squeaking. Can we make the snore and whistle a bit more prominent? ... see the janitor walking around, mopping the floor with his beard ... the water on the floor kind of following ... And then walking back to the bucket to squeeze it out." Built: Mops's loop before the first tap, a louder snore, swish-only strokes while Squatch sleeps (`src/modules/mop-loop.js`). Waiting for his ears and eyes.
 - The morning's sound (branch feat/morning-sound, draft), Brian's answers of 2026-11-24: 34A (every MY PICK on the sound board, in the morning and home alone), 31a (the beard squirts when tapped; "Hey, stop that!"), 30a (a cutaway with no words and nothing to tap plays by itself), the music and effects levels and Brian's recording turned up 10 dB. The morning fixes (18a to 21a) merged on 2026-11-24 as PR #86.

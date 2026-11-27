@@ -25,6 +25,17 @@
  *                  fast, up to the fade) through the night, the wake, the rocket, the Guardian Box, the calendar and the
  *                  lunch bag, to the lunch sneak's first moment in the party hall. A kid's taps: the floor to walk,
  *                  the action button, NEXT. With SHOWING_STILLS=<dir>, a still of each step goes there too.
+ *     lunch        beats 25 to 27, the lunch sneak: from TAKE · lunch at home through the sneak past the guests (the
+ *                  cones timed: the finger goes when the watcher has just looked away), the hallway, GIVE · lunch, Mops
+ *                  eating the lunch and the bag, back behind the snack counter, one snack cake, to beat 28's first line.
+ *     lunchseen    the lunch sneak's capture rule: he steps out while a guest looks; FUR!, the alarm, the guards, back
+ *                  into the plant, "They lost you."; then seen again and standing still: the LOCKUP card, and the
+ *                  restart hidden in the plant. Both write a still of each step to SHOWING_STILLS=<dir> if it is set.
+ *     day1end      the new end of Day 1 (story pass 28-52, E2/E4): closing time with the Polaroid (he joined the group
+ *                  photo), he walks home himself, the wall speaker calls Mops, the player is Mops cleaning the hall (the
+ *                  dust, a spill, the full beard and the wring, the fur trail, the Polaroid close-up), home, truth or
+ *                  fib (TELL), the talk, the TV story, the bedtime story (why Mops kept him, the last cake, one heart),
+ *                  to Day 2 fading in. A kid's taps: the floor, the big button, NEXT, the two buttons.
  *   SHOWING_SILENT=1 leaves the sound out.
  */
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
@@ -33,7 +44,7 @@ import { join, dirname } from "node:path";
 import { startGame, sleep, root } from "../tests/game-page.mjs";
 
 const [which, outFile] = process.argv.slice(2);
-const WHICH = ["keep", "back", "flyer", "early", "ventfur", "ventcostume", "tv", "bedtime", "morning"];
+const WHICH = ["keep", "back", "flyer", "early", "ventfur", "ventcostume", "tv", "bedtime", "morning", "lunch", "lunchseen", "day1end"];
 if (!WHICH.includes(which) || !outFile) {
   console.error("Usage: node tools/party-showing.mjs <" + WHICH.join("|") + "> <out.mp4>");
   process.exit(2);
@@ -47,7 +58,7 @@ const hall = await import(join(root, "src", "modules", "party-hall.js"));
 const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 2 };
 const g = await startGame({ port: 9360 + WHICH.indexOf(which), name: "party-showing-" + which });
 const sneak = await import(join(root, "tests", "party-sneak.mjs"));
-const { page, errors } = await g.open(which === "tv" || which === "bedtime" || which === "morning" ? "?ch=1" : "?beat=" + (which === "flyer" ? "party:P3" : which === "ventfur" ? "party:P2" : "party:P6"), PHONE);
+const { page, errors } = await g.open(which === "tv" || which === "bedtime" || which === "morning" || which === "lunch" || which === "lunchseen" ? "?ch=1" : "?beat=" + (which === "flyer" ? "party:P3" : which === "ventfur" ? "party:P2" : which === "day1end" ? "party:P8b" : "party:P6"), PHONE);
 await sleep(600);
 SILENT || (await page.click("#ss-sound").catch(() => {}));
 await sleep(600);
@@ -418,6 +429,8 @@ if (which === "bedtime") {
       n = ss.op;
     n.q = [];
     n.cur = null;
+    // (after the party, as party.js finish() leaves it: the evening is at night, night-look.js)
+    n.ch1PartyNow = { scene: "done" };
     window.SSQ.engine().tvStory();
     for (let i = 0; i < 600; i++) {
       ss.tick(0.05);
@@ -439,6 +452,8 @@ if (which === "morning") {
       bed = window.SSQ.beat("ch1-bedtime-story");
     n.q = [];
     n.cur = null;
+    // (after the party, as party.js finish() leaves it: the evening is at night, night-look.js)
+    n.ch1PartyNow = { scene: "done" };
     window.SSQ.engine().tvStory();
     for (let i = 0; i < 6000; i++) {
       if (bed.debug().phase === "fade") return true;
@@ -450,8 +465,22 @@ if (which === "morning") {
   });
   ok || (await fail("the bedtime story did not reach its fade to black"));
 }
+// The lunch videos start at home on Day 2 with the lunch bag in reach (the home morning's last step), or in the hall.
+if (which === "lunch" || which === "lunchseen") {
+  await page.evaluate(() => window.__ss.lockedReady);
+  await page.evaluate((w) => {
+    const ss = window.__ss,
+      n = ss.op;
+    n.q = [];
+    n.cur = null;
+    ss.ch1JumpBeat(22);
+    w === "lunch" ? window.SSQ.beat("ch1-home-morning").jump("lunch") : window.SSQ.beat("ch1-lunch").jump("plant");
+  }, which);
+}
 await startRecording();
-await sleep(which === "morning" ? 300 : 1800);
+// (day1end: Squatch joined the group photo, so Mops finds the Polaroid)
+which === "day1end" && (await page.evaluate(() => (window.__ss.op.ch1PartyNow.shot = { phase: "done", got: true })));
+await sleep(which === "morning" || which === "lunch" || which === "lunchseen" ? 300 : 1800);
 if (which === "keep") {
   await dance(16, 4);
   // toward the wall by the alarm box, where the row will stand; the first song ends and the photo moment begins
@@ -594,6 +623,8 @@ if (which === "tv") {
     const n = window.__ss.op;
     n.q = [];
     n.cur = null;
+    // (after the party, as party.js finish() leaves it: the evening is at night, night-look.js)
+    n.ch1PartyNow = { scene: "done" };
     window.SSQ.engine().tvStory();
   });
   // every picture: read it (about 3 s), then NEXT; the ship picture gets 6 s
@@ -712,68 +743,229 @@ if (which === "morning") {
   await still("room-comes-up-asleep-under-the-blanket");
   await until(async () => (await hm()) === "wake", 4000);
   mark("part wake");
-  await sleep(450);
-  await still("sits-up-blanket-slides-off");
-  await sleep(700);
-  await still("stretches");
-  await stepIs("rocket");
-  await sleep(1200);
-  await still("rocket-glows-pick-up");
-  await press();
-  await sleep(1500);
-  await still("holds-it-up-thinks-of-the-guardians");
-  await until((q) => q.cur === "bub", 4000);
-  await sleep(900);
-  await still("guardians-line");
-  await sleep(2600);
-  await next();
-  await sleep(700);
-  await still("thinks-of-the-guardian-box");
-  await stepIs("closet");
-  await sleep(1000);
-  await still("closet-glows");
-  await walkTo(300, 400, "OPEN · closet");
-  await sleep(500);
-  await still("open-closet");
-  await press();
-  await stepIs("box");
-  await sleep(1000);
-  await still("box-glows-put-in");
-  await press();
-  await until((q) => q.cur === "cutaway", 4000);
-  await sleep(600);
-  await still("close-up-holding-the-gift");
-  await sleep(1400);
-  await still("close-up-gift-in-the-box");
-  await sleep(1500);
-  await next();
-  // the box goes back in the closet, the door shuts, and the bag by the door is outlined for his line
-  await sleep(500);
-  await still("box-goes-back-in-the-closet");
-  await until((q) => q.cur === "bub", 4000);
-  await sleep(1000);
-  await still("bag-glows-he-forgot-his-lunch");
-  await sleep(2000);
-  await next();
-  await stepIs("lunch");
-  await sleep(800);
-  await still("lunch-goal");
-  // the calendar is there to look at (not a step): LOOK · calendar by the wardrobe, then back to the lunch
-  await press();
-  await sleep(1300);
-  await still("calendar-today-optional");
-  await sleep(2400);
-  await floor(880, 540);
-  await stepIs("lunch");
-  await sleep(600);
-  await walkTo(760, 505, "TAKE · lunch");
-  await sleep(400);
-  await still("take-lunch");
-  await press();
-  await until((q) => q.room === "hall" && q.ctrl, 10000);
+  // From the PA on, the morning is played by what is on screen (round D: Mops asleep until the PA, the PA's line,
+  // the note close-up, the Guardians line, the thought bubble, the closet, the box close-up, the walk to the bag):
+  // a line, card or close-up is read and closed with NEXT; with control, the step's action is done the way a kid does.
+  const seenOnce = new Set();
+  const once = async (name) => seenOnce.has(name) || (seenOnce.add(name), await still(name));
+  const t1 = Date.now() + 150000;
+  let calendar = false;
+  for (;;) {
+    if (Date.now() > t1) await fail("the home morning did not reach the hall");
+    const q = await st(),
+      step = await hm();
+    if (q.room === "hall" && q.ctrl) break;
+    if (["bub", "card", "panel", "cutaway"].includes(q.cur)) {
+      await sleep(q.cur === "cutaway" ? 1400 : 900);
+      await once(step + "-" + q.cur + "-" + String(q.text || "").slice(0, 24).replace(/[^A-Za-z0-9]+/g, "-").toLowerCase());
+      await sleep(q.cur === "cutaway" ? 1200 : 1500);
+      const again = await st();
+      again.cur === q.cur && again.text === q.text && (await next());
+      await sleep(400);
+      continue;
+    }
+    if (!q.ctrl) {
+      step === "wake" && (await once("sits-up-and-stretches"));
+      step === "think" && (await sleep(500), await once("thinks-of-the-guardian-box"));
+      step === "mopsUp" && (await sleep(500), await once("mops-gets-up-heart"));
+      await sleep(250);
+      continue;
+    }
+    if (step === "rocket") {
+      await sleep(1000);
+      await once("rocket-outlined-pick-up");
+      await press();
+    } else if (step === "closet") {
+      await sleep(800);
+      await once("closet-outlined");
+      await walkTo(300, 400, "OPEN · closet");
+      await sleep(500);
+      await once("open-closet");
+      await press();
+    } else if (step === "box") {
+      await sleep(900);
+      await once("box-outlined-put-in");
+      await press();
+    } else if (step === "toBag") {
+      await sleep(900);
+      await once("bag-outlined-walk-to-it");
+      await floor(760, 505);
+      // (one tap: a second one while his line is up would close it before it is read)
+      await until(async (q2) => q2.cur === "bub" || (await hm()) !== "toBag", 8000);
+    } else if (step === "lunch") {
+      await sleep(700);
+      await once("lunch-goal");
+      // the calendar is there to look at (not a step): LOOK · calendar by the wardrobe, once, then back to the lunch
+      if (!calendar && q.act === "LOOK · calendar") {
+        calendar = true;
+        await press();
+        await sleep(1300);
+        await once("calendar-today-optional");
+        await sleep(2400);
+        await floor(880, 540);
+        await sleep(600);
+        continue;
+      }
+      await walkTo(760, 505, "TAKE · lunch");
+      await sleep(400);
+      await once("take-lunch");
+      await press();
+      await until((q2) => q2.room === "hall" && q2.ctrl, 10000);
+    } else await sleep(300);
+  }
   await sleep(600);
   await still("out-the-door-lunch-sneak-starts");
   await sleep(1500);
+}
+if (which === "lunch" || which === "lunchseen") {
+  const STILLS = process.env.SHOWING_STILLS || "";
+  STILLS && mkdirSync(STILLS, { recursive: true });
+  let k = 0;
+  const still = async (name) => STILLS && (await page.screenshot({ path: join(STILLS, (which === "lunch" ? "" : "seen-") + String(++k).padStart(2, "0") + "-" + name + ".png") }));
+  const lu = () =>
+    page.evaluate(() => {
+      const n = window.__ss.op,
+        l = n.ch1Lunch || {},
+        b = window.SSQ.beat("ch1-lunch"),
+        w = (id) => {
+          const q = [...b.place.WATCHERS, b.place.COUNTER_WATCHER].find((x) => x.id === id);
+          return b.place.watcherNow(q, id === "robot" ? l.counterT || 0 : l.t || 0);
+        };
+      return { step: l.step, pose: l.pose, alarm: l.alarm ? l.alarm.phase : "", look: l.mops ? l.mops.phase || "" : "", teal: w("teal"), camera: w("camera"), robot: w("robot"), jail: !!(n.cur && n.cur.id === "jail") };
+    });
+  const next = () => page.evaluate(() => ((window.__ss.op.bt = 1), window.__ss.opTap()));
+  const stepIs = (name, ms = 10000) => until(async (q) => (await lu()).step === name && q.ctrl, ms);
+  const walkTo = async (x, y, act, ms = 9000) => {
+    await floor(x, y);
+    (await until((q) => q.act === act, ms, async (q) => q.ctrl && !q.act && Math.hypot(q.x - x, q.y - y) > 30 && !q.cur && (await sleep(700), await floor(x, y)))) || (await fail("no " + act + " after walking to " + x + ", " + y));
+  };
+  // inside the hallway doorway's opening (lunch-sneak-place.js LUNCH_PLACES.door.walkTo)
+  const LUNCH_DOOR = (await import(join(root, "src", "modules", "lunch-sneak-place.js"))).LUNCH_PLACES.door.walkTo;
+  // a kid who has watched the cone: waits for the watcher to have just looked away
+  const awayNow = (id, ms = 9000) => until(async () => ((w) => w.phase === "away" && w.k < 0.08)((await lu())[id]), ms);
+  const lookNow = (id, ms = 9000) => until(async () => ((w) => w.phase === "look" && w.k > 0.1 && w.k < 0.3)((await lu())[id]), ms);
+  if (which === "lunch") {
+    await sleep(700);
+    await still("take-lunch-at-home");
+    await press();
+    await sleep(500);
+    await still("walk-in-mops-mops-his-way-out");
+    await stepIs("plant");
+    await sleep(900);
+    await still("only-the-hallway-doorway-glows");
+    // ROLL · ball (Brian 2026-11-26): he rolls up where he stands, then walks on (moving unrolls him)
+    if ((await st()).act === "ROLL · ball") {
+      await press();
+      await sleep(900);
+      await still("roll-ball");
+      await sleep(600);
+    }
+    await walkTo(396, 552, "HIDE · plant");
+    await press();
+    await sleep(700);
+    await still("hidden-in-the-plant");
+    await awayNow("teal");
+    await still("she-looks-away-go");
+    await walkTo(600, 478, "HIDE · crate");
+    await press();
+    await sleep(700);
+    await still("hidden-behind-the-crates-eyes-at-the-seam");
+    await awayNow("camera");
+    // the doorway is walk-through (Brian #47): he walks up the strip and on into the opening, no button
+    await floor(905, 320);
+    await sleep(1400);
+    await still("at-the-hallway-doorway");
+    await floor(LUNCH_DOOR.x, LUNCH_DOOR.y);
+    await until((q) => q.room === "passage", 6000);
+    await sleep(900);
+    await still("the-hallway-mops-mops-with-his-beard");
+    await until(async () => ((await lu()).look || "") === "left", 4000);
+    await sleep(700);
+    await still("mops-looks-left");
+    await until(async () => ((await lu()).look || "") === "right", 3000);
+    await sleep(700);
+    await still("mops-looks-right");
+    await until(async () => ((await lu()).look || "") === "hearts", 3000);
+    await sleep(500);
+    await still("mops-sees-him-hearts");
+    await stepIs("give");
+    await sleep(700);
+    await still("mops-glows-give-him-his-lunch");
+    await walkTo(540, 488, "GIVE · lunch");
+    await press();
+    await sleep(300);
+    await still("the-bag-goes-to-mops");
+    await until((q) => q.cur === "bub", 4000);
+    await sleep(700);
+    await still("my-lunch-youre-the-best");
+    await sleep(1400);
+    await next();
+    await until((q) => q.cur === "cutaway", 3000);
+    await sleep(900);
+    await still("mops-eats-the-sandwich");
+    await sleep(1400);
+    await still("then-the-bag");
+    await stepIs("back", 8000);
+    await sleep(600);
+    await still("go-on-the-doorway-is-outlined");
+    await floor(50, 345);
+    await until(async () => (await lu()).step === "one", 9000);
+    await until((q) => q.cur === "bub", 5000);
+    await sleep(900);
+    await still("counter-close-up-mops-grab-one-snack");
+    await sleep(2200);
+    await next();
+    await stepIs("snack", 8000);
+    await sleep(500);
+    await still("grab-one-snack-he-looks-away");
+    await press();
+    await sleep(700);
+    await still("he-reaches-over-for-one");
+    await until(async () => (await lu()).step === "chew", 3000);
+    await sleep(400);
+    await still("he-eats-it");
+    await until((q) => q.cur === "bub", 5000);
+    await sleep(800);
+    await still("beat-28-the-ship-is-coming");
+    await sleep(1600);
+  } else {
+    await sleep(600);
+    await walkTo(396, 552, "HIDE · plant");
+    await press();
+    await sleep(600);
+    await still("hidden-in-the-plant");
+    // out into the open while she looks across: a kid who did not wait
+    await lookNow("teal");
+    await floor(498, 520);
+    await until(async () => !!(await lu()).alarm, 4000);
+    await sleep(300);
+    await still("seen-fur");
+    await until(async () => (await lu()).alarm === "pull", 4000);
+    await sleep(900);
+    await still("the-alarm-pulled");
+    await until(async () => (await lu()).alarm === "search", 6000);
+    await sleep(300);
+    await still("guards-come-hide");
+    await walkTo(396, 552, "HIDE · plant", 5000);
+    await press();
+    await sleep(900);
+    await still("hidden-they-search");
+    await until(async () => !(await lu()).alarm, 15000);
+    await sleep(500);
+    await still("they-lost-you");
+    // seen again, and he stands still: a guard catches him
+    await lookNow("teal", 12000);
+    await floor(498, 520);
+    await until(async () => (await lu()).jail, 20000);
+    await sleep(800);
+    await still("caught-the-lockup-card");
+    await sleep(2600);
+    for (let i = 0; i < 6 && (await st()).cur; i++) (await tap(187, 300), await sleep(900));
+    await stepIs("crate", 6000);
+    await sleep(700);
+    await still("restarts-hidden-in-the-plant");
+    await sleep(1200);
+  }
 }
 if (which === "early") {
   await dance(10, 0);
@@ -796,6 +988,105 @@ if (which === "early") {
   await until((q) => q.ctrl && q.now && Object.values(q.now.worn).every((v) => !v), 8000);
   log("the costume off");
   await toTv(120000);
+}
+if (which === "day1end") {
+  const C = await import(join(root, "src", "modules", "party-cleanup.js"));
+  const next = () => page.evaluate(() => ((window.__ss.op.bt = 1), window.__ss.opTap()));
+  const more = () =>
+    page.evaluate(() => {
+      const n = window.__ss.op,
+        now = window.SSQ.beat("ch1-party").now();
+      return { mo: { x: n.mo.x, y: n.mo.y }, clean: now && now.clean, truthOpen: !!(now && now.truthOpen), close: now && now.close ? now.close.phase : "" };
+    });
+  // a line, a card or a picture with words: read it, then NEXT (a picture that plays by itself is left alone)
+  const readIt = async (q) => {
+    const auto = await page.evaluate(() => !!(window.__ss.op.cur && window.__ss.op.cur.auto));
+    if (auto) return void (await sleep(200));
+    await sleep(q.cur === "cutaway" ? 2600 : 1500);
+    await next();
+    await sleep(250);
+  };
+  // the Mops walk: a finger on the floor, again if he stops short
+  const mopsTo = async (x, y, ms = 7000) => {
+    const end = Date.now() + ms;
+    let last = 0;
+    for (;;) {
+      const m = await more(),
+        q = await st();
+      if (Math.hypot(m.mo.x - x, m.mo.y - y) < 14 || Date.now() > end || (q.cur && q.cur !== "until")) return;
+      q.ctrl && Date.now() - last > 900 && ((last = Date.now()), await floor(x, y));
+      await sleep(120);
+    }
+  };
+  // closing time: the speaker, then he walks home through his own door
+  await until((q) => q.ctrl && q.now && q.now.close && q.now.close.phase !== "speak" && q.now.close.phase !== "cheer" && q.now.close.phase !== "dim", 25000, async (q) => ["bub", "card"].includes(q.cur) && (await readIt(q)));
+  await sleep(1500);
+  log("home through his own door");
+  await until((q) => q.now && q.now.scene === "P9" && q.ctrl && !q.cur, 40000, async (q) => {
+    if (["bub", "card", "panel"].includes(q.cur)) return readIt(q);
+    q.ctrl && q.room === "hall" && (await floor(hall.HALL_DOOR.x, hall.HALL_DOOR.y + 12), await sleep(600));
+  });
+  log("the cleanup");
+  // mop a while (the dust and a spill), then on until the beard is full
+  const sp = C.SPILLS[1];
+  await mopsTo(sp.x + 60, sp.y);
+  await mopsTo(sp.x - 90, sp.y);
+  for (let i = 0; i < 30; i++) {
+    const m = await more();
+    if (!m.clean || m.clean.beard >= 1) break;
+    await mopsTo(i % 2 ? 90 : 760, [330, 390, 450, 510, 570][i % 5]);
+  }
+  await sleep(1200);
+  // the bucket (outlined), WRING · beard, the pictures, then the fur
+  for (const end = Date.now() + 300000; Date.now() < end; ) {
+    const q = await st(),
+      m = await more(),
+      c = m.clean;
+    if (q.now && q.now.scene === "P9b") break;
+    if (["bub", "card", "panel", "cutaway"].includes(q.cur)) {
+      await readIt(q);
+      continue;
+    }
+    // (in the close-up he has no walking control: only the taps)
+    if (c && c.close) {
+      await sleep(1600);
+      const b = c.close === "shirt" ? c.targets.shirt : c.close === "feet" ? c.targets.feet : null;
+      b && (await floor(b.x, b.y));
+      await sleep(400);
+      continue;
+    }
+    if (!q.ctrl || !c) {
+      await sleep(120);
+      continue;
+    }
+    if (q.act) {
+      await sleep(700);
+      await press();
+      await sleep(400);
+      continue;
+    }
+    if (c.beard >= 1) await mopsTo(C.WRING_AT.x, C.WRING_AT.y);
+    else if (c.found) (await sleep(800), await floor(477, 622), await sleep(1500));
+    else if (c.phase === "find") await mopsTo(c.find.x, c.find.y + 30);
+    else if (c.lit) {
+      const x = (c.lit.x0 + c.lit.x1) / 2,
+        y = (c.lit.y0 + c.lit.y1) / 2 + 4;
+      await mopsTo(Math.max(70, x - C.BEARD_TIP.dx - 50), y);
+      await mopsTo(x - C.BEARD_TIP.dx + 6, y);
+    } else await sleep(200);
+  }
+  log("home: truth or fib");
+  await until(async () => (await more()).truthOpen, 40000, async (q) => ["bub", "card"].includes(q.cur) && (await readIt(q)));
+  await sleep(2500);
+  const T = await page.evaluate(() => window.SSQ.beat("ch1-party").truthTargets());
+  T ? await tap(T.tell.x, T.tell.y) : await fail("no truth or fib buttons");
+  // the talk, to the TV
+  await toTv(150000);
+  log("the TV story");
+  // the TV story and the bedtime story, read at a kid's pace, to Day 2
+  await until(() => page.evaluate(() => !!window.__ss.op.ch1Day2), 400000, async (q) => ["bub", "card", "panel", "cutaway"].includes(q.cur) && (await readIt(q)));
+  log("Day 2");
+  await sleep(3000);
 }
 await finishRecording();
 console.log("page errors", errors.slice(0, 5));

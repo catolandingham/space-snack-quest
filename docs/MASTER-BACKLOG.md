@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–26 | # Master backlog |
-| 27–175 | ## Where main is (Chapter 1 redesign) |
-| 176–190 | ## Register |
-| 191–212 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 213–233 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 234–246 | ## Phase 2 (plan section 4, T13 to T18) |
-| 247–269 | ## Phase 1 (plan section 3, T5 to T12) |
-| 270–283 | ## SS40–SS44 |
-| 284–301 | ## Story rows |
-| 302–320 | ## Reset section |
-| 321–331 | ## Still open |
-| 332–335 | ## Chapter 1 replot, recorded and not built |
-| 336–493 | ## Changelog |
+| 27–201 | ## Where main is (Chapter 1 redesign) |
+| 202–216 | ## Register |
+| 217–238 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 239–259 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 260–272 | ## Phase 2 (plan section 4, T13 to T18) |
+| 273–295 | ## Phase 1 (plan section 3, T5 to T12) |
+| 296–309 | ## SS40–SS44 |
+| 310–327 | ## Story rows |
+| 328–346 | ## Reset section |
+| 347–357 | ## Still open |
+| 358–361 | ## Chapter 1 replot, recorded and not built |
+| 362–519 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -30,11 +30,15 @@
 
 2026-11-26 (late night), draft PR #87: story pass 28-52, E2: Mops cleans the hall after the party (P9) and truth or fib at home (P9b) (`party-cleanup.js`, `party-truth.js`, `tests/party-cleanup.mjs`; DECISIONS "Day 1 after the party: Mops cleans the hall, then truth or fib"). Waiting on Brian: party lines 91 to 119; the open conflicts listed there (Mops finding him in the hall at closing time; the flyer's place in the talk; Isfred's sales-visit line; the TV story's office and scanner pictures). Not yet played by a person. Docs match main: yes.
 
+2026-11-26 (late night, lunch), draft PR #91: the rename and the family stamp merged in; the lunch sneak's plate is Stars Cakes. Waiting on Brian (from #87 and #89): the bedtime line's new words, the crate bed's stamp layer, the crayon "ST". Docs match main: yes.
+
 2026-11-26 (late night, Day 2's start), draft PR #90: the rename and the family stamp merged in; nothing new waiting on Brian from this merge. Docs match main: yes.
 
 2026-11-26 (late night, bedtime), draft PR #89: the rename reaches the bedtime story (the crate caption, Mops's line, the story crate's worn family stamp with no crayon). Waiting on Brian: Mops's line's new words. Docs match main: yes.
 
 2026-11-26 (late night), draft PR #87: the snack is Stars Cakes everywhere (Brian, question 86; `snack-name.js`, `crate-stamp.js`, `tests/snack-name.mjs`; DECISIONS "The snack renamed, and the crate bed's stamp (question 86)"). Waiting on Brian: the bedtime line's new words; the crate bed's stamp layer over the locked home pictures (his yes); the hall tin's new lid over the locked hall picture (his yes); the crayon "ST". Not yet played by a person. Docs match main: yes.
+
+2026-11-26 (night, lunch), draft PR #91: the night look merged in; the lunch sneak is day (checked by `night-look`). Docs match main: yes.
 
 2026-11-26 (night, Day 2's start), draft PR #90: Day 2 starts dark, the black lifts on the night look, then the morning comes up (`home-morning.js` NIGHT_LIFT, the room coming up 2.0 s, placeholders). Docs match main: yes.
 
@@ -44,9 +48,22 @@
 
 2026-11-26 (round D, merge), draft PR #90 on `feat/ch1-day2-morning`, not merged. Done: `feat/ch1-bedtime-story` (with the party's round D) merged in (merge commit); the morning's goal things (the rocket, the lunch bag) keep only the dashed goal line, no glow (`tests/highlight-style.mjs`). NOT ASSESSED: whether a kid on a phone still finds the bag at once without the glow (the stills). Docs match main: yes.
 
+2026-11-26 (round D, merge), draft PR #91 on `feat/ch1-lunch-sneak`, not merged. Done: `feat/ch1-day2-morning` (with the party's round D) merged in (merge commit); the lunch's glows are the one dashed line (the doorway, Mops at GIVE, the plate, the alarm's plant and crates; `tests/highlight-style.mjs`); the kid-play robot's lunch-sneak loop fixed (a test bug: a no-button doorway was marked done by any press). The lunch alarm rang the old bell instead of the red alert whoops; fixed, with a check. Open for Brian: behind the snack counter the music is Lobby Time (the empty hall's track), not Sneaky Snitch (round-d/lunch-sneak.mp4 from about 40 s); keep, or Sneaky Snitch until the pie is eaten? Open for Brian: during an alarm the plant and crates still get the line (the capture rule's "every hiding place"); the line round Mops at GIVE is a rounded box (he is not part of a locked picture, so nothing to trace). NOT ASSESSED: how the lines read on a phone at a kid's pace (see the round-d stills). Docs match main: yes.
+
+2026-11-26 (round D), draft PR #91 on `feat/ch1-lunch-sneak`, not merged. Done: `feat/ch1-day2-morning` (round D) merged in (merge commit; this branch's night PA step and its checks dropped, `ganitor.js` pa-ganitor marked merged into the morning PA). Brian's lunch notes and answers of 2026-11-26: only the hallway doorway lit up (0:38; no glow or outline on the plant or the crates), two wandering guests with cones (0:38), the walk-through hallway doorway (#47; SNEAK · hallway retired), crate eyes at the seam (0:13), Mops in the hallway mopping with his beard, wet streaks, his bucket, a slow look left and right, hearts (0:17.6, 0:17.9, #48), the duck as the L2 ball (0:38, 0:39.8). Docs match main: yes.
+- Needs Brian's yes: the goal words "Squatch: take Mops his lunch in the hallway" (suggested; or keep "Squatch: take Mops his lunch"); the wanderers' places (only the hall's left part leaves their cones off his way); Mops's turn (his drawing flips as his cone passes straight up) and his plain look cone; the hallway bucket's place and size; the streaks' look.
+- Kept: during an alarm the plant and the crates still glow (the capture rule's "every hiding place glows"); say if that should go too.
+- Placeholders (not pins): the counter close-up 1.7 times (from 1.65); Mops's look 0.5 + 1.2 + 1.2 + 0.6 s, hearts 1.2 s; his mopping 40 px a second.
+- NOT ASSESSED: the lunch videos (the coordinator records them after merging; `tools/party-showing.mjs lunch` follows the walk-through doorway and Mops's look); how the wanderers read at a kid's pace.
+2026-11-26 (round C), draft PR #91 on `feat/ch1-lunch-sneak`, not merged. Done, Brian's answers of 2026-11-26 (chat): behind the snack counter Mops says "...you know the rule, grab one snack." (approved word for word) in place of the one-pie thought bubble; "Squatch! You should be hiding." stays out (he looks left and right); no balloon anywhere in the lunch sneak (none drawn, as built); the bartender stays away and a guest at the counter watches (as built); ROLL · ball is offered in the hall during the sneak (the ball rule, DECISIONS C20 and R43: noticed only by someone within 70 px for 2 s looking his way; moving unrolls him; not offered in the hallway or behind the counter; the doorway waits until he unrolls); Mops's lunch is a hay sandwich, then the bag; the bag is bigger (62 x 68 at home, 0.88 of that in the hall) so MOPS on it is 20 game px (about 16 CSS px on an iPad standing up, 8 on a 375-wide phone; off the canvas-text allow list for size); the snack counter moment has a framed close-up of the counter's corner 1.65 times bigger (a tap on the plate in it is TAKE · snack). Ganitor (`src/modules/ganitor.js`): A a GANITOR name tag on Mops's pocket in every scene (in place of the old name patch; the word shows in the close-ups, a plain tag elsewhere), B the wall speaker's "Ganitor Mops to the party hall." in the dark before Mops leaves on Day 2 (overheard, ear icon), C an Employee of the Month photo of Mops with the plaque MOPS, GANITOR on the hallway's back wall (a layer over the locked picture, not part of it), E Squatch's crayon card in the hallway says ME / MOPS THE GANITOR (the crayon Guardians drawing has no Mops, so no label). Tests: `tests/lunch-ganitor.mjs`, `tests/lunch-sneak.mjs`, `tests/home-morning.mjs`. Docs match main: yes. Not yet played by a person.
+- Ganitor D (the robot janitor notice): not built; three wordings for Brian in the round C report.
+- Needs Brian's yes (visual, placeholders): the counter close-up's frame and place (it covers the hall's left part at the counter); the Employee of the Month photo and plaque (a layer over the locked hallway picture); the name tag's look; the hay sandwich; the bigger bag (about three quarters of Squatch's height in the hall); the crayon card made a little bigger for the longer label.
+- Placeholders (not pins): the close-up 1.65 times, grows in 0.4 s; the eating close-up 3.8 s (first bite at 0.8 s so the whole sandwich is seen).
+- The two watchers moved and turned (placeholders): once the party's sight saw Squatch's whole drawn body (merged in this round), the old places put his doorway, the plant and the crates inside their cones. Now the teal guest stands at 380, 355 looking down and right, the camera tourist at 480, 400 looking right and a little up; `tests/lunch-sneak.mjs`'s fairness rules pass again.
+- MOPS on the bag as he walks in at the picture's bottom edge is still partly off the canvas for a moment (listed in `tests/canvas-text-allow.json`).
 2026-11-26 (round D), draft PR #90 on `feat/ch1-day2-morning`, not merged. Done: `feat/ch1-bedtime-story` (round D) merged in (merge commit). Brian's notes of 2026-11-26 on the morning: the PA beat (#41, suggested words; "Morning" from the speaker, music table row "day2am"); Mops asleep by the bed until the PA, then up and out (#33, a heart #48); the note read in a close-up at PICK UP (0:24), not again in the box; thought bubbles bigger than their drawing with a thought trail (0:11); nobody walks through furniture (0:18: the rule in REVIEW-RULES, `tests/scripted-walks.mjs`); the closet taller on Day 2 (0:20, Brian's yes; `tall-closet.js` layer); walk to the bag before "He forgot his lunch!" (0:30). Docs match main: yes. Not yet played by a person.
 - Waiting on Brian: the outline pick (A to E sheet) and the no-label still (0:18, 0:20); the PA words; the chip "Squatch: go to the bag by the door"; the taller closet on Day 1 too?
-- For the lunch branch (`feat/ch1-lunch-sneak`): its night PA ("Ganitor Mops to the party hall.", `ganitor.js` pa-ganitor, used in `home-morning.js` start and checked in `tests/home-morning.mjs`) is replaced by this branch's morning PA: on the merge forward drop its PA step and check, keep `ganitor.js` for the tag, wall and crayon labels.
+- Done on the merge into `feat/ch1-lunch-sneak` (2026-11-26): its night PA ("Ganitor Mops to the party hall.", `ganitor.js` pa-ganitor, used in `home-morning.js` start and checked in `tests/home-morning.mjs`) is replaced by this branch's morning PA: on the merge forward drop its PA step and check, keep `ganitor.js` for the tag, wall and crayon labels.
 - NOT ASSESSED: the morning video (recorded after the merge); how loud "Morning" sits after the PA on a phone.
 2026-11-26 (round D, merge), draft PR #89 on `feat/ch1-bedtime-story`, not merged. Done: `feat/party-half-two` (fe5a558) merged in (merge commit); bedtime keeps Joe's theme sung (SINGING_OK has bedtime); test fixes for the kid-play robot's no-button doorways and the mop bucket in the arrow check. NOT ASSESSED: the bedtime video after the merge (recorded from the lunch tip). Docs match main: yes.
 
@@ -60,6 +77,15 @@
 2026-11-26 (round C), draft PR #89 on `feat/ch1-bedtime-story`, not merged. Done: `feat/party-half-two` merged in (merge commit; the party branch's 00-core.js music and alarm kept as they are; Floating in Space stays deleted). Bedtime plays Reawakening (Brian's music table of 2026-11-26): the bedtime story says when it is showing (`showing()`, as the TV story does) and `bridge.js` turns the home cue into "bedtime" then; no track is written into the beat. Mops's bleat: `window.SSQ.playSoundPick(name)` (bridge.js) plays the game's sound picks through the same player as the morning song's bleat (`music-picks.js` playSound), so the bedtime story's "...Weeee-eenn-nnttt?" now plays `sounds/goat-bleat.mp3`. Tests: `tests/bedtime-story.mjs` (the cue is "bedtime" every frame from the walk to bed to the fade, the bleat on the weent picture only, one bleat in the whole story, the clip started). Docs match main: yes. NOT ASSESSED: how loud Reawakening sits under the snores on a phone speaker. Not yet played by a person.
 - (2026-11-26, the line below about the bleat player is done: `window.SSQ.playSoundPick` exists now.)
 - Then, from Brian's notes on the lunch video (2026-11-26, "when alarm goes off, I presume music should stop"): when an alarm goes off the music stops, everywhere (a beat's `alarmOn`, the party's included, and the older program's alarm sound through `bridge.js` alarmSound); the alarm's sound and the FUR! sting still play; the music stays quiet in that place after the alarm and comes back only with a visit to another place (`music-picks.js` hushNow). A restart of the part that had the alarm (after the LOCKUP card, or ↺) is a new visit too, so its music comes back (`bridge.js`, the beat's `alarmKey`). The older program's own alarms hush the music each time their sound plays; how long it stays quiet after their last sound is NOT ASSESSED. Test: `tests/alarm-music.mjs`. Also `tests/party-round4.mjs` waits for the JOIN · photo label's frame (the lunch branch's fix, brought back here: it failed in this branch's full run).
+
+2026-11-26, draft PR on `feat/ch1-lunch-sneak` (stacked on `feat/ch1-day2-morning`), not merged. (Its questions below were answered by Brian the same day and built in round C, above.) Done: beats 25 to 27, the lunch sneak, as a module (`ch1-lunch`): the sneak past two watchers on fixed rhythms (plant, crates, hallway doorway; one glow at a time), the party's capture rule unchanged, GIVE · lunch and "My lunch! You're the best.", Mops eating the lunch and the bag in a wordless close-up, back behind the snack counter, one Moon Pie, then beat 28 unchanged. Old lunch code deleted. Waiting on Brian:
+- Mops's one-snack line (pending) or the wordless one-pie bubble as built? "Squatch! You should be hiding." (pending): add it when approved?
+- The balloon "still there" in beat 25: the balloon beat is out of the game, so none is drawn. Draw one on the ceiling, or leave it?
+- The bartender (beat 27 lists her nearby): her place is the aisle Squatch hides in, so as built she is not there and a guest at the counter watches instead.
+- ROLL · ball (C20, "ball anytime") is not offered in the lunch sneak, as at the party (plants and crates only). Offer it?
+- What Mops eats from the bag (a sandwich, placeholder), and where the crates came from (party supplies left over, placeholder).
+- New drawings waiting for his eye: the crates, the plate of Moon Pies, the eating close-up (sandwich, bag bitten away), Squatch ducked and reaching, the one-pie thought bubble, the bolder cone look for these watchers.
+- Placeholders (not pins): the watchers' places and angles and their rhythm (away 3.0 s, "?" 0.6 s, turn 0.3 s, look 2.4 s); walk 190; the eating close-up 3.6 s; the grab 1.4 s; the chew 1.2 s; pies 1.25 times the party's snack; the bag in the hall 0.68 of its home size.
 
 2026-11-26, draft PR on `feat/ch1-day2-morning` (stacked on `feat/ch1-bedtime-story`), not merged. Done: beats 22 to 24, the home morning, as a module (`ch1-home-morning`): the night going on from the bedtime story (dark, asleep under the blanket) to morning and the wake in bed with no words, PICK UP · rocket with the crayon Guardians thought bubble and the Guardians line, the thought bubble of the box, OPEN · closet, PUT IN · box with the first build's box view (commit 18c9157: older notes, MY GARDIAN BOX lid, the MY GUARDIANS crayon drawing, the note's words), the box back in the closet, "He forgot his lunch!" (MOPS on the bag), TAKE · lunch into today's lunch sneak; the calendar with today marked is optional (LOOK · calendar). Brian's answers of 2026-11-26 are built: calendar optional, PICK UP · rocket and PUT IN · box approved, the box back in the closet, Mops heard leaving as built, the note's words "Brave Sasquatches stay hidden. — The Guardians", MOPS on the bag, the 20-second goal-words rule kept, drawings fine as placeholders. The old gift, box, calendar and lunch steps are deleted from `src/game/`. Open for Brian:
 - The Guardian Box is 2.4 times its approved size on Day 2 (so it is clearly bigger than the rocket, his note 0:21); Day 1's closet still has it at the approved size. Make Day 1 match?

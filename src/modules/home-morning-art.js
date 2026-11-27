@@ -35,14 +35,16 @@ const BOX_W = BOX_PIC.w * PIC_X * DAY2_BOX,
 /**
  * How big each thing is in the room (game pixels; placeholders, Brian to approve): Squatch is the room's own size;
  * the rocket about two fifths of him (a big toy he can hold up; coordinator, 2026-11-26: at a third it was about 10 px
- * tall on a phone), the lunch bag about a third (a paper bag drawn a little big so it reads on a phone); the box the
+ * tall on a phone), the lunch bag about half (a big paper bag, so MOPS on it reads on a phone); the box the
  * approved one, DAY2_BOX times bigger, so the rocket fits in it.
  */
 export const MORNING_SIZES = Object.freeze({
   squatch: 48.5 * 3,
   rocket: 64,
   rocketW: 34, // fin tip to fin tip
-  bag: { w: 40, h: 52 },
+  // (Brian 2026-11-26: MOPS on the bag must read on a 375-wide phone and an iPad: the bag drawn bigger, 62 x 68, so
+  // its word is 20 game px, about 16 CSS px on an iPad standing up and 8 on a phone; still smaller than the bucket)
+  bag: { w: 62, h: 68 },
   box: Object.freeze({ w: BOX_W, h: BOX_H }),
 });
 
@@ -61,7 +63,7 @@ export const MORNING_THINGS = Object.freeze({
 /** The boxes the dashed outline traces each drawn thing inside (a little bigger than the thing, nothing else in them). */
 export const TRACE = Object.freeze({
   rocket: Object.freeze({ x0: 322, x1: 400, y0: 520, y1: 610 }),
-  bag: Object.freeze({ x0: 814, x1: 878, y0: 442, y1: 514 }),
+  bag: Object.freeze({ x0: 805, x1: 887, y0: 427, y1: 514 }),
 });
 /** The dashed outline round the things the game draws: thicker than a room thing's, so it shows on a phone. */
 export const DRAWN_OUTLINE = Object.freeze({ width: 7, dash: 14, gap: 3 });
@@ -153,6 +155,8 @@ export function drawGiftNote(ctx, x, y, k, lw = 2.5) {
   ctx.restore();
 }
 
+// The size of MOPS on the bag (game px at the bag's room size): as big as the bag's width allows.
+export const BAG_WORD = 20;
 /** Mops's paper lunch bag, the middle of its bottom at (x, y): a brown bag with its top folded over, MOPS on it. */
 export function drawLunchBag(ctx, x, y, k = 1) {
   const W = MORNING_SIZES.bag.w,
@@ -172,11 +176,11 @@ export function drawLunchBag(ctx, x, y, k = 1) {
   ctx.closePath();
   hmPaint(ctx, "#a87f4b", w);
   // MOPS written on it in marker (Brian, 2026-11-26; words from home-morning-lines.js)
-  ctx.font = "900 12px system-ui, -apple-system, sans-serif";
+  ctx.font = `900 ${BAG_WORD}px system-ui, -apple-system, sans-serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillStyle = HM_INK;
-  ctx.fillText(morningWords("sign-bag"), 0, -H / 2 + 6, W - 6);
+  ctx.fillText(morningWords("sign-bag"), 0, -H / 2 + 6, W - 8);
   ctx.restore();
 }
 

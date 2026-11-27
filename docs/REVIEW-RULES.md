@@ -237,6 +237,8 @@ His note on the home morning (video note 0:18): "he kind of glitches through the
 - Logic for the party went into `src/game/` (sizes, the walk ring's bookkeeping, the singing rule) although the rule said modules. `tests/game-no-growth.mjs` now fails when `src/game/` grows.
 - Moving the talk off the bucket put Squatch's held-out flyer over Mops: a drawn person is wider than his feet (his arm and what he holds). A new place for two people talking is checked with the drawn boxes (`tests/party-home.mjs`), not only with the feet.
 - A test that opens a scene, waits a moment in real time and only then stops the clock reads a scene that has already moved on (the talk had fetched the flyer before the first look). Stop the clock and restart the part (`__ss.sectionReset()`) before reading where it starts; the beat's own `restart()` does not clear the story queue.
+- Words drawn inside a scaled drawing (the GANITOR tag in Mops's own units, 2026-11-26) were read by `tests/canvas-text.mjs` at their unscaled font size (2 CSS px), because it only adds a move, not a scale. Write words in game pixels: find the spot in the drawing's units, then set the transform to the picture's own scale there and give the font in game pixels (`src/modules/ganitor.js` drawGanitorTag).
+- A test of a ball or hiding rule that only tried the open floor passed while the doorway still let a rolled-up Squatch through and a noticed ball could stay put through the search (the round C code review). Test each button a hiding pose can still reach, and the search after a sighting.
 
 ## Mistakes caught building Brian's showing-6 notes (2026-11-26)
 

@@ -29,12 +29,12 @@
     }
     // The goal mark is a soft yellow outline round the real thing (src/modules/goal-targets.js), never a
     // circle or an arrow (Brian, raised at least six times). Remember the last one drawn, so tests can check
-    // it is never round Squatch himself.
+    // it is never round Squatch himself; it is returned (the lunch sneak reads it).
     function drawGoalMark(spot) {
       // Never over the people standing there: the outline is left out of their boxes.
       let people = [n.sqPose !== "hidden" ? sqBox() : null, n.moPose && n.moPose !== "hidden" && n.mo.x > -100 ? moBox() : null];
       let box = window.SSQ && window.SSQ.drawGoalOutline ? window.SSQ.drawGoalOutline(e, n.room, spot.id, lockedImg[lockedNow], n.T, people) : null;
-      box && (n.lastRing = { x: (box.x0 + box.x1) / 2, y: (box.y0 + box.y1) / 2, T: n.T, box, id: spot.id, act: spot.verb + " · " + spot.cap });
+      return box && (n.lastRing = { x: (box.x0 + box.x1) / 2, y: (box.y0 + box.y1) / 2, T: n.T, box, id: spot.id, act: spot.verb + " · " + spot.cap });
     }
     function ch1MarkGoal() {
       if (n.ch1PadOn || !n.ctrl || n.ch1Zoom || n.sqPose === "hidden") return;
@@ -845,6 +845,7 @@
     function drawCh1DayHall() {
       drawLockedRoom("hall");
       if (n.roomOnly) return;
+      luBeat() && luBeat().drawProps(e); // the crates and the plate of snack cakes stay after the lunch sneak
       n.scene === "Q3" && !(n.ch1Step === "family" || n.ch1Step === "gohome") && drawCh1Alien(640, 500, "hat", ALIEN_ADULT, 1);
       n.moPose !== "hidden" && n.mo.x > -50 && n.mo.x < 1100 && Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 });
       n.sqPose === "ball" && drawL2Ball(n.sq.x, n.sq.y - 16);

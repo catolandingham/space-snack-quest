@@ -121,6 +121,11 @@ const results = {};
   const closetNight = await frame(page, CLOSET);
   await page.evaluate(() => (window.__ss.op.ch1Night = false));
   g.check("Day 2 at home at night (ch1Night): the taller closet is the night one", closetNight.night && closetNight.drew.closet && bright(closetDay.px.closet) < 600 && bright(closetNight.px.closet) < bright(closetDay.px.closet) * 0.7, { day: closetDay.px.closet, night: closetNight.px.closet });
+  // the lunch sneak (beat 25, Day 2's lunch): day
+  await page.evaluate(() => (window.__ss.ch1JumpBeat(25), Object.assign(window.__ss.op, { ch1Zoom: null, q: [], cur: null }), window.__ss.settleRoom()));
+  results.lunch = await frame(page, HALL_PTS);
+  g.check("the lunch sneak (beat 25): day", !results.lunch.night && !Object.keys(results.lunch.drew).length, results.lunch);
+  await still(page, "lunch-sneak-day2");
   await page.evaluate(() => (window.__ss.ch1JumpBeat(27), Object.assign(window.__ss.op, { ch1Zoom: null, q: [], cur: null }), window.__ss.settleRoom()));
   results.hallDay = await frame(page, HALL_PTS);
   g.check("Day 2 in the hall (beat 27): day", results.hallDay.room === "hall" && !results.hallDay.night && !results.hallDay.drew.hall, results.hallDay);

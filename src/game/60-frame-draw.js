@@ -17,6 +17,7 @@
         let party = partyBeat();
         party && party.tick(l);
         hmBeat() && hmBeat().tick(l);
+        luBeat() && luBeat().tick(l);
       }
       (n.sqHop &&
         ((n.sqHop.t += l),
@@ -400,8 +401,8 @@
         ].forEach(([a, b, c2, d2, f2, g2]) => (e.beginPath(), e.moveTo(a, b), e.lineTo(c2, d2), e.lineTo(f2, g2), e.closePath(), r("#3478f6", 1))),
         m(3, -19, 6, 6, 1.5),
         r("#3478f6", 1),
-        X(6, -19, 2.2, 1.1),
-        r("#ffffff", 0.8));
+        // His GANITOR name tag on the pocket (Brian 2026-11-26; src/modules/ganitor.js); without it, the old name patch.
+        window.SSQ && window.SSQ.drawGanitorTag ? window.SSQ.drawGanitorTag(e, i) : (X(6, -19, 2.2, 1.1), r("#ffffff", 0.8)));
       // headDrop lowers his head (the morning cutaway); sweep swings the beard's ragged end (mopping);
       // noBeard leaves the beard to the caller (the cutaway draws it dunking and twisting).
       let A = s.headDrop != null ? s.headDrop : s.headDown ? 6 : 0,
@@ -2014,7 +2015,7 @@
     function drawRoom() {
       if (n.room === "office") return drawCh1OfficeRoom();
       // The party night's hall is the party module's drawing, on the locked picture.
-      if (n.room === "hall" && partyBeat() && partyBeat().ownsRoom() && partyBeat().drawRoom(e)) return;
+      if (n.room === "hall" && hallBeat() && hallBeat().drawRoom(e)) return;
       (n.room === "closet"
         ? (P2(), X2(), g5(), z2())
         : n.room === "deck"
@@ -2098,6 +2099,7 @@
         partyBeat() && partyBeat().draw(e);
         window.SSQ && window.SSQ.beat("ch1-bedtime-story") && window.SSQ.beat("ch1-bedtime-story").draw(e);
         hmBeat() && hmBeat().draw(e);
+        luBeat() && luBeat().draw(e);
         if (n.ch1Calendar) {
           drawCh1Calendar();
           return;

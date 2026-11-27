@@ -3,24 +3,25 @@
 
 | Lines | Heading |
 | --- | --- |
-| 25–31 | # Chapter 1 lines for Brian |
-| 32–41 | ## Home morning (beats 22 to 24), 2026-11-26 round D (branch feat/ch1-day2-morning, not merged) |
-| 42–54 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
-| 55–70 | ## Calendar revision, Nov 16 (PR 58, not live) |
-| 71–78 | ## Earlier chapter lines |
-| 79–93 | ## Goal chips |
-| 94–177 | ## What people say |
-| 178–189 | ## The snack's name (2026-11-26, question 86) |
-| 190–203 | ## Words painted on things |
-| 204–227 | ## Buttons |
-| 228–314 | ## Day 2 onward (beats 22–61), pending |
-| 315–322 | ## Ball hiding |
-| 323–330 | ## Off-screen lines, for Brian (playtest 12) |
-| 331–340 | ## Homework desk, approved Nov 16 |
-| 341–379 | ## Questions still open |
-| 380–417 | ## After the party: the cleanup and truth or fib (story pass 28-52, E2), pending |
-| 418–437 | ## Bedtime additions and the chart over his bed (story pass 28-52, E4), pending |
-| 438–463 | ## Day 1 stand-ins, pending |
+| 26–32 | # Chapter 1 lines for Brian |
+| 33–42 | ## Home morning (beats 22 to 24), 2026-11-26 round D (branch feat/ch1-day2-morning, not merged) |
+| 43–55 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
+| 56–72 | ## Lunch sneak and Ganitor, 2026-11-26 (branch feat/ch1-lunch-sneak, not merged) |
+| 73–88 | ## Calendar revision, Nov 16 (PR 58, not live) |
+| 89–96 | ## Earlier chapter lines |
+| 97–111 | ## Goal chips |
+| 112–195 | ## What people say |
+| 196–207 | ## The snack's name (2026-11-26, question 86) |
+| 208–221 | ## Words painted on things |
+| 222–245 | ## Buttons |
+| 246–332 | ## Day 2 onward (beats 22–61), pending |
+| 333–340 | ## Ball hiding |
+| 341–348 | ## Off-screen lines, for Brian (playtest 12) |
+| 349–358 | ## Homework desk, approved Nov 16 |
+| 359–397 | ## Questions still open |
+| 398–435 | ## After the party: the cleanup and truth or fib (story pass 28-52, E2), pending |
+| 436–455 | ## Bedtime additions and the chart over his bed (story pass 28-52, E4), pending |
+| 456–481 | ## Day 1 stand-ins, pending |
 <!-- /section-index -->
 # Chapter 1 lines for Brian
 
@@ -51,6 +52,23 @@ Every word of the bedtime story is in `src/modules/bedtime-story-lines.js`; thes
 | Mops, back in the room after the story pictures | You came to me in a Stars Cakes crate. You've loved Stars Cakes ever since. | Approved as written, Brian 2026-11-26 (#36), with the old name; the words changed with the rename (question 86): needs your yes again |
 | Mops, after "You came to me in a Stars Cakes crate. You've loved Stars Cakes ever since.", over the picture of Squatch's crayon drawing of the Guardians | And you've always had your Guardians, watching over you. | Approved, Brian 2026-11-26, chat 18b A |
 | A mark over each of the two tourists peeking in at the door, in the wordless picture before "Nothing to see here!" (Brian 2026-11-26, video note 0:39: "Would we actually want people to walk in so we see that tourists are suspicious?") | ? | Suggested, needs Brian's yes (a mark, no words) |
+
+## Lunch sneak and Ganitor, 2026-11-26 (branch feat/ch1-lunch-sneak, not merged)
+
+The words are in `src/modules/lunch-sneak-lines.js` and `src/modules/ganitor.js`. New lines this round, each approved word for word by Brian:
+
+| Who | Line | Where | Source | Status |
+| --- | --- | --- | --- | --- |
+| Mops | ...you know the rule, grab one snack. | Behind the snack counter (beat 27), in place of the wordless one-pie thought bubble | Brian, chat 2026-11-26 | Approved |
+| The wall speaker (overheard, ear icon) | Ganitor Mops to the party hall. | Merged into the morning PA (2026-11-26, #41): no longer said on its own; its words are inside "Good morning, Stormtop! Ganitor Mops to the party hall. The new robot janitors arrive today!" (kept in `ganitor.js` as pa-ganitor, marked merged) | Brian, chat 2026-11-26 | Approved words; merged |
+| Name tag on Mops's shirt | GANITOR | Every scene; the word shows where Mops is drawn big enough to read it (the close-ups), elsewhere a plain tag | Brian, chat 2026-11-26 | Approved |
+| Plaque under Mops's photo on the hallway wall | MOPS, GANITOR | The hallway, Employee of the Month photo | Brian, chat 2026-11-26 | Approved |
+| Squatch's crayon card on the hallway wall | MOPS THE GANITOR (with ME, unchanged) | The hallway, the keepsake card (was "MOPS") | Brian, chat 2026-11-26 | Approved |
+| Button | ROLL · ball | The lunch sneak in the hall (the game's existing words for the ball) | Brian, chat 2026-11-26 (offer it) | Approved |
+| Goal chip | Squatch: take Mops his lunch in the hallway | The lunch sneak in the hall, after 20 s (was "...take Mops his lunch"): round D, so the goal words point to the hallway, the one thing lit up (lunch note 0:38) | Claude, round D 2026-11-26 | Suggested, needs Brian's yes |
+| Button | SNEAK · hallway | Retired (round D, 2026-11-26): the hallway doorway is walk-through (Brian #47), no button; kept in `lunch-sneak-lines.js` marked retired | In the game before | Retired |
+
+Left out on purpose (Brian, chat 2026-11-26): Mops's "Squatch! You should be hiding." (he looks left and right instead).
 
 ## Calendar revision, Nov 16 (PR 58, not live)
 

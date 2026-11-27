@@ -21,6 +21,7 @@
         (n.ch1SiteRoom = ""),
         (n.ch1Office = !1),
         (n.ch1PartyNow = null),
+        (n.ch1Lunch = null),
         (n.ch1SureEnd = !1),
         (n.ch1Day2 = !1),
         (n.ch1Zoom = null),
@@ -48,6 +49,10 @@
     // The party night's module (src/modules/party.js), or null if the module script did not load.
     function partyBeat() {
       return (window.SSQ && window.SSQ.beat && window.SSQ.beat("ch1-party")) || null;
+    }
+    // The module that draws the hall now (the party night, or the lunch sneak), or null.
+    function hallBeat() {
+      return (window.SSQ && window.SSQ.hallOwner && window.SSQ.hallOwner()) || null;
     }
     // True while the party's snack close-up is open (src/modules/party-snacks.js): taps and drags go to it.
     function partyCutOpen() {
@@ -82,7 +87,7 @@
       window.SSQ.handOver &&
       window.SSQ.handOver({
         queue: (items) => J(items),
-        say: (who, text, style) => v(who, text, style || "say"),
+        say: (who, text, style, ear) => v(who, text, style || "say", !!ear), // ear: an overheard line (the ear icon)
         card: (id, text) => ({ k: "card", id, text }),
         run: (f) => N(f),
         until: (f) => cV(f),
@@ -115,9 +120,8 @@
           (who === "mops" ? n.mo : n.sq).f = f;
         },
         step: (who, x, y, speed, dt) => mV(who === "mops" ? n.mo : n.sq, x, y, speed, dt),
-        still: (who) => {
-          (who === "mops" ? n.mo : n.sq).moving = !1;
-        },
+        still: (who) => ((who === "mops" ? n.mo : n.sq).moving = !1),
+        stopWalk: () => (n.walkTo = null), // a tap's walk ends (he hid where he stands: src/modules/lunch-sneak.js)
         // While Mops walks, he is not solid (he would shove Squatch in a jump; see R0).
         moWalking: (on) => {
           n.mo.walking = !!on;
@@ -169,9 +173,9 @@
         // The goal's yellow outline round a party spot's real thing (drawGoalMark keeps n.lastRing for the chip).
         markGoal: (spot) => drawGoalMark(spot),
         // The party night (P6 to P8): Mops in the hall at closing time (on `ctx`), an ambient line that fades by itself
-        // ("Say cheese!"), stars for a snack or the photo, and beat 20 (the TV
-        // story) after "You have me." (14-ch1-day1.js ch1TvEvening).
+        // ("Say cheese!"), stars, beat 20 (the TV story) after "You have me."; the L2 ball and its rule (R43), for the lunch.
         drawMopsOn: (ctx, x, y, scale, opts) => onCtx(ctx, () => Fe(x, y, scale, opts || {})),
+        ball: { radius: BALL_NOTICE_RADIUS, seconds: BALL_NOTICE_SECONDS, drawOn: (ctx, x, y, k) => onCtx(ctx, () => (e.save(), e.translate(x, y), e.scale(k, k), drawL2Ball(0, 0), e.restore())) },
         ambient: (who, text, style) => kV(who, text, style),
         addStars: (k) => {
           n.stars = (n.stars || 0) + k;
@@ -180,6 +184,7 @@
         // The home morning (src/modules/home-morning.js): the calendar close-up, then on to the lunch sneak.
         openCalendar: (next) => ch1OpenCalendar(next),
         takeLunch: () => ch1TakeLunch(),
+        shipCall: () => ch1ShipCall(), // beat 28 after the lunch sneak (src/modules/lunch-sneak.js)
         offer: () => pick(ch1QSpots()),
         // Holding ↺ inside a full-screen view: the same restart as the page's ↺.
         restartPart: () => sectionReset(),

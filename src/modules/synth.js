@@ -344,6 +344,15 @@ export const SOUNDS = Object.freeze({
       }
     },
   },
+  // Beat 26, Mops eating (PLACEHOLDERS for Brian): a soft chomp, and the paper bag's crunch.
+  chomp: {
+    len: 0.2,
+    play: (A, t) => {
+      nz(A, { t, d: 0.09, v: 0.3, ft: "lowpass", f: 700, a: 0.004 });
+      tone(A, { t, f: 160, f1: 90, d: 0.12, v: 0.16, a: 0.004 });
+    },
+  },
+  crunch: { len: 0.35, play: (A, t) => (rustle(A, t, 5, 3400, 0.4), nz(A, { t, d: 0.08, v: 0.25, ft: "lowpass", f: 900, a: 0.003 })) },
   // A paper rustle: the homework sheet up close, and the calendar close-up.
   rustle: { len: 0.6, play: (A, t) => rustle(A, t, 8, 2800, 0.35) },
   // "That evening…": a soft whoosh and two quiet bell notes.

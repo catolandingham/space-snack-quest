@@ -3,39 +3,40 @@
 
 | Lines | Heading |
 | --- | --- |
-| 40–48 | ## Day 1 after the party: Mops cleans the hall, then truth or fib (story pass 28-52, E2; 2026-11-26) |
-| 49–54 | # Space Snack Quest: every decision, in one place |
-| 55–63 | ## Day 1 bedtime: why Mops kept him, the last cake, and the chart over his bed (story pass 28-52, E4; 2026-11-26) |
-| 64–71 | ## How to use this file |
-| 72–79 | ## The snack renamed, and the crate bed's stamp (question 86), 2026-11-26 (Brian, relayed by the coordinator) |
-| 80–82 | ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator) |
-| 83–93 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
-| 94–103 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
-| 104–114 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
-| 115–138 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
-| 139–143 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 144–152 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 153–156 | ## Sound, 2026-11-23 |
-| 157–180 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 181–192 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 193–217 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 218–226 | ## Which repo is the base, 2026-11-22 |
-| 227–237 | ## Sight cones, 2026-11-22 |
-| 238–242 | ## Latest calendar direction, 2026-11-16 |
-| 243–245 | ## Vent walk, 2026-11-16 |
-| 246–248 | ## Locked home room v5, 2026-11-16 |
-| 249–258 | ## Fidelity system (pictures are locked, not just words) |
-| 259–296 | ## 1. Working rules |
-| 297–363 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 364–388 | ## 3. Characters and look |
-| 389–465 | ## 4. Look, rooms and layout |
-| 466–487 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 488–531 | ## 6. Later chapters (2–4 and travel) |
-| 532–541 | ## 7. Audio |
-| 542–576 | ## 8. Code, controls and process |
-| 577–623 | ## 9. Open / waiting on Brian |
-| 624–718 | ## 10. Earlier entries, kept word for word |
-| 719–815 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 41–49 | ## Day 1 after the party: Mops cleans the hall, then truth or fib (story pass 28-52, E2; 2026-11-26) |
+| 50–55 | # Space Snack Quest: every decision, in one place |
+| 56–64 | ## Day 1 bedtime: why Mops kept him, the last cake, and the chart over his bed (story pass 28-52, E4; 2026-11-26) |
+| 65–72 | ## How to use this file |
+| 73–80 | ## The snack renamed, and the crate bed's stamp (question 86), 2026-11-26 (Brian, relayed by the coordinator) |
+| 81–83 | ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator) |
+| 84–92 | ## Lunch sneak, 2026-11-26 (Brian's video notes and answers, round D) |
+| 93–103 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
+| 104–113 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
+| 114–124 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
+| 125–148 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
+| 149–153 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 154–162 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 163–166 | ## Sound, 2026-11-23 |
+| 167–190 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 191–202 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 203–227 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 228–236 | ## Which repo is the base, 2026-11-22 |
+| 237–247 | ## Sight cones, 2026-11-22 |
+| 248–252 | ## Latest calendar direction, 2026-11-16 |
+| 253–255 | ## Vent walk, 2026-11-16 |
+| 256–258 | ## Locked home room v5, 2026-11-16 |
+| 259–268 | ## Fidelity system (pictures are locked, not just words) |
+| 269–306 | ## 1. Working rules |
+| 307–373 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 374–398 | ## 3. Characters and look |
+| 399–475 | ## 4. Look, rooms and layout |
+| 476–497 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 498–541 | ## 6. Later chapters (2–4 and travel) |
+| 542–551 | ## 7. Audio |
+| 552–586 | ## 8. Code, controls and process |
+| 587–633 | ## 9. Open / waiting on Brian |
+| 634–728 | ## 10. Earlier entries, kept word for word |
+| 729–825 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 ## Day 1 after the party: Mops cleans the hall, then truth or fib (story pass 28-52, E2; 2026-11-26)
 
@@ -79,6 +80,15 @@ Brian's words: "Build this pass: yes" (new and changed lines built and marked pe
 
 ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator)
 - **Night look, Decided 2026-11-26:** "Make sure it's not just the hall dark at night, but all rooms are different at night versus daytime." Every room shown while the story is at night has a night look (`src/modules/night-look.js`): the loading bay its locked night picture (`delivery-room-empty-night-v2.png`); every other room its locked day picture under a dim blue tint, with the things that give light (the hall's window onto space and its FUR alarm, home's TV screen, the office's screens and keypad, the hallway's keypad) cut from the same picture and drawn again over the tint. No picture file changes. Night is from the party night's start ("That evening...") until Day 2 begins, and any older night scene. The tint's strength (`NIGHT_TINT`, 0.5 of the bedtime story's night blue) and the lit boxes are placeholders for Brian's eye. The bedtime story's lights-out dim goes on top. Built on feat/party-half-two (the party), then merged forward and applied on the bedtime (the evening and bedtime story), Day 2 morning (the dark start) and lunch branches.
+
+## Lunch sneak, 2026-11-26 (Brian's video notes and answers, round D)
+
+- **Walk through any open doorway.** Brian (#47): "yes, walk through any open doorway everywhere; closed doors keep OPEN · door. The doorway only counts when he walks into the opening itself." Built in the lunch sneak: the hallway doorway has no button (SNEAK · hallway retired); his feet inside its opening take him into the hallway. **Decided.**
+- **Mops keeps his cone; seeing Squatch sends up hearts.** Brian (#48): "We answered this already. We had a cone, but when he sees Squatch, it always sends up hearts rather than question marks or exclamation points." In the hallway Mops looks round with his cone sweeping, then faces Squatch: his cone fills with hearts and hearts float up; never "?" or "!" (checked in `tests/lunch-sneak.mjs`). **Decided.**
+- **Only the hallway lights up in the sneak.** Brian (lunch note 0:38): "I don't know that we need the bush to light up here... maybe one or two more folks milling around... the only thing I would imagine we really care about having lit up is actually the hallway." Built: no glow on the plant or the crates (they still hide him), the hallway doorway glows and is outlined, two more guests wander slowly on the left of the hall with cones. **Decided** (the wandering guests' places are placeholders).
+- **Crate eyes where the plant's are.** Brian (lunch note 0:13): "You can't really see the eyes on the boxes... more centrally placed so they're visible like they are in the plant... same size." Built: the eyes in the middle of the crates' front, at the seam under the small crate. **Decided.**
+- **Mops in the hallway, slower and clearer.** Brian (lunch notes 0:17.6 and 0:17.9): "I see how he looks around, but it's not enough. We need to slow it down, have it be way more obvious." and "mop should have a bucket, and we should see streaks of him wiping his beard on the floor". Built: he mops with his beard (no separate mop), wet streaks behind him, his bucket (the one mop bucket, `mop-bucket.js`) beside him; he looks left 1.2 s and right 1.2 s. **Decided** (placeholder drawing).
+- **The duck is the ball.** Brian (lunch notes 0:38 and 0:39.8): "he should be able to duck beneath the bar into the ball" and "remember how I like it, that he goes into the ball, not this weird look". Behind the snack counter he is the approved L2 ball (C3), never the squashed Squatch (C5, superseded). **Decided.**
 
 ## Home morning, 2026-11-26 (Brian's video notes and answers, round D)
 - **The station PA wakes Mops on Day 2.** Brian (#41): the exact words are pending, and he also wants the robot janitors' arrival announced. Built with the line marked suggested: "Good morning, Stormtop! Ganitor Mops to the party hall. The new robot janitors arrive today!" from the wall speaker (it is on the locked home picture, so no ear icon), with its ding-dong and sound lines, waiting for NEXT; then the speaker plays Kevin MacLeod's "Morning" (`music/morning.mp3`), notes rising from it. The music table has its own row for it ("day2am", `src/modules/music-picks.js`), so the home rotation (Carefree, Morning, Rainbows) is not stepped on; the room is quiet as it comes up and while the PA talks. This replaces round C's night line "Ganitor Mops to the party hall." (built on `feat/ch1-lunch-sneak`), whose approved words are kept inside the new one. **Decided** (the beat); the words **need Brian's yes**.

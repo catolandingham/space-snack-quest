@@ -1,7 +1,7 @@
 /**
  * The home morning, Chapter 1 beats 22 to 24 (docs/CH1-STORY-WALKTHROUGH.md): a gift from the Guardians, the
  * calendar (delivery day, there to look at), and Mops's forgotten lunch. It follows the bedtime story (beat 21, bedtime-story.js) and
- * hands over to today's lunch sneak (src/game/14-ch1-day2.js ch1TakeLunch). What the player sees, step by step
+ * hands over to the lunch sneak (lunch-sneak.js, through src/game/14-ch1-day2.js ch1TakeLunch). What the player sees, step by step
  * (plan reviewed 2026-11-26; every word is from home-morning-lines.js, every drawing from home-morning-art.js):
  *   night   wordless: the night the bedtime story ended on goes on: the room is dark, Squatch asleep in his crate bed
  *           under the blanket and Mops asleep on his back beside it, feet in the air (as bedtime-story.js left them;
@@ -832,10 +832,6 @@ export function createHomeMorning(bridge) {
       const h = live();
       if (!h || h.step !== "calendar") return null;
       return (drew = { step: h.step, calendar: drawCalendarToday(ctx, zoom, E().time()) });
-    },
-    /** The lunch bag in his paw (the older program draws it while he carries it to Mops: 14-ch1-day2.js). */
-    drawHeldBag(ctx, x, y) {
-      drawLunchBag(ctx, x, y);
     },
     /** Tests: the step, what the last frame drew, and what was heard. */
     debug() {

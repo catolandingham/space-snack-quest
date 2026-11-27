@@ -1,6 +1,6 @@
 /**
  * Mops looks like the picture Brian approved on Nov 8 (mops-approved-nov8.png, "Yes!!"):
- * a blue work shirt with a two-point collar and a chest pocket with a white oval name patch,
+ * a blue work shirt with a two-point collar and a chest pocket with a white GANITOR name tag (2026-11-26; was an oval patch),
  * a short tail, floppy ears with pink insides, closed smiling eyes and a smile, a narrow beard
  * from his chin to the floor (it is his mop), dark hooves, no gold badge and no mop stick.
  * Checked in Chapter 1 (home) and Chapter 2, since every chapter draws him with the same
@@ -51,6 +51,7 @@ function recorder() {
   wrap("bezierCurveTo", ([a, b, c2, d, x, y]) => (pt(a, b), pt(c2, d), pt(x, y)));
   wrap("arcTo", ([a, b, x, y]) => (pt(a, b), pt(x, y)));
   wrap("arc", ([x, y, r]) => (pt(x - r, y - r), pt(x + r, y + r)));
+  wrap("roundRect", ([x, y, w2, h2]) => (pt(x, y), pt(x + w2, y + h2)));
   wrap("ellipse", ([x, y, rx, ry]) => {
     pt(x - rx, y - ry);
     pt(x + rx, y + ry);
@@ -137,8 +138,10 @@ function checkLook(where, ops, pose = {}) {
   // Pocket: a small blue piece on the chest, with a white oval name patch inside its top.
   const pocket = fills.find((o) => o !== shirt && !collar.includes(o) && isBlue(o.c) && w(o.b) < 12 && h(o.b) < 12 && o.b.x0 > -2 && o.b.y0 > -24);
   g.check(`${where}: chest pocket`, !!pocket, fills.filter((o) => isBlue(o.c)).map((o) => o.b));
-  const patch = pocket && fills.find((o) => isWhite(o.c) && o.oval && w(o.b) < 8 && o.b.x0 >= pocket.b.x0 - 1 && o.b.x1 <= pocket.b.x1 + 1 && Math.abs(o.b.y1 - pocket.b.y0) < 4);
-  g.check(`${where}: white oval name patch on the pocket`, !!patch);
+  // (Brian 2026-11-26, Ganitor A: the old white oval name patch is now his GANITOR name tag, a white tag across the
+  // pocket's top, src/modules/ganitor.js; nothing else about him changed)
+  const tag = pocket && fills.find((o) => isWhite(o.c) && !o.oval && w(o.b) >= 8 && w(o.b) <= 11 && h(o.b) <= 5.5 && o.b.x0 <= pocket.b.x0 + 2 && o.b.x1 >= pocket.b.x1 - 1 && Math.abs(o.b.y1 - pocket.b.y0) < 4);
+  g.check(`${where}: white GANITOR name tag across the pocket's top`, !!tag, fills.filter((o) => isWhite(o.c)).map((o) => o.b).slice(-4));
   // Tail: a white piece behind the body (the back is at x -17), up at the rump.
   const tail = fills.find((o) => isWhite(o.c) && o.b.x0 < -17 && o.b.x1 < -8 && o.b.y1 < -12);
   g.check(`${where}: short white tail at the back`, !!tail, fills.filter((o) => isWhite(o.c)).map((o) => o.b));

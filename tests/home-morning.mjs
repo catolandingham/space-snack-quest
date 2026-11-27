@@ -22,8 +22,8 @@
  *     says "He forgot his lunch!";
  *   - the calendar is optional (Brian 2026-11-26): on the lunch goal, LOOK · calendar by the wardrobe opens today's
  *     close-up (days 1 to 13 crossed off, day 14 circled) and comes back to the lunch goal;
- *   - "He forgot his lunch!" waits for NEXT; "Squatch: take the lunch", TAKE · lunch; then
- *     today's lunch sneak in the party hall, the bag in his paw.
+ *   - the lunch bag outlined; he walks to it; "He forgot his lunch!" waits for NEXT; "Squatch: take the lunch",
+ *     TAKE · lunch; then the lunch sneak in the party hall (lunch-sneak.js), the bag in his paw.
  * Also: no new words (every word drawn is a whole line of home-morning-lines.js, or was on screen before), nothing he
  * is told to tap is under him, sizes against the room, nothing disappears, the old code is gone.
  *   node tests/home-morning.mjs
@@ -299,7 +299,8 @@ const run = !(registered && asleep)
         out.music = window.SSQ.homeMusic.debug();
         for (let i = 0; i < 200 && !(n.room === "hall" && n.ctrl); i++) ss.tick(0.05);
         ss.drawFrame();
-        out.hall = { room: n.room, step: n.ch1Step, hold: n.ch1Hold, chip: ss.chipNow() };
+        const lu = window.SSQ.beat("ch1-lunch") && window.SSQ.beat("ch1-lunch").debug().state;
+        out.hall = { room: n.room, step: n.ch1Step, bag: lu ? lu.bag : "", chip: ss.chipNow() };
         out.debug = d();
         out.steps = d().steps;
         out.list = { rocket, closetFar, closet, box, toBag, cal, lunchFar, lunchAtBag, lunch };
@@ -315,6 +316,11 @@ const run = !(registered && asleep)
 const R = run || { prompts: [], wordless: [], list: {}, steps: [], debug: { sounds: {}, sizes: {}, things: {} }, drawn: {} };
 const P = R.list;
 g.check("Day 2 starts from the bedtime story's sleep", !!R.day2, R.day2);
+
+// The Ganitor lines (the tag, the wall, the crayon): their words may show. Its PA line (pa-ganitor) is said inside the
+// morning PA, checked below, and is marked merged (Brian 2026-11-26, #41).
+const GAN = existsSync(join(root, "src", "modules", "ganitor.js")) ? await import(join(root, "src", "modules", "ganitor.js")) : { GANITOR_LINES: [] };
+g.check("the Ganitor PA line is kept as the record, marked merged into the morning PA, and its words are inside it", (GAN.GANITOR_LINES.find((l) => l.id === "pa-ganitor") || {}).merged === "pa-morning");
 
 // 1. the wordless start
 const night = R.wordless.find((w) => w.phase === "night"),
@@ -428,7 +434,7 @@ g.check("today's close-up: days 1 to 13 crossed off, the circled snack delivery 
 // the lunch
 g.check("as he gets to the bag (not before), the bag is outlined while he says his line, word for word, over him, no chip", R.line2 && R.line2.who === "sq" && R.line2.text === LUNCH && R.line2.chip === "" && !!R.line2.bagOutline && R.line2.at.x > 640 && R.toBag && !R.toBag.line, R.line2);
 g.check("the lunch line waits for NEXT", R.line2Held);
-g.check("TAKE · lunch hands over to today's lunch sneak: the party hall, the bag in his paw", R.hall && R.hall.room === "hall" && R.hall.step === "sneak" && R.hall.hold === "lunch" && R.hall.chip === "Squatch: take Mops his lunch", R.hall);
+g.check("TAKE · lunch hands over to the lunch sneak (lunch-sneak.js): the party hall, the bag in his paw", R.hall && R.hall.room === "hall" && R.hall.step === "lu-plant" && R.hall.bag === "paw" && R.hall.chip === "Squatch: take Mops his lunch in the hallway", R.hall);
 g.check("the lunch bag has MOPS written on it (Brian 2026-11-26)", (R.bagWords || []).length >= 1 && L["sign-bag"] === "MOPS", R.bagWords);
 g.check("the calendar is not a step (Brian 2026-11-26): on the lunch goal TAKE · lunch comes first (the one outlined) and LOOK · calendar is there too", JSON.stringify(R.offers) === JSON.stringify([L["button-lunch"], L["button-cal"]]) && P.lunchFar && P.lunchFar.chip === L["chip-lunch"], R.offers);
 g.check("once he has looked, the button offers only the lunch (a kid pressing it is not sent back to the calendar), and a tap on the calendar still opens it", JSON.stringify(R.offersAfterCal) === JSON.stringify([L["button-lunch"]]) && R.tapCalendar, { offers: R.offersAfterCal, tap: R.tapCalendar });
@@ -463,7 +469,7 @@ g.check("open floor between him and the rocket when he wakes (at least 20 px)", 
 const Z = R.debug.sizes || {};
 g.check("Squatch is drawn at the room's own size (scale 3)", P.rocket && P.rocket.scale === 3, P.rocket && P.rocket.scale);
 g.check("the rocket is a big toy he can hold up: about half of Squatch's height (0.4 to 0.55), smaller than the bed and the bucket", Z.rocket / Z.squatch >= 0.4 && Z.rocket / Z.squatch <= 0.55 && Z.rocket < 150 && Z.rocket < 71, Z);
-g.check("the lunch bag is a paper lunch bag: about a third of Squatch's height (0.25 to 0.4), smaller than the bucket", Z.bag && Z.bag.h / Z.squatch >= 0.25 && Z.bag.h / Z.squatch <= 0.4 && Z.bag.h < 71, Z);
+g.check("the lunch bag is a big paper lunch bag (Brian 2026-11-26: MOPS on it must read): about half of Squatch's height (0.4 to 0.5), smaller than the bucket", Z.bag && Z.bag.h / Z.squatch >= 0.4 && Z.bag.h / Z.squatch <= 0.5 && Z.bag.h < 71, Z);
 // On a 375-wide phone the picture is 375 / 960 of its size: the rocket and the bag must still be big enough to see.
 const PHONE_K = 375 / 960;
 g.check("on a 375-wide phone the rocket is at least 25 px tall and the bag at least 17 px", Z.rocket * PHONE_K >= 25 && Z.bag.h * PHONE_K >= 17, { rocket: Z.rocket * PHONE_K, bag: Z.bag && Z.bag.h * PHONE_K });
@@ -473,7 +479,7 @@ const cs = cu.last && cu.last.sizes;
 g.check("in the close-up the rocket and the box keep the room's proportion (the box clearly bigger)", cs && Math.abs(cs.rocket / cs.box.w - Z.rocket / Z.box.w) < 0.01 && cs.box.w > cs.rocket, { closeUp: cs, room: Z });
 
 // No new words
-const known = new Set(HOME_MORNING_LINES.map((l) => l.text));
+const known = new Set([...HOME_MORNING_LINES, ...GAN.GANITOR_LINES].map((l) => l.text));
 // (the speech bubble's name tag, the calendar's close button, and the room's sleep mark were in the game before)
 const before = new Set([...(R.shownBefore || []), "Squatch", "Speaker", "X", "z z z", "\u266a", "\u266b"]);
 const esc = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

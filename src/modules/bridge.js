@@ -25,6 +25,7 @@ import { quietLine } from "./party-lines.js";
 import { quietBedtimeLine } from "./bedtime-story-lines.js";
 import { drawHomeMopBucket, lastHomeMopBucket } from "./mop-bucket.js"; // (bedtime branch, 2026-11-26: Mops's mop bucket)
 import { adultPxFor, doorAdultPx } from "./room-sizes.js";
+import { drawGanitorTag, drawHallwayCrayon, ganitorTagsDrawn, hallwayCrayonDrawn } from "./ganitor.js";
 import { singingNow } from "./music-rules.js";
 import { keepInSpan, seeCue, visitNow, playSound, soundsPlayed, hushNow, hushKey, unhush } from "./music-picks.js";
 import { drawBubbleTail } from "./bubble-tail.js";
@@ -41,7 +42,7 @@ import { cakeChartDrawn } from "./cake-chart.js";
  * to write another field stops with an error; tests/module-build.mjs checks the morning (and its home-alone
  * part) and the party night against this list.
  */
-export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1HomeMorning", "ch1Step", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe"]);
+export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1HomeMorning", "ch1Lunch", "ch1Sneak", "ch1Step", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe"]);
 
 export function createBridge() {
   const beats = new Map();
@@ -114,6 +115,25 @@ export function createBridge() {
     /** Every game-state field a beat has written so far (tests). */
     beatWrites() {
       return [...written];
+    },
+    /**
+     * Mops's GANITOR name tag (ganitor.js), drawn by his drawing (60-frame-draw.js Fe) in his own units on `ctx`, at his
+     * scale `scale` (game pixels to one of his units).
+     */
+    drawGanitorTag(ctx, scale) {
+      return drawGanitorTag(ctx, scale);
+    },
+    /** Tests: Mops's name tags drawn since the last call ({ readable, scale }). */
+    ganitorTags() {
+      return ganitorTagsDrawn();
+    },
+    /** Tests: what the hallway's crayon card drew last (ganitor.js), or null. */
+    hallwayCrayonDrawn() {
+      return hallwayCrayonDrawn();
+    },
+    /** Squatch's crayon card on the hallway wall, "ME" and "MOPS THE GANITOR" (ganitor.js), for 14-ch1-day2.js. */
+    drawHallwayCrayon(ctx) {
+      return drawHallwayCrayon(ctx);
     },
     /** The morning's music at home (its pick in music-picks.js: Floating in Space). See home-music.js. */
     homeMusic,
@@ -244,6 +264,14 @@ export function createBridge() {
     /** The rebuilt beat with this id, or null while the older program still runs it. */
     beat(id) {
       return beats.get(id) || null;
+    },
+    /**
+     * The rebuilt beat that draws the party hall now (the party night, or the lunch sneak), or null: the older
+     * program asks it for the hall's picture, its walls (bounds) and what feet cannot walk through (solids).
+     */
+    hallOwner() {
+      for (const b of beats.values()) if (b.ownsRoom && b.ownsRoom()) return b;
+      return null;
     },
     /** Ids of every rebuilt beat, in the order they were registered. */
     beatIds() {

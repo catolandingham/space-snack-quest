@@ -11,6 +11,7 @@
  */
 import { FLYER } from "./party-hall.js";
 import { TRACE, MORNING_THINGS, DRAWN_OUTLINE, outlineSource } from "./home-morning-art.js";
+import { LUNCH_TRACE, lunchOutlineSource } from "./lunch-sneak-art.js";
 import { TALL_BOX, tallClosetSource } from "./tall-closet.js";
 import { WRING_BOX } from "./party-cleanup.js";
 
@@ -42,11 +43,16 @@ export const GOAL_TARGETS = {
   "hall:go-home": HALL_HOME_DOOR, // party P4, and the alarm
   "hall:grab-flyer": { rect: FLYER.box }, // party P4: the flyer on the bar counter's far end (the party's own table)
   "hall:wring": { rect: WRING_BOX }, // the party cleanup: his bucket, when his beard is full (party-cleanup.js)
-  "hall:d2-HIDE-plant": { trace: { x0: 392, x1: 494, y0: 432, y1: 556 } }, // the same plant (Day 2)
-  "hall:d2-SNEAK-hallway": { rect: { x0: 912, x1: 940, y0: 257, y1: 345 } }, // the doorway to the hallway (hall v2, back corner)
+  "hall:d2-HIDE-plant": { trace: { x0: 392, x1: 494, y0: 432, y1: 556 } }, // the same plant (Day 2, beat 38)
+  // The lunch sneak, Day 2 (lunch-sneak.js): one thing at a time
+  // (in the sneak only the hallway doorway is outlined, Brian 2026-11-26, lunch note 0:38; the plant and the crates
+  // still hide him, and get the line only during an alarm: the plant's is "hall:hide", the crates' a drawn box)
+  "hall:lu-door": { rect: { x0: 912, x1: 940, y0: 257, y1: 345 } }, // the doorway to the hallway (hall v2, back corner)
+  "hall:lu-snack": { trace: LUNCH_TRACE.plate, source: () => lunchOutlineSource("plate"), line: DRAWN_OUTLINE }, // the plate of snack cakes
   "hall:d2-GO-home": HALL_HOME_DOOR,
   // Hallway
   "passage:d2-GO-hall": { rect: { x0: 20, x1: 48, y0: 266, y1: 354 } }, // the doorway to the hall (left; the walk uses it)
+  "passage:lu-back": { rect: { x0: 20, x1: 48, y0: 266, y1: 354 } }, // the doorway to the hall (left), after lunch
   "passage:d2-GO-ship": { rect: { x0: 912, x1: 940, y0: 266, y1: 354 } }, // the doorway to the loading bay
   // Loading bay
   "hangar:d2-HIDE-plant": { trace: { x0: 70, x1: 180, y0: 244, y1: 382 } },

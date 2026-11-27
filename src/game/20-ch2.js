@@ -597,9 +597,8 @@
           let beat = window.SSQ && window.SSQ.beat("ch1-morning");
           if (beat && beat.beforeSong()) return void beat.start({ restart: !0 });
           if (hmBeat() && hmBeat().restart()) return; // Day 2 before he is up: the home morning starts again
+          if (luBeat() && luBeat().restart()) return; // the lunch sneak between its steps: back to the last one
           if (restoreCh1Step(ch2.qCheck)) return void (n.ctrl = !0);
-          // No saved start for this step (the player has not had control in it yet): only the lunch walk has a hand-made one.
-          if (scene === "QB" && n.ch1Step === "sneak") return (ch1RestartLunch(), void (n.ctrl = !0));
           return void (n.cur || n.q.length || (n.ctrl = !0));
         }
         if (CH1_CHECKPOINTS[scene]) return (CH1_CHECKPOINTS[scene](), (n.ctrl = !0), void 0);

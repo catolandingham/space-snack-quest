@@ -10,7 +10,7 @@
 import { readFileSync } from "node:fs";
 import { startGame } from "./game-page.mjs";
 
-const src = ["game/12-ch1-redesign.js", "game/13-ch1-slice.js", "game/14-ch1-day2.js", "modules/party-lines.js", "modules/home-morning-lines.js"]
+const src = ["game/12-ch1-redesign.js", "game/13-ch1-slice.js", "game/14-ch1-day2.js", "modules/party-lines.js", "modules/home-morning-lines.js", "modules/lunch-sneak-lines.js"]
   .map((f) => readFileSync(new URL("../src/" + f, import.meta.url), "utf8"))
   .join("\n");
 const chips = [...src.matchAll(/Squatch: [^"]+/g)].map((m) => m[0]);
@@ -54,10 +54,12 @@ const report = await page.evaluate(async (chips) => {
     // (Brian 2026-11-26, video note 0:30: he walks over to the bag and sees it first; the bag is outlined, no button)
     "Squatch: go to the bag by the door": { hm: "toBag", walk: true, x: 846, y: 480 },
     "Squatch: take the lunch": { hm: "lunch" },
-    "Squatch: take Mops his lunch": { step: "sneak", room: "hall", x: 700, y: 540 },
-    "Squatch: give Mops his lunch": { step: "give", room: "passage", x: 500, y: 510 },
-    "Squatch: feed Mops": { step: "feed1", room: "passage", zoom: "eat", x: 240, y: 510 },
-    "Squatch: grab one snack": { step: "snack", room: "hall", scene: "Q3", x: 760, y: 530 },
+    // the lunch sneak (src/modules/lunch-sneak.js), each opened by its own jump with everything before it done; he
+    // stands where its button comes up (by Mops; behind the counter). The sneak's goal is the hallway doorway, which
+    // is walk-through (Brian #47): he is hidden behind the crates (no button), a step from the doorway's opening.
+    "Squatch: take Mops his lunch in the hallway": { lu: "door", walk: true, x: 900, y: 330 },
+    "Squatch: give Mops his lunch": { lu: "give", x: 540, y: 488 },
+    "Squatch: grab one snack": { lu: "snack" },
     "Squatch: hide in the plant": { step: "hide", room: "hangar", bay: true, x: 230, y: 400 },
     "Squatch: go on": { step: "photos", room: "passage", x: 480, y: 560 },
     "Squatch: hide": { step: "family", room: "hall", scene: "Q3", x: 520, y: 530 },
@@ -150,14 +152,20 @@ const report = await page.evaluate(async (chips) => {
   };
   for (const [chip, spec] of Object.entries(play)) {
     if (spec.hm) {
-      Object.assign(n, { ch1PartyNow: null, ch1Morning: null, ch1Zoom: null, ch1PadOn: false, q: [], cur: null });
+      Object.assign(n, { ch1PartyNow: null, ch1Morning: null, ch1Lunch: null, ch1Zoom: null, ch1PadOn: false, q: [], cur: null });
       ss.ch1JumpBeat(22);
       window.SSQ.beat("ch1-home-morning").jump(spec.hm);
       // at the wardrobe step he has walked there (where OPEN · closet works)
       spec.hm === "closet" && ((n.sq.x = 300), (n.sq.y = 398));
       ((n.chip = chip), (n.moved = 200));
+    } else if (spec.lu) {
+      Object.assign(n, { ch1PartyNow: null, ch1Morning: null, ch1Zoom: null, ch1PadOn: false, q: [], cur: null });
+      ss.ch1JumpBeat(22);
+      window.SSQ.beat("ch1-lunch").jump(spec.lu);
+      spec.x && ((n.sq.x = spec.x), (n.sq.y = spec.y));
+      ((n.chip = chip), (n.moved = 200));
     } else if (spec.party) {
-      Object.assign(n, { ch1Day2: false, ch1Zoom: null, ch1PadOn: false, ch1Morning: null, q: [], cur: null, moPose: "hidden" });
+      Object.assign(n, { ch1Day2: false, ch1Lunch: null, ch1Zoom: null, ch1PadOn: false, ch1Morning: null, q: [], cur: null, moPose: "hidden" });
       window.SSQ.beat("ch1-party").jump(spec.party);
       const p = n.ch1PartyNow;
       spec.out && ((p.pose = "stand"), (n.sqPose = "stand"));
@@ -169,6 +177,7 @@ const report = await page.evaluate(async (chips) => {
     } else {
     n.ch1PartyNow = null;
     n.ch1HomeMorning = null;
+    n.ch1Lunch = null;
     n.ch1Day2 = spec.day2 !== false;
     // The song step of the morning module (src/modules/morning.js), with Mops beside the bucket.
     n.ch1Morning = spec.song ? { step: "song", t: 0, notes: true } : null;
