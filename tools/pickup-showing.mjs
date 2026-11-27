@@ -6,10 +6,9 @@
  *   npm run build && node tools/pickup-showing.mjs <pickup|seen> <out.mp4>
  *     pickup  from the escape's end (the localhost link ?beat=pickup, or SHOWING_FROM=<step>) through pickup day: every
  *             line read and NEXT, every walk tapped on the floor (Mops's too), every button pressed where it comes up;
- *             the sneak to the plant done the way a careful kid does it (rolled up until the robots carry crate two
- *             out, then along the front).
- *     seen    the robots' capture rule in the mail room: he climbs out and stands in their way; "!", the FUR alarm, a
- *             guard; ROLL · ball, "They lost you.".
+ *             after the spill he climbs out and hides in the mailbox.
+ *     seen    the robots' capture rule: he climbs out and walks out of the mail room into an old robot's look at the
+ *             ramp; "!", the FUR alarm, a guard; ROLL · ball, "They lost you.".
  *   SHOWING_STILLS=<dir> also writes a still of each step there. SHOWING_SILENT=1 leaves the sound out.
  */
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
@@ -215,23 +214,11 @@ if (which === "pickup") {
       continue;
     }
     const es = s.es || {};
-    // 55: the sneak to the plant, the way a careful kid does it: rolled up behind the bags until the robots have carried
-    // crate two out of the mail room, then along the front of the bay and up to the plant
+    // 55: out of his crate, round it to the mailbox (the robot is out cleaning by the vent), HIDE · mailbox
     if (es.step === "sneak") {
-      if (Date.now() - (globalThis.__lastLog || 0) > 4000) ((globalThis.__lastLog = Date.now()), log("sneak " + JSON.stringify({ sneak, two: es.two, x: Math.round(s.x), y: Math.round(s.y), pose: s.pose, act: s.act, guard: !!es.guard })));
       const go = async (x, y) => Date.now() - tapAt > 700 && ((tapAt = Date.now()), await page.evaluate(([x, y]) => (window.__ss.drawFrame(), window.__ss.tapAt(x, y, false)), [x, y]));
-      if (!sneak) ((sneak = "ball"), await sleep(600), await press(), log("rolled up"), await still("rolled-up"));
-      // (out of the mail room by its opening, then along the front of the bay, then up to the plant)
-      // (the plant stands right of the bin since the bay's pickup v4 picture: pickup-place.js PK_BAY.plantAt; the tap
-      // walks him round the open crate below it)
-      const W = { out: [700, 462], front: [560, 600], left: [190, 600], up: [294, 388] },
-        near = (k) => Math.hypot(s.x - W[k][0], s.y - W[k][1]) < 26;
-      if (sneak === "ball" && ["scan", "up", "done"].includes(es.two)) ((sneak = "out"), await go(...W.out));
-      else if (sneak === "out" && near("out")) ((sneak = "front"), (tapAt = 0), await go(...W.front));
-      else if (sneak === "front" && near("front")) ((sneak = "left"), (tapAt = 0), await go(...W.left));
-      else if (sneak === "left" && near("left")) ((sneak = "up"), (tapAt = 0), await go(...W.up));
-      else if (sneak === "up" && s.act.startsWith("HIDE")) (await sleep(500), await press());
-      else if (sneak !== "ball") await go(...W[sneak]);
+      if (s.act.startsWith("HIDE")) (await sleep(500), await press());
+      else await go(878, 508);
       await sleep(150);
       continue;
     }
@@ -262,8 +249,8 @@ if (which === "pickup") {
   await press();
   await sleep(600);
   await still("out");
-  // he stands where the robots will turn to (in front of the row)
-  await until((s) => s.es.bots.some((b) => b.mark === "?"), 30000);
+  // he walks out of the mail room into the bay, toward the old robot loading at the ramp
+  await until(async (s) => s.es.bots.some((b) => b.mark === "?"), 30000, async () => await at(560, 520));
   await still("robot-registers");
   await until((s) => s.sec, 10000);
   await sleep(500);

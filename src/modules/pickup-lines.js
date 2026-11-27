@@ -11,11 +11,13 @@
  *   text    the words, exactly as shown
  *   status  "pending" (waiting for Brian's yes), "in-game" (shown before), "approved" (his yes), "new" (needs his yes)
  *   source  where the words came from
- *   q       the story pass question the line hangs on (pick A built as a placeholder until Brian answers), if any
+ *   q       the question the line hangs on (pick A built as a placeholder until Brian answers), if any.
+ * Round 7 (2026-11-27): Brian's 83 video notes, the story review (fable-story-review.md) and his question batch #116 to #133;
+ * the batch is not answered yet, so pick A of each is built as a placeholder and its lines carry `q` (116 to 133).
+ * A `q` under 100 is the 53-61 pass's own question.
  * The snack's name comes from snack-name.js, the crate tag from loading-bay-lines.js and the weekly tag from escape-lines.js (one place each).
  */
-import { SNACK } from "./snack-name.js";
-import { bayWords } from "./loading-bay-lines.js";
+import { FAMILY } from "./snack-name.js";
 import { escapeWords } from "./escape-lines.js";
 
 const PK_WALK = "docs/CH1-STORY-WALKTHROUGH.md beat ";
@@ -23,6 +25,9 @@ const PK_SP = (beat, mark) => `story pass 53-61 (2026-11-26), beat ${beat} (${ma
 const pkLine = (id, who, text, status, source, q) => ({ id, who, text, status, source, ...(q ? { q } : {}) });
 const pkPend = (id, who, text, beat, mark, q) => pkLine(id, who, text, "pending", PK_SP(beat, mark), q);
 const pkNew = (id, who, text, beat, why) => pkLine(id, who, text, "new", PK_SP(beat, "no words given") + (why ? `; ${why}` : ""));
+// Round 7's lines: pending, from the story review (topic letter) or Brian's own note, hung on question `q` (116 to 133).
+const R7 = (topic) => `round 7 story review (2026-11-27) topic ${topic}`;
+const pkR7 = (id, who, text, topic, q, why) => pkLine(id, who, text, "pending", R7(topic) + (why ? `; ${why}` : ""), q);
 
 export const PICKUP_LINES = Object.freeze(
   [
@@ -36,14 +41,22 @@ export const PICKUP_LINES = Object.freeze(
     pkPend("button-pack-note", "button", "PACK · note", 53, "the button the pass names"),
     pkPend("sq-safe", "sq", "Safe.", 53, "NEW, a thought as the note covers the pink", 8),
     pkPend("mops-scanner", "mops", "The scanner stops fur.", 53, "NEW"),
-    pkPend("mops-tuft", "mops", "Even one tuft.", 53, "NEW"),
+    pkR7("mops-hair-ok", "mops", "It lets hair through.", "A", 116, "replaces \"Even one tuft.\""),
     pkNew("switch-mop", "switch", "Mops wipes the fur out of the crate.", 53, "the reason on the switch card"),
     pkNew("chip-mop", "chip", "Mops: wipe the fur out of the crate", 53),
     pkPend("button-mop", "button", "MOP · crate", 53, "the button the pass names (a walk: no button shows)"),
+    // (r6 2:21, Brian: playing as Mops, go to the STAY IN HERE poster and eat it)
+    pkR7("chip-poster", "chip", "Mops: eat the STAY IN HERE poster", "P", 133, "goal words, new"),
+    pkR7("button-poster", "button", "EAT · poster", "P", 133, "new"),
+    pkR7("mops-dont-need", "mops", "We don't need this anymore.", "P", 133),
+    pkR7("sq-you-ate", "sq", "You ATE it.", "P", 133),
+    pkR7("mops-delicious", "mops", "Delicious.", "P", 133, "his own beat 33 word"),
     pkNew("switch-pack", "switch", "The crate is clean. Squatch packs.", 53, "the reason on the switch card"),
     pkNew("chip-pack", "chip", "Squatch: pack the crate", 53),
     pkLine("button-pack-box", "button", "PACK · box", "pending", PK_WALK + "53; story pass 53-61 (KEEP, pending)"),
     pkLine("button-pack-bucket", "button", "PACK · bucket", "pending", PK_WALK + "53; story pass 53-61 (KEEP, pending)"),
+    // (a Chapter 2 plant: the snack bag from the snack bar is seen going into the crate)
+    pkLine("button-pack-snacks", "button", "PACK · snacks", "pending", "Snack Quest Chat's Chapter 2 plant (2026-11-27), pending Brian's yes"),
     pkNew("chip-walls", "chip", "Squatch: take the things off the walls", 53),
     pkNew("button-take-chart", "button", "TAKE · chart", 53, "his crayon chart of cake kinds"),
     pkNew("button-take-brochure", "button", "TAKE · brochure", 53),
@@ -53,10 +66,13 @@ export const PICKUP_LINES = Object.freeze(
     pkLine("pa-ship", "pa", "Universal Postal Service ship arriving!", "pending", PK_SP(53, "KEEP: the Day 2 words, used again; ear icon")),
     pkNew("chip-label", "chip", "Squatch: put the label on the crate", 53),
     pkPend("button-label", "button", "PUT ON · label", 53, "the button the pass names"),
-    pkLine("label", "paper", bayWords("crate-empty"), "pending", PK_SP(53, "the same tag the player saw on last week's crate (loading-bay-lines.js crate-empty, beat 30)")),
+    // (the tag loses "EMPTY.": topic K. The same words as loading-bay-lines.js crate-empty once the bay builder's round 7
+    // change lands there; point this back at bayWords("crate-empty") at that merge)
+    pkR7("label", "paper", "FOR PICKUP.", "K", 124, "the same tag as last week's crate (beat 30) and the office printer's (51)"),
     pkNew("chip-get-in", "chip", "Squatch: get in the crate", 53),
     pkPend("button-get-in", "button", "GET IN · crate", 53, "the button the pass names"),
     pkPend("mops-in", "mops", "In you go.", 53, "NEW"),
+    pkR7("mops-pile", "mops", "So today you're a pile of hair.", "A", 116, "Mops lays his beard hair over him on purpose"),
     pkPend("mops-sound", "mops", "Not a sound.", 53, "NEW"),
     pkNew("switch-push", "switch", "Squatch is in the crate. Mops pushes it to the mail room.", 53, "the reason on the switch card"),
     pkNew("chip-push", "chip", "Mops: push the crate to the mail room", 53),
@@ -64,52 +80,39 @@ export const PICKUP_LINES = Object.freeze(
     pkPend("crate-oof", "sq", "Oof!", 53, "NEW, the crate on a bump"),
     pkLine("mops-weent", "mops", "Weeee-eenn-nnttt!", "pending", PK_SP(53, "KEEP: his bleat, covering")),
     pkLine("guest-hi", "tourist", "Hi, Mops!", "pending", PK_SP(53, "KEEP: the line from 44d, used again")),
-    pkPend("robot-label", "robot", bayWords("crate-empty"), 53, "NEW: a robot in the hallway reads the label (ear icon)"),
-    // ---- 54: the robots open a crate (Squatch inside, the view through a slat) ----
-    pkNew("switch-crate", "switch", "Squatch is in the crate. He can only look.", 54, "the reason on the switch card"),
+    pkR7("robot-label", "robot", "FOR PICKUP.", "K", 124, "a robot in the hallway reads the label (ear icon)"),
+    // ---- 54: one upgraded robot opens a crate (Squatch inside: the room, his eyes in the crate) ----
     pkLine("scan-no-fur", "scanner", "NO FUR. PROCEED.", "pending", PK_SP(54, "KEEP: the words from beat 30 (ear icon), still pending there")),
-    pkPend("bot-new-rule", "robot", "NEW ROBOTS. NEW RULE.", 54, "NEW, a new robot (ear icon)", 2),
-    pkPend("bot-scan-every", "robot", "SCAN EVERY CRATE.", 54, "NEW, a new robot (ear icon)", 2),
-    pkPend("bot-never", "robot", "We never did that.", 54, "NEW, an old robot (ear icon)", 2),
-    pkPend("bot-why-here", "robot", "THAT IS WHY WE ARE HERE.", 54, "NEW, a new robot (ear icon)", 2),
-    pkLine("scan-fur-stop", "scanner", "FUR. STOP.", "pending", PK_SP(54, "KEEP: the words from beat 30 (ear icon), still pending there")),
-    pkPend("bot-hat", "robot", "It is a hat.", 54, "NEW (Lou's own line, a week late)"),
-    pkLine("bot-fur-stop", "robot", "FUR. STOP.", "pending", PK_SP(54, "KEEP, a new robot")),
-    pkPend("sq-look-inside", "sq", "They look inside now.", 54, "NEW, a thought"),
-    pkPend("sq-all-fur", "sq", "I'm ALL fur.", 54, "NEW, a thought"),
-    pkPend("sq-that-was-me", "sq", "The new robots. That was me.", 54, "NEW, a thought, smaller"),
-    // ---- 55: Mops warns him, and one white hair ----
-    pkNew("switch-warn", "switch", "Mops saw the hat. He has to get Squatch out.", 55, "the reason on the switch card"),
-    pkNew("chip-warn", "chip", "Mops: get to Squatch's crate", 55),
+    pkR7("bot-upgrade", "robot", "UPGRADE INSTALLED.", "A", 117),
+    pkR7("bot-corners", "robot", "WE CHECK EVERY CORNER NOW.", "A", 117),
+    pkR7("bot-every-crate", "robot", "AND EVERY CRATE.", "A", 117),
+    pkR7("mops-told", "mops", "...I told them to check the corners.", "A", 117, "small"),
+    pkR7("sq-look-inside", "sq", "They LOOK inside now.", "A", 117, "a thought, from the crate"),
+    // ---- 55: Mops gets him out: KNOCK, then SPILL · bucket out in the bay; he hides inside the mailbox (Brian's #118 B) ----
+    pkR7("chip-knock", "chip", "Mops: knock on Squatch's crate", "A", 118, "goal words, new"),
     pkPend("button-knock", "button", "KNOCK · crate", 55, "the button the pass names"),
     pkPend("mops-get-out", "mops", "Squatch! Get out.", 55, "CHANGED (in the game: \"Get out. They're checking a crate.\", split)"),
     pkPend("mops-opening", "mops", "They're opening the crates.", 55, "CHANGED"),
-    pkNew("chip-bleat-robot", "chip", "Mops: get the robots to look at you", 55),
-    pkPend("button-bleat-robot", "button", "BLEAT · robot", 55, "the button the pass names"),
-    pkLine("mops-bleat-clang", "mops", "Weeee-eenn-nnttt!", "pending", PK_SP(55, "KEEP: his bleat, after the clang")),
-    pkPend("bot-replaced", "robot", "GOAT. YOU ARE REPLACED.", 55, "NEW, a new robot to Mops"),
-    pkPend("bot-stop-helping", "robot", "STOP HELPING.", 55, "NEW"),
-    pkNew("switch-out", "switch", "The robots are looking at Mops. Squatch's turn.", 55, "the reason on the switch card"),
+    pkR7("chip-spill", "chip", "Mops: get the robot out of the mail room", "A", 118, "goal words, new"),
+    pkR7("button-spill", "button", "SPILL · bucket", "A", 118),
+    pkR7("bot-spill", "robot", "SPILL. CLEANING EVERY CORNER.", "A", 118),
+    pkR7("switch-out", "switch", "The robot is cleaning far away. Squatch's turn.", "A", 118, "the reason on the switch card, new"),
     pkNew("chip-climb", "chip", "Squatch: climb out of the crate", 55),
     pkPend("button-climb", "button", "CLIMB OUT · crate", 55, "the button the pass names"),
-    pkNew("chip-plant", "chip", "Squatch: hide in the bay's plant", 55),
+    pkR7("chip-mailbox", "chip", "Squatch: hide in the mailbox", "A", 118, "goal words, new; Brian chose B, his mailbox idea"),
     pkLine("button-ball", "button", "ROLL · ball", "in-game", "lunch-sneak-lines.js and escape-lines.js (the ball, R43)"),
-    pkPend("button-plant", "button", "HIDE · plant", 55, "the button the pass names"),
+    pkR7("button-mailbox", "button", "HIDE · mailbox", "A", 118, "Brian chose B, his mailbox idea"),
     pkLine("lockup-cause", "card", "A robot saw Squatch in the delivery room. Security caught him.", "in-game", "src/game/25-capture.js CAPTURES.delivery (the LOCKUP card in the loading bay)"),
-    pkPend("bot-read-label", "robot", bayWords("crate-empty"), 55, "NEW, a robot reads the label at his crate"),
-    pkPend("bot-stars-loading", "robot", `${SNACK.NAME}. Loading.`, 55, "NEW, the carry-forward line: it reads the stamp wrong"),
-    pkPend("bot-scan-first", "robot", "SCAN FIRST.", 55, "NEW, a new robot"),
+    // (the robot reads the crate as it is written: the stamp's first letter is scraped off. Topic D)
+    pkR7("bot-ars-loading", "robot", `${FAMILY.FADED}. LOADING.`, "D", 133, "replaces the reading with its first letter put back"),
     pkPend("bot-one-box", "robot", "ONE BOX. ONE BUCKET.", 55, "NEW", 8),
-    pkPend("bot-label-empty", "robot", "LABEL SAYS EMPTY.", 55, "NEW, a new robot"),
-    pkPend("bot-goat-stuff", "robot", "Goat stuff.", 55, "NEW, an old robot"),
-    pkPend("scan-hair", "scanner", "HAIR...", 55, "NEW (ear icon)"),
-    pkPend("scan-goat-hair", "scanner", "GOAT HAIR. PROCEED.", 55, "NEW (ear icon)"),
+    pkR7("scan-hair-ok", "scanner", "HAIR. PROCEED.", "A", 116, "ear icon; was \"GOAT HAIR. PROCEED.\""),
     pkPend("sq-on-ship", "sq", "It's on the ship. I'm not.", 55, "NEW, a thought"),
     pkNew("chip-sneak-home", "chip", "Squatch: walk home with Mops", 55),
-    pkPend("sq-stopped-hat", "sq", "It stopped the hat.", 55, "NEW, at home"),
-    pkPend("sq-passed-hair", "sq", "It passed your hair.", 55, "NEW"),
-    pkPend("sq-lets-goats", "sq", "The scanner lets goats through!", 55, "NEW"),
-    pkPend("mops-every-day", "mops", "I walk through it every day.", 55, "NEW"),
+    // (the idea, said at home instead of three thought pictures: r6 5:33)
+    pkR7("sq-hair-through", "sq", "The hair got through.", "A", 116),
+    pkR7("sq-they-looked", "sq", "But they LOOKED.", "A", 116),
+    pkR7("mops-need-goat", "mops", "Then you need hair... and you need to look like a goat.", "A", 116),
     pkPend("sq-make-goat", "sq", "So make me a goat.", 55, "NEW"),
     // ---- 56: the goat costume ----
     pkNew("switch-snip", "switch", "Mops gives Squatch a piece of his beard.", 56, "the reason on the switch card"),
@@ -128,8 +131,8 @@ export const PICKUP_LINES = Object.freeze(
     pkNew("button-bleat-mops", "button", "BLEAT · Mops", 56, "the pass says only BLEAT; every button reads VERB · thing"),
     pkPend("sq-bleat-1", "sq", "Weee-RAWWR!", 56, "NEW, the first press"),
     pkLine("mops-less-roar", "mops", "More bleat. Less roar.", "in-game", PK_WALK + "56 (decided, in the game today)"),
-    pkPend("sq-dont-weent", "sq", "Sasquatches don't weent.", 56, "NEW, Brian's Nov 8 exchange [48:12]"),
-    pkPend("mops-goats-do", "mops", "Goats do. You're a goat now.", 56, "NEW, Brian's Nov 8 words"),
+    pkR7("sq-cant-bleat", "sq", "I can't bleat. I'm a Sasquatch.", "P", 133, "r6 6:23; replaces \"Sasquatches don't weent.\""),
+    pkR7("mops-goat-today", "mops", "Today you're a goat.", "P", 133, "replaces \"Goats do. You're a goat now.\""),
     pkPend("sq-bleat-3", "sq", "Weeee-eenn-nnttt?", 56, "NEW, the third press"),
     pkPend("mops-close-enough", "mops", "Close enough.", 56, "NEW"),
     pkPend("mops-two-goats", "mops", "Two goats.", 56, "NEW, at the mirror"),
@@ -149,6 +152,7 @@ export const PICKUP_LINES = Object.freeze(
     pkPend("sq-ate", "sq", "They ate it all.", 57, "NEW"),
     pkPend("sign-photo", "paper", "PHOTO DAY", 57, "NEW, the sign on the office door"),
     pkPend("mops-good-wall", "mops", "Good wall.", 57, "NEW"),
+    pkR7("button-lift-photo", "button", "LIFT · photo", "G", 128, "the drawing is hidden behind the crooked photo"),
     pkLine("button-take-keepsake", "button", "TAKE · drawing", "pending", PK_WALK + "57; story pass 53-61 (KEEP, pending)"),
     pkPend("crayon-words", "paper", "ME, MOPS, TIED TOGETHER FOREVER", 57, "the crayon drawing's words, as the pass writes them"),
     pkPend("sq-comes-with", "sq", "This one comes with us.", 57, "NEW"),
@@ -161,6 +165,7 @@ export const PICKUP_LINES = Object.freeze(
     pkPend("mops-mail", "mops", "I've got the mail.", 58, "NEW"),
     pkNew("chip-scanner", "chip", "Squatch: walk to the scanner", 58),
     pkPend("bot-two-goats", "robot", "TWO GOATS?", 58, "NEW", 3),
+    pkPend("button-bleat-robot", "button", "BLEAT · robot", 58, "the button the pass names (in 55 too before round 7)"),
     pkPend("sq-bleat-ramp", "sq", "Weee-RAWW-eennt!", 58, "NEW (BLEAT)", 3),
     pkPend("bot-odd-goat", "robot", "ODD GOAT.", 58, "NEW", 3),
     pkPend("mops-cousin", "mops", "My cousin. He has a cold.", 58, "NEW", 3),
@@ -171,7 +176,6 @@ export const PICKUP_LINES = Object.freeze(
     pkPend("bot-tool", "robot", "HAND OVER YOUR TOOL.", 58, "NEW", 3),
     pkPend("mops-attached", "mops", "It's attached.", 58, "NEW", 3),
     pkLine("bot-beard-mop", "robot", "A BEARD IS NOT A MOP.", "pending", PK_SP(58, "KEEP: from 44b"), 3),
-    pkPend("bot-stars-count", "robot", "STARS DO NOT COUNT.", 58, "NEW, at his gold star", 3),
     pkPend("scan-goat", "scanner", "GOAT. PROCEED.", 58, "NEW (ear icon)"),
     pkNew("switch-board-sq", "switch", "Mops is through. Squatch's turn.", 58, "the reason on the switch card"),
     pkLine("chip-board", "chip", "Squatch: walk through the scanner", "in-game", "src/game/12-ch1-redesign.js chips Q9 (KEEP: the goal line if stuck)"),
@@ -187,20 +191,13 @@ export const PICKUP_LINES = Object.freeze(
     pkLine("isfred-not-here", "official", "Not here? He can't live off the station!", "pending", PK_WALK + "59; story pass 53-61 (KEEP)", 5),
     pkLine("bot-replaced-shipment", "robot", "He was replaced by the new robot shipment.", "pending", PK_WALK + "59; story pass 53-61 (KEEP)", 5),
     pkLine("isfred-tapes", "official", "I never ordered a replacement! Get me the security tapes.", "pending", PK_WALK + "59; story pass 53-61 (KEEP)", 5),
-    // ---- 60: the security tapes ----
+    // ---- 60: the security tape (one clip from the camera's corner: a goat and a very tall goat, the beard falls) ----
     pkLine("card-later", "card", "Later that evening...", "pending", PK_WALK + "60; story pass 53-61 (KEEP, #416)"),
     pkLine("rec", "paper", "REC", "pending", PK_WALK + "60; story pass 53-61 (KEEP)"),
-    pkNew("tape-night", "paper", "NIGHT", 60, "the first tape's label (the pass names it \"NIGHT\")"),
-    pkNew("tape-today", "paper", "TODAY", 60, "the second tape's label (the pass names it \"TODAY\")"),
+    pkR7("tape-bay", "paper", "LOADING BAY", "E", 123, "the one tape's label, new"),
     pkPend("button-play", "button", "PLAY · tape", 60, "the button the pass names"),
     pkPend("button-zoom", "button", "ZOOM · in", 60, "the button the pass names"),
-    pkPend("button-next-tape", "button", "NEXT · tape", 60, "the button the pass names"),
     pkNew("chip-tapes", "chip", "Isfred: watch the tapes", 60),
-    pkPend("isfred-what", "official", "What IS that?", 60, "NEW", 4),
-    pkPend("isfred-ordered", "official", "It ordered my robots!", 60, "NEW", 4),
-    pkPend("isfred-star-ganitor", "official", "Star Ganitor.", 60, "NEW (the word the player earned in the Mop-Off)", 4),
-    pkPend("isfred-great-ganitor", "official", "Great Ganitor.", 60, "NEW", 4),
-    pkPend("isfred-good-ganitor", "official", "Good Ganitor.", 60, "NEW", 4),
     pkPend("isfred-best", "official", "My best worker.", 60, "NEW", 4),
     pkPend("isfred-not-goat", "official", "That is not a goat.", 60, "NEW, Brian's #372", 4),
     pkPend("isfred-wookiee", "official", "A Wookiee!", 60, "NEW, Brian's Nov 8 words [49:24]", 4),
@@ -221,6 +218,13 @@ export const PICKUP_LINES = Object.freeze(
     pkPend("sq-sasquatch", "sq", "I'm a SASQUATCH.", 61, "NEW (Brian's Nov 8 \"No, I'm a Sasquatch.\")", 6),
     pkNew("chip-hide-crate", "chip", "Squatch: hide in the crate", 61),
     pkPend("button-hide-crate", "button", "HIDE · crate", 61, "the button the pass names"),
+    // (r6 9:15: the crew member walks down the stairs; Mops tries to stop him; it fails. Topic F)
+    pkR7("switch-crew", "switch", "The crew is coming for the crate. Mops tries to stop him.", "F", 133, "the reason on the switch card, new"),
+    pkR7("chip-crew", "chip", "Mops: stop the crew", "F", 133, "goal words, new"),
+    pkR7("crew-out-of-way", "ups", "Out of the way, goat.", "F", 133),
+    pkR7("button-bleat-crew", "button", "BLEAT · crew", "F", 133),
+    pkR7("mops-bleat-crew", "mops", "Weeee-eenn-nnttt!", "F", 133, "his bleat, the same as 53's"),
+    pkR7("crew-nice-try", "ups", "Nice try.", "F", 133),
     pkPend("crew-found", "ups", "Found him.", 61, "NEW", 7),
     pkPend("crew-stay", "ups", "You can stay, goat.", 61, "NEW", 7),
     pkPend("mops-with-me", "mops", "He's with me.", 61, "NEW", 7),
