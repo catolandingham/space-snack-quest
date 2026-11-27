@@ -6,19 +6,19 @@
  *   spin     stars circling his head after SPIN · chair
  *   light    once, a robot's flashlight cone sliding past the open door while he hides under the desk
  *   esmug    the mug, close: GALAXY'S OKAYEST MANAGER
- *   esdrawer the drawer, close: one Stars Cake, a bite out of it
+ *   esdrawer the drawer, close: one snack cake, a bite out of it
  *   esframe  the frame, close: empty, its brass tag NEXT MONTH: MOPS
  * Every drawing is a PLACEHOLDER for Brian; every word from escape-lines.js.
  */
 import { escapeWords } from "./escape-lines.js";
-import { HALLWAY, OFFICE } from "./escape-place.js";
+import { ES_HALLWAY, OFFICE } from "./escape-place.js";
 import { esRect, esPaint, esWords, ES_INK } from "./escape-art.js";
 
 const TAU = Math.PI * 2;
 
 /** The sign on the office door (50). */
 export function drawClosedSign(ctx) {
-  const d = HALLWAY.door,
+  const d = ES_HALLWAY.door,
     cx = (d.x0 + d.x1) / 2,
     y = d.y0 + 20;
   ctx.save();
@@ -115,7 +115,7 @@ function drawerPanel(ctx) {
   ctx.fillRect(0, 0, 960, 640);
   esRect(ctx, 120, 140, 720, 420, 12);
   esPaint(ctx, "#2d323e", 6);
-  // one Stars Cake, a bite out of it
+  // one snack cake, a bite out of it
   ctx.save();
   ctx.beginPath();
   ctx.ellipse(480, 360, 170, 110, 0, 0, TAU);

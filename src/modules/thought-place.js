@@ -5,20 +5,20 @@
  * it sits beside the head instead, on the side with more room, never over it. Returns the cloud's middle (cx, cy), its
  * size, and the point its trail goes down to.
  */
-export const THOUGHT = Object.freeze({ gap: 30, edge: 14 });
+export const THOUGHT_PLACE = Object.freeze({ gap: 30, edge: 14 });
 export function placeThought(head, size) {
   const hx = head.x + head.w / 2,
     top = head.y,
     w = size.w,
     h = size.h;
-  let cx = Math.min(960 - THOUGHT.edge - w / 2, Math.max(THOUGHT.edge + w / 2, hx)),
-    cy = top - THOUGHT.gap - h / 2,
+  let cx = Math.min(960 - THOUGHT_PLACE.edge - w / 2, Math.max(THOUGHT_PLACE.edge + w / 2, hx)),
+    cy = top - THOUGHT_PLACE.gap - h / 2,
     beside = false;
-  if (cy - h / 2 < THOUGHT.edge) {
+  if (cy - h / 2 < THOUGHT_PLACE.edge) {
     beside = true;
-    const right = head.x + head.w + THOUGHT.gap + w <= 960 - THOUGHT.edge;
-    cx = right ? head.x + head.w + THOUGHT.gap + w / 2 : head.x - THOUGHT.gap - w / 2;
-    cy = Math.max(THOUGHT.edge + h / 2, top + head.h / 3 - h / 2);
+    const right = head.x + head.w + THOUGHT_PLACE.gap + w <= 960 - THOUGHT_PLACE.edge;
+    cx = right ? head.x + head.w + THOUGHT_PLACE.gap + w / 2 : head.x - THOUGHT_PLACE.gap - w / 2;
+    cy = Math.max(THOUGHT_PLACE.edge + h / 2, top + head.h / 3 - h / 2);
   }
   return { cx, cy, w, h, beside, to: { x: hx, y: beside ? top + head.h * 0.2 : top - 12 } };
 }

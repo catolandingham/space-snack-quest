@@ -60,7 +60,7 @@ const PICTURES = {
       line(ctx, [s * 0.16 + Math.cos(a) * s * 0.1, -s * 0.2 + Math.sin(a) * s * 0.1, s * 0.16 + Math.cos(a) * s * 0.24, -s * 0.2 + Math.sin(a) * s * 0.24], "#ffcf33", Math.max(2, s * 0.035));
     }
   },
-  // the snacks: a little pyramid of Moon Pies on the counter
+  // the snacks: a little pyramid of the snack cakes on the counter
   snacks(ctx, s) {
     rr(ctx, -s * 0.4, s * 0.24, s * 0.8, s * 0.1, 4, "#c9b6a0", 2);
     const r = s * 0.12;

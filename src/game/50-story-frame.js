@@ -981,7 +981,7 @@
                 Xn(o, i, 150, 84, "\xD7500"),
                 m(o + 6, i - 22, 138, 20, 3),
                 r("#fffdf3", 2),
-                g("FOR THE MANAGER \xB7 EXTRA MOON PIES", o + 75, i - 12, 6.5, "#7a2e1d", "center", 900),
+                g("FOR THE MANAGER \xB7 EXTRA " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("NAME") : "SNACKS"), o + 75, i - 12, 6.5, "#7a2e1d", "center", 900),
                 le.dolly &&
                   (m(o - 4, i + 82, 158, 8, 3),
                   r("#59657d", 2),

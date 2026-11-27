@@ -28,6 +28,7 @@ import { startGame, root } from "./game-page.mjs";
 
 const M = (f) => join(root, "src", "modules", f);
 const { ESCAPE_LINES } = await import(M("escape-lines.js"));
+const { SNACK } = await import(M("snack-name.js"));
 const P = await import(M("escape-place.js"));
 const W = Object.fromEntries(ESCAPE_LINES.map((l) => [l.id, l.text]));
 const g = await startGame({ port: 9781, name: "escape" });
@@ -57,17 +58,17 @@ g.check("the keypad's keys are a finger wide on a phone (120 game px, about 43 p
   };
   const office = walkClear([P.OFFICE.sq, ...P.OFFICE.out, P.OFFICE.door], P.OFFICE.solids);
   const bay = [];
-  const spots = [P.BAY.ventStand, P.BAY.mopsVent, ...P.BAY.toAlarm, ...P.BAY.toDock, W.BAY_DOOR.in, W.BAY_DOOR.round, { x: P.BAY.patrol.x0, y: P.BAY.patrol.y }, { x: P.BAY.patrol.x1, y: P.BAY.patrol.y }].filter((q) => W.BAY_SOLIDS.some((b) => q.x > b.x0 && q.x < b.x1 && q.y > b.y0 && q.y < b.y1));
+  const spots = [P.ES_BAY.ventStand, P.ES_BAY.mopsVent, ...P.ES_BAY.toAlarm, ...P.ES_BAY.toDock, W.BAY_DOOR.in, W.BAY_DOOR.round, { x: P.ES_BAY.patrol.x0, y: P.ES_BAY.patrol.y }, { x: P.ES_BAY.patrol.x1, y: P.ES_BAY.patrol.y }].filter((q) => W.BAY_SOLIDS.some((b) => q.x > b.x0 && q.x < b.x1 && q.y > b.y0 && q.y < b.y1));
   g.check("the walk out of the office goes round the desk and chair; the walk into the bay round its things; nobody stands in them", office.length === 0 && bay.length === 0 && spots.length === 0, { office, bay, spots });
-  g.check("rolling up counts as at the vent over the whole of the ROLL button's circle (one number)", typeof P.BAY.ventReach === "number" && P.BAY.ventReach >= 50);
+  g.check("rolling up counts as at the vent over the whole of the ROLL button's circle (one number)", typeof P.ES_BAY.ventReach === "number" && P.ES_BAY.ventReach >= 50);
 }
 // the old code for these beats is gone from src/game
 const game = readdirSync(join(root, "src", "game")).map((f) => readFileSync(join(root, "src", "game", f), "utf8")).join("\n");
 const gone = ["ch1TeaseLines", "ch1EscapeHome", "ch1ToVent", "ch1RollVent", "ch1VentLines", "ch1GrabPinkNow", "ch1ToPad", "ch1PadPress", "ch1OfficeIn", "ch1Booked", "ch1AllStart", "ch1BagSnack", "ch1LeaveFood", "ch1HideSlip", "4723"];
 g.check("the old escape code (and the old code 4723) is gone from src/game", gone.every((f) => !game.includes(f)), gone.filter((f) => game.includes(f)));
-// the code is typed in three places (the keypad's, night one's close-up in 14-ch1-day2.js, the old keypad picture in
-// 50-story-frame.js): they must be the same digits
-g.check("the office code is the same everywhere it is drawn", game.includes(`CH1_OFFICE_CODE = "${P.OFFICE_CODE}"`) && game.includes(`"${[...P.OFFICE_CODE].join(" ")}"`));
+// the code is in one place (office-code.js, for the bay's pink sheet, night one's close-up and the keypad); the older
+// program's old keypad picture (50-story-frame.js) draws the same digits, and the older program has no copy of its own
+g.check("the office code is the same everywhere it is drawn", !game.includes("CH1_OFFICE_CODE") && game.includes(`"${[...P.OFFICE_CODE].join(" ")}"`));
 
 const { ctx, page, errors } = await g.open("?beat=escape:ball", { width: 375, height: 812, isMobile: true, hasTouch: true });
 await page.evaluate(() => window.__ss.lockedReady);
@@ -117,8 +118,8 @@ const run = await page.evaluate(
     n.sq.y = 560;
     tick();
     const away = ss.offerNow();
-    n.sq.x = P.BAY.ventStand.x;
-    n.sq.y = P.BAY.ventStand.y;
+    n.sq.x = P.ES_BAY.ventStand.x;
+    n.sq.y = P.ES_BAY.ventStand.y;
     out.ball.awayOffer = away ? away.verb : "";
     out.ball.press = press();
     out.ball.pose = n.sqPose;
@@ -154,8 +155,8 @@ const run = await page.evaluate(
     ss.drawFrame();
     out.hallNight = !!(d().drew && d().drew.night) || null;
     out.tohall.sign = d().drew.sign;
-    n.sq.x = P.HALLWAY.sq.x;
-    n.sq.y = P.HALLWAY.sq.y;
+    n.sq.x = P.ES_HALLWAY.sq.x;
+    n.sq.y = P.ES_HALLWAY.sq.y;
     out.tohall.press = press();
     ss.drawFrame();
     out.pad = { chip: n.ch1Chip, keys: Object.keys((d().drew.pad || {}).keys || {}).length, slip: d().drew.pad && d().drew.pad.slip };
@@ -270,7 +271,7 @@ const run = await page.evaluate(
     out.bar.guardians = said(2);
     until(() => S().step === "food" && n.ctrl, 5);
     out.bar.plate = S().snacks.plate;
-    tap(P.SNACKS.plate.x, P.SNACKS.plate.y - 30); // a tap on the plate: his last Stars Cake goes on it
+    tap(P.SNACKS.plate.x, P.SNACKS.plate.y - 30); // a tap on the plate: his last snack cake goes on it
     until(() => !S().snacks.carry, 3);
     out.bar.onPlate = S().snacks.onPlate.map((i) => P.SNACKS.kinds[i]);
     out.bar.favorite = said(1);
@@ -325,12 +326,12 @@ g.check("51: the label prints (EMPTY. FOR PICKUP.); TAKE · label; \"We're reall
 g.check("51: Mops is drawn in the office with him", run.office.mopsPixels > 300, run.office);
 g.check("52: he walks to the snack bar himself (office, hallway, hall; the aisle outlined); Mops's lines, word for word", run.bar.chip === W["chip-bar"] && JSON.stringify(run.bar.rooms) === JSON.stringify(["passage", "hall"]) && run.bar.mark && JSON.stringify(run.bar.said) === JSON.stringify([W["mops-one"], W["mops-long"], W["mops-all"]]), run.bar);
 g.check("52: four into the bag; then \"What about the Guardians?\" / \"I'll leave them some food.\"; the plate", run.bar.bag === 4 && JSON.stringify(run.bar.guardians) === JSON.stringify([W["sq-what-guardians"], W["sq-leave-food"]]) && run.bar.plate, run.bar);
-g.check("52: his last Stars Cake on the plate, \"Their favorite. I think.\"; Mops says nothing, a heart; then he walks home", JSON.stringify(run.bar.onPlate) === JSON.stringify(["cake"]) && JSON.stringify(run.bar.favorite) === JSON.stringify([W["sq-favorite"]]) && run.bar.hearts && !run.bar.mopsSaid && run.bar.home.chip === W["chip-home-night"], run.bar);
+g.check("52: his last snack cake on the plate, \"Their favorite. I think.\"; Mops says nothing, a heart; then he walks home", JSON.stringify(run.bar.onPlate) === JSON.stringify(["cake"]) && JSON.stringify(run.bar.favorite) === JSON.stringify([W["sq-favorite"]]) && run.bar.hearts && !run.bar.mopsSaid && run.bar.home.chip === W["chip-home-night"], run.bar);
 g.check("52: home, OPEN · closet, PUT IN · box", run.home2.room === "closet" && run.home2.chip === W["chip-slip"] && run.home2.open === W["button-closet"] && run.home2.wardrobe === "open" && run.home2.put === W["button-box"], run.home2);
 g.check("52: the box close-up (MY GARDIAN BOX, MY GUARDIANS): the slip goes under the notes", run.home2.box.id === "esbox" && run.home2.box.drew.tucked && run.home2.box.drew.label === "MY GARDIAN BOX" && run.home2.box.drew.title === "MY GUARDIANS", run.home2.box);
 g.check("52: the slip is in the box, the closet shut, Squatch asleep, then beat 53 (pickup day: read the note)", run.home2.slip === "box" && run.home2.shut && run.home2.sleep && run.end.step === "pk-note" && !run.end.active, { home: run.home2, end: run.end });
 g.check("52: \"Mops can never see this.\" (a thought), \"Big day tomorrow.\", and their song", JSON.stringify(run.home2.after) === JSON.stringify([W["sq-never"] + " (whisper)", W["mops-big-day"], W["sq-sing"], W["mops-sing"]]), run.home2.after);
-g.check("the drawings show the walkthrough's words", ["STARS CAKES", "Order new box", "Return empty crate", "OPEN", "CLOSED.", "EMPTY. FOR PICKUP.", "Pickup booked.", "ghjk"].every((w) => run.words.includes(w)), run.words);
+g.check("the drawings show the walkthrough's words", [SNACK.NAME, "Order new box", "Return empty crate", "OPEN", "CLOSED.", "EMPTY. FOR PICKUP.", "Pickup booked.", "ghjk"].every((w) => run.words.includes(w)), run.words);
 
 // ---------- the night robot and the one capture rule ----------
 const rule = await page.evaluate(() => {
@@ -424,7 +425,7 @@ const rule = await page.evaluate(() => {
       }
     return bad;
   };
-  const Y = P.BAY;
+  const Y = P.ES_BAY;
   out.routes = {
     solids: solids.length,
     patrol: walk([{ x: Y.patrol.x0, y: Y.patrol.y }, { x: Y.patrol.x1, y: Y.patrol.y }]),

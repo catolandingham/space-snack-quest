@@ -10,7 +10,7 @@
 import { readFileSync } from "node:fs";
 import { startGame } from "./game-page.mjs";
 
-const src = ["game/12-ch1-redesign.js", "game/13-ch1-slice.js", "game/14-ch1-day2.js", "modules/party-lines.js", "modules/home-morning-lines.js", "modules/lunch-sneak-lines.js", "modules/escape-lines.js", "modules/pickup-lines.js"]
+const src = ["game/12-ch1-redesign.js", "game/13-ch1-slice.js", "game/14-ch1-day2.js", "modules/party-lines.js", "modules/home-morning-lines.js", "modules/lunch-sneak-lines.js", "modules/loading-bay-lines.js", "modules/evening-lines.js", "modules/escape-lines.js", "modules/pickup-lines.js"]
   .map((f) => readFileSync(new URL("../src/" + f, import.meta.url), "utf8"))
   .join("\n");
 const chips = [...src.matchAll(/Squatch: [^"]+/g)].map((m) => m[0]);
@@ -62,19 +62,41 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: take Mops his lunch in the hallway": { lu: "door", walk: true, x: 900, y: 330 },
     "Squatch: give Mops his lunch": { lu: "give", x: 540, y: 488 },
     "Squatch: grab one snack": { lu: "snack" },
-    "Squatch: hide in the plant": { step: "hide", room: "hangar", bay: true, x: 230, y: 400 },
-    "Squatch: go on": { step: "photos", room: "passage", x: 480, y: 560 },
-    "Squatch: hide": { step: "family", room: "hall", scene: "Q3", x: 520, y: 530 },
-    "Squatch: go home": { step: "gohome", room: "hall", scene: "Q3", x: 480, y: 560 },
-    "Squatch: get the copies from the bin": { step: "grab", room: "hangar", bay: true, scene: "Q4", x: 212, y: 370 },
-    "Squatch: get the yellow copy to the mailbox": { step: "post", room: "hangar", bay: true, scene: "Q4", x: 878, y: 450 },
-    "Squatch: check the order": { step: "mark", room: "hangar", bay: true, zoom: "paw", x: 212, y: 370 },
-    "Squatch: post the yellow copy": { step: "post", room: "hangar", bay: true, scene: "Q4", x: 878, y: 450 },
-    "Squatch: sneak home": { step: "out", room: "hangar", bay: true, x: 90, y: 540 },
+    // the loading bay (src/modules/loading-bay.js), each step opened by the beat's own jump; he stands where its button
+    // comes up, or (the hallway's far doorway, the bay's doorway home, the snack counter in the party hall: walked
+    // into, no button) a step from it
+    "Squatch: follow Mops to the ship": { bayStep: "hallway", walk: true, x: 900, y: 330 },
+    "Squatch: hide behind the cargo": { bayStep: "cargo", x: 176, y: 350 },
+    "Squatch: peek at the form": { bayStep: "peek" },
+    "Squatch: go home with Mops": { bayStep: "home", walk: true, x: 90, y: 336 },
+    "Squatch: get past the robots": { bayStep: "hall", walk: true, x: 800, y: 560 },
+    // the evening and night one (src/modules/evening.js), each opened by its own jump with everything before it done;
+    // a doorway walked through is the action there (walk), as at the party
+    // (he stands a step from each doorway, outside the circle that takes him through it)
+    "Squatch: go on": { ev: "wall", galleryDone: true, walk: true, x: 100, y: 300 },
+    "Squatch: hide": { ev: "hide", x: 852, y: 326 },
+    "Squatch: roll up!": { ev: "dodge", x: 700, y: 430 },
+    "Squatch: go on to the hall": { ev: "past", walk: true, x: 100, y: 300 },
+    "Squatch: peek at the window": { ev: "peek" },
+    "Squatch: duck!": { ev: "duck" },
+    "Squatch: grab the brochure": { ev: "brochure" },
+    "Squatch: open the box from the Guardians": { ev: "box" },
+    "Squatch: bite the cake": { ev: "bite" },
+    "Squatch: mark the chart": { ev: "chart", x: 236, y: 440 },
+    "Squatch: hold the brochure up to your crate": { ev: "crate", x: 330, y: 458 },
+    "Squatch: go home": { ev: "gohome", walk: true, x: 477, y: 555 },
+    "Squatch: show Mops the brochure": [{ ev: "show" }, { es: "show", x: 380, y: 556, look: [400, 500] }], // (beat 40, the evening, and beat 45, the escape)
+    "Squatch: go to sleep in your bed": { ev: "bed", x: 330, y: 458 },
+    "Squatch: sneak out the door": { ev: "out", walk: true, x: 860, y: 380 },
+    "Squatch: get the copies from the bin": { ev: "bin", x: 212, y: 398 },
+    "Squatch: get the form from the bin": { ev: "bin", x: 212, y: 398 },
+    "Squatch: get the yellow copy to the mailbox": { ev: "post", x: 862, y: 500 },
+    "Squatch: post the yellow copy": { ev: "post", x: 862, y: 500 },
+    // (ROLL · ball works anywhere in the night's loading bay, so it is what the button offers on the way to the doorway)
+    "Squatch: sneak home": { ev: "back", walk: true, x: 105, y: 290, anywhere: "ROLL · ball" },
     // the escape (src/modules/escape.js), each opened by its own jump with everything before it done; `look` is where
     // its glow or outline is (the vent, the slip in Mops's mouth, the computer, the wardrobe); the close-ups (the
     // keypad, the snacks, the Guardians' plate) are tapped, and their thing glows
-    "Squatch: show Mops the brochure": { es: "show", x: 380, y: 556, look: [400, 500] },
     "Squatch: look at your crate": { es: "crate", x: 330, y: 500, look: [184, 392] },
     "Squatch: look at the calendar": { es: "cal", x: 230, y: 392, look: [133, 192] },
     "Squatch: sneak to the big vent": { es: "sneak", walk: true, x: 380, y: 556, look: [916, 362] },
@@ -177,7 +199,8 @@ const report = await page.evaluate(async (chips) => {
     lines++;
     return lineTo.apply(this, arguments);
   };
-  for (const [chip, spec] of Object.entries(play)) {
+  // (a chip two beats show has one spec for each)
+  for (const [chip, spec] of Object.entries(play).flatMap(([c, s]) => [].concat(s).map((x) => [c, x]))) {
     if (spec.hm) {
       Object.assign(n, { ch1PartyNow: null, ch1Morning: null, ch1Lunch: null, ch1Zoom: null, ch1PadOn: false, ch1Pickup: null, q: [], cur: null });
       ss.ch1JumpBeat(22);
@@ -191,21 +214,37 @@ const report = await page.evaluate(async (chips) => {
       window.SSQ.beat("ch1-lunch").jump(spec.lu);
       spec.x && ((n.sq.x = spec.x), (n.sq.y = spec.y));
       ((n.chip = chip), (n.moved = 200));
+    } else if (spec.bayStep) {
+      Object.assign(n, { ch1PartyNow: null, ch1Morning: null, ch1Zoom: null, ch1PadOn: false, q: [], cur: null });
+      ss.ch1JumpBeat(29);
+      Object.assign(n, { q: [], cur: null });
+      window.SSQ.beat("ch1-bay").jump(spec.bayStep);
+      for (let i = 0; i < 400 && !(n.ctrl && !n.cur && window.SSQ.beat("ch1-bay").debug().state.step === spec.bayStep); i++) (ss.tick(0.05), n.cur && n.cur.k === "bub" && ((n.bt = 1), ss.opTap()));
+      spec.x && ((n.sq.x = spec.x), (n.sq.y = spec.y));
+      ((n.chip = chip), (n.moved = spec.walk ? 0 : 200));
+    } else if (spec.ev) {
+      Object.assign(n, { ch1PartyNow: null, ch1Morning: null, ch1Zoom: null, ch1PadOn: false, q: [], cur: null });
+      ss.ch1JumpBeat(37);
+      window.SSQ.beat("ch1-evening").jump(spec.ev);
+      spec.galleryDone && (n.ch1Evening.galleryDone = true);
+      spec.x && ((n.sq.x = spec.x), (n.sq.y = spec.y));
+      ((n.chip = chip), (n.moved = 200));
     } else if (spec.es) {
-      Object.assign(n, { ch1PartyNow: null, ch1Morning: null, ch1Lunch: null, ch1Zoom: null, ch1PadOn: false, ch1Pickup: null, q: [], cur: null, ch1Day2: true });
+      // (the beats before it are over: the bay's and the evening's states are cleared, as a jump to the escape does)
+      Object.assign(n, { ch1PartyNow: null, ch1Morning: null, ch1Lunch: null, ch1Bay: null, ch1Evening: null, ch1Zoom: null, ch1PadOn: false, ch1Pickup: null, q: [], cur: null, ch1Day2: true });
       window.SSQ.beat("ch1-escape").jump(spec.es === "food" ? "snacks" : spec.es);
       spec.es === "food" && Object.assign(n.ch1Escape, { step: "food" }, { snacks: { ...n.ch1Escape.snacks, plate: true } }) && (n.ch1Step = "es-food");
       spec.x && ((n.sq.x = spec.x), (n.sq.y = spec.y));
       ((n.chip = chip), (n.moved = 200));
     } else if (spec.pk) {
-      Object.assign(n, { ch1PartyNow: null, ch1Morning: null, ch1Lunch: null, ch1Escape: null, ch1Zoom: null, ch1PadOn: false, q: [], cur: null, ch1Day2: true });
+      Object.assign(n, { ch1PartyNow: null, ch1Morning: null, ch1Lunch: null, ch1Bay: null, ch1Evening: null, ch1Escape: null, ch1Zoom: null, ch1PadOn: false, q: [], cur: null, ch1Day2: true });
       window.SSQ.beat("ch1-pickup").jump(spec.pk);
       // he stands where the step's button comes up (the spot's own place), or where the spec says
       const sp0 = (ss.spotsNow() || []).find((q) => q && q.verb && q.who === "sq" && q.r > 0 && !q.hot);
       spec.x ? ((n.sq.x = spec.x), (n.sq.y = spec.y)) : sp0 && ((n.sq.x = sp0.x), (n.sq.y = sp0.y));
       ((n.chip = chip), (n.moved = 200));
     } else if (spec.party) {
-      Object.assign(n, { ch1Day2: false, ch1Lunch: null, ch1Zoom: null, ch1PadOn: false, ch1Morning: null, q: [], cur: null, moPose: "hidden" });
+      Object.assign(n, { ch1Day2: false, ch1Lunch: null, ch1Bay: null, ch1Zoom: null, ch1PadOn: false, ch1Morning: null, q: [], cur: null, moPose: "hidden" });
       window.SSQ.beat("ch1-party").jump(spec.party);
       const p = n.ch1PartyNow;
       spec.out && ((p.pose = "stand"), (n.sqPose = "stand"));
@@ -218,6 +257,8 @@ const report = await page.evaluate(async (chips) => {
     n.ch1PartyNow = null;
     n.ch1HomeMorning = null;
     n.ch1Lunch = null;
+    n.ch1Bay = null;
+    n.ch1Evening = null;
     n.ch1Escape = null;
     n.ch1Pickup = null;
     n.ch1Day2 = spec.day2 !== false;
@@ -266,7 +307,7 @@ const report = await page.evaluate(async (chips) => {
     if (n.lastRing && n.lastRing.box) {
       outlined.push(chip);
       const offered = offer && offer.verb ? offer.verb + " · " + offer.cap : "";
-      offered && offered !== n.lastRing.act && farOutline.push(`${chip}: outline for ${n.lastRing.act}, action offered is ${offered}`);
+      offered && offered !== n.lastRing.act && offered !== spec.anywhere && farOutline.push(`${chip}: outline for ${n.lastRing.act}, action offered is ${offered}`);
     } else unoutlined.push(chip);
     if (!target || yellow < 1 || !prompt) bad.push({ chip, target, yellow, prompt, verb: offer && offer.verb, spots: spots.length });
   }

@@ -1,5 +1,5 @@
 /**
- * Beat 21, the bedtime story (why Moon Pies), rebuilt as a module (src/modules/bedtime-story.js) in place of the
+ * Beat 21, the bedtime story (why he loves the station's snack), rebuilt as a module (src/modules/bedtime-story.js) in place of the
  * caption box the game showed before ("ch1moon"). After the TV story's "Now" card:
  *   1. with no words and no tap, Squatch walks to his crate bed and climbs in, and Mops comes over beside it (each
  *      wordless part plays 2 to 4 seconds); then Squatch asks, in one bubble over him, "Tell me about when we first
@@ -20,7 +20,7 @@
  * drawing) with the baby curled into a furry ball (no face); before "Nothing to see here!" a wordless picture plays by
  * itself, two tourists peeking in at a door with a "?" over each; the crate story's pictures have the memory look
  * (#38: soft cloud edges, a warm old-photo tint), the Guardians picture does not; bedtime plays Joe's theme with its
- * singing from his ask (#37); Mops's Moon Pie line is approved (#36).
+ * singing from his ask (#37); Mops's line was approved (#36) and its words changed with the snack's new name (question 86), so it waits for his yes again.
  * No goal chip shows at any point from the Now card to Day 2 (the old video showed "Squatch: pick up the gift" over
  * the sleeping room). The old fourth picture (the mop bucket) is on (Brian 2026-11-26), and Mops's bleat is asked for
  * under his goat sound. The old "ch1moon" panel is gone.
@@ -29,17 +29,18 @@
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { startGame, root } from "./game-page.mjs";
+import { SNACK, FAMILY } from "../src/modules/snack-name.js";
 
 // The captions as commit 71ec66e had them (its crate story array), word for word.
 const OLD = {
-  crate: "A delivery crate of Moon Pies came to Stormtop.",
+  crate: `A delivery crate of ${SNACK.name} came to Stormtop.`, // (the snack renamed, Brian 2026-11-26, question 86)
   baby: "Inside: a sleeping baby Sasquatch. Covered in crumbs.",
   beard: "He woke up, grabbed Mops's beard, and giggled.",
   weent: "...Weeee-eenn-nnttt?", // the old picture had "...Baaa?" (Brian 2026-11-26: goats say "weeeent")
   bucket: "Tourists were coming! Mops hid him in the mop bucket.", // (then the tourists peek in: no words)
   nothing: "Nothing to see here!",
 };
-const MOPS_LINE = "You came to me in a Moon Pie crate. You've loved Moon Pies ever since.";
+const MOPS_LINE = `You came to me in a ${SNACK.name} crate. You've loved ${SNACK.name} ever since.`;
 const ASK = "Tell me about when we first met?";
 const linesFile = join(root, "src", "modules", "bedtime-story-lines.js");
 const { BEDTIME_STORY_LINES = [], BEDTIME_SWITCHES = {} } = existsSync(linesFile) ? await import(linesFile) : {};
@@ -236,8 +237,8 @@ g.check("the captions show word for word as commit 71ec66e had them", ["crate", 
 g.check("Mops's goat sound is ...Weeee-eenn-nnttt? in a bubble over him in its own picture, with no caption under it", onScreen(OLD.weent) && pics.find((p) => p.pic === "weent" && p.bubble && !p.caption && p.bubble.y1 < p.mopsHead.y + 10), pics.find((p) => p.pic === "weent"));
 g.check('no "Baaa" anywhere in the bedtime story (on screen or in its lines)', !joined.includes("Baa") && BEDTIME_STORY_LINES.every((l) => !/baa/i.test(l.text)));
 g.check("the lines file holds the old captions word for word, the goat sound and Mops's line", L["cap-crate"] && L["cap-crate"].text === OLD.crate && L["cap-baby"].text === OLD.baby && L["cap-beard"].text === OLD.beard && L["mops-weent"] && L["mops-weent"].text === OLD.weent && L["mops-moon-pie"].text === MOPS_LINE);
-g.check("the old crate story's words are approved (Brian 2026-11-26: keep them); the goat sound is Brian's; Mops's Moon Pie line is approved as written (Brian 2026-11-26, #36)", ["cap-crate", "cap-baby", "cap-beard", "cap-bucket", "mops-nothing", "sign-moon-pies", "mops-moon-pie"].every((id) => L[id] && L[id].status === "approved") && L["mops-weent"].status.startsWith("Brian 2026-11-26") && /#36/.test(L["mops-moon-pie"].source));
-const known = new Set(BEDTIME_STORY_LINES.map((l) => l.text));
+g.check("the old crate story's words are approved (Brian 2026-11-26: keep them); the goat sound is Brian's; Mops's line was approved (#36) and waits for his yes again with the snack's new name (question 86)", ["cap-crate", "cap-baby", "cap-beard", "cap-bucket", "mops-nothing"].every((id) => L[id] && L[id].status === "approved") && L["mops-moon-pie"].status === "renamed, needs-yes" && /question 86/.test(L["mops-moon-pie"].source) && L["mops-weent"].status.startsWith("Brian 2026-11-26") && /#36/.test(L["mops-moon-pie"].source));
+const known = new Set([...BEDTIME_STORY_LINES.map((l) => l.text), FAMILY.FADED]); // (and the crate's worn stamp: snack-name.js)
 const fromStory = (run.shownStory || []).filter((w) => !run.shownBefore.includes(w));
 // A caption or bubble wrapped on a phone is drawn a line at a time: a drawn piece counts when it is a whole line of
 // the lines file, or a run of whole words of one (a wrapped bubble's middle line is a run from neither end). (The
@@ -271,12 +272,13 @@ await new Promise((r) => setTimeout(r, 1500));
 const startedBleat = await page.evaluate(() => window.SSQ.soundPicksPlayed().filter((p) => p.name === "mops-bleat" && p.started).length);
 g.check("the bleat clip loaded and started (its sound reached the effects level)", startedBleat >= 1, startedBleat);
 // One player for the bleat (music-picks.js playSound): the bedtime story reaches it through window.SSQ.playSoundPick,
-// the morning song's line and Floating in Space call it directly; no other module asks for the bleat.
+// the morning song's line and Floating in Space call it directly, and the loading bay's "Weeee-eenn-nnttt!" (beat 31,
+// the story pass of 2026-11-26) through window.SSQ.playSoundPick; no other module asks for the bleat.
 const MODS = Object.fromEntries(readdirSync(join(root, "src", "modules")).filter((f) => f.endsWith(".js")).map((f) => [f, readFileSync(join(root, "src", "modules", f), "utf8")]));
 const askers = Object.keys(MODS).filter((f) => /"mops-bleat"/.test(MODS[f])).sort();
 // (and the escape's one bleat, escape.js: the brief of 2026-11-26; pickup day's bleats, pickup.js: Mops covering the
 // crate's "Oof!", his BLEAT · robot, and Squatch's third try at a bleat)
-g.check("the bleat is asked for only by the bedtime story, the morning song's bleat line, Floating in Space's gaps, the escape's one bleat and pickup day's (and named in the music table)", JSON.stringify(askers) === JSON.stringify(["bedtime-story-sound.js", "escape.js", "home-music.js", "morning-sound.js", "music-picks.js", "pickup.js"]), askers);
+g.check("the bleat is asked for only by the bedtime story, the morning song's bleat line, Floating in Space's gaps, the loading bay's Weeee-eenn-nnttt!, the escape's one bleat and pickup day's (and named in the music table)", JSON.stringify(askers) === JSON.stringify(["bedtime-story-sound.js", "escape.js", "home-music.js", "loading-bay.js", "morning-sound.js", "music-picks.js", "pickup.js"]), askers);
 g.check("window.SSQ.playSoundPick plays through music-picks.js playSound (no second sound system)", /playSoundPick\(name\)[\s\S]{0,200}playSound\(b\.ctx, b\.fx, name/.test(MODS["bridge.js"]));
 // The music (Brian's music table, 2026-11-26): bedtime plays Joe's theme with its singing (#37), nothing hard-coded.
 const PICKS = await import(join(root, "src", "modules", "music-picks.js"));

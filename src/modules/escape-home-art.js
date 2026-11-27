@@ -2,8 +2,8 @@
  * Drawings for the escape's evenings at home (story pass 2026-11-26), on top of the locked home picture (never changed):
  *   43   the week on the home calendar, close: "Six days later" across its top, six days crossed off one at a time, and
  *        tomorrow's square saying DELIVERY with the one highlight (not a cold start: Brian, escape video 0:03).
- *   45a  his crate bed's stamp, "_ARS CAKES", its worn first letter bare (stars-cakes.js): a layer over the picture's
- *        own label, in the same place (a PLACEHOLDER waiting for Brian's yes, like every layer over a locked room).
+ *   45a  his crate bed's family stamp is the home picture's own layer (crate-stamp.js, the same in every beat): when
+ *        Mops touches its scraped first letter with a hoof, the scraped gap lights up (drawStampTouch).
  *   45b  the crayon plan: a sheet of paper with three crayon pictures (1 the door with its keypad and the pink paper,
  *        2 the computer, 3 the crate with two faces peeking out and an arrow to a red dot, the ship above it), each
  *        drawn as the talk gets to it, and a crayon tick on each when its step is done.
@@ -12,13 +12,13 @@
 import { WEEK } from "./escape-place.js";
 import { escapeWords } from "./escape-lines.js";
 import { highlightBox } from "./outline.js";
-import { STARS_CAKES } from "./stars-cakes.js";
+import { familyStampOnRoom } from "./crate-stamp.js";
 
 const INK = "#1e2430";
 const RED = "#d62828";
 const PAPER = "#fffdf6";
 const TAU = Math.PI * 2;
-const font = (size, weight = 900) => `${weight} ${size}px system-ui, -apple-system, sans-serif`;
+const esHomeFont = (size, weight = 900) => `${weight} ${size}px system-ui, -apple-system, sans-serif`;
 
 /** Beat 43: the week, close. `age` seconds since it opened. Returns what it drew. */
 export function drawWeek(ctx, age, t) {
@@ -37,7 +37,7 @@ export function drawWeek(ctx, age, t) {
   ctx.stroke();
   ctx.fillStyle = "#e0533a";
   ctx.fillRect(x0 + 3, W.y0 - 117, w - 6, 70);
-  ctx.font = font(46);
+  ctx.font = esHomeFont(46);
   ctx.textAlign = "center";
   ctx.fillStyle = "#ffffff";
   const card = escapeWords("card-six-days");
@@ -49,7 +49,7 @@ export function drawWeek(ctx, age, t) {
     ctx.strokeStyle = INK;
     ctx.lineWidth = 3;
     ctx.strokeRect(x, y, W.w, W.h);
-    ctx.font = font(24, 800);
+    ctx.font = esHomeFont(24, 800);
     ctx.textAlign = "left";
     ctx.fillStyle = INK;
     ctx.fillText(String(i + 1), x + 8, y + 28);
@@ -68,11 +68,11 @@ export function drawWeek(ctx, age, t) {
       }
     } else {
       // tomorrow: DELIVERY, with a little ship
-      ctx.font = font(17);
+      ctx.font = esHomeFont(17);
       ctx.textAlign = "center";
       ctx.fillStyle = RED;
       ctx.fillText(escapeWords("cal-delivery"), x + W.w / 2, y + W.h - 18);
-      ship(ctx, x + W.w / 2, y + 78, 0.9);
+      drawPlanShip(ctx, x + W.w / 2, y + 78, 0.9);
       age >= W.settle + W.xEvery * 6 && highlightBox(ctx, { x0: x, y0: y, x1: x + W.w, y1: y + W.h }, t, 6);
     }
   }
@@ -80,7 +80,7 @@ export function drawWeek(ctx, age, t) {
   return { card, xs, delivery: age >= W.settle + W.xEvery * 6 };
 }
 // a little cargo ship, side on (the calendar's DELIVERY square, the crayon plan)
-function ship(ctx, x, y, k, crayon) {
+function drawPlanShip(ctx, x, y, k, crayon) {
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(k, k);
@@ -102,29 +102,23 @@ function ship(ctx, x, y, k, crayon) {
   ctx.restore();
 }
 
-/** Beat 45a: the crate bed's stamp, "_ARS CAKES", over the picture's own label (the gap bare). Box: the label. */
-export function drawCrateStamp(ctx, b, touched) {
-  ctx.save();
-  ctx.fillStyle = "#2b3a67";
-  ctx.strokeStyle = INK;
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.roundRect(b.x0, b.y0, b.x1 - b.x0, b.y1 - b.y0, 8);
-  ctx.fill();
-  ctx.stroke();
-  ctx.font = font(11);
-  ctx.textAlign = "center";
-  ctx.fillStyle = "#ffcf33";
-  const s = STARS_CAKES.faded;
-  ctx.fillText(s, (b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2 + 4);
-  // the worn patch where the first letter was (Mops touches it with a hoof)
-  const gx = (b.x0 + b.x1) / 2 - ctx.measureText(s).width / 2 + 3;
-  ctx.fillStyle = touched ? "rgba(255,255,255,.55)" : "rgba(255,255,255,.25)";
-  ctx.beginPath();
-  ctx.ellipse(gx, (b.y0 + b.y1) / 2, 6, 6, 0, 0, TAU);
-  ctx.fill();
-  ctx.restore();
-  return s;
+/**
+ * Beat 45a: the crate bed's stamp is drawn with the home picture (crate-stamp.js); once Mops touches its scraped first
+ * letter (`touched`), a soft light over that gap shows where his hoof is. Returns the stamp's words as the room shows them.
+ */
+export function drawStampTouch(ctx, touched) {
+  const st = familyStampOnRoom();
+  if (!st) return "";
+  if (touched) {
+    const g = st.gap;
+    ctx.save();
+    ctx.fillStyle = "rgba(255,255,255,.45)";
+    ctx.beginPath();
+    ctx.ellipse((g.x0 + g.x1) / 2, (g.y0 + g.y1) / 2, (g.x1 - g.x0) / 2 + 4, (g.y1 - g.y0) / 2 + 4, 0, 0, TAU);
+    ctx.fill();
+    ctx.restore();
+  }
+  return st.text;
 }
 
 /**
@@ -152,14 +146,14 @@ export function drawPlan(ctx, x, y, w, st) {
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
   // crayon numbers
-  ctx.font = font(Math.round(30 * k));
+  ctx.font = esHomeFont(Math.round(30 * k));
   ctx.textAlign = "center";
   ctx.fillStyle = "#7a4fd1";
   ["1", "2", "3"].forEach((n, i) => (has[["door", "computer", "crate"][i]] ? ctx.fillText(n, cw * (i + 0.15), 36 * k) : null));
   if (has.door) crayonDoor(ctx, at.door.x, at.door.y, k);
   if (has.computer) crayonComputer(ctx, at.computer.x, at.computer.y, k);
   if (has.crate) crayonCrate(ctx, at.crate.x, at.crate.y, k);
-  if (has.ship) ship(ctx, at.crate.x - 10 * k, at.crate.y - 120 * k, 1.1 * k, true);
+  if (has.ship) drawPlanShip(ctx, at.crate.x - 10 * k, at.crate.y - 120 * k, 1.1 * k, true);
   for (const id of ["door", "computer", "crate"]) if (ticks[id]) tick(ctx, at[id].x + cw * 0.3, at[id].y - 60 * k, k);
   ctx.restore();
   return at;
@@ -222,7 +216,7 @@ function tick(ctx, x, y, k) {
 }
 
 /** Beat 45a: one sweat drop by his head while he gulps (no words). `head` is his head's box. */
-export function drawSweat(ctx, head, age) {
+export function drawGulpSweat(ctx, head, age) {
   const x = head.x + head.w + 4,
     y = head.y + 6 + Math.min(1, age / 1.0) * 14;
   ctx.save();

@@ -17,11 +17,13 @@ import { adultPxFor } from "./room-sizes.js";
 
 /**
  * What feet cannot walk through in the bay (each box already grown by a person's feet: 25 either side, 14 behind,
- * 8 in front). The plant and the walkway are in the locked picture; the plant stands just inside the left doorway,
- * so a walk in from there goes round its front (a question for Brian: it is in the locked picture).
+ * 8 in front). The plant and the walkway are in the locked picture. The plant stands right of the bin, a few steps
+ * along the back wall from the left doorway (the locked bay pictures v3, Brian's yes to question 75, 2026-11-26: the
+ * older program's CH1_FURNITURE.hangar plant, x 273 to 318, grown by the feet), so a walk in from the doorway goes round
+ * the bin's front.
  */
 export const BAY_SOLIDS = Object.freeze([
-  Object.freeze({ id: "plant", x0: 78, x1: 172, y0: 300, y1: 380 }),
+  Object.freeze({ id: "plant", x0: 248, x1: 343, y0: 300, y1: 380 }),
   Object.freeze({ id: "bin", x0: 162, x1: 262, y0: 326, y1: 384 }),
   Object.freeze({ id: "walkway", x0: 322, x1: 612, y0: 280, y1: 428 }),
   Object.freeze({ id: "mail room wall", x0: 660, x1: 946, y0: 345, y1: 377 }),
@@ -29,7 +31,7 @@ export const BAY_SOLIDS = Object.freeze([
   Object.freeze({ id: "mail room wall, low", x0: 655, x1: 719, y0: 492, y1: 640 }),
   Object.freeze({ id: "mailbox", x0: 822, x1: 934, y0: 430, y1: 486 }),
 ]);
-/** The left doorway, from the hallway (picture y 350 to 455), and the way in round the plant's front. */
+/** The left doorway, from the hallway (picture y 350 to 455), and the way in round the bin's front. */
 export const BAY_DOOR = Object.freeze({ out: Object.freeze({ x: 6, y: 318 }), in: Object.freeze({ x: 50, y: 330 }), round: Object.freeze({ x: 52, y: 430 }) });
 /** The corners of a walk from `a` to `b` round the bay's things (tap-path.js), or the straight line when it is clear. */
 export function bayPath(a, b) {

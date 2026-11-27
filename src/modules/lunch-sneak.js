@@ -24,7 +24,7 @@
  *   back    "Squatch: go on"; Mops waits in the left doorway, which is outlined; walking there takes them both back
  *           into the hall, down behind the snack counter, where Squatch ducks into his ball (the L2 ball, as ROLL ·
  *           ball; only the counter's guest is near).
- *   one     the counter guest's cone lies over the ducked Squatch and stays grey; the plate of Moon Pies has its dashed line and
+ *   one     the counter guest's cone lies over the ducked Squatch and stays grey; the plate of snack cakes has its dashed line and
  *           Mops says "...you know the rule, grab one snack." (NEXT).
  *   snack   "Squatch: grab one snack"; TAKE · snack (first offered as the guest turns away): he stands up, reaches,
  *           takes the top pie and ducks. Seen while up: the pie stays on the plate and the same capture rule runs.
@@ -42,6 +42,7 @@ import { HALL, HALL_PICTURE, SPOTS } from "./party-hall.js";
 import { coneFrom, coneSees, lookAt, SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
 import { startAlarm, tickAlarm, guardCones, ALARM } from "./party-alarm.js";
 import { drawHall } from "./party-draw.js";
+import { withSnackLayers } from "./crate-stamp.js";
 import { drawAlarmCloseUp } from "./party-art.js";
 import { partyLine, lockupCause } from "./party-lines.js";
 import { tickQuestions, questions } from "./party-question.js";
@@ -735,8 +736,11 @@ export function createLunchSneak(bridge) {
     const hidden = l.pose === "hidden" || l.pose === "ball";
     const extra = [];
     extra.push({ y: LUNCH_PLACES.crate.box.y1, f: () => drawCrates(ctx0) });
-    // rolled up: the L2 ball (the older program's drawing, DECISIONS C3) at his size, where he stands
-    l.pose === "ball" && e.ball && extra.push({ y: s.y, f: () => e.ball.drawOn(ctx0, s.x, s.y - 16 * (k / 1.65), k / 1.65) });
+    // rolled up: the L2 ball (the older program's drawing, DECISIONS C3) at his size, where he stands. Hidden behind
+    // something (the counter, the crates) he is that ball too, never standing or squashed: only in a plant are just his
+    // eyes shown (Brian 2026-11-26, the loading bay video at 0:08.7: "If he's hiding, he should be in the ball").
+    const balled = l.pose === "ball" || ducked || (l.pose === "hidden" && l.hideAt === "crate");
+    balled && e.ball && extra.push({ y: s.y, f: () => e.ball.drawOn(ctx0, s.x, s.y - 16 * (k / 1.65), k / 1.65) });
     l.counter && extra.push({ y: COUNTER_SPOTS.plate.y, f: () => drawPlate(ctx0, l.pies) });
     // The one highlight (the dashed gold line, no glow; Brian 2026-11-26) round what `glowing` names, drawn just after
     // the thing at its depth (so the crates and the plate do not cover it): the hallway doorway's line is the goal mark
@@ -752,9 +756,8 @@ export function createLunchSneak(bridge) {
     }
     // what he carries: the lunch bag in his paw on the way to Mops
     !l.counter && !hidden && l.bag === "paw" && extra.push({ y: s.y + 0.5, f: () => drawBagInPaw(ctx0, s.x, s.y, s.f || 1, k) });
-    // ducked behind the counter: he is in his ball (the approved L2 ball, as ROLL · ball; never the squashed Squatch,
-    // Brian 2026-11-26); standing up at it, reaching over for a pie
-    ducked && e.ball && extra.push({ y: s.y, f: () => e.ball.drawOn(ctx0, s.x, s.y - 16 * (k / 1.65), k / 1.65) });
+    // (ducked behind the counter he is in his ball: drawn above with the other hiding places; Brian 2026-11-26)
+    // standing up at the counter, reaching over for a pie
     if (l.pose === "up" && l.grab) {
       const P = LUNCH_PACE,
         g = l.grab.t,
@@ -778,7 +781,7 @@ export function createLunchSneak(bridge) {
     }
     return {
       t,
-      picture,
+      picture: withSnackLayers("hall", picture, "lunch"), // (the hall tin's new lid, crate-stamp.js)
       banner: false,
       lights: null,
       isfred: null,
@@ -794,7 +797,7 @@ export function createLunchSneak(bridge) {
       squatch: hidden || ducked || l.pose === "up" ? (l.pose === "up" ? { x: s.x, y: s.y, f: s.f || -1, walk: 0, pose: "stand" } : { x: s.x, y: s.y, pose: "hidden" }) : { x: s.x, y: s.y, f: s.f || 1, walk: e.walkPhase(), pose: "stand" },
       // (tests: how he is drawn low, "ball" when ducked or rolled up)
       low: ducked || l.pose === "ball" ? "ball" : "",
-      eyes: hidden && l.hideAt ? { ...LUNCH_PLACES[l.hideAt].eyes } : null,
+      eyes: hidden && l.hideAt === "plant" ? { ...LUNCH_PLACES.plant.eyes } : null,
       marks,
       shout,
       alarm: !!a && a.phase !== "shout" && a.phase !== "run" && a.phase !== "calm",
@@ -886,14 +889,22 @@ export function createLunchSneak(bridge) {
       }
       return true;
     },
+    /**
+     * The hallway's Employee of the Month photo of Mops, MOPS, GANITOR (Brian 2026-11-26, Ganitor C): a layer over the
+     * locked hallway picture on every Chapter 1 visit (not the office). The older program paints it right after the
+     * picture, before anyone in the hallway (14-ch1-day2.js drawCh1Passage), so people walking by are in front of it
+     * (Brian 2026-11-26, the loading bay video at 0:14.8: Mops's horns were drawn behind it). It does not belong to the
+     * lunch; it lives here because this beat first drew over the hallway.
+     */
+    drawWall(ctx) {
+      const e = E();
+      wallDrew = e && e.room() === "passage" && !e.get("ch1Office") && (e.get("scene") || "")[0] === "Q" ? drawGanitorWall(ctx, e.drawMopsOn) : null;
+      return wallDrew;
+    },
     /** Over the hallway (the older program draws the room, Squatch and Mops): the bag, the heart, Mops mopping, the goal line round Mops. */
     draw(ctx) {
       const l = live(),
         e = E();
-      // The hallway's Employee of the Month photo of Mops, MOPS, GANITOR (Brian 2026-11-26, Ganitor C): a layer over the
-      // locked hallway picture on every Chapter 1 visit (not the office). Drawn here because this beat draws over the
-      // hallway; it does not belong to the lunch.
-      wallDrew = e && e.room() === "passage" && !e.get("ch1Office") && (e.get("scene") || "")[0] === "Q" ? drawGanitorWall(ctx, e.drawMopsOn) : null;
       if (!l || e.room() !== "passage") return;
       const t = e.time(),
         k = sqScale(),
@@ -950,7 +961,7 @@ export function createLunchSneak(bridge) {
     },
     /**
      * The hall after the lunch (the older program draws it, 12-ch1-redesign.js drawCh1DayHall): the crates are still
-     * there, and the plate on the counter's end has the Moon Pies he left on it.
+     * there, and the plate on the counter's end has the snack cakes he left on it.
      */
     drawProps(ctx) {
       const l = L(),

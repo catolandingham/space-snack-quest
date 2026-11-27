@@ -3,38 +3,43 @@
 
 | Lines | Heading |
 | --- | --- |
-| 39–42 | ## The escape's words and the vent room, 2026-11-26 (Brian, notes page questions 55 and 56) |
-| 43–45 | ## The office code, 2026-11-26 (Brian, chat) |
-| 46–48 | # Space Snack Quest: every decision, in one place |
-| 49–56 | ## How to use this file |
-| 57–65 | ## Lunch sneak, 2026-11-26 (Brian's video notes and answers, round D) |
-| 66–76 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
-| 77–86 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
-| 87–97 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
-| 98–121 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
-| 122–126 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 127–135 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 136–139 | ## Sound, 2026-11-23 |
-| 140–163 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 164–175 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 176–200 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 201–209 | ## Which repo is the base, 2026-11-22 |
-| 210–220 | ## Sight cones, 2026-11-22 |
-| 221–225 | ## Latest calendar direction, 2026-11-16 |
-| 226–228 | ## Vent walk, 2026-11-16 |
-| 229–231 | ## Locked home room v5, 2026-11-16 |
-| 232–241 | ## Fidelity system (pictures are locked, not just words) |
-| 242–279 | ## 1. Working rules |
-| 280–346 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 347–371 | ## 3. Characters and look |
-| 372–448 | ## 4. Look, rooms and layout |
-| 449–470 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 471–514 | ## 6. Later chapters (2–4 and travel) |
-| 515–524 | ## 7. Audio |
-| 525–559 | ## 8. Code, controls and process |
-| 560–606 | ## 9. Open / waiting on Brian |
-| 607–701 | ## 10. Earlier entries, kept word for word |
-| 702–798 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 44–47 | ## The escape's words and the vent room, 2026-11-26 (Brian, notes page questions 55 and 56) |
+| 48–50 | ## The office code, 2026-11-26 (Brian, chat) |
+| 51–56 | # Space Snack Quest: every decision, in one place |
+| 57–64 | ## How to use this file |
+| 65–68 | ## Office code and the loading bay, 2026-11-26 (Brian, chat) |
+| 69–76 | ## The snack renamed, and the crate bed's stamp (question 86), 2026-11-26 (Brian, relayed by the coordinator) |
+| 77–80 | ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator) |
+| 81–87 | ## Evening and night one rebuilt from the story pass, 2026-11-26 night (Brian: "Go! Go as far as you can without me.") |
+| 88–95 | ## Evening and night one, look and physics, 2026-11-26 (Brian, video notes on beats 37 to 42) |
+| 96–104 | ## Lunch sneak, 2026-11-26 (Brian's video notes and answers, round D) |
+| 105–115 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
+| 116–125 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
+| 126–136 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
+| 137–160 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
+| 161–165 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 166–174 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 175–178 | ## Sound, 2026-11-23 |
+| 179–203 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 204–215 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 216–240 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 241–249 | ## Which repo is the base, 2026-11-22 |
+| 250–260 | ## Sight cones, 2026-11-22 |
+| 261–265 | ## Latest calendar direction, 2026-11-16 |
+| 266–268 | ## Vent walk, 2026-11-16 |
+| 269–271 | ## Locked home room v5, 2026-11-16 |
+| 272–281 | ## Fidelity system (pictures are locked, not just words) |
+| 282–319 | ## 1. Working rules |
+| 320–386 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 387–411 | ## 3. Characters and look |
+| 412–488 | ## 4. Look, rooms and layout |
+| 489–510 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 511–554 | ## 6. Later chapters (2–4 and travel) |
+| 555–564 | ## 7. Audio |
+| 565–599 | ## 8. Code, controls and process |
+| 600–646 | ## 9. Open / waiting on Brian |
+| 647–741 | ## 10. Earlier entries, kept word for word |
+| 742–839 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 ## The escape's words and the vent room, 2026-11-26 (Brian, notes page questions 55 and 56)
 - **The escape's written words are approved as written** (Brian, 2026-11-26, notes page question 55: "Approve all as written", PR #93 comment): the card "Six days later", the board IDEAS FOR GUARDIANS, HAVE YOU SEEN?, the labels MARS / NO / TOYS, the Mars letter, the Guardian note with "— The Guardians", the goal line "Squatch: type the code from the pink slip", and the site's "Order new box" and "Return empty crate". The office-code pin is "make 169556". **Decided.** (The site's header is renamed STARS CAKES in the rebuild of 2026-11-26 night, the Stars Cakes thread: that new word waits for his yes.)
@@ -44,6 +49,9 @@
 - **The office code is 169556.** Brian, chat, 2026-11-26: the office code is 169556 (six digits), not 4723. It is written on the pink sheet, its close-up shows it big and clear before the keypad (beat 50), and the office keypad takes six digits. The code is still for the office door only (his answer of 2026-11-22). `docs/TUNING-PINS.json` "office-code" now points at `src/modules/escape-place.js`. **Decided.** This replaces 4723 everywhere (R84 below and the 2026-11-22 keypad line keep their history with a note).
 
 # Space Snack Quest: every decision, in one place
+
+> **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
+
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
 
 ## How to use this file
@@ -54,6 +62,37 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 - **This repo file is the single source of truth.** It was synced on Monday, November 9, 2026 from the designer record through decision R63, and it still holds the earlier snapshot `docs/old/project/DECISIONS-2026-11-08.md` (on `main` at commit 10030f6). Every earlier entry is kept in section 10. Where a later decision replaces an earlier one, the earlier line is marked **Superseded** and says what replaced it. The dated snapshot's full text is in `docs/old/history/DECISIONS-2026-11-08.md`. A short pointer stays at `docs/old/project/DECISIONS-2026-11-08.md`. New decisions get a row in the tables above, through a docs PR (review, "Docs match main: yes", Brian's written yes before merge).
 - Don't invent a decision. If something isn't clear, add it under **Open**.
 
+## Office code and the loading bay, 2026-11-26 (Brian, chat)
+- **Isfred's office code is 169556** (six digits). Brian, chat, 2026-11-26: Isfred writes it on the pink sheet in beat 32, readable in the close-up, and it is the office keypad's code (beat 50). **Decided.** It replaces 4723 (the number drawn on the old keypad, R84 and the 2026-11-22 keypad answer below). The tuning pin `office-code` changes with Brian's word (`docs/TUNING-PINS.json`).
+- **The loading bay's plant moves a few steps along the wall** (Brian, 2026-11-26, his yes to question 75 of the story pass): new locked bay pictures, `delivery-room-empty-day-v3.png`, `-day-noship-v3.png`, `-night-v3.png` and `-pickup-v4.png`, with the plant right of the bin instead of beside the doorway, so nobody walks into it coming in (docs/locked-rooms/README.md). **Decided.**
+- **The party hall picture is version 2** (`docs/locked-rooms/hall-room-empty-v2.png`), which the game already uses. Brian confirmed, chat, 2026-11-26.
+## The snack renamed, and the crate bed's stamp (question 86), 2026-11-26 (Brian, relayed by the coordinator)
+- **Decided (Brian, 2026-11-26, question 86, "A": rename everywhere now; his notes the same day: "calling them Mars Cakes, what his family makes. And the box he came in is faded, so all you can see is R's Cakes, A-R-S"):** the station's snack "Moon Pies" is now **Stars Cakes** ("STARS CAKES" on crates and signs) in every line, file, test, label and drawing. The name is spelled in one place, `src/modules/snack-name.js`; the older program reads it through `window.SSQ.snack(...)`, guarded, with a plain "snacks" if the module script fails. As an adjective it is the plural ("a Stars Cakes crate", as in Brian's own bedtime line); one cake is "a Stars Cake".
+- **Changed words, pending Brian's yes again:** the bedtime line is now "You came to me in a Stars Cakes crate. You've loved Stars Cakes ever since." Every other changed line only swaps the name (list: `docs/CH1-LINES-FOR-BRIAN.md`, "The snack's name").
+- **Squatch's crate bed is his family's crate (the spec's 2.3):** its stamp is fat red letters, worn, the first letter scraped off ("_ARS CAKES": a bare patch one wide letter across, with the two faint red feet of the lost letter), and his old crayon "ST" in the gap. **Needs Brian's yes (locked picture):** the stamp is a layer drawn over the locked home pictures `home-room-empty-closed-v6.png` and `home-room-empty-open-v6.png` (the old MOON PIES badge painted out in the crate's own wood, then the new stamp); the picture files are not edited (`src/modules/crate-stamp.js`, checked by `tests/snack-name.mjs`). **Needs Brian's yes (new words):** the crayon "ST". Look, sizes, red and crayon are PLACEHOLDER.
+- **The party hall's snack tin:** the locked hall picture `hall-room-empty-v2.png` has a tin on the snack bar with the old name on its lid. **Needs Brian's yes (locked picture):** a layer paints the lid blue again with a little yellow star and "Stars Cakes" in two thin white lines (`crate-stamp.js` drawTinLid); the file is not edited.
+- **The station's crates (the spec's 2.12):** a blue star and the name in thin blue letters, so the two stamps never match (`crate-stamp.js` drawStationStamp, used by every crate the game draws).
+- **Kept as they were:** file names and code ids that hold the old name joined up (the cutaway id `moonpie`, line ids such as `mops-moon-pie`, picture and sketch file names such as `sketch-22-moon-pie-site.png`), and the locked pictures' drawing scripts (`docs/locked-rooms/home_room.py`), which no one changes without a new locked version. No player sees any of them. Dated history entries in the docs keep the old name as it was said then.
+
+## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator)
+- **Night look, Decided 2026-11-26:** "Make sure it's not just the hall dark at night, but all rooms are different at night versus daytime." Every room shown while the story is at night has a night look (`src/modules/night-look.js`): the loading bay its locked night picture (`delivery-room-empty-night-v2.png`); every other room its locked day picture under a dim blue tint, with the things that give light (the hall's window onto space and its FUR alarm, home's TV screen, the office's screens and keypad, the hallway's keypad) cut from the same picture and drawn again over the tint. No picture file changes. Night is from the party night's start ("That evening...") until Day 2 begins, and any older night scene. The tint's strength (`NIGHT_TINT`, 0.5 of the bedtime story's night blue) and the lit boxes are placeholders for Brian's eye. The bedtime story's lights-out dim goes on top. Built on feat/party-half-two (the party), then merged forward and applied on the bedtime (the evening and bedtime story), Day 2 morning (the dark start) and lunch branches.
+
+
+## Evening and night one rebuilt from the story pass, 2026-11-26 night (Brian: "Go! Go as far as you can without me.")
+- **Beats 37 to 42c are rebuilt from the story pass of 2026-11-26** (scratchpad story pass, sections C and D, and the Mars Cakes thread), with every CHANGED or NEW line built word for word and **Needs Brian's yes** as he watches (`src/modules/evening-lines.js`, status "pending").
+- **The party hall's floor vent is on at night one.** Coordinator, 2026-11-26: "The party hall floor vent is ON at night (placeholder)." One vent rule everywhere: his fur drifts in, and staying, the hall's FUR alarm goes off ("by the vent"). **Needs Brian's yes** (still open in the story pass).
+- **The brochure's only words are MARS CAKES on one cake box in its picture.** The story pass's pick, built as a placeholder (still open); it is what the M moment at the crate (39b) needs. **Needs Brian's yes.**
+- **No song on night one.** Story pass beat 41: their song is their goodbye and their bond, and its absence is felt. The night at home is quiet (bridge.js). **Needs Brian's yes** (the story pass's call).
+- **The two robots parked in the mail room stay parked.** The story pass's night one has the night robot only; the old cutscene of robots waking after the post is gone (the post is loud instead, and the alarm follows). **Needs Brian's yes.**
+
+## Evening and night one, look and physics, 2026-11-26 (Brian, video notes on beats 37 to 42)
+- **Every room has a night look.** Brian: "Make sure it's not just the hall dark at night, but all rooms are different at night versus daytime." Built as one rule in `src/modules/night-look.js`: at night a room shows its locked night picture where one exists (the loading bay), and otherwise its day picture under a dim blue night tint (the bedtime story's night colour), with windows, screens and lamps kept bright and the characters drawn lit over it. Every room shown in a night beat is tested for it (`tests/evening-physics.mjs`). The party night and the escape night should use the same helper. **Decided** (the rule); the tint's strength and the lit boxes are a PLACEHOLDER look, **Needs Brian's yes**.
+- **Robots always show their cones, and roll only through open floor.** From Brian's video notes: a robot never rolls across a doorway, through a wall or through furniture, and every robot, parked or rolling, shows its cone. **Decided.**
+- **Nobody walks over anyone or anything.** From Brian's video notes (Squatch walked over the sleeping Mops): every walk, scripted or the player's, goes round furniture, walkways and people. **Decided.**
+- **Mops's fainting-goat sleep sits on the floor.** From Brian's video notes: a shadow under him, his back on the floor, his head resting on his mop bucket, feet up. **Decided.**
+- **A cone reacts only once it has held him.** From Brian's video notes: a guard or robot reacts only after its drawn cone reaches him and stays about half a second (a "?" shows while it registers), never when the cone stops short; flashlight cones never vanish mid-search. **Decided** (0.5 s is `EVENING_PACE.robotSee`).
+- **Vents behave the same everywhere.** From Brian's video notes: the big wall vent shows swirl lines while it sucks; the floor-vent fur rule applies at night unless the vent is off. **Decided.**
+- **Long bubbles are split.** From Brian's video notes: a bubble over about 12 words is said as several bubbles, word for word, one at a time. **Decided.**
 ## Lunch sneak, 2026-11-26 (Brian's video notes and answers, round D)
 
 - **Walk through any open doorway.** Brian (#47): "yes, walk through any open doorway everywhere; closed doors keep OPEN · door. The doorway only counts when he walks into the opening itself." Built in the lunch sneak: the hallway doorway has no button (SNEAK · hallway retired); his feet inside its opening take him into the hallway. **Decided.**
@@ -154,6 +193,7 @@ Brian does not read the long files; he confirms assumptions by multiple choice i
 - **Dress-up: "Drag-on close-up".** A close-up of Squatch on a white background; the kid drags pieces on, more or less anywhere; the "Disguised enough" meter fills as pieces go on.
 - **Wookiee TV: "Full-screen story".** Cut away to full-screen story pictures, as walkthrough beat 20 says.
 - **Hangar robot (problem 3): "No close catch".** While the night robot looks away it cannot catch Squatch, however close; only its cone counts.
+- **Keypad: "We need the code for the office door, not the hangar"** (his own answer). v1 already puts the code (from the pink slip) on the office door, walkthrough beat 50; no hangar code. No change needed. (The code was 4723; since 2026-11-26 it is 169556, Brian, chat, above.)
 - **Keypad: "We need the code for the office door, not the hangar"** (his own answer). v1 already puts the code (4723, from the pink slip; 169556 since Brian's chat of 2026-11-26) on the office door, walkthrough beat 50; no hangar code. No change needed.
 - **Raising the alarm: "Ch 1 wall, later shout".** In Chapter 1 whoever sees Squatch runs to the FUR ALARM on the wall and pulls it, giving him time to hide; shouting for security is allowed in later chapters.
 - **Goal words: "Outline; words if stuck".** The next place or thing gets a soft outline (his settled rule, Squatchbot #1343 to #1345: "You just light up that entrance"). No goal line at first; if the kid does nothing useful for about 20 seconds, a short goal line fades in. This replaces v1's always-on goal bar.
@@ -777,6 +817,7 @@ These lines were added to the 2026-11-08 snapshot (now `docs/old/history/DECISIO
 - 2026-11-11 (playtest 6): "PUT ON · tourist disguise" turned the costume on in one frame, and the dress-up screen popped in the same way. Both now fade through black in about 0.4 seconds. No new words.
   **In this unmerged slice.**
 
+- 2026-11-11: R84. Chapter 1 beats 22–61 use the walkthrough defaults where a question was still open. Mops is in the hallway at lunch. The calendar shows delivery morning, and the PA still says the ship is here. A robot calls Isfred away because a crate is damaged in the mail room. Squatch posts the yellow copy, then a cutscene sends the pink sheet into the vent. He hides that pink slip in the Guardian Box after the office. On pickup day the Moon Pie crate is already loaded and is not in the scanner shot. The hallway door is the north end of the party hall's right wall. Mops walks him to the snack bar, then goes back to work, and Squatch walks home. He waits at the vent as the L2 ball. The office code on the pink slip is 4723, the same digits already drawn on the old keypad (superseded 2026-11-26: 169556, Brian, chat). The keepsake gives no points until Brian picks a number. Lunch guests use the night robot's cone (210, 0.42, 70) so no new sight number was invented. Joe's warm theme is still the generated stand-in. None of this is a yes to merge.
 - 2026-11-11: R84. Chapter 1 beats 22–61 use the walkthrough defaults where a question was still open. Mops is in the hallway at lunch. The calendar shows delivery morning, and the PA still says the ship is here. A robot calls Isfred away because a crate is damaged in the mail room. Squatch posts the yellow copy, then a cutscene sends the pink sheet into the vent. He hides that pink slip in the Guardian Box after the office. On pickup day the Moon Pie crate is already loaded and is not in the scanner shot. The hallway door is the north end of the party hall's right wall. Mops walks him to the snack bar, then goes back to work, and Squatch walks home. He waits at the vent as the L2 ball. The office code on the pink slip is 4723, the same digits already drawn on the old keypad (superseded 2026-11-26, Brian, chat: 169556). The keepsake gives no points until Brian picks a number. Lunch guests use the night robot's cone (210, 0.42, 70) so no new sight number was invented. Joe's warm theme is still the generated stand-in. None of this is a yes to merge.
   **Decided** as the build default. The words and the open questions stay pending for Brian. R67–R83 are already numbered in the 2026-11-10 planning record (the walkthrough and the decisions copy). This row does not reuse those numbers.
 

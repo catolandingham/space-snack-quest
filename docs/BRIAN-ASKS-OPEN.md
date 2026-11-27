@@ -3,27 +3,30 @@
 
 | Lines | Heading |
 | --- | --- |
-| 26–32 | # Brian's asks that are not in the game yet |
-| 33–42 | ## 1. Build next |
-| 43–61 | ## 2. Needs your eyes |
-| 62–65 | ## 3. Your instructions disagree |
-| 66–67 | ## 4. Everything else not built |
-| 68–81 | ### Morning and home |
-| 82–92 | ### Party |
-| 93–104 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
-| 105–108 | ### Party video notes and answers, 2026-11-24 (not built yet) |
-| 109–113 | ### Snacks and dress-up |
-| 114–126 | ### Day 2 and night |
-| 127–131 | ### Escape and later chapters |
-| 132–135 | ### Looks and lines |
-| 136–143 | ### Sound |
-| 144–147 | ### Words and rules |
-| 148–160 | ### How the bots work |
-| 161–168 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
-| 169–186 | ## 5. Merged, in a pull request, and being built |
-| 187–197 | ## 6. Corrections to the checkers |
+| 26–35 | # Brian's asks that are not in the game yet |
+| 36–45 | ## 1. Build next |
+| 46–64 | ## 2. Needs your eyes |
+| 65–68 | ## 3. Your instructions disagree |
+| 69–70 | ## 4. Everything else not built |
+| 71–85 | ### Morning and home |
+| 86–96 | ### Party |
+| 97–108 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
+| 109–112 | ### Party video notes and answers, 2026-11-24 (not built yet) |
+| 113–117 | ### Snacks and dress-up |
+| 118–127 | ### Day 2 and night |
+| 128–132 | ### Escape and later chapters |
+| 133–136 | ### Looks and lines |
+| 137–144 | ### Sound |
+| 145–148 | ### Words and rules |
+| 149–161 | ### How the bots work |
+| 162–169 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
+| 170–187 | ## 5. Merged, in a pull request, and being built |
+| 188–198 | ## 6. Corrections to the checkers |
 <!-- /section-index -->
 # Brian's asks that are not in the game yet
+
+> **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
+
 
 This page lists everything Brian asked for that is not in the game yet, checked against main on 2026-11-23 and against an independent review the same day.
 When an ask gets built, it leaves this page. Bots: read "Build next" before choosing work.
@@ -42,7 +45,7 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 
 ## 2. Needs your eyes
 
-- **The Moon Pie bedtime story (beat 21).** Brian 2026-11-25: the old crate story "is the bedtime story (beat 21) and gets the same sizing fix". Built on branch `feat/ch1-bedtime-story` (PR #89, draft, not merged) with the old captions (approved 2026-11-26, "keep the old crate story words") and his bedtime line (approved as written, #36); the mop bucket picture is on (his answer of 2026-11-26). His 2026-11-26 notes are built there too: Squatch asks "Tell me about when we first met?" (approved), Mops's "...Weeee-eenn-nnttt?", Joe's theme sung from his ask (#37), the Guardians picture with his approved line, the crate story's memory look (#38), the baby a furry ball in his mop bucket and two tourists peeking in before "Nothing to see here!" (video note 0:39), and falling asleep with a yawn, the tuck, Mops falling asleep beside the bed like a fainting goat (#33), the light going down and three snores. Waiting for his eyes. Open: the "?" over the tourists (suggested); the light goes down by itself as Mops settles (nobody turns it off); the new bucket is also drawn over the home room's painted bucket (his yes was said about the bedtime picture's bucket: confirm the room); the morning's beard-wringing close-up keeps its own bucket, not his new mop bucket (he approved that close-up separately): change it too?
+- **The bedtime crate story (beat 21).** Brian 2026-11-25: the old crate story "is the bedtime story (beat 21) and gets the same sizing fix". Built on branch `feat/ch1-bedtime-story` (PR #89, draft, not merged) with the old captions (approved 2026-11-26, "keep the old crate story words") and his bedtime line (approved as written, #36); the mop bucket picture is on (his answer of 2026-11-26). His 2026-11-26 notes are built there too: Squatch asks "Tell me about when we first met?" (approved), Mops's "...Weeee-eenn-nnttt?", Joe's theme sung from his ask (#37), the Guardians picture with his approved line, the crate story's memory look (#38), the baby a furry ball in his mop bucket and two tourists peeking in before "Nothing to see here!" (video note 0:39), and falling asleep with a yawn, the tuck, Mops falling asleep beside the bed like a fainting goat (#33), the light going down and three snores. Waiting for his eyes. Open: the "?" over the tourists (suggested); the light goes down by itself as Mops settles (nobody turns it off); the new bucket is also drawn over the home room's painted bucket (his yes was said about the bedtime picture's bucket: confirm the room); the morning's beard-wringing close-up keeps its own bucket, not his new mop bucket (he approved that close-up separately): change it too?
 - **The home morning (beats 22 to 24).** Built on branch `feat/ch1-day2-morning` (draft, not merged), including "Make the first gift obvious" ("that needs to be more obvious.", S 92): the rocket is the only thing outlined and glowing when he wakes. His 2026-11-26 notes are built there too: the box clearly bigger than the rocket (0:21), the first build's box view with the older notes and the crayon drawing (0:21), and his crayon Guardians in a thought bubble as he holds up the gift (0:30, the story hole; with Mops's Guardians line at bedtime). His answers of 2026-11-26 are built: the calendar optional, the box back in the closet, the note's words, MOPS on the bag, the two prompts approved. Placeholder drawings. Round D (his notes and answers of 2026-11-26) built there too: the PA wakes Mops, asleep by the bed since bedtime (#41, #33; the PA words are suggested, pick them), the note read when he picks up the rocket (0:24), bigger thought bubbles with a trail (0:11), no walking through the crate (0:18), the taller closet (0:20), walking to the bag first (0:30; the chip "Squatch: go to the bag by the door" needs your yes). Pick: the goal outline (options sheet A to E) and whether labels on the picture go (0:18, 0:20).
 - **Home room objects.** "the new version of the crate in the room is off, at least in the picture you showed." (G 597). Covers crate, bed, bucket, bedtime-story look, janitor facing. Walls and furniture merged today; check.
 - **The dance game.** A scrolling-arrow dance exists but you said it never worked. "The dance game, hopefully that can be done clean and simple. If not, forget it." (G 516). "the fur shows at the dance scene" (G 603) is unclear.
@@ -76,6 +79,7 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 - Package inspection announcement. "due to suspicious activity, we will be inspecting every package" (S 408).
 - The slip is the confirmation and mail-back form. "this is the confirmation form and also what you mail back to us if you want to order any more." (S 405).
 - UPS-replacing-Amazon joke. "Maybe there's kind of a funny nod, like UPS replacing Amazon" (S 408).
+- Reason Mops dismisses Mars, made obvious. "there's a reason why he thinks it's a waste of time to go to Mars." (S 1058).
 - Order signed in triplicate. "I like Paul signs the order, but it's in triplicate" (S 380).
 - Moon Pies delivered for a reason. "Actually make sure the moonpies get delivered and maybe there's a reason why ?" (K 156).
 
@@ -112,14 +116,11 @@ Brian watched the party video and answered every question the same evening (his 
 - Ball-hide in every room. "I like the idea he can do it to hide when he wants" (S 705).
 
 ### Day 2 and night
-- Photo gallery with five photos a visit, a crooked picture, movie-still gags. "each visit should by default just be like five photos maybe?" (S 853); "Darth Vader's pretty much near perfect, really no notes there" (S 985).
-- Gallery with arrows and an X always there. "arrows to sweep left or right, and then an X that's there at all times" (S 883).
+- The gallery's approved movie-scene pictures (the gallery itself is built, feat/ch1-evening, with stand-in pictures). "Darth Vader's pretty much near perfect, really no notes there" (S 985).
 - Janitor gets sucked out when robots land. "Is there a way where, like, the janitor can get sucked out when the robots land or something?" (S 223).
 - Squatch sneaks to the grate, music distracts robots. "we should have squatch sneak over to grate after distracting robots with music" (S 596).
-- Manager shakes the robots' hands. "The Guy Who Ordered Them Should Shake The Hands Of Dot Bob And Lou As They Leave" (P L103).
 - Foreshadow rolling into a ball. "Foreshadowing The Fact That You Can Roll Up Into A Ball" (P L182).
 - Ship cutscene, security cameras. "We got a call from The From Stormtop Uh Security cameras" (P L222).
-- Squatch shows the brochure. "Squatch Should Show Him The Brochure" (P L165).
 - Hurtful line, then "I didn't mean that". "He Should Say Something More Like Um I Wish You Would Have Left Me In That Crate Or Something" (P L176).
 - Loading-bay banishment shown, and the office rule issued. "It Should Actually Show Them Getting On The Ship At The Loading Bay" (P L50); "Then Show Him In Like The Office Issuing A New Rule On The Computer" (P L53).
 - Lobby crowd obvious. "I kind of think it should be obvious that they're coming in, it needs to be a change" (S 33).

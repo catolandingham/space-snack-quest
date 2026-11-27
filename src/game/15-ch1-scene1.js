@@ -21,7 +21,8 @@
         (n.ch1SiteRoom = ""),
         (n.ch1Office = !1),
         (n.ch1PartyNow = null),
-        (n.ch1Lunch = null),
+        (n.ch1Lunch = null), (n.ch1Bay = null),
+        (n.ch1Evening = null),
         (n.ch1Escape = null),
         (n.ch1Pickup = null),
         (n.ch1SureEnd = !1),
@@ -51,7 +52,7 @@
     function partyBeat() {
       return (window.SSQ && window.SSQ.beat && window.SSQ.beat("ch1-party")) || null;
     }
-    // The module that draws the hall now (the party night, or the lunch sneak), or null.
+    // The module that draws the room now (the party night or the lunch sneak in the hall, the loading bay), or null.
     function hallBeat() {
       return (window.SSQ && window.SSQ.hallOwner && window.SSQ.hallOwner()) || null;
     }
@@ -96,7 +97,7 @@
         tapWait: () => ({ k: "wait", t: 0 }),
         current: () =>
           n.cur
-            ? { k: n.cur.k, who: n.cur.b ? n.cur.b.who : "", style: n.cur.b ? n.cur.b.style : "", id: n.cur.id || "", panel: n.cur.panel, el: n.cur.el || 0, over: !!n.cur.over }
+            ? { k: n.cur.k, who: n.cur.b ? n.cur.b.who : "", text: n.cur.b ? n.cur.b.text : "", style: n.cur.b ? n.cur.b.style : "", id: n.cur.id || "", panel: n.cur.panel, el: n.cur.el || 0, over: !!n.cur.over }
             : null,
         // Steps that come in front of the one up now, which comes back after them (Brian 31a: Mops's line over
         // the close-up). An item with over: true is drawn over the picture up now.
@@ -186,8 +187,17 @@
         openCalendar: (next) => ch1OpenCalendar(next),
         takeLunch: () => ch1TakeLunch(),
         shipCall: () => ch1ShipCall(), // beat 28 after the lunch sneak (src/modules/lunch-sneak.js)
+        // The loading bay (src/modules/loading-bay.js): a locked room picture by the older program's name (it is then the
+        // one goal outlines trace), Dot, Bob and Lou as the room draws workers.
+        drawLocked: (ctx, id) => onCtx(ctx, () => drawLockedRoom(id)),
+        drawWorker: (ctx, x, y, name) => onCtx(ctx, () => u5({ x, y, name: name || "" })),
+        // Playing as Mops or Squatch (the one switch rule, announced with its card; `byLine` the card's line).
+        switchTo: (who, byLine) => ((SWITCH_WHY.__beat = byLine || ""), switchTo(who, byLine ? "__beat" : "")),
+        // The evening (src/modules/evening.js): the papers' record (ch1SetPaper), and beat 43 after night one.
+        paper: (p) => ch1SetPaper(p),
+        sixDays: () => ch1SixDays(),
         // The escape (src/modules/escape.js): the walk between rooms, beat 53 after it, the one capture rule's guard
-        // (and whether it is out), the robot drawing.
+        // (and whether it is out), the robot drawing (the evening's too).
         goTo: (dest, flags, next) => ch1GoDay(dest, flags, next),
         chapterEnd: () => ch1ChapterEnd(), // the end of Chapter 1, after pickup.js's beat 61
         // Who the stick drives (switchTo, announced by the card "You are MOPS now." when `why` is given), and who it is.
@@ -318,7 +328,7 @@
         }
         item.lines.forEach((line, i) => calendarText(line, x, y + 49 + (i - (item.lines.length - 1) / 2) * 22, 22));
       }
-      calendarText("Sponsored by MOON PIES", 360, 492, 25, "#8b5a3c", "center", 700);
+      calendarText("Sponsored by " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("NAME") : "SNACKS"), 360, 492, 25, "#8b5a3c", "center", 700);
       // A very enthusiastic red crayon circle, not an extra clue or a new delivery date.
       ctx.strokeStyle = "#e5533d";
       ctx.lineWidth = 3;

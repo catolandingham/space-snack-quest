@@ -9,7 +9,7 @@
       // The crawl vent is the grille under the speaker, on the right wall. The floor vent stays in the picture.
       CH1_VENT = { x: 820, y: 470 },
       CH1_ROBOT = { x: 480, y: 400 },
-      CH1_PLANT = { x: 125, y: 400 };
+      CH1_PLANT = { x: 295, y: 400 }; // a few steps along the wall from the doorway (locked bay pictures v3, Brian 2026-11-26)
     const CH1Q_CHIPS = {
       Q1: "",
       Q2: "Squatch: hide and watch",
@@ -46,7 +46,7 @@
           : ch1MorningSpots()
             ? ch1MorningSpots()
             : [];
-      let s = (spots || []).find((o) => o && o.verb && o.when !== !1);
+      let s = (spots || []).find((o) => o && (o.verb || o.walk) && o.when !== !1); // walk: a doorway walked through (evening.js)
       s && drawGoalMark(s);
     }
     // The morning module's spots (SING ALONG, TALK · Mops) while its song step has control, and home alone's
@@ -117,10 +117,10 @@
     const LOCKED_ROOMS = {
       hall: "docs/locked-rooms/hall-room-empty-v2.png",
       hallway: "docs/locked-rooms/hallway-room-empty-v6.png",
-      "delivery-day": "docs/locked-rooms/delivery-room-empty-day-v2.png",
-      "delivery-night": "docs/locked-rooms/delivery-room-empty-night-v2.png",
-      "delivery-noship": "docs/locked-rooms/delivery-room-empty-day-noship-v2.png",
-      "delivery-pickup": "docs/locked-rooms/delivery-room-empty-pickup-v3.png",
+      "delivery-day": "docs/locked-rooms/delivery-room-empty-day-v3.png",
+      "delivery-night": "docs/locked-rooms/delivery-room-empty-night-v3.png",
+      "delivery-noship": "docs/locked-rooms/delivery-room-empty-day-noship-v3.png",
+      "delivery-pickup": "docs/locked-rooms/delivery-room-empty-pickup-v4.png",
       "home-closed": "docs/locked-rooms/home-room-empty-closed-v6.png",
       "home-open": "docs/locked-rooms/home-room-empty-open-v6.png",
       office: "docs/locked-rooms/office-room-empty-v2.png",
@@ -140,13 +140,13 @@
     let lockedNow = "";
     function drawLockedRoom(id) {
       lockedNow = id;
-      let img = lockedImg[id];
+      let img = window.SSQ && window.SSQ.nightPicture ? window.SSQ.nightPicture(id, lockedImg[id]) : lockedImg[id]; // at night, the room's night look (src/modules/night-look.js)
       img && img.complete && img.naturalWidth ? e.drawImage(img, 0, 0, c, b) : ((e.fillStyle = "#e2e5ed"), e.fillRect(0, 0, c, b));
     }
     // Where Squatch's eyes show when he hides in a plant (Brian, C21: "The two eyes sit LOW, in the two
     // lower-front clumps" of leaves, small). One entry per plant in the locked pictures, in game positions.
     const CH1_PLANT_EYES = {
-      hangar: [[125, 308]], // loading bay plant
+      hangar: [[295, 308]], // loading bay plant (v3: right of the bin)
       hall: [
         [441, 486], // the plant in the middle of the hall
         [101, 318], // the plant by the back wall
@@ -433,43 +433,10 @@
         return (ch1Trail(), sqOk && moOk);
       });
     }
-    function ch1AtDelivery() {
-      ((n.scene = "Q2"),
-        (n.sqPose = "stand"),
-        J([
-          ch1Step("sq", CH1_PLANT.x, CH1_PLANT.y, 180),
-          N(() => {
-            ((n.sqPose = "hidden"), (n.sq.x = CH1_PLANT.x), (n.sq.y = CH1_PLANT.y));
-          }),
-          ch1Step("mo", 640, 500, 180),
-          v("official", "Mops, don't worry, you know how much we love you here. Even our visitors always love you."),
-          v("tourist", "Isfred Bar Neshuman! The dock needs you."),
-          v("ups", "Left one of the copies in the office. What do I do with the other two?"),
-          v("mops", "I'll take care of it."),
-          v("mops", "So futuristic and we still order on paper."),
-          N(() => {
-            ((n.ch1Prop = "delicious"), D.slurp());
-          }),
-          v("mops", "Delicious."),
-          N(() => {
-            n.ch1Prop = "gumble";
-          }),
-          v("mops", "Mmf mrrf!"),
-          v("sq", "You're gumbling! (goat mumbling)"),
-          N(() => {
-            n.ch1Prop = "bin";
-          }),
-          v("mops", "Ptoo!"),
-          v("mops", "We got to watch out for these robots."),
-          N(() => {
-            ((n.sqPose = "stand"), (n.ch1Prop = ""), ch1Go("hall", { scene: "Q3" }, ch1Snack));
-          }),
-        ]));
-    }
     function ch1Snack() {
       ((n.scene = "Q3"),
         J([
-          v("tourist", "I swear we had more Moon Pies... is that what they stole at lunch?", "say", !0),
+          v("tourist", "I swear we had more " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("name") : "snacks") + "... is that what they stole at lunch?", "say", !0),
           v("mops", "Quick, hide."),
           ch1Step("sq", ne.x, ne.y, 200),
           N(() => {
@@ -602,7 +569,7 @@
         ]));
     }
     function ch1Site() {
-      // The Moon Pie page is on the manager's computer in the hall (R46), never on the home TV.
+      // The snack's order page is on the manager's computer in the hall (R46), never on the home TV.
       ((n.scene = "Q7"),
         (n.room = "hall"),
         (n.ch1D = !1),
@@ -735,8 +702,7 @@
         (n.sq.x = 140),
         (n.sq.y = 540),
         (n.ctrl = !0),
-        (n.ch1LookT = 0),
-        n.ch1Day2 && ch1NightReset());
+        (n.ch1LookT = 0));
     }
     function drawGameBin(px, py) {
       (e.beginPath(),
@@ -755,7 +721,7 @@
     function drawCh1DayHall() {
       drawLockedRoom("hall");
       if (n.roomOnly) return;
-      luBeat() && luBeat().drawProps(e); // the crates and the plate of Moon Pies stay after the lunch sneak
+      luBeat() && luBeat().drawProps(e); // the crates and the plate of snack cakes stay after the lunch sneak
       n.scene === "Q3" && !(n.ch1Step === "family" || n.ch1Step === "gohome") && drawCh1Alien(640, 500, "hat", ALIEN_ADULT, 1);
       n.moPose !== "hidden" && n.mo.x > -50 && n.mo.x < 1100 && Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 });
       n.sqPose === "ball" && drawL2Ball(n.sq.x, n.sq.y - 16);
@@ -861,12 +827,6 @@
       n.sqPose === "hidden" && !n.ch1InCrate && ch1HideEyes();
       n.ch1InCrate && ga(830, 510);
       n.scene === "Q2" && Qt(700, 530, "#e8a87c", qtScale("hangar"), -1),
-      (n.ch1Crew === "day" || n.ch1Crew === "leave") &&
-        [
-          ["Dot", 250, 580],
-          ["Bob", 330, 565],
-          ["Lou", 410, 580],
-        ].forEach((w) => u5({ x: w[1] - (n.ch1Crew === "leave" ? (n.ch1Leave || 0) * 520 : 0), y: w[2], name: w[0] }));
       !night && n.ch1Ship && n.scene !== "Q9" && n.ch1BossX !== -1 && Qt(n.ch1BossX == null ? 560 : n.ch1BossX, 500, "#c9b6f2", qtScale("hangar"), 0.2);
       n.ch1Crew === "tease" && [360, 480, 600].forEach((px) => dq(px, 460, !1));
       night &&

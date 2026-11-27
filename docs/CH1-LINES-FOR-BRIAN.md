@@ -3,26 +3,134 @@
 
 | Lines | Heading |
 | --- | --- |
-| 23–26 | # Chapter 1 lines for Brian |
-| 27–36 | ## Home morning (beats 22 to 24), 2026-11-26 round D (branch feat/ch1-day2-morning, not merged) |
-| 37–49 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
-| 50–66 | ## Lunch sneak and Ganitor, 2026-11-26 (branch feat/ch1-lunch-sneak, not merged) |
-| 67–82 | ## Calendar revision, Nov 16 (PR 58, not live) |
-| 83–90 | ## Earlier chapter lines |
-| 91–105 | ## Goal chips |
-| 106–189 | ## What people say |
-| 190–203 | ## Words painted on things |
-| 204–227 | ## Buttons |
-| 228–314 | ## Day 2 onward (beats 22–61), pending |
-| 315–322 | ## Ball hiding |
-| 323–330 | ## Off-screen lines, for Brian (playtest 12) |
-| 331–340 | ## Homework desk, approved Nov 16 |
-| 341–379 | ## Questions still open |
-| 380–405 | ## Day 1 stand-ins, pending |
+| 25–31 | # Chapter 1 lines for Brian |
+| 32–134 | ## Loading bay (beats 28 to 36, and 36b), 2026-11-26 rebuild (branch feat/ch1-loading-bay, not merged) |
+| 135–144 | ## Home morning (beats 22 to 24), 2026-11-26 round D (branch feat/ch1-day2-morning, not merged) |
+| 145–157 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
+| 158–174 | ## Lunch sneak and Ganitor, 2026-11-26 (branch feat/ch1-lunch-sneak, not merged) |
+| 175–190 | ## Calendar revision, Nov 16 (PR 58, not live) |
+| 191–198 | ## Earlier chapter lines |
+| 199–213 | ## Goal chips |
+| 214–297 | ## What people say |
+| 298–309 | ## The snack's name (2026-11-26, question 86) |
+| 310–323 | ## Words painted on things |
+| 324–347 | ## Buttons |
+| 348–434 | ## Day 2 onward (beats 22–61), pending |
+| 435–442 | ## Ball hiding |
+| 443–450 | ## Off-screen lines, for Brian (playtest 12) |
+| 451–460 | ## Homework desk, approved Nov 16 |
+| 461–499 | ## Questions still open |
+| 500–525 | ## Day 1 stand-ins, pending |
 <!-- /section-index -->
 # Chapter 1 lines for Brian
 
+> **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
+
+
 The rebuilt morning (2026-11-23, draft PR, waking up to Mops leaving) has its own numbered sheet: `docs/MORNING-LINES-FOR-BRIAN.md`. Its words replace the Nov 14 morning lines below where they differ.
+
+## Loading bay (beats 28 to 36, and 36b), 2026-11-26 rebuild (branch feat/ch1-loading-bay, not merged)
+
+Every word is in `src/modules/loading-bay-lines.js`, word for word from the story pass of 2026-11-26. Every line marked NEW or CHANGED there waits for your yes as you watch. `tests/loading-bay.mjs` checks this table against the lines file.
+
+| Who | Line | Where | Status |
+| --- | --- | --- | --- |
+| The station speaker (ear) | Universal Postal Service ship arriving! | Beat 28 (KEEP) | Pending |
+| Squatch | The Stars Cakes ship! | Beat 28 (NEW) | Pending |
+| Squatch | A new kind from the Guardians! | Beat 28 (NEW) | Pending |
+| Squatch | Maybe it's the crate kind! | Beat 28 (NEW) | Pending |
+| Mops | Maybe. | Beat 28 (NEW) | Pending |
+| Mops | I better go see. | Beat 28 (CHANGED) | Pending |
+| Squatch | Can I come? I'll be really sneaky. | Beat 28 (CHANGED) | Pending |
+| Mops | Just this once. | Beat 28 (CHANGED) | Pending |
+| Mops | Hide when I say hide. | Beat 28 (CHANGED) | Pending |
+| Goal words | Squatch: follow Mops to the ship | Beat 29 (goal words, NEW) | Pending |
+| Mops | Later. The ship! | Beat 29 (NEW) | Pending |
+| Mops | Quick! The manager is coming! | Beat 29 (NEW) | Pending |
+| Mops | Hide! | Beat 29 (NEW) | Pending |
+| Goal words | Squatch: hide behind the cargo | Beat 29 (goal words, NEW) | Pending |
+| Button | ROLL · ball | Brian, chat 2026-11-26 (lunch); Beat 29 | Approved |
+| Isfred | Mmf mmf... mmf! | Beat 30 (NEW, muffled) | Pending |
+| The fur scanner arch | NO FUR. PROCEED. | Beat 30 (NEW) | Pending |
+| Goal words | Squatch: sneak to the plant | src/modules/party-lines.js (the party's sneak) | In the game already |
+| Button | HIDE · plant | src/game/14-ch1-day2.js before this change | In the game already |
+| The robot mailbox | Mail scanned. | Beat 30 (NEW) | Pending |
+| Isfred | I wasn't sure we needed these robots. | Beat 30 (CHANGED, Brian's Nov 8 line split) | Pending |
+| Isfred | But we keep getting fur in the vents. | Beat 30 (CHANGED) | Pending |
+| Isfred | I'm convinced now. | Beat 30 (CHANGED) | Pending |
+| Squatch (whisper) | Fur in the vents... that was me. | Beat 30 (NEW) | Pending |
+| Isfred | Dot. Bob. Lou. | Beat 30 (NEW) | Pending |
+| Isfred | Thank you for thirty years. | Beat 30 (NEW) | Pending |
+| Isfred | The robots will take it from here. | Beat 30 (NEW) | Pending |
+| Dot | Thirty years. Replaced by a toaster. | Beat 30 (NEW) | Pending |
+| Bob | Other way up, pal. | Beat 30 (NEW) | Pending |
+| The fur scanner arch | FUR. STOP. | Beat 30 (NEW) | Pending |
+| Lou | It's a HAT. | Beat 30 (NEW) | Pending |
+| Mops | Weee...? | Beat 30 (NEW) | Pending |
+| Isfred | Mops, don't worry. | Beat 31 (CHANGED) | Pending |
+| Isfred | You know how much we love you here. | Beat 31 (CHANGED) | Pending |
+| Isfred | Even our visitors love you. | Beat 31 (CHANGED) | Pending |
+| Mops | Weeee-eenn-nnttt! | Beat 31 (NEW) | Pending |
+| Goal words | Squatch: peek at the form | Beat 32 (goal words, NEW) | Pending |
+| Button | PEEK · form | Beat 32 (PEEK opens the close-up) | Pending |
+| A robot | Sign here. | Beat 32 (NEW) | Pending |
+| A robot | Tick the box to order more robots. | Beat 32 (NEW) | Pending |
+| Painted or written | ORDER MORE ROBOTS | Beat 32 (KEEP; the box is drawn) | Pending |
+| Isfred | Oh, I don't need this order form. | Beat 32 (CHANGED, Brian's Nov 8 words) | Pending |
+| Isfred | I wouldn't replace the Ganitor. | Beat 32 (CHANGED) | Pending |
+| Isfred | He's part of the attraction that brings all the tourists here. | Beat 32 (CHANGED) | Pending |
+| Isfred | Please put this in my office. | Beat 32 (NEW) | Pending |
+| Isfred | Oh, wait. | Beat 32 (NEW) | Pending |
+| Isfred | Here's the code to unlock the door. | Beat 32 (NEW) | Pending |
+| Dot | Isfred! We're leaving! | Beat 32 (NEW) | Pending |
+| Switch card | Mops takes care of the copies. | Beat 33 (the switch card's line, NEW) | Pending |
+| A robot | Left one of the copies in the office. What do I do with the other two? | Beat 33 (KEEP) | Pending |
+| Mops | I'll take care of it. | Beat 33 (KEEP) | Pending |
+| Goal words | Mops: take the copies | Beat 33 (goal words, NEW) | Pending |
+| Button | TAKE · copies | Beat 33 (NEW) | Pending |
+| Goal words | Mops: eat the copies | Beat 33 (goal words, NEW) | Pending |
+| Button | EAT · copies | Beat 33 (NEW) | Pending |
+| Mops | Delicious. | Beat 33 (KEEP) | Pending |
+| A robot | Unit 1: clean the office. | Beat 34 (NEW) | Pending |
+| A robot | Units 2 and 3: clean the great hall. | Beat 34 (NEW) | Pending |
+| A robot | CLEANING. | Beat 34 (NEW) | Pending |
+| Goal words | Mops: talk to Squatch | Beat 34 (goal words, NEW) | Pending |
+| Button | TALK · Squatch | Beat 34 (NEW) | Pending |
+| Mops (whisper) | Mee, Mwatch? Muffing moo mworry amout. | Beat 34 (CHANGED; whispered, mouth full) | Pending |
+| Squatch | You're gumbling! (goat mumbling) | Beat 34 (KEEP, approved; the bracket stays) | Approved |
+| Squatch | I can't understand you with paper in your mouth. | Beat 34 (NEW) | Pending |
+| Goal words | Mops: spit them out | Beat 35 (goal words, NEW) | Pending |
+| Button | SPIT · bin | Beat 35 (NEW) | Pending |
+| Mops | Ptoo! | Beat 35 (KEEP) | Pending |
+| Mops | See, Squatch? Nothing to worry about. | Beat 35 (NEW) | Pending |
+| Goal words | Mops: pick up the little box | Beat 35 (goal words, NEW) | Pending |
+| Button | PICK UP · box | Beat 35 (NEW; the home morning's PICK UP) | Pending |
+| Goal words | Mops: give Squatch the box | Beat 35 (goal words, NEW) | Pending |
+| Button | GIVE · box | Beat 35 (NEW) | Pending |
+| Mops | Mail for you. | Beat 35 (NEW) | Pending |
+| Painted or written | For S. A new kind. — The Guardians | Beat 35 (NEW, the tag) | Pending |
+| Squatch | They never forget. | Beat 35 (NEW) | Pending |
+| Mops | The robots are gone. Let's get you home. | Beat 35 (NEW) | Pending |
+| Mops | Stay close to me. | Beat 35 (NEW) | Pending |
+| Switch card | Squatch goes home with Mops. | Beat 35 (the switch card's line, NEW) | Pending |
+| Painted or written | EMPTY. FOR PICKUP. | Beat 30 (NEW, the empty crate's tag) | Pending |
+| Goal words | Squatch: go home with Mops | Beat 36 (goal words, NEW) | Pending |
+| A robot | What's that? | Beat 36 (NEW) | Pending |
+| Mops | Big hairball. | Beat 36 (NEW) | Pending |
+| A robot | Does not compute. | Beat 36 (NEW) | Pending |
+| Mops | We have to watch out for these robots. | Beat 36 (CHANGED) | Pending |
+| Squatch | What's the difference between fur and hair? | Beat 36 (KEEP, decided) | Decided |
+| Mops | Paperwork. | Beat 36 (KEEP, decided) | Decided |
+| The lockup card | A robot | builder's words for the lockup card (NEW) | Pending |
+| The lockup card | The manager | builder's words for the lockup card (NEW) | Pending |
+| The lockup card | A worker | builder's words for the lockup card (NEW) | Pending |
+| The lockup card | in the delivery room | builder's words for the lockup card (NEW) | Pending |
+| The lockup card | in the hallway | builder's words for the lockup card (NEW) | Pending |
+| Goal words | Squatch: get past the robots | Beat 36b (goal words, NEW) | Pending |
+| A robot | CLEANING. | Beat 36b (NEW) | Pending |
+| A robot | MOVE, GOAT. | Beat 36b (NEW) | Pending |
+| Mops | You missed a corner. | Beat 36b (NEW) | Pending |
+| A robot | CORNERS ARE NOT EFFICIENT. | Beat 36b (NEW) | Pending |
 
 ## Home morning (beats 22 to 24), 2026-11-26 round D (branch feat/ch1-day2-morning, not merged)
 
@@ -41,10 +149,10 @@ Every word of the bedtime story is in `src/modules/bedtime-story-lines.js`; thes
 | Who | Line | Status |
 | --- | --- | --- |
 | Squatch, in bed, before the story pictures | Tell me about when we first met? | Approved word for word, Brian 2026-11-26 (his video note 0:12) |
-| The old crate story's captions and bubbles, the MOON PIES badge, the "!" and "z z z" marks, the mop bucket picture's "Tourists were coming! Mops hid him in the mop bucket." and "Nothing to see here!" | (as in `bedtime-story-lines.js`) | Approved, Brian 2026-11-26 (keep the old crate story words; the fourth picture on) |
+| The old crate story's captions and bubbles (the crate caption renamed with the snack, question 86: "A delivery crate of Stars Cakes came to Stormtop."), the crate's stamp (now the family crate's worn "_ARS CAKES", no crayon yet: "The snack's name" below), the "!" and "z z z" marks, the mop bucket picture's "Tourists were coming! Mops hid him in the mop bucket." and "Nothing to see here!" | (as in `bedtime-story-lines.js`) | Approved, Brian 2026-11-26 (keep the old crate story words; the fourth picture on) |
 | Mops, in the story picture of the baby holding his beard | ...Weeee-eenn-nnttt? | Brian 2026-11-26 (video note 0:28, "Goats say "weeeent" not baaaah"); his approved goat spelling (`MORNING-LINES-FOR-BRIAN.md` row 13, DECISIONS R96). Replaces "...Baaa?" |
-| Mops, back in the room after the story pictures | You came to me in a Moon Pie crate. You've loved Moon Pies ever since. | Approved as written, Brian 2026-11-26 (#36) |
-| Mops, after "You came to me in a Moon Pie crate. You've loved Moon Pies ever since.", over the picture of Squatch's crayon drawing of the Guardians | And you've always had your Guardians, watching over you. | Approved, Brian 2026-11-26, chat 18b A |
+| Mops, back in the room after the story pictures | You came to me in a Stars Cakes crate. You've loved Stars Cakes ever since. | Approved as written, Brian 2026-11-26 (#36), with the old name; the words changed with the rename (question 86): needs your yes again |
+| Mops, after "You came to me in a Stars Cakes crate. You've loved Stars Cakes ever since.", over the picture of Squatch's crayon drawing of the Guardians | And you've always had your Guardians, watching over you. | Approved, Brian 2026-11-26, chat 18b A |
 | A mark over each of the two tourists peeking in at the door, in the wordless picture before "Nothing to see here!" (Brian 2026-11-26, video note 0:39: "Would we actually want people to walk in so we see that tourists are suspicious?") | ? | Suggested, needs Brian's yes (a mark, no words) |
 
 ## Lunch sneak and Ganitor, 2026-11-26 (branch feat/ch1-lunch-sneak, not merged)
@@ -70,13 +178,13 @@ Brian requested fake months, a calendar sponsor, "family Olympics night" and a f
 
 - Month heading: "MOONMUNCH"
 - Month beneath the heading: "FUZZUARY" (Brian's correction)
-- Sponsor: "Sponsored by MOON PIES"
+- Sponsor: "Sponsored by STARS CAKES"
 - Day 2: "Sock hunt"
 - Day 9: "family Olympics night" (Brian's requested words)
 - Day 12: "Wash outside windows (remember space suit!)" (Brian's requested replacement; text extends into the next blank cell)
 - Day 18: "Blanket fort night"
 
-No spoken lines added. These are decorative plans, not new story beats or a change to the day-two delivery sequence. The circled Moon Pie stays in its existing grid position.
+No spoken lines added. These are decorative plans, not new story beats or a change to the day-two delivery sequence. The circled Stars Cakes stays in its existing grid position.
 
 Brian removed the calendar's Homework and Sing with Mops reminders on Nov 16; this does not cancel the desk-homework transition after Mops leaves. Earlier month-strip copy is superseded.
 
@@ -86,7 +194,7 @@ These are the new words in the redesigned Chapter 1. Each one is in the game now
 
 2026-11-13, 4:10 AM ET. Brian approved Mops's Mars gate lines. They are Chapter 4, rows 19.19 and 19.20 in `docs/PHASE-3-LINES-FOR-BRIAN.md`. After "WOOKIE?!", Mops says "He's with me." After "...Do you need help?", Mops says "No thanks. We're getting my goat."
 
-Words the game already had, and the one you already approved, are not in this list: "Stormtop Cloud Resort, floating above Jupiter.", "This is Squatch. He's a Sasquatch.", "My lunch! You're the best.", "You're gumbling! (goat mumbling)", "More bleat. Less roar.", "HAIR... PROBABLY. PROCEED.", "Brave Sasquatches stay hidden.", "— The Guardians", and the room labels STAY IN HERE, DELIVERY, MOON PIES, FRAGILE, G, UPS, DOT, BOB, LOU.
+Words the game already had, and the one you already approved, are not in this list: "Stormtop Cloud Resort, floating above Jupiter.", "This is Squatch. He's a Sasquatch.", "My lunch! You're the best.", "You're gumbling! (goat mumbling)", "More bleat. Less roar.", "HAIR... PROBABLY. PROCEED.", "Brave Sasquatches stay hidden.", "— The Guardians", and the room labels STAY IN HERE, DELIVERY, STARS CAKES, FRAGILE, G, UPS, DOT, BOB, LOU.
 
 ## Goal chips
 
@@ -98,7 +206,7 @@ Words the game already had, and the one you already approved, are not in this li
 | 4 | Night, the yellow copy is still in the bin | Squatch: get the yellow copy to the mailbox | Squatch: mail the yellow copy |
 | 5 | Escape night, outside the vent | Squatch: roll into a ball by the vent | Squatch: ball up under the vent |
 | 6 | Mops comes out with the pink slip | Squatch: grab the pink slip | Squatch: take the pink slip |
-| 7 | The Moon Pie page is on the manager's office computer | Squatch: return the empty crate | Squatch: send the empty crate |
+| 7 | The Stars Cakes page is on the manager's office computer | Squatch: return the empty crate | Squatch: send the empty crate |
 | 8 | The wardrobe is open at home | Squatch: put on the spare jacket | Squatch: put on the spare blue jacket |
 | 9 | The scanner is on | Squatch: walk through the scanner | Squatch: board the ship |
 | 70 | At the party | Squatch: look around the party | NEEDS BRIAN |
@@ -120,7 +228,7 @@ Words the game already had, and the one you already approved, are not in this li
 | 20 | Mops, mouth full | Mmf mrrf! | |
 | 21 | Mops | Ptoo! | |
 | 22 | Mops, walking home | We got to watch out for these robots. | |
-| 23 | A tourist, by the snacks | I swear we had more Moon Pies... is that what they stole at lunch? | Your words from 4:14. |
+| 23 | A tourist, by the snacks | I swear we had more Stars Cakes... is that what they stole at lunch? | Your words from 4:14. |
 | 24 | Mops | Quick, hide. | |
 | 25 | Mops, at home | Didn't you hear what Isfred Bar Neshuman said? They need me here, they're not going to replace me. Plus the Guardians are here. | Your words from 4:14, with his name. |
 | 26 | Mops | I need to get back to work, we'll talk about it tonight. | Your words from 4:14. |
@@ -187,6 +295,18 @@ Words the game already had, and the one you already approved, are not in this li
 | 42 | The PA, on the trip | The base called the ship. It has to stop. | |
 | 43 | A card | Six days later | The week is decided. These are the words on the card. |
 
+## The snack's name (2026-11-26, question 86)
+
+The station's snack is Stars Cakes everywhere (Brian, 2026-11-26, question 86). The crate words live in `src/modules/snack-name.js` (SNACK_LINES).
+
+| Where | Words | Status |
+| --- | --- | --- |
+| The station's crates (a blue star, thin blue letters) | STARS CAKES | approved (question 86) |
+| The snack tin painted on the party hall's snack bar (a new lid, layered over the locked picture) | Stars Cakes | approved (question 86); the layer needs your yes |
+| Squatch's crate bed, his family's crate, worn, the first letter scraped off | _ARS CAKES | approved (Brian's notes, 2026-11-26) |
+| His crayon in the scraped gap | ST | NEW, needs your yes |
+| Mops, bedtime picture | You came to me in a Stars Cakes crate. You've loved Stars Cakes ever since. | words changed by the rename: needs your yes again |
+
 ## Words painted on things
 
 | # | Where | In the game now | Another way to say it |
@@ -198,8 +318,8 @@ Words the game already had, and the one you already approved, are not in this li
 | 48 | A planet label | MARS | |
 | 49 | The stamp on the Mars letter | NO | |
 | 50 | The bin in the vent | TOYS | |
-| 51 | The manager's computer, the Moon Pie page | Order new box | |
-| 52 | The Moon Pie page, the one Squatch presses | Return empty crate | |
+| 51 | The manager's computer, the Stars Cakes page | Order new box | |
+| 52 | The Stars Cakes page, the one Squatch presses | Return empty crate | |
 
 ## Buttons
 
@@ -363,7 +483,7 @@ Approved. Built 2026-11-23 on branch `feat/home-alone` (draft): every home-alone
 
 6. After Squatch grabs the pink slip, the game does not yet show it riding inside the Guardian Box all the way to Mars.
 
-7. The snack stand still does not bring up the pancake brochure (the rest of that beat), and Squatch does not yet take all the snacks or leave food for the Guardians. The Moon Pie line and "Quick, hide." are in.
+7. The snack stand still does not bring up the pancake brochure (the rest of that beat), and Squatch does not yet take all the snacks or leave food for the Guardians. The Stars Cakes line and "Quick, hide." are in.
 
 The office computer is decided (R46). The code on the pink slip opens the manager's computer in the hall. Order new box and Return empty crate are on that screen. They are never on the home TV.
 
@@ -387,11 +507,11 @@ These are on screen in this unmerged slice so the day can be played. NEEDS BRIAN
 | 87 | Mops, answer | You have me. |
 | 88 | TV picture | Fur in the scrubber. |
 | 89 | TV picture | Onto the ship. |
-| 90 | Mops, bedtime picture (approved as written, Brian 2026-11-26, #36; see the bedtime story section) | You came to me in a Moon Pie crate. You've loved Moon Pies ever since. |
+| 90 | Mops, bedtime picture (approved as written, Brian 2026-11-26, #36; words changed by the rename the same day, question 86: needs your yes again; see the bedtime story section) | You came to me in a Stars Cakes crate. You've loved Stars Cakes ever since. |
 | 91 | Squatch, when the octopus comes | I gotta juke this fool. |
 | 92 | Octopus | *hic* Fellow tourist! |
 | 93 | Camera tourist | Say cheese! |
-| 94 | Karaoke screen | Ay-ay-ay-ay, I love my Moon Pies! |
+| 94 | Karaoke screen | Ay-ay-ay-ay, I love my Stars Cakes! |
 | 95 | Karaoke screen | Round and chocolate-y, sweet as the starry skies! |
 | 96 | Karaoke button | Sing |
 

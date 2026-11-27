@@ -33,7 +33,19 @@ export const VOICES = Object.freeze({
   speaker: Object.freeze({ f: 220, bright: 1.4, set: "male_standard", rate: 1.02 }), // the wall speaker at home
   pa: Object.freeze({ f: 220, bright: 1.4, set: "male_standard", rate: 1.02 }), // the party hall's wall speaker
   mops: Object.freeze({ own: "meh" }),
-  robot: Object.freeze({ own: "bleep" }), // the robots' bleep-bloop, played by the older program (00-core.js D.bleep)
+  // the loading bay (loading-bay-lines.js): the robots, the fur scanner arch and the robot mailbox in the robot set;
+  // the three leaving workers (Dot, Bob, Lou) each a little different
+  robot: Object.freeze({ f: 262, bright: 1.2, set: "robot", rate: 1 }),
+  scanner: Object.freeze({ f: 220, bright: 1.3, set: "robot", rate: 0.9 }),
+  ups: Object.freeze({ f: 294, bright: 1.3, set: "robot", rate: 1.1 }),
+  dot: Object.freeze({ f: 233, bright: 1, set: "female_standard", rate: 0.95 }),
+  bob: Object.freeze({ f: 147, bright: 0.9, set: "male_deep", rate: 1 }),
+  lou: Object.freeze({ f: 185, bright: 1, set: "male_standard", rate: 1.05 }),
+  // the evening of Day 2 (evening.js) uses the same station robots and robot mailbox; the family and the guest at the storm
+  dad: Object.freeze({ f: 160, bright: 1, set: "male_standard", rate: 1.04 }),
+  mom: Object.freeze({ f: 233, bright: 1.05, set: "female_standard", rate: 1 }),
+  kid: Object.freeze({ f: 300, bright: 1.15, set: "female_light", rate: 1.15 }),
+  guest: Object.freeze({ f: 210, bright: 1, set: "female_light", rate: 1 }),
 });
 /** The party's guests (party.js `talker`, the one saying a "tourist" line): each one's set and pitch. */
 export const GUEST_VOICES = Object.freeze({

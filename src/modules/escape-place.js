@@ -1,15 +1,16 @@
 /**
  * Where things are and how long things take in the escape (Chapter 1, beats 43 to 52). Game positions are the 960 x 640
  * picture, read off the locked room pictures (docs/locked-rooms/: the picture is 1280 x 830, so x * 0.75 and y * 0.771).
- * Every number here is a PLACEHOLDER for Brian to see in play, except the office code: 169556 (Brian, chat, 2026-11-26:
- * six digits, replacing the old 4723), for the office door only (Brian 2026-11-22: "We need the code for the office
- * door, not the hangar").
+ * Every number here is a PLACEHOLDER for Brian to see in play. The office code is office-code.js's (one place for
+ * beats 32, 42b and 50), passed on here for the escape's keypad.
  */
-export const OFFICE_CODE = "169556";
+import { nightPictureFor } from "./night-look.js";
+export { OFFICE_CODE } from "./office-code.js";
 
-// The loading bay pictures the escape draws (the older program's LOCKED_ROOMS names the same files).
-export const BAY_DAY = "docs/locked-rooms/delivery-room-empty-day-noship-v2.png";
-export const BAY_NIGHT = "docs/locked-rooms/delivery-room-empty-night-v2.png";
+// The loading bay pictures the escape draws (the older program's LOCKED_ROOMS names the same files: the locked bay
+// pictures v3, the plant moved along the wall; the night one is night-look.js's, the bay's night look).
+export const BAY_DAY = "docs/locked-rooms/delivery-room-empty-day-noship-v3.png";
+export const BAY_NIGHT = nightPictureFor("hangar");
 
 // Home (home-room-empty-*-v6): Squatch by the bed's foot, Mops comes in through the door on the right. The pancake
 // brochure (beat 38) is pinned on the wall above the bed, where Mops's bubble never covers it.
@@ -17,28 +18,27 @@ export const ES_HOME = Object.freeze({
   sq: Object.freeze({ x: 380, y: 556 }),
   door: Object.freeze({ x: 905, y: 470 }),
   mops: Object.freeze({ x: 700, y: 536 }),
-  brochure: Object.freeze({ x0: 226, y0: 140, x1: 316, y1: 226 }), // above the bed, clear of Mops's bubble on the right
+  brochure: Object.freeze({ x0: 236, y0: 132, x1: 306, y1: 228 }), // above the bed, clear of Mops's bubble on the right (the evening's brochure, its shape: 220 by 300)
   closet: Object.freeze({ x: 300, y: 398 }), // where he stands at the wardrobe (home-morning.js HOME_MORNING_SPOTS.closet)
   bedFoot: Object.freeze({ x: 330, y: 560 }),
   wardrobe: Object.freeze({ x0: 30, x1: 172, y0: 188, y1: 352 }), // the wardrobe in the locked home picture (its outline traces it)
   bed: Object.freeze({ x: 205, y: 470 }), // lying in bed (the room draws him there: sqPose "sleep")
   mopsNight: Object.freeze({ x: 640, y: 470 }), // Mops at the end of the day, by the TV, his back to the closet
-  // 45a, 45b (the rebuild of 2026-11-26 night): his crate bed (the locked picture's crate, x 83-286), its stamp (over the
-  // picture's own label: picture x 198-295, y 583-605), where Mops stands to touch it; the calendar; the brochure held up
+  // 45a, 45b (the rebuild of 2026-11-26 night): his crate bed (the locked picture's crate, x 83-286), its stamp (the
+  // home picture's layer, crate-stamp.js), where Mops stands to touch it; the calendar; the brochure held up
   crate: Object.freeze({ x0: 84, y0: 396, x1: 286, y1: 530 }),
-  crateStamp: Object.freeze({ x0: 146, y0: 448, x1: 224, y1: 468 }),
   crateAt: Object.freeze({ x: 330, y: 500 }),
   stamp: Object.freeze({ x: 300, y: 556 }),
   calendar: Object.freeze({ x0: 99, y0: 196, x1: 167, y1: 279 }),
   calAt: Object.freeze({ x: 230, y: 392 }),
-  brochureUp: Object.freeze({ x0: 330, y0: 120, x1: 630, y1: 380 }),
+  brochureUp: Object.freeze({ x0: 385, y0: 90, x1: 575, y1: 349 }), // (the evening's brochure, its shape)
 });
 // The wardrobe and the Guardian Box in it (home-morning-art.js MORNING_THINGS.boxIn) are read from there.
 
 // The loading bay. The big wall vent (the grille under the speaker, right wall): picture x 1070-1200, y 237-332. Its things
 // are solid (bay-watch.js BAY_SOLIDS: the walkway, the plant, the bin, the mail room's walls); every walk here is a
 // list of corners that goes round them (tests/escape.mjs walks each one).
-export const BAY = Object.freeze({
+export const ES_BAY = Object.freeze({
   vent: Object.freeze({ x0: 802, y0: 183, x1: 900, y1: 256 }),
   // where he rolls up: on the floor in front of the vent's wall, clear of the wall's foot (y 254) and of the mail room's
   // wall in front (y 359), with a shadow under him (Brian 2026-11-26, escape 0:47: not looking inside the wall)
@@ -50,7 +50,7 @@ export const BAY = Object.freeze({
   // right it looks up at the vent, going left the way it goes
   patrol: Object.freeze({ x0: 250, x1: 630, y: 452, speed: 42 }),
   furAlarm: Object.freeze({ x: 81, y: 153 }), // the FUR alarm on the left wall (picture x 92-126, y 178-218)
-  toAlarm: Object.freeze([Object.freeze({ x: 52, y: 452 }), Object.freeze({ x: 52, y: 330 })]), // under the FUR alarm, left of the plant
+  toAlarm: Object.freeze([Object.freeze({ x: 52, y: 452 }), Object.freeze({ x: 52, y: 330 })]), // under the FUR alarm, left of the bin
   toDock: Object.freeze([Object.freeze({ x: 640, y: 462 }), Object.freeze({ x: 760, y: 462 }), Object.freeze({ x: 790, y: 560 })]), // in through the mail room's opening
 });
 
@@ -82,7 +82,7 @@ export const VENT_ROOM = Object.freeze({
 });
 
 // The hallway at night (hallway-room-empty-v6): the office door on the front wall and its keypad, right of it.
-export const HALLWAY = Object.freeze({
+export const ES_HALLWAY = Object.freeze({
   door: Object.freeze({ x0: 433, y0: 487, x1: 529, y1: 609 }),
   keypad: Object.freeze({ x0: 543, y0: 567, x1: 569, y1: 601 }),
   sq: Object.freeze({ x: 630, y: 548 }),
@@ -136,7 +136,7 @@ export const OFFICE = Object.freeze({
 });
 // The way from the bay to the office door (50): the hallway, where the keypad is.
 export const ROUTE_OFFICE = Object.freeze({ hangar: "passage" });
-// The Moon Pie site close-up (over the blurred office): the screen, its header and two buttons.
+// The snack site close-up (over the blurred office): the screen, its header and two buttons.
 export const SITE = Object.freeze({
   screen: Object.freeze({ x0: 110, y0: 40, x1: 850, y1: 600 }),
   order: Object.freeze({ x0: 200, y0: 210, x1: 760, y1: 290 }),
@@ -172,16 +172,6 @@ export const SNACKS = Object.freeze({
   forBag: 4, // snacks into his bag before he thinks of the Guardians; the rest go on their plate
   carry: 0.45,
   rest: Object.freeze({ x: 470, y: 600 }),
-});
-
-// What gives light at night in each room (night-look.js keeps these bright under the night tint): the office's screen,
-// the hall's big window, the desk lamp's light in the vent.
-export const NIGHT_LIT = Object.freeze({
-  office: Object.freeze([Object.freeze({ x0: 672, y0: 309, x1: 798, y1: 404 })]),
-  hall: Object.freeze([Object.freeze({ x0: 20, y0: 70, x1: 610, y1: 225 })]),
-  duct: Object.freeze([Object.freeze({ x0: 600, y0: 300, x1: 920, y1: 440, round: true })]),
-  passage: Object.freeze([]),
-  closet: Object.freeze([]),
 });
 
 // Timing (seconds) and walking speeds (game pixels a second).

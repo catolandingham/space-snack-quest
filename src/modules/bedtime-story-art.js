@@ -1,10 +1,10 @@
 /**
- * The bedtime story's pictures (Chapter 1, beat 21: why Moon Pies), full screen, in the old story pictures' look
+ * The bedtime story's pictures (Chapter 1, beat 21: why he loves the station's snack), full screen, in the old story pictures' look
  * (since 2026-11-26 in a memory look of their own, MEMORY_LOOK below: Brian, #38, "soft cloud-shaped edges and a warm
  * old-photo tint"). Brian, 2026-11-25: the old crate story
  * from commit 71ec66e "is the bedtime story (beat 21) and gets the same sizing fix" ("Look at how small mops and
  * squatch are versus box."). The old pictures, by name and in order:
- *   crate   a delivery crate of Moon Pies, three Moon Pies on its lid
+ *   crate   a delivery crate of the snack, three cakes on its lid
  *   baby    the crate open, a sleeping baby Sasquatch in it covered in crumbs, Mops beside it with a "!"
  *   beard   the baby out of the crate, holding Mops's beard and giggling
  *   weent   the same picture, Mops's "...Weeee-eenn-nnttt?" in a bubble over him (one bubble, no caption: the TV
@@ -21,10 +21,10 @@
  * Sizes: everything is drawn as the home room draws it, 1.6 times bigger (BED_STORY.k). Mops is the room's Mops (the
  * engine's own drawing, the approved one: a goat whose beard is his mop, down to the floor; no mop prop). The crate is
  * the crate bed of the locked home room (docs/locked-rooms/home_room.py draw_bed_crate: the same planks, cross braces,
- * grey corner posts, Moon Pie badge and short legs), without the bed's purple pillow, since it was not a bed yet. So
+ * grey corner posts, stamp and short legs), without the bed's purple pillow, since it was not a bed yet. So
  * Mops stands against the crate exactly as he does in the room. Baby Squatch is BED_STORY.baby of a grown Squatch.
  * The old pictures had the characters far smaller than the crate (a crate 80 units wide, Mops about 30).
- * Drawn here, new, for Brian's yes: the crate's shape in a picture, the Moon Pies on the lid, the lid leaning on the
+ * Drawn here, new, for Brian's yes: the crate's shape in a picture, the cakes on the lid, the lid leaning on the
  * crate, the crumbs, the baby's pose and the bucket picture.
  */
 import { placeThought } from "./thought-place.js";
@@ -33,6 +33,7 @@ import { MOP_BUCKET, drawMopBucketBack, drawMopBucketFront } from "./mop-bucket.
 import { createGuestArt } from "./guests.js";
 import { drawSquatchArt, armEnds } from "./squatch-art.js";
 import { bedLine, BEDTIME_SWITCHES } from "./bedtime-story-lines.js";
+import { CRATE_BED, drawFamilyStamp } from "./crate-stamp.js";
 import { drawGuardiansCrayon } from "./guardians-drawing.js";
 
 const INK = "#1e2430";
@@ -88,9 +89,9 @@ function seg(ctx, x0, y0, x1, y1, color, width) {
 const disc = (ctx, x, y, r) => (ctx.beginPath(), ctx.arc(x, y, r, 0, Math.PI * 2));
 
 /**
- * The Moon Pie crate, as the home room's crate bed is drawn (home_room.py draw_bed_crate and its Moon Pie badge),
- * with its middle at `cx` and its legs on `bottom`, `u` canvas pixels to a unit. `words`: the badge says MOON PIES
- * (left out in the little crate of the thought bubble, which has no words). Returns its box.
+ * The crate, as the home room's crate bed is drawn (home_room.py draw_bed_crate), with its middle at `cx` and its
+ * legs on `bottom`, `u` canvas pixels to a unit. `words`: the family crate's worn stamp (crate-stamp.js; left out in
+ * the little crate of the thought bubble, which has no words). Returns its box.
  */
 export function drawCrate(ctx, cx, bottom, u, { words = true } = {}) {
   const w = CRATE.w * u,
@@ -108,34 +109,17 @@ export function drawCrate(ctx, cx, bottom, u, { words = true } = {}) {
   seg(ctx, x0 + 7 * u, y0 + 7 * u, x0 + w - 7 * u, y0 + h - 7 * u, BRACE, 2.2 * s);
   seg(ctx, x0 + 7 * u, y0 + h - 7 * u, x0 + w - 7 * u, y0 + 7 * u, BRACE, 2.2 * s);
   for (const px of [x0, x0 + w - 12 * u]) (ctx.beginPath(), ctx.rect(px, y0, 12 * u, h), paint(ctx, POST, 1.5 * s, DARK));
-  // the Moon Pie badge: a navy pill with a Moon Pie on the left, a little yellow moon on the right
-  const bx = cx,
-    by = y0 + h * 0.42,
-    bs = 0.55 * u,
-    bw = 124 * bs,
-    bh = 30 * bs;
-  round(ctx, bx - bw / 2, by - bh / 2, bw, bh, 15 * bs);
-  paint(ctx, "#2b3a67", 2.2 * s, DARK);
-  disc(ctx, bx - 47 * bs, by, 10 * bs);
-  paint(ctx, "#8b5a3c", 1.5 * s, DARK);
-  ctx.beginPath();
-  ctx.arc(bx - 47 * bs, by, 9 * bs, -0.7, 2.4);
-  ctx.strokeStyle = "#fff3d6";
-  ctx.lineWidth = 1.8 * s;
-  ctx.stroke();
-  disc(ctx, bx + 50 * bs, by - 3 * bs, 6 * bs);
-  paint(ctx, "#f4c430", 1.5 * s, DARK);
-  disc(ctx, bx + 53 * bs, by - 5 * bs, 5 * bs);
-  paint(ctx, "#2b3a67", 0);
-  // The badge's words are painted on, as in the locked picture (drawn straight, at the badge's own size: the
-  // game's text would grow them past the badge on a phone).
+  // The stamp, as the crate arrived (Brian 2026-11-26, question 86, and the family-crate spec): his family's crate,
+  // fat red letters, worn, the first letter scraped off, and no crayon yet (he was a baby). The same stamp as his crate
+  // bed in the room (crate-stamp.js), moved and scaled from the room picture's crate onto this one.
   if (words) {
+    const F = CRATE_BED.front,
+      k = w / (F.x1 - F.x0);
     ctx.save();
-    ctx.font = `800 ${Math.round(14 * bs)}px Nunito, system-ui, sans-serif`;
-    ctx.fillStyle = "#f4c430";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(bedLine("sign-moon-pies"), bx + 1 * bs, by + 1 * bs);
+    ctx.translate(x0, y0);
+    ctx.scale(k, k);
+    ctx.translate(-F.x0, -F.y0);
+    drawFamilyStamp(ctx, { paintOut: false, crayon: false, note: false });
     ctx.restore();
   }
   return { x0, y0, x1: x0 + w, y1: bottom, top: y0 };
@@ -148,8 +132,8 @@ function shadow(ctx, cx, w) {
   ctx.fillStyle = "rgba(30,36,48,.15)";
   ctx.fill();
 }
-// A Moon Pie: a round brown cookie with a pale rim, sitting on `y`.
-function moonPie(ctx, x, y, r) {
+// One of the cakes on the crate's lid: a round brown cake with a pale rim, sitting on `y`.
+function cakeOnLid(ctx, x, y, r) {
   disc(ctx, x, y - r, r);
   paint(ctx, "#8b5a3c", 3, INK);
   ctx.beginPath();
@@ -263,7 +247,7 @@ const CRATE_AT = { solo: 480, baby: 625, beard: 765 };
 function crateScene(ctx) {
   shadow(ctx, CRATE_AT.solo, CRATE.w * U + 30);
   const c = drawCrate(ctx, CRATE_AT.solo, BED_STORY.floor, U);
-  for (const dx of [-80, 0, 80]) moonPie(ctx, CRATE_AT.solo + dx, c.top + 2, 30);
+  for (const dx of [-80, 0, 80]) cakeOnLid(ctx, CRATE_AT.solo + dx, c.top + 2, 30);
   return { cast: [] };
 }
 function babyScene(ctx, engine, t) {
@@ -527,7 +511,7 @@ function guardiansPicture(ctx, t, engine) {
 export const GUARDIANS_PANELS = Object.freeze([(ctx, t, engine) => guardiansPicture(ctx, t, engine)]);
 
 /**
- * The thought bubble over Squatch's head in the room, with a little Moon Pie crate in it and no words. `head` is
+ * The thought bubble over Squatch's head in the room, with a little crate in it and no words. `head` is
  * the top of his head (canvas). Returns its box. `a` fades it in (0 to 1). `inside(ctx, cx, cy)` draws something else
  * in it instead of the crate (the home morning's Guardian Box and crayon drawing, home-morning-art.js); `size` ({ w, h })
  * makes the cloud bigger than its usual 172 x 118.
@@ -568,7 +552,7 @@ export function drawThought(ctx, head, a = 1, inside = null, size = null) {
     ctx.ellipse(bx + (tail.x - bx) * k, by + (tail.y - by) * k, r * 1.3, r, 0, 0, Math.PI * 2);
     paint(ctx, "#ffffff", 3, INK);
   }
-  // the little Moon Pie crate (his bed, before it was a bed), with no words
+  // the little crate (his bed, before it was a bed), with no words
   const u = 0.4;
   inside ? inside(ctx, cx, cy) : drawCrate(ctx, cx, cy + ((CRATE.body + CRATE.legs) * u) / 2, u, { words: false });
   ctx.restore();

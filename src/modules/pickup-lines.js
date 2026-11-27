@@ -12,9 +12,11 @@
  *   status  "pending" (waiting for Brian's yes), "in-game" (shown before), "approved" (his yes), "new" (needs his yes)
  *   source  where the words came from
  *   q       the story pass question the line hangs on (pick A built as a placeholder until Brian answers), if any
- * The Stars Cakes names come from stars-cakes.js (one place for the rename).
+ * The snack's name comes from snack-name.js, the crate tag from loading-bay-lines.js and the weekly tag from escape-lines.js (one place each).
  */
-import { STARS_CAKES } from "./stars-cakes.js";
+import { SNACK } from "./snack-name.js";
+import { bayWords } from "./loading-bay-lines.js";
+import { escapeWords } from "./escape-lines.js";
 
 const PK_WALK = "docs/CH1-STORY-WALKTHROUGH.md beat ";
 const PK_SP = (beat, mark) => `story pass 53-61 (2026-11-26), beat ${beat} (${mark})`;
@@ -51,7 +53,7 @@ export const PICKUP_LINES = Object.freeze(
     pkLine("pa-ship", "pa", "Universal Postal Service ship arriving!", "pending", PK_SP(53, "KEEP: the Day 2 words, used again; ear icon")),
     pkNew("chip-label", "chip", "Squatch: put the label on the crate", 53),
     pkPend("button-label", "button", "PUT ON · label", 53, "the button the pass names"),
-    pkLine("label", "paper", STARS_CAKES.pickup, "pending", PK_SP(53, "the same tag the player saw on last week's crate")),
+    pkLine("label", "paper", bayWords("crate-empty"), "pending", PK_SP(53, "the same tag the player saw on last week's crate (loading-bay-lines.js crate-empty, beat 30)")),
     pkNew("chip-get-in", "chip", "Squatch: get in the crate", 53),
     pkPend("button-get-in", "button", "GET IN · crate", 53, "the button the pass names"),
     pkPend("mops-in", "mops", "In you go.", 53, "NEW"),
@@ -62,7 +64,7 @@ export const PICKUP_LINES = Object.freeze(
     pkPend("crate-oof", "sq", "Oof!", 53, "NEW, the crate on a bump"),
     pkLine("mops-weent", "mops", "Weeee-eenn-nnttt!", "pending", PK_SP(53, "KEEP: his bleat, covering")),
     pkLine("guest-hi", "tourist", "Hi, Mops!", "pending", PK_SP(53, "KEEP: the line from 44d, used again")),
-    pkPend("robot-label", "robot", STARS_CAKES.pickup, 53, "NEW: a robot in the hallway reads the label (ear icon)"),
+    pkPend("robot-label", "robot", bayWords("crate-empty"), 53, "NEW: a robot in the hallway reads the label (ear icon)"),
     // ---- 54: the robots open a crate (Squatch inside, the view through a slat) ----
     pkNew("switch-crate", "switch", "Squatch is in the crate. He can only look.", 54, "the reason on the switch card"),
     pkLine("scan-no-fur", "scanner", "NO FUR. PROCEED.", "pending", PK_SP(54, "KEEP: the words from beat 30 (ear icon), still pending there")),
@@ -94,8 +96,8 @@ export const PICKUP_LINES = Object.freeze(
     pkLine("button-ball", "button", "ROLL · ball", "in-game", "lunch-sneak-lines.js and escape-lines.js (the ball, R43)"),
     pkPend("button-plant", "button", "HIDE · plant", 55, "the button the pass names"),
     pkLine("lockup-cause", "card", "A robot saw Squatch in the delivery room. Security caught him.", "in-game", "src/game/25-capture.js CAPTURES.delivery (the LOCKUP card in the loading bay)"),
-    pkPend("bot-read-label", "robot", STARS_CAKES.pickup, 55, "NEW, a robot reads the label at his crate"),
-    pkPend("bot-stars-loading", "robot", `${STARS_CAKES.station}. Loading.`, 55, "NEW, the carry-forward line: it reads the stamp wrong"),
+    pkPend("bot-read-label", "robot", bayWords("crate-empty"), 55, "NEW, a robot reads the label at his crate"),
+    pkPend("bot-stars-loading", "robot", `${SNACK.NAME}. Loading.`, 55, "NEW, the carry-forward line: it reads the stamp wrong"),
     pkPend("bot-scan-first", "robot", "SCAN FIRST.", 55, "NEW, a new robot"),
     pkPend("bot-one-box", "robot", "ONE BOX. ONE BUCKET.", 55, "NEW", 8),
     pkPend("bot-label-empty", "robot", "LABEL SAYS EMPTY.", 55, "NEW, a new robot"),
@@ -154,7 +156,7 @@ export const PICKUP_LINES = Object.freeze(
     // ---- 58: through the scanner ----
     pkNew("button-pick-box", "button", "PICK UP · box", 58, "the pass names PICK UP · box"),
     pkNew("chip-box58", "chip", "Squatch: pick up the box", 58),
-    pkLine("tag", "paper", STARS_CAKES.tag, "pending", "stars-cakes.js (the weekly box's tag; the Stars Cakes thread)"),
+    pkLine("tag", "paper", escapeWords("blank-tag"), "pending", "escape-lines.js blank-tag (the weekly box's tag; the snack thread)"),
     pkPend("sq-my-box", "sq", "My box!", 58, "NEW"),
     pkPend("mops-mail", "mops", "I've got the mail.", 58, "NEW"),
     pkNew("chip-scanner", "chip", "Squatch: walk to the scanner", 58),

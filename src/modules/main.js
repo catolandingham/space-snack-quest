@@ -8,6 +8,8 @@ import { createTvStory } from "./tv-story.js";
 import { createBedtimeStory } from "./bedtime-story.js";
 import { createHomeMorning } from "./home-morning.js";
 import { createLunchSneak } from "./lunch-sneak.js";
+import { createLoadingBay } from "./loading-bay.js";
+import { createEvening } from "./evening.js";
 import { createEscape, ESCAPE_ID } from "./escape.js";
 import { createPickup, PICKUP_ID } from "./pickup.js";
 
@@ -19,6 +21,8 @@ bridge.registerBeat("ch1-tv-story", createTvStory(bridge));
 bridge.registerBeat("ch1-bedtime-story", createBedtimeStory(bridge));
 bridge.registerBeat("ch1-home-morning", createHomeMorning(bridge));
 bridge.registerBeat("ch1-lunch", createLunchSneak(bridge));
+bridge.registerBeat("ch1-bay", createLoadingBay(bridge));
+bridge.registerBeat("ch1-evening", createEvening(bridge));
 bridge.registerBeat(ESCAPE_ID, createEscape(bridge));
 bridge.registerBeat(PICKUP_ID, createPickup(bridge));
 // Not writable or replaceable: the older program and every module see the same bridge.

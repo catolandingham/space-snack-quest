@@ -1284,7 +1284,7 @@
           : n.room === "duct"
             ? { x0: 100, x1: 880, y0: 400, y1: 470 }
               : n.room === "hangar"
-              ? { x0: 60, x1: 900, y0: n.ch1D ? 320 : 400, y1: 590 }
+              ? { x0: 60, x1: 900, y0: n.ch1D || hallBeat() ? 320 : 400, y1: 590 }
               : n.room === "closet"
                 ? { x0: 100, x1: 860, y0: 372, y1: 578 }
                 : n.room === "deck"
@@ -1314,10 +1314,10 @@
           { x0: 587, x1: 885, y0: 524, y1: 551 }, // desk
         ],
         hangar: [
-          { x0: 103, x1: 148, y0: 346, y1: 370 }, // plant
+          { x0: 273, x1: 318, y0: 346, y1: 370 }, // plant (locked bay pictures v3: right of the bin)
           { x0: 189, x1: 237, y0: 350, y1: 374 }, // bin
-          { x0: 344, x1: 369, y0: 392, y1: 416 }, // scanner arch, left post
-          { x0: 563, x1: 588, y0: 392, y1: 416 }, // scanner arch, right post
+          { x0: 344, x1: 369, y0: 392, y1: 416, ship: 1 }, // scanner arch, left post (only while a ship is docked: R15)
+          { x0: 563, x1: 588, y0: 392, y1: 416, ship: 1 }, // scanner arch, right post
           { x0: 675, x1: 699, y0: 360, y1: 420 }, // mail room wall, above its door
           { x0: 675, x1: 699, y0: 507, y1: 609 }, // mail room wall, below its door
           { x0: 848, x1: 908, y0: 452, y1: 476 }, // robot mailbox
@@ -1346,7 +1346,7 @@
         n.room === "deck")
       )
         for (let i of qn) l.push(i.kind === "plant" ? nt(i.x, i.y, 26, 14, 10) : nt(i.x, i.y, 40, 14, 10));
-      if (n.room === "window" && l.push(nt(rt.x, rt.y, 26, 14, 10)), hallBeat()) for (let i of hallBeat().solids()) l.push(i); // (and the escape's bay and office)
+      if (n.room === "window" && l.push(nt(rt.x, rt.y, 26, 14, 10)), hallBeat()) for (let i of hallBeat().solids()) l.push(i); // (the bay's, the evening's and the escape's)
       else if (n.room === "hall") {
         (l.push(nt(ne.x, ne.y, 26, 14, 10)),
           l.push(nt(DV.x, DV.y, 26, 16, 8)),
@@ -1364,7 +1364,8 @@
         n.room === "port")
       )
         for (let i of xf) l.push(nt(i.x, i.y, 26, 14, 10));
-      if ((n.scene || "")[0] === "Q" && CH1_FURNITURE[n.room] && (n.room !== "office" || n.ch1Office)) for (let i of CH1_FURNITURE[n.room]) l.push(i);
+      if ((n.scene || "")[0] === "Q" && CH1_FURNITURE[n.room] && (n.room !== "office" || n.ch1Office)) for (let i of CH1_FURNITURE[n.room]) (!i.ship || n.ch1Ship || (hallBeat() && hallBeat().docked && hallBeat().docked())) && l.push(i);
+      window.SSQ && window.SSQ.extraSolids && l.push(...window.SSQ.extraSolids(n.room)); // a rebuilt beat's people and things (evening.js)
       return (n.room === "van" && l.push({ x0: Tt.x - 100, x1: Tt.x + 100, y0: 380, y1: 470 }), l);
     }
     // What blocks a walker's feet: the room's solids, plus a standing Mops when the walker is Squatch.

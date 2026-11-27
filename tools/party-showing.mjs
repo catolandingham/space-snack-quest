@@ -27,10 +27,18 @@
  *                  the action button, NEXT. With SHOWING_STILLS=<dir>, a still of each step goes there too.
  *     lunch        beats 25 to 27, the lunch sneak: from TAKE · lunch at home through the sneak past the guests (the
  *                  cones timed: the finger goes when the watcher has just looked away), the hallway, GIVE · lunch, Mops
- *                  eating the lunch and the bag, back behind the snack counter, one Moon Pie, to beat 28's first line.
+ *                  eating the lunch and the bag, back behind the snack counter, one snack cake, to beat 28's first line.
  *     lunchseen    the lunch sneak's capture rule: he steps out while a guest looks; FUR!, the alarm, the guards, back
  *                  into the plant, "They lost you."; then seen again and standing still: the LOCKUP card, and the
  *                  restart hidden in the plant. Both write a still of each step to SHOWING_STILLS=<dir> if it is set.
+ *     bay          beats 28 to 36 and 36b, the loading bay (the story pass of 2026-11-26): from the lunch's end behind
+ *                  the snack counter (the station speaker, the snack ship talk), the hallway walked (up to the photo
+ *                  wall first: "Later. The ship!"), ROLL · ball behind the cargo, the robots and the crates, the sneak
+ *                  to the plant past the patrolling robot (the finger goes when it rolls away), Lou's hat at the
+ *                  scanner, PEEK · form and the code, then as Mops: TAKE, EAT, TALK, SPIT, PICK UP and GIVE (the tag),
+ *                  then home as Squatch: the office door, ROLL · ball in time, the hairball, and the party hall's three
+ *                  cleaning robots (crossing their lanes behind them) to the snack counter. With SHOWING_STILLS=<dir>,
+ *                  a still of each step.
  *   SHOWING_SILENT=1 leaves the sound out.
  */
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
@@ -39,7 +47,7 @@ import { join, dirname } from "node:path";
 import { startGame, sleep, root } from "../tests/game-page.mjs";
 
 const [which, outFile] = process.argv.slice(2);
-const WHICH = ["keep", "back", "flyer", "early", "ventfur", "ventcostume", "tv", "bedtime", "morning", "lunch", "lunchseen"];
+const WHICH = ["keep", "back", "flyer", "early", "ventfur", "ventcostume", "tv", "bedtime", "morning", "lunch", "lunchseen", "bay"];
 if (!WHICH.includes(which) || !outFile) {
   console.error("Usage: node tools/party-showing.mjs <" + WHICH.join("|") + "> <out.mp4>");
   process.exit(2);
@@ -53,7 +61,7 @@ const hall = await import(join(root, "src", "modules", "party-hall.js"));
 const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 2 };
 const g = await startGame({ port: 9360 + WHICH.indexOf(which), name: "party-showing-" + which });
 const sneak = await import(join(root, "tests", "party-sneak.mjs"));
-const { page, errors } = await g.open(which === "tv" || which === "bedtime" || which === "morning" || which === "lunch" || which === "lunchseen" ? "?ch=1" : "?beat=" + (which === "flyer" ? "party:P3" : which === "ventfur" ? "party:P2" : "party:P6"), PHONE);
+const { page, errors } = await g.open(which === "tv" || which === "bedtime" || which === "morning" || which === "lunch" || which === "lunchseen" || which === "bay" ? "?ch=1" : "?beat=" + (which === "flyer" ? "party:P3" : which === "ventfur" ? "party:P2" : "party:P6"), PHONE);
 await sleep(600);
 SILENT || (await page.click("#ss-sound").catch(() => {}));
 await sleep(600);
@@ -424,6 +432,8 @@ if (which === "bedtime") {
       n = ss.op;
     n.q = [];
     n.cur = null;
+    // (after the party, as party.js finish() leaves it: the evening is at night, night-look.js)
+    n.ch1PartyNow = { scene: "done" };
     window.SSQ.engine().tvStory();
     for (let i = 0; i < 600; i++) {
       ss.tick(0.05);
@@ -445,6 +455,8 @@ if (which === "morning") {
       bed = window.SSQ.beat("ch1-bedtime-story");
     n.q = [];
     n.cur = null;
+    // (after the party, as party.js finish() leaves it: the evening is at night, night-look.js)
+    n.ch1PartyNow = { scene: "done" };
     window.SSQ.engine().tvStory();
     for (let i = 0; i < 6000; i++) {
       if (bed.debug().phase === "fade") return true;
@@ -468,8 +480,19 @@ if (which === "lunch" || which === "lunchseen") {
     w === "lunch" ? window.SSQ.beat("ch1-home-morning").jump("lunch") : window.SSQ.beat("ch1-lunch").jump("plant");
   }, which);
 }
+// The loading bay video starts behind the snack counter as the lunch sneak ends (its own jump, then beat 28 starts).
+if (which === "bay") {
+  await page.evaluate(() => window.__ss.lockedReady);
+  await page.evaluate(() => {
+    const ss = window.__ss,
+      n = ss.op;
+    n.q = [];
+    n.cur = null;
+    ss.ch1JumpBeat(28);
+  });
+}
 await startRecording();
-await sleep(which === "morning" || which === "lunch" || which === "lunchseen" ? 300 : 1800);
+await sleep(which === "morning" || which === "lunch" || which === "lunchseen" || which === "bay" ? 300 : 1800);
 if (which === "keep") {
   await dance(16, 4);
   // toward the wall by the alarm box, where the row will stand; the first song ends and the photo moment begins
@@ -612,6 +635,8 @@ if (which === "tv") {
     const n = window.__ss.op;
     n.q = [];
     n.cur = null;
+    // (after the party, as party.js finish() leaves it: the evening is at night, night-look.js)
+    n.ch1PartyNow = { scene: "done" };
     window.SSQ.engine().tvStory();
   });
   // every picture: read it (about 3 s), then NEXT; the ship picture gets 6 s
@@ -953,6 +978,141 @@ if (which === "lunch" || which === "lunchseen") {
     await still("restarts-hidden-in-the-plant");
     await sleep(1200);
   }
+}
+if (which === "bay") {
+  const STILLS = process.env.SHOWING_STILLS || "";
+  STILLS && mkdirSync(STILLS, { recursive: true });
+  let k = 0;
+  const still = async (name) => (mark(name), STILLS && (await page.screenshot({ path: join(STILLS, String(++k).padStart(2, "0") + "-" + name + ".png") })));
+  const bay = () =>
+    page.evaluate(() => {
+      const b = window.SSQ.beat("ch1-bay"),
+        s = (b.debug().state || {}),
+        d = b.debug().drew || {};
+      return { step: s.step || "", active: b.active(), closeUp: d.closeUp && d.closeUp.u === 1 ? d.closeUp.id : "", papers: s.papers ? s.papers.where : "", ship: s.ship || 0 };
+    });
+  const slug = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 48);
+  // Reads every line as a kid does (a still of it first), and takes a still whenever something new is on screen:
+  // a new part, a close-up grown full, the copies somewhere new. Stops when `done` says so.
+  async function watch(done, ms) {
+    const end = Date.now() + ms;
+    let seen = "";
+    for (;;) {
+      const s = await st(),
+        b = await bay();
+      if (await done(s, b)) return true;
+      if (Date.now() > end) return false;
+      const key = [b.step, b.closeUp, b.papers, b.ship >= 1 ? "ship" : ""].join("|");
+      if (key !== seen) {
+        seen = key;
+        s.cur !== "bub" && (await sleep(500), await still(slug([b.step, b.closeUp && b.closeUp + " close-up", b.ship >= 1 && b.step === "dock" && "ship docked"].filter(Boolean).join(" "))));
+      }
+      if (s.cur === "bub") {
+        await sleep(700);
+        await still(slug(s.text));
+        await sleep(900);
+        await tap(s.btn.x, s.btn.y);
+        await sleep(300);
+      } else if (s.cur === "card") {
+        // a switch card: a still, then a tap to go on
+        await sleep(900);
+        await still("switch-card");
+        await read(s);
+      }
+      await sleep(120);
+    }
+  }
+  // where the one the player steers is, and the button's words
+  const who = () =>
+    page.evaluate(() => {
+      const n = window.__ss.op,
+        b = window.SSQ.beat("ch1-bay").debug().state || {},
+        p = b.asMops ? n.mo : n.sq;
+      return { x: p.x, y: p.y, asMops: !!b.asMops, step: b.step || "", ctrl: !!n.ctrl, cur: n.cur ? n.cur.k : "", act: n.act ? n.act.verb + (n.act.cap ? " · " + n.act.cap : "") : "", alarm: !!b.alarm, ball: !!b.ball, rollBy: b.rollBy, office: b.office, robots: (b.robots || []).map((r) => ({ x: r.x, y: r.y, f: r.f, dir: r.dir })), hall: b.hall ? b.hall.robots.map((r) => ({ x: r.x, y: r.y, dir: r.dir })) : null };
+    });
+  // Walks the one the player steers to a place by tapping it, reading any line on the way, until `ok` or there.
+  async function walk(x, y, ok, ms = 12000) {
+    const end = Date.now() + ms;
+    let last = 0;
+    for (;;) {
+      const q = await who(),
+        s = await st();
+      if ((ok && ok(q)) || Math.hypot(q.x - x, q.y - y) < 14) return q;
+      if (Date.now() > end) return q;
+      if (s.cur === "bub") {
+        await sleep(700);
+        await still(slug(s.text));
+        await sleep(900);
+        await tap(s.btn.x, s.btn.y);
+        await sleep(300);
+      } else if (["card", "panel"].includes(s.cur)) await read(s);
+      else if (q.ctrl && Date.now() - last > 900) ((last = Date.now()), await floor(x, y));
+      await sleep(110);
+    }
+  }
+  // At a step: walk to its spot, wait for its button, a still, then press it.
+  async function act(step, x, y, words) {
+    (await watch((s, b) => b.step === step && s.ctrl && !s.cur, 90000)) || (await fail("the bay's " + step + " step did not come"));
+    await sleep(900);
+    await still(step + "-the-goal");
+    x != null && (await walk(x, y, (q) => q.act === words));
+    (await until((q) => q.act === words, 8000)) || (await fail("no " + words + " at " + step));
+    await sleep(500);
+    await still(slug(words));
+    await press();
+    await sleep(700);
+  }
+  // 28 and the hallway: up to the photo wall first ("Later. The ship!"), then on to the bay's doorway
+  (await watch((s, b) => b.step === "hallway" && s.ctrl, 60000)) || (await fail("the hallway did not come"));
+  await sleep(900);
+  await still("the-hallway-follow-mops-to-the-ship");
+  await walk(500, 270, (q) => q.cur === "bub");
+  await walk(946, 330, (q) => q.step !== "hallway");
+  // 29, 30: behind the cargo, then the robots
+  await act("cargo", 176, 350, "ROLL · ball");
+  await still("in-the-ball-behind-the-cargo");
+  // the sneak: the finger goes when the patrolling robot rolls away from the plant
+  (await watch((s, b) => b.step === "sneak" && s.ctrl && s.cur !== "bub", 90000)) || (await fail("the sneak did not come"));
+  await sleep(900);
+  await still("sneak-to-the-plant");
+  await until(async () => ((q) => q.robots[1] && q.robots[1].dir > 0 && q.robots[1].x > 360)(await who()), 20000);
+  await walk(294, 384, (q) => q.act === "HIDE · plant");
+  await sleep(300);
+  await still("hide-plant");
+  await press();
+  await sleep(900);
+  await still("in-the-plant-only-his-eyes");
+  await act("peek", null, null, "PEEK · form");
+  // as Mops
+  await act("take", 250, 474, "TAKE · copies");
+  await act("eat", 250, 474, "EAT · copies");
+  await act("talkto", 330, 404, "TALK · Squatch");
+  await act("spit", 244, 404, "SPIT · bin");
+  await act("box", 448, 454, "PICK UP · box");
+  await act("give", 330, 404, "GIVE · box");
+  // home as Squatch: out of the bay, down the hallway; the office door opens: ROLL · ball in time
+  (await watch((s, b) => b.step === "home" && s.ctrl && !s.cur, 90000)) || (await fail("the walk home did not come"));
+  await sleep(900);
+  await still("home-go-home-with-mops");
+  await walk(30, 336, (q) => q.step === "walkby");
+  (await watch((s, b) => b.step === "walkby" && s.ctrl, 20000)) || (await fail("the hallway walk home did not come"));
+  await sleep(700);
+  await walk(560, 360, (q) => q.rollBy > 0);
+  await sleep(500);
+  await still("the-office-door-opens-roll-ball");
+  await press();
+  // the hairball, then on to the party hall (its lines read on the way)
+  // 36b: the party hall, three cleaning robots; cross the lanes just after their robots have rolled away
+  (await watch((s, b) => (b.step === "hall" && s.ctrl && s.cur !== "bub") || !b.active, 60000)) || (await fail("the party hall did not come"));
+  await sleep(900);
+  await still("the-party-hall-get-past-the-robots");
+  await walk(850, 340);
+  // both lower lanes' robots rolling away (left) and far enough off: then straight down to the counter
+  await until(async () => ((q) => q.hall && [1, 2].every((i) => q.hall[i].dir < 0 && q.hall[i].x < 600))(await who()), 45000);
+  await walk(772, 584, (q) => q.step !== "hall", 15000);
+  await sleep(1200);
+  await still("at-the-snack-counter-the-storm-is-next");
+  await sleep(800);
 }
 if (which === "early") {
   await dance(10, 0);

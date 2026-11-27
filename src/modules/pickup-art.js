@@ -7,9 +7,10 @@
  * Every word comes from pickup-lines.js (or escape-lines.js for the Guardian note and the frame); every place from
  * pickup-place.js.
  */
-import { STARS_CAKES } from "./stars-cakes.js";
+import { drawFamilyStampAt } from "./crate-stamp.js";
 import { pickupWords } from "./pickup-lines.js";
-import { esRect, esPaint, esWords, ES_INK, drawPawPrint, drawPinkSheet } from "./escape-art.js";
+import { esRect, esPaint, esWords, ES_INK, drawPinkSheet } from "./escape-art.js";
+import { drawPawPrint } from "./evening-art.js";
 import { drawThought } from "./bedtime-story-art.js";
 import { drawSnack } from "./party-snacks-art.js";
 import { drawGuardianBox } from "./home-morning-art.js";
@@ -81,7 +82,9 @@ export function drawFloorPatch(ctx, b, at) {
   ctx.fillRect(b.x0, b.y0, b.x1 - b.x0, b.y1 - b.y0);
   ctx.restore();
 }
-/** His crate on its pallet: the worn stamp "_ARS CAKES", its label once it is on, the bucket on top, the lid. */
+// The family stamp's width for its height (crate-stamp.js draws it from its left edge; measured once, drawn unseen).
+let pkStampRatio = 0;
+/** His crate on its pallet: the worn family stamp (crate-stamp.js, the one stamp layer), its label once it is on, the bucket on top, the lid. */
 export function drawPkCrate(ctx, cx, bottom, k, { label = false, bucket = false, open = 0, eyes = false, glow = 0 } = {}) {
   const w = PK_CRATE.w * k,
     h = PK_CRATE.h * k,
@@ -104,10 +107,16 @@ export function drawPkCrate(ctx, cx, bottom, k, { label = false, bucket = false,
   ctx.strokeStyle = PK_WOOD_DARK;
   ctx.lineWidth = lw * 0.8;
   ctx.stroke();
-  // the stamp (stars-cakes.js: its first letter worn off)
-  esRect(ctx, cx - 46 * k, y0 + h * 0.3, 92 * k, 20 * k, 10 * k);
-  esPaint(ctx, "#2b3a67", lw * 0.6);
-  esWords(ctx, STARS_CAKES.faded, cx, y0 + h * 0.3 + 10 * k, Math.max(6, 11 * k), PK_GOLD, "center", 900);
+  // the stamp: the family stamp the home picture's crate bed carries (crate-stamp.js), his crayon gone since he rubbed
+  // it out in the evening of Day 2 (39b)
+  const sh = 18 * k;
+  if (!pkStampRatio) {
+    ctx.save();
+    ctx.globalAlpha = 0;
+    pkStampRatio = drawFamilyStampAt(ctx, 0, 0, 100, { crayon: 0 }).end / 100 || 4.6;
+    ctx.restore();
+  }
+  drawFamilyStampAt(ctx, cx - (pkStampRatio * sh) / 2, y0 + h * 0.3 + sh * 0.8, sh, { crayon: 0 });
   // the label: the same tag as last week's crate
   if (label) {
     esRect(ctx, cx - 50 * k, y0 + h * 0.62, 100 * k, 22 * k, 2 * k);
@@ -175,7 +184,7 @@ export function drawHat(ctx, x, y, k = 1) {
   esPaint(ctx, "#ffffff", 3);
   ctx.restore();
 }
-/** The weekly box on the ship, tagged "For S. A new kind." (stars-cakes.js). */
+/** The weekly box on the ship, tagged with escape-lines.js blank-tag. */
 export function drawTagBox(ctx, x, y, k = 1, glow = false) {
   const lw = Math.max(1.5, 3 * k);
   esRect(ctx, x - 22 * k, y - 26 * k, 44 * k, 26 * k, 3 * k);
@@ -835,7 +844,7 @@ export function drawTapeScreen(ctx, engine, { clip, k, zoom, next, star }, t) {
   } else if (zoom === "paw") {
     esRect(ctx, 300, 120, 360, 300, 4);
     esPaint(ctx, "#ffe08a", 5);
-    drawPawPrint(ctx, 480, 270, 90);
+    drawPawPrint(ctx, 480, 270, 200); // (his paw print as night one's close-up drew it, evening-art.js)
   } else if (zoom === "star") {
     esRect(ctx, 220, 150, 520, 220, 16);
     esPaint(ctx, PK_PAPER, 6);

@@ -32,6 +32,9 @@ import { keepInSpan, seeCue, visitNow, playSound, soundsPlayed, hushNow, hushKey
 import { drawBubbleTail } from "./bubble-tail.js";
 import { createSpeechVoice } from "./speech-voice.js";
 import { drawCreditsButton, creditsTap, creditsShown } from "./credits.js";
+import { nightPicture, isNightNow, nightDrawn } from "./night-look.js";
+import { snackWord } from "./snack-name.js";
+import { drawStationStamp, crateStampDrawn, setCrayonSource } from "./crate-stamp.js";
 
 /**
  * The game-state fields a rebuilt beat may write, through engine().set(field, value). Anything else it
@@ -39,10 +42,16 @@ import { drawCreditsButton, creditsTap, creditsShown } from "./credits.js";
  * to write another field stops with an error; tests/module-build.mjs checks the morning (and its home-alone
  * part) and the party night against this list.
  */
-export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1HomeMorning", "ch1Lunch", "ch1Escape", "ch1Pickup", "costumeOn", "ch1Ship", "ch1Office", "ch1Crayon", "ch1Keepsake", "ch1D", "ch1Night", "ch1Brochure", "ch1DidBall", "ch1Journey", "ch1Sneak", "ch1Step", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe"]);
+// (the evening, evening.js, also keeps the older program's record of night one: the crayon drawing on the wall, the
+// brochure, the paw print, the posted yellow copy, the pink sheet in the vent, the lights; and ch1D, the loading bay; the escape, escape.js, the night, the ball and the journey;
+// pickup day, pickup.js, the costume, the ship, the office, the keepsake drawing)
+export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1HomeMorning", "ch1Lunch", "ch1Bay", "ch1Evening", "ch1Sneak", "ch1Step", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe", "ch1Crayon", "ch1Brochure", "ch1Paw", "ch1Signed", "ch1Mailed", "ch1PinkSucked", "ch1Lights", "ch1D", "ch1Escape", "ch1Night", "ch1DidBall", "ch1Journey", "ch1Pickup", "costumeOn", "ch1Ship", "ch1Office", "ch1Keepsake"]);
 
 export function createBridge() {
   const beats = new Map();
+  // His crayon in the crate bed's stamp is there until a rebuilt beat says he has rubbed it out (the evening's 39b, and
+  // every beat after it: crayonGone()).
+  setCrayonSource(() => ![...beats.values()].some((b) => b.crayonGone && b.crayonGone()));
   const outlines = new Map();
   const guests = createGuestArt();
   // The engine functions the older program hands over (see handOver), and the fields beats have written.
@@ -76,11 +85,15 @@ export function createBridge() {
       hm = beats.get("ch1-home-morning"),
       // the home morning's own music: the bedtime music while the night is dark, quiet as it comes up and through the
       // PA, then "Morning" from the speaker (home-morning.js musicCue; null when it has no say)
-      morning = hm && hm.musicCue ? hm.musicCue() : null;
+      morning = hm && hm.musicCue ? hm.musicCue() : null,
+      ev = beats.get("ch1-evening");
     // (the bedtime story's walk to bed and climb in are quiet: the TV story's music has ended with the film, and the
     // bedtime music starts as Squatch asks; Brian 2026-11-26, video note 0:03)
     if (tv && tv.showing && tv.showing()) return "tv";
     if (bed && bed.quietNow && bed.quietNow()) return "";
+    // (Day 2's night one at home after the fight: no song tonight, story pass beat 41: their song is their bond, and its
+    // absence is felt)
+    if (ev && ev.nightNow && ev.nightNow()) return "";
     return bed && bed.showing && bed.showing() ? "bedtime" : morning != null ? morning : cue;
   };
   return Object.freeze({
@@ -218,11 +231,41 @@ export function createBridge() {
      * over the painted bucket of the locked picture, under the people, and again over Squatch when he stands behind it.
      * Returns its box, or null while not ready (the painted bucket shows). See mop-bucket.js.
      */
-    drawHomeBucket: drawHomeMopBucket,
+    drawHomeBucket(ctx, front) {
+      return drawHomeMopBucket(ctx, front, !!engine && isNightNow(engine.get));
+    },
     /** Tests: where the home bucket was last drawn. */
     homeBucketDrawn: lastHomeMopBucket,
     /** The full-screen cutaway (tests read what its last frame drew). See cutaway.js. */
     cutaway: Object.freeze({ last: lastCutaway }),
+    /**
+     * The night look (Brian, 2026-11-26: every room looks different at night). The older program draws each locked
+     * room picture, and cuts pieces of it, from nightPicture(id, img): at night the room's night picture or its tinted
+     * one, by day `img` itself. nightNow() says whether the story is at night; nightDrawn() (tests) which rooms drew
+     * their night look since the last call. See night-look.js.
+     */
+    nightPicture(id, img) {
+      return nightPicture(id, img, !!engine && isNightNow(engine.get));
+    },
+    nightNow() {
+      return !!engine && isNightNow(engine.get);
+    },
+    nightDrawn,
+    /**
+     * The station's snack, named in one place (snack-name.js; Brian 2026-11-26, question 86): snack("name") for
+     * sentence text, "one" for one of them, "NAME" and "ONE" in capitals. The older program guards each use and shows
+     * a plain word ("snacks") if the module script ever fails.
+     */
+    snack: snackWord,
+    /**
+     * The station's stamp on a crate the older program draws (its crate, the old calendar): a blue star and the snack's
+     * name in thin blue letters, centred at (x, y), `s` times its size. See crate-stamp.js.
+     */
+    drawSnackStamp(ctx, x, y, s) {
+      return drawStationStamp(ctx, x, y, s);
+    },
+    /** Tests: the layers for the snack's name (the crate bed's stamp over the home pictures, the hall tin's lid). */
+    crateStampDrawn,
     /** Register a rebuilt beat. Ids are unique; registering one twice is a mistake, so it throws. */
     registerBeat(id, beat) {
       if (typeof id !== "string" || !id) throw new Error("registerBeat needs an id");
@@ -235,8 +278,8 @@ export function createBridge() {
       return beats.get(id) || null;
     },
     /**
-     * The rebuilt beat that draws the room on screen now (the party night or the lunch sneak in the hall; the escape in
-     * the loading bay and the vent), or null: the older program asks it for the room's picture, and in the hall for its
+     * The rebuilt beat that draws the room on screen now (the party night, the lunch sneak, the bay's 36b and the evening in the
+     * hall; the loading bay, the evening and the escape in the loading bay; the escape in the vent), or null: the older program asks it for the room's picture, and in the hall for its
      * walls (bounds) and what feet cannot walk through (solids).
      */
     hallOwner() {
@@ -244,8 +287,8 @@ export function createBridge() {
       return null;
     },
     /**
-     * Where a speaker's bubble points, from the rebuilt beat that places it (the party night, the escape), or null.
-     * The older program asks this before its own places (60-frame-draw.js T5) and to know a speaker is drawn.
+     * Where a speaker's bubble points, from the rebuilt beat that places it (Isfred beside him at the party, the wall
+     * speakers, Squatch's eyes in a plant...), or null: the older program's own place for that speaker. Only a beat that is on now (active) answers.
      */
     speakerAt(who) {
       for (const b of beats.values()) {
@@ -253,6 +296,29 @@ export function createBridge() {
         if (at) return at;
       }
       return null;
+    },
+    /** The name over a speaker's bubble, from the rebuilt beat that names that speaker, or "". */
+    speakerName(who) {
+      for (const b of beats.values()) {
+        // (only a beat that names speakers by who they are: the morning's speakerName() names its own wall speaker)
+        const name = b.speakerName && b.speakerName.length >= 1 && b.speakerName(who);
+        if (name) return name;
+      }
+      return "";
+    },
+    /** A bubble that sits beside its speaker instead of over him, from the rebuilt beat that says so, or null. */
+    bubbleBeside(who) {
+      for (const b of beats.values()) {
+        const at = b.bubbleBeside && b.bubbleBeside(who);
+        if (at) return at;
+      }
+      return null;
+    },
+    /** Feet nobody walks through that a rebuilt beat adds to a room the older program draws (00-core.js). */
+    extraSolids(room) {
+      const out = [];
+      for (const b of beats.values()) b.extraSolids && out.push(...b.extraSolids(room));
+      return out;
     },
     /** Ids of every rebuilt beat, in the order they were registered. */
     beatIds() {

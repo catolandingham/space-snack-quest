@@ -429,7 +429,7 @@ g.check("he shuts the closet (bump): the calendar on its door is back", R.wardro
 
 // the calendar
 g.check("LOOK · calendar opens the calendar close-up", R.calendarOpen);
-g.check("today's close-up: days 1 to 13 crossed off, the circled Moon Pie day (14) is today", R.calendar && R.calendar.today === 14 && R.calendar.crossed.length === 13 && R.calendar.crossed[12] === 13, R.calendar);
+g.check("today's close-up: days 1 to 13 crossed off, the circled snack delivery day (14) is today", R.calendar && R.calendar.today === 14 && R.calendar.crossed.length === 13 && R.calendar.crossed[12] === 13, R.calendar);
 
 // the lunch
 g.check("as he gets to the bag (not before), the bag is outlined while he says his line, word for word, over him, no chip", R.line2 && R.line2.who === "sq" && R.line2.text === LUNCH && R.line2.chip === "" && !!R.line2.bagOutline && R.line2.at.x > 640 && R.toBag && !R.toBag.line, R.line2);
@@ -545,7 +545,8 @@ const mid = await page.evaluate(() => {
   tick(0.8);
   ss.sectionReset();
   out.night = after();
-  tick(3.5);
+  // (the night 3.4 s, the room coming up on the night look since 2026-11-26, then the ding-dong's wait)
+  tick(4.3);
   out.atPa = { step: (hm.debug().state || {}).step, bub: !!(n.cur && n.cur.k === "bub") };
   next();
   tick(12);

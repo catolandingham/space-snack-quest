@@ -14,6 +14,7 @@
  */
 import { startGame, sleep, readLines } from "./game-page.mjs";
 import { setState } from "./chapter-states.mjs";
+import { SNACK } from "../src/modules/snack-name.js";
 
 const g = await startGame({ port: 8792, name: "hud-layout" });
 const lines = readLines({ where: true });
@@ -102,7 +103,7 @@ for (const [vname, viewport] of [
   // Cards and flashbacks fill the picture: no HUD box shows over them (the flashback's SKIP button included).
   for (const [what, cur] of [
     ["a LOCKUP card", { k: "card", id: "jail", text: "LOCKUP", cause: "A test.", restart: "A test." }],
-    ["a flashback with SKIP", { k: "fb", pic: "fb1crate", cap: "A delivery crate of Moon Pies came to Stormtop." }],
+    ["a flashback with SKIP", { k: "fb", pic: "fb1crate", cap: `A delivery crate of ${SNACK.name} came to Stormtop.` }],
   ]) {
     await page.evaluate((cur) => { const n = window.__ss.op; n.q = []; n.cur = cur; n.bt = 0; }, cur);
     await sleep(200);

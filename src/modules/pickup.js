@@ -44,10 +44,10 @@ import { drawPkTuft, drawHair, drawFloorPatch, drawPkCrate, drawBucket, drawMail
 import { OFFICE_PANELS } from "./escape-office-art.js";
 import { escapeWords } from "./escape-lines.js";
 import { drawPerson, LOOKS } from "./party-art.js";
-import { drawSweat } from "./escape-home-art.js";
+import { drawGulpSweat } from "./escape-home-art.js";
 import { ES_HOME, ES_DOORS, FOLLOW } from "./escape-place.js";
 import { doorAt, doorTo, markDoor, freshTrail, followStep } from "./escape-doors.js";
-import { markBox, blurBehind, drawHearts, drawBrochure, esWords } from "./escape-art.js";
+import { markBox, blurBehind, drawHearts, drawPinnedBrochure, esWords } from "./escape-art.js";
 import { drawNoteCloseup } from "./escape-vent-art.js";
 import { MORNING_THINGS } from "./home-morning-art.js";
 import { LUNCH_SOLIDS, LUNCH_BOUNDS } from "./lunch-sneak-place.js";
@@ -1566,7 +1566,7 @@ export function createPickup(bridge) {
     if (l.crumbAt >= 0 && t - l.crumbAt < PK_PACE.hold + 0.6) (ctx.save(), (ctx.fillStyle = "#8b5a3c"), ctx.beginPath(), ctx.arc(m.x + 14 * moScale(room), m.y - 34 * moScale(room), 4, 0, 7), ctx.fill(), ctx.restore());
     // 57: the hallway: the office door's sign and the flash under it; a gulp if he saw the frame in the office
     if (room === "passage" && l.step !== "push") drew.sign = drawPhotoSign(ctx, PK_HALLWAY.sign, PK_HALLWAY.under, t);
-    if (l.gulpAt >= 0 && t - l.gulpAt < 1.2) drew.sweat = drawSweat(ctx, headBox("sq"), t - l.gulpAt);
+    if (l.gulpAt >= 0 && t - l.gulpAt < 1.2) drew.sweat = drawGulpSweat(ctx, headBox("sq"), t - l.gulpAt);
     if (l.heartsAt >= 0) drawHearts(ctx, m.x, m.y - 46 * moScale(room), t - l.heartsAt);
     // 59, 60: the office on photo day: the camera on its tripod and the stool; the robot is one of the new ones
     if (room === "office") {
@@ -1593,7 +1593,7 @@ export function createPickup(bridge) {
     if (!l || !e || e.room() !== "closet") return;
     const d = {};
     // the things on the walls, or the pale squares where they hung
-    PK_HOME.walls.forEach((w, i) => (l.walls[w.id] ? drawPaleSquare(ctx, w.box) : w.id === "chart" ? drawChart(ctx, w.box) : w.id === "brochure" ? drawBrochure(ctx, w.box) : drawKidDrawing(ctx, w.box, i % 2)));
+    PK_HOME.walls.forEach((w, i) => (l.walls[w.id] ? drawPaleSquare(ctx, w.box) : w.id === "chart" ? drawChart(ctx, w.box) : w.id === "brochure" ? drawPinnedBrochure(ctx, w.box) : drawKidDrawing(ctx, w.box, i % 2)));
     d.walls = PK_HOME.walls.filter((w) => !l.walls[w.id]).map((w) => w.id);
     // the crate bed: the note on the pillow, the fur, the white hair; once it is pushed out, the floor where it stood
     if (l.crate !== "bed") drawFloorPatch(ctx, PK_HOME.bedBox, PK_HOME.floorAt);
@@ -1910,6 +1910,10 @@ export function createPickup(bridge) {
         return [...BAY_SOLIDS.map((b) => ({ ...b })), { id: "open crate", x0: 232, x1: 370, y0: 470, y1: 509 }, ...row];
       }
       return [];
+    },
+    /** Pickup day comes after he rubbed his crayon out of the crate bed's stamp (39b): none in the stamp. */
+    crayonGone() {
+      return !!E().get("ch1Pickup");
     },
     /** Tests: the places. */
     place: Object.freeze({ PK_HOME, PK_HALL, PK_HALLWAY, PK_BAY, ES_DOORS, tuftStand }),
