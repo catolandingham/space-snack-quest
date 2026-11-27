@@ -141,6 +141,8 @@ const results = {};
   await still(page, "hallway-night");
   await page.evaluate(() => (window.__ss.op.ch1Night = false));
   // the loading bay at night (night one, beat 42b: the evening's bin, debug beat 142): its own locked night picture
+  // (the evening draws night one's rooms itself and does not set ch1Night, so nightNow() is false there; what this
+  // checks is the bay's night picture, as the escape's bay at night is checked in tests/escape.mjs)
   await page.evaluate(() => (window.__ss.ch1JumpBeat(142), window.__ss.settleRoom()));
   results.bayNight = await frame(page, {});
   g.check("the loading bay at night (beat 42b): its locked night picture", results.bayNight.room === "hangar" && results.bayNight.drew.hangar && results.bayNight.drew.hangar.picture, results.bayNight);

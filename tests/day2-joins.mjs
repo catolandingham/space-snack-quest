@@ -30,7 +30,8 @@ g.check("the office code is typed once, in office-code.js (the older program kee
 const exportsOf = (f) => [...src[f].matchAll(/^export const ([A-Z_]+)/gm)].map((m) => m[1]);
 g.check("thought-place.js and thought-bubble.js export no name in common", !exportsOf("thought-place.js").some((x) => exportsOf("thought-bubble.js").includes(x)), [exportsOf("thought-place.js"), exportsOf("thought-bubble.js")]);
 const fnNames = {};
-for (const f of mods) for (const m of src[f].matchAll(/^(?:export )?(?:async )?function\s+([A-Za-z0-9_$]+)/gm)) (fnNames[m[1]] = fnNames[m[1]] || []).push(f);
+// (functions, and functions written as arrow constants: esbuild renames the second of either)
+for (const f of mods) for (const m of src[f].matchAll(/^(?:export )?(?:(?:async )?function\s+([A-Za-z0-9_$]+)|(?:const|let) ([A-Za-z0-9_$]+) = (?:async )?(?:\([^)]*\)|[A-Za-z_$][\w$]*) =>)/gm)) (fnNames[m[1] || m[2]] = fnNames[m[1] || m[2]] || []).push(f);
 const day2 = /^(loading-bay|evening|escape|bay-watch|office-code|thought-place|pen-digits|line-split|crate-stamp)/;
 const clash = Object.entries(fnNames).filter(([, fs]) => fs.length > 1 && fs.some((f) => day2.test(f)));
 g.check("no Day 2 module shares a top-level function name with another module", clash.length === 0, clash);
@@ -105,7 +106,7 @@ const crayon = await page.evaluate(() => {
     for (let i = 0; i < 4; i++) ss.tick(0.05);
     n.room === "closet" ? ss.drawFrame() : ((n.room = "closet"), ss.drawFrame());
     const d = window.SSQ.crateStampDrawn();
-    return { room: n.room, crayon: !!(d.made && d.made.crayon) };
+    return { room: n.room, crayon: d.crayonNow };
   };
   out.morning = look(22);
   out.evening = look(40);

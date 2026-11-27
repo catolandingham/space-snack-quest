@@ -51,7 +51,7 @@ let last = null,
  * last on any crate (the bedtime story's too) and how many times it has been drawn.
  */
 export function crateStampDrawn() {
-  return { made, handed, tin: tinMade, handedHall, last, stamps, byLunch };
+  return { made, handed, tin: tinMade, handedHall, last, stamps, byLunch, crayonNow: lastCrayon };
 }
 
 // The stamp's letter sheets, made once each (drawFamilyStamp).
@@ -295,7 +295,7 @@ export function familyStampOnRoom() {
   const kx = 960 / CRATE_BED.picture.w,
     ky = 640 / CRATE_BED.picture.h,
     box = (b) => ({ x0: b.x0 * kx, x1: b.x1 * kx, y0: b.y0 * ky, y1: b.y1 * ky });
-  return { gap: box(made.gap), letters: box(made.letters), text: "_" + made.letters.text, crayon: !!made.crayon };
+  return { gap: box(made.gap), letters: box(made.letters), text: "_" + made.letters.text };
 }
 
 /**
@@ -359,6 +359,8 @@ export function setCrayonSource(fn) {
   crayonNow = typeof fn === "function" ? fn : () => true;
 }
 const ready = (img) => !!img && !!img.complete && !!img.naturalWidth;
+// (tests: whether the home picture handed out last had his crayon)
+let lastCrayon = null;
 let handedHall = 0,
   byLunch = 0; // (tests: the lunch sneak's own hall drawing)
 /**
@@ -387,10 +389,11 @@ export function withSnackLayers(id, img, by = "") {
     c.scale(w / layer[0].w, h / layer[0].h);
     layer[1](c, crayon);
     c.restore();
-    Object.assign(cv, { complete: true, naturalWidth: w, naturalHeight: h, src: img.src + "#snack-layer", snackLayer: true });
+    // (its own src for each crayon: the night tint is cached by the picture's src, night-look.js)
+    Object.assign(cv, { complete: true, naturalWidth: w, naturalHeight: h, src: img.src + "#snack-layer" + (crayon ? "" : "-nocrayon"), snackLayer: true, crayon });
     layered.set(key, cv);
   }
-  id === "hall" ? handedHall++ : handed++;
+  id === "hall" ? handedHall++ : ((handed++), (lastCrayon = crayon));
   by === "lunch" && byLunch++;
   return layered.get(key);
 }

@@ -117,6 +117,8 @@ const night = await ev(() => {
   out.windowDay = +window.__light({ x0: 100, y0: 180, x1: 500, y1: 220 }).toFixed(1);
   return out;
 });
+// (the joined night look's tint is the lowest branch's, 0.5; the evening's own copy had 0.58, so its floors are about
+// three quarters of the day's light, not under 0.7 of it)
 for (const [step, room] of [["out", "closet"], ["nighthall", "hall"], ["nightway", "passage"]]) {
   const r = night[step];
   g.check(`night one, ${room}: the night look (the one tint), the floor clearly darker than by day`, r.room === room && r.night && r.night.tint >= NL.NIGHT_TINT.alpha - 0.01 && r.light < r.day * 0.8, r);

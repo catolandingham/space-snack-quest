@@ -18,7 +18,7 @@ const INK = "#1e2430";
 const RED = "#d62828";
 const PAPER = "#fffdf6";
 const TAU = Math.PI * 2;
-const font = (size, weight = 900) => `${weight} ${size}px system-ui, -apple-system, sans-serif`;
+const esHomeFont = (size, weight = 900) => `${weight} ${size}px system-ui, -apple-system, sans-serif`;
 
 /** Beat 43: the week, close. `age` seconds since it opened. Returns what it drew. */
 export function drawWeek(ctx, age, t) {
@@ -37,7 +37,7 @@ export function drawWeek(ctx, age, t) {
   ctx.stroke();
   ctx.fillStyle = "#e0533a";
   ctx.fillRect(x0 + 3, W.y0 - 117, w - 6, 70);
-  ctx.font = font(46);
+  ctx.font = esHomeFont(46);
   ctx.textAlign = "center";
   ctx.fillStyle = "#ffffff";
   const card = escapeWords("card-six-days");
@@ -49,7 +49,7 @@ export function drawWeek(ctx, age, t) {
     ctx.strokeStyle = INK;
     ctx.lineWidth = 3;
     ctx.strokeRect(x, y, W.w, W.h);
-    ctx.font = font(24, 800);
+    ctx.font = esHomeFont(24, 800);
     ctx.textAlign = "left";
     ctx.fillStyle = INK;
     ctx.fillText(String(i + 1), x + 8, y + 28);
@@ -68,7 +68,7 @@ export function drawWeek(ctx, age, t) {
       }
     } else {
       // tomorrow: DELIVERY, with a little ship
-      ctx.font = font(17);
+      ctx.font = esHomeFont(17);
       ctx.textAlign = "center";
       ctx.fillStyle = RED;
       ctx.fillText(escapeWords("cal-delivery"), x + W.w / 2, y + W.h - 18);
@@ -146,7 +146,7 @@ export function drawPlan(ctx, x, y, w, st) {
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
   // crayon numbers
-  ctx.font = font(Math.round(30 * k));
+  ctx.font = esHomeFont(Math.round(30 * k));
   ctx.textAlign = "center";
   ctx.fillStyle = "#7a4fd1";
   ["1", "2", "3"].forEach((n, i) => (has[["door", "computer", "crate"][i]] ? ctx.fillText(n, cw * (i + 0.15), 36 * k) : null));

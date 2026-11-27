@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–26 | # Master backlog |
-| 27–226 | ## Where main is (Chapter 1 redesign) |
-| 227–241 | ## Register |
-| 242–263 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 264–284 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 285–297 | ## Phase 2 (plan section 4, T13 to T18) |
-| 298–320 | ## Phase 1 (plan section 3, T5 to T12) |
-| 321–334 | ## SS40–SS44 |
-| 335–352 | ## Story rows |
-| 353–371 | ## Reset section |
-| 372–382 | ## Still open |
-| 383–386 | ## Chapter 1 replot, recorded and not built |
-| 387–544 | ## Changelog |
+| 27–228 | ## Where main is (Chapter 1 redesign) |
+| 229–243 | ## Register |
+| 244–265 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 266–286 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 287–299 | ## Phase 2 (plan section 4, T13 to T18) |
+| 300–322 | ## Phase 1 (plan section 3, T5 to T12) |
+| 323–336 | ## SS40–SS44 |
+| 337–354 | ## Story rows |
+| 355–373 | ## Reset section |
+| 374–384 | ## Still open |
+| 385–388 | ## Chapter 1 replot, recorded and not built |
+| 389–548 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -25,6 +25,8 @@
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-27 (Day 2 joined), draft PR on `feat/ch1-day2-joined` (stacked on `feat/ch1-lunch-sneak`; joins #95, #94 and #93), not merged. Done: one continuous Day 2 from beat 28 to beat 53 (see README); one copy each of the snack's names, the night look, the office code, the crate bed's stamp, the speech voices; the plant's v3 spot in every bay beat; `tests/day2-joins.mjs`; `tools/day2-showing.mjs`. Open for Brian: the picks the join made (the robots' voice is the loading bay's, the night tint is the lunch sneak branch's 0.5 not the evening's 0.58, the escape's brochure on the wall is now the evening's drawing, the evening's pen code), and everything still open on #95, #94 and #93. NOT ASSESSED: how the joins feel to a kid on a phone (the video shows one way through). Docs match main: yes. Not yet played by a person.
 
 2026-11-26 (rebuild from the story pass), draft PR #95 on `feat/ch1-loading-bay` (stacked on `feat/ch1-lunch-sneak`), not merged. Done: beats 28 to 36 and the new 36b rebuilt word for word from the story pass of 2026-11-26 (see README): the walked hallway, ROLL · ball behind the cargo, the sneak to the plant, Lou's hat at the scanner, PEEK · form, Mops eating the copies where he's handed them, the mumble whisper, the robots' orders, the tag, the empty hallway and the hairball, the party hall's three cleaning robots up to the storm. The bay plant moved in new locked delivery pictures (Brian's yes, question 75; DECISIONS). Open for Brian: every line marked Pending in the "Loading bay (beats 28 to 36, and 36b)" section of `docs/CH1-LINES-FOR-BRIAN.md`. NOT ASSESSED: whether a kid on a phone times the sneak to the plant and the party hall's lanes without help (the video shows one timing). Docs match main: yes. Not yet played by a person.
 
@@ -385,6 +387,8 @@ Live open questions are `docs/DECISIONS.md` §9 and `docs/old/OPEN-ASKS.md`. The
 `docs/DECISIONS.md` rows R29 through R63 are the Nov 8–9 cartoon decisions. R29–R57 cover the home wardrobe, no home vent, the pickup-day crate, the spare blue jacket disguise, Isfred Bar Neshuman, ball-hide timing, the office computer, the connecting hallway, the party with no Mops and no robots, the office cutscene, and the Employee of the Month gallery (5 photos, crooked photo #4, keepsake points still open). R58–R63 are not in the game. R58: returning the balloon gets a wordless smile, a finger to the lips, and a thumbs-up; keeping it makes the kid yell "Scary Wookiee!" (NEEDS BRIAN), pulls the FUR alarm, and brings security; never jumping sends the balloon to the ceiling, the kid is sad, and nothing else happens. R59, delegated by Brian: the kid gasps with "!" and points, then a 6-second wobbly glowing rise while grabbable, one jump grabs it, and it reads with no words. R60: the pair hunt is dropped; a "Find someone who…" picture card is proposed and pending Brian; the octopus is an over-snacked, huggy tourist ("*hic* Fellow tourist!", NEEDS BRIAN) whose two hugs knock the disguise off; a photo corner lets Squatch enter the shot, then a cut to a printing Polaroid, with bonus points if he is in it (amount open); tapes proof is dropped; the third snack-table grab starts a chain reaction that pushes things off the far end and gives a hide window (4-second placeholder, needs Brian). R61: the balloon stays in the party hall later (on the ceiling if missed, tied near the kid's spot if returned) and pops quietly with a comic "POP!" (NEEDS BRIAN) on the last Chapter 1 hall visit. R62: funnier gags are things worn as horns, something in his mouth, and random things on his head, about 16, the Squatch ball-roll photobomb stays, and the crooked photo stays #4; the crayon drawing reads as Squatch and Mops with "Always tied together" (NEEDS BRIAN) underneath; controls are left and right arrows under the photo plus an X that is always visible; swiping past photo 5 always triggers "BEEP BEEP" (NEEDS BRIAN) and the gallery cuts out. R63: kid-handwritten "MOPS" and "ME" (NEEDS BRIAN), and a dotted sight line from Mops to Squatch with hearts rising from it, contrasting with the "!" other characters get. They are not in the game. New on-screen words are marked NEEDS BRIAN in `docs/CH1-CARTOON-LINES.md`. Ball-hide numbers (R43, about 70px for 2 seconds), the 6-second rise (R59), and the 4-second snack-table placeholder (R60) are written down only. This page does not change a timer, a price, or a range in the build.
 
 ## Changelog
+
+2026-11-27, Day 2 joined (#95, #94, #93 on `feat/ch1-day2-joined`): one module each for what they shared (`snack-name.js`, `night-look.js`, `office-code.js`, `crate-stamp.js`), `stars-cakes.js` and `cakes-brand.js` deleted, the evening's `startStorm()` and its wait while the bay's 36b plays, `tests/day2-joins.mjs`, `tools/day2-showing.mjs`.
 
 2026-11-26, draft PR #87, Brian's showing-6 notes. New: `music-picks.js` (one table: moment to a stretch of a music file, or silence; `window.SSQ.musicSpan` keeps Joe's theme element in its stretch, called from `warmTick` in `00-core.js`, the same number of lines), `music/stormtop-sylvania.mp3` (the Croc Boys' song, played by `party-sound.js` through the band's bus and the music level), `music/goating-in-space.mp3` (the morning, once: `home-music.js`), Kevin MacLeod's Carefree, Der Kleber Sting, Funky Chunk (cut to 1:10), Lobby Time, Odyssey (cut to 1:15) and Sneaky Snitch, credited in `music/CREDITS.txt`; the older program's music element plays every file through `keepInSpan` (its cues: title, home, gift, heart, hall, sneak, and the party's `musicCue`; at home the TV story's cue is "tv", `tv-story.js` `showing`); `party-sound.js` plays the band's list and the sting; `music/floating-in-space.mp3` removed (nothing plays it; `MIX.floatingMatch` gone), `tests/party-showing6.mjs`. Changed: `party-watch.js` (`SQUATCH_OUTLINE`, `coneEdge`; `coneSeesPoint` for the home guard), `party-hall.js` (`P4_SWEEP` searched again; the bar strip marked `bar`), `party-alarm.js` (`guardStep`, `GUARD_AROUND`), `party-board-sounds.js` (the murmur without its noise), `party-free.js` (`PHOTO_AFTER_DANCE`), `home-music.js` and `party-sound.js` read the table; `tests/party-sneak.mjs`, `tests/ch1-party-cones.mjs`, `tests/party-flyer.mjs`, `tests/morning-music.mjs` and `tests/sound-cues.mjs` follow the outline and the table; `tests/standing-spots.mjs` walks the guards.
 

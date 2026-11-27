@@ -1865,6 +1865,10 @@ export function createEscape(bridge) {
       return r === "office" ? OFFICE.solids.map((b) => ({ ...b })) : [];
     },
     /** Tests: the code, the places. */
+    /** Every escape beat comes after he rubbed his crayon out of the crate bed's stamp (39b): none in the stamp. */
+    crayonGone() {
+      return !!E().get("ch1Escape");
+    },
     place: Object.freeze({ OFFICE_CODE, BAY: ES_BAY, ES_BAY, HALLWAY: ES_HALLWAY, ES_HALLWAY, OFFICE, BAR: ES_BAR, HOME: ES_HOME, KEYPAD, SITE, SNACKS, VENT_ROOM, keyAt, MOP_CALM, MOPOFF, PLAQUE, ES_DOORS }),
     /** Tests: the state, what the last frame drew, the steps so far. */
     debug() {

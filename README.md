@@ -4,21 +4,21 @@
 | Lines | Heading |
 | --- | --- |
 | 23–35 | # Space Snack Quest |
-| 36–164 | ## Chapter 1 redesign (on main) |
-| 165–179 | ## Music credits |
-| 180–210 | ## Source and build |
-| 211–221 | ## Debug link |
-| 222–227 | ## Automatic checks |
-| 228–231 | ## Screen fit |
-| 232–255 | ## Brian's repeat complaints, as tests (2026-11-22) |
-| 256–261 | ## Scene 1 morning |
-| 262–265 | ## Chapter 1 kid robot |
-| 266–282 | ## Phase 1: kitchen and diner clarity |
-| 283–295 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
-| 296–309 | ## Phase 3: one capture rule, phone HUD, tap to walk |
-| 310–319 | ## Chapter 1 pass: the night out has a purpose, switches say why |
-| 320–337 | ## Progression tests |
-| 338–364 | ## Left as they were |
+| 36–166 | ## Chapter 1 redesign (on main) |
+| 167–181 | ## Music credits |
+| 182–212 | ## Source and build |
+| 213–223 | ## Debug link |
+| 224–229 | ## Automatic checks |
+| 230–233 | ## Screen fit |
+| 234–257 | ## Brian's repeat complaints, as tests (2026-11-22) |
+| 258–263 | ## Scene 1 morning |
+| 264–267 | ## Chapter 1 kid robot |
+| 268–284 | ## Phase 1: kitchen and diner clarity |
+| 285–297 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
+| 298–311 | ## Phase 3: one capture rule, phone HUD, tap to walk |
+| 312–321 | ## Chapter 1 pass: the night out has a purpose, switches say why |
+| 322–339 | ## Progression tests |
+| 340–366 | ## Left as they were |
 <!-- /section-index -->
 # Space Snack Quest
 
@@ -34,6 +34,8 @@ Calendar review status (2026-11-16): Brian said yes to merge the calendar (Nov 1
 **Next up (Brian, 2026-11-16):** Chapter 1, one beat at a time in [`docs/CH1-STORY-WALKTHROUGH.md`](docs/CH1-STORY-WALKTHROUGH.md). Do not leave beat 1 until Brian says it is right. Squatch walks around the bed and the bucket, and the Guardian box is in the closet on day 1 (locked home room v5; Brian's yes, Nov 16, 12:50 PM PT). On day 2 he takes the box out at the closet (`tests/bedroom-walk.mjs`). The calendar is tappable. Printed copy: MOONMUNCH / FUZZUARY; Sponsored by MOON PIES; Sock hunt; family Olympics night; Wash outside windows (remember space suit!); Blanket fort night. These are decoration, not new quests. X or NEXT returns to the same scene (`tests/calendar-closeup.mjs`). Closet, bed, desk homework and the already-bitten calendar are built on branch `feat/home-alone` (draft, see below); the purple bed bar is removed there too; still to build: the bucket. The night vent step no longer finishes inside Mops: the morning hum was leaving him marked as walking. Docs match main: yes.
 
 ## Chapter 1 redesign (on main)
+
+2026-11-27 (Day 2 joined), draft pull request on branch `feat/ch1-day2-joined` (from `feat/ch1-lunch-sneak`), not merged. It joins three branches built side by side from the lunch sneak: the loading bay (#95, beats 28 to 36 and 36b), the evening (#94, beats 37 to 42c) and the escape (#93, beats 43 to 52), with the lunch sneak branch's newest commits merged in too, so Day 2 plays in one go from the snack ship to the night before pickup. The hand-overs, in story order: 36 ends in the hallway after the hairball and the evening goes on from where they stand (37, the photo wall, optional); walking into the hall's doorway starts the bay's 36b (the party hall's three cleaning robots) while the evening waits; reaching the snack counter's front starts the evening's storm (38a, `startStorm()` in `evening.js`); night one's SLEEP · bed starts the escape (43); the escape ends at beat 53. One copy of everything the three branches shared: the snack's names only in `snack-name.js` (`stars-cakes.js` and `cakes-brand.js` are gone; the bay's crates carry `crate-stamp.js`'s station stamp); the night look is `night-look.js` (the lunch sneak branch's) everywhere, and the bay's night picture is the new v3; Isfred's office code only in `office-code.js` (the pin moved there, the number is the same), written in the same pen strokes (`pen-digits.js`) in the bay, in night one's close-up and in the escape; the crate bed's family stamp is one layer on the home picture (`crate-stamp.js`), drawn bigger in the evening's 39b close-up with the same look, and his crayon is gone from it once he rubs it out (39b) through the escape; the escape's pinned brochure is the evening's own drawing; one speech voice per speaker (the robots keep the loading bay's robot voice); `thought-place.js` exports `THOUGHT_PLACE`, and no Day 2 module shares a top-level name with another. The bay plant's new spot (locked bay pictures v3) is in the evening's night bay and the escape's solids. Check: `tests/day2-joins.mjs`, with the bay's, the evening's, the night look's and the escape's own suites. Showing tool: `node tools/day2-showing.mjs <out.mp4>` (beats 28 to 53 in one recording). Docs match main: yes. Not yet played by a person.
 
 2026-11-26 (rebuild from the story pass), draft pull request #95 on branch `feat/ch1-loading-bay` (from `feat/ch1-lunch-sneak`), not merged. Beats 28 to 36 and the new 36b are a module (`src/modules/loading-bay.js`, registered as `ch1-bay`; places and timings in `loading-bay-place.js`, drawings in `loading-bay-art.js`, words in `loading-bay-lines.js`; the snack's names in `cakes-brand.js`: the station's STARS CAKES, the family's MARS CAKES, his crate's faded _ARS CAKES). Behind the snack counter the station speaker calls the Universal Postal Service ship (a bubble beside the hall speaker, sound waves) and Squatch hopes for a new kind from the Guardians. The hallway is the player's to walk ("Squatch: follow Mops to the ship"); the photo wall turns him back ("Later. The ship!"). In the bay the manager is coming: "Hide!", ROLL · ball behind the cargo. The ship docks; three robots roll down under the scanner arch ("NO FUR. PROCEED.", its field shimmering), STARS CAKES crates and a little tagged box come down, last week's empty crate goes up; one robot posts a letter in the robot mailbox ("Mail scanned."). The player sneaks from the cargo to the plant past a robot rolling to and fro (HIDE · plant; its cone holds 0.5 s with a "?"; seen means the alarm and the one capture rule). From the plant: Isfred on why the robots came (Squatch's whisper: "Fur in the vents... that was me."), the three workers Dot, Bob and Lou thanked and each handing a robot their tool, Lou stopped at the scanner for his fuzzy hat (FUR. STOP.), the promise, then PEEK · form: the form close-up with ORDER MORE ROBOTS and Isfred's office code 169556 written on the pink and through on the yellow. The ramp goes up and the ship leaves. Then the player is Mops (a switch card): TAKE and EAT the copies (the bite close-up), the robots get their orders and go, TALK · Squatch (the mumble whispered, "I can't understand you with paper in your mouth."), SPIT · bin, PICK UP and GIVE the little box (the tag close-up: "For S. A new kind. — The Guardians"), and Squatch again (a second card) goes home with Mops. In the empty hallway the office door opens with a robot inside; ROLL · ball in time gives the hairball close-up ("What's that?" "Big hairball." "Does not compute."); too slow and the robot sees fur (the one capture rule; the lockup names "A robot" "in the hallway"). 36 ends there with the rebuilt evening's `start()` (`window.SSQ.beat("ch1-evening")`, the photo wall) when that beat is there. 36b (`window.SSQ.beat("ch1-bay").startHallSneak()`, which the evening calls after its photo wall, or this beat itself when the evening is not there): the party hall with three cleaning robots mopping lanes, cones pointing the way they roll, grey streaks (Mops shakes his head at one), plants blocking sight, Mops able to stop one ("MOVE, GOAT." "You missed a corner." "CORNERS ARE NOT EFFICIENT."); reaching the snack counter calls the evening's `startStorm()` (38a) or, without it, the older program's next step (the engine's `hallSneakDone`). The bay plant moved a few steps along the wall in new locked delivery-room pictures (v3, pickup v4; Brian's yes, question 75). Shared files copied as-is from sibling branches: `party-alarm.js` (feat/ch1-evening), `pen-digits.js` and `line-split.js` (feat/ch1-escape). On localhost `?beat=bay:pa` (or `bay:hallway`, `bay:cargo`, `bay:sneak`, `bay:peek`, `bay:take`, `bay:talkto`, `bay:walkby`, `bay:hall`, any part) opens it. Check: `tests/loading-bay.mjs`. Showing tool: `node tools/party-showing.mjs bay <out.mp4>`. Docs match main: yes. Not yet played by a person.
 

@@ -62,7 +62,7 @@ const homeSpots = {
   ...Object.fromEntries(Object.entries(HOME_MORNING_SPOTS).filter(([k]) => k !== "bed").map(([k, v]) => ["home morning " + k, v])),
   // the evening (beats 40 to 42, evening.js): where he stops, where Mops stands, beside the bed at night; Mops's way to
   // his sleeping place (he lies there: its floor is checked below)
-  ...Object.fromEntries(["stop", "mops", "up", "sleepVia"].map((k) => ["evening " + k, EVP.HOME[k]])),
+  ...Object.fromEntries(["stop", "mops", "up", "sleepVia"].map((k) => ["evening " + k, EVP.EV_HOME[k]])),
   // the escape (beats 45, 46 and 52): lying in bed is on the bed on purpose (not listed); the brochure is on the wall
   ...Object.fromEntries(["sq", "door", "mops", "closet", "bedFoot", "mopsNight"].map((k) => ["escape " + k, ESCAPE_HOME[k]])),
 };
@@ -240,7 +240,7 @@ check("draw order: front last, and people on the same feet line always in the or
 // of where Squatch gets out of bed; his head rests against the bucket (the box ends at its left side).
 {
   // (his scale at home is the room's, 3: Mops's head at the bucket, measured in tests/evening-physics.mjs)
-  const H = EVP.HOME,
+  const H = EVP.EV_HOME,
     lie = EVP.mopsSleepBox(3),
     up = { x0: H.up.x - FOOT.home.side, x1: H.up.x + FOOT.home.side, y0: H.up.y - FOOT.home.up, y1: H.up.y + FOOT.home.down };
   check("evening: Mops lies on open floor (not on the bed or the bucket, not where Squatch gets out of bed)", !hit(lie, HOME_FURNITURE.bed) && !hit(lie, HOME_FURNITURE.bucket) && !hit(lie, up) && lie.x1 === HOME_FURNITURE.bucket.x0, { lie, up });

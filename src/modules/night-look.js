@@ -49,6 +49,9 @@ export const LIT_BY_NIGHT = Object.freeze({
   // home v6: no window or lamp; the TV's screen (picture 762 to 904 wide, 182 to 277 high; party-talk.js TV.screen)
   closet: Object.freeze([Object.freeze({ x0: 572, y0: 141, x1: 678, y1: 213 })]),
   hangar: Object.freeze([]),
+  // the vent room v1 (Mops's secret room, the escape's beat 48): the desk lamp's corner, where its light falls (the
+  // escape's own box before the join; the escape draws the lamp's beam over it)
+  duct: Object.freeze([Object.freeze({ x0: 600, y0: 300, x1: 920, y1: 440 })]),
 });
 
 /**

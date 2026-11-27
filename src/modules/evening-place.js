@@ -123,7 +123,7 @@ export const STORM = Object.freeze({
   // strip to the aisle's top (EV_BAR.sq), never over the counter or a stool
   fromSneak: Object.freeze({
     mops: Object.freeze([Object.freeze({ x: 740, y: 540 }), Object.freeze({ x: 778, y: 510 })]),
-    sq: Object.freeze([Object.freeze({ x: 730, y: 560 }), Object.freeze({ x: 730, y: 330 }), Object.freeze({ x: 852, y: 326 })]),
+    sq: Object.freeze([Object.freeze({ x: 730, y: 560 }), Object.freeze({ x: 730, y: 330 }), EV_BAR.sq]),
   }),
   // his eyes over the counter's edge while he peeks
   eyes: Object.freeze({ x: 866, y: 446 }),
@@ -140,7 +140,7 @@ export const STORM = Object.freeze({
 });
 
 // ---------- beats 40 and 41: home ----------
-export const HOME = Object.freeze({
+export const EV_HOME = Object.freeze({
   in: Object.freeze({ x: 930, y: 462 }),
   stop: Object.freeze({ x: 470, y: 470 }),
   mopsIn: Object.freeze({ x: 960, y: 462 }),
@@ -158,9 +158,9 @@ export const HOME = Object.freeze({
   // Mops's mop bucket on the floor (the room's solid for it, mop-bucket.js): bumping it at night clangs
   bucket: Object.freeze({ x0: 536, x1: 596, y0: 500, y1: 571 }),
 });
-/** Where Mops stands before he tips over (his feet), so that on his back his head rests at HOME.sleepHead (`k`: his scale at home). */
+/** Where Mops stands before he tips over (his feet), so that on his back his head rests at EV_HOME.sleepHead (`k`: his scale at home). */
 export function mopsSleepAt(k) {
-  return { x: HOME.sleepHead.x - 17 * k, y: HOME.sleepHead.y };
+  return { x: EV_HOME.sleepHead.x - 17 * k, y: EV_HOME.sleepHead.y };
 }
 /** The floor Mops takes up lying on his back (a solid while he sleeps, so nobody walks through him). */
 export function mopsSleepBox(k) {
@@ -196,7 +196,7 @@ export const EV_BAY = Object.freeze({
   run: Object.freeze([Object.freeze({ x: 720, y: 466 }), Object.freeze({ x: 645, y: 463 }), Object.freeze({ x: 645, y: 336 }), Object.freeze({ x: 850, y: 334 })]),
   // the plant (HIDE · plant during an alarm): where he steps in, where his eyes show (12-ch1-redesign.js CH1_PLANT_EYES)
   // (the locked bay pictures v3: the plant right of the bin, Brian's yes to question 75; the bay's own spot,
-  // loading-bay-place.js EV_BAY.plant, and the older program's CH1_PLANT and CH1_PLANT_EYES)
+  // loading-bay-place.js BAY.plant, and the older program's CH1_PLANT and CH1_PLANT_EYES)
   plant: Object.freeze({ x: 295, y: 388, r: 46, eyes: Object.freeze({ x: 295, y: 308 }), box: Object.freeze({ x0: 240, x1: 350, y0: 244, y1: 382 }) }),
   // the red FUR alarm on the back wall by the door (picture 90 to 127 wide, 178 to 219 high), where a robot runs
   alarm: Object.freeze({ x0: 68, y0: 137, x1: 95, y1: 169 }),

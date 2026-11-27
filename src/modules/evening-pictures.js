@@ -36,7 +36,7 @@ function pWords(ctx, t, x, y, size, color = INK, weight = 900, align = "center",
   ctx.fillStyle = color;
   ctx.fillText(t, x, y);
 }
-const CRAYON_FONT = '"Comic Sans MS", "Chalkboard SE", system-ui, sans-serif';
+const EV_CRAYON_FONT = '"Comic Sans MS", "Chalkboard SE", system-ui, sans-serif';
 
 // ---------- 38a: Jupiter's big red storm ----------
 /** The hall's big window in game positions (the locked hall v2 picture's window, picture 47 to 828 by 95 to 298). */
@@ -305,7 +305,7 @@ export function drawCakeChart(ctx, x, y, w, h, newX = 0, small = false, crateKin
     ctx.beginPath();
     for (let x = 90; x <= 270; x += 18) ctx.lineTo(x, 44 + (x % 36 ? -6 : 6));
     ctx.stroke();
-  } else pWords(ctx, SNACK.NAME, CHART.W / 2, 44, 34, "#e5533d", 800, "center", CRAYON_FONT);
+  } else pWords(ctx, SNACK.NAME, CHART.W / 2, 44, 34, "#e5533d", 800, "center", EV_CRAYON_FONT);
   const C = CHART.cell;
   const xMark = (cx, cy, r, u) => {
     ctx.save();
@@ -345,7 +345,7 @@ export function drawCakeChart(ctx, x, y, w, h, newX = 0, small = false, crateKin
       ctx.strokeStyle = "#ffb000";
       ctx.stroke();
     }
-  crateKind && pWords(ctx, crateKind, K.x - 76, K.y + 62, 22, "#3478f6", 800, "center", CRAYON_FONT);
+  crateKind && pWords(ctx, crateKind, K.x - 76, K.y + 62, 22, "#3478f6", 800, "center", EV_CRAYON_FONT);
   ctx.restore();
 }
 
