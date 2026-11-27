@@ -81,13 +81,15 @@ check(`home: none of ${Object.keys(homeSpots).length} standing spots overlaps th
 {
   const { mopsTurnedBox, MOPS_ASLEEP } = await mod("mops-asleep-art.js");
   const bad = [];
-  for (const turn of [0, 0.25, 0.5, 0.75, 1]) {
+  for (const turn of [0, 0.25, 0.5, MOPS_ASLEEP.turn]) {
     const { box } = mopsTurnedBox(MOPS_ASLEEP.x, MOPS_ASLEEP.floor, 3.45, MOPS_ASLEEP.f, turn, MOPS_ASLEEP.headDrop);
     const floor = { x0: box.x0, x1: box.x1, y0: MOPS_ASLEEP.floor - FOOT.home.up, y1: MOPS_ASLEEP.floor + FOOT.home.down };
-    for (const [thing, f] of Object.entries(HOME_FURNITURE)) hit(floor, f) && bad.push({ turn, thing, box });
+    // (his head comes down on the bucket's rim on purpose: round 7, question 127; his feet stay left of it)
+    for (const [thing, f] of Object.entries(HOME_FURNITURE)) thing !== "bucket" && hit(floor, f) && bad.push({ turn, thing, box });
+    MOPS_ASLEEP.x + FOOT.home.side > HOME_FURNITURE.bucket.x0 && bad.push({ turn, thing: "bucket (his feet)", x: MOPS_ASLEEP.x });
     box.x0 < HOME_FURNITURE.bed.x1 && bad.push({ turn, thing: "bed (drawn over it)", box });
   }
-  check("home: Mops falling asleep and asleep on his back beside the bed overlaps no bed, bucket or Guardian box", bad.length === 0, bad);
+  check("home: Mops falling asleep and asleep on his side by his bucket is clear of the bed and the Guardian box, his feet left of the bucket", bad.length === 0, bad);
 }
 // the two places Mops stood on the bucket in showing 5 would fail this check (they are kept here as its proof)
 const onBucket = (p) => hit({ x0: p.x - FOOT.home.side, x1: p.x + FOOT.home.side, y0: p.y - FOOT.home.up, y1: p.y + FOOT.home.down }, HOME_FURNITURE.bucket);

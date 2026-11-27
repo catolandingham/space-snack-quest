@@ -4,8 +4,8 @@
  * Mops is the room's own drawing (the older program's Fe, through the drawMopsOn hand-over), never redrawn here, only
  * turned round the middle of his body with canvas transforms and set down so his lowest point rests on the floor:
  *   turn 0     standing (as the room draws him)
- *   turn 0.5   tipped over onto his side, stiff legs straight out sideways
- *   turn 1     on his back, his four feet in the air
+ *   turn 0.5   tipped over onto his side, stiff legs straight out sideways (he sleeps a little past this: MOPS_SLEEP)
+ *   turn 1     on his back, his four feet in the air (not used since 2026-11-27, question 127)
  * The bedtime story (bedtime-story.js) draws him with this from the moment his eyes droop until the fade to black. The
  * morning after (feat/ch1-day2-morning) can draw him still asleep the same way (MOPS_ASLEEP: where and how), until he
  * gets up after the PA.
@@ -26,8 +26,30 @@ const HULL = Object.freeze({
 // The middle of his body, in his units: he turns round it.
 const MIDDLE = -17;
 
-/** Where Mops lies asleep after the bedtime story (game positions) and how he is drawn there (turn 1, eyes closed). */
-export const MOPS_ASLEEP = Object.freeze({ x: 405, floor: 460, f: -1, turn: 1, headDrop: 12 });
+/**
+ * How far round Mops ends up asleep, everywhere he sleeps (Day 1's bedtime, the morning after, the evening of Day 2 and
+ * night one): tipped over onto his side, a little past flat, and no further (Brian, 2026-11-27, video note r5 8:24:
+ * "just tip over and sleep. The whole sleeping upside down thing just doesn't work"; question 127, the pick A, a
+ * placeholder pose until he answers). `side` is the stiff fall onto his side; `turn` where he settles.
+ * q: 127. Option B (as built before: he rolls on onto his back, feet in the air): turn: 1.
+ */
+export const MOPS_SLEEP = Object.freeze({ side: 0.5, turn: 0.58 });
+/**
+ * Where Mops lies asleep after the bedtime story (game positions: his feet before he tips, left of his mop bucket, so
+ * that tipped over his head comes down on the bucket's rim; the same place as in the evening of Day 2,
+ * evening-place.js mopsSleepAt) and how he is drawn there (eyes closed).
+ */
+export const MOPS_ASLEEP = Object.freeze({ x: 492, floor: 584, f: -1, turn: MOPS_SLEEP.turn, headDrop: 12 });
+/**
+ * Where his head is, turned (game position): the middle of his head in his own units is (17, -29) facing right
+ * (evening-art.js measured it), turned with him round his middle.
+ */
+export function mopsTurnedHead(x, floor, scale, f, turn, headDrop = 0) {
+  const T = mopsTurnedBox(x, floor, scale, f, turn, headDrop),
+    dx = 17 * f * scale,
+    dy = (-29 + headDrop - MIDDLE) * scale;
+  return { x: x + dx * Math.cos(T.a) - dy * Math.sin(T.a), y: T.mid + dx * Math.sin(T.a) + dy * Math.cos(T.a) };
+}
 
 /**
  * Where his drawing's points land for `turn` (0 standing, 1 on his back), turned clockwise as seen, with his lowest

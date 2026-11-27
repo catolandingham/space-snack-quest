@@ -14,7 +14,7 @@
  * The snack's names come from snack-name.js (one place for the rename); the empty crate's tag is the loading bay's
  * (loading-bay-lines.js "crate-empty"), the same tag on the same kind of crate.
  */
-import { SNACK } from "./snack-name.js";
+import { SNACK, FAMILY } from "./snack-name.js";
 import { bayWords } from "./loading-bay-lines.js";
 
 const ES_WALK = "docs/CH1-STORY-WALKTHROUGH.md beat ";
@@ -86,7 +86,8 @@ export const ESCAPE_LINES = Object.freeze(
     pend("mops-brochure", "mops", "Do you still have that brochure?", "45a", "CHANGED"),
     fresh("chip-show", "chip", "Squatch: show Mops the brochure", "45a"),
     esLine("button-show", "button", "SHOW · brochure", "pending", SP("45a", "the same button as the night of the fight, beat 40")),
-    pend("mops-pancake-go", "mops", "Let's go find that pancake place.", "45a", "CHANGED, with hearts"),
+    // (round 7, Brian 2026-11-27, question 120: no pancakes anywhere; was "Let's go find that pancake place.")
+    pend("mops-pancake-go", "mops", `Let's go find that ${FAMILY.name} stand.`, "45a", "CHANGED 2026-11-27 (question 120), with a heart"),
     pend("mops-mars", "mops", "...Mars.", "45a", "NEW, the snack's thread: he touches the crate's worn letter"),
     // ---- 45b: the plan, in crayon ----
     pend("sq-how", "sq", "How? The scanner stops fur.", "45b", "NEW"),
@@ -138,7 +139,7 @@ export const ESCAPE_LINES = Object.freeze(
     kept("label-toys", "paper", "TOYS", "approved", ES_WALK + "48 (labels MARS / NO / TOYS)" + Q55),
     kept("letter", "paper", "MARS LOST & FOUND. Re: a lost baby Sasquatch. We have NO record of any lost baby. There are NO Sasquatches on Mars.", "approved", ES_WALK + "48 (shown as four lines on the letter: story pass 2026-11-26, KEEP)" + Q55),
     pend("mops-asked", "mops", "I asked Mars. Mars said no.", 48, "NEW"),
-    pend("mops-cooks", "mops", "But those cooks...", 48, "NEW"),
+    pend("mops-cooks", "mops", "But those cakes...", 48, "CHANGED 2026-11-27: was \"But those cooks...\" (no cooks on the brochure now, question 119)"),
     fresh("chip-toys", "chip", "Mops: look in the toy bin", 48),
     esLine("button-toys", "button", "LOOK · toy bin", "pending", SP(48, "named by the story pass")),
     fresh("chip-stubs", "chip", "Mops: look at the stubs", 48),

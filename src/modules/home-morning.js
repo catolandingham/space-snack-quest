@@ -49,7 +49,7 @@ import { drawSquatchArt, armEnds } from "./squatch-art.js";
 import { morningWords } from "./home-morning-lines.js";
 import { MORNING_THINGS, MORNING_SIZES, TRACE, drawRocket, drawLunchBag, drawGuardianBox, drawBoxWithGift, drawBoxThought, drawCrayonThought, drawCalendarToday, BOX_CLOSEUP, GBOX_ID, NOTE_ID } from "./home-morning-art.js";
 import { drawBedtimeSquatch, drawBedBlanket, drawCrateFront, BED_POSES, BEDTIME_SPOTS, CRATE_FRONT } from "./bedtime-story.js";
-import { MOPS_ASLEEP, drawMopsTurned } from "./mops-asleep-art.js";
+import { MOPS_ASLEEP, MOPS_SLEEP, drawMopsTurned } from "./mops-asleep-art.js";
 import { drawTallCloset } from "./tall-closet.js";
 import { HOME_THINGS } from "./home-alone.js";
 import { cutawaySteps } from "./cutaway.js";
@@ -87,7 +87,7 @@ export const HOME_MORNING_SPOTS = Object.freeze({
 export const HOME_MORNING_WALKS = Object.freeze({
   getUp: Object.freeze({ who: "sq", from: HOME_MORNING_SPOTS.side, via: Object.freeze([{ x: 315, y: 560 }, HOME_MORNING_SPOTS.woke]) }),
   toCloset: Object.freeze({ who: "sq", from: HOME_MORNING_SPOTS.woke, via: Object.freeze([{ x: 320, y: 562 }, { x: 335, y: 400 }, HOME_MORNING_SPOTS.closet]) }),
-  mopsOut: Object.freeze({ who: "mops", from: HOME_MORNING_SPOTS.mopsBed, via: Object.freeze([{ x: 520, y: 440 }, { x: 900, y: 430 }, HOME_MORNING_SPOTS.mopsOut]) }),
+  mopsOut: Object.freeze({ who: "mops", from: HOME_MORNING_SPOTS.mopsBed, via: Object.freeze([{ x: 470, y: 470 }, { x: 520, y: 440 }, { x: 900, y: 430 }, HOME_MORNING_SPOTS.mopsOut]) }),
 });
 // Where the room draws him sitting in the crate bed (the bedtime story's SIT).
 const BED_SIT = BED_POSES.sit;
@@ -274,8 +274,8 @@ export function createHomeMorning(bridge) {
       };
     const m = h.mo;
     m.eyes = t >= P.eyes ? "" : "closed";
-    // on his back (1), onto his side (0.5), up on his feet (0)
-    m.turn = 1 - 0.5 * k(P.side[0], P.side[1]) - 0.5 * k(P.stand[0], P.stand[1]);
+    // as he slept (MOPS_SLEEP.turn), flat on his side (MOPS_SLEEP.side), up on his feet (0)
+    m.turn = MOPS_SLEEP.turn - (MOPS_SLEEP.turn - MOPS_SLEEP.side) * k(P.side[0], P.side[1]) - MOPS_SLEEP.side * k(P.stand[0], P.stand[1]);
     m.headDrop = MOPS_ASLEEP.headDrop * (1 - k(P.side[0], P.stand[1]));
     m.jitter = t > P.stand[1] && t < P.stand[1] + 0.15 ? Math.sin(t * 70) * 1.4 : 0;
     // up: he looks at Squatch asleep, and a heart floats up from him (whenever Mops sees Squatch: Brian 2026-11-26, #48)

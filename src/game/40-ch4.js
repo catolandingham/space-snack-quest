@@ -360,7 +360,7 @@
         (H.bot = { x: 860, y: 500, hx: 860, hf: -1, f: -1, look: 0, pause: 0, alert: 0 }),
         J([
           { k: "card", id: "ch4", text: "Chapter 4 \xB7 Mars" },
-          v("zip", "Mars dock! Pancake stand's past the gate. Tuesdays. Three dozen."),
+          v("zip", "Mars dock! The " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("family") : "Cakes") + " stand's past the gate. Tuesdays. Three dozen."),
           v("mops", "Home doesn't mean safe. Locals are scared of a Squatch. Troopers and searchlights lock you up."),
           v("mops", "I'll walk on ahead. Nobody looks twice at a goat."),
           v("sq", "Trash cans. I'll use them on purpose."),
@@ -435,7 +435,7 @@
             N(() => {
               ((H.dad = !0), (H.dadX = Qa.x + 110));
             }),
-            v("dad", "Come in, come in! Pancakes!"),
+            v("dad", "Come in, come in! " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("family") : "Cakes") + "!"),
             cV((l) => mV(n.mo, Qa.x - 20, 560, 140, l)),
             v("dad", "Oh, um... goats wait outside, I think? Health rules. Sorry, fella!"),
             v("sq", "Go wait in the van, Mops. Just for a bit."),
@@ -522,7 +522,7 @@
         : arrive();
       J([
         cV(() => !n.roomWalk),
-        v("mom", "Eat up, Harry! Three dozen pretzels, and pancakes forever."),
+        v("mom", "Eat up, Harry! Three dozen pretzels, and " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("family") : "Cakes") + " forever."),
         uV(1.2),
         N(() => {
           ((H.beam = 0), D.alarm(), (n.ctrl = !0));
@@ -662,7 +662,7 @@
             ((H.gone = !1), (H.mom = !0), (H.dad = !0), (H.momX = 1e3), (H.dadX = 1060));
           }),
           cV((l) => ((H.momX = Math.max(900, H.momX - 160 * l)), (H.dadX = Math.max(960, H.dadX - 160 * l)), H.momX <= 900)),
-          v("dad", "Forget the rules. Any goat who raised our son eats pancakes with us."),
+          v("dad", "Forget the rules. Any goat who raised our son eats " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("family") : "Cakes") + " with us."),
           v("sq", "Harry to my family. Squatch to my goat."),
           N(() => {
             ((H.phase = "m5d"), chipNow(), (n.ctrl = !0));
@@ -695,7 +695,7 @@
             {
               k: "card",
               id: "ever",
-              text: "Ever since: no more hiding. Squatch sings out loud, Mops mops the pancake stand (badly), and the menu says, in crayon: GOATS EAT FREE.",
+              text: "Ever since: no more hiding. Squatch sings out loud, Mops mops the " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("family") : "Cakes") + " stand (badly), and the menu says, in crayon: GOATS EAT FREE.",
             },
             { k: "panel", id: "tally4" },
             { k: "card", id: "end", text: "THE END" },
@@ -838,7 +838,7 @@
         e.lineTo(350, 90),
         e.closePath(),
         r("#e5533d", 4),
-        g("BIG FURRY PANCAKES", 620, 112, 22, "#ffffff", "center", 900),
+        g((window.SSQ && window.SSQ.snack ? window.SSQ.snack("FAMILY") : "CAKES"), 620, 112, 22, "#ffffff", "center", 900),
         Mo(380, 112, 0.6),
         ringOf("sdoor"),
         m(Qa.x - 44, 240, 88, 150, 6),
@@ -968,7 +968,7 @@
           g("Lost in a", 0, 70, 26, y, "center", 800),
           g((window.SSQ && window.SSQ.snack ? window.SSQ.snack("NAME") : "SNACK") + " shipment", 0, 108, 30, "#3478f6", "center", 900),
           g("Please bring him home.", 0, 160, 22, "#59657d", "center", 700),
-          g("\u2014 Big Furry Pancakes, Crater Row", 0, 200, 16, "#59657d", "center", 700),
+          g("\u2014 " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("family") : "Cakes") + ", Crater Row", 0, 200, 16, "#59657d", "center", 700),
           e.restore(),
           !0
         );

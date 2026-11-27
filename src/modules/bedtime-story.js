@@ -37,7 +37,7 @@ import { heart } from "./party-free-art.js";
 import { cutawaySteps } from "./cutaway.js";
 import { footfall } from "./footfalls.js";
 import { createBedtimeSound } from "./bedtime-story-sound.js";
-import { drawMopsTurned, MOPS_ASLEEP } from "./mops-asleep-art.js";
+import { drawMopsTurned, MOPS_ASLEEP, MOPS_SLEEP } from "./mops-asleep-art.js";
 import { nightPicture, isNightNow } from "./night-look.js";
 
 export const BEDTIME_STORY_ID = "moonpie";
@@ -66,6 +66,8 @@ export const BEDTIME_SPOTS = Object.freeze({
   // video note 0:58: "Mops also looks like he's overlapping the crate")
   mops: Object.freeze({ x: 405, y: 460 }),
   tuck: Object.freeze({ x: 366, y: 460 }),
+  // where he falls asleep: left of his mop bucket, his head coming down on its rim (mops-asleep-art.js MOPS_ASLEEP)
+  sleep: Object.freeze({ x: MOPS_ASLEEP.x, y: MOPS_ASLEEP.floor }),
 });
 /**
  * Every walk the bedtime story makes, as its start and the corners it goes through (game positions), round the crate
@@ -77,7 +79,7 @@ export const BEDTIME_SPOTS = Object.freeze({
 export const BEDTIME_WALKS = Object.freeze({
   squatch: Object.freeze({ who: "sq", from: Object.freeze({ x: 640, y: 545 }), via: Object.freeze([BEDTIME_SPOTS.via, BEDTIME_SPOTS.side]) }),
   mops: Object.freeze({ who: "mops", from: BEDTIME_SPOTS.mopsStart, via: Object.freeze([BEDTIME_SPOTS.mopsVia, BEDTIME_SPOTS.mops]) }),
-  tuck: Object.freeze({ who: "mops", from: BEDTIME_SPOTS.mops, via: Object.freeze([BEDTIME_SPOTS.tuck, BEDTIME_SPOTS.mops]) }),
+  tuck: Object.freeze({ who: "mops", from: BEDTIME_SPOTS.mops, via: Object.freeze([BEDTIME_SPOTS.tuck, BEDTIME_SPOTS.mops, BEDTIME_SPOTS.sleep]) }),
 });
 // In his crate bed (Brian 2026-11-26, video notes 0:14 and 0:58: "it does look like Squatch just lost his lower body
 // half... make that look like he's actually inside of a crib or crate"): this file draws him sitting down inside the
@@ -416,13 +418,17 @@ export function createBedtimeStory(bridge) {
       P = BEDTIME_PACE,
       t = S.t;
     if (t < P.tuckStep) mopsStep(BEDTIME_SPOTS.tuck.x, BEDTIME_SPOTS.tuck.y, dt, P.mops);
-    else if (t > P.blanket[1] + 0.15) mopsStep(BEDTIME_SPOTS.mops.x, BEDTIME_SPOTS.mops.y, dt, P.mops);
-    else e.still("mops");
-    e.face("mops", -1);
+    else if (t > P.blanket[1] + 0.15) {
+      // back from the bed, then over to his bucket, where he sleeps
+      const w = [BEDTIME_SPOTS.mops, BEDTIME_SPOTS.sleep][S.mopsLeg];
+      w ? mopsStep(w.x, w.y, dt, P.mops) && S.mopsLeg++ : e.still("mops");
+    } else e.still("mops");
+    S.mopsLeg === 1 || e.face("mops", -1);
     S.rustled || t < P.blanket[0] || ((S.rustled = true), sound.rustle());
     S.blanket = between(t, P.blanket[0], P.blanket[1]);
-    if (t < P.tuck) return false;
+    if (t < P.tuck || S.mopsLeg < 2) return false;
     e.still("mops");
+    e.face("mops", -1);
     const m = e.pos("mops");
     record.tuck = { blanket: S.blanket, mops: { x: Math.round(m.x), y: Math.round(m.y) } };
     // from here this file draws Mops (the room's drawing of him, turned as he falls asleep: mops-asleep-art.js)
@@ -452,22 +458,23 @@ export function createBedtimeStory(bridge) {
     // he falls faster and faster, then bounces a little where he lands
     const k = Math.max(0, Math.min(1, (t - P.stiff) / (P.fall - P.stiff))),
       bounce = t > P.fall ? Math.max(0, Math.sin(((t - P.fall) / 0.3) * Math.PI)) * 0.03 * (t < P.fall + 0.3 ? 1 : 0) : 0;
-    S.mo.turn = 0.5 * k * k - bounce;
+    S.mo.turn = MOPS_SLEEP.side * k * k - bounce;
     S.thumped || t < P.fall || ((S.thumped = true), sound.thump());
     if (t < P.tip) return false;
-    S.mo.turn = 0.5;
+    S.mo.turn = MOPS_SLEEP.side;
     phase("roll");
     return true;
   }
-  // 4f. He rolls onto his back, his four feet in the air, asleep; as he settles the light goes down by itself.
+  // 4f. He settles where he fell, on his side, asleep (no roll onto his back since 2026-11-27, question 127:
+  // mops-asleep-art.js MOPS_SLEEP); as he settles the light goes down by itself.
   function roll(dt) {
     beatFrame(dt);
     const P = BEDTIME_PACE,
       t = S.t;
-    S.mo.turn = 0.5 + 0.5 * between(t, P.rollAt[0], P.rollAt[1]);
+    S.mo.turn = MOPS_SLEEP.side + (MOPS_SLEEP.turn - MOPS_SLEEP.side) * between(t, P.rollAt[0], P.rollAt[1]);
     S.dim = between(t, P.dimFrom, P.dimTo);
     if (t < P.roll) return false;
-    S.mo.turn = 1;
+    S.mo.turn = MOPS_SLEEP.turn;
     record.asleep = { x: Math.round(S.mo.x), floor: Math.round(S.mo.floor), turn: S.mo.turn, eyes: S.mo.eyes };
     phase("snore1");
     return true;

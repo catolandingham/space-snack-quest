@@ -3,11 +3,10 @@
  * PLACEHOLDER for Brian's eye, drawn as a layer over a locked room picture or in a close-up; none changes a locked
  * picture's file.
  *   Jupiter's big red storm rolling past the hall's big window, and the red glow it gives the hall (38a)
- *   the bin behind the snack counter the brochure lands in (38b); the coffee stain on the brochure
- *   the brochure's picture parts a kid taps (39): Mars in the window, the pancakes, the cut-open cake that fizzes, the
- *     paw print, the two cooks, and one cake box stamped with his family's name (the brochure's only words)
- *   the Guardians' mark (their "paw" print, slightly off: made with a hoof)
- *   the Guardians' little box with its tag, and this week's cake (39b); the crayon chart of kinds tried (39b)
+ *   the bin of the don't-send ending's cutaway (42b)
+ *   the two things on the stand's counter in the brochure (39): one cake box stamped with his family's name (the
+ *     brochure's only words) and the cut-open cake that fizzes
+ *   the Guardians' little box with its tag, and this week's cake (39b)
  *   the thought pictures (41: the idea; 42b: the choice) and the "years later" picture of the don't-send ending
  *   the crate beside the loading bay's big wall vent (42c)
  */
@@ -119,53 +118,41 @@ export function drawCounterBin(ctx, x, y, s = 1) {
   pRect(ctx, -19, -38, 38, 6, 2, "#a7b0c2", INK, 2.5);
   ctx.restore();
 }
-/** A brown coffee splash on the brochure (inside its box). */
-export function drawCoffeeStain(ctx, x, y, w, h) {
-  ctx.save();
-  ctx.globalAlpha = 0.7;
-  ctx.fillStyle = "#6b3f1d";
-  ctx.beginPath();
-  ctx.ellipse(x + w * 0.86, y + h * 0.1, w * 0.1, h * 0.06, 0.4, 0, TAU);
-  ctx.fill();
-  pDisc(ctx, x + w * 0.74, y + h * 0.06, w * 0.03, "#6b3f1d");
-  pDisc(ctx, x + w * 0.92, y + h * 0.2, w * 0.025, "#6b3f1d");
-  ctx.restore();
-}
-
 // ---------- 39: the brochure's picture parts ----------
 /**
- * Where each thing a kid taps sits on the brochure's front, as fractions of its box (evening-art.js drawBrochure):
- * Mars in the window, the pancakes, the cut-open cake, the paw print, the two cooks; and the cake box stamped
- * his family's name. Each is { fx, fy, fr } (middle and reach, fractions of the width).
+ * Where the two things on the stand's counter sit on the brochure's front, as fractions of its box (evening-art.js
+ * drawBrochure): the cake box stamped with his family's name, and the cake cut open.
  */
 export const BROCHURE_PARTS = Object.freeze({
-  window: Object.freeze({ fx: 0.5, fy: 0.2, fr: 0.17 }),
-  pancakes: Object.freeze({ fx: 0.5, fy: 0.68, fr: 0.13 }),
-  cake: Object.freeze({ fx: 0.82, fy: 0.84, fr: 0.11 }),
-  paw: Object.freeze({ fx: 0.86, fy: 0.95, fr: 0.07 }),
-  cooks: Object.freeze({ fx: 0.5, fy: 0.45, fr: 0.3 }),
-  box: Object.freeze({ fx: 0.2, fy: 0.84, fw: 0.32, fh: 0.13 }),
+  box: Object.freeze({ fx: 0.36, fy: 0.56, fw: 0.42, fh: 0.13 }),
+  cake: Object.freeze({ fx: 0.74, fy: 0.56, fr: 0.13 }),
 });
 /**
- * The brochure's extra things, drawn over its front (x, y, w, h): the cake box stamped with his family's name (snack-name.js FAMILY) on the counter, the
- * cake cut open with its red middle (`fizz` 0 to 1: little sparks), and the round real paw print in the corner.
+ * The things on the stand's counter, drawn over the brochure's front (x, y, w, h): the cake box stamped with his
+ * family's name (snack-name.js FAMILY) in fat red letters, and the cake cut open with its red middle (`fizz` 0 to 1:
+ * little sparks). `small`: the box's letters are a red bar (too small to read in a paw).
  */
-export function drawBrochureExtras(ctx, x, y, w, h, fizz = 0, t = 0) {
+export function drawBrochureExtras(ctx, x, y, w, h, fizz = 0, t = 0, small = false) {
   const B = BROCHURE_PARTS.box,
     bx = x + w * (B.fx - B.fw / 2),
     by = y + h * (B.fy - B.fh / 2),
     bw = w * B.fw,
     bh = h * B.fh;
   pRect(ctx, bx, by, bw, bh, 3, "#f6e7c8", INK, Math.max(1.2, w * 0.006));
-  const size = bh * 0.42;
-  ctx.save();
-  ctx.font = `900 ${size}px "Arial Black", Impact, system-ui, sans-serif`;
-  const tw = ctx.measureText(FAMILY.NAME).width,
-    sk = Math.min(1, (bw * 0.9) / tw);
-  ctx.translate(bx + bw / 2 - (tw * sk) / 2, by + bh * 0.68);
-  ctx.scale(sk, 1);
-  drawFatLetters(ctx, FAMILY.NAME, 0, 0, size);
-  ctx.restore();
+  if (small) {
+    ctx.fillStyle = "#c6261e";
+    ctx.fillRect(bx + bw * 0.12, by + bh * 0.35, bw * 0.76, bh * 0.3);
+  } else {
+    const size = bh * 0.5;
+    ctx.save();
+    ctx.font = `900 ${size}px "Arial Black", Impact, system-ui, sans-serif`;
+    const tw = ctx.measureText(FAMILY.NAME).width,
+      sk = Math.min(1, (bw * 0.9) / tw);
+    ctx.translate(bx + bw / 2 - (tw * sk) / 2, by + bh * 0.7);
+    ctx.scale(sk, 1);
+    drawFatLetters(ctx, FAMILY.NAME, 0, 0, size);
+    ctx.restore();
+  }
   // the cut-open cake: a round cake with a slice out, the red marshmallow middle showing
   const C = BROCHURE_PARTS.cake,
     cx = x + w * C.fx,
@@ -200,39 +187,6 @@ export function drawBrochureExtras(ctx, x, y, w, h, fizz = 0, t = 0) {
       ctx.stroke();
       ctx.restore();
     }
-  // the round, real paw print in the corner
-  const P = BROCHURE_PARTS.paw;
-  drawRealPaw(ctx, x + w * P.fx, y + h * P.fy, w * P.fr * 1.3);
-}
-/** A round, real paw print: a big pad and four round toes. */
-export function drawRealPaw(ctx, x, y, s, color = "#5a3418") {
-  ctx.save();
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  ctx.ellipse(x, y + s * 0.12, s * 0.32, s * 0.26, 0, 0, TAU);
-  ctx.fill();
-  for (let i = 0; i < 4; i++) {
-    ctx.beginPath();
-    ctx.arc(x + (i - 1.5) * s * 0.22, y - s * 0.26 - (i === 1 || i === 2 ? s * 0.06 : 0), s * 0.1, 0, TAU);
-    ctx.fill();
-  }
-  ctx.restore();
-}
-/** The Guardians' mark, slightly off: made with a hoof, so the pad is a split heart and the toes are two half-moons. */
-export function drawGuardianMark(ctx, x, y, s, color = "#5a3418") {
-  ctx.save();
-  ctx.fillStyle = color;
-  for (const d of [-1, 1]) {
-    ctx.beginPath();
-    ctx.ellipse(x + d * s * 0.14, y + s * 0.12, s * 0.15, s * 0.26, d * 0.25, 0, TAU);
-    ctx.fill();
-  }
-  for (const d of [-1, 1]) {
-    ctx.beginPath();
-    ctx.ellipse(x + d * s * 0.22, y - s * 0.3, s * 0.12, s * 0.07, d * 0.5, 0, TAU);
-    ctx.fill();
-  }
-  ctx.restore();
 }
 
 // ---------- 39b: the Guardians' box, this week's cake, the chart ----------
@@ -282,73 +236,6 @@ export function drawWeekCake(ctx, x, y, r, bite = 0) {
   }
   ctx.restore();
 }
-/** The chart's layout in its own units (360 x 260). */
-export const CHART = Object.freeze({ W: 360, H: 260, tried: 5, cell: Object.freeze({ x0: 34, y: 140, step: 48, r: 18 }), crate: Object.freeze({ x: 330, y: 140, r: 22 }) });
-/**
- * The crayon chart above his bed, in (x, y, w, h): the station snack's name (snack-name.js), a row of little cakes each with an X (`tried`), this
- * week's cake with `newX` (0 to 1) of its X drawn, and at the end one empty circle with a red dot and sparks, "THE CRATE
- * KIND". `small` draws it as it hangs on the wall (no fine lines).
- */
-export function drawEveningChart(ctx, x, y, w, h, newX = 0, small = false, crateKind = "") {
-  const k = Math.min(w / CHART.W, h / CHART.H);
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.scale(k, k);
-  pRect(ctx, 0, 0, CHART.W, CHART.H, 6, "#fffdf2", INK, 3);
-  ctx.fillStyle = "rgba(240,230,180,.85)";
-  ctx.fillRect(12, -8, 40, 18);
-  ctx.fillRect(CHART.W - 52, -8, 40, 18);
-  // (on the wall, too small to read: the title is a crayon scribble; the close-up has the words)
-  if (small) {
-    ctx.strokeStyle = "#e5533d";
-    ctx.lineWidth = 6;
-    ctx.beginPath();
-    for (let x = 90; x <= 270; x += 18) ctx.lineTo(x, 44 + (x % 36 ? -6 : 6));
-    ctx.stroke();
-  } else pWords(ctx, SNACK.NAME, CHART.W / 2, 44, 34, "#e5533d", 800, "center", EV_CRAYON_FONT);
-  const C = CHART.cell;
-  const xMark = (cx, cy, r, u) => {
-    ctx.save();
-    ctx.strokeStyle = "#1e2430";
-    ctx.lineWidth = 5;
-    ctx.lineCap = "round";
-    const a = Math.min(1, u * 2),
-      b = Math.max(0, u * 2 - 1);
-    ctx.beginPath();
-    ctx.moveTo(cx - r, cy - r);
-    ctx.lineTo(cx - r + 2 * r * a, cy - r + 2 * r * a);
-    if (b > 0) {
-      ctx.moveTo(cx + r, cy - r);
-      ctx.lineTo(cx + r - 2 * r * b, cy - r + 2 * r * b);
-    }
-    ctx.stroke();
-    ctx.restore();
-  };
-  const colors = ["#f0c94a", "#6fa8ff", "#a8784a", "#ffb347", "#c38cff", "#3b3b3b", "#9ad46a"];
-  for (let i = 0; i <= CHART.tried; i++) {
-    const cx = C.x0 + i * C.step;
-    pDisc(ctx, cx, C.y, C.r, colors[i], INK, 2.5);
-    if (i < CHART.tried) xMark(cx, C.y, C.r * 0.8, 1);
-    else newX > 0 && xMark(cx, C.y, C.r * 0.8, newX);
-  }
-  // the crate kind: an empty circle with a red dot and sparks
-  const K = CHART.crate;
-  pDisc(ctx, K.x, K.y, K.r, null, INK, 3);
-  pDisc(ctx, K.x, K.y, 6, "#e0303a");
-  if (!small)
-    for (let i = 0; i < 6; i++) {
-      const a = (i / 6) * TAU;
-      ctx.beginPath();
-      ctx.moveTo(K.x + Math.cos(a) * (K.r + 4), K.y + Math.sin(a) * (K.r + 4));
-      ctx.lineTo(K.x + Math.cos(a) * (K.r + 12), K.y + Math.sin(a) * (K.r + 12));
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = "#ffb000";
-      ctx.stroke();
-    }
-  crateKind && pWords(ctx, crateKind, K.x - 76, K.y + 62, 22, "#3478f6", 800, "center", EV_CRAYON_FONT);
-  ctx.restore();
-}
-
 // ---------- 41 and 42b: the thought pictures ----------
 /**
  * One small wordless picture inside a thought cloud (x, y the middle, s the size, about 100 units across): "mopping"

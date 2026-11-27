@@ -29,7 +29,9 @@ const M = (f) => join(root, "src", "modules", f);
 const { BAY_LINES } = await import(M("loading-bay-lines.js"));
 const { BAY, BAY_SPOTS, HALLWAY, HALL_SNEAK } = await import(M("loading-bay-place.js"));
 const { HALL, HALL_SPEAKER } = await import(M("party-hall.js"));
-const WORDS = new Set(BAY_LINES.map((l) => l.text));
+const { EVENING_LINES } = await import(M("evening-lines.js"));
+// (36b's "Behind the bar. Quick." is the evening's line: evening.js barLine)
+const WORDS = new Set([...BAY_LINES.map((l) => l.text), EVENING_LINES.find((l) => l.id === "mops-behind-bar").text]);
 const line = (id) => BAY_LINES.find((l) => l.id === id).text;
 
 const g = await startGame({ port: 9800, name: "loading-bay" });
@@ -181,7 +183,11 @@ await page.evaluate(
             if (s.rollBy < 0 && s.office === 0) ((n.sq.x = 600), (n.sq.y = 360));
             else if (s.rollBy > 0 && !s.ball && !opts.tooSlow) press(() => 0);
             else if (s.rollBy < 0 && !s.ball && s.office >= 1) ((n.sq.x = 30), (n.sq.y = 340));
-          } else if (S === "hall" && !opts.stayInHall) ((n.sq.x = HALL_SNEAK.goal.x), (n.sq.y = HALL_SNEAK.goal.y));
+          } else if (S === "hall" && !opts.stayInHall) {
+            // HIDE · bar when the evening is there (round 7), else across to the counter's front
+            const H = ev && ev.barSpot ? ev.barSpot() : null;
+            H ? press(() => ((n.sq.x = H.x), (n.sq.y = H.y))) : ((n.sq.x = HALL_SNEAK.goal.x), (n.sq.y = HALL_SNEAK.goal.y));
+          }
           if (S === "cargo" || S === "walkby") sample("ball-" + S, s.ball || st().ball);
         }
       };
@@ -246,8 +252,8 @@ g.check("36: the hairball close-up and its lines, in order", B("robot-what") && 
 g.check("36: then \"We have to watch out for these robots.\", the fur and hair question and \"Paperwork.\"", run.lines.join("|").includes([line("mops-robots"), line("sq-fur"), line("mops-paperwork")].join("|")), run.lines.slice(-6));
 g.check("hall, hallway, bay, hallway, party hall", run.rooms.join(",") === "hall,passage,hangar,passage,hall", run.rooms);
 // 36b
-g.check("36b: in the party hall, \"Squatch: get past the robots\" with control", run.steps.hall && run.steps.hall.room === "hall" && run.steps.hall.chip === line("chip-hall"), run.steps.hall);
-g.check("36b: reaching the snack counter hands over (the evening's storm, 38a)", !run.end.active && run.end.step === "done" && run.end.room === "hall" && ["tostorm", "storm"].includes(run.end.evening), run.end);
+g.check("36b: in the party hall, \"Squatch: hide behind the bar\" with control, and HIDE · bar", run.steps.hall && run.steps.hall.room === "hall" && run.steps.hall.chip === EVENING_LINES.find((l) => l.id === "chip-hide").text && run.steps.hall.offers.includes("HIDE · bar"), run.steps.hall);
+g.check("36b: HIDE · bar hands over (the evening's storm, 38a) before any robot sees him", !run.end.active && run.end.step === "done" && run.end.room === "hall" && ["tostorm", "storm"].includes(run.end.evening), run.end);
 g.check("beat 36's end goes on to the evening's photo wall (37) in the hallway, and walking into the hall's doorway starts 36b", JSON.stringify((run.evening || []).filter((s) => s !== "tohall").slice(0, 3)) === JSON.stringify(["walkin", "wall", "hallsneak"]), run.evening);
 // all through
 g.check("in the cutscenes nobody's cone ever holds him", run.seenInCutscene.length === 0, run.seenInCutscene.slice(0, 5));
@@ -367,6 +373,7 @@ const robotCones = await page.evaluate(() => {
     n.q = [];
     n.cur = null;
     beat.jump(step);
+    for (let i = 0; i < 60 && step === "hall" && !n.ctrl; i++) (n.cur && n.cur.b && ((n.bt = 1), ss.opTap()), ss.tick(0.05));
     for (let i = 0; i < 4; i++) ss.tick(0.05);
     ss.drawFrame();
     out[step] = ((beat.debug().drew || {}).cones || []).filter((c) => /^(robot|cleaner)/.test(c.id)).map((c) => ({ id: c.id, show: c.show }));
@@ -436,6 +443,8 @@ const hall = await page.evaluate(({ HALL, HALL_SNEAK }) => {
     n.q = [];
     n.cur = null;
     beat.jump("hall");
+    // (past Mops's "Behind the bar. Quick.", to control)
+    for (let i = 0; i < 60 && !n.ctrl; i++) (n.cur && n.cur.b && ((n.bt = 1), ss.opTap()), ss.tick(0.05));
     for (let i = 0; i < 4; i++) ss.tick(0.05);
   };
   // in front of robot 0, in its lane, standing: seen within a second

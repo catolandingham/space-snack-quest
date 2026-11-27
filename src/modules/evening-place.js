@@ -6,6 +6,7 @@
  * these numbers.
  */
 import { HALL } from "./party-hall.js";
+import { MOPS_SLEEP, mopsTurnedBox, mopsTurnedHead } from "./mops-asleep-art.js";
 
 // ---------- beat 37: the hallway ----------
 export const EV_HALLWAY = Object.freeze({
@@ -102,39 +103,47 @@ export const STORM = Object.freeze({
     kid: Object.freeze({ x: 270, y: 344 }),
     guest: Object.freeze({ x: 520, y: 326 }),
   }),
-  // at the snack bar: the family at the counter's front, the guest by the stools
+  // at the snack bar: the family in front of Mops (who stands at the bar's front, facing left), clear of him, of the
+  // lunch's crates and of each other
   bar: Object.freeze({
-    dad: Object.freeze({ x: 730, y: 470 }),
-    mom: Object.freeze({ x: 742, y: 566 }),
-    kid: Object.freeze({ x: 690, y: 520 }),
-    guest: Object.freeze({ x: 740, y: 404 }),
+    dad: Object.freeze({ x: 660, y: 508 }),
+    mom: Object.freeze({ x: 640, y: 566 }),
+    kid: Object.freeze({ x: 704, y: 556 }),
   }),
   // they walk in along the floor's back strip, under the window and the bench, and leave the same way; to the bar they
-  // go down the floor between the lunch's crates and the stools
+  // step down from the window (barLane), go along under the other guest, and down the floor left of the lunch's crates
   lane: 320,
-  barVia: Object.freeze({ x: 730 }),
+  barLane: 366,
+  barVia: Object.freeze({ x: 590 }),
   ids: Object.freeze({ dad: "camera", mom: "teal", kid: "octopus-guest", guest: "backpack" }),
   // Mops at the counter's front below the stools (picture's, game x 772 to 800 at y 390 and 447), wiping it
   mops: Object.freeze({ x: 778, y: 510 }),
+  // while the player is Mops he can shuffle this far from that spot, no further (the family comes to him)
+  mopsRoam: 30,
   // his way to and from it: along the strip above the counter's top end, then down the floor left of the stools
   mopsVia: Object.freeze([Object.freeze({ x: 730, y: 330 }), Object.freeze({ x: 730, y: 510 })]),
-  // after the party hall's cleaning robots (36b, loading-bay-place.js HALL_SNEAK: he ends at the counter's front end,
-  // Mops beside him): Mops round to the counter's front, then Squatch up the floor left of the stools and along the
-  // strip to the aisle's top (EV_BAR.sq), never over the counter or a stool
-  fromSneak: Object.freeze({
-    mops: Object.freeze([Object.freeze({ x: 740, y: 540 }), Object.freeze({ x: 778, y: 510 })]),
-    sq: Object.freeze([Object.freeze({ x: 730, y: 560 }), Object.freeze({ x: 730, y: 330 }), EV_BAR.sq]),
-  }),
-  // his eyes over the counter's edge while he peeks
-  eyes: Object.freeze({ x: 866, y: 446 }),
-  bin: Object.freeze({ x: 896, y: 540 }),
-  // GRAB · brochure from where he is rolled up, beside the bin
+  // where he stands up behind the bar when the guests have gone, and Mops passes the brochure over it to him
   grab: Object.freeze({ x: 893, y: 490, r: 70 }),
-  // the storm takes this long to fill the window; the family turns this long before they walk to the bar
+  // 36b's robot that mops the lane by the bar's front (loading-bay-place.js HALL_SNEAK.lanes[1]): it waits here while
+  // Mops walks down to the bar's front, then rolls up to him (cornerAt) for "MOVE, GOAT."
+  cornerLane: 1,
+  cornerWait: Object.freeze({ x: 660 }),
+  cornerAt: Object.freeze({ x: 728 }),
+  // GREET · kid: where the kid steps up to pet Mops; how long the pats take (wordless)
+  pet: Object.freeze({ x: 716, y: 534 }),
+  pat: 2.0,
+  // "Come on. Bedtime.": the family turns to go, a few steps back the way they came
+  leave: Object.freeze({
+    dad: Object.freeze({ x: 596, y: 500 }),
+    mom: Object.freeze({ x: 572, y: 560 }),
+    kid: Object.freeze({ x: 630, y: 540 }),
+  }),
+  // leaving: the other guest first, then the family one after another (seconds before each sets off)
+  outWait: Object.freeze({ guest: 0, dad: 0.5, mom: 1.0, kid: 1.7 }),
+  // the storm takes this long to fill the window
   stormIn: 4.0,
-  turn: 1.6,
   walk: 95,
-  // the brochure held up (picture toward the player), then the coffee, then the toss over the counter
+  // the brochure held up (picture toward the player); Mops's pass over the bar
   holdUp: 1.6,
   toss: 0.7,
 });
@@ -150,7 +159,8 @@ export const EV_HOME = Object.freeze({
   bed: Object.freeze({ x: 330, y: 458, r: 60 }),
   // where Mops falls asleep: on his back on the floor, his head resting against the left side of his mop bucket (the
   // locked picture's bucket, 536 to 596 wide, 500 to 571 high); his feet stand where mopsSleepAt says
-  sleepHead: Object.freeze({ x: 530, y: 572 }),
+  sleepHead: Object.freeze({ x: 540, y: 500 }),
+  sleepFloor: 584,
   sleepVia: Object.freeze({ x: 500, y: 478 }),
   // out of bed at night, beside it
   up: Object.freeze({ x: 340, y: 470 }),
@@ -158,14 +168,19 @@ export const EV_HOME = Object.freeze({
   // Mops's mop bucket on the floor (the room's solid for it, mop-bucket.js): bumping it at night clangs
   bucket: Object.freeze({ x0: 536, x1: 596, y0: 500, y1: 571 }),
 });
-/** Where Mops stands before he tips over (his feet), so that on his back his head rests at EV_HOME.sleepHead (`k`: his scale at home). */
+/**
+ * Where Mops stands before he tips over (his feet; `k`: his scale at home): left of the bucket, so that tipped onto his
+ * side (mops-asleep-art.js MOPS_SLEEP) his head comes down on the bucket's rim (EV_HOME.sleepHead).
+ */
 export function mopsSleepAt(k) {
-  return { x: EV_HOME.sleepHead.x - 17 * k, y: EV_HOME.sleepHead.y };
+  const h = mopsTurnedHead(0, 0, k, -1, MOPS_SLEEP.turn, 0);
+  return { x: Math.round(EV_HOME.sleepHead.x - h.x), y: EV_HOME.sleepFloor };
 }
-/** The floor Mops takes up lying on his back (a solid while he sleeps, so nobody walks through him). */
+/** The floor Mops takes up lying on his side (a solid while he sleeps, so nobody walks through him). */
 export function mopsSleepBox(k) {
-  const at = mopsSleepAt(k);
-  return { x0: Math.round(at.x - 26 * k), x1: 536, y0: at.y - 22, y1: at.y + 8 };
+  const at = mopsSleepAt(k),
+    b = mopsTurnedBox(at.x, at.y, k, -1, MOPS_SLEEP.turn, 0).box;
+  return { x0: Math.round(b.x0), x1: 536, y0: at.y - 22, y1: at.y + 8 };
 }
 
 // ---------- beat 42: the loading bay at night ----------
@@ -271,8 +286,6 @@ export const BAY_SEARCH = Object.freeze([
  * the wall above the bed. X · chart from below it; HOLD UP · brochure in front of the crate.
  */
 export const HOME_ALONE = Object.freeze({
-  chart: Object.freeze({ x: 176, y: 262, w: 104, h: 75 }),
-  chartSpot: Object.freeze({ x: 236, y: 440, r: 60 }),
   crateSpot: Object.freeze({ x: 330, y: 458, r: 60 }),
   // the crate's side, where the close-up holds the brochure against it
   crate: Object.freeze({ x0: 96, x1: 275, y0: 437, y1: 524 }),
@@ -291,7 +304,6 @@ export const EVENING_PACE = Object.freeze({
   lift: 1.0,
   // the line's people leave, the family comes
   leave: 120,
-  pictureBubble: 2.8, // the family's wordless picture bubble (pancakes, Mars)
   stare: 1.6, // Mops looks at the brochure a moment too long (39)
   putDown: 0.6,
   evening: 2.4, // the room warms to evening at home
@@ -299,8 +311,7 @@ export const EVENING_PACE = Object.freeze({
   // 39b: the box opens; after the crunch, the silence where a fizz would be; one stroke of the X; he rubs out "ST"
   boxOpen: 0.6,
   silence: 1.4,
-  xStroke: 0.35,
-  rub: 1.2,
+  hurt: 1.2, // the quiet after "my REAL family wouldn't make me hide!" (40)
   // 41: each picture of the idea; 42b: the don't-send ending's cutaway; 42c: how near the big wall vent the form flutters
   idea: 1.4,
   cutaway: 3.0,

@@ -221,7 +221,9 @@ export function createView(h) {
     const c = E().coneSize();
     if (m.heart > 0) {
       const a = m.a == null ? Math.PI : m.a;
-      drawHeartCone(ctx, m.x, m.y - 30, a, c.half, c.len, t, m.heart);
+      // (his hearts once, as he first sees him: mops-hearts.js)
+      m.heartAt == null && (m.heartAt = t);
+      drawHeartCone(ctx, m.x, m.y - 30, a, c.half, c.len, t, m.heart, t - m.heartAt);
       E().noteCone({ ox: m.x, oy: m.y - 30, a, half: c.half, len: c.len, heart: true });
     }
   }

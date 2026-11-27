@@ -11,7 +11,7 @@ export function splitLine(text, max = BUBBLE_WORDS) {
   if (wordCount(text) <= max) return [text];
   const sentences = (text.match(/[^.?!]+[.?!]+["')]*\s*|[^.?!]+$/g) || [text]).map((s) => s.trim()).filter(Boolean);
   // a line that needs splitting: one sentence to a bubble, except that a question keeps the sentence after it (they
-  // read as one thought: "Remember that pancake place? Let's go find out about it.")
+  // read as one thought: "Remember that place on Mars? Let's go find out about it.")
   const out = [];
   for (const s of sentences) {
     const last = out[out.length - 1];

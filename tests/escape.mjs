@@ -3,7 +3,7 @@
  * order, each checked as the player meets it:
  *   - the card "Six days later" waits for NEXT;
  *   - the robots tease Mops in the loading bay (no Squatch there; three robots); both lines wait for NEXT;
- *   - home: the pancake brochure is on the wall and glows while Mops talks about it; the wordless thought pictures (the
+ *   - home: the stand's brochure is on the wall and glows while Mops talks about it; the wordless thought pictures (the
  *     crate to the ship, the locked office door) play by themselves; Squatch's two lines; his thought of the sheet
  *     going into the vent;
  *   - the bay at night: ROLL · ball at the vent, the vent glows; a robot patrols with its cone; rolled up at the vent,

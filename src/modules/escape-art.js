@@ -1,6 +1,6 @@
 /**
  * The escape's drawings (Chapter 1, beats 43 to 52). Everything here is a PLACEHOLDER drawing in the game's style (dark
- * outlines, flat colours) until Brian approves a look: the pancake brochure on the home wall, the big pink order sheet
+ * outlines, flat colours) until Brian approves a look: the stand's brochure on the home wall, the big pink order sheet
  * (the paw print in the ORDER MORE ROBOTS box, the office code written in its corner), the open vent grille, the inside
  * of the vent (no locked picture exists: Mops's secret desk, the IDEAS FOR GUARDIANS board, the detective wall, the
  * TOYS bin), the close-ups (the detective wall, the Mars letter, the new Guardian note, the slip in his paw, the
@@ -11,7 +11,7 @@
 import { peopleBoxesNow } from "./room-model.js";
 import { FAMILY } from "./snack-name.js";
 import { drawBrochure, drawPawPrint } from "./evening-art.js";
-import { drawCoffeeStain } from "./evening-pictures.js";
+import { STORY_HEART } from "./mops-hearts.js";
 import { escapeWords } from "./escape-lines.js";
 import { VENT_ROOM, KEYPAD, keyAt, SITE, SNACKS, OFFICE_CODE, ES_HALLWAY } from "./escape-place.js";
 import { drawThought, drawCrate } from "./bedtime-story-art.js";
@@ -166,16 +166,15 @@ export function drawSlipSmall(ctx, x, y, k = 1, a = 0) {
 }
 
 /**
- * The pancake brochure (beat 39, the evening) pinned on the home wall above his bed, or held up big (45a): the
- * evening's own drawing of it (evening-art.js drawBrochure: the two cooks, Mars in the window, the pancakes and, held
- * up big, the cake box stamped with his family's name), with the guest's coffee stain from the snack bar (38c). On
+ * The stand's brochure (beat 39, the evening) pinned on the home wall above his bed, or held up big (45a): the
+ * evening's own drawing of it (evening-art.js drawBrochure: the stand, Mars behind it and, held
+ * up big, the cake box stamped with his family's name). On
  * the wall, a red pin. In box `b`; `big` held up. Returns what it drew.
  */
 export function drawPinnedBrochure(ctx, b, big = false) {
   const w = b.x1 - b.x0,
     h = b.y1 - b.y0;
   drawBrochure(ctx, b.x0, b.y0, w, h, !big);
-  drawCoffeeStain(ctx, b.x0, b.y0, w, h);
   if (big) return { big, stamp: FAMILY.NAME };
   // a red pin
   ctx.beginPath();
@@ -826,15 +825,18 @@ export function drawSnackCounter(ctx, st, t) {
   return { paw, bag: st.bag, plate: st.plate ? P : null };
 }
 
-/** Hearts rising over Mops (he says nothing: DECISIONS, beat 52). */
+/**
+ * A story moment's heart rising over Mops (he says nothing: DECISIONS, beat 52): one heart, not three (Brian
+ * 2026-11-27, "come on with the hearts"; mops-hearts.js STORY_HEART, question 126).
+ */
 export function drawHearts(ctx, x, y, age) {
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < STORY_HEART.count; i++) {
     const a = age - i * 0.35;
     if (a < 0) continue;
     const k = esClamp(a / 1.2);
     ctx.save();
     ctx.globalAlpha = 1 - k * 0.7;
-    drawHeart(ctx, x + (i - 1) * 26, y - k * 60, 18);
+    drawHeart(ctx, x + (i - (STORY_HEART.count - 1) / 2) * 26, y - k * 60, 18);
     ctx.restore();
   }
 }

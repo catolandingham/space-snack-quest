@@ -12,7 +12,7 @@ export { OFFICE_CODE } from "./office-code.js";
 export const BAY_DAY = "docs/locked-rooms/delivery-room-empty-day-noship-v3.png";
 export const BAY_NIGHT = nightPictureFor("hangar");
 
-// Home (home-room-empty-*-v6): Squatch by the bed's foot, Mops comes in through the door on the right. The pancake
+// Home (home-room-empty-*-v6): Squatch by the bed's foot, Mops comes in through the door on the right. The stand's
 // brochure (beat 38) is pinned on the wall above the bed, where Mops's bubble never covers it.
 export const ES_HOME = Object.freeze({
   sq: Object.freeze({ x: 380, y: 556 }),
