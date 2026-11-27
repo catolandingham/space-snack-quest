@@ -226,6 +226,11 @@ if (which === "bar") {
   await sleep(900);
   await still("overheard-the-moon-pies");
   await read(2600);
+  // the tourist's line is two bubbles (Brian 2026-11-26: bubbles over about 12 words are split)
+  await until((s) => s.cur === "bub", 4000);
+  await sleep(700);
+  await still("overheard-what-they-stole-at-lunch");
+  await read(2000);
   await until((s) => s.cur === "bub", 12000);
   await sleep(700);
   await still("the-family-reads-quick-hide");
@@ -274,6 +279,13 @@ if (which === "home") {
   await sleep(700);
   await still("the-mars-line");
   await read(3200);
+  // Mops's answer is three bubbles (split over about 12 words)
+  for (const name of ["they-need-me-here", "plus-the-guardians"]) {
+    await until((s) => s.cur === "bub", 4000);
+    await sleep(700);
+    await still(name);
+    await read(2600);
+  }
   await stepIs("bed", 6000);
   await sleep(800);
   await still("the-bed-outlined");

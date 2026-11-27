@@ -176,11 +176,12 @@ export const BAY_EXTRA = Object.freeze([Object.freeze({ x0: 683, x1: 930, y0: 35
  */
 export const BAY_VENT = Object.freeze({ floor: Object.freeze({ x: 165, y: 540 }), wall: Object.freeze({ x: 851, y: 220 }) });
 /**
- * Where each robot parked in the mail room looks while it stands there: one down and left into the room's corner, the
- * other right along the wall, so their cones show on the floor and stay clear of the way to the mailbox.
+ * Where each robot parked in the mail room looks while it stands there: both right along the room's bottom wall, so
+ * their cones show on the floor and stay clear of the way in to the mailbox (2026-11-26: the left one looked down and
+ * left, and its cone reached out past the mail room's wall onto the way in; tests/evening-physics.mjs walks that way).
  */
 export function robotLook(id) {
-  return id === "robot-3" ? 0.2 : 2.6;
+  return 0.2;
 }
 /** The loading bay's floor at night (feet). */
 export const BAY_BOUNDS = Object.freeze({ x0: 60, x1: 900, y0: 320, y1: 590 });

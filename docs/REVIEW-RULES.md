@@ -27,7 +27,7 @@
 | 219–229 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
 | 230–239 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
 | 240–245 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
-| 246–256 | ## Mistakes caught building the evening and night one (2026-11-26) |
+| 246–257 | ## Mistakes caught building the evening and night one (2026-11-26) |
 <!-- /section-index -->
 # Review rules
 
@@ -253,3 +253,4 @@ His words, on the snack close-up, for every piece of the game: "It just needs to
 - The hall alone was darkened at night, and the hallway, home and the office stayed in daylight (Brian: "Make sure it's not just the hall dark at night, but all rooms are different at night versus daytime."). Night is one rule for every room, `src/modules/night-look.js` (the locked night picture where one exists, else the day picture under the night tint with its lights kept bright, the characters drawn lit over it); a beat at night draws its rooms through it, and a test checks every room a night beat shows.
 - A robot rolled across a doorway and Squatch walked over the sleeping Mops, because scripted walks went in straight lines and never met the room's solids. Every scripted walk (robots, the family, Mops) is stepped against the solids in a test, people included, and a robot's cone is drawn whenever it is on screen.
 - A cone that stopped short of him still caught him, and a cone that touched him for one frame did too. A sighting needs the drawn cone to reach him and hold about half a second, with a "?" while it registers.
+- Giving the two robots parked in the mail room their cones (robots always show cones) put the left one's cone out past the mail room's wall onto the way in to the mailbox, so the showing was seen and the alarm went off before POST · mailbox. When a cone is added or turned, walk the step's fair way through it in a test (`tests/evening-physics.mjs` walks the way in to the mailbox).

@@ -147,6 +147,20 @@ const robots = await ev(() => {
   window.__run(0.2);
   window.__ss.drawFrame();
   out.bayBefore = window.__ss.conesDrawn().map((c) => c.id);
+  // the way in to the mailbox (the showing's and a kid's: along the front, up to the mail room's opening, in):
+  // no parked robot's cone is on him anywhere along it
+  window.__jump(143);
+  window.__run(0.2);
+  const way = [[300, 585], [640, 585], [690, 470], [760, 490], [862, 500]];
+  out.wayIn = [];
+  for (let i = 0; i + 1 < way.length; i++)
+    for (let t = 0; t <= 1; t += 0.1) {
+      n.sq.x = way[i][0] + (way[i + 1][0] - way[i][0]) * t;
+      n.sq.y = way[i][1] + (way[i + 1][1] - way[i][1]) * t;
+      window.__ss.drawFrame();
+      const on = (window.SSQ.beat("ch1-evening").debug().drew.cones || []).filter((c) => (c.id === "robot-2" || c.id === "robot-3") && c.inside).map((c) => c.id);
+      on.length && out.wayIn.push([Math.round(n.sq.x), Math.round(n.sq.y), on]);
+    }
   window.__jump(144);
   window.__run(0.2);
   window.__ss.drawFrame();
@@ -160,6 +174,7 @@ const door = PL.HALLWAY.officeDoor,
 g.check("the hallway robot rolls along the floor and out through a doorway: never over the office door, never through a wall", robots.path.length > 20 && !onDoor.length && !offFloor.length && !throughWall.length, { onDoor: onDoor.slice(0, 3), offFloor: offFloor.slice(0, 3), throughWall: throughWall.slice(0, 3), n: robots.path.length });
 g.check("the hallway robot shows its cone the whole time it is in the hallway", robots.cones.length > 20 && robots.cones.every(Boolean), { frames: robots.cones.length, without: robots.cones.filter((x) => !x).length });
 g.check("in the bay every robot shows its cone: the night robot and the two parked in the mail room", ["night-robot", "robot-2", "robot-3"].every((id) => robots.bayBefore.includes(id)), robots.bayBefore);
+g.check("the way in to the mailbox is clear of the two parked robots' cones (they look along the mail room's bottom wall)", robots.wayIn.length === 0, robots.wayIn.slice(0, 5));
 g.check("after the post, the night robot and the two woken robots show their cones", ["night-robot", "robot-2", "robot-3"].every((id) => robots.bayAfter.includes(id)), robots.bayAfter);
 
 // ---------- nobody walks through anything ----------
