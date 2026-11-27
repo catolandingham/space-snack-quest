@@ -113,9 +113,12 @@ export const HALLWAY = Object.freeze({
 
 /** Beat 36b: the party hall (locked v2), three robots mopping in lanes; he crosses from the hallway doorway down to the snack counter's front. */
 export const HALL_SNEAK = Object.freeze({
-  in: Object.freeze({ x: 905, y: 320 }),
+  // (a step in from the doorway, on the strip above the counter's end; Mops a step behind him, just inside the doorway:
+  // until 2026-11-27 they stood 12 pixels apart, drawn one on top of the other, and the kid robot counted Squatch as
+  // standing inside Mops)
+  in: Object.freeze({ x: 850, y: 320 }),
   // (Mops on the strip at the aisle's top, clear of the counter: in the aisle his feet were against it)
-  mopsIn: Object.freeze({ x: 893, y: 336 }),
+  mopsIn: Object.freeze({ x: 905, y: 326 }),
   // the counter's front end, where 38a (the storm) begins: reaching it ends this beat
   goal: Object.freeze({ x: 772, y: 584, r: 46 }),
   goalBox: Object.freeze({ x0: 720, x1: 806, y0: 540, y1: 606 }),
