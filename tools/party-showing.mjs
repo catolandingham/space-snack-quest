@@ -1096,15 +1096,13 @@ if (which === "bay") {
   await still("the-office-door-opens-roll-ball");
   await press();
   // the hairball, then on to the party hall (its lines read on the way)
-  // 36b: the party hall, three cleaning robots; cross each lane just after its robot has gone by
+  // 36b: the party hall, three cleaning robots; cross the lanes just after their robots have rolled away
   (await watch((s, b) => (b.step === "hall" && s.ctrl && s.cur !== "bub") || !b.active, 60000)) || (await fail("the party hall did not come"));
   await sleep(900);
   await still("the-party-hall-get-past-the-robots");
-  await walk(830, 340);
-  for (const [lane, y] of [[0, 430], [1, 500], [2, 572]]) {
-    await until(async () => ((q) => q.hall && q.hall[lane] && q.hall[lane].dir < 0 && q.hall[lane].x < 640)(await who()), 30000);
-    await walk(830, y, (q) => q.alarm || q.step !== "hall");
-  }
+  await walk(850, 340);
+  // both lower lanes' robots rolling away (left) and far enough off: then straight down to the counter
+  await until(async () => ((q) => q.hall && [1, 2].every((i) => q.hall[i].dir < 0 && q.hall[i].x < 600))(await who()), 45000);
   await walk(772, 584, (q) => q.step !== "hall", 15000);
   await sleep(1200);
   await still("at-the-snack-counter-the-storm-is-next");
