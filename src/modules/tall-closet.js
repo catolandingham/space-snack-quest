@@ -18,6 +18,8 @@ const PIC_W = 1280,
   GX = 960 / PIC_W,
   GY = 640 / PIC_H;
 
+import { nightPicture } from "./night-look.js";
+
 export const TALL_CLOSET = Object.freeze({
   // how much taller, in picture pixels (110 is about 85 game pixels; the wall above it is clear to about row 75)
   growPic: 110,
@@ -52,11 +54,15 @@ function tcCopy(ctx, img, x0, x1, r0, r1, to, rows = r1 - r0) {
   ctx.drawImage(img, x0 * kx, r0 * ky, (x1 - x0) * kx, (r1 - r0) * ky, x0 * GX, to * GY, (x1 - x0) * GX, rows * GY);
 }
 
-/** Draws the taller closet over the home picture, `open` or closed. Returns its box, or null while not ready. */
-export function drawTallCloset(ctx, open) {
+/**
+ * Draws the taller closet over the home picture, `open` or closed; `night`: cut from the room's night look
+ * (night-look.js). Returns its box, or null while not ready.
+ */
+export function drawTallCloset(ctx, open, night = false) {
   const T = TALL_CLOSET,
-    img = tcImg(open ? "open" : "closed");
-  if (!img) return null;
+    day = tcImg(open ? "open" : "closed");
+  if (!day) return null;
+  const img = nightPicture(open ? "home-open" : "home-closed", day, night);
   const g = T.growPic,
     x1 = open ? T.x1Open : T.x1;
   if (open) {

@@ -55,7 +55,7 @@ import { HOME_THINGS } from "./home-alone.js";
 import { cutawaySteps } from "./cutaway.js";
 import { footfall } from "./footfalls.js";
 import { createHomeMorningSound, HOME_MORNING_SOUND } from "./home-morning-sound.js";
-import { drawNightTint } from "./night-look.js";
+import { drawNightTint, isNightNow } from "./night-look.js";
 
 export const HOME_MORNING_ID = "ch1-home-morning";
 
@@ -664,7 +664,7 @@ export function createHomeMorning(bridge) {
     drawOnRoom(ctx) {
       const e = E();
       // Day 2 at home: the closet is taller (tall-closet.js), open or shut
-      closetDrawn = e && e.room() === "closet" && e.get("ch1Day2") ? drawTallCloset(ctx, e.get("wardrobe") === "open") : null;
+      closetDrawn = e && e.room() === "closet" && e.get("ch1Day2") ? drawTallCloset(ctx, e.get("wardrobe") === "open", isNightNow(e.get)) : null;
       this.drawBox(ctx);
       const h = H(),
         on = live();
