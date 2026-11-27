@@ -527,7 +527,19 @@ while (now() < MAX_S) {
   // (the steps where rolling up is the goal: behind the bay's cargo, the hairball in the hallway, the evening's robot
   // in the hallway, the escape night's wait by the vent)
   const ROLL_STEPS = ["bay-cargo", "bay-walkby", "ev-dodge", "es-ball"];
-  const avoid = (v) => AVOID.some((a) => v.startsWith(a)) || (v === "ROLL · ball" && !ROLL_STEPS.includes(s.step));
+  // (and wherever the game offers the ball because he has just been seen, its hot ROLL · ball: the escape's bay at night,
+  // "es-ball-any". Before 2026-11-27 the robot left that alone too, so in beat 47 every sighting ran on to the guard and
+  // the LOCKUP card: caught 39 times from KID_START=bay:pa)
+  const seenBall = s.placed.some((p) => /ball-any$/.test(p.id));
+  const avoid = (v) => AVOID.some((a) => v.startsWith(a)) || (v === "ROLL · ball" && !ROLL_STEPS.includes(s.step) && !seenBall);
+  // The lunch sneak's hall (src/modules/lunch-sneak.js): the glowing hallway doorway is the goal, offered whenever no
+  // alarm is on; the plant and the crates are cover a kid uses when someone looks his way, not things to do. Before
+  // 2026-11-27 the robot pressed every HIDE it stood by first and then held still 20 s while the guests' cones were on
+  // screen (they always are), plant, crate, plant, crate, until its 75 s without progress ran out: the stall at "take
+  // Mops his lunch in the hallway". It now walks for the doorway (its path keeps out of the cones and waits for them),
+  // and hides only in an alarm, when the doorway is not offered.
+  const luDoor = s.placed.some((p) => p.id === "lu-door");
+  const coverOnly = (v) => luDoor && (v.startsWith("HIDE") || v === "ROLL · ball");
   // The escape's close-ups: the office keypad (type the number on the pink slip beside it, one key at a time), the
   // snack site (its big button), the snack counter (each snack in turn).
   if (s.esc) {
@@ -618,7 +630,7 @@ while (now() < MAX_S) {
   }
   if (s.pose !== "hidden" && s.pose !== "under" && s.pose !== "ball") hidAt = 0;
   // (with three snacks in his bag he has had enough of the snack bar: he does not open it again)
-  const verb = s.btn && s.btn !== "ACTION" && !avoid(s.btn) && !(s.btn === "GRAB · snacks" && s.party && s.party.bag >= 3) ? s.btn : "";
+  const verb = s.btn && s.btn !== "ACTION" && !avoid(s.btn) && !coverOnly(s.btn) && !(s.btn === "GRAB · snacks" && s.party && s.party.bag >= 3) ? s.btn : "";
   const vkey = s.scene + "|" + verb;
   // Press what is offered, but not the same thing over and over when nothing new came of it.
   const pr = presses.get(vkey) || { count: 0, at: -1 };
