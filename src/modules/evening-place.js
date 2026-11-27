@@ -102,39 +102,45 @@ export const STORM = Object.freeze({
     kid: Object.freeze({ x: 270, y: 344 }),
     guest: Object.freeze({ x: 520, y: 326 }),
   }),
-  // at the snack bar: the family at the counter's front, the guest by the stools
+  // at the snack bar: the family in front of Mops (who stands at the bar's front, facing left), clear of him, of the
+  // lunch's crates and of each other
   bar: Object.freeze({
-    dad: Object.freeze({ x: 730, y: 470 }),
-    mom: Object.freeze({ x: 742, y: 566 }),
-    kid: Object.freeze({ x: 690, y: 520 }),
-    guest: Object.freeze({ x: 740, y: 404 }),
+    dad: Object.freeze({ x: 660, y: 508 }),
+    mom: Object.freeze({ x: 640, y: 566 }),
+    kid: Object.freeze({ x: 704, y: 556 }),
   }),
   // they walk in along the floor's back strip, under the window and the bench, and leave the same way; to the bar they
-  // go down the floor between the lunch's crates and the stools
+  // step down from the window (barLane), go along under the other guest, and down the floor left of the lunch's crates
   lane: 320,
-  barVia: Object.freeze({ x: 730 }),
+  barLane: 366,
+  barVia: Object.freeze({ x: 590 }),
   ids: Object.freeze({ dad: "camera", mom: "teal", kid: "octopus-guest", guest: "backpack" }),
   // Mops at the counter's front below the stools (picture's, game x 772 to 800 at y 390 and 447), wiping it
   mops: Object.freeze({ x: 778, y: 510 }),
   // his way to and from it: along the strip above the counter's top end, then down the floor left of the stools
   mopsVia: Object.freeze([Object.freeze({ x: 730, y: 330 }), Object.freeze({ x: 730, y: 510 })]),
-  // after the party hall's cleaning robots (36b, loading-bay-place.js HALL_SNEAK: he ends at the counter's front end,
-  // Mops beside him): Mops round to the counter's front, then Squatch up the floor left of the stools and along the
-  // strip to the aisle's top (EV_BAR.sq), never over the counter or a stool
-  fromSneak: Object.freeze({
-    mops: Object.freeze([Object.freeze({ x: 740, y: 540 }), Object.freeze({ x: 778, y: 510 })]),
-    sq: Object.freeze([Object.freeze({ x: 730, y: 560 }), Object.freeze({ x: 730, y: 330 }), EV_BAR.sq]),
-  }),
-  // his eyes over the counter's edge while he peeks
-  eyes: Object.freeze({ x: 866, y: 446 }),
-  bin: Object.freeze({ x: 896, y: 540 }),
-  // GRAB · brochure from where he is rolled up, beside the bin
+  // where he stands up behind the bar when the guests have gone, and Mops passes the brochure over it to him
   grab: Object.freeze({ x: 893, y: 490, r: 70 }),
-  // the storm takes this long to fill the window; the family turns this long before they walk to the bar
+  // 36b's robot that mops the lane by the bar's front (loading-bay-place.js HALL_SNEAK.lanes[1]): it waits here while
+  // Mops walks down to the bar's front, then rolls up to him (cornerAt) for "MOVE, GOAT."
+  cornerLane: 1,
+  cornerWait: Object.freeze({ x: 660 }),
+  cornerAt: Object.freeze({ x: 728 }),
+  // GREET · kid: where the kid steps up to pet Mops; how long the pats take (wordless)
+  pet: Object.freeze({ x: 716, y: 534 }),
+  pat: 2.0,
+  // "Come on. Bedtime.": the family turns to go, a few steps back the way they came
+  leave: Object.freeze({
+    dad: Object.freeze({ x: 596, y: 500 }),
+    mom: Object.freeze({ x: 572, y: 560 }),
+    kid: Object.freeze({ x: 630, y: 540 }),
+  }),
+  // leaving: the other guest first, then the family one after another (seconds before each sets off)
+  outWait: Object.freeze({ guest: 0, dad: 0.5, mom: 1.0, kid: 1.7 }),
+  // the storm takes this long to fill the window
   stormIn: 4.0,
-  turn: 1.6,
   walk: 95,
-  // the brochure held up (picture toward the player), then the coffee, then the toss over the counter
+  // the brochure held up (picture toward the player); Mops's pass over the bar
   holdUp: 1.6,
   toss: 0.7,
 });

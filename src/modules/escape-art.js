@@ -10,7 +10,6 @@
  */
 import { FAMILY } from "./snack-name.js";
 import { drawBrochure, drawPawPrint } from "./evening-art.js";
-import { drawCoffeeStain } from "./evening-pictures.js";
 import { escapeWords } from "./escape-lines.js";
 import { VENT_ROOM, KEYPAD, keyAt, SITE, SNACKS, OFFICE_CODE, ES_HALLWAY } from "./escape-place.js";
 import { drawThought, drawCrate } from "./bedtime-story-art.js";
@@ -164,7 +163,6 @@ export function drawPinnedBrochure(ctx, b, big = false) {
   const w = b.x1 - b.x0,
     h = b.y1 - b.y0;
   drawBrochure(ctx, b.x0, b.y0, w, h, !big);
-  drawCoffeeStain(ctx, b.x0, b.y0, w, h);
   if (big) return { big, stamp: FAMILY.NAME };
   // a red pin
   ctx.beginPath();

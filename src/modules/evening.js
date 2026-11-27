@@ -11,13 +11,15 @@
  *            his thought. Past photo 5:
  * * dodge    a robot comes in through the hall's doorway with its cone: ROLL · ball (a ball fools a quick look) or back
  *            through the doorway; seen, the one capture rule in the hallway. BEEP BEEP as it passes.
- *   storm    the hall: Jupiter's big red storm rolls into the big window; the PA; Mops: "Guests! Quick, hide."
- * * hide     HIDE · counter (rolled up behind it) while the guests walk in to the window.
- * * peek     PEEK · window: his eyes over the counter; the family talks about Mars (talk); they turn to the bar:
- * * duck     DUCK · down before their cones reach his eyes (seen: the capture rule); then waitbar.
- *   bar      the pancake talk with Mops (Brian's Nov 8 words), the close-up at "Sasquatches", the coffee, the toss.
- * * brochure GRAB · brochure from the bin: the close-up (read), five things to tap; then (after) "Are those other
- *            Sasquatches?", Mops looks too long, back to work.
+ *   (36b, loading-bay.js: the hall's three cleaning robots; Mops: "Behind the bar. Quick."; HIDE · bar hands over here)
+ * * hide     HIDE · bar (only without the bay's 36b: a jump, a test): he rolls up behind the bar.
+ *   tostorm, storm   Mops goes to the bar's front; "You missed a corner."; Jupiter's big red storm rolls into the big
+ *            window; the PA; the robots stop and roll out; "You are MOPS now."
+ *   window   the guests walk in to the window; the family talks (overheard); the kid sees the goat; they come over.
+ * * greet    GREET · kid (as Mops): the kid pets him; "Come on. Bedtime."; they turn to go.
+ * * ask      TALK · family (as Mops): "What were you saying about Mars Cakes?"; Wookiees; only at their stand; Dad
+ *            hands him the brochure (the close-up, read: it waits for a tap); they leave; "You are SQUATCH now.";
+ *            Mops passes the brochure down behind the bar (pass): "Take this home." "We'll talk tonight."
  * * gohome   the home doorway outlined.
  * * box, bite, chart, crate   home alone: OPEN · box, BITE · cake, "No fizz.", X · chart (the close-up: two taps draw
  *            the X), HOLD UP · brochure (the close-up: slide it along the crate's worn family stamp; "MARS!").
@@ -36,7 +38,7 @@
  * last one he did (restart()).
  */
 import { EV_HALLWAY, EV_BAR, STORM, EV_HOME, HOME_ALONE, EV_BAY, BAY_FURNITURE, BAY_EXTRA, BAY_BOUNDS, BAY_SEARCH, BAY_VENT, EVENING_PACE as P, EVENING_LOOK, nightLook, mopsSleepAt, mopsSleepBox, robotLook } from "./evening-place.js";
-import { drawJupiterStorm, drawStormGlow, drawCounterBin, drawCoffeeStain, BROCHURE_PARTS, drawGuardianMark, drawEveningThought, drawGuardiansBox, drawWeekCake, drawEveningChart, CHART, drawIdeaPicture, drawYearsLater, drawVentCrate, BAY_CRATE } from "./evening-pictures.js";
+import { drawJupiterStorm, drawStormGlow, drawCounterBin, drawEveningThought, drawGuardiansBox, drawWeekCake, drawEveningChart, CHART, drawIdeaPicture, drawYearsLater, drawVentCrate, BAY_CRATE } from "./evening-pictures.js";
 import { placeThought } from "./thought-place.js";
 import { drawFamilyStampAt, drawFatLetters, familyStampOnRoom } from "./crate-stamp.js";
 import { FAMILY } from "./snack-name.js";
@@ -44,6 +46,11 @@ import { HALLWAY_CRAYON } from "./ganitor.js";
 import { drawNightTint, noteNightPicture, nightDrawn, nightPictureFor } from "./night-look.js";
 import { VENT } from "./party-vent.js";
 import { eveningWords } from "./evening-lines.js";
+import { bayWords } from "./loading-bay-lines.js";
+import { HALL_SNEAK, BAY_PACE } from "./loading-bay-place.js";
+import { drawRobot as drawCleaner, drawStreak } from "./loading-bay-art.js";
+import { drawPat } from "./party-free-art.js";
+import { BLEAT_HOOK } from "./bedtime-story-sound.js";
 import { drawPhoto, drawCrayonDrawing, drawBrochure, drawPapers, drawPawPrint, drawFurArm, drawSleepingMops, drawPlaque, drawCutInBack, drawCloseX, drawArrow, fitDesign, PAPERS, PHOTO_POOL, drawHeartShape } from "./evening-art.js";
 import { HALL, HALL_PICTURE } from "./party-hall.js";
 import { LUNCH_SOLIDS, LUNCH_BOUNDS, LUNCH_PLACES } from "./lunch-sneak-place.js";
@@ -66,11 +73,11 @@ import { findPath } from "./tap-path.js";
 
 export const EVENING_ID = "ch1-evening";
 /** The steps the player controls (ch1Step "ev-<step>"), in order. */
-export const EVENING_STEPS = Object.freeze(["wall", "dodge", "past", "hide", "peek", "duck", "brochure", "gohome", "box", "bite", "chart", "crate", "show", "choose", "bed", "out", "nighthall", "nightway", "bin", "post", "back", "backway", "backhall", "tobed"]);
+export const EVENING_STEPS = Object.freeze(["wall", "dodge", "past", "hide", "greet", "ask", "gohome", "box", "bite", "chart", "crate", "show", "choose", "bed", "out", "nighthall", "nightway", "bin", "post", "back", "backway", "backhall", "tobed"]);
 /** Which room each step is in (the step restart and jump() put him there). */
 export const STEP_ROOM = Object.freeze({
   walkin: "passage", wall: "passage", gallery: "passage", dodge: "passage", past: "passage",
-  tohall: "hall", tostorm: "hall", storm: "hall", hide: "hall", peek: "hall", talk: "hall", duck: "hall", waitbar: "hall", bar: "hall", brochure: "hall", read: "hall", after: "hall", gohome: "hall",
+  tohall: "hall", tostorm: "hall", storm: "hall", hide: "hall", window: "hall", greet: "hall", pet: "hall", ask: "hall", talk: "hall", read: "hall", leaving: "hall", pass: "hall", gohome: "hall",
   homein: "closet", box: "closet", bite: "closet", chart: "closet", xchart: "closet", crate: "closet", slide: "closet", mars: "closet",
   evening: "closet", show: "closet", fight: "closet", choose: "closet", fightend: "closet", bed: "closet", asleep: "closet", idea: "closet", out: "closet",
   nighthall: "hall", nightway: "passage",
@@ -78,7 +85,7 @@ export const STEP_ROOM = Object.freeze({
   backway: "passage", backhall: "hall", tobed: "closet", sleep: "closet",
 });
 /** The debug beats (?beat=evening:37 and ch1JumpBeat): the step each opens at. */
-export const BEAT_STEP = Object.freeze({ 37: "wall", 38: "hide", 39: "brochure", 40: "show", 41: "bed", 42: "out", 138: "peek", 139: "gohome", 140: "box", 141: "crate", 145: "choose", 142: "bin", 143: "post", 144: "back" });
+export const BEAT_STEP = Object.freeze({ 37: "wall", 38: "hide", 39: "ask", 40: "show", 41: "bed", 42: "out", 138: "greet", 139: "gohome", 140: "box", 141: "crate", 145: "choose", 142: "bin", 143: "post", 144: "back" });
 // The loading bay's alarm place (party-alarm.js): the robot runs to the FUR alarm by the door, guards come in there.
 addAlarmPlace("bay", {
   room: "hangar",
@@ -126,6 +133,7 @@ export function createEvening(bridge) {
   let ff = {},
     bayDrew = {},
     pads = 0,
+    mopsWas = { x: 0, y: 0 },
     drew = null,
     view = null, // the full-screen close-up open now: { kind, at } (the gallery, the brochure, the papers)
     record = { steps: [], cutIns: [] };
@@ -172,13 +180,11 @@ export function createEvening(bridge) {
     robot: null,
     storm: -1,
     guests: null,
-    peek: false,
-    turnT: 0,
-    beardStop: false,
-    coffee: -1,
-    tapped: {},
-    thought: "",
-    mopsStare: -1,
+    cleaners: [],
+    cornerSaid: false,
+    talker: "",
+    pat: -1,
+    mopsWide: false,
     brochure: "",
     warm: 0,
     dim: 0,
@@ -327,7 +333,7 @@ export function createEvening(bridge) {
     go("tohall");
     e.walkOff();
     // the party hall's three cleaning robots come next (36b, loading-bay.js startHallSneak), when that beat is there:
-    // this beat waits, and the bay's hallDone hands back to the storm (startStorm)
+    // this beat waits, and the bay's HIDE · bar hands back to the storm (startStorm)
     const bay = bridge.beat("ch1-bay");
     e.queue([
       e.until((dt) => {
@@ -345,97 +351,204 @@ export function createEvening(bridge) {
           e.face("sq", -1);
           e.face("mops", -1);
         }),
-        // (Mops round the counter's top end, along the strip, then down to its front: never over the counter)
-        e.until((dt) => {
-          e.trail();
-          e.moWalking(true);
-          const s = S();
-          s.mopsLeg = s.mopsLeg || 0;
-          const w = [...STORM.mopsVia, STORM.mops][s.mopsLeg];
-          w && e.step("mops", w.x, w.y, P.mopsWalk, dt || 0) && s.mopsLeg++;
-          return e.step("sq", EV_BAR.sq.x, EV_BAR.sq.y, P.hallWalk, dt || 0) && s.mopsLeg >= 3;
-        }),
-        e.run(() => (S().mopsLeg = 0)),
-        e.run(() => {
-          e.moWalking(false);
-          e.still("mops");
-          e.face("mops", 1);
-          e.face("sq", -1);
-          stormStarts();
-        }),
-        ]),
+        walkTo("sq", EV_BAR.sq.x, EV_BAR.sq.y, P.hallWalk),
+        e.run(() => (e.moWalking(false), e.still("mops"), offerHide())),
+      ]),
     ]);
+  }
+  // Without the bay's cleaning robots (the older program without the bay, a jump, a test): Mops says where, and HIDE ·
+  // bar is his (36b, Brian r5 4:49: they hide behind the bar when they walk in).
+  function offerHide() {
+    const e = E();
+    busy();
+    go("tostorm");
+    e.queue([e.say("mops", eveningWords("mops-behind-bar")), e.run(() => (go("hide"), control("chip-hide")))]);
   }
 
   /**
-   * Beat 36b's end (the party hall's cleaning robots, loading-bay.js hallDone: he has reached the snack counter's front
-   * with Mops) hands over here. He goes up past the stools to the strip by the aisle's top, Mops to the counter's
-   * front, and the storm begins (38a).
+   * Beat 36b's HIDE · bar (the party hall's cleaning robots, loading-bay.js hideBehindBar) hands over here with its
+   * robots (`from.robots`: where each is and its grey streak; `from.said`: the corner exchange has been said already).
+   * He goes down behind the bar and rolls up; Mops goes to the bar's front; the storm begins (38a).
    */
-  function startStorm() {
+  function startStorm(from) {
     const e = E(),
       was = S();
     ff = {};
-    e.set("ch1Evening", fresh({ galleryDone: true, looked: !!(was && was.looked) }));
+    e.set(
+      "ch1Evening",
+      fresh({
+        galleryDone: true,
+        looked: !!(was && was.looked),
+        cleaners: ((from && from.robots) || []).map((r) => ({ id: r.id, x: r.x, y: r.y, f: r.f, dir: r.dir, lane: r.lane, streak: (r.streak || []).slice(), route: null, stop: false })),
+        cornerSaid: !!(from && from.said),
+      }),
+    );
     busy();
     e.set("ch1Sneak", false);
     e.room() !== "hall" && e.enterRoom("hall", "QB");
     e.set("moPose", "stand");
     e.set("sqPose", "stand");
-    go("tostorm");
-    // each walks its way, round the counter, the stools and the crates from wherever 36b left them (tap-path.js; the
-    // solids grown by a person's feet, so the feet never touch them)
-    const FEET_SOLIDS = LUNCH_SOLIDS.map((b) => ({ x0: b.x0 - 25, x1: b.x1 + 25, y0: b.y0 - 8, y1: b.y1 + 14 }));
-    const legs = (who, way, speed) => {
-      let route = null;
-      return [
-        e.run(() => {
-          let at = e.pos(who);
-          route = [];
-          for (const w of way) (route.push(...(findPath(at, w, LUNCH_BOUNDS, FEET_SOLIDS) || [w])), (at = w));
-        }),
-        e.until((dt) => {
-          e.trail();
-          who === "mops" && e.moWalking(true);
-          const w = route[0];
-          return !w || (e.step(who, w.x, w.y, speed, dt || 0) && (route.shift(), !route.length));
-        }),
-      ];
-    };
-    e.queue([
-      ...legs("mops", STORM.fromSneak.mops, P.mopsWalk),
-      e.run(() => (e.moWalking(false), e.still("mops"), e.face("mops", 1))),
-      ...legs("sq", STORM.fromSneak.sq, P.hallWalk),
+    hideBehindBar();
+  }
+  // each walks its way round the counter, the stools and the crates (tap-path.js; the solids grown by a person's feet,
+  // so the feet never touch them)
+  const FEET_SOLIDS = LUNCH_SOLIDS.map((b) => ({ x0: b.x0 - 25, x1: b.x1 + 25, y0: b.y0 - 8, y1: b.y1 + 14 }));
+  const legs = (who, way, speed) => {
+    const e = E();
+    let route = null;
+    return [
       e.run(() => {
-        e.face("sq", -1);
-        stormStarts();
+        let at = e.pos(who);
+        route = [];
+        for (const w of way) (route.push(...(findPath(at, w, LUNCH_BOUNDS, FEET_SOLIDS) || [w])), (at = w));
       }),
+      e.until((dt) => {
+        e.trail();
+        who === "mops" && e.moWalking(true);
+        const w = route[0];
+        return !w || (e.step(who, w.x, w.y, speed, dt || 0) && (route.shift(), !route.length));
+      }),
+    ];
+  };
+  /** HIDE · bar: down into the aisle behind the bar, rolled up; Mops to the bar's front; then the storm (38a). */
+  function hideBehindBar() {
+    const e = E(),
+      s = S();
+    busy();
+    go("tostorm");
+    s.hideAt = "counter";
+    // the robot that mops the lane by the bar's front waits clear of Mops's way down to it
+    const near = cornerRobot(s);
+    near && (near.route = [{ x: STORM.cornerWait.x, y: near.y }]);
+    e.queue([
+      // into the aisle at its top (round the bar's corner), then down it
+      e.until((dt) => e.step("sq", EV_BAR.aisleTop.x, EV_BAR.aisleTop.y, P.hallWalk * 1.3, dt || 0)),
+      e.until((dt) => e.step("sq", EV_BAR.hidden.x, EV_BAR.hidden.y, P.hallWalk * 1.3, dt || 0)),
+      e.run(() => (setPose("hidden"), sound.effect("hide"), e.still("sq"))),
+      ...legs("mops", [...STORM.mopsVia, STORM.mops], P.mopsWalk),
+      e.run(() => (e.moWalking(false), e.still("mops"), e.face("mops", -1))),
+      // the corner exchange (36b's, the Mop-Off's setup), if a robot has not said it to him already
+      ...(near && !s.cornerSaid
+        ? [
+            e.run(() => ((near.route = [{ x: STORM.cornerAt.x, y: near.y }]), (S().talker = near.id))),
+            e.until(() => !near.route),
+            e.say("robot", bayWords("robot-move")),
+            e.say("mops", bayWords("mops-corner")),
+            e.say("robot", bayWords("robot-corners")),
+            e.run(() => (S().cornerSaid = true)),
+          ]
+        : []),
+      e.run(() => stormStarts()),
     ]);
+  }
+  const cornerRobot = (s) => (s.cleaners || []).find((r) => r.lane === STORM.cornerLane) || null;
+  // Every frame in the hall while 36b's robots are still there: each mops its lane to and fro (as loading-bay.js
+  // hallTick), or rolls along its route (to Mops, or out through the hallway doorway).
+  function cleanersTick(dt) {
+    const s = S();
+    for (const r of s.cleaners || []) {
+      if (r.route) {
+        const w = r.route[0];
+        if (!w) {
+          r.route = null;
+          r.stop = true;
+          continue;
+        }
+        const d = Math.hypot(w.x - r.x, w.y - r.y),
+          k = Math.min(d, BAY_PACE.robot * dt);
+        d > 0.5 && ((r.x += ((w.x - r.x) / d) * k), (r.y += ((w.y - r.y) / d) * k));
+        Math.abs(w.x - r.x) > Math.abs(w.y - r.y) ? (r.f = w.x > r.x ? 1 : -1) : d > 0.5 && (r.f = w.y > r.y ? 0 : 2);
+        d - k < 0.5 && r.route.shift();
+        r.moving = true;
+        continue;
+      }
+      r.moving = !r.stop;
+      if (r.stop) continue;
+      const L = HALL_SNEAK.lanes[r.lane];
+      r.y += (L.y - r.y) * Math.min(1, dt * 2);
+      r.x += r.dir * BAY_PACE.mop * dt;
+      r.f = r.dir;
+      if (r.x > L.x1 || r.x < L.x0) ((r.x = Math.max(L.x0, Math.min(L.x1, r.x))), (r.dir = -r.dir), (r.f = r.dir));
+      r.streak.push({ x: r.x, y: r.y + 4 });
+      r.streak.length > 40 && r.streak.shift();
+    }
   }
 
   // ---------- beat 38a: the big red storm ----------
-  // Jupiter rolls into the big window; the PA calls everyone to it; Mops: hide behind the counter; guests come in.
+  // Jupiter rolls into the big window; the PA calls everyone to it; the cleaning robots stop and roll out; the player
+  // is Mops at the bar's front; the guests come in to the window.
   function stormStarts() {
     const e = E(),
       s = S();
     go("storm");
     s.storm = 0;
+    const way = (a, z) => findPath(a, z, LUNCH_BOUNDS, FEET_SOLIDS) || [z]; // (clear of the crates and stools by a robot's width)
     e.queue([
       timer(1.2),
       e.say("pa", eveningWords("pa-storm"), "pa", true),
       e.say("pa", eveningWords("pa-window"), "pa", true),
-      e.say("mops", eveningWords("mops-hide")),
-      e.say("mops", eveningWords("mops-counter")),
+      ...((s.cleaners || []).length
+        ? [
+            e.run(() => (S().talker = (cornerRobot(S()) || S().cleaners[0]).id)),
+            e.say("robot", eveningWords("robots-paused")),
+            // they roll out through the hallway doorway, round the counter, the stools and the crates (nobody vanishes)
+            e.run(() => {
+              for (const r of S().cleaners) {
+                const up = { x: r.x, y: HALL_SNEAK.out.y + 12 };
+                r.stop = false;
+                r.route = [...way({ x: r.x, y: r.y }, up), ...way(up, HALL_SNEAK.out), HALL_SNEAK.gone];
+              }
+            }),
+            e.until(() => S().cleaners.every((r) => !r.route)),
+            e.run(() => ((S().cleaners = []), (S().talker = ""))),
+          ]
+        : []),
+      // the switch, announced: the player is Mops now (Squatch stays rolled up behind the bar)
       e.run(() => {
-        // the guests come in through the hallway doorway, one after another, and walk to the window
-        S().guests = ["dad", "mom", "kid", "guest"].map((role, i) => ({ role, id: STORM.ids[role], x: STORM.in.x + i * 46, y: STORM.in.y + i * 4, a: Math.PI, kid: role === "kid", to: "window", wait: 0.6 + i * 0.9 }));
-        go("hide");
-        control("chip-hide");
+        e.playAs("mops", eveningWords("switch-mops"));
+        e.queue(windowTalk());
       }),
     ]);
   }
-  // Every frame: each guest walks (in along the floor's back strip, to the window or the bar, or out), looking where
-  // he walks; standing at the window he looks up at it; at the bar, at the counter.
+  // The guests come in through the hallway doorway and walk to the window; the family talks there (overheard), the kid
+  // sees the goat, and the family comes over to the bar.
+  function windowTalk() {
+    const e = E();
+    return [
+      e.run(() => {
+        e.face("mops", -1);
+        S().guests = ["dad", "mom", "kid", "guest"].map((role, i) => ({ role, id: STORM.ids[role], x: STORM.in.x + i * 46, y: STORM.in.y + i * 4, a: Math.PI, kid: role === "kid", to: "window", wait: 0.6 + i * 0.9 }));
+        go("window");
+      }),
+      e.until(() => guestsAt("window")),
+      timer(0.6),
+      e.say("kid", eveningWords("kid-red"), "say", true),
+      e.say("mom", eveningWords("mom-mars"), "say", true),
+      e.say("dad", eveningWords("dad-loved"), "say", true),
+      e.say("mom", eveningWords("mom-best"), "say", true),
+      e.say("kid", eveningWords("kid-mars-cakes"), "say", true),
+      // the kid turns round and sees the goat at the bar
+      e.run(() => lookAtMops(["kid"])),
+      e.say("kid", eveningWords("kid-goat")),
+      e.run(() => lookAtMops(["mom", "dad"])),
+      e.say("mom", eveningWords("mom-ganitor")),
+      e.say("mom", eveningWords("mom-only-goat")),
+      // the family comes over to the bar (the other guest stays at the window)
+      e.run(() => S().guests.forEach((g) => g.role !== "guest" && (g.to = "bar"))),
+      e.until(() => familyAt("bar")),
+      e.run(() => {
+        lookAtMops(["dad", "mom", "kid"]);
+        go("greet");
+        control("chip-greet");
+      }),
+    ];
+  }
+  const lookAtMops = (roles) => {
+    const m = E().pos("mops");
+    for (const g of S().guests || []) roles.includes(g.role) && ((g.a = Math.atan2(m.y - g.y, m.x - g.x)), (g.look = true));
+  };
+  // Every frame: each guest walks (in along the floor's back strip, to the window or the bar, a few steps away, or
+  // out), looking where he walks; standing at the window he looks up at it; at the bar, at Mops.
   function guestsTick(dt) {
     const s = S();
     for (const g of s.guests || []) {
@@ -443,23 +556,26 @@ export function createEvening(bridge) {
         g.wait -= dt;
         continue;
       }
-      if (g.to === "turn") continue;
       // the way there: in and out along the floor's back strip (under the window and the bench); to the bar along the
       // strip and down the floor left of the stools and the crates (STORM.barVia), never over them
       if (g.wayTo !== g.to) {
+        const from = g.wayTo;
         g.wayTo = g.to;
-        const T = g.to === "window" ? STORM.window[g.role] : g.to === "bar" ? STORM.bar[g.role] : { x: STORM.in.x + 80, y: STORM.in.y };
+        g.look = false;
+        const T = g.to === "window" ? STORM.window[g.role] : g.to === "bar" ? STORM.bar[g.role] : g.to === "pet" ? STORM.pet : g.to === "leave" ? STORM.leave[g.role] : { x: STORM.in.x + 80, y: STORM.in.y };
         g.way =
           g.to === "window"
             ? [{ x: T.x, y: STORM.lane }, T]
-            : g.to === "bar"
-              ? [{ x: g.x, y: STORM.lane }, { x: STORM.barVia.x, y: STORM.lane }, { x: STORM.barVia.x, y: T.y }, T]
-              : [{ x: STORM.barVia.x, y: g.y }, { x: STORM.barVia.x, y: STORM.lane }, T];
+            : g.to === "bar" && from === "window"
+              ? [{ x: g.x, y: STORM.barLane }, { x: STORM.barVia.x, y: STORM.barLane }, { x: STORM.barVia.x, y: T.y }, T]
+              : g.to === "out"
+                ? [...(g.y > STORM.lane + 30 ? [{ x: STORM.barVia.x, y: g.y }] : []), { x: g.y > STORM.lane + 30 ? STORM.barVia.x : g.x, y: STORM.lane }, T]
+                : [T]; // (a step or two by the bar: straight there)
       }
       const via = g.way[0];
       if (!via) {
         g.moving = false;
-        g.a = g.to === "window" ? -Math.PI / 2 : g.to === "bar" ? 0 : g.a;
+        g.look || (g.a = g.to === "window" ? -Math.PI / 2 : g.a);
         continue;
       }
       const d = Math.hypot(via.x - g.x, via.y - g.y),
@@ -472,170 +588,100 @@ export function createEvening(bridge) {
       } else g.way.shift();
     }
   }
-  const guestsAt = (where) => (S().guests || []).every((g) => g.to === where && !g.moving && g.wait <= 0 && Math.hypot(g.x - (where === "window" ? STORM.window : STORM.bar)[g.role].x, g.y - (where === "window" ? STORM.window : STORM.bar)[g.role].y) < 1);
-  /** HIDE · counter: down into the aisle behind the counter, rolled up into the ball. */
-  function hideCounter() {
-    const e = E(),
-      s = S();
-    s.alarm && (s.alarm.spotted = s.alarm.guards.some((g) => g.sees));
-    busy();
-    s.hideAt = "counter";
-    e.queue([
-      // into the aisle at its top (round the counter's corner), then down it
-      e.until((dt) => e.step("sq", EV_BAR.aisleTop.x, EV_BAR.aisleTop.y, P.hallWalk * 1.3, dt || 0)),
-      e.until((dt) => e.step("sq", EV_BAR.hidden.x, EV_BAR.hidden.y, P.hallWalk * 1.3, dt || 0)),
-      e.run(() => {
-        setPose("hidden");
-        sound.effect("hide");
-        e.still("sq");
-        if (S().alarm) return void control("");
-        // (the family already on its way to the bar: he waits down behind the counter)
-        if ((S().guests || []).some((g) => g.to === "turn" || g.to === "bar")) return void go("waitbar");
-        go("peek");
-        control("chip-peek");
-      }),
-    ]);
-  }
-  /** PEEK · window: his eyes rise over the counter's edge; the family talks at the window (they look up at it). */
-  function peekUp() {
-    const e = E(),
-      s = S();
-    s.peek = true;
-    sound.effect("slip");
-    go("talk");
-    busy();
-    e.queue([
-      e.until(() => guestsAt("window")),
-      timer(0.6),
-      e.say("kid", eveningWords("kid-red"), "say", true),
-      e.say("mom", eveningWords("mom-mars"), "say", true),
-      e.say("dad", eveningWords("dad-loved"), "say", true),
-      e.say("mom", eveningWords("mom-best"), "say", true),
-      e.say("kid", eveningWords("kid-pancakes"), "say", true),
-      e.say("kid", eveningWords("kid-hungry"), "say", true),
-      // they turn round to the snack bar: their cones swing toward the counter; DUCK before they see his eyes
-      e.run(() => {
-        for (const g of S().guests) ((g.to = "turn"), (g.turnFrom = g.a));
-        S().turnT = 0;
-        go("duck");
-        control("chip-duck");
-      }),
-    ]);
-  }
-  /** DUCK · down: his eyes go back down behind the counter. */
-  function duckDown() {
-    S().peek = false;
-    sound.effect("hide");
-    // down behind the counter, he waits while they come over
-    busy();
-    go("waitbar");
-  }
-  // Every frame of "duck": they turn toward the bar, then walk to it; once they are there (and he is down), 38b.
-  function turnTick(dt) {
-    const s = S();
-    if ((s.step !== "duck" && s.step !== "waitbar") || s.alarm) return;
-    s.turnT = (s.turnT || 0) + dt;
-    const u = Math.min(1, s.turnT / STORM.turn);
-    for (const g of s.guests) {
-      if (g.to !== "turn") continue;
-      const want = 0; // toward the snack bar, across the room
-      g.a = g.turnFrom + angleTo(g.turnFrom, want) * u;
-      u >= 1 && (g.to = "bar");
-    }
-    if (guestsAt("bar") && s.step === "waitbar" && !E().current()) atTheBar();
-  }
-  const angleTo = (a, b) => Math.atan2(Math.sin(b - a), Math.cos(b - a));
+  const guestThere = (g) => g.wayTo === g.to && !g.moving && g.wait <= 0 && !(g.way || []).length;
+  const guestsAt = (where) => (S().guests || []).every((g) => g.to === where && guestThere(g));
+  const familyAt = (where) => (S().guests || []).filter((g) => g.role !== "guest").every((g) => g.to === where && guestThere(g));
+  const guestBy = (role) => (S().guests || []).find((g) => g.role === role);
 
-  // ---------- beat 38b: "They said they were Sasquatches" ----------
-  function atTheBar() {
-    const e = E(),
-      s = S();
+  // ---------- beat 38b: pet the goat, and Mops asks about the cakes (Brian r5 5:34 to 6:08; q: 119) ----------
+  /** GREET · kid (the player is Mops): the kid steps up and pets him; then the family turns to go. */
+  function greetKid() {
+    const e = E();
     busy();
-    go("bar");
-    for (const g of s.guests) g.a = Math.atan2(STORM.mops.y - g.y, STORM.mops.x - g.x);
+    go("pet");
+    e.face("mops", -1);
+    sound.effect("grab");
     e.queue([
-      timer(0.4),
-      e.say("dad", eveningWords("dad-any")),
-      e.say("mops", eveningWords("mops-none")),
-      e.say("dad", eveningWords("dad-best")),
-      e.say("dad", eveningWords("dad-wookiees")),
-      e.say("dad", eveningWords("dad-sasquatches")),
-      // at the word his beard stops mid-wipe; the close-up shows both faces: Mops's, and Squatch's eyes, just as wide
+      e.run(() => (guestBy("kid").to = "pet")),
+      e.until(() => guestThere(guestBy("kid"))),
+      // wordless, about 2 seconds: two soft pats on his head, and his bleat
+      e.run(() => (lookAtMops(["kid"]), (S().pat = 0), bridge.playSoundPick && bridge.playSoundPick(BLEAT_HOOK))),
+      e.until((dt) => ((S().pat += (dt || 0) / STORM.pat), S().pat >= 1)),
+      e.run(() => (S().pat = -1)),
+      e.say("mom", eveningWords("mom-bedtime")),
+      // they turn to go: a few steps up the floor toward the doorway
+      e.run(() => S().guests.forEach((g) => g.role !== "guest" && (g.to = "leave"))),
+      e.until(() => familyAt("leave")),
       e.run(() => {
-        S().beardStop = true;
-        openView("shock");
+        go("ask");
+        control("chip-ask");
       }),
-      e.until(() => !view),
-      e.say("kid", eveningWords("kid-fizzy"), "say", true),
-      e.say("guest", eveningWords("guest-check"), "say", true),
-      // Dad holds the brochure up, its picture toward the player, then hands it over
+    ]);
+  }
+  /** TALK · family (the player is Mops): what were they saying about Mars Cakes? Dad hands him a brochure. */
+  function askFamily() {
+    const e = E();
+    busy();
+    go("talk");
+    e.face("mops", -1);
+    e.queue([
+      e.say("mops", eveningWords("mops-what")),
+      // they turn back and come to the bar again
+      e.run(() => S().guests.forEach((g) => g.role !== "guest" && (g.to = "bar"))),
+      e.until(() => familyAt("bar")),
+      e.run(() => lookAtMops(["dad", "mom", "kid"])),
+      e.say("dad", eveningWords("dad-best-had")),
+      e.say("kid", eveningWords("kid-fizzy")),
+      // at "fizzy" he stops dead, his eyes wide (no words)
+      e.run(() => ((S().mopsWide = true), (S().t0 = 0), sound.effect("slip"))),
+      timer(P.stare),
+      e.run(() => (S().mopsWide = false)),
+      e.say("dad", eveningWords("dad-wookiees")),
+      e.say("dad", eveningWords("dad-only-stand")),
+      // Dad holds the brochure up, its picture toward the player, then hands it to Mops
       e.run(() => ((S().brochure = "up"), (S().t0 = 0), sound.effect("grab"))),
       timer(STORM.holdUp),
       e.say("dad", eveningWords("dad-brochure")),
-      e.run(() => ((S().brochure = "guest"), (S().coffee = 0))),
-      // the guest spills coffee on it, and tosses it over the counter into the bin beside Squatch
-      e.until((dt) => ((S().coffee = Math.min(1, S().coffee + (dt || 0) / 0.5)), S().coffee >= 1)),
-      e.say("guest", eveningWords("guest-coffee"), "say", true),
-      e.run(() => ((S().brochure = "toss"), (S().t0 = 0), sound.effect("slip"))),
-      timer(STORM.toss),
-      e.run(() => ((S().brochure = "bin"), sound.effect("hide"))),
-      e.say("mom", eveningWords("mom-bedtime"), "say", true),
+      // the brochure, close: it waits for a tap
+      e.run(() => {
+        S().brochure = "mops";
+        sound.effect("pickup");
+        go("read");
+        openView("brochure");
+      }),
+      e.until(() => !view),
+      e.run(() => go("leaving")),
       // they all leave the way they came, through the hallway doorway
-      e.run(() => S().guests.forEach((g, i) => ((g.to = "out"), (g.wait = i * 0.3)))),
+      e.run(() => S().guests.forEach((g) => ((g.to = "out"), (g.wait = STORM.outWait[g.role])))),
       e.until(() => S().guests.every((g) => g.x > 960)),
+      // the switch back, announced; then Mops passes the brochure down behind the bar
       e.run(() => {
         S().guests = null;
-        S().beardStop = false;
-        go("brochure");
-        control("chip-brochure");
+        e.playAs("squatch", eveningWords("switch-squatch"));
+        e.queue(passDown());
       }),
     ]);
   }
-  function grabBrochure() {
-    const s = S();
-    busy();
-    s.brochure = "paw";
-    s.tapped = {};
-    s.thought = "";
-    E().set("ch1Brochure", true);
-    sound.effect("grab");
-    go("read");
-    openView("brochure");
-  }
-
-  // ---------- beat 39: the brochure, and "Are those other Sasquatches?" ----------
-  // The close-up's five things to tap, one idea each (story pass beat 39); the cooks (or the X) go on.
-  const BROCHURE_THOUGHT = { window: "sq-mars", pancakes: "sq-yum", cake: "sq-fizzes", paw: "sq-almost" };
-  function tapBrochure(part) {
-    const s = S();
-    s.tapped[part] = E().time();
-    if (part === "cooks") return brochureClosed();
-    s.thought = BROCHURE_THOUGHT[part];
-    sound.effect(part === "cake" ? "pickup" : "grab");
-  }
-  function brochureClosed() {
-    const e = E(),
-      s = S();
-    closeView();
-    s.thought = "";
-    go("after");
-    // he stands up behind the counter, the brochure in his paw; Mops beside him at the counter
-    setPose("stand");
-    e.place("sq", STORM.grab.x, STORM.grab.y);
-    e.face("sq", -1);
-    e.face("mops", 1);
-    e.queue([
-      e.say("sq", eveningWords("sq-look-like")),
-      e.say("sq", eveningWords("sq-not-hidden")),
-      e.say("sq", eveningWords("sq-like-me")),
-      e.say("sq", eveningWords("sq-other")),
-      // Mops looks at the picture a moment too long, and says nothing
-      e.run(() => ((S().mopsStare = 0), sound.effect("slip"))),
-      e.until((dt) => ((S().mopsStare += dt || 0), S().mopsStare >= P.stare)),
-      e.run(() => (S().mopsStare = -1)),
-      e.say("mops", eveningWords("mops-work")),
+  // ---------- beat 39: Mops passes the brochure down ----------
+  function passDown() {
+    const e = E();
+    return [
+      e.run(() => {
+        go("pass");
+        // he stands up behind the bar; Mops turns to him
+        setPose("stand");
+        e.place("sq", STORM.grab.x, STORM.grab.y);
+        e.face("sq", -1);
+        e.face("mops", 1);
+        sound.effect("slip");
+      }),
+      e.say("mops", eveningWords("mops-take-home")),
+      // over the bar, from Mops to his paw
+      e.run(() => ((S().brochure = "toss"), (S().t0 = 0), sound.effect("slip"))),
+      timer(STORM.toss),
+      e.run(() => ((S().brochure = "paw"), e.set("ch1Brochure", true), sound.effect("grab"))),
       e.say("mops", eveningWords("mops-tonight")),
-      // Mops goes back to work: up past the counter's top end and out through the hallway doorway
+      // Mops goes back to work: up past the bar's top end and out through the hallway doorway
       walkTo("mops", STORM.mopsVia[1].x, STORM.mopsVia[1].y, P.mopsWalk),
       walkTo("mops", STORM.mopsVia[0].x, STORM.mopsVia[0].y, P.mopsWalk),
       walkTo("mops", EV_BAR.in.x - 30, EV_BAR.in.y + 20, P.mopsWalk),
@@ -647,7 +693,7 @@ export function createEvening(bridge) {
         go("gohome");
         control("chip-home");
       }),
-    ]);
+    ];
   }
 
   // ---------- beat 39b: home alone (no fizz, and the missing letter) ----------
@@ -1243,6 +1289,8 @@ export function createEvening(bridge) {
         out.push({ ...coneFrom(p.id, q.x, q.y, look(p, HALL.alarm), size), always: true, bold: true });
       }
     }
+    // 36b's cleaning robots while they are still in the hall (he is rolled up behind the bar: they catch nobody)
+    if (room() === "hall") for (const r of s.cleaners || []) out.push({ ...coneFrom(r.id, r.x, r.y, r.f === 1 ? 0 : r.f === -1 ? Math.PI : r.f === 2 ? -Math.PI / 2 : Math.PI / 2, size), always: true, robot: true, catch: false });
     // the hallway robot (beat 37): its cone goes where it looks (every robot shows its cone, rule 8)
     // (only once it is in the hallway: waiting outside the doorway it is not in the picture)
     if (room() === "passage" && s.robot && s.robot.wait <= 0) {
@@ -1279,7 +1327,6 @@ export function createEvening(bridge) {
     const bay = room() === "hangar",
       hallway = room() === "passage";
     startAlarm(s, w, whereId || (bay ? "where-bay" : hallway ? "where-hallway" : "where-bar"), bay || hallway ? "who-robot" : id === "fur-alarm" ? "who-guard" : "who-tourist", bay ? "bay" : hallway ? "hallway" : "");
-    s.peek = false;
     e.sfx("bleep");
     psound.sting();
     s.seenBy = "";
@@ -1326,9 +1373,7 @@ export function createEvening(bridge) {
         if (s.postAlarm) return postAlarmDone();
         // the hallway: the robot rolls on out (it has done its job), and the hallway is his again
         if (room() === "passage") return ((s.robot = null), go("past"), control("chip-to-hall"));
-        if (s.step === "hide") return s.pose === "hidden" && s.hideAt === "counter" ? (go("peek"), control("chip-peek")) : control("chip-hide");
-        if (s.step === "peek") return control("chip-peek");
-        if (s.step === "duck") return s.pose === "hidden" && !s.peek ? (busy(), go("waitbar")) : control("chip-duck");
+        if (s.step === "hide") return control("chip-hide");
         control(s.step === "post" ? "chip-post" : ["back", "backway", "backhall", "tobed"].includes(s.step) ? "chip-sneak-home" : "chip-bin");
       },
     };
@@ -1353,7 +1398,7 @@ export function createEvening(bridge) {
     // beat 38a: Jupiter's storm fills the window; the guests walk (not while an alarm moves them)
     r === "hall" && s.storm >= 0 && (s.storm = Math.min(1, s.storm + dt / STORM.stormIn));
     r === "hall" && s.guests && !s.alarm && guestsTick(dt);
-    r === "hall" && turnTick(dt);
+    r === "hall" && (s.cleaners || []).length && cleanersTick(dt);
     view && view.kind === "order" && orderTick();
     view && view.kind === "chart" && chartTick(dt);
     r === "hangar" && suckTick(dt);
@@ -1366,22 +1411,20 @@ export function createEvening(bridge) {
     }
     view && view.kind === "crate" && slideTick(dt);
     // the close-ups end themselves once the game no longer has what opened them (a restart, the LOCKUP card)
-    if (view && !((view.kind === "gallery" && s.step === "gallery") || (view.kind === "brochure" && s.step === "read") || (view.kind === "shock" && s.step === "bar") || (view.kind === "chart" && s.step === "xchart") || (view.kind === "crate" && s.step === "slide") || (view.kind === "back" && s.step === "fightend") || (view.kind === "order" && s.step === "order"))) closeView();
+    if (view && !((view.kind === "gallery" && s.step === "gallery") || (view.kind === "brochure" && s.step === "read") || (view.kind === "chart" && s.step === "xchart") || (view.kind === "crate" && s.step === "slide") || (view.kind === "back" && s.step === "fightend") || (view.kind === "order" && s.step === "order"))) closeView();
     // Night one, still in bed: his first move gets him up.
     if (on && s.step === "out" && s.bed && r === "closet" && e.steering()) return void getUp();
     // Steering steps him out of hiding or unrolls him.
-    if (on && (s.pose === "hidden" || s.pose === "ball") && e.steering()) {
-      s.peek = false;
+    if (on && (s.pose === "hidden" || s.pose === "ball") && e.steering() && e.playing() !== "mops") {
       s.hideAt = "";
       s.ballNear = {};
       setPose("stand");
     }
     // Sight: hall watchers and night robots; guests "?" then "!" after SEEN_TOO_LONG_SECONDS, robots "!" at once.
     const showing = {};
-    const watching = (r === "hall" || r === "hangar" || (r === "passage" && s.robot)) && !s.alarm && on && (s.pose === "stand" || s.peek);
+    const watching = (r === "hall" || r === "hangar" || (r === "passage" && s.robot)) && !s.alarm && on && s.pose === "stand";
     if (watching) {
-      // (peeking over the counter, only his eyes show: sight looks for them at the counter's edge)
-      const seen = coneList(s).find((c) => c.catch !== false && (s.peek && s.pose !== "stand" ? coneSeesPoint(c, { x: STORM.eyes.x, y: STORM.eyes.y + 20 }) : seesHere(c, sqAt)));
+      const seen = coneList(s).find((c) => c.catch !== false && seesHere(c, sqAt));
       if (!seen) ((s.seenBy = ""), (s.seenT = 0));
       else {
         s.seenT = s.seenBy === seen.id ? s.seenT + dt : 0;
@@ -1481,6 +1524,25 @@ export function createEvening(bridge) {
     s.hideAt = "plant";
     sound.effect("hide");
   }
+  // an action of Mops's, offered wherever he stands (the player is Mops), its prompt over the one it is about
+  const mopsSpot = (id, wordsId, at, f) => {
+    const [verb, cap] = eveningWords(wordsId).split(" · "),
+      m = E().pos("mops");
+    return { id, verb, cap, who: "mo", x: m.x, y: m.y, r: 60, at, f, hot: true };
+  };
+  /** HIDE · bar while an alarm is on (night one in the hall): down into the aisle behind the bar, rolled up. */
+  function hideFromAlarm() {
+    const e = E(),
+      s = S();
+    s.alarm && (s.alarm.spotted = s.alarm.guards.some((g) => g.sees));
+    busy();
+    s.hideAt = "counter";
+    e.queue([
+      e.until((dt) => e.step("sq", EV_BAR.aisleTop.x, EV_BAR.aisleTop.y, P.hallWalk * 1.3, dt || 0)),
+      e.until((dt) => e.step("sq", EV_BAR.hidden.x, EV_BAR.hidden.y, P.hallWalk * 1.3, dt || 0)),
+      e.run(() => (setPose("hidden"), sound.effect("hide"), e.still("sq"), control(""))),
+    ]);
+  }
   const doorSpot = (id, p) => spot(id, "", { x: p.x, y: p.y, r: p.r }, null, null);
   function spots() {
     const s = live(),
@@ -1492,7 +1554,7 @@ export function createEvening(bridge) {
     if (s.alarm) {
       if (!standing) return [];
       const out = [];
-      r === "hall" && out.push(spot("ev-counter", "button-counter", EV_BAR.hide, EV_BAR.aisle, hideCounter));
+      r === "hall" && out.push(spot("ev-counter", "button-counter", EV_BAR.hide, EV_BAR.aisle, hideFromAlarm));
       // after the loud post the crate by the big wall vent is the one hiding place (story pass 42c)
       if (r === "hangar" && s.postAlarm) return [spot("ev-bay-crate", "button-crate", { x: EV_BAY.underVent.x, y: EV_BAY.underVent.y, r: 56 }, BAY_CRATE, hideCrate)];
       r === "hangar" && out.push(spot("ev-plant", "button-plant", EV_BAY.plant, EV_BAY.plant.box, hidePlant), spot("ev-bay-crate", "button-crate", { x: EV_BAY.underVent.x, y: EV_BAY.underVent.y, r: 56 }, BAY_CRATE, hideCrate));
@@ -1513,15 +1575,16 @@ export function createEvening(bridge) {
       case "dodge":
         return standing ? [ballSpot()] : [];
       case "hide":
-        return standing ? [spot("ev-counter", "button-counter", EV_BAR.hide, EV_BAR.aisle, hideCounter)] : [];
-      // rolled up behind the counter: PEEK · window raises his eyes over its edge; DUCK · down takes them back down
-      // (stepped out from behind the counter: HIDE · counter again)
-      case "peek":
-        return s.pose === "hidden" ? [spot("ev-peek", "button-peek", { x: e.pos("sq").x, y: e.pos("sq").y, r: 60 }, null, peekUp)] : standing ? [spot("ev-counter", "button-counter", EV_BAR.hide, EV_BAR.aisle, hideCounter)] : [];
-      case "duck":
-        return s.peek ? [spot("ev-duck", "button-duck", { x: e.pos("sq").x, y: e.pos("sq").y, r: 60 }, null, duckDown)] : standing ? [spot("ev-counter", "button-counter", EV_BAR.hide, EV_BAR.aisle, hideCounter)] : [];
-      case "brochure":
-        return [spot("ev-brochure", "button-brochure", STORM.grab, box(STORM.bin.x, STORM.bin.y - 18, 46, 50), grabBrochure)];
+        return standing ? [spot("ev-counter", "button-counter", EV_BAR.hide, EV_BAR.aisle, hideBehindBar)] : [];
+      // 38b (the player is Mops; each is offered where he stands, its words over the kid or the family)
+      case "greet": {
+        const kid = guestBy("kid");
+        return kid ? [mopsSpot("ev-greet", "button-greet", [kid.x, kid.y - e.hallSizes().adult * EV_BAR.kidK - 10], greetKid)] : [];
+      }
+      case "ask": {
+        const dad = guestBy("dad");
+        return dad ? [mopsSpot("ev-talk", "button-talk", [dad.x, dad.y - bridge.guests.height(dad.id, e.hallSizes().adult) - 10], askFamily)] : [];
+      }
       case "gohome":
         return [doorSpot("ev-home", EV_BAR.home)];
       // 39b: the Guardians' box in his paw, the bite, the chart above his bed, the crate
@@ -1580,9 +1643,7 @@ export function createEvening(bridge) {
   // ---------- the full-screen close-ups ----------
   // The design boxes (evening-art.js fitDesign): the gallery's photo, arrows and X; the brochure; the papers.
   const GALLERY = Object.freeze({ W: 400, H: 700, photo: { x: 40, y: 110, w: 320, h: 250 }, plaque: { x: 200, y: 404, size: 20 }, left: { x: 80, y: 520, r: 40 }, right: { x: 320, y: 520, r: 40 }, close: { x: 352, y: 640, r: 36 }, dots: { x: 200, y: 452 }, lift: { x: 130, y: 496, w: 140, h: 48 }, thought: { x: 160, y: 596, w: 280, h: 92 } });
-  const BROCHURE = Object.freeze({ W: 360, H: 600, card: { x: 30, y: 40, w: 300, h: 420 }, close: { x: 318, y: 556, r: 34 }, thought: { x: 150, y: 528, w: 270, h: 96 } });
-  // 38b: Mops's face at "Sasquatches", his beard stopped mid-wipe, and Squatch's eyes just as wide at the counter's edge
-  const SHOCK = Object.freeze({ W: 400, H: 700, mops: { x: 200, y: 470, k: 4.6 }, counter: { y: 560 }, eyes: { x: 200, y: 548 }, close: { x: 352, y: 640, r: 36 } });
+  const BROCHURE = Object.freeze({ W: 360, H: 600, card: { x: 30, y: 60, w: 300, h: 420 }, close: { x: 318, y: 556, r: 34 } });
   // 39b: the chart close-up (this week's cake to X), the crate close-up (the brochure slid along the stamp)
   const CHARTV = Object.freeze({ W: 400, H: 700, chart: { x: 20, y: 170, w: 360, h: 260 }, close: { x: 352, y: 640, r: 36 } });
   const CRATEV = Object.freeze({ W: 400, H: 700, crate: { x: 10, y: 150, w: 380, h: 230 }, stamp: { x: 40, y: 290, h: 40 }, card: { y: 420, w: 220, h: 300 }, close: { x: 352, y: 640, r: 36 } });
@@ -1599,13 +1660,13 @@ export function createEvening(bridge) {
     card: { y: 470 },
     goBack: { x: 70, y: 600, w: 260, h: 56 },
   });
-  const designOf = (kind) => ({ gallery: GALLERY, brochure: BROCHURE, shock: SHOCK, chart: CHARTV, crate: CRATEV, back: BACKV, order: ORDERV })[kind] || PAPERS;
+  const designOf = (kind) => ({ gallery: GALLERY, brochure: BROCHURE, chart: CHARTV, crate: CRATEV, back: BACKV, order: ORDERV })[kind] || PAPERS;
   function openView(kind) {
     const at = E().time();
     view = { kind, at, paw: null, down: null };
     record.cutIns.push(kind);
     openFullScreen({
-      label: { gallery: "photo wall", brochure: "brochure", shock: "Mops at the counter", chart: "cake chart", crate: "crate", back: "Mops" }[kind] || "order papers",
+      label: { gallery: "photo wall", brochure: "brochure", chart: "cake chart", crate: "crate", back: "Mops" }[kind] || "order papers",
       draw: (ctx, w, h, t) => drawView(ctx, w, h, t),
       pointer: (k, x, y) => pointer(k, x, y),
       restart: () => E().restartPart && E().restartPart(),
@@ -1648,14 +1709,8 @@ export function createEvening(bridge) {
       if (back && g.i > 0) return ((g.i -= 1), (g.lift = 0), sound.effect("grab"));
       return;
     }
-    if (view.kind === "brochure") {
-      if (kind !== "up" || E().time() - view.at <= P.zoomIn) return;
-      if (hit(p, BROCHURE.close)) return tapBrochure("cooks");
-      const part = brochurePartAt(p);
-      part && tapBrochure(part);
-      return;
-    }
-    if (view.kind === "shock" || view.kind === "back") {
+    // the brochure in Mops's keeping, and Mops's turned back: a tap anywhere (once it has zoomed in) goes on
+    if (view.kind === "brochure" || view.kind === "back") {
       if (kind === "up" && E().time() - view.at > P.zoomIn) closeView();
       return;
     }
@@ -1692,21 +1747,6 @@ export function createEvening(bridge) {
         q = { x: p.x - ORDERV.papers.x, y: p.y - ORDERV.papers.y };
       if ((kind === "down" || kind === "up") && q.x > B.x - 26 && q.x < B.x + B.s + 26 && q.y > B.y - 26 && q.y < B.y + B.s + 26) markOrder();
     }
-  }
-  // The brochure close-up's parts in design units (BROCHURE_PARTS are fractions of the card).
-  const brochurePart = (name) => {
-    const C = BROCHURE.card,
-      q = BROCHURE_PARTS[name];
-    return { x: C.x + C.w * q.fx, y: C.y + C.h * q.fy, r: C.w * q.fr };
-  };
-  const BROCHURE_ORDER = ["window", "pancakes", "cake", "paw", "cooks"];
-  function brochurePartAt(p) {
-    // the small things first (the paw sits in the corner, the cooks fill the middle)
-    for (const name of ["paw", "cake", "window", "pancakes", "cooks"]) {
-      const q = brochurePart(name);
-      if (Math.hypot(p.x - q.x, p.y - q.y) <= q.r + 6) return name;
-    }
-    return "";
   }
   function drawView(ctx, w, h, t) {
     if (!view) return;
@@ -1791,50 +1831,11 @@ export function createEvening(bridge) {
       if (g.thoughtAt >= 0 && now - g.thoughtAt < 4) viewThought(ctx, GALLERY.thought, eveningWords("sq-hid-it"), Math.min(1, (now - g.thoughtAt) / 0.25));
       Object.assign(out, { photo: g.i + 1, id, crooked, lift: +q.toFixed(2), lifted: g.lifted, crayon: crooked, thought: g.thoughtAt >= 0 && now - g.thoughtAt < 4 });
     } else if (view.kind === "brochure") {
+      // a brochure for the stand (Brian r5 6:08: no cooks on it): the stand, Mars behind it, the cake box, the cake fizzing
       const C = BROCHURE.card;
-      drawBrochure(ctx, C.x, C.y, C.w, C.h, false, s.tapped && s.tapped.cake ? 1 : 0, now);
-      s.coffee >= 0 && drawCoffeeStain(ctx, C.x, C.y, C.w, C.h);
-      // the Guardians' mark appears beside the brochure's paw print: close, and not the same
-      if (s.thought === "sq-almost") {
-        const P2 = brochurePart("paw");
-        drawGuardianMark(ctx, P2.x - 46, P2.y - 4, 26);
-      }
-      // the next thing to tap gets the one highlight (in order; a tap on anything works)
-      const next = BROCHURE_ORDER.find((n) => !(s.tapped && s.tapped[n]));
-      if (next) {
-        const q = brochurePart(next);
-        ctx.save();
-        ctx.globalAlpha = 0.85 + 0.15 * Math.sin(now * 4);
-        ctx.setLineDash([OUTLINE.dash * 1.4 * px, OUTLINE.dash * px]);
-        ctx.lineWidth = 3 * px;
-        ctx.strokeStyle = OUTLINE.color;
-        ctx.beginPath();
-        ctx.arc(q.x, q.y, q.r + 4, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.restore();
-      }
-      drawFurArm(ctx, C.x + C.w * 0.3, D.H + 40, C.x + C.w * 0.12, C.y + C.h - 10, 30);
-      s.thought && viewThought(ctx, BROCHURE.thought, eveningWords(s.thought), 1);
+      drawBrochure(ctx, C.x, C.y, C.w, C.h, false, 1, now);
       drawCloseX(ctx, BROCHURE.close.x, BROCHURE.close.y, BROCHURE.close.r);
-      Object.assign(out, { card: C, next: next || "", thought: s.thought ? eveningWords(s.thought) : "", tapped: Object.keys(s.tapped || {}), mark: s.thought === "sq-almost" });
-    } else if (view.kind === "shock") {
-      const M = SHOCK.mops;
-      // Mops, big, his beard stopped mid-wipe; the counter's edge; Squatch's eyes over it, wide
-      ctx.fillStyle = "#e6dfcf";
-      ctx.fillRect(10, 70, 380, 560);
-      E().drawMopsOn(ctx, M.x, M.y, M.k, { f: -1, eyes: "wide" });
-      ctx.fillStyle = "#c9ced8";
-      ctx.fillRect(10, SHOCK.counter.y, 380, 70);
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = "#1e2430";
-      ctx.strokeRect(10, SHOCK.counter.y, 380, 70);
-      ctx.save();
-      ctx.translate(SHOCK.eyes.x, SHOCK.eyes.y);
-      ctx.scale(2.4, 2.4);
-      E().drawEyes(ctx, 0, 0);
-      ctx.restore();
-      drawCloseX(ctx, SHOCK.close.x, SHOCK.close.y, SHOCK.close.r);
-      Object.assign(out, { mops: true, eyes: true });
+      Object.assign(out, { card: C });
     } else if (view.kind === "chart") {
       const C = CHARTV.chart;
       drawEveningChart(ctx, C.x, C.y, C.w, C.h, s.xMark || 0, false, eveningWords("sign-crate-kind"));
@@ -1876,7 +1877,6 @@ export function createEvening(bridge) {
         shift = (1 - u) * 160,
         bx = stamp.patch.x - 34 + shift;
       drawBrochure(ctx, bx, Cd.y + 40, Cd.w, Cd.h, false, 0, now);
-      s.coffee >= 0 && drawCoffeeStain(ctx, bx, Cd.y + 40, Cd.w, Cd.h);
       // the brochure's cake box, held up close under the stamp: the same fat red letters, his family's name, sliding
       // left until its first letter sits under the scraped patch and the rest under the crate's
       ctx.beginPath();
@@ -2053,12 +2053,7 @@ export function createEvening(bridge) {
       at = (p) => ({ x: f.x + p.x * f.k, y: f.y + p.y * f.k });
     if (view.kind === "gallery" && s.gallery)
       return { kind: "gallery", i: s.gallery.i, next: at(GALLERY.right), back: at(GALLERY.left), close: at(GALLERY.close), photo: at({ x: GALLERY.photo.x + GALLERY.photo.w / 2, y: GALLERY.photo.y + GALLERY.photo.h / 2 }), lift: at({ x: GALLERY.lift.x + GALLERY.lift.w / 2, y: GALLERY.lift.y + GALLERY.lift.h / 2 }), lifted: s.gallery.lifted, ready: E().time() - view.at > P.zoomIn };
-    if (view.kind === "brochure") {
-      const parts = {};
-      for (const n of BROCHURE_ORDER) parts[n] = at(brochurePart(n));
-      return { kind: "brochure", close: at(BROCHURE.close), parts, next: BROCHURE_ORDER.find((n) => !(s.tapped && s.tapped[n])) || "", ready: E().time() - view.at > P.zoomIn };
-    }
-    if (view.kind === "shock" || view.kind === "back") return { kind: view.kind, close: at(designOf(view.kind).close), ready: E().time() - view.at > P.zoomIn };
+    if (view.kind === "brochure" || view.kind === "back") return { kind: view.kind, close: at(designOf(view.kind).close), ready: E().time() - view.at > P.zoomIn };
     if (view.kind === "chart") {
       const C = CHARTV.chart,
         k = C.w / CHART.W;
@@ -2103,61 +2098,47 @@ export function createEvening(bridge) {
     a && a.guards.forEach((g) => g.room === "hall" && g.sees && marks.push({ x: g.x, y: g.y - adult * 1.29, mark: "!", size: Math.round(adult * 0.635) }));
     // the crates from the lunch are still there
     extra.push({ y: LUNCH_PLACES.crate.box.y1, f: () => drawCrates(ctx0) });
-    // Mops: at the counter's front wiping it with his beard (it stops dead at "Sasquatches"), or walking
+    // 36b's cleaning robots, still mopping or rolling out
+    const rk = adultPxFor("hall") / adultPxFor("hangar");
+    for (const r of s.cleaners || []) extra.push({ y: r.y, f: () => drawCleaner(ctx0, r.x, r.y, r.f, rk, r.moving ? Math.abs(Math.sin(t * 14)) * 2 * rk : 0, 0) });
+    // Mops: at the bar's front wiping it with his beard (it stops dead at "fizzy", his eyes wide), walking, or the
+    // player's to move
     if (e.get("moPose") !== "hidden") {
       const mo = e.pos("mops"),
-        wiping = (s.step === "hide" || s.step === "peek" || s.step === "talk" || s.step === "duck" || s.step === "bar") && !s.beardStop && Math.hypot(mo.x - STORM.mops.x, mo.y - STORM.mops.y) < 2,
-        dx = wiping ? Math.sin(t * 5) * 4 : 0;
-      extra.push({ y: mo.y, f: () => e.drawMopsOn(ctx0, mo.x + dx, mo.y, k * 1.15, { f: s.mopsStare >= 0 ? 1 : mo.f || -1, walk: 0 }) });
+        moved = Math.hypot(mo.x - mopsWas.x, mo.y - mopsWas.y) > 0.2,
+        mine = e.playing() === "mops",
+        wiping = !mine && !moved && ["tostorm", "storm"].includes(s.step) && Math.hypot(mo.x - STORM.mops.x, mo.y - STORM.mops.y) < 2 && !e.current(),
+        dx = wiping ? Math.sin(t * 5) * 4 : 0,
+        mk = k * 1.15;
+      mopsWas = { x: mo.x, y: mo.y };
+      extra.push({ y: mo.y, f: () => e.drawMopsOn(ctx0, mo.x + dx, mo.y, mk, { f: mo.f || -1, walk: moved ? t * 9 : 0, eyes: s.mopsWide ? "wide" : "" }) });
+      // the kid's pats on his head (wordless)
+      s.pat >= 0 && extra.push({ y: 9998, f: () => drawPat(ctx0, mo.x + (mo.f || -1) * 17 * mk, mo.y - 40 * mk, s.pat, 30) });
+      // the brochure Dad handed him, in his mouth
+      s.brochure === "mops" && !view && extra.push({ y: mo.y + 1, f: () => drawBrochure(ctx0, mo.x + (mo.f || -1) * 26 * mk - 11, mo.y - 30 * mk, 22, 28, true) });
     }
-    // the bin behind the counter, beside where he hides
-    s.storm >= 0 && extra.push({ y: STORM.bin.y, f: () => drawCounterBin(ctx0, STORM.bin.x, STORM.bin.y, 1) });
-    // the brochure: held up by Dad (its picture toward the player), in the guest's hand, tossed, in the bin, in his paw
-    const dad = (s.guests || []).find((g) => g.role === "dad"),
-      guest = (s.guests || []).find((g) => g.role === "guest");
-    const brochureAt = (x, y, w, h) => {
-      drawBrochure(ctx0, x - w / 2, y - h / 2, w, h, true);
-      s.coffee >= 0 && drawCoffeeStain(ctx0, x - w / 2, y - h / 2, w, h);
-    };
+    // the brochure: held up by Dad (its picture toward the player), passed over the bar by Mops, in Squatch's paw
+    const dad = (s.guests || []).find((g) => g.role === "dad");
+    const brochureAt = (x, y, w, h) => drawBrochure(ctx0, x - w / 2, y - h / 2, w, h, true);
     if (s.brochure === "up" && dad) extra.push({ y: 9998, f: () => brochureAt(dad.x, dad.y - over(dad.id) - 30, 60, 80) });
-    if (s.brochure === "guest" && guest) {
-      extra.push({ y: guest.y + 1, f: () => brochureAt(guest.x + 18, guest.y - adult * 0.62, 30, 40) });
-      // the coffee splashing
-      s.coffee < 1 &&
-        extra.push({ y: 9998, f: () => {
-          ctx0.fillStyle = "#6b3f1d";
-          for (let i = 0; i < 5; i++) {
-            ctx0.beginPath();
-            ctx0.arc(guest.x + 18 + Math.cos(i * 1.3) * 20 * s.coffee, guest.y - adult * 0.7 - Math.sin(i * 1.7) * 18 * s.coffee, 4, 0, Math.PI * 2);
-            ctx0.fill();
-          }
-        } });
-    }
-    if (s.brochure === "toss" && guest) {
-      const u = Math.min(1, s.t0 / STORM.toss),
-        x0 = guest.x + 18,
-        y0 = guest.y - adult * 0.62,
-        x = x0 + (STORM.bin.x - x0) * u,
-        y = y0 + (STORM.bin.y - 40 - y0) * u - Math.sin(u * Math.PI) * 70;
+    if (s.brochure === "toss") {
+      const mo = e.pos("mops"),
+        u = Math.min(1, s.t0 / STORM.toss),
+        x0 = mo.x + 20,
+        y0 = mo.y - 30 * k,
+        x = x0 + (sq.x - 14 * k - x0) * u,
+        y = y0 + (sq.y - 34 * k - y0) * u - Math.sin(u * Math.PI) * 60;
       extra.push({ y: 9998, f: () => {
         ctx0.save();
         ctx0.translate(x, y);
-        ctx0.rotate(u * 5);
-        brochureAt(0, 0, 30, 40);
+        ctx0.rotate(u * Math.PI * 2);
+        brochureAt(0, 0, 26, 34);
         ctx0.restore();
       } });
     }
-    if (s.brochure === "bin") extra.push({ y: STORM.bin.y + 1, f: () => {
-      ctx0.save();
-      ctx0.translate(STORM.bin.x + 4, STORM.bin.y - 44);
-      ctx0.rotate(0.25);
-      brochureAt(0, 0, 26, 34);
-      ctx0.restore();
-    } });
     if (s.brochure === "paw" && s.pose === "stand" && !view) extra.push({ y: sq.y + 1, f: () => brochureAt(sq.x + (sq.f || -1) * 14 * k, sq.y - 34 * k, 22, 28) });
-    // rolled up in the aisle behind the counter; peeking, his eyes over the counter's edge
+    // rolled up in the aisle behind the bar (no peeking eyes: Brian r5 5:07)
     s.pose === "hidden" && s.hideAt === "counter" && e.ball && extra.push({ y: sq.y, f: () => e.ball.drawOn(ctx0, sq.x, sq.y - 16 * (k / 1.65), k / 1.65) });
-    s.peek && extra.push({ y: 9997, f: () => e.drawEyes(ctx0, STORM.eyes.x, STORM.eyes.y) });
     s.pose === "ball" && e.ball && extra.push({ y: sq.y, f: () => e.ball.drawOn(ctx0, sq.x, sq.y - 16 * (k / 1.65), k / 1.65) });
     return {
       t,
@@ -2184,12 +2165,12 @@ export function createEvening(bridge) {
       // under the people: Jupiter's storm in the big window and its red glow (38a), or the hall's night look (night one)
       floor: NIGHT_STEPS.includes(s.step)
         ? (ctx) => drawNightTint(ctx, "hall", hallPic, 1)
-        : s.storm >= 0
-          ? (ctx) => {
-              drawJupiterStorm(ctx, s.storm, t);
-              drawStormGlow(ctx, s.storm);
-            }
-          : null,
+        : (ctx) => {
+            if (s.storm >= 0) (drawJupiterStorm(ctx, s.storm, t), drawStormGlow(ctx, s.storm));
+            for (const r of s.cleaners || []) drawStreak(ctx, r.streak);
+            // HIDE · bar (36b without the bay): the game's one highlight round the aisle behind the bar
+            s.step === "hide" && e.get("ctrl") && !e.current() && dashedOutline(ctx, EV_BAR.aisle.x0, EV_BAR.aisle.y0, EV_BAR.aisle.x1 - EV_BAR.aisle.x0, EV_BAR.aisle.y1 - EV_BAR.aisle.y0, 1, t);
+          },
       extra,
     };
   }
@@ -2439,6 +2420,13 @@ export function createEvening(bridge) {
   return {
     start,
     startStorm,
+    /** 36b (loading-bay.js): Mops's line as they walk in, and the HIDE · bar spot (its words, place and thing). */
+    barLine: () => eveningWords("mops-behind-bar"),
+    barChip: () => eveningWords("chip-hide"),
+    barSpot() {
+      const [verb, cap] = eveningWords("button-counter").split(" · ");
+      return { verb, cap, x: EV_BAR.hide.x, y: EV_BAR.hide.y, r: EV_BAR.hide.r, thing: EV_BAR.aisle };
+    },
     jump,
     /** The debug beats (?beat=evening:<beat>, ch1JumpBeat): BEAT_STEP's step for that beat. */
     jumpBeat(b) {
@@ -2453,7 +2441,7 @@ export function createEvening(bridge) {
       if (!s) return false;
       // (a step he controls in a room that is not its own cannot be: back to its start)
       if (EVENING_STEPS.includes(s.step)) return STEP_ROOM[s.step] !== room() ? (jump(s.step), true) : false;
-      const back = { walkin: "wall", gallery: "wall", tohall: "wall", tostorm: "hide", storm: "hide", talk: "peek", waitbar: "duck", bar: "duck", read: "brochure", after: "brochure", homein: "box", xchart: "chart", slide: "crate", mars: "crate", evening: "show", fight: "show", fightend: "choose", asleep: "bed", idea: "bed", choosing: "bin", order: "bin", posted: "post", sleep: "tobed" }[s.step];
+      const back = { walkin: "wall", gallery: "wall", tohall: "wall", tostorm: "hide", storm: "hide", window: "greet", pet: "greet", talk: "ask", read: "ask", leaving: "ask", pass: "gohome", homein: "box", xchart: "chart", slide: "crate", mars: "crate", evening: "show", fight: "show", fightend: "choose", asleep: "bed", idea: "bed", choosing: "bin", order: "bin", posted: "post", sleep: "tobed" }[s.step];
       return back ? (jump(back), true) : false;
     },
     /** True once he has rubbed his crayon out of the crate bed's stamp (39b): the home picture's stamp has none. */
@@ -2496,13 +2484,7 @@ export function createEvening(bridge) {
       const s = live();
       if (!s || !this.ownsRoom()) return false;
       if (room() === "hall") {
-        drew = { step: s.step, cones: drawHall(ctx, E(), bridge.guests, hallView(s, ctx)) };
-        // Hidden behind the counter, the older program draws no goal outline (it would sit on him): this beat draws the
-        // brochure's (the game's one highlight, the dashed gold outline).
-        if (s.step === "brochure" && s.pose === "hidden" && E().get("ctrl")) {
-          const sp = spots().find((q) => q.id === "ev-brochure");
-          drew.outline = sp && bridge.drawGoalOutline(ctx, "hall", sp.id, null, E().time(), []);
-        }
+        drew = { step: s.step, cones: drawHall(ctx, E(), bridge.guests, hallView(s, ctx)), cleaners: (s.cleaners || []).length, brochure: s.brochure, pat: s.pat >= 0, wide: !!s.mopsWide };
       }
       else drew = { step: s.step, cones: drawBay(ctx, s), ...bayDrew };
       return true;
@@ -2547,6 +2529,8 @@ export function createEvening(bridge) {
         e = E();
       if (!s) return null;
       if (who === "robot" && s.robot) return { x: s.robot.x, y: s.robot.y - 80 };
+      const cl = who === "robot" && room() === "hall" ? (s.cleaners || []).find((r) => r.id === s.talker) : null;
+      if (cl) return { x: cl.x, y: cl.y - 70 };
       if (who === "sleeping-mops" && s.mopsSleep) {
         const at = mopsSleepAt(mopsScale("closet"));
         return { x: at.x - 10, y: at.y - 70 };
@@ -2569,7 +2553,8 @@ export function createEvening(bridge) {
       const e = E(),
         feet = (x, y) => ({ x0: x - 25, x1: x + 25, y0: y - 14, y1: y + 8, person: 1 });
       const out = [...LUNCH_SOLIDS];
-      e.get("moPose") !== "hidden" && out.push(feet(e.pos("mops").x, e.pos("mops").y));
+      e.get("moPose") !== "hidden" && e.playing() !== "mops" && out.push(feet(e.pos("mops").x, e.pos("mops").y));
+      for (const r of s.cleaners || []) out.push(feet(r.x, r.y));
       // everyone standing in the hall is solid too (the two in line, the family where they stand or back away to)
       for (const p of (s.guests || []).filter((f) => f.x < 940 && f.wait <= 0)) {
         const q = (s.alarm && s.alarm.w.id === p.id ? s.alarm.w : s.people && s.people[p.id]) || p;
@@ -2610,12 +2595,7 @@ export function createEvening(bridge) {
         if (g.i === 3 && !g.lifted) return ((g.lift = 0.999), (g.holding = true), galleryTick(0.01), (g.holding = false), "LIFT · photo");
         return g.i >= 4 ? (galleryEnd(true), "past 5") : ((g.i += 1), (g.lift = 0), "next");
       }
-      if (view.kind === "brochure") {
-        if (E().time() - view.at <= P.zoomIn) return "";
-        const next = BROCHURE_ORDER.find((n) => !(s.tapped && s.tapped[n]));
-        return (tapBrochure(next || "cooks"), next || "cooks");
-      }
-      if (view.kind === "shock" || view.kind === "back") return E().time() - view.at > P.zoomIn ? (closeView(), "X") : "";
+      if (view.kind === "brochure" || view.kind === "back") return E().time() - view.at > P.zoomIn ? (closeView(), "X") : "";
       if (view.kind === "chart") return E().time() - view.at > P.zoomIn && s.xStroke < 2 ? ((s.xStroke = 2), (s.xMark = 1), "X") : "";
       if (view.kind === "crate") return E().time() - view.at > P.zoomIn && s.slide < 1 ? ((s.slide = 1), "slide") : "";
       if (view.kind === "order") {
@@ -2660,8 +2640,7 @@ export function createEvening(bridge) {
       fresh({
         galleryDone: step === "dodge" || step === "past",
         storm: STEP_ROOM[step] === "hall" && !NIGHT_STEPS.includes(step) ? 1 : -1,
-        brochure: after("brochure") ? (after("show") ? "home" : "paw") : step === "brochure" ? "bin" : "",
-        coffee: after("duck") ? 1 : -1,
+        brochure: after("ask") ? (after("show") ? "home" : "paw") : "",
         dim: after("bed") ? 1 : 0,
         warm: after("crate") ? 1 : 0,
         stampST: after("crate") ? 0 : 1, // (his crayon in the stamp: rubbed out at the crate, 39b)
@@ -2675,7 +2654,7 @@ export function createEvening(bridge) {
     e.set("ch1Crayon", after("wall"));
     e.set("ch1Mailed", after("post") ? 1 : 0);
     e.set("ch1PinkSucked", after("post") ? 1 : 0);
-    after("brochure") && e.set("ch1Brochure", true);
+    e.set("ch1Brochure", after("ask"));
     after("bin") && (e.set("ch1Paw", 1), e.set("ch1Signed", 1));
     after("post") && (e.set("ch1Mailed", 1), e.set("ch1PinkSucked", 1));
     const s = S();
@@ -2688,9 +2667,8 @@ export function createEvening(bridge) {
       dodge: EV_HALLWAY.stop,
       past: EV_HALLWAY.stop,
       hide: EV_BAR.sq,
-      peek: EV_BAR.hidden,
-      duck: EV_BAR.hidden,
-      brochure: EV_BAR.hidden,
+      greet: EV_BAR.hidden,
+      ask: EV_BAR.hidden,
       gohome: STORM.grab,
       box: EV_HOME.stop,
       bite: EV_HOME.stop,
@@ -2712,7 +2690,7 @@ export function createEvening(bridge) {
     e.place("sq", at.x, at.y);
     e.face("sq", -1);
     // Mops: waiting at the hallway's end, behind the counter, at home, or asleep on the floor
-    const mops = { wall: EV_HALLWAY.mops, dodge: EV_HALLWAY.mops, past: EV_HALLWAY.mops, hide: STORM.mops, peek: STORM.mops, duck: STORM.mops, brochure: STORM.mops, show: EV_HOME.mops, choose: EV_HOME.mops, bed: EV_HOME.mops }[step];
+    const mops = { wall: EV_HALLWAY.mops, dodge: EV_HALLWAY.mops, past: EV_HALLWAY.mops, hide: STORM.mops, greet: STORM.mops, ask: STORM.mops, show: EV_HOME.mops, choose: EV_HOME.mops, bed: EV_HOME.mops }[step];
     // 39b and 40 at home: the box, the cake, the chart's X, the stamp's ST, the light, Mops's hearts
     if (["box", "bite", "chart", "crate"].includes(step)) ((s.warm = 0.4), (s.box = { box: "paw", bite: "open", chart: "floor", crate: "floor" }[step]));
     step === "bite" && ((s.cake = 0), (s.t0 = P.boxOpen));
@@ -2721,17 +2699,21 @@ export function createEvening(bridge) {
     (step === "show" || step === "choose") && (s.hearts = 1);
     step === "bed" && ((s.hearts = 0.4), (s.turned = true));
     e.set("moPose", mops ? "stand" : "hidden");
-    mops ? (e.place("mops", mops.x, mops.y), e.face("mops", step === "wall" || step === "dodge" || step === "past" || STEP_ROOM[step] === "hall" ? 1 : -1)) : e.place("mops", -400, 0);
-    // the guests: coming in (hide), at the window (peek), turning to the bar (duck)
-    const guestsAt = (where) => ["dad", "mom", "kid", "guest"].map((role) => ({ role, id: STORM.ids[role], x: where[role].x, y: where[role].y, a: -Math.PI / 2, kid: role === "kid", to: "window", wayTo: "window", way: [], wait: 0 }));
-    if (step === "hide") s.guests = ["dad", "mom", "kid", "guest"].map((role, i) => ({ role, id: STORM.ids[role], x: STORM.in.x + i * 46, y: STORM.in.y + i * 4, a: Math.PI, kid: role === "kid", to: "window", wait: 0.6 + i * 0.9 }));
-    if (step === "peek") s.guests = guestsAt(STORM.window);
-    if (step === "duck") ((s.guests = guestsAt(STORM.window).map((g) => ({ ...g, to: "turn", turnFrom: g.a }))), (s.turnT = 0), (s.peek = true));
+    mops ? (e.place("mops", mops.x, mops.y), e.face("mops", step === "wall" || step === "dodge" || step === "past" ? 1 : -1)) : e.place("mops", -400, 0);
+    // the family: at the bar (greet), a few steps away, turned to go (ask); the other guest at the window
+    const guestsWhere = (to) => ["dad", "mom", "kid", "guest"].map((role) => {
+      const at = role === "guest" ? STORM.window.guest : STORM[to][role];
+      return { role, id: STORM.ids[role], x: at.x, y: at.y, a: role === "guest" ? -Math.PI / 2 : Math.atan2(STORM.mops.y - at.y, STORM.mops.x - at.x), look: role !== "guest", kid: role === "kid", to: role === "guest" ? "window" : to, wayTo: role === "guest" ? "window" : to, way: [], wait: 0 };
+    });
+    if (step === "greet") s.guests = guestsWhere("bar");
+    if (step === "ask") s.guests = guestsWhere("leave");
     if (step === "dodge") s.robot = { x: EV_HALLWAY.robotOut.x, y: EV_HALLWAY.robotOut.y, a: 0, leg: 0, wait: P.robotWait, beeped: false };
-    if (step === "peek" || step === "duck" || step === "brochure") ((s.pose = "hidden"), (s.hideAt = "counter"));
+    if (step === "greet" || step === "ask") ((s.pose = "hidden"), (s.hideAt = "counter"));
+    // who the player is: Mops while the family is at the bar, Squatch everywhere else (no card: a jump announces nothing)
+    e.playAs(step === "greet" || step === "ask" ? "mops" : "squatch");
     s.step = step;
     record.steps.push(step);
     setPose(s.pose);
-    control({ wall: "chip-go-on", dodge: "chip-roll", past: "chip-to-hall", hide: "chip-hide", peek: "chip-peek", duck: "chip-duck", brochure: "chip-brochure", gohome: "chip-home", box: "chip-box", bite: "chip-bite", chart: "chip-chart", crate: "chip-crate", choose: "", show: "chip-show", bed: "chip-bed", out: "chip-out", nighthall: "chip-bin", nightway: "chip-bin", bin: "chip-bin", post: "chip-post", back: "chip-sneak-home", backway: "chip-sneak-home", backhall: "chip-sneak-home", tobed: "chip-bed" }[step]);
+    control({ wall: "chip-go-on", dodge: "chip-roll", past: "chip-to-hall", hide: "chip-hide", greet: "chip-greet", ask: "chip-ask", gohome: "chip-home", box: "chip-box", bite: "chip-bite", chart: "chip-chart", crate: "chip-crate", choose: "", show: "chip-show", bed: "chip-bed", out: "chip-out", nighthall: "chip-bin", nightway: "chip-bin", bin: "chip-bin", post: "chip-post", back: "chip-sneak-home", backway: "chip-sneak-home", backhall: "chip-sneak-home", tobed: "chip-bed" }[step]);
   }
 }
