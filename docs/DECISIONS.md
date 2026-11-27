@@ -5,34 +5,34 @@
 | --- | --- |
 | 37–42 | # Space Snack Quest: every decision, in one place |
 | 43–50 | ## How to use this file |
-| 51–57 | ## The snack renamed, and the crate bed's stamp (question 86), 2026-11-26 (Brian, relayed by the coordinator) |
-| 58–60 | ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator) |
-| 61–70 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
-| 71–78 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
-| 79–102 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
-| 103–107 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 108–116 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 117–120 | ## Sound, 2026-11-23 |
-| 121–144 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 145–156 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 157–181 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 182–190 | ## Which repo is the base, 2026-11-22 |
-| 191–201 | ## Sight cones, 2026-11-22 |
-| 202–206 | ## Latest calendar direction, 2026-11-16 |
-| 207–209 | ## Vent walk, 2026-11-16 |
-| 210–212 | ## Locked home room v5, 2026-11-16 |
-| 213–222 | ## Fidelity system (pictures are locked, not just words) |
-| 223–260 | ## 1. Working rules |
-| 261–327 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 328–352 | ## 3. Characters and look |
-| 353–429 | ## 4. Look, rooms and layout |
-| 430–451 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 452–495 | ## 6. Later chapters (2–4 and travel) |
-| 496–505 | ## 7. Audio |
-| 506–540 | ## 8. Code, controls and process |
-| 541–587 | ## 9. Open / waiting on Brian |
-| 588–682 | ## 10. Earlier entries, kept word for word |
-| 683–779 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 51–58 | ## The snack renamed, and the crate bed's stamp (question 86), 2026-11-26 (Brian, relayed by the coordinator) |
+| 59–61 | ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator) |
+| 62–71 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
+| 72–79 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
+| 80–103 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
+| 104–108 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 109–117 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 118–121 | ## Sound, 2026-11-23 |
+| 122–145 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 146–157 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 158–182 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 183–191 | ## Which repo is the base, 2026-11-22 |
+| 192–202 | ## Sight cones, 2026-11-22 |
+| 203–207 | ## Latest calendar direction, 2026-11-16 |
+| 208–210 | ## Vent walk, 2026-11-16 |
+| 211–213 | ## Locked home room v5, 2026-11-16 |
+| 214–223 | ## Fidelity system (pictures are locked, not just words) |
+| 224–261 | ## 1. Working rules |
+| 262–328 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 329–353 | ## 3. Characters and look |
+| 354–430 | ## 4. Look, rooms and layout |
+| 431–452 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 453–496 | ## 6. Later chapters (2–4 and travel) |
+| 497–506 | ## 7. Audio |
+| 507–541 | ## 8. Code, controls and process |
+| 542–588 | ## 9. Open / waiting on Brian |
+| 589–683 | ## 10. Earlier entries, kept word for word |
+| 684–780 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 
@@ -52,6 +52,7 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 - **Decided (Brian, 2026-11-26, question 86, "A": rename everywhere now; his notes the same day: "calling them Mars Cakes, what his family makes. And the box he came in is faded, so all you can see is R's Cakes, A-R-S"):** the station's snack "Moon Pies" is now **Stars Cakes** ("STARS CAKES" on crates and signs) in every line, file, test, label and drawing. The name is spelled in one place, `src/modules/snack-name.js`; the older program reads it through `window.SSQ.snack(...)`, guarded, with a plain "snacks" if the module script fails. As an adjective it is the plural ("a Stars Cakes crate", as in Brian's own bedtime line); one cake is "a Stars Cake".
 - **Changed words, pending Brian's yes again:** the bedtime line is now "You came to me in a Stars Cakes crate. You've loved Stars Cakes ever since." Every other changed line only swaps the name (list: `docs/CH1-LINES-FOR-BRIAN.md`, "The snack's name").
 - **Squatch's crate bed is his family's crate (the spec's 2.3):** its stamp is fat red letters, worn, the first letter scraped off ("_ARS CAKES": a bare patch one wide letter across, with the two faint red feet of the lost letter), and his old crayon "ST" in the gap. **Needs Brian's yes (locked picture):** the stamp is a layer drawn over the locked home pictures `home-room-empty-closed-v6.png` and `home-room-empty-open-v6.png` (the old MOON PIES badge painted out in the crate's own wood, then the new stamp); the picture files are not edited (`src/modules/crate-stamp.js`, checked by `tests/snack-name.mjs`). **Needs Brian's yes (new words):** the crayon "ST". Look, sizes, red and crayon are PLACEHOLDER.
+- **The party hall's snack tin:** the locked hall picture `hall-room-empty-v2.png` has a tin on the snack bar with the old name on its lid. **Needs Brian's yes (locked picture):** a layer paints the lid blue again with a little yellow star and "Stars Cakes" in two thin white lines (`crate-stamp.js` drawTinLid); the file is not edited.
 - **The station's crates (the spec's 2.12):** a blue star and the name in thin blue letters, so the two stamps never match (`crate-stamp.js` drawStationStamp, used by every crate the game draws).
 - **Kept as they were:** file names and code ids that hold the old name joined up (the cutaway id `moonpie`, line ids such as `mops-moon-pie`, picture and sketch file names such as `sketch-22-moon-pie-site.png`), and the locked pictures' drawing scripts (`docs/locked-rooms/home_room.py`), which no one changes without a new locked version. No player sees any of them. Dated history entries in the docs keep the old name as it was said then.
 

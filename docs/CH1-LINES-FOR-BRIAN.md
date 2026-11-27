@@ -9,15 +9,15 @@
 | 58–65 | ## Earlier chapter lines |
 | 66–80 | ## Goal chips |
 | 81–164 | ## What people say |
-| 165–175 | ## The snack's name (2026-11-26, question 86) |
-| 176–189 | ## Words painted on things |
-| 190–213 | ## Buttons |
-| 214–300 | ## Day 2 onward (beats 22–61), pending |
-| 301–308 | ## Ball hiding |
-| 309–316 | ## Off-screen lines, for Brian (playtest 12) |
-| 317–326 | ## Homework desk, approved Nov 16 |
-| 327–365 | ## Questions still open |
-| 366–391 | ## Day 1 stand-ins, pending |
+| 165–176 | ## The snack's name (2026-11-26, question 86) |
+| 177–190 | ## Words painted on things |
+| 191–214 | ## Buttons |
+| 215–301 | ## Day 2 onward (beats 22–61), pending |
+| 302–309 | ## Ball hiding |
+| 310–317 | ## Off-screen lines, for Brian (playtest 12) |
+| 318–327 | ## Homework desk, approved Nov 16 |
+| 328–366 | ## Questions still open |
+| 367–392 | ## Day 1 stand-ins, pending |
 <!-- /section-index -->
 # Chapter 1 lines for Brian
 
@@ -169,6 +169,7 @@ The station's snack is Stars Cakes everywhere (Brian, 2026-11-26, question 86). 
 | Where | Words | Status |
 | --- | --- | --- |
 | The station's crates (a blue star, thin blue letters) | STARS CAKES | approved (question 86) |
+| The snack tin painted on the party hall's snack bar (a new lid, layered over the locked picture) | Stars Cakes | approved (question 86); the layer needs your yes |
 | Squatch's crate bed, his family's crate, worn, the first letter scraped off | _ARS CAKES | approved (Brian's notes, 2026-11-26) |
 | His crayon in the scraped gap | ST | NEW, needs your yes |
 | Mops, bedtime picture | You came to me in a Stars Cakes crate. You've loved Stars Cakes ever since. | words changed by the rename: needs your yes again |

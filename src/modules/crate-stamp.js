@@ -6,16 +6,14 @@
  *     off (a bare patch one wide letter across, the two faint red feet of the lost letter at its bottom), so only the
  *     rest of the word shows (snack-name.js FAMILY.FADED), and his old crayon "ST" in the gap. The two stamps never match.
  * The crate bed is part of the locked home pictures (docs/locked-rooms/home-room-empty-closed-v6.png and -open-v6),
- * whose badge still says the old name. The picture files never change: withCrateStamp(id, img) gives a copy of the
+ * whose badge still says the old name, and the party hall picture's snack tin (HALL_TIN) still has the old name on its
+ * lid. The picture files never change: withSnackLayers(id, img) gives a copy of the
  * picture (a canvas that draws like the Image) with the old badge painted out in the crate's own wood and the new
- * stamp drawn over it, a layer for Brian's yes (docs/DECISIONS.md, "The snack renamed, and the crate bed's stamp (question 86)"). Every place that
+ * stamp drawn over it (and the tin's lid painted again with the new name), a layer for Brian's yes (docs/DECISIONS.md, "The snack renamed, and the crate bed's stamp (question 86)"). Every place that
  * draws a home picture gets it through night-look.js nightPicture, by day and by night.
  * PLACEHOLDER look (letter sizes, the red, the wear, the crayon) for Brian.
  */
 import { snackLine } from "./snack-name.js";
-
-/** The locked pictures that show the crate bed. */
-export const CRATE_BED_PICTURES = Object.freeze(["home-closed", "home-open"]);
 
 /**
  * The crate bed in the locked home picture, in that picture's pixels (1280 x 830), from docs/locked-rooms/home_room.py
@@ -45,9 +43,12 @@ const CRAYON_FONT = (px) => `700 ${px}px "Chalkboard SE", "Marker Felt", "Comic 
 // Tests: what the layer drew, and how often a home picture was handed out with it.
 let made = null;
 let handed = 0;
-/** Tests: the layer's parts (null before it was made) and how many times a home picture came with it. */
+/**
+ * Tests: the crate bed layer's parts (null before it was made) and how many times a home picture came with it; the
+ * hall tin's lid (null before it was made) and how many times the hall picture came with it.
+ */
 export function crateStampDrawn() {
-  return { made, handed };
+  return { made, handed, tin: tinMade, handedHall };
 }
 
 // A small fixed sequence for the wear, so the stamp looks the same every time.
@@ -203,15 +204,70 @@ export function drawFamilyStamp(c, { paintOut = true, crayon: withCrayon = true,
   return parts;
 }
 
+/**
+ * The snack tin painted on the party hall's snack bar (docs/locked-rooms/hall-room-empty-v2.png), in that picture's
+ * pixels: its blue lid still says the old name in white script. The layer paints the lid blue again and puts the new
+ * name on it (two thin white lines under a little yellow star), tipped the way the tin sits.
+ */
+export const HALL_TIN = Object.freeze({
+  picture: Object.freeze({ w: 1280, h: 830 }),
+  lid: Object.freeze({ cx: 1106, cy: 659, rx: 13.5, ry: 11.5, tilt: -0.35 }),
+  blue: "rgb(27,69,131)",
+});
+let tinMade = null;
+/** Draws the tin's new lid on `c` (a 2D context in the hall picture's pixels). Returns its parts. */
+export function drawTinLid(c) {
+  const T = HALL_TIN.lid,
+    words = snackLine("tin-label").split(" ");
+  c.save();
+  c.translate(T.cx, T.cy);
+  c.rotate(T.tilt);
+  c.beginPath();
+  c.ellipse(0, 0, T.rx, T.ry, 0, 0, Math.PI * 2);
+  c.fillStyle = HALL_TIN.blue;
+  c.fill();
+  // the little star
+  c.beginPath();
+  for (let i = 0; i < 10; i++) {
+    const r = i % 2 ? 1.2 : 2.8,
+      a = -Math.PI / 2 + (i * Math.PI) / 5;
+    c.lineTo(r * Math.cos(a), -6.6 + r * Math.sin(a));
+  }
+  c.closePath();
+  c.fillStyle = "#ffcf33";
+  c.fill();
+  // the name, two thin white lines
+  c.fillStyle = "#ffffff";
+  c.textAlign = "center";
+  c.textBaseline = "middle";
+  c.font = `600 7px system-ui, -apple-system, sans-serif`;
+  words.forEach((w, i) => c.fillText(w, 0, -0.6 + i * 7, T.rx * 2 - 3));
+  c.restore();
+  tinMade = { words };
+  return tinMade;
+}
+
+// What each locked picture gets layered over it (picture id: the size the drawing is in, and the drawing).
+const LAYERS = {
+  "home-closed": [CRATE_BED.picture, (c) => drawFamilyStamp(c)],
+  "home-open": [CRATE_BED.picture, (c) => drawFamilyStamp(c)],
+  hall: [HALL_TIN.picture, drawTinLid],
+};
+/** The locked pictures that get a layer for the snack's name: the two home pictures (the crate bed) and the hall (the tin). */
+export const SNACK_LAYER_PICTURES = Object.freeze(Object.keys(LAYERS));
+
 const layered = new Map();
 const ready = (img) => !!img && !!img.complete && !!img.naturalWidth;
+let handedHall = 0;
 /**
- * The locked picture `img` for picture id `id`, with the family's stamp layered over the crate bed's old badge: a
- * canvas the picture's size that draws like the Image (complete, naturalWidth, naturalHeight, src), made once. Any
- * other picture, or one still loading, comes back as it is.
+ * The locked picture `img` for picture id `id` with its layer for the snack's name: the family's stamp over the crate
+ * bed's old badge (the home pictures), the new lid on the snack bar's tin (the hall). A canvas the picture's size that
+ * draws like the Image (complete, naturalWidth, naturalHeight, src), made once. Any other picture, or one still
+ * loading, comes back as it is.
  */
-export function withCrateStamp(id, img) {
-  if (!CRATE_BED_PICTURES.includes(id) || !ready(img) || img.crateStamp) return img;
+export function withSnackLayers(id, img) {
+  const layer = LAYERS[id];
+  if (!layer || !ready(img) || img.snackLayer) return img;
   const key = id + "|" + img.src;
   if (!layered.has(key)) {
     if (typeof document === "undefined") return img;
@@ -225,13 +281,13 @@ export function withCrateStamp(id, img) {
     if (!c) return img;
     c.drawImage(img, 0, 0);
     c.save();
-    c.scale(w / CRATE_BED.picture.w, h / CRATE_BED.picture.h);
-    drawFamilyStamp(c);
+    c.scale(w / layer[0].w, h / layer[0].h);
+    layer[1](c);
     c.restore();
-    Object.assign(cv, { complete: true, naturalWidth: w, naturalHeight: h, src: img.src + "#crate-stamp", crateStamp: true });
+    Object.assign(cv, { complete: true, naturalWidth: w, naturalHeight: h, src: img.src + "#snack-layer", snackLayer: true });
     layered.set(key, cv);
   }
-  handed++;
+  id === "hall" ? handedHall++ : handed++;
   return layered.get(key);
 }
 
