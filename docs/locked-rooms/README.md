@@ -11,10 +11,10 @@ The game paints each one, scaled to the 960×640 picture, as the room background
 | `office-room-empty-v2.png` | Manager's office interior (R84). The hallway door is on this room's back wall. Squatch enters through that door. The desk and the signs are part of the picture. |
 | `home-room-empty-closed-v6.png` | Home, wardrobe closed. v4: the calendar is a real calendar with the Moon Pie delivery day circled (Brian, Nov 2026). v5: no Guardian Box on the floor; it is kept in the closet until Day 2 (Brian, 2026-11-16: "put the guardian crate in the closet and they can get it out later"). v6 (Brian, 2026-11-23, "Yes, lock it"): the wall speaker, the retro wooden one he picked ("4: retro wooden speaker", Squatchbot #448), at his spot "A, near the door" (Squatchbot #1385), high on the wall above the STAY IN HERE poster. Cut from the hall picture, without the hall's painted sound lines: the game draws sound lines and music notes only while it plays. v5 stays in this folder as history. |
 | `home-room-empty-open-v6.png` | Home, wardrobe open. v5: no Guardian Box on the floor. v6: the wall speaker (same change as closed v6). |
-| `delivery-room-empty-day-v2.png` | Loading bay, day, ship docked. Ramp and fur-scanner are in this picture. |
-| `delivery-room-empty-day-noship-v2.png` | Loading bay, day, no ship, so no scanner arch. |
-| `delivery-room-empty-night-v2.png` | Loading bay at night. |
-| `delivery-room-empty-pickup-v3.png` | Loading bay on pickup day. |
+| `delivery-room-empty-day-v3.png` | Loading bay, day, ship docked. Ramp and fur-scanner are in this picture. v3 (pickup v4), Brian 2026-11-26 (story pass, "The bay plant moves a few steps along the wall, in a new locked version of the bay picture", his yes to question 75): the plant by the doorway is moved a few steps along the back wall, to the right of the bin, so nobody walks into it coming in. Made by editing a copy of the previous version (the plant cut out and set down 226 picture pixels to the right, the wall and floor behind it filled from the same rows); nothing else changed. The previous versions stay in this folder as history. |
+| `delivery-room-empty-day-noship-v3.png` | Loading bay, day, no ship, so no scanner arch. v3: the plant moved, as the day picture. |
+| `delivery-room-empty-night-v3.png` | Loading bay at night. v3: the plant moved, as the day picture. |
+| `delivery-room-empty-pickup-v4.png` | Loading bay on pickup day. v4: the plant moved, as the day picture. |
 
 Layers the game draws over these pictures (the files themselves unchanged), each with Brian's yes:
 - Mops's mop bucket over the home room's painted bucket (`src/modules/mop-bucket.js`; Brian 2026-11-26, "Let's go with it moving forward").

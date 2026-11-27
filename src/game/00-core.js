@@ -1314,7 +1314,7 @@
           { x0: 587, x1: 885, y0: 524, y1: 551 }, // desk
         ],
         hangar: [
-          { x0: 103, x1: 148, y0: 346, y1: 370 }, // plant
+          { x0: 273, x1: 318, y0: 346, y1: 370 }, // plant (locked bay pictures v3: right of the bin)
           { x0: 189, x1: 237, y0: 350, y1: 374 }, // bin
           { x0: 344, x1: 369, y0: 392, y1: 416, ship: 1 }, // scanner arch, left post (only while a ship is docked: R15)
           { x0: 563, x1: 588, y0: 392, y1: 416, ship: 1 }, // scanner arch, right post

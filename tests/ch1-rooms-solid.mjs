@@ -39,7 +39,7 @@ const ROOMS = [
     set: { room: "hangar", scene: "Q4", ch1D: true, ch1Night: false, ch1Ship: true }, // (the scanner arch's posts are there only with a ship docked)
     floor: true,
     things: [
-      { name: "plant", box: pic(137, 197, 455, 480) },
+      { name: "plant", box: pic(363, 423, 455, 480) }, // (v3: moved right of the bin)
       { name: "bin", box: pic(252, 316, 465, 485) },
       { name: "left post of the scanner arch", box: pic(465, 485, 515, 540) },
       { name: "right post of the scanner arch", box: pic(757, 777, 515, 540) },

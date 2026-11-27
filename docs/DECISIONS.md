@@ -5,35 +5,35 @@
 | --- | --- |
 | 38–40 | # Space Snack Quest: every decision, in one place |
 | 41–48 | ## How to use this file |
-| 49–51 | ## Office code and the loading bay, 2026-11-26 (Brian, chat) |
-| 52–60 | ## Lunch sneak, 2026-11-26 (Brian's video notes and answers, round D) |
-| 61–71 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
-| 72–81 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
-| 82–92 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
-| 93–116 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
-| 117–121 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 122–130 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 131–134 | ## Sound, 2026-11-23 |
-| 135–158 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 159–170 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 171–195 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 196–204 | ## Which repo is the base, 2026-11-22 |
-| 205–215 | ## Sight cones, 2026-11-22 |
-| 216–220 | ## Latest calendar direction, 2026-11-16 |
-| 221–223 | ## Vent walk, 2026-11-16 |
-| 224–226 | ## Locked home room v5, 2026-11-16 |
-| 227–236 | ## Fidelity system (pictures are locked, not just words) |
-| 237–274 | ## 1. Working rules |
-| 275–341 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 342–366 | ## 3. Characters and look |
-| 367–443 | ## 4. Look, rooms and layout |
-| 444–465 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 466–509 | ## 6. Later chapters (2–4 and travel) |
-| 510–519 | ## 7. Audio |
-| 520–554 | ## 8. Code, controls and process |
-| 555–601 | ## 9. Open / waiting on Brian |
-| 602–696 | ## 10. Earlier entries, kept word for word |
-| 697–793 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 49–52 | ## Office code and the loading bay, 2026-11-26 (Brian, chat) |
+| 53–61 | ## Lunch sneak, 2026-11-26 (Brian's video notes and answers, round D) |
+| 62–72 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
+| 73–82 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
+| 83–93 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
+| 94–117 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
+| 118–122 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 123–131 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 132–135 | ## Sound, 2026-11-23 |
+| 136–159 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 160–171 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 172–196 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 197–205 | ## Which repo is the base, 2026-11-22 |
+| 206–216 | ## Sight cones, 2026-11-22 |
+| 217–221 | ## Latest calendar direction, 2026-11-16 |
+| 222–224 | ## Vent walk, 2026-11-16 |
+| 225–227 | ## Locked home room v5, 2026-11-16 |
+| 228–237 | ## Fidelity system (pictures are locked, not just words) |
+| 238–275 | ## 1. Working rules |
+| 276–342 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 343–367 | ## 3. Characters and look |
+| 368–444 | ## 4. Look, rooms and layout |
+| 445–466 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 467–510 | ## 6. Later chapters (2–4 and travel) |
+| 511–520 | ## 7. Audio |
+| 521–555 | ## 8. Code, controls and process |
+| 556–602 | ## 9. Open / waiting on Brian |
+| 603–697 | ## 10. Earlier entries, kept word for word |
+| 698–794 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -48,6 +48,7 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 
 ## Office code and the loading bay, 2026-11-26 (Brian, chat)
 - **Isfred's office code is 169556** (six digits). Brian, chat, 2026-11-26: Isfred writes it on the pink sheet in beat 32, readable in the close-up, and it is the office keypad's code (beat 50). **Decided.** It replaces 4723 (the number drawn on the old keypad, R84 and the 2026-11-22 keypad answer below). The tuning pin `office-code` changes with Brian's word (`docs/TUNING-PINS.json`).
+- **The loading bay's plant moves a few steps along the wall** (Brian, 2026-11-26, his yes to question 75 of the story pass): new locked bay pictures, `delivery-room-empty-day-v3.png`, `-day-noship-v3.png`, `-night-v3.png` and `-pickup-v4.png`, with the plant right of the bin instead of beside the doorway, so nobody walks into it coming in (docs/locked-rooms/README.md). **Decided.**
 - **The party hall picture is version 2** (`docs/locked-rooms/hall-room-empty-v2.png`), which the game already uses. Brian confirmed, chat, 2026-11-26.
 ## Lunch sneak, 2026-11-26 (Brian's video notes and answers, round D)
 

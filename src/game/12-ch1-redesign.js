@@ -9,7 +9,7 @@
       // The crawl vent is the grille under the speaker, on the right wall. The floor vent stays in the picture.
       CH1_VENT = { x: 820, y: 470 },
       CH1_ROBOT = { x: 480, y: 400 },
-      CH1_PLANT = { x: 125, y: 400 };
+      CH1_PLANT = { x: 295, y: 400 }; // a few steps along the wall from the doorway (locked bay pictures v3, Brian 2026-11-26)
     const CH1Q_CHIPS = {
       Q1: "",
       Q2: "Squatch: hide and watch",
@@ -117,10 +117,10 @@
     const LOCKED_ROOMS = {
       hall: "docs/locked-rooms/hall-room-empty-v2.png",
       hallway: "docs/locked-rooms/hallway-room-empty-v6.png",
-      "delivery-day": "docs/locked-rooms/delivery-room-empty-day-v2.png",
-      "delivery-night": "docs/locked-rooms/delivery-room-empty-night-v2.png",
-      "delivery-noship": "docs/locked-rooms/delivery-room-empty-day-noship-v2.png",
-      "delivery-pickup": "docs/locked-rooms/delivery-room-empty-pickup-v3.png",
+      "delivery-day": "docs/locked-rooms/delivery-room-empty-day-v3.png",
+      "delivery-night": "docs/locked-rooms/delivery-room-empty-night-v3.png",
+      "delivery-noship": "docs/locked-rooms/delivery-room-empty-day-noship-v3.png",
+      "delivery-pickup": "docs/locked-rooms/delivery-room-empty-pickup-v4.png",
       "home-closed": "docs/locked-rooms/home-room-empty-closed-v6.png",
       "home-open": "docs/locked-rooms/home-room-empty-open-v6.png",
       office: "docs/locked-rooms/office-room-empty-v2.png",
@@ -146,7 +146,7 @@
     // Where Squatch's eyes show when he hides in a plant (Brian, C21: "The two eyes sit LOW, in the two
     // lower-front clumps" of leaves, small). One entry per plant in the locked pictures, in game positions.
     const CH1_PLANT_EYES = {
-      hangar: [[125, 308]], // loading bay plant
+      hangar: [[295, 308]], // loading bay plant (v3: right of the bin)
       hall: [
         [441, 486], // the plant in the middle of the hall
         [101, 318], // the plant by the back wall
