@@ -14,7 +14,6 @@
  */
 import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
-import { readFileSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -178,7 +177,9 @@ check(`hall: none of ${Object.keys(hallSpots).length} standing spots overlaps th
   const spots = { ...Object.fromEntries(Object.entries(BAY_SPOTS).filter(([, v]) => v && v.x != null)), "door step": BAY.door.step };
   BAY_SPOTS.workers.forEach((w) => (spots["worker " + w.name] = w));
   BAY_SPOTS.robots.forEach((r, i) => (spots["robot " + (i + 1)] = r));
-  const bad = Object.entries(spots).map(([k, p]) => [k, onThing(p)]).filter(([, t]) => t.length);
+  // (the spots used once the ship has gone: the scanner's posts are solid only with a ship docked, 00-core.js)
+  const AFTER_SHIP = new Set(["talk", "spit", "boxPick", "sqOut"]);
+  const bad = Object.entries(spots).map(([k, p]) => [k, onThing(p).filter((t) => !(AFTER_SHIP.has(k) && t.startsWith("scanner")))]).filter(([, t]) => t.length);
   check(`loading bay: none of ${Object.keys(spots).length} standing spots overlaps the plant, the bin, the scanner, the mail room's wall or the mailbox`, bad.length === 0, bad);
   // every walk in the bay, step by step, with the people standing there at that moment as obstacles too
   const R = BAY_SPOTS.robots,
@@ -186,18 +187,23 @@ check(`hall: none of ${Object.keys(hallSpots).length} standing spots overlaps th
     inPast = (to) => [BAY.door, BAY.door.step, ...BAY_SPOTS.behindMops, to],
     mops = { "Mops (waiting)": BAY_SPOTS.mopsWatch },
     robots = Object.fromEntries(R.map((r, i) => ["robot " + (i + 1), r]));
+  const isf = { Isfred: BAY_SPOTS.isfred },
+    workers = Object.fromEntries(W.map((q) => [q.name, q])),
+    rampUp = (w) => [w, { x: BAY.rampFoot.x, y: w.y }, BAY.rampFoot, BAY.shipDoor];
   const ways = [
-    ["Squatch and Mops in through the doorway", [BAY.door, BAY.door.step, BAY_SPOTS.sqIn], {}],
-    ["Isfred in past Mops", inPast(BAY_SPOTS.isfred), mops],
-    ...W.map((w, i) => [`${w.name} in past Mops`, inPast(w), { ...mops, ...Object.fromEntries(W.slice(0, i).map((q) => [q.name, q])) }]),
-    ...R.map((r, i) => [`robot ${i + 1} down the ramp to its place`, [BAY.rampFoot, r], { ...mops, ...Object.fromEntries(W.map((q) => [q.name, q])), "Isfred": BAY_SPOTS.isfred }]),
-    ...W.map((w, i) => [`${w.name} up the ramp`, [w, BAY.rampFoot], { ...mops, ...robots, ...Object.fromEntries(W.slice(i + 1).map((q) => [q.name, q])) }]),
-    ["robot 1 to Isfred with the form", [R[0], BAY_SPOTS.robotSign], { ...mops, "robot 2": R[1], "robot 3": R[2] }],
-    ["robot 1 back to Mops", inPast(BAY_SPOTS.robotToMops), { ...mops, "robot 2": R[1], "robot 3": R[2] }],
-    ["Mops to the vent", [BAY_SPOTS.mopsWatch, ...BAY_SPOTS.ventWay, BAY_SPOTS.mopsVent], robots],
-    ["Mops back to the plant", [BAY_SPOTS.mopsVent, ...BAY_SPOTS.plantWay, BAY_SPOTS.mopsPlant], robots],
-    ...[1, 2].map((i) => [`robot ${i + 1} out to the hallway`, [R[i], ...BAY_SPOTS.robotsOut, BAY.door.step, BAY.door], { "Mops (at the plant)": BAY_SPOTS.mopsPlant, "robot 1": R[0] }]),
-    ["Squatch and Mops out through the doorway", [BAY_SPOTS.sqOut, BAY.door.step, BAY.door], { "robot 1": R[0] }],
+    ["Mops in through the doorway", [BAY.door, BAY.door.step, BAY_SPOTS.mopsIn], {}],
+    ["Squatch in through the doorway", [BAY.door, BAY.door.step, BAY_SPOTS.sqIn], {}],
+    ...R.map((r, i) => [`robot ${i + 1} down the ramp to its place`, [BAY.rampFoot, r], { ...mops, ...Object.fromEntries(R.map((q, j) => ["robot " + (j + 1), q]).slice(i + 1)) }]),
+    ["Isfred in past Mops", inPast(BAY_SPOTS.isfred), { ...mops, ...robots }],
+    ["robot 3 to the robot mailbox and back", [R[2], BAY.mailDoor, BAY.mailbox.post, BAY.mailDoor, R[2]], { ...mops, ...isf, "robot 1": R[0], "robot 2": R[1] }],
+    ...W.map((w, i) => [`${w.name} in past Mops`, [BAY.door, BAY.door.step, BAY_SPOTS.behindMops[0], ...BAY_SPOTS.workerWay, { x: w.x, y: BAY_SPOTS.workerWay[1].y }, w], { ...mops, ...isf, ...robots, ...Object.fromEntries(W.slice(0, i).map((q) => [q.name, q])) }]),
+    ...R.map((r, i) => [`robot ${i + 1} down to take ${W[i].name}'s tool and back`, [r, { x: r.x, y: r.y + 22 }, r], { ...mops, ...isf, ...workers }]),
+    ...W.map((w, i) => [`${w.name} up the ramp`, rampUp(w), { ...mops, ...isf, ...robots, ...Object.fromEntries(W.slice(i + 1).map((q) => [q.name, q])) }]),
+    ["robot 1 to the office with the form", [BAY_SPOTS.robotSign, ...BAY_SPOTS.officeWay, BAY.door.step, BAY.door], { ...mops, ...isf, "robot 2": R[1], "robot 3": R[2] }],
+    ["robot 1 back to Mops with the copies", inPast(BAY_SPOTS.robotToMops), { ...mops, "robot 2": R[1], "robot 3": R[2] }],
+    ["robot 1 out", [BAY_SPOTS.robotToMops, BAY_SPOTS.behindMops[1], BAY_SPOTS.behindMops[0], BAY.door.step, BAY.door], { ...mops, "robot 2": R[1], "robot 3": R[2] }],
+    ...[1, 2].map((i) => [`robot ${i + 1} out to the hallway`, [R[i], { x: R[i].x, y: BAY_SPOTS.robotsOut[0].y }, ...BAY_SPOTS.robotsOut, BAY.door.step, BAY.door], mops]),
+    ["Squatch and Mops out through the doorway", [BAY_SPOTS.sqOut, BAY.door.step, BAY.door], {}],
   ];
   const walkBad = [];
   for (const [name, way, people] of ways)

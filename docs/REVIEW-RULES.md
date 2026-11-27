@@ -28,7 +28,7 @@
 | 223–233 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
 | 234–243 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
 | 244–249 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
-| 250–257 | ## Mistakes caught building the loading bay (2026-11-26) |
+| 250–260 | ## Mistakes caught building the loading bay (2026-11-26) |
 <!-- /section-index -->
 # Review rules
 
@@ -254,3 +254,6 @@ His note on the home morning (video note 0:18): "he kind of glitches through the
 - A layer over a locked picture (the hallway's Employee of the Month photo) was drawn by a beat's over-the-room hook, after the people, so Mops's horns went behind it (Brian, the loading bay video at 0:14.8). A layer that belongs to the room is painted right after the room's picture (`drawWall` from `drawCh1Passage`), and a test counts his fur's pixels over it, run once with the old order to see it fail.
 - The hallway's robots were drawn at the bay's pixel size, so next to the hallway's bigger people they looked small, and they stood on the office door's painting (Brian, 1:37.2). Anything drawn in two rooms is scaled by each room's grown-up (`adultPxFor`), and a test checks its drawn box against the room's doors and walls.
 - The ramp in the bay picture comes with the ship: a thing that arrives with something else goes away before it (the ramp back up into the ship, then the ship), and the scanner's posts are solid only while it is there.
+- Every bubble's name tag read "Speaker" in the rebuild: the bridge's `speakerName(who)` asked every beat in turn, and the home morning's `speakerName()` (no argument, its own wall speaker's name) answered for everyone. The bridge asks only a beat whose `speakerName` takes the speaker, and the bay's test reads the name on Dot's, Bob's and Lou's bubbles.
+- Three robots rolled down the ramp one after another to spots left to right, so the second rolled through the first, already standing in its place. People sent to a row of spots go to the far one first; `tests/standing-spots.mjs` checks each walk against the people already standing.
+- A merge left `import { readFileSync }` twice in `tests/standing-spots.mjs`, so the whole suite stopped at load and its bay checks (written for the old walks) went unseen. After a merge, run every suite the merged files touch, not only your own.

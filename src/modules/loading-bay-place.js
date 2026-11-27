@@ -86,7 +86,7 @@ export const BAY_SPOTS = Object.freeze({
   // walks in and out go behind Mops (he waits at mopsWatch)
   behindMops: Object.freeze([Object.freeze({ x: 196, y: 436 }), Object.freeze({ x: 330, y: 436 })]),
   // the robots that go off to clean, along the front of the room, out through the doorway
-  robotsOut: Object.freeze([Object.freeze({ x: 700, y: 560 }), Object.freeze({ x: 360, y: 560 }), Object.freeze({ x: 120, y: 470 })]),
+  robotsOut: Object.freeze([Object.freeze({ x: 360, y: 560 }), Object.freeze({ x: 120, y: 470 })]),
   // Robot 1 from Isfred to the office, and back: below Isfred, then behind Mops
   officeWay: Object.freeze([Object.freeze({ x: 438, y: 500 }), Object.freeze({ x: 330, y: 500 }), Object.freeze({ x: 330, y: 436 }), Object.freeze({ x: 196, y: 436 })]),
 });

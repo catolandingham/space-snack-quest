@@ -1,21 +1,24 @@
 /**
- * Beats 28 to 36, the loading bay (src/modules/loading-bay.js), at phone size, from the lunch's end behind the snack
- * counter to beat 37's first step in the hallway. In order, each checked as the player meets it:
- *   - 28: the wall speaker's line sits beside the hall speaker (not the old banner) while sound waves come off it; then
- *     Mops, Squatch, Mops, each waiting for NEXT;
- *   - 29: the walk hall -> hallway -> bay is a cutscene (no control, nothing offered in the hallway, nobody jumps);
- *     in the bay "Squatch: hide in the plant", the plant outlined, HIDE · plant at the plant; hidden, only his eyes in
- *     the middle of its leaves;
- *   - 30 to 35, watched from the plant with no control: nobody's cone ever holds him; the ship docks (the locked "day"
- *     picture shows in the window), three robots roll down, Isfred shakes each worker's hand and they leave up the
- *     ramp; the promise; the form close-up (the white, the big pink with ORDER MORE ROBOTS, the small yellow stuck under
- *     the pink; the office code on the pink and the same on the yellow); the wall speaker chimes and Isfred and the
- *     robot leave with the papers; the robot comes back with only the pink and the yellow; the bite close-up and its
- *     chomp; Mops at the plant (the close-up shows the eyes, him and the bin); Squatch's bubble from the eyes; the
- *     copies fly into the bin by the plant and stay there;
- *   - 36: Mops waves him out; Mops's hearts; the hallway robots at the office door are outlined (dashed gold) on Mops's line; their cones
- *     never hold him; they leave; beat 37 (ch1Step "photos", "Squatch: go on").
- * Also: only the lines file's words, pending lines still pending; ↺ in every part; the debug link; the old code gone.
+ * Beats 28 to 36 and 36b, the loading bay (src/modules/loading-bay.js), rebuilt from the story pass of 2026-11-26, at
+ * phone size. The beat is played from behind the snack counter to the snack counter's front in the party hall, the
+ * player's steps taken the way a kid would (stand on the spot, press the button), and each checked as it comes:
+ *   - 28: the station speaker's line beside the hall speaker with sound waves; then the Stars Cakes lines in order;
+ *   - 29: the hallway is the player's (follow Mops to the ship); the photo wall turns him back with "Later. The ship!";
+ *     in the bay "Hide!" and ROLL · ball behind the cargo, where he is the ball;
+ *   - 30: the robots roll under the scanner arch (NO FUR. PROCEED.), the STARS CAKES crates come down, the robot mailbox
+ *     takes a letter (Mail scanned.); the sneak to the plant past a patrolling robot (HIDE · plant); Isfred's lines;
+ *     three workers each hand a robot their tool; Lou is stopped at the arch for his fuzzy hat, which stays on the floor;
+ *   - 31 and 32: the promise; PEEK · form opens the form close-up: ORDER MORE ROBOTS on the pink, the office code 169556
+ *     written on the pink and coming through on the yellow; the ship's ramp goes up before the ship leaves;
+ *   - 33 to 35: the player is switched to Mops (a switch card) and takes, eats (the bite close-up), talks (the mumble
+ *     whisper, "I can't understand you with paper in your mouth."), spits the copies into the bin, picks up the tagged
+ *     box and gives it (the tag close-up), then is switched back to Squatch;
+ *   - 36: the empty hallway; the office door opens with a robot; ROLL · ball in time gives the hairball close-up and its
+ *     lines; too slow, the robot sees fur and the one capture rule runs (the lockup names "A robot");
+ *   - 36b: three cleaning robots mop their lanes in the party hall; Mops in a lane stops one (its lines); plants block
+ *     sight; reaching the snack counter hands over to the storm (the evening's startStorm, or the older program's step).
+ * Also: the lines table for Brian matches the lines file; nothing but the lines file's words is said; ↺ at each step;
+ * the chapter reset; the hand-over to the evening's start(); the old code gone; the snack's names in one file.
  *   node tests/loading-bay.mjs
  */
 import { readFileSync, readdirSync } from "node:fs";
@@ -24,24 +27,28 @@ import { startGame, root } from "./game-page.mjs";
 
 const M = (f) => join(root, "src", "modules", f);
 const { BAY_LINES } = await import(M("loading-bay-lines.js"));
-const { BAY, BAY_PARTS, HALLWAY } = await import(M("loading-bay-place.js"));
-const { HALL_SPEAKER } = await import(M("party-hall.js"));
+const { BAY, BAY_SPOTS, HALLWAY, HALL_SNEAK } = await import(M("loading-bay-place.js"));
+const { HALL, HALL_SPEAKER } = await import(M("party-hall.js"));
+const { CAKES } = await import(M("cakes-brand.js"));
 const WORDS = new Set(BAY_LINES.map((l) => l.text));
+const line = (id) => BAY_LINES.find((l) => l.id === id).text;
 
 const g = await startGame({ port: 9800, name: "loading-bay" });
 
-// ---------- the lines file ----------
-const walk = readFileSync(join(root, "docs", "CH1-STORY-WALKTHROUGH.md"), "utf8");
-// (beats 28 to 36 only: from "### 28." to "### 37.", after the section index)
-const body = walk.slice(walk.indexOf("<!-- /section-index -->")),
-  beats = body.slice(body.indexOf("### 28. The ship is coming"), body.indexOf("### 37."));
-const said = BAY_LINES.filter((l) => !["chip", "button"].includes(l.who));
-const notInWalk = said.filter((l) => !beats.includes(`"${l.text}"`) && !beats.includes(`"${l.text} ☐"`));
-g.check("every spoken or painted line is word for word in the walkthrough's beats 28 to 36", notInWalk.length === 0, notInWalk.map((l) => l.text));
-// what the walkthrough says of each line: "*(pending" or "*(decided" right after its words
-const marked = (l) => ((beats.split(`"${l.text}`)[1] || "").match(/\*\((pending|decided)/) || [])[1];
-const statusWrong = said.filter((l) => (marked(l) === "pending") !== (l.status === "pending"));
-g.check("each line's status follows the walkthrough: pending stays pending, decided is decided or approved", statusWrong.length === 0, statusWrong.map((l) => [l.id, l.status, marked(l)]));
+// ---------- the lines table for Brian ----------
+const doc = readFileSync(join(root, "docs", "CH1-LINES-FOR-BRIAN.md"), "utf8"),
+  afterIndex = doc.slice(doc.indexOf("<!-- /section-index -->")),
+  table = afterIndex.slice(afterIndex.indexOf("## Loading bay (beats 28 to 36, and 36b)"), afterIndex.indexOf("\n## ", afterIndex.indexOf("## Loading bay (beats 28 to 36, and 36b)") + 5));
+const STATUS = { pending: "Pending", decided: "Decided", approved: "Approved", "in-game": "In the game already" };
+const offTable = BAY_LINES.filter((l) => !table.split("\n").some((row) => row.includes(`| ${l.text.replace(/\|/g, "\\|")} |`) && row.trim().endsWith(`| ${STATUS[l.status]} |`)));
+g.check("every line of the lines file is in Brian's lines table, word for word, with its status", offTable.length === 0, offTable.map((l) => l.text));
+const notPending = BAY_LINES.filter((l) => /\((NEW|CHANGED)/.test(l.source || "") && l.status !== "pending");
+g.check("every NEW or CHANGED line from the story pass is still pending", notPending.length === 0, notPending.map((l) => l.text));
+
+// ---------- the snack's names in one place ----------
+const mods = readdirSync(join(root, "src", "modules")).filter((f) => f.startsWith("loading-bay"));
+const typed = mods.filter((f) => /["'`][^"'`\n]*(STARS|MARS) CAKES/.test(readFileSync(M(f), "utf8")));
+g.check("the crates' and the tag's snack names come from cakes-brand.js (no loading bay file types them)", typed.length === 0 && CAKES.station === "STARS CAKES" && CAKES.family === "MARS CAKES" && CAKES.faded === "_ARS CAKES", typed);
 
 // ---------- the beat, played ----------
 const { page, errors } = await g.open("?beat=bay:pa", { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 1 });
@@ -50,330 +57,322 @@ await page.evaluate(() => new Promise((r) => setTimeout(r, 600)));
 await page.evaluate(() => (window.requestAnimationFrame = () => 0));
 g.check("the loading bay beat is registered (ch1-bay) and ?beat=bay:pa opens it behind the snack counter", await page.evaluate(() => !!window.SSQ.beat("ch1-bay") && window.SSQ.beat("ch1-bay").debug().state.step === "pa" && window.__ss.op.room === "hall"));
 
-const run = await page.evaluate(
-  ({ BAY, HALL_SPEAKER }) => {
-    const ss = window.__ss,
-      n = ss.op,
-      beat = window.SSQ.beat("ch1-bay"),
-      E = window.SSQ.engine(),
-      out = { lines: [], bubbles: {}, rooms: [], ctrlDuring: [], offersInHallway: [], jumps: [], seen: [], parts: [], drew: {}, shakes: new Set(), mopsSaw: false, eyesHidden: null, papersSeen: new Set() };
-    const st = () => beat.debug().state || {};
-    let prev = null,
-      lastLine = "";
-    const frame = () => {
-      ss.tick(0.05);
-      ss.drawFrame();
-      const s = st(),
-        d = beat.debug().drew;
-      // nobody jumps more than 60 inside a room in one frame
-      const at = { room: n.room, sq: { x: n.sq.x, y: n.sq.y }, mo: { x: n.mo.x, y: n.mo.y } };
-      if (prev && prev.room === at.room) for (const who of ["sq", "mo"]) Math.hypot(at[who].x - prev[who].x, at[who].y - prev[who].y) > 60 && out.jumps.push(who + " in " + at.room);
-      prev = at;
-      out.rooms[out.rooms.length - 1] !== n.room && out.rooms.push(n.room);
-      s.step && out.parts[out.parts.length - 1] !== s.step && out.parts.push(s.step);
-      if (s.step !== "hide" && s.step !== "done" && n.ctrl) out.ctrlDuring.push(s.step);
-      if (s.step === "walk" && n.room === "passage") ss.offerNow() && out.offersInHallway.push(ss.offerNow().verb);
-      beat.seenNow() && out.seen.push(s.step + " " + n.room);
-      beat.mopsSees() && (out.mopsSaw = true);
-      s.shaking >= 0 && s.shaking != null && out.shakes.add(s.shaking);
-      s.papers && out.papersSeen.add(s.papers.where);
-      if (d && d.closeUp && d.closeUp.u === 1) out.drew["closeUp-" + d.closeUp.id] = d.closeUp;
-      if (d && d.ring) out.drew.ring = d.ring;
-      // a bubble: note it, read where it sits, then NEXT (as a kid, after a moment)
-      if (n.cur && n.cur.k === "bub") {
-        const b = n.cur.b;
-        if (b.text !== lastLine) {
-          lastLine = b.text;
-          for (let i = 0; i < 8; i++) (ss.tick(0.05), ss.drawFrame());
-          const lb = window.__ss.lastBubble;
-          out.lines.push(b.text);
-          out.bubbles[b.text] = { who: b.who, box: lb ? { x: lb.x, y: lb.y, w: lb.w, h: lb.h } : null, head: lb && lb.head ? { ...lb.head } : null, step: st().step, ring: (beat.debug().drew || {}).ring || "", closeUp: (beat.debug().drew || {}).closeUp ? beat.debug().drew.closeUp.id : "", papers: st().papers ? st().papers.where : "", outlined: ((beat.debug().drew || {}).outlined || []).length, room: n.room };
+// One driver for every run: plays frames, answers each bubble with NEXT (as a kid, after a moment), and at each of the
+// player's steps puts the right one on its spot and presses the button. `stopAt(state)` ends it early.
+await page.evaluate(
+  ({ BAY, BAY_SPOTS, HALL_SNEAK }) => {
+    window.__bayDrive = (opts = {}) => {
+      const ss = window.__ss,
+        n = ss.op,
+        beat = window.SSQ.beat("ch1-bay"),
+        st = () => beat.debug().state || {},
+        out = { lines: [], bubbles: {}, rooms: [], parts: [], steps: {}, jumps: [], seenInCutscene: [], drew: {}, samples: {}, cards: [] };
+      let prev = null,
+        lastLine = "";
+      const sample = (k, v) => (out.samples[k] = out.samples[k] || v);
+      const frame = () => {
+        ss.tick(0.05);
+        ss.drawFrame();
+        if (opts.until && opts.until(st())) return "stop";
+        const s = st(),
+          d = beat.debug().drew || {};
+        const at = { room: n.room, ctrl: n.ctrl, sq: { x: n.sq.x, y: n.sq.y }, mo: { x: n.mo.x, y: n.mo.y } };
+        // nobody jumps more than 60 in a frame while the game moves them (the player's own steps are placed by the test)
+        if (prev && prev.room === at.room && !prev.ctrl && !at.ctrl) for (const who of ["sq", "mo"]) Math.hypot(at[who].x - prev[who].x, at[who].y - prev[who].y) > 60 && out.jumps.push(who + " in " + at.room + " at " + s.step);
+        prev = at;
+        out.rooms[out.rooms.length - 1] !== n.room && out.rooms.push(n.room);
+        s.step && out.parts[out.parts.length - 1] !== s.step && out.parts.push(s.step);
+        !n.ctrl && beat.seenNow() && out.seenInCutscene.push(s.step);
+        if (d.closeUp && d.closeUp.u === 1) out.drew["closeUp-" + d.closeUp.id] = d.closeUp;
+        if (s.step === "robots" && d.shimmer) sample("shimmer", true);
+        if (s.stopAt) sample("louStopped", { step: s.step, line: n.cur && n.cur.b ? n.cur.b.text : "", hat: s.workers.map((w) => w.hat) });
+        if (s.hatOnFloor) sample("hatOnFloor", { step: s.step });
+        if (s.robots && s.robots.some((r) => r.carry === "letter")) sample("letter", true);
+        if (s.ship < 1 && s.ship > 0) sample("shipLeaving", { ramp: s.ramp });
+        if (s.ramp > 0 && s.ship === 0) sample("rampWithoutShip", true);
+        if (s.robots && s.robots.some((r) => r.carry && r.carry !== "letter")) sample("robotCarries", s.robots.map((r) => r.carry || ""));
+        if (s.step === "walkby" && s.office >= 1) sample("officeOpen", { rollBy: s.rollBy });
+        if (s.hall && s.hall.shookAt) sample("mopsShook", true);
+        if (n.cur && n.cur.k === "card") {
+          const c = n.cur;
+          out.cards[out.cards.length - 1] !== (c.text || c.who || "card") && out.cards.push(c.text || c.who || "card");
         }
-        n.bt = 1;
-        ss.opTap();
-        return;
+        if (n.cur && n.cur.k === "bub") {
+          const b = n.cur.b;
+          if (b.text !== lastLine && s.step !== "done") {
+            lastLine = b.text;
+            for (let i = 0; i < 8; i++) (ss.tick(0.05), ss.drawFrame());
+            const lb = window.__ss.lastBubble,
+              d2 = beat.debug().drew || {};
+            out.lines.push(b.text);
+            out.bubbles[b.text] = out.bubbles[b.text] || { who: b.who, name: window.SSQ.speakerName(b.who), style: b.style || "", ear: !!b.ear, box: lb ? { x: lb.x, y: lb.y, w: lb.w, h: lb.h } : null, step: st().step, ring: d2.ring || "", closeUp: d2.closeUp ? d2.closeUp.id : "", papers: st().papers ? st().papers.where : "", room: n.room, asMops: !!st().asMops, box2: st().box };
+            if (b.text === "Here's the code to unlock the door.") {
+              // the pen writes the code while he says so: give it the time a reader takes
+              for (let i = 0; i < 60; i++) (ss.tick(0.05), ss.drawFrame());
+              const d3 = beat.debug().drew || {};
+              d3.closeUp && (out.drew.codeWritten = d3.closeUp);
+            }
+          }
+          n.bt = 1;
+          ss.opTap();
+          return;
+        }
+        if (n.cur && n.cur.k === "card") {
+          n.bt = 1;
+          ss.opTap();
+          return;
+        }
+        lastLine = "";
+        // the player's steps
+        if (n.ctrl && !n.cur && !s.alarm) {
+          const S = s.step;
+          if (!out.steps[S]) out.steps[S] = { chip: ss.chipNow(), ch1Step: n.ch1Step, room: n.room, offers: [] };
+          if (opts.stopAt && opts.stopAt(s)) return "stop";
+          const press = (place) => {
+            place();
+            ss.tick(0.05);
+            const o = ss.offerNow();
+            if (o) {
+              const tag = o.verb + " · " + o.cap;
+              out.steps[S].offers.includes(tag) || out.steps[S].offers.push(tag);
+              o.f();
+            }
+            return o;
+          };
+          if (S === "hallway") ((n.sq.x = 935), (n.sq.y = 332));
+          else if (S === "cargo") press(() => ((n.sq.x = BAY.cargo.ball.x), (n.sq.y = BAY.cargo.ball.y)));
+          else if (S === "sneak") press(() => ((n.sq.x = BAY.plant.stand.x), (n.sq.y = BAY.plant.stand.y)));
+          else if (S === "peek") press(() => 0);
+          else if (S === "take" || S === "eat") press(() => ((n.mo.x = BAY_SPOTS.mopsWatch.x), (n.mo.y = BAY_SPOTS.mopsWatch.y)));
+          else if (S === "talkto" || S === "give") press(() => ((n.mo.x = BAY_SPOTS.talk.x), (n.mo.y = BAY_SPOTS.talk.y)));
+          else if (S === "spit") press(() => ((n.mo.x = BAY_SPOTS.spit.x), (n.mo.y = BAY_SPOTS.spit.y)));
+          else if (S === "box") press(() => ((n.mo.x = BAY_SPOTS.boxPick.x), (n.mo.y = BAY_SPOTS.boxPick.y)));
+          else if (S === "home") ((n.sq.x = 50), (n.sq.y = 336));
+          else if (S === "walkby") {
+            if (s.rollBy < 0 && s.office === 0) ((n.sq.x = 600), (n.sq.y = 360));
+            else if (s.rollBy > 0 && !s.ball && !opts.tooSlow) press(() => 0);
+            else if (s.rollBy < 0 && !s.ball && s.office >= 1) ((n.sq.x = 30), (n.sq.y = 340));
+          } else if (S === "hall" && !opts.stayInHall) ((n.sq.x = HALL_SNEAK.goal.x), (n.sq.y = HALL_SNEAK.goal.y));
+          if (S === "cargo" || S === "walkby") sample("ball-" + S, s.ball || st().ball);
+        }
+      };
+      for (let i = 0; i < (opts.frames || 12000); i++) {
+        if (frame() === "stop") break;
+        if (!beat.active() && !opts.pastEnd) break;
       }
-      lastLine = "";
+      out.end = { step: st().step, room: n.room, ctrl: n.ctrl, ch1Step: n.ch1Step, chip: ss.chipNow(), active: beat.active(), code: beat.debug().code, papers: st().papers ? st().papers.where : "", box: st().box, sq: { x: n.sq.x, y: n.sq.y }, alarm: !!st().alarm };
+      return out;
     };
-    // beat 28 and the walk
-    for (let i = 0; i < 3000 && !(st().step === "hide" && n.ctrl); i++) frame();
-    out.hide = { chip: ss.chipNow(), room: n.room, ctrl: n.ctrl, ch1Step: n.ch1Step, sq: { x: n.sq.x, y: n.sq.y } };
-    // walk him to the plant (the game's own walk), then the offer and the outline there
-    n.walkTo = { x: BAY.plant.stand.x, y: BAY.plant.stand.y, room: n.room };
-    for (let i = 0; i < 120 && Math.hypot(n.sq.x - BAY.plant.stand.x, n.sq.y - BAY.plant.stand.y) > 30; i++) frame();
-    out.hide.offer = ((o) => (o ? o.verb + " · " + o.cap : ""))(ss.offerNow());
-    n.lastRing = null;
-    ss.drawFrame();
-    out.hide.outline = n.lastRing ? n.lastRing.id : "";
-    ss.offerNow() && ss.offerNow().f();
-    frame();
-    out.hidden = { pose: n.sqPose, step: st().step };
-    // the eyes in the middle of the leaves: white there now
-    const cv = document.querySelector("canvas"),
-      cx = cv.getContext("2d"),
-      m = cx.getTransform(),
-      px = (x, y) => [...cx.getImageData(Math.round(m.a * x + m.e), Math.round(m.d * y + m.f), 1, 1).data];
-    let white = 0;
-    for (let i = 0; i < 30; i++) (frame(), (white = Math.max(white, ...[-9, 9].map((dx) => (px(BAY.plant.eyes.x + dx - 2, BAY.plant.eyes.y - 2)[0] > 220 ? 1 : 0)))));
-    out.eyesWhite = white;
-    // beats 30 to 36
-    let shipPx = null;
-    for (let i = 0; i < 6000 && beat.active(); i++) {
-      frame();
-      if (!shipPx && st().step === "robots") shipPx = px((BAY.window.x0 + BAY.window.x1) / 2, (BAY.window.y0 + BAY.window.y1) / 2 - 20);
-    }
-    out.shipPx = shipPx;
-    out.end = { ch1Step: n.ch1Step, chip: ss.chipNow(), room: n.room, ctrl: n.ctrl, active: beat.active(), step: st().step, papers: st().papers.where, sounds: beat.debug().sounds, code: beat.debug().code };
-    out.shakes = [...out.shakes];
-    out.papersSeen = [...out.papersSeen];
-    return out;
   },
-  { BAY, HALL_SPEAKER },
+  { BAY, BAY_SPOTS, HALL_SNEAK },
 );
 
-// beat 28
-const pa = run.bubbles["Universal Postal Service ship arriving!"];
-g.check("28: the wall speaker's line sits beside the hall speaker, to its left and level with it (not the old banner)", !!pa && !!pa.box && pa.box.x + pa.box.w <= HALL_SPEAKER.x0 && pa.box.y < HALL_SPEAKER.y1 + 20, pa);
-g.check("28: sound waves come off the hall speaker while it talks", pa && pa.ring === "hall", pa);
-g.check("28: then Mops, Squatch, Mops, word for word, in order", run.lines.slice(0, 4).join(" / ") === ["Universal Postal Service ship arriving!", "I better go see what that is.", "Please let me follow you, I'll be really sneaky.", "Okay, just this time, but hide carefully."].join(" / "), run.lines.slice(0, 4));
-// beat 29
-g.check("29: hall, hallway, loading bay, then the hallway again on the way home", run.rooms.join(",") === "hall,passage,hangar,passage", run.rooms);
-g.check("29: the walk is a cutscene: no control, and nothing in the hallway is offered", !run.ctrlDuring.length && !run.offersInHallway.length, { ctrl: run.ctrlDuring, offers: run.offersInHallway });
-g.check("nobody jumps more than 60 between frames inside a room", run.jumps.length === 0, run.jumps);
-g.check("29: in the bay, \"Squatch: hide in the plant\" with control", run.hide.chip === "Squatch: hide in the plant" && run.hide.ctrl && run.hide.room === "hangar" && run.hide.ch1Step === "bay-hide", run.hide);
-g.check("29: at the plant, HIDE · plant, and the plant is outlined", run.hide.offer === "HIDE · plant" && run.hide.outline === "d2-HIDE-plant", run.hide);
-g.check("29: hidden: only his eyes, white, in the middle of the plant's leaves", run.hidden.pose === "hidden" && run.eyesWhite === 1, run.hidden);
-// beats 30 to 35
-g.check("30 to 36: no cone of a robot, Isfred or a worker ever holds him", run.seen.length === 0, run.seen.slice(0, 5));
-g.check("30 to 36: no control until beat 37", !run.ctrlDuring.length, run.ctrlDuring);
-g.check("every part plays, in order", JSON.stringify(run.parts) === JSON.stringify(["pa", "walk", "hide", ...BAY_PARTS, "done"]), run.parts);
-g.check("30: the ship docks: the locked day picture's grey ship shows in the window", !!run.shipPx && run.shipPx[0] > 150 && run.shipPx[2] > 150 && Math.abs(run.shipPx[0] - run.shipPx[2]) < 40, run.shipPx);
-g.check("30: Isfred shakes each of the three workers' hands", JSON.stringify(run.shakes.sort()) === "[0,1,2]", run.shakes);
-const f = run.drew["closeUp-form"];
-const inside = (a, b) => a.x0 >= b.x0 - 1 && a.x1 <= b.x1 + 1 && a.y0 >= b.y0 - 1 && a.y1 <= b.y1 + 1;
-g.check("32: the form close-up shows the white copy, the big pink and a smaller yellow stuck under the pink's corner", !!f && !!f.parts && f.parts.yellow.x1 - f.parts.yellow.x0 < f.parts.pink.x1 - f.parts.pink.x0 && f.parts.yellow.x0 < f.parts.pink.x1 && f.parts.yellow.y0 < f.parts.pink.y1 && inside(f.parts.white, f.box), f && f.parts);
-g.check("32: ORDER MORE ROBOTS on the pink, with its box", !!f && f.parts.words.text === "ORDER MORE ROBOTS" && inside(f.parts.box, f.parts.pink), f && f.parts.words);
-g.check("32: the office code (169556, Brian 2026-11-26) written on the pink and the same coming through on the yellow", !!f && run.end.code === "169556" && f.parts.code.text === "169556" && f.parts.carbon.text === "169556", f && f.parts.code);
-g.check("32: the close-up's words are big enough to read on a phone (code 16 px or more at 375 wide)", !!f && f.parts.code.size * (355 / 960) >= 16, f && f.parts.code.size);
-g.check("32: Mops's paper joke over the close-up, its bubble clear of it", (() => { const b = run.bubbles["So futuristic and we still order on paper."]; return !!b && b.closeUp === "form" && (b.box.x + b.box.w <= f.box.x0 + 2 || b.box.y + b.box.h <= f.box.y0 + 2); })(), run.bubbles["So futuristic and we still order on paper."]);
-g.check("32: the wall speaker chimes (its ding-dong) and the papers go out to the office", (run.end.sounds.dingDong || 0) >= 1 && run.papersSeen.includes("office"), run.papersSeen);
-const r33 = run.bubbles["Left one of the copies in the office. What do I do with the other two?"];
-g.check("33: the robot comes back holding the two other copies (no white one)", !!r33 && r33.who === "robot" && r33.papers === "robot0", r33);
-g.check("33: Mops takes them, and bites them by the vent, in a close-up (a chomp)", run.papersSeen.includes("mops-hoof") && !!run.drew["closeUp-bite"] && run.bubbles["Delicious."].closeUp === "bite" && (run.end.sounds.chomp || 0) >= 1, run.bubbles["Delicious."]);
-const gum = run.bubbles["You're gumbling! (goat mumbling)"];
-g.check("34: \"Mmf mrrf!\" by the plant in a close-up; Squatch's line from his eyes in the plant", run.bubbles["Mmf mrrf!"].closeUp === "plant" && !!gum && gum.box && Math.abs(gum.box.x + gum.box.w / 2 - BAY.plant.eyes.x) < 200 && gum.box.y + gum.box.h < BAY.plant.eyes.y, { mmf: run.bubbles["Mmf mrrf!"], gum });
-g.check("35: the copies fly into the bin by the plant and stay there", run.papersSeen.includes("flying") && run.bubbles["Ptoo!"].papers === "bin" && run.end.papers === "bin", run.papersSeen);
-// beat 36
-g.check("36: Mops's cone holds him (hearts) once he is out of the plant", run.mopsSaw);
-g.check("36: in the hallway both robots get the dashed gold outline on Mops's line (the game's one highlight, no glow)", run.bubbles["We got to watch out for these robots."].outlined === 2 && run.bubbles["We got to watch out for these robots."].room === "passage", run.bubbles["We got to watch out for these robots."]);
-// the hallway's lines sit beside the speaker's head: not on it, and no further than 60 from it (the photo wall's heading
-// once pushed one to the far corner)
-const besideHead = ["We got to watch out for these robots.", "What's the difference between fur and hair?", "Paperwork."].map((t) => {
-  const b = run.bubbles[t] || {},
-    x = b.box,
-    h = b.head;
-  if (!x || !h) return { t, bad: "no box" };
-  const over = x.x < h.x + h.w && x.x + x.w > h.x && x.y < h.y + h.h && x.y + x.h > h.y,
-    gap = Math.max(h.x - (x.x + x.w), x.x - (h.x + h.w), h.y - (x.y + x.h), x.y - (h.y + h.h), 0);
-  return { t, over, gap: Math.round(gap) };
-});
-g.check("36: in the hallway each bubble sits beside its speaker's head, not on it", besideHead.every((b) => b.over === false && b.gap <= 60), besideHead);
-g.check("36: then the fur and hair question and \"Paperwork.\"", run.lines.slice(-2).join(" / ") === "What's the difference between fur and hair? / Paperwork.", run.lines.slice(-2));
-g.check("36 ends with beat 37: the hallway, \"Squatch: go on\", control (ch1WalkHomeDone)", run.end.room === "passage" && run.end.ch1Step === "photos" && run.end.chip === "Squatch: go on" && run.end.ctrl && !run.end.active, run.end);
-g.check("only the lines file's words were said", run.lines.every((t) => WORDS.has(t)), run.lines.filter((t) => !WORDS.has(t)));
+const run = await page.evaluate(() => window.__bayDrive({ pastEnd: false }));
+const B = (id) => run.bubbles[line(id)];
 
-// ---------- ↺ in every part ----------
-const restarts = await page.evaluate((parts) => {
+// 28
+const pa = B("pa-ship");
+g.check("28: the station speaker's line sits beside the hall speaker, to its left and level with it, sound waves coming off it", !!pa && !!pa.box && pa.box.x + pa.box.w <= HALL_SPEAKER.x0 && pa.box.y < HALL_SPEAKER.y1 + 20 && pa.ring === "hall", pa);
+const order28 = ["pa-ship", "sq-stars-ship", "sq-new-kind", "sq-crate-kind", "mops-maybe", "mops-see", "sq-come", "mops-once", "mops-hide-when"].map(line);
+g.check("28: then the Stars Cakes lines, word for word and in order", run.lines.slice(0, order28.length).join(" / ") === order28.join(" / "), run.lines.slice(0, order28.length));
+// 29
+g.check("29: the hallway is the player's: control, \"Squatch: follow Mops to the ship\"", !!run.steps.hallway && run.steps.hallway.room === "passage" && run.steps.hallway.chip === line("chip-follow") && run.steps.hallway.ch1Step === "bay-hallway", run.steps.hallway);
+g.check("29: in the bay, \"Quick! The manager is coming!\" then \"Hide!\", and the goal is the cargo", run.lines.indexOf(line("mops-manager")) >= 0 && run.lines.indexOf(line("mops-hide")) === run.lines.indexOf(line("mops-manager")) + 1 && run.steps.cargo && run.steps.cargo.chip === line("chip-cargo"), run.steps.cargo);
+g.check("29: behind the cargo the button reads ROLL · ball and he is the ball", run.steps.cargo && run.steps.cargo.offers.includes(line("button-ball")) && run.samples["ball-cargo"] !== undefined, run.steps.cargo);
+// 30
+g.check("30: the robots roll under the scanner arch and its field shimmers; NO FUR. PROCEED. is overheard (ear)", !!run.samples.shimmer && B("scanner-proceed") && B("scanner-proceed").ear, { shimmer: run.samples.shimmer, b: B("scanner-proceed") });
+g.check("30: a robot posts a letter in the robot mailbox: \"Mail scanned.\"", !!run.samples.letter && !!B("ups-scanned"), run.samples.letter);
+g.check("30: the sneak to the plant: \"Squatch: sneak to the plant\", HIDE · plant there", run.steps.sneak && run.steps.sneak.chip === line("chip-plant") && run.steps.sneak.offers.includes(line("button-hide")), run.steps.sneak);
+g.check("30: Isfred's lines, then Squatch's whisper \"Fur in the vents... that was me.\"", ["isfred-not-sure", "isfred-fur", "isfred-convinced", "sq-was-me"].every((id) => !!B(id)) && B("sq-was-me").style === "whisper", B("sq-was-me"));
+g.check("30: the workers hand their tools to the robots", Array.isArray(run.samples.robotCarries) && run.samples.robotCarries.filter(Boolean).length >= 1, run.samples.robotCarries);
+g.check("30: Lou is stopped at the arch for his fuzzy hat (FUR. STOP. / It's a HAT.) and the hat stays on the floor", !!run.samples.louStopped && !!run.samples.hatOnFloor && !!B("lou-hat") && B("lou-hat").who === "lou", { stop: run.samples.louStopped, hat: run.samples.hatOnFloor });
+// 31, 32
+g.check("31: the promise, then \"Weeee-eenn-nnttt!\"", ["isfred-dont-worry", "isfred-love", "isfred-visitors", "mops-bleat-happy"].every((id) => !!B(id)), run.lines.filter((t) => t.startsWith("Mops, don't") || t.startsWith("Weeee")));
+g.check("32: \"Squatch: peek at the form\" and PEEK · form", run.steps.peek && run.steps.peek.chip === line("chip-peek") && run.steps.peek.offers.includes(line("button-peek")), run.steps.peek);
+const f = run.drew.codeWritten;
+const inside = (a, b) => a.x0 >= b.x0 - 1 && a.x1 <= b.x1 + 1 && a.y0 >= b.y0 - 1 && a.y1 <= b.y1 + 1;
+g.check("32: the form close-up: ORDER MORE ROBOTS on the pink, with its box", !!f && f.parts && f.parts.words.text === "ORDER MORE ROBOTS" && inside(f.parts.box, f.parts.pink), f && f.parts && f.parts.words);
+g.check("32: the office code 169556 written on the pink and coming through on the yellow while he says so", !!f && run.end.code === "169556" && f.parts.code.text === "169556" && f.parts.carbon.text === "169556", f && f.parts && [f.parts.code.text, f.parts.carbon.text]);
+g.check("32: the ramp goes up before the ship leaves (never a ramp with no ship)", !!run.samples.shipLeaving && run.samples.shipLeaving.ramp === 0 && !run.samples.rampWithoutShip, run.samples);
+// 33 to 35, as Mops
+g.check("33: the player is switched to Mops with a switch card", run.cards.length >= 1 && B("robot-copies") && run.steps.take && run.steps.take.chip === line("chip-take"), { cards: run.cards, take: run.steps.take });
+g.check("33: TAKE · copies, then EAT · copies and the bite close-up (\"Delicious.\")", run.steps.take.offers.includes(line("button-take")) && run.steps.eat.offers.includes(line("button-eat")) && B("mops-delicious").closeUp === "bite", { take: run.steps.take, eat: run.steps.eat });
+g.check("34: the robots' orders, then the robots go", ["robot-office", "robot-hall", "robots-cleaning"].every((id) => !!B(id)), run.lines.filter((t) => t.startsWith("Unit")));
+const mumble = B("mops-mumble");
+g.check("34: TALK · Squatch: the mumble is a whisper at the plant, then \"I can't understand you with paper in your mouth.\"", run.steps.talkto.offers.includes(line("button-talk")) && !!mumble && mumble.style === "whisper" && mumble.closeUp === "plant" && run.lines.indexOf(line("sq-paper-mouth")) > run.lines.indexOf(mumble && line("mops-mumble")), mumble);
+g.check("35: SPIT · bin: \"Ptoo!\" and the copies stay in the bin", run.steps.spit.offers.includes(line("button-spit")) && !!B("mops-ptoo") && run.end.papers === "bin", { spit: run.steps.spit, papers: run.end.papers });
+g.check("35: PICK UP · box, GIVE · box: \"Mail for you.\", the tag close-up, \"They never forget.\"", run.steps.box.offers.includes(line("button-box")) && run.steps.give.offers.includes(line("button-give")) && !!B("mops-mail") && B("sq-never-forget").closeUp === "tag", { box: run.steps.box, give: run.steps.give });
+g.check("35: then the player is Squatch again (a second switch card), going home with Mops", run.cards.length >= 2 && run.steps.home && run.steps.home.chip === line("chip-home"), { cards: run.cards, home: run.steps.home });
+// 36
+g.check("36: the office door opens on the walk home (a robot inside), and ROLL · ball in time is the ball", !!run.samples.officeOpen && run.steps.walkby && run.steps.walkby.offers.includes(line("button-ball")), { open: run.samples.officeOpen, walkby: run.steps.walkby });
+g.check("36: the hairball close-up and its lines, in order", B("robot-what") && B("robot-what").closeUp === "hairball" && run.lines.join("|").includes([line("robot-what"), line("mops-hairball"), line("robot-compute")].join("|")), B("robot-what"));
+g.check("36: then \"We have to watch out for these robots.\", the fur and hair question and \"Paperwork.\"", run.lines.join("|").includes([line("mops-robots"), line("sq-fur"), line("mops-paperwork")].join("|")), run.lines.slice(-6));
+g.check("hall, hallway, bay, hallway, party hall", run.rooms.join(",") === "hall,passage,hangar,passage,hall", run.rooms);
+// 36b
+g.check("36b: in the party hall, \"Squatch: get past the robots\" with control", run.steps.hall && run.steps.hall.room === "hall" && run.steps.hall.chip === line("chip-hall"), run.steps.hall);
+g.check("36b: reaching the snack counter hands over (the older program's step when the evening is not there)", !run.end.active && run.end.step === "done" && run.end.room === "hall", run.end);
+// all through
+g.check("in the cutscenes nobody's cone ever holds him", run.seenInCutscene.length === 0, run.seenInCutscene.slice(0, 5));
+g.check("nobody the game walks jumps more than 60 between frames", run.jumps.length === 0, run.jumps.slice(0, 5));
+g.check("only the lines file's words were said", run.lines.every((t) => WORDS.has(t)), run.lines.filter((t) => !WORDS.has(t)));
+g.check("the workers' bubbles are named Dot, Bob and Lou", [B("dot-toaster"), B("bob-way-up"), B("lou-hat")].map((b) => b && b.name).join(",") === "Dot,Bob,Lou", [B("dot-toaster"), B("bob-way-up"), B("lou-hat")].map((b) => b && b.name));
+
+// ---------- the photo wall in the hallway, on the way to the ship ----------
+const later = await page.evaluate(({ HALLWAY }) => {
+  const ss = window.__ss,
+    n = ss.op,
+    beat = window.SSQ.beat("ch1-bay");
+  n.q = [];
+  n.cur = null;
+  beat.jump("hallway");
+  for (let i = 0; i < 10; i++) ss.tick(0.05);
+  const W = HALLWAY.photoWall;
+  n.sq.x = (W.x0 + W.x1) / 2;
+  n.sq.y = W.y1 - 4;
+  for (let i = 0; i < 3; i++) ss.tick(0.05);
+  return { line: n.cur && n.cur.b ? n.cur.b.text : "", y: n.sq.y, below: n.sq.y >= W.y1, step: beat.debug().state.step };
+}, { HALLWAY });
+g.check("29: walking up to the photo wall, Mops: \"Later. The ship!\" and Squatch is turned back", later.line === line("mops-later") && later.below && later.step === "hallway", later);
+
+// ---------- 36: too slow at the office door ----------
+const slow = await page.evaluate(() => {
+  const ss = window.__ss,
+    n = ss.op,
+    beat = window.SSQ.beat("ch1-bay");
+  n.q = [];
+  n.cur = null;
+  beat.jump("walkby");
+  let card = null,
+    alarm = false;
+  window.__bayDrive({
+    tooSlow: true,
+    pastEnd: true,
+    frames: 1500,
+    until: (s) => {
+      alarm = alarm || !!s.alarm;
+      if (n.cur && n.cur.k === "card") card = JSON.stringify(n.cur, (k, v) => (typeof v === "function" ? undefined : v));
+      return !!card;
+    },
+  });
+  return { card, alarm };
+});
+g.check("36: too slow to roll, the robot sees fur: the alarm and the one capture rule (the lockup names a robot in the hallway)", slow.alarm && !!slow.card && /LOCKUP/.test(slow.card) && /A robot/.test(slow.card) && /hallway/.test(slow.card), slow);
+
+// ---------- 36b: seen in a lane; a plant between; Mops blocks a robot ----------
+const hall = await page.evaluate(({ HALL, HALL_SNEAK }) => {
   const ss = window.__ss,
     n = ss.op,
     beat = window.SSQ.beat("ch1-bay"),
     out = {};
-  for (const p of parts) {
+  const fresh = () => {
     n.q = [];
     n.cur = null;
-    ss.ch1JumpBeat(29);
-    beat.jump(p);
-    for (let i = 0; i < 30; i++) ss.tick(0.05);
-    const before = beat.debug().state.step;
-    ss.sectionReset();
-    for (let i = 0; i < 2; i++) ss.tick(0.05);
-    out[p] = { before, after: beat.debug().state.step, hidden: n.sqPose, room: n.room, queued: n.q.length + (n.cur ? 1 : 0) };
+    beat.jump("hall");
+    for (let i = 0; i < 4; i++) ss.tick(0.05);
+  };
+  // in front of robot 0, in its lane, standing: seen within a second
+  fresh();
+  let s = ss.op.ch1Bay,
+    r = s.hall.robots[0];
+  r.stop = 99;
+  n.sq.x = r.x + r.dir * 90;
+  n.sq.y = r.y;
+  for (let i = 0; i < 30; i++) ss.tick(0.05);
+  out.seen = { alarm: !!ss.op.ch1Bay.alarm };
+  // the same, with the middle plant's leaves between the robot and him: never seen
+  fresh();
+  s = ss.op.ch1Bay;
+  const L = HALL.plants[0].leaves,
+    pot = HALL.plants[0].pot;
+  s.hall.robots.forEach((q) => ((q.stop = 99), (q.x = 40), (q.y = 340), (q.f = -1)));
+  r = s.hall.robots[0];
+  // (the robot on the plant's left looking right; Squatch just behind the plant on its right, his feet at the pot's foot)
+  Object.assign(r, { x: L.x0 - 60, y: pot.y1, f: 1, dir: 1 });
+  n.sq.x = L.x1 + 16;
+  n.sq.y = pot.y1;
+  n.mo.x = 900;
+  n.mo.y = 320;
+  for (let i = 0; i < 40; i++) ss.tick(0.05);
+  out.plant = { alarm: !!ss.op.ch1Bay.alarm, seenBy: ss.op.ch1Bay.seenBy };
+  // and the same distance with no plant between: seen (so it was the plant)
+  const dx = n.sq.x - r.x;
+  fresh();
+  s = ss.op.ch1Bay;
+  s.hall.robots.forEach((q) => ((q.stop = 99), (q.x = 40), (q.y = 340), (q.f = -1)));
+  Object.assign(s.hall.robots[0], { x: 560, y: 520, f: 1, dir: 1 });
+  n.sq.x = 560 + dx;
+  n.sq.y = 520;
+  n.mo.x = 900;
+  n.mo.y = 320;
+  for (let i = 0; i < 40; i++) ss.tick(0.05);
+  out.open = { alarm: !!ss.op.ch1Bay.alarm };
+  // Mops standing in a lane: the robot stops and they say their lines
+  fresh();
+  s = ss.op.ch1Bay;
+  r = s.hall.robots[1];
+  n.sq.x = HALL_SNEAK.in.x;
+  n.sq.y = HALL_SNEAK.in.y;
+  n.mo.x = r.x + r.dir * 50;
+  n.mo.y = r.y;
+  const said = [];
+  for (let i = 0; i < 60; i++) {
+    ss.tick(0.05);
+    if (n.cur && n.cur.b) (said[said.length - 1] !== n.cur.b.text && said.push(n.cur.b.text), (n.bt = 1), ss.opTap());
   }
-  // behind the counter (beat 28): its lines again from the first, with no control
-  n.q = [];
-  n.cur = null;
-  ss.ch1JumpBeat(28);
-  for (let i = 0; i < 20; i++) (ss.tick(0.05), n.cur && n.cur.k === "bub" && n.cur.b.text.startsWith("Universal") && ((n.bt = 1), ss.opTap()));
-  ss.sectionReset();
-  ss.tick(0.05);
-  out.pa = { after: beat.debug().state.step, room: n.room, ctrl: n.ctrl, line: n.cur && n.cur.b ? n.cur.b.text : "" };
-  // the hide step: walked off, ↺ brings back its start (where he came in, with control and the plant to hide in)
-  n.q = [];
-  n.cur = null;
-  ss.ch1JumpBeat(29);
-  for (let i = 0; i < 4; i++) ss.tick(0.05);
-  n.sq.x = 700;
-  n.sq.y = 560;
-  ss.tick(0.05);
-  ss.sectionReset();
-  ss.tick(0.05);
-  out.hide = { after: beat.debug().state.step, room: n.room, ctrl: n.ctrl, x: Math.round(n.sq.x), y: Math.round(n.sq.y), pose: n.sqPose };
-  // the walk home, already in the hallway: back to the start of the walk home, in the plant
-  n.q = [];
-  n.cur = null;
-  ss.ch1JumpBeat(29);
-  beat.jump("home");
-  for (let i = 0; i < 2000 && n.room !== "passage"; i++) (ss.tick(0.05), n.cur && n.cur.k === "bub" && ((n.bt = 1), ss.opTap()));
-  ss.sectionReset();
-  ss.tick(0.05);
-  out.hallway = { after: beat.debug().state.step, room: n.room, pose: n.sqPose, robots: beat.debug().state.robots.filter((r) => r.show && r.room === "passage").length };
-  // in the walk: back to the bay's hide step, with control
-  n.q = [];
-  n.cur = null;
-  ss.ch1JumpBeat(28);
-  for (let i = 0; i < 400 && beat.debug().state.step !== "walk"; i++) (ss.tick(0.05), n.cur && n.cur.k === "bub" && ((n.bt = 1), ss.opTap()));
-  for (let i = 0; i < 20; i++) ss.tick(0.05);
-  ss.sectionReset();
-  ss.tick(0.05);
-  out.walk = { after: beat.debug().state.step, ctrl: n.ctrl, room: n.room, chip: ss.chipNow() };
+  out.block = said;
   return out;
-}, BAY_PARTS);
-const special = { walk: (r) => r.after === "hide" && r.ctrl && r.room === "hangar", pa: (r) => r.after === "pa" && r.room === "hall" && !r.ctrl && r.line === "Universal Postal Service ship arriving!", hide: (r) => r.after === "hide" && r.ctrl && r.room === "hangar" && r.x === 236 && r.y === 470 && r.pose === "stand", hallway: (r) => r.after === "home" && r.room === "hangar" && r.pose === "hidden" && r.robots === 0 };
-const badRestart = Object.entries(restarts).filter(([p, r]) => (special[p] ? !special[p](r) : !(r.after === p && r.room === "hangar" && r.hidden === "hidden" && r.queued > 0)));
-g.check("↺ in each part of the cutscene starts that part again (beat 28: its first line; the hide step: where he came in; the walk: the hide step; the hallway: the walk home's start, in the plant)", badRestart.length === 0, restarts);
-g.check("the chapter reset clears the loading bay", await page.evaluate(() => (window.__ss.op.ch1Bay = { step: "sign" }, window.SSQ.engine().resetChapter(), window.__ss.op.ch1Bay == null)));
+}, { HALL, HALL_SNEAK });
+g.check("36b: standing in a robot's lane in front of it, he is seen (the alarm)", hall.seen.alarm, hall.seen);
+g.check("36b: a plant between a robot and him blocks its sight (the same distance in the open: seen)", !hall.plant.alarm && !hall.plant.seenBy && hall.open.alarm, hall);
+g.check("36b: Mops in a lane stops a robot: MOVE, GOAT. / You missed a corner. / CORNERS ARE NOT EFFICIENT.", hall.block.join("|") === [line("robot-move"), line("mops-corner"), line("robot-corners")].join("|"), hall.block);
 
-// ---------- beat 37 follows: the rebuilt evening when it is there ----------
-const evening = await page.evaluate(() => {
+// ---------- ↺ at each of the player's steps, and in a cutscene part ----------
+const restarts = await page.evaluate(() => {
+  const ss = window.__ss,
+    n = ss.op,
+    beat = window.SSQ.beat("ch1-bay"),
+    out = {};
+  for (const p of ["hallway", "cargo", "sneak", "peek", "take", "talkto", "spit", "walkby", "hall", "robots", "form"]) {
+    n.q = [];
+    n.cur = null;
+    beat.jump(p);
+    for (let i = 0; i < 30; i++) (ss.tick(0.05), n.cur && n.cur.k === "bub" && ((n.bt = 1), ss.opTap()));
+    ss.sectionReset();
+    for (let i = 0; i < (p === "walkby" ? 80 : 3); i++) ss.tick(0.05);
+    out[p] = { after: beat.debug().state.step, room: n.room, ctrl: n.ctrl, busy: !!(n.cur || n.q.length) };
+  }
+  return out;
+});
+const ROOM = { hallway: "passage", walkby: "passage", hall: "hall" };
+const badRestart = Object.entries(restarts).filter(([p, r]) => r.after !== p || r.room !== (ROOM[p] || "hangar") || (["robots", "form"].includes(p) ? !r.busy : !r.ctrl && !r.busy));
+g.check("↺ at each step starts that step again, in its room (and in a cutscene, that part)", badRestart.length === 0, restarts);
+g.check("the chapter reset clears the loading bay", await page.evaluate(() => ((window.__ss.op.ch1Bay = { step: "form" }), window.SSQ.engine().resetChapter(), window.__ss.op.ch1Bay == null)));
+
+// ---------- the hand-overs: the evening's start() after 36; its startStorm() after 36b ----------
+const hand = await page.evaluate(() => {
   const ss = window.__ss,
     n = ss.op,
     beat = window.SSQ.beat("ch1-bay"),
     called = [];
-  // a stand-in for the evening's module (beats 37 to 42, its own branch): only its start is asked for
-  window.SSQ.beat("ch1-evening") || window.SSQ.registerBeat("ch1-evening", { start: () => called.push({ room: n.room, step: n.ch1Step }) });
+  const had = window.SSQ.beat("ch1-evening");
+  const stand = { start: () => called.push({ k: "start", room: n.room }), startStorm: () => called.push({ k: "storm", room: n.room }) };
+  had ? Object.assign(had, stand) : window.SSQ.registerBeat("ch1-evening", stand);
   n.q = [];
   n.cur = null;
   ss.ch1JumpBeat(29);
-  beat.jump("home");
-  for (let i = 0; i < 3000 && beat.active(); i++) (ss.tick(0.05), n.cur && n.cur.k === "bub" && ((n.bt = 1), ss.opTap()));
-  return { called, active: beat.active(), step: n.ch1Step };
+  beat.jump("walkby");
+  window.__bayDrive({ frames: 3000 });
+  const afterBay = called.slice();
+  // the evening calls the hall sneak after its photo wall
+  beat.startHallSneak();
+  window.__bayDrive({ frames: 600 });
+  return { afterBay, all: called, active: beat.active() };
 });
-g.check("36 ends in the hallway and hands over to the evening's start() when that beat is there (not the older program's step)", evening.called.length === 1 && evening.called[0].room === "passage" && !evening.active && evening.step !== "photos", evening);
-
-// ---------- Brian's notes on the first video (2026-11-26) ----------
-const notes = await page.evaluate(({ BAY, HALLWAY }) => {
-  const ss = window.__ss,
-    n = ss.op,
-    e = window.SSQ.engine(),
-    beat = window.SSQ.beat("ch1-bay"),
-    out = {};
-  const cv = document.querySelector("canvas"),
-    cx = cv.getContext("2d"),
-    px = (x, y) => {
-      const m = cx.getTransform();
-      return [...cx.getImageData(Math.round(m.a * x + m.e), Math.round(m.d * y + m.f), 1, 1).data];
-    };
-  const run = (s) => {
-    for (let i = 0; i < s / 0.05; i++) (ss.tick(0.05), n.cur && n.cur.k === "bub" && ((n.bt = 1), ss.opTap()));
-  };
-  // 0:08.7, "If he's hiding, he should be in the ball": behind the counter (beat 28) and behind the crates (the lunch)
-  const balls = [],
-    keep = e.ball.drawOn;
-  e.ball.drawOn = (ctx, x, y, k) => (balls.push({ x: Math.round(x), y: Math.round(y) }), keep(ctx, x, y, k));
-  n.q = [];
-  n.cur = null;
-  ss.ch1JumpBeat(28);
-  ss.tick(0.05);
-  balls.length = 0;
-  ss.drawFrame();
-  out.counter = { balls: balls.slice(), sq: { x: n.sq.x, y: n.sq.y } };
-  n.q = [];
-  n.cur = null;
-  ss.ch1JumpBeat(22);
-  window.SSQ.beat("ch1-lunch").jump("door");
-  ss.tick(0.05);
-  balls.length = 0;
-  ss.drawFrame();
-  out.crate = { balls: balls.slice(), sq: { x: n.sq.x, y: n.sq.y }, hideAt: n.ch1Lunch.hideAt, eyes: !!(window.SSQ.beat("ch1-lunch").debug().drew || {}).eyes };
-  e.ball.drawOn = keep;
-  // 0:14.8, Mops's horns behind the hallway's photo: Mops's head on the photo's top-left corner is drawn in front of it
-  n.q = [];
-  n.cur = null;
-  ss.ch1JumpBeat(37);
-  // (the room's fade in ends first)
-  for (let i = 0; i < 40; i++) ss.tick(0.05);
-  Object.assign(n, { moPose: "stand", ctrl: false });
-  Object.assign(n.mo, { x: 694, y: 166, f: 1, moving: false });
-  // (white fur counted over his head's patch, with him there and without: the photo under it has sky and its own Mops)
-  const whites = () => {
-    ss.drawFrame();
-    let w = 0;
-    for (let dy = -12; dy <= 12; dy += 3) for (let dx = -12; dx <= 12; dx += 3) ((p) => p[0] > 245 && p[1] > 245 && p[2] > 245 && w++)(px(730 + dx, 104 + dy));
-    return w;
-  };
-  const withMops = whites();
-  n.moPose = "hidden";
-  const without = whites();
-  out.wall = { withMops, without, photoDrawn: !!window.SSQ.beat("ch1-lunch").debug().wall };
-  // 0:32, the ramp goes back up into the ship before the ship leaves; no ship, no ramp
-  n.q = [];
-  n.cur = null;
-  ss.ch1JumpBeat(29);
-  beat.jump("shake");
-  const seq = [];
-  for (let i = 0; i < 2000 && beat.debug().state.step === "shake"; i++) {
-    run(0.05);
-    const s = beat.debug().state;
-    seq.push([s.ship, s.ramp]);
-  }
-  out.leave = { rampGoneWhileShip: seq.some(([sh, r]) => r === 0 && sh === 1), shipWithRamp: seq.some(([sh, r]) => sh < 1 && r > 0), end: seq[seq.length - 1], docked: beat.docked() };
-  // 0:33.2, the robots roll under the scanner arch (its bar stays in front of them) and its field shimmers as they pass
-  n.q = [];
-  n.cur = null;
-  ss.ch1JumpBeat(29);
-  beat.jump("robots");
-  let shimmer = 0,
-    over = null;
-  for (let i = 0; i < 400 && beat.debug().state.step === "robots"; i++) {
-    ss.tick(0.05);
-    ss.drawFrame();
-    const d = beat.debug(),
-      r = d.state.robots.find((q) => q.show && Math.abs(q.x - 465) < 6 && q.y > 330 && q.y < 372);
-    d.drew && d.drew.shimmer && shimmer++;
-    r && !over && (over = { bar: px(465, 314), robotFeet: r.y });
-  }
-  for (let i = 0; i < 20; i++) ss.tick(0.05);
-  ss.drawFrame();
-  out.arch = { shimmer, over, barAlone: px(465, 314) };
-  // 1:37.2, the hallway robots: the bay's size next to the people there, on the floor, not on the office door
-  n.q = [];
-  n.cur = null;
-  ss.ch1JumpBeat(29);
-  beat.jump("home");
-  let seen = null;
-  for (let i = 0; i < 2000 && beat.active() && !seen; i++) {
-    run(0.05);
-    ss.drawFrame();
-    const d = beat.debug().drew;
-    d && d.room === "passage" && d.robots && d.robots.length === 2 && (seen = d.robots);
-  }
-  out.hallway = seen;
-  return out;
-}, { BAY, HALLWAY });
-const near = (b, p) => b.some((q) => Math.abs(q.x - p.x) < 4 && Math.abs(q.y - p.y) < 40);
-g.check("behind the counter (beat 28) he is the L2 ball, not standing or squashed", near(notes.counter.balls, notes.counter.sq), notes.counter);
-g.check("behind the crates (the lunch sneak) he is the L2 ball, and no eyes are drawn", notes.crate.hideAt === "crate" && near(notes.crate.balls, notes.crate.sq) && !notes.crate.eyes, notes.crate);
-g.check("in the hallway Mops's head is drawn in front of the Employee of the Month photo (his white fur shows over it)", notes.wall.photoDrawn && notes.wall.withMops - notes.wall.without >= 15, notes.wall);
-g.check("the ship leaves: its ramp goes back up first; never a ship gone with its ramp still down; then no ship and no ramp (the scanner's posts not solid)", notes.leave.rampGoneWhileShip && !notes.leave.shipWithRamp && notes.leave.end[0] === 0 && notes.leave.end[1] === 0 && !notes.leave.docked, notes.leave);
-g.check("the robots roll under the scanner arch: its bar is drawn in front of a robot passing under it, and its field shimmers", notes.arch.shimmer > 0 && !!notes.arch.over && notes.arch.over.bar.slice(0, 3).join() === notes.arch.barAlone.slice(0, 3).join(), notes.arch);
-const ratio = (await import(join(root, "src", "modules", "room-sizes.js"))).adultPxFor;
-const kHall = ratio("passage") / ratio("hangar"),
-  door = HALLWAY.officeDoor,
-  hit = (a, b) => a.x0 < b.x1 && a.x1 > b.x0 && a.y0 < b.y1 && a.y1 > b.y0;
-g.check("the hallway robots are the bay's size next to the people there, stand on the floor and are not on the office door", !!notes.hallway && notes.hallway.every((r) => Math.abs(r.k - kHall) < 0.01 && !hit(r.box, door) && r.y > 256 && r.y < 600), { kHall, robots: notes.hallway });
+g.check("36 ends in the hallway with the evening's start() when that beat is there", hand.afterBay.length === 1 && hand.afterBay[0].k === "start" && hand.afterBay[0].room === "passage", hand);
+g.check("36b, started by the evening (startHallSneak), ends at the snack counter with the evening's startStorm()", hand.all.length === 2 && hand.all[1].k === "storm" && hand.all[1].room === "hall" && !hand.active, hand);
 
 // ---------- the old code is gone ----------
-const game = readdirSync(join(root, "src", "game")).map((f) => readFileSync(join(root, "src", "game", f), "utf8")).join("\n");
+const game = readdirSync(join(root, "src", "game")).map((fl) => readFileSync(join(root, "src", "game", fl), "utf8")).join("\n");
 const old = ["function ch1HideBay", "function ch1BayLines", "function ch1AtDelivery", "So futuristic and we still order on paper.", "Isfred! A crate is damaged in the mail room."].filter((s) => game.includes(s));
 g.check("the old beats 28 to 36 code is gone from src/game", old.length === 0, old);
 g.check("no page errors", errors.length === 0, errors.slice(0, 5));

@@ -478,7 +478,8 @@ export function createLoadingBay(bridge) {
           let all = true;
           b.robots.forEach((r, i) => {
             if (r.done) return;
-            if (e.time() - b.t0 < i * 0.7) return void (all = false);
+            // (the far one first, so nobody rolls through a robot already standing in its place)
+            if (e.time() - b.t0 < (b.robots.length - 1 - i) * 0.7) return void (all = false);
             if (!r.show) ((r.show = true), (r.x = BAY.shipDoor.x), (r.y = BAY.shipDoor.y), (r.f = 0), e.sfx("bleep"));
             along(r, [BAY.rampFoot, BAY_SPOTS.robots[i]], P.robot, dt) && ((r.done = true), (r.f = 2));
             if (!r.done && r.y < BAY.rampFoot.y - 1) r.f = 0;
@@ -655,7 +656,7 @@ export function createLoadingBay(bridge) {
           b.robots.forEach((r, i) => {
             if (!r.show) return;
             if (e.time() - b.t0 < [0, 1.6, 0.6][i]) return void (all = false);
-            const way = i === 0 ? [BAY_SPOTS.behindMops[1], BAY_SPOTS.behindMops[0], BAY.door.step, BAY.door, BAY.door.off] : [...BAY_SPOTS.robotsOut, BAY.door.step, BAY.door, BAY.door.off];
+            const way = i === 0 ? [BAY_SPOTS.behindMops[1], BAY_SPOTS.behindMops[0], BAY.door.step, BAY.door, BAY.door.off] : [{ x: r.x, y: BAY_SPOTS.robotsOut[0].y }, ...BAY_SPOTS.robotsOut, BAY.door.step, BAY.door, BAY.door.off];
             along(r, way, P.robot, dt) && (r.show = false);
             all = all && !r.show;
           });
@@ -868,7 +869,23 @@ export function createLoadingBay(bridge) {
   // ---------- sight and the one capture rule (the bay's sneak, the hallway, the hall) ----------
   // Squatch's drawn outline at this room's size (the hall's outline scaled round his feet), as the cones see him.
   function outlineSees(c, sq, k) {
-    for (const [ox, oy] of SQUATCH_OUTLINE) if (distToCone(sq.x + ox * k, sq.y + oy * k, c.ox, c.oy, c.a, c.half, c.len) <= 0) return true;
+    for (const [ox, oy] of SQUATCH_OUTLINE) {
+      const x = sq.x + ox * k,
+        y = sq.y + oy * k;
+      if (distToCone(x, y, c.ox, c.oy, c.a, c.half, c.len) <= 0 && !plantBetween(c.ox, c.oy, x, y)) return true;
+    }
+    return false;
+  }
+  // In the party hall the plants block sight (36b): a look that passes through a plant's leaves or pot stops there.
+  function plantBetween(x0, y0, x1, y1) {
+    if (room() !== "hall") return false;
+    for (const pl of HALL.plants)
+      for (const L of [pl.leaves, pl.pot])
+        for (let i = 1; i < 12; i++) {
+          const x = x0 + ((x1 - x0) * i) / 12,
+            y = y0 + ((y1 - y0) * i) / 12;
+          if (x > L.x0 && x < L.x1 && y > L.y0 && y < L.y1) return true;
+        }
     return false;
   }
   const outlineK = () => (room() === "hall" ? 1 : SQ_K(room()) / E().hallSizes().squatch);
@@ -1090,8 +1107,11 @@ export function createLoadingBay(bridge) {
       }
       r.streak.push({ x: r.x, y: r.y + 4 });
       r.streak.length > 40 && r.streak.shift();
+      // the first grey streak Mops walks by: he looks at it and shakes his head (the Mop-Off's setup, no words)
+      if (!h.shookAt && r.streak.some((q) => Math.hypot(q.x - m.x, q.y - m.y) < 40)) h.shookAt = h.t;
       b.people[r.id] && Object.assign(b.people[r.id], { x: r.x, y: r.y, hx: r.x, hy: r.y });
     }
+    if (h.shookAt && h.t - h.shookAt < 0.9) e.face("mops", Math.floor((h.t - h.shookAt) / 0.15) % 2 ? 1 : -1);
     // the snack counter's front: the storm (38a) begins
     if (free && !b.alarm && Math.hypot(s.x - HALL_SNEAK.goal.x, s.y - HALL_SNEAK.goal.y) < HALL_SNEAK.goal.r) hallDone();
   }
