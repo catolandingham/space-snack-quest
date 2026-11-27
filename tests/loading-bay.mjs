@@ -249,9 +249,10 @@ const homeIn = await page.evaluate(() => {
   n.cur = null;
   beat.jump("walkby");
   for (let i = 0; i < 400 && !(n.ctrl && n.room === "passage"); i++) ss.tick(0.05);
-  return { room: n.room, x: Math.round(n.sq.x), y: Math.round(n.sq.y), mo: Math.round(n.mo.x) };
+  return { room: n.room, x: Math.round(n.sq.x), y: Math.round(n.sq.y), mo: Math.round(n.mo.x), moY: Math.round(n.mo.y) };
 });
-g.check("36: on the walk home Squatch and Mops come into the hallway inside its walk bounds (x 60 to 900)", homeIn.room === "passage" && homeIn.x >= 60 && homeIn.x <= 900 && homeIn.mo <= 900, homeIn);
+// (and not on each other: the kid-play robot counts Mops as 46 either way round his feet)
+g.check("36: on the walk home Squatch and Mops come into the hallway inside its walk bounds (x 60 to 900), side by side, not on each other", homeIn.room === "passage" && homeIn.x >= 60 && homeIn.x <= 900 && homeIn.mo <= 900 && (Math.abs(homeIn.x - homeIn.mo) > 52 || Math.abs(homeIn.y - homeIn.moY) > 52), homeIn);
 
 // ---------- 36: too slow at the office door ----------
 const slow = await page.evaluate(() => {

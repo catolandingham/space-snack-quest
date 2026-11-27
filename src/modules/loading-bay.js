@@ -767,7 +767,7 @@ export function createLoadingBay(bridge) {
         e.enterRoom("passage", "QB");
         // (inside the hallway's walk bounds, x 60 to 900: the player steers from here)
         e.place("sq", HALLWAY.exitRight, HALLWAY.right.y);
-        e.place("mops", HALLWAY.exitRight - 30, HALLWAY.right.y + 34);
+        e.place("mops", HALLWAY.exitRight - 70, HALLWAY.right.y + 40); // (beside him, not on him)
         e.face("sq", -1);
         e.face("mops", -1);
         const b = B();
