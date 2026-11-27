@@ -1001,7 +1001,7 @@ if (which === "day1end") {
   // a line, a card or a picture with words: read it, then NEXT (a picture that plays by itself is left alone)
   const readIt = async (q) => {
     const auto = await page.evaluate(() => !!(window.__ss.op.cur && window.__ss.op.cur.auto));
-    if (auto) return;
+    if (auto) return void (await sleep(200));
     await sleep(q.cur === "cutaway" ? 2600 : 1500);
     await next();
     await sleep(250);
@@ -1038,7 +1038,7 @@ if (which === "day1end") {
   }
   await sleep(1200);
   // the bucket (outlined), WRING · beard, the pictures, then the fur
-  for (let i = 0; i < 600; i++) {
+  for (const end = Date.now() + 300000; Date.now() < end; ) {
     const q = await st(),
       m = await more(),
       c = m.clean;
