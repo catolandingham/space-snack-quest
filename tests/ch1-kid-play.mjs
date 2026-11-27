@@ -113,6 +113,8 @@ const st = () =>
       zoomKey: n.ch1Zoom ? [n.ch1Zoom.id, n.ch1Zoom.bag || 0, n.ch1Packed || 0].join(":") : "",
       jailBy: n.jailBy || "",
       step: n.ch1Step || "",
+      // (pickup day's crate two: "row", "going", "carry", then "scan", "up", "done"; src/modules/pickup.js sneakTick)
+      pkTwo: (() => { const b = window.SSQ && window.SSQ.beat("ch1-pickup"); const l = b && b.active() && n.ch1Pickup; return l ? l.two || "" : ""; })(),
       // The party's full-screen dress-up (src/modules/party.js): the pieces in the closet and the body spots.
       dress: window.SSQ && window.SSQ.beat("ch1-party") ? window.SSQ.beat("ch1-party").dressTargets() : null,
       placed: ss.placedSpots().map((s) => ({ id: s.id || "", verb: s.verb || "", cap: s.cap || "", x: Math.round(s.x || 0), y: Math.round(s.y || 0), r: s.r || 0 })),
@@ -130,6 +132,10 @@ const st = () =>
 
 // What the robot can see of danger: any cone on screen, with a little room to spare.
 const inDanger = (s, x, y) => {
+  // While the player is Mops nobody's look can catch him (the one capture rule is Squatch's): pickup day's robots work
+  // round him in the bay. Before 2026-11-27 the robot kept Mops out of their cones too, found no safe way to Squatch's
+  // crate (beat 55, "Mops: get to Squatch's crate") and wandered until its time ran out.
+  if (s.mops) return false;
   for (const c of s.cones) {
     // Mops's cone of hearts at closing time is not someone who could catch him.
     if (c.heart) continue;
@@ -526,7 +532,10 @@ while (now() < MAX_S) {
   // is the goal itself: ROLL_STEPS)
   // (the steps where rolling up is the goal: behind the bay's cargo, the hairball in the hallway, the evening's robot
   // in the hallway, the escape night's wait by the vent)
-  const ROLL_STEPS = ["bay-cargo", "bay-walkby", "ev-dodge", "es-ball"];
+  // (and pickup day's climb-out, 55, where he comes out of his crate beside the robots: rolled up he waits for them to
+  // carry crate two to the ramp, as the showing tool does; before 2026-11-27 the robot never rolled there and was caught
+  // the moment it stepped away)
+  const ROLL_STEPS = ["bay-cargo", "bay-walkby", "ev-dodge", "es-ball", "pk-sneak"];
   // (and wherever the game offers the ball because he has just been seen, its hot ROLL · ball: the escape's bay at night,
   // "es-ball-any". Before 2026-11-27 the robot left that alone too, so in beat 47 every sighting ran on to the guard and
   // the LOCKUP card: caught 39 times from KID_START=bay:pa)
@@ -542,7 +551,10 @@ while (now() < MAX_S) {
   const coverOnly = (v) => luDoor && (v.startsWith("HIDE") || v === "ROLL · ball");
   // The escape's close-ups: the office keypad (type the number on the pink slip beside it, one key at a time), the
   // snack site (its big button), the snack counter (each snack in turn).
-  if (s.esc) {
+  // (when the step has moved on with its close-up still open, the booked crate's TAKE · label, the button is pressed
+  // as anywhere: before 2026-11-27 the robot waited here for a tap it had no rule for, 75 s, and stopped)
+  const escTap = s.esc && (s.esc.step === "pad" || s.esc.step === "note" || s.esc.step === "site" || ((s.esc.step === "snacks" || s.esc.step === "food") && !s.esc.carry && s.esc.snacks.length));
+  if (s.esc && (escTap || !s.btn || s.btn === "ACTION")) {
     const E = s.esc;
     if (E.step === "pad") {
       const d = SLIP_CODE[E.typed.length] || SLIP_CODE[0];
@@ -628,6 +640,13 @@ while (now() < MAX_S) {
     }
   }
   // Hidden (or rolled up) with a cone on screen: stay put, the way a kid holds still while someone is looking.
+  // Pickup day's climb-out (55): he comes out of his crate beside the new robots. Rolled up, he waits (as the showing
+  // tool does, and a careful kid) until they have carried crate two to the ramp, then goes. (Before 2026-11-27 the 20 s
+  // limit below unrolled him beside them, and he was caught again and again.)
+  if (s.step === "pk-sneak" && s.pose === "ball" && ["row", "going", "carry"].includes(s.pkTwo)) {
+    await sleep(250);
+    continue;
+  }
   if ((s.pose === "hidden" || s.pose === "under" || s.pose === "ball") && (s.cones.length || (s.party && s.party.alarm)) && Date.now() - (hidAt || (hidAt = Date.now())) < 20000) {
     await sleep(250);
     continue;
@@ -683,7 +702,9 @@ while (now() < MAX_S) {
         await sleep(150);
         s2 = await st();
         // (or the step moved on: the vent's tunnel ends where its far end is reached, into the room, 48)
-        if (!s2.ctrl || s2.up || s2.scene !== s.scene || s2.step !== s.step) { got = true; break; }
+        // (or he went through the doorway he was sent to: the room changed; until 2026-11-27 the robot then read his
+        // place in the next room, the hallway's (860, 332), as stopped short of the bay's doorway)
+        if (!s2.ctrl || s2.up || s2.scene !== s.scene || s2.step !== s.step || s2.room !== s.room) { got = true; break; }
         // (a doorway with no button is reached only by walking into it: "".startsWith is always true, so it waits for
         // the walk; stepping in before it ended stopped him short of the lunch sneak's hallway doorway every time)
         if ((p.verb && s2.btn.startsWith(p.verb)) || Math.hypot(s2.x - p.x, s2.y - p.y) < Math.max(40, (p.r || 0) - 10)) { got = true; break; }
