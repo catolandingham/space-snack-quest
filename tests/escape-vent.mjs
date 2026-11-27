@@ -186,6 +186,11 @@ const run = await page.evaluate(
     out.out.tick = tickMark;
     out.out.folded = S().folded;
     out.words = d().words;
+    // 50: walking out of the bay, Mops a step behind him never boxes him in: a tap finds a way round the bay's things
+    until(() => S().step === "tohall" && n.ctrl, 8);
+    ss.drawFrame();
+    ss.tapAt(300, 560, false);
+    out.walkOut = { step: S().step, path: !!(n.walkTo && n.walkTo.path && n.walkTo.path.length), walkTo: n.walkTo, ctrl: n.ctrl, cur: n.cur && n.cur.k, sq: [n.sq.x, n.sq.y], mo: [n.mo.x, n.mo.y], room: n.room };
     } catch (err) {
       out.err = String(err.stack).slice(0, 600);
     }
@@ -216,6 +221,7 @@ g.check("48: TAKE · pink slip: close, then his lines", o.slip.chip === W["chip-
 g.check("49: out in the bay, the slip in his mouth; the switch to Squatch announced; \"Mmf! Mmf mmf!\", \"You're gumbling again!\", the thought", o.out.slip === "mops" && JSON.stringify(o.slip.said.slice(3)) === JSON.stringify(["You are SQUATCH now.", ...w("mops-mmf", "sq-gumbling"), W["sq-get-it"] + " (whisper)"]) && o.out.playing === "sq", { said: o.slip.said, out: o.out });
 g.check("49: GRAB · pink slip; the fold (paw print inside); \"Got it! The code is on there.\", \"I'll carry it.\"; the plan's tick on the door", o.out.chip === W["chip-grab"] && o.out.press === W["button-grab"] && o.out.fold && o.out.folded && JSON.stringify(o.out.after) === JSON.stringify(w("mops-got-it", "sq-carry")) && o.out.tick, o.out);
 g.check("the close-ups show their words (the board, the flyers, MARS, NO, TOYS, the note and its signature, the stubs)", ["IDEAS FOR GUARDIANS", "HAVE YOU SEEN?", "MARS", "NO", "TOYS", W["note-2"], W["note-3"], W["note-sign"], W["blank-tag"]].every((x) => (o.words || []).includes(x)), o.words);
+g.check("50: out of the bay, a tap on the floor finds a way round (Mops behind him is not in the way)", o.walkOut && o.walkOut.step === "tohall" && o.walkOut.path, o.walkOut);
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();
 await g.finish("escape-vent");

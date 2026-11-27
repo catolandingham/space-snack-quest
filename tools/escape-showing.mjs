@@ -252,6 +252,23 @@ if (which === "escape") {
       } else await sleep(200);
       continue;
     }
+    // the bay at night (47): sneak round the robot the way a careful kid does: down the left side while it goes right,
+    // along the front (its cone never reaches that low), up the gap by the mail room while it goes left; rolled up
+    // after an alarm, a tap on the floor unrolls him once it is over
+    if (es.step === "sneak" && s.room === "hangar" && es.robot) {
+      const r = es.robot,
+        P = { x: s.x, y: s.y },
+        // (the bay's taps go through the game's own tap: a finger tap there did not always start the walk in the recorder)
+        go = async (x, y) => Date.now() - tapAt > 700 && ((tapAt = Date.now()), await page.evaluate(([x, y]) => (window.__ss.drawFrame(), window.__ss.tapAt(x, y, false)), [x, y]));
+      if (Date.now() - (globalThis.__lastLog || 0) > (+process.env.SHOWING_LOG_MS || 8000)) ((globalThis.__lastLog = Date.now()), log("bay " + JSON.stringify({ x: Math.round(P.x), y: Math.round(P.y), pose: s.pose, r: [Math.round(r.x), r.f, r.phase], guard: !!es.guard, cur: s.cur, ctrl: s.ctrl })));
+      if (s.pose === "ball") (!es.guard && r.phase === "patrol" && (await go(P.x + 30, P.y)), await sleep(200));
+      else if (P.y < 560 && P.x < 600) r.f > 0 || P.x > 90 ? await go(P.x < 120 ? 70 : P.x, 585) : await sleep(150);
+      else if (P.x < 630) await go(636, 585);
+      else if (P.y > 340) r.f < 0 || P.y < 560 ? await go(636, 330) : await sleep(150);
+      else await go(846, 322);
+      await sleep(120);
+      continue;
+    }
     // the next place to be: the goal's spot (a few optional ones first)
     let list = await spots();
     const pick = (id) => list.find((q) => q.id === id);

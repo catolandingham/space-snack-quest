@@ -395,7 +395,9 @@ export function createEscape(bridge) {
     // Mops behind Squatch, along his trail
     if (who === "sq" && e.get("moPose") !== "hidden" && l.trail) {
       const to = followStep(l.trail, p, e.pos("mops"));
-      e.moWalking(!!to);
+      // (a follower is never solid: standing a step behind him, he would box Squatch in and a tap's walk would find
+      // no way round; found recording the walk out of the bay, 2026-11-26)
+      e.moWalking(true);
       to ? e.step("mops", to.x, to.y, FOLLOW.speed, dt) : e.still("mops");
     }
     // a guest in the hall by day waves at Mops
@@ -545,6 +547,7 @@ export function createEscape(bridge) {
   function toBay() {
     const e = E();
     go("sneak", { route: "vent", trail: freshTrail(), night: true });
+    e.moWalking(true); // (he follows: never solid, see walkTick)
     e.set("ch1Night", true);
     control("chip-sneak");
   }
@@ -805,6 +808,7 @@ export function createEscape(bridge) {
   function toHallway() {
     const e = E();
     go("tohall", { route: "office", trail: freshTrail() });
+    e.moWalking(true); // (he follows: never solid, see walkTick)
     control("chip-door");
   }
   // TYPE · code: the keypad, close, with the folded slip beside it (its pen corner showing; a tap makes it bigger)
@@ -970,6 +974,7 @@ export function createEscape(bridge) {
   function toBar() {
     const e = E();
     go("tobar", { route: "bar", trail: freshTrail(), door: true });
+    e.moWalking(true); // (he follows: never solid, see walkTick)
     control("chip-bar");
   }
   // behind the counter: Mops breaks his own one-snack rule
@@ -1024,6 +1029,7 @@ export function createEscape(bridge) {
   function toHome() {
     const e = E();
     go("gohome", { route: "homeN", trail: freshTrail(), heartsAt: -1 });
+    e.moWalking(true); // (he follows: never solid, see walkTick)
     control("chip-home-night");
   }
   function arriveNight(d) {
