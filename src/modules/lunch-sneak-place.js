@@ -49,6 +49,13 @@ export const WATCHERS = Object.freeze([
 // (its clock starts as they come into the hall: it is looking at the counter as Squatch ducks, and turns away as Mops's
 // picture bubble ends, so TAKE · snack first comes up as he looks away)
 export const COUNTER_WATCHER = Object.freeze({ id: "robot", x: 742, y: 500, away: Math.PI, look: 0.02, at: 3.2, guards: "snack" });
+/**
+ * Beat 28's walk out (Brian 2026-11-27, finish plan: "one lunch guest's cone sweeps toward the doorway now and then, so
+ * standing up at the wrong moment can get him caught"; r5 0:20): while Squatch waits behind the counter to walk out, the
+ * counter's watcher keeps its rhythm but its look turns up and right, over the top of the counter's aisle and the way
+ * to the hallway doorway. Its "?" warns a turn as always. Ducked in the aisle he stays hidden. PLACEHOLDER angle.
+ */
+export const COUNTER_WATCHER_WALKOUT = Object.freeze({ ...COUNTER_WATCHER, look: -0.78 });
 
 /**
  * Guests milling around (Brian 2026-11-26, lunch note 0:38: "maybe one or two more folks milling around"): each walks
