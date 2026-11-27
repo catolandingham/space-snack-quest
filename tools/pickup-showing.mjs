@@ -197,7 +197,7 @@ if (which === "pickup") {
   for (;;) {
     if (Date.now() > end) await fail("ran out of time");
     const s = await st();
-    if (!s.active && lastStep && !s.cur) break;
+    if ((!s.active && lastStep && !s.cur) || (s.cur === "panel" && s.id === "tally")) break;
     const step = s.es && s.es.step;
     if (step && step !== lastStep) ((lastStep = step), log(step), await sleep(300), await still(step));
     if (["bub", "card", "cutaway"].includes(s.cur)) {
@@ -251,8 +251,8 @@ if (which === "pickup") {
     if (!close && Date.now() - tapAt > 700) ((tapAt = Date.now()), await at(sp.x, sp.y));
     await sleep(120);
   }
-  await sleep(1500);
-  await still("after");
+  await sleep(2500);
+  await still("tally");
   log("pickup day shown");
 } else {
   await until((s) => s.act.startsWith("CLIMB"), 15000);

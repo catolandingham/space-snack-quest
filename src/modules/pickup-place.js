@@ -120,13 +120,14 @@ export const PK_BAY = Object.freeze({
     Object.freeze({ kind: "his", x: 894, y: 560 }),
   ]),
   mailIn: Object.freeze({ x: 700, y: 462 }), // the mail room's opening
-  pushTo: Object.freeze({ x: 848, y: 600 }), // where Mops leaves his crate (it goes to the row's third place)
+  pushTo: Object.freeze({ x: 848, y: 584 }), // where Mops leaves his crate (it goes to the row's third place)
   pushR: 40,
-  knockAt: Object.freeze({ x: 850, y: 604 }),
+  knockAt: Object.freeze({ x: 850, y: 584 }),
   knockR: 56,
   bleatAt: Object.freeze({ x: 706, y: 470 }), // Mops at the opening, left of the robots
   bleatR: 50,
-  climbOut: Object.freeze({ x: 914, y: 606 }),
+  climbOut: Object.freeze({ x: 884, y: 584 }), // (in the bay's walking bounds: x up to 900, y up to 590)
+  mopsAside: Object.freeze({ x: 612, y: 560 }), // after his bleat Mops steps out of the mail room's opening (he is solid to Squatch)
   // the robots: where the old three stand in a line by the ramp, where the two new ones work
   oldLine: Object.freeze([Object.freeze({ x: 600, y: 470 }), Object.freeze({ x: 640, y: 500 }), Object.freeze({ x: 680, y: 530 })]),
   botsBack: Object.freeze([Object.freeze({ x: 770, y: 606 }), Object.freeze({ x: 800, y: 580 })]),

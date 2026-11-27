@@ -613,7 +613,9 @@ export function createPickup(bridge) {
       by(3),
       ...sayP("robot", "bot-replaced"),
       ...sayP("robot", "bot-stop-helping"),
-      e.run(() => asSquatch("switch-out", () => (go("climb"), control("chip-climb")))),
+      // Mops steps out of the opening, so the way out of the mail room is clear
+      ...bridgeWalk("mops", [PK_BAY.mopsAside]),
+      e.run(() => (e.face("mops", 1), asSquatch("switch-out", () => (go("climb"), control("chip-climb"))))),
     ]);
   }
   function climbOut() {
@@ -961,6 +963,7 @@ export function createPickup(bridge) {
     l.things = null;
     l.bots = [Object.assign(robot("r0", "new", PK_BAY.rampBot, -1), { a: Math.PI * 0.92 }), robot("old0", "old", { x: 760, y: 520 }, 1), robot("old1", "old", { x: 820, y: 600 }, 1)];
     l.box = { x: PK_BAY.rampTop.x, y: PK_BAY.rampTop.y, where: "ramp" };
+    l.trail = freshTrail();
     go("pickbox");
     control("chip-box58");
   }
@@ -1085,7 +1088,8 @@ export function createPickup(bridge) {
     e.set("ch1Office", true);
     e.set("sqPose", "hidden");
     e.set("moPose", "hidden");
-    e.place("sq", -400, -400);
+    // (nobody of theirs is in the office; Squatch's place, hidden, is where the tape's big button works)
+    e.place("sq", 480, 560);
     e.place("mops", -400, -400);
     go("photo", { place: "", bots: [], box: null, cu: noFrame === true ? "" : "frame", cuAt: e.time() });
     L().t0 = 0;
@@ -1247,6 +1251,12 @@ export function createPickup(bridge) {
       l.box.y >= PK_BAY.box.y && Object.assign(l.box, { ...PK_BAY.box, where: "floor" });
     }
     if (l.step === "toscan" && free && at(e.pos("sq"), PK_BAY.archFront, 50)) heldAtRamp();
+    // 58: Mops stays a step behind him in the bay until the scanner (he carries the mail)
+    if (free && (l.step === "pickbox" || l.step === "toscan") && l.trail && e.get("moPose") !== "hidden") {
+      const to = followStep(l.trail, e.pos("sq"), e.pos("mops"));
+      e.moWalking(true);
+      to ? e.step("mops", to.x, to.y, FOLLOW.speed, dt) : e.still("mops");
+    }
   }
 
   // ---------- spots ----------
@@ -1756,7 +1766,7 @@ export function createPickup(bridge) {
     e.place("mops", step === "warn" ? PK_BAY.door.x : step === "bleat" ? PK_BAY.bleatAt.x : PK_BAY.knockAt.x, step === "warn" ? PK_BAY.door.y + 60 : step === "bleat" ? PK_BAY.bleatAt.y : PK_BAY.knockAt.y);
     if (step === "warn" || step === "knock" || step === "bleat") return (go(step), control(step === "bleat" ? "chip-bleat-robot" : "chip-warn"));
     bots("new0", "new1").forEach((b) => ((b.f = -1), (b.a = Math.PI), (b.phase = "mops")));
-    e.place("mops", PK_BAY.bleatAt.x, PK_BAY.bleatAt.y);
+    e.place("mops", PK_BAY.mopsAside.x, PK_BAY.mopsAside.y);
     if (step === "climb") return (go("climb"), control("chip-climb"));
     if (step === "sneak") return climbOut();
     // home: the crate is on the ship; he walks home from the plant
