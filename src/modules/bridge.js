@@ -22,15 +22,18 @@ import { lastCutaway } from "./cutaway.js";
 import { SPEAKER } from "./morning.js";
 import { placeLabel } from "./cap-place.js";
 import { quietLine } from "./party-lines.js";
+import { quietBedtimeLine } from "./bedtime-story-lines.js";
+import { drawHomeMopBucket, lastHomeMopBucket } from "./mop-bucket.js"; // (bedtime branch, 2026-11-26: Mops's mop bucket)
 import { adultPxFor, doorAdultPx } from "./room-sizes.js";
 import { singingNow } from "./music-rules.js";
-import { keepInSpan, seeCue } from "./music-picks.js";
+import { keepInSpan, seeCue, visitNow, playSound, soundsPlayed, hushNow, hushKey, unhush } from "./music-picks.js";
 import { drawBubbleTail } from "./bubble-tail.js";
 import { createSpeechVoice } from "./speech-voice.js";
 import { drawCreditsButton, creditsTap, creditsShown } from "./credits.js";
 import { nightPicture, isNightNow, nightDrawn } from "./night-look.js";
 import { snackWord } from "./snack-name.js";
 import { drawStationStamp, crateStampDrawn } from "./crate-stamp.js";
+import { cakeChartDrawn } from "./cake-chart.js";
 
 /**
  * The game-state fields a rebuilt beat may write, through engine().set(field, value). Anything else it
@@ -54,10 +57,26 @@ export function createBridge() {
     const party = beats.get("ch1-party");
     return party && party.talker ? party.talker() : "";
   });
-  // At home, while the TV story is on the screen, the music's cue is "tv" (music-picks.js).
+  // At home, while the TV story is on the screen, the music's cue is "tv"; while the bedtime story plays, "bedtime"
+  // (music-picks.js: Joe's theme with its singing, 2026-11-26).
+  let musicCueNow = ""; // the cue the music last followed (refined), for tests
   const refineCue = (cue) => {
-    const tv = beats.get("ch1-tv-story");
-    return cue === "home" && tv && tv.showing && tv.showing() ? "tv" : cue;
+    // While a beat's alarm is on (the one capture rule: FUR!, the alarm, the search), no music; after it, the music
+    // stays quiet in this place until a visit to another place (music-picks.js hushNow; Brian 2026-11-26).
+    for (const [id, b] of beats) if (b.alarmOn && b.alarmOn()) return (hushNow(undefined, b.alarmKey ? b.alarmKey() : null, id), "");
+    // the part that had the alarm started again (its state is a new one: a restart after the LOCKUP card, or ↺): a new
+    // visit, so the music comes back
+    const h = hushKey();
+    if (h && h.owner) {
+      const b = beats.get(h.owner);
+      (!b || !b.alarmKey || b.alarmKey() !== h.key) && unhush();
+    }
+    if (cue !== "home") return cue;
+    const tv = beats.get("ch1-tv-story"),
+      bed = beats.get("ch1-bedtime-story");
+    // (the bedtime story's walk to bed and climb in are quiet: the TV story's music has ended with the film, and the
+    // bedtime music starts as Squatch asks; Brian 2026-11-26, video note 0:03)
+    return tv && tv.showing && tv.showing() ? "tv" : bed && bed.quietNow && bed.quietNow() ? "" : bed && bed.showing && bed.showing() ? "bedtime" : cue;
   };
   return Object.freeze({
     version: 1,
@@ -89,7 +108,7 @@ export function createBridge() {
     beatWrites() {
       return [...written];
     },
-    /** Brian's Floating in Space recording in the morning. See home-music.js. */
+    /** The morning's music at home (its pick in music-picks.js: Floating in Space). See home-music.js. */
     homeMusic,
     /**
      * The music element, every frame it plays: the file and stretch its cue plays, and how loud now (music-picks.js).
@@ -100,19 +119,44 @@ export function createBridge() {
     },
     /**
      * The one FUR alarm of Chapter 1 (Brian 2026-11-26, the red alert whoop: party-board-sounds.js BOARD.alarm), for
-     * the older program's alarm sound. True once played; false while sound is off (the older program then plays
-     * nothing either).
+     * the older program's alarm sound. The music stops with it (hushNow). True once played; false while sound is off
+     * (the older program then plays nothing either).
      */
     alarmSound() {
       const b = buses(engine);
       if (!b) return false;
+      // (the music stops with the alarm, and stays quiet here until another place: music-picks.js hushNow; the older
+      // program calls this each time its alarm sounds)
+      hushNow();
       BOARD.alarm({ c: b.ctx, o: b.fx }, b.ctx.currentTime + 0.01);
       return true;
     },
     /** The older program's music cue, every frame once its music has started: where the music is (music-picks.js). */
     musicCue(cue) {
-      seeCue(refineCue(cue));
+      seeCue((musicCueNow = refineCue(cue)));
       return cue;
+    },
+    /** Tests: the cue the music follows for the older program's cue `cue` (after the TV and bedtime stories'). */
+    refinedCue(cue) {
+      return refineCue(cue);
+    },
+    /** Tests: the cue the music follows now (after the TV story's and the bedtime story's), and where it is. */
+    musicNow() {
+      const v = visitNow();
+      return { ...v, visitCue: v.cue, cue: musicCueNow };
+    },
+    /**
+     * Plays one of the game's sounds that are not music by its name (music-picks.js SOUND_PICKS: Mops's bleat),
+     * at the effects level under the master volume. The same player as the morning's bleat (music-picks.js
+     * playSound); nothing plays while sound is off. True once asked for.
+     */
+    playSoundPick(name) {
+      const b = buses(engine);
+      return !!b && playSound(b.ctx, b.fx, name, b.ctx.currentTime + 0.05);
+    },
+    /** Tests: every sound pick asked for so far ({ name, at, started }). */
+    soundPicksPlayed() {
+      return soundsPlayed();
     },
     /** The morning's and home alone's made-up sounds (snoring, the ding-dong, mopping...). See morning-sound.js. */
     morningSound,
@@ -120,11 +164,12 @@ export function createBridge() {
     mix: MIX,
     /**
      * A speech bubble opens: its tick, and Mops's meh on his first line in a scene. His gentle lines
-     * ("You have me.", party-lines.js `quiet`) never get the meh. See morning-sound.js. Everyone else's speech gets
-     * a muffled "wah-wah" voice under it (never a sung line or a thought). See speech-voice.js.
+     * ("You have me.", party-lines.js `quiet`; his bedtime line, bedtime-story-lines.js) never get the meh. See
+     * morning-sound.js. Everyone else's speech gets a muffled "wah-wah" voice under it (never a sung line or a
+     * thought). See speech-voice.js.
      */
     bubbleSound(b, scene) {
-      morningSound.bubble(b, scene, homeMusic.debug().playing, quietLine(b));
+      morningSound.bubble(b, scene, homeMusic.debug().playing, quietLine(b) || quietBedtimeLine(b));
       speechVoice.speak(b);
     },
     /** The title screen's Credits button (drawn by the older program's title) and a tap on it. See credits.js. */
@@ -140,6 +185,16 @@ export function createBridge() {
     speakerBox() {
       return SPEAKER;
     },
+    /**
+     * (bedtime branch, 2026-11-26) Mops's mop bucket in the home room (Brian: "Let's go with it moving forward"), drawn
+     * over the painted bucket of the locked picture, under the people, and again over Squatch when he stands behind it.
+     * Returns its box, or null while not ready (the painted bucket shows). See mop-bucket.js.
+     */
+    drawHomeBucket(ctx, front) {
+      return drawHomeMopBucket(ctx, front, !!engine && isNightNow(engine.get));
+    },
+    /** Tests: where the home bucket was last drawn. */
+    homeBucketDrawn: lastHomeMopBucket,
     /** The full-screen cutaway (tests read what its last frame drew). See cutaway.js. */
     cutaway: Object.freeze({ last: lastCutaway }),
     /**
@@ -170,6 +225,8 @@ export function createBridge() {
     },
     /** Tests: the layers for the snack's name (the crate bed's stamp over the home pictures, the hall tin's lid). */
     crateStampDrawn,
+    /** Tests: the crayon chart over his bed, as the home pictures' layer last drew it (cake-chart.js). */
+    cakeChartDrawn,
     /** Register a rebuilt beat. Ids are unique; registering one twice is a mistake, so it throws. */
     registerBeat(id, beat) {
       if (typeof id !== "string" || !id) throw new Error("registerBeat needs an id");

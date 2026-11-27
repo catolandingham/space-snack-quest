@@ -3,21 +3,23 @@
 
 | Lines | Heading |
 | --- | --- |
-| 22–28 | # Chapter 1 lines for Brian |
-| 29–44 | ## Calendar revision, Nov 16 (PR 58, not live) |
-| 45–52 | ## Earlier chapter lines |
-| 53–67 | ## Goal chips |
-| 68–151 | ## What people say |
-| 152–163 | ## The snack's name (2026-11-26, question 86) |
-| 164–177 | ## Words painted on things |
-| 178–201 | ## Buttons |
-| 202–288 | ## Day 2 onward (beats 22–61), pending |
-| 289–296 | ## Ball hiding |
-| 297–304 | ## Off-screen lines, for Brian (playtest 12) |
-| 305–314 | ## Homework desk, approved Nov 16 |
-| 315–353 | ## Questions still open |
-| 354–391 | ## After the party: the cleanup and truth or fib (story pass 28-52, E2), pending |
-| 392–417 | ## Day 1 stand-ins, pending |
+| 24–30 | # Chapter 1 lines for Brian |
+| 31–43 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
+| 44–59 | ## Calendar revision, Nov 16 (PR 58, not live) |
+| 60–67 | ## Earlier chapter lines |
+| 68–82 | ## Goal chips |
+| 83–166 | ## What people say |
+| 167–178 | ## The snack's name (2026-11-26, question 86) |
+| 179–192 | ## Words painted on things |
+| 193–216 | ## Buttons |
+| 217–303 | ## Day 2 onward (beats 22–61), pending |
+| 304–311 | ## Ball hiding |
+| 312–319 | ## Off-screen lines, for Brian (playtest 12) |
+| 320–329 | ## Homework desk, approved Nov 16 |
+| 330–368 | ## Questions still open |
+| 369–406 | ## After the party: the cleanup and truth or fib (story pass 28-52, E2), pending |
+| 407–426 | ## Bedtime additions and the chart over his bed (story pass 28-52, E4), pending |
+| 427–452 | ## Day 1 stand-ins, pending |
 <!-- /section-index -->
 # Chapter 1 lines for Brian
 
@@ -25,6 +27,19 @@
 
 
 The rebuilt morning (2026-11-23, draft PR, waking up to Mops leaving) has its own numbered sheet: `docs/MORNING-LINES-FOR-BRIAN.md`. Its words replace the Nov 14 morning lines below where they differ.
+
+## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged)
+
+Every word of the bedtime story is in `src/modules/bedtime-story-lines.js`; these are the lines that changed or were added on 2026-11-26.
+
+| Who | Line | Status |
+| --- | --- | --- |
+| Squatch, in bed, before the story pictures | Tell me about when we first met? | Approved word for word, Brian 2026-11-26 (his video note 0:12) |
+| The old crate story's captions and bubbles (the crate caption renamed with the snack, question 86: "A delivery crate of Stars Cakes came to Stormtop."), the crate's stamp (now the family crate's worn "_ARS CAKES", no crayon yet: "The snack's name" below), the "!" and "z z z" marks, the mop bucket picture's "Tourists were coming! Mops hid him in the mop bucket." and "Nothing to see here!" | (as in `bedtime-story-lines.js`) | Approved, Brian 2026-11-26 (keep the old crate story words; the fourth picture on) |
+| Mops, in the story picture of the baby holding his beard | ...Weeee-eenn-nnttt? | Brian 2026-11-26 (video note 0:28, "Goats say "weeeent" not baaaah"); his approved goat spelling (`MORNING-LINES-FOR-BRIAN.md` row 13, DECISIONS R96). Replaces "...Baaa?" |
+| Mops, back in the room after the story pictures | You came to me in a Stars Cakes crate. You've loved Stars Cakes ever since. | Approved as written, Brian 2026-11-26 (#36), with the old name; the words changed with the rename (question 86): needs your yes again |
+| Mops, after "You came to me in a Stars Cakes crate. You've loved Stars Cakes ever since.", over the picture of Squatch's crayon drawing of the Guardians | And you've always had your Guardians, watching over you. | Approved, Brian 2026-11-26, chat 18b A |
+| A mark over each of the two tourists peeking in at the door, in the wordless picture before "Nothing to see here!" (Brian 2026-11-26, video note 0:39: "Would we actually want people to walk in so we see that tourists are suspicious?") | ? | Suggested, needs Brian's yes (a mark, no words) |
 
 ## Calendar revision, Nov 16 (PR 58, not live)
 
@@ -389,6 +404,26 @@ Brian, story pass 28-52, E2/E4 (2026-11-26). Numbered with the party's lines in 
 | 118 | sq | ...I'm sorry I fibbed. | needs your yes |
 | 119 | mops | You never have to hide from me. | needs your yes |
 
+## Bedtime additions and the chart over his bed (story pass 28-52, E4), pending
+
+Brian, story pass 28-52, E2/E4 (2026-11-26). Every line needs your yes. In the bedtime story (`src/modules/bedtime-story-lines.js`), in order:
+
+| Where | Who | Words |
+| --- | --- | --- |
+| Back in the room after the crate story, before his snack line | Mops | I thought: a Wookiee! |
+| the same | Mops | But you looked different. |
+| the same | Mops | Maybe you were one of a kind. Like me. |
+| the same | Mops | The only goat janitor. |
+| the same | Mops | I know what it's like to be one of a kind. |
+| the same | Mops | So I said: I'll take care of you. |
+| After his snack line, in bed | Squatch | Tell me about the last cake. |
+| Picture 1 of 3: the scraped crate, crumbs, one cake cut open, red in the middle, sparking | Mops | One cake left. Red in the middle. |
+| Picture 2 of 3 | Mops | It fizzed. |
+| Picture 3 of 3 | Mops | Never found one like it. |
+| Back in the room; then Mops says nothing, one heart | Squatch | The Guardians will. |
+| The crayon chart over his bed (a layer over the locked home picture), its title | crayon | the snack's name in capitals (snack-name.js) |
+| The same chart, under the empty circle with the red dot | crayon | THE CRATE KIND |
+
 ## Day 1 stand-ins, pending
 
 These are on screen in this unmerged slice so the day can be played. NEEDS BRIAN.
@@ -399,7 +434,7 @@ These are on screen in this unmerged slice so the day can be played. NEEDS BRIAN
 | 87 | Mops, answer | You have me. |
 | 88 | TV picture | Fur in the scrubber. |
 | 89 | TV picture | Onto the ship. |
-| 90 | Mops, bedtime picture | You came to me in a Stars Cakes crate. You've loved Stars Cakes ever since. (words changed by the rename, 2026-11-26: pending your yes again) |
+| 90 | Mops, bedtime picture (approved as written, Brian 2026-11-26, #36; words changed by the rename the same day, question 86: needs your yes again; see the bedtime story section) | You came to me in a Stars Cakes crate. You've loved Stars Cakes ever since. |
 | 91 | Squatch, when the octopus comes | I gotta juke this fool. |
 | 92 | Octopus | *hic* Fellow tourist! |
 | 93 | Camera tourist | Say cheese! |

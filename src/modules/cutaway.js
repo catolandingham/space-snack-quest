@@ -16,7 +16,8 @@
  *
  * Squatch's homework on the home-alone morning is the second user: its two pictures are in
  * homework-cutaway.js. The TV story (beat 20) is the third: its Wookiee pictures are in tv-story-art.js. The
- * party's Croc Boy close-up (P3) is the fourth: croc-cutaway.js.
+ * party's Croc Boy close-up (P3) is the fourth: croc-cutaway.js. The bedtime story (beat 21) is the fifth: its crate
+ * story pictures are in bedtime-story-art.js.
  *
  * Drawn here in the game's style (dark outlines, flat colours). Mops is drawn by this file too, from the same
  * shapes as the engine's drawMops but with outlines as thin as in Brian's approved picture (see "Mops in the
@@ -24,6 +25,7 @@
  */
 import { HOMEWORK_PANELS } from "./homework-cutaway.js";
 import { WOOKIEE_PANELS } from "./tv-story-art.js";
+import { BEDTIME_PANELS, GUARDIANS_PANELS, BEDTIME_AUTO, LASTCAKE_PANELS } from "./bedtime-story-art.js";
 import { CROC_PANELS } from "./croc-cutaway.js";
 import { TAPE_PANELS } from "./tv-tape-art.js";
 
@@ -52,7 +54,7 @@ let last = null;
  * to tap (31a) and the homework sheet has words to read, so they wait. The Croc Boy close-up (croc-cutaway.js, P3,
  * Brian 2026-11-26) plays 2.6 s by itself: his head bops on the band's first notes.
  */
-export const AUTO = Object.freeze({ beard: [3.6, 0], homework: [3.0, 0], croc: [2.6], tvtape: [2.4, 0] });
+export const AUTO = Object.freeze({ beard: [3.6, 0], homework: [3.0, 0], croc: [2.6], tvtape: [2.4, 0], moonpie: BEDTIME_AUTO }); // (moonpie: the tourists peeking in, 2026-11-26)
 
 /**
  * What each picture sounds like, timed to its drawing (synth.js names): `loop` seconds a loop (0: once), and
@@ -645,6 +647,11 @@ const PANELS = {
   homework: HOMEWORK_PANELS,
   // beat 20, the TV story (tv-story.js): the old Wookiee pictures, each drawing itself full screen
   wookiee: WOOKIEE_PANELS,
+  // beat 21, the bedtime story (bedtime-story.js): the old crate story's pictures
+  moonpie: BEDTIME_PANELS,
+  // and its last picture, after Mops's bedtime line: Squatch's crayon drawing of the Guardians, Mops's Guardians line
+  guardians: GUARDIANS_PANELS,
+  lastcake: LASTCAKE_PANELS,
   // P3, the band's first notes: a Croc Boy bopping, close up (croc-cutaway.js)
   croc: CROC_PANELS,
   // beat 20's start: the tape going in, then the news report's title card (tv-tape-art.js)

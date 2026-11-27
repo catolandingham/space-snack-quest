@@ -983,6 +983,15 @@ export function createParty(bridge) {
      * band yet; in P4 the band plays, and its song wins), "home" for the talk at home after the party (P8a to P8c, no
      * alarm), otherwise "" (the party's own sounds: the band, the crowd, the party through his door).
      */
+    /** True while the one capture rule's alarm is on at the party (FUR! to the calm): no music then (bridge.js). */
+    alarmOn() {
+      const p = live();
+      return !!(p && p.alarm);
+    },
+    /** The party's state now (its alarm's music quiet ends when this is a new one: a restart). */
+    alarmKey() {
+      return live() || null;
+    },
     musicCue() {
       const p = live();
       if (!p || p.alarm) return "";

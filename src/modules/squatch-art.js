@@ -54,7 +54,7 @@ export function armEnds(arms) {
  * out, they hang at rest). `feet: false` leaves his legs and feet out, for boots that stand where they are.
  * Returns where his near paw is and his mouth (game positions) and the outline drawn, for props and tests.
  */
-export function drawSquatchArt(ctx, x, y, scale, { line = 4, shadow = true, arms = null, feet = true } = {}) {
+export function drawSquatchArt(ctx, x, y, scale, { line = 4, shadow = true, arms = null, feet = true, eyes = "" } = {}) {
   const q = SQUATCH_LOOK,
     o = line / scale; // outline in his units
   const T = q.leg,
@@ -169,8 +169,19 @@ export function drawSquatchArt(ctx, x, y, scale, { line = 4, shadow = true, arms
   ctx.bezierCurveTo(mx + mw * 0.62, my - mh * 0.55, mx + mw * 0.15, my - mh * 0.62, mx, my - mh * 0.28);
   ctx.closePath();
   fill(q.mask, o * MASK_LINE);
-  dot(-q.head * 0.27, P + q.head * 0.12, 1.5, INK);
-  dot(q.head * 0.27, P + q.head * 0.12, 1.5, INK);
+  // His eyes: two dots, or, asleep ("closed"), two small arcs as the engine draws them (Re, eyes: "closed").
+  if (eyes === "closed")
+    for (const k of [-1, 1]) {
+      ctx.beginPath();
+      ctx.arc(k * q.head * 0.27, P + q.head * 0.1, 1.6, 0.1, Math.PI - 0.1);
+      ctx.strokeStyle = INK;
+      ctx.lineWidth = o * FACE_LINE;
+      ctx.stroke();
+    }
+  else {
+    dot(-q.head * 0.27, P + q.head * 0.12, 1.5, INK);
+    dot(q.head * 0.27, P + q.head * 0.12, 1.5, INK);
+  }
   ctx.beginPath();
   ctx.arc(0, P + q.head * 0.38, 2.2, 0.2, Math.PI - 0.2);
   ctx.strokeStyle = INK;

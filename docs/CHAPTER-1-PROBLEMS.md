@@ -27,10 +27,10 @@
 | 269–272 | ## 13. Sneaking to the plant plays itself (beat 4) — fixed Nov 14 (see "Do first" step 5) |
 | 273–276 | ## 14. The octopus and the photo have buttons that do the moment (beats 12, 13) |
 | 277–280 | ## 15. Running home happens by itself (beat 18) |
-| 281–285 | ## 16. The TV story is a small TV in the room (beat 20) (fixed 2026-11-25, draft PR #87) |
-| 286–289 | ## 17. Mops finds the flyer and fur at the wrong time (beat 19) |
-| 290–293 | ## 18. The bedtime story has no pictures (beat 21) |
-| 294–297 | ## 19. The Croc Boys are barely there (beat 6) |
+| 281–286 | ## 16. The TV story is a small TV in the room (beat 20) (fixed 2026-11-25, draft PR #87) |
+| 287–290 | ## 17. Mops finds the flyer and fur at the wrong time (beat 19) |
+| 291–295 | ## 18. The bedtime story has no pictures (beat 21) |
+| 296–299 | ## 19. The Croc Boys are barely there (beat 6) |
 <!-- /section-index -->
 # Chapter 1 problems, ranked
 
@@ -282,6 +282,7 @@ Found by reading the Day 1 code against beats 1 to 21 of `docs/CH1-STORY-WALKTHR
 
 - Walkthrough and Brian (t287u): cut away to full-screen story pictures. Game: three pictures on the TV set, with two captions that Brian has not approved ("Fur in the scrubber." and "Onto the ship.").
 - Fixed 2026-11-25 (Brian: "1", bring back the Wookiee story): the old picture story of commit 71ec66e, full screen, its approved captions word for word, sized to the game's rule, with his Wookiee recording (`src/modules/tv-story.js`; `tests/tv-story.mjs`). The stand-in is deleted.
+- 2026-11-26: the Station Official's line came back with that story ("Nobody can live outside. The scrubbers keep us breathing. NO FUR."); the older docs that called it cut (CH1-CARTOON-LINES, the walkthrough, DECISIONS S19) now say so. Brian approved new wording the same day: "We rely on the air scrubbers to keep us breathing. NO FUR." (the game's line changes on the party branch, feat/party-half-two).
 
 ## 17. Mops finds the flyer and fur at the wrong time (beat 19)
 
@@ -290,6 +291,7 @@ Found by reading the Day 1 code against beats 1 to 21 of `docs/CH1-STORY-WALKTHR
 ## 18. The bedtime story has no pictures (beat 21)
 
 - Walkthrough: tap through story pictures of Mops finding the baby in a Stars Cakes crate. Game: one text box.
+- Built, not merged (2026-11-25, branch `feat/ch1-bedtime-story`): the wordless ask, the old crate story's pictures from 71ec66e, Mops's line, asleep, Day 2 (`src/modules/bedtime-story.js`). Check: `tests/bedtime-story.mjs`. Waiting for Brian's yes on the words and drawings.
 
 ## 19. The Croc Boys are barely there (beat 6)
 

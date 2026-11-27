@@ -676,6 +676,8 @@ const liveLines = (page) => page.evaluate(() => (window.__ss.op.log || []).filte
   g.check("the camera tourist has carried his camera over and stands facing the row", Math.hypot(cam.x - photo.PHOTO_ROW.camera.x, cam.y - photo.PHOTO_ROW.camera.y) < 2 && cam.y > photo.PHOTO_ROW.squatch.y + 100, cam);
   // the label on his place
   s = await until(page, (q) => q.act === "JOIN · photo", 5000);
+  // (the label is drawn with the next frame after the offer: wait for it, up to a second)
+  await page.waitForFunction(() => window.__ss.op.lastCap && window.__ss.op.lastCap.text === "JOIN · photo", { timeout: 1000 }).catch(() => {});
   const label = await page.evaluate(() => { const n = window.__ss.op; return n.lastCap ? { text: n.lastCap.text, box: n.lastCap.box } : null; });
   g.check("JOIN · photo is offered from across the hall, its label at the gap in the row", !!s && !!label && label.text === "JOIN · photo" && Math.abs((label.box.x0 + label.box.x1) / 2 - photo.PHOTO_ROW.squatch.x) < 120 && label.box.y1 < 420 && label.box.x1 <= 960 && label.box.y0 >= 0, label);
   await still(page, "r4-photo-row-and-label");

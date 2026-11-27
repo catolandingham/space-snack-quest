@@ -58,6 +58,11 @@ export const MUSIC_FILES = Object.freeze({
 export const SPANS = Object.freeze({
   themeTune: Object.freeze({ file: "theme", from: 1.0, to: 18.5, words: false }),
   themeBreak: Object.freeze({ file: "theme", from: 154, to: 178, words: false }), // an option, not used
+  // bedtime (Brian 2026-11-26, #37: "The song I liked playing during the flashback was the original theme song"): Joe's
+  // song from its opening tune, sung part and all, once (the file is 3:54.6); it starts as Squatch asks "Tell me about
+  // when we first met?", so the singing (from 0:19.5) comes in about 19.5 s later (HOLD, then 18.5 s of opening tune),
+  // over the crate story's pictures
+  themeSong: Object.freeze({ file: "theme", from: 1.0, to: 233.5, words: true, once: true }),
   // `bleats`: seconds into the song where Mops's goat bleat plays over it, in its three quiet gaps (found by loudness:
   // the music dips about 15 dB at 0:36.5 to 0:38.9 after "A really long way from home", at 1:04.0 to 1:06.4 after
   // "It's really a pretty nice room", and at 1:35 to 1:38 after "He means I love you"; estimates to about 0.2 s).
@@ -65,7 +70,7 @@ export const SPANS = Object.freeze({
   carefreeOnce: Object.freeze({ file: "carefree", from: 0, to: 205, words: false, once: true }),
   morningOnce: Object.freeze({ file: "morning", from: 0, to: 153, words: false, once: true }),
   rainbowsOnce: Object.freeze({ file: "rainbows", from: 0, to: 219, words: false, once: true }),
-  reawakeningOnce: Object.freeze({ file: "reawakening", from: 0, to: 214, words: false, once: true }),
+  reawakeningOnce: Object.freeze({ file: "reawakening", from: 0, to: 214, words: false, once: true }), // an option, not used since 2026-11-26
   // `bpm`: the beat the Croc Boys bob to while it plays (party-art.js drawBand). Estimated 2026-11-26 from 40 s of each
   // file (the loudness rises' repeat time): Stormtop-Sylvania about 160 a minute, Funky Chunk about 115.
   bandSong: Object.freeze({ file: "band", from: 0, to: 119.6, words: true, bpm: 160 }), // ends on its count, "...six."
@@ -87,7 +92,8 @@ export const SPANS = Object.freeze({
  *   home     every other daytime visit home (the "home" cue, and the talk at home after the party: party.js musicCue):
  *            the next track of the home rotation each visit, Carefree, Morning, Rainbows, then Carefree again (Brian:
  *            "so it isn't repetitive")
- *   bedtime  the bedtime story (beat 21, on its own branch: it adds the "bedtime" cue): Reawakening
+ *   bedtime  the bedtime story (beat 21: bedtime-story.js says when it is showing, bridge.js makes the cue "bedtime"):
+ *            Joe's theme with its singing, from Squatch's ask (Brian 2026-11-26, #37; it was Reawakening)
  *   gift     the gift, out at home: the same visit as home (MUSIC_PLACE), so the home track carries on
  *   heart    the heart moments: the same visit as home (MUSIC_PLACE, Brian 2026-11-26 #32), so the home track carries
  *            on through them
@@ -109,7 +115,7 @@ export const MUSIC_PICKS = Object.freeze({
   morning: "floatingOnce",
   home: Object.freeze(["carefreeOnce", "morningOnce", "rainbowsOnce"]),
   gift: Object.freeze(["carefreeOnce", "morningOnce", "rainbowsOnce"]),
-  bedtime: "reawakeningOnce",
+  bedtime: "themeSong",
   heart: "themeTune",
   tv: "odysseyOnce",
   hall: "lobbyLoop",
@@ -120,8 +126,9 @@ export const MUSIC_PICKS = Object.freeze({
   "closing-hum": "mopsHumLoop",
 });
 // Sounds that are not music. Mops's bleat (Brian 2026-11-26, "Bleat 2": sounds/goat-bleat.mp3, 1.2 s, cut from
-// Wikimedia Commons "Herd of goats bleating.ogg" by stephan, public domain): on his bleat line only (the morning song's
-// "♪ Weeee-eenn-nnttt! ♪", morning-sound.js), and over Floating in Space where it leaves a gap for one (`bleats`).
+// Wikimedia Commons "Herd of goats bleating.ogg" by stephan, public domain): on his bleat lines only (the morning song's
+// "♪ Weeee-eenn-nnttt! ♪", morning-sound.js, and the bedtime story's "...Weeee-eenn-nnttt?", bedtime-story-sound.js
+// through window.SSQ.playSoundPick), and over Floating in Space where it leaves a gap for one (`bleats`).
 // The crowd in the hall (Brian 2026-11-26: "I don't like any of the crowd sounds. They don't sound like crowds at all.";
 // then his pick, "crowd 1 with the band on top", and "fine with the crowd noise without the music when that makes
 // sense"): sounds/party-crowd.mp3 (BigSoundBank "Crowd of 50-60 People #1", CC0; 60 s, looped), -20.7 LUFS. `level`
@@ -131,10 +138,13 @@ export const SOUND_PICKS = Object.freeze({ "mops-bleat": Object.freeze({ url: "s
 // Cues that are the same place (one visit): moving between them does not start a `once` track again.
 // (Brian 2026-11-26, #32: the heart moments at home count as the same home visit, so the home track carries on)
 export const MUSIC_PLACE = Object.freeze({ gift: "home", heart: "home" });
-// The moments where a sung track may play (Brian 2026-11-26): the morning's Floating in Space, and the band.
-export const SINGING_OK = Object.freeze(["morning", "band"]);
+// The moments where a sung track may play (Brian 2026-11-26): the morning's Floating in Space, the band, and bedtime
+// (Joe's theme sung over the crate story, #37).
+export const SINGING_OK = Object.freeze(["morning", "band", "bedtime"]);
 // Seconds of fade at the end of a span (before it goes back to its start, or stops), and in again after.
-export const SPAN_FADE = Object.freeze({ out: 0.8, in: 0.3 });
+// `quiet`: seconds a track fades out when its moment goes quiet (Brian 2026-11-26: the TV story's music stops when the
+// film ends; it does not play on a second and stop).
+export const SPAN_FADE = Object.freeze({ out: 0.8, in: 0.3, quiet: 0.8 });
 
 // Where each rotation is (the next track for that moment's next visit).
 const turn = {};
@@ -170,10 +180,10 @@ export function nextTurn(place) {
 // started (fresh). A cue that changes for less than HOLD (a frame between two story steps, a moment's walk) is not a
 // new visit.
 export const HOLD = 1;
-const visit = { place: null, cue: "", n: 0, done: false, fresh: false, pend: null };
+const visit = { place: null, cue: "", n: 0, done: false, fresh: false, pend: null, hush: null };
 /** Tests: forget the visits and the rotations (as if the page were new). */
 export function newVisits() {
-  Object.assign(visit, { place: null, cue: "", n: 0, done: false, fresh: false, pend: null });
+  Object.assign(visit, { place: null, cue: "", n: 0, done: false, fresh: false, pend: null, hush: null });
   for (const k of Object.keys(turn)) delete turn[k];
 }
 const clock = () => (typeof performance !== "undefined" ? performance.now() : Date.now()) / 1000;
@@ -186,13 +196,41 @@ export function seeCue(cue, now = clock()) {
   if (place === visit.place) return ((visit.pend = null), cue);
   if (!visit.pend || visit.pend.place !== place) return ((visit.pend = { place, cue, since: now }), cue);
   if (now - visit.pend.since >= HOLD || visit.place === null) {
+    // (after an alarm the music stays quiet until a visit to another place, music or none: hushNow; while the alarm is
+    // still going, hushNow keeps it, so the alarm's own quiet is not a new place)
+    visit.hush && place !== visit.hush.place && now - visit.hush.at > HOLD && (visit.hush = null);
     Object.assign(visit, { place, cue: visit.pend.cue, n: place ? nextTurn(place) : 0, done: false, fresh: !!place, pend: null });
   }
   return cue;
 }
+/**
+ * The alarm goes off (Brian 2026-11-26: "when alarm goes off, I presume music should stop"): the music stops now, and
+ * stays quiet through the alarm and after it, in this place, even when the alarm is over; it comes back only with a
+ * visit to another place (then that place's pick plays, as the table says), or when the part with the alarm starts
+ * again (a restart after the LOCKUP card, or ↺: bridge.js compares `key`, the state of the beat `owner` that had the
+ * alarm, and calls unhush when it is not the same any more). Called every frame while an alarm is on (`now`: seconds,
+ * for tests). The alarm's own sound and the FUR!
+ * moment's sting are sound effects, not music: they still play.
+ */
+export function hushNow(now = clock(), key = null, owner = "") {
+  const place = visit.hush ? visit.hush.place : visit.place || (visit.pend && visit.pend.place) || "";
+  visit.hush = { place, at: now, key: key || (visit.hush && visit.hush.key) || null, owner: owner || (visit.hush && visit.hush.owner) || "" };
+}
+/** Who hushed the music and with what state ({ owner, key }), or null (bridge.js). */
+export function hushKey() {
+  return visit.hush ? { owner: visit.hush.owner, key: visit.hush.key } : null;
+}
+/** The quiet after an alarm ends at once (the part with the alarm started again: a restart is a new visit). */
+export function unhush() {
+  visit.hush = null;
+}
+/** Tests: whether the music is hushed by an alarm now (and for which place). */
+export function hushed() {
+  return visit.hush ? { place: visit.hush.place, at: visit.hush.at, owner: visit.hush.owner } : null;
+}
 /** Tests: where the music is. */
 export function visitNow() {
-  return { place: visit.place, cue: visit.cue, n: visit.n, done: visit.done, file: visit.place ? fileFor(visit.cue, visit.n) : null };
+  return { place: visit.place, cue: visit.cue, n: visit.n, done: visit.done, hush: !!visit.hush, file: visit.place ? fileFor(visit.cue, visit.n) : null };
 }
 
 /**
@@ -203,12 +241,14 @@ export function visitNow() {
  */
 export function keepInSpan(el, cue) {
   if (!el) return 1;
-  visit.place === null && cue && seeCue(cue, -1e9) && seeCue(cue, 0);
+  visit.place === null && cue && seeCue(cue, clock() - 1e9) && seeCue(cue, clock());
   // no music here (a place with none, held a second: the old track has faded out by then), or waiting for a new
-  // place to hold: quiet, so nothing old is heard again
-  if (!visit.place) return 0;
+  // place to hold: quiet, so nothing old is heard again; and after an alarm, until another place (hushNow)
+  if (!visit.place || visit.hush) return 0;
   const s = spanFor(visit.cue, visit.n);
   if (!s) return 0;
+  // going quiet (the cue has left for a moment with no music, not held for HOLD yet): fade out now
+  const quiet = visit.pend && visit.pend.place === "" ? Math.max(0, 1 - (clock() - visit.pend.since) / SPAN_FADE.quiet) : 1;
   const file = MUSIC_FILES[s.file];
   if (visit.fresh) {
     visit.fresh = false;
@@ -233,7 +273,7 @@ export function keepInSpan(el, cue) {
     } catch {}
     return 0;
   }
-  return file.match * Math.max(0, Math.min(1, (s.to - t) / SPAN_FADE.out, (t - s.from + 0.05) / SPAN_FADE.in));
+  return quiet * file.match * Math.max(0, Math.min(1, (s.to - t) / SPAN_FADE.out, (t - s.from + 0.05) / SPAN_FADE.in));
 }
 
 // One decoded copy of each sound per audio context (the bleat is shared by the morning's line and the song).
@@ -254,9 +294,17 @@ export function loadSound(c, name) {
         throw e;
       }));
 }
+// Every sound pick asked for (tests): its name, the audio clock time it was asked for, and whether it started.
+const played = [];
+/** Tests: every sound pick asked for so far ({ name, at, started }), oldest first (the last 50). */
+export function soundsPlayed() {
+  return played.map((p) => ({ ...p }));
+}
 /** Plays the sound `name` at time `t` into node `out` (at its level times `v`), once it has loaded. */
 export function playSound(c, out, name, t, v = 1) {
   const p = loadSound(c, name);
+  const rec = { name, at: c ? +c.currentTime.toFixed(2) : 0, started: false };
+  p && (played.push(rec), played.length > 50 && played.shift());
   p &&
     p
       .then((buf) => {
@@ -267,6 +315,7 @@ export function playSound(c, out, name, t, v = 1) {
         src.connect(g);
         g.connect(out);
         src.start(Math.max(t, c.currentTime));
+        rec.started = true;
       })
       .catch(() => {});
   return !!p;

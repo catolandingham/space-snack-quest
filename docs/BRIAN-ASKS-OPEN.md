@@ -4,24 +4,24 @@
 | Lines | Heading |
 | --- | --- |
 | 26–35 | # Brian's asks that are not in the game yet |
-| 36–44 | ## 1. Build next |
-| 45–62 | ## 2. Needs your eyes |
-| 63–66 | ## 3. Your instructions disagree |
-| 67–68 | ## 4. Everything else not built |
-| 69–87 | ### Morning and home |
-| 88–98 | ### Party |
-| 99–110 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
-| 111–114 | ### Party video notes and answers, 2026-11-24 (not built yet) |
-| 115–119 | ### Snacks and dress-up |
-| 120–132 | ### Day 2 and night |
-| 133–137 | ### Escape and later chapters |
-| 138–141 | ### Looks and lines |
-| 142–149 | ### Sound |
-| 150–153 | ### Words and rules |
-| 154–166 | ### How the bots work |
-| 167–174 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
-| 175–191 | ## 5. Merged, in a pull request, and being built |
-| 192–202 | ## 6. Corrections to the checkers |
+| 36–45 | ## 1. Build next |
+| 46–63 | ## 2. Needs your eyes |
+| 64–67 | ## 3. Your instructions disagree |
+| 68–69 | ## 4. Everything else not built |
+| 70–88 | ### Morning and home |
+| 89–99 | ### Party |
+| 100–111 | ### Playthrough 2026-11-23 (party, for the party rebuild) |
+| 112–115 | ### Party video notes and answers, 2026-11-24 (not built yet) |
+| 116–120 | ### Snacks and dress-up |
+| 121–133 | ### Day 2 and night |
+| 134–138 | ### Escape and later chapters |
+| 139–142 | ### Looks and lines |
+| 143–150 | ### Sound |
+| 151–154 | ### Words and rules |
+| 155–167 | ### How the bots work |
+| 168–175 | ### Ideas kept from closed pull requests (Brian's "10a", 2026-11-23) |
+| 176–192 | ## 5. Merged, in a pull request, and being built |
+| 193–203 | ## 6. Corrections to the checkers |
 <!-- /section-index -->
 # Brian's asks that are not in the game yet
 
@@ -41,14 +41,15 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 11. **A check that catches drift.** Open PR #34 checks his rules on each pull request; a first try is closed PR #34 (rules check on every PR); nothing compares the game to DECISIONS.md. "I think we basically need to have a recurring built-in check to make sure we're not drifting." (G 433).
 12. **Delete the old Chapter 1.** "we didn't get rid of the wrong ideas as we went" (G 433); "deleting bad code" (G 516). The old opening is still in 10-ch1.js and 11-ch1-hall.js.
 13. **Last, if time allows: karaoke.** Brian, 2026-11-23. Karaoke with the Moon Pie song: "For karaoke, let's actually do a different song." (S 1013); "I'm good with the Moon Pie's song." (S 1019). Today it is tap-to-howl only.
+14. **"Ganitor".** Brian, 2026-11-26: "Ganitor is what mops is - goat janitor - that should be an ongoing reference in the game." Make "Ganitor" (goat + janitor, Mops's job title) an ongoing reference in the game. Where it shows, Brian's pick the same day ("I like all of them a b c d e"), five places, to be built in a later round: A) a GANITOR name tag on Mops's shirt in every scene; B) the Station PA calls him, approved words: "Ganitor Mops to the party hall."; C) the hallway Employee of the Month wall, Mops's photo labeled "MOPS, GANITOR"; D) the robot janitor notice plays on it (robots can be janitors, only Mops is a Ganitor; exact wording still needs Brian's yes); E) Squatch's crayon drawings labeled "MOPS THE GANITOR" where Mops appears in them. Not on screen anywhere yet (decided as a fact in `docs/STORY-DECISIONS.md`, "Also answered").
 
 ## 2. Needs your eyes
 
-- **The bedtime crate story (beat 21).** Brian 2026-11-25: the old crate story "is the bedtime story (beat 21) and gets the same sizing fix". Not built yet: its old captions differ from the walkthrough's pending line, and it is not under "Build next". Ask which words, and whether it is this round.
+- **The bedtime crate story (beat 21).** Brian 2026-11-25: the old crate story "is the bedtime story (beat 21) and gets the same sizing fix". Built on branch `feat/ch1-bedtime-story` (PR #89, draft, not merged) with the old captions (approved 2026-11-26, "keep the old crate story words") and his bedtime line (approved as written, #36); the mop bucket picture is on (his answer of 2026-11-26). His 2026-11-26 notes are built there too: Squatch asks "Tell me about when we first met?" (approved), Mops's "...Weeee-eenn-nnttt?", Joe's theme sung from his ask (#37), the Guardians picture with his approved line, the crate story's memory look (#38), the baby a furry ball in his mop bucket and two tourists peeking in before "Nothing to see here!" (video note 0:39), and falling asleep with a yawn, the tuck, Mops falling asleep beside the bed like a fainting goat (#33), the light going down and three snores. Waiting for his eyes. Open: the "?" over the tourists (suggested); the light goes down by itself as Mops settles (nobody turns it off); the new bucket is also drawn over the home room's painted bucket (his yes was said about the bedtime picture's bucket: confirm the room); the morning's beard-wringing close-up keeps its own bucket, not his new mop bucket (he approved that close-up separately): change it too?
 - **Home room objects.** "the new version of the crate in the room is off, at least in the picture you showed." (G 597). Covers crate, bed, bucket, bedtime-story look, janitor facing. Walls and furniture merged today; check.
 - **The dance game.** A scrolling-arrow dance exists but you said it never worked. "The dance game, hopefully that can be done clean and simple. If not, forget it." (G 516). "the fur shows at the dance scene" (G 603) is unclear.
 - **The balloon game.** "The balloon thing has just never worked when we've tried it before ... if it's all wonky and confusing, forget it." (G 516); "the balloon's just total nonsense" (K 336). Still in main (12-ch1-redesign.js:808-834).
-- **Which music where** (2026-11-26, showing 6: "I don't think we should default to the vocal part of this song"; "let's find alts to very where else"). Built: his picks of 2026-11-26 in one table (`src/modules/music-picks.js`): Floating in Space (the new recording) the first time home on day one, a home rotation every other daytime visit (Carefree, Morning, Rainbows), Reawakening at bedtime (with the bedtime branch), Odyssey for the TV story, Lobby Time in the empty hall, Sneaky Snitch for sneaking, Der Kleber Sting when caught, Stormtop-Sylvania then Funky Chunk for the band, Joe's opening tune on the title. Waiting: the goat bleat clip ("mops-bleat"); Mops's closing-time hum (stand-in: silence).
+- **Which music where** (2026-11-26, showing 6: "I don't think we should default to the vocal part of this song"; "let's find alts to very where else"). Built: his picks of 2026-11-26 in one table (`src/modules/music-picks.js`): Floating in Space (the new recording) the first time home on day one, a home rotation every other daytime visit (Carefree, Morning, Rainbows), Joe's theme with its singing at bedtime, from Squatch's ask (bedtime branch, round D; it was Reawakening), Odyssey for the TV story, Lobby Time in the empty hall, Sneaky Snitch for sneaking, Der Kleber Sting when caught, Funky Chunk then Stormtop-Sylvania for his dance then Funky Chunk for the band, Run Amok for the octopus chase, Mops's hum at closing, Joe's opening tune on the title. The goat bleat plays on the morning song's bleat line, in Floating in Space's gaps and on the bedtime story's "...Weeee-eenn-nnttt?". The music stops when the alarm goes off and comes back only at the next place (Brian 2026-11-26, notes on the lunch video: "when alarm goes off, I presume music should stop").
 - **The guards' flashlights** (2026-11-26, showing 6: "should they always come with flashlights on?"). In the hall the guards carry none (plain sight cones while they are in the hall); at home the guard's beam is on from the doorway until Mops sends him off. On only while searching, off walking in and out? Not changed until he says.
 - **Hallway and corners.** "Adding The Airlock Button Here For No Reason Doesn't Really Make Sense" (P L198). "The Alarm Can Not Be In The Bush Here" (P L163). The hall asks about the speaker and FUR alarm on one wall and the window wrap (S 457, 463, 466) are checked against the locked hall picture, which has the speaker and alarm on the back wall and no wrap.
 - **Sizes and looks of people.** Room-door sizing is built, cutscene sizes unchecked. "please go ahead with sizing people by each room's door, even tho it risks running out" (S 1163). "It could just be is Fred." (S 982). "I hate the arms on the green guys - just make them normal" (K 314).
@@ -73,7 +74,6 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 - Make the first gift obvious. "that needs to be more obvious." (S 92).
 - Things to touch on the walk to the room. "maybe look around, maybe there's another thing or two he can interact with on the way." (S 405).
 - Bedtime story flashback: Mops at his desk, Guardians, big furry Sasquatches. "I agree with A, that works really well." (S 429).
-- Janitor finds Squatch and keeps him. "I Know What It's Like To Be One Of A Kind" (P L134).
 - Sasquatch family visits and is sent back. "We Should Show Sasquatch Family Coming To Visit" (P L120).
 - Pretend to sleep, wait for the janitor. "You Would Just Pretend To Go To Sleep And Then Wait For The Ganitor To Actually Fall Asleep" (P L168).
 - Guardian note in the vent. "we know you're thinking about going to Mars. Don't worry, we'll always be with you." (S 408).

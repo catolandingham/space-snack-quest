@@ -7,7 +7,8 @@
  *   (b) No lines file (src/modules/*-lines.js) has a line with the old name.
  *   (c) No word the canvas draws in the main scenes says the old name: every Chapter 1 beat the game can jump to,
  *       the party night's scenes, the calendar close-up, the panels (the delivery notice, the snack site, the Chapter 4
- *       poster) and the old crate flashback, by day and by night. The snack site and the calendar show the new name.
+ *       poster), the old crate flashback and the bedtime story's pictures, by day and by night. The bedtime story's
+ *       crate shows the family stamp as it arrived (no crayon). The snack site and the calendar show the new name.
  *   (d) The party hall's snack tin, painted in the locked hall picture with the old name, gets a new lid as a layer.
  *       Squatch's crate bed, his family's crate, carries its own stamp, layered over the locked home picture (the file
  *       never changes): fat red letters, the first one scraped off (FAMILY.FADED), with his crayon "ST" in the scraped gap, by day and at
@@ -71,7 +72,7 @@ for (const f of lineFiles) {
   for (const [k, v] of Object.entries(mod)) visit(v, k);
 }
 g.check(`no line in the ${lineFiles.length} lines files says the old name (${lineCount} lines read)`, lineCount > 50 && badLines.length === 0, badLines);
-g.check("the painted words are in the snack's lines: the station's stamp, the hall tin's lid, the faded stamp and his crayon", SNACK_LINES.map((l) => l.text).join("|") === `${SNACK.NAME}|${SNACK.name}|_${FAMILY.FADED}|${FAMILY.CRAYON}`, SNACK_LINES);
+g.check("the painted words are in the snack's lines: the station's stamp, the hall tin's lid, the faded stamp and his crayon, and the chart over his bed (its title and THE CRATE KIND; story pass 28-52, E4)", SNACK_LINES.map((l) => l.text).join("|") === `${SNACK.NAME}|${SNACK.name}|_${FAMILY.FADED}|${FAMILY.CRAYON}|${SNACK.NAME}|THE CRATE KIND`, SNACK_LINES);
 
 // (c) and (d) In the game.
 const { page, errors } = await g.open("?ch=1", { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
@@ -116,7 +117,15 @@ const scan = await page.evaluate(async () => {
   draw("calendar close-up", () => (reset(), ss.ch1JumpBeat(22), (n.ch1Calendar = { ctrl: true, next: null, age: 1 })));
   for (const id of ["sched", "ch1site", "ch1moon", "poster4"]) draw("panel " + id, () => (reset(), ss.ch1JumpBeat(22), (n.cur = { k: "panel", id })));
   draw("old crate flashback", () => (reset(), ss.ch1JumpBeat(22), (n.cur = { k: "fb", pic: "fb1crate", cap: "" })));
-  return { states, words: [...window.__words] };
+  // the bedtime story's crate picture (beat 21, cutaway "moonpie"), alone: the crate as it arrived
+  const all = [...window.__words];
+  window.__words = new Set();
+  const before = window.SSQ.crateStampDrawn().stamps;
+  draw("bedtime story crate picture", () => (reset(), ss.ch1JumpBeat(22), (n.cur = { k: "cutaway", id: "moonpie", panel: 0 })));
+  const d = window.SSQ.crateStampDrawn();
+  const bedtimeCrate = { words: [...window.__words], stamped: d.stamps - before, last: d.last };
+  for (let i = 1; i < 8; i++) draw("bedtime story picture " + (i + 1), () => (reset(), ss.ch1JumpBeat(22), (n.cur = { k: "cutaway", id: "moonpie", panel: i })));
+  return { states, words: [...all, ...window.__words], bedtimeCrate };
 });
 const opened = scan.states.filter((s) => !/could not open/.test(s));
 const shownOld = scan.words.filter((w) => new RegExp("moo" + "n pies?", "i").test(w));
@@ -125,6 +134,12 @@ g.check(
   "the new name is drawn: the calendar's sponsor, the snack site's header, the delivery notice, the station's crate stamp",
   [`Sponsored by ${SNACK.NAME}`, SNACK.NAME, `${SNACK.NAME} ×500`].every((w) => scan.words.includes(w)),
   scan.words.filter((w) => NEW.test(w)),
+);
+
+g.check(
+  `the bedtime story's crate, as it arrived, has the family's worn stamp "${FAMILY.FADED}" and no crayon yet (he was a baby)`,
+  scan.bedtimeCrate.stamped > 0 && !!scan.bedtimeCrate.last && scan.bedtimeCrate.last.letters.text === FAMILY.FADED && scan.bedtimeCrate.last.crayon === null && !scan.bedtimeCrate.words.some((w) => OLD.test(w)),
+  scan.bedtimeCrate,
 );
 
 // (d) The crate bed's stamp, by day and at night.
@@ -172,6 +187,9 @@ const bed = async (night) =>
         crayon: m ? count(m.gap, (r, g, b) => b > r + 30 && b > g + 20) : null,
         // the old badge's navy pill
         navy: count(B.badge, (r, g, b) => Math.abs(r - 43) < 22 && Math.abs(g - 58) < 22 && Math.abs(b - 103) < 26 && !night),
+        // the crayon chart over his bed (story pass 28-52, E4): what the layer drew, and its red crayon Xs on the wall
+        chart: window.SSQ.cakeChartDrawn ? window.SSQ.cakeChartDrawn() : null,
+        chartRed: window.SSQ.cakeChartDrawn && window.SSQ.cakeChartDrawn() ? count(window.SSQ.cakeChartDrawn().box, (r, g, b) => r > 1.6 * g && r > 1.6 * b && r > (night ? 70 : 130)) : null,
       };
     },
     night,
@@ -191,6 +209,11 @@ for (const [tag, r] of [
   );
 }
 g.check("by day: the old badge's navy pill is gone from the crate", day.navy.c < day.navy.of * 0.02, day.navy);
+// The crayon chart over his bed (Brian, story pass 28-52, E4): a layer over the locked home picture, for Brian's yes.
+for (const [tag, r] of [
+  ["by day", day],
+  ["at night", night],
+]) g.check(`${tag}: the crayon chart hangs over his bed: the snack's name as its title, six cakes crossed out, THE CRATE KIND`, !!r.chart && r.chart.title === SNACK.NAME && r.chart.label === "THE CRATE KIND" && r.chart.crossed === 6 && r.chart.box.x0 > 230 && r.chart.box.x1 < 530 && r.chart.box.y1 < 445 && r.chartRed && r.chartRed.c > 40, { chart: r.chart, red: r.chartRed });
 // The party hall's snack tin (painted in the locked hall picture with the old name on its lid) gets a new lid.
 const hall = await page.evaluate(
   (T) => {

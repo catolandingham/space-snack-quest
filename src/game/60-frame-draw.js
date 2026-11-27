@@ -682,7 +682,7 @@
           continue;
         }
         // While hopping out of bed he is over the bed, not behind it.
-        !(id === "bed" && n.hopOut >= 0) && l.y < p.back && l.x > p.x - 40 && l.x < p.x + p.w + 40 && e.drawImage(img, p.x * k, p.y * ky, p.w * k, p.h * ky, p.x, p.y, p.w, p.h);
+        !(id === "bed" && n.hopOut >= 0) && l.y < p.back && l.x > p.x - 40 && l.x < p.x + p.w + 40 && ((id === "bucket" && window.SSQ && window.SSQ.drawHomeBucket && window.SSQ.drawHomeBucket(e, !0)) || e.drawImage(img, p.x * k, p.y * ky, p.w * k, p.h * ky, p.x, p.y, p.w, p.h)); // Mops's mop bucket (mop-bucket.js)
       }
     }
     function g5() {
@@ -700,7 +700,7 @@
     function P2() {
       if (homePicture()) {
         drawLockedRoom(n.wardrobe === "open" ? "home-open" : "home-closed");
-        gboxOut() && L2();
+        (window.SSQ && window.SSQ.drawHomeBucket && window.SSQ.drawHomeBucket(e), gboxOut() && L2()); // Mops's mop bucket over the painted one (mop-bucket.js)
         // Home alone with the closet open: the morning module draws the G box on the closet floor.
         {
           let beat = window.SSQ && window.SSQ.beat("ch1-morning");
@@ -1579,7 +1579,6 @@
         (X(l, o, i * 0.8, i), e.stroke());
     }
     function gq(l, o) {
-      if (l === "ch1moon") return drawCh1Moon();
       if (l === "ch1site") {
         ((e.fillStyle = "rgba(20,24,32,.62)"),
           e.fillRect(0, 0, c, b),
@@ -2095,6 +2094,7 @@
         // The morning's sound lines and notes at the wall speaker, and the wet floor where Mops mops.
         beat && beat.draw(e);
         partyBeat() && partyBeat().draw(e);
+        window.SSQ && window.SSQ.beat("ch1-bedtime-story") && window.SSQ.beat("ch1-bedtime-story").draw(e);
         if (n.ch1Calendar) {
           drawCh1Calendar();
           return;
