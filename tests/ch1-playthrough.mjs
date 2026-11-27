@@ -612,7 +612,7 @@ g.check("walks stay on the picture", offPicture.length === 0, offPicture.slice(0
 g.check(
   "the office computer is in the office (R84) and the walks still use the hall doors",
   play.siteRoom === "office" && doors.backHome >= 2 && doors.overHall >= 2,
-  { siteRoom: play.siteRoom, doors, walks },
+  { siteRoom: play.siteRoom, doors, walks, log: (play.state.walks || []).filter((w) => w.phase !== "off").map((w) => w.phase[0] + ":" + w.room + ":" + w.x + "," + w.y) },
 );
 const paper = play.paper || [];
 const binAt = paper.indexOf("bin");
@@ -693,8 +693,9 @@ function doorUses(walks) {
     if (a.phase !== "edge" || b.phase !== "in") continue;
     if (a.room === "hangar" && b.room === "hall" && a.x < 160 && b.x > 800) use.backHall++;
     if (a.room === "hall" && b.room === "closet" && a.y > 560 && b.x > 800) use.backHome++;
-    // (the walks between rooms come in at the hall's bottom door, y 556: escape-place.js ES_DOORS)
-    if (a.room === "closet" && b.room === "hall" && a.x > 800 && b.y > 550) use.overHall++;
+    // (the walks the escape and pickup day let him do himself log the doorway he left by at both ends: escape-doors.js;
+    // the hall's bottom door is at y 556 there)
+    if (a.room === "closet" && b.room === "hall" && a.x > 800 && (b.y > 550 || b.x > 800)) use.overHall++;
     if (a.room === "hall" && b.room === "hangar" && a.x > 800 && b.x < 160) use.overDelivery++;
   }
   return use;

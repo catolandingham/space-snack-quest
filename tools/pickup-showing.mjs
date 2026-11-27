@@ -218,13 +218,18 @@ if (which === "pickup") {
     // 55: the sneak to the plant, the way a careful kid does it: rolled up behind the bags until the robots have carried
     // crate two out of the mail room, then along the front of the bay and up to the plant
     if (es.step === "sneak") {
+      if (Date.now() - (globalThis.__lastLog || 0) > 4000) ((globalThis.__lastLog = Date.now()), log("sneak " + JSON.stringify({ sneak, two: es.two, x: Math.round(s.x), y: Math.round(s.y), pose: s.pose, act: s.act, guard: !!es.guard })));
       const go = async (x, y) => Date.now() - tapAt > 700 && ((tapAt = Date.now()), await page.evaluate(([x, y]) => (window.__ss.drawFrame(), window.__ss.tapAt(x, y, false)), [x, y]));
       if (!sneak) ((sneak = "ball"), await sleep(600), await press(), log("rolled up"), await still("rolled-up"));
-      else if (sneak === "ball" && ["scan", "up", "done"].includes(es.two)) ((sneak = "front"), await go(600, 606));
-      else if (sneak === "front" && s.x < 640) ((sneak = "left"), (tapAt = 0), await go(140, 600));
-      else if (sneak === "left" && s.x < 170) ((sneak = "up"), (tapAt = 0), await go(126, 400));
+      // (out of the mail room by its opening, then along the front of the bay, then up to the plant)
+      const W = { out: [700, 462], front: [560, 600], left: [140, 600], up: [126, 400] },
+        near = (k) => Math.hypot(s.x - W[k][0], s.y - W[k][1]) < 26;
+      if (sneak === "ball" && ["scan", "up", "done"].includes(es.two)) ((sneak = "out"), await go(...W.out));
+      else if (sneak === "out" && near("out")) ((sneak = "front"), (tapAt = 0), await go(...W.front));
+      else if (sneak === "front" && near("front")) ((sneak = "left"), (tapAt = 0), await go(...W.left));
+      else if (sneak === "left" && near("left")) ((sneak = "up"), (tapAt = 0), await go(...W.up));
       else if (sneak === "up" && s.act.startsWith("HIDE")) (await sleep(500), await press());
-      else if (sneak !== "ball") await go(...{ front: [600, 606], left: [140, 600], up: [126, 400] }[sneak]);
+      else if (sneak !== "ball") await go(...W[sneak]);
       await sleep(150);
       continue;
     }

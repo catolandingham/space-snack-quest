@@ -9,8 +9,12 @@
  *   54: the slat view (his eyes in the corner), the new robots' lines, the bag opened, Lou's hat in the bin;
  *   55: Mops walks to the crate, KNOCK · crate, BLEAT · robot (the robots turn to him); CLIMB OUT · crate; ROLL · ball
  *       is offered where he stands; HIDE · plant; the held moment ("GOAT HAIR. PROCEED."); the idea; the walk home.
- * Also: every line's words come from the lines file; ↺ in a step he controls brings it back; the chapter reset forgets
- * pickup day; a robot that sees him sneaking pulls the alarm (a guard comes); the old code is gone from src/game.
+ *   56 to 61: played the same way to the tally card (the snip, the dress-up's button, three bleats, the last walk, the
+ *       scanner, the office, the tapes, the hold).
+ * Also: every line's words come from the lines files; ↺ in a step he controls brings it back, and between steps goes
+ * back to the last one he did; the chapter reset forgets pickup day; a robot that sees him sneaking shows "?", then the
+ * alarm and a guard; a guest's cone on him in costume ("?", BLEAT · guest, the beard slipping, PRESS · beard); the old
+ * code is gone from src/game.
  *   node tests/pickup.mjs
  */
 import { readFileSync, readdirSync } from "node:fs";
@@ -31,8 +35,8 @@ g.check("every button reads VERB · thing", PICKUP_LINES.filter((l) => l.who ===
   g.check("the decided words stay word for word (\"More bleat. Less roar.\", the office lines)", ["More bleat. Less roar.", "Send in Mops for his Employee of the Month photo.", "I never ordered a replacement! Get me the security tapes."].every((w) => pass.includes(w) && PICKUP_LINES.some((l) => l.text === w)));
 }
 const game = readdirSync(join(root, "src", "game")).map((f) => readFileSync(join(root, "src", "game", f), "utf8")).join("\n");
-const gone = ["ch1PackStart", "ch1PackBox", "ch1PackBucket", "ch1ToPickup", "ch1PickupWatch"];
-g.check("the old beats 53 to 55 are gone from src/game", gone.every((f) => !game.includes(f)), gone.filter((f) => game.includes(f)));
+const gone = ["ch1PackStart", "ch1PackBox", "ch1PackBucket", "ch1ToPickup", "ch1PickupWatch", "ch1CostumeReady", "ch1Jacket", "ch1LastWalk", "ch1TakeDrawing", "ch1ToScanner", "ch1Leave()", "ch1AtScanner", "ch1Board", "ch1Trim", "drawPickupLoad", '"pack1"', '"keepsake"'];
+g.check("the old beats 53 to 61 are gone from src/game", gone.every((f) => !game.includes(f)), gone.filter((f) => game.includes(f)));
 
 const { page, errors } = await g.open("?beat=pickup", { width: 375, height: 812, isMobile: true, hasTouch: true });
 await page.evaluate(() => window.__ss.lockedReady);
@@ -55,7 +59,7 @@ const run = await page.evaluate(
         if (n.cur) {
           n.cur.k === "panel" && n.cur.id === "tally" && (out.tally = true);
           const s = say();
-          s && out.said[out.said.length - 1] !== s && out.said.push(s);
+          !out.tally && s && out.said[out.said.length - 1] !== s && out.said.push(s);
           ss.drawFrame();
           (n.bt = 1), ss.opTap();
           tick(0.1);
@@ -223,7 +227,97 @@ g.check("59: Isfred's five lines, word for word, then \"Later that evening...\""
 g.check("60: the tapes: PLAY · tape, ZOOM · in, NEXT · tape; \"That is not a goat.\" / \"A Wookiee!\"", ["PLAY · tape", "ZOOM · in", "NEXT · tape"].every((a) => run.acts.includes(a)) && [W["isfred-what"], W["isfred-not-goat"], W["isfred-wookiee"], W["isfred-ship"]].every((w) => run.said.includes(w)), run.acts);
 g.check("61: OPEN · box, BITE · cake, \"No fizz.\", the call, HIDE · crate, \"Found him.\", \"He's with me.\"", ["OPEN · box", "BITE · cake", "HIDE · crate"].every((a) => run.acts.includes(a)) && [W["sq-no-fizz"], W["ship-call"], W["ship-wookiee"], W["sq-sasquatch"], W["crew-found"], W["mops-with-me"], W["crew-both-off"]].every((w) => run.said.includes(w)), run.acts);
 g.check("the end of Chapter 1: the tally card", run.tally === true, run.end);
-g.check("every line shown is a pickup line or a later beat's", run.allSaid.every((s) => PICKUP_LINES.some((l) => l.text.includes(s) || s.includes(l.text)) || /You are|now/.test(s) || true));
+// every bubble and card shown is a pickup line (or a piece of one), the Guardian note's or the frame's words
+// (escape-lines.js), a switch card, or the chapter's own end; nothing else is said
+{
+  const { ESCAPE_LINES } = await import(M("escape-lines.js"));
+  const known = [...PICKUP_LINES, ...ESCAPE_LINES].map((l) => l.text);
+  const stray = run.allSaid.filter((s) => !known.some((t) => t === s || t.includes(s)) && !/^You are (MOPS|SQUATCH) now/.test(s) && !/^LOCKUP|Chapter|Never caught/.test(s));
+  g.check("every line shown comes from the lines files (no words made up in the code)", stray.length === 0, stray);
+}
+// ---------- ↺, the chapter reset, the robots' capture rule, the costume's rule (a fresh page: still Chapter 1) ----------
+const page2 = (await g.open("?beat=pickup", { width: 375, height: 812, isMobile: true, hasTouch: true })).page;
+await page2.evaluate(() => window.__ss.lockedReady);
+const more = await page2.evaluate(() => {
+  const ss = window.__ss,
+    n = ss.op,
+    B = window.SSQ.beat("ch1-pickup"),
+    S = () => n.ch1Pickup; // (the live state: a change here is a change in the game)
+  const tick = (s = 0.05) => ss.tick(s);
+  const out = { restart: {}, cut: {} };
+  // each of these steps he controls: jumped to, changed, then ↺ brings back its start
+  for (const step of ["walls", "sneak", "dress", "lastwalk", "tape"]) {
+    ((n.q = []), (n.cur = null), (n.ch1Escape = null), B.jump(step));
+    for (let i = 0; i < 300 && !(n.ctrl && !n.cur && S().step === step); i++) ((n.cur && ((n.bt = 1), ss.opTap())), tick(0.1));
+    for (let i = 0; i < 4; i++) tick(); // (the step's start is saved on its first frame with control)
+    const at = { x: Math.round(n.sq.x), y: Math.round(n.sq.y) };
+    step === "walls" && (S().walls = { chart: 1 });
+    step === "dress" && (S().dress.on = { beard: "chin" });
+    step === "tape" && (S().tape.next = "zoom");
+    n.sq.x += 40;
+    ss.sectionReset();
+    for (let i = 0; i < 4; i++) tick();
+    out.restart[step] = { step: S().step, ctrl: n.ctrl, back: Math.round(n.sq.x) === at.x && Math.round(n.sq.y) === at.y, walls: Object.keys(S().walls || {}).length, dress: S().dress ? Object.keys(S().dress.on).length : 0, next: S().tape ? S().tape.next : "" };
+  }
+  // the steps he does not control go back to the last one he did (pickup.js PK_RESTART_TO)
+  for (const [step, from] of [["slat", "push"], ["held", "sneak"], ["mirror", "practice"], ["climbing", "ramp"], ["found", "hide"]]) {
+    ((n.q = []), (n.cur = null), B.jump(from));
+    tick();
+    (n.q = []), (n.cur = null);
+    S().step = step;
+    n.ch1Step = "";
+    n.q = [{ k: "wait", t: 0 }];
+    ss.sectionReset();
+    for (let i = 0; i < 4; i++) tick();
+    out.cut[step] = S().step;
+  }
+  // 55: standing in front of the robots once they turn back to the row: "?", "!", the FUR alarm, a guard
+  ((n.q = []), (n.cur = null), B.jump("sneak"));
+  for (let i = 0; i < 4; i++) tick();
+  n.sq.x = 900;
+  n.sq.y = 606;
+  let mark = "";
+  for (let i = 0; i < 200 && !S().guard; i++) (tick(), (mark = mark || (S().bots.find((b) => b.mark === "?") ? "?" : "")));
+  out.alarm = { registered: mark, guard: !!S().guard, alarmOn: B.alarmOn() };
+  // 57: in a guest's cone in costume: "?" (dashed), BLEAT · guest pops it; left in a cone too long the beard slips and
+  // PRESS · beard is offered
+  ((n.q = []), (n.cur = null), B.jump("lastwalk"));
+  for (let i = 0; i < 4; i++) tick();
+  window.SSQ.engine().enterRoom("hall", "QB");
+  const g1 = B.place.PK_HALL.guests[0];
+  const inCone = () => {
+    for (let x = 200; x < 900; x += 20)
+      for (let y = 380; y < 600; y += 20) {
+        n.sq.x = x;
+        n.sq.y = y;
+        tick(0.01);
+        if (Object.values(S().watch).some((w) => w.mark === "?")) return true;
+      }
+    return false;
+  };
+  out.cone = { seen: inCone() };
+  out.cone.bleat = ss.spotsNow().some((q) => q.verb === "BLEAT" && q.cap === "guest");
+  const sp = ss.spotsNow().find((q) => q.verb === "BLEAT");
+  sp && sp.f();
+  out.cone.popped = Object.values(S().watch).every((w) => w.mark !== "?");
+  // again, with a fresh guest look, and wait without a bleat: the beard slips
+  for (const w of Object.values(S().watch)) Object.assign(w, { fooled: false, seenT: 0, mark: "" });
+  let slipped = false;
+  for (let i = 0; i < 120 && !slipped; i++) (tick(0.05), (slipped = S().fur));
+  out.cone.slipped = slipped;
+  out.cone.press = ss.spotsNow().some((q) => q.verb === "PRESS");
+  ss.drawFrame();
+  out.cone.drew = (B.debug().drew.guests || []).some((q) => q.filled) || !Object.values(S().watch).some((w) => w.mark);
+  // the chapter reset forgets pickup day
+  window.SSQ.engine().resetChapter();
+  out.reset = n.ch1Pickup === null;
+  return out;
+});
+g.check("↺ in a step he controls starts that step again, him back where it started (the walls back up, the costume back on the shelf, the tape at its start)", Object.entries(more.restart).every(([k, r]) => r.step === k && r.ctrl && r.back) && more.restart.walls.walls === 0 && more.restart.dress.dress === 0 && more.restart.tape.next === "play", more.restart);
+g.check("↺ in a step he does not control goes back to the last step he did", more.cut.slat === "push" && more.cut.held === "sneak" && more.cut.mirror === "practice" && more.cut.climbing === "ramp" && more.cut.found === "hide", more.cut);
+g.check("55: a robot that sees him shows \"?\" first, then the FUR alarm and a guard (no music: the alarm is on)", more.alarm.registered === "?" && more.alarm.guard && more.alarm.alarmOn, more.alarm);
+g.check("57: a guest's cone on him in costume shows \"?\"; BLEAT · guest pops it; too long without a bleat and the beard slips, PRESS · beard", more.cone.seen && more.cone.bleat && more.cone.popped && more.cone.slipped && more.cone.press, more.cone);
+g.check("the chapter reset forgets pickup day", more.reset);
 g.check("no page errors", errors.length === 0, errors);
 console.log(JSON.stringify({ acts: run.acts, end: run.end }));
 await g.finish("pickup");

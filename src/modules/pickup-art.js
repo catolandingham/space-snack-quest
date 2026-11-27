@@ -29,7 +29,7 @@ const PK_FUR = "#6b4428",
 
 // ---------- small things ----------
 /** A tuft of his fur (53: on the crate bed). */
-export function drawTuft(ctx, x, y, k = 1) {
+export function drawPkTuft(ctx, x, y, k = 1) {
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(k, k);
@@ -634,7 +634,7 @@ export function drawMirror(ctx, engine, b, t, show) {
 
 // ---------- 57 ----------
 /** The Guardians' plate on the snack bar (52's plate): empty now, a few crumbs. */
-export function drawPlate(ctx, b) {
+export function drawPkPlate(ctx, b) {
   const cx = (b.x0 + b.x1) / 2,
     cy = (b.y0 + b.y1) / 2;
   ctx.beginPath();

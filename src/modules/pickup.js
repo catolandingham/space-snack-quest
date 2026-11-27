@@ -40,14 +40,14 @@
  */
 import { pickupWords } from "./pickup-lines.js";
 import { PK_HOME, PK_HALL, PK_HALLWAY, PK_BAY, PK_BAY_PICKUP, PK_BAY_GONE, PK_SIGHT, PK_PACE, PK_CRATE, ROUTE_PUSH, ROUTE_SNEAK, ROUTE_LAST, COSTUME, PK_OFFICE, PK_HOLD } from "./pickup-place.js";
-import { drawTuft, drawHair, drawFloorPatch, drawPkCrate, drawBucket, drawMailBag, drawHat, drawNewRobotBits, drawScanLine, drawArchLight, drawCamera, drawChart, drawKidDrawing, drawPaleSquare, drawFoldedNote, drawBoxCloseup, drawHairCloseup, drawSlatFrame, SLAT, drawIdea, drawSnipCloseup, drawDressCloseup, drawMirror, COSTUME_PIECES, DRESS, costumeSpotAt, drawPlate, drawPlateCloseup, drawPhotoSign, drawCrayonCloseup, drawTagBox, drawPeelCloseup, drawSlipCloseup, drawShipAway, drawPhotoCorner, drawTapeScreen, drawHold, drawBiteCloseup, drawLidView } from "./pickup-art.js";
+import { drawPkTuft, drawHair, drawFloorPatch, drawPkCrate, drawBucket, drawMailBag, drawHat, drawNewRobotBits, drawScanLine, drawArchLight, drawCamera, drawChart, drawKidDrawing, drawPaleSquare, drawFoldedNote, drawBoxCloseup, drawHairCloseup, drawSlatFrame, SLAT, drawIdea, drawSnipCloseup, drawDressCloseup, drawMirror, COSTUME_PIECES, DRESS, costumeSpotAt, drawPkPlate, drawPlateCloseup, drawPhotoSign, drawCrayonCloseup, drawTagBox, drawPeelCloseup, drawSlipCloseup, drawShipAway, drawPhotoCorner, drawTapeScreen, drawHold, drawBiteCloseup, drawLidView } from "./pickup-art.js";
 import { OFFICE_PANELS } from "./escape-office-art.js";
 import { escapeWords } from "./escape-lines.js";
 import { drawPerson, LOOKS } from "./party-art.js";
 import { drawSweat } from "./escape-home-art.js";
 import { ES_HOME, ES_DOORS, FOLLOW } from "./escape-place.js";
 import { doorAt, doorTo, markDoor, freshTrail, followStep } from "./escape-doors.js";
-import { markBox, blurBehind, drawHearts, drawBrochure } from "./escape-art.js";
+import { markBox, blurBehind, drawHearts, drawBrochure, esWords } from "./escape-art.js";
 import { drawNoteCloseup } from "./escape-vent-art.js";
 import { MORNING_THINGS } from "./home-morning-art.js";
 import { LUNCH_SOLIDS, LUNCH_BOUNDS } from "./lunch-sneak-place.js";
@@ -472,7 +472,8 @@ export function createPickup(bridge) {
     e.face("mops", -1);
     go("arrive");
     e.queue([
-      ...bridgeWalk("mops", [PK_BAY.mailIn, { x: 600, y: 470 }, { x: 120, y: 470 }, PK_BAY.door]),
+      // (out along the front of the walkway, clear of the old robots' line and the open crate)
+      ...bridgeWalk("mops", [PK_BAY.mailIn, { x: 600, y: 440 }, { x: 380, y: 440 }, { x: 200, y: 440 }, { x: 52, y: 430 }, PK_BAY.door]),
       e.run(() => {
         e.set("moPose", "hidden");
         e.place("mops", -400, -400);
@@ -788,7 +789,7 @@ export function createPickup(bridge) {
     e.place("mops", PK_HOME.mirrorMops.x + 40, PK_HOME.mirrorMops.y + 40);
     e.face("mops", -1);
     go("tosnip");
-    asMops("switch-snip", () => (go("snip", { cu: "snip", cuAt: e.time(), cut: false }), control("chip-jacket")));
+    asMops("switch-snip", () => (go("snip", { cu: "snip", cuAt: e.time(), cut: false }), control("chip-snip")));
   }
   function snip() {
     const e = E();
@@ -894,6 +895,8 @@ export function createPickup(bridge) {
     for (const g of PK_HALL.guests) {
       const w = l.watch[g.id],
         on = e.get("sqPose") === "stand" && coneOnBody(guestCone(g, t), s, k);
+      // a guest says hello to Mops as he passes (57: "Hi, Mops!")
+      if (!w.waved && at(e.pos("mops"), g, PK_HALL.hiNear)) ((w.waved = true), e.ambient("tourist", pickupWords("guest-hi-57")));
       if (!on || w.fooled) {
         w.seenT = 0;
         w.mark = "";
@@ -989,7 +992,7 @@ export function createPickup(bridge) {
       ...sayP("robot", "bot-odd-goat"),
       ...sayP("mops", "mops-cousin"),
       ...sayP("robot", "bot-compute"),
-      e.run(() => ((bots("r0")[0].mark = ""), asMops("switch-board-mops", () => (go("goship"), control("chip-board"))))),
+      e.run(() => ((bots("r0")[0].mark = ""), asMops("switch-board-mops", () => (go("goship"), control("chip-go-ship"))))),
     ]);
   }
   // GO · ship (the player is Mops): a robot holds out a claw for his tool, the way Dot, Bob and Lou handed theirs over
@@ -1522,7 +1525,7 @@ export function createPickup(bridge) {
       if (l.crate !== "bed") drawFloorPatch(ctx, PK_HOME.bedBox, PK_HOME.floorAt);
       else {
         ["wake", "note"].includes(l.step) && drawFoldedNote(ctx, PK_HOME.note);
-        PK_HOME.tufts.forEach((q, i) => l.tufts[i] || drawTuft(ctx, q.x, q.y, 1.4));
+        PK_HOME.tufts.forEach((q, i) => l.tufts[i] || drawPkTuft(ctx, q.x, q.y, 1.4));
         l.hairOut && !l.packed.box && drawHair(ctx, PK_HOME.hair.x, PK_HOME.hair.y, 46, 2.5);
         l.packed.box && markPacked(ctx, l);
       }
@@ -1562,7 +1565,7 @@ export function createPickup(bridge) {
     if (l.roarAt >= 0 && t - l.roarAt < PK_PACE.shake && room === "closet") drew.roar = roarLines(ctx, headBox("sq"), t - l.roarAt);
     // 57: the hall's guests and their cones (the costume's rule); the plate; the slipped beard
     if (room === "hall" && l.step !== "push" && l.watch) drew.guests = drawHallGuests(ctx, l, t);
-    if (room === "hall" && (l.step === "lastwalk" || l.step === "plate")) drawPlate(ctx, PK_HALL.plate);
+    if (room === "hall" && (l.step === "lastwalk" || l.step === "plate")) drawPkPlate(ctx, PK_HALL.plate);
     if (l.fur && room === "hall") drew.fur = slippedBeard(ctx, t);
     if (l.crumbAt >= 0 && t - l.crumbAt < PK_PACE.hold + 0.6) (ctx.save(), (ctx.fillStyle = "#8b5a3c"), ctx.beginPath(), ctx.arc(m.x + 14 * moScale(room), m.y - 34 * moScale(room), 4, 0, 7), ctx.fill(), ctx.restore());
     // 57: the hallway: the office door's sign and the flash under it; a gulp if he saw the frame in the office
@@ -1647,9 +1650,10 @@ export function createPickup(bridge) {
     if (l.packed.label) {
       ctx.save();
       ctx.fillStyle = "#fffdf8";
-      ctx.fillRect(c.x0 + 66, c.y1 - 40, 74, 20);
-      ctx.strokeRect(c.x0 + 66, c.y1 - 40, 74, 20);
+      ctx.fillRect(c.x0 + 56, c.y1 - 42, 94, 22);
+      ctx.strokeRect(c.x0 + 56, c.y1 - 42, 94, 22);
       ctx.restore();
+      esWords(ctx, pickupWords("label"), c.x0 + 103, c.y1 - 31, 9, "#1e2430", "center", 900);
     }
   }
 
@@ -1692,6 +1696,9 @@ export function createPickup(bridge) {
     if (step !== "start" && step !== "isfred" && !PICKUP_STEPS.includes(step) && !PK_RESTART_TO[step]) return;
     busy();
     e.set("ch1Journey", false);
+    // Day 2's morning is long over (a jump from a link or a test: the home morning's ↺ must not take over)
+    const hm = e.get("ch1HomeMorning");
+    e.set("ch1HomeMorning", { ...(hm || {}), step: "done", gift: "box", boxOut: false, door: false, bag: "taken", heart: -1 });
     if (step === "start") return start();
     if (!PICKUP_STEPS.includes(step) && step !== "isfred") step = PK_RESTART_TO[step];
     const i = PICKUP_STEPS.indexOf(step);
@@ -1772,7 +1779,7 @@ export function createPickup(bridge) {
       e.place("sq", PK_HOME.mirrorSq.x, PK_HOME.mirrorSq.y + 40);
       e.place("mops", PK_HOME.mirrorMops.x + 40, PK_HOME.mirrorMops.y + 40);
       e.face("mops", -1);
-      if (step === "snip") return (go("snip", { cu: "snip", cut: false }), control("chip-jacket"));
+      if (step === "snip") return (go("snip", { cu: "snip", cut: false }), control("chip-snip"));
       if (step === "dress") return (go("dress", { cu: "dress", dress: { on: {}, held: "" } }), control("chip-jacket"));
       if (step === "practice") return (go("practice", { bleats: 0 }), control("chip-bleat"));
       return lastWalk();
@@ -1786,8 +1793,9 @@ export function createPickup(bridge) {
     if (["board", "peel", "ramp"].includes(step)) e.place("mops", PK_BAY.mopsTop.x, PK_BAY.mopsTop.y);
     if (step === "peel" || step === "ramp") (e.place("sq", PK_BAY.rampFoot.x, PK_BAY.rampFoot.y), (l.scanSq = step === "peel" ? 1 : -1));
     l.trail = freshTrail();
+    step === "botbleat" && (l.bots[0].mark = "?");
     go(step, step === "peel" ? { cu: "peel", pressed: false } : {});
-    control({ pickbox: "chip-box58", toscan: "chip-scanner", botbleat: "chip-scanner", goship: "chip-board", board: "chip-board", peel: "chip-board", ramp: "chip-board" }[step]);
+    control({ pickbox: "chip-box58", toscan: "chip-scanner", botbleat: "chip-scanner", goship: "chip-go-ship", board: "chip-board", peel: "chip-board", ramp: "chip-board" }[step]);
   }
 
   return {
@@ -1867,7 +1875,8 @@ export function createPickup(bridge) {
     solids() {
       const l = live(),
         r = l && E().room();
-      if (r === "hall" && walking(l)) return [...LUNCH_SOLIDS.map((b) => ({ ...b })), ...PK_HALL.guests.map((g) => ({ x0: g.x - 25, x1: g.x + 25, y0: g.y - 14, y1: g.y + 8, person: 1 }))];
+      // (the guests stand in the hall on the push and the last walk; on the walk home in 55 the hall is empty)
+      if (r === "hall" && walking(l)) return [...LUNCH_SOLIDS.map((b) => ({ ...b })), ...(l.step === "home" ? [] : PK_HALL.guests.map((g) => ({ x0: g.x - 25, x1: g.x + 25, y0: g.y - 14, y1: g.y + 8, person: 1 })))];
       if (r === "hangar") {
         const row = Object.entries(l.things || {})
           .filter(([, th]) => th.where === "row")

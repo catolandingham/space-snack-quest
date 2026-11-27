@@ -616,7 +616,7 @@
         ]));
     }
     function ch1ReturnCrate() {
-      ((n.ctrl = !1), (n.act = null), pkBeat() && pkBeat().start()); // pickup day: src/modules/pickup.js
+      ((n.ctrl = !1), (n.act = null), pkBeat() ? pkBeat().start() : ch1ChapterEnd()); // pickup day: src/modules/pickup.js
     }
     function ch1QSpots() {
       if (partyBeat() && partyBeat().active()) return [...partyBeat().spots(), ...ch1CalendarSpots()];

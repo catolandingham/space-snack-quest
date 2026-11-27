@@ -65,7 +65,6 @@ export const PICKUP_LINES = Object.freeze(
     pkPend("robot-label", "robot", STARS_CAKES.pickup, 53, "NEW: a robot in the hallway reads the label (ear icon)"),
     // ---- 54: the robots open a crate (Squatch inside, the view through a slat) ----
     pkNew("switch-crate", "switch", "Squatch is in the crate. He can only look.", 54, "the reason on the switch card"),
-    pkNew("chip-look", "chip", "Squatch: look through the slat", 54),
     pkLine("scan-no-fur", "scanner", "NO FUR. PROCEED.", "pending", PK_SP(54, "KEEP: the words from beat 30 (ear icon), still pending there")),
     pkPend("bot-new-rule", "robot", "NEW ROBOTS. NEW RULE.", 54, "NEW, a new robot (ear icon)", 2),
     pkPend("bot-scan-every", "robot", "SCAN EVERY CRATE.", 54, "NEW, a new robot (ear icon)", 2),
@@ -112,6 +111,7 @@ export const PICKUP_LINES = Object.freeze(
     pkPend("sq-make-goat", "sq", "So make me a goat.", 55, "NEW"),
     // ---- 56: the goat costume ----
     pkNew("switch-snip", "switch", "Mops gives Squatch a piece of his beard.", 56, "the reason on the switch card"),
+    pkNew("chip-snip", "chip", "Mops: snip a piece of your beard", 56),
     pkPend("button-snip", "button", "SNIP · beard", 56, "the button the pass names"),
     pkNew("switch-dress", "switch", "The beard is cut. Squatch dresses up.", 56, "the reason on the switch card"),
     pkLine("mops-wardrobe", "mops", "The spare jacket. The beard. And the horns.", "in-game", "src/game/14-ch1-day2.js ch1CostumeReady (KEEP)"),
@@ -164,6 +164,7 @@ export const PICKUP_LINES = Object.freeze(
     pkPend("mops-cousin", "mops", "My cousin. He has a cold.", 58, "NEW", 3),
     pkLine("bot-compute", "robot", "Does not compute.", "pending", PK_SP(58, "KEEP: Brian's hairball line from 36, used again"), 3),
     pkNew("switch-board-mops", "switch", "Mops goes first. The scanner knows him.", 58, "the reason on the switch card"),
+    pkNew("chip-go-ship", "chip", "Mops: walk through the scanner", 58),
     pkLine("button-go-ship", "button", "GO · ship", "pending", PK_WALK + "58; story pass 53-61 (KEEP, pending)"),
     pkPend("bot-tool", "robot", "HAND OVER YOUR TOOL.", 58, "NEW", 3),
     pkPend("mops-attached", "mops", "It's attached.", 58, "NEW", 3),

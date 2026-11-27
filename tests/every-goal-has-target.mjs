@@ -32,8 +32,6 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: get away from the octopus!",
     // (night one's vent cutscene, beat 42, its still: 14-ch1-day2.js ch1JumpBeat 142; the player has no control there)
     "Squatch: hide by the vent",
-    // (pickup day, 54: inside the crate he can only look; the robots' lines wait for NEXT)
-    "Squatch: look through the slat",
   ]);
   const play = {
     "Squatch: walk around the room": { scene: "O1", room: "closet", day2: false, walk: true, x: 500, y: 530 },
@@ -285,7 +283,7 @@ g.check("no goal is marked with a yellow circle, a floor ring or an arrow", repo
 g.check("at least 14 goals outline their real thing (doors, plants, bin, mailbox, vent, calendar, wardrobe)", report.outlined.length >= 14, report.outlined);
 g.check("each outline is round the thing whose action is offered where the goal is done", report.farOutline.length === 0, report.farOutline);
 g.known(`${report.unoutlined.length} of ${report.checked} goals have no outline yet (props the game draws, Mops, close-ups, and Squatch's own spot)`, report.unoutlined.length > 0, report.unoutlined);
-g.check("story goals are named (the four story goals, the octopus chase, night one's vent cutscene and pickup day's slat view)", report.story.length === 7, report.story);
+g.check("story goals are named (the four story goals, the octopus chase and night one's vent cutscene)", report.story.length === 6, report.story);
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();
 await g.finish("every-goal");
