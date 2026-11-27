@@ -9,7 +9,7 @@
  *       the hall (the guests' "Hi, Mops!") and the hallway (the robot reads the label) to the mail room;
  *   54: no slat view: his eyes in his crate; one upgraded robot's lines; the first crate opened, scanned, up the ramp;
  *   55: KNOCK · crate, SPILL · bucket by the floor vent (the robot leaves the mail room to clean); CLIMB OUT · crate;
- *       ROLL · ball is offered where he stands; HIDE · mail bags; the held moment (the stamp read as it is, "HAIR.
+ *       ROLL · ball is offered where he stands; HIDE · mailbox (Brian's #118 B); the held moment (the stamp read as it is, "HAIR.
  *       PROCEED."); the walk home; the idea in words at home.
  *   56 to 61: played the same way to the tally card (the snip, the dress-up's button, three bleats, the last walk, the
  *       scanner, the beard slipping off in the room, the office, the one tape, the hold, the crew's walk down the
@@ -120,6 +120,10 @@ const run = await page.evaluate(
     out.posterGone = d().drew.poster === false && S().posterEaten;
     play("pack");
     play("bucket");
+    ss.drawFrame();
+    out.bagOnFloor = !!S() && S().step === "snacks";
+    play("snacks");
+    out.snacksPacked = S().packed.snacks;
     for (let k = 0; k < 4; k++) play("walls");
     ss.drawFrame();
     out.wallsLeft = d().drew.walls;
@@ -198,6 +202,7 @@ const run = await page.evaluate(
       if (!st || !B.active()) break;
       ss.drawFrame();
       const dr = d().drew || {};
+      st.snipped && n.room === "hall" && (out.snipHall = out.snipHall || !!dr.snipMark);
       seen[st.step] = seen[st.step] || { room: n.room, cu: st.cu, chip: n.ch1Chip, mark: !!dr.mark, mirror: dr.mirror, dress: dr.dress && dr.dress.meter, tape: dr.tape && dr.tape.next, crew: dr.crew, place: st.place };
       // (nothing to press yet, e.g. the week's box still coming down the ramp: wait a moment)
       if (!ss.spotsNow().some((q) => q && (q.r > 0 || q.box) && !q.extra)) {
@@ -211,6 +216,7 @@ const run = await page.evaluate(
     }
     out.seen = seen;
     out.costume = n.costumeOn;
+    out.stripped = !!(S() && S().stripped);
     out.end = { step: S() && S().step, scene: n.scene, room: n.room, ch1Step: n.ch1Step, active: B.active(), cur: n.cur && (n.cur.id || n.cur.k) };
     out.allSaid = out.said;
     out.steps = d().steps;
@@ -227,7 +233,7 @@ g.check("53: \"Safe.\", then \"The scanner stops fur.\" / \"It lets hair through
 g.check("53: the four tufts are wiped by walking (the next one is the walk spot); no stray hair close-up", run.tufts.every(Boolean) && run.marks.tuft === "pk-tuft" && run.hairCu === "", { tufts: run.tufts, mark: run.marks.tuft, cu: run.hairCu });
 g.check("53 (r6 2:21): as Mops, EAT · poster on the outlined STAY IN HERE poster; his line, Squatch's, \"Delicious.\"; a pale square where it hung", run.poster0.step === "poster" && run.poster0.driving === "mops" && run.poster0.chip === W["chip-poster"] && run.poster0.mark === "pk-poster" && run.poster0.poster === true && run.acts.includes("EAT · poster") && [W["mops-dont-need"], W["sq-you-ate"], W["mops-delicious"]].every((w) => run.said.includes(w)) && run.posterGone, run.poster0);
 g.check("53 (#116): Mops lays his beard hair over him in the crate on purpose: \"So today you're a pile of hair.\"", run.pile === true && run.said.includes(W["mops-pile"]) && run.said.indexOf(W["mops-in"]) < run.said.indexOf(W["mops-pile"]));
-g.check("53: PACK · box, PACK · bucket, four things off the walls, PUT ON · label, GET IN · crate", ["PACK · box", "PACK · bucket", "TAKE · chart", "TAKE · brochure", "TAKE · drawing", "PUT ON · label", "GET IN · crate"].every((a) => run.acts.includes(a)) && run.wallsLeft.length === 0, run.acts);
+g.check("53: PACK · box, PACK · bucket, four things off the walls, PUT ON · label, GET IN · crate", ["PACK · box", "PACK · bucket", "PACK · snacks", "TAKE · chart", "TAKE · brochure", "TAKE · drawing", "PUT ON · label", "GET IN · crate"].every((a) => run.acts.includes(a)) && run.wallsLeft.length === 0, run.acts);
 g.check("53: the bare walls, the PA, \"In you go.\"", [W["sq-empty"], W["mops-empty"], W["pa-ship"], W["mops-in"], W["mops-sound"]].every((w) => run.said.includes(w)));
 g.check("53: the push: the player is Mops, Squatch hidden in the crate", run.push0.driving === "mops" && run.push0.sqPose === "hidden" && run.push0.crate === "push", run.push0);
 g.check("53: a guest waves at Mops in the hall; the hallway robot reads the label", run.pushLog.includes(W["guest-hi"]) && run.pushLog.includes(W["robot-label"]), run.pushLog);
@@ -235,7 +241,7 @@ g.check("54 (r6 3:34): no slat view: the room, his eyes in his crate; one upgrad
 g.check("54 (#117): the upgrade lines and Mops's \"...I told them to check the corners.\"; the first crate opened, scanned, up the ramp; no hat, no mail bag", [W["scan-no-fur"], W["bot-upgrade"], W["bot-corners"], W["bot-every-crate"], W["mops-told"], W["sq-look-inside"]].every((w) => run.slatSaid.includes(w)) && run.crateOne === "ship" && !run.slatSaid.some((w) => /HAT|hat\.|NEW RULE/.test(w)), { crateOne: run.crateOne });
 g.check("55: the player is Mops at his crate: KNOCK · crate, then he has the bucket", run.knock0.driving === "mops" && run.knock0.step === "knock" && run.knock0.chip === W["chip-knock"] && run.acts.includes("KNOCK · crate") && run.spill0.bucketOff && run.spill0.chip === W["chip-spill"], { knock0: run.knock0, spill0: run.spill0 });
 g.check("55 (#118): SPILL · bucket by the floor vent: \"SPILL. CLEANING EVERY CORNER.\"; the robot cleans round the puddle, out of the mail room", run.acts.includes("SPILL · bucket") && run.said.includes(W["bot-spill"]) && run.cleaning.phase === "clean" && run.cleaning.x < 400 && run.cleaning.spill, run.cleaning);
-g.check("55: CLIMB OUT · crate; ROLL · ball offered where he stands; HIDE · mail bags (he stays in the mail room)", run.acts.includes("CLIMB OUT · crate") && run.ballOffered && run.acts.includes("HIDE · mail bags") && run.hidAt.x > 700, run.hidAt);
+g.check("55: CLIMB OUT · crate; ROLL · ball offered where he stands; HIDE · mailbox, his eyes in its slot (he stays in the mail room)", run.acts.includes("CLIMB OUT · crate") && run.ballOffered && run.acts.includes("HIDE · mailbox") && run.hidAt.x > 700, run.hidAt);
 g.check("55 (D, #116): the held moment: the stamp read as written, \"ONE BOX. ONE BUCKET.\", \"HAIR. PROCEED.\", up the ramp", [W["bot-ars-loading"], W["bot-one-box"], W["scan-hair-ok"]].every((w) => run.said.includes(w)) && W["bot-ars-loading"] === FAMILY.FADED + ". LOADING." && run.his === "ship", { his: run.his });
 g.check("55 (r6 5:33): the idea said at home, no thought pictures", [W["sq-hair-through"], W["sq-they-looked"], W["mops-need-goat"], W["sq-make-goat"]].every((w) => run.said.includes(w)), run.end);
 g.check("56: SNIP · beard as Mops; the dress-up's big button puts on the beard, the horns, the jacket; BLEAT · Mops three times", ["SNIP · beard", "PUT ON · beard", "PUT ON · horns", "PUT ON · jacket", "BLEAT · Mops"].every((a) => run.acts.includes(a)) && run.acts.filter((a) => a === "BLEAT · Mops").length === 3, run.acts);
@@ -248,6 +254,7 @@ g.check("60 (#123, #130): one tape: PLAY · tape, \"My best worker.\", ZOOM · i
 g.check("58 (r6 7:46): the beard slips off in the room, no close-up", run.slipSeen === true && !run.slipCu, { slip: run.slipSeen, cu: run.slipCu });
 g.check("61: OPEN · box, BITE · cake, \"No fizz.\", the call, HIDE · crate, \"Found him.\", \"He's with me.\"", ["OPEN · box", "BITE · cake", "HIDE · crate"].every((a) => run.acts.includes(a)) && [W["sq-no-fizz"], W["ship-call"], W["ship-wookiee"], W["sq-sasquatch"], W["crew-found"], W["mops-with-me"], W["crew-both-off"]].every((w) => run.said.includes(w)), run.acts);
 g.check("61 (r6 9:15, F): the crew member walks down the stairs (\"Out of the way, goat.\"); the player is Mops: BLEAT · crew, \"Nice try.\", then the lid", run.acts.includes("BLEAT · crew") && run.seen.crewbleat && run.seen.crewbleat.chip === W["chip-crew"] && [W["crew-out-of-way"], W["crew-nice-try"], W["crew-found"]].every((w) => run.said.includes(w)) && run.said.indexOf(W["crew-nice-try"]) < run.said.indexOf(W["crew-found"]), run.seen.crewbleat);
+g.check("Chapter 2 plants (pending): PACK · snacks after the bucket; the snipped beard's ragged end still drawn on the last walk; the crew takes the beard and horns (the jacket stays)", run.bagOnFloor && run.snacksPacked && run.snipHall === true && run.stripped === true, { bag: run.bagOnFloor, packed: run.snacksPacked, snip: run.snipHall, stripped: run.stripped });
 g.check("the end of Chapter 1: the tally card", run.tally === true, run.end);
 // every bubble and card shown is a pickup line (or a piece of one), the Guardian note's or the frame's words
 // (escape-lines.js), a switch card, or the chapter's own end; nothing else is said

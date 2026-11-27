@@ -153,6 +153,30 @@ export function drawBucket(ctx, cx, bottom, k) {
   esRect(ctx, cx - 18 * k, bottom - 46 * k, 36 * k, 10 * k, 3 * k);
   esPaint(ctx, "#8fd8ff", lw * 0.7);
 }
+/** His snack bag from the snack bar (beat 52): a small paper bag, folded top, a cake peeking out (a PLACEHOLDER). */
+export function drawSnackBag(ctx, b) {
+  const w = b.x1 - b.x0,
+    h = b.y1 - b.y0;
+  ctx.save();
+  esRect(ctx, b.x0, b.y0 + h * 0.2, w, h * 0.8, 3);
+  esPaint(ctx, "#d9b27c", 2.5);
+  ctx.beginPath();
+  ctx.arc(b.x0 + w * 0.55, b.y0 + h * 0.2, w * 0.22, Math.PI, 0);
+  esPaint(ctx, "#f2c96b", 2);
+  ctx.restore();
+  return b;
+}
+/** The stand's brochure's corner sticking out of a pocket (a Chapter 2 plant, a PLACEHOLDER). */
+export function drawBrochureCorner(ctx, x, y, k = 1) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(-0.25);
+  esRect(ctx, -9 * k, -16 * k, 18 * k, 16 * k, 2 * k);
+  esPaint(ctx, PK_PAPER, Math.max(1.2, 2 * k));
+  esRect(ctx, -9 * k, -16 * k, 18 * k, 5 * k, 1);
+  esPaint(ctx, PK_RED, 0);
+  ctx.restore();
+}
 /** 55: Mops's spill by the floor vent (round 7, #118): a puddle and the bucket on its side (a PLACEHOLDER layer). */
 export function drawPuddle(ctx, p, t) {
   ctx.save();
@@ -519,6 +543,11 @@ export function drawDressCloseup(ctx, engine, st, t) {
       on === p.spot && right++;
     } else if (st.held !== p.id) drawCostumePiece(ctx, p.id, DRESS.shelf[i].x, DRESS.shelf[i].y, 0.9);
   });
+  // the brochure goes into the jacket's pocket (a Chapter 2 plant)
+  if (st.on.jacket === "body") {
+    const j = costumeSpotAt("body");
+    drawBrochureCorner(ctx, j.x + 40, j.y + 10, 2.2);
+  }
   if (st.held) drawCostumePiece(ctx, st.held, DRESS.sq.x - 200, 300 + Math.sin(t * 4) * 6, 1.1);
   // the meter
   const k = right / COSTUME_PIECES.length;

@@ -6,7 +6,7 @@
  *   npm run build && node tools/pickup-showing.mjs <pickup|seen> <out.mp4>
  *     pickup  from the escape's end (the localhost link ?beat=pickup, or SHOWING_FROM=<step>) through pickup day: every
  *             line read and NEXT, every walk tapped on the floor (Mops's too), every button pressed where it comes up;
- *             after the spill he climbs out and steps behind the mail bags.
+ *             after the spill he climbs out and hides in the mailbox.
  *     seen    the robots' capture rule: he climbs out and walks out of the mail room into an old robot's look at the
  *             ramp; "!", the FUR alarm, a guard; ROLL · ball, "They lost you.".
  *   SHOWING_STILLS=<dir> also writes a still of each step there. SHOWING_SILENT=1 leaves the sound out.
@@ -214,11 +214,11 @@ if (which === "pickup") {
       continue;
     }
     const es = s.es || {};
-    // 55: out of his crate, a few steps left to the mail bags (the robot is out cleaning by the vent), HIDE · mail bags
+    // 55: out of his crate, round it to the mailbox (the robot is out cleaning by the vent), HIDE · mailbox
     if (es.step === "sneak") {
       const go = async (x, y) => Date.now() - tapAt > 700 && ((tapAt = Date.now()), await page.evaluate(([x, y]) => (window.__ss.drawFrame(), window.__ss.tapAt(x, y, false)), [x, y]));
       if (s.act.startsWith("HIDE")) (await sleep(500), await press());
-      else await go(818, 584);
+      else await go(878, 508);
       await sleep(150);
       continue;
     }

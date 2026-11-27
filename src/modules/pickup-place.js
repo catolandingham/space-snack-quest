@@ -38,8 +38,10 @@ export const PK_HOME = Object.freeze({
   bucket: Object.freeze({ x0: 536, y0: 500, x1: 596, y1: 571 }),
   bucketAt: Object.freeze({ x: 640, y: 560 }),
   bucketPatch: Object.freeze({ x0: 520, y0: 440, x1: 612, y1: 580 }), // the bucket drawn over the painted one, handle and wheels included
-  // the things on the walls he takes down (layers on the locked picture: his crayon chart of cake kinds, the pancake
-  // brochure from beat 38, two of his drawings), each with where he stands for it
+  // his snack bag from the snack bar (beat 52), on the floor by the crate bed until he packs it (a Chapter 2 plant)
+  snackBag: Object.freeze({ x0: 392, y0: 500, x1: 438, y1: 548 }),
+  // the things on the walls he takes down (layers on the locked picture: his crayon chart of cake kinds, the Mars
+  // Cakes brochure from beat 38, two of his drawings), each with where he stands for it
   walls: Object.freeze([
     // the chart over his bed (cake-chart.js CAKE_CHART, the home picture's layer, in game positions)
     Object.freeze({ id: "chart", box: Object.freeze({ x0: 194, y0: 228, x1: 346, y1: 321 }), at: Object.freeze({ x: 270, y: 470 }) }),
@@ -118,7 +120,7 @@ export const PK_HALLWAY = Object.freeze({
 // The loading bay on pickup day (delivery-room-empty-pickup-v4): the walkway (ramp and scanner arch), the plant, the
 // bin, the mail room and its row of crates (layers on the picture: a crate, then his crate). Round 7 (topic A, #118
 // pick A): one upgraded robot works the mail room; the old ones load at the ramp; passengers board; Mops spills the
-// bucket by the floor vent, out in the bay; Squatch hides behind the mail bags (painted in the locked picture).
+// bucket by the floor vent, out in the bay; Squatch hides inside the robot mailbox (painted in the locked picture; Brian's #118 B).
 export const PK_BAY = Object.freeze({
   arch: Object.freeze({ x0: 345, y0: 302, x1: 587, y1: 416 }),
   archFront: Object.freeze({ x: 466, y: 446 }),
@@ -148,17 +150,19 @@ export const PK_BAY = Object.freeze({
   spillAt: Object.freeze({ x: 250, y: 580 }),
   spillR: 50,
   puddle: Object.freeze({ x: 196, y: 590, rx: 46, ry: 16 }),
-  // 55: the mail bags painted at the front of the mail room (the left one): he hides behind it, his eyes over its top
-  bags: Object.freeze({ x0: 790, y0: 540, x1: 846, y1: 596 }),
-  bagsAt: Object.freeze({ x: 818, y: 584 }),
-  bagsR: 46,
-  bagEyes: Object.freeze({ x: 818, y: 548 }),
+  // 55 (Brian, #118 B, 2026-11-27: his idea): the robot mailbox painted in the mail room; he hides inside it, his eyes
+  // in its slot; it stays quiet while he is in it (no "MAIL SCANNED.")
+  mailbox: Object.freeze({ x0: 846, y0: 384, x1: 910, y1: 476 }),
+  mailboxAt: Object.freeze({ x: 878, y: 508 }),
+  mailboxR: 46,
+  slotEyes: Object.freeze({ x: 878, y: 421 }),
   // the robots: the old two load at the ramp (facing it); the upgraded one comes down the ramp and works the mail room
   oldLine: Object.freeze([Object.freeze({ x: 610, y: 470 }), Object.freeze({ x: 392, y: 480 })]),
-  botsBack: Object.freeze([Object.freeze({ x: 780, y: 600 }), Object.freeze({ x: 800, y: 580 })]),
+  botsBack: Object.freeze([Object.freeze({ x: 748, y: 604 }), Object.freeze({ x: 800, y: 580 })]),
   // 54: two passengers come in from the hallway and board while the robot talks (they never see him: he is in the crate)
-  // (round the front of the bin, the plant and the open crate, all painted in the picture, so nobody walks over them)
-  board: Object.freeze([Object.freeze({ x: 60, y: 340 }), Object.freeze({ x: 90, y: 540 }), Object.freeze({ x: 450, y: 540 }), Object.freeze({ x: 466, y: 446 }), Object.freeze({ x: 466, y: 404 }), Object.freeze({ x: 466, y: 240 })]),
+  // (round the front of the bin, the plant, the open crate and the floor vent, all painted in the picture, so nobody
+  // walks over them)
+  board: Object.freeze([Object.freeze({ x: 60, y: 340 }), Object.freeze({ x: 90, y: 584 }), Object.freeze({ x: 450, y: 584 }), Object.freeze({ x: 466, y: 446 }), Object.freeze({ x: 466, y: 404 }), Object.freeze({ x: 466, y: 240 })]),
   passengers: Object.freeze([Object.freeze({ id: "backpack", delay: 0 }), Object.freeze({ id: "camera", delay: 1.6 })]),
   // a carry from the row out through the opening to the scan place (round the mail room's walls), and back
   carry: Object.freeze([Object.freeze({ x: 790, y: 520 }), Object.freeze({ x: 700, y: 462 }), Object.freeze({ x: 600, y: 452 }), Object.freeze({ x: 500, y: 446 })]),

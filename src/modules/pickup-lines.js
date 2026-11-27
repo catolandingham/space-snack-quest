@@ -55,6 +55,8 @@ export const PICKUP_LINES = Object.freeze(
     pkNew("chip-pack", "chip", "Squatch: pack the crate", 53),
     pkLine("button-pack-box", "button", "PACK · box", "pending", PK_WALK + "53; story pass 53-61 (KEEP, pending)"),
     pkLine("button-pack-bucket", "button", "PACK · bucket", "pending", PK_WALK + "53; story pass 53-61 (KEEP, pending)"),
+    // (a Chapter 2 plant: the snack bag from the snack bar is seen going into the crate)
+    pkLine("button-pack-snacks", "button", "PACK · snacks", "pending", "Snack Quest Chat's Chapter 2 plant (2026-11-27), pending Brian's yes"),
     pkNew("chip-walls", "chip", "Squatch: take the things off the walls", 53),
     pkNew("button-take-chart", "button", "TAKE · chart", 53, "his crayon chart of cake kinds"),
     pkNew("button-take-brochure", "button", "TAKE · brochure", 53),
@@ -86,7 +88,7 @@ export const PICKUP_LINES = Object.freeze(
     pkR7("bot-every-crate", "robot", "AND EVERY CRATE.", "A", 117),
     pkR7("mops-told", "mops", "...I told them to check the corners.", "A", 117, "small"),
     pkR7("sq-look-inside", "sq", "They LOOK inside now.", "A", 117, "a thought, from the crate"),
-    // ---- 55: Mops gets him out: KNOCK, then SPILL · bucket out in the bay; he hides behind the mail bags ----
+    // ---- 55: Mops gets him out: KNOCK, then SPILL · bucket out in the bay; he hides inside the mailbox (Brian's #118 B) ----
     pkR7("chip-knock", "chip", "Mops: knock on Squatch's crate", "A", 118, "goal words, new"),
     pkPend("button-knock", "button", "KNOCK · crate", 55, "the button the pass names"),
     pkPend("mops-get-out", "mops", "Squatch! Get out.", 55, "CHANGED (in the game: \"Get out. They're checking a crate.\", split)"),
@@ -97,9 +99,9 @@ export const PICKUP_LINES = Object.freeze(
     pkR7("switch-out", "switch", "The robot is cleaning far away. Squatch's turn.", "A", 118, "the reason on the switch card, new"),
     pkNew("chip-climb", "chip", "Squatch: climb out of the crate", 55),
     pkPend("button-climb", "button", "CLIMB OUT · crate", 55, "the button the pass names"),
-    pkR7("chip-bags", "chip", "Squatch: hide behind the mail bags", "A", 118, "goal words, new"),
+    pkR7("chip-mailbox", "chip", "Squatch: hide in the mailbox", "A", 118, "goal words, new; Brian chose B, his mailbox idea"),
     pkLine("button-ball", "button", "ROLL · ball", "in-game", "lunch-sneak-lines.js and escape-lines.js (the ball, R43)"),
-    pkR7("button-bags", "button", "HIDE · mail bags", "A", 118),
+    pkR7("button-mailbox", "button", "HIDE · mailbox", "A", 118, "Brian chose B, his mailbox idea"),
     pkLine("lockup-cause", "card", "A robot saw Squatch in the delivery room. Security caught him.", "in-game", "src/game/25-capture.js CAPTURES.delivery (the LOCKUP card in the loading bay)"),
     // (the robot reads the crate as it is written: the stamp's first letter is scraped off. Topic D)
     pkR7("bot-ars-loading", "robot", `${FAMILY.FADED}. LOADING.`, "D", 133, "replaces the reading with its first letter put back"),
