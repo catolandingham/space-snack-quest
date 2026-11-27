@@ -560,7 +560,8 @@ await join_("42c-to-43-six-days-later");
   for (;;) {
     if (Date.now() > end) await fail("ran out of time in the escape");
     const s = await st();
-    if (s.ch1Step === "pack1") break;
+    // (beat 53 is pickup day's module now: it is on as soon as the escape hands over)
+    if (s.ch1Step === "pack1" || (await page.evaluate(() => !!(window.SSQ.beat("ch1-pickup") && window.SSQ.beat("ch1-pickup").active())))) break;
     const step = s.es && s.es.step;
     if (step && step !== lastStep) ((lastStep = step), log(step), await sleep(300), await still("es-" + step));
     if (["bub", "card", "cutaway"].includes(s.cur)) {
