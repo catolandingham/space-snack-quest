@@ -424,6 +424,8 @@ if (which === "bedtime") {
       n = ss.op;
     n.q = [];
     n.cur = null;
+    // (after the party, as party.js finish() leaves it: the evening is at night, night-look.js)
+    n.ch1PartyNow = { scene: "done" };
     window.SSQ.engine().tvStory();
     for (let i = 0; i < 600; i++) {
       ss.tick(0.05);
@@ -445,6 +447,8 @@ if (which === "morning") {
       bed = window.SSQ.beat("ch1-bedtime-story");
     n.q = [];
     n.cur = null;
+    // (after the party, as party.js finish() leaves it: the evening is at night, night-look.js)
+    n.ch1PartyNow = { scene: "done" };
     window.SSQ.engine().tvStory();
     for (let i = 0; i < 6000; i++) {
       if (bed.debug().phase === "fade") return true;
@@ -612,6 +616,8 @@ if (which === "tv") {
     const n = window.__ss.op;
     n.q = [];
     n.cur = null;
+    // (after the party, as party.js finish() leaves it: the evening is at night, night-look.js)
+    n.ch1PartyNow = { scene: "done" };
     window.SSQ.engine().tvStory();
   });
   // every picture: read it (about 3 s), then NEXT; the ship picture gets 6 s
