@@ -5,8 +5,8 @@
  *     gags: Karate Kid, Darth Vader with Squatch behind the mask, E.T. with Squatch in the basket, Lion King on a rock
  *     of crates, a minion, a goat dunk, and one with Squatch rolled up as a ball in the back); the approved pictures
  *     are not in the repo yet, so these are stand-ins
- *   Squatch's crayon drawing behind the crooked photo #4: him and Mops, TIED TOGETHER FOREVER, ME / MOPS THE GANITOR,
- *     and a dotted look from Mops to him with hearts (R63)
+ *   Squatch's crayon drawing behind the crooked photo #4: him and Mops, TIED TOGETHER FOREVER, two tags ME and MOPS
+ *     each with an arrow (decided 2026-11-26), and a dotted look from Mops to him with hearts (R63)
  *   the pancake brochure: a big furry Sasquatch couple behind a pancake counter, Mars in the window behind them (no
  *     words: what it says is still Brian's to pick)
  *   the family's wordless picture bubble (pancakes, Mars)
@@ -14,8 +14,9 @@
  *     carbon copy stuck under it; Squatch's paw print
  *   his furry arm and paw in the close-ups; Mops asleep on his back with his four feet in the air
  */
-import { ganitorWords, crayonGanitorLabel } from "./ganitor.js";
+import { ganitorWords } from "./ganitor.js";
 import { eveningWords } from "./evening-lines.js";
+import { drawBrochureExtras } from "./evening-pictures.js";
 
 export const INK = "#1e2430";
 const TAU = Math.PI * 2;
@@ -340,11 +341,26 @@ export function drawCrayonDrawing(ctx, x, y, w, h) {
   ctx.setLineDash([]);
   drawHeartShape(ctx, 150, 54, 6);
   drawHeartShape(ctx, 124, 60, 5);
-  // the labels
-  crayon(ganitorWords("sign-crayon-me"), 82, 196, 20, "#3478f6");
-  const label = crayonGanitorLabel().split(" ");
-  crayon(label.slice(0, 2).join(" "), 214, 192, 17, "#3478f6");
-  crayon(label.slice(2).join(" "), 214, 212, 17, "#3478f6");
+  // the labels: two crayon tags, each with its own arrow (decided 2026-11-26, question 2: A; "Ganitor" stays on the
+  // brass plaque only)
+  const tagArrow = (x0, y0, x1, y1) => {
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    ctx.quadraticCurveTo((x0 + x1) / 2 + 10, (y0 + y1) / 2, x1, y1);
+    const a = Math.atan2(y1 - y0, x1 - x0);
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x1 - Math.cos(a - 0.5) * 12, y1 - Math.sin(a - 0.5) * 12);
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x1 - Math.cos(a + 0.5) * 12, y1 - Math.sin(a + 0.5) * 12);
+    ctx.lineWidth = 3;
+    ctx.lineCap = "round";
+    ctx.strokeStyle = "#3478f6";
+    ctx.stroke();
+  };
+  crayon(eveningWords("sign-me"), 40, 204, 24, "#3478f6");
+  tagArrow(48, 190, 60, 172);
+  crayon(eveningWords("sign-mops"), 262, 204, 24, "#3478f6");
+  tagArrow(250, 190, 238, 170);
   ctx.restore();
 }
 export function drawHeartShape(ctx, x, y, r, color = "#e5533d") {
@@ -436,10 +452,11 @@ export function drawMars(ctx, x, y, r) {
 }
 /**
  * The brochure's front inside (x, y, w, h): a big furry Sasquatch couple smiling behind a pancake counter, a stack of
- * pancakes, Mars in the round window behind them. No words (Brian has not picked them). `small` leaves out the fine
- * parts (the brochure in a paw or on the counter).
+ * pancakes, Mars in the round window behind them, and (evening-pictures.js) one cake box stamped MARS CAKES, a
+ * cut-open cake with a red middle (`fizz`: its sparks) and a round paw print. No other words (decided 2026-11-26).
+ * `small` leaves out the fine parts (the brochure in a paw or on the counter).
  */
-export function drawBrochure(ctx, x, y, w, h, small = false) {
+export function drawBrochure(ctx, x, y, w, h, small = false, fizz = 0, t = 0) {
   ctx.save();
   rrect(ctx, x, y, w, h, Math.max(2, w * 0.03), "#fffaf0", INK, Math.max(1.5, w * 0.012));
   ctx.beginPath();
@@ -459,6 +476,8 @@ export function drawBrochure(ctx, x, y, w, h, small = false) {
   ctx.fillStyle = "#c98c58";
   ctx.fillRect(x, y + h * 0.7, w, h * 0.04);
   pancakes(ctx, x + w * 0.5, y + h * 0.72, s * 1.4);
+  // the cake box stamped MARS CAKES, the cut-open cake, the round paw print (story pass beat 39)
+  !small && drawBrochureExtras(ctx, x, y, w, h, fizz, t);
   ctx.restore();
   // the fold
   if (!small) {

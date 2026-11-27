@@ -109,6 +109,8 @@ const night = await ev(() => {
   out.window = +window.__light({ x0: 100, y0: 180, x1: 500, y1: 220 }).toFixed(1);
   window.__jump(39);
   window.__run(0.2);
+  // (by day the window here has Jupiter's storm in it, beat 38a: compare with the window as the picture has it)
+  n.ch1Evening.storm = -1;
   window.__ss.drawFrame();
   out.windowDay = +window.__light({ x0: 100, y0: 180, x1: 500, y1: 220 }).toFixed(1);
   return out;
@@ -175,39 +177,36 @@ g.check("the hallway robot rolls along the floor and out through a doorway: neve
 g.check("the hallway robot shows its cone the whole time it is in the hallway", robots.cones.length > 20 && robots.cones.every(Boolean), { frames: robots.cones.length, without: robots.cones.filter((x) => !x).length });
 g.check("in the bay every robot shows its cone: the night robot and the two parked in the mail room", ["night-robot", "robot-2", "robot-3"].every((id) => robots.bayBefore.includes(id)), robots.bayBefore);
 g.check("the way in to the mailbox is clear of the two parked robots' cones (they look along the mail room's bottom wall)", robots.wayIn.length === 0, robots.wayIn.slice(0, 5));
-g.check("after the post, the night robot and the two woken robots show their cones", ["night-robot", "robot-2", "robot-3"].every((id) => robots.bayAfter.includes(id)), robots.bayAfter);
+g.check("after the post, the night robot and the two parked robots still show their cones", ["night-robot", "robot-2", "robot-3"].every((id) => robots.bayAfter.includes(id)), robots.bayAfter);
 
 // ---------- nobody walks through anything ----------
 const walks = await ev(() => {
   const n = window.__ss.op,
     b = window.SSQ.beat("ch1-evening"),
-    out = { hall: [], bayRun: [], bayRobots: [], homeMops: [] };
-  // the snack bar: the two in line leaving, the family coming in and going, Mops coming and going
+    out = { hall: [], homeMops: [] };
+  // the snack bar: the guests coming in to the window, to the bar and out, Mops coming and going
   window.__jump(37);
   n.sq.x = 60;
   n.sq.y = 330;
-  window.__run(40, () => window.__st() === "brochure" && n.ctrl, () => {
+  window.__run(80, () => window.__st() === "brochure" && n.ctrl, () => {
     const s = n.ch1Evening;
     if (n.room !== "hall") return;
-    if (window.__st() === "hide" && n.ctrl) {
+    const st = window.__st();
+    if (n.ctrl && (st === "hide" || st === "peek" || (st === "duck" && s.peek))) {
       const o = window.__ss.offerNow();
-      o && o.verb === "HIDE" && o.f();
+      o && o.f();
     }
-    for (const p of [...(s.line || []), ...(s.family || []).filter((f) => f.x < 940)]) out.hall.push({ who: p.id, x: Math.round(p.x), y: Math.round(p.y), kid: !!p.kid });
+    b.viewOpen() === "shock" && b.viewAct();
+    for (const p of (s.guests || []).filter((f) => f.x < 940 && f.wait <= 0)) out.hall.push({ who: p.id, x: Math.round(p.x), y: Math.round(p.y), kid: !!p.kid });
     n.moPose !== "hidden" && out.hall.push({ who: "mops", x: Math.round(n.mo.x), y: Math.round(n.mo.y) });
   });
-  // the post: the run to the vent and the woken robots
-  window.__jump(143);
-  n.sq.x = 862;
-  n.sq.y = 500;
-  window.__ss.tick(0.05);
-  const post = window.__ss.offerNow();
-  post && post.f();
-  window.__run(20, () => window.__st() === "back" && n.ctrl, () => {
-    const s = n.ch1Evening;
-    window.__st() === "robots" && out.bayRun.push({ x: Math.round(n.sq.x), y: Math.round(n.sq.y) });
-    for (const r of s.woke || []) out.bayRobots.push({ x: Math.round(r.x), y: Math.round(r.y) });
+  out.reached = window.__st();
+  window.__run(30, () => window.__st() === "gohome", () => {
+    n.moPose !== "hidden" && n.room === "hall" && out.hall.push({ who: "mops", x: Math.round(n.mo.x), y: Math.round(n.mo.y) });
+    b.viewOpen() && b.viewAct();
   });
+  window.__jump(143);
+  window.__run(0.1);
   out.baySolids = window.__ss.solids();
   // home: Mops's walk to his sleeping place
   window.__jump(41);
@@ -231,10 +230,8 @@ const hallFurniture = LP.LUNCH_SOLIDS;
 const hallBad = walks.hall.filter((p) => hallFurniture.some((b) => hit(feetOf(p, p.kid ? 16 : 25), b)));
 g.check("at the snack bar the two in line, the family and Mops never walk on the counter, the stools, the crates or a plant", walks.hall.length > 100 && hallBad.length === 0, hallBad.slice(0, 5));
 const bayFurniture = [...PL.BAY_FURNITURE, ...PL.BAY_EXTRA];
-const runBad = walks.bayRun.filter((p) => bayFurniture.some((b) => hit(feetOf(p, 18), b))),
-  robotBad = walks.bayRobots.filter((p) => bayFurniture.some((b) => hit(feetOf(p, 18), b)));
-g.check("his run from the mailbox to the vent goes out through the mail room's opening, never through its fence or walls", walks.bayRun.length > 20 && runBad.length === 0, runBad.slice(0, 5));
-g.check("the woken robots roll out through the mail room's opening, never through its walls", walks.bayRobots.length > 20 && robotBad.length === 0, robotBad.slice(0, 5));
+g.check("the scripted walk at the snack bar got all the way to the brochure", walks.reached === "brochure", walks.reached);
+g.check("the crate under the big wall vent is reached on open floor (where he hides is clear of the mail room's fence and walls)", !bayFurniture.some((b) => hit(feetOf(PL.BAY.underVent, 18), b)));
 g.check("the mail room's fence is solid (nobody walks through it)", PL.BAY_EXTRA.every((f) => walks.baySolids.some((q) => q.x0 === f.x0 && q.y0 === f.y0)), walks.baySolids.length);
 const HOME_FURNITURE = [{ x0: 83, x1: 286, y0: 409, y1: 526 }, { x0: 536, x1: 596, y0: 500, y1: 571 }];
 const mopsBad = walks.homeMops.filter((p) => HOME_FURNITURE.some((b) => hit(feetOf(p), b)));
@@ -282,13 +279,32 @@ const vents = await ev(() => {
   window.__ss.tick(0.05);
   const post = window.__ss.offerNow();
   post && post.f();
+  window.__run(8, () => !!n.ch1Evening.alarm);
+  n.sq.x = 850;
+  n.sq.y = 334;
+  window.__ss.tick(0.05);
+  const hide = window.__ss.offerNow();
+  hide && hide.f();
   let swirl = false;
-  window.__run(20, () => window.__st() === "back", () => n.ch1Evening.suck >= 0 && (window.__ss.drawFrame(), (swirl = swirl || !!b.debug().drew.swirl)));
+  window.__run(4, () => n.ch1Evening.suck < 0 && n.ch1Evening.pink === "vent", () => n.ch1Evening.suck >= 0 && (window.__ss.drawFrame(), (swirl = swirl || !!b.debug().drew.swirl)));
   out.swirlSucking = swirl;
+  // the party hall's floor vent at night one (on, PLACEHOLDER: one vent rule everywhere): his fur drifts in; staying,
+  // the hall's FUR alarm goes off
+  window.__jump(42);
+  n.sq.x = 860;
+  n.sq.y = 440;
+  window.__run(10, () => window.__st() === "nighthall" && n.ctrl);
+  n.sq.x = 188;
+  n.sq.y = 494;
+  let hallTufts = 0;
+  for (let i = 0; i < 45 && !n.ch1Evening.alarm; i++) (window.__ss.tick(0.05), (hallTufts = Math.max(hallTufts, ((n.ch1Evening.vent || {}).tufts || []).length)));
+  window.__ss.drawFrame();
+  out.hall = { tufts: hallTufts, alarm: n.ch1Evening.alarm && { by: n.ch1Evening.alarm.w.id, where: n.ch1Evening.alarm.where } };
   return out;
 });
 g.check("the bay's floor vent pulls his fur in (tufts drift in), and staying there sets off the alarm, \"by the vent\"", vents.tufts > 0 && vents.alarm && vents.where === "where-vent" && vents.by === "night-robot", vents);
-g.check("the big wall vent shows its swirl while it sucks the pink sheet in, and not before", !vents.swirlBefore && vents.swirlSucking, vents);
+g.check("the big wall vent shows its swirl while it sucks the pink sheet in (hidden in the crate after the post), and not before", !vents.swirlBefore && vents.swirlSucking, vents);
+g.check("the party hall's floor vent is on at night: his fur drifts in, and staying sets off the hall's FUR alarm, \"by the vent\"", vents.hall.tufts > 0 && vents.hall.alarm && vents.hall.alarm.by === "fur-alarm" && vents.hall.alarm.where === "where-vent", vents.hall);
 
 g.check("no page errors", errors.length === 0, errors.slice(0, 5));
 await g.finish("evening-physics");

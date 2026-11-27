@@ -21,9 +21,10 @@ export const HALLWAY = Object.freeze({
   // the doorway to the hall (left end) and to the loading bay (right end): walking into one goes through
   left: Object.freeze({ x: 50, y: 330, r: 45 }),
   right: Object.freeze({ x: 910, y: 330, r: 45 }),
-  // the robot that rolls through after photo 5 (BEEP BEEP): in through the loading bay's doorway (right end), along
-  // the middle of the floor (clear of the office door in the front wall, picture 575 to 705 wide, from 630 down), and
-  // out through the hall's doorway (left end); it looks where it rolls
+  // the robot that rolls through after photo 5 (BEEP BEEP): in through the hall's doorway (the hall end, left: story
+  // pass beat 37, "the robot comes in through the doorway at the hall end, on the floor, with a cone"), along the
+  // middle of the floor (clear of the office door in the front wall, picture 575 to 705 wide, from 630 down), and out
+  // through the loading bay's doorway (right end); it looks where it rolls
   robotIn: Object.freeze({ x: 990, y: 310 }),
   // just inside each doorway (the robot comes and goes straight through it)
   robotDoorR: Object.freeze({ x: 880, y: 310 }),
@@ -78,6 +79,56 @@ export const BAR = Object.freeze({
 /** The family's rhythm: seconds reading the brochure in the doorway before they look up. */
 export const FAMILY = Object.freeze({ read: 4, walk: 95, lineWalk: 120 });
 
+// ---------- beats 38a and 38b: the storm at the big window (story pass 2026-11-26) ----------
+/**
+ * Jupiter's big red storm at the hall's big window. The family (dad, mom, their kid: approved guest pictures, the kid
+ * drawn smaller) and one more guest come in through the hallway doorway (top right) and walk to the window, under it
+ * below the bench, looking up at it (their cones point at the window, away from the counter). Mops wipes the counter's
+ * front with his beard. Behind the counter Squatch is rolled up in the aisle; PEEK · window raises his eyes over the
+ * counter's edge (`eyes`, where sight looks for him while he peeks). When the kid is hungry they all turn and walk to
+ * the counter's front (`bar`), the guest to the stools. The guest tosses the brochure over the counter into the bin
+ * beside him (`bin`).
+ */
+export const STORM = Object.freeze({
+  in: Object.freeze({ x: 990, y: 314 }),
+  door: Object.freeze({ x: 940, y: 314 }),
+  // where each stands at the window (feet), clear of the bench (the locked picture's, game 248 to 480 by 245 to 293)
+  window: Object.freeze({
+    dad: Object.freeze({ x: 330, y: 330 }),
+    mom: Object.freeze({ x: 392, y: 338 }),
+    kid: Object.freeze({ x: 270, y: 344 }),
+    guest: Object.freeze({ x: 520, y: 326 }),
+  }),
+  // at the snack bar: the family at the counter's front, the guest by the stools
+  bar: Object.freeze({
+    dad: Object.freeze({ x: 730, y: 470 }),
+    mom: Object.freeze({ x: 742, y: 566 }),
+    kid: Object.freeze({ x: 690, y: 520 }),
+    guest: Object.freeze({ x: 740, y: 404 }),
+  }),
+  // they walk in along the floor's back strip, under the window and the bench, and leave the same way; to the bar they
+  // go down the floor between the lunch's crates and the stools
+  lane: 320,
+  barVia: Object.freeze({ x: 730 }),
+  ids: Object.freeze({ dad: "camera", mom: "teal", kid: "octopus-guest", guest: "backpack" }),
+  // Mops at the counter's front below the stools (picture's, game x 772 to 800 at y 390 and 447), wiping it
+  mops: Object.freeze({ x: 778, y: 510 }),
+  // his way to and from it: along the strip above the counter's top end, then down the floor left of the stools
+  mopsVia: Object.freeze([Object.freeze({ x: 730, y: 330 }), Object.freeze({ x: 730, y: 510 })]),
+  // his eyes over the counter's edge while he peeks
+  eyes: Object.freeze({ x: 866, y: 446 }),
+  bin: Object.freeze({ x: 896, y: 540 }),
+  // GRAB · brochure from where he is rolled up, beside the bin
+  grab: Object.freeze({ x: 893, y: 490, r: 70 }),
+  // the storm takes this long to fill the window; the family turns this long before they walk to the bar
+  stormIn: 4.0,
+  turn: 1.6,
+  walk: 95,
+  // the brochure held up (picture toward the player), then the coffee, then the toss over the counter
+  holdUp: 1.6,
+  toss: 0.7,
+});
+
 // ---------- beats 40 and 41: home ----------
 export const HOME = Object.freeze({
   in: Object.freeze({ x: 930, y: 462 }),
@@ -94,6 +145,8 @@ export const HOME = Object.freeze({
   // out of bed at night, beside it
   up: Object.freeze({ x: 340, y: 470 }),
   door: Object.freeze({ x: 870, y: 440, r: 40 }),
+  // Mops's mop bucket on the floor (the room's solid for it, mop-bucket.js): bumping it at night clangs
+  bucket: Object.freeze({ x0: 536, x1: 596, y0: 500, y1: 571 }),
 });
 /** Where Mops stands before he tips over (his feet), so that on his back his head rests at HOME.sleepHead (`k`: his scale at home). */
 export function mopsSleepAt(k) {
@@ -195,22 +248,48 @@ export const BAY_SEARCH = Object.freeze([
   Object.freeze({ x: 160, y: 540 }),
 ]);
 
+// ---------- beat 39b: home alone (story pass 2026-11-26) ----------
+/**
+ * Home, late afternoon. His crate bed is the locked picture's crate (picture 112 to 382 by 517 to 706); its faded stamp
+ * "_ARS CAKES" (stars-cakes.js) is drawn across its side over the old label. The crayon chart of kinds tried hangs on
+ * the wall above the bed. X · chart from below it; HOLD UP · brochure in front of the crate.
+ */
+export const HOME_ALONE = Object.freeze({
+  stamp: Object.freeze({ x: 112, y: 472, h: 20 }),
+  chart: Object.freeze({ x: 176, y: 262, w: 104, h: 75 }),
+  chartSpot: Object.freeze({ x: 236, y: 440, r: 60 }),
+  crateSpot: Object.freeze({ x: 330, y: 458, r: 60 }),
+  // the crate's side, where the close-up holds the brochure against it
+  crate: Object.freeze({ x0: 96, x1: 275, y0: 437, y1: 524 }),
+});
+
 /** Timing in seconds and speeds in game pixels a second. PLACEHOLDERS; every wordless part plays 2 to 4 seconds. */
 export const EVENING_PACE = Object.freeze({
   walk: 150, // in the hallway and home
   hallWalk: 190,
   mopsWalk: 160,
   robotRoll: 260, // the hallway robot (BEEP BEEP)
+  robotWait: 1.0, // it waits just outside the hall's doorway first: the player's real second to act
   ballIn: 0.35, // he rolls up as it comes
   ballOut: 0.4,
-  // the gallery: the crooked photo lifts this long
-  lift: 0.6,
+  // the gallery: the crooked photo swings up on its nail like a flap this long (about a second), and back
+  lift: 1.0,
   // the line's people leave, the family comes
   leave: 120,
   pictureBubble: 2.8, // the family's wordless picture bubble (pancakes, Mars)
+  stare: 1.6, // Mops looks at the brochure a moment too long (39)
   putDown: 0.6,
   evening: 2.4, // the room warms to evening at home
-  hold: 1.0, // he holds the brochure up before Mops's line
+  hold: 1.0, // he holds the brochure up before his first line
+  // 39b: the box opens; after the crunch, the silence where a fizz would be; one stroke of the X; he rubs out "ST"
+  boxOpen: 0.6,
+  silence: 1.4,
+  xStroke: 0.35,
+  rub: 1.2,
+  // 41: each picture of the idea; 42b: the don't-send ending's cutaway; 42c: how near the big wall vent the form flutters
+  idea: 1.4,
+  cutaway: 3.0,
+  flutterNear: 300,
   hop: 0.55,
   lie: 1.2,
   lights: 2.4,

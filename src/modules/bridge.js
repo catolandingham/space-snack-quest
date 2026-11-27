@@ -83,8 +83,9 @@ export function createBridge() {
     // bedtime music starts as Squatch asks; Brian 2026-11-26, video note 0:03)
     if (tv && tv.showing && tv.showing()) return "tv";
     if (bed && bed.quietNow && bed.quietNow()) return "";
-    // (Day 2's night one at home: the bedtime music while the evening beat says it is night)
-    if (ev && ev.nightNow && ev.nightNow()) return "bedtime";
+    // (Day 2's night one at home after the fight: no song tonight, story pass beat 41: their song is their bond, and its
+    // absence is felt)
+    if (ev && ev.nightNow && ev.nightNow()) return "";
     return bed && bed.showing && bed.showing() ? "bedtime" : morning != null ? morning : cue;
   };
   return Object.freeze({

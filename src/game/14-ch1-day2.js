@@ -663,8 +663,8 @@
         ((n.scene = "QB"), luBeat() && luBeat().jump(["plant", "give", "snack"][b - 25]));
       } else if (b === 33) {
         ((n.room = "hangar"), (n.ch1D = !0), (n.ch1Ship = !0), (n.scene = "QB"), (n.sqPose = "hidden"), (n.sq.x = CH1_PLANT.x), (n.sq.y = CH1_PLANT.y), (n.mo.x = 640), (n.mo.y = 500), (n.ch1ShowBots = !0), (n.ch1Ramp = 1), ch1SetPaper("mouth"));
-      } else if ((b >= 37 && b <= 42) || b === 142 || b === 143 || b === 144) {
-        // the evening and night one (evening.js): 37 the hallway wall ... 42 out of bed at night; 142 at the bin, 143 the mailbox, 144 the way back
+      } else if ((b >= 37 && b <= 42) || (b >= 137 && b <= 149)) {
+        // the evening and night one (evening.js BEAT_STEP): 37 the hallway wall ... 42 out of bed at night; 137 to 149 the steps between
         ((n.scene = "QB"), evBeat() && evBeat().jumpBeat(b));
       } else if (b === 29) {
         ((n.room = "hangar"), (n.ch1D = !0), (n.ch1Ship = !0), (n.scene = "QB"), (n.sq.x = 420), (n.sq.y = 520), (n.mo.x = 520), (n.mo.y = 510), (n.ch1ShowBots = !0), (n.ch1Ramp = 1));
