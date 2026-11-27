@@ -43,13 +43,19 @@ const CRAYON_FONT = (px) => `700 ${px}px "Chalkboard SE", "Marker Felt", "Comic 
 // Tests: what the layer drew, and how often a home picture was handed out with it.
 let made = null;
 let handed = 0;
+let last = null,
+  stamps = 0;
 /**
  * Tests: the crate bed layer's parts (null before it was made) and how many times a home picture came with it; the
- * hall tin's lid (null before it was made) and how many times the hall picture came with it.
+ * hall tin's lid (null before it was made) and how many times the hall picture came with it; the family stamp drawn
+ * last on any crate (the bedtime story's too) and how many times it has been drawn.
  */
 export function crateStampDrawn() {
-  return { made, handed, tin: tinMade, handedHall };
+  return { made, handed, tin: tinMade, handedHall, last, stamps, byLunch };
 }
+
+// The stamp's letter sheets, made once each (drawFamilyStamp).
+const STAMP_SHEETS = new Map();
 
 // A small fixed sequence for the wear, so the stamp looks the same every time.
 function wearDots(n, seed) {
@@ -139,23 +145,30 @@ export function drawFamilyStamp(c, { paintOut = true, crayon: withCrayon = true,
   for (const f of feet) c.fillRect(f.x, f.y, f.w, f.h);
   c.restore();
   // 4. the fat red letters, worn: drawn on their own sheet, nicked with little holes, then laid on the crate
-  const sheet = typeof document !== "undefined" ? document.createElement("canvas") : null;
+  // (made once for its words and size, then reused: the bedtime story draws this crate every frame)
+  const sheetKey = faded + "|" + px;
+  let sheet = STAMP_SHEETS.get(sheetKey) || null;
+  const fresh = !sheet && typeof document !== "undefined";
+  fresh && (sheet = document.createElement("canvas"));
   const lettersX = left + gapW;
   if (sheet && sheet.getContext) {
-    sheet.pictureLayer = true; // (tests/canvas-text.mjs: part of the picture, not words on the game canvas)
-    sheet.width = Math.ceil(textW + 8);
-    sheet.height = Math.ceil(px * 1.4);
-    const s = sheet.getContext("2d");
-    s.font = FAT(px);
-    s.textAlign = "left";
-    s.textBaseline = "alphabetic";
-    s.fillStyle = B.red;
-    s.fillText(faded, 4, sheet.height / 2 + cap / 2);
-    s.globalCompositeOperation = "destination-out";
-    for (const [a, b, r] of wearDots(90, 7)) {
-      s.beginPath();
-      s.arc(a * sheet.width, b * sheet.height, r, 0, Math.PI * 2);
-      s.fill();
+    if (fresh) {
+      sheet.pictureLayer = true; // (tests/canvas-text.mjs: part of the picture, not words on the game canvas)
+      sheet.width = Math.ceil(textW + 8);
+      sheet.height = Math.ceil(px * 1.4);
+      const s = sheet.getContext("2d");
+      s.font = FAT(px);
+      s.textAlign = "left";
+      s.textBaseline = "alphabetic";
+      s.fillStyle = B.red;
+      s.fillText(faded, 4, sheet.height / 2 + cap / 2);
+      s.globalCompositeOperation = "destination-out";
+      for (const [a, b, r] of wearDots(90, 7)) {
+        s.beginPath();
+        s.arc(a * sheet.width, b * sheet.height, r, 0, Math.PI * 2);
+        s.fill();
+      }
+      STAMP_SHEETS.set(sheetKey, sheet);
     }
     c.save();
     c.globalAlpha = 0.86;
@@ -167,32 +180,38 @@ export function drawFamilyStamp(c, { paintOut = true, crayon: withCrayon = true,
   let cpx = Math.round(cap * 0.95);
   c.font = CRAYON_FONT(cpx);
   while (cpx > 10 && c.measureText(crayon).width * 1.1 > gapW - 2) c.font = CRAYON_FONT(--cpx);
-  const wax = sheet && withCrayon ? document.createElement("canvas") : null;
+  const waxKey = crayon + "|" + cpx + "|" + Math.round(gapW);
+  let wax = withCrayon ? STAMP_SHEETS.get(waxKey) || null : null;
+  const freshWax = withCrayon && !wax && typeof document !== "undefined";
+  freshWax && (wax = document.createElement("canvas"));
   if (wax && wax.getContext) {
-    wax.pictureLayer = true;
-    wax.width = Math.ceil(gapW + 12);
-    wax.height = Math.ceil(cpx * 1.6);
-    const w = wax.getContext("2d");
-    w.font = CRAYON_FONT(cpx);
-    w.textAlign = "center";
-    w.textBaseline = "middle";
-    w.fillStyle = B.crayon;
-    w.strokeStyle = B.crayon;
-    w.lineWidth = Math.max(1, cpx * 0.06);
-    const step = c.measureText(crayon).width / crayon.length;
-    [...crayon].forEach((ch, i) => {
-      w.save();
-      w.translate(wax.width / 2 + (i - (crayon.length - 1) / 2) * step * 1.05, wax.height / 2 + (i % 2 ? -1.5 : 1.5));
-      w.rotate(i % 2 ? 0.14 : -0.2);
-      w.fillText(ch, 0, 0);
-      w.strokeText(ch, 0.6, -0.4);
-      w.restore();
-    });
-    w.globalCompositeOperation = "destination-out";
-    for (const [a, b2, r] of wearDots(40, 3)) {
-      w.beginPath();
-      w.arc(a * wax.width, b2 * wax.height, r * 0.6, 0, Math.PI * 2);
-      w.fill();
+    if (freshWax) {
+      wax.pictureLayer = true;
+      wax.width = Math.ceil(gapW + 12);
+      wax.height = Math.ceil(cpx * 1.6);
+      const w = wax.getContext("2d");
+      w.font = CRAYON_FONT(cpx);
+      w.textAlign = "center";
+      w.textBaseline = "middle";
+      w.fillStyle = B.crayon;
+      w.strokeStyle = B.crayon;
+      w.lineWidth = Math.max(1, cpx * 0.06);
+      const step = c.measureText(crayon).width / crayon.length;
+      [...crayon].forEach((ch, i) => {
+        w.save();
+        w.translate(wax.width / 2 + (i - (crayon.length - 1) / 2) * step * 1.05, wax.height / 2 + (i % 2 ? -1.5 : 1.5));
+        w.rotate(i % 2 ? 0.14 : -0.2);
+        w.fillText(ch, 0, 0);
+        w.strokeText(ch, 0.6, -0.4);
+        w.restore();
+      });
+      w.globalCompositeOperation = "destination-out";
+      for (const [a, b2, r] of wearDots(40, 3)) {
+        w.beginPath();
+        w.arc(a * wax.width, b2 * wax.height, r * 0.6, 0, Math.PI * 2);
+        w.fill();
+      }
+      STAMP_SHEETS.set(waxKey, wax);
     }
     c.save();
     c.globalAlpha = 0.92;
@@ -201,6 +220,8 @@ export function drawFamilyStamp(c, { paintOut = true, crayon: withCrayon = true,
   }
   const parts = { gap, feet, letters: { x0: lettersX, x1: lettersX + textW, y0: top, y1: base, px, text: faded }, crayon: withCrayon ? { text: crayon, px: cpx } : null };
   if (note) made = parts; // (tests: the crate bed's, not another crate's)
+  last = parts; // (tests: whichever crate drew it last, and how often)
+  stamps++;
   return parts;
 }
 
@@ -258,14 +279,15 @@ export const SNACK_LAYER_PICTURES = Object.freeze(Object.keys(LAYERS));
 
 const layered = new Map();
 const ready = (img) => !!img && !!img.complete && !!img.naturalWidth;
-let handedHall = 0;
+let handedHall = 0,
+  byLunch = 0; // (tests: the lunch sneak's own hall drawing)
 /**
  * The locked picture `img` for picture id `id` with its layer for the snack's name: the family's stamp over the crate
  * bed's old badge (the home pictures), the new lid on the snack bar's tin (the hall). A canvas the picture's size that
  * draws like the Image (complete, naturalWidth, naturalHeight, src), made once. Any other picture, or one still
- * loading, comes back as it is.
+ * loading, comes back as it is. `by` names the caller for the tests ("lunch": the lunch sneak draws the hall itself).
  */
-export function withSnackLayers(id, img) {
+export function withSnackLayers(id, img, by = "") {
   const layer = LAYERS[id];
   if (!layer || !ready(img) || img.snackLayer) return img;
   const key = id + "|" + img.src;
@@ -288,6 +310,7 @@ export function withSnackLayers(id, img) {
     layered.set(key, cv);
   }
   id === "hall" ? handedHall++ : handed++;
+  by === "lunch" && byLunch++;
   return layered.get(key);
 }
 

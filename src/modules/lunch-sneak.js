@@ -779,7 +779,7 @@ export function createLunchSneak(bridge) {
     }
     return {
       t,
-      picture: withSnackLayers("hall", picture), // (the hall tin's new lid, crate-stamp.js)
+      picture: withSnackLayers("hall", picture, "lunch"), // (the hall tin's new lid, crate-stamp.js)
       banner: false,
       lights: null,
       isfred: null,

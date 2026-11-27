@@ -20,7 +20,7 @@ import { execFileSync } from "node:child_process";
 import { join } from "node:path";
 import { startGame, root } from "./game-page.mjs";
 import { SNACK, FAMILY, SNACK_LINES } from "../src/modules/snack-name.js";
-import { CRATE_BED } from "../src/modules/crate-stamp.js";
+import { CRATE_BED, HALL_TIN } from "../src/modules/crate-stamp.js";
 
 const g = await startGame({ port: 9520, name: "snack-name" });
 
@@ -120,8 +120,10 @@ const scan = await page.evaluate(async () => {
   // the bedtime story's crate picture (beat 21, cutaway "moonpie"), alone: the crate as it arrived
   const all = [...window.__words];
   window.__words = new Set();
+  const before = window.SSQ.crateStampDrawn().stamps;
   draw("bedtime story crate picture", () => (reset(), ss.ch1JumpBeat(22), (n.cur = { k: "cutaway", id: "moonpie", panel: 0 })));
-  const bedtimeCrate = [...window.__words];
+  const d = window.SSQ.crateStampDrawn();
+  const bedtimeCrate = { words: [...window.__words], stamped: d.stamps - before, last: d.last };
   for (let i = 1; i < 8; i++) draw("bedtime story picture " + (i + 1), () => (reset(), ss.ch1JumpBeat(22), (n.cur = { k: "cutaway", id: "moonpie", panel: i })));
   return { states, words: [...all, ...window.__words], bedtimeCrate };
 });
@@ -136,7 +138,7 @@ g.check(
 
 g.check(
   `the bedtime story's crate, as it arrived, has the family's worn stamp "${FAMILY.FADED}" and no crayon yet (he was a baby)`,
-  scan.bedtimeCrate.includes(FAMILY.FADED) && !scan.bedtimeCrate.includes(FAMILY.CRAYON) && !scan.bedtimeCrate.some((w) => OLD.test(w)),
+  scan.bedtimeCrate.stamped > 0 && !!scan.bedtimeCrate.last && scan.bedtimeCrate.last.letters.text === FAMILY.FADED && scan.bedtimeCrate.last.crayon === null && !scan.bedtimeCrate.words.some((w) => OLD.test(w)),
   scan.bedtimeCrate,
 );
 
@@ -218,9 +220,35 @@ const hall = await page.evaluate(
     const d = window.SSQ.crateStampDrawn();
     return { handedThisFrame: d.handedHall - before, tin: d.tin };
   },
-  null,
+  HALL_TIN.lid,
 );
-// the lunch sneak (beats 25 to 27) draws the hall itself, and its counter close-up copies what it drew
+// The lid itself, in the hall picture as the game gets it by day (full size): the little yellow star is there, where the
+// locked file has the old lid's blue and white.
+const lid = await page.evaluate(async (T) => {
+  const ss = window.__ss;
+  ss.op.q = [];
+  ss.op.cur = null;
+  ss.ch1JumpBeat(22); // (Day 2: day)
+  const img = new Image();
+  img.src = "docs/locked-rooms/hall-room-empty-v2.png";
+  await img.decode();
+  const pic = window.SSQ.nightPicture("hall", img);
+  const read = (source) => {
+    const c = document.createElement("canvas");
+    c.width = 1280;
+    c.height = 830;
+    const x = c.getContext("2d");
+    x.drawImage(source, 0, 0);
+    const px = x.getImageData(Math.round(T.cx + 6.6 * Math.sin(T.tilt)) - 2, Math.round(T.cy - 6.6 * Math.cos(T.tilt)) - 2, 5, 5).data;
+    let n = 0;
+    for (let i = 0; i < px.length; i += 4) px[i] > 200 && px[i + 1] > 150 && px[i + 2] < 120 && n++;
+    return n;
+  };
+  return { night: window.SSQ.nightNow(), layered: pic !== img, starNow: read(pic), starInFile: read(img) };
+}, HALL_TIN.lid);
+g.check("by day the hall picture comes with the new lid: its yellow star is where the locked file has none", !lid.night && lid.layered && lid.starNow >= 3 && lid.starInFile === 0, lid);
+// the lunch sneak (beats 25 to 27) draws the hall itself (its own call, counted on its own), and its counter close-up
+// copies what it drew
 const lunchHall = await page.evaluate(() => {
   const ss = window.__ss,
     n = ss.op,
@@ -228,11 +256,12 @@ const lunchHall = await page.evaluate(() => {
   for (const b of [25, 27]) {
     n.q = [];
     n.cur = null;
+    n.ch1PartyNow = null; // (the party night, opened above, is over)
     ss.ch1JumpBeat(b);
-    const before = window.SSQ.crateStampDrawn().handedHall;
+    const before = window.SSQ.crateStampDrawn().byLunch;
     for (let i = 0; i < 4; i++) ss.tick(0.05);
     ss.drawFrame();
-    out.push({ beat: b, room: n.room, handed: window.SSQ.crateStampDrawn().handedHall - before });
+    out.push({ beat: b, room: n.room, handed: window.SSQ.crateStampDrawn().byLunch - before });
   }
   return out;
 });
