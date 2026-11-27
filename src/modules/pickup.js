@@ -1610,12 +1610,13 @@ export function createPickup(bridge) {
       });
     }
     // the hallway robot that reads the label as the crate rolls by
-    if (room === "passage" && l.step === "push") e.drawRobot(ctx, PK_HALLWAY.robot.x, PK_HALLWAY.robot.y, false, adultPxFor("passage") / 47);
+    // (the robot and the crate back to front, by where each stands on the floor: room-model.js)
+    const hallwayBot = room === "passage" && l.step === "push" ? () => e.drawRobot(ctx, PK_HALLWAY.robot.x, PK_HALLWAY.robot.y, false, adultPxFor("passage") / 47) : null;
+    const crateNow = l.crate === "push" && e.get("moPose") !== "hidden" ? pushedCrate() : null;
+    hallwayBot && (!crateNow || crateNow.y > PK_HALLWAY.robot.y) && hallwayBot();
     // the push: his crate on its pallet in front of Mops
-    if (l.crate === "push" && e.get("moPose") !== "hidden") {
-      const c = pushedCrate();
-      drew.crate = drawPkCrate(ctx, c.x, c.y, c.k, { label: true, bucket: true });
-    }
+    if (crateNow) drew.crate = drawPkCrate(ctx, crateNow.x, crateNow.y, crateNow.k, { label: true, bucket: true });
+    hallwayBot && crateNow && crateNow.y <= PK_HALLWAY.robot.y && hallwayBot();
     // the walks: the next doorway's outline
     if (walking(l) && e.get("ctrl")) {
       const d = doorTo(room, routeOf(l)[room]);
