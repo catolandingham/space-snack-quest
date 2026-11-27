@@ -6,9 +6,9 @@
 import { ES_HOME } from "./escape-place.js";
 
 // The loading bay on pickup day: the locked picture with the ship docked and the mail room full of crates and bags
-// (delivery-room-empty-pickup-v3.png, story pass 54). After the ship has gone, the same bay with no ship.
-export const PK_BAY_PICKUP = "docs/locked-rooms/delivery-room-empty-pickup-v3.png";
-export const PK_BAY_GONE = "docs/locked-rooms/delivery-room-empty-day-noship-v2.png";
+// (delivery-room-empty-pickup-v4.png, story pass 54; v4: the plant moved right of the bin, Brian's yes to question 75). After the ship has gone, the same bay with no ship (noship-v3, the plant moved too).
+export const PK_BAY_PICKUP = "docs/locked-rooms/delivery-room-empty-pickup-v4.png";
+export const PK_BAY_GONE = "docs/locked-rooms/delivery-room-empty-day-noship-v3.png";
 
 // Home on pickup morning (home-room-empty-open-v6).
 export const PK_HOME = Object.freeze({
@@ -99,7 +99,7 @@ export const PK_HALLWAY = Object.freeze({
   robot: Object.freeze({ x: 560, y: 360 }), // 53: the robot that reads the label as the crate rolls by
 });
 
-// The loading bay on pickup day (delivery-room-empty-pickup-v3): the walkway (ramp and scanner arch), the plant, the
+// The loading bay on pickup day (delivery-room-empty-pickup-v4): the walkway (ramp and scanner arch), the plant, the
 // bin, the mail room and its row of crates (layers on the picture: a mail bag, a crate, his crate, third).
 export const PK_BAY = Object.freeze({
   arch: Object.freeze({ x0: 345, y0: 302, x1: 587, y1: 416 }),
@@ -108,10 +108,11 @@ export const PK_BAY = Object.freeze({
   rampTop: Object.freeze({ x: 466, y: 232 }),
   // where things are scanned: put down at the foot of the ramp, under the arch
   scanAt: Object.freeze({ x: 466, y: 444 }),
-  plant: Object.freeze({ x0: 81, y0: 254, x1: 170, y1: 372 }),
-  plantAt: Object.freeze({ x: 126, y: 396 }),
+  // the plant right of the bin since v4 (the same spot as the Day 2 bay's, loading-bay-place.js BAY.plant)
+  plant: Object.freeze({ x0: 249, y0: 254, x1: 339, y1: 372 }),
+  plantAt: Object.freeze({ x: 294, y: 386 }),
   plantR: 60,
-  eyes: Object.freeze({ x: 125, y: 318 }),
+  eyes: Object.freeze({ x: 294, y: 318 }),
   bin: Object.freeze({ x: 212, y: 318 }),
   door: Object.freeze({ x: 50, y: 330 }), // in from the hallway
   // the mail room's row (bottom middles), left to right; his crate third (the kid can count)
