@@ -283,7 +283,7 @@ export const VENT_TUNNEL = Object.freeze({
   top: 300,
   floor: 470,
   y: 462,
-  end: 860, // he reaches the room here
+  end: 830, // he reaches the room here (a tap on the far end stops a few steps short of it)
   scale: 2.6,
   finds: Object.freeze([Object.freeze({ x: 300, kind: "hat" }), Object.freeze({ x: 480, kind: "sock" }), Object.freeze({ x: 650, kind: "fork" })]),
 });

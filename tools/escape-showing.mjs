@@ -31,10 +31,15 @@ const WORK = join(root, "tests", "out", "escape-showing-work", which);
 rmSync(WORK, { recursive: true, force: true });
 mkdirSync(join(WORK, "fr"), { recursive: true });
 mkdirSync(dirname(outFile), { recursive: true });
-const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 2 };
+const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: +process.env.SHOWING_DPR || 2 };
 const g = await startGame({ port: 9400 + WHICH.indexOf(which), name: "escape-showing-" + which });
-const { page, errors } = await g.open(which === "escape" ? "?beat=escape" : "?beat=escape:ball", PHONE);
+const { page, errors } = await g.open(which === "escape" ? "?beat=escape" + (process.env.SHOWING_FROM ? ":" + process.env.SHOWING_FROM : "") : "?beat=escape:ball", PHONE);
 await page.evaluate(() => (window.__ss.drawFrame(), 0));
+page.on("error", (e) => console.log("PAGE CRASH " + e));
+page.on("close", () => console.log("PAGE CLOSED"));
+page.on("pageerror", (e) => console.log("PAGE ERROR " + String(e).slice(0, 300)));
+page.on("console", (m) => m.type() === "error" && console.log("CONSOLE " + m.text().slice(0, 300)));
+page.on("framenavigated", (f) => f === page.mainFrame() && console.log("NAVIGATED " + f.url()));
 await sleep(800);
 SILENT || (await page.click("#ss-sound").catch(() => {}));
 await sleep(600);
@@ -207,6 +212,13 @@ if (which === "escape") {
       await read(s, "");
       continue;
     }
+    // a picture that waits for NEXT with no words (the calendar's "Six days later"): look, then NEXT
+    if (s.cur === "wait") {
+      await sleep(3600);
+      await press();
+      await sleep(300);
+      continue;
+    }
     if (!s.ctrl || s.cur) {
       await sleep(110);
       continue;
@@ -251,6 +263,7 @@ if (which === "escape") {
       await sleep(150);
       continue;
     }
+    if (Date.now() - (globalThis.__lastLog || 0) > (+process.env.SHOWING_LOG_MS || 8000)) ((globalThis.__lastLog = Date.now()), log("at " + JSON.stringify({ step: es.step, room: s.room, x: Math.round(s.x), y: Math.round(s.y), mo: [Math.round(s.mo.x), Math.round(s.mo.y)], sp: sp.id, to: [Math.round(sp.x), Math.round(sp.y)], act: s.act })));
     const mops = sp.who === "mo";
     const here = mops ? s.mo : { x: s.x, y: s.y };
     const close = Math.hypot(here.x - sp.x, here.y - sp.y) < 12;

@@ -1188,7 +1188,7 @@ export function createEscape(bridge) {
     }
     // 47: in the bay, the vent is where he is going; 48: the tunnel's far end
     if (l.step === "sneak" && e.room() === "hangar" && l.pose === "stand" && !l.guard && !(l.robot && l.robot.phase !== "patrol")) return [walkSpot("es-vent", "sq", BAY.ventStand, BAY.ventReach - 10)];
-    if (l.step === "tunnel") return [walkSpot("es-tunnel", "mo", { x: VENT_TUNNEL.end + 6, y: VENT_TUNNEL.y }, 16)];
+    if (l.step === "tunnel") return [walkSpot("es-tunnel", "mo", { x: VENT_TUNNEL.end + 24, y: VENT_TUNNEL.y }, 16)];
     if (l.step === "tobar" && e.room() === "hall") return [{ ...walkSpot("es-bar", "sq", ES_BAR.sq, ES_BAR.r - 6), thing: ES_BAR.aisle }];
     const door = walking(l) && doorTo(e.room(), routeOf(l)[e.room()]);
     const doorSpot = door ? [walkSpot("es-door", driving === "mops" ? "mo" : "sq", { x: (door.box.x0 + door.box.x1) / 2, y: (door.box.y0 + door.box.y1) / 2 }, 20)] : [];

@@ -354,7 +354,8 @@ const wall = await page.evaluate(() => {
 g.check("C: in the hallway, a framed photo of Mops on the back wall labelled MOPS, GANITOR, right of the locked picture's photo grid", wall.wall && wall.wall.word === "MOPS, GANITOR" && wall.wall.frame.x0 >= 690 && wall.wall.plaque.x0 >= 655 && wall.wall.plaque.x1 <= 940 && wall.wall.plaque.y1 < 260, wall.wall);
 g.check("C: not in the office", wall.office === null, wall.office);
 const base = execFileSync("git", ["-C", root, "merge-base", "HEAD", "origin/main"], { encoding: "utf8" }).trim();
-const locked = execFileSync("git", ["-C", root, "diff", "--name-only", base, "--", "docs/locked-rooms/*.png"], { encoding: "utf8" }).trim();
+// (changed or removed ones: a new locked picture added with Brian's yes, the vent room's, is not a change)
+const locked = execFileSync("git", ["-C", root, "diff", "--name-only", "--diff-filter=MDR", base, "--", "docs/locked-rooms/*.png"], { encoding: "utf8" }).trim();
 g.check("C: the locked room pictures are not changed on this branch (the wall is a layer drawn over the hallway)", locked === "", locked);
 g.check("E: Squatch's crayon card on the hallway wall says ME and MOPS THE GANITOR", wall.crayon && JSON.stringify(wall.crayon.lines) === JSON.stringify(["ME", "MOPS THE", "GANITOR"]) && GAN.crayonGanitorLabel() === "MOPS THE GANITOR", wall.crayon);
 const GD = readFileSync(M("guardians-drawing.js"), "utf8");

@@ -33,6 +33,7 @@ export const VOICES = Object.freeze({
   speaker: Object.freeze({ f: 220, bright: 1.4, set: "male_standard", rate: 1.02 }), // the wall speaker at home
   pa: Object.freeze({ f: 220, bright: 1.4, set: "male_standard", rate: 1.02 }), // the party hall's wall speaker
   mops: Object.freeze({ own: "meh" }),
+  robot: Object.freeze({ own: "bleep" }), // the robots' bleep-bloop, played by the older program (00-core.js D.bleep)
 });
 /** The party's guests (party.js `talker`, the one saying a "tourist" line): each one's set and pitch. */
 export const GUEST_VOICES = Object.freeze({
