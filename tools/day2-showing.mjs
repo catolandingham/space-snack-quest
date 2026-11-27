@@ -596,7 +596,7 @@ await join_("42c-to-43-six-days-later");
         // "Not that one!", then GOAT STUFF)
         const R = await page.evaluate(() => window.SSQ.beat("ch1-escape").place.SITE);
         const pg = es.sitePage || 0;
-        const b = pg === 2 && !done.sasquatch ? ((done.sasquatch = true), R.inside[2]) : [R.schedule, R.sizes[2], R.inside[1]][pg];
+        const b = pg === 2 && !done.sasquatch ? ((done.sasquatch = true), R.inside[2]) : [R.schedule, R.sizes[2], R.inside[1], R.to[0]][pg];
         await sleep(1200);
         await still("51-site-page-" + (pg + 1));
         await at((b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2);

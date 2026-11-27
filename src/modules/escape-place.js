@@ -147,7 +147,7 @@ export const OFFICE = Object.freeze({
 export const ROUTE_OFFICE = Object.freeze({ hangar: "passage" });
 // The snack site close-up (over the blurred office): the screen, its header and two buttons.
 // Round 7 (r5 15:23 and 15:29, q: 124): a Universal Postal Service page, three pages: SCHEDULE A PICKUP; How big?;
-// What's inside? (`schedule`, `sizes`, `inside`: the buttons' boxes on each page).
+// What's inside? (`schedule`, `sizes`, `inside`: the buttons' boxes on each page); then (q: 135) Where to? (`to`).
 export const SITE = Object.freeze({
   screen: Object.freeze({ x0: 110, y0: 40, x1: 850, y1: 600 }),
   schedule: Object.freeze({ x0: 200, y0: 260, x1: 760, y1: 430 }),
@@ -161,6 +161,9 @@ export const SITE = Object.freeze({
     Object.freeze({ id: "in-goat", x0: 200, y0: 345, x1: 760, y1: 420 }),
     Object.freeze({ id: "in-sq", x0: 200, y0: 440, x1: 760, y1: 515 }),
   ]),
+  // (Chapter 2 question 135 A, Brian 2026-11-27: the crate stays on the ship, booked through to Mars; a fourth page,
+  // "Where to?", with one lit choice: MARS)
+  to: Object.freeze([Object.freeze({ id: "to-mars", x0: 280, y0: 290, x1: 680, y1: 440 })]),
   booked: 2.4, // seconds the booked picture (the crate rides to the ship) plays before the close-up closes
 });
 

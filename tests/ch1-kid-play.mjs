@@ -107,7 +107,7 @@ const st = () =>
           e = b && b.active() && b.debug().state;
         if (!e || !e.cu) return null;
         const P = b.place;
-        return { cu: e.cu, step: e.step, typed: e.typed || "", keys: Object.fromEntries([..."0123456789"].map((d) => [d, P.keyAt(d)])), ret: [P.SITE.schedule, P.SITE.sizes[2], P.SITE.inside[1]][e.sitePage || 0], snacks: P.SNACKS.at.filter((_, i) => !e.snacks.gone[i]), carry: !!e.snacks.carry };
+        return { cu: e.cu, step: e.step, typed: e.typed || "", keys: Object.fromEntries([..."0123456789"].map((d) => [d, P.keyAt(d)])), ret: [P.SITE.schedule, P.SITE.sizes[2], P.SITE.inside[1], P.SITE.to[0]][e.sitePage || 0], snacks: P.SNACKS.at.filter((_, i) => !e.snacks.gone[i]), carry: !!e.snacks.carry };
       })(),
       zoom: n.ch1Zoom ? n.ch1Zoom.id : "",
       zoomKey: n.ch1Zoom ? [n.ch1Zoom.id, n.ch1Zoom.bag || 0, n.ch1Packed || 0].join(":") : "",

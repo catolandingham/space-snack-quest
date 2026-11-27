@@ -1023,11 +1023,13 @@ export function createEscape(bridge) {
     if (l.step !== "site" || l.bookAt >= 0) return;
     if (l.sitePage === 0) return void (choice === "schedule" && ((l.sitePage = 1), sfx("key")));
     if (l.sitePage === 1) return void (SITE.sizes.some((b) => b.id === choice) && ((l.siteSize = choice), (l.sitePage = 2), sfx("key")));
-    if (choice === "in-sq") return orderBox();
-    if (choice === "in-old" || choice === "in-goat") return ((l.siteInside = choice), returnCrate());
+    if (l.sitePage === 2 && choice === "in-sq") return orderBox();
+    // (q: 135: then "Where to?": MARS, the one lit choice, books it)
+    if (l.sitePage === 2) return void ((choice === "in-old" || choice === "in-goat") && ((l.siteInside = choice), (l.sitePage = 3), sfx("key")));
+    if (choice === "to-mars") return returnCrate();
   }
-  // the big button in the close-up: the outlined choice on each page (BIG, GOAT STUFF)
-  const siteNext = () => siteTap(["schedule", "size-big", "in-goat"][L().sitePage || 0]);
+  // the big button in the close-up: the outlined choice on each page (BIG, GOAT STUFF, MARS)
+  const siteNext = () => siteTap(["schedule", "size-big", "in-goat", "to-mars"][L().sitePage || 0]);
   // ONE SASQUATCH: Mops stops him
   function orderBox() {
     const e = E();
@@ -1723,7 +1725,7 @@ export function createEscape(bridge) {
     if (l.cu === "site" && l.step === "site") {
       const on = (b) => x >= b.x0 && x <= b.x1 && y >= b.y0 && y <= b.y1,
         page = l.sitePage || 0,
-        hit = page === 0 ? (on(SITE.schedule) ? "schedule" : "") : ((page === 1 ? SITE.sizes : SITE.inside).find(on) || {}).id || "";
+        hit = page === 0 ? (on(SITE.schedule) ? "schedule" : "") : ([null, SITE.sizes, SITE.inside, SITE.to][page].find(on) || {}).id || "";
       hit ? siteTap(hit) : E().sfx("bzzt");
       return true;
     }
@@ -1872,7 +1874,7 @@ export function createEscape(bridge) {
       // the robot's light coming by: hide under the desk
       if (step === "duck") return (Object.assign(L(), { ducked: true }), e.place("sq", OFFICE.sq.x, OFFICE.sq.y), go("duck"), control("chip-hide-desk"));
       // the crate booked, the label printed
-      if (step === "label") return (Object.assign(L(), { ducked: true, sitePage: 2, siteSize: "size-big", bookAt: e.time() - 5, labelAt: e.time() - 5 }), e.place("sq", OFFICE.sq.x, OFFICE.sq.y), go("label", { cu: "site" }), control("chip-label"));
+      if (step === "label") return (Object.assign(L(), { ducked: true, sitePage: 3, siteSize: "size-big", bookAt: e.time() - 5, labelAt: e.time() - 5 }), e.place("sq", OFFICE.sq.x, OFFICE.sq.y), go("label", { cu: "site" }), control("chip-label"));
       return control("chip-computer");
     }
     if (at === "snacks") {

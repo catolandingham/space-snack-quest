@@ -679,10 +679,21 @@ export function drawSite(ctx, { booked = -1, t = 0, page = 0, size = "", label =
         esWords(ctx, escapeWords(b.id), (b.x0 + b.x1) / 2, b.y1 - 26, 30, ES_INK, "center", 900);
       }
       boxes = { sizes: S.sizes };
-    } else {
+    } else if (page === 2) {
       esWords(ctx, escapeWords("site-inside"), (sc.x0 + sc.x1) / 2, sc.y0 + 165, 48, ES_INK, "center", 900);
       for (const b of S.inside) button(b, escapeWords(b.id), b.id === "in-goat", 36);
       boxes = { inside: S.inside };
+    } else {
+      // (q: 135) Where to? MARS, the one lit choice: a red planet beside the word
+      esWords(ctx, escapeWords("site-to"), (sc.x0 + sc.x1) / 2, sc.y0 + 165, 48, ES_INK, "center", 900);
+      for (const b of S.to) {
+        button(b, "", true, 52, "#e5533d", "#ffffff");
+        ctx.beginPath();
+        ctx.arc(b.x0 + 80, (b.y0 + b.y1) / 2, 42, 0, ES_TAU);
+        esPaint(ctx, "#ff9a6b", 4);
+        esWords(ctx, escapeWords(b.id), (b.x0 + b.x1) / 2 + 40, (b.y0 + b.y1) / 2, 56, "#ffffff", "center", 900);
+      }
+      boxes = { to: S.to };
     }
   } else {
     // booked: the crate rides up the ramp into the ship, then a big green tick
@@ -725,7 +736,10 @@ export function drawSite(ctx, { booked = -1, t = 0, page = 0, size = "", label =
       L = { x0: 300, x1: 660, y0: 560 - 0 + (1 - k) * 60, y1: 640 };
     esRect(ctx, L.x0, L.y0, L.x1 - L.x0, 110, 6);
     esPaint(ctx, ES_PAPER, 4);
-    esWords(ctx, escapeWords("label"), (L.x0 + L.x1) / 2, L.y0 + 44, 34, ES_INK, "center", 900);
+    // (q: 135: "FOR PICKUP. TO: MARS." on two lines, so it fits the label)
+    const words = escapeWords("label"),
+      cut = words.indexOf(". ");
+    (cut < 0 ? [words] : [words.slice(0, cut + 1), words.slice(cut + 2)]).forEach((w, i, all) => esWords(ctx, w, (L.x0 + L.x1) / 2, L.y0 + (all.length > 1 ? 30 + i * 36 : 44), 32, ES_INK, "center", 900));
     lab = L;
   }
   return { ...boxes, page, size, booked: booked >= 0, label: lab };

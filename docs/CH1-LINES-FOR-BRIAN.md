@@ -5,25 +5,25 @@
 | --- | --- |
 | 28–34 | # Chapter 1 lines for Brian |
 | 35–138 | ## Loading bay (beats 28 to 36, and 36b), 2026-11-26 rebuild (branch feat/ch1-loading-bay, not merged) |
-| 139–188 | ## Round 7: night one, the Mop-Off, the plan, the vent desk and the office (2026-11-27, branch feat/ch1-r7-bay, not merged) |
-| 189–198 | ## Home morning (beats 22 to 24), 2026-11-26 round D (branch feat/ch1-day2-morning, not merged) |
-| 199–211 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
-| 212–228 | ## Lunch sneak and Ganitor, 2026-11-26 (branch feat/ch1-lunch-sneak, not merged) |
-| 229–244 | ## Calendar revision, Nov 16 (PR 58, not live) |
-| 245–252 | ## Earlier chapter lines |
-| 253–267 | ## Goal chips |
-| 268–351 | ## What people say |
-| 352–363 | ## The snack's name (2026-11-26, question 86) |
-| 364–377 | ## Words painted on things |
-| 378–401 | ## Buttons |
-| 402–488 | ## Day 2 onward (beats 22–61), pending |
-| 489–496 | ## Ball hiding |
-| 497–504 | ## Off-screen lines, for Brian (playtest 12) |
-| 505–514 | ## Homework desk, approved Nov 16 |
-| 515–553 | ## Questions still open |
-| 554–591 | ## After the party: the cleanup and truth or fib (story pass 28-52, E2), pending |
-| 592–611 | ## Bedtime additions and the chart over his bed (story pass 28-52, E4), pending |
-| 612–637 | ## Day 1 stand-ins, pending |
+| 139–191 | ## Round 7: night one, the Mop-Off, the plan, the vent desk and the office (2026-11-27, branch feat/ch1-r7-bay, not merged) |
+| 192–201 | ## Home morning (beats 22 to 24), 2026-11-26 round D (branch feat/ch1-day2-morning, not merged) |
+| 202–214 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
+| 215–231 | ## Lunch sneak and Ganitor, 2026-11-26 (branch feat/ch1-lunch-sneak, not merged) |
+| 232–247 | ## Calendar revision, Nov 16 (PR 58, not live) |
+| 248–255 | ## Earlier chapter lines |
+| 256–270 | ## Goal chips |
+| 271–354 | ## What people say |
+| 355–366 | ## The snack's name (2026-11-26, question 86) |
+| 367–380 | ## Words painted on things |
+| 381–404 | ## Buttons |
+| 405–491 | ## Day 2 onward (beats 22–61), pending |
+| 492–499 | ## Ball hiding |
+| 500–507 | ## Off-screen lines, for Brian (playtest 12) |
+| 508–517 | ## Homework desk, approved Nov 16 |
+| 518–556 | ## Questions still open |
+| 557–594 | ## After the party: the cleanup and truth or fib (story pass 28-52, E2), pending |
+| 595–614 | ## Bedtime additions and the chart over his bed (story pass 28-52, E4), pending |
+| 615–640 | ## Day 1 stand-ins, pending |
 <!-- /section-index -->
 # Chapter 1 lines for Brian
 
@@ -179,6 +179,9 @@ Every line here is new or changed from your video notes of 2026-11-27 and waits 
 | Painted or written | MEDIUM | The escape and the office (beats 43 to 52), your note r5 15:23; q 124 | Pending |
 | Painted or written | BIG | The escape and the office (beats 43 to 52), your note r5 15:23; q 124 | Pending |
 | Painted or written | What's inside? | The escape and the office (beats 43 to 52), your note r5 15:23; q 124 | Pending |
+| Painted or written | Where to? | The escape and the office (beats 43 to 52), Chapter 2 question 135 A (booked through to Mars); q 135 | Pending |
+| Painted or written | MARS | The escape and the office (beats 43 to 52), the one lit choice on "Where to?"; q 135 | Pending |
+| Painted or written | FOR PICKUP. TO: MARS. | The escape and the office (beats 43 to 52), the printed label (Day 2's crate tag stays FOR PICKUP.); q 135 | Pending |
 | Painted or written | OLD MOPS | The escape and the office (beats 43 to 52), your note r5 15:23; q 124 | Pending |
 | Painted or written | GOAT STUFF | The escape and the office (beats 43 to 52), your note r5 15:23; q 124 | Pending |
 | Painted or written | ONE SASQUATCH | The escape and the office (beats 43 to 52), your note r5 15:23; q 124 | Pending |
