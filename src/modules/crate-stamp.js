@@ -14,6 +14,7 @@
  * PLACEHOLDER look (letter sizes, the red, the wear, the crayon) for Brian.
  */
 import { snackLine } from "./snack-name.js";
+import { drawCakeChart } from "./cake-chart.js";
 
 /**
  * The crate bed in the locked home picture, in that picture's pixels (1280 x 830), from docs/locked-rooms/home_room.py
@@ -270,8 +271,9 @@ export function drawTinLid(c) {
 
 // What each locked picture gets layered over it (picture id: the size the drawing is in, and the drawing).
 const LAYERS = {
-  "home-closed": [CRATE_BED.picture, (c) => drawFamilyStamp(c)],
-  "home-open": [CRATE_BED.picture, (c) => drawFamilyStamp(c)],
+  // (and the crayon chart over his bed, cake-chart.js: story pass 28-52, E4; for Brian's yes)
+  "home-closed": [CRATE_BED.picture, (c) => (drawFamilyStamp(c), drawCakeChart(c))],
+  "home-open": [CRATE_BED.picture, (c) => (drawFamilyStamp(c), drawCakeChart(c))],
   hall: [HALL_TIN.picture, drawTinLid],
 };
 /** The locked pictures that get a layer for the snack's name: the two home pictures (the crate bed) and the hall (the tin). */

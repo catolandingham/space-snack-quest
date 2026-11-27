@@ -12,6 +12,7 @@
 import { FLYER } from "./party-hall.js";
 import { TRACE, MORNING_THINGS, DRAWN_OUTLINE, outlineSource } from "./home-morning-art.js";
 import { TALL_BOX, tallClosetSource } from "./tall-closet.js";
+import { WRING_BOX } from "./party-cleanup.js";
 
 // Doorways more than one goal outlines: each typed once.
 const HOME_DOOR = { rect: { x0: 912, x1: 940, y0: 358, y1: 468 } }, // home: the doorway in the right wall
@@ -40,6 +41,7 @@ export const GOAL_TARGETS = {
   "hall:hide": { trace: { x0: 392, x1: 494, y0: 432, y1: 556 } }, // the plant in the middle (party sneak)
   "hall:go-home": HALL_HOME_DOOR, // party P4, and the alarm
   "hall:grab-flyer": { rect: FLYER.box }, // party P4: the flyer on the bar counter's far end (the party's own table)
+  "hall:wring": { rect: WRING_BOX }, // the party cleanup: his bucket, when his beard is full (party-cleanup.js)
   "hall:d2-HIDE-plant": { trace: { x0: 392, x1: 494, y0: 432, y1: 556 } }, // the same plant (Day 2)
   "hall:d2-SNEAK-hallway": { rect: { x0: 912, x1: 940, y0: 257, y1: 345 } }, // the doorway to the hallway (hall v2, back corner)
   "hall:d2-GO-home": HALL_HOME_DOOR,

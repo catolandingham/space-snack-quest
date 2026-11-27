@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–26 | # Master backlog |
-| 27–171 | ## Where main is (Chapter 1 redesign) |
-| 172–186 | ## Register |
-| 187–208 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 209–229 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 230–242 | ## Phase 2 (plan section 4, T13 to T18) |
-| 243–265 | ## Phase 1 (plan section 3, T5 to T12) |
-| 266–279 | ## SS40–SS44 |
-| 280–297 | ## Story rows |
-| 298–316 | ## Reset section |
-| 317–327 | ## Still open |
-| 328–331 | ## Chapter 1 replot, recorded and not built |
-| 332–489 | ## Changelog |
+| 27–175 | ## Where main is (Chapter 1 redesign) |
+| 176–190 | ## Register |
+| 191–212 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 213–233 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 234–246 | ## Phase 2 (plan section 4, T13 to T18) |
+| 247–269 | ## Phase 1 (plan section 3, T5 to T12) |
+| 270–283 | ## SS40–SS44 |
+| 284–301 | ## Story rows |
+| 302–320 | ## Reset section |
+| 321–331 | ## Still open |
+| 332–335 | ## Chapter 1 replot, recorded and not built |
+| 336–493 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -25,6 +25,10 @@
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-26 (late night), draft PR #89: story pass 28-52, E4 bedtime additions and the chart over his bed (`bedtime-story*.js`, `cake-chart.js`; DECISIONS "Day 1 bedtime: why Mops kept him, the last cake, and the chart over his bed"). Waiting on Brian: the 11 new bedtime lines, the chart's two words, and his yes to the chart as a layer over the locked home pictures. Not yet played by a person. Docs match main: yes.
+
+2026-11-26 (late night), draft PR #87: story pass 28-52, E2: Mops cleans the hall after the party (P9) and truth or fib at home (P9b) (`party-cleanup.js`, `party-truth.js`, `tests/party-cleanup.mjs`; DECISIONS "Day 1 after the party: Mops cleans the hall, then truth or fib"). Waiting on Brian: party lines 91 to 119; the open conflicts listed there (Mops finding him in the hall at closing time; the flyer's place in the talk; Isfred's sales-visit line; the TV story's office and scanner pictures). Not yet played by a person. Docs match main: yes.
 
 2026-11-26 (late night, Day 2's start), draft PR #90: the rename and the family stamp merged in; nothing new waiting on Brian from this merge. Docs match main: yes.
 

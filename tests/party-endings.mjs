@@ -9,8 +9,8 @@
  *   - hiding in a plant in P7: "They lost you.", then his door is the goal; walking home, a guard follows a moment
  *     later all the same: HIDE · bed, then the card;
  *   - P8b: the wall speaker's line (name "Station PA"), the band packs up, everyone leaves through the hallway
- *     doorway in the pairs, then the bartender, Isfred and the band, each walking out (nobody vanishes), Mops
- *     mops in, his heart cone is as big as everyone's, the kid walks to him, they walk home through Squatch's
+ *     doorway in the pairs, then the bartender, Isfred and the band, each walking out (nobody vanishes), the wall
+ *     speaker calls Mops to the hall (story pass 28-52, E2), Mops mops in, his heart cone is as big as everyone's, the kid walks to him, they walk home through Squatch's
  *     door, the talk at home (party-talk.js), beat 20;
  *   - no catch in P8; ↺ restarts an ending; Joe's home theme never plays during the party night; the ta-da and
  *     the band's start are not silent (the chime and the cheer play).
@@ -257,6 +257,10 @@ async function readLines(page, stop, ms = 30000) {
   const walkedOut = Object.entries(lastAt).filter(([, at]) => at[0] < 880);
   g.check("nobody vanishes: everyone was last seen at the hallway doorway, walking out", walkedOut.length === 0, walkedOut);
   await still(page, "p8b-empty-hall");
+  // the empty hall: the wall speaker calls Mops to clean it (story pass 28-52, E2; approved words), then he comes in
+  s = await until(page, (q) => q.cur === "bub", 6000);
+  g.check('the empty hall: the wall speaker says "Ganitor Mops to the party hall." before Mops comes in', !!s && s.text === "Ganitor Mops to the party hall." && !s.now.mops, s && [s.text, !!s.now.mops]);
+  await next(page);
   s = await until(page, (q) => q.now.mops && q.now.mops.heart >= 1, 20000);
   g.check("Mops comes in mopping and his cone fills with hearts", !!s);
   const drawn = await page.evaluate(() => window.__ss.conesDrawn());
