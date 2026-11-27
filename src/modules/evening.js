@@ -1517,7 +1517,7 @@ export function createEvening(bridge) {
 
   // ---------- the full-screen close-ups ----------
   // The design boxes (evening-art.js fitDesign): the gallery's photo, arrows and X; the brochure; the papers.
-  const GALLERY = Object.freeze({ W: 400, H: 700, photo: { x: 40, y: 110, w: 320, h: 250 }, plaque: { x: 200, y: 404, size: 20 }, left: { x: 80, y: 520, r: 40 }, right: { x: 320, y: 520, r: 40 }, close: { x: 352, y: 640, r: 36 }, dots: { x: 200, y: 452 }, lift: { x: 130, y: 496, w: 140, h: 48 }, thought: { x: 170, y: 600, w: 300, h: 92 } });
+  const GALLERY = Object.freeze({ W: 400, H: 700, photo: { x: 40, y: 110, w: 320, h: 250 }, plaque: { x: 200, y: 404, size: 20 }, left: { x: 80, y: 520, r: 40 }, right: { x: 320, y: 520, r: 40 }, close: { x: 352, y: 640, r: 36 }, dots: { x: 200, y: 452 }, lift: { x: 130, y: 496, w: 140, h: 48 }, thought: { x: 160, y: 596, w: 280, h: 92 } });
   const BROCHURE = Object.freeze({ W: 360, H: 600, card: { x: 30, y: 40, w: 300, h: 420 }, close: { x: 318, y: 556, r: 34 }, thought: { x: 150, y: 528, w: 270, h: 96 } });
   // 38b: Mops's face at "Sasquatches", his beard stopped mid-wipe, and Squatch's eyes just as wide at the counter's edge
   const SHOCK = Object.freeze({ W: 400, H: 700, mops: { x: 200, y: 470, k: 4.6 }, counter: { y: 560 }, eyes: { x: 200, y: 548 }, close: { x: 352, y: 640, r: 36 } });
@@ -1958,7 +1958,10 @@ export function createEvening(bridge) {
     ctx.save();
     ctx.globalAlpha = a;
     ctx.fillStyle = "#1e2430";
+    // (sized to fit inside the cloud with room to spare)
     ctx.font = "800 22px system-ui, -apple-system, sans-serif";
+    const size = Math.min(22, Math.floor((22 * (T.w * 0.72)) / ctx.measureText(words).width));
+    ctx.font = `800 ${size}px system-ui, -apple-system, sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(words, T.x, T.y);

@@ -547,7 +547,18 @@ function sheetPrint(ctx, x, y, w, h, ink, mark, code) {
     by = y + B.y - PAPERS.pink.y;
   text(ctx, eveningWords("sign-order"), x + 16, by + B.s / 2, 16, ink, 900, "left");
   rrect(ctx, bx, by, B.s, B.s, 4, "rgba(255,255,255,.6)", ink, 3);
-  code && text(ctx, eveningWords("sign-code"), x + w * 0.42, y + PAPERS.code.y - PAPERS.pink.y, 34, ink, 700);
+  // the office code, written in blue pen in the corner (handwriting: a secret someone wrote, story pass beat 42b)
+  if (code) {
+    ctx.save();
+    ctx.translate(x + w * 0.7, y + h - 34);
+    ctx.rotate(-0.06);
+    ctx.font = `700 28px "Comic Sans MS", "Chalkboard SE", "Bradley Hand", cursive`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#1d4fb8";
+    ctx.fillText(eveningWords("sign-code"), 0, 0);
+    ctx.restore();
+  }
   ctx.beginPath();
   ctx.moveTo(x + 40, y + h - 40);
   ctx.bezierCurveTo(x + 70, y + h - 70, x + 90, y + h - 10, x + 120, y + h - 45);
