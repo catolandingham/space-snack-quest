@@ -31,19 +31,24 @@ export function truthButtonAt(L, x, y) {
 
 /** Squatch with his paws open, a heart over him (`s` the picture's height). */
 function drawTellPicture(ctx, s, art) {
-  for (const k of [-1, 1]) oval(ctx, k * s * 0.3, -s * 0.42, s * 0.07, s * 0.09, "#6b4428", 2);
-  art.squatch(ctx, 0, s * 0.42, s / 78);
-  heart(ctx, 0, -s * 0.62, s * 0.11, "#ff6fa0");
+  art.squatch(ctx, 0, s * 0.45, s / 60);
+  // his paws held open, palms out, beside his shoulders (pale palms with a furry brown rim, like his own paws)
+  for (const k of [-1, 1]) {
+    oval(ctx, k * s * 0.36, s * 0.04, s * 0.085, s * 0.1, "#6b4428", 2);
+    oval(ctx, k * s * 0.36, s * 0.05, s * 0.055, s * 0.07, "#f4c39a");
+    for (const f of [-1, 0, 1]) oval(ctx, k * s * 0.36 + f * s * 0.035, -s * 0.04, s * 0.022, s * 0.026, "#f4c39a", 1.5);
+  }
+  heart(ctx, 0, -s * 0.47, s * 0.1, "#ff6fa0");
 }
 /** Squatch tipped back, looking up at the ceiling, whistling (notes rising beside his mouth). */
 function drawFibPicture(ctx, s, art, t) {
   ctx.save();
-  ctx.translate(0, s * 0.42);
+  ctx.translate(0, s * 0.45);
   ctx.rotate(-0.12);
-  art.squatch(ctx, 0, 0, s / 78);
+  art.squatch(ctx, 0, 0, s / 60);
   ctx.restore();
-  drawNote(ctx, s * 0.26, -s * 0.36 - Math.sin(t * 3) * 4, s * 0.09, "#3478f6");
-  drawNote(ctx, s * 0.38, -s * 0.56 - Math.sin(t * 3 + 1) * 4, s * 0.08, "#ff5fa8");
+  drawNote(ctx, s * 0.3, -s * 0.12 - Math.sin(t * 3) * 4, s * 0.09, "#3478f6");
+  drawNote(ctx, s * 0.42, -s * 0.34 - Math.sin(t * 3 + 1) * 4, s * 0.08, "#ff5fa8");
 }
 
 /** Draws the choice. `st`: { pressed ("tell", "fib" or "") }; `art`: { squatch (ctx, x, y, scale) }; `t` seconds. */
@@ -52,15 +57,16 @@ export function drawTruthChoice(ctx, L, st, art, t) {
   ctx.fillRect(0, 0, L.w, L.h);
   for (const b of L.buttons) {
     const down = st.pressed === b.id ? 3 : 0,
-      pic = b.h * 0.82;
+      pic = Math.min(b.h * 0.82, b.w * 0.36);
     rr(ctx, b.x, b.y + down, b.w, b.h, 22, "#fffdf8", 3);
     ctx.save();
     ctx.translate(b.x + pic * 0.62, b.y + b.h / 2 + down);
     b.id === "tell" ? drawTellPicture(ctx, pic, art) : drawFibPicture(ctx, pic, art, t || 0);
     ctx.restore();
     const [verb, thing] = partyLine(b.id === "tell" ? "button-tell" : "button-fib").split(" · "),
-      size = Math.max(20, Math.round(Math.min(b.h * 0.2, b.w * 0.075))),
-      tx = b.x + pic * 1.2 + (b.w - pic * 1.2) / 2;
+      tx = b.x + pic * 1.2 + (b.w - pic * 1.2) / 2,
+      // (the words fit the space beside the picture: about 0.56 of a letter's size per letter, bold)
+      size = Math.round(Math.min(b.h * 0.2, b.w * 0.075, (b.w - pic * 1.25 - 12) / (0.58 * thing.length)));
     words(ctx, verb + " ·", tx, b.y + b.h / 2 - size * 0.7 + down, Math.round(size * 1.25), b.id === "tell" ? "#2b9a6a" : "#d0662a");
     words(ctx, thing, tx, b.y + b.h / 2 + size * 0.75 + down, size, INK);
   }
