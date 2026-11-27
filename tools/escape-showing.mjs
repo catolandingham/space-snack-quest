@@ -321,9 +321,12 @@ if (which === "escape") {
   await until((s) => !s.sec, 20000);
   await sleep(1500);
   await still("lost-you");
-  // unroll and stand still in the way until caught
-  await at(600, 440);
-  await until((s) => s.cur === "card" && s.id === "jail", 60000);
+  // unroll (a step away), back into the robot's way, and stand still there until caught
+  await at(540, 480);
+  await sleep(1500);
+  await walkTo(600, 440);
+  log("standing in the robot's way again");
+  await until((s) => s.cur === "card" && s.id === "jail", 90000);
   await sleep(1500);
   await still("lockup");
   await press();
