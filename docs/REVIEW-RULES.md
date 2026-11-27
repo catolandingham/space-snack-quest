@@ -3,35 +3,41 @@
 
 | Lines | Heading |
 | --- | --- |
-| 35–41 | ## Mistakes caught building the escape rebuild (2026-11-26 night) |
-| 42–45 | # Review rules |
-| 46–97 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
-| 98–100 | ## Techniques |
-| 101–103 | ## Mistake: locked art was redrawn |
-| 104–108 | ## Mistake: optional inspection interrupted getting out of bed |
-| 109–111 | ## Mistake: a big doc's section index went stale |
-| 112–114 | ## Mistake: a rebuilt beat forgot the step restart |
-| 115–117 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
-| 118–120 | ## Mistake: a killed run was read as a failing test |
-| 121–123 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
-| 124–126 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
-| 127–133 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
-| 134–141 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
-| 142–158 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
-| 159–171 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
-| 172–174 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
-| 175–177 | ## Standing rule: nobody walks through furniture (Brian, 2026-11-26) |
-| 178–186 | ## Mistakes caught building the morning sound (2026-11-24) |
-| 187–198 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
-| 199–210 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
-| 211–224 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
-| 225–231 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
-| 232–242 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
-| 243–252 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
-| 253–258 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
-| 259–267 | ## Mistakes caught building the escape (2026-11-26) |
-| 268–278 | ## Mistakes Brian's videos of the escape caught (2026-11-26) |
+| 36–40 | ## Mistakes caught building pickup day (2026-11-26 night) |
+| 41–47 | ## Mistakes caught building the escape rebuild (2026-11-26 night) |
+| 48–51 | # Review rules |
+| 52–103 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
+| 104–106 | ## Techniques |
+| 107–109 | ## Mistake: locked art was redrawn |
+| 110–114 | ## Mistake: optional inspection interrupted getting out of bed |
+| 115–117 | ## Mistake: a big doc's section index went stale |
+| 118–120 | ## Mistake: a rebuilt beat forgot the step restart |
+| 121–123 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
+| 124–126 | ## Mistake: a killed run was read as a failing test |
+| 127–129 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
+| 130–132 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
+| 133–139 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
+| 140–147 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
+| 148–164 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
+| 165–177 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
+| 178–180 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
+| 181–183 | ## Standing rule: nobody walks through furniture (Brian, 2026-11-26) |
+| 184–192 | ## Mistakes caught building the morning sound (2026-11-24) |
+| 193–204 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
+| 205–216 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
+| 217–230 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
+| 231–237 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
+| 238–248 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
+| 249–258 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
+| 259–264 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
+| 265–273 | ## Mistakes caught building the escape (2026-11-26) |
+| 274–284 | ## Mistakes Brian's videos of the escape caught (2026-11-26) |
 <!-- /section-index -->
+## Mistakes caught building pickup day (2026-11-26 night)
+- A switch card (`playAs` with a reason) queued from inside a story step goes to the end of the queue, so the lines queued after it played before the card and the step's own start ran last (the dress-up's lines came before "You are SQUATCH now."). Queue a switch last, and put what follows it in the function it calls.
+- A goal line was the same words as an older beat's ("Squatch: hide in the plant"), and the goal test keys goals by their words, so the new one silently replaced the old one's check. Goal lines are unique words.
+- A yellow drawing made of straight lines (a crayon rocket's flame, a bucket drawn with lineTo) reads as a yellow arrow to the goal test. Props drawn in yellow use rounded shapes, or another colour.
+- Squatch hidden in a crate stood where the crate was, and the home room drew him there standing. Someone inside a thing is off the picture (-400), and his bubbles point at the thing (speakerAt).
 ## Mistakes caught building the escape rebuild (2026-11-26 night)
 - A walk-through doorway whose opening lay past the room's walking edge could never be walked into (feet stop at the edge, and a tap's walk stops up to 8 short of it). Every doorway's opening overlaps the floor his feet can reach, and a test walks through each one (tests/escape-vent.mjs).
 - "Robot! Duck!" was said with no robot to see: its light showed only after he hid. A warning's danger is drawn from the warning on.

@@ -599,6 +599,7 @@
           if (hmBeat() && hmBeat().restart()) return; // Day 2 before he is up: the home morning starts again
           if (luBeat() && luBeat().restart()) return; // the lunch sneak between its steps: back to the last one
           if (esBeat() && esBeat().restart()) return; // the escape between its steps, the same
+          if (pkBeat() && pkBeat().restart()) return; // pickup day, the same
           if (restoreCh1Step(ch2.qCheck)) return void (n.ctrl = !0);
           return void (n.cur || n.q.length || (n.ctrl = !0));
         }

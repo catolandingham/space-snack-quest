@@ -4,24 +4,31 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–192 | ## Where main is (Chapter 1 redesign) |
-| 193–207 | ## Register |
-| 208–229 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 230–250 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 251–263 | ## Phase 2 (plan section 4, T13 to T18) |
-| 264–286 | ## Phase 1 (plan section 3, T5 to T12) |
-| 287–300 | ## SS40–SS44 |
-| 301–318 | ## Story rows |
-| 319–337 | ## Reset section |
-| 338–348 | ## Still open |
-| 349–352 | ## Chapter 1 replot, recorded and not built |
-| 353–510 | ## Changelog |
+| 24–199 | ## Where main is (Chapter 1 redesign) |
+| 200–214 | ## Register |
+| 215–236 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 237–257 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 258–270 | ## Phase 2 (plan section 4, T13 to T18) |
+| 271–293 | ## Phase 1 (plan section 3, T5 to T12) |
+| 294–307 | ## SS40–SS44 |
+| 308–325 | ## Story rows |
+| 326–344 | ## Reset section |
+| 345–355 | ## Still open |
+| 356–359 | ## Chapter 1 replot, recorded and not built |
+| 360–517 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-26 (night), draft PR on `feat/ch1-pickup-day` (stacked on `feat/ch1-escape`), not merged. Done: beats 53 to 61, pickup day, as a module (`ch1-pickup`) from the story pass for 53 to 61; the old pickup-day code is gone from `src/game`; the chapter ends through `ch1ChapterEnd` (tally card, Chapter 2).
+- Pending (Brian approves as he watches): every CHANGED and NEW line in `src/modules/pickup-lines.js` (status "pending"); the goal lines, buttons, switch reasons and tape labels marked "new".
+- The pass's eight questions, pick A of each built as a placeholder: his own crate opened after a mail bag (1); the new robots scan every crate, "NEW ROBOTS. NEW RULE." (2); Mops boards openly, "It's attached." (3); two tape clips, "That is not a goat." / "A Wookiee!" (4); the five short office lines (5); the call as written (6); found in his crate, "He's with me.", both put off, no lockup card (7); the slip under the notes, the robots never open the little box (8).
+- Layers over locked pictures, for Brian's yes: the camera with a red light over the ramp (in pickup day's bay only; the pass also wants it from Day 2 on), the mirror inside the wardrobe door, Lou's hat in the bay's bin, the things on the home walls and their pale squares, the floor where the crate bed and the bucket stood, the mail room's row (a bag, a crate, his crate), the PHOTO DAY sign and flash, the tripod and stool in the office. The cargo hold is a new placeholder picture (no locked picture).
+- Not built: dragging to look through the slat (the strip shows the whole bay); PACK · photo (the Polaroid: no record on this branch of whether he kept it); guests' cones on the 55 walk home (no guests in the hall then); Mops walking ahead on that walk (he follows); the room shaking at the first bleat (roar lines instead); the crew's own look (the party's guard look); Lou's hat left on the bay floor in beat 30 and the camera from beat 29 (earlier beats, other builders); a security guard walking in for the costume's catch in the hall (the LOCKUP card comes straight).
+- NOT ASSESSED: how it feels to play (Not yet played by a person); the music in the cargo hold and the office at evening is whatever the room's cue gives.
 
 2026-11-26 (night, rebuild), draft PR #93 on `feat/ch1-escape`, not merged. Done: beats 43 to 52 rebuilt from the story pass of 2026-11-26, one beat group a commit (43 and 44; 45 and 46; 47 to 49; 50 to 52): the calendar card, the player as Mops (mopping, the Mop-Off "clean better" with FAST and SPARKLE and the GANITOR star, the HQ news in the manager's own words, the walk home), "You were right" and the crayon plan, the almost-slip, the walked sneak to the vent with Mops following, the player as Mops in the vent (tunnel, lamp, wall, toy bin, stubs and chart, the note line by line, the pink slip), "You're gumbling again!", the keypad with the folded slip, the office's optional finds and the duck, the site with "ghjk", the label, the snacks and the last Stars Cake, the Guardian Box, the song. The vent room is locked (`vent-room-empty-v1.png`, Brian question 56). Docs match main: yes.
 - Pending (Brian approves as he watches): every CHANGED and NEW line in `src/modules/escape-lines.js` (status "pending"); the "new" goal lines, buttons and switch reasons there; the crate stamp _ARS CAKES and the MARS CAKES box on the held-up brochure (layers over locked pictures, waiting for his yes); every drawing (the calendar close-up, the cart tracks and dirt, the robots' lanes, the bars, the star close-up, the crayon plan, the tunnel, the stubs and chart, the note close-up, the fold, the folded slip, the office's mug, frame, drawer and passing light, the label).

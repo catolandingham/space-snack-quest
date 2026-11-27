@@ -1087,8 +1087,9 @@ export function createEscape(bridge) {
     record.steps.push("done");
     e.set("sqPose", "stand");
     chip("");
-    // beat 53, as it is today (14-ch1-day2.js ch1PackStart)
-    e.packStart();
+    // beat 53: pickup day (pickup.js)
+    const pk = bridge.beat("ch1-pickup");
+    pk ? pk.start() : e.chapterEnd();
   }
 
   // True on a walk between rooms the player walks himself (the hall's walls and solids are then the escape's).

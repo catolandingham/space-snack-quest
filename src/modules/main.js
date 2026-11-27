@@ -9,6 +9,7 @@ import { createBedtimeStory } from "./bedtime-story.js";
 import { createHomeMorning } from "./home-morning.js";
 import { createLunchSneak } from "./lunch-sneak.js";
 import { createEscape, ESCAPE_ID } from "./escape.js";
+import { createPickup, PICKUP_ID } from "./pickup.js";
 
 const bridge = createBridge();
 // The rebuilt beats. The older program asks for each by id where it used to run its own code.
@@ -19,5 +20,6 @@ bridge.registerBeat("ch1-bedtime-story", createBedtimeStory(bridge));
 bridge.registerBeat("ch1-home-morning", createHomeMorning(bridge));
 bridge.registerBeat("ch1-lunch", createLunchSneak(bridge));
 bridge.registerBeat(ESCAPE_ID, createEscape(bridge));
+bridge.registerBeat(PICKUP_ID, createPickup(bridge));
 // Not writable or replaceable: the older program and every module see the same bridge.
 Object.defineProperty(window, "SSQ", { value: bridge, writable: false, configurable: false, enumerable: true });

@@ -300,7 +300,7 @@ const run = await page.evaluate(
     out.home2.sleep = n.sqPose === "sleep";
     out.home2.shut = n.wardrobe === "closed";
     out.home2.slip = S().slip;
-    until(() => n.ch1Step === "pack1", 20);
+    until(() => n.ch1Step === "pk-note", 20);
     out.end = { step: n.ch1Step, active: B.active() };
     out.words = d().words;
     return out;
@@ -328,7 +328,7 @@ g.check("52: four into the bag; then \"What about the Guardians?\" / \"I'll leav
 g.check("52: his last Stars Cake on the plate, \"Their favorite. I think.\"; Mops says nothing, a heart; then he walks home", JSON.stringify(run.bar.onPlate) === JSON.stringify(["cake"]) && JSON.stringify(run.bar.favorite) === JSON.stringify([W["sq-favorite"]]) && run.bar.hearts && !run.bar.mopsSaid && run.bar.home.chip === W["chip-home-night"], run.bar);
 g.check("52: home, OPEN · closet, PUT IN · box", run.home2.room === "closet" && run.home2.chip === W["chip-slip"] && run.home2.open === W["button-closet"] && run.home2.wardrobe === "open" && run.home2.put === W["button-box"], run.home2);
 g.check("52: the box close-up (MY GARDIAN BOX, MY GUARDIANS): the slip goes under the notes", run.home2.box.id === "esbox" && run.home2.box.drew.tucked && run.home2.box.drew.label === "MY GARDIAN BOX" && run.home2.box.drew.title === "MY GUARDIANS", run.home2.box);
-g.check("52: the slip is in the box, the closet shut, Squatch asleep, then beat 53 (pack the crate)", run.home2.slip === "box" && run.home2.shut && run.home2.sleep && run.end.step === "pack1" && !run.end.active, { home: run.home2, end: run.end });
+g.check("52: the slip is in the box, the closet shut, Squatch asleep, then beat 53 (pickup day: read the note)", run.home2.slip === "box" && run.home2.shut && run.home2.sleep && run.end.step === "pk-note" && !run.end.active, { home: run.home2, end: run.end });
 g.check("52: \"Mops can never see this.\" (a thought), \"Big day tomorrow.\", and their song", JSON.stringify(run.home2.after) === JSON.stringify([W["sq-never"] + " (whisper)", W["mops-big-day"], W["sq-sing"], W["mops-sing"]]), run.home2.after);
 g.check("the drawings show the walkthrough's words", ["STARS CAKES", "Order new box", "Return empty crate", "OPEN", "CLOSED.", "EMPTY. FOR PICKUP.", "Pickup booked.", "ghjk"].every((w) => run.words.includes(w)), run.words);
 

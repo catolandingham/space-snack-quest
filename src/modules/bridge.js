@@ -39,7 +39,7 @@ import { drawCreditsButton, creditsTap, creditsShown } from "./credits.js";
  * to write another field stops with an error; tests/module-build.mjs checks the morning (and its home-alone
  * part) and the party night against this list.
  */
-export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1HomeMorning", "ch1Lunch", "ch1Escape", "ch1D", "ch1Night", "ch1Brochure", "ch1DidBall", "ch1Journey", "ch1Sneak", "ch1Step", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe"]);
+export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1HomeMorning", "ch1Lunch", "ch1Escape", "ch1Pickup", "costumeOn", "ch1Ship", "ch1Office", "ch1Crayon", "ch1Keepsake", "ch1D", "ch1Night", "ch1Brochure", "ch1DidBall", "ch1Journey", "ch1Sneak", "ch1Step", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe"]);
 
 export function createBridge() {
   const beats = new Map();

@@ -19,6 +19,7 @@
         hmBeat() && hmBeat().tick(l);
         luBeat() && luBeat().tick(l);
         esBeat() && esBeat().tick(l);
+        pkBeat() && pkBeat().tick(l);
       }
       (n.sqHop &&
         ((n.sqHop.t += l),
@@ -2122,6 +2123,7 @@
         hmBeat() && hmBeat().draw(e);
         luBeat() && luBeat().draw(e);
         esBeat() && esBeat().draw(e);
+        pkBeat() && pkBeat().draw(e);
         if (n.ch1Calendar) {
           drawCh1Calendar();
           return;

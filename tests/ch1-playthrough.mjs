@@ -502,14 +502,15 @@ const play = await page.evaluate(() => {
     siteRoom: esRoom,
     brochure: !!n.ch1Brochure,
     boxed: !!(n.ch1HomeMorning && n.ch1HomeMorning.gift === "box"), // the gift in the Guardian Box (home-morning.js)
-    packed: n.ch1Packed || 0,
+    // pickup day (pickup.js): he climbed out of his crate in the mail room; it rode on the ship
+    pickup: n.ch1Pickup ? { climbed: !!n.ch1Pickup.climbed, crate: n.ch1Pickup.crate, packed: n.ch1Pickup.packed } : null,
     paper: n.ch1PaperLog || [],
   };
 });
 g.check("Chapter 1 reaches the tally card", play.end === "tally", { end: play.end, acts: play.acts, scene: play.state.scene });
 // The party night (src/modules/party.js): the peek, the plant, home through his door, the dress-up, out through his
 // door; the party in disguise (the dance), closing time, and walking home with Mops.
-const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "GRAB · flyer", "WALK · go-home", "SAVE · flyer", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "PICK UP · rocket", "OPEN · closet", "PUT IN · box", "WALK · bag", "TAKE · lunch", "WALK · lu-door", "GIVE · lunch", "WALK · lu-back", "TAKE · snack", "HIDE · plant", "GO · hall", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "WALK · es-patch", "WALK · es-cell", "WALK · es-door", "SHOW · brochure", "LOOK · crate", "LOOK · calendar", "WALK · es-door", "WALK · es-vent", "ROLL · ball", "WALK · es-tunnel", "LIGHT · lamp", "LOOK · wall", "LOOK · toy bin", "LOOK · stubs", "WRITE · note", "TAP · note", "TAP · note", "TAP · note", "TAKE · pink slip", "GRAB · pink slip", "WALK · es-door", "TYPE · code", "TYPE · 169556", "RETURN · empty crate", "HIDE · desk", "RETURN · empty crate", "TAP · Return empty crate", "TAKE · label", "WALK · es-door", "WALK · es-bar", "TAKE · snack", "TAKE · snack", "TAKE · snack", "TAKE · snack", "LEAVE · food", "WALK · es-door", "OPEN · closet", "PUT IN · box", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
+const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "GRAB · flyer", "WALK · go-home", "SAVE · flyer", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "PICK UP · rocket", "OPEN · closet", "PUT IN · box", "WALK · bag", "TAKE · lunch", "WALK · lu-door", "GIVE · lunch", "WALK · lu-back", "TAKE · snack", "HIDE · plant", "GO · hall", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "WALK · es-patch", "WALK · es-cell", "WALK · es-door", "SHOW · brochure", "LOOK · crate", "LOOK · calendar", "WALK · es-door", "WALK · es-vent", "ROLL · ball", "WALK · es-tunnel", "LIGHT · lamp", "LOOK · wall", "LOOK · toy bin", "LOOK · stubs", "WRITE · note", "TAP · note", "TAP · note", "TAP · note", "TAKE · pink slip", "GRAB · pink slip", "WALK · es-door", "TYPE · code", "TYPE · 169556", "RETURN · empty crate", "HIDE · desk", "RETURN · empty crate", "TAP · Return empty crate", "TAKE · label", "WALK · es-door", "WALK · es-bar", "TAKE · snack", "TAKE · snack", "TAKE · snack", "TAKE · snack", "LEAVE · food", "WALK · es-door", "OPEN · closet", "PUT IN · box", "READ · note", "OPEN · box", "PACK · note", "WALK · pk-tuft", "PACK · box", "PACK · bucket", "TAKE · chart", "TAKE · brochure", "TAKE · drawing", "TAKE · drawing", "PUT ON · label", "GET IN · crate", "WALK · pk-door", "WALK · pk-row", "WALK · pk-to-crate", "KNOCK · crate", "BLEAT · robot", "CLIMB OUT · crate", "HIDE · plant", "WALK · pk-door", "SNIP · beard", "PUT ON · beard", "PUT ON · horns", "PUT ON · jacket", "BLEAT · Mops", "BLEAT · Mops", "BLEAT · Mops", "WALK · pk-door", "WALK · pk-box", "PICK UP · box", "WALK · pk-to-scan", "BLEAT · robot", "GO · ship", "BOARD · scanner", "PRESS · beard", "CLIMB · ramp", "PLAY · tape", "ZOOM · in", "NEXT · tape", "PLAY · tape", "ZOOM · in", "ZOOM · in", "OPEN · box", "BITE · cake", "HIDE · crate"];
 g.check("the player does the new actions in order", JSON.stringify(play.acts) === JSON.stringify(wantActs), play.acts);
 const must = [
   "Stormtop Cloud Resort, floating above Jupiter.",
@@ -576,17 +577,20 @@ const must = [
   "Get it before he sees it.",
   "This time, take all the snacks you want.",
   "What about the Guardians?",
-  "Get out. They're checking a crate.",
+  "Squatch! Get out.",
+  "GOAT HAIR. PROCEED.",
   "The spare jacket. The beard. And the horns.",
   "More bleat. Less roar.",
-  "HAIR... PROBABLY. PROCEED.",
+  "...PROBABLY.",
   "Send in Mops for his Employee of the Month photo.",
   "Mops isn't here.",
   "Not here? He can't live off the station!",
   "He was replaced by the new robot shipment.",
   "I never ordered a replacement! Get me the security tapes.",
   "Later that evening...",
-  "The base called the ship. It has to stop.",
+  "A Wookiee!",
+  "Call from Stormtop.",
+  "He's with me.",
 ];
 let at = -1;
 const order = must.map((line) => {
@@ -596,9 +600,9 @@ const order = must.map((line) => {
 });
 g.check("the story lines show in cartoon order", order.every(([, i]) => i >= 0), order.filter(([, i]) => i < 0).map(([line]) => line));
 g.check(
-  "Squatch hid in a crate on pickup day, climbed out, then wore the costume",
-  play.state.didBall === true && play.state.peeked === true && play.state.climbed === true && play.state.inCrate === false && play.state.costume === true,
-  play.state,
+  "Squatch hid in his crate on pickup day, climbed out (the crate rode on without him), then wore the costume",
+  play.state.didBall === true && play.pickup && play.pickup.climbed === true && play.pickup.crate === "ship" && play.state.costume === true,
+  { state: play.state, pickup: play.pickup },
 );
 const walks = walkChanges(play.state.trail);
 g.check("every room change walks off and walks in", walks >= 12, { walks, sample: play.state.trail.slice(0, 8) });
@@ -634,12 +638,15 @@ g.check(
     play.escape.plate === 1 &&
     play.escape.bag === 4 &&
     play.escape.slip === "box" &&
-    play.packed === 2,
+    !!play.pickup &&
+    play.pickup.packed.box &&
+    play.pickup.packed.bucket,
   { paper, vent: play.vent, paw: play.paw },
 );
 g.check(
   "the order box, the Mars letter, and the Guardian box are drawn",
-  play.shown.includes("ORDER MORE ROBOTS") && play.shown.includes("MARS LOST & FOUND.") && play.shown.includes("MY GARDIANS"),
+  // (the Guardian Box: its close-up on pickup day, opened with OPEN · box, src/modules/pickup.js)
+  play.shown.includes("ORDER MORE ROBOTS") && play.shown.includes("MARS LOST & FOUND.") && play.acts.includes("OPEN · box") && !!play.pickup && play.pickup.packed.box,
   play.shown,
 );
 g.check("the vent board and the Moon Pie buttons are drawn", play.shown.includes("IDEAS FOR GUARDIANS") && play.shown.includes("Return empty crate"), play.shown);
@@ -686,7 +693,8 @@ function doorUses(walks) {
     if (a.phase !== "edge" || b.phase !== "in") continue;
     if (a.room === "hangar" && b.room === "hall" && a.x < 160 && b.x > 800) use.backHall++;
     if (a.room === "hall" && b.room === "closet" && a.y > 560 && b.x > 800) use.backHome++;
-    if (a.room === "closet" && b.room === "hall" && a.x > 800 && b.y > 560) use.overHall++;
+    // (the walks between rooms come in at the hall's bottom door, y 556: escape-place.js ES_DOORS)
+    if (a.room === "closet" && b.room === "hall" && a.x > 800 && b.y > 550) use.overHall++;
     if (a.room === "hall" && b.room === "hangar" && a.x > 800 && b.x < 160) use.overDelivery++;
   }
   return use;

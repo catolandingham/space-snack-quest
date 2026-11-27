@@ -230,6 +230,7 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
         n.scene = "Q9";
         n.room = "office";
         n.ch1Office = true;
+        n.ch1Pickup = null; // (the chapter's end: pickup day is over)
         n.ctrl = false;
         n.cur = { k: "panel", id: "tally" };
       }),

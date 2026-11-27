@@ -29,6 +29,10 @@
     function esBeat() {
       return (window.SSQ && window.SSQ.beat && window.SSQ.beat("ch1-escape")) || null;
     }
+    // Beats 53 to 61, pickup day: src/modules/pickup.js (the escape hands over to it; it ends with ch1ChapterEnd).
+    function pkBeat() {
+      return (window.SSQ && window.SSQ.beat && window.SSQ.beat("ch1-pickup")) || null;
+    }
     function ch1Day2Begin(awake) {
       ((n.ch1Day2 = !0),
         (n.ch1VentLunch = 0),
@@ -251,119 +255,12 @@
       });
     }
     function ch1SixDays() {
-      esBeat() ? esBeat().start() : ch1PackStart();
+      esBeat() ? esBeat().start() : pkBeat() ? pkBeat().start() : ch1ChapterEnd();
     }
-    function ch1PackStart() {
-      ((n.ctrl = !1), (n.ch1Zoom = { id: "pack", zoom: 0, paw: { x: 300, y: 580 } }), (n.ch1Step = "pack1"), (n.ch1Chip = "Squatch: pack the crate"), chipNow());
-    }
-    function ch1PackBox() {
-      if (n.ch1Packed) return;
-      ((n.ch1Packed = 1), (n.ch1Step = "pack2"), D.hide());
-    }
-    function ch1PackBucket() {
-      if (n.ch1Packed !== 1) return;
-      ((n.ch1Packed = 2), ch1CloseZoom(ch1ToPickup));
-    }
-    function ch1ToPickup() {
-      ch1GoDay("hall", { who: "both", scene: "QB" }, () => {
-        ch1GoDay("passage", { who: "both", scene: "QB" }, () => {
-          ch1GoDay("delivery", { who: "sq", scene: "QB", ship: !0, crew: "pickup", mail: "full", night: !1, stand: [760, 520] }, ch1PickupWatch);
-        });
-      });
-    }
-    function ch1PickupWatch() {
-      ((n.ch1InCrate = !0),
-        (n.ch1Peeked = !0),
-        (n.ch1Load = 0),
-        (n.ch1Crew = "pickup"),
-        (n.ch1Ship = !0),
-        (n.sqPose = "hidden"),
-        (n.sq.x = 780),
-        (n.sq.y = 520),
-        (n.moPose = "stand"),
-        (n.mo.x = -40),
-        (n.mo.y = 520),
-        (n.ctrl = !1),
-        (n.scene = "QB"));
+    // The end of Chapter 1 (pickup.js hands over here after beat 61): the never-caught bonus, the tally card, Chapter 2.
+    function ch1ChapterEnd() {
+      ((n.ctrl = !1), (n.act = null));
       J([
-        cV((dt) => {
-          n.ch1Load = Math.min(1, (n.ch1Load || 0) + dt * 0.55);
-          return (ch1Trail(), n.ch1Load >= 1 && mV(n.mo, 690, 520, 160, dt));
-        }),
-        v("mops", "Get out. They're checking a crate."),
-        N(() => {
-          ((n.ch1InCrate = !1), (n.sqPose = "stand"), (n.ch1Climbed = !0));
-        }),
-        ch1Step("sq", 700, 520, 140),
-        N(() =>
-          ch1GoDay("passage", { who: "both", scene: "Q8", night: !1 }, () => {
-            ch1GoDay("hall", { who: "both", scene: "Q8" }, () => {
-              ch1GoDay("closet", { who: "both", scene: "Q8" }, ch1CostumeReady);
-            });
-          }),
-        ),
-      ]);
-    }
-    function ch1CostumeReady() {
-      ((n.wardrobe = "open"), (n.room = "closet"), (n.ctrl = !1));
-      J([
-        v("mops", "The spare jacket. The beard. And the horns."),
-        N(() => ch1Ready("jacket", "Squatch: put on the spare jacket", "Q8")),
-      ]);
-    }
-    function ch1Jacket() {
-      ((n.ctrl = !1),
-        J([
-          ch1Step("sq", 200, 500, 150),
-          N(() => (n.costumeOn = !0)),
-          v("mops", "More bleat. Less roar."),
-          N(ch1LastWalk),
-        ]));
-    }
-    function ch1LastWalk() {
-      ((n.ch1Last = !0), (n.ctrl = !1));
-      ch1GoDay("hall", { who: "both", scene: "Q9" }, () => {
-        ch1GoDay("passage", { who: "both", scene: "Q9" }, () => ch1Ready("keepsake", "Squatch: go to the ship", "Q9"));
-      });
-    }
-    function ch1TakeDrawing() {
-      if (n.ch1Keepsake) return;
-      ((n.ch1Keepsake = !0), (n.ch1Crayon = !0), D.pickup());
-    }
-    function ch1ToScanner() {
-      ch1GoDay("delivery", { who: "both", scene: "Q9", ship: !0, crew: "", mail: "full", night: !1, stand: [420, 500] }, () => {
-        ((n.costumeOn = !0), (n.ch1Crew = ""), ch1Ready("board", "Squatch: walk through the scanner", "Q9"));
-      });
-    }
-    function ch1Leave() {
-      ((n.ctrl = !1), (n.act = null), (n.costumeOn = !0));
-      J([
-        v("scanner", "HAIR... PROBABLY. PROCEED."),
-        cV((dt) => (ch1Trail(), (n.costumeOn = !0), mV(n.sq, 480, 240, 160, dt) && mV(n.mo, 540, 250, 160, dt))),
-        N(() => {
-          ((Ka = 1),
-            (n.room = "office"),
-            (n.ch1D = !1),
-            (n.ch1Office = !0),
-            (n.scene = "Q9"),
-            (n.ch1Chip = ""),
-            (n.sqPose = "hidden"),
-            (n.moPose = "hidden"),
-            (n.sq.x = -400),
-            (n.sq.y = -400),
-            (n.mo.x = -400),
-            chipNow());
-        }),
-        v("official", "Send in Mops for his Employee of the Month photo."),
-        v("robot", "Mops isn't here."),
-        v("official", "Not here? He can't live off the station!"),
-        v("robot", "He was replaced by the new robot shipment."),
-        v("official", "I never ordered a replacement! Get me the security tapes."),
-        { k: "card", id: "later", text: "Later that evening..." },
-        N(() => (n.ch1Tape = !0)),
-        uV(1.1),
-        N(() => (n.ch1Heart = !0)),
-        v("pa", "The base called the ship. It has to stop.", "pa"),
         N(() => {
           (aV.caught + x.caught === 0 && !n.found.has("ghost1") && (n.found.add("ghost1"), (n.stars += 250)), (B.nextBeat = "Ch2"));
         }),
@@ -377,7 +274,7 @@
     }
     function ch1ZoomAct() {
       let s = n.ch1Step;
-      s === "mark" ? ch1Mark() : s === "pack1" ? ch1PackBox() : s === "pack2" && ch1PackBucket();
+      s === "mark" && ch1Mark();
     }
     function ch1OkHit(x, y) {
       return x > 760 && x < 940 && y > 500 && y < 600;
@@ -390,7 +287,7 @@
     }
     function ch1WorldTap(x, y) {
       if (!n.ch1Day2 || !n.ctrl || n.ch1Zoom) return !1;
-      for (let b of [hmBeat(), luBeat(), esBeat()]) if (b && b.active() && b.tap && b.tap(x, y)) return !0; // a tap on the glowing thing (or the lunch's close-up)
+      for (let b of [hmBeat(), luBeat(), esBeat(), pkBeat()]) if (b && b.active() && b.tap && b.tap(x, y)) return !0; // a tap on the glowing thing (or the lunch's close-up)
       if (n.ch1Step === "photos" && ch1HallDoorHit(x, y)) return (ch1LeavePhotos(), !0);
       if (n.ch1Step === "family" && Math.hypot(x - 430, y - 530) < 80) return (ch1HideFamily(), !0);
       return !1;
@@ -400,7 +297,6 @@
       if (ch1OkHit(x, y)) return !0;
       if (Math.hypot(x - 880, y - 540) < 42) return !0;
       if (s === "mark") return Math.hypot(x - 470, y - 310) < 80;
-      if (s === "pack1" || s === "pack2") return Math.hypot(x - 480, y - 330) < 110;
       return !1;
     }
     function ch1Day2Pointer(kind, x, y) {
@@ -439,6 +335,7 @@
       if (hmBeat() && hmBeat().active()) return hmBeat().spots();
       if (luBeat() && luBeat().active()) return luBeat().spots();
       if (esBeat() && esBeat().active()) return esBeat().spots();
+      if (pkBeat() && pkBeat().active()) return pkBeat().spots();
       if (!n.ch1Day2 || !n.ctrl) return [];
       let s = n.ch1Step;
       if (n.sqPose === "hidden" || n.sqPose === "ball" || n.sqPose === "sleep") return [];
@@ -451,15 +348,6 @@
       if (s === "mark") return [ch1At("MARK", "order", CH1_BIN.x, CH1_BIN.y, 170, ch1Mark)];
       if (s === "post") return [ch1At("POST", "mailbox", CH1_MAIL.x, CH1_MAIL.y, 110, ch1PostYellow)];
       if (s === "out") return [ch1At("GO", "door", 90, 540, 120, ch1OutHome)];
-      if (s === "pack1") return [ch1At("PACK", "box", n.sq.x || 420, n.sq.y || 520, 280, ch1PackBox)];
-      if (s === "pack2") return [ch1At("PACK", "bucket", n.sq.x || 420, n.sq.y || 520, 280, ch1PackBucket)];
-      if (s === "jacket") return [ch1At("PUT ON", "jacket", 160, 510, 170, ch1Jacket)];
-      if (s === "keepsake") {
-        let out = [ch1At("GO", "ship", 820, 510, 220, ch1ToScanner)];
-        n.ch1Keepsake || out.push(ch1At("TAKE", "drawing", 480, 450, 80, ch1TakeDrawing));
-        return out;
-      }
-      if (s === "board") return [ch1At("BOARD", "scanner", 480, 500, 170, ch1Leave)];
       return [];
     }
     function drawSlip(x, y, color, w, h) {
@@ -516,10 +404,6 @@
           (e.save(), e.translate(325, 230), e.rotate(-0.2), (e.strokeStyle = "#6b4428"), (e.lineWidth = 6), (e.lineCap = "round"), e.beginPath(), e.moveTo(-16, 4), e.lineTo(0, 18), e.lineTo(22, -16), e.stroke(), e.restore());
         }
         g(CH1_OFFICE_CODE, 470, 420, 28, "#1e2430", "center", 900);
-      } else if (id === "pack") {
-        (m(360, 240, 240, 160, 8), r("#d7c4a3", 4), g("MOON PIES", 480, 280, 18, "#1e2430", "center", 900));
-        n.ch1Packed && (m(430, 300, 80, 50, 4), r("#3478f6", 3), g("MY GARDIANS", 470, 326, 10, "#fff", "center", 800), drawSlip(448, 312, "#ff8fb8", 22, 18));
-        n.ch1Packed === 2 && (L(560, 250, 22), r("#8a93a3", 3));
       }
       (drawPawArm(z.paw), drawZoomX(), (e.globalAlpha = 1));
     }
@@ -590,6 +474,7 @@
         (n.ch1HomeMorning = null),
         (n.ch1Lunch = null),
         (n.ch1Escape = null),
+        (n.ch1Pickup = null),
         (n.ch1Chip = ""));
       if (b === 22 || b === 23) {
         // the home morning (home-morning.js), awake beside the rocket; 23: the lunch goal by the wardrobe (LOOK · calendar)
@@ -633,49 +518,12 @@
       } else if (b >= 44 && b <= 52) {
         // the escape (escape.js): 44 to 46 from its card, 47 the ball, 48 and 49 the slip, 50 the keypad, 51 the computer, 52 the snacks
         ((n.scene = "QB"), esBeat() && esBeat().jump(b <= 46 ? "start" : ["sneak", "tunnel", "grab", "tohall", "computer", "tobar"][b - 47]));
-      } else if (b === 53) {
-        ((n.room = "closet"), (n.scene = "QB"), (n.sq.x = 420), (n.sq.y = 520), (n.mo.x = 560), (n.mo.y = 500));
-        n.ch1Zoom = { id: "pack", zoom: 1, paw: { x: 400, y: 400 } };
-        n.ch1Step = "pack1";
-        n.ch1Packed = 1;
-      } else if (b === 54) {
-        ((n.room = "hangar"), (n.ch1D = !0), (n.ch1Ship = !0), (n.scene = "QB"), (n.ch1InCrate = !0), (n.ch1Crew = "pickup"), (n.sqPose = "hidden"), (n.sq.x = 780), (n.sq.y = 520), (n.mo.x = 200), (n.mo.y = 520));
-      } else if (b === 57) {
-        ((n.room = "hall"), (n.scene = "Q3"), (n.costumeOn = !0), (n.sq.x = 400), (n.sq.y = 520), (n.mo.x = 520), (n.mo.y = 510), (n.ch1Pop = 1), (n.ch1Step = "keepsake"));
-      } else if (b === 61) {
-        ((n.room = "hangar"),
-          (n.ch1D = !0),
-          (n.ch1Ship = !0),
-          (n.scene = "Q9"),
-          (n.sqPose = "hidden"),
-          (n.moPose = "hidden"),
-          (n.ctrl = !1),
-          (n.bt = 1),
-          (n.ch1Heart = !0),
-          (n.cur = { k: "bub", b: { who: "pa", text: "The base called the ship. It has to stop.", style: "pa", ear: !1 } }));
-      } else if (b === 56) {
-        ((n.room = "closet"), (n.scene = "Q8"), (n.wardrobe = "open"), (n.costumeOn = !0), (n.sq.x = 460), (n.sq.y = 510), (n.mo.x = 620), (n.mo.y = 500), (n.ch1Step = "jacket"));
-      } else if (b === 58) {
-        ((n.room = "hangar"), (n.ch1D = !0), (n.ch1Ship = !0), (n.scene = "Q9"), (n.costumeOn = !0), (n.sq.x = 420), (n.sq.y = 500), (n.mo.x = 520), (n.mo.y = 500), (n.ch1Step = "board"));
-      } else if (b === 59 || b === 60) {
-        ((n.room = "office"),
-          (n.ch1Office = !0),
-          (n.ch1Step = ""),
-          (n.scene = "Q9"),
-          (n.sqPose = "hidden"),
-          (n.sq.x = -400),
-          (n.sq.y = -400),
-          (n.moPose = "hidden"),
-          (n.ch1Tape = b === 60),
-          (n.scene = b === 60 ? "Q0" : "Q9"),
-          (n.ctrl = b === 60),
-          (n.bt = b === 59 ? 1 : 0),
-          b === 59 &&
-            (n.cur = {
-              k: "bub",
-              b: { who: "official", text: "Send in Mops for his Employee of the Month photo.", style: "say", ear: !1 },
-            }));
+      } else if (b >= 53 && b <= 58) {
+        // pickup day (pickup.js): 53 the note, 54 the push, 55 Mops at the bay door, 56 the snip, 57 the last walk, 58 the box
+        ((n.scene = "QB"), pkBeat() && pkBeat().jump(["start", "push", "warn", "snip", "lastwalk", "pickbox"][b - 53]));
+      } else if (b >= 59 && b <= 61) {
+        // pickup day (pickup.js): 59 Isfred's lines, 60 the tapes (from the frame), 61 the cargo hold
+        ((n.scene = "QB"), pkBeat() && pkBeat().jump(["isfred", "tape", "cake"][b - 59]));
       }
-      b === 60 && ((n.scene = "Q0"), (n.ch1Chip = ""), (n.ctrl = !0), (n.cur = null));
       chipNow();
     }

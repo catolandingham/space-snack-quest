@@ -616,95 +616,7 @@
         ]));
     }
     function ch1ReturnCrate() {
-      ((n.ctrl = !1),
-        (n.act = null),
-        (n.ch1Mail = "full"),
-        J([N(() => ch1Go("delivery", { night: !1, ship: !0, crew: "pickup", mail: "full", scene: "Q2" }, ch1Pickup))]));
-    }
-    function ch1Pickup() {
-      // R38: crates leave storage for the belt. Squatch is inside one. Mops comes in, he climbs out, they walk home.
-      ((n.ch1Prop = "load"),
-        (n.ch1InCrate = !0),
-        (n.ch1Peeked = !0),
-        (n.ch1Load = 0),
-        (n.sqPose = "hidden"),
-        (n.sq.x = 780),
-        (n.sq.y = 520),
-        (n.moPose = "stand"),
-        (n.mo.x = -40),
-        (n.mo.y = 520),
-        (n.ctrl = !1),
-        J([
-          cV((dt) => {
-            n.ch1Load = Math.min(1, (n.ch1Load || 0) + dt * 0.55);
-            let arrived = mV(n.mo, 690, 520, 160, dt);
-            return (ch1Trail(), n.ch1Load >= 1 && arrived);
-          }),
-          v("mops", "Get out. They're checking a crate."),
-          N(() => {
-            ((n.ch1InCrate = !1), (n.sqPose = "stand"), (n.ch1Climbed = !0));
-          }),
-          ch1Step("sq", 760, 520, 120),
-          cV((dt) => (ch1Trail(), mV(n.sq, 680, 530, 140, dt))),
-          N(() => ch1Go("closet", { scene: "Q8", night: !1, ship: !1 }, ch1Costume)),
-        ]));
-    }
-    function ch1Costume() {
-      ((n.scene = "Q8"),
-        (n.wardrobe = "open"),
-        (n.room = "closet"),
-        J([
-          ch1Step("sq", 460, 510, 160),
-          v("mops", "The spare jacket. The beard. And the horns."),
-          N(() => {
-            n.ctrl = !0;
-          }),
-        ]));
-    }
-    function ch1Trim() {
-      ((n.costumeOn = !0),
-        (n.ctrl = !1),
-        (n.act = null),
-        J([
-          v("mops", "More bleat. Less roar."),
-          N(() => ch1Go("delivery", { night: !1, ship: !0, crew: "day", mail: "full", scene: "Q9", stand: [400, 500] }, ch1AtScanner)),
-        ]));
-    }
-    function ch1AtScanner() {
-      ((n.scene = "Q9"), (n.ctrl = !0), (n.costumeOn = !0));
-    }
-    function ch1Board() {
-      ((n.ctrl = !1),
-        (n.act = null),
-        (n.costumeOn = !0),
-        J([
-          v("scanner", "HAIR... PROBABLY. PROCEED."),
-          cV((dt) => (ch1Trail(), (n.costumeOn = !0), mV(n.sq, 480, 220, 160, dt) && mV(n.mo, 540, 240, 160, dt))),
-          { k: "card", id: "later", text: "Later that evening..." },
-          N(() => {
-            ((n.room = "hall"),
-              (n.ch1D = !1),
-              (n.ch1Duct = !1),
-              (n.ch1Office = !0),
-              (n.scene = "Q9"),
-              (n.sqPose = "hidden"),
-              (n.moPose = "hidden"),
-              (n.sq.x = -400),
-              (n.mo.x = -400),
-              (B.camX = 0));
-          }),
-          v("official", "Send in Mops for his Employee of the Month photo."),
-          v("robot", "Mops isn't here."),
-          v("official", "Not here? He can't live off the station!"),
-          v("robot", "He was replaced by the new robot shipment."),
-          v("official", "I never ordered a replacement! Get me the security tapes."),
-          v("pa", "The base called the ship. It has to stop.", "pa"),
-          N(() => {
-            (aV.caught + x.caught === 0 && !n.found.has("ghost1") && (n.found.add("ghost1"), (n.stars += 250)), (B.nextBeat = "Ch2"));
-          }),
-          { k: "panel", id: "tally" },
-          N(Ws),
-        ]));
+      ((n.ctrl = !1), (n.act = null), pkBeat() && pkBeat().start()); // pickup day: src/modules/pickup.js
     }
     function ch1QSpots() {
       if (partyBeat() && partyBeat().active()) return [...partyBeat().spots(), ...ch1CalendarSpots()];
@@ -756,8 +668,6 @@
           ),
         s === "Q7" &&
           out.push(spot({ id: "crate", verb: "RETURN", cap: "empty crate", who: "sq", x: lt.x, y: 420, r: 160, at: [lt.x, lt.y - 40], hot: !0, f: ch1ReturnCrate })),
-        s === "Q8" && out.push(spot({ id: "jacket", verb: "PUT ON", cap: "jacket", who: "sq", x: 460, y: 510, r: 200, at: [460, 430], hot: !0, f: ch1Trim })),
-        s === "Q9" && out.push(spot({ id: "scan", verb: "BOARD", cap: "scanner", who: "sq", x: 480, y: 500, r: 160, hot: !0, f: ch1Board })),
         s === "Q4" &&
           out.push(
             spot({
@@ -939,28 +849,6 @@
     }
     function drawMailRobot(px, py) {
       (dq(px, py, !0), g("UPS", px, py - 8, 10, "#ffffff", "center", 900));
-    }
-    function drawPickupLoad() {
-      let t = n.ch1Load || 0,
-        slide = (x0, y0, x1, y1) => [x0 + (x1 - x0) * t, y0 + (y1 - y0) * t];
-      // Other crates leave the mail room for the ramp. Squatch's crate stays inside the mail room.
-      [
-        [800, 500, 520, 330],
-        [860, 460, 580, 300],
-      ].forEach((s) => {
-        let p = slide(s[0], s[1], s[2], s[3]);
-        Xn(p[0], p[1], 58, 36, "");
-      });
-      (Xn(430, 250, 70, 34, ""),
-        e.save(),
-        e.translate(438, 242),
-        e.rotate(-0.8),
-        m(0, -6, 64, 12, 2),
-        r("#d9a35b", 3),
-        e.restore(),
-        dq(500, 270, !1),
-        Xn(748, 470, 78, 48, ""),
-        n.ch1InCrate && ga(787, 482));
     }
     function drawCh1Delivery() {
       let night = !!n.ch1Night;

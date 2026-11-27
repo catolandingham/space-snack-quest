@@ -23,6 +23,7 @@
         (n.ch1PartyNow = null),
         (n.ch1Lunch = null),
         (n.ch1Escape = null),
+        (n.ch1Pickup = null),
         (n.ch1SureEnd = !1),
         (n.ch1Day2 = !1),
         (n.ch1Zoom = null),
@@ -188,7 +189,7 @@
         // The escape (src/modules/escape.js): the walk between rooms, beat 53 after it, the one capture rule's guard
         // (and whether it is out), the robot drawing.
         goTo: (dest, flags, next) => ch1GoDay(dest, flags, next),
-        packStart: () => ch1PackStart(),
+        chapterEnd: () => ch1ChapterEnd(), // the end of Chapter 1, after pickup.js's beat 61
         // Who the stick drives (switchTo, announced by the card "You are MOPS now." when `why` is given), and who it is.
         playAs: (who, why) => switchTo(who, why),
         playing: () => (x.mops ? "mops" : "sq"),
