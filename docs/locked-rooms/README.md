@@ -19,6 +19,7 @@ The game paints each one, scaled to the 960×640 picture, as the room background
 
 Layers the game draws over these pictures (the files themselves unchanged), each with Brian's yes:
 - Mops's mop bucket over the home room's painted bucket (`src/modules/mop-bucket.js`; Brian 2026-11-26, "Let's go with it moving forward").
+- The escape (beats 43 to 52, `src/modules/escape*.js`), waiting for Brian's yes as he watches (the story pass of 2026-11-26): over the home pictures, the crate bed's stamp _ARS CAKES (over its MOON PIES label), the brochure held up big with a MARS CAKES box; over the loading bay, the cart tracks, the dirt, the painted line, the robots' bars; over the hallway, the "CLOSED. Back at 9." sign on the office door; over the office, a mug on the filing cabinet and a photo frame on the desk; over the vent room, the lamp's light, the things on the desk, the pink slip and Squatch's eyes at the grille.
 - On Day 2 the home wardrobe drawn about 85 game pixels taller, open and shut, from pieces of these two home pictures (`src/modules/tall-closet.js`; Brian 2026-11-26, video note 0:20: "We should make the closet taller... the clothes should be over the box").
 
 The `.py` files are the scripts that drew the pictures (`mockups/rooms/`).

@@ -3,34 +3,42 @@
 
 | Lines | Heading |
 | --- | --- |
-| 34–37 | # Review rules |
-| 38–89 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
-| 90–92 | ## Techniques |
-| 93–95 | ## Mistake: locked art was redrawn |
-| 96–100 | ## Mistake: optional inspection interrupted getting out of bed |
-| 101–103 | ## Mistake: a big doc's section index went stale |
-| 104–106 | ## Mistake: a rebuilt beat forgot the step restart |
-| 107–109 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
-| 110–112 | ## Mistake: a killed run was read as a failing test |
-| 113–115 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
-| 116–118 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
-| 119–125 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
-| 126–133 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
-| 134–150 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
-| 151–163 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
-| 164–166 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
-| 167–169 | ## Standing rule: nobody walks through furniture (Brian, 2026-11-26) |
-| 170–178 | ## Mistakes caught building the morning sound (2026-11-24) |
-| 179–190 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
-| 191–202 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
-| 203–216 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
-| 217–223 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
-| 224–234 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
-| 235–244 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
-| 245–250 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
-| 251–259 | ## Mistakes caught building the escape (2026-11-26) |
-| 260–270 | ## Mistakes Brian's videos of the escape caught (2026-11-26) |
+| 35–41 | ## Mistakes caught building the escape rebuild (2026-11-26 night) |
+| 42–45 | # Review rules |
+| 46–97 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
+| 98–100 | ## Techniques |
+| 101–103 | ## Mistake: locked art was redrawn |
+| 104–108 | ## Mistake: optional inspection interrupted getting out of bed |
+| 109–111 | ## Mistake: a big doc's section index went stale |
+| 112–114 | ## Mistake: a rebuilt beat forgot the step restart |
+| 115–117 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
+| 118–120 | ## Mistake: a killed run was read as a failing test |
+| 121–123 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
+| 124–126 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
+| 127–133 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
+| 134–141 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
+| 142–158 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
+| 159–171 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
+| 172–174 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
+| 175–177 | ## Standing rule: nobody walks through furniture (Brian, 2026-11-26) |
+| 178–186 | ## Mistakes caught building the morning sound (2026-11-24) |
+| 187–198 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
+| 199–210 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
+| 211–224 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
+| 225–231 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
+| 232–242 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
+| 243–252 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
+| 253–258 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
+| 259–267 | ## Mistakes caught building the escape (2026-11-26) |
+| 268–278 | ## Mistakes Brian's videos of the escape caught (2026-11-26) |
 <!-- /section-index -->
+## Mistakes caught building the escape rebuild (2026-11-26 night)
+- A walk-through doorway whose opening lay past the room's walking edge could never be walked into (feet stop at the edge, and a tap's walk stops up to 8 short of it). Every doorway's opening overlaps the floor his feet can reach, and a test walks through each one (tests/escape-vent.mjs).
+- "Robot! Duck!" was said with no robot to see: its light showed only after he hid. A warning's danger is drawn from the warning on.
+- A +50 secret paid again after ↺, because ↺ does not take stars back. A secret pays once per beat, kept outside the restored state.
+- Goals in the second and later rooms of a walk had no outline (the vent in the bay, the keypad in the hallway), and the goal test looked only in the first room. Each room of a walk outlines where he is going.
+- A test helper that reads "lines until control comes back" kept reading into the next scene's lines; a helper that reads lines stops at a count or at the step it expects.
+
 # Review rules
 
 Copied word for word on 2026-11-06 from the "Process: review checklist" section of `HANDOFF.md` (HANDOFF: Space Snack Quest v3, updated 2026-11-02, in the Grok workspace zip). Do not edit these rules without Brian's yes. `CLAUDE.md` at the repo root holds the short form.

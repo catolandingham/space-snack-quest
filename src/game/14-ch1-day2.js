@@ -632,7 +632,7 @@
         ((n.room = "hangar"), (n.ch1D = !0), (n.ch1Night = !0), (n.scene = "Q4"), (n.sq.x = 780), (n.sq.y = 520), (n.moPose = "hidden"), (n.ch1Step = "post"), ch1SetPaper("paws"), (n.ch1Paw = 1));
       } else if (b >= 44 && b <= 52) {
         // the escape (escape.js): 44 to 46 from its card, 47 the ball, 48 and 49 the slip, 50 the keypad, 51 the computer, 52 the snacks
-        ((n.scene = "QB"), esBeat() && esBeat().jump(b <= 46 ? "start" : ["ball", "grab", "grab", "pad", "computer", "snacks"][b - 47]));
+        ((n.scene = "QB"), esBeat() && esBeat().jump(b <= 46 ? "start" : ["sneak", "tunnel", "grab", "tohall", "computer", "tobar"][b - 47]));
       } else if (b === 53) {
         ((n.room = "closet"), (n.scene = "QB"), (n.sq.x = 420), (n.sq.y = 520), (n.mo.x = 560), (n.mo.y = 500));
         n.ch1Zoom = { id: "pack", zoom: 1, paw: { x: 400, y: 400 } };

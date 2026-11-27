@@ -344,7 +344,7 @@ const rule = await page.evaluate(() => {
     for (let i = 0; i < s / 0.05 && !f(); i++) tick();
     return f();
   };
-  const jump = () => ((n.q = []), (n.cur = null), ss.ch1JumpBeat(47), tick());
+  const jump = () => ((n.q = []), (n.cur = null), B.jump("ball"), tick());
   const out = {};
   jump();
   const solids = ss.solids(),
@@ -461,7 +461,7 @@ const restarts = await page.evaluate(() => {
     [52, "closet"],
     [52, "box"],
   ]) {
-    ((n.q = []), (n.cur = null), ss.ch1JumpBeat(beat));
+    ((n.q = []), (n.cur = null), B.jump(step === "food" ? "snacks" : step === "box" ? "closet" : step));
     step === "closet" || step === "box" ? B.jump("closet") : null;
     step === "site" && B.jump("site");
     step === "food" && (Object.assign(S(), { step: "food" }), (S().snacks.plate = true), (n.ch1Step = "es-food"));
@@ -491,7 +491,7 @@ const restarts = await page.evaluate(() => {
     out.cut[step] = S().step;
   }
   // between steps, for real: the vent's cutscene goes back to the ball step
-  ((n.q = []), (n.cur = null), ss.ch1JumpBeat(47));
+  ((n.q = []), (n.cur = null), B.jump("ball"));
   tick();
   n.sq.x = B.place.BAY.ventStand.x;
   n.sq.y = B.place.BAY.ventStand.y;

@@ -52,6 +52,7 @@ const run = await page.evaluate(
       for (let i = 0; i < 30; i++) {
         until(() => (n.cur && n.cur.k !== "until" && n.cur.k !== "run") || (n.ctrl && !n.cur && !n.q.length), 20);
         if (!n.cur || n.cur.k === "until") break;
+        ss.drawFrame(); // (a kid sees each one before NEXT)
         got.push(say() + (n.cur.b && n.cur.b.style === "whisper" ? " (whisper)" : ""));
         next();
       }

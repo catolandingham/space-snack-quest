@@ -65,7 +65,8 @@ export const VENT_ROOM = Object.freeze({
   eyes: Object.freeze({ x: 86, y: 384 }),
   desk: Object.freeze({ x0: 560, y0: 430, x1: 920, y1: 470 }),
   mops: Object.freeze({ x: 470, y: 462 }), // his feet, at the desk's left end, facing right (back to the grille)
-  mopsIn: Object.freeze({ x: 160, y: 462 }),
+  mopsIn: Object.freeze({ x: 360, y: 462 }), // in from the tunnel, right of the toy bin
+  wallX: 350, // he cannot walk left of here (the toy bin, then the grille)
   slip: Object.freeze({ x: 600, y: 432 }), // the pink sheet on the left of the desk, right beside him (lying on its top)
   // 48 (the rebuild of 2026-11-26 night): the player walks Mops (the vent's floor strip, y 400 to 470) to each thing
   // in turn; each has its outline and its place to stand
@@ -187,8 +188,6 @@ export const NIGHT_LIT = Object.freeze({
 export const ES_PACE = Object.freeze({
   mopsIn: 150,
   think: 2.6, // a wordless thought picture over someone's head
-  ventLook: 2.6, // the first view inside the vent, held still: where they are, his eyes at the grille (Brian 2026-11-26)
-  atDesk: 1.4, // Mops at his desk before the first close-up
   crawl: 1.2, // Mops crawling into (or out of) the vent
   ballWait: 2.2, // rolled up at the vent, the robot rolls by, then the picture goes inside
   grab: 0.45,
@@ -251,7 +250,7 @@ export const MOPOFF = Object.freeze({
   zip: 1.6, // the robots zip in
 });
 // Mops's place in the bay when the robots tell him the news (44c), and the robots round him.
-export const NEWS = Object.freeze({ mops: Object.freeze({ x: 560, y: 520 }), bots: Object.freeze([Object.freeze({ x: 400, y: 500 }), Object.freeze({ x: 720, y: 560 })]) });
+export const NEWS = Object.freeze({ mops: Object.freeze({ x: 560, y: 520 }), bots: Object.freeze([Object.freeze({ x: 400, y: 500, f: 1 }), Object.freeze({ x: 630, y: 590, f: -1 })]) });
 // Walking between rooms (44d, 47, 50, 52): each doorway's opening (his feet in it take him through) and where he comes in
 // on the other side. Doors join home and the hall, the hall and the hallway, the hallway and the bay.
 export const ES_DOORS = Object.freeze({

@@ -82,7 +82,7 @@ export function drawPassingLight(ctx, k) {
     oy = OFFICE.door.y - 30,
     a = 0.6 + k * 1.9;
   ctx.save();
-  ctx.fillStyle = "rgba(255,240,170,.38)";
+  ctx.fillStyle = "rgba(214,232,255,.42)"; // (a cold white flashlight, not the goal's gold)
   ctx.beginPath();
   ctx.moveTo(ox, oy);
   ctx.lineTo(ox + Math.cos(a - 0.22) * 420, oy + Math.sin(a - 0.22) * 420);

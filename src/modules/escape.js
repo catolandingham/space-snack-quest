@@ -63,7 +63,7 @@ import {
 } from "./escape-art.js";
 import { cutawaySteps } from "./cutaway.js";
 import { coneFrom, lookAt } from "./party-watch.js";
-import { BAY_SOLIDS, BAY_DOOR, SIGHT, bayPath, coneOnBody, watchTick, drawWatchCone, drawWatchMark, newGuard, guardTick, drawGuard } from "./bay-watch.js";
+import { BAY_SOLIDS, SIGHT, bayPath, coneOnBody, watchTick, drawWatchCone, drawWatchMark, newGuard, guardTick, drawGuard } from "./bay-watch.js";
 import { splitLine } from "./line-split.js";
 import { drawNightTint } from "./night-look.js";
 import { partyLine } from "./party-lines.js";
@@ -111,6 +111,7 @@ const RESTART_TO = Object.freeze({
   drawered: "computer",
   framed: "computer",
   hidden: "duck",
+  duckcall: "computer",
   ghjk: "computer",
   notthat: "site",
   booked: "site",
@@ -142,6 +143,7 @@ export function createEscape(bridge) {
     record = { steps: [], sounds: [] },
     lastMops = null,
     moMoving = false,
+    framePaid = false, // the frame's +50 is paid once an escape (a ↺ does not take stars back, so it must not pay again)
     driving = ""; // "mops" while the stick drives Mops (the escape switched him in; a chapter reset switches back)
   const guests = createGuestArt();
 
@@ -230,6 +232,7 @@ export function createEscape(bridge) {
   function start() {
     const e = E();
     record = { steps: [], sounds: [] };
+    framePaid = false;
     settle();
     e.set("ch1Escape", fresh());
     busy();
@@ -333,7 +336,7 @@ export function createEscape(bridge) {
     go("news", { talker: 0 });
     const by = (i) => e.run(() => (L().talker = i));
     e.queue([
-      e.until((dt) => (e.moWalking(true), e.step("mops", NEWS.mops.x, NEWS.mops.y, ES_PACE.walk, dt || 0))),
+      ...bayPath(e.pos("mops"), NEWS.mops).map((to) => e.until((dt) => (e.moWalking(true), e.step("mops", to.x, to.y, ES_PACE.walk, dt || 0)))),
       e.run(() => (e.moWalking(false), e.still("mops"), e.face("mops", -1))),
       by(0),
       ...sayParts("robot", "robot-enjoy"),
@@ -890,7 +893,7 @@ export function createEscape(bridge) {
     e.queue([
       ...cutawaySteps("esframe"),
       // a gulp and one sweat drop; he looks at Mops's back in the doorway (a secret: +50)
-      e.run(() => ((L().gulpAt = e.time()), e.face("sq", -1), e.addStars(50), sfx("pickup"))),
+      e.run(() => ((L().gulpAt = e.time()), e.face("sq", -1), framePaid || ((framePaid = true), e.addStars(50)), sfx("pickup"))),
       e.until(() => e.time() - L().gulpAt >= ES_PACE.gulp),
       e.run(() => (go("computer"), control("chip-computer"))),
     ]);
@@ -900,6 +903,8 @@ export function createEscape(bridge) {
     const e = E();
     busy();
     L().ducked = true;
+    go("duckcall");
+    sfx("bleep");
     e.queue([...sayParts("mops", "mops-duck"), e.run(() => (go("duck"), control("chip-hide-desk")))]);
   }
   function hideDesk() {
@@ -986,9 +991,11 @@ export function createEscape(bridge) {
     const l = L(),
       s = l.snacks;
     if (s.carry || s.gone[i]) return;
-    // for the Guardians' plate: his last Stars Cake
-    const cake = SNACKS.kinds.findIndex((k, j) => k === "cake" && !s.gone[j]);
-    l.step === "food" && cake >= 0 && (i = cake);
+    // his last Stars Cake is kept for the Guardians' plate: the bag takes the others
+    const cake = SNACKS.kinds.lastIndexOf("cake");
+    if (l.step === "snacks" && i === cake) i = SNACKS.kinds.findIndex((_, j) => j !== cake && !s.gone[j]);
+    if (l.step === "food") i = cake;
+    if (i < 0 || s.gone[i]) return;
     s.carry = { i, k: 0, to: l.step === "food" ? "plate" : "bag" };
   }
   function snackTick(l, dt) {
@@ -1108,6 +1115,8 @@ export function createEscape(bridge) {
     if (free && l.step === "sneak" && e.room() === "hangar" && l.pose === "stand" && atVent() && l.robot && l.robot.phase === "patrol" && !l.guard) toVent();
     // 52: behind the snack counter
     if (free && l.step === "tobar" && e.room() === "hall" && Math.hypot(e.pos("sq").x - ES_BAR.sq.x, e.pos("sq").y - ES_BAR.sq.y) < ES_BAR.r) atBar();
+    // 48: in the room, the toy bin and the grille make a wall on his left (nobody walks over anything)
+    if (e.room() === "duct" && l.vent === "room" && m.x < VENT_ROOM.wallX) e.place("mops", VENT_ROOM.wallX, m.y);
     // 48: the end of the tunnel
     if (free && l.step === "tunnel" && m.x >= VENT_TUNNEL.end) roomIn();
     if (l.robot && e.room() === "hangar" && l.robot.phase !== "asleep") robotTick(l, dt);
@@ -1354,10 +1363,17 @@ export function createEscape(bridge) {
       ["mopoff", "buzzer"].includes(l.step) && (out.bars = drawBars(ctx, bars(l.floor, l.ct)));
     }
     const bots = botsNow(l);
-    bots.forEach((b) => e.drawRobot(ctx, b.x, b.y, false, adultPxFor("hangar") / 47));
+    // robots always show their cones (they are not looking for anyone by day)
+    bots.forEach((b, i) => {
+      const c = coneFrom("es-bot" + i, b.x, b.y, (b.f || -1) > 0 ? 0 : Math.PI, { half: SIGHT.half, len: SIGHT.len * 0.6 });
+      drawWatchCone(ctx, c, false);
+      e.drawRobot(ctx, b.x, b.y, false, adultPxFor("hangar") / 47);
+    });
     out.robots = bots.length;
     // a walk between rooms: the next doorway's outline (44d, 50)
     walking(l) && e.get("ctrl") && markDoor(ctx, doorTo("hangar", routeOf(l).hangar), t);
+    // 47: in the bay the vent is where he is going
+    l.step === "sneak" && e.get("ctrl") && !e.current() && (out.ventMark = markBox(ctx, BAY.vent, t));
     // the night robot on patrol, its cone (dashed, yellow while he is in it), and its "!"
     const r = l.robot;
     if (r) {
@@ -1479,9 +1495,12 @@ export function createEscape(bridge) {
     // 50: the sign on the office door; 51: the office's things, his stars after the spin, the passing light, his eyes
     // under the desk
     room === "passage" && !l.door && (drew.sign = drawClosedSign(ctx));
+    room === "passage" && l.step === "tohall" && e.get("ctrl") && !e.current() && (drew.mark = markBox(ctx, HALLWAY.keypad, t));
     if (room === "office") {
       drawOfficeThings(ctx);
       l.step === "spin" && drawSpinStars(ctx, headBox("sq"), t - l.spinAt, t);
+      // the robot's light at the open door from Mops's warning on; it passes once he is hidden
+      (l.step === "duckcall" || l.step === "duck") && (drew.light = drawPassingLight(ctx, 0.04 * Math.sin(t * 3)));
       l.step === "hidden" && ((drew.light = drawPassingLight(ctx, Math.min(1, (t - l.sweepAt) / OFFICE.sweep))), e.drawEyes(ctx, OFFICE.hide.under.x, OFFICE.hide.under.y - 30));
       l.gulpAt >= 0 && t - l.gulpAt < ES_PACE.gulp && (drew.sweat = drawSweat(ctx, headBox("sq"), t - l.gulpAt));
       if (e.get("ctrl") && !e.current() && !l.cu) {
@@ -1597,6 +1616,8 @@ export function createEscape(bridge) {
    */
   function jump(step) {
     const e = E();
+    // (an unknown step changes nothing: the game keeps its control)
+    if (step !== "start" && !ESCAPE_STEPS.includes(step) && !RESTART_TO[step]) return;
     busy();
     settle();
     e.set("ch1Journey", false); // (a restart in the middle of a walk between rooms: that walk is over)

@@ -45,6 +45,9 @@ const g = await startGame({ port: 9783, name: "escape-mops" });
   g.check("44b: the corners are four of his cells", cells.filter((c) => c.corner).length === 4);
   const pend = ESCAPE_LINES.filter((l) => /story pass/.test(l.source) && /CHANGED|NEW/.test(l.source));
   g.check("every CHANGED or NEW line from the story pass is pending (Brian approves as he watches)", pend.length > 60 && pend.every((l) => l.status === "pending"), pend.filter((l) => l.status !== "pending").map((l) => l.id));
+  // and nothing from the story pass is marked approved or shown before unless it was (KEEP, or Brian's yes, or in the game already)
+  const odd = ESCAPE_LINES.filter((l) => /story pass/.test(l.source) && l.status !== "pending" && !(l.status === "new" && /no words given/.test(l.source)) && !/KEEP|Brian|in-game|before/.test(l.source + l.status));
+  g.check("no line from the story pass skips pending without a reason (KEEP, Brian's yes, or in the game already)", odd.length === 0, odd.map((l) => l.id));
 }
 
 const { ctx, page, errors } = await g.open("?beat=escape", { width: 375, height: 812, isMobile: true, hasTouch: true });

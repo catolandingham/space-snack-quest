@@ -48,7 +48,7 @@ export function escapeDrawnWords() {
 }
 /** Words in game pixels (the size is what a test reads). Returns the words. */
 export function esWords(ctx, s, x, y, size, color = ES_INK, align = "center", weight = 800) {
-  drawnWords.size > 500 && drawnWords.clear();
+  drawnWords.size > 4000 && drawnWords.clear();
   drawnWords.add(String(s));
   ctx.font = `${weight} ${size}px system-ui, -apple-system, sans-serif`;
   ctx.textAlign = align;
@@ -571,6 +571,8 @@ function boxPanel(ctx, t) {
     sy = B.y0 - rim - 70 + k * 190,
     sx = cx - 10;
   k < 1 && drawSlipSmall(ctx, sx, sy, 4.2, -0.1);
+  // unfolded for a moment: the paw print shows (Mops can never see this), then it goes in
+  k < 0.5 && drawPawPrint(ctx, sx + 6, sy + 10, 16);
   // the older notes (the gift's rocket among them), in front of the slip once it is under them
   const notes = [
     [cx - 100, B.y0 + 30, 150, 140, -0.12],

@@ -241,7 +241,25 @@ function slipDeskPanel(ctx, t) {
   ctx.fillStyle = "#c4a574";
   ctx.fillRect(0, 0, 960, 640);
   const s = drawPinkSheet(ctx, 260, 30, 440, { glowCode: true, t });
-  return { pic: "esslipdesk", code: s.code, paw: s.paw };
+  // Mops's eye, top right: his look goes to the pen corner only, never to the paw print
+  ctx.save();
+  ctx.beginPath();
+  ctx.ellipse(880, 90, 46, 34, 0, 0, TAU);
+  esPaint(ctx, "#ffffff", 4);
+  ctx.beginPath();
+  ctx.arc(866, 104, 14, 0, TAU);
+  esPaint(ctx, ES_INK);
+  ctx.setLineDash([10, 10]);
+  ctx.beginPath();
+  ctx.moveTo(850, 124);
+  ctx.lineTo(s.code.x + 40, s.code.y - 20);
+  ctx.strokeStyle = "rgba(30,36,48,.6)";
+  ctx.lineWidth = 4;
+  ctx.stroke();
+  ctx.restore();
+  // Squatch at the grille, far behind him: his eyes, small
+  const eyes = drawEyesInset(ctx, 1);
+  return { pic: "esslipdesk", code: s.code, paw: s.paw, mopsLooks: "code", eyes: !!eyes };
 }
 export const VENT_PANELS = Object.freeze({ estoys: [toysPanel], esstubs: [stubsPanel], esslipdesk: [slipDeskPanel] });
 

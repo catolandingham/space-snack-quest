@@ -95,9 +95,7 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: go to the ship": { step: "keepsake", room: "passage", scene: "Q9", x: 820, y: 510 },
     "Squatch: walk through the scanner": { step: "board", room: "hangar", bay: true, scene: "Q9", x: 480, y: 500 },
   };
-  // the escape's goals not built yet in the rebuild of 2026-11-26 night (each leaves this list when its step is built)
-  const escapeLater = new Set(["_"]);
-  const missing = chips.filter((c) => !play[c] && !story.has(c) && !escapeLater.has(c));
+  const missing = chips.filter((c) => !play[c] && !story.has(c));
   const yellowNear = (x, y) => {
     const cv = document.querySelector("canvas[width='960']") || document.querySelector("canvas");
     const k = cv.width / 960;

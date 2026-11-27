@@ -114,10 +114,14 @@ const run = await page.evaluate(
     out.cal.press = press();
     // 45b's talk, then 46, each line with what is drawn
     const thinks = [];
-    out.b3 = lines((i) => (d().drew.plan && plans.push(Object.keys(d().drew.plan.has).sort().join("+")), S().think && thinks.push(i)));
+    let seenLines = 0,
+      thinkAt = -1;
+    watch = () => S().think && thinkAt < 0 && (thinkAt = seenLines);
+    out.b3 = lines((i) => ((seenLines = i + 1), (d().drew.plan && plans.push(Object.keys(d().drew.plan.has).sort().join("+")), S().think && thinks.push(i))));
+    watch = null;
+    out.thinkAt = thinkAt;
     out.b3 = out.b3.filter(Boolean); // (the walk out starts after the last line)
     out.plans = [...new Set(plans)];
-    // his thought of the vent comes before the line that names it
     out.thinkBefore = thinks;
     until(() => S().step === "ball" || S().step === "tobay" || S().step === "sneak", 20);
     out.after = S().step;
@@ -137,7 +141,7 @@ g.check("45b: LOOK · calendar, the calendar outlined", o.cal.step === "cal" && 
 const talk = w("mops-book", "mops-computer", "sq-office", "sq-locked", "mops-code", "mops-pen", "mops-ate", "mops-bin", "sq-slip", "mops-hm", "sq-vent", "mops-big-vent", "mops-lost", "mops-know");
 g.check("45b, 46: the plan's talk and the almost-slip, word for word, in order", JSON.stringify(o.b3) === JSON.stringify(talk), o.b3);
 g.check("45b: the plan's pictures come one at a time: the crate, the ship over it, the computer, the door", JSON.stringify(o.plans) === JSON.stringify(["crate", "crate+ship", "computer+crate+ship", "computer+crate+door+ship"]), o.plans);
-g.check("46: his thought picture of the vent is up before he says \"Didn't a copy get sucked into the vent?\"", o.b3.indexOf(W["sq-vent"]) > 0, o);
+g.check("46: his thought picture of the vent is up after \"Hm?\" and before he says \"Didn't a copy get sucked into the vent?\"", o.thinkAt === o.b3.indexOf(W["mops-hm"]) + 1 && o.b3.indexOf(W["sq-vent"]) === o.thinkAt, { thinkAt: o.thinkAt, b3: o.b3 });
 g.check("46: then on to the vent", ["tobay", "ball", "sneak"].includes(o.after), o.after);
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();

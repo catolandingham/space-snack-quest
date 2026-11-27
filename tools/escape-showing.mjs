@@ -4,9 +4,10 @@
  * 1624), with the game's own sound. Recorded the same way as tools/party-showing.mjs (the browser's screencast, the
  * sound from the game's master volume, joined by ffmpeg). Not a test: it reads the game only to know when to act.
  *   npm run build && node tools/escape-showing.mjs <escape|seen> <out.mp4>
- *     escape  from night one's end (the localhost link ?beat=escape): "Six days later", the robots tease Mops, home,
- *             the bay at night, ROLL · ball by the vent, inside the vent, the pink slip, the keypad (one wrong key
- *             first), the office computer, all the snacks and the Guardians' plate, the Guardian Box, bed, to beat 53.
+ *     escape  from night one's end (the localhost link ?beat=escape) to beat 53, the rebuild of 2026-11-26 night: the
+ *             calendar, Mops mopping and the Mop-Off, his walk home, the plan, the walk to the vent, Mops in the vent,
+ *             the grab, the keypad (one wrong key first), the office (the frame and the chair, the duck, "Order new
+ *             box" once), the snacks, the Guardian Box, bed.
  *     seen    the night robot's capture rule at the vent: he stands in the robot's way; "!", it pulls the FUR alarm, a
  *             guard comes; ROLL · ball, "They lost you."; then standing still in its way: the LOCKUP card, and the
  *             ball step starts again.
@@ -33,6 +34,7 @@ mkdirSync(dirname(outFile), { recursive: true });
 const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 2 };
 const g = await startGame({ port: 9400 + WHICH.indexOf(which), name: "escape-showing-" + which });
 const { page, errors } = await g.open(which === "escape" ? "?beat=escape" : "?beat=escape:ball", PHONE);
+await page.evaluate(() => (window.__ss.drawFrame(), 0));
 await sleep(800);
 SILENT || (await page.click("#ss-sound").catch(() => {}));
 await sleep(600);
@@ -186,116 +188,83 @@ async function readUntil(ok, names = [], ms = 60000) {
 
 await startRecording();
 if (which === "escape") {
-  // 43 to 46
-  await readUntil((s) => s.es && s.es.step === "home" && s.cur === "bub", ["card-six-days", "tease-robot", "tease-mops"]);
-  await readUntil((s) => s.es && s.es.think, ["home-mops"]);
-  await sleep(600);
-  await still("think-crate");
-  await until((s) => s.es.think && s.es.think.kind === "door", 6000);
-  await sleep(600);
-  await still("think-door");
-  await readUntil((s) => s.es && s.es.think && s.es.think.kind === "vent", ["sq-slip", "sq-vent"]);
-  await sleep(1000);
-  await still("think-vent");
-  log("to the bay at night");
-  // 47
-  await readUntil((s) => s.es && s.es.step === "ball" && s.ctrl, [], 90000);
-  await sleep(800);
-  await still("ball-goal");
-  const vent = (await page.evaluate(() => window.SSQ.beat("ch1-escape").place.BAY.ventStand));
-  await walkTo(vent.x, vent.y, (s) => s.act.startsWith("ROLL"));
-  await sleep(500);
-  await press();
-  log("rolled up by the vent");
-  await sleep(700);
-  await still("ball-rolled");
-  // 48
-  await readUntil((s) => s.cur === "cutaway" && s.id === "eswall");
-  await sleep(500);
-  await read(await st(), "vent-wall");
-  await until((s) => s.cur === "cutaway" && s.id === "esletter", 5000);
-  await read(await st(), "vent-letter");
-  await until((s) => s.cur === "bub", 5000);
-  await read(await st(), "vent-notice");
-  await until((s) => s.cur === "cutaway" && s.id === "esnote", 5000);
-  await sleep(3800);
-  await read(await st(), "vent-note");
-  // 49
-  await readUntil((s) => s.es && s.es.step === "grab" && s.ctrl, ["out-hurry", "out-get-it"]);
-  await sleep(600);
-  await still("grab");
-  const m = (await st()).mo;
-  await walkTo(m.x + 30, m.y, (s) => s.act.startsWith("GRAB"));
-  await sleep(400);
-  await press();
-  log("grabbed the pink slip");
-  // 50
-  await readUntil((s) => s.cur === "cutaway" && s.id === "esslip", [], 60000);
-  await read(await st(), "slip-code");
-  await until((s) => s.es && s.es.step === "pad" && s.ctrl, 5000);
-  await sleep(1200);
-  await still("keypad");
-  const key = async (d) => {
-    const p = await page.evaluate((d) => window.SSQ.beat("ch1-escape").place.keyAt(d), d);
-    await at(p.x, p.y);
-    await sleep(550);
-  };
-  await key("9"); // a wrong key first: the buzz, the screen clears
-  await still("keypad-wrong");
-  await sleep(700);
-  for (const d of "16955") await key(d);
-  await still("keypad-five");
-  await key("6");
-  await sleep(300);
-  await still("keypad-open");
-  log("typed 169556");
-  // 51
-  await until((s) => s.es && s.es.step === "computer" && s.ctrl, 20000);
-  await sleep(700);
-  await still("office");
-  const O = await page.evaluate(() => window.SSQ.beat("ch1-escape").place.OFFICE.sq);
-  await walkTo(O.x, O.y, (s) => s.act.startsWith("RETURN"));
-  await sleep(400);
-  await press();
-  await sleep(900);
-  await still("site");
-  const R = await page.evaluate(() => window.SSQ.beat("ch1-escape").place.SITE.ret);
-  await at((R.x0 + R.x1) / 2, (R.y0 + R.y1) / 2);
-  await sleep(1300);
-  await still("site-booked");
-  // 52
-  await readUntil((s) => s.es && s.es.step === "snacks" && s.ctrl, ["bar-mops"], 60000);
-  await sleep(900);
-  await still("snacks");
-  const SN = await page.evaluate(() => window.SSQ.beat("ch1-escape").place.SNACKS);
-  for (const i of [0, 1, 2, 3]) {
-    await at(SN.at[i].x, SN.at[i].y);
-    await sleep(900);
-    i === 1 && (await still("snacks-two"));
+  // The whole escape played by a finger, the way the rebuild of 2026-11-26 night asks: every line read and NEXT, every
+  // walk tapped on the floor (Mops's too, while the player is Mops), every button pressed where it comes up, the
+  // close-ups tapped. A still each time the step changes. A few optional things too: the plaque, the chair and the
+  // frame in the office, one wrong key, "Order new box" once.
+  const done = { wrong: false, order: false, plaque: false, chair: false, frame: false };
+  let lastStep = "",
+    tapAt = 0;
+  const spots = () => page.evaluate(() => window.__ss.spotsNow().map((q) => ({ id: q.id, verb: q.verb || "", who: q.who, x: q.x, y: q.y })));
+  const end = Date.now() + 15 * 60000;
+  for (;;) {
+    if (Date.now() > end) await fail("ran out of time");
+    const s = await st();
+    if (s.ch1Step === "pack1") break;
+    const step = s.es && s.es.step;
+    if (step && step !== lastStep) ((lastStep = step), log(step), await sleep(300), await still(step));
+    if (["bub", "card", "cutaway"].includes(s.cur)) {
+      await read(s, "");
+      continue;
+    }
+    if (!s.ctrl || s.cur) {
+      await sleep(110);
+      continue;
+    }
+    const es = s.es || {};
+    if (es.cu) {
+      if (es.step === "pad") {
+        const key = async (d) => {
+          const p = await page.evaluate((d) => window.SSQ.beat("ch1-escape").place.keyAt(d), d);
+          await at(p.x, p.y);
+          await sleep(550);
+        };
+        if (!done.wrong) ((done.wrong = true), await at(220, 360), await sleep(900), await key("9"), await still("keypad-wrong"), await sleep(900));
+        for (const d of "169556") await key(d);
+        await sleep(400);
+        await still("keypad-open");
+      } else if (es.step === "site") {
+        const R = await page.evaluate(() => window.SSQ.beat("ch1-escape").place.SITE);
+        const b = done.order ? R.ret : R.order;
+        done.order = true;
+        await sleep(900);
+        await at((b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2);
+        await sleep(600);
+      } else if (es.step === "label") (await sleep(800), await at(480, 600), await sleep(600));
+      else if (es.step === "note") (await sleep(900), await at(480, 320), await sleep(500));
+      else if (es.step === "snacks" || es.step === "food") {
+        const SN = await page.evaluate(() => window.SSQ.beat("ch1-escape").place.SNACKS);
+        const i = SN.kinds.findIndex((k, j) => !es.snacks.gone[j] && !(es.step === "snacks" && j === SN.kinds.lastIndexOf("cake")));
+        es.step === "food" ? await at(SN.plate.x, SN.plate.y - 30) : i >= 0 && (await at(SN.at[i].x, SN.at[i].y));
+        await sleep(1000);
+      } else await sleep(200);
+      continue;
+    }
+    // the next place to be: the goal's spot (a few optional ones first)
+    let list = await spots();
+    const pick = (id) => list.find((q) => q.id === id);
+    let sp = list[0];
+    if (es.step === "walkhome" && s.room === "passage" && !done.plaque && pick("es-plaque")) ((sp = pick("es-plaque")), (done.plaque = true));
+    if (es.step === "computer" && !done.frame && pick("es-frame")) sp = pick("es-frame");
+    else if (es.step === "computer" && !done.chair && pick("es-chair")) sp = pick("es-chair");
+    if (!sp) {
+      await sleep(150);
+      continue;
+    }
+    const mops = sp.who === "mo";
+    const here = mops ? s.mo : { x: s.x, y: s.y };
+    const close = Math.hypot(here.x - sp.x, here.y - sp.y) < 12;
+    if (sp.verb && s.act === sp.verb + " · " + (await page.evaluate((id) => (window.__ss.spotsNow().find((q) => q.id === id) || {}).cap || "", sp.id))) {
+      sp.id === "es-frame" && (done.frame = true);
+      sp.id === "es-chair" && (done.chair = true);
+      await sleep(500);
+      await press();
+      await sleep(500);
+      continue;
+    }
+    if (!close && Date.now() - tapAt > 700) ((tapAt = Date.now()), await at(sp.x, sp.y));
+    await sleep(120);
   }
-  await readUntil((s) => s.es && s.es.step === "food" && s.ctrl, ["snacks-guardians"]);
-  await sleep(800);
-  await still("food-plate");
-  for (const i of [4, 5]) (await at(SN.at[i].x, SN.at[i].y), await sleep(900));
-  await sleep(400);
-  await still("hearts");
-  await until((s) => s.es && s.es.step === "closet" && s.ctrl, 60000);
-  await sleep(700);
-  await still("home-closet");
-  const H = await page.evaluate(() => window.SSQ.beat("ch1-escape").place.HOME.closet);
-  await walkTo(H.x, H.y, (s) => s.act.startsWith("OPEN"));
-  await sleep(400);
-  await press();
-  await sleep(800);
-  await still("box-goal");
-  await press();
-  await until((s) => s.cur === "cutaway" && s.id === "esbox", 5000);
-  await sleep(2200);
-  await read(await st(), "box-closeup");
-  await until((s) => s.pose === "sleep", 15000);
-  await sleep(1200);
-  await still("asleep");
-  await until((s) => s.ch1Step === "pack1", 15000);
   await sleep(1500);
   await still("beat-53");
   log("beat 53");

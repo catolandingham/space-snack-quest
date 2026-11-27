@@ -51,7 +51,7 @@ export function mopCalm(floor, b, time) {
   return floor.calm.filter(Boolean).length;
 }
 /** 44b: the cell under the beard, or null. */
-export function cellAt(b) {
+function cellAt(b) {
   return goatCells().find((c) => b.x >= c.x0 && b.x < c.x1 && b.y >= c.y0 && b.y < c.y1) || null;
 }
 /** 44b: one pass of the beard (entering a cell takes one layer of dirt off it). */
