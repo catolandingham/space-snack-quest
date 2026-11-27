@@ -111,7 +111,8 @@ const cones = (page) => page.evaluate(() => window.SSQ.beat("ch1-party").cones()
   const { page, errors } = await open("party:P8a");
   // (from its start: the page ran a moment before the clock was stopped)
   await page.evaluate(() => window.__ss.sectionReset());
-  const t = await run(page, "(p) => p.flyer === 'take'", 20);
+  // (story pass 28-52, E2: first Mops cleans the hall, done at once here: tests/party-cleanup.mjs plays it; cards tapped)
+  const t = await run(page, "(p) => p.flyer === 'take'", 40, `(n, p) => (n.cur && n.cur.k === "card" && window.__ss.opTap(), p.scene === "P9" && n.ctrl && !n.cur && window.SSQ.beat("ch1-party").finishCleanup())`);
   const s = await page.evaluate(() => ({ x: window.__ss.op.sq.x, y: window.__ss.op.sq.y }));
   g.check("2: in the talk Squatch takes the flyer from his bed (he stands at the bed's front corner to take it)", t >= 0 && Math.hypot(s.x - hall.HOME_ROOM.saveAt.x, s.y - hall.HOME_ROOM.saveAt.y) < 4, [t, s]);
   g.check("no page errors (2, the talk)", errors.length === 0, errors);

@@ -27,10 +27,13 @@ import { PHOTO_ROW, tripodOut, bandPosing, photoOpen } from "./party-photo.js";
 import { bounceHop, bumpMark, drawBump } from "./party-hallway.js";
 import { OCT } from "./party-octopus.js";
 import { nightPicture } from "./night-look.js";
+import { drawCleanFloor, drawCleanTufts, drawCleanOutline, cleanExtras, drawCleanOver, drawCleanHome } from "./party-cleanup-draw.js";
+import { cleanPatches } from "./party-cleanup.js";
+const CLEAN_PATCHES = cleanPatches();
 
 // How far above his feet Mops's head top is at home, in Squatch's home scale (party-free-art.js drawMopsHearts).
 const MOPS_HEAD_UP = 46;
-const LATE = new Set(["P6", "P7", "P8a", "P8b", "P8c"]);
+const LATE = new Set(["P6", "P7", "P8a", "P8b", "P8c", "P9", "P9b"]);
 /** Beats since the band's song began (its bpm, music-picks.js), or null when it has none. */
 export const bandBeat = (p) => {
   const sp = spanFor("band", bandTrackNow(p));
@@ -172,6 +175,25 @@ export function createView(h) {
       ],
     };
   }
+  /**
+   * P9, the cleanup (party-cleanup.js): the empty hall, nobody watching, no Squatch (he is home); the floor's mess
+   * under everyone; Mops (the player) and his bucket.
+   */
+  function cleanView(p, t, v) {
+    return {
+      ...v,
+      cones: [],
+      marks: [],
+      shout: null,
+      squatch: null,
+      eyes: null,
+      warning: null,
+      tufts: [],
+      unseen: true,
+      floor: (ctx) => (floor(ctx, p, t), drawCleanFloor(ctx, p, t, CLEAN_PATCHES), drawCleanTufts(ctx, p)),
+      extra: cleanExtras(ctx0, E(), p, t),
+    };
+  }
   // Where the camera points: the row during the photo moment (until everyone walks back), else the stage.
   // (the stage's middle while Isfred speaks; the Croc Boys once they play)
   const aimNow = (p) => (p.shot && ["camera", "gather", "join", "count", "flash", "polaroid"].includes(p.shot.phase) ? PHOTO_ROW.aim : p.mode === "pairs" && !LATE.has(p.scene) ? BAND_AIM : CAMERA_AIM);
@@ -292,11 +314,13 @@ export function createView(h) {
     const e = E(),
       t = e.time();
     ctx0 = ctx;
-    drawHall(ctx, e, h.guests, view(p, t));
+    const v = view(p, t);
+    drawHall(ctx, e, h.guests, p.scene === "P9" ? cleanView(p, t, v) : v);
     LATE.has(p.scene) && drawLate(ctx, p, t);
     // P3 and P4: the band's notes rise from them as soon as they play (Brian 2026-11-26, showing 7 at 0:18)
     !LATE.has(p.scene) && p.band && drawBandNotes(ctx, p.bandAt || CAST.band, t, p.song || 0, e.hallSizes().adult * 0.98);
     outline(p, "hall");
+    p.scene === "P9" && h.cleanLit && drawCleanOutline(ctx, h.cleanLit(p), t);
     return true;
   }
   function outline(p, room) {
@@ -309,6 +333,7 @@ export function createView(h) {
   function draw(ctx, p) {
     const e = E(),
       t = e.time();
+    if (e.room() === "hall" && p.scene === "P9") return void drawCleanOver(ctx, e, p, t, h.guests);
     if (e.room() === "hall") return void (snackDrawn = p.snack ? drawSnackCloseUp(ctx, p, t, drawSnackPaw) : null);
     if (e.room() !== "closet") return;
     p.scene === "P1" && p.phase === "home" && drawDoorNotes(ctx, h.homeDoor, t);
@@ -375,6 +400,8 @@ export function createView(h) {
       const m = e.pos("mops");
       drawMopsHearts(ctx, m.x - 10 * sk, m.y - MOPS_HEAD_UP * sk, 12 * sk, hk);
     }
+    // after the cleanup: what Mops found, held up; the Polaroid by Squatch's bed; one heart after a fib
+    p.scene === "P9b" && drawCleanHome(ctx, e, p, t);
     outline(p, "closet");
   }
   // How tall the guard is drawn in the home room.

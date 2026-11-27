@@ -29,6 +29,20 @@ async function open(beat) {
   const o = await g.open("?beat=" + beat, PHONE);
   await sleep(1400);
   await o.page.evaluate(() => (window.requestAnimationFrame = () => 0));
+  // Since the story pass 28-52, E2, the endings go on into Mops cleaning the hall (P9), then home and truth or fib
+  // (P9b). This suite is about home: each tick, a card up a moment is tapped, the cleanup is done at once
+  // (tests/party-cleanup.mjs plays it), and truth or fib is answered "fib".
+  await o.page.evaluate(() => {
+    let card = 0;
+    window.__onTheWay = (n) => {
+      const p = n.ch1PartyNow,
+        beat = window.SSQ.beat("ch1-party");
+      n.cur && n.cur.k === "card" ? (card += 1 / 60) : (card = 0);
+      card > 0.6 && (window.__ss.opTap(), (card = 0));
+      p && p.scene === "P9" && n.ctrl && !n.cur && beat.finishCleanup();
+      p && p.truth && beat.truthChoose("fib");
+    };
+  });
   return o;
 }
 const st = (page) =>
@@ -49,6 +63,7 @@ const run = (page, f, max = 30, each = "() => {}") =>
       each(n);
       n.cur && n.cur.k === "bub" ? (up += 1 / 60) : (up = 0);
       up > 0.6 && (window.__ss.opTap(), (up = 0));
+      window.__onTheWay && window.__onTheWay(n);
       window.__ss.tick(1 / 60);
     }
     window.__ss.drawFrame();
@@ -165,6 +180,7 @@ const overlap = (a, b) => Math.max(0, Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0
         }
         n.cur && n.cur.k === "bub" ? (up += 1 / 60) : (up = 0);
         up > 0.6 && (window.__ss.opTap(), (up = 0));
+        window.__onTheWay && window.__onTheWay(n);
         window.__ss.tick(1 / 60);
       }
       return { most, at };
@@ -217,6 +233,7 @@ for (const beat of ["party:P8a", "party:P8b"]) {
         p.flyer === "paw" && paw == null && (paw = i / 60);
         n.cur && n.cur.k === "bub" ? (up += 1 / 60) : (up = 0);
         up > 0.6 && (window.__ss.opTap(), (up = 0));
+        window.__onTheWay && window.__onTheWay(n);
         window.__ss.tick(1 / 60);
       }
       // on to his worry: the flyer is held up while he says it
@@ -230,6 +247,7 @@ for (const beat of ["party:P8a", "party:P8b"]) {
         }
         n.cur && n.cur.k === "bub" ? (up += 1 / 60) : (up = 0);
         up > 0.6 && (window.__ss.opTap(), (up = 0));
+        window.__onTheWay && window.__onTheWay(n);
         window.__ss.tick(1 / 60);
       }
       return { most, at, paw, robotsLine, upHeld };
@@ -284,12 +302,12 @@ const goHomeEarly = async (page) => {
   s = await st(page);
   g.check("OPEN · closet: the costume comes off into the closet (nothing worn), and Mops is not home yet", k >= 0 && Object.values(s.now.worn).every((v) => !v) && s.mo.pose === "hidden", [s.now.worn, s.mo]);
   await still(page, "home-5-costume-off");
-  const mopsIn = await run(page, "(p, n) => n.moPose === 'stand'", 30);
+  const mopsIn = await run(page, "(p, n) => n.moPose === 'stand' || (p && p.scene === 'P9')", 30);
   const lines = [];
   await run(page, "(p, n) => !p || p.scene === 'done' || (p.lift && p.lift.k > 0.5)", 60, "(n) => n.cur && n.cur.k === 'bub' && window.__homeLines.push(n.cur.b.text)".replace("window.__homeLines.push", "(window.__homeLines = window.__homeLines || []).push"));
   s = await st(page);
   const heard = await page.evaluate(() => [...new Set(window.__homeLines || [])]);
-  g.check("Mops comes home after closing time, and the talk: \"You went to the party.\" first, with the flyer in Squatch's paw", mopsIn >= 0 && heard[0] === L("mops-went") && heard.includes(L("mops-have-me")) && s.now.flyer === "paw", [mopsIn, heard, s.now.flyer]);
+  g.check("after closing time the wall speaker calls Mops, he cleans the hall (story pass 28-52, E2), comes home and asks; Squatch fibs; the talk, with the flyer in Squatch's paw", mopsIn >= 0 && heard.includes(L("mops-did-you-go")) && heard.includes(L("mops-went")) && heard.includes(L("mops-have-me")) && s.now.flyer === "paw", [mopsIn, heard, s.now.flyer]);
   g.check("nothing on his head: Mops pats him (nothing lifted)", !!s.now.lift && s.now.lift.id === "", s.now.lift);
   await still(page, "home-6-home-early-pat");
   g.check("no page errors (home early)", errors.length === 0, errors);
@@ -305,7 +323,7 @@ const goHomeEarly = async (page) => {
   // (P8c's own clock: the page ran a moment in real time before the test took over the ticks)
   const at = await page.evaluate(() => window.__ss.op.ch1PartyNow.mopsT);
   const inAt = await run(page, "(p, n) => n.moPose === 'stand'", 15);
-  g.check("he keeps the costume on: Mops comes home all the same (15 seconds into P8c, a placeholder; he walks in once Squatch has the flyer)", t >= 0 && at >= 15 && at < 15.2 && inAt >= 0, [t, at, inAt]);
+  g.check("he keeps the costume on: Mops is called to the hall all the same (15 seconds into P8c, a placeholder) and comes in to clean it", t >= 0 && at >= 15 && at < 15.2 && inAt >= 0, [t, at, inAt]);
   await page.close();
 }
 await g.finish("party-home");
