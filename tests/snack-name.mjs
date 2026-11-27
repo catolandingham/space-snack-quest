@@ -19,7 +19,7 @@ import { execFileSync } from "node:child_process";
 import { join } from "node:path";
 import { startGame, root } from "./game-page.mjs";
 import { SNACK, FAMILY, SNACK_LINES } from "../src/modules/snack-name.js";
-import { CRATE_BED } from "../src/modules/crate-stamp.js";
+import { CRATE_BED, HALL_TIN } from "../src/modules/crate-stamp.js";
 
 const g = await startGame({ port: 9520, name: "snack-name" });
 
@@ -205,8 +205,33 @@ const hall = await page.evaluate(
     const d = window.SSQ.crateStampDrawn();
     return { handedThisFrame: d.handedHall - before, tin: d.tin };
   },
-  null,
+  HALL_TIN.lid,
 );
+// The lid itself, in the hall picture as the game gets it by day (full size): the little yellow star is there, where the
+// locked file has the old lid's blue and white.
+const lid = await page.evaluate(async (T) => {
+  const ss = window.__ss;
+  ss.op.q = [];
+  ss.op.cur = null;
+  ss.ch1JumpBeat(22); // (Day 2: day)
+  const img = new Image();
+  img.src = "docs/locked-rooms/hall-room-empty-v2.png";
+  await img.decode();
+  const pic = window.SSQ.nightPicture("hall", img);
+  const read = (source) => {
+    const c = document.createElement("canvas");
+    c.width = 1280;
+    c.height = 830;
+    const x = c.getContext("2d");
+    x.drawImage(source, 0, 0);
+    const px = x.getImageData(Math.round(T.cx + 6.6 * Math.sin(T.tilt)) - 2, Math.round(T.cy - 6.6 * Math.cos(T.tilt)) - 2, 5, 5).data;
+    let n = 0;
+    for (let i = 0; i < px.length; i += 4) px[i] > 200 && px[i + 1] > 150 && px[i + 2] < 120 && n++;
+    return n;
+  };
+  return { night: window.SSQ.nightNow(), layered: pic !== img, starNow: read(pic), starInFile: read(img) };
+}, HALL_TIN.lid);
+g.check("by day the hall picture comes with the new lid: its yellow star is where the locked file has none", !lid.night && lid.layered && lid.starNow >= 3 && lid.starInFile === 0, lid);
 g.check(`the hall picture is drawn with the tin's new lid: "${SNACK.name}" under a star`, hall.handedThisFrame > 0 && !!hall.tin && hall.tin.words.join(" ") === SNACK.name, hall);
 
 // The picture files are as main has them (git's own record of each file's contents).
