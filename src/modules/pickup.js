@@ -751,6 +751,8 @@ export function createPickup(bridge) {
   function sneakHome() {
     const e = E(),
       l = L();
+    // (the robot has cleaned it up: no puddle when he comes back that evening)
+    l.spill = null;
     e.set("sqPose", "stand");
     e.place("sq", PK_BAY.mailboxAt.x, PK_BAY.mailboxAt.y);
     e.set("moPose", "stand");
@@ -1588,9 +1590,9 @@ export function createPickup(bridge) {
       }
     }
     // the crew (a PLACEHOLDER: the party's guard look until the ship's crew has a look)
-    if (l.crewAt) (drawPerson(ctx, l.crewAt.x, l.crewAt.y, adultPxFor("hangar") * 1.5, LOOKS.guard, l.crewAt.f || 1, t), (out.crew = { x: Math.round(l.crewAt.x), y: Math.round(l.crewAt.y) }));
+    if (l.crewAt) (drawPerson(ctx, l.crewAt.x, l.crewAt.y, adultPxFor("hangar") * PK_HOLD.crewK, LOOKS.guard, l.crewAt.f || 1, t), (out.crew = { x: Math.round(l.crewAt.x), y: Math.round(l.crewAt.y) }));
     // the crew holds up the beard and the horns he took (one drawn second, a Chapter 2 plant)
-    if (l.takeAt >= 0 && l.takeAt != null && l.crewAt) (drawCostumePiece(ctx, "beard", l.crewAt.x + 50, l.crewAt.y - 150, 0.35), drawCostumePiece(ctx, "horns", l.crewAt.x + 50, l.crewAt.y - 200, 0.3), (out.taken = true));
+    if (l.takeAt >= 0 && l.takeAt != null && l.crewAt) (drawCostumePiece(ctx, "beard", l.crewAt.x + 60, l.crewAt.y - adultPxFor("hangar") * 1.3, 0.45), drawCostumePiece(ctx, "horns", l.crewAt.x + 60, l.crewAt.y - adultPxFor("hangar") * 1.8, 0.4), (out.taken = true));
     if (l.heartsAt >= 0) drawHearts(ctx, m.x, m.y - 50 * mk, t - l.heartsAt);
     if (e.get("ctrl") && !e.current() && !l.cu) {
       const sp = spots().find((q) => q.thing);
@@ -1986,7 +1988,7 @@ export function createPickup(bridge) {
       if (room === "passage" && who === "robot") return { x: PK_HALLWAY.robot.x, y: PK_HALLWAY.robot.y - 80 };
       if (room === "office" && who === "robot") return { x: 280, y: 400 };
       if (room === "office" && who === "official") return l.cu === "tape" ? { x: 480, y: 640 } : { x: 430, y: 390 };
-      if (room === "hangar" && l.place === "hold" && who === "ups") return l.crewAt ? { x: l.crewAt.x, y: l.crewAt.y - adultPxFor("hangar") * 1.6 } : { x: 120, y: 120 };
+      if (room === "hangar" && l.place === "hold" && who === "ups") return l.crewAt ? { x: l.crewAt.x, y: l.crewAt.y - adultPxFor("hangar") * (PK_HOLD.crewK + 0.15) } : { x: 120, y: 120 };
       // over a close-up (the snip, the dress-up, the plate, the drawing, the peel): the bubbles go along the bottom
       if (l.cu && (who === "sq" || who === "mops")) return { x: who === "sq" ? 330 : 630, y: 640 };
       return null;
