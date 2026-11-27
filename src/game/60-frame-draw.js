@@ -19,6 +19,7 @@
         hmBeat() && hmBeat().tick(l);
         luBeat() && luBeat().tick(l);
         bayBeat() && bayBeat().tick(l);
+        evBeat() && evBeat().tick(l);
       }
       (n.sqHop &&
         ((n.sqHop.t += l),
@@ -2101,6 +2102,7 @@
         window.SSQ && window.SSQ.beat("ch1-bedtime-story") && window.SSQ.beat("ch1-bedtime-story").draw(e);
         hmBeat() && hmBeat().draw(e);
         luBeat() && luBeat().draw(e), bayBeat() && bayBeat().draw(e);
+        evBeat() && evBeat().draw(e);
         if (n.ch1Calendar) {
           drawCh1Calendar();
           return;

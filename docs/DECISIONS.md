@@ -3,39 +3,41 @@
 
 | Lines | Heading |
 | --- | --- |
-| 40–45 | # Space Snack Quest: every decision, in one place |
-| 46–53 | ## How to use this file |
-| 54–57 | ## Office code and the loading bay, 2026-11-26 (Brian, chat) |
-| 58–65 | ## The snack renamed, and the crate bed's stamp (question 86), 2026-11-26 (Brian, relayed by the coordinator) |
-| 66–68 | ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator) |
-| 69–77 | ## Lunch sneak, 2026-11-26 (Brian's video notes and answers, round D) |
-| 78–88 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
-| 89–98 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
-| 99–109 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
-| 110–133 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
-| 134–138 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 139–147 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 148–151 | ## Sound, 2026-11-23 |
-| 152–175 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 176–187 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 188–212 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 213–221 | ## Which repo is the base, 2026-11-22 |
-| 222–232 | ## Sight cones, 2026-11-22 |
-| 233–237 | ## Latest calendar direction, 2026-11-16 |
-| 238–240 | ## Vent walk, 2026-11-16 |
-| 241–243 | ## Locked home room v5, 2026-11-16 |
-| 244–253 | ## Fidelity system (pictures are locked, not just words) |
-| 254–291 | ## 1. Working rules |
-| 292–358 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 359–383 | ## 3. Characters and look |
-| 384–460 | ## 4. Look, rooms and layout |
-| 461–482 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 483–526 | ## 6. Later chapters (2–4 and travel) |
-| 527–536 | ## 7. Audio |
-| 537–571 | ## 8. Code, controls and process |
-| 572–618 | ## 9. Open / waiting on Brian |
-| 619–713 | ## 10. Earlier entries, kept word for word |
-| 714–810 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 42–47 | # Space Snack Quest: every decision, in one place |
+| 48–55 | ## How to use this file |
+| 56–59 | ## Office code and the loading bay, 2026-11-26 (Brian, chat) |
+| 60–67 | ## The snack renamed, and the crate bed's stamp (question 86), 2026-11-26 (Brian, relayed by the coordinator) |
+| 68–71 | ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator) |
+| 72–78 | ## Evening and night one rebuilt from the story pass, 2026-11-26 night (Brian: "Go! Go as far as you can without me.") |
+| 79–86 | ## Evening and night one, look and physics, 2026-11-26 (Brian, video notes on beats 37 to 42) |
+| 87–95 | ## Lunch sneak, 2026-11-26 (Brian's video notes and answers, round D) |
+| 96–106 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
+| 107–116 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
+| 117–127 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
+| 128–151 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
+| 152–156 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 157–165 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 166–169 | ## Sound, 2026-11-23 |
+| 170–193 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 194–205 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 206–230 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 231–239 | ## Which repo is the base, 2026-11-22 |
+| 240–250 | ## Sight cones, 2026-11-22 |
+| 251–255 | ## Latest calendar direction, 2026-11-16 |
+| 256–258 | ## Vent walk, 2026-11-16 |
+| 259–261 | ## Locked home room v5, 2026-11-16 |
+| 262–271 | ## Fidelity system (pictures are locked, not just words) |
+| 272–309 | ## 1. Working rules |
+| 310–376 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 377–401 | ## 3. Characters and look |
+| 402–478 | ## 4. Look, rooms and layout |
+| 479–500 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 501–544 | ## 6. Later chapters (2–4 and travel) |
+| 545–554 | ## 7. Audio |
+| 555–589 | ## 8. Code, controls and process |
+| 590–636 | ## 9. Open / waiting on Brian |
+| 637–731 | ## 10. Earlier entries, kept word for word |
+| 732–828 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 
@@ -66,6 +68,22 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator)
 - **Night look, Decided 2026-11-26:** "Make sure it's not just the hall dark at night, but all rooms are different at night versus daytime." Every room shown while the story is at night has a night look (`src/modules/night-look.js`): the loading bay its locked night picture (`delivery-room-empty-night-v2.png`); every other room its locked day picture under a dim blue tint, with the things that give light (the hall's window onto space and its FUR alarm, home's TV screen, the office's screens and keypad, the hallway's keypad) cut from the same picture and drawn again over the tint. No picture file changes. Night is from the party night's start ("That evening...") until Day 2 begins, and any older night scene. The tint's strength (`NIGHT_TINT`, 0.5 of the bedtime story's night blue) and the lit boxes are placeholders for Brian's eye. The bedtime story's lights-out dim goes on top. Built on feat/party-half-two (the party), then merged forward and applied on the bedtime (the evening and bedtime story), Day 2 morning (the dark start) and lunch branches.
 
+
+## Evening and night one rebuilt from the story pass, 2026-11-26 night (Brian: "Go! Go as far as you can without me.")
+- **Beats 37 to 42c are rebuilt from the story pass of 2026-11-26** (scratchpad story pass, sections C and D, and the Mars Cakes thread), with every CHANGED or NEW line built word for word and **Needs Brian's yes** as he watches (`src/modules/evening-lines.js`, status "pending").
+- **The party hall's floor vent is on at night one.** Coordinator, 2026-11-26: "The party hall floor vent is ON at night (placeholder)." One vent rule everywhere: his fur drifts in, and staying, the hall's FUR alarm goes off ("by the vent"). **Needs Brian's yes** (still open in the story pass).
+- **The brochure's only words are MARS CAKES on one cake box in its picture.** The story pass's pick, built as a placeholder (still open); it is what the M moment at the crate (39b) needs. **Needs Brian's yes.**
+- **No song on night one.** Story pass beat 41: their song is their goodbye and their bond, and its absence is felt. The night at home is quiet (bridge.js). **Needs Brian's yes** (the story pass's call).
+- **The two robots parked in the mail room stay parked.** The story pass's night one has the night robot only; the old cutscene of robots waking after the post is gone (the post is loud instead, and the alarm follows). **Needs Brian's yes.**
+
+## Evening and night one, look and physics, 2026-11-26 (Brian, video notes on beats 37 to 42)
+- **Every room has a night look.** Brian: "Make sure it's not just the hall dark at night, but all rooms are different at night versus daytime." Built as one rule in `src/modules/night-look.js`: at night a room shows its locked night picture where one exists (the loading bay), and otherwise its day picture under a dim blue night tint (the bedtime story's night colour), with windows, screens and lamps kept bright and the characters drawn lit over it. Every room shown in a night beat is tested for it (`tests/evening-physics.mjs`). The party night and the escape night should use the same helper. **Decided** (the rule); the tint's strength and the lit boxes are a PLACEHOLDER look, **Needs Brian's yes**.
+- **Robots always show their cones, and roll only through open floor.** From Brian's video notes: a robot never rolls across a doorway, through a wall or through furniture, and every robot, parked or rolling, shows its cone. **Decided.**
+- **Nobody walks over anyone or anything.** From Brian's video notes (Squatch walked over the sleeping Mops): every walk, scripted or the player's, goes round furniture, walkways and people. **Decided.**
+- **Mops's fainting-goat sleep sits on the floor.** From Brian's video notes: a shadow under him, his back on the floor, his head resting on his mop bucket, feet up. **Decided.**
+- **A cone reacts only once it has held him.** From Brian's video notes: a guard or robot reacts only after its drawn cone reaches him and stays about half a second (a "?" shows while it registers), never when the cone stops short; flashlight cones never vanish mid-search. **Decided** (0.5 s is `EVENING_PACE.robotSee`).
+- **Vents behave the same everywhere.** From Brian's video notes: the big wall vent shows swirl lines while it sucks; the floor-vent fur rule applies at night unless the vent is off. **Decided.**
+- **Long bubbles are split.** From Brian's video notes: a bubble over about 12 words is said as several bubbles, word for word, one at a time. **Decided.**
 ## Lunch sneak, 2026-11-26 (Brian's video notes and answers, round D)
 
 - **Walk through any open doorway.** Brian (#47): "yes, walk through any open doorway everywhere; closed doors keep OPEN · door. The doorway only counts when he walks into the opening itself." Built in the lunch sneak: the hallway doorway has no button (SNEAK · hallway retired); his feet inside its opening take him into the hallway. **Decided.**

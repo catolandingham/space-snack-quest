@@ -864,7 +864,7 @@ export function createLoadingBay(bridge) {
     go("done");
     const evening = bridge.beat("ch1-evening");
     if (evening && evening.startStorm) return evening.startStorm();
-    e.hallSneakDone && e.hallSneakDone();
+    e.sixDays && e.sixDays();
   }
 
   // ---------- sight and the one capture rule (the bay's sneak, the hallway, the hall) ----------

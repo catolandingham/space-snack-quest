@@ -1,7 +1,7 @@
 /**
  * The night look, one rule for every room (Brian, 2026-11-26: "Make sure it's not just the hall dark at night, but all
  * rooms are different at night versus daytime."): whenever the story is at night, the room shown has its night look.
- *   - A room with a locked night picture shows it (the loading bay: delivery-room-empty-night-v2.png).
+ *   - A room with a locked night picture shows it (the loading bay: delivery-room-empty-night-v3.png).
  *   - Every other room (home, the party hall, the hallway, the office) shows its day picture under a dim blue night
  *     tint (the bedtime story's night colour, BEDTIME_NIGHT on feat/ch1-bedtime-story), with the things that give light kept bright: drawn again over the tint,
  *     cut from the same locked picture (the hall's window onto space and its FUR alarm lamp, home's TV screen, the office's screens and
@@ -20,7 +20,7 @@ import { withSnackLayers } from "./crate-stamp.js";
 
 export const NIGHT_TINT = Object.freeze({ color: "rgb(14,22,58)", alpha: 0.5 });
 /** Rooms with a locked night picture of their own (game room names). */
-export const NIGHT_PICTURES = Object.freeze({ hangar: "docs/locked-rooms/delivery-room-empty-night-v2.png" });
+export const NIGHT_PICTURES = Object.freeze({ hangar: "docs/locked-rooms/delivery-room-empty-night-v3.png" });
 /** The older program's locked picture ids (12-ch1-redesign.js LOCKED_ROOMS) and the game room each one is. */
 export const ROOM_OF_PICTURE = Object.freeze({
   hall: "hall",

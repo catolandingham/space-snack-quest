@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–26 | # Master backlog |
-| 27–206 | ## Where main is (Chapter 1 redesign) |
-| 207–221 | ## Register |
-| 222–243 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 244–264 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 265–277 | ## Phase 2 (plan section 4, T13 to T18) |
-| 278–300 | ## Phase 1 (plan section 3, T5 to T12) |
-| 301–314 | ## SS40–SS44 |
-| 315–332 | ## Story rows |
-| 333–351 | ## Reset section |
-| 352–362 | ## Still open |
-| 363–366 | ## Chapter 1 replot, recorded and not built |
-| 367–524 | ## Changelog |
+| 27–213 | ## Where main is (Chapter 1 redesign) |
+| 214–228 | ## Register |
+| 229–250 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 251–271 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 272–284 | ## Phase 2 (plan section 4, T13 to T18) |
+| 285–307 | ## Phase 1 (plan section 3, T5 to T12) |
+| 308–321 | ## SS40–SS44 |
+| 322–339 | ## Story rows |
+| 340–358 | ## Reset section |
+| 359–369 | ## Still open |
+| 370–373 | ## Chapter 1 replot, recorded and not built |
+| 374–531 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -50,6 +50,13 @@
 2026-11-26 (night, bedtime), draft PR #89: the night look is merged in and used by the bedtime story (the crate's front wall and Mops's mop bucket at night; lights out dims on top). Open for Brian: lights out over the night look is darker than before (a placeholder; `BEDTIME_NIGHT.dim` could come down). Docs match main: yes.
 
 2026-11-26 (night), draft PR #87: every room has a night look at night (Brian: "all rooms are different at night versus daytime"; `night-look.js`, README "Chapter 1 redesign", the 2026-11-26 night paragraph). Open for Brian: the tint's strength (`NIGHT_TINT`, a placeholder) and which things stay lit; home has no window or lamp in its picture, so only its TV screen stays as it is. NOT ASSESSED: how the night look plays on a phone in daylight. Docs match main: yes.
+2026-11-26 (night), draft PR #94 on `feat/ch1-evening`: beats 37 to 42c rebuilt from the story pass (storm, peek and duck, the pancake talk, the brochure's taps, home alone with the chart and the crate's MARS, the fight, the idea, the choice with the happily-ish ending, the loud post and the crate by the vent). Open: Brian's yes on every pending line and on the placeholder pictures (the storm, the chart, the crate stamp over the locked crate, the bay crate, the years-later picture); the party hall's night vent (on, placeholder); beat 36b (the three robots cleaning the hall) is not in this branch, so the hall has no robots before the storm; `feat/ch1-escape`'s `night-look.js` has a different shape from this branch's (a merge to settle).
+2026-11-26 (later), draft PR #94 on `feat/ch1-evening`: Brian's video notes on 37 to 42 built (night look for every room in `src/modules/night-look.js`, robot cones and routes, walks round solids and people, Mops asleep on his bucket, vents, cones that must hold half a second, split bubbles), tested in `tests/evening-physics.mjs`. Open: the party night and escape night rooms should draw through `night-look.js` too; the tint's strength and the lit boxes are a PLACEHOLDER for Brian; the bay plant by the door is in the locked picture (Brian to decide).
+2026-11-26, draft PR on `feat/ch1-evening` (stacked on `feat/ch1-lunch-sneak`), not merged. Done: beats 37 to 42 as a module (`ch1-evening`): the Employee of the Month gallery (5 photos, crooked #4 and the crayon drawing, the robot and BEEP BEEP), the snack bar (the Moon Pie line, the family, HIDE · counter, the brochure close-up), the walk home, the Mars talk (SHOW · brochure), lights out (Mops asleep the fainting-goat way), night one (the bay at night on R64, the paw-order close-up, the mailbox, the robots wake, the vent takes the pink sheet, home to bed); the one capture rule in the bay (`party-alarm.js` alarm places); the old Day 2 code for these beats deleted. Hand-over from beat 36: `ch1BayLines` ends with `window.SSQ.beat("ch1-evening").start()` (the loading-bay branch replaces that function: call `start()` when Mops and Squatch walk into the hallway from the bay). Hand-over to beat 43: the older program's `ch1SixDays` (the engine's `sixDays`), with the night's record set (`ch1Paw`, `ch1Mailed`, `ch1PinkSucked`, `ch1Brochure`, `ch1Lights`, the papers' log "paws" then "vent").
+- Needs Brian's yes (words, in `src/modules/evening-lines.js`): pending "I swear we had more Moon Pies... is that what they stole at lunch?", "Quick, hide.", "Are those other Sasquatches?", "I need to get back to work, we'll talk about it tonight.", Mops's Mars line, "Mail scanned. Pawature accepted.", ORDER MORE ROBOTS, GRAB · copies, MARK · order; new (suggested) HIDE · counter, SHOW · brochure, "Squatch: show Mops the brochure".
+- Needs Brian's yes (pictures, all placeholders): the gallery's photos (his approved movie-scene pictures are not in the repo), the crayon drawing, the brochure's front and whether it has words, the family (two approved guests and a smaller one as their child), the picture bubble, the papers, the station robots, Mops asleep feet up.
+- Open: `ch1-kid-play` from the chapter's start stops in the lunch sneak (hidden in the middle plant, the robot never sets off for the crates); the same happens on this branch's base, 78c8d8b (checked 2026-11-26), so it is the lunch branch's to fix. From beat 37 (`KID_START=evening:37`) the robot plays the evening and the rest of Chapter 1 to the tally card, caught 0 times.
+- Open: the keypad (beat 50) still takes 4723 while the pink sheet shows Brian's 169556 (the escape branch's beat, and the 4723 tuning pin); a night look for the hall and hallway; music for the hallway and the loading bay (none in the table); how long the wordless lights-out and the family scene run.
 
 2026-11-26 (round D, merge), draft PR #90 on `feat/ch1-day2-morning`, not merged. Done: `feat/ch1-bedtime-story` (with the party's round D) merged in (merge commit); the morning's goal things (the rocket, the lunch bag) keep only the dashed goal line, no glow (`tests/highlight-style.mjs`). NOT ASSESSED: whether a kid on a phone still finds the bag at once without the glow (the stills). Docs match main: yes.
 

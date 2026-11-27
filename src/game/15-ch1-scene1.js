@@ -22,6 +22,7 @@
         (n.ch1Office = !1),
         (n.ch1PartyNow = null),
         (n.ch1Lunch = null), (n.ch1Bay = null),
+        (n.ch1Evening = null),
         (n.ch1SureEnd = !1),
         (n.ch1Day2 = !1),
         (n.ch1Zoom = null),
@@ -186,14 +187,16 @@
         takeLunch: () => ch1TakeLunch(),
         shipCall: () => ch1ShipCall(), // beat 28 after the lunch sneak (src/modules/lunch-sneak.js)
         // The loading bay (src/modules/loading-bay.js): a locked room picture by the older program's name (it is then the
-        // one goal outlines trace), Dot, Bob and Lou as the room draws workers, Isfred's office code, and the end of beat 36.
+        // one goal outlines trace), Dot, Bob and Lou as the room draws workers, Isfred's office code.
         drawLocked: (ctx, id) => onCtx(ctx, () => drawLockedRoom(id)),
         drawWorker: (ctx, x, y, name) => onCtx(ctx, () => u5({ x, y, name: name || "" })),
         officeCode: () => CH1_OFFICE_CODE,
-        walkHomeDone: () => ch1WalkHomeDone(),
-        // Playing as Mops or Squatch (the one switch rule, announced with its card; `byLine` the card's line) and 36b's end.
+        // Playing as Mops or Squatch (the one switch rule, announced with its card; `byLine` the card's line).
         switchTo: (who, byLine) => ((SWITCH_WHY.__beat = byLine || ""), switchTo(who, byLine ? "__beat" : "")),
-        hallSneakDone: () => ch1SnackLine(),
+        // The evening (src/modules/evening.js): a station robot, the papers' record (ch1SetPaper), and beat 43 after night one.
+        drawRobot: (ctx, x, y) => onCtx(ctx, () => dq(x, y, !1)),
+        paper: (p) => ch1SetPaper(p),
+        sixDays: () => ch1SixDays(),
         offer: () => pick(ch1QSpots()),
         // Holding ↺ inside a full-screen view: the same restart as the page's ↺.
         restartPart: () => sectionReset(),

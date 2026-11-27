@@ -403,6 +403,21 @@ const play = await page.evaluate(() => {
       still = 0;
       continue;
     }
+    // The evening's close-ups (src/modules/evening.js): the brochure's X, the paw on the order's box.
+    const evb = window.SSQ.beat("ch1-evening");
+    if (evb && evb.viewOpen()) {
+      const did = evb.viewAct();
+      did === "MARK · box" && acts.push(did);
+      ss.tick(0.05);
+      still = 0;
+      continue;
+    }
+    // (hidden through the evening's alarm after the loud post: he waits in the crate until they lose him)
+    if (n.ch1Evening && n.ch1Evening.alarm && n.ch1Evening.pose === "hidden") {
+      ss.tick(0.05);
+      still = 0;
+      continue;
+    }
     if (n.ctrl && !n.cur && n.q.length === 0 && (n.scene || "")[0] === "Q") {
       if (n.ch1PadOn) {
         for (const d of window.SSQ.engine().officeCode()) ss.ch1PadPress(d);
@@ -481,12 +496,13 @@ const play = await page.evaluate(() => {
     // the loading bay (loading-bay.js): where the day's two stuck copies went
     bayPapers: n.ch1Bay && n.ch1Bay.papers ? n.ch1Bay.papers.where : "",
     officeCode: window.SSQ.engine().officeCode(),
+    order: window.SSQ.beat("ch1-evening").debug().cutIns.includes("order"),
   };
 });
 g.check("Chapter 1 reaches the tally card", play.end === "tally", { end: play.end, acts: play.acts, scene: play.state.scene });
 // The party night (src/modules/party.js): the peek, the plant, home through his door, the dress-up, out through his
 // door; the party in disguise (the dance), closing time, and walking home with Mops.
-const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "GRAB · flyer", "WALK · go-home", "SAVE · flyer", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "PICK UP · rocket", "OPEN · closet", "PUT IN · box", "WALK · bag", "TAKE · lunch", "WALK · lu-door", "GIVE · lunch", "WALK · lu-back", "TAKE · snack", "WALK · bay-door", "ROLL · ball", "HIDE · plant", "PEEK · form", "TAKE · copies", "EAT · copies", "TALK · Squatch", "SPIT · bin", "PICK UP · box", "GIVE · box", "WALK · bay-home", "WALK · bay-walk", "ROLL · ball", "WALK · bay-counter", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "LEAVE · food", "PUT · slip", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
+const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "GRAB · flyer", "WALK · go-home", "SAVE · flyer", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "PICK UP · rocket", "OPEN · closet", "PUT IN · box", "WALK · bag", "TAKE · lunch", "WALK · lu-door", "GIVE · lunch", "WALK · lu-back", "TAKE · snack", "WALK · bay-door", "ROLL · ball", "HIDE · plant", "PEEK · form", "TAKE · copies", "EAT · copies", "TALK · Squatch", "SPIT · bin", "PICK UP · box", "GIVE · box", "WALK · bay-home", "WALK · bay-walk", "ROLL · ball", "WALK · ev-hall", "WALK · bay-counter", "HIDE · counter", "PEEK · window", "DUCK · down", "GRAB · brochure", "WALK · ev-home", "OPEN · box", "BITE · cake", "X · chart", "HOLD UP · brochure", "SHOW · brochure", "ASK · again", "SLEEP · bed", "WALK · ev-out", "WALK · ev-hallway", "WALK · ev-bay", "GRAB · copies", "MARK · box", "POST · mailbox", "HIDE · crate", "WALK · ev-bayout", "WALK · ev-hall", "WALK · ev-home", "SLEEP · bed", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "LEAVE · food", "PUT · slip", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
 g.check("the player does the new actions in order", JSON.stringify(play.acts) === JSON.stringify(wantActs), play.acts);
 const must = [
   "Stormtop Cloud Resort, floating above Jupiter.",
@@ -537,12 +553,31 @@ const must = [
   "Big hairball.",
   "What's the difference between fur and hair?",
   "Paperwork.",
-  `I swear we had more ${SNACK.name}... is that what they stole at lunch?`,
-  "Quick, hide.",
+  "The Great Red Storm is passing!",
+  "Guests! Quick, hide.",
+  "Red like Mars.",
+  "The PANCAKES!",
+  "But I talked to them, and they said they were Sasquatches.",
+  "Here's a brochure I got on it.",
+  "They look just like the Guardians.",
   "Are those other Sasquatches?",
-  "I need to get back to work, we'll talk about it tonight.",
-  "Didn't you hear what the manager said? They need me here, they're not going to replace me. Plus the Guardians are here.",
-  "Mail scanned. Pawature accepted.",
+  "We'll talk tonight.",
+  "No fizz.",
+  "Not STARS...",
+  "MARS!",
+  "That evening…",
+  "Mops! My crate says MARS!",
+  "Why won't you help me find my family?",
+  "I AM your family.",
+  "Maybe my REAL family wouldn't make me hide!",
+  "Bed. The floors don't mop themselves.",
+  "The floors don't mop themselves...",
+  "The form!",
+  "If they replace Mops...",
+  "MAIL SCANNED.",
+  "PAWATURE ACCEPTED.",
+  "No! The pink one!",
+  "It's done.",
   "Six days later",
   "Replaced? The manager was lying to me.",
   "I'm going to be replaced. The new robots are coming on the ship tomorrow. Remember that pancake place? Let's go find out about it.",
@@ -615,9 +650,10 @@ g.check(
   { paper, vent: play.vent, paw: play.paw },
 );
 g.check(
-  "the order box, the Mars letter, and the Guardian box are drawn",
-  play.shown.includes("ORDER MORE ROBOTS") && play.shown.includes("MARS LOST & FOUND") && play.shown.includes("MY GARDIANS"),
-  play.shown,
+  "the paw-order close-up opened (its words are measured in tests/evening.mjs), and the Mars letter and the Guardian box are drawn",
+  // (ORDER MORE ROBOTS is on the pink sheet in the evening's paw-order close-up, src/modules/evening.js)
+  play.order && play.shown.includes("MARS LOST & FOUND") && play.shown.includes("MY GARDIANS"),
+  { shown: play.shown, order: play.order },
 );
 g.check("the vent board and the snack site's buttons are drawn", play.shown.includes("IDEAS FOR GUARDIANS") && play.shown.includes("Return empty crate"), play.shown);
 // The red FUR alarm is part of the locked party hall picture now (its words are in the picture, not drawn text):
