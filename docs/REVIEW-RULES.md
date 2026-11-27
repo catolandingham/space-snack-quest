@@ -3,31 +3,32 @@
 
 | Lines | Heading |
 | --- | --- |
-| 32–35 | # Review rules |
-| 36–87 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
-| 88–90 | ## Techniques |
-| 91–93 | ## Mistake: locked art was redrawn |
-| 94–98 | ## Mistake: optional inspection interrupted getting out of bed |
-| 99–101 | ## Mistake: a big doc's section index went stale |
-| 102–104 | ## Mistake: a rebuilt beat forgot the step restart |
-| 105–107 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
-| 108–110 | ## Mistake: a killed run was read as a failing test |
-| 111–113 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
-| 114–116 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
-| 117–123 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
-| 124–131 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
-| 132–148 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
-| 149–161 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
-| 162–164 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
-| 165–173 | ## Mistakes caught building the morning sound (2026-11-24) |
-| 174–185 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
-| 186–197 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
-| 198–211 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
-| 212–218 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
-| 219–229 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
-| 230–239 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
-| 240–245 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
-| 246–254 | ## Mistakes caught building the escape (2026-11-26) |
+| 33–36 | # Review rules |
+| 37–88 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
+| 89–91 | ## Techniques |
+| 92–94 | ## Mistake: locked art was redrawn |
+| 95–99 | ## Mistake: optional inspection interrupted getting out of bed |
+| 100–102 | ## Mistake: a big doc's section index went stale |
+| 103–105 | ## Mistake: a rebuilt beat forgot the step restart |
+| 106–108 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
+| 109–111 | ## Mistake: a killed run was read as a failing test |
+| 112–114 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
+| 115–117 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
+| 118–124 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
+| 125–132 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
+| 133–149 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
+| 150–162 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
+| 163–165 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
+| 166–174 | ## Mistakes caught building the morning sound (2026-11-24) |
+| 175–186 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
+| 187–198 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
+| 199–212 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
+| 213–219 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
+| 220–230 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
+| 231–240 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
+| 241–246 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
+| 247–255 | ## Mistakes caught building the escape (2026-11-26) |
+| 256–262 | ## Mistakes Brian's videos of the escape caught (2026-11-26) |
 <!-- /section-index -->
 # Review rules
 
@@ -251,3 +252,10 @@ His words, on the snack close-up, for every piece of the game: "It just needs to
 - A wordless thought picture that plays by itself showed the pink sheet with its words at 6 to 8 game pixels. A picture that plays by itself has no words: draw things in it with their words left out.
 - Restart tests changed `debug().state`, a JSON copy, so they changed nothing in the game and passed for nothing. A test that changes a beat's state changes the live game-state field.
 - New art helpers (`rr`, `paint`, `words`, `clamp`, `INK`...) reused top-level names other modules use; esbuild renames them. Give a new module's top-level names its own prefix (`es...`).
+
+## Mistakes Brian's videos of the escape caught (2026-11-26)
+
+- Walks were checked against the older program's solids, which in the loading bay did not include its walkway (the ramp and scanner frame), so people walked over it. A room's own things are listed as solids in the module that draws the room (`bay-watch.js` BAY_SOLIDS), and every scripted walk is a route of corners tested step by step against them.
+- A robot's sight used his outline at party-hall size while the bay draws him smaller, so it reacted while its drawn cone stopped short of him. Sight uses the points of him as he is drawn in that room (`bay-watch.js` coneOnBody), and a reaction waits until the drawn cone has been on him for half a second, a "?" filling in meanwhile.
+- A thought bubble was placed from a head height worked out with the wrong scale, so it sat on his face. A thought takes the box of the head as the room draws it and sits above it with a gap (`thought-place.js`), and a test measures the gap.
+- The ball by the vent sat on the mail room's wall line, so it looked like it was inside the wall. A hiding pose that sits on the floor gets a shadow, and its place is checked against the lines of the room behind and in front of it.
