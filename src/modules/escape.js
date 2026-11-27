@@ -1013,9 +1013,9 @@ export function createEscape(bridge) {
     if (!L().ducked) return duckCall();
     busy();
     e.face("sq", 1);
-    go("ghjk", { cu: "site", sitePage: 0, siteSize: "" });
-    sfx("key");
-    e.queue([...sayParts("mops", "mops-door"), e.run(() => (go("site"), control("chip-computer")))]);
+    // (round 7: Mops says it in the room, over his head, before the page opens: over the page his bubble hid its name)
+    go("ghjk", { cu: "", sitePage: 0, siteSize: "" });
+    e.queue([...sayParts("mops", "mops-door"), e.run(() => (sfx("key"), go("site", { cu: "site" }), control("chip-computer")))]);
   }
   // A tap on the page (or the big button: the outlined choice) moves it on.
   function siteTap(choice) {
@@ -1032,8 +1032,9 @@ export function createEscape(bridge) {
   function orderBox() {
     const e = E();
     busy();
-    go("notthat");
-    e.queue([...sayParts("mops", "mops-not-that"), e.run(() => (go("site"), control("chip-computer")))]);
+    // (the page steps aside so his bubble sits over him at the door, then it comes back)
+    go("notthat", { cu: "" });
+    e.queue([...sayParts("mops", "mops-not-that"), e.run(() => (go("site", { cu: "site" }), control("chip-computer")))]);
   }
   function returnCrate() {
     const e = E();
