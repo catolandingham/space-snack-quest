@@ -38,6 +38,7 @@
  * (PK_RESTART_TO). Words: pickup-lines.js; places and times: pickup-place.js; drawings: pickup-art.js. Every drawing and
  * number is a PLACEHOLDER for Brian.
  */
+import { personBox, boxHit, addMovers, setCarry, addKeeper } from "./room-model.js";
 import { pickupWords } from "./pickup-lines.js";
 import { PK_HOME, PK_HALL, PK_HALLWAY, PK_BAY, PK_BAY_PICKUP, PK_BAY_GONE, PK_SIGHT, PK_PACE, PK_CRATE, ROUTE_PUSH, ROUTE_SNEAK, ROUTE_LAST, COSTUME, PK_OFFICE, PK_HOLD } from "./pickup-place.js";
 import { drawPkTuft, drawHair, drawFloorPatch, drawPkCrate, drawBucket, drawMailBag, drawHat, drawNewRobotBits, drawScanLine, drawArchLight, drawCamera, drawKidDrawing, drawPaleSquare, drawFoldedNote, drawBoxCloseup, drawHairCloseup, drawSlatFrame, SLAT, drawIdea, drawSnipCloseup, drawDressCloseup, drawMirror, COSTUME_PIECES, DRESS, costumeSpotAt, drawPkPlate, drawPlateCloseup, drawPhotoSign, drawCrayonCloseup, drawTagBox, drawPeelCloseup, drawSlipCloseup, drawShipAway, drawPhotoCorner, drawTapeScreen, drawHold, drawBiteCloseup, drawLidView } from "./pickup-art.js";
@@ -105,6 +106,8 @@ const PK_RESTART_TO = Object.freeze({
 const PK_ROUTES = Object.freeze({ push: ROUTE_PUSH, home: ROUTE_SNEAK, lastwalk: ROUTE_LAST });
 const PK_WALK_CHIP = Object.freeze({ push: "chip-push", home: "chip-sneak-home", lastwalk: "chip-last-walk" });
 
+// How long his crate takes to slide from the mail room's opening into its place in the row (seconds). PLACEHOLDER.
+const PK_SLIDE = 0.6;
 export function createPickup(bridge) {
   const E = () => bridge.engine();
   const pic = (src) => (typeof Image !== "undefined" ? Object.assign(new Image(), { src }) : null);
@@ -118,6 +121,15 @@ export function createPickup(bridge) {
       e = E();
     return l && e && l.step && l.step !== "done" ? l : null;
   };
+  // The room model (room-model.js): while Mops pushes his crate, his walk keeps the crate's reach off things too, and
+  // the crate's floor is checked with everyone else's.
+  const pushing = () => {
+    const l = live();
+    return !!(l && l.step === "push" && l.crate === "push" && E().get("moPose") !== "hidden");
+  };
+  setCarry((who, room) => (who === "mops" && pushing() ? { reach: (PK_CRATE.w + PK_CRATE.ahead + 4) * crateK(room) - 25, f: E().pos("mops").f || 1 } : null));
+  addKeeper((who) => who === "mops" && pushing() && lastMops && lastMops.room === E().room() && keepCrateClear(L(), lastMops, lastMops.f || 1));
+  addMovers(() => (pushing() ? [{ who: "crate", room: E().room(), ...pushedCrate(), box: crateFoot(pushedCrate()) }] : []));
   const guests = createGuestArt();
   let drew = null,
     record = { steps: [], sounds: [] },
@@ -466,8 +478,11 @@ export function createPickup(bridge) {
       l = L();
     busy();
     sfx("grab");
+    const c = pushedCrate();
     l.crate = "row";
     l.things = freshThings();
+    // (one last shove: the crate slides from where he left it in the opening to its place in the row)
+    l.slideHis = { x: c.x, y: c.y, t: 0 };
     l.bots = PK_BAY.oldLine.map((p, i) => robot("old" + i, "old", p, -1));
     e.face("mops", -1);
     go("arrive");
@@ -1232,12 +1247,15 @@ export function createPickup(bridge) {
     }
     dt = dt || 0;
     const free = e.get("ctrl") && !e.current();
+    // the pushed crate is solid: a step that would put it in something is taken back (room-model.js)
+    l.step === "push" && l.crate === "push" && lastMops && lastMops.room === e.room() && keepCrateClear(l, lastMops, lastMops.f || 1);
     const m = e.pos("mops");
     moMoving = !!lastMops && Math.hypot(m.x - lastMops.x, m.y - lastMops.y) > 0.3;
     l.mopping = free && moMoving && l.step === "mop";
     if (free && l.step === "mop") mopTick(l);
     if (free && walking(l)) walkTick(l, dt);
-    lastMops = m;
+    l.slideHis && (l.slideHis.t += dt) >= PK_SLIDE && (l.slideHis = null);
+    lastMops = { ...m, room: e.room() };
     // 55: the robots roll back while Mops walks in; the sneak to the plant
     if (["warn", "knock", "bleat"].includes(l.step) && free) bots("new0", "new1").forEach((b) => roll(b, dt));
     if (l.step === "warn" && free && at(m, PK_BAY.knockAt, PK_BAY.knockR)) (go("knock"), control("chip-warn"));
@@ -1354,13 +1372,54 @@ export function createPickup(bridge) {
 
   // ---------- drawing ----------
   // where his crate is drawn while Mops pushes it: in front of Mops, the way he faces
-  const crateK = (room) => sqScale(room) / sqScale("closet");
-  function pushedCrate() {
+  // One size for his crate in every room, the size of the row's crates in the bay (Brian r6 3:07: "Crate is way too
+  // large"): it was sized against home by the room rule, but home draws its people at three times their scale, so
+  // the pushed crate came out about twice the size of the crates it joins.
+  // (home draws its people at three times their scale, not the room rule: there the crate goes by that)
+  const crateK = (room) => ((room === "closet" ? 3 : sqScale(room)) / sqScale("closet")) * 0.55;
+  // The floor his crate stands on while pushed (its pallet's width, a strip at its bottom), for the room's solids.
+  function crateFoot(c) {
+    const half = (PK_CRATE.w / 2 + 4) * c.k;
+    return { x0: c.x - half, x1: c.x + half, y0: c.y - 22, y1: c.y + 2 };
+  }
+  // The solids his crate keeps out of: the room's (the engine's, with the beat's), people's feet included, not Mops's own.
+  function crateSolids() {
+    const e = E(),
+      m = e.pos("mops");
+    return (e.roomSolids ? e.roomSolids() : []).filter((b) => b && !(b.person && Math.abs((b.x0 + b.x1) / 2 - m.x) < 2 && Math.abs((b.y0 + b.y1) / 2 - m.y) < 6));
+  }
+  /**
+   * Normal physics for the push (Brian r6 3:07 to 3:19: "he shouldn't be able to just push it through the bar", "pushes
+   * right through the robot", "through the other crates and over the wall"): a step (or a turn) that would put the
+   * crate in something solid does not happen; along a wall he slides on the way that is free. True when it stopped him.
+   */
+  function keepCrateClear(l, was, wasF) {
     const e = E(),
       m = e.pos("mops"),
-      k = crateK(e.room()),
-      f = m.f || 1;
-    return { x: m.x + f * ((PK_CRATE.w / 2 + PK_CRATE.ahead) * k), y: m.y + 4, k };
+      solids = crateSolids(),
+      fits = (x, y, f) => !boxHit(crateFoot({ ...pushedCrateAt(x, y, f) }), solids);
+    if (fits(m.x, m.y, m.f || 1)) return false;
+    // (a turn that would swing the crate into something: he keeps facing the way he was)
+    const f = fits(m.x, m.y, wasF) ? wasF : null;
+    if (f != null) return (e.face("mops", f), false);
+    const tries = [
+      [m.x, was.y, m.f || 1],
+      [was.x, m.y, m.f || 1],
+      [was.x, was.y, wasF],
+    ];
+    const ok = tries.find(([x, y, q]) => fits(x, y, q)) || [was.x, was.y, wasF];
+    e.place("mops", ok[0], ok[1]);
+    e.face("mops", ok[2]);
+    l.crateStops = (l.crateStops || 0) + 1;
+    return true;
+  }
+  function pushedCrate() {
+    const m = E().pos("mops");
+    return pushedCrateAt(m.x, m.y, m.f || 1);
+  }
+  function pushedCrateAt(x, y, f) {
+    const k = crateK(E().room());
+    return { x: x + f * ((PK_CRATE.w / 2 + PK_CRATE.ahead) * k), y: y + 4, k };
   }
   function headBox(who) {
     const e = E(),
@@ -1374,6 +1433,16 @@ export function createPickup(bridge) {
     const s = e.pos("sq"),
       q = sqScale(room);
     return { x: s.x - 20 * q, y: s.y - 78 * q, w: 40 * q, h: 36 * q };
+  }
+  // the boxes of Squatch and Mops as the room draws them (the highlight leaves them out: room-model.js personBox)
+  function peopleBoxes(room) {
+    const e = E(),
+      s = e.pos("sq"),
+      m = e.pos("mops"),
+      out = [];
+    e.get("sqPose") === "stand" && out.push(personBox("sq", s.x, s.y, sqScale(room)));
+    e.get("moPose") !== "hidden" && out.push(personBox("mops", m.x, m.y, moScale(room)));
+    return out;
   }
   // the bay's people and robots, back to front
   function bayPeople(ctx, l) {
@@ -1405,8 +1474,11 @@ export function createPickup(bridge) {
     b.mark && drawWatchMark(ctx, b.x, b.y - 70, b.mark, Math.min(1, (b.seenT || 0) / 0.5), t);
   }
   function drawThing(ctx, kind, th, l) {
-    const k = crateK("hangar") * 0.55;
+    const k = crateK("hangar");
     if (kind === "bag") return drawMailBag(ctx, th.x, th.y, 0.8);
+    const sl = kind === "his" && l.slideHis,
+      u = sl ? Math.min(1, sl.t / PK_SLIDE) : 1;
+    sl && (th = { ...th, x: sl.x + (th.x - sl.x) * u, y: sl.y + (th.y - sl.y) * u });
     drawPkCrate(ctx, th.x, th.y, k, { label: kind === "his", bucket: kind === "his" && l.packed.top, open: th.open || 0, eyes: kind === "his" && l.crate === "row" && ["warn", "knock", "bleat", "bleated", "climb"].includes(l.step) });
   }
   const m0 = () => E().pos("mops");
@@ -1436,7 +1508,7 @@ export function createPickup(bridge) {
     // the goal's outline
     if (e.get("ctrl") && !e.current() && !l.cu) {
       const sp = spots().find((q) => q.thing && !q.extra);
-      sp && (out.mark = markBox(ctx, sp.thing, t));
+      sp && (out.mark = markBox(ctx, sp.thing, t, 6, peopleBoxes("hangar")));
       walking(l) && markDoor(ctx, doorTo("hangar", routeOf(l).hangar), t);
       l.step === "push" && (out.mark = markBox(ctx, { x0: PK_BAY.row[2].x - 40, y0: PK_BAY.row[2].y - 64, x1: PK_BAY.row[2].x + 40, y1: PK_BAY.row[2].y }, t));
       l.step === "warn" && (out.mark = markBox(ctx, hisCrateBox(), t));
@@ -1538,12 +1610,13 @@ export function createPickup(bridge) {
       });
     }
     // the hallway robot that reads the label as the crate rolls by
-    if (room === "passage" && l.step === "push") e.drawRobot(ctx, PK_HALLWAY.robot.x, PK_HALLWAY.robot.y, false, adultPxFor("passage") / 47);
+    // (the robot and the crate back to front, by where each stands on the floor: room-model.js)
+    const hallwayBot = room === "passage" && l.step === "push" ? () => e.drawRobot(ctx, PK_HALLWAY.robot.x, PK_HALLWAY.robot.y, false, adultPxFor("passage") / 47) : null;
+    const crateNow = l.crate === "push" && e.get("moPose") !== "hidden" ? pushedCrate() : null;
+    hallwayBot && (!crateNow || crateNow.y > PK_HALLWAY.robot.y) && hallwayBot();
     // the push: his crate on its pallet in front of Mops
-    if (l.crate === "push" && e.get("moPose") !== "hidden") {
-      const c = pushedCrate();
-      drew.crate = drawPkCrate(ctx, c.x, c.y, c.k, { label: true, bucket: true });
-    }
+    if (crateNow) drew.crate = drawPkCrate(ctx, crateNow.x, crateNow.y, crateNow.k, { label: true, bucket: true });
+    hallwayBot && crateNow && crateNow.y <= PK_HALLWAY.robot.y && hallwayBot();
     // the walks: the next doorway's outline
     if (walking(l) && e.get("ctrl")) {
       const d = doorTo(room, routeOf(l)[room]);
@@ -1911,6 +1984,13 @@ export function createPickup(bridge) {
         return [...BAY_SOLIDS.map((b) => ({ ...b })), { id: "open crate", x0: 232, x1: 370, y0: 470, y1: 509 }, ...row];
       }
       return [];
+    },
+    /** Feet nobody walks through in rooms another drawing owns: the hallway robot that reads the label on the push. */
+    extraSolids(r) {
+      const l = live();
+      if (!(l && l.step === "push" && r === "passage")) return [];
+      const q = PK_HALLWAY.robot;
+      return [{ id: "hallway robot", x0: q.x - 25, x1: q.x + 25, y0: q.y - 14, y1: q.y + 8, person: 1 }];
     },
     /** Pickup day comes after he rubbed his crayon out of the crate bed's stamp (39b): none in the stamp. */
     crayonGone() {

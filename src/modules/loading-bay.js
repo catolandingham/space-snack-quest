@@ -1078,8 +1078,10 @@ export function createLoadingBay(bridge) {
       d = Math.hypot(s.x - m.x, s.y - m.y);
     if (d > 80) {
       e.moWalking(true);
-      const tx = s.x + (m.x > s.x ? 56 : -56),
-        ty = s.y + 30;
+      // (his spot beside Squatch moved off anything solid, the counter say: room-model.js; Brian r5 4:38, "the janitor is walking on the bar")
+      const spot = bridge.freeSpot ? bridge.freeSpot("mops", s.x + (m.x > s.x ? 56 : -56), s.y + 30) : { x: s.x + (m.x > s.x ? 56 : -56), y: s.y + 30 },
+        tx = spot.x,
+        ty = spot.y;
       e.face("mops", tx > m.x ? 1 : -1);
       e.step("mops", tx, ty, P.walk, dt);
     } else (e.moWalking(false), e.still("mops"));
