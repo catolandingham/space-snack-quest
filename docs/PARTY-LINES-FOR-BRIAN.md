@@ -100,8 +100,39 @@ Half one is P1 to P5 (peek to dress-up), built first. Half two is P6 to P8. The 
 | 86 | P6. The dance: the same, speed 3 | Super fast! | button | two | approved | Brian 2026-11-26 (#45): the speed words Dance! / Faster! / Super fast! / Top speed! and a gold Super dancer! badge |
 | 87 | P6. The dance: the same, speed 4 (the fastest; the button keeps it after that) | Top speed! | button | two | approved | Brian 2026-11-26 (#45): the speed words Dance! / Faster! / Super fast! / Top speed! and a gold Super dancer! badge |
 | 88 | P6. The dance: a gold badge over him after a perfect routine at top speed | Super dancer! | badge | two | approved | Brian 2026-11-26 (#45): the speed words Dance! / Faster! / Super fast! / Top speed! and a gold Super dancer! badge |
+| 89 | P9. The wall speaker after the party, calling Mops to clean the hall: in the empty hall at closing time, or at home (its home speaker) when Squatch is home first; once a night | Ganitor Mops to the party hall. | speaker | two | approved | Brian, chat 2026-11-26 (Ganitor B: approved words, ganitor.js pa-ganitor); placed after the party by the story pass 28-52, E2 (KEEP) |
+| 90 | P9. After the alarm ("Keep going"), Mops to Squatch under the bed, before he goes to clean the hall | Stay in here. | mops | two | approved | Approved words (morning-lines.js mops-stay: walkthrough beat 1, Nov 14; Q5 answer 2026-11-23); reused after the alarm by the story pass 28-52, E2 (KEEP) |
+| 91 | P9. The switch card's why, under "You are MOPS now.", as the player becomes Mops to clean up | Mops cleans up the party hall. | card | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 92 | P9. Goal chip while Mops cleans the empty hall | Mops: mop the party hall | chip | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 93 | P9. Goal chip when his beard is full (grey) and stops cleaning; the bucket is outlined | Mops: wring your beard at the bucket | chip | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 94 | P9. Action button at his bucket when his beard is full | WRING · beard | button | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 95 | P9. Mops sees the first tuft of fur by the floor vent (after his first wring) | Fur? | mops | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 96 | P9. Mops, as the floor vent takes that first tuft | No, no, no. | mops | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 97 | P9. Goal chip while the trail of tufts shows, one at a time with the dashed outline | Mops: mop up the fur | chip | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 98 | P9. Mops, as the third tuft shows | Oh no. | mops | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 99 | P9. Mops, as he mops the third tuft | Nobody saw that. | mops | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 100 | P9. Action button at the Polaroid on the floor under the photo spot (only if Squatch joined the group photo) | PICK UP · photo | button | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 101 | P9. Action button at Squatch's top hat where it fell in the hall (no photo) | PICK UP · hat | button | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 102 | P9. Action button at the fur caught in Squatch's doorway (no photo, no hat on the floor) | PICK UP · fur | button | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 103 | P9. The Polaroid close-up: tapping Squatch's shirt (it is Mops's own) | That's MY shirt. | mops | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 104 | P9. Mops's bleat as a gasp, as the heart over the furry feet (or over him) pops | Weee...?! | mops | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 105 | P9 and P9b. After the gasp in the hall; and at home, the first thing Mops says when he comes in | Squatch. | mops | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 106 | P9. Picking up the top hat (no photo) | That's MY hat. | mops | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 107 | P9. A gold badge when the whole hall is clean (no points) | Spotless! | badge | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 108 | P9. Goal chip once Mops has the find; his doorway home is outlined | Mops: go home | chip | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 109 | P9b. The switch card's why, under "You are SQUATCH now.", as Mops walks home | Mops comes home. | card | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 110 | P9b. At home, Mops asks (he knows; Squatch chooses) | Did you go to the party? | mops | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 111 | P9b. The left/top button of the truth-or-fib choice (Squatch with open paws) | TELL · the truth | button | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 112 | P9b. The other button (Squatch looking at the ceiling, whistling) | FIB · "I stayed in" | button | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 113 | P9b. TELL: Squatch's first line | Yes. I went. | sq | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 114 | P9b. TELL: Squatch's second line | I just wanted to dance. | sq | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 115 | P9b. TELL: Mops holds up what he found | I know. | mops | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 116 | P9b. TELL, with the Polaroid only: big hearts; then the photo stands by Squatch's bed | Nice shirt. | mops | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 117 | P9b. FIB: Squatch's fib | No. I stayed in here. | sq | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 118 | P9b. FIB: after Mops holds it up (no hearts) and says line 57 | ...I'm sorry I fibbed. | sq | two | needs your yes | Brian, story pass 28-52, E2/E4 |
+| 119 | P9b. Both paths meet here; then lines 41, 58, 42 and the rest of the talk as built | You never have to hide from me. | mops | two | needs your yes | Brian, story pass 28-52, E2/E4 |
 
-Lines that need your yes: 25, 78 (2 lines). Your "Yes to all" (2026-11-24) covered the other 31; line 25, the band's name tag "Croc Boys", was added after it; line 78 changed "under your bed" to "on your bed" (2026-11-26) after your answer that he lays the flyer on top of the bed.
+Lines that need your yes: 25, 78, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119 (31 lines). Lines 91 to 119 are the story pass 28-52, section E2 (Mops cleans the hall, and truth or fib at home), new on 2026-11-26. Your "Yes to all" (2026-11-24) covered the other 31; line 25, the band's name tag "Croc Boys", was added after it; line 78 changed "under your bed" to "on your bed" (2026-11-26) after your answer that he lays the flyer on top of the bed.
 
 The Croc Boys: you picked look B on 2026-11-24 ("25 i like B but they don't look like crocs"); their heads are redrawn as real crocodiles (long snout, teeth, eyes on top, tail).
 

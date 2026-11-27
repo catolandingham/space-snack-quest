@@ -153,13 +153,10 @@ export function createHomeEarly(h) {
       free = e.get("ctrl") && !e.current();
     if (!free) return;
     if ((p.costumeOffT != null && p.costumeOffT >= HOME_EARLY.afterCostume) || p.mopsT >= HOME_EARLY.wait) {
-      // Mops's key in the door (heard): Squatch runs for the flyer to show him, and Mops comes in (party-talk.js)
+      // the wall speaker calls Mops to the hall after closing time, and the player is Mops, cleaning up (Brian, story
+      // pass 28-52, E2: party-cleanup.js); Mops comes home after it, and the talk with truth or fib
       p.mopsComing = true;
-      p.doorHeard = true;
-      h.sound.one("door");
-      h.control(false);
-      e.walkOff();
-      e.queue(h.afterAlarm().talk.steps());
+      h.cleanup().begin(p, "early");
     }
   }
   /** The big button at home in P8c: OPEN · closet, while he still has something on. */

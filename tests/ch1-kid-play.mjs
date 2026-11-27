@@ -83,7 +83,7 @@ const st = () =>
       party: (() => {
         const b = window.SSQ && window.SSQ.beat("ch1-party"),
           p = b && b.now();
-        return p ? { scene: p.scene, alarm: p.alarm || "", song: p.song == null ? -1 : p.song, dance: !!p.dance, done: p.done ? Object.keys(p.done).length : 0, close: p.close ? p.close.phase : "", bag: p.snacks ? p.snacks.bag : 0, card: p.card ? b.cardTargets() : null, mops: p.mops && p.mops.heart > 0 ? { x: Math.round(p.mops.x), y: Math.round(p.mops.y) } : null } : null;
+        return p ? { scene: p.scene, alarm: p.alarm || "", song: p.song == null ? -1 : p.song, dance: !!p.dance, done: p.done ? Object.keys(p.done).length : 0, close: p.close ? p.close.phase : "", bag: p.snacks ? p.snacks.bag : 0, card: p.card ? b.cardTargets() : null, clean: p.scene === "P9" ? p.clean : null, truth: b.truthTargets ? b.truthTargets() : null, mo: { x: Math.round(n.mo.x), y: Math.round(n.mo.y) }, mops: p.mops && p.mops.heart > 0 ? { x: Math.round(p.mops.x), y: Math.round(p.mops.y) } : null } : null;
       })(),
       // The party's snack close-up (drawn in the game picture): the bartender's turn, his paw, the pile, and where
       // each snack and LEAVE · bar are (game positions). And the group photo's Polaroid, which fills the screen.
@@ -375,6 +375,14 @@ while (now() < MAX_S) {
     await sleep(600);
     continue;
   }
+  // Truth or fib at home after the cleanup (story pass 28-52, E2): two big buttons on the whole screen; a kid tells.
+  if (s.party && s.party.truth) {
+    say(s, "TAP TELL · the truth");
+    await sleep(1200);
+    await tap(s.party.truth.tell.x, s.party.truth.tell.y);
+    await sleep(600);
+    continue;
+  }
   // The "more to find" card after an alarm: a finger on one of its two big buttons. The first time a kid goes back
   // to the party; the next time he keeps going.
   if (s.party && s.party.card) {
@@ -389,6 +397,34 @@ while (now() < MAX_S) {
   if (s.up) {
     await tapGame(s, 480, 320);
     await sleep(220);
+    continue;
+  }
+  // The cleanup after the party (story pass 28-52, E2): the player is Mops. A kid mops about until something is
+  // outlined (the bucket, a tuft, the find, the doorway home), goes to it, presses what the button offers, and in the
+  // Polaroid close-up taps what is outlined. Nobody watches him here.
+  // (in the close-up he has no walking control: only the taps)
+  if (s.party && s.party.scene === "P9" && s.party.clean && (s.ctrl || s.party.clean.close)) {
+    const c = s.party.clean,
+      m = s.party.mo;
+    if (c.close) {
+      const b = c.close === "shirt" ? c.targets.shirt : c.close === "feet" ? c.targets.feet : null;
+      b && (say(s, "TAP the outlined " + c.close + " in the Polaroid"), await tapGame(s, b.x, b.y));
+      await sleep(600);
+      continue;
+    }
+    if (s.btn && s.btn !== "ACTION") {
+      say(s, "PRESS " + s.btn);
+      await tap(s.btnR[0] + s.btnR[2] / 2, s.btnR[1] + s.btnR[3] / 2);
+      await sleep(500);
+      continue;
+    }
+    // (a tuft is mopped by the beard, which hangs in front of him: come at it from the left)
+    const t = c.beard >= 1 ? { x: c.bucket.x, y: c.bucket.y } : c.found ? { x: 477, y: 625 } : c.phase === "find" ? { x: c.find.x, y: c.find.y + 30 } : c.lit ? { x: (c.lit.x0 + c.lit.x1) / 2 - 30, y: (c.lit.y0 + c.lit.y1) / 2 + 4 } : { x: [90, 760][wander % 2], y: 320 + ((wander * 53) % 260) };
+    c.lit && !c.found && c.beard < 1 && c.phase !== "find" && m.x > t.x - 10 && (await tapGame(s, t.x - 60, t.y), await sleep(700));
+    c.lit || c.beard >= 1 || c.found || c.phase === "find" || wander++;
+    say(s, `MOPS toward ${Math.round(t.x)},${Math.round(t.y)}`);
+    await tapGame(s, t.x, t.y);
+    await sleep(c.lit ? 1200 : 1500);
     continue;
   }
   // The snack close-up: a tap on the top snack left (nothing stands on it) while the bartender's back is turned

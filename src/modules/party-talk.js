@@ -7,6 +7,9 @@
  *   glows; Brian 2026-11-26, #42). Squatch takes it from the bed in his paw and comes to the middle of the room (round
  *   the back of the room when Mops is in the way: nobody walks through anybody). Mops turns to him and hearts float up
  *   from Mops (Brian 2026-11-26, #48: hearts, never "?" or "!"; no yellow glow on Squatch).
+ *   (After Mops has cleaned the hall and found what Squatch left there, `steps({ ask })`: "Squatch." / "Did you go to
+ *   the party?" / TELL or FIB (party-truth.js) / that path's lines / "You never have to hide from me."; Brian, story
+ *   pass 28-52, E2. Otherwise, as below.)
  *   Mops "You went to the party." / Squatch "Everyone out there has someone." / "Everyone except me." / Mops "You
  *   have me." / Mops lifts the piece on his head off him and sets it down by his foot (nothing on his head: a pat) /
  *   Squatch holds the flyer up: "But look. Robots are coming to do your job." / Mops "Nobody is replacing me. They
@@ -22,8 +25,9 @@ import { liftTo } from "./party-free-art.js";
 
 // How fast they walk at home, how far apart they stand to talk and for the hat, how long Mops looks, how long the
 // hat's lift (or the pat) and setting it down take, where the hat is set down (up and out from his foot), and how
-// long taking the flyer and holding it up take.
-export const TALK = Object.freeze({ walk: 150, beside: 195, close: 138, notice: 1.2, look: 1.4, lift: 2.6, setDown: 0.5, hatUp: 14, hatOut: 52, take: 0.45, up: 0.35 });
+// long taking the flyer and holding it up take; how long Mops takes to hold up what he found (`hold`, slowly on a fib:
+// `holdSlow`).
+export const TALK = Object.freeze({ walk: 150, beside: 195, close: 138, notice: 1.2, look: 1.4, lift: 2.6, setDown: 0.5, hatUp: 14, hatOut: 52, take: 0.45, up: 0.35, hold: 0.4, holdSlow: 1.4 });
 // Where they stand. Squatch on the open floor between the bucket and the door (`sq`), Mops beside
 // him on the door side. Squatch takes the flyer standing at `take` (right of the bed's front corner). He never walks
 // through Mops (the home room draws them big): when Mops stands between him and the flyer, he goes round along the
@@ -63,7 +67,7 @@ export function createTalk(h) {
    * The talk's steps, for the game's queue, from wherever the two of them are now (Squatch standing, Mops in the
    * room). Ends with the hand-over to beat 20.
    */
-  function steps() {
+  function steps(opts = {}) {
     const e = E(),
       S = TALK_SPOTS.sq,
       K = TALK_SPOTS.take,
@@ -151,7 +155,9 @@ export function createTalk(h) {
       // always sends up hearts rather than question marks or exclamation points"; no yellow glow on Squatch)
       e.run(() => (e.still("mops"), e.face("mops", -1), (P().mopsHeartsAt = E().time()))),
       ...wait(TALK.look),
-      h.say("mops", "mops-went"),
+      // after he cleaned the hall and found what Squatch left there, Mops asks, and Squatch tells the truth or fibs
+      // (Brian, story pass 28-52, E2b); when Mops found him in the hall himself, he just says it
+      ...(opts.ask ? askSteps(opts.ask) : [h.say("mops", "mops-went")]),
       h.say("sq", "sq-someone"),
       h.say("sq", "sq-except"),
       h.say("mops", "mops-have-me"),
@@ -197,11 +203,56 @@ export function createTalk(h) {
       e.run(() => h.finish()),
     ];
   }
+  /**
+   * Truth or fib (E2b): "Squatch." / "Did you go to the party?" / the choice (party-truth.js, full screen) / the path
+   * chosen / both meet at "You never have to hide from me.". `kind` is what Mops found in the hall: "photo", "hat" or
+   * "fur"; he holds it up. Nobody is punished and no points change: a fib costs one beat of no hearts.
+   */
+  function askSteps(kind) {
+    const e = E(),
+      hold = (slow) => e.run(() => ((P().holdUp = { kind, k: 0, slow: !!slow }), h.sound.one("fwip"))),
+      tell = () => [
+        h.say("sq", "sq-yes-went"),
+        h.say("sq", "sq-just-dance"),
+        hold(false),
+        h.say("mops", "mops-i-know"),
+        ...(kind === "photo" ? [e.run(() => ((P().mopsHeartsAt = E().time()), h.sound.one("twinkle"))), h.say("mops", "mops-nice-shirt")] : []),
+        // he gives Squatch the photo, and it stands by Squatch's bed (a hat or a tuft just goes away)
+        e.run(() => {
+          const q = P();
+          q.holdUp = null;
+          kind === "photo" && ((q.keptPhoto = "bed"), h.sound.one("pop"));
+        }),
+      ],
+      fib = () => [
+        h.say("sq", "sq-stayed-in"),
+        // he holds it up slowly; no hearts
+        hold(true),
+        h.say("mops", "mops-went"),
+        h.say("sq", "sq-sorry-fib"),
+        // he puts it back in his jacket: one heart
+        e.run(() => {
+          const q = P();
+          q.holdUp = null;
+          kind === "photo" && (q.keptPhoto = "mops");
+          q.oneHeartAt = E().time();
+        }),
+      ];
+    return [
+      h.say("mops", "mops-squatch"),
+      h.say("mops", "mops-did-you-go"),
+      e.run(() => h.askTruth()),
+      e.until(() => !P() || !!P().truthPick),
+      e.run(() => e.cutIn(P().truthPick === "tell" ? tell() : fib())),
+      h.say("mops", "mops-never-hide"),
+    ];
+  }
   /** Every frame: taking the flyer, holding it up, the hat's lift (or the pat), setting it down, the horn press. */
   function tick(p, dt) {
     p.take != null && p.take < 1 && (p.take = Math.min(1, p.take + dt / TALK.take));
     p.flyerUp != null && p.flyerUp < 1 && (p.flyerUp = Math.min(1, p.flyerUp + dt / TALK.up));
     p.lift && p.lift.k < 1 && (p.lift.k = Math.min(1, p.lift.k + dt / TALK.lift));
+    p.holdUp && p.holdUp.k < 1 && (p.holdUp.k = Math.min(1, p.holdUp.k + dt / (p.holdUp.slow ? TALK.holdSlow : TALK.hold)));
     p.lift && p.lift.set != null && p.lift.set < 1 && (p.lift.set = Math.min(1, p.lift.set + dt / TALK.setDown));
     // The horn press: a small hop, his horn's top on the button at the top of it, where the TV comes on.
     const v = p.tv;

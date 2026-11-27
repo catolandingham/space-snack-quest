@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–26 | # Master backlog |
-| 27–128 | ## Where main is (Chapter 1 redesign) |
-| 129–143 | ## Register |
-| 144–165 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 166–186 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 187–199 | ## Phase 2 (plan section 4, T13 to T18) |
-| 200–222 | ## Phase 1 (plan section 3, T5 to T12) |
-| 223–236 | ## SS40–SS44 |
-| 237–254 | ## Story rows |
-| 255–273 | ## Reset section |
-| 274–284 | ## Still open |
-| 285–288 | ## Chapter 1 replot, recorded and not built |
-| 289–446 | ## Changelog |
+| 27–130 | ## Where main is (Chapter 1 redesign) |
+| 131–145 | ## Register |
+| 146–167 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 168–188 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 189–201 | ## Phase 2 (plan section 4, T13 to T18) |
+| 202–224 | ## Phase 1 (plan section 3, T5 to T12) |
+| 225–238 | ## SS40–SS44 |
+| 239–256 | ## Story rows |
+| 257–275 | ## Reset section |
+| 276–286 | ## Still open |
+| 287–290 | ## Chapter 1 replot, recorded and not built |
+| 291–448 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -25,6 +25,8 @@
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-26 (late night), draft PR #87: story pass 28-52, E2: Mops cleans the hall after the party (P9) and truth or fib at home (P9b) (`party-cleanup.js`, `party-truth.js`, `tests/party-cleanup.mjs`; DECISIONS "Day 1 after the party: Mops cleans the hall, then truth or fib"). Waiting on Brian: party lines 91 to 119; the open conflicts listed there (Mops finding him in the hall at closing time; the flyer's place in the talk; Isfred's sales-visit line; the TV story's office and scanner pictures). Not yet played by a person. Docs match main: yes.
 
 2026-11-26 (late night), draft PR #87: the snack is Stars Cakes everywhere (Brian, question 86; `snack-name.js`, `crate-stamp.js`, `tests/snack-name.mjs`; DECISIONS "The snack renamed, and the crate bed's stamp (question 86)"). Waiting on Brian: the bedtime line's new words; the crate bed's stamp layer over the locked home pictures (his yes); the hall tin's new lid over the locked hall picture (his yes); the crayon "ST". Not yet played by a person. Docs match main: yes.
 

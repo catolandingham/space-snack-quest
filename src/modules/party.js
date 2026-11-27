@@ -29,6 +29,9 @@
  *   P8a / P8b / P8c The endings: after an alarm ("Keep going"), at closing time, or after going home early through
  *      his own door ("Keep going"); all three end with the talk at home and beat 20 (party-after-alarm.js,
  *      party-endings.js, party-home-early.js, party-talk.js).
+ *   P9 / P9b After the party (Brian, story pass 28-52, E2): the player is Mops, cleaning the empty hall (↺ restarts
+ *      it), then at home truth or fib and the talk (↺ restarts the talk at home) (party-cleanup.js, party-truth.js).
+ *      Every ending goes through it except closing time when Mops finds Squatch in the hall himself.
  * Words come only from party-lines.js. The beat's progress lives in the game state as ch1PartyNow, so a restart
  * and the tests can read it. Everything in the hall is drawn by party-draw.js on the locked picture (the view is
  * built in party-view.js); the capture rule's hooks are in party-capture.js.
@@ -60,6 +63,8 @@ import { tickQuestions } from "./party-question.js";
 import { footfall } from "./footfalls.js";
 import { bandOnStageForPhoto } from "./party-photo.js";
 import { OCT, chasing } from "./party-octopus.js";
+import { createCleanup } from "./party-cleanup.js";
+import { truthLayout, truthButtonAt, drawTruthChoice } from "./party-truth.js";
 
 // His home door in the right wall: the one box its outline uses too (goal-targets.js).
 const HOME_DOOR = GOAL_TARGETS["closet:peek"].rect;
@@ -94,7 +99,8 @@ export function createParty(bridge) {
   const control = (on) => (E().set("ctrl", !!on), on || E().set("act", null), on || E().still("sq"));
 
   const sound = createPartySound(E);
-  const late = (p) => p.scene === "P6" || p.scene === "P7" || p.scene === "P8a" || p.scene === "P8b" || p.scene === "P8c";
+  // (P9: Mops cleans the hall; P9b: the talk at home after it, with truth or fib: party-cleanup.js)
+  const late = (p) => p.scene === "P6" || p.scene === "P7" || p.scene === "P8a" || p.scene === "P8b" || p.scene === "P8c" || p.scene === "P9" || p.scene === "P9b";
 
   // ---------- the cast ----------
   function freshPeople() {
@@ -372,6 +378,32 @@ export function createParty(bridge) {
       opts.restart && e.place("sq", DANCE_SPOT.x, DANCE_SPOT.y + 10);
       e.set("sqPose", "stand");
       return endings.startClosing(p);
+    }
+    if (id === "P9" || id === "P9b") {
+      // P9 (↺ in the cleanup): Mops at the hallway doorway, the hall as the party left it. P9b (↺ in the talk after
+      // it): at home, Mops coming in with what he found, then the talk with truth or fib.
+      const was = P() || {};
+      const p = base(id, { phase: "end", flyer: "bed" });
+      Object.values(p.outfit).some(Boolean) || (p.outfit = { ...JUMP_OUTFIT });
+      Object.assign(p, { lostPieces: (was.lostPieces || []).slice(), song: 2, done: was.done || {}, snacks: was.snacks || null, flying: [], fallen: (was.fallen || []).slice(), shot: was.shot || null, cleanFrom: was.cleanFrom || "close", paCalled: true });
+      save(p);
+      if (id === "P9" || !was.clean) return cleanup.restart(p);
+      p.clean = { ...was.clean };
+      e.room() !== "closet" && e.enterRoom("closet", "Q1");
+      e.set("scene", "Q1");
+      e.set("wardrobe", "closed");
+      e.switchTo("sq", "");
+      e.set("moPose", "hidden");
+      e.place("mops", HOME_ROOM.mopsDoor.x, HOME_ROOM.mopsDoor.y + 6);
+      // (where Mops left him: under the bed after the alarm, else standing in the room)
+      const bed = p.cleanFrom === "alarm";
+      bed ? e.place("sq", HOME_ROOM.bed.x, HOME_ROOM.bed.y) : e.place("sq", HOME_ROOM.inside.x - 60, HOME_ROOM.inside.y + 30);
+      e.face("sq", 1);
+      e.set("sqPose", bed ? "under" : "stand");
+      p.pose = bed ? "bed" : "stand";
+      control(false);
+      chip("");
+      return void e.queue(homeSteps(p));
     }
     if (id === "P5") {
       // the band plays on, heard muffled through his door
@@ -719,6 +751,8 @@ export function createParty(bridge) {
       // his own door takes him home early (party-home-early.js)
       if (inHallNow && p.scene === "P6" && !p.alarm && !paused && homeEarly.hallTick(p, s, free)) return;
       paused || endings.tick(p, dt, s, free);
+      // P9: Mops cleans the hall (party-cleanup.js)
+      p.scene === "P9" && inHallNow && cleanup.tick(p, dt, free && !paused);
       if (!live()) return;
     }
     late(p) && (afterAlarm.tick(p, dt), homeEarly.tick(p, dt));
@@ -797,6 +831,8 @@ export function createParty(bridge) {
     }
     // P8b, closing time: after the speaker's line his door takes him home on his own (party-endings.js; Brian #50)
     p.scene === "P8b" && room === "hall" && p.close && !["cheer", "dim", "speak", "home"].includes(p.close.phase) && out.push(doorBox("go-home", HALL_DOOR_OPENING));
+    // P9: WRING · beard at the bucket, PICK UP at the find, his doorway home (Mops; party-cleanup.js)
+    p.scene === "P9" && out.push(...cleanup.spots(p));
     // P8c (home early): OPEN · closet takes the costume off.
     out.push(...homeEarly.spots(p));
     // P7: both plants hide him while the alarm rings; his door is the way home, alarm or not.
@@ -809,6 +845,7 @@ export function createParty(bridge) {
   // The one thing outlined (only what the kid must go to next).
   function goalId(p, room) {
     if (!E().get("ctrl")) return "";
+    if (p.scene === "P9") return room === "hall" ? cleanup.goal(p) : "";
     if (p.alarm) return room === "closet" ? (p.pose === "bed" ? "" : "hidebed") : p.pose === "hidden" ? "" : "go-home";
     if (p.scene === "P1" && room === "closet") return "peek";
     if (p.scene === "P2" && p.pose === "stand") return "hide";
@@ -839,7 +876,7 @@ export function createParty(bridge) {
   }
 
   // ---------- the pieces ----------
-  const helpers = { E, P, sq, say, chip, control, startScene, picture, homeRoom: HOME_ROOM, homeThings: HOME_THINGS, pace: PACE, firstAlarm, homeDoor: HOME_DOOR, sound, afterAlarm: () => afterAlarm, flyerHome: () => flyerHome() };
+  const helpers = { E, P, sq, say, chip, control, startScene, picture, homeRoom: HOME_ROOM, homeThings: HOME_THINGS, pace: PACE, firstAlarm, homeDoor: HOME_DOOR, sound, afterAlarm: () => afterAlarm, flyerHome: () => flyerHome(), cleanup: () => cleanup, askTruth: () => askTruth() };
   const capture = createCapture(helpers);
   const freePlay = createFreePlay({
     ...helpers,
@@ -869,7 +906,58 @@ export function createParty(bridge) {
   };
   const afterAlarm = createAfterAlarm({ ...helpers, guests: bridge.guests, finish, resume: (p) => freePlay.resume(p), homeEarly: () => homeEarly });
   const homeEarly = createHomeEarly({ ...helpers, resume: (p) => freePlay.resume(p) });
-  const views = createView({ ...helpers, guests: bridge.guests, cones, glancePhase, personAt, spots, goalId });
+  // Mops is home from cleaning: Squatch out from under the bed if he hid there, then the talk with truth or fib.
+  function homeSteps(p) {
+    const e = E();
+    p.doorHeard = true;
+    return [
+      e.run(() => {
+        const q = P();
+        if (q.pose !== "bed") return;
+        e.set("sqPose", "stand");
+        q.pose = "stand";
+        e.place("sq", HOME_ROOM.inFront.x, HOME_ROOM.inFront.y + 40);
+        sound.one("underBed");
+      }),
+      ...afterAlarm.talk.steps({ ask: (p.clean && p.clean.find && p.clean.find.kind) || "fur" }),
+    ];
+  }
+  const cleanup = createCleanup({ ...helpers, home: (p) => homeSteps(p) });
+  // Truth or fib (party-truth.js): the two big buttons on the whole screen; the talk waits for `truthPick`.
+  function askTruth() {
+    const p = P(),
+      e = E();
+    p.truth = { pressed: "" };
+    p.truthPick = "";
+    const art = { squatch: (ctx, x, y, scale) => e.drawSquatch(ctx, x, y, scale, { f: 1 }) };
+    openFullScreen({
+      label: "truth or fib",
+      restart: () => e.restartPart(),
+      draw(ctx, w, hgt, t) {
+        const q = P();
+        q && q.truth && drawTruthChoice(ctx, truthLayout(w, hgt), q.truth, art, t);
+      },
+      pointer(kind, x, y) {
+        const q = P(),
+          o = fullScreenOpen();
+        if (!q || !q.truth || !o) return;
+        const b = truthButtonAt(truthLayout(o.size().w, o.size().h), x, y);
+        if (kind === "down") q.truth.pressed = b;
+        else if (kind === "up") {
+          const was = q.truth.pressed;
+          q.truth.pressed = "";
+          b && b === was && pickTruth(q, b);
+        }
+      },
+    });
+  }
+  function pickTruth(p, id) {
+    closeFullScreen();
+    p.truth = null;
+    p.truthPick = id;
+    sound.one("pop");
+  }
+  const views = createView({ ...helpers, guests: bridge.guests, cones, glancePhase, personAt, spots, goalId, cleanLit: (p) => cleanup.litBox(p) });
   const eyesAt = (p, t) => views.eyesAt(p, t);
   const seenByNow = (p) => p.seenBy;
 
@@ -900,7 +988,7 @@ export function createParty(bridge) {
       if (!p || p.alarm) return "";
       if (p.scene === "P2" && E().room() === "hall" && !p.band) return "sneak";
       // (home early, the party still on: the band through his door, not the home music)
-      if ((p.scene === "P8a" || p.scene === "P8b" || p.scene === "P8c") && E().room() === "closet" && !partyOnNow(p)) return "home";
+      if ((p.scene === "P8a" || p.scene === "P8b" || p.scene === "P8c" || p.scene === "P9b") && E().room() === "closet" && !partyOnNow(p)) return "home";
       return "";
     },
     /** The guest saying a guest's line now (party state `talker`), or "" (speech-voice.js, each guest's voice). */
@@ -921,7 +1009,8 @@ export function createParty(bridge) {
       const p = live();
       if (!p) return null;
       const out = { isfred: { x: Math.round(p.isfred.x), y: Math.round(p.isfred.y), walking: !!p.isfred.walking, bend: p.isfred.bend || 0 }, flyerGlow: !!p.flyerGlow, bannerGlow: p.glow || 0, bandState: p.bandOff ? "off" : p.bandAt && p.bandAt.some((b) => b.walk) ? "walking" : "on", bandPlaying: !!p.band, bandAt: p.bandAt ? p.bandAt.map((b) => ({ x: Math.round(b.x), y: Math.round(b.y) })) : null, grab: p.grab == null ? null : p.grab, put: p.put == null ? null : p.put, scene: p.scene, phase: p.phase, pose: p.pose, alarm: p.alarm ? p.alarm.phase : "", seenBy: seenByNow(p), glance: p.scene === "P2" ? glancePhase(p).phase : "", outfit: { ...p.outfit }, flyer: p.flyer, tufts: ventTufts(p), eyes: p.pose === "hidden" ? eyesAt(p, 0) : null, lost: !!p.lost, sound: sound.debug() };
-      return late(p) ? { ...out, ...lateState(p, { scale: E().hallSizes().squatch, guardTall: views.homeGuardHeight() }) } : out;
+      const cl = p.clean || p.truthPick ? { clean: cleanup.state(p), truthPick: p.truthPick || "", truthOpen: !!p.truth, holdUp: p.holdUp ? p.holdUp.kind : "", keptPhoto: p.keptPhoto || "", player: E().player() } : {};
+      return late(p) ? { ...out, ...lateState(p, { scale: E().hallSizes().squatch, guardTall: views.homeGuardHeight() }), ...cl } : out;
     },
     /** The outfit he chose. */
     outfit() {
@@ -950,12 +1039,13 @@ export function createParty(bridge) {
     /** A finger in the snack close-up (game positions): true when the close-up took it. */
     pointer(kind, x, y) {
       const p = live();
+      if (p && p.clean && p.clean.close) return cleanup.pointer(p, kind, x, y);
       return !!p && freePlay.pointer(p, kind, x, y);
     },
     /** True while the snack close-up is open (taps go to it). */
     cutOpen() {
       const p = live();
-      return !!(p && p.snack);
+      return !!(p && (p.snack || (p.clean && p.clean.close)));
     },
     solids,
     bounds() {
@@ -968,6 +1058,12 @@ export function createParty(bridge) {
       if (p && who === "guard" && E().room() === "closet" && p.alarm && p.alarm.homeGuard) return { x: p.alarm.homeGuard.x, y: p.alarm.homeGuard.y - views.homeGuardHeight() - 6 };
       if (!p || E().room() !== "hall") return null;
       const adult = E().hallSizes().adult;
+      // the cleanup: over Mops's head (the hall draws him big); in the Polaroid close-up, under the photo
+      if (who === "mops" && p.scene === "P9") {
+        if (p.clean && p.clean.close) return { x: 480, y: 612 };
+        const m = E().pos("mops");
+        return { x: m.x, y: m.y - E().hallSizes().squatch * 1.15 * 47 - 6 };
+      }
       if (who === "official") return { x: p.isfred.x, y: p.isfred.y - adult - 6 };
       if (who === "band") return { x: CAST.band[1].x, y: CAST.band[1].y - adult - 6 };
       if (who === "sq" && p.pose === "hidden") return eyesAt(p, 0);
@@ -989,6 +1085,7 @@ export function createParty(bridge) {
       if (!p || !at) return null;
       if (who === "sq" && p.pose === "hidden") return HALL.plants.find((q) => q.id === (p.hideAt || "middle")).leaves;
       if (who === "pa") return HALL_SPEAKER;
+      if (who === "mops" && p.scene === "P9") return p.clean && p.clean.close ? { x0: 440, x1: 520, y0: 612, y1: 636 } : { x0: at.x - 22, x1: at.x + 22, y0: at.y + 6, y1: at.y + 50 };
       if (who === "sq" && p.pose === "peek") return { x0: HALL.homeDoor.x0, x1: HALL.homeDoor.x1, y0: HALL.homeDoor.y0 - 20, y1: HALL.homeDoor.y1 };
       if (who === "sq" && p.snack) return { x0: at.x - 24, x1: at.x + 24, y0: at.y + 30, y1: at.y + 90 };
       // a person: `at` is just over the head; the head is the top fifth of a grown-up's height
@@ -1036,6 +1133,29 @@ export function createParty(bridge) {
     /** Tests and the robot: the "more to find" card's buttons on the screen, while it is up; and pressing one. */
     cardTargets() {
       return live() ? afterAlarm.cardTargets() : null;
+    },
+    /** Tests and the robot: the truth-or-fib buttons on the screen while they are up ({ tell, fib }), or null. */
+    truthTargets() {
+      const p = live(),
+        o = fullScreenOpen();
+      if (!p || !p.truth || !o) return null;
+      const L = truthLayout(o.size().w, o.size().h);
+      return Object.fromEntries(L.buttons.map((b) => [b.id, { x: b.x + b.w / 2, y: b.y + b.h / 2 }]));
+    },
+    /** Tests that tick the game themselves: answers truth or fib ("tell" or "fib"). */
+    truthChoose(id) {
+      const p = live();
+      p && p.truth && pickTruth(p, id);
+    },
+    /** Tests about the talk or the TV: the cleanup done at once and Mops on his way home (party-cleanup.js). True when it did. */
+    finishCleanup() {
+      const p = live();
+      return !!p && p.scene === "P9" && cleanup.finish(p);
+    },
+    /** Tests only: the hall all clean at once (party-cleanup.js). */
+    cleanAll() {
+      const p = live();
+      p && cleanup.cleanAll(p);
     },
     /** Tests that tick the game themselves (no finger): answers the card, "back" or "keep". */
     cardChoose(id) {

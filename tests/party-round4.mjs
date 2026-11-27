@@ -125,6 +125,14 @@ async function toCard(page, before) {
     await next(page);
   });
 }
+// Since the story pass 28-52, E2: "Keep going" goes on into Mops cleaning the hall (P9), then home and truth or fib
+// (P9b). This suite is about the talk and the TV: on the way it taps each line and card, has the cleanup done at once
+// (tests/party-cleanup.mjs plays it), and answers truth or fib with `pick`.
+const onTheWay = (page, pick = "fib") => async (q) => {
+  if (q.cur === "bub" || q.cur === "card") return void (await sleep(120), await next(page));
+  if (q.now && q.now.scene === "P9" && q.ctrl && !q.cur) return void (await page.evaluate(() => window.SSQ.beat("ch1-party").finishCleanup()));
+  if (q.now && q.now.truthOpen) await page.evaluate((id) => window.SSQ.beat("ch1-party").truthChoose(id), pick);
+};
 // Lines shown in order until `stop`, tapping NEXT on each: [who, text, name over the bubble].
 async function readLines(page, stop, ms = 40000) {
   const seen = [];
@@ -276,7 +284,12 @@ const GUARD_TALK = [
   ["mops", L("mops-thumbs")],
 ];
 const HOME_TALK = [
+  ["mops", L("mops-squatch")],
+  ["mops", L("mops-did-you-go")],
+  ["sq", L("sq-stayed-in")],
   ["mops", L("mops-went")],
+  ["sq", L("sq-sorry-fib")],
+  ["mops", L("mops-never-hide")],
   ["sq", L("sq-someone")],
   ["sq", L("sq-except")],
   ["mops", L("mops-have-me")],
@@ -320,7 +333,7 @@ const atButton = (page, hex, r = 4, tol = 12) => pixels(page, { x0: after.TV.but
 g.check(
   "the lines are Brian's, word for word",
   JSON.stringify(GUARD_TALK.map((l) => l[1])) === JSON.stringify(["Someone pulled the fur alarm.", "They saw someone run in here.", "Sure. I'm hiding a Wookiee in here.", "Ha! You're right. That's ridiculous.", "You coming to poker night?", "You know I don't have opposable thumbs."]) &&
-    JSON.stringify(HOME_TALK.map((l) => l[1])) === JSON.stringify(["You went to the party.", "Everyone out there has someone.", "Everyone except me.", "You have me."]),
+    JSON.stringify(HOME_TALK.slice(-4).map((l) => l[1])) === JSON.stringify(["You never have to hide from me.", "Everyone out there has someone.", "Everyone except me.", "You have me."]),
 );
 // The talk at home after the hat (Brian 2026-11-25, "Worry comes after You have me"): his worry, flyer held up, and
 // Mops's answer, then the two questions.
@@ -340,8 +353,9 @@ async function keepGoing(name, outfit, lost) {
   s = await until(page, (q) => !q.full, 2000);
   out.closed = !!s && s.now.scene === "P8a";
   out.noNote = !!s && s.note === 0;
-  // he comes out and fetches the flyer from by the door (it glows), then Mops looks at him
-  s = await until(page, (q) => q.now && q.now.flyer === "take", 20000);
+  // Mops cleans the hall first (done at once here), then he comes home; Squatch comes out and fetches the flyer from
+  // his bed (it glows), then Mops looks at him
+  s = await until(page, (q) => q.now && q.now.flyer === "take", 40000, onTheWay(page));
   out.fetch = !!s && s.now.flyerGlow !== undefined;
   name && (await still(page, `r4-keep-${name}-takes-the-flyer`));
   s = await until(page, (q) => q.now.mopsHearts, 20000);
@@ -349,7 +363,10 @@ async function keepGoing(name, outfit, lost) {
   out.look = !!s && s.cur !== "bub" && Math.abs(s.mo.x - s.x) < 260 && s.now.flyer === "paw";
   await sleep(300);
   name && (await still(page, `r4-keep-${name}-mops-looks`));
-  out.home = await readLines(page, (q, seen) => seen.length >= 4 && q.cur !== "bub");
+  // Mops asks, Squatch fibs (the truth's road is tests/party-cleanup.mjs), and the lines after it
+  const asked = await readLines(page, (q) => q.now && q.now.truthOpen);
+  await page.evaluate(() => window.SSQ.beat("ch1-party").truthChoose("fib"));
+  out.home = asked.concat(await readLines(page, (q, seen) => seen.length >= HOME_TALK.length - asked.length && q.cur !== "bub"));
   // the lift (or the pat) plays itself: no taps from here
   s = await until(page, (q) => q.now && q.now.lift && q.now.lift.k > 0.45, 8000);
   out.lift = s ? s.now.lift : null;
@@ -415,7 +432,7 @@ async function keepGoing(name, outfit, lost) {
   g.check("over the guard's bubble, a name (\"A guard\"), never blank; over Mops's, \"Mops\"", o.talk.filter((l) => l[0] === "mops").every((l) => l[2] === "Mops") && o.talk.filter((l) => l[0] === "guard").every((l) => l[2] === "A guard"), o.talk.map((l) => l[2]));
   g.check("a tap on \"Keep going\" closes the card: the ending (P8a), and no \"They lost you.\" was said", o.closed && o.noNote);
   g.check("Squatch comes out still in costume and takes the flyer from his bed; Mops turns to him and hearts float up (no glow; Brian 2026-11-26, #48), before any line", o.fetch && o.cameOut && o.look, [o.fetch, o.cameOut, o.look]);
-  g.check("Mops and Squatch: the four lines, word for word, in order", JSON.stringify(o.home.map((l) => [l[0], l[1]])) === JSON.stringify(HOME_TALK), o.home);
+  g.check("Mops and Squatch: Mops asks, Squatch fibs (story pass 28-52, E2), and the approved lines after it, word for word, in order", JSON.stringify(o.home.map((l) => [l[0], l[1]])) === JSON.stringify(HOME_TALK), o.home);
   g.check("with no words, Mops lifts the hat off him: it leaves his head and plays itself", o.lift && o.lift.id === "tophat" && o.liftNoBubble && o.wornDuring && o.wornDuring.head === "tophat", [o.lift, o.liftNoBubble]);
   g.check("the hat he lifted off is set down on the floor between them, and stays there when Mops walks to the TV", o.hatDown && o.atTv.hatStayed, [o.hatDown, o.atTv]);
   g.check("after the hat: \"But look. Robots are coming to do your job.\" and \"Nobody is replacing me. They need me here.\", word for word, each from its speaker", JSON.stringify(o.robots.map((l) => [l[0], l[1]])) === JSON.stringify(ROBOT_TALK), o.robots);
@@ -453,41 +470,41 @@ async function keepGoing(name, outfit, lost) {
   await page.evaluate(() => window.__ss.sectionReset());
   await sleep(600);
   s = await st(page);
-  g.check("↺ in the middle of the talk: \"Keep going\" starts over from under the bed (no line up, the flyer back under the bed)", s.now.scene === "P8a" && s.cur !== "bub" && s.mo.pose === "stand" && !s.now.alarm && (s.now.pose === "bed" || s.now.flyer === "bed"), [s.now.scene, s.now.pose, s.cur, s.mo.pose, s.now.flyer]);
+  g.check("↺ at its first line: \"Keep going\" starts over from under the bed (no line up but the wall speaker's first one, the flyer back under the bed)", s.now.scene === "P8a" && (s.cur !== "bub" || s.text === L("pa-mops-hall")) && s.mo.pose === "stand" && !s.now.alarm && (s.now.pose === "bed" || s.now.flyer === "bed"), [s.now.scene, s.now.pose, s.cur, s.mo.pose, s.now.flyer]);
   s = await until(page, (q) => q.cur === "bub", 30000);
-  g.check("and it plays again: Mops's first line", !!s && s.text === L("mops-went"), s && s.text);
+  g.check("and it plays again: its first line, the wall speaker calling Mops to the hall (story pass 28-52, E2)", !!s && s.text === L("pa-mops-hall"), s && s.text);
   await page.close();
 }
 
 {
   // ↺ after the TV has come on: "Keep going" starts over with the TV off and no button drawn
   const { page } = await open("party:P8a");
-  let s = await until(page, (q) => q.now && q.now.tv && q.lit, 90000, async (q) => q.cur === "bub" && (await sleep(120), await next(page)));
+  let s = await until(page, (q) => q.now && q.now.tv && q.lit, 90000, onTheWay(page));
   g.check("(Keep going played through to the TV coming on)", !!s && s.lit && (await tvLit(page)), s && s.now.tv);
   await page.evaluate(() => window.__ss.sectionReset());
   await sleep(600);
   s = await st(page);
-  g.check("↺ once the TV is on: \"Keep going\" starts over from under the bed, the TV off again", s.now.scene === "P8a" && !s.lit && !s.now.tv && !s.now.lift && s.mo.pose === "stand" && (await tvDark(page)), [s.now.scene, s.lit, s.now.tv]);
+  g.check("↺ once the TV is on: the talk after the cleanup (P9b) starts over at home, the TV off again", s.now.scene === "P9b" && !s.lit && !s.now.tv && !s.now.lift && s.mo.pose === "stand" && (await tvDark(page)), [s.now.scene, s.lit, s.now.tv]);
   await page.close();
 }
 {
   // ↺ in the middle of the new part: while the hat is being set down, and again in the middle of the horn press.
   // Each time "Keep going" starts over clean, and the third time it plays through to beat 20.
   const { page, errors } = await open("party:P8a");
-  const play = (stop, ms = 90000) => until(page, stop, ms, async (q) => q.cur === "bub" && (await sleep(120), await next(page)));
+  const play = (stop, ms = 90000) => until(page, stop, ms, onTheWay(page));
   let s = await play((q) => q.now && q.now.lift && q.now.lift.set != null && q.now.lift.set < 1);
   g.check("(the hat is on its way down to the floor)", !!s, s && s.now.lift);
   await page.evaluate(() => window.__ss.sectionReset());
   await sleep(600);
   s = await st(page);
-  g.check("↺ while the hat is being set down: \"Keep going\" starts over (nothing lifted, no TV, the flyer back under the bed)", s.now.scene === "P8a" && !s.now.lift && !s.now.tv && s.now.flyer === "bed", [s.now.pose, s.now.lift, s.now.tv, s.now.flyer]);
+  g.check("↺ while the hat is being set down: the talk at home (P9b) starts over (nothing lifted, no TV, the flyer back on the bed)", s.now.scene === "P9b" && !s.now.lift && !s.now.tv && s.now.flyer === "bed", [s.now.pose, s.now.lift, s.now.tv, s.now.flyer]);
   s = await play((q) => q.now && q.now.tv && q.now.tv.phase === "press" && q.now.tv.k > 0.1);
   g.check("(Mops is in the middle of the horn press)", !!s, s && s.now.tv);
   await page.evaluate(() => window.__ss.sectionReset());
   await sleep(600);
   s = await st(page);
   // (the talk starts at once: Mops steps from where he sent the guard off to his place beside the middle)
-  g.check("↺ in the middle of the horn press: it starts over, the TV off, Mops back where he sent the guard off (or stepping from there to his place for the talk)", s.now.scene === "P8a" && !s.now.lift && !s.now.tv && !s.lit && s.mo.x >= after.AFTER_SPOTS.mopsTalk.x - 2 && s.mo.x <= talk.TALK_SPOTS.sq.x + talk.TALK.beside + 2 && (await tvDark(page)), [s.now.pose, s.now.tv, s.mo]);
+  g.check("↺ in the middle of the horn press: the talk at home starts over, the TV off, Mops coming home through the door (or on his way in)", s.now.scene === "P9b" && !s.now.lift && !s.now.tv && !s.lit && s.mo.x >= talk.TALK_SPOTS.sq.x + talk.TALK.beside - 2 && (await tvDark(page)), [s.now.pose, s.now.tv, s.mo]);
   s = await play((q) => q.tv && (!q.now || q.now.scene === "done"), 120000);
   g.check("and played once more it runs clean to beat 20 (no left-over wait from the runs before)", !!s && errors.length === 0, [!!s, errors.slice(0, 2)]);
   await page.close();

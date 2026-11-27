@@ -3,20 +3,21 @@
 
 | Lines | Heading |
 | --- | --- |
-| 21–27 | # Chapter 1 lines for Brian |
-| 28–43 | ## Calendar revision, Nov 16 (PR 58, not live) |
-| 44–51 | ## Earlier chapter lines |
-| 52–66 | ## Goal chips |
-| 67–150 | ## What people say |
-| 151–162 | ## The snack's name (2026-11-26, question 86) |
-| 163–176 | ## Words painted on things |
-| 177–200 | ## Buttons |
-| 201–287 | ## Day 2 onward (beats 22–61), pending |
-| 288–295 | ## Ball hiding |
-| 296–303 | ## Off-screen lines, for Brian (playtest 12) |
-| 304–313 | ## Homework desk, approved Nov 16 |
-| 314–352 | ## Questions still open |
-| 353–378 | ## Day 1 stand-ins, pending |
+| 22–28 | # Chapter 1 lines for Brian |
+| 29–44 | ## Calendar revision, Nov 16 (PR 58, not live) |
+| 45–52 | ## Earlier chapter lines |
+| 53–67 | ## Goal chips |
+| 68–151 | ## What people say |
+| 152–163 | ## The snack's name (2026-11-26, question 86) |
+| 164–177 | ## Words painted on things |
+| 178–201 | ## Buttons |
+| 202–288 | ## Day 2 onward (beats 22–61), pending |
+| 289–296 | ## Ball hiding |
+| 297–304 | ## Off-screen lines, for Brian (playtest 12) |
+| 305–314 | ## Homework desk, approved Nov 16 |
+| 315–353 | ## Questions still open |
+| 354–391 | ## After the party: the cleanup and truth or fib (story pass 28-52, E2), pending |
+| 392–417 | ## Day 1 stand-ins, pending |
 <!-- /section-index -->
 # Chapter 1 lines for Brian
 
@@ -349,6 +350,44 @@ Layout for that build: the party hall exit is in the left end wall. The loading 
 R49 is in the game. Squatch goes to the party alone and hides it. Mops is never there. No robots are there, because the delegation is only announced. Guests are drawn at the same size as the game's people. R52: "You have me" is not said at the party. The disguise comes off if the plant, the vent, or the guard takes it, or when a guest says "Cool hat!" after 120 seconds of party play. That timer is COOL_HAT_SECONDS. Free-play moments are the list CH1_PARTY_FREE, so more can be added there. R58 and R59: a kid lets go of a balloon, gasps with a ! and points up. The balloon wobbles, glows while it can be grabbed, and takes about 6 seconds to reach the ceiling (R59, approved). One jump in reach grabs it. Walking it back, the kid goes wide-eyed, smiles, holds a finger to the lips, and gives a thumbs-up, with no words, and the disguise stays. Keeping it makes the kid yell "Scary Wookiee!" (row 79, NEEDS BRIAN) and starts the FUR alarm and the walk home. Letting it hit the ceiling only makes the kid sad. R60: the octopus says "*hic* Fellow tourist!" (row 80, NEEDS BRIAN). One hug tugs the hat. A second hug knocks the disguise off. A photo in the corner gives PHOTO_BONUS points if Squatch is in the shot. That amount is 25, approved by Brian on 2026-11-09, and is not drawn. The third snack spills the table. Guests look away for SNACK_LOOK_SECONDS (4), which Brian approved on 2026-11-09, and he can hide in the plant. The pair hunt is not built. R61: after the party the balloon stays in the hall. A miss stays on the ceiling. Giving it back or keeping it ties it to the plant by the kid, because he does not take it home. That state is in the save. The last hall visit pops it once, with "POP!" (row 81, NEEDS BRIAN) and a soft pop. Nobody reacts and the game does not pause.
 
 R50 is in the game. When Mops and the disguised Squatch leave, the manager is not at the ship. There is no boarding chase and no "Mops, it's a mistake!" After they leave, the office cutscene is R54, rows 63, 64, 68, 69, and 41, in that order. All five are NEEDS BRIAN. The name on the robot's bubble is "Robot" (row 67, NEEDS BRIAN), not Security. Mops is not in that cutscene. The robots have arrived by then.
+
+## After the party: the cleanup and truth or fib (story pass 28-52, E2), pending
+
+Brian, story pass 28-52, E2/E4 (2026-11-26). Numbered with the party's lines in `docs/PARTY-LINES-FOR-BRIAN.md` (rows 89 to 119, where each one appears); all new ones need your yes.
+
+| Party # | Who | Words | Status |
+| --- | --- | --- | --- |
+| 89 | speaker | Ganitor Mops to the party hall. | approved (reused) |
+| 90 | mops | Stay in here. | approved (reused) |
+| 91 | card | Mops cleans up the party hall. | needs your yes |
+| 92 | chip | Mops: mop the party hall | needs your yes |
+| 93 | chip | Mops: wring your beard at the bucket | needs your yes |
+| 94 | button | WRING · beard | needs your yes |
+| 95 | mops | Fur? | needs your yes |
+| 96 | mops | No, no, no. | needs your yes |
+| 97 | chip | Mops: mop up the fur | needs your yes |
+| 98 | mops | Oh no. | needs your yes |
+| 99 | mops | Nobody saw that. | needs your yes |
+| 100 | button | PICK UP · photo | needs your yes |
+| 101 | button | PICK UP · hat | needs your yes |
+| 102 | button | PICK UP · fur | needs your yes |
+| 103 | mops | That's MY shirt. | needs your yes |
+| 104 | mops | Weee...?! | needs your yes |
+| 105 | mops | Squatch. | needs your yes |
+| 106 | mops | That's MY hat. | needs your yes |
+| 107 | badge | Spotless! | needs your yes |
+| 108 | chip | Mops: go home | needs your yes |
+| 109 | card | Mops comes home. | needs your yes |
+| 110 | mops | Did you go to the party? | needs your yes |
+| 111 | button | TELL · the truth | needs your yes |
+| 112 | button | FIB · "I stayed in" | needs your yes |
+| 113 | sq | Yes. I went. | needs your yes |
+| 114 | sq | I just wanted to dance. | needs your yes |
+| 115 | mops | I know. | needs your yes |
+| 116 | mops | Nice shirt. | needs your yes |
+| 117 | sq | No. I stayed in here. | needs your yes |
+| 118 | sq | ...I'm sorry I fibbed. | needs your yes |
+| 119 | mops | You never have to hide from me. | needs your yes |
 
 ## Day 1 stand-ins, pending
 
