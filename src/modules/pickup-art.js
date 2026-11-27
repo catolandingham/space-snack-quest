@@ -82,7 +82,7 @@ export function drawFloorPatch(ctx, b, at) {
   ctx.fillRect(b.x0, b.y0, b.x1 - b.x0, b.y1 - b.y0);
   ctx.restore();
 }
-// The family stamp's width for its height (crate-stamp.js draws it from its left edge; measured once, drawn unseen).
+// The family stamp's width for its height (crate-stamp.js draws it from its left edge; measured once, off screen).
 let pkStampRatio = 0;
 /** His crate on its pallet: the worn family stamp (crate-stamp.js, the one stamp layer), its label once it is on, the bucket on top, the lid. */
 export function drawPkCrate(ctx, cx, bottom, k, { label = false, bucket = false, open = 0, eyes = false, glow = 0 } = {}) {
@@ -111,10 +111,9 @@ export function drawPkCrate(ctx, cx, bottom, k, { label = false, bucket = false,
   // it out in the evening of Day 2 (39b)
   const sh = 18 * k;
   if (!pkStampRatio) {
-    ctx.save();
-    ctx.globalAlpha = 0;
-    pkStampRatio = drawFamilyStampAt(ctx, 0, 0, 100, { crayon: 0 }).end / 100 || 4.6;
-    ctx.restore();
+    // (measured on a canvas of its own: the stamp sets its own transparency, so it would show on the game's)
+    const scratch = typeof document !== "undefined" ? document.createElement("canvas").getContext("2d") : null;
+    pkStampRatio = (scratch && drawFamilyStampAt(scratch, 0, 0, 100, { crayon: 0 }).end / 100) || 4.6;
   }
   drawFamilyStampAt(ctx, cx - (pkStampRatio * sh) / 2, y0 + h * 0.3 + sh * 0.8, sh, { crayon: 0 });
   // the label: the same tag as last week's crate

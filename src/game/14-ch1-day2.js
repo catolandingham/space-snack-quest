@@ -205,8 +205,8 @@
         (n.ch1Wide = !1),
         (n.ch1Morning = null),
         (n.ch1HomeMorning = null),
-        (n.ch1Lunch = null), (n.ch1Bay = null),
-        (n.ch1Evening = null),
+        (n.ch1Lunch = null),
+        (n.ch1Bay = null),
         (n.ch1Escape = null),
         (n.ch1Pickup = null),
         (n.ch1Chip = ""));
