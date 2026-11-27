@@ -15,6 +15,7 @@ The game paints each one, scaled to the 960×640 picture, as the room background
 | `delivery-room-empty-day-noship-v2.png` | Loading bay, day, no ship, so no scanner arch. |
 | `delivery-room-empty-night-v2.png` | Loading bay at night. |
 | `delivery-room-empty-pickup-v3.png` | Loading bay on pickup day. |
+| `vent-room-empty-v1.png` | Inside the big vent (Mops's secret room, beat 48): the grille on the left, the IDEAS FOR GUARDIANS board, the detective wall (MARS crossed off, the letter stamped NO), the TOYS bin, the desk and its lamp (off). No one in it, nothing on the desk. v1 (Brian, 2026-11-26, notes page question 56: a locked, cleaned-up vent room; drawn by `tools/vent-room-picture.mjs` from `escape-art.js` drawVentRoomPicture). The lamp's light, the things on the desk, the pink slip, Squatch's eyes at the grille and Mops are drawn on top (`src/modules/escape.js`). |
 
 Layers the game draws over these pictures (the files themselves unchanged), each with Brian's yes:
 - Mops's mop bucket over the home room's painted bucket (`src/modules/mop-bucket.js`; Brian 2026-11-26, "Let's go with it moving forward").

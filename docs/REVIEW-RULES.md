@@ -3,31 +3,33 @@
 
 | Lines | Heading |
 | --- | --- |
-| 32–35 | # Review rules |
-| 36–87 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
-| 88–90 | ## Techniques |
-| 91–93 | ## Mistake: locked art was redrawn |
-| 94–98 | ## Mistake: optional inspection interrupted getting out of bed |
-| 99–101 | ## Mistake: a big doc's section index went stale |
-| 102–104 | ## Mistake: a rebuilt beat forgot the step restart |
-| 105–107 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
-| 108–110 | ## Mistake: a killed run was read as a failing test |
-| 111–113 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
-| 114–116 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
-| 117–123 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
-| 124–131 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
-| 132–148 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
-| 149–161 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
-| 162–164 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
-| 165–167 | ## Standing rule: nobody walks through furniture (Brian, 2026-11-26) |
-| 168–176 | ## Mistakes caught building the morning sound (2026-11-24) |
-| 177–188 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
-| 189–200 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
-| 201–214 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
-| 215–221 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
-| 222–232 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
-| 233–240 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
-| 241–246 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
+| 34–37 | # Review rules |
+| 38–89 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
+| 90–92 | ## Techniques |
+| 93–95 | ## Mistake: locked art was redrawn |
+| 96–100 | ## Mistake: optional inspection interrupted getting out of bed |
+| 101–103 | ## Mistake: a big doc's section index went stale |
+| 104–106 | ## Mistake: a rebuilt beat forgot the step restart |
+| 107–109 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
+| 110–112 | ## Mistake: a killed run was read as a failing test |
+| 113–115 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
+| 116–118 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
+| 119–125 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
+| 126–133 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
+| 134–150 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
+| 151–163 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
+| 164–166 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
+| 167–169 | ## Standing rule: nobody walks through furniture (Brian, 2026-11-26) |
+| 170–178 | ## Mistakes caught building the morning sound (2026-11-24) |
+| 179–190 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
+| 191–202 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
+| 203–216 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
+| 217–223 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
+| 224–234 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
+| 235–244 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
+| 245–250 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
+| 251–259 | ## Mistakes caught building the escape (2026-11-26) |
+| 260–270 | ## Mistakes Brian's videos of the escape caught (2026-11-26) |
 <!-- /section-index -->
 # Review rules
 
@@ -245,3 +247,23 @@ His note on the home morning (video note 0:18): "he kind of glitches through the
 - Sight was tested at one point a quarter of the way up Squatch while he is drawn about 85 tall, so a cone drawn across his head did not see him ("It looks like he's right in the octopus' cone, what am I missing??"). What a cone is drawn on is what it sees: sight tests his whole drawn outline (`party-watch.js` `coneEdge`), and `tests/party-showing6.mjs` checks the drawn cone against his drawn pixels. A change to sight re-checks every layout built on it (P2's glancer, P4's sweeps, the guards' reach).
 - Guards walked straight from point to point, through a plant pot. Anyone who walks a route round the room goes round its furniture (`guardStep`), and a route's whole walk is checked step by step (`tests/standing-spots.mjs`), not only where it stops.
 - A wait was tied to the end of a song (the photo after the dance, 28 s of nothing). After an action ends, the next beat starts within about a second, or the wait is shown.
+
+## Mistakes caught building the escape (2026-11-26)
+
+- Mops walked into the office and vanished: the office's own drawing (12-ch1-redesign.js drawCh1OfficeRoom) draws only Squatch unless the old Isfred flag is on. When a beat moves someone into a room another drawing owns, check that drawing draws them, and test their drawn pixels (they go when he is hidden).
+- The night robot's sight tested one point above his feet while its cone was coloured by his whole outline, so the cone went yellow on him for most of a second with no reaction. Sight uses the same test as the drawing (`coneSees`), and a test checks every frame the drawn cone holds him.
+- Walks and a robot's run went in straight lines through the bay's bin and the mail room's wall. Every route is a list of corners in the place file, and a test walks each one step by step against the room's solids.
+- A wordless thought picture that plays by itself showed the pink sheet with its words at 6 to 8 game pixels. A picture that plays by itself has no words: draw things in it with their words left out.
+- Restart tests changed `debug().state`, a JSON copy, so they changed nothing in the game and passed for nothing. A test that changes a beat's state changes the live game-state field.
+- New art helpers (`rr`, `paint`, `words`, `clamp`, `INK`...) reused top-level names other modules use; esbuild renames them. Give a new module's top-level names its own prefix (`es...`).
+
+## Mistakes Brian's videos of the escape caught (2026-11-26)
+
+- Walks were checked against the older program's solids, which in the loading bay did not include its walkway (the ramp and scanner frame), so people walked over it. A room's own things are listed as solids in the module that draws the room (`bay-watch.js` BAY_SOLIDS), and every scripted walk is a route of corners tested step by step against them.
+- A robot's sight used his outline at party-hall size while the bay draws him smaller, so it reacted while its drawn cone stopped short of him. Sight uses the points of him as he is drawn in that room (`bay-watch.js` coneOnBody), and a reaction waits until the drawn cone has been on him for half a second, a "?" filling in meanwhile.
+- A thought bubble was placed from a head height worked out with the wrong scale, so it sat on his face. A thought takes the box of the head as the room draws it and sits above it with a gap (`thought-place.js`), and a test measures the gap.
+- The ball by the vent sat on the mail room's wall line, so it looked like it was inside the wall. A hiding pose that sits on the floor gets a shadow, and its place is checked against the lines of the room behind and in front of it.
+- The independent review of round two found the scripted walk into the bay passing right through the patrolling robot, its cone yellow on him for seconds with no reaction: a scripted walk past a watcher is tested frame by frame with the watcher live (no cone on him, the distance between them), or the watcher waits out of the way while the story walks.
+- It also found a stale block left at the end of a test that overwrote the new block's results, so the new check could not fail: when a test block is replaced, delete the old one, and run the check once against the old code to see it fail.
+- Two numbers for one place (the ROLL button's circle 60, "at the vent" 50) left a kid rolled up at 55 with nothing happening: one number, used by both.
+

@@ -9,6 +9,7 @@
  * The older program must guard every use (`window.SSQ && ...`): if the module script ever fails to
  * load, the game must still run as it did.
  */
+import { drawTagStar } from "./escape-mopoff.js";
 import { outlineCanvas, OUTLINE } from "./outline.js";
 import { GOAL_TARGETS } from "./goal-targets.js";
 import { SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
@@ -25,7 +26,7 @@ import { quietLine } from "./party-lines.js";
 import { quietBedtimeLine } from "./bedtime-story-lines.js";
 import { drawHomeMopBucket, lastHomeMopBucket } from "./mop-bucket.js"; // (bedtime branch, 2026-11-26: Mops's mop bucket)
 import { adultPxFor, doorAdultPx } from "./room-sizes.js";
-import { drawGanitorTag, drawHallwayCrayon, ganitorTagsDrawn, hallwayCrayonDrawn } from "./ganitor.js";
+import { drawGanitorTag, drawHallwayCrayon, ganitorTagsDrawn, hallwayCrayonDrawn, GANITOR_TAG } from "./ganitor.js";
 import { singingNow } from "./music-rules.js";
 import { keepInSpan, seeCue, visitNow, playSound, soundsPlayed, hushNow, hushKey, unhush } from "./music-picks.js";
 import { drawBubbleTail } from "./bubble-tail.js";
@@ -38,7 +39,7 @@ import { drawCreditsButton, creditsTap, creditsShown } from "./credits.js";
  * to write another field stops with an error; tests/module-build.mjs checks the morning (and its home-alone
  * part) and the party night against this list.
  */
-export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1HomeMorning", "ch1Lunch", "ch1Sneak", "ch1Step", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe"]);
+export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1HomeMorning", "ch1Lunch", "ch1Escape", "ch1D", "ch1Night", "ch1Brochure", "ch1DidBall", "ch1Journey", "ch1Sneak", "ch1Step", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe"]);
 
 export function createBridge() {
   const beats = new Map();
@@ -117,7 +118,11 @@ export function createBridge() {
      * scale `scale` (game pixels to one of his units).
      */
     drawGanitorTag(ctx, scale) {
-      return drawGanitorTag(ctx, scale);
+      const drew = drawGanitorTag(ctx, scale);
+      // the gold star he won in the Mop-Off stays on his tag for the rest of the chapter (escape-mopoff.js)
+      const es = beats.get("ch1-escape");
+      es && es.tagStar && es.tagStar() && drawTagStar(ctx, GANITOR_TAG);
+      return drew;
     },
     /** Tests: Mops's name tags drawn since the last call ({ readable, scale }). */
     ganitorTags() {
@@ -230,11 +235,23 @@ export function createBridge() {
       return beats.get(id) || null;
     },
     /**
-     * The rebuilt beat that draws the party hall now (the party night, or the lunch sneak), or null: the older
-     * program asks it for the hall's picture, its walls (bounds) and what feet cannot walk through (solids).
+     * The rebuilt beat that draws the room on screen now (the party night or the lunch sneak in the hall; the escape in
+     * the loading bay and the vent), or null: the older program asks it for the room's picture, and in the hall for its
+     * walls (bounds) and what feet cannot walk through (solids).
      */
     hallOwner() {
       for (const b of beats.values()) if (b.ownsRoom && b.ownsRoom()) return b;
+      return null;
+    },
+    /**
+     * Where a speaker's bubble points, from the rebuilt beat that places it (the party night, the escape), or null.
+     * The older program asks this before its own places (60-frame-draw.js T5) and to know a speaker is drawn.
+     */
+    speakerAt(who) {
+      for (const b of beats.values()) {
+        const at = b.speakerAt && (!b.active || b.active()) ? b.speakerAt(who) : null;
+        if (at) return at;
+      }
       return null;
     },
     /** Ids of every rebuilt beat, in the order they were registered. */

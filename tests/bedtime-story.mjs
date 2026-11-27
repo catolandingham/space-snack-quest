@@ -274,7 +274,8 @@ g.check("the bleat clip loaded and started (its sound reached the effects level)
 // the morning song's line and Floating in Space call it directly; no other module asks for the bleat.
 const MODS = Object.fromEntries(readdirSync(join(root, "src", "modules")).filter((f) => f.endsWith(".js")).map((f) => [f, readFileSync(join(root, "src", "modules", f), "utf8")]));
 const askers = Object.keys(MODS).filter((f) => /"mops-bleat"/.test(MODS[f])).sort();
-g.check("the bleat is asked for only by the bedtime story, the morning song's bleat line and Floating in Space's gaps (and named in the music table)", JSON.stringify(askers) === JSON.stringify(["bedtime-story-sound.js", "home-music.js", "morning-sound.js", "music-picks.js"]), askers);
+// (and the escape's one bleat, escape.js: the brief of 2026-11-26)
+g.check("the bleat is asked for only by the bedtime story, the morning song's bleat line, Floating in Space's gaps and the escape's one bleat (and named in the music table)", JSON.stringify(askers) === JSON.stringify(["bedtime-story-sound.js", "escape.js", "home-music.js", "morning-sound.js", "music-picks.js"]), askers);
 g.check("window.SSQ.playSoundPick plays through music-picks.js playSound (no second sound system)", /playSoundPick\(name\)[\s\S]{0,200}playSound\(b\.ctx, b\.fx, name/.test(MODS["bridge.js"]));
 // The music (Brian's music table, 2026-11-26): bedtime plays Joe's theme with its singing (#37), nothing hard-coded.
 const PICKS = await import(join(root, "src", "modules", "music-picks.js"));

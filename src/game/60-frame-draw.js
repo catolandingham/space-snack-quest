@@ -18,6 +18,7 @@
         party && party.tick(l);
         hmBeat() && hmBeat().tick(l);
         luBeat() && luBeat().tick(l);
+        esBeat() && esBeat().tick(l);
       }
       (n.sqHop &&
         ((n.sqHop.t += l),
@@ -1148,8 +1149,8 @@
       // Over a morning close-up (Brian 31a) the speaker is where the close-up draws him.
       let close = n.cur && n.cur.over && window.SSQ && window.SSQ.beat("ch1-morning");
       if (close && close.closeUpSpeaker(l)) return close.closeUpSpeaker(l);
-      // The party night places its own speakers (Isfred beside him, the band, Squatch's eyes in the plant).
-      let at = partyBeat() && partyBeat().speakerAt(l);
+      // The party night and the escape place their own speakers (Isfred beside him, Squatch's eyes in the plant or the grille).
+      let at = window.SSQ && window.SSQ.speakerAt && window.SSQ.speakerAt(l);
       if (at) return at;
       let o = IA(l);
       if (o) return o;
@@ -2035,7 +2036,7 @@
     function drawRoom() {
       if (n.room === "office") return drawCh1OfficeRoom();
       // The party night's hall is the party module's drawing, on the locked picture.
-      if (n.room === "hall" && hallBeat() && hallBeat().drawRoom(e)) return;
+      if (hallBeat() && hallBeat().drawRoom(e)) return; // (and the escape's loading bay and vent)
       (n.room === "closet"
         ? (P2(), X2(), g5(), z2())
         : n.room === "deck"
@@ -2120,6 +2121,7 @@
         window.SSQ && window.SSQ.beat("ch1-bedtime-story") && window.SSQ.beat("ch1-bedtime-story").draw(e);
         hmBeat() && hmBeat().draw(e);
         luBeat() && luBeat().draw(e);
+        esBeat() && esBeat().draw(e);
         if (n.ch1Calendar) {
           drawCh1Calendar();
           return;
@@ -2268,8 +2270,8 @@
           N0() ? Cs() : skipStoryCards();
           return;
         }
-        if (n.ch1PadOn && (/^Digit[0-9]$/.test(l.code) || /^Numpad[0-9]$/.test(l.code))) {
-          ch1PadPress(l.code.replace(/\D/g, "").slice(-1));
+        if (esBeat() && esBeat().padOpen() && (/^Digit[0-9]$/.test(l.code) || /^Numpad[0-9]$/.test(l.code))) {
+          esBeat().key(l.code.replace(/\D/g, "").slice(-1)); // the office keypad (src/modules/escape.js)
           return;
         }
         if (l.code === "KeyM") {
