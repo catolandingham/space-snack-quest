@@ -170,7 +170,8 @@ g.check("the songs last COOL_HAT_SECONDS in all, and the pin is 180", free.COOL_
   const j2 = await watchJumps(page);
   g.check("the guests mill (at least three move somewhere new)", moved.length >= 3, moved);
   g.check("milling, nobody jumps", j2.jumps.length === 0, j2);
-  g.check("the band plays song 1 (the sound and the light)", s.now.song === 0 && (await played(page)).includes("song0"), s.now.song);
+  // (the band's track before he dances is Funky Chunk, the 2nd of the band's list: Brian's band order of 2026-11-26)
+  g.check("the band plays song 1 (the light), on Funky Chunk until he dances", s.now.song === 0 && (await played(page)).includes("song1"), s.now.song);
   g.check("no errors walking in", errors.length === 0, errors);
   await page.close();
 }
@@ -192,9 +193,11 @@ g.check("the songs last COOL_HAT_SECONDS in all, and the pin is 180", free.COOL_
   await watchStart(page);
   s = await until(page, (q) => q.now && q.now.scene === "P8b", 4000);
   await sleep(600);
+  // (first the cheer and the band's bow, then the lights a step darker: about 4.6 s before the speaker, Brian 2026-11-26)
+  const sp = await until(page, (q) => q.cur === "bub", 8000);
   const jc = await watchJumps(page);
   g.check("into closing time nobody jumps (the guests stay where they milled)", jc.jumps.length === 0, jc);
-  g.check("after the third song: closing time (P8b), the speaker's line", !!s && /party's over/.test(s.text), s && [s.now && s.now.scene, s.text]);
+  g.check("after the third song: closing time (P8b), the speaker's line", !!s && !!sp && /party's over/.test(sp.text), s && [s.now && s.now.scene, sp && sp.text]);
   await page.close();
 }
 {
@@ -408,8 +411,8 @@ const warningDiscs = (page, ms) =>
   await place(page, hall.HALL.vent.x + 30, hall.HALL.vent.y + 10);
   // (Brian 2026-11-25, showing-5 note 3, and R108: in disguise the vent sucks in his costume, a piece at a time)
   let s = await until(page, (q) => q.now.gone.length >= 1, 4000);
-  const heard = (await played(page)).slice(before).filter((x) => ["fwip", "pieceOff", "whoosh"].includes(x));
-  g.check("after his first minute, staying at the vent in a whole disguise: it sucks his hat in (the warning, then the piece flies into the grille), and no alarm", !!s && s.now.gone[0] === "head" && !s.now.alarm && heard.includes("whoosh") && heard.includes("pieceOff"), s && [s.now.gone, s.now.alarm, heard]);
+  const heard = (await played(page)).slice(before).filter((x) => ["fwip", "pieceOff", "suction", "suckIn"].includes(x));
+  g.check("after his first minute, staying at the vent in a whole disguise: it sucks his hat in (the warning, then the piece flies into the grille), and no alarm", !!s && s.now.gone[0] === "head" && !s.now.alarm && heard.includes("suction") && heard.includes("pieceOff"), s && [s.now.gone, s.now.alarm, heard]);
   await sleep(250);
   await still(page, "p6-vent-costume");
   // stepping away, it takes nothing more

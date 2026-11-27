@@ -575,7 +575,7 @@ let p4Cast = null;
     q.ctrl && q.room === "closet" && q.act === "SAVE · flyer" && (await press(page), await sleep(300));
     q.cur === "bub" && (homeLines.includes(q.text) || homeLines.push(q.text), await sleep(450), await tap(page));
   });
-  g.check("through his door he walks home with it: \"Phew, made it!\", SAVE · flyer puts it under his bed, his two thoughts; P5 with the flyer under the bed", !!s && s.now.flyer === "bed" && s.room === "closet" && JSON.stringify(homeLines) === JSON.stringify(["Phew, made it!", "That party looked so fun. I've never gotten to dance at one.", "I'll sneak back in a costume and dance!"]), [s && s.now.flyer, homeLines]);
+  g.check("through his door he walks home with it: \"Phew, made it!\", SAVE · flyer lays it on his bed, his two thoughts; P5 with the flyer on the bed", !!s && s.now.flyer === "bed" && s.room === "closet" && JSON.stringify(homeLines) === JSON.stringify(["Phew, made it!", "That party looked so fun.", "I'll sneak back in a costume and dance!"]), [s && s.now.flyer, homeLines]);
   await still(page, "p5-home-flyer");
   const p3Trail = await trailJumps(page);
   g.check("from P3 to P5 nobody teleports: Squatch never jumps over 60 inside a room", p3Trail.jumps.length === 0, p3Trail.jumps.slice(0, 3));
@@ -626,7 +626,12 @@ let p4Cast = null;
     await drag(piece, d.spots[spot]);
     d = await page.evaluate(() => window.SSQ.beat("ch1-party").dressTargets());
   }
-  g.check("four covered spots fill the meter and bring GO · party", !!d.go && Object.values(d.outfit).every(Boolean), d);
+  // Brian 2026-11-26 (showing 7, 1:05): "he probably has to put on the shirt or it's not disguised enough"
+  g.check("four covered spots without the shirt are not disguised enough: no GO · party, the meter at three quarters, the shirt glows", !d.go && Object.values(d.outfit).every(Boolean) && d.meter === 0.75 && d.shirtGlows, d);
+  await still(page, "p5-dress-no-shirt");
+  await drag(d.pieces.find((p) => p.id === "shirt"), d.spots.body);
+  d = await page.evaluate(() => window.SSQ.beat("ch1-party").dressTargets());
+  g.check("the shirt on his body (the tutu back in the closet) fills the meter and brings GO · party; the shirt stops glowing", !!d.go && d.outfit.body === "shirt" && Object.values(d.outfit).every(Boolean) && d.meter === 1 && !d.shirtGlows, d);
   await sleep(400);
   g.check("the full outfit's ta-da is not silent (the ta-da plays)", (await page.evaluate(() => window.SSQ.beat("ch1-party").now().sound.played)).includes("tada"));
   await still(page, "p5-dress-full");

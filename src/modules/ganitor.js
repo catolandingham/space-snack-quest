@@ -4,7 +4,8 @@
  *   A  a GANITOR name tag on Mops's shirt, in every scene (drawGanitorTag: where the patch on his pocket was; the rest
  *      of Mops is unchanged). The word shows where Mops is drawn big enough for it to read (the close-ups); smaller,
  *      the tag is a clear white tag with two pencil lines.
- *   B  the station PA calls him to work as he leaves home on Day 2 (home-morning.js, the night), with the ear icon
+ *   B  the station PA calls him to work on Day 2: its words are inside the morning PA (home-morning-lines.js pa-morning,
+ *      Brian 2026-11-26 #41), which the wall speaker says with sound lines round it; pa-ganitor is kept as the record
  *   C  in the hallway, an Employee of the Month photo of Mops labelled MOPS, GANITOR (drawGanitorWall), a layer drawn
  *      over the locked hallway picture (the picture itself is not changed)
  *   D  a robot janitor notice: not built (wordings for Brian in the round's report)
@@ -16,7 +17,7 @@
 export const GANITOR_LINES = Object.freeze(
   [
     { id: "sign-tag", who: "sign", text: "GANITOR", status: "approved", source: "Brian, chat 2026-11-26 (A: a GANITOR name tag on Mops's shirt)" },
-    { id: "pa-ganitor", who: "speaker", text: "Ganitor Mops to the party hall.", status: "approved", source: "Brian, chat 2026-11-26 (B, approved words)" },
+    { id: "pa-ganitor", who: "speaker", text: "Ganitor Mops to the party hall.", status: "approved", merged: "pa-morning", source: "Brian, chat 2026-11-26 (B, approved words). Merged into the morning PA (home-morning-lines.js pa-morning, Brian 2026-11-26 #41), which says these words inside its own line; not said on its own" },
     { id: "sign-wall", who: "sign", text: "MOPS, GANITOR", status: "approved", source: "Brian, chat 2026-11-26 (C: the Employee of the Month photo's label)" },
     { id: "sign-crayon", who: "sign", text: "MOPS THE GANITOR", status: "approved", source: "Brian, chat 2026-11-26 (E: on Squatch's crayon drawings where Mops is in one)" },
     { id: "sign-crayon-me", who: "sign", text: "ME", status: "approved", source: "Brian 2026-11-13 (the crayon labels ME / MOPS, CH1-LINES-FOR-BRIAN row 130); unchanged" },

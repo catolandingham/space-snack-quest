@@ -8,7 +8,7 @@
  *           bubble in the picture), "tag" (the name over a bubble), "sign" (words painted on a thing), "label"
  *           (the corner mark of every picture)
  *   text    the words, exactly as shown
- *   status  "approved" (Brian's yes, `source` says where)
+ *   status  "approved" (Brian's yes, `source` says where) or "needs-yes" (a suggestion that waits for his yes)
  *   source  where the words and the yes came from
  */
 const SOURCE = "Old story, commit 71ec66e (2026-11-02); brought back by Brian 2026-11-25, Snack Quest Chat";
@@ -25,9 +25,10 @@ export const TV_STORY_LINES = Object.freeze(
     { id: "tourist-gasp", who: "tourist", text: "*gasp*" },
     { id: "sign-tours", who: "sign", text: "TOURS" },
     { id: "tag-official", who: "tag", text: "Station Official" },
-    { id: "official-no-fur", who: "official", text: "Nobody can live outside. The scrubbers keep us breathing. NO FUR." },
+    { id: "official-no-fur", who: "official", text: "We rely on the air scrubbers to keep us breathing. NO FUR.", status: "approved", source: "Brian 2026-11-26 (#40), word for word; it replaced the old story's \"Nobody can live outside. The scrubbers keep us breathing. NO FUR.\"" },
     { id: "card-now", who: "card", text: "Now" },
-  ].map((l) => Object.freeze({ ...l, status: "approved", source: SOURCE })),
+    { id: "news-title", who: "card", text: "STORMTOP NEWS", status: "needs-yes", source: "Suggested 2026-11-26 for the news report's title card (Brian 2026-11-26, #39: yes to the tape and a news report; the title words wait for his yes)" },
+  ].map((l) => Object.freeze({ status: "approved", source: SOURCE, ...l })),
 );
 
 /** The words of one line, by id. Throws on an unknown id, so a typo cannot show empty words. */

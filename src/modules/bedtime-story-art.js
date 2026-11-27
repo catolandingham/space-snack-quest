@@ -1,6 +1,7 @@
 /**
  * The bedtime story's pictures (Chapter 1, beat 21: why Moon Pies), full screen, in the old story pictures' look
- * (the washed-out "years ago" colours and frame, tv-story-art.js storyWash). Brian, 2026-11-25: the old crate story
+ * (since 2026-11-26 in a memory look of their own, MEMORY_LOOK below: Brian, #38, "soft cloud-shaped edges and a warm
+ * old-photo tint"). Brian, 2026-11-25: the old crate story
  * from commit 71ec66e "is the bedtime story (beat 21) and gets the same sizing fix" ("Look at how small mops and
  * squatch are versus box."). The old pictures, by name and in order:
  *   crate   a delivery crate of Moon Pies, three Moon Pies on its lid
@@ -9,10 +10,14 @@
  *   weent   the same picture, Mops's "...Weeee-eenn-nnttt?" in a bubble over him (one bubble, no caption: the TV
  *           story split its "*gasp*" off the same way; the old picture had "...Baaa?", Brian 2026-11-26: "Goats say
  *           "weeeent" not baaaah")
- *   bucket, hide   Mops beside his mop bucket, the baby hidden in it (BEDTIME_SWITCHES.bucketPicture, on since
- *                  Brian's answer of 2026-11-26)
- * Only Mops and baby Squatch are in the pictures (docs/GUARDIANS-STORY-BRIEF.md: the story is only about Mops finding
- * him; no parents, no other Sasquatches, no hints of them).
+ *   bucket  Mops beside his mop bucket (mop-bucket.js, Brian 2026-11-26: "Let's go with it moving forward"), the baby
+ *           hidden in it, curled into a furry ball (no face showing) (BEDTIME_SWITCHES.bucketPicture, on since Brian's
+ *           answer of 2026-11-26)
+ *   peek    wordless, plays by itself: two tourists peek in at a doorway, a "?" over each (the cause of his line)
+ *   hide    the same picture, Mops's "Nothing to see here!" in a bubble over him
+ * Only Mops and baby Squatch are in the pictures, and the two tourists at the door in the last two
+ * (docs/GUARDIANS-STORY-BRIEF.md: the story is only about Mops finding him; no parents, no other Sasquatches, no hints
+ * of them).
  * Sizes: everything is drawn as the home room draws it, 1.6 times bigger (BED_STORY.k). Mops is the room's Mops (the
  * engine's own drawing, the approved one: a goat whose beard is his mop, down to the floor; no mop prop). The crate is
  * the crate bed of the locked home room (docs/locked-rooms/home_room.py draw_bed_crate: the same planks, cross braces,
@@ -23,7 +28,9 @@
  * crate, the crumbs, the baby's pose and the bucket picture.
  */
 import { placeThought } from "./thought-place.js";
-import { caption, bubble, storyWash } from "./tv-story-art.js";
+import { caption, bubble } from "./tv-story-art.js";
+import { MOP_BUCKET, drawMopBucketBack, drawMopBucketFront } from "./mop-bucket.js";
+import { createGuestArt } from "./guests.js";
 import { drawSquatchArt, armEnds } from "./squatch-art.js";
 import { bedLine, BEDTIME_SWITCHES } from "./bedtime-story-lines.js";
 import { drawGuardiansCrayon } from "./guardians-drawing.js";
@@ -179,14 +186,75 @@ function reach(x, y, tx, ty) {
   return Math.atan2(tx - (x + sh.x * BABY_SCALE), ty - (y + sh.y * BABY_SCALE));
 }
 
-// A picture: the scene on the pale story background, then the "years ago" wash and frame (no YEARS AGO mark:
-// the old crate story had none), then its words over the wash.
+/**
+ * The memory look of Mops's crate story (Brian 2026-11-26, #38: "soft cloud-shaped edges and a warm old-photo tint"):
+ * the picture's colours faded (fade, as grey over them) and warmed (tint, multiplied in, then a little cream), and a
+ * soft cream edge all round whose inner side is a cloud (puffs bumps a side, inset from the edge), softened by drawing
+ * it in `soft` see-through layers `step` apart.
+ */
+export const MEMORY_LOOK = Object.freeze({ fade: 0.45, tint: "#c98f4e", tintA: 0.3, cream: "rgba(255,236,200,.16)", edge: "#fbf3e4", inset: 44, puffs: Object.freeze([9, 6]), bump: 26, soft: 6, step: 5 });
+// The cloud-shaped window: round a rectangle inset from the picture's edges, each stretch between two points bulging
+// out toward the edge, like the edge of a cloud.
+function cloudWindow(ctx, inset) {
+  const M = MEMORY_LOOK,
+    x0 = inset,
+    y0 = inset,
+    x1 = 960 - inset,
+    y1 = 640 - inset,
+    [nx, ny] = M.puffs,
+    pts = [];
+  for (let i = 0; i < nx; i++) pts.push([x0 + ((x1 - x0) * i) / nx, y0, 0, -1]);
+  for (let i = 0; i < ny; i++) pts.push([x1, y0 + ((y1 - y0) * i) / ny, 1, 0]);
+  for (let i = 0; i < nx; i++) pts.push([x1 - ((x1 - x0) * i) / nx, y1, 0, 1]);
+  for (let i = 0; i < ny; i++) pts.push([x0, y1 - ((y1 - y0) * i) / ny, -1, 0]);
+  ctx.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i <= pts.length; i++) {
+    const a = pts[i - 1],
+      b = pts[i % pts.length],
+      // (at a corner the bump goes out diagonally)
+      ox = a[2] + b[2],
+      oy = a[3] + b[3];
+    ctx.quadraticCurveTo((a[0] + b[0]) / 2 + Math.sign(ox) * M.bump, (a[1] + b[1]) / 2 + Math.sign(oy) * M.bump, b[0], b[1]);
+  }
+  ctx.closePath();
+}
+function memoryLook(ctx) {
+  const M = MEMORY_LOOK;
+  ctx.save();
+  ctx.globalCompositeOperation = "saturation";
+  ctx.globalAlpha = M.fade;
+  ctx.fillStyle = "#808080";
+  ctx.fillRect(0, 0, 960, 640);
+  ctx.globalCompositeOperation = "multiply";
+  ctx.globalAlpha = M.tintA;
+  ctx.fillStyle = M.tint;
+  ctx.fillRect(0, 0, 960, 640);
+  ctx.globalCompositeOperation = "source-over";
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = M.cream;
+  ctx.fillRect(0, 0, 960, 640);
+  // the soft cloud edge: the cream drawn in see-through layers, each a little further in, so it fades out softly
+  // toward the middle (no canvas blur filter: some phones' browsers ignore it)
+  ctx.fillStyle = M.edge;
+  for (let i = 0; i < M.soft; i++) {
+    ctx.globalAlpha = i === 0 ? 1 : 0.32;
+    ctx.beginPath();
+    ctx.rect(-60, -60, 1080, 760);
+    cloudWindow(ctx, M.inset - M.step * 2 + i * M.step);
+    ctx.fill("evenodd");
+  }
+  ctx.restore();
+  return { tint: M.tint, edge: M.edge, inset: M.inset };
+}
+
+// A picture: the scene on the pale story background, then the memory look (no YEARS AGO mark: the old crate story had
+// none), then its words over it, sharp.
 function storyPicture(ctx, scene, words) {
   ctx.fillStyle = "#f1f3f6";
   ctx.fillRect(0, 0, 960, 640);
   const drew = scene() || {};
-  storyWash(ctx);
-  return { ...drew, ...(words ? words() : {}) };
+  const memory = memoryLook(ctx);
+  return { ...drew, memory, ...(words ? words() : {}) };
 }
 const sizes = () => sizesAt(BED_STORY.k);
 
@@ -231,38 +299,100 @@ function beardScene(ctx, engine, t) {
   baby(ctx, bx, by, { arms: [{ a: reach(bx, by, grab.x, grab.y) }, { a: Math.PI - 0.45 + Math.sin(t * 7) * 0.15 }] });
   return { cast: ["mops", "baby"], mopsHead: m.head, mouth: m.mouth };
 }
-function bucketScene(ctx, engine) {
-  // his mop bucket as the home room draws it (yellow), drawn so it reads as a bucket: wider at the top, a thick rim,
-  // a wire handle and two little wheels; the baby's eyes over its rim
-  const cx = 560,
-    wTop = 176,
-    wBot = 128,
-    h = 132,
-    wheel = 12,
-    bottom = BED_STORY.floor - wheel,
-    top = bottom - h;
-  shadow(ctx, cx, wTop + 10);
-  // the handle, behind (an arc up over the rim)
+// The baby hidden in the bucket (Brian 2026-11-26, video note 0:39: "Maybe he should look more like a ball rather than
+// us being able to see his head here"): curled up into a furry ball, no face showing, the top of the ball over the rim.
+function furBall(ctx, x, y, r, t) {
+  const breathe = 1 + Math.sin(t * 2.2) * 0.02,
+    n = 16;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(breathe, 1 / breathe);
   ctx.beginPath();
-  ctx.ellipse(cx, top + 4, wTop / 2 - 8, 70, 0, Math.PI, 0);
-  ctx.strokeStyle = DARK;
-  ctx.lineWidth = 5;
-  ctx.stroke();
-  baby(ctx, cx, top + 46, { shadow: false });
-  ctx.beginPath();
-  ctx.moveTo(cx - wTop / 2, top);
-  ctx.lineTo(cx + wTop / 2, top);
-  ctx.lineTo(cx + wBot / 2, bottom);
-  ctx.lineTo(cx - wBot / 2, bottom);
+  for (let i = 0; i <= n; i++) {
+    const a = (i / n) * Math.PI * 2,
+      px = Math.cos(a) * r,
+      py = Math.sin(a) * r * 0.86;
+    if (i === 0) ctx.moveTo(px, py);
+    else {
+      const m = ((i - 0.5) / n) * Math.PI * 2;
+      ctx.quadraticCurveTo(Math.cos(m) * (r + 9), Math.sin(m) * (r * 0.86 + 9), px, py);
+    }
+  }
   ctx.closePath();
-  paint(ctx, "#ffcf33", 4.2, DARK);
-  // the rim, a darker band round the top, and two ribs down the side
-  round(ctx, cx - wTop / 2 - 6, top - 6, wTop + 12, 18, 8);
-  paint(ctx, "#e0a81c", 4.2, DARK);
-  for (const k of [-0.25, 0.25]) seg(ctx, cx + k * wTop, top + 22, cx + k * wBot, bottom - 10, "#d9a514", 4);
-  for (const wx of [cx - wBot / 2 + 18, cx + wBot / 2 - 18]) (disc(ctx, wx, bottom + wheel / 2, wheel / 2 + 2), paint(ctx, "#59657d", 3, DARK));
-  const m = mops(ctx, engine, 330, 1);
-  return { cast: ["mops", "baby"], mopsHead: m.head, mouth: m.mouth };
+  paint(ctx, "#6b4428", 4.5, INK);
+  // tufts of fur curling round the ball (his back as he curls up)
+  for (const [a, k] of [
+    [-2.3, 0.55],
+    [-1.6, 0.62],
+    [-0.9, 0.5],
+  ]) {
+    ctx.beginPath();
+    ctx.arc(Math.cos(a) * r * k, Math.sin(a) * r * k * 0.86, r * 0.32, a + 0.9, a + 2.4);
+    ctx.strokeStyle = "#55351f";
+    ctx.lineWidth = 4;
+    ctx.lineCap = "round";
+    ctx.stroke();
+  }
+  ctx.restore();
+  return { x0: x - r - 9, x1: x + r + 9, y0: y - r * 0.86 - 9, y1: y + r * 0.86 + 9 };
+}
+// The mop bucket picture: Mops beside his mop bucket (mop-bucket.js, the one bucket drawing), the baby curled up in it.
+const BUCKET_PIC = Object.freeze({ cx: 560, mops: 330, ball: 50, up: 16 });
+function bucketScene(ctx, engine, t) {
+  const B = BUCKET_PIC;
+  shadow(ctx, B.cx, MOP_BUCKET.wTop + 10);
+  const box = drawMopBucketBack(ctx, B.cx, BED_STORY.floor, 1);
+  const ball = furBall(ctx, B.cx, box.top - B.up, B.ball, t || 0);
+  drawMopBucketFront(ctx, B.cx, BED_STORY.floor, 1);
+  const m = mops(ctx, engine, B.mops, 1);
+  return { cast: ["mops", "baby"], mopsHead: m.head, mouth: m.mouth, mopBucket: { x0: Math.round(box.x0), x1: Math.round(box.x1), top: Math.round(box.top) }, ball: { ...ball, face: false } };
+}
+/**
+ * The cause of "Nothing to see here!" (Brian 2026-11-26, video note 0:39: "Would we actually want people to walk in so
+ * we see that tourists are suspicious?"): the same picture, with a doorway on the right where two tourists peek in,
+ * leaning round its edge, a "?" over each. Placeholder tourists: the approved party guests with the camera and the
+ * backpack (guests.js), at a grown-up's size next to this Mops.
+ */
+export const PEEK = Object.freeze({ door: Object.freeze({ x0: 742, x1: 900, top: 120 }), tourists: Object.freeze([Object.freeze({ id: "camera", x: 790, lean: -0.13 }), Object.freeze({ id: "backpack", x: 858, lean: -0.08 })]), tall: 300 });
+let guestArt = null;
+function peekers(ctx, t) {
+  const D = PEEK.door,
+    floor = BED_STORY.floor;
+  guestArt = guestArt || createGuestArt();
+  // the open doorway in the back wall: the dark hall beyond, and its frame
+  ctx.fillStyle = "#3a4152";
+  ctx.fillRect(D.x0, D.top, D.x1 - D.x0, floor - D.top);
+  const drawn = [];
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(D.x0 - 60, D.top + 6, D.x1 - D.x0 + 60, floor - D.top);
+  ctx.clip();
+  for (const p of PEEK.tourists) {
+    // they lean in at the door, heads first, as people peek in
+    ctx.save();
+    ctx.translate(p.x, floor);
+    ctx.rotate(p.lean + Math.sin(t * 1.3 + p.x) * 0.015);
+    const ok = guestArt.drawId(ctx, p.id, 0, 0, PEEK.tall, 0);
+    ctx.restore();
+    const h = guestArt.height(p.id, PEEK.tall);
+    drawn.push({ id: p.id, ok, head: { x: p.x + Math.sin(p.lean) * h * 0.9, y: floor - Math.cos(p.lean) * h } });
+  }
+  ctx.restore();
+  ctx.lineWidth = 10;
+  ctx.strokeStyle = "#8a6a4a";
+  ctx.lineJoin = "round";
+  ctx.beginPath();
+  ctx.moveTo(D.x0, floor);
+  ctx.lineTo(D.x0, D.top);
+  ctx.lineTo(D.x1, D.top);
+  ctx.lineTo(D.x1, floor);
+  ctx.stroke();
+  return { tourists: drawn, door: { ...D } };
+}
+function peekScene(ctx, engine, t) {
+  const d = bucketScene(ctx, engine, t),
+    p = peekers(ctx, t);
+  return { ...d, cast: [...d.cast, ...p.tourists.map((x) => "tourist")], tourists: p.tourists, door: p.door };
 }
 
 const word = (engine, text, x, y, size, color) => engine.text(text, x, y, size, color, "center", 900);
@@ -306,7 +436,30 @@ const ALL = [
   {
     pic: "bucket",
     off: !BEDTIME_SWITCHES.bucketPicture,
-    draw: (ctx, t, engine) => storyPicture(ctx, () => bucketScene(ctx, engine), () => ({ caption: caption(ctx, engine, bedLine("cap-bucket")) })),
+    draw: (ctx, t, engine) => storyPicture(ctx, () => bucketScene(ctx, engine, t), () => ({ caption: caption(ctx, engine, bedLine("cap-bucket")) })),
+  },
+  {
+    // wordless: two tourists peek in at the door, a "?" over each; it plays by itself (Brian 30a: no words, nothing
+    // to tap), then Mops says his line
+    pic: "peek",
+    off: !BEDTIME_SWITCHES.bucketPicture,
+    auto: 3.0,
+    draw: (ctx, t, engine) => {
+      let d = null;
+      return storyPicture(
+        ctx,
+        () => (d = peekScene(ctx, engine, t)),
+        () => {
+          // the "?" pops up over each tourist, one after the other
+          const marks = d.tourists.map((p, i) => {
+            const k = Math.max(0, Math.min(1, (t - 0.5 - i * 0.5) / 0.25));
+            k > 0 && word(engine, bedLine("mark-wonder"), p.head.x, p.head.y - 26 - 10 * k, 30 + 20 * k, "#e5533d");
+            return { x: Math.round(p.head.x), y: Math.round(p.head.y - 36), shown: k > 0 };
+          });
+          return { caption: null, marks };
+        },
+      );
+    },
   },
   {
     pic: "hide",
@@ -315,7 +468,7 @@ const ALL = [
       let d = null;
       return storyPicture(
         ctx,
-        () => (d = bucketScene(ctx, engine)),
+        () => (d = peekScene(ctx, engine, t)),
         () => ({ caption: null, bubble: bubble(ctx, engine, bedLine("mops-nothing"), d.mouth.x - 8, d.mopsHead.y, 28, 340, "", "", 70) }),
       );
     },
@@ -324,6 +477,9 @@ const ALL = [
 
 /** The names of the pictures that show, in order. */
 export const BEDTIME_PICTURES = Object.freeze(ALL.map((p) => p.pic));
+
+/** Seconds each picture plays by itself before the game goes on (0: it waits for NEXT; cutaway.js AUTO.moonpie). */
+export const BEDTIME_AUTO = Object.freeze(ALL.map((p) => p.auto || 0));
 
 /** The pictures as the cutaway draws them: (ctx, t, engine) => what was drawn. */
 export const BEDTIME_PANELS = Object.freeze(ALL.map((p) => (ctx, t, engine) => ({ pic: p.pic, sizes: sizes(), ...p.draw(ctx, t, engine) })));

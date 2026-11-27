@@ -773,7 +773,8 @@
         Fe(600, 386, 3.2, { f: -1, walk: p.t * 6, headDown: !0, sweep: Math.sin(p.t * 3.4) * 1.6 }),
         g(U, 600, 408, 18, "#2b8a5e"),
         l && Cn(180, 222, "\u266A I'm floating in space! \u266A", "#ffe3f1", 20),
-        g(u ? "Tap a chapter to play" : "Click a chapter or press 1-4 (ENTER = continue)", c / 2, 440, 20, y, "center", 700));
+        g(u ? "Tap a chapter to play" : "Click a chapter or press 1-4 (ENTER = continue)", c / 2, 440, 20, y, "center", 700),
+        window.SSQ && window.SSQ.credits && window.SSQ.credits.drawButton(e));
       for (let o = 0; o < 4; o++) {
         let i = 40 + o * 225,
           s = 466,

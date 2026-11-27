@@ -3,7 +3,7 @@
  * from the Dog Zylan line until "That evening…", then it fades; Joe's theme stays everywhere else).
  * - Sound off (the default): nothing plays, but the notes still come out of the speaker.
  * - The morning keeps the room quiet before the song (Joe's theme does not play under the speaker).
- * - Sound on: the morning's song (music-picks.js; Goating in Space since 2026-11-26, once, no loop) starts on the tap after "Now here's a classic hit
+ * - Sound on: the morning's song (music-picks.js; Floating in Space, the new recording, since 2026-11-26, once, no loop) starts on the tap after "Now here's a classic hit
  *   from Dog Zylan!", never before; it plays as a decoded buffer through the game's master volume (no new
  *   <audio> element) on the music level, turned up 10 dB to sit level with Joe's theme (sound plan section 8);
  *   Joe's theme is quiet while it plays; it dips under each sung line and comes back; the
@@ -161,7 +161,7 @@ const waitFor = async (r, ok, ms = 8000) => {
     };
     return { intro: skip > 0 ? db(0, Math.min(2.5, skip)) : null, atStart: db(skip, skip + 0.6), skip, dur: b.duration };
   }, SKIP, HOME_MUSIC.url);
-  // (Goating in Space starts at once, so it plays from 0; a file with a quiet start skips it)
+  // (Floating in Space starts at once, so it plays from 0; a file with a quiet start skips it)
   g.check("before where it starts, the file is nearly silent (or it starts at 0)", SKIP === 0 || lv.intro < -45, lv);
   g.check("it starts where the music is clearly audible", lv.atStart > -35, lv);
   await ctx.close();
@@ -181,7 +181,7 @@ const waitFor = async (r, ok, ms = 8000) => {
   }, MOPS_SONG);
   g.check("the song has been playing for over a second before Mops's \"Floating in space!\" line",atLine.playing && atLine.playedFor >= 1.2, atLine);
   s = await waitFor(r, (s) => s.m.playing);
-  g.check("the tap after the Dog Zylan line starts the morning's music (Goating in Space, 1:44, the whole file loaded), from its start, once (no loop)", s.m.playing && s.mm.starts.length === 1 && Math.abs(s.mm.starts[0].dur - 103.96) < 1 && Math.abs(s.mm.starts[0].offset - SKIP) < 0.01 && s.mm.starts[0].loop === false && s.m.once, s.mm.starts);
+  g.check("the tap after the Dog Zylan line starts the morning's music (Floating in Space, 1:44, the whole file loaded), from its start, once (no loop)", s.m.playing && s.mm.starts.length === 1 && Math.abs(s.mm.starts[0].dur - 103.96) < 1 && Math.abs(s.mm.starts[0].offset - SKIP) < 0.01 && s.mm.starts[0].loop === false && s.m.once, s.mm.starts);
   g.check("it plays through the music level under the game's master volume, not a new <audio> element", s.m.via === "music" && !s.mm.audios.some((a) => /goating/.test(a)), { via: s.m.via, audios: s.mm.audios });
   g.check("first play at full level", Math.abs(s.m.target - 1) < 0.01, s.m);
   // Sound plan section 8: each file is turned up to sit level with Joe's theme (Floating in Space by 10 dB; ffmpeg:
