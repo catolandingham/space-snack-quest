@@ -229,7 +229,7 @@ export function createBridge() {
     drawSnackStamp(ctx, x, y, s) {
       return drawStationStamp(ctx, x, y, s);
     },
-    /** Tests: the crate bed's stamp layer over the home pictures (its parts, and how often it was handed out). */
+    /** Tests: the layers for the snack's name (the crate bed's stamp over the home pictures, the hall tin's lid). */
     crateStampDrawn,
     /** Register a rebuilt beat. Ids are unique; registering one twice is a mistake, so it throws. */
     registerBeat(id, beat) {
