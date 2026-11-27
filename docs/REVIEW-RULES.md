@@ -3,31 +3,32 @@
 
 | Lines | Heading |
 | --- | --- |
-| 32–35 | # Review rules |
-| 36–87 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
-| 88–90 | ## Techniques |
-| 91–93 | ## Mistake: locked art was redrawn |
-| 94–98 | ## Mistake: optional inspection interrupted getting out of bed |
-| 99–101 | ## Mistake: a big doc's section index went stale |
-| 102–104 | ## Mistake: a rebuilt beat forgot the step restart |
-| 105–107 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
-| 108–110 | ## Mistake: a killed run was read as a failing test |
-| 111–113 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
-| 114–116 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
-| 117–123 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
-| 124–131 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
-| 132–148 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
-| 149–161 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
-| 162–164 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
-| 165–167 | ## Standing rule: nobody walks through furniture (Brian, 2026-11-26) |
-| 168–176 | ## Mistakes caught building the morning sound (2026-11-24) |
-| 177–188 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
-| 189–200 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
-| 201–214 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
-| 215–221 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
-| 222–232 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
-| 233–240 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
-| 241–246 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
+| 33–36 | # Review rules |
+| 37–88 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
+| 89–91 | ## Techniques |
+| 92–94 | ## Mistake: locked art was redrawn |
+| 95–99 | ## Mistake: optional inspection interrupted getting out of bed |
+| 100–102 | ## Mistake: a big doc's section index went stale |
+| 103–105 | ## Mistake: a rebuilt beat forgot the step restart |
+| 106–108 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
+| 109–111 | ## Mistake: a killed run was read as a failing test |
+| 112–114 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
+| 115–117 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
+| 118–124 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
+| 125–132 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
+| 133–149 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
+| 150–162 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
+| 163–165 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
+| 166–168 | ## Standing rule: nobody walks through furniture (Brian, 2026-11-26) |
+| 169–177 | ## Mistakes caught building the morning sound (2026-11-24) |
+| 178–189 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
+| 190–201 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
+| 202–215 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
+| 216–222 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
+| 223–233 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
+| 234–243 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
+| 244–249 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
+| 250–262 | ## Mistakes caught building the loading bay (2026-11-26) |
 <!-- /section-index -->
 # Review rules
 
@@ -245,3 +246,16 @@ His note on the home morning (video note 0:18): "he kind of glitches through the
 - Sight was tested at one point a quarter of the way up Squatch while he is drawn about 85 tall, so a cone drawn across his head did not see him ("It looks like he's right in the octopus' cone, what am I missing??"). What a cone is drawn on is what it sees: sight tests his whole drawn outline (`party-watch.js` `coneEdge`), and `tests/party-showing6.mjs` checks the drawn cone against his drawn pixels. A change to sight re-checks every layout built on it (P2's glancer, P4's sweeps, the guards' reach).
 - Guards walked straight from point to point, through a plant pot. Anyone who walks a route round the room goes round its furniture (`guardStep`), and a route's whole walk is checked step by step (`tests/standing-spots.mjs`), not only where it stops.
 - A wait was tied to the end of a song (the photo after the dance, 28 s of nothing). After an action ends, the next beat starts within about a second, or the wait is shown.
+
+## Mistakes caught building the loading bay (2026-11-26)
+- The older program's "pa" bubble style is a banner fixed in the middle of the picture, so the first build's PA line sat over the window, nowhere near the wall speaker (Brian's rule: beside the speaker, with sound waves). A speaker's line is an ordinary bubble placed by the beat (`bubbleBeside`, `speakerAt`), and a test reads the drawn bubble's box against the speaker's (`tests/loading-bay.mjs`).
+- A beat that draws a locked room itself must paint the picture through the older program (`drawLocked`): the goal outline traces whichever locked picture was painted last, so a room painted any other way gets an outline traced from the previous room.
+- A bubble over a close-up covered the close-up (a long line wraps to about 490 wide). Place the close-up and the bubble together, and test the drawn boxes apart.
+- A layer over a locked picture (the hallway's Employee of the Month photo) was drawn by a beat's over-the-room hook, after the people, so Mops's horns went behind it (Brian, the loading bay video at 0:14.8). A layer that belongs to the room is painted right after the room's picture (`drawWall` from `drawCh1Passage`), and a test counts his fur's pixels over it, run once with the old order to see it fail.
+- The hallway's robots were drawn at the bay's pixel size, so next to the hallway's bigger people they looked small, and they stood on the office door's painting (Brian, 1:37.2). Anything drawn in two rooms is scaled by each room's grown-up (`adultPxFor`), and a test checks its drawn box against the room's doors and walls.
+- The ramp in the bay picture comes with the ship: a thing that arrives with something else goes away before it (the ramp back up into the ship, then the ship), and the scanner's posts are solid only while it is there.
+- Every bubble's name tag read "Speaker" in the rebuild: the bridge's `speakerName(who)` asked every beat in turn, and the home morning's `speakerName()` (no argument, its own wall speaker's name) answered for everyone. The bridge asks only a beat whose `speakerName` takes the speaker, and the bay's test reads the name on Dot's, Bob's and Lou's bubbles.
+- Three robots rolled down the ramp one after another to spots left to right, so the second rolled through the first, already standing in its place. People sent to a row of spots go to the far one first; `tests/standing-spots.mjs` checks each walk against the people already standing.
+- The hallway's way into the bay was a trigger at x 916, but the hallway's walk bounds stop him at 900, so a player could never get through (the showing tool stopped at x 893; the test had placed him at 935 by hand). A place walked into must be inside the room's walk bounds, and a test checks the numbers; a test that puts him somewhere by hand cannot prove he can walk there.
+- The lockup card's words ("A robot", "in the hallway") were typed in the beat's code, and Isfred or a worker seeing him read "A tourist". Every word on the card comes from the lines file, and each watcher gets its own (pending) words.
+- A merge left `import { readFileSync }` twice in `tests/standing-spots.mjs`, so the whole suite stopped at load and its bay checks (written for the old walks) went unseen. After a merge, run every suite the merged files touch, not only your own.

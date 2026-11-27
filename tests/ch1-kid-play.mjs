@@ -16,7 +16,7 @@
  *   KID_AVOID=HIDE,DANCE  buttons (verbs) the robot leaves alone (default: none)
  *   KID_URL=?beat=party:P7  start somewhere else (for looking into one place; the run then cannot reach the tally)
  */
-import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, rmSync, writeFileSync, readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { join } from "node:path";
 import { root, startGame, sleep } from "./game-page.mjs";
@@ -29,7 +29,8 @@ const MAX_S = +(process.env.KID_MAX_S || 900);
 const OUT = process.env.KID_OUT || join(root, "tests", "out", "kid-play");
 const SHOTS = process.env.KID_SHOTS === "1";
 const AVOID = (process.env.KID_AVOID || "").split(",").filter(Boolean);
-const SLIP_CODE = "4723"; // what the pink slip says
+// what the pink slip says: Isfred's office code, as the game has it (src/game/14-ch1-day2.js CH1_OFFICE_CODE)
+const SLIP_CODE = readFileSync(join(root, "src", "game", "14-ch1-day2.js"), "utf8").match(/CH1_OFFICE_CODE = "(\d+)"/)[1];
 const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 1 };
 mkdirSync(OUT, { recursive: true });
 if (SHOTS) (rmSync(join(OUT, "fr"), { recursive: true, force: true }), mkdirSync(join(OUT, "fr"), { recursive: true }));

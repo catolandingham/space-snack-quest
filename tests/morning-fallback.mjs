@@ -3,8 +3,8 @@
  * must still play (CLAUDE.md: the older program guards every use of window.SSQ). The morning is a module now,
  * so without it Chapter 1 skips from the opening cards to "That evening…". The party night is a module too
  * (src/modules/party.js), so without it the evening goes on to Day 2. Day 2's home morning is a module too
- * (src/modules/home-morning.js), and so is the lunch sneak (src/modules/lunch-sneak.js), so without them Day 2 goes on
- * from TAKE · lunch straight to beat 28 (the ship is coming), which still plays.
+ * (src/modules/home-morning.js), and so are the lunch sneak (src/modules/lunch-sneak.js) and the loading bay
+ * (src/modules/loading-bay.js), so without them Day 2 goes on from TAKE · lunch straight to beat 37 in the hallway.
  *   node tests/morning-fallback.mjs
  */
 import { readFileSync } from "node:fs";
@@ -48,13 +48,13 @@ for (let i = 0; i < 20 && !(s.ctrl && s.chip); i++) {
   s = await st();
 }
 g.check("without the module the cards still play, then \"That evening…\"", seen.length >= 3 && /^card:Stormtop/.test(seen[0]) && seen.some((t) => /^card:That evening/.test(t)), seen);
-// (with no module, beat 28's lines come up at once: tap through them to its goal)
+// (with no module, Day 2's lines come up at once: tap through them to its goal)
 for (let i = 0; i < 12 && !(s.ctrl && s.chip); i++) {
   await page.touchscreen.tap(187, 300);
   await sleep(400);
   s = await st();
 }
-g.check("then the game goes on: without the party, home morning and lunch modules, Day 2 goes on to beat 28 and its goal", s.ctrl && /hide in the plant/.test(s.chip), s);
+g.check("then the game goes on: without the party, home morning, lunch and loading bay modules, Day 2 goes on to beat 37 in the hallway and its goal", s.ctrl && /go on/.test(s.chip), s);
 g.check("no page errors without the module", errors.length === 0, errors);
 await ctx.close();
 await g.finish("morning-fallback");

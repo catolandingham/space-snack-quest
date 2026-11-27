@@ -1,6 +1,6 @@
 // Chapter 1 beats 22-61. Day 1 calls ch1Day2Begin. This file owns the lunch, the night order, the escape, and pickup day.
-    // The office code is the one already drawn on the old keypad (4 7 2 3). It is not a new number.
-    const CH1_OFFICE_CODE = "4723";
+    // Isfred's office code, written on the pink sheet in beat 32 and typed on the office keypad (Brian 2026-11-26, chat).
+    const CH1_OFFICE_CODE = "169556";
     function ch1Ready(step, chip, scene) {
       ((n.ch1Step = step), (n.ch1Chip = chip), scene && (n.scene = scene), (n.ctrl = !0), (n.act = null), chipNow());
     }
@@ -53,65 +53,16 @@
     function ch1TakeLunch() {
       luBeat() ? luBeat().start() : ch1ShipCall();
     }
+    // Beats 28 to 36, the loading bay: src/modules/loading-bay.js. Without it, Day 2 goes on to beat 37 in the hallway.
+    function bayBeat() {
+      return (window.SSQ && window.SSQ.beat && window.SSQ.beat("ch1-bay")) || null;
+    }
     function ch1ShipCall() {
-      ((n.ctrl = !1),
-        J([
-          v("pa", "Universal Postal Service ship arriving!", "pa"),
-          v("mops", "I better go see what that is."),
-          v("sq", "Please let me follow you, I'll be really sneaky."),
-          v("mops", "Okay, just this time, but hide carefully."),
-          N(() =>
-            ch1GoDay("passage", { who: "both", scene: "QB" }, () => {
-              ch1GoDay("delivery", { who: "both", scene: "QB", ship: !0, crew: "day", stand: [240, 520] }, () =>
-                ch1Ready("hide", "Squatch: hide in the plant", "QB"),
-              );
-            }),
-          ),
-        ]));
+      bayBeat() ? bayBeat().start() : ((n.room = "passage"), (n.scene = "QB"), (n.moPose = "stand"), ch1WalkHomeDone());
     }
-    function ch1HideBay() {
-      if (n.ch1Hid) return;
-      ((n.ch1Hid = !0), (n.ctrl = !1));
-      J([
-        ch1Step("sq", CH1_PLANT.x, CH1_PLANT.y, 160),
-        N(() => {
-          ((n.sqPose = "hidden"), D.hide(), (n.ch1Chip = "Squatch: hide and watch"), chipNow(), ch1BayLines());
-        }),
-      ]);
-    }
-    function ch1BayLines() {
-      ((n.ch1Ramp = 0), (n.ch1ShowBots = !0), ch1SetPaper("set"), (n.ctrl = !1));
-      J([
-        cV((dt) => ((n.ch1Ramp = Math.min(1, (n.ch1Ramp || 0) + dt / 1.3)), n.ch1Ramp >= 1)),
-        v("official", "Mops, don't worry, you know how much we love you here. Even our visitors always love you."),
-        v("ups", "Isfred! A crate is damaged in the mail room."),
-        cV((dt) => {
-          ((n.ch1BossX = (n.ch1BossX == null ? 560 : n.ch1BossX) - 300 * dt), (n.ch1Crew = "leave"), (n.ch1Leave = Math.min(1, (n.ch1Leave || 0) + dt / 1.1)), n.ch1Paper !== "file" && ch1SetPaper("file"));
-          return n.ch1BossX < -30;
-        }),
-        N(() => {
-          ((n.ch1BossX = -1), (n.ch1Crew = ""), (n.ch1Filed = !0));
-        }),
-        v("ups", "Left one of the copies in the office. What do I do with the other two?"),
-        v("mops", "I'll take care of it."),
-        v("mops", "So futuristic and we still order on paper."),
-        N(() => ch1SetPaper("bite")),
-        v("mops", "Delicious."),
-        N(() => ch1SetPaper("mouth")),
-        v("mops", "Mmf mrrf!"),
-        v("sq", "You're gumbling! (goat mumbling)"),
-        N(() => ch1SetPaper("bin")),
-        v("mops", "Ptoo!"),
-        N(() => (n.sqPose = "stand")),
-        ch1Step("sq", 430, 520, 140),
-        v("mops", "We got to watch out for these robots."),
-        v("sq", "What's the difference between fur and hair?"),
-        v("mops", "Paperwork."),
-        N(() => {
-          n.ch1ShowBots = !1;
-          ch1GoDay("passage", { who: "both", scene: "QB", stand: [420, 510] }, () => ch1Ready("photos", "Squatch: go on", "QB"));
-        }),
-      ]);
+    // The end of beat 36 (Mops has walked Squatch past the robots into the hallway): beat 37 follows from here.
+    function ch1WalkHomeDone() {
+      ch1Ready("photos", "Squatch: go on", "QB");
     }
     function ch1LookPhotos() {
       if (n.ch1Gallery) return;
@@ -652,11 +603,6 @@
       }
       (z && z.zoom < 1 && (z.zoom = Math.min(1, z.zoom + (dt || 0) / 0.5)),
         z && z.zoom >= 1 && !n.cur && n.q.length === 0 && (n.ctrl = !0),
-        n.ch1Step === "hide" &&
-          n.ctrl &&
-          n.sqPose === "stand" &&
-          Math.hypot(n.sq.x - CH1_PLANT.x, n.sq.y - CH1_PLANT.y) < 78 &&
-          ch1HideBay(),
         n.ch1Step === "family" &&
           n.ctrl &&
           n.sqPose === "stand" &&
@@ -665,11 +611,10 @@
     }
     function ch1Day2Spots() {
       if (hmBeat() && hmBeat().active()) return hmBeat().spots();
-      if (luBeat() && luBeat().active()) return luBeat().spots();
+      for (let b of [bayBeat(), luBeat()]) if (b && b.active()) return b.spots();
       if (!n.ch1Day2 || !n.ctrl || n.ch1PadOn) return [];
       let s = n.ch1Step;
       if (n.sqPose === "hidden" || n.sqPose === "ball" || n.sqPose === "sleep") return [];
-      if (s === "hide") return [ch1At("HIDE", "plant", CH1_PLANT.x, CH1_PLANT.y, 130, ch1HideBay)];
       if (s === "photos")
         return [ch1At("GO", "hall", 480, 560, 130, ch1LeavePhotos), ch1At("LOOK", "photos", 480, 320, 110, ch1LookPhotos)];
       if (s === "family") return [ch1At("HIDE", "plant", 430, 530, 120, ch1HideFamily)];
@@ -721,6 +666,7 @@
     }
     function drawCh1Passage() {
       drawLockedRoom(n.ch1Office ? "office" : "hallway");
+      luBeat() && luBeat().drawWall && luBeat().drawWall(e); // the Employee of the Month photo of Mops, under the people
       n.ch1Crayon &&
         !n.ch1Keepsake &&
         !n.ch1Office &&
@@ -778,9 +724,8 @@
       (drawPawArm(z.paw), drawZoomX(), (e.globalAlpha = 1));
     }
     function drawCh1Day2() {
-      if (n.ch1Paper === "bite" || n.ch1Paper === "mouth") (drawSlip(n.mo.x - 8, n.mo.y - 86, "#ff8fb8", 22, 28), drawSlip(n.mo.x + 8, n.mo.y - 80, "#ffe08a", 14, 18));
       n.ch1Paper === "slip" && drawSlip(n.mo.x - 6, n.mo.y - 84, "#ff8fb8", 18, 24);
-      n.ch1Paper === "bin" && (drawSlip(236, 470, "#ff8fb8", 20, 26), drawSlip(252, 476, "#ffe08a", 12, 16));
+      n.ch1Paper === "bin" && (drawSlip(198, 294, "#ff8fb8", 20, 26), drawSlip(214, 300, "#ffe08a", 12, 16)); // in the bin's opening, where Mops spat them (loading-bay.js)
       n.ch1Paper === "paws" && n.sqPose === "stand" && (drawSlip(n.sq.x + 12, n.sq.y - 70, "#ff8fb8", 18, 24), !n.ch1Mailed && drawSlip(n.sq.x + 24, n.sq.y - 64, "#ffe08a", 12, 16));
       (n.ch1Paper === "pink" || n.ch1Paper === "paw" || n.ch1Hold === "slip") && n.sqPose === "stand" && drawSlip(n.sq.x + 14, n.sq.y - 72, "#ff8fb8", 18, 24);
       n.ch1Paper === "box" && n.room === "closet" && n.wardrobe === "open" && drawSlip(110, 266, "#ff8fb8", 16, 20); // in the Guardian Box, in the closet (home-morning-art.js boxIn)
@@ -846,7 +791,7 @@
         (n.ch1Wide = !1),
         (n.ch1Morning = null),
         (n.ch1HomeMorning = null),
-        (n.ch1Lunch = null),
+        (n.ch1Lunch = null), (n.ch1Bay = null),
         (n.ch1Chip = ""));
       if (b === 22 || b === 23) {
         // the home morning (home-morning.js), awake beside the rocket; 23: the lunch goal by the wardrobe (LOOK · calendar)
@@ -855,8 +800,9 @@
       } else if (b >= 25 && b <= 27) {
         // the lunch sneak (lunch-sneak.js): 25 at its start in the hall, 26 in the hallway, 27 behind the counter
         ((n.scene = "QB"), luBeat() && luBeat().jump(["plant", "give", "snack"][b - 25]));
-      } else if (b === 33) {
-        ((n.room = "hangar"), (n.ch1D = !0), (n.ch1Ship = !0), (n.scene = "QB"), (n.sqPose = "hidden"), (n.sq.x = CH1_PLANT.x), (n.sq.y = CH1_PLANT.y), (n.mo.x = 640), (n.mo.y = 500), (n.ch1ShowBots = !0), (n.ch1Ramp = 1), ch1SetPaper("mouth"));
+      } else if (b >= 28 && b <= 36) {
+        // the loading bay (loading-bay.js): 28 behind the counter, 29 hiding, then each beat's first part
+        ((n.scene = "QB"), bayBeat() && bayBeat().jump(["pa", "hallway", "robots", "promise", "peek", "take", "talkto", "spit", "walkby"][b - 28]));
       } else if (b === 37) {
         ((n.room = "passage"), (n.scene = "QB"), (n.ch1Step = "photos"), (n.ch1Crayon = !0), (n.sq.x = 420), (n.sq.y = 420), (n.mo.x = 520), (n.mo.y = 420));
       } else if (b === 38) {
@@ -883,8 +829,6 @@
           (n.ch1SuckT = n.T - 0.4),
           (n.ch1Chip = "Squatch: hide by the vent"),
           ch1SetPaper(""));
-      } else if (b === 29) {
-        ((n.room = "hangar"), (n.ch1D = !0), (n.ch1Ship = !0), (n.scene = "QB"), (n.sq.x = 420), (n.sq.y = 520), (n.mo.x = 520), (n.mo.y = 510), (n.ch1ShowBots = !0), (n.ch1Ramp = 1));
       } else if (b === 43) {
         ((n.room = "hangar"), (n.ch1D = !0), (n.ch1Night = !0), (n.scene = "Q4"), (n.sq.x = 780), (n.sq.y = 520), (n.moPose = "hidden"), (n.ch1Step = "post"), ch1SetPaper("paws"), (n.ch1Paw = 1));
       } else if (b === 44) {
@@ -898,7 +842,7 @@
       } else if (b === 49) {
         ((n.room = "hangar"), (n.ch1D = !0), (n.scene = "Q6"), (n.sq.x = 500), (n.sq.y = 520), (n.mo.x = 640), (n.mo.y = 500), (n.ch1Step = "pink"), ch1SetPaper("slip"));
       } else if (b === 50) {
-        ((n.room = "passage"), (n.scene = "QP"), (n.sq.x = 480), (n.sq.y = 520), (n.mo.x = 600), (n.mo.y = 510), (n.ch1Hold = "slip"), (n.ch1PadOn = !0), (n.ch1Pad = "47"));
+        ((n.room = "passage"), (n.scene = "QP"), (n.sq.x = 480), (n.sq.y = 520), (n.mo.x = 600), (n.mo.y = 510), (n.ch1Hold = "slip"), (n.ch1PadOn = !0), (n.ch1Pad = "169"));
         n.ch1Zoom = { id: "pad", zoom: 1, paw: { x: 480, y: 360 } };
         n.ch1Step = "pad";
       } else if (b === 51) {

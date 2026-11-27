@@ -21,7 +21,7 @@
         (n.ch1SiteRoom = ""),
         (n.ch1Office = !1),
         (n.ch1PartyNow = null),
-        (n.ch1Lunch = null),
+        (n.ch1Lunch = null), (n.ch1Bay = null),
         (n.ch1SureEnd = !1),
         (n.ch1Day2 = !1),
         (n.ch1Zoom = null),
@@ -50,7 +50,7 @@
     function partyBeat() {
       return (window.SSQ && window.SSQ.beat && window.SSQ.beat("ch1-party")) || null;
     }
-    // The module that draws the hall now (the party night, or the lunch sneak), or null.
+    // The module that draws the room now (the party night or the lunch sneak in the hall, the loading bay), or null.
     function hallBeat() {
       return (window.SSQ && window.SSQ.hallOwner && window.SSQ.hallOwner()) || null;
     }
@@ -185,6 +185,15 @@
         openCalendar: (next) => ch1OpenCalendar(next),
         takeLunch: () => ch1TakeLunch(),
         shipCall: () => ch1ShipCall(), // beat 28 after the lunch sneak (src/modules/lunch-sneak.js)
+        // The loading bay (src/modules/loading-bay.js): a locked room picture by the older program's name (it is then the
+        // one goal outlines trace), Dot, Bob and Lou as the room draws workers, Isfred's office code, and the end of beat 36.
+        drawLocked: (ctx, id) => onCtx(ctx, () => drawLockedRoom(id)),
+        drawWorker: (ctx, x, y, name) => onCtx(ctx, () => u5({ x, y, name: name || "" })),
+        officeCode: () => CH1_OFFICE_CODE,
+        walkHomeDone: () => ch1WalkHomeDone(),
+        // Playing as Mops or Squatch (the one switch rule, announced with its card; `byLine` the card's line) and 36b's end.
+        switchTo: (who, byLine) => ((SWITCH_WHY.__beat = byLine || ""), switchTo(who, byLine ? "__beat" : "")),
+        hallSneakDone: () => ch1SnackLine(),
         offer: () => pick(ch1QSpots()),
         // Holding ↺ inside a full-screen view: the same restart as the page's ↺.
         restartPart: () => sectionReset(),

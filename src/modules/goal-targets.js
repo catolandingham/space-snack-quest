@@ -53,7 +53,7 @@ export const GOAL_TARGETS = {
   "passage:lu-back": { rect: { x0: 20, x1: 48, y0: 266, y1: 354 } }, // the doorway to the hall (left), after lunch
   "passage:d2-GO-ship": { rect: { x0: 912, x1: 940, y0: 266, y1: 354 } }, // the doorway to the loading bay
   // Loading bay
-  "hangar:d2-HIDE-plant": { trace: { x0: 70, x1: 180, y0: 244, y1: 382 } },
+  "hangar:d2-HIDE-plant": { trace: { x0: 242, x1: 350, y0: 244, y1: 382 } }, // the plant (locked bay pictures v3: right of the bin)
   "hangar:d2-GRAB-copies": { trace: { x0: 178, x1: 248, y0: 304, y1: 390 } }, // the bin
   "hangar:d2-POST-mailbox": { trace: { x0: 834, x1: 920, y0: 368, y1: 486 } }, // the robot mailbox
   "hangar:d2-GO-door": { rect: { x0: 20, x1: 48, y0: 266, y1: 354 } }, // the doorway home

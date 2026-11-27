@@ -4,24 +4,34 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–178 | ## Where main is (Chapter 1 redesign) |
-| 179–193 | ## Register |
-| 194–215 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 216–236 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 237–249 | ## Phase 2 (plan section 4, T13 to T18) |
-| 250–272 | ## Phase 1 (plan section 3, T5 to T12) |
-| 273–286 | ## SS40–SS44 |
-| 287–304 | ## Story rows |
-| 305–323 | ## Reset section |
-| 324–334 | ## Still open |
-| 335–338 | ## Chapter 1 replot, recorded and not built |
-| 339–496 | ## Changelog |
+| 24–188 | ## Where main is (Chapter 1 redesign) |
+| 189–203 | ## Register |
+| 204–225 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 226–246 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 247–259 | ## Phase 2 (plan section 4, T13 to T18) |
+| 260–282 | ## Phase 1 (plan section 3, T5 to T12) |
+| 283–296 | ## SS40–SS44 |
+| 297–314 | ## Story rows |
+| 315–333 | ## Reset section |
+| 334–344 | ## Still open |
+| 345–348 | ## Chapter 1 replot, recorded and not built |
+| 349–506 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-26 (rebuild from the story pass), draft PR #95 on `feat/ch1-loading-bay` (stacked on `feat/ch1-lunch-sneak`), not merged. Done: beats 28 to 36 and the new 36b rebuilt word for word from the story pass of 2026-11-26 (see README): the walked hallway, ROLL · ball behind the cargo, the sneak to the plant, Lou's hat at the scanner, PEEK · form, Mops eating the copies where he's handed them, the mumble whisper, the robots' orders, the tag, the empty hallway and the hairball, the party hall's three cleaning robots up to the storm. The bay plant moved in new locked delivery pictures (Brian's yes, question 75; DECISIONS). Open for Brian: every line marked Pending in the "Loading bay (beats 28 to 36, and 36b)" section of `docs/CH1-LINES-FOR-BRIAN.md`. NOT ASSESSED: whether a kid on a phone times the sneak to the plant and the party hall's lanes without help (the video shows one timing). Docs match main: yes. Not yet played by a person.
+
+2026-11-26, draft PR on `feat/ch1-loading-bay` (stacked on `feat/ch1-lunch-sneak`), not merged. Done: beats 28 to 36, the loading bay, as a module (`ch1-bay`; see README). Brian's notes on its first video (2026-11-26) built: the ball when hidden behind something, Mops in front of the hallway photo, the ramp up before the ship leaves, the robots under the scanner arch with its field shimmering, the hallway robots' size and place. A writer is revising beats 28 to 36's story; lines and order unchanged here. Isfred's office code is 169556 (Brian, chat; pin `office-code` changed). Open for Brian:
+- What calls Isfred away (beat 32)? Built: the bay's wall speaker chimes, no words. Or a robot's damaged crate in the mail room (Call 15; conflicts with R20, the mail room empty until pickup day), or the speaker's "Isfred Bar Neshuman! The dock needs you."
+- Where Isfred and the workers come from: built, through the hallway doorway after Squatch hides (so nobody can see him while he walks to the plant, and the bay needs no capture of its own).
+- Music in the bay and the hallway: the music table has no pick for them; none plays.
+- New drawings waiting for his eye (placeholders): the robots, the form set and its close-up, the two stuck copies, the bite, the copies in the bin, the ship docking (the locked day picture shown through the window and down the ramp), the workers as the older program draws them (no name tags).
+- Pending words: every line in the "Loading bay" section of `docs/CH1-LINES-FOR-BRIAN.md` except the gumbling, fur and Paperwork lines.
+- Placeholders (not pins): the close-ups' places and sizes, every walking speed and pause in `loading-bay-place.js` (BAY_PACE).
 
 2026-11-26 (round D, merge), draft PR #90 on `feat/ch1-day2-morning`, not merged. Done: `feat/ch1-bedtime-story` (with the party's round D) merged in (merge commit); the morning's goal things (the rocket, the lunch bag) keep only the dashed goal line, no glow (`tests/highlight-style.mjs`). NOT ASSESSED: whether a kid on a phone still finds the bag at once without the glow (the stills). Docs match main: yes.
 
