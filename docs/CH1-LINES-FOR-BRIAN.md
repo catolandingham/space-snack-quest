@@ -3,26 +3,27 @@
 
 | Lines | Heading |
 | --- | --- |
-| 27–33 | # Chapter 1 lines for Brian |
-| 34–137 | ## Loading bay (beats 28 to 36, and 36b), 2026-11-26 rebuild (branch feat/ch1-loading-bay, not merged) |
-| 138–147 | ## Home morning (beats 22 to 24), 2026-11-26 round D (branch feat/ch1-day2-morning, not merged) |
-| 148–160 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
-| 161–177 | ## Lunch sneak and Ganitor, 2026-11-26 (branch feat/ch1-lunch-sneak, not merged) |
-| 178–193 | ## Calendar revision, Nov 16 (PR 58, not live) |
-| 194–201 | ## Earlier chapter lines |
-| 202–216 | ## Goal chips |
-| 217–300 | ## What people say |
-| 301–312 | ## The snack's name (2026-11-26, question 86) |
-| 313–326 | ## Words painted on things |
-| 327–350 | ## Buttons |
-| 351–437 | ## Day 2 onward (beats 22–61), pending |
-| 438–445 | ## Ball hiding |
-| 446–453 | ## Off-screen lines, for Brian (playtest 12) |
-| 454–463 | ## Homework desk, approved Nov 16 |
-| 464–502 | ## Questions still open |
-| 503–540 | ## After the party: the cleanup and truth or fib (story pass 28-52, E2), pending |
-| 541–560 | ## Bedtime additions and the chart over his bed (story pass 28-52, E4), pending |
-| 561–586 | ## Day 1 stand-ins, pending |
+| 28–34 | # Chapter 1 lines for Brian |
+| 35–138 | ## Loading bay (beats 28 to 36, and 36b), 2026-11-26 rebuild (branch feat/ch1-loading-bay, not merged) |
+| 139–188 | ## Round 7: night one, the Mop-Off, the plan, the vent desk and the office (2026-11-27, branch feat/ch1-r7-bay, not merged) |
+| 189–198 | ## Home morning (beats 22 to 24), 2026-11-26 round D (branch feat/ch1-day2-morning, not merged) |
+| 199–211 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
+| 212–228 | ## Lunch sneak and Ganitor, 2026-11-26 (branch feat/ch1-lunch-sneak, not merged) |
+| 229–244 | ## Calendar revision, Nov 16 (PR 58, not live) |
+| 245–252 | ## Earlier chapter lines |
+| 253–267 | ## Goal chips |
+| 268–351 | ## What people say |
+| 352–363 | ## The snack's name (2026-11-26, question 86) |
+| 364–377 | ## Words painted on things |
+| 378–401 | ## Buttons |
+| 402–488 | ## Day 2 onward (beats 22–61), pending |
+| 489–496 | ## Ball hiding |
+| 497–504 | ## Off-screen lines, for Brian (playtest 12) |
+| 505–514 | ## Homework desk, approved Nov 16 |
+| 515–553 | ## Questions still open |
+| 554–591 | ## After the party: the cleanup and truth or fib (story pass 28-52, E2), pending |
+| 592–611 | ## Bedtime additions and the chart over his bed (story pass 28-52, E4), pending |
+| 612–637 | ## Day 1 stand-ins, pending |
 <!-- /section-index -->
 # Chapter 1 lines for Brian
 
@@ -134,6 +135,56 @@ Every word is in `src/modules/loading-bay-lines.js`, word for word from the stor
 | A robot | MOVE, GOAT. | Beat 36b (NEW) | Pending |
 | Mops | You missed a corner. | Beat 36b (NEW) | Pending |
 | A robot | CORNERS ARE NOT EFFICIENT. | Beat 36b (NEW) | Pending |
+
+## Round 7: night one, the Mop-Off, the plan, the vent desk and the office (2026-11-27, branch feat/ch1-r7-bay, not merged)
+Every line here is new or changed from your video notes of 2026-11-27 and waits for your yes as you watch. The loading bay's round-7 lines are in the loading bay table above.
+
+| Who | Line | Where | Status |
+|---|---|---|---|
+| Goal words | Squatch: look at the photos | Night one (beats 37 to 42c), your note r5 4:05; q 128 | Pending |
+| Robot | NIGHT SHIFT. | Night one (beats 37 to 42c), your note r5 9:29; q 125 | Pending |
+| Robot | CLEANING. | Night one (beats 37 to 42c), your note r5 9:29; q 125 | Pending |
+| Mops | Must be Isfred. The manager. | The escape and the office (beats 43 to 52), your note r5 10:49; q 131 | Pending |
+| Robot | NO. FRED IS NOT THE MANAGER. | The escape and the office (beats 43 to 52), your note r5 10:54; q 131 | Pending |
+| Mops | No. ISFRED. | The escape and the office (beats 43 to 52), your note r5 10:54; q 131 | Pending |
+| Robot | THAT IS WHAT I SAID. | The escape and the office (beats 43 to 52), your note r5 10:54; q 131 | Pending |
+| Mops | Employee of the Month. Ha. | The escape and the office (beats 43 to 52), your note r5 11:22; q 128 | Pending |
+| Mops | Crates ride out on the ship. | The escape and the office (beats 43 to 52), your note r5 15:23; q 124 | Pending |
+| Mops | Let's make a plan. | The escape and the office (beats 43 to 52), your note r5 12:19; q 132 | Pending |
+| Goal words | Squatch: draw the plan at your desk | The escape and the office (beats 43 to 52), your note r5 12:19; q 132 | Pending |
+| Button | DRAW · plan | The escape and the office (beats 43 to 52), your note r5 12:19; q 132 | Pending |
+| Painted or written | GET THE CODE | The escape and the office (beats 43 to 52), your note r5 12:19; q 132 | Pending |
+| Painted or written | BOOK THE CRATE | The escape and the office (beats 43 to 52), your note r5 12:19; q 132 | Pending |
+| Painted or written | RIDE TO MARS | The escape and the office (beats 43 to 52), your note r5 12:19; q 132 | Pending |
+| Squatch | It was on the form. I... never mind. | The escape and the office (beats 43 to 52), your note r5 12:33; q 133 | Pending |
+| Squatch | Didn't a copy get sucked into a vent? | The escape and the office (beats 43 to 52), your note r5 13:18; q 125 | Pending |
+| Mops | Everything the vents suck up ends up behind the big vent. | The escape and the office (beats 43 to 52), your note r5 13:18; q 125 | Pending |
+| Switch card | Mops goes into the vent. Squatch keeps watch. | The escape and the office (beats 43 to 52), your note r5 13:29; q 125 | Pending |
+| Painted or written | STARS CAKES. A NEW KIND. | The escape and the office (beats 43 to 52), your note r5 13:57; q 133 | Pending |
+| Painted or written | Paid by: MOPS | The escape and the office (beats 43 to 52), your note r5 13:57; q 133 | Pending |
+| Squatch | I hope he didn't read the order form. | The escape and the office (beats 43 to 52), your note r5 14:24; q 133 | Pending |
+| Goal words | Squatch: book a pickup on the computer | The escape and the office (beats 43 to 52), your note r5 15:23; q 124 | Pending |
+| Button | LOOK · screens | The escape and the office (beats 43 to 52), your note r5 15:01; q 124 | Pending |
+| Squatch | That's the loading bay. On TV! | The escape and the office (beats 43 to 52), your note r5 15:01; q 124 | Pending |
+| Mops | Cameras. He never watches them. | The escape and the office (beats 43 to 52), your note r5 15:01; q 124 | Pending |
+| Button | LOOK · poster | The escape and the office (beats 43 to 52), your note r5 15:01; q 124 | Pending |
+| Button | LOOK · cabinet | The escape and the office (beats 43 to 52), your note r5 15:01; q 124 | Pending |
+| Mops | Robot! Duck! | The escape and the office (beats 43 to 52), your note round 7 | Pending |
+| Button | USE · computer | The escape and the office (beats 43 to 52), your note r5 15:23; q 124 | Pending |
+| Mops | You do it. I'll watch the door. | The escape and the office (beats 43 to 52), your note r6 0:41; q 124 | Pending |
+| Painted or written | UNIVERSAL POSTAL SERVICE | The escape and the office (beats 43 to 52), your note r5 15:23; q 124 | Pending |
+| Painted or written | SCHEDULE A PICKUP | The escape and the office (beats 43 to 52), your note r5 15:23; q 124 | Pending |
+| Painted or written | How big? | The escape and the office (beats 43 to 52), your note r5 15:23; q 124 | Pending |
+| Painted or written | SMALL | The escape and the office (beats 43 to 52), your note r5 15:23; q 124 | Pending |
+| Painted or written | MEDIUM | The escape and the office (beats 43 to 52), your note r5 15:23; q 124 | Pending |
+| Painted or written | BIG | The escape and the office (beats 43 to 52), your note r5 15:23; q 124 | Pending |
+| Painted or written | What's inside? | The escape and the office (beats 43 to 52), your note r5 15:23; q 124 | Pending |
+| Painted or written | OLD MOPS | The escape and the office (beats 43 to 52), your note r5 15:23; q 124 | Pending |
+| Painted or written | GOAT STUFF | The escape and the office (beats 43 to 52), your note r5 15:23; q 124 | Pending |
+| Painted or written | ONE SASQUATCH | The escape and the office (beats 43 to 52), your note r5 15:23; q 124 | Pending |
+| Mops | Not that one! | The escape and the office (beats 43 to 52), your note round 7 | Pending |
+| Goal words | Squatch: go home | The escape and the office (beats 43 to 52), your note r5 15:47; q 133 | Pending |
+| Mops | Wait. It's a long way to Mars. | The escape and the office (beats 43 to 52), your note r5 15:47; q 124 | Pending |
 
 ## Home morning (beats 22 to 24), 2026-11-26 round D (branch feat/ch1-day2-morning, not merged)
 
