@@ -35,7 +35,7 @@ Calendar review status (2026-11-16): Brian said yes to merge the calendar (Nov 1
 
 ## Chapter 1 redesign (on main)
 
-2026-11-26 (late night, lunch), draft pull request #91, not merged. The rename (question 86) and the family crate's stamp are merged in from #87, #89 and #90. The lunch sneak's plate holds the same round cakes, now the station's Stars Cakes (comments and test notes say so; no words are painted on the plate or the lunch crates). Stills for Brian: `tests/out/for-brian-2026-11-26/round-e/rename-stills/`. Not yet played by a person. Docs match main: yes.
+2026-11-26 (late night, lunch), draft pull request #91, not merged. The rename (question 86) and the family crate's stamp are merged in from #87, #89 and #90. The lunch sneak's plate holds the same round cakes, now the station's Stars Cakes (comments and test notes say so; no words are painted on the plate or the lunch crates). The lunch sneak draws the hall itself, so it takes the hall tin's new lid there too (and its counter close-up, copied from it). Stills for Brian: `tests/out/for-brian-2026-11-26/round-e/rename-stills/`. Not yet played by a person. Docs match main: yes.
 
 2026-11-26 (late night, Day 2's start), draft pull request #90, not merged. The rename (question 86) and the bedtime story's family stamp are merged in from #87 and #89. The home morning's words about the calendar now name the snack's delivery day; the tall wardrobe and the mop bucket, cut from the home pictures, come with the crate bed's new stamp like every home picture. Not yet played by a person. Docs match main: yes.
 

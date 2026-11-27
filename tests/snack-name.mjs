@@ -220,6 +220,23 @@ const hall = await page.evaluate(
   },
   null,
 );
+// the lunch sneak (beats 25 to 27) draws the hall itself, and its counter close-up copies what it drew
+const lunchHall = await page.evaluate(() => {
+  const ss = window.__ss,
+    n = ss.op,
+    out = [];
+  for (const b of [25, 27]) {
+    n.q = [];
+    n.cur = null;
+    ss.ch1JumpBeat(b);
+    const before = window.SSQ.crateStampDrawn().handedHall;
+    for (let i = 0; i < 4; i++) ss.tick(0.05);
+    ss.drawFrame();
+    out.push({ beat: b, room: n.room, handed: window.SSQ.crateStampDrawn().handedHall - before });
+  }
+  return out;
+});
+g.check("the lunch sneak's hall (beats 25 and 27, and the counter close-up copied from it) has the tin's new lid", lunchHall.every((r) => r.handed > 0), lunchHall);
 g.check(`the hall picture is drawn with the tin's new lid: "${SNACK.name}" under a star`, hall.handedThisFrame > 0 && !!hall.tin && hall.tin.words.join(" ") === SNACK.name, hall);
 
 // The picture files are as main has them (git's own record of each file's contents).

@@ -42,6 +42,7 @@ import { HALL, HALL_PICTURE, SPOTS } from "./party-hall.js";
 import { coneFrom, coneSees, lookAt, SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
 import { startAlarm, tickAlarm, guardCones, ALARM } from "./party-alarm.js";
 import { drawHall } from "./party-draw.js";
+import { withSnackLayers } from "./crate-stamp.js";
 import { drawAlarmCloseUp } from "./party-art.js";
 import { partyLine, lockupCause } from "./party-lines.js";
 import { tickQuestions, questions } from "./party-question.js";
@@ -778,7 +779,7 @@ export function createLunchSneak(bridge) {
     }
     return {
       t,
-      picture,
+      picture: withSnackLayers("hall", picture), // (the hall tin's new lid, crate-stamp.js)
       banner: false,
       lights: null,
       isfred: null,
