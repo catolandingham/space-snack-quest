@@ -44,21 +44,8 @@ export const BAY = Object.freeze({
   // wall in front (y 359), with a shadow under him (Brian 2026-11-26, escape 0:47: not looking inside the wall)
   ventStand: Object.freeze({ x: 846, y: 322 }),
   mopsVent: Object.freeze({ x: 800, y: 326 }), // where Mops starts his crawl, left of Squatch
-  // in from the hallway: through the left doorway, down past the plant's front to the front of the bay, along the front
-  // (well away from the robot, who waits at the bin end looking at the vent while they come in), up the gap between the
-  // walkway and the mail room, and along above the mail room's wall to the vent
-walkIn: Object.freeze([
-    Object.freeze({ x: 50, y: 330 }),
-    Object.freeze({ x: 52, y: 570 }),
-    Object.freeze({ x: 636, y: 570 }),
-    Object.freeze({ x: 636, y: 330 }),
-    Object.freeze({ x: 846, y: 322 }),
-  ]),
   // how near the vent he must be to roll up there (the ROLL spot's circle, and "at the vent")
   ventReach: 60,
-  // the tease (beat 44): Mops mops in front of the walkway, the three robots round him
-  teaseMops: Object.freeze({ x: 470, y: 500 }),
-  teaseBots: Object.freeze([Object.freeze({ x: 320, y: 470 }), Object.freeze({ x: 630, y: 470 }), Object.freeze({ x: 560, y: 580 })]),
   // the night robot on patrol across the bay in front of the walkway, from the bin toward the vent and back; going
   // right it looks up at the vent, going left the way it goes
   patrol: Object.freeze({ x0: 250, x1: 630, y: 452, speed: 42 }),
@@ -136,7 +123,18 @@ export const OFFICE = Object.freeze({
   ]),
   sq: Object.freeze({ x: 610, y: 585 }),
   mops: Object.freeze({ x: 380, y: 470 }),
+  // 51 (the rebuild of 2026-11-26 night): Mops keeps watch at the door; the fun things, each where he stands for it
+  watch: Object.freeze({ x: 420, y: 300 }),
+  chair: Object.freeze({ at: Object.freeze({ x: 486, y: 560 }), thing: Object.freeze({ x0: 491, y0: 409, x1: 559, y1: 517 }) }),
+  mug: Object.freeze({ at: Object.freeze({ x: 120, y: 440 }), thing: Object.freeze({ x0: 70, y0: 300, x1: 112, y1: 336 }) }),
+  drawer: Object.freeze({ at: Object.freeze({ x: 230, y: 500 }), thing: Object.freeze({ x0: 68, y0: 352, x1: 158, y1: 396 }) }),
+  frame: Object.freeze({ at: Object.freeze({ x: 905, y: 585 }), thing: Object.freeze({ x0: 846, y0: 396, x1: 884, y1: 444 }) }),
+  hide: Object.freeze({ at: Object.freeze({ x: 700, y: 585 }), thing: Object.freeze({ x0: 600, y0: 444, x1: 870, y1: 552 }), under: Object.freeze({ x: 735, y: 520 }) }),
+  r: 45,
+  sweep: 2.6, // seconds the robot's light takes to pass the open door
 });
+// The way from the bay to the office door (50): the hallway, where the keypad is.
+export const ROUTE_OFFICE = Object.freeze({ hangar: "passage" });
 // The Moon Pie site close-up (over the blurred office): the screen, its header and two buttons.
 export const SITE = Object.freeze({
   screen: Object.freeze({ x0: 110, y0: 40, x1: 850, y1: 600 }),
@@ -151,6 +149,8 @@ export const ES_BAR = Object.freeze({
   mops: Object.freeze({ x: 893, y: 396 }),
   top: Object.freeze({ x: 893, y: 336 }),
   out: Object.freeze({ x: 700, y: 420 }),
+  r: 46, // this near his place behind the counter, the snacks begin (52)
+  aisle: Object.freeze({ x0: 862, y0: 352, x1: 924, y1: 548 }), // the counter's aisle (lunch-sneak-place.js AISLE)
 });
 // The snack close-up: six snacks on the counter (one row of four, two on top), the bag bottom left, the Guardians'
 // plate on the counter's right end (it shows once Squatch has said his line).
@@ -185,8 +185,6 @@ export const NIGHT_LIT = Object.freeze({
 
 // Timing (seconds) and walking speeds (game pixels a second).
 export const ES_PACE = Object.freeze({
-  tease: 2.4, // the robots circle Mops, laughing, before the first line
-  sad: 1.0,
   mopsIn: 150,
   think: 2.6, // a wordless thought picture over someone's head
   ventLook: 2.6, // the first view inside the vent, held still: where they are, his eyes at the grille (Brian 2026-11-26)
@@ -204,6 +202,9 @@ export const ES_PACE = Object.freeze({
   eyes: 2.0, // 48: Squatch's eyes at the grille, in their small round picture
   fold: 1.0, // 49: the slip folded, the paw print inside
   planPop: 2.4, // the crayon plan pops up with a tick
+  ghjk: 1.4, // 51: Mops's hooves on the keys before "Hooves. You do it."
+  label: 1.2, // 51: the label slides out of the printer
+  spin: 1.6, // 51: SPIN · chair
 });
 
 // ---------- the rebuild of 2026-11-26 night (the story pass): every number a PLACEHOLDER for Brian ----------
@@ -263,11 +264,15 @@ export const ES_DOORS = Object.freeze({
     Object.freeze({ to: "hall", box: Object.freeze({ x0: 0, x1: 78, y0: 318, y1: 374 }), at: Object.freeze({ x: 880, y: 318 }), f: -1, mark: Object.freeze({ x0: 14, y0: 250, x1: 72, y1: 372 }) }),
     Object.freeze({ to: "hangar", box: Object.freeze({ x0: 882, x1: 960, y0: 300, y1: 364 }), at: Object.freeze({ x: 70, y: 400 }), f: 1, mark: Object.freeze({ x0: 890, y0: 250, x1: 950, y1: 362 }) }),
   ]),
+  office: Object.freeze([Object.freeze({ to: "passage", box: Object.freeze({ x0: 440, x1: 522, y0: 240, y1: 296 }), at: Object.freeze({ x: 570, y: 560 }), f: 1, mark: Object.freeze({ x0: 432, y0: 131, x1: 529, y1: 255 }) })]),
   hangar: Object.freeze([Object.freeze({ to: "passage", box: Object.freeze({ x0: 0, x1: 78, y0: 318, y1: 352 }), at: Object.freeze({ x: 860, y: 332 }), f: -1, mark: Object.freeze({ x0: 8, y0: 260, x1: 64, y1: 352 }) })]),
 });
 // The way home through the rooms (44d: from the bay), and out to the vent (47: from home).
 export const ROUTE_HOME = Object.freeze({ hangar: "passage", passage: "hall", hall: "closet" });
 export const ROUTE_VENT = Object.freeze({ closet: "hall", hall: "passage", passage: "hangar" });
+// 52: from the office to the snack bar (the hall), and from there home.
+export const ROUTE_BAR = Object.freeze({ office: "passage", passage: "hall" });
+export const ROUTE_HOME_NIGHT = Object.freeze({ hall: "closet" });
 // The hall by day on the walk home: the guest who waves at Mops, and how near Mops must be for her "Hi, Mops!".
 export const HALL_GUEST = Object.freeze({ x: 560, y: 450, near: 170, kind: "teal" });
 // The Employee of the Month photo in the hallway (ganitor.js drawGanitorWall), where Mops can LOOK · plaque.

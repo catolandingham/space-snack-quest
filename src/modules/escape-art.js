@@ -217,74 +217,6 @@ export function drawBrochure(ctx, b, big = false) {
 }
 
 // ---------- the wordless thought pictures (beats 45 and 46) ----------
-/** Mops's plan: the Moon Pie crate, Squatch's and Mops's eyes peeking out, riding up a ramp into the ship. */
-export function thinkCrateShip(ctx, head, a = 1) {
-  return drawThought(
-    ctx,
-    head,
-    a,
-    (c, cx, cy) => {
-      // the ship on the right
-      c.save();
-      esRect(c, cx + 10, cy - 40, 92, 60, 26);
-      esPaint(c, "#c5ccd8", 3);
-      for (const k of [0, 1]) (c.beginPath(), c.arc(cx + 36 + k * 30, cy - 14, 8, 0, ES_TAU), esPaint(c, "#78b4ea", 2));
-      // the crate on the left, two pairs of eyes in its gap
-      drawCrate(c, cx - 44, cy + 34, 0.36, { words: false });
-      for (const [ex, col] of [
-        [-58, "#ffffff"],
-        [-32, "#ffffff"],
-      ]) {
-        for (const d of [-4, 4]) (c.beginPath(), c.arc(cx + ex + d, cy - 2, 3.4, 0, ES_TAU), esPaint(c, col, 1.5));
-      }
-      // an arrow from the crate to the ship
-      c.beginPath();
-      c.moveTo(cx - 6, cy + 4);
-      c.lineTo(cx + 18, cy - 6);
-      c.strokeStyle = ES_RED;
-      c.lineWidth = 4;
-      c.stroke();
-      c.restore();
-    },
-    { w: 240, h: 150 },
-  );
-}
-/** The office door, shut, with its keypad and a red padlock: they need the code. */
-export function thinkLockedDoor(ctx, head, a = 1) {
-  return drawThought(
-    ctx,
-    head,
-    a,
-    (c, cx, cy) => {
-      esRect(c, cx - 34, cy - 46, 52, 86, 3);
-      esPaint(c, "#8b93a7", 3);
-      c.beginPath();
-      c.moveTo(cx - 8, cy - 42);
-      c.lineTo(cx - 8, cy + 36);
-      c.strokeStyle = "#2b3a67";
-      c.lineWidth = 2;
-      c.stroke();
-      esRect(c, cx + 28, cy - 4, 18, 26, 3);
-      esPaint(c, "#59657d", 2);
-      for (const [dx, dy] of [
-        [33, 3],
-        [41, 3],
-        [33, 12],
-        [41, 12],
-      ])
-        (c.beginPath(), c.arc(cx + dx, cy + dy, 2, 0, ES_TAU), (c.fillStyle = "#8fdcff"), c.fill());
-      // the padlock
-      c.beginPath();
-      c.arc(cx - 8, cy - 6, 9, Math.PI, 0);
-      c.strokeStyle = ES_INK;
-      c.lineWidth = 4;
-      c.stroke();
-      esRect(c, cx - 20, cy - 6, 24, 20, 3);
-      esPaint(c, ES_RED, 3);
-    },
-    { w: 200, h: 140 },
-  );
-}
 /** The pink sheet, its code in the corner, flying into the big wall vent (what he remembers from night one). */
 export function thinkSlipVent(ctx, head, a = 1, t = 0) {
   return drawThought(
@@ -599,92 +531,6 @@ function letterPanel(ctx) {
   stampNo(ctx, 700, 520, 120);
   return { pic: "esletter", head, lines, size: 38 };
 }
-// Mops writes the new Guardian note at his desk: his hoof with the pencil, the words coming as he writes them, his
-// white beard hanging in from above, and one long white hair left on the note (like the gift note's).
-function notePanel(ctx, t) {
-  ctx.fillStyle = "#c4a574";
-  ctx.fillRect(0, 0, 960, 640);
-  ideasBoard(ctx, { x0: 60, y0: 10, x1: 520, y1: 150 }, 26);
-  esRect(ctx, 120, 170, 720, 420, 8);
-  esPaint(ctx, ES_CREAM, 5);
-  const text = escapeWords("note"),
-    sign = escapeWords("note-sign"),
-    k = esClamp(t / 3.2),
-    shown = text.slice(0, Math.round(text.length * k));
-  const lines = esWrap(ctx, text, 640, 40);
-  let left = shown.length,
-    y = 250,
-    end = { x: 160, y: 250 };
-  ctx.save();
-  for (const l of lines) {
-    const part = l.slice(0, Math.max(0, left));
-    left -= l.length + 1;
-    if (part) {
-      esWords(ctx, part, 160, y, 40, "#2b3a67", "left", 700);
-      end = { x: 160 + ctx.measureText(part).width, y };
-    }
-    y += 62;
-  }
-  ctx.restore();
-  const signed = t >= 3.4;
-  signed && esWords(ctx, sign, 800, y + 20, 38, "#2b3a67", "right", 700);
-  // the hair, once the note is written
-  if (signed) {
-    ctx.save();
-    ctx.strokeStyle = "#ffffff";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(300, 540);
-    ctx.bezierCurveTo(420, 500, 520, 590, 700, 530);
-    ctx.stroke();
-    ctx.strokeStyle = "rgba(30,36,48,.35)";
-    ctx.lineWidth = 1;
-    ctx.stroke();
-    ctx.restore();
-  }
-  // his white beard hanging in from the top right
-  ctx.beginPath();
-  ctx.moveTo(760, -10);
-  ctx.quadraticCurveTo(700, 120, 760, 200);
-  ctx.quadraticCurveTo(800, 150, 830, 200);
-  ctx.quadraticCurveTo(880, 120, 900, -10);
-  ctx.closePath();
-  esPaint(ctx, "#f4f5f8", 4);
-  // his hoof and the pencil, at the end of the words (resting on the paper once signed)
-  const hx = signed ? 860 : Math.min(840, end.x + 30),
-    hy = signed ? 470 : end.y - 10;
-  ctx.save();
-  ctx.translate(hx, hy);
-  ctx.rotate(0.5);
-  esRect(ctx, -6, -70, 12, 80, 3);
-  esPaint(ctx, ES_GOLD, 3);
-  ctx.beginPath();
-  ctx.moveTo(-6, 10);
-  ctx.lineTo(0, 24);
-  ctx.lineTo(6, 10);
-  esPaint(ctx, "#f2d3a4", 2);
-  ctx.restore();
-  ctx.beginPath();
-  ctx.ellipse(hx + 34, hy - 34, 30, 26, 0.4, 0, ES_TAU);
-  esPaint(ctx, "#4a505c", 4);
-  ctx.beginPath();
-  ctx.moveTo(hx + 44, hy - 58);
-  ctx.lineTo(hx + 110, hy - 140);
-  ctx.lineTo(hx + 150, hy - 110);
-  ctx.lineTo(hx + 62, hy - 28);
-  ctx.closePath();
-  esPaint(ctx, "#ffffff", 4);
-  return { pic: "esnote", shown, signed, size: 40, hair: signed };
-}
-// The pink sheet in Squatch's paw, close (beat 50): the paw print in the ORDER MORE ROBOTS box, and the office code in
-// its corner, lit, beside the little door with its keypad.
-function slipPanel(ctx, t) {
-  ctx.fillStyle = "#e8e3d6";
-  ctx.fillRect(0, 0, 960, 640);
-  const s = drawPinkSheet(ctx, 250, 40, 440, { glowCode: true, t });
-  furryArm(ctx, { x: 270, y: 560 }, { x: 60, y: 760 });
-  return { pic: "esslip", code: OFFICE_CODE, codeSize: s.code.size, codeAt: s.code, paw: s.paw };
-}
 // The Guardian Box close-up (the home morning's box view: the lid with MY GARDIAN BOX, the older notes, the rocket,
 // the crayon drawing MY GUARDIANS): his paw slides the pink slip in under the notes, and it is gone from sight.
 function boxPanel(ctx, t) {
@@ -744,7 +590,7 @@ function boxPanel(ctx, t) {
   furryArm(ctx, paw, { x: paw.x + 140, y: -80 });
   return { pic: "esbox", tucked: k >= 1, label: sign.join(" "), title };
 }
-export const ESCAPE_PANELS = Object.freeze({ eswall: [wallPanel], esletter: [letterPanel], esnote: [notePanel], esslip: [slipPanel], esbox: [boxPanel] });
+export const ESCAPE_PANELS = Object.freeze({ eswall: [wallPanel], esletter: [letterPanel], esbox: [boxPanel] });
 
 // ---------- close-ups drawn over the room (the keypad, the Moon Pie site, the snack counter) ----------
 /** The room behind a close-up: blurred and darkened, as in the cut-in recipe (docs/CUT-IN-SPEC.md). */
@@ -761,14 +607,31 @@ export function blurBehind(ctx) {
  * big: a screen with four boxes, and ten keys. `typed` the digits typed; `buzz` (0 to 1) the red buzz of a wrong try;
  * `ok` the green of the right code. Returns the keys' places.
  */
-export function drawKeypad(ctx, { typed = "", buzz = 0, ok = false, t = 0 } = {}) {
+export function drawKeypad(ctx, { typed = "", buzz = 0, ok = false, t = 0, big = false } = {}) {
   const K = KEYPAD;
   const s = K.slip;
+  // the slip, folded so only its pen corner shows (Mops is beside him: the paw print stays inside); a tap makes it
+  // bigger (Brian, Nov 8)
+  const w = big ? s.x1 - s.x0 : (s.x1 - s.x0) * 0.62,
+    h = w * 0.7,
+    x = s.x0 + (s.x1 - s.x0 - w) / 2,
+    y = (s.y0 + s.y1) / 2 - h / 2;
   ctx.save();
-  ctx.translate(s.x0, s.y0);
-  ctx.rotate(-0.04);
-  drawPinkSheet(ctx, 0, 0, s.x1 - s.x0, { glowCode: !ok, t });
+  ctx.translate(x + w / 2, y + h / 2);
+  ctx.rotate(-0.05);
+  esRect(ctx, -w / 2, -h / 2, w, h, 6);
+  esPaint(ctx, ES_PINK, 5);
+  ctx.beginPath();
+  ctx.moveTo(-w / 2, h / 2 - 6);
+  ctx.lineTo(w / 2, -h / 2 + 6);
+  ctx.strokeStyle = ES_PINK_DARK;
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  drawPenDigits(ctx, OFFICE_CODE, -w * 0.08, h * 0.2, w * 0.11, "#2b3a67");
   ctx.restore();
+  const slip = { x0: x, y0: y, x1: x + w, y1: y + h, big };
+  // the one highlight round it while he still has the code to type
+  !ok && markBox(ctx, slip, t);
   const p = K.pad;
   esRect(ctx, p.x0, p.y0, p.x1 - p.x0, p.y1 - p.y0, 22);
   esPaint(ctx, "#59657d", 6);
@@ -782,8 +645,9 @@ export function drawKeypad(ctx, { typed = "", buzz = 0, ok = false, t = 0 } = {}
     const bx = sc.x0 + 12 + i * slot + shake;
     esRect(ctx, bx + 3, sc.y0 + 12, slot - 6, sc.y1 - sc.y0 - 24, 6);
     esPaint(ctx, "rgba(255,255,255,.12)", 2, "#8fdcff");
-    typed[i] && esWords(ctx, typed[i], bx + slot / 2, (sc.y0 + sc.y1) / 2, 42, ok ? "#c8ffd9" : "#8fdcff", "center", 900);
+    !ok && typed[i] && esWords(ctx, typed[i], bx + slot / 2, (sc.y0 + sc.y1) / 2, 42, "#8fdcff", "center", 900);
   }
+  ok && esWords(ctx, escapeWords("pad-open"), (sc.x0 + sc.x1) / 2, (sc.y0 + sc.y1) / 2 + 2, 52, "#c8ffd9", "center", 900);
   const keys = {};
   for (const d of ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]) {
     const k = keyAt(d);
@@ -793,7 +657,7 @@ export function drawKeypad(ctx, { typed = "", buzz = 0, ok = false, t = 0 } = {}
     esWords(ctx, d, k.x, k.y + 2, 48, ES_INK, "center", 900);
     keys[d] = { x: k.x, y: k.y, r: K.r };
   }
-  return { keys, typed, ok, buzz: buzz > 0 };
+  return { keys, typed, ok, buzz: buzz > 0, slip, open: ok ? escapeWords("pad-open") : "" };
 }
 /** The open office door over the hallway's locked door: the dark room through it. */
 export function drawDoorOpen(ctx) {
@@ -813,7 +677,7 @@ export function drawDoorOpen(ctx) {
  * button and a big lit "Return empty crate" button. `booked` (0 to 1): after the tap, the crate rides up a ramp into
  * the ship and a big green tick comes. Returns the buttons' boxes.
  */
-export function drawSite(ctx, { booked = -1, t = 0 } = {}) {
+export function drawSite(ctx, { booked = -1, t = 0, ghjk = false, label = -1 } = {}) {
   const S = SITE,
     sc = S.screen;
   esRect(ctx, sc.x0 - 20, sc.y0 - 20, sc.x1 - sc.x0 + 40, sc.y1 - sc.y0 + 40, 18);
@@ -825,6 +689,23 @@ export function drawSite(ctx, { booked = -1, t = 0 } = {}) {
   esWords(ctx, escapeWords("site"), (sc.x0 + sc.x1) / 2, sc.y0 + 58, 60, "#fff3d6", "center", 900);
   const o = S.order,
     r = S.ret;
+  // the kinds already ordered, one a week (the hunt seen from the manager's side): a column of little cakes, each ticked
+  for (let i = 0; i < 6; i++) {
+    const kx = sc.x1 - 46,
+      ky = sc.y0 + 150 + i * 62;
+    ctx.beginPath();
+    ctx.ellipse(kx, ky, 26, 18, 0, 0, ES_TAU);
+    esPaint(ctx, ["#c98b4a", "#e0b070", "#9b6b3c", "#f0c890", "#b8763a", "#d9a35b"][i], 3);
+    ctx.beginPath();
+    ctx.moveTo(kx - 46, ky - 4);
+    ctx.lineTo(kx - 38, ky + 6);
+    ctx.lineTo(kx - 26, ky - 10);
+    ctx.strokeStyle = "#2bc48a";
+    ctx.lineWidth = 4;
+    ctx.stroke();
+  }
+  // Mops tried first: his hooves hit four keys at once
+  ghjk && (esRect(ctx, o.x0, sc.y0 + 124, 300, 60, 8), esPaint(ctx, "#ffffff", 3), esWords(ctx, escapeWords("keys-ghjk"), o.x0 + 20, sc.y0 + 156, 34, ES_INK, "left", 700));
   if (booked < 0) {
     esRect(ctx, o.x0, o.y0, o.x1 - o.x0, o.y1 - o.y0, 12);
     esPaint(ctx, "#dfe4ea", 3, "#8a93a3");
@@ -849,6 +730,8 @@ export function drawSite(ctx, { booked = -1, t = 0 } = {}) {
     for (const kx of [0, 1, 2]) (ctx.beginPath(), ctx.arc(610 + kx * 60, 240, 18, 0, ES_TAU), esPaint(ctx, "#78b4ea", 3));
     k < 1 && drawCrate(ctx, cx, cy, 0.5, { words: false });
     if (booked > 0.9) {
+      esWords(ctx, escapeWords("site-booked"), 480, 430, 44, "#1f7a4a", "center", 900);
+      esWords(ctx, escapeWords("site-tomorrow"), 480, 486, 40, ES_INK, "center", 800);
       ctx.beginPath();
       ctx.arc(330, 300, 90, 0, ES_TAU);
       esPaint(ctx, "#2bc48a", 6);
@@ -862,7 +745,17 @@ export function drawSite(ctx, { booked = -1, t = 0 } = {}) {
       ctx.stroke();
     }
   }
-  return { order: o, ret: r, booked: booked >= 0 };
+  // the printer's label, sliding out under the screen: the same tag as last week's crate
+  let lab = null;
+  if (label >= 0) {
+    const k = esClamp(label / 0.8),
+      L = { x0: 300, x1: 660, y0: 560 - 0 + (1 - k) * 60, y1: 640 };
+    esRect(ctx, L.x0, L.y0, L.x1 - L.x0, 110, 6);
+    esPaint(ctx, ES_PAPER, 4);
+    esWords(ctx, escapeWords("label"), (L.x0 + L.x1) / 2, L.y0 + 44, 34, ES_INK, "center", 900);
+    lab = L;
+  }
+  return { order: o, ret: r, booked: booked >= 0, label: lab, ghjk };
 }
 /** His big furry arm and paw coming up from below (for the close-ups over the room), the paw at `paw`. */
 export function drawArmUp(ctx, paw) {

@@ -78,9 +78,14 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: look at your crate": { es: "crate", x: 330, y: 500, look: [184, 392] },
     "Squatch: look at the calendar": { es: "cal", x: 230, y: 392, look: [133, 192] },
     "Squatch: sneak to the big vent": { es: "sneak", walk: true, x: 380, y: 556, look: [916, 362] },
+    "Squatch: go to the office door": { es: "tohall", walk: true, look: [36, 262] },
+    "Squatch: book the empty crate on the computer": { es: "computer", x: 610, y: 585, look: [735, 300] },
+    "Squatch: hide under the desk": { es: "duck", x: 700, y: 585, look: [600, 446] },
+    "Squatch: take the label": { es: "label", closeUp: true, look: [480, 600] },
+    "Squatch: go to the snack bar": { es: "tobar", walk: true, look: [480, 133] },
     "Squatch: roll into a ball by the vent": { es: "ball", x: 846, y: 322, look: [800, 220] },
     "Squatch: grab the pink slip": { es: "grab", x: 850, y: 334, look: [796, 290] },
-    "Squatch: type the code from the pink slip": { es: "pad", closeUp: true, look: [273, 553] },
+    "Squatch: type the code from the pink slip": { es: "pad", closeUp: true, look: [220, 276] },
     "Squatch: return the empty crate": { es: "computer", x: 610, y: 585, look: [735, 300] },
     "Squatch: take the snacks": { es: "snacks", closeUp: true, look: [330, 400] },
     "Squatch: leave food for the Guardians": { es: "food", closeUp: true, look: [850, 420] },
@@ -91,7 +96,7 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: walk through the scanner": { step: "board", room: "hangar", bay: true, scene: "Q9", x: 480, y: 500 },
   };
   // the escape's goals not built yet in the rebuild of 2026-11-26 night (each leaves this list when its step is built)
-  const escapeLater = new Set(["Squatch: go to the office door", "Squatch: book the empty crate on the computer", "Squatch: go to the snack bar"]);
+  const escapeLater = new Set(["_"]);
   const missing = chips.filter((c) => !play[c] && !story.has(c) && !escapeLater.has(c));
   const yellowNear = (x, y) => {
     const cv = document.querySelector("canvas[width='960']") || document.querySelector("canvas");

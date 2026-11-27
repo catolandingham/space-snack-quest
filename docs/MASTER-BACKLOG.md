@@ -4,24 +4,30 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–186 | ## Where main is (Chapter 1 redesign) |
-| 187–201 | ## Register |
-| 202–223 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 224–244 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 245–257 | ## Phase 2 (plan section 4, T13 to T18) |
-| 258–280 | ## Phase 1 (plan section 3, T5 to T12) |
-| 281–294 | ## SS40–SS44 |
-| 295–312 | ## Story rows |
-| 313–331 | ## Reset section |
-| 332–342 | ## Still open |
-| 343–346 | ## Chapter 1 replot, recorded and not built |
-| 347–504 | ## Changelog |
+| 24–192 | ## Where main is (Chapter 1 redesign) |
+| 193–207 | ## Register |
+| 208–229 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 230–250 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 251–263 | ## Phase 2 (plan section 4, T13 to T18) |
+| 264–286 | ## Phase 1 (plan section 3, T5 to T12) |
+| 287–300 | ## SS40–SS44 |
+| 301–318 | ## Story rows |
+| 319–337 | ## Reset section |
+| 338–348 | ## Still open |
+| 349–352 | ## Chapter 1 replot, recorded and not built |
+| 353–510 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-26 (night, rebuild), draft PR #93 on `feat/ch1-escape`, not merged. Done: beats 43 to 52 rebuilt from the story pass of 2026-11-26, one beat group a commit (43 and 44; 45 and 46; 47 to 49; 50 to 52): the calendar card, the player as Mops (mopping, the Mop-Off "clean better" with FAST and SPARKLE and the GANITOR star, the HQ news in the manager's own words, the walk home), "You were right" and the crayon plan, the almost-slip, the walked sneak to the vent with Mops following, the player as Mops in the vent (tunnel, lamp, wall, toy bin, stubs and chart, the note line by line, the pink slip), "You're gumbling again!", the keypad with the folded slip, the office's optional finds and the duck, the site with "ghjk", the label, the snacks and the last Stars Cake, the Guardian Box, the song. The vent room is locked (`vent-room-empty-v1.png`, Brian question 56). Docs match main: yes.
+- Pending (Brian approves as he watches): every CHANGED and NEW line in `src/modules/escape-lines.js` (status "pending"); the "new" goal lines, buttons and switch reasons there; the crate stamp _ARS CAKES and the MARS CAKES box on the held-up brochure (layers over locked pictures, waiting for his yes); every drawing (the calendar close-up, the cart tracks and dirt, the robots' lanes, the bars, the star close-up, the crayon plan, the tunnel, the stubs and chart, the note close-up, the fold, the folded slip, the office's mug, frame, drawer and passing light, the label).
+- Still-open picks built as placeholders: the brochure has no words but a MARS CAKES box; why Mops made up the Guardians, who turned the family back and how the baby says what he is touch no line here.
+- Not built: the bay plant moved a few steps (a new locked bay picture: beats 28 to 36's builder); a blink with Mops's heart at the Guardians' plate (one heart only); the Guardian note turning up on the pillow and PUT ON · label on pickup day (beat 53 onward); drag (not tap) for the snacks.
+- NOT ASSESSED: how it feels to play (Not yet played by a person); the music in the new rooms (the tunnel, the vent room, the office) is whatever the room's cue gives.
 
 2026-11-26, draft PR on `feat/ch1-escape` (stacked on `feat/ch1-lunch-sneak`), not merged. Done: beats 43 to 52, the escape, as a module (`ch1-escape`): the card, the tease, the pancake plan at home with wordless thought pictures, the night walk, ROLL · ball by the vent past a patrolling robot (the one capture rule), the vent workstation (placeholder room; the wall, the letter and the new note as close-ups), the pink slip, the keypad (169556, Brian chat 2026-11-26), the Moon Pie site in the office, all the snacks and the Guardians' plate, the slip into the Guardian Box, bed, beat 53. Old escape code deleted. Waiting on Brian:
 - The escape's written words (the card, the wall, the letter, the note with "— The Guardians", the goal line, the Moon Pie site) are approved as written (Brian, 2026-11-26, question 55), and the office-code pin ("make 169556"). The spoken lines are still pending: a story rewrite of 43 to 52 is coming. The vent room gets a locked, cleaned-up picture (question 56), not built yet.

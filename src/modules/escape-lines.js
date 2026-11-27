@@ -175,6 +175,7 @@ export const ESCAPE_LINES = Object.freeze(
     pend("frame", "paper", "NEXT MONTH: MOPS", 51, "NEW, the frame's brass tag (a secret, +50)"),
     line("button-hide-desk", "button", "HIDE · desk", "pending", SP(51, "named by the story pass")),
     pend("mops-duck", "mops", "Robot! Duck!", 51, "NEW"),
+    fresh("chip-hide-desk", "chip", "Squatch: hide under the desk", 51),
     kept("button-computer", "button", "RETURN · empty crate", "in-game", ES_OLD + " (DECISIONS calls 2026-11-22, call 10); story pass 2026-11-26 (KEEP)"),
     pend("keys-ghjk", "paper", "ghjk", 51, "NEW: his hooves hit four keys at once"),
     pend("mops-hooves", "mops", "Hooves. You do it.", 51, "NEW"),
@@ -186,6 +187,7 @@ export const ESCAPE_LINES = Object.freeze(
     pend("site-tomorrow", "paper", "Tomorrow's ship.", 51, "NEW"),
     line("label", "paper", STARS_CAKES.pickup, "pending", SP(51, "NEW: the label the printer gives, the same tag as last week's crate")),
     line("button-label", "button", "TAKE · label", "pending", SP(51, "NEW")),
+    fresh("chip-label", "chip", "Squatch: take the label", 51),
     pend("sq-going", "sq", "We're really going.", 51, "NEW"),
     pend("mops-going", "mops", "We're really going.", 51, "NEW, hearts"),
     // ---- 52: all the snacks, and one secret ----

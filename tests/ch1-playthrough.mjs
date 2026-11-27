@@ -416,6 +416,10 @@ const play = await page.evaluate(() => {
         esRoom = n.room;
         ss.tapAt((P.SITE.ret.x0 + P.SITE.ret.x1) / 2, (P.SITE.ret.y0 + P.SITE.ret.y1) / 2, false);
         acts.push("TAP · Return empty crate");
+      } else if (es.step === "label") {
+        // the printed label (51): his paw takes it
+        ss.tapAt(480, 600, false);
+        acts.push("TAKE · label");
       } else if (es.step === "note") {
         // the Guardian note (48): a tap writes the next line
         ss.tapAt(480, 320, false);
@@ -493,7 +497,7 @@ const play = await page.evaluate(() => {
     // the lunch sneak (lunch-sneak.js): one Moon Pie taken and eaten, two left on the plate
     one: n.ch1Lunch && n.ch1Lunch.pie === "eaten" && n.ch1Lunch.pies === 2 ? 1 : 0,
     lights: n.ch1Lights || 0,
-    // the escape (escape.js): the slip ends in the Guardian Box, two snacks on the Guardians' plate, the computer's room
+    // the escape (escape.js): the slip ends in the Guardian Box, his last Stars Cake on the Guardians' plate, the computer's room
     escape: n.ch1Escape ? { slip: n.ch1Escape.slip, plate: n.ch1Escape.snacks.onPlate.length, bag: n.ch1Escape.snacks.bag, typed: n.ch1Escape.typed } : null,
     siteRoom: esRoom,
     brochure: !!n.ch1Brochure,
@@ -505,7 +509,7 @@ const play = await page.evaluate(() => {
 g.check("Chapter 1 reaches the tally card", play.end === "tally", { end: play.end, acts: play.acts, scene: play.state.scene });
 // The party night (src/modules/party.js): the peek, the plant, home through his door, the dress-up, out through his
 // door; the party in disguise (the dance), closing time, and walking home with Mops.
-const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "GRAB · flyer", "WALK · go-home", "SAVE · flyer", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "PICK UP · rocket", "OPEN · closet", "PUT IN · box", "WALK · bag", "TAKE · lunch", "WALK · lu-door", "GIVE · lunch", "WALK · lu-back", "TAKE · snack", "HIDE · plant", "GO · hall", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "WALK · es-patch", "WALK · es-cell", "WALK · es-door", "SHOW · brochure", "LOOK · crate", "LOOK · calendar", "WALK · es-door", "WALK · es-vent", "ROLL · ball", "WALK · es-tunnel", "LIGHT · lamp", "LOOK · wall", "LOOK · toy bin", "LOOK · stubs", "WRITE · note", "TAP · note", "TAP · note", "TAP · note", "TAKE · pink slip", "GRAB · pink slip", "TYPE · 169556", "RETURN · empty crate", "TAP · Return empty crate", "TAKE · snack", "TAKE · snack", "TAKE · snack", "TAKE · snack", "LEAVE · food", "LEAVE · food", "OPEN · closet", "PUT IN · box", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
+const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "GRAB · flyer", "WALK · go-home", "SAVE · flyer", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "PICK UP · rocket", "OPEN · closet", "PUT IN · box", "WALK · bag", "TAKE · lunch", "WALK · lu-door", "GIVE · lunch", "WALK · lu-back", "TAKE · snack", "HIDE · plant", "GO · hall", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "WALK · es-patch", "WALK · es-cell", "WALK · es-door", "SHOW · brochure", "LOOK · crate", "LOOK · calendar", "WALK · es-door", "WALK · es-vent", "ROLL · ball", "WALK · es-tunnel", "LIGHT · lamp", "LOOK · wall", "LOOK · toy bin", "LOOK · stubs", "WRITE · note", "TAP · note", "TAP · note", "TAP · note", "TAKE · pink slip", "GRAB · pink slip", "WALK · es-door", "TYPE · code", "TYPE · 169556", "RETURN · empty crate", "HIDE · desk", "RETURN · empty crate", "TAP · Return empty crate", "TAKE · label", "WALK · es-door", "WALK · es-bar", "TAKE · snack", "TAKE · snack", "TAKE · snack", "TAKE · snack", "LEAVE · food", "WALK · es-door", "OPEN · closet", "PUT IN · box", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
 g.check("the player does the new actions in order", JSON.stringify(play.acts) === JSON.stringify(wantActs), play.acts);
 const must = [
   "Stormtop Cloud Resort, floating above Jupiter.",
@@ -627,7 +631,7 @@ g.check(
     play.escape &&
     play.escape.typed === "169556" &&
     play.boxed &&
-    play.escape.plate === 2 &&
+    play.escape.plate === 1 &&
     play.escape.bag === 4 &&
     play.escape.slip === "box" &&
     play.packed === 2,
