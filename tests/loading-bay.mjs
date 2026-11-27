@@ -97,11 +97,14 @@ await page.evaluate(
         if (s.step === "robots" && d.shimmer) sample("shimmer", true);
         if (s.stopAt) sample("louStopped", { step: s.step, line: n.cur && n.cur.b ? n.cur.b.text : "", hat: s.workers.map((w) => w.hat) });
         if (s.hatOnFloor) sample("hatOnFloor", { step: s.step });
+        if (d.mail) sample("mailByBox", true);
+        if (d.passing && !s.workers[2].hat) sample("hairPass", true);
         if (s.robots && s.robots.some((r) => r.carry === "letter")) sample("letter", true);
         if (s.ship < 1 && s.ship > 0) sample("shipLeaving", { ramp: s.ramp });
         if (s.ramp > 0 && s.ship === 0) sample("rampWithoutShip", true);
         if (s.robots && s.robots.some((r) => r.carry && r.carry !== "letter")) sample("robotCarries", s.robots.map((r) => r.carry || ""));
         if (s.step === "walkby" && s.office >= 1) sample("officeOpen", { rollBy: s.rollBy });
+        if (s.step === "walkby" && s.office > 0 && s.rollBy > 0) sample("robotOut", { f: s.robots[0].f, rollAfterTurn: +(s.rollBy - s.turnAt).toFixed(2) });
         if (s.hall && s.hall.shookAt) sample("mopsShook", true);
         if (n.cur && n.cur.k === "card") {
           const c = n.cur;
@@ -196,11 +199,13 @@ g.check("29: in the bay, \"Quick! The manager is coming!\" then \"Hide!\", and t
 g.check("29: behind the cargo the button reads ROLL · ball and he is the ball", run.steps.cargo && run.steps.cargo.offers.includes(line("button-ball")) && run.samples["ball-cargo"] !== undefined, run.steps.cargo);
 // 30
 g.check("30: the robots roll under the scanner arch and its field shimmers; NO FUR. PROCEED. is overheard (ear)", !!run.samples.shimmer && B("scanner-proceed") && B("scanner-proceed").ear, { shimmer: run.samples.shimmer, b: B("scanner-proceed") });
-g.check("30: a robot posts a letter in the robot mailbox: \"Mail scanned.\"", !!run.samples.letter && !!B("ups-scanned"), run.samples.letter);
+g.check("30 (round 7, r5 3:21): no robot posts a letter at the mailbox; the little box came down the ramp with the mail, which lies beside it", !run.samples.letter && !!run.samples.mailByBox, { letter: run.samples.letter, mail: run.samples.mailByBox });
 g.check("30: the sneak to the plant: \"Squatch: sneak to the plant\", HIDE · plant there", run.steps.sneak && run.steps.sneak.chip === line("chip-plant") && run.steps.sneak.offers.includes(line("button-hide")), run.steps.sneak);
 g.check("30: Isfred's lines, then Squatch's whisper \"Fur in the vents... that was me.\"", ["isfred-not-sure", "isfred-fur", "isfred-convinced", "sq-was-me"].every((id) => !!B(id)) && B("sq-was-me").style === "whisper", B("sq-was-me"));
 g.check("30: the workers hand their tools to the robots", Array.isArray(run.samples.robotCarries) && run.samples.robotCarries.filter(Boolean).length >= 1, run.samples.robotCarries);
-g.check("30: Lou is stopped at the arch for his fuzzy hat (FUR. STOP. / It's a HAT.) and the hat stays on the floor", !!run.samples.louStopped && !!run.samples.hatOnFloor && !!B("lou-hat") && B("lou-hat").who === "lou", { stop: run.samples.louStopped, hat: run.samples.hatOnFloor });
+g.check("30: Lou walks in wearing the fuzzy hat, is stopped at the arch (FUR. STOP. / It's a HAT.) and the hat stays on the floor", !!run.samples.louStopped && run.samples.louStopped.hat[2] === true && !!run.samples.hatOnFloor && !!B("lou-hat") && B("lou-hat").who === "lou", { stop: run.samples.louStopped, hat: run.samples.hatOnFloor });
+const hatOrder = ["scanner-stop", "lou-hat", "scanner-hair", "lou-hair"].map(line);
+g.check("30 (round 7, r5 1:59, q: 116): fur stops, hair goes: FUR. STOP. / It's a HAT. / (hat off) HAIR. PROCEED. / It's just hair., the arch glowing green as it lets him through", run.lines.join("|").includes(hatOrder.join("|")) && !!run.samples.hairPass && B("lou-hair").name === "Lou", { lines: run.lines.filter((t) => hatOrder.includes(t)), pass: run.samples.hairPass });
 // 31, 32
 g.check("31: the promise, then \"Weeee-eenn-nnttt!\"", ["isfred-dont-worry", "isfred-love", "isfred-visitors", "mops-bleat-happy"].every((id) => !!B(id)), run.lines.filter((t) => t.startsWith("Mops, don't") || t.startsWith("Weeee")));
 g.check("32: \"Squatch: peek at the form\" and PEEK · form", run.steps.peek && run.steps.peek.chip === line("chip-peek") && run.steps.peek.offers.includes(line("button-peek")), run.steps.peek);
@@ -221,6 +226,7 @@ g.check("35: PICK UP · box, GIVE · box: \"Mail for you.\", the tag close-up, \
 g.check("35: then the player is Squatch again (a second switch card), going home with Mops", run.cards.length >= 2 && run.steps.home && run.steps.home.chip === line("chip-home"), { cards: run.cards, home: run.steps.home });
 // 36
 g.check("36: the office door opens on the walk home (a robot inside), and ROLL · ball in time is the ball", !!run.samples.officeOpen && run.steps.walkby && run.steps.walkby.offers.includes(line("button-ball")), { open: run.samples.officeOpen, walkby: run.steps.walkby });
+g.check("36 (round 7, r5 3:45, q: 133): the robot comes out looking away (out of the picture) first, so he has a moment to curl up himself; it turns his way after 2 s and then he has 1.5 s more", !!run.samples.robotOut && run.samples.robotOut.f === 0 && run.samples.robotOut.rollAfterTurn === 1.5, run.samples.robotOut);
 g.check("36: the hairball close-up and its lines, in order", B("robot-what") && B("robot-what").closeUp === "hairball" && run.lines.join("|").includes([line("robot-what"), line("mops-hairball"), line("robot-compute")].join("|")), B("robot-what"));
 g.check("36: then \"We have to watch out for these robots.\", the fur and hair question and \"Paperwork.\"", run.lines.join("|").includes([line("mops-robots"), line("sq-fur"), line("mops-paperwork")].join("|")), run.lines.slice(-6));
 g.check("hall, hallway, bay, hallway, party hall", run.rooms.join(",") === "hall,passage,hangar,passage,hall", run.rooms);
@@ -235,6 +241,7 @@ g.check("only the lines file's words were said", run.lines.every((t) => WORDS.ha
 g.check("the workers' bubbles are named Dot, Bob and Lou", [B("dot-toaster"), B("bob-way-up"), B("lou-hat")].map((b) => b && b.name).join(",") === "Dot,Bob,Lou", [B("dot-toaster"), B("bob-way-up"), B("lou-hat")].map((b) => b && b.name));
 
 // ---------- the photo wall in the hallway, on the way to the ship ----------
+// (round 7, r5 0:27, q: 133: "Later. The ship!" is cut, and nothing turns him back at the photo wall now)
 const later = await page.evaluate(({ HALLWAY }) => {
   const ss = window.__ss,
     n = ss.op,
@@ -247,9 +254,9 @@ const later = await page.evaluate(({ HALLWAY }) => {
   n.sq.x = (W.x0 + W.x1) / 2;
   n.sq.y = W.y1 - 4;
   for (let i = 0; i < 3; i++) ss.tick(0.05);
-  return { line: n.cur && n.cur.b ? n.cur.b.text : "", y: n.sq.y, below: n.sq.y >= W.y1, step: beat.debug().state.step };
+  return { line: n.cur && n.cur.b ? n.cur.b.text : "", y: n.sq.y, step: beat.debug().state.step };
 }, { HALLWAY });
-g.check("29: walking up to the photo wall, Mops: \"Later. The ship!\" and Squatch is turned back", later.line === line("mops-later") && later.below && later.step === "hallway", later);
+g.check("29: walking up to the photo wall, nobody speaks and he is not turned back (\"Later. The ship!\" is cut)", later.line === "" && later.y === HALLWAY.photoWall.y1 - 4 && later.step === "hallway", later);
 
 // ---------- 36: in the hallway home he starts inside its walk bounds (the kid-play robot found him at x 936) ----------
 const homeIn = await page.evaluate(() => {

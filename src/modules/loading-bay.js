@@ -55,7 +55,7 @@ import { BAY, BAY_SPOTS, HALLWAY, HALL_SNEAK, BAY_PACE as P, BAY_PICTURES, BAY_C
 import { bayWords, bayLine, BAY_SPEAKER_NAMES } from "./loading-bay-lines.js";
 import { OFFICE_CODE } from "./office-code.js";
 import { findPath } from "./tap-path.js";
-import { drawRobot, robotHand, drawFormSet, drawStuck, drawBiteCrumbs, drawFormCloseUp, closeUpBox, drawCloseUpBack, drawCloseUpFront, drawWave, drawDashedOutline, drawBayCrate, drawCargo, drawTag, drawTaggedBox, drawTagCloseUp, drawDoorShadow, drawTool, drawFuzzyHat, drawScannerStop, drawLetter, drawSlotLight, drawSweat, drawOfficeOpen, drawStreak } from "./loading-bay-art.js";
+import { drawRobot, robotHand, drawFormSet, drawStuck, drawBiteCrumbs, drawFormCloseUp, closeUpBox, drawCloseUpBack, drawCloseUpFront, drawWave, drawDashedOutline, drawBayCrate, drawCargo, drawTag, drawTaggedBox, drawTagCloseUp, drawDoorShadow, drawTool, drawFuzzyHat, drawScannerStop, drawScannerPass, drawMailBeside, drawLetter, drawSlotLight, drawSweat, drawOfficeOpen, drawStreak } from "./loading-bay-art.js";
 import { drawSpeakerRing, drawHeartCone } from "./party-free-art.js";
 import { HALL, HALL_PICTURE, HALL_SPEAKER } from "./party-hall.js";
 import { COUNTER_SPOTS, LUNCH_SOLIDS, LUNCH_BOUNDS, LUNCH_PLACES } from "./lunch-sneak-place.js";
@@ -130,6 +130,7 @@ export function createLoadingBay(bridge) {
       e = E();
     return b && e && e.get("ch1Day2") && b.step && b.step !== "done" ? b : null;
   };
+  let mailDrawn = false; // (tests: the mail was drawn beside the little box)
   let drew = null,
     ff = {},
     moFF = {},
@@ -277,6 +278,8 @@ export function createLoadingBay(bridge) {
       slotAt: -1,
       letter: null,
       stopAt: -1,
+      passAt: -1,
+      turnAt: -1,
       shimmer: false,
       asMops: false,
       office: 0,
@@ -513,13 +516,8 @@ export function createLoadingBay(bridge) {
       return [
         // the robot that patrolled goes back to its place
         e.until((dt) => moveTo(robot(1), BAY_SPOTS.robots[1].x, BAY_SPOTS.robots[1].y, P.robot, dt) && ((robot(1).f = 2), true)),
-        // a robot posts a letter in the mailbox
-        e.run(() => (r2().carry = "letter")),
-        e.until((dt) => along(r2(), [BAY.mailDoor, BAY.mailbox.post], P.robot, dt)),
-        e.run(() => ((r2().f = 1), (r2().carry = ""), (B().slotAt = e.time()))),
-        say("ups-scanned"),
-        e.until((dt) => along(r2(), [BAY.mailDoor, BAY_SPOTS.robots[2]], P.robot, dt)),
-        e.run(() => (r2().f = 2)),
+        // (round 7, r5 3:21, q: 133: no robot posts a letter at the mailbox any more; the mail came down the ramp with
+        // the little box, and stays beside it)
         // why the robots came, and the thought
         e.run(() => (B().isfred.f = -1)),
         say("isfred-not-sure"),
@@ -560,8 +558,13 @@ export function createLoadingBay(bridge) {
         e.run(() => ((B().stopAt = e.time()), e.sfx("bleep"))),
         say("scanner-stop"),
         say("lou-hat"),
-        say("scanner-stop"),
-        e.run(() => ((B().workers[2].hat = false), (B().hatOnFloor = true), (B().stopAt = -1), (B().workers[2].wi = 0))),
+        // (round 7, r5 1:59, q: 116: fur stops, hair goes. He takes the hat off and leaves it; the arch lets his hair through)
+        e.run(() => ((B().workers[2].hat = false), (B().hatOnFloor = true), (B().stopAt = -1), sound.morning("rustle"))),
+        wait(0.5),
+        e.run(() => ((B().passAt = e.time()), e.sfx("bleep"))),
+        say("scanner-hair"),
+        say("lou-hair"),
+        e.run(() => ((B().passAt = -1), (B().workers[2].wi = 0))),
         climb(2),
         e.run(() => playBleat()),
         say("mops-bleat-short"),
@@ -611,7 +614,7 @@ export function createLoadingBay(bridge) {
           there && ((r.show = false), (B().papers.where = "office"));
           return there;
         }),
-        say("dot-leaving"),
+        // (round 7, r5 2:26, q: 133: Dot's "Isfred! We're leaving!" is cut; Isfred just waves them off)
         // Isfred waves at the ramp's foot; the workers are aboard; the ramp goes up, the ship leaves
         e.run(() => ((B().isfred.f = 1), (B().point = true))),
         e.until((dt) => moveTo(B().isfred, BAY.rampFoot.x - 70, BAY.rampFoot.y + 40, P.people, dt)),
@@ -784,8 +787,11 @@ export function createLoadingBay(bridge) {
     const e = E(),
       b = B();
     b.office = 0.001;
-    b.rollBy = e.time() + P.rollTime;
-    Object.assign(robot(0), { show: true, x: HALLWAY.robotOut.x, y: HALLWAY.officeDoor.y0 + 20, f: 2 });
+    // (round 7, r5 3:45, q: 133: the robot comes out looking the other way first, so the player has a moment to see it
+    // and curl up himself; then it turns up the hallway toward him and he has rollTime more)
+    b.turnAt = e.time() + P.lookAway;
+    b.rollBy = b.turnAt + P.rollTime;
+    Object.assign(robot(0), { show: true, x: HALLWAY.robotOut.x, y: HALLWAY.officeDoor.y0 + 20, f: 0 }); // (0: facing out of the picture, away from the hallway's floor)
     sound.morning("door");
   }
   // rolled up in time: the robot looks at the ball, Mops answers for it
@@ -1053,8 +1059,7 @@ export function createLoadingBay(bridge) {
     }
   }
   function hallwayTick(b, s) {
-    const e = E(),
-      W = HALLWAY.photoWall;
+    const e = E();
     // Mops goes ahead to the bay's end
     const m = e.pos("mops");
     if (Math.hypot(m.x - HALLWAY.mopsBay.x, m.y - HALLWAY.mopsBay.y) > 2) {
@@ -1062,13 +1067,7 @@ export function createLoadingBay(bridge) {
       e.face("mops", 1);
       e.step("mops", HALLWAY.mopsBay.x, HALLWAY.mopsBay.y, P.walk, 1 / 60) && (e.moWalking(false), e.still("mops"), e.face("mops", -1));
     }
-    // up to the photo wall: "Later. The ship!" (each time he tries), and he is turned back toward the bay
-    if (s.y < W.y1 && s.x > W.x0 && s.x < W.x1) {
-      e.stopWalk && e.stopWalk();
-      e.place("sq", s.x, W.y1 + 24);
-      e.set("ctrl", false);
-      e.queue([say("mops-later"), e.run(() => e.set("ctrl", true))]);
-    }
+    // (round 7, r5 0:27, q: 133: "Later. The ship!" is cut, and with it the turn back at the photo wall)
     if (s.x > HALLWAY.exitRight && Math.abs(s.y - HALLWAY.right.y) < 46) intoBay();
   }
   function followSquatch(dt) {
@@ -1089,7 +1088,7 @@ export function createLoadingBay(bridge) {
     if (b.office === 0 && s.x < HALLWAY.trigger && free) doorOpens();
     if (b.office > 0) b.office = Math.min(1, b.office + dt / P.doorOpen);
     const r = robot(0);
-    if (r.show && b.rollBy > 0) moveTo(r, HALLWAY.robotOut.x, HALLWAY.robotOut.y, P.robot, dt) && (r.f = 2);
+    if (r.show && b.rollBy > 0) moveTo(r, HALLWAY.robotOut.x, HALLWAY.robotOut.y, P.robot, dt) && (r.f = e.time() < (b.turnAt || 0) ? 0 : 2);
     // too slow: the robot sees fur
     if (b.rollBy > 0 && e.time() > b.rollBy && !b.ball && !b.alarm) {
       b.rollBy = -1;
@@ -1263,7 +1262,8 @@ export function createLoadingBay(bridge) {
         y = BAY.shipDoor.y + (BAY_SPOTS.crates.y - BAY.shipDoor.y) * u;
       list.push({ y, f: () => (drawBayCrate(ctx, x, y, 54, true), drawBayCrate(ctx, x + 2, y - 34, 48, true)) });
     }
-    b.box === "ramp" && list.push({ y: BAY_SPOTS.box.y, f: () => drawTaggedBox(ctx, BAY_SPOTS.box.x, BAY_SPOTS.box.y) });
+    // the little box came down the ramp with the mail: two letters lie beside it (round 7, r5 3:02, q: 133)
+    b.box === "ramp" && list.push({ y: BAY_SPOTS.box.y, f: () => (drawMailBeside(ctx, BAY_SPOTS.box.x, BAY_SPOTS.box.y), drawTaggedBox(ctx, BAY_SPOTS.box.x, BAY_SPOTS.box.y), (mailDrawn = true)) });
     if (b.emptyCrate.show) {
       const c = b.emptyCrate,
         a = c.y < BAY.rampFoot.y ? Math.max(0, (c.y - BAY.shipDoor.y) / (BAY.rampFoot.y - BAY.shipDoor.y)) : 1;
@@ -1318,7 +1318,7 @@ export function createLoadingBay(bridge) {
           ctx.globalAlpha = Math.max(0, Math.min(1, w.a));
           e.drawWorker(ctx, w.x, w.y, "");
           w.tool && drawTool(ctx, w.tool, w.x + 14, w.y - 22, false, 1);
-          w.hat && drawFuzzyHat(ctx, w.x, w.y - 66, 0.9);
+          w.hat && drawFuzzyHat(ctx, w.x, w.y - 64, 1.25); // (round 7, r5 1:59: big enough to see on a phone)
           ctx.restore();
         },
       });
@@ -1342,6 +1342,7 @@ export function createLoadingBay(bridge) {
     b.slotAt >= 0 && t - b.slotAt < 1.2 && drawSlotLight(ctx, BAY.mailbox.slot.x, BAY.mailbox.slot.y, 1 - (t - b.slotAt) / 1.2);
     b.sweatAt >= 0 && t - b.sweatAt < 2 && b.hidden && drawSweat(ctx, BAY.plant.eyes.x + 18, BAY.plant.eyes.y - 6, Math.min(1, (t - b.sweatAt) / 2));
     b.stopAt >= 0 && drawScannerStop(ctx, BAY.arch.field, Math.min(1, (t - b.stopAt) / P.flash), t);
+    b.passAt >= 0 && drawScannerPass(ctx, BAY.arch.field, Math.min(1, (t - b.passAt) / P.flash), t);
   }
   function underArch(b) {
     const A = BAY.arch,
@@ -1603,7 +1604,7 @@ export function createLoadingBay(bridge) {
       const hl = highlightNow(b);
       hl && drawDashedOutline(ctx, hl, t);
       const closeUp = drawCloseUp(ctx, b, t);
-      drew = { step: b.step, room: "hangar", shimmer: !!b.shimmer, outline: hl, cones: cones.map((c) => ({ id: c.id, inside: c.inside, show: c.show, hearts: !!c.hearts })), closeUp, papers: b.papers.where, box: b.box, formStage: b.formStage };
+      drew = { step: b.step, room: "hangar", shimmer: !!b.shimmer, outline: hl, cones: cones.map((c) => ({ id: c.id, inside: c.inside, show: c.show, hearts: !!c.hearts })), closeUp, papers: b.papers.where, box: b.box, formStage: b.formStage, mail: mailDrawn, passing: b.passAt >= 0 };
       return true;
     },
     draw: drawOver,

@@ -4,25 +4,25 @@
 | Lines | Heading |
 | --- | --- |
 | 27–33 | # Chapter 1 lines for Brian |
-| 34–136 | ## Loading bay (beats 28 to 36, and 36b), 2026-11-26 rebuild (branch feat/ch1-loading-bay, not merged) |
-| 137–146 | ## Home morning (beats 22 to 24), 2026-11-26 round D (branch feat/ch1-day2-morning, not merged) |
-| 147–159 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
-| 160–176 | ## Lunch sneak and Ganitor, 2026-11-26 (branch feat/ch1-lunch-sneak, not merged) |
-| 177–192 | ## Calendar revision, Nov 16 (PR 58, not live) |
-| 193–200 | ## Earlier chapter lines |
-| 201–215 | ## Goal chips |
-| 216–299 | ## What people say |
-| 300–311 | ## The snack's name (2026-11-26, question 86) |
-| 312–325 | ## Words painted on things |
-| 326–349 | ## Buttons |
-| 350–436 | ## Day 2 onward (beats 22–61), pending |
-| 437–444 | ## Ball hiding |
-| 445–452 | ## Off-screen lines, for Brian (playtest 12) |
-| 453–462 | ## Homework desk, approved Nov 16 |
-| 463–501 | ## Questions still open |
-| 502–539 | ## After the party: the cleanup and truth or fib (story pass 28-52, E2), pending |
-| 540–559 | ## Bedtime additions and the chart over his bed (story pass 28-52, E4), pending |
-| 560–585 | ## Day 1 stand-ins, pending |
+| 34–135 | ## Loading bay (beats 28 to 36, and 36b), 2026-11-26 rebuild (branch feat/ch1-loading-bay, not merged) |
+| 136–145 | ## Home morning (beats 22 to 24), 2026-11-26 round D (branch feat/ch1-day2-morning, not merged) |
+| 146–158 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
+| 159–175 | ## Lunch sneak and Ganitor, 2026-11-26 (branch feat/ch1-lunch-sneak, not merged) |
+| 176–191 | ## Calendar revision, Nov 16 (PR 58, not live) |
+| 192–199 | ## Earlier chapter lines |
+| 200–214 | ## Goal chips |
+| 215–298 | ## What people say |
+| 299–310 | ## The snack's name (2026-11-26, question 86) |
+| 311–324 | ## Words painted on things |
+| 325–348 | ## Buttons |
+| 349–435 | ## Day 2 onward (beats 22–61), pending |
+| 436–443 | ## Ball hiding |
+| 444–451 | ## Off-screen lines, for Brian (playtest 12) |
+| 452–461 | ## Homework desk, approved Nov 16 |
+| 462–500 | ## Questions still open |
+| 501–538 | ## After the party: the cleanup and truth or fib (story pass 28-52, E2), pending |
+| 539–558 | ## Bedtime additions and the chart over his bed (story pass 28-52, E4), pending |
+| 559–584 | ## Day 1 stand-ins, pending |
 <!-- /section-index -->
 # Chapter 1 lines for Brian
 
@@ -40,14 +40,13 @@ Every word is in `src/modules/loading-bay-lines.js`, word for word from the stor
 | The station speaker (ear) | Universal Postal Service ship arriving! | Beat 28 (KEEP) | Pending |
 | Squatch | The Stars Cakes ship! | Beat 28 (NEW) | Pending |
 | Squatch | A new kind from the Guardians! | Beat 28 (NEW) | Pending |
-| Squatch | Maybe it's the crate kind! | Beat 28 (NEW) | Pending |
+| Squatch | I hope it's the kind we've been looking for! | Beat 28 (round 7, your note r5 0:07; q 133) | Pending |
 | Mops | Maybe. | Beat 28 (NEW) | Pending |
 | Mops | I better go see. | Beat 28 (CHANGED) | Pending |
 | Squatch | Can I come? I'll be really sneaky. | Beat 28 (CHANGED) | Pending |
 | Mops | Just this once. | Beat 28 (CHANGED) | Pending |
 | Mops | Hide when I say hide. | Beat 28 (CHANGED) | Pending |
 | Goal words | Squatch: follow Mops to the ship | Beat 29 (goal words, NEW) | Pending |
-| Mops | Later. The ship! | Beat 29 (NEW) | Pending |
 | Mops | Quick! The manager is coming! | Beat 29 (NEW) | Pending |
 | Mops | Hide! | Beat 29 (NEW) | Pending |
 | Goal words | Squatch: hide behind the cargo | Beat 29 (goal words, NEW) | Pending |
@@ -56,7 +55,6 @@ Every word is in `src/modules/loading-bay-lines.js`, word for word from the stor
 | The fur scanner arch | NO FUR. PROCEED. | Beat 30 (NEW) | Pending |
 | Goal words | Squatch: sneak to the plant | src/modules/party-lines.js (the party's sneak) | In the game already |
 | Button | HIDE · plant | src/game/14-ch1-day2.js before this change | In the game already |
-| The robot mailbox | Mail scanned. | Beat 30 (NEW) | Pending |
 | Isfred | I wasn't sure we needed these robots. | Beat 30 (CHANGED, Brian's Nov 8 line split) | Pending |
 | Isfred | But we keep getting fur in the vents. | Beat 30 (CHANGED) | Pending |
 | Isfred | I'm convinced now. | Beat 30 (CHANGED) | Pending |
@@ -68,6 +66,8 @@ Every word is in `src/modules/loading-bay-lines.js`, word for word from the stor
 | Bob | Other way up, pal. | Beat 30 (NEW) | Pending |
 | The fur scanner arch | FUR. STOP. | Beat 30 (NEW) | Pending |
 | Lou | It's a HAT. | Beat 30 (NEW) | Pending |
+| The scanner arch (ear) | HAIR. PROCEED. | Beat 30 (round 7, r5 1:59: he takes the hat off; q 116) | Pending |
+| Lou | It's just hair. | Beat 30 (round 7, r5 1:59, your "I just have hair"; q 116) | Pending |
 | Mops | Weee...? | Beat 30 (NEW) | Pending |
 | Isfred | Mops, don't worry. | Beat 31 (CHANGED) | Pending |
 | Isfred | You know how much we love you here. | Beat 31 (CHANGED) | Pending |
@@ -84,7 +84,6 @@ Every word is in `src/modules/loading-bay-lines.js`, word for word from the stor
 | Isfred | Please put this in my office. | Beat 32 (NEW) | Pending |
 | Isfred | Oh, wait. | Beat 32 (NEW) | Pending |
 | Isfred | Here's the code to unlock the door. | Beat 32 (NEW) | Pending |
-| Dot | Isfred! We're leaving! | Beat 32 (NEW) | Pending |
 | Switch card | Mops takes care of the copies. | Beat 33 (the switch card's line, NEW) | Pending |
 | A robot | Left one of the copies in the office. What do I do with the other two? | Beat 33 (KEEP) | Pending |
 | Mops | I'll take care of it. | Beat 33 (KEEP) | Pending |
@@ -110,12 +109,12 @@ Every word is in `src/modules/loading-bay-lines.js`, word for word from the stor
 | Goal words | Mops: give Squatch the box | Beat 35 (goal words, NEW) | Pending |
 | Button | GIVE · box | Beat 35 (NEW) | Pending |
 | Mops | Mail for you. | Beat 35 (NEW) | Pending |
-| Painted or written | For S. A new kind. — The Guardians | Beat 35 (NEW, the tag) | Pending |
+| Painted or written | For S. A new kind to try. — The Guardians | Beat 35 (round 7, r5 3:28, the tag; q 133) | Pending |
 | Squatch | They never forget. | Beat 35 (NEW) | Pending |
 | Mops | The robots are gone. Let's get you home. | Beat 35 (NEW) | Pending |
 | Mops | Stay close to me. | Beat 35 (NEW) | Pending |
 | Switch card | Squatch goes home with Mops. | Beat 35 (the switch card's line, NEW) | Pending |
-| Painted or written | EMPTY. FOR PICKUP. | Beat 30 (NEW, the empty crate's tag) | Pending |
+| Painted or written | FOR PICKUP. | Beat 30 (round 7, r5 15:23, the crate's tag; q 124) | Pending |
 | Goal words | Squatch: go home with Mops | Beat 36 (goal words, NEW) | Pending |
 | A robot | What's that? | Beat 36 (NEW) | Pending |
 | Mops | Big hairball. | Beat 36 (NEW) | Pending |
