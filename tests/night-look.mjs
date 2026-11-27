@@ -5,7 +5,8 @@
  *     the older program marks a night scene (ch1Night);
  *   - each night beat draws its room's night look (the tinted picture, or the bay's own locked night picture) and
  *     each day beat does not: the party at home (P1, P8) and in the hall (P2, P6 with the band's lights), the
- *     evening at home after the party (TV story and bedtime), against Day 1's morning at home and Day 2 at home, in
+ *     evening at home after the party (TV story and bedtime; the bedtime story's crate front and Mops's mop bucket
+ *     under the night look, its lights-out dim on top), against Day 1's morning at home and Day 2 at home, in
  *     the hall and in the hallway;
  *   - pixels: the night room's wall is darker and bluer than the same wall by day, and the lit things (the hall's
  *     window onto space and its FUR alarm, home's TV screen) stay as bright as by day.
@@ -156,7 +157,55 @@ for (const [beat, room, name, pts] of [
   await ctx.close();
 }
 
+// The bedtime story (beat 21) after the party: in bed under the night look (the crate's front wall drawn over him and
+// Mops's mop bucket from the night look too), then the lights-out dim on top of it
+{
+  const { page, ctx, errors } = await open("?ch=1");
+  const BED_PTS = { ...HOME_PTS, crate: { x: 150, y: 480 }, bucket: { x: 559, y: 548 }, bucketFloor: { x: 528, y: 572 } };
+  await page.evaluate(() => (window.SSQ.engine().enterRoom("closet", "Q1"), Object.assign(window.__ss.op, { q: [], cur: null })));
+  results.bedDay = await frame(page, BED_PTS);
+  await page.evaluate(() => {
+    const n = window.__ss.op;
+    n.q = [];
+    n.cur = null;
+    // (the party is over, as party.js finish() saves it, and beat 20 starts as the party's endings start it)
+    n.ch1PartyNow = { scene: "done" };
+    window.SSQ.engine().tvStory();
+  });
+  // tap through the TV story and the bedtime story's pictures and lines, stopping in bed (the ask) and at the snores
+  const until = (phases) =>
+    page.evaluate((phases) => {
+      const ss = window.__ss,
+        n = ss.op,
+        beat = window.SSQ.beat("ch1-bedtime-story");
+      for (let i = 0; i < 8000 && !n.ch1Day2; i++) {
+        const d = beat.debug();
+        if (phases.includes(d.phase) && !(n.cur && n.cur.k === "cutaway")) return d.phase;
+        const c = n.cur;
+        c && ["card", "cutaway", "bub", "panel"].includes(c.k) && !c.auto && ((n.bt = 1), ss.opTap());
+        ss.tick(0.05);
+      }
+      return "";
+    }, phases);
+  const inBed = await until(["ask", "line"]);
+  results.bedAsk = await frame(page, BED_PTS);
+  const crate1 = await page.evaluate(() => window.SSQ.beat("ch1-bedtime-story").debug().drew);
+  g.check("bedtime (in bed, before lights out): the home room's night look, the crate's front wall drawn over him", !!inBed && results.bedAsk.night && results.bedAsk.drew.closet && crate1 && crate1.crateFront, { inBed, f: results.bedAsk, crate1 });
+  await still(page, "home-bedtime-in-bed");
+  await until(["snore2"]);
+  for (let i = 0; i < 20; i++) await page.evaluate(() => window.__ss.tick(0.05));
+  results.bedSnore = await frame(page, BED_PTS);
+  const dim = await page.evaluate(() => window.SSQ.beat("ch1-bedtime-story").debug().drew);
+  g.check("lights out: the bedtime story's dim goes on top of the night look", results.bedSnore.night && results.bedSnore.drew.closet && dim && dim.dim > 0.4 && bright(results.bedSnore.px.wall) < bright(results.bedAsk.px.wall) * 0.8, { dim, ask: results.bedAsk.px.wall, snore: results.bedSnore.px.wall });
+  await still(page, "home-bedtime-lights-out");
+  g.check("no page errors (bedtime)", errors.length === 0, errors);
+  await ctx.close();
+}
+
 // ---------- pixels: night is darker and bluer; the lit things stay lit ----------
+g.check("in bed at night the crate's front wall drawn over him is the night one (much darker than by day)", bright(results.bedAsk.px.crate) < bright(results.bedDay.px.crate) * 0.7, { night: results.bedAsk.px.crate, day: results.bedDay.px.crate });
+g.check("at night the floor patch under Mops's mop bucket comes from the night look", bright(results.bedAsk.px.bucketFloor) < bright(results.bedDay.px.bucketFloor) * 0.7, { night: results.bedAsk.px.bucketFloor, day: results.bedDay.px.bucketFloor });
+g.check("at night Mops's mop bucket (drawn in code) is under the night tint too", bright(results.bedAsk.px.bucket) < bright(results.bedDay.px.bucket) * 0.75, { night: results.bedAsk.px.bucket, day: results.bedDay.px.bucket });
 const H = results["hall-party-P2"],
   D = results.hallDay;
 g.check("the hall's wall at night is much darker than by day", bright(H.px.wall) < bright(D.px.wall) * 0.65, { night: H.px.wall, day: D.px.wall });

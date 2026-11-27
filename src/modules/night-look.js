@@ -6,6 +6,8 @@
  *     tint (the bedtime story's night colour, BEDTIME_NIGHT on feat/ch1-bedtime-story), with the things that give light kept bright: drawn again over the tint,
  *     cut from the same locked picture (the hall's window onto space and its FUR alarm lamp, home's TV screen, the office's screens and
  *     keypad, the hallway's keypad). The picture files never change.
+ *   - Room things the game draws in code rather than from the picture (Mops's mop bucket) go under the tint too
+ *     (drawUnderNightTint).
  *   - Characters are drawn after the room, so they stay lit and readable. The bedtime story's lights-out dim
  *     (bedtime-story.js BEDTIME_NIGHT) goes on top of this, over everything.
  * When it is night (isNightNow): from the party night's start ("That evening...", the party beat's state ch1PartyNow
@@ -164,4 +166,54 @@ export function drawNightTint(ctx, room, picture, k = 1) {
     }
   drawn[room] = { tint: +(Math.min(1, k) * NIGHT_TINT.alpha).toFixed(2), lit: lit.length };
   return drawn[room];
+}
+
+// (one scratch canvas, the size of the game's canvas, for drawing a room thing under the tint)
+let nightScratch = null;
+/**
+ * Draws a room thing the game draws in code, not from the picture (Mops's mop bucket), with the night tint over just
+ * that thing: `draw(c)` draws it on a canvas with the same size and placing as `ctx`; at night only what it drew gets
+ * the tint, then it goes onto `ctx`. By day `draw(ctx)` draws it straight on. `box` (game positions): where the thing
+ * is, so only that part of the canvas is worked on (it must hold all of the drawing). Returns what `draw` returned.
+ */
+export function drawUnderNightTint(ctx, night, draw, box = null) {
+  if (!night || typeof document === "undefined" || !ctx.canvas || !ctx.getTransform) return draw(ctx);
+  const W = ctx.canvas.width,
+    H = ctx.canvas.height,
+    m = ctx.getTransform();
+  // the part of the canvas to work on: `box` (game positions) in canvas pixels, or all of it
+  let x = 0,
+    y = 0,
+    w = W,
+    h = H;
+  if (box) {
+    const xs = [box.x0, box.x1].map((bx) => m.a * bx + m.e),
+      ys = [box.y0, box.y1].map((by) => m.d * by + m.f);
+    x = Math.max(0, Math.floor(Math.min(...xs)));
+    y = Math.max(0, Math.floor(Math.min(...ys)));
+    w = Math.min(W, Math.ceil(Math.max(...xs))) - x;
+    h = Math.min(H, Math.ceil(Math.max(...ys))) - y;
+    if (w <= 0 || h <= 0) return draw(ctx);
+  }
+  nightScratch = nightScratch || document.createElement("canvas");
+  (nightScratch.width !== W || nightScratch.height !== H) && ((nightScratch.width = W), (nightScratch.height = H));
+  const c = nightScratch.getContext("2d");
+  c.setTransform(1, 0, 0, 1, 0, 0);
+  c.globalCompositeOperation = "source-over";
+  c.globalAlpha = 1;
+  c.clearRect(x, y, w, h);
+  c.setTransform(m);
+  const out = draw(c);
+  c.setTransform(1, 0, 0, 1, 0, 0);
+  c.globalCompositeOperation = "source-atop";
+  c.globalAlpha = NIGHT_TINT.alpha;
+  c.fillStyle = NIGHT_TINT.color;
+  c.fillRect(x, y, w, h);
+  c.globalCompositeOperation = "source-over";
+  c.globalAlpha = 1;
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.drawImage(nightScratch, x, y, w, h, x, y, w, h);
+  ctx.restore();
+  return out;
 }

@@ -187,7 +187,9 @@ export function createBridge() {
      * over the painted bucket of the locked picture, under the people, and again over Squatch when he stands behind it.
      * Returns its box, or null while not ready (the painted bucket shows). See mop-bucket.js.
      */
-    drawHomeBucket: drawHomeMopBucket,
+    drawHomeBucket(ctx, front) {
+      return drawHomeMopBucket(ctx, front, !!engine && isNightNow(engine.get));
+    },
     /** Tests: where the home bucket was last drawn. */
     homeBucketDrawn: lastHomeMopBucket,
     /** The full-screen cutaway (tests read what its last frame drew). See cutaway.js. */
