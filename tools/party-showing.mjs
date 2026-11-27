@@ -1047,15 +1047,16 @@ if (which === "day1end") {
       await readIt(q);
       continue;
     }
-    if (!q.ctrl || !c) {
-      await sleep(120);
-      continue;
-    }
-    if (c.close) {
+    // (in the close-up he has no walking control: only the taps)
+    if (c && c.close) {
       await sleep(1600);
       const b = c.close === "shirt" ? c.targets.shirt : c.close === "feet" ? c.targets.feet : null;
       b && (await floor(b.x, b.y));
       await sleep(400);
+      continue;
+    }
+    if (!q.ctrl || !c) {
+      await sleep(120);
       continue;
     }
     if (q.act) {
