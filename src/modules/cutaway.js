@@ -29,6 +29,7 @@ import { BEDTIME_PANELS, GUARDIANS_PANELS, BEDTIME_AUTO } from "./bedtime-story-
 import { GBOX_PANELS, NOTE_PANELS, drawLunchBag, MORNING_SIZES } from "./home-morning-art.js";
 import { drawGanitorTag } from "./ganitor.js";
 import { ESCAPE_PANELS } from "./escape-art.js";
+import { VENT_PANELS } from "./escape-vent-art.js";
 import { CROC_PANELS } from "./croc-cutaway.js";
 import { TAPE_PANELS } from "./tv-tape-art.js";
 
@@ -841,6 +842,7 @@ const PANELS = {
   // beats 48, 50 and 52, the escape (escape.js): the detective wall, the Mars letter, the new Guardian note, the pink
   // slip in his paw, the Guardian Box (each has words: each waits for NEXT)
   ...ESCAPE_PANELS,
+  ...VENT_PANELS,
   // and the note tied to the gift, read as he picks it up (Brian 2026-11-26, video note 0:24)
   note: NOTE_PANELS,
   // P3, the band's first notes: a Croc Boy bopping, close up (croc-cutaway.js)

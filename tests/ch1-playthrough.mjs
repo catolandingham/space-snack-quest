@@ -416,6 +416,10 @@ const play = await page.evaluate(() => {
         esRoom = n.room;
         ss.tapAt((P.SITE.ret.x0 + P.SITE.ret.x1) / 2, (P.SITE.ret.y0 + P.SITE.ret.y1) / 2, false);
         acts.push("TAP · Return empty crate");
+      } else if (es.step === "note") {
+        // the Guardian note (48): a tap writes the next line
+        ss.tapAt(480, 320, false);
+        acts.push("TAP · note");
       } else if (es.step === "snacks" || es.step === "food") {
         const i = P.SNACKS.kinds.findIndex((_, k) => !es.snacks.gone[k]);
         if (i >= 0 && !es.snacks.carry) (ss.tapAt(P.SNACKS.at[i].x, P.SNACKS.at[i].y, false), acts.push(es.step === "food" ? "LEAVE · food" : "TAKE · snack"));
@@ -501,7 +505,7 @@ const play = await page.evaluate(() => {
 g.check("Chapter 1 reaches the tally card", play.end === "tally", { end: play.end, acts: play.acts, scene: play.state.scene });
 // The party night (src/modules/party.js): the peek, the plant, home through his door, the dress-up, out through his
 // door; the party in disguise (the dance), closing time, and walking home with Mops.
-const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "GRAB · flyer", "WALK · go-home", "SAVE · flyer", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "PICK UP · rocket", "OPEN · closet", "PUT IN · box", "WALK · bag", "TAKE · lunch", "WALK · lu-door", "GIVE · lunch", "WALK · lu-back", "TAKE · snack", "HIDE · plant", "GO · hall", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "WALK · es-patch", "WALK · es-cell", "WALK · es-door", "SHOW · brochure", "LOOK · crate", "LOOK · calendar", "ROLL · ball", "GRAB · pink slip", "TYPE · 169556", "RETURN · empty crate", "TAP · Return empty crate", "TAKE · snack", "TAKE · snack", "TAKE · snack", "TAKE · snack", "LEAVE · food", "LEAVE · food", "OPEN · closet", "PUT IN · box", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
+const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "GRAB · flyer", "WALK · go-home", "SAVE · flyer", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "PICK UP · rocket", "OPEN · closet", "PUT IN · box", "WALK · bag", "TAKE · lunch", "WALK · lu-door", "GIVE · lunch", "WALK · lu-back", "TAKE · snack", "HIDE · plant", "GO · hall", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "WALK · es-patch", "WALK · es-cell", "WALK · es-door", "SHOW · brochure", "LOOK · crate", "LOOK · calendar", "WALK · es-door", "WALK · es-vent", "ROLL · ball", "WALK · es-tunnel", "LIGHT · lamp", "LOOK · wall", "LOOK · toy bin", "LOOK · stubs", "WRITE · note", "TAP · note", "TAP · note", "TAP · note", "TAKE · pink slip", "GRAB · pink slip", "TYPE · 169556", "RETURN · empty crate", "TAP · Return empty crate", "TAKE · snack", "TAKE · snack", "TAKE · snack", "TAKE · snack", "LEAVE · food", "LEAVE · food", "OPEN · closet", "PUT IN · box", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
 g.check("the player does the new actions in order", JSON.stringify(play.acts) === JSON.stringify(wantActs), play.acts);
 const must = [
   "Stormtop Cloud Resort, floating above Jupiter.",
@@ -560,8 +564,11 @@ const must = [
   "Let's go find that pancake place.",
   "Oh, it was on the form I sent, I mean, never mind.",
   "Didn't a copy get sucked into the vent?",
+  "Goat-sized. You keep watch.",
+  "I asked Mars. Mars said no.",
   "I hope Mops doesn't notice...",
   "Mmf! Mmf mmf!",
+  "You're gumbling again!",
   "Get it before he sees it.",
   "This time, take all the snacks you want.",
   "What about the Guardians?",

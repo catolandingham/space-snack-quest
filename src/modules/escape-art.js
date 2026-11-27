@@ -21,7 +21,7 @@ import { drawHeart } from "./lunch-sneak-art.js";
 import { OUTLINE } from "./outline.js";
 import { drawPenDigits } from "./pen-digits.js";
 
-const ES_INK = "#1e2430";
+export const ES_INK = "#1e2430";
 const ES_PINK = "#ff9cc2",
   ES_PINK_DARK = "#d9668f",
   ES_CREAM = "#fff4c2",
@@ -33,11 +33,11 @@ const ES_PINK = "#ff9cc2",
 const ES_TAU = Math.PI * 2;
 const esClamp = (k) => Math.max(0, Math.min(1, k));
 
-function esRect(ctx, x, y, w, h, r) {
+export function esRect(ctx, x, y, w, h, r) {
   ctx.beginPath();
   ctx.roundRect(x, y, w, h, Math.max(0, Math.min(r, w / 2, h / 2)));
 }
-function esPaint(ctx, fill, line, ink = ES_INK) {
+export function esPaint(ctx, fill, line, ink = ES_INK) {
   fill && ((ctx.fillStyle = fill), ctx.fill());
   line && ((ctx.strokeStyle = ink), (ctx.lineWidth = line), (ctx.lineJoin = "round"), ctx.stroke());
 }
@@ -58,7 +58,7 @@ export function esWords(ctx, s, x, y, size, color = ES_INK, align = "center", we
   return s;
 }
 // Words split into lines no wider than `w`.
-function esWrap(ctx, s, w, size, weight = 700) {
+export function esWrap(ctx, s, w, size, weight = 700) {
   ctx.font = `${weight} ${size}px system-ui, -apple-system, sans-serif`;
   const out = [];
   let line = "";
@@ -376,7 +376,7 @@ function sasquatchShape(ctx, x, y, s) {
 function flyer(ctx, x, y, w, size) {
   esRect(ctx, x, y, w, w * 1.2, 3);
   esPaint(ctx, ES_PAPER, 2.5);
-  esWords(ctx, escapeWords("flyer"), x + w / 2, y + size * 0.9, size, ES_RED, "center", 900);
+  esWords(ctx, escapeWords("flyer"), x + w / 2, y + size * 0.9, size * 0.82, ES_RED, "center", 900);
   sasquatchShape(ctx, x + w / 2, y + w * 0.62, w / 70);
   pin(ctx, x + w / 2, y + 4);
 }
@@ -415,7 +415,7 @@ function stampNo(ctx, x, y, size) {
   ctx.restore();
 }
 /** The IDEAS FOR GUARDIANS board: its title over small notes nobody can read (S#586). */
-function ideasBoard(ctx, b, size = 22) {
+export function ideasBoard(ctx, b, size = 22) {
   esRect(ctx, b.x0, b.y0, b.x1 - b.x0, b.y1 - b.y0, 6);
   esPaint(ctx, "#c9a36b", 4);
   esWords(ctx, escapeWords("board"), (b.x0 + b.x1) / 2, b.y0 + size * 0.95, size, ES_INK, "center", 900);
@@ -467,7 +467,7 @@ function detectiveWall(ctx, b, big) {
   return { mars, letter };
 }
 /** The TOYS bin: a box of old baby toys (a rattle, a ball, a block) with its label. */
-function toysBin(ctx, b, size = 22) {
+export function toysBin(ctx, b, size = 22) {
   const w = b.x1 - b.x0;
   ctx.beginPath();
   ctx.arc(b.x0 + w * 0.3, b.y0 + 4, 16, 0, ES_TAU);
@@ -485,7 +485,7 @@ function toysBin(ctx, b, size = 22) {
  * right with the pink sheet on its left end, the TOYS bin. Mops is drawn by the caller (behind the desk's front).
  * `glowSlip` lights the sheet. Returns what it drew.
  */
-export function drawVentRoom(ctx, t, { slip = "desk", glowSlip = false, eyes = true } = {}) {
+export function drawVentRoom(ctx, t, { slip = "desk", glowSlip = false, eyes = true, beam = true } = {}) {
   const V = VENT_ROOM;
   // the metal walls and floor
   ctx.fillStyle = "#c3c9d4";
@@ -516,27 +516,41 @@ export function drawVentRoom(ctx, t, { slip = "desk", glowSlip = false, eyes = t
   for (let y = g.y0 + 14; y < g.y1 - 8; y += 34) ctx.fillRect(g.x0 + 6, y, g.x1 - g.x0 - 12, 12);
   ideasBoard(ctx, V.board);
   detectiveWall(ctx, V.wall, false);
-  // a lamp on the desk, its light on the paper
+  // a lamp on the desk, its light on the paper (the light is a layer: escape-vent-art.js drawLampLight)
   const d = V.desk;
-  ctx.save();
-  ctx.fillStyle = "rgba(255,240,170,.45)";
-  ctx.beginPath();
-  ctx.moveTo(d.x1 - 90, d.y0 - 120);
-  ctx.lineTo(d.x0 + 60, d.y0);
-  ctx.lineTo(d.x1 - 20, d.y0);
-  ctx.closePath();
-  ctx.fill();
-  ctx.restore();
-  esRect(ctx, d.x1 - 110, d.y0 - 140, 50, 26, 8);
+  beam && drawLampBeam(ctx);
+  esRect(ctx, d.x1 - 110, d.y0 - 84, 50, 26, 8);
   esPaint(ctx, "#3478f6", 3);
   ctx.beginPath();
-  ctx.moveTo(d.x1 - 85, d.y0 - 114);
+  ctx.moveTo(d.x1 - 85, d.y0 - 58);
   ctx.lineTo(d.x1 - 70, d.y0);
   ctx.strokeStyle = ES_INK;
   ctx.lineWidth = 4;
   ctx.stroke();
   toysBin(ctx, V.toys);
   return { slip, glowSlip };
+}
+/** The desk lamp's light on the desk (on once Mops lights it, 48). */
+export function drawLampBeam(ctx) {
+  const d = VENT_ROOM.desk;
+  ctx.save();
+  ctx.fillStyle = "rgba(255,240,170,.45)";
+  ctx.beginPath();
+  ctx.moveTo(d.x1 - 90, d.y0 - 64);
+  ctx.lineTo(d.x0 + 60, d.y0);
+  ctx.lineTo(d.x1 - 20, d.y0);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+/**
+ * The vent room's locked picture (docs/locked-rooms/vent-room-empty-v1.png, Brian 2026-11-26, notes page question 56:
+ * a locked, cleaned-up vent room), drawn once by tools/vent-room-picture.mjs: the room with no one in it, the lamp off,
+ * nothing on the desk, the grille empty. The game paints the picture and draws what changes on top.
+ */
+export function drawVentRoomPicture(ctx) {
+  drawVentRoom(ctx, 0, { eyes: false, beam: false });
+  drawVentDesk(ctx, 0, { slip: "" });
 }
 /** The desk's front, over Mops's legs; and the sheet on its left end (lit when `glowSlip`). */
 export function drawVentDesk(ctx, t, { slip = "desk", glowSlip = false } = {}) {

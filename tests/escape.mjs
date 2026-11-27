@@ -107,20 +107,9 @@ const run = await page.evaluate(
       return a ? a.verb + " · " + a.cap : "";
     };
     const tap = (x, y) => (ss.drawFrame(), ss.tapAt(x, y, false), tick());
+    const panel = () => window.SSQ.cutaway.last();
     // 43 to 46: tests/escape-mops.mjs and tests/escape-home.mjs (the rebuild of 2026-11-26 night); this run starts at the ball
-    // 47
-    // the walk in, frame by frame with the robot there: never near it, never in its drawn cone
-    const walkIn = { near: 1e9, inCone: 0, frames: 0 };
-    for (let i = 0; i < 2400 && !(S().step === "ball" && n.ctrl); i++) {
-      tick();
-      if (n.room !== "hangar" || !S().robot) continue;
-      ss.drawFrame();
-      const c = (d().drew.cones || [])[0];
-      walkIn.frames++;
-      c && c.inside && walkIn.inCone++;
-      walkIn.near = Math.min(walkIn.near, Math.hypot(n.sq.x - S().robot.x, n.sq.y - S().robot.y), Math.hypot(n.mo.x - S().robot.x, n.mo.y - S().robot.y));
-    }
-    out.walkIn = { ...walkIn, near: Math.round(walkIn.near) };
+    // 47 (the walk to the vent is tests/escape-vent.mjs)
     ss.drawFrame();
     out.ball = { room: n.room, night: !!n.ch1Night, chip: n.ch1Chip, robot: !!S().robot, cones: (d().drew.cones || []).length };
     // the button comes up by the vent only (the goal), not out in the bay
@@ -138,48 +127,13 @@ const run = await page.evaluate(
     ss.drawFrame();
     out.ball.shadow = d().drew.ballShadow;
     out.ball.at = { y: Math.round(n.sq.y) };
-    const ventStart = n.T;
-    // 48
-    // the first view inside the vent is held still before anything else (Mops does not move; his eyes at the grille)
-    until(() => S().step === "vent" && n.room === "duct", 20);
-    const inAt = n.T,
-      mo0 = n.mo.x;
-    for (let i = 0; i < 48; i++) tick();
-    ss.drawFrame();
-    out.ventHold = { still: n.mo.x === mo0, night: !!(d().drew && d().drew.night) };
-    until(() => n.cur && n.cur.k === "cutaway", 20);
-    out.ventHold.toFirst = +(n.T - inAt).toFixed(1);
-    out.vent = { room: n.room, mopsFacesAway: n.mo.f > 0 && n.mo.x > n.sq.x };
-    const panel = () => window.SSQ.cutaway.last();
-    ss.drawFrame();
-    out.vent.wall = { id: n.cur.id, waits: waitsForNext() };
-    ss.drawFrame();
-    out.vent.wall.drew = panel();
-    next();
-    ss.drawFrame();
-    out.vent.letter = { id: n.cur.id, waits: waitsForNext() };
-    ss.drawFrame();
-    out.vent.letter.drew = panel();
-    next();
-    ss.drawFrame();
-    out.vent.notice = { line: say(), style: n.cur && n.cur.b.style, glow: !!(d().drew && d().drew.glowSlip), sheet: !!(d().drew && d().drew.sheet) };
-    next();
-    until(() => n.cur && n.cur.k === "cutaway", 5);
-    for (let i = 0; i < 90; i++) tick();
-    ss.drawFrame();
-    out.vent.note = { id: n.cur && n.cur.id, drew: panel() };
-    next();
-    // 49
-    until(() => n.cur && n.cur.k === "bub", 20);
-    out.out = { room: n.room, line: say(), slip: S().slip };
-    next();
-    out.out.think = say();
-    out.out.style = n.cur && n.cur.b.style;
-    next();
-    until(() => S().step === "grab" && n.ctrl, 10);
-    out.grab = { press: press() };
+    // 48 and 49 (the vent, played as Mops; out, the grab): tests/escape-vent.mjs; here, from the grab on
+    ((n.q = []), (n.cur = null), B.jump("grab"));
+    tick();
+    out.grab = { press: (() => ((n.sq.x = n.mo.x + 30), (n.sq.y = n.mo.y), press()))() };
     until(() => S().slip === "paw", 5);
     out.grab.slip = S().slip;
+    for (let i = 0; i < 6 && S().step !== "tohall"; i++) (until(() => (n.cur && n.cur.k === "bub") || S().step === "tohall", 10), n.cur && n.cur.k === "bub" && next());
     // 50
     until(() => n.cur && n.cur.k === "cutaway", 60);
     ss.drawFrame();
@@ -282,16 +236,9 @@ const run = await page.evaluate(
   { W, CODE: P.OFFICE_CODE },
 );
 g.check("47: rolled up by the vent: on the floor in front of the wall, a shadow under him", run.ball.shadow && run.ball.at.y - 40 > 254 && run.ball.at.y + 8 < 359, run.ball);
-g.check("48: the first view inside the vent is held still (2.5 s and more) at night before anything else; the first close-up after Mops reaches his desk", run.ventHold.still && run.ventHold.night && run.ventHold.toFirst >= 4, run.ventHold);
 g.check("51, 52: night in the office and at the snack counter; the office's desk, chair and cabinet are solid", run.office.night && run.bar.night && ["desk", "chair", "cabinet"].every((k) => run.office.solids.includes(k)), { office: run.office, bar: run.bar });
 g.check("47: the bay at night, the goal, a patrolling robot with its cone", run.ball.room === "hangar" && run.ball.night && run.ball.chip === W["chip-ball"] && run.ball.robot && run.ball.cones === 1, run.ball);
 g.check("47: ROLL · ball comes up by the vent; he rolls into the L2 ball", run.ball.awayOffer === "" && run.ball.press === W["button-ball"] && run.ball.pose === "ball", run.ball);
-g.check("48: inside the vent Mops has his back to Squatch at the grille", run.vent.room === "duct" && run.vent.mopsFacesAway, run.vent);
-g.check("48: the detective wall (MARS, HAVE YOU SEEN?, NO) and the Mars letter wait for NEXT", run.vent.wall.id === "eswall" && run.vent.wall.waits && run.vent.letter.id === "esletter" && run.vent.letter.waits, run.vent);
-g.check("48: the letter reads on a phone (its words 38 game px, about 14 phone px)", run.vent.letter.drew && run.vent.letter.drew.size >= 38 && run.vent.letter.drew.lines.length >= 3, run.vent.letter.drew);
-g.check('48: "I hope Mops doesn\'t notice..." is a thought, with the pink sheet on the desk glowing', run.vent.notice.line === W["sq-notice"] && run.vent.notice.style === "whisper" && run.vent.notice.glow && run.vent.notice.sheet, run.vent.notice);
-g.check("48: the new Guardian note is written in full and signed — The Guardians, a white hair on it", run.vent.note.id === "esnote" && run.vent.note.drew.shown === W.note && run.vent.note.drew.signed && run.vent.note.drew.hair, run.vent.note);
-g.check("49: Mops comes out with the sheet in his mouth; his line; Squatch's thought", run.out.room === "hangar" && run.out.slip === "mops" && run.out.line === W["mops-mmf"] && run.out.think === W["sq-get-it"] && run.out.style === "whisper", run.out);
 g.check("49: GRAB · pink slip, and the slip goes to his paw", run.grab.press === W["button-grab"] && run.grab.slip === "paw", run.grab);
 g.check("50: in the hallway Mops faces away; the sheet's close-up shows the code written in pen, inside the sheet (and waits for NEXT)", run.slipview.room === "passage" && run.slipview.mopsAway && run.slipview.id === "esslip" && run.slipview.drew.code === "169556" && run.slipview.drew.codeAt.pen && run.slipview.drew.codeAt.inSheet && run.slipview.waits, run.slipview);
 g.check("50: the keypad: the goal, ten keys", run.pad.chip === W["chip-code"] && run.pad.keys === 10, run.pad);
@@ -305,7 +252,7 @@ g.check("52: the Guardians' plate, the last two on it (a tap on the plate works)
 g.check("52: home, OPEN · closet, PUT IN · box", run.home2.room === "closet" && run.home2.chip === W["chip-slip"] && run.home2.open === W["button-closet"] && run.home2.wardrobe === "open" && run.home2.put === W["button-box"], run.home2);
 g.check("52: the box close-up (MY GARDIAN BOX, MY GUARDIANS): the slip goes under the notes", run.home2.box.id === "esbox" && run.home2.box.drew.tucked && run.home2.box.drew.label === "MY GARDIAN BOX" && run.home2.box.drew.title === "MY GUARDIANS", run.home2.box);
 g.check("52: the slip is in the box, the closet shut, Squatch asleep, then beat 53 (pack the crate)", run.home2.slip === "box" && run.home2.shut && run.home2.sleep && run.end.step === "pack1" && !run.end.active, { home: run.home2, end: run.end });
-g.check("the drawings show the walkthrough's words", ["IDEAS FOR GUARDIANS", "HAVE YOU SEEN?", "MARS", "NO", "TOYS", "STARS CAKES", "Order new box", "Return empty crate", "pen:169556", W["note-sign"]].every((w) => run.words.includes(w)), run.words);
+g.check("the drawings show the walkthrough's words", ["STARS CAKES", "Order new box", "Return empty crate", "pen:169556"].every((w) => run.words.includes(w)), run.words);
 
 // ---------- the night robot and the one capture rule ----------
 const rule = await page.evaluate(() => {
@@ -455,7 +402,7 @@ const restarts = await page.evaluate(() => {
   // the steps he does not control go back to the last step he did (escape.js RESTART_TO); a hand-made state for each
   // (the step's name, with a story wait up so the step restart has nothing saved for it)
   out.cut = {};
-  for (const [step, from] of [["home", "walkhome"], ["tobay", "ball"], ["rolled", "ball"], ["vent", "ball"], ["out", "ball"], ["tohall", "grab"], ["slipview", "grab"], ["open", "pad"], ["booked", "computer"], ["tobar", "computer"], ["mopsall", "computer"], ["guardians", "snacks"], ["hearts", "snacks"], ["tohome", "snacks"], ["boxview", "closet"], ["bed", "closet"]]) {
+  for (const [step, from] of [["home", "walkhome"], ["togoat", "sneak"], ["rolled", "ball"], ["inside", "ball"], ["out", "slip"], ["tohall", "grab"], ["slipview", "grab"], ["open", "pad"], ["booked", "computer"], ["tobar", "computer"], ["mopsall", "computer"], ["guardians", "snacks"], ["hearts", "snacks"], ["tohome", "snacks"], ["boxview", "closet"], ["bed", "closet"]]) {
     ((n.q = []), (n.cur = null), B.jump(from));
     tick();
     (n.q = []), (n.cur = null);
@@ -473,7 +420,7 @@ const restarts = await page.evaluate(() => {
   n.sq.y = B.place.BAY.ventStand.y;
   tick();
   ss.offerNow().f();
-  for (let i = 0; i < 400 && S().step !== "vent"; i++) tick();
+  for (let i = 0; i < 400 && S().step !== "inside"; i++) tick();
   out.between = S().step;
   ss.sectionReset();
   for (let i = 0; i < 4; i++) tick();
@@ -485,9 +432,9 @@ const restarts = await page.evaluate(() => {
 });
 const ctrlSteps = ["ball", "grab", "pad", "computer", "site", "snacks", "food", "closet", "box"];
 g.check("↺ in each step he controls starts that step again, with him back where it started (the keypad clears, the snacks come back)", ctrlSteps.every((k) => restarts[k].step === k && restarts[k].ctrl && restarts[k].back) && restarts.pad.typed === "" && restarts.snacks.bag === 0 && restarts.food.bag === 0 && restarts.box.wardrobe === "open", restarts);
-const want = { home: "walkhome", tobay: "ball", rolled: "ball", vent: "ball", out: "ball", tohall: "grab", slipview: "grab", open: "pad", booked: "computer", tobar: "computer", mopsall: "computer", guardians: "snacks", hearts: "snacks", tohome: "snacks", boxview: "closet", bed: "closet" };
+const want = { home: "walkhome", togoat: "sneak", rolled: "ball", inside: "ball", out: "slip", tohall: "grab", slipview: "grab", open: "pad", booked: "computer", tobar: "computer", mopsall: "computer", guardians: "snacks", hearts: "snacks", tohome: "snacks", boxview: "closet", bed: "closet" };
 g.check("↺ in a step he does not control goes back to the last step he did (hand-made states)", Object.entries(want).every(([k, v]) => restarts.cut[k] === v), restarts.cut);
-g.check("↺ between steps (inside the vent, played there) goes back to the ball step", restarts.between === "vent" && restarts.betweenAfter.step === "ball" && restarts.betweenAfter.room === "hangar" && restarts.betweenAfter.ctrl, restarts);
+g.check("↺ between steps (inside the vent, played there) goes back to the ball step", restarts.between === "inside" && restarts.betweenAfter.step === "ball" && restarts.betweenAfter.room === "hangar" && restarts.betweenAfter.ctrl, restarts);
 g.check("the chapter reset (ch1ResetState) forgets the escape", restarts.reset, restarts);
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();

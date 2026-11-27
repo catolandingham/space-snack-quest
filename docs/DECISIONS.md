@@ -3,38 +3,43 @@
 
 | Lines | Heading |
 | --- | --- |
-| 38–40 | ## The office code, 2026-11-26 (Brian, chat) |
-| 41–43 | # Space Snack Quest: every decision, in one place |
-| 44–51 | ## How to use this file |
-| 52–60 | ## Lunch sneak, 2026-11-26 (Brian's video notes and answers, round D) |
-| 61–71 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
-| 72–81 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
-| 82–92 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
-| 93–116 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
-| 117–121 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 122–130 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 131–134 | ## Sound, 2026-11-23 |
-| 135–158 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 159–170 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 171–195 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 196–204 | ## Which repo is the base, 2026-11-22 |
-| 205–215 | ## Sight cones, 2026-11-22 |
-| 216–220 | ## Latest calendar direction, 2026-11-16 |
-| 221–223 | ## Vent walk, 2026-11-16 |
-| 224–226 | ## Locked home room v5, 2026-11-16 |
-| 227–236 | ## Fidelity system (pictures are locked, not just words) |
-| 237–274 | ## 1. Working rules |
-| 275–341 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 342–366 | ## 3. Characters and look |
-| 367–443 | ## 4. Look, rooms and layout |
-| 444–465 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 466–509 | ## 6. Later chapters (2–4 and travel) |
-| 510–519 | ## 7. Audio |
-| 520–554 | ## 8. Code, controls and process |
-| 555–601 | ## 9. Open / waiting on Brian |
-| 602–696 | ## 10. Earlier entries, kept word for word |
-| 697–793 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 39–42 | ## The escape's words and the vent room, 2026-11-26 (Brian, notes page questions 55 and 56) |
+| 43–45 | ## The office code, 2026-11-26 (Brian, chat) |
+| 46–48 | # Space Snack Quest: every decision, in one place |
+| 49–56 | ## How to use this file |
+| 57–65 | ## Lunch sneak, 2026-11-26 (Brian's video notes and answers, round D) |
+| 66–76 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
+| 77–86 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
+| 87–97 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
+| 98–121 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
+| 122–126 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 127–135 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 136–139 | ## Sound, 2026-11-23 |
+| 140–163 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 164–175 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 176–200 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 201–209 | ## Which repo is the base, 2026-11-22 |
+| 210–220 | ## Sight cones, 2026-11-22 |
+| 221–225 | ## Latest calendar direction, 2026-11-16 |
+| 226–228 | ## Vent walk, 2026-11-16 |
+| 229–231 | ## Locked home room v5, 2026-11-16 |
+| 232–241 | ## Fidelity system (pictures are locked, not just words) |
+| 242–279 | ## 1. Working rules |
+| 280–346 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 347–371 | ## 3. Characters and look |
+| 372–448 | ## 4. Look, rooms and layout |
+| 449–470 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 471–514 | ## 6. Later chapters (2–4 and travel) |
+| 515–524 | ## 7. Audio |
+| 525–559 | ## 8. Code, controls and process |
+| 560–606 | ## 9. Open / waiting on Brian |
+| 607–701 | ## 10. Earlier entries, kept word for word |
+| 702–798 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
+## The escape's words and the vent room, 2026-11-26 (Brian, notes page questions 55 and 56)
+- **The escape's written words are approved as written** (Brian, 2026-11-26, notes page question 55: "Approve all as written", PR #93 comment): the card "Six days later", the board IDEAS FOR GUARDIANS, HAVE YOU SEEN?, the labels MARS / NO / TOYS, the Mars letter, the Guardian note with "— The Guardians", the goal line "Squatch: type the code from the pink slip", and the site's "Order new box" and "Return empty crate". The office-code pin is "make 169556". **Decided.** (The site's header is renamed STARS CAKES in the rebuild of 2026-11-26 night, the Stars Cakes thread: that new word waits for his yes.)
+- **The vent room is a locked picture** (Brian, 2026-11-26, notes page question 56: a locked, cleaned-up vent room): `docs/locked-rooms/vent-room-empty-v1.png`, drawn once by `tools/vent-room-picture.mjs`. The room with no one in it, the lamp off, nothing on the desk; what changes is drawn on top. **Decided.**
+
 ## The office code, 2026-11-26 (Brian, chat)
 - **The office code is 169556.** Brian, chat, 2026-11-26: the office code is 169556 (six digits), not 4723. It is written on the pink sheet, its close-up shows it big and clear before the keypad (beat 50), and the office keypad takes six digits. The code is still for the office door only (his answer of 2026-11-22). `docs/TUNING-PINS.json` "office-code" now points at `src/modules/escape-place.js`. **Decided.** This replaces 4723 everywhere (R84 below and the 2026-11-22 keypad line keep their history with a note).
 

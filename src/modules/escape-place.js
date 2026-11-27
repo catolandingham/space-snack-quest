@@ -70,15 +70,23 @@ walkIn: Object.freeze([
 // The night robot's sight (the older program's standing cone: 210 long, 0.42 each side; party-watch.js coneFrom).
 export const ROBOT_SIGHT = Object.freeze({ run: 170 }); // (its cone: bay-watch.js SIGHT)
 
-// Inside the vent (no locked picture: a placeholder room, drawn by escape-art.js). The grille is on the left (Squatch
+// Inside the vent (its locked picture since 2026-11-26: docs/locked-rooms/vent-room-empty-v1.png, drawn by escape-art.js
+// drawVentRoomPicture). The grille is on the left (Squatch
 // outside it, rolled up, his eyes between the slats); Mops's desk on the right, his back to the grille.
 export const VENT_ROOM = Object.freeze({
   grille: Object.freeze({ x0: 24, y0: 250, x1: 150, y1: 470 }),
   eyes: Object.freeze({ x: 86, y: 384 }),
   desk: Object.freeze({ x0: 560, y0: 430, x1: 920, y1: 470 }),
-  mops: Object.freeze({ x: 470, y: 600 }), // his feet, at the desk's left end, facing right (back to the grille)
-  mopsIn: Object.freeze({ x: 200, y: 600 }),
-  slip: Object.freeze({ x: 650, y: 432 }), // the pink sheet on the left of the desk, right beside him (lying on its top)
+  mops: Object.freeze({ x: 470, y: 462 }), // his feet, at the desk's left end, facing right (back to the grille)
+  mopsIn: Object.freeze({ x: 160, y: 462 }),
+  slip: Object.freeze({ x: 600, y: 432 }), // the pink sheet on the left of the desk, right beside him (lying on its top)
+  // 48 (the rebuild of 2026-11-26 night): the player walks Mops (the vent's floor strip, y 400 to 470) to each thing
+  // in turn; each has its outline and its place to stand
+  lamp: Object.freeze({ x0: 800, y0: 338, x1: 870, y1: 432 }),
+  stubs: Object.freeze({ x0: 690, y0: 386, x1: 800, y1: 430 }),
+  note: Object.freeze({ x: 655, y: 430 }),
+  at: Object.freeze({ lamp: 800, wall: 720, toys: 380, stubs: 700, note: 630, slip: 540, y: 462, r: 64 }),
+  picture: "docs/locked-rooms/vent-room-empty-v1.png",
   wall: Object.freeze({ x0: 560, y0: 50, x1: 940, y1: 330 }),
   board: Object.freeze({ x0: 210, y0: 50, x1: 520, y1: 250 }),
   toys: Object.freeze({ x0: 200, y0: 380, x1: 320, y1: 466 }), // on the floor at the back, under the board
@@ -192,6 +200,10 @@ export const ES_PACE = Object.freeze({
   gulp: 1.2, // 45a: his gulp and sweat drop
   touch: 1.0, // 45a: Mops's hoof on the crate's worn letter before "...Mars."
   brochureUp: 2.6, // 45a: the brochure held up, big
+  lampHold: 1.4, // 48: the room lit, held still before anything can be tapped
+  eyes: 2.0, // 48: Squatch's eyes at the grille, in their small round picture
+  fold: 1.0, // 49: the slip folded, the paw print inside
+  planPop: 2.4, // the crayon plan pops up with a tick
 });
 
 // ---------- the rebuild of 2026-11-26 night (the story pass): every number a PLACEHOLDER for Brian ----------
@@ -242,16 +254,16 @@ export const NEWS = Object.freeze({ mops: Object.freeze({ x: 560, y: 520 }), bot
 // Walking between rooms (44d, 47, 50, 52): each doorway's opening (his feet in it take him through) and where he comes in
 // on the other side. Doors join home and the hall, the hall and the hallway, the hallway and the bay.
 export const ES_DOORS = Object.freeze({
-  closet: Object.freeze([Object.freeze({ to: "hall", box: Object.freeze({ x0: 846, x1: 900, y0: 436, y1: 504 }), at: Object.freeze({ x: 476, y: 556 }), f: 1, mark: Object.freeze({ x0: 872, y0: 360, x1: 960, y1: 500 }) })]),
+  closet: Object.freeze([Object.freeze({ to: "hall", box: Object.freeze({ x0: 836, x1: 900, y0: 436, y1: 504 }), at: Object.freeze({ x: 476, y: 556 }), f: 1, mark: Object.freeze({ x0: 872, y0: 360, x1: 960, y1: 500 }) })]),
   hall: Object.freeze([
-    Object.freeze({ to: "closet", box: Object.freeze({ x0: 432, x1: 522, y0: 580, y1: 640 }), at: Object.freeze({ x: 820, y: 470 }), f: -1, mark: Object.freeze({ x0: 430, y0: 584, x1: 524, y1: 638 }) }),
+    Object.freeze({ to: "closet", box: Object.freeze({ x0: 432, x1: 522, y0: 572, y1: 640 }), at: Object.freeze({ x: 820, y: 470 }), f: -1, mark: Object.freeze({ x0: 430, y0: 584, x1: 524, y1: 638 }) }),
     Object.freeze({ to: "passage", box: Object.freeze({ x0: 912, x1: 960, y0: 286, y1: 346 }), at: Object.freeze({ x: 96, y: 345 }), f: 1, mark: Object.freeze({ x0: 880, y0: 258, x1: 946, y1: 348 }) }),
   ]),
   passage: Object.freeze([
-    Object.freeze({ to: "hall", box: Object.freeze({ x0: 0, x1: 66, y0: 318, y1: 374 }), at: Object.freeze({ x: 880, y: 318 }), f: -1, mark: Object.freeze({ x0: 14, y0: 250, x1: 72, y1: 372 }) }),
-    Object.freeze({ to: "hangar", box: Object.freeze({ x0: 894, x1: 960, y0: 300, y1: 364 }), at: Object.freeze({ x: 76, y: 332 }), f: 1, mark: Object.freeze({ x0: 890, y0: 250, x1: 950, y1: 362 }) }),
+    Object.freeze({ to: "hall", box: Object.freeze({ x0: 0, x1: 78, y0: 318, y1: 374 }), at: Object.freeze({ x: 880, y: 318 }), f: -1, mark: Object.freeze({ x0: 14, y0: 250, x1: 72, y1: 372 }) }),
+    Object.freeze({ to: "hangar", box: Object.freeze({ x0: 882, x1: 960, y0: 300, y1: 364 }), at: Object.freeze({ x: 70, y: 400 }), f: 1, mark: Object.freeze({ x0: 890, y0: 250, x1: 950, y1: 362 }) }),
   ]),
-  hangar: Object.freeze([Object.freeze({ to: "passage", box: Object.freeze({ x0: 0, x1: 66, y0: 318, y1: 352 }), at: Object.freeze({ x: 870, y: 332 }), f: -1, mark: Object.freeze({ x0: 8, y0: 260, x1: 64, y1: 352 }) })]),
+  hangar: Object.freeze([Object.freeze({ to: "passage", box: Object.freeze({ x0: 0, x1: 78, y0: 318, y1: 352 }), at: Object.freeze({ x: 860, y: 332 }), f: -1, mark: Object.freeze({ x0: 8, y0: 260, x1: 64, y1: 352 }) })]),
 });
 // The way home through the rooms (44d: from the bay), and out to the vent (47: from home).
 export const ROUTE_HOME = Object.freeze({ hangar: "passage", passage: "hall", hall: "closet" });
@@ -262,3 +274,12 @@ export const HALL_GUEST = Object.freeze({ x: 560, y: 450, near: 170, kind: "teal
 export const PLAQUE = Object.freeze({ x: 767, y: 300, r: 70 });
 // Mops follows Squatch this far behind along his trail (47, 50, 52).
 export const FOLLOW = Object.freeze({ gap: 60, speed: 190 });
+// 48: the short tunnel, side view, Mops crawling through it before the room; the lost things along it.
+export const VENT_TUNNEL = Object.freeze({
+  top: 300,
+  floor: 470,
+  y: 462,
+  end: 860, // he reaches the room here
+  scale: 2.6,
+  finds: Object.freeze([Object.freeze({ x: 300, kind: "hat" }), Object.freeze({ x: 480, kind: "sock" }), Object.freeze({ x: 650, kind: "fork" })]),
+});
