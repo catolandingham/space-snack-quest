@@ -568,7 +568,7 @@
         r("#a8380b", 0),
         X(-128, 8, 4, 2),
         r("#a8380b", 0),
-        g("MARS PANCAKES!", 22, 2, 27, "#fff3d6", "center", 900),
+        g((window.SSQ && window.SSQ.snack ? window.SSQ.snack("FAMILY") : "CAKES") + "!", 22, 2, 27, "#fff3d6", "center", 900),
         e.restore());
     }
     function w2(l, o, i, s) {

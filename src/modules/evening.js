@@ -860,11 +860,10 @@ export function createEvening(bridge) {
         e.face("mops", 1);
       }),
       e.say("mops", eveningWords("mops-family")),
-      // it ends on his line (Brian r5 8:03: no "...I didn't mean that."); a pause; Mops forgives him without being asked
+      // it ends on his line, then a quiet moment, then straight to "Bed." (Brian's answer of 2026-11-27 to question
+      // 122: B; no "...I didn't mean that.", no "We say things we don't mean all the time.")
       e.say("sq", eveningWords("sq-real")),
       timer(P.hurt),
-      // (q: 122, the pick A. Option B, straight to "Bed.": delete the next line.)
-      e.say("mops", eveningWords("mops-we-say")),
       e.say("mops", eveningWords("mops-bed")),
       // he walks to bed himself, past Mops's turned back
       e.run(() => {

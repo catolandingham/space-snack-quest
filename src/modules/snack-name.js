@@ -38,6 +38,9 @@ export const FAMILY = Object.freeze({
  * cannot show empty words.
  */
 export function snackWord(form) {
+  // ("family", "FAMILY": his family's cakes, the stand's name; Brian 2026-11-27, question 120: the stand sells only these)
+  if (form === "family") return FAMILY.name;
+  if (form === "FAMILY") return FAMILY.NAME;
   if (!Object.prototype.hasOwnProperty.call(SNACK, form)) throw new Error(`no snack form ${form}`);
   return SNACK[form];
 }

@@ -371,7 +371,7 @@ export function drawHeartShape(ctx, x, y, r, color = "#e5533d") {
   ctx.fill();
 }
 
-// ---------- the pancake brochure ----------
+// ---------- the stand's brochure ----------
 // One grown-up Sasquatch behind the counter (bigger than Squatch, a different fur: not him; Brian P 33:05 to 33:58).
 /** Mars: a red planet with craters. */
 export function drawMars(ctx, x, y, r) {

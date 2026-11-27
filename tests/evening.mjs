@@ -7,7 +7,7 @@
  *     the robot from the hall's end: rolled up it passes (BEEP BEEP), standing it sees him (the capture rule);
  *   - 38a: Jupiter's storm, the PA, "Guests! Quick, hide.", the guests seeing a kid who stays out, HIDE · counter, PEEK
  *     · window, the family's Mars talk, DUCK · down; still up, their cones find his eyes;
- *   - 38b and 39: the pancake talk, the close-up, the brochure in the bin, its five taps and the lines after;
+ *   - 38b and 39: as Mops, GREET · kid and TALK · family; the brochure handed to Mops (its close-up) and passed down;
  *   - 39b: OPEN · box, BITE · cake, "No fizz.", the chart's X, the crate's letters, "MARS!";
  *   - 40 and 41: the fight, STOMP · to bed, the turned back, lights out with no song, Mops asleep, the idea;
  *   - 42: the bucket bump, the night rooms, GRAB · copies, PUT BACK · bin and GO BACK, MARK · box, the loud post, the
@@ -254,7 +254,7 @@ r = await ev(() => {
   const off = ss.offerNow();
   return { said, ears, alarm, step: window.__st(), chip: n.ch1Chip, guests: (d.state.guests || []).map((q) => q.role + ":" + q.to), offer: off && off.verb + " · " + off.cap, eyes: !!d.state.peek, pose: d.state.pose, stepId: n.ch1Step };
 });
-g.check("the guests walk in to the window; the family's Mars talk is overheard (the ear), and nobody says pancakes (question 120)", r.said.slice(0, 5).join("|") === "Whoa. It's SO red.|Red like Mars.|Oh, we loved Mars.|What did you like best?|The " + FAMILY.NAME + "!" && r.ears.slice(0, 5).every(Boolean) && !r.said.some((t) => /pancake/i.test(t)), r);
+g.check("the guests walk in to the window; the family's Mars talk is overheard (the ear), and no other food is named (question 120)", r.said.slice(0, 5).join("|") === "Whoa. It's SO red.|Red like Mars.|Oh, we loved Mars.|What did you like best?|The " + FAMILY.NAME + "!" && r.ears.slice(0, 5).every(Boolean) && !r.said.some((t) => new RegExp("pan" + "cake", "i").test(t)), r);
 g.check("the kid sees the goat: \"A GOAT! Can I pet him?\" / \"That's the Ganitor. He's famous.\" / \"The only goat janitor in the whole galaxy.\"", r.said.slice(5).join("|") === "A GOAT! Can I pet him?|That's the Ganitor. He's famous.|The only goat janitor in the whole galaxy.", r);
 g.check("the family comes over to the bar (the other guest stays at the window); Squatch stays rolled up, no eyes peek, nobody sees him; GREET · kid is Mops's", r.step === "greet" && r.guests.join(",") === "dad:bar,mom:bar,kid:bar,guest:window" && r.pose === "hidden" && !r.eyes && !r.alarm && r.offer === "GREET · kid" && r.chip === "Mops: say hello to the kid" && r.stepId === "ev-greet", r);
 r = await ev(() => {
@@ -425,7 +425,7 @@ r = await ev(() => {
   return { pressed, said, back, hearts, step: window.__st(), turned: n.ch1Evening.turned };
 });
 g.check("STOMP · to bed: Mops calls him back first; \"Why won't you help me find my family?\" ... \"Squatch... I already...\" and he turns his back in the room (no close-up)", r.pressed && r.said[0] === "Squatch. Wait." && r.said[1] === "Why won't you help me find my family?" && r.said[2] === "Squatch... I already..." && !r.back && r.turned, r);
-g.check("it ends on his line: \"I AM your family.\" / \"Maybe my REAL family wouldn't make me hide!\" / (no take-back) / \"We say things we don't mean all the time.\" / \"Bed. The floors don't mop themselves.\"", r.said.slice(3).join("|") === "I AM your family.|Maybe my REAL family wouldn't make me hide!|We say things we don't mean all the time.|Bed. The floors don't mop themselves.", r);
+g.check("it ends on his line (question 122: B): \"I AM your family.\" / \"Maybe my REAL family wouldn't make me hide!\" / (no take-back, no forgiving line) / \"Bed. The floors don't mop themselves.\"", r.said.slice(3).join("|") === "I AM your family.|Maybe my REAL family wouldn't make me hide!|Bed. The floors don't mop themselves.", r);
 g.check("no hearts anywhere in the fight", r.hearts.every((h) => !h), r.hearts.filter(Boolean).length);
 r = await ev(() => {
   const n = window.__ss.op,

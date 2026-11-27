@@ -3,7 +3,7 @@
  * at phone size, from Mops reaching home:
  *   45a  the switch back to Squatch is announced; Mops's lines, word for word, in short bubbles; Squatch's gulp and
  *        sweat drop (no words); the brochure in his paw is outlined; SHOW · brochure: it is held up big, hearts over
- *        Mops, "Let's go find that pancake place."; Mops touches the crate's worn letter (the family stamp's scraped first letter): "...Mars."
+ *        Mops, "Let's go find that [the family's cakes] stand."; Mops touches the crate's worn letter (the family stamp's scraped first letter): "...Mars."
  *   45b  "How? The scanner stops fur." / "You came here in a crate."; LOOK · crate (the crate outlined): the crayon plan
  *        gets its crate picture; "...I can LEAVE in a crate!" / "Empty crates ride back on the ship."; LOOK · calendar
  *        (outlined): the ship; the talk adds the computer and the door; every line word for word, in order.
@@ -134,7 +134,7 @@ const w = (...ids) => ids.map((k) => W[k]);
 g.check("45a: Mops comes home; the switch back to Squatch is announced; his lines, word for word, in order", o.room === "closet" && JSON.stringify(o.a) === JSON.stringify(["You are SQUATCH now.", ...w("mops-you-right", "mops-replacing", "mops-ship", "mops-brochure")]), o.a);
 g.check("45a: Squatch's gulp and sweat drop (no words); his crate's stamp reads the worn family stamp", o.a45.sweat && o.a45.stamp === "_" + FAMILY.FADED, o.a45);
 g.check("45a: SHOW · brochure, the brochure in his paw outlined; it is held up big", o.a45.step === "show" && o.a45.chip === W["chip-show"] && o.a45.mark && o.a45.press === W["button-show"] && o.a45.up && o.a45.up.big, o.a45);
-g.check("45a, 45b: \"Let's go find that pancake place.\", Mops touches the worn letter, \"...Mars.\"; then the plan's first lines", JSON.stringify(o.b1) === JSON.stringify(w("mops-pancake-go", "mops-mars", "sq-how", "mops-crate")) && o.a45.touched, o.b1);
+g.check("45a, 45b: Mops: let's go find that stand (escape-lines.js mops-pancake-go), Mops touches the worn letter, \"...Mars.\"; then the plan's first lines", JSON.stringify(o.b1) === JSON.stringify(w("mops-pancake-go", "mops-mars", "sq-how", "mops-crate")) && o.a45.touched, o.b1);
 g.check("45b: LOOK · crate, the crate outlined; ↺ there puts him back", o.crate.step === "crate" && o.crate.chip === W["chip-crate-look"] && o.crate.mark && o.crate.press === W["button-crate"] && o.crate.restart.step === "crate" && o.crate.restart.back, o.crate);
 g.check("45b: the crate picture on the crayon plan, then \"...I can LEAVE in a crate!\" and \"Empty crates ride back on the ship.\"", JSON.stringify(o.b2) === JSON.stringify(w("sq-leave", "mops-empties")), o.b2);
 g.check("45b: LOOK · calendar, the calendar outlined", o.cal.step === "cal" && o.cal.chip === W["chip-cal-look"] && o.cal.mark && o.cal.press === W["button-calendar"], o.cal);

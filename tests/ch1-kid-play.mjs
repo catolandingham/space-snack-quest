@@ -402,20 +402,10 @@ while (now() < MAX_S) {
       say(s, lift ? "HOLD LIFT · photo" : "TAP next photo");
       if (lift) (await page.touchscreen.touchStart(v.lift.x, v.lift.y), await sleep(1400), await page.touchscreen.touchEnd());
       else await tap(v.next.x, v.next.y);
-    } else if (v.kind === "brochure") {
-      // the thing that has the outline (the next of the five), last the two cooks
-      const at = v.parts[v.next || "cooks"];
-      say(s, "TAP the brochure's " + (v.next || "cooks"));
-      await tap(at.x, at.y);
-    } else if (v.kind === "shock" || v.kind === "back") {
+    } else if (v.kind === "brochure" || v.kind === "crate") {
+      // (round 7: the brochure in Mops's keeping, and the brochure beside the crate's stamp: each waits for a tap)
       say(s, "TAP the close-up's X");
       await tap(v.close.x, v.close.y);
-    } else if (v.kind === "chart") {
-      say(s, "TAP this week's cake (the X)");
-      await tap(v.cake.x, v.cake.y);
-    } else if (v.kind === "crate") {
-      say(s, "TAP the brochure along the crate");
-      await tap(v.card.x, v.card.y);
     } else if (v.kind === "order") {
       // the choice: a kid picks MARK · box (the story goes on; PUT BACK · bin is the short ending, tested elsewhere)
       if (v.choose) (say(s, "TAP MARK · box"), await tap(v.mark.x, v.mark.y));

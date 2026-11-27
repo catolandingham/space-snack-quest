@@ -298,7 +298,6 @@ export const EVENING_PACE = Object.freeze({
   lift: 1.0,
   // the line's people leave, the family comes
   leave: 120,
-  pictureBubble: 2.8, // the family's wordless picture bubble (pancakes, Mars)
   stare: 1.6, // Mops looks at the brochure a moment too long (39)
   putDown: 0.6,
   evening: 2.4, // the room warms to evening at home

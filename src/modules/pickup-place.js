@@ -38,7 +38,7 @@ export const PK_HOME = Object.freeze({
   bucket: Object.freeze({ x0: 536, y0: 500, x1: 596, y1: 571 }),
   bucketAt: Object.freeze({ x: 640, y: 560 }),
   bucketPatch: Object.freeze({ x0: 520, y0: 440, x1: 612, y1: 580 }), // the bucket drawn over the painted one, handle and wheels included
-  // the things on the walls he takes down (layers on the locked picture: his crayon chart of cake kinds, the pancake
+  // the things on the walls he takes down (layers on the locked picture: his crayon chart of cake kinds, the stand's
   // brochure from beat 38, two of his drawings), each with where he stands for it
   walls: Object.freeze([
     // the chart over his bed (cake-chart.js CAKE_CHART, the home picture's layer, in game positions)
