@@ -122,7 +122,8 @@ const ball = await page.evaluate(() => {
   n.walkTo = { x: n.sq.x + 80, y: n.sq.y, room: n.room, lx: n.sq.x, ly: n.sq.y, lt: n.T, at: n.T };
   tick(0.3);
   out.afterSteer = { pose: st().pose, sqPose: n.sqPose };
-  // rolled up in the hallway doorway's ring: SNEAK · hallway is not offered (he unrolls first)
+  // rolled up by the hallway doorway: the doorway (walk-through, Brian #47) is not his way while he is a ball; rolled
+  // into its opening he stays in the hall (he unrolls first)
   n.q = [];
   n.cur = null;
   ss.ch1JumpBeat(25);
@@ -132,10 +133,14 @@ const ball = await page.evaluate(() => {
   n.sq.x = lu.LUNCH_PLACES.door.stand.x;
   n.sq.y = lu.LUNCH_PLACES.door.stand.y;
   tick(0.05);
-  out.doorStanding = offer();
+  out.doorStanding = (beat.spots() || []).map((q) => q.id + ":" + q.verb);
   beat.spots().find((q) => q.id === "lu-ball").f();
   tick(0.05);
-  out.doorBall = (beat.spots() || []).map((q) => q.verb + " · " + q.cap);
+  out.doorBall = (beat.spots() || []).map((q) => q.id + ":" + q.verb);
+  n.sq.x = lu.LUNCH_PLACES.door.walkTo.x;
+  n.sq.y = lu.LUNCH_PLACES.door.walkTo.y;
+  tick(0.2);
+  out.ballThrough = { room: n.room, pose: st().pose };
   // a tap on the floor past the plant: he walks there; HIDE · plant comes up as he reaches the plant's ring, a press
   // hides him, and he stays hidden (the tap's walk ends; it used to count as steering and step him out at once)
   n.q = [];
@@ -173,7 +178,7 @@ g.check("↺ during the alarm starts the part again: no alarm, the sneak's music
 g.check("noticed rolled up, he is not safe staying put: the guards know where he is (as a guard who saw him hide)", ball.nearSpotted, ball);
 g.check("↺ while rolled up: he stands again at the step's start, nothing of the ball left", ball.afterReset.pose !== "ball" && ball.afterReset.sqPose !== "ball" && ball.afterReset.ballNear === "{}", ball.afterReset);
 g.check("moving unrolls him (as stepping out of a hiding place)", ball.beforeSteer === "ball" && ball.afterSteer.pose === "stand" && ball.afterSteer.sqPose === "stand", { before: ball.beforeSteer, after: ball.afterSteer });
-g.check("rolled up in the hallway doorway, SNEAK · hallway is not offered (he must unroll first)", ball.doorStanding === "SNEAK · hallway" && !ball.doorBall.includes("SNEAK · hallway"), { standing: ball.doorStanding, ball: ball.doorBall });
+g.check("standing by the hallway doorway it is his way, with no button (walk-through); rolled up it is not, and rolled into its opening he stays in the hall (he must unroll first)", ball.doorStanding[0] === "lu-door:" && !ball.doorBall.some((q) => q.startsWith("lu-door")) && ball.ballThrough.room === "hall" && ball.ballThrough.pose === "ball", { standing: ball.doorStanding, ball: ball.doorBall, through: ball.ballThrough });
 g.check("HIDE · plant pressed while a tap's walk is still taking him there: he hides and stays hidden", ball.hideWhileWalking.offer === "HIDE · plant" && ball.hideWhileWalking.walking && ball.hideWhileWalking.after.pose === "hidden" && ball.hideWhileWalking.after.sqPose === "hidden", ball.hideWhileWalking);
 g.check("ROLL · ball is not offered in the hallway or behind the counter", !ball.hallwayOffers.includes("ROLL · ball") && !ball.counterOffers.includes("ROLL · ball"), { hallway: ball.hallwayOffers, counter: ball.counterOffers });
 
@@ -244,11 +249,10 @@ const C = P.COUNTER_CLOSEUP,
   inSrc = (p) => p.x > C.src.x0 && p.x < C.src.x1 && p.y > C.src.y0 && p.y < C.src.y1;
 g.check("at the snack counter a framed close-up shows the counter's corner bigger, on the left of the picture", !!box && box.u === 1 && box.x0 < 60 && box.x1 < 480 && Math.abs((box.x1 - box.x0) / (C.src.x1 - C.src.x0) - C.k) < 0.01, box);
 g.check("the close-up holds the plate, Squatch ducked, Mops and the counter guest", inSrc(P.COUNTER_SPOTS.plate) && inSrc(P.COUNTER_SPOTS.sq) && inSrc(P.COUNTER_SPOTS.mops) && inSrc(P.COUNTER_WATCHER), C.src);
-// (hidden behind the counter he is the L2 ball, Brian 2026-11-26: about 44 of its units tall, drawn at the hall's
-// Squatch scale over 1.65, which is 1)
-const duckPx = 44 * C.k * PHONE_K,
+// (ducked he is his L2 ball, BALL_UNITS_TALL at the hall's own scale)
+const duckPx = ART.BALL_UNITS_TALL * C.k * PHONE_K,
   platePx = P.LUNCH_SIZES.plate.w * C.k * PHONE_K;
-g.check("on a 375-wide phone, in the close-up the ball (Squatch hidden behind the counter) is at least 24 px tall and the plate at least 50 px wide", duckPx >= 24 && platePx >= 50, { duckPx, platePx });
+g.check("on a 375-wide phone, in the close-up the ducked Squatch (his ball) is at least 28 px tall and the plate at least 50 px wide", duckPx >= 28 && platePx >= 50, { duckPx, platePx });
 g.check("a tap on the hall floor the close-up covers does nothing at the counter (he stays behind it), though the same tap in the sneak walks him there", cu.offer === "TAKE · snack" && !cu.afterTapOff.moved && cu.afterTapOff.step === "snack" && cu.sameTapInSneak, cu);
 g.check("a tap on the plate in the close-up is TAKE · snack: he stands up and reaches for one pie", ["grab", "chew"].includes(cu.afterTapPlate.step) && cu.afterTapPlate.pose !== "ducked", cu.afterTapPlate);
 

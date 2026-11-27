@@ -208,7 +208,7 @@ for (const beat of ["party:P8a", "party:P8b"]) {
       for (let i = 0; i < 60 * 90; i++) {
         const p = n.ch1PartyNow;
         // (until Mops stands beside him to look at him: from then on Mops steps close on purpose, to lift the hat)
-        if (!p || p.scene === "done" || p.costumeLook) break;
+        if (!p || p.scene === "done" || p.mopsHeartsAt != null) break;
         // (walking in together through the door they start side by side: count from once both are in the room)
         if (n.room === "closet" && n.moPose === "stand" && n.sqPose === "stand" && n.sq.x < 880) {
           const o = over(place(mb, n.mo.x, n.mo.y, n.mo.f || -1), place(sb, n.sq.x, n.sq.y, n.sq.f || 1));

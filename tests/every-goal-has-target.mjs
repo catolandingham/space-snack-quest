@@ -44,17 +44,20 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: grab the flyer": { party: "P4", out: true, x: 788, y: 420 },
     "Squatch: sneak home for a disguise": { party: "P4", out: true, flyer: "paw", walk: true, x: 477, y: 540 },
     "Squatch: run home and hide!": { party: "P2", alarm: true, walk: true, x: 520, y: 560 },
-    // home with the flyer (Brian 2026-11-25): his bed glows and SAVE · flyer slides it under
-    "Squatch: put the flyer under your bed for Mops": { party: "P4", home: true, flyer: "paw", x: 790, y: 480 },
-    // the group photo once everyone is in place (Brian 2026-11-25): JOIN · photo, the gap glows
+    // home with the flyer (Brian 2026-11-25): his bed glows and SAVE · flyer lays it on top (2026-11-26)
+    "Squatch: put the flyer on your bed for Mops": { party: "P4", home: true, flyer: "paw", x: 790, y: 480 },
+    // the group photo once the 3-2-1 starts (Brian 2026-11-26, #46): JOIN · photo, the gap glows
     "Squatch: join the group photo": { party: "P6", shot: true, x: 600, y: 470 },
     // the home morning (src/modules/home-morning.js), each opened by its own jump with everything before it done
     "Squatch: pick up the gift": { hm: "rocket" },
     "Squatch: put the gift in the box": { hm: "closet" },
+    // (Brian 2026-11-26, video note 0:30: he walks over to the bag and sees it first; the bag is outlined, no button)
+    "Squatch: go to the bag by the door": { hm: "toBag", walk: true, x: 846, y: 480 },
     "Squatch: take the lunch": { hm: "lunch" },
     // the lunch sneak (src/modules/lunch-sneak.js), each opened by its own jump with everything before it done; he
-    // stands where its button comes up (beside the plant; by Mops; behind the counter)
-    "Squatch: take Mops his lunch": { lu: "plant", x: 400, y: 552 },
+    // stands where its button comes up (by Mops; behind the counter). The sneak's goal is the hallway doorway, which
+    // is walk-through (Brian #47): he is hidden behind the crates (no button), a step from the doorway's opening.
+    "Squatch: take Mops his lunch in the hallway": { lu: "door", walk: true, x: 900, y: 330 },
     "Squatch: give Mops his lunch": { lu: "give", x: 540, y: 488 },
     "Squatch: grab one snack": { lu: "snack" },
     // the loading bay (src/modules/loading-bay.js), opened by its own jump; he stands a step from the plant
@@ -125,13 +128,18 @@ const report = await page.evaluate(async (chips) => {
     if (Math.min(rx, ry) >= 20 && Math.abs(a1 - a0) >= Math.PI) arcs.push(`${Math.round(x)},${Math.round(y)} e${Math.round(rx)}x${Math.round(ry)}`);
     return ellipse.apply(this, arguments);
   };
+  // Mops's mop bucket is yellow (mop-bucket.js, Brian's yes 2026-11-26, "Let's go with it moving forward"): a prop,
+  // not a highlight, so its own drawing is not counted (it is found by the bucket's drawing functions on the stack).
+  const prop = () => /drawMopBucket(Back|Front)|drawHomeMopBucket/.test(new Error().stack || "");
   proto.stroke = function () {
+    if (prop()) return stroke.apply(this, arguments);
     if (isYellow(this.strokeStyle)) arcs.forEach((a) => yellowCircles.add(a));
     // A stroked chevron: two or three straight lines, no curve, not dashed (outlines of doorways use strokeRect).
     if (isYellow(this.strokeStyle) && lines >= 2 && lines <= 4 && !arcs.length && !this.getLineDash().length) yellowCircles.add("arrow");
     return stroke.apply(this, arguments);
   };
   proto.fill = function () {
+    if (prop()) return fill.apply(this, arguments);
     if (isYellow(this.fillStyle)) arcs.forEach((a) => yellowCircles.add(a));
     if (isYellow(this.fillStyle) && lines >= 2 && lines <= 4 && !arcs.length) yellowCircles.add("arrow");
     return fill.apply(this, arguments);
@@ -169,7 +177,7 @@ const report = await page.evaluate(async (chips) => {
       spec.out && ((p.pose = "stand"), (n.sqPose = "stand"));
       spec.flyer && (p.flyer = spec.flyer);
       spec.home && (window.SSQ.engine().enterRoom("closet", "Q1"), (p.phase = "save"), (p.pose = "stand"), (n.sqPose = "stand"));
-      spec.shot && ((p.shot = { phase: "join", t: 0, n: 0, in: false, got: false }), (p.bandAt = [[258, 256], [308, 256], [358, 256]].map(([x, y]) => ({ x, y }))));
+      spec.shot && ((p.shot = { phase: "count", t: 0, n: 3, in: false, got: false }), (p.bandAt = [[258, 256], [308, 256], [358, 256]].map(([x, y]) => ({ x, y }))));
       spec.alarm && (p.alarm = { phase: "search", t: 0, st: 0, w: { id: "backpack", x: 880, y: 318, hx: 600, hy: 490 }, where: "where-hall", who: "who-tourist", guards: [], bell: 9, last: null, hidden: "" });
       ((n.sq.x = spec.x), (n.sq.y = spec.y), (n.ch1Chip = chip), (n.chip = chip), (n.moved = 200));
     } else {

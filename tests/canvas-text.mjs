@@ -216,7 +216,11 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
         for (let i = 0; i < 20; i++) ss.tick(0.05);
       }),
       // Closing time (P8b): the wall speaker's line.
-      shot("closing time", () => window.SSQ.beat("ch1-party").jump("P8b")),
+      // (since 2026-11-26 the cheer, the band's bow and the lights dim first, about 4.6 s: ticked through to the line)
+      shot("closing time", () => {
+        window.SSQ.beat("ch1-party").jump("P8b");
+        for (let i = 0; i < 120 && !(n.cur && n.cur.k === "bub"); i++) ss.tick(0.05);
+      }),
       shot("lockup card", () => {
         party();
         n.ctrl = false;

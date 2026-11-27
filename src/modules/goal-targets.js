@@ -12,6 +12,7 @@
 import { FLYER } from "./party-hall.js";
 import { TRACE, MORNING_THINGS, DRAWN_OUTLINE, outlineSource } from "./home-morning-art.js";
 import { LUNCH_TRACE, lunchOutlineSource } from "./lunch-sneak-art.js";
+import { TALL_BOX, tallClosetSource } from "./tall-closet.js";
 
 // Doorways more than one goal outlines: each typed once.
 const HOME_DOOR = { rect: { x0: 912, x1: 940, y0: 358, y1: 468 } }, // home: the doorway in the right wall
@@ -31,7 +32,8 @@ export const GOAL_TARGETS = {
   "closet:undress": { trace: { x0: 30, x1: 172, y0: 188, y1: 352 } }, // the closet (party P8c, home early: costume off)
   // The home morning, Day 2 (home-morning.js): one thing at a time
   "closet:hm-rocket": { trace: TRACE.rocket, source: () => outlineSource("rocket"), line: DRAWN_OUTLINE }, // the Guardians' toy rocket
-  "closet:hm-closet": { trace: { x0: 30, x1: 172, y0: 188, y1: 352 } }, // the wardrobe (the box is in it)
+  // the wardrobe (the box is in it), taller on Day 2 (tall-closet.js): traced from the home picture with it drawn on
+  "closet:hm-closet": { trace: { x0: 30, x1: 172, y0: Math.floor(TALL_BOX.y0) - 8, y1: 352 }, source: () => tallClosetSource(false) },
   "closet:hm-box": { rect: pad(MORNING_THINGS.boxIn, 4) }, // the Guardian Box on the closet floor, door open
   "closet:hm-calendar": { rect: { x0: 99, x1: 167, y0: 196, y1: 279 } }, // the calendar on the wardrobe door
   "closet:hm-lunch": { trace: TRACE.bag, source: () => outlineSource("bag"), line: DRAWN_OUTLINE }, // Mops's lunch bag by the door
@@ -41,8 +43,8 @@ export const GOAL_TARGETS = {
   "hall:grab-flyer": { rect: FLYER.box }, // party P4: the flyer on the bar counter's far end (the party's own table)
   "hall:d2-HIDE-plant": { trace: { x0: 392, x1: 494, y0: 432, y1: 556 } }, // the same plant (Day 2, beat 38)
   // The lunch sneak, Day 2 (lunch-sneak.js): one thing at a time
-  "hall:lu-plant": { trace: { x0: 392, x1: 494, y0: 432, y1: 556 } }, // the middle plant
-  "hall:lu-crate": { trace: LUNCH_TRACE.crate, source: () => lunchOutlineSource("crate"), line: DRAWN_OUTLINE }, // the crates
+  // (in the sneak only the hallway doorway is outlined, Brian 2026-11-26, lunch note 0:38; the plant and the crates
+  // still hide him, and get the line only during an alarm: the plant's is "hall:hide", the crates' a drawn box)
   "hall:lu-door": { rect: { x0: 912, x1: 940, y0: 257, y1: 345 } }, // the doorway to the hallway (hall v2, back corner)
   "hall:lu-snack": { trace: LUNCH_TRACE.plate, source: () => lunchOutlineSource("plate"), line: DRAWN_OUTLINE }, // the plate of Moon Pies
   "hall:d2-GO-home": HALL_HOME_DOOR,

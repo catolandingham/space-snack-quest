@@ -333,7 +333,7 @@ function picture(ctx, engine, t, scene, after) {
 }
 /**
  * "Years ago": the colours of the picture drawn so far washed out and warmed, and a frame round it all (the old
- * story pictures' look; the bedtime story's pictures have it too, bedtime-story-art.js).
+ * story pictures' look; the bedtime story's pictures have a memory look of their own, bedtime-story-art.js).
  */
 export function storyWash(ctx) {
   ctx.save();

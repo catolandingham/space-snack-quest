@@ -1,21 +1,29 @@
 /**
  * Beats 22 to 24, the home morning (src/modules/home-morning.js), at phone size, from the bedtime story's last
  * picture to the lunch out the door. In order, each checked as the player meets it:
- *   - wordless: the night goes on from the bedtime story (dark, Squatch asleep under the blanket, Mops gone, heard
- *     leaving), the room comes up, then Squatch sits up in bed, stretches and gets up beside the toy rocket (each
- *     part plays by itself, under 4 seconds, nothing to tap);
- *   - "Squatch: pick up the gift", only the rocket outlined, PICK UP · rocket; he holds it up, one heart, and a
- *     thought bubble shows his crayon drawing of the Guardians; then he says "The Guardians came! They always come
- *     when I'm scared." (waits for NEXT);
+ *   - wordless: the night goes on from the bedtime story (dark, Squatch asleep in his crate bed under the blanket,
+ *     Mops asleep on his back beside it), the room comes up;
+ *   - the station PA (Brian 2026-11-26, #41): the speaker's ding-dong and sound lines, its line (suggested words,
+ *     waits for NEXT), then "Morning" from the speaker (notes rise from it; the music table's "day2am" row);
+ *   - wordless: Mops wakes, rolls over and gets up, a heart as he looks at Squatch, and walks out of the door (heard);
+ *     Squatch sits up, stretches, hops out over the crate's side and walks round its foot to the rocket (each part
+ *     plays by itself, 2 to 4 seconds, nothing to tap; every walk round the furniture);
+ *   - "Squatch: pick up the gift", only the rocket outlined, PICK UP · rocket; the note tied to it opens in a close-up
+ *     with its approved words (waits for NEXT); he holds it up, one heart, and a thought bubble (bigger than the
+ *     drawing in it, with a thought trail) shows his crayon drawing of the Guardians; then he says "The Guardians
+ *     came! They always come when I'm scared." (waits for NEXT);
  *   - a thought bubble shows the Guardian Box before the chip names it; "Squatch: put the gift in the box", the
- *     wardrobe outlined, OPEN · closet; the door opens, the box outlined, PUT IN · box;
+ *     wardrobe (taller on Day 2, Brian 2026-11-26) outlined, OPEN · closet; the door opens on the clothes up on the
+ *     rail and the box on the closet floor below them, the box outlined, PUT IN · box;
  *   - the close-up (the first build's box view): the lid's MY GARDIAN BOX, the older notes, his crayon drawing MY
- *     GUARDIANS, the gift drops in and stays (waits for NEXT); the box (2.4 times the approved size) stays out with
- *     the gift in it, the door shuts;
+ *     GUARDIANS, the gift drops in with the folded note tied on, not read again (waits for NEXT); the box (2.4 times
+ *     the approved size) goes back in the closet with the gift in it, the door shuts;
+ *   - the lunch bag glows and is outlined; he walks over to it (Brian 2026-11-26, video note 0:30), and there he
+ *     says "He forgot his lunch!";
  *   - the calendar is optional (Brian 2026-11-26): on the lunch goal, LOOK · calendar by the wardrobe opens today's
  *     close-up (days 1 to 13 crossed off, day 14 circled) and comes back to the lunch goal;
- *   - the lunch bag outlined, "He forgot his lunch!" (waits for NEXT); "Squatch: take the lunch", TAKE · lunch; then
- *     the lunch sneak in the party hall (lunch-sneak.js), the bag in his paw.
+ *   - the lunch bag outlined; he walks to it; "He forgot his lunch!" waits for NEXT; "Squatch: take the lunch",
+ *     TAKE · lunch; then the lunch sneak in the party hall (lunch-sneak.js), the bag in his paw.
  * Also: no new words (every word drawn is a whole line of home-morning-lines.js, or was on screen before), nothing he
  * is told to tap is under him, sizes against the room, nothing disappears, the old code is gone.
  *   node tests/home-morning.mjs
@@ -78,15 +86,6 @@ const run = !(registered && asleep)
         // the bedtime story's sleep, then Day 2 starts (no tap)
         for (let i = 0; i < 400 && !n.ch1Day2; i++) ss.tick(0.05);
         out.day2 = !!n.ch1Day2;
-        // 0. in the dark the wall speaker calls Mops to work, overheard (Brian 2026-11-26, Ganitor B), waiting for NEXT
-        for (let i = 0; i < 40 && !(n.cur && n.cur.k === "bub"); i++) ss.tick(0.05);
-        out.pa = n.cur && n.cur.k === "bub" ? { who: n.cur.b.who, text: n.cur.b.text, ear: !!n.cur.b.ear, step: step(), mops: n.moPose } : null;
-        ss.drawFrame();
-        out.paDrawn = ss.lastBubble ? { text: ss.lastBubble.text, ear: !!ss.lastBubble.ear, name: ss.lastBubble.name } : null;
-        out.paHoovesBefore = (d().sounds || {}).hoof || 0;
-        tick(3);
-        out.paWaits = !!(n.cur && n.cur.k === "bub");
-        next();
         // 1. the wordless parts: count how long each plays, and that nothing waits for a tap
         let phase = step(),
           since = 0,
@@ -99,10 +98,28 @@ const run = !(registered && asleep)
             since = 0;
           }
           if (step() === "rocket" && n.ctrl) break;
+          // the PA's line: the one thing to tap before he wakes (it waits for NEXT)
+          if (n.cur && n.cur.k === "bub" && n.cur.b.who === "speaker") {
+            if (!out.pa) {
+              ss.drawFrame();
+              out.pa = { who: n.cur.b.who, text: n.cur.b.text, step: step(), chip: ss.chipNow(), lines: !!(d().drew && d().drew.speakerLines), cue: window.SSQ.refinedCue(ss.warmWhy()), dings: (d().sounds || {}).dingDong || 0, mops: d().drew && d().drew.mops };
+              tick(6);
+              out.paHeld = !!(n.cur && n.cur.k === "bub" && n.cur.b.who === "speaker");
+              ss.drawFrame();
+              out.paLines6 = !!(d().drew && d().drew.speakerLines);
+            }
+            next();
+            continue;
+          }
           (n.cur && ["bub", "card", "cutaway"].includes(n.cur.k)) && taps++;
           n.ctrl && taps++;
           ss.drawFrame();
           const r = d().drew;
+          r && r.mops && (out.mopsDrawn = out.mopsDrawn || []).push({ step: step(), turn: r.mops.turn, eyes: r.mops.eyes, x0: r.mops.x0 });
+          r && r.mopsHeart && (out.mopsHeart = r.mopsHeart);
+          r && r.speakerNotes && (out.notes = Math.max(out.notes || 0, r.speakerNotes));
+          r && r.pose === "hopOut" && (out.hop = (out.hop || 0) + 1);
+          step() === "mopsOut" && (out.mopsWalk = out.mopsWalk || []).push({ x: Math.round(n.mo.x), y: Math.round(n.mo.y), shown: n.moPose });
           r && r.dark != null && (out.dark = Math.max(out.dark || 0, r.dark));
           r && r.pose === "stretch" && (out.stretched = true);
           r && r.dark != null && r.dark > 0.5 && (out.darkMops = n.moPose);
@@ -159,6 +176,12 @@ const run = !(registered && asleep)
         out.walkedTo = sqAt.slice(-1)[0];
         out.pads0 = d().sounds.pad || 0;
         press();
+        tick(0.8);
+        ss.drawFrame();
+        out.noteUp = { cur: n.cur ? n.cur.k + ":" + n.cur.id : "", step: step(), drew: { ...window.SSQ.cutaway.last() } };
+        tick(6);
+        out.noteHeld = !!(n.cur && n.cur.k === "cutaway" && n.cur.id === "note");
+        next();
         tick(0.3);
         ss.drawFrame();
         out.drawn.holdUp = d().drew && d().drew.heldUp;
@@ -189,6 +212,7 @@ const run = !(registered && asleep)
         tick(2);
         const box = atStep("box");
         out.boxInCloset = d().box;
+        out.closetOpen = d().closet;
         out.wardrobeOpen = n.wardrobe;
         press();
         tick(0.2);
@@ -212,15 +236,24 @@ const run = !(registered && asleep)
         out.boxBack = d().box;
         tick(0.85);
         out.wardrobeShut = n.wardrobe;
-        // 4. the lunch bag by the door: his line (the calendar is not a step)
+        // 4. the lunch bag by the door glows: he walks over to it, and there he says his line (the calendar is not a step)
         ss.drawFrame();
         out.boxAfterShut = d().box;
-        out.line2 = n.cur && n.cur.k === "bub" ? { who: n.cur.b.who, text: n.cur.b.text, chip: ss.chipNow(), bagOutline: d().drew && d().drew.bagOutline } : null;
+        out.closetShut = d().closet;
+        const toBag = atStep("toBag");
+        ss.drawFrame();
+        out.toBag = { outline: d().drew && d().drew.bagOutline, spots: (ss.spotsNow() || []).filter((x) => x && x.verb).length, line: !!(n.cur && n.cur.k === "bub") };
+        walkTo(760, 505);
+        tick(0.2);
+        ss.drawFrame();
+        out.line2 = n.cur && n.cur.k === "bub" ? { who: n.cur.b.who, text: n.cur.b.text, chip: ss.chipNow(), bagOutline: d().drew && d().drew.bagOutline, at: { x: Math.round(n.sq.x), y: Math.round(n.sq.y) } } : null;
         tick(6);
         out.line2Held = !!(n.cur && n.cur.k === "bub" && n.cur.b.text === LUNCH);
         next();
         tick(0.3);
-        // 5. the lunch goal; by the wardrobe the calendar can still be looked at (optional)
+        // 5. the lunch goal (at the bag); by the wardrobe the calendar can still be looked at (optional)
+        const lunchAtBag = atStep("lunch-at-bag");
+        walkTo(320, 420);
         const lunchFar = atStep("lunch-far");
         out.offers = (ss.spotsNow() || []).filter((x) => x && x.verb).map((x) => x.verb + " · " + x.cap);
         // the words painted on the lunch bag's picture (part of its drawing, not the game's text log): what the room's
@@ -270,7 +303,9 @@ const run = !(registered && asleep)
         out.hall = { room: n.room, step: n.ch1Step, bag: lu ? lu.bag : "", chip: ss.chipNow() };
         out.debug = d();
         out.steps = d().steps;
-        out.list = { rocket, closetFar, closet, box, cal, lunchFar, lunch };
+        out.list = { rocket, closetFar, closet, box, toBag, cal, lunchFar, lunchAtBag, lunch };
+        out.closetBox = closet && box;
+        out.musicCues = { pa: out.pa && out.pa.cue };
 
         // 6. the step restart (↺) at the closet step puts him back there, on that step
         return out;
@@ -282,33 +317,44 @@ const R = run || { prompts: [], wordless: [], list: {}, steps: [], debug: { soun
 const P = R.list;
 g.check("Day 2 starts from the bedtime story's sleep", !!R.day2, R.day2);
 
-// 0. the PA (Ganitor B)
+// The Ganitor lines (the tag, the wall, the crayon): their words may show. Its PA line (pa-ganitor) is said inside the
+// morning PA, checked below, and is marked merged (Brian 2026-11-26, #41).
 const GAN = existsSync(join(root, "src", "modules", "ganitor.js")) ? await import(join(root, "src", "modules", "ganitor.js")) : { GANITOR_LINES: [] };
-const PA = (GAN.GANITOR_LINES.find((l) => l.id === "pa-ganitor") || {}).text;
-g.check('in the dark, before Mops goes, the wall speaker says "Ganitor Mops to the party hall." (Brian 2026-11-26, approved words)', PA === "Ganitor Mops to the party hall." && R.pa && R.pa.who === "speaker" && R.pa.text === PA && R.pa.step === "night" && R.paHoovesBefore === 0, { pa: R.pa, hooves: R.paHoovesBefore });
-g.check("it is an overheard line: drawn with the ear icon, the Speaker's name on it, and it waits for NEXT", R.paDrawn && R.paDrawn.ear && R.paDrawn.text === PA && R.paDrawn.name === "Speaker" && R.paWaits, { drawn: R.paDrawn, waits: R.paWaits });
+g.check("the Ganitor PA line is kept as the record, marked merged into the morning PA, and its words are inside it", (GAN.GANITOR_LINES.find((l) => l.id === "pa-ganitor") || {}).merged === "pa-morning");
 
 // 1. the wordless start
 const night = R.wordless.find((w) => w.phase === "night"),
   wake = R.wordless.find((w) => w.phase === "wake");
+const mopsUpPart = R.wordless.find((w) => w.phase === "mopsUp"),
+  mopsOutPart = R.wordless.find((w) => w.phase === "mopsOut");
 g.check("night to morning plays by itself: the room goes dark and comes back (2 to 4 s)", night && night.secs >= 2 && night.secs <= 4 && R.dark > 0.9, { night, dark: R.dark });
-g.check("he wakes, stretches and gets up by himself (2 to 4 s)", wake && wake.secs >= 2 && wake.secs <= 4 && R.stretched, { wake, stretched: R.stretched });
-g.check("the wordless start has nothing to tap and no line (no control, no bubble)", R.tapsDuringWordless === 0, R.tapsDuringWordless);
-g.check("Mops leaves while it is dark: there for the night, gone in the morning", R.darkMops === "hidden" && R.mopsAfter === "hidden", { dark: R.darkMops, after: R.mopsAfter });
-// One night: the morning starts where the bedtime story ended (dark, Squatch asleep under the blanket, Mops gone).
+g.check("Mops gets up and walks out by himself (each 2 to 4 s)", mopsUpPart && mopsUpPart.secs >= 2 && mopsUpPart.secs <= 4 && mopsOutPart && mopsOutPart.secs >= 2 && mopsOutPart.secs <= 4, { mopsUpPart, mopsOutPart });
+g.check("he wakes, stretches, hops out over the crate's side and walks to the rocket by himself (2 to 4 s)", wake && wake.secs >= 2 && wake.secs <= 4 && R.stretched && R.hop > 2, { wake, stretched: R.stretched, hop: R.hop });
+g.check("the wordless parts have nothing to tap and no line (no control, no bubble but the PA's)", R.tapsDuringWordless === 0, R.tapsDuringWordless);
+// One night: the morning starts where the bedtime story ended (dark, Squatch asleep in the crate under the blanket,
+// Mops asleep on his back beside it, drawn by the morning, Brian 2026-11-26 #33).
 const NS = R.nightStart || {};
-g.check("the morning starts where the night ended: the room dark, Squatch asleep lying in bed under the blanket, Mops gone, no chip", NS.dark === 1 && NS.mops === "hidden" && NS.pose === "asleep" && NS.inBed && NS.inBed.eyes === "closed" && Math.abs(NS.inBed.a + Math.PI / 2) < 0.02 && NS.inBed.blanket === 1 && NS.chip === "", NS);
+const MD = R.mopsDrawn || [];
+g.check("the morning starts where the night ended: the room dark, Squatch asleep lying in his crate bed under the blanket (its front wall over him), no chip", NS.dark === 1 && NS.pose === "asleep" && NS.inBed && NS.inBed.eyes === "closed" && Math.abs(NS.inBed.a + Math.PI / 2) < 0.02 && NS.inBed.blanket === 1 && NS.chip === "", NS);
+g.check("Mops sleeps on his back beside the bed (feet in the air, eyes closed) through the night and the PA, drawn by the morning (the room leaves him out), clear of the bed", MD.length > 5 && MD.filter((m) => m.step === "night" || m.step === "pa").every((m) => m.turn === 1 && m.eyes === "closed" && m.x0 >= 286) && NS.mops === "hidden", MD.slice(0, 2));
+g.check("the PA wakes him: he opens his eyes and gets up (on his back, onto his side, on his feet), a heart as he looks at Squatch, then walks out (heard: hooves, the door)", MD.some((m) => m.step === "mopsUp" && m.turn > 0.4 && m.turn < 0.6) && MD.filter((m) => m.step === "mopsUp").slice(-1)[0].turn < 0.05 && MD.filter((m) => m.step === "mopsUp").slice(-1)[0].eyes === "" && !!R.mopsHeart && R.mopsAfter === "hidden" && (R.mopsWalk || []).length > 10 && (R.mopsWalk || []).slice(-1)[0].x > 880, { heart: R.mopsHeart, walk: (R.mopsWalk || []).slice(-2), after: R.mopsAfter });
+const PA = R.pa || {};
+g.check('the PA: after the room comes up, the wall speaker rings and says (suggested words, Brian #41) "Good morning, Stormtop! Ganitor Mops to the party hall. The new robot janitors arrive today!", sound lines round the speaker, no chip, Mops still asleep', PA.who === "speaker" && PA.text === L["pa-morning"] && L["pa-morning"] === "Good morning, Stormtop! Ganitor Mops to the party hall. The new robot janitors arrive today!" && PA.step === "pa" && PA.chip === "" && PA.lines && PA.dings === 1 && PA.mops && PA.mops.turn === 1, PA);
+g.check("the PA's line waits for NEXT (still up after 6 seconds, the sound lines still on)", R.paHeld && R.paLines6);
+g.check("the PA keeps Brian's approved \"Ganitor Mops to the party hall.\" inside it and is marked suggested in the lines file", /Ganitor Mops to the party hall\./.test(L["pa-morning"]) && HOME_MORNING_LINES.find((l) => l.id === "pa-morning").status === "suggested");
+g.check("then music from the speaker: notes rise from it", R.notes >= 1, R.notes);
 const SU = R.satUp || [];
 g.check("he wakes in bed: he sits up from lying down, eyes open, the blanket sliding off", SU.length > 2 && SU[0].a < -1 && SU.slice(-1)[0].a > -0.1 && SU.slice(-1)[0].blanket < 0.1 && SU.every((u) => u.eyes === ""), [SU[0], SU.slice(-1)[0]]);
 const S = R.debug.sounds || {};
-g.check("Mops is heard leaving in the dark: his hooves, then the door", S.hoof === 3 && S.door === 1, S);
+g.check("Mops is heard leaving: his hooves as he walks, then the door", S.hoof >= 3 && S.door === 1, S);
 // The music table (Brian 2026-11-26, music-picks.js): Goating in Space only on Day 1's first morning; this later
 // daytime visit home plays the home rotation; while the night is still dark the bedtime music goes on.
 const CUES = R.cues || [];
 const darkCues = CUES.filter((c) => c.step === "night" && c.dark === 1),
-  dayCues = CUES.filter((c) => c.step === "wake" || c.step === "rocket");
+  upCues = CUES.filter((c) => c.step === "night" && c.dark != null && c.dark < 0.9),
+  dayCues = CUES.filter((c) => ["mopsUp", "mopsOut", "wake", "rocket"].includes(c.step));
 const PICKS = await import(join(root, "src", "modules", "music-picks.js"));
-g.check("the music follows the music table: Reawakening goes on while the night is dark, then the home rotation (Carefree, Morning, Rainbows) for the day; Goating in Space does not play (it is Day 1's first morning's)", darkCues.length > 3 && darkCues.every((c) => c.cue === "bedtime") && dayCues.length > 3 && dayCues.every((c) => c.cue === "home") && R.lunchCue === "home" && R.music && !R.music.owns && JSON.stringify(PICKS.listFor("home")) === JSON.stringify(["carefreeOnce", "morningOnce", "rainbowsOnce"]) && PICKS.fileFor("morning") === "music/goating-in-space.mp3", { dark: darkCues.slice(0, 2), day: dayCues.slice(0, 2), lunch: R.lunchCue, owns: R.music && R.music.owns });
+g.check('the music follows the music table: the bedtime music goes on while the night is dark, quiet as the room comes up and through the PA, then the speaker plays Kevin MacLeod\'s "Morning" (the "day2am" row) until he takes the lunch; Goating in Space does not play (Day 1\'s first morning\'s) and the home rotation is untouched', darkCues.length > 3 && darkCues.every((c) => c.cue === "bedtime") && upCues.length > 3 && upCues.every((c) => c.cue === "") && PA.cue === "" && dayCues.length > 3 && dayCues.every((c) => c.cue === "day2am") && R.lunchCue === "day2am" && PICKS.fileFor("day2am") === "music/morning.mp3" && R.music && !R.music.owns && JSON.stringify(PICKS.listFor("home")) === JSON.stringify(["carefreeOnce", "morningOnce", "rainbowsOnce"]) && PICKS.fileFor("morning") === "music/goating-in-space.mp3", { dark: darkCues.slice(0, 2), up: upCues.slice(0, 2), pa: PA.cue, day: dayCues.slice(0, 2), lunch: R.lunchCue, owns: R.music && R.music.owns });
 
 // 2. each control step: the chip, the one button, the one outline round its thing
 const want = [
@@ -322,35 +368,62 @@ for (const [k, chip, act] of want) {
   g.check(`${k}: the chip says "${chip}" and the button says "${act}"`, p.chip === chip && p.offer === act && p.spots === 1, p);
   g.check(`${k}: only the thing to use is outlined (the dashed outline is round "${act}")`, !!p.outline && p.outline.act === act, p.outline);
 }
+{
+  const p = P.toBag || {};
+  g.check('on the way to the bag: the chip says "' + L["chip-bag"] + '", no button, the bag outlined (and glowing)', p.chip === L["chip-bag"] && p.spots === 0 && R.toBag && R.toBag.spots === 0 && !!R.toBag.outline && !R.toBag.line, { p, toBag: R.toBag });
+  g.check("toBag: on the phone the goal words wait while the outline shows, then come up after 20 s (words if stuck)", !(p.wordsAtFirst && p.wordsAtFirst.shown) && p.wordsIfStuck && p.wordsIfStuck.shown && p.stillStep === "toBag", { first: p.wordsAtFirst, stuck: p.wordsIfStuck });
+}
 for (const [k] of want) {
   const p = P[k] || {};
-  // (at the wardrobe and the bag he has already waited 20 s across the room: the first look is from there)
-  const first = (P[k + "Far"] || p).wordsAtFirst;
+  // (at the wardrobe he has already waited 20 s across the room, and at the lunch step at the bag: the first look is
+  // from there)
+  const first = ((k === "lunch" ? P.lunchAtBag : P[k + "Far"]) || p).wordsAtFirst;
   g.check(`${k}: on the phone the goal words wait while the outline shows, then come up in the top bar after 20 s (words if stuck)`, !(first && first.shown) && p.wordsIfStuck && p.wordsIfStuck.shown && p.wordsIfStuck.inside && p.stillStep === k, { first, stuck: p.wordsIfStuck });
 }
 g.check("the words are today's: the chips and buttons the game had (no calendar chip: it is optional), PICK UP · rocket and PUT IN · box and OPEN · closet (approved)", L["chip-gift"] === "Squatch: pick up the gift" && L["chip-box"] === "Squatch: put the gift in the box" && !("chip-cal" in L) && L["chip-lunch"] === "Squatch: take the lunch" && L["button-rocket"] === "PICK UP · rocket" && L["button-box"] === "PUT IN · box" && L["button-closet"] === "OPEN · closet" && L["button-cal"] === "LOOK · calendar" && L["button-lunch"] === "TAKE · lunch");
 g.check("the goal stays up while he walks: the wardrobe is outlined from across the room, the bag from the wardrobe", P.closetFar && P.closetFar.chip === L["chip-box"] && P.closetFar.outline && P.closetFar.outline.act === L["button-closet"] && P.lunchFar && P.lunchFar.chip === L["chip-lunch"] && P.lunchFar.outline && P.lunchFar.outline.act === L["button-lunch"], { closetFar: P.closetFar, lunchFar: P.lunchFar });
+g.check("when he has seen the bag, TAKE · lunch works where he stands", P.lunchAtBag && P.lunchAtBag.offer === L["button-lunch"], P.lunchAtBag);
 g.check("he gets up right beside the rocket: PICK UP works where he stands", P.rocket && P.rocket.offer === L["button-rocket"]);
 
+// the note (Brian 2026-11-26, video note 0:24)
+const NU = R.noteUp || {};
+g.check('PICK UP: the note tied to the rocket opens in a close-up with its approved words, "Brave Sasquatches stay hidden. — The Guardians", before he holds the gift up', NU.cur === "cutaway:note" && NU.step === "note" && NU.drew && NU.drew.id === "note" && NU.drew.open === 1 && JSON.stringify(NU.drew.words) === JSON.stringify(["Brave Sasquatches", "stay hidden.", "— The Guardians"]) && L["note-words"] === "Brave Sasquatches stay hidden. — The Guardians", NU);
+g.check("the note close-up waits for NEXT (still up after 6 seconds)", R.noteHeld);
 // the rocket and the line
 g.check("PICK UP: he holds the rocket up (drawn in his raised paw), with one heart over him", R.drawn.holdUp && R.drawn.holdUp.rocket.y0 < R.drawn.holdUp.head + 20 && !!R.drawn.heart, { hold: R.drawn.holdUp, heart: R.drawn.heart });
 const CT = R.crayon && R.crayon.drew;
 g.check("as he holds it up, a thought bubble over him shows his crayon drawing of the Guardians (two big furry Sasquatches), before any words", CT && CT.drawing && CT.drawing.figures.guardians === 2 && CT.box.y1 < CT.head.y && !R.crayon.bub, R.crayon);
 g.check("on a phone the drawing in the thought bubble is at least 50 px wide", CT && (CT.drawing.x1 - CT.drawing.x0) * (375 / 960) >= 50, CT && CT.drawing);
+// Brian 2026-11-26, video note 0:11: "The thought bubble is smaller than the drawing."
+const inOval = (o, x, y) => ((x - o.cx) / o.rx) ** 2 + ((y - o.cy) / o.ry) ** 2 <= 1;
+const fits = (t, m) => t && t.oval && t.content && [[t.content.x0 - m, t.content.y0 - m], [t.content.x1 + m, t.content.y0 - m], [t.content.x0 - m, t.content.y1 + m], [t.content.x1 + m, t.content.y1 + m]].every(([x, y]) => inOval(t.oval, x, y));
+const trailOk = (t) => t && t.trail && t.trail.length === 3 && t.trail[0].r > t.trail[1].r && t.trail[1].r > t.trail[2].r && Math.hypot(t.trail[2].x - t.head.x, t.trail[2].y - t.head.y) < 30 && t.trail.every((c, i) => i === 0 || c.y > t.trail[i - 1].y);
+g.check("the crayon thought bubble is clearly bigger than the drawing in it: every corner of the drawing, with 14 px of margin, is inside the cloud's inner edge", fits(CT, 14) && CT.drawing.x1 - CT.drawing.x0 <= CT.content.x1 - CT.content.x0 + 1, CT && { content: CT.content, oval: CT.oval, drawing: CT.drawing });
+g.check("it has a classic thought trail: three circles, each smaller, going down to his head", trailOk(CT), CT && CT.trail);
 g.check("the thought bubble is gone when he says his line (one bubble at a time)", R.crayonDuringLine === false);
 g.check("then his line, word for word, in one bubble over him, with no chip", R.line1 && R.line1.who === "sq" && R.line1.text === GUARDIANS && R.line1.chip === "", R.line1);
 g.check("the line waits for NEXT (still up after 6 seconds)", R.line1Held);
 g.check("before the chip names the box, a thought bubble over him shows it (no words, no control)", R.thought && R.thought.step === "think" && R.thought.drew && R.thought.drew.box && R.thought.drew.box.y1 < R.thought.drew.head.y && R.thought.chip === "" && !R.thought.ctrl, R.thought);
+g.check("the box's thought bubble is bigger than the box in it (with margin) and has the thought trail", R.thought && fits(R.thought.drew, 14) && trailOk(R.thought.drew), R.thought && R.thought.drew);
 g.check("he carries the gift in his paw on the way to the wardrobe (it never vanishes)", !!R.drawn.carried, R.drawn.carried);
 g.check("his footsteps sound only while he walks (footfalls.js)", R.pads2 > R.pads1 && R.pads1 === R.pads0, { before: R.pads0, standing: R.pads1, walked: R.pads2 });
 
 // the closet and the box
 g.check("OPEN · closet opens the door (squeaky hinge) and the Guardian Box shows on the closet floor", R.wardrobeOpen === "open" && R.boxInCloset && R.boxInCloset.where === "closet" && S.closetOpen === 1, { wardrobe: R.wardrobeOpen, box: R.boxInCloset, hinge: S.closetOpen });
 g.check("PUT IN · box: he takes the box out of the closet onto the floor", R.boxMoving && R.boxMoving.where === "moving", R.boxMoving);
+{
+  // Brian 2026-11-26, video note 0:20: "We should make the closet taller... the clothes should be over the box."
+  const TC = await import(join(root, "src", "modules", "tall-closet.js"));
+  const clothesBottom = (TC.TALL_CLOSET.clothesEnd - TC.TALL_CLOSET.growPic) * (640 / 830),
+    bx = (R.debug.things || {}).boxIn;
+  g.check("on Day 2 the closet is drawn taller (a layer over the locked picture, about 85 px up), open and shut; open, the clothes hang on the rail above and the Guardian Box sits on the closet floor below them", R.closetOpen && R.closetOpen.open && Math.round(R.closetOpen.y0) < 120 && R.closetShut && !R.closetShut.open && Math.abs(TC.TALL_GROW - 84.8) < 0.5 && bx && bx.y0 > clothesBottom + 20 && bx.y1 <= R.closetOpen.y1, { open: R.closetOpen, shut: R.closetShut, clothesBottom, box: bx });
+  const lockedFiles = readFileSync(join(root, "src", "modules", "tall-closet.js"), "utf8");
+  g.check("the taller closet never changes the locked picture files: it copies pieces of them onto the game's canvas", /docs\/locked-rooms\/home-room-empty-open-v6\.png/.test(lockedFiles) && !/toDataURL|writeFile/.test(lockedFiles));
+}
 const cu = R.closeUp || {};
 g.check('the close-up is the first build\'s box view: the open box with its lid labelled "MY GARDIAN BOX", the older notes in it, his crayon drawing titled "MY GUARDIANS" (two big Sasquatches), the gift held over it first', cu.first && cu.first.id === "gbox" && cu.first.label === "MY GARDIAN BOX" && cu.first.title === "MY GUARDIANS" && cu.first.notes >= 2 && cu.first.drawing && cu.first.drawing.figures.guardians === 2 && cu.first.held && !cu.first.landed, cu.first);
 g.check("then the gift drops into the box and stays (a thunk), and the close-up waits for NEXT", cu.last && cu.last.landed && cu.heldAfter && cu.thunks === 1, { last: cu.last, held: cu.heldAfter, thunks: cu.thunks });
-g.check("the close-up shows the note's words, approved: \"Brave Sasquatches stay hidden. — The Guardians\" (no Rule #1), once the gift is in", cu.last && cu.last.note && !cu.first.note && (R.shownMorning || []).some((w) => w === "Brave Sasquatches") && (R.shownMorning || []).some((w) => w === "— The Guardians") && !(R.shownMorning || []).some((w) => /Rule/.test(w)), { note: cu.last && cu.last.note });
+g.check("the gift goes in with the folded note still tied on, not read again (he read it when he picked it up); the note's words were shown once, approved, no Rule #1", cu.last && cu.last.note === null && cu.last.noteTied && cu.first.noteTied && (R.shownMorning || []).some((w) => w === "Brave Sasquatches") && (R.shownMorning || []).some((w) => w === "— The Guardians") && !(R.shownMorning || []).some((w) => /Rule/.test(w)), { note: cu.last && cu.last.note });
 g.check("back in the room the box, the gift in it, goes back in the closet (Brian 2026-11-26), and stays there after", R.boxBack && R.boxBack.where === "moving" && R.boxBack.gift && R.boxAfterShut === null && R.boxInClosetAfter === true, { back: R.boxBack, shut: R.boxAfterShut, inCloset: R.boxInClosetAfter });
 g.check("he shuts the closet (bump): the calendar on its door is back", R.wardrobeShut === "closed" && S.closetShut === 1, { wardrobe: R.wardrobeShut, bump: S.closetShut });
 
@@ -359,15 +432,27 @@ g.check("LOOK · calendar opens the calendar close-up", R.calendarOpen);
 g.check("today's close-up: days 1 to 13 crossed off, the circled Moon Pie day (14) is today", R.calendar && R.calendar.today === 14 && R.calendar.crossed.length === 13 && R.calendar.crossed[12] === 13, R.calendar);
 
 // the lunch
-g.check("the closet shut, the lunch bag is outlined while he says his line, word for word, over him, no chip", R.line2 && R.line2.who === "sq" && R.line2.text === LUNCH && R.line2.chip === "" && !!R.line2.bagOutline, R.line2);
+g.check("as he gets to the bag (not before), the bag is outlined while he says his line, word for word, over him, no chip", R.line2 && R.line2.who === "sq" && R.line2.text === LUNCH && R.line2.chip === "" && !!R.line2.bagOutline && R.line2.at.x > 640 && R.toBag && !R.toBag.line, R.line2);
 g.check("the lunch line waits for NEXT", R.line2Held);
-g.check("TAKE · lunch hands over to the lunch sneak (lunch-sneak.js): the party hall, the bag in his paw", R.hall && R.hall.room === "hall" && R.hall.step === "lu-plant" && R.hall.bag === "paw" && R.hall.chip === "Squatch: take Mops his lunch", R.hall);
+g.check("TAKE · lunch hands over to the lunch sneak (lunch-sneak.js): the party hall, the bag in his paw", R.hall && R.hall.room === "hall" && R.hall.step === "lu-plant" && R.hall.bag === "paw" && R.hall.chip === "Squatch: take Mops his lunch in the hallway", R.hall);
 g.check("the lunch bag has MOPS written on it (Brian 2026-11-26)", (R.bagWords || []).length >= 1 && L["sign-bag"] === "MOPS", R.bagWords);
 g.check("the calendar is not a step (Brian 2026-11-26): on the lunch goal TAKE · lunch comes first (the one outlined) and LOOK · calendar is there too", JSON.stringify(R.offers) === JSON.stringify([L["button-lunch"], L["button-cal"]]) && P.lunchFar && P.lunchFar.chip === L["chip-lunch"], R.offers);
 g.check("once he has looked, the button offers only the lunch (a kid pressing it is not sent back to the calendar), and a tap on the calendar still opens it", JSON.stringify(R.offersAfterCal) === JSON.stringify([L["button-lunch"]]) && R.tapCalendar, { offers: R.offersAfterCal, tap: R.tapCalendar });
 g.check("closing the calendar goes back to the lunch goal, with control", R.afterCalendar && R.afterCalendar.step === "lunch" && R.afterCalendar.ctrl && R.afterCalendar.chip === L["chip-lunch"] && !R.afterCalendar.cur, R.afterCalendar);
-g.check("the steps came in order", JSON.stringify(R.steps) === JSON.stringify(["night", "wake", "rocket", "hold", "think", "closet", "toCloset", "box", "lift", "closeup", "putBack", "shut", "notice", "lunch", "calendar", "lunch", "calendar", "lunch", "done"]), R.steps);
+g.check("the steps came in order", JSON.stringify(R.steps) === JSON.stringify(["night", "pa", "mopsUp", "mopsOut", "wake", "rocket", "note", "hold", "think", "closet", "toCloset", "box", "lift", "closeup", "putBack", "shut", "toBag", "notice", "lunch", "calendar", "lunch", "calendar", "lunch", "done"]), R.steps);
 
+// Nobody walks through furniture (docs/REVIEW-RULES.md, Brian 2026-11-26, video note 0:18): every position the morning's
+// scripted walks took in the game (Mops out, Squatch getting up, Squatch to the wardrobe), feet as standing-spots counts
+// them, clear of the crate bed, the bucket and the Guardian box (tests/scripted-walks.mjs checks the walk lists).
+{
+  const FURN = JSON.parse(readFileSync(join(root, "tests", "data", "home-furniture.json"), "utf8")),
+    F = FURN.foot.home,
+    W = R.debug.walks || [],
+    bad = [];
+  for (const w of W) for (const [k, b] of Object.entries(FURN.home)) w.x + F.side > b.x0 && w.x - F.side < b.x1 && w.y + F.down > b.y0 && w.y - F.up < b.y1 && bad.length < 6 && bad.push({ ...w, thing: k });
+  const kinds = new Set(W.map((w) => w.walk));
+  g.check(`in the game every scripted walk went round the furniture (${W.length} steps: ${[...kinds].join(", ")})`, bad.length === 0 && ["mopsOut", "getUp", "toCloset"].every((k) => kinds.has(k)), bad);
+}
 // Nothing he is told to tap is under him (Fable's review): at OPEN, PUT IN and LOOK he stands right of the wardrobe.
 const SQ = (p) => ({ x0: p.sq.x - 18 * p.scale, x1: p.sq.x + 18 * p.scale, y0: p.sq.y - 50 * p.scale, y1: p.sq.y });
 const hit = (a, b) => a && b && a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
@@ -396,7 +481,7 @@ g.check("in the close-up the rocket and the box keep the room's proportion (the 
 // No new words
 const known = new Set([...HOME_MORNING_LINES, ...GAN.GANITOR_LINES].map((l) => l.text));
 // (the speech bubble's name tag, the calendar's close button, and the room's sleep mark were in the game before)
-const before = new Set([...(R.shownBefore || []), "Squatch", "X", "z z z", "Speaker"]); // (Speaker: the wall speaker's name tag, morning-lines.js)
+const before = new Set([...(R.shownBefore || []), "Squatch", "Speaker", "X", "z z z", "\u266a", "\u266b"]);
 const esc = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 // (a line drawn in pieces counts when each piece is a run of two or more whole words of one line; the lid label is
 // drawn on two lines, MY GARDIAN / BOX)
@@ -460,18 +545,34 @@ const mid = await page.evaluate(() => {
   tick(0.8);
   ss.sectionReset();
   out.night = after();
-  // (the PA's line in the dark waits for NEXT)
-  n.cur && n.cur.k === "bub" && next();
-  tick(6);
+  tick(3.5);
+  out.atPa = { step: (hm.debug().state || {}).step, bub: !!(n.cur && n.cur.k === "bub") };
+  next();
+  tick(12);
   out.nightThen = after();
   open(22);
+  hm.start();
+  tick(5);
+  ss.sectionReset();
+  out.paReset = after();
+  open(22);
   press();
+  tick(1.2);
+  out.inNote = n.cur && n.cur.k === "cutaway" && n.cur.id === "note";
+  ss.sectionReset();
+  out.note = after();
+  open(22);
+  press();
+  tick(0.6);
+  next();
   tick(1.2);
   ss.sectionReset();
   out.hold = after();
   open(22);
   press();
-  tick(1.2);
+  tick(0.6);
+  next();
+  tick(3.2);
   next();
   tick(0.6);
   ss.sectionReset();
@@ -490,10 +591,41 @@ const mid = await page.evaluate(() => {
   out.calendar = after();
   return out;
 });
-g.check("↺ in the night starts the morning again from asleep, and it plays on to the rocket", mid.night.step === "night" && !mid.night.ctrl && mid.nightThen.step === "rocket" && mid.nightThen.offer === L["button-rocket"], { night: mid.night, then: mid.nightThen });
-g.check("↺ during his Guardians line or the thought bubble: back on the rocket step, the rocket on the floor", ["hold", "think"].every((k) => mid[k].step === "rocket" && mid[k].ctrl && mid[k].offer === L["button-rocket"] && mid[k].gift === "floor"), { hold: mid.hold, think: mid.think });
+g.check("↺ in the night starts the morning again from asleep, and it plays on to the PA and then the rocket", mid.night.step === "night" && !mid.night.ctrl && mid.atPa.step === "pa" && mid.atPa.bub && mid.nightThen.step === "rocket" && mid.nightThen.offer === L["button-rocket"], { night: mid.night, pa: mid.atPa, then: mid.nightThen });
+g.check("↺ during the PA or Mops leaving starts the morning again from asleep (no control)", mid.paReset.step === "night" && !mid.paReset.ctrl, mid.paReset);
+g.check("↺ during the note close-up, his Guardians line or the thought bubble: back on the rocket step, the rocket on the floor", mid.inNote && ["note", "hold", "think"].every((k) => mid[k].step === "rocket" && mid[k].ctrl && mid[k].offer === L["button-rocket"] && mid[k].gift === "floor"), { note: mid.note, hold: mid.hold, think: mid.think });
 g.check("↺ in the box close-up: back on the box step, door open, the gift in his paw", mid.inCloseUp && mid.closeup.step === "box" && mid.closeup.ctrl && mid.closeup.offer === L["button-box"] && mid.closeup.door === "open" && mid.closeup.gift === "held", mid.closeup);
 g.check("↺ in the calendar close-up: back on the lunch step by the wardrobe, LOOK · calendar offered there", mid.inCalendar && mid.calendar.step === "lunch" && mid.calendar.ctrl && mid.calendar.offer === L["button-cal"] && !mid.calendar.cur, mid.calendar);
+// He sees the bag from whichever side he comes, and TAKE · lunch then works where he stands (code review, 2026-11-26):
+// from the left (the wardrobe), from the right (the doorway) and from above (the back wall).
+const sides = await page.evaluate(() => {
+  const ss = window.__ss,
+    n = ss.op,
+    hm = window.SSQ.beat("ch1-home-morning"),
+    out = {};
+  for (const [name, from] of [["left", [300, 398]], ["right", [945, 505]], ["above", [806, 380]]]) {
+    n.q = [];
+    n.cur = null;
+    ss.ch1JumpBeat(22);
+    hm.jump("toBag");
+    n.sq.x = from[0];
+    n.sq.y = from[1];
+    for (let i = 0; i < 6; i++) ss.tick(0.05);
+    let said = null;
+    for (let i = 0; i < 400 && !said; i++) {
+      window.SSQ.engine().step("sq", 846, 505, 160, 0.05);
+      ss.tick(0.05);
+      n.cur && n.cur.k === "bub" && (said = n.cur.b.text);
+    }
+    n.bt = 1;
+    ss.opTap();
+    for (let i = 0; i < 6; i++) ss.tick(0.05);
+    const o = ss.offerNow();
+    out[name] = { said, step: (hm.debug().state || {}).step, offer: o ? o.verb + " · " + o.cap : "" };
+  }
+  return out;
+});
+g.check("he sees the bag from the left, the right or above (\"He forgot his lunch!\"), and TAKE · lunch works where he stands", ["left", "right", "above"].every((k) => sides[k].said === LUNCH && sides[k].step === "lunch" && sides[k].offer === L["button-lunch"]), sides);
 // Later on Day 2 he hides the pink slip in the Guardian Box (14-ch1-day2.js ch1HideSlip): the box is in the closet now,
 // so the closet opens for it and the slip shows in the box there, then the door shuts as they go to bed.
 const slip = await page.evaluate(() => {

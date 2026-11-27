@@ -282,17 +282,8 @@ const frameDiff = (page, change, undo, from) =>
   await page.close();
 }
 
-// ---------- no walk ring where the goal outline already marks the place ----------
+// ---------- no walk-tap ring anywhere (Brian 2026-11-26, #51: "remove the white walk-tap ring everywhere") ----------
 {
-  const ring = await import(join(root, "src", "modules", "walk-ring.js"));
-  const door = { box: { x0: 426, x1: 528, y0: 600, y1: 622 }, spot: { verb: "", x: hall.HALL_DOOR.x, y: hall.HALL_DOOR.y, r: hall.HALL_DOOR.r } };
-  g.check("rule: a tap on the outlined doorway, or in the place that takes him through it, shows no ring", !ring.walkRingShows({ x: 474, y: 581 }, door) && !ring.walkRingShows({ x: 477, y: 590 }, door) && !ring.walkRingShows({ x: 495, y: 566 }, door));
-  g.check("rule: a tap on the open floor still shows the ring", ring.walkRingShows({ x: 300, y: 480 }, door) && ring.walkRingShows({ x: 474, y: 500 }, door));
-  g.check("rule: with no goal outline on screen the ring always shows", ring.walkRingShows({ x: 474, y: 581 }, null));
-  // a button's spot (HIDE · bed works anywhere in the room) hides the ring only on the outlined thing itself
-  const bed = { box: { x0: 76, x1: 294, y0: 390, y1: 552 }, spot: { verb: "HIDE", x: 205, y: 500, r: 700 } };
-  g.check("rule: a button that works anywhere in the room hides the ring only at its outlined thing", ring.walkRingShows({ x: 600, y: 500 }, bed) && !ring.walkRingShows({ x: 300, y: 560 }, bed));
-
   // In the game: drawn with and without the walk target, the picture differs only if a ring was drawn there.
   const ringAt = (page, x, y) =>
     page.evaluate(
@@ -322,7 +313,7 @@ const frameDiff = (page, change, undo, from) =>
     await still(page, "r3-run-home-door-no-ring");
     const b = await ringAt(page, 300, 500);
     const onFloor = b.t ? await drawnAt(page, b.t) : null;
-    g.check("P7: tapping the open floor still draws the walk ring there", !!b.t && !!onFloor && onFloor.count > 20 && onFloor.far <= 40, { b, onFloor });
+    g.check("P7: tapping the open floor draws no ring there either (#51: no walk-tap ring anywhere)", !!b.t && !!onFloor && onFloor.count === 0, { b, onFloor });
     g.check("no errors (walk ring, P7)", errors.length === 0, errors);
     await page.close();
   }

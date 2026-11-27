@@ -1,0 +1,9 @@
+{
+  "about": "The home room's furniture as the floor counts it (the same boxes as the room's solids in src/game/00-core.js, read off the locked home picture v6), and a person's feet as the floor counts them there (the room draws people three times bigger, so up to the shins). Used by tests/standing-spots.mjs and tests/scripted-walks.mjs.",
+  "foot": { "home": { "side": 25, "up": 30, "down": 8 }, "hall": { "side": 25, "up": 14, "down": 8 } },
+  "home": {
+    "bed": { "x0": 83, "x1": 286, "y0": 409, "y1": 526 },
+    "bucket": { "x0": 536, "x1": 596, "y0": 500, "y1": 571 },
+    "Guardian box": { "x0": 188, "x1": 236, "y0": 366, "y1": 394 }
+  }
+}

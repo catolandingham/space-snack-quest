@@ -16,4 +16,8 @@ The game paints each one, scaled to the 960×640 picture, as the room background
 | `delivery-room-empty-night-v2.png` | Loading bay at night. |
 | `delivery-room-empty-pickup-v3.png` | Loading bay on pickup day. |
 
+Layers the game draws over these pictures (the files themselves unchanged), each with Brian's yes:
+- Mops's mop bucket over the home room's painted bucket (`src/modules/mop-bucket.js`; Brian 2026-11-26, "Let's go with it moving forward").
+- On Day 2 the home wardrobe drawn about 85 game pixels taller, open and shut, from pieces of these two home pictures (`src/modules/tall-closet.js`; Brian 2026-11-26, video note 0:20: "We should make the closet taller... the clothes should be over the box").
+
 The `.py` files are the scripts that drew the pictures (`mockups/rooms/`).

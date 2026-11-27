@@ -76,7 +76,7 @@ export const CAST = Object.freeze({
 // it down on the counter's far end (`x`, `y`, `size` across; `box` is the thing GRAB · flyer names), then stands
 // there facing the room with his back to it. Squatch takes it from `reach` (within `r`), on the floor in front of
 // the counter's end, between the two bar stools (clear of Isfred, who stands a little up the room). Times in seconds: Isfred's walk to the bar (`to`), the
-// bend (`down`), Squatch's reach for it (`grab`), and putting it down at home (`put`). PLACEHOLDERS.
+// bend (`down`), Squatch's reach for it (`grab`), and laying it on his bed at home (`put`). PLACEHOLDERS.
 export const FLYER = Object.freeze({
   x: 838,
   y: 418,
@@ -88,7 +88,7 @@ export const FLYER = Object.freeze({
   to: 2.1,
   down: 0.8,
   grab: 0.45,
-  put: 0.5,
+  put: 0.8,
 });
 /**
  * P4, the moving cones (Brian 2026-11-25): while the band plays, the dancing pairs turn on the spot, the glancer looks
@@ -192,9 +192,10 @@ export const HOME_ROOM = Object.freeze({
   runTo: Object.freeze({ x: 660, y: 545 }),
   inFront: Object.freeze({ x: 330, y: 410 }), // just right of the bed, clear of it (not on its head end)
   bed: Object.freeze({ x: 205, y: 500 }),
-  // the flyer under his bed for Mops (Brian 2026-11-25): a corner peeks out at the crate bed's front right; he
-  // stands at `saveAt` (right of it, facing it) to slide it under, and to take it back out in the talk
-  flyer: Object.freeze({ x: 270, y: 556 }),
+  // the flyer on his bed for Mops (Brian 2026-11-26, #42: "He should lay it on top of the bed"): on the mattress
+  // near its right end, turned a little; he stands at `saveAt` (right of the bed, facing it) to lay it there, and to
+  // take it back in the talk. It keeps the size it has in his paw ("It shouldn't shrink"). PLACEHOLDER spot.
+  flyer: Object.freeze({ x: 236, y: 414, rot: 0.25 }),
   saveAt: Object.freeze({ x: 350, y: 560 }),
   guardDoor: Object.freeze({ x: 880, y: 470 }), // where a guard comes in, and where he searches from
   guardLook: Object.freeze({ x: 770, y: 470 }),
@@ -203,6 +204,14 @@ export const HOME_ROOM = Object.freeze({
 });
 // The doorway home in the hall, as a trigger: within `r` of the door spot (SPOTS.doorway) he goes through.
 export const HALL_DOOR = Object.freeze({ x: SPOTS.doorway.x, y: SPOTS.doorway.y, r: 36 });
+/**
+ * The doorway's opening itself (Brian 2026-11-26, #47: "The doorway only counts when he walks into the opening
+ * itself"): from just above his door spot down through the opening, as wide as the opening less a step each side.
+ * Walking in here takes him home; the floor in front of the door does not. The door's spot entries use this box.
+ */
+export const HALL_DOOR_OPENING = Object.freeze({ x0: HALL_DOOR.x - 36, x1: HALL_DOOR.x + 36, y0: HALL_DOOR.y - 16, y1: 660 });
+/** True when his feet are in the doorway's opening (HALL_DOOR_OPENING). */
+export const inHallDoorway = (s) => !!s && s.x > HALL_DOOR_OPENING.x0 && s.x < HALL_DOOR_OPENING.x1 && s.y > HALL_DOOR_OPENING.y0 && s.y < HALL_DOOR_OPENING.y1;
 
 /** Moves `o` toward (x, y) at `speed` for `dt` seconds; true once there. */
 export function stepTo(o, x, y, speed, dt) {

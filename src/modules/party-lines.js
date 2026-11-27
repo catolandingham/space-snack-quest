@@ -4,7 +4,7 @@
  * fails if the two ever differ, and fails if the party code types a word of its own.
  *   id      the line's name in the code and in the tests
  *   half    1 = scenes P1 to P5 (peek to dress-up, built first), 2 = P6 to P8 (free play, alarm, endings)
- *   who     "banner", "isfred", "sq" (Squatch thinks or says it), "card", "chip" (the goal chip), "button" (the big
+ *   who     "badge" (a gold badge in the dance), "banner", "isfred", "sq" (Squatch thinks or says it), "card", "chip" (the goal chip), "button" (the big
  *           action button), "tag" (the name over a bubble), "meter", "guest" (a party guest), "bartender", "octopus", "band", "speaker", "mops", "guard" (the guard who follows him home),
  *           "lockup" (the LOCKUP card) or "note" (the small note after hiding)
  *   text    the words, exactly as shown. The lockup line has two blanks, {who} and {where}, filled from the
@@ -106,7 +106,7 @@ export const PARTY_LINES = Object.freeze([
   { id: "honor-snack-bandit", half: 2, who: "card", text: "Snack Bandit: took every snack at the party.", status: "approved", source: "Brian 2026-11-24, click in Snack Quest Chat: \"Snack Bandit (Recommended)\"" },
   // The showing-4 notes (Brian 2026-11-25 morning, his clicks in Snack Quest Chat; asks/video-notes-2026-11-24/ANSWERS.md,
   // "Round of notes on the showing-4 videos" and "The talk, reordered").
-  { id: "button-dance-again", half: 2, who: "button", text: "Dance again", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
+  { id: "button-dance-again", half: 2, who: "button", text: "Dance again", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat; replaced 2026-11-26 by the speed words (lines 84 to 87)", removed: true },
   { id: "sq-robots-job", half: 1, who: "sq", text: "Robots for the heavy work? That's Mops's job!", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
   { id: "sq-show-mops", half: 1, who: "sq", text: "I have to show Mops.", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
   { id: "band-group-photo", half: 2, who: "band", text: "Group photo!", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
@@ -114,12 +114,17 @@ export const PARTY_LINES = Object.freeze([
   { id: "mops-need-me", half: 2, who: "mops", text: "Nobody is replacing me. They need me here.", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat", quiet: true },
   // The showing-5 notes (Brian 2026-11-25, his notes on the video notes page, each decided in Snack Quest Chat).
   { id: "sq-phew", half: 1, who: "sq", text: "Phew, made it!", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
-  { id: "chip-save-flyer", half: 1, who: "chip", text: "Squatch: put the flyer under your bed for Mops", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
+  { id: "chip-save-flyer", half: 1, who: "chip", text: "Squatch: put the flyer on your bed for Mops", status: "needs-yes", source: "Brian 2026-11-25, Snack Quest Chat; \"under\" changed to \"on\" 2026-11-26 because Brian answered #42: he lays it on top of the bed" },
   { id: "button-save-flyer", half: 1, who: "button", text: "SAVE · flyer", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
-  { id: "sq-party-fun", half: 1, who: "sq", text: "That party looked so fun. I've never gotten to dance at one.", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
+  { id: "sq-party-fun", half: 1, who: "sq", text: "That party looked so fun.", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat; cut to its first sentence by Brian 2026-11-26 (#29)" },
   { id: "sq-sneak-back", half: 1, who: "sq", text: "I'll sneak back in a costume and dance!", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
   { id: "chip-octopus", half: 2, who: "chip", text: "Squatch: get away from the octopus!", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
   { id: "chip-join-photo", half: 2, who: "chip", text: "Squatch: join the group photo", status: "approved", source: "Brian 2026-11-25, Snack Quest Chat" },
+  { id: "speed-0", half: 2, who: "button", text: "Dance!", status: "approved", source: "Brian 2026-11-26 (#45): the speed words Dance! / Faster! / Super fast! / Top speed! and a gold Super dancer! badge" },
+  { id: "speed-1", half: 2, who: "button", text: "Faster!", status: "approved", source: "Brian 2026-11-26 (#45): the speed words Dance! / Faster! / Super fast! / Top speed! and a gold Super dancer! badge" },
+  { id: "speed-2", half: 2, who: "button", text: "Super fast!", status: "approved", source: "Brian 2026-11-26 (#45): the speed words Dance! / Faster! / Super fast! / Top speed! and a gold Super dancer! badge" },
+  { id: "speed-3", half: 2, who: "button", text: "Top speed!", status: "approved", source: "Brian 2026-11-26 (#45): the speed words Dance! / Faster! / Super fast! / Top speed! and a gold Super dancer! badge" },
+  { id: "badge-super-dancer", half: 2, who: "badge", text: "Super dancer!", status: "approved", source: "Brian 2026-11-26 (#45): the speed words Dance! / Faster! / Super fast! / Top speed! and a gold Super dancer! badge" },
 ]);
 
 /** Whether this bubble is one of Mops's gentle lines, which never get his "meh" (morning-sound.js, through the bridge). */

@@ -1,13 +1,14 @@
 /**
  * The lunch sneak's own drawings (Chapter 1, beats 25 to 27). Every drawing here is a PLACEHOLDER in the game's style
  * (dark outlines, flat colours) until Brian approves a look: the stack of two crates in the hall, the plate of Moon
- * Pies on the snack counter's end, the glow behind the next thing, one heart, Squatch ducked behind the counter and
- * reaching over it. The lunch bag is the home morning's (home-morning-art.js), the Moon Pie is the party's snack
+ * Pies on the snack counter's end, the dashed goal line round a thing it draws itself, one heart, his arm reaching over the counter, and
+ * Mops's wet streaks, look cone and hearts in the hallway. The lunch bag is the home morning's (home-morning-art.js), the Moon Pie is the party's snack
  * (party-snacks-art.js).
  */
 import { drawSnack } from "./party-snacks-art.js";
 import { drawLunchBag } from "./home-morning-art.js";
 import { armEnds } from "./squatch-art.js";
+import { highlightBox } from "./outline.js";
 import { LUNCH_PLACES, COUNTER_SPOTS, LUNCH_SIZES, COUNTER_CLOSEUP } from "./lunch-sneak-place.js";
 
 const LU_INK = "#1e2430";
@@ -79,21 +80,14 @@ export function drawPlate(ctx, n) {
 /** Where pie `i` (0 at the bottom) sits in the stack on the plate. */
 export const pieY = (i) => COUNTER_SPOTS.plate.y - 5 - i * 11;
 
-/** A soft pulsing yellow glow behind a thing (well bigger than it, so it reads on a phone). */
-export function drawNextGlow(ctx, box, time, grow = 1) {
-  const cx = (box.x0 + box.x1) / 2,
-    cy = (box.y0 + box.y1) / 2,
-    rad = Math.max(56, Math.max(box.x1 - box.x0, box.y1 - box.y0) * 0.95) * grow,
-    a = 0.75 + 0.2 * Math.sin((time || 0) * 4),
-    g = ctx.createRadialGradient(cx, cy, 4, cx, cy, rad);
-  g.addColorStop(0, `rgba(255,214,80,${a})`);
-  g.addColorStop(0.55, `rgba(255,224,110,${a * 0.55})`);
-  g.addColorStop(1, "rgba(255,224,110,0)");
-  ctx.save();
-  ctx.fillStyle = g;
-  ctx.fillRect(cx - rad, cy - rad, rad * 2, rad * 2);
-  ctx.restore();
-  return { x: cx, y: cy, r: rad };
+/**
+ * The one highlight (Brian 2026-11-26: "So E, but thicker, but not quite as thick as A"; outline.js): the dashed gold
+ * line round `box` (game positions), for a goal thing the lunch draws itself (the crates during an alarm, Mops at
+ * GIVE · lunch). No glow. Returns the box it went round.
+ */
+export function drawLunchGoalLine(ctx, box, time, pad = 6) {
+  highlightBox(ctx, box, time || 0, pad);
+  return { x0: box.x0 - pad, y0: box.y0 - pad, x1: box.x1 + pad, y1: box.y1 + pad };
 }
 
 /** One red heart (a drawn shape, not a letter), its middle at (x, y). */
@@ -127,6 +121,75 @@ export function drawBagInPaw(ctx, x, y, f, scale) {
 // The bag's size in the hall (a share of its home-room size; the hall's Squatch is about half the home room's): big
 // enough that MOPS on it is about 14 CSS px on an iPad standing up (Brian 2026-11-26: MOPS readable). PLACEHOLDER.
 export const BAG_IN_HALL = 0.88;
+
+// (Squatch ducked behind the counter is the approved L2 ball, the older program's drawL2Ball through
+// engine().ball.drawOn (DECISIONS C3; Brian 2026-11-26, lunch notes 0:38 and 0:39.8: "he goes into the ball, not this
+// weird look"). The squashed Squatch that stood here (C5, superseded) is gone; tests/lunch-sneak.mjs checks it stays
+// gone.) The ball's drawn height at scale 1 (game pixels: its scalloped head's top at 21 above its middle line, its
+// bottom at 22 below), drawn at the hall Squatch's scale / 1.65, as ROLL · ball.
+export const BALL_UNITS_TALL = 43;
+
+// ---------- the hallway: Mops mopping with his beard, looking round, the hearts ----------
+/**
+ * Mops's wet streaks on the hallway floor: where his beard mopped (Brian 2026-11-26, lunch note 0:17.9: "we should see
+ * streaks of him wiping his beard on the floor"). `wet`: the spots his beard tip passed, each { x, y }. `avoid`: boxes
+ * of people standing on them (the streak is on the floor, under their feet). PLACEHOLDER look.
+ */
+export function drawWetStreaks(ctx, wet, avoid = []) {
+  if (!wet || !wet.length) return;
+  ctx.save();
+  for (const b of avoid) {
+    if (!b) continue;
+    ctx.beginPath();
+    ctx.rect(-4000, -4000, 9000, 9000);
+    ctx.rect(b.x0, b.y0, b.x1 - b.x0, b.y1 - b.y0);
+    ctx.clip("evenodd");
+  }
+  // a wavy wet band (each beard swish a little higher or lower), then a shine on every other swish
+  wet.forEach((w, i) => {
+    ctx.beginPath();
+    ctx.ellipse(w.x, w.y + ((i % 3) - 1) * 3.5, 14, 7, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(96,160,220,.42)";
+    ctx.fill();
+  });
+  wet.forEach((w, i) => {
+    if (i % 2) return;
+    ctx.beginPath();
+    ctx.ellipse(w.x - 2, w.y + ((i % 3) - 1) * 3.5 - 2, 6, 1.8, -0.1, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255,255,255,.7)";
+    ctx.fill();
+  });
+  ctx.restore();
+}
+/**
+ * Mops's cone while he looks round (as everyone's: a dashed outline from his eyes, `len` long, `half` wide each side
+ * of `a`). It never sees anyone: it is where he is looking. When he faces Squatch it becomes his heart cone
+ * (party-free-art.js drawHeartCone, R98 and R104), with hearts floating up.
+ */
+export function drawLookCone(ctx, ox, oy, a, half, len) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(ox, oy);
+  ctx.arc(ox, oy, len, a - half, a + half);
+  ctx.closePath();
+  ctx.fillStyle = "rgba(255,253,248,.28)";
+  ctx.fill();
+  ctx.setLineDash([9, 6]);
+  ctx.lineWidth = 2.5;
+  ctx.strokeStyle = "rgba(30,36,48,.6)";
+  ctx.stroke();
+  ctx.restore();
+}
+/** Hearts floating up from over Mops's head (`age` seconds since they began): three, rising and fading. */
+export function drawHeartsUp(ctx, x, y, age) {
+  for (let i = 0; i < 3; i++) {
+    const k = (age * 0.8 + i / 3) % 1;
+    ctx.save();
+    ctx.globalAlpha = 1 - k * 0.7;
+    drawHeart(ctx, x + Math.sin(i * 2.3 + age * 2) * 14 + (i - 1) * 14, y - k * 46, 10 + 4 * (1 - k));
+    ctx.restore();
+  }
+}
 
 /** His near arm reaching from his shoulder to (tx, ty), furry, outlined (standing up at the counter). */
 export function drawReach(ctx, x, y, f, scale, tx, ty) {
@@ -217,9 +280,10 @@ export function drawCounterCloseUp(ctx, u) {
   return b;
 }
 
-// ---------- the outlines' sources: the crates and the plate alone on a plain floor, once ----------
+// ---------- the outline's source: the plate alone on a plain floor, once ----------
+// (the crates have no outline: only the hallway doorway is lit up in the sneak, Brian 2026-11-26)
 const LU_SOURCES = {};
-/** A canvas the size of the game picture with only `id` ("crate" or "plate") drawn, for the dashed goal outline. */
+/** A canvas the size of the game picture with only `id` ("plate") drawn, for the dashed goal outline. */
 export function lunchOutlineSource(id) {
   if (LU_SOURCES[id]) return LU_SOURCES[id];
   if (typeof document === "undefined") return null;
@@ -229,11 +293,10 @@ export function lunchOutlineSource(id) {
   const ctx = c.getContext("2d", { willReadFrequently: true });
   ctx.fillStyle = "#e8e3d9";
   ctx.fillRect(0, 0, 960, 640);
-  id === "crate" ? drawCrates(ctx) : drawPlate(ctx, 3);
+  drawPlate(ctx, 3);
   return (LU_SOURCES[id] = c);
 }
-/** The boxes the dashed outline traces each drawn thing inside (a little bigger than it, nothing else in them). */
+/** The box the dashed outline traces the drawn plate inside (a little bigger than it, nothing else in it). */
 export const LUNCH_TRACE = Object.freeze({
-  crate: Object.freeze({ x0: LUNCH_PLACES.crate.box.x0 - 12, x1: LUNCH_PLACES.crate.box.x1 + 12, y0: LUNCH_PLACES.crate.box.y0 - 12, y1: LUNCH_PLACES.crate.box.y1 + 14 }),
   plate: Object.freeze({ x0: COUNTER_SPOTS.plate.x - LUNCH_SIZES.plate.w / 2 - 10, x1: COUNTER_SPOTS.plate.x + LUNCH_SIZES.plate.w / 2 + 10, y0: pieY(2) - 30, y1: COUNTER_SPOTS.plate.y + 20 }),
 });

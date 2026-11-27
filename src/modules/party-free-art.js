@@ -19,6 +19,21 @@ export function heart(ctx, x, y, s, fill) {
   ctx.stroke();
 }
 
+/**
+ * Hearts floating up from Mops's head when he sees Squatch (Brian 2026-11-26, #48: hearts, never "?" or "!"). (x, y)
+ * is the top of his head, `s` a heart's size, `k` seconds since he saw him: three hearts, one after another, each
+ * rising and fading.
+ */
+export function drawMopsHearts(ctx, x, y, s, k) {
+  for (let i = 0; i < 3; i++) {
+    const u = (k - i * 0.35) / 1.2;
+    if (u <= 0 || u >= 1) continue;
+    ctx.save();
+    ctx.globalAlpha = u < 0.2 ? u / 0.2 : 1 - (u - 0.2) / 0.8;
+    heart(ctx, x + (i - 1) * s * 0.9 + Math.sin(u * 6 + i) * s * 0.3, y - u * s * 4, s * (0.8 + 0.4 * u), "#ff6fa0");
+    ctx.restore();
+  }
+}
 // ---------- Mops's heart cone (V13) ----------
 /** Mops's warm cone, as big as everyone's, with hearts floating up in it (PR #35's look, R98 and R104). */
 export function drawHeartCone(ctx, ox, oy, a, half, len, t, k = 1) {

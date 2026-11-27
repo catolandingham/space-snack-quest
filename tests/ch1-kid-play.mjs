@@ -14,6 +14,7 @@
  *   KID_MAX_S  most seconds to play (default 900)   KID_OUT  folder for kid-play.json and the log
  *   KID_SHOTS=1  saves pictures while playing and joins them into chapter-1.mp4 (needs ffmpeg)
  *   KID_AVOID=HIDE,DANCE  buttons (verbs) the robot leaves alone (default: none)
+ *   KID_URL=?beat=party:P7  start somewhere else (for looking into one place; the run then cannot reach the tally)
  */
 import { mkdirSync, rmSync, writeFileSync, readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
@@ -35,7 +36,7 @@ mkdirSync(OUT, { recursive: true });
 if (SHOTS) (rmSync(join(OUT, "fr"), { recursive: true, force: true }), mkdirSync(join(OUT, "fr"), { recursive: true }));
 
 const g = await startGame({ port: 8902, name: "ch1-kid-play" });
-const { page, errors } = await g.open("?ch=1", PHONE);
+const { page, errors } = await g.open(process.env.KID_URL || "?ch=1", PHONE);
 const tap = async (x, y) => {
   await page.touchscreen.touchStart(x, y);
   await sleep(40);
@@ -268,7 +269,9 @@ let lastKey = "",
   shooting = SHOTS,
   jailUp = false,
   waitSince = 0,
-  hidAt = 0;
+  hidAt = 0,
+  stillAt = "",
+  stillTaps = 0;
 let cardSeen = 0;
 (async () => {
   while (shooting) {
@@ -477,7 +480,10 @@ while (now() < MAX_S) {
   const pr = presses.get(vkey) || { count: 0, at: -1 };
   if (verb && (pr.count < 2 || pr.at !== progress)) {
     presses.set(vkey, { count: pr.count + 1, at: progress });
-    for (const p of s.placed) if (verb.startsWith(p.verb)) done.add(s.scene + "|" + (p.id || p.verb + p.cap));
+    // (a place with no button, a walk-through doorway, is never done by pressing something else: "".startsWith is
+    // always true, so before 2026-11-26 every HIDE or ROLL press marked the doorways done (the party's way home, the
+    // lunch sneak's hallway), and the robot hid in a plant over and over until its time ran out)
+    for (const p of s.placed) if (p.verb && verb.startsWith(p.verb)) done.add(s.scene + "|" + (p.id || p.verb + p.cap));
     say(s, "PRESS " + verb);
     await tap(s.btnR[0] + s.btnR[2] / 2, s.btnR[1] + s.btnR[3] / 2);
     await sleep(500);
@@ -517,7 +523,9 @@ while (now() < MAX_S) {
         await sleep(150);
         s2 = await st();
         if (!s2.ctrl || s2.up || s2.scene !== s.scene) { got = true; break; }
-        if (s2.btn.startsWith(p.verb) || Math.hypot(s2.x - p.x, s2.y - p.y) < Math.max(40, (p.r || 0) - 10)) { got = true; break; }
+        // (a doorway with no button is reached only by walking into it: "".startsWith is always true, so it waits for
+        // the walk; stepping in before it ended stopped him short of the lunch sneak's hallway doorway every time)
+        if ((p.verb && s2.btn.startsWith(p.verb)) || Math.hypot(s2.x - p.x, s2.y - p.y) < Math.max(40, (p.r || 0) - 10)) { got = true; break; }
         const pos = s2.x + "," + s2.y;
         still = pos === prev ? still + 1 : 0;
         prev = pos;
@@ -526,6 +534,14 @@ while (now() < MAX_S) {
       continue;
     }
     const step = nextStep(s, p.x, Math.max(s.bounds.y0, Math.min(s.bounds.y1, p.y)), Math.max(28, (p.r || 70) - 30));
+    // A doorway with no button right beside him (his feet a step from its opening) that no safe way leads into (the
+    // grid keeps clear of the walls round it): a kid just taps the doorway.
+    if (step.wait && !p.verb && Math.hypot(p.x - s.x, p.y - s.y) < 110) {
+      say(s, `TAP the doorway beside him (${p.x},${p.y})`);
+      await tapGame(s, p.x, p.y);
+      await sleep(900);
+      continue;
+    }
     if (step.wait) {
       waitSince = waitSince || Date.now();
       if (Date.now() - waitSince > 12000) {
@@ -537,6 +553,18 @@ while (now() < MAX_S) {
       continue;
     }
     waitSince = 0;
+    // A step that does not move him (a tap right beside him can be too short to walk), again and again: a kid taps the
+    // place itself.
+    const here = s.x + "," + s.y + "|" + pk;
+    stillTaps = here === stillAt ? stillTaps + 1 : 0;
+    stillAt = here;
+    if (stillTaps >= 12) {
+      stillTaps = 0;
+      say(s, `NOT MOVING: tap ${p.verb} · ${p.cap} itself (${p.x},${p.y})`);
+      await tapGame(s, p.x, p.y);
+      await sleep(600);
+      continue;
+    }
     await tapGame(s, step.x, step.y);
     await sleep(step.last ? 350 : 220);
     continue;

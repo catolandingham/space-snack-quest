@@ -3,22 +3,23 @@
 
 | Lines | Heading |
 | --- | --- |
-| 23–26 | # Chapter 1 lines for Brian |
-| 27–52 | ## Loading bay (beats 28 to 36), 2026-11-26 (branch feat/ch1-loading-bay, not merged) |
-| 53–63 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
-| 64–78 | ## Lunch sneak and Ganitor, 2026-11-26 (branch feat/ch1-lunch-sneak, not merged) |
-| 79–94 | ## Calendar revision, Nov 16 (PR 58, not live) |
-| 95–102 | ## Earlier chapter lines |
-| 103–117 | ## Goal chips |
-| 118–201 | ## What people say |
-| 202–215 | ## Words painted on things |
-| 216–239 | ## Buttons |
-| 240–326 | ## Day 2 onward (beats 22–61), pending |
-| 327–334 | ## Ball hiding |
-| 335–342 | ## Off-screen lines, for Brian (playtest 12) |
-| 343–352 | ## Homework desk, approved Nov 16 |
-| 353–391 | ## Questions still open |
-| 392–417 | ## Day 1 stand-ins, pending |
+| 24–27 | # Chapter 1 lines for Brian |
+| 28–52 | ## Loading bay (beats 28 to 36), 2026-11-26 (branch feat/ch1-loading-bay, not merged) |
+| 53–62 | ## Home morning (beats 22 to 24), 2026-11-26 round D (branch feat/ch1-day2-morning, not merged) |
+| 63–75 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
+| 76–92 | ## Lunch sneak and Ganitor, 2026-11-26 (branch feat/ch1-lunch-sneak, not merged) |
+| 93–108 | ## Calendar revision, Nov 16 (PR 58, not live) |
+| 109–116 | ## Earlier chapter lines |
+| 117–131 | ## Goal chips |
+| 132–215 | ## What people say |
+| 216–229 | ## Words painted on things |
+| 230–253 | ## Buttons |
+| 254–340 | ## Day 2 onward (beats 22–61), pending |
+| 341–348 | ## Ball hiding |
+| 349–356 | ## Off-screen lines, for Brian (playtest 12) |
+| 357–366 | ## Homework desk, approved Nov 16 |
+| 367–405 | ## Questions still open |
+| 406–431 | ## Day 1 stand-ins, pending |
 <!-- /section-index -->
 # Chapter 1 lines for Brian
 
@@ -49,6 +50,15 @@ Every word is in `src/modules/loading-bay-lines.js`, word for word from the walk
 | Mops | Paperwork. | Beat 36 | Decided |
 
 No words on purpose (questions for Brian in the pull request): what calls Isfred away in beat 32 (built: the bay's wall speaker chimes, he looks up at it, points the robot at the doorway and hurries out); Mops waving Squatch out of the plant in beat 36. The old lines "Isfred! A crate is damaged in the mail room." and "Isfred Bar Neshuman! The dock needs you." are not shown.
+## Home morning (beats 22 to 24), 2026-11-26 round D (branch feat/ch1-day2-morning, not merged)
+
+Every word of the home morning is in `src/modules/home-morning-lines.js`; these are the lines added on 2026-11-26 (round D).
+
+| Who | Line | Status |
+| --- | --- | --- |
+| The wall speaker (the station PA), as the room comes up on Day 2, before Mops wakes | Good morning, Stormtop! Ganitor Mops to the party hall. The new robot janitors arrive today! | Suggested, needs Brian's yes (his answer #41, 2026-11-26: build it with this line marked suggested). Keeps his approved "Ganitor Mops to the party hall." inside it |
+| Goal chip, after the closet shuts, while he walks to the bag by the door (words if stuck, after 20 s) | Squatch: go to the bag by the door | New, needs Brian's yes (for his video note 0:30, "he should have to walk over to the lunch and see it first") |
+| The note close-up, as he picks up the rocket | Brave Sasquatches stay hidden. — The Guardians | Approved, Brian 2026-11-26 (unchanged words; shown now when he picks the rocket up, video note 0:24, not again in the box) |
 
 ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged)
 
@@ -59,7 +69,9 @@ Every word of the bedtime story is in `src/modules/bedtime-story-lines.js`; thes
 | Squatch, in bed, before the story pictures | Tell me about when we first met? | Approved word for word, Brian 2026-11-26 (his video note 0:12) |
 | The old crate story's captions and bubbles, the MOON PIES badge, the "!" and "z z z" marks, the mop bucket picture's "Tourists were coming! Mops hid him in the mop bucket." and "Nothing to see here!" | (as in `bedtime-story-lines.js`) | Approved, Brian 2026-11-26 (keep the old crate story words; the fourth picture on) |
 | Mops, in the story picture of the baby holding his beard | ...Weeee-eenn-nnttt? | Brian 2026-11-26 (video note 0:28, "Goats say "weeeent" not baaaah"); his approved goat spelling (`MORNING-LINES-FOR-BRIAN.md` row 13, DECISIONS R96). Replaces "...Baaa?" |
+| Mops, back in the room after the story pictures | You came to me in a Moon Pie crate. You've loved Moon Pies ever since. | Approved as written, Brian 2026-11-26 (#36) |
 | Mops, after "You came to me in a Moon Pie crate. You've loved Moon Pies ever since.", over the picture of Squatch's crayon drawing of the Guardians | And you've always had your Guardians, watching over you. | Approved, Brian 2026-11-26, chat 18b A |
+| A mark over each of the two tourists peeking in at the door, in the wordless picture before "Nothing to see here!" (Brian 2026-11-26, video note 0:39: "Would we actually want people to walk in so we see that tourists are suspicious?") | ? | Suggested, needs Brian's yes (a mark, no words) |
 
 ## Lunch sneak and Ganitor, 2026-11-26 (branch feat/ch1-lunch-sneak, not merged)
 
@@ -68,11 +80,13 @@ The words are in `src/modules/lunch-sneak-lines.js` and `src/modules/ganitor.js`
 | Who | Line | Where | Source | Status |
 | --- | --- | --- | --- | --- |
 | Mops | ...you know the rule, grab one snack. | Behind the snack counter (beat 27), in place of the wordless one-pie thought bubble | Brian, chat 2026-11-26 | Approved |
-| The wall speaker (overheard, ear icon) | Ganitor Mops to the party hall. | Day 2 at home, in the dark before Mops leaves for work | Brian, chat 2026-11-26 | Approved |
+| The wall speaker (overheard, ear icon) | Ganitor Mops to the party hall. | Merged into the morning PA (2026-11-26, #41): no longer said on its own; its words are inside "Good morning, Stormtop! Ganitor Mops to the party hall. The new robot janitors arrive today!" (kept in `ganitor.js` as pa-ganitor, marked merged) | Brian, chat 2026-11-26 | Approved words; merged |
 | Name tag on Mops's shirt | GANITOR | Every scene; the word shows where Mops is drawn big enough to read it (the close-ups), elsewhere a plain tag | Brian, chat 2026-11-26 | Approved |
 | Plaque under Mops's photo on the hallway wall | MOPS, GANITOR | The hallway, Employee of the Month photo | Brian, chat 2026-11-26 | Approved |
 | Squatch's crayon card on the hallway wall | MOPS THE GANITOR (with ME, unchanged) | The hallway, the keepsake card (was "MOPS") | Brian, chat 2026-11-26 | Approved |
 | Button | ROLL · ball | The lunch sneak in the hall (the game's existing words for the ball) | Brian, chat 2026-11-26 (offer it) | Approved |
+| Goal chip | Squatch: take Mops his lunch in the hallway | The lunch sneak in the hall, after 20 s (was "...take Mops his lunch"): round D, so the goal words point to the hallway, the one thing lit up (lunch note 0:38) | Claude, round D 2026-11-26 | Suggested, needs Brian's yes |
+| Button | SNEAK · hallway | Retired (round D, 2026-11-26): the hallway doorway is walk-through (Brian #47), no button; kept in `lunch-sneak-lines.js` marked retired | In the game before | Retired |
 
 Left out on purpose (Brian, chat 2026-11-26): Mops's "Squatch! You should be hiding." (he looks left and right instead).
 
@@ -399,7 +413,7 @@ These are on screen in this unmerged slice so the day can be played. NEEDS BRIAN
 | 87 | Mops, answer | You have me. |
 | 88 | TV picture | Fur in the scrubber. |
 | 89 | TV picture | Onto the ship. |
-| 90 | Mops, bedtime picture | You came to me in a Moon Pie crate. You've loved Moon Pies ever since. |
+| 90 | Mops, bedtime picture (approved as written, Brian 2026-11-26, #36; see the bedtime story section) | You came to me in a Moon Pie crate. You've loved Moon Pies ever since. |
 | 91 | Squatch, when the octopus comes | I gotta juke this fool. |
 | 92 | Octopus | *hic* Fellow tourist! |
 | 93 | Camera tourist | Say cheese! |
