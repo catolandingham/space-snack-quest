@@ -60,7 +60,7 @@ export const PICKUP_LINES = Object.freeze(
     pkNew("chip-push", "chip", "Mops: push the crate to the mail room", 53),
     pkPend("button-push", "button", "PUSH · pallet", 53, "the button the pass names (a walk: no button shows)"),
     pkPend("crate-oof", "sq", "Oof!", 53, "NEW, the crate on a bump"),
-    pkLine("mops-bleat", "mops", "Weeee-eenn-nnttt!", "pending", PK_SP(53, "KEEP: his bleat, covering")),
+    pkLine("mops-weent", "mops", "Weeee-eenn-nnttt!", "pending", PK_SP(53, "KEEP: his bleat, covering")),
     pkLine("guest-hi", "tourist", "Hi, Mops!", "pending", PK_SP(53, "KEEP: the line from 44d, used again")),
     pkPend("robot-label", "robot", STARS_CAKES.pickup, 53, "NEW: a robot in the hallway reads the label (ear icon)"),
     // ---- 54: the robots open a crate (Squatch inside, the view through a slat) ----

@@ -454,7 +454,7 @@ export function createPickup(bridge) {
         Object.assign(l.bump, { at: t, by: g.id, still: 0 });
         sfx("pop");
         e.ambient("sq", pickupWords("crate-oof"));
-        e.ambient("mops", pickupWords("mops-bleat"));
+        e.ambient("mops", pickupWords("mops-weent"));
         pick("mops-bleat");
       }
     }
