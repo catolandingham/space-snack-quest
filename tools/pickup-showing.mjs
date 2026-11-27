@@ -222,7 +222,9 @@ if (which === "pickup") {
       const go = async (x, y) => Date.now() - tapAt > 700 && ((tapAt = Date.now()), await page.evaluate(([x, y]) => (window.__ss.drawFrame(), window.__ss.tapAt(x, y, false)), [x, y]));
       if (!sneak) ((sneak = "ball"), await sleep(600), await press(), log("rolled up"), await still("rolled-up"));
       // (out of the mail room by its opening, then along the front of the bay, then up to the plant)
-      const W = { out: [700, 462], front: [560, 600], left: [140, 600], up: [126, 400] },
+      // (the plant stands right of the bin since the bay's pickup v4 picture: pickup-place.js PK_BAY.plantAt; the tap
+      // walks him round the open crate below it)
+      const W = { out: [700, 462], front: [560, 600], left: [190, 600], up: [294, 388] },
         near = (k) => Math.hypot(s.x - W[k][0], s.y - W[k][1]) < 26;
       if (sneak === "ball" && ["scan", "up", "done"].includes(es.two)) ((sneak = "out"), await go(...W.out));
       else if (sneak === "out" && near("out")) ((sneak = "front"), (tapAt = 0), await go(...W.front));
