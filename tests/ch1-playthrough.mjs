@@ -294,7 +294,8 @@ const play = await page.evaluate(() => {
   let acts = [],
     esRoom = "";
   let end = "stuck";
-  for (let i = 0; i < 12000; i++) {
+  // (round 7 added beats: the camera going up, the photos, the robots waking, the plan at the desk, the office robot)
+  for (let i = 0; i < 16000; i++) {
     if (n.ch1Calendar) {
       ss.tick(0.3);
       ss.opTap();
@@ -430,8 +431,15 @@ const play = await page.evaluate(() => {
         acts.push("TYPE · " + P.OFFICE_CODE);
       } else if (es.step === "site") {
         esRoom = n.room;
-        ss.tapAt((P.SITE.ret.x0 + P.SITE.ret.x1) / 2, (P.SITE.ret.y0 + P.SITE.ret.y1) / 2, false);
-        acts.push("TAP · Return empty crate");
+        // (round 7, q: 124: the Universal Postal Service page, one tap a page: SCHEDULE A PICKUP, BIG, GOAT STUFF)
+        const pg = es.sitePage || 0,
+          b = [P.SITE.schedule, P.SITE.sizes[2], P.SITE.inside[1], P.SITE.to[0]][pg];
+        ss.tapAt((b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2, false);
+        acts.push("TAP · " + ["SCHEDULE A PICKUP", "BIG", "GOAT STUFF", "MARS"][pg]);
+      } else if (es.step === "drawplan") {
+        // (round 7, q: 132: the plan at his desk, one picture a tap)
+        const o = ss.offerNow();
+        o && (o.f(), acts.push(o.verb + " · " + o.cap));
       } else if (es.step === "label") {
         // the printed label (51): his paw takes it
         ss.tapAt(480, 600, false);
@@ -454,13 +462,22 @@ const play = await page.evaluate(() => {
         const rolls = ss.spotsNow().filter((s) => s && s.verb === "ROLL");
         if (rolls.length !== 1 || !(rolls[0].r > 0) || rolls[0].x < 100) return { end: "vent-roll", rolls, acts, texts: texts(), state: ss.ch1State(), shown: [], tally: [] };
       }
+      // (round 7, q: 128: the photos are the goal now, so the route looks at them; past photo 5 the hallway robot
+      // comes through: he rolls up and waits for it to pass)
+      if (n.ch1Evening && n.ch1Evening.step === "dodge") {
+        const o = ss.offerNow();
+        o && o.verb === "ROLL" && n.ch1Evening.pose === "stand" && (o.f(), acts.push("ROLL · ball"));
+        ss.tick(0.05);
+        still = 0;
+        continue;
+      }
       // Optional bedroom inspections are tested separately; this route follows the story goal.
       // A spot with a place to stand: a circle (r) or a box (the home-alone desk). A doorway the party walks him
       // through has no button: standing in it is the action.
       const spots = ss.spotsNow().filter((s) => s && (s.verb || s.r > 0 || s.box) && (s.r > 0 || s.box) && s.id !== "home-calendar");
       const spot = spots[0];
       if (!spot) {
-        end = "no-spot " + n.scene;
+        end = "no-spot " + n.scene + (n.ch1Evening ? " ev:" + n.ch1Evening.step + ":" + n.ch1Evening.pose + ":" + !!n.ch1Evening.alarm + ":" + n.ctrl : "");
         break;
       }
       // (the spot names who stands there: Squatch, or Mops when the player is Mops: the escape's 44a to 44d)
@@ -505,7 +522,7 @@ const play = await page.evaluate(() => {
     acts,
     texts: texts(),
     state: ss.ch1State(),
-    shown: [...shown, ...(window.SSQ.beat("ch1-escape") ? window.SSQ.beat("ch1-escape").debug().words : [])].filter((s) => /IDEAS FOR GUARDIANS|HAVE YOU SEEN|Order new box|Return empty crate|PULL DOWN|Brave Sasquatches|ORDER MORE ROBOTS|MARS LOST|MY GARDIANS|TIED TOGETHER|169556/.test(s)),
+    shown: [...shown, ...(window.SSQ.beat("ch1-escape") ? window.SSQ.beat("ch1-escape").debug().words : [])].filter((s) => /IDEAS FOR GUARDIANS|HAVE YOU SEEN|SCHEDULE A PICKUP|PULL DOWN|Brave Sasquatches|ORDER MORE ROBOTS|MARS LOST|MY GARDIANS|TIED TOGETHER|169556/.test(s)),
     tally: ss.chTally(),
     vent: n.ch1VentLunch || 0,
     paw: n.ch1Paw || 0,
@@ -530,7 +547,7 @@ const play = await page.evaluate(() => {
 g.check("Chapter 1 reaches the tally card", play.end === "tally", { end: play.end, acts: play.acts, scene: play.state.scene });
 // The party night (src/modules/party.js): the peek, the plant, home through his door, the dress-up, out through his
 // door; the party in disguise (the dance), closing time, and walking home with Mops.
-const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "GRAB · flyer", "WALK · go-home", "SAVE · flyer", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "PICK UP · rocket", "OPEN · closet", "PUT IN · box", "WALK · bag", "TAKE · lunch", "WALK · lu-door", "GIVE · lunch", "WALK · lu-back", "TAKE · snack", "WALK · bay-door", "ROLL · ball", "HIDE · plant", "PEEK · form", "TAKE · copies", "EAT · copies", "TALK · Squatch", "SPIT · bin", "PICK UP · box", "GIVE · box", "WALK · bay-home", "WALK · bay-walk", "ROLL · ball", "WALK · ev-hall", "WALK · bay-counter", "HIDE · counter", "PEEK · window", "DUCK · down", "GRAB · brochure", "WALK · ev-home", "OPEN · box", "BITE · cake", "X · chart", "HOLD UP · brochure", "SHOW · brochure", "ASK · again", "SLEEP · bed", "WALK · ev-out", "WALK · ev-hallway", "WALK · ev-bay", "GRAB · copies", "MARK · box", "POST · mailbox", "HIDE · crate", "WALK · ev-bayout", "WALK · ev-hall", "WALK · ev-home", "SLEEP · bed", "WALK · es-patch", "WALK · es-cell", "WALK · es-door", "SHOW · brochure", "LOOK · crate", "LOOK · calendar", "WALK · es-door", "WALK · es-vent", "ROLL · ball", "WALK · es-tunnel", "LIGHT · lamp", "LOOK · wall", "LOOK · toy bin", "LOOK · stubs", "WRITE · note", "TAP · note", "TAP · note", "TAP · note", "TAKE · pink slip", "GRAB · pink slip", "WALK · es-door", "TYPE · code", "TYPE · 169556", "RETURN · empty crate", "HIDE · desk", "RETURN · empty crate", "TAP · Return empty crate", "TAKE · label", "WALK · es-door", "WALK · es-bar", "TAKE · snack", "TAKE · snack", "TAKE · snack", "TAKE · snack", "LEAVE · food", "WALK · es-door", "OPEN · closet", "PUT IN · box", "READ · note", "OPEN · box", "PACK · note", "WALK · pk-tuft", "PACK · box", "PACK · bucket", "TAKE · chart", "TAKE · brochure", "TAKE · drawing", "TAKE · drawing", "PUT ON · label", "GET IN · crate", "WALK · pk-door", "WALK · pk-row", "WALK · pk-to-crate", "KNOCK · crate", "BLEAT · robot", "CLIMB OUT · crate", "HIDE · plant", "WALK · pk-door", "SNIP · beard", "PUT ON · beard", "PUT ON · horns", "PUT ON · jacket", "BLEAT · Mops", "BLEAT · Mops", "BLEAT · Mops", "WALK · pk-door", "WALK · pk-box", "PICK UP · box", "WALK · pk-to-scan", "BLEAT · robot", "GO · ship", "BOARD · scanner", "PRESS · beard", "CLIMB · ramp", "PLAY · tape", "ZOOM · in", "NEXT · tape", "PLAY · tape", "ZOOM · in", "ZOOM · in", "OPEN · box", "BITE · cake", "HIDE · crate"];
+const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "GRAB · flyer", "WALK · go-home", "SAVE · flyer", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "PICK UP · rocket", "OPEN · closet", "PUT IN · box", "WALK · bag", "TAKE · lunch", "WALK · lu-door", "GIVE · lunch", "WALK · lu-back", "TAKE · snack", "WALK · bay-hall-door", "WALK · bay-door", "ROLL · ball", "HIDE · plant", "PEEK · form", "TAKE · copies", "EAT · copies", "TALK · Squatch", "SPIT · bin", "PICK UP · box", "GIVE · box", "WALK · bay-home", "WALK · bay-walk", "ROLL · ball", "LOOK · photos", "ROLL · ball", "WALK · ev-hall", "WALK · bay-counter", "HIDE · counter", "PEEK · window", "DUCK · down", "GRAB · brochure", "WALK · ev-home", "OPEN · box", "BITE · cake", "X · chart", "HOLD UP · brochure", "SHOW · brochure", "ASK · again", "SLEEP · bed", "WALK · ev-out", "WALK · ev-hallway", "WALK · ev-bay", "GRAB · copies", "MARK · box", "POST · mailbox", "HIDE · crate", "WALK · ev-bayout", "WALK · ev-hall", "WALK · ev-home", "SLEEP · bed", "WALK · es-patch", "WALK · es-cell", "WALK · es-door", "SHOW · brochure", "LOOK · crate", "LOOK · calendar", "DRAW · plan", "DRAW · plan", "DRAW · plan", "WALK · es-door", "WALK · es-vent", "ROLL · ball", "LIGHT · lamp", "LOOK · wall", "LOOK · toy bin", "LOOK · stubs", "WRITE · note", "TAP · note", "TAP · note", "TAP · note", "TAKE · pink slip", "GRAB · pink slip", "WALK · es-door", "TYPE · code", "TYPE · 169556", "USE · computer", "HIDE · desk", "USE · computer", "TAP · SCHEDULE A PICKUP", "TAP · BIG", "TAP · GOAT STUFF", "TAP · MARS", "TAKE · label", "WALK · es-door", "TAKE · snack", "TAKE · snack", "TAKE · snack", "TAKE · snack", "LEAVE · food", "WALK · es-door", "OPEN · closet", "PUT IN · box", "READ · note", "OPEN · box", "PACK · note", "WALK · pk-tuft", "PACK · box", "PACK · bucket", "TAKE · chart", "TAKE · brochure", "TAKE · drawing", "TAKE · drawing", "PUT ON · label", "GET IN · crate", "WALK · pk-door", "WALK · pk-row", "WALK · pk-to-crate", "KNOCK · crate", "BLEAT · robot", "CLIMB OUT · crate", "HIDE · plant", "WALK · pk-door", "SNIP · beard", "PUT ON · beard", "PUT ON · horns", "PUT ON · jacket", "BLEAT · Mops", "BLEAT · Mops", "BLEAT · Mops", "WALK · pk-door", "WALK · pk-box", "PICK UP · box", "WALK · pk-to-scan", "BLEAT · robot", "GO · ship", "BOARD · scanner", "PRESS · beard", "CLIMB · ramp", "PLAY · tape", "ZOOM · in", "NEXT · tape", "PLAY · tape", "ZOOM · in", "ZOOM · in", "OPEN · box", "BITE · cake", "HIDE · crate"];
 g.check("the player does the new actions in order", JSON.stringify(play.acts) === JSON.stringify(wantActs), play.acts);
 const must = [
   "Stormtop Cloud Resort, floating above Jupiter.",
@@ -613,11 +630,11 @@ const must = [
   "Squatch was right.",
   "They're replacing me.",
   "Let's go find that pancake place.",
-  "Oh, it was on the form I sent, I mean, never mind.",
-  "Didn't a copy get sucked into the vent?",
+  "It was on the form. I... never mind.",
+  "Didn't a copy get sucked into a vent?",
   "Goat-sized. You keep watch.",
   "I asked Mars. Mars said no.",
-  "I hope Mops doesn't notice...",
+  "I hope he didn't read the order form.",
   "Mmf! Mmf mmf!",
   "You're gumbling again!",
   "Get it before he sees it.",
@@ -697,7 +714,7 @@ g.check(
   play.order && play.shown.some((s) => /^MARS LOST & FOUND\.?$/.test(s)) && play.acts.includes("OPEN · box") && !!play.pickup && play.pickup.packed.box,
   { shown: play.shown, order: play.order },
 );
-g.check("the vent board and the snack site's buttons are drawn", play.shown.includes("IDEAS FOR GUARDIANS") && play.shown.includes("Return empty crate"), play.shown);
+g.check("the vent board and the snack site's buttons are drawn", play.shown.includes("IDEAS FOR GUARDIANS") && play.shown.includes("SCHEDULE A PICKUP"), play.shown);
 // The red FUR alarm is part of the locked party hall picture now (its words are in the picture, not drawn text):
 // it shows on the back wall, by the hallway doorway, during the party.
 const { HALL } = await import(new URL("../src/modules/party-hall.js", import.meta.url).href);

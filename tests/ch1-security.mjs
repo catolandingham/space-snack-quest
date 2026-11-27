@@ -238,7 +238,9 @@ g.check("party: no page errors", open.errors.length === 0 && hid.errors.length =
         ev = window.SSQ.beat("ch1-evening"),
         st = () => n.ch1Evening || {},
         lockedUp = () => (n.cur && n.cur.id === "jail") || n.q.some((q) => q.id === "jail");
-      ((n.q = []), (n.cur = null), ss.ch1JumpBeat(142));
+      ((n.q = []), (n.cur = null), ss.ch1JumpBeat(143));
+      // (round 7, q: 125: the robots sleep until the loud post; awake, as after it)
+      Object.assign(st(), { awake: true, nightT: 0 });
       for (let i = 0; i < 300 && ev.place.nightLook(st().nightT).phase !== "down"; i++) ss.tick(1 / 30);
       n.sq.x = 480;
       n.sq.y = 585;

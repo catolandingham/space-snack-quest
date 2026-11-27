@@ -107,7 +107,7 @@ const st = () =>
           e = b && b.active() && b.debug().state;
         if (!e || !e.cu) return null;
         const P = b.place;
-        return { cu: e.cu, step: e.step, typed: e.typed || "", keys: Object.fromEntries([..."0123456789"].map((d) => [d, P.keyAt(d)])), ret: P.SITE.ret, snacks: P.SNACKS.at.filter((_, i) => !e.snacks.gone[i]), carry: !!e.snacks.carry };
+        return { cu: e.cu, step: e.step, typed: e.typed || "", keys: Object.fromEntries([..."0123456789"].map((d) => [d, P.keyAt(d)])), ret: [P.SITE.schedule, P.SITE.sizes[2], P.SITE.inside[1], P.SITE.to[0]][e.sitePage || 0], snacks: P.SNACKS.at.filter((_, i) => !e.snacks.gone[i]), carry: !!e.snacks.carry };
       })(),
       zoom: n.ch1Zoom ? n.ch1Zoom.id : "",
       zoomKey: n.ch1Zoom ? [n.ch1Zoom.id, n.ch1Zoom.bag || 0, n.ch1Packed || 0].join(":") : "",
@@ -565,7 +565,7 @@ while (now() < MAX_S) {
       say(s, "TAP the note");
       await tapGame(s, 480, 320);
     } else if (E.step === "site") {
-      say(s, "TAP Return empty crate");
+      say(s, "TAP the outlined choice on the pickup page");
       await tapGame(s, (E.ret.x0 + E.ret.x1) / 2, (E.ret.y0 + E.ret.y1) / 2);
     } else if ((E.step === "snacks" || E.step === "food") && !E.carry && E.snacks.length) {
       say(s, "TAP a snack");

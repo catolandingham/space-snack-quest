@@ -9,7 +9,7 @@
 /** The parts of the bay that play by themselves (each can be jumped to, and ↺ restarts the one he is in). */
 export const BAY_PARTS = Object.freeze(["arrive", "robots", "talk", "promise", "form", "back", "orders", "after"]);
 /** The steps the player controls (ch1Step "bay-<step>"), in order. */
-export const BAY_STEPS = Object.freeze(["hallway", "cargo", "sneak", "peek", "take", "eat", "talkto", "spit", "box", "give", "home", "walkby", "hall"]);
+export const BAY_STEPS = Object.freeze(["counter", "hallway", "cargo", "sneak", "peek", "take", "eat", "talkto", "spit", "box", "give", "home", "walkby", "hall"]);
 
 /** The locked pictures this beat paints (the older program's names for them: 12-ch1-redesign.js ch1DeliveryArt). */
 export const BAY_PICTURES = Object.freeze({ noship: "delivery-noship", day: "delivery-day" });
@@ -87,6 +87,9 @@ export const BAY_SPOTS = Object.freeze({
   behindMops: Object.freeze([Object.freeze({ x: 196, y: 436 }), Object.freeze({ x: 330, y: 436 })]),
   // the robots that go off to clean, along the front of the room, out through the doorway
   robotsOut: Object.freeze([Object.freeze({ x: 360, y: 560 }), Object.freeze({ x: 120, y: 470 })]),
+  // beat 30 (round 7, q: 123): Robot 3 puts the security camera up, upper right by the speaker: it rolls up past the
+  // arch's right post and along under the big wall vent, stands here and reaches up (bay-camera.js BAY_CAMERA.game)
+  cameraWay: Object.freeze([Object.freeze({ x: 656, y: 346 }), Object.freeze({ x: 878, y: 346 })]),
   // Robot 1 from Isfred to the office, and back: below Isfred, then behind Mops
   officeWay: Object.freeze([Object.freeze({ x: 438, y: 500 }), Object.freeze({ x: 330, y: 500 }), Object.freeze({ x: 330, y: 436 }), Object.freeze({ x: 196, y: 436 })]),
 });
@@ -95,7 +98,8 @@ export const BAY_SPOTS = Object.freeze({
 export const HALLWAY = Object.freeze({
   left: Object.freeze({ x: 14, y: 330 }),
   right: Object.freeze({ x: 946, y: 330 }),
-  // the photo wall's floor: walking up to it on the way to the ship, Mops says "Later. The ship!"
+  // the photo wall's floor (the evening's photo wall, beat 37; on the way to the ship nothing happens there now: round 7
+  // cut "Later. The ship!", r5 0:27, q: 133)
   photoWall: Object.freeze({ x0: 270, x1: 720, y0: 256, y1: 300 }),
   // the office door in the front wall (picture 575 to 705 at the bottom): it slides open in beat 36
   officeDoor: Object.freeze({ x0: 431, x1: 529, y0: 487, y1: 609 }),
@@ -155,7 +159,9 @@ export const BAY_PACE = Object.freeze({
   bite: 0.5,
   spit: 0.6,
   look: 0.6,
-  rollTime: 1.5, // the hairball: how long he has to roll up once the office door opens
+  rollTime: 1.5, // the hairball: how long he has to roll up once the robot turns his way
+  install: 1.2, // round 7 (q: 123): the robot's arm reaching up and the camera going on the wall
+  lookAway: 2, // the hairball: the robot comes out looking the other way this long first (round 7, r5 3:45, q: 133)
   doorOpen: 0.5,
   flash: 0.6, // the scanner's red flash at Lou's hat
 });

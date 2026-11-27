@@ -4,10 +4,10 @@
  *   47  the player walks Squatch from home to the bay himself, Mops behind him on his trail; through each doorway, the
  *       next one outlined; the night robot patrols the bay (seen: "!", the guard, caught: the LOCKUP card and the bay
  *       again); at the vent: "Goat-sized. You keep watch.", Mops goes in, ROLL · ball.
- *   48  the switch to Mops is announced; he crawls the tunnel himself (the lost things bob as he passes); the room is dark
+ *   48  the switch to Mops is announced; he steps straight into his room from the big vent (round 7: no crawl); the room is dark
  *       until LIGHT · lamp; then one thing at a time, each outlined: LOOK · wall (the wall, the letter), his lines,
  *       LOOK · toy bin, LOOK · stubs (the pen strokes ST out for M), his lines, WRITE · note one line per tap and signed
- *       by the fourth; Squatch's eyes at the grille twice; "I hope Mops doesn't notice..."; TAKE · pink slip, close;
+ *       by the fourth; Squatch's eyes at the grille twice; (round 7: "I hope he didn't read the order form." moves to beat 49); TAKE · pink slip, close;
  *       his lines; the room is the locked picture.
  *   49  Mops crawls out with the slip in his mouth; the switch to Squatch is announced; "Mmf! Mmf mmf!", "You're
  *       gumbling again!", the thought; GRAB · pink slip; the fold (paw print inside); his lines; the crayon plan's tick.
@@ -15,11 +15,14 @@
  *   node tests/escape-vent.mjs
  */
 import { join } from "node:path";
+import { readFileSync } from "node:fs";
 import { startGame, root } from "./game-page.mjs";
 
 const M = (f) => join(root, "src", "modules", f);
 const { ESCAPE_LINES } = await import(M("escape-lines.js"));
 const W = Object.fromEntries(ESCAPE_LINES.map((l) => [l.id, l.text]));
+const { tagLines } = await import(M("escape-vent-art.js"));
+const { SNACK } = await import(M("snack-name.js"));
 const g = await startGame({ port: 9787, name: "escape-vent" });
 const { ctx, page, errors } = await g.open("?beat=escape:sneak", { width: 375, height: 812, isMobile: true, hasTouch: true });
 await page.evaluate(() => window.__ss.lockedReady);
@@ -117,17 +120,8 @@ const run = await page.evaluate(
     out.inside = { card: say(), by: n.cur && n.cur.by };
     next();
     until(() => n.ctrl, 5);
-    out.tunnel = { step: S().step, chip: n.ch1Chip, playing: E.playing(), found: [] };
-    // ↺ in the tunnel: still Mops, back at its start
-    for (let i = 0; i < 4; i++) tick();
-    const t0 = Math.round(n.mo.x);
-    walk(300, 462, 2);
-    ss.sectionReset();
-    for (let i = 0; i < 4; i++) tick();
-    out.tunnel.restart = { step: S().step, playing: E.playing(), back: Math.round(n.mo.x) === t0 };
-    watch = () => d().drew && d().drew.tunnel && d().drew.tunnel.found.forEach((f) => out.tunnel.found.includes(f) || out.tunnel.found.push(f));
-    walk(880, 462, 12);
-    watch = null;
+    // (round 7, r5 13:29, q: 125: no crawl; the big vent opens straight into his room)
+    out.tunnel = { step: S().step, chip: n.ch1Chip, playing: E.playing(), vent: S().vent };
     until(() => S().step === "lamp", 2);
     ss.drawFrame();
     out.room = { step: S().step, lamp: d().drew.lamp, picture: d().drew.picture, next: d().drew.next, mark: !!d().drew.mark, chip: n.ch1Chip };
@@ -207,8 +201,7 @@ g.check("47: in the bay at night the robot is on its rounds", o.bay.room === "ha
 g.check("47: seen by the robot, it goes for the alarm and a guard comes; caught: the LOCKUP card, then the bay again (the sneak step)", o.seen.phase !== "patrol" && o.seen.guard && !!o.seen.card && o.seen.after.step === "sneak" && o.seen.after.room === "hangar" && !o.seen.after.guard, o.seen);
 g.check("47: at the vent, \"Goat-sized. You keep watch.\"; Mops goes in; ROLL · ball", JSON.stringify(o.vent.lines) === JSON.stringify(w("mops-goat-sized")) && o.vent.step === "ball" && o.vent.chip === W["chip-ball"] && o.vent.press === W["button-ball"], o.vent);
 g.check("48: the switch to Mops is announced, with why", o.inside.card === "You are MOPS now." && o.inside.by === W["switch-vent"], o.inside);
-g.check("48: he crawls the tunnel himself (the goal says so); the lost things bob as he passes", o.tunnel.step === "tunnel" && o.tunnel.chip === W["chip-crawl"] && o.tunnel.playing === "mops" && ["hat", "sock", "fork"].every((f) => o.tunnel.found.includes(f)), o.tunnel);
-g.check("48: ↺ in the tunnel puts him back at its start, still Mops", o.tunnel.restart.step === "tunnel" && o.tunnel.restart.playing === "mops" && o.tunnel.restart.back, o.tunnel.restart);
+g.check("48 (round 7, r5 13:29, q: 125): no crawl: as Mops he steps straight from the big vent into his dark room (LIGHT · lamp next)", o.tunnel.step === "lamp" && o.tunnel.vent === "room" && o.tunnel.chip === W["chip-lamp"] && o.tunnel.playing === "mops", o.tunnel);
 g.check("48: the room is the locked picture, dark until LIGHT · lamp (the lamp outlined)", o.room.picture && o.room.lamp === false && o.room.next === "es-lamp" && o.room.mark && o.room.chip === W["chip-lamp"] && o.room.lampPress === W["button-lamp"] && o.room.lit, o.room);
 g.check("48: Squatch's eyes at the grille, in their small round picture, after the lamp and after the note", o.room.eyes1 && o.note.eyes2, { a: o.room.eyes1, b: o.note.eyes2 });
 g.check("48: LOOK · wall: the wall, the letter, then his lines", o.wall.press === W["button-wall"] && JSON.stringify(o.wall.said) === JSON.stringify(["[eswall]", "[esletter]", ...w("mops-asked", "mops-cooks")]), o.wall);
@@ -216,11 +209,20 @@ g.check("48: LOOK · toy bin: the twin rocket under the board", o.toys.press ===
 g.check("48: LOOK · stubs: the tags, the stubs, his chart; the pen strokes ST out and writes M; then his lines", o.stubs.press === W["button-stubs"] && o.stubs.panel && o.stubs.panel.crossed && o.stubs.panel.m && JSON.stringify(o.stubs.said) === JSON.stringify(["[esstubs]", ...w("mops-wrong", "mops-one-kind")]), o.stubs);
 g.check("48: WRITE · note: one line a tap, signed by the fourth, word for word", o.note.press === W["button-note"] && JSON.stringify(o.note.lines) === JSON.stringify([1, 1, 2, 3, 4]) && JSON.stringify(o.note.shown) === JSON.stringify(w("note-1", "note-2", "note-3", "note-sign")), o.note);
 g.check("48: ↺ at the note starts it again (no lines), still Mops", o.note.restart.step === "note" && o.note.restart.lines === 0 && o.note.restart.playing === "mops", o.note.restart);
-g.check("48: then Squatch's whisper at the grate", JSON.stringify(o.note.after) === JSON.stringify([W["sq-notice"] + " (whisper)"]), o.note.after);
+{
+  // (round 7, r5 13:44, 13:57 and 14:17, q: 133)
+  const CA = await import(M("cutaway.js"));
+  const VA = readFileSync(M("escape-vent-art.js"), "utf8");
+  const slipFn = VA.slice(VA.indexOf("function slipDeskPanel"), VA.indexOf("export const VENT_PANELS"));
+  g.check("48 (round 7, r5 13:44): every close-up at the vent desk waits for NEXT (none plays by itself)", ["eswall", "esletter", "estoys", "esstubs", "esslipdesk"].every((id) => CA.cutawaySteps(id).length > 0 && CA.cutawaySteps(id).every((st) => !st.auto)));
+  g.check("48 (round 7, r5 13:57): the pay stub just says the kind and who paid", W["stub"] === SNACK.NAME + ". A NEW KIND." && W["stub-paid"] === "Paid by: MOPS", [W["stub"], W["stub-paid"]]);
+  g.check("48 (round 7, r5 14:17): no Squatch eyes in the pink slip's close-up", !/drawEyesInset/.test(slipFn));
+}
+g.check("48 (round 7, r5 14:24, q: 133): no whisper at the grate any more (his worry moves to beat 49)", JSON.stringify(o.note.after) === "[]", o.note.after);
 g.check("48: TAKE · pink slip: close, then his lines", o.slip.chip === W["chip-slip-take"] && o.slip.press === W["button-slip-take"] && JSON.stringify(o.slip.said.slice(0, 3)) === JSON.stringify(["[esslipdesk]", ...w("mops-slip", "mops-code-pen")]), o.slip);
-g.check("49: out in the bay, the slip in his mouth; the switch to Squatch announced; \"Mmf! Mmf mmf!\", \"You're gumbling again!\", the thought", o.out.slip === "mops" && JSON.stringify(o.slip.said.slice(3)) === JSON.stringify(["You are SQUATCH now.", ...w("mops-mmf", "sq-gumbling"), W["sq-get-it"] + " (whisper)"]) && o.out.playing === "sq", { said: o.slip.said, out: o.out });
+g.check("49: out in the bay, the slip in his mouth; the switch to Squatch announced; his thought \"I hope he didn't read the order form.\" (round 7, q: 133); \"Mmf! Mmf mmf!\", \"You're gumbling again!\", the thought", o.out.slip === "mops" && JSON.stringify(o.slip.said.slice(3)) === JSON.stringify(["You are SQUATCH now.", W["sq-notice"] + " (whisper)", ...w("mops-mmf", "sq-gumbling"), W["sq-get-it"] + " (whisper)"]) && o.out.playing === "sq", { said: o.slip.said, out: o.out });
 g.check("49: GRAB · pink slip; the fold (paw print inside); \"Got it! The code is on there.\", \"I'll carry it.\"; the plan's tick on the door", o.out.chip === W["chip-grab"] && o.out.press === W["button-grab"] && o.out.fold && o.out.folded && JSON.stringify(o.out.after) === JSON.stringify(w("mops-got-it", "sq-carry")) && o.out.tick, o.out);
-g.check("the close-ups show their words (the board, the flyers, MARS, NO, TOYS, the note and its signature, the stubs)", ["IDEAS FOR GUARDIANS", "HAVE YOU SEEN?", "MARS", "NO", "TOYS", W["note-2"], W["note-3"], W["note-sign"], W["blank-tag"]].every((x) => (o.words || []).includes(x)), o.words);
+g.check("the close-ups show their words (the board, the flyers, MARS, NO, TOYS, the note and its signature, the stubs)", ["IDEAS FOR GUARDIANS", "HAVE YOU SEEN?", "MARS", "NO", "TOYS", W["note-2"], W["note-3"], W["note-sign"], ...tagLines(W["blank-tag"])].every((x) => (o.words || []).includes(x)), o.words);
 g.check("50: out of the bay, a tap on the floor finds a way round (Mops behind him is not in the way)", o.walkOut && o.walkOut.step === "tohall" && o.walkOut.path, o.walkOut);
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();

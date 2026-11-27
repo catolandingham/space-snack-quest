@@ -51,7 +51,8 @@ const everSeen = (p) => {
   for (let t = 0; t < PL.NIGHT_CYCLE; t += 0.05) if (L(t).catch && seesBay(robotCone(t), p)) return true;
   return false;
 };
-g.check("the bin, the mailbox, the plant, the doorway and under the vent are never in the night robot's cone", ["bin", "mail", "plant", "door", "underVent"].every((k) => !everSeen(PL.EV_BAY[k])), ["bin", "mail", "plant", "door", "underVent"].filter((k) => everSeen(PL.EV_BAY[k])));
+const BAY_PTS = { bin: PL.EV_BAY.bin, mail: PL.EV_BAY.mail, plant: PL.EV_BAY.plant, door: PL.EV_BAY.door, crate: PL.EV_BAY.crate.stand };
+g.check("the bin, the mailbox, the plant, the doorway and the crate by the floor vent are never in the night robot's cone", Object.values(BAY_PTS).every((p) => !everSeen(p)), Object.keys(BAY_PTS).filter((k) => everSeen(BAY_PTS[k])));
 g.check("the front of the bay is seen while it looks down, the back while it looks up", seesBay(robotCone(1), { x: 480, y: 585 }) && !seesBay(robotCone(4), { x: 480, y: 585 }) && seesBay(robotCone(4), { x: 480, y: 330 }) && !seesBay(robotCone(1), { x: 480, y: 330 }));
 
 // ---------- in the game ----------
@@ -95,7 +96,7 @@ const frame = () => new Promise((r) => setTimeout(r, 160));
 
 // beat 37
 let r = await ev(() => ({ step: window.__st(), room: window.__ss.op.room, ctrl: window.__ss.op.ctrl, ring: window.__ss.op.lastRing && window.__ss.op.lastRing.id, chip: window.__ss.chipNow() }));
-g.check("the debug link opens beat 37 in the hallway; the hall's doorway is outlined, the optional photo wall is not", r.step === "wall" && r.room === "passage" && r.ctrl && r.ring === "ev-hall", r);
+g.check("the debug link opens beat 37 in the hallway; the photos are outlined and are the goal (round 7, r5 4:05, q: 128: \"the picture should light up\")", r.step === "wall" && r.room === "passage" && r.ctrl && r.ring === "ev-photos" && r.chip === "Squatch: look at the photos", r);
 r = await ev(() => {
   const spots = window.__ss.spotsNow().map((s) => s.id);
   return { spots, look: !!window.__press("LOOK · photos"), step: window.__st() };
@@ -513,32 +514,39 @@ r = await ev(async () => {
 });
 g.check("the close-up draws ORDER MORE ROBOTS, the office code 169556 in pen (pen-digits.js, as in the bay and the escape), and the two buttons MARK · box and PUT BACK · bin", ["ORDER MORE ROBOTS", "MARK · box", "PUT BACK · bin"].every((w) => r.words.includes(w)) && !!r.through && (r.through.pen || []).includes("169556"), { words: r.words, pen: r.through && r.through.pen });
 g.check("MARK · box: his paw on the box marks it (a paw print), it presses through, the yellow tears off; the mailbox is outlined", !r.before && r.after === 1 && r.pressing && r.pressing.mark > 0 && r.through.tear > 0 && r.step === "post" && !r.open && r.papers === "both" && r.ring === "ev-post", r);
-// beat 42c: post it, and pay for it
+// beat 42c: post it (round 7, r5 9:29 and 13:18, q: 125): the robots sleep (zzz, no cones) until the loud post wakes
+// them; he hides in the crate by the floor vent, which takes the pink sheet (paper: no alarm)
 r = await ev(() => {
   const n = window.__ss.op,
-    s = () => n.ch1Evening;
+    s = () => n.ch1Evening,
+    b = window.SSQ.beat("ch1-evening");
+  window.__ss.drawFrame();
+  const before = { awake: !!s().awake, cones: (b.debug().drew && b.debug().drew.cones) || null, robotCones: window.__ss.conesNow ? window.__ss.conesNow().length : null };
   const pressed = window.__press("POST · mailbox");
   const said = [];
-  window.__run(6, () => !!s().alarm, () => n.cur && n.cur.b && said[said.length - 1] !== n.cur.b.text && said.push(n.cur.b.text + (n.cur.b.ear ? " (ear)" : "")));
-  const out = { pressed, said, alarm: s().alarm && { by: s().alarm.w.id, place: s().alarm.place }, offers: window.__ss.spotsNow().map((q) => q.verb + " · " + q.cap), mailed: n.ch1Mailed };
-  // he runs out of the mail room and up to the crate by the big wall vent, and hides in it
-  for (const w of [{ x: 700, y: 463 }, { x: 645, y: 463 }, { x: 645, y: 336 }, { x: 850, y: 334 }]) ((n.sq.x = w.x), (n.sq.y = w.y), window.__ss.tick(0.05));
+  window.__run(8, () => s().postHide && n.ctrl, () => n.cur && n.cur.b && said[said.length - 1] !== n.cur.b.text && said.push(n.cur.b.text + (n.cur.b.ear ? " (ear)" : "")));
+  const out = { before, pressed, said, awake: !!s().awake, alarm: !!s().alarm, offers: window.__ss.spotsNow().map((q) => q.verb + " · " + q.cap), chip: window.__ss.chipNow(), mailed: n.ch1Mailed };
+  // he slips out of the mail room and along the front to the crate by the floor vent, while the robot looks up
+  for (const w of [{ x: 700, y: 463 }, { x: 645, y: 463 }]) ((n.sq.x = w.x), (n.sq.y = w.y), window.__ss.tick(0.05));
+  window.__run(8, () => b.place.nightLook(s().nightT).phase === "up");
+  for (const w of [{ x: 560, y: 560 }, { x: 420, y: 566 }, { x: 300, y: 566 }]) ((n.sq.x = w.x), (n.sq.y = w.y), window.__ss.tick(0.05));
   out.hid = window.__press("HIDE · crate");
   const after = [];
   window.__run(40, () => window.__st() === "back" && n.ctrl, () => {
     n.cur && n.cur.b && after[after.length - 1] !== n.cur.b.text && after.push(n.cur.b.text);
     out.maxSuck = Math.max(out.maxSuck || 0, s().suck);
+    s().alarm && (out.alarmAfter = true);
   });
   out.after = after;
   out.step = window.__st();
   out.pink = s().pink;
   out.sucked = n.ch1PinkSucked;
-  out.lost = window.SSQ.beat("ch1-evening").debug().lost;
   return out;
 });
-g.check("POST · mailbox is loud: \"MAIL SCANNED.\" / \"PAWATURE ACCEPTED.\", \"Shhh!\"; the night robot hears: the alarm (the one capture rule)", r.pressed && r.said.join("|").startsWith("MAIL SCANNED.|PAWATURE ACCEPTED.|Shhh!") && r.alarm && r.alarm.by === "night-robot" && r.alarm.place === "bay" && r.mailed === 1, r);
-g.check("the one hiding place is the crate by the big wall vent: HIDE · crate", r.offers.join("|") === "HIDE · crate", r.offers);
-g.check("in the crate the vent's swirls take the pink sheet (\"No! The pink one!\"); they lose him; \"...The yellow one got mailed.\" / \"It's done.\"", r.hid && r.maxSuck > 0.5 && r.pink === "vent" && r.sucked === 1 && r.after.join("|") === "No! The pink one!|...The yellow one got mailed.|It's done." && r.lost >= 1 && r.step === "back", r);
+g.check("night one before the post: the robots are asleep (round 7, q: 125)", r.before.awake === false, r.before);
+g.check("POST · mailbox is loud: \"MAIL SCANNED.\" / \"PAWATURE ACCEPTED.\", \"Shhh!\"; the robots wake: \"NIGHT SHIFT.\" \"CLEANING.\"; no alarm; \"Squatch: hide\"", r.pressed && r.said.join("|") === "MAIL SCANNED.|PAWATURE ACCEPTED.|Shhh!|NIGHT SHIFT.|CLEANING." && r.awake && !r.alarm && r.mailed === 1 && r.chip === "Squatch: hide", r);
+g.check("the one place to go is the crate by the floor vent: HIDE · crate", r.offers.join("|") === "HIDE · crate", r.offers);
+g.check("in the crate the floor vent takes the pink sheet (\"No! The pink one!\") with no alarm (paper never rings it); \"...The yellow one got mailed.\" / \"It's done.\"", r.hid && r.maxSuck > 0.5 && r.pink === "vent" && r.sucked === 1 && !r.alarmAfter && r.after.join("|") === "No! The pink one!|...The yellow one got mailed.|It's done." && r.step === "back", r);
 r = await ev(() => {
   const n = window.__ss.op;
   const walk = (x, y, step) => ((n.sq.x = x), (n.sq.y = y), window.__run(10, () => window.__st() === step && n.ctrl));
@@ -562,7 +570,7 @@ r = await ev(() => {
   const n = window.__ss.op,
     b = window.SSQ.beat("ch1-evening"),
     look = b.place.nightLook;
-  window.__jump(142);
+  window.__jump(144); // (round 7, q: 125: the robots sleep until the post, so the capture rule is tried on the way back)
   window.__run(8, () => look(n.ch1Evening.nightT).phase === "down" && look(n.ch1Evening.nightT).catch);
   n.sq.x = 480;
   n.sq.y = 585;
@@ -583,7 +591,7 @@ r = await ev(() => {
 const reg = await ev(() => {
   const n = window.__ss.op,
     b = window.SSQ.beat("ch1-evening");
-  window.__jump(142);
+  window.__jump(144); // (round 7, q: 125: the robots sleep until the post, so the capture rule is tried on the way back)
   window.__run(8, () => b.place.nightLook(n.ch1Evening.nightT).phase === "down" && b.place.nightLook(n.ch1Evening.nightT - 0.06).phase !== "down");
   // just past the cone's end, straight below the robot: the cone stops short of him
   n.sq.x = 480;
@@ -614,7 +622,7 @@ r = await ev(() => {
   const n = window.__ss.op,
     b = window.SSQ.beat("ch1-evening"),
     look = b.place.nightLook;
-  window.__jump(142);
+  window.__jump(144); // (round 7, q: 125: the robots sleep until the post, so the capture rule is tried on the way back)
   window.__run(8, () => look(n.ch1Evening.nightT).phase === "down" && look(n.ch1Evening.nightT).catch);
   n.sq.x = 480;
   n.sq.y = 585;
@@ -634,12 +642,12 @@ r = await ev(() => {
   const lost = b.debug().lost === lost0 + 1;
   return { hid: o && o.verb + " · " + o.cap, over: !n.ch1Evening.alarm, lost, step: window.__st(), ctrl: n.ctrl, jail: !!(n.cur && n.cur.id === "jail") };
 });
-g.check("hidden in the plant through the search: the guards give up (\"They lost you.\"), the step goes on", r.hid === "HIDE · plant" && r.over && r.lost && r.step === "bin" && r.ctrl && !r.jail, r);
+g.check("hidden in the plant through the search: the guards give up (\"They lost you.\"), the step goes on", r.hid === "HIDE · plant" && r.over && r.lost && r.step === "back" && r.ctrl && !r.jail, r);
 r = await ev(() => {
   const n = window.__ss.op,
     b = window.SSQ.beat("ch1-evening"),
     look = b.place.nightLook;
-  window.__jump(142);
+  window.__jump(144); // (round 7, q: 125: the robots sleep until the post, so the capture rule is tried on the way back)
   window.__run(8, () => look(n.ch1Evening.nightT).phase === "down" && look(n.ch1Evening.nightT).catch);
   n.sq.x = 480;
   n.sq.y = 585;
@@ -648,10 +656,10 @@ r = await ev(() => {
     window.__ss.tick(0.05);
     n.cur && n.cur.id === "jail" && (card = n.cur.cause || "");
   }
-  window.__run(20, () => n.ctrl && !n.cur && window.__st() === "bin");
+  window.__run(20, () => n.ctrl && !n.cur && window.__st() === "back");
   return { card, step: window.__st(), x: Math.round(n.sq.x), alarm: !!(n.ch1Evening && n.ch1Evening.alarm) };
 });
-g.check("seen and standing still: a guard catches him, the LOCKUP card names a robot in the delivery room, the step restarts", r.card === "A robot saw Squatch in the delivery room. Security caught him." && r.step === "bin" && !r.alarm, r);
+g.check("seen and standing still: a guard catches him, the LOCKUP card names a robot in the delivery room, the step restarts", r.card === "A robot saw Squatch in the delivery room. Security caught him." && r.step === "back" && !r.alarm, r);
 
 // ↺: in each step he controls the step comes back; between steps, back to the last one he controlled
 r = await ev(() => {
@@ -691,7 +699,7 @@ r = await ev(() => {
   const n = window.__ss.op,
     b = window.SSQ.beat("ch1-evening"),
     B = b.place.BAY;
-  window.__jump(142);
+  window.__jump(144); // (round 7, q: 125: the robots sleep until the post, so the capture rule is tried on the way back)
   const solids = window.__ss.solids();
   const same = b.place.BAY_FURNITURE.every((f) => solids.some((q) => q.x0 === f.x0 && q.x1 === f.x1 && q.y0 === f.y0 && q.y1 === f.y1));
   // (the plant is a hiding place during an alarm only: walking past it the button stays on the next thing)

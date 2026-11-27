@@ -17,6 +17,7 @@
  * nightDrawn and noteNightPicture, which this one keeps with the same meaning; the two are meant to become one file). PLACEHOLDER look (the tint's strength and the lit boxes) for Brian.
  */
 import { withSnackLayers } from "./crate-stamp.js";
+import { withCameraLayer } from "./bay-camera.js";
 
 export const NIGHT_TINT = Object.freeze({ color: "rgb(14,22,58)", alpha: 0.5 });
 /** Rooms with a locked night picture of their own (game room names). */
@@ -136,6 +137,10 @@ function tintedPicture(room, img) {
  */
 export function nightPicture(id, img, night = true) {
   if (!nightReady(img)) return img;
+  // (round 7: the security camera's layer goes on last, over the day or night picture: bay-camera.js)
+  return withCameraLayer(id, nightPictureBase(id, img, night));
+}
+function nightPictureBase(id, img, night) {
   img = withSnackLayers(id, img);
   if (!night) return img;
   const room = ROOM_OF_PICTURE[id] || id;

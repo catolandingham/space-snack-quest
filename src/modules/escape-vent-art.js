@@ -171,6 +171,11 @@ function toysPanel(ctx) {
   return { pic: "estoys", words: [escapeWords("board"), escapeWords("label-toys")], rocket: true };
 }
 // The stubs, close: the blank tags, the spike of pay stubs, and his chart; then the pen strokes ST out and writes M.
+/** A tag's words in two lines: up to the first ". " (the name), then the rest. */
+export function tagLines(s) {
+  const i = String(s).indexOf(". ");
+  return i < 0 ? [String(s)] : [s.slice(0, i + 1), s.slice(i + 2)];
+}
 function stubsPanel(ctx, t) {
   ctx.fillStyle = "#c4a574";
   ctx.fillRect(0, 0, 960, 640);
@@ -179,7 +184,8 @@ function stubsPanel(ctx, t) {
     esRect(ctx, 40 + i * 8, 60 + i * 10, 260, 70, 6);
     esPaint(ctx, CREAM, 3);
   }
-  esWords(ctx, escapeWords("blank-tag"), 186, 112, 26, BLUE_PEN, "center", 700);
+  // (round 7: the longer tag, "For S. A new kind to try.", on two lines so it fits the tag: the name, then the rest)
+  for (const [i, part] of tagLines(escapeWords("blank-tag")).entries()) esWords(ctx, part, 186, 98 + i * 30, 24, BLUE_PEN, "center", 700);
   // the spike of pay stubs
   ctx.beginPath();
   ctx.moveTo(170, 600);
@@ -187,14 +193,16 @@ function stubsPanel(ctx, t) {
   ctx.strokeStyle = ES_INK;
   ctx.lineWidth = 6;
   ctx.stroke();
+  // (round 7, r5 13:57, q: 133: two short lines, the kind and who paid)
   const stub = escapeWords("stub"),
-    [a, b] = stub.split(", ");
+    a = stub,
+    b = escapeWords("stub-paid");
   for (let i = 0; i < 3; i++) {
     const y = 250 + i * 110;
     esRect(ctx, 24, y, 300, 92, 4);
     esPaint(ctx, "#ffffff", 3);
-    esWords(ctx, a + ",", 174, y + 36, 21, ES_INK, "center", 800);
-    esWords(ctx, b, 174, y + 70, 21, ES_INK, "center", 800);
+    esWords(ctx, a, 174, y + 36, 19, ES_INK, "center", 800);
+    esWords(ctx, b, 174, y + 70, 19, ES_INK, "center", 800);
   }
   // his chart: the same kinds as Squatch's, every one crossed off in pen
   const C = { x0: 380, y0: 40, x1: 920, y1: 600 };
@@ -257,9 +265,8 @@ function slipDeskPanel(ctx, t) {
   ctx.lineWidth = 4;
   ctx.stroke();
   ctx.restore();
-  // Squatch at the grille, far behind him: his eyes, small
-  const eyes = drawEyesInset(ctx, 1);
-  return { pic: "esslipdesk", code: s.code, paw: s.paw, mopsLooks: "code", eyes: !!eyes };
+  // (round 7, r5 14:17, q: 133: no Squatch eyes in this close-up: he is outside and cannot see the desk)
+  return { pic: "esslipdesk", code: s.code, paw: s.paw, mopsLooks: "code", eyes: false };
 }
 export const VENT_PANELS = Object.freeze({ estoys: [toysPanel], esstubs: [stubsPanel], esslipdesk: [slipDeskPanel] });
 

@@ -16,6 +16,10 @@ import { SNACK } from "./snack-name.js";
 
 const PASS = "story pass 2026-11-26, beat ";
 const BAY_DAY2 = "src/game/14-ch1-day2.js before this change";
+// Round 7: a line built from Brian's video notes of 2026-11-27 and the question it hangs on (questions 116 to 133; he
+// has not answered yet, so each is option A, the pick, and pending). Option B, where cheap, is one line in the code
+// marked with the same "q: <number>".
+const R7 = (q, why) => `round 7 (Brian's video notes 2026-11-27): ${why}; q: ${q} (option A, the pick, built before his answer)`;
 
 export const BAY_LINES = Object.freeze(
   [
@@ -23,7 +27,7 @@ export const BAY_LINES = Object.freeze(
     { id: "pa-ship", who: "pa", style: "ear", text: "Universal Postal Service ship arriving!", status: "pending", source: PASS + "28 (KEEP)" },
     { id: "sq-stars-ship", who: "sq", text: `The ${SNACK.name} ship!`, status: "pending", source: PASS + "28 (NEW)" },
     { id: "sq-new-kind", who: "sq", text: "A new kind from the Guardians!", status: "pending", source: PASS + "28 (NEW)" },
-    { id: "sq-crate-kind", who: "sq", text: "Maybe it's the crate kind!", status: "pending", source: PASS + "28 (NEW)" },
+    { id: "sq-crate-kind", who: "sq", text: "I hope it's the kind we've been looking for!", status: "pending", source: R7(133, "r5 0:07, CHANGED from \"Maybe it's the crate kind!\"") },
     { id: "mops-maybe", who: "mops", text: "Maybe.", status: "pending", source: PASS + "28 (NEW)" },
     { id: "mops-see", who: "mops", text: "I better go see.", status: "pending", source: PASS + "28 (CHANGED)" },
     { id: "sq-come", who: "sq", text: "Can I come? I'll be really sneaky.", status: "pending", source: PASS + "28 (CHANGED)" },
@@ -31,7 +35,6 @@ export const BAY_LINES = Object.freeze(
     { id: "mops-hide-when", who: "mops", text: "Hide when I say hide.", status: "pending", source: PASS + "28 (CHANGED)" },
     // ---- 29. Walk to the loading bay, and the cue to hide ----
     { id: "chip-follow", who: "chip", text: "Squatch: follow Mops to the ship", status: "pending", source: PASS + "29 (goal words, NEW)" },
-    { id: "mops-later", who: "mops", text: "Later. The ship!", status: "pending", source: PASS + "29 (NEW)" },
     { id: "mops-manager", who: "mops", text: "Quick! The manager is coming!", status: "pending", source: PASS + "29 (NEW)" },
     { id: "mops-hide", who: "mops", text: "Hide!", status: "pending", source: PASS + "29 (NEW)" },
     { id: "chip-cargo", who: "chip", text: "Squatch: hide behind the cargo", status: "pending", source: PASS + "29 (goal words, NEW)" },
@@ -41,11 +44,12 @@ export const BAY_LINES = Object.freeze(
     { id: "scanner-proceed", who: "scanner", style: "ear", text: "NO FUR. PROCEED.", status: "pending", source: PASS + "30 (NEW)" },
     { id: "chip-plant", who: "chip", text: "Squatch: sneak to the plant", status: "in-game", source: "src/modules/party-lines.js (the party's sneak)" },
     { id: "button-hide", who: "button", text: "HIDE · plant", status: "in-game", source: BAY_DAY2 },
-    { id: "ups-scanned", who: "ups", style: "ear", text: "Mail scanned.", status: "pending", source: PASS + "30 (NEW)" },
     { id: "isfred-not-sure", who: "official", text: "I wasn't sure we needed these robots.", status: "pending", source: PASS + "30 (CHANGED, Brian's Nov 8 line split)" },
     { id: "isfred-fur", who: "official", text: "But we keep getting fur in the vents.", status: "pending", source: PASS + "30 (CHANGED)" },
     { id: "isfred-convinced", who: "official", text: "I'm convinced now.", status: "pending", source: PASS + "30 (CHANGED)" },
     { id: "sq-was-me", who: "sq", style: "think", text: "Fur in the vents... that was me.", status: "pending", source: PASS + "30 (NEW)" },
+    { id: "isfred-camera", who: "official", text: "And a camera. Just in case.", status: "pending", source: R7(123, "r6 7:46, NEW: a robot puts it up, upper right by the speaker") },
+    { id: "isfred-tapes", who: "official", text: "I never watch the tapes. Unless something goes wrong.", status: "pending", source: R7(123, "r6 7:46, NEW") },
     { id: "isfred-names", who: "official", text: "Dot. Bob. Lou.", status: "pending", source: PASS + "30 (NEW)" },
     { id: "isfred-thanks", who: "official", text: "Thank you for thirty years.", status: "pending", source: PASS + "30 (NEW)" },
     { id: "isfred-take-it", who: "official", text: "The robots will take it from here.", status: "pending", source: PASS + "30 (NEW)" },
@@ -53,6 +57,8 @@ export const BAY_LINES = Object.freeze(
     { id: "bob-way-up", who: "bob", style: "ear", text: "Other way up, pal.", status: "pending", source: PASS + "30 (NEW)" },
     { id: "scanner-stop", who: "scanner", style: "ear", text: "FUR. STOP.", status: "pending", source: PASS + "30 (NEW)" },
     { id: "lou-hat", who: "lou", style: "ear", text: "It's a HAT.", status: "pending", source: PASS + "30 (NEW)" },
+    { id: "scanner-hair", who: "scanner", style: "ear", text: "HAIR. PROCEED.", status: "pending", source: R7(116, "r5 1:59, NEW: he takes the hat off and the arch lets his hair through") },
+    { id: "lou-hair", who: "lou", style: "ear", text: "It's just hair.", status: "pending", source: R7(116, "r5 1:59, NEW: Brian's \"I just have hair\"") },
     { id: "mops-bleat-short", who: "mops", text: "Weee...?", status: "pending", source: PASS + "30 (NEW)" },
     // ---- 31. The promise ----
     { id: "isfred-dont-worry", who: "official", text: "Mops, don't worry.", status: "pending", source: PASS + "31 (CHANGED)" },
@@ -71,7 +77,6 @@ export const BAY_LINES = Object.freeze(
     { id: "isfred-office", who: "official", text: "Please put this in my office.", status: "pending", source: PASS + "32 (NEW)" },
     { id: "isfred-wait", who: "official", text: "Oh, wait.", status: "pending", source: PASS + "32 (NEW)" },
     { id: "isfred-code", who: "official", text: "Here's the code to unlock the door.", status: "pending", source: PASS + "32 (NEW)" },
-    { id: "dot-leaving", who: "dot", style: "ear", text: "Isfred! We're leaving!", status: "pending", source: PASS + "32 (NEW)" },
     // ---- 33. "Delicious." (the player is Mops) ----
     { id: "card-mops", who: "card", text: "Mops takes care of the copies.", status: "pending", source: PASS + "33 (the switch card's line, NEW)" },
     { id: "robot-copies", who: "robot", text: "Left one of the copies in the office. What do I do with the other two?", status: "pending", source: PASS + "33 (KEEP)" },
@@ -100,12 +105,12 @@ export const BAY_LINES = Object.freeze(
     { id: "chip-give", who: "chip", text: "Mops: give Squatch the box", status: "pending", source: PASS + "35 (goal words, NEW)" },
     { id: "button-give", who: "button", text: "GIVE · box", status: "pending", source: PASS + "35 (NEW)" },
     { id: "mops-mail", who: "mops", text: "Mail for you.", status: "pending", source: PASS + "35 (NEW)" },
-    { id: "box-tag", who: "paper", text: "For S. A new kind. — The Guardians", status: "pending", source: PASS + "35 (NEW, the tag)" },
+    { id: "box-tag", who: "paper", text: "For S. A new kind to try. — The Guardians", status: "pending", source: R7(133, "r5 3:28, CHANGED from \"For S. A new kind. — The Guardians\" (the tag)") },
     { id: "sq-never-forget", who: "sq", text: "They never forget.", status: "pending", source: PASS + "35 (NEW)" },
     { id: "mops-home", who: "mops", text: "The robots are gone. Let's get you home.", status: "pending", source: PASS + "35 (NEW)" },
     { id: "mops-close", who: "mops", text: "Stay close to me.", status: "pending", source: PASS + "35 (NEW)" },
     { id: "card-squatch", who: "card", text: "Squatch goes home with Mops.", status: "pending", source: PASS + "35 (the switch card's line, NEW)" },
-    { id: "crate-empty", who: "paper", text: "EMPTY. FOR PICKUP.", status: "pending", source: PASS + "30 (NEW, the empty crate's tag)" },
+    { id: "crate-empty", who: "paper", text: "FOR PICKUP.", status: "pending", source: R7(124, "r5 15:23, CHANGED from \"EMPTY. FOR PICKUP.\" (the crate's tag; the id stays, pickup-lines.js reads it)") },
     // ---- 36. The hairball (the walk home) ----
     { id: "chip-home", who: "chip", text: "Squatch: go home with Mops", status: "pending", source: PASS + "36 (goal words, NEW)" },
     { id: "robot-what", who: "robot", text: "What's that?", status: "pending", source: PASS + "36 (NEW)" },

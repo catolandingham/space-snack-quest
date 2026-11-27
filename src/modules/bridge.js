@@ -26,7 +26,7 @@ import { quietLine } from "./party-lines.js";
 import { quietBedtimeLine } from "./bedtime-story-lines.js";
 import { drawHomeMopBucket, lastHomeMopBucket } from "./mop-bucket.js"; // (bedtime branch, 2026-11-26: Mops's mop bucket)
 import { adultPxFor, doorAdultPx } from "./room-sizes.js";
-import { drawGanitorTag, drawHallwayCrayon, ganitorTagsDrawn, hallwayCrayonDrawn, GANITOR_TAG } from "./ganitor.js";
+import { drawGanitorTag, drawHallwayCrayon, ganitorTagsDrawn, hallwayCrayonDrawn, GANITOR_TAG, CRAYON_ON_WALL } from "./ganitor.js";
 import { singingNow } from "./music-rules.js";
 import { keepInSpan, seeCue, visitNow, playSound, soundsPlayed, hushNow, hushKey, unhush } from "./music-picks.js";
 import { drawBubbleTail } from "./bubble-tail.js";
@@ -35,6 +35,7 @@ import { drawCreditsButton, creditsTap, creditsShown } from "./credits.js";
 import { nightPicture, isNightNow, nightDrawn } from "./night-look.js";
 import { snackWord } from "./snack-name.js";
 import { drawStationStamp, crateStampDrawn, setCrayonSource } from "./crate-stamp.js";
+import { setCameraSource, cameraUpFrom, cameraLayerDrawn } from "./bay-camera.js";
 import { cakeChartDrawn } from "./cake-chart.js";
 
 /**
@@ -58,6 +59,8 @@ export function createBridge() {
   // The engine functions the older program hands over (see handOver), and the fields beats have written.
   let engine = null;
   const written = new Set();
+  // The bay's security camera is up from Day 2's beat 30 on (round 7, q: 123; bay-camera.js)
+  setCameraSource(() => !!engine && cameraUpFrom(engine.get));
   const homeMusic = createHomeMusic(() => engine);
   const morningSound = createMorningSound(() => engine);
   // (a guest's line: which guest says it, for the guest's own voice)
@@ -148,7 +151,8 @@ export function createBridge() {
     },
     /** Squatch's crayon card on the hallway wall, "ME" and "MOPS THE GANITOR" (ganitor.js), for 14-ch1-day2.js. */
     drawHallwayCrayon(ctx) {
-      return drawHallwayCrayon(ctx);
+      // (round 7, q: 128: the drawing stays hidden behind the crooked photo; nothing is drawn on the wall)
+      return CRAYON_ON_WALL ? drawHallwayCrayon(ctx) : null;
     },
     /** The morning's music at home (its pick in music-picks.js: Floating in Space). See home-music.js. */
     homeMusic,
@@ -267,6 +271,8 @@ export function createBridge() {
     },
     /** Tests: the layers for the snack's name (the crate bed's stamp over the home pictures, the hall tin's lid). */
     crateStampDrawn,
+    /** Tests: the bay camera's layer (round 7, q: 123): how many pictures had it, and the last one's id. */
+    cameraLayerDrawn,
     /** Tests: the crayon chart over his bed, as the home pictures' layer last drew it (cake-chart.js). */
     cakeChartDrawn,
     /** Register a rebuilt beat. Ids are unique; registering one twice is a mistake, so it throws. */

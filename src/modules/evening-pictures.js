@@ -514,7 +514,8 @@ export function drawYearsLater(ctx, x, y, w, h, mops, poster) {
 
 // ---------- 42c: the crate by the big wall vent ----------
 /** The crate under the loading bay's big wall vent (a hiding place): its box in game positions. */
-export const BAY_CRATE = Object.freeze({ x0: 818, x1: 884, y0: 268, y1: 322 });
+// (round 7, q: 125: beside the floor vent, evening-place.js EV_BAY.crate.box)
+export const BAY_CRATE = Object.freeze({ x0: 268, x1: 332, y0: 500, y1: 552 });
 export function drawVentCrate(ctx) {
   const B = BAY_CRATE;
   pRect(ctx, B.x0, B.y0, B.x1 - B.x0, B.y1 - B.y0, 3, "#b98a4e", INK, 2.5);
