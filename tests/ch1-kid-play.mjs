@@ -386,16 +386,33 @@ while (now() < MAX_S) {
     await sleep(900);
     if (v.kind === "gallery") {
       const lift = v.i === 3 && !v.lifted;
-      say(s, lift ? "TAP the crooked photo" : "TAP next photo");
-      await tap(lift ? v.photo.x : v.next.x, lift ? v.photo.y : v.next.y);
+      say(s, lift ? "HOLD LIFT · photo" : "TAP next photo");
+      if (lift) (await page.touchscreen.touchStart(v.lift.x, v.lift.y), await sleep(1400), await page.touchscreen.touchEnd());
+      else await tap(v.next.x, v.next.y);
     } else if (v.kind === "brochure") {
-      say(s, "TAP the brochure's X");
+      // the thing that has the outline (the next of the five), last the two cooks
+      const at = v.parts[v.next || "cooks"];
+      say(s, "TAP the brochure's " + (v.next || "cooks"));
+      await tap(at.x, at.y);
+    } else if (v.kind === "shock" || v.kind === "back") {
+      say(s, "TAP the close-up's X");
       await tap(v.close.x, v.close.y);
+    } else if (v.kind === "chart") {
+      say(s, "TAP this week's cake (the X)");
+      await tap(v.cake.x, v.cake.y);
+    } else if (v.kind === "crate") {
+      say(s, "TAP the brochure along the crate");
+      await tap(v.card.x, v.card.y);
     } else if (v.kind === "order") {
-      say(s, "PAW on the order box");
-      await page.touchscreen.touchStart(v.box.x, v.box.y);
-      await sleep(500);
-      await page.touchscreen.touchEnd();
+      // the choice: a kid picks MARK · box (the story goes on; PUT BACK · bin is the short ending, tested elsewhere)
+      if (v.choose) (say(s, "TAP MARK · box"), await tap(v.mark.x, v.mark.y));
+      else if (v.ending) (say(s, "TAP the ending"), await tap(v.ending === "last" ? v.goBack.x : v.tap.x, v.ending === "last" ? v.goBack.y : v.tap.y));
+      else {
+        say(s, "PAW on the order box");
+        await page.touchscreen.touchStart(v.box.x, v.box.y);
+        await sleep(500);
+        await page.touchscreen.touchEnd();
+      }
     }
     await sleep(500);
     continue;
@@ -464,7 +481,7 @@ while (now() < MAX_S) {
   // (ROLL · ball works anywhere in the lunch sneak and the night's loading bay, so it is on the button nearly all the
   // time; a kid who has a hiding place to go to goes there: the robot leaves the ball alone, except where rolling up
   // is the goal itself, the escape night's wait by the vent, step "roll")
-  const avoid = (v) => AVOID.some((a) => v.startsWith(a)) || (v === "ROLL · ball" && s.step !== "roll");
+  const avoid = (v) => AVOID.some((a) => v.startsWith(a)) || (v === "ROLL · ball" && s.step !== "roll" && s.step !== "ev-dodge");
   // The door keypad: type the number printed on the pink slip beside it, one key at a time.
   if (s.pad) {
     const d = SLIP_CODE[s.padHave.length] || SLIP_CODE[0];

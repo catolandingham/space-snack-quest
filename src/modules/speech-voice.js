@@ -33,6 +33,13 @@ export const VOICES = Object.freeze({
   speaker: Object.freeze({ f: 220, bright: 1.4, set: "male_standard", rate: 1.02 }), // the wall speaker at home
   pa: Object.freeze({ f: 220, bright: 1.4, set: "male_standard", rate: 1.02 }), // the party hall's wall speaker
   mops: Object.freeze({ own: "meh" }),
+  // the evening of Day 2 (evening.js): the station robots and the robot mailbox; the family and the guest at the storm
+  robot: Object.freeze({ f: 180, bright: 1.2, set: "robot", rate: 1 }),
+  ups: Object.freeze({ f: 160, bright: 1.2, set: "robot", rate: 0.95 }),
+  dad: Object.freeze({ f: 160, bright: 1, set: "male_standard", rate: 1.04 }),
+  mom: Object.freeze({ f: 233, bright: 1.05, set: "female_standard", rate: 1 }),
+  kid: Object.freeze({ f: 300, bright: 1.15, set: "female_light", rate: 1.15 }),
+  guest: Object.freeze({ f: 210, bright: 1, set: "female_light", rate: 1 }),
 });
 /** The party's guests (party.js `talker`, the one saying a "tourist" line): each one's set and pitch. */
 export const GUEST_VOICES = Object.freeze({

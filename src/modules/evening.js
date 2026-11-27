@@ -1,48 +1,42 @@
 /**
- * The evening of Day 2, Chapter 1 beats 37 to 42 (docs/CH1-STORY-WALKTHROUGH.md, with the newer decisions of
- * 2026-11-22 to 2026-11-26 where they differ): the Employee of the Month wall, the pancake brochure, "Are those other
- * Sasquatches?", the Mars talk, lights out, and night one's paw order. It follows beat 36 (Mops walks him home past
- * the robots: start()) and hands over to beat 43 ("Six days later") as it is today (14-ch1-day2.js ch1SixDays).
- * What the player sees, step by step (every word from evening-lines.js, every place and number from evening-place.js,
- * every new drawing from evening-art.js; steps the player controls are marked *):
- *   walkin   the hallway, wordless: they walk in from the loading bay's end; Mops walks on to the hall's end and waits.
- * * wall     LOOK · photos under the photo wall (optional: no outline); the hall's doorway is outlined. The gallery
- *            (full screen): 5 photos a visit, arrows under the photo and an X always there; photo #4 hangs crooked,
- *            and lifting it shows Squatch's crayon drawing, which stays on the wall. Past photo 5 the gallery closes:
- *   robot    a robot rolls through the hallway, Squatch rolls up into the L2 ball, "BEEP BEEP", it rolls on out.
- *   tohall   walking into the doorway: both walk into the hall at the snack counter's top end; Mops stands by the stools.
- *   line     two people in line at the counter's front: "I swear we had more Moon Pies..." (overheard, the ear); they
- *            leave. A family appears in the hallway doorway reading a brochure; Mops: "Quick, hide."
- * * hide     HIDE · counter: into the aisle behind the counter, rolled up. The family looks up from the brochure after
- *            a few seconds: seen in the open, the one capture rule (FUR!, the alarm, guards, hide, "They lost you.").
- *   watch    hidden, he watches the family walk round to the counter's front, a wordless picture bubble (pancakes, Mars),
- *            the brochure put down on the counter, and the family leaving without it.
- * * brochure GRAB · brochure: the close-up (full screen): a big furry Sasquatch couple behind a pancake counter, Mars in
- *            the window. X closes it. "Are those other Sasquatches?" / "I need to get back to work, we'll talk about it
- *            tonight." Mops goes back to work.
- * * gohome   the home doorway is outlined (the goal words only if he stalls); walking into it takes him home.
- *   evening  home: the light warms to evening, Mops comes home.
- * * show     SHOW · brochure (where he stands): he holds it up, no words; Mops: "Didn't you hear what the manager said?..."
- * * bed      SLEEP · bed (the bed outlined).
- *   asleep   wordless: he climbs in and lies down; the light goes down; Mops dozes off standing, goes stiff, tips over
- *            like a fainting goat, rolls onto his back with his four feet in the air, and snores (z z z). Squatch
- *            sits up and slips out of bed.
- * * out, nighthall, nightway   night one: out the door, across the hall, along the hallway (each doorway outlined).
- * * bin      the loading bay at night: the night robot looks down 2 s and up at the back wall 4 s (R64). GRAB · copies.
- *   order    the close-up: his paw follows the finger; MARK · order: a paw print presses into the box on the pink
- *            sheet and through onto the yellow copy, which he tears off.
- * * post     POST · mailbox (in the mail room): "Mail scanned. Pawature accepted." Then, wordless and with no control:
- *   robots   the two robots parked in the mail room wake and roll out, he runs to hide under the big wall vent, and the
- *            vent pulls the pink sheet out of his paw.
- * * back, backway, backhall, tobed   he sneaks home past the robots (each doorway outlined) and SLEEP · bed.
- *   sleep    wordless: he lies down, z z z, and beat 43 starts.
- * Seen in the bay: the robot shows "!" and runs to the FUR alarm on the bay's wall (the one capture rule, Call 17).
+ * The evening of Day 2, Chapter 1 beats 37 to 42c, rebuilt from the story pass of 2026-11-26 (Brian: "Go! Go as far as
+ * you can without me."): the Employee of the Month wall, Jupiter's big red storm, "They said they were Sasquatches",
+ * the brochure, home alone (no fizz, the missing letter), the fight, lights out and the idea, and night one's choice.
+ * It follows beat 36 (start()) and hands over to beat 43 ("Six days later") as it is today (14-ch1-day2.js
+ * ch1SixDays). Every word comes from evening-lines.js, every place and number from evening-place.js, the new drawings
+ * from evening-pictures.js and evening-art.js. Steps the player controls are marked *:
+ *   walkin   the hallway, wordless: they walk in from the loading bay's end; Mops waits at the hall's end.
+ * * wall     LOOK · photos (optional, no outline); the hall's doorway outlined. The gallery (full screen): holding LIFT ·
+ *            photo swings the crooked photo 4 up like a flap over his crayon drawing (ME and MOPS, each with an arrow),
+ *            his thought. Past photo 5:
+ * * dodge    a robot comes in through the hall's doorway with its cone: ROLL · ball (a ball fools a quick look) or back
+ *            through the doorway; seen, the one capture rule in the hallway. BEEP BEEP as it passes.
+ *   storm    the hall: Jupiter's big red storm rolls into the big window; the PA; Mops: "Guests! Quick, hide."
+ * * hide     HIDE · counter (rolled up behind it) while the guests walk in to the window.
+ * * peek     PEEK · window: his eyes over the counter; the family talks about Mars (talk); they turn to the bar:
+ * * duck     DUCK · down before their cones reach his eyes (seen: the capture rule); then waitbar.
+ *   bar      the pancake talk with Mops (Brian's Nov 8 words), the close-up at "Sasquatches", the coffee, the toss.
+ * * brochure GRAB · brochure from the bin: the close-up (read), five things to tap; then (after) "Are those other
+ *            Sasquatches?", Mops looks too long, back to work.
+ * * gohome   the home doorway outlined.
+ * * box, bite, chart, crate   home alone: OPEN · box, BITE · cake, "No fizz.", X · chart (the close-up: two taps draw
+ *            the X), HOLD UP · brochure (the close-up: slide it along the crate's "_ARS CAKES"; "MARS!").
+ * * show, choose   "That evening…", Mops comes home; SHOW · brochure; the fight; ASK · again or STOMP · to bed; he
+ *            turns his back (the close-up); "Bed. The floors don't mop themselves."
+ * * bed      SLEEP · bed: lights out, no song; Mops's fainting-goat sleep by the bucket; the idea in pictures.
+ * * out, nighthall, nightway   night one: past Mops (a bump on the bucket: "Weee...?"), the hall (its floor vent on),
+ *            the hallway, the bay.
+ * * bin      GRAB · copies: his whisper; the close-up (order): MARK · box, or PUT BACK · bin (the happily-ish ending,
+ *            GO BACK · to the form). MARK: his paw print, the yellow tears off.
+ * * post     POST · mailbox: loud; "Shhh!"; the night robot hears: the alarm; HIDE · crate by the big wall vent; the vent
+ *            takes the pink sheet; "They lost you."; "...The yellow one got mailed." "It's done."
+ * * back, backway, backhall, tobed   home past the night robot; SLEEP · bed; then beat 43.
  * Its progress lives in the game-state field ch1Evening, and ch1Step is "ev-<step>" at each step the player
  * controls, so the step restart (↺) brings back the step he is on; ↺ in a step he does not control goes back to the
  * last one he did (restart()).
  */
 import { HALLWAY, BAR, STORM, HOME, HOME_ALONE, BAY, BAY_FURNITURE, BAY_EXTRA, BAY_BOUNDS, BAY_SEARCH, BAY_VENT, EVENING_PACE as P, EVENING_LOOK, nightLook, mopsSleepAt, mopsSleepBox, robotLook } from "./evening-place.js";
-import { drawJupiterStorm, drawStormGlow, drawCounterBin, drawCoffeeStain, BROCHURE_PARTS, drawGuardianMark, drawThoughtCloud, drawGuardiansBox, drawWeekCake, drawCakeChart, CHART, drawIdeaPicture, drawYearsLater, drawBayCrate, BAY_CRATE } from "./evening-pictures.js";
+import { drawJupiterStorm, drawStormGlow, drawCounterBin, drawCoffeeStain, BROCHURE_PARTS, drawGuardianMark, drawEveningThought, drawGuardiansBox, drawWeekCake, drawCakeChart, CHART, drawIdeaPicture, drawYearsLater, drawBayCrate, BAY_CRATE } from "./evening-pictures.js";
 import { placeThought } from "./thought-place.js";
 import { drawCrateStamp } from "./stars-cakes.js";
 import { drawNightTint, noteNightPicture, nightDrawn, nightPictureFor } from "./night-look.js";
@@ -432,6 +426,8 @@ export function createEvening(bridge) {
         sound.effect("hide");
         e.still("sq");
         if (S().alarm) return void control("");
+        // (the family already on its way to the bar: he waits down behind the counter)
+        if ((S().guests || []).some((g) => g.to === "turn" || g.to === "bar")) return void go("waitbar");
         go("peek");
         control("chip-peek");
       }),
@@ -637,7 +633,7 @@ export function createEvening(bridge) {
       e.run(() => {
         S().cake = 0;
         go("bite");
-        control("chip-box");
+        control("chip-bite");
       }),
     ]);
   }
@@ -1241,7 +1237,8 @@ export function createEvening(bridge) {
       E: e,
       size: () => e.coneSize(),
       sq: () => e.pos("sq"),
-      hidden: () => (hiddenNow(S()) ? "plant" : ""),
+      // (a ball fools a quick look, never a search: decided 2026-11-26, question 1: A)
+      hidden: () => (S().pose === "hidden" ? "plant" : ""),
       room: () => e.room(),
       people: () => S().people || {},
       sees: (c, sq) => seesHere(c, sq),
@@ -1267,8 +1264,8 @@ export function createEvening(bridge) {
         if (room() === "passage") return ((s.robot = null), go("wall"), control("chip-go-on"));
         if (s.step === "hide") return s.pose === "hidden" && s.hideAt === "counter" ? (go("peek"), control("chip-peek")) : control("chip-hide");
         if (s.step === "peek") return control("chip-peek");
-        if (s.step === "duck") return control("chip-duck");
-        control(s.step === "back" || s.step === "post" ? (s.step === "post" ? "chip-post" : "chip-sneak-home") : "chip-bin");
+        if (s.step === "duck") return s.pose === "hidden" && !s.peek ? (busy(), go("waitbar")) : control("chip-duck");
+        control(s.step === "post" ? "chip-post" : ["back", "backway", "backhall", "tobed"].includes(s.step) ? "chip-sneak-home" : "chip-bin");
       },
     };
   }
@@ -1301,7 +1298,7 @@ export function createEvening(bridge) {
     // night one at home: bumping Mops's bucket clangs; he snorts and rolls over (funny, no capture), and back he goes
     if (on && r === "closet" && s.step === "out" && !s.bed && s.mopsSleep && !s.bumping) {
       const B = HOME.bucket;
-      if (sqAt.x > B.x0 - 16 && sqAt.x < B.x1 + 16 && sqAt.y > B.y0 - 10 && sqAt.y < B.y1 + 14) bumpBucket();
+      if (sqAt.x > B.x0 - 16 && sqAt.x < B.x1 + 16 && sqAt.y > B.y0 - 18 && sqAt.y < B.y1 + 14) bumpBucket();
     }
     view && view.kind === "crate" && slideTick(dt);
     // the close-ups end themselves once the game no longer has what opened them (a restart, the LOCKUP card)
@@ -1375,7 +1372,7 @@ export function createEvening(bridge) {
     // walking through an open doorway (no button): each door the step leads to
     if (on && !s.alarm) {
       const at = (p) => Math.hypot(sqAt.x - p.x, sqAt.y - p.y) < p.r;
-      if (s.step === "wall" && r === "passage" && at(HALLWAY.left)) toHall();
+      if ((s.step === "wall" || s.step === "dodge") && r === "passage" && at(HALLWAY.left)) ((s.robot = null), toHall());
       else if (s.step === "gohome" && r === "hall" && at(BAR.home)) toHome(homeAlone);
       else if (s.step === "out" && r === "closet" && at(HOME.door)) (s.bed && ((s.bed = null), setPose("stand")), NIGHT.out());
       else if (s.step === "nighthall" && r === "hall" && at({ ...LUNCH_PLACES.door.stand, r: LUNCH_PLACES.door.r })) NIGHT.nighthall();
@@ -1435,7 +1432,7 @@ export function createEvening(bridge) {
       // after the loud post the crate by the big wall vent is the one hiding place (story pass 42c)
       if (r === "hangar" && s.postAlarm) return [spot("ev-bay-crate", "button-crate", { x: BAY.underVent.x, y: BAY.underVent.y, r: 56 }, BAY_CRATE, hideCrate)];
       r === "hangar" && out.push(spot("ev-plant", "button-plant", BAY.plant, BAY.plant.box, hidePlant), spot("ev-bay-crate", "button-crate", { x: BAY.underVent.x, y: BAY.underVent.y, r: 56 }, BAY_CRATE, hideCrate));
-      out.push(ballSpot());
+      // (no ball once the alarm has rung: a ball never fools a search)
       return out;
     }
     switch (s.step) {
@@ -1451,10 +1448,11 @@ export function createEvening(bridge) {
       case "hide":
         return standing ? [spot("ev-counter", "button-counter", BAR.hide, BAR.aisle, hideCounter)] : [];
       // rolled up behind the counter: PEEK · window raises his eyes over its edge; DUCK · down takes them back down
+      // (stepped out from behind the counter: HIDE · counter again)
       case "peek":
-        return s.pose === "hidden" ? [spot("ev-peek", "button-peek", { x: e.pos("sq").x, y: e.pos("sq").y, r: 60 }, null, peekUp)] : [];
+        return s.pose === "hidden" ? [spot("ev-peek", "button-peek", { x: e.pos("sq").x, y: e.pos("sq").y, r: 60 }, null, peekUp)] : standing ? [spot("ev-counter", "button-counter", BAR.hide, BAR.aisle, hideCounter)] : [];
       case "duck":
-        return s.peek ? [spot("ev-duck", "button-duck", { x: e.pos("sq").x, y: e.pos("sq").y, r: 60 }, null, duckDown)] : [];
+        return s.peek ? [spot("ev-duck", "button-duck", { x: e.pos("sq").x, y: e.pos("sq").y, r: 60 }, null, duckDown)] : standing ? [spot("ev-counter", "button-counter", BAR.hide, BAR.aisle, hideCounter)] : [];
       case "brochure":
         return [spot("ev-brochure", "button-brochure", STORM.grab, box(STORM.bin.x, STORM.bin.y - 18, 46, 50), grabBrochure)];
       case "gohome":
@@ -1866,7 +1864,7 @@ export function createEvening(bridge) {
       // the choice: two thought pictures above the papers, each with its button (gone once he has picked MARK · box)
       if (!o.chose) {
         for (const [id, C, word] of [["go", ORDERV.go, "button-mark"], ["stay", ORDERV.stay, "button-put-back"]]) {
-          drawThoughtCloud(ctx, C.cx, C.cy, C.w, C.h, C.cx, C.cy + C.h / 2 + 4, 1);
+          drawEveningThought(ctx, C.cx, C.cy, C.w, C.h, C.cx, C.cy + C.h / 2 + 4, 1);
           drawIdeaPicture(ctx, id, C.cx, C.cy, 110, (c, x, y, k, op) => E().drawMopsOn(c, x, y, k, op), now);
           viewButton(ctx, C.button, eveningWords(word), false);
         }
@@ -1906,7 +1904,7 @@ export function createEvening(bridge) {
   }
   /** Squatch's thought inside a close-up: a cloud with his words, its trail going down to him (the bottom left). */
   function viewThought(ctx, T, words, a) {
-    drawThoughtCloud(ctx, T.x, T.y, T.w, T.h, 30, T.y + T.h / 2 + 60, a);
+    drawEveningThought(ctx, T.x, T.y, T.w, T.h, 30, T.y + T.h / 2 + 60, a);
     ctx.save();
     ctx.globalAlpha = a;
     ctx.fillStyle = "#1e2430";
@@ -2301,7 +2299,7 @@ export function createEvening(bridge) {
       const head = { x: BED_POSES.lie.x - 70, y: BED_POSES.lie.y - 40, w: 44, h: 40 },
         place = placeThought(head, { w: 170, h: 130 }),
         u = Math.min(1, (t - s.idea.at) / 0.25);
-      drawThoughtCloud(ctx, place.cx, place.cy, place.w, place.h, place.to.x, place.to.y, u);
+      drawEveningThought(ctx, place.cx, place.cy, place.w, place.h, place.to.x, place.to.y, u);
       ctx.save();
       ctx.globalAlpha = u;
       drawIdeaPicture(ctx, s.idea.id, place.cx, place.cy + 6, 100, (c, x, y, sc, o) => e.drawMopsOn(c, x, y, sc, o), t, s.idea.id === "form" ? 0.6 + 0.4 * Math.sin(t * 5) : 0);
@@ -2540,6 +2538,10 @@ export function createEvening(bridge) {
         yellow: after("post") ? "mail" : "",
       }),
     );
+    // (the record of what he has done is only what comes before this step: a jump back forgets what came after)
+    e.set("ch1Crayon", after("dodge") || step === "dodge");
+    e.set("ch1Mailed", after("post") ? 1 : 0);
+    e.set("ch1PinkSucked", after("post") ? 1 : 0);
     after("brochure") && e.set("ch1Brochure", true);
     after("bin") && (e.set("ch1Paw", 1), e.set("ch1Signed", 1));
     after("post") && (e.set("ch1Mailed", 1), e.set("ch1PinkSucked", 1));
@@ -2596,6 +2598,6 @@ export function createEvening(bridge) {
     s.step = step;
     record.steps.push(step);
     setPose(s.pose);
-    control({ wall: "chip-go-on", dodge: "chip-roll", hide: "chip-hide", peek: "chip-peek", duck: "chip-duck", brochure: "chip-brochure", gohome: "chip-home", box: "chip-box", bite: "chip-box", chart: "chip-chart", crate: "chip-crate", choose: "", show: "chip-show", bed: "chip-bed", out: "chip-out", nighthall: "chip-bin", nightway: "chip-bin", bin: "chip-bin", post: "chip-post", back: "chip-sneak-home", backway: "chip-sneak-home", backhall: "chip-sneak-home", tobed: "chip-bed" }[step]);
+    control({ wall: "chip-go-on", dodge: "chip-roll", hide: "chip-hide", peek: "chip-peek", duck: "chip-duck", brochure: "chip-brochure", gohome: "chip-home", box: "chip-box", bite: "chip-bite", chart: "chip-chart", crate: "chip-crate", choose: "", show: "chip-show", bed: "chip-bed", out: "chip-out", nighthall: "chip-bin", nightway: "chip-bin", bin: "chip-bin", post: "chip-post", back: "chip-sneak-home", backway: "chip-sneak-home", backhall: "chip-sneak-home", tobed: "chip-bed" }[step]);
   }
 }

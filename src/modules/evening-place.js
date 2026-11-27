@@ -309,7 +309,7 @@ export const EVENING_PACE = Object.freeze({
   wake: 1.0,
   rollOut: 150,
   runTo: 260,
-  suck: 1.3,
+  suck: 3.0, // 42c: the vent pulls the pink sheet out of his paws in the crate (a wordless cutaway, about 3 s)
   sleepEnd: 2.6,
   // a robot or a guard reacts only once its drawn cone has been on him this long (a short "?" while it registers;
   // Brian 2026-11-26: never when the cone stops short)

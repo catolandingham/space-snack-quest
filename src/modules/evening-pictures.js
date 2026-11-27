@@ -297,7 +297,14 @@ export function drawCakeChart(ctx, x, y, w, h, newX = 0, small = false, crateKin
   ctx.fillStyle = "rgba(240,230,180,.85)";
   ctx.fillRect(12, -8, 40, 18);
   ctx.fillRect(CHART.W - 52, -8, 40, 18);
-  pWords(ctx, STARS_CAKES, CHART.W / 2, 44, 34, "#e5533d", 800, "center", CRAYON_FONT);
+  // (on the wall, too small to read: the title is a crayon scribble; the close-up has the words)
+  if (small) {
+    ctx.strokeStyle = "#e5533d";
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    for (let x = 90; x <= 270; x += 18) ctx.lineTo(x, 44 + (x % 36 ? -6 : 6));
+    ctx.stroke();
+  } else pWords(ctx, STARS_CAKES, CHART.W / 2, 44, 34, "#e5533d", 800, "center", CRAYON_FONT);
   const C = CHART.cell;
   const xMark = (cx, cy, r, u) => {
     ctx.save();
@@ -433,7 +440,7 @@ export function drawIdeaPicture(ctx, id, x, y, s, mops, t = 0, glow = 0) {
   ctx.restore();
 }
 /** A thought cloud with a trail of circles going down to (tx, ty): middle (cx, cy), size (w, h). */
-export function drawThoughtCloud(ctx, cx, cy, w, h, tx, ty, a = 1) {
+export function drawEveningThought(ctx, cx, cy, w, h, tx, ty, a = 1) {
   ctx.save();
   ctx.globalAlpha = a;
   ctx.fillStyle = "#ffffff";

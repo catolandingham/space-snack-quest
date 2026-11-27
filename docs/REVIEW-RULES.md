@@ -28,7 +28,7 @@
 | 223–233 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
 | 234–243 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
 | 244–249 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
-| 250–261 | ## Mistakes caught building the evening and night one (2026-11-26) |
+| 250–264 | ## Mistakes caught building the evening and night one (2026-11-26) |
 <!-- /section-index -->
 # Review rules
 
@@ -258,3 +258,6 @@ His note on the home morning (video note 0:18): "he kind of glitches through the
 - A robot rolled across a doorway and Squatch walked over the sleeping Mops, because scripted walks went in straight lines and never met the room's solids. Every scripted walk (robots, the family, Mops) is stepped against the solids in a test, people included, and a robot's cone is drawn whenever it is on screen.
 - A cone that stopped short of him still caught him, and a cone that touched him for one frame did too. A sighting needs the drawn cone to reach him and hold about half a second, with a "?" while it registers.
 - Giving the two robots parked in the mail room their cones (robots always show cones) put the left one's cone out past the mail room's wall onto the way in to the mailbox, so the showing was seen and the alarm went off before POST · mailbox. When a cone is added or turned, walk the step's fair way through it in a test (`tests/evening-physics.mjs` walks the way in to the mailbox).
+- After merging a lower branch, the evening's hall drawing still called a hand-over the merge had removed (`bridge.goalMark`), and every frame of the hall threw. After any merge, run the beat's own suites before building on it.
+- Mops asleep is drawn by the evening module, so the older program counts him as "not in the picture" (`moPose` is hidden) and silently skips any bubble of his ("offscreen"). A character a module draws itself speaks through its own speaker id (`sleeping-mops`, placed by `speakerAt`).
+- A rebuilt beat needed new debug beats (138 to 145) and the older program's jump only passed 37 to 42 and 142 to 144 on, so the new links opened nothing. When a module adds debug beats, widen the older program's range in the same change (it may only shrink in lines: change the condition, do not add one).

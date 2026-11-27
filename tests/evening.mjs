@@ -1,21 +1,17 @@
 /**
- * Beats 37 to 42, the evening of Day 2 and night one (src/modules/evening.js), at phone size. Checked as the player
- * meets them:
- *   - the words: every line in evening-lines.js, the pending ones still pending, no spoken line of its own invention;
- *   - beat 37: the hallway; LOOK · photos opens the gallery (5 photos, arrows, an X always there); photo #4 hangs
- *     crooked and lifting it shows the crayon drawing, which stays on the wall (ch1Crayon); the X closes it with no
- *     robot; past photo 5 the gallery closes, a robot rolls through, Squatch rolls into the L2 ball and "BEEP BEEP";
- *   - beat 38: the hall: the overheard Moon Pie line (with the ear), the family in the hallway doorway reading, "Quick,
- *     hide."; standing in the open when they look up is the one capture rule; HIDE · counter rolls him up behind the
- *     counter, the family walks round, its picture bubble, the brochure put down, GRAB · brochure, the close-up;
- *   - beat 39: "Are those other Sasquatches?" / Mops's back-to-work line, the home doorway outlined (the goal words
- *     wait while it is), home;
- *   - beat 40: SHOW · brochure, held up, Mops's Mars line; beat 41: SLEEP · bed, the light goes down, Mops tips over and
- *     sleeps on his back with his feet up, the snores, and nobody walks through him;
- *   - beat 42: the night robot's rhythm (R64) and sight; the bin, the paw order close-up (a paw print, not a check; the
- *     yellow torn off), POST · mailbox, the robots wake, the vent takes the pink sheet; a fair way back; seen in the
- *     bay: the robot runs to the bay's FUR alarm, guards, hide, "They lost you."; seen and standing: the LOCKUP card;
- *   - ↺ in every step, the debug link, the music's cues, beat 43 after night one, and the old code is gone.
+ * Beats 37 to 42c, the evening of Day 2 and night one rebuilt from the story pass (src/modules/evening.js), at phone
+ * size. Checked as the player meets them:
+ *   - the words: every story-pass line built word for word and still pending, Brian's Nov 8 lines across their bubbles,
+ *     no bubble too long (line-split.js), the office code;
+ *   - 37: the gallery, holding LIFT · photo swings photo 4 up over the crayon drawing (ME, MOPS) and back; past photo 5
+ *     the robot from the hall's end: rolled up it passes (BEEP BEEP), standing it sees him (the capture rule);
+ *   - 38a: Jupiter's storm, the PA, "Guests! Quick, hide.", the guests seeing a kid who stays out, HIDE · counter, PEEK
+ *     · window, the family's Mars talk, DUCK · down; still up, their cones find his eyes;
+ *   - 38b and 39: the pancake talk, the close-up, the brochure in the bin, its five taps and the lines after;
+ *   - 39b: OPEN · box, BITE · cake, "No fizz.", the chart's X, the crate's letters, "MARS!";
+ *   - 40 and 41: the fight, STOMP · to bed, the turned back, lights out with no song, Mops asleep, the idea;
+ *   - 42: the bucket bump, the night rooms, GRAB · copies, PUT BACK · bin and GO BACK, MARK · box, the loud post, the
+ *     crate by the vent, the pink sheet in the vent, home and beat 43; the capture rule in the bay; ↺; the debug link.
  *   node tests/evening.mjs
  */
 import { readFileSync, readdirSync } from "node:fs";
@@ -123,8 +119,17 @@ r = await ev(async () => {
   await new Promise((q) => setTimeout(q, 120));
   const half = b.debug().view.drew.lift;
   window.__run(0.8);
-  await new Promise((q) => setTimeout(q, 120));
-  const up = b.debug().view.drew;
+  // the words drawn while it is up (the gallery's own canvas)
+  const words = [],
+    CP = CanvasRenderingContext2D.prototype,
+    keep = CP.fillText;
+  CP.fillText = function (t) {
+    this.canvas.getAttribute("aria-label") === "photo wall" && words.push(String(t));
+    return keep.apply(this, arguments);
+  };
+  await new Promise((q) => setTimeout(q, 200));
+  CP.fillText = keep;
+  const up = { ...b.debug().view.drew, crayonWords: [...new Set(words)] };
   window.__tapView("photo wall", L, "pointerup");
   window.__run(1.2);
   await new Promise((q) => setTimeout(q, 120));
@@ -133,7 +138,7 @@ r = await ev(async () => {
 g.check("photo #4 hangs crooked, with a corner of crayon paper poking out; LIFT · photo is offered on it", r.seen[2].photo === 4 && r.seen[2].crooked && r.seen[0].crooked === false && !r.before, r.seen);
 g.check("holding LIFT · photo swings the frame up on its nail like a flap (about a second); his crayon drawing is underneath; his thought", r.half > 0.1 && r.half < 0.9 && r.up.lift === 1 && r.up.lifted && r.up.thought && r.after === true, { half: r.half, up: r.up });
 g.check("letting go swings the frame back down", r.back.lift === 0, r.back);
-g.check("the drawing's labels are two crayon tags, ME and MOPS, each with an arrow (no GANITOR on it)", EVENING_LINES.find((l) => l.id === "sign-me").text === "ME" && EVENING_LINES.find((l) => l.id === "sign-mops").text === "MOPS" && !readFileSync(join(root, "src/modules/evening-art.js"), "utf8").includes("crayonGanitorLabel"));
+g.check("the drawing's labels are two crayon tags, ME and MOPS (no GANITOR on the drawing: only the plaque says it)", r.up.crayonWords && r.up.crayonWords.includes("ME") && r.up.crayonWords.includes("MOPS") && !r.up.crayonWords.some((w) => /GANITOR/.test(w) && !/MOPS, GANITOR/.test(w)), r.up.crayonWords);
 r = await ev(() => {
   const b = window.SSQ.beat("ch1-evening");
   window.__tapView("photo wall", b.viewTargets().close);
@@ -261,7 +266,16 @@ r = await ev(async () => {
     b = window.SSQ.beat("ch1-evening");
   const pressed = window.__press("GRAB · brochure");
   window.__run(1);
-  await new Promise((q) => setTimeout(q, 150));
+  // the words the brochure close-up draws before anything is tapped (its picture only: no thought yet)
+  const bw = [],
+    CP = CanvasRenderingContext2D.prototype,
+    keep = CP.fillText;
+  CP.fillText = function (t) {
+    this.canvas.getAttribute("aria-label") === "brochure" && bw.push(String(t));
+    return keep.apply(this, arguments);
+  };
+  await new Promise((q) => setTimeout(q, 200));
+  CP.fillText = keep;
   const t = b.viewTargets(),
     thoughts = [];
   for (const part of ["window", "pancakes", "cake", "paw"]) {
@@ -272,11 +286,11 @@ r = await ev(async () => {
   const words = [];
   window.__tapView("brochure", t.parts.cooks);
   window.__run(30, () => window.__st() === "gohome" && n.ctrl, () => n.cur && n.cur.b && words[words.length - 1] !== n.cur.b.text && words.push(n.cur.b.text));
-  return { pressed, thoughts, words, step: window.__st(), open: b.viewOpen() };
+  return { pressed, thoughts, words, step: window.__st(), open: b.viewOpen(), brochureWords: [...new Set(bw)] };
 });
 g.check("GRAB · brochure opens its close-up; tapping the window, the pancakes, the cake and the paw print: \"Mars.\", \"Yum.\", \"It FIZZES.\", the Guardians' mark beside it", r.pressed && r.thoughts.join("|") === "Mars.|Yum.|It FIZZES.|Like the Guardians' mark. Almost. +mark", r);
 g.check("tapping the two cooks: \"They look just like the Guardians.\" ... \"Are those other Sasquatches?\", then Mops: back to work, tonight", r.words.join("|") === "They look just like the Guardians.|But they're not hidden.|Just like me.|Are those other Sasquatches?|I have to get back to work.|We'll talk tonight." && r.step === "gohome" && r.open === "", r);
-g.check("the brochure has no words but MARS CAKES on the cake box in its picture", EVENING_LINES.filter((l) => l.who === "sign" && /MARS CAKES/.test(l.text)).length === 1 && readFileSync(join(root, "src/modules/evening-pictures.js"), "utf8").includes("drawFatLetters(ctx, MARS_CAKES"));
+g.check("the brochure has no words but MARS CAKES on the cake box in its picture", r.brochureWords.length === 1 && r.brochureWords[0] === "MARS CAKES", r.brochureWords);
 r = await ev(() => {
   const n = window.__ss.op;
   window.__ss.drawFrame();
@@ -584,7 +598,7 @@ const reg = await ev(() => {
 });
 g.check("a robot's cone that stops short of him does not see him; on him it registers for half a second (a \"?\") before the alarm", !reg.short && reg.on && !reg.alarmAt03 && reg.questionDrawn && reg.alarmAt06, reg);
 g.check("seen in the bay: the robot shows \"!\" and runs to the FUR alarm on the bay's wall; guards come", r.alarm && r.by === "night-robot" && r.place === "bay" && r.ran && r.guards.length === 2 && r.guards.every((q) => q === "hangar"), r);
-g.check("during the alarm every hiding place is offered (the plant, the ball)", r.offers.includes("ROLL · ball") && r.offers.includes("HIDE · plant"), r);
+g.check("during the alarm the real hiding places are offered (the plant, the crate by the vent), not the ball (a ball never fools a search)", !r.offers.includes("ROLL · ball") && r.offers.includes("HIDE · plant") && r.offers.includes("HIDE · crate"), r);
 // again, and this time he hides in the plant as soon as the robot shouts
 r = await ev(() => {
   const n = window.__ss.op,

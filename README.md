@@ -4,21 +4,21 @@
 | Lines | Heading |
 | --- | --- |
 | 23–32 | # Space Snack Quest |
-| 33–137 | ## Chapter 1 redesign (on main) |
-| 138–152 | ## Music credits |
-| 153–183 | ## Source and build |
-| 184–194 | ## Debug link |
-| 195–200 | ## Automatic checks |
-| 201–204 | ## Screen fit |
-| 205–228 | ## Brian's repeat complaints, as tests (2026-11-22) |
-| 229–234 | ## Scene 1 morning |
-| 235–238 | ## Chapter 1 kid robot |
-| 239–255 | ## Phase 1: kitchen and diner clarity |
-| 256–268 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
-| 269–282 | ## Phase 3: one capture rule, phone HUD, tap to walk |
-| 283–292 | ## Chapter 1 pass: the night out has a purpose, switches say why |
-| 293–310 | ## Progression tests |
-| 311–337 | ## Left as they were |
+| 33–139 | ## Chapter 1 redesign (on main) |
+| 140–154 | ## Music credits |
+| 155–185 | ## Source and build |
+| 186–196 | ## Debug link |
+| 197–202 | ## Automatic checks |
+| 203–206 | ## Screen fit |
+| 207–230 | ## Brian's repeat complaints, as tests (2026-11-22) |
+| 231–236 | ## Scene 1 morning |
+| 237–240 | ## Chapter 1 kid robot |
+| 241–257 | ## Phase 1: kitchen and diner clarity |
+| 258–270 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
+| 271–284 | ## Phase 3: one capture rule, phone HUD, tap to walk |
+| 285–294 | ## Chapter 1 pass: the night out has a purpose, switches say why |
+| 295–312 | ## Progression tests |
+| 313–339 | ## Left as they were |
 <!-- /section-index -->
 # Space Snack Quest
 
@@ -31,6 +31,8 @@ Calendar review status (2026-11-16): Brian said yes to merge the calendar (Nov 1
 **Next up (Brian, 2026-11-16):** Chapter 1, one beat at a time in [`docs/CH1-STORY-WALKTHROUGH.md`](docs/CH1-STORY-WALKTHROUGH.md). Do not leave beat 1 until Brian says it is right. Squatch walks around the bed and the bucket, and the Guardian box is in the closet on day 1 (locked home room v5; Brian's yes, Nov 16, 12:50 PM PT). On day 2 he takes the box out at the closet (`tests/bedroom-walk.mjs`). The calendar is tappable. Printed copy: MOONMUNCH / FUZZUARY; Sponsored by MOON PIES; Sock hunt; family Olympics night; Wash outside windows (remember space suit!); Blanket fort night. These are decoration, not new quests. X or NEXT returns to the same scene (`tests/calendar-closeup.mjs`). Closet, bed, desk homework and the already-bitten calendar are built on branch `feat/home-alone` (draft, see below); the purple bed bar is removed there too; still to build: the bucket. The night vent step no longer finishes inside Mops: the morning hum was leaving him marked as walking. Docs match main: yes.
 
 ## Chapter 1 redesign (on main)
+
+2026-11-26 (night), the same draft pull request #94 on `feat/ch1-evening`, beats 37 to 42c rebuilt from the story pass (Brian: "Go! Go as far as you can without me."); not merged. 37: holding LIFT · photo swings photo 4 up like a flap over Squatch's crayon drawing (ME and MOPS, each with an arrow); past photo 5 a robot comes in from the hall's end, ROLL · ball or be seen. 38a: Jupiter's big red storm rolls past the big window, the PA calls the guests, HIDE · counter (the ball), PEEK · window and DUCK · down while the family remembers Mars. 38b: the pancake talk in Brian's Nov 8 words, a close-up of Mops and Squatch at "Sasquatches", the coffee and the toss into the bin. 39: the brochure close-up (only MARS CAKES on a cake box) with five things to tap. 39b: home alone, the Guardians' box, "No fizz.", X · chart, HOLD UP · brochure along his crate's faded "_ARS CAKES": "MARS!" 40: the fight (ASK · again or STOMP · to bed, the turned back). 41: no song, the idea in pictures. 42: a bump on Mops's bucket, the choice (MARK · box, or PUT BACK · bin for the happily-ish ending and GO BACK), the loud post, the alarm, the crate by the vent that takes the pink sheet. Every new line is pending. Shared: `src/modules/stars-cakes.js` (the names and the crate stamp), `thought-place.js` and `line-split.js` (copied from `feat/ch1-escape`). Checked by `tests/evening.mjs`, `tests/evening-physics.mjs` and `tests/ch1-playthrough.mjs`.
 
 2026-11-26 (later), the same draft pull request #94 on `feat/ch1-evening`, Brian's video notes on beats 37 to 42 (physics and look only; the story, lines and scene order are unchanged while a writer reworks 37 to 52). Every room has a night look, one rule in `src/modules/night-look.js` (the bay's locked night picture; home, the hall and the hallway under a dim blue tint with the hall's window and FUR lamp kept lit, characters drawn lit). Robots always show cones, roll through open floor and round doorways; scripted walks go round furniture and people (Squatch no longer walks over the sleeping Mops); Mops sleeps on his back with a shadow, his head on his bucket, feet up; the wall vent swirls while it sucks and the floor vent takes fur at night; a robot's or bay guard's cone must hold him about half a second, with a "?", before it reacts; bubbles over about 12 words are split. Checked by `tests/evening-physics.mjs`.
 

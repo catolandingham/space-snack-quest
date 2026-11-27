@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–23 | # Master backlog |
-| 24–185 | ## Where main is (Chapter 1 redesign) |
-| 186–200 | ## Register |
-| 201–222 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 223–243 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 244–256 | ## Phase 2 (plan section 4, T13 to T18) |
-| 257–279 | ## Phase 1 (plan section 3, T5 to T12) |
-| 280–293 | ## SS40–SS44 |
-| 294–311 | ## Story rows |
-| 312–330 | ## Reset section |
-| 331–341 | ## Still open |
-| 342–345 | ## Chapter 1 replot, recorded and not built |
-| 346–503 | ## Changelog |
+| 24–186 | ## Where main is (Chapter 1 redesign) |
+| 187–201 | ## Register |
+| 202–223 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 224–244 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 245–257 | ## Phase 2 (plan section 4, T13 to T18) |
+| 258–280 | ## Phase 1 (plan section 3, T5 to T12) |
+| 281–294 | ## SS40–SS44 |
+| 295–312 | ## Story rows |
+| 313–331 | ## Reset section |
+| 332–342 | ## Still open |
+| 343–346 | ## Chapter 1 replot, recorded and not built |
+| 347–504 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -23,6 +23,7 @@
 
 ## Where main is (Chapter 1 redesign)
 
+2026-11-26 (night), draft PR #94 on `feat/ch1-evening`: beats 37 to 42c rebuilt from the story pass (storm, peek and duck, the pancake talk, the brochure's taps, home alone with the chart and the crate's MARS, the fight, the idea, the choice with the happily-ish ending, the loud post and the crate by the vent). Open: Brian's yes on every pending line and on the placeholder pictures (the storm, the chart, the crate stamp over the locked crate, the bay crate, the years-later picture); the party hall's night vent (on, placeholder); beat 36b (the three robots cleaning the hall) is not in this branch, so the hall has no robots before the storm; `feat/ch1-escape`'s `night-look.js` has a different shape from this branch's (a merge to settle).
 2026-11-26 (later), draft PR #94 on `feat/ch1-evening`: Brian's video notes on 37 to 42 built (night look for every room in `src/modules/night-look.js`, robot cones and routes, walks round solids and people, Mops asleep on his bucket, vents, cones that must hold half a second, split bubbles), tested in `tests/evening-physics.mjs`. Open: the party night and escape night rooms should draw through `night-look.js` too; the tint's strength and the lit boxes are a PLACEHOLDER for Brian; the bay plant by the door is in the locked picture (Brian to decide).
 2026-11-26, draft PR on `feat/ch1-evening` (stacked on `feat/ch1-lunch-sneak`), not merged. Done: beats 37 to 42 as a module (`ch1-evening`): the Employee of the Month gallery (5 photos, crooked #4 and the crayon drawing, the robot and BEEP BEEP), the snack bar (the Moon Pie line, the family, HIDE · counter, the brochure close-up), the walk home, the Mars talk (SHOW · brochure), lights out (Mops asleep the fainting-goat way), night one (the bay at night on R64, the paw-order close-up, the mailbox, the robots wake, the vent takes the pink sheet, home to bed); the one capture rule in the bay (`party-alarm.js` alarm places); the old Day 2 code for these beats deleted. Hand-over from beat 36: `ch1BayLines` ends with `window.SSQ.beat("ch1-evening").start()` (the loading-bay branch replaces that function: call `start()` when Mops and Squatch walk into the hallway from the bay). Hand-over to beat 43: the older program's `ch1SixDays` (the engine's `sixDays`), with the night's record set (`ch1Paw`, `ch1Mailed`, `ch1PinkSucked`, `ch1Brochure`, `ch1Lights`, the papers' log "paws" then "vent").
 - Needs Brian's yes (words, in `src/modules/evening-lines.js`): pending "I swear we had more Moon Pies... is that what they stole at lunch?", "Quick, hide.", "Are those other Sasquatches?", "I need to get back to work, we'll talk about it tonight.", Mops's Mars line, "Mail scanned. Pawature accepted.", ORDER MORE ROBOTS, GRAB · copies, MARK · order; new (suggested) HIDE · counter, SHOW · brochure, "Squatch: show Mops the brochure".
