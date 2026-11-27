@@ -59,7 +59,7 @@ import { findPath } from "./tap-path.js";
 import { drawRobot, robotHand, drawFormSet, drawStuck, drawBiteCrumbs, drawFormCloseUp, closeUpBox, drawCloseUpBack, drawCloseUpFront, drawWave, drawDashedOutline, drawBayCrate, drawCargo, drawTag, drawTaggedBox, drawTagCloseUp, drawDoorShadow, drawTool, drawFuzzyHat, drawScannerStop, drawScannerPass, drawMailBeside, drawLetter, drawSlotLight, drawSweat, drawOfficeOpen, drawStreak } from "./loading-bay-art.js";
 import { drawSpeakerRing, drawHeartCone } from "./party-free-art.js";
 import { HALL, HALL_PICTURE, HALL_SPEAKER } from "./party-hall.js";
-import { COUNTER_SPOTS, LUNCH_SOLIDS, LUNCH_BOUNDS, LUNCH_PLACES } from "./lunch-sneak-place.js";
+import { COUNTER_SPOTS, LUNCH_SOLIDS, LUNCH_BOUNDS, LUNCH_PLACES, AISLE } from "./lunch-sneak-place.js";
 import { coneFrom, drawCones, distToCone, SQUATCH_OUTLINE, SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
 import { startAlarm, tickAlarm, guardCones, addAlarmPlace, ALARM, GUARD_FEET } from "./party-alarm.js";
 import { drawHall } from "./party-draw.js";
@@ -156,7 +156,7 @@ export function createLoadingBay(bridge) {
     e.still("mops");
     e.chipNow();
   };
-  const CHIPS = { hallway: "chip-follow", cargo: "chip-cargo", sneak: "chip-plant", peek: "chip-peek", take: "chip-take", eat: "chip-eat", talkto: "chip-talk", spit: "chip-spit", box: "chip-box", give: "chip-give", home: "chip-home", walkby: "chip-home", hall: "chip-hall" };
+  const CHIPS = { counter: "chip-follow", hallway: "chip-follow", cargo: "chip-cargo", sneak: "chip-plant", peek: "chip-peek", take: "chip-take", eat: "chip-eat", talkto: "chip-talk", spit: "chip-spit", box: "chip-box", give: "chip-give", home: "chip-home", walkby: "chip-home", hall: "chip-hall" };
   /** Control at one of the player's steps. */
   function control(step) {
     const e = E();
@@ -286,6 +286,7 @@ export function createLoadingBay(bridge) {
       shimmer: false,
       asMops: false,
       office: 0,
+      officeShut: 0, // (round 7, r5 3:58: the office door slides shut again once the robot is gone, so the hallway's door looks as in every other scene)
       rollBy: -1,
       alarm: null,
       people: {},
@@ -372,17 +373,52 @@ export function createLoadingBay(bridge) {
   }
 
   // ---------- 29: up into the hallway (held), the hallway (walked), into the bay ----------
+  // (round 7, r5 0:20: "The players should have the options to stand up and walk. This shouldn't be a cut scene
+  // because if they get up at the wrong time they could get caught." Mops goes on ahead; then the player has him behind
+  // the counter, ducked, and he stands up and walks out to the hallway doorway himself when he chooses, under the
+  // lunch crowd's own cones and the one capture rule (lunch-sneak.js runs the hall's sight until he is out of it).)
+  const HALL_DOOR = { x: 952, y: 312 };
   function walkToHallway() {
     const e = E();
     busy();
     go("walk");
-    e.set("sqPose", "stand");
     e.walkOff();
-    const door = { x: 952, y: 312 };
+    e.queue([engineWay("mops", [COUNTER_SPOTS.top, HALL_DOOR], P.walk), e.run(() => e.set("moPose", "hidden")), e.run(atCounter)]);
+  }
+  /** The counter step: ducked behind the counter (the lunch's own ducked pose), the hallway doorway outlined. */
+  function atCounter() {
+    const e = E(),
+      lu = e.get("ch1Lunch");
+    lu && (lu.pose = "ducked");
+    e.set("sqPose", "stand");
+    control("counter");
+  }
+  // the lunch's sight is on in the hall until he walks out (its alarm, its hiding: ducked in the counter's aisle)
+  const lunchNow = () => {
+    const lu = E().get("ch1Lunch");
+    return lu && lu.step === "handoff" ? lu : null;
+  };
+  const inCounterAisle = (p) => p.x > AISLE.x0 && p.x < AISLE.x1 && p.y > AISLE.y0 && p.y < AISLE.y1 + 8;
+  function counterTick(b, dt, free) {
+    const e = E(),
+      lu = lunchNow(),
+      s = e.pos("sq");
+    if (!lu) return;
+    // back in the aisle he ducks behind the counter again (the lunch stands him up once he is out of it)
+    free && lu.pose === "stand" && inCounterAisle(s) && (lu.pose = "ducked");
+    // after the lunch's alarm (seen, then hidden through the search): the goal is the doorway again
+    const follow = bayWords("chip-follow");
+    if (!lu.alarm && free && e.get("ch1Chip") !== follow) (e.set("ch1Chip", follow), e.chipNow());
+    const O = LUNCH_PLACES.door.opening;
+    if (free && !lu.alarm && s.x >= O.x0 && s.x <= O.x1 && s.y >= O.y0 && s.y <= O.y1) throughHallDoor();
+  }
+  function throughHallDoor() {
+    const e = E();
+    busy();
+    go("walk");
+    e.walkOff();
     e.queue([
-      engineWay("mops", [COUNTER_SPOTS.top, door], P.walk),
-      e.run(() => e.set("moPose", "hidden")),
-      engineWay("sq", [COUNTER_SPOTS.top, door], P.walk),
+      engineWay("sq", [HALL_DOOR], P.walk),
       e.run(() => {
         e.enterRoom("passage", "QB");
         e.set("moPose", "stand");
@@ -802,6 +838,7 @@ export function createLoadingBay(bridge) {
         e.face("mops", -1);
         const b = B();
         b.office = 0;
+        b.officeShut = 0;
         b.rollBy = -1;
         // Robot 1 is in the office, cleaning it, with the door shut
         Object.assign(robot(0), { x: HALLWAY.robotOut.x, y: HALLWAY.officeDoor.y0 + 30, show: false, room: "passage", f: 2 });
@@ -1061,11 +1098,16 @@ export function createLoadingBay(bridge) {
     // moving takes him out of the ball (as the lunch's ROLL · ball)
     if (free && b.ball && e.steering() && b.step !== "cargo") ((b.ball = false), e.set("sqPose", "stand"));
     // the player's steps
+    if (b.step === "counter" && room() === "hall") counterTick(b, dt, free);
     if (free && b.step === "hallway") hallwayTick(b, s);
     if (free && b.step === "home" && room() === "hangar" && s.x < BAY.door.x + 26 && Math.abs(s.y - BAY.door.y) < 40) intoHallway();
     // Mops follows him (the walk home, the hall)
     if (["home", "walkby", "hall"].includes(b.step) && !b.alarm && free) followSquatch(dt);
     if (b.step === "walkby" && room() === "passage") walkbyTick(b, s, dt, free);
+    // (round 7, r5 3:58: "a different hallway door in the scene than in any other scene": once the robot has rolled
+    // off, the office door slides shut again, the hallway's own grey door as everywhere else)
+    if ((b.step === "walkby" || b.step === "after") && room() === "passage" && b.office >= 1 && !robot(0).show && b.rollBy < 0 && b.officeShut < 1)
+      (b.officeShut === 0 && sound.morning("door"), (b.officeShut = Math.min(1, b.officeShut + dt / P.doorOpen)));
     if (b.step === "hall" && room() === "hall") hallTick(b, s, dt, free);
     if (b.step === "hallout" && room() === "hall") hallOutTick(b, dt);
     // the sneak: one robot rolls to and fro across the floor, looking the way it goes
@@ -1199,6 +1241,7 @@ export function createLoadingBay(bridge) {
     // places walked into, no button (as the lunch's doorway): the hallway's far doorway, the bay's doorway home, along
     // the hallway home (past the office door, then its far end), the snack counter in the party hall
     const walkTo = (id, x, y, r) => ({ id, verb: "", cap: "", who: "sq", x, y, r });
+    if (b.step === "counter" && room() === "hall" && lunchNow() && !lunchNow().alarm) return [walkTo("bay-hall-door", LUNCH_PLACES.door.walkTo.x, LUNCH_PLACES.door.walkTo.y, 24)];
     if (b.step === "hallway" && room() === "passage") return [walkTo("bay-door", HALLWAY.exitRight + 12, HALLWAY.right.y, 24)];
     if (b.step === "home" && room() === "hangar") return [walkTo("bay-home", BAY.door.x + 18, BAY.door.y, 24)];
     if (b.step === "walkby" && room() === "passage" && b.office === 0) return [walkTo("bay-walk", HALLWAY.trigger - 40, HALLWAY.right.y + 30, 24)];
@@ -1216,6 +1259,7 @@ export function createLoadingBay(bridge) {
     // the camera glows while Isfred talks about it (rule 4; round 7, q: 123)
     if (b.camGlow && room() === "hangar") return CAMERA_BOX;
     if (!e.get("ctrl") || b.alarm || e.current()) return null;
+    if (b.step === "counter" && room() === "hall") return lunchNow() && !lunchNow().alarm ? LUNCH_PLACES.door.box : null;
     if (b.step === "hallway" && room() === "passage") return { x0: 912, x1: 948, y0: 266, y1: 354 };
     if (b.step === "cargo" && room() === "hangar") return BAY.cargo.box;
     if ((b.step === "talkto" || b.step === "give") && room() === "hangar") return { x0: BAY.plant.leaves.x0, x1: BAY.plant.leaves.x1, y0: BAY.plant.leaves.y0, y1: 372 };
@@ -1540,10 +1584,15 @@ export function createLoadingBay(bridge) {
       drawSpeakerRing(ctx, HALL_SPEAKER, t);
       drew = { step: b.step, ring: "hall" };
     }
+    if (room() === "hall" && b.step === "counter") {
+      const hl = highlightNow(b);
+      hl && drawDashedOutline(ctx, hl, t);
+      drew = { step: b.step, room: "hall", outline: hl };
+    }
     if (room() === "passage") {
       const hl = highlightNow(b);
       hl && drawDashedOutline(ctx, hl, t);
-      b.office > 0 && drawOfficeOpen(ctx, HALLWAY.officeDoor, b.office);
+      b.office > 0 && b.officeShut < 1 && drawOfficeOpen(ctx, HALLWAY.officeDoor, b.office * (1 - b.officeShut));
       const k = ROBOT_K("passage"),
         robots = b.robots.filter((r) => r.show && r.room === "passage");
       const cones = drawAllCones(ctx, b, t);
@@ -1552,7 +1601,7 @@ export function createLoadingBay(bridge) {
       if (b.alarm) for (const g of b.alarm.guards.filter((q) => q.room === "passage")) drawPerson(ctx, g.x, g.y, adultPxFor("passage") * 1.02, LOOKS.guard, Math.cos(g.a) < 0 ? -1 : 1, t);
       drawMarks(ctx, b, t);
       const closeUp = drawHairballCloseUp(ctx, b, t);
-      drew = { step: b.step, room: "passage", office: b.office, rollBy: b.rollBy, closeUp, outline: hl, cones: cones.map((c) => ({ id: c.id, inside: c.inside, show: c.show, hearts: !!c.hearts })), robots: robots.map((r) => ({ x: r.x, y: r.y, f: r.f, k })) };
+      drew = { step: b.step, room: "passage", office: b.office, officeDrawn: b.officeShut < 1 ? b.office * (1 - b.officeShut) : 0, rollBy: b.rollBy, closeUp, outline: hl, cones: cones.map((c) => ({ id: c.id, inside: c.inside, show: c.show, hearts: !!c.hearts })), robots: robots.map((r) => ({ x: r.x, y: r.y, f: r.f, k })) };
     }
   }
   function drawBallAt(ctx, e, r) {
@@ -1613,6 +1662,7 @@ export function createLoadingBay(bridge) {
       const b = live();
       if (!b) return false;
       if (b.step === "pa") return (jump("pa"), true);
+      if (b.step === "counter") return (jump("counter"), true);
       if (b.step === "walk") return (jump("hallway"), true);
       // (the lines after the hairball play in the hallway: ↺ there is the walk home through it again)
       if (b.step === "after") return (jump("walkby"), true);
@@ -1760,9 +1810,9 @@ export function createLoadingBay(bridge) {
     ff = {};
     moFF = {};
     const lu = e.get("ch1Lunch");
-    part !== "pa" && lu && e.set("ch1Lunch", { ...lu, step: "done" });
+    part !== "pa" && part !== "counter" && lu && e.set("ch1Lunch", { ...lu, step: "done" });
     B() && B().asMops && playAs("squatch", "");
-    if (part === "pa") {
+    if (part === "pa" || part === "counter") {
       const lunch = bridge.beat("ch1-lunch");
       if (lunch) {
         lunch.jump("snack");
@@ -1770,7 +1820,12 @@ export function createLoadingBay(bridge) {
       }
       e.set("ctrl", false);
       e.set("ch1Chip", "");
-      return start();
+      if (part === "pa") return start();
+      // (the counter step again: Mops gone on ahead, Squatch ducked at his place behind the counter)
+      e.set("ch1Bay", freshWorld());
+      e.set("moPose", "hidden");
+      e.place("mops", HALL_DOOR.x, HALL_DOOR.y);
+      return atCounter();
     }
     if (part === "hallway") {
       e.set("ch1Bay", freshWorld());

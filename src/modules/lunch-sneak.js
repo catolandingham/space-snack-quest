@@ -502,8 +502,9 @@ export function createLunchSneak(bridge) {
     psound.sting();
     l.seenBy = "";
     l.seenT = 0;
-    // behind the counter he is already hidden: no "hide" goal there
-    chip(l.counter ? "" : "chip-hide");
+    // behind the counter he is already hidden: no "hide" goal there (beat 28's walk out, round 7 r5 0:20: he is standing
+    // when seen, so "hide" it is; loading-bay.js counterTick)
+    chip(l.counter && l.step !== "handoff" ? "" : "chip-hide");
   }
   function alarmApi() {
     const e = E(),
@@ -543,6 +544,8 @@ export function createLunchSneak(bridge) {
       },
       calmDone() {
         const q = L();
+        // (beat 28's walk out behind the counter keeps its own goal: loading-bay.js counterTick)
+        if (q.step === "handoff") return;
         if (q.counter) return chip("chip-snack");
         // hidden through the search in a place further on than he had reached: the glow moves past it
         const k = q.hideAt === "crate" ? 2 : q.hideAt === "plant" ? 1 : 0;

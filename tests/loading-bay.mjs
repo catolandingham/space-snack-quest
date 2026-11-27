@@ -111,6 +111,7 @@ await page.evaluate(
         if (s.robots && s.robots.some((r) => r.carry && r.carry !== "letter")) sample("robotCarries", s.robots.map((r) => r.carry || ""));
         if (s.step === "walkby" && s.office >= 1) sample("officeOpen", { rollBy: s.rollBy });
         if (s.step === "walkby" && s.office > 0 && s.rollBy > 0) sample("robotOut", { f: s.robots[0].f, rollAfterTurn: +(s.rollBy - s.turnAt).toFixed(2) });
+        if (s.step === "after" && n.room === "passage" && s.officeShut >= 1) sample("officeShutAfter", { drawn: window.SSQ.beat("ch1-bay").debug().drew.officeDrawn });
         if (s.hall && s.hall.shookAt) sample("mopsShook", true);
         if (n.cur && n.cur.k === "card") {
           const c = n.cur;
@@ -163,7 +164,11 @@ await page.evaluate(
             }
             return o;
           };
-          if (S === "hallway") ((n.sq.x = 935), (n.sq.y = 332));
+          if (S === "counter") {
+            const L0 = n.ch1Lunch || {};
+            sample("counter", { pose: L0.pose, lunchStep: L0.step, outline: (beat.debug().drew || {}).outline || null, mopsPose: n.moPose, room: n.room });
+            (n.sq.x = 930), (n.sq.y = 318);
+          } else if (S === "hallway") ((n.sq.x = 935), (n.sq.y = 332));
           else if (S === "cargo") press(() => ((n.sq.x = BAY.cargo.ball.x), (n.sq.y = BAY.cargo.ball.y)));
           else if (S === "sneak") press(() => ((n.sq.x = BAY.plant.stand.x), (n.sq.y = BAY.plant.stand.y)));
           else if (S === "peek") press(() => 0);
@@ -199,7 +204,8 @@ const pa = B("pa-ship");
 g.check("28: the station speaker's line sits beside the hall speaker, to its left and level with it, sound waves coming off it", !!pa && !!pa.box && pa.box.x + pa.box.w <= HALL_SPEAKER.x0 && pa.box.y < HALL_SPEAKER.y1 + 20 && pa.ring === "hall", pa);
 const order28 = ["pa-ship", "sq-stars-ship", "sq-new-kind", "sq-crate-kind", "mops-maybe", "mops-see", "sq-come", "mops-once", "mops-hide-when"].map(line);
 g.check("28: then the snack ship's lines, word for word and in order", run.lines.slice(0, order28.length).join(" / ") === order28.join(" / "), run.lines.slice(0, order28.length));
-// 29
+// 29 (round 7, r5 0:20: no scripted stand-up; he stands and walks out himself, under the lunch crowd's cones)
+g.check("29 (round 7, r5 0:20): after the talk Mops goes on ahead and the player has Squatch ducked behind the counter: \"Squatch: follow Mops to the ship\", the hallway doorway outlined, the lunch's sight still on", !!run.steps.counter && run.steps.counter.room === "hall" && run.steps.counter.chip === line("chip-follow") && run.steps.counter.ch1Step === "bay-counter" && !!run.samples.counter && run.samples.counter.pose === "ducked" && run.samples.counter.lunchStep === "handoff" && run.samples.counter.mopsPose === "hidden" && !!run.samples.counter.outline, { step: run.steps.counter, at: run.samples.counter });
 g.check("29: the hallway is the player's: control, \"Squatch: follow Mops to the ship\"", !!run.steps.hallway && run.steps.hallway.room === "passage" && run.steps.hallway.chip === line("chip-follow") && run.steps.hallway.ch1Step === "bay-hallway", run.steps.hallway);
 g.check("29: in the bay, \"Quick! The manager is coming!\" then \"Hide!\", and the goal is the cargo", run.lines.indexOf(line("mops-manager")) >= 0 && run.lines.indexOf(line("mops-hide")) === run.lines.indexOf(line("mops-manager")) + 1 && run.steps.cargo && run.steps.cargo.chip === line("chip-cargo"), run.steps.cargo);
 g.check("29: behind the cargo the button reads ROLL · ball and he is the ball", run.steps.cargo && run.steps.cargo.offers.includes(line("button-ball")) && run.samples["ball-cargo"] !== undefined, run.steps.cargo);
@@ -235,6 +241,7 @@ g.check("35: then the player is Squatch again (a second switch card), going home
 // 36
 g.check("36: the office door opens on the walk home (a robot inside), and ROLL · ball in time is the ball", !!run.samples.officeOpen && run.steps.walkby && run.steps.walkby.offers.includes(line("button-ball")), { open: run.samples.officeOpen, walkby: run.steps.walkby });
 g.check("36 (round 7, r5 3:45, q: 133): the robot comes out looking away (out of the picture) first, so he has a moment to curl up himself; it turns his way after 2 s and then he has 1.5 s more", !!run.samples.robotOut && run.samples.robotOut.f === 0 && run.samples.robotOut.rollAfterTurn === 1.5, run.samples.robotOut);
+g.check("36 (round 7, r5 3:58): once the robot has rolled off, the office door slides shut again, so the hallway's door looks as in every other scene", !!run.samples.officeShutAfter && run.samples.officeShutAfter.drawn === 0, run.samples.officeShutAfter);
 g.check("36: the hairball close-up and its lines, in order", B("robot-what") && B("robot-what").closeUp === "hairball" && run.lines.join("|").includes([line("robot-what"), line("mops-hairball"), line("robot-compute")].join("|")), B("robot-what"));
 g.check("36: then \"We have to watch out for these robots.\", the fur and hair question and \"Paperwork.\"", run.lines.join("|").includes([line("mops-robots"), line("sq-fur"), line("mops-paperwork")].join("|")), run.lines.slice(-6));
 g.check("hall, hallway, bay, hallway, party hall", run.rooms.join(",") === "hall,passage,hangar,passage,hall", run.rooms);
@@ -303,6 +310,37 @@ const slow = await page.evaluate(() => {
   return { card, alarm };
 });
 g.check("36: too slow to roll, the robot sees fur: the alarm and the one capture rule (the lockup names a robot in the hallway)", slow.alarm && !!slow.card && /LOCKUP/.test(slow.card) && /A robot/.test(slow.card) && /hallway/.test(slow.card), slow);
+
+// ---------- 29 (round 7, r5 0:20): at the counter, standing up in someone's sight is the one capture rule ----------
+const counter = await page.evaluate(() => {
+  const ss = window.__ss,
+    n = ss.op,
+    beat = window.SSQ.beat("ch1-bay"),
+    lunch = window.SSQ.beat("ch1-lunch");
+  n.q = [];
+  n.cur = null;
+  beat.jump("counter");
+  const out = { step: beat.debug().state.step, pose: n.ch1Lunch.pose, ctrl: n.ctrl };
+  // ducked in the counter's aisle: hidden, whatever the crowd looks at, for 8 s
+  for (let i = 0; i < 160; i++) (ss.tick(0.05), ss.drawFrame());
+  out.ducked = { alarm: !!n.ch1Lunch.alarm, step: beat.debug().state.step };
+  // stood up out of the aisle inside a watcher's cone: "?", then the alarm
+  const c = lunch.debug().cones.find((q) => q.len > 60);
+  n.sq.x = c.ox + Math.cos(c.a) * c.len * 0.5;
+  n.sq.y = c.oy + Math.sin(c.a) * c.len * 0.5;
+  for (let i = 0; i < 40 && !n.ch1Lunch.alarm; i++) {
+    const cc = lunch.debug().cones.find((q) => q.id === c.id);
+    (n.sq.x = cc.ox + Math.cos(cc.a) * cc.len * 0.5), (n.sq.y = cc.oy + Math.sin(cc.a) * cc.len * 0.5);
+    ss.tick(0.05);
+    ss.drawFrame();
+  }
+  out.seen = { alarm: !!n.ch1Lunch.alarm, chip: ss.chipNow() };
+  // ↺ there: the counter step again, ducked, no alarm
+  beat.restart();
+  out.again = { step: beat.debug().state.step, pose: n.ch1Lunch.pose, alarm: !!n.ch1Lunch.alarm, room: n.room };
+  return out;
+});
+g.check("29 (round 7, r5 0:20): ducked in the counter's aisle no one sees him; stood up in a watcher's cone the lunch's alarm starts (\"Squatch: hide\"); ↺ puts him back behind the counter", counter.step === "counter" && counter.pose === "ducked" && !counter.ducked.alarm && counter.ducked.step === "counter" && counter.seen.alarm && /hide/.test(counter.seen.chip) && counter.again.step === "counter" && counter.again.pose === "ducked" && !counter.again.alarm && counter.again.room === "hall", counter);
 
 // ---------- robots always show their cones, however far he is ----------
 const robotCones = await page.evaluate(() => {

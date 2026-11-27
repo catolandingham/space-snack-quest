@@ -216,7 +216,7 @@ export const ESCAPE_LINES = Object.freeze(
     pend("sq-going", "sq", "We're really going.", 51, "NEW"),
     pend("mops-going", "mops", "We're really going.", 51, "NEW, hearts"),
     // ---- 52: all the snacks, and one secret ----
-    r7("chip-bar", "chip", "Squatch: go home", "r5 15:47, CHANGED from \"Squatch: go to the snack bar\" (the snack bar is on the way)", 133),
+    r7("chip-bar", "chip", "Squatch: go home", "r5 15:47, CHANGED from the old goal words, go to the snack bar (the snack bar is on the way)", 133),
     r7("mops-long", "mops", "Wait. It's a long way to Mars.", "r5 15:47, CHANGED: said passing the bar (replaces \"We take one so nobody notices.\" / \"But it's a long way to Mars.\")", 124),
     kept("mops-all", "mops", "This time, take all the snacks you want.", "pending", ES_WALK + "52; story pass 2026-11-26 (KEEP)"),
     kept("chip-snacks", "chip", "Squatch: take the snacks", "in-game", ES_OLD),

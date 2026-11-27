@@ -9,7 +9,7 @@
 /** The parts of the bay that play by themselves (each can be jumped to, and ↺ restarts the one he is in). */
 export const BAY_PARTS = Object.freeze(["arrive", "robots", "talk", "promise", "form", "back", "orders", "after"]);
 /** The steps the player controls (ch1Step "bay-<step>"), in order. */
-export const BAY_STEPS = Object.freeze(["hallway", "cargo", "sneak", "peek", "take", "eat", "talkto", "spit", "box", "give", "home", "walkby", "hall"]);
+export const BAY_STEPS = Object.freeze(["counter", "hallway", "cargo", "sneak", "peek", "take", "eat", "talkto", "spit", "box", "give", "home", "walkby", "hall"]);
 
 /** The locked pictures this beat paints (the older program's names for them: 12-ch1-redesign.js ch1DeliveryArt). */
 export const BAY_PICTURES = Object.freeze({ noship: "delivery-noship", day: "delivery-day" });
