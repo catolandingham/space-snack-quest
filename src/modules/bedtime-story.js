@@ -1,5 +1,5 @@
 /**
- * Beat 21, the bedtime story: why Moon Pies (docs/CH1-STORY-WALKTHROUGH.md, "21. Bedtime story"). It replaces the
+ * Beat 21, the bedtime story: why he loves the station's snack (docs/CH1-STORY-WALKTHROUGH.md, "21. Bedtime story"). It replaces the
  * caption box the game showed at bedtime ("ch1moon"). After the TV story, at home:
  *   1. Squatch walks to his crate bed and climbs in; Mops comes over beside it (wordless, each part 2 to 4 seconds,
  *      Brian 30a). Then Squatch asks, in one bubble over him: "Tell me about when we first met?" (waits for NEXT;

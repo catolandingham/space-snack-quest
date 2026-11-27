@@ -1,5 +1,7 @@
 # Promised or claimed, but not delivered
 
+> **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
+
 Things a bot (Squatchbot, Grok Bot, G Bot, or the coding agents they ran) promised or said were done, followed by evidence that they were not. Only items with later evidence are listed. Each line: the claim → what showed it was not true. Tags: `[G#]` G Bot, `[S#]` Squatchbot, `[K#]` Grok Bot. Quotes are word for word (one family name replaced with [name removed]; one line about account usage left out) and were checked by script against the message each tag names. Drafted 2026-11-22. **Brian: strike anything that was in fact delivered.**
 
 The pattern, in short: rooms and characters were called matching or locked and then were not; "all tests pass" was said many times right before you found the game broken; rules, drift checks and "I read the docs" were promised and then broken in the next build. This is why every change from now on needs a test that plays the game, a screenshot you can open, and the words "not yet played by a person" until you play it.

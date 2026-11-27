@@ -31,6 +31,8 @@ import { drawBubbleTail } from "./bubble-tail.js";
 import { createSpeechVoice } from "./speech-voice.js";
 import { drawCreditsButton, creditsTap, creditsShown } from "./credits.js";
 import { nightPicture, isNightNow, nightDrawn } from "./night-look.js";
+import { snackWord } from "./snack-name.js";
+import { drawStationStamp, crateStampDrawn } from "./crate-stamp.js";
 
 /**
  * The game-state fields a rebuilt beat may write, through engine().set(field, value). Anything else it
@@ -207,6 +209,21 @@ export function createBridge() {
       return !!engine && isNightNow(engine.get);
     },
     nightDrawn,
+    /**
+     * The station's snack, named in one place (snack-name.js; Brian 2026-11-26, question 86): snack("name") for
+     * sentence text, "one" for one of them, "NAME" and "ONE" in capitals. The older program guards each use and shows
+     * a plain word ("snacks") if the module script ever fails.
+     */
+    snack: snackWord,
+    /**
+     * The station's stamp on a crate the older program draws (its crate, the old calendar): a blue star and the snack's
+     * name in thin blue letters, centred at (x, y), `s` times its size. See crate-stamp.js.
+     */
+    drawSnackStamp(ctx, x, y, s) {
+      return drawStationStamp(ctx, x, y, s);
+    },
+    /** Tests: the crate bed's stamp layer over the home pictures (its parts, and how often it was handed out). */
+    crateStampDrawn,
     /** Register a rebuilt beat. Ids are unique; registering one twice is a mistake, so it throws. */
     registerBeat(id, beat) {
       if (typeof id !== "string" || !id) throw new Error("registerBeat needs an id");

@@ -3,25 +3,32 @@
 
 | Lines | Heading |
 | --- | --- |
-| 20–23 | # Master backlog |
-| 24–144 | ## Where main is (Chapter 1 redesign) |
-| 145–159 | ## Register |
-| 160–181 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 182–202 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 203–215 | ## Phase 2 (plan section 4, T13 to T18) |
-| 216–238 | ## Phase 1 (plan section 3, T5 to T12) |
-| 239–252 | ## SS40–SS44 |
-| 253–270 | ## Story rows |
-| 271–289 | ## Reset section |
-| 290–300 | ## Still open |
-| 301–304 | ## Chapter 1 replot, recorded and not built |
-| 305–462 | ## Changelog |
+| 20–26 | # Master backlog |
+| 27–151 | ## Where main is (Chapter 1 redesign) |
+| 152–166 | ## Register |
+| 167–188 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 189–209 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 210–222 | ## Phase 2 (plan section 4, T13 to T18) |
+| 223–245 | ## Phase 1 (plan section 3, T5 to T12) |
+| 246–259 | ## SS40–SS44 |
+| 260–277 | ## Story rows |
+| 278–296 | ## Reset section |
+| 297–307 | ## Still open |
+| 308–311 | ## Chapter 1 replot, recorded and not built |
+| 312–469 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
+
+> **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
+
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-26 (late night, bedtime), draft PR #89: the rename reaches the bedtime story (the crate caption, Mops's line, the story crate's worn family stamp with no crayon). Waiting on Brian: Mops's line's new words. Docs match main: yes.
+
+2026-11-26 (late night), draft PR #87: the snack is Stars Cakes everywhere (Brian, question 86; `snack-name.js`, `crate-stamp.js`, `tests/snack-name.mjs`; DECISIONS "The snack renamed, and the crate bed's stamp (question 86)"). Waiting on Brian: the bedtime line's new words; the crate bed's stamp layer over the locked home pictures (his yes); the crayon "ST". Not yet played by a person. Docs match main: yes.
 
 2026-11-26 (night, bedtime), draft PR #89: the night look is merged in and used by the bedtime story (the crate's front wall and Mops's mop bucket at night; lights out dims on top). Open for Brian: lights out over the night look is darker than before (a placeholder; `BEDTIME_NIGHT.dim` could come down). Docs match main: yes.
 
@@ -72,7 +79,7 @@
 
 2026-11-25 (evening), draft PR #87, not merged. Done: Brian's twelve showing-5 decisions and his two code rules (README, "Chapter 1 redesign", the 2026-11-25 evening paragraph). Open for Brian:
 - Pick the FUR alarm: `tools/alarm-choices.html` (five made-up sounds). The game's alarm is unchanged until he picks.
-- The Moon Pie bedtime story (beat 21, `docs/CHAPTER-1-PROBLEMS.md` 18): built on branch `feat/ch1-bedtime-story` (see the 2026-11-25 night entry above), waiting for his yes.
+- The bedtime crate story (beat 21, `docs/CHAPTER-1-PROBLEMS.md` 18): built on branch `feat/ch1-bedtime-story` (see the 2026-11-25 night entry above), waiting for his yes.
 - New drawings waiting for his eye: the TOURS ship in the TV story, the gap glow in the photo row, the dance spot's outline, the small filling "?", the hat tipping in the octopus's hug, the flyer's corner under the bed.
 - The octopus vent trick (his arms sucked into the vent) only if the chase still feels short in the new video.
 

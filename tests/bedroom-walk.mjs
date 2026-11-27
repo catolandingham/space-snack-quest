@@ -1,5 +1,5 @@
 /**
- * Beat 1 bedroom: Squatch walks smoothly around the Moon Pie crate bed, and the Guardian Box
+ * Beat 1 bedroom: Squatch walks smoothly around his crate bed, and the Guardian Box
  * is in the closet until Day 2 (Brian, 2026-11-16).
  *   node tests/bedroom-walk.mjs
  */

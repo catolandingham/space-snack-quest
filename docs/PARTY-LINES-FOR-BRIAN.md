@@ -1,5 +1,7 @@
 # Party night: every line, for Brian's yes
 
+> **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
+
 The party night (Chapter 1, the eight party scenes P1 to P8: peek, sneak to the plant, the welcome and the band, sneak home, dress-up, the party in disguise, the FUR alarm and the run home, and the endings), built on branch `feat/party-rebuild`.
 Every word the party shows is here, numbered in the order a player meets it, with where it appears, which half it is built in, and whether you have said yes.
 The game reads the same words from `src/modules/party-lines.js`; `tests/party-lines.mjs` fails if the two ever differ, or if the party code types a word of its own.

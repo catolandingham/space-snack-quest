@@ -12,6 +12,8 @@
  * The calendar's words ("LOOK · calendar" and the close-up) are the older program's, unchanged; the
  * "That evening…" card is the morning's (morning-lines.js). There is no "tap ▸" cue (Brian 18a): NEXT only.
  */
+import { SNACK } from "./snack-name.js";
+
 export const HOME_ALONE_LINES = Object.freeze([
   { id: "chip-homework", who: "chip", text: "Squatch: do your homework", status: "approved", source: "Brian 2026-11-23: 6A" },
   { id: "button-homework", who: "button", text: "DO · homework", status: "approved", source: "Brian Nov 16, 4:05 PM PT (CH1-LINES-FOR-BRIAN.md, Homework desk)" },
@@ -22,7 +24,7 @@ export const HOME_ALONE_LINES = Object.freeze([
   { id: "sheet-heading", who: "sheet", text: "I SWEATY", status: "approved", source: "G 567 (I sweaty); okayed G 579" },
   { id: "sheet-name", who: "sheet", text: "Name: Squatch", status: "approved", source: "okayed G 579" },
   { id: "sheet-subject", who: "sheet", text: "SPACE MATH", status: "approved", source: "Brian 2026-11-23: 13A (Good with the 3 words on the homework sheet)" },
-  { id: "sheet-sum", who: "sheet", text: "2 + 2 = 4 Moon Pies", status: "approved", source: "Brian 2026-11-23: 13A (Good with the 3 words on the homework sheet)" },
+  { id: "sheet-sum", who: "sheet", text: `2 + 2 = 4 ${SNACK.name}`, status: "approved", source: "Brian 2026-11-23: 13A (Good with the 3 words on the homework sheet); the snack renamed, Brian 2026-11-26, question 86" },
   { id: "sheet-take", who: "sheet", text: "4 − 4 = yum!", status: "approved", source: "Brian 2026-11-23: 13A (Good with the 3 words on the homework sheet)" },
 ]);
 

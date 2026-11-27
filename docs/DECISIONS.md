@@ -3,37 +3,41 @@
 
 | Lines | Heading |
 | --- | --- |
-| 36–38 | # Space Snack Quest: every decision, in one place |
-| 39–46 | ## How to use this file |
-| 47–49 | ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator) |
-| 50–59 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
-| 60–67 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
-| 68–91 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
-| 92–96 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 97–105 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 106–109 | ## Sound, 2026-11-23 |
-| 110–133 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 134–145 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 146–170 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 171–179 | ## Which repo is the base, 2026-11-22 |
-| 180–190 | ## Sight cones, 2026-11-22 |
-| 191–195 | ## Latest calendar direction, 2026-11-16 |
-| 196–198 | ## Vent walk, 2026-11-16 |
-| 199–201 | ## Locked home room v5, 2026-11-16 |
-| 202–211 | ## Fidelity system (pictures are locked, not just words) |
-| 212–249 | ## 1. Working rules |
-| 250–316 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 317–341 | ## 3. Characters and look |
-| 342–418 | ## 4. Look, rooms and layout |
-| 419–440 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 441–484 | ## 6. Later chapters (2–4 and travel) |
-| 485–494 | ## 7. Audio |
-| 495–529 | ## 8. Code, controls and process |
-| 530–576 | ## 9. Open / waiting on Brian |
-| 577–671 | ## 10. Earlier entries, kept word for word |
-| 672–768 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 37–42 | # Space Snack Quest: every decision, in one place |
+| 43–50 | ## How to use this file |
+| 51–57 | ## The snack renamed, and the crate bed's stamp (question 86), 2026-11-26 (Brian, relayed by the coordinator) |
+| 58–60 | ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator) |
+| 61–70 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
+| 71–78 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
+| 79–102 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
+| 103–107 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 108–116 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 117–120 | ## Sound, 2026-11-23 |
+| 121–144 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 145–156 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 157–181 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 182–190 | ## Which repo is the base, 2026-11-22 |
+| 191–201 | ## Sight cones, 2026-11-22 |
+| 202–206 | ## Latest calendar direction, 2026-11-16 |
+| 207–209 | ## Vent walk, 2026-11-16 |
+| 210–212 | ## Locked home room v5, 2026-11-16 |
+| 213–222 | ## Fidelity system (pictures are locked, not just words) |
+| 223–260 | ## 1. Working rules |
+| 261–327 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 328–352 | ## 3. Characters and look |
+| 353–429 | ## 4. Look, rooms and layout |
+| 430–451 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 452–495 | ## 6. Later chapters (2–4 and travel) |
+| 496–505 | ## 7. Audio |
+| 506–540 | ## 8. Code, controls and process |
+| 541–587 | ## 9. Open / waiting on Brian |
+| 588–682 | ## 10. Earlier entries, kept word for word |
+| 683–779 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
+
+> **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
+
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
 
 ## How to use this file
@@ -43,6 +47,13 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 - **Status words:** **Decided** (Brian said it or approved it) · **Needs Brian's yes** (proposed, or on-screen words waiting on him) · **Superseded** (replaced; the line says by what) · **Open** (a real question nobody has answered yet).
 - **This repo file is the single source of truth.** It was synced on Monday, November 9, 2026 from the designer record through decision R63, and it still holds the earlier snapshot `docs/old/project/DECISIONS-2026-11-08.md` (on `main` at commit 10030f6). Every earlier entry is kept in section 10. Where a later decision replaces an earlier one, the earlier line is marked **Superseded** and says what replaced it. The dated snapshot's full text is in `docs/old/history/DECISIONS-2026-11-08.md`. A short pointer stays at `docs/old/project/DECISIONS-2026-11-08.md`. New decisions get a row in the tables above, through a docs PR (review, "Docs match main: yes", Brian's written yes before merge).
 - Don't invent a decision. If something isn't clear, add it under **Open**.
+
+## The snack renamed, and the crate bed's stamp (question 86), 2026-11-26 (Brian, relayed by the coordinator)
+- **Decided (Brian, 2026-11-26, question 86, "A": rename everywhere now; his notes the same day: "calling them Mars Cakes, what his family makes. And the box he came in is faded, so all you can see is R's Cakes, A-R-S"):** the station's snack "Moon Pies" is now **Stars Cakes** ("STARS CAKES" on crates and signs) in every line, file, test, label and drawing. The name is spelled in one place, `src/modules/snack-name.js`; the older program reads it through `window.SSQ.snack(...)`, guarded, with a plain "snacks" if the module script fails. As an adjective it is the plural ("a Stars Cakes crate", as in Brian's own bedtime line); one cake is "a Stars Cake".
+- **Changed words, pending Brian's yes again:** the bedtime line is now "You came to me in a Stars Cakes crate. You've loved Stars Cakes ever since." Every other changed line only swaps the name (list: `docs/CH1-LINES-FOR-BRIAN.md`, "The snack's name").
+- **Squatch's crate bed is his family's crate (the spec's 2.3):** its stamp is fat red letters, worn, the first letter scraped off ("_ARS CAKES": a bare patch one wide letter across, with the two faint red feet of the lost letter), and his old crayon "ST" in the gap. **Needs Brian's yes (locked picture):** the stamp is a layer drawn over the locked home pictures `home-room-empty-closed-v6.png` and `home-room-empty-open-v6.png` (the old MOON PIES badge painted out in the crate's own wood, then the new stamp); the picture files are not edited (`src/modules/crate-stamp.js`, checked by `tests/snack-name.mjs`). **Needs Brian's yes (new words):** the crayon "ST". Look, sizes, red and crayon are PLACEHOLDER.
+- **The station's crates (the spec's 2.12):** a blue star and the name in thin blue letters, so the two stamps never match (`crate-stamp.js` drawStationStamp, used by every crate the game draws).
+- **Kept as they were:** file names and code ids that hold the old name joined up (the cutaway id `moonpie`, line ids such as `mops-moon-pie`, picture and sketch file names such as `sketch-22-moon-pie-site.png`), and the locked pictures' drawing scripts (`docs/locked-rooms/home_room.py`), which no one changes without a new locked version. No player sees any of them. Dated history entries in the docs keep the old name as it was said then.
 
 ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator)
 - **Night look, Decided 2026-11-26:** "Make sure it's not just the hall dark at night, but all rooms are different at night versus daytime." Every room shown while the story is at night has a night look (`src/modules/night-look.js`): the loading bay its locked night picture (`delivery-room-empty-night-v2.png`); every other room its locked day picture under a dim blue tint, with the things that give light (the hall's window onto space and its FUR alarm, home's TV screen, the office's screens and keypad, the hallway's keypad) cut from the same picture and drawn again over the tint. No picture file changes. Night is from the party night's start ("That evening...") until Day 2 begins, and any older night scene. The tint's strength (`NIGHT_TINT`, 0.5 of the bedtime story's night blue) and the lit boxes are placeholders for Brian's eye. The bedtime story's lights-out dim goes on top. Built on feat/party-half-two (the party), then merged forward and applied on the bedtime (the evening and bedtime story), Day 2 morning (the dark start) and lunch branches.

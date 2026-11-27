@@ -74,7 +74,7 @@ export function drawPyramid(ctx, p, sq, t) {
     for (let i = slots.length - 1; i >= 0; i--) slots[i] >= 0 && drawSnack(ctx, kindOf(slots[i]), hallSlotAt(i).x, hallSlotAt(i).y, SNACK_SIZE.hall);
     return;
   }
-  // The chain: the stack tips, a cup rolls off, the tray slides, the Moon Pie tin falls last.
+  // The chain: the stack tips, a cup rolls off, the tray slides, the snack tin falls last.
   const tip = Math.min(1, k / 0.25),
     roll = clamp((k - 0.25) / 0.3),
     tray = clamp((k - 0.45) / 0.3),
