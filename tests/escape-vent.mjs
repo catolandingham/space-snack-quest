@@ -22,6 +22,7 @@ const M = (f) => join(root, "src", "modules", f);
 const { ESCAPE_LINES } = await import(M("escape-lines.js"));
 const W = Object.fromEntries(ESCAPE_LINES.map((l) => [l.id, l.text]));
 const { tagLines } = await import(M("escape-vent-art.js"));
+const { SNACK } = await import(M("snack-name.js"));
 const g = await startGame({ port: 9787, name: "escape-vent" });
 const { ctx, page, errors } = await g.open("?beat=escape:sneak", { width: 375, height: 812, isMobile: true, hasTouch: true });
 await page.evaluate(() => window.__ss.lockedReady);
@@ -214,7 +215,7 @@ g.check("48: ↺ at the note starts it again (no lines), still Mops", o.note.res
   const VA = readFileSync(M("escape-vent-art.js"), "utf8");
   const slipFn = VA.slice(VA.indexOf("function slipDeskPanel"), VA.indexOf("export const VENT_PANELS"));
   g.check("48 (round 7, r5 13:44): every close-up at the vent desk waits for NEXT (none plays by itself)", ["eswall", "esletter", "estoys", "esstubs", "esslipdesk"].every((id) => CA.cutawaySteps(id).length > 0 && CA.cutawaySteps(id).every((st) => !st.auto)));
-  g.check("48 (round 7, r5 13:57): the pay stub just says the kind and who paid", W["stub"] === "STARS CAKES. A NEW KIND." && W["stub-paid"] === "Paid by: MOPS", [W["stub"], W["stub-paid"]]);
+  g.check("48 (round 7, r5 13:57): the pay stub just says the kind and who paid", W["stub"] === SNACK.NAME + ". A NEW KIND." && W["stub-paid"] === "Paid by: MOPS", [W["stub"], W["stub-paid"]]);
   g.check("48 (round 7, r5 14:17): no Squatch eyes in the pink slip's close-up", !/drawEyesInset/.test(slipFn));
 }
 g.check("48 (round 7, r5 14:24, q: 133): no whisper at the grate any more (his worry moves to beat 49)", JSON.stringify(o.note.after) === "[]", o.note.after);

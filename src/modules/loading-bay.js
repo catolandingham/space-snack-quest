@@ -430,7 +430,8 @@ export function createLoadingBay(bridge) {
       e.run(() => {
         e.enterRoom("passage", "QB");
         e.set("moPose", "stand");
-        e.place("mops", HALLWAY.left.x + 40, HALLWAY.left.y + 6);
+        // (Mops went through first: a stride ahead of him, not on him)
+        e.place("mops", HALLWAY.left.x + 100, HALLWAY.left.y + 6);
         e.place("sq", HALLWAY.left.x, HALLWAY.left.y);
         e.face("mops", 1);
         e.face("sq", 1);

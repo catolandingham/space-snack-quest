@@ -143,7 +143,7 @@ export const ESCAPE_LINES = Object.freeze(
     esLine("button-toys", "button", "LOOK · toy bin", "pending", SP(48, "named by the story pass")),
     fresh("chip-stubs", "chip", "Mops: look at the stubs", 48),
     esLine("button-stubs", "button", "LOOK · stubs", "pending", SP(48, "named by the story pass")),
-    r7("stub", "paper", `${SNACK.NAME}. A NEW KIND.`, "r5 13:57, CHANGED: the pay stub, simpler (was \"PAY: 10 · STARS CAKES, NEW KIND: 3 · paid by MOPS\")", 133),
+    r7("stub", "paper", `${SNACK.NAME}. A NEW KIND.`, "r5 13:57, CHANGED: the pay stub, simpler (was the longer pay line with the amount and the count)", 133),
     r7("stub-paid", "paper", "Paid by: MOPS", "r5 13:57, the pay stub's second line", 133),
     r7("blank-tag", "paper", "For S. A new kind to try.", "r5 3:28, CHANGED from \"For S. A new kind.\" to match Day 2's tag (loading-bay-lines.js box-tag); the stubs' old tags and pickup day's weekly box", 133),
     esLine("chart", "paper", SNACK.NAME, "pending", SP(48, "Mops's chart, its ST crossed out for M in pen")),
