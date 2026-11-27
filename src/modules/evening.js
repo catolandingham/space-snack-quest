@@ -40,7 +40,7 @@ import { drawJupiterStorm, drawStormGlow, drawCounterBin, drawCoffeeStain, BROCH
 import { placeThought } from "./thought-place.js";
 import { drawFamilyStampAt, drawFatLetters, familyStampOnRoom } from "./crate-stamp.js";
 import { FAMILY } from "./snack-name.js";
-import { HALLWAY_CRAYON } from "./ganitor.js";
+import { HALLWAY_CRAYON, CRAYON_ON_WALL } from "./ganitor.js";
 import { drawNightTint, noteNightPicture, nightDrawn, nightPictureFor } from "./night-look.js";
 import { withCameraLayer } from "./bay-camera.js";
 import { VENT } from "./party-vent.js";
@@ -245,7 +245,7 @@ export function createEvening(bridge) {
         e.still("mops");
         e.face("mops", 1);
         go("wall");
-        control("chip-go-on");
+        control("chip-photos"); // (round 7, q: 128: the photos are the goal first)
       }),
     ]);
   }
@@ -1506,8 +1506,10 @@ export function createEvening(bridge) {
         return [doorSpot("ev-hall", EV_HALLWAY.left)];
       case "wall": {
         const out = [doorSpot("ev-hall", EV_HALLWAY.left)];
-        // the gallery is optional: no outline (it is not the goal), offered under the wall until the robot came
-        standing && !s.galleryDone && out.push({ ...spot("ev-photos", "button-photos", EV_HALLWAY.look, EV_HALLWAY.wall, lookPhotos), optional: true });
+        // offered under the wall until the robot came. Round 7 (r5 4:05, q: 128): until he has looked, the photos are
+        // the goal and get the one highlight ("The picture should light up this time"); after, the hall's doorway.
+        const photos = { ...spot("ev-photos", "button-photos", EV_HALLWAY.look, EV_HALLWAY.wall, lookPhotos), optional: true };
+        standing && !s.galleryDone && (s.looked ? out.push(photos) : out.unshift(photos));
         return out;
       }
       // the robot rolls through: ROLL · ball wherever he is (a ball fools a quick look)
@@ -2539,7 +2541,8 @@ export function createEvening(bridge) {
         s.pose === "stand" && e.drawSquatch(ctx, sq.x, sq.y, sqScale("passage"), { f: sq.f || 1, walk: e.walkPhase() });
       }
       // the crayon drawing on the hallway's wall, once lifted: its tags as decided (ME and MOPS, each with an arrow)
-      if (room() === "passage" && e.get("ch1Crayon")) (drew = drew || { step: s.step }).crayon = drawCrayonCard(ctx);
+      // (round 7, r5 4:24 and 8:54, q: 128: it stays hidden behind the crooked photo while CRAYON_ON_WALL is false)
+      if (CRAYON_ON_WALL && room() === "passage" && e.get("ch1Crayon")) (drew = drew || { step: s.step }).crayon = drawCrayonCard(ctx);
       if (room() === "closet" && STEP_ROOM[s.step] === "closet") drew = { step: s.step, ...drawHome(ctx, s) };
     },
     /** Where a speaker's bubble points: the robot in the hallway, the one in line, Squatch rolled up, the mailbox. */
@@ -2733,6 +2736,6 @@ export function createEvening(bridge) {
     s.step = step;
     record.steps.push(step);
     setPose(s.pose);
-    control({ wall: "chip-go-on", dodge: "chip-roll", past: "chip-to-hall", hide: "chip-hide", peek: "chip-peek", duck: "chip-duck", brochure: "chip-brochure", gohome: "chip-home", box: "chip-box", bite: "chip-bite", chart: "chip-chart", crate: "chip-crate", choose: "", show: "chip-show", bed: "chip-bed", out: "chip-out", nighthall: "chip-bin", nightway: "chip-bin", bin: "chip-bin", post: "chip-post", back: "chip-sneak-home", backway: "chip-sneak-home", backhall: "chip-sneak-home", tobed: "chip-bed" }[step]);
+    control({ wall: s.looked ? "chip-go-on" : "chip-photos", dodge: "chip-roll", past: "chip-to-hall", hide: "chip-hide", peek: "chip-peek", duck: "chip-duck", brochure: "chip-brochure", gohome: "chip-home", box: "chip-box", bite: "chip-bite", chart: "chip-chart", crate: "chip-crate", choose: "", show: "chip-show", bed: "chip-bed", out: "chip-out", nighthall: "chip-bin", nightway: "chip-bin", bin: "chip-bin", post: "chip-post", back: "chip-sneak-home", backway: "chip-sneak-home", backhall: "chip-sneak-home", tobed: "chip-bed" }[step]);
   }
 }

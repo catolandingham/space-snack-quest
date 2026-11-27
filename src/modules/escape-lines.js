@@ -70,8 +70,7 @@ export const ESCAPE_LINES = Object.freeze(
     pend("mops-tell", "mops", "I have to tell him.", "44d", "NEW"),
     fresh("chip-home", "chip", "Mops: walk home and tell Squatch", "44d"),
     pend("guest-hi", "tourist", "Hi, Mops!", "44d", "NEW, a guest in the hall"),
-    fresh("button-plaque", "button", "LOOK · plaque", "44d", "the story pass names it LOOK · plaque"),
-    pend("mops-plaque", "mops", "Employee of the Month. Ha.", "44d", "NEW, optional"),
+    pend("mops-plaque", "mops", "Employee of the Month. Ha.", "44d", "NEW; round 7 (r5 11:22, q: 128): said as he walks past the wall, no button"),
     // ---- 45a: "You were right" ----
     fresh("switch-home", "switch", "Mops is home. Squatch's turn.", "45a", "the reason on the switch card"),
     pend("mops-you-right", "mops", "Squatch. You were right.", "45a", "NEW"),

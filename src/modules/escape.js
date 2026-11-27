@@ -9,7 +9,7 @@
  *        cell by cell (sticky twice, the corners); their wheels across his clean side once; FAST and SPARKLE; the
  *        buzzer; GOOD, GREAT or STAR GANITOR, and a gold star that stays on his tag (bridge.js drawGanitorTag).
  *   44c  "HQ got the order form." ... "The manager lied to me."
- *   44d  Mops walks home himself (LOOK · plaque, optional; a guest's "Hi, Mops!").
+ *   44d  Mops walks home himself (past the Employee of the Month wall: "Employee of the Month. Ha."; a guest's "Hi, Mops!").
  *   45a  the switch back to Squatch; "Squatch. You were right." in short bubbles; his gulp; SHOW · brochure; Mops touches
  *        his crate's worn letter (the family stamp's scraped first letter): "...Mars."
  *   45b  the crayon plan: LOOK · crate, LOOK · calendar, and the talk add its pictures one at a time.
@@ -400,6 +400,8 @@ export function createEscape(bridge) {
       e.moWalking(true);
       to ? e.step("mops", to.x, to.y, FOLLOW.speed, dt) : e.still("mops");
     }
+    // (round 7, r5 11:22, q: 128: no LOOK · plaque; walking past the Employee of the Month wall he says his line)
+    if (l.step === "walkhome" && room === "passage" && !l.plaque && p.x > PLAQUE.x0 && p.x < PLAQUE.x1) ((l.plaque = true), e.ambient("mops", escapeWords("mops-plaque")));
     // a guest in the hall by day waves at Mops
     if (l.step === "walkhome" && room === "hall" && !l.waved && Math.hypot(p.x - HALL_GUEST.x, p.y - HALL_GUEST.y) < HALL_GUEST.near) ((l.waved = true), e.ambient("tourist", escapeWords("guest-hi")));
     const d = doorAt(room, p);
@@ -414,14 +416,6 @@ export function createEscape(bridge) {
     throughDoor(d);
     busy();
     homeTalk();
-  }
-  // LOOK · plaque: his own Employee of the Month photo in the hallway (optional, once)
-  function lookPlaque() {
-    const e = E();
-    busy();
-    L().plaque = true;
-    e.face("mops", 1);
-    e.queue([...sayParts("mops", "mops-plaque"), e.run(() => control("chip-home"))]);
   }
 
   // ---------- beats 45 and 46: home that night ----------
@@ -1208,7 +1202,6 @@ export function createEscape(bridge) {
     if (l.step === "crate") return [spot("es-crate", "button-crate", { x: ES_HOME.crateAt.x, y: ES_HOME.crateAt.y, r: 90 }, ES_HOME.crate, lookCrate)];
     if (l.step === "cal") return [spot("es-cal", "button-calendar", { x: ES_HOME.calAt.x, y: ES_HOME.calAt.y, r: 60 }, ES_HOME.calendar, lookCalendar)];
     // 44d: his own Employee of the Month photo in the hallway, optional, once
-    if (l.step === "walkhome" && e.room() === "passage" && !l.plaque) return [...doorSpot, { ...spot("es-plaque", "button-plaque", { x: PLAQUE.x, y: PLAQUE.y, r: PLAQUE.r }, null, lookPlaque), who: "mo" }];
     if (doorSpot.length) return doorSpot;
     if (l.step === "sneak" && e.room() === "hangar" && l.pose === "stand" && (l.guard || (l.robot && l.robot.phase !== "patrol"))) {
       const s = e.pos("sq"),

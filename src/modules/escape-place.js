@@ -264,8 +264,9 @@ export const ROUTE_BAR = Object.freeze({ office: "passage", passage: "hall" });
 export const ROUTE_HOME_NIGHT = Object.freeze({ hall: "closet" });
 // The hall by day on the walk home: the guest who waves at Mops, and how near Mops must be for her "Hi, Mops!".
 export const HALL_GUEST = Object.freeze({ x: 560, y: 450, near: 170, kind: "teal" });
-// The Employee of the Month photo in the hallway (ganitor.js drawGanitorWall), where Mops can LOOK · plaque.
-export const PLAQUE = Object.freeze({ x: 767, y: 300, r: 70 });
+// The hallway's Employee of the Month wall (the locked picture's photo grid): walking Mops past it (x0 to x1) says his
+// line (round 7, r5 11:22, q: 128: LOOK · plaque is gone, and so is the big photo of him).
+export const PLAQUE = Object.freeze({ x: 480, y: 300, x0: 300, x1: 660 });
 // Mops follows Squatch this far behind along his trail (47, 50, 52).
 export const FOLLOW = Object.freeze({ gap: 60, speed: 190 });
 // 48: the short tunnel, side view, Mops crawling through it before the room; the lost things along it.

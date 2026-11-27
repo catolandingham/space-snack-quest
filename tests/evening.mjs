@@ -95,7 +95,7 @@ const frame = () => new Promise((r) => setTimeout(r, 160));
 
 // beat 37
 let r = await ev(() => ({ step: window.__st(), room: window.__ss.op.room, ctrl: window.__ss.op.ctrl, ring: window.__ss.op.lastRing && window.__ss.op.lastRing.id, chip: window.__ss.chipNow() }));
-g.check("the debug link opens beat 37 in the hallway; the hall's doorway is outlined, the optional photo wall is not", r.step === "wall" && r.room === "passage" && r.ctrl && r.ring === "ev-hall", r);
+g.check("the debug link opens beat 37 in the hallway; the photos are outlined and are the goal (round 7, r5 4:05, q: 128: \"the picture should light up\")", r.step === "wall" && r.room === "passage" && r.ctrl && r.ring === "ev-photos" && r.chip === "Squatch: look at the photos", r);
 r = await ev(() => {
   const spots = window.__ss.spotsNow().map((s) => s.id);
   return { spots, look: !!window.__press("LOOK · photos"), step: window.__st() };

@@ -74,6 +74,7 @@ const report = await page.evaluate(async (chips) => {
     // a doorway walked through is the action there (walk), as at the party
     // (he stands a step from each doorway, outside the circle that takes him through it)
     "Squatch: go on": { ev: "wall", galleryDone: true, walk: true, x: 100, y: 300 },
+    "Squatch: look at the photos": { ev: "wall", x: 480, y: 300 }, // (round 7, q: 128: the photos outlined first)
     "Squatch: hide": { ev: "hide", x: 852, y: 326 },
     "Squatch: roll up!": { ev: "dodge", x: 700, y: 430 },
     "Squatch: go on to the hall": { ev: "past", walk: true, x: 100, y: 300 },

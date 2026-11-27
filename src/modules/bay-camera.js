@@ -144,7 +144,7 @@ export function cameraUpFrom(get) {
   return !!(bay && bay.camera);
 }
 
-const ready = (img) => !!img && !!img.complete && !!img.naturalWidth;
+const cameraPicReady = (img) => !!img && !!img.complete && !!img.naturalWidth;
 const layered = new Map();
 let handed = 0;
 /** Tests: how many pictures were handed out with the camera layer, and the last one's id. */
@@ -159,7 +159,7 @@ export function cameraLayerDrawn() {
  */
 export function withCameraLayer(id, img) {
   const bay = BAY_IDS.has(id);
-  if (!(bay || id === "office") || !ready(img) || img.cameraLayer || !cameraNow()) return img;
+  if (!(bay || id === "office") || !cameraPicReady(img) || img.cameraLayer || !cameraNow()) return img;
   const key = id + "|" + img.src;
   if (!layered.has(key)) {
     if (typeof document === "undefined") return img;

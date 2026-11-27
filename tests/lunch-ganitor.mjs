@@ -353,7 +353,8 @@ const wall = await page.evaluate(() => {
   return out;
 });
 // (the locked picture's photo grid ends at about x 685 in its top three rows, 650 in the bottom row, y 214 and up)
-g.check("C: in the hallway, a framed photo of Mops on the back wall labelled MOPS, GANITOR, right of the locked picture's photo grid", wall.wall && wall.wall.word === "MOPS, GANITOR" && wall.wall.frame.x0 >= 690 && wall.wall.plaque.x0 >= 655 && wall.wall.plaque.x1 <= 940 && wall.wall.plaque.y1 < 260, wall.wall);
+// (round 7, r5 4:25 and 8:54, q: 128: the big photo is "overkill" and is off the wall; GANITOR_POSTER brings it back)
+g.check("C (round 7, q: 128): the big MOPS, GANITOR photo is off the hallway wall", GAN.GANITOR_POSTER === false && wall.wall === null, wall.wall);
 g.check("C: not in the office", wall.office === null, wall.office);
 const base = execFileSync("git", ["-C", root, "merge-base", "HEAD", "origin/main"], { encoding: "utf8" }).trim();
 // (the delivery room's new locked versions, the plant moved along the wall, have Brian's yes: question 75, 2026-11-26,
@@ -361,7 +362,8 @@ const base = execFileSync("git", ["-C", root, "merge-base", "HEAD", "origin/main
 // Brian's yes)
 const locked = execFileSync("git", ["-C", root, "diff", "--name-only", "--diff-filter=MDR", base, "--", "docs/locked-rooms/*.png"], { encoding: "utf8" }).trim();
 g.check("C: the locked room pictures are not changed on this branch (the wall is a layer drawn over the hallway)", locked === "", locked);
-g.check("E: Squatch's crayon card on the hallway wall says ME and MOPS THE GANITOR", wall.crayon && JSON.stringify(wall.crayon.lines) === JSON.stringify(["ME", "MOPS THE", "GANITOR"]) && GAN.crayonGanitorLabel() === "MOPS THE GANITOR", wall.crayon);
+// (round 7, r5 4:24 and 8:54, q: 128: the drawing stays hidden behind the crooked photo; the label stays for drawings)
+g.check("E (round 7, q: 128): Squatch's crayon drawing is not drawn on the hallway wall (it stays behind the photo); its label is still MOPS THE GANITOR", GAN.CRAYON_ON_WALL === false && !wall.crayon && GAN.crayonGanitorLabel() === "MOPS THE GANITOR", wall.crayon);
 const GD = readFileSync(M("guardians-drawing.js"), "utf8");
 g.check("E: the crayon Guardians drawing has no Mops in it, so it writes no label (it draws no words at all)", !/fillText|strokeText/.test(GD) && !/GANITOR/.test(GD));
 g.check("no page errors", errors.length === 0, errors);

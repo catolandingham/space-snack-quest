@@ -23,6 +23,7 @@ import { OFFICE_CODE } from "./office-code.js";
 export const EVENING_LINES = Object.freeze(
   [
     { id: "chip-go-on", who: "chip", text: "Squatch: go on", status: "in-game", source: "src/game/14-ch1-day2.js (beat 37)" },
+    { id: "chip-photos", who: "chip", text: "Squatch: look at the photos", status: "pending", source: "round 7 (Brian's video notes 2026-11-27, r5 4:05: the photo lights up): goal words, NEW; q: 128 (option A, built before his answer)" },
     { id: "button-photos", who: "button", text: "LOOK · photos", status: "in-game", source: "src/game/14-ch1-day2.js (beat 37)" },
     { id: "sign-month", who: "sign", text: "EMPLOYEE OF THE MONTH", status: "pending", source: "story pass 2026-11-26 beat 37 (KEEP, pending)" },
     { id: "button-lift", who: "button", text: "LIFT · photo", status: "pending", source: "story pass 2026-11-26 beat 37 (the button reads LIFT · photo)" },

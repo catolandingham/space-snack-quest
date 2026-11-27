@@ -52,7 +52,7 @@ import { createHomeMorningSound, HOME_MORNING_SOUND } from "./home-morning-sound
 import { cutawaySteps, LUNCH_EAT } from "./cutaway.js";
 import { footfall } from "./footfalls.js";
 import { adultPxFor } from "./room-sizes.js";
-import { drawGanitorWall } from "./ganitor.js";
+import { drawGanitorWall, GANITOR_POSTER } from "./ganitor.js";
 
 export const LUNCH_ID = "ch1-lunch";
 // The eating cutaway (cutaway.js PANELS "lunch") and its sounds: [seconds into it, synth.js sound].
@@ -898,7 +898,8 @@ export function createLunchSneak(bridge) {
      */
     drawWall(ctx) {
       const e = E();
-      wallDrew = e && e.room() === "passage" && !e.get("ch1Office") && (e.get("scene") || "")[0] === "Q" ? drawGanitorWall(ctx, e.drawMopsOn) : null;
+      // (round 7, q: 128: the photo is off the wall while GANITOR_POSTER is false)
+      wallDrew = GANITOR_POSTER && e && e.room() === "passage" && !e.get("ch1Office") && (e.get("scene") || "")[0] === "Q" ? drawGanitorWall(ctx, e.drawMopsOn) : null;
       return wallDrew;
     },
     /** Over the hallway (the older program draws the room, Squatch and Mops): the bag, the heart, Mops mopping, the goal line round Mops. */

@@ -10,7 +10,7 @@
  *        cells need two passes; all clean ends it at once; the buzzer lines; the star close-up with its words; the star
  *        stays on his tag.
  *   44c  the robots' news and Mops's lines, word for word, in order.
- *   44d  Mops walks home himself: through the bay's doorway, the hallway (LOOK · plaque, optional), the hall (a guest
+ *   44d  Mops walks home himself: through the bay's doorway, the hallway (his line at the Employee of the Month wall), the hall (a guest
  *        waves: "Hi, Mops!"), home; the switch back to Squatch is announced.
  * Also: the logic without a browser (grades, bars, wheels), nobody walks over the walkway, ↺ in each Mops step, and a
  * chapter reset hands the stick back to Squatch.
@@ -176,8 +176,9 @@ const run = await page.evaluate(
     ss.drawFrame();
     out.home.hallwayDoor = d().drew.door;
     walk(B.place.PLAQUE.x, B.place.PLAQUE.y, 6);
-    out.home.plaque = press();
-    out.home.plaqueLine = lines(2);
+    ss.tick(0.05);
+    out.home.plaque = (ss.offerNow() && ss.offerNow().verb + " · " + ss.offerNow().cap) || "";
+    out.home.plaqueLine = [...(n.live || []), ...n.log].filter((r) => r.text === W["mops-plaque"]).map((r) => r.text);
     walk(40, 346, 8);
     out.home.hall = n.room;
     walk(560, 400, 8);
@@ -219,7 +220,7 @@ g.check("44c, 44d: the robots' news and Mops's answer, then \"Squatch was right.
 g.check("44d: he walks home himself, as Mops (the goal says so)", o.home.step === "walkhome" && o.home.chip === W["chip-home"] && o.home.playing === "mops" && o.home.ctrl, o.home);
 g.check("44d: ↺ on the walk home puts him back where it started, still Mops", o.home.restart.step === "walkhome" && o.home.restart.playing === "mops" && o.home.restart.back, o.home.restart);
 g.check("44d: through the bay's doorway into the hallway; the next doorway (to the hall) is outlined", o.home.hallway === "passage" && o.home.hallwayDoor === "hall", o.home);
-g.check("44d: LOOK · plaque at his Employee of the Month photo, and his line", o.home.plaque === "LOOK · plaque" && o.home.plaqueLine[0] === W["mops-plaque"], o.home);
+g.check("44d (round 7, r5 11:22, q: 128): no LOOK · plaque; walking past the Employee of the Month wall, Mops says his line", o.home.plaque !== "LOOK · plaque" && o.home.plaqueLine[0] === W["mops-plaque"], o.home);
 g.check("44d: the hall, a guest waves (\"Hi, Mops!\"), then home", o.home.hall === "hall" && o.home.waved && o.home.room === "closet", o.home);
 g.check("45a: at home the switch back to Squatch is announced, with why; the star is still on his tag", o.home.switch.text === "You are SQUATCH now." && o.home.switch.by === W["switch-home"] && o.home.after === "sq" && o.home.tagStar, o.home);
 g.check("a chapter reset while he is Mops gives the stick back to Squatch", o.reset.before === "mops" && o.reset.after === "sq", o.reset);

@@ -65,6 +65,7 @@ export const GOAL_TARGETS = {
   // photo wall is optional and gets no outline. (Rects only: in the hall and the loading bay that beat draws the
   // picture itself.)
   "passage:ev-hall": { rect: { x0: 20, x1: 48, y0: 266, y1: 354 } }, // the hallway's doorway to the hall (left)
+  "passage:ev-photos": { rect: { x0: 274, x1: 686, y0: 104, y1: 216 } }, // the Employee of the Month photos (round 7, r5 4:05, q: 128; evening-place.js EV_HALLWAY.wall)
   "passage:ev-bay": { rect: { x0: 912, x1: 940, y0: 266, y1: 354 } }, // its doorway to the loading bay (right)
   "hall:ev-counter": { rect: { x0: 864, x1: 924, y0: 344, y1: 436 } }, // the aisle behind the snack counter (HIDE · counter)
   "hall:ev-brochure": { rect: { x0: 872, x1: 920, y0: 490, y1: 545 } }, // the brochure in the bin behind the counter (38b)
