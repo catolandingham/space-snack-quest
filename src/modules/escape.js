@@ -704,23 +704,26 @@ export function createEscape(bridge) {
     // the room lit, held still a breath before anything can be tapped
     e.queue([wait(ES_PACE.lampHold), ...eyesPop(), e.run(() => (go("wall"), control("chip-wall")))]);
   }
+  const DESK_HOLD = 0.5;
   function lookWall() {
     const e = E();
     busy();
     go("walled");
-    e.queue([...cutawaySteps("eswall"), ...cutawaySteps("esletter"), ...sayParts("mops", "mops-asked"), ...sayParts("mops", "mops-cooks"), e.run(() => (go("toys"), control("chip-toys")))]);
+    // (round 7, r5 13:44, q: 133: every close-up here waits for NEXT; a short hold first swallows a second quick tap on
+    // the button, so the close-up cannot be passed before it is seen)
+    e.queue([wait(DESK_HOLD), ...cutawaySteps("eswall"), wait(DESK_HOLD), ...cutawaySteps("esletter"), ...sayParts("mops", "mops-asked"), ...sayParts("mops", "mops-cooks"), e.run(() => (go("toys"), control("chip-toys")))]);
   }
   function lookToys() {
     const e = E();
     busy();
     go("toyed");
-    e.queue([...cutawaySteps("estoys"), e.run(() => (go("stubs"), control("chip-stubs")))]);
+    e.queue([wait(DESK_HOLD), ...cutawaySteps("estoys"), e.run(() => (go("stubs"), control("chip-stubs")))]);
   }
   function lookStubs() {
     const e = E();
     busy();
     go("stubbed");
-    e.queue([...cutawaySteps("esstubs"), ...sayParts("mops", "mops-wrong"), ...sayParts("mops", "mops-one-kind"), e.run(() => (go("note", { cu: "", noteLines: 0 }), control("chip-note")))]);
+    e.queue([wait(DESK_HOLD), ...cutawaySteps("esstubs"), ...sayParts("mops", "mops-wrong"), ...sayParts("mops", "mops-one-kind"), e.run(() => (go("note", { cu: "", noteLines: 0 }), control("chip-note")))]);
   }
   // WRITE · note: the note close; each tap writes one line, the fourth signs it
   function writeLine() {
@@ -737,7 +740,6 @@ export function createEscape(bridge) {
       e.until(() => e.time() - L().noteAt >= 0.9),
       e.run(() => (L().cu = "")),
       ...eyesPop(),
-      ...sayParts("sq", "sq-notice", "whisper"),
       e.run(() => (go("slip"), control("chip-slip-take"))),
     ]);
   }
@@ -746,6 +748,7 @@ export function createEscape(bridge) {
     busy();
     go("slipped");
     e.queue([
+      wait(DESK_HOLD),
       ...cutawaySteps("esslipdesk"),
       ...sayParts("mops", "mops-slip"),
       ...sayParts("mops", "mops-code-pen"),
@@ -774,7 +777,8 @@ export function createEscape(bridge) {
       e.run(() => ((L().crawl = null), (L().pose = "stand"), e.set("sqPose", "stand"), e.face("sq", -1))),
       e.run(() =>
         asSquatch("switch-out", () =>
-          e.queue([...sayParts("mops", "mops-mmf"), ...sayParts("sq", "sq-gumbling"), ...sayParts("sq", "sq-get-it", "whisper"), e.run(() => (go("grab"), control("chip-grab")))]),
+          // (round 7, r5 14:24, q: 133: his worry, now that Mops is out)
+          e.queue([...sayParts("sq", "sq-notice", "whisper"), ...sayParts("mops", "mops-mmf"), ...sayParts("sq", "sq-gumbling"), ...sayParts("sq", "sq-get-it", "whisper"), e.run(() => (go("grab"), control("chip-grab")))]),
         ),
       ),
     ]);

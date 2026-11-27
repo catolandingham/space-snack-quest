@@ -136,7 +136,8 @@ export const ESCAPE_LINES = Object.freeze(
     esLine("button-toys", "button", "LOOK · toy bin", "pending", SP(48, "named by the story pass")),
     fresh("chip-stubs", "chip", "Mops: look at the stubs", 48),
     esLine("button-stubs", "button", "LOOK · stubs", "pending", SP(48, "named by the story pass")),
-    esLine("stub", "paper", `PAY: 10 · ${SNACK.NAME}, NEW KIND: 3 · paid by MOPS`, "pending", SP(48, "the pay stubs' words")),
+    r7("stub", "paper", `${SNACK.NAME}. A NEW KIND.`, "r5 13:57, CHANGED: the pay stub, simpler (was \"PAY: 10 · STARS CAKES, NEW KIND: 3 · paid by MOPS\")", 133),
+    r7("stub-paid", "paper", "Paid by: MOPS", "r5 13:57, the pay stub's second line", 133),
     esLine("blank-tag", "paper", "For S. A new kind.", "pending", SP(48, "the blank tags; the snack's thread")),
     esLine("chart", "paper", SNACK.NAME, "pending", SP(48, "Mops's chart, its ST crossed out for M in pen")),
     pend("mops-wrong", "mops", "Maybe Mars was wrong.", 48, "NEW, after the pen stroke from ST to M"),
@@ -152,7 +153,7 @@ export const ESCAPE_LINES = Object.freeze(
     esLine("button-slip-take", "button", "TAKE · pink slip", "pending", SP(48, "named by the story pass")),
     pend("mops-slip", "mops", "The pink slip!", 48, "NEW"),
     pend("mops-code-pen", "mops", "And the code. In pen.", 48, "NEW"),
-    kept("sq-notice", "sq", "I hope Mops doesn't notice...", "pending", ES_WALK + "48; story pass 2026-11-26 (KEEP, a whisper at the grate)"),
+    r7("sq-notice", "sq", "I hope he didn't read the order form.", "r5 14:24, CHANGED from \"I hope Mops doesn't notice...\" and moved: a thought once Mops is back out (beat 49)", 133),
     // ---- 49: "You're gumbling again!" ----
     fresh("switch-out", "switch", "Mops is back out. Squatch's turn.", 49, "the reason on the switch card"),
     pend("mops-mmf", "mops", "Mmf! Mmf mmf!", 49, "CHANGED: paper in his mouth; was \"Hurry, hurry, pink slip, got it!\""),

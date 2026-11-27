@@ -187,14 +187,16 @@ function stubsPanel(ctx, t) {
   ctx.strokeStyle = ES_INK;
   ctx.lineWidth = 6;
   ctx.stroke();
+  // (round 7, r5 13:57, q: 133: two short lines, the kind and who paid)
   const stub = escapeWords("stub"),
-    [a, b] = stub.split(", ");
+    a = stub,
+    b = escapeWords("stub-paid");
   for (let i = 0; i < 3; i++) {
     const y = 250 + i * 110;
     esRect(ctx, 24, y, 300, 92, 4);
     esPaint(ctx, "#ffffff", 3);
-    esWords(ctx, a + ",", 174, y + 36, 21, ES_INK, "center", 800);
-    esWords(ctx, b, 174, y + 70, 21, ES_INK, "center", 800);
+    esWords(ctx, a, 174, y + 36, 19, ES_INK, "center", 800);
+    esWords(ctx, b, 174, y + 70, 19, ES_INK, "center", 800);
   }
   // his chart: the same kinds as Squatch's, every one crossed off in pen
   const C = { x0: 380, y0: 40, x1: 920, y1: 600 };
@@ -257,9 +259,8 @@ function slipDeskPanel(ctx, t) {
   ctx.lineWidth = 4;
   ctx.stroke();
   ctx.restore();
-  // Squatch at the grille, far behind him: his eyes, small
-  const eyes = drawEyesInset(ctx, 1);
-  return { pic: "esslipdesk", code: s.code, paw: s.paw, mopsLooks: "code", eyes: !!eyes };
+  // (round 7, r5 14:17, q: 133: no Squatch eyes in this close-up: he is outside and cannot see the desk)
+  return { pic: "esslipdesk", code: s.code, paw: s.paw, mopsLooks: "code", eyes: false };
 }
 export const VENT_PANELS = Object.freeze({ estoys: [toysPanel], esstubs: [stubsPanel], esslipdesk: [slipDeskPanel] });
 
