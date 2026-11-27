@@ -48,6 +48,8 @@ export const BAY_LINES = Object.freeze(
     { id: "isfred-fur", who: "official", text: "But we keep getting fur in the vents.", status: "pending", source: PASS + "30 (CHANGED)" },
     { id: "isfred-convinced", who: "official", text: "I'm convinced now.", status: "pending", source: PASS + "30 (CHANGED)" },
     { id: "sq-was-me", who: "sq", style: "think", text: "Fur in the vents... that was me.", status: "pending", source: PASS + "30 (NEW)" },
+    { id: "isfred-camera", who: "official", text: "And a camera. Just in case.", status: "pending", source: R7(123, "r6 7:46, NEW: a robot puts it up, upper right by the speaker") },
+    { id: "isfred-tapes", who: "official", text: "I never watch the tapes. Unless something goes wrong.", status: "pending", source: R7(123, "r6 7:46, NEW") },
     { id: "isfred-names", who: "official", text: "Dot. Bob. Lou.", status: "pending", source: PASS + "30 (NEW)" },
     { id: "isfred-thanks", who: "official", text: "Thank you for thirty years.", status: "pending", source: PASS + "30 (NEW)" },
     { id: "isfred-take-it", who: "official", text: "The robots will take it from here.", status: "pending", source: PASS + "30 (NEW)" },

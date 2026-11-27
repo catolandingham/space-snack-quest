@@ -87,6 +87,9 @@ export const BAY_SPOTS = Object.freeze({
   behindMops: Object.freeze([Object.freeze({ x: 196, y: 436 }), Object.freeze({ x: 330, y: 436 })]),
   // the robots that go off to clean, along the front of the room, out through the doorway
   robotsOut: Object.freeze([Object.freeze({ x: 360, y: 560 }), Object.freeze({ x: 120, y: 470 })]),
+  // beat 30 (round 7, q: 123): Robot 3 puts the security camera up, upper right by the speaker: it rolls up past the
+  // arch's right post and along under the big wall vent, stands here and reaches up (bay-camera.js BAY_CAMERA.game)
+  cameraWay: Object.freeze([Object.freeze({ x: 656, y: 346 }), Object.freeze({ x: 878, y: 346 })]),
   // Robot 1 from Isfred to the office, and back: below Isfred, then behind Mops
   officeWay: Object.freeze([Object.freeze({ x: 438, y: 500 }), Object.freeze({ x: 330, y: 500 }), Object.freeze({ x: 330, y: 436 }), Object.freeze({ x: 196, y: 436 })]),
 });
@@ -157,6 +160,7 @@ export const BAY_PACE = Object.freeze({
   spit: 0.6,
   look: 0.6,
   rollTime: 1.5, // the hairball: how long he has to roll up once the robot turns his way
+  install: 1.2, // round 7 (q: 123): the robot's arm reaching up and the camera going on the wall
   lookAway: 2, // the hairball: the robot comes out looking the other way this long first (round 7, r5 3:45, q: 133)
   doorOpen: 0.5,
   flash: 0.6, // the scanner's red flash at Lou's hat

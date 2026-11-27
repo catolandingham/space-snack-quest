@@ -35,6 +35,7 @@ import { drawCreditsButton, creditsTap, creditsShown } from "./credits.js";
 import { nightPicture, isNightNow, nightDrawn } from "./night-look.js";
 import { snackWord } from "./snack-name.js";
 import { drawStationStamp, crateStampDrawn, setCrayonSource } from "./crate-stamp.js";
+import { setCameraSource, cameraUpFrom, cameraLayerDrawn } from "./bay-camera.js";
 import { cakeChartDrawn } from "./cake-chart.js";
 
 /**
@@ -58,6 +59,8 @@ export function createBridge() {
   // The engine functions the older program hands over (see handOver), and the fields beats have written.
   let engine = null;
   const written = new Set();
+  // The bay's security camera is up from Day 2's beat 30 on (round 7, q: 123; bay-camera.js)
+  setCameraSource(() => !!engine && cameraUpFrom(engine.get));
   const homeMusic = createHomeMusic(() => engine);
   const morningSound = createMorningSound(() => engine);
   // (a guest's line: which guest says it, for the guest's own voice)
@@ -267,6 +270,8 @@ export function createBridge() {
     },
     /** Tests: the layers for the snack's name (the crate bed's stamp over the home pictures, the hall tin's lid). */
     crateStampDrawn,
+    /** Tests: the bay camera's layer (round 7, q: 123): how many pictures had it, and the last one's id. */
+    cameraLayerDrawn,
     /** Tests: the crayon chart over his bed, as the home pictures' layer last drew it (cake-chart.js). */
     cakeChartDrawn,
     /** Register a rebuilt beat. Ids are unique; registering one twice is a mistake, so it throws. */

@@ -54,6 +54,7 @@
 import { BAY, BAY_SPOTS, HALLWAY, HALL_SNEAK, BAY_PACE as P, BAY_PICTURES, BAY_CLOSEUPS, BAY_PARTS, BAY_STEPS, ROBOT_SIZE } from "./loading-bay-place.js";
 import { bayWords, bayLine, BAY_SPEAKER_NAMES } from "./loading-bay-lines.js";
 import { OFFICE_CODE } from "./office-code.js";
+import { CAMERA_INSTALL_SCENE, BAY_CAMERA, drawBayCamera } from "./bay-camera.js";
 import { findPath } from "./tap-path.js";
 import { drawRobot, robotHand, drawFormSet, drawStuck, drawBiteCrumbs, drawFormCloseUp, closeUpBox, drawCloseUpBack, drawCloseUpFront, drawWave, drawDashedOutline, drawBayCrate, drawCargo, drawTag, drawTaggedBox, drawTagCloseUp, drawDoorShadow, drawTool, drawFuzzyHat, drawScannerStop, drawScannerPass, drawMailBeside, drawLetter, drawSlotLight, drawSweat, drawOfficeOpen, drawStreak } from "./loading-bay-art.js";
 import { drawSpeakerRing, drawHeartCone } from "./party-free-art.js";
@@ -279,6 +280,8 @@ export function createLoadingBay(bridge) {
       letter: null,
       stopAt: -1,
       passAt: -1,
+      camera: !CAMERA_INSTALL_SCENE, // the security camera is up (round 7, q: 123; bay-camera.js)
+      installAt: -1,
       turnAt: -1,
       shimmer: false,
       asMops: false,
@@ -315,6 +318,7 @@ export function createLoadingBay(bridge) {
       e.set("sqPose", "hidden");
       b.workers.forEach((w) => (w.show = false));
       b.hatOnFloor = true;
+      b.camera = true;
       b.robots.forEach((r, i) => (r.carry = TOOLS[i]));
     },
     promise(b) {
@@ -459,6 +463,25 @@ export function createLoadingBay(bridge) {
     back: () => control("take"),
     orders: () => control("talkto"),
   };
+  // 30 (round 7, q: 123): "And a camera. Just in case." Robot 3 rolls under the big wall vent, its arm reaches up and
+  // the camera goes on the wall; "I never watch the tapes. Unless something goes wrong."
+  const CAMERA_BOX = { x0: BAY_CAMERA.game.x - 44, x1: BAY_CAMERA.game.x + 14, y0: BAY_CAMERA.game.y - 16, y1: BAY_CAMERA.game.y + 28 };
+  function putUpCamera(r) {
+    const e = E();
+    return [
+      e.run(() => (B().isfred.f = 1)),
+      say("isfred-camera"),
+      e.run(() => (r().f = 2)),
+      e.until((dt) => along(r(), BAY_SPOTS.cameraWay, P.robot, dt)),
+      e.run(() => ((r().f = 2), (r().arm = 1), (B().installAt = e.time()), sound.morning("rustle"))),
+      e.until(() => e.time() - B().installAt >= P.install),
+      e.run(() => ((B().camera = true), (B().installAt = -1), (r().arm = 0), e.sfx("bleep"))),
+      e.until((dt) => along(r(), [...BAY_SPOTS.cameraWay].reverse().concat([BAY_SPOTS.robots[2]]), P.robot, dt)),
+      e.run(() => ((r().f = 2), (B().isfred.f = 1), (B().camGlow = true))),
+      say("isfred-tapes"),
+      e.run(() => ((B().isfred.f = -1), (B().camGlow = false))),
+    ];
+  }
   const PARTS = {
     // 29: the ship docks as they come in; footsteps and Isfred's shadow in the doorway; Mops's cue
     arrive() {
@@ -525,6 +548,9 @@ export function createLoadingBay(bridge) {
         say("isfred-convinced"),
         e.run(() => (B().sweatAt = e.time())),
         say("sq-was-me"),
+        // (round 7, r6 7:46, q: 123: Isfred adds a camera, and Robot 3 puts it up, upper right by the speaker; from now on it
+        // is on every picture of the bay, its red light on: bay-camera.js)
+        ...(CAMERA_INSTALL_SCENE ? putUpCamera(r2) : []),
         // the three workers come in carrying their things, past Mops
         e.run(() => B().workers.forEach((w) => ((w.show = true), (w.done = false)))),
         e.until((dt) => {
@@ -1187,6 +1213,8 @@ export function createLoadingBay(bridge) {
   // what the player must go to next: the one highlight round it (the plant's is the older program's traced outline)
   function highlightNow(b) {
     const e = E();
+    // the camera glows while Isfred talks about it (rule 4; round 7, q: 123)
+    if (b.camGlow && room() === "hangar") return CAMERA_BOX;
     if (!e.get("ctrl") || b.alarm || e.current()) return null;
     if (b.step === "hallway" && room() === "passage") return { x0: 912, x1: 948, y0: 266, y1: 354 };
     if (b.step === "cargo" && room() === "hangar") return BAY.cargo.box;
@@ -1318,7 +1346,7 @@ export function createLoadingBay(bridge) {
           ctx.globalAlpha = Math.max(0, Math.min(1, w.a));
           e.drawWorker(ctx, w.x, w.y, "");
           w.tool && drawTool(ctx, w.tool, w.x + 14, w.y - 22, false, 1);
-          w.hat && drawFuzzyHat(ctx, w.x, w.y - 64, 1.25); // (round 7, r5 1:59: big enough to see on a phone)
+          w.hat && drawFuzzyHat(ctx, w.x, w.y - 52, 1.6); // (round 7, r5 1:59: big enough to see on a phone)
           ctx.restore();
         },
       });
@@ -1338,6 +1366,28 @@ export function createLoadingBay(bridge) {
       });
     });
     b.ramp >= 0.999 && list.push({ y: BAY.arch.foot, f: () => drawArchFront(ctx, b, t) });
+    // the camera going up (round 7, q: 123): Robot 3's arm stretches up to the wall and the camera fades on
+    if (b.installAt >= 0) {
+      const r = robot(2),
+        u = Math.min(1, (t - b.installAt) / P.install),
+        h = robotHand(r.x, r.y, r.f, 1, 1),
+        c = BAY_CAMERA.game;
+      list.push({
+        y: 9999,
+        f: () => {
+          ctx.save();
+          ctx.strokeStyle = "#5b6475";
+          ctx.lineWidth = 4;
+          ctx.lineCap = "round";
+          ctx.beginPath();
+          ctx.moveTo(h.x, h.y);
+          ctx.lineTo(h.x + (c.x - 6 - h.x) * u, h.y + (c.y + 14 - h.y) * u);
+          ctx.stroke();
+          ctx.restore();
+          drawBayCamera(ctx, c.x, c.y, 0.98, u >= 1, Math.max(0, (u - 0.5) * 2));
+        },
+      });
+    }
     list.sort((a, c) => a.y - c.y).forEach((p) => p.f());
     b.slotAt >= 0 && t - b.slotAt < 1.2 && drawSlotLight(ctx, BAY.mailbox.slot.x, BAY.mailbox.slot.y, 1 - (t - b.slotAt) / 1.2);
     b.sweatAt >= 0 && t - b.sweatAt < 2 && b.hidden && drawSweat(ctx, BAY.plant.eyes.x + 18, BAY.plant.eyes.y - 6, Math.min(1, (t - b.sweatAt) / 2));

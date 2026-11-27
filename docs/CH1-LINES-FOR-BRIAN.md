@@ -4,25 +4,25 @@
 | Lines | Heading |
 | --- | --- |
 | 27–33 | # Chapter 1 lines for Brian |
-| 34–135 | ## Loading bay (beats 28 to 36, and 36b), 2026-11-26 rebuild (branch feat/ch1-loading-bay, not merged) |
-| 136–145 | ## Home morning (beats 22 to 24), 2026-11-26 round D (branch feat/ch1-day2-morning, not merged) |
-| 146–158 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
-| 159–175 | ## Lunch sneak and Ganitor, 2026-11-26 (branch feat/ch1-lunch-sneak, not merged) |
-| 176–191 | ## Calendar revision, Nov 16 (PR 58, not live) |
-| 192–199 | ## Earlier chapter lines |
-| 200–214 | ## Goal chips |
-| 215–298 | ## What people say |
-| 299–310 | ## The snack's name (2026-11-26, question 86) |
-| 311–324 | ## Words painted on things |
-| 325–348 | ## Buttons |
-| 349–435 | ## Day 2 onward (beats 22–61), pending |
-| 436–443 | ## Ball hiding |
-| 444–451 | ## Off-screen lines, for Brian (playtest 12) |
-| 452–461 | ## Homework desk, approved Nov 16 |
-| 462–500 | ## Questions still open |
-| 501–538 | ## After the party: the cleanup and truth or fib (story pass 28-52, E2), pending |
-| 539–558 | ## Bedtime additions and the chart over his bed (story pass 28-52, E4), pending |
-| 559–584 | ## Day 1 stand-ins, pending |
+| 34–137 | ## Loading bay (beats 28 to 36, and 36b), 2026-11-26 rebuild (branch feat/ch1-loading-bay, not merged) |
+| 138–147 | ## Home morning (beats 22 to 24), 2026-11-26 round D (branch feat/ch1-day2-morning, not merged) |
+| 148–160 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
+| 161–177 | ## Lunch sneak and Ganitor, 2026-11-26 (branch feat/ch1-lunch-sneak, not merged) |
+| 178–193 | ## Calendar revision, Nov 16 (PR 58, not live) |
+| 194–201 | ## Earlier chapter lines |
+| 202–216 | ## Goal chips |
+| 217–300 | ## What people say |
+| 301–312 | ## The snack's name (2026-11-26, question 86) |
+| 313–326 | ## Words painted on things |
+| 327–350 | ## Buttons |
+| 351–437 | ## Day 2 onward (beats 22–61), pending |
+| 438–445 | ## Ball hiding |
+| 446–453 | ## Off-screen lines, for Brian (playtest 12) |
+| 454–463 | ## Homework desk, approved Nov 16 |
+| 464–502 | ## Questions still open |
+| 503–540 | ## After the party: the cleanup and truth or fib (story pass 28-52, E2), pending |
+| 541–560 | ## Bedtime additions and the chart over his bed (story pass 28-52, E4), pending |
+| 561–586 | ## Day 1 stand-ins, pending |
 <!-- /section-index -->
 # Chapter 1 lines for Brian
 
@@ -59,6 +59,8 @@ Every word is in `src/modules/loading-bay-lines.js`, word for word from the stor
 | Isfred | But we keep getting fur in the vents. | Beat 30 (CHANGED) | Pending |
 | Isfred | I'm convinced now. | Beat 30 (CHANGED) | Pending |
 | Squatch (whisper) | Fur in the vents... that was me. | Beat 30 (NEW) | Pending |
+| Isfred Bar Neshuman | And a camera. Just in case. | Beat 30 (round 7, r6 7:46: a robot puts it up, upper right by the speaker; q 123) | Pending |
+| Isfred Bar Neshuman | I never watch the tapes. Unless something goes wrong. | Beat 30 (round 7, r6 7:46; q 123) | Pending |
 | Isfred | Dot. Bob. Lou. | Beat 30 (NEW) | Pending |
 | Isfred | Thank you for thirty years. | Beat 30 (NEW) | Pending |
 | Isfred | The robots will take it from here. | Beat 30 (NEW) | Pending |

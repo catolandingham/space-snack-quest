@@ -42,6 +42,7 @@ import { drawFamilyStampAt, drawFatLetters, familyStampOnRoom } from "./crate-st
 import { FAMILY } from "./snack-name.js";
 import { HALLWAY_CRAYON } from "./ganitor.js";
 import { drawNightTint, noteNightPicture, nightDrawn, nightPictureFor } from "./night-look.js";
+import { withCameraLayer } from "./bay-camera.js";
 import { VENT } from "./party-vent.js";
 import { eveningWords } from "./evening-lines.js";
 import { drawPhoto, drawCrayonDrawing, drawBrochure, drawPapers, drawPawPrint, drawFurArm, drawSleepingMops, drawPlaque, drawCutInBack, drawCloseX, drawArrow, fitDesign, PAPERS, PHOTO_POOL, drawHeartShape } from "./evening-art.js";
@@ -2201,7 +2202,7 @@ export function createEvening(bridge) {
       k = sqScale("hangar"),
       hidden = hiddenNow(s);
     // (the bay is only ever shown at night here: its own locked night picture is its night look, night-look.js)
-    if (bayPic && bayPic.complete && bayPic.naturalWidth) ctx.drawImage(bayPic, 0, 0, 960, 640);
+    if (bayPic && bayPic.complete && bayPic.naturalWidth) ctx.drawImage(withCameraLayer("delivery-night", bayPic), 0, 0, 960, 640); // (with the security camera, round 7, q: 123)
     else ((ctx.fillStyle = "#7f8597"), ctx.fillRect(0, 0, 960, 640));
     noteNightPicture("hangar");
     // the big wall vent shows the same swirl as every vent while it sucks

@@ -98,6 +98,12 @@ await page.evaluate(
         if (s.stopAt) sample("louStopped", { step: s.step, line: n.cur && n.cur.b ? n.cur.b.text : "", hat: s.workers.map((w) => w.hat) });
         if (s.hatOnFloor) sample("hatOnFloor", { step: s.step });
         if (d.mail) sample("mailByBox", true);
+        // the bay camera's layer (round 7, q: 123): none on the bay's picture until the robot has put it up
+        const cam = window.SSQ.cameraLayerDrawn();
+        if (n.room === "hangar" && !s.camera) sample("noCameraYet", { handed: cam.handed });
+        if (n.room === "hangar" && !s.camera && out.samples.noCameraYet && cam.handed !== out.samples.noCameraYet.handed) sample("cameraTooSoon", s.step);
+        if (s.installAt >= 0) sample("installing", { robot: s.robots[2] && { x: s.robots[2].x, y: s.robots[2].y } });
+        if (n.room === "hangar" && s.camera && s.step === "peek") sample("cameraOnPicture", { id: cam.lastId });
         if (d.passing && !s.workers[2].hat) sample("hairPass", true);
         if (s.robots && s.robots.some((r) => r.carry === "letter")) sample("letter", true);
         if (s.ship < 1 && s.ship > 0) sample("shipLeaving", { ramp: s.ramp });
@@ -206,6 +212,8 @@ g.check("30: the workers hand their tools to the robots", Array.isArray(run.samp
 g.check("30: Lou walks in wearing the fuzzy hat, is stopped at the arch (FUR. STOP. / It's a HAT.) and the hat stays on the floor", !!run.samples.louStopped && run.samples.louStopped.hat[2] === true && !!run.samples.hatOnFloor && !!B("lou-hat") && B("lou-hat").who === "lou", { stop: run.samples.louStopped, hat: run.samples.hatOnFloor });
 const hatOrder = ["scanner-stop", "lou-hat", "scanner-hair", "lou-hair"].map(line);
 g.check("30 (round 7, r5 1:59, q: 116): fur stops, hair goes: FUR. STOP. / It's a HAT. / (hat off) HAIR. PROCEED. / It's just hair., the arch glowing green as it lets him through", run.lines.join("|").includes(hatOrder.join("|")) && !!run.samples.hairPass && B("lou-hair").name === "Lou", { lines: run.lines.filter((t) => hatOrder.includes(t)), pass: run.samples.hairPass });
+g.check("30 (round 7, r6 7:46, q: 123): \"And a camera. Just in case.\", a robot rolls under the wall vent and puts the camera up, then \"I never watch the tapes. Unless something goes wrong.\"", !!B("isfred-camera") && !!B("isfred-tapes") && run.lines.indexOf(line("isfred-tapes")) > run.lines.indexOf(line("isfred-camera")) && !!run.samples.installing && Math.abs(run.samples.installing.robot.x - BAY_SPOTS.cameraWay[1].x) < 2, run.samples.installing);
+g.check("30 (q: 123): the bay's picture has no camera before it is put up, and has it (the layer) after", !!run.samples.noCameraYet && !run.samples.cameraTooSoon && !!run.samples.cameraOnPicture && /^delivery-/.test(run.samples.cameraOnPicture.id), { too: run.samples.cameraTooSoon, on: run.samples.cameraOnPicture });
 // 31, 32
 g.check("31: the promise, then \"Weeee-eenn-nnttt!\"", ["isfred-dont-worry", "isfred-love", "isfred-visitors", "mops-bleat-happy"].every((id) => !!B(id)), run.lines.filter((t) => t.startsWith("Mops, don't") || t.startsWith("Weeee")));
 g.check("32: \"Squatch: peek at the form\" and PEEK · form", run.steps.peek && run.steps.peek.chip === line("chip-peek") && run.steps.peek.offers.includes(line("button-peek")), run.steps.peek);
