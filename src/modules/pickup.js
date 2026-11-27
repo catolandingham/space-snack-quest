@@ -52,6 +52,7 @@ import { personBox, boxHit, addMovers, setCarry, addKeeper } from "./room-model.
 import { pickupWords } from "./pickup-lines.js";
 import { PK_HOME, PK_HALL, PK_HALLWAY, PK_BAY, PK_BAY_PICKUP, PK_BAY_GONE, PK_SIGHT, PK_PACE, PK_CRATE, ROUTE_PUSH, ROUTE_SNEAK, ROUTE_LAST, COSTUME, PK_OFFICE, PK_HOLD } from "./pickup-place.js";
 import { withCameraLayer, BAY_CAMERA } from "./bay-camera.js";
+import { storyHeart } from "./mops-hearts.js";
 import { drawPkTuft, drawHair, drawFloorPatch, drawPkCrate, drawBucket, drawPuddle, drawSnackBag, drawNewRobotBits, drawScanLine, drawArchLight, drawKidDrawing, drawPaleSquare, drawWallPatch, drawFoldedNote, drawBoxCloseup, drawSnipCloseup, drawDressCloseup, drawMirror, drawCostumePiece, drawBrochureCorner, COSTUME_PIECES, DRESS, costumeSpotAt, drawPkPlate, drawPlateCloseup, drawPhotoSign, drawCrayonCloseup, drawTagBox, drawPeelCloseup, drawShipAway, drawPhotoCorner, drawTapeScreen, drawHold, drawBiteCloseup, drawLidView } from "./pickup-art.js";
 import { OFFICE_PANELS } from "./escape-office-art.js";
 import { drawPerson, LOOKS } from "./party-art.js";
@@ -273,7 +274,7 @@ export function createPickup(bridge) {
       e.run(() => (L().cu = "")),
       ...sayP("sq", "sq-know"),
       ...sayP("sq", "sq-not-mad"),
-      e.run(() => ((L().heartsAt = e.time()), (L().t0 = 0))),
+      e.run(() => (storyHeart("pk-not-mad") && (L().heartsAt = e.time()), (L().t0 = 0))),
       wait(PK_PACE.hold + 0.6),
       e.run(() => {
         L().heartsAt = -1;
@@ -387,7 +388,7 @@ export function createPickup(bridge) {
     e.queue([
       ...sayP("sq", "sq-empty"),
       ...sayP("mops", "mops-empty"),
-      e.run(() => ((L().heartsAt = e.time()), (L().t0 = 0))),
+      e.run(() => (storyHeart("pk-empty") && (L().heartsAt = e.time()), (L().t0 = 0))),
       wait(1.0),
       e.run(() => (L().heartsAt = -1)),
       ...sayP("pa", "pa-ship", "pa", true),
@@ -872,7 +873,7 @@ export function createPickup(bridge) {
       ...bridgeWalk("mops", [PK_HOME.mirrorMops]),
       e.run(() => (e.face("sq", -1), e.face("mops", -1), (L().mirrorOn = true))),
       ...sayP("mops", "mops-two-goats"),
-      e.run(() => (L().heartsAt = e.time())),
+      e.run(() => storyHeart("pk-two-goats") && (L().heartsAt = e.time())),
       ...sayP("mops", "mops-not-one"),
       ...sayP("sq", "sq-itches"),
       e.run(lastWalk),
@@ -947,7 +948,7 @@ export function createPickup(bridge) {
     e.queue([
       ...sayP("sq", "sq-came"),
       ...sayP("sq", "sq-ate"),
-      e.run(() => ((L().cu = ""), (L().heartsAt = e.time()), (L().crumbAt = e.time()), (L().t0 = 0))),
+      e.run(() => ((L().cu = ""), storyHeart("pk-plate") && (L().heartsAt = e.time()), (L().crumbAt = e.time()), (L().t0 = 0))),
       wait(PK_PACE.hold + 0.6),
       e.run(() => ((L().heartsAt = -1), go("lastwalk"), control("chip-last-walk"))),
     ]);
@@ -1176,7 +1177,7 @@ export function createPickup(bridge) {
       ...sayP("sq", "sq-no-fizz"),
       e.run(() => (L().cu = "")),
       ...sayP("sq", "sq-fizzy-mars"),
-      e.run(() => (L().heartsAt = e.time())),
+      e.run(() => storyHeart("pk-going") && (L().heartsAt = e.time())),
       ...sayP("mops", "mops-going-there"),
       e.run(() => ((L().heartsAt = -1), go("call"), sfx("bleep"))),
       ...sayP("ups", "ship-call", "say", true),
@@ -1252,7 +1253,7 @@ export function createPickup(bridge) {
       ...bridgeWalk("mops", [{ x: PK_HOLD.crate.x - 30, y: PK_HOLD.crate.y + 40 }]),
       e.run(() => e.face("mops", -1)),
       ...sayP("mops", "mops-with-me"),
-      e.run(() => (L().heartsAt = e.time())),
+      e.run(() => storyHeart("pk-with-me") && (L().heartsAt = e.time())),
       ...sayP("ups", "crew-both-off"),
       e.run(chapterEnd),
     ]);
@@ -1691,23 +1692,26 @@ export function createPickup(bridge) {
       m = e.pos("mops");
     if (room === "hangar") return;
     drew = { step: l.step, room, ...(drewHome || {}) };
-    // the hall by day: its guests (53), each with a cone (they only wave at Mops)
-    if (room === "hall" && l.step === "push") {
-      drew.guests = PK_HALL.guests.map((g) => {
-        guests.drawId(ctx, g.kind, g.x, g.y, adultPxFor("hall"), t);
-        const bumped = l.bump.by === g.id && t - l.bump.at < 1.6;
-        bumped && drawWatchMark(ctx, g.x, g.y - adultPxFor("hall") * 1.2, "?", 1, t);
-        return { id: g.id, mark: bumped ? "?" : "" };
-      });
-    }
+    const crateNow = l.crate === "push" && e.get("moPose") !== "hidden" ? pushedCrate() : null;
+    // the hall by day: its guests (53), each with a cone (they only wave at Mops); a guest standing in front of the
+    // pushed crate (feet lower on the floor) is drawn after it, so the crate never covers him (the join, physics left 2)
+    const hallGuest = (g) => {
+      guests.drawId(ctx, g.kind, g.x, g.y, adultPxFor("hall"), t);
+      const bumped = l.bump.by === g.id && t - l.bump.at < 1.6;
+      bumped && drawWatchMark(ctx, g.x, g.y - adultPxFor("hall") * 1.2, "?", 1, t);
+      return { id: g.id, mark: bumped ? "?" : "" };
+    };
+    const inFront = (g) => !!crateNow && g.y > crateNow.y;
+    const hallPush = room === "hall" && l.step === "push";
+    hallPush && (drew.guests = PK_HALL.guests.filter((g) => !inFront(g)).map(hallGuest));
     // the hallway robot that reads the label as the crate rolls by
     // (the robot and the crate back to front, by where each stands on the floor: room-model.js)
     const hallwayBot = room === "passage" && l.step === "push" ? () => e.drawRobot(ctx, PK_HALLWAY.robot.x, PK_HALLWAY.robot.y, false, adultPxFor("passage") / 47) : null;
-    const crateNow = l.crate === "push" && e.get("moPose") !== "hidden" ? pushedCrate() : null;
     hallwayBot && (!crateNow || crateNow.y > PK_HALLWAY.robot.y) && hallwayBot();
     // the push: his crate on its pallet in front of Mops
     if (crateNow) drew.crate = drawPkCrate(ctx, crateNow.x, crateNow.y, crateNow.k, { label: true, bucket: true });
     hallwayBot && crateNow && crateNow.y <= PK_HALLWAY.robot.y && hallwayBot();
+    hallPush && drew.guests.push(...PK_HALL.guests.filter(inFront).map(hallGuest));
     // the walks: the next doorway's outline
     if (walking(l) && e.get("ctrl")) {
       const d = doorTo(room, routeOf(l)[room]);

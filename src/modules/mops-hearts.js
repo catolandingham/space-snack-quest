@@ -27,3 +27,25 @@ export function firstSightHearts(age) {
   }
   return out;
 }
+
+/**
+ * The story moments that keep their one heart (Brian, 2026-11-27, Snack Quest Chat: "cut from 8 to 3"; keep "It was
+ * empty before you.", "He's with me." and the pickup-day moment where Mops chooses Squatch, which is "Then that's where
+ * we're going.", where Mops gives up his job to go to Mars with him). true: the heart shows; false: cut at the join.
+ * Every heart moment in the chapter is listed here, so a change is one word.
+ */
+export const STORY_HEARTS = Object.freeze({
+  "pk-empty": true, // 53, "It was empty before you."
+  "pk-going": true, // 61, "Then that's where we're going." (Mops chooses Squatch)
+  "pk-with-me": true, // 61, "He's with me."
+  "pk-not-mad": false, // 53, the note: "They're not mad."
+  "pk-two-goats": false, // 56, the mirror: "I'm not one of a kind today."
+  "pk-plate": false, // 57, the empty plate: "They ate it all."
+  "es-brochure": false, // 45a, the brochure on the wall: "Let's go find that Mars Cakes stand."
+  "es-favorite": false, // 52, at the snack bar after his favorite snack
+  "es-label": false, // 51, the printed label: "We're really going."
+});
+/** Whether the story moment `id` (STORY_HEARTS) shows its heart. */
+export function storyHeart(id) {
+  return STORY_HEARTS[id] === true;
+}

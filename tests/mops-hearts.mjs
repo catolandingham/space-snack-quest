@@ -17,6 +17,13 @@ g.check("the hearts set off one after another and are gone after their time: non
 // no scene draws hearts on a loop any more: every Mops heart drawing goes by an age through this rule
 const src = (f) => readFileSync(M(f), "utf8");
 g.check("the warm cone's hearts, the lunch hallway's hearts and the story hearts all go by mops-hearts.js", /firstSightHearts\(age\)/.test(src("party-free-art.js")) && /firstSightHearts\(age\)/.test(src("lunch-sneak-art.js")) && /STORY_HEART\.count/.test(src("escape-art.js")) && /firstSightHearts\(/.test(src("evening.js")));
+// the story hearts cut from 8 to 3 (Brian 2026-11-27): "It was empty before you.", Mops choosing Squatch ("Then that's
+// where we're going.") and "He's with me."; every heart moment goes by STORY_HEARTS
+const kept = Object.keys(H.STORY_HEARTS).filter((k) => H.storyHeart(k)).sort();
+g.check("three story hearts are kept: pk-empty, pk-going, pk-with-me", JSON.stringify(kept) === JSON.stringify(["pk-empty", "pk-going", "pk-with-me"]), kept);
+const pkSrc = src("pickup.js"),
+  esSrc = src("escape.js");
+g.check("every story heart in pickup day and the escape asks storyHeart (no heart set without it)", (pkSrc.match(/heartsAt = e\.time\(\)/g) || []).length === (pkSrc.match(/storyHeart\("pk-[a-z-]+"\) && \(L\(\)\.heartsAt = e\.time\(\)\)/g) || []).length && (esSrc.match(/drawHearts\(/g) || []).length === (esSrc.match(/storyHeart\("es-[a-z-]+"\)/g) || []).length, null);
 
 // in the game: the loading bay's walk home (Brian's note r5 3:45): his cone holds Squatch all the way; the hearts show once
 const { page, errors } = await g.open("?beat=bay:home", { width: 375, height: 812, isMobile: true, hasTouch: true });

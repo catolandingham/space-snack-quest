@@ -41,6 +41,7 @@
  */
 import { personBox } from "./room-model.js";
 import { withCameraLayer } from "./bay-camera.js";
+import { storyHeart } from "./mops-hearts.js";
 import { escapeWords } from "./escape-lines.js";
 import { OFFICE_CODE, BAY_DAY, BAY_NIGHT, ES_HOME, ES_BAY, ROBOT_SIGHT, VENT_ROOM, VENT_TUNNEL, ES_HALLWAY, KEYPAD, keyAt, OFFICE, SITE, ES_BAR, SNACKS, ES_PACE, WEEK, MOP_CALM, MOPOFF, NEWS, ROUTE_HOME, ROUTE_VENT, ROUTE_OFFICE, ROUTE_BAR, ROUTE_HOME_NIGHT, HALL_GUEST, PLAQUE, FOLLOW, ES_DOORS } from "./escape-place.js";
 import { freshFloor, goatCells, beardAt, mopCalm, mopGoat, goatClean, wheelsAcross, starFor, bars, robotsAt, drawCalmFloor, drawMopFloor, drawBars, drawStarCloseup, markPatch, drawScrub } from "./escape-mopoff.js";
@@ -1644,7 +1645,7 @@ export function createEscape(bridge) {
         sp && (drew.mark = markBox(ctx, sp.thing, t));
         drew.fun = spots().filter((q) => q.extra).map((q) => q.id);
       }
-      l.heartsAt >= 0 && drawHearts(ctx, m.x, m.y - 46 * moScale("office"), t - l.heartsAt);
+      l.heartsAt >= 0 && storyHeart("es-label") && drawHearts(ctx, m.x, m.y - 46 * moScale("office"), t - l.heartsAt);
     }
     // the walks between rooms: the next doorway's outline (44d, 47)
     if (walking(l) && e.get("ctrl")) {
@@ -1683,7 +1684,7 @@ export function createEscape(bridge) {
     // 45a: a gulp and one sweat drop (he sent that order); the brochure held up, big; hearts over Mops
     if (room === "closet" && l.gulpAt >= 0 && t - l.gulpAt < ES_PACE.gulp) drew.sweat = drawGulpSweat(ctx, headBox("sq"), t - l.gulpAt);
     if (room === "closet" && l.step === "shown" && l.heartsAt >= 0) {
-      drawHearts(ctx, m.x, m.y - 46 * moScale("closet"), t - l.heartsAt);
+      storyHeart("es-brochure") && drawHearts(ctx, m.x, m.y - 46 * moScale("closet"), t - l.heartsAt);
       t - l.heartsAt < ES_PACE.brochureUp && (drew.brochureUp = drawPinnedBrochure(ctx, ES_HOME.brochureUp, true));
     }
     // the thought pictures, above the thinker's head with a clear gap (thought-place.js, through drawThought)
@@ -1696,7 +1697,7 @@ export function createEscape(bridge) {
       drew.think = { who, kind, box, head };
     }
     // hearts over Mops at the snack counter (he says nothing)
-    if (l.heartsAt >= 0 && l.step === "hearts" && room === "hall") drawHearts(ctx, m.x, m.y - 46 * moScale("hall"), t - l.heartsAt);
+    if (l.heartsAt >= 0 && l.step === "hearts" && room === "hall" && storyHeart("es-favorite")) drawHearts(ctx, m.x, m.y - 46 * moScale("hall"), t - l.heartsAt);
     // the plan's tick, small in the corner (round 7, q: 132: no full-screen pop-up)
     if (l.cu === "planmini") drew.plan = planMini(ctx, l);
     // the close-ups over the blurred room
