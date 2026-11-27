@@ -10,7 +10,7 @@
 import { readFileSync } from "node:fs";
 import { startGame } from "./game-page.mjs";
 
-const src = ["game/12-ch1-redesign.js", "game/13-ch1-slice.js", "game/14-ch1-day2.js", "modules/party-lines.js", "modules/home-morning-lines.js", "modules/lunch-sneak-lines.js", "modules/loading-bay-lines.js", "modules/evening-lines.js", "modules/escape-lines.js"]
+const src = ["game/12-ch1-redesign.js", "game/13-ch1-slice.js", "game/14-ch1-day2.js", "modules/party-lines.js", "modules/home-morning-lines.js", "modules/lunch-sneak-lines.js", "modules/loading-bay-lines.js", "modules/evening-lines.js", "modules/escape-lines.js", "modules/pickup-lines.js"]
   .map((f) => readFileSync(new URL("../src/" + f, import.meta.url), "utf8"))
   .join("\n");
 const chips = [...src.matchAll(/Squatch: [^"]+/g)].map((m) => m[0]);
@@ -112,10 +112,24 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: take the snacks": { es: "snacks", closeUp: true, look: [330, 400] },
     "Squatch: leave food for the Guardians": { es: "food", closeUp: true, look: [850, 420] },
     "Squatch: hide the pink slip": { es: "closet", x: 300, y: 398, look: [172, 300] },
-    "Squatch: pack the crate": { step: "pack1", room: "closet", zoom: "pack", x: 420, y: 520 },
-    "Squatch: put on the spare jacket": { step: "jacket", room: "closet", scene: "Q8", x: 160, y: 510 },
-    "Squatch: go to the ship": { step: "keepsake", room: "passage", scene: "Q9", x: 820, y: 510 },
-    "Squatch: walk through the scanner": { step: "board", room: "hangar", bay: true, scene: "Q9", x: 480, y: 500 },
+    // pickup day (src/modules/pickup.js): each opens its step; `thing` looks for the outline round the spot's thing
+    "Squatch: read the note": { pk: "note", thing: true },
+    "Squatch: open the Guardian Box": { pk: "box", thing: true },
+    "Squatch: pack the crate": { pk: "pack", thing: true },
+    "Squatch: take the things off the walls": { pk: "walls", thing: true },
+    "Squatch: put the label on the crate": { pk: "label", thing: true },
+    "Squatch: get in the crate": { pk: "getin", thing: true },
+    "Squatch: climb out of the crate": { pk: "climb" },
+    "Squatch: hide in the bay's plant": { pk: "sneak", x: 300, y: 560, thing: true },
+    "Squatch: walk home with Mops": { pk: "home", walk: true, look: [36, 300] },
+    "Squatch: put on the spare jacket": { pk: "dress", closeUp: true },
+    "Squatch: practice your bleat": { pk: "practice" },
+    "Squatch: walk to the ship": { pk: "lastwalk", walk: true, look: [916, 400] },
+    "Squatch: pick up the box": { pk: "pickbox", thing: true },
+    "Squatch: walk to the scanner": { pk: "toscan", walk: true, look: [466, 310] },
+    "Squatch: walk through the scanner": { pk: "board", thing: true },
+    "Squatch: open this week's box": { pk: "cake", thing: true },
+    "Squatch: hide in the crate": { pk: "hide", thing: true },
   };
   const missing = chips.filter((c) => !play[c] && !story.has(c));
   const yellowNear = (x, y) => {
@@ -188,14 +202,14 @@ const report = await page.evaluate(async (chips) => {
   // (a chip two beats show has one spec for each)
   for (const [chip, spec] of Object.entries(play).flatMap(([c, s]) => [].concat(s).map((x) => [c, x]))) {
     if (spec.hm) {
-      Object.assign(n, { ch1PartyNow: null, ch1Morning: null, ch1Lunch: null, ch1Zoom: null, ch1PadOn: false, q: [], cur: null });
+      Object.assign(n, { ch1PartyNow: null, ch1Morning: null, ch1Lunch: null, ch1Zoom: null, ch1PadOn: false, ch1Pickup: null, q: [], cur: null });
       ss.ch1JumpBeat(22);
       window.SSQ.beat("ch1-home-morning").jump(spec.hm);
       // at the wardrobe step he has walked there (where OPEN · closet works)
       spec.hm === "closet" && ((n.sq.x = 300), (n.sq.y = 398));
       ((n.chip = chip), (n.moved = 200));
     } else if (spec.lu) {
-      Object.assign(n, { ch1PartyNow: null, ch1Morning: null, ch1Zoom: null, ch1PadOn: false, q: [], cur: null });
+      Object.assign(n, { ch1PartyNow: null, ch1Morning: null, ch1Zoom: null, ch1PadOn: false, ch1Pickup: null, q: [], cur: null });
       ss.ch1JumpBeat(22);
       window.SSQ.beat("ch1-lunch").jump(spec.lu);
       spec.x && ((n.sq.x = spec.x), (n.sq.y = spec.y));
@@ -217,10 +231,17 @@ const report = await page.evaluate(async (chips) => {
       ((n.chip = chip), (n.moved = 200));
     } else if (spec.es) {
       // (the beats before it are over: the bay's and the evening's states are cleared, as a jump to the escape does)
-      Object.assign(n, { ch1PartyNow: null, ch1Morning: null, ch1Lunch: null, ch1Bay: null, ch1Evening: null, ch1Zoom: null, ch1PadOn: false, q: [], cur: null, ch1Day2: true });
+      Object.assign(n, { ch1PartyNow: null, ch1Morning: null, ch1Lunch: null, ch1Bay: null, ch1Evening: null, ch1Zoom: null, ch1PadOn: false, ch1Pickup: null, q: [], cur: null, ch1Day2: true });
       window.SSQ.beat("ch1-escape").jump(spec.es === "food" ? "snacks" : spec.es);
       spec.es === "food" && Object.assign(n.ch1Escape, { step: "food" }, { snacks: { ...n.ch1Escape.snacks, plate: true } }) && (n.ch1Step = "es-food");
       spec.x && ((n.sq.x = spec.x), (n.sq.y = spec.y));
+      ((n.chip = chip), (n.moved = 200));
+    } else if (spec.pk) {
+      Object.assign(n, { ch1PartyNow: null, ch1Morning: null, ch1Lunch: null, ch1Bay: null, ch1Evening: null, ch1Escape: null, ch1Zoom: null, ch1PadOn: false, q: [], cur: null, ch1Day2: true });
+      window.SSQ.beat("ch1-pickup").jump(spec.pk);
+      // he stands where the step's button comes up (the spot's own place), or where the spec says
+      const sp0 = (ss.spotsNow() || []).find((q) => q && q.verb && q.who === "sq" && q.r > 0 && !q.hot);
+      spec.x ? ((n.sq.x = spec.x), (n.sq.y = spec.y)) : sp0 && ((n.sq.x = sp0.x), (n.sq.y = sp0.y));
       ((n.chip = chip), (n.moved = 200));
     } else if (spec.party) {
       Object.assign(n, { ch1Day2: false, ch1Lunch: null, ch1Bay: null, ch1Zoom: null, ch1PadOn: false, ch1Morning: null, q: [], cur: null, moPose: "hidden" });
@@ -239,6 +260,7 @@ const report = await page.evaluate(async (chips) => {
     n.ch1Bay = null;
     n.ch1Evening = null;
     n.ch1Escape = null;
+    n.ch1Pickup = null;
     n.ch1Day2 = spec.day2 !== false;
     // The song step of the morning module (src/modules/morning.js), with Mops beside the bucket.
     n.ch1Morning = spec.song ? { step: "song", t: 0, notes: true } : null;
@@ -271,9 +293,12 @@ const report = await page.evaluate(async (chips) => {
     const at = spots[0] || { x: spec.x, y: spec.y };
     // Rule (Brian, 2026-11-14): no ring when the action happens where Squatch stands, so those goals need only the prompt.
     const onSquatch = !!spots[0] && (!!spots[0].hot || (Math.abs(spots[0].x - n.sq.x) < 2 && Math.abs(spots[0].y - n.sq.y) < 2));
-    const yellow = onSquatch ? 1 : spec.look ? yellowNear(...spec.look) : yellowNear(at.x || spec.x, at.y || spec.y);
+    const th = spec.thing && spots[0] && spots[0].thing && [spots[0].thing.x0, spots[0].thing.y0, spots[0].thing.x1, spots[0].thing.y1].every(Number.isFinite) ? spots[0].thing : null;
+    spec.thing && !th && bad.push({ chip, thing: "no thing to outline", spot: spots[0] && spots[0].id });
+    const noPlace = !onSquatch && !th && !spec.look && !Number.isFinite(at.x || spec.x);
+    const yellow = noPlace ? 0 : onSquatch ? 1 : th ? yellowNear((th.x0 + th.x1) / 2, (th.y0 + th.y1) / 2) + yellowNear(th.x0, th.y0) : spec.look ? yellowNear(...spec.look) : yellowNear(at.x || spec.x, at.y || spec.y);
     // (an escape close-up is its own prompt: the keys, the snacks and the plate are what he taps)
-    const prompt = spec.pad ? n.ch1PadOn : spec.closeUp ? !!(n.ch1Escape && n.ch1Escape.cu) : spec.walk ? true : !!(offer && offer.verb);
+    const prompt = spec.pad ? n.ch1PadOn : spec.closeUp ? !!((n.ch1Escape && n.ch1Escape.cu) || (n.ch1Pickup && n.ch1Pickup.cu)) : spec.walk ? true : !!(offer && offer.verb);
     const target = spec.walk || spec.pad || spec.closeUp || spots.length > 0;
     for (const r of ss.rings()) ringed.push(`${chip} -> ${r.box ? "box" : "circle"} ring and arrow on ${r.id}`);
     for (const c of yellowCircles) ringed.push(`${chip} -> yellow ${c === "arrow" ? "arrow" : "circle at " + c}`);

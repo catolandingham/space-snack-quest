@@ -72,7 +72,7 @@ for (const f of lineFiles) {
   for (const [k, v] of Object.entries(mod)) visit(v, k);
 }
 g.check(`no line in the ${lineFiles.length} lines files says the old name (${lineCount} lines read)`, lineCount > 50 && badLines.length === 0, badLines);
-g.check("the painted words are in the snack's lines: the station's stamp, the hall tin's lid, the faded stamp and his crayon", SNACK_LINES.map((l) => l.text).join("|") === `${SNACK.NAME}|${SNACK.name}|_${FAMILY.FADED}|${FAMILY.CRAYON}`, SNACK_LINES);
+g.check("the painted words are in the snack's lines: the station's stamp, the hall tin's lid, the faded stamp and his crayon, and the chart over his bed (its title and THE CRATE KIND; story pass 28-52, E4)", SNACK_LINES.map((l) => l.text).join("|") === `${SNACK.NAME}|${SNACK.name}|_${FAMILY.FADED}|${FAMILY.CRAYON}|${SNACK.NAME}|THE CRATE KIND`, SNACK_LINES);
 
 // (c) and (d) In the game.
 const { page, errors } = await g.open("?ch=1", { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
@@ -176,7 +176,9 @@ const bed = async (night) =>
         for (let i = 0; i < d.length; i += 4) test(d[i], d[i + 1], d[i + 2]) && c++;
         return { c, of: w * h };
       };
-      const m = drawn.made;
+      // (the layer with his crayon: the crayonless ones the escape and pickup day draw are made later in this run, and
+      // a layer is made once per picture and crayon, so the crate bed's last one made can be one of theirs)
+      const m = drawn.madeCrayon || drawn.made;
       return {
         night: window.SSQ.nightNow(),
         handedThisFrame: drawn.handed - before,
@@ -187,6 +189,9 @@ const bed = async (night) =>
         crayon: m ? count(m.gap, (r, g, b) => b > r + 30 && b > g + 20) : null,
         // the old badge's navy pill
         navy: count(B.badge, (r, g, b) => Math.abs(r - 43) < 22 && Math.abs(g - 58) < 22 && Math.abs(b - 103) < 26 && !night),
+        // the crayon chart over his bed (story pass 28-52, E4): what the layer drew, and its red crayon Xs on the wall
+        chart: window.SSQ.cakeChartDrawn ? window.SSQ.cakeChartDrawn() : null,
+        chartRed: window.SSQ.cakeChartDrawn && window.SSQ.cakeChartDrawn() ? count(window.SSQ.cakeChartDrawn().box, (r, g, b) => r > 1.6 * g && r > 1.6 * b && r > (night ? 70 : 130)) : null,
       };
     },
     night,
@@ -206,6 +211,11 @@ for (const [tag, r] of [
   );
 }
 g.check("by day: the old badge's navy pill is gone from the crate", day.navy.c < day.navy.of * 0.02, day.navy);
+// The crayon chart over his bed (Brian, story pass 28-52, E4): a layer over the locked home picture, for Brian's yes.
+for (const [tag, r] of [
+  ["by day", day],
+  ["at night", night],
+]) g.check(`${tag}: the crayon chart hangs over his bed: the snack's name as its title, six cakes crossed out, THE CRATE KIND`, !!r.chart && r.chart.title === SNACK.NAME && r.chart.label === "THE CRATE KIND" && r.chart.crossed === 6 && r.chart.box.x0 > 230 && r.chart.box.x1 < 530 && r.chart.box.y1 < 445 && r.chartRed && r.chartRed.c > 40, { chart: r.chart, red: r.chartRed });
 // The party hall's snack tin (painted in the locked hall picture with the old name on its lid) gets a new lid.
 const hall = await page.evaluate(
   (T) => {

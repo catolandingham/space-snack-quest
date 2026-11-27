@@ -14,6 +14,7 @@
  * PLACEHOLDER look (letter sizes, the red, the wear, the crayon) for Brian.
  */
 import { snackLine } from "./snack-name.js";
+import { drawCakeChart } from "./cake-chart.js";
 
 /**
  * The crate bed in the locked home picture, in that picture's pixels (1280 x 830), from docs/locked-rooms/home_room.py
@@ -41,7 +42,8 @@ const FAT = (px) => `900 ${px}px "Arial Black", Impact, system-ui, sans-serif`;
 const CRAYON_FONT = (px) => `700 ${px}px "Chalkboard SE", "Marker Felt", "Comic Sans MS", cursive`;
 
 // Tests: what the layer drew, and how often a home picture was handed out with it.
-let made = null;
+let made = null,
+  madeCrayon = null;
 let handed = 0;
 let last = null,
   stamps = 0;
@@ -51,7 +53,7 @@ let last = null,
  * last on any crate (the bedtime story's too) and how many times it has been drawn.
  */
 export function crateStampDrawn() {
-  return { made, handed, tin: tinMade, handedHall, last, stamps, byLunch, crayonNow: lastCrayon };
+  return { made, madeCrayon, handed, tin: tinMade, handedHall, last, stamps, byLunch, crayonNow: lastCrayon };
 }
 
 // The stamp's letter sheets, made once each (drawFamilyStamp).
@@ -210,6 +212,7 @@ export function drawFamilyStamp(c, { paintOut = true, crayon: withCrayon = true,
   }
   const parts = { gap, feet, letters: { x0: lettersX, x1: lettersX + textW, y0: top, y1: base, px, text: faded }, crayon: withCrayon ? { text: crayon, px: cpx } : null };
   if (note) made = parts; // (tests: the crate bed's, not another crate's)
+  if (note && withCrayon) madeCrayon = parts; // (tests: the crate bed's last one with his crayon, however late a crayonless one was made)
   last = parts; // (tests: whichever crate drew it last, and how often)
   stamps++;
   return parts;
@@ -343,8 +346,9 @@ export function drawTinLid(c) {
 
 // What each locked picture gets layered over it (picture id: the size the drawing is in, and the drawing).
 const LAYERS = {
-  "home-closed": [CRATE_BED.picture, (c, crayon) => drawFamilyStamp(c, { crayon })],
-  "home-open": [CRATE_BED.picture, (c, crayon) => drawFamilyStamp(c, { crayon })],
+  // (and the crayon chart over his bed, cake-chart.js: story pass 28-52, E4; for Brian's yes)
+  "home-closed": [CRATE_BED.picture, (c, crayon) => (drawFamilyStamp(c, { crayon }), drawCakeChart(c))],
+  "home-open": [CRATE_BED.picture, (c, crayon) => (drawFamilyStamp(c, { crayon }), drawCakeChart(c))],
   hall: [HALL_TIN.picture, drawTinLid],
 };
 /** The locked pictures that get a layer for the snack's name: the two home pictures (the crate bed) and the hall (the tin). */

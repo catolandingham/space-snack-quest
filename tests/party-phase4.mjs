@@ -71,7 +71,8 @@ async function open(beat, frozen = true) {
   g.check("closing: the crowd cheers and the band bows, then the lights dim a step, then the speaker (2 to 4 s each)", at("cheer") != null && at("dim") - at("cheer") >= 2 && at("dim") - at("cheer") <= 4 && at("speak") - at("dim") >= 1.5 && at("speak") - at("dim") <= 4 && r.dimMax > 1.2, r.phases);
   g.check("closing: cheer, claps and the band's flourish before the chime", ["cheer", "clap", "tada"].every((s) => r.played.indexOf(s) >= 0 && r.played.indexOf(s) < r.played.indexOf("chime")), r.played);
   g.check("closing: while the speaker says its line, its sound-wave arcs are drawn beside it (phase 4 item 1)", !!r.arcs && r.arcs.speaking === "pa" && r.arcs.text === L("speaker-closing") && r.arcs.differ, r.arcs);
-  // he walks home through his own door; Mops comes home and the talk starts there
+  // he walks home through his own door; the wall speaker calls Mops to clean the hall; Mops comes home and the talk
+  // starts there
   const h = await page.evaluate((D) => {
     const ss = window.__ss,
       n = ss.op,
@@ -87,15 +88,23 @@ async function open(beat, frozen = true) {
       if (!p) break;
       out.rooms[out.rooms.length - 1] !== n.room && out.rooms.push(n.room);
       p.mopsHeartsAt != null && out.hearts == null && (out.hearts = { mopsIn: n.moPose !== "hidden", line: n.cur && n.cur.k === "bub" ? n.cur.b.text : "" });
-      if (n.cur && n.cur.k === "bub") {
-        out.first = n.cur.b.text;
-        break;
+      // (story pass 28-52, E2: the wall speaker calls Mops; he cleans the hall, done at once here, and comes home)
+      if (n.cur && (n.cur.k === "bub" || n.cur.k === "card")) {
+        const t = n.cur.k === "bub" ? n.cur.b.text : "card:" + n.cur.text;
+        (out.said = out.said || []).push(t);
+        if (n.room === "closet" && p.scene === "P9b" && n.cur.k === "bub") {
+          out.first = t;
+          break;
+        }
+        n.bt = 1;
+        ss.opTap();
       }
+      p.scene === "P9" && n.ctrl && !n.cur && window.SSQ.beat("ch1-party").finishCleanup();
     }
     out.costumeLook = "costumeLook" in (n.ch1PartyNow || {});
     return out;
   }, { x: hall.HALL_DOOR.x, y: hall.HALL_DOOR.y });
-  g.check("#50 at closing time his own door takes him home; Mops comes home and the talk starts there", JSON.stringify(h.rooms) === JSON.stringify(["hall", "closet"]) && h.first === L("mops-went"), h);
+  g.check("#50 at closing time his own door takes him home; the wall speaker calls Mops, he cleans the hall (story pass 28-52, E2), comes home and the talk starts there", JSON.stringify(h.rooms) === JSON.stringify(["hall", "closet", "hall", "closet"]) && h.said[0] === L("pa-mops-hall") && h.first === L("mops-squatch"), h);
   g.check("#48 Mops turns to him and hearts float up before he speaks; no yellow glow on Squatch", !!h.hearts && h.hearts.mopsIn && !h.costumeLook, h);
   await page.evaluate(() => {
     const ss = window.__ss;

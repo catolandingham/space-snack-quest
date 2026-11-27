@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–26 | # Master backlog |
-| 27–228 | ## Where main is (Chapter 1 redesign) |
-| 229–243 | ## Register |
-| 244–265 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 266–286 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 287–299 | ## Phase 2 (plan section 4, T13 to T18) |
-| 300–322 | ## Phase 1 (plan section 3, T5 to T12) |
-| 323–336 | ## SS40–SS44 |
-| 337–354 | ## Story rows |
-| 355–373 | ## Reset section |
-| 374–384 | ## Still open |
-| 385–388 | ## Chapter 1 replot, recorded and not built |
-| 389–548 | ## Changelog |
+| 27–241 | ## Where main is (Chapter 1 redesign) |
+| 242–256 | ## Register |
+| 257–278 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 279–299 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 300–312 | ## Phase 2 (plan section 4, T13 to T18) |
+| 313–335 | ## Phase 1 (plan section 3, T5 to T12) |
+| 336–349 | ## SS40–SS44 |
+| 350–367 | ## Story rows |
+| 368–386 | ## Reset section |
+| 387–397 | ## Still open |
+| 398–401 | ## Chapter 1 replot, recorded and not built |
+| 402–561 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -25,6 +25,15 @@
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-27 (Chapter 1 whole), draft PR #96 on `feat/ch1-pickup-day`, now stacked on `feat/ch1-day2-joined` (#97), not merged. Done: #97 and the lunch tip 299e287 merged in (merge commits, no rebase); pickup day on the joined shared modules (see README); pickup's bay on the plant-moved pictures; one chart over his bed; 36b's entry spots apart; the kid robot through the lunch sneak, beat 47 (0 catches) and the note. Open: the kid robot stops at pickup day's beat 55 after the climb-out (rolled up, no catches, but it finds no path to the plant it calls safe; the showing tool's route along the front works); the evening's own wall chart (`evening-pictures.js drawEveningChart`, beat 39 home) and the chart layer from the lunch branch (`cake-chart.js`) both hang over his bed in the evening, one over the other (which one is Brian's call); older shared top-level names the reviewer listed (`PAPER`, `DAY2`, `INK`, `last`, `tick`, `draw`) are not from this round. NOT ASSESSED: how it plays for a person (Not yet played by a person). Docs match main: yes.
+
+2026-11-26 (night), draft PR on `feat/ch1-pickup-day` (stacked on `feat/ch1-escape`), not merged. Done: beats 53 to 61, pickup day, as a module (`ch1-pickup`) from the story pass for 53 to 61; the old pickup-day code is gone from `src/game`; the chapter ends through `ch1ChapterEnd` (tally card, Chapter 2).
+- Pending (Brian approves as he watches): every CHANGED and NEW line in `src/modules/pickup-lines.js` (status "pending"); the goal lines, buttons, switch reasons and tape labels marked "new".
+- The pass's eight questions, pick A of each built as a placeholder: his own crate opened after a mail bag (1); the new robots scan every crate, "NEW ROBOTS. NEW RULE." (2); Mops boards openly, "It's attached." (3); two tape clips, "That is not a goat." / "A Wookiee!" (4); the five short office lines (5); the call as written (6); found in his crate, "He's with me.", both put off, no lockup card (7); the slip under the notes, the robots never open the little box (8).
+- Layers over locked pictures, for Brian's yes: the camera with a red light over the ramp (in pickup day's bay only; the pass also wants it from Day 2 on), the mirror inside the wardrobe door, Lou's hat in the bay's bin, the things on the home walls and their pale squares, the floor where the crate bed and the bucket stood, the mail room's row (a bag, a crate, his crate), the PHOTO DAY sign and flash, the tripod and stool in the office. The cargo hold is a new placeholder picture (no locked picture).
+- Not built: dragging to look through the slat (the strip shows the whole bay); PACK · photo (the Polaroid: no record on this branch of whether he kept it); guests' cones on the 55 walk home (no guests in the hall then); Mops walking ahead on that walk (he follows); the room shaking at the first bleat (roar lines instead); the crew's own look (the party's guard look); Lou's hat left on the bay floor in beat 30 and the camera from beat 29 (earlier beats, other builders); a security guard walking in for the costume's catch in the hall (the LOCKUP card comes straight).
+- NOT ASSESSED: how it feels to play (Not yet played by a person); the music in the cargo hold and the office at evening is whatever the room's cue gives.
 
 2026-11-27 (Day 2 joined), draft PR on `feat/ch1-day2-joined` (stacked on `feat/ch1-lunch-sneak`; joins #95, #94 and #93), not merged. Done: one continuous Day 2 from beat 28 to beat 53 (see README); one copy each of the snack's names, the night look, the office code, the crate bed's stamp, the speech voices; the plant's v3 spot in every bay beat; `tests/day2-joins.mjs`; `tools/day2-showing.mjs`. Open for Brian: the picks the join made (the robots' voice is the loading bay's, the night tint is the lunch sneak branch's 0.5 not the evening's 0.58, the escape's brochure on the wall is now the evening's drawing, the evening's pen code), and everything still open on #95, #94 and #93. NOT ASSESSED: how the joins feel to a kid on a phone (the video shows one way through). Docs match main: yes. Not yet played by a person.
 
@@ -37,6 +46,10 @@
 - New drawings waiting for his eye (placeholders): the robots, the form set and its close-up, the two stuck copies, the bite, the copies in the bin, the ship docking (the locked day picture shown through the window and down the ramp), the workers as the older program draws them (no name tags).
 - Pending words: every line in the "Loading bay" section of `docs/CH1-LINES-FOR-BRIAN.md` except the gumbling, fur and Paperwork lines.
 - Placeholders (not pins): the close-ups' places and sizes, every walking speed and pause in `loading-bay-place.js` (BAY_PACE).
+2026-11-26 (late night), draft PR #89: story pass 28-52, E4 bedtime additions and the chart over his bed (`bedtime-story*.js`, `cake-chart.js`; DECISIONS "Day 1 bedtime: why Mops kept him, the last cake, and the chart over his bed"). Waiting on Brian: the 11 new bedtime lines, the chart's two words, and his yes to the chart as a layer over the locked home pictures. Not yet played by a person. Docs match main: yes.
+
+2026-11-26 (late night), draft PR #87: story pass 28-52, E2: Mops cleans the hall after the party (P9) and truth or fib at home (P9b) (`party-cleanup.js`, `party-truth.js`, `tests/party-cleanup.mjs`; DECISIONS "Day 1 after the party: Mops cleans the hall, then truth or fib"). Waiting on Brian: party lines 91 to 119; the open conflicts listed there (Mops finding him in the hall at closing time; the flyer's place in the talk; Isfred's sales-visit line; the TV story's office and scanner pictures). Not yet played by a person. Docs match main: yes.
+
 2026-11-26 (late night, lunch), draft PR #91: the rename and the family stamp merged in; the lunch sneak's plate is Stars Cakes. Waiting on Brian (from #87 and #89): the bedtime line's new words, the crate bed's stamp layer, the crayon "ST". Docs match main: yes.
 
 2026-11-26 (late night, Day 2's start), draft PR #90: the rename and the family stamp merged in; nothing new waiting on Brian from this merge. Docs match main: yes.

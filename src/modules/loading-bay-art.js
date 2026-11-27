@@ -161,7 +161,7 @@ export function drawStuck(ctx, x, y, s = 16, bite = 0, rot = 0) {
 }
 
 /** A few crumbs of paper falling from a bite at (x, y), `u` (0 to 1) of the way through their fall. */
-export function drawCrumbs(ctx, x, y, u, s = 1) {
+export function drawBiteCrumbs(ctx, x, y, u, s = 1) {
   ctx.save();
   for (let i = 0; i < 4; i++) {
     const dx = (i - 1.5) * 6 * s,

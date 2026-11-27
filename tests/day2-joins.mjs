@@ -32,7 +32,7 @@ g.check("thought-place.js and thought-bubble.js export no name in common", !expo
 const fnNames = {};
 // (functions, and functions written as arrow constants: esbuild renames the second of either)
 for (const f of mods) for (const m of src[f].matchAll(/^(?:export )?(?:(?:async )?function\s+([A-Za-z0-9_$]+)|(?:const|let) ([A-Za-z0-9_$]+) = (?:async )?(?:\([^)]*\)|[A-Za-z_$][\w$]*) =>)/gm)) (fnNames[m[1] || m[2]] = fnNames[m[1] || m[2]] || []).push(f);
-const day2 = /^(loading-bay|evening|escape|bay-watch|office-code|thought-place|pen-digits|line-split|crate-stamp)/;
+const day2 = /^(loading-bay|evening|escape|pickup|bay-watch|office-code|thought-place|pen-digits|line-split|crate-stamp)/; // (and pickup day, merged on top)
 const clash = Object.entries(fnNames).filter(([, fs]) => fs.length > 1 && fs.some((f) => day2.test(f)));
 g.check("no Day 2 module shares a top-level function name with another module", clash.length === 0, clash);
 

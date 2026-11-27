@@ -21,6 +21,7 @@
         bayBeat() && bayBeat().tick(l);
         evBeat() && evBeat().tick(l);
         esBeat() && esBeat().tick(l);
+        pkBeat() && pkBeat().tick(l);
       }
       (n.sqHop &&
         ((n.sqHop.t += l),
@@ -687,7 +688,7 @@
           continue;
         }
         // While hopping out of bed he is over the bed, not behind it.
-        !(id === "bed" && n.hopOut >= 0) && l.y < p.back && l.x > p.x - 40 && l.x < p.x + p.w + 40 && ((id === "bucket" && window.SSQ && window.SSQ.drawHomeBucket && window.SSQ.drawHomeBucket(e, !0)) || e.drawImage(img, p.x * k, p.y * ky, p.w * k, p.h * ky, p.x, p.y, p.w, p.h)); // Mops's mop bucket (mop-bucket.js)
+        !(id === "bed" && n.hopOut >= 0) && !(pkBeat() && pkBeat().gone(id)) && l.y < p.back && l.x > p.x - 40 && l.x < p.x + p.w + 40 && ((id === "bucket" && window.SSQ && window.SSQ.drawHomeBucket && window.SSQ.drawHomeBucket(e, !0)) || e.drawImage(img, p.x * k, p.y * ky, p.w * k, p.h * ky, p.x, p.y, p.w, p.h)); // Mops's mop bucket (mop-bucket.js)
       }
     }
     function g5() {
@@ -706,7 +707,7 @@
       if (homePicture()) {
         drawLockedRoom(n.wardrobe === "open" ? "home-open" : "home-closed");
         // Day 2: the Guardian Box (in the closet, then out on the floor) and the home morning's things on the floor; Mops's mop bucket over the painted one (mop-bucket.js)
-        (window.SSQ && window.SSQ.drawHomeBucket && window.SSQ.drawHomeBucket(e), hmBeat() ? hmBeat().drawOnRoom(e) : gboxOut() && L2());
+        (window.SSQ && window.SSQ.drawHomeBucket && window.SSQ.drawHomeBucket(e), hmBeat() ? hmBeat().drawOnRoom(e) : gboxOut() && L2(), pkBeat() && pkBeat().drawOnRoom(e)); // (pickup day's things under the people: pickup.js)
         // Home alone with the closet open: the morning module draws the G box on the closet floor.
         {
           let beat = window.SSQ && window.SSQ.beat("ch1-morning");
@@ -2105,6 +2106,7 @@
         luBeat() && luBeat().draw(e), bayBeat() && bayBeat().draw(e);
         evBeat() && evBeat().draw(e);
         esBeat() && esBeat().draw(e);
+        pkBeat() && pkBeat().draw(e);
         if (n.ch1Calendar) {
           drawCh1Calendar();
           return;

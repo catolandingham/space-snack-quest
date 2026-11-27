@@ -24,6 +24,7 @@
         (n.ch1Lunch = null), (n.ch1Bay = null),
         (n.ch1Evening = null),
         (n.ch1Escape = null),
+        (n.ch1Pickup = null),
         (n.ch1SureEnd = !1),
         (n.ch1Day2 = !1),
         (n.ch1Zoom = null),
@@ -198,7 +199,7 @@
         // The escape (src/modules/escape.js): the walk between rooms, beat 53 after it, the one capture rule's guard
         // (and whether it is out), the robot drawing (the evening's too).
         goTo: (dest, flags, next) => ch1GoDay(dest, flags, next),
-        packStart: () => ch1PackStart(),
+        chapterEnd: () => ch1ChapterEnd(), // the end of Chapter 1, after pickup.js's beat 61
         // Who the stick drives (switchTo, announced by the card "You are MOPS now." when `why` is given), and who it is.
         playAs: (who, why) => switchTo(who, why),
         playing: () => (x.mops ? "mops" : "sq"),
@@ -209,6 +210,9 @@
         // Holding ↺ inside a full-screen view: the same restart as the page's ↺.
         restartPart: () => sectionReset(),
         squatchScale: () => wl,
+        // Who the player is, and the switch (the party cleanup, src/modules/party-cleanup.js): its card, with `by` as its why, comes first.
+        player: () => (x.mops ? "mops" : "sq"),
+        switchTo: (who, by) => !!x.mops !== (who === "mops") && (switchTo(who === "mops" ? "mops" : "squatch"), by && n.q.unshift({ k: "card", id: "switch", who: who === "mops" ? "mops" : "sq", text: "You are " + (who === "mops" ? "MOPS" : "SQUATCH") + " now.", by })),
         text: (t, x, y, size, color, align, weight) => g(t, x, y, size, color, align, weight),
       });
     // Optional inspection, not a new story beat. Keep the current queue intact while it is open.

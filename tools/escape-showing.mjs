@@ -205,7 +205,8 @@ if (which === "escape") {
   for (;;) {
     if (Date.now() > end) await fail("ran out of time");
     const s = await st();
-    if (s.ch1Step === "pack1") break;
+    // (the escape hands over to pickup day, pickup.js, at beat 53; without it, the older program's packing)
+    if (s.ch1Step === "pack1" || (await page.evaluate(() => !!(window.SSQ.beat("ch1-pickup") && window.SSQ.beat("ch1-pickup").active())))) break;
     const step = s.es && s.es.step;
     if (step && step !== lastStep) ((lastStep = step), log(step), await sleep(300), await still(step));
     if (["bub", "card", "cutaway"].includes(s.cur)) {

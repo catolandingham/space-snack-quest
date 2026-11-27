@@ -601,6 +601,7 @@
           if (bayBeat() && bayBeat().restart()) return; // the loading bay's cutscene: the part he is in starts again
           if (evBeat() && evBeat().restart()) return; // the evening (evening.js) between its steps: back to the last one
           if (esBeat() && esBeat().restart()) return; // the escape between its steps, the same
+          if (pkBeat() && pkBeat().restart()) return; // pickup day, the same
           if (restoreCh1Step(ch2.qCheck)) return void (n.ctrl = !0);
           return void (n.cur || n.q.length || (n.ctrl = !0));
         }

@@ -36,7 +36,7 @@
  * last one he did (restart()).
  */
 import { EV_HALLWAY, EV_BAR, STORM, EV_HOME, HOME_ALONE, EV_BAY, BAY_FURNITURE, BAY_EXTRA, BAY_BOUNDS, BAY_SEARCH, BAY_VENT, EVENING_PACE as P, EVENING_LOOK, nightLook, mopsSleepAt, mopsSleepBox, robotLook } from "./evening-place.js";
-import { drawJupiterStorm, drawStormGlow, drawCounterBin, drawCoffeeStain, BROCHURE_PARTS, drawGuardianMark, drawEveningThought, drawGuardiansBox, drawWeekCake, drawCakeChart, CHART, drawIdeaPicture, drawYearsLater, drawVentCrate, BAY_CRATE } from "./evening-pictures.js";
+import { drawJupiterStorm, drawStormGlow, drawCounterBin, drawCoffeeStain, BROCHURE_PARTS, drawGuardianMark, drawEveningThought, drawGuardiansBox, drawWeekCake, drawEveningChart, CHART, drawIdeaPicture, drawYearsLater, drawVentCrate, BAY_CRATE } from "./evening-pictures.js";
 import { placeThought } from "./thought-place.js";
 import { drawFamilyStampAt, drawFatLetters, familyStampOnRoom } from "./crate-stamp.js";
 import { FAMILY } from "./snack-name.js";
@@ -1837,7 +1837,7 @@ export function createEvening(bridge) {
       Object.assign(out, { mops: true, eyes: true });
     } else if (view.kind === "chart") {
       const C = CHARTV.chart;
-      drawCakeChart(ctx, C.x, C.y, C.w, C.h, s.xMark || 0, false, eveningWords("sign-crate-kind"));
+      drawEveningChart(ctx, C.x, C.y, C.w, C.h, s.xMark || 0, false, eveningWords("sign-crate-kind"));
       // this week's cake gets the one highlight until its X is drawn
       if ((s.xStroke || 0) < 2) {
         const k = C.w / CHART.W;
@@ -2347,7 +2347,7 @@ export function createEvening(bridge) {
     const onRoom = familyStampOnRoom();
     out.stamp = onRoom ? onRoom.text.replace(/[_ ]/g, "").length : 0;
     const Ch = HOME_ALONE.chart;
-    drawCakeChart(ctx, Ch.x, Ch.y, Ch.w, Ch.h, s.chartX ? 1 : 0, true);
+    drawEveningChart(ctx, Ch.x, Ch.y, Ch.w, Ch.h, s.chartX ? 1 : 0, true);
     // the brochure: in his paw, or held up high over his head for Mops to see
     const paw = sqPawAt(sq.x, sq.y, sq.f || 1, k);
     // the Guardians' little box: in his other paw, opening, or put down on the floor; this week's cake, bitten

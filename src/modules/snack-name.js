@@ -73,6 +73,20 @@ export const SNACK_LINES = Object.freeze([
     status: "needs-yes",
     source: "NEW, the spec's 2.12 (a call made without a question): Squatch's crayon in the scraped gap, years ago",
   },
+  {
+    id: "chart-title",
+    who: "crayon",
+    text: SNACK.NAME,
+    status: "needs-yes",
+    source: "Brian, story pass 28-52, E2/E4: the crayon chart of kinds tried over his bed (cake-chart.js), its title",
+  },
+  {
+    id: "chart-crate-kind",
+    who: "crayon",
+    text: "THE CRATE KIND",
+    status: "needs-yes",
+    source: "Brian, story pass 28-52, E2/E4: the chart's empty circle with the red dot, the one he is still looking for (the Stars Cakes thread's label)",
+  },
 ]);
 
 /** The words of one snack line, by id. Throws on an unknown id. */

@@ -35,6 +35,7 @@ import { drawCreditsButton, creditsTap, creditsShown } from "./credits.js";
 import { nightPicture, isNightNow, nightDrawn } from "./night-look.js";
 import { snackWord } from "./snack-name.js";
 import { drawStationStamp, crateStampDrawn, setCrayonSource } from "./crate-stamp.js";
+import { cakeChartDrawn } from "./cake-chart.js";
 
 /**
  * The game-state fields a rebuilt beat may write, through engine().set(field, value). Anything else it
@@ -43,8 +44,9 @@ import { drawStationStamp, crateStampDrawn, setCrayonSource } from "./crate-stam
  * part) and the party night against this list.
  */
 // (the evening, evening.js, also keeps the older program's record of night one: the crayon drawing on the wall, the
-// brochure, the paw print, the posted yellow copy, the pink sheet in the vent, the lights; and ch1D, the loading bay; the escape, escape.js, the night, the ball and the journey)
-export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1HomeMorning", "ch1Lunch", "ch1Bay", "ch1Evening", "ch1Sneak", "ch1Step", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe", "ch1Crayon", "ch1Brochure", "ch1Paw", "ch1Signed", "ch1Mailed", "ch1PinkSucked", "ch1Lights", "ch1D", "ch1Escape", "ch1Night", "ch1DidBall", "ch1Journey"]);
+// brochure, the paw print, the posted yellow copy, the pink sheet in the vent, the lights; and ch1D, the loading bay; the escape, escape.js, the night, the ball and the journey;
+// pickup day, pickup.js, the costume, the ship, the office, the keepsake drawing)
+export const BEAT_WRITES = Object.freeze(["ch1Morning", "ch1PartyNow", "ch1HomeMorning", "ch1Lunch", "ch1Bay", "ch1Evening", "ch1Sneak", "ch1Step", "ch1Chip", "ctrl", "scene", "act", "sqPose", "moPose", "sqLift", "zzz", "wardrobe", "ch1Crayon", "ch1Brochure", "ch1Paw", "ch1Signed", "ch1Mailed", "ch1PinkSucked", "ch1Lights", "ch1D", "ch1Escape", "ch1Night", "ch1DidBall", "ch1Journey", "ch1Pickup", "costumeOn", "ch1Ship", "ch1Office", "ch1Keepsake"]);
 
 export function createBridge() {
   const beats = new Map();
@@ -265,6 +267,8 @@ export function createBridge() {
     },
     /** Tests: the layers for the snack's name (the crate bed's stamp over the home pictures, the hall tin's lid). */
     crateStampDrawn,
+    /** Tests: the crayon chart over his bed, as the home pictures' layer last drew it (cake-chart.js). */
+    cakeChartDrawn,
     /** Register a rebuilt beat. Ids are unique; registering one twice is a mistake, so it throws. */
     registerBeat(id, beat) {
       if (typeof id !== "string" || !id) throw new Error("registerBeat needs an id");
