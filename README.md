@@ -4,21 +4,21 @@
 | Lines | Heading |
 | --- | --- |
 | 23–35 | # Space Snack Quest |
-| 36–168 | ## Chapter 1 redesign (on main) |
-| 169–183 | ## Music credits |
-| 184–214 | ## Source and build |
-| 215–225 | ## Debug link |
-| 226–231 | ## Automatic checks |
-| 232–235 | ## Screen fit |
-| 236–259 | ## Brian's repeat complaints, as tests (2026-11-22) |
-| 260–265 | ## Scene 1 morning |
-| 266–269 | ## Chapter 1 kid robot |
-| 270–286 | ## Phase 1: kitchen and diner clarity |
-| 287–299 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
-| 300–313 | ## Phase 3: one capture rule, phone HUD, tap to walk |
-| 314–323 | ## Chapter 1 pass: the night out has a purpose, switches say why |
-| 324–341 | ## Progression tests |
-| 342–368 | ## Left as they were |
+| 36–172 | ## Chapter 1 redesign (on main) |
+| 173–187 | ## Music credits |
+| 188–218 | ## Source and build |
+| 219–229 | ## Debug link |
+| 230–235 | ## Automatic checks |
+| 236–239 | ## Screen fit |
+| 240–263 | ## Brian's repeat complaints, as tests (2026-11-22) |
+| 264–269 | ## Scene 1 morning |
+| 270–273 | ## Chapter 1 kid robot |
+| 274–290 | ## Phase 1: kitchen and diner clarity |
+| 291–303 | ## Phase 2: tests, dead engine out, files by chapter, rings, captions |
+| 304–317 | ## Phase 3: one capture rule, phone HUD, tap to walk |
+| 318–327 | ## Chapter 1 pass: the night out has a purpose, switches say why |
+| 328–345 | ## Progression tests |
+| 346–372 | ## Left as they were |
 <!-- /section-index -->
 # Space Snack Quest
 
@@ -42,6 +42,10 @@ Calendar review status (2026-11-16): Brian said yes to merge the calendar (Nov 1
 2026-11-26 (rebuild from the story pass), draft pull request #95 on branch `feat/ch1-loading-bay` (from `feat/ch1-lunch-sneak`), not merged. Beats 28 to 36 and the new 36b are a module (`src/modules/loading-bay.js`, registered as `ch1-bay`; places and timings in `loading-bay-place.js`, drawings in `loading-bay-art.js`, words in `loading-bay-lines.js`; the snack's names in `cakes-brand.js`: the station's STARS CAKES, the family's MARS CAKES, his crate's faded _ARS CAKES). Behind the snack counter the station speaker calls the Universal Postal Service ship (a bubble beside the hall speaker, sound waves) and Squatch hopes for a new kind from the Guardians. The hallway is the player's to walk ("Squatch: follow Mops to the ship"); the photo wall turns him back ("Later. The ship!"). In the bay the manager is coming: "Hide!", ROLL · ball behind the cargo. The ship docks; three robots roll down under the scanner arch ("NO FUR. PROCEED.", its field shimmering), STARS CAKES crates and a little tagged box come down, last week's empty crate goes up; one robot posts a letter in the robot mailbox ("Mail scanned."). The player sneaks from the cargo to the plant past a robot rolling to and fro (HIDE · plant; its cone holds 0.5 s with a "?"; seen means the alarm and the one capture rule). From the plant: Isfred on why the robots came (Squatch's whisper: "Fur in the vents... that was me."), the three workers Dot, Bob and Lou thanked and each handing a robot their tool, Lou stopped at the scanner for his fuzzy hat (FUR. STOP.), the promise, then PEEK · form: the form close-up with ORDER MORE ROBOTS and Isfred's office code 169556 written on the pink and through on the yellow. The ramp goes up and the ship leaves. Then the player is Mops (a switch card): TAKE and EAT the copies (the bite close-up), the robots get their orders and go, TALK · Squatch (the mumble whispered, "I can't understand you with paper in your mouth."), SPIT · bin, PICK UP and GIVE the little box (the tag close-up: "For S. A new kind. — The Guardians"), and Squatch again (a second card) goes home with Mops. In the empty hallway the office door opens with a robot inside; ROLL · ball in time gives the hairball close-up ("What's that?" "Big hairball." "Does not compute."); too slow and the robot sees fur (the one capture rule; the lockup names "A robot" "in the hallway"). 36 ends there with the rebuilt evening's `start()` (`window.SSQ.beat("ch1-evening")`, the photo wall) when that beat is there. 36b (`window.SSQ.beat("ch1-bay").startHallSneak()`, which the evening calls after its photo wall, or this beat itself when the evening is not there): the party hall with three cleaning robots mopping lanes, cones pointing the way they roll, grey streaks (Mops shakes his head at one), plants blocking sight, Mops able to stop one ("MOVE, GOAT." "You missed a corner." "CORNERS ARE NOT EFFICIENT."); reaching the snack counter calls the evening's `startStorm()` (38a) or, without it, the older program's next step (the engine's `hallSneakDone`). The bay plant moved a few steps along the wall in new locked delivery-room pictures (v3, pickup v4; Brian's yes, question 75). Shared files copied as-is from sibling branches: `party-alarm.js` (feat/ch1-evening), `pen-digits.js` and `line-split.js` (feat/ch1-escape). On localhost `?beat=bay:pa` (or `bay:hallway`, `bay:cargo`, `bay:sneak`, `bay:peek`, `bay:take`, `bay:talkto`, `bay:walkby`, `bay:hall`, any part) opens it. Check: `tests/loading-bay.mjs`. Showing tool: `node tools/party-showing.mjs bay <out.mp4>`. Docs match main: yes. Not yet played by a person.
 
 2026-11-26 (round C), draft pull request #91 on branch `feat/ch1-lunch-sneak`, not merged. Brian's answers of 2026-11-26 are built in the lunch sneak: Mops's approved "...you know the rule, grab one snack." behind the counter (the thought bubble is gone), ROLL · ball in the hall (the game's ball rule), a framed close-up of the snack counter so the plate, the pie and Squatch read on a phone, a hay sandwich, and a bigger bag whose MOPS reads on a phone and an iPad. "Ganitor" (goat + janitor, `src/modules/ganitor.js`): a GANITOR name tag on Mops in every scene, the wall speaker's "Ganitor Mops to the party hall." before he leaves on Day 2 (with the ear icon), an Employee of the Month photo labelled MOPS, GANITOR in the hallway (a layer over the locked picture), and MOPS THE GANITOR on Squatch's crayon card. The robot janitor notice (D) waits for Brian's pick of wording. Docs match main: yes. Not yet played by a person.
+2026-11-26 (late night), draft pull request #89 (`feat/ch1-bedtime-story`), Brian's story pass 28-52, section E4; not merged to main. The bedtime story gains, all pending his yes: Mops's six lines on why he kept him ("one of a kind, like me"), before his snack line; Squatch's "Tell me about the last cake."; three pictures of the last cake (the scraped crate, crumbs, a cake cut open, red in the middle, sparking) with Mops's three lines; "The Guardians will."; one heart over Mops, no words. The crayon chart of kinds tried hangs over his bed from the first minute, a layer over the locked home pictures (`cake-chart.js`; needs Brian's yes). Tests: `bedtime-story`, `snack-name`. Docs match main: yes. Not yet played by a person.
+
+2026-11-26 (late night, after the rename), the same draft pull request #87, Brian's story pass 28-52, section E2 ("Build this pass: yes"; questions 11 B and 12 A; "Go! Go as far as you can without me"); not merged to main. After the party the player is Mops, cleaning the empty party hall (scene P9, `src/modules/party-cleanup.js`, drawn by `party-cleanup-draw.js` and `party-cleanup-art.js`): the wall speaker calls him, the switch card announces him, his beard cleans the dust and confetti it passes, sticky spills take two passes, the beard fills and he wrings it at his bucket (`mop-bucket.js`, the approved bucket, copied from the bedtime branch without its home-room part), no timer. Then a fur trail (the floor vent takes the first tuft) leads to the Polaroid if Squatch joined the group photo (a close-up: his shirt, then his feet), else his fallen top hat, else fur in his doorway. At home, Mops asks "Did you go to the party?" and the player picks TELL or FIB (`party-truth.js`); both meet at "You never have to hide from me." and the talk as built. Every ending except Mops finding him in the hall goes through it (closing time home first, "Keep going" after the alarm, home early). The older program hands over `switchTo` and `player` (`src/game/15-ch1-scene1.js`, 4 lines; `src/game/` is still well under main's size), and `?beat=party:P9` / `party:P9b` open the cleanup and the talk after it. 31 new lines wait for Brian's yes (party lines 91 to 119). Tests: `party-cleanup` (new, with a robot that plays the cleanup with taps and the big button only), `party-endings` (the wall speaker's call). Docs match main: yes. Not yet played by a person.
+
 2026-11-26 (late night, lunch), draft pull request #91, not merged. The rename (question 86) and the family crate's stamp are merged in from #87, #89 and #90. The lunch sneak's plate holds the same round cakes, now the station's Stars Cakes (comments and test notes say so; no words are painted on the plate or the lunch crates). The lunch sneak draws the hall itself, so it takes the hall tin's new lid there too (and its counter close-up, copied from it). Stills for Brian: `tests/out/for-brian-2026-11-26/round-e/rename-stills/`. Not yet played by a person. Docs match main: yes.
 
 2026-11-26 (late night, Day 2's start), draft pull request #90, not merged. The rename (question 86) and the bedtime story's family stamp are merged in from #87 and #89. The home morning's words about the calendar now name the snack's delivery day; the tall wardrobe and the mop bucket, cut from the home pictures, come with the crate bed's new stamp like every home picture. Not yet played by a person. Docs match main: yes.

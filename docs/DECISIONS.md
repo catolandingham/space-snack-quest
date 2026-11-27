@@ -3,43 +3,45 @@
 
 | Lines | Heading |
 | --- | --- |
-| 44–47 | ## The escape's words and the vent room, 2026-11-26 (Brian, notes page questions 55 and 56) |
-| 48–50 | ## The office code, 2026-11-26 (Brian, chat) |
-| 51–56 | # Space Snack Quest: every decision, in one place |
-| 57–64 | ## How to use this file |
-| 65–68 | ## Office code and the loading bay, 2026-11-26 (Brian, chat) |
-| 69–76 | ## The snack renamed, and the crate bed's stamp (question 86), 2026-11-26 (Brian, relayed by the coordinator) |
-| 77–80 | ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator) |
-| 81–87 | ## Evening and night one rebuilt from the story pass, 2026-11-26 night (Brian: "Go! Go as far as you can without me.") |
-| 88–95 | ## Evening and night one, look and physics, 2026-11-26 (Brian, video notes on beats 37 to 42) |
-| 96–104 | ## Lunch sneak, 2026-11-26 (Brian's video notes and answers, round D) |
-| 105–115 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
-| 116–125 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
-| 126–136 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
-| 137–160 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
-| 161–165 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 166–174 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 175–178 | ## Sound, 2026-11-23 |
-| 179–203 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 204–215 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 216–240 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 241–249 | ## Which repo is the base, 2026-11-22 |
-| 250–260 | ## Sight cones, 2026-11-22 |
-| 261–265 | ## Latest calendar direction, 2026-11-16 |
-| 266–268 | ## Vent walk, 2026-11-16 |
-| 269–271 | ## Locked home room v5, 2026-11-16 |
-| 272–281 | ## Fidelity system (pictures are locked, not just words) |
-| 282–319 | ## 1. Working rules |
-| 320–386 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 387–411 | ## 3. Characters and look |
-| 412–488 | ## 4. Look, rooms and layout |
-| 489–510 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 511–554 | ## 6. Later chapters (2–4 and travel) |
-| 555–564 | ## 7. Audio |
-| 565–599 | ## 8. Code, controls and process |
-| 600–646 | ## 9. Open / waiting on Brian |
-| 647–741 | ## 10. Earlier entries, kept word for word |
-| 742–839 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 46–49 | ## The escape's words and the vent room, 2026-11-26 (Brian, notes page questions 55 and 56) |
+| 50–52 | ## The office code, 2026-11-26 (Brian, chat) |
+| 53–61 | ## Day 1 after the party: Mops cleans the hall, then truth or fib (story pass 28-52, E2; 2026-11-26) |
+| 62–67 | # Space Snack Quest: every decision, in one place |
+| 68–76 | ## Day 1 bedtime: why Mops kept him, the last cake, and the chart over his bed (story pass 28-52, E4; 2026-11-26) |
+| 77–84 | ## How to use this file |
+| 85–88 | ## Office code and the loading bay, 2026-11-26 (Brian, chat) |
+| 89–96 | ## The snack renamed, and the crate bed's stamp (question 86), 2026-11-26 (Brian, relayed by the coordinator) |
+| 97–100 | ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator) |
+| 101–107 | ## Evening and night one rebuilt from the story pass, 2026-11-26 night (Brian: "Go! Go as far as you can without me.") |
+| 108–115 | ## Evening and night one, look and physics, 2026-11-26 (Brian, video notes on beats 37 to 42) |
+| 116–124 | ## Lunch sneak, 2026-11-26 (Brian's video notes and answers, round D) |
+| 125–135 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
+| 136–145 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
+| 146–156 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
+| 157–180 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
+| 181–185 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 186–194 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 195–198 | ## Sound, 2026-11-23 |
+| 199–223 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 224–235 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 236–260 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 261–269 | ## Which repo is the base, 2026-11-22 |
+| 270–280 | ## Sight cones, 2026-11-22 |
+| 281–285 | ## Latest calendar direction, 2026-11-16 |
+| 286–288 | ## Vent walk, 2026-11-16 |
+| 289–291 | ## Locked home room v5, 2026-11-16 |
+| 292–301 | ## Fidelity system (pictures are locked, not just words) |
+| 302–339 | ## 1. Working rules |
+| 340–406 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 407–431 | ## 3. Characters and look |
+| 432–508 | ## 4. Look, rooms and layout |
+| 509–530 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 531–574 | ## 6. Later chapters (2–4 and travel) |
+| 575–584 | ## 7. Audio |
+| 585–619 | ## 8. Code, controls and process |
+| 620–666 | ## 9. Open / waiting on Brian |
+| 667–761 | ## 10. Earlier entries, kept word for word |
+| 762–859 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 ## The escape's words and the vent room, 2026-11-26 (Brian, notes page questions 55 and 56)
 - **The escape's written words are approved as written** (Brian, 2026-11-26, notes page question 55: "Approve all as written", PR #93 comment): the card "Six days later", the board IDEAS FOR GUARDIANS, HAVE YOU SEEN?, the labels MARS / NO / TOYS, the Mars letter, the Guardian note with "— The Guardians", the goal line "Squatch: type the code from the pink slip", and the site's "Order new box" and "Return empty crate". The office-code pin is "make 169556". **Decided.** (The site's header is renamed STARS CAKES in the rebuild of 2026-11-26 night, the Stars Cakes thread: that new word waits for his yes.)
@@ -48,11 +50,29 @@
 ## The office code, 2026-11-26 (Brian, chat)
 - **The office code is 169556.** Brian, chat, 2026-11-26: the office code is 169556 (six digits), not 4723. It is written on the pink sheet, its close-up shows it big and clear before the keypad (beat 50), and the office keypad takes six digits. The code is still for the office door only (his answer of 2026-11-22). `docs/TUNING-PINS.json` "office-code" now points at `src/modules/escape-place.js`. **Decided.** This replaces 4723 everywhere (R84 below and the 2026-11-22 keypad line keep their history with a note).
 
+## Day 1 after the party: Mops cleans the hall, then truth or fib (story pass 28-52, E2; 2026-11-26)
+
+Brian's words: "Build this pass: yes" (he approves the lines as he watches each scene, so new and changed lines are built and marked pending), question 11 "B" (the Polaroid only if he joined the group photo; otherwise the hat and fur), question 12 "A" (truth or fib, as written), and tonight "Go! Go as far as you can without me". Earlier, his words that started it (2026-11-26): control the janitor more often; have him clean up after the party before he comes back to the room; that is where he sees the Polaroid and learns Squatch went; then in the room Squatch decides whether he lies; the cleaning foreshadows the contest against the robots.
+
+- **Built (Decided, the beats):** after the party the player is Mops, cleaning the empty hall (scene P9, `src/modules/party-cleanup.js`): the wall speaker's "Ganitor Mops to the party hall." (approved words) is the cause; after the alarm Mops first says "Stay in here." (approved words) to Squatch under the bed. The switch card says "You are MOPS now." Dust and confetti come off where his beard passes; two sticky spills need two passes; the snacks he knocked over lie by the bar; the beard fills, goes grey and stops; WRING · beard at his bucket (the first time, the morning's beard pictures). No timer, no robots, no points. After his first wring the fur: "Fur?", the floor vent takes the first tuft, "No, no, no.", a trail of tufts one at a time with the dashed outline, "Oh no." at the third, "Nobody saw that." as he mops it. The find: the Polaroid (if he joined the group photo; PICK UP · photo, a close-up: his shirt, "That's MY shirt.", then his feet, a heart that pops, "Weee...?!", "Squatch."), else his top hat where it fell ("That's MY hat."), else fur caught in his doorway. "Spotless!" when the hall is all clean. Then home: "You are SQUATCH now.", Mops comes in, "Squatch." / "Did you go to the party?" and two big picture buttons (`party-truth.js`): TELL · the truth or FIB · "I stayed in". Both paths say their lines, nobody is punished, and both meet at "You never have to hide from me." and the approved lines after it, to the TV. With the truth the Polaroid stands by his bed; with the fib Mops keeps it.
+- **Needs Brian's yes:** every new line (party lines 91 to 119, `docs/PARTY-LINES-FOR-BRIAN.md`; source "Brian, story pass 28-52, E2/E4").
+- **Calls made without a question (veto any):** the fur starts after his first wring, so dust, the full beard and the wring come first (one new thing at a time). With no photo and no top hat lying in the hall, the trail ends at fur caught in Squatch's own doorway (PICK UP · fur): E2's hat exists only if it fell. "Nice shirt." is said only with the Polaroid. Going home early ("Keep going" after his own door, P8c) also has Mops clean the hall before he comes home, like walking home at closing time. His bucket stands by the hallway doorway (the approved bucket drawing, not part of the locked picture). The hall has no tables, so "corners and under the tables" is the corners only. Mops's switch cards use the game's own "You are MOPS now." / "You are SQUATCH now." with a why line each ("Mops cleans up the party hall.", "Mops comes home."; pending).
+- **Open (conflicts with what was built today; not changed):** (1) Closing time still has the road where the kid waits in the empty hall and Mops finds him there (Brian #50 kept it beside walking home alone); E2 has Squatch always home first. On that road there is no cleanup and the talk is as built ("You went to the party."); the wall speaker's call now plays as the hall empties, before Mops comes in. My pick: keep both roads. (2) E2 puts "Mops notices the flyer on the bed" after "You have me."; the built talk opens with it (Brian #42). Kept as built; the question takes the place of "You went to the party.". (3) E4's sales-visit line for Isfred ("We're thinking about their helper robots.") would replace his approved "to help with the heavy work", which Squatch's approved "Robots for the heavy work? That's Mops's job!" answers, and the morning PA already says the robots arrive; not built. (4) E4's TV story office and scanner pictures: Brian brought the old story back "as it was" (2026-11-25), and E4 makes them depend on his flag 12; not built.
+- NOT ASSESSED: how the mopping feels on a phone; whether a child reads the dust and the grey beard without help. Tests: `tests/party-cleanup.mjs` (new). Not yet played by a person.
 # Space Snack Quest: every decision, in one place
 
 > **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
 
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
+
+## Day 1 bedtime: why Mops kept him, the last cake, and the chart over his bed (story pass 28-52, E4; 2026-11-26)
+
+Brian's words: "Build this pass: yes" (new and changed lines built and marked pending; he approves them as he watches), the Stars Cakes decisions of 2026-11-26 ("the original has the red marshmallow middle that fizzes"; "Mops secretly pays"; Squatch thinks the Guardians send the new kinds), and tonight "Go! Go as far as you can without me".
+
+- **Built (pending Brian's yes, every word):** back in the room after the crate story, before his snack line, Mops says why he kept him (E4's proposed lines, from Brian's Nov 8 playtest words): "I thought: a Wookiee!" / "But you looked different." / "Maybe you were one of a kind. Like me." / "The only goat janitor." / "I know what it's like to be one of a kind." / "So I said: I'll take care of you." After the snack line, Squatch: "Tell me about the last cake."; three full-screen pictures, years ago (the memory look): the scraped crate, crumbs, one cake cut open, red in the middle, sparking, with Mops's "One cake left. Red in the middle." / "It fizzed." / "Never found one like it."; back in the room Squatch: "The Guardians will."; Mops says nothing and one heart floats up over him (no words, plays by itself, about 2 seconds); then the Guardians picture as before. No parents anywhere (the bedtime rule). Lines: `src/modules/bedtime-story-lines.js` (status "pending, needs-yes", source "Brian, story pass 28-52, E2/E4").
+- **Needs Brian's yes (a layer over a locked picture):** the crayon chart over his bed (`src/modules/cake-chart.js`): a taped sheet on the bare wall between the closet and the desk, titled with the snack's name in his blue crayon, six little cakes each crossed out in red, and an empty dashed circle with a red dot and sparks labelled THE CRATE KIND. It is drawn over a copy of the locked home pictures (closed and open, v6) with the crate bed's stamp (`crate-stamp.js` withSnackLayers); the picture files are not changed. There from the first minute of the game. Its two words are snack lines ("chart-title", "chart-crate-kind", needs yes).
+- **Calls made without a question (veto any):** the one-of-a-kind lines come back in the room, just before the snack line (E4 says "after he opens the crate and before the approved line"); the three last-cake lines are one picture each, Mops in the picture beside the crate; "a blink" is left out (Mops's eyes are always drawn shut as soft arcs, so a blink would not show); the kinds tried are colours only, no names.
+- NOT ASSESSED: how the chart reads on a phone (it is small on the wall); whether the six one-of-a-kind lines in a row feel long. Tests: `tests/bedtime-story.mjs`, `tests/snack-name.mjs` (the chart by day and at night). Not yet played by a person.
 
 ## How to use this file
 - **This is the single source of truth for decisions.** If chat, memory or another doc disagrees with this file, this file wins. Fix the other doc, or bring the question to Brian.

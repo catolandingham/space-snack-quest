@@ -32,7 +32,8 @@
  */
 import { drawSquatchArt } from "./squatch-art.js";
 import { ROOM_SIZES, BEDTIME_PICTURES } from "./bedtime-story-art.js";
-import { bedLine } from "./bedtime-story-lines.js";
+import { bedLine, ONE_OF_A_KIND } from "./bedtime-story-lines.js";
+import { heart } from "./party-free-art.js";
 import { cutawaySteps } from "./cutaway.js";
 import { footfall } from "./footfalls.js";
 import { createBedtimeSound } from "./bedtime-story-sound.js";
@@ -42,6 +43,8 @@ import { nightPicture, isNightNow } from "./night-look.js";
 export const BEDTIME_STORY_ID = "moonpie";
 /** The picture after Mops's bedtime line: Squatch's crayon drawing of the Guardians (bedtime-story-art.js). */
 export const GUARDIANS_ID = "guardians";
+/** After his snack line: the last cake, one picture for each of Mops's three lines (story pass 28-52, E4). */
+export const LASTCAKE_ID = "lastcake";
 
 /**
  * Where everyone stands at home (game positions; every one is checked against the furniture by
@@ -141,6 +144,8 @@ export const BEDTIME_PACE = Object.freeze({
   dimFrom: 1.0,
   dimTo: 2.7,
   snores: 3,
+  // after "The Guardians will.": Mops says nothing, one heart floats up over him (wordless, plays by itself; E4)
+  heart: 2.2,
   snore: 2.6,
   fade: 2.0,
   fadeIn: 1.2,
@@ -361,6 +366,11 @@ export function createBedtimeStory(bridge) {
     e.set("moPose", "stand");
     phase("line");
   }
+  // After "The Guardians will.": one heart over Mops, no words (2 to 4 seconds, plays by itself).
+  function heartFloat(dt) {
+    beatFrame(dt);
+    return S.t >= BEDTIME_PACE.heart;
+  }
   // 4. Falling asleep. From here this file draws him (the room's sitting Squatch, then lying down).
   function toSleep() {
     const e = E();
@@ -520,7 +530,17 @@ export function createBedtimeStory(bridge) {
         // the story pictures; as Mops's "...Weeee-eenn-nnttt?" comes up, his bleat
         ...cutawaySteps(BEDTIME_STORY_ID).flatMap((c) => (BEDTIME_PICTURES[c.panel] === "weent" ? [e.run(() => sound.bleat()), c] : [c])),
         e.run(backInRoom),
+        // why Mops kept him (story pass 28-52, E4, proposed; every line pending)
+        ...ONE_OF_A_KIND.map((id) => e.say("mops", bedLine(id))),
         e.say("mops", bedLine("mops-moon-pie")),
+        // the last cake (E4, the snack thread (docs: the crate-kind thread)): Squatch asks; three pictures; "The Guardians will."; one heart
+        e.say("sq", bedLine("sq-last-cake")),
+        e.run(() => phase("lastcake")),
+        ...cutawaySteps(LASTCAKE_ID),
+        e.run(() => phase("line")),
+        e.say("sq", bedLine("sq-guardians-will")),
+        e.run(() => phase("heart")),
+        e.until(heartFloat),
         e.run(() => phase("guardians")),
         ...cutawaySteps(GUARDIANS_ID),
         e.run(toSleep),
@@ -553,7 +573,7 @@ export function createBedtimeStory(bridge) {
       }
       // Squatch in the crate bed (sitting from the hop in, through the ask and Mops's line, then falling asleep): drawn
       // by this file whenever the story is on, with the crate's front wall over him
-      const inBed = on && S.sq && e.get("sqPose") === "lie" && ["bed", "ask", "line", ...ASLEEP_PARTS].includes(S.phase);
+      const inBed = on && S.sq && e.get("sqPose") === "lie" && ["bed", "ask", "line", "heart", ...ASLEEP_PARTS].includes(S.phase);
       const c = e.current();
       const wordless = ["bed", ...ASLEEP_PARTS].includes(S.phase) && e.time() - S.at <= 0.25 && c && c.k === "until";
       if (!inBed && !wordless) return;
@@ -564,6 +584,17 @@ export function createBedtimeStory(bridge) {
         d.blanket && (drew.blanket = d.blanket);
         // (once he is over the bed: the crate's front wall in front of him)
         S.sq.x < CRATE_FRONT.x1 + 10 && (drew.crateFront = drawCrateFront(ctx, isNightNow(e.get)));
+        // Mops says nothing: one heart floats up over him (E4)
+        if (S.phase === "heart") {
+          const m = e.pos("mops"),
+            sk = (e.squatchScale && e.squatchScale()) || 3,
+            u = Math.min(1, S.t / BEDTIME_PACE.heart);
+          ctx.save();
+          ctx.globalAlpha = u < 0.2 ? u / 0.2 : u > 0.8 ? (1 - u) / 0.2 : 1;
+          heart(ctx, m.x - 10 * sk, m.y - 50 * sk - u * 46, 24 + 8 * u, "#ff6fa0");
+          ctx.restore();
+          drew.heart = { x: Math.round(m.x - 10 * sk), k: +u.toFixed(2) };
+        }
       }
       if (!wordless) return;
       const m = e.pos("mops");
@@ -603,7 +634,7 @@ export function createBedtimeStory(bridge) {
       // (over once the fade has ended, whatever else happened)
       if (!on || !e || !S || S.phase === "end") return (on = false);
       const c = e.current(),
-        mine = !c || c.k === "do" || c.k === "until" || (c.k === "bub" && (c.who === "sq" || c.who === "mops")) || (c.k === "cutaway" && (c.id === BEDTIME_STORY_ID || c.id === GUARDIANS_ID));
+        mine = !c || c.k === "do" || c.k === "until" || (c.k === "bub" && (c.who === "sq" || c.who === "mops")) || (c.k === "cutaway" && (c.id === BEDTIME_STORY_ID || c.id === GUARDIANS_ID || c.id === LASTCAKE_ID));
       // (something else up, or the player has control, or he is out of the room: cut short by a restart; it is over)
       if (!mine || e.get("ctrl") || e.room() !== "closet") on = false;
       return on;

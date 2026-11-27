@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–26 | # Master backlog |
-| 27–235 | ## Where main is (Chapter 1 redesign) |
-| 236–250 | ## Register |
-| 251–272 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 273–293 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 294–306 | ## Phase 2 (plan section 4, T13 to T18) |
-| 307–329 | ## Phase 1 (plan section 3, T5 to T12) |
-| 330–343 | ## SS40–SS44 |
-| 344–361 | ## Story rows |
-| 362–380 | ## Reset section |
-| 381–391 | ## Still open |
-| 392–395 | ## Chapter 1 replot, recorded and not built |
-| 396–555 | ## Changelog |
+| 27–239 | ## Where main is (Chapter 1 redesign) |
+| 240–254 | ## Register |
+| 255–276 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 277–297 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 298–310 | ## Phase 2 (plan section 4, T13 to T18) |
+| 311–333 | ## Phase 1 (plan section 3, T5 to T12) |
+| 334–347 | ## SS40–SS44 |
+| 348–365 | ## Story rows |
+| 366–384 | ## Reset section |
+| 385–395 | ## Still open |
+| 396–399 | ## Chapter 1 replot, recorded and not built |
+| 400–559 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -44,6 +44,10 @@
 - New drawings waiting for his eye (placeholders): the robots, the form set and its close-up, the two stuck copies, the bite, the copies in the bin, the ship docking (the locked day picture shown through the window and down the ramp), the workers as the older program draws them (no name tags).
 - Pending words: every line in the "Loading bay" section of `docs/CH1-LINES-FOR-BRIAN.md` except the gumbling, fur and Paperwork lines.
 - Placeholders (not pins): the close-ups' places and sizes, every walking speed and pause in `loading-bay-place.js` (BAY_PACE).
+2026-11-26 (late night), draft PR #89: story pass 28-52, E4 bedtime additions and the chart over his bed (`bedtime-story*.js`, `cake-chart.js`; DECISIONS "Day 1 bedtime: why Mops kept him, the last cake, and the chart over his bed"). Waiting on Brian: the 11 new bedtime lines, the chart's two words, and his yes to the chart as a layer over the locked home pictures. Not yet played by a person. Docs match main: yes.
+
+2026-11-26 (late night), draft PR #87: story pass 28-52, E2: Mops cleans the hall after the party (P9) and truth or fib at home (P9b) (`party-cleanup.js`, `party-truth.js`, `tests/party-cleanup.mjs`; DECISIONS "Day 1 after the party: Mops cleans the hall, then truth or fib"). Waiting on Brian: party lines 91 to 119; the open conflicts listed there (Mops finding him in the hall at closing time; the flyer's place in the talk; Isfred's sales-visit line; the TV story's office and scanner pictures). Not yet played by a person. Docs match main: yes.
+
 2026-11-26 (late night, lunch), draft PR #91: the rename and the family stamp merged in; the lunch sneak's plate is Stars Cakes. Waiting on Brian (from #87 and #89): the bedtime line's new words, the crate bed's stamp layer, the crayon "ST". Docs match main: yes.
 
 2026-11-26 (late night, Day 2's start), draft PR #90: the rename and the family stamp merged in; nothing new waiting on Brian from this merge. Docs match main: yes.

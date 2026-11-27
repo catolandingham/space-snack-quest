@@ -98,7 +98,7 @@ const run = !(started && tvDone)
       let since = 0,
         phase = "";
       const note = (s) => out.steps[out.steps.length - 1] !== s && out.steps.push(s);
-      const wordless = ["walk", "bed", "yawn", "lie", "tuck", "droop", "tip", "roll", "snore1", "snore2", "snore3", "fade"];
+      const wordless = ["walk", "bed", "heart", "yawn", "lie", "tuck", "droop", "tip", "roll", "snore1", "snore2", "snore3", "fade"];
       for (let i = 0; i < 6000 && !n.ch1Day2; i++) {
         const c = n.cur;
         const d = beat.debug();
@@ -200,18 +200,18 @@ const run = !(started && tvDone)
     });
 
 const order = run.steps.filter((s) => !s.startsWith("phase:end"));
-const want = ["phase:walk", "phase:bed", "phase:ask", "bub:sq", "phase:story", "pic:crate", "pic:baby", "pic:beard", "pic:weent", "pic:bucket", "pic:peek", "pic:hide", "phase:line", "bub:mops", "phase:guardians", "pic:guardians", "phase:yawn", "phase:lie", "phase:tuck", "phase:droop", "phase:tip", "phase:roll", "phase:snore1", "phase:snore2", "phase:snore3", "phase:fade"];
+const want = ["phase:walk", "phase:bed", "phase:ask", "bub:sq", "phase:story", "pic:crate", "pic:baby", "pic:beard", "pic:weent", "pic:bucket", "pic:peek", "pic:hide", "phase:line", "bub:mops", "bub:sq", "phase:lastcake", "pic:lastcake", "phase:line", "bub:sq", "phase:heart", "phase:guardians", "pic:guardians", "phase:yawn", "phase:lie", "phase:tuck", "phase:droop", "phase:tip", "phase:roll", "phase:snore1", "phase:snore2", "phase:snore3", "phase:fade"];
 g.check("the bedtime story plays in order: to bed (Mops comes), the ask, crate, baby, beard, ...Weeee-eenn-nnttt?, the mop bucket, the tourists peek in, \"Nothing to see here!\", Mops's line, the Guardians picture, yawn, lie down, tuck in, Mops nods off, tips over, rolls onto his back, three snores, fade", JSON.stringify(order) === JSON.stringify(want), order);
 g.check("no words show from the Now card until Squatch asks", run.newWords.filter((w) => w !== ASK && w !== "Squatch").length === 0, run.newWords);
 const wl = run.wordless;
-g.check("each wordless part (to bed, into bed, yawn, lie down, tuck in, Mops nods off, tips over, rolls over, each snore, the fade) plays by itself for 2 to 4 seconds", wl.length === 12 && wl.every((w) => w.secs >= 2 && w.secs <= 4.05), wl);
+g.check("each wordless part (to bed, into bed, yawn, lie down, tuck in, Mops nods off, tips over, rolls over, each snore, the fade) plays by itself for 2 to 4 seconds", wl.length === 13 && wl.every((w) => w.secs >= 2 && w.secs <= 4.05), wl);
 const hop = run.room.filter((r) => r.phase === "bed" && r.squatch);
 g.check("he climbs into bed: drawn going from beside the bed to where the room draws him sitting", hop.length > 0 && hop[0].squatch.x > 300 && hop.some((r) => r.squatch.x < 215), hop.slice(0, 2));
 g.check("Mops comes over and stays beside the bed (facing him) for the story", run.debug && run.debug.mopsAt && run.debug.mopsAt.x < 420 && run.debug.mopsAt.f === -1, run.debug && run.debug.mopsAt);
 
 // The ask
 const ask = run.lines.find((l) => l.who === "sq");
-g.check('Squatch asks in one bubble over him: "Tell me about when we first met?"', ask && ask.text === ASK && run.lines.filter((l) => l.who === "sq").length === 1, run.lines);
+g.check('Squatch asks in one bubble over him: "Tell me about when we first met?"', ask && ask.text === ASK && run.lines.filter((l) => l.who === "sq").length === 3, run.lines);
 const askDrawn = run.room.filter((r) => r.phase === "ask" && r.squatch);
 g.check("he asks sitting inside his crate bed (drawn sitting, the crate's front wall drawn over his legs), with Mops beside the bed", run.askAt && askDrawn.length > 0 && askDrawn.every((r) => r.squatch.sitting && r.crateFront && r.squatch.y > r.crateFront.y0) && run.askAt.mops.x < 420 && run.askAt.mops.pose === "stand", { askAt: run.askAt, drawn: askDrawn[0] });
 // Brian 2026-11-26 (video note 0:58, "Mops also looks like he's overlapping the crate"): Mops stands beside the crate
@@ -227,8 +227,8 @@ g.check("the wordless pat and the thought bubble are gone (no pat sound, no thou
 // The pictures
 const story = run.pics.filter((p) => p.id === "moonpie"),
   pics = story.map((p) => p.drew || {});
-g.check("the seven story pictures are the full-screen cutaway of the crate story, then one Guardians picture", story.length === 7 && story.every((p) => p.drew && p.drew.full) && run.pics.length === 8 && run.pics[7].id === "guardians", run.pics.map((p) => p.id));
-g.check("every picture with words, and every line, waits for NEXT (still up after 6 seconds with no tap)", run.held.length === 9 && run.held.every(Boolean), run.held);
+g.check("the seven story pictures are the full-screen cutaway of the crate story, then one Guardians picture", story.length === 7 && story.every((p) => p.drew && p.drew.full) && run.pics.length === 11 && run.pics[10].id === "guardians", run.pics.map((p) => p.id));
+g.check("every picture with words, and every line, waits for NEXT (still up after 6 seconds with no tap)", run.held.length === 20 && run.held.every(Boolean), run.held);
 g.check("the tourists' picture has no words and plays by itself for 2 to 4 seconds, then the story goes on (Brian 30a)", run.autoPics.length === 1 && run.autoPics[0].pic === "peek" && run.autoPics[0].wentOn && run.autoPics[0].secs >= 2 && run.autoPics[0].secs <= 4.05 && pics.find((p) => p.pic === "peek" && !p.caption && !p.bubble), run.autoPics);
 const shown = new Set(run.shownAfter || []);
 const joined = [...shown].join(" ");
@@ -261,7 +261,7 @@ g.check("the bucket pictures draw the bucket with mop-bucket.js (the one drawing
 // The memory look (#38): every crate story picture, not the Guardians picture (that one is now)
 g.check("every crate story picture has the memory look (soft cloud edge, warm old-photo tint); the Guardians picture does not", story.every((p) => p.drew.memory && p.drew.memory.inset > 0) && !((run.pics.find((p) => p.id === "guardians") || {}).drew || {}).memory, story.map((p) => p.drew.memory));
 const warm = run.pics.filter((p) => p.px);
-g.check("the memory look is warm: the story pictures' pale background (bluish white) turns cream (more red than blue)", warm.filter((p) => p.id === "moonpie").every((p) => p.px[0] - p.px[2] >= 25) && warm.length === 7, warm.map((p) => [p.id, p.panel, p.px]));
+g.check("the memory look is warm: the story pictures' pale background (bluish white) turns cream (more red than blue)", warm.filter((p) => p.id === "moonpie").every((p) => p.px[0] - p.px[2] >= 25) && warm.length === 10, warm.map((p) => [p.id, p.panel, p.px]));
 g.check("Mops's bleat is asked for once, as his \"...Weeee-eenn-nnttt?\" comes up (the mops-bleat sound hook)", run.debug && run.debug.sounds.bleat === 1, run.debug && run.debug.sounds);
 // The bleat plays (window.SSQ.playSoundPick, the same player as the morning song's bleat), and nothing else does.
 g.check("sound is on for this run (the sound button)", soundOn);
@@ -289,7 +289,7 @@ const bedMusic = run.music.filter((m) => m.phase && m.phase !== "end"),
 // music ends with the film; the walk to bed is quiet; the bedtime music starts as he asks.
 g.check("after the film the walk to bed and the climb in are quiet (no music cue)", toBed.length > 30 && toBed.every((m) => m.cue === ""), toBed.filter((m) => m.cue !== "").slice(0, 5));
 g.check("from his ask until the fade, the music follows the \"bedtime\" cue (every frame)", afterAsk.length > 60 && afterAsk.every((m) => m.cue === "bedtime"), afterAsk.filter((m) => m.cue !== "bedtime").slice(0, 5));
-g.check("and through every story picture and the Guardians picture", run.picMusic.length === 8 && run.picMusic.every((m) => m.cue === "bedtime"), run.picMusic);
+g.check("and through every story picture, the last cake's three and the Guardians picture", run.picMusic.length === 11 && run.picMusic.every((m) => m.cue === "bedtime"), run.picMusic);
 // (with the home morning here, Day 2 starts dark with the bedtime music still on, then goes quiet as the room comes up
 // and the station PA talks: home-morning.js musicCue, Brian 2026-11-26 #41)
 g.check("after the fade the bedtime story is over: not showing, and the home cue is no longer \"bedtime\" from it", run.showingAfter === false && (run.cueAfter === "home" || run.cueAfter === "bedtime" || run.cueAfter === ""), { showing: run.showingAfter, cue: run.cueAfter });
@@ -310,8 +310,22 @@ g.check("Mops is drawn big: at least 160 px tall on the 640-tall picture (a grow
 g.check("baby Squatch is a baby: a third to three fifths of Mops's height, and smaller than the crate", sz[0] && sz[0].baby >= sz[0].mops / 3 && sz[0].baby <= (sz[0].mops * 3) / 5 && sz[0].baby < sz[0].crate.h, sz[0]);
 
 // Mops's line
-const mopsLine = run.lines.find((l) => l.who === "mops");
+const mopsLine = run.lines.find((l) => l.who === "mops" && l.text === MOPS_LINE);
 g.check("Mops says his bedtime line, as it was, in one bubble over him", mopsLine && mopsLine.text === MOPS_LINE, run.lines);
+
+// Story pass 28-52, E4 (every line pending Brian's yes): why Mops kept him, before his snack line; then the last cake
+// (Squatch asks; three pictures, one line each; "The Guardians will."; Mops says nothing, one heart).
+const ONE = ["I thought: a Wookiee!", "But you looked different.", "Maybe you were one of a kind. Like me.", "The only goat janitor.", "I know what it's like to be one of a kind.", "So I said: I'll take care of you."];
+const said = run.lines.map((l) => l.who + ":" + l.text);
+const iMoon = said.indexOf("mops:" + MOPS_LINE);
+g.check("E4: Mops's one-of-a-kind lines come just before his snack line, in order", JSON.stringify(said.slice(iMoon - 6, iMoon)) === JSON.stringify(ONE.map((t) => "mops:" + t)), said);
+g.check('E4: then Squatch asks "Tell me about the last cake." and, after the pictures, says "The Guardians will."', said[iMoon + 1] === "sq:Tell me about the last cake." && said[iMoon + 2] === "sq:The Guardians will.", said.slice(iMoon, iMoon + 3));
+const cakes = run.pics.filter((p) => p.id === "lastcake").map((p) => p.drew || {});
+const CAKE = ["One cake left. Red in the middle.", "It fizzed.", "Never found one like it."];
+g.check("E4: the last cake is three full-screen pictures (the scraped crate, crumbs, a cake cut open, red in the middle), Mops's three lines one in each, in a bubble over him", cakes.length === 3 && cakes.every((d, i) => d.full && d.pic === "lastcake" && d.line && d.cake && d.cake.red && d.bubble && d.bubble.y1 < d.mopsHead.y + 10) && CAKE.every((t) => onScreen(t)), cakes.map((d) => ({ line: d.line, cake: d.cake, bubble: d.bubble })));
+g.check("E4: the new lines are in the lines file, each pending Brian's yes, source the story pass", [...ONE, "Tell me about the last cake.", ...CAKE, "The Guardians will."].every((t) => BEDTIME_STORY_LINES.some((l) => l.text === t && /needs-yes/.test(l.status) && /story pass 28-52, E2\/E4/.test(l.source))));
+const hearts = run.room.filter((r) => r.phase === "heart");
+g.check("E4: after \"The Guardians will.\", no words: one heart rises over Mops (2 to 4 seconds, by itself)", hearts.length > 0 && hearts.some((r) => r.heart && r.heart.k > 0.3) && (run.wordless.find((w) => w.phase === "heart") || {}).secs >= 2, { n: hearts.length, wl: run.wordless.find((w) => w.phase === "heart") });
 
 // The Guardians (Brian, 2026-11-26): after Mops's line, the crayon drawing full screen and Mops's Guardians line
 const GUARDIANS = "And you've always had your Guardians, watching over you.";

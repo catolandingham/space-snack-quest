@@ -268,24 +268,7 @@ export function drawCamera(ctx, x, y, t, k = 1) {
 }
 
 // ---------- 53: home ----------
-/** His crayon chart of cake kinds (a layer on the home wall). */
-export function drawChart(ctx, b) {
-  esRect(ctx, b.x0, b.y0, b.x1 - b.x0, b.y1 - b.y0, 3);
-  esPaint(ctx, PK_PAPER, 3);
-  const kinds = ["pie", "cake", "cup", "pie"];
-  kinds.forEach((kind, i) => {
-    const x = b.x0 + 24 + (i % 2) * 46,
-      y = b.y0 + 26 + Math.floor(i / 2) * 42;
-    drawSnack(ctx, kind, x, y, 0.32, 0, 0, 2);
-    ctx.beginPath();
-    ctx.moveTo(x + 12, y + 4);
-    ctx.lineTo(x + 16, y + 10);
-    ctx.lineTo(x + 24, y - 6);
-    ctx.strokeStyle = i === 3 ? PK_RED : PK_GREEN;
-    ctx.lineWidth = 3;
-    ctx.stroke();
-  });
-}
+// (his crayon chart over the bed is the home picture's own layer, cake-chart.js)
 /** One of his crayon drawings on the home wall (a layer): Mops and him, a rocket. */
 export function drawKidDrawing(ctx, b, kind = 0) {
   esRect(ctx, b.x0, b.y0, b.x1 - b.x0, b.y1 - b.y0, 3);

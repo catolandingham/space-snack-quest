@@ -289,7 +289,7 @@ export const CHART = Object.freeze({ W: 360, H: 260, tried: 5, cell: Object.free
  * week's cake with `newX` (0 to 1) of its X drawn, and at the end one empty circle with a red dot and sparks, "THE CRATE
  * KIND". `small` draws it as it hangs on the wall (no fine lines).
  */
-export function drawCakeChart(ctx, x, y, w, h, newX = 0, small = false, crateKind = "") {
+export function drawEveningChart(ctx, x, y, w, h, newX = 0, small = false, crateKind = "") {
   const k = Math.min(w / CHART.W, h / CHART.H);
   ctx.save();
   ctx.translate(x, y);

@@ -92,7 +92,7 @@
         linkBeatRaw = q.get("beat") || "",
         linkBeat = parseInt(linkBeatRaw, 10) || 0,
         linkDay2 = linkBeatRaw === "day2",
-        linkParty = /^party(:P([1-7]|8a|8b|8c))?$/.test(linkBeatRaw) ? linkBeatRaw.slice(6) || "P1" : "",
+        linkParty = /^party(:P([1-7]|8a|8b|8c|9|9b))?$/.test(linkBeatRaw) ? linkBeatRaw.slice(6) || "P1" : "",
         linkBay = /^bay(:[a-z]+)?$/.test(linkBeatRaw) ? linkBeatRaw.slice(4) || "pa" : "",
         linkEvening = /^evening(:\d+)?$/.test(linkBeatRaw) ? +linkBeatRaw.slice(8) || 37 : 0,
         linkEscape = /^escape(:[a-z]+)?$/.test(linkBeatRaw) ? linkBeatRaw.slice(7) || "start" : "",

@@ -55,7 +55,7 @@ import { BAY, BAY_SPOTS, HALLWAY, HALL_SNEAK, BAY_PACE as P, BAY_PICTURES, BAY_C
 import { bayWords, bayLine, BAY_SPEAKER_NAMES } from "./loading-bay-lines.js";
 import { OFFICE_CODE } from "./office-code.js";
 import { findPath } from "./tap-path.js";
-import { drawRobot, robotHand, drawFormSet, drawStuck, drawCrumbs, drawFormCloseUp, closeUpBox, drawCloseUpBack, drawCloseUpFront, drawWave, drawDashedOutline, drawBayCrate, drawCargo, drawTag, drawTaggedBox, drawTagCloseUp, drawDoorShadow, drawTool, drawFuzzyHat, drawScannerStop, drawLetter, drawSlotLight, drawSweat, drawOfficeOpen, drawStreak } from "./loading-bay-art.js";
+import { drawRobot, robotHand, drawFormSet, drawStuck, drawBiteCrumbs, drawFormCloseUp, closeUpBox, drawCloseUpBack, drawCloseUpFront, drawWave, drawDashedOutline, drawBayCrate, drawCargo, drawTag, drawTaggedBox, drawTagCloseUp, drawDoorShadow, drawTool, drawFuzzyHat, drawScannerStop, drawLetter, drawSlotLight, drawSweat, drawOfficeOpen, drawStreak } from "./loading-bay-art.js";
 import { drawSpeakerRing, drawHeartCone } from "./party-free-art.js";
 import { HALL, HALL_PICTURE, HALL_SPEAKER } from "./party-hall.js";
 import { COUNTER_SPOTS, LUNCH_SOLIDS, LUNCH_BOUNDS, LUNCH_PLACES } from "./lunch-sneak-place.js";
@@ -1283,7 +1283,7 @@ export function createLoadingBay(bridge) {
           if (b.papers.where === "mops-mouth") {
             const p = mouthAt();
             drawStuck(ctx, p.x + (m.f || 1) * 6, p.y + 2, 17, b.papers.bite, (m.f || 1) * 0.25);
-            b.biteAt != null && drawCrumbs(ctx, p.x, p.y + 6, Math.min(1, (t - b.biteAt) / 0.9), 0.8);
+            b.biteAt != null && drawBiteCrumbs(ctx, p.x, p.y + 6, Math.min(1, (t - b.biteAt) / 0.9), 0.8);
           }
           if (b.papers.where === "flying") {
             const p = mouthAt(),

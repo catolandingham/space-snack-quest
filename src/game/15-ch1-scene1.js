@@ -210,6 +210,9 @@
         // Holding ↺ inside a full-screen view: the same restart as the page's ↺.
         restartPart: () => sectionReset(),
         squatchScale: () => wl,
+        // Who the player is, and the switch (the party cleanup, src/modules/party-cleanup.js): its card, with `by` as its why, comes first.
+        player: () => (x.mops ? "mops" : "sq"),
+        switchTo: (who, by) => !!x.mops !== (who === "mops") && (switchTo(who === "mops" ? "mops" : "squatch"), by && n.q.unshift({ k: "card", id: "switch", who: who === "mops" ? "mops" : "sq", text: "You are " + (who === "mops" ? "MOPS" : "SQUATCH") + " now.", by })),
         text: (t, x, y, size, color, align, weight) => g(t, x, y, size, color, align, weight),
       });
     // Optional inspection, not a new story beat. Keep the current queue intact while it is open.

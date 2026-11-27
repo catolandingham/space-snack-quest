@@ -41,7 +41,8 @@ export const PK_HOME = Object.freeze({
   // the things on the walls he takes down (layers on the locked picture: his crayon chart of cake kinds, the pancake
   // brochure from beat 38, two of his drawings), each with where he stands for it
   walls: Object.freeze([
-    Object.freeze({ id: "chart", box: Object.freeze({ x0: 322, y0: 104, x1: 416, y1: 196 }), at: Object.freeze({ x: 370, y: 470 }) }),
+    // the chart over his bed (cake-chart.js CAKE_CHART, the home picture's layer, in game positions)
+    Object.freeze({ id: "chart", box: Object.freeze({ x0: 194, y0: 228, x1: 346, y1: 321 }), at: Object.freeze({ x: 270, y: 470 }) }),
     Object.freeze({ id: "brochure", box: ES_HOME.brochure, at: Object.freeze({ x: 320, y: 470 }) }),
     Object.freeze({ id: "drawing", box: Object.freeze({ x0: 432, y0: 112, x1: 506, y1: 176 }), at: Object.freeze({ x: 470, y: 470 }) }),
     Object.freeze({ id: "drawing2", box: Object.freeze({ x0: 718, y0: 96, x1: 790, y1: 158 }), at: Object.freeze({ x: 750, y: 470 }) }),

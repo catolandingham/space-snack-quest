@@ -40,7 +40,7 @@
  */
 import { pickupWords } from "./pickup-lines.js";
 import { PK_HOME, PK_HALL, PK_HALLWAY, PK_BAY, PK_BAY_PICKUP, PK_BAY_GONE, PK_SIGHT, PK_PACE, PK_CRATE, ROUTE_PUSH, ROUTE_SNEAK, ROUTE_LAST, COSTUME, PK_OFFICE, PK_HOLD } from "./pickup-place.js";
-import { drawPkTuft, drawHair, drawFloorPatch, drawPkCrate, drawBucket, drawMailBag, drawHat, drawNewRobotBits, drawScanLine, drawArchLight, drawCamera, drawChart, drawKidDrawing, drawPaleSquare, drawFoldedNote, drawBoxCloseup, drawHairCloseup, drawSlatFrame, SLAT, drawIdea, drawSnipCloseup, drawDressCloseup, drawMirror, COSTUME_PIECES, DRESS, costumeSpotAt, drawPkPlate, drawPlateCloseup, drawPhotoSign, drawCrayonCloseup, drawTagBox, drawPeelCloseup, drawSlipCloseup, drawShipAway, drawPhotoCorner, drawTapeScreen, drawHold, drawBiteCloseup, drawLidView } from "./pickup-art.js";
+import { drawPkTuft, drawHair, drawFloorPatch, drawPkCrate, drawBucket, drawMailBag, drawHat, drawNewRobotBits, drawScanLine, drawArchLight, drawCamera, drawKidDrawing, drawPaleSquare, drawFoldedNote, drawBoxCloseup, drawHairCloseup, drawSlatFrame, SLAT, drawIdea, drawSnipCloseup, drawDressCloseup, drawMirror, COSTUME_PIECES, DRESS, costumeSpotAt, drawPkPlate, drawPlateCloseup, drawPhotoSign, drawCrayonCloseup, drawTagBox, drawPeelCloseup, drawSlipCloseup, drawShipAway, drawPhotoCorner, drawTapeScreen, drawHold, drawBiteCloseup, drawLidView } from "./pickup-art.js";
 import { OFFICE_PANELS } from "./escape-office-art.js";
 import { escapeWords } from "./escape-lines.js";
 import { drawPerson, LOOKS } from "./party-art.js";
@@ -1593,7 +1593,8 @@ export function createPickup(bridge) {
     if (!l || !e || e.room() !== "closet") return;
     const d = {};
     // the things on the walls, or the pale squares where they hung
-    PK_HOME.walls.forEach((w, i) => (l.walls[w.id] ? drawPaleSquare(ctx, w.box) : w.id === "chart" ? drawChart(ctx, w.box) : w.id === "brochure" ? drawPinnedBrochure(ctx, w.box) : drawKidDrawing(ctx, w.box, i % 2)));
+    // (the chart is the home picture's own layer, cake-chart.js, there since the first minute; once taken, a pale square)
+    PK_HOME.walls.forEach((w, i) => (l.walls[w.id] ? drawPaleSquare(ctx, w.box) : w.id === "chart" ? null : w.id === "brochure" ? drawPinnedBrochure(ctx, w.box) : drawKidDrawing(ctx, w.box, i % 2)));
     d.walls = PK_HOME.walls.filter((w) => !l.walls[w.id]).map((w) => w.id);
     // the crate bed: the note on the pillow, the fur, the white hair; once it is pushed out, the floor where it stood
     if (l.crate !== "bed") drawFloorPatch(ctx, PK_HOME.bedBox, PK_HOME.floorAt);
