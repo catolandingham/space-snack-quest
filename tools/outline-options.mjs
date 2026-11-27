@@ -5,7 +5,7 @@
 //   A  a thicker dark-gold line (4 px on the phone) with a soft outer glow
 //   B  a white and gold double line (it pulses in the game; the still shows it at full)
 //   C  a bouncing arrow over the thing, plus a thicker line
-//   D  the soft full glow behind the thing, as the lunch sneak uses it (lunch-sneak-art.js drawNextGlow)
+//   D  the soft full glow behind the thing, the option the lunch sneak used until the one highlight style (2026-11-26)
 //   E  the dashed gold line, as the game draws it now (outline.js)
 // Also (phase-3 item 8) one game still at the closet goal with option A and no label on the picture, the words only on
 // the button.
@@ -47,7 +47,7 @@ const STYLES = `
     return { canvas: o, x, y, thing, w, h };
   }
   function glowUnder(ctx, scene, box) {
-    // drawNextGlow (lunch-sneak-art.js): a soft pulsing yellow glow behind the thing, well bigger than it
+    // a soft pulsing yellow glow behind the thing, well bigger than it
     const cx = (box.x0 + box.x1) / 2, cy = (box.y0 + box.y1) / 2,
       rad = Math.max(56, Math.max(box.x1 - box.x0, box.y1 - box.y0) * 0.95), a = 0.95,
       gr = ctx.createRadialGradient(cx, cy, 4, cx, cy, rad);

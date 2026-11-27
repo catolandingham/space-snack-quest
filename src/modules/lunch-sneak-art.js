@@ -1,7 +1,7 @@
 /**
  * The lunch sneak's own drawings (Chapter 1, beats 25 to 27). Every drawing here is a PLACEHOLDER in the game's style
  * (dark outlines, flat colours) until Brian approves a look: the stack of two crates in the hall, the plate of Moon
- * Pies on the snack counter's end, the glow behind the next thing, one heart, his arm reaching over the counter, and
+ * Pies on the snack counter's end, the dashed goal line round a thing it draws itself, one heart, his arm reaching over the counter, and
  * Mops's wet streaks, look cone and hearts in the hallway. The lunch bag is the home morning's (home-morning-art.js), the Moon Pie is the party's snack
  * (party-snacks-art.js).
  */

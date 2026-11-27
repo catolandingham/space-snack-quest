@@ -6,25 +6,25 @@
  * place and number from lunch-sneak-place.js, every new drawing from lunch-sneak-art.js):
  *   walkin  wordless: in the hallway doorway (top right) Mops mops his way out of sight; Squatch comes up through his
  *           home doorway with the lunch bag in his paw. The two watchers' cones are drawn whole.
- *   plant   "Squatch: take Mops his lunch in the hallway" (suggested words); only the hallway doorway glows and is
- *   crate   outlined, from the start (Brian 2026-11-26, lunch note 0:38: "the only thing ... lit up is actually the
+ *   plant   "Squatch: take Mops his lunch in the hallway" (suggested words); only the hallway doorway has the dashed
+ *   crate   goal line, from the start (Brian 2026-11-26, lunch note 0:38: "the only thing ... lit up is actually the
  *   door    hallway"). The plant and the crates still hide him (HIDE · plant, HIDE · crate: only his eyes show) but
- *           do not glow. The teal guest's cone sweeps across the way from the plant to the crates on her rhythm, the
+ *           are not outlined. The teal guest's cone sweeps across the way from the plant to the crates on her rhythm, the
  *           camera tourist's along the way from the crates up to the doorway ("?" warns a turn); two more guests
  *           wander slowly up and down the left of the hall (WANDERERS). The doorway is walk-through (Brian #47): his
  *           feet in its opening take him into the hallway; there is no button. The steps (plant, crate, door) are the
  *           furthest hiding place he has reached: where the step restart puts him.
  *           Seen (0.8 s in a cone): the party's one capture rule (party-alarm.js), "Squatch: hide", every hiding
- *           place glows; hidden: "They lost you." and on; caught: the LOCKUP card, and the step he was on restarts.
+ *           place gets the dashed line; hidden: "They lost you." and on; caught: the LOCKUP card, and the step he was on restarts.
  *   arrive  wordless, the hallway: he walks in from the left; Mops mops with his beard away from him, wet streaks behind,
  *           his mop bucket beside him; Mops stops, lifts his head, turns slowly to look left, then right (his cone
  *           sweeping), then turns to Squatch, and his cone fills with hearts as hearts float up (never "?" or "!").
- *   give    "Squatch: give Mops his lunch"; Mops glows. GIVE · lunch: the bag goes from his paw to Mops's hoof, one
+ *   give    "Squatch: give Mops his lunch"; the dashed line round Mops. GIVE · lunch: the bag goes from his paw to Mops's hoof, one
  *           heart, "My lunch! You're the best." (NEXT), then the wordless cutaway: Mops eats the lunch, then the bag.
  *   back    "Squatch: go on"; Mops waits in the left doorway, which is outlined; walking there takes them both back
  *           into the hall, down behind the snack counter, where Squatch ducks into his ball (the L2 ball, as ROLL ·
  *           ball; only the counter's guest is near).
- *   one     the counter guest's cone lies over the ducked Squatch and stays grey; the plate of Moon Pies glows and
+ *   one     the counter guest's cone lies over the ducked Squatch and stays grey; the plate of Moon Pies has its dashed line and
  *           Mops says "...you know the rule, grab one snack." (NEXT).
  *   snack   "Squatch: grab one snack"; TAKE · snack (first offered as the guest turns away): he stands up, reaches,
  *           takes the top pie and ducks. Seen while up: the pie stays on the plate and the same capture rule runs.
@@ -884,7 +884,7 @@ export function createLunchSneak(bridge) {
       }
       return true;
     },
-    /** Over the hallway (the older program draws the room, Squatch and Mops): the bag, the heart, Mops mopping, the glow. */
+    /** Over the hallway (the older program draws the room, Squatch and Mops): the bag, the heart, Mops mopping, the goal line round Mops. */
     draw(ctx) {
       const l = live(),
         e = E();

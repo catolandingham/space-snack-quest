@@ -34,7 +34,12 @@ const HOOK = () => {
   P.createRadialGradient = function (x0, y0, r0, x1, y1, r1) { log.radial.push([Math.round(x1), Math.round(y1), Math.round(r1)]); return rg.apply(this, arguments); };
   const st = P.stroke,
     sr = P.strokeRect;
-  const note = (ctx) => String(ctx.strokeStyle).toLowerCase() === "#ffcf33" && log.gold.push({ w: ctx.lineWidth, dashed: ctx.getLineDash().length > 0 });
+  // (a rounded box's place, for the gold line that strokes it: outline.js highlightBox)
+  const rr = P.roundRect;
+  let lastBox = null;
+  P.beginPath = ((bp) => function () { lastBox = null; return bp.apply(this, arguments); })(P.beginPath);
+  P.roundRect = function (x, y, w, h) { lastBox = [Math.round(x), Math.round(y), Math.round(x + w), Math.round(y + h)]; return rr.apply(this, arguments); };
+  const note = (ctx) => String(ctx.strokeStyle).toLowerCase() === "#ffcf33" && log.gold.push({ w: ctx.lineWidth, dashed: ctx.getLineDash().length > 0, box: lastBox });
   P.stroke = function () { note(this); return st.apply(this, arguments); };
   // a traced outline (outline.js outlineCanvas) is a small canvas drawn as an image: where it went
   const di = P.drawImage;
@@ -152,10 +157,18 @@ const oneStyle = (h, w = OUTLINE.width) => h.blur === 0 && h.gold.length > 0 && 
   g.check("lunch sneak: the hallway doorway, the goal, has the one dashed line and no glow", same(a) && near(a, door).length === 0 && aGold > 40 && a.gold.length > 0, { radial: near(a, door), gold: aGold, strokes: a.gold.slice(0, 3), blur: a.blur });
   const b = await frame(page, jump("give"));
   const mo = await page.evaluate(() => window.SSQ.engine().pos("mops"));
-  g.check("lunch sneak: Mops at GIVE · lunch has the one dashed line round him and no glow", same(b) && b.radial.length === 0 && b.gold.length > 0, { radial: b.radial, strokes: b.gold.slice(0, 3), blur: b.blur, mo });
-  const c = await frame(page, jump("snack"));
+  const round = (h, x0, y0, x1, y1) => h.gold.some((q) => q.box && q.box[0] <= x0 && q.box[1] <= y0 && q.box[2] >= x1 && q.box[3] >= y1 && q.box[2] - q.box[0] < x1 - x0 + 60);
+  g.check("lunch sneak: Mops at GIVE · lunch has the one dashed line round him and no glow", same(b) && b.radial.length === 0 && round(b, mo.x - 40, mo.y - 60, mo.x + 40, mo.y), { radial: b.radial, strokes: b.gold.slice(0, 3), blur: b.blur, mo });
+  // the plate: its traced line (a small picture round it), while Mops says his line (no control yet) and on the snack
+  // step (the goal mark)
   const plate = { x0: P.COUNTER_SPOTS.plate.x - 50, x1: P.COUNTER_SPOTS.plate.x + 50, y0: P.COUNTER_SPOTS.plate.y - 50, y1: P.COUNTER_SPOTS.plate.y + 20 };
-  g.check("lunch sneak: the plate behind the counter has the one dashed line and no glow", same(c) && near(c, plate).length === 0, { radial: near(c, plate), strokes: c.gold.slice(0, 3), blur: c.blur });
+  const px = P.COUNTER_SPOTS.plate.x,
+    py = P.COUNTER_SPOTS.plate.y;
+  const plateLine = (h) => h.traced.some(([x, y, w, hh]) => x < px && x + w > px && y < py && y + hh > py - 10 && w < 220);
+  const c1 = await frame(page, jump("snack", 'n.ch1Lunch.step = "one"; n.ctrl = false;'));
+  g.check("lunch sneak: the plate behind the counter, while Mops says his line, has the one dashed line and no glow", same(c1) && near(c1, plate).length === 0 && plateLine(c1), { radial: near(c1, plate), traced: c1.traced, blur: c1.blur });
+  const c = await frame(page, jump("snack"));
+  g.check("lunch sneak: the plate behind the counter, the goal, has the one dashed line and no glow", same(c) && near(c, plate).length === 0 && plateLine(c), { radial: near(c, plate), traced: c.traced, blur: c.blur });
   // an alarm: hide in the plant, step out into the teal guest's look, and wait for the guards (as tests/lunch-sneak.mjs)
   const alarm = `(ss, n) => {
     const st = () => n.ch1Lunch, P = window.SSQ.beat("ch1-lunch").place;
@@ -174,7 +187,7 @@ const oneStyle = (h, w = OUTLINE.width) => h.blur === 0 && h.gold.length > 0 && 
     crate = P.LUNCH_PLACES.crate.box;
   // (the plant's line is its traced outline, drawn as a small picture round it; the crates' a dashed stroke)
   const plantLine = d.traced.some(([x, y, w, h]) => x <= plant.x0 && y <= plant.y0 && x + w >= plant.x1 && y + h >= plant.y1 && w < plant.x1 - plant.x0 + 60);
-  g.check("lunch sneak alarm: the plant and the crates, where he can hide, have the one dashed line and no glow", !!phase && same(d) && near(d, plant).length === 0 && near(d, crate).length === 0 && plantLine && d.gold.length > 0, { phase, plantLine, traced: d.traced, radial: d.radial, strokes: d.gold.slice(0, 3), blur: d.blur });
+  g.check("lunch sneak alarm: the plant and the crates, where he can hide, have the one dashed line and no glow", !!phase && same(d) && near(d, plant).length === 0 && near(d, crate).length === 0 && plantLine && round(d, crate.x0, crate.y0, crate.x1, crate.y1), { phase, plantLine, traced: d.traced, radial: d.radial, strokes: d.gold.slice(0, 3), blur: d.blur });
   g.check("no page errors (lunch sneak)", errors.length === 0, errors);
 }
 await g.finish("highlight-style");

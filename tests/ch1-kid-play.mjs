@@ -522,7 +522,9 @@ while (now() < MAX_S) {
         await sleep(150);
         s2 = await st();
         if (!s2.ctrl || s2.up || s2.scene !== s.scene) { got = true; break; }
-        if (s2.btn.startsWith(p.verb) || Math.hypot(s2.x - p.x, s2.y - p.y) < Math.max(40, (p.r || 0) - 10)) { got = true; break; }
+        // (a doorway with no button is reached only by walking into it: "".startsWith is always true, so it waits for
+        // the walk; stepping in before it ended stopped him short of the lunch sneak's hallway doorway every time)
+        if ((p.verb && s2.btn.startsWith(p.verb)) || Math.hypot(s2.x - p.x, s2.y - p.y) < Math.max(40, (p.r || 0) - 10)) { got = true; break; }
         const pos = s2.x + "," + s2.y;
         still = pos === prev ? still + 1 : 0;
         prev = pos;
