@@ -13,7 +13,7 @@ import { snackLine } from "./snack-name.js";
 
 /** Where the sheet hangs, in the home picture's pixels (1280 x 830): on the bare wall over the crate bed. */
 export const CAKE_CHART = Object.freeze({
-  x0: 246,
+  x0: 262,
   y0: 300,
   w: 196,
   h: 112,
