@@ -140,7 +140,7 @@
     let lockedNow = "";
     function drawLockedRoom(id) {
       lockedNow = id;
-      let img = lockedImg[id];
+      let img = window.SSQ && window.SSQ.nightPicture ? window.SSQ.nightPicture(id, lockedImg[id]) : lockedImg[id]; // at night, the room's night look (src/modules/night-look.js)
       img && img.complete && img.naturalWidth ? e.drawImage(img, 0, 0, c, b) : ((e.fillStyle = "#e2e5ed"), e.fillRect(0, 0, c, b));
     }
     // Where Squatch's eyes show when he hides in a plant (Brian, C21: "The two eyes sit LOW, in the two

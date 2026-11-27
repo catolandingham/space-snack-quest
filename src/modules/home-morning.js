@@ -55,6 +55,7 @@ import { HOME_THINGS } from "./home-alone.js";
 import { cutawaySteps } from "./cutaway.js";
 import { footfall } from "./footfalls.js";
 import { createHomeMorningSound, HOME_MORNING_SOUND } from "./home-morning-sound.js";
+import { drawNightTint } from "./night-look.js";
 
 export const HOME_MORNING_ID = "ch1-home-morning";
 
@@ -102,7 +103,8 @@ const SPEAKER_BOX = HOME_THINGS.speaker;
 
 /**
  * Timing in seconds and speeds in game pixels a second (placeholders). Each wordless part plays 2 to 4 seconds.
- * night: dark (held, from the bedtime story's black), up (back to light). pa: the ding-dong, then the speaker's line
+ * night: dark (held, from the bedtime story's black), up (back to light: the black lifts on the night look, the
+ * night holds a moment, then gives way to the morning: NIGHT_LIFT). pa: the ding-dong, then the speaker's line
  * after dingWait. mopsUp: Mops opens his eyes (eyes), rolls onto his side (side), gets up (stand), looks at Squatch
  * with a heart (look), all within mopsUp; mopsWalk: his walking speed out. wake: sitUp (from lying asleep to sitting,
  * the blanket sliding off), stretch (arms up), hop (out over the crate's side), then a walk to beside the rocket.
@@ -111,7 +113,7 @@ const SPEAKER_BOX = HOME_THINGS.speaker;
  */
 export const HOME_MORNING_PACE = Object.freeze({
   dark: 1.4,
-  up: 1.2,
+  up: 2.0,
   dingWait: 0.7,
   mopsUp: 2.6,
   eyes: 0.25,
@@ -133,6 +135,11 @@ export const HOME_MORNING_PACE = Object.freeze({
   notesEvery: 1.1,
   noteLife: 2.6,
 });
+/**
+ * The room coming up (0 to 1 of `up`): by `lifted` the black has lifted off the room at night; from `morning` the night
+ * look gives way to the morning light (placeholders).
+ */
+export const NIGHT_LIFT = Object.freeze({ lifted: 0.4, morning: 0.6 });
 // His arms (the angle from straight down, squatch-art.js): both up to stretch; holding the gift up high.
 const STRETCH = [{ a: -2.75 }, { a: 2.75 }],
   HOLD_UP = [{ a: -2.45 }, { a: 2.95 }];
@@ -806,11 +813,18 @@ export function createHomeMorning(bridge) {
       }
       if (h.step === "night") {
         // dark as the bedtime story's fade left it, then the room comes up
+        // the black lifts (to NIGHT_LIFT of the way) on the room at night, the night tint over everything as at lights
+        // out (night-look.js), then the morning light comes up
         const t = h.t,
-          a = t < P.dark ? 1 : Math.max(0, 1 - (t - P.dark) / P.up);
+          A = P.dark + P.up * NIGHT_LIFT.lifted,
+          L = P.dark + P.up * NIGHT_LIFT.morning,
+          a = t < P.dark ? 1 : Math.max(0, 1 - (t - P.dark) / (A - P.dark)),
+          k = t < L ? 1 : Math.max(0, 1 - (t - L) / (P.dark + P.up - L));
+        k > 0 && (drew.night = drawNightTint(ctx, "closet", null, k));
         ctx.fillStyle = `rgba(0,0,0,${a.toFixed(3)})`;
         ctx.fillRect(-2000, -2000, 6000, 5000);
         drew.dark = a;
+        drew.nightK = +k.toFixed(2);
       }
     },
     /** Over the calendar close-up (15-ch1-scene1.js drawCh1Calendar): today's marks, on Day 2's look only. */
