@@ -140,7 +140,7 @@
     let lockedNow = "";
     function drawLockedRoom(id) {
       lockedNow = id;
-      let img = lockedImg[id];
+      let img = window.SSQ && window.SSQ.nightPicture ? window.SSQ.nightPicture(id, lockedImg[id]) : lockedImg[id]; // at night, the room's night look (src/modules/night-look.js)
       img && img.complete && img.naturalWidth ? e.drawImage(img, 0, 0, c, b) : ((e.fillStyle = "#e2e5ed"), e.fillRect(0, 0, c, b));
     }
     // Where Squatch's eyes show when he hides in a plant (Brian, C21: "The two eyes sit LOW, in the two
@@ -436,7 +436,7 @@
     function ch1Snack() {
       ((n.scene = "Q3"),
         J([
-          v("tourist", "I swear we had more Moon Pies... is that what they stole at lunch?", "say", !0),
+          v("tourist", "I swear we had more " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("name") : "snacks") + "... is that what they stole at lunch?", "say", !0),
           v("mops", "Quick, hide."),
           ch1Step("sq", ne.x, ne.y, 200),
           N(() => {
@@ -569,7 +569,7 @@
         ]));
     }
     function ch1Site() {
-      // The Moon Pie page is on the manager's computer in the hall (R46), never on the home TV.
+      // The snack's order page is on the manager's computer in the hall (R46), never on the home TV.
       ((n.scene = "Q7"),
         (n.room = "hall"),
         (n.ch1D = !1),
@@ -812,7 +812,7 @@
     function drawCh1DayHall() {
       drawLockedRoom("hall");
       if (n.roomOnly) return;
-      luBeat() && luBeat().drawProps(e); // the crates and the plate of Moon Pies stay after the lunch sneak
+      luBeat() && luBeat().drawProps(e); // the crates and the plate of snack cakes stay after the lunch sneak
       n.scene === "Q3" && !(n.ch1Step === "family" || n.ch1Step === "gohome") && drawCh1Alien(640, 500, "hat", ALIEN_ADULT, 1);
       n.moPose !== "hidden" && n.mo.x > -50 && n.mo.x < 1100 && Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 });
       n.sqPose === "ball" && drawL2Ball(n.sq.x, n.sq.y - 16);

@@ -3,7 +3,7 @@
  * style (dark outlines, flat colours) until Brian approves a look: the toy rocket with the folded note tied on as a
  * gift tag, Mops's paper lunch bag, the Guardian Box close-up (the first build's box view: the open box, the older
  * notes, the lid's taped MY GARDIAN BOX label, Squatch's crayon drawing MY GUARDIANS), the thought bubbles (the box;
- * his crayon Guardians), and today's marks on the calendar close-up (the days before the circled Moon Pie day crossed
+ * his crayon Guardians), and today's marks on the calendar close-up (the days before the circled snack delivery day crossed
  * off). The Guardian Box in the room is the approved one (docs/approved-art/closet/, home-alone.js GUARDIAN_BOX) in its
  * approved look, DAY2_BOX times its approved size.
  * Sizes are read against the home room: Squatch is 48.5 of his units at the room's scale 3 (about 145 px), and every
@@ -267,7 +267,7 @@ export function outlineSource(id) {
 // ---------- the calendar close-up's marks for today ----------
 /**
  * Over the older program's calendar close-up (src/game/15-ch1-scene1.js drawCh1Calendar, its paper 720 x 530 drawn
- * at (460, 320) scaled by 0.92 + 0.08 * zoom): days 1 to 13 crossed off in pencil, so the circled Moon Pie day (14)
+ * at (460, 320) scaled by 0.92 + 0.08 * zoom): days 1 to 13 crossed off in pencil, so the circled snack delivery day (14)
  * is the first day not crossed off, today; and that circle pulses. Placeholder marks. Returns what it drew.
  */
 export const CALENDAR_TODAY = Object.freeze({ day: 14, circle: Object.freeze({ x: 492, y: 330 }) });

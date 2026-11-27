@@ -3,21 +3,24 @@
 
 | Lines | Heading |
 | --- | --- |
-| 20–23 | # Master backlog |
-| 24–188 | ## Where main is (Chapter 1 redesign) |
-| 189–203 | ## Register |
-| 204–225 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 226–246 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 247–259 | ## Phase 2 (plan section 4, T13 to T18) |
-| 260–282 | ## Phase 1 (plan section 3, T5 to T12) |
-| 283–296 | ## SS40–SS44 |
-| 297–314 | ## Story rows |
-| 315–333 | ## Reset section |
-| 334–344 | ## Still open |
-| 345–348 | ## Chapter 1 replot, recorded and not built |
-| 349–506 | ## Changelog |
+| 20–26 | # Master backlog |
+| 27–206 | ## Where main is (Chapter 1 redesign) |
+| 207–221 | ## Register |
+| 222–243 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 244–264 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 265–277 | ## Phase 2 (plan section 4, T13 to T18) |
+| 278–300 | ## Phase 1 (plan section 3, T5 to T12) |
+| 301–314 | ## SS40–SS44 |
+| 315–332 | ## Story rows |
+| 333–351 | ## Reset section |
+| 352–362 | ## Still open |
+| 363–366 | ## Chapter 1 replot, recorded and not built |
+| 367–524 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
+
+> **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
+
 
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
@@ -32,6 +35,21 @@
 - New drawings waiting for his eye (placeholders): the robots, the form set and its close-up, the two stuck copies, the bite, the copies in the bin, the ship docking (the locked day picture shown through the window and down the ramp), the workers as the older program draws them (no name tags).
 - Pending words: every line in the "Loading bay" section of `docs/CH1-LINES-FOR-BRIAN.md` except the gumbling, fur and Paperwork lines.
 - Placeholders (not pins): the close-ups' places and sizes, every walking speed and pause in `loading-bay-place.js` (BAY_PACE).
+2026-11-26 (late night, lunch), draft PR #91: the rename and the family stamp merged in; the lunch sneak's plate is Stars Cakes. Waiting on Brian (from #87 and #89): the bedtime line's new words, the crate bed's stamp layer, the crayon "ST". Docs match main: yes.
+
+2026-11-26 (late night, Day 2's start), draft PR #90: the rename and the family stamp merged in; nothing new waiting on Brian from this merge. Docs match main: yes.
+
+2026-11-26 (late night, bedtime), draft PR #89: the rename reaches the bedtime story (the crate caption, Mops's line, the story crate's worn family stamp with no crayon). Waiting on Brian: Mops's line's new words. Docs match main: yes.
+
+2026-11-26 (late night), draft PR #87: the snack is Stars Cakes everywhere (Brian, question 86; `snack-name.js`, `crate-stamp.js`, `tests/snack-name.mjs`; DECISIONS "The snack renamed, and the crate bed's stamp (question 86)"). Waiting on Brian: the bedtime line's new words; the crate bed's stamp layer over the locked home pictures (his yes); the hall tin's new lid over the locked hall picture (his yes); the crayon "ST". Not yet played by a person. Docs match main: yes.
+
+2026-11-26 (night, lunch), draft PR #91: the night look merged in; the lunch sneak is day (checked by `night-look`). Docs match main: yes.
+
+2026-11-26 (night, Day 2's start), draft PR #90: Day 2 starts dark, the black lifts on the night look, then the morning comes up (`home-morning.js` NIGHT_LIFT, the room coming up 2.0 s, placeholders). Docs match main: yes.
+
+2026-11-26 (night, bedtime), draft PR #89: the night look is merged in and used by the bedtime story (the crate's front wall and Mops's mop bucket at night; lights out dims on top). Open for Brian: lights out over the night look is darker than before (a placeholder; `BEDTIME_NIGHT.dim` could come down). Docs match main: yes.
+
+2026-11-26 (night), draft PR #87: every room has a night look at night (Brian: "all rooms are different at night versus daytime"; `night-look.js`, README "Chapter 1 redesign", the 2026-11-26 night paragraph). Open for Brian: the tint's strength (`NIGHT_TINT`, a placeholder) and which things stay lit; home has no window or lamp in its picture, so only its TV screen stays as it is. NOT ASSESSED: how the night look plays on a phone in daylight. Docs match main: yes.
 
 2026-11-26 (round D, merge), draft PR #90 on `feat/ch1-day2-morning`, not merged. Done: `feat/ch1-bedtime-story` (with the party's round D) merged in (merge commit); the morning's goal things (the rocket, the lunch bag) keep only the dashed goal line, no glow (`tests/highlight-style.mjs`). NOT ASSESSED: whether a kid on a phone still finds the bag at once without the glow (the stills). Docs match main: yes.
 
@@ -116,7 +134,7 @@
 
 2026-11-25 (evening), draft PR #87, not merged. Done: Brian's twelve showing-5 decisions and his two code rules (README, "Chapter 1 redesign", the 2026-11-25 evening paragraph). Open for Brian:
 - Pick the FUR alarm: `tools/alarm-choices.html` (five made-up sounds). The game's alarm is unchanged until he picks.
-- The Moon Pie bedtime story (beat 21, `docs/CHAPTER-1-PROBLEMS.md` 18): built on branch `feat/ch1-bedtime-story` (see the 2026-11-25 night entry above), waiting for his yes.
+- The bedtime crate story (beat 21, `docs/CHAPTER-1-PROBLEMS.md` 18): built on branch `feat/ch1-bedtime-story` (see the 2026-11-25 night entry above), waiting for his yes.
 - New drawings waiting for his eye: the TOURS ship in the TV story, the gap glow in the photo row, the dance spot's outline, the small filling "?", the hat tipping in the octopus's hug, the flyer's corner under the bed.
 - The octopus vent trick (his arms sucked into the vent) only if the chase still feels short in the new video.
 

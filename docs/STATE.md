@@ -3,25 +3,28 @@
 
 | Lines | Heading |
 | --- | --- |
-| 24–26 | # Space Snack Quest: where things stand |
-| 27–43 | ## 2026-11-22 sitting (Snack Quest Chat, Claude) |
-| 44–49 | ## 2026-11-22 sitting 2 (Snack Quest Chat, Claude): repeat-complaint tests |
-| 50–56 | ## 2026-11-22 overnight (Snack Quest Chat, Claude; Brian asleep, said keep going) |
-| 57–63 | ## Fidelity system (new, 9:55 PM PT, Brian t233 / W33) |
-| 64–81 | ## The game |
-| 82–119 | ## Chapter 1 cartoon: panels in story order |
-| 120–135 | ## Open questions from the new panels (for Brian, multiple choice) |
-| 136–140 | ## In progress right now |
-| 141–195 | ## Next |
-| 196–200 | ## Earlier state, kept in full |
-| 201–206 | # Space Snack Quest: state |
-| 207–209 | ## What it is |
-| 210–221 | ## Where things live |
-| 222–258 | ## Open items |
-| 259–263 | ## Next step |
-| 264–268 | ## Paused 2026-11-08 at the credit line |
+| 24–29 | # Space Snack Quest: where things stand |
+| 30–46 | ## 2026-11-22 sitting (Snack Quest Chat, Claude) |
+| 47–52 | ## 2026-11-22 sitting 2 (Snack Quest Chat, Claude): repeat-complaint tests |
+| 53–59 | ## 2026-11-22 overnight (Snack Quest Chat, Claude; Brian asleep, said keep going) |
+| 60–66 | ## Fidelity system (new, 9:55 PM PT, Brian t233 / W33) |
+| 67–84 | ## The game |
+| 85–122 | ## Chapter 1 cartoon: panels in story order |
+| 123–138 | ## Open questions from the new panels (for Brian, multiple choice) |
+| 139–143 | ## In progress right now |
+| 144–198 | ## Next |
+| 199–203 | ## Earlier state, kept in full |
+| 204–209 | # Space Snack Quest: state |
+| 210–212 | ## What it is |
+| 213–224 | ## Where things live |
+| 225–261 | ## Open items |
+| 262–266 | ## Next step |
+| 267–271 | ## Paused 2026-11-08 at the credit line |
 <!-- /section-index -->
 # Space Snack Quest: where things stand
+
+> **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
+
 Monday, November 9, 2026, through R63. Updated 2026-11-10 after the Chapter 1 redesign and the party landed on `main`. Decisions: `docs/DECISIONS.md`. Open asks: `docs/old/OPEN-ASKS.md`. Words: `docs/CH1-CARTOON-LINES.md`. Look: `docs/STYLE-GUIDE.md`.
 
 ## 2026-11-22 sitting (Snack Quest Chat, Claude)
@@ -128,9 +131,9 @@ Not a story panel: `sketch-08-home-closed.png` (home, wardrobe closed — APPROV
   - B. Mops drops it after "got it!" as he climbs out and Squatch scoops it up.
   - C. Mops hands it to Squatch to hold without looking at it.
   - (Still open after that: O10, how it gets into the Guardian Box / crate.)
-- **Q4 At boarding, where are the Moon Pie crate and the Guardian Box (S50, O10)?** Drawn: A.
+- **Q4 At boarding, where are the Stars Cakes crate and the Guardian Box (S50, O10)?** Drawn: A.
   - A. Already loaded with the cargo, not shown.
-  - B. A robot pushes the Moon Pie crate up the ramp in the same picture.
+  - B. A robot pushes the Stars Cakes crate up the ramp in the same picture.
   - C. Squatch carries the little Guardian Box himself through the scanner.
 
 ## In progress right now

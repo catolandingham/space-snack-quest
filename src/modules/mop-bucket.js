@@ -10,6 +10,8 @@
  * The wringing close-up of the morning (cutaway.js) keeps its own bucket, which Brian approved separately (a question
  * for him: docs/BRIAN-ASKS-OPEN.md).
  */
+import { nightPicture, drawUnderNightTint } from "./night-look.js";
+
 const DARK = "#22242c";
 /** The bucket's shape at k 1 (picture pixels): top and bottom widths, body height, wheel size; and its colours. */
 export const MOP_BUCKET = Object.freeze({
@@ -123,18 +125,20 @@ const homeImg = typeof Image !== "undefined" ? Object.assign(new Image(), { src:
 let lastHome = null;
 /**
  * Draws the bucket in the home room on `ctx`: the floor over the painted bucket, then this bucket with its water.
- * `front`: only the bucket, again, over Squatch standing behind it (the floor is not painted again over him).
+ * `front`: only the bucket, again, over Squatch standing behind it (the floor is not painted again over him). `night`:
+ * the story is at night (bridge.js passes it): the room's night look (night-look.js).
  * Returns its box, or null while the picture has not loaded (the painted bucket then shows, as before).
  */
-export function drawHomeMopBucket(ctx, front = false) {
+export function drawHomeMopBucket(ctx, front = false, night = false) {
   const H = HOME_BUCKET,
     C = H.cover;
   if (!homeImg || !homeImg.complete || !homeImg.naturalWidth) return (lastHome = null);
-  const kx = homeImg.naturalWidth / 960,
-    ky = homeImg.naturalHeight / 640;
-  front || ctx.drawImage(homeImg, (C.x0 - C.from) * kx, C.y0 * ky, (C.x1 - C.x0) * kx, (C.y1 - C.y0) * ky, C.x0, C.y0, C.x1 - C.x0, C.y1 - C.y0);
-  drawMopBucketBack(ctx, H.cx, H.floor, H.k);
-  const b = drawMopBucketFront(ctx, H.cx, H.floor, H.k, { water: true });
+  // at night the floor comes from the room's night picture and the bucket is under the night tint (night-look.js)
+  const pic = nightPicture("home-closed", homeImg, night),
+    kx = pic.naturalWidth / 960,
+    ky = pic.naturalHeight / 640;
+  front || ctx.drawImage(pic, (C.x0 - C.from) * kx, C.y0 * ky, (C.x1 - C.x0) * kx, (C.y1 - C.y0) * ky, C.x0, C.y0, C.x1 - C.x0, C.y1 - C.y0);
+  const b = drawUnderNightTint(ctx, night, (ctx) => (drawMopBucketBack(ctx, H.cx, H.floor, H.k), drawMopBucketFront(ctx, H.cx, H.floor, H.k, { water: true })), { x0: C.x0 - 12, x1: C.x1 + 12, y0: C.y0 - 40, y1: C.y1 + 12 });
   return (lastHome = { x0: Math.round(b.x0), x1: Math.round(b.x1), y0: Math.round(b.y0), y1: Math.round(b.floor) });
 }
 /** Tests: the box the last home bucket was drawn in, or null. */

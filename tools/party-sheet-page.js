@@ -1,6 +1,7 @@
 // Bundled by tools/party-sheet.mjs and run inside the game page (never part of the game): draws every new party
 // picture for Brian's picture sheet with the game's own drawing code, and hands each back as a PNG data URL.
 import { drawHall } from "../src/modules/party-draw.js";
+import { withSnackLayers } from "../src/modules/crate-stamp.js";
 import { BAND_A } from "./party-half-two-art.js";
 import { drawHeartCone, drawCountdown, drawBandNotes, drawClap, drawHiccups, drawSpeakerRing, drawLoosePiece, drawFlash } from "../src/modules/party-free-art.js";
 import { SONG_LIGHTS } from "../src/modules/party-dance.js";
@@ -25,9 +26,9 @@ const load = (src) =>
   });
 const pics = {};
 const ready = (async () => {
-  pics.hall = await load(HALL_PICTURE);
-  pics.home = await load("docs/locked-rooms/home-room-empty-closed-v6.png");
-  pics.homeOpen = await load("docs/locked-rooms/home-room-empty-open-v6.png");
+  pics.hall = withSnackLayers("hall", await load(HALL_PICTURE)); // (the tin's new lid, as the game shows it)
+  pics.home = withSnackLayers("home-closed", await load("docs/locked-rooms/home-room-empty-closed-v6.png"));
+  pics.homeOpen = withSnackLayers("home-open", await load("docs/locked-rooms/home-room-empty-open-v6.png"));
   // the guest pictures load in createGuestArt; wait for them too
   await new Promise((r) => setTimeout(r, 600));
 })();

@@ -20,4 +20,8 @@ Layers the game draws over these pictures (the files themselves unchanged), each
 - Mops's mop bucket over the home room's painted bucket (`src/modules/mop-bucket.js`; Brian 2026-11-26, "Let's go with it moving forward").
 - On Day 2 the home wardrobe drawn about 85 game pixels taller, open and shut, from pieces of these two home pictures (`src/modules/tall-closet.js`; Brian 2026-11-26, video note 0:20: "We should make the closet taller... the clothes should be over the box").
 
+The crate bed in both home pictures still has its old MOON PIES badge. Since 2026-11-26 (Brian, question 86: the snack is Stars Cakes) the game draws a layer over it, never editing the file: the badge painted out in the crate's own wood and the family crate's worn stamp ("_ARS CAKES", his crayon "ST") on top (`src/modules/crate-stamp.js`). The layer needs Brian's yes; until then it is a proposal, listed in `docs/DECISIONS.md`.
+
+The party hall picture `hall-room-empty-v2.png` has a snack tin on the bar with the old name on its lid. Since 2026-11-26 the game draws a new lid over it (blue, a little yellow star, "Stars Cakes"; `crate-stamp.js` drawTinLid), never editing the file. It needs Brian's yes too.
+
 The `.py` files are the scripts that drew the pictures (`mockups/rooms/`).

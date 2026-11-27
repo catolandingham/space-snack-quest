@@ -24,7 +24,7 @@
  *   back    "Squatch: go on"; Mops waits in the left doorway, which is outlined; walking there takes them both back
  *           into the hall, down behind the snack counter, where Squatch ducks into his ball (the L2 ball, as ROLL ·
  *           ball; only the counter's guest is near).
- *   one     the counter guest's cone lies over the ducked Squatch and stays grey; the plate of Moon Pies has its dashed line and
+ *   one     the counter guest's cone lies over the ducked Squatch and stays grey; the plate of snack cakes has its dashed line and
  *           Mops says "...you know the rule, grab one snack." (NEXT).
  *   snack   "Squatch: grab one snack"; TAKE · snack (first offered as the guest turns away): he stands up, reaches,
  *           takes the top pie and ducks. Seen while up: the pie stays on the plate and the same capture rule runs.
@@ -42,6 +42,7 @@ import { HALL, HALL_PICTURE, SPOTS } from "./party-hall.js";
 import { coneFrom, coneSees, lookAt, SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
 import { startAlarm, tickAlarm, guardCones, ALARM } from "./party-alarm.js";
 import { drawHall } from "./party-draw.js";
+import { withSnackLayers } from "./crate-stamp.js";
 import { drawAlarmCloseUp } from "./party-art.js";
 import { partyLine, lockupCause } from "./party-lines.js";
 import { tickQuestions, questions } from "./party-question.js";
@@ -780,7 +781,7 @@ export function createLunchSneak(bridge) {
     }
     return {
       t,
-      picture,
+      picture: withSnackLayers("hall", picture, "lunch"), // (the hall tin's new lid, crate-stamp.js)
       banner: false,
       lights: null,
       isfred: null,
@@ -960,7 +961,7 @@ export function createLunchSneak(bridge) {
     },
     /**
      * The hall after the lunch (the older program draws it, 12-ch1-redesign.js drawCh1DayHall): the crates are still
-     * there, and the plate on the counter's end has the Moon Pies he left on it.
+     * there, and the plate on the counter's end has the snack cakes he left on it.
      */
     drawProps(ctx) {
       const l = L(),

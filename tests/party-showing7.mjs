@@ -174,7 +174,8 @@ const g = await startGame({ port: 9474, name: "party-showing7" });
         ss.tick(1 / 60);
         ss.drawFrame();
         const d = ctx.getImageData(Math.round(700 * k), Math.round(380 * k), Math.round(260 * k), Math.round(150 * k)).data;
-        for (let i = 0; i < d.length; i += 4) d[i] > 200 && d[i + 1] < 170 && d[i + 2] > 150 && d[i] - d[i + 1] > 60 && n++;
+        // (pink against the floor, by day or under the night look: night-look.js)
+        for (let i = 0; i < d.length; i += 4) d[i] > 150 && d[i + 2] > 120 && d[i] - d[i + 1] > 60 && n++;
       }
       return n;
     });

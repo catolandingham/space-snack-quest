@@ -118,13 +118,13 @@ export function watcherNow(w, t) {
 /**
  * The service aisle between the counter and the right wall (hall v2: the counter's top 1085 to 1145 picture pixels
  * wide, the aisle 1145 to 1235, closed at the bottom by the counter's end). Mops waits at its top, Squatch below him
- * by the counter's end, where the plate of Moon Pies (PLACEHOLDER) sits.
+ * by the counter's end, where the plate of snack cakes (PLACEHOLDER) sits.
  */
 export const AISLE = Object.freeze({ x0: 862, x1: 924, y0: 352, y1: 548 });
 export const COUNTER_SPOTS = Object.freeze({
   mops: Object.freeze({ x: 893, y: 396 }),
   sq: Object.freeze({ x: 893, y: 506 }),
-  // the plate on the counter's end, right of and below the Moon Pie painted on the counter
+  // the plate on the counter's end, right of and below the snack cake painted on the counter
   plate: Object.freeze({ x: 884, y: 572 }),
   // walking in from the hallway doorway, down the aisle
   in: Object.freeze({ x: 952, y: 312 }),

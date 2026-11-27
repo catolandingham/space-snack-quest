@@ -3,7 +3,7 @@
  * the order a player meets them. Nothing here is new: each line is in the game today, decided or approved. The note
  * tied to the rocket shows its words in the box close-up (Brian, 2026-11-26; no "Rule #1"). The calendar is optional
  * (Brian, 2026-11-26), so it has no goal chip. The calendar close-up's own words
- * ("MOONMUNCH", "FUZZUARY", the reminders, "Sponsored by MOON PIES") are the older program's, unchanged.
+ * ("MOONMUNCH", "FUZZUARY", the reminders, the sponsor line, which names the snack from snack-name.js) are the older program's.
  *   id      the line's name in the code and in tests/home-morning.mjs
  *   who     "chip" (the goal chip), "button" (the big action button), "sq" (Squatch says it), "sign" (painted on a thing),
  *           "speaker" (the wall speaker, the station's PA)

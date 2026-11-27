@@ -2,7 +2,7 @@
  * The lunch sneak's own drawings (Chapter 1, beats 25 to 27). Every drawing here is a PLACEHOLDER in the game's style
  * (dark outlines, flat colours) until Brian approves a look: the stack of two crates in the hall, the plate of Moon
  * Pies on the snack counter's end, the dashed goal line round a thing it draws itself, one heart, his arm reaching over the counter, and
- * Mops's wet streaks, look cone and hearts in the hallway. The lunch bag is the home morning's (home-morning-art.js), the Moon Pie is the party's snack
+ * Mops's wet streaks, look cone and hearts in the hallway. The lunch bag is the home morning's (home-morning-art.js), the snack cake is the party's snack
  * (party-snacks-art.js).
  */
 import { drawSnack } from "./party-snacks-art.js";
@@ -63,7 +63,7 @@ export function drawCrates(ctx) {
   return b;
 }
 
-/** The plate of Moon Pies on the counter's end: `n` pies stacked on it (3, then 2 once he has taken one). */
+/** The plate of snack cakes on the counter's end: `n` pies stacked on it (3, then 2 once he has taken one). */
 export function drawPlate(ctx, n) {
   const p = COUNTER_SPOTS.plate,
     s = LUNCH_SIZES.plate;
@@ -214,7 +214,7 @@ export function drawReach(ctx, x, y, f, scale, tx, ty) {
   ctx.stroke();
   ctx.restore();
 }
-/** One Moon Pie (in his paw, or flying from the plate to it). */
+/** One snack cake (in his paw, or flying from the plate to it). */
 export function drawPie(ctx, x, y, k = 1) {
   drawSnack(ctx, "pie", x, y, LUNCH_SIZES.pie * k);
 }

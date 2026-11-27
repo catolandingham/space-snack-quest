@@ -87,7 +87,7 @@
     function ch1SnackLine() {
       ((n.ctrl = !1),
         J([
-          v("tourist", "I swear we had more Moon Pies... is that what they stole at lunch?", "say", !0),
+          v("tourist", "I swear we had more " + (window.SSQ && window.SSQ.snack ? window.SSQ.snack("name") : "snacks") + "... is that what they stole at lunch?", "say", !0),
           v("mops", "Quick, hide."),
           N(() => ch1Ready("family", "Squatch: hide", "Q3")),
         ]));
@@ -717,7 +717,7 @@
             (L(k.x, k.y, 36), r("#fffdf8", 4), g(d, k.x, k.y, 28, "#1e2430", "center", 900));
           }));
       } else if (id === "pack") {
-        (m(360, 240, 240, 160, 8), r("#d7c4a3", 4), g("MOON PIES", 480, 280, 18, "#1e2430", "center", 900));
+        (m(360, 240, 240, 160, 8), r("#d7c4a3", 4), g((window.SSQ && window.SSQ.snack ? window.SSQ.snack("NAME") : "SNACKS"), 480, 280, 18, "#1e2430", "center", 900));
         n.ch1Packed && (m(430, 300, 80, 50, 4), r("#3478f6", 3), g("MY GARDIANS", 470, 326, 10, "#fff", "center", 800), drawSlip(448, 312, "#ff8fb8", 22, 18));
         n.ch1Packed === 2 && (L(560, 250, 22), r("#8a93a3", 3));
       }

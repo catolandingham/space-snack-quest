@@ -46,7 +46,7 @@ export const GOAL_TARGETS = {
   // (in the sneak only the hallway doorway is outlined, Brian 2026-11-26, lunch note 0:38; the plant and the crates
   // still hide him, and get the line only during an alarm: the plant's is "hall:hide", the crates' a drawn box)
   "hall:lu-door": { rect: { x0: 912, x1: 940, y0: 257, y1: 345 } }, // the doorway to the hallway (hall v2, back corner)
-  "hall:lu-snack": { trace: LUNCH_TRACE.plate, source: () => lunchOutlineSource("plate"), line: DRAWN_OUTLINE }, // the plate of Moon Pies
+  "hall:lu-snack": { trace: LUNCH_TRACE.plate, source: () => lunchOutlineSource("plate"), line: DRAWN_OUTLINE }, // the plate of snack cakes
   "hall:d2-GO-home": HALL_HOME_DOOR,
   // Hallway
   "passage:d2-GO-hall": { rect: { x0: 20, x1: 48, y0: 266, y1: 354 } }, // the doorway to the hall (left; the walk uses it)

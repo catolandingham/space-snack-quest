@@ -27,7 +27,7 @@
  *                  the action button, NEXT. With SHOWING_STILLS=<dir>, a still of each step goes there too.
  *     lunch        beats 25 to 27, the lunch sneak: from TAKE · lunch at home through the sneak past the guests (the
  *                  cones timed: the finger goes when the watcher has just looked away), the hallway, GIVE · lunch, Mops
- *                  eating the lunch and the bag, back behind the snack counter, one Moon Pie, to beat 28's first line.
+ *                  eating the lunch and the bag, back behind the snack counter, one snack cake, to beat 28's first line.
  *     lunchseen    the lunch sneak's capture rule: he steps out while a guest looks; FUR!, the alarm, the guards, back
  *                  into the plant, "They lost you."; then seen again and standing still: the LOCKUP card, and the
  *                  restart hidden in the plant. Both write a still of each step to SHOWING_STILLS=<dir> if it is set.
@@ -432,6 +432,8 @@ if (which === "bedtime") {
       n = ss.op;
     n.q = [];
     n.cur = null;
+    // (after the party, as party.js finish() leaves it: the evening is at night, night-look.js)
+    n.ch1PartyNow = { scene: "done" };
     window.SSQ.engine().tvStory();
     for (let i = 0; i < 600; i++) {
       ss.tick(0.05);
@@ -453,6 +455,8 @@ if (which === "morning") {
       bed = window.SSQ.beat("ch1-bedtime-story");
     n.q = [];
     n.cur = null;
+    // (after the party, as party.js finish() leaves it: the evening is at night, night-look.js)
+    n.ch1PartyNow = { scene: "done" };
     window.SSQ.engine().tvStory();
     for (let i = 0; i < 6000; i++) {
       if (bed.debug().phase === "fade") return true;
@@ -631,6 +635,8 @@ if (which === "tv") {
     const n = window.__ss.op;
     n.q = [];
     n.cur = null;
+    // (after the party, as party.js finish() leaves it: the evening is at night, night-look.js)
+    n.ch1PartyNow = { scene: "done" };
     window.SSQ.engine().tvStory();
   });
   // every picture: read it (about 3 s), then NEXT; the ship picture gets 6 s

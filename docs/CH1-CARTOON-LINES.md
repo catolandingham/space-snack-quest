@@ -1,4 +1,6 @@
 # Chapter 1: every on-screen word, in story order (for Brian's yes)
+
+> **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.
 Repo copy, synced Monday, November 9, 2026, through R63. The Chapter 1 redesign and the party are now on `main`. A row stays NEEDS BRIAN until Brian approves those exact words. The hallway gallery is not in the game yet.
 Updated Sunday, November 8, 2026, about 11:45 PM PT, then extended through the Nov 9 panels. This is the one list of every word that appears on screen in the Chapter 1 cartoon. Decisions behind each line are in `docs/DECISIONS.md` (codes in brackets); which picture is current is in `docs/STATE.md` and `LOCKED/INDEX.md`.
 
@@ -40,7 +42,7 @@ Rules: never invent why the parents never came back (W21). No new words go on a 
 |---|---|---|
 | Home: poster beside the door out | STAY IN HERE! / — Mops | EXISTING (game room art) |
 | Home: calendar on the wardrobe door (closed only) | DELIVERY | EXISTING (game room art) |
-| Home: crate bed badge and calendar badge | MOON PIES | EXISTING (game room art) |
+| Home: crate bed badge and calendar badge | STARS CAKES | EXISTING (game room art) |
 | Home: crate bed side | FRAGILE · THIS SIDE UP (+ drawn up-arrow) | EXISTING (game room art) |
 | Home: Guardian Box | G | EXISTING (game room art) |
 | Delivery room: ship badge and robot mailbox | UPS | EXISTING (game room art) |
@@ -161,7 +163,7 @@ Rules: never invent why the parents never came back (W21). No new words go on a 
 ### 13 · Snack stand on the way home *(no panel yet)* [S33]
 | Speaker / surface | Exact text | Status |
 |---|---|---|
-| Person in line | I swear we had more Moon Pies... is that what they stole at lunch? | NEEDS BRIAN (Brian 4:14, 4:31 PM) |
+| Person in line | I swear we had more Stars Cakes... is that what they stole at lunch? | NEEDS BRIAN (Brian 4:14, 4:31 PM) |
 | Mops | Quick, hide. | NEEDS BRIAN (Brian 4:14 PM) |
 
 ### 14 · Their room: the Mars talk *(no panel yet)* [S36]
@@ -220,7 +222,7 @@ Rules: never invent why the parents never came back (W21). No new words go on a 
 | Speaker / surface | Exact text | Status |
 |---|---|---|
 | Desk nameplate | MANAGER | EXISTING (game Z6) |
-| Site header | MOON PIES | NEEDS BRIAN (prop on screen) |
+| Site header | STARS CAKES | NEEDS BRIAN (prop on screen) |
 | Site buttons | Order new box / Return empty crate | NEEDS BRIAN (Brian 4:20 PM; S48) |
 
 ### 23 · Pickup day: robots open a crate by the ship; Squatch hides in the mail room — `sketch-09-pickup-day.png` [R41, R40, R38, P13, S53]

@@ -51,7 +51,7 @@ const CAPTIONS = {
   h2_camera_count: "Half two. The camera's red lights counting 3-2-1, only during the group photo (the Polaroid of the group fills the whole screen: see the round-four stills).",
   h2_flash: "Half two. The camera's flash: a small bright burst at the lens (the room never goes white).",
   h2_pyramid: "Half two. The snack pyramid on the bar's counter. Standing at the bar, the action button reads GRAB · snacks (no ring and no little picture over the pyramid, Brian 2026-11-24).",
-  h2_pyramid_topple: "Half two, new. The pyramid toppling in a chain (a cup rolls, the tray slides, the Moon Pie tin falls), a flying cup, and a piece of his outfit knocked off.",
+  h2_pyramid_topple: "Half two, new. The pyramid toppling in a chain (a cup rolls, the tray slides, the snack tin falls), a flying cup, and a piece of his outfit knocked off.",
   h2_snack_closeup_back: "Half two, new. The snack close-up: the bartender's back turned (her apron bow and hair bun), his paw taking a snack, the bag with what he took, the close button (a cross, no words).",
   h2_snack_closeup_glance: "Half two, new. The same, as she glances: her face turns to the side (the warning).",
   h2_snack_closeup_face: "Half two, new. The same, facing the room: a paw in the snacks now is caught.",
