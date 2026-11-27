@@ -10,7 +10,9 @@
  *   Mops comes in from the hallway mopping with his beard, looks up, and his cone fills with floating hearts (R98,
  *   R104; PR #35's look, as big as everyone's). No words. The kid walks Squatch to Mops and they walk home together
  *   through Squatch's door. Or, any time after the speaker's line, he walks home through his door on his own; Mops
- *   comes home a moment later and the talk starts there (Brian 2026-11-26, #50). At home, the talk (party-talk.js): he takes the flyer he left by the door, "You went to
+ *   comes home a moment later and the talk starts there (Brian 2026-11-26, #50). Since the story pass 28-52 (E2), the
+ *   wall speaker calls "Ganitor Mops to the party hall." as the hall empties (or at home, if he went first), and when
+ *   he went home first the player is Mops, cleaning the hall, before the talk (party-cleanup.js). At home, the talk (party-talk.js): he takes the flyer he left by the door, "You went to
  *   the party." ... "Here's why you have to hide.", the horn press and the TV; then beat 20 (the TV story).
  */
 import { footfall } from "./footfalls.js";
@@ -25,8 +27,9 @@ import { lookAt } from "./party-watch.js";
 // their way to the doorway before heading straight for the doorway round him. `besideHome`: how far from Squatch Mops
 // stops at home (the home room draws them big, so further than in the hall).
 // `cheer`: the crowd's cheer and the band's bow; `dim`: the lights a step darker before the speaker; `darker`: how much;
-// `mopsHome`: how long after he walks home on his own Mops comes in.
-export const ENDING = Object.freeze({ cheer: 2.6, dim: 2, darker: 1.35, mopsHome: 2.5, leave: 110, gap: 1.2, pack: 1.6, mop: 45, reach: 70, walk: 150, heart: 0.8, comeOver: 3, clearOf: CLEAR_OF_SQUATCH, giveWay: 1.5, besideHome: 170 });
+// `mopsHome`: how long after he walks home on his own the wall speaker calls Mops to the hall (then the cleanup);
+// `afterPa`: how long after the wall speaker's call Mops comes into the empty hall.
+export const ENDING = Object.freeze({ cheer: 2.6, dim: 2, darker: 1.35, mopsHome: 1.2, afterPa: 1.5, leave: 110, gap: 1.2, pack: 1.6, mop: 45, reach: 70, walk: 150, heart: 0.8, comeOver: 3, clearOf: CLEAR_OF_SQUATCH, giveWay: 1.5, besideHome: 170 });
 // Who leaves, in order: the pairs, the two who came alone, then the bartender, Isfred and the band.
 export const LEAVING = Object.freeze([["teal", "stilt"], ["robot", "octopus-guest"], ["camera", "backpack"], ["bartender"], ["isfred"], ["band0", "band1", "band2"]]);
 const step = stepTo;
@@ -161,7 +164,17 @@ export function createEndings(h) {
       if (!still) ((c.phase = "empty"), (c.t = 0));
       return;
     }
-    if (c.phase === "empty" && c.t >= 1) {
+    // the hall is empty: the wall speaker calls Mops to clean it (Brian, story pass 28-52, E2: the cause for Squatch to
+    // go home before Mops walks in; approved words). Squatch can still go home through his door now.
+    if (c.phase === "empty" && !p.paCalled && c.t >= 0.6) {
+      p.paCalled = true;
+      p.speakerOn = true;
+      c.t = 0;
+      h.sound.one("chime");
+      e.queue([h.say("pa", "pa-mops-hall"), e.run(() => h.P() && h.P().close && ((h.P().speakerOn = false), (h.P().close.t = 0)))]);
+      return;
+    }
+    if (c.phase === "empty" && p.paCalled && c.t >= ENDING.afterPa) {
       // Mops comes in from the hallway, head down, mopping with his beard
       c.phase = "mops";
       c.t = 0;
@@ -260,9 +273,9 @@ export function createEndings(h) {
       e.until((dt) => e.step("sq", R.inside.x, R.inside.y, ENDING.walk, dt)),
       e.run(() => ((h.P().pt = 0), e.still("sq"))),
       e.until(() => !h.P() || h.P().pt >= ENDING.mopsHome),
-      // Mops's key in the door: he comes home, and the talk (party-talk.js)
-      e.run(() => (h.sound.one("door"), (h.P().doorHeard = true))),
-      ...h.afterAlarm().talk.steps(),
+      // the wall speaker calls Mops to the hall (if it has not yet), and the player is Mops, cleaning up (Brian, story
+      // pass 28-52, E2: party-cleanup.js); the talk at home comes after it
+      e.run(() => h.cleanup().begin(h.P(), "close")),
     ]);
   }
 

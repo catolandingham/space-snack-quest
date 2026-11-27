@@ -3,37 +3,47 @@
 
 | Lines | Heading |
 | --- | --- |
-| 37–42 | # Space Snack Quest: every decision, in one place |
-| 43–50 | ## How to use this file |
-| 51–58 | ## The snack renamed, and the crate bed's stamp (question 86), 2026-11-26 (Brian, relayed by the coordinator) |
-| 59–61 | ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator) |
-| 62–71 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
-| 72–79 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
-| 80–103 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
-| 104–108 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 109–117 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 118–121 | ## Sound, 2026-11-23 |
-| 122–145 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 146–157 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 158–182 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 183–191 | ## Which repo is the base, 2026-11-22 |
-| 192–202 | ## Sight cones, 2026-11-22 |
-| 203–207 | ## Latest calendar direction, 2026-11-16 |
-| 208–210 | ## Vent walk, 2026-11-16 |
-| 211–213 | ## Locked home room v5, 2026-11-16 |
-| 214–223 | ## Fidelity system (pictures are locked, not just words) |
-| 224–261 | ## 1. Working rules |
-| 262–328 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 329–353 | ## 3. Characters and look |
-| 354–430 | ## 4. Look, rooms and layout |
-| 431–452 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 453–496 | ## 6. Later chapters (2–4 and travel) |
-| 497–506 | ## 7. Audio |
-| 507–541 | ## 8. Code, controls and process |
-| 542–588 | ## 9. Open / waiting on Brian |
-| 589–683 | ## 10. Earlier entries, kept word for word |
-| 684–780 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 38–46 | ## Day 1 after the party: Mops cleans the hall, then truth or fib (story pass 28-52, E2; 2026-11-26) |
+| 47–52 | # Space Snack Quest: every decision, in one place |
+| 53–60 | ## How to use this file |
+| 61–68 | ## The snack renamed, and the crate bed's stamp (question 86), 2026-11-26 (Brian, relayed by the coordinator) |
+| 69–71 | ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator) |
+| 72–81 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
+| 82–89 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
+| 90–113 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
+| 114–118 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 119–127 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 128–131 | ## Sound, 2026-11-23 |
+| 132–155 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 156–167 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 168–192 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 193–201 | ## Which repo is the base, 2026-11-22 |
+| 202–212 | ## Sight cones, 2026-11-22 |
+| 213–217 | ## Latest calendar direction, 2026-11-16 |
+| 218–220 | ## Vent walk, 2026-11-16 |
+| 221–223 | ## Locked home room v5, 2026-11-16 |
+| 224–233 | ## Fidelity system (pictures are locked, not just words) |
+| 234–271 | ## 1. Working rules |
+| 272–338 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 339–363 | ## 3. Characters and look |
+| 364–440 | ## 4. Look, rooms and layout |
+| 441–462 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 463–506 | ## 6. Later chapters (2–4 and travel) |
+| 507–516 | ## 7. Audio |
+| 517–551 | ## 8. Code, controls and process |
+| 552–598 | ## 9. Open / waiting on Brian |
+| 599–693 | ## 10. Earlier entries, kept word for word |
+| 694–790 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
+## Day 1 after the party: Mops cleans the hall, then truth or fib (story pass 28-52, E2; 2026-11-26)
+
+Brian's words: "Build this pass: yes" (he approves the lines as he watches each scene, so new and changed lines are built and marked pending), question 11 "B" (the Polaroid only if he joined the group photo; otherwise the hat and fur), question 12 "A" (truth or fib, as written), and tonight "Go! Go as far as you can without me". Earlier, his words that started it (2026-11-26): control the janitor more often; have him clean up after the party before he comes back to the room; that is where he sees the Polaroid and learns Squatch went; then in the room Squatch decides whether he lies; the cleaning foreshadows the contest against the robots.
+
+- **Built (Decided, the beats):** after the party the player is Mops, cleaning the empty hall (scene P9, `src/modules/party-cleanup.js`): the wall speaker's "Ganitor Mops to the party hall." (approved words) is the cause; after the alarm Mops first says "Stay in here." (approved words) to Squatch under the bed. The switch card says "You are MOPS now." Dust and confetti come off where his beard passes; two sticky spills need two passes; the snacks he knocked over lie by the bar; the beard fills, goes grey and stops; WRING · beard at his bucket (the first time, the morning's beard pictures). No timer, no robots, no points. After his first wring the fur: "Fur?", the floor vent takes the first tuft, "No, no, no.", a trail of tufts one at a time with the dashed outline, "Oh no." at the third, "Nobody saw that." as he mops it. The find: the Polaroid (if he joined the group photo; PICK UP · photo, a close-up: his shirt, "That's MY shirt.", then his feet, a heart that pops, "Weee...?!", "Squatch."), else his top hat where it fell ("That's MY hat."), else fur caught in his doorway. "Spotless!" when the hall is all clean. Then home: "You are SQUATCH now.", Mops comes in, "Squatch." / "Did you go to the party?" and two big picture buttons (`party-truth.js`): TELL · the truth or FIB · "I stayed in". Both paths say their lines, nobody is punished, and both meet at "You never have to hide from me." and the approved lines after it, to the TV. With the truth the Polaroid stands by his bed; with the fib Mops keeps it.
+- **Needs Brian's yes:** every new line (party lines 91 to 119, `docs/PARTY-LINES-FOR-BRIAN.md`; source "Brian, story pass 28-52, E2/E4").
+- **Calls made without a question (veto any):** the fur starts after his first wring, so dust, the full beard and the wring come first (one new thing at a time). With no photo and no top hat lying in the hall, the trail ends at fur caught in Squatch's own doorway (PICK UP · fur): E2's hat exists only if it fell. "Nice shirt." is said only with the Polaroid. Going home early ("Keep going" after his own door, P8c) also has Mops clean the hall before he comes home, like walking home at closing time. His bucket stands by the hallway doorway (the approved bucket drawing, not part of the locked picture). The hall has no tables, so "corners and under the tables" is the corners only. Mops's switch cards use the game's own "You are MOPS now." / "You are SQUATCH now." with a why line each ("Mops cleans up the party hall.", "Mops comes home."; pending).
+- **Open (conflicts with what was built today; not changed):** (1) Closing time still has the road where the kid waits in the empty hall and Mops finds him there (Brian #50 kept it beside walking home alone); E2 has Squatch always home first. On that road there is no cleanup and the talk is as built ("You went to the party."); the wall speaker's call now plays as the hall empties, before Mops comes in. My pick: keep both roads. (2) E2 puts "Mops notices the flyer on the bed" after "You have me."; the built talk opens with it (Brian #42). Kept as built; the question takes the place of "You went to the party.". (3) E4's sales-visit line for Isfred ("We're thinking about their helper robots.") would replace his approved "to help with the heavy work", which Squatch's approved "Robots for the heavy work? That's Mops's job!" answers, and the morning PA already says the robots arrive; not built. (4) E4's TV story office and scanner pictures: Brian brought the old story back "as it was" (2026-11-25), and E4 makes them depend on his flag 12; not built.
+- NOT ASSESSED: how the mopping feels on a phone; whether a child reads the dust and the grey beard without help. Tests: `tests/party-cleanup.mjs` (new). Not yet played by a person.
 # Space Snack Quest: every decision, in one place
 
 > **The snack is now Stars Cakes** (Brian, 2026-11-26, question 86). Dated entries below keep the old name as it was said then.

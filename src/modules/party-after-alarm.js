@@ -225,20 +225,17 @@ export function createAfterAlarm(h) {
   }
 
   // ---------- "Keep going" ----------
-  /** The ending: its own restart point from here. Squatch comes out from under the bed, and the talk. */
+  /**
+   * The ending: its own restart point from here. Squatch stays under the bed; the wall speaker calls Mops to the hall,
+   * Mops says "Stay in here." and goes, and the player is Mops, cleaning up (Brian, story pass 28-52, E2:
+   * party-cleanup.js). Squatch comes out when Mops is home, and the talk with truth or fib.
+   */
   function keepGoing(p) {
     const e = E();
     p.scene = "P8a";
     e.forgetSaved();
     h.control(false);
-    e.queue([
-      e.run(() => {
-        e.set("sqPose", "stand");
-        P().pose = "stand";
-        e.walkOff();
-      }),
-      ...talk.steps(),
-    ]);
+    h.cleanup().begin(p, "alarm");
   }
   /** Every frame: the card once Mops has sent the guard off (see guardSearched); the talk's own moving parts. */
   function tick(p, dt) {

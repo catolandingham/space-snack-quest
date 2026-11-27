@@ -88,7 +88,7 @@
         linkBeatRaw = q.get("beat") || "",
         linkBeat = parseInt(linkBeatRaw, 10) || 0,
         linkDay2 = linkBeatRaw === "day2",
-        linkParty = /^party(:P([1-7]|8a|8b|8c))?$/.test(linkBeatRaw) ? linkBeatRaw.slice(6) || "P1" : "";
+        linkParty = /^party(:P([1-7]|8a|8b|8c|9|9b))?$/.test(linkBeatRaw) ? linkBeatRaw.slice(6) || "P1" : "";
       let previewBeat = !1,
         day2Jump = !1,
         partyJump = !1;
