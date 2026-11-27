@@ -212,8 +212,8 @@ if (which === "wall") {
   await still("look-photos");
   await press();
   for (let i = 0; i < 6; i++) {
-    const s = await until((q) => q.view && q.view.ready, 4000);
-    if (!s) break;
+    const s = await until((q) => (q.view && q.view.ready) || q.step === "dodge", 4000);
+    if (!s || !s.view) break;
     await sleep(500);
     await still("photo-" + (s.view.i + 1) + (s.view.i === 3 ? "-crooked-lift-photo" : ""));
     if (s.view.i === 3 && !s.view.lifted) {
@@ -477,17 +477,17 @@ if (which === "night") {
 if (which === "seen") {
   await sleep(1200);
   await still("the-bay-at-night");
-  // he waits by the robot's column until it has just turned to look down, then steps out in front of it: seen
-  await walkTo(360, 585, null, 8000);
-  await waitStart("down");
-  await walkTo(450, 585, (s) => !!s.alarm, 4000);
+  // he waits along the back, right of the robot's column, until it has just turned to the back wall: seen
+  await walkTo(700, 345, null, 8000);
+  await waitStart("up");
+  await walkTo(560, 345, (s) => !!s.alarm, 4000);
   await sleep(250);
   await still("seen-the-robot-shows-!");
-  // hiding: the plant by the door, or the crate under the big wall vent (both outlined during an alarm)
-  (await walkTo(125, 392, (s) => s.act === "HIDE · plant", 6000)) || (await fail("no HIDE · plant"));
+  // hiding: a ball never fools a search, so a real hiding place: the crate under the big wall vent (outlined)
+  (await walkTo(850, 334, (s) => s.act === "HIDE · crate", 6000)) || (await fail("no HIDE · crate"));
   await press();
   await sleep(1000);
-  await still("hidden-in-the-plant");
+  await still("hidden-in-the-crate");
   await until((s) => s.alarm === "search", 10000);
   await sleep(1200);
   await still("guards-search-the-bay");

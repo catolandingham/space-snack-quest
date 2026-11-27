@@ -38,7 +38,7 @@
 import { HALLWAY, BAR, STORM, HOME, HOME_ALONE, BAY, BAY_FURNITURE, BAY_EXTRA, BAY_BOUNDS, BAY_SEARCH, BAY_VENT, EVENING_PACE as P, EVENING_LOOK, nightLook, mopsSleepAt, mopsSleepBox, robotLook } from "./evening-place.js";
 import { drawJupiterStorm, drawStormGlow, drawCounterBin, drawCoffeeStain, BROCHURE_PARTS, drawGuardianMark, drawEveningThought, drawGuardiansBox, drawWeekCake, drawCakeChart, CHART, drawIdeaPicture, drawYearsLater, drawBayCrate, BAY_CRATE } from "./evening-pictures.js";
 import { placeThought } from "./thought-place.js";
-import { drawCrateStamp } from "./stars-cakes.js";
+import { drawCrateStamp, drawFatLetters, MARS_CAKES } from "./stars-cakes.js";
 import { HALLWAY_CRAYON } from "./ganitor.js";
 import { drawNightTint, noteNightPicture, nightDrawn, nightPictureFor } from "./night-look.js";
 import { VENT } from "./party-vent.js";
@@ -1810,9 +1810,20 @@ export function createEvening(bridge) {
       // sits under the scraped patch
       const Cd = CRATEV.card,
         u = s.slide || 0,
-        bx = stamp.patch.x - 34 + (1 - u) * 160;
-      drawBrochure(ctx, bx, Cd.y, Cd.w, Cd.h, false, 0, now);
-      s.coffee >= 0 && drawCoffeeStain(ctx, bx, Cd.y, Cd.w, Cd.h);
+        shift = (1 - u) * 160,
+        bx = stamp.patch.x - 34 + shift;
+      drawBrochure(ctx, bx, Cd.y + 40, Cd.w, Cd.h, false, 0, now);
+      s.coffee >= 0 && drawCoffeeStain(ctx, bx, Cd.y + 40, Cd.w, Cd.h);
+      // the brochure's cake box, held up close under the stamp: the same fat red letters, MARS CAKES, sliding left
+      // until its M sits under the scraped patch and its ARS CAKES under the crate's
+      ctx.beginPath();
+      ctx.roundRect(stamp.patch.x - 10 + shift, T.y + 18, stamp.end - stamp.patch.x + 20, T.h + 22, 6);
+      ctx.fillStyle = "#f6e7c8";
+      ctx.fill();
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "#1e2430";
+      ctx.stroke();
+      drawFatLetters(ctx, MARS_CAKES, stamp.patch.x + shift, T.y + 18 + T.h + 8, T.h);
       // the M's two feet landing on the two faint marks: a soft click
       if ((s.click || 0) > 0) {
         ctx.save();
@@ -1901,13 +1912,13 @@ export function createEvening(bridge) {
     ctx.lineWidth = 3;
     ctx.strokeStyle = "#1e2430";
     ctx.stroke();
-    ctx.font = `800 ${C.size}px system-ui, -apple-system, sans-serif`;
+    ctx.font = `800 ${C.size - 2}px system-ui, -apple-system, sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillStyle = "#1e2430";
     const words = [eveningWords("sign-me"), eveningWords("sign-mops")];
     words.forEach((t, k) => {
-      const x = C.x0 + C.w * (k ? 0.68 : 0.3),
+      const x = C.x0 + C.w * (k ? 0.7 : 0.22),
         y = C.y0 + 22;
       ctx.fillText(t, x, y);
       // the arrow down to the figure
@@ -2316,7 +2327,7 @@ export function createEvening(bridge) {
         const u = (t * 0.6 + i / n) % 1;
         ctx.save();
         ctx.globalAlpha = Math.sin(u * Math.PI);
-        drawHeartShape(ctx, mo.x - 10 + i * 12, mo.y - 70 * mopsK - u * 40, (s.hearts >= 1 ? 7 : 5) * (mopsK / 1.6));
+        drawHeartShape(ctx, mo.x - 10 + i * 12, mo.y - 52 * mopsK - u * 30, (s.hearts >= 1 ? 7 : 5) * (mopsK / 1.6));
         ctx.restore();
       }
       out.hearts = n;

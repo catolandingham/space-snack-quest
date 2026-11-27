@@ -124,10 +124,10 @@ export function drawCoffeeStain(ctx, x, y, w, h) {
   ctx.globalAlpha = 0.7;
   ctx.fillStyle = "#6b3f1d";
   ctx.beginPath();
-  ctx.ellipse(x + w * 0.72, y + h * 0.3, w * 0.2, h * 0.12, 0.4, 0, TAU);
+  ctx.ellipse(x + w * 0.86, y + h * 0.1, w * 0.1, h * 0.06, 0.4, 0, TAU);
   ctx.fill();
-  pDisc(ctx, x + w * 0.5, y + h * 0.22, w * 0.05, "#6b3f1d");
-  pDisc(ctx, x + w * 0.86, y + h * 0.48, w * 0.04, "#6b3f1d");
+  pDisc(ctx, x + w * 0.74, y + h * 0.06, w * 0.03, "#6b3f1d");
+  pDisc(ctx, x + w * 0.92, y + h * 0.2, w * 0.025, "#6b3f1d");
   ctx.restore();
 }
 
@@ -484,7 +484,12 @@ export function drawYearsLater(ctx, x, y, w, h, mops, poster) {
   ctx.fillRect(x, y + h * 0.62, w, h * 0.38);
   // the yellowed poster
   pRect(ctx, x + w * 0.62, y + h * 0.14, w * 0.28, h * 0.26, 3, "#f3e3a2", INK, 2.5);
-  poster && pWords(ctx, poster, x + w * 0.76, y + h * 0.25, Math.round(w * 0.05), "#c84a2e", 900);
+  if (poster) {
+    const words = poster.split(" "),
+      half = Math.ceil(words.length / 2);
+    pWords(ctx, words.slice(0, half).join(" "), x + w * 0.76, y + h * 0.21, Math.round(w * 0.042), "#c84a2e", 900);
+    pWords(ctx, words.slice(half).join(" "), x + w * 0.76, y + h * 0.31, Math.round(w * 0.042), "#c84a2e", 900);
+  }
   // the door, and Squatch, huge, peeking round it, his muzzle grey
   pRect(ctx, x + w * 0.62, y + h * 0.42, w * 0.3, h * 0.5, 3, "#c9a77c", INK, 3);
   const fx = x + w * 0.6,
@@ -498,8 +503,11 @@ export function drawYearsLater(ctx, x, y, w, h, mops, poster) {
   ctx.fill();
   pDisc(ctx, fx - r * 0.38, fy - r * 0.12, r * 0.14, INK);
   pDisc(ctx, fx + r * 0.3, fy - r * 0.12, r * 0.14, INK);
-  // Mops, old, mopping
-  mops && mops(ctx, x + w * 0.3, y + h * 0.86, w / 260, { f: 1, beard: "#bdbdbd" });
+  // Mops, old, mopping: grey all over (his beard grey)
+  ctx.save();
+  ctx.filter = "grayscale(1) brightness(1.08)";
+  mops && mops(ctx, x + w * 0.3, y + h * 0.86, w / 260, { f: 1 });
+  ctx.restore();
   ctx.restore();
 }
 
