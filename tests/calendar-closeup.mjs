@@ -108,11 +108,14 @@ for (const viewport of [
   await tap(592, 385);
   const pawAfter = (await pawPixels(530, 560, 660, 640)) + (await pawPixels(700, 590, 860, 640));
   g.check(`${tag}: no paw is drawn on the close-up, before, during a drag, or after a touch`, pawBefore === 0 && pawHeld === 0 && pawAfter === 0, { pawBefore, pawHeld, pawAfter });
-  g.check(`${tag}: bite opens through the right paper edge without a closing ink line`, await page.evaluate(() => {
-    const cv = document.querySelector("canvas"), k = cv.width / 960;
-    const p = cv.getContext("2d").getImageData(819 * k, 390 * k, 1, 1).data;
-    return p[0] > 90 && p[1] > 90 && p[2] > 90;
-  }));
+  // (the bite shows what is behind the paper: the room beyond its edge, at night the night look's darker room,
+  // night-look.js; an ink line there would be near black)
+  const bite = await page.evaluate(() => {
+    const cv = document.querySelector("canvas"), k = cv.width / 960, x = cv.getContext("2d");
+    const p = x.getImageData(819 * k, 390 * k, 1, 1).data, q = x.getImageData(850 * k, 390 * k, 1, 1).data;
+    return { hole: [p[0], p[1], p[2]], beyond: [q[0], q[1], q[2]] };
+  });
+  g.check(`${tag}: bite opens through the right paper edge without a closing ink line`, bite.hole.every((v, i) => Math.abs(v - bite.beyond[i]) < 30) && bite.hole[0] + bite.hole[1] + bite.hole[2] > 150, bite);
   g.check(`${tag}: touching the printed snack changes nothing: the dated grid and pie are the same`, await page.evaluate(() => {
     const cv = document.querySelector("canvas"), k = cv.width / 960;
     const after = cv.getContext("2d").getImageData(130 * k, 185 * k, 660 * k, 320 * k).data;

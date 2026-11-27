@@ -5,34 +5,34 @@
 | --- | --- |
 | 37–39 | # Space Snack Quest: every decision, in one place |
 | 40–47 | ## How to use this file |
-| 48–49 | ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator) |
-| 50–60 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
-| 61–70 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
-| 71–81 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
-| 82–105 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
-| 106–110 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 111–119 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 120–123 | ## Sound, 2026-11-23 |
-| 124–147 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 148–159 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 160–184 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 185–193 | ## Which repo is the base, 2026-11-22 |
-| 194–204 | ## Sight cones, 2026-11-22 |
-| 205–209 | ## Latest calendar direction, 2026-11-16 |
-| 210–212 | ## Vent walk, 2026-11-16 |
-| 213–215 | ## Locked home room v5, 2026-11-16 |
-| 216–225 | ## Fidelity system (pictures are locked, not just words) |
-| 226–263 | ## 1. Working rules |
-| 264–330 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 331–355 | ## 3. Characters and look |
-| 356–432 | ## 4. Look, rooms and layout |
-| 433–454 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 455–498 | ## 6. Later chapters (2–4 and travel) |
-| 499–508 | ## 7. Audio |
-| 509–543 | ## 8. Code, controls and process |
-| 544–590 | ## 9. Open / waiting on Brian |
-| 591–685 | ## 10. Earlier entries, kept word for word |
-| 686–782 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 48–50 | ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator) |
+| 51–61 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
+| 62–71 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
+| 72–82 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
+| 83–106 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
+| 107–111 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 112–120 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 121–124 | ## Sound, 2026-11-23 |
+| 125–148 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 149–160 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 161–185 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 186–194 | ## Which repo is the base, 2026-11-22 |
+| 195–205 | ## Sight cones, 2026-11-22 |
+| 206–210 | ## Latest calendar direction, 2026-11-16 |
+| 211–213 | ## Vent walk, 2026-11-16 |
+| 214–216 | ## Locked home room v5, 2026-11-16 |
+| 217–226 | ## Fidelity system (pictures are locked, not just words) |
+| 227–264 | ## 1. Working rules |
+| 265–331 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 332–356 | ## 3. Characters and look |
+| 357–433 | ## 4. Look, rooms and layout |
+| 434–455 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 456–499 | ## 6. Later chapters (2–4 and travel) |
+| 500–509 | ## 7. Audio |
+| 510–544 | ## 8. Code, controls and process |
+| 545–591 | ## 9. Open / waiting on Brian |
+| 592–686 | ## 10. Earlier entries, kept word for word |
+| 687–783 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
