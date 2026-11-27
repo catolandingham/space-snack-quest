@@ -140,7 +140,7 @@ const run = await page.evaluate(
     // stand still while the robots do their side
     until(() => S().ct >= 15.2, 20);
     ss.drawFrame();
-    out.contest.at15 = { bars: d().drew.bars, boxes: d().drew.floor.boxesDown, done: n.log.some((r) => r.text === W["robot-done"]) };
+    out.contest.at15 = { bucket: !!d().drew.bucket, bars: d().drew.bars, boxes: d().drew.floor.boxesDown, done: n.log.some((r) => r.text === W["robot-done"]) };
     until(() => S().ct >= 25.5, 15);
     out.contest.wheels = S().floor.wheelsDone;
     // now mop every cell (twice), serpentine
@@ -148,15 +148,12 @@ const run = await page.evaluate(
     const cols = [0, 1, 2].map((c) => C.goat.x0 + ((c + 0.5) * (C.goat.x1 - C.goat.x0)) / 3),
       rows = [0, 1, 2, 3].map((r) => C.floor.y0 + ((r + 0.5) * (C.floor.y1 - C.floor.y0)) / 4);
     for (let k = 0; k < 2 && S().step === "mopoff"; k++)
-      for (const y of rows) for (const x of k % 2 ? [...cols].reverse() : cols) S().step === "mopoff" && (walk(x - 24 * (n.mo.f || 1), y, 3), walk(x - 24 * (n.mo.f || 1) + 2, y + 8, 1));
+      for (const y of rows) for (const x of k % 2 ? [...cols].reverse() : cols) S().step === "mopoff" && (walk(x - 24 * (n.mo.f || 1), y, 3), walk(x - 24 * (n.mo.f || 1) + 2, y + 8, 1), ss.drawFrame(), d().drew && d().drew.scrub && (out.contest.scrub = true));
     out.contest.early = S().ct < C.goatTime;
     out.contest.endStep = S().step;
     out.buzz = lines(3);
-    until(() => S().cu === "star", 5);
-    tick(0.7);
-    ss.drawFrame();
-    out.star = { ...d().drew.star, id: S().star, waits: waitsForNext() };
-    next();
+    // (round 7, r5 10:47, q: 130: no star card; the news follows the buzzer lines)
+    for (let i = 0; i < 20; i++) (tick(), S().cu === "star" && (out.starCard = true));
     out.tagStar = B.tagStar();
     // 44c and the walk home's first two lines
     out.news = lines(20);
@@ -212,17 +209,18 @@ g.check("44b: the contest's goal; still Mops", o.contest.chip === W["chip-mopoff
 g.check("44b: nobody walks over anything (a tap on the mailbox stops him at its edge)", o.contest.walkway === false, o.contest);
 g.check("44b: at 15 seconds the robots are done (FAST full, SPARKLE low), the boxes are down, DONE.", o.contest.at15.bars.fast[0] === 1 && o.contest.at15.bars.sparkle[0] <= 0.3 && o.contest.at15.boxes && o.contest.at15.done, o.contest.at15);
 g.check("44b: once, their wheels dirty his side", o.contest.wheels);
+g.check("44b (round 7, r5 10:24): his bucket stands by his side of the floor, and scrubbing shows soap swishes under his beard", o.contest.at15.bucket && o.contest.scrub, { at15: o.contest.at15, scrub: o.contest.scrub });
 g.check("44b: making all of his side sparkle ends it at once", o.contest.early && o.contest.endStep !== "mopoff", o.contest);
 g.check("44b: the buzzer lines, word for word, in order", JSON.stringify(o.buzz) === JSON.stringify([W["robot-time"], W["robot-goat"], W["robot-hq"]]), o.buzz);
-g.check("44b: all of it clean, corners too: STAR GANITOR on his tag, close; it waits for NEXT; the star stays", o.star.id === "star-star" && o.star.words === W["star-star"] && o.star.landed && o.star.waits && o.tagStar, o.star);
-const newsWant = ["robot-enjoy", "robot-order", "robot-more", "robot-no-ganitor", "mops-who", "robot-stormtop", "mops-form", "mops-replace", "mops-sent", "mops-lied", "mops-right", "mops-tell"].map((k) => W[k]);
-g.check("44c, 44d: the robots' news and Mops's answer, then \"Squatch was right.\", word for word, in order", JSON.stringify(o.news) === JSON.stringify(newsWant), o.news);
+g.check("44b (round 7, r5 10:47, q: 130): no Star Ganitor card and no star on his tag", !o.starCard && !o.tagStar, { card: o.starCard, tag: o.tagStar });
+const newsWant = ["robot-enjoy", "robot-order", "robot-more", "robot-no-ganitor", "mops-who", "mops-isfred", "robot-is-fred", "mops-no-isfred", "robot-said", "mops-form", "mops-replace", "mops-sent", "mops-lied", "mops-right", "mops-tell"].map((k) => W[k]);
+g.check("44c, 44d (round 7, r5 10:49 and 10:54, q: 131): the robots' news, \"Must be Isfred. The manager.\" and the HE IS FRED mix-up, Mops's answer, then \"Squatch was right.\", word for word, in order", JSON.stringify(o.news) === JSON.stringify(newsWant), o.news);
 g.check("44d: he walks home himself, as Mops (the goal says so)", o.home.step === "walkhome" && o.home.chip === W["chip-home"] && o.home.playing === "mops" && o.home.ctrl, o.home);
 g.check("44d: ↺ on the walk home puts him back where it started, still Mops", o.home.restart.step === "walkhome" && o.home.restart.playing === "mops" && o.home.restart.back, o.home.restart);
 g.check("44d: through the bay's doorway into the hallway; the next doorway (to the hall) is outlined", o.home.hallway === "passage" && o.home.hallwayDoor === "hall", o.home);
 g.check("44d (round 7, r5 11:22, q: 128): no LOOK · plaque; walking past the Employee of the Month wall, Mops says his line", o.home.plaque !== "LOOK · plaque" && o.home.plaqueLine[0] === W["mops-plaque"], o.home);
 g.check("44d: the hall, a guest waves (\"Hi, Mops!\"), then home", o.home.hall === "hall" && o.home.waved && o.home.room === "closet", o.home);
-g.check("45a: at home the switch back to Squatch is announced, with why; the star is still on his tag", o.home.switch.text === "You are SQUATCH now." && o.home.switch.by === W["switch-home"] && o.home.after === "sq" && o.home.tagStar, o.home);
+g.check("45a: at home the switch back to Squatch is announced, with why; the star is still on his tag", o.home.switch.text === "You are SQUATCH now." && o.home.switch.by === W["switch-home"] && o.home.after === "sq" && !o.home.tagStar, o.home); // (round 7, q: 130: no star)
 g.check("a chapter reset while he is Mops gives the stick back to Squatch", o.reset.before === "mops" && o.reset.after === "sq", o.reset);
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();

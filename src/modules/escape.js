@@ -37,7 +37,8 @@
  */
 import { escapeWords } from "./escape-lines.js";
 import { OFFICE_CODE, BAY_DAY, BAY_NIGHT, ES_HOME, ES_BAY, ROBOT_SIGHT, VENT_ROOM, VENT_TUNNEL, ES_HALLWAY, KEYPAD, keyAt, OFFICE, SITE, ES_BAR, SNACKS, ES_PACE, WEEK, MOP_CALM, MOPOFF, NEWS, ROUTE_HOME, ROUTE_VENT, ROUTE_OFFICE, ROUTE_BAR, ROUTE_HOME_NIGHT, HALL_GUEST, PLAQUE, FOLLOW, ES_DOORS } from "./escape-place.js";
-import { freshFloor, goatCells, beardAt, mopCalm, mopGoat, goatClean, wheelsAcross, starFor, bars, robotsAt, drawCalmFloor, drawMopFloor, drawBars, drawStarCloseup, markPatch } from "./escape-mopoff.js";
+import { freshFloor, goatCells, beardAt, mopCalm, mopGoat, goatClean, wheelsAcross, starFor, bars, robotsAt, drawCalmFloor, drawMopFloor, drawBars, drawStarCloseup, markPatch, drawScrub } from "./escape-mopoff.js";
+import { drawMopBucketBack, drawMopBucketFront } from "./mop-bucket.js";
 import { doorAt, doorTo, markDoor, freshTrail, followStep } from "./escape-doors.js";
 import { drawWeek, drawStampTouch, drawPlan, drawGulpSweat } from "./escape-home-art.js";
 import { drawClosedSign, drawOfficeThings, drawSpinStars, drawPassingLight } from "./escape-office-art.js";
@@ -313,19 +314,21 @@ export function createEscape(bridge) {
     const clean = goatClean(l.floor);
     if (l.ct >= MOPOFF.goatTime || clean.all) buzzer(clean);
   }
+  const STAR_CARD = false; // q: 130
+  // q: 131. true: the robot hears "Isfred" as "is Fred" (option A); false: Mops just says "Must be Isfred. The manager."
+  const ISFRED_JOKE = true;
   function buzzer(clean) {
     const e = E();
     busy();
     sfx("bzzt");
-    go("buzzer", { star: starFor(clean), clean: +clean.k.toFixed(2), talker: 1 });
+    go("buzzer", { star: STAR_CARD ? starFor(clean) : "", clean: +clean.k.toFixed(2), talker: 1 });
     e.queue([
       wait(MOPOFF.hold),
       ...sayParts("robot", "robot-time"),
       ...sayParts("robot", "robot-goat"),
       ...sayParts("robot", "robot-hq"),
-      e.run(() => (go("star", { cu: "star", starAt: e.time(), star: L().star }), sfx("pickup"))),
-      e.until(() => e.time() - L().starAt >= 0.6),
-      e.tapWait(),
+      // (round 7, r5 10:47, q: 130: no Star Ganitor card or star; STAR_CARD true brings them back)
+      ...(STAR_CARD ? [e.run(() => (go("star", { cu: "star", starAt: e.time(), star: L().star }), sfx("pickup"))), e.until(() => e.time() - L().starAt >= 0.6), e.tapWait()] : []),
       e.run(() => ((L().cu = ""), news())),
     ]);
   }
@@ -347,8 +350,9 @@ export function createEscape(bridge) {
       by(1),
       ...sayParts("robot", "robot-no-ganitor"),
       ...sayParts("mops", "mops-who"),
-      by(0),
-      ...sayParts("robot", "robot-stormtop"),
+      // (round 7, r5 10:49 and 10:54, q: 131: not "Stormtop did."; Mops works it out, and a robot mishears the name)
+      ...sayParts("mops", "mops-isfred"),
+      ...(ISFRED_JOKE ? [by(0), ...sayParts("robot", "robot-is-fred"), ...sayParts("mops", "mops-no-isfred"), by(0), ...sayParts("robot", "robot-said")] : []),
       ...sayParts("mops", "mops-form"),
       ...sayParts("mops", "mops-replace"),
       ...sayParts("mops", "mops-sent"),
@@ -1373,6 +1377,19 @@ export function createEscape(bridge) {
     } else if (l.floor && ["sides", "mopoff", "buzzer", "star", "news"].includes(l.step)) {
       out.floor = drawMopFloor(ctx, l.floor, { ct: l.step === "sides" ? 0 : l.ct, paint: l.paint }, t);
       ["mopoff", "buzzer"].includes(l.step) && (out.bars = drawBars(ctx, bars(l.floor, l.ct)));
+    }
+    // (round 7, r5 10:24: his bucket beside his side, and soap swishes under his beard as he scrubs)
+    if (l.floor && ["mopin", "mop", "sides", "mopoff", "buzzer", "news"].includes(l.step)) {
+      const Bk = MOPOFF.bucket;
+      drawMopBucketBack(ctx, Bk.cx, Bk.floor, Bk.k);
+      drawMopBucketFront(ctx, Bk.cx, Bk.floor, Bk.k, { water: true });
+      out.bucket = true;
+      const m = e.pos("mops");
+      if (moMoving && ["mop", "mopoff"].includes(l.step)) {
+        const bd = beardAt(m.x, m.y, m.f);
+        drawScrub(ctx, bd.x, bd.y, t);
+        out.scrub = true;
+      }
     }
     const bots = botsNow(l);
     // robots always show their cones (they are not looking for anyone by day)

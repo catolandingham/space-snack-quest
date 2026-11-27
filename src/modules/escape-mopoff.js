@@ -290,6 +290,34 @@ function icon(ctx, x, y, who) {
   }
   ctx.restore();
 }
+/**
+ * Scrubbing, made plain (round 7, r5 10:24: "a clear scrubbing motion"): while his beard moves on the floor, soap
+ * swishes go back and forth under it and a few bubbles pop up. PLACEHOLDER drawing for Brian.
+ */
+export function drawScrub(ctx, x, y, t) {
+  const sw = Math.sin(t * 16);
+  ctx.save();
+  ctx.strokeStyle = "rgba(255,255,255,.9)";
+  ctx.lineWidth = 3;
+  ctx.lineCap = "round";
+  for (const k of [0, 1]) {
+    ctx.beginPath();
+    ctx.arc(x + sw * 8, y + 4 + k * 6, 12 + k * 6, Math.PI * (0.15 + 0.1 * sw), Math.PI * (0.85 + 0.1 * sw));
+    ctx.stroke();
+  }
+  ctx.fillStyle = "rgba(220,240,255,.9)";
+  ctx.strokeStyle = "rgba(120,170,220,.9)";
+  ctx.lineWidth = 1.2;
+  for (let i = 0; i < 3; i++) {
+    const u = (t * 1.6 + i / 3) % 1;
+    ctx.beginPath();
+    ctx.arc(x - 10 + i * 10, y - 4 - u * 18, 2.5 + i, 0, TAU);
+    ctx.globalAlpha = 1 - u;
+    ctx.fill();
+    ctx.stroke();
+  }
+  ctx.restore();
+}
 /** A gold five-pointed star at (x, y), radius r. */
 export function drawGoldStar(ctx, x, y, r, line = 2) {
   ctx.save();

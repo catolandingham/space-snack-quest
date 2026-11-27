@@ -223,6 +223,8 @@ export const MOPOFF = Object.freeze({
   robotX: Object.freeze([90, 450]),
   robotsDone: 15, // seconds the robots take for their side
   goatTime: 45, // seconds until the buzzer
+  // his mop bucket, on the goat side's far edge (round 7, r5 10:24: "shouldn't he have his bucket?"; mop-bucket.js)
+  bucket: Object.freeze({ cx: 676, floor: 450, k: 0.28 }),
   wheels: Object.freeze({ at: 24, y: 510, speed: 160 }), // a robot rolls its dirty wheels across the goat side, once
   boxes: Object.freeze({ x: 230, y: 455, at: 6 }), // a stack of boxes the robots knock over
   taunts: Object.freeze([
