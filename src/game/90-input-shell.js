@@ -90,7 +90,7 @@
         linkBeat = parseInt(linkBeatRaw, 10) || 0,
         linkDay2 = linkBeatRaw === "day2",
         linkParty = /^party(:P([1-7]|8a|8b|8c))?$/.test(linkBeatRaw) ? linkBeatRaw.slice(6) || "P1" : "",
-        linkEscape = /^escape(:(start|ball|grab|pad|computer|snacks|closet))?$/.test(linkBeatRaw) ? linkBeatRaw.slice(7) || "start" : "";
+        linkEscape = /^escape(:[a-z]+)?$/.test(linkBeatRaw) ? linkBeatRaw.slice(7) || "start" : "";
       let previewBeat = !1,
         day2Jump = !1,
         partyJump = !1;

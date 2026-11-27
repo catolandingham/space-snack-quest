@@ -53,7 +53,7 @@ import { escapeWords } from "./escape-lines.js";
 import { OFFICE_CODE, BAY_DAY, BAY_NIGHT, ES_HOME, BAY, ROBOT_SIGHT, VENT_ROOM, HALLWAY, KEYPAD, keyAt, OFFICE, SITE, ES_BAR, SNACKS, ES_PACE, NIGHT_LIT, WEEK, MOP_CALM, MOPOFF, NEWS, ROUTE_HOME, ROUTE_VENT, HALL_GUEST, PLAQUE, FOLLOW, ES_DOORS } from "./escape-place.js";
 import { freshFloor, goatCells, beardAt, mopCalm, mopGoat, goatClean, wheelsAcross, starFor, bars, robotsAt, drawCalmFloor, drawMopFloor, drawBars, drawStarCloseup, markPatch } from "./escape-mopoff.js";
 import { doorAt, doorTo, markDoor, freshTrail, followStep } from "./escape-doors.js";
-import { drawWeek } from "./escape-home-art.js";
+import { drawWeek, drawCrateStamp, drawPlan, drawSweat } from "./escape-home-art.js";
 import { LUNCH_SOLIDS, LUNCH_BOUNDS } from "./lunch-sneak-place.js";
 import { createGuestArt } from "./guests.js";
 import {
@@ -86,7 +86,7 @@ import { MORNING_THINGS } from "./home-morning-art.js";
 
 export const ESCAPE_ID = "ch1-escape";
 // The steps the player controls (ch1Step "es-<step>"), in order. (jump() takes these, and "start".)
-export const ESCAPE_STEPS = Object.freeze(["mop", "mopoff", "walkhome", "ball", "grab", "pad", "computer", "site", "snacks", "food", "closet", "box"]);
+export const ESCAPE_STEPS = Object.freeze(["mop", "mopoff", "walkhome", "show", "crate", "cal", "ball", "grab", "pad", "computer", "site", "snacks", "food", "closet", "box"]);
 // The steps where the stick drives Mops (the rest drive Squatch).
 const MOPS_STEPS = Object.freeze(["mop", "mopoff", "walkhome"]);
 // Where a step the player does not control goes back to on ↺ (its last step he controlled, or the start).
@@ -99,6 +99,11 @@ const RESTART_TO = Object.freeze({
   news: "mopoff",
   homeward: "mopoff",
   home: "walkhome",
+  shown: "show",
+  plan0: "show",
+  crated: "crate",
+  caled: "cal",
+  slip46: "cal",
   tobay: "ball",
   crawl: "ball",
   rolled: "ball",
@@ -191,6 +196,11 @@ export function createEscape(bridge) {
     trail: null,
     waved: false,
     plaque: false,
+    brochure: "wall",
+    gulpAt: -1,
+    touchAt: -1,
+    plan: null,
+    planAt: -1,
     ...(extra || {}),
   });
   /** Day 2's morning and lunch are over, the pink sheet is in the vent, the brochure is pinned up at home. */
@@ -400,32 +410,109 @@ export function createEscape(bridge) {
       parts = splitLine(escapeWords(id));
     return parts.flatMap((part, i) => [...(onPart ? [e.run(() => onPart(i, part))] : []), style ? e.say(who, part, style) : e.say(who, part)]);
   }
-  // (beats 45 and 46 are rebuilt in the next step of this round; until then their lines play in order)
+  // ---------- beat 45a: "You were right" ----------
+  // Mops walks in (the player brought him to the door); Squatch is by his crate bed with the brochure, soft from a week
+  // of looking. The switch back to Squatch is announced; Mops says it in short bubbles; SHOW · brochure.
   function homeTalk() {
     const e = E();
     e.set("ch1D", false);
     e.set("sqPose", "stand");
     e.place("sq", ES_HOME.sq.x, ES_HOME.sq.y);
     e.face("sq", 1);
+    e.set("ch1Brochure", true); // (in his paw: the older program draws it there, 14-ch1-day2.js)
     e.set("moPose", "stand");
-    go("home", { mopping: false, night: true });
+    go("home", { mopping: false, night: true, brochure: "paw" });
     e.queue([
       e.until((dt) => (e.moWalking(true), e.step("mops", ES_HOME.mops.x, ES_HOME.mops.y, ES_PACE.mopsIn, dt || 0))),
       e.run(() => (e.moWalking(false), e.still("mops"), e.face("mops", -1))),
       e.run(() =>
         asSquatch("switch-home", () =>
           e.queue([
-            ...["mops-you-right", "mops-replacing", "mops-ship", "mops-brochure", "mops-pancake-go"].flatMap((id) => sayParts("mops", id)),
-            ...sayParts("mops", "mops-ate"),
-            ...sayParts("sq", "sq-slip"),
-            e.run(() => think("sq", "vent")),
-            wait(ES_PACE.think),
-            e.run(() => (L().think = null)),
-            ...sayParts("sq", "sq-vent"),
-            e.run(toBay),
+            ...sayParts("mops", "mops-you-right"),
+            ...sayParts("mops", "mops-replacing"),
+            ...sayParts("mops", "mops-ship"),
+            // a gulp and one sweat drop, no words (he sent that order)
+            e.run(() => (L().gulpAt = e.time())),
+            e.until(() => e.time() - L().gulpAt >= ES_PACE.gulp),
+            ...sayParts("mops", "mops-brochure"),
+            e.run(() => (go("show"), control("chip-show"))),
           ]),
         ),
       ),
+    ]);
+  }
+  function showBrochure() {
+    const e = E();
+    busy();
+    e.face("sq", 1);
+    go("shown", { brochure: "up", heartsAt: e.time() });
+    sfx("pickup");
+    e.queue([
+      ...sayParts("mops", "mops-pancake-go"),
+      // Mops looks at the crate, and touches the worn letter with a hoof (a week ago he would not look)
+      e.run(() => (L().heartsAt = -1)),
+      e.until((dt) => (e.moWalking(true), e.step("mops", ES_HOME.stamp.x, ES_HOME.stamp.y, ES_PACE.mopsIn, dt || 0))),
+      e.run(() => (e.moWalking(false), e.still("mops"), e.face("mops", -1), (L().touchAt = e.time()))),
+      e.until(() => e.time() - L().touchAt >= ES_PACE.touch),
+      ...sayParts("mops", "mops-mars"),
+      e.run(plan),
+    ]);
+  }
+
+  // ---------- beat 45b: the plan, in crayon ----------
+  // Each step of the plan is found by looking at one outlined thing in the room (LOOK · crate, LOOK · calendar), and
+  // each adds a crayon picture to the sheet Squatch draws on; the talk gives the other two.
+  function plan() {
+    const e = E();
+    go("plan0", { plan: { has: {}, ticks: {} } });
+    e.queue([...sayParts("sq", "sq-how"), ...sayParts("mops", "mops-crate"), e.run(() => (go("crate"), control("chip-crate-look")))]);
+  }
+  const planShow = (add) => E().run(() => (Object.assign(L().plan.has, add), (L().cu = "plan"), (L().planAt = E().time()), sfx("pickup")));
+  function lookCrate() {
+    const e = E();
+    busy();
+    go("crated");
+    e.queue([planShow({ crate: true }), e.until(() => e.time() - L().planAt >= 0.4), ...sayParts("sq", "sq-leave"), ...sayParts("mops", "mops-empties"), e.run(() => ((L().cu = ""), go("cal"), control("chip-cal-look")))]);
+  }
+  function lookCalendar() {
+    const e = E();
+    busy();
+    go("caled");
+    e.queue([
+      planShow({ ship: true }),
+      e.until(() => e.time() - L().planAt >= 0.4),
+      ...sayParts("mops", "mops-book"),
+      planShow({ computer: true }),
+      ...sayParts("mops", "mops-computer"),
+      ...sayParts("sq", "sq-office"),
+      ...sayParts("sq", "sq-locked"),
+      planShow({ door: true }),
+      ...sayParts("mops", "mops-code"),
+      ...sayParts("mops", "mops-pen"),
+      e.run(() => (L().cu = "")),
+      e.run(almostSlip),
+    ]);
+  }
+
+  // ---------- beat 46: the almost-slip ----------
+  function almostSlip() {
+    const e = E();
+    go("slip46");
+    e.queue([
+      ...sayParts("mops", "mops-ate"),
+      ...sayParts("mops", "mops-bin"),
+      ...sayParts("sq", "sq-slip"),
+      ...sayParts("mops", "mops-hm"),
+      // what he remembers comes first, then he says it (the vent is shown before the line names it)
+      e.run(() => think("sq", "vent")),
+      wait(ES_PACE.think),
+      e.run(() => (L().think = null)),
+      ...sayParts("sq", "sq-vent"),
+      ...sayParts("mops", "mops-big-vent"),
+      ...sayParts("mops", "mops-lost"),
+      ...sayParts("mops", "mops-know"),
+      e.run(() => e.set("ch1Brochure", false)),
+      e.run(toBay),
     ]);
   }
   function think(who, kind) {
@@ -938,6 +1025,14 @@ export function createEscape(bridge) {
     }
     const door = walking(l) && doorTo(e.room(), (l.route === "home" ? ROUTE_HOME : ROUTE_VENT)[e.room()]);
     const doorSpot = door ? [walkSpot("es-door", driving === "mops" ? "mo" : "sq", { x: (door.box.x0 + door.box.x1) / 2, y: (door.box.y0 + door.box.y1) / 2 }, 20)] : [];
+    // 45a, 45b: SHOW · brochure where he stands; LOOK · crate; LOOK · calendar
+    if (l.step === "show") {
+      const s = e.pos("sq"),
+        [verb, cap] = escapeWords("button-show").split(" · ");
+      return [{ id: "es-show", verb, cap, who: "sq", hot: true, x: s.x, y: s.y, r: 40, at: [s.x, s.y - 70], f: showBrochure }];
+    }
+    if (l.step === "crate") return [spot("es-crate", "button-crate", { x: ES_HOME.crateAt.x, y: ES_HOME.crateAt.y, r: 90 }, ES_HOME.crate, lookCrate)];
+    if (l.step === "cal") return [spot("es-cal", "button-calendar", { x: ES_HOME.calAt.x, y: ES_HOME.calAt.y, r: 60 }, ES_HOME.calendar, lookCalendar)];
     // 44d: his own Employee of the Month photo in the hallway, optional, once
     if (l.step === "walkhome" && e.room() === "passage" && !l.plaque) return [...doorSpot, { ...spot("es-plaque", "button-plaque", { x: PLAQUE.x, y: PLAQUE.y, r: PLAQUE.r }, null, lookPlaque), who: "mo" }];
     if (doorSpot.length) return doorSpot;
@@ -1147,7 +1242,9 @@ export function createEscape(bridge) {
     if (room === "hangar" || room === "duct") return;
     drew = { step: l.step, room };
     // things in the room (under the night tint, like the room)
-    room === "closet" && drawBrochure(ctx, ES_HOME.brochure);
+    // home: the brochure on the wall (in his paw from 45a to 46); his crate bed's stamp, "_ARS CAKES" (stars-cakes.js)
+    room === "closet" && l.brochure !== "paw" && l.brochure !== "up" && drawBrochure(ctx, ES_HOME.brochure);
+    room === "closet" && (drew.stamp = drawCrateStamp(ctx, ES_HOME.crateStamp, l.touchAt >= 0));
     // the slip in his paw (the older program draws him in these rooms)
     room !== "closet" || l.step !== "bed" ? pawSlip(ctx, l, s, sqScale(room)) : null;
     if (room === "passage" && l.door) drawDoorOpen(ctx);
@@ -1172,6 +1269,21 @@ export function createEscape(bridge) {
       l.glow === "brochure" && markBox(ctx, ES_HOME.brochure, t);
       drew.brochure = { glow: l.glow === "brochure" };
     }
+    if (room === "closet" && e.get("ctrl") && !e.current()) {
+      // the one highlight on the next thing to look at (45a: the brochure in his paw; 45b: the crate, the calendar)
+      if (l.step === "show") {
+        const p = sqPawAt(s.x, s.y, s.f || 1, sqScale("closet"));
+        drew.mark = markBox(ctx, { x0: p.x - 6, y0: p.y - 70, x1: p.x + 30, y1: p.y - 36 }, t);
+      }
+      l.step === "crate" && (drew.mark = markBox(ctx, ES_HOME.crate, t));
+      l.step === "cal" && (drew.mark = markBox(ctx, ES_HOME.calendar, t));
+    }
+    // 45a: a gulp and one sweat drop (he sent that order); the brochure held up, big; hearts over Mops
+    if (room === "closet" && l.gulpAt >= 0 && t - l.gulpAt < ES_PACE.gulp) drew.sweat = drawSweat(ctx, headBox("sq"), t - l.gulpAt);
+    if (room === "closet" && l.step === "shown" && l.heartsAt >= 0) {
+      drawHearts(ctx, m.x, m.y - 46 * moScale("closet"), t - l.heartsAt);
+      t - l.heartsAt < ES_PACE.brochureUp && (drew.brochureUp = drawBrochure(ctx, ES_HOME.brochureUp, true));
+    }
     // the thought pictures, above the thinker's head with a clear gap (thought-place.js, through drawThought)
     if (l.think && room === "closet") {
       const who = l.think.who,
@@ -1187,6 +1299,7 @@ export function createEscape(bridge) {
     if (l.cu) {
       blurBehind(ctx);
       if (l.cu === "cal") drew.week = drawWeek(ctx, t - l.calAt, t);
+      else if (l.cu === "plan") drew.plan = { at: drawPlan(ctx, 180, 90, 600, l.plan), has: { ...l.plan.has }, ticks: { ...l.plan.ticks } };
       else if (l.cu === "pad") {
         const buzz = l.buzzAt >= 0 ? Math.max(0, 1 - (t - l.buzzAt) / KEYPAD.buzz) : 0;
         drew.pad = drawKeypad(ctx, { typed: l.typed, buzz, ok: l.okAt >= 0, t });
@@ -1261,6 +1374,22 @@ export function createEscape(bridge) {
     }
     driving = "";
     e.playAs("squatch");
+    // 45a, 45b: home at night, Mops just in, the brochure in Squatch's paw
+    if (step === "show" || step === "crate" || step === "cal") {
+      e.set("ch1Escape", fresh({ night: true, star: "star-great", brochure: "paw", plan: { has: {}, ticks: {} } }));
+      e.enterRoom("closet", "QB");
+      e.set("sqPose", "stand");
+      e.set("moPose", "stand");
+      e.set("ch1Brochure", true);
+      e.place("sq", ES_HOME.sq.x, ES_HOME.sq.y);
+      e.face("sq", 1);
+      const mo = step === "show" ? ES_HOME.mops : ES_HOME.stamp;
+      e.place("mops", mo.x, mo.y);
+      e.face("mops", -1);
+      step === "cal" && (L().plan.has.crate = true);
+      go(step);
+      return control(step === "show" ? "chip-show" : step === "crate" ? "chip-crate-look" : "chip-cal-look");
+    }
     const at = { site: "computer", food: "snacks", box: "closet" }[step] || step;
     const i = ["ball", "grab", "pad", "computer", "snacks", "closet"].indexOf(at);
     if (i < 0) return;
@@ -1368,6 +1497,8 @@ export function createEscape(bridge) {
         if (b) return { x: b.x, y: b.y - 80 };
       }
       if (room === "hall" && who === "tourist") return { x: HALL_GUEST.x, y: HALL_GUEST.y - 150 };
+      // over the crayon plan (45b): the bubbles go under the sheet, clear of its pictures
+      if (room === "closet" && l.cu === "plan" && (who === "sq" || who === "mops")) return { x: who === "sq" ? 330 : 630, y: 640 };
       if (room === "hall" && who === "sq" && l.cu === "snacks") return { x: SNACKS.rest.x, y: SNACKS.rest.y - 160 };
       return null;
     },

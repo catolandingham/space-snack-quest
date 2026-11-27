@@ -220,3 +220,21 @@ function tick(ctx, x, y, k) {
   ctx.lineTo(x + 20 * k, y - 18 * k);
   ctx.stroke();
 }
+
+/** Beat 45a: one sweat drop by his head while he gulps (no words). `head` is his head's box. */
+export function drawSweat(ctx, head, age) {
+  const x = head.x + head.w + 4,
+    y = head.y + 6 + Math.min(1, age / 1.0) * 14;
+  ctx.save();
+  ctx.fillStyle = "#8fdcff";
+  ctx.strokeStyle = INK;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x, y - 12);
+  ctx.quadraticCurveTo(x + 8, y, x, y + 4);
+  ctx.quadraticCurveTo(x - 8, y, x, y - 12);
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+  return { x: Math.round(x), y: Math.round(y) };
+}

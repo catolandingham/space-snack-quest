@@ -23,6 +23,15 @@ export const ES_HOME = Object.freeze({
   wardrobe: Object.freeze({ x0: 30, x1: 172, y0: 188, y1: 352 }), // the wardrobe in the locked home picture (its outline traces it)
   bed: Object.freeze({ x: 205, y: 470 }), // lying in bed (the room draws him there: sqPose "sleep")
   mopsNight: Object.freeze({ x: 640, y: 470 }), // Mops at the end of the day, by the TV, his back to the closet
+  // 45a, 45b (the rebuild of 2026-11-26 night): his crate bed (the locked picture's crate, x 83-286), its stamp (over the
+  // picture's own label: picture x 198-295, y 583-605), where Mops stands to touch it; the calendar; the brochure held up
+  crate: Object.freeze({ x0: 84, y0: 396, x1: 286, y1: 530 }),
+  crateStamp: Object.freeze({ x0: 146, y0: 448, x1: 224, y1: 468 }),
+  crateAt: Object.freeze({ x: 330, y: 500 }),
+  stamp: Object.freeze({ x: 300, y: 556 }),
+  calendar: Object.freeze({ x0: 99, y0: 196, x1: 167, y1: 279 }),
+  calAt: Object.freeze({ x: 230, y: 392 }),
+  brochureUp: Object.freeze({ x0: 330, y0: 120, x1: 630, y1: 380 }),
 });
 // The wardrobe and the Guardian Box in it (home-morning-art.js MORNING_THINGS.boxIn) are read from there.
 
@@ -180,6 +189,9 @@ export const ES_PACE = Object.freeze({
   walk: 150,
   hearts: 1.8,
   lie: 1.0,
+  gulp: 1.2, // 45a: his gulp and sweat drop
+  touch: 1.0, // 45a: Mops's hoof on the crate's worn letter before "...Mars."
+  brochureUp: 2.6, // 45a: the brochure held up, big
 });
 
 // ---------- the rebuild of 2026-11-26 night (the story pass): every number a PLACEHOLDER for Brian ----------

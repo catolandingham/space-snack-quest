@@ -8,6 +8,7 @@
  * pictures are never redrawn: these are layers on top of them, or whole pictures of their own.
  * Every word comes from escape-lines.js; every place from escape-place.js.
  */
+import { STARS_CAKES } from "./stars-cakes.js";
 import { escapeWords } from "./escape-lines.js";
 import { VENT_ROOM, KEYPAD, keyAt, SITE, SNACKS, OFFICE_CODE, HALLWAY } from "./escape-place.js";
 import { drawThought, drawCrate } from "./bedtime-story-art.js";
@@ -174,7 +175,7 @@ export function drawSlipSmall(ctx, x, y, k = 1, a = 0) {
  * The pancake brochure (beat 38) pinned on the home wall: PANCAKES over the smiling Sasquatch couple behind a counter.
  * PANCAKES was the brochure's word in the game before (14-ch1-day2.js).
  */
-export function drawBrochure(ctx, b) {
+export function drawBrochure(ctx, b, big = false) {
   const w = b.x1 - b.x0,
     h = b.y1 - b.y0;
   esRect(ctx, b.x0, b.y0, w, h, 4);
@@ -201,10 +202,18 @@ export function drawBrochure(ctx, b) {
   }
   esRect(ctx, b.x0 + 8, cy + 8 * s, w - 16, 14 * s, 3);
   esPaint(ctx, "#ffe08a", 2);
+  // held up big (45a): a box of cakes on the counter, stamped MARS CAKES (stars-cakes.js; a pick Brian has not made yet)
+  if (big) {
+    esRect(ctx, b.x1 - 30 * s, cy + 2 * s, 24 * s, 14 * s, 2);
+    esPaint(ctx, "#d9a35b", 2);
+    esWords(ctx, STARS_CAKES.family, b.x1 - 18 * s, cy + 11 * s, 3.4 * s, ES_RED, "center", 900);
+    return { big, stamp: STARS_CAKES.family };
+  }
   // a red pin
   ctx.beginPath();
   ctx.arc(cx, b.y0 + 2, 5, 0, ES_TAU);
   esPaint(ctx, ES_RED, 2);
+  return { big };
 }
 
 // ---------- the wordless thought pictures (beats 45 and 46) ----------
