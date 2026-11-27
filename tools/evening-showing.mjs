@@ -236,10 +236,10 @@ if (which === "wall") {
   await press();
   await sleep(1400);
   await still("rolled-up-the-robot-rolls-past");
-  await readStills((s) => s.step === "wall" && s.ctrl, { "BEEP BEEP": "beep-beep" }, 15000);
+  await readStills((s) => s.step === "past" && s.ctrl, { "BEEP BEEP": "beep-beep" }, 15000);
   await sleep(600);
   await still("the-robot-gone");
-  (await walkTo(60, 330, (s) => s.step !== "wall", 12000)) || (await fail("not through the doorway"));
+  (await walkTo(60, 330, (s) => s.step !== "past", 12000)) || (await fail("not through the doorway"));
   await until((s) => s.room === "hall", 6000);
   await sleep(1500);
   await still("the-hall");
@@ -342,6 +342,7 @@ if (which === "alone") {
 }
 if (which === "fight") {
   await stepIs("crate", 5000);
+  (await walkTo(330, 458, (s) => s.act === "HOLD UP · brochure", 6000)) || (await fail("no HOLD UP · brochure"));
   await press();
   const k2 = await until((s) => s.view && s.view.kind === "crate" && s.view.ready, 4000);
   for (let i = 0; i < 3; i++) await tapView(k2.view.card, 80);
@@ -483,7 +484,7 @@ if (which === "seen") {
   await sleep(250);
   await still("seen-the-robot-shows-!");
   // hiding: the plant by the door, or the crate under the big wall vent (both outlined during an alarm)
-  (await walkTo(230, 400, (s) => s.act === "HIDE · plant", 6000)) || (await fail("no HIDE · plant"));
+  (await walkTo(125, 392, (s) => s.act === "HIDE · plant", 6000)) || (await fail("no HIDE · plant"));
   await press();
   await sleep(1000);
   await still("hidden-in-the-plant");

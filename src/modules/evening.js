@@ -39,6 +39,7 @@ import { HALLWAY, BAR, STORM, HOME, HOME_ALONE, BAY, BAY_FURNITURE, BAY_EXTRA, B
 import { drawJupiterStorm, drawStormGlow, drawCounterBin, drawCoffeeStain, BROCHURE_PARTS, drawGuardianMark, drawEveningThought, drawGuardiansBox, drawWeekCake, drawCakeChart, CHART, drawIdeaPicture, drawYearsLater, drawBayCrate, BAY_CRATE } from "./evening-pictures.js";
 import { placeThought } from "./thought-place.js";
 import { drawCrateStamp } from "./stars-cakes.js";
+import { HALLWAY_CRAYON } from "./ganitor.js";
 import { drawNightTint, noteNightPicture, nightDrawn, nightPictureFor } from "./night-look.js";
 import { VENT } from "./party-vent.js";
 import { eveningWords } from "./evening-lines.js";
@@ -63,10 +64,10 @@ import { adultPxFor } from "./room-sizes.js";
 
 export const EVENING_ID = "ch1-evening";
 /** The steps the player controls (ch1Step "ev-<step>"), in order. */
-export const EVENING_STEPS = Object.freeze(["wall", "dodge", "hide", "peek", "duck", "brochure", "gohome", "box", "bite", "chart", "crate", "show", "choose", "bed", "out", "nighthall", "nightway", "bin", "post", "back", "backway", "backhall", "tobed"]);
+export const EVENING_STEPS = Object.freeze(["wall", "dodge", "past", "hide", "peek", "duck", "brochure", "gohome", "box", "bite", "chart", "crate", "show", "choose", "bed", "out", "nighthall", "nightway", "bin", "post", "back", "backway", "backhall", "tobed"]);
 /** Which room each step is in (the step restart and jump() put him there). */
 export const STEP_ROOM = Object.freeze({
-  walkin: "passage", wall: "passage", gallery: "passage", dodge: "passage",
+  walkin: "passage", wall: "passage", gallery: "passage", dodge: "passage", past: "passage",
   tohall: "hall", storm: "hall", hide: "hall", peek: "hall", talk: "hall", duck: "hall", waitbar: "hall", bar: "hall", brochure: "hall", read: "hall", after: "hall", gohome: "hall",
   homein: "closet", box: "closet", bite: "closet", chart: "closet", xchart: "closet", crate: "closet", slide: "closet", mars: "closet",
   evening: "closet", show: "closet", fight: "closet", choose: "closet", fightend: "closet", bed: "closet", asleep: "closet", idea: "closet", out: "closet",
@@ -303,7 +304,7 @@ export function createEvening(bridge) {
     if (!w) {
       s.robot = null;
       s.pose === "ball" && setPose("stand");
-      go("wall");
+      go("past");
       return void control("chip-go-on");
     }
     moveRobot(w.x, w.y, dt) && r.leg++;
@@ -1261,7 +1262,7 @@ export function createEvening(bridge) {
         s.people = {};
         if (s.postAlarm) return postAlarmDone();
         // the hallway: the robot rolls on out (it has done its job), and the hallway is his again
-        if (room() === "passage") return ((s.robot = null), go("wall"), control("chip-go-on"));
+        if (room() === "passage") return ((s.robot = null), go("past"), control("chip-go-on"));
         if (s.step === "hide") return s.pose === "hidden" && s.hideAt === "counter" ? (go("peek"), control("chip-peek")) : control("chip-hide");
         if (s.step === "peek") return control("chip-peek");
         if (s.step === "duck") return s.pose === "hidden" && !s.peek ? (busy(), go("waitbar")) : control("chip-duck");
@@ -1372,7 +1373,7 @@ export function createEvening(bridge) {
     // walking through an open doorway (no button): each door the step leads to
     if (on && !s.alarm) {
       const at = (p) => Math.hypot(sqAt.x - p.x, sqAt.y - p.y) < p.r;
-      if ((s.step === "wall" || s.step === "dodge") && r === "passage" && at(HALLWAY.left)) ((s.robot = null), toHall());
+      if ((s.step === "wall" || s.step === "dodge" || s.step === "past") && r === "passage" && at(HALLWAY.left)) ((s.robot = null), toHall());
       else if (s.step === "gohome" && r === "hall" && at(BAR.home)) toHome(homeAlone);
       else if (s.step === "out" && r === "closet" && at(HOME.door)) (s.bed && ((s.bed = null), setPose("stand")), NIGHT.out());
       else if (s.step === "nighthall" && r === "hall" && at({ ...LUNCH_PLACES.door.stand, r: LUNCH_PLACES.door.r })) NIGHT.nighthall();
@@ -1436,6 +1437,9 @@ export function createEvening(bridge) {
       return out;
     }
     switch (s.step) {
+      // the robot has gone: the hall's doorway (the gallery is not offered again this visit)
+      case "past":
+        return [doorSpot("ev-hall", HALLWAY.left)];
       case "wall": {
         const out = [doorSpot("ev-hall", HALLWAY.left)];
         // the gallery is optional: no outline (it is not the goal), offered under the wall until the robot came
@@ -1884,6 +1888,40 @@ export function createEvening(bridge) {
     }
     ctx.restore();
     view.drew = out;
+  }
+  /** The crayon card on the hallway's wall (ganitor.js HALLWAY_CRAYON's place): ME and MOPS, each with an arrow. */
+  function drawCrayonCard(ctx) {
+    const C = HALLWAY_CRAYON;
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(C.x0, C.y0, C.w, C.h, 6);
+    ctx.fillStyle = "#fffdf8";
+    ctx.fill();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#1e2430";
+    ctx.stroke();
+    ctx.font = `800 ${C.size}px system-ui, -apple-system, sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#1e2430";
+    const words = [eveningWords("sign-me"), eveningWords("sign-mops")];
+    words.forEach((t, k) => {
+      const x = C.x0 + C.w * (k ? 0.68 : 0.3),
+        y = C.y0 + 22;
+      ctx.fillText(t, x, y);
+      // the arrow down to the figure
+      ctx.beginPath();
+      ctx.moveTo(x, y + 14);
+      ctx.lineTo(x, y + 46);
+      ctx.moveTo(x - 6, y + 38);
+      ctx.lineTo(x, y + 46);
+      ctx.lineTo(x + 6, y + 38);
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "#3478f6";
+      ctx.stroke();
+    });
+    ctx.restore();
+    return words;
   }
   /** A big button inside a close-up (LIFT · photo): a white pill, the words, pressed in while held. */
   function viewButton(ctx, B, label, down) {
@@ -2412,6 +2450,8 @@ export function createEvening(bridge) {
         const sq = e.pos("sq");
         s.pose === "stand" && e.drawSquatch(ctx, sq.x, sq.y, sqScale("passage"), { f: sq.f || 1, walk: e.walkPhase() });
       }
+      // the crayon drawing on the hallway's wall, once lifted: its tags as decided (ME and MOPS, each with an arrow)
+      if (room() === "passage" && e.get("ch1Crayon")) (drew = drew || { step: s.step }).crayon = drawCrayonCard(ctx);
       if (room() === "closet" && STEP_ROOM[s.step] === "closet") drew = { step: s.step, ...drawHome(ctx, s) };
     },
     /** Where a speaker's bubble points: the robot in the hallway, the one in line, Squatch rolled up, the mailbox. */
@@ -2526,7 +2566,7 @@ export function createEvening(bridge) {
     e.set(
       "ch1Evening",
       fresh({
-        galleryDone: step === "dodge",
+        galleryDone: step === "dodge" || step === "past",
         storm: STEP_ROOM[step] === "hall" && !NIGHT_STEPS.includes(step) ? 1 : -1,
         brochure: after("brochure") ? (after("show") ? "home" : "paw") : step === "brochure" ? "bin" : "",
         coffee: after("duck") ? 1 : -1,
@@ -2539,7 +2579,7 @@ export function createEvening(bridge) {
       }),
     );
     // (the record of what he has done is only what comes before this step: a jump back forgets what came after)
-    e.set("ch1Crayon", after("dodge") || step === "dodge");
+    e.set("ch1Crayon", after("wall"));
     e.set("ch1Mailed", after("post") ? 1 : 0);
     e.set("ch1PinkSucked", after("post") ? 1 : 0);
     after("brochure") && e.set("ch1Brochure", true);
@@ -2553,6 +2593,7 @@ export function createEvening(bridge) {
     const at = {
       wall: HALLWAY.stop,
       dodge: HALLWAY.stop,
+      past: HALLWAY.stop,
       hide: BAR.sq,
       peek: BAR.hidden,
       duck: BAR.hidden,
@@ -2578,7 +2619,7 @@ export function createEvening(bridge) {
     e.place("sq", at.x, at.y);
     e.face("sq", -1);
     // Mops: waiting at the hallway's end, behind the counter, at home, or asleep on the floor
-    const mops = { wall: HALLWAY.mops, dodge: HALLWAY.mops, hide: STORM.mops, peek: STORM.mops, duck: STORM.mops, brochure: STORM.mops, show: HOME.mops, choose: HOME.mops, bed: HOME.mops }[step];
+    const mops = { wall: HALLWAY.mops, dodge: HALLWAY.mops, past: HALLWAY.mops, hide: STORM.mops, peek: STORM.mops, duck: STORM.mops, brochure: STORM.mops, show: HOME.mops, choose: HOME.mops, bed: HOME.mops }[step];
     // 39b and 40 at home: the box, the cake, the chart's X, the stamp's ST, the light, Mops's hearts
     if (["box", "bite", "chart", "crate"].includes(step)) ((s.warm = 0.4), (s.box = { box: "paw", bite: "open", chart: "floor", crate: "floor" }[step]));
     step === "bite" && ((s.cake = 0), (s.t0 = P.boxOpen));
@@ -2587,7 +2628,7 @@ export function createEvening(bridge) {
     (step === "show" || step === "choose") && (s.hearts = 1);
     step === "bed" && ((s.hearts = 0.4), (s.turned = true));
     e.set("moPose", mops ? "stand" : "hidden");
-    mops ? (e.place("mops", mops.x, mops.y), e.face("mops", step === "wall" || step === "dodge" || STEP_ROOM[step] === "hall" ? 1 : -1)) : e.place("mops", -400, 0);
+    mops ? (e.place("mops", mops.x, mops.y), e.face("mops", step === "wall" || step === "dodge" || step === "past" || STEP_ROOM[step] === "hall" ? 1 : -1)) : e.place("mops", -400, 0);
     // the guests: coming in (hide), at the window (peek), turning to the bar (duck)
     const guestsAt = (where) => ["dad", "mom", "kid", "guest"].map((role) => ({ role, id: STORM.ids[role], x: where[role].x, y: where[role].y, a: -Math.PI / 2, kid: role === "kid", to: "window", wayTo: "window", way: [], wait: 0 }));
     if (step === "hide") s.guests = ["dad", "mom", "kid", "guest"].map((role, i) => ({ role, id: STORM.ids[role], x: STORM.in.x + i * 46, y: STORM.in.y + i * 4, a: Math.PI, kid: role === "kid", to: "window", wait: 0.6 + i * 0.9 }));
@@ -2598,6 +2639,6 @@ export function createEvening(bridge) {
     s.step = step;
     record.steps.push(step);
     setPose(s.pose);
-    control({ wall: "chip-go-on", dodge: "chip-roll", hide: "chip-hide", peek: "chip-peek", duck: "chip-duck", brochure: "chip-brochure", gohome: "chip-home", box: "chip-box", bite: "chip-bite", chart: "chip-chart", crate: "chip-crate", choose: "", show: "chip-show", bed: "chip-bed", out: "chip-out", nighthall: "chip-bin", nightway: "chip-bin", bin: "chip-bin", post: "chip-post", back: "chip-sneak-home", backway: "chip-sneak-home", backhall: "chip-sneak-home", tobed: "chip-bed" }[step]);
+    control({ wall: "chip-go-on", dodge: "chip-roll", past: "chip-go-on", hide: "chip-hide", peek: "chip-peek", duck: "chip-duck", brochure: "chip-brochure", gohome: "chip-home", box: "chip-box", bite: "chip-bite", chart: "chip-chart", crate: "chip-crate", choose: "", show: "chip-show", bed: "chip-bed", out: "chip-out", nighthall: "chip-bin", nightway: "chip-bin", bin: "chip-bin", post: "chip-post", back: "chip-sneak-home", backway: "chip-sneak-home", backhall: "chip-sneak-home", tobed: "chip-bed" }[step]);
   }
 }

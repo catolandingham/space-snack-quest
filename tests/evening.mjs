@@ -154,11 +154,11 @@ r = await ev(async () => {
   for (let i = 0; i < 6; i++) (b.viewAct(), await new Promise((q) => setTimeout(q, 60)));
   const out = { step: window.__st(), open: !!document.querySelector('canvas[aria-label="photo wall"]'), ctrl: n.ctrl, ball: !!window.__spot("ROLL · ball"), robot: { ...n.ch1Evening.robot } };
   // one real second to act: the robot waits just outside the hall's doorway
-  window.__run(0.5);
+  window.__run(1.5);
   out.waiting = n.ch1Evening.robot && n.ch1Evening.robot.x < 0;
   out.rolled = window.__press("ROLL · ball");
   const path = [];
-  window.__run(10, () => window.__st() === "wall" && n.ctrl && !n.ch1Evening.robot, () => {
+  window.__run(14, () => window.__st() === "past" && n.ctrl && !n.ch1Evening.robot, () => {
     const r2 = n.ch1Evening.robot;
     r2 && path.push([Math.round(r2.x), Math.round(r2.y)]);
     n.cur && n.cur.b && (out.bub = out.bub || n.cur.b.text);
@@ -170,7 +170,7 @@ r = await ev(async () => {
   return out;
 });
 g.check("past photo 5 the gallery closes and the kid has control: ROLL · ball is offered; the robot waits a second outside the hall's doorway", r.step === "dodge" && !r.open && r.ctrl && r.ball && r.robot.x < 0 && r.waiting, r);
-g.check("the robot comes in through the hall's doorway (the hall end) and rolls out through the bay's; rolled up, the ball fools it: BEEP BEEP, no alarm", r.rolled && r.path.length > 3 && r.path[1][0] < 200 && r.path[r.path.length - 1][0] > 800 && r.bub === "BEEP BEEP" && !r.alarm && r.after === "wall", r);
+g.check("the robot comes in through the hall's doorway (the hall end) and rolls out through the bay's; rolled up, the ball fools it: BEEP BEEP, no alarm", r.rolled && r.path.length > 3 && r.path[1][0] < 200 && r.path[r.path.length - 1][0] > 800 && r.bub === "BEEP BEEP" && !r.alarm && r.after === "past" && !r.look, r);
 // a kid who does not roll up: the robot sees him (cone held half a second, "?"), the alarm, guards, caught
 r = await ev(() => {
   const n = window.__ss.op;

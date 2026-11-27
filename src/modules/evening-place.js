@@ -269,7 +269,7 @@ export const EVENING_PACE = Object.freeze({
   hallWalk: 190,
   mopsWalk: 160,
   robotRoll: 260, // the hallway robot (BEEP BEEP)
-  robotWait: 1.0, // it waits just outside the hall's doorway first: the player's real second to act
+  robotWait: 2.0, // it waits just outside the hall's doorway first (its beep), the player's real moment to act
   ballIn: 0.35, // he rolls up as it comes
   ballOut: 0.4,
   // the gallery: the crooked photo swings up on its nail like a flap this long (about a second), and back
