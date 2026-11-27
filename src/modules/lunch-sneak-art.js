@@ -5,6 +5,7 @@
  * Mops's wet streaks, look cone and hearts in the hallway. The lunch bag is the home morning's (home-morning-art.js), the snack cake is the party's snack
  * (party-snacks-art.js).
  */
+import { firstSightHearts } from "./mops-hearts.js";
 import { drawSnack } from "./party-snacks-art.js";
 import { drawLunchBag } from "./home-morning-art.js";
 import { armEnds } from "./squatch-art.js";
@@ -180,13 +181,15 @@ export function drawLookCone(ctx, ox, oy, a, half, len) {
   ctx.stroke();
   ctx.restore();
 }
-/** Hearts floating up from over Mops's head (`age` seconds since they began): three, rising and fading. */
+/**
+ * Hearts floating up from over Mops's head (`age` seconds since he first saw him): two or three, one after another,
+ * once, then none (mops-hearts.js: Brian 2026-11-27, question 126).
+ */
 export function drawHeartsUp(ctx, x, y, age) {
-  for (let i = 0; i < 3; i++) {
-    const k = (age * 0.8 + i / 3) % 1;
+  for (const h of firstSightHearts(age)) {
     ctx.save();
-    ctx.globalAlpha = 1 - k * 0.7;
-    drawHeart(ctx, x + Math.sin(i * 2.3 + age * 2) * 14 + (i - 1) * 14, y - k * 46, 10 + 4 * (1 - k));
+    ctx.globalAlpha = h.alpha;
+    drawHeart(ctx, x + Math.sin(h.i * 2.3 + age * 2) * 6 + (h.i - 1) * 14, y - h.rise * 46, 10 + 4 * (1 - h.rise));
     ctx.restore();
   }
 }

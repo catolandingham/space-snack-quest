@@ -57,6 +57,7 @@ import { OFFICE_CODE } from "./office-code.js";
 import { findPath } from "./tap-path.js";
 import { drawRobot, robotHand, drawFormSet, drawStuck, drawBiteCrumbs, drawFormCloseUp, closeUpBox, drawCloseUpBack, drawCloseUpFront, drawWave, drawDashedOutline, drawBayCrate, drawCargo, drawTag, drawTaggedBox, drawTagCloseUp, drawDoorShadow, drawTool, drawFuzzyHat, drawScannerStop, drawLetter, drawSlotLight, drawSweat, drawOfficeOpen, drawStreak } from "./loading-bay-art.js";
 import { drawSpeakerRing, drawHeartCone } from "./party-free-art.js";
+import { firstSightHeartsUp } from "./mops-hearts.js";
 import { HALL, HALL_PICTURE, HALL_SPEAKER } from "./party-hall.js";
 import { COUNTER_SPOTS, LUNCH_SOLIDS, LUNCH_BOUNDS, LUNCH_PLACES } from "./lunch-sneak-place.js";
 import { coneFrom, drawCones, distToCone, SQUATCH_OUTLINE, SEEN_TOO_LONG_SECONDS } from "./party-watch.js";
@@ -844,6 +845,7 @@ export function createLoadingBay(bridge) {
     b.qs = {};
     b.hidden = false;
     b.ball = false;
+    b.warmRoom = ""; // (a new scene: his first-sight hearts again, mops-hearts.js)
     b.hall = {
       robots: HALL_SNEAK.lanes.map((L, i) => ({ id: "cleaner" + i, x: L.x0 + (L.x1 - L.x0) * L.at, y: L.y, dir: L.dir, lane: i, f: L.dir, stop: 0, streak: [] })),
       blockedSaid: false,
@@ -1407,7 +1409,9 @@ export function createLoadingBay(bridge) {
       warm = mops && mopsSees(b);
     const cones = [...watcherCones(b), ...(b.alarm ? guardCones(b.alarm, { half: CONE.half, len: CONE.len }) : [])];
     const out = drawCones(ctx, [...cones, ...(mops && !warm ? [mops] : [])], s, !sqStanding(b), false, again ? null : (c) => e.noteCone(c));
-    warm && (drawHeartCone(ctx, mops.ox, mops.oy, mops.a, mops.half, mops.len, t, 1), out.push({ ...mops, inside: false, show: 1, hearts: true }));
+    // (his hearts only the first time his cone holds Squatch in this room: mops-hearts.js, question 126)
+    warm && b.warmRoom !== room() && ((b.warmRoom = room()), (b.warmAt = t));
+    warm && (drawHeartCone(ctx, mops.ox, mops.oy, mops.a, mops.half, mops.len, t, 1, t - b.warmAt), out.push({ ...mops, inside: false, show: 1, hearts: true, heartsUp: firstSightHeartsUp(t - b.warmAt) }));
     return out;
   }
   // the "?" filling over whoever is looking at him, and "!" over the one who saw him
@@ -1624,7 +1628,7 @@ export function createLoadingBay(bridge) {
       const hl = highlightNow(b);
       hl && drawDashedOutline(ctx, hl, t);
       const closeUp = drawCloseUp(ctx, b, t);
-      drew = { step: b.step, room: "hangar", shimmer: !!b.shimmer, outline: hl, cones: cones.map((c) => ({ id: c.id, inside: c.inside, show: c.show, hearts: !!c.hearts })), closeUp, papers: b.papers.where, box: b.box, formStage: b.formStage };
+      drew = { step: b.step, room: "hangar", shimmer: !!b.shimmer, outline: hl, cones: cones.map((c) => ({ id: c.id, inside: c.inside, show: c.show, hearts: !!c.hearts, heartsUp: !!c.heartsUp })), closeUp, papers: b.papers.where, box: b.box, formStage: b.formStage };
       return true;
     },
     draw: drawOver,

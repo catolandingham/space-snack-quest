@@ -10,6 +10,7 @@
  */
 import { FAMILY } from "./snack-name.js";
 import { drawBrochure, drawPawPrint } from "./evening-art.js";
+import { STORY_HEART } from "./mops-hearts.js";
 import { escapeWords } from "./escape-lines.js";
 import { VENT_ROOM, KEYPAD, keyAt, SITE, SNACKS, OFFICE_CODE, ES_HALLWAY } from "./escape-place.js";
 import { drawThought, drawCrate } from "./bedtime-story-art.js";
@@ -785,15 +786,18 @@ export function drawSnackCounter(ctx, st, t) {
   return { paw, bag: st.bag, plate: st.plate ? P : null };
 }
 
-/** Hearts rising over Mops (he says nothing: DECISIONS, beat 52). */
+/**
+ * A story moment's heart rising over Mops (he says nothing: DECISIONS, beat 52): one heart, not three (Brian
+ * 2026-11-27, "come on with the hearts"; mops-hearts.js STORY_HEART, question 126).
+ */
 export function drawHearts(ctx, x, y, age) {
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < STORY_HEART.count; i++) {
     const a = age - i * 0.35;
     if (a < 0) continue;
     const k = esClamp(a / 1.2);
     ctx.save();
     ctx.globalAlpha = 1 - k * 0.7;
-    drawHeart(ctx, x + (i - 1) * 26, y - k * 60, 18);
+    drawHeart(ctx, x + (i - (STORY_HEART.count - 1) / 2) * 26, y - k * 60, 18);
     ctx.restore();
   }
 }
