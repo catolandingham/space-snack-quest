@@ -341,7 +341,7 @@ if (which === "fight") {
   await sleep(700);
   await still("to-bed");
   await press();
-  for (const [ms, name] of [[2600, "in-bed"], [2600, "lights-down-no-song"], [2600, "mops-dozes"], [2200, "fainting-goat"], [2400, "on-his-back-snoring"]]) (await sleep(ms), await still(name));
+  for (const [ms, name] of [[2600, "in-bed"], [2600, "lights-down-no-song"], [2600, "mops-dozes"], [2200, "fainting-goat"], [2400, "on-his-side-head-on-the-bucket-snoring"]]) (await sleep(ms), await still(name));
   await until((s) => s.step === "idea", 20000);
   for (const [ms, name] of [[1100, "idea-mops-mopping"], [1400, "idea-robots-mopping"], [1400, "idea-the-ship"]]) (await sleep(ms), await still(name));
   await readStills((s) => s.step === "out" && s.ctrl && !s.cur, { "The floors don't mop themselves...": "the-floors-dont-mop-themselves", "The form!": "the-form" }, 30000);
