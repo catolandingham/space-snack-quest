@@ -4,22 +4,22 @@
 | Lines | Heading |
 | --- | --- |
 | 24–27 | # Chapter 1 lines for Brian |
-| 28–125 | ## Loading bay (beats 28 to 36, and 36b), 2026-11-26 rebuild (branch feat/ch1-loading-bay, not merged) |
-| 126–135 | ## Home morning (beats 22 to 24), 2026-11-26 round D (branch feat/ch1-day2-morning, not merged) |
-| 136–148 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
-| 149–165 | ## Lunch sneak and Ganitor, 2026-11-26 (branch feat/ch1-lunch-sneak, not merged) |
-| 166–181 | ## Calendar revision, Nov 16 (PR 58, not live) |
-| 182–189 | ## Earlier chapter lines |
-| 190–204 | ## Goal chips |
-| 205–288 | ## What people say |
-| 289–302 | ## Words painted on things |
-| 303–326 | ## Buttons |
-| 327–413 | ## Day 2 onward (beats 22–61), pending |
-| 414–421 | ## Ball hiding |
-| 422–429 | ## Off-screen lines, for Brian (playtest 12) |
-| 430–439 | ## Homework desk, approved Nov 16 |
-| 440–478 | ## Questions still open |
-| 479–504 | ## Day 1 stand-ins, pending |
+| 28–130 | ## Loading bay (beats 28 to 36, and 36b), 2026-11-26 rebuild (branch feat/ch1-loading-bay, not merged) |
+| 131–140 | ## Home morning (beats 22 to 24), 2026-11-26 round D (branch feat/ch1-day2-morning, not merged) |
+| 141–153 | ## Bedtime story (beat 21), 2026-11-26 (branch feat/ch1-bedtime-story, not merged) |
+| 154–170 | ## Lunch sneak and Ganitor, 2026-11-26 (branch feat/ch1-lunch-sneak, not merged) |
+| 171–186 | ## Calendar revision, Nov 16 (PR 58, not live) |
+| 187–194 | ## Earlier chapter lines |
+| 195–209 | ## Goal chips |
+| 210–293 | ## What people say |
+| 294–307 | ## Words painted on things |
+| 308–331 | ## Buttons |
+| 332–418 | ## Day 2 onward (beats 22–61), pending |
+| 419–426 | ## Ball hiding |
+| 427–434 | ## Off-screen lines, for Brian (playtest 12) |
+| 435–444 | ## Homework desk, approved Nov 16 |
+| 445–483 | ## Questions still open |
+| 484–509 | ## Day 1 stand-ins, pending |
 <!-- /section-index -->
 # Chapter 1 lines for Brian
 
@@ -117,6 +117,11 @@ Every word is in `src/modules/loading-bay-lines.js`, word for word from the stor
 | Mops | We have to watch out for these robots. | Beat 36 (CHANGED) | Pending |
 | Squatch | What's the difference between fur and hair? | Beat 36 (KEEP, decided) | Decided |
 | Mops | Paperwork. | Beat 36 (KEEP, decided) | Decided |
+| The lockup card | A robot | builder's words for the lockup card (NEW) | Pending |
+| The lockup card | The manager | builder's words for the lockup card (NEW) | Pending |
+| The lockup card | A worker | builder's words for the lockup card (NEW) | Pending |
+| The lockup card | in the delivery room | builder's words for the lockup card (NEW) | Pending |
+| The lockup card | in the hallway | builder's words for the lockup card (NEW) | Pending |
 | Goal words | Squatch: get past the robots | Beat 36b (goal words, NEW) | Pending |
 | A robot | CLEANING. | Beat 36b (NEW) | Pending |
 | A robot | MOVE, GOAT. | Beat 36b (NEW) | Pending |

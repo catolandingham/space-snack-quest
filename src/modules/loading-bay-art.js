@@ -362,7 +362,7 @@ export function drawWave(ctx, x, y, t) {
 
 // ---------- the bay's new things (beats 29 to 35; PLACEHOLDERS) ----------
 /** One wooden crate, its bottom middle at (x, y), `w` wide; `label` stamped on its front (the station's in blue). */
-export function drawCrate(ctx, x, y, w = 56, label = "", color = CAKES.stampColor) {
+export function drawBayCrate(ctx, x, y, w = 56, label = "", color = CAKES.stampColor) {
   const h = w * 0.62;
   ctx.save();
   bayRound(ctx, x - w / 2, y - h, w, h, 3);
@@ -380,12 +380,12 @@ export function drawCrate(ctx, x, y, w = 56, label = "", color = CAKES.stampColo
     ctx.textBaseline = "middle";
     ctx.fillText(label, x, y - h * 0.3);
     // the star
-    star(ctx, x, y - h * 0.72, w * 0.08, color);
+    bayStar(ctx, x, y - h * 0.72, w * 0.08, color);
   }
   ctx.restore();
   return { x0: x - w / 2, x1: x + w / 2, y0: y - h, y1: y };
 }
-function star(ctx, x, y, r, color) {
+function bayStar(ctx, x, y, r, color) {
   ctx.beginPath();
   for (let i = 0; i < 10; i++) {
     const a = -Math.PI / 2 + (i * Math.PI) / 5,
@@ -400,8 +400,8 @@ function star(ctx, x, y, r, color) {
 export function drawCargo(ctx, box) {
   const w = box.x1 - box.x0,
     x = (box.x0 + box.x1) / 2;
-  drawCrate(ctx, x, box.y1, w);
-  drawCrate(ctx, x + 4, box.y1 - w * 0.6, w * 0.86);
+  drawBayCrate(ctx, x, box.y1, w);
+  drawBayCrate(ctx, x + 4, box.y1 - w * 0.6, w * 0.86);
 }
 /** A paper tag on a string at (x, y), with `text` on it (small; its words are read in a close-up). */
 export function drawTag(ctx, x, y, text, s = 1) {
@@ -513,7 +513,7 @@ export function drawTool(ctx, kind, x, y, flip = false, k = 1) {
     ctx.moveTo(0, 6);
     ctx.lineTo(0, -22);
     ctx.stroke();
-    ctx.fillStyle = "#e0c068";
+    ctx.fillStyle = "#b8955a"; // (straw tan, not the goal marker's yellow)
     ctx.beginPath();
     ctx.moveTo(-6, -22);
     ctx.lineTo(6, -22);

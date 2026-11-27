@@ -50,6 +50,10 @@ const mods = readdirSync(join(root, "src", "modules")).filter((f) => f.startsWit
 const typed = mods.filter((f) => /["'`][^"'`\n]*(STARS|MARS) CAKES/.test(readFileSync(M(f), "utf8")));
 g.check("the crates' and the tag's snack names come from cakes-brand.js (no loading bay file types them)", typed.length === 0 && CAKES.station === "STARS CAKES" && CAKES.family === "MARS CAKES" && CAKES.faded === "_ARS CAKES", typed);
 
+// the hallway's far ends take him through inside the hallway's walk bounds (x 60 to 900, 00-core.js): a doorway he
+// cannot reach is a dead end (the first video stopped at x 893, short of a trigger at 916)
+g.check("the hallway's walk-through ends are inside its walk bounds", HALLWAY.exitRight < 900 - 8 && HALLWAY.exitLeft > 60 + 8 && HALLWAY.trigger < HALLWAY.exitRight, HALLWAY);
+
 // ---------- the beat, played ----------
 const { page, errors } = await g.open("?beat=bay:pa", { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 1 });
 await page.evaluate(() => window.__ss.lockedReady);
@@ -257,6 +261,50 @@ const slow = await page.evaluate(() => {
   return { card, alarm };
 });
 g.check("36: too slow to roll, the robot sees fur: the alarm and the one capture rule (the lockup names a robot in the hallway)", slow.alarm && !!slow.card && /LOCKUP/.test(slow.card) && /A robot/.test(slow.card) && /hallway/.test(slow.card), slow);
+
+// ---------- the lockup card names who saw him: the manager in the bay ----------
+const byIsfred = await page.evaluate(() => {
+  const ss = window.__ss,
+    n = ss.op,
+    beat = window.SSQ.beat("ch1-bay");
+  n.q = [];
+  n.cur = null;
+  beat.jump("sneak");
+  for (let i = 0; i < 4; i++) ss.tick(0.05);
+  const b = n.ch1Bay;
+  b.robots.forEach((r) => (r.show = false));
+  Object.assign(b.isfred, { show: true, x: 600, y: 420, f: 1, look: false });
+  let card = null,
+    alarm = false;
+  // (he stands in front of Isfred and stays there; lines are read, nothing else is pressed)
+  for (let i = 0; i < 1500 && !card; i++) {
+    ss.tick(0.05);
+    const s = n.ch1Bay || {};
+    alarm = alarm || !!s.alarm;
+    if (s.isfred) Object.assign(s.isfred, { x: 600, y: 420, f: 1 });
+    if (s.step === "sneak" && !s.alarm) ((n.sq.x = 680), (n.sq.y = 420), (n.sqPose = "stand"), (s.ball = false));
+    if (n.cur && n.cur.k === "card") card = JSON.stringify(n.cur, (k, v) => (typeof v === "function" ? undefined : v));
+    else if (n.cur && n.cur.k === "bub") ((n.bt = 1), ss.opTap());
+  }
+  return { card, alarm, step: (n.ch1Bay || {}).step };
+});
+g.check("30: seen by Isfred, the lockup card names the manager in the delivery room", !!byIsfred.card && /The manager/.test(byIsfred.card) && /in the delivery room/.test(byIsfred.card), byIsfred);
+
+// ---------- ↺ in the hallway after the hairball: the walk home through the hallway again ----------
+const afterRestart = await page.evaluate(() => {
+  const ss = window.__ss,
+    n = ss.op,
+    beat = window.SSQ.beat("ch1-bay");
+  n.q = [];
+  n.cur = null;
+  beat.jump("walkby");
+  window.__bayDrive({ pastEnd: true, frames: 3000, until: (s) => s.step === "after" && n.cur && n.cur.k === "bub" });
+  const before = { step: beat.debug().state.step, room: n.room };
+  ss.sectionReset();
+  for (let i = 0; i < 80; i++) ss.tick(0.05);
+  return { before, after: beat.debug().state.step, room: n.room, hidden: n.sqPose };
+});
+g.check("↺ during the lines after the hairball starts the hallway walk home again (in the hallway, not the bay)", afterRestart.before.step === "after" && afterRestart.before.room === "passage" && afterRestart.after === "walkby" && afterRestart.room === "passage", afterRestart);
 
 // ---------- 36b: seen in a lane; a plant between; Mops blocks a robot ----------
 const hall = await page.evaluate(({ HALL, HALL_SNEAK }) => {

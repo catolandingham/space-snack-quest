@@ -53,7 +53,7 @@
  */
 import { BAY, BAY_SPOTS, HALLWAY, HALL_SNEAK, BAY_PACE as P, BAY_PICTURES, BAY_CLOSEUPS, BAY_PARTS, BAY_STEPS, ROBOT_SIZE } from "./loading-bay-place.js";
 import { bayWords, bayLine, BAY_SPEAKER_NAMES } from "./loading-bay-lines.js";
-import { drawRobot, robotHand, drawFormSet, drawStuck, drawCrumbs, drawFormCloseUp, closeUpBox, drawCloseUpBack, drawCloseUpFront, drawWave, drawDashedOutline, drawCrate, drawCargo, drawTag, drawTaggedBox, drawTagCloseUp, drawDoorShadow, drawTool, drawFuzzyHat, drawScannerStop, drawLetter, drawSlotLight, drawSweat, drawOfficeOpen, drawStreak } from "./loading-bay-art.js";
+import { drawRobot, robotHand, drawFormSet, drawStuck, drawCrumbs, drawFormCloseUp, closeUpBox, drawCloseUpBack, drawCloseUpFront, drawWave, drawDashedOutline, drawBayCrate, drawCargo, drawTag, drawTaggedBox, drawTagCloseUp, drawDoorShadow, drawTool, drawFuzzyHat, drawScannerStop, drawLetter, drawSlotLight, drawSweat, drawOfficeOpen, drawStreak } from "./loading-bay-art.js";
 import { drawSpeakerRing, drawHeartCone } from "./party-free-art.js";
 import { HALL, HALL_PICTURE, HALL_SPEAKER } from "./party-hall.js";
 import { COUNTER_SPOTS, LUNCH_SOLIDS, LUNCH_BOUNDS, LUNCH_PLACES } from "./lunch-sneak-place.js";
@@ -78,7 +78,7 @@ const ISFRED_K = () => adultPxFor("hangar") / adultPxFor("hall");
 const ROBOT_K = (room) => adultPxFor(room) / adultPxFor("hangar");
 const CONE = { half: 0.42, len: 210 };
 // A cone holds him this long ("?" filling) before anyone has seen him (the shared rule, 2026-11-26).
-const HOLD = 0.5;
+const BAY_HOLD = 0.5;
 const TOOLS = ["wrench", "broom", "clipboard"];
 
 // The bay's own place for the one capture rule (party-alarm.js): the robot runs to the red FUR alarm on the bay's left
@@ -101,7 +101,7 @@ addAlarmPlace("bay-day", {
   around: BAY_AROUND,
   floor: { x0: 20, x1: 920, y0: 310, y1: 600 },
   feet: 0,
-  register: HOLD,
+  register: BAY_HOLD,
 });
 // the hallway: the robot rolls to the bay's end to raise it; guards come in from the hall's end
 addAlarmPlace("bay-hallway", {
@@ -112,7 +112,7 @@ addAlarmPlace("bay-hallway", {
   around: [],
   floor: { x0: 20, x1: 940, y0: 270, y1: 590 },
   feet: 0,
-  register: HOLD,
+  register: BAY_HOLD,
 });
 
 export function createLoadingBay(bridge) {
@@ -931,8 +931,8 @@ export function createLoadingBay(bridge) {
     else {
       b.seenT = b.seenBy === who.id ? b.seenT + dt : 0;
       b.seenBy = who.id;
-      showing[who.id] = b.seenT / (ballSeen && !seen ? 2 : HOLD);
-      if (b.seenT >= (ballSeen && !seen ? 2 : HOLD)) raise(b, who);
+      showing[who.id] = b.seenT / (ballSeen && !seen ? 2 : BAY_HOLD);
+      if (b.seenT >= (ballSeen && !seen ? 2 : BAY_HOLD)) raise(b, who);
     }
     return showing;
   }
@@ -943,14 +943,14 @@ export function createLoadingBay(bridge) {
     const e = E(),
       at = c.id.startsWith("cleaner") ? b.hall.robots.find((r) => r.id === c.id) : c.id === "isfred" ? b.isfred : c.id.startsWith("worker") ? b.workers[+c.id.slice(6)] : robot(+c.id.slice(5));
     b.people[c.id] = b.people[c.id] || { x: at.x, y: at.y, hx: at.x, hy: at.y, ax: 0, ay: 0 };
-    startAlarm(b, { id: c.id, x: at.x, y: at.y }, room() === "hall" ? "where-hall" : room() === "passage" ? "lockup-hallway" : "lockup-bay", c.who === "robot" ? "lockup-robot" : "who-tourist", placeId());
+    startAlarm(b, { id: c.id, x: at.x, y: at.y }, room() === "hall" ? "where-hall" : room() === "passage" ? "lockup-hallway" : "lockup-bay", c.who === "robot" ? "lockup-robot" : c.who === "official" ? "lockup-manager" : "lockup-worker", placeId());
     e.sfx("bleep");
     psound.sting();
     b.seenBy = "";
     b.seenT = 0;
   }
-  const word = (id) => (id.startsWith("lockup-") ? LOCKUP[id] : partyLine(id));
-  const LOCKUP = { "lockup-robot": "A robot", "lockup-bay": "in the delivery room", "lockup-hallway": "in the hallway" };
+  // (the lockup card's who and where: the bay's own from its lines file, the hall's from the party's)
+  const word = (id) => (id.startsWith("lockup-") ? bayWords(id) : partyLine(id));
   function alarmApi(b) {
     const e = E();
     return {
@@ -1038,7 +1038,7 @@ export function createLoadingBay(bridge) {
       e.set("ctrl", false);
       e.queue([say("mops-later"), e.run(() => e.set("ctrl", true))]);
     }
-    if (s.x > HALLWAY.right.x - 30 && Math.abs(s.y - HALLWAY.right.y) < 46) intoBay();
+    if (s.x > HALLWAY.exitRight && Math.abs(s.y - HALLWAY.right.y) < 46) intoBay();
   }
   function followSquatch(dt) {
     const e = E(),
@@ -1065,7 +1065,7 @@ export function createLoadingBay(bridge) {
       raise(b, { id: "robot0", who: "robot" });
     }
     // past the robot and on to the hall's end: beat 37
-    if (free && !b.alarm && b.rollBy < 0 && b.office >= 1 && !robot(0).show && s.x < HALLWAY.left.x + 40) partsFromAfter();
+    if (free && !b.alarm && b.rollBy < 0 && b.office >= 1 && !robot(0).show && s.x < HALLWAY.exitLeft) partsFromAfter();
   }
   function partsFromAfter() {
     busy();
@@ -1140,7 +1140,18 @@ export function createLoadingBay(bridge) {
     if (b.step === "box") return [spot("bay-box", "button-box", mo, BAY_SPOTS.boxPick.x, BAY_SPOTS.boxPick.y, 52, pickUpBox, { at: [BAY_SPOTS.box.x, BAY_SPOTS.box.y - 30] })];
     if (b.step === "give") return [spot("bay-give", "button-give", mo, BAY_SPOTS.talk.x, BAY_SPOTS.talk.y, 60, giveBox, { thing: L, at: [(L.x0 + L.x1) / 2, L.y0] })];
     if (b.step === "walkby" && b.rollBy > 0 && !b.ball) return [{ ...spot("bay-roll", "button-ball", "sq", s.x, s.y, 40, hairball), hot: true, at: [s.x, s.y - 80] }];
-    if (b.step === "hall" && !b.ball) return [{ ...spot("bay-ball", "button-ball", "sq", s.x, s.y, 40, () => ((B().ball = true), E().set("sqPose", "ball"), E().sfx("hide"))), hot: true, at: [s.x, s.y - 80] }];
+    // places walked into, no button (as the lunch's doorway): the hallway's far doorway, the bay's doorway home, along
+    // the hallway home (past the office door, then its far end), the snack counter in the party hall
+    const walkTo = (id, x, y, r) => ({ id, verb: "", cap: "", who: "sq", x, y, r });
+    if (b.step === "hallway" && room() === "passage") return [walkTo("bay-door", HALLWAY.exitRight + 12, HALLWAY.right.y, 24)];
+    if (b.step === "home" && room() === "hangar") return [walkTo("bay-home", BAY.door.x + 18, BAY.door.y, 24)];
+    if (b.step === "walkby" && room() === "passage" && b.office === 0) return [walkTo("bay-walk", HALLWAY.trigger - 40, HALLWAY.right.y + 30, 24)];
+    if (b.step === "walkby" && room() === "passage" && b.rollBy < 0 && !robot(0).show) return [walkTo("bay-walk", HALLWAY.exitLeft - 12, HALLWAY.left.y + 10, 24)];
+    if (b.step === "hall" && room() === "hall") {
+      const out = [walkTo("bay-counter", HALL_SNEAK.goal.x, HALL_SNEAK.goal.y, 24)];
+      !b.ball && out.push({ ...spot("bay-ball", "button-ball", "sq", s.x, s.y, 40, () => ((B().ball = true), E().set("sqPose", "ball"), E().sfx("hide"))), hot: true, at: [s.x, s.y - 80] });
+      return out;
+    }
     return [];
   }
   // what the player must go to next: the one highlight round it (the plant's is the older program's traced outline)
@@ -1219,13 +1230,13 @@ export function createLoadingBay(bridge) {
       const u = ease(Math.min(1, b.crates)),
         x = BAY.rampFoot.x + (BAY_SPOTS.crates.x - BAY.rampFoot.x) * u,
         y = BAY.shipDoor.y + (BAY_SPOTS.crates.y - BAY.shipDoor.y) * u;
-      list.push({ y, f: () => (drawCrate(ctx, x, y, 54, CAKES.station), drawCrate(ctx, x + 2, y - 34, 48, CAKES.station)) });
+      list.push({ y, f: () => (drawBayCrate(ctx, x, y, 54, CAKES.station), drawBayCrate(ctx, x + 2, y - 34, 48, CAKES.station)) });
     }
     b.box === "ramp" && list.push({ y: BAY_SPOTS.box.y, f: () => drawTaggedBox(ctx, BAY_SPOTS.box.x, BAY_SPOTS.box.y) });
     if (b.emptyCrate.show) {
       const c = b.emptyCrate,
         a = c.y < BAY.rampFoot.y ? Math.max(0, (c.y - BAY.shipDoor.y) / (BAY.rampFoot.y - BAY.shipDoor.y)) : 1;
-      list.push({ y: c.y, f: () => (ctx.save(), (ctx.globalAlpha = a), drawCrate(ctx, c.x, c.y, 46), drawTag(ctx, c.x + 20, c.y - 20, bayWords("crate-empty")), ctx.restore()) });
+      list.push({ y: c.y, f: () => (ctx.save(), (ctx.globalAlpha = a), drawBayCrate(ctx, c.x, c.y, 46), drawTag(ctx, c.x + 20, c.y - 20, bayWords("crate-empty")), ctx.restore()) });
     }
     b.hatOnFloor && list.push({ y: BAY.arch.foot + 14, f: () => drawFuzzyHat(ctx, BAY.rampFoot.x - 40, BAY.arch.foot + 14, 1) });
     if (e.get("moPose") !== "hidden")
@@ -1520,6 +1531,8 @@ export function createLoadingBay(bridge) {
       if (!b) return false;
       if (b.step === "pa") return (jump("pa"), true);
       if (b.step === "walk") return (jump("hallway"), true);
+      // (the lines after the hairball play in the hallway: ↺ there is the walk home through it again)
+      if (b.step === "after") return (jump("walkby"), true);
       if (BAY_PARTS.includes(b.step)) return (jump(b.step), true);
       return false;
     },

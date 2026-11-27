@@ -5,7 +5,8 @@
  *   id      the line's name in the code and in tests/loading-bay.mjs
  *   who     the speaker's id in the game ("pa", "mops", "sq", "official" Isfred, "robot", "dot", "bob", "lou",
  *           "scanner" the fur scanner arch, "ups" the robot mailbox), or "chip" (the goal words), "button" (the big
- *           action button), "card" (a switch card's line), "paper" (words drawn on a thing)
+ *           action button), "card" (a switch card's line), "lockup" (the lockup card's who and where), "paper"
+ *           (words drawn on a thing)
  *   style   "say" (a speech bubble), "think" (Squatch's thought: a trail of circles), "ear" (overheard: the ear icon)
  *   text    the words, exactly as shown
  *   status  "pending" (waiting for Brian's yes), "decided", "approved" (Brian's yes, word for word), "in-game"
@@ -112,6 +113,12 @@ export const BAY_LINES = Object.freeze(
     { id: "sq-fur", who: "sq", text: "What's the difference between fur and hair?", status: "decided", source: PASS + "36 (KEEP, decided)" },
     { id: "mops-paperwork", who: "mops", text: "Paperwork.", status: "decided", source: PASS + "36 (KEEP, decided)" },
     // ---- 36b. Through the party hall, past three cleaning robots ----
+    // ---- the lockup card's words, when someone here sees him (the one capture rule: who saw him, and where) ----
+    { id: "lockup-robot", who: "lockup", text: "A robot", status: "pending", source: "builder's words for the lockup card (NEW)" },
+    { id: "lockup-manager", who: "lockup", text: "The manager", status: "pending", source: "builder's words for the lockup card (NEW)" },
+    { id: "lockup-worker", who: "lockup", text: "A worker", status: "pending", source: "builder's words for the lockup card (NEW)" },
+    { id: "lockup-bay", who: "lockup", text: "in the delivery room", status: "pending", source: "builder's words for the lockup card (NEW)" },
+    { id: "lockup-hallway", who: "lockup", text: "in the hallway", status: "pending", source: "builder's words for the lockup card (NEW)" },
     { id: "chip-hall", who: "chip", text: "Squatch: get past the robots", status: "pending", source: PASS + "36b (goal words, NEW)" },
     { id: "robot-turn", who: "robot", style: "ear", text: "CLEANING.", status: "pending", source: PASS + "36b (NEW)" },
     { id: "robot-move", who: "robot", text: "MOVE, GOAT.", status: "pending", source: PASS + "36b (NEW)" },

@@ -60,8 +60,14 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: take Mops his lunch in the hallway": { lu: "door", walk: true, x: 900, y: 330 },
     "Squatch: give Mops his lunch": { lu: "give", x: 540, y: 488 },
     "Squatch: grab one snack": { lu: "snack" },
-    // the loading bay (src/modules/loading-bay.js), opened by its own jump; he stands a step from the plant
-    "Squatch: hide in the plant": { bayPart: 29, x: 160, y: 410 },
+    // the loading bay (src/modules/loading-bay.js), each step opened by the beat's own jump; he stands where its button
+    // comes up, or (the hallway's far doorway, the bay's doorway home, the snack counter in the party hall: walked
+    // into, no button) a step from it
+    "Squatch: follow Mops to the ship": { bayStep: "hallway", walk: true, x: 900, y: 330 },
+    "Squatch: hide behind the cargo": { bayStep: "cargo", x: 110, y: 336 },
+    "Squatch: peek at the form": { bayStep: "peek" },
+    "Squatch: go home with Mops": { bayStep: "home", walk: true, x: 90, y: 336 },
+    "Squatch: get past the robots": { bayStep: "hall", walk: true, x: 800, y: 560 },
     "Squatch: go on": { step: "photos", room: "passage", x: 480, y: 560 },
     "Squatch: hide": { step: "family", room: "hall", scene: "Q3", x: 520, y: 530 },
     "Squatch: go home": { step: "gohome", room: "hall", scene: "Q3", x: 480, y: 560 },
@@ -165,11 +171,14 @@ const report = await page.evaluate(async (chips) => {
       window.SSQ.beat("ch1-lunch").jump(spec.lu);
       spec.x && ((n.sq.x = spec.x), (n.sq.y = spec.y));
       ((n.chip = chip), (n.moved = 200));
-    } else if (spec.bayPart) {
+    } else if (spec.bayStep) {
       Object.assign(n, { ch1PartyNow: null, ch1Morning: null, ch1Zoom: null, ch1PadOn: false, q: [], cur: null });
-      ss.ch1JumpBeat(spec.bayPart);
+      ss.ch1JumpBeat(29);
+      Object.assign(n, { q: [], cur: null });
+      window.SSQ.beat("ch1-bay").jump(spec.bayStep);
+      for (let i = 0; i < 400 && !(n.ctrl && !n.cur && window.SSQ.beat("ch1-bay").debug().state.step === spec.bayStep); i++) (ss.tick(0.05), n.cur && n.cur.k === "bub" && ((n.bt = 1), ss.opTap()));
       spec.x && ((n.sq.x = spec.x), (n.sq.y = spec.y));
-      ((n.chip = chip), (n.moved = 200));
+      ((n.chip = chip), (n.moved = spec.walk ? 0 : 200));
     } else if (spec.party) {
       Object.assign(n, { ch1Day2: false, ch1Lunch: null, ch1Bay: null, ch1Zoom: null, ch1PadOn: false, ch1Morning: null, q: [], cur: null, moPose: "hidden" });
       window.SSQ.beat("ch1-party").jump(spec.party);

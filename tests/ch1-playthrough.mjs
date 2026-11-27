@@ -422,9 +422,9 @@ const play = await page.evaluate(() => {
         end = "no-spot " + n.scene;
         break;
       }
-      n.sq.x = spot.x;
-      n.sq.y = spot.y;
-      n.sqPose = "stand";
+      // (a spot for Mops, where the player is Mops: he goes there; a spot for Squatch: Squatch stands there)
+      if (spot.who === "mo") ((n.mo.x = spot.x), (n.mo.y = spot.y));
+      else ((n.sq.x = spot.x), (n.sq.y = spot.y), (n.sqPose = "stand"));
       ss.drawFrame();
       ss.tick(0.05);
       if (!spot.verb) {
@@ -485,7 +485,7 @@ const play = await page.evaluate(() => {
 g.check("Chapter 1 reaches the tally card", play.end === "tally", { end: play.end, acts: play.acts, scene: play.state.scene });
 // The party night (src/modules/party.js): the peek, the plant, home through his door, the dress-up, out through his
 // door; the party in disguise (the dance), closing time, and walking home with Mops.
-const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "GRAB · flyer", "WALK · go-home", "SAVE · flyer", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "PICK UP · rocket", "OPEN · closet", "PUT IN · box", "WALK · bag", "TAKE · lunch", "WALK · lu-door", "GIVE · lunch", "WALK · lu-back", "TAKE · snack", "HIDE · plant", "GO · hall", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "LEAVE · food", "PUT · slip", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
+const wantActs = ["SING ALONG", "DO · homework", "PEEK · door", "HIDE · plant", "GRAB · flyer", "WALK · go-home", "SAVE · flyer", "OPEN · closet", "DRESS tophat · head", "DRESS shades · face", "DRESS shirt · body", "DRESS boots · legs", "WALK · go-party", "DANCE · circle", "WALK · Mops", "PICK UP · rocket", "OPEN · closet", "PUT IN · box", "WALK · bag", "TAKE · lunch", "WALK · lu-door", "GIVE · lunch", "WALK · lu-back", "TAKE · snack", "WALK · bay-door", "ROLL · ball", "HIDE · plant", "PEEK · form", "TAKE · copies", "EAT · copies", "TALK · Squatch", "SPIT · bin", "PICK UP · box", "GIVE · box", "WALK · bay-home", "WALK · bay-walk", "ROLL · ball", "WALK · bay-counter", "HIDE · plant", "GO · home", "GRAB · copies", "MARK · order", "POST · mailbox", "GO · door", "ROLL · ball", "GRAB · pink slip", "RETURN · empty crate", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "DROP · snacks", "LEAVE · food", "PUT · slip", "PACK · box", "PACK · bucket", "PUT ON · jacket", "GO · ship", "BOARD · scanner"];
 g.check("the player does the new actions in order", JSON.stringify(play.acts) === JSON.stringify(wantActs), play.acts);
 const must = [
   "Stormtop Cloud Resort, floating above Jupiter.",
@@ -516,18 +516,24 @@ const must = [
   "The Guardians came! They always come when I'm scared.",
   "He forgot his lunch!",
   "My lunch! You're the best.",
+  // the loading bay, rebuilt from the story pass of 2026-11-26 (loading-bay-lines.js): a few lines from each beat
   "Universal Postal Service ship arriving!",
-  "I better go see what that is.",
-  "Please let me follow you, I'll be really sneaky.",
-  "Okay, just this time, but hide carefully.",
-  "Mops, don't worry, you know how much we love you here. Even our visitors always love you.",
-  // (what calls Isfred away is wordless now: the bay's wall speaker chimes; loading-bay.js)
-  "So futuristic and we still order on paper.",
+  "The Stars Cakes ship!",
+  "Hide when I say hide.",
+  "Quick! The manager is coming!",
+  "NO FUR. PROCEED.",
+  "Fur in the vents... that was me.",
+  "It's a HAT.",
+  "Mops, don't worry.",
+  "Here's the code to unlock the door.",
   "Left one of the copies in the office. What do I do with the other two?",
   "I'll take care of it.",
   "Delicious.",
   "You're gumbling! (goat mumbling)",
+  "I can't understand you with paper in your mouth.",
   "Ptoo!",
+  "They never forget.",
+  "Big hairball.",
   "What's the difference between fur and hair?",
   "Paperwork.",
   "I swear we had more Moon Pies... is that what they stole at lunch?",

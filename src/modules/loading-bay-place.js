@@ -102,6 +102,9 @@ export const HALLWAY = Object.freeze({
   // beat 36: Robot 1 rolls out of the office to here and looks up the hallway; walking past it (x below `trigger`) opens
   // the door; he has `rollTime` seconds to roll up
   robotOut: Object.freeze({ x: 480, y: 470 }),
+  // where walking into the hallway's far ends takes him through (inside the hallway's walk bounds, x 60 to 900)
+  exitRight: 880,
+  exitLeft: 80,
   trigger: 640,
   // where Mops waits for him at each end
   mopsBay: Object.freeze({ x: 880, y: 352 }),

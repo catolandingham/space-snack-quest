@@ -28,7 +28,7 @@
 | 223–233 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
 | 234–243 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
 | 244–249 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
-| 250–260 | ## Mistakes caught building the loading bay (2026-11-26) |
+| 250–262 | ## Mistakes caught building the loading bay (2026-11-26) |
 <!-- /section-index -->
 # Review rules
 
@@ -256,4 +256,6 @@ His note on the home morning (video note 0:18): "he kind of glitches through the
 - The ramp in the bay picture comes with the ship: a thing that arrives with something else goes away before it (the ramp back up into the ship, then the ship), and the scanner's posts are solid only while it is there.
 - Every bubble's name tag read "Speaker" in the rebuild: the bridge's `speakerName(who)` asked every beat in turn, and the home morning's `speakerName()` (no argument, its own wall speaker's name) answered for everyone. The bridge asks only a beat whose `speakerName` takes the speaker, and the bay's test reads the name on Dot's, Bob's and Lou's bubbles.
 - Three robots rolled down the ramp one after another to spots left to right, so the second rolled through the first, already standing in its place. People sent to a row of spots go to the far one first; `tests/standing-spots.mjs` checks each walk against the people already standing.
+- The hallway's way into the bay was a trigger at x 916, but the hallway's walk bounds stop him at 900, so a player could never get through (the showing tool stopped at x 893; the test had placed him at 935 by hand). A place walked into must be inside the room's walk bounds, and a test checks the numbers; a test that puts him somewhere by hand cannot prove he can walk there.
+- The lockup card's words ("A robot", "in the hallway") were typed in the beat's code, and Isfred or a worker seeing him read "A tourist". Every word on the card comes from the lines file, and each watcher gets its own (pending) words.
 - A merge left `import { readFileSync }` twice in `tests/standing-spots.mjs`, so the whole suite stopped at load and its bay checks (written for the old walks) went unseen. After a merge, run every suite the merged files touch, not only your own.
