@@ -765,8 +765,9 @@ export function createLoadingBay(bridge) {
       bothWays([BAY.door, BAY.door.edge], [BAY.door, BAY.door.edge], P.walk),
       e.run(() => {
         e.enterRoom("passage", "QB");
-        e.place("sq", HALLWAY.right.x - 10, HALLWAY.right.y);
-        e.place("mops", HALLWAY.right.x - 40, HALLWAY.right.y + 34);
+        // (inside the hallway's walk bounds, x 60 to 900: the player steers from here)
+        e.place("sq", HALLWAY.exitRight, HALLWAY.right.y);
+        e.place("mops", HALLWAY.exitRight - 30, HALLWAY.right.y + 34);
         e.face("sq", -1);
         e.face("mops", -1);
         const b = B();

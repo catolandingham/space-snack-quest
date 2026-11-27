@@ -240,6 +240,19 @@ const later = await page.evaluate(({ HALLWAY }) => {
 }, { HALLWAY });
 g.check("29: walking up to the photo wall, Mops: \"Later. The ship!\" and Squatch is turned back", later.line === line("mops-later") && later.below && later.step === "hallway", later);
 
+// ---------- 36: in the hallway home he starts inside its walk bounds (the kid-play robot found him at x 936) ----------
+const homeIn = await page.evaluate(() => {
+  const ss = window.__ss,
+    n = ss.op,
+    beat = window.SSQ.beat("ch1-bay");
+  n.q = [];
+  n.cur = null;
+  beat.jump("walkby");
+  for (let i = 0; i < 400 && !(n.ctrl && n.room === "passage"); i++) ss.tick(0.05);
+  return { room: n.room, x: Math.round(n.sq.x), y: Math.round(n.sq.y), mo: Math.round(n.mo.x) };
+});
+g.check("36: on the walk home Squatch and Mops come into the hallway inside its walk bounds (x 60 to 900)", homeIn.room === "passage" && homeIn.x >= 60 && homeIn.x <= 900 && homeIn.mo <= 900, homeIn);
+
 // ---------- 36: too slow at the office door ----------
 const slow = await page.evaluate(() => {
   const ss = window.__ss,

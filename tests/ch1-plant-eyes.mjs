@@ -9,7 +9,8 @@ import { startGame } from "./game-page.mjs";
 
 // The leaves of each plant in the locked pictures (game positions), and where Squatch stands when hidden there.
 const CASES = [
-  { id: "loading bay plant (Day 2, hide and watch)", beat: 33, leaves: { x0: 82, x1: 168, y0: 256, y1: 336 } },
+  // (the bay plant moved along the wall in the delivery pictures v3, Brian's yes, question 75: loading-bay-place.js BAY.plant)
+  { id: "loading bay plant (Day 2, hide and watch)", beat: 33, leaves: { x0: 249, x1: 339, y0: 256, y1: 338 } },
   { id: "hall middle plant (Day 2, hide from the family)", beat: 38, set: { ch1Step: "family", room: "hall", scene: "Q3", x: 430, y: 530 }, leaves: { x0: 400, x1: 484, y0: 440, y1: 520 } },
 ];
 
