@@ -52,7 +52,7 @@ import { createHomeMorningSound, HOME_MORNING_SOUND } from "./home-morning-sound
 import { cutawaySteps, LUNCH_EAT } from "./cutaway.js";
 import { footfall } from "./footfalls.js";
 import { adultPxFor } from "./room-sizes.js";
-import { drawGanitorWall } from "./ganitor.js";
+import { drawGanitorWall, GANITOR_POSTER } from "./ganitor.js";
 
 export const LUNCH_ID = "ch1-lunch";
 // The eating cutaway (cutaway.js PANELS "lunch") and its sounds: [seconds into it, synth.js sound].
@@ -502,8 +502,9 @@ export function createLunchSneak(bridge) {
     psound.sting();
     l.seenBy = "";
     l.seenT = 0;
-    // behind the counter he is already hidden: no "hide" goal there
-    chip(l.counter ? "" : "chip-hide");
+    // behind the counter he is already hidden: no "hide" goal there (beat 28's walk out, round 7 r5 0:20: he is standing
+    // when seen, so "hide" it is; loading-bay.js counterTick)
+    chip(l.counter && l.step !== "handoff" ? "" : "chip-hide");
   }
   function alarmApi() {
     const e = E(),
@@ -543,6 +544,8 @@ export function createLunchSneak(bridge) {
       },
       calmDone() {
         const q = L();
+        // (beat 28's walk out behind the counter keeps its own goal: loading-bay.js counterTick)
+        if (q.step === "handoff") return;
         if (q.counter) return chip("chip-snack");
         // hidden through the search in a place further on than he had reached: the glow moves past it
         const k = q.hideAt === "crate" ? 2 : q.hideAt === "plant" ? 1 : 0;
@@ -898,7 +901,8 @@ export function createLunchSneak(bridge) {
      */
     drawWall(ctx) {
       const e = E();
-      wallDrew = e && e.room() === "passage" && !e.get("ch1Office") && (e.get("scene") || "")[0] === "Q" ? drawGanitorWall(ctx, e.drawMopsOn) : null;
+      // (round 7, q: 128: the photo is off the wall while GANITOR_POSTER is false)
+      wallDrew = GANITOR_POSTER && e && e.room() === "passage" && !e.get("ch1Office") && (e.get("scene") || "")[0] === "Q" ? drawGanitorWall(ctx, e.drawMopsOn) : null;
       return wallDrew;
     },
     /** Over the hallway (the older program draws the room, Squatch and Mops): the bag, the heart, Mops mopping, the goal line round Mops. */

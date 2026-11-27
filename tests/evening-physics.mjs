@@ -11,7 +11,7 @@
  *     from his bed to the door goes round Mops asleep on the floor;
  *   - Mops asleep: on his back, his head against his bucket, his feet in the air;
  *   - the vents: the bay's floor vent pulls his fur in (the party's vent rule) and the alarm follows ("by the vent");
- *     the big wall vent shows its swirl while it sucks.
+ *     the big wall vent has no swirl (round 7: the floor vent takes the pink sheet).
  *   node tests/evening-physics.mjs
  */
 import { join } from "node:path";
@@ -180,7 +180,9 @@ const door = PL.EV_HALLWAY.officeDoor,
   throughWall = robots.path.filter(([x, y]) => (x <= 48 || x >= 912) && (y < 266 || y > 354));
 g.check("the hallway robot rolls along the floor and out through a doorway: never over the office door, never through a wall", robots.path.length > 20 && !onDoor.length && !offFloor.length && !throughWall.length, { onDoor: onDoor.slice(0, 3), offFloor: offFloor.slice(0, 3), throughWall: throughWall.slice(0, 3), n: robots.path.length });
 g.check("the hallway robot shows its cone the whole time it is in the hallway", robots.cones.length > 20 && robots.cones.every(Boolean), { frames: robots.cones.length, without: robots.cones.filter((x) => !x).length });
-g.check("in the bay every robot shows its cone: the night robot and the two parked in the mail room", ["night-robot", "robot-2", "robot-3"].every((id) => robots.bayBefore.includes(id)), robots.bayBefore);
+// (round 7, r5 9:29, q: 125: the bay's robots sleep, zzz and no cones, until the loud post wakes them; awake, every one
+// shows its cone)
+g.check("in the bay the robots sleep with no cones before the post, and once awake every robot shows its cone (the night robot and the two in the mail room)", !["night-robot", "robot-2", "robot-3"].some((id) => robots.bayBefore.includes(id)) && ["night-robot", "robot-2", "robot-3"].every((id) => robots.bayAfter.includes(id)), { before: robots.bayBefore, after: robots.bayAfter });
 g.check("the way in to the mailbox is clear of the two parked robots' cones (they look along the mail room's bottom wall)", robots.wayIn.length === 0, robots.wayIn.slice(0, 5));
 g.check("after the post, the night robot and the two parked robots still show their cones", ["night-robot", "robot-2", "robot-3"].every((id) => robots.bayAfter.includes(id)), robots.bayAfter);
 
@@ -240,7 +242,7 @@ const hallBad = walks.hall.filter((p) => hallFurniture.some((b) => hit(feetOf(p,
 g.check("at the snack bar the two in line, the family and Mops never walk on the counter, the stools, the crates or a plant", walks.hall.length > 100 && hallBad.length === 0, hallBad.slice(0, 5));
 const bayFurniture = [...PL.BAY_FURNITURE, ...PL.BAY_EXTRA];
 g.check("the scripted walk at the snack bar got all the way to the brochure", walks.reached === "brochure", walks.reached);
-g.check("the crate under the big wall vent is reached on open floor (where he hides is clear of the mail room's fence and walls)", !bayFurniture.some((b) => hit(feetOf(PL.EV_BAY.underVent, 18), b)));
+g.check("the crate by the floor vent is reached on open floor (where he hides is clear of the furniture, the fence and walls)", !bayFurniture.some((b) => hit(feetOf(PL.EV_BAY.crate.stand, 18), b)));
 g.check("the mail room's fence is solid (nobody walks through it)", PL.BAY_EXTRA.every((f) => walks.baySolids.some((q) => q.x0 === f.x0 && q.y0 === f.y0)), walks.baySolids.length);
 const HOME_FURNITURE = [{ x0: 83, x1: 286, y0: 409, y1: 526 }, { x0: 536, x1: 596, y0: 500, y1: 571 }];
 const mopsBad = walks.homeMops.filter((p) => HOME_FURNITURE.some((b) => hit(feetOf(p), b)));
@@ -311,8 +313,9 @@ const vents = await ev(() => {
   out.hall = { tufts: hallTufts, alarm: n.ch1Evening.alarm && { by: n.ch1Evening.alarm.w.id, where: n.ch1Evening.alarm.where } };
   return out;
 });
-g.check("the bay's floor vent pulls his fur in (tufts drift in), and staying there sets off the alarm, \"by the vent\"", vents.tufts > 0 && vents.alarm && vents.where === "where-vent" && vents.by === "night-robot", vents);
-g.check("the big wall vent shows its swirl while it sucks the pink sheet in (hidden in the crate after the post), and not before", !vents.swirlBefore && vents.swirlSucking, vents);
+g.check("the bay's floor vent pulls his fur in (tufts drift in), and staying there sets off the alarm, \"by the vent\"", vents.tufts > 0 && vents.alarm && vents.where === "where-vent" && vents.by === "fur-alarm", vents); // (round 7, r5 9:57, q: 125: fur in a vent always rings the room's own FUR alarm)
+// (round 7, r5 13:18, q: 125: the floor vent takes the pink sheet; the big wall vent never gets a swirl)
+g.check("the big wall vent never shows a swirl (the floor vent takes the pink sheet)", !vents.swirlBefore && !vents.swirlSucking, vents);
 g.check("the party hall's floor vent is on at night: his fur drifts in, and staying sets off the hall's FUR alarm, \"by the vent\"", vents.hall.tufts > 0 && vents.hall.alarm && vents.hall.alarm.by === "fur-alarm" && vents.hall.alarm.where === "where-vent", vents.hall);
 
 g.check("no page errors", errors.length === 0, errors.slice(0, 5));

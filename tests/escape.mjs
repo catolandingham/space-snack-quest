@@ -31,6 +31,8 @@ const { ESCAPE_LINES } = await import(M("escape-lines.js"));
 const { SNACK } = await import(M("snack-name.js"));
 const P = await import(M("escape-place.js"));
 const W = Object.fromEntries(ESCAPE_LINES.map((l) => [l.id, l.text]));
+const { BAY_LINES } = await import(M("loading-bay-lines.js"));
+const BAY_W = Object.fromEntries(BAY_LINES.map((l) => [l.id, l.text]));
 const g = await startGame({ port: 9781, name: "escape" });
 
 // ---------- the words, without a browser ----------
@@ -113,6 +115,10 @@ const run = await page.evaluate(
     // 47 (the walk to the vent is tests/escape-vent.mjs)
     ss.drawFrame();
     out.ball = { room: n.room, night: !!n.ch1Night, chip: n.ch1Chip, robot: !!S().robot, cones: (d().drew.cones || []).length };
+    const before = window.SSQ.cameraLayerDrawn().handed;
+    ss.drawFrame();
+    // (this frame's own draw handed out a camera-layered bay picture, not an earlier frame's)
+    out.ball.camera = window.SSQ.cameraLayerDrawn().handed > before ? window.SSQ.cameraLayerDrawn().lastId : "";
     // the button comes up by the vent only (the goal), not out in the bay
     n.sq.x = 420;
     n.sq.y = 560;
@@ -214,7 +220,7 @@ const run = await page.evaluate(
       until(() => S().step === "computer" && n.ctrl, 5);
       return got;
     };
-    out.fun = { chair: fun("chair"), mug: fun("mug"), drawer: fun("drawer") };
+    out.fun = { screens: fun("screens"), poster: fun("poster"), chair: fun("chair"), mug: fun("mug"), drawer: fun("drawer") };
     const stars0 = n.stars;
     out.fun.frame = fun("frame");
     out.fun.secret = n.stars - stars0;
@@ -225,20 +231,40 @@ const run = await page.evaluate(
     Object.assign(out.duck, { said: said(), step: S().step, chip: n.ch1Chip });
     n.sq.x = P.OFFICE.hide.at.x;
     n.sq.y = P.OFFICE.hide.at.y;
+    ss.drawFrame();
+    out.duck.atDoor = d().drew.officeRobot || null;
     out.duck.press = press();
     out.duck.hidden = n.sqPose;
-    until(() => S().step === "computer" && n.ctrl, 6);
+    out.duck.inRoom = false;
+    for (let i = 0; i < 160 && !(S().step === "computer" && n.ctrl); i++) (tick(), ss.drawFrame(), d().drew.officeRobot && d().drew.officeRobot.cone && (out.duck.inRoom = true));
     out.duck.after = { step: S().step, pose: n.sqPose };
     n.sq.x = P.OFFICE.sq.x;
     n.sq.y = P.OFFICE.sq.y;
     out.office.press = press();
     ss.drawFrame();
-    out.site = { open: S().cu === "site", ghjk: !!(d().drew.site && d().drew.site.ghjk) };
-    out.site.hooves = said();
-    tap((P.SITE.order.x0 + P.SITE.order.x1) / 2, (P.SITE.order.y0 + P.SITE.order.y1) / 2);
+    // (round 7: Mops says it in the room, then the page opens: over the page his bubble hid its name)
+    out.site = { before: S().cu || "" };
+    out.site.door = said();
+    out.site.open = S().cu === "site";
+    const mid = (b) => tap((b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2);
+    ss.drawFrame();
+    out.site.pages = [d().drew.site && d().drew.site.page];
+    mid(P.SITE.schedule);
+    ss.drawFrame();
+    out.site.pages.push(d().drew.site && d().drew.site.page);
+    mid(P.SITE.sizes[2]);
+    ss.drawFrame();
+    out.site.pages.push(d().drew.site && d().drew.site.page);
+    out.site.size = S().siteSize;
+    mid(P.SITE.inside[2]);
     out.site.order = said();
     out.site.orderNothing = S().step === "site" && S().bookAt < 0;
-    tap((P.SITE.ret.x0 + P.SITE.ret.x1) / 2, (P.SITE.ret.y0 + P.SITE.ret.y1) / 2);
+    mid(P.SITE.inside[1]);
+    // (q: 135: Where to? MARS books it)
+    ss.drawFrame();
+    out.site.pages.push(d().drew.site && d().drew.site.page);
+    out.site.notYet = S().bookAt < 0;
+    mid(P.SITE.to[0]);
     out.site.booked = S().bookAt >= 0;
     until(() => S().step === "label" && n.ctrl, 8);
     ss.drawFrame();
@@ -256,12 +282,7 @@ const run = await page.evaluate(
       for (let i = 0; i < 4; i++) tick();
       out.bar.rooms.push(n.room);
     }
-    ss.drawFrame();
-    out.bar.mark = !!d().drew.mark;
-    n.sq.x = P.BAR.sq.x;
-    n.sq.y = P.BAR.sq.y;
-    tick();
-    out.bar.said = said(3);
+    out.bar.said = said(2);
     out.bar.room = n.room;
     until(() => S().step === "snacks" && n.ctrl, 5);
     out.bar.night = !!(d().drew && d().drew.night);
@@ -310,6 +331,7 @@ const run = await page.evaluate(
 );
 g.check("47: rolled up by the vent: on the floor in front of the wall, a shadow under him", run.ball.shadow && run.ball.at.y - 40 > 254 && run.ball.at.y + 8 < 359, run.ball);
 g.check("51, 52: night in the office and at the snack counter; the office's desk, chair and cabinet are solid", run.office.night && run.bar.night && ["desk", "chair", "cabinet"].every((k) => run.office.solids.includes(k)), { office: run.office, bar: run.bar });
+g.check("47 (round 7, q: 123): the bay at night has the security camera Isfred had put up on Day 2", /^delivery-/.test(run.ball.camera || ""), run.ball.camera);
 g.check("47: the bay at night, the goal, a patrolling robot with its cone", run.ball.room === "hangar" && run.ball.night && run.ball.chip === W["chip-ball"] && run.ball.robot && run.ball.cones === 1, run.ball);
 g.check("47: ROLL · ball comes up by the vent; he rolls into the L2 ball", run.ball.awayOffer === "" && run.ball.press === W["button-ball"] && run.ball.pose === "ball", run.ball);
 g.check("49: GRAB · pink slip, and the slip goes to his paw", run.grab.press === W["button-grab"] && run.grab.slip === "paw", run.grab);
@@ -317,21 +339,23 @@ g.check("50: he walks to the office door himself (the goal says so); a sign on t
 g.check("50: TYPE · code: the keypad, ten keys, the folded slip beside it (its pen corner); a tap makes the slip bigger", run.tohall.press === W["button-code"] && run.pad.chip === W["chip-code"] && run.pad.keys === 10 && !!run.pad.slip && run.pad.bigger, run.pad);
 g.check("50: a wrong key buzzes, Mops whispers \"Shh! Try again.\", the screen clears, no stars are lost", run.pad.buzz && run.pad.shh && run.pad.cleared && run.pad.stars, run.pad);
 g.check("50: the keyboard's digits work, and 169556 opens the door (OPEN on the keypad)", run.pad.keyboard && run.pad.typed === "169556" && run.pad.open === W["pad-open"], run.pad);
-g.check("51: the office, the goal; the fun things are there to find", run.office.room === "office" && run.office.chip === W["chip-computer"] && JSON.stringify(run.office.fun) === JSON.stringify(["es-chair", "es-mug", "es-drawer", "es-frame"]), run.office);
-g.check("51: SPIN · chair; LOOK · mug (GALAXY'S OKAYEST MANAGER); OPEN · drawer (\"No fizz.\", \"One snack. That's the rule.\"); LOOK · frame (NEXT MONTH: MOPS, a secret: +50)", JSON.stringify(run.fun.chair) === JSON.stringify([W["button-chair"]]) && JSON.stringify(run.fun.mug) === JSON.stringify([W["button-mug"], "[esmug]"]) && JSON.stringify(run.fun.drawer) === JSON.stringify([W["button-drawer"], "[esdrawer]", W["sq-no-fizz"], W["sq-one-snack"]]) && JSON.stringify(run.fun.frame) === JSON.stringify([W["button-frame"], "[esframe]"]) && run.fun.secret === 50, run.fun);
-g.check("51: the first time he goes to use the computer, \"Robot! Duck!\"; HIDE · desk; the light passes; he comes out", run.duck.first === W["button-computer"] && JSON.stringify(run.duck.said) === JSON.stringify([W["mops-duck"]]) && run.duck.chip === W["chip-hide-desk"] && run.duck.press === W["button-hide-desk"] && run.duck.hidden === "hidden" && run.duck.after.step === "computer" && run.duck.after.pose === "stand", run.duck);
-g.check("51: RETURN · empty crate: Mops tries first (ghjk), \"Hooves. You do it.\"", run.office.press === W["button-computer"] && run.site.open && run.site.ghjk && JSON.stringify(run.site.hooves) === JSON.stringify([W["mops-hooves"]]), run.site);
-g.check("51: \"Order new box\": Mops, \"Not that one!\", nothing booked; \"Return empty crate\" books it", JSON.stringify(run.site.order) === JSON.stringify([W["mops-not-that"]]) && run.site.orderNothing && run.site.booked, run.site);
-g.check("51: the label prints (EMPTY. FOR PICKUP.); TAKE · label; \"We're really going.\" twice", !!run.site.label && run.site.chip === W["chip-label"] && run.site.take === W["button-label"] && run.site.label2 && JSON.stringify(run.site.going) === JSON.stringify([W["sq-going"], W["mops-going"]]), run.site);
+g.check("51: the office, the goal; the fun things are there to find", run.office.room === "office" && run.office.chip === W["chip-computer"] && JSON.stringify(run.office.fun) === JSON.stringify(["es-screens", "es-poster", "es-chair", "es-mug", "es-drawer", "es-frame"]), run.office);
+g.check("51 (round 7, r5 15:01, q: 124): LOOK · screens (\"That's the loading bay. On TV!\" / \"Cameras. He never watches them.\"); LOOK · poster (a gulp, no words)", JSON.stringify(run.fun.screens) === JSON.stringify([W["button-screens"], W["sq-tv"], W["mops-cameras"]]) && JSON.stringify(run.fun.poster) === JSON.stringify([W["button-poster"]]), { screens: run.fun.screens, poster: run.fun.poster });
+g.check("51: SPIN · chair; LOOK · mug (GALAXY'S OKAYEST MANAGER); LOOK · cabinet (\"No fizz.\", \"One snack. That's the rule.\"); LOOK · frame (NEXT MONTH: MOPS, a secret: +50)", JSON.stringify(run.fun.chair) === JSON.stringify([W["button-chair"]]) && JSON.stringify(run.fun.mug) === JSON.stringify([W["button-mug"], "[esmug]"]) && JSON.stringify(run.fun.drawer) === JSON.stringify([W["button-drawer"], "[esdrawer]", W["sq-no-fizz"], W["sq-one-snack"]]) && JSON.stringify(run.fun.frame) === JSON.stringify([W["button-frame"], "[esframe]"]) && run.fun.secret === 50, run.fun);
+g.check("51 (round 7, r6 0:37, q: 133): the first time he goes to use the computer a robot comes to the door (no cone yet): \"Robot! Duck!\"; HIDE · desk; it comes in (its cone on), dusts and goes; he comes out", !!run.duck.atDoor && run.duck.atDoor.cone === false && run.duck.inRoom && run.duck.first === W["button-computer"] && JSON.stringify(run.duck.said) === JSON.stringify([W["mops-duck"]]) && run.duck.chip === W["chip-hide-desk"] && run.duck.press === W["button-hide-desk"] && run.duck.hidden === "hidden" && run.duck.after.step === "computer" && run.duck.after.pose === "stand", run.duck);
+g.check("51 (round 7, r5 15:23, r6 0:41, q: 124): USE · computer: \"You do it. I'll watch the door.\"; the Universal Postal Service page: SCHEDULE A PICKUP, then How big? (BIG), then What's inside?", run.office.press === W["button-computer"] && run.site.open && run.site.before !== "site" && JSON.stringify(run.site.door) === JSON.stringify([W["mops-door"]]) && JSON.stringify(run.site.pages) === "[0,1,2,3]" && run.site.notYet && run.site.size === "size-big", run.site);
+g.check("51 (q: 124): ONE SASQUATCH: Mops, \"Not that one!\", nothing booked; GOAT STUFF, then (q: 135) Where to? MARS books it", JSON.stringify(run.site.order) === JSON.stringify([W["mops-not-that"]]) && run.site.orderNothing && run.site.booked, run.site);
+g.check("51 (Chapter 2 q: 135): the label reads FOR PICKUP. TO: MARS. (booked through to Mars); Day 2's crate tag stays FOR PICKUP.", W["label"] === "FOR PICKUP. TO: MARS." && BAY_W["crate-empty"] === "FOR PICKUP.", { label: W["label"], day2: BAY_W["crate-empty"] });
+g.check("51: the label prints; TAKE · label; \"We're really going.\" twice", !!run.site.label && run.site.chip === W["chip-label"] && run.site.take === W["button-label"] && run.site.label2 && JSON.stringify(run.site.going) === JSON.stringify([W["sq-going"], W["mops-going"]]), run.site);
 g.check("51: Mops is drawn in the office with him", run.office.mopsPixels > 300, run.office);
-g.check("52: he walks to the snack bar himself (office, hallway, hall; the aisle outlined); Mops's lines, word for word", run.bar.chip === W["chip-bar"] && JSON.stringify(run.bar.rooms) === JSON.stringify(["passage", "hall"]) && run.bar.mark && JSON.stringify(run.bar.said) === JSON.stringify([W["mops-one"], W["mops-long"], W["mops-all"]]), run.bar);
+g.check("52 (round 7, r5 15:47, q: 133): \"Squatch: go home\"; office, hallway, hall; passing the snack bar Mops stops him: \"Wait. It's a long way to Mars.\" / \"This time, take all the snacks you want.\"", run.bar.chip === W["chip-bar"] && W["chip-bar"] === "Squatch: go home" && JSON.stringify(run.bar.rooms) === JSON.stringify(["passage", "hall"]) && JSON.stringify(run.bar.said) === JSON.stringify([W["mops-long"], W["mops-all"]]), run.bar);
 g.check("52: four into the bag; then \"What about the Guardians?\" / \"I'll leave them some food.\"; the plate", run.bar.bag === 4 && JSON.stringify(run.bar.guardians) === JSON.stringify([W["sq-what-guardians"], W["sq-leave-food"]]) && run.bar.plate, run.bar);
 g.check("52: his last snack cake on the plate, \"Their favorite. I think.\"; Mops says nothing, a heart; then he walks home", JSON.stringify(run.bar.onPlate) === JSON.stringify(["cake"]) && JSON.stringify(run.bar.favorite) === JSON.stringify([W["sq-favorite"]]) && run.bar.hearts && !run.bar.mopsSaid && run.bar.home.chip === W["chip-home-night"], run.bar);
 g.check("52: home, OPEN · closet, PUT IN · box", run.home2.room === "closet" && run.home2.chip === W["chip-slip"] && run.home2.open === W["button-closet"] && run.home2.wardrobe === "open" && run.home2.put === W["button-box"], run.home2);
 g.check("52: the box close-up (MY GARDIAN BOX, MY GUARDIANS): the slip goes under the notes", run.home2.box.id === "esbox" && run.home2.box.drew.tucked && run.home2.box.drew.label === "MY GARDIAN BOX" && run.home2.box.drew.title === "MY GUARDIANS", run.home2.box);
 g.check("52: the slip is in the box, the closet shut, Squatch asleep, then beat 53 (pickup day: read the note)", run.home2.slip === "box" && run.home2.shut && run.home2.sleep && run.end.step === "pk-note" && !run.end.active, { home: run.home2, end: run.end });
 g.check("52: \"Mops can never see this.\" (a thought), \"Big day tomorrow.\", and their song", JSON.stringify(run.home2.after) === JSON.stringify([W["sq-never"] + " (whisper)", W["mops-big-day"], W["sq-sing"], W["mops-sing"]]), run.home2.after);
-g.check("the drawings show the walkthrough's words", [SNACK.NAME, "Order new box", "Return empty crate", "OPEN", "CLOSED.", "EMPTY. FOR PICKUP.", "Pickup booked.", "ghjk"].every((w) => run.words.includes(w)), run.words);
+g.check("the drawings show the walkthrough's words", ["UNIVERSAL POSTAL SERVICE", "SCHEDULE A PICKUP", "How big?", "BIG", "What's inside?", "GOAT STUFF", "ONE SASQUATCH", "OPEN", "CLOSED.", "FOR PICKUP.", "Pickup booked."].every((w) => run.words.includes(w)), run.words);
 
 // ---------- the night robot and the one capture rule ----------
 const rule = await page.evaluate(() => {

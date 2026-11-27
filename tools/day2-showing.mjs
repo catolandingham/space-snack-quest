@@ -239,6 +239,13 @@ const who = () =>
     await press();
     await sleep(700);
   }
+  // (round 7, r5 0:20: after the talk he is ducked behind the counter; he stands up and walks out himself)
+  (await watch((s, b) => b.step === "counter" && s.ctrl && !s.cur, 60000)) || (await fail("the counter step did not come"));
+  await sleep(1400);
+  await still("29-ducked-behind-the-counter-the-doorway-outlined");
+  await walk(893, 380);
+  await sleep(500);
+  await walk(930, 318, (q) => q.step !== "counter");
   (await watch((s, b) => b.step === "hallway" && s.ctrl, 60000)) || (await fail("the hallway did not come"));
   await sleep(900);
   await walk(500, 270, (q) => q.cur === "bub");
@@ -264,7 +271,8 @@ const who = () =>
   (await watch((s, b) => b.step === "walkby" && s.ctrl, 20000)) || (await fail("the hallway walk home did not come"));
   await sleep(700);
   await walk(560, 360, (q) => q.rollBy > 0);
-  await sleep(500);
+  // (round 7, q: 133: the robot comes out looking away for 2 s: the moment to curl up)
+  await sleep(1300);
   await still("bay-the-office-door-opens-roll-ball");
   await press();
   // the hairball and the lines after it; beat 36 ends, the evening goes on from here (37)
@@ -312,7 +320,7 @@ async function readStills(stop, names = {}, ms = 60000) {
 }
 (await stepIs("wall", 15000)) || (await fail("the photo wall step did not come"));
 await sleep(1200);
-await still("37-the-hallway-the-doorway-outlined");
+await still("37-the-hallway-the-photos-outlined-the-goal");
 (await walkTo(480, 300, (s) => s.act === "LOOK · photos")) || (await fail("no LOOK · photos"));
 await press();
 for (let i = 0; i < 6; i++) {
@@ -505,23 +513,24 @@ await tap(w.view.box.x, w.view.box.y, 700);
 await sleep(300);
 await stepIs("post", 6000);
 await sleep(600);
-await crossBay([{ x: 300, y: 585 }]);
-await waitStart("up");
-await crossBay([{ x: 640, y: 585 }, { x: 690, y: 470 }]);
+// (round 7, q: 125: the robots sleep, z z z, no cones, until the loud post wakes them)
+await still("42b-the-robots-asleep");
+await crossBay([{ x: 300, y: 585 }, { x: 640, y: 585 }, { x: 690, y: 470 }]);
 (await walkTo(862, 500, (s) => s.act === "POST · mailbox", 8000)) || (await fail("no POST · mailbox"));
 await press();
-await readStills((s) => !!s.alarm && s.ctrl && !s.cur, { "Shhh!": "42c-shhh" }, 15000);
-await sleep(300);
-await crossBay([{ x: 700, y: 463 }, { x: 645, y: 400 }]);
-(await walkTo(850, 334, (s) => s.act === "HIDE · crate", 8000)) || (await fail("no HIDE · crate"));
+await readStills((s) => s.act === "HIDE · crate" || (s.ctrl && !s.cur), { "Shhh!": "42c-shhh", "NIGHT SHIFT.": "42c-night-shift-the-robots-wake" }, 15000);
+await sleep(600);
+await still("42c-awake-hide-the-crate-by-the-floor-vent");
+// out of the mail room, down, and along the bottom while the robot looks up, to the crate by the floor vent
+await crossBay([{ x: 700, y: 463 }, { x: 650, y: 585 }]);
+await waitStart("up");
+(await walkTo(300, 566, (s) => s.act === "HIDE · crate", 9000)) || (await fail("no HIDE · crate"));
 await press();
 await sleep(900);
-await still("42c-in-the-crate-the-vent-pulls-the-pink-sheet");
-await readStills((s) => s.step === "back" && s.ctrl && !s.cur, { "It's done.": "42c-its-done" }, 40000);
+await still("42c-in-the-crate-the-floor-vent-pulls-the-pink-sheet");
+await readStills((s) => s.step === "back" && s.ctrl && !s.cur, { "No! The pink one!": "42c-no-the-pink-one", "It's done.": "42c-its-done" }, 40000);
 await sleep(800);
-await crossBay([{ x: 645, y: 400 }, { x: 650, y: 585 }]);
 await waitStart("up");
-await crossBay([{ x: 300, y: 585 }]);
 (await walkTo(70, 330, (s) => s.room === "passage", 10000)) || (await fail("not out of the bay"));
 (await walkTo(40, 330, (s) => s.room === "hall", 10000)) || (await fail("not back in the hall"));
 (await walkTo(477, 600, (s) => s.room === "closet", 12000)) || (await fail("not home"));
@@ -542,7 +551,7 @@ await join_("42c-to-43-six-days-later");
     await press();
     await sleep(300);
   };
-  const done = { wrong: false, order: false, plaque: false, chair: false, frame: false };
+  const done = { wrong: false, plan: 0, sasquatch: false, plaque: false, chair: false, frame: false };
   let lastStep = "",
     tapAt = 0,
     lastLog = 0;
@@ -551,7 +560,8 @@ await join_("42c-to-43-six-days-later");
   for (;;) {
     if (Date.now() > end) await fail("ran out of time in the escape");
     const s = await st();
-    if (s.ch1Step === "pack1") break;
+    // (beat 53 is pickup day's module now: it is on as soon as the escape hands over)
+    if (s.ch1Step === "pack1" || (await page.evaluate(() => !!(window.SSQ.beat("ch1-pickup") && window.SSQ.beat("ch1-pickup").active())))) break;
     const step = s.es && s.es.step;
     if (step && step !== lastStep) ((lastStep = step), log(step), await sleep(300), await still("es-" + step));
     if (["bub", "card", "cutaway"].includes(s.cur)) {
@@ -582,12 +592,21 @@ await join_("42c-to-43-six-days-later");
         await sleep(400);
         await still("50-keypad-open");
       } else if (es.step === "site") {
+        // (round 7, q: 124: the Universal Postal Service page: SCHEDULE A PICKUP, then BIG, then ONE SASQUATCH once for
+        // "Not that one!", then GOAT STUFF)
         const R = await page.evaluate(() => window.SSQ.beat("ch1-escape").place.SITE);
-        const b = done.order ? R.ret : R.order;
-        done.order = true;
-        await sleep(900);
+        const pg = es.sitePage || 0;
+        const b = pg === 2 && !done.sasquatch ? ((done.sasquatch = true), R.inside[2]) : [R.schedule, R.sizes[2], R.inside[1], R.to[0]][pg];
+        await sleep(1200);
+        await still("51-site-page-" + (pg + 1));
         await at((b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2);
-        await sleep(600);
+        await sleep(700);
+      } else if (es.step === "drawplan") {
+        // (round 7, q: 132: the plan drawn at his desk, one picture a tap)
+        await sleep(1200);
+        await still("45-plan-picture-" + ++done.plan);
+        await press();
+        await sleep(700);
       } else if (es.step === "label") (await sleep(800), await at(480, 600), await sleep(600));
       else if (es.step === "note") (await sleep(900), await at(480, 320), await sleep(500));
       else if (es.step === "snacks" || es.step === "food") {
@@ -615,8 +634,10 @@ await join_("42c-to-43-six-days-later");
     const pick = (id) => list.find((q) => q.id === id);
     let sp = list[0];
     if (es.step === "walkhome" && s.room === "passage" && !done.plaque && pick("es-plaque")) ((sp = pick("es-plaque")), (done.plaque = true));
-    if (es.step === "computer" && !done.frame && pick("es-frame")) sp = pick("es-frame");
-    else if (es.step === "computer" && !done.chair && pick("es-chair")) sp = pick("es-chair");
+    // (round 7, q: 124: LOOK · screens, the bay on the security screen; LOOK · poster; LOOK · cabinet)
+    if (es.step === "computer" && !done.frame && pick("es-screens")) sp = pick("es-screens");
+    else if (es.step === "computer" && !done.chair && pick("es-poster")) sp = pick("es-poster");
+    else if (es.step === "computer" && !done.drawer && pick("es-drawer")) sp = pick("es-drawer");
     if (!sp) {
       await sleep(150);
       continue;
@@ -626,8 +647,9 @@ await join_("42c-to-43-six-days-later");
     const here = mops ? s.mo : { x: s.x, y: s.y };
     const close = Math.hypot(here.x - sp.x, here.y - sp.y) < 12;
     if (sp.verb && s.act === sp.verb + " · " + (await page.evaluate((id) => (window.__ss.spotsNow().find((q) => q.id === id) || {}).cap || "", sp.id))) {
-      sp.id === "es-frame" && (done.frame = true);
-      sp.id === "es-chair" && (done.chair = true);
+      sp.id === "es-screens" && (done.frame = true);
+      sp.id === "es-poster" && (done.chair = true);
+      sp.id === "es-drawer" && (done.drawer = true);
       await sleep(500);
       await press();
       await sleep(500);

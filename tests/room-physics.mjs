@@ -9,7 +9,8 @@
  *   2. the push (pickup:push): Mops pushes his crate home to the mail room, shoved first into the snack counter: the
  *      crate never touches a solid, the counter stops it, and it arrives;
  *   3. 36b (bay:hall): Squatch walks along the counter's front; Mops follows him and never stands in the counter;
- *   4. night one's alarm (evening:143, POST · mailbox): the night robot runs to the FUR alarm round the walkway, the
+ *   4. night one's alarm (evening:143, POST · mailbox wakes the robots, then he stands in the night robot's look): it
+ *      runs to the FUR alarm round the walkway, the
  *      plant and the bin, never through them;
  *   5. home (pickup:mop): Squatch behind the crate bed, Mops in front of it: Mops is drawn (his pixels over the bed),
  *      and the bed is painted over Squatch alone.
@@ -171,14 +172,21 @@ const now = (page) => page.evaluate(() => ({ v: window.SSQ.physicsNow(), log: wi
   await sleep(200);
   await press(page);
   const track = [];
-  const end = Date.now() + 12000;
+  const end = Date.now() + 16000;
+  let placed = false;
   while (Date.now() < end) {
     const s = await page.evaluate(() => {
       const n = window.__ss.op,
         a = n.ch1Evening && n.ch1Evening.alarm;
-      return { cur: n.cur ? n.cur.k : "", w: a ? { x: a.w.x, y: a.w.y, phase: a.phase } : null };
+      return { cur: n.cur ? n.cur.k : "", awake: !!(n.ch1Evening && n.ch1Evening.awake), ctrl: !!n.ctrl, w: a ? { x: a.w.x, y: a.w.y, phase: a.phase } : null };
     });
     if (s.cur === "bub") await press(page);
+    // (round 7, q: 125: the post only wakes the robots; once awake, he stands along the front in the night robot's
+    // look, as tools/evening-showing.mjs "seen" walks him, so the robot sees him and runs to the alarm)
+    if (!placed && s.awake && s.ctrl && !s.cur && !s.w) {
+      placed = true;
+      await page.evaluate(() => ((window.__ss.op.sq.x = 450), (window.__ss.op.sq.y = 585)));
+    }
     s.w && track.push(s.w);
     if (s.w && ["search", "home"].includes(s.w.phase)) break;
     await sleep(60);

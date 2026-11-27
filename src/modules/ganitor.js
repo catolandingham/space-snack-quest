@@ -14,6 +14,14 @@
  * Every drawing here is a PLACEHOLDER waiting for Brian's eye. Every word is in GANITOR_LINES.
  */
 
+/**
+ * Round 7 (Brian's video notes 2026-11-27, r5 4:24, 4:25 and 8:54; q: 128, option A, built before his answer): the big
+ * MOPS, GANITOR photo (C) is "overkill" and comes off the hallway wall, and his crayon drawing stays hidden behind the
+ * crooked photo (E is no longer drawn on the wall). Option B is true for each: one line here each.
+ */
+export const GANITOR_POSTER = false; // q: 128
+export const CRAYON_ON_WALL = false; // q: 128
+
 export const GANITOR_LINES = Object.freeze(
   [
     { id: "sign-tag", who: "sign", text: "GANITOR", status: "approved", source: "Brian, chat 2026-11-26 (A: a GANITOR name tag on Mops's shirt)" },

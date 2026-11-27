@@ -97,11 +97,21 @@ await page.evaluate(
         if (s.step === "robots" && d.shimmer) sample("shimmer", true);
         if (s.stopAt) sample("louStopped", { step: s.step, line: n.cur && n.cur.b ? n.cur.b.text : "", hat: s.workers.map((w) => w.hat) });
         if (s.hatOnFloor) sample("hatOnFloor", { step: s.step });
+        if (d.mail) sample("mailByBox", true);
+        // the bay camera's layer (round 7, q: 123): none on the bay's picture until the robot has put it up
+        const cam = window.SSQ.cameraLayerDrawn();
+        if (n.room === "hangar" && !s.camera) sample("noCameraYet", { handed: cam.handed });
+        if (n.room === "hangar" && !s.camera && out.samples.noCameraYet && cam.handed !== out.samples.noCameraYet.handed) sample("cameraTooSoon", s.step);
+        if (s.installAt >= 0) sample("installing", { robot: s.robots[2] && { x: s.robots[2].x, y: s.robots[2].y } });
+        if (n.room === "hangar" && s.camera && s.step === "peek") sample("cameraOnPicture", { id: cam.lastId });
+        if (d.passing && !s.workers[2].hat) sample("hairPass", true);
         if (s.robots && s.robots.some((r) => r.carry === "letter")) sample("letter", true);
         if (s.ship < 1 && s.ship > 0) sample("shipLeaving", { ramp: s.ramp });
         if (s.ramp > 0 && s.ship === 0) sample("rampWithoutShip", true);
         if (s.robots && s.robots.some((r) => r.carry && r.carry !== "letter")) sample("robotCarries", s.robots.map((r) => r.carry || ""));
         if (s.step === "walkby" && s.office >= 1) sample("officeOpen", { rollBy: s.rollBy });
+        if (s.step === "walkby" && s.office > 0 && s.rollBy > 0) sample("robotOut", { f: s.robots[0].f, rollAfterTurn: +(s.rollBy - s.turnAt).toFixed(2) });
+        if (s.step === "after" && n.room === "passage" && s.officeShut >= 1) sample("officeShutAfter", { drawn: window.SSQ.beat("ch1-bay").debug().drew.officeDrawn });
         if (s.hall && s.hall.shookAt) sample("mopsShook", true);
         if (n.cur && n.cur.k === "card") {
           const c = n.cur;
@@ -154,7 +164,11 @@ await page.evaluate(
             }
             return o;
           };
-          if (S === "hallway") ((n.sq.x = 935), (n.sq.y = 332));
+          if (S === "counter") {
+            const L0 = n.ch1Lunch || {};
+            sample("counter", { pose: L0.pose, lunchStep: L0.step, outline: (beat.debug().drew || {}).outline || null, mopsPose: n.moPose, room: n.room });
+            (n.sq.x = 930), (n.sq.y = 318);
+          } else if (S === "hallway") ((n.sq.x = 935), (n.sq.y = 332));
           else if (S === "cargo") press(() => ((n.sq.x = BAY.cargo.ball.x), (n.sq.y = BAY.cargo.ball.y)));
           else if (S === "sneak") press(() => ((n.sq.x = BAY.plant.stand.x), (n.sq.y = BAY.plant.stand.y)));
           else if (S === "peek") press(() => 0);
@@ -190,17 +204,22 @@ const pa = B("pa-ship");
 g.check("28: the station speaker's line sits beside the hall speaker, to its left and level with it, sound waves coming off it", !!pa && !!pa.box && pa.box.x + pa.box.w <= HALL_SPEAKER.x0 && pa.box.y < HALL_SPEAKER.y1 + 20 && pa.ring === "hall", pa);
 const order28 = ["pa-ship", "sq-stars-ship", "sq-new-kind", "sq-crate-kind", "mops-maybe", "mops-see", "sq-come", "mops-once", "mops-hide-when"].map(line);
 g.check("28: then the snack ship's lines, word for word and in order", run.lines.slice(0, order28.length).join(" / ") === order28.join(" / "), run.lines.slice(0, order28.length));
-// 29
+// 29 (round 7, r5 0:20: no scripted stand-up; he stands and walks out himself, under the lunch crowd's cones)
+g.check("29 (round 7, r5 0:20): after the talk Mops goes on ahead and the player has Squatch ducked behind the counter: \"Squatch: follow Mops to the ship\", the hallway doorway outlined, the lunch's sight still on", !!run.steps.counter && run.steps.counter.room === "hall" && run.steps.counter.chip === line("chip-follow") && run.steps.counter.ch1Step === "bay-counter" && !!run.samples.counter && run.samples.counter.pose === "ducked" && run.samples.counter.lunchStep === "handoff" && run.samples.counter.mopsPose === "hidden" && !!run.samples.counter.outline, { step: run.steps.counter, at: run.samples.counter });
 g.check("29: the hallway is the player's: control, \"Squatch: follow Mops to the ship\"", !!run.steps.hallway && run.steps.hallway.room === "passage" && run.steps.hallway.chip === line("chip-follow") && run.steps.hallway.ch1Step === "bay-hallway", run.steps.hallway);
 g.check("29: in the bay, \"Quick! The manager is coming!\" then \"Hide!\", and the goal is the cargo", run.lines.indexOf(line("mops-manager")) >= 0 && run.lines.indexOf(line("mops-hide")) === run.lines.indexOf(line("mops-manager")) + 1 && run.steps.cargo && run.steps.cargo.chip === line("chip-cargo"), run.steps.cargo);
 g.check("29: behind the cargo the button reads ROLL · ball and he is the ball", run.steps.cargo && run.steps.cargo.offers.includes(line("button-ball")) && run.samples["ball-cargo"] !== undefined, run.steps.cargo);
 // 30
 g.check("30: the robots roll under the scanner arch and its field shimmers; NO FUR. PROCEED. is overheard (ear)", !!run.samples.shimmer && B("scanner-proceed") && B("scanner-proceed").ear, { shimmer: run.samples.shimmer, b: B("scanner-proceed") });
-g.check("30: a robot posts a letter in the robot mailbox: \"Mail scanned.\"", !!run.samples.letter && !!B("ups-scanned"), run.samples.letter);
+g.check("30 (round 7, r5 3:21): no robot posts a letter at the mailbox; the little box came down the ramp with the mail, which lies beside it", !run.samples.letter && !!run.samples.mailByBox, { letter: run.samples.letter, mail: run.samples.mailByBox });
 g.check("30: the sneak to the plant: \"Squatch: sneak to the plant\", HIDE · plant there", run.steps.sneak && run.steps.sneak.chip === line("chip-plant") && run.steps.sneak.offers.includes(line("button-hide")), run.steps.sneak);
 g.check("30: Isfred's lines, then Squatch's whisper \"Fur in the vents... that was me.\"", ["isfred-not-sure", "isfred-fur", "isfred-convinced", "sq-was-me"].every((id) => !!B(id)) && B("sq-was-me").style === "whisper", B("sq-was-me"));
 g.check("30: the workers hand their tools to the robots", Array.isArray(run.samples.robotCarries) && run.samples.robotCarries.filter(Boolean).length >= 1, run.samples.robotCarries);
-g.check("30: Lou is stopped at the arch for his fuzzy hat (FUR. STOP. / It's a HAT.) and the hat stays on the floor", !!run.samples.louStopped && !!run.samples.hatOnFloor && !!B("lou-hat") && B("lou-hat").who === "lou", { stop: run.samples.louStopped, hat: run.samples.hatOnFloor });
+g.check("30: Lou walks in wearing the fuzzy hat, is stopped at the arch (FUR. STOP. / It's a HAT.) and the hat stays on the floor", !!run.samples.louStopped && run.samples.louStopped.hat[2] === true && !!run.samples.hatOnFloor && !!B("lou-hat") && B("lou-hat").who === "lou", { stop: run.samples.louStopped, hat: run.samples.hatOnFloor });
+const hatOrder = ["scanner-stop", "lou-hat", "scanner-hair", "lou-hair"].map(line);
+g.check("30 (round 7, r5 1:59, q: 116): fur stops, hair goes: FUR. STOP. / It's a HAT. / (hat off) HAIR. PROCEED. / It's just hair., the arch glowing green as it lets him through", run.lines.join("|").includes(hatOrder.join("|")) && !!run.samples.hairPass && B("lou-hair").name === "Lou", { lines: run.lines.filter((t) => hatOrder.includes(t)), pass: run.samples.hairPass });
+g.check("30 (round 7, r6 7:46, q: 123): \"And a camera. Just in case.\", a robot rolls under the wall vent and puts the camera up, then \"I never watch the tapes. Unless something goes wrong.\"", !!B("isfred-camera") && !!B("isfred-tapes") && run.lines.indexOf(line("isfred-tapes")) > run.lines.indexOf(line("isfred-camera")) && !!run.samples.installing && Math.abs(run.samples.installing.robot.x - BAY_SPOTS.cameraWay[1].x) < 2, run.samples.installing);
+g.check("30 (q: 123): the bay's picture has no camera before it is put up, and has it (the layer) after", !!run.samples.noCameraYet && !run.samples.cameraTooSoon && !!run.samples.cameraOnPicture && /^delivery-/.test(run.samples.cameraOnPicture.id), { too: run.samples.cameraTooSoon, on: run.samples.cameraOnPicture });
 // 31, 32
 g.check("31: the promise, then \"Weeee-eenn-nnttt!\"", ["isfred-dont-worry", "isfred-love", "isfred-visitors", "mops-bleat-happy"].every((id) => !!B(id)), run.lines.filter((t) => t.startsWith("Mops, don't") || t.startsWith("Weeee")));
 g.check("32: \"Squatch: peek at the form\" and PEEK · form", run.steps.peek && run.steps.peek.chip === line("chip-peek") && run.steps.peek.offers.includes(line("button-peek")), run.steps.peek);
@@ -221,6 +240,8 @@ g.check("35: PICK UP · box, GIVE · box: \"Mail for you.\", the tag close-up, \
 g.check("35: then the player is Squatch again (a second switch card), going home with Mops", run.cards.length >= 2 && run.steps.home && run.steps.home.chip === line("chip-home"), { cards: run.cards, home: run.steps.home });
 // 36
 g.check("36: the office door opens on the walk home (a robot inside), and ROLL · ball in time is the ball", !!run.samples.officeOpen && run.steps.walkby && run.steps.walkby.offers.includes(line("button-ball")), { open: run.samples.officeOpen, walkby: run.steps.walkby });
+g.check("36 (round 7, r5 3:45, q: 133): the robot comes out looking away (out of the picture) first, so he has a moment to curl up himself; it turns his way after 2 s and then he has 1.5 s more", !!run.samples.robotOut && run.samples.robotOut.f === 0 && run.samples.robotOut.rollAfterTurn === 1.5, run.samples.robotOut);
+g.check("36 (round 7, r5 3:58): once the robot has rolled off, the office door slides shut again, so the hallway's door looks as in every other scene", !!run.samples.officeShutAfter && run.samples.officeShutAfter.drawn === 0, run.samples.officeShutAfter);
 g.check("36: the hairball close-up and its lines, in order", B("robot-what") && B("robot-what").closeUp === "hairball" && run.lines.join("|").includes([line("robot-what"), line("mops-hairball"), line("robot-compute")].join("|")), B("robot-what"));
 g.check("36: then \"We have to watch out for these robots.\", the fur and hair question and \"Paperwork.\"", run.lines.join("|").includes([line("mops-robots"), line("sq-fur"), line("mops-paperwork")].join("|")), run.lines.slice(-6));
 g.check("hall, hallway, bay, hallway, party hall", run.rooms.join(",") === "hall,passage,hangar,passage,hall", run.rooms);
@@ -235,6 +256,7 @@ g.check("only the lines file's words were said", run.lines.every((t) => WORDS.ha
 g.check("the workers' bubbles are named Dot, Bob and Lou", [B("dot-toaster"), B("bob-way-up"), B("lou-hat")].map((b) => b && b.name).join(",") === "Dot,Bob,Lou", [B("dot-toaster"), B("bob-way-up"), B("lou-hat")].map((b) => b && b.name));
 
 // ---------- the photo wall in the hallway, on the way to the ship ----------
+// (round 7, r5 0:27, q: 133: "Later. The ship!" is cut, and nothing turns him back at the photo wall now)
 const later = await page.evaluate(({ HALLWAY }) => {
   const ss = window.__ss,
     n = ss.op,
@@ -247,9 +269,9 @@ const later = await page.evaluate(({ HALLWAY }) => {
   n.sq.x = (W.x0 + W.x1) / 2;
   n.sq.y = W.y1 - 4;
   for (let i = 0; i < 3; i++) ss.tick(0.05);
-  return { line: n.cur && n.cur.b ? n.cur.b.text : "", y: n.sq.y, below: n.sq.y >= W.y1, step: beat.debug().state.step };
+  return { line: n.cur && n.cur.b ? n.cur.b.text : "", y: n.sq.y, step: beat.debug().state.step };
 }, { HALLWAY });
-g.check("29: walking up to the photo wall, Mops: \"Later. The ship!\" and Squatch is turned back", later.line === line("mops-later") && later.below && later.step === "hallway", later);
+g.check("29: walking up to the photo wall, nobody speaks and he is not turned back (\"Later. The ship!\" is cut)", later.line === "" && later.y === HALLWAY.photoWall.y1 - 4 && later.step === "hallway", later);
 
 // ---------- 36: in the hallway home he starts inside its walk bounds (the kid-play robot found him at x 936) ----------
 const homeIn = await page.evaluate(() => {
@@ -288,6 +310,52 @@ const slow = await page.evaluate(() => {
   return { card, alarm };
 });
 g.check("36: too slow to roll, the robot sees fur: the alarm and the one capture rule (the lockup names a robot in the hallway)", slow.alarm && !!slow.card && /LOCKUP/.test(slow.card) && /A robot/.test(slow.card) && /hallway/.test(slow.card), slow);
+
+// ---------- 29 (round 7, r5 0:20): at the counter, standing up in someone's sight is the one capture rule ----------
+const counter = await page.evaluate(() => {
+  const ss = window.__ss,
+    n = ss.op,
+    beat = window.SSQ.beat("ch1-bay"),
+    lunch = window.SSQ.beat("ch1-lunch");
+  n.q = [];
+  n.cur = null;
+  beat.jump("counter");
+  const out = { step: beat.debug().state.step, pose: n.ch1Lunch.pose, ctrl: n.ctrl };
+  // ducked in the counter's aisle: hidden, whatever the crowd looks at, for 8 s
+  for (let i = 0; i < 160; i++) (ss.tick(0.05), ss.drawFrame());
+  out.ducked = { alarm: !!n.ch1Lunch.alarm, step: beat.debug().state.step };
+  // stood up out of the aisle inside a watcher's cone: "?", then the alarm
+  const c = lunch.debug().cones.find((q) => q.len > 60);
+  n.sq.x = c.ox + Math.cos(c.a) * c.len * 0.5;
+  n.sq.y = c.oy + Math.sin(c.a) * c.len * 0.5;
+  for (let i = 0; i < 40 && !n.ch1Lunch.alarm; i++) {
+    const cc = lunch.debug().cones.find((q) => q.id === c.id);
+    (n.sq.x = cc.ox + Math.cos(cc.a) * cc.len * 0.5), (n.sq.y = cc.oy + Math.sin(cc.a) * cc.len * 0.5);
+    ss.tick(0.05);
+    ss.drawFrame();
+  }
+  out.seen = { alarm: !!n.ch1Lunch.alarm, chip: ss.chipNow() };
+  // the place to hide is shown: back behind the counter (its aisle outlined, a place to walk to)
+  for (let i = 0; i < 30; i++) (ss.tick(0.05), ss.drawFrame());
+  out.hideShown = { outline: (beat.debug().drew || {}).outline || null, spots: ss.spotsNow().map((q) => q.id), phase: n.ch1Lunch.alarm && n.ch1Lunch.alarm.phase };
+  // he walks back into the aisle: ducked, hidden; the search ends with "They lost you" and the goal is the doorway again
+  (n.sq.x = 893), (n.sq.y = 420);
+  let jail = false;
+  for (let i = 0; i < 1600 && n.ch1Lunch.alarm; i++) {
+    if (n.cur && n.cur.k === "bub") ((n.bt = 1), ss.opTap());
+    jail = jail || (n.cur && n.cur.id === "jail") || n.q.some((q) => q.id === "jail");
+    ss.tick(0.05);
+    ss.drawFrame();
+  }
+  for (let i = 0; i < 10; i++) ss.tick(0.05);
+  out.hidden = { alarm: !!n.ch1Lunch.alarm, pose: n.ch1Lunch.pose, jail, chip: ss.chipNow(), step: beat.debug().state.step };
+  // ↺ there: the counter step again, ducked, no alarm
+  beat.restart();
+  out.again = { step: beat.debug().state.step, pose: n.ch1Lunch.pose, alarm: !!n.ch1Lunch.alarm, room: n.room };
+  return out;
+});
+g.check("29 (round 7, r5 0:20): seen at the counter, the aisle behind it is outlined as the place to hide; ducked there, the search loses him and the goal is the doorway again", !!counter.hideShown.outline && counter.hideShown.outline.y0 >= 340 && counter.hideShown.spots.includes("bay-counter-hide") && !counter.hidden.alarm && counter.hidden.pose === "ducked" && !counter.hidden.jail && counter.hidden.chip === line("chip-follow") && counter.hidden.step === "counter", { shown: counter.hideShown, hidden: counter.hidden });
+g.check("29 (round 7, r5 0:20): ducked in the counter's aisle no one sees him; stood up in a watcher's cone the lunch's alarm starts (\"Squatch: hide\"); ↺ puts him back behind the counter", counter.step === "counter" && counter.pose === "ducked" && !counter.ducked.alarm && counter.ducked.step === "counter" && counter.seen.alarm && /hide/.test(counter.seen.chip) && counter.again.step === "counter" && counter.again.pose === "ducked" && !counter.again.alarm && counter.again.room === "hall", counter);
 
 // ---------- robots always show their cones, however far he is ----------
 const robotCones = await page.evaluate(() => {

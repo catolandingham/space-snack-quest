@@ -14,10 +14,11 @@
  *     fight  beats 40 and 41: "That evening…", SHOW · brochure, the fight, STOMP · to bed, the turned back, lights out
  *            with no song, Mops's fainting-goat sleep, the idea in pictures, "The form!"
  *     night  beats 42a to 42c: out past Mops (a bump on his bucket), the night rooms, GRAB · copies, the choice (PUT
- *            BACK · bin first: the happily-ish ending and GO BACK), MARK · box, POST · mailbox (loud), the alarm, HIDE ·
- *            crate, the vent takes the pink sheet, "They lost you.", home, SLEEP · bed, "Six days later"
- *     seen   the capture rule in the bay: seen by the night robot, the alarm, guards, "They lost you."; seen again and
- *            standing still: the LOCKUP card and the restart
+ *            BACK · bin first: the happily-ish ending and GO BACK), MARK · box, the robots asleep, POST · mailbox (loud:
+ *            they wake, NIGHT SHIFT.), HIDE · crate by the floor vent, the floor vent takes the pink sheet, home, SLEEP ·
+ *            bed, "Six days later" (round 7, q: 125)
+ *     seen   the capture rule in the bay after the post: seen by the night robot, the alarm, guards, "They lost you.";
+ *            seen again and standing still: the LOCKUP card and the step again from the crate
  *   SHOWING_STILLS=<dir> writes a still of each step there too. SHOWING_SILENT=1 leaves the sound out.
  */
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
@@ -39,7 +40,7 @@ rmSync(WORK, { recursive: true, force: true });
 mkdirSync(join(WORK, "fr"), { recursive: true });
 mkdirSync(dirname(outFile), { recursive: true });
 const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 2 };
-const START = { wall: 37, bar: 37, alone: 139, fight: 141, night: 42, seen: 142 }[which];
+const START = { wall: 37, bar: 37, alone: 139, fight: 141, night: 42, seen: 143 }[which]; // (seen: 143, the post step; round 7, q: 125, the robots wake at the post)
 const g = await startGame({ port: 9790 + WHICH.indexOf(which), name: "evening-showing-" + which });
 const { page, errors } = await g.open("?beat=evening:" + START, PHONE);
 await sleep(900);
@@ -439,27 +440,25 @@ if (which === "night") {
   await stepIs("post", 6000);
   await sleep(600);
   await still("the-mailbox-outlined");
-  // across the robot's column: along the front while it looks at the back wall; past the big wall vent the pink flutters
-  await crossBay([{ x: 300, y: 585 }]);
-  await waitLook("up");
-  await crossBay([{ x: 640, y: 585 }, { x: 690, y: 470 }]);
+  // (round 7, q: 125: the robots sleep, z z z, no cones, until the loud post wakes them)
+  await still("the-robots-asleep");
+  await crossBay([{ x: 300, y: 585 }, { x: 640, y: 585 }, { x: 690, y: 470 }]);
   (await walkTo(862, 500, (s) => s.act === "POST · mailbox", 8000)) || (await fail("no POST · mailbox"));
   await press();
-  await readStills((s) => !!s.alarm && s.ctrl && !s.cur, { "MAIL SCANNED.": "mail-scanned", "PAWATURE ACCEPTED.": "pawature-accepted", "Shhh!": "shhh" }, 15000);
+  await readStills((s) => s.ctrl && !s.cur, { "MAIL SCANNED.": "mail-scanned", "PAWATURE ACCEPTED.": "pawature-accepted", "Shhh!": "shhh", "NIGHT SHIFT.": "night-shift-the-robots-wake" }, 15000);
   await sleep(300);
-  await still("the-robot-hears-the-alarm");
-  // out of the mail room and up to the crate under the big wall vent
-  await crossBay([{ x: 700, y: 463 }, { x: 645, y: 400 }]);
-  (await walkTo(850, 334, (s) => s.act === "HIDE · crate", 8000)) || (await fail("no HIDE · crate"));
+  await still("awake-hide-the-crate-by-the-floor-vent");
+  // out of the mail room, down, and along the front while the robot looks at the back wall, to the crate by the floor vent
+  await crossBay([{ x: 700, y: 463 }, { x: 650, y: 585 }]);
+  await waitLook("up");
+  (await walkTo(300, 566, (s) => s.act === "HIDE · crate", 9000)) || (await fail("no HIDE · crate"));
   await press();
   await sleep(900);
-  await still("in-the-crate-the-vent-pulls-the-pink-sheet");
+  await still("in-the-crate-the-floor-vent-pulls-the-pink-sheet");
   await readStills((s) => s.step === "back" && s.ctrl && !s.cur, { "No! The pink one!": "no-the-pink-one", "...The yellow one got mailed.": "the-yellow-one-got-mailed", "It's done.": "its-done" }, 40000);
   await sleep(800);
   await still("sneak-home");
-  await crossBay([{ x: 645, y: 400 }, { x: 650, y: 585 }]);
   await waitLook("up");
-  await crossBay([{ x: 300, y: 585 }]);
   (await walkTo(70, 330, (s) => s.room === "passage", 10000)) || (await fail("not out of the bay"));
   (await walkTo(40, 330, (s) => s.room === "hall", 10000)) || (await fail("not back in the hall"));
   (await walkTo(477, 600, (s) => s.room === "closet", 12000)) || (await fail("not home"));
@@ -476,15 +475,19 @@ if (which === "night") {
 }
 if (which === "seen") {
   await sleep(1200);
-  await still("the-bay-at-night");
-  // he waits along the back, right of the robot's column, until it has just turned to the back wall: seen
-  await walkTo(700, 345, null, 8000);
-  await waitStart("up");
-  await walkTo(560, 345, (s) => !!s.alarm, 4000);
+  await still("the-bay-at-night-the-robots-asleep");
+  // (round 7, q: 125: asleep until the loud post; awake after it, he walks into the robot's look along the front)
+  await crossBay([{ x: 300, y: 585 }, { x: 640, y: 585 }, { x: 690, y: 470 }]);
+  (await walkTo(862, 500, (s) => s.act === "POST · mailbox", 8000)) || (await fail("no POST · mailbox"));
+  await press();
+  await readStills((s) => s.ctrl && !s.cur, {}, 15000);
+  await crossBay([{ x: 700, y: 463 }, { x: 650, y: 585 }]);
+  await waitStart("down");
+  await walkTo(450, 585, (s) => !!s.alarm, 5000);
   await sleep(250);
   await still("seen-the-robot-shows-!");
-  // hiding: a ball never fools a search, so a real hiding place: the crate under the big wall vent (outlined)
-  (await walkTo(850, 334, (s) => s.act === "HIDE · crate", 6000)) || (await fail("no HIDE · crate"));
+  // hiding: a ball never fools a search, so a real hiding place: the crate by the floor vent (outlined)
+  (await walkTo(300, 566, (s) => s.act === "HIDE · crate", 6000)) || (await fail("no HIDE · crate"));
   await press();
   await sleep(1000);
   await still("hidden-in-the-crate");
@@ -501,6 +504,7 @@ if (which === "seen") {
   await walkTo(360, 585, null, 6000);
   await waitStart("down");
   await walkTo(450, 585, (s) => !!s.alarm, 4000);
+  // (caught on the way home: the step restarts where it began, in the crate by the floor vent)
   await sleep(300);
   await still("seen-again-and-standing-still");
   await until((s) => s.id === "jail", 25000);
@@ -508,9 +512,9 @@ if (which === "seen") {
   await still("caught-the-lockup-card");
   await sleep(2200);
   await press();
-  await stepIs("bin", 8000);
+  await until((s) => s.ctrl && !s.cur, 8000);
   await sleep(800);
-  await still("restarts-at-the-bin-step");
+  await still("restarts-the-step-in-the-crate");
 }
 await finishRecording();
 console.log("page errors", errors.slice(0, 5));

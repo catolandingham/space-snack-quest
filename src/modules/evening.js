@@ -41,8 +41,9 @@ import { drawJupiterStorm, drawStormGlow, drawCounterBin, drawCoffeeStain, BROCH
 import { placeThought } from "./thought-place.js";
 import { drawFamilyStampAt, drawFatLetters, familyStampOnRoom } from "./crate-stamp.js";
 import { FAMILY } from "./snack-name.js";
-import { HALLWAY_CRAYON } from "./ganitor.js";
+import { HALLWAY_CRAYON, CRAYON_ON_WALL } from "./ganitor.js";
 import { drawNightTint, noteNightPicture, nightDrawn, nightPictureFor } from "./night-look.js";
+import { withCameraLayer } from "./bay-camera.js";
 import { VENT } from "./party-vent.js";
 import { eveningWords } from "./evening-lines.js";
 import { drawPhoto, drawCrayonDrawing, drawBrochure, drawPapers, drawPawPrint, drawFurArm, drawSleepingMops, drawPlaque, drawCutInBack, drawCloseX, drawArrow, fitDesign, PAPERS, PHOTO_POOL, drawHeartShape } from "./evening-art.js";
@@ -193,6 +194,9 @@ export function createEvening(bridge) {
     pink: "",
     suck: -1,
     nightT: 0,
+    awake: false, // the bay's robots, asleep until the loud post (round 7, q: 125)
+    wakeAt: -1,
+    postHide: false,
     alarm: null,
     people: {},
     seenBy: "",
@@ -246,7 +250,7 @@ export function createEvening(bridge) {
         e.still("mops");
         e.face("mops", 1);
         go("wall");
-        control("chip-go-on");
+        control("chip-photos"); // (round 7, q: 128: the photos are the goal first)
       }),
     ]);
   }
@@ -1116,7 +1120,10 @@ export function createEvening(bridge) {
       control("chip-post");
     }
   }
-  /** POST · mailbox: it is loud. The night robot hears; the alarm (the one capture rule); the crate by the vent. */
+  /**
+   * POST · mailbox: it is loud. Round 7 (r5 9:29, q: 125): the sleeping robots wake ("NIGHT SHIFT." "CLEANING."), their
+   * cones come on, and he has to hide: the crate by the floor vent. No alarm unless a robot sees him.
+   */
   function postYellow() {
     const e = E(),
       s = S();
@@ -1132,28 +1139,36 @@ export function createEvening(bridge) {
       e.say("ups", eveningWords("ups-scanned")),
       e.say("ups", eveningWords("ups-accepted")),
       e.say("sq", eveningWords("sq-shhh"), "whisper"),
-      // the night robot turns: "!", it rolls to the FUR alarm; guards come. He has to hide, and the crate is the place
+      // the robots wake: their lights come on, then their words
+      e.run(() => ((S().wakeAt = e.time()), e.sfx("bleep"))),
+      timer(0.6),
+      e.say("robot", eveningWords("robots-night-shift")),
+      e.say("robot", eveningWords("robots-cleaning")),
       e.run(() => {
-        S().postAlarm = true;
+        const s = S();
+        s.awake = true;
+        s.nightT = 0; // (the night robot starts its rhythm looking down at the floor)
+        s.postHide = true;
         // (control without a new saved step: caught now, the step restarts at POST · mailbox)
         e.set("ctrl", true);
         chip("chip-hide");
-        raise(EV_BAY.robot.id, "where-bay");
       }),
     ]);
   }
-  /** HIDE · crate (by the big wall vent): crouched in it, the vent's swirls catch the pink sheet and take it. */
+  /** HIDE · crate (by the floor vent): crouched in it, the floor vent's swirls catch the pink sheet and take it. Paper is not fur: no alarm (round 7, q: 125). */
   function hideCrate() {
     const e = E(),
       s = S();
     s.alarm && (s.alarm.spotted = s.alarm.guards.some((g) => g.sees));
-    e.place("sq", EV_BAY.underVent.x, EV_BAY.underVent.y);
+    e.place("sq", EV_BAY.crate.stand.x, EV_BAY.crate.stand.y);
     e.still("sq");
     e.stopWalk && e.stopWalk();
     setPose("hidden");
     s.hideAt = "crate";
     sound.effect("hide");
     if (s.papers === "pink" && s.suck < 0) ((s.suck = 0), (s.pink = "flying"), e.sfx("slurp"));
+    // (unseen after the post: the floor vent takes the sheet and the way home follows by itself; round 7, q: 125)
+    s.postHide && !s.alarm && s.suck >= 0 && busy();
   }
   // Every frame: the vent pulling the pink sheet out of his paws (wordless, about 3 seconds), then his whisper.
   function suckTick(dt) {
@@ -1168,13 +1183,15 @@ export function createEvening(bridge) {
       e.set("ch1PinkSucked", 1);
       e.paper && e.paper("vent");
       e.queue([e.say("sq", eveningWords("sq-pink"), "whisper")]);
+      // nobody saw him: he waits in the crate a moment, then the way home (seen, the search's end does this)
+      s.postHide && !s.alarm && e.queue([timer(0.6), e.run(() => postAlarmDone())]);
     }
   }
-  // after "They lost you.": the yellow one got mailed. It's done. Then the way home.
+  // in the crate unseen (or after "They lost you."): the yellow one got mailed. It's done. Then the way home.
   function postAlarmDone() {
     const e = E(),
       s = S();
-    s.postAlarm = false;
+    s.postHide = false;
     busy();
     e.queue([
       e.say("sq", eveningWords("sq-mailed"), "whisper"),
@@ -1251,7 +1268,8 @@ export function createEvening(bridge) {
       const q = at({ id: "hallway-robot", x: s.robot.x, y: s.robot.y });
       out.push({ ...coneFrom("hallway-robot", q.x, q.y, look({ id: "hallway-robot", a: s.robot.a }, { x0: 60, x1: 100, y0: 280, y1: 320 }), size), always: true, bold: true, robot: true });
     }
-    if (room() === "hangar") {
+    // (round 7, r5 9:29, q: 125: asleep until the loud post wakes them: no cones)
+    if (room() === "hangar" && s.awake) {
       const n = nightLook(s.nightT),
         nr = at({ id: EV_BAY.robot.id, x: EV_BAY.robot.x, y: EV_BAY.robot.y, a: n.a });
       out.push({ ...coneFrom(EV_BAY.robot.id, nr.x, nr.y, look({ ...nr, id: EV_BAY.robot.id, a: n.a }, EV_BAY.alarm), size), always: true, bold: true, catch: n.catch || (a && a.w.id === EV_BAY.robot.id), robot: true });
@@ -1263,6 +1281,8 @@ export function createEvening(bridge) {
   }
   const witnessAt = (s, id) => {
     if (room() === "hangar") {
+      // (round 7, r5 9:57: fur in a vent always rings the alarm, robots awake or not: the bay's own FUR alarm)
+      if (id === "fur-alarm") return { id, x: 110, y: 340 };
       if (id === EV_BAY.robot.id) return { id, x: EV_BAY.robot.x, y: EV_BAY.robot.y };
       const i = +id.split("-")[1] - 2,
         r = EV_BAY.parked[i];
@@ -1280,7 +1300,7 @@ export function createEvening(bridge) {
     if (!w) return;
     const bay = room() === "hangar",
       hallway = room() === "passage";
-    startAlarm(s, w, whereId || (bay ? "where-bay" : hallway ? "where-hallway" : "where-bar"), bay || hallway ? "who-robot" : id === "fur-alarm" ? "who-guard" : "who-tourist", bay ? "bay" : hallway ? "hallway" : "");
+    startAlarm(s, w, whereId || (bay ? "where-bay" : hallway ? "where-hallway" : "where-bar"), id === "fur-alarm" ? "who-guard" : bay || hallway ? "who-robot" : "who-tourist", bay ? "bay" : hallway ? "hallway" : "");
     s.peek = false;
     e.sfx("bleep");
     psound.sting();
@@ -1325,7 +1345,8 @@ export function createEvening(bridge) {
         // the guests' moving cones follow the people who backed away and came back
         for (const f of s.guests || []) s.people[f.id] && ((f.x = s.people[f.id].x), (f.y = s.people[f.id].y));
         s.people = {};
-        if (s.postAlarm) return postAlarmDone();
+        if (s.postHide && s.pink === "vent") return postAlarmDone();
+        if (s.postHide) return (e.set("ctrl", true), chip("chip-hide"));
         // the hallway: the robot rolls on out (it has done its job), and the hallway is his again
         if (room() === "passage") return ((s.robot = null), go("past"), control("chip-to-hall"));
         if (s.step === "hide") return s.pose === "hidden" && s.hideAt === "counter" ? (go("peek"), control("chip-peek")) : control("chip-hide");
@@ -1407,8 +1428,8 @@ export function createEvening(bridge) {
       if (v.t >= VENT.stay) {
         v.t = 0;
         for (let i = 0; i < 6; i++) v.tufts.push({ k: -i * 0.08, x0: sqAt.x + (i % 3) * 6 - 6, y0: sqAt.y - 20 - i * 4 });
-        // in the bay the night robot sees the fur go in; in the empty hall the vent's own FUR alarm goes off
-        raise(r === "hangar" ? EV_BAY.robot.id : "fur-alarm", "where-vent");
+        // fur in a vent always rings the alarm (round 7, r5 9:57, q: 125): the room's own FUR alarm, robots awake or not
+        raise("fur-alarm", "where-vent");
       }
     } else v.t = 0;
     // Rolled up: the ball rule (R43, the lunch's own reading of it): someone looking his way within reach for 2 s
@@ -1484,6 +1505,8 @@ export function createEvening(bridge) {
     sound.effect("hide");
   }
   const doorSpot = (id, p) => spot(id, "", { x: p.x, y: p.y, r: p.r }, null, null);
+  // the crate by the floor vent (round 7, q: 125)
+  const crateSpot = () => spot("ev-bay-crate", "button-crate", { x: EV_BAY.crate.stand.x, y: EV_BAY.crate.stand.y, r: 56 }, BAY_CRATE, hideCrate);
   function spots() {
     const s = live(),
       e = E();
@@ -1495,20 +1518,22 @@ export function createEvening(bridge) {
       if (!standing) return [];
       const out = [];
       r === "hall" && out.push(spot("ev-counter", "button-counter", EV_BAR.hide, EV_BAR.aisle, hideCounter));
-      // after the loud post the crate by the big wall vent is the one hiding place (story pass 42c)
-      if (r === "hangar" && s.postAlarm) return [spot("ev-bay-crate", "button-crate", { x: EV_BAY.underVent.x, y: EV_BAY.underVent.y, r: 56 }, BAY_CRATE, hideCrate)];
-      r === "hangar" && out.push(spot("ev-plant", "button-plant", EV_BAY.plant, EV_BAY.plant.box, hidePlant), spot("ev-bay-crate", "button-crate", { x: EV_BAY.underVent.x, y: EV_BAY.underVent.y, r: 56 }, BAY_CRATE, hideCrate));
+      r === "hangar" && out.push(spot("ev-plant", "button-plant", EV_BAY.plant, EV_BAY.plant.box, hidePlant), crateSpot());
       // (no ball once the alarm has rung: a ball never fools a search)
       return out;
     }
+    // after the loud post the robots are awake: the crate by the floor vent is the one place to go (round 7, q: 125)
+    if (s.postHide && r === "hangar") return standing ? [crateSpot()] : [];
     switch (s.step) {
       // the robot has gone: the hall's doorway (the gallery is not offered again this visit)
       case "past":
         return [doorSpot("ev-hall", EV_HALLWAY.left)];
       case "wall": {
         const out = [doorSpot("ev-hall", EV_HALLWAY.left)];
-        // the gallery is optional: no outline (it is not the goal), offered under the wall until the robot came
-        standing && !s.galleryDone && out.push({ ...spot("ev-photos", "button-photos", EV_HALLWAY.look, EV_HALLWAY.wall, lookPhotos), optional: true });
+        // offered under the wall until the robot came. Round 7 (r5 4:05, q: 128): until he has looked, the photos are
+        // the goal and get the one highlight ("The picture should light up this time"); after, the hall's doorway.
+        const photos = { ...spot("ev-photos", "button-photos", EV_HALLWAY.look, EV_HALLWAY.wall, lookPhotos), optional: true };
+        standing && !s.galleryDone && (s.looked ? out.push(photos) : out.unshift(photos));
         return out;
       }
       // the robot rolls through: ROLL · ball wherever he is (a ball fools a quick look)
@@ -2203,13 +2228,11 @@ export function createEvening(bridge) {
       k = sqScale("hangar"),
       hidden = hiddenNow(s);
     // (the bay is only ever shown at night here: its own locked night picture is its night look, night-look.js)
-    if (bayPic && bayPic.complete && bayPic.naturalWidth) ctx.drawImage(bayPic, 0, 0, 960, 640);
+    if (bayPic && bayPic.complete && bayPic.naturalWidth) ctx.drawImage(withCameraLayer("delivery-night", bayPic), 0, 0, 960, 640); // (with the security camera, round 7, q: 123)
     else ((ctx.fillStyle = "#7f8597"), ctx.fillRect(0, 0, 960, 640));
     noteNightPicture("hangar");
-    // the big wall vent shows the same swirl as every vent while it sucks
-    const sucking = s.suck >= 0 || !!s.postAlarm;
-    sucking && drawVentSwirl(ctx, BAY_VENT.wall, t);
-    bayDrew = { swirl: sucking };
+    // (round 7, r5 13:18, q: 125: no swirl on the big wall vent; the floor vent's swirl is in the locked picture)
+    bayDrew = { swirl: false, awake: !!s.awake };
     const a = s.alarm;
     a && a.phase !== "shout" && a.phase !== "run" && a.phase !== "calm" && drawAlarmFlash(ctx, EV_BAY.alarm, t);
     const cones = drawCones(ctx, coneList(s).map((c) => (c.catch === false ? { ...c, bold: false, always: true } : c)), sq, hidden || !free(), true, (c) => e.noteCone(c));
@@ -2232,8 +2255,10 @@ export function createEvening(bridge) {
     const people = [];
     const robotAt = (id, x, y) => (a && a.w.id === id ? { x: a.w.x, y: a.w.y } : { x, y });
     const nr = robotAt(EV_BAY.robot.id, EV_BAY.robot.x, EV_BAY.robot.y);
-    people.push({ y: nr.y, f: () => robot(ctx, nr.x, nr.y, 1) });
-    EV_BAY.parked.forEach((r) => people.push({ y: r.y, f: () => robot(ctx, r.x, r.y, 0) }));
+    // asleep (dim, light off, zzz) until the loud post; their lights come on as they wake (round 7, q: 125)
+    const lit = s.awake ? 1 : s.wakeAt >= 0 ? Math.min(1, (t - s.wakeAt) / 0.6) : 0;
+    people.push({ y: nr.y, f: () => robot(ctx, nr.x, nr.y, lit, t) });
+    EV_BAY.parked.forEach((r) => people.push({ y: r.y, f: () => robot(ctx, r.x, r.y, lit, t) }));
     for (const g of a ? a.guards.filter((q) => q.room === "hangar") : []) people.push({ y: g.y, f: () => drawPerson(ctx, g.x, g.y, adultPxFor("hangar") * 1.02, LOOKS.guard, Math.cos(g.a) < 0 ? -1 : 1, t) });
     // him: standing (the room's Squatch, wide-eyed under the vent), rolled up, or his eyes in the plant
     if (s.pose === "stand") people.push({ y: sq.y, f: () => (e.drawSquatch(ctx, sq.x, sq.y, k, { f: sq.f || 1, walk: e.walkPhase(), eyes: s.pink === "flying" ? "wide" : undefined }), papersInPaw(ctx, s, sq, k, t)) });
@@ -2251,7 +2276,7 @@ export function createEvening(bridge) {
       const u = s.suck,
         x0 = s.hideAt === "crate" ? (BAY_CRATE.x0 + BAY_CRATE.x1) / 2 : sq.x + 14,
         y0 = s.hideAt === "crate" ? BAY_CRATE.y0 : sq.y - 46 * k,
-        V = EV_BAY.vent.mouth,
+        V = BAY_VENT.floor, // (round 7, r5 13:18, q: 125: the floor vent takes it)
         x = x0 + (V.x - x0) * u + Math.sin(u * 18) * 10 * (1 - u),
         y = y0 + (V.y - y0) * u;
       for (let i = 1; i <= 4; i++) {
@@ -2290,8 +2315,16 @@ export function createEvening(bridge) {
     return cones;
   }
   // A station robot: the older program's drawing (handed over), dimmed and with its light off while it sleeps.
-  function robot(ctx, x, y, lit) {
+  function robot(ctx, x, y, lit, t = 0) {
     const e = E();
+    // asleep: "z z z" rising off it (round 7, r5 9:29, q: 125), gone as it wakes
+    if (lit < 1 && e.text) {
+      const u = (t * 0.5 + x * 0.003) % 1;
+      ctx.save();
+      ctx.globalAlpha = (1 - lit) * Math.min(1, u * 4) * (1 - u);
+      e.text(eveningWords("mark-sleep"), x + 14 + 10 * u, y - 70 - 22 * u, 16, "#dfe6ff", "center", 900);
+      ctx.restore();
+    }
     ctx.save();
     ctx.globalAlpha = 0.55 + 0.45 * lit;
     e.drawRobot && e.drawRobot(ctx, x, y);
@@ -2540,7 +2573,8 @@ export function createEvening(bridge) {
         s.pose === "stand" && e.drawSquatch(ctx, sq.x, sq.y, sqScale("passage"), { f: sq.f || 1, walk: e.walkPhase() });
       }
       // the crayon drawing on the hallway's wall, once lifted: its tags as decided (ME and MOPS, each with an arrow)
-      if (room() === "passage" && e.get("ch1Crayon")) (drew = drew || { step: s.step }).crayon = drawCrayonCard(ctx);
+      // (round 7, r5 4:24 and 8:54, q: 128: it stays hidden behind the crooked photo while CRAYON_ON_WALL is false)
+      if (CRAYON_ON_WALL && room() === "passage" && e.get("ch1Crayon")) (drew = drew || { step: s.step }).crayon = drawCrayonCard(ctx);
       if (room() === "closet" && STEP_ROOM[s.step] === "closet") drew = { step: s.step, ...drawHome(ctx, s) };
     },
     /** Where a speaker's bubble points: the robot in the hallway, the one in line, Squatch rolled up, the mailbox. */
@@ -2671,6 +2705,7 @@ export function createEvening(bridge) {
         papers: step === "post" ? "both" : after("post") ? "" : "",
         pink: after("post") ? "vent" : "",
         yellow: after("post") ? "mail" : "",
+        awake: after("post"), // (round 7, q: 125: the robots woke at the post)
       }),
     );
     // (the record of what he has done is only what comes before this step: a jump back forgets what came after)
@@ -2706,7 +2741,7 @@ export function createEvening(bridge) {
       nightway: { x: 110, y: EV_HALLWAY.left.y + 20 },
       bin: EV_BAY.stop,
       post: EV_BAY.bin,
-      back: EV_BAY.underVent,
+      back: EV_BAY.crate.stand,
       backway: { x: 850, y: EV_HALLWAY.right.y + 20 },
       backhall: LUNCH_PLACES.door.stand,
       tobed: { x: 800, y: 470 },
@@ -2734,6 +2769,6 @@ export function createEvening(bridge) {
     s.step = step;
     record.steps.push(step);
     setPose(s.pose);
-    control({ wall: "chip-go-on", dodge: "chip-roll", past: "chip-to-hall", hide: "chip-hide", peek: "chip-peek", duck: "chip-duck", brochure: "chip-brochure", gohome: "chip-home", box: "chip-box", bite: "chip-bite", chart: "chip-chart", crate: "chip-crate", choose: "", show: "chip-show", bed: "chip-bed", out: "chip-out", nighthall: "chip-bin", nightway: "chip-bin", bin: "chip-bin", post: "chip-post", back: "chip-sneak-home", backway: "chip-sneak-home", backhall: "chip-sneak-home", tobed: "chip-bed" }[step]);
+    control({ wall: s.looked ? "chip-go-on" : "chip-photos", dodge: "chip-roll", past: "chip-to-hall", hide: "chip-hide", peek: "chip-peek", duck: "chip-duck", brochure: "chip-brochure", gohome: "chip-home", box: "chip-box", bite: "chip-bite", chart: "chip-chart", crate: "chip-crate", choose: "", show: "chip-show", bed: "chip-bed", out: "chip-out", nighthall: "chip-bin", nightway: "chip-bin", bin: "chip-bin", post: "chip-post", back: "chip-sneak-home", backway: "chip-sneak-home", backhall: "chip-sneak-home", tobed: "chip-bed" }[step]);
   }
 }
