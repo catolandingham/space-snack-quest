@@ -2139,7 +2139,7 @@
       (Ka > 0 && ((e.fillStyle = "rgba(20,24,32," + Math.min(1, Ka).toFixed(3) + ")"), e.fillRect(0, 0, c, b)), drawRoomLine(), t5());
       let o = Bs();
       // The green VERB pill for actions with no caption (none in Chapter 1, #110: the dashed gold line alone shows the thing).
-      if (o && !o.cap && !n.ch1Zoom && !(/^[SOQ]/.test(n.scene || "") && window.SSQ && window.SSQ.thingWords === false) && (o.x || o.r > 0 || n.room === "deck" || n.room === "hall") && !de() && n.live.length === 0) {
+      if (o && !o.cap && !n.ch1Zoom && !(window.SSQ && window.SSQ.noThingWords && window.SSQ.noThingWords(n.scene)) && (o.x || o.r > 0 || n.room === "deck" || n.room === "hall") && !de() && n.live.length === 0) {
         let i = o.x === 790 || o.x === 845,
           s = i ? 845 : o.r > 0 || o.x ? o.x : n.sq.x,
           q = i ? 250 : o.r > 0 || o.x ? o.y - 60 : 330;
@@ -2162,7 +2162,7 @@
       // No caption over the crate's own LEAVE SOUP label, or over the dish while it is being scrubbed.
       if (!a || !a.cap || !n.ctrl || n.ch1Zoom || a.verb === "LEAVE SOUP" || (n.room === "kitchen" && ch2.dishT > 0)) return;
       // Chapter 1: no tag at all (Brian #110, 2026-11-27: the dashed gold line alone; cap-place.js THING_WORDS), else none where Squatch stands.
-      if (/^[SOQ]/.test(n.scene || "") && ((window.SSQ && window.SSQ.thingWords === false) || (/^(Q|O1$)/.test(n.scene) && actsWhereSquatchStands(a)))) return;
+      if ((window.SSQ && window.SSQ.noThingWords && window.SSQ.noThingWords(n.scene)) || (/^(Q|O1$)/.test(n.scene || "") && actsWhereSquatchStands(a))) return;
       // The label is at least 156 wide, wider for long words, and always fully on the picture.
       let t = a.verb + " \u00b7 " + a.cap;
       ge(14);

@@ -417,6 +417,15 @@ export function createBridge() {
     placeLabel,
     /** Whether Chapter 1 shows "VERB · thing" words beside the things (false: the gold line alone, #110). See cap-place.js. */
     thingWords: THING_WORDS,
+    /**
+     * True where no "VERB · thing" words are drawn beside things: Chapter 1 (its scenes S, O and Q, and the party night,
+     * whose scenes are P like Chapter 3's, so it asks the party beat) while THING_WORDS is false.
+     */
+    noThingWords(scene) {
+      if (THING_WORDS) return false;
+      const party = beats.get("ch1-party");
+      return /^[SOQ]/.test(scene || "") || !!(party && party.active && party.active());
+    },
     /** Tap to walk around furniture: the corners to walk through. See tap-path.js. */
     findPath,
     /** How tall a grown-up is drawn in a room (85% of its door; the party hall 40% bigger). See room-sizes.js. */

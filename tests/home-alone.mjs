@@ -209,6 +209,11 @@ for (const [id, thing] of [
   // (Brian #110, 2026-11-27: no "VERB · thing" words beside things in Chapter 1; the dashed gold line alone, cap-place.js THING_WORDS)
   g.check(`${l && l.act}: no words are drawn beside the ${thing} (the gold line alone, #110)`, !!l && !!l.act && !box, { act: l && l.act, box });
 }
+{
+  // (the control: the rule is Chapter 1's alone; Chapter 2's scenes still get words beside things)
+  const rule = await page.evaluate(() => ({ home: window.SSQ.noThingWords(window.__ss.op.scene), ch2: window.SSQ.noThingWords("G1"), ch3: window.SSQ.noThingWords("P1") }));
+  g.check("#110 applies in Chapter 1 and not in Chapters 2 and 3 (outside the party)", rule.home === true && rule.ch2 === false && rule.ch3 === false, rule);
+}
 // Brian: "The dash outline drawing over him doesn't work." Squatch at the desk: no outline yellow on him.
 const overHim = await page.evaluate(() => {
   const ss = window.__ss,

@@ -680,7 +680,8 @@ const liveLines = (page) => page.evaluate(() => (window.__ss.op.log || []).filte
   await sleep(300);
   const label = await page.evaluate(() => { const n = window.__ss.op; return n.lastCap ? { text: n.lastCap.text, box: n.lastCap.box } : null; });
   // (Brian #110, 2026-11-27: no "VERB · thing" words beside the thing in Chapter 1; the big button says JOIN · photo)
-  g.check("JOIN · photo is offered from across the hall, with no words drawn at the gap in the row (#110)", !!s && !label, label);
+  const off = await page.evaluate(() => window.SSQ.noThingWords(window.__ss.op.scene));
+  g.check("JOIN · photo is offered from across the hall, with no words drawn at the gap in the row (#110: the party counts as Chapter 1)", !!s && !label && off === true, { label, off });
   await still(page, "r4-photo-row-and-label");
   const sqScale = await page.evaluate(() => window.SSQ.engine().hallSizes().squatch),
     hallCover = covered(rowBoxes(adult, sqScale));
