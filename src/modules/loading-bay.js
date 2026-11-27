@@ -63,7 +63,7 @@ import { coneFrom, drawCones, distToCone, SQUATCH_OUTLINE, SEEN_TOO_LONG_SECONDS
 import { startAlarm, tickAlarm, guardCones, addAlarmPlace, ALARM, GUARD_FEET } from "./party-alarm.js";
 import { drawHall } from "./party-draw.js";
 import { drawMark, drawPerson, LOOKS } from "./party-art.js";
-import { drawHeart } from "./lunch-sneak-art.js";
+import { drawHeart, drawCrates } from "./lunch-sneak-art.js";
 import { partyLine } from "./party-lines.js";
 import { tickQuestions, questions } from "./party-question.js";
 import { createHomeMorningSound, HOME_MORNING_SOUND } from "./home-morning-sound.js";
@@ -1517,7 +1517,8 @@ export function createLoadingBay(bridge) {
       k = e.hallSizes().squatch,
       h = b.hall,
       rk = ROBOT_K("hall");
-    const extra = [];
+    // (the lunch's stack of crates stays in the hall through the afternoon: the storm's hall has it too, evening.js)
+    const extra = [{ y: LUNCH_PLACES.crate.box.y1, f: () => drawCrates(ctx) }];
     for (const r of h.robots) extra.push({ y: r.y, f: () => drawRobot(ctx, r.x, r.y, r.f, rk, r.stop > 0 ? 0 : Math.abs(Math.sin(t * 14)) * 2 * rk, 0) });
     b.ball && e.ball && extra.push({ y: s.y, f: () => e.ball.drawOn(ctx, s.x, s.y - 16 * (k / 1.65), k / 1.65) });
     const mo = e.pos("mops");

@@ -46,6 +46,17 @@ g.check("the escape's bay plant is the locked v3 picture's (the older program's 
 const evPlant = EV.BAY_FURNITURE[0];
 g.check("the evening's bay plant at night is the same plant", evPlant.x0 === plant[0] && evPlant.x1 === plant[1] && EV.EV_BAY.plant.x > evPlant.x0 && EV.EV_BAY.plant.x < evPlant.x1, { evPlant, plant: EV.EV_BAY.plant });
 
+// 36b's robots mop lanes in the hall that keeps the lunch's crates and the plants: no lane runs through one
+const { HALL_SNEAK } = await import(M("loading-bay-place.js"));
+const { LUNCH_SOLIDS } = await import(M("lunch-sneak-place.js"));
+const laneHits = [];
+for (const [i, L] of HALL_SNEAK.lanes.entries())
+  for (let x = L.x0; x <= L.x1; x += 4) {
+    const feet = { x0: x - 22, x1: x + 22, y0: L.y - 12, y1: L.y + 8 };
+    LUNCH_SOLIDS.forEach((b, j) => feet.x0 < b.x1 && feet.x1 > b.x0 && feet.y0 < b.y1 && feet.y1 > b.y0 && laneHits.push({ lane: i, x, solid: j }));
+  }
+g.check("36b: no cleaning robot's lane runs through the hall's crates, plants, stools or counter", laneHits.length === 0, laneHits.slice(0, 5));
+
 // ---------- (a) and (b) in the game ----------
 const { page, errors } = await g.open("?beat=bay:walkby", { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 1 });
 await page.evaluate(() => window.__ss.lockedReady);

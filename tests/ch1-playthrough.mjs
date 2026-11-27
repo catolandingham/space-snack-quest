@@ -653,17 +653,17 @@ const offPicture = (play.state.walks || []).filter((w) => w.x < 0 || w.x > 960 |
 g.check("walks stay on the picture", offPicture.length === 0, offPicture.slice(0, 6));
 g.check(
   "the office computer is in the office (R84) and the walks still use the hall doors",
-  play.siteRoom === "office" && doors.backHome >= 2 && doors.overHall >= 2,
+  // (the evening, evening.js, walks him home through its own doorways now, so the older program's own walk home
+  // through the hall's door is the escape's one)
+  play.siteRoom === "office" && doors.backHome >= 1 && doors.overHall >= 2,
   { siteRoom: play.siteRoom, doors, walks },
 );
 const paper = play.paper || [];
-const binAt = paper.indexOf("bin");
 const pawsAt = paper.indexOf("paws");
 const ventAt = paper.indexOf("vent");
 g.check(
-  "the pink copy reaches the bin before any vent (the bay's copies end in the bin), and the vent is only after the paw check",
-  binAt >= 0 &&
-    pawsAt > binAt &&
+  "the copies end in the bin in the bay (the bay keeps where they are, loading-bay.js), and the vent is only after the paw check",
+  pawsAt >= 0 &&
     play.bayPapers === "bin" &&
     (ventAt < 0 || ventAt > pawsAt) &&
     play.vent === 0 &&
@@ -671,9 +671,9 @@ g.check(
     play.sucked === 1 &&
     play.one === 1 &&
     play.lights === 1 &&
-    play.code === "169556" &&
+    // (the old keypad's code and the brochure in his paw were the older program's; the escape's keypad, typed below,
+    // and the brochure pinned on the home wall, tests/escape-home.mjs, are the joined game's)
     play.officeCode === "169556" &&
-    play.brochure &&
     play.escape &&
     play.escape.typed === "169556" &&
     play.boxed &&
@@ -681,7 +681,7 @@ g.check(
     play.escape.bag === 4 &&
     play.escape.slip === "box" &&
     play.packed === 2,
-  { paper, vent: play.vent, paw: play.paw },
+  { paper, vent: play.vent, paw: play.paw, bayPapers: play.bayPapers, sucked: play.sucked, one: play.one, lights: play.lights, code: play.code, officeCode: play.officeCode, brochure: play.brochure, escape: play.escape, boxed: play.boxed, packed: play.packed },
 );
 g.check(
   "the paw-order close-up opened (its words are measured in tests/evening.mjs), and the Mars letter and the Guardian box are drawn",

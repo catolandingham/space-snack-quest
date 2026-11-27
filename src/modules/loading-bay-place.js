@@ -114,7 +114,8 @@ export const HALLWAY = Object.freeze({
 /** Beat 36b: the party hall (locked v2), three robots mopping in lanes; he crosses from the hallway doorway down to the snack counter's front. */
 export const HALL_SNEAK = Object.freeze({
   in: Object.freeze({ x: 905, y: 320 }),
-  mopsIn: Object.freeze({ x: 880, y: 372 }),
+  // (Mops on the strip at the aisle's top, clear of the counter: in the aisle his feet were against it)
+  mopsIn: Object.freeze({ x: 893, y: 336 }),
   // the counter's front end, where 38a (the storm) begins: reaching it ends this beat
   goal: Object.freeze({ x: 772, y: 584, r: 46 }),
   goalBox: Object.freeze({ x0: 720, x1: 806, y0: 540, y1: 606 }),
@@ -125,8 +126,11 @@ export const HALL_SNEAK = Object.freeze({
   lanes: Object.freeze([
     // (the first lane stops short of the doorway, so its cone never reaches him where he comes in)
     Object.freeze({ y: 392, x0: 300, x1: 600, at: 0.1, dir: 1 }),
-    Object.freeze({ y: 462, x0: 150, x1: 744, at: 0.55, dir: -1 }),
-    Object.freeze({ y: 532, x0: 150, x1: 700, at: 0.85, dir: 1 }),
+    // (in front of the lunch's stack of crates, which stays in the hall, lunch-sneak-place.js LUNCH_PLACES.crate: never
+    // through it)
+    Object.freeze({ y: 500, x0: 150, x1: 744, at: 0.55, dir: -1 }),
+    // (right of the middle plant's pot: never through it)
+    Object.freeze({ y: 532, x0: 500, x1: 700, at: 0.85, dir: 1 }),
   ]),
 });
 

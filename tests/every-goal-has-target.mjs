@@ -213,8 +213,11 @@ const report = await page.evaluate(async (chips) => {
       ss.ch1JumpBeat(37);
       window.SSQ.beat("ch1-evening").jump(spec.ev);
       spec.galleryDone && (n.ch1Evening.galleryDone = true);
+      spec.x && ((n.sq.x = spec.x), (n.sq.y = spec.y));
+      ((n.chip = chip), (n.moved = 200));
     } else if (spec.es) {
-      Object.assign(n, { ch1PartyNow: null, ch1Morning: null, ch1Lunch: null, ch1Zoom: null, ch1PadOn: false, q: [], cur: null, ch1Day2: true });
+      // (the beats before it are over: the bay's and the evening's states are cleared, as a jump to the escape does)
+      Object.assign(n, { ch1PartyNow: null, ch1Morning: null, ch1Lunch: null, ch1Bay: null, ch1Evening: null, ch1Zoom: null, ch1PadOn: false, q: [], cur: null, ch1Day2: true });
       window.SSQ.beat("ch1-escape").jump(spec.es === "food" ? "snacks" : spec.es);
       spec.es === "food" && Object.assign(n.ch1Escape, { step: "food" }, { snacks: { ...n.ch1Escape.snacks, plate: true } }) && (n.ch1Step = "es-food");
       spec.x && ((n.sq.x = spec.x), (n.sq.y = spec.y));

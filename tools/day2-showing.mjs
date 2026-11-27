@@ -474,7 +474,8 @@ await readStills((s) => s.step === "out" && s.ctrl && !s.cur, { "The form!": "41
 // night
 const waitStart = async (phase) => (await until((s) => s.look.phase !== phase, 9000), await until((s) => s.look.phase === phase, 9000));
 async function crossBay(points) {
-  for (const p of points) (await walkTo(p.x, p.y, null, 8000)) || (await fail("stuck crossing the bay at " + p.x + "," + p.y));
+  // (near enough: a step from the point; a tap there can stop him a few pixels short)
+  for (const p of points) (await walkTo(p.x, p.y, (s) => Math.hypot(s.x - p.x, s.y - p.y) < 22, 8000)) || (await fail("stuck crossing the bay at " + p.x + "," + p.y));
 }
 await sleep(1200);
 await still("42-night-out-of-bed");

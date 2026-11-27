@@ -62,6 +62,7 @@ import { createBedtimeSound } from "./bedtime-story-sound.js";
 import { drawBedtimeSquatch, drawBedBlanket, BED_POSES, BEDTIME_NIGHT } from "./bedtime-story.js";
 import { footfall } from "./footfalls.js";
 import { adultPxFor } from "./room-sizes.js";
+import { findPath } from "./tap-path.js";
 
 export const EVENING_ID = "ch1-evening";
 /** The steps the player controls (ch1Step "ev-<step>"), in order. */
@@ -382,7 +383,25 @@ export function createEvening(bridge) {
     e.set("moPose", "stand");
     e.set("sqPose", "stand");
     go("tostorm");
-    const legs = (who, way, speed) => way.map((w) => e.until((dt) => (e.trail(), who === "mops" && e.moWalking(true), e.step(who, w.x, w.y, speed, dt || 0))));
+    // each walks its way, round the counter, the stools and the crates from wherever 36b left them (tap-path.js; the
+    // solids grown by a person's feet, so the feet never touch them)
+    const FEET_SOLIDS = LUNCH_SOLIDS.map((b) => ({ x0: b.x0 - 25, x1: b.x1 + 25, y0: b.y0 - 8, y1: b.y1 + 14 }));
+    const legs = (who, way, speed) => {
+      let route = null;
+      return [
+        e.run(() => {
+          let at = e.pos(who);
+          route = [];
+          for (const w of way) (route.push(...(findPath(at, w, LUNCH_BOUNDS, FEET_SOLIDS) || [w])), (at = w));
+        }),
+        e.until((dt) => {
+          e.trail();
+          who === "mops" && e.moWalking(true);
+          const w = route[0];
+          return !w || (e.step(who, w.x, w.y, speed, dt || 0) && (route.shift(), !route.length));
+        }),
+      ];
+    };
     e.queue([
       ...legs("mops", STORM.fromSneak.mops, P.mopsWalk),
       e.run(() => (e.moWalking(false), e.still("mops"), e.face("mops", 1))),
