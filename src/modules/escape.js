@@ -35,6 +35,7 @@
  * one he did (RESTART_TO). Words: escape-lines.js; places and times: escape-place.js; the snack's names:
  * snack-name.js. Every drawing and number is a PLACEHOLDER for Brian.
  */
+import { personBox } from "./room-model.js";
 import { escapeWords } from "./escape-lines.js";
 import { OFFICE_CODE, BAY_DAY, BAY_NIGHT, ES_HOME, ES_BAY, ROBOT_SIGHT, VENT_ROOM, VENT_TUNNEL, ES_HALLWAY, KEYPAD, keyAt, OFFICE, SITE, ES_BAR, SNACKS, ES_PACE, WEEK, MOP_CALM, MOPOFF, NEWS, ROUTE_HOME, ROUTE_VENT, ROUTE_OFFICE, ROUTE_BAR, ROUTE_HOME_NIGHT, HALL_GUEST, PLAQUE, FOLLOW, ES_DOORS } from "./escape-place.js";
 import { freshFloor, goatCells, beardAt, mopCalm, mopGoat, goatClean, wheelsAcross, starFor, bars, robotsAt, drawCalmFloor, drawMopFloor, drawBars, drawStarCloseup, markPatch } from "./escape-mopoff.js";
@@ -1404,7 +1405,7 @@ export function createEscape(bridge) {
       out.robot = { x: Math.round(r.x), y: Math.round(r.y), phase: r.phase, mark: r.mark || "" };
     }
     // the slip in Mops's mouth is outlined while he is to grab it (it moves with him, so it is not a goal-targets entry)
-    l.step === "grab" && e.get("ctrl") && markBox(ctx, mouthBox(), t);
+    l.step === "grab" && e.get("ctrl") && markBox(ctx, mouthBox(), t, 6, []); // (a thing a person holds keeps its whole line)
     // (the vent's outline while he is to roll up by it is the goal outline: goal-targets.js "hangar:es-ball")
     people(ctx, l, "hangar");
     // security, as the party's guard, with his flashlight cone the whole time he is out (bay-watch.js)
@@ -1450,7 +1451,7 @@ export function createEscape(bridge) {
     // the one highlight on the next thing (over the dark: it stays bright)
     if (e.get("ctrl") && !e.current() && !l.cu) {
       const sp = spots()[0];
-      sp && sp.thing && (out.mark = markBox(ctx, sp.thing, t));
+      sp && sp.thing && (out.mark = markBox(ctx, sp.thing, t, 6, e.get("moPose") !== "hidden" ? [personBox("mops", m.x, m.y, VENT_ROOM.scale)] : []));
       out.next = sp ? sp.id : "";
     }
     if (l.eyesAt >= 0 && t - l.eyesAt < ES_PACE.eyes) out.eyes = drawEyesInset(ctx, t - l.eyesAt);
@@ -1547,7 +1548,7 @@ export function createEscape(bridge) {
       // the one highlight on the next thing to look at (45a: the brochure in his paw; 45b: the crate, the calendar)
       if (l.step === "show") {
         const p = sqPawAt(s.x, s.y, s.f || 1, sqScale("closet"));
-        drew.mark = markBox(ctx, { x0: p.x - 6, y0: p.y - 70, x1: p.x + 30, y1: p.y - 36 }, t);
+        drew.mark = markBox(ctx, { x0: p.x - 6, y0: p.y - 70, x1: p.x + 30, y1: p.y - 36 }, t, 6, []); // (in his paw)
       }
       l.step === "crate" && (drew.mark = markBox(ctx, ES_HOME.crate, t));
       l.step === "cal" && (drew.mark = markBox(ctx, ES_HOME.calendar, t));

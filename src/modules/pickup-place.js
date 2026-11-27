@@ -123,7 +123,10 @@ export const PK_BAY = Object.freeze({
     Object.freeze({ kind: "his", x: 894, y: 560 }),
   ]),
   mailIn: Object.freeze({ x: 700, y: 462 }), // the mail room's opening
-  pushTo: Object.freeze({ x: 848, y: 584 }), // where Mops leaves his crate (it goes to the row's third place)
+  // where Mops leaves his crate: in the mail room's opening, the crate just through it (it then slides to the row's third
+  // place). (It was x 848, y 584, inside the mail room: no crate pushed in front of him fits past the mailbox and the
+  // low wall to get there, and the crate went through both; Brian r6 3:19.)
+  pushTo: Object.freeze({ x: 640, y: 462 }),
   pushR: 40,
   knockAt: Object.freeze({ x: 850, y: 584 }),
   knockR: 56,

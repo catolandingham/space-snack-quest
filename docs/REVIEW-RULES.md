@@ -3,39 +3,46 @@
 
 | Lines | Heading |
 | --- | --- |
-| 39–43 | ## Mistakes caught building pickup day (2026-11-26 night) |
-| 44–50 | ## Mistakes caught building the escape rebuild (2026-11-26 night) |
-| 51–54 | # Review rules |
-| 55–106 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
-| 107–109 | ## Techniques |
-| 110–112 | ## Mistake: locked art was redrawn |
-| 113–117 | ## Mistake: optional inspection interrupted getting out of bed |
-| 118–120 | ## Mistake: a big doc's section index went stale |
-| 121–123 | ## Mistake: a rebuilt beat forgot the step restart |
-| 124–126 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
-| 127–129 | ## Mistake: a killed run was read as a failing test |
-| 130–132 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
-| 133–135 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
-| 136–142 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
-| 143–150 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
-| 151–167 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
-| 168–180 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
-| 181–183 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
-| 184–186 | ## Standing rule: nobody walks through furniture (Brian, 2026-11-26) |
-| 187–195 | ## Mistakes caught building the morning sound (2026-11-24) |
-| 196–207 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
-| 208–219 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
-| 220–233 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
-| 234–240 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
-| 241–251 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
-| 252–261 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
-| 262–267 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
-| 268–273 | ## Mistakes caught joining Day 2 (2026-11-27) |
-| 274–287 | ## Mistakes caught building the loading bay (2026-11-26) |
-| 288–301 | ## Mistakes caught building the evening and night one (2026-11-26) |
-| 302–310 | ## Mistakes caught building the escape (2026-11-26) |
-| 311–321 | ## Mistakes Brian's videos of the escape caught (2026-11-26) |
+| 40–45 | ## Mistakes Brian's videos of Day 2 and the chapter's end caught: physics (2026-11-27) |
+| 46–50 | ## Mistakes caught building pickup day (2026-11-26 night) |
+| 51–57 | ## Mistakes caught building the escape rebuild (2026-11-26 night) |
+| 58–61 | # Review rules |
+| 62–113 | ## Process: review checklist (CUMULATIVE; never drop a check, only add) |
+| 114–116 | ## Techniques |
+| 117–119 | ## Mistake: locked art was redrawn |
+| 120–124 | ## Mistake: optional inspection interrupted getting out of bed |
+| 125–127 | ## Mistake: a big doc's section index went stale |
+| 128–130 | ## Mistake: a rebuilt beat forgot the step restart |
+| 131–133 | ## Mistake: pictures sent to Brian with labels and outlines on top of Squatch |
+| 134–136 | ## Mistake: a killed run was read as a failing test |
+| 137–139 | ## Mistake: a "nothing is drawn" check looked where the old drawing never was |
+| 140–142 | ## Mistake: a game wait on real audio time met a test helper that only ticks |
+| 143–149 | ## Mistakes caught building the party rebuild, half one (2026-11-24) |
+| 150–157 | ## Mistakes the independent review of PR #85 caught (2026-11-24) |
+| 158–174 | ## Mistakes caught building the party rebuild, half two (2026-11-24) |
+| 175–187 | ## Mistakes caught building party round three, Brian's video notes (2026-11-24) |
+| 188–190 | ## Standing rule: painstakingly obvious (Brian, 2026-11-24) |
+| 191–193 | ## Standing rule: nobody walks through furniture (Brian, 2026-11-26) |
+| 194–202 | ## Mistakes caught building the morning sound (2026-11-24) |
+| 203–214 | ## Mistakes caught building the quiet room's mopping loop (2026-11-24) |
+| 215–226 | ## Mistakes caught building the snacks and the dance, and merging them (2026-11-24) |
+| 227–240 | ## Mistakes caught building the lines before the TV and the flyer sneak (2026-11-24) |
+| 241–247 | ## Mistakes caught building the sleeved paw, the bartender, and the four fixes (2026-11-25) |
+| 248–258 | ## Mistakes caught building Brian's showing-4 notes (2026-11-25) |
+| 259–268 | ## Mistakes caught building Brian's showing-5 notes (2026-11-25) |
+| 269–274 | ## Mistakes caught building Brian's showing-6 notes (2026-11-26) |
+| 275–280 | ## Mistakes caught joining Day 2 (2026-11-27) |
+| 281–294 | ## Mistakes caught building the loading bay (2026-11-26) |
+| 295–308 | ## Mistakes caught building the evening and night one (2026-11-26) |
+| 309–317 | ## Mistakes caught building the escape (2026-11-26) |
+| 318–328 | ## Mistakes Brian's videos of the escape caught (2026-11-26) |
 <!-- /section-index -->
+## Mistakes Brian's videos of Day 2 and the chapter's end caught: physics (2026-11-27)
+- Only the player's own walk asked the room what is solid; scripted moves (Mops following Squatch, the alarm's runner, the pushed crate) went in straight lines through the counter, the walkway and the robot, and each beat kept its own solids. Every scripted step of Squatch and Mops now goes through the room model (`src/modules/room-model.js` `roomWaypoint`, from the engine's `step`), module movers through `stepRound`, and a pushed thing is checked with `boxFits`/`addKeeper` in the same frame as the step. A new mover goes through it, and `tests/room-physics.mjs` samples `physicsNow()` and `physicsLog()` the whole time.
+- The home room painted the crate bed again over everyone whenever Squatch alone stood behind it, so Mops in front vanished under it. A thing in a locked picture that people stand behind has a floor line (`HOME_BASELINES`) and is drawn in the same back-to-front list as the people (`homeDepthItems`); the test counts Mops's pixels over the bed, run once on the old build to see 0.
+- Feet are a point, but Mops's body is twice as wide as the feet box the solid lists allow for, so his body went over the crates and the tourist. A walker's solids grow by how much wider than a feet box he is (`bodyExtra`), and by what he pushes (`setCarry`).
+- The pushed crate was sized against home by the room rule, but home draws people at three times their scale, so the crate came out twice the size of the crates it joins. A thing that travels between rooms is sized by the room's Squatch (`crateK`), and one size rule covers it in every room.
+- The goal's dashed line was drawn over Mops by `markBox`, which had no list of people to leave out. Highlights leave out the people's boxes (`peopleBoxesNow`), except in close-ups.
 ## Mistakes caught building pickup day (2026-11-26 night)
 - A switch card (`playAs` with a reason) queued from inside a story step goes to the end of the queue, so the lines queued after it played before the card and the step's own start ran last (the dress-up's lines came before "You are SQUATCH now."). Queue a switch last, and put what follows it in the function it calls.
 - A goal line was the same words as an older beat's ("Squatch: hide in the plant"), and the goal test keys goals by their words, so the new one silently replaced the old one's check. Goal lines are unique words.

@@ -35,6 +35,7 @@
  * controls, so the step restart (↺) brings back the step he is on; ↺ in a step he does not control goes back to the
  * last one he did (restart()).
  */
+import { BAY_SOLIDS } from "./bay-watch.js";
 import { EV_HALLWAY, EV_BAR, STORM, EV_HOME, HOME_ALONE, EV_BAY, BAY_FURNITURE, BAY_EXTRA, BAY_BOUNDS, BAY_SEARCH, BAY_VENT, EVENING_PACE as P, EVENING_LOOK, nightLook, mopsSleepAt, mopsSleepBox, robotLook } from "./evening-place.js";
 import { drawJupiterStorm, drawStormGlow, drawCounterBin, drawCoffeeStain, BROCHURE_PARTS, drawGuardianMark, drawEveningThought, drawGuardiansBox, drawWeekCake, drawEveningChart, CHART, drawIdeaPicture, drawYearsLater, drawVentCrate, BAY_CRATE } from "./evening-pictures.js";
 import { placeThought } from "./thought-place.js";
@@ -85,7 +86,8 @@ addAlarmPlace("bay", {
   run: EV_BAY.alarmRun,
   guardIn: EV_BAY.guardIn,
   search: BAY_SEARCH,
-  around: [...BAY_FURNITURE, ...BAY_EXTRA].map((b) => ({ x0: b.x0 - GUARD_FEET.side, x1: b.x1 + GUARD_FEET.side, y0: b.y0 - GUARD_FEET.down, y1: b.y1 + GUARD_FEET.up })),
+  // (the bay's own solids, bay-watch.js BAY_SOLIDS, already feet-sized: the walkway under the scanner too, which the furniture strips left out, so the robot rolled over it; Brian r5 9:29)
+  around: [...BAY_SOLIDS, ...[...BAY_FURNITURE, ...BAY_EXTRA].map((b) => ({ x0: b.x0 - GUARD_FEET.side, x1: b.x1 + GUARD_FEET.side, y0: b.y0 - GUARD_FEET.down, y1: b.y1 + GUARD_FEET.up }))],
   floor: { x0: 20, x1: 920, y0: 310, y1: 600 },
   // a guard sees him only once his drawn cone has been on him a moment (no "this close" circle: Brian 2026-11-26)
   feet: 0,
