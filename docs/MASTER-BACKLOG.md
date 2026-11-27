@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–26 | # Master backlog |
-| 27–241 | ## Where main is (Chapter 1 redesign) |
-| 242–256 | ## Register |
-| 257–278 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 279–299 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 300–312 | ## Phase 2 (plan section 4, T13 to T18) |
-| 313–335 | ## Phase 1 (plan section 3, T5 to T12) |
-| 336–349 | ## SS40–SS44 |
-| 350–367 | ## Story rows |
-| 368–386 | ## Reset section |
-| 387–397 | ## Still open |
-| 398–401 | ## Chapter 1 replot, recorded and not built |
-| 402–561 | ## Changelog |
+| 27–243 | ## Where main is (Chapter 1 redesign) |
+| 244–258 | ## Register |
+| 259–280 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 281–301 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 302–314 | ## Phase 2 (plan section 4, T13 to T18) |
+| 315–337 | ## Phase 1 (plan section 3, T5 to T12) |
+| 338–351 | ## SS40–SS44 |
+| 352–369 | ## Story rows |
+| 370–388 | ## Reset section |
+| 389–399 | ## Still open |
+| 400–403 | ## Chapter 1 replot, recorded and not built |
+| 404–563 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
