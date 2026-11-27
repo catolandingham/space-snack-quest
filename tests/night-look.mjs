@@ -1,0 +1,172 @@
+/**
+ * The night look (src/modules/night-look.js; Brian, 2026-11-26: "Make sure it's not just the hall dark at night, but
+ * all rooms are different at night versus daytime."):
+ *   - when it is night: from the party night's start (the party beat's state is set) until Day 2 begins, and whenever
+ *     the older program marks a night scene (ch1Night);
+ *   - each night beat draws its room's night look (the tinted picture, or the bay's own locked night picture) and
+ *     each day beat does not: the party at home (P1, P8) and in the hall (P2, P6 with the band's lights), the
+ *     evening at home after the party (TV story and bedtime), against Day 1's morning at home and Day 2 at home, in
+ *     the hall and in the hallway;
+ *   - pixels: the night room's wall is darker and bluer than the same wall by day, and the lit things (the hall's
+ *     window onto space and its FUR alarm, home's TV screen) stay as bright as by day.
+ * Stills at 375 px go to tests/out/night-stills/ (day and night of each room).
+ *   node tests/night-look.mjs
+ */
+import { mkdirSync } from "node:fs";
+import { join } from "node:path";
+import { startGame, sleep, root } from "./game-page.mjs";
+
+const OUT = join(root, "tests", "out", "night-stills");
+mkdirSync(OUT, { recursive: true });
+const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true };
+const NL = await import(join(root, "src", "modules", "night-look.js"));
+const g = await startGame({ port: 9741, name: "night-look" });
+
+// ---------- when it is night (no page) ----------
+const at = (s) => NL.isNightNow((k) => s[k]);
+g.check("Day 1 morning (no party yet) is day", !at({}));
+g.check("the party night (its state set, Day 2 not begun) is night", at({ ch1PartyNow: { scene: "P2" } }));
+g.check("after the party, the TV story and bedtime (party done, Day 2 not begun) is night", at({ ch1PartyNow: { scene: "done" } }));
+g.check("once Day 2 begins it is day", !at({ ch1PartyNow: { scene: "done" }, ch1Day2: true }));
+g.check("a night scene of the older program (ch1Night) is night, even on Day 2", at({ ch1Night: true, ch1Day2: true }));
+g.check("every room has a lit list or its own night picture", ["hall", "closet", "passage", "office", "hangar"].every((r) => Array.isArray(NL.LIT_BY_NIGHT[r]) || NL.nightPictureFor(r)));
+
+// ---------- in the game ----------
+// Frames: the frame drawn now, what night look it drew, and colours at game points (the canvas is the 960 x 640
+// picture scaled by k).
+const frame = (page, pts) =>
+  page.evaluate((pts) => {
+    const ss = window.__ss,
+      c = document.querySelector("canvas"),
+      k = c.width / 960,
+      x = c.getContext("2d");
+    window.SSQ.nightDrawn();
+    ss.drawFrame();
+    const drew = window.SSQ.nightDrawn(),
+      px = {};
+    for (const [id, p] of Object.entries(pts)) {
+      const d = x.getImageData(Math.round(p.x * k), Math.round(p.y * k), 1, 1).data;
+      px[id] = [d[0], d[1], d[2]];
+    }
+    const n = ss.op;
+    return { drew, px, room: n.room, scene: n.scene, night: window.SSQ.nightNow() };
+  }, pts);
+const still = async (page, name) => {
+  await page.setViewport({ ...PHONE, deviceScaleFactor: 2 });
+  await sleep(150);
+  await page.evaluate(() => window.__ss.drawFrame());
+  await page.screenshot({ path: join(OUT, name + ".png") });
+};
+async function open(q) {
+  const o = await g.open(q, PHONE);
+  await o.page.evaluate(() => window.__ss.lockedReady);
+  await sleep(900);
+  await o.page.evaluate(() => (window.requestAnimationFrame = () => 0));
+  return o;
+}
+const bright = (p) => p[0] + p[1] + p[2];
+// (blue against red: night is bluer)
+const blueShare = (p) => p[2] / Math.max(1, p[0]);
+const same = (a, b, tol = 12) => a.every((v, i) => Math.abs(v - b[i]) <= tol);
+
+// Points (game positions) on each room's picture where nobody stands and nothing is drawn over it.
+const HALL_PTS = { wall: { x: 720, y: 40 }, window: { x: 150, y: 120 }, fur: { x: 893, y: 156 } };
+const HOME_PTS = { wall: { x: 330, y: 90 }, tv: { x: 600, y: 160 } };
+const PASSAGE_PTS = { wall: { x: 120, y: 120 } };
+
+const results = {};
+// Day 1's morning at home (no party yet)
+{
+  const { page, ctx, errors } = await open("?ch=1");
+  await page.evaluate(() => {
+    const n = window.__ss.op;
+    window.SSQ.engine().enterRoom("closet", "Q1");
+    n.q = [];
+    n.cur = null;
+  });
+  results.homeDay = await frame(page, HOME_PTS);
+  g.check("Day 1 morning at home: day (no night look drawn)", !results.homeDay.night && !results.homeDay.drew.closet, results.homeDay);
+  await still(page, "home-day1-morning");
+  // the TV story's evening and bedtime: the party is over (its state "done", as party.js finish() saves it), home, Day 2 not begun
+  await page.evaluate(() => {
+    const n = window.__ss.op;
+    n.ch1PartyNow = { scene: "done" };
+    n.ch1Day2 = false;
+  });
+  results.homeEvening = await frame(page, HOME_PTS);
+  g.check("the evening at home after the party (TV story, bedtime): the home room's night look", results.homeEvening.night && results.homeEvening.drew.closet && results.homeEvening.drew.closet.tint > 0.3, results.homeEvening);
+  await still(page, "home-evening");
+  // Day 2 begins
+  await page.evaluate(() => (window.__ss.op.ch1Day2 = true));
+  results.homeDay2 = await frame(page, HOME_PTS);
+  g.check("Day 2 at home (the party state still set): day again", !results.homeDay2.night && !results.homeDay2.drew.closet, results.homeDay2);
+  g.check("no page errors (home)", errors.length === 0, errors);
+  await ctx.close();
+}
+// Day 2 by its own link, in the hall and the hallway (the older program's jump beats)
+{
+  const { page, ctx, errors } = await open("?beat=day2");
+  results.day2 = await frame(page, HOME_PTS);
+  g.check("Day 2 (its link): day", !results.day2.night && !Object.keys(results.day2.drew).length, results.day2);
+  // (with its zoom-in card and queue cleared, so the room shows plain)
+  await page.evaluate(() => (window.__ss.ch1JumpBeat(27), Object.assign(window.__ss.op, { ch1Zoom: null, q: [], cur: null }), window.__ss.settleRoom()));
+  results.hallDay = await frame(page, HALL_PTS);
+  g.check("Day 2 in the hall (beat 27): day", results.hallDay.room === "hall" && !results.hallDay.night && !results.hallDay.drew.hall, results.hallDay);
+  await still(page, "hall-day2");
+  await page.evaluate(() => (window.__ss.ch1JumpBeat(37), Object.assign(window.__ss.op, { ch1Zoom: null, q: [], cur: null }), window.__ss.settleRoom()));
+  results.passageDay = await frame(page, PASSAGE_PTS);
+  g.check("Day 2 in the hallway (beat 37): day", results.passageDay.room === "passage" && !results.passageDay.night && !results.passageDay.drew.passage, results.passageDay);
+  await still(page, "hallway-day2");
+  // the same hallway in a night scene of the older program (ch1Night): tinted, the keypad kept lit
+  await page.evaluate(() => (window.__ss.op.ch1Night = true));
+  results.passageNight = await frame(page, PASSAGE_PTS);
+  g.check("the hallway in a night scene (ch1Night): its night look", results.passageNight.night && results.passageNight.drew.passage && results.passageNight.drew.passage.lit === 1, results.passageNight);
+  await still(page, "hallway-night");
+  await page.evaluate(() => (window.__ss.op.ch1Night = false));
+  // the loading bay at night (beat 42): its own locked night picture
+  await page.evaluate(() => (window.__ss.ch1JumpBeat(42), window.__ss.settleRoom()));
+  results.bayNight = await frame(page, {});
+  g.check("the loading bay at night (beat 42): its locked night picture", results.bayNight.room === "hangar" && results.bayNight.night && results.bayNight.drew.hangar && results.bayNight.drew.hangar.picture, results.bayNight);
+  g.check("no page errors (Day 2)", errors.length === 0, errors);
+  await ctx.close();
+}
+// The party night: at home (P1) and in the hall (P2), the band's lights (P6), closing time (P8b), home early (P8c)
+for (const [beat, room, name, pts] of [
+  ["party", "closet", "home-party-P1", HOME_PTS],
+  ["party:P2", "hall", "hall-party-P2", HALL_PTS],
+  ["party:P6", "hall", "hall-party-P6-lights", HALL_PTS],
+  ["party:P8b", "hall", "hall-party-P8b-closing", HALL_PTS],
+  ["party:P8c", "closet", "home-party-P8c", HOME_PTS],
+]) {
+  const { page, ctx, errors } = await open("?beat=" + beat);
+  const f = await frame(page, pts);
+  results[name] = f;
+  g.check(`${beat}: the ${room === "hall" ? "hall" : "home room"} draws its night look`, f.night && f.room === room && f.drew[room] && f.drew[room].tint > 0.3, f);
+  await still(page, name);
+  if (beat === "party") {
+    // Squatch behind his bed: the piece of the bed the room cuts from its picture and draws again over him is the
+    // night one too (no bright patch)
+    const BED = { x: 120, y: 520 };
+    const away = await frame(page, { bed: BED });
+    await page.evaluate(() => Object.assign(window.__ss.op.sq, { x: 200, y: 500 }));
+    const behind = await frame(page, { bed: BED });
+    g.check("at night the bed's piece drawn over Squatch behind it is the night one", same(away.px.bed, behind.px.bed, 6) && bright(behind.px.bed) < 500, { away: away.px.bed, behind: behind.px.bed });
+  }
+  g.check(`no page errors (${beat})`, errors.length === 0, errors);
+  await ctx.close();
+}
+
+// ---------- pixels: night is darker and bluer; the lit things stay lit ----------
+const H = results["hall-party-P2"],
+  D = results.hallDay;
+g.check("the hall's wall at night is much darker than by day", bright(H.px.wall) < bright(D.px.wall) * 0.65, { night: H.px.wall, day: D.px.wall });
+g.check("the hall's wall at night is bluer than by day", blueShare(H.px.wall) > blueShare(D.px.wall) * 1.12, { night: H.px.wall, day: D.px.wall });
+g.check("the hall's window onto space stays as bright at night as by day (kept lit)", same(H.px.window, D.px.window), { night: H.px.window, day: D.px.window });
+g.check("the hall's FUR alarm stays as bright at night as by day (kept lit)", same(H.px.fur, D.px.fur), { night: H.px.fur, day: D.px.fur });
+for (const k of ["home-party-P1", "home-party-P8c", "homeEvening"])
+  g.check(`home at night (${k}): the wall much darker and bluer than Day 1's morning`, bright(results[k].px.wall) < bright(results.homeDay.px.wall) * 0.65 && blueShare(results[k].px.wall) > blueShare(results.homeDay.px.wall) * 1.12, { night: results[k].px.wall, day: results.homeDay.px.wall });
+for (const k of ["home-party-P1", "homeEvening"]) g.check(`home at night (${k}): the TV's screen keeps its look (kept as by day)`, same(results[k].px.tv, results.homeDay.px.tv), { night: results[k].px.tv, day: results.homeDay.px.tv });
+g.check("home on Day 2 is the same as Day 1's morning (day)", same(results.homeDay2.px.wall, results.homeDay.px.wall, 4), { day2: results.homeDay2.px.wall, day1: results.homeDay.px.wall });
+g.check("the hallway at night: the wall much darker than by day", bright(results.passageNight.px.wall) < bright(results.passageDay.px.wall) * 0.65, { night: results.passageNight.px.wall, day: results.passageDay.px.wall });
+
+await g.finish("night-look");

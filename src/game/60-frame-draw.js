@@ -690,7 +690,7 @@
     };
     function homeFront() {
       let l = n.sq,
-        img = lockedImg[n.wardrobe === "open" ? "home-open" : "home-closed"];
+        img = window.SSQ && window.SSQ.nightPicture ? window.SSQ.nightPicture("home-closed", lockedImg[n.wardrobe === "open" ? "home-open" : "home-closed"]) : lockedImg[n.wardrobe === "open" ? "home-open" : "home-closed"];
       if (n.sqPose !== "stand" || !img || !img.complete || !img.naturalWidth) return;
       let k = img.naturalWidth / c,
         ky = img.naturalHeight / b;

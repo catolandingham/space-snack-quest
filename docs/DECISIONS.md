@@ -3,32 +3,33 @@
 
 | Lines | Heading |
 | --- | --- |
-| 33–35 | # Space Snack Quest: every decision, in one place |
-| 36–43 | ## How to use this file |
-| 44–67 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
-| 68–72 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 73–81 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 82–85 | ## Sound, 2026-11-23 |
-| 86–109 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 110–121 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 122–146 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 147–155 | ## Which repo is the base, 2026-11-22 |
-| 156–166 | ## Sight cones, 2026-11-22 |
-| 167–171 | ## Latest calendar direction, 2026-11-16 |
-| 172–174 | ## Vent walk, 2026-11-16 |
-| 175–177 | ## Locked home room v5, 2026-11-16 |
-| 178–187 | ## Fidelity system (pictures are locked, not just words) |
-| 188–225 | ## 1. Working rules |
-| 226–292 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 293–317 | ## 3. Characters and look |
-| 318–394 | ## 4. Look, rooms and layout |
-| 395–416 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 417–460 | ## 6. Later chapters (2–4 and travel) |
-| 461–470 | ## 7. Audio |
-| 471–505 | ## 8. Code, controls and process |
-| 506–552 | ## 9. Open / waiting on Brian |
-| 553–647 | ## 10. Earlier entries, kept word for word |
-| 648–744 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 34–36 | # Space Snack Quest: every decision, in one place |
+| 37–44 | ## How to use this file |
+| 45–47 | ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator) |
+| 48–71 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
+| 72–76 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 77–85 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 86–89 | ## Sound, 2026-11-23 |
+| 90–113 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 114–125 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 126–150 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 151–159 | ## Which repo is the base, 2026-11-22 |
+| 160–170 | ## Sight cones, 2026-11-22 |
+| 171–175 | ## Latest calendar direction, 2026-11-16 |
+| 176–178 | ## Vent walk, 2026-11-16 |
+| 179–181 | ## Locked home room v5, 2026-11-16 |
+| 182–191 | ## Fidelity system (pictures are locked, not just words) |
+| 192–229 | ## 1. Working rules |
+| 230–296 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 297–321 | ## 3. Characters and look |
+| 322–398 | ## 4. Look, rooms and layout |
+| 399–420 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 421–464 | ## 6. Later chapters (2–4 and travel) |
+| 465–474 | ## 7. Audio |
+| 475–509 | ## 8. Code, controls and process |
+| 510–556 | ## 9. Open / waiting on Brian |
+| 557–651 | ## 10. Earlier entries, kept word for word |
+| 652–748 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
 # Space Snack Quest: every decision, in one place
 For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, about 8:50 PM PT • Repo copy: Monday, November 9, 2026, synced through R63. Nothing deleted.
@@ -40,6 +41,9 @@ For Brian and every assistant • Last full rebuild: Sunday, November 8, 2026, a
 - **Status words:** **Decided** (Brian said it or approved it) · **Needs Brian's yes** (proposed, or on-screen words waiting on him) · **Superseded** (replaced; the line says by what) · **Open** (a real question nobody has answered yet).
 - **This repo file is the single source of truth.** It was synced on Monday, November 9, 2026 from the designer record through decision R63, and it still holds the earlier snapshot `docs/old/project/DECISIONS-2026-11-08.md` (on `main` at commit 10030f6). Every earlier entry is kept in section 10. Where a later decision replaces an earlier one, the earlier line is marked **Superseded** and says what replaced it. The dated snapshot's full text is in `docs/old/history/DECISIONS-2026-11-08.md`. A short pointer stays at `docs/old/project/DECISIONS-2026-11-08.md`. New decisions get a row in the tables above, through a docs PR (review, "Docs match main: yes", Brian's written yes before merge).
 - Don't invent a decision. If something isn't clear, add it under **Open**.
+
+## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator)
+- **Night look, Decided 2026-11-26:** "Make sure it's not just the hall dark at night, but all rooms are different at night versus daytime." Every room shown while the story is at night has a night look (`src/modules/night-look.js`): the loading bay its locked night picture (`delivery-room-empty-night-v2.png`); every other room its locked day picture under a dim blue tint, with the things that give light (the hall's window onto space and its FUR alarm, home's TV screen, the office's screens and keypad, the hallway's keypad) cut from the same picture and drawn again over the tint. No picture file changes. Night is from the party night's start ("That evening...") until Day 2 begins, and any older night scene. The tint's strength (`NIGHT_TINT`, 0.5 of the bedtime story's night blue) and the lit boxes are placeholders for Brian's eye. The bedtime story's lights-out dim goes on top. Built on feat/party-half-two (the party), then merged forward and applied on the bedtime (the evening and bedtime story), Day 2 morning (the dark start) and lunch branches.
 
 ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes)
 - **Music names, Decided 2026-11-26:** "The new Ganitor song is still called Floating in Space. It just happens to have the lyrics goating in space. We're not doing the old song anytime." The track in `music/goating-in-space.mp3` is titled Floating in Space everywhere a title shows; the old floating-in-space.mp3 never comes back. Built on feat/party-half-two.

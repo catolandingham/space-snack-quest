@@ -23,6 +23,8 @@
 
 ## Where main is (Chapter 1 redesign)
 
+2026-11-26 (night), draft PR #87: every room has a night look at night (Brian: "all rooms are different at night versus daytime"; `night-look.js`, README "Chapter 1 redesign", the 2026-11-26 night paragraph). Open for Brian: the tint's strength (`NIGHT_TINT`, a placeholder) and which things stay lit; home has no window or lamp in its picture, so only its TV screen stays as it is. NOT ASSESSED: how the night look plays on a phone in daylight. Docs match main: yes.
+
 2026-11-26 (evening), draft PR #87, not merged. Done: Brian's answers of 2026-11-26 and phase 4 items 1 to 8 (README, "Chapter 1 redesign", the 2026-11-26 evening paragraph; DECISIONS, "Brian's answers of 2026-11-26"). Open for Brian:
 - Words waiting for his yes: party line 78, "Squatch: put the flyer on your bed for Mops" ("under" changed to "on" after #42); the TV's "STORMTOP NEWS" title card (a suggestion); the Credits screen's words (`credits-lines.js`, from the credit files).
 - The photo's 2 s to step out counts while he can move: not while the Polaroid fills the screen (a kid must close it first).

@@ -28,6 +28,7 @@ import { keepInSpan, seeCue } from "./music-picks.js";
 import { drawBubbleTail } from "./bubble-tail.js";
 import { createSpeechVoice } from "./speech-voice.js";
 import { drawCreditsButton, creditsTap, creditsShown } from "./credits.js";
+import { nightPicture, isNightNow, nightDrawn } from "./night-look.js";
 
 /**
  * The game-state fields a rebuilt beat may write, through engine().set(field, value). Anything else it
@@ -139,6 +140,19 @@ export function createBridge() {
     },
     /** The full-screen cutaway (tests read what its last frame drew). See cutaway.js. */
     cutaway: Object.freeze({ last: lastCutaway }),
+    /**
+     * The night look (Brian, 2026-11-26: every room looks different at night). The older program draws each locked
+     * room picture, and cuts pieces of it, from nightPicture(id, img): at night the room's night picture or its tinted
+     * one, by day `img` itself. nightNow() says whether the story is at night; nightDrawn() (tests) which rooms drew
+     * their night look since the last call. See night-look.js.
+     */
+    nightPicture(id, img) {
+      return nightPicture(id, img, !!engine && isNightNow(engine.get));
+    },
+    nightNow() {
+      return !!engine && isNightNow(engine.get);
+    },
+    nightDrawn,
     /** Register a rebuilt beat. Ids are unique; registering one twice is a mistake, so it throws. */
     registerBeat(id, beat) {
       if (typeof id !== "string" || !id) throw new Error("registerBeat needs an id");
