@@ -98,7 +98,7 @@
       return (adultPxFor(n.room) * 0.8) / 45;
     }
     // The box round Squatch's drawing (ears and fur included), and round Mops's, in game positions. At home the
-    // room draws Squatch at wl.
+    // room draws both at wl (home-morning.js, pickup.js; the room table's closet is wl too, room-scale.js).
     function sqBox() {
       let q = n.room === "closet" ? wl : sqDrawScale();
       return { x0: n.sq.x - 19 * q, x1: n.sq.x + 19 * q, y0: n.sq.y - 50 * q, y1: n.sq.y + 2 };
@@ -108,7 +108,7 @@
       return { x0: n.mo.x - 24 * q, x1: n.mo.x + 24 * q, y0: n.mo.y - 56 * q, y1: n.mo.y + 2 };
     }
     function moDrawScale() {
-      if (n.room === "closet" && (n.scene || "")[0] !== "Q") return wl;
+      if (n.room === "closet") return wl;
       return sqDrawScale() * 1.15;
     }
     // Back-wall door of office-room-empty-v2. The hallway's front door, seen from inside.

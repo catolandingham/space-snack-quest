@@ -190,8 +190,10 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
         n.ctrl = true;
         n.cur = { k: "bub", b: { who: "mops", text: "\u266A Weeee-eenn-nnttt! \u266A", style: "song" } };
         n.moPose = "stand";
-        n.mo.x = 800;
-        n.mo.y = 470;
+        // where Mops stands in the morning (morning.js MORNING_PLACES.mops). At home his bubble sits over his real
+        // head now (drawn at wl, 3; round 8's room table), so the old spot under the speaker put it in the notes.
+        n.mo.x = 690;
+        n.mo.y = 560;
         n.sq.x = 600;
         n.sq.y = 470;
       }),
@@ -288,7 +290,9 @@ for (const [sizeName, size] of Object.entries(SIZES)) {
       const c = document.querySelector("canvas");
       const g = c.getContext("2d");
       const at = (x, y) => Array.from(g.getImageData(x, y, 1, 1).data);
-      return { robot: at(280, 460), isfred: at(430, 450), bottom: at(280, 630), alien: ss.alienScale("office"), robotScale: ss.adultPxFor("office") / 47 };
+      // the robot's white body, 18 of its units above its feet (280, 500), at the office's size (the room table)
+      const k = ss.adultPxFor("office") / 47;
+      return { robot: at(280, Math.round(500 - 18 * k)), isfred: at(430, 450), bottom: at(280, 630), alien: ss.alienScale("office"), robotScale: k };
     });
     const blueCutOff = office.bottom[2] > 200 && office.bottom[0] < 100 && office.bottom[1] < 160;
     g.check(

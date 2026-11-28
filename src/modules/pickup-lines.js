@@ -155,7 +155,6 @@ export const PICKUP_LINES = Object.freeze(
     pkPend("mops-good-wall", "mops", "Good wall.", 57, "NEW"),
     pkR7("button-lift-photo", "button", "LIFT · photo", "G", 128, "the drawing is hidden behind the crooked photo"),
     pkLine("button-take-keepsake", "button", "TAKE · drawing", "pending", PK_WALK + "57; story pass 53-61 (KEEP, pending)"),
-    pkPend("crayon-words", "paper", "ME, MOPS, TIED TOGETHER FOREVER", 57, "the crayon drawing's words, as the pass writes them"),
     pkPend("sq-comes-with", "sq", "This one comes with us.", 57, "NEW"),
     pkPend("mops-tied", "mops", "Tied together.", 57, "NEW"),
     // ---- 58: through the scanner ----

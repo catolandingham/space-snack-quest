@@ -14,7 +14,7 @@ import { esRect, esPaint, esWords, ES_INK, drawPinkSheet } from "./escape-art.js
 import { drawSnack } from "./party-snacks-art.js";
 import { drawGuardianBox } from "./home-morning-art.js";
 import { drawMopBucketBack, drawMopBucketFront, MOP_BUCKET } from "./mop-bucket.js";
-import { drawBrochure } from "./evening-art.js";
+import { drawBrochure, drawCrayonDrawing } from "./evening-art.js";
 import { adultPxFor } from "./room-sizes.js";
 import { drawGoatBeard as drawGoatBeardOnTape, drawSnippedBeard } from "./pickup-people-art.js";
 import { PK_OFFICE, PK_HOLD, PK_CRATE } from "./pickup-place.js";
@@ -936,27 +936,9 @@ export function drawCrayonCloseup(ctx, age) {
   ctx.fillRect(0, 0, 960, 640);
   ctx.translate(480, 320 - pkClamp(age) * 20);
   ctx.rotate(-0.04);
-  esRect(ctx, -300, -220, 600, 440, 6);
-  esPaint(ctx, PK_PAPER, 5);
-  ctx.lineWidth = 6;
-  ctx.lineCap = "round";
-  ctx.strokeStyle = PK_FUR;
-  ctx.beginPath();
-  ctx.arc(-110, -10, 70, 0, PK_TAU);
-  ctx.stroke();
-  ctx.strokeStyle = PK_GREEN;
-  ctx.beginPath();
-  ctx.arc(110, -10, 60, 0, PK_TAU);
-  ctx.stroke();
-  ctx.strokeStyle = PK_RED;
-  ctx.beginPath();
-  ctx.moveTo(-40, 20);
-  ctx.bezierCurveTo(-10, 50, 10, -10, 50, 20);
-  ctx.stroke();
-  const w = pickupWords("crayon-words").split(", ");
-  esWords(ctx, w[0], -110, -110, 34, PK_FUR, "center", 900);
-  esWords(ctx, w[1], 110, -110, 34, PK_GREEN, "center", 900);
-  esWords(ctx, w.slice(2).join(", "), 0, 160, 34, PK_RED, "center", 900);
+  // the same drawing as the evening's close-up behind the photo (evening-art.js drawCrayonDrawing, ART-A's final art),
+  // so both close-ups match; its words are the evening's approved ones
+  drawCrayonDrawing(ctx, -300, -230, 600, 460);
   ctx.restore();
 }
 

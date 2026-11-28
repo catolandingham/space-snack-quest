@@ -81,7 +81,7 @@ import { coneFrom } from "./party-watch.js";
 import { BAY_SOLIDS, coneOnBody, watchTick, drawWatchCone, drawWatchMark, newGuard, guardTick, drawGuard } from "./bay-watch.js";
 import { splitLine } from "./line-split.js";
 import { partyLine } from "./party-lines.js";
-import { adultPxFor } from "./room-sizes.js";
+import { adultPxFor, doorAdultPx } from "./room-sizes.js";
 
 export const PICKUP_ID = "ch1-pickup";
 // The steps the player controls (ch1Step "pk-<step>"), in order. (jump() takes these, and "start".)
@@ -1453,7 +1453,9 @@ export function createPickup(bridge) {
   // large"): it was sized against home by the room rule, but home draws its people at three times their scale, so
   // the pushed crate came out about twice the size of the crates it joins.
   // (home draws its people at three times their scale, not the room rule: there the crate goes by that)
-  const crateK = (room) => ((room === "closet" ? 3 : sqScale(room)) / sqScale("closet")) * 0.55;
+  // (the crate's 0.55 was tuned against home's door rule, doorAdultPx("closet"); the room table sets home's people at
+  // 3 but the crate keeps its size, and elsewhere it follows the room's people)
+  const crateK = (room) => ((room === "closet" ? 3 : sqScale(room)) / ((doorAdultPx("closet") * 0.8) / 45)) * 0.55;
   // The floor his crate stands on while pushed (its pallet's width, a strip at its bottom), for the room's solids.
   function crateFoot(c) {
     const half = (PK_CRATE.w / 2 + 4) * c.k;
