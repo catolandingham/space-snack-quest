@@ -38,7 +38,7 @@ async function at(step, setup) {
     run();
     ss.drawFrame();
     const mb = window.SSQ.beat("ch1-morning");
-    return { drew: B.debug().drew, room: e.room(), step: L().step, look: mb && mb.mopsLook ? mb.mopsLook() : "none", ssLook: window.SSQ.mopsBeardLook ? window.SSQ.mopsBeardLook() : "none", face: window.SSQ.mopsFaceSnipped ? window.SSQ.mopsFaceSnipped() : "none" };
+    return { drew: B.debug().drew, room: e.room(), step: L().step, look: mb && mb.mopsLook ? mb.mopsLook() : "none", ssLook: window.SSQ.mopsBeardLook ? window.SSQ.mopsBeardLook() : "none", face: window.SSQ.mopsFaceSnipped ? window.SSQ.mopsFaceSnipped() : "none", over: window.SSQ.mopsBeardOver ? !!window.SSQ.mopsBeardOver(document.createElement("canvas").getContext("2d"), 100, 200, 2.6, 1) : "none" };
   }, setup);
   await page.close();
   return { ...r, errors };
@@ -56,7 +56,8 @@ g.check("56 on: once snipped, the engine leaves its own beard out (mopsLook noBe
 g.check("56 on: the HUD's Mops face shows the snipped beard too (Brian's yes to sheet 2, 2026-11-27; mops-face.js), and not before the snip", last.face === true && pack.face === false, { last: last.face, pack: pack.face });
 g.check(
   "56 on: the switch card's Mops reads the same beard look and draws the snipped beard over him (60-frame-draw.js, mops-face.js)",
-  /mopsBeardLook\(\)\) \}\), window\.SSQ && window\.SSQ\.mopsBeardOver/.test(readFileSync(join(root, "src", "game", "60-frame-draw.js"), "utf8")),
+  /mopsBeardLook\(\)\) \}\), window\.SSQ && window\.SSQ\.mopsBeardOver/.test(readFileSync(join(root, "src", "game", "60-frame-draw.js"), "utf8")) && last.over === true && pack.over === false,
+  { last: last.over, pack: pack.over },
 );
 const hall = await at("lastwalk", "e.enterRoom('hall','QB'); e.place('sq',480,520); e.set('costumeOn',true); L().fur = true");
 g.check("57: the beard slipped in the hall", hall.drew.fur === true, hall.room);
