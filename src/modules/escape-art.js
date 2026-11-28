@@ -651,23 +651,56 @@ export function drawDoorOpen(ctx) {
 export function drawSite(ctx, { booked = -1, t = 0, page = 0, size = "", label = -1 } = {}) {
   const S = SITE,
     sc = S.screen;
+  // the office computer's own monitor (office_room_v2.py _computer: the bezel's grey-blue, the green power light), close
+  // up; the page in the postal service's blue and white. Final art, pending Brian's yes (round 8).
   esRect(ctx, sc.x0 - 20, sc.y0 - 20, sc.x1 - sc.x0 + 40, sc.y1 - sc.y0 + 40, 18);
-  esPaint(ctx, "#2d323e", 6);
+  esPaint(ctx, "rgb(89,101,125)", 6, "rgb(34,36,44)");
+  ctx.beginPath();
+  ctx.arc(sc.x1 + 6, sc.y1 + 8, 5, 0, ES_TAU);
+  esPaint(ctx, "rgb(43,196,138)", 2, "rgb(34,36,44)");
   esRect(ctx, sc.x0, sc.y0, sc.x1 - sc.x0, sc.y1 - sc.y0, 8);
-  esPaint(ctx, "#eaf4ff", 3);
-  // the header band: the postal service's blue, its name in white, a little envelope
+  esPaint(ctx, "#eef5ff", 3, "rgb(34,36,44)");
+  // the header band: the postal service's blue, a thin red and white airmail edge under it, its name in white
   ctx.fillStyle = "#2f5aa8";
   ctx.fillRect(sc.x0 + 3, sc.y0 + 3, sc.x1 - sc.x0 - 6, 110);
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(sc.x0 + 3, sc.y0 + 113, sc.x1 - sc.x0 - 6, 8);
+  ctx.clip();
+  for (let x = sc.x0 - 10, i = 0; x < sc.x1; x += 18, i++) {
+    ctx.fillStyle = i % 2 ? "#ffffff" : "#e5533d";
+    ctx.beginPath();
+    ctx.moveTo(x, sc.y0 + 121);
+    ctx.lineTo(x + 9, sc.y0 + 113);
+    ctx.lineTo(x + 18, sc.y0 + 113);
+    ctx.lineTo(x + 9, sc.y0 + 121);
+    ctx.fill();
+  }
+  ctx.restore();
   esWords(ctx, escapeWords("site"), (sc.x0 + sc.x1) / 2 + 30, sc.y0 + 58, 44, "#ffffff", "center", 900);
-  esRect(ctx, sc.x0 + 24, sc.y0 + 32, 64, 46, 4);
+  // the logo: an envelope with its flap and a red stamp, three speed lines behind it
+  ctx.strokeStyle = "#ffffff";
+  ctx.lineWidth = 4;
+  ctx.lineCap = "round";
+  for (const dy of [-9, 0, 9]) (ctx.beginPath(), ctx.moveTo(sc.x0 + 10, sc.y0 + 56 + dy), ctx.lineTo(sc.x0 + 20 - Math.abs(dy) / 3, sc.y0 + 56 + dy), ctx.stroke());
+  esRect(ctx, sc.x0 + 24, sc.y0 + 40, 46, 33, 3);
   esPaint(ctx, "#ffffff", 3);
   ctx.beginPath();
-  ctx.moveTo(sc.x0 + 24, sc.y0 + 32);
-  ctx.lineTo(sc.x0 + 56, sc.y0 + 58);
-  ctx.lineTo(sc.x0 + 88, sc.y0 + 32);
+  ctx.moveTo(sc.x0 + 24, sc.y0 + 40);
+  ctx.lineTo(sc.x0 + 47, sc.y0 + 59);
+  ctx.lineTo(sc.x0 + 70, sc.y0 + 40);
   ctx.strokeStyle = ES_INK;
   ctx.lineWidth = 3;
   ctx.stroke();
+  esRect(ctx, sc.x0 + 57, sc.y0 + 60, 9, 10, 2);
+  esPaint(ctx, "#e5533d", 2);
+  // where he is: four dots along the bottom, one for each page, the ones done filled in (no words)
+  const pageNow = booked >= 0 ? 4 : page;
+  for (let i = 0; i < 4; i++) {
+    ctx.beginPath();
+    ctx.arc((sc.x0 + sc.x1) / 2 + (i - 1.5) * 34, sc.y1 - 22, 8, 0, ES_TAU);
+    esPaint(ctx, i < pageNow ? "#2bc48a" : i === pageNow ? "#2f5aa8" : "#d6e2f2", 2.5);
+  }
   const button = (b, words, goal, size2 = 40, fill = "#ffffff", ink = ES_INK) => {
     goal && markBox(ctx, b, t, 6, []);
     esRect(ctx, b.x0, b.y0, b.x1 - b.x0, b.y1 - b.y0, 14);
@@ -701,6 +734,7 @@ export function drawSite(ctx, { booked = -1, t = 0, page = 0, size = "", label =
         ctx.beginPath();
         ctx.arc(b.x0 + 80, (b.y0 + b.y1) / 2, 42, 0, ES_TAU);
         esPaint(ctx, "#ff9a6b", 4);
+        for (const [dx, dy, r] of [[-12, -10, 9], [14, 12, 7], [10, -18, 5]]) (ctx.beginPath(), ctx.arc(b.x0 + 80 + dx, (b.y0 + b.y1) / 2 + dy, r, 0, ES_TAU), esPaint(ctx, "#e0784c", 2.5));
         esWords(ctx, escapeWords(b.id), (b.x0 + b.x1) / 2 + 40, (b.y0 + b.y1) / 2, 56, "#ffffff", "center", 900);
       }
       boxes = { to: S.to };
