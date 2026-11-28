@@ -154,38 +154,97 @@ export function drawBrochureExtras(ctx, x, y, w, h, fizz = 0, t = 0, small = fal
     drawFatLetters(ctx, FAMILY.NAME, 0, 0, size);
     ctx.restore();
   }
-  // the cut-open cake: a round cake with a slice out, the red marshmallow middle showing
+  // the cut-open cake, seen from the side: a round chocolate cake with a slice cut out at the front, its two cut faces
+  // showing chocolate on top, sponge, and the red middle; `fizz` its little star sparks. Final art, pending Brian's yes
+  // (round 8).
   const C = BROCHURE_PARTS.cake,
     cx = x + w * C.fx,
-    cy = y + h * C.fy,
-    r = w * C.fr * 0.62;
-  ctx.beginPath();
-  ctx.moveTo(cx, cy);
-  ctx.arc(cx, cy, r, 0.5, TAU - 0.3);
-  ctx.closePath();
-  ctx.fillStyle = "#8a5228";
-  ctx.fill();
-  ctx.lineWidth = Math.max(1.2, w * 0.006);
+    r = w * C.fr * 0.86,
+    ry = r * 0.42,
+    H = r * 0.85,
+    cy = y + h * C.fy - H * 0.35,
+    lw = Math.max(1.2, w * 0.006);
+  ctx.save();
+  ctx.lineJoin = "round";
+  ctx.lineWidth = lw;
   ctx.strokeStyle = INK;
+  // the side, then the top
+  ctx.beginPath();
+  ctx.moveTo(cx - r, cy);
+  ctx.lineTo(cx - r, cy + H);
+  ctx.ellipse(cx, cy + H, r, ry, 0, Math.PI, 0, true);
+  ctx.lineTo(cx + r, cy);
+  ctx.closePath();
+  ctx.fillStyle = "#5e3820";
+  ctx.fill();
   ctx.stroke();
   ctx.beginPath();
-  ctx.moveTo(cx, cy);
-  ctx.arc(cx, cy, r * 0.55, 0.5, TAU - 0.3);
-  ctx.closePath();
-  ctx.fillStyle = "#e0303a";
+  ctx.ellipse(cx, cy, r, ry, 0, 0, TAU);
+  ctx.fillStyle = "#8a5228";
   ctx.fill();
+  ctx.stroke();
+  // the two cut faces of the missing slice: chocolate, sponge, the red middle, sponge
+  const face = (ax, ay, bx, by, shade) => {
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(ax, ay);
+    ctx.lineTo(bx, by);
+    ctx.lineTo(bx, by + H);
+    ctx.lineTo(ax, ay + H);
+    ctx.closePath();
+    ctx.save();
+    ctx.clip();
+    for (const [v0, v1, col] of [[0, 0.18, "#7a4422"], [0.18, 0.45, shade], [0.45, 0.68, "#e0303a"], [0.68, 1.01, shade]]) {
+      ctx.beginPath();
+      ctx.moveTo(ax, ay + H * v0);
+      ctx.lineTo(bx, by + H * v0);
+      ctx.lineTo(bx, by + H * v1);
+      ctx.lineTo(ax, ay + H * v1);
+      ctx.closePath();
+      ctx.fillStyle = col;
+      ctx.fill();
+    }
+    ctx.restore();
+    ctx.stroke();
+    ctx.restore();
+  };
+  face(cx, cy, cx - r * 0.42, cy + ry * 0.9, "#c98b4a");
+  face(cx, cy, cx + r * 0.5, cy + ry * 0.87, "#e0a868");
+  // a white icing squiggle across the top
+  if (!small) {
+    ctx.beginPath();
+    for (let i = 0; i <= 16; i++) {
+      const u = i / 16,
+        px = cx - r * 0.85 + r * 0.6 * u;
+      ctx.lineTo(px, cy - ry * 0.1 + Math.sin(u * TAU * 1.5) * ry * 0.3);
+    }
+    ctx.strokeStyle = "#fffaf0";
+    ctx.lineWidth = lw * 1.5;
+    ctx.lineCap = "round";
+    ctx.stroke();
+  }
+  ctx.restore();
   if (fizz > 0)
     for (let i = 0; i < 7; i++) {
       const a = (i / 7) * TAU + t * 3,
-        d = r * (0.9 + 0.5 * ((t * 2 + i * 0.3) % 1));
+        d = r * (1 + 0.5 * ((t * 2 + i * 0.3) % 1)),
+        sx = cx + Math.cos(a) * d,
+        sy = cy + Math.sin(a) * d,
+        k = Math.max(1.5, w * 0.012);
       ctx.save();
       ctx.globalAlpha = fizz;
-      ctx.strokeStyle = "#ffd23f";
-      ctx.lineWidth = Math.max(1.5, w * 0.008);
+      ctx.fillStyle = "#ffd23f";
       ctx.beginPath();
-      ctx.moveTo(cx + Math.cos(a) * d * 0.8, cy + Math.sin(a) * d * 0.8);
-      ctx.lineTo(cx + Math.cos(a) * d * 1.1, cy + Math.sin(a) * d * 1.1);
-      ctx.stroke();
+      ctx.moveTo(sx, sy - k * 1.6);
+      ctx.lineTo(sx + k * 0.45, sy - k * 0.45);
+      ctx.lineTo(sx + k * 1.6, sy);
+      ctx.lineTo(sx + k * 0.45, sy + k * 0.45);
+      ctx.lineTo(sx, sy + k * 1.6);
+      ctx.lineTo(sx - k * 0.45, sy + k * 0.45);
+      ctx.lineTo(sx - k * 1.6, sy);
+      ctx.lineTo(sx - k * 0.45, sy - k * 0.45);
+      ctx.closePath();
+      ctx.fill();
       ctx.restore();
     }
 }

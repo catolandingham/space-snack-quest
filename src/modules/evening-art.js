@@ -257,10 +257,14 @@ export function drawPhoto(ctx, id, x, y, w, h, mops, t = 0) {
 /**
  * Squatch's crayon drawing (made at age 5) inside (x, y, w, h): him and Mops holding hands with a loop of string
  * round both their hands, TIED TOGETHER FOREVER over them, ME and MOPS THE GANITOR under them, and a dotted look from
- * Mops's eye to him with small hearts along it (R63).
+ * Mops's eye to him with small hearts along it (R63). Drawn in crayon, the way his other crayon pictures are
+ * (guardians-drawing.js): every line twice, a little off, the second fainter; shapes coloured in with slanted strokes
+ * that leave the paper showing; his crayon writing pressed hard. Final art, pending Brian's yes (round 8; the words and
+ * what is in it are as approved, 2026-11-13).
  */
 export function drawCrayonDrawing(ctx, x, y, w, h) {
-  const s = Math.min(w / 300, h / 230);
+  const s = Math.min(w / 300, h / 230),
+    rnd = cdWobble(13);
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(s, s);
@@ -270,91 +274,51 @@ export function drawCrayonDrawing(ctx, x, y, w, h) {
   ctx.fillRect(10, -8, 40, 18);
   ctx.fillRect(250, -8, 40, 18);
   const crayon = (t, cx, cy, size, color) => {
-    for (const [dx, dy] of [[0, 0], [0.8, 0.6]]) text(ctx, t, cx + dx, cy + dy, size, color, 800);
+    for (const [dx, dy, a] of [[0, 0, 0.95], [0.9, 0.7, 0.45]]) (ctx.save(), (ctx.globalAlpha = a), text(ctx, t, cx + dx, cy + dy, size, color, 800), ctx.restore());
   };
   crayon(eveningWords("sign-tied"), 150, 26, 22, "#e5533d");
-  // Squatch: a scribbly brown body, head, ears, two eyes and a big smile
-  ctx.lineWidth = 3;
-  ctx.strokeStyle = "#5a3418";
-  ctx.fillStyle = "#8a5a36";
-  ctx.beginPath();
-  ctx.ellipse(82, 130, 34, 44, 0, 0, TAU);
-  ctx.fill();
-  ctx.stroke();
-  evDisc(ctx, 82, 78, 24, "#8a5a36", "#5a3418", 3);
-  evDisc(ctx, 62, 62, 8, "#8a5a36", "#5a3418", 3);
-  evDisc(ctx, 102, 62, 8, "#8a5a36", "#5a3418", 3);
+  // Squatch: a brown body, head and ears coloured in, a darker brown line round them, two eyes and a big smile
+  const SQ = "#8a5a36",
+    SQL = "#5a3418";
+  cdColourOval(ctx, rnd, 82, 130, 34, 44, SQ);
+  cdColourOval(ctx, rnd, 82, 78, 24, 24, SQ);
+  for (const ex of [62, 102]) cdColourOval(ctx, rnd, ex, 62, 8, 8, SQ);
+  cdOval(ctx, rnd, 82, 130, 34, 44, SQL, 3);
+  for (const ex of [62, 102]) cdOval(ctx, rnd, ex, 62, 8, 8, SQL, 3);
+  cdOval(ctx, rnd, 82, 78, 24, 24, SQL, 3);
   evDisc(ctx, 74, 76, 3.5, INK);
   evDisc(ctx, 90, 76, 3.5, INK);
-  ctx.beginPath();
-  ctx.arc(82, 84, 9, 0.2, Math.PI - 0.2);
-  ctx.lineWidth = 3;
-  ctx.strokeStyle = INK;
-  ctx.stroke();
-  // Mops: a white goat with horns, a long beard and his name tag
-  ctx.fillStyle = "#ffffff";
-  ctx.strokeStyle = "#3b3f4a";
-  ctx.beginPath();
-  ctx.ellipse(214, 132, 34, 42, 0, 0, TAU);
-  ctx.fill();
-  ctx.stroke();
-  evDisc(ctx, 214, 80, 22, "#ffffff", "#3b3f4a", 3);
-  ctx.beginPath();
-  ctx.moveTo(200, 62);
-  ctx.quadraticCurveTo(190, 40, 202, 34);
-  ctx.moveTo(228, 62);
-  ctx.quadraticCurveTo(238, 40, 226, 34);
-  ctx.lineWidth = 4;
-  ctx.strokeStyle = "#a07a4a";
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(206, 96);
-  ctx.lineTo(214, 128);
-  ctx.lineTo(222, 96);
-  ctx.closePath();
-  ctx.fillStyle = "#d8d8d8";
-  ctx.fill();
+  cdLine(ctx, rnd, cdArcPts(82, 84, 9, 0.2, Math.PI - 0.2), INK, 3);
+  // Mops: a white goat (grey crayon round him, a little grey shading), horns, a long beard, his blue name tag
+  const GL = "#3b3f4a";
+  cdColourOval(ctx, rnd, 214, 132, 34, 42, "#d9dce3", 0.45);
+  cdOval(ctx, rnd, 214, 132, 34, 42, GL, 3);
+  cdOval(ctx, rnd, 214, 80, 22, 22, GL, 3);
+  cdLine(ctx, rnd, [[200, 62], [192, 46], [202, 34]], "#a07a4a", 4);
+  cdLine(ctx, rnd, [[228, 62], [236, 46], [226, 34]], "#a07a4a", 4);
+  cdLine(ctx, rnd, [[206, 96], [214, 128], [222, 96]], "#9a9ea8", 3);
+  for (const bx of [210, 214, 218]) cdLine(ctx, rnd, [[bx, 100], [214 + (bx - 214) * 0.4, 122]], "#b8bcc6", 2);
   evDisc(ctx, 207, 78, 3, INK);
   evDisc(ctx, 221, 78, 3, INK);
-  rrect(ctx, 224, 118, 18, 9, 2, "#ffffff", "#1d4fb8", 2);
+  cdLine(ctx, rnd, [[224, 118], [242, 118], [242, 127], [224, 127], [224, 118]], "#1d4fb8", 2.5);
   // holding hands, a loop of string round both
-  ctx.beginPath();
-  ctx.moveTo(112, 128);
-  ctx.lineTo(184, 128);
-  ctx.lineWidth = 4;
-  ctx.strokeStyle = "#5a3418";
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.ellipse(148, 128, 14, 8, 0, 0, TAU);
-  ctx.lineWidth = 3;
-  ctx.strokeStyle = "#e5533d";
-  ctx.stroke();
-  // the dotted look from Mops's eye to Squatch, with hearts
-  ctx.setLineDash([3, 6]);
-  ctx.beginPath();
-  ctx.moveTo(204, 74);
-  ctx.quadraticCurveTo(150, 46, 98, 72);
-  ctx.lineWidth = 2.5;
-  ctx.strokeStyle = "#e5533d";
-  ctx.stroke();
-  ctx.setLineDash([]);
+  cdLine(ctx, rnd, [[112, 128], [148, 129], [184, 128]], SQL, 4);
+  cdOval(ctx, rnd, 148, 128, 14, 8, "#e5533d", 3);
+  // the dotted look from Mops's eye to Squatch: crayon dabs along it, and hearts coloured in
+  for (let i = 0; i <= 10; i++) {
+    const u = i / 10,
+      px = (1 - u) * (1 - u) * 204 + 2 * (1 - u) * u * 150 + u * u * 98,
+      py = (1 - u) * (1 - u) * 74 + 2 * (1 - u) * u * 46 + u * u * 72;
+    i % 2 || cdLine(ctx, rnd, [[px - 1.5, py], [px + 1.5, py]], "#e5533d", 3);
+  }
   drawHeartShape(ctx, 150, 54, 6);
   drawHeartShape(ctx, 124, 60, 5);
   // the labels: two crayon tags, each with its own arrow (decided 2026-11-26, question 2: A; "Ganitor" stays on the
   // brass plaque only)
   const tagArrow = (x0, y0, x1, y1) => {
-    ctx.beginPath();
-    ctx.moveTo(x0, y0);
-    ctx.quadraticCurveTo((x0 + x1) / 2 + 10, (y0 + y1) / 2, x1, y1);
     const a = Math.atan2(y1 - y0, x1 - x0);
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x1 - Math.cos(a - 0.5) * 12, y1 - Math.sin(a - 0.5) * 12);
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x1 - Math.cos(a + 0.5) * 12, y1 - Math.sin(a + 0.5) * 12);
-    ctx.lineWidth = 3;
-    ctx.lineCap = "round";
-    ctx.strokeStyle = "#3478f6";
-    ctx.stroke();
+    cdLine(ctx, rnd, [[x0, y0], [(x0 + x1) / 2 + 5, (y0 + y1) / 2], [x1, y1]], "#3478f6", 3);
+    cdLine(ctx, rnd, [[x1 - Math.cos(a - 0.5) * 12, y1 - Math.sin(a - 0.5) * 12], [x1, y1], [x1 - Math.cos(a + 0.5) * 12, y1 - Math.sin(a + 0.5) * 12]], "#3478f6", 3);
   };
   crayon(eveningWords("sign-me"), 40, 204, 24, "#3478f6");
   tagArrow(48, 190, 60, 172);
@@ -362,6 +326,50 @@ export function drawCrayonDrawing(ctx, x, y, w, h) {
   tagArrow(250, 190, 238, 170);
   ctx.restore();
 }
+// His crayon: a fixed wobble (the same every frame), from a seed.
+function cdWobble(seed) {
+  let n = seed >>> 0 || 1;
+  return () => ((n = (n * 1664525 + 1013904223) >>> 0), n / 4294967296 - 0.5);
+}
+// A crayon line through points: twice, a little off, the second fainter.
+function cdLine(ctx, rnd, pts, color, width) {
+  ctx.save();
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  for (let i = 0; i < 2; i++) {
+    ctx.beginPath();
+    pts.forEach(([px, py], j) => (j ? ctx.lineTo(px + rnd() * 1.6, py + rnd() * 1.6) : ctx.moveTo(px + rnd() * 1.6, py + rnd() * 1.6)));
+    ctx.strokeStyle = color;
+    ctx.globalAlpha = i ? 0.5 : 0.92;
+    ctx.lineWidth = width * (i ? 0.75 : 1);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+const cdArcPts = (cx, cy, r, a0, a1, n = 10) => Array.from({ length: n + 1 }, (_, i) => [cx + Math.cos(a0 + ((a1 - a0) * i) / n) * r, cy + Math.sin(a0 + ((a1 - a0) * i) / n) * r]);
+// A crayon oval's outline.
+function cdOval(ctx, rnd, cx, cy, rx, ry, color, width) {
+  cdLine(ctx, rnd, Array.from({ length: 19 }, (_, i) => [cx + Math.cos((i / 18) * TAU) * rx, cy + Math.sin((i / 18) * TAU) * ry]), color, width);
+}
+// An oval coloured in with slanted crayon strokes, the paper showing between them.
+function cdColourOval(ctx, rnd, cx, cy, rx, ry, color, alpha = 0.7) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, rx, ry, 0, 0, TAU);
+  ctx.clip();
+  ctx.strokeStyle = color;
+  ctx.globalAlpha = alpha;
+  ctx.lineWidth = 3.2;
+  ctx.lineCap = "round";
+  for (let k = -rx - ry; k < rx + ry; k += 3.6) {
+    ctx.beginPath();
+    ctx.moveTo(cx + k + rnd() * 1.5, cy + ry);
+    ctx.lineTo(cx + k + ry * 0.6 + rnd() * 1.5, cy - ry);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
 export function drawHeartShape(ctx, x, y, r, color = "#e5533d") {
   ctx.beginPath();
   ctx.moveTo(x, y + r);
@@ -384,49 +392,108 @@ export function drawMars(ctx, x, y, r) {
  * The brochure's front inside (x, y, w, h), a brochure for the stand (Brian, 2026-11-27, r5 6:08: "just more of a
  * brochure for the stand", nobody on it): the stand with its striped awning, Mars big in the sky behind it, on its
  * counter one cake box stamped with his family's name (snack-name.js FAMILY) in fat red letters, and one cake cut
- * open, red inside (`fizz` 0 to 1: its sparks). No cooks, no paw print, no other words. PLACEHOLDER drawing for
- * Brian's yes. `small` leaves out the fine parts (the brochure in a paw or held up in the room).
+ * open, red inside (`fizz` 0 to 1: its sparks). No cooks, no paw print, no other words (DECISIONS: its only words are
+ * MARS CAKES on the box). Drawn in the locked rooms' way (flat fills, one dark ink line, white shine): the folded paper
+ * (a crease near its right edge), space flat navy with four-point sparkles, Mars with craters and a lit edge, the red
+ * ground, the awning's scallops, the counter's planks. Final art, pending Brian's yes (round 8).
+ * `small` leaves out the fine parts (the brochure in a paw or held up in the room).
  */
 export function drawBrochure(ctx, x, y, w, h, small = false, fizz = 0, t = 0) {
-  const lw = Math.max(1.5, w * 0.012);
+  const lw = Math.max(1.5, w * 0.012),
+    ink = "rgb(34,36,44)";
   ctx.save();
-  rrect(ctx, x, y, w, h, Math.max(2, w * 0.03), "#fffaf0", INK, lw);
+  rrect(ctx, x, y, w, h, Math.max(2, w * 0.03), "#fffaf0", ink, lw);
   ctx.beginPath();
   ctx.rect(x + w * 0.04, y + w * 0.04, w * 0.92, h - w * 0.08);
   ctx.clip();
-  // the night sky, and Mars big behind the stand
-  sky(ctx, x, y, w, h * 0.62, "#1b2350", "#4b3a7a");
-  !small && stars(ctx, x, y, w, h * 0.3, 12);
-  drawMars(ctx, x + w * 0.68, y + h * 0.2, w * 0.26);
-  // the red ground
+  // space: flat navy (the rooms' window), sparkles
+  ctx.fillStyle = "rgb(50,56,96)";
+  ctx.fillRect(x, y, w, h * 0.62);
+  if (!small)
+    for (const [u, v, r] of [[0.12, 0.08, 1], [0.3, 0.2, 0.7], [0.22, 0.34, 0.8], [0.45, 0.07, 0.6], [0.92, 0.42, 0.7], [0.1, 0.5, 0.6], [0.4, 0.42, 0.5]]) {
+      const sx = x + w * u,
+        sy = y + h * v,
+        k = w * 0.016 * r;
+      ctx.fillStyle = "rgb(235,235,245)";
+      ctx.beginPath();
+      ctx.moveTo(sx, sy - k * 2);
+      ctx.lineTo(sx + k * 0.5, sy - k * 0.5);
+      ctx.lineTo(sx + k * 2, sy);
+      ctx.lineTo(sx + k * 0.5, sy + k * 0.5);
+      ctx.lineTo(sx, sy + k * 2);
+      ctx.lineTo(sx - k * 0.5, sy + k * 0.5);
+      ctx.lineTo(sx - k * 2, sy);
+      ctx.lineTo(sx - k * 0.5, sy - k * 0.5);
+      ctx.closePath();
+      ctx.fill();
+    }
+  // Mars, big behind the stand: a lit edge on its upper left
+  const mx = x + w * 0.68,
+    my = y + h * 0.2,
+    mr = w * 0.26;
+  drawMars(ctx, mx, my, mr);
+  if (!small) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(mx, my, mr - lw / 2, 0, TAU);
+    ctx.clip();
+    ctx.beginPath();
+    ctx.arc(mx - mr * 0.1, my - mr * 0.1, mr, Math.PI * 0.95, Math.PI * 1.55);
+    ctx.strokeStyle = "rgba(255,190,150,.8)";
+    ctx.lineWidth = mr * 0.12;
+    ctx.stroke();
+    ctx.restore();
+  }
+  // the red ground, a darker line where it meets the sky
   ctx.fillStyle = "#c86a48";
   ctx.fillRect(x, y + h * 0.6, w, h * 0.4);
-  // the stand: two posts, a striped awning, a counter
+  ctx.fillStyle = "#a8503a";
+  ctx.fillRect(x, y + h * 0.6, w, Math.max(1, h * 0.012));
+  // the stand: two posts, a striped awning with scalloped edge, a counter of planks
   const sx = x + w * 0.12,
     sw = w * 0.76,
     top = y + h * 0.36,
     ct = y + h * 0.62;
-  for (const px of [sx + sw * 0.04, sx + sw * 0.96 - w * 0.03]) rrect(ctx, px, top, w * 0.03, h * 0.5, 1, "#8b5a2b", INK, lw);
+  for (const px of [sx + sw * 0.04, sx + sw * 0.96 - w * 0.03]) rrect(ctx, px, top, w * 0.03, h * 0.5, 1, "#8b5a2b", ink, lw);
   const n = small ? 4 : 6;
+  rrect(ctx, sx - w * 0.02, top - h * 0.03, sw + w * 0.04, h * 0.035, 2, "#e0303a", ink, lw);
   for (let i = 0; i < n; i++) {
     ctx.beginPath();
     ctx.moveTo(sx + (sw * i) / n, top);
     ctx.lineTo(sx + (sw * (i + 1)) / n, top);
     ctx.lineTo(sx + (sw * (i + 1)) / n, top + h * 0.09);
-    ctx.quadraticCurveTo(sx + (sw * (i + 0.5)) / n, top + h * 0.13, sx + (sw * i) / n, top + h * 0.09);
+    ctx.quadraticCurveTo(sx + (sw * (i + 0.5)) / n, top + h * 0.14, sx + (sw * i) / n, top + h * 0.09);
     ctx.closePath();
     ctx.fillStyle = i % 2 ? "#fffaf0" : "#e0303a";
     ctx.fill();
     ctx.lineWidth = lw;
-    ctx.strokeStyle = INK;
+    ctx.strokeStyle = ink;
     ctx.stroke();
   }
-  rrect(ctx, sx - w * 0.04, ct, sw + w * 0.08, h * 0.3, 2, "#b0784a", INK, lw);
+  rrect(ctx, sx - w * 0.04, ct, sw + w * 0.08, h * 0.3, 2, "#b0784a", ink, lw);
   ctx.fillStyle = "#c98c58";
   ctx.fillRect(sx - w * 0.04 + lw, ct + lw, sw + w * 0.08 - lw * 2, h * 0.035);
+  if (!small) {
+    ctx.strokeStyle = "#8b5a2b";
+    ctx.lineWidth = lw * 0.6;
+    for (const v of [0.1, 0.2]) (ctx.beginPath(), ctx.moveTo(sx - w * 0.03, ct + h * v), ctx.lineTo(sx + sw + w * 0.03, ct + h * v), ctx.stroke());
+  }
   // on the counter: the cake box stamped with his family's name, and the cake cut open, red and fizzing
   drawBrochureExtras(ctx, x, y, w, h, small ? 0 : fizz, t, small);
   ctx.restore();
+  // the fold: a crease near the right edge, the folded part a shade darker
+  if (!small) {
+    ctx.save();
+    ctx.fillStyle = "rgba(34,36,44,.08)";
+    ctx.fillRect(x + w * 0.9, y + lw, w * 0.1 - lw, h - lw * 2);
+    ctx.strokeStyle = "rgba(34,36,44,.35)";
+    ctx.lineWidth = lw * 0.5;
+    ctx.beginPath();
+    ctx.moveTo(x + w * 0.9, y + lw);
+    ctx.lineTo(x + w * 0.9, y + h - lw);
+    ctx.stroke();
+    ctx.restore();
+  }
 }
 
 // ---------- the order papers ----------
