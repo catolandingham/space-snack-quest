@@ -3,7 +3,8 @@
  * The robot taps through speech, presses whatever the action button offers, taps the floor to walk
  * to the next spot, and keeps out of the cones it can see. It reads the game only to steer.
  * While it plays it measures what a kid would see: the action button changing size, the page
- * jumping, Squatch standing inside furniture, a tap that stops at furniture, a goal ring on
+ * jumping, Squatch standing inside furniture (or anyone else the room model checks: Mops, the pushed crate, the
+ * robots, Isfred and the workers), a tap that stops at furniture, a goal ring on
  * Squatch himself, and errors. Each problem it meets is checked against KNOWN below: a problem
  * on that list passes with a note, a problem not on it fails.
  * The party night (src/modules/party.js) is played the same way: the sneak, the dress-up (dragging the pieces),
@@ -16,7 +17,7 @@
  *   KID_AVOID=HIDE,DANCE  buttons (verbs) the robot leaves alone (default: none)
  *   KID_URL=?beat=party:P7  start somewhere else (for looking into one place; the run then cannot reach the tally)
  *   KID_START=evening:37  start from that debug link (localhost): the rest of Chapter 1 from there, to the tally
- *   KID_PART=day1|day2|pickup  play one day (see PARTS below); npm test plays the three in turn
+ *   KID_PART=day1|day2|escape|pickup  play one part (see PARTS below); npm test plays the four in turn
  */
 import { mkdirSync, rmSync, writeFileSync, readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
@@ -27,12 +28,16 @@ const sneak = await import(join(root, "tests", "party-sneak.mjs"));
 // Problems Brian knows about. Take one off this list in the change that fixes it.
 const KNOWN = {};
 
-// KID_PART=day1|day2|pickup plays one day, each with its own time (2026-11-27, the join: the whole chapter is longer than one
-// run's time). day1: from the chapter's start until Day 2's morning begins; day2: from Day 2's morning (?beat=day2) until
-// pickup day begins; pickup: from pickup day (?beat=pickup:start) to the tally card. With no KID_PART, KID_START or
-// KID_URL, this file plays the three parts one after another (each in its own run) and fails if any part fails.
+// KID_PART=day1|day2|escape|pickup plays one part, each with its own time (2026-11-27, the join: the whole chapter is
+// longer than one run's time). day1: from the chapter's start until Day 2's morning begins; day2: from Day 2's morning
+// (?beat=day2) until the escape begins; escape: from the escape (?beat=escape) until pickup day begins; pickup: from
+// pickup day (?beat=pickup:start) to the tally card. With no KID_PART, KID_START or KID_URL, this file plays the four
+// parts one after another (each in its own run) and fails if any part fails.
 const PART = process.env.KID_PART || "";
-const PARTS = { day1: { url: "?ch=1", until: "day2On" }, day2: { url: "?beat=day2", until: "pickupOn" }, pickup: { url: "?beat=pickup:start", until: "" } };
+// (Day 2 and its night are two parts since 2026-11-27: played at a kid's speed, the day to the end of night one took
+// about 470 s and the escape night about 300 s more, so one 600 s run could never reach pickup day. day2 ends where the
+// escape begins; escape: from ?beat=escape, after night one, until pickup day begins.)
+const PARTS = { day1: { url: "?ch=1", until: "day2On" }, day2: { url: "?beat=day2", until: "escapeOn" }, escape: { url: "?beat=escape", until: "pickupOn" }, pickup: { url: "?beat=pickup:start", until: "" } };
 if (!PART && !process.env.KID_START && !process.env.KID_URL) {
   let failed = 0;
   for (const part of Object.keys(PARTS)) {
@@ -40,16 +45,18 @@ if (!PART && !process.env.KID_START && !process.env.KID_URL) {
     const r = spawnSync(process.execPath, [process.argv[1]], { stdio: "inherit", env: { ...process.env, KID_PART: part, KID_OUT: join(process.env.KID_OUT || join(root, "tests", "out", "kid-play"), part) } });
     r.status !== 0 && failed++;
   }
-  console.log(failed ? `ch1-kid-play: ${failed} of 3 parts failed` : "ch1-kid-play: all three parts passed");
+  console.log(failed ? `ch1-kid-play: ${failed} of ${Object.keys(PARTS).length} parts failed` : `ch1-kid-play: all ${Object.keys(PARTS).length} parts passed`);
   process.exit(failed ? 1 : 0);
 }
-if (PART && !PARTS[PART]) throw new Error("KID_PART must be day1, day2 or pickup");
+if (PART && !PARTS[PART]) throw new Error("KID_PART must be day1, day2, escape or pickup");
 const MAX_S = +(process.env.KID_MAX_S || (PART ? 600 : 900));
 const OUT = process.env.KID_OUT || join(root, "tests", "out", "kid-play");
 const SHOTS = process.env.KID_SHOTS === "1";
 const AVOID = (process.env.KID_AVOID || "").split(",").filter(Boolean);
 // what the pink slip says: Isfred's office code, as the game has it (src/modules/office-code.js)
 const { OFFICE_CODE: SLIP_CODE } = await import(join(root, "src", "modules", "office-code.js"));
+// where Squatch rolls up by the big vent in the escape's bay (src/modules/escape-place.js)
+const { ES_BAY: ES_BAY_PLACE } = await import(join(root, "src", "modules", "escape-place.js"));
 const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 1 };
 mkdirSync(OUT, { recursive: true });
 if (SHOTS) (rmSync(join(OUT, "fr"), { recursive: true, force: true }), mkdirSync(join(OUT, "fr"), { recursive: true }));
@@ -127,12 +134,30 @@ const st = () =>
         const P = b.place;
         return { cu: e.cu, step: e.step, typed: e.typed || "", keys: Object.fromEntries([..."0123456789"].map((d) => [d, P.keyAt(d)])), ret: [P.SITE.schedule, P.SITE.sizes[2], P.SITE.inside[1], P.SITE.to[0]][e.sitePage || 0], snacks: P.SNACKS.at.filter((_, i) => !e.snacks.gone[i]), carry: !!e.snacks.carry };
       })(),
+      // what a press can change on screen without the goal words changing (the plan drawn one picture a press, the walls
+      // taken one thing a press): counted as something new, so the robot presses again (2026-11-27: it pressed DRAW ·
+      // plan twice, saw nothing new, and wandered 20 s; TAKE · brochure the same)
+      pressKey: (() => {
+        const es = window.SSQ && window.SSQ.beat("ch1-escape"),
+          e = es && es.active() && es.debug().state,
+          p = n.ch1Pickup;
+        return [e ? [e.step, e.cu || "", e.plan ? Object.keys(e.plan.has).length : 0].join(",") : "", p ? [p.step, Object.keys(p.walls || {}).length].join(",") : ""].join("|");
+      })(),
+      // everyone else the room model checks this frame (src/modules/room-model.js physicsNow): Mops, the pushed crate,
+      // the modules' robots, Isfred and the workers, standing in a solid
+      others: window.SSQ && window.SSQ.physicsNow ? window.SSQ.physicsNow().filter((q) => q.who !== "sq") : [],
+      escStep: (() => {
+        const es = window.SSQ && window.SSQ.beat("ch1-escape"),
+          e = es && es.active() && es.debug().state;
+        return e ? { step: e.step, robot: e.robot ? e.robot.phase : "", guard: !!e.guard } : null;
+      })(),
       zoom: n.ch1Zoom ? n.ch1Zoom.id : "",
       zoomKey: n.ch1Zoom ? [n.ch1Zoom.id, n.ch1Zoom.bag || 0, n.ch1Packed || 0].join(":") : "",
       jailBy: n.jailBy || "",
       step: n.ch1Step || "",
       // (which day's beat is running, for KID_PART: Day 2's home morning, pickup day)
       day2On: !!(window.SSQ && window.SSQ.beat("ch1-home-morning") && window.SSQ.beat("ch1-home-morning").active()),
+      escapeOn: !!(window.SSQ && window.SSQ.beat("ch1-escape") && window.SSQ.beat("ch1-escape").active()),
       pickupOn: !!(window.SSQ && window.SSQ.beat("ch1-pickup") && window.SSQ.beat("ch1-pickup").active()),
       // The party's full-screen dress-up (src/modules/party.js): the pieces in the closet and the body spots.
       dress: window.SSQ && window.SSQ.beat("ch1-party") ? window.SSQ.beat("ch1-party").dressTargets() : null,
@@ -286,7 +311,7 @@ const say = (s, what) => {
   console.log(line);
 };
 const rects = { btn: new Map(), pic: new Map(), joy: new Map() };
-const seen = { inSolid: [], blocked: new Set(), selfRing: new Set(), caught: [], scenes: [], silent: [] };
+const seen = { others: new Map(), inSolid: [], blocked: new Set(), selfRing: new Set(), caught: [], scenes: [], silent: [] };
 const firstChip = new Map();
 let lastChip = "",
   lastScene = "",
@@ -326,6 +351,10 @@ while (now() < MAX_S) {
   ])
     if (r) rects[k].has(r.join("x")) || rects[k].set(r.join("x"), `${now().toFixed(1)}s ${s.scene} "${s.btn}"`);
   if (s.ctrl && !s.mops && !s.zoom && s.pose === "stand" && inSolid(s, s.x, s.y, -6)) seen.inSolid.push(`${now().toFixed(1)}s ${s.scene} at ${s.x},${s.y}`);
+  for (const q of s.others || []) {
+    const k = `${s.scene}/${q.room}: ${q.who} in ${q.solid.id || [q.solid.x0, q.solid.y0, q.solid.x1, q.solid.y1].join(",")}`;
+    seen.others.has(k) || seen.others.set(k, `${now().toFixed(1)}s ${k} at ${q.x},${q.y} (${s.step || s.chip})`);
+  }
   if (s.ctrl && s.selfSpot) seen.selfRing.add(`${s.scene}: ${s.chip}`);
   if (s.by && !jailUp) {
     seen.caught.push(`${now().toFixed(1)}s ${s.scene} by ${s.by}`);
@@ -368,7 +397,7 @@ while (now() < MAX_S) {
   }
   loopScene = s.scene;
   const pk = s.party ? [s.party.scene, s.party.alarm, s.party.song, s.party.done, s.party.close, s.party.bag, !!s.party.card, s.polaroid].join(":") : "";
-  const key = [s.scene, s.room, s.chip, s.mops, s.zoomKey, done.size, seen.caught.length, s.dress ? JSON.stringify(s.dress.outfit) : "", pk].join("|");
+  const key = [s.scene, s.room, s.chip, s.mops, s.zoomKey, s.pressKey, done.size, seen.caught.length, s.dress ? JSON.stringify(s.dress.outfit) : "", pk].join("|");
   if (key !== lastKey) ((lastKey = key), (lastChange = Date.now()), progress++);
   if (Date.now() - lastChange > 75000) {
     end = "stuck";
@@ -654,6 +683,17 @@ while (now() < MAX_S) {
       continue;
     }
   }
+  // The escape's bay at night (47, "sneak to the big vent"): the big vent is outlined, with no button until he is there;
+  // a kid walks to it (the robot's path keeps out of the night robot's cone, and waits for it). Until 2026-11-27 the
+  // robot had no place to go here, wandered into the patrol's look, and Day 2 ran out of time.
+  if (s.escStep && s.escStep.step === "sneak" && s.room === "hangar" && s.pose === "stand" && s.ctrl && !s.escStep.guard && s.escStep.robot === "patrol") {
+    const V = ES_BAY_PLACE.ventStand,
+      st2 = nextStep(s, V.x, V.y, 20);
+    say(s, st2.wait ? "WAIT for the night robot to look away" : `WALK to the big vent (${V.x},${V.y})`);
+    if (!st2.wait) await tapGame(s, st2.x, st2.y);
+    await sleep(st2.wait ? 250 : 400);
+    continue;
+  }
   // Hidden (or rolled up) with a cone on screen: stay put, the way a kid holds still while someone is looking.
   if ((s.pose === "hidden" || s.pose === "under" || s.pose === "ball") && (s.cones.length || (s.party && s.party.alarm)) && Date.now() - (hidAt || (hidAt = Date.now())) < 20000) {
     await sleep(250);
@@ -697,6 +737,24 @@ while (now() < MAX_S) {
       for (let i = 0; i <= k; i++) if (v.risky(v.cell(x0 + ((x1 - x0) * i) / k, y0 + ((y1 - y0) * i) / k))) return false;
       return true;
     };
+    // Pushing his crate (pickup day, 53), Mops is a crate longer than the robot's own map of the room knows: a kid taps
+    // the doorway and lets the game's walk take him round the tables, and taps it again when he stops. (Until 2026-11-27
+    // the robot's own short steps, a new one every fifth of a second, each started the game's way round afresh, and
+    // he stood shuffling by the hall's table for 75 s.)
+    if (s.mops && s.step === "pk-push" && !p.verb) {
+      say(s, `TAP the doorway and let him walk (${p.x},${p.y})`);
+      await tapGame(s, p.x, p.y);
+      let prev = "";
+      for (let i = 0; i < 40; i++) {
+        await sleep(250);
+        const s2 = await st();
+        if (s2.room !== s.room || s2.step !== s.step || !s2.ctrl) break;
+        const pos = s2.x + "," + s2.y;
+        if (pos === prev) break;
+        prev = pos;
+      }
+      continue;
+    }
     const py = Math.max(p.y, s.bounds.y0);
     if (!directTried.has(pk) && lineOk(s, s.x, s.y, p.x, py, false) && calm(s.x, s.y, p.x, py)) {
       directTried.add(pk);
@@ -751,6 +809,8 @@ while (now() < MAX_S) {
     if (stillTaps >= 12) {
       stillTaps = 0;
       say(s, `NOT MOVING: tap ${p.verb} · ${p.cap} itself (${p.x},${p.y})`);
+      // KID_DEBUG=1: what the game has for the walk when he does not move
+      process.env.KID_DEBUG && console.log("  debug", await page.evaluate(() => { const n = window.__ss.op; return JSON.stringify({ sq: [n.sq.x, n.sq.y], mo: [n.mo.x, n.mo.y, n.mo.f], walkTo: n.walkTo, cur: n.cur && n.cur.k, ctrl: n.ctrl, mops: window.__ss.ch.mops, pose: [n.sqPose, n.moPose] }); }));
       await tapGame(s, p.x, p.y);
       await sleep(600);
       continue;
@@ -782,6 +842,7 @@ const found = {
   "button-size": rects.btn.size > 1 ? [...rects.btn].map(([k, v]) => `${k} at ${v}`) : [],
   "page-jump": rects.pic.size > 1 || rects.joy.size > 1 ? [...rects.pic].map(([k, v]) => `picture top ${k} at ${v}`) : [],
   "squatch-in-furniture": seen.inSolid.slice(0, 20),
+  "someone-else-in-furniture": [...seen.others.values()].slice(0, 20),
   "tap-stops-at-furniture": [...seen.blocked],
   "ring-on-squatch": [...seen.selfRing],
   "start-over-without-card": seen.silent,

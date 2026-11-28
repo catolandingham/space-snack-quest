@@ -22,6 +22,7 @@ import { pathToFileURL } from "node:url";
 
 const mod = (f) => import(pathToFileURL(join(root, "src", "modules", f)).href);
 const RM = await mod("room-model.js");
+const { adultPxFor } = await mod("room-sizes.js");
 const { BAY_SOLIDS } = await mod("bay-watch.js");
 
 const { open, check, finish } = await startGame({ port: 9861, name: "room physics" });
@@ -62,6 +63,26 @@ const PHONE = { width: 375, height: 812 };
   check("the model: someone standing inside a thing walks out of it the shortest way first", !!out && out.y >= 200 && Math.abs(out.x - 150) < 8, out);
   check("the model: a clear walk goes straight (no corner)", RM.waypointAmong("t3", { x: 50, y: 300 }, 350, 300, "test", [box], bounds) === null);
   check("the model: Mops is wider than a feet box in the party hall, Squatch is not", RM.bodyExtra("mops", "hall") > 0 && RM.bodyExtra("sq", "hall") <= 8);
+  // a load pushed ahead of him (a crate to his right, its floor 18 behind his feet): his feet may not pass just in
+  // front of a table whose box ends above them, because the load would touch it (2026-11-27, the kid robot's pickup day)
+  RM.setCarry(() => ({ reach: 100, f: 1, near: 20, far: 120, up: 18, down: 6 }));
+  const table = { x0: 300, x1: 380, y0: 100, y1: 160 },
+    grown = RM.moverSolids("sq", { x: 0, y: 0 }, [table], "test");
+  check("the model: a pushed load's floor keeps his feet from walking it into a table's front (feet 10 below the table's box, the load just past it)", RM.blockedAt(grown, 300 - 30, 170) && !RM.blockedAt(grown, 300 - 30, 180) && !RM.blockedAt(grown, 300 - 125, 170), grown);
+  RM.setCarry(null);
+  // two people side by side on one row: the follower keeps far enough back that their drawings do not cover each other
+  // (beat 52, home at night: a fixed 60 had Mops inside Squatch at home, where both are drawn three times bigger)
+  const sideBySide = (room) => {
+    // (the scales the game draws them at: three at home, the older program's wl; elsewhere the room rule, Mops 1.15
+    // times Squatch: escape.js and pickup.js sqScale, moScale)
+    const sq = room === "closet" ? 3 : (adultPxFor(room) * 0.8) / 45,
+      mo = room === "closet" ? 3 : sq * 1.15,
+      g = RM.followGap(room),
+      a = RM.personBox("sq", 500, 400, sq),
+      b = RM.personBox("mops", 500 - g, 400, mo);
+    return Math.max(0, b.x1 - a.x0) / (a.x1 - a.x0);
+  };
+  check("the model: Mops following Squatch on a row covers at most a sixth of him, at home, in the hall, the hallway and the bay", ["closet", "hall", "passage", "hangar"].every((r) => sideBySide(r) <= 1 / 6), ["closet", "hall", "passage", "hangar"].map((r) => [r, RM.followGap(r), sideBySide(r).toFixed(2)]));
 }
 
 const press = (page) =>
@@ -120,10 +141,34 @@ const now = (page) => page.evaluate(() => ({ v: window.SSQ.physicsNow(), log: wi
     }
     await sleep(110);
   }
+  // under the table's front with the crate (where the kid robot's tap walked him on 2026-11-27): a tap at the doorway
+  // still takes him there (before, every step but one was taken back, and he stood there for good)
+  const second = await open("?beat=pickup:push", PHONE);
+  let t = null;
+  for (let i = 0; i < 200; i++) {
+    t = await second.page.evaluate(() => ({ room: window.__ss.op.room, ctrl: !!window.__ss.op.ctrl, cur: window.__ss.op.cur ? window.__ss.op.cur.k : "", door: window.__ss.spotsNow().find((q) => q.id === "pk-door") || null }));
+    if (t.room === "hall" && t.ctrl && !t.cur) break;
+    if (["bub", "card"].includes(t.cur)) await press(second.page);
+    else if (t.ctrl && t.door) await tapAt(second.page, t.door.x, t.door.y);
+    await sleep(300);
+  }
+  await second.page.evaluate(() => Object.assign(window.__ss.op.mo, { x: 688, y: 480, f: 1 }));
+  await sleep(100);
+  const door = await second.page.evaluate(() => window.__ss.spotsNow().find((q) => q.id === "pk-door"));
+  let left = null;
+  for (let i = 0; i < 30 && door; i++) {
+    left = await second.page.evaluate(() => ({ room: window.__ss.op.room, x: window.__ss.op.mo.x, y: window.__ss.op.mo.y }));
+    if (left.room !== "hall") break;
+    i % 6 === 0 && (await tapAt(second.page, door.x, door.y));
+    await sleep(250);
+  }
+  check("the push: from under the hall table's front, a tap at the doorway takes Mops and his crate out of the hall", !!left && left.room === "passage", left);
+  await second.page.close();
   const p = await now(page);
   check("the push: Mops takes his crate from home through the hall and the hallway to the mail room", s.step !== "push" && rooms.join(">") === "closet>hall>passage>hangar", { step: s.step, rooms });
   check("the push: his crate never stands in anything (the counter, the guests, the hallway robot, the walkway, the walls)", viol.length === 0, viol.slice(0, 4));
-  check("the push: shoved at the snack counter, the counter stops the crate (Mops stays a crate's length from it)", stopsAtCounter > 0 && atCounter && atCounter.x < 806 - 60, { stopsAtCounter, atCounter });
+  // (since 2026-11-27 his own walk keeps the crate's floor off the counter, so the push's take-back may never be needed)
+  check("the push: shoved at the snack counter, the counter stops the crate (Mops stays a crate's length from it)", atCounter && atCounter.x < 806 - 60 && atCounter.x > 600, { stopsAtCounter, atCounter });
   check("the push: no move went through a solid (the model's record)", p.log.length === 0, p.log.slice(0, 4));
   check("the push: no page errors", errors.length === 0, errors);
   await page.close();
