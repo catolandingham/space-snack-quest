@@ -85,12 +85,13 @@ const ball = await page.evaluate(() => {
   out.rolled = { pose: st().pose, sqPose: n.sqPose, ctrl: n.ctrl };
   // steering takes him out of it (as out of a hiding place)
   out.offerWhileBall = offer();
-  // a ball in her look 150 px off: far, so not noticed in her whole look
-  out.farOffer = fresh(150, true);
+  // a ball in her look 200 px off: far, so not noticed in her whole look (200, not 150, since round 8's combine: the
+  // camera guest stands 20 right and down of where he was, within 70 px of the 150 spot; standing at 200 is seen, below)
+  out.farOffer = fresh(200, true);
   tick(2.3);
   out.far = { alarm: !!st().alarm, pose: st().pose };
   // standing there instead is seen
-  fresh(150, false);
+  fresh(200, false);
   tick(2.3);
   out.farStanding = { alarm: !!st().alarm };
   // a ball 50 px off in her look: noticed after 2 s, and the one capture rule starts
