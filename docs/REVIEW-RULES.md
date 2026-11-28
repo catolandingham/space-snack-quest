@@ -325,3 +325,4 @@ His note on the home morning (video note 0:18): "he kind of glitches through the
 - It also found a stale block left at the end of a test that overwrote the new block's results, so the new check could not fail: when a test block is replaced, delete the old one, and run the check once against the old code to see it fail.
 - Two numbers for one place (the ROLL button's circle 60, "at the vent" 50) left a kid rolled up at 55 with nothing happening: one number, used by both.
 
+- Round 8 (2026-11-27): a walker carrying something (Mops's pushed crate) was routed for his feet alone, and his load ran into a table's front where every step was taken back. Anything that walks with a load gives the room model the load's own floor (`room-model.js setCarry` near, far, up, down), so the way round keeps the load clear too. And a waiting spot for a follower is never on the leader's goal ring (Mops waited 22 px from the hallway's doorway ring).

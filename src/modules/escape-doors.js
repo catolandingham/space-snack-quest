@@ -24,15 +24,16 @@ export function markDoor(ctx, d, t) {
 export const freshTrail = () => ({ pts: [] });
 /**
  * One frame of Mops following: the leader's feet `lead` go on the trail; Mops (feet `m`) walks toward the oldest trail
- * point more than FOLLOW.gap behind the leader. Returns where Mops should step to, or null to stand still.
+ * point more than `gap` behind the leader (FOLLOW.gap, or the room's: room-model.js followGap). Returns where Mops
+ * should step to, or null to stand still.
  */
-export function followStep(trail, lead, m) {
+export function followStep(trail, lead, m, gap = FOLLOW.gap) {
   const pts = trail.pts,
     last = pts[pts.length - 1];
   (!last || Math.hypot(lead.x - last.x, lead.y - last.y) > 6) && pts.push({ x: lead.x, y: lead.y });
-  if (Math.hypot(lead.x - m.x, lead.y - m.y) <= FOLLOW.gap) return null;
+  if (Math.hypot(lead.x - m.x, lead.y - m.y) <= gap) return null;
   // the first trail point Mops has not reached that is still more than a gap from the leader
   while (pts.length > 1 && Math.hypot(pts[0].x - m.x, pts[0].y - m.y) < 6) pts.shift();
   const to = pts[0];
-  return to && Math.hypot(lead.x - to.x, lead.y - to.y) > FOLLOW.gap * 0.5 ? to : null;
+  return to && Math.hypot(lead.x - to.x, lead.y - to.y) > gap * 0.5 ? to : null;
 }

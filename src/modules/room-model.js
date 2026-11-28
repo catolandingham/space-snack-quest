@@ -51,7 +51,12 @@ export function setCarry(fn) {
 }
 function carrying(who, room) {
   const c = carryFn ? carryFn(who, room) : null;
-  return c && c.reach > 0 ? { reach: Math.round(c.reach), f: c.f < 0 ? -1 : 1 } : null;
+  if (!c || !(c.reach > 0)) return null;
+  const out = { reach: Math.round(c.reach), f: c.f < 0 ? -1 : 1 };
+  // (the load's own floor, when the module says where it is: from `near` to `far` ahead of his feet, `up` behind them
+  // and `down` in front; a load that reaches up the floor further than his feet hits a table his feet pass under)
+  if (c.far > 0) Object.assign(out, { near: c.near || 0, far: c.far, up: c.up || 0, down: c.down || 0 });
+  return out;
 }
 
 let engine = null;
@@ -73,14 +78,27 @@ const ownBox = (b, at) => !!(b && b.person && at && Math.abs((b.x0 + b.x1) / 2 -
 export function moverSolids(who, at, list, room, keepOwn = false) {
   const extra = bodyExtra(who, room),
     load = carrying(who, room),
+    exact = !!(load && load.far),
     // (a load in front of him reaches past him on that side only: a thing to his right grows leftward by it)
-    left = Math.max(extra, load && load.f > 0 ? load.reach : 0),
-    right = Math.max(extra, load && load.f < 0 ? load.reach : 0);
+    left = Math.max(extra, load && !exact && load.f > 0 ? load.reach : 0),
+    right = Math.max(extra, load && !exact && load.f < 0 ? load.reach : 0);
   const out = [];
   for (const b of list || []) {
     if (!b) continue;
-    if (!keepOwn && ownBox(b, at)) continue;
+    const own = ownBox(b, at);
+    if (!keepOwn && own) continue;
     out.push(left || right ? { ...b, x0: b.x0 - left, x1: b.x1 + right } : b);
+    // the load's floor: the feet may not stand where it would touch this box (the pushed crate under a table's edge,
+    // pickup.js keepCrateClear, which takes back any step that puts it there: before 2026-11-27 the way round was
+    // worked out for his feet alone and walked him under the hall's table, where every step but one was taken back)
+    if (exact && !own)
+      out.push({
+        x0: load.f > 0 ? b.x0 - load.far : b.x0 + load.near,
+        x1: load.f > 0 ? b.x1 - load.near : b.x1 + load.far,
+        y0: b.y0 - load.down,
+        y1: b.y1 + load.up,
+        load: true,
+      });
   }
   return out;
 }
@@ -212,6 +230,14 @@ export function freeSpot(who, x, y) {
 }
 
 /**
+ * A follower's next trail point (escape-doors.js followStep), moved onto free floor for Mops: the leader's feet can pass
+ * closer to a thing than Mops's wider body can (the hall's snack bar end by the hallway doorway, 2026-11-27).
+ */
+export function freeFollow(to) {
+  return to ? freeSpot("mops", to.x, to.y) : to;
+}
+
+/**
  * One step of a thing a module moves itself (a robot, a guard, the alarm's runner) toward (x, y) at `speed`, round
  * `solids` inside `bounds`: `step(obj, x, y, speed, dt)` is the module's own straight step (returns true when there).
  * True once at (x, y).
@@ -221,6 +247,36 @@ export function stepRound(id, obj, x, y, speed, dt, room, solids, bounds, step) 
   if (!w) return step(obj, x, y, speed, dt);
   step(obj, w.x, w.y, speed, dt);
   return false;
+}
+
+/**
+ * The furniture a module's own mover (a robot) keeps out of in `room` now: the room's solids as the engine has them
+ * (the older program's ih() with the beat that owns the room), without anyone's feet box (robots never walked round
+ * people, and two robots' routes that cross would bend), and without what `keep(box)` says no to (a robot that rides
+ * the scanner's walkway on purpose leaves the walkway out). Empty when `room` is not the room on screen.
+ */
+export function robotSolids(room, keep) {
+  if (!engine || !engine.roomSolids || engine.room() !== room) return [];
+  return engine.roomSolids().filter((b) => b && !b.person && (!keep || keep(b)));
+}
+/**
+ * One step of a module's own mover (pickup day's robots, the bay's robots and Isfred, the escape's night robot, the
+ * evening's hallway robot) toward (x, y): `step(obj, x, y, speed, dt)` is the module's own straight step. Straight
+ * where the line is clear (every route that was clear rolls exactly as before), round the room's furniture where it is
+ * not. A mover in a room not on screen rolls straight (nobody sees it). True once at (x, y).
+ */
+export function robotStep(id, obj, x, y, speed, dt, room, step, keep) {
+  const solids = robotSolids(room, keep);
+  if (!solids.length) return step(obj, x, y, speed, dt);
+  return stepRound(id, obj, x, y, speed, dt, room, solids, engine.roomBounds(), step);
+}
+const robotList = [];
+/**
+ * A module tells the model about its robots for the check of everyone this frame: fn() returns
+ * [{ who, room, x, y, keep? }], checked against robotSolids(room, keep).
+ */
+export function addRobots(fn) {
+  robotList.push(fn);
 }
 
 /** A box (a pushed crate's floor) may stand there: inside `bounds`, touching none of `solids`. */
@@ -245,6 +301,26 @@ export const HOME_BASELINES = Object.freeze({
   bed: Object.freeze({ x: 92, y: 396, w: 188, h: 132, back: 526 }),
   gbox: Object.freeze({ x: 188, y: 356, w: 48, h: 40, back: 390 }),
 });
+/**
+ * The vent room's desk (the locked vent-room-empty-v1 picture, in game positions): its top to the feet of its legs,
+ * and its floor line at the feet of its front legs. Mops's walk along the back wall (y 400 to 470) is behind that line,
+ * so the desk is in front of him: before 2026-11-27 he was drawn over it, standing on it (Brian's video notes, beat 48).
+ */
+export const VENT_BASELINES = Object.freeze({
+  desk: Object.freeze({ x: 552, y: 424, w: 378, h: 182, back: 598 }),
+});
+/**
+ * The same rule for a room whose things are painted once over everyone: the things in `baselines` that someone in
+ * `people` ({ who, x, y, half }) stands behind (feet above the thing's floor line, overlapping it): [{ id, p, over }].
+ */
+export function thingsInFrontOf(baselines, people) {
+  const out = [];
+  for (const [id, p] of Object.entries(baselines)) {
+    const behind = people.filter((q) => q.y < p.back && q.x + q.half > p.x && q.x - q.half < p.x + p.w);
+    behind.length && out.push({ id, p, over: behind.map((q) => q.who) });
+  }
+  return out;
+}
 let depthNow = [];
 /**
  * The depth items for the home room's things (for the people's back-to-front list): each is drawn at its floor line,
@@ -305,6 +381,13 @@ export function physicsNow() {
         const q = (m.solids || list).find((b) => (m.box ? m.box.x0 < b.x1 && m.box.x1 > b.x0 && m.box.y0 < b.y1 && m.box.y1 > b.y0 : inBox(b, m.x, m.y)));
         q && out.push({ who: m.who, room, x: Math.round(m.x), y: Math.round(m.y), solid: { id: q.id || "", x0: q.x0, x1: q.x1, y0: q.y0, y1: q.y1 } });
       }
+  // the modules' robots, against the furniture they keep out of (robotSolids): only on the floor, not out past its edge
+  for (const fn of robotList)
+    for (const m of fn() || [])
+      if (m && m.room === room && on(m)) {
+        const q = robotSolids(room, m.keep).find((b) => inBox(b, m.x, m.y));
+        q && out.push({ who: m.who, room, x: Math.round(m.x), y: Math.round(m.y), solid: { id: q.id || "", x0: q.x0, x1: q.x1, y0: q.y0, y1: q.y1 } });
+      }
   return out;
 }
 
@@ -330,6 +413,33 @@ export function addKeeper(fn) {
 /** The older program calls this at every walker's own step (00-core.js R0). */
 export function afterMove(who) {
   for (const k of keepers) k(who);
+}
+
+/** How wide `who` is drawn in `room`, each side of his feet (personBox's width at the room's drawing scale). */
+export function drawnHalf(who, room) {
+  const k = room === "closet" ? 3 : (adultPxFor(room) * 0.8) / 45;
+  return who === "mops" ? 27 * k * (room === "closet" ? 1 : 1.15) : 21 * k;
+}
+/**
+ * How far behind Squatch Mops walks when he follows him along a row (escape-doors.js followStep, a doorway's arrival):
+ * at least `min`, and far enough that their drawings do not cover each other side by side (most of both bodies:
+ * horns and beard tips may touch). Depth by the feet orders two people in a column; side by side on one line it cannot,
+ * so the follower keeps this gap (before 2026-11-27 a fixed 60, in every room: at home, drawn three times bigger, Mops
+ * walked inside Squatch on the way home at night, beat 52).
+ */
+/**
+ * Where a follower comes in behind a walker who has just come through a doorway into `room` at `at`, facing `f`: the
+ * room's follow gap behind him, but on the floor (bounds), so a wide gap does not start him off the picture.
+ */
+export function followSpot(room, at, f) {
+  const b = engine && engine.roomBounds ? engine.roomBounds() : null,
+    x = at.x - f * followGap(room),
+    p = { x: b ? Math.max(b.x0, Math.min(b.x1, x)) : x, y: at.y };
+  // (and on free floor: in the party hall the floor's edge by the hallway doorway is the snack bar's end)
+  return b && engine.roomSolids ? freeNear(moverSolids("mops", p, engine.roomSolids(), room), b, p.x, p.y) : p;
+}
+export function followGap(room, min = 60) {
+  return Math.max(min, Math.round(0.9 * (drawnHalf("sq", room) + drawnHalf("mops", room))));
 }
 
 /**

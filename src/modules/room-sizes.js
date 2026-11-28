@@ -9,6 +9,8 @@
  *   Home's right-wall opening is the 129px cut. A room with no door uses the hall.
  * Alien heads are that height / 84. Qt heads are that height / 50. Squatch is 80% of the adult, / 45.
  */
+import { tableAdultPx } from "./room-scale.js";
+
 export const CANVAS_DOOR_PX = Object.freeze({
   hall: 101 * (640 / 830),
   hallway: 160 * (640 / 830),
@@ -31,5 +33,8 @@ export function doorAdultPx(room) {
 
 /** How tall a grown-up is drawn in `room`: 85% of its door, and in the hall itself HALL_BIGGER times that. */
 export function adultPxFor(room) {
+  // (the one-scale-per-room proposal, room-scale.js: off until Brian's yes)
+  const t = tableAdultPx(room);
+  if (t) return t;
   return doorAdultPx(room) * (room === "hall" ? HALL_BIGGER : 1);
 }

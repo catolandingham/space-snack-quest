@@ -110,8 +110,9 @@ export const HALLWAY = Object.freeze({
   exitRight: 880,
   exitLeft: 80,
   trigger: 640,
-  // where Mops waits for him at each end
-  mopsBay: Object.freeze({ x: 880, y: 352 }),
+  // where Mops waits for him at the bay's end: a step in front of the doorway, not in it (until 2026-11-27 he waited at
+  // 880,352, 22 from the doorway's ring, so walking into the doorway walked Squatch into Mops: kid robot, Day 2, 89 s)
+  mopsBay: Object.freeze({ x: 858, y: 404 }),
   mopsHall: Object.freeze({ x: 70, y: 340 }),
 });
 

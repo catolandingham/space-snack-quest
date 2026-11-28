@@ -72,6 +72,20 @@ import { createHomeMorningSound, HOME_MORNING_SOUND } from "./home-morning-sound
 import { createPartySound } from "./party-sound.js";
 import { footfall } from "./footfalls.js";
 import { adultPxFor } from "./room-sizes.js";
+import { robotStep, addRobots } from "./room-model.js";
+// someone of the bay's own (Isfred, a worker, a robot) one straight step toward (x, y); true there
+function bayStepStraight(o, x, y, speed, dt) {
+  const dx = x - o.x,
+    dy = y - o.y,
+    d = Math.hypot(dx, dy),
+    k = speed * (dt || 0);
+  Math.abs(dx) > 1 && (o.f = dx > 0 ? 1 : -1);
+  o.moving = d > 0.5;
+  if (d <= k || d < 0.5) return ((o.x = x), (o.y = y), (o.moving = false), true);
+  o.x += (dx / d) * k;
+  o.y += (dy / d) * k;
+  return false;
+}
 
 export const BAY_ID = "ch1-bay";
 /** Which walkthrough beat each step or part plays (tests, ch1JumpBeat). */
@@ -142,6 +156,12 @@ export function createLoadingBay(bridge) {
     closeAlarmView = null,
     record = { steps: [] };
   const room = () => E().room();
+  // the bay's robots, Isfred and the workers, for the room model's check of everyone (room-model.js addRobots)
+  addRobots(() => {
+    const b = live();
+    if (!b) return [];
+    return [...b.robots.filter((r) => r.show).map((r, i) => ({ who: "bay robot " + i, room: r.room || "hangar", x: r.x, y: r.y })), ...(b.isfred.show ? [{ who: "isfred", room: "hangar", x: b.isfred.x, y: b.isfred.y }] : []), ...b.workers.filter((w) => w.show).map((w, i) => ({ who: "worker " + i, room: "hangar", x: w.x, y: w.y }))];
+  });
 
   // ---------- small helpers ----------
   const go = (step, extra) => {
@@ -179,18 +199,12 @@ export function createLoadingBay(bridge) {
     return e.until(() => (t0 == null && (t0 = e.time()), e.time() - t0 >= s));
   };
   // someone of this beat's own (Isfred, a worker, a robot) walks to (x, y); true there
-  const moveTo = (o, x, y, speed, dt) => {
-    const dx = x - o.x,
-      dy = y - o.y,
-      d = Math.hypot(dx, dy),
-      k = speed * (dt || 0);
-    Math.abs(dx) > 1 && (o.f = dx > 0 ? 1 : -1);
-    o.moving = d > 0.5;
-    if (d <= k || d < 0.5) return ((o.x = x), (o.y = y), (o.moving = false), true);
-    o.x += (dx / d) * k;
-    o.y += (dy / d) * k;
-    return false;
-  };
+  // (round the room's furniture where the straight line would cross it, room-model.js robotStep: every walker and
+  // robot of this beat, in the room it is in; a straight line that is clear walks exactly as before)
+  const moverIds = new WeakMap();
+  let moverCount = 0;
+  const moverId = (o) => (moverIds.has(o) || moverIds.set(o, "bay-mover-" + moverCount++), moverIds.get(o));
+  const moveTo = (o, x, y, speed, dt) => robotStep(moverId(o), o, x, y, speed, dt || 0, o.room || "hangar", bayStepStraight);
   const along = (o, way, speed, dt) => {
     o.wi = o.wi || 0;
     while (o.wi < way.length && moveTo(o, way[o.wi].x, way[o.wi].y, speed, dt)) o.wi++;
