@@ -1694,7 +1694,7 @@ export function createPickup(bridge) {
       drew.next = sp ? sp.id : "";
     }
     // 56: the mirror inside the open wardrobe door (a layer, for Brian's yes); his roar's lines
-    if (room === "closet" && e.get("wardrobe") === "open" && ["snip", "snipped", "dresstalk", "dress", "dressed", "practice", "practiced", "mirror"].includes(l.step)) drawMirror(ctx, e, PK_HOME.mirror, t, !!l.mirrorOn), (drew.mirror = !!l.mirrorOn);
+    if (room === "closet" && e.get("wardrobe") === "open" && ["snip", "snipped", "dresstalk", "dress", "dressed", "practice", "practiced", "mirror"].includes(l.step)) drawMirror(ctx, e, PK_HOME.mirror, t, !!l.mirrorOn, !!l.snipped), (drew.mirror = !!l.mirrorOn);
     if (l.roarAt >= 0 && t - l.roarAt < PK_PACE.shake && room === "closet") drew.roar = roarLines(ctx, headBox("sq"), t - l.roarAt);
     // 57: the hall's guests and their cones (the costume's rule); the plate; the slipped beard
     if (room === "hall" && l.step !== "push" && l.watch) drew.guests = drawHallGuests(ctx, l, t);

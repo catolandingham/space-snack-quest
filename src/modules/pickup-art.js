@@ -16,7 +16,7 @@ import { drawGuardianBox } from "./home-morning-art.js";
 import { drawMopBucketBack, drawMopBucketFront, MOP_BUCKET } from "./mop-bucket.js";
 import { drawBrochure } from "./evening-art.js";
 import { adultPxFor } from "./room-sizes.js";
-import { drawGoatBeard as drawGoatBeardOnTape } from "./pickup-people-art.js";
+import { drawGoatBeard as drawGoatBeardOnTape, drawSnippedBeard } from "./pickup-people-art.js";
 import { PK_OFFICE, PK_HOLD, PK_CRATE } from "./pickup-place.js";
 
 const PK_TAU = Math.PI * 2;
@@ -866,7 +866,7 @@ export function drawDressCloseup(ctx, engine, st, t) {
   return { meter: k, right };
 }
 /** The mirror on the inside of the wardrobe's open door (a layer, for Brian's yes): the two goats in it, small. */
-export function drawMirror(ctx, engine, b, t, show) {
+export function drawMirror(ctx, engine, b, t, show, snipped = false) {
   esRect(ctx, b.x0, b.y0, b.x1 - b.x0, b.y1 - b.y0, 6);
   esPaint(ctx, "#cfe8f7", 4);
   if (!show) return;
@@ -875,7 +875,8 @@ export function drawMirror(ctx, engine, b, t, show) {
   ctx.rect(b.x0 + 3, b.y0 + 3, b.x1 - b.x0 - 6, b.y1 - b.y0 - 6);
   ctx.clip();
   const mid = (b.x0 + b.x1) / 2;
-  engine.drawMopsOn(ctx, mid + 12, b.y1 - 10, 0.9, { f: -1 });
+  engine.drawMopsOn(ctx, mid + 12, b.y1 - 10, 0.9, { f: -1, noBeard: snipped });
+  snipped && drawSnippedBeard(ctx, mid + 12, b.y1 - 10, 0.9, -1);
   engine.drawSquatch(ctx, mid - 12, b.y1 - 10, 1.0, { f: 1, jacket: true, goatBeard: true, horns: true });
   ctx.restore();
 }

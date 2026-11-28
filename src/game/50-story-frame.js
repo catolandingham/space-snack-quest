@@ -1039,7 +1039,7 @@
           l.push({
           y: n.mo.y,
           d: () => {
-            (Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f, walk: n.mo.moving ? n.mo.walk : 0, mop: (n.scene || "")[0] !== "Q" }),
+            (Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f, walk: n.mo.moving ? n.mo.walk : 0, mop: (n.scene || "")[0] !== "Q", ...(window.SSQ && window.SSQ.mopsBeardLook && window.SSQ.mopsBeardLook()) }),
               B.gave && n.scene === "S2" && (m(n.mo.x + 22 * n.mo.f - 9, n.mo.y - 50, 18, 20, 2), r("#cdbb98", 1.5)));
           },
         }),
