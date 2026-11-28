@@ -209,7 +209,7 @@ export function drawBrochureExtras(ctx, x, y, w, h, fizz = 0, t = 0, small = fal
     ctx.restore();
   };
   face(cx, cy, cx - r * 0.42, cy + ry * 0.9, "#c98b4a");
-  face(cx, cy, cx + r * 0.5, cy + ry * 0.87, "#e0a868");
+  face(cx, cy, cx + r * 0.5, cy + ry * 0.87, "#dba274");
   // a white icing squiggle across the top
   if (!small) {
     ctx.beginPath();

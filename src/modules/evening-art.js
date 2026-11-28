@@ -393,7 +393,7 @@ export function drawMars(ctx, x, y, r) {
  * brochure for the stand", nobody on it): the stand with its striped awning, Mars big in the sky behind it, on its
  * counter one cake box stamped with his family's name (snack-name.js FAMILY) in fat red letters, and one cake cut
  * open, red inside (`fizz` 0 to 1: its sparks). No cooks, no paw print, no other words (DECISIONS: its only words are
- * MARS CAKES on the box). Drawn in the locked rooms' way (flat fills, one dark ink line, white shine): the folded paper
+ * the family name on the box). Drawn in the locked rooms' way (flat fills, one dark ink line, white shine): the folded paper
  * (a crease near its right edge), space flat navy with four-point sparkles, Mars with craters and a lit edge, the red
  * ground, the awning's scallops, the counter's planks. Final art, pending Brian's yes (round 8).
  * `small` leaves out the fine parts (the brochure in a paw or held up in the room).
