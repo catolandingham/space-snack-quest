@@ -8,17 +8,14 @@ import { rr, oval, line, INK, drawPiece, drawNote, drawFlyer, drawTuft } from ".
 const TAU = Math.PI * 2;
 
 import { firstSightHearts } from "./mops-hearts.js";
+import { drawMopsHeart } from "./heart-art.js";
 
+/**
+ * Mops's heart at the party's size `s` (its middle a little above (x, y), about 1.25 s wide): the one heart drawing
+ * (heart-art.js, round 8). `fill` is kept for the callers; every heart is the one look.
+ */
 export function heart(ctx, x, y, s, fill) {
-  ctx.beginPath();
-  ctx.moveTo(x, y + s * 0.35);
-  ctx.bezierCurveTo(x - s, y - s * 0.3, x - s * 0.45, y - s, x, y - s * 0.45);
-  ctx.bezierCurveTo(x + s * 0.45, y - s, x + s, y - s * 0.3, x, y + s * 0.35);
-  ctx.fillStyle = fill;
-  ctx.fill();
-  ctx.lineWidth = Math.max(1, s * 0.12);
-  ctx.strokeStyle = INK;
-  ctx.stroke();
+  drawMopsHeart(ctx, x, y - s * 0.2, s * 1.25);
 }
 
 /**

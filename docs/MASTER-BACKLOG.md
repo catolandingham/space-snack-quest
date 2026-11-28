@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–26 | # Master backlog |
-| 27–247 | ## Where main is (Chapter 1 redesign) |
-| 248–262 | ## Register |
-| 263–284 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 285–305 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 306–318 | ## Phase 2 (plan section 4, T13 to T18) |
-| 319–341 | ## Phase 1 (plan section 3, T5 to T12) |
-| 342–355 | ## SS40–SS44 |
-| 356–373 | ## Story rows |
-| 374–392 | ## Reset section |
-| 393–403 | ## Still open |
-| 404–407 | ## Chapter 1 replot, recorded and not built |
-| 408–569 | ## Changelog |
+| 27–249 | ## Where main is (Chapter 1 redesign) |
+| 250–264 | ## Register |
+| 265–286 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 287–307 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 308–320 | ## Phase 2 (plan section 4, T13 to T18) |
+| 321–343 | ## Phase 1 (plan section 3, T5 to T12) |
+| 344–357 | ## SS40–SS44 |
+| 358–375 | ## Story rows |
+| 376–394 | ## Reset section |
+| 395–405 | ## Still open |
+| 406–409 | ## Chapter 1 replot, recorded and not built |
+| 410–571 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -25,6 +25,8 @@
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-27 (round 8, ART-B), draft PR on `feat/ch1-r8-art-b` (from `feat/ch1-complete` 2f942d7), not merged. Final art for the join's placeholders 18 and 20 to 32, each **final art, pending Brian's yes** (approval sheet in the PR): 18 Mops's heart, one drawing for every heart (`heart-art.js`; the party, lunch, bay, escape, home morning and evening hearts all draw it); 20 the eaten poster's pale square (tape corners, bitten paper scraps); 21 his beard hair heaped over the crate bed (white locks, not fur); 22 the snack bag (rolled top, blue star sticker); 23 the crate in the mail room row (boards, frame, nails; the slide's motion unchanged); 24 the upgraded robot's new parts (corner mirror on a periscope, chrome band, green light, scrub brush); 25 the passengers (the approved guest pictures, each with a rolling suitcase; the walk unchanged); 26 the spill (an uneven soapy puddle, the approved mop bucket on its side); 27 his eyes in the mailbox slot (fur round them, the flap pushed up; it stays quiet); 28 the brochure in his jacket pocket (the top of beat 38's brochure itself, `evening-art.js` drawBrochure, so it follows ART-A's final brochure); 29 Mops's snipped beard (short, a blunt ragged cut; the engine's long beard is left out in every room once snipped, `mops-beard.js`, the mirror too); 30 the costume beard falling and slipped (the engine's goat-beard tuft on its elastic; the slip's motion unchanged), and in his lap in the hold; 31 the tape (the locked pickup-day bay picture itself, greyed, scan lines, the two goats on the ramp; ZOOM close on the tall goat with the beard in his paws); 32 the crew member (the ship's flight crew: grey-blue jumpsuit, orange cap and cuffs, envelope patch, headset; 2.2 times the bay's grown-up, as Mops and Squatch are in the hold; `crewK` 2.3 to 2.2, not a pin). New drawings: `pickup-people-art.js`. Tests: `tests/pickup-final-art.mjs`, one check added to `tests/mops-hearts.mjs`. Not done: the switch card's and HUD face's Mops keep the long beard after the snip (older program drawings). No new words. Docs match main: yes.
 
 2026-11-27 (Chapter 1 complete, the join), draft PR on `feat/ch1-complete` (from `feat/ch1-pickup-day`), not merged. The four round 7 branches joined with merge commits, in order: the room model (#101), the loading bay (#98), the evening (#100), pickup day (#99). Where two did the same thing, one is kept: one office door (the bay closes it after the robot; it slides the picture's own grey leaves), one security camera (`bay-camera.js BAY_CAMERA`, drawn on pickup day too), one crate tag (`loading-bay-lines.js crate-empty`), night one as the bay built it (the post wakes the robots; the evening's 36b goal names the bar). After the join: #110, Chapter 1 shows no "VERB · thing" words beside outlined things (the party too; the big button keeps its label; `cap-place.js THING_WORDS`); beat 28's counter watcher looks toward the hallway doorway now and then; the story hearts are three (`mops-hearts.js STORY_HEARTS`); the hall's guests in front of the pushed crate are drawn after it; the hallway robot reads FOR PICKUP. TO: MARS. (pending); the kid robot plays one day at a time (`KID_PART`); `tools/chapter-showing.mjs` records the whole chapter in one game. Not done here (HANDOFF.md): one scale per room (pins `adult-door-share`, `hall-bigger` need Brian's written yes), the module robots' own patrols through the room model, Mops on the vent desk, the beat 52 overlap, the cabinet bite's ink edge; the kid robot stops in Day 2 (night one's vent) and on pickup day's push. Docs match main: yes. Not yet played by a person.
 

@@ -723,7 +723,7 @@
       if (n.roomOnly) return;
       luBeat() && luBeat().drawProps(e); // the crates and the plate of snack cakes stay after the lunch sneak
       n.scene === "Q3" && !(n.ch1Step === "family" || n.ch1Step === "gohome") && drawCh1Alien(640, 500, "hat", ALIEN_ADULT, 1);
-      n.moPose !== "hidden" && n.mo.x > -50 && n.mo.x < 1100 && Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 });
+      n.moPose !== "hidden" && n.mo.x > -50 && n.mo.x < 1100 && Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1, ...(window.SSQ && window.SSQ.mopsBeardLook && window.SSQ.mopsBeardLook()) });
       n.sqPose === "ball" && drawL2Ball(n.sq.x, n.sq.y - 16);
       n.sqPose === "hidden" && ch1HideEyes();
       n.sqPose !== "hidden" &&
@@ -839,7 +839,7 @@
           e.stroke()),
         dq(CH1_ROBOT.x, CH1_ROBOT.y, !1),
         n.ch1Alert && g("!", CH1_ROBOT.x, CH1_ROBOT.y - 78, 28, "#e5533d", "center", 900));
-      (n.moPose !== "hidden" && Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1 }),
+      (n.moPose !== "hidden" && Fe(n.mo.x, n.mo.y, moDrawScale(), { f: n.mo.f || 1, walk: n.mo.moving ? n.mo.walk : 0, mop: !1, ...(window.SSQ && window.SSQ.mopsBeardLook && window.SSQ.mopsBeardLook()) }),
         n.sqPose === "ball" && drawL2Ball(n.sq.x, n.sq.y - 16),
         n.sqPose !== "hidden" &&
           n.sqPose !== "ball" &&

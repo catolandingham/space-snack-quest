@@ -53,7 +53,8 @@ import { HALL_SNEAK, BAY_PACE } from "./loading-bay-place.js";
 import { drawRobot as drawCleaner, drawStreak } from "./loading-bay-art.js";
 import { drawPat } from "./party-free-art.js";
 import { BLEAT_HOOK } from "./bedtime-story-sound.js";
-import { drawPhoto, drawCrayonDrawing, drawBrochure, drawPapers, drawPawPrint, drawFurArm, drawPlaque, drawCutInBack, drawCloseX, drawArrow, fitDesign, PAPERS, PHOTO_POOL, drawHeartShape } from "./evening-art.js";
+import { drawPhoto, drawCrayonDrawing, drawBrochure, drawPapers, drawPawPrint, drawFurArm, drawPlaque, drawCutInBack, drawCloseX, drawArrow, fitDesign, PAPERS, PHOTO_POOL } from "./evening-art.js";
+import { drawMopsHeart } from "./heart-art.js";
 import { HALL, HALL_PICTURE } from "./party-hall.js";
 import { LUNCH_SOLIDS, LUNCH_BOUNDS, LUNCH_PLACES } from "./lunch-sneak-place.js";
 import { drawCrates, sqPawAt } from "./lunch-sneak-art.js";
@@ -2322,7 +2323,7 @@ export function createEvening(bridge) {
       for (const h of hs) {
         ctx.save();
         ctx.globalAlpha = h.alpha;
-        drawHeartShape(ctx, mo.x - 12 + h.i * 12, mo.y - 52 * mopsK - h.rise * 34, 7 * (mopsK / 1.6));
+        drawMopsHeart(ctx, mo.x - 12 + h.i * 12, mo.y - 52 * mopsK - h.rise * 34, 17 * (mopsK / 1.6)); // the one heart drawing (heart-art.js)
         ctx.restore();
       }
       out.hearts = hs.length;

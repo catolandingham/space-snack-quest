@@ -25,6 +25,15 @@ const pkSrc = src("pickup.js"),
   esSrc = src("escape.js");
 g.check("every story heart in pickup day and the escape asks storyHeart (no heart set without it)", (pkSrc.match(/heartsAt = e\.time\(\)/g) || []).length === (pkSrc.match(/storyHeart\("pk-[a-z-]+"\) && \(L\(\)\.heartsAt = e\.time\(\)\)/g) || []).length && (esSrc.match(/drawHearts\(/g) || []).length === (esSrc.match(/storyHeart\("es-[a-z-]+"\)/g) || []).length, null);
 
+// one heart drawing everywhere (round 8, placeholder 18; heart-art.js): every place that draws Mops's heart goes through
+// drawMopsHeart, and none keeps a heart shape of its own
+{
+  const callers = { "party-free-art.js": /drawMopsHeart\(ctx, x, y - s \* 0\.2/, "lunch-sneak-art.js": /drawMopsHeart\(ctx, x, y, r \* 1\.9\)/, "home-morning.js": /drawMopsHeart\(ctx, x, y, r \* 1\.9\)/, "evening.js": /drawMopsHeart\(ctx, mo\.x/ };
+  const bad = Object.entries(callers).filter(([f, re]) => !re.test(src(f)));
+  const ownShape = ["party-free-art.js", "lunch-sneak-art.js", "home-morning.js", "evening.js", "escape-art.js"].filter((f) => /function (heart|drawHeart)\([^)]*\) \{\s*\n\s*ctx\.(save|beginPath)/.test(src(f)));
+  g.check("one heart drawing: the party's heart, the lunch's drawHeart (escape and bay too), the home morning's and the evening's hearts all draw heart-art.js drawMopsHeart", bad.length === 0 && ownShape.length === 0, { bad: bad.map((b) => b[0]), ownShape });
+}
+
 // in the game: the loading bay's walk home (Brian's note r5 3:45): his cone holds Squatch all the way; the hearts show once
 const { page, errors } = await g.open("?beat=bay:home", { width: 375, height: 812, isMobile: true, hasTouch: true });
 await new Promise((r) => setTimeout(r, 900));
