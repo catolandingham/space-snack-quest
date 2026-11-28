@@ -8,6 +8,8 @@ import { ROBOT_SIZE } from "./loading-bay-place.js";
 import { highlightBox } from "./outline.js";
 import { drawPenDigits } from "./pen-digits.js";
 import { drawStationStamp } from "./crate-stamp.js";
+import { drawArchGlow } from "./arch-glow.js";
+import { LOCKED_LOOK, lookRound, lookFill, lookShine } from "./locked-look.js";
 
 const BAY_INK = "#1e2430";
 export const PAPER = Object.freeze({ white: "#fffdf8", pink: "#ff9cc2", yellow: "#ffe27a", carbon: "#7d6f86" });
@@ -550,30 +552,55 @@ export function drawScannerStop(ctx, field, k, t) {
   ctx.restore();
 }
 /**
- * The scanner arch letting hair through (round 7, r5 1:59, q: 116): its field glows green for a moment (`k` 0 to 1).
- * PLACEHOLDER look for Brian.
+ * The scanner arch letting hair through (round 7, r5 1:59, q: 116): the arch lights green, its lamp, its scan lines and
+ * its floor strip, with a scan bar sweeping down (`k` 0 to 1). Final art, pending Brian's yes (arch-glow.js).
  */
 export function drawScannerPass(ctx, field, k, t) {
-  ctx.save();
-  ctx.globalAlpha = (0.22 + 0.12 * Math.abs(Math.sin(t * 6))) * Math.min(1, k * 2);
-  ctx.fillStyle = "#3fb26b";
-  ctx.fillRect(field.x0, field.y0, field.x1 - field.x0, field.y1 - field.y0);
-  ctx.restore();
+  drawArchGlow(ctx, field, "green", k, t);
 }
 /**
- * The mail that came down the ramp with the little box (round 7, r5 3:02 and 3:21, q: 133): two letters on the floor
- * beside it, so the box reads as "the mail". PLACEHOLDER look for Brian.
+ * The mail that came down the ramp with the little box (round 7, r5 3:02 and 3:21, q: 133): two envelopes on the floor
+ * beside it, so the box reads as "the mail": a white one with the red and blue airmail border and a cream one with a
+ * red stamp, the rooms' ink round each. Final art, pending Brian's yes (round 8).
  */
 export function drawMailBeside(ctx, x, y) {
+  const L = LOCKED_LOOK,
+    env = (ex, ey, rot, fill, airmail) => {
+      ctx.save();
+      ctx.translate(ex, ey);
+      ctx.rotate(rot);
+      lookRound(ctx, -9, -6, 18, 12, 1.5);
+      lookFill(ctx, fill, 1.6);
+      if (airmail) {
+        ctx.save();
+        ctx.clip();
+        ctx.lineWidth = 1.6;
+        for (let i = -12; i < 14; i += 3) {
+          ctx.strokeStyle = (i / 3) % 2 ? L.red : "rgb(70,110,180)";
+          for (const ey2 of [-6, 6]) (ctx.beginPath(), ctx.moveTo(i, ey2 - 1.5), ctx.lineTo(i + 2, ey2 + 1.5), ctx.stroke());
+        }
+        ctx.restore();
+        lookRound(ctx, -9, -6, 18, 12, 1.5);
+        lookFill(ctx, "rgba(0,0,0,0)", 1.6);
+        // the flap
+        ctx.beginPath();
+        ctx.moveTo(-8, -5);
+        ctx.lineTo(0, 1);
+        ctx.lineTo(8, -5);
+        ctx.lineWidth = 1.3;
+        ctx.stroke();
+      } else {
+        ctx.fillStyle = L.red;
+        ctx.fillRect(4, -4, 4, 4);
+        ctx.fillStyle = L.ink;
+        ctx.fillRect(-6, 0, 7, 1.2);
+        ctx.fillRect(-6, 2.6, 5, 1.2);
+      }
+      ctx.restore();
+    };
   ctx.save();
-  ctx.translate(x - 22, y - 4);
-  ctx.rotate(-0.2);
-  drawLetter(ctx, 0, 0, 1.2);
-  ctx.restore();
-  ctx.save();
-  ctx.translate(x - 14, y + 4);
-  ctx.rotate(0.15);
-  drawLetter(ctx, 0, 0, 1.2);
+  env(x - 24, y - 6, -0.22, L.paper, true);
+  env(x - 16, y + 2, 0.12, "rgb(246,232,200)", false);
   ctx.restore();
 }
 /** A letter in a robot's gripper or going into the mailbox's slot. */
@@ -616,51 +643,88 @@ export function drawSweat(ctx, x, y, u) {
 const LB_HALLWAY_PIC = "docs/locked-rooms/hallway-room-empty-v6.png";
 const lbHallwayImg = typeof Image !== "undefined" ? Object.assign(new Image(), { src: LB_HALLWAY_PIC }) : null;
 /**
- * The hallway's office door open (beat 36): its two doors slid aside `k` (0 to 1), light spilling out on the floor, and
- * inside a desk with a glowing computer screen. The two doors are the picture's own grey leaves, slid along the wall
- * either side (Brian r5 3:58: "There's a different hallway door in the scene than in any other scene": the opening
- * was painted cream and the leaves left out, so it read as another door).
+ * The hallway's office door open (beat 36): its two doors slid aside `k` (0 to 1) into the wall either side, light
+ * spilling out on the hallway floor, and inside the lit office: its back wall, the grey desk with the computer's screen
+ * glowing, a filing cabinet, the HANG IN THERE poster's frame (the office picture's own things, office_room_v2.py, in its
+ * colours). The two doors are the picture's own grey leaves (Brian r5 3:58: "There's a different hallway door in the
+ * scene than in any other scene"), slid inside the doorway so they go into the wall, never over it. Final art, pending
+ * Brian's yes (round 8).
  */
 export function drawOfficeOpen(ctx, door, k) {
-  const w = door.x1 - door.x0,
-    gap = w * 0.9 * k;
+  const L = LOCKED_LOOK,
+    w = door.x1 - door.x0,
+    h = door.y1 - door.y0,
+    gap = w * 0.9 * k,
+    cx = door.x0 + w / 2;
+  if (k <= 0) return;
   ctx.save();
-  // the light on the floor
-  ctx.globalAlpha = 0.45 * k;
-  ctx.fillStyle = "#fff3b0";
+  // the light on the hallway floor, fanning out from the gap (flat, as the rooms draw light)
+  ctx.globalAlpha = 0.4 * Math.min(1, k * 1.5);
+  ctx.fillStyle = "rgb(255,240,170)";
   ctx.beginPath();
-  ctx.moveTo(door.x0 + w / 2 - gap / 2, door.y0);
-  ctx.lineTo(door.x0 + w / 2 + gap / 2, door.y0);
-  ctx.lineTo(door.x1 + 40 * k, door.y0 - 70 * k);
-  ctx.lineTo(door.x0 - 40 * k, door.y0 - 70 * k);
+  ctx.moveTo(cx - gap / 2, door.y0 + 2);
+  ctx.lineTo(cx + gap / 2, door.y0 + 2);
+  ctx.lineTo(cx + gap / 2 + 46 * k, door.y0 - 64 * k);
+  ctx.lineTo(cx - gap / 2 - 46 * k, door.y0 - 64 * k);
   ctx.closePath();
   ctx.fill();
   ctx.globalAlpha = 1;
-  // inside: lit wall, a desk, a computer
-  const ix = door.x0 + w / 2 - gap / 2;
+  // everything else stays inside the doorway
   ctx.beginPath();
-  ctx.rect(ix, door.y0 + 4, gap, door.y1 - door.y0 - 4);
-  ctx.save();
+  ctx.rect(door.x0, door.y0, w, h);
   ctx.clip();
-  ctx.fillStyle = "#fff6d8";
-  ctx.fillRect(ix, door.y0, gap, door.y1 - door.y0);
-  ctx.fillStyle = "#8b5a2b";
-  ctx.fillRect(door.x0 + 10, door.y0 + 70, w - 20, 14);
-  ctx.fillStyle = "#2b3a67";
-  ctx.fillRect(door.x0 + w / 2 - 16, door.y0 + 40, 32, 24);
-  ctx.fillStyle = "#8fdcff";
-  ctx.fillRect(door.x0 + w / 2 - 13, door.y0 + 43, 26, 18);
-  ctx.restore();
-  // the two leaves, cut from the picture where they hang shut, slid aside by half the gap each
+  // inside: the lit back wall and the floor
+  const fy = door.y0 + h * 0.56;
+  ctx.fillStyle = "rgb(255,246,214)";
+  ctx.fillRect(door.x0, door.y0, w, fy - door.y0);
+  ctx.fillStyle = "rgb(240,230,204)";
+  ctx.fillRect(door.x0, fy, w, door.y1 - fy);
+  ctx.fillStyle = L.line;
+  ctx.fillRect(door.x0, fy - 1, w, 2);
+  // the poster's frame on the back wall, and the filing cabinet on the left
+  lookRound(ctx, cx + 14, door.y0 + 14, 22, 28, 2);
+  lookFill(ctx, "rgb(40,48,92)", 2);
+  ctx.fillStyle = L.yellow;
+  ctx.beginPath();
+  ctx.arc(cx + 25, door.y0 + 26, 4, 0, Math.PI * 2);
+  ctx.fill();
+  lookRound(ctx, door.x0 + 6, fy - 34, 24, 58, 2);
+  lookFill(ctx, L.desk, 2.5);
+  for (const v of [0.2, 0.52, 0.84]) {
+    lookRound(ctx, door.x0 + 10, fy - 34 + 58 * v - 6, 16, 12, 1.5);
+    lookFill(ctx, L.deskTop, 1.5);
+  }
+  // the desk, with the computer on it, its screen lit
+  lookRound(ctx, cx - 18, fy - 22, 30, 24, 2);
+  lookFill(ctx, L.bezel, 2.5);
+  ctx.fillStyle = "rgb(170,215,245)";
+  ctx.fillRect(cx - 14, fy - 18, 22, 16);
+  lookShine(ctx, cx - 10, fy - 14, 1.6);
+  lookRound(ctx, cx - 6, fy + 2, 6, 6, 1);
+  lookFill(ctx, L.desk, 1.5);
+  lookRound(ctx, cx - 30, fy + 8, w * 0.72, 9, 2);
+  lookFill(ctx, L.deskTop, 2.5);
+  lookRound(ctx, cx - 26, fy + 17, w * 0.64, 40, 2);
+  lookFill(ctx, L.desk, 2.5);
+  // the two leaves, cut from the picture where they hang shut, each slid half the gap into the wall
   const img = lbHallwayImg;
   if (img && img.complete && img.naturalWidth) {
     const kx = img.naturalWidth / 960,
       ky = img.naturalHeight / 640,
-      half = w / 2,
-      h = door.y1 - door.y0;
+      half = w / 2;
     ctx.drawImage(img, door.x0 * kx, door.y0 * ky, half * kx, h * ky, door.x0 - gap / 2, door.y0, half, h);
     ctx.drawImage(img, (door.x0 + half) * kx, door.y0 * ky, half * kx, h * ky, door.x0 + half + gap / 2, door.y0, half, h);
+    // each leaf's open edge, in the rooms' ink
+    ctx.fillStyle = L.ink;
+    ctx.fillRect(door.x0 + half - gap / 2 - 1.5, door.y0, 3, h);
+    ctx.fillRect(door.x0 + half + gap / 2 - 1.5, door.y0, 3, h);
   }
+  ctx.restore();
+  // the doorway's own frame, drawn again on top
+  ctx.save();
+  ctx.lineWidth = 3.5;
+  ctx.strokeStyle = L.ink;
+  ctx.strokeRect(door.x0, door.y0, w, h);
   ctx.restore();
 }
 /** A robot's mopping streak on the floor: a grey smear along `pts`. */

@@ -54,7 +54,7 @@
 import { BAY, BAY_SPOTS, HALLWAY, HALL_SNEAK, BAY_PACE as P, BAY_PICTURES, BAY_CLOSEUPS, BAY_PARTS, BAY_STEPS, ROBOT_SIZE } from "./loading-bay-place.js";
 import { bayWords, bayLine, BAY_SPEAKER_NAMES } from "./loading-bay-lines.js";
 import { OFFICE_CODE } from "./office-code.js";
-import { CAMERA_INSTALL_SCENE, BAY_CAMERA, drawBayCamera } from "./bay-camera.js";
+import { CAMERA_INSTALL_SCENE, BAY_CAMERA, drawCameraInstall } from "./bay-camera.js";
 import { findPath } from "./tap-path.js";
 import { drawRobot, robotHand, drawFormSet, drawStuck, drawBiteCrumbs, drawFormCloseUp, closeUpBox, drawCloseUpBack, drawCloseUpFront, drawWave, drawDashedOutline, drawBayCrate, drawCargo, drawTag, drawTaggedBox, drawTagCloseUp, drawDoorShadow, drawTool, drawFuzzyHat, drawScannerStop, drawScannerPass, drawMailBeside, drawLetter, drawSlotLight, drawSweat, drawOfficeOpen, drawStreak } from "./loading-bay-art.js";
 import { drawSpeakerRing, drawHeartCone } from "./party-free-art.js";
@@ -1445,27 +1445,12 @@ export function createLoadingBay(bridge) {
       });
     });
     b.ramp >= 0.999 && list.push({ y: BAY.arch.foot, f: () => drawArchFront(ctx, b, t) });
-    // the camera going up (round 7, q: 123): Robot 3's arm stretches up to the wall and the camera fades on
+    // the camera going up (round 7, q: 123): Robot 3's arm telescopes up and carries the camera to the wall (bay-camera.js)
     if (b.installAt >= 0) {
       const r = robot(2),
         u = Math.min(1, (t - b.installAt) / P.install),
-        h = robotHand(r.x, r.y, r.f, 1, 1),
-        c = BAY_CAMERA.game;
-      list.push({
-        y: 9999,
-        f: () => {
-          ctx.save();
-          ctx.strokeStyle = "#5b6475";
-          ctx.lineWidth = 4;
-          ctx.lineCap = "round";
-          ctx.beginPath();
-          ctx.moveTo(h.x, h.y);
-          ctx.lineTo(h.x + (c.x - 6 - h.x) * u, h.y + (c.y + 14 - h.y) * u);
-          ctx.stroke();
-          ctx.restore();
-          drawBayCamera(ctx, c.x, c.y, 0.98, u >= 1, Math.max(0, (u - 0.5) * 2));
-        },
-      });
+        h = robotHand(r.x, r.y, r.f, 1, 1);
+      list.push({ y: 9999, f: () => drawCameraInstall(ctx, h, u) });
     }
     list.sort((a, c) => a.y - c.y).forEach((p) => p.f());
     b.slotAt >= 0 && t - b.slotAt < 1.2 && drawSlotLight(ctx, BAY.mailbox.slot.x, BAY.mailbox.slot.y, 1 - (t - b.slotAt) / 1.2);
