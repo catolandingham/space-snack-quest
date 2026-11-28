@@ -3,49 +3,53 @@
 
 | Lines | Heading |
 | --- | --- |
-| 49–102 | ## Brian's answers of 2026-11-27 (round 7 video notes, questions 116 to 133) |
-| 103–155 | ## Round 7, the evening: Brian's answers of 2026-11-27 (questions 119 to 129) |
-| 156–166 | ## Pickup day, round 7: Brian's answers of 2026-11-27 (questions #116 to #133, relayed by Snack Quest Chat) |
-| 167–170 | ## The escape's words and the vent room, 2026-11-26 (Brian, notes page questions 55 and 56) |
-| 171–173 | ## The office code, 2026-11-26 (Brian, chat) |
-| 174–182 | ## Day 1 after the party: Mops cleans the hall, then truth or fib (story pass 28-52, E2; 2026-11-26) |
-| 183–188 | # Space Snack Quest: every decision, in one place |
-| 189–197 | ## Day 1 bedtime: why Mops kept him, the last cake, and the chart over his bed (story pass 28-52, E4; 2026-11-26) |
-| 198–205 | ## How to use this file |
-| 206–209 | ## Office code and the loading bay, 2026-11-26 (Brian, chat) |
-| 210–217 | ## The snack renamed, and the crate bed's stamp (question 86), 2026-11-26 (Brian, relayed by the coordinator) |
-| 218–221 | ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator) |
-| 222–228 | ## Evening and night one rebuilt from the story pass, 2026-11-26 night (Brian: "Go! Go as far as you can without me.") |
-| 229–236 | ## Evening and night one, look and physics, 2026-11-26 (Brian, video notes on beats 37 to 42) |
-| 237–245 | ## Lunch sneak, 2026-11-26 (Brian's video notes and answers, round D) |
-| 246–256 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
-| 257–266 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
-| 267–277 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
-| 278–301 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
-| 302–306 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
-| 307–315 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
-| 316–319 | ## Sound, 2026-11-23 |
-| 320–344 | ## Brian's confirmations by multiple choice, 2026-11-22 |
-| 345–356 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
-| 357–381 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
-| 382–390 | ## Which repo is the base, 2026-11-22 |
-| 391–401 | ## Sight cones, 2026-11-22 |
-| 402–406 | ## Latest calendar direction, 2026-11-16 |
-| 407–409 | ## Vent walk, 2026-11-16 |
-| 410–412 | ## Locked home room v5, 2026-11-16 |
-| 413–422 | ## Fidelity system (pictures are locked, not just words) |
-| 423–460 | ## 1. Working rules |
-| 461–527 | ## 2. Story and plot (Chapter 1 unless noted) |
-| 528–552 | ## 3. Characters and look |
-| 553–629 | ## 4. Look, rooms and layout |
-| 630–651 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
-| 652–695 | ## 6. Later chapters (2–4 and travel) |
-| 696–705 | ## 7. Audio |
-| 706–740 | ## 8. Code, controls and process |
-| 741–787 | ## 9. Open / waiting on Brian |
-| 788–882 | ## 10. Earlier entries, kept word for word |
-| 883–980 | ## 11. Decisions recorded on main on 2026-11-09 |
+| 50–52 | ## The snack counter's watcher is a robot that glances toward the doorway (Brian, 2026-11-27) |
+| 53–106 | ## Brian's answers of 2026-11-27 (round 7 video notes, questions 116 to 133) |
+| 107–159 | ## Round 7, the evening: Brian's answers of 2026-11-27 (questions 119 to 129) |
+| 160–170 | ## Pickup day, round 7: Brian's answers of 2026-11-27 (questions #116 to #133, relayed by Snack Quest Chat) |
+| 171–174 | ## The escape's words and the vent room, 2026-11-26 (Brian, notes page questions 55 and 56) |
+| 175–177 | ## The office code, 2026-11-26 (Brian, chat) |
+| 178–186 | ## Day 1 after the party: Mops cleans the hall, then truth or fib (story pass 28-52, E2; 2026-11-26) |
+| 187–192 | # Space Snack Quest: every decision, in one place |
+| 193–201 | ## Day 1 bedtime: why Mops kept him, the last cake, and the chart over his bed (story pass 28-52, E4; 2026-11-26) |
+| 202–209 | ## How to use this file |
+| 210–213 | ## Office code and the loading bay, 2026-11-26 (Brian, chat) |
+| 214–221 | ## The snack renamed, and the crate bed's stamp (question 86), 2026-11-26 (Brian, relayed by the coordinator) |
+| 222–225 | ## Night looks different in every room, 2026-11-26 (Brian, relayed by the coordinator) |
+| 226–232 | ## Evening and night one rebuilt from the story pass, 2026-11-26 night (Brian: "Go! Go as far as you can without me.") |
+| 233–240 | ## Evening and night one, look and physics, 2026-11-26 (Brian, video notes on beats 37 to 42) |
+| 241–249 | ## Lunch sneak, 2026-11-26 (Brian's video notes and answers, round D) |
+| 250–260 | ## Home morning, 2026-11-26 (Brian's video notes and answers, round D) |
+| 261–270 | ## Bedtime story and the mop bucket, 2026-11-26 (Brian's video notes and answers, round D) |
+| 271–281 | ## Bedtime story, 2026-11-26 (Brian, video notes and Snack Quest Chat) |
+| 282–305 | ## Brian's answers of 2026-11-26 (relayed by the coordinator; his words in quotes) |
+| 306–310 | ## Party, 2026-11-24 night (Brian, Snack Quest Chat) |
+| 311–319 | ## Brian's answers by multiple choice, 2026-11-23 (Snack Quest Chat) |
+| 320–323 | ## Sound, 2026-11-23 |
+| 324–348 | ## Brian's confirmations by multiple choice, 2026-11-22 |
+| 349–360 | ## Story and points, settled 2026-11-22 (Brian: "All good") |
+| 361–385 | ## Claude's design calls, 2026-11-22 (Brian can veto any) |
+| 386–394 | ## Which repo is the base, 2026-11-22 |
+| 395–405 | ## Sight cones, 2026-11-22 |
+| 406–410 | ## Latest calendar direction, 2026-11-16 |
+| 411–413 | ## Vent walk, 2026-11-16 |
+| 414–416 | ## Locked home room v5, 2026-11-16 |
+| 417–426 | ## Fidelity system (pictures are locked, not just words) |
+| 427–464 | ## 1. Working rules |
+| 465–531 | ## 2. Story and plot (Chapter 1 unless noted) |
+| 532–556 | ## 3. Characters and look |
+| 557–633 | ## 4. Look, rooms and layout |
+| 634–655 | ## 5. Chapter 1 cartoon, panel by panel (story order) |
+| 656–699 | ## 6. Later chapters (2–4 and travel) |
+| 700–709 | ## 7. Audio |
+| 710–744 | ## 8. Code, controls and process |
+| 745–791 | ## 9. Open / waiting on Brian |
+| 792–886 | ## 10. Earlier entries, kept word for word |
+| 887–984 | ## 11. Decisions recorded on main on 2026-11-09 |
 <!-- /section-index -->
+## The snack counter's watcher is a robot that glances toward the doorway (Brian, 2026-11-27)
+Asked "At the snack counter, OK for the watching robot to glance instead of a guest?", Brian answered "All good, nothing needed." (relayed by Snack Quest Chat, round 8). Decided: in beat 28's walk out the counter's watcher is the robot at the counter's end, and its look turns toward the hallway doorway now and then (`lunch-sneak-place.js COUNTER_WATCHER_WALKOUT`), not a guest's. Its angle stays a placeholder.
+
 ## Brian's answers of 2026-11-27 (round 7 video notes, questions 116 to 133)
 Brian answered on 2026-11-27 (relayed by Snack Quest Chat). These are final choices; the new lines they bring stay pending until he sees them.
 - 116 A: hair passes, fur stops. Lou's fuzzy hat: FUR. STOP. / It's a HAT. / he takes it off / HAIR. PROCEED. / It's just hair. On pickup day the beard goes through as hair.
