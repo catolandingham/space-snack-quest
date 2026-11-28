@@ -38,6 +38,17 @@
  * last one he did (restart()).
  */
 import { BAY_SOLIDS } from "./bay-watch.js";
+import { robotStep, addRobots } from "./room-model.js";
+// the evening's hallway robot's straight roll toward (x, y), looking where it rolls: true there
+function evRollStraight(r, x, y, speed, dt) {
+  const d = Math.hypot(x - r.x, y - r.y),
+    k = Math.min(d, speed * dt);
+  if (d < 0.5) return true;
+  r.a = Math.atan2(y - r.y, x - r.x);
+  r.x += ((x - r.x) / d) * k;
+  r.y += ((y - r.y) / d) * k;
+  return false;
+}
 import { EV_HALLWAY, EV_BAR, STORM, EV_HOME, HOME_ALONE, EV_BAY, BAY_FURNITURE, BAY_EXTRA, BAY_BOUNDS, BAY_SEARCH, BAY_VENT, EVENING_PACE as P, EVENING_LOOK, nightLook, mopsSleepAt, mopsSleepBox, robotLook } from "./evening-place.js";
 import { drawJupiterStorm, drawStormGlow, drawCounterBin, drawEveningThought, drawGuardiansBox, drawWeekCake, drawIdeaPicture, drawYearsLater, drawVentCrate, BAY_CRATE } from "./evening-pictures.js";
 import { placeThought } from "./thought-place.js";
@@ -135,6 +146,11 @@ export function createEvening(bridge) {
     const s = S();
     return s && s.step && s.step !== "done" && s.step !== "hallsneak" ? s : null;
   };
+  // the hallway robot, for the room model's check of everyone (room-model.js addRobots)
+  addRobots(() => {
+    const s = live();
+    return s && s.robot ? [{ who: "hallway robot", room: "passage", x: s.robot.x, y: s.robot.y }] : [];
+  });
   let ff = {},
     bayDrew = {},
     pads = 0,
@@ -310,15 +326,9 @@ export function createEvening(bridge) {
   }
   // the hallway robot's way: in through the hall's doorway, along the floor's middle, out through the bay's doorway
   const ROBOT_LEGS = [EV_HALLWAY.robotDoorL, { x: 200, y: EV_HALLWAY.robotLane }, { x: 800, y: EV_HALLWAY.robotLane }, EV_HALLWAY.robotDoorR, EV_HALLWAY.robotIn];
+  // (round the hallway's things where a leg would cross one: room-model.js robotStep)
   function moveRobot(x, y, dt) {
-    const r = S().robot,
-      d = Math.hypot(x - r.x, y - r.y),
-      k = Math.min(d, P.robotRoll * dt);
-    if (d < 0.5) return true;
-    r.a = Math.atan2(y - r.y, x - r.x); // it looks where it rolls
-    r.x += ((x - r.x) / d) * k;
-    r.y += ((y - r.y) / d) * k;
-    return false;
+    return robotStep("ev-hallway-robot", S().robot, x, y, P.robotRoll, dt, "passage", evRollStraight);
   }
   // Every frame of "dodge": the robot rolls on (it waits a second just outside first); once it is past him, BEEP BEEP;
   // once it is out, the hallway is his again.

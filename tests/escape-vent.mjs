@@ -196,7 +196,8 @@ const o = run;
 g.check("the run went to its end", !o.err, o.err);
 const w = (...ids) => ids.map((k) => W[k]);
 g.check("47: the goal is to sneak to the big vent; he walks there himself through each doorway (home, the hall, the hallway, the bay), the next one outlined", o.sneak.chip === W["chip-sneak"] && JSON.stringify(o.sneak.rooms) === JSON.stringify(["hall", "passage", "hangar"]) && JSON.stringify(o.sneak.marks) === JSON.stringify(["hall", "passage", "hangar"]), o.sneak);
-g.check("47: Mops walks behind him the whole way (a step or two back)", o.sneak.gaps.every((x) => x < 130), o.sneak.gaps);
+// (a step or two back: at home, where both are drawn three times bigger, his step back is 130, room-model.js followGap)
+g.check("47: Mops walks behind him the whole way (a step or two back)", o.sneak.gaps.every((x) => x < 175), o.sneak.gaps);
 g.check("47: in the bay at night the robot is on its rounds", o.bay.room === "hangar" && o.bay.robot && o.bay.phase === "patrol", o.bay);
 g.check("47: seen by the robot, it goes for the alarm and a guard comes; caught: the LOCKUP card, then the bay again (the sneak step)", o.seen.phase !== "patrol" && o.seen.guard && !!o.seen.card && o.seen.after.step === "sneak" && o.seen.after.room === "hangar" && !o.seen.after.guard, o.seen);
 g.check("47: at the vent, \"Goat-sized. You keep watch.\"; Mops goes in; ROLL · ball", JSON.stringify(o.vent.lines) === JSON.stringify(w("mops-goat-sized")) && o.vent.step === "ball" && o.vent.chip === W["chip-ball"] && o.vent.press === W["button-ball"], o.vent);
@@ -224,6 +225,16 @@ g.check("49: out in the bay, the slip in his mouth; the switch to Squatch announ
 g.check("49: GRAB · pink slip; the fold (paw print inside); \"Got it! The code is on there.\", \"I'll carry it.\"; the plan's tick on the door", o.out.chip === W["chip-grab"] && o.out.press === W["button-grab"] && o.out.fold && o.out.folded && JSON.stringify(o.out.after) === JSON.stringify(w("mops-got-it", "sq-carry")) && o.out.tick, o.out);
 g.check("the close-ups show their words (the board, the flyers, MARS, NO, TOYS, the note and its signature, the stubs)", ["IDEAS FOR GUARDIANS", "HAVE YOU SEEN?", "MARS", "NO", "TOYS", W["note-2"], W["note-3"], W["note-sign"], ...tagLines(W["blank-tag"])].every((x) => (o.words || []).includes(x)), o.words);
 g.check("50: out of the bay, a tap on the floor finds a way round (Mops behind him is not in the way)", o.walkOut && o.walkOut.step === "tohall" && o.walkOut.path, o.walkOut);
+// 48: at his desk Mops stands behind it (his feet on the back wall's floor, above the desk's front legs): the desk is
+// painted over him, by the room model's depth-by-feet rule (Brian's notes: Mops was drawn on top of the desk)
+{
+  const second = await g.open("?beat=escape:stubs", { width: 375, height: 812, isMobile: true, hasTouch: true });
+  await second.page.evaluate(() => window.__ss.lockedReady);
+  await second.page.evaluate(() => new Promise((r) => setTimeout(r, 900)));
+  const desk = await second.page.evaluate(() => ({ over: window.SSQ.beat("ch1-escape").debug().drew.deskOver, mo: [window.__ss.op.mo.x, window.__ss.op.mo.y] }));
+  g.check("48: Mops at the desk (LOOK · stubs) stands behind it: the desk is painted over him (room-model.js VENT_BASELINES)", JSON.stringify(desk.over) === JSON.stringify(["mops"]), desk);
+  await second.ctx.close();
+}
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();
 await g.finish("escape-vent");

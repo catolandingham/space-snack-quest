@@ -39,7 +39,16 @@
  * one he did (RESTART_TO). Words: escape-lines.js; places and times: escape-place.js; the snack's names:
  * snack-name.js. Every drawing and number is a PLACEHOLDER for Brian.
  */
-import { personBox } from "./room-model.js";
+import { personBox, robotStep, addRobots, thingsInFrontOf, VENT_BASELINES, followGap, followSpot, freeFollow } from "./room-model.js";
+// the night robot's straight roll toward (x, y): true there (escape.js roll and its patrol go round things with it)
+function esRollStraight(r, x, y, speed, dt) {
+  const d = Math.hypot(x - r.x, y - r.y);
+  Math.abs(x - r.x) > 1 && (r.f = x < r.x ? -1 : 1);
+  if (d <= speed * dt) return ((r.x = x), (r.y = y), true);
+  r.x += ((x - r.x) * speed * dt) / d;
+  r.y += ((y - r.y) * speed * dt) / d;
+  return false;
+}
 import { withCameraLayer } from "./bay-camera.js";
 import { storyHeart } from "./mops-hearts.js";
 import { escapeWords } from "./escape-lines.js";
@@ -155,6 +164,11 @@ export function createEscape(bridge) {
     framePaid = false, // the frame's +50 is paid once an escape (a ↺ does not take stars back, so it must not pay again)
     driving = ""; // "mops" while the stick drives Mops (the escape switched him in; a chapter reset switches back)
   const guests = createGuestArt();
+  // the night robot, for the room model's check of everyone (room-model.js addRobots)
+  addRobots(() => {
+    const l = live();
+    return l && l.robot ? [{ who: "night robot", room: "hangar", x: l.robot.x, y: l.robot.y }] : [];
+  });
 
   // ---------- small helpers ----------
   // A sound effect (synth.js, through the older program), remembered for the tests.
@@ -393,7 +407,7 @@ export function createEscape(bridge) {
     e.set("ch1Night", !!l.night);
     e.place(walker, d.at.x, d.at.y);
     e.face(walker, d.f);
-    if (walker === "sq" && e.get("moPose") !== "hidden") (e.place("mops", d.at.x - d.f * FOLLOW.gap, d.at.y), e.face("mops", d.f), (l.trail = freshTrail()));
+    if (walker === "sq" && e.get("moPose") !== "hidden") (((q) => e.place("mops", q.x, q.y))(followSpot(d.to, d.at, d.f)), e.face("mops", d.f), (l.trail = freshTrail()));
     // into the bay at night: the night robot on its rounds (47)
     if (d.to === "hangar" && l.step === "sneak" && !l.robot) l.robot = freshRobot();
     sfx("open");
@@ -406,7 +420,7 @@ export function createEscape(bridge) {
       route = routeOf(l);
     // Mops behind Squatch, along his trail
     if (who === "sq" && e.get("moPose") !== "hidden" && l.trail) {
-      const to = followStep(l.trail, p, e.pos("mops"));
+      const to = freeFollow(followStep(l.trail, p, e.pos("mops"), followGap(room)));
       // (a follower is never solid: standing a step behind him, he would box Squatch in and a tap's walk would find
       // no way round; found recording the walk out of the bay, 2026-11-26)
       e.moWalking(true);
@@ -638,13 +652,11 @@ export function createEscape(bridge) {
     return r.mark === "!";
   }
   // Rolls along a route of corners; true at its end.
+  // (round the bay's things where a leg would cross one: room-model.js robotStep)
   function roll(r, speed, dt) {
     const to = r.route[0];
     if (!to) return true;
-    const d = Math.hypot(to.x - r.x, to.y - r.y);
-    Math.abs(to.x - r.x) > 1 && (r.f = to.x < r.x ? -1 : 1);
-    if (d <= speed * dt) ((r.x = to.x), (r.y = to.y), r.route.shift());
-    else ((r.x += ((to.x - r.x) * speed * dt) / d), (r.y += ((to.y - r.y) * speed * dt) / d));
+    robotStep("es-night-robot", r, to.x, to.y, speed, dt, "hangar", esRollStraight) && r.route.shift();
     return !r.route.length;
   }
   function robotTick(l, dt) {
@@ -653,9 +665,9 @@ export function createEscape(bridge) {
       P = ES_BAY.patrol;
     r.t += dt;
     if (r.phase === "patrol") {
-      r.x += r.f * P.speed * dt;
-      if (r.x > P.x1) ((r.x = P.x1), (r.f = -1));
-      if (r.x < P.x0) ((r.x = P.x0), (r.f = 1));
+      // (to and fro along the front of the walkway, through the room model like every robot's roll)
+      const end = r.f > 0 ? P.x1 : P.x0;
+      robotStep("es-night-robot", r, end, P.y, P.speed, dt, "hangar", esRollStraight) && (r.f = end === P.x1 ? -1 : 1);
       if (e.get("ctrl") && !e.current() && robotSees(r, dt)) Object.assign(r, { phase: "bang", t: 0, saw: { ...e.pos("sq") } });
       else if (!e.get("ctrl") || e.current()) ((r.seenT = 0), (r.mark = ""));
     } else if (r.phase === "bang") {
@@ -1560,11 +1572,21 @@ export function createEscape(bridge) {
     out.night = !!(p && p.nightLook);
     out.picture = !!(p && p.complete && p.naturalWidth);
     drawVentEyes(ctx);
+    // Mops, then the desk painted again over him when he stands behind it (room-model.js: depth by the feet, the desk's
+    // floor line at its front legs), then what lies on the desk, which is in front of him too
+    const moOn = e.get("moPose") !== "hidden";
+    moOn && e.drawMopsOn(ctx, m.x, m.y, VENT_ROOM.scale, { f: m.f || 1, walk: moMoving ? t * 8 : 0 });
+    mopsSlip(ctx, l, m, VENT_ROOM.scale);
+    out.deskOver = [];
+    for (const q of moOn ? thingsInFrontOf(VENT_BASELINES, [{ who: "mops", x: m.x, y: m.y, half: 27 * VENT_ROOM.scale }]) : []) {
+      const r = q.p,
+        k = p && p.naturalWidth ? p.naturalWidth / 960 : 1,
+        kv = p && p.naturalHeight ? p.naturalHeight / 640 : 1;
+      if (p && p.complete && p.naturalWidth && p.naturalHeight) (ctx.drawImage(p, r.x * k, r.y * kv, r.w * k, r.h * kv, r.x, r.y, r.w, r.h), out.deskOver.push(...q.over));
+    }
     l.lamp !== false && drawLampBeam(ctx);
     drawDeskThings(ctx);
     (l.step === "note" || l.step === "noted") && drawNotePad(ctx);
-    e.get("moPose") !== "hidden" && e.drawMopsOn(ctx, m.x, m.y, VENT_ROOM.scale, { f: m.f || 1, walk: moMoving ? t * 8 : 0 });
-    mopsSlip(ctx, l, m, VENT_ROOM.scale);
     const d = drawVentDesk(ctx, t, { slip: l.slip === "desk" ? "desk" : "", glowSlip: false });
     // before the lamp: dark (after it, the room's own night look, drawn with its picture above)
     if (l.lamp === false) drawDark(ctx);

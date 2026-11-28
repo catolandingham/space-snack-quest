@@ -26,6 +26,7 @@ import { quietLine } from "./party-lines.js";
 import { quietBedtimeLine } from "./bedtime-story-lines.js";
 import { drawHomeMopBucket, lastHomeMopBucket } from "./mop-bucket.js"; // (bedtime branch, 2026-11-26: Mops's mop bucket)
 import { adultPxFor, doorAdultPx } from "./room-sizes.js";
+import { showRoomScaleTable } from "./room-scale.js";
 import { drawGanitorTag, drawHallwayCrayon, ganitorTagsDrawn, hallwayCrayonDrawn, GANITOR_TAG, CRAYON_ON_WALL } from "./ganitor.js";
 import { singingNow } from "./music-rules.js";
 import { keepInSpan, seeCue, visitNow, playSound, soundsPlayed, hushNow, hushKey, unhush } from "./music-picks.js";
@@ -140,6 +141,8 @@ export function createBridge() {
     physicsLog,
     clearPhysicsLog,
     homeDepthDrawn,
+    /** Tools only: the one-scale-per-room proposal (room-scale.js), on or off in this page, for its picture sheet. */
+    showRoomScaleTable,
     /** The handed-over engine functions, or null before the older program has started. */
     engine() {
       return engine;
