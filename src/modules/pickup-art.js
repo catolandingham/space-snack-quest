@@ -244,17 +244,13 @@ export function drawScanLine(ctx, box, k, color = "rgba(80,170,255,.9)") {
   ctx.stroke();
   ctx.restore();
 }
+import { drawArchGlow } from "./arch-glow.js";
+// The arch's light on pickup day ("red", "yellow" or "green", or nothing): its lamp, scan lines and floor strip in that
+// colour, a scan bar sweeping down (arch-glow.js; round 8 final art, pending Brian's yes, ART-A). `arch` is the whole
+// arch (bar and posts); its field is between the posts, under the bar.
 export function drawArchLight(ctx, arch, light, t) {
   if (!light) return;
-  const c = { red: "rgba(229,83,61,", yellow: "rgba(255,207,51,", green: "rgba(43,196,138," }[light];
-  ctx.save();
-  ctx.fillStyle = c + (0.35 + 0.2 * Math.sin(t * 12)).toFixed(2) + ")";
-  ctx.fillRect(arch.x0 + 14, arch.y0 + 20, arch.x1 - arch.x0 - 28, arch.y1 - arch.y0 - 24);
-  ctx.beginPath();
-  ctx.arc((arch.x0 + arch.x1) / 2, arch.y0 + 10, 9, 0, PK_TAU);
-  ctx.fillStyle = c + "1)";
-  ctx.fill();
-  ctx.restore();
+  drawArchGlow(ctx, { x0: arch.x0 + 19, x1: arch.x1 - 21, y0: arch.y0 + 24, y1: arch.y1 - 6 }, light, 1, t);
 }
 
 // ---------- 53: home ----------

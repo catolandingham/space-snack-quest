@@ -77,15 +77,24 @@ export function mopsTurnedBox(x, floor, scale, f, turn, headDrop = 0) {
  */
 export function drawMopsTurned(ctx, engine, { x, floor, scale, f = -1, turn = 0, eyes = "", headDrop = 0, jitter = 0 }) {
   if (!engine || !engine.drawMopsOn) return null;
-  const T = mopsTurnedBox(x, floor, scale, f, turn, headDrop);
-  // his shadow on the floor, under him as he lies there
+  const T = mopsTurnedBox(x, floor, scale, f, turn, headDrop),
+    lying = turn >= MOPS_SLEEP.side - 0.01;
+  // his shadow on the floor: under his feet while he stands, the length of his body once he lies on his side (round 8
+  // final art, pending Brian's yes: the rooms' flat shadow, the ink at a low alpha)
   ctx.save();
   ctx.beginPath();
-  ctx.ellipse(x, floor + 1, Math.max(22 * scale, (T.box.x1 - T.box.x0) / 2), 3.5 * scale, 0, 0, Math.PI * 2);
-  ctx.fillStyle = "rgba(30,36,48,.15)";
+  lying
+    ? ctx.ellipse((T.box.x0 + T.box.x1) / 2, floor + 1, (T.box.x1 - T.box.x0) / 2 + 2 * scale, 3.5 * scale, 0, 0, Math.PI * 2)
+    : ctx.ellipse(x, floor + 1, Math.max(22 * scale, (T.box.x1 - T.box.x0) / 2), 3.5 * scale, 0, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(34,36,44,.16)";
   ctx.fill();
   ctx.translate(x + jitter, T.mid);
   ctx.rotate(T.a);
+  // asleep, he breathes: his body rises and falls a little, slowly (the drawing itself is the room's own Mops)
+  if (lying && eyes === "closed" && typeof performance !== "undefined") {
+    const b = 1 + 0.018 * Math.sin(performance.now() / 1000 * 2.1);
+    ctx.scale(1, b);
+  }
   // (the room's drawing puts his feet at y 0: his middle is MIDDLE units above them)
   engine.drawMopsOn(ctx, 0, -MIDDLE * scale, scale, { f, walk: 0, mop: false, eyes, headDrop });
   ctx.restore();

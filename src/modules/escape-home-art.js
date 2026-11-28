@@ -122,129 +122,224 @@ export function drawStampTouch(ctx, touched) {
 }
 
 /**
- * Beat 45b on: the crayon plan, a sheet of paper. `st.pics` is how many of the three pictures are drawn (they are added
- * in the order 3, the ship over it, 2, 1: st.has = { crate, ship, computer, door }), `st.ticks` which have a tick.
- * At (x, y), `w` wide. Returns where each picture is.
+ * Beat 45b on: the crayon plan, a sheet of paper taped up, drawn the way his other crayon pictures are drawn
+ * (guardians-drawing.js: each line drawn twice, a little off, the second fainter, shapes coloured in with slanted
+ * strokes): 1 the office door with its keypad and the pink paper, 2 the computer, its screen coloured in, 3 the crate
+ * with him and Mops peeking out, an arrow up to Mars. Under each, its crayon words (escape-lines.js plan-1 to plan-3, in
+ * his crayon hand). `st.has` = { door, computer, crate, ship } says which are drawn (added 3, its arrow to Mars, 2, 1),
+ * `st.ticks` which have a green tick. At (x, y), `w` wide; `words` { door, computer, crate }. Returns where each picture
+ * is. Final art, pending Brian's yes (round 8; the words were already his pending lines).
  */
 export function drawPlan(ctx, x, y, w, st, words = null) {
   const h = w * 0.62,
     has = st.has || {},
-    ticks = st.ticks || {};
+    ticks = st.ticks || {},
+    cw = w / 3,
+    k = w / 600,
+    at = { door: { x: cw * 0.5, y: h * 0.55 }, computer: { x: cw * 1.5, y: h * 0.55 }, crate: { x: cw * 2.5, y: h * 0.62 } },
+    rnd = planWobble(11);
   ctx.save();
   ctx.translate(x, y);
   ctx.rotate(-0.02);
+  // the sheet, and two strips of tape
   ctx.fillStyle = PAPER;
-  ctx.strokeStyle = INK;
-  ctx.lineWidth = Math.max(2, w / 160);
+  ctx.strokeStyle = "#c9c2b0";
+  ctx.lineWidth = Math.max(1.5, w / 260);
   ctx.beginPath();
   ctx.rect(0, 0, w, h);
   ctx.fill();
   ctx.stroke();
-  const cw = w / 3,
-    k = w / 600,
-    at = { door: { x: cw * 0.5, y: h * 0.55 }, computer: { x: cw * 1.5, y: h * 0.55 }, crate: { x: cw * 2.5, y: h * 0.62 } };
+  ctx.fillStyle = "rgba(240,226,170,.9)";
+  for (const tx of [0.08, 0.92]) {
+    ctx.save();
+    ctx.translate(tx * w, 0);
+    ctx.rotate(tx < 0.5 ? -0.3 : 0.3);
+    ctx.fillRect(-22 * k, -9 * k, 44 * k, 18 * k);
+    ctx.restore();
+  }
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
-  // crayon numbers
-  ctx.font = esHomeFont(Math.round(30 * k));
-  ctx.textAlign = "center";
-  ctx.fillStyle = "#7a4fd1";
-  ["1", "2", "3"].forEach((n, i) => (has[["door", "computer", "crate"][i]] ? ctx.fillText(n, cw * (i + 0.15), 36 * k) : null));
-  if (has.door) crayonDoor(ctx, at.door.x, at.door.y, k);
-  if (has.computer) crayonComputer(ctx, at.computer.x, at.computer.y, k);
-  if (has.crate) crayonCrate(ctx, at.crate.x, at.crate.y, k, !words); // (with words the arrow to Mars is crayonToMars's: one Mars, not two)
-  // round 7 (r5 12:19, q: 132): with words, the third picture is the crate, an arrow and the red planet (Mars), and each
-  // picture has its crayon words under it; without words, the old ship over the crate
+  const C = { k, rnd, ctx };
+  // his crayon numbers
+  ["door", "computer", "crate"].forEach((id, i) => has[id] && planWords(C, String(i + 1), cw * (i + 0.13), 34 * k, 34, PLAN_CRAYON.purple));
+  if (has.door) planDoor(C, at.door.x, at.door.y);
+  if (has.computer) planComputer(C, at.computer.x, at.computer.y);
+  if (has.crate) planCrate(C, at.crate.x, at.crate.y, !words);
   if (has.ship && !words) drawPlanShip(ctx, at.crate.x - 10 * k, at.crate.y - 120 * k, 1.1 * k, true);
-  if (has.ship && words) crayonToMars(ctx, at.crate.x, at.crate.y - 105 * k, k);
-  if (words) {
-    ctx.font = esHomeFont(Math.round(26 * k));
-    ctx.textAlign = "center";
-    ctx.fillStyle = "#c2185b";
-    for (const id of ["door", "computer", "crate"]) has[id] && words[id] && ctx.fillText(words[id], at[id].x - 4 * k, h - 18 * k, cw - 12 * k);
-  }
-  for (const id of ["door", "computer", "crate"]) if (ticks[id]) tick(ctx, at[id].x + cw * 0.3, at[id].y - 60 * k, k);
+  if (has.ship && words) planToMars(C, at.crate.x, at.crate.y - 105 * k);
+  if (words) for (const id of ["door", "computer", "crate"]) has[id] && words[id] && planWords(C, words[id], at[id].x - 4 * k, h - 22 * k, 25, PLAN_CRAYON.words, cw - 14 * k);
+  for (const id of ["door", "computer", "crate"]) if (ticks[id]) planTick(C, at[id].x + cw * 0.3, at[id].y - 60 * k);
   ctx.restore();
   return at;
 }
-function crayon(ctx, col, k) {
-  ctx.strokeStyle = col;
-  ctx.lineWidth = 6 * k;
+// The plan's crayons.
+const PLAN_CRAYON = Object.freeze({
+  purple: "#7a4fd1",
+  words: "#c2185b",
+  door: "#8a5a2b",
+  doorFill: "#c99a62",
+  keypad: "#3b3f4a",
+  pink: "#ff8fbd",
+  computer: "#2b6fd6",
+  screen: "#8fd0ff",
+  button: "#2bb673",
+  crate: "#b8742a",
+  crateFill: "#e3b77a",
+  fur: "#7a4a26",
+  goat: "#9aa0ad",
+  mars: "#e5533d",
+  marsDark: "#a8321f",
+  arrow: "#1e2430",
+  tick: "#2b9348",
+});
+const PLAN_FONT = (px) => `700 ${px}px "Chalkboard SE", "Marker Felt", "Comic Sans MS", cursive`;
+// A fixed wobble (the same every frame), from a seed.
+function planWobble(seed) {
+  let s = seed >>> 0 || 1;
+  return () => ((s = (s * 1664525 + 1013904223) >>> 0), s / 4294967296 - 0.5);
 }
-function crayonDoor(ctx, x, y, k) {
-  crayon(ctx, "#8a5a2b", k);
-  ctx.strokeRect(x - 40 * k, y - 80 * k, 70 * k, 130 * k);
-  crayon(ctx, INK, k);
-  ctx.strokeRect(x + 40 * k, y - 20 * k, 22 * k, 30 * k); // the keypad
-  // the pink paper
-  ctx.fillStyle = "#ff9cc2";
-  ctx.save();
-  ctx.translate(x + 52 * k, y + 40 * k);
-  ctx.rotate(0.2);
-  ctx.fillRect(-16 * k, -20 * k, 32 * k, 40 * k);
-  ctx.restore();
-}
-function crayonComputer(ctx, x, y, k) {
-  crayon(ctx, "#2b9348", k);
-  ctx.strokeRect(x - 55 * k, y - 70 * k, 110 * k, 80 * k);
-  ctx.beginPath();
-  ctx.moveTo(x, y + 10 * k);
-  ctx.lineTo(x, y + 34 * k);
-  ctx.moveTo(x - 34 * k, y + 36 * k);
-  ctx.lineTo(x + 34 * k, y + 36 * k);
-  ctx.stroke();
-}
-// (round 7, q: 132) an arrow up from the crate to a red planet with a ring of craters: the ride to Mars
-function crayonToMars(ctx, x, y, k) {
-  crayon(ctx, INK, k);
-  ctx.beginPath();
-  ctx.moveTo(x - 40 * k, y + 50 * k);
-  ctx.quadraticCurveTo(x - 30 * k, y, x + 6 * k, y - 10 * k);
-  ctx.moveTo(x + 6 * k, y - 10 * k);
-  ctx.lineTo(x - 10 * k, y - 20 * k);
-  ctx.moveTo(x + 6 * k, y - 10 * k);
-  ctx.lineTo(x - 6 * k, y + 6 * k);
-  ctx.stroke();
-  ctx.fillStyle = "#e5533d";
-  ctx.beginPath();
-  ctx.arc(x + 44 * k, y - 22 * k, 26 * k, 0, Math.PI * 2);
-  ctx.fill();
-  crayon(ctx, "#a8321f", k * 0.7);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(x + 36 * k, y - 28 * k, 5 * k, 0, Math.PI * 2);
-  ctx.arc(x + 54 * k, y - 14 * k, 4 * k, 0, Math.PI * 2);
-  ctx.stroke();
-}
-function crayonCrate(ctx, x, y, k, redDot = true) {
-  crayon(ctx, "#c77d2a", k);
-  ctx.strokeRect(x - 60 * k, y - 34 * k, 96 * k, 70 * k);
-  // two faces peeking out over the top: a furry one and a goat
-  for (const [dx, col] of [[-34, "#a07a52"], [6, "#cfd3dc"]]) {
+// A crayon line through points (sheet units times k): twice, a little off, the second fainter.
+function planLine(C, pts, color, width = 6, close = false) {
+  const { ctx, k, rnd } = C;
+  for (let i = 0; i < 2; i++) {
     ctx.beginPath();
-    ctx.arc(x + dx * k, y - 44 * k, 16 * k, Math.PI, 0);
-    crayon(ctx, col, k);
+    pts.forEach(([px, py], j) => {
+      const X = px + rnd() * 2.4 * k,
+        Y = py + rnd() * 2.4 * k;
+      j ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y);
+    });
+    close && ctx.closePath();
+    ctx.strokeStyle = color;
+    ctx.globalAlpha = i ? 0.5 : 0.92;
+    ctx.lineWidth = width * k * (i ? 0.7 : 1);
     ctx.stroke();
   }
-  if (!redDot) return;
-  // an arrow to a red dot
-  crayon(ctx, RED, k);
-  ctx.beginPath();
-  ctx.moveTo(x + 40 * k, y);
-  ctx.lineTo(x + 78 * k, y - 26 * k);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(x + 86 * k, y - 32 * k, 10 * k, 0, TAU);
-  ctx.fillStyle = RED;
-  ctx.fill();
+  ctx.globalAlpha = 1;
 }
-function tick(ctx, x, y, k) {
-  crayon(ctx, "#2b9348", k * 1.6);
+// A box coloured in with slanted crayon strokes (x0, y0, x1, y1), the crayon's grain showing the paper between.
+function planColourIn(C, x0, y0, x1, y1, color) {
+  const { ctx, k, rnd } = C;
+  ctx.save();
   ctx.beginPath();
-  ctx.moveTo(x - 16 * k, y);
-  ctx.lineTo(x - 4 * k, y + 14 * k);
-  ctx.lineTo(x + 20 * k, y - 18 * k);
-  ctx.stroke();
+  ctx.rect(x0, y0, x1 - x0, y1 - y0);
+  ctx.clip();
+  ctx.strokeStyle = color;
+  ctx.globalAlpha = 0.55;
+  ctx.lineWidth = 5 * k;
+  for (let s = -(y1 - y0); s < x1 - x0; s += 7 * k) {
+    ctx.beginPath();
+    ctx.moveTo(x0 + s + rnd() * 2 * k, y1);
+    ctx.lineTo(x0 + s + (y1 - y0) * 0.5 + rnd() * 2 * k, y0);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+const planRect = (x0, y0, x1, y1) => [[x0, y0], [x1, y0], [x1, y1], [x0, y1], [x0, y0]];
+// His crayon writing: drawn twice, a little off, like a crayon pressed hard.
+function planWords(C, text, x, y, px, color, maxW = undefined) {
+  const { ctx, k } = C;
+  ctx.font = PLAN_FONT(Math.round(px * k));
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillStyle = color;
+  ctx.globalAlpha = 0.95;
+  ctx.fillText(text, x, y, maxW);
+  ctx.globalAlpha = 0.45;
+  ctx.fillText(text, x + 1.2 * k, y + 0.9 * k, maxW);
+  ctx.globalAlpha = 1;
+}
+function planDoor(C, x, y) {
+  const { k } = C,
+    P = PLAN_CRAYON;
+  planColourIn(C, x - 40 * k, y - 80 * k, x + 30 * k, y + 50 * k, P.doorFill);
+  planLine(C, planRect(x - 40 * k, y - 80 * k, x + 30 * k, y + 50 * k), P.door);
+  planLine(C, [[x + 18 * k, y - 10 * k], [x + 22 * k, y - 8 * k]], P.door, 7); // the handle
+  // the keypad, with its buttons as dots
+  planColourIn(C, x + 40 * k, y - 22 * k, x + 64 * k, y + 10 * k, "#c9ccd6");
+  planLine(C, planRect(x + 40 * k, y - 22 * k, x + 64 * k, y + 10 * k), P.keypad, 4);
+  for (const [dx, dy] of [[47, -14], [57, -14], [47, -4], [57, -4], [52, 4]]) planLine(C, [[x + dx * k, y + dy * k], [x + (dx + 0.5) * k, y + dy * k]], P.keypad, 4);
+  // the pink paper with the code (scribbled, no numbers to read)
+  C.ctx.save();
+  C.ctx.translate(x + 54 * k, y + 40 * k);
+  C.ctx.rotate(0.2);
+  planColourIn(C, -16 * k, -20 * k, 16 * k, 20 * k, P.pink);
+  planLine(C, planRect(-16 * k, -20 * k, 16 * k, 20 * k), "#e0629a", 4);
+  planLine(C, [[-9 * k, -6 * k], [-3 * k, -8 * k], [3 * k, -5 * k], [9 * k, -7 * k]], "#e0629a", 3);
+  planLine(C, [[-9 * k, 4 * k], [-2 * k, 2 * k], [5 * k, 5 * k], [9 * k, 3 * k]], "#e0629a", 3);
+  C.ctx.restore();
+}
+function planComputer(C, x, y) {
+  const { k } = C,
+    P = PLAN_CRAYON;
+  planColourIn(C, x - 55 * k, y - 70 * k, x + 55 * k, y + 10 * k, P.screen);
+  planLine(C, planRect(x - 55 * k, y - 70 * k, x + 55 * k, y + 10 * k), P.computer);
+  // the big green button on its screen
+  planColourIn(C, x - 30 * k, y - 42 * k, x + 30 * k, y - 20 * k, P.button);
+  planLine(C, planRect(x - 30 * k, y - 42 * k, x + 30 * k, y - 20 * k), "#1f8a55", 4);
+  // its stand and the desk line
+  planLine(C, [[x, y + 10 * k], [x, y + 34 * k]], P.computer);
+  planLine(C, [[x - 34 * k, y + 36 * k], [x + 34 * k, y + 36 * k]], P.computer);
+}
+function planCrate(C, x, y, redDot) {
+  const { k } = C,
+    P = PLAN_CRAYON;
+  // two faces peeking over the top: him (furry, brown) and Mops (grey, two horns)
+  const head = (cx, color, horns) => {
+    const pts = [];
+    for (let i = 0; i <= 12; i++) {
+      const a = Math.PI + (i / 12) * Math.PI,
+        r = (horns ? 15 : i % 2 ? 19 : 16) * k;
+      pts.push([cx + Math.cos(a) * r, y - 34 * k + Math.sin(a) * r]);
+    }
+    planLine(C, pts, color, 5);
+    planLine(C, [[cx - 6 * k, y - 42 * k], [cx - 5 * k, y - 42 * k]], P.arrow, 6);
+    planLine(C, [[cx + 6 * k, y - 42 * k], [cx + 7 * k, y - 42 * k]], P.arrow, 6);
+    horns && planLine(C, [[cx - 10 * k, y - 46 * k], [cx - 18 * k, y - 62 * k]], P.goat, 5);
+    horns && planLine(C, [[cx + 10 * k, y - 46 * k], [cx + 18 * k, y - 62 * k]], P.goat, 5);
+  };
+  head(x - 34 * k, P.fur, false);
+  head(x + 6 * k, P.goat, true);
+  planColourIn(C, x - 60 * k, y - 34 * k, x + 36 * k, y + 36 * k, P.crateFill);
+  planLine(C, planRect(x - 60 * k, y - 34 * k, x + 36 * k, y + 36 * k), P.crate);
+  planLine(C, [[x - 58 * k, y], [x + 34 * k, y]], P.crate, 4);
+  if (!redDot) return;
+  planLine(C, [[x + 40 * k, y], [x + 78 * k, y - 26 * k]], P.mars);
+  planColourIn(C, x + 76 * k, y - 42 * k, x + 96 * k, y - 22 * k, P.mars);
+}
+// (round 7, q: 132) an arrow up from the crate to the red planet, Mars, with two craters: the ride to Mars
+function planToMars(C, x, y) {
+  const { k, ctx } = C,
+    P = PLAN_CRAYON;
+  const curve = [];
+  for (let i = 0; i <= 8; i++) {
+    const u = i / 8;
+    curve.push([x - 40 * k + 46 * k * u, y + 50 * k - 60 * k * Math.sin((u * Math.PI) / 2)]);
+  }
+  planLine(C, curve, P.arrow, 5);
+  planLine(C, [[x - 10 * k, y - 20 * k], [x + 6 * k, y - 10 * k], [x - 6 * k, y + 6 * k]], P.arrow, 5);
+  // Mars: coloured in round, a darker crayon ring, two craters
+  const mx = x + 44 * k,
+    my = y - 22 * k,
+    r = 26 * k;
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(mx, my, r, 0, TAU);
+  ctx.clip();
+  planColourIn(C, mx - r, my - r, mx + r, my + r, P.mars);
+  planColourIn(C, mx - r, my - r, mx + r, my + r, P.mars);
+  ctx.restore();
+  const ring = [];
+  for (let i = 0; i <= 16; i++) ring.push([mx + Math.cos((i / 16) * TAU) * r, my + Math.sin((i / 16) * TAU) * r]);
+  planLine(C, ring, P.marsDark, 5);
+  for (const [dx, dy, cr] of [[-8, -6, 5], [10, 8, 4]]) {
+    const c = [];
+    for (let i = 0; i <= 8; i++) c.push([mx + dx * k + Math.cos((i / 8) * TAU) * cr * k, my + dy * k + Math.sin((i / 8) * TAU) * cr * k]);
+    planLine(C, c, P.marsDark, 3);
+  }
+}
+function planTick(C, x, y) {
+  const { k } = C;
+  planLine(C, [[x - 16 * k, y], [x - 4 * k, y + 14 * k], [x + 20 * k, y - 18 * k]], PLAN_CRAYON.tick, 9);
 }
 
 /** Beat 45a: one sweat drop by his head while he gulps (no words). `head` is his head's box. */

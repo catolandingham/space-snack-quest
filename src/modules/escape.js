@@ -53,7 +53,7 @@ import { withCameraLayer } from "./bay-camera.js";
 import { storyHeart } from "./mops-hearts.js";
 import { escapeWords } from "./escape-lines.js";
 import { OFFICE_CODE, BAY_DAY, BAY_NIGHT, ES_HOME, ES_BAY, ROBOT_SIGHT, VENT_ROOM, VENT_TUNNEL, ES_HALLWAY, KEYPAD, keyAt, OFFICE, SITE, ES_BAR, SNACKS, ES_PACE, WEEK, MOP_CALM, MOPOFF, NEWS, ROUTE_HOME, ROUTE_VENT, ROUTE_OFFICE, ROUTE_BAR, ROUTE_HOME_NIGHT, HALL_GUEST, PLAQUE, FOLLOW, ES_DOORS } from "./escape-place.js";
-import { freshFloor, goatCells, beardAt, mopCalm, mopGoat, goatClean, wheelsAcross, starFor, bars, robotsAt, drawCalmFloor, drawMopFloor, drawBars, drawStarCloseup, markPatch, drawScrub } from "./escape-mopoff.js";
+import { freshFloor, goatCells, beardAt, mopCalm, mopGoat, goatClean, wheelsAcross, starFor, bars, robotsAt, drawCalmFloor, drawMopFloor, drawBars, drawStarCloseup, markPatch, drawScrub, drawBucketSuds } from "./escape-mopoff.js";
 import { drawMopBucketBack, drawMopBucketFront } from "./mop-bucket.js";
 import { doorAt, doorTo, markDoor, freshTrail, followStep } from "./escape-doors.js";
 import { drawWeek, drawStampTouch, drawPlan, drawGulpSweat } from "./escape-home-art.js";
@@ -1490,11 +1490,12 @@ export function createEscape(bridge) {
       out.floor = drawMopFloor(ctx, l.floor, { ct: l.step === "sides" ? 0 : l.ct, paint: l.paint }, t);
       ["mopoff", "buzzer"].includes(l.step) && (out.bars = drawBars(ctx, bars(l.floor, l.ct)));
     }
-    // (round 7, r5 10:24: his bucket beside his side, and soap swishes under his beard as he scrubs)
+    // (round 7, r5 10:24: his bucket beside his side, suds in it, and soap swishes under his beard as he scrubs)
     if (l.floor && ["mopin", "mop", "sides", "mopoff", "buzzer", "news"].includes(l.step)) {
       const Bk = MOPOFF.bucket;
       drawMopBucketBack(ctx, Bk.cx, Bk.floor, Bk.k);
       drawMopBucketFront(ctx, Bk.cx, Bk.floor, Bk.k, { water: true });
+      drawBucketSuds(ctx, Bk, t);
       out.bucket = true;
       const m = e.pos("mops");
       if (moMoving && ["mop", "mopoff"].includes(l.step)) {

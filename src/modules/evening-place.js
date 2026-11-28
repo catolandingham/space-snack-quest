@@ -207,7 +207,7 @@ export const EV_BAY = Object.freeze({
   // the big wall vent (picture 1070 to 1200 wide, 238 to 332 high): he hides under it, it pulls the pink sheet in
   vent: Object.freeze({ x0: 802, x1: 900, y0: 183, y1: 256, mouth: Object.freeze({ x: 851, y: 220 }) }),
   // round 7 (r5 9:29 and 13:18, q: 125): the crate he hides in after the loud post stands beside the floor vent (a
-  // PLACEHOLDER drawing; the locked picture has no crate there), and the floor vent takes the pink sheet out of his paws.
+  // drawing, final art pending Brian's yes; the locked picture has no crate there), and the floor vent takes the pink sheet out of his paws.
   // `stand`: where he steps in (just out of the floor vent's reach, party-vent.js VENT.near).
   crate: Object.freeze({ stand: Object.freeze({ x: 300, y: 566 }), box: Object.freeze({ x0: 268, x1: 332, y0: 500, y1: 552 }) }),
   // the way he runs from the mailbox to the vent: out of the mail room through its opening (never through its fence),
