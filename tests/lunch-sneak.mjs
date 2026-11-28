@@ -127,6 +127,13 @@ if (P) {
     look = W.coneSees(W.coneFrom(cw.id, cw.x, cw.y, cw.look, CONE), at),
     away = W.coneSees(W.coneFrom(cw.id, cw.x, cw.y, cw.away, CONE), at);
   g.check("the guest at the counter sees Squatch standing up when he looks, not when he looks away", look && !away, { look, away });
+  // beat 28's walk out (finish plan 2026-11-27): now and then the counter's watcher looks toward the hallway doorway, so
+  // Squatch standing between the counter's aisle and the doorway is seen then, and not while it looks away
+  const ww = P.COUNTER_WATCHER_WALKOUT,
+    way = { x: 893, y: 345 },
+    wLook = W.coneSees(W.coneFrom(ww.id, ww.x, ww.y, ww.look, CONE), way),
+    wAway = W.coneSees(W.coneFrom(ww.id, ww.x, ww.y, ww.away, CONE), way);
+  g.check("on beat 28's walk out the counter's watcher, looking, sees the way from the aisle's top to the doorway (not while looking away)", !!ww && wLook && !wAway, { wLook, wAway });
 } else g.check("lunch-sneak-place.js exists", false);
 
 // ---------- the beat, played ----------

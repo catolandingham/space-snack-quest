@@ -1,6 +1,6 @@
 /**
  * The escape's drawings (Chapter 1, beats 43 to 52). Everything here is a PLACEHOLDER drawing in the game's style (dark
- * outlines, flat colours) until Brian approves a look: the pancake brochure on the home wall, the big pink order sheet
+ * outlines, flat colours) until Brian approves a look: the stand's brochure on the home wall, the big pink order sheet
  * (the paw print in the ORDER MORE ROBOTS box, the office code written in its corner), the open vent grille, the inside
  * of the vent (no locked picture exists: Mops's secret desk, the IDEAS FOR GUARDIANS board, the detective wall, the
  * TOYS bin), the close-ups (the detective wall, the Mars letter, the new Guardian note, the slip in his paw, the
@@ -8,9 +8,10 @@
  * pictures are never redrawn: these are layers on top of them, or whole pictures of their own.
  * Every word comes from escape-lines.js; every place from escape-place.js.
  */
+import { peopleBoxesNow } from "./room-model.js";
 import { FAMILY } from "./snack-name.js";
 import { drawBrochure, drawPawPrint } from "./evening-art.js";
-import { drawCoffeeStain } from "./evening-pictures.js";
+import { STORY_HEART } from "./mops-hearts.js";
 import { escapeWords } from "./escape-lines.js";
 import { VENT_ROOM, KEYPAD, keyAt, SITE, SNACKS, OFFICE_CODE, ES_HALLWAY } from "./escape-place.js";
 import { drawThought, drawCrate } from "./bedtime-story-art.js";
@@ -76,11 +77,21 @@ export function esWrap(ctx, s, w, size, weight = 700) {
 /**
  * The one highlight (Brian, 2026-11-26: the dashed gold line, no glow, no ring, no arrow): a dashed line round box `b`,
  * `pad` outside it, with the goal outline's own width, dash and colour (outline.js OUTLINE, which the shared drawing
- * owns) and its gentle pulse (bridge.js drawGoalOutline). Returns the box it went round.
+ * owns) and its gentle pulse (bridge.js drawGoalOutline). `avoid`: boxes the line leaves out (by default Squatch and Mops
+ * where the room draws them: room-model.js peopleBoxesNow).
+ * Returns the box it went round.
  */
-export function markBox(ctx, b, t, pad = 6) {
+export function markBox(ctx, b, t, pad = 6, avoid = peopleBoxesNow()) {
   const box = { x0: b.x0 - pad, y0: b.y0 - pad, x1: b.x1 + pad, y1: b.y1 + pad };
   ctx.save();
+  // (never over a person standing there: the people's boxes are left out, as bridge.js drawGoalOutline does)
+  for (const q of avoid || []) {
+    if (!q) continue;
+    ctx.beginPath();
+    ctx.rect(-4000, -4000, 9000, 9000);
+    ctx.rect(q.x0, q.y0, q.x1 - q.x0, q.y1 - q.y0);
+    ctx.clip("evenodd");
+  }
   ctx.globalAlpha = 0.85 + 0.15 * Math.sin((t || 0) * 4);
   ctx.setLineDash([OUTLINE.dash, OUTLINE.dash * 0.7]);
   ctx.lineWidth = OUTLINE.width;
@@ -129,7 +140,7 @@ export function drawPinkSheet(ctx, x, y, w, { glowCode = false, t = 0, paw = tru
   }
   // the code in the corner, and the little door with its keypad drawn beside it
   const code = { x: 66 * u, y: 114 * u, size: 11 * u }; // (in pen: six digits fit between the door drawing and the edge)
-  glowCode && markBox(ctx, { x0: 34 * u, y0: 102 * u, x1: 96 * u, y1: 126 * u }, t);
+  glowCode && markBox(ctx, { x0: 34 * u, y0: 102 * u, x1: 96 * u, y1: 126 * u }, t, 6, []);
   // written by hand in pen (pen-digits.js; Brian 2026-11-26), so it reads as someone wrote it there
   let pen = null;
   text ? ((pen = drawPenDigits(ctx, OFFICE_CODE, code.x, code.y, code.size, "#1d3fa8")), drawnWords.add("pen:" + OFFICE_CODE)) : ((ctx.fillStyle = "#2b3a67"), ctx.fillRect(code.x - 22 * u, code.y - 3 * u, 44 * u, 6 * u));
@@ -155,16 +166,15 @@ export function drawSlipSmall(ctx, x, y, k = 1, a = 0) {
 }
 
 /**
- * The pancake brochure (beat 39, the evening) pinned on the home wall above his bed, or held up big (45a): the
- * evening's own drawing of it (evening-art.js drawBrochure: the two cooks, Mars in the window, the pancakes and, held
- * up big, the cake box stamped with his family's name), with the guest's coffee stain from the snack bar (38c). On
+ * The stand's brochure (beat 39, the evening) pinned on the home wall above his bed, or held up big (45a): the
+ * evening's own drawing of it (evening-art.js drawBrochure: the stand, Mars behind it and, held
+ * up big, the cake box stamped with his family's name). On
  * the wall, a red pin. In box `b`; `big` held up. Returns what it drew.
  */
 export function drawPinnedBrochure(ctx, b, big = false) {
   const w = b.x1 - b.x0,
     h = b.y1 - b.y0;
   drawBrochure(ctx, b.x0, b.y0, w, h, !big);
-  drawCoffeeStain(ctx, b.x0, b.y0, w, h);
   if (big) return { big, stamp: FAMILY.NAME };
   // a red pin
   ctx.beginPath();
@@ -453,7 +463,7 @@ export function drawVentDesk(ctx, t, { slip = "desk", glowSlip = false } = {}) {
   esPaint(ctx, ES_CREAM, 2);
   let sheet = null;
   if (slip === "desk") {
-    glowSlip && markBox(ctx, { x0: V.slip.x - 60, y0: V.slip.y - 50, x1: V.slip.x + 60, y1: V.slip.y + 10 }, t);
+    glowSlip && markBox(ctx, { x0: V.slip.x - 60, y0: V.slip.y - 50, x1: V.slip.x + 60, y1: V.slip.y + 10 }, t, 6, []);
     // lying on the desk top (seen from the front, so it is drawn flattened), the paw print side up
     ctx.save();
     ctx.translate(V.slip.x, V.slip.y);
@@ -590,7 +600,7 @@ export function drawKeypad(ctx, { typed = "", buzz = 0, ok = false, t = 0, big =
   ctx.restore();
   const slip = { x0: x, y0: y, x1: x + w, y1: y + h, big };
   // the one highlight round it while he still has the code to type
-  !ok && markBox(ctx, slip, t);
+  !ok && markBox(ctx, slip, t, 6, []);
   const p = K.pad;
   esRect(ctx, p.x0, p.y0, p.x1 - p.x0, p.y1 - p.y0, 22);
   esPaint(ctx, "#59657d", 6);
@@ -632,58 +642,83 @@ export function drawDoorOpen(ctx) {
   esPaint(ctx, "#8b93a7", 3);
 }
 /**
- * The snack site on the office computer (beat 51), close up: the snack's name as its header, a small grey "Order new box"
- * button and a big lit "Return empty crate" button. `booked` (0 to 1): after the tap, the crate rides up a ramp into
- * the ship and a big green tick comes. Returns the buttons' boxes.
+ * The office computer (beat 51), close up. Round 7 (r5 15:23 and 15:29, q: 124): a Universal Postal Service page, "just
+ * schedule a pickup": `page` 0 the big SCHEDULE A PICKUP button; 1 "How big?" (SMALL, MEDIUM, BIG: three boxes of three
+ * sizes, BIG outlined); 2 "What's inside?" (OLD MOPS, GOAT STUFF outlined, ONE SASQUATCH). `booked` (0 to 1): after the
+ * last tap, the crate rides up a ramp into the ship and a big green tick comes. PLACEHOLDER page for Brian.
+ * Returns the buttons' boxes on the page shown.
  */
-export function drawSite(ctx, { booked = -1, t = 0, ghjk = false, label = -1 } = {}) {
+export function drawSite(ctx, { booked = -1, t = 0, page = 0, size = "", label = -1 } = {}) {
   const S = SITE,
     sc = S.screen;
   esRect(ctx, sc.x0 - 20, sc.y0 - 20, sc.x1 - sc.x0 + 40, sc.y1 - sc.y0 + 40, 18);
   esPaint(ctx, "#2d323e", 6);
   esRect(ctx, sc.x0, sc.y0, sc.x1 - sc.x0, sc.y1 - sc.y0, 8);
   esPaint(ctx, "#eaf4ff", 3);
-  ctx.fillStyle = "#8b5a3c";
+  // the header band: the postal service's blue, its name in white, a little envelope
+  ctx.fillStyle = "#2f5aa8";
   ctx.fillRect(sc.x0 + 3, sc.y0 + 3, sc.x1 - sc.x0 - 6, 110);
-  esWords(ctx, escapeWords("site"), (sc.x0 + sc.x1) / 2, sc.y0 + 58, 60, "#fff3d6", "center", 900);
-  const o = S.order,
-    r = S.ret;
-  // the kinds already ordered, one a week (the hunt seen from the manager's side): a column of little cakes, each ticked
-  for (let i = 0; i < 6; i++) {
-    const kx = sc.x1 - 46,
-      ky = sc.y0 + 150 + i * 62;
-    ctx.beginPath();
-    ctx.ellipse(kx, ky, 26, 18, 0, 0, ES_TAU);
-    esPaint(ctx, ["#c98b4a", "#e0b070", "#9b6b3c", "#f0c890", "#b8763a", "#d9a35b"][i], 3);
-    ctx.beginPath();
-    ctx.moveTo(kx - 46, ky - 4);
-    ctx.lineTo(kx - 38, ky + 6);
-    ctx.lineTo(kx - 26, ky - 10);
-    ctx.strokeStyle = "#2bc48a";
-    ctx.lineWidth = 4;
-    ctx.stroke();
-  }
-  // Mops tried first: his hooves hit four keys at once
-  ghjk && (esRect(ctx, o.x0, sc.y0 + 124, 300, 60, 8), esPaint(ctx, "#ffffff", 3), esWords(ctx, escapeWords("keys-ghjk"), o.x0 + 20, sc.y0 + 156, 34, ES_INK, "left", 700));
+  esWords(ctx, escapeWords("site"), (sc.x0 + sc.x1) / 2 + 30, sc.y0 + 58, 44, "#ffffff", "center", 900);
+  esRect(ctx, sc.x0 + 24, sc.y0 + 32, 64, 46, 4);
+  esPaint(ctx, "#ffffff", 3);
+  ctx.beginPath();
+  ctx.moveTo(sc.x0 + 24, sc.y0 + 32);
+  ctx.lineTo(sc.x0 + 56, sc.y0 + 58);
+  ctx.lineTo(sc.x0 + 88, sc.y0 + 32);
+  ctx.strokeStyle = ES_INK;
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  const button = (b, words, goal, size2 = 40, fill = "#ffffff", ink = ES_INK) => {
+    goal && markBox(ctx, b, t, 6, []);
+    esRect(ctx, b.x0, b.y0, b.x1 - b.x0, b.y1 - b.y0, 14);
+    esPaint(ctx, fill, 4);
+    esWords(ctx, words, (b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2, size2, ink, "center", 900);
+  };
+  let boxes = {};
   if (booked < 0) {
-    esRect(ctx, o.x0, o.y0, o.x1 - o.x0, o.y1 - o.y0, 12);
-    esPaint(ctx, "#dfe4ea", 3, "#8a93a3");
-    esWords(ctx, escapeWords("site-order"), (o.x0 + o.x1) / 2, (o.y0 + o.y1) / 2, 30, "#59657d", "center", 700);
-    markBox(ctx, r, t);
-    esRect(ctx, r.x0, r.y0, r.x1 - r.x0, r.y1 - r.y0, 18);
-    esPaint(ctx, "#2bc48a", 6);
-    esWords(ctx, escapeWords("site-return"), (r.x0 + r.x1) / 2, (r.y0 + r.y1) / 2, 50, "#ffffff", "center", 900);
+    if (page === 0) {
+      button(S.schedule, escapeWords("site-schedule"), true, 46, "#2bc48a", "#ffffff");
+      boxes = { schedule: S.schedule };
+    } else if (page === 1) {
+      esWords(ctx, escapeWords("site-size"), (sc.x0 + sc.x1) / 2, sc.y0 + 170, 48, ES_INK, "center", 900);
+      for (const [i, b] of S.sizes.entries()) {
+        button(b, "", b.id === "size-big");
+        // a crate drawn at its size, its word under it
+        const k = [0.35, 0.5, 0.68][i];
+        drawCrate(ctx, (b.x0 + b.x1) / 2, b.y0 + 70, k, { words: false });
+        esWords(ctx, escapeWords(b.id), (b.x0 + b.x1) / 2, b.y1 - 26, 30, ES_INK, "center", 900);
+      }
+      boxes = { sizes: S.sizes };
+    } else if (page === 2) {
+      esWords(ctx, escapeWords("site-inside"), (sc.x0 + sc.x1) / 2, sc.y0 + 165, 48, ES_INK, "center", 900);
+      for (const b of S.inside) button(b, escapeWords(b.id), b.id === "in-goat", 36);
+      boxes = { inside: S.inside };
+    } else {
+      // (q: 135) Where to? MARS, the one lit choice: a red planet beside the word
+      esWords(ctx, escapeWords("site-to"), (sc.x0 + sc.x1) / 2, sc.y0 + 165, 48, ES_INK, "center", 900);
+      for (const b of S.to) {
+        button(b, "", true, 52, "#e5533d", "#ffffff");
+        ctx.beginPath();
+        ctx.arc(b.x0 + 80, (b.y0 + b.y1) / 2, 42, 0, ES_TAU);
+        esPaint(ctx, "#ff9a6b", 4);
+        esWords(ctx, escapeWords(b.id), (b.x0 + b.x1) / 2 + 40, (b.y0 + b.y1) / 2, 56, "#ffffff", "center", 900);
+      }
+      boxes = { to: S.to };
+    }
   } else {
     // booked: the crate rides up the ramp into the ship, then a big green tick
     const k = esClamp(booked / 0.7),
       cx = 260 + k * 330,
       cy = 470 - k * 150;
-    ctx.beginPath();
-    ctx.moveTo(220, 500);
-    ctx.lineTo(640, 300);
-    ctx.lineWidth = 10;
-    ctx.strokeStyle = "#8a93a3";
-    ctx.stroke();
+    // (the ramp only while the crate rides it: under the tick and the words it read as a stray line)
+    if (booked <= 0.9) {
+      ctx.beginPath();
+      ctx.moveTo(220, 500);
+      ctx.lineTo(640, 300);
+      ctx.lineWidth = 10;
+      ctx.strokeStyle = "#8a93a3";
+      ctx.stroke();
+    }
     esRect(ctx, 560, 180, 240, 160, 60);
     esPaint(ctx, "#c5ccd8", 4);
     for (const kx of [0, 1, 2]) (ctx.beginPath(), ctx.arc(610 + kx * 60, 240, 18, 0, ES_TAU), esPaint(ctx, "#78b4ea", 3));
@@ -711,10 +746,13 @@ export function drawSite(ctx, { booked = -1, t = 0, ghjk = false, label = -1 } =
       L = { x0: 300, x1: 660, y0: 560 - 0 + (1 - k) * 60, y1: 640 };
     esRect(ctx, L.x0, L.y0, L.x1 - L.x0, 110, 6);
     esPaint(ctx, ES_PAPER, 4);
-    esWords(ctx, escapeWords("label"), (L.x0 + L.x1) / 2, L.y0 + 44, 34, ES_INK, "center", 900);
+    // (q: 135: "FOR PICKUP. TO: MARS." on two lines, so it fits the label)
+    const words = escapeWords("label"),
+      cut = words.indexOf(". ");
+    (cut < 0 ? [words] : [words.slice(0, cut + 1), words.slice(cut + 2)]).forEach((w, i, all) => esWords(ctx, w, (L.x0 + L.x1) / 2, L.y0 + (all.length > 1 ? 30 + i * 36 : 44), 32, ES_INK, "center", 900));
     lab = L;
   }
-  return { order: o, ret: r, booked: booked >= 0, label: lab, ghjk };
+  return { ...boxes, page, size, booked: booked >= 0, label: lab };
 }
 /** His big furry arm and paw coming up from below (for the close-ups over the room), the paw at `paw`. */
 export function drawArmUp(ctx, paw) {
@@ -738,7 +776,7 @@ export function drawSnackCounter(ctx, st, t) {
   // the Guardians' plate and its card
   const P = S.plate;
   if (st.plate) {
-    st.next === "plate" && markBox(ctx, { x0: P.x - P.r, y0: P.y - 60, x1: P.x + P.r, y1: P.y + 20 }, t);
+    st.next === "plate" && markBox(ctx, { x0: P.x - P.r, y0: P.y - 60, x1: P.x + P.r, y1: P.y + 20 }, t, 6, []);
     ctx.beginPath();
     ctx.ellipse(P.x, P.y, P.r, 18, 0, 0, ES_TAU);
     esPaint(ctx, "#ffffff", 4);
@@ -750,7 +788,7 @@ export function drawSnackCounter(ctx, st, t) {
   // what is still on the counter (the one he is reaching for stays until his paw has it)
   for (let i = 0; i < S.kinds.length; i++) {
     if (st.gone[i] || (st.carry && st.carry.i === i && st.carry.k > 0.4)) continue;
-    st.next && !st.carry && markBox(ctx, { x0: S.at[i].x - 40, y0: S.at[i].y - 40, x1: S.at[i].x + 40, y1: S.at[i].y + 40 }, t);
+    st.next && !st.carry && markBox(ctx, { x0: S.at[i].x - 40, y0: S.at[i].y - 40, x1: S.at[i].x + 40, y1: S.at[i].y + 40 }, t, 6, []);
     drawSnack(ctx, S.kinds[i], S.at[i].x, S.at[i].y, 3.1, 0, 0, 2);
   }
   // the bag: its open top, and how many are in it
@@ -787,15 +825,18 @@ export function drawSnackCounter(ctx, st, t) {
   return { paw, bag: st.bag, plate: st.plate ? P : null };
 }
 
-/** Hearts rising over Mops (he says nothing: DECISIONS, beat 52). */
+/**
+ * A story moment's heart rising over Mops (he says nothing: DECISIONS, beat 52): one heart, not three (Brian
+ * 2026-11-27, "come on with the hearts"; mops-hearts.js STORY_HEART, question 126).
+ */
 export function drawHearts(ctx, x, y, age) {
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < STORY_HEART.count; i++) {
     const a = age - i * 0.35;
     if (a < 0) continue;
     const k = esClamp(a / 1.2);
     ctx.save();
     ctx.globalAlpha = 1 - k * 0.7;
-    drawHeart(ctx, x + (i - 1) * 26, y - k * 60, 18);
+    drawHeart(ctx, x + (i - (STORY_HEART.count - 1) / 2) * 26, y - k * 60, 18);
     ctx.restore();
   }
 }

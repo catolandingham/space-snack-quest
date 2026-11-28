@@ -86,7 +86,6 @@ Brian's answers of 2026-11-23 (Snack Quest Chat) are in the rows below and win o
 - Hall: speaker and FUR alarm placement, window wrap, fur-alarm zoom. "let's have the viewing portal wrap from the far left wall all the way up behind the wall where the fur alarm and the speaker are" (S 457); "let's just make sure at some point we do a zoom in on the fur alarm." (S 466). Check against the locked hall picture.
 - More people. The bartender (draft PR #85) and the Croc Boys are in; more guests wait until Brian sees this cast. "don't we need more people around than just one, two, three, four Five, six" (S 954).
 - Random conversations to join. "there should be random conversations he could join and be part of" (S 361).
-- "Got any pancakes" at the stand, "Mom's Pancakes", spilled coffee. "It's Just Mom's Pancakes" (P L154); "One Of Them Should Say Got Any Pancakes" (P L147).
 - Guests' eyes pop after the spill. "why are there eyeballs if they can't see us?" (S 65).
 - An alarm on the wall of every room. "There Should Be An Alarm In Every Room Too" (P L107).
 - Trip on the bucket; janitor turns around. "Should he Trip on the Bucket Sure Yeah" (P L41).

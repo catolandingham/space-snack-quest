@@ -12,7 +12,7 @@ export { OFFICE_CODE } from "./office-code.js";
 export const BAY_DAY = "docs/locked-rooms/delivery-room-empty-day-noship-v3.png";
 export const BAY_NIGHT = nightPictureFor("hangar");
 
-// Home (home-room-empty-*-v6): Squatch by the bed's foot, Mops comes in through the door on the right. The pancake
+// Home (home-room-empty-*-v6): Squatch by the bed's foot, Mops comes in through the door on the right. The stand's
 // brochure (beat 38) is pinned on the wall above the bed, where Mops's bubble never covers it.
 export const ES_HOME = Object.freeze({
   sq: Object.freeze({ x: 380, y: 556 }),
@@ -31,6 +31,8 @@ export const ES_HOME = Object.freeze({
   stamp: Object.freeze({ x: 300, y: 556 }),
   calendar: Object.freeze({ x0: 99, y0: 196, x1: 167, y1: 279 }),
   calAt: Object.freeze({ x: 230, y: 392 }),
+  // round 7 (r5 12:19, q: 132): the plan is drawn at his homework desk (home-alone.js's homework spot)
+  desk: Object.freeze({ x: 550, y: 392, r: 60, box: Object.freeze({ x0: 396, x1: 522, y0: 238, y1: 352 }) }),
   brochureUp: Object.freeze({ x0: 385, y0: 90, x1: 575, y1: 349 }), // (the evening's brochure, its shape)
 });
 // The wardrobe and the Guardian Box in it (home-morning-art.js MORNING_THINGS.boxIn) are read from there.
@@ -131,16 +133,37 @@ export const OFFICE = Object.freeze({
   drawer: Object.freeze({ at: Object.freeze({ x: 230, y: 500 }), thing: Object.freeze({ x0: 68, y0: 352, x1: 158, y1: 396 }) }),
   frame: Object.freeze({ at: Object.freeze({ x: 905, y: 585 }), thing: Object.freeze({ x0: 846, y0: 396, x1: 884, y1: 444 }) }),
   hide: Object.freeze({ at: Object.freeze({ x: 700, y: 585 }), thing: Object.freeze({ x0: 600, y0: 444, x1: 870, y1: 552 }), under: Object.freeze({ x: 735, y: 520 }) }),
+  // round 7 (r5 15:01, q: 124): the wall of security screens (they show the bay: bay-camera.js) and the NO FUR poster
+  screens: Object.freeze({ at: Object.freeze({ x: 160, y: 300 }), thing: Object.freeze({ x0: 60, y0: 83, x1: 254, y1: 231 }) }),
+  poster: Object.freeze({ at: Object.freeze({ x: 650, y: 300 }), thing: Object.freeze({ x0: 606, y0: 96, x1: 700, y1: 210 }) }),
   r: 45,
-  sweep: 2.6, // seconds the robot's light takes to pass the open door
+  // round 7 (r6 0:37, q: 133): a robot comes in through the door, dusts the filing cabinet and goes; `sweep` seconds in
+  // all. Its cone shows once it is in the room (below `inside`); in the doorway it has none yet.
+  sweep: 5,
+  robotWay: Object.freeze([Object.freeze({ x: 480, y: 300 }), Object.freeze({ x: 470, y: 400 }), Object.freeze({ x: 250, y: 470 })]),
+  inside: 340,
 });
 // The way from the bay to the office door (50): the hallway, where the keypad is.
 export const ROUTE_OFFICE = Object.freeze({ hangar: "passage" });
 // The snack site close-up (over the blurred office): the screen, its header and two buttons.
+// Round 7 (r5 15:23 and 15:29, q: 124): a Universal Postal Service page, three pages: SCHEDULE A PICKUP; How big?;
+// What's inside? (`schedule`, `sizes`, `inside`: the buttons' boxes on each page); then (q: 135) Where to? (`to`).
 export const SITE = Object.freeze({
   screen: Object.freeze({ x0: 110, y0: 40, x1: 850, y1: 600 }),
-  order: Object.freeze({ x0: 200, y0: 210, x1: 760, y1: 290 }),
-  ret: Object.freeze({ x0: 200, y0: 330, x1: 760, y1: 500 }),
+  schedule: Object.freeze({ x0: 200, y0: 260, x1: 760, y1: 430 }),
+  sizes: Object.freeze([
+    Object.freeze({ id: "size-small", x0: 150, y0: 300, x1: 340, y1: 470 }),
+    Object.freeze({ id: "size-medium", x0: 385, y0: 300, x1: 575, y1: 470 }),
+    Object.freeze({ id: "size-big", x0: 620, y0: 300, x1: 810, y1: 470 }),
+  ]),
+  inside: Object.freeze([
+    Object.freeze({ id: "in-old", x0: 200, y0: 250, x1: 760, y1: 325 }),
+    Object.freeze({ id: "in-goat", x0: 200, y0: 345, x1: 760, y1: 420 }),
+    Object.freeze({ id: "in-sq", x0: 200, y0: 440, x1: 760, y1: 515 }),
+  ]),
+  // (Chapter 2 question 135 A, Brian 2026-11-27: the crate stays on the ship, booked through to Mars; a fourth page,
+  // "Where to?", with one lit choice: MARS)
+  to: Object.freeze([Object.freeze({ id: "to-mars", x0: 280, y0: 290, x1: 680, y1: 440 })]),
   booked: 2.4, // seconds the booked picture (the crate rides to the ship) plays before the close-up closes
 });
 
@@ -223,6 +246,8 @@ export const MOPOFF = Object.freeze({
   robotX: Object.freeze([90, 450]),
   robotsDone: 15, // seconds the robots take for their side
   goatTime: 45, // seconds until the buzzer
+  // his mop bucket, on the goat side's far edge (round 7, r5 10:24: "shouldn't he have his bucket?"; mop-bucket.js)
+  bucket: Object.freeze({ cx: 676, floor: 450, k: 0.28 }),
   wheels: Object.freeze({ at: 24, y: 510, speed: 160 }), // a robot rolls its dirty wheels across the goat side, once
   boxes: Object.freeze({ x: 230, y: 455, at: 6 }), // a stack of boxes the robots knock over
   taunts: Object.freeze([
@@ -264,8 +289,9 @@ export const ROUTE_BAR = Object.freeze({ office: "passage", passage: "hall" });
 export const ROUTE_HOME_NIGHT = Object.freeze({ hall: "closet" });
 // The hall by day on the walk home: the guest who waves at Mops, and how near Mops must be for her "Hi, Mops!".
 export const HALL_GUEST = Object.freeze({ x: 560, y: 450, near: 170, kind: "teal" });
-// The Employee of the Month photo in the hallway (ganitor.js drawGanitorWall), where Mops can LOOK · plaque.
-export const PLAQUE = Object.freeze({ x: 767, y: 300, r: 70 });
+// The hallway's Employee of the Month wall (the locked picture's photo grid): walking Mops past it (x0 to x1) says his
+// line (round 7, r5 11:22, q: 128: LOOK · plaque is gone, and so is the big photo of him).
+export const PLAQUE = Object.freeze({ x: 480, y: 300, x0: 300, x1: 660 });
 // Mops follows Squatch this far behind along his trail (47, 50, 52).
 export const FOLLOW = Object.freeze({ gap: 60, speed: 190 });
 // 48: the short tunnel, side view, Mops crawling through it before the room; the lost things along it.

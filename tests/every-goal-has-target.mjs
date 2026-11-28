@@ -32,6 +32,9 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: get away from the octopus!",
     // (night one's vent cutscene, beat 42, its still: 14-ch1-day2.js ch1JumpBeat 142; the player has no control there)
     "Squatch: hide by the vent",
+    // (the lunch sneak's alarm chip, lunch-sneak-lines.js: every hiding place is offered then; the evening's own goal is
+    // "Squatch: hide behind the bar", below)
+    "Squatch: hide",
   ]);
   const play = {
     "Squatch: walk around the room": { scene: "O1", room: "closet", day2: false, walk: true, x: 500, y: 530 },
@@ -74,17 +77,14 @@ const report = await page.evaluate(async (chips) => {
     // a doorway walked through is the action there (walk), as at the party
     // (he stands a step from each doorway, outside the circle that takes him through it)
     "Squatch: go on": { ev: "wall", galleryDone: true, walk: true, x: 100, y: 300 },
+    "Squatch: look at the photos": { ev: "wall", x: 480, y: 300 }, // (round 7, q: 128: the photos outlined first)
     "Squatch: hide": { ev: "hide", x: 852, y: 326 },
+    "Squatch: hide behind the bar": { ev: "hide", x: 862, y: 330 },
     "Squatch: roll up!": { ev: "dodge", x: 700, y: 430 },
     "Squatch: go on to the hall": { ev: "past", walk: true, x: 100, y: 300 },
-    "Squatch: peek at the window": { ev: "peek" },
-    "Squatch: duck!": { ev: "duck" },
-    "Squatch: grab the brochure": { ev: "brochure" },
     "Squatch: open the box from the Guardians": { ev: "box" },
     "Squatch: bite the cake": { ev: "bite" },
-    "Squatch: mark the chart": { ev: "chart", x: 236, y: 440 },
     "Squatch: hold the brochure up to your crate": { ev: "crate", x: 330, y: 458 },
-    "Squatch: go home": { ev: "gohome", walk: true, x: 477, y: 555 },
     "Squatch: show Mops the brochure": [{ ev: "show" }, { es: "show", x: 380, y: 556, look: [400, 500] }], // (beat 40, the evening, and beat 45, the escape)
     "Squatch: go to sleep in your bed": { ev: "bed", x: 330, y: 458 },
     "Squatch: sneak out the door": { ev: "out", walk: true, x: 860, y: 380 },
@@ -99,12 +99,13 @@ const report = await page.evaluate(async (chips) => {
     // keypad, the snacks, the Guardians' plate) are tapped, and their thing glows
     "Squatch: look at your crate": { es: "crate", x: 330, y: 500, look: [184, 392] },
     "Squatch: look at the calendar": { es: "cal", x: 230, y: 392, look: [133, 192] },
+    "Squatch: draw the plan at your desk": { es: "drawplan", x: 550, y: 392, look: [459, 238] }, // (round 7, q: 132: the desk outlined)
     "Squatch: sneak to the big vent": { es: "sneak", walk: true, x: 380, y: 556, look: [916, 362] },
     "Squatch: go to the office door": { es: "tohall", walk: true, look: [36, 262] },
-    "Squatch: book the empty crate on the computer": { es: "computer", x: 610, y: 585, look: [735, 300] },
+    "Squatch: book a pickup on the computer": { es: "computer", x: 610, y: 585, look: [735, 300] },
     "Squatch: hide under the desk": { es: "duck", x: 700, y: 585, look: [600, 446] },
     "Squatch: take the label": { es: "label", closeUp: true, look: [480, 600] },
-    "Squatch: go to the snack bar": { es: "tobar", walk: true, look: [480, 133] },
+    "Squatch: go home": [{ ev: "gohome", walk: true, x: 477, y: 555 }, { es: "tobar", walk: true, look: [480, 133] }], // (round 7, q: 133: the walk home from the office passes the snack bar)
     "Squatch: roll into a ball by the vent": { es: "ball", x: 846, y: 322, look: [800, 220] },
     "Squatch: grab the pink slip": { es: "grab", x: 850, y: 334, look: [796, 290] },
     "Squatch: type the code from the pink slip": { es: "pad", closeUp: true, look: [220, 276] },
@@ -120,7 +121,7 @@ const report = await page.evaluate(async (chips) => {
     "Squatch: put the label on the crate": { pk: "label", thing: true },
     "Squatch: get in the crate": { pk: "getin", thing: true },
     "Squatch: climb out of the crate": { pk: "climb" },
-    "Squatch: hide in the bay's plant": { pk: "sneak", x: 300, y: 560, thing: true },
+    "Squatch: hide in the mailbox": { pk: "sneak", x: 878, y: 508, thing: true },
     "Squatch: walk home with Mops": { pk: "home", walk: true, look: [36, 300] },
     "Squatch: put on the spare jacket": { pk: "dress", closeUp: true },
     "Squatch: practice your bleat": { pk: "practice" },
@@ -324,7 +325,7 @@ g.check("no goal is marked with a yellow circle, a floor ring or an arrow", repo
 g.check("at least 14 goals outline their real thing (doors, plants, bin, mailbox, vent, calendar, wardrobe)", report.outlined.length >= 14, report.outlined);
 g.check("each outline is round the thing whose action is offered where the goal is done", report.farOutline.length === 0, report.farOutline);
 g.known(`${report.unoutlined.length} of ${report.checked} goals have no outline yet (props the game draws, Mops, close-ups, and Squatch's own spot)`, report.unoutlined.length > 0, report.unoutlined);
-g.check("story goals are named (the four story goals, the octopus chase and night one's vent cutscene)", report.story.length === 6, report.story);
+g.check("story goals are named (the four story goals, the octopus chase, night one's vent cutscene and the lunch's alarm chip)", report.story.length === 7, report.story);
 g.check("no page errors", errors.length === 0, errors);
 await ctx.close();
 await g.finish("every-goal");

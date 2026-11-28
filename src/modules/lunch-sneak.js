@@ -32,7 +32,7 @@
  * Its progress lives in the game-state field ch1Lunch, and ch1Step is "lu-<step>" at each step the player controls,
  * so the step restart (↺, 20-ch2.js) brings back the step he is on.
  */
-import { LUNCH_PLACES, DOOR_WAY, WATCHERS, WANDERERS, wandererNow, COUNTER_WATCHER, RHYTHM, RHYTHM_LENGTH, watcherNow, AISLE, COUNTER_SPOTS, HALLWAY_SPOTS, LUNCH_SOLIDS, LUNCH_BOUNDS, LUNCH_PACE, LUNCH_SIZES, COUNTER_CLOSEUP } from "./lunch-sneak-place.js";
+import { LUNCH_PLACES, DOOR_WAY, WATCHERS, WANDERERS, wandererNow, COUNTER_WATCHER, COUNTER_WATCHER_WALKOUT, RHYTHM, RHYTHM_LENGTH, watcherNow, AISLE, COUNTER_SPOTS, HALLWAY_SPOTS, LUNCH_SOLIDS, LUNCH_BOUNDS, LUNCH_PACE, LUNCH_SIZES, COUNTER_CLOSEUP } from "./lunch-sneak-place.js";
 import { lunchWords } from "./lunch-sneak-lines.js";
 import { drawCrates, drawPlate, drawLunchGoalLine, drawHeart, drawBagInPaw, drawReach, drawPie, sqPawAt, pieY, BAG_IN_HALL, drawCounterCloseUp, counterCloseUpBox, drawWetStreaks, drawLookCone, drawHeartsUp } from "./lunch-sneak-art.js";
 import { drawMopBucketBack, drawMopBucketFront } from "./mop-bucket.js";
@@ -52,7 +52,7 @@ import { createHomeMorningSound, HOME_MORNING_SOUND } from "./home-morning-sound
 import { cutawaySteps, LUNCH_EAT } from "./cutaway.js";
 import { footfall } from "./footfalls.js";
 import { adultPxFor } from "./room-sizes.js";
-import { drawGanitorWall } from "./ganitor.js";
+import { drawGanitorWall, GANITOR_POSTER } from "./ganitor.js";
 
 export const LUNCH_ID = "ch1-lunch";
 // The eating cutaway (cutaway.js PANELS "lunch") and its sounds: [seconds into it, synth.js sound].
@@ -118,8 +118,10 @@ export function createLunchSneak(bridge) {
   // while an alarm is on: he stands where he was until it is over, so nobody jumps when it ends.
   function personNow(l, w) {
     if (w.wander) return wandererNow(w, l.wt || 0);
-    const at = l.people[w.id] || w;
-    return { x: at.x, y: at.y, a: watcherNow(w, w === COUNTER_WATCHER ? l.counterT || 0 : l.t).a };
+    const at = l.people[w.id] || w,
+      // (beat 28's walk out: the counter's watcher looks toward the doorway now and then, COUNTER_WATCHER_WALKOUT)
+      ww = w === COUNTER_WATCHER && l.step === "handoff" ? COUNTER_WATCHER_WALKOUT : w;
+    return { x: at.x, y: at.y, a: watcherNow(ww, w === COUNTER_WATCHER ? l.counterT || 0 : l.t).a };
   }
   function freshPeople(counter) {
     const out = {};
@@ -502,8 +504,9 @@ export function createLunchSneak(bridge) {
     psound.sting();
     l.seenBy = "";
     l.seenT = 0;
-    // behind the counter he is already hidden: no "hide" goal there
-    chip(l.counter ? "" : "chip-hide");
+    // behind the counter he is already hidden: no "hide" goal there (beat 28's walk out, round 7 r5 0:20: he is standing
+    // when seen, so "hide" it is; loading-bay.js counterTick)
+    chip(l.counter && l.step !== "handoff" ? "" : "chip-hide");
   }
   function alarmApi() {
     const e = E(),
@@ -543,6 +546,8 @@ export function createLunchSneak(bridge) {
       },
       calmDone() {
         const q = L();
+        // (beat 28's walk out behind the counter keeps its own goal: loading-bay.js counterTick)
+        if (q.step === "handoff") return;
         if (q.counter) return chip("chip-snack");
         // hidden through the search in a place further on than he had reached: the glow moves past it
         const k = q.hideAt === "crate" ? 2 : q.hideAt === "plant" ? 1 : 0;
@@ -898,7 +903,8 @@ export function createLunchSneak(bridge) {
      */
     drawWall(ctx) {
       const e = E();
-      wallDrew = e && e.room() === "passage" && !e.get("ch1Office") && (e.get("scene") || "")[0] === "Q" ? drawGanitorWall(ctx, e.drawMopsOn) : null;
+      // (round 7, q: 128: the photo is off the wall while GANITOR_POSTER is false)
+      wallDrew = GANITOR_POSTER && e && e.room() === "passage" && !e.get("ch1Office") && (e.get("scene") || "")[0] === "Q" ? drawGanitorWall(ctx, e.drawMopsOn) : null;
       return wallDrew;
     },
     /** Over the hallway (the older program draws the room, Squatch and Mops): the bag, the heart, Mops mopping, the goal line round Mops. */
@@ -932,7 +938,7 @@ export function createLunchSneak(bridge) {
           c = e.coneSize(),
           eye = { x: m.x + Math.sign(m.f) * MOPS_EYE.x * sc * Math.abs(m.f), y: m.y + MOPS_EYE.y * sc };
         // his cone: where he looks while he looks round; full of hearts once he faces Squatch (never "?" or "!")
-        if (!m.mop && m.hearts >= 0) drawHeartCone(ctx, eye.x, eye.y, Math.PI, c.half, c.len, t, Math.min(1, (t - m.hearts) / 0.4));
+        if (!m.mop && m.hearts >= 0) drawHeartCone(ctx, eye.x, eye.y, Math.PI, c.half, c.len, t, Math.min(1, (t - m.hearts) / 0.4)); // (the hearts are over his head: drawHeartsUp)
         else if (!m.mop) drawLookCone(ctx, eye.x, eye.y, m.look, c.half, c.len);
         e.drawMopsOn(ctx, m.x, m.y, sc, { f: m.f, walk: m.mop ? t * 6 : 0, headDrop: m.mop ? 6 : m.head, sweep: m.mop ? Math.sin(t * 6) * 4 : 0 });
         m.hearts >= 0 && drawHeartsUp(ctx, m.x, m.y - 52 * sc, t - m.hearts);

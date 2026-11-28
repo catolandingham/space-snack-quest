@@ -16,6 +16,7 @@
  *   KID_AVOID=HIDE,DANCE  buttons (verbs) the robot leaves alone (default: none)
  *   KID_URL=?beat=party:P7  start somewhere else (for looking into one place; the run then cannot reach the tally)
  *   KID_START=evening:37  start from that debug link (localhost): the rest of Chapter 1 from there, to the tally
+ *   KID_PART=day1|day2|pickup  play one day (see PARTS below); npm test plays the three in turn
  */
 import { mkdirSync, rmSync, writeFileSync, readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
@@ -26,7 +27,24 @@ const sneak = await import(join(root, "tests", "party-sneak.mjs"));
 // Problems Brian knows about. Take one off this list in the change that fixes it.
 const KNOWN = {};
 
-const MAX_S = +(process.env.KID_MAX_S || 900);
+// KID_PART=day1|day2|pickup plays one day, each with its own time (2026-11-27, the join: the whole chapter is longer than one
+// run's time). day1: from the chapter's start until Day 2's morning begins; day2: from Day 2's morning (?beat=day2) until
+// pickup day begins; pickup: from pickup day (?beat=pickup:start) to the tally card. With no KID_PART, KID_START or
+// KID_URL, this file plays the three parts one after another (each in its own run) and fails if any part fails.
+const PART = process.env.KID_PART || "";
+const PARTS = { day1: { url: "?ch=1", until: "day2On" }, day2: { url: "?beat=day2", until: "pickupOn" }, pickup: { url: "?beat=pickup:start", until: "" } };
+if (!PART && !process.env.KID_START && !process.env.KID_URL) {
+  let failed = 0;
+  for (const part of Object.keys(PARTS)) {
+    console.log(`\n--- ch1-kid-play, part ${part} ---`);
+    const r = spawnSync(process.execPath, [process.argv[1]], { stdio: "inherit", env: { ...process.env, KID_PART: part, KID_OUT: join(process.env.KID_OUT || join(root, "tests", "out", "kid-play"), part) } });
+    r.status !== 0 && failed++;
+  }
+  console.log(failed ? `ch1-kid-play: ${failed} of 3 parts failed` : "ch1-kid-play: all three parts passed");
+  process.exit(failed ? 1 : 0);
+}
+if (PART && !PARTS[PART]) throw new Error("KID_PART must be day1, day2 or pickup");
+const MAX_S = +(process.env.KID_MAX_S || (PART ? 600 : 900));
 const OUT = process.env.KID_OUT || join(root, "tests", "out", "kid-play");
 const SHOTS = process.env.KID_SHOTS === "1";
 const AVOID = (process.env.KID_AVOID || "").split(",").filter(Boolean);
@@ -38,7 +56,7 @@ if (SHOTS) (rmSync(join(OUT, "fr"), { recursive: true, force: true }), mkdirSync
 
 const g = await startGame({ port: 8902, name: "ch1-kid-play" });
 // KID_START=evening:37 starts from a debug link (localhost) instead of the chapter's start: the rest of Chapter 1 from there.
-const { page, errors } = await g.open(process.env.KID_URL || (process.env.KID_START ? "?beat=" + process.env.KID_START : "?ch=1"), PHONE);
+const { page, errors } = await g.open(process.env.KID_URL || (process.env.KID_START ? "?beat=" + process.env.KID_START : PART ? PARTS[PART].url : "?ch=1"), PHONE);
 const tap = async (x, y) => {
   await page.touchscreen.touchStart(x, y);
   await sleep(40);
@@ -107,14 +125,15 @@ const st = () =>
           e = b && b.active() && b.debug().state;
         if (!e || !e.cu) return null;
         const P = b.place;
-        return { cu: e.cu, step: e.step, typed: e.typed || "", keys: Object.fromEntries([..."0123456789"].map((d) => [d, P.keyAt(d)])), ret: P.SITE.ret, snacks: P.SNACKS.at.filter((_, i) => !e.snacks.gone[i]), carry: !!e.snacks.carry };
+        return { cu: e.cu, step: e.step, typed: e.typed || "", keys: Object.fromEntries([..."0123456789"].map((d) => [d, P.keyAt(d)])), ret: [P.SITE.schedule, P.SITE.sizes[2], P.SITE.inside[1], P.SITE.to[0]][e.sitePage || 0], snacks: P.SNACKS.at.filter((_, i) => !e.snacks.gone[i]), carry: !!e.snacks.carry };
       })(),
       zoom: n.ch1Zoom ? n.ch1Zoom.id : "",
       zoomKey: n.ch1Zoom ? [n.ch1Zoom.id, n.ch1Zoom.bag || 0, n.ch1Packed || 0].join(":") : "",
       jailBy: n.jailBy || "",
       step: n.ch1Step || "",
-      // (pickup day's crate two: "row", "going", "carry", then "scan", "up", "done"; src/modules/pickup.js sneakTick)
-      pkTwo: (() => { const b = window.SSQ && window.SSQ.beat("ch1-pickup"); const l = b && b.active() && n.ch1Pickup; return l ? l.two || "" : ""; })(),
+      // (which day's beat is running, for KID_PART: Day 2's home morning, pickup day)
+      day2On: !!(window.SSQ && window.SSQ.beat("ch1-home-morning") && window.SSQ.beat("ch1-home-morning").active()),
+      pickupOn: !!(window.SSQ && window.SSQ.beat("ch1-pickup") && window.SSQ.beat("ch1-pickup").active()),
       // The party's full-screen dress-up (src/modules/party.js): the pieces in the closet and the body spots.
       dress: window.SSQ && window.SSQ.beat("ch1-party") ? window.SSQ.beat("ch1-party").dressTargets() : null,
       placed: ss.placedSpots().map((s) => ({ id: s.id || "", verb: s.verb || "", cap: s.cap || "", x: Math.round(s.x || 0), y: Math.round(s.y || 0), r: s.r || 0 })),
@@ -327,6 +346,12 @@ while (now() < MAX_S) {
   }
   const tag = s.scene + ": " + s.chip;
   if (!seen.scenes.length || seen.scenes[seen.scenes.length - 1][1] !== tag) seen.scenes.push([Math.round(now()), tag]);
+  // (one day at a time: the part ends when the next day's beat begins)
+  if (PART && PARTS[PART].until && s[PARTS[PART].until]) {
+    end = "tally";
+    say(s, `PART ${PART} done: the next day has begun`);
+    break;
+  }
   if (s.curId === "tally") {
     end = "tally";
     say(s, "TALLY CARD: Chapter 1 finished");
@@ -402,20 +427,10 @@ while (now() < MAX_S) {
       say(s, lift ? "HOLD LIFT · photo" : "TAP next photo");
       if (lift) (await page.touchscreen.touchStart(v.lift.x, v.lift.y), await sleep(1400), await page.touchscreen.touchEnd());
       else await tap(v.next.x, v.next.y);
-    } else if (v.kind === "brochure") {
-      // the thing that has the outline (the next of the five), last the two cooks
-      const at = v.parts[v.next || "cooks"];
-      say(s, "TAP the brochure's " + (v.next || "cooks"));
-      await tap(at.x, at.y);
-    } else if (v.kind === "shock" || v.kind === "back") {
+    } else if (v.kind === "brochure" || v.kind === "crate") {
+      // (round 7: the brochure in Mops's keeping, and the brochure beside the crate's stamp: each waits for a tap)
       say(s, "TAP the close-up's X");
       await tap(v.close.x, v.close.y);
-    } else if (v.kind === "chart") {
-      say(s, "TAP this week's cake (the X)");
-      await tap(v.cake.x, v.cake.y);
-    } else if (v.kind === "crate") {
-      say(s, "TAP the brochure along the crate");
-      await tap(v.card.x, v.card.y);
     } else if (v.kind === "order") {
       // the choice: a kid picks MARK · box (the story goes on; PUT BACK · bin is the short ending, tested elsewhere)
       if (v.choose) (say(s, "TAP MARK · box"), await tap(v.mark.x, v.mark.y));
@@ -565,7 +580,7 @@ while (now() < MAX_S) {
       say(s, "TAP the note");
       await tapGame(s, 480, 320);
     } else if (E.step === "site") {
-      say(s, "TAP Return empty crate");
+      say(s, "TAP the outlined choice on the pickup page");
       await tapGame(s, (E.ret.x0 + E.ret.x1) / 2, (E.ret.y0 + E.ret.y1) / 2);
     } else if ((E.step === "snacks" || E.step === "food") && !E.carry && E.snacks.length) {
       say(s, "TAP a snack");
@@ -640,13 +655,6 @@ while (now() < MAX_S) {
     }
   }
   // Hidden (or rolled up) with a cone on screen: stay put, the way a kid holds still while someone is looking.
-  // Pickup day's climb-out (55): he comes out of his crate beside the new robots. Rolled up, he waits (as the showing
-  // tool does, and a careful kid) until they have carried crate two to the ramp, then goes. (Before 2026-11-27 the 20 s
-  // limit below unrolled him beside them, and he was caught again and again.)
-  if (s.step === "pk-sneak" && s.pose === "ball" && ["row", "going", "carry"].includes(s.pkTwo)) {
-    await sleep(250);
-    continue;
-  }
   if ((s.pose === "hidden" || s.pose === "under" || s.pose === "ball") && (s.cones.length || (s.party && s.party.alarm)) && Date.now() - (hidAt || (hidAt = Date.now())) < 20000) {
     await sleep(250);
     continue;

@@ -10,7 +10,7 @@
             n.room !== "duct" && R0(s),
             (s.walk += l * 11),
             (s.moving = !0),
-            Math.abs(o.x) > 0.1 && (s.f = o.x > 0 ? 1 : -1));
+            Math.abs(o.x) > 0.1 && (s.f = o.x > 0 ? 1 : -1), window.SSQ && window.SSQ.afterMove && window.SSQ.afterMove("mops")); // (after his step and turn: room-model.js)
         } else n.mo.moving = !1;
       }
       if (
@@ -568,7 +568,7 @@
         r("#a8380b", 0),
         X(-128, 8, 4, 2),
         r("#a8380b", 0),
-        g("MARS PANCAKES!", 22, 2, 27, "#fff3d6", "center", 900),
+        g((window.SSQ && window.SSQ.snack ? window.SSQ.snack("FAMILY") : "CAKES") + "!", 22, 2, 27, "#fff3d6", "center", 900),
         e.restore());
     }
     function w2(l, o, i, s) {

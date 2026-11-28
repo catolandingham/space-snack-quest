@@ -21,12 +21,12 @@ import { MIX, buses } from "./sound-mix.js";
 import { BOARD } from "./party-board-sounds.js";
 import { lastCutaway } from "./cutaway.js";
 import { SPEAKER } from "./morning.js";
-import { placeLabel } from "./cap-place.js";
+import { placeLabel, THING_WORDS } from "./cap-place.js";
 import { quietLine } from "./party-lines.js";
 import { quietBedtimeLine } from "./bedtime-story-lines.js";
 import { drawHomeMopBucket, lastHomeMopBucket } from "./mop-bucket.js"; // (bedtime branch, 2026-11-26: Mops's mop bucket)
 import { adultPxFor, doorAdultPx } from "./room-sizes.js";
-import { drawGanitorTag, drawHallwayCrayon, ganitorTagsDrawn, hallwayCrayonDrawn, GANITOR_TAG } from "./ganitor.js";
+import { drawGanitorTag, drawHallwayCrayon, ganitorTagsDrawn, hallwayCrayonDrawn, GANITOR_TAG, CRAYON_ON_WALL } from "./ganitor.js";
 import { singingNow } from "./music-rules.js";
 import { keepInSpan, seeCue, visitNow, playSound, soundsPlayed, hushNow, hushKey, unhush } from "./music-picks.js";
 import { drawBubbleTail } from "./bubble-tail.js";
@@ -35,7 +35,9 @@ import { drawCreditsButton, creditsTap, creditsShown } from "./credits.js";
 import { nightPicture, isNightNow, nightDrawn } from "./night-look.js";
 import { snackWord } from "./snack-name.js";
 import { drawStationStamp, crateStampDrawn, setCrayonSource } from "./crate-stamp.js";
+import { setCameraSource, cameraUpFrom, cameraLayerDrawn } from "./bay-camera.js";
 import { cakeChartDrawn } from "./cake-chart.js";
+import { setRoomEngine, roomWaypoint, walkerSolids, freeSpot, homeDepthItems, homeDepthDrawn, physicsNow, physicsLog, clearPhysicsLog, HOME_BASELINES, afterMove } from "./room-model.js";
 
 /**
  * The game-state fields a rebuilt beat may write, through engine().set(field, value). Anything else it
@@ -58,6 +60,8 @@ export function createBridge() {
   // The engine functions the older program hands over (see handOver), and the fields beats have written.
   let engine = null;
   const written = new Set();
+  // The bay's security camera is up from Day 2's beat 30 on (round 7, q: 123; bay-camera.js)
+  setCameraSource(() => !!engine && cameraUpFrom(engine.get));
   const homeMusic = createHomeMusic(() => engine);
   const morningSound = createMorningSound(() => engine);
   // (a guest's line: which guest says it, for the guest's own voice)
@@ -118,7 +122,24 @@ export function createBridge() {
           e.set(field, value);
         },
       });
+      setRoomEngine(engine);
     },
+    /** The room model (room-model.js): the next corner of a scripted step round the room's solids, or null (straight). */
+    roomWaypoint,
+    /** The room model: right after a walker's own step (a pushed crate keeps out of things). */
+    afterMove,
+    /** The room model: a walker's own solids (grown by how much wider than a feet box his body is). */
+    walkerSolids,
+    /** The room model: the free floor nearest a place, for a walker in the room now. */
+    freeSpot,
+    /** The room model: the home room's things as items in the people's back-to-front list (drawn at their floor lines). */
+    homeDepthItems,
+    homeBaselines: HOME_BASELINES,
+    /** Tests: the room model's record (moves through solids), where everyone stands now, the home things drawn over whom. */
+    physicsNow,
+    physicsLog,
+    clearPhysicsLog,
+    homeDepthDrawn,
     /** The handed-over engine functions, or null before the older program has started. */
     engine() {
       return engine;
@@ -148,7 +169,8 @@ export function createBridge() {
     },
     /** Squatch's crayon card on the hallway wall, "ME" and "MOPS THE GANITOR" (ganitor.js), for 14-ch1-day2.js. */
     drawHallwayCrayon(ctx) {
-      return drawHallwayCrayon(ctx);
+      // (round 7, q: 128: the drawing stays hidden behind the crooked photo; nothing is drawn on the wall)
+      return CRAYON_ON_WALL ? drawHallwayCrayon(ctx) : null;
     },
     /** The morning's music at home (its pick in music-picks.js: Floating in Space). See home-music.js. */
     homeMusic,
@@ -267,6 +289,8 @@ export function createBridge() {
     },
     /** Tests: the layers for the snack's name (the crate bed's stamp over the home pictures, the hall tin's lid). */
     crateStampDrawn,
+    /** Tests: the bay camera's layer (round 7, q: 123): how many pictures had it, and the last one's id. */
+    cameraLayerDrawn,
     /** Tests: the crayon chart over his bed, as the home pictures' layer last drew it (cake-chart.js). */
     cakeChartDrawn,
     /** Register a rebuilt beat. Ids are unique; registering one twice is a mistake, so it throws. */
@@ -391,6 +415,17 @@ export function createBridge() {
     },
     /** Where a "VERB · thing" label goes: next to its thing, clear of Squatch and other things. See cap-place.js. */
     placeLabel,
+    /** Whether Chapter 1 shows "VERB · thing" words beside the things (false: the gold line alone, #110). See cap-place.js. */
+    thingWords: THING_WORDS,
+    /**
+     * True where no "VERB · thing" words are drawn beside things: Chapter 1 (its scenes S, O and Q, and the party night,
+     * whose scenes are P like Chapter 3's, so it asks the party beat) while THING_WORDS is false.
+     */
+    noThingWords(scene) {
+      if (THING_WORDS) return false;
+      const party = beats.get("ch1-party");
+      return /^[SOQ]/.test(scene || "") || !!(party && party.active && party.active());
+    },
     /** Tap to walk around furniture: the corners to walk through. See tap-path.js. */
     findPath,
     /** How tall a grown-up is drawn in a room (85% of its door; the party hall 40% bigger). See room-sizes.js. */

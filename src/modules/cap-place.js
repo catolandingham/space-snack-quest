@@ -10,6 +10,13 @@
  *     clear, the old place is used.
  * The older program's drawCap (src/game/60-frame-draw.js) asks for the place; tests/home-alone.mjs checks it.
  */
+/**
+ * q: 110. Brian, 2026-11-27 (Snack Quest Chat, finish plan): drop the on-screen "VERB · thing" words next to outlined
+ * things in Chapter 1; the thick dashed gold line alone shows what can be touched. The big action button keeps its own
+ * "VERB · thing" label. false: no words beside things (the older program's drawCap and its green pill read
+ * window.SSQ.thingWords); true: the words come back, placed by placeLabel below.
+ */
+export const THING_WORDS = false;
 const GAP = 8;
 // The picture's edges a label must stay inside; the top 44 is where the HUD sits over the picture.
 const EDGE = Object.freeze({ x0: 4, x1: 956, y0: 44, y1: 636 });

@@ -195,9 +195,9 @@ await startRecording();
 if (which === "escape") {
   // The whole escape played by a finger, the way the rebuild of 2026-11-26 night asks: every line read and NEXT, every
   // walk tapped on the floor (Mops's too, while the player is Mops), every button pressed where it comes up, the
-  // close-ups tapped. A still each time the step changes. A few optional things too: the plaque, the chair and the
-  // frame in the office, one wrong key, "Order new box" once.
-  const done = { wrong: false, order: false, plaque: false, chair: false, frame: false };
+  // close-ups tapped. A still each time the step changes. A few optional things too (round 7, q: 124): LOOK · screens,
+  // LOOK · poster and LOOK · cabinet in the office, one wrong key, ONE SASQUATCH once on the postal page.
+  const done = { wrong: false, plan: 0, sasquatch: false, plaque: false, chair: false, frame: false, drawer: false };
   let lastStep = "",
     tapAt = 0;
   const spots = () => page.evaluate(() => window.__ss.spotsNow().map((q) => ({ id: q.id, verb: q.verb || "", who: q.who, x: q.x, y: q.y })));
@@ -237,12 +237,21 @@ if (which === "escape") {
         await sleep(400);
         await still("keypad-open");
       } else if (es.step === "site") {
+        // (round 7, q: 124: the Universal Postal Service page: SCHEDULE A PICKUP, then BIG, then ONE SASQUATCH once for
+        // "Not that one!", then GOAT STUFF)
         const R = await page.evaluate(() => window.SSQ.beat("ch1-escape").place.SITE);
-        const b = done.order ? R.ret : R.order;
-        done.order = true;
-        await sleep(900);
+        const pg = es.sitePage || 0;
+        const b = pg === 2 && !done.sasquatch ? ((done.sasquatch = true), R.inside[2]) : [R.schedule, R.sizes[2], R.inside[1], R.to[0]][pg];
+        await sleep(1200);
+        await still("site-page-" + (pg + 1));
         await at((b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2);
-        await sleep(600);
+        await sleep(700);
+      } else if (es.step === "drawplan") {
+        // (round 7, q: 132: the plan drawn at his desk, one picture a tap)
+        await sleep(1200);
+        await still("plan-picture-" + ++done.plan);
+        await press();
+        await sleep(700);
       } else if (es.step === "label") (await sleep(800), await at(480, 600), await sleep(600));
       else if (es.step === "note") (await sleep(900), await at(480, 320), await sleep(500));
       else if (es.step === "snacks" || es.step === "food") {
@@ -275,8 +284,9 @@ if (which === "escape") {
     const pick = (id) => list.find((q) => q.id === id);
     let sp = list[0];
     if (es.step === "walkhome" && s.room === "passage" && !done.plaque && pick("es-plaque")) ((sp = pick("es-plaque")), (done.plaque = true));
-    if (es.step === "computer" && !done.frame && pick("es-frame")) sp = pick("es-frame");
-    else if (es.step === "computer" && !done.chair && pick("es-chair")) sp = pick("es-chair");
+    if (es.step === "computer" && !done.frame && pick("es-screens")) sp = pick("es-screens");
+    else if (es.step === "computer" && !done.chair && pick("es-poster")) sp = pick("es-poster");
+    else if (es.step === "computer" && !done.drawer && pick("es-drawer")) sp = pick("es-drawer");
     if (!sp) {
       await sleep(150);
       continue;
@@ -286,8 +296,9 @@ if (which === "escape") {
     const here = mops ? s.mo : { x: s.x, y: s.y };
     const close = Math.hypot(here.x - sp.x, here.y - sp.y) < 12;
     if (sp.verb && s.act === sp.verb + " · " + (await page.evaluate((id) => (window.__ss.spotsNow().find((q) => q.id === id) || {}).cap || "", sp.id))) {
-      sp.id === "es-frame" && (done.frame = true);
-      sp.id === "es-chair" && (done.chair = true);
+      sp.id === "es-screens" && (done.frame = true);
+      sp.id === "es-poster" && (done.chair = true);
+      sp.id === "es-drawer" && (done.drawer = true);
       await sleep(500);
       await press();
       await sleep(500);

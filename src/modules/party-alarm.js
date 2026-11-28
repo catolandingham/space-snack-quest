@@ -21,6 +21,7 @@
  */
 import { SPOTS, HALL, HOME_ROOM, HALL_SOLIDS, stepTo } from "./party-hall.js";
 import { findPath } from "./tap-path.js";
+import { stepRound } from "./room-model.js";
 import { coneFrom, coneSees, coneSeesPoint, lookAt } from "./party-watch.js";
 
 export const ALARM = Object.freeze({
@@ -107,6 +108,15 @@ export function guardStep(g, x, y, speed, dt, around = GUARD_AROUND, floor = GUA
 }
 
 /**
+ * One step of the alarm's witness (who saw him, running to pull the room's FUR alarm and back) toward (x, y): round the
+ * room's things as the guards go round them (the place's `around` and `floor`, the hall's GUARD_AROUND), straight
+ * where that is clear. True once there.
+ */
+function witnessStep(a, PL, x, y, speed, dt) {
+  return stepRound("alarm-witness", a.w, x, y, speed, dt, PL.room, PL.around || GUARD_AROUND, PL.floor || GUARD_FLOOR, step);
+}
+
+/**
  * Rooms other than the party hall where the one capture rule runs (2026-11-26, the night's loading bay, evening.js):
  * by id, { room, run (where the witness runs to pull the room's FUR alarm), guardIn, search, around, floor, feet (the
  * "this close" circle, the pinned cone-feet when left out), register (seconds a guard's cone must stay on him before
@@ -146,7 +156,8 @@ export function tickAlarm(P, dt, api) {
     return;
   }
   if (a.phase === "run") {
-    if (step(a.w, PL.run.x, PL.run.y, ALARM.run, dt)) {
+    // (round the room's things, never through them: room-model.js; Brian 2026-11-27, r5 9:29 "the robot appears to just be able to move through things")
+    if (witnessStep(a, PL, PL.run.x, PL.run.y, ALARM.run, dt)) {
       a.phase = "pull";
       a.t = 0;
       if (api.firstTime()) ((a.closeUp = true), api.closeUp(() => ((a.closeUp = false), ring(a, E))));
@@ -190,7 +201,7 @@ export function tickAlarm(P, dt, api) {
       g.a = Math.atan2(out.y - g.y, out.x - g.x);
       gone ? (g.room = "out") : (still = true);
     }
-    step(a.w, a.w.hx, a.w.hy, ALARM.calm, dt) || (still = true);
+    witnessStep(a, PL, a.w.hx, a.w.hy, ALARM.calm, dt) || (still = true);
     for (const g of Object.values(api.people())) step(g, g.hx, g.hy, ALARM.calm, dt) || (still = true);
     if (!still && a.t > 0.6) {
       const how = a.hidden;

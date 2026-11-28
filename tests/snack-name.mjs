@@ -72,7 +72,7 @@ for (const f of lineFiles) {
   for (const [k, v] of Object.entries(mod)) visit(v, k);
 }
 g.check(`no line in the ${lineFiles.length} lines files says the old name (${lineCount} lines read)`, lineCount > 50 && badLines.length === 0, badLines);
-g.check("the painted words are in the snack's lines: the station's stamp, the hall tin's lid, the faded stamp and his crayon, and the chart over his bed (its title and THE CRATE KIND; story pass 28-52, E4)", SNACK_LINES.map((l) => l.text).join("|") === `${SNACK.NAME}|${SNACK.name}|_${FAMILY.FADED}|${FAMILY.CRAYON}|${SNACK.NAME}|THE CRATE KIND`, SNACK_LINES);
+g.check("the painted words are in the snack's lines: the station's stamp, the hall tin's lid, the faded stamp and his crayon, and the chart over his bed (its title only: round 7, question 129)", SNACK_LINES.map((l) => l.text).join("|") === `${SNACK.NAME}|${SNACK.name}|_${FAMILY.FADED}|${FAMILY.CRAYON}|${SNACK.NAME}`, SNACK_LINES);
 
 // (c) and (d) In the game.
 const { page, errors } = await g.open("?ch=1", { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
@@ -205,8 +205,8 @@ for (const [tag, r] of [
 ]) {
   g.check(`${tag}: the home picture is drawn with the crate bed's stamp layer`, r.handedThisFrame > 0 && !!r.made && r.night === (tag === "at night"), r);
   g.check(
-    `${tag}: the stamp is fat red letters "${FAMILY.FADED}" after a scraped gap with his crayon "${FAMILY.CRAYON}"`,
-    !!r.made && r.made.letters.text === FAMILY.FADED && r.made.crayon.text === FAMILY.CRAYON && r.made.feet.length === 2 && r.red.c > r.red.of * 0.12 && r.crayon.c > 8,
+    `${tag}: the stamp is fat red letters "${FAMILY.FADED}" after a scraped gap, faded, with no crayon in the gap (round 7, question 121: crate-stamp.js STAMP_CRAYON)`,
+    !!r.made && r.made.letters.text === FAMILY.FADED && r.made.crayon === null && r.made.feet.length === 2 && r.red.c > r.red.of * 0.12 && r.crayon.c <= 8,
     { red: r.red, crayon: r.crayon, made: r.made },
   );
 }
@@ -215,7 +215,7 @@ g.check("by day: the old badge's navy pill is gone from the crate", day.navy.c <
 for (const [tag, r] of [
   ["by day", day],
   ["at night", night],
-]) g.check(`${tag}: the crayon chart hangs over his bed: the snack's name as its title, six cakes crossed out, THE CRATE KIND`, !!r.chart && r.chart.title === SNACK.NAME && r.chart.label === "THE CRATE KIND" && r.chart.crossed === 6 && r.chart.box.x0 > 230 && r.chart.box.x1 < 530 && r.chart.box.y1 < 445 && r.chartRed && r.chartRed.c > 40, { chart: r.chart, red: r.chartRed });
+]) g.check(`${tag}: the crayon chart hangs over his bed: the snack's name as its title, eight cakes each crossed out, no label (a picture only: round 7, question 129)`, !!r.chart && r.chart.title === SNACK.NAME && r.chart.label === "" && r.chart.crossed === 8 && r.chart.box.x0 > 230 && r.chart.box.x1 < 530 && r.chart.box.y1 < 445 && r.chartRed && r.chartRed.c > 40, { chart: r.chart, red: r.chartRed });
 // The party hall's snack tin (painted in the locked hall picture with the old name on its lid) gets a new lid.
 const hall = await page.evaluate(
   (T) => {

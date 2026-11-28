@@ -549,6 +549,33 @@ export function drawScannerStop(ctx, field, k, t) {
   ctx.strokeRect(field.x0, y - 5, field.x1 - field.x0, 10);
   ctx.restore();
 }
+/**
+ * The scanner arch letting hair through (round 7, r5 1:59, q: 116): its field glows green for a moment (`k` 0 to 1).
+ * PLACEHOLDER look for Brian.
+ */
+export function drawScannerPass(ctx, field, k, t) {
+  ctx.save();
+  ctx.globalAlpha = (0.22 + 0.12 * Math.abs(Math.sin(t * 6))) * Math.min(1, k * 2);
+  ctx.fillStyle = "#3fb26b";
+  ctx.fillRect(field.x0, field.y0, field.x1 - field.x0, field.y1 - field.y0);
+  ctx.restore();
+}
+/**
+ * The mail that came down the ramp with the little box (round 7, r5 3:02 and 3:21, q: 133): two letters on the floor
+ * beside it, so the box reads as "the mail". PLACEHOLDER look for Brian.
+ */
+export function drawMailBeside(ctx, x, y) {
+  ctx.save();
+  ctx.translate(x - 22, y - 4);
+  ctx.rotate(-0.2);
+  drawLetter(ctx, 0, 0, 1.2);
+  ctx.restore();
+  ctx.save();
+  ctx.translate(x - 14, y + 4);
+  ctx.rotate(0.15);
+  drawLetter(ctx, 0, 0, 1.2);
+  ctx.restore();
+}
 /** A letter in a robot's gripper or going into the mailbox's slot. */
 export function drawLetter(ctx, x, y, k = 1) {
   ctx.save();
@@ -585,9 +612,14 @@ export function drawSweat(ctx, x, y, u) {
   ctx.stroke();
   ctx.restore();
 }
+// The locked hallway picture, for the office door's own two grey leaves (docs/locked-rooms; nothing of it changes).
+const LB_HALLWAY_PIC = "docs/locked-rooms/hallway-room-empty-v6.png";
+const lbHallwayImg = typeof Image !== "undefined" ? Object.assign(new Image(), { src: LB_HALLWAY_PIC }) : null;
 /**
  * The hallway's office door open (beat 36): its two doors slid aside `k` (0 to 1), light spilling out on the floor, and
- * inside a desk with a glowing computer screen.
+ * inside a desk with a glowing computer screen. The two doors are the picture's own grey leaves, slid along the wall
+ * either side (Brian r5 3:58: "There's a different hallway door in the scene than in any other scene": the opening
+ * was painted cream and the leaves left out, so it read as another door).
  */
 export function drawOfficeOpen(ctx, door, k) {
   const w = door.x1 - door.x0,
@@ -619,6 +651,16 @@ export function drawOfficeOpen(ctx, door, k) {
   ctx.fillStyle = "#8fdcff";
   ctx.fillRect(door.x0 + w / 2 - 13, door.y0 + 43, 26, 18);
   ctx.restore();
+  // the two leaves, cut from the picture where they hang shut, slid aside by half the gap each
+  const img = lbHallwayImg;
+  if (img && img.complete && img.naturalWidth) {
+    const kx = img.naturalWidth / 960,
+      ky = img.naturalHeight / 640,
+      half = w / 2,
+      h = door.y1 - door.y0;
+    ctx.drawImage(img, door.x0 * kx, door.y0 * ky, half * kx, h * ky, door.x0 - gap / 2, door.y0, half, h);
+    ctx.drawImage(img, (door.x0 + half) * kx, door.y0 * ky, half * kx, h * ky, door.x0 + half + gap / 2, door.y0, half, h);
+  }
   ctx.restore();
 }
 /** A robot's mopping streak on the floor: a grey smear along `pts`. */

@@ -677,9 +677,11 @@ const liveLines = (page) => page.evaluate(() => (window.__ss.op.log || []).filte
   // the label on his place
   s = await until(page, (q) => q.act === "JOIN · photo", 5000);
   // (the label is drawn with the next frame after the offer: wait for it, up to a second)
-  await page.waitForFunction(() => window.__ss.op.lastCap && window.__ss.op.lastCap.text === "JOIN · photo", { timeout: 1000 }).catch(() => {});
+  await sleep(300);
   const label = await page.evaluate(() => { const n = window.__ss.op; return n.lastCap ? { text: n.lastCap.text, box: n.lastCap.box } : null; });
-  g.check("JOIN · photo is offered from across the hall, its label at the gap in the row", !!s && !!label && label.text === "JOIN · photo" && Math.abs((label.box.x0 + label.box.x1) / 2 - photo.PHOTO_ROW.squatch.x) < 120 && label.box.y1 < 420 && label.box.x1 <= 960 && label.box.y0 >= 0, label);
+  // (Brian #110, 2026-11-27: no "VERB · thing" words beside the thing in Chapter 1; the big button says JOIN · photo)
+  const off = await page.evaluate(() => window.SSQ.noThingWords(window.__ss.op.scene));
+  g.check("JOIN · photo is offered from across the hall, with no words drawn at the gap in the row (#110: the party counts as Chapter 1)", !!s && !label && off === true, { label, off });
   await still(page, "r4-photo-row-and-label");
   const sqScale = await page.evaluate(() => window.SSQ.engine().hallSizes().squatch),
     hallCover = covered(rowBoxes(adult, sqScale));

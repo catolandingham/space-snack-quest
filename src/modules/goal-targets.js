@@ -65,18 +65,17 @@ export const GOAL_TARGETS = {
   // photo wall is optional and gets no outline. (Rects only: in the hall and the loading bay that beat draws the
   // picture itself.)
   "passage:ev-hall": { rect: { x0: 20, x1: 48, y0: 266, y1: 354 } }, // the hallway's doorway to the hall (left)
+  "passage:ev-photos": { rect: { x0: 274, x1: 686, y0: 104, y1: 216 } }, // the Employee of the Month photos (round 7, r5 4:05, q: 128; evening-place.js EV_HALLWAY.wall)
   "passage:ev-bay": { rect: { x0: 912, x1: 940, y0: 266, y1: 354 } }, // its doorway to the loading bay (right)
-  "hall:ev-counter": { rect: { x0: 864, x1: 924, y0: 344, y1: 436 } }, // the aisle behind the snack counter (HIDE · counter)
-  "hall:ev-brochure": { rect: { x0: 872, x1: 920, y0: 490, y1: 545 } }, // the brochure in the bin behind the counter (38b)
+  "hall:ev-counter": { rect: { x0: 864, x1: 924, y0: 344, y1: 436 } }, // the aisle behind the snack bar (HIDE · bar)
   "hall:ev-home": HALL_HOME_DOOR,
   "hall:ev-hallway": { rect: { x0: 912, x1: 940, y0: 257, y1: 345 } },
   "closet:ev-bed": { trace: { x0: 76, x1: 294, y0: 390, y1: 552 } }, // the bed
   "closet:ev-out": HOME_DOOR,
-  "closet:ev-chart": { rect: { x0: 170, x1: 286, y0: 256, y1: 343 } }, // the crayon chart above his bed (39b)
   "closet:ev-crate": { rect: { x0: 92, x1: 279, y0: 433, y1: 528 } }, // his crate bed's side, its stamp (39b)
   "hangar:ev-bin": { rect: { x0: 182, x1: 244, y0: 308, y1: 380 } }, // the bin by the plant
   "hangar:ev-post": { rect: { x0: 834, x1: 918, y0: 362, y1: 484 } }, // the robot mailbox
-  "hangar:ev-bay-crate": { rect: { x0: 814, x1: 888, y0: 264, y1: 326 } }, // the crate under the big wall vent (42c)
+  "hangar:ev-bay-crate": { rect: { x0: 264, x1: 336, y0: 496, y1: 556 } }, // the crate by the floor vent (42c; round 7, q: 125)
   "hangar:ev-bayout": { rect: { x0: 20, x1: 48, y0: 266, y1: 354 } }, // the loading bay's doorway (left)
   // Loading bay
   "hangar:d2-HIDE-plant": { trace: { x0: 242, x1: 350, y0: 244, y1: 382 } }, // the plant (locked bay pictures v3: right of the bin)

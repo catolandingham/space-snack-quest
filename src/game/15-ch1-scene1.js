@@ -121,8 +121,8 @@
         face: (who, f) => {
           (who === "mops" ? n.mo : n.sq).f = f;
         },
-        step: (who, x, y, speed, dt) => mV(who === "mops" ? n.mo : n.sq, x, y, speed, dt),
-        still: (who) => ((who === "mops" ? n.mo : n.sq).moving = !1),
+        step: (who, x, y, speed, dt) => ((o, w) => (w ? (mV(o, w.x, w.y, speed, dt), !1) : mV(o, x, y, speed, dt)))(who === "mops" ? n.mo : n.sq, window.SSQ && window.SSQ.roomWaypoint ? window.SSQ.roomWaypoint(who === "mops" ? "mops" : "sq", who === "mops" ? n.mo : n.sq, x, y) : null), // round solids (room-model.js)
+        still: (who) => ((who === "mops" ? n.mo : n.sq).moving = !1), roomSolids: () => ih(), roomBounds: () => sn(), // (the room model reads the room: room-model.js)
         stopWalk: () => (n.walkTo = null), // a tap's walk ends (he hid where he stands: src/modules/lunch-sneak.js)
         // While Mops walks, he is not solid (he would shove Squatch in a jump; see R0).
         moWalking: (on) => {

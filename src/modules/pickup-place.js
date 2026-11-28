@@ -38,8 +38,10 @@ export const PK_HOME = Object.freeze({
   bucket: Object.freeze({ x0: 536, y0: 500, x1: 596, y1: 571 }),
   bucketAt: Object.freeze({ x: 640, y: 560 }),
   bucketPatch: Object.freeze({ x0: 520, y0: 440, x1: 612, y1: 580 }), // the bucket drawn over the painted one, handle and wheels included
-  // the things on the walls he takes down (layers on the locked picture: his crayon chart of cake kinds, the pancake
-  // brochure from beat 38, two of his drawings), each with where he stands for it
+  // his snack bag from the snack bar (beat 52), on the floor by the crate bed until he packs it (a Chapter 2 plant)
+  snackBag: Object.freeze({ x0: 392, y0: 500, x1: 438, y1: 548 }),
+  // the things on the walls he takes down (layers on the locked picture: his crayon chart of cake kinds, the Mars
+  // Cakes brochure from beat 38, two of his drawings), each with where he stands for it
   walls: Object.freeze([
     // the chart over his bed (cake-chart.js CAKE_CHART, the home picture's layer, in game positions)
     Object.freeze({ id: "chart", box: Object.freeze({ x0: 194, y0: 228, x1: 346, y1: 321 }), at: Object.freeze({ x: 270, y: 470 }) }),
@@ -55,6 +57,21 @@ export const PK_HOME = Object.freeze({
   mops: Object.freeze({ x: 640, y: 470 }),
   bed: ES_HOME.bed,
   bedFoot: ES_HOME.bedFoot,
+  // 53: the STAY IN HERE poster painted on the locked picture by the door (home-alone.js has the same box); Mops eats it
+  // (r6 2:21) and a pale square is left (a layer, a PLACEHOLDER), and where he stands to reach it
+  poster: Object.freeze({ x0: 834, y0: 244, x1: 914, y1: 324 }),
+  posterAt: Object.freeze({ x: 846, y: 470 }),
+  posterR: 60,
+  wallAt: Object.freeze({ x: 800, y: 330 }), // a spot of bare wall in the locked picture (the wall's colour)
+  // 53: Mops lays his beard hair over Squatch in the crate on purpose (round 7, topic A): where the strands lie
+  pile: Object.freeze([
+    Object.freeze({ x: 120, y: 470, a: -0.4 }),
+    Object.freeze({ x: 160, y: 455, a: 0.3 }),
+    Object.freeze({ x: 205, y: 468, a: -0.1 }),
+    Object.freeze({ x: 245, y: 452, a: 0.5 }),
+    Object.freeze({ x: 140, y: 500, a: 0.1 }),
+    Object.freeze({ x: 225, y: 498, a: -0.5 }),
+  ]),
   // 56: the wardrobe's mirror (a layer on the inside of the open door, for Brian's yes); where each stands for it
   mirror: Object.freeze({ x0: 182, y0: 200, x1: 236, y1: 340 }),
   mirrorSq: Object.freeze({ x: 330, y: 470 }),
@@ -101,7 +118,9 @@ export const PK_HALLWAY = Object.freeze({
 });
 
 // The loading bay on pickup day (delivery-room-empty-pickup-v4): the walkway (ramp and scanner arch), the plant, the
-// bin, the mail room and its row of crates (layers on the picture: a mail bag, a crate, his crate, third).
+// bin, the mail room and its row of crates (layers on the picture: a crate, then his crate). Round 7 (topic A, #118
+// pick A): one upgraded robot works the mail room; the old ones load at the ramp; passengers board; Mops spills the
+// bucket by the floor vent, out in the bay; Squatch hides inside the robot mailbox (painted in the locked picture; Brian's #118 B).
 export const PK_BAY = Object.freeze({
   arch: Object.freeze({ x0: 345, y0: 302, x1: 587, y1: 416 }),
   archFront: Object.freeze({ x: 466, y: 446 }),
@@ -117,23 +136,37 @@ export const PK_BAY = Object.freeze({
   bin: Object.freeze({ x: 212, y: 318 }),
   door: Object.freeze({ x: 50, y: 330 }), // in from the hallway
   // the mail room's row (bottom middles), left to right; his crate third (the kid can count)
-  row: Object.freeze([
-    Object.freeze({ kind: "bag", x: 752, y: 560 }),
-    Object.freeze({ kind: "crate", x: 822, y: 560 }),
-    Object.freeze({ kind: "his", x: 894, y: 560 }),
-  ]),
+  row: Object.freeze([Object.freeze({ kind: "crate", x: 822, y: 560 }), Object.freeze({ kind: "his", x: 894, y: 560 })]),
   mailIn: Object.freeze({ x: 700, y: 462 }), // the mail room's opening
-  pushTo: Object.freeze({ x: 848, y: 584 }), // where Mops leaves his crate (it goes to the row's third place)
+  // where Mops leaves his crate: in the mail room's opening, the crate just through it (it then slides to the row's third
+  // place). (It was x 848, y 584, inside the mail room: no crate pushed in front of him fits past the mailbox and the
+  // low wall to get there, and the crate went through both; Brian r6 3:19.)
+  pushTo: Object.freeze({ x: 640, y: 462 }),
   pushR: 40,
   knockAt: Object.freeze({ x: 850, y: 584 }),
   knockR: 56,
-  bleatAt: Object.freeze({ x: 706, y: 470 }), // Mops at the opening, left of the robots
-  bleatR: 50,
   climbOut: Object.freeze({ x: 884, y: 584 }), // (in the bay's walking bounds: x up to 900, y up to 590)
-  mopsAside: Object.freeze({ x: 612, y: 560 }), // after his bleat Mops steps out of the mail room's opening (he is solid to Squatch)
-  // the robots: where the old three stand in a line by the ramp, where the two new ones work
-  oldLine: Object.freeze([Object.freeze({ x: 600, y: 470 }), Object.freeze({ x: 640, y: 500 }), Object.freeze({ x: 680, y: 530 })]),
-  botsBack: Object.freeze([Object.freeze({ x: 770, y: 606 }), Object.freeze({ x: 800, y: 580 })]),
+  // 54: Mops waits at the mail room's opening while the robot tells him about its upgrade
+  mopsWait: Object.freeze({ x: 760, y: 500 }),
+  // 55: the spill: Mops stands right of the floor vent (the vent outlined), the puddle between; the robot cleans round it
+  vent: Object.freeze({ x0: 134, y0: 527, x1: 197, y1: 554 }),
+  spillAt: Object.freeze({ x: 250, y: 580 }),
+  spillR: 50,
+  puddle: Object.freeze({ x: 196, y: 590, rx: 46, ry: 16 }),
+  // 55 (Brian, #118 B, 2026-11-27: his idea): the robot mailbox painted in the mail room; he hides inside it, his eyes
+  // in its slot; it stays quiet while he is in it (no "MAIL SCANNED.")
+  mailbox: Object.freeze({ x0: 846, y0: 384, x1: 910, y1: 476 }),
+  mailboxAt: Object.freeze({ x: 878, y: 508 }),
+  mailboxR: 46,
+  slotEyes: Object.freeze({ x: 878, y: 421 }),
+  // the robots: the old two load at the ramp (facing it); the upgraded one comes down the ramp and works the mail room
+  oldLine: Object.freeze([Object.freeze({ x: 610, y: 470 }), Object.freeze({ x: 392, y: 480 })]),
+  botsBack: Object.freeze([Object.freeze({ x: 748, y: 604 }), Object.freeze({ x: 800, y: 580 })]),
+  // 54: two passengers come in from the hallway and board while the robot talks (they never see him: he is in the crate)
+  // (round the front of the bin, the plant, the open crate and the floor vent, all painted in the picture, so nobody
+  // walks over them)
+  board: Object.freeze([Object.freeze({ x: 60, y: 340 }), Object.freeze({ x: 90, y: 584 }), Object.freeze({ x: 450, y: 584 }), Object.freeze({ x: 466, y: 446 }), Object.freeze({ x: 466, y: 404 }), Object.freeze({ x: 466, y: 240 })]),
+  passengers: Object.freeze([Object.freeze({ id: "backpack", delay: 0 }), Object.freeze({ id: "camera", delay: 1.6 })]),
   // a carry from the row out through the opening to the scan place (round the mail room's walls), and back
   carry: Object.freeze([Object.freeze({ x: 790, y: 520 }), Object.freeze({ x: 700, y: 462 }), Object.freeze({ x: 600, y: 452 }), Object.freeze({ x: 500, y: 446 })]),
   // 58: the week's box comes down the ramp to here; the robot at the foot of the ramp; Mops waits at the top
@@ -141,7 +174,7 @@ export const PK_BAY = Object.freeze({
   boxR: 60,
   rampBot: Object.freeze({ x: 600, y: 452 }),
   mopsTop: Object.freeze({ x: 500, y: 250 }),
-  camera: Object.freeze({ x: 540, y: 288 }), // the camera with a red light over the ramp (a layer, for Brian's yes)
+  // (the camera, upper right by the speaker box, is bay-camera.js BAY_CAMERA: one place for Day 2, the escape and here)
 });
 // The robots' sight (bay-watch.js SIGHT; the night robot's): new robots carrying a crate look where they roll.
 export const PK_SIGHT = Object.freeze({ len: 200, half: 0.42 });
@@ -154,6 +187,13 @@ export const PK_HOLD = Object.freeze({
   mops: Object.freeze({ x: 670, y: 570 }),
   window: Object.freeze({ x: 760, y: 200, r: 64 }),
   stairs: Object.freeze({ x0: 40, y0: 120, x1: 200, y1: 560 }),
+  // 61: the crew member comes down the stairs (r6 9:15), stops in front of Mops, then goes to the crate
+  crewTop: Object.freeze({ x: 90, y: 300 }),
+  crewK: 2.3, // his height in grown-up heights of the bay: the hold is close up, as Mops and Squatch are drawn here
+  crewFoot: Object.freeze({ x: 190, y: 566 }),
+  crewStop: Object.freeze({ x: 250, y: 578 }), // where Mops stops him
+  mopsBlock: Object.freeze({ x: 360, y: 578 }), // Mops steps between him and the crate
+  crewLid: Object.freeze({ x: 380, y: 578 }), // at the crate, lifting the lid
 });
 
 // The office on photo day (59) and that evening (60): the frame on the desk, the camera on its tripod, a stool, Isfred,
@@ -164,32 +204,30 @@ export const PK_OFFICE = Object.freeze({
   robot: Object.freeze({ x: 280, y: 520 }),
   tripod: Object.freeze({ x: 640, y: 560 }),
   stool: Object.freeze({ x: 760, y: 570 }),
-  // the tape close-up: the screen and its three big buttons
+  // the tape close-up: the screen and its two big buttons (round 7: one clip, #123)
   screen: Object.freeze({ x0: 120, y0: 40, x1: 840, y1: 470 }),
-  buttons: Object.freeze([
-    Object.freeze({ id: "play", x0: 120, y0: 500, x1: 340, y1: 610 }),
-    Object.freeze({ id: "zoom", x0: 370, y0: 500, x1: 590, y1: 610 }),
-    Object.freeze({ id: "next", x0: 620, y0: 500, x1: 840, y1: 610 }),
-  ]),
+  buttons: Object.freeze([Object.freeze({ id: "play", x0: 200, y0: 500, x1: 440, y1: 610 }), Object.freeze({ id: "zoom", x0: 520, y0: 500, x1: 760, y1: 610 })]),
 });
 
 // Timing (seconds) and speeds (game pixels a second).
 export const PK_PACE = Object.freeze({
   walk: 150,
   roll: 70, // a robot carrying
+  rush: 170, // 55: the robot hurrying out to the spill
   newIn: 2.2, // the new robots roll down the ramp
   scan: 1.4, // the blue scan line goes in
   claw: 1.0,
-  hold: 1.2, // a held picture (the white hair, the empty plate)
-  think: 2.6, // a wordless thought picture
+  hold: 1.2, // a held picture (the empty plate)
   eyes: 2.4,
+  clean: 2.5, // 55: the robot cleans every corner of the spill this long after he is hidden, then comes back
+  board: 70, // 54: a passenger walking to the ship
   snip: 1.2,
   shake: 0.6,
   scanDown: 1.8, // 58: the scan line from the horns down to the beard
   rampUp: 2.4,
-  slip: 2.6, // 58: the beard in his paws, the camera's red light (a wordless close-up)
+  slip: 2.0, // 58: the beard slips off and falls, in the room, under the camera's red light
   gone: 2.4, // 58: the ship slides away; the empty bay
-  tape: 2.4, // 60: a tape clip plays
+  tape: 4.0, // 60: the tape plays (the goat, then the very tall goat, the beard falls)
   lid: 1.0,
-  faceMops: 4.0, // 55: the robots keep telling Mops off this long after he can climb out
+  crewDown: 1.6, // 61: the crew member walks down the stairs
 });
