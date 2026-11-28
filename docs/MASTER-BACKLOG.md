@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–26 | # Master backlog |
-| 27–245 | ## Where main is (Chapter 1 redesign) |
-| 246–260 | ## Register |
-| 261–282 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 283–303 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 304–316 | ## Phase 2 (plan section 4, T13 to T18) |
-| 317–339 | ## Phase 1 (plan section 3, T5 to T12) |
-| 340–353 | ## SS40–SS44 |
-| 354–371 | ## Story rows |
-| 372–390 | ## Reset section |
-| 391–401 | ## Still open |
-| 402–405 | ## Chapter 1 replot, recorded and not built |
-| 406–567 | ## Changelog |
+| 27–247 | ## Where main is (Chapter 1 redesign) |
+| 248–262 | ## Register |
+| 263–284 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 285–305 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 306–318 | ## Phase 2 (plan section 4, T13 to T18) |
+| 319–341 | ## Phase 1 (plan section 3, T5 to T12) |
+| 342–355 | ## SS40–SS44 |
+| 356–373 | ## Story rows |
+| 374–392 | ## Reset section |
+| 393–403 | ## Still open |
+| 404–407 | ## Chapter 1 replot, recorded and not built |
+| 408–569 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -25,6 +25,8 @@
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-27 (Chapter 1 complete, the join), draft PR on `feat/ch1-complete` (from `feat/ch1-pickup-day`), not merged. The four round 7 branches joined with merge commits, in order: the room model (#101), the loading bay (#98), the evening (#100), pickup day (#99). Where two did the same thing, one is kept: one office door (the bay closes it after the robot; it slides the picture's own grey leaves), one security camera (`bay-camera.js BAY_CAMERA`, drawn on pickup day too), one crate tag (`loading-bay-lines.js crate-empty`), night one as the bay built it (the post wakes the robots; the evening's 36b goal names the bar). After the join: #110, Chapter 1 shows no "VERB · thing" words beside outlined things (the party too; the big button keeps its label; `cap-place.js THING_WORDS`); beat 28's counter watcher looks toward the hallway doorway now and then; the story hearts are three (`mops-hearts.js STORY_HEARTS`); the hall's guests in front of the pushed crate are drawn after it; the hallway robot reads FOR PICKUP. TO: MARS. (pending); the kid robot plays one day at a time (`KID_PART`); `tools/chapter-showing.mjs` records the whole chapter in one game. Not done here (HANDOFF.md): one scale per room (pins `adult-door-share`, `hall-bigger` need Brian's written yes), the module robots' own patrols through the room model, Mops on the vent desk, the beat 52 overlap, the cabinet bite's ink edge; the kid robot stops in Day 2 (night one's vent) and on pickup day's push. Docs match main: yes. Not yet played by a person.
 
 2026-11-27 (round 7, loading bay builder), draft PR #98 on `feat/ch1-r7-bay` (from `feat/ch1-pickup-day`), not merged. Done: Brian's round 7 notes for beats 28 to 36 and 42 to 52 with his answers of 2026-11-27 (see README), including r5 0:20 (he walks out from behind the snack counter himself, under the lunch's cones) and r5 3:58 (the hallway's office door shuts again); after looking at the 375 px stills: the camera in the escape's bay, one Mars in the plan, the old tags' words, the cabinet's bitten cake, the booked page's stray ramp, Mops's office lines said before the page opens. Open for Brian: every Pending line in CH1-LINES-FOR-BRIAN (loading bay table and the round 7 table); the placeholders (the camera and its red light, the bay on the office screen, the floor-vent crate, the mail by the box, the green arch glow, the bucket and soap swishes, the plan's pictures, the postal page, the dust puff); whether a lunch watcher should look toward the hallway doorway so standing up at the wrong moment can get him caught (no cone reaches the doorway today). Not done here: pancakes elsewhere in the game (the evening builder's sweep, question 120). NOT ASSESSED: how it plays for a person. Docs match main: yes.
 **Round 7, the evening (2026-11-27, branch `feat/ch1-r7-evening`, draft, not merged).** Built: the brochure scene as Mops (36b to 39), the M moment as one close-up, the chart as a picture, the fight's new ending, Mops's hearts once per scene, Mops asleep on his side, and no "pancake" in any chapter. Waiting on Brian: every new line (pending), the placeholder brochure drawing, the sleep pose, and whether the window talk keeps "What did you like best?" / the kid's answer. Not built here: beat 37's photo wall and night one (the bay builder's), pickup day's hearts beyond one heart each (the pickup builder's beats), and the older lines list `docs/CH1-LINES-FOR-BRIAN.md`, which still shows the old brochure lines.
