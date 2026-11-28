@@ -55,8 +55,6 @@ const SHOTS = process.env.KID_SHOTS === "1";
 const AVOID = (process.env.KID_AVOID || "").split(",").filter(Boolean);
 // what the pink slip says: Isfred's office code, as the game has it (src/modules/office-code.js)
 const { OFFICE_CODE: SLIP_CODE } = await import(join(root, "src", "modules", "office-code.js"));
-// where Squatch rolls up by the big vent in the escape's bay (src/modules/escape-place.js)
-const { ES_BAY: ES_BAY_PLACE } = await import(join(root, "src", "modules", "escape-place.js"));
 const PHONE = { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 1 };
 mkdirSync(OUT, { recursive: true });
 if (SHOTS) (rmSync(join(OUT, "fr"), { recursive: true, force: true }), mkdirSync(join(OUT, "fr"), { recursive: true }));
@@ -146,11 +144,6 @@ const st = () =>
       // everyone else the room model checks this frame (src/modules/room-model.js physicsNow): Mops, the pushed crate,
       // the modules' robots, Isfred and the workers, standing in a solid
       others: window.SSQ && window.SSQ.physicsNow ? window.SSQ.physicsNow().filter((q) => q.who !== "sq") : [],
-      escStep: (() => {
-        const es = window.SSQ && window.SSQ.beat("ch1-escape"),
-          e = es && es.active() && es.debug().state;
-        return e ? { step: e.step, robot: e.robot ? e.robot.phase : "", guard: !!e.guard } : null;
-      })(),
       zoom: n.ch1Zoom ? n.ch1Zoom.id : "",
       zoomKey: n.ch1Zoom ? [n.ch1Zoom.id, n.ch1Zoom.bag || 0, n.ch1Packed || 0].join(":") : "",
       jailBy: n.jailBy || "",
@@ -163,9 +156,11 @@ const st = () =>
       dress: window.SSQ && window.SSQ.beat("ch1-party") ? window.SSQ.beat("ch1-party").dressTargets() : null,
       placed: ss.placedSpots().map((s) => ({ id: s.id || "", verb: s.verb || "", cap: s.cap || "", x: Math.round(s.x || 0), y: Math.round(s.y || 0), r: s.r || 0 })),
       // Furniture, plus Mops: the game does not let Squatch walk through him. (Not in the party hall: the party draws
-      // that room itself, Mops is not in it until closing time, and then he is one of the party's own solids. Before,
+      // that room itself, Mops is not in it until closing time, and then he is one of the party's own solids. A Mops who
+      // is walking (following Squatch) is not solid in the game either (00-core.js walkSolids): until 2026-11-27 the robot
+      // kept his box anyway and found itself boxed in at the big vent, Mops beside it, and wandered. Before,
       // the robot kept a box where Mops last stood at home, and would not cross it on the way back from the flyer.)
-      solids: ss.solids().concat(!ss.ch.mops && !(window.SSQ && window.SSQ.beat("ch1-party") && window.SSQ.beat("ch1-party").ownsRoom()) && n.moPose !== "hidden" && n.moPose !== "sleep" && n.mo.x > 20 && n.mo.x < 1000 ? [{ x0: n.mo.x - 46, x1: n.mo.x + 46, y0: n.mo.y - 46, y1: n.mo.y + 46, mops: true }] : []),
+      solids: ss.solids().concat(!ss.ch.mops && !(window.SSQ && window.SSQ.beat("ch1-party") && window.SSQ.beat("ch1-party").ownsRoom()) && n.moPose !== "hidden" && n.moPose !== "sleep" && !n.mo.walking && n.mo.x > 20 && n.mo.x < 1000 ? [{ x0: n.mo.x - 46, x1: n.mo.x + 46, y0: n.mo.y - 46, y1: n.mo.y + 46, mops: true }] : []),
       bounds: ss.walkBounds(),
       cones: ss.conesDrawn().filter((k) => !k.room || k.room === n.room),
       // The goal ring the game really drew this frame (drawGoalMark keeps n.lastRing). A ring drawn on
@@ -683,15 +678,43 @@ while (now() < MAX_S) {
       continue;
     }
   }
-  // The escape's bay at night (47, "sneak to the big vent"): the big vent is outlined, with no button until he is there;
-  // a kid walks to it (the robot's path keeps out of the night robot's cone, and waits for it). Until 2026-11-27 the
-  // robot had no place to go here, wandered into the patrol's look, and Day 2 ran out of time.
-  if (s.escStep && s.escStep.step === "sneak" && s.room === "hangar" && s.pose === "stand" && s.ctrl && !s.escStep.guard && s.escStep.robot === "patrol") {
-    const V = ES_BAY_PLACE.ventStand,
-      st2 = nextStep(s, V.x, V.y, 20);
-    say(s, st2.wait ? "WAIT for the night robot to look away" : `WALK to the big vent (${V.x},${V.y})`);
-    if (!st2.wait) await tapGame(s, st2.x, st2.y);
-    await sleep(st2.wait ? 250 : 400);
+  // The escape's bay at night (47, "sneak to the big vent"): the night robot patrols in front of the walkway, looking up
+  // at the vent while it goes right and the way it goes while it goes left (escape-place.js ES_BAY.patrol), the same
+  // every play, which a kid learns by watching. The way to the vent is round the walkway's right end, through the gap
+  // by the mail room, then along the back wall. The robot waits at the front by that gap until the robot goes left
+  // past the middle, then goes up the gap and along. To get to the gap it goes along the front while the robot looks
+  // up. (Until 2026-11-27 it walked straight for the vent and the robot saw it every time, roll, wait, wander, until
+  // its time ran out.)
+  const esc47 = s.room === "hangar" && s.pose === "stand" && s.ctrl && s.placed.some((p) => p.id === "es-vent") ? await page.evaluate(() => { const r = window.__ss.op.ch1Escape && window.__ss.op.ch1Escape.robot; return r ? { x: r.x, f: r.f, phase: r.phase } : null; }) : null;
+  if (esc47 && esc47.phase === "patrol") {
+    const GAP = { x: 636, y: 585 },
+      atGap = Math.abs(s.x - GAP.x) < 24 && s.y > 560,
+      inGap = s.x > 600 && s.x < 660 && s.y < 560;
+    if (inGap || (atGap && esc47.f < 0 && esc47.x < 480)) {
+      say(s, "UP the gap by the mail room and along the back wall to the vent (the robot looks the other way)");
+      await tapGame(s, GAP.x, 330);
+      for (let i = 0; i < 30; i++) {
+        await sleep(100);
+        const q = await st();
+        if (q.y < 345 || q.room !== s.room) break;
+      }
+      await tapGame(s, 846, 322);
+      await sleep(1500);
+      continue;
+    }
+    if (!atGap) {
+      if (s.y < 570 && !(s.x > 560 && s.x < 660)) {
+        // first down to the front edge, while the robot looks up at the vent
+        if (esc47.f > 0 && esc47.x < 420) (say(s, "DOWN to the front while the robot looks up"), await tapGame(s, s.x, 585), await sleep(1200));
+        else await sleep(150);
+        continue;
+      }
+      say(s, "ALONG the front to the gap by the mail room");
+      await tapGame(s, GAP.x, GAP.y);
+      await sleep(900);
+      continue;
+    }
+    await sleep(150);
     continue;
   }
   // Hidden (or rolled up) with a cone on screen: stay put, the way a kid holds still while someone is looking.

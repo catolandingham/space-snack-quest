@@ -476,7 +476,7 @@ export function createPickup(bridge) {
     e.set("ch1D", d.to === "hangar");
     e.place(walker, d.at.x, d.at.y);
     e.face(walker, d.f);
-    if (walker === "sq" && e.get("moPose") !== "hidden") (e.place("mops", followSpot(d.to, d.at, d.f).x, d.at.y), e.face("mops", d.f), (l.trail = freshTrail()));
+    if (walker === "sq" && e.get("moPose") !== "hidden") (((q) => e.place("mops", q.x, q.y))(followSpot(d.to, d.at, d.f)), e.face("mops", d.f), (l.trail = freshTrail()));
     sfx("open");
   }
   const walking = (l) => l.step === "push" || l.step === "home" || l.step === "lastwalk";

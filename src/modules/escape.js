@@ -407,7 +407,7 @@ export function createEscape(bridge) {
     e.set("ch1Night", !!l.night);
     e.place(walker, d.at.x, d.at.y);
     e.face(walker, d.f);
-    if (walker === "sq" && e.get("moPose") !== "hidden") (e.place("mops", followSpot(d.to, d.at, d.f).x, d.at.y), e.face("mops", d.f), (l.trail = freshTrail()));
+    if (walker === "sq" && e.get("moPose") !== "hidden") (((q) => e.place("mops", q.x, q.y))(followSpot(d.to, d.at, d.f)), e.face("mops", d.f), (l.trail = freshTrail()));
     // into the bay at night: the night robot on its rounds (47)
     if (d.to === "hangar" && l.step === "sneak" && !l.robot) l.robot = freshRobot();
     sfx("open");

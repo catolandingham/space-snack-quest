@@ -425,8 +425,10 @@ export function drawnHalf(who, room) {
  */
 export function followSpot(room, at, f) {
   const b = engine && engine.roomBounds ? engine.roomBounds() : null,
-    x = at.x - f * followGap(room);
-  return { x: b ? Math.max(b.x0, Math.min(b.x1, x)) : x, y: at.y };
+    x = at.x - f * followGap(room),
+    p = { x: b ? Math.max(b.x0, Math.min(b.x1, x)) : x, y: at.y };
+  // (and on free floor: in the party hall the floor's edge by the hallway doorway is the snack bar's end)
+  return b && engine.roomSolids ? freeNear(moverSolids("mops", p, engine.roomSolids(), room), b, p.x, p.y) : p;
 }
 export function followGap(room, min = 60) {
   return Math.max(min, Math.round(0.9 * (drawnHalf("sq", room) + drawnHalf("mops", room))));
