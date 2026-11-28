@@ -13,6 +13,10 @@ import { pickupWords } from "./pickup-lines.js";
 import { esRect, esPaint, esWords, ES_INK, drawPinkSheet } from "./escape-art.js";
 import { drawSnack } from "./party-snacks-art.js";
 import { drawGuardianBox } from "./home-morning-art.js";
+import { drawMopBucketBack, drawMopBucketFront, MOP_BUCKET } from "./mop-bucket.js";
+import { drawBrochure } from "./evening-art.js";
+import { adultPxFor } from "./room-sizes.js";
+import { drawGoatBeard as drawGoatBeardOnTape } from "./pickup-people-art.js";
 import { PK_OFFICE, PK_HOLD, PK_CRATE } from "./pickup-place.js";
 
 const PK_TAU = Math.PI * 2;
@@ -39,21 +43,6 @@ export function drawPkTuft(ctx, x, y, k = 1) {
     ctx.ellipse(Math.cos(a) * 7, Math.sin(a) * 5, 7, 5, a, 0, PK_TAU);
   }
   esPaint(ctx, PK_FUR, 2);
-  ctx.restore();
-}
-/** One long white hair from Mops's beard (53, 55). */
-export function drawHair(ctx, x, y, len = 40, lw = 2.5) {
-  ctx.save();
-  ctx.beginPath();
-  ctx.moveTo(x - len / 2, y);
-  ctx.bezierCurveTo(x - len / 6, y - len / 5, x + len / 6, y + len / 5, x + len / 2, y - len / 10);
-  ctx.lineCap = "round";
-  ctx.strokeStyle = ES_INK;
-  ctx.lineWidth = lw + 2;
-  ctx.stroke();
-  ctx.strokeStyle = "#ffffff";
-  ctx.lineWidth = lw;
-  ctx.stroke();
   ctx.restore();
 }
 /**
@@ -83,29 +72,88 @@ export function drawFloorPatch(ctx, b, at) {
 }
 // The family stamp's width for its height (crate-stamp.js draws it from its left edge; measured once, off screen).
 let pkStampRatio = 0;
-/** His crate on its pallet: the worn family stamp (crate-stamp.js, the one stamp layer), its label once it is on, the bucket on top, the lid. */
+/**
+ * His crate on its pallet (final art, pending Brian's yes; round 8, placeholder 23): drawn like the crate bed in the
+ * locked home picture, a wooden crate of wide boards in the crate bed's two woods (home_room.py CRATE and CRATED), a
+ * darker board framing each edge, the board seams across, nail heads at the corners, a soft shadow under the pallet;
+ * the worn family stamp (crate-stamp.js, the one stamp layer), its label once it is on, the bucket on top, the lid.
+ */
 export function drawPkCrate(ctx, cx, bottom, k, { label = false, bucket = false, open = 0, eyes = false, glow = 0 } = {}) {
   const w = PK_CRATE.w * k,
     h = PK_CRATE.h * k,
     p = PK_CRATE.pallet * k,
     x0 = cx - w / 2,
     y0 = bottom - p - h,
-    lw = Math.max(1.5, 3 * k);
+    lw = Math.max(1.5, 3 * k),
+    fr = Math.max(3, 11 * k); // the frame board's width
   ctx.save();
-  // the pallet
-  esRect(ctx, x0 - 4 * k, bottom - p, w + 8 * k, p, 2 * k);
+  // the shadow on the floor
+  ctx.beginPath();
+  ctx.ellipse(cx, bottom + 1 * k, w * 0.56, Math.max(2, 5 * k), 0, 0, PK_TAU);
+  ctx.fillStyle = "rgba(30,36,48,.16)";
+  ctx.fill();
+  // the pallet: a top board on three blocks
+  esRect(ctx, x0 - 4 * k, bottom - p, w + 8 * k, p * 0.45, 2 * k);
   esPaint(ctx, PK_WOOD_DARK, lw);
-  // the crate
+  for (const u of [0.02, 0.5, 0.98]) {
+    esRect(ctx, x0 - 4 * k + (w + 8 * k) * u - 9 * k, bottom - p * 0.58, 18 * k, p * 0.58, 1.5 * k);
+    esPaint(ctx, PK_WOOD_DARK, lw * 0.8);
+  }
+  // the crate: the boards
   esRect(ctx, x0, y0, w, h, 3 * k);
   esPaint(ctx, PK_WOOD, lw);
-  ctx.beginPath();
-  ctx.moveTo(x0 + 6 * k, y0 + 6 * k);
-  ctx.lineTo(x0 + w - 6 * k, y0 + h - 6 * k);
-  ctx.moveTo(x0 + 6 * k, y0 + h - 6 * k);
-  ctx.lineTo(x0 + w - 6 * k, y0 + 6 * k);
-  ctx.strokeStyle = PK_WOOD_DARK;
-  ctx.lineWidth = lw * 0.8;
-  ctx.stroke();
+  ctx.save();
+  esRect(ctx, x0, y0, w, h, 3 * k);
+  ctx.clip();
+  // a lighter top edge on each board, its seam under it, and a few grain lines
+  const boards = 3,
+    bh = h / boards;
+  for (let i = 0; i < boards; i++) {
+    const by = y0 + i * bh;
+    ctx.fillStyle = "rgba(255,240,210,.35)";
+    ctx.fillRect(x0, by + 1, w, Math.max(1, 3 * k));
+    if (i) {
+      ctx.beginPath();
+      ctx.moveTo(x0, by);
+      ctx.lineTo(x0 + w, by);
+      ctx.strokeStyle = PK_WOOD_DARK;
+      ctx.lineWidth = Math.max(1, 2 * k);
+      ctx.stroke();
+    }
+    ctx.beginPath();
+    for (const [u, v, len] of [
+      [0.22, 0.45, 0.16],
+      [0.6, 0.7, 0.12],
+      [0.78, 0.35, 0.1],
+    ]) {
+      const gx = x0 + w * ((u + i * 0.17) % 1),
+        gy = by + bh * v;
+      ctx.moveTo(gx, gy);
+      ctx.quadraticCurveTo(gx + (w * len) / 2, gy - 2 * k, gx + w * len, gy);
+    }
+    ctx.strokeStyle = "rgba(169,116,58,.55)";
+    ctx.lineWidth = Math.max(0.8, 1.4 * k);
+    ctx.stroke();
+  }
+  ctx.restore();
+  // the frame: a darker board up each side and along the top and the bottom
+  for (const [fx, fy, fw, fh] of [
+    [x0, y0, fr, h],
+    [x0 + w - fr, y0, fr, h],
+    [x0, y0, w, fr * 0.8],
+    [x0, y0 + h - fr * 0.8, w, fr * 0.8],
+  ]) {
+    esRect(ctx, fx, fy, fw, fh, 2 * k);
+    esPaint(ctx, "#c48a46", lw * 0.7);
+  }
+  // nail heads at the frame's corners
+  for (const nx of [x0 + fr / 2, x0 + w - fr / 2])
+    for (const ny of [y0 + fr * 0.4, y0 + h - fr * 0.4]) {
+      ctx.beginPath();
+      ctx.arc(nx, ny, Math.max(0.8, 1.8 * k), 0, PK_TAU);
+      ctx.fillStyle = "#6e5236";
+      ctx.fill();
+    }
   // the stamp: the family stamp the home picture's crate bed carries (crate-stamp.js), his crayon gone since he rubbed
   // it out in the evening of Day 2 (39b)
   const sh = 18 * k;
@@ -121,20 +169,26 @@ export function drawPkCrate(ctx, cx, bottom, k, { label = false, bucket = false,
     esPaint(ctx, PK_PAPER, lw * 0.6);
     esWords(ctx, pickupWords("label"), cx, y0 + h * 0.62 + 11 * k, Math.max(6, 9 * k), ES_INK, "center", 900);
   }
-  // the lid, lifting (0 shut, 1 open)
+  // the lid, lifting (0 shut, 1 open): one board with its frame
   if (open > 0) {
     ctx.save();
     ctx.translate(x0, y0);
     ctx.rotate(-open * 1.1);
-    esRect(ctx, 0, -8 * k, w, 10 * k, 2 * k);
+    esRect(ctx, 0, -10 * k, w, 12 * k, 2 * k);
     esPaint(ctx, PK_WOOD, lw);
+    esRect(ctx, 0, -10 * k, fr, 12 * k, 2 * k);
+    esPaint(ctx, "#c48a46", lw * 0.6);
+    esRect(ctx, w - fr, -10 * k, fr, 12 * k, 2 * k);
+    esPaint(ctx, "#c48a46", lw * 0.6);
     ctx.restore();
   }
-  // Squatch's eyes between the slats (hidden in it, the bucket's shadow on top)
+  // Squatch's eyes in the dark gap under the top board (hidden in it, the bucket's shadow on top)
   if (eyes) {
+    esRect(ctx, cx - 22 * k, y0 + h * 0.18 - 7 * k, 44 * k, 14 * k, 4 * k);
+    esPaint(ctx, "#2a1d12", 0);
     for (const d of [-9, 9]) {
       ctx.beginPath();
-      ctx.ellipse(cx + d * k, y0 + h * 0.18, 5 * k, 6 * k, 0, 0, PK_TAU);
+      ctx.ellipse(cx + d * k, y0 + h * 0.18, 5 * k, 5.5 * k, 0, 0, PK_TAU);
       esPaint(ctx, "#ffffff", lw * 0.4);
       ctx.beginPath();
       ctx.arc(cx + d * k + 1, y0 + h * 0.18 + 1, 2.4 * k, 0, PK_TAU);
@@ -145,51 +199,208 @@ export function drawPkCrate(ctx, cx, bottom, k, { label = false, bucket = false,
   ctx.restore();
   return { x0, y0, x1: x0 + w, y1: bottom };
 }
-/** Mops's mop bucket (sitting on something at `bottom`). */
+/**
+ * Mops's mop bucket standing on something at `bottom` (final art, pending Brian's yes): the one approved mop bucket
+ * (mop-bucket.js, Brian 2026-11-26 "Let's go with it moving forward"), about 40 k wide, its water showing.
+ */
+export const PK_BUCKET_K = 0.23;
 export function drawBucket(ctx, cx, bottom, k) {
-  const lw = Math.max(1.5, 3 * k);
-  esRect(ctx, cx - 18 * k, bottom - 40 * k, 36 * k, 40 * k, 4 * k);
-  esPaint(ctx, "#ffd23f", lw);
-  esRect(ctx, cx - 18 * k, bottom - 46 * k, 36 * k, 10 * k, 3 * k);
-  esPaint(ctx, "#8fd8ff", lw * 0.7);
+  const q = PK_BUCKET_K * k;
+  drawMopBucketBack(ctx, cx, bottom, q);
+  drawMopBucketFront(ctx, cx, bottom, q, { water: true });
 }
-/** His snack bag from the snack bar (beat 52): a small paper bag, folded top, a cake peeking out (a PLACEHOLDER). */
+/**
+ * His snack bag from the snack bar (beat 52; final art, pending Brian's yes; round 8, placeholder 22): a brown paper
+ * bag inside `b`, its top rolled down twice and crimped, a little wider at the bottom, its shaded side, and the snack
+ * bar's round blue sticker with a yellow star (the Stars Cakes tin's colours, crate-stamp.js drawTinLid) holding it shut.
+ */
 export function drawSnackBag(ctx, b) {
   const w = b.x1 - b.x0,
-    h = b.y1 - b.y0;
+    h = b.y1 - b.y0,
+    lw = Math.max(1.5, w * 0.05),
+    top = b.y0 + h * 0.3;
   ctx.save();
-  esRect(ctx, b.x0, b.y0 + h * 0.2, w, h * 0.8, 3);
-  esPaint(ctx, "#d9b27c", 2.5);
+  // its shadow
   ctx.beginPath();
-  ctx.arc(b.x0 + w * 0.55, b.y0 + h * 0.2, w * 0.22, Math.PI, 0);
-  esPaint(ctx, "#f2c96b", 2);
+  ctx.ellipse(b.x0 + w / 2, b.y1, w * 0.55, Math.max(2, h * 0.06), 0, 0, PK_TAU);
+  ctx.fillStyle = "rgba(30,36,48,.16)";
+  ctx.fill();
+  // the body, a little wider at the bottom
+  ctx.beginPath();
+  ctx.moveTo(b.x0 + w * 0.08, top);
+  ctx.lineTo(b.x0 + w * 0.92, top);
+  ctx.lineTo(b.x1, b.y1);
+  ctx.lineTo(b.x0, b.y1);
+  ctx.closePath();
+  esPaint(ctx, "#d6a96b", lw);
+  // the shaded side panel and the bottom fold
+  ctx.beginPath();
+  ctx.moveTo(b.x0 + w * 0.7, top + 1);
+  ctx.lineTo(b.x0 + w * 0.92, top + 1);
+  ctx.lineTo(b.x1 - lw / 2, b.y1 - lw / 2);
+  ctx.lineTo(b.x0 + w * 0.76, b.y1 - lw / 2);
+  ctx.closePath();
+  ctx.fillStyle = "#bf8f52";
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(b.x0 + w * 0.7, top);
+  ctx.lineTo(b.x0 + w * 0.76, b.y1);
+  ctx.moveTo(b.x0 + w * 0.06, b.y1 - h * 0.1);
+  ctx.lineTo(b.x0 + w * 0.3, b.y1 - h * 0.02);
+  ctx.strokeStyle = "#9c6f3a";
+  ctx.lineWidth = Math.max(1, lw * 0.5);
+  ctx.stroke();
+  // the rolled top: two rolls, crimped along the top edge
+  for (let r = 0; r < 2; r++) {
+    const ry = top - (r + 1) * h * 0.11;
+    esRect(ctx, b.x0 + w * (0.06 + r * 0.03), ry, w * (0.88 - r * 0.06), h * 0.13, h * 0.05);
+    esPaint(ctx, r ? "#e3bb84" : "#cf9e5e", lw * 0.8);
+  }
+  ctx.beginPath();
+  const cy = top - h * 0.22;
+  for (let i = 0; i <= 8; i++) ctx.lineTo(b.x0 + w * (0.12 + (i * 0.76) / 8), cy - (i % 2 ? h * 0.035 : 0));
+  ctx.strokeStyle = "#9c6f3a";
+  ctx.lineWidth = Math.max(1, lw * 0.45);
+  ctx.stroke();
+  // the sticker over the roll: blue, a yellow star
+  const sx = b.x0 + w * 0.45,
+    sy = top + h * 0.02,
+    sr = w * 0.17;
+  ctx.beginPath();
+  ctx.arc(sx, sy, sr, 0, PK_TAU);
+  esPaint(ctx, "#2f6fd6", lw * 0.6);
+  ctx.beginPath();
+  for (let i = 0; i < 10; i++) {
+    const rr = i % 2 ? sr * 0.32 : sr * 0.72,
+      a = -Math.PI / 2 + (i * Math.PI) / 5;
+    ctx.lineTo(sx + Math.cos(a) * rr, sy + Math.sin(a) * rr);
+  }
+  ctx.closePath();
+  ctx.fillStyle = PK_GOLD;
+  ctx.fill();
   ctx.restore();
   return b;
 }
-/** The stand's brochure's corner sticking out of a pocket (a Chapter 2 plant, a PLACEHOLDER). */
+/**
+ * The stand's brochure sticking out of his jacket pocket (a Chapter 2 plant; final art, pending Brian's yes; round 8,
+ * placeholder 28): the top of the very brochure from beat 38 (evening-art.js drawBrochure, so it always matches it: the
+ * night sky and Mars big over the stand), tipped a little, its lower part down inside a jacket pocket drawn over it.
+ * (x, y) is the pocket's top middle; `k` the size (1: a pocket 18 game pixels wide).
+ */
 export function drawBrochureCorner(ctx, x, y, k = 1) {
+  const pw = 18 * k,
+    ph = 14 * k,
+    bw = 17 * k,
+    bh = 24 * k;
   ctx.save();
   ctx.translate(x, y);
-  ctx.rotate(-0.25);
-  esRect(ctx, -9 * k, -16 * k, 18 * k, 16 * k, 2 * k);
-  esPaint(ctx, PK_PAPER, Math.max(1.2, 2 * k));
-  esRect(ctx, -9 * k, -16 * k, 18 * k, 5 * k, 1);
-  esPaint(ctx, PK_RED, 0);
-  ctx.restore();
-}
-/** 55: Mops's spill by the floor vent (round 7, #118): a puddle and the bucket on its side (a PLACEHOLDER layer). */
-export function drawPuddle(ctx, p, t) {
+  // the brochure, standing in the pocket, tipped back
   ctx.save();
   ctx.beginPath();
-  ctx.ellipse(p.x, p.y, p.rx + Math.sin(t * 2) * 1.5, p.ry, 0, 0, PK_TAU);
-  ctx.fillStyle = "rgba(120,190,255,.75)";
+  ctx.rect(-pw, -bh, pw * 2, bh + 1);
+  ctx.clip();
+  ctx.rotate(-0.28);
+  drawBrochure(ctx, -bw / 2, -bh * 0.8, bw, bh, true);
+  ctx.restore();
+  // the pocket in front: the jacket's blue, a darker flap edge, a stitch line
+  esRect(ctx, -pw / 2, 0, pw, ph, 2 * k);
+  esPaint(ctx, "#3a76d6", Math.max(1, 1.6 * k));
+  ctx.beginPath();
+  ctx.moveTo(-pw / 2 + 2 * k, 2.6 * k);
+  ctx.lineTo(pw / 2 - 2 * k, 2.6 * k);
+  ctx.strokeStyle = "rgba(255,255,255,.55)";
+  ctx.setLineDash([2 * k, 1.6 * k]);
+  ctx.lineWidth = Math.max(0.6, 0.8 * k);
+  ctx.stroke();
+  ctx.restore();
+}
+/**
+ * 55: Mops's spill by the floor vent (round 7, #118; final art, pending Brian's yes; round 8, placeholder 26): his
+ * own mop bucket (mop-bucket.js) tipped on its side on the floor right of the puddle, its open top toward it, soapy
+ * water running out of it into a wide, uneven puddle: pale blue with a darker edge, white shine streaks, soap bubbles
+ * and one slow ring where the last drips land. A layer over the pickup-day bay.
+ */
+export function drawPuddle(ctx, p, t) {
+  const rx = p.rx,
+    ry = p.ry;
+  ctx.save();
+  // the puddle: a few lobes in one shape
+  const lobes = [
+    [0, 0, 1, 1],
+    [-0.55, 0.15, 0.55, 0.75],
+    [0.5, -0.1, 0.6, 0.8],
+    [-0.15, 0.35, 0.5, 0.6],
+    [0.95, 0.05, 0.35, 0.55],
+  ];
+  const lobePath = (grow) => {
+    ctx.beginPath();
+    for (const [u, v, a, b] of lobes) {
+      ctx.moveTo(p.x + u * rx + a * rx * 0.62 + grow, p.y + v * ry);
+      ctx.ellipse(p.x + u * rx, p.y + v * ry, a * rx * 0.62 + grow, b * ry + grow * 0.5, 0, 0, PK_TAU);
+    }
+  };
+  lobePath(2.5);
+  ctx.fillStyle = "#4a90d9";
+  ctx.fill();
+  lobePath(0);
+  ctx.fillStyle = "#a8dcff";
+  ctx.fill();
+  // shine streaks
+  ctx.strokeStyle = "rgba(255,255,255,.9)";
+  ctx.lineCap = "round";
+  ctx.lineWidth = 2.2;
+  ctx.beginPath();
+  ctx.moveTo(p.x - rx * 0.55, p.y - ry * 0.2);
+  ctx.lineTo(p.x - rx * 0.25, p.y - ry * 0.35);
+  ctx.moveTo(p.x + rx * 0.1, p.y + ry * 0.35);
+  ctx.lineTo(p.x + rx * 0.3, p.y + ry * 0.25);
+  ctx.stroke();
+  // the ring where it drips
+  const u = (t * 0.6) % 1;
+  ctx.globalAlpha = 1 - u;
+  ctx.beginPath();
+  ctx.ellipse(p.x + rx * 0.62, p.y + 1, 4 + u * rx * 0.35, 1.5 + u * ry * 0.35, 0, 0, PK_TAU);
+  ctx.strokeStyle = "#ffffff";
+  ctx.lineWidth = 1.4;
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+  // soap bubbles
+  for (const [u2, v2, r] of [
+    [-0.35, -0.05, 3.2],
+    [-0.28, 0.12, 2.2],
+    [0.2, -0.3, 2.6],
+    [0.82, -0.25, 2.4],
+    [0.7, 0.2, 3],
+  ]) {
+    ctx.beginPath();
+    ctx.arc(p.x + u2 * rx, p.y + v2 * ry, r, 0, PK_TAU);
+    ctx.fillStyle = "rgba(255,255,255,.85)";
+    ctx.fill();
+    ctx.strokeStyle = "#5aa9e6";
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+  }
+  // the bucket on its side: its bottom to the right, its open top facing the puddle, lying on the floor
+  const q = PK_BUCKET_K * 0.62,
+    B = MOP_BUCKET;
+  ctx.translate(p.x + rx * 1.05 + (B.h * q) / 2 + 10, p.y + 2 - (B.wTop / 2 + 6) * q);
+  ctx.rotate(-Math.PI / 2 + 0.06);
+  drawMopBucketFront(ctx, 0, (B.h / 2 + B.wheel) * q, q, { water: false });
+  ctx.restore();
+  // the water running out of its mouth into the puddle
+  ctx.save();
+  ctx.beginPath();
+  const mx = p.x + rx * 1.05 + 6,
+    my = p.y - 6;
+  ctx.moveTo(mx + 4, my - 10);
+  ctx.quadraticCurveTo(mx - 6, my - 4, p.x + rx * 0.7, p.y);
+  ctx.quadraticCurveTo(mx - 4, my + 6, mx + 4, my + 6);
+  ctx.closePath();
+  ctx.fillStyle = "#a8dcff";
   ctx.fill();
   ctx.strokeStyle = "#4a90d9";
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 1.5;
   ctx.stroke();
-  ctx.translate(p.x + p.rx * 0.9, p.y - 4);
-  ctx.rotate(Math.PI / 2);
-  drawBucket(ctx, 0, 0, 0.55);
   ctx.restore();
   return true;
 }
@@ -208,27 +419,84 @@ export function drawTagBox(ctx, x, y, k = 1, glow = false) {
   esPaint(ctx, PK_PAPER, lw * 0.6);
   return { x0: x - 24 * k, y0: y - 28 * k, x1: x + 34 * k, y1: y + 2 };
 }
-/** A plain new robot, shinier than the first three, with a small mop arm (the ones his paw print sent for). */
+/**
+ * The upgraded robot's new parts (final art, pending Brian's yes; round 8, placeholder 24), drawn over the older
+ * program's robot picture (feet at (x, y), `k` its size, the same units): Mops's complaint got them "upgraded" to
+ * "check every corner", so it wears what checks corners. A bolted-on chrome band round its middle with rivets and a
+ * green light that blinks; a periscope up from its dome with a round corner mirror on top; and on its other side a
+ * second arm with a round scrub brush that turns. `f` is unused (the robot picture never turns).
+ */
 export function drawNewRobotBits(ctx, x, y, k, f = 1, t = 0) {
-  // a shine on its dome and a mop arm (drawn over the older program's robot picture)
+  const lw = Math.max(1, 1.6 * k);
   ctx.save();
-  ctx.globalAlpha = 0.85;
+  ctx.translate(x, y);
+  ctx.scale(k, k);
+  const ow = lw / k;
+  // the brush arm (behind the body) and its turning brush
   ctx.beginPath();
-  ctx.ellipse(x - 10 * k, y - 40 * k, 5 * k, 3 * k, -0.5, 0, PK_TAU);
+  ctx.moveTo(-13, -14);
+  ctx.lineTo(-24, -3);
+  ctx.strokeStyle = ES_INK;
+  ctx.lineWidth = 4.6;
+  ctx.lineCap = "round";
+  ctx.stroke();
+  ctx.strokeStyle = "#b9c0cc";
+  ctx.lineWidth = 2.6;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.ellipse(-26, 0.5, 7, 3, 0, 0, PK_TAU);
+  esPaint(ctx, "#5c86d6", ow);
+  ctx.beginPath();
+  for (let i = 0; i < 6; i++) {
+    const a = t * 9 + (i * PK_TAU) / 6;
+    ctx.moveTo(-26 + Math.cos(a) * 3, 0.5 + Math.sin(a) * 1.2);
+    ctx.lineTo(-26 + Math.cos(a) * 7.5, 0.5 + Math.sin(a) * 3.2);
+  }
+  ctx.strokeStyle = "#e8edf6";
+  ctx.lineWidth = 0.9;
+  ctx.stroke();
+  // the chrome band round its middle, three rivets, the green light
+  esRect(ctx, -15.5, -22, 31, 6, 1.5);
+  esPaint(ctx, "#cfd5df", ow);
+  ctx.fillStyle = "rgba(255,255,255,.8)";
+  ctx.fillRect(-13, -21, 22, 1.2);
+  for (const rx of [-11, -4, 3]) {
+    ctx.beginPath();
+    ctx.arc(rx, -19, 0.9, 0, PK_TAU);
+    ctx.fillStyle = "#7d8696";
+    ctx.fill();
+  }
+  ctx.beginPath();
+  ctx.arc(9.5, -19, 1.9, 0, PK_TAU);
+  esPaint(ctx, Math.sin(t * 5) > -0.3 ? "#2bc48a" : "#1b7a57", ow * 0.7);
+  // the periscope: a pole up from the dome's side, bent over, a round mirror looking round the corner
+  ctx.beginPath();
+  ctx.moveTo(-5, -44);
+  ctx.lineTo(-5, -56);
+  ctx.quadraticCurveTo(-5, -60, -1, -60);
+  ctx.strokeStyle = ES_INK;
+  ctx.lineWidth = 3.4;
+  ctx.stroke();
+  ctx.strokeStyle = "#b9c0cc";
+  ctx.lineWidth = 1.6;
+  ctx.stroke();
+  ctx.save();
+  ctx.translate(3, -60);
+  ctx.rotate(Math.sin(t * 1.3) * 0.35);
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 4.4, 3.4, 0, 0, PK_TAU);
+  esPaint(ctx, "#8fdcff", ow);
+  ctx.beginPath();
+  ctx.ellipse(-1.3, -1, 1.4, 0.8, -0.5, 0, PK_TAU);
   ctx.fillStyle = "#ffffff";
   ctx.fill();
   ctx.restore();
-  const ax = x + f * 24 * k,
-    ay = y - 22 * k;
+  // a shine on its dome
   ctx.beginPath();
-  ctx.moveTo(x + f * 14 * k, y - 26 * k);
-  ctx.lineTo(ax, ay + 18 * k);
-  ctx.strokeStyle = "#8a93a3";
-  ctx.lineWidth = Math.max(2, 4 * k);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.ellipse(ax, ay + 22 * k, 7 * k, 4 * k, Math.sin(t * 6) * 0.3, 0, PK_TAU);
-  esPaint(ctx, "#f4f0e6", Math.max(1.5, 2 * k));
+  ctx.ellipse(-4, -41, 2.6, 1.5, -0.6, 0, PK_TAU);
+  ctx.fillStyle = "rgba(255,255,255,.9)";
+  ctx.fill();
+  ctx.restore();
 }
 /** The blue scan line going into something (0 to 1 down `box`), and the arch's light: "red", "yellow", "green" or "". */
 export function drawScanLine(ctx, box, k, color = "rgba(80,170,255,.9)") {
@@ -294,14 +562,72 @@ export function drawKidDrawing(ctx, b, kind = 0) {
   }
   ctx.restore();
 }
-/** Where a thing hung: a pale square on the wall. */
-export function drawPaleSquare(ctx, b) {
+/**
+ * Where a thing hung (final art, pending Brian's yes; round 8, placeholder 20): the wall behind it kept its first
+ * colour, so a square a little whiter than the wall round it, a faint grey line of dust along its top and left edges,
+ * and a little bit of tape left at its top corners. `eaten` (the STAY IN HERE poster Mops ate, 53): the paper's
+ * corners are still under the tape, their inner edges bitten off in a row of small bites.
+ */
+export function drawPaleSquare(ctx, b, eaten = false) {
+  const w = b.x1 - b.x0,
+    h = b.y1 - b.y0,
+    tp = Math.max(6, w * 0.16);
   ctx.save();
-  ctx.fillStyle = "rgba(255,255,255,.55)";
-  ctx.fillRect(b.x0, b.y0, b.x1 - b.x0, b.y1 - b.y0);
-  ctx.strokeStyle = "rgba(120,110,90,.25)";
+  ctx.fillStyle = "rgba(255,255,255,.42)";
+  ctx.fillRect(b.x0, b.y0, w, h);
+  ctx.beginPath();
+  ctx.moveTo(b.x0, b.y1);
+  ctx.lineTo(b.x0, b.y0);
+  ctx.lineTo(b.x1, b.y0);
+  ctx.strokeStyle = "rgba(140,128,104,.38)";
   ctx.lineWidth = 2;
-  ctx.strokeRect(b.x0, b.y0, b.x1 - b.x0, b.y1 - b.y0);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(b.x1, b.y0);
+  ctx.lineTo(b.x1, b.y1);
+  ctx.lineTo(b.x0, b.y1);
+  ctx.strokeStyle = "rgba(140,128,104,.18)";
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  for (const s of [-1, 1]) {
+    const cx = s < 0 ? b.x0 : b.x1;
+    if (eaten) {
+      // the torn paper corner left under the tape, bitten along its inner edge
+      ctx.beginPath();
+      ctx.moveTo(cx, b.y0);
+      ctx.lineTo(cx - s * tp * 1.5, b.y0);
+      for (let i = 1; i <= 4; i++) {
+        const u = i / 4;
+        ctx.quadraticCurveTo(cx - s * tp * (1.5 - u * 1.5 + 0.35), b.y0 + tp * (u * 1.5 - 0.2), cx - s * tp * (1.5 - u * 1.5), b.y0 + tp * u * 1.5);
+      }
+      ctx.closePath();
+      ctx.fillStyle = "#fffdf8";
+      ctx.fill();
+      ctx.strokeStyle = ES_INK;
+      ctx.lineWidth = 1.5;
+      ctx.lineJoin = "round";
+      ctx.stroke();
+      // a corner of the poster's red border
+      ctx.beginPath();
+      ctx.moveTo(cx - s * 2, b.y0 + 2);
+      ctx.lineTo(cx - s * tp * 0.9, b.y0 + 2);
+      ctx.moveTo(cx - s * 2, b.y0 + 2);
+      ctx.lineTo(cx - s * 2, b.y0 + tp * 0.9);
+      ctx.strokeStyle = PK_RED;
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+    }
+    // the bit of tape, across the corner
+    ctx.save();
+    ctx.translate(cx - s * tp * 0.3, b.y0 + tp * 0.3);
+    ctx.rotate(s * -0.78);
+    ctx.fillStyle = "rgba(255,246,200,.85)";
+    ctx.fillRect(-tp * 0.55, -tp * 0.2, tp * 1.1, tp * 0.4);
+    ctx.strokeStyle = "rgba(160,140,90,.6)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(-tp * 0.55, -tp * 0.2, tp * 1.1, tp * 0.4);
+    ctx.restore();
+  }
   ctx.restore();
 }
 /**
@@ -328,7 +654,7 @@ export function drawWallPatch(ctx, b, at) {
   ctx.fillStyle = pkWall[key] || "#f4efe4";
   ctx.fillRect(b.x0 - 3, b.y0 - 3, b.x1 - b.x0 + 6, b.y1 - b.y0 + 6);
   ctx.restore();
-  drawPaleSquare(ctx, b);
+  drawPaleSquare(ctx, b, true);
 }
 /** The note folded on his pillow. */
 export function drawFoldedNote(ctx, b) {
@@ -695,12 +1021,35 @@ export function drawPhotoCorner(ctx) {
 }
 /**
  * The tape screen, filling the picture, with the REC badge and its two big buttons (PLAY · tape, ZOOM · in; the one to
- * press now bright). One clip (round 7, #123 pick A), the bay seen from the camera's corner, upper right, looking down
- * at the ramp: a goat (Mops) walks up it, then a very tall goat, and halfway up his beard falls off. `k` how far it has
- * played (0 to 1); `zoom` "tall": close on the very tall goat, the beard in his paws, his fur showing.
+ * press now bright). One clip (round 7, #123 pick A; final art, pending Brian's yes; round 8, placeholder 31): the
+ * security camera's own picture of the pickup-day bay (the locked picture itself, greyed and a little green, with the
+ * tape's scan lines and a rolling band), seen from its corner: a goat (Mops) walks up the ramp to the ship, then a very
+ * tall goat, and halfway up his beard falls off and he catches it. `k` how far it has played (0 to 1); `zoom` "tall":
+ * close on the very tall goat on the ramp, the beard in his paws, his fur showing.
  */
+const pkBayPic = typeof Image !== "undefined" ? Object.assign(new Image(), { src: "docs/locked-rooms/delivery-room-empty-pickup-v4.png" }) : null;
+// the part of the bay the camera sees (game positions), and, zoomed, the part round the ramp's middle
+const PK_TAPE_VIEW = Object.freeze({ x0: 230, y0: 160, x1: 730, y1: 456 }),
+  PK_TAPE_ZOOM = Object.freeze({ x0: 391, y0: 238, x1: 541, y1: 327 }),
+  PK_TAPE_RAMP = Object.freeze([Object.freeze({ x: 466, y: 446 }), Object.freeze({ x: 466, y: 250 })]);
+function pkTapeLook(ctx, S, t) {
+  // the tape's look over the picture: a green-grey tint, scan lines, a slow rolling band, a dark edge
+  ctx.fillStyle = "rgba(40,80,60,.18)";
+  ctx.fillRect(S.x0, S.y0, S.x1 - S.x0, S.y1 - S.y0);
+  ctx.fillStyle = "rgba(0,0,0,.12)";
+  for (let y = S.y0; y < S.y1; y += 4) ctx.fillRect(S.x0, y, S.x1 - S.x0, 1.5);
+  const band = S.y0 + (((t * 60) % (S.y1 - S.y0 + 80)) - 40);
+  ctx.fillStyle = "rgba(255,255,255,.07)";
+  ctx.fillRect(S.x0, band, S.x1 - S.x0, 26);
+  const g = ctx.createRadialGradient((S.x0 + S.x1) / 2, (S.y0 + S.y1) / 2, (S.y1 - S.y0) * 0.35, (S.x0 + S.x1) / 2, (S.y0 + S.y1) / 2, (S.x1 - S.x0) * 0.62);
+  g.addColorStop(0, "rgba(0,0,0,0)");
+  g.addColorStop(1, "rgba(0,0,0,.45)");
+  ctx.fillStyle = g;
+  ctx.fillRect(S.x0, S.y0, S.x1 - S.x0, S.y1 - S.y0);
+}
 export function drawTapeScreen(ctx, engine, { k, zoom, next }, t) {
-  const S = PK_OFFICE.screen;
+  const S = PK_OFFICE.screen,
+    I = { x0: S.x0 + 4, y0: S.y0 + 4, x1: S.x1 - 4, y1: S.y1 - 4 };
   ctx.save();
   ctx.fillStyle = "#1c2030";
   ctx.fillRect(0, 0, 960, 640);
@@ -708,49 +1057,42 @@ export function drawTapeScreen(ctx, engine, { k, zoom, next }, t) {
   esPaint(ctx, "#8c94a6", 6);
   ctx.save();
   ctx.beginPath();
-  ctx.rect(S.x0 + 4, S.y0 + 4, S.x1 - S.x0 - 8, S.y1 - S.y0 - 8);
+  ctx.rect(I.x0, I.y0, I.x1 - I.x0, I.y1 - I.y0);
   ctx.clip();
-  ctx.filter = "grayscale(0.6)";
+  // the camera's picture: the bay, grey (`V` the part of the bay shown; game positions map into the screen)
+  const V = zoom ? PK_TAPE_ZOOM : PK_TAPE_VIEW,
+    sc = (I.x1 - I.x0) / (V.x1 - V.x0),
+    at = (p) => ({ x: I.x0 + (p.x - V.x0) * sc, y: I.y0 + (p.y - V.y0) * sc });
+  ctx.fillStyle = "#cfcabb";
+  ctx.fillRect(I.x0, I.y0, I.x1 - I.x0, I.y1 - I.y0);
+  ctx.save();
+  ctx.filter = "grayscale(0.85) contrast(1.1)";
+  pkBayPic && pkBayPic.complete && pkBayPic.naturalWidth && ctx.drawImage(pkBayPic, (V.x0 / 960) * pkBayPic.naturalWidth, (V.y0 / 640) * pkBayPic.naturalHeight, ((V.x1 - V.x0) / 960) * pkBayPic.naturalWidth, ((V.y1 - V.y0) / 640) * pkBayPic.naturalHeight, I.x0, I.y0, I.x1 - I.x0, I.y1 - I.y0);
+  ctx.filter = "grayscale(0.7)";
+  // the two of them on the ramp, at the bay's size (pickup.js sqScale and moScale: Squatch 0.8 of a grown-up)
+  const sqK = ((adultPxFor("hangar") * 0.8) / 45) * sc,
+    moK = sqK * 1.15,
+    up = (u) => at({ x: PK_TAPE_RAMP[0].x + (PK_TAPE_RAMP[1].x - PK_TAPE_RAMP[0].x) * u, y: PK_TAPE_RAMP[0].y + (PK_TAPE_RAMP[1].y - PK_TAPE_RAMP[0].y) * u });
   if (!zoom) {
-    // from up in the corner: the floor, the ramp going up to the ship's door (top left), the arch at its foot
-    ctx.fillStyle = "#cfcabb";
-    ctx.fillRect(S.x0, S.y0, S.x1 - S.x0, S.y1 - S.y0);
-    ctx.beginPath();
-    ctx.moveTo(300, 450);
-    ctx.lineTo(470, 450);
-    ctx.lineTo(300, 90);
-    ctx.lineTo(220, 90);
-    ctx.closePath();
-    esPaint(ctx, "#8e95a4", 4);
-    esRect(ctx, 180, 50, 150, 50, 10);
-    esPaint(ctx, "#2d323e", 4);
-    esRect(ctx, 270, 330, 230, 20, 6);
-    esPaint(ctx, "#c3c8d2", 4);
-    // the goat first, then the very tall goat; past halfway the very tall one's beard falls
-    const up = (u) => ({ x: 400 - u * 130, y: 440 - u * 330 }),
-      mk = Math.min(1, k * 2),
+    // the goat first, then the very tall goat; past halfway the very tall one's beard falls and he catches it
+    const mk = Math.min(1, k * 2),
       sk = Math.max(0, k * 2 - 1);
-    mk < 1 && ((p) => engine.drawMopsOn(ctx, p.x, p.y, 2.2 - mk * 0.8, { f: -1, walk: t * 8 }))(up(mk));
+    mk > 0 && mk < 1 && ((p) => engine.drawMopsOn(ctx, p.x, p.y, moK, { f: -1, walk: t * 8 }))(up(mk));
     if (sk > 0) {
       const p = up(sk * 0.85),
-        sc = 3.4 - sk * 1.1,
-        off = sk > 0.45;
-      engine.drawSquatch(ctx, p.x, p.y, sc, { f: -1, walk: t * 8, jacket: true, horns: true, goatBeard: !off });
-      off && (esRect(ctx, p.x + 4, p.y - 8 * sc + Math.min(1, (sk - 0.45) * 4) * 4 * sc, 10 * sc * 0.6, 14 * sc * 0.6, 2), esPaint(ctx, "#ffffff", 3));
+        off = sk > 0.45,
+        fall = Math.min(1, (sk - 0.45) * 4);
+      engine.drawSquatch(ctx, p.x, p.y, sqK, { f: -1, walk: off ? 0 : t * 8, jacket: true, horns: true, goatBeard: !off });
+      off && drawGoatBeardOnTape(ctx, p.x - 2 * sqK - fall * 5 * sqK, p.y - 44 * sqK + fall * 22 * sqK, sqK, -fall * 1.4);
     }
   } else {
-    // close on the very tall goat: horns, a jacket, big furry feet, the beard in his paws
-    ctx.fillStyle = "#cfcabb";
-    ctx.fillRect(S.x0, S.y0, S.x1 - S.x0, S.y1 - S.y0);
-    engine.drawSquatch(ctx, 480, 470, 7.5, { f: -1, jacket: true, horns: true, goatBeard: false });
-    ctx.beginPath();
-    ctx.moveTo(430, 300);
-    ctx.lineTo(530, 300);
-    ctx.lineTo(490, 400);
-    ctx.lineTo(470, 400);
-    ctx.closePath();
-    esPaint(ctx, "#ffffff", 5);
+    // close on the very tall goat: horns, a jacket, big furry feet, the beard in his paws, his fur showing
+    const p = up(0.85 * 0.85);
+    engine.drawSquatch(ctx, p.x, p.y, sqK, { f: -1, jacket: true, horns: true, goatBeard: false });
+    drawGoatBeardOnTape(ctx, p.x - 8 * sqK, p.y - 22 * sqK, sqK, -1.4);
   }
+  ctx.restore();
+  pkTapeLook(ctx, I, t);
   ctx.restore();
   // the REC badge and the tape's label
   esRect(ctx, S.x0 + 20, S.y0 + 18, 90, 40, 8);
