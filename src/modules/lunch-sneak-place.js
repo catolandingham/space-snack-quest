@@ -38,13 +38,16 @@ export const DOOR_WAY = Object.freeze([Object.freeze({ x: 740, y: 336 }), LUNCH_
 export const RHYTHM = Object.freeze({ away: 3.0, warn: 0.6, turn: 0.3, look: 2.4 });
 export const WATCHERS = Object.freeze([
   // (2026-11-26, round C: moved and turned once sight saw Squatch's whole drawn body, party-watch.js, so the rules in
-  // tests/lunch-sneak.mjs still hold; found by trying every place and angle on a grid against those rules)
+  // tests/lunch-sneak.mjs still hold; found by trying every place and angle on a grid against those rules. Again
+  // 2026-11-27, round 8 combined: the room table made the hall's people 21% smaller, so his outline is smaller and a walk
+  // while a watcher looks crossed the cone too fast for the "!"; teal moved 10 down, camera 20 right and 20 down,
+  // found the same way)
   // in front of the stage, left of its middle: away = up at the stage; look = down and right, across the way from the
   // plant to the crates
-  Object.freeze({ id: "teal", x: 380, y: 355, away: -2.2, look: 0.64, at: 3.6, guards: "plant-crate" }),
+  Object.freeze({ id: "teal", x: 380, y: 365, away: -2.2, look: 0.64, at: 3.6, guards: "plant-crate" }),
   // a step down and right of her: away = up at the stage; look = right and a little up, along the way from the crates
   // up to the doorway
-  Object.freeze({ id: "camera", x: 480, y: 400, away: -2.2, look: -0.32, at: 0.6, guards: "crate-door" }),
+  Object.freeze({ id: "camera", x: 500, y: 420, away: -2.2, look: -0.32, at: 0.6, guards: "crate-door" }),
 ]);
 // (its clock starts as they come into the hall: it is looking at the counter as Squatch ducks, and turns away as Mops's
 // picture bubble ends, so TAKE · snack first comes up as he looks away)

@@ -8,6 +8,7 @@
  * This file says where each cone starts, which way it points, and how strongly it shows (the distance fade
  * below), and draws the cones whole (drawCones, at the end): the party night draws with it, and the sight check uses the same shape, so the shaded area is exactly where Squatch is seen.
  */
+import { adultPxFor, doorAdultPx, HALL_BIGGER } from "./room-sizes.js";
 
 // The middle of the stage, in game positions (hall-room-empty-v2 and the party drawing).
 export const PARTY_STAGE = { x: 448, y: 280 };
@@ -105,9 +106,13 @@ const HALF_OUTLINE = [
   [34, -18], [35, -16], [35, -14], [35, -12], [35, -10], [34, -8], [30, -6], [26, -4], [18, -2], [18, 0], [18, 2],
   [17, 4], [16, 6], [0, 8],
 ];
+// The outline was measured at the hall's size of 2026-11-26 (Squatch 1.65: 85% of the hall's door, 1.4 times); the
+// room table (room-scale.js, Brian's yes of 2026-11-27) sets the hall's people now, so it is scaled round his feet to
+// that size (the hall's sizes are fixed when the game loads).
+const OUTLINE_K = adultPxFor("hall") / (doorAdultPx("hall") * HALL_BIGGER);
 export const SQUATCH_OUTLINE = Object.freeze([
-  ...HALF_OUTLINE.map(([x, y]) => Object.freeze([x, y])),
-  ...HALF_OUTLINE.slice(1, -1).reverse().map(([x, y]) => Object.freeze([-x, y])),
+  ...HALF_OUTLINE.map(([x, y]) => Object.freeze([x * OUTLINE_K, y * OUTLINE_K])),
+  ...HALF_OUTLINE.slice(1, -1).reverse().map(([x, y]) => Object.freeze([-x * OUTLINE_K, y * OUTLINE_K])),
 ]);
 // Points along the outline every 2 pixels or less: a cone that crosses him crosses his outline, so it holds one of
 // these (a cone on him by less than 2 pixels is not one a kid could see).
@@ -122,7 +127,7 @@ const OUTLINE_PTS = (() => {
   return out;
 })();
 // The middle of him, and how far the outline reaches from it at most (a quick "nowhere near" before the full test).
-const BODY_MID = -36,
+const BODY_MID = -36 * OUTLINE_K,
   BODY_REACH = Math.max(...OUTLINE_PTS.map(([x, y]) => Math.hypot(x, y - BODY_MID))) + 0.5;
 /** True when (px, py) is inside his outline standing at feet `sq`. */
 function insideOutline(px, py, sq) {
