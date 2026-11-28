@@ -8,7 +8,8 @@
  *   esmug    the mug, close: GALAXY'S OKAYEST MANAGER
  *   esdrawer the drawer, close: one snack cake, a bite out of it
  *   esframe  the frame, close: empty, its brass tag NEXT MONTH: MOPS
- * Every drawing is a PLACEHOLDER for Brian; every word from escape-lines.js.
+ * Every drawing is a PLACEHOLDER for Brian, except the dust puff and the drawer's cake (round 8 final art, pending his
+ * yes); every word from escape-lines.js.
  */
 import { escapeWords } from "./escape-lines.js";
 import { ES_HALLWAY, OFFICE } from "./escape-place.js";
@@ -77,18 +78,31 @@ export function drawSpinStars(ctx, head, age, t) {
   ctx.restore();
 }
 /**
- * Dust off the filing cabinet as the office robot wipes it (round 7, r6 0:37: a robot comes in and dusts one thing).
- * A few grey puffs rising and fading. PLACEHOLDER drawing for Brian.
+ * Dust off the filing cabinet as the office robot wipes it (round 7, r6 0:37: a robot comes in and dusts one thing):
+ * little cartoon dust clouds (three bumps each, pale grey, the rooms' ink round them) rising and fading, and a few specks.
+ * Final art, pending Brian's yes (round 8).
  */
 export function drawDustPuff(ctx, x, y, t) {
   ctx.save();
   for (let i = 0; i < 4; i++) {
-    const u = (t * 1.3 + i / 4) % 1;
-    ctx.globalAlpha = 0.55 * (1 - u);
-    ctx.fillStyle = "#b9bfca";
+    const u = (t * 1.3 + i / 4) % 1,
+      cx = x + (i - 1.5) * 13 + Math.sin(u * 6 + i) * 4,
+      cy = y - u * 34,
+      r = 5 + u * 5;
+    ctx.globalAlpha = 0.9 * (1 - u) * Math.min(1, u * 6);
     ctx.beginPath();
-    ctx.arc(x + (i - 1.5) * 12 + Math.sin(u * 6 + i) * 4, y - u * 34, 7 + u * 6, 0, Math.PI * 2);
+    for (const [dx, dy, k] of [[-0.8, 0.2, 0.75], [0, -0.25, 1], [0.85, 0.2, 0.7]]) {
+      ctx.moveTo(cx + dx * r + k * r, cy + dy * r);
+      ctx.arc(cx + dx * r, cy + dy * r, k * r, 0, TAU);
+    }
+    ctx.fillStyle = "rgb(214,214,206)";
+    ctx.lineWidth = 3.2;
+    ctx.strokeStyle = "rgb(34,36,44)";
+    // (the outline round the whole cloud, not each bump: stroke, then fill again over the inner lines)
+    ctx.stroke();
     ctx.fill();
+    ctx.fillStyle = "rgb(150,150,142)";
+    for (const [dx, dy] of [[-r * 1.6, -r], [r * 1.7, -r * 0.6], [0, -r * 1.9]]) ctx.fillRect(cx + dx, cy + dy, 2, 2);
   }
   ctx.restore();
 }
@@ -110,29 +124,129 @@ function mugPanel(ctx) {
   esWords(ctx, words[2], 460, 400, 52, "#3478f6", "center", 900);
   return { pic: "esmug", words: escapeWords("mug") };
 }
+// The bite out of the drawer's cake: a round bite with three tooth bumps along its edge (a path, `ox`/`oy` its middle).
+function biteShape(ctx, ox, oy, r) {
+  ctx.beginPath();
+  ctx.moveTo(ox + r, oy);
+  for (let i = 1; i <= 36; i++) {
+    const a = (i / 36) * TAU,
+      bump = 1 + 0.09 * Math.max(0, Math.cos(a * 3 + 1.4));
+    ctx.lineTo(ox + Math.cos(a) * r * bump, oy + Math.sin(a) * r * bump);
+  }
+  ctx.closePath();
+}
+/**
+ * LOOK · cabinet: the drawer, open, and in it one snack cake with a bite out of it, on its torn wrapper. The cake is a
+ * round chocolate snack cake (a darker side, a white icing squiggle on top), the bite cut out of it with tooth bumps, its
+ * inside showing (sponge and a white cream layer). Its outline is drawn round what is left of the cake, so no ink line
+ * crosses the bite (round 8: the faint ink edge across the bite is gone). The drawer is the office's filing cabinet's
+ * grey (office_room_v2.py DESK, DESK_TOP, BEZEL). Final art, pending Brian's yes (round 8).
+ */
 function drawerPanel(ctx) {
-  ctx.fillStyle = "#59657d";
+  const INKD = "rgb(34,36,44)";
+  ctx.fillStyle = "rgb(138,147,163)";
   ctx.fillRect(0, 0, 960, 640);
-  esRect(ctx, 120, 140, 720, 420, 12);
-  esPaint(ctx, "#2d323e", 6);
-  // one snack cake, a bite out of it
-  // (round 7: the bite is cut out of the cake, not a bump on it: the cake, then the drawer's dark inside where the bite
-  // was, its edge drawn only on the cake)
-  ctx.save();
+  // the drawer's inside and its two sides
+  esRect(ctx, 120, 120, 720, 400, 12);
+  esPaint(ctx, "rgb(70,80,102)", 6, INKD);
+  ctx.fillStyle = "rgb(89,101,125)";
   ctx.beginPath();
-  ctx.ellipse(480, 360, 170, 110, 0, 0, TAU);
-  ctx.fillStyle = "#c98b4a";
+  ctx.moveTo(126, 126);
+  ctx.lineTo(834, 126);
+  ctx.lineTo(800, 170);
+  ctx.lineTo(160, 170);
+  ctx.closePath();
   ctx.fill();
-  ctx.strokeStyle = ES_INK;
-  ctx.lineWidth = 6;
-  ctx.stroke();
-  ctx.clip();
+  // the wrapper, torn open, under the cake
   ctx.beginPath();
-  ctx.arc(620, 300, 60, 0, TAU);
-  ctx.fillStyle = "#2d323e";
-  ctx.fill();
+  ctx.moveTo(270, 430);
+  ctx.lineTo(300, 300);
+  ctx.lineTo(340, 318);
+  ctx.lineTo(380, 286);
+  ctx.lineTo(640, 290);
+  ctx.lineTo(700, 330);
+  ctx.lineTo(690, 452);
+  ctx.closePath();
+  esPaint(ctx, "rgb(206,214,226)", 4, INKD);
+  ctx.strokeStyle = "rgb(255,255,255)";
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(320, 410);
+  ctx.lineTo(340, 340);
+  ctx.moveTo(650, 320);
+  ctx.lineTo(670, 420);
   ctx.stroke();
-  ctx.restore();
+  // the cake, drawn on its own sheet so the bite can be cut out of it
+  const cv = document.createElement("canvas");
+  cv.width = 960;
+  cv.height = 640;
+  const c = cv.getContext("2d");
+  if (c) {
+    const cx = 480,
+      cy = 340,
+      rx = 170,
+      ry = 96,
+      side = 40,
+      bx = 620,
+      by = 312,
+      br = 62;
+    // the side, then the top
+    c.beginPath();
+    c.ellipse(cx, cy + side, rx, ry, 0, 0, TAU);
+    c.rect(cx - rx, cy, rx * 2, side);
+    c.fillStyle = "rgb(84,50,28)";
+    c.fill();
+    c.beginPath();
+    c.ellipse(cx, cy, rx, ry, 0, 0, TAU);
+    c.fillStyle = "rgb(122,74,42)";
+    c.fill();
+    // the white icing squiggle
+    c.beginPath();
+    for (let i = 0; i <= 60; i++) {
+      const u = i / 60,
+        px = cx - 120 + 240 * u;
+      c.lineTo(px, cy - 8 + Math.sin(u * TAU * 3.5) * 22 * Math.sin(u * Math.PI));
+    }
+    c.strokeStyle = "rgb(255,253,243)";
+    c.lineWidth = 9;
+    c.lineCap = "round";
+    c.stroke();
+    // the bite: cut out, then its inside drawn where it meets the cake
+    c.globalCompositeOperation = "destination-out";
+    biteShape(c, bx, by, br);
+    c.fill();
+    c.globalCompositeOperation = "source-atop";
+    c.save();
+    biteShape(c, bx - 6, by + 10, br);
+    c.lineWidth = 34;
+    c.strokeStyle = "rgb(186,132,82)";
+    c.stroke();
+    c.lineWidth = 9;
+    c.strokeStyle = "rgb(255,253,243)";
+    c.translate(0, 4);
+    biteShape(c, bx - 6, by + 10, br + 4);
+    c.stroke();
+    c.restore();
+    c.globalCompositeOperation = "source-over";
+    // one ink line round what is left of the cake (its whole edge, bite included), nothing across the bite
+    const edge = document.createElement("canvas");
+    edge.width = 960;
+    edge.height = 640;
+    const e = edge.getContext("2d");
+    if (e) {
+      for (const [dx, dy] of [[-6, 0], [6, 0], [0, -6], [0, 6], [-4, -4], [4, 4], [-4, 4], [4, -4]]) e.drawImage(cv, dx, dy);
+      e.globalCompositeOperation = "source-in";
+      e.fillStyle = INKD;
+      e.fillRect(0, 0, 960, 640);
+      ctx.drawImage(edge, 0, 0);
+    }
+    ctx.drawImage(cv, 0, 0);
+  }
+  // the drawer's front, with its handle
+  esRect(ctx, 90, 500, 780, 110, 10);
+  esPaint(ctx, "rgb(181,188,200)", 6, INKD);
+  esRect(ctx, 400, 540, 160, 26, 13);
+  esPaint(ctx, "rgb(138,147,163)", 4, INKD);
   return { pic: "esdrawer", bite: true };
 }
 function framePanel(ctx) {

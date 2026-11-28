@@ -4,18 +4,18 @@
 | Lines | Heading |
 | --- | --- |
 | 20–26 | # Master backlog |
-| 27–247 | ## Where main is (Chapter 1 redesign) |
-| 248–262 | ## Register |
-| 263–284 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
-| 285–305 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
-| 306–318 | ## Phase 2 (plan section 4, T13 to T18) |
-| 319–341 | ## Phase 1 (plan section 3, T5 to T12) |
-| 342–355 | ## SS40–SS44 |
-| 356–373 | ## Story rows |
-| 374–392 | ## Reset section |
-| 393–403 | ## Still open |
-| 404–407 | ## Chapter 1 replot, recorded and not built |
-| 408–569 | ## Changelog |
+| 27–249 | ## Where main is (Chapter 1 redesign) |
+| 250–264 | ## Register |
+| 265–286 | ## Chapter 1 pass (Brian's brief of 2026-11-07) |
+| 287–307 | ## Phase 3 (plan section 4, T19 to T23, with Brian's decisions of 2026-11-07) |
+| 308–320 | ## Phase 2 (plan section 4, T13 to T18) |
+| 321–343 | ## Phase 1 (plan section 3, T5 to T12) |
+| 344–357 | ## SS40–SS44 |
+| 358–375 | ## Story rows |
+| 376–394 | ## Reset section |
+| 395–405 | ## Still open |
+| 406–409 | ## Chapter 1 replot, recorded and not built |
+| 410–571 | ## Changelog |
 <!-- /section-index -->
 # Master backlog
 
@@ -25,6 +25,8 @@
 **[`DECISIONS.md`](DECISIONS.md) is the single source of truth for decisions.** If this page disagrees with it, `DECISIONS.md` wins. Where things stand is [`STATE.md`](STATE.md). Open asks are [`OPEN-ASKS.md`](OPEN-ASKS.md).
 
 ## Where main is (Chapter 1 redesign)
+
+2026-11-27 (round 8, final art A), draft PR on `feat/ch1-r8-art-a` (from `feat/ch1-complete`), not merged. Final art, each one **final art, pending Brian's yes**, for the join's placeholders 1 to 17 and 19, drawn in the locked rooms' look (their colours in the new `src/modules/locked-look.js`; flat fills, one dark ink line, white shine dots), every one a layer or a module drawing, no locked picture changed: 1 the bay camera and its red light (`bay-camera.js drawBayCamera`; dimmed on the night bay, its light still bright), final art, pending Brian's yes; 2 the bay on the office's bottom-right screen in the office picture's own feed style (`drawBayOnScreen`), final art, pending Brian's yes; 3 the robot's arm telescoping up with the camera (`drawCameraInstall`), final art, pending Brian's yes; 4 the mail beside the box, an airmail envelope and a stamped one (`loading-bay-art.js drawMailBeside`), final art, pending Brian's yes; 5 the arch's glow, Day 2 and pickup day (`arch-glow.js`, `drawScannerPass`, `pickup-art.js drawArchLight`), final art, pending Brian's yes; 6 the office door's leaves sliding into the wall and the lit office inside (`drawOfficeOpen`), final art, pending Brian's yes; 7 the one dashed line round the counter's whole aisle when he is seen (`loading-bay.js COUNTER_HIDE`), final art, pending Brian's yes; 8 the night crate by the floor vent (`evening-pictures.js drawVentCrate`), final art, pending Brian's yes; 9 suds in Mops's bucket and under his beard (`escape-mopoff.js drawScrub`, `drawBucketSuds`), final art, pending Brian's yes; 10 the plan in his crayon (`escape-home-art.js drawPlan`), final art, pending Brian's yes; 11 the postal page (`escape-art.js drawSite`), final art, pending Brian's yes; 12 the dust puff (`escape-office-art.js drawDustPuff`), final art, pending Brian's yes; 13 the drawer's bitten cake, its faint ink edge across the bite gone (`escape-office-art.js` drawer panel), final art, pending Brian's yes; 14 the Mars Cakes brochure, its only words MARS CAKES on the box (`evening-art.js drawBrochure`, `evening-pictures.js drawBrochureExtras`), final art, pending Brian's yes; 15 the HOLD UP close-up (`evening.js` crate view), final art, pending Brian's yes; 16 the cake chart in his crayon, a picture only (`cake-chart.js`), final art, pending Brian's yes; 17 Mops asleep, the same approved Mops and pose, with a shadow the length of him and slow breathing (`mops-asleep-art.js`), final art, pending Brian's yes; 19 his crayon drawing behind the photo, in crayon (`evening-art.js drawCrayonDrawing`), final art, pending Brian's yes. Not done: pickup day's own close-up of the drawing at 57 (`pickup-art.js drawCrayonCloseup`, ART-B's file) still draws its old picture. No new words. Docs match main: yes. Not yet played by a person.
 
 2026-11-27 (Chapter 1 complete, the join), draft PR on `feat/ch1-complete` (from `feat/ch1-pickup-day`), not merged. The four round 7 branches joined with merge commits, in order: the room model (#101), the loading bay (#98), the evening (#100), pickup day (#99). Where two did the same thing, one is kept: one office door (the bay closes it after the robot; it slides the picture's own grey leaves), one security camera (`bay-camera.js BAY_CAMERA`, drawn on pickup day too), one crate tag (`loading-bay-lines.js crate-empty`), night one as the bay built it (the post wakes the robots; the evening's 36b goal names the bar). After the join: #110, Chapter 1 shows no "VERB · thing" words beside outlined things (the party too; the big button keeps its label; `cap-place.js THING_WORDS`); beat 28's counter watcher looks toward the hallway doorway now and then; the story hearts are three (`mops-hearts.js STORY_HEARTS`); the hall's guests in front of the pushed crate are drawn after it; the hallway robot reads FOR PICKUP. TO: MARS. (pending); the kid robot plays one day at a time (`KID_PART`); `tools/chapter-showing.mjs` records the whole chapter in one game. Not done here (HANDOFF.md): one scale per room (pins `adult-door-share`, `hall-bigger` need Brian's written yes), the module robots' own patrols through the room model, Mops on the vent desk, the beat 52 overlap, the cabinet bite's ink edge; the kid robot stops in Day 2 (night one's vent) and on pickup day's push. Docs match main: yes. Not yet played by a person.
 

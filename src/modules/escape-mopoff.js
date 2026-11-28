@@ -16,6 +16,7 @@
 import { MOP_CALM, MOPOFF } from "./escape-place.js";
 import { escapeWords } from "./escape-lines.js";
 import { highlightLine } from "./outline.js";
+import { LOCKED_LOOK, lookFill, lookShine } from "./locked-look.js";
 
 const INK = "#1e2430";
 const GOLD = "#ffcf33";
@@ -290,32 +291,64 @@ function icon(ctx, x, y, who) {
   }
   ctx.restore();
 }
+// One soap bubble: white, the rooms' ink round it, the rooms' white-blue shine (locked-look.js).
+function soapBubble(ctx, x, y, r, lw = 1.4) {
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, TAU);
+  lookFill(ctx, "rgb(255,255,255)", lw);
+  r > 2.6 && lookShine(ctx, x - r * 0.35, y - r * 0.35, Math.max(0.8, r * 0.28));
+}
 /**
- * Scrubbing, made plain (round 7, r5 10:24: "a clear scrubbing motion"): while his beard moves on the floor, soap
- * swishes go back and forth under it and a few bubbles pop up. PLACEHOLDER drawing for Brian.
+ * Scrubbing, made plain (round 7, r5 10:24: "a clear scrubbing motion"): while his beard moves on the floor, a patch of
+ * suds under it (white bubbles, the rooms' ink round each, on a wet blue sheen), two curved swish marks either side that
+ * swap as the beard goes back and forth, and a few bubbles floating up. Final art, pending Brian's yes (round 8).
  */
 export function drawScrub(ctx, x, y, t) {
-  const sw = Math.sin(t * 16);
+  const sw = Math.sin(t * 16),
+    L = LOCKED_LOOK;
   ctx.save();
-  ctx.strokeStyle = "rgba(255,255,255,.9)";
-  ctx.lineWidth = 3;
+  // the wet sheen on the floor
+  ctx.fillStyle = "rgba(120,170,220,0.35)";
+  ctx.beginPath();
+  ctx.ellipse(x, y + 8, 26, 7, 0, 0, TAU);
+  ctx.fill();
+  // the suds, moving with the beard
+  const ox = sw * 4;
+  for (const [dx, dy, r] of [[-14, 6, 4.5], [-6, 9, 5.5], [4, 7, 5], [13, 9, 4], [-1, 3, 4], [9, 2, 3]]) soapBubble(ctx, x + dx + ox, y + dy, r);
+  // the swish marks: two short ink curves on the side the beard is moving away from
+  ctx.strokeStyle = L.ink;
+  ctx.lineWidth = 2;
   ctx.lineCap = "round";
+  const side = sw > 0 ? -1 : 1;
   for (const k of [0, 1]) {
+    const sx = x + side * (24 + k * 7),
+      r = 7 + k * 3;
     ctx.beginPath();
-    ctx.arc(x + sw * 8, y + 4 + k * 6, 12 + k * 6, Math.PI * (0.15 + 0.1 * sw), Math.PI * (0.85 + 0.1 * sw));
+    ctx.arc(sx, y + 4, r, side < 0 ? Math.PI * 0.65 : -Math.PI * 0.35, side < 0 ? Math.PI * 1.35 : Math.PI * 0.35);
     ctx.stroke();
   }
-  ctx.fillStyle = "rgba(220,240,255,.9)";
-  ctx.strokeStyle = "rgba(120,170,220,.9)";
-  ctx.lineWidth = 1.2;
+  // bubbles floating up
   for (let i = 0; i < 3; i++) {
     const u = (t * 1.6 + i / 3) % 1;
-    ctx.beginPath();
-    ctx.arc(x - 10 + i * 10, y - 4 - u * 18, 2.5 + i, 0, TAU);
-    ctx.globalAlpha = 1 - u;
-    ctx.fill();
-    ctx.stroke();
+    ctx.globalAlpha = 1 - u * u;
+    soapBubble(ctx, x - 10 + i * 10 + Math.sin(t * 4 + i) * 3, y - 4 - u * 22, 2.4 + i * 0.8, 1.2);
   }
+  ctx.restore();
+}
+/**
+ * Suds in his bucket (the Mop-Off): white bubbles heaped on the water and one over the rim, so the bucket at his side
+ * reads as the soapy water he mops with. `b`: the bucket (escape-place.js MOPOFF.bucket: its middle, floor, size).
+ * The bucket itself is Brian's approved one (mop-bucket.js). Final art, pending Brian's yes (round 8).
+ */
+export function drawBucketSuds(ctx, b, t) {
+  const k = b.k / 0.28,
+    top = b.floor - (12 + 132) * b.k,
+    cx = b.cx;
+  ctx.save();
+  for (const [dx, dy, r] of [[-14, 0, 4], [-6, -3, 5], [4, -2, 5.5], [13, 0, 4], [0, -7, 4], [-10, -6, 3]]) soapBubble(ctx, cx + dx * k, top + dy * k + Math.sin(t * 3 + dx) * 0.6, r * k, 1.3);
+  // one drip of suds over the rim
+  soapBubble(ctx, cx + 20 * k, top + 4 * k, 3 * k, 1.2);
+  soapBubble(ctx, cx + 21 * k, top + 9 * k, 2.2 * k, 1.1);
   ctx.restore();
 }
 /** A gold five-pointed star at (x, y), radius r. */

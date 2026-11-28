@@ -39,7 +39,7 @@
  */
 import { BAY_SOLIDS } from "./bay-watch.js";
 import { EV_HALLWAY, EV_BAR, STORM, EV_HOME, HOME_ALONE, EV_BAY, BAY_FURNITURE, BAY_EXTRA, BAY_BOUNDS, BAY_SEARCH, BAY_VENT, EVENING_PACE as P, EVENING_LOOK, nightLook, mopsSleepAt, mopsSleepBox, robotLook } from "./evening-place.js";
-import { drawJupiterStorm, drawStormGlow, drawCounterBin, drawEveningThought, drawGuardiansBox, drawWeekCake, drawIdeaPicture, drawYearsLater, drawVentCrate, BAY_CRATE } from "./evening-pictures.js";
+import { drawJupiterStorm, drawStormGlow, drawCounterBin, drawEveningThought, drawGuardiansBox, drawWeekCake, drawIdeaPicture, drawYearsLater, drawVentCrate, BAY_CRATE, BROCHURE_PARTS } from "./evening-pictures.js";
 import { placeThought } from "./thought-place.js";
 import { drawFamilyStampAt, drawFatLetters, familyStampOnRoom } from "./crate-stamp.js";
 import { FAMILY } from "./snack-name.js";
@@ -1823,26 +1823,62 @@ export function createEvening(bridge) {
         T = CRATEV.stamp,
         Cd = CRATEV.card;
       // the crate's side, big: wood slats, and its family stamp, faded, its first letter scraped off (crate-stamp.js,
-      // the same look as on the crate bed in the room; no crayon)
-      ctx.fillStyle = "#d9a35b";
-      ctx.fillRect(C.x, C.y, C.w, C.h);
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = "#1e2430";
-      ctx.strokeRect(C.x, C.y, C.w, C.h);
-      ctx.strokeStyle = "#8b5a2b";
-      ctx.lineWidth = 2;
-      for (let i = 1; i < 4; i++) (ctx.beginPath(), ctx.moveTo(C.x, C.y + (C.h * i) / 4), ctx.lineTo(C.x + C.w, C.y + (C.h * i) / 4), ctx.stroke());
+      // the same look as on the crate bed in the room; no crayon). Round 8 final art, pending Brian's yes: the crate in
+      // the locked rooms' crate colours (delivery_room.py _crate: the wood, darker plank lines, a nail at each corner).
+      ctx.beginPath();
+      ctx.roundRect(C.x, C.y, C.w, C.h, 8);
+      ctx.fillStyle = "rgb(206,176,136)";
+      ctx.fill();
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = "rgb(34,36,44)";
+      ctx.stroke();
+      ctx.strokeStyle = "rgb(170,140,100)";
+      ctx.lineWidth = 3;
+      ctx.lineCap = "round";
+      for (let i = 1; i < 4; i++) (ctx.beginPath(), ctx.moveTo(C.x + 6, C.y + (C.h * i) / 4), ctx.lineTo(C.x + C.w - 6, C.y + (C.h * i) / 4), ctx.stroke());
+      ctx.lineCap = "butt";
+      for (const [nx, ny] of [[C.x + 14, C.y + 14], [C.x + C.w - 14, C.y + 14], [C.x + 14, C.y + C.h - 14], [C.x + C.w - 14, C.y + C.h - 14]]) {
+        ctx.beginPath();
+        ctx.arc(nx, ny, 5, 0, Math.PI * 2);
+        ctx.fillStyle = "rgb(120,100,70)";
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "rgb(34,36,44)";
+        ctx.stroke();
+      }
       const stamp = drawFamilyStampAt(ctx, T.x, T.y, T.h, { crayon: 0, lit: 0, click: 0 });
-      // the brochure held up beside it, and its cake box's name big on the paper, straight under the stamp's letters:
-      // the same fat red letters, one more at the front
+      // the brochure held up beside it, and its cake box's name, magnified, straight under the stamp's letters: the same
+      // fat red letters, one more at the front. Two thin lines run from the box on the brochure out to the big label,
+      // so it reads as that box, close.
       drawFurArm(ctx, 330, D.H + 40, Cd.x + Cd.w * 0.8, Cd.y + Cd.h * 0.7, 30);
       drawBrochure(ctx, Cd.x, Cd.y, Cd.w, Cd.h, false, 0, now);
+      const lab = { x0: stamp.patch.x - 12, y0: C.y + C.h + 8, x1: stamp.end + 12, y1: C.y + C.h + 8 + T.h + 22 },
+        bp = BROCHURE_PARTS.box,
+        bx0 = Cd.x + Cd.w * (bp.fx - bp.fw / 2),
+        bx1 = Cd.x + Cd.w * (bp.fx + bp.fw / 2),
+        by0 = Cd.y + Cd.h * (bp.fy - bp.fh / 2);
       ctx.beginPath();
-      ctx.roundRect(stamp.patch.x - 12, C.y + C.h + 8, stamp.end - stamp.patch.x + 24, T.h + 22, 6);
+      ctx.moveTo(bx0, by0);
+      ctx.lineTo(lab.x0 + 6, lab.y1);
+      ctx.lineTo(lab.x1 - 6, lab.y1);
+      ctx.lineTo(bx1, by0);
+      ctx.closePath();
+      ctx.fillStyle = "rgba(255,250,240,.35)";
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(bx0, by0);
+      ctx.lineTo(lab.x0 + 6, lab.y1 - 4);
+      ctx.moveTo(bx1, by0);
+      ctx.lineTo(lab.x1 - 6, lab.y1 - 4);
+      ctx.strokeStyle = "rgba(34,36,44,.55)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.roundRect(lab.x0, lab.y0, lab.x1 - lab.x0, lab.y1 - lab.y0, 6);
       ctx.fillStyle = "#f6e7c8";
       ctx.fill();
       ctx.lineWidth = 3;
-      ctx.strokeStyle = "#1e2430";
+      ctx.strokeStyle = "rgb(34,36,44)";
       ctx.stroke();
       drawFatLetters(ctx, FAMILY.NAME, stamp.patch.x, C.y + C.h + 8 + T.h + 8, T.h);
       drawCloseX(ctx, CRATEV.close.x, CRATEV.close.y, CRATEV.close.r);
@@ -2146,7 +2182,7 @@ export function createEvening(bridge) {
       paper(ctx, 0, 0, "#ffe27a", 14);
       ctx.restore();
     }
-    // the crate under the big wall vent (a hiding place; PLACEHOLDER drawing)
+    // the crate by the floor vent (a hiding place; final art, pending Brian's yes)
     drawVentCrate(ctx);
     const people = [];
     const robotAt = (id, x, y) => (a && a.w.id === id ? { x: a.w.x, y: a.w.y } : { x, y });
