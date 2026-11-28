@@ -12,6 +12,7 @@
  */
 import { FAMILY, SNACK } from "./snack-name.js";
 import { drawFatLetters } from "./crate-stamp.js";
+import { LOCKED_LOOK, lookRound, lookFill } from "./locked-look.js";
 
 const INK = "#1e2430",
   TAU = Math.PI * 2,
@@ -403,15 +404,42 @@ export function drawYearsLater(ctx, x, y, w, h, mops, poster) {
 /** The crate under the loading bay's big wall vent (a hiding place): its box in game positions. */
 // (round 7, q: 125: beside the floor vent, evening-place.js EV_BAY.crate.box)
 export const BAY_CRATE = Object.freeze({ x0: 268, x1: 332, y0: 500, y1: 552 });
-export function drawVentCrate(ctx) {
-  const B = BAY_CRATE;
-  pRect(ctx, B.x0, B.y0, B.x1 - B.x0, B.y1 - B.y0, 3, "#b98a4e", INK, 2.5);
+/**
+ * The crate beside the floor vent, drawn the way the locked bay draws its crates (delivery_room.py _crate: the crate's
+ * wood with two plank lines and a middle seam in the darker wood, a nail at each corner, the rooms' ink round it), with
+ * a little shadow under it, then the night picture's own blue-grey dimming laid over it (apply_night, 20,24,60 at 120 of
+ * 255), so it sits in the dark room like everything painted there. Final art, pending Brian's yes (round 8).
+ */
+export function drawVentCrate(ctx, night = true) {
+  const B = BAY_CRATE,
+    L = LOCKED_LOOK,
+    w = B.x1 - B.x0,
+    h = B.y1 - B.y0;
+  ctx.save();
+  ctx.fillStyle = "rgba(34,36,44,0.18)";
   ctx.beginPath();
-  ctx.moveTo(B.x0 + 4, B.y0 + 4);
-  ctx.lineTo(B.x1 - 4, B.y1 - 4);
-  ctx.moveTo(B.x1 - 4, B.y0 + 4);
-  ctx.lineTo(B.x0 + 4, B.y1 - 4);
-  ctx.lineWidth = 2;
-  ctx.strokeStyle = "#7a5228";
+  ctx.ellipse((B.x0 + B.x1) / 2, B.y1 + 1, w * 0.56, 5, 0, 0, TAU);
+  ctx.fill();
+  lookRound(ctx, B.x0, B.y0, w, h, 4.5);
+  lookFill(ctx, L.crate, 3);
+  ctx.lineCap = "round";
+  ctx.strokeStyle = L.crateDark;
+  ctx.lineWidth = 2.3;
+  for (const v of [1 / 3, 2 / 3]) (ctx.beginPath(), ctx.moveTo(B.x0 + 3, B.y0 + h * v), ctx.lineTo(B.x1 - 3, B.y0 + h * v), ctx.stroke());
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(B.x0 + w / 2, B.y0 + 3);
+  ctx.lineTo(B.x0 + w / 2, B.y1 - 3);
   ctx.stroke();
+  for (const [nx, ny] of [[B.x0 + 6, B.y0 + 6], [B.x1 - 6, B.y0 + 6], [B.x0 + 6, B.y1 - 6], [B.x1 - 6, B.y1 - 6]]) {
+    ctx.beginPath();
+    ctx.arc(nx, ny, 2.3, 0, TAU);
+    lookFill(ctx, L.wood, 1.4);
+  }
+  if (night) {
+    lookRound(ctx, B.x0 - 2, B.y0 - 2, w + 4, h + 4, 5);
+    ctx.fillStyle = "rgba(20,24,60,0.47)";
+    ctx.fill();
+  }
+  ctx.restore();
 }

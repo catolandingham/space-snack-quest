@@ -2146,7 +2146,7 @@ export function createEvening(bridge) {
       paper(ctx, 0, 0, "#ffe27a", 14);
       ctx.restore();
     }
-    // the crate under the big wall vent (a hiding place; PLACEHOLDER drawing)
+    // the crate by the floor vent (a hiding place; final art, pending Brian's yes)
     drawVentCrate(ctx);
     const people = [];
     const robotAt = (id, x, y) => (a && a.w.id === id ? { x: a.w.x, y: a.w.y } : { x, y });

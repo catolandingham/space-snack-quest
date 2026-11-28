@@ -399,8 +399,11 @@ export function createLoadingBay(bridge) {
     const lu = E().get("ch1Lunch");
     return lu && lu.step === "handoff" ? lu : null;
   };
-  // seen standing at the counter: "Squatch: hide", and the place to hide is back down behind the counter (its aisle)
-  const COUNTER_HIDE = { x0: AISLE.x0, x1: AISLE.x1, y0: AISLE.y0, y1: AISLE.y0 + 90 };
+  // seen standing at the counter: "Squatch: hide", and the place to hide is back down behind the counter (its aisle).
+  // The one dashed line runs round the whole aisle as the hall picture draws it, from the counter's side to the right
+  // wall and from the counter's top down to its end piece (drawDashedOutline sits 4 outside the box). Round 8 final
+  // art, pending Brian's yes (was a box over the aisle's top only).
+  const COUNTER_HIDE = { x0: AISLE.x0 + 4, x1: AISLE.x1 - 4, y0: AISLE.y0 + 4, y1: AISLE.y1 - 4 };
   const counterHide = () => {
     const lu = lunchNow();
     return !!lu && !!lu.alarm && lu.alarm.phase !== "calm" && lu.alarm.phase !== "caught" && lu.pose === "stand";

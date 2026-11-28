@@ -271,7 +271,34 @@ export function withCameraLayer(id, img) {
     c.drawImage(img, 0, 0);
     c.save();
     c.scale(w / BAY_CAMERA.picture.w, h / BAY_CAMERA.picture.h);
-    bay ? drawBayCamera(c, BAY_CAMERA.x, BAY_CAMERA.y, 1.3) : drawBayOnScreen(c);
+    if (bay && (id === "delivery-night" || img.nightLook)) {
+      // at night the camera sits in the dark like the room: the night picture's own dimming over it (delivery_room.py
+      // apply_night, 20,24,60 at 120 of 255), drawn on a small canvas of its own so only the camera is dimmed
+      const cam = document.createElement("canvas"),
+        g = cam.getContext("2d");
+      cam.width = 140;
+      cam.height = 110;
+      if (g) {
+        drawBayCamera(g, 110, 40, 1.3);
+        g.globalCompositeOperation = "source-atop";
+        g.fillStyle = "rgba(20,24,60,0.47)";
+        g.fillRect(0, 0, cam.width, cam.height);
+        c.drawImage(cam, BAY_CAMERA.x - 110, BAY_CAMERA.y - 40);
+        // its red light stays bright in the dark
+        const k = 1.3,
+          a = 0.38,
+          lx = BAY_CAMERA.x + k * (-14 + Math.cos(a) * -7 - Math.sin(a) * -1),
+          ly = BAY_CAMERA.y + k * (8 + Math.sin(a) * -7 + Math.cos(a) * -1);
+        c.fillStyle = "rgba(255,59,48,0.35)";
+        c.beginPath();
+        c.arc(lx, ly, 10 * k, 0, Math.PI * 2);
+        c.fill();
+        c.beginPath();
+        c.arc(lx, ly, 3.6 * k, 0, Math.PI * 2);
+        lookFill(c, "rgb(255,59,48)", 1.6 * k);
+        lookShine(c, lx - 1.2 * k, ly - 1.2 * k, 1.1 * k);
+      }
+    } else bay ? drawBayCamera(c, BAY_CAMERA.x, BAY_CAMERA.y, 1.3) : drawBayOnScreen(c);
     c.restore();
     Object.assign(cv, { complete: true, naturalWidth: w, naturalHeight: h, src: img.src + "#camera", cameraLayer: true, nightLook: !!img.nightLook, snackLayer: !!img.snackLayer });
     cameraLayered.set(key, cv);
