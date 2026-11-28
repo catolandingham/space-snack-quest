@@ -6,6 +6,7 @@ Draft PR into feat/ch1-complete, for Brian's phone test. SSQ_PORT_OFFSET=1600. I
 - Every round 8 drawing is final art (sheets 1 and 2, "Yes, all of it"); after the snip the switch card's and HUD face's Mops show the snipped beard (mops-face.js).
 - One scale per room is on (ROOM_SCALE_ON = true). Pins adult-door-share and hall-bigger retired; room-scale-table and room-scale-on added.
 - With the table on: Mops at home is wl (3) in every scene (moDrawScale); the pickup crate keeps its size (crateK measured against doorAdultPx("closet")); people-scale and canvas-text measure the table.
+- The hall's sight outline follows the table (party-watch.js OUTLINE_K); the lunch's teal and camera watchers moved so a walk while one looks still gets the "!" (found on a grid against tests/lunch-sneak.mjs).
 - Pickup day's crayon close-up draws evening-art.js drawCrayonDrawing.
 - The cabinet cake's ink edge was fixed in #104's art (kept as merged).
 - The escape's walk to the bar: Mops at the counter's top end stands at its front line, drawn in front by the feet rule; looked at in one still, no change.
